@@ -1,0 +1,1038 @@
+<!-- Section 9: Safety Functions (Peripheral I/O Bus, Self-Diagnostic BIST, ECC) -->
+<!-- Source: UPD70F3508GJA2-GBG-AX-1.pdf pp.429-461 (manual pp.409-441) -->
+
+<!-- ================================================================ -->
+<!-- PBUS: Peripheral I/O Bus PSELG Registers (Table 9-1, 9.3.1/9.3.2) -->
+<!-- Base: 0xFF454000 (lowest register APC at FF45 4000H)              -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>PBUS</name>
+  <description>Peripheral I/O Bus PSELG Error Detection and Control</description>
+  <baseAddress>0xFF454000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x14</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>APC</name>
+      <description>Peripheral I/O Bus PSELG Control Register</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <!-- Bit 3: SLV — not present on µPD70F3508/3509 -->
+        <field>
+          <name>SLV</name>
+          <description>Slave error EDC checking enable (not on µPD70F3508/3509)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>UAA</name>
+          <description>Undefined-area-access checking enable (0=disabled, 1=enabled)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>ATO</name>
+          <description>Access-timeout checking enable (0=disabled, 1=enabled)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>APES</name>
+      <description>Peripheral I/O Bus PSELG Error Status Register</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>SLV</name>
+          <description>Slave error generated flag (not on µPD70F3508/3509)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>UAA</name>
+          <description>Undefined-area-access error generated flag</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>ATO</name>
+          <description>Access-timeout error generated flag</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>APEC</name>
+      <description>Peripheral I/O Bus PSELG Error Status Clear Register</description>
+      <addressOffset>0x8</addressOffset>
+      <size>8</size>
+      <!-- write-only functionally; reads return 00H; access R/W per manual access column -->
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>SLV</name>
+          <description>Clear APES.SLV slave-error source flag (not on µPD70F3508/3509)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>UAA</name>
+          <description>Clear APES.UAA undefined-area-access error source flag</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>ATO</name>
+          <description>Clear APES.ATO access-timeout error source flag</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>APAM</name>
+      <description>Peripheral I/O Bus PSELG Error Address Store Register</description>
+      <addressOffset>0xC</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0xFF000000</resetValue>
+      <fields>
+        <field>
+          <name>A</name>
+          <description>Address of most recent peripheral I/O bus access error [23:0]</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>MATS</name>
+      <description>Peripheral I/O Bus Maximum Access Time Set Register</description>
+      <addressOffset>0x10</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>MATS</name>
+          <description>Maximum bus access time selection (MATS[3:0]; 0000=2^9/PCLK through 0111=2^16/PCLK; others prohibited)</description>
+          <bitRange>[3:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- BIST: Self-Diagnostic BIST Sequence Registers (Table 9-7, 9.5.1) -->
+<!-- Base: 0xFF83B000                                                   -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>BIST</name>
+  <description>Self-Diagnostic BIST Sequence and Protection Registers</description>
+  <baseAddress>0xFF83B000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x10</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>BSEQ0TCRPCMD</name>
+      <description>BIST Protection Command Register — write-enable command for write-protected BIST registers</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <register>
+      <name>BSEQ0TCRPESR</name>
+      <description>BIST Protection Status Register — protection error detection status</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>PESR0</name>
+          <description>Protected-write-sequence error detected (0=no error, 1=error detected)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>BSEQ0STRHBT</name>
+      <description>Self-Diagnostic BIST Status Register — BIST sequence error and completion flags</description>
+      <addressOffset>0x8</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x0000FF00</resetValue>
+      <fields>
+        <field>
+          <name>BCE</name>
+          <description>BIST sequencer comparison error (0=no error, 1=error)</description>
+          <bitRange>[31:31]</bitRange>
+        </field>
+        <field>
+          <name>MPE</name>
+          <description>Self-diagnostic BIST code-parity error on master side (0=no error, 1=error)</description>
+          <bitRange>[30:30]</bitRange>
+        </field>
+        <field>
+          <name>CPE</name>
+          <description>Self-diagnostic BIST code-parity error on checker side (0=no error, 1=error)</description>
+          <bitRange>[29:29]</bitRange>
+        </field>
+        <field>
+          <name>HWBS15_8</name>
+          <description>Checker BIST sequencer state bits [15:8] (0=ended normally, 1=ended abnormally/not ended/not started)</description>
+          <bitRange>[15:8]</bitRange>
+        </field>
+        <field>
+          <name>HWBS7_0</name>
+          <description>Master BIST sequencer state bits [7:0] (0=abnormal/not ended/not started, 1=ended normally)</description>
+          <bitRange>[7:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>BSEQ0STCHBT</name>
+      <description>Self-Diagnostic BIST Status Clear Trigger Register — clears error flags in BSEQ0STRHBT (write-protected sequence required)</description>
+      <addressOffset>0xC</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>CLHWBS31</name>
+          <description>Clear BSEQ0STRHBT.BCE (bit 31)</description>
+          <bitRange>[31:31]</bitRange>
+        </field>
+        <field>
+          <name>CLHWBS30</name>
+          <description>Clear BSEQ0STRHBT.MPE (bit 30)</description>
+          <bitRange>[30:30]</bitRange>
+        </field>
+        <field>
+          <name>CLHWBS29</name>
+          <description>Clear BSEQ0STRHBT.CPE (bit 29)</description>
+          <bitRange>[29:29]</bitRange>
+        </field>
+        <field>
+          <name>CLHWBS15_8</name>
+          <description>Clear BSEQ0STRHBT.HWBS[15:8] checker state bits</description>
+          <bitRange>[15:8]</bitRange>
+        </field>
+        <field>
+          <name>CLHWBS7_0</name>
+          <description>Clear BSEQ0STRHBT.HWBS[7:0] master state bits</description>
+          <bitRange>[7:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- BIST_AUX: SGA Error Pulse + Backup RAM Registers (Table 9-7)     -->
+<!-- Base: 0xFF83F020                                                   -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>BIST_AUX</name>
+  <description>SGA Error Pulse Control and Backup RAM Registers</description>
+  <baseAddress>0xFF83F020</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x20</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>SGAEPCTL</name>
+      <description>SGA Error Pulse Control Register — selects timer source for SGA dynamic-mode operation</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>SGATMSL</name>
+          <description>Timer source select for SGA (0=TAUA1 ch15, 1=OSTM1)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- BRAMDAT0-3 at FF83 F030H-FF83 F03CH; offset from 0xFF83F020 base -->
+    <register>
+      <name>BRAMDAT0</name>
+      <description>Backup RAM Register 0 — holds data [31:0] across self-diagnostic BIST</description>
+      <addressOffset>0x10</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <register>
+      <name>BRAMDAT1</name>
+      <description>Backup RAM Register 1 — holds data [63:32] across self-diagnostic BIST</description>
+      <addressOffset>0x14</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <register>
+      <name>BRAMDAT2</name>
+      <description>Backup RAM Register 2 — holds data [95:64] across self-diagnostic BIST</description>
+      <addressOffset>0x18</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <register>
+      <name>BRAMDAT3</name>
+      <description>Backup RAM Register 3 — holds data [127:96] across self-diagnostic BIST</description>
+      <addressOffset>0x1C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- BSEQ0CTL: Self-Diagnostic BIST Control Register                  -->
+<!-- Address FF42 003CH — only for µPD70F3505A; listed in Table 9-7   -->
+<!-- NOTE: This address falls within the Reset Controller range        -->
+<!-- (FF42 0000H region). Emitted here per section 9 scope.            -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>BIST_CTL</name>
+  <description>Self-Diagnostic BIST Control Register (µPD70F3505A only, at Reset Controller address space)</description>
+  <baseAddress>0xFF42003C</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>BSEQ0CTL</name>
+      <description>Self-Diagnostic BIST Control Register — BIST execute/skip selection (µPD70F3505A only; write-protected)</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x01</resetValue>
+      <fields>
+        <field>
+          <name>HWBISTENM</name>
+          <description>BIST control write status flag — read with HWBISTEN to confirm write state</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>HWBISTEN</name>
+          <description>BIST execution/skip control (0=BIST skipped, 1=BIST executed)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- ECC_CFLASH: Code Flash ECC Registers (Table 9-16, 9.6.1/9.6.2)  -->
+<!-- Base: 0xFF432000                                                   -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>ECC_CFLASH</name>
+  <description>Code Flash ECC Error Detection and Address Registers</description>
+  <baseAddress>0xFF432000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x10</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>CECCER</name>
+      <description>Code Flash ECC Error Flag Register</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CECCER0EDFLG</name>
+          <description>ECC uncorrectable error flag (0=no error, 1=uncorrectable error generated)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>CECCER0ECFLG</name>
+          <description>ECC correction flag (0=no correction, 1=correction occurred)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CECCERC</name>
+      <description>Code Flash ECC Error Flag Clear Register — writing 1 clears corresponding CECCER bits</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CECCER0EDCLR</name>
+          <description>Clear CECCER.CECCER0EDFLG (0=no clear, 1=clear)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>CECCER0ECCLR</name>
+          <description>Clear CECCER.CECCER0ECFLG (0=no clear, 1=clear)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CECADR</name>
+      <description>Code Flash ECC Error Correction Address Register — holds address where ECC correction was applied</description>
+      <addressOffset>0x8</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>CECADR0A</name>
+          <description>Address where ECC correction was applied [21:4]</description>
+          <bitRange>[21:4]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CEDADR</name>
+      <description>Code Flash ECC Error Detection Address Register — holds address where ECC error was detected</description>
+      <addressOffset>0xC</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>CEDADR0A</name>
+          <description>Address where ECC error was encountered [21:4]</description>
+          <bitRange>[21:4]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- ECC_RAM: On-chip RAM ECC Registers (Table 9-16, 9.6.1/9.6.2)    -->
+<!-- Base: 0xFF468000                                                   -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>ECC_RAM</name>
+  <description>On-chip RAM ECC Error Detection and Address Registers</description>
+  <baseAddress>0xFF468000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x10</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>LECCER</name>
+      <description>On-chip RAM ECC Error Flag Register</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>LECCER0EDFLG</name>
+          <description>On-chip RAM ECC uncorrectable error flag (0=no error, 1=uncorrectable error)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>LECCER0ECFLG</name>
+          <description>On-chip RAM ECC correction flag (0=no correction, 1=correction occurred)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>LECCERC</name>
+      <description>On-chip RAM ECC Error Flag Clear Register — writing 1 clears corresponding LECCER bits</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>LECCER0EDCLR</name>
+          <description>Clear LECCER.LECCER0EDFLG (0=no clear, 1=clear)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>LECCER0ECCLR</name>
+          <description>Clear LECCER.LECCER0ECFLG (0=no clear, 1=clear)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>LECADR</name>
+      <description>On-chip RAM ECC Error Correction Address Register — holds address where ECC correction was applied</description>
+      <addressOffset>0x8</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>LECADR0A</name>
+          <description>On-chip RAM address where ECC correction was applied [20:2]</description>
+          <bitRange>[20:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>LEDADR</name>
+      <description>On-chip RAM ECC Error Detection Address Register — holds address where ECC error was detected</description>
+      <addressOffset>0xC</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>LEDADR0A</name>
+          <description>On-chip RAM address where ECC error was encountered [20:2]</description>
+          <bitRange>[20:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- ECC_CAN0: CAN0 RAM ECC Control Registers (Table 9-16, 9.6.2)    -->
+<!-- Base: 0xFF460000; E6A0CTL and E6A1CTL                             -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>ECC_CAN0</name>
+  <description>CAN0 RAM ECC Control Registers (E6A0CTL, E6A1CTL)</description>
+  <baseAddress>0xFF460000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x104</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>E6A0CTL</name>
+      <description>CAN0 ECC0 Control Register — ECC error flag and clear for CAN0 RAM bank 0</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined per manual; no resetValue emitted -->
+      <fields>
+        <field>
+          <name>E6A0CTLER2C</name>
+          <description>Clear E6A0CTL.E6A0CTLECCER2 (write 1 to clear; reads always 0)</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>E6A0CTLECCER2</name>
+          <description>CAN0 RAM ECC error flag (0=no error, 1=ECC error generated)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>E6A1CTL</name>
+      <description>CAN0 ECC1 Control Register — ECC error flag and clear for CAN0 RAM bank 1</description>
+      <addressOffset>0x100</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined per manual; no resetValue emitted -->
+      <fields>
+        <field>
+          <name>E6A1CTLER2C</name>
+          <description>Clear E6A1CTL.E6A1CTLECCER2 (write 1 to clear; reads always 0)</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>E6A1CTLECCER2</name>
+          <description>CAN0 RAM ECC error flag bank 1 (0=no error, 1=ECC error generated)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- ECC_CAN1: CAN1 RAM ECC Control Registers (Table 9-16, 9.6.2)    -->
+<!-- Base: 0xFF460800; E6A2CTL and E6A3CTL                             -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>ECC_CAN1</name>
+  <description>CAN1 RAM ECC Control Registers (E6A2CTL, E6A3CTL)</description>
+  <baseAddress>0xFF460800</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x104</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>E6A2CTL</name>
+      <description>CAN1 ECC0 Control Register — ECC error flag and clear for CAN1 RAM bank 0</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined per manual; no resetValue emitted -->
+      <fields>
+        <field>
+          <name>E6A2CTLER2C</name>
+          <description>Clear E6A2CTL.E6A2CTLECCER2 (write 1 to clear; reads always 0)</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>E6A2CTLECCER2</name>
+          <description>CAN1 RAM ECC error flag bank 0 (0=no error, 1=ECC error generated)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>E6A3CTL</name>
+      <description>CAN1 ECC1 Control Register — ECC error flag and clear for CAN1 RAM bank 1</description>
+      <addressOffset>0x100</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined per manual; no resetValue emitted -->
+      <fields>
+        <field>
+          <name>E6A3CTLER2C</name>
+          <description>Clear E6A3CTL.E6A3CTLECCER2 (write 1 to clear; reads always 0)</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>E6A3CTLECCER2</name>
+          <description>CAN1 RAM ECC error flag bank 1 (0=no error, 1=ECC error generated)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- ECC_FLEXRAY: FlexRay RAM ECC Control Registers (Table 9-16/9.6.2)-->
+<!-- Base: 0xFF464000; E7A0CTL-E7A6CTL (µPD70F3505A excluded)         -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>ECC_FLEXRAY</name>
+  <description>FlexRay RAM ECC Control Registers (E7A0CTL to E7A6CTL; not on µPD70F3505A)</description>
+  <baseAddress>0xFF464000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x604</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>E7A0CTL</name>
+      <description>FlexRay ECC0 Control Register</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined per manual; no resetValue emitted -->
+      <fields>
+        <field>
+          <name>E7A0CTLER2C</name>
+          <description>Clear E7A0CTL.E7A0CTLECCER2 (write 1 to clear; reads always 0)</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>E7A0CTLECCER2</name>
+          <description>FlexRay RAM ECC error flag ch0 (0=no error, 1=ECC error generated)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>E7A1CTL</name>
+      <description>FlexRay ECC1 Control Register</description>
+      <addressOffset>0x100</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined per manual; no resetValue emitted -->
+      <fields>
+        <field>
+          <name>E7A1CTLER2C</name>
+          <description>Clear E7A1CTL.E7A1CTLECCER2 (write 1 to clear; reads always 0)</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>E7A1CTLECCER2</name>
+          <description>FlexRay RAM ECC error flag ch1 (0=no error, 1=ECC error generated)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>E7A2CTL</name>
+      <description>FlexRay ECC2 Control Register</description>
+      <addressOffset>0x200</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined per manual; no resetValue emitted -->
+      <fields>
+        <field>
+          <name>E7A2CTLER2C</name>
+          <description>Clear E7A2CTL.E7A2CTLECCER2 (write 1 to clear; reads always 0)</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>E7A2CTLECCER2</name>
+          <description>FlexRay RAM ECC error flag ch2 (0=no error, 1=ECC error generated)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>E7A3CTL</name>
+      <description>FlexRay ECC3 Control Register</description>
+      <addressOffset>0x300</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined per manual; no resetValue emitted -->
+      <fields>
+        <field>
+          <name>E7A3CTLER2C</name>
+          <description>Clear E7A3CTL.E7A3CTLECCER2 (write 1 to clear; reads always 0)</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>E7A3CTLECCER2</name>
+          <description>FlexRay RAM ECC error flag ch3 (0=no error, 1=ECC error generated)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>E7A4CTL</name>
+      <description>FlexRay ECC4 Control Register</description>
+      <addressOffset>0x400</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined per manual; no resetValue emitted -->
+      <fields>
+        <field>
+          <name>E7A4CTLER2C</name>
+          <description>Clear E7A4CTL.E7A4CTLECCER2 (write 1 to clear; reads always 0)</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>E7A4CTLECCER2</name>
+          <description>FlexRay RAM ECC error flag ch4 (0=no error, 1=ECC error generated)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>E7A5CTL</name>
+      <description>FlexRay ECC5 Control Register</description>
+      <addressOffset>0x500</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined per manual; no resetValue emitted -->
+      <fields>
+        <field>
+          <name>E7A5CTLER2C</name>
+          <description>Clear E7A5CTL.E7A5CTLECCER2 (write 1 to clear; reads always 0)</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>E7A5CTLECCER2</name>
+          <description>FlexRay RAM ECC error flag ch5 (0=no error, 1=ECC error generated)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>E7A6CTL</name>
+      <description>FlexRay ECC6 Control Register</description>
+      <addressOffset>0x600</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined per manual; no resetValue emitted -->
+      <fields>
+        <field>
+          <name>E7A6CTLER2C</name>
+          <description>Clear E7A6CTL.E7A6CTLECCER2 (write 1 to clear; reads always 0)</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>E7A6CTLECCER2</name>
+          <description>FlexRay RAM ECC error flag ch6 (0=no error, 1=ECC error generated)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- PPU: CPU Core Protection Peripheral Violation Registers (Table 9-30, 9.7.2) -->
+<!-- Base: 0xFFFF5110 (lowest address VPNECR)                          -->
+<!-- NOTE: Multiple byte-alias names map to the same 32-bit address.   -->
+<!-- Only the word-width canonical name is emitted per unique address.  -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>PPU</name>
+  <description>CPU Core Protection Peripheral Protection Unit violation registers (Table 9-30)</description>
+  <baseAddress>0xFFFF5110</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1C</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- NT-state (Non-Task-state) violation registers -->
+    <register>
+      <name>VPNECR</name>
+      <description>Peripheral device protection NT state violation cause register (32-bit canonical; byte aliases VPNECRL/VPNECRLL/VPNECRLH also map here)</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <register>
+      <name>VPNADR</name>
+      <description>Peripheral device protection NT state violation address register (32-bit canonical; byte/halfword aliases also map here)</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <register>
+      <name>VPNTID</name>
+      <description>Peripheral device protection NT state violation task ID register (32-bit canonical; byte/halfword aliases also map here)</description>
+      <addressOffset>0x8</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <!-- T-state (Task-state) violation registers -->
+    <!-- 0xFFFF5120 = base + 0x10 -->
+    <register>
+      <name>VPTECR</name>
+      <description>Peripheral device protection T state violation cause register (32-bit canonical; byte aliases also map here)</description>
+      <addressOffset>0x10</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <!-- 0xFFFF5124 = base + 0x14 -->
+    <register>
+      <name>VPTADR</name>
+      <description>Peripheral device protection T state violation address register (32-bit canonical; byte/halfword aliases also map here)</description>
+      <addressOffset>0x14</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <!-- 0xFFFF5128 = base + 0x18 -->
+    <register>
+      <name>VPTTID</name>
+      <description>Peripheral device protection T state violation task ID register (32-bit canonical; byte/halfword aliases also map here)</description>
+      <addressOffset>0x18</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- TSC: Timing Supervision Counter Registers (Table 9-31, 9.7.2)    -->
+<!-- Base: 0xFFFF5024 (lowest address TSCCNT0)                         -->
+<!-- 6 counter channels; each channel has CNT/CMP/RLD at +0x10 stride -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>TSC</name>
+  <description>Timing Supervision Counter registers — count, compare, and reload values for channels 0-5 (Table 9-31)</description>
+  <baseAddress>0xFFFF5024</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x5C</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- Channel 0: base offsets 0x00, 0x04, 0x08 -->
+    <register>
+      <name>TSCCNT0</name>
+      <description>Timing supervision counter 0 count value register</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+    <register>
+      <name>TSCCMP0</name>
+      <description>Timing supervision counter 0 comparison value register</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+    <register>
+      <name>TSCRLD0</name>
+      <description>Timing supervision counter 0 reload value register</description>
+      <addressOffset>0x8</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <!-- Channel 1: 0xFFFF5034 = base + 0x10 -->
+    <register>
+      <name>TSCCNT1</name>
+      <description>Timing supervision counter 1 count value register</description>
+      <addressOffset>0x10</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+    <register>
+      <name>TSCCMP1</name>
+      <description>Timing supervision counter 1 comparison value register</description>
+      <addressOffset>0x14</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+    <register>
+      <name>TSCRLD1</name>
+      <description>Timing supervision counter 1 reload value register</description>
+      <addressOffset>0x18</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <!-- Channel 2: 0xFFFF5044 = base + 0x20 -->
+    <register>
+      <name>TSCCNT2</name>
+      <description>Timing supervision counter 2 count value register</description>
+      <addressOffset>0x20</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+    <register>
+      <name>TSCCMP2</name>
+      <description>Timing supervision counter 2 comparison value register</description>
+      <addressOffset>0x24</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+    <register>
+      <name>TSCRLD2</name>
+      <description>Timing supervision counter 2 reload value register</description>
+      <addressOffset>0x28</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <!-- Channel 3: 0xFFFF5054 = base + 0x30 -->
+    <register>
+      <name>TSCCNT3</name>
+      <description>Timing supervision counter 3 count value register</description>
+      <addressOffset>0x30</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+    <register>
+      <name>TSCCMP3</name>
+      <description>Timing supervision counter 3 comparison value register</description>
+      <addressOffset>0x34</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+    <register>
+      <name>TSCRLD3</name>
+      <description>Timing supervision counter 3 reload value register</description>
+      <addressOffset>0x38</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <!-- Channel 4: 0xFFFF5064 = base + 0x40 -->
+    <register>
+      <name>TSCCNT4</name>
+      <description>Timing supervision counter 4 count value register</description>
+      <addressOffset>0x40</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+    <register>
+      <name>TSCCMP4</name>
+      <description>Timing supervision counter 4 comparison value register</description>
+      <addressOffset>0x44</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+    <register>
+      <name>TSCRLD4</name>
+      <description>Timing supervision counter 4 reload value register</description>
+      <addressOffset>0x48</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+    <!-- Channel 5: 0xFFFF5074 = base + 0x50 -->
+    <register>
+      <name>TSCCNT5</name>
+      <description>Timing supervision counter 5 count value register</description>
+      <addressOffset>0x50</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+    <register>
+      <name>TSCCMP5</name>
+      <description>Timing supervision counter 5 comparison value register</description>
+      <addressOffset>0x54</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+    <register>
+      <name>TSCRLD5</name>
+      <description>Timing supervision counter 5 reload value register</description>
+      <addressOffset>0x58</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- Initial value: Undefined; no resetValue emitted -->
+    </register>
+
+  </registers>
+</peripheral>

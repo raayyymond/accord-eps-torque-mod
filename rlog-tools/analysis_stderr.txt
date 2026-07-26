@@ -1,0 +1,9 @@
+collecting mall_route0...
+  [skip truncated tail] D:/drivedata/00000000--74efcd1ee3--5/rlog.zst: capnp\serialize.c++:55: failed: expected array.size() >= offset + segmentSize [16 >= 19]; Message ends prematurely in first segment.
+stack: 7ffa83adb5aa 7ffa83a9b1e9 7ffa839a004c 7ffa8399b19d 7ffaad4a5d76 7ffaad44b58a 7ffaad44b479 7ffaad4a5d76 7ffaad4a49d6 7ffaad4a6032 7ffaad4a49d6 7ffaad4a6032 7ffaad45a1cc 7ffaad4bad05 7ffaad4ba9c9 7ffaad4ba949 7ffaad53f393 7ffaad53f248 7ffaad53dd1f 7ffaad53d9a2 7ffaad53d85e 7ffaad4b3a2f 7ffaad4b38c0 7ff694204181 7ff694205623 7ffb1e60e956 7ffb1f8c7c1b
+collecting road_route1...
+  [skip truncated tail] D:/drivedata/00000001--638fd75d31--8/rlog.zst: capnp\serialize.c++:55: failed: expected array.size() >= offset + segmentSize [7 >= 9]; Message ends prematurely in first segment.
+stack: 7ffa83adb5aa 7ffa83a9b1e9 7ffa839a004c 7ffa8399b19d 7ffaad4a5d76 7ffaad44b58a 7ffaad44b479 7ffaad4a5d76 7ffaad4a49d6 7ffaad4a6032 7ffaad4a49d6 7ffaad4a6032 7ffaad45a1cc 7ffaad4bad05 7ffaad4ba9c9 7ffaad4ba949 7ffaad53f393 7ffaad53f248 7ffaad53dd1f 7ffaad53d9a2 7ffaad53d85e 7ffaad4b3a2f 7ffaad4b38c0 7ff694204181 7ff694205623 7ffb1e60e956 7ffb1f8c7c1b
+collecting road_route2...
+  [skip truncated tail] D:/drivedata/00000002--a6fcb0a223--4/rlog.zst: capnp\serialize.c++:55: failed: expected array.size() >= offset + segmentSize [7 >= 19]; Message ends prematurely in first segment.
+stack: 7ffa83adb5aa 7ffa83a9b1e9 7ffa839a004c 7ffa8399b19d 7ffaad4a5d76 7ffaad44b58a 7ffaad44b479 7ffaad4a5d76 7ffaad4a49d6 7ffaad4a6032 7ffaad4a49d6 7ffaad4a6032 7ffaad45a1cc 7ffaad4bad05 7ffaad4ba9c9 7ffaad4ba949 7ffaad53f393 7ffaad53f248 7ffaad53dd1f 7ffaad53d9a2 7ffaad53d85e 7ffaad4b3a2f 7ffaad4b38c0 7ff694204181 7ff694205623 7ffb1e60e956 7ffb1f8c7c1b

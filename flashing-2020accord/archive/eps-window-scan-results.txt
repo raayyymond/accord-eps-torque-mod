@@ -1,0 +1,30 @@
+======================================================================
+  EPS DOWNLOAD-WINDOW FINDER - issues 0x34/0x37 only, NEVER 0x36 (no flash write)
+  addr=0x18DA30F1 bus=1 page=0x1000 erase_first=True
+  start range [0x0, 0x100000)
+======================================================================
+[setup] app id (0xF181) = b'39990-TVA-A110\x00\x00'
+[setup] SA ok (seed 0xDEBD -> key 0xE3E4)
+[setup] --erase-first: issuing eraseMemory(0xFF00)
+[setup] wrote decryption key BF109E
+[scan] probing 256 page-aligned starts...
+[scan]  start=0x00010000: rejected NRC 0x31
+[scan]  start=0x00014000: rejected NRC 0x31
+[scan]  start=0x00012000: rejected NRC 0x31
+[scan]  start=0x00000000: rejected NRC 0x31
+[scan]  start=0x00001000: rejected NRC 0x31
+[scan]  start=0x00002000: rejected NRC 0x31
+[scan]  start=0x00003000: rejected NRC 0x31
+[scan]  start=0x00004000: rejected NRC 0x31
+[FOUND] start=0x13000 accepts FULL size=0xED000 (max_chunk=0xFF2)
+======================================================================
+  RESULT: ACCEPTED WINDOW FOUND
+    start = 0x13000
+    end   = 0x100000  (size 0xED000, 970752 bytes)
+    ECU max transfer chunk = 0xFF2
+  No flash was written (no 0x36 TransferData was ever sent).
+  To build a matching image, add to build_stock_tva_v7.py CANDIDATES:
+    ("v7win", 0x13000, 0x100000, "bootloader-accepted window"),
+  Then flash that .rwd deliberately (name file + bus; iron rule).
+======================================================================
+  scanned 256 starts in 0s; results -> /home/dudei/firmware-analysis-kit/flashing-2020accord/eps-window-scan-results.txt

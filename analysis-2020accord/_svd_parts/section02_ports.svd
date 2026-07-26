@@ -1,0 +1,1936 @@
+<!-- Section 2: Port Functions - V850E2/Px4 (UPD70F3508) -->
+<!--
+  Base addresses (Table 2-2):
+    PORTn_base0 = 0xFF400000   (electrical-characteristics registers)
+    PORTn_base1 = 0xFFFF8000   (data / mode registers)
+    DNFn_base   = 0xFF410000   (digital noise-filter registers)
+    JTAG port 0 fixed at       0xFF440000
+    FCLA0 fixed at             0xFF414000
+    FCLA1 fixed at             0xFF414100
+    FCLA2 fixed at             0xFF414200
+    DNFSCTL fixed at           0xFF420034
+
+  Register address formulas (Table 2-7):
+    Pn        = PORTn_base1 + n*4
+    PSRn      = PORTn_base1 + 0x100 + n*4
+    PPRn      = PORTn_base1 + 0x200 + n*4
+    PMn       = PORTn_base1 + 0x300 + n*4
+    PMCn      = PORTn_base1 + 0x400 + n*4   (n=0..7)
+    PFCn      = PORTn_base1 + 0x500 + n*4   (n=0..7)
+    PFCEn     = PORTn_base1 + 0x600 + n*4   (n=0..7)
+    PNOTn     = PORTn_base1 + 0x700 + n*4
+    PMSRn     = PORTn_base1 + 0x800 + n*4
+    PMCSRn    = PORTn_base1 + 0x900 + n*4   (n=0..7)
+    PIBCn     = PORTn_base0 + 0x4000 + n*4
+    PBDCn     = PORTn_base0 + 0x4100 + n*4  (n=0,1,3,4,5,6)
+    PIPCn     = PORTn_base0 + 0x4200 + n*4  (n=0..7)
+    PUn       = PORTn_base0 + 0x4300 + n*4
+    PODCn     = PORTn_base0 + 0x4500 + n*4  (n=2,3)
+    PDSCn     = PORTn_base0 + 0x4600 + n*4  (n=6 only)
+    PISn      = PORTn_base0 + 0x4700 + n*4  (n=6 only)
+    PPROTSn   = PORTn_base0 + 0x4B00 + n*4  (n=2,3,6)
+    PPCMDn    = PORTn_base0 + 0x4C00 + n*4  (n=2,3,6)
+
+  Each port group is split into two SVD peripherals:
+    PORT{n}_DATA  - data / mode registers (base1 region, baseAddress = Pn address)
+    PORT{n}_CFG   - electrical config registers (base0 region, baseAddress = PIBCn address)
+
+  Port 8 has NO alternative-function registers (PMC, PFC, PFCE, PIPC, PBDC, PODC, PDSC, PIS,
+  PPCMD, PPROTS), only P, PSR, PPR, PM, PNOT, PMSR, PIBC, PU.
+
+  DNF (digital noise filter) n=0..36:
+    DNFAnCTL  = DNFn_base + n*0x100
+    DNFAnEN   = DNFn_base + n*0x100 + 4
+    DNFSCTL   = 0xFF420034
+
+  FCLA (edge-detection filter) - absolute addresses (Table 2-65).
+-->
+
+<!-- ============================================================ -->
+<!-- PORT0_DATA: Port 0 data / mode registers                     -->
+<!-- baseAddress = P0 = 0xFFFF8000                               -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>PORT0_DATA</name>
+  <description>Port 0 data and mode control registers</description>
+  <baseAddress>0xFFFF8000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x904</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>P0</name>
+      <description>Port 0 register</description>
+      <addressOffset>0x000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>P0_15_0</name><description>Port 0 output data bits [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PSR0</name>
+      <description>Port 0 set reset register</description>
+      <addressOffset>0x100</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>PSR0_31_16</name><description>Mask bits: 1 = corresponding lower bit is written to P0</description><bitRange>[31:16]</bitRange></field>
+        <field><name>PSR0_15_0</name><description>Value bits for P0 when corresponding mask bit is 1</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PPR0</name>
+      <description>Port 0 pin read register</description>
+      <addressOffset>0x200</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PPR0_15_0</name><description>Pin P0_m, P0.P0_m value, or alternative function output</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PM0</name>
+      <description>Port 0 mode register (0=output, 1=input)</description>
+      <addressOffset>0x300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field><name>PM0_15_0</name><description>I/O mode bits: 0=output, 1=input</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PMC0</name>
+      <description>Port 0 mode control register (0=port mode, 1=alternative mode)</description>
+      <addressOffset>0x400</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PMC0_15_0</name><description>Pin mode: 0=port mode, 1=alternative mode</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PFC0</name>
+      <description>Port 0 function control register</description>
+      <addressOffset>0x500</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PFC0_15_0</name><description>Alternative function select (with PFCE0)</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PFCE0</name>
+      <description>Port 0 function control expansion register</description>
+      <addressOffset>0x600</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PFCE0_15_0</name><description>Alternative function expansion select (with PFC0)</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PNOT0</name>
+      <description>Port 0 NOT register (write 1 to invert corresponding P0 bit)</description>
+      <addressOffset>0x700</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PNOT0_15_0</name><description>Write 1 to invert P0.P0_m</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PMSR0</name>
+      <description>Port 0 mode set reset register</description>
+      <addressOffset>0x800</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0000FFFF</resetValue>
+      <fields>
+        <field><name>PMSR0_31_16</name><description>Mask bits: 1 = corresponding lower PM0 bit is written</description><bitRange>[31:16]</bitRange></field>
+        <field><name>PMSR0_15_0</name><description>Value bits for PM0 when corresponding mask bit is 1</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PMCSR0</name>
+      <description>Port 0 mode control set reset register</description>
+      <addressOffset>0x900</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>PMCSR0_31_16</name><description>Mask bits: 1 = corresponding PMC0 bit is written</description><bitRange>[31:16]</bitRange></field>
+        <field><name>PMCSR0_15_0</name><description>Value bits for PMC0 when corresponding mask bit is 1</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- PORT0_CFG: Port 0 electrical-characteristics registers       -->
+<!-- baseAddress = PIBC0 = 0xFF404000                            -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>PORT0_CFG</name>
+  <description>Port 0 electrical configuration registers</description>
+  <baseAddress>0xFF404000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0xC04</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>PIBC0</name>
+      <description>Port 0 input buffer control register</description>
+      <addressOffset>0x0000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PIBC0_15_0</name><description>Input buffer enable: 0=disabled, 1=enabled</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PBDC0</name>
+      <description>Port 0 bi-direction control register</description>
+      <addressOffset>0x0100</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PBDC0_15_0</name><description>Bi-directional mode: 0=disabled, 1=enabled (forces pin level readable)</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIPC0</name>
+      <description>Port 0 IP control register (I/O direction control)</description>
+      <addressOffset>0x0200</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PIPC0_15_0</name><description>I/O control: 0=software (PM), 1=peripheral (direct)</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PU0</name>
+      <description>Port 0 pull-up option register</description>
+      <addressOffset>0x0300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PU0_15_0</name><description>Pull-up resistor: 0=disconnected, 1=connected</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- PORT1_DATA: Port 1 data / mode registers                     -->
+<!-- baseAddress = P1 = 0xFFFF8004                               -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>PORT1_DATA</name>
+  <description>Port 1 data and mode control registers</description>
+  <baseAddress>0xFFFF8004</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x904</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>P1</name>
+      <description>Port 1 register</description>
+      <addressOffset>0x000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PSR1</name>
+      <description>Port 1 set reset register</description>
+      <addressOffset>0x100</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <register>
+      <name>PPR1</name>
+      <description>Port 1 pin read register</description>
+      <addressOffset>0x200</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PM1</name>
+      <description>Port 1 mode register (0=output, 1=input)</description>
+      <addressOffset>0x300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMC1</name>
+      <description>Port 1 mode control register</description>
+      <addressOffset>0x400</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFC1</name>
+      <description>Port 1 function control register</description>
+      <addressOffset>0x500</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFCE1</name>
+      <description>Port 1 function control expansion register</description>
+      <addressOffset>0x600</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PNOT1</name>
+      <description>Port 1 NOT register</description>
+      <addressOffset>0x700</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PMSR1</name>
+      <description>Port 1 mode set reset register</description>
+      <addressOffset>0x800</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0000FFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMCSR1</name>
+      <description>Port 1 mode control set reset register</description>
+      <addressOffset>0x900</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- PORT1_CFG -->
+<peripheral>
+  <name>PORT1_CFG</name>
+  <description>Port 1 electrical configuration registers</description>
+  <baseAddress>0xFF404004</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x304</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>PIBC1</name>
+      <description>Port 1 input buffer control register</description>
+      <addressOffset>0x0000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PBDC1</name>
+      <description>Port 1 bi-direction control register</description>
+      <addressOffset>0x0100</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PIPC1</name>
+      <description>Port 1 IP control register</description>
+      <addressOffset>0x0200</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PU1</name>
+      <description>Port 1 pull-up option register</description>
+      <addressOffset>0x0300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- PORT2_DATA: Port 2 data / mode registers                     -->
+<!-- baseAddress = P2 = 0xFFFF8008                               -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>PORT2_DATA</name>
+  <description>Port 2 data and mode control registers</description>
+  <baseAddress>0xFFFF8008</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x904</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>P2</name>
+      <description>Port 2 register</description>
+      <addressOffset>0x000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PSR2</name>
+      <description>Port 2 set reset register</description>
+      <addressOffset>0x100</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <register>
+      <name>PPR2</name>
+      <description>Port 2 pin read register</description>
+      <addressOffset>0x200</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PM2</name>
+      <description>Port 2 mode register</description>
+      <addressOffset>0x300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMC2</name>
+      <description>Port 2 mode control register</description>
+      <addressOffset>0x400</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFC2</name>
+      <description>Port 2 function control register</description>
+      <addressOffset>0x500</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFCE2</name>
+      <description>Port 2 function control expansion register</description>
+      <addressOffset>0x600</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PNOT2</name>
+      <description>Port 2 NOT register</description>
+      <addressOffset>0x700</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PMSR2</name>
+      <description>Port 2 mode set reset register</description>
+      <addressOffset>0x800</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0000FFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMCSR2</name>
+      <description>Port 2 mode control set reset register</description>
+      <addressOffset>0x900</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- PORT2_CFG: Port 2 has PIBC, PIPC, PU, PODC, PPROTS, PPCMD (no PBDC per description "n=0,1,3-6") -->
+<peripheral>
+  <name>PORT2_CFG</name>
+  <description>Port 2 electrical configuration registers (includes PODC open-drain control)</description>
+  <baseAddress>0xFF404008</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0xC04</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>PIBC2</name>
+      <description>Port 2 input buffer control register</description>
+      <addressOffset>0x0000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <!-- PBDC2 not present (PBDCn valid for n=0,1,3..6 only) -->
+
+    <register>
+      <name>PIPC2</name>
+      <description>Port 2 IP control register</description>
+      <addressOffset>0x0200</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PU2</name>
+      <description>Port 2 pull-up option register</description>
+      <addressOffset>0x0300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PODC2</name>
+      <description>Port 2 open drain control register (protected write)</description>
+      <addressOffset>0x0500</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>PODC2_31_0</name><description>Output buffer: 0=push-pull, 1=open-drain</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PPROTS2</name>
+      <description>Port 2 protection status register</description>
+      <addressOffset>0x0B00</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>PPROTSn_0</name><description>Protection error: 0=none, 1=write-sequence error</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PPCMD2</name>
+      <description>Port 2 register protection command register</description>
+      <addressOffset>0x0C00</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- PORT3_DATA                                                    -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>PORT3_DATA</name>
+  <description>Port 3 data and mode control registers</description>
+  <baseAddress>0xFFFF800C</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x904</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>P3</name>
+      <description>Port 3 register</description>
+      <addressOffset>0x000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PSR3</name>
+      <description>Port 3 set reset register</description>
+      <addressOffset>0x100</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <register>
+      <name>PPR3</name>
+      <description>Port 3 pin read register</description>
+      <addressOffset>0x200</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PM3</name>
+      <description>Port 3 mode register</description>
+      <addressOffset>0x300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMC3</name>
+      <description>Port 3 mode control register</description>
+      <addressOffset>0x400</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFC3</name>
+      <description>Port 3 function control register</description>
+      <addressOffset>0x500</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFCE3</name>
+      <description>Port 3 function control expansion register</description>
+      <addressOffset>0x600</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PNOT3</name>
+      <description>Port 3 NOT register</description>
+      <addressOffset>0x700</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PMSR3</name>
+      <description>Port 3 mode set reset register</description>
+      <addressOffset>0x800</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0000FFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMCSR3</name>
+      <description>Port 3 mode control set reset register</description>
+      <addressOffset>0x900</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- PORT3_CFG: has PIBC, PBDC, PIPC, PU, PODC, PPROTS, PPCMD -->
+<peripheral>
+  <name>PORT3_CFG</name>
+  <description>Port 3 electrical configuration registers (includes PODC, PBDC)</description>
+  <baseAddress>0xFF40400C</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0xC04</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>PIBC3</name>
+      <description>Port 3 input buffer control register</description>
+      <addressOffset>0x0000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PBDC3</name>
+      <description>Port 3 bi-direction control register</description>
+      <addressOffset>0x0100</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PIPC3</name>
+      <description>Port 3 IP control register</description>
+      <addressOffset>0x0200</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PU3</name>
+      <description>Port 3 pull-up option register</description>
+      <addressOffset>0x0300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PODC3</name>
+      <description>Port 3 open drain control register (protected write)</description>
+      <addressOffset>0x0500</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <register>
+      <name>PPROTS3</name>
+      <description>Port 3 protection status register</description>
+      <addressOffset>0x0B00</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>PPROTSn_0</name><description>Protection error flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PPCMD3</name>
+      <description>Port 3 register protection command register</description>
+      <addressOffset>0x0C00</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- PORT4_DATA                                                    -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>PORT4_DATA</name>
+  <description>Port 4 data and mode control registers</description>
+  <baseAddress>0xFFFF8010</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x904</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>P4</name>
+      <description>Port 4 register</description>
+      <addressOffset>0x000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PSR4</name>
+      <description>Port 4 set reset register</description>
+      <addressOffset>0x100</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <register>
+      <name>PPR4</name>
+      <description>Port 4 pin read register</description>
+      <addressOffset>0x200</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PM4</name>
+      <description>Port 4 mode register</description>
+      <addressOffset>0x300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMC4</name>
+      <description>Port 4 mode control register</description>
+      <addressOffset>0x400</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFC4</name>
+      <description>Port 4 function control register</description>
+      <addressOffset>0x500</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFCE4</name>
+      <description>Port 4 function control expansion register</description>
+      <addressOffset>0x600</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PNOT4</name>
+      <description>Port 4 NOT register</description>
+      <addressOffset>0x700</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PMSR4</name>
+      <description>Port 4 mode set reset register</description>
+      <addressOffset>0x800</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0000FFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMCSR4</name>
+      <description>Port 4 mode control set reset register</description>
+      <addressOffset>0x900</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- PORT4_CFG: has PIBC, PBDC, PIPC, PU (no PODC/PDSC/PIS) -->
+<peripheral>
+  <name>PORT4_CFG</name>
+  <description>Port 4 electrical configuration registers</description>
+  <baseAddress>0xFF404010</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x304</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>PIBC4</name>
+      <description>Port 4 input buffer control register</description>
+      <addressOffset>0x0000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PBDC4</name>
+      <description>Port 4 bi-direction control register</description>
+      <addressOffset>0x0100</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PIPC4</name>
+      <description>Port 4 IP control register</description>
+      <addressOffset>0x0200</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PU4</name>
+      <description>Port 4 pull-up option register</description>
+      <addressOffset>0x0300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- PORT5_DATA                                                    -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>PORT5_DATA</name>
+  <description>Port 5 data and mode control registers</description>
+  <baseAddress>0xFFFF8014</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x904</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>P5</name>
+      <description>Port 5 register</description>
+      <addressOffset>0x000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PSR5</name>
+      <description>Port 5 set reset register</description>
+      <addressOffset>0x100</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <register>
+      <name>PPR5</name>
+      <description>Port 5 pin read register</description>
+      <addressOffset>0x200</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PM5</name>
+      <description>Port 5 mode register</description>
+      <addressOffset>0x300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMC5</name>
+      <description>Port 5 mode control register</description>
+      <addressOffset>0x400</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFC5</name>
+      <description>Port 5 function control register</description>
+      <addressOffset>0x500</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFCE5</name>
+      <description>Port 5 function control expansion register</description>
+      <addressOffset>0x600</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PNOT5</name>
+      <description>Port 5 NOT register</description>
+      <addressOffset>0x700</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PMSR5</name>
+      <description>Port 5 mode set reset register</description>
+      <addressOffset>0x800</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0000FFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMCSR5</name>
+      <description>Port 5 mode control set reset register</description>
+      <addressOffset>0x900</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- PORT5_CFG: has PIBC, PBDC, PIPC, PU -->
+<peripheral>
+  <name>PORT5_CFG</name>
+  <description>Port 5 electrical configuration registers</description>
+  <baseAddress>0xFF404014</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x304</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>PIBC5</name>
+      <description>Port 5 input buffer control register</description>
+      <addressOffset>0x0000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PBDC5</name>
+      <description>Port 5 bi-direction control register</description>
+      <addressOffset>0x0100</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PIPC5</name>
+      <description>Port 5 IP control register</description>
+      <addressOffset>0x0200</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PU5</name>
+      <description>Port 5 pull-up option register</description>
+      <addressOffset>0x0300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- PORT6_DATA                                                    -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>PORT6_DATA</name>
+  <description>Port 6 data and mode control registers</description>
+  <baseAddress>0xFFFF8018</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x904</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>P6</name>
+      <description>Port 6 register</description>
+      <addressOffset>0x000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PSR6</name>
+      <description>Port 6 set reset register</description>
+      <addressOffset>0x100</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <register>
+      <name>PPR6</name>
+      <description>Port 6 pin read register</description>
+      <addressOffset>0x200</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PM6</name>
+      <description>Port 6 mode register</description>
+      <addressOffset>0x300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMC6</name>
+      <description>Port 6 mode control register</description>
+      <addressOffset>0x400</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFC6</name>
+      <description>Port 6 function control register</description>
+      <addressOffset>0x500</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFCE6</name>
+      <description>Port 6 function control expansion register</description>
+      <addressOffset>0x600</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PNOT6</name>
+      <description>Port 6 NOT register</description>
+      <addressOffset>0x700</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PMSR6</name>
+      <description>Port 6 mode set reset register</description>
+      <addressOffset>0x800</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0000FFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMCSR6</name>
+      <description>Port 6 mode control set reset register</description>
+      <addressOffset>0x900</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- PORT6_CFG: has PIBC, PBDC, PIPC, PU, PDSC, PIS, PPROTS, PPCMD -->
+<peripheral>
+  <name>PORT6_CFG</name>
+  <description>Port 6 electrical configuration registers (includes PDSC drive-strength, PIS input-select)</description>
+  <baseAddress>0xFF404018</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0xC04</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>PIBC6</name>
+      <description>Port 6 input buffer control register</description>
+      <addressOffset>0x0000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PBDC6</name>
+      <description>Port 6 bi-direction control register</description>
+      <addressOffset>0x0100</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PIPC6</name>
+      <description>Port 6 IP control register</description>
+      <addressOffset>0x0200</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PU6</name>
+      <description>Port 6 pull-up option register</description>
+      <addressOffset>0x0300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PDSC6</name>
+      <description>Port 6 drive strength control register (protected write; 0=25MHz, 1=40MHz per bit)</description>
+      <addressOffset>0x0600</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>PDSC6_31_0</name><description>Drive strength per bit: 0=low (25 MHz), 1=high (40 MHz)</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIS6</name>
+      <description>Port 6 input buffer selection register (0=Schmitt, 1=CMOS characteristics)</description>
+      <addressOffset>0x0700</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PIS6_15_0</name><description>Input buffer type: 0=Schmitt trigger, 1=CMOS</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PPROTS6</name>
+      <description>Port 6 protection status register</description>
+      <addressOffset>0x0B00</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>PPROTSn_0</name><description>Protection error flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PPCMD6</name>
+      <description>Port 6 register protection command register</description>
+      <addressOffset>0x0C00</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- PORT7_DATA                                                    -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>PORT7_DATA</name>
+  <description>Port 7 data and mode control registers</description>
+  <baseAddress>0xFFFF801C</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x904</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>P7</name>
+      <description>Port 7 register</description>
+      <addressOffset>0x000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PSR7</name>
+      <description>Port 7 set reset register</description>
+      <addressOffset>0x100</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <register>
+      <name>PPR7</name>
+      <description>Port 7 pin read register</description>
+      <addressOffset>0x200</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PM7</name>
+      <description>Port 7 mode register</description>
+      <addressOffset>0x300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMC7</name>
+      <description>Port 7 mode control register</description>
+      <addressOffset>0x400</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFC7</name>
+      <description>Port 7 function control register</description>
+      <addressOffset>0x500</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PFCE7</name>
+      <description>Port 7 function control expansion register</description>
+      <addressOffset>0x600</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PNOT7</name>
+      <description>Port 7 NOT register</description>
+      <addressOffset>0x700</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PMSR7</name>
+      <description>Port 7 mode set reset register</description>
+      <addressOffset>0x800</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0000FFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PMCSR7</name>
+      <description>Port 7 mode control set reset register</description>
+      <addressOffset>0x900</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- PORT7_CFG: has PIBC, PIPC, PU (no PBDC per Table 2-51 bit-map; no PODC/PDSC/PIS) -->
+<peripheral>
+  <name>PORT7_CFG</name>
+  <description>Port 7 electrical configuration registers</description>
+  <baseAddress>0xFF40401C</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x304</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>PIBC7</name>
+      <description>Port 7 input buffer control register</description>
+      <addressOffset>0x0000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <!-- PBDC7: not present per Table 2-51 list (port 7 not in n=0,1,3-6 list for PBDCn) -->
+
+    <register>
+      <name>PIPC7</name>
+      <description>Port 7 IP control register</description>
+      <addressOffset>0x0200</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PU7</name>
+      <description>Port 7 pull-up option register</description>
+      <addressOffset>0x0300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- PORT8_DATA: Port 8 has NO alternative functions;             -->
+<!-- no PMC, PFC, PFCE, PIPC, PBDC, PODC, PDSC, PIS, PPCMD,     -->
+<!-- PPROTS. Only P, PSR, PPR, PM, PNOT, PMSR, PIBC, PU.        -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>PORT8_DATA</name>
+  <description>Port 8 data and mode control registers (no alternative functions)</description>
+  <baseAddress>0xFFFF8020</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x804</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>P8</name>
+      <description>Port 8 register (only bit 0 / P8_0 is implemented)</description>
+      <addressOffset>0x000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PSR8</name>
+      <description>Port 8 set reset register</description>
+      <addressOffset>0x100</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <register>
+      <name>PPR8</name>
+      <description>Port 8 pin read register</description>
+      <addressOffset>0x200</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PM8</name>
+      <description>Port 8 mode register</description>
+      <addressOffset>0x300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+    </register>
+
+    <register>
+      <name>PNOT8</name>
+      <description>Port 8 NOT register</description>
+      <addressOffset>0x700</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PMSR8</name>
+      <description>Port 8 mode set reset register</description>
+      <addressOffset>0x800</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0000FFFF</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- PORT8_CFG: only PIBC, PU -->
+<peripheral>
+  <name>PORT8_CFG</name>
+  <description>Port 8 electrical configuration registers</description>
+  <baseAddress>0xFF404020</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x304</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>PIBC8</name>
+      <description>Port 8 input buffer control register</description>
+      <addressOffset>0x0000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>PU8</name>
+      <description>Port 8 pull-up option register</description>
+      <addressOffset>0x0300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- JTAG_PORT0: JTAG port 0 (absolute addresses, Table 2-8)     -->
+<!-- baseAddress = JP0 = 0xFF440000                              -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>JTAG_PORT0</name>
+  <description>JTAG port 0 control registers (Table 2-8)</description>
+  <baseAddress>0xFF440000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x434</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>JP0</name>
+      <description>JTAG port register (JP0_0 = TDI/TMS/TCK/TRST)</description>
+      <addressOffset>0x0000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>JPSR0</name>
+      <description>JTAG port set / reset register</description>
+      <addressOffset>0x0010</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <register>
+      <name>JPPR0</name>
+      <description>JTAG port pin read register</description>
+      <addressOffset>0x0020</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>JPM0</name>
+      <description>JTAG port mode register (0=output, 1=input)</description>
+      <addressOffset>0x0030</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+    </register>
+
+    <register>
+      <name>JPNOT0</name>
+      <description>JTAG port NOT register</description>
+      <addressOffset>0x0070</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>JPMSR0</name>
+      <description>JTAG port mode set register</description>
+      <addressOffset>0x0080</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0000FFFF</resetValue>
+    </register>
+
+    <register>
+      <name>JPIBC0</name>
+      <description>JTAG port input buffer control register</description>
+      <addressOffset>0x0400</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <register>
+      <name>JPU0</name>
+      <description>JTAG pull-up option register</description>
+      <addressOffset>0x0430</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- DNF: Digital Noise Filter (n=0..36)                          -->
+<!-- baseAddress = DNFn_base = 0xFF410000                        -->
+<!-- DNFAnCTL at base + n*0x100                                  -->
+<!-- DNFAnEN  at base + n*0x100 + 4                              -->
+<!-- DNFSCTL  at 0xFF420034 (outside this peripheral's range -   -->
+<!--           emitted separately)                               -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>DNF</name>
+  <description>Digital noise filter control registers (n=0..36, Table 2-58/2-59/2-61)</description>
+  <baseAddress>0xFF410000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x2408</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- DNFA0: NMI filter -->
+    <register><name>DNFA0CTL</name><description>DNF group 0 (NMI) control register</description><addressOffset>0x0000</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue>
+      <fields>
+        <field><name>DNFAnNFSTS</name><description>Number of same-level samples for validation [6:5]</description><bitRange>[6:5]</bitRange></field>
+        <field><name>DNFAnPRS</name><description>Sampling clock prescaler [2:0]</description><bitRange>[2:0]</bitRange></field>
+      </fields>
+    </register>
+    <register><name>DNFA0EN</name><description>DNF group 0 (NMI) enable register</description><addressOffset>0x0004</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue>
+      <fields><field><name>DNFA0NFEN0</name><description>NMI noise cancellation enable</description><bitRange>[0:0]</bitRange></field></fields>
+    </register>
+
+    <!-- DNFA1: INTP0/1/2 -->
+    <register><name>DNFA1CTL</name><description>DNF group 1 (INTP0/1/2) control register</description><addressOffset>0x0100</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA1EN</name><description>DNF group 1 (INTP0/1/2) enable register</description><addressOffset>0x0104</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DNFA1NFEN2</name><description>INTP2 noise cancellation enable</description><bitRange>[2:2]</bitRange></field>
+        <field><name>DNFA1NFEN1</name><description>INTP1 noise cancellation enable</description><bitRange>[1:1]</bitRange></field>
+        <field><name>DNFA1NFEN0</name><description>INTP0 noise cancellation enable</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- DNFA2: INTP3/4/5 (shared with ADCA0TRG0/1/2) -->
+    <register><name>DNFA2CTL</name><description>DNF group 2 (INTP3/4/5) control register</description><addressOffset>0x0200</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA2EN</name><description>DNF group 2 (INTP3/4/5) enable register</description><addressOffset>0x0204</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <!-- DNFA3: INTP6/7/8/9/10 (shared with ESO0-3) -->
+    <register><name>DNFA3CTL</name><description>DNF group 3 (INTP6..10) control register</description><addressOffset>0x0300</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA3EN</name><description>DNF group 3 (INTP6..10) enable register</description><addressOffset>0x0304</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <!-- DNFA4..11: TAUA0 I/O channels -->
+    <register><name>DNFA4CTL</name><description>DNF group 4 (TAUA0I0/1) control register</description><addressOffset>0x0400</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA4EN</name><description>DNF group 4 enable register</description><addressOffset>0x0404</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA5CTL</name><description>DNF group 5 (TAUA0I2/3) control register</description><addressOffset>0x0500</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA5EN</name><description>DNF group 5 enable register</description><addressOffset>0x0504</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA6CTL</name><description>DNF group 6 (TAUA0I4/5) control register</description><addressOffset>0x0600</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA6EN</name><description>DNF group 6 enable register</description><addressOffset>0x0604</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA7CTL</name><description>DNF group 7 (TAUA0I6/7) control register</description><addressOffset>0x0700</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA7EN</name><description>DNF group 7 enable register</description><addressOffset>0x0704</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA8CTL</name><description>DNF group 8 (TAUA0I8/9) control register</description><addressOffset>0x0800</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA8EN</name><description>DNF group 8 enable register</description><addressOffset>0x0804</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA9CTL</name><description>DNF group 9 (TAUA0I10/11) control register</description><addressOffset>0x0900</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA9EN</name><description>DNF group 9 enable register</description><addressOffset>0x0904</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA10CTL</name><description>DNF group 10 (TAUA0I12/13) control register</description><addressOffset>0x0A00</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA10EN</name><description>DNF group 10 enable register</description><addressOffset>0x0A04</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA11CTL</name><description>DNF group 11 (TAUA0I14/15) control register</description><addressOffset>0x0B00</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA11EN</name><description>DNF group 11 enable register</description><addressOffset>0x0B04</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <!-- DNFA12..19: TAUA1 -->
+    <register><name>DNFA12CTL</name><description>DNF group 12 (TAUA1I0/1) control register</description><addressOffset>0x0C00</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA12EN</name><description>DNF group 12 enable register</description><addressOffset>0x0C04</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA13CTL</name><description>DNF group 13 (TAUA1I2/3) control register</description><addressOffset>0x0D00</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA13EN</name><description>DNF group 13 enable register</description><addressOffset>0x0D04</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA14CTL</name><description>DNF group 14 (TAUA1I4/5) control register</description><addressOffset>0x0E00</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA14EN</name><description>DNF group 14 enable register</description><addressOffset>0x0E04</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA15CTL</name><description>DNF group 15 (TAUA1I6/7) control register</description><addressOffset>0x0F00</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA15EN</name><description>DNF group 15 enable register</description><addressOffset>0x0F04</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA16CTL</name><description>DNF group 16 (TAUA1I8/9) control register</description><addressOffset>0x1000</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA16EN</name><description>DNF group 16 enable register</description><addressOffset>0x1004</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA17CTL</name><description>DNF group 17 (TAUA1I10/11) control register</description><addressOffset>0x1100</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA17EN</name><description>DNF group 17 enable register</description><addressOffset>0x1104</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA18CTL</name><description>DNF group 18 (TAUA1I12/13) control register</description><addressOffset>0x1200</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA18EN</name><description>DNF group 18 enable register</description><addressOffset>0x1204</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA19CTL</name><description>DNF group 19 (TAUA1I14/15) control register</description><addressOffset>0x1300</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA19EN</name><description>DNF group 19 enable register</description><addressOffset>0x1304</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <!-- DNFA20..23: TAUJ0 -->
+    <register><name>DNFA20CTL</name><description>DNF group 20 (TAUJ0I0) control register</description><addressOffset>0x1400</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA20EN</name><description>DNF group 20 enable register</description><addressOffset>0x1404</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA21CTL</name><description>DNF group 21 (TAUJ0I1) control register</description><addressOffset>0x1500</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA21EN</name><description>DNF group 21 enable register</description><addressOffset>0x1504</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA22CTL</name><description>DNF group 22 (TAUJ0I2) control register</description><addressOffset>0x1600</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA22EN</name><description>DNF group 22 enable register</description><addressOffset>0x1604</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA23CTL</name><description>DNF group 23 (TAUJ0I3) control register</description><addressOffset>0x1700</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA23EN</name><description>DNF group 23 enable register</description><addressOffset>0x1704</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <!-- DNFA24..27: TAUJ1 -->
+    <register><name>DNFA24CTL</name><description>DNF group 24 (TAUJ1I0) control register</description><addressOffset>0x1800</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA24EN</name><description>DNF group 24 enable register</description><addressOffset>0x1804</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA25CTL</name><description>DNF group 25 (TAUJ1I1) control register</description><addressOffset>0x1900</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA25EN</name><description>DNF group 25 enable register</description><addressOffset>0x1904</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA26CTL</name><description>DNF group 26 (TAUJ1I2) control register</description><addressOffset>0x1A00</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA26EN</name><description>DNF group 26 enable register</description><addressOffset>0x1A04</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA27CTL</name><description>DNF group 27 (TAUJ1I3) control register</description><addressOffset>0x1B00</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA27EN</name><description>DNF group 27 enable register</description><addressOffset>0x1B04</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <!-- DNFA28..30: TSG20 / ENC0 -->
+    <register><name>DNFA28CTL</name><description>DNF group 28 (TSG20PTSI0/1, ENCA0E0/1) control register</description><addressOffset>0x1C00</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA28EN</name><description>DNF group 28 enable register</description><addressOffset>0x1C04</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA29CTL</name><description>DNF group 29 (TSG20PTSI2/ENCA0EC) control register</description><addressOffset>0x1D00</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA29EN</name><description>DNF group 29 enable register</description><addressOffset>0x1D04</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA30CTL</name><description>DNF group 30 (TSG20CLKI) control register</description><addressOffset>0x1E00</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA30EN</name><description>DNF group 30 enable register</description><addressOffset>0x1E04</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <!-- DNFA31..33: TSG21 / ENC1 -->
+    <register><name>DNFA31CTL</name><description>DNF group 31 (TSG21PTSI0/1, ENCA1E0/1) control register</description><addressOffset>0x1F00</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA31EN</name><description>DNF group 31 enable register</description><addressOffset>0x1F04</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA32CTL</name><description>DNF group 32 (TSG21PTSI2/ENCA1EC) control register</description><addressOffset>0x2000</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA32EN</name><description>DNF group 32 enable register</description><addressOffset>0x2004</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA33CTL</name><description>DNF group 33 (TSG21CLKI) control register</description><addressOffset>0x2100</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA33EN</name><description>DNF group 33 enable register</description><addressOffset>0x2104</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <!-- DNFA34..35: ENC0/ENC1 phase inputs -->
+    <register><name>DNFA34CTL</name><description>DNF group 34 (ENCA0I0/1) control register</description><addressOffset>0x2200</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA34EN</name><description>DNF group 34 enable register</description><addressOffset>0x2204</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <register><name>DNFA35CTL</name><description>DNF group 35 (ENCA1I0/1) control register</description><addressOffset>0x2300</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA35EN</name><description>DNF group 35 enable register</description><addressOffset>0x2304</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue></register>
+
+    <!-- DNFA36: CSI ready inputs -->
+    <register><name>DNFA36CTL</name><description>DNF group 36 (CSIG0/1/2RYI, CSIH0/1RYI) control register</description><addressOffset>0x2400</addressOffset><size>8</size><access>read-write</access><resetValue>0x00</resetValue></register>
+    <register><name>DNFA36EN</name><description>DNF group 36 enable register</description><addressOffset>0x2404</addressOffset><size>16</size><access>read-write</access><resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DNFA36NFEN4</name><description>CSIG2RYI noise cancellation enable</description><bitRange>[4:4]</bitRange></field>
+        <field><name>DNFA36NFEN3</name><description>CSIG1RYI noise cancellation enable</description><bitRange>[3:3]</bitRange></field>
+        <field><name>DNFA36NFEN2</name><description>CSIG0RYI noise cancellation enable</description><bitRange>[2:2]</bitRange></field>
+        <field><name>DNFA36NFEN1</name><description>CSIH1RYI noise cancellation enable</description><bitRange>[1:1]</bitRange></field>
+        <field><name>DNFA36NFEN0</name><description>CSIH0RYI noise cancellation enable</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- DNFSCTL: Digital Noise Filter Sampling Clock Control          -->
+<!-- Standalone at 0xFF420034 (outside DNFn_base range)          -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>DNFSCTL</name>
+  <description>Digital noise filter sampling clock control register (Table 2-62)</description>
+  <baseAddress>0xFF420034</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x2</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>DNFSCTL</name>
+      <description>DNF sampling clock control register</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DNFSCKSL71_70</name><description>TAUJ1 group sampling clock: 00=PCLK, 01=PCLK/2, 10=TAUJ1ch0 CKEN</description><bitRange>[15:14]</bitRange></field>
+        <field><name>DNFSCKSL61_60</name><description>TAUJ0 group sampling clock: 00=PCLK, 01=PCLK/2, 10=TAUJ0ch0 CKEN</description><bitRange>[13:12]</bitRange></field>
+        <field><name>DNFSCKSL51_50</name><description>TAUA1 group sampling clock</description><bitRange>[11:10]</bitRange></field>
+        <field><name>DNFSCKSL41_40</name><description>TAUA0 group sampling clock</description><bitRange>[9:8]</bitRange></field>
+        <field><name>DNFSCKSL20</name><description>CSI group sampling clock: 0=PCLK, 1=PCLK/2</description><bitRange>[4:4]</bitRange></field>
+        <field><name>DNFSCKSL10</name><description>TSG2/ENC group sampling clock: 0=PCLK, 1=PCLK/2</description><bitRange>[2:2]</bitRange></field>
+        <field><name>DNFSCKSL00</name><description>INTP group sampling clock: 0=PCLK, 1=PCLK/2</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- FCLA0: Edge detection filter - NMI                          -->
+<!-- baseAddress = 0xFF414000                                    -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>FCLA0</name>
+  <description>Edge detection filter group 0 - NMI (Table 2-65)</description>
+  <baseAddress>0xFF414000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>FCLA0CTL0</name>
+      <description>Edge detection filter control register for NMI</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>FCLA0INTF0</name><description>Falling edge detection: 0=disabled, 1=enabled</description><bitRange>[1:1]</bitRange></field>
+        <field><name>FCLA0INTR0</name><description>Rising edge detection: 0=disabled, 1=enabled</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- FCLA1: Edge detection filter - INTP0..7                     -->
+<!-- baseAddress = 0xFF414100                                    -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>FCLA1</name>
+  <description>Edge detection filter group 1 - INTP0..7 (Table 2-65)</description>
+  <baseAddress>0xFF414100</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1D</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>FCLA1CTL0</name>
+      <description>Edge detection filter control for INTP0</description>
+      <addressOffset>0x00</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>FCLA1INTF0</name><description>Falling edge: 0=disabled, 1=enabled</description><bitRange>[1:1]</bitRange></field>
+        <field><name>FCLA1INTR0</name><description>Rising edge: 0=disabled, 1=enabled</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCLA1CTL1</name>
+      <description>Edge detection filter control for INTP1</description>
+      <addressOffset>0x04</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>FCLA1INTF1</name><description>Falling edge enable</description><bitRange>[1:1]</bitRange></field>
+        <field><name>FCLA1INTR1</name><description>Rising edge enable</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCLA1CTL2</name>
+      <description>Edge detection filter control for INTP2</description>
+      <addressOffset>0x08</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+    <register>
+      <name>FCLA1CTL3</name>
+      <description>Edge detection filter control for INTP3</description>
+      <addressOffset>0x0C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+    <register>
+      <name>FCLA1CTL4</name>
+      <description>Edge detection filter control for INTP4</description>
+      <addressOffset>0x10</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+    <register>
+      <name>FCLA1CTL5</name>
+      <description>Edge detection filter control for INTP5</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+    <register>
+      <name>FCLA1CTL6</name>
+      <description>Edge detection filter control for INTP6</description>
+      <addressOffset>0x18</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+    <register>
+      <name>FCLA1CTL7</name>
+      <description>Edge detection filter control for INTP7</description>
+      <addressOffset>0x1C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ============================================================ -->
+<!-- FCLA2: Edge detection filter - INTP8..10                    -->
+<!-- baseAddress = 0xFF414200                                    -->
+<!-- ============================================================ -->
+<peripheral>
+  <name>FCLA2</name>
+  <description>Edge detection filter group 2 - INTP8..10 (Table 2-65)</description>
+  <baseAddress>0xFF414200</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x9</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>FCLA2CTL0</name>
+      <description>Edge detection filter control for INTP8</description>
+      <addressOffset>0x00</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>FCLA2INTF0</name><description>Falling edge enable</description><bitRange>[1:1]</bitRange></field>
+        <field><name>FCLA2INTR0</name><description>Rising edge enable</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCLA2CTL1</name>
+      <description>Edge detection filter control for INTP9</description>
+      <addressOffset>0x04</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+    <register>
+      <name>FCLA2CTL2</name>
+      <description>Edge detection filter control for INTP10</description>
+      <addressOffset>0x08</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+  </registers>
+</peripheral>

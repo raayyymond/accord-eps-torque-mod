@@ -1,0 +1,3958 @@
+R01UH0098EJ0100 Rev.1.00
+Page 442 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+Section 10 Safety Guardian (SGA)
+This section gives an overview of the SGA.
+10.1
+SGA Features
+Number of
+instances
+This product has a single SGA.
+Meaning of m in
+names
+Throughout this section, the SGAM and SGAC are collectively referred to by 
+attaching the index "m" (m = M and C). The individual values (M and C) identify 
+the respective areas. That is,
+• SGAmESET indicates both SGAMESET and SGACESET.
+Meaning of xx in
+signal names
+Throughout this section, the index "xx" (xx = 0 to 47) attached to the common 
+part of the signal name collectively indicates SGATERRIN0 to SGATERRIN47. 
+The individual values (0 to 47) identify the respective signals.
+Register addresses
+All SGA register addresses are given as address offsets from the individual 
+base addresses <SGA_base>, <SGAM_base>, or <SGAC_base>.
+The addresses of each area are listed in the following table.
+Table 10-1
+Instances of SGA
+SGA
+Instances
+1
+Names
+SGA (common area), SGAM, SGAC
+Table 10-2
+SGA Register Base Addresses
+SGA Register
+Address Label
+Address
+SGAM
+<SGAM_base>
+FF83 C000H
+SGAC
+<SGAC_base>
+FF83 D000H
+SGA
+<SGA_base>
+FF83 E000H
+
+R01UH0098EJ0100 Rev.1.00
+Page 443 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+Clock supply
+All SGA provide one clock input.
+Interrupts
+The SGA can generate the following interrupt requests.
+I/O signals
+The error input signals of the SGA are listed in the following table.
+Table 10-3
+SGA Clock Supply
+SGA Area
+SGA Clock
+Connected to
+SGA, SGAM, 
+SGAC
+PCLK
+Clock controller
+Table 10-4
+SGA Interrupt Requests
+SGA Signal
+Function
+Connected to
+SGATI
+SGA interrupt
+Interrupt controller INTISG
+Table 10-5
+SGA Error Input Signals  (1/3)
+SGA Signal
+Function
+Connected to
+SGATERRIN0
+CLMA0 error input
+OSC_ERR
+SGATERRIN1
+CLMA1 error input
+PLL_ERR
+SGATERRIN2
+CLMA2 error input
+ROSC_ERR
+SGATERRIN3
+WDTA error input
+WDTA_ERR
+SGATERRIN4
+LVI reset input
+LVI_RES
+SGATERRIN5
+Compare unit error input
+CMP_ERR
+SGATERRIN6
+Flash memory ECC error detection
+FLASH_ED
+SGATERRIN7
+Flash memory ECC error detection (and 
+correction)
+FLASH_EC
+SGATERRIN8
+RAM ECC error detection
+IRAM_ED
+SGATERRIN9
+RAM ECC error detection (and 
+correction)
+IRAM_EC
+SGATERRIN10
+Flash cache RAM ECC error detection
+FCACHE_RAM_ED2
+SGATERRIN11
+Flash cache RAM ECC error detection
+FCACHE_RAM_ED1
+SGATERRIN12
+Flash cache TAG ECC error detection
+FCACHE_TAG_ED2
+SGATERRIN13
+Flash cache TAG ECC error detection
+FCACHE_TAG_ED1
+SGATERRIN14
+CAN ECC error detection
+CAN_ED
+SGATERRIN15*1
+FlexRay ECC error detection
+FR_ED
+SGATERRIN16*2
+EDC-based detection of errors in data on 
+the peripheral bus
+EDCs (error-detection codes) are used 
+in monitoring data transfer to and from 
+the A/D converter and TSG2 module.
+APB_DATA_EDC
+SGATERRIN17
+Reserved
+Reserved
+
+R01UH0098EJ0100 Rev.1.00
+Page 444 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+SGATERRIN18
+Unintentional enabling of self-diagnostic 
+BIST
+(for the target self-diagnostic BIST 
+groups indicated below)
+µPD70F3505A, µPD70F3506, 
+µPD70F3507: 
+Master group
+PD70F3508, PD70F3509: All BIST 
+group
+µPD70F3505A, µPD70F3506, µPD70F3507: 
+ET_MASTER_ENABLE
+µPD70F3508, µPD70F3509: 
+ET_BIST_ENABLE*3
+SGATERRIN19
+Unintentional enabling of self-diagnostic 
+BIST
+(for the target self-diagnostic BIST 
+groups indicated below)
+µPD70F3505A, µPD70F3506, 
+µPD70F3507: 
+Checker group
+µPD70F3508, µPD70F3509: All BIST 
+group
+µPD70F3505A, µPD70F3506, µPD70F3507: 
+ET_CHECKER_ENABLE
+µPD70F3508, µPD70F3509: 
+ET_BIST_ENABLE*3
+SGATERRIN
+[20...31]
+Reserved
+Reserved
+SGATERRIN32
+Unintentional activation of code flash 
+programming mode
+FRB_PRG_ENABLE
+SGATERRIN33
+Unintentional prohibition of CLMA0
+CLM0_DISABLE
+SGATERRIN34
+Unintentional prohibition of CLMA1
+CLM1_DISABLE
+SGATERRIN35
+Unintentional prohibition of CLMA2
+CLM2_DISABLE
+SGATERRIN36
+Unintentional enabling of self-diagnostic 
+BIST
+(for the target self-diagnostic BIST 
+groups indicated below)
+µPD70F3505A, µPD70F3506, 
+µPD70F3507: 
+PBUS1 group
+µPD70F3508, µPD70F3509: All BIST 
+groups
+µPD70F3505A, µPD70F3506, µPD70F3507: 
+ET_APB1_ENABLE
+µPD70F3508, µPD70F3509: 
+ET_BIST_ENABLE*3
+SGATERRIN37*1
+Unintentional enabling of self-diagnostic 
+BIST
+(for the target self-diagnostic BIST 
+groups indicated below)
+µPD70F3506, µPD70F3507: FlexRay
+µPD70F3508, µPD70F3509: All BIST 
+group
+µPD70F3506, µPD70F3507: 
+ET_APB2_ENABLE
+µPD70F3508, µPD70F3509: 
+ET_BIST_ENABLE*3
+SGATERRIN38
+Unintentional enabling of production test 
+mode
+TEST_ENABLE
+SGATERRIN39
+CPU mode error: This error is generated 
+on detection of an unintentional change 
+to the CPU operating mode.
+CPU_MODE_ERR
+SGATERRIN40
+SGA compare error, internal loop back of 
+the SGA error output. Inconsistency of 
+the redundant SGA is indicated by this 
+error.
+SG_CMP_ERR
+Table 10-5
+SGA Error Input Signals  (2/3)
+SGA Signal
+Function
+Connected to
+
+R01UH0098EJ0100 Rev.1.00
+Page 445 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+Note 1.
+The µPD70F3505A does not have this signal.
+Note 2.
+The µPD70F3508 and PD70F3509 do not have this signal.
+Note 3.
+In the µPD70F3508 and PD70F3509, the error signal from unintentionally 
+enabling self-diagnostic BIST is connected in common to these SGA error 
+inputs: SGATERRIN18, 19, 36, and 37.
+I/O signals
+The I/O signals of the SGA are listed in the following table.
+SGATERRIN41
+Unintentional masking of an error signal: 
+Since the BIST block toggles error 
+signals, error generation during BIST 
+execution is masked in accord with this 
+signal.
+This signal also indicates whether or not 
+error generation is masked beyond BIST 
+execution.
+SG_HW_BIST_ERR_EN
+SGATERRIN
+[42...47]
+Reserved
+Reserved
+SGATERRSWS
+This signal indicates the state of writing 
+to SGAmESET.
+SGA internal connection
+SGATERRLB
+Loop-back signal from the signal on the 
+ERROROUT pin (i.e. this signal 
+indicates the level on the ERROROUT 
+pin).
+ERROROUT pin
+Table 10-5
+SGA Error Input Signals  (3/3)
+SGA Signal
+Function
+Connected to
+Table 10-6
+SGA Input Signals 
+SGA Signal
+Function
+Connected to
+SGATERROUTZ
+SGA error output used for 
+signaling of errors to an external 
+watchdog.
+ERROROUT pin
+SGARES
+SGA internal reset request can 
+force an internal reset of the 
+device.
+Reset controller
+SGATRERRO
+SGA error output for Hi-Z control 
+of TAPA. In case of an error, 
+signaled by SGATERROUTZ, a 
+Hi-Z state can automatically be 
+enabled for the motor control timer 
+outputs.
+PIC (ERROROUT) 
+SGATTIN
+SGA timer input. The dynamic 
+behavior of the SGATERROUTZ 
+can be configured by this timer 
+input.
+TAUA1 ch15
+OSTM1
+
+R01UH0098EJ0100 Rev.1.00
+Page 446 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+10.2
+SGA Functional Overview
+The safety guardian (SGA) collects all the internal error signals coming from 
+the different error sources and monitoring circuits. These errors are for 
+instance generated by the clock monitor, ECC circuit, compare unit, and other 
+monitoring units.
+Features
+summary
+The SGA has the following features.
+• Error collection, status indication, and individual treatment
+– Error generation via SGATERROUTZ
+– Interrupt generation via SGATI
+– Internal reset generation via SGARES
+The SGA is implemented redundant. Some of the redundant registers are 
+accessed simultaneously by one write operation and some registers have to 
+be accessed individually. This allows an individual functional test by software 
+of the two safety guardian instances.
+• SGA (safety guardian) register area represents the common register area 
+where the redundant registers are accessed simultaneously by one write 
+operation.
+• SGAM (safety guardian master) register area represents a register area 
+where the SGA master registers are accessed individually.
+• SGAC (safety guardian checker) register area represents a register area 
+where the SGA checker registers are accessed individually.
+The following block diagram shows the mapping of the SGA register areas.
+Figure 10-1
+Register Areas of the Redundant SGA
+<SGAM_base> address
+<SGA_base> address
+<SGAC_base> address
+SGA
+SGA C
+SGAM
+
+R01UH0098EJ0100 Rev.1.00
+Page 447 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+The following block diagram shows the main components of the SGA.
+Figure 10-2
+Block Diagram of the Redundant SGA
+SGA checker
+SGA master
+ISG
+SGAM_base
+SGA_base
+DSG
+SGARES
+ISG
+SGAC_base
+SGA_base
+DSG
+SGATERROUTZ
+SGATI
+SGATERRINxx
+SGATTIN
+Peripheral bus
+Peripheral bus
+PCLK
+SGATERRINxx
+SGATTIN
+PCLK
+SGA
+SGATERRINxx
+SG_CMP_ERR
+SG_CMP_ERR
+SGATERRLB
+SGATERRLB
+
+R01UH0098EJ0100 Rev.1.00
+Page 448 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+The SGA is divided into the indirect safety guardian (ISG) and direct safety 
+guardian (DSG).
+• ISG is used for static configuration of the error sources.
+• DSG consists of combinatorial logic only. Therefore, it is robust against 
+clock faults and able to indicate an error towards SGATERROUTZ even in 
+case of clock faults.
+The SGA has the following external connections.
+• Inputs
+– Error inputs SGATERRINxx from all internal error sources and monitoring 
+units. The SGA master and SGA checker have identical error input 
+signals.
+– The SGATTIN timer input connection is for generating dynamic error 
+operation.
+– Error loop-back SGATERRLB is used to read back the error output level 
+from the ERROROUT pin of the device.
+• Outputs
+– Interrupt output SGATI
+– Internal reset output SGARES
+– Error output SGATERROUTZ
+
+R01UH0098EJ0100 Rev.1.00
+Page 449 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+10.3
+Functional Description
+10.3.1
+SGA Operating States
+The SGA operation can be sub-divided into four main phases.
+• Reset: Hardware initialization of the device.
+• Start-up test: Execution/Evaluation of self-diagnostic BIST and software 
+self-test
+• Application: Configuration of SGA and execution of user application
+• Error: Error handling according to SGA configuration
+The following block diagram shows an example of the different phases of 
+operation.
+Figure 10-3
+SGA Error States and Phases
+Reset
+Error
+Internal reset
+WDTA0RES,
+CLMA0RES to CLMA2RES,
+LVIRES, SGARES
+Hardware error
+Error clear
+Error clear
+Application
+Error set
+Error set
+SGATERROUTZ = 0
+ERROROUT = Hi-Z
+(Reset by the RESET signal)
+Start-up test
+SGATERROUTZ = 0
+ERROROUT = 0
+SGATERROUTZ = 0
+ERROROUT = 0
+SGATERROUTZ = 1
+ERROROUT = 1
+RESET
+Self-diagnostic BIST error
+SGAmECLR
+SGAmESET
+SGAmECLR
+SGATERRINxx
+SGAmESET
+ERROROUT = 0
+(Internal reset)
+Self-diagnostic BIST
+
+R01UH0098EJ0100 Rev.1.00
+Page 450 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+10.3.2
+SGA Configuration Overview
+The SGA supports the following functions.
+• Error set/clear register
+– The error set/clear register is used to enter or release the active or 
+inactive error state. Where active (error set) means that the error output 
+SGATERROUTZ is low independent from the error inputs 
+SGATERRINxx. Inactive (error clear) means that the error output 
+SGATERROUTZ is high (or toggled by timer input) until an error is 
+indicated by SGATERRINxx.
+• Error source status registers
+– Represent the status of the individual error source input SGATERRINxx.
+• Error source status clear registers
+– Are used to clear the individual error status.
+• Error mask registers
+– Each individual error input SGATERRINxx can be masked towards the 
+error output SGATERROUZ.
+• Internal reset configuration registers
+– Each individual error input SGATERRINxx can be configured to generate 
+an internal reset or not.
+• Interrupt configuration register
+– Interrupt generation by SGATI can be configured for some error inputs 
+SGATERRIN41 to SGATERRIN32.
+• Pseudo error registers
+– This function allows functional tests of the error path by pseudo error 
+injection.
+• Error pulse configuration register
+– The SGATERROUTZ error-output signal can be configured for dynamic 
+or non-dynamic operation. In dynamic mode, the error-output signal 
+operates in accord with the level on SGATTIN.
+The register and signal dependency is shown below.
+Figure 10-4
+SGA Register and Signal Dependency
+SGAmESSR
+SGAPE
+SGAmESSCR
+SGATERRINxx
+SGAmEMK
+SGAIRCFG
+SGAICFG
+SGAmESET
+SGAmECLR
+SGATERROUTZ
+SGARES
+SGATI
+SGA error pulse
+SGAmEPCFG
+SGATTIN
+SGATERRLB
+SGA error source status clear
+Clear
+Set
+Set
+SGA error source status
+SGA pseudo error
+SGA error source mask
+SGA internal reset
+SGA error set
+SGA error clear
+SGA interrupt
+
+R01UH0098EJ0100 Rev.1.00
+Page 451 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+10.3.3
+Operations for Error Output
+The error output SGATERROUZ is connected to the ERROROUT pin.
+The error output can be configured for two different modes of operation, non-
+dynamic or dynamic.
+Caution
+The following programming procedure should be considered.
+(1)
+Dynamic Mode Enable
+1) Set the SGAEMK0 and SGAEMK1 registers.
+2) Initialize the related timer (connected to SGATTIN).
+3) Drive the error output to high level by setting the SGAmECLR.SGAmECT 
+bit to 1. Refer to the note in section 10.4.2 (2), SGAmECLR - SGAm Error 
+Clear Trigger Register.
+4) Set the SGAEPCFG.SGASL0 bit to 1 for dynamic mode.
+5) Start the timer.
+Note
+Determine the setting for the timer cycle according to the characteristics of the 
+external device to be connected.
+(2)
+Dynamic Mode Disable
+1) Set the SGAEMK0 and SGAEMK1 registers.
+2) Drive the error output to low level by setting the SGAmESET.SGAmEST 
+bit to 1. Refer to the note in section 10.4.2 (1), SGAmESET SGAm Error 
+Set Trigger Register.
+3) Stop the timer.
+4) Set the SGAEPCFG.SGASL0 bit to 0 for non-dynamic mode.
+Table 10-7
+Error Output Operating Modes
+Error Status
+SGAmESSTR
+y.SGAmSSE0
+19-000/
+SGAmSSE13
+1-100 
+(y = 0, 1)
+Operating 
+Mode 
+SGASL0 
+Bit
+Error Output 
+Operating Mode
+Error Output Level
+Error Status
+0
+0
+Non-dynamic
+High
+No error
+1
+Dynamic
+Toggles (according to 
+SGATTIN timer configuration)
+No error
+1
+0
+Non-dynamic
+Low
+Error
+1
+Dynamic
+Low
+Error
+
+R01UH0098EJ0100 Rev.1.00
+Page 452 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+10.3.4
+Loop-Back Function
+The SGA supports a loop-back function which is used to check the error path 
+from the SGA to the ERROROUT pin. The SGATERRLB is connected to the 
+ERROROUT pin and the level of the output is reflected to the SGAmSSE131 
+bit, shown in table 10-14, SGAmESSTR1 Register Contents.
+If a loop-back test is to be run, do so while all error flags that are not masked 
+by settings in SGAEMK0/1 are clear.
+(1)
+Example of a Loop-Back Test after Reset
+1) After any reset, the error output has a “low level”.
+2) Read the SGAMESSTR1.SGAMSSE131 and 
+SGACESSTR1.SGACSSE131 bits and check for “0”.
+3) Clear all internal error sources by the SGAESSTC0 and SGAESSTC1 
+registers.
+4) Mask SG_CMP_ERR by setting the SGAEMK1.SGAEMK108 bit.
+5) Set error output to “high level” by the SGAMECLR and SGACECLR 
+registers.
+6) Read the SGAMESSTR1.SGAMSSE131 and 
+SGACESSTR1.SGACSSE131 bits and check for “1”.
+7) Set error output to “low level” by the SGAMESET register.
+8) Read the SGAMESSTR1.SGAMSSE131 and 
+SGACESSTR1.SGACSSE131 bits and check for “0”
+9) Clear the error by the SGAESSTC1.SGACLSSE130 bit.
+10) Set error output to “high level” by the SGAMECLR register.
+11) Read the SGAMESSTR1.SGAMSSE131 and 
+SGACESSTR1.SGACSSE131 bits and check for “1”.
+12) Set error output to “low level” by the SGACESET register.
+13) Read the SGAMESSTR1.SGAMSSE131 and 
+SGACESSTR1.SGACSSE131 bits and check for “0”.
+14) Set error output to “low level” by the SGAMESET and SGACESET 
+registers.
+15) Clear the error by the SGAESSTC1.SGACLSSE108 and 
+SGAESSTC1.SGACLSSE130 bits.
+16) Unmask SG_CMP_ERR by clearing the SGAEMK1.SGAEMK108 bit.
+Refer to the note in section 10.4.2 (1), SGAmESET SGAm Error Set Trigger 
+Register.
+
+R01UH0098EJ0100 Rev.1.00
+Page 453 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+10.3.5
+Pseudo Error Generation
+The SGA supports a pseudo error injection function to “emulate” an error for 
+test or debug purposes. The operation of the SGA during injection of pseudo 
+errors is identical to the occurrence of real errors. This means that all 
+configurations for error masks, interrupt, or internal reset apply in the same 
+way.
+The pseudo error generation can be used:
+• for debug purposes to generate errors and check for instance the operation 
+of the software for
+– SGA interrupts (SGATI)
+– Internal reset (SGARES)
+– error output (SGATERROUTZ)
+• for test purposes after reset to perform a functional test of the error source 
+status registers SGAMESSTR0 and SGAMESSTR1. This test can be 
+combined with the loop-back function.
+A pseudo-error can be generated by setting the error source bit (SGAPE100 to 
+SGAPE108 or SGAPE000 to SGAPE019) for the given source in the SGAPE0 
+or SGAPE1 register to 1.
+
+R01UH0098EJ0100 Rev.1.00
+Page 454 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+10.3.6
+Error Status
+The error status is indicated by the SGAmESSTR0 and SGAmESSTR1 
+registers. The error status is only cleared after external reset by RESET. In 
+case of an internal reset, the status is kept and the error source can be 
+evaluated afterwards by reading the SGAmESSTR0 and SGAmESSTR1 
+registers. Additionally, these registers are excluded from the self-diagnostic 
+BIST in order to not destroy their content. As a result, the content of these 
+registers is generated by a majority voter based on the content of the 
+SGAmESSTR0n and SGAmESSTR1n registers.
+Figure 10-5
+SGA Majority Checking Registers
+SGAmESSR1
+SGATERRIN[45:32]
+SGAmESSR1A
+SGAmESSR1B
+SGAmESSR1C
+SGAmESSR0
+SGATERRIN[19:0]
+SGA error source status
+SGA error source status
+SGA error source status
+SGA error source status
+SGA error source status
+SGA error source status
+SGA error source status
+SGA error source status
+SGAmESSR0A
+SGAmESSR0B
+SGAmESSR0C
+SGATERRSWS
+ 
+Majority 
+checking
+Majority 
+checking
+
+R01UH0098EJ0100 Rev.1.00
+Page 455 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+10.3.7
+Writing to Protected Registers
+Write protected registers are protected from inadvertent write access due to 
+erroneous program execution, etc. An overview of the related registers is 
+shown in table 10-10, Overview of SGA Registers.
+(1)
+Protection Unlock Sequence
+Write access to a write protected register is only possible within a special 
+protection unlock sequence.
+1.
+Write the fixed value 0000 00A5H to the protection command registers 
+SGAPCMD1 and SGAmPCMD0.
+2.
+Write the desired value to the protected registers of SGA and SGAm.
+3.
+Write the bit-wise inversion of desired value to the protected registers of 
+SGA and SGAm.
+4.
+Write the desired value to the protected registers of SGA and SGAm.
+5.
+Check successful write of the desired value to the protected register by 
+checking that SGAPS.SGAPRERR = 0.
+In case of any access to another register between step 1 to step 4 of the above 
+sequence, the protection mechanism behaves as follows.
+• If the second register belongs to the SGA, the write to the protected register 
+fails (indicated by SGAPS.SGAPRERR = 1). The entire sequence has to be 
+restarted at step 1.
+• If the second register does not belong to the SGA, the protection unlock 
+sequence is not disrupted and the write to the first register can be 
+completed successfully.
+Note
+For sequences of SGAPCMD1 and SGAmPCMD0 registers, the status of the 
+protection unlock sequence is commonly indicated by the 
+SGAPS.SGAPRERR flag. Therefore, it is recommended not to intermix 
+protection unlock sequences of SGAPCMD1 and SGAmPCMD0.
+In case the protection unlock sequence is interrupted, the protection 
+mechanism behaves as follows.
+• Interrupts during protection unlock sequence
+If an interrupt is acknowledged within the above protection unlock sequence 
+and the interrupt service routine does not access any register of the SGA, 
+the protection unlock sequence is not disrupted and the write to the 
+protected register can be successfully completed after returning from the 
+interrupt service routine.
+Caution
+All protected registers as well as the SGA protection command registers 
+SGAPCMD1 and SGAmPCMD0 must be accessed in 32-bit units.
+
+R01UH0098EJ0100 Rev.1.00
+Page 456 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+10.4
+Registers
+This section contains a description of all registers of the SGA.
+10.4.1
+Overview of SGA Registers
+The SGA is controlled and operated by the following registers.
+Table  10-8
+Overview of SGA Master Registers
+Register Name
+Symbol
+Write Protected 
+by Special 
+Sequence
+Address
+SGA master error set trigger register
+SGAMESET
+Enabled
+<SGAM_base>
+SGA master error clear trigger register
+SGAMECLR
+Enabled
+<SGAM_base> + 4H
+SGA master error source status register 0
+SGAMESSTR0
+Disabled
+<SGAM_base> + 8H
+SGA master error source status register 1
+SGAMESSTR1
+Disabled
+<SGAM_base> + CH
+SGA master protection command register
+SGAMPCMD0
+Not applicable
+<SGAM_base> + 10H
+SGA master error source status register 0A 
+(majority A)
+SGAMESSTR0A
+Disabled
+<SGAM_base> + 20H
+SGA master error source status register 1A 
+(majority A)
+SGAMESSTR1A
+Disabled
+<SGAM_base> + 24H
+SGA master error source status register 0B 
+(majority B)
+SGAMESSTR0B
+Disabled
+<SGAM_base> + 28H
+SGA master error source status register 1B 
+(majority B)
+SGAMESSTR1B
+Disabled
+<SGAM_base> + 2CH
+SGA master error source status register 0C 
+(majority C)
+SGAMESSTR0C
+Disabled
+<SGAM_base> + 30H
+SGA master error source status register 1C 
+(majority C)
+SGAMESSTR1C
+Disabled
+<SGAM_base> + 34H
+
+R01UH0098EJ0100 Rev.1.00
+Page 457 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+Table  10-9
+Overview of SGA Checker Registers
+Register Name
+Symbol
+Write Protected by 
+Special Sequence
+Address
+SGA checker error set trigger register
+SGACESET
+Enabled
+<SGAC_base>
+SGA checker error clear trigger register
+SGACECLR
+Enabled
+<SGAC_base> + 4H
+SGA checker error source status register 0
+SGACESSTR0
+Disabled
+<SGAC_base> + 8H
+SGA checker error source status register 1
+SGACESSTR1
+Disabled
+<SGAC_base> + CH
+SGA checker protection command register
+SGACPCMD0
+Not applicable
+<SGAC_base> + 10H
+SGA checker error source status register 0A 
+(majority A)
+SGACESSTR0A
+Disabled
+<SGAC_base> + 20H
+SGA checker error source status register 1A 
+(majority A)
+SGACESSTR1A
+Disabled
+<SGAC_base> + 24H
+SGA checker error source status register 0B 
+(majority B)
+SGACESSTR0B
+Disabled
+<SGAC_base> + 28H
+SGA checker error source status register 1B 
+(majority B)
+SGACESSTR1B
+Disabled
+<SGAC_base> + 2CH
+SGA checker error source status register 0C 
+(majority C)
+SGACESSTR0C
+Disabled
+<SGAC_base> + 30H
+SGA checker error source status register 1C 
+(majority C)
+SGACESSTR1C
+Disabled
+<SGAC_base> + 34H
+Table  10-10
+Overview of SGA Registers 
+Register Name
+Symbol
+Write Protected by 
+Special Sequence
+Address
+SGA error pulse configuration register
+SGAEPCFG
+Enabled
+<SGA_base>
+SGA interrupt configuration register
+SGAICFG1
+Enabled
+<SGA_base> + 4H
+SGA internal reset configuration register 0
+SGAIRCFG0
+Enabled
+<SGA_base> + 8H
+SGA internal reset configuration register 1
+SGAIRCFG1
+Enabled
+<SGA_base> + CH
+SGA SGATERROUTZ mask register 0
+SGAEMK0
+Enabled
+<SGA_base> + 10H
+SGA SGATERROUTZ mask register 1
+SGAEMK1
+Enabled
+<SGA_base> + 14H
+SGA error source status clear register 0
+SGAESSTC0
+Enabled
+<SGA_base> + 18H
+SGA error source status clear register 1
+SGAESSTC1
+Enabled
+<SGA_base> + 1CH
+SGA protection command register
+SGAPCMD1
+Not applicable
+<SGA_base> + 20H
+SGA protection status register
+SGAPS
+Not applicable
+<SGA_base> + 24H
+SGA pseudo error trigger register 0
+SGAPE0
+Enabled
+<SGA_base> + 28H
+SGA pseudo error trigger register 1
+SGAPE1
+Enabled
+<SGA_base> + 2CH
+SGA error pulse output control register
+SGAEPCTL
+Not applicable
+FF83 F020H
+
+R01UH0098EJ0100 Rev.1.00
+Page 458 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+10.4.2
+SGA Registers Details
+(1)
+SGAmESET   SGAm Error Set Trigger Register
+This register is used to set error output signals to the low (active) level.
+The given error output is immediately set to the active level after a value is 
+written to this register. This response is not maskable.
+Access
+This register can be written in 32-bit units. Writing to this register is protected 
+by a sequence of instructions.
+Address
+<SGAm_base>
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+Caution
+Setting the error output via the SGAmESET register will generate the error (in 
+the SGAmESSTR1.SGAmSSE108 and SGAmESSTR1.SGAmSSE130 bits).
+Therefore, the following has to be set in advance.
+1) Set the SGAEMK1.SGAEMK108 bit to “masked”.
+2) Prevent the generation of SGATI interrupts by setting the 
+SGAICFG1.SGAIE108 bit to “prohibited”.
+3) Prevent generation of the SGARES reset by setting the 
+SGAIRCFG1.SGAIRE108 bit to “prohibited”.
+4) Set the error output bit in the SGAmESET register.
+5) Clear error flags by setting the SGAESSTC1.SGACLSSE108 and 
+SGAESSTC1.SGACLSSE130 bits.
+6) Make the following settings in accord with the condition of usage for the 
+SGATERRIN40 error.
+- If an SGATERROUTZ error is being output, set the 
+SGAEMK1.SGAEMK108 bit to “not masked”.
+- If an SGATI interrupt is being generated, set the SGAICFG1.SGAIE108 bit 
+to “enabled”.
+- If a SGARES reset is being generated, set the SGAIRCFG1.SGAIRE108 
+bit to “enabled”.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+SGAm
+EST
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+Table  10-11
+SGAmEST Register Contents
+Bit position
+Bit Name
+Function
+0
+SGAmEST
+SGA error set trigger bit
+0: Writing 0 to this bit is ignored.
+1: Initiate an active state of the SGATERROUTZ (low level).
+
+R01UH0098EJ0100 Rev.1.00
+Page 459 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(2)
+SGAmECLR - SGAm Error Clear Trigger Register
+This register is used to deactivate error output (by placing the signal at the high 
+level). If no further errors are pending, the setting is immediately effective for 
+the signal on the error pin.
+Access
+This register can be written in 32-bit units. Writing to this register is protected 
+by a sequence of instructions.
+Address
+<SGAm_base> + 4H
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+Caution 1. Clearing of SGATERROUTZ is only possible if all errors, not masked by 
+SGAEMK0/1, are cleared beforehand.
+Caution 2. Clearing the error output via the SGAmECLR register will generate the error (in 
+the SGAmESSTR1.SGAmSSE108 bit).
+Therefore, the following has to be set in advance.
+1) Set the SGAEMK1.SGAEMK108 bit to “masked”.
+2) Prevent the generation of SGATI interrupts by setting the 
+SGAICFG1.SGAIE108 bit to “prohibited”.
+3) Prevent generation of the SGARES reset by setting the 
+SGAIRCFG1.SGAIRE108 bit to “prohibited”.
+4) Clear the error output bit in the SGAmECLR register.
+5) Clear error flags by setting the SGAESSTC1.SGACLSSE108 bit.
+6) Make the following settings in accord with the condition of usage for the 
+SGATERRIN40 error.
+- If an SGATERROUTZ error is being output, set the 
+SGAEMK1.SGAEMK108 bit to “not masked”.
+- If an SGATI interrupt is being generated, set the SGAICFG1.SGAIE108 
+bit to “enabled”.
+- If a SGARES reset is being generated, set the 
+SGAIRCFG1.SGAIRE108 bit to “enabled”.
+Caution 3. Once the setting for dynamic mode has been made, we recommend not 
+switching back to non-dynamic mode. This is because doing so raises the 
+possibility of glitches at times of error output. For details, see section 10.3.3, 
+Operations for Error Output.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+SGAm
+ECT
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+Table  10-12
+SGAmECLR Register Contents
+Bit position
+Bit Name
+Function
+0
+SGAmECT
+SGA error clear trigger bit
+0: Writing 0 to this bit is ignored.
+1: Initiate an inactive state of the SGATERROUTZ (high level).
+
+R01UH0098EJ0100 Rev.1.00
+Page 460 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(3)
+SGAmESSTR0 - SGAm Error Source Status Register 0
+This register shows the status of each error source. The status is indicated 
+regardless of mask settings.
+Access
+This register can be read in 32-bit units.
+Address
+<SGAm_base> + 8H
+Initial value
+0000 0000H
+This register is initialized by RESET only.
+Note
+This register is not tested by the self-diagnostic BIST. The content of this 
+register is generated by a majority checking process based on the content of 
+the description in (6) SGAmESSTR0n - SGAm Error Source Status Register 
+0n.
+Note * The µPD70F3508 and µPD70F3509 do not have this function.
+Caution 1. The self-diagnostic BIST leads to setting (to 1) of the 
+SGAmESSTR0.SGAmSSE018 and SGAmESSTR0.SGAmSSE019 bits. They 
+should be cleared by software.
+Caution 2. The generation of an internal reset may lead to setting of the 
+SGAmESSTR0.SGAmSSE006 bit (indicating detection of an ECC error in 
+flash memory) and the SGAmESSTR0.SGAmSSE007 bit (indicating detection 
+of an ECC error in flash memory, including when the error has been 
+corrected). For reliable detection of ECC errors, set the 
+SGAIRCFG0.SGAIRE006 and SGAIRCFG0.SGAIRE007 bits to suppress 
+internal resetting by the SGA (i.e. setting the bits to 0) and test the error source 
+flags in register CECCER.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+SGAm
+SSE
+019
+SGAm
+SSE
+018
+0
+SGAm
+SSE
+016*
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+SGAm
+SSE
+015
+SGAm
+SSE
+014
+SGAm
+SSE
+013
+SGAm
+SSE
+012
+SGAm
+SSE
+011
+SGAm
+SSE
+010
+SGAm
+SSE
+009
+SGAm
+SSE
+008
+SGAm
+SSE
+007
+SGAm
+SSE
+006
+SGAm
+SSE
+005
+SGAm
+SSE
+004
+SGAm
+SSE
+003
+SGAm
+SSE
+002
+SGAm
+SSE
+001
+SGAm
+SSE
+000
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table  10-13
+SGAmESSTR0 Register Contents
+Bit position
+Bit Name
+Function
+19 to 18, 
+16 to 0
+SGAmSSE019 to 
+SGAmSSE018, 
+SGAmSSE016 to 
+SGAmSSE000
+SGAmSSE019 to SGAmSSE000 correspond to SGATERRIN19 to 
+SGATERRIN00.
+0: SGATERRINxx error not occurred
+1: SGATERRINxx error occurred
+
+R01UH0098EJ0100 Rev.1.00
+Page 461 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(4)
+SGAmESSTR1 - SGAm Error Source Status Register 1
+This register shows the status of each error source. The status is indicated 
+regardless of mask settings.
+Access
+This register can be read in 32-bit units.
+Address
+<SGAm_base> + CH
+Initial value
+0000 0000H
+This register is initialized by RESET only.
+However, with the μPD70F3505A, μPD70F3506, and μPD70F3507, the 
+SGAmSSE130 bit is initialized by a reset from any source.
+Note
+This register is not tested by the self-diagnostic BIST. The content of this 
+register is generated by a majority checking process based on the content of 
+the description in (7) SGAmESSTR1n - SGAm Error Source Status Register 
+1n.
+Caution
+Since self-diagnostic BIST leads to setting of the 
+SGAmESSTR1.SGATmSSE104, SGAmESSTR1.SGATmSSE105, and 
+SGAmESSTR1.SGATmSSE109 bits (to 1), software should clear these bits to 
+0.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+SGAm
+SSE
+131
+SGAm
+SSE
+130
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+SGAm
+SSE
+109
+SGAm
+SSE
+108
+SGAm
+SSE
+107
+SGAm
+SSE
+106
+SGAm
+SSE
+105
+SGAm
+SSE
+104
+SGAm
+SSE
+103
+SGAm
+SSE
+102
+SGAm
+SSE
+101
+SGAm
+SSE
+100
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table  10-14
+SGAmESSTR1 Register Contents
+Bit position
+Bit Name
+Function
+31
+SGAmSSE131
+Indicates the error output loop-back state (SGATERRLB).
+0: Error output (the ERROROUT pin) is low level
+1: Error output (the ERROROUT pin) is high level
+30
+SGAmSSE130
+Indicates the SGAmESET write status (SGATERRSWS).
+0: No error
+1: Error is set by SGAmESET.SGAmEST
+9 to 0
+SGAmSSE109 to 
+SGAmSSE100
+SGAmSSE109 to SGAmSSE100 correspond to SGATERRIN41 to 
+SGATERRIN32.
+0: SGATERRINxx error not occurred
+1: SGATERRINxx error occurred
+
+R01UH0098EJ0100 Rev.1.00
+Page 462 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(5)
+SGAmPCMD0 - SGAm (Master/Checker) Protection Command Register
+This register is the protection command register for the SGAm (master/
+checker) register. For a list of protected registers, refer to table 10-10, 
+Overview of SGA Registers.
+For details on the register write protection sequence, refer to section 10.3.7, 
+Writing to Protected Registers. The status of the protected write sequence is 
+indicated in the description in (17) SGAPS - SGA Protection Status Register.
+Access
+This register can be written in 32-bit units.
+Address
+<SGAm_base> + 10H
+Initial value
+Undefined
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+SGAm0REG[7:0]
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+Table 10-15
+SGAPmCMD0 Register Contents
+Bit position
+Bit Name
+Function
+7 to 0
+SGAm0REG[7:0]
+Protection commands to enable writing to SGAm registers
+
+R01UH0098EJ0100 Rev.1.00
+Page 463 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(6)
+SGAmESSTR0n - SGAm Error Source Status Register 0n
+The error source status shown in the description (3) SGAmESSTR0 - SGAm 
+Error Source Status Register 0, is generated by a majority checking circuit. 
+The SGAmESSTR0n registers consist of a set of three registers.
+The index n stands for one instance of these registers. (n = A, B, or C).
+These registers can be used for consistency checking to determine whether 
+majority checking is in effect. The bit position in the SGAmESSTR0n registers 
+is identical to that in the SGAmESSTR0.
+Access
+This register can be read in 32-bit units.
+Address
+<SGAm_base> + 20H
+<SGAm_base> + 28H
+<SGAm_base> + 30H
+Initial value
+0000 0000H
+This register is initialized by RESET only.
+Note
+This register is not tested by the self-diagnostic BIST.
+Note * The µPD70F3508 and µPD70F3509 do not have this function.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+SGAm
+SSE
+019n
+SGAm
+SSE
+018n
+0
+SGAm
+SSE
+016n*
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+SGAm
+SSE
+015n
+SGAm
+SSE
+014n
+SGAm
+SSE
+013n
+SGAm
+SSE
+012n
+SGAm
+SSE
+011n
+SGAm
+SSE
+010n
+SGAm
+SSE
+009n
+SGAm
+SSE
+008n
+SGAm
+SSE
+007n
+SGAm
+SSE
+006n
+SGAm
+SSE
+005n
+SGAm
+SSE
+004n
+SGAm
+SSE
+003n
+SGAm
+SSE
+002n
+SGAm
+SSE
+001n
+SGAm
+SSE
+000n
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table  10-16
+SGAmESSTR0n Register Contents
+Bit position
+Bit Name
+Function
+19 to 18, 
+and 16 to 0
+SGAmSSE019n 
+to 
+SGAmSSE018n, 
+and 
+SGAmSSE016n 
+to 
+SGAmSSE000n
+SGAmSSE019n to SGAmSSE000n correspond to SGATERRIN19 to 
+SGATERRIN00.
+0: SGATERRINxxn error not occurred
+1: SGATERRINxxn error occurred
+
+R01UH0098EJ0100 Rev.1.00
+Page 464 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(7)
+SGAmESSTR1n - SGAm Error Source Status Register 1n
+The error source status shown in the description (4) SGAmESSTR1 - SGAm 
+Error Source Status Register 1, is generated by a majority checking circuit. 
+The SGAmESSTR1n registers consist of a set of three registers.
+The index n stands for one instance of these registers. (n = A, B, or C).
+These registers can be used for consistency checking to determine whether 
+majority checking is in effect. The bit position in the SGAmESSTR1n registers 
+is identical to that in the SGAmESSTR1.
+Access
+This register can be read in 32-bit units.
+Address
+<SGAm_base> + 24H
+<SGAm_base> + 2CH
+<SGAm_base> + 34H
+Initial value
+0000 0000H
+This register is initialized by RESET only.
+Note
+This register is not tested by the self-diagnostic BIST.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+SGAm
+SSE
+130n
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+SGAm
+SSE
+109n
+SGAm
+SSE
+108n
+SGAm
+SSE
+107n
+SGAm
+SSE
+106n
+SGAm
+SSE
+105n
+SGAm
+SSE
+104n
+SGAm
+SSE
+103n
+SGAm
+SSE
+102n
+SGAm
+SSE
+101n
+SGAm
+SSE
+100n
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table  10-17
+SGAmESSTR1n Register Contents
+Bit position
+Bit Name
+Function
+30
+SGAmSSE130n
+Indicates the error set trigger state (SGATERRSWS).
+0: No error
+1: Error is set by SGAmESET.SGAmEST
+9 to 0
+SGAmSSE109n 
+to 
+SGAmSSE100n
+SGAmSSE109n to SGAmSSE100n correspond to SGATERRIN41 to 
+SGATERRIN32.
+0: SGATERRINxx error not occurred
+1: SGATERRINxx error occurred
+
+R01UH0098EJ0100 Rev.1.00
+Page 465 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(8)
+SGAEPCFG - SGA Error Pulse Configuration Register
+This register is used to specify the operating mode for the error output signal.
+Access
+This register can be read/written in 32-bit units. Writing to this register is 
+protected by a sequence of instructions.
+Address
+<SGA_base> 
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+Caution
+After setting the dynamic mode, it is recommended not to change to non-
+dynamic mode again, because there is a possibility of a glitch at the error 
+output. For details, see section 10.3.3, Operations for Error Output.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+SGAS
+L0
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R/W
+Table  10-18
+SGAEPCFG Register Contents
+Bit position
+Bit Name
+Function
+0
+SGASL0
+Error output operation setting for SGATERROUTZ
+0: Non-dynamic mode
+1: Dynamic mode. Dynamic error signals are generated from the timer 
+input signal connected to SGATTIN.
+
+R01UH0098EJ0100 Rev.1.00
+Page 466 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(9)
+SGAICFG1 - SGA Interrupt Configuration Register 1
+This register is used to set generation of the SGATI interrupt. Specifically, the 
+generation of interrupts in response to errors (SGATERRINxx) is selectable.
+Access
+This register can be read/written in 32-bit units. Writing to this register is 
+protected by a sequence of instructions.
+Address
+<SGA_base> + 4H
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+Caution
+Setting SGAIE109 to 1 does not generate an interrupt for SGATERRIN41.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+SGAI
+E109
+SGA
+IE108
+SGA
+IE107
+SGA
+IE106
+SGA
+IE105
+SGA
+IE104
+SGA
+IE103
+SGA
+IE102
+SGA
+IE101
+SGA
+IE100
+R
+R
+R
+R
+R
+R
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table  10-19
+SGAICFG1 Register Contents
+Bit position
+Bit Name
+Function
+9 to 0
+SGAIE109 to 
+SGAIE100
+SGAIE109 to SGAIE100 correspond to the error input signals 
+SGATERRIN41 to SGATERRIN32.
+SGATI interrupt disable/enable
+0: Disabled. SGATI is not generated by the occurrence of SGATERRINxx.
+1: Enabled. SGATI is generated by the occurrence of SGATERRINxx.
+
+R01UH0098EJ0100 Rev.1.00
+Page 467 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(10)
+SGAIRCFG0 - SGA Internal Reset Configuration Register 0
+This register is used to set the generation of internal resets in response to 
+internal errors.
+Access
+This register can be read/written in 32-bit units. Writing to this register is 
+protected by a sequence of instructions.
+Address
+<SGA_base> + 8H
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+Note * The µPD70F3508 and µPD70F3509 do not have this function.
+Caution
+The generation of an internal reset may lead to the 
+SGAmESSTR0.SGAmSSE006 bit (flash memory ECC error detection) and the 
+SGAmESSTR0.SGAmSSE007 bit (flash memory ECC error detection, 
+including when the error has been corrected) being set to 1. Accordingly, for 
+the reliable detection of ECC errors, set the SGAIRCFG0.SGAIRE006 and 
+SGAIRCFG0.SGAIRE007 bits to suppress internal resetting by the SGA (i.e. 
+setting the bits to 0) and test the error source flags in register CECCER.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+SGA
+IRE
+019
+SGA
+IRE
+018
+0
+SGA
+IRE
+016*
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R/W
+R/W
+R
+R/W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+SGA
+IRE
+015
+SGA
+IRE
+014
+SGA
+IRE
+013
+SGA
+IRE
+012
+SGA
+IRE
+011
+SGA
+IRE
+010
+SGA
+IRE
+009
+SGA
+IRE
+008
+SGA
+IRE
+007
+SGA
+IRE
+006
+SGA
+IRE
+005
+SGA
+IRE
+004
+SGA
+IRE
+003
+SGA
+IRE
+002
+SGA
+IRE
+001
+SGA
+IRE
+000
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table  10-20
+SGAIRCFG0 Register Contents
+Bit position
+Bit Name
+Function
+19, 18, and 
+16 to 0
+SGAIRE019, 
+SGAIRE018, and 
+SGAIRE016 to 
+SGAIRE000
+SGAIRE019 to SGAIRE000 correspond to the error input signals 
+SGATERRIN19 to SGATERRIN00.
+SGARES internal reset disable/enable
+0: Disabled. SGARES is not generated by the occurrence of 
+SGATERRINxx.
+1: Enabled. SGARES is generated by the occurrence of SGATERRINxx.
+
+R01UH0098EJ0100 Rev.1.00
+Page 468 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(11)
+SGAIRCFG1 - SGA Internal Reset Configuration Register 1
+This register is used to set the generation of internal resets in response to 
+internal errors.
+Access
+This register can be read/written in 32-bit units. Writing to this register is 
+protected by a sequence of instructions.
+Address
+<SGA_base> + CH
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+SGA
+IRE
+109
+SGA
+IRE
+108
+SGA
+IRE
+107
+SGA
+IRE
+106
+SGA
+IRE
+105
+SGA
+IRE
+104
+SGA
+IRE
+103
+SGA
+IRE
+102
+SGA
+IRE
+101
+SGA
+IRE
+100
+R
+R
+R
+R
+R
+R
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table  10-21
+SGAIRCFG1 Register Contents
+Bit position
+Bit Name
+Function
+9 to 0
+SGAIRE109 to 
+SGAIRE100
+SGAIRE109 to SGAIRE100 correspond to the error input signals 
+SGATERRIN41 to SGATERRIN32.
+SGARES internal reset disable/enable
+0: Disabled. SGARES is not generated by the occurrence of 
+SGATERRINxx.
+1: Enabled. SGARES is generated by the occurrence of SGATERRINxx.
+
+R01UH0098EJ0100 Rev.1.00
+Page 469 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(12)
+SGAEMK0 - SGA Error Mask Register 0
+This register is used to mask individual error sources (SGATERRINxx) for the 
+error output signal SGATERROUTZ.
+Access
+This register can be read/written in 32-bit units. Writing to this register is 
+protected by a sequence of instructions.
+Address
+<SGA_base> + 10H
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+Note * The µPD70F3508 and µPD70F3509 do not have this function.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+SGA
+EMK
+019
+SGA
+EMK
+018
+0
+SGA
+EMK
+016*
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R/W
+R/W
+R
+R/W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+SGA
+EMK
+015
+SGA
+EMK
+014
+SGA
+EMK
+013
+SGA
+EMK
+012
+SGA
+EMK
+011
+SGA
+EMK
+010
+SGA
+EMK
+009
+SGA
+EMK
+008
+SGA
+EMK
+007
+SGA
+EMK
+006
+SGA
+EMK
+005
+SGA
+EMK
+004
+SGA
+EMK
+003
+SGA
+EMK
+002
+SGA
+EMK
+001
+SGA
+EMK
+000
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table  10-22
+SGAEMK0 Register Contents
+Bit position
+Bit Name
+Function
+19, 18, and 
+16 to 0
+SGAEMK019, 
+SGAEMK018, 
+and SGAEMK016 
+to SGAEMK000
+SGAEMK019 to SGAEMK000 correspond to the error input signals 
+SGATERRIN19 to SGATERRIN00.
+SGATERROUTZ error output signal mask setting
+0: Not maksed. SGATERROUTZ enters the active or error state by 
+occurrence of SGATERRINxx.
+1: Masked. SGATERROUTZ does not enter the active or error state by 
+occurrence of SGATERRINxx.
+
+R01UH0098EJ0100 Rev.1.00
+Page 470 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(13)
+SGAEMK1 - SGA Error Mask Register 1
+This register is used to mask individual error sources (SGATERRINxx) for the 
+error output signal SGATERROUTZ.
+Access
+This register can be read/written in 32-bit units. Writing to this register is 
+protected by a sequence of instructions.
+Address
+<SGA_base> + 14H
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+Caution
+Setting SGAEMK109 to 1 does not mask SGATERRIN41.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+SGA
+EMK
+109
+SGA
+EMK
+108
+SGA
+EMK
+107
+SGA
+EMK
+106
+SGA
+EMK
+105
+SGA
+EMK
+104
+SGA
+EMK
+103
+SGA
+EMK
+102
+SGA
+EMK
+101
+SGA
+EMK
+100
+R
+R
+R
+R
+R
+R
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table  10-23
+SGAEMK1 Register Contents
+Bit position
+Bit Name
+Function
+9 to 0
+SGAEMK109 to 
+SGAEMK100
+SGAEMK109 to SGAEMK100 correspond to the error input signals 
+SGATERRIN41 to SGATERRIN32.
+SGATERROUTZ error output signal mask setting
+0: Not maksed. SGATERROUTZ is generated by the occurrence of 
+SGATERRINxx.
+1: Masked. SGATERROUTZ is not generated by the occurrence of 
+SGATERRINxx.
+
+R01UH0098EJ0100 Rev.1.00
+Page 471 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(14)
+SGAESSTC0 - SGA Error Source Status Clear Register 0
+This register is used to clear the individual error source status of the 
+SGAESSTR0 register. The error status of both SGAM and SGAC is cleared 
+simultaneously.
+Access
+This register can be written in 32-bit units. Writing to this register is protected 
+by a sequence of instructions.
+Address
+<SGA_base> + 18H
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+Note * The µPD70F3508 and µPD70F3509 do not have this function.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+SGA
+CLSSE
+019
+SGA
+CLSSE
+018
+0
+SGA
+CLSSE
+016*
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+SGA
+CLSSE
+015
+SGA
+CLSSE
+014
+SGA
+CLSSE
+013
+SGA
+CLSSE
+012
+SGA
+CLSSE
+011
+SGA
+CLSSE
+010
+SGA
+CLSSE
+009
+SGA
+CLSSE
+008
+SGA
+CLSSE
+007
+SGA
+CLSSE
+006
+SGA
+CLSSE
+005
+SGA
+CLSSE
+004
+SGA
+CLSSE
+003
+SGA
+CLSSE
+002
+SGA
+CLSSE
+001
+SGA
+CLSSE
+000
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+Table  10-24
+SGAmESSTC0 Register Contents
+Bit position
+Bit Name
+Function
+19,18, and 
+16 to 0
+SGACLSSE019, 
+SGACLSSE018, 
+and 
+SGACLSSE016 
+to 
+SGACLSSE000
+Controls the status clearing of the SGAmESSTR0.SGASSE019 to 
+SGASSE000 bits.
+0: No action. Writing to this bit is ignored.
+1: The related error status SGASSE0xx is cleared.
+
+R01UH0098EJ0100 Rev.1.00
+Page 472 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(15)
+SGAESSTC1 - SGA Error Source Status Clear Register 1
+This register is used to clear the individual error source status of the 
+SGAESSTR1 register. The error status of both SGAM and SGAC is cleared 
+simultaneously.
+Access
+This register can be written in 32-bit units. Writing to this register is protected 
+by a sequence of instructions.
+Address
+<SGA_base> + 1CH
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+SGA
+CLSSE
+130
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+SGA
+CLSSE
+109
+SGA
+CLSSE
+108
+SGA
+CLSSE
+107
+SGA
+CLSSE
+106
+SGA
+CLSSE
+105
+SGA
+CLSSE
+104
+SGA
+CLSSE
+103
+SGA
+CLSSE
+102
+SGA
+CLSSE
+101
+SGA
+CLSSE
+100
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+Table  10-25
+SGAmESSTC1 Register Contents
+Bit position
+Bit Name
+Function
+30
+SGACLSSE130
+Controls the status clearing of the SGAESSTR1.SGASSE130 bit.
+0: No action. Writing to this bit is ignored.
+1: The related error status SGASSE130 is cleared.
+9 to 0
+SGACLSSE109 
+to 
+SGACLSSE100
+Controls the status clearing of the SGAmESSTR1.SGASSE109 to 
+SGASSE100 bits
+0: No action. Writing to this bit is ignored.
+1: The related error status SGASSE1 is cleared.
+
+R01UH0098EJ0100 Rev.1.00
+Page 473 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(16)
+SGAPCMD1 - SGA Protection Command Register 
+This register is the protection command register for the SGA register. For a list 
+of protected registers, refer to table 10-10, Overview of SGA Registers.
+For details about the register write protection sequence, refer to section 10.3.7, 
+Writing to Protected Registers.
+Access
+This register can be written in 32-bit units.
+Address
+<SGA_base> + 20H
+Initial value
+Undefined
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+SGA1REG[7:0]
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+Table 10-26
+SGAPCMD1 Register Contents
+Bit position
+Bit Name
+Function
+7 to 0
+SGA1REG
+[7:0]
+Protection commands to enable writing to SGA registers
+
+R01UH0098EJ0100 Rev.1.00
+Page 474 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(17)
+SGAPS - SGA Protection Status Register 
+This register is used to verify whether the write protected register has been 
+written successfully or not.
+For details, refer to section 10.3.7, Writing to Protected Registers.
+Access
+This register can be read in 32-bit units.
+Address
+<SGA_base> + 24H
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+SGA
+PRE
+RR
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table 10-27
+SGAPS Register Contents
+Bit position
+Bit Name
+Function
+0
+SGAPRERR
+Indicates whether writing to a write protected register failed or was 
+successful.
+0: Writing was successfully completed.
+1: Writing failed.
+
+R01UH0098EJ0100 Rev.1.00
+Page 475 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(18)
+SGAPE0 - SGA Pseudo Error Register 0
+This register is used to generate a pseudo error for test purposes. The SGA 
+operation in response to the generation of a pseudo error is identical to that in 
+response to a real error signal on SGATERRINxx.
+Access
+This register can be written in 32-bit units. Writing to this register is protected 
+by a sequence of instructions.
+Address
+<SGA_base> + 28H
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+Note * The µPD70F3508 and µPD70F3509 do not have this function.
+Caution
+SGATERRIN18, SGATERRIN19, SGATERRIN36, and SGATERRIN37 cannot 
+be generated simultaneously with other pseudo errors.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+SGA
+PE
+019
+SGA
+PE
+018
+0
+SGA
+PE
+016*
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+SGA
+PE
+015
+SGA
+PE
+014
+SGA
+PE
+013
+SGA
+PE
+012
+SGA
+PE
+011
+SGA
+PE
+010
+SGA
+PE
+009
+SGA
+PE
+008
+SGA
+PE
+007
+SGA
+PE
+006
+SGA
+PE
+005
+SGA
+PE
+004
+SGA
+PE
+003
+SGA
+PE
+002
+SGA
+PE
+001
+SGA
+PE
+000
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+Table  10-28
+SGAPE0 Register Contents
+Bit position
+Bit Name
+Function
+19, 18, and 
+16 to 0
+SGAPE019, 
+SGAPE018, and 
+SGAPE016 to 
+SGAPE000
+SGAPE019 to SGAPE000 correspond to SGATERRIN19 to SGATERRIN00.
+0: No action. The SGATERRINxx error is not generated.
+1: A pseudo error is generated in the same way as SGATERRINxx.
+
+R01UH0098EJ0100 Rev.1.00
+Page 476 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(19)
+SGAPE1 - SGA Pseudo Error Register 1
+This register is used to generate a pseudo error for test purposes. The SGA 
+operation in response to the generation of a pseudo error is identical to that in 
+response to a real error signal on SGATERRINxx.
+Access
+This register can be written in 32-bit units. Writing to this register is protected 
+by a sequence of instructions.
+Address
+<SGA_base> + 2CH
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+Caution
+SGATERRIN18, SGATERRIN19, SGATERRIN36, and SGATERRIN37 cannot 
+be generated simultaneously with other pseudo errors.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+SGA
+PE
+108
+SGA
+PE
+107
+SGA
+PE
+106
+SGA
+PE
+105
+SGA
+PE
+104
+SGA
+PE
+103
+SGA
+PE
+102
+SGA
+PE
+101
+SGA
+PE
+100
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+Table  10-29
+SGAPE1 Register Contents
+Bit position
+Bit Name
+Function
+8 to 0
+SGAPE108 to 
+SGAPE100
+SGAPE108 to SGAPE100 correspond to SGATERRIN40 to SGATERRIN32.
+0: No action. The SGATERRINxx error is not generated.
+1: A pseudo error is generated in the same way as SGATERRINxx.
+
+R01UH0098EJ0100 Rev.1.00
+Page 477 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 10　Safety Guardian (SGA)
+(20)
+SGAEPCTL - SGA Error Pulse Output Control Register
+This register is used to select the timer for the output of error signals while the 
+SGA is in dynamic mode.
+Access
+This register can be read/written in 8-bit units.
+Address
+FF83 F020H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+SGATMSL
+R
+R
+R
+R
+R
+R
+R
+R/W
+Table  10-30
+SGAEPCTL Register Contents
+Bit position
+Bit Name
+Function
+0
+SGATMSL
+This bit selects the timer for the output of error signals while the SGA is in 
+dynamic mode.
+0: TAUA1 channel 15 is selected.
+1: OST1 is selected.
+
+Total pages in JSON: 2271
+=== PDF PAGE 462 ===
+=== PDF PAGE 463 ===
+=== PDF PAGE 464 ===
+=== PDF PAGE 465 ===
+=== PDF PAGE 466 ===
+=== PDF PAGE 467 ===
+=== PDF PAGE 468 ===
+=== PDF PAGE 469 ===
+=== PDF PAGE 470 ===
+=== PDF PAGE 471 ===
+=== PDF PAGE 472 ===
+=== PDF PAGE 473 ===
+=== PDF PAGE 474 ===
+=== PDF PAGE 475 ===
+=== PDF PAGE 476 ===
+=== PDF PAGE 477 ===
+=== PDF PAGE 478 ===
+=== PDF PAGE 479 ===
+=== PDF PAGE 480 ===
+=== PDF PAGE 481 ===
+=== PDF PAGE 482 ===
+=== PDF PAGE 483 ===
+=== PDF PAGE 484 ===
+=== PDF PAGE 485 ===
+=== PDF PAGE 486 ===
+=== PDF PAGE 487 ===
+=== PDF PAGE 488 ===
+=== PDF PAGE 489 ===
+=== PDF PAGE 490 ===
+=== PDF PAGE 491 ===
+=== PDF PAGE 492 ===
+=== PDF PAGE 493 ===
+=== PDF PAGE 494 ===
+=== PDF PAGE 495 ===
+=== PDF PAGE 496 ===
+=== PDF PAGE 497 ===

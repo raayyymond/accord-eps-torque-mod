@@ -1,0 +1,142 @@
+# ---------- python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---------- javascript ----------
+node_modules/
+
+# ---------- jupyter ----------
+.ipynb_checkpoints/
+
+# ---------- pickles / caches ----------
+*.pkl
+*.pickle
+*.cache
+
+# ---------- editor / OS ----------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ---------- logs ----------
+*.log
+logs/
+
+# ---------- claude code project-local ----------
+# (keep .claude/skills/ tracked — that's the priming stack the kit gifts)
+.claude/settings.local.json
+.claude/projects/
+.claude/conversation_*/
+.claude/local/
+
+# ---------- beads (issue tracker — sync export tracked, runtime DB ignored) ----------
+.beads/*.db
+.beads/*.db-journal
+
+# ---------- firmware artifacts kept outside the repository ----------
+# Proprietary firmware images and Honda containers live under the sibling
+# ../accord-firmware tree. Keep accidental copies out of future commits.
+analysis-2020accord/**/*.bin
+flashing-2020accord/**/*.rwd*
+iHDS_rwds/
+
+# ---------- firmware artifacts that get regenerated ----------
+# (intermediate canonical bins from re-running build scripts)
+*.tmp.bin
+*.scratch.bin
+*.work.*
+
+# regenerable rlog-derived signal extracts (large binary; regenerate from rlogs)
+*.parquet
+*.npz
+# raw field CAN captures (large CSV dumps; keep out of git)
+radar-re/captures_field/
+
+# ---------- secrets / never commit ----------
+.env
+.env.*
+*.env
+!.env.example
+*.pem
+*.key
+credentials.json
+secrets.json
+.discord.env
+.gemini.env
+**/.gemini.env
+.mcp.json
+openrouterkey.txt
+
+# ---------- project-local junk (don't commit) ----------
+.playwright-mcp/
+NUL
+
+analysis-2020accord/bin_decompile.rep/*
+
+# ---------- scratch / large archives / capture dumps (regenerable, too big for git) ----------
+.tmp/
+*.zip
+*.tar.gz
+*.tgz
+radar-re/captures.tar.gz
+# path-mangled artifacts from a tool writing to a literal Windows path string
+*multimodel-swarm_schema_dump.json
+*AppDataLocalTemp*
+
+# ---------- Ghidra projects (binary DB blobs, not git-appropriate) ----------
+ghidra-project/
+radar-re/ghidra-proj/
+radar-re/ghidra-out/
+*.gpr.lock
+*.lock
+*.rep/
+
+# ---------- external / large / secret-bearing data (never commit) ----------
+# (gitignore has no inline comments — keep patterns on their own lines)
+# calib-files/ = external HondaCalibFiles clone (~7M); discord-export-incremental/ ~11M;
+# friend-log-collection/ = shared logs; community-upload/ holds uploader-credentials.env (SECRET);
+# analysis/ = scratch output; *_tree.json = large regenerable Ghidra call-tree dumps.
+calib-files/
+discord-export-incremental/
+friend-log-collection/
+community-upload/
+analysis/
+hcf_tree.json
+hrt_tree.json
+dordo-recovery/
+
+docs/can-research/annas/papers/
+docs/can-research/annas/candidates.json
+
+.uds-repos/
+
+# ---------- crash dumps ----------
+*.stackdump
+
+# ---------- rlog capture data (large binaries; kept LOCAL only, never tracked) ----------
+# Drive logs + camera media live under analysis-2020accord/rlogs/ (incl. manual/
+# baselines). Decode scripts read them locally; the captures themselves (.zst rlogs,
+# .hevc/.ts camera segments) are large and not versioned. Ignore the whole tree.
+analysis-2020accord/rlogs/

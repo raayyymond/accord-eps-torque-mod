@@ -1,0 +1,178 @@
+<!-- Section 6: Memory Modules (Flash / Option Bytes) — UPD70F3508 -->
+<!-- Registers extracted: OPBT0, PRDNAME, PRDSELH, PRDSELL (FLASH_OPT peripheral)  -->
+<!--                      FLMDCNT, FLMDPCMD, FLMDPS (FLASH_FLMD peripheral)         -->
+<!-- Flash array data regions (code flash 0x00000000–0x000FFFFF,                    -->
+<!--   data flash 0x02000000–0x02007FFF) and RAM (0xFEDEC000–0xFEDFFFFF)            -->
+<!--   are NOT emitted — they are memory regions, not control SFRs.                 -->
+
+<peripheral>
+  <name>FLASH_OPT</name>
+  <description>Flash Option-Byte and Product Identification Registers</description>
+  <baseAddress>0xFF470000</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x2C</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <!-- 6.5.1  OPBT0 — Option Byte Verification Register -->
+    <register>
+      <name>OPBT0</name>
+      <description>Option Byte Verification Register</description>
+      <addressOffset>0xC</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <!-- Reset value for uPD70F3508/3509: HEAPCLK=160 MHz, PCLK=80 MHz, FlexRay enabled -->
+      <resetValue>0xFFFFFFEA</resetValue>
+      <fields>
+        <field>
+          <name>FOP31</name>
+          <description>JTAG port switch: 0=enabled, 1=disabled</description>
+          <bitRange>[31:31]</bitRange>
+        </field>
+        <field>
+          <name>FOP5</name>
+          <description>FlexRay clock (SCLK2) enable: 0=disabled, 1=enabled</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>FOP4</name>
+          <description>Peripheral clock (PCLK) select bit 1 (see FOP[4:3] table)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>FOP3</name>
+          <description>Peripheral clock (PCLK) select bit 0 (see FOP[4:3] table)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>FOP2</name>
+          <description>CPU clock (HEAPCLK) select bit 2 (see FOP[2:0] table)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>FOP1</name>
+          <description>CPU clock (HEAPCLK) select bit 1 (see FOP[2:0] table)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>FOP0</name>
+          <description>CPU clock (HEAPCLK) select bit 0 (uPD70F3508/3509 only)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- 6.6 (3)  PRDSELL — Product Selection Register Low -->
+    <register>
+      <name>PRDSELL</name>
+      <description>Product Selection Register Low (product identification)</description>
+      <addressOffset>0x20</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <!-- uPD70F3508/3509: 000020FFH -->
+      <resetValue>0x000020FF</resetValue>
+    </register>
+
+    <!-- 6.6 (2)  PRDSELH — Product Selection Register High -->
+    <register>
+      <name>PRDSELH</name>
+      <description>Product Selection Register High (RAM start address and code flash size code)</description>
+      <addressOffset>0x24</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <!-- uPD70F3508/3509: FEDEC004H -->
+      <resetValue>0xFEDEC004</resetValue>
+    </register>
+
+    <!-- 6.6 (1)  PRDNAME — Product Name Register -->
+    <register>
+      <name>PRDNAME</name>
+      <description>Product Name Register (product identifier and version)</description>
+      <addressOffset>0x28</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <!-- uPD70F3508 version 1.0: 0DB40100H -->
+      <resetValue>0x0DB40100</resetValue>
+      <fields>
+        <field>
+          <name>PRODID</name>
+          <description>Product identifier (bits 31:12); 0DB40H = uPD70F3508</description>
+          <bitRange>[31:12]</bitRange>
+        </field>
+        <field>
+          <name>VERSION</name>
+          <description>Product version information (bits 11:0)</description>
+          <bitRange>[11:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<peripheral>
+  <name>FLASH_FLMD</name>
+  <description>FLMD Pin Control Registers (FLMD0 pull-up/pull-down and write protection)</description>
+  <baseAddress>0xFF438000</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0xC</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <!-- 6.7.1 (1)  FLMDCNT — FLMD Control Register -->
+    <register>
+      <name>FLMDCNT</name>
+      <description>FLMD Control Register — specifies FLMD0 pin pull-up or pull-down</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>FLMDPUP</name>
+          <description>FLMD0 pin pull direction: 0=pull-down, 1=pull-up</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- 6.7.1 (2)  FLMDPCMD — FLMD Protection Command Register -->
+    <register>
+      <name>FLMDPCMD</name>
+      <description>FLMD Protection Command Register — write A5H to begin FLMDCNT write sequence</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <!-- Initial value: Undefined (read always returns 00H) -->
+      <fields>
+        <field>
+          <name>FLMDPCMD</name>
+          <description>Protection command byte; write A5H as first step of FLMDCNT write sequence</description>
+          <bitRange>[7:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- 6.7.1 (3)  FLMDPS — FLMD Protection Error Status Register -->
+    <register>
+      <name>FLMDPS</name>
+      <description>FLMD Protection Error Status Register — indicates FLMDCNT write success or failure</description>
+      <addressOffset>0x8</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>FLMDPRERR</name>
+          <description>Write protection error: 0=write succeeded, 1=write failed</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

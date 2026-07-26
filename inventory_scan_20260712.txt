@@ -1,0 +1,534 @@
+Script started on 2026-07-12 17:55:58-07:00 [TERM="xterm-256color" TTY="/dev/pts/2" COLUMNS="104" LINES="23"]
+[?2004h]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ python3 comma4_can_inventory.py 
+[?2004l====================================================================
+  Comma 4 Panda - CAN Bus INVENTORY  (read-only, SILENT/listen-only)
+====================================================================
+
+[1/5] SPI device /dev/spidev0.0: FOUND
+
+[2/5] pandad process: STILL RUNNING
+  WARNING: stop it first -> tmux kill-server ; sleep 2 ; retry.
+
+ABORT: pandad still running; stop openpilot first.
+[?2004h]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ tmux-kill[K[K[K[K[K kill-server
+[?2004l[?2004h]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ tmux kill-serverpython3 comma4_can_inventory.py [16Ptmux kill-server[Ktmux kill-serverpython3 comma4_can_inventory.py 
+[?2004l====================================================================
+  Comma 4 Panda - CAN Bus INVENTORY  (read-only, SILENT/listen-only)
+====================================================================
+
+[1/5] SPI device /dev/spidev0.0: FOUND
+
+[2/5] pandad process: NOT RUNNING (good)
+
+[3/5] Panda library: IMPORTED
+INFO: connecting to panda 1a000f000851333334373931
+  Hardware type: CUATRO (comma 4)
+  Serial: c55bbd10c99323e5
+  Bootstub mode: False
+  Firmware version: DEV-50fb0628-DEBUG
+
+  Safety mode set to SILENT (0) -> panda is listen-only, cannot TX.
+
+[4/5] Panda health check: OK
+  Voltage: 14168 mV   Current: 244 mA
+  Safety mode: 0   Ignition line: 1
+  Car harness status: 2
+
+[5/5] Sniffing CAN for 10s (READ ONLY, SILENT mode)...
+  Tip: ignition ON (engine off is fine) gives full traffic.
+
+Traceback (most recent call last):
+  File "/data/media/0/testing/comma4_can_inventory.py", line 243, in <module>
+    main()
+  File "/data/media/0/testing/comma4_can_inventory.py", line 227, in main
+    results["can_read"] = inventory(p, seconds)
+                          ^^^^^^^^^^^^^^^^^^^^^
+  File "/data/media/0/testing/comma4_can_inventory.py", line 138, in inventory
+    for addr, _, data, bus in p.can_recv():
+        ^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 4, got 3)
+[?2004h]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ nano comma4_can_inventory.py 
+[?2004l[?2004h[?1049h[22;0;0t[1;23r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[21;46H(B[0;7m[ Reading... ](B[m[21;30H(B[0;7m[ Read 243 lines (Converted from DOS format) ](B[m[H(B[0;7m  GNU nano 7.2                             comma4_can_inventory.py                                      [1;103H(B[m[22d(B[0;7m^G(B[m Help[15G(B[0;7m^O(B[m Write Out  (B[0;7m^W(B[m Where Is   (B[0;7m^K(B[m Cut[22;57H(B[0;7m^T(B[m Execute    (B[0;7m^C(B[m Location   (B[0;7mM-U(B[m Undo[23d(B[0;7m^X(B[m Exit[15G(B[0;7m^R(B[m Read File  (B[0;7m^\(B[m Replace    (B[0;7m^U(B[m Paste[57G(B[0;7m^J(B[m Justify    (B[0;7m^/(B[m Go To Line (B[0;7mM-E(B[m Redo[2d(B[0;1m[31m#!/usr/bin/env python3[3d[32m"""[4dComma 4 Panda - CAN Bus INVENTORY  (read-only, non-destructive)[6dExtends comma4_panda_test.py. Where that script just counts frames per bus for a[7d5-second go/no-go check, this one sniffs for ~10 s and prints:[9d  * EVERY CAN ID seen on each bus, with its measured rate (Hz), DLC, and a data sample.[10d  * An explicit "frames of interest" report for the EPS telemetry decision:[11;6H[1K - the EPS frames that SHOULD be comma-visible  (0x14A, 0x18F/399, 0x1AB/427)[12;6H[1K - the EPS frames we believe are internal-bus only (0x19F, 0x32E, 0x64D, 0x660)[13d    so you can confirm, live, which bus each is on (or that it is absent).[15dWHY: the rlogs show 0x660 (our old telemetry-piggyback target) never reaches the[16dcomma. This gives live ground truth on that, plus the real per-ID rates that decide[17dwhether a telemetry frame can be sampled fast enough (the gentle-EME cut is ~90 ms).[19d100% READ-ONLY. The panda is forced into SAFETY_SILENT (listen-only) before reading,[20dso it physically cannot transmit any CAN frame. No message is ever sent. This honors[2d[39m(B[m[?12l[?25h[?25l[?12l[?25h[3d[?25l[?12l[?25h[4d[?25l[?12l[?25h[5d[?25l[?12l[?25h[6d[?25l[?12l[?25h[7d[?25l[?12l[?25h[8d[?25l[?12l[?25h[9d[?25l[?12l[?25h[10d[?25l[?12l[?25h[11d[?25l[?12l[?25h[12d[?25l[?12l[?25h[13d[?25l[?12l[?25h[14d[?25l[?12l[?25h[15d[?25l[?12l[?25h[16d[?25l[?12l[?25h[17d[?25l[?12l[?25h[18d[?25l[?12l[?25h[19d[?25l[?12l[?25h[20d[?25l[?12l[?25h7[2;20r8
+[1;23r[20;1H(B[0;1m[32mthe kit iron rule: never put anything on the bus without explicit operator confirmation.[39m(B[m[?25l[21d[K[?12l[?25h7[2;21r8
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[32mUsage (run on the comma 4 via SSH):[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[32m  1. ssh comma@192.168.43.1[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[32m  2. tmux kill-server           # release the panda from pandad/openpilot[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[32m  3. sleep 2[20X[20;33H# let the panda settle[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[32m  4. python3 /data/comma4_can_inventory.py [seconds]     (default 10)[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[32m  Turn the car's ignition ON (engine off is fine) for full bus traffic.[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[32m"""[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[36mimport[39m(B[m sys[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[36mimport[39m(B[m time[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[36mimport[39m(B[m os[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[31m# EPS transmit frames (from the firmware's 7 CAN content-builders). We expect the[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[31m# first three on a comma-visible bus and the last four only on the EPS-internal bus.[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1HEPS_COMMA_VISIBLE = {0x14A: (B[0;1m[32m"330"[39m(B[m, 0x18F: (B[0;1m[32m"399 STEER_STATUS"[39m(B[m, 0x1AB: (B[0;1m[32m"427 MOTOR_TORQUE"[39m(B[m}[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1HEPS_INTERNAL_ONLY = {0x19F: (B[0;1m[32m"415"[39m(B[m, 0x32E: (B[0;1m[32m"814"[39m(B[m, 0x64D: (B[0;1m[32m"1613"[39m(B[m, 0x660: (B[0;1m[32m"1632 (telemetry target)"[39m(B[m}[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[36mdef[34m check_spi_device[39m(B[m():[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5Hspi_path = (B[0;1m[32m"/dev/spidev0.0"[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5Hexists = os.path.exists(spi_path)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5Hprint(f(B[0;1m[32m"[1/5] SPI device {spi_path}: {'FOUND' if exists else 'NOT FOUND'}"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mif[39m(B[m (B[0;1m[36mnot[39m(B[m exists:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint((B[0;1m[32m"  ERROR: SPI device missing. Is this a comma 4 / comma 3X?"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mreturn[39m(B[m exists[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[36mdef[34m check_pandad_running[39m(B[m():[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mtry[39m(B[m:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mimport[39m(B[m subprocess[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hresult = subprocess.run([(B[0;1m[32m"pgrep"[39m(B[m, (B[0;1m[32m"-f"[39m(B[m, (B[0;1m[32m"pandad"[39m(B[m], capture_output=(B[0;1m[35mTrue[39m(B[m, text=(B[0;1m[35mTrue[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hrunning = result.returncode == 0[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mif[39m(B[m running:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13Hprint((B[0;1m[32m"[2/5] pandad process: STILL RUNNING"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13Hprint((B[0;1m[32m"  WARNING: stop it first -> tmux kill-server ; sleep 2 ; retry."[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36melse[39m(B[m:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13Hprint((B[0;1m[32m"[2/5] pandad process: NOT RUNNING (good)"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mreturn[39m(B[m (B[0;1m[36mnot[39m(B[m running[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mexcept[39m(B[m Exception (B[0;1m[36mas[39m(B[m e:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint(f(B[0;1m[32m"[2/5] pandad check: SKIPPED ({e})"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mreturn[39m(B[m (B[0;1m[35mTrue[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[36mdef[34m connect_panda[39m(B[m():[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mtry[39m(B[m:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mfrom[39m(B[m panda (B[0;1m[36mimport[39m(B[m Panda[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mexcept[39m(B[m ImportError:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hsys.path.insert(0, (B[0;1m[32m"/data/openpilot/third_party/panda"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hsys.path.insert(0, (B[0;1m[32m"/data/openpilot"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mtry[39m(B[m:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13H(B[0;1m[36mfrom[39m(B[m panda (B[0;1m[36mimport[39m(B[m Panda[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mexcept[39m(B[m ImportError:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13Hprint((B[0;1m[32m"[3/5] Panda library: NOT FOUND (need openpilot at /data/openpilot)"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13H(B[0;1m[36mreturn[39m(B[m (B[0;1m[35mNone[39m(B[m, (B[0;1m[35mNone[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5Hprint((B[0;1m[32m"[3/5] Panda library: IMPORTED"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5Hp = (B[0;1m[35mNone[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mtry[39m(B[m:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hp = Panda()[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hhw_type = p.get_type()[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hserial = p.get_serial()[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hhw_names = {b(B[0;1m[32m'(B[0m[38;5;148m\x07(B[0;1m[32m'[39m(B[m: (B[0;1m[32m"RED_PANDA"[39m(B[m, b(B[0;1m[32m'(B[0m[38;5;148m\x09(B[0;1m[32m'[39m(B[m: (B[0;1m[32m"TRES (comma 3X)"[39m(B[m, b(B[0;1m[32m'(B[0m[38;5;148m\x0a(B[0;1m[32m'[39m(B[m: (B[0;1m[32m"CUATRO (comma 4)"[39m(B[m}[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint(f(B[0;1m[32m"  Hardware type: {hw_names.get(hw_type, f'UNKNOWN ({hw_type.hex()})')}"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint(f(B[0;1m[32m"  Serial: {serial[0] if serial else 'unknown'}"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint(f(B[0;1m[32m"  Bootstub mode: {p.bootstub}"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mif[39m(B[m p.bootstub:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13Hprint((B[0;1m[32m"  WARNING: panda is in bootstub mode (not running app firmware)."[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13Hp.close()[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13H(B[0;1m[36mreturn[39m(B[m (B[0;1m[35mNone[39m(B[m, (B[0;1m[35mNone[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint(f(B[0;1m[32m"  Firmware version: {p.get_version()}"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mreturn[39m(B[m p, Panda[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mexcept[39m(B[m Exception (B[0;1m[36mas[39m(B[m e:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mif[39m(B[m p (B[0;1m[36mis[39m(B[m (B[0;1m[36mnot[39m(B[m (B[0;1m[35mNone[39m(B[m:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13Hp.close()[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint(f(B[0;1m[32m"[3/5] Panda connection: FAILED(B[0m[38;5;148m\n(B[0;1m[32m  Error: {e}"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint((B[0;1m[32m"  Make sure pandad/openpilot is stopped (tmux kill-server)."[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mreturn[39m(B[m (B[0;1m[35mNone[39m(B[m, (B[0;1m[35mNone[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[36mdef[34m force_silent[39m(B[m(p, Panda):[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[32m"""Put the panda in listen-only SILENT mode so it cannot transmit. Returns True on success."""[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5Hmode = getattr(Panda, (B[0;1m[32m"SAFETY_SILENT"[39m(B[m, 0)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mtry[39m(B[m:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hp.set_safety_mode(mode)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;8H(B[0;1m[31m # flush any stale frames buffered from before we set silent mode[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mtry[39m(B[m:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13Hp.can_clear(0xFFFF)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mexcept[39m(B[m Exception:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13H(B[0;1m[36mpass[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint(f(B[0;1m[32m"  Safety mode set to SILENT ({mode}) -> panda is listen-only, cannot TX."[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mreturn[39m(B[m (B[0;1m[35mTrue[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mexcept[39m(B[m Exception (B[0;1m[36mas[39m(B[m e:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint(f(B[0;1m[32m"  WARNING: could not set SILENT mode ({e}); reading anyway (still no sends issued)."[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mreturn[39m(B[m (B[0;1m[35mFalse[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[36mdef[34m check_health[39m(B[m(p):[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mtry[39m(B[m:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hh = p.health()[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint((B[0;1m[32m"[4/5] Panda health check: OK"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint(f(B[0;1m[32m"  Voltage: {h.get('voltage', 'N/A')} mV   Current: {h.get('current', 'N/A')} mA"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint(f(B[0;1m[32m"  Safety mode: {h.get('safety_mode', 'N/A')}   Ignition line: {h.get('ignition_line', '[39m(B[0;7m>[20;1H(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint(f(B[0;1m[32m"  Car harness status: {h.get('car_harness_status', 'N/A')}"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mreturn[39m(B[m (B[0;1m[35mTrue[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mexcept[39m(B[m Exception (B[0;1m[36mas[39m(B[m e:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9Hprint(f(B[0;1m[32m"[4/5] Panda health check: FAILED ({e})"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mreturn[39m(B[m (B[0;1m[35mFalse[39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;1H(B[0;1m[36mdef[34m inventory[39m(B[m(p, seconds):[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5Hprint(f(B[0;1m[32m"[5/5] Sniffing CAN for {seconds}s (READ ONLY, SILENT mode)..."[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5Hprint((B[0;1m[32m"  Tip: ignition ON (engine off is fine) gives full traffic.(B[0m[38;5;148m\n(B[0;1m[32m"[39m(B[m)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;4H(B[0;1m[31m # stats[bus][addr] = [count, first_t, last_t, dlc, last_data_hex][39m(B[m[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5Hstats = {}[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5Hstart = time.monotonic()[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;5H(B[0;1m[36mwhile[39m(B[m (time.monotonic() - start) < seconds:[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;9H(B[0;1m[36mfor[39m(B[m addr, _, data, bus (B[0;1m[36min[39m(B[m p.can_recv():[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13Hnow = time.monotonic()[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13Hb = stats.setdefault(bus, {})[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13Hrec = b.get(addr)[?25l[?12l[?25h7[2;21r8[21d
+[1;23r[20;13H(B[0;1m[36mif[39m(B[m rec (B[0;1m[36mis[39m(B[m (B[0;1m[35mNone[39m(B[m:[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h[A[?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h [?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h[C[?25l[?12l[?25h [?25l[?12l[?25ha[?25l[?12l[?25hd[?25l[?12l[?25hd[?25l[?12l[?25hr[?25l[?12l[?25h,[?25l[?12l[?25h [?25l[?12l[?25h_[?25l[?12l[?25h,[?25l[1;68H(B[0;7m*[103G(B[m[?12l[?25h[16;20H[1P[?25l[?12l[?25h[1P[?25l[?12l[?25h[1P[?25l[21d(B[0;7mSave modified buffer?                                                                                   [22;1H Y(B[m Yes[K[23d(B[0;7m N(B[m No  [15G  (B[0;7m^C(B[m Cancel[K[21;23H[?12l[?25h[?25l[22d(B[0;7m^G(B[m Help[22;27H(B[0;7mM-D(B[m DOS Format[22;53H(B[0;7mM-A(B[m Append[22;79H(B[0;7mM-B(B[m Backup File[23d(B[0;7m^C(B[m Cancel[17G          (B[0;7mM-M(B[m Mac Format[23;53H(B[0;7mM-P(B[m Prepend[23;79H(B[0;7m^T(B[m Browse[21d(B[0;7mFile Name to Write [DOS Format]: comma4_can_inventory.py(B[m[?12l[?25h[?25l[21;45H[1K (B[0;7m[ Writing... ](B[m[K[1;68H(B[0;7m [103G(B[m[21;43H(B[0;7m[ Wrote 243 lines ](B[m[J[23d[?12l[?25h[23;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ nano comma4_can_inventory.py [3@python3[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[?2004l====================================================================
+  Comma 4 Panda - CAN Bus INVENTORY  (read-only, SILENT/listen-only)
+====================================================================
+
+[1/5] SPI device /dev/spidev0.0: FOUND
+
+[2/5] pandad process: NOT RUNNING (good)
+
+[3/5] Panda library: IMPORTED
+INFO: connecting to panda 1a000f000851333334373931
+  Hardware type: CUATRO (comma 4)
+  Serial: c55bbd10c99323e5
+  Bootstub mode: False
+  Firmware version: DEV-50fb0628-DEBUG
+
+  Safety mode set to SILENT (0) -> panda is listen-only, cannot TX.
+
+[4/5] Panda health check: OK
+  Voltage: 14157 mV   Current: 152 mA
+  Safety mode: 0   Ignition line: 1
+  Car harness status: 2
+
+[5/5] Sniffing CAN for 10s (READ ONLY, SILENT mode)...
+  Tip: ignition ON (engine off is fine) gives full traffic.
+
+  captured 47149 frames over 10.0s across 3 bus id(s)
+
+  --- bus 0  (100 unique IDs) ---
+        ID   dec  count      Hz DLC  data(last)
+    0x00E4   228   1000   100.0   5  0000000033
+    0x00E5   229    500    50.0   8  0400801000000035
+    0x0201   513    149    14.9   8  11380034dc000017
+    0x0240   576    149    14.9   8  800d800000000014
+    0x0241   577    149    14.9   8  d0007ff07ff08011
+    0x0243   579    149    14.9   8  800d800000000011
+    0x0244   580    149    14.9   8  d0007ff07ff0801e
+    0x0246   582    149    14.9   8  800d80000000001e
+    0x0247   583    149    14.9   8  d0007ff07ff0801b
+    0x0249   585    149    14.9   8  800d80000000001b
+    0x024A   586    149    14.9   8  d0007ff07ff08018
+    0x0280   640    149    14.9   8  00740aad83e00315
+    0x0281   641    149    14.9   8  000330da7d7e0016
+    0x0282   642    149    14.9   8  41dd8000ff7eff13
+    0x0283   643    149    14.9   8  9c5a6b8081800e1e
+    0x0284   644    149    14.9   8  02340cbda4e0011f
+    0x0285   645    149    14.9   8  000111ba7cb8001a
+    0x0286   646    149    14.9   8  0abd8000ff7eff1c
+    0x0287   647    149    14.9   8  adba9c0080802310
+    0x0288   648    149    14.9   8  fef0fffdfffeff16
+    0x0289   649    149    14.9   8  fcfffffaffff0018
+    0x028A   650    149    14.9   8  fffdffc0ffffff9d
+    0x028B   651    149    14.9   8  801a80008000ff11
+    0x028C   652    149    14.9   8  fef0fffdfffeff12
+    0x028D   653    149    14.9   8  fcfffffaffff0014
+    0x028E   654    149    14.9   8  fffdffc0ffffff99
+    0x028F   655    149    14.9   8  801a80008000ff1d
+    0x0290   656    149    14.9   8  ffdaff8080007d15
+    0x0291   657    149    14.9   8  ffdaff8080007d14
+    0x0292   658    149    14.9   8  ffdaff8080007d13
+    0x0293   659    149    14.9   8  ffdaff8080007d12
+    0x0294   660    149    14.9   8  ffdaff8080007d11
+    0x0295   661    149    14.9   8  ffdaff8080007d10
+    0x0296   662    149    14.9   8  ffdaff8080007d1f
+    0x0297   663    149    14.9   8  ffdaff8080007d1e
+    0x02C8   712    149    14.9   8  6c1a00c081807d13
+    0x02C9   713    149    14.9   8  6f5a074080807d1d
+    0x02CA   714    149    14.9   8  ffdaff8080007d18
+    0x02CB   715    149    14.9   8  ffdaff8080007d17
+    0x02CC   716    149    14.9   8  ffdaff8080007d16
+    0x02CD   717    149    14.9   8  ffdaff8080007d15
+    0x02CE   718    149    14.9   8  ffdaff8080007d14
+    0x02CF   719    149    14.9   8  ffdaff8080007d13
+    0x02D0   720    149    14.9   8  fef0fffdfffeff19
+    0x02D1   721    149    14.9   8  fcfffffaffff001b
+    0x02D2   722    149    14.9   8  fffdffc0ffffff90
+    0x02D3   723    149    14.9   8  801a80008000ff14
+    0x02D4   724    149    14.9   8  fef0fffdfffeff15
+    0x02D5   725    149    14.9   8  fcfffffaffff0017
+    0x02D6   726    149    14.9   8  fffdffc0ffffff9c
+    0x02D7   727    149    14.9   8  801a80008000ff10
+    0x02D8   728    149    14.9   8  fef0fffdfffeff11
+    0x02D9   729    149    14.9   8  fcfffffaffff0013
+    0x02DA   730    149    14.9   8  fffdffc0ffffff98
+    0x02DB   731    149    14.9   8  801a80008000ff1c
+    0x02DC   732    149    14.9   8  fef0fffdfffeff1d
+    0x02DD   733    149    14.9   8  fcfffffaffff001f
+    0x02DE   734    149    14.9   8  fffdffc0ffffff94
+    0x02DF   735    149    14.9   8  801a80008000ff18
+    0x02E0   736    149    14.9   8  fef0fffdfffeff18
+    0x02E1   737    149    14.9   8  fcfffffaffff001a
+    0x02E2   738    149    14.9   8  fffdffc0ffffff9f
+    0x02E3   739    149    14.9   8  801a80008000ff13
+    0x02E4   740    149    14.9   8  fef0fffdfffeff14
+    0x02E5   741    149    14.9   8  fcfffffaffff0016
+    0x02E6   742    149    14.9   8  fffdffc0ffffff9b
+    0x02E7   743    149    14.9   8  801a80008000ff1f
+    0x02E8   744    149    14.9   8  fef0fffdfffeff10
+    0x02E9   745    149    14.9   8  fcfffffaffff0012
+    0x02EA   746    149    14.9   8  fffdffc0ffffff97
+    0x02EB   747    149    14.9   8  801a80008000ff1b
+    0x02EC   748    149    14.9   8  fef0fffdfffeff1c
+    0x02ED   749    149    14.9   8  fcfffffaffff001e
+    0x02EE   750    149    14.9   8  fffdffc0ffffff93
+    0x02EF   751    149    14.9   8  801a80008000ff17
+    0x02F0   752    149    14.9   8  fef0fffdfffeff17
+    0x02F1   753    149    14.9   8  fcfffffaffff0019
+    0x02F2   754    149    14.9   8  fffdffc0ffffff9e
+    0x02F3   755    149    14.9   8  801a80008000ff12
+    0x02F4   756    149    14.9   8  fef0fffdfffeff13
+    0x02F5   757    149    14.9   8  fcfffffaffff0015
+    0x02F6   758    149    14.9   8  fffdffc0ffffff9a
+    0x02F7   759    149    14.9   8  801a80008000ff1e
+    0x02F8   760    149    14.9   8  fef0fffdfffeff1f
+    0x02F9   761    149    14.9   8  fcfffffaffff0011
+    0x02FA   762    149    14.9   8  fffdffc0ffffff96
+    0x02FB   763    149    14.9   8  801a80008000ff1a
+    0x02FC   764    149    14.9   8  fef0fffdfffeff1b
+    0x02FD   765    149    14.9   8  fcfffffaffff001d
+    0x02FE   766    149    14.9   8  fffdffc0ffffff92
+    0x02FF   767    149    14.9   8  801a80008000ff16
+    0x033D   829    100    10.0   5  0000004809
+    0x0400  1024    500    50.0   4  02802035
+    0x0410  1040     10     1.0   6  54564341322c
+    0x0420  1056    100    10.0   8  0000000000000002
+    0x0669  1641     10     1.0   8  00022b7bb7dd0015
+    0x0750  1872    500    50.0   8  008c00240000007b
+    0x7FE7A00 134117888    298    29.8   8  de050000f50c0000
+    0x1BFE7A36 469662262    100    10.0   8  0b0b00000b0b0001
+    0x1BFE7A37 469662263    100    10.0   8  0000000000000000
+
+  --- bus 1  (36 unique IDs) ---
+        ID   dec  count      Hz DLC  data(last)
+    0x0094   148   1000   100.0   8  80a027de02000c61
+    0x00E4   228   1000   100.0   5  0000000024
+    0x0130   304   1000   100.0   8  0000001700000417
+    0x014A   330   1000   100.0   8  011b004007011b31
+    0x0158   344   1000   100.0   8  000002b00000001c
+    0x017C   380   1000   100.0   8  000302d10002001e
+    0x018F   399    999    99.9   7  0adf033230002d
+    0x01A3   419    500    50.0   8  000000040100006f
+    0x01A4   420    498    49.8   8  006600000000003a
+    0x01AB   427    500    50.0   3  80563c
+    0x01B0   432    498    49.8   7  00000000000075
+    0x01B9   441    498    49.8   5  020b00043f
+    0x01BE   446    500    50.0   3  e60028
+    0x01C2   450    499    49.9   8  0000000000000036
+    0x01D0   464    499    49.9   8  000000000000000a
+    0x01DD   477    500    50.0   8  0017099100000002
+    0x01DF   479    500    50.0   8  8ad0000000000039
+    0x01EF   495    500    50.0   8  03ff007530000037
+    0x0221   545    250    25.0   6  33000000001c
+    0x0296   662    250    25.0   4  00000016
+    0x0305   773    100    10.0   7  8154000000003b
+    0x0309   777    100    10.0   8  000000000000419e
+    0x030C   780    100    10.0   8  000000ff0040c00b
+    0x0324   804    100    10.0   8  7f58009c00004003
+    0x0326   806    100    10.0   8  1fa700100000001a
+    0x0328   808    100    10.0   8  000000000080007c
+    0x033D   829    100    10.0   5  0000004809
+    0x035E   862    100    10.0   8  0000c7000000000f
+    0x0374   884    100    10.0   8  3c0000ff00401008
+    0x037B   891    100    10.0   8  0000002000000001
+    0x039F   927    100    10.0   8  330000404a010004
+    0x03A1   929     50     5.0   8  400010020000022f
+    0x0516  1302     20     2.0   8  016539000050000f
+    0x0640  1600     10     1.0   5  000000002c
+    0x0641  1601     10     1.0   8  000000000000002b
+    0x0674  1652     10     1.0   8  2000000009020028
+
+  --- bus 2  (100 unique IDs) ---
+        ID   dec  count      Hz DLC  data(last)
+    0x00E4   228   1000   100.0   5  0000000033
+    0x00E5   229    500    50.0   8  0400801000000035
+    0x0201   513    149    14.9   8  11380034dc000017
+    0x0240   576    149    14.9   8  800d800000000014
+    0x0241   577    149    14.9   8  d0007ff07ff08011
+    0x0243   579    149    14.9   8  800d800000000011
+    0x0244   580    149    14.9   8  d0007ff07ff0801e
+    0x0246   582    149    14.9   8  800d80000000001e
+    0x0247   583    149    14.9   8  d0007ff07ff0801b
+    0x0249   585    149    14.9   8  800d80000000001b
+    0x024A   586    149    14.9   8  d0007ff07ff08018
+    0x0280   640    149    14.9   8  00740aad83e00315
+    0x0281   641    149    14.9   8  000330da7d7e0016
+    0x0282   642    149    14.9   8  41dd8000ff7eff13
+    0x0283   643    149    14.9   8  9c5a6b8081800e1e
+    0x0284   644    149    14.9   8  02340cbda4e0011f
+    0x0285   645    149    14.9   8  000111ba7cb8001a
+    0x0286   646    149    14.9   8  0abd8000ff7eff1c
+    0x0287   647    149    14.9   8  adba9c0080802310
+    0x0288   648    149    14.9   8  fef0fffdfffeff16
+    0x0289   649    149    14.9   8  fcfffffaffff0018
+    0x028A   650    149    14.9   8  fffdffc0ffffff9d
+    0x028B   651    149    14.9   8  801a80008000ff11
+    0x028C   652    149    14.9   8  fef0fffdfffeff12
+    0x028D   653    149    14.9   8  fcfffffaffff0014
+    0x028E   654    149    14.9   8  fffdffc0ffffff99
+    0x028F   655    149    14.9   8  801a80008000ff1d
+    0x0290   656    149    14.9   8  ffdaff8080007d15
+    0x0291   657    149    14.9   8  ffdaff8080007d14
+    0x0292   658    149    14.9   8  ffdaff8080007d13
+    0x0293   659    149    14.9   8  ffdaff8080007d12
+    0x0294   660    149    14.9   8  ffdaff8080007d11
+    0x0295   661    149    14.9   8  ffdaff8080007d10
+    0x0296   662    149    14.9   8  ffdaff8080007d1f
+    0x0297   663    149    14.9   8  ffdaff8080007d1e
+    0x02C8   712    149    14.9   8  6c1a00c081807d13
+    0x02C9   713    149    14.9   8  6f5a074080807d1d
+    0x02CA   714    149    14.9   8  ffdaff8080007d18
+    0x02CB   715    149    14.9   8  ffdaff8080007d17
+    0x02CC   716    149    14.9   8  ffdaff8080007d16
+    0x02CD   717    149    14.9   8  ffdaff8080007d15
+    0x02CE   718    149    14.9   8  ffdaff8080007d14
+    0x02CF   719    149    14.9   8  ffdaff8080007d13
+    0x02D0   720    149    14.9   8  fef0fffdfffeff19
+    0x02D1   721    149    14.9   8  fcfffffaffff001b
+    0x02D2   722    149    14.9   8  fffdffc0ffffff90
+    0x02D3   723    149    14.9   8  801a80008000ff14
+    0x02D4   724    149    14.9   8  fef0fffdfffeff15
+    0x02D5   725    149    14.9   8  fcfffffaffff0017
+    0x02D6   726    149    14.9   8  fffdffc0ffffff9c
+    0x02D7   727    149    14.9   8  801a80008000ff10
+    0x02D8   728    149    14.9   8  fef0fffdfffeff11
+    0x02D9   729    149    14.9   8  fcfffffaffff0013
+    0x02DA   730    149    14.9   8  fffdffc0ffffff98
+    0x02DB   731    149    14.9   8  801a80008000ff1c
+    0x02DC   732    149    14.9   8  fef0fffdfffeff1d
+    0x02DD   733    149    14.9   8  fcfffffaffff001f
+    0x02DE   734    149    14.9   8  fffdffc0ffffff94
+    0x02DF   735    149    14.9   8  801a80008000ff18
+    0x02E0   736    149    14.9   8  fef0fffdfffeff18
+    0x02E1   737    149    14.9   8  fcfffffaffff001a
+    0x02E2   738    149    14.9   8  fffdffc0ffffff9f
+    0x02E3   739    149    14.9   8  801a80008000ff13
+    0x02E4   740    149    14.9   8  fef0fffdfffeff14
+    0x02E5   741    149    14.9   8  fcfffffaffff0016
+    0x02E6   742    149    14.9   8  fffdffc0ffffff9b
+    0x02E7   743    149    14.9   8  801a80008000ff1f
+    0x02E8   744    149    14.9   8  fef0fffdfffeff10
+    0x02E9   745    149    14.9   8  fcfffffaffff0012
+    0x02EA   746    149    14.9   8  fffdffc0ffffff97
+    0x02EB   747    149    14.9   8  801a80008000ff1b
+    0x02EC   748    149    14.9   8  fef0fffdfffeff1c
+    0x02ED   749    149    14.9   8  fcfffffaffff001e
+    0x02EE   750    149    14.9   8  fffdffc0ffffff93
+    0x02EF   751    149    14.9   8  801a80008000ff17
+    0x02F0   752    149    14.9   8  fef0fffdfffeff17
+    0x02F1   753    149    14.9   8  fcfffffaffff0019
+    0x02F2   754    149    14.9   8  fffdffc0ffffff9e
+    0x02F3   755    149    14.9   8  801a80008000ff12
+    0x02F4   756    149    14.9   8  fef0fffdfffeff13
+    0x02F5   757    149    14.9   8  fcfffffaffff0015
+    0x02F6   758    149    14.9   8  fffdffc0ffffff9a
+    0x02F7   759    149    14.9   8  801a80008000ff1e
+    0x02F8   760    149    14.9   8  fef0fffdfffeff1f
+    0x02F9   761    149    14.9   8  fcfffffaffff0011
+    0x02FA   762    149    14.9   8  fffdffc0ffffff96
+    0x02FB   763    149    14.9   8  801a80008000ff1a
+    0x02FC   764    149    14.9   8  fef0fffdfffeff1b
+    0x02FD   765    149    14.9   8  fcfffffaffff001d
+    0x02FE   766    149    14.9   8  fffdffc0ffffff92
+    0x02FF   767    149    14.9   8  801a80008000ff16
+    0x033D   829    100    10.0   5  0000004809
+    0x0400  1024    500    50.0   4  02802035
+    0x0410  1040     10     1.0   6  54564341322c
+    0x0420  1056    100    10.0   8  0000000000000002
+    0x0669  1641     10     1.0   8  00022b7bb7dd0015
+    0x0750  1872    500    50.0   8  008c00240000007b
+    0x7FE7A00 134117888    298    29.8   8  de050000f50c0000
+    0x1BFE7A36 469662262    100    10.0   8  0b0b00000b0b0001
+    0x1BFE7A37 469662263    100    10.0   8  0000000000000000
+
+  ==================================================================
+  CAN FRAMES OF INTEREST (EPS telemetry planning)
+  ==================================================================
+  EPS frames that SHOULD be comma-visible:
+    0x014A 330               : PRESENT  bus 1 @ 100.0Hz dlc8
+    0x018F 399 STEER_STATUS  : PRESENT  bus 1 @ 99.9Hz dlc7
+    0x01AB 427 MOTOR_TORQUE  : PRESENT  bus 1 @ 50.0Hz dlc3
+
+  EPS frames believed EPS-internal-only (telemetry can't use these):
+    0x019F 415                     : ABSENT  (confirms internal-bus-only)
+    0x032E 814                     : ABSENT  (confirms internal-bus-only)
+    0x064D 1613                    : ABSENT  (confirms internal-bus-only)
+    0x0660 1632 (telemetry target) : ABSENT  (confirms internal-bus-only)
+
+  Read the rates above: a telemetry frame must sit on a comma-visible bus
+  at >=~50Hz for the ~90ms gentle-EME cut. 100Hz single-signal = ~9 samples.
+====================================================================
+  RESULTS SUMMARY
+====================================================================
+  spi         : PASS
+  pandad      : PASS
+  connect     : PASS
+  health      : PASS
+  can_read    : PASS
+
+  ALL CHECKS PASSED - panda reachable, SILENT, and CAN traffic inventoried.
+[?2004h]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ pyghon3[K[K[K[K[Kthon3 sniff_can_id.py -id 0x18F --bus 1 --seconds 5
+[?2004lusage: sniff_can_id.py [-h] [--id ID] [--bus BUS] [--seconds SECONDS]
+sniff_can_id.py: error: unrecognized arguments: -id 0x18F
+[?2004h]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ python3 sniff_can_id.py -id 0x18F --bus 1 --seconds 5[1@-
+[?2004lINFO: connecting to panda 1a000f000851333334373931
+[watch] SILENT, id=0x18F bus=1 for 5s. ---> TURN THE WHEEL now <---
+
+[result] 500 frames of 0x18F on bus 1, 497 UNIQUE payload(s)
+  per-byte value range across all distinct payloads (byte: min..max):
+    byte0:   0..255  span=255   <-- VARIES
+    byte1:   0..255  span=255   <-- VARIES
+    byte2:   0..255  span=255   <-- VARIES
+    byte3:   0..255  span=255   <-- VARIES
+    byte4:  48.. 48  span=0
+    byte5:   0..  0  span=0
+    byte6:   0.. 63  span=63   <-- VARIES
+
+  first distinct payloads seen (t, hex):
+    [ 0.01s] f41cfb93300025
+    [ 0.02s] f28af961300038
+    [ 0.03s] f36ef7be300008
+    [ 0.04s] f5d1f7c6300012
+    [ 0.05s] f623f954300020
+    [ 0.06s] f341fa3e300039
+    [ 0.07s] f1b8f9fc300007
+    [ 0.08s] f182f9d6300017
+
+[read this] 0x18F CHANGES while turning -> the EPS senses LIVE torque in RAM. So the STATIC UDS read of gp-0x4f68 is a read-path staleness bug (ECU response cache / latched value), not the firmware.
+[?2004h]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ python3 sniff_can_id.py --id 0x18F --bus 1 --seconds 5[1P[1@0
+[?2004lINFO: connecting to panda 1a000f000851333334373931
+[watch] SILENT, id=0x18F bus=0 for 5s. ---> TURN THE WHEEL now <---
+
+[result] 0 frames of 0x18F on bus 0, 0 UNIQUE payload(s)
+  NONE seen -> wrong id/bus, or not transmitted (399 is ~100Hz on bus 1).
+[?2004h]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ python3 sniff_can_id.py --id 0x18F --bus 0 --seconds 5[1P[1@2
+[?2004lINFO: connecting to panda 1a000f000851333334373931
+[watch] SILENT, id=0x18F bus=2 for 5s. ---> TURN THE WHEEL now <---
+
+[result] 0 frames of 0x18F on bus 2, 0 UNIQUE payload(s)
+  NONE seen -> wrong id/bus, or not transmitted (399 is ~100Hz on bus 1).
+[?2004h]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ python3 bench_uds_telem_read.py --bus 1 --obd off --safety e lm327 --seconds 12 --yes --out a1.csv
+[?2004l======================================================================
+  bench_uds_telem_read.py - about to TRANSMIT UDS reads on CAN
+======================================================================
+  bus            : 1
+  request addr   : 0x18DA30F1
+  will send      : [22 48 01]  (ReadDataByIdentifier, DID 0x4801)
+  plus           : [3E 00] TesterPresent
+  read-only      : SID 0x22/0x3E change NO ECU state
+  prereq         : openpilot/pandad killed (tmux kill-server)
+======================================================================
+[confirm] --yes given, proceeding
+INFO: connecting to panda 1a000f000851333334373931
+[obd] OBD multiplexing = False (bus 1 -> harness CAN2 / normal)
+[uds] hand-rolled ISO-TP (no UdsClient dep); req=0x18DA30F1 resp=0x18DAF130 bus=1
+[log] writing CSV -> a1.csv
+[run] polling DID 0x4801 on bus 1 (max rate); Ctrl-C to stop.
+[    1.8s] n=5 ok=0 err=5     0/s  last MAX=None AVG=None COLTQ=None ANGLE=None      [    3.9s] n=11 ok=0 err=11     0/s  last MAX=None AVG=None COLTQ=None ANGLE=None      [    6.3s] n=17 ok=0 err=17     0/s  last MAX=None AVG=None COLTQ=None ANGLE=None      [    8.4s] n=23 ok=0 err=23     0/s  last MAX=None AVG=None COLTQ=None ANGLE=None      [   10.9s] n=29 ok=0 err=29     0/s  last MAX=None AVG=None COLTQ=None ANGLE=None      
+[done] 12.1s  samples=32  ok=0  err=32  avg=0/s
+[done] CSV: a1.csv
+[hint] 0 successful reads. Check: .rwd flashed? correct --bus (try 0)? openpilot killed? correct --did?
+[?2004h]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ python3 bench_uds_telem_read.py --bus 1 --obd off --safety elm327 --seconds 12 --yes --out a1.csv[1P.csv2.csv[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C --safety elm[1P[A]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C --safety elm3[1P[A]0;comma@comma-7fe43f61: /data/media/0/testing[01;32mcomma@comma-7fe43f61[00m:[01;34m/data/media/0/testing[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[

@@ -1,0 +1,492 @@
+<!-- Section 21: Clocked Serial Interface G (CSIG) — UPD70F3508 -->
+<!-- 3 instances: CSIG0, CSIG1, CSIG2 -->
+<!-- Each instance has registers spread across two non-contiguous address ranges:   -->
+<!--   <CSIGn_base0>: CTL1 (+10H), CTL2 (+14H), CFG0 (+1010H)                      -->
+<!--   <CSIGn_base1>: CTL0 (+00H), STR0 (+04H), STCR0 (+08H), BCTL0 (+80H),        -->
+<!--                  TX0W (+84H), TX0H (+88H), RX0 (+8CH)                          -->
+<!-- Because the two address regions are disjoint, each instance is split into       -->
+<!-- two SVD peripherals: CSIGn_B0 (base0 region) and CSIGn_B1 (base1 region).     -->
+
+<!-- ===== CSIG0 base0 region (0xFF700000): CTL1, CTL2, CFG0 ===== -->
+<peripheral>
+  <name>CSIG0_B0</name>
+  <description>Clocked Serial Interface G 0 - base0 region (CTL1, CTL2, CFG0)</description>
+  <baseAddress>0xFF700010</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1004</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>CSIG0CTL1</name>
+      <description>CSIG0 Control Register 1</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIGnCKR</name><description>Clock phase selection: 0=SCK default high, 1=SCK default low</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIGnSLIT</name><description>TIC interrupt timing: 0=after transfer, 1=when TX0W/H free</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIGnEDLE</name><description>Extended data length enable: 0=disabled, 1=enabled</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIGnDCS</name><description>Data consistency check enable: 0=disabled, 1=enabled</description><bitRange>[5:5]</bitRange></field>
+        <field><name>CSIGnLBM</name><description>Loop-back mode: 0=deactivated, 1=activated</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIGnSIT</name><description>Interrupt delay: 0=no delay, 1=half-clock delay</description><bitRange>[2:2]</bitRange></field>
+        <field><name>CSIGnHSE</name><description>Handshake enable: 0=disabled, 1=enabled</description><bitRange>[1:1]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG0CTL2</name>
+      <description>CSIG0 Control Register 2 - baud rate generator</description>
+      <addressOffset>0x4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xE000</resetValue>
+      <fields>
+        <field><name>CSIGnPRS</name><description>Prescaler select [2:0]: 000-110=PCLK/2^m master, 111=slave ext clock</description><bitRange>[15:13]</bitRange></field>
+        <field><name>CSIGnBRS</name><description>Baud rate select [11:0]: 0=BRG stopped, 1-4095=divisor k</description><bitRange>[11:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG0 is at base0+1010H; offset from this peripheral's base (base0+10H) = 0x1000 -->
+    <register>
+      <name>CSIG0CFG0</name>
+      <description>CSIG0 Configuration Register 0 - protocol, data length, parity, direction, clock/data phase</description>
+      <addressOffset>0x1000</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIGnPS</name><description>Parity select [1:0]: 00=none, 01=fixed-0, 10=odd, 11=even</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIGnDLS</name><description>Data length select [3:0]: 0=16-bit, 1-15=N bits</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIGnDIR</name><description>Transfer direction: 0=MSB first, 1=LSB first</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIGnDAP</name><description>Data phase selection (used with CKR for SPI mode)</description><bitRange>[16:16]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== CSIG0 base1 region (0xFFFFE400): CTL0, STR0, STCR0, BCTL0, TX0W, TX0H, RX0 ===== -->
+<peripheral>
+  <name>CSIG0_B1</name>
+  <description>Clocked Serial Interface G 0 - base1 region (CTL0, STR0, STCR0, BCTL0, TX0W, TX0H, RX0)</description>
+  <baseAddress>0xFFFFE400</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x90</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>CSIG0CTL0</name>
+      <description>CSIG0 Control Register 0 - operation clock, TX/RX enable</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSIGnPWR</name><description>Operation clock: 0=stop, 1=provide</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIGnTXE</name><description>Transmission enable: 0=disabled, 1=enabled</description><bitRange>[6:6]</bitRange></field>
+        <field><name>CSIGnRXE</name><description>Reception enable: 0=disabled, 1=enabled</description><bitRange>[5:5]</bitRange></field>
+        <field><name>CSIGnMBS</name><description>Must be set to 1 before activating CSIG</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG0STR0</name>
+      <description>CSIG0 Status Register 0</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000010</resetValue>
+      <fields>
+        <field><name>CSIGnTSF</name><description>Transfer status: 0=idle, 1=transfer in progress or pending</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIGnDCE</name><description>Data consistency error flag: 0=none, 1=error detected</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIGnPE</name><description>Parity error flag: 0=none, 1=parity error detected</description><bitRange>[1:1]</bitRange></field>
+        <field><name>CSIGnOVE</name><description>Overrun error flag: 0=none, 1=overrun detected</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG0STCR0</name>
+      <description>CSIG0 Status Clear Register 0 - clears STR0 error flags</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CSIGnDCEC</name><description>Clear DCE flag: write 1 to clear CSIGnSTR0.CSIGnDCE</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIGnPEC</name><description>Clear PE flag: write 1 to clear CSIGnSTR0.CSIGnPE</description><bitRange>[1:1]</bitRange></field>
+        <field><name>CSIGnOVEC</name><description>Clear OVE flag: write 1 to clear CSIGnSTR0.CSIGnOVE</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG0BCTL0</name>
+      <description>CSIG0 Receive-Only Mode Control Register 0</description>
+      <addressOffset>0x80</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x01</resetValue>
+      <fields>
+        <field><name>CSIGnSCE</name><description>Next reception enable on RX0 read: 0=disabled, 1=enabled</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG0TX0W</name>
+      <description>CSIG0 Transmission Register 0 - word access (use with EDL)</description>
+      <addressOffset>0x84</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIGnEDL</name><description>Extended data length: 0=normal, 1=transmit as 16-bit EDL block</description><bitRange>[29:29]</bitRange></field>
+        <field><name>CSIGnTX</name><description>Transmit data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG0TX0H</name>
+      <description>CSIG0 Transmission Register 0 - half-word access (use without EDL)</description>
+      <addressOffset>0x88</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CSIGnTX</name><description>Transmit data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG0RX0</name>
+      <description>CSIG0 Reception Register 0</description>
+      <addressOffset>0x8C</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CSIGnRX</name><description>Received data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== CSIG1 base0 region (0xFF710000): CTL1, CTL2, CFG0 ===== -->
+<peripheral>
+  <name>CSIG1_B0</name>
+  <description>Clocked Serial Interface G 1 - base0 region (CTL1, CTL2, CFG0)</description>
+  <baseAddress>0xFF710010</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1004</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>CSIG1CTL1</name>
+      <description>CSIG1 Control Register 1</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIGnCKR</name><description>Clock phase selection: 0=SCK default high, 1=SCK default low</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIGnSLIT</name><description>TIC interrupt timing: 0=after transfer, 1=when TX0W/H free</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIGnEDLE</name><description>Extended data length enable: 0=disabled, 1=enabled</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIGnDCS</name><description>Data consistency check enable: 0=disabled, 1=enabled</description><bitRange>[5:5]</bitRange></field>
+        <field><name>CSIGnLBM</name><description>Loop-back mode: 0=deactivated, 1=activated</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIGnSIT</name><description>Interrupt delay: 0=no delay, 1=half-clock delay</description><bitRange>[2:2]</bitRange></field>
+        <field><name>CSIGnHSE</name><description>Handshake enable: 0=disabled, 1=enabled</description><bitRange>[1:1]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG1CTL2</name>
+      <description>CSIG1 Control Register 2 - baud rate generator</description>
+      <addressOffset>0x4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xE000</resetValue>
+      <fields>
+        <field><name>CSIGnPRS</name><description>Prescaler select [2:0]: 000-110=PCLK/2^m master, 111=slave ext clock</description><bitRange>[15:13]</bitRange></field>
+        <field><name>CSIGnBRS</name><description>Baud rate select [11:0]: 0=BRG stopped, 1-4095=divisor k</description><bitRange>[11:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG1CFG0</name>
+      <description>CSIG1 Configuration Register 0 - protocol, data length, parity, direction, clock/data phase</description>
+      <addressOffset>0x1000</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIGnPS</name><description>Parity select [1:0]: 00=none, 01=fixed-0, 10=odd, 11=even</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIGnDLS</name><description>Data length select [3:0]: 0=16-bit, 1-15=N bits</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIGnDIR</name><description>Transfer direction: 0=MSB first, 1=LSB first</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIGnDAP</name><description>Data phase selection (used with CKR for SPI mode)</description><bitRange>[16:16]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== CSIG1 base1 region (0xFFFFE500): CTL0, STR0, STCR0, BCTL0, TX0W, TX0H, RX0 ===== -->
+<peripheral>
+  <name>CSIG1_B1</name>
+  <description>Clocked Serial Interface G 1 - base1 region (CTL0, STR0, STCR0, BCTL0, TX0W, TX0H, RX0)</description>
+  <baseAddress>0xFFFFE500</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x90</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>CSIG1CTL0</name>
+      <description>CSIG1 Control Register 0 - operation clock, TX/RX enable</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSIGnPWR</name><description>Operation clock: 0=stop, 1=provide</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIGnTXE</name><description>Transmission enable: 0=disabled, 1=enabled</description><bitRange>[6:6]</bitRange></field>
+        <field><name>CSIGnRXE</name><description>Reception enable: 0=disabled, 1=enabled</description><bitRange>[5:5]</bitRange></field>
+        <field><name>CSIGnMBS</name><description>Must be set to 1 before activating CSIG</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG1STR0</name>
+      <description>CSIG1 Status Register 0</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000010</resetValue>
+      <fields>
+        <field><name>CSIGnTSF</name><description>Transfer status: 0=idle, 1=transfer in progress or pending</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIGnDCE</name><description>Data consistency error flag: 0=none, 1=error detected</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIGnPE</name><description>Parity error flag: 0=none, 1=parity error detected</description><bitRange>[1:1]</bitRange></field>
+        <field><name>CSIGnOVE</name><description>Overrun error flag: 0=none, 1=overrun detected</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG1STCR0</name>
+      <description>CSIG1 Status Clear Register 0 - clears STR0 error flags</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CSIGnDCEC</name><description>Clear DCE flag: write 1 to clear CSIGnSTR0.CSIGnDCE</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIGnPEC</name><description>Clear PE flag: write 1 to clear CSIGnSTR0.CSIGnPE</description><bitRange>[1:1]</bitRange></field>
+        <field><name>CSIGnOVEC</name><description>Clear OVE flag: write 1 to clear CSIGnSTR0.CSIGnOVE</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG1BCTL0</name>
+      <description>CSIG1 Receive-Only Mode Control Register 0</description>
+      <addressOffset>0x80</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x01</resetValue>
+      <fields>
+        <field><name>CSIGnSCE</name><description>Next reception enable on RX0 read: 0=disabled, 1=enabled</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG1TX0W</name>
+      <description>CSIG1 Transmission Register 0 - word access (use with EDL)</description>
+      <addressOffset>0x84</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIGnEDL</name><description>Extended data length: 0=normal, 1=transmit as 16-bit EDL block</description><bitRange>[29:29]</bitRange></field>
+        <field><name>CSIGnTX</name><description>Transmit data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG1TX0H</name>
+      <description>CSIG1 Transmission Register 0 - half-word access (use without EDL)</description>
+      <addressOffset>0x88</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CSIGnTX</name><description>Transmit data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG1RX0</name>
+      <description>CSIG1 Reception Register 0</description>
+      <addressOffset>0x8C</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CSIGnRX</name><description>Received data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== CSIG2 base0 region (0xFF720000): CTL1, CTL2, CFG0 ===== -->
+<peripheral>
+  <name>CSIG2_B0</name>
+  <description>Clocked Serial Interface G 2 - base0 region (CTL1, CTL2, CFG0)</description>
+  <baseAddress>0xFF720010</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1004</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>CSIG2CTL1</name>
+      <description>CSIG2 Control Register 1</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIGnCKR</name><description>Clock phase selection: 0=SCK default high, 1=SCK default low</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIGnSLIT</name><description>TIC interrupt timing: 0=after transfer, 1=when TX0W/H free</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIGnEDLE</name><description>Extended data length enable: 0=disabled, 1=enabled</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIGnDCS</name><description>Data consistency check enable: 0=disabled, 1=enabled</description><bitRange>[5:5]</bitRange></field>
+        <field><name>CSIGnLBM</name><description>Loop-back mode: 0=deactivated, 1=activated</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIGnSIT</name><description>Interrupt delay: 0=no delay, 1=half-clock delay</description><bitRange>[2:2]</bitRange></field>
+        <field><name>CSIGnHSE</name><description>Handshake enable: 0=disabled, 1=enabled</description><bitRange>[1:1]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG2CTL2</name>
+      <description>CSIG2 Control Register 2 - baud rate generator</description>
+      <addressOffset>0x4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xE000</resetValue>
+      <fields>
+        <field><name>CSIGnPRS</name><description>Prescaler select [2:0]: 000-110=PCLK/2^m master, 111=slave ext clock</description><bitRange>[15:13]</bitRange></field>
+        <field><name>CSIGnBRS</name><description>Baud rate select [11:0]: 0=BRG stopped, 1-4095=divisor k</description><bitRange>[11:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG2CFG0</name>
+      <description>CSIG2 Configuration Register 0 - protocol, data length, parity, direction, clock/data phase</description>
+      <addressOffset>0x1000</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIGnPS</name><description>Parity select [1:0]: 00=none, 01=fixed-0, 10=odd, 11=even</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIGnDLS</name><description>Data length select [3:0]: 0=16-bit, 1-15=N bits</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIGnDIR</name><description>Transfer direction: 0=MSB first, 1=LSB first</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIGnDAP</name><description>Data phase selection (used with CKR for SPI mode)</description><bitRange>[16:16]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== CSIG2 base1 region (0xFFFFE600): CTL0, STR0, STCR0, BCTL0, TX0W, TX0H, RX0 ===== -->
+<peripheral>
+  <name>CSIG2_B1</name>
+  <description>Clocked Serial Interface G 2 - base1 region (CTL0, STR0, STCR0, BCTL0, TX0W, TX0H, RX0)</description>
+  <baseAddress>0xFFFFE600</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x90</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>CSIG2CTL0</name>
+      <description>CSIG2 Control Register 0 - operation clock, TX/RX enable</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSIGnPWR</name><description>Operation clock: 0=stop, 1=provide</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIGnTXE</name><description>Transmission enable: 0=disabled, 1=enabled</description><bitRange>[6:6]</bitRange></field>
+        <field><name>CSIGnRXE</name><description>Reception enable: 0=disabled, 1=enabled</description><bitRange>[5:5]</bitRange></field>
+        <field><name>CSIGnMBS</name><description>Must be set to 1 before activating CSIG</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG2STR0</name>
+      <description>CSIG2 Status Register 0</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000010</resetValue>
+      <fields>
+        <field><name>CSIGnTSF</name><description>Transfer status: 0=idle, 1=transfer in progress or pending</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIGnDCE</name><description>Data consistency error flag: 0=none, 1=error detected</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIGnPE</name><description>Parity error flag: 0=none, 1=parity error detected</description><bitRange>[1:1]</bitRange></field>
+        <field><name>CSIGnOVE</name><description>Overrun error flag: 0=none, 1=overrun detected</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG2STCR0</name>
+      <description>CSIG2 Status Clear Register 0 - clears STR0 error flags</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CSIGnDCEC</name><description>Clear DCE flag: write 1 to clear CSIGnSTR0.CSIGnDCE</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIGnPEC</name><description>Clear PE flag: write 1 to clear CSIGnSTR0.CSIGnPE</description><bitRange>[1:1]</bitRange></field>
+        <field><name>CSIGnOVEC</name><description>Clear OVE flag: write 1 to clear CSIGnSTR0.CSIGnOVE</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG2BCTL0</name>
+      <description>CSIG2 Receive-Only Mode Control Register 0</description>
+      <addressOffset>0x80</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x01</resetValue>
+      <fields>
+        <field><name>CSIGnSCE</name><description>Next reception enable on RX0 read: 0=disabled, 1=enabled</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG2TX0W</name>
+      <description>CSIG2 Transmission Register 0 - word access (use with EDL)</description>
+      <addressOffset>0x84</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIGnEDL</name><description>Extended data length: 0=normal, 1=transmit as 16-bit EDL block</description><bitRange>[29:29]</bitRange></field>
+        <field><name>CSIGnTX</name><description>Transmit data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG2TX0H</name>
+      <description>CSIG2 Transmission Register 0 - half-word access (use without EDL)</description>
+      <addressOffset>0x88</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CSIGnTX</name><description>Transmit data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CSIG2RX0</name>
+      <description>CSIG2 Reception Register 0</description>
+      <addressOffset>0x8C</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CSIGnRX</name><description>Received data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

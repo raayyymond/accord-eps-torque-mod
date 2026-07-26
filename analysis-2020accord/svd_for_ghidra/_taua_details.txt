@@ -1,0 +1,3360 @@
+=== PDF PAGE 784 ===
+R01UH0098EJ0100 Rev.1.00
+Page 764 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.15.3
+Details of TAUAn Control Registers
+(1)
+TAUAnCDRm - TAUAn Channel Data Register m
+This register functions either as a compare register or as a capture register,
+depending on the operating mode specified in TAUAnCMORm.TAUAnMD[4:1].
+Access
+Readable/writable in 16-bit units.
+• Readable in capture mode. Any write operation is ignored.
+• Readable/writable in compare mode.
+Address
+<TAUAn_base1> + m  4H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUAnCDR[15:0]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-203
+Description of TAUAnCDRm Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnCDR
+[15:0]
+Data register for capture/compare values
+
+
+=== PDF PAGE 785 ===
+R01UH0098EJ0100 Rev.1.00
+Page 765 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(2)
+TAUAnCNTm - TAUAn Channel Counter Register m
+This is a channel m counter register.
+Access
+Readable in 16-bit units.
+Address
+<TAUAn_base1> + 80H + m  4H
+Initial value
+0000H or FFFFH
+An initial value depends on an operating mode. See table 13-205, 
+TAUAnCNTm Read Values after Re-Enabling Counter. This register is 
+initialized by any reset source.
+A read value depends on a counter value, a changed operating mode, 
+TAUAnTS.TAUAnTSm or TAUAnTT.TAUAnTTm bit value.
+The initial read value of the counter depends on an operating mode and how 
+the counter is stopped.
+• Stop by a reset 
+• Stop by a counter stop trigger (TAUAnTT.TAUAnTTm = 1)
+The following table lists the initial counter read values after the counter is 
+stopped (TAUAnTE.TAUAnTEm = 0) and re-enabled (TAUAnTS.TAUAnTSm = 
+1).
+The table also contains the counter read value one count after the counter is
+enabled (TAUAnTS.TAUAnTSm = 1) with the counter waiting for a start trigger.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUAnCNT[15:0]
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table 13-204
+Description of TAUAnCNTm Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnCNT
+[15:0]
+16-bit counter value
+
+
+=== PDF PAGE 786 ===
+R01UH0098EJ0100 Rev.1.00
+Page 766 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+Note
+If the operating mode is changed while the counter is stopped, the initial 
+counter value after a counter restart becomes undefined. The operating mode 
+is changed by the TAUAnCMORm.TAUAnMD[4:1] register.
+Table 13-205
+TAUAnCNTm Read Values after Re-Enabling Counter 
+Mode Name
+Count Method 
+(Up/Down)
+TAUAnCNTm Value 
+After Reset
+After Stop Trigger
+After One Count
+Interval timer mode
+Count down
+FFFFH
+Stop value
+-
+Judge mode
+Count down 
+FFFFH
+Stop value
+-
+Capture mode
+Count up 
+0000H
+Stop value
+-
+Event count mode
+Count down
+FFFFH
+Stop value
+-
+One-count mode
+Count down 
+FFFFH
+Stop value
+FFFFH
+Capture and one-count mode
+Count up 
+0000H
+Stop value
+Capture value + 1 
+(TAUAnCDRm)
+Judge and one-count mode
+Count down 
+FFFFH
+Stop value
+TAUAnCNTm value 
+- 1
+Up/down count mode
+Count down/up
+FFFFH
+Stop value
+-
+Pulse one count mode
+Count down 
+FFFFH
+Stop value
+0000H
+Count capture mode
+Count up 
+0000H
+Stop value
+-
+Gate count mode
+Count down
+FFFFH
+Stop value
+Stop value
+Capture and gate count mode
+Count up
+0000H
+Stop value
+Stop value
+
+
+=== PDF PAGE 787 ===
+R01UH0098EJ0100 Rev.1.00
+Page 767 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(3)
+TAUAnCMORm - TAUAn Channel Mode OS Register m
+This register controls channel m operation.
+Access
+Readable/writable in 16-bit units. Writable when the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 200H + m  4H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUAnCKS
+[1:0]
+TAUAnCCS
+[1:0]
+TAUA
+nMAS
+TAUAnSTS[2:0]
+TAUAnCOS
+[1:0]
+-
+TAUAnMD[4:0]
+R/W
+R/W
+R/W
+R/W
+R/W
+R
+R/W
+Table 13-206
+Description of TAUAnCMORm Register (1/3)
+Bit Position
+Bit Name
+Function
+15, 14
+TAUAnCKS
+[1:0]
+Selects a sampling clock.
+A sampling clock is used for the TAUAnTTINm input edge detection circuit. 
+TAUAnCMORm.TAUAnCCS[1:0] bit setting enables use as a counter clock.
+TAUAn
+CKS1
+TAUAn
+CKS0
+Selection of Sampling Clock
+0
+0
+Prescaler output CK0
+0
+1
+Prescaler output CK1
+1
+0
+Prescaler output CK2
+1
+1
+Prescaler output CK3
+13, 12
+TAUAnCCS
+[1:0]
+Selects a count clock for TAUAnCNTm counter.
+TAUAn
+CCS1
+TAUAn
+CCS0
+Selection of Count Clock
+0
+0
+Sampling clock specified by 
+TAUAnCMORm.TAUAnCKS[1:0]
+0
+1
+Valid edge of TAUAnTTINm input signal
+1
+0
+Setting prohibited
+1
+1
+INTTAUAnIm signal of master channel
+11
+TAUAnMAS
+Specifies whether the channel is a master channel or slave channel during 
+synchronous channel operation.
+0: Slave
+1: Master
+This bit setting is valid only for even channels (CHm_even). Odd channels 
+(CHm_odd) are fixed to 0.
+
+
+=== PDF PAGE 788 ===
+R01UH0098EJ0100 Rev.1.00
+Page 768 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+10 to 8
+TAUAnSTS
+[2:0]
+Selects an external start trigger.
+TAUAn
+STS2
+TAUAn
+STS1
+TAUAn
+STS0
+Functional Description
+0
+0
+0
+Software trigger
+0
+0
+1
+Valid edge of TAUAnTTINm input signal, which 
+is specified by TAUAnCMURm.TAUAnTIS[1:0].
+0
+1
+0
+Valid edge of TAUAnTTINm input signal is used 
+as a start trigger and the opposite edge as a 
+stop trigger.
+0
+1
+1
+Simultaneous rewrite trigger
+1
+0
+0
+INT of master channel
+1
+0
+1
+INT of upper channel (m - 1) regardless of 
+master setting
+1
+1
+0
+Dead time output signal of TAUAnTTOUTm 
+generating unit
+1
+1
+1
+Up/down output trigger signal of master 
+channel
+7, 6
+TAUAnCOS
+[1:0]
+Specifies the timing for updating capture register TAUAnCDRm and overflow flag 
+TAUAnCSRm.TAUAnOVF of channel m.
+These bits are valid only when channel m is in capture mode.
+TAUAn
+COS1
+TAUAn
+COS0
+TAUAnCDRm
+TAUAnCSRm.TAUAnOVF
+0
+0
+Updated upon detection of 
+valid edge of TAUAnTTINm 
+input.
+Updated (cleared or set) by 
+detecting valid edge of 
+TAUAnTTINm input:
+•
+If a counter overflow has 
+occurred since the last 
+detection of valid edge, set 
+TAUAnCSRm.
+TAUAnOVF.
+•
+If no counter overflow has 
+occurred since the last 
+detection of valid edge, 
+clear 
+TAUAnCSRm.TAUAnOVF.
+0
+1
+Set when a counter overflow 
+occurs, and cleared when 
+TAUAnCSCm.TAUAnCLOV is 
+set to 1.
+1
+0
+Updated upon detection of 
+valid edge of TAUAnTTINm 
+input and at the occurrence of 
+counter overflow:
+•
+Detection of valid edge of 
+TAUAnTTINm input: 
+Counter value is written 
+into TAUAnCDRm.
+•
+Occurrence of overflow: 
+FFFFH is loaded into 
+TAUAnCDRm. The next 
+detection of valid of 
+TAUAnTTINm input is 
+ignored.
+Not set
+1
+1
+Set when a counter overflow 
+occurs, and cleared when 
+TAUAnCSCm.TAUAnCLOV is 
+set to 1.
+Table 13-206
+Description of TAUAnCMORm Register (2/3)
+Bit Position
+Bit Name
+Function
+
+
+=== PDF PAGE 789 ===
+R01UH0098EJ0100 Rev.1.00
+Page 769 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+4 to 0
+TAUAnMD
+[4:0]
+Specifies an operating mode.
+TAUAn
+MD4
+TAUAn
+MD3
+TAUAn
+MD2
+TAUAn
+MD1
+TAUAn
+MD0
+Functional Description
+0
+0
+0
+0
+1/0
+Interval timer mode
+0
+0
+0
+1
+1/0
+Judge mode
+0
+0
+1
+0
+1/0
+Capture mode
+0
+0
+1
+1
+0
+Event count mode
+0
+1
+0
+0
+1/0
+One-count mode
+0
+1
+0
+1
+1/0
+Setting prohibited
+0
+1
+1
+0
+0
+Capture and one-count 
+mode
+0
+1
+1
+1
+1/0
+Judge and one-count mode
+1
+0
+0
+0
+0
+Setting prohibited
+1
+0
+0
+1
+0
+Up/down count mode
+1
+0
+1
+0
+1/0
+Pulse one-count mode
+1
+0
+1
+1
+1/0
+Count capture mode
+1
+1
+0
+0
+0
+Gate count mode
+1
+1
+0
+1
+0
+Capture and gate count 
+mode
+Mode
+Role of TAUAnMD0 Bit
+Interval timer mode
+Capture mode
+Count capture mode
+Specifies whether INTTAUAnIm is generated at the beginning of count operation 
+(when a start trigger is entered) or not.
+0: INTTAUAnIm is not generated.
+1: INTTAUAnIm is generated.
+Event count mode
+Up/down count mode
+This bit should be set to 0.
+One-count mode
+Gate count mode
+Pulse one-count mode
+Enables/disables start trigger detection during counting.
+0: Disables detection.
+1: Enables detection.
+Capture and one-count 
+mode
+Capture and gate count 
+mode
+This bit should be set to 0.
+Judge mode
+Judge and one-count 
+mode
+Specifies INTTAUAnIm output timing.
+0: When TAUAnCNTm  TAUAnCDRm
+1: When TAUAnCNTm > TAUAnCDRm
+Table 13-206
+Description of TAUAnCMORm Register (3/3)
+Bit Position
+Bit Name
+Function
+
+
+=== PDF PAGE 790 ===
+R01UH0098EJ0100 Rev.1.00
+Page 770 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(4)
+TAUAnCMURm - TAUAn Channel Mode User Register m
+This register specifies a type of valid edge detection used for TAUAnTTINm 
+input.
+Access
+Readable/writable in 8-bit units.
+Address
+<TAUAn_base1> + C0H + m  4H
+Initial value
+00H
+This register is initialized by any reset source.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+-
+-
+-
+-
+TAUAnTIS[1:0]
+R
+R
+R
+R
+R
+R
+R/W
+R/W
+Table 13-207
+Description of TAUAnCMURm Register
+Bit Position
+Bit Name
+Function
+1, 0
+TAUAnTIS
+[1:0]
+Specifies a valid edge of TAUAnTTINm input signal.
+TAUAn
+TIS1
+TAUAn
+TIS0
+Functional Description
+0
+0
+Falling edge
+0
+1
+Rising edge
+1
+0
+Detects both of falling and rising edges (Selects 
+low width measurement)
+Start trigger: Falling edge
+Stop trigger (capture): Rising edge
+1
+1
+Detects both of falling and rising edges (Selects 
+high width measurement)
+Start trigger: Rising edge
+Stop trigger (capture): Falling edge
+•
+Edge detection of TAUAnTTINm input signal is based on the sampling clock 
+selected by TAUAnCMORm.TAUAnCKS[1:0].
+
+
+=== PDF PAGE 791 ===
+R01UH0098EJ0100 Rev.1.00
+Page 771 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(5)
+TAUAnCSRm - TAUAn Channel Status Register m
+This register indicates the count direction and overflow status of channel m 
+counter.
+Access
+Readable in 8-bit units.
+Address
+<TAUAn_base1> + 140H + m  4H
+Initial value
+00H
+This register is initialized by any reset source.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+-
+-
+-
+-
+TAUAnCSF
+TAUAnOVF
+R
+R
+R
+R
+R
+R
+R
+R
+Table 13-208
+Description of TAUAnCSRm Register
+Bit Position
+Bit Mame
+Function
+1
+TAUAnCSF
+Indicates a count direction.
+0: Count-up
+1: Count-down
+The read value of this bit is valid only in the following mode:
+•
+Up/down count
+0
+TAUAnOVF
+Indicates counter overflow status.
+0: No overflow occurs.
+1: Overflow occurs.
+This bit is used only in the following modes:
+•
+Capture mode
+•
+Capture and one-count mode
+•
+Count capture mode
+•
+Capture and gate count mode
+The function of this bit depends on the setting of control bit 
+TAUAnCMORm.TAUAnCOS[1:0].
+
+
+=== PDF PAGE 792 ===
+R01UH0098EJ0100 Rev.1.00
+Page 772 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(6)
+TAUAnCSCm - TAUAn Channel Status Clear Trigger Register m
+This is a trigger register for clearing the overflow flag 
+TAUAnCSRm.TAUAnOVF of channel m.
+Access
+Writable in 8-bit units. This value is always read as 00H.
+Address
+<TAUAn_base1> + 180H + m  4H
+Initial value
+00H
+This register is initialized by any reset source.
+(7)
+TAUAnTS - TAUAn Channel Start Trigger Register
+This register enables the counter operation of each channel.
+Access
+Writable in 16-bit units. This value is always read as 0000H.
+Address
+<TAUAn_base1> + 1C4H
+Initial value
+0000H
+This register is initialized by any reset source.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+-
+-
+-
+-
+0
+TAUAnCLOV
+R
+R
+R
+R
+R
+R
+R
+W
+Table 13-209
+Description of TAUAnCSCm Register
+Bit Position
+Bit Name
+Function
+0
+TAUAnCLOV
+Controls whether to clear the overflow flag (TAUAnCSRm.TAUAnOVF bit) of 
+channel m.
+0: Invalid (Setting this bit to 0 does not affect the overflow flag 
+TAUAnCSRm.TAUAnOVF bit.)
+1: Clears overflow flag TAUAnCSRm.TAUAnOVF.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTS
+15
+TAUA
+nTS
+14
+TAUA
+nTS
+13
+TAUA
+nTS
+12
+TAUA
+nTS
+11
+TAUA
+nTS
+10
+TAUA
+nTS
+09
+TAUA
+nTS
+08
+TAUA
+nTS
+07
+TAUA
+nTS
+06
+TAUA
+nTS
+05
+TAUA
+nTS
+04
+TAUA
+nTS
+03
+TAUA
+nTS
+02
+TAUA
+nTS
+01
+TAUA
+nTS
+00
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+Table 13-210
+Description of TAUAnTS Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTSm
+Enables the counter operation of channel m.
+0: Invalid (Setting these bits to 0 does not start the counter operation of channel 
+m.)
+1: Enables the counter operation and sets TAUAnTE.TAUAnTEm to 1.
+The counter operation is only enabled when TAUAnTE.TAUAnTEm is set to 1. 
+Whether counting is started or not depends on a selected operating mode.
+
+
+=== PDF PAGE 793 ===
+R01UH0098EJ0100 Rev.1.00
+Page 773 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(8)
+TAUAnTE - TAUAn Channel Enable Status Register
+This register enables/disables a counter operation.
+Access
+Readable in 16-bit units.
+Address
+<TAUAn_base1> + 1C0H
+Initial value
+0000H
+This register is initialized by any reset source.
+Note
+For details on how to make a simultaneous start between units, see section 
+26.4.1, Simultaneous Start Trigger Function.
+(9)
+TAUAnTT - TAUAn Channel Stop Trigger Register
+This register stops the counter operation of each channel.
+Access
+Writable in 16-bit units. This value is always read as 0000H.
+Address
+<TAUAn_base1> + 1C8H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTE
+15
+TAUA
+nTE
+14
+TAUA
+nTE
+13
+TAUA
+nTE
+12
+TAUA
+nTE
+11
+TAUA
+nTE
+10
+TAUA
+nTE
+09
+TAUA
+nTE
+08
+TAUA
+nTE
+07
+TAUA
+nTE
+06
+TAUA
+nTE
+05
+TAUA
+nTE
+04
+TAUA
+nTE
+03
+TAUA
+nTE
+02
+TAUA
+nTE
+01
+TAUA
+nTE
+00
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table 13-211
+Description of TAUAnTE Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTEm
+Enables/disables the counter operation of channel m.
+0: Disables counter operation.
+1: Enables counter operation.
+This bit is set to 1 when trigger input of TAUAnTSSTm (synchronous channel 
+start trigger signal) is detected or when TAUAnTS.TAUAnTSm is set to 1. This bit 
+is set to 0 when TAUAnTT.TAUAnTTm is set to 1.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTT
+15
+TAUA
+nTT
+14
+TAUA
+nTT
+13
+TAUA
+nTT
+12
+TAUA
+nTT
+11
+TAUA
+nTT
+10
+TAUA
+nTT
+09
+TAUA
+nTT
+08
+TAUA
+nTT
+07
+TAUA
+nTT
+06
+TAUA
+nTT
+05
+TAUA
+nTT
+04
+TAUA
+nTT
+03
+TAUA
+nTT
+02
+TAUA
+nTT
+01
+TAUA
+nTT
+00
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+Table 13-212
+Description of TAUAnTT Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTTm
+Stops the counter operation of channel m.
+0: Invalid (Setting these bits to 0 does not stop the counter operation of channel 
+m.)
+1: Stops the counter operation and resets TAUAnTE.TAUAnTEm.
+TAUAnCNTm, TAUAnTO.TAUAnTOm, and TAUAnTTOUTm retain the values 
+provided before the counter is stopped.
+
+
+=== PDF PAGE 794 ===
+R01UH0098EJ0100 Rev.1.00
+Page 774 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.15.4
+Details of TAUAn Output Registers
+(1)
+TAUAnTOE - TAUAn Channel Output Enable Register
+This register enables/disables the independent channel output mode 
+controlled by software. 
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm bit = 0).
+Address
+<TAUAn_base1> + 5CH
+Initial value
+0000H
+This register is initialized by any reset source.
+Note
+The output from TAUAnTTOUTm pin is controlled by TAUAnTO.TAUAnTOm 
+(software control).
+(2)
+TAUAnTOM - TAUAn Channel Output Mode Register
+This register specifies the output mode of each channel.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 248H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTOE
+15
+TAUA
+nTOE
+14
+TAUA
+nTOE
+13
+TAUA
+nTOE
+12
+TAUA
+nTOE
+11
+TAUA
+nTOE
+10
+TAUA
+nTOE
+09
+TAUA
+nTOE
+08
+TAUA
+nTOE
+07
+TAUA
+nTOE
+06
+TAUA
+nTOE
+05
+TAUA
+nTOE
+04
+TAUA
+nTOE
+03
+TAUA
+nTOE
+02
+TAUA
+nTOE
+01
+TAUA
+nTOE
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-213
+Description of TAUAnTOE Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTOEm
+Enables/disables the independent timer output function.
+0: Disables the independent timer output function (software control).
+1: Enables the independent timer output function.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTOM
+15
+TAUA
+nTOM
+14
+TAUA
+nTOM
+13
+TAUA
+nTOM
+12
+TAUA
+nTOM
+11
+TAUA
+nTOM
+10
+TAUA
+nTOM
+09
+TAUA
+nTOM
+08
+TAUA
+nTOM
+07
+TAUA
+nTOM
+06
+TAUA
+nTOM
+05
+TAUA
+nTOM
+04
+TAUA
+nTOM
+03
+TAUA
+nTOM
+02
+TAUA
+nTOM
+01
+TAUA
+nTOM
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-214
+Description of TAUAnTOM Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTOMm
+Specifies an output mode.
+0: Independent channel operation
+1: Synchronous channel operation
+As described in table 13-9, Channel Output Modes, the output mode depends on 
+the setting of each channel output control bit.
+
+
+=== PDF PAGE 795 ===
+R01UH0098EJ0100 Rev.1.00
+Page 775 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(3)
+TAUAnTOC - TAUAn Channel Output Configuration Register
+This register specifies the output mode of each channel in combination with 
+TAUAnTOMm.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 24CH
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTOC
+15
+TAUA
+nTOC
+14
+TAUA
+nTOC
+13
+TAUA
+nTOC
+12
+TAUA
+nTOC
+11
+TAUA
+nTOC
+10
+TAUA
+nTOC
+09
+TAUA
+nTOC
+08
+TAUA
+nTOC
+07
+TAUA
+nTOC
+06
+TAUA
+nTOC
+05
+TAUA
+nTOC
+04
+TAUA
+nTOC
+03
+TAUAn
+TOC
+02
+TAUAn
+TOC
+01
+TAUAn
+TOC
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-215
+Description of TAUAnTOC Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAn
+TOCm
+Specifies an output mode.
+0: Operating mode 1
+1: Operating mode 2
+As listed below, the output mode depends on the setting of 
+TAUAnTOM.TAUAnTOMm.
+TOMm
+TOCm
+Functional Description
+0
+0
+Toggle mode: Toggle operation is conducted 
+when INTTAUAnIm occurs.
+1
+Set/reset mode: Set when INTTAUAnIm occurs 
+at the beginning of count operation, and reset 
+when INTTAUAnlm is caused by detection of a 
+match between TAUAnCNTm and 
+TAUAnCDRm.
+1
+0
+Synchronous channel operating mode 1: Set 
+when INT occurs on master channels, and 
+reset when INT occurs on slave channels.
+1
+Synchronous channel operating mode 2: Set 
+when INTTAUAnIm occurs in count-down 
+status, and reset when INTTAUAnIm occurs in 
+count-up status.
+
+
+=== PDF PAGE 796 ===
+R01UH0098EJ0100 Rev.1.00
+Page 776 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(4)
+TAUAnTDE - TAUAn Channel Dead Time Output Enable Register
+This register enables/disables the dead time operation of every channel.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 250H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTDE
+15
+TAUA
+nTDE
+14
+TAUA
+nTDE
+13
+TAUA
+nTDE
+12
+TAUA
+nTDE
+11
+TAUA
+nTDE
+10
+TAUA
+nTDE
+09
+TAUA
+nTDE
+08
+TAUA
+nTDE
+07
+TAUA
+nTDE
+06
+TAUA
+nTDE
+05
+TAUA
+nTDE
+04
+TAUA
+nTDE
+03
+TAUA
+nTDE
+02
+TAUA
+nTDE
+01
+TAUA
+nTDE
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-216
+Description of TAUAnTDE Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTDEm
+Enables/disables the dead time control operation of channel m.
+0: Disables dead time operation.
+1: Enables dead time operation.
+The same setting should be made for both even and odd slave channels in pairs.
+These bit settings are applied when:
+•
+TAUAnTOE.TAUAnTOEm, TAUAnTOM.TAUAnTOMm, 
+TAUAnTOC.TAUAnTOCm = 1
+
+
+=== PDF PAGE 797 ===
+R01UH0098EJ0100 Rev.1.00
+Page 777 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(5)
+TAUAnTDM - TAUAn Channel Dead Time Output Mode Register 
+This register specifies the timing to add dead time during dead time output.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 254H
+Initial value
+0000H
+This register is initialized by any reset source.
+(6)
+TAUAnTDL - TAUAn Channel Dead Time Output Level Register
+This register selects a phase in which dead time is added.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm bit = 0) (except the channel output mode for 
+modulation output).
+Address
+<TAUAn_base1> + 54H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTDM
+15
+TAUA
+nTDM
+14
+TAUA
+nTDM
+13
+TAUA
+nTDM
+12
+TAUA
+nTDM
+11
+TAUA
+nTDM
+10
+TAUA
+nTDM
+09
+TAUA
+nTDM
+08
+TAUA
+nTDM
+07
+TAUA
+nTDM
+06
+TAUA
+nTDM
+05
+TAUA
+nTDM
+04
+TAUA
+nTDM
+03
+TAUA
+nTDM
+02
+TAUA
+nTDM
+01
+TAUA
+nTDM
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-217
+Description of TAUAnTDM Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTDMm
+Specifies the timing to add dead time during dead time output.
+0: When detecting the duty cycle of an upper even channel (duty dead time 
+output).
+1: When detecting the TIN input edge of a lower odd channel (one-phase dead 
+time output).
+The same setting should be made for both even and odd slave channels in pairs.
+These bit settings are applied when:
+•
+TAUAnTOE.TAUAnTOEm, TAUAnTOM.TAUAnTOMm, 
+TAUAnTOC.TAUAnTOCm, TAUAnTDE.TAUAnTDEm = 1
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTDL
+15
+TAUA
+nTDL
+14
+TAUA
+nTDL
+13
+TAUA
+nTDL
+12
+TAUA
+nTDL
+11
+TAUA
+nTDL
+10
+TAUA
+nTDL
+09
+TAUA
+nTDL
+08
+TAUA
+nTDL
+07
+TAUA
+nTDL
+06
+TAUA
+nTDL
+05
+TAUA
+nTDL
+04
+TAUA
+nTDL
+03
+TAUA
+nTDL
+02
+TAUA
+nTDL
+01
+TAUA
+nTDL
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-218
+Description of TAUAnTDL Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTDLm
+Selects a phase in which dead time is added.
+0: Normal phase
+1: Reverse phase
+These bit settings are applied when:
+•
+TAUAnTOE.TAUAnTOEm, TAUAnTOM.TAUAnTOMm, 
+TAUAnTOC.TAUAnTOCm, TAUAnTDE.TAUAnTDEm = 1
+
+
+=== PDF PAGE 798 ===
+R01UH0098EJ0100 Rev.1.00
+Page 778 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(7)
+TAUAnTRE - TAUAn Channel Real-Time Output Enable Register
+This register enables/disables real-time output.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 258H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTRE
+15
+TAUA
+nTRE
+14
+TAUA
+nTRE
+13
+TAUA
+nTRE
+12
+TAUA
+nTRE
+11
+TAUA
+nTRE
+10
+TAUA
+nTRE
+09
+TAUA
+nTRE
+08
+TAUA
+nTRE
+07
+TAUA
+nTRE
+06
+TAUA
+nTRE
+05
+TAUA
+nTRE
+04
+TAUA
+nTRE
+03
+TAUA
+nTRE
+02
+TAUA
+nTRE
+01
+TAUA
+nTRE
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-219
+Description of TAUAnTRE Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTREm
+Enables or disables real-time output of channel m.
+0: Disables real-time output.
+1: Enables real-time output.
+These bit settings are applied only when TAUTnTOE.TAUAnTOEm = 1.
+When TAUAnTRE.TREm = 0, TAUAnTTOUTm is not affected by real-time 
+output.
+When TAUAnTRE.TREm = 1, TAUAnTTOUTm outputs the value of real-time
+output bit TAUAnTRO.TROm in response to a timer operation.
+
+
+=== PDF PAGE 799 ===
+R01UH0098EJ0100 Rev.1.00
+Page 779 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(8)
+TAUAnTRC - TAUAn Channel Real-Time Output Control Register
+This register controls the real-time output trigger of each channel.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 25CH
+Initial value
+0000H
+This register is initialized by any reset source.
+(9)
+TAUAnTRO - TAUAn Channel Real-Time Output Register
+This register sets a value which is output to TAUAnTTOUTm.
+Access
+Readable/writable in 16-bit units.
+Address
+<TAUAn_base1> + 4CH
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTRC
+15
+TAUA
+nTRC
+14
+TAUA
+nTRC
+13
+TAUA
+nTRC
+12
+TAUA
+nTRC
+11
+TAUA
+nTRC
+10
+TAUA
+nTRC
+09
+TAUA
+nTRC
+08
+TAUA
+nTRC
+07
+TAUA
+nTRC
+06
+TAUA
+nTRC
+05
+TAUA
+nTRC
+04
+TAUA
+nTRC
+03
+TAUA
+nTRC
+02
+TAUA
+nTRC
+01
+TAUA
+nTRC
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-220
+Description of TAUAnTRC Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTRCm
+Specifies a channel on which the real-time output trigger for channel m is 
+generated.
+0: Next upper channel with this bit set to 1
+1: Channel m
+These bit settings are applied only when TAUTnTRE.TAUAnTREm = 1.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUAn
+TRO
+15
+TAUAn
+TRO
+14
+TAUAn
+TRO
+13
+TAUAn
+TRO
+12
+TAUAn
+TRO
+11
+TAUAn
+TRO
+10
+TAUAn
+TRO
+09
+TAUAn
+TRO
+08
+TAUAn
+TRO
+07
+TAUAn
+TRO
+06
+TAUAn
+TRO
+05
+TAUAn
+TRO
+04
+TAUAn
+TRO
+03
+TAUAn
+TRO
+02
+TAUAn
+TRO
+01
+TAUAn
+TRO
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-221
+Description of TAUAnTRO Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTROm
+Sets a value which is output to TAUAnTTOUTm.
+0: Low
+1: High
+TAUAnTROm value is not output to TAUAnTTOUTm when 
+TAUAnTRE.TAUAnTRE = 0, even if a real-time trigger occurs.
+
+
+=== PDF PAGE 800 ===
+R01UH0098EJ0100 Rev.1.00
+Page 780 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(10)
+TAUAnTME - TAUAn Channel Modulation Output Enable Register
+This register enables/disables modulation output for timer output and real-time 
+output.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm bit = 0) (except the channel output mode for 
+modulation output).
+Address
+<TAUAn_base1> + 50H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTME
+15
+TAUA
+nTME
+14
+TAUA
+nTME
+13
+TAUA
+nTME
+12
+TAUA
+nTME
+11
+TAUA
+nTME
+10
+TAUA
+nTME
+09
+TAUA
+nTME
+08
+TAUA
+nTME
+07
+TAUA
+nTME
+06
+TAUA
+nTME
+05
+TAUA
+nTME
+04
+TAUA
+nTME
+03
+TAUA
+nTME
+02
+TAUA
+nTME
+01
+TAUA
+nTME
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-222
+Description of TAUAnTME Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTMEm
+Enables/disables modulation output for timer output and real-time output of 
+channel m.
+0: Disables modulation.
+1: Enables modulation.
+These bit settings are applied only when TAUAnTOE.TAUAnTOEm and 
+TAUAnTRE.TAUAnTREm = 1.
+
+
+=== PDF PAGE 801 ===
+R01UH0098EJ0100 Rev.1.00
+Page 781 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.15.5
+Details of TAUAn Channel Output Level Registers
+(1)
+TAUAnTO - TAUAn Channel Output Register
+This register specifies and reads a TAUAnTTOUTm level.
+Access
+Readable/writable in 16-bit units.
+Address
+<TAUAn_base1> + 58H
+Initial value
+0000H
+This register is initialized by any reset source.
+(2)
+TAUAnTOL - TAUAn Channel Output Active Level Register
+This register specifies the output logic of channel output bit 
+(TAUAnTO.TAUAnTOm).
+Access
+Readable/writable in 16-bit units.
+Address
+<TAUAn_base1> + 40H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTO
+15
+TAUA
+nTO
+14
+TAUA
+nTO
+13
+TAUA
+nTO
+12
+TAUA
+nTO
+11
+TAUA
+nTO
+10
+TAUA
+nTO
+09
+TAUA
+nTO
+08
+TAUA
+nTO
+07
+TAUA
+nTO
+06
+TAUA
+nTO
+05
+TAUA
+nTO
+04
+TAUA
+nTO
+03
+TAUA
+nTO
+02
+TAUA
+nTO
+01
+TAUA
+nTO
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-223
+Description of TAUAnTO Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTOm
+Specifies and reads a TAUAnTTOUTm level.
+0: Low level
+1: High level
+TAUAnTOm bit is writable when TAUAnTOE.TAUAnTOEm = 0.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTOL 
+15
+TAUA
+nTOL 
+14
+TAUA
+nTOL 
+13
+TAUA
+nTOL 
+12
+TAUA
+nTOL1
+1
+TAUA
+nTOL 
+10
+TAUA
+nTOL 
+09
+TAUA
+nTOL 
+08
+TAUA
+nTOL 
+07
+TAUA
+nTOL 
+06
+TAUA
+nTOL 
+05
+TAUA
+nTOL 
+04
+TAUA
+nTOL 
+03
+TAUA
+nTOL
+02
+TAUA
+nTOL
+01
+TAUA
+nTOL
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-224
+Description of TAUAnTOL Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTOLm
+Specifies the output logic of channel m output bit (TAUAnTO.TAUAnTOm).
+0: Positive logic (active high)
+1: Inverted logic (active low)
+
+
+=== PDF PAGE 802 ===
+R01UH0098EJ0100 Rev.1.00
+Page 782 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.15.6
+Details of TAUAn Simultaneous Rewrite Registers
+(1)
+TAUAnRDE - TAUAn Channel Reload Data Enable Register
+This register enables/disables simultaneous rewrite of TAUAnCDRm/
+TAUAnTOLm data register.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 260H
+Initial value
+0000H
+This register is initialized by any reset source.
+(2)
+TAUAnRDS - TAUAn Channel Reload Data Control Channel Select 
+Register
+This register selects a channel that controls simultaneous rewrite.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 268H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nRDE
+15
+TAUA
+nRDE
+14
+TAUA
+nRDE
+13
+TAUA
+nRDE
+12
+TAUA
+nRDE
+11
+TAUA
+nRDE
+10
+TAUA
+nRDE
+09
+TAUA
+nRDE
+08
+TAUA
+nRDE
+07
+TAUA
+nRDE
+06
+TAUA
+nRDE
+05
+TAUA
+nRDE
+04
+TAUA
+nRDE
+03
+TAUA
+nRDE
+02
+TAUA
+nRDE
+01
+TAUA
+nRDE
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-225
+Description of TAUAnRDE Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnRDEm
+Enables/disables simultaneous rewrite of the data register of channel m.
+0: Disables simultaneous rewrite.
+1: Enables simultaneous rewrite.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nRDS
+15
+TAUA
+nRDS
+14
+TAUA
+nRDS
+13
+TAUA
+nRDS
+12
+TAUA
+nRDS
+11
+TAUA
+nRDS
+10
+TAUA
+nRDS
+09
+TAUA
+nRDS
+08
+TAUA
+nRDS
+07
+TAUA
+nRDS
+06
+TAUA
+nRDS
+05
+TAUA
+nRDS
+04
+TAUA
+nRDS
+03
+TAUA
+nRDS
+02
+TAUA
+nRDS
+01
+TAUA
+nRDS
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-226
+Description of TAUAnRDS Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnRDSm
+Selects a channel that monitors a simultaneous rewrite trigger.
+0: Master channel
+1: Another upper channel
+
+
+=== PDF PAGE 803 ===
+R01UH0098EJ0100 Rev.1.00
+Page 783 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(3)
+TAUAnRDM - TAUAn Channel Reload Data Mode Register
+This register selects the timing for generating a simultaneous rewrite control 
+signal.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 264H
+Initial value
+0000H
+This register is initialized by any reset source.
+(4)
+TAUAnRDC - TAUAn Channel Reload Data Control Register
+This register specifies a channel which generates an INTTAUAnlm signal to 
+trigger simultaneous rewrite.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 26CH
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nRDM
+15
+TAUA
+nRDM
+14
+TAUA
+nRDM
+13
+TAUA
+nRDM
+12
+TAUA
+nRDM
+11
+TAUA
+nRDM
+10
+TAUA
+nRDM
+09
+TAUA
+nRDM
+08
+TAUA
+nRDM
+07
+TAUA
+nRDM
+06
+TAUA
+nRDM
+05
+TAUA
+nRDM
+04
+TAUA
+nRDM
+03
+TAUA
+nRDM
+02
+TAUA
+nRDM
+01
+TAUA
+nRDM
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-227
+Description of TAUAnRDM Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnRDMm
+Selects the timing for generating a simultaneous rewrite trigger signal.
+0: When the master channel counter starts to count
+1: At the peak of cycle of triangular wave
+These bit settings are applied only when TAUAnRDE.TAUAnRDEm = 1 and 
+TAUAnRDS.TAUAnRDSm = 0.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nRDC
+15
+TAUA
+nRDC
+14
+TAUA
+nRDC
+13
+TAUA
+nRDC
+12
+TAUA
+nRDC
+11
+TAUA
+nRDC
+10
+TAUA
+nRDC
+09
+TAUA
+nRDC
+08
+TAUA
+nRDC
+07
+TAUA
+nRDC
+06
+TAUA
+nRDC
+05
+TAUA
+nRDC
+04
+TAUA
+nRDC
+03
+TAUA
+nRDC
+02
+TAUA
+nRDC
+01
+TAUA
+nRDC
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-228
+Description of TAUAnRDC Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnRDCm
+Specifies whether the channel generates a simultaneous rewrite trigger signal or 
+not.
+0: Not operate as a simultaneous rewrite trigger channel.
+1: Operates as a simultaneous rewrite trigger channel.
+These bit settings are applied only when TAUAnRDS.TAUAnRDSm = 1.
+
+
+=== PDF PAGE 804 ===
+R01UH0098EJ0100 Rev.1.00
+Page 784 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+(5)
+TAUAnRDT - TAUAn Channel Reload Data Trigger Register
+This register triggers a simultaneous rewrite pending state.
+Access
+Writable in 16-bit units. This value is always read as 0000H.
+Address
+<TAUAn_base1> + 44H
+Initial value
+0000H
+This register is initialized by any reset source.
+(6)
+TAUAnRSF - TAUAn Channel Reload Status Register
+This flag register indicates simultaneous rewrite status. 
+Access
+Readable in 16-bit units.
+Address
+<TAUAn_base1> + 48H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nRDT
+15
+TAUA
+nRDT
+14
+TAUA
+nRDT
+13
+TAUA
+nRDT
+12
+TAUA
+nRDT
+11
+TAUA
+nRDT
+10
+TAUA
+nRDT
+09
+TAUA
+nRDT
+08
+TAUA
+nRDT
+07
+TAUA
+nRDT
+06
+TAUA
+nRDT
+05
+TAUA
+nRDT
+04
+TAUA
+nRDT
+03
+TAUA
+nRDT
+02
+TAUA
+nRDT
+01
+TAUA
+nRDT
+00
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+W
+Table 13-229
+Description of TAUAnRDT Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnRDTm
+Triggers a simultaneous rewrite pending state.
+0: Invalid (Setting these bits to 0 does not trigger a simultaneous rewrite 
+pending state.)
+1: Triggers a simultaneous rewrite pending state. The simultaneous rewrite 
+pending flag (TAUAnRSF.TAUAnRSFm) is set to 1. The system waits for a 
+simultaneous rewrite trigger.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nRSF
+15
+TAUA
+nRSF
+14
+TAUA
+nRSF
+13
+TAUA
+nRSF
+12
+TAUA
+nRSF
+11
+TAUA
+nRSF
+10
+TAUA
+nRSF
+09
+TAUA
+nRSF
+08
+TAUA
+nRSF
+07
+TAUA
+nRSF
+06
+TAUA
+nRSF
+05
+TAUA
+nRSF
+04
+TAUA
+nRSF
+03
+TAUA
+nRSF
+02
+TAUA
+nRSF
+01
+TAUA
+nRSF
+00
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table 13-230
+Description of TAUAnRSF Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnRSFm
+Indicates simultaneous rewrite status.
+0: Indicates that a simultaneous rewrite trigger has started simultaneous 
+rewrite.
+1: Indicates that simultaneous rewrite is in the pending state 
+(TAUAnRDT.TAUAnRDTm = 1).
+
+
+=== PDF PAGE 805 ===
+R01UH0098EJ0100 Rev.1.00
+Page 785 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.15.7
+TAUAn DMA Window Registers 
+(1)
+TAUAnDASi - TAUAn DMA Window Address Setting Register i (i = 0 to 7)
+This register specifies a window register address for DMA. Eight TAUAnDASi 
+registers control 16 TAUAnDWRm registers. In other words, each TAUAnDASi 
+register controls two TAUAnDWRm register.
+Access
+Readable/writable in 16-bit units.
+Address
+<TAUAn_base0> + 270H + m  4H
+Initial value
+0000H
+This register is initialized by any reset source.
+odd = 01, 03, 05, 07, 09, 11, 13, 15
+even = 00, 02, 04, 06, 08, 10, 12, 14
+The following table shows the relationship between the TAUAnDASi control 
+registers and the TAUAnDWRm registers.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nDAS
+odd7
+TAUA
+nDAS
+odd6
+TAUA
+nDAS
+odd5
+TAUA
+nDAS
+odd4
+TAUA
+nDAS
+odd3
+TAUA
+nDAS
+odd2
+TAUA
+nDAS
+odd1
+TAUA
+nDAS
+odd0
+TAUA
+nDAS
+even7
+TAUA
+nDAS
+even6
+TAUA
+nDAS
+even5
+TAUA
+nDAS
+even4
+TAUA
+nDAS
+even3
+TAUA
+nDAS
+even2
+TAUA
+nDAS
+even1
+TAUA
+nDAS
+even0
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-231
+Relationship between TAUAnDASi and TAUAnDWRm Registers
+Control Register
+Control Bit
+Control Target Register
+TAUAnDWRm
+TAUAnDAS0
+Bits 7 to 0
+TAUAnDWR0
+TAUAnDAS0
+Bits 15 to 8
+TAUAnDWR1
+TAUAnDAS1
+Bits 7 to 0
+TAUAnDWR2
+TAUAnDAS1
+Bits 15 to 8
+TAUAnDWR3
+TAUAnDAS2
+Bits 7 to 0
+TAUAnDWR4
+TAUAnDAS2
+Bits 15 to 8
+TAUAnDWR5
+TAUAnDAS3
+Bits 7 to 0
+TAUAnDWR6
+TAUAnDAS3
+Bits 15 to 8
+TAUAnDWR7
+TAUAnDAS4
+Bits 7 to 0
+TAUAnDWR8
+TAUAnDAS4
+Bits 15 to 8
+TAUAnDWR9
+TAUAnDAS5
+Bits 7 to 0
+TAUAnDWR10
+TAUAnDAS5
+Bits 15 to 8
+TAUAnDWR11
+TAUAnDAS6
+Bits 7 to 0
+TAUAnDWR12
+TAUAnDAS6
+Bits 15 to 8
+TAUAnDWR13
+TAUAnDAS7
+Bits 7 to 0
+TAUAnDWR14
+TAUAnDAS7
+Bits 15 to 8
+TAUAnDWR15
+
+
+=== PDF PAGE 806 ===
+R01UH0098EJ0100 Rev.1.00
+Page 786 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+Set TAUAnDASm [9:8] and [1:0] to 0.
+(2)
+TAUAnDWRm - TAUAn DMA Window Register m
+This is a register for DMA (m = 0 to 15). TAUAnDWRm mirrors an address 
+specified by the corresponding TAUAnDASi (i = 0 to 7) register. (See the 
+description on (1) TAUAnDASi - TAUAn DMA Window Address Setting 
+Register i (i = 0 to 7)).
+Access
+Readable/writable in 16-bit units.
+Address
+<TAUAn_base1> + 100H + m  4H
+Initial value
+0000H
+This register is initialized by any reset source.
+Table 13-232
+Description of TAUAnDASm Register
+Bit Position
+Bit Name
+Function
+15 to 8
+TAUAn
+DASodd[15:8]
+00H to 3CH: Specifies CDR0 to CDR15 registers.
+40H: Specifies TAUAnTOL register.
+44H: Specifies TAUAnRDT register.
+48H: Specifies TAUAnRSF register.
+4CH: Specifies TAUAnTRO register.
+50H: Specifies TAUAnTME register.
+54H: Specifies TAUAnTDL register.
+58H: Specifies TAUAnTO register.
+5CH: Specifies TAUAnTOE register.
+60H to 7CH: Setting prohibited
+80H to BCH: Specifies CNT0 to CNT15 registers.
+C0H to FCH: Setting prohibited
+7 to 0
+TAUAn
+DASeven[7:0]
+00H to 3CH: Specifies CDR0 to CDR15 registers.
+40H: Specifies TAUAnTOL register.
+44H: Specifies TAUAnRDT register.
+48H: Specifies TAUAnRSF register.
+4CH: Specifies TAUAnTRO register.
+50H: Specifies TAUAnTME register.
+54H: Specifies TAUAnTDL register.
+58H: Specifies TAUAnTO register.
+5CH: Specifies TAUAnTOE register.
+60H to 7CH: Setting prohibited
+80H to BCH: Specifies CNT0 to CNT15 registers.
+C0H to FCH: Setting prohibited
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+DMA window address specified by TAUAnDASi (i = 0 to 7)
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+
+

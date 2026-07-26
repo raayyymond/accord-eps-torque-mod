@@ -1,0 +1,1103 @@
+<!-- Section 14: Timer Array Unit J (TAUJ) -->
+<!-- Instances: TAUJ0, TAUJ1 -->
+<!-- Base addresses from Table 14-2:                                        -->
+<!--   TAUJ0: base0=0xFF811000, base1=0xFFFFC200                            -->
+<!--   TAUJ1: base0=0xFF812000, base1=0xFFFFC300                            -->
+<!-- Each instance is split into two peripherals:                            -->
+<!--   TAUJn_CFG  = base0 registers (CMORm, TPS, BRS, TOM, TOC, RDE, RDM)  -->
+<!--   TAUJn      = base1 registers (CDRm, CNTm, CMURm, CSRm, CSCm,         -->
+<!--                                  TE, TS, TT, TO, TOE, TOL, RDT, RSF)   -->
+
+<!-- ======================================================================= -->
+<!-- TAUJ0_CFG: base0 registers (0xFF811080 .. 0xFF8110A4)                  -->
+<!-- ======================================================================= -->
+<peripheral>
+  <name>TAUJ0_CFG</name>
+  <description>Timer Array Unit J 0 - Configuration Registers (base0)</description>
+  <baseAddress>0xFF811080</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x25</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- CMORm: base0 + 80H + m*4H, 16-bit R/W, reset 0x0000 -->
+    <register>
+      <name>TAUJ0CMOR0</name>
+      <description>TAUJn Channel Mode OS Register 0</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even channels only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture register update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CMOR1</name>
+      <description>TAUJn Channel Mode OS Register 1</description>
+      <addressOffset>0x4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even channels only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture register update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CMOR2</name>
+      <description>TAUJn Channel Mode OS Register 2</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even channels only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture register update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CMOR3</name>
+      <description>TAUJn Channel Mode OS Register 3</description>
+      <addressOffset>0xC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even channels only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture register update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TPS: base0 + 90H = offset 0x10 from base 0xFF811080, 16-bit R/W, reset 0xFFFF -->
+    <register>
+      <name>TAUJ0TPS</name>
+      <description>TAUJn Prescaler Clock Select Register</description>
+      <addressOffset>0x10</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field><name>PRS3</name><description>CK3_PRE clock prescaler select [3:0]</description><bitRange>[15:12]</bitRange></field>
+        <field><name>PRS2</name><description>CK2 clock prescaler select [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>PRS1</name><description>CK1 clock prescaler select [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>PRS0</name><description>CK0 clock prescaler select [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- BRS: base0 + 94H = offset 0x14, 8-bit R/W, reset 0x00 -->
+    <register>
+      <name>TAUJ0BRS</name>
+      <description>TAUJn Prescaler Baud Rate Setting Register</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>BRS</name><description>CK3_PRE division factor for CK3 [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TOM: base0 + 98H = offset 0x18, 8-bit R/W, reset 0x00 -->
+    <register>
+      <name>TAUJ0TOM</name>
+      <description>TAUJn Channel Output Mode Register</description>
+      <addressOffset>0x18</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TOM3</name><description>Channel 3 output mode (0=independent, 1=synchronous)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TOM2</name><description>Channel 2 output mode (0=independent, 1=synchronous)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TOM1</name><description>Channel 1 output mode (0=independent, 1=synchronous)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TOM0</name><description>Channel 0 output mode (0=independent, 1=synchronous)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TOC: base0 + 9CH = offset 0x1C, 8-bit R/W, reset 0x00 -->
+    <register>
+      <name>TAUJ0TOC</name>
+      <description>TAUJn Channel Output Configuration Register</description>
+      <addressOffset>0x1C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TOC3</name><description>Channel 3 output configuration (0=toggle mode)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TOC2</name><description>Channel 2 output configuration (0=toggle mode)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TOC1</name><description>Channel 1 output configuration (0=toggle mode)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TOC0</name><description>Channel 0 output configuration (0=toggle mode)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- RDE: base0 + A0H = offset 0x20, 8-bit R/W, reset 0x00 -->
+    <register>
+      <name>TAUJ0RDE</name>
+      <description>TAUJn Channel Reload Data Enable Register</description>
+      <addressOffset>0x20</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>RDE3</name><description>Channel 3 simultaneous rewrite enable</description><bitRange>[3:3]</bitRange></field>
+        <field><name>RDE2</name><description>Channel 2 simultaneous rewrite enable</description><bitRange>[2:2]</bitRange></field>
+        <field><name>RDE1</name><description>Channel 1 simultaneous rewrite enable</description><bitRange>[1:1]</bitRange></field>
+        <field><name>RDE0</name><description>Channel 0 simultaneous rewrite enable</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- RDM: base0 + A4H = offset 0x24, 8-bit R/W, reset 0x00 -->
+    <register>
+      <name>TAUJ0RDM</name>
+      <description>TAUJn Channel Reload Data Mode Register</description>
+      <addressOffset>0x24</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>RDM3</name><description>Channel 3 simultaneous rewrite trigger timing select</description><bitRange>[3:3]</bitRange></field>
+        <field><name>RDM2</name><description>Channel 2 simultaneous rewrite trigger timing select</description><bitRange>[2:2]</bitRange></field>
+        <field><name>RDM1</name><description>Channel 1 simultaneous rewrite trigger timing select</description><bitRange>[1:1]</bitRange></field>
+        <field><name>RDM0</name><description>Channel 0 simultaneous rewrite trigger timing select</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ======================================================================= -->
+<!-- TAUJ0: base1 registers (0xFFFFC200 .. 0xFFFFC26C)                      -->
+<!-- ======================================================================= -->
+<peripheral>
+  <name>TAUJ0</name>
+  <description>Timer Array Unit J 0 - Channel Registers (base1)</description>
+  <baseAddress>0xFFFFC200</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x6D</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- CDRm: base1 + m*4H, 32-bit R/W, reset 0x00000000 -->
+    <register>
+      <name>TAUJ0CDR0</name>
+      <description>TAUJn Channel Data Register 0 (compare/capture)</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>32-bit data register (compare or capture value)</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CDR1</name>
+      <description>TAUJn Channel Data Register 1 (compare/capture)</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>32-bit data register (compare or capture value)</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CDR2</name>
+      <description>TAUJn Channel Data Register 2 (compare/capture)</description>
+      <addressOffset>0x8</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>32-bit data register (compare or capture value)</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CDR3</name>
+      <description>TAUJn Channel Data Register 3 (compare/capture)</description>
+      <addressOffset>0xC</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>32-bit data register (compare or capture value)</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CNTm: base1 + 10H + m*4H, 32-bit R -->
+    <register>
+      <name>TAUJ0CNT0</name>
+      <description>TAUJn Channel Counter Register 0</description>
+      <addressOffset>0x10</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>32-bit counter value</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CNT1</name>
+      <description>TAUJn Channel Counter Register 1</description>
+      <addressOffset>0x14</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>32-bit counter value</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CNT2</name>
+      <description>TAUJn Channel Counter Register 2</description>
+      <addressOffset>0x18</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>32-bit counter value</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CNT3</name>
+      <description>TAUJn Channel Counter Register 3</description>
+      <addressOffset>0x1C</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>32-bit counter value</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CMURm: base1 + 20H + m*4H, 8-bit R/W, reset 0x00 -->
+    <register>
+      <name>TAUJ0CMUR0</name>
+      <description>TAUJn Channel Mode User Register 0</description>
+      <addressOffset>0x20</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>Valid edge select for TAUJnTTINm [1:0]</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CMUR1</name>
+      <description>TAUJn Channel Mode User Register 1</description>
+      <addressOffset>0x24</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>Valid edge select for TAUJnTTINm [1:0]</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CMUR2</name>
+      <description>TAUJn Channel Mode User Register 2</description>
+      <addressOffset>0x28</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>Valid edge select for TAUJnTTINm [1:0]</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CMUR3</name>
+      <description>TAUJn Channel Mode User Register 3</description>
+      <addressOffset>0x2C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>Valid edge select for TAUJnTTINm [1:0]</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CSRm: base1 + 30H + m*4H, 8-bit R, reset 0x00 -->
+    <register>
+      <name>TAUJ0CSR0</name>
+      <description>TAUJn Channel Status Register 0</description>
+      <addressOffset>0x30</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>OVF</name><description>Counter overflow flag (capture modes only)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CSR1</name>
+      <description>TAUJn Channel Status Register 1</description>
+      <addressOffset>0x34</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>OVF</name><description>Counter overflow flag (capture modes only)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CSR2</name>
+      <description>TAUJn Channel Status Register 2</description>
+      <addressOffset>0x38</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>OVF</name><description>Counter overflow flag (capture modes only)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CSR3</name>
+      <description>TAUJn Channel Status Register 3</description>
+      <addressOffset>0x3C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>OVF</name><description>Counter overflow flag (capture modes only)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CSCm: base1 + 40H + m*4H, 8-bit W (reads 0x00), reset 0x00 -->
+    <register>
+      <name>TAUJ0CSC0</name>
+      <description>TAUJn Channel Status Clear Trigger Register 0</description>
+      <addressOffset>0x40</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag TAUJnCSRm.OVF</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CSC1</name>
+      <description>TAUJn Channel Status Clear Trigger Register 1</description>
+      <addressOffset>0x44</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag TAUJnCSRm.OVF</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CSC2</name>
+      <description>TAUJn Channel Status Clear Trigger Register 2</description>
+      <addressOffset>0x48</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag TAUJnCSRm.OVF</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ0CSC3</name>
+      <description>TAUJn Channel Status Clear Trigger Register 3</description>
+      <addressOffset>0x4C</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag TAUJnCSRm.OVF</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TE: base1 + 50H, 8-bit R, reset 0x00 -->
+    <register>
+      <name>TAUJ0TE</name>
+      <description>TAUJn Channel Enable Status Register</description>
+      <addressOffset>0x50</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TE3</name><description>Channel 3 counter enable status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TE2</name><description>Channel 2 counter enable status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TE1</name><description>Channel 1 counter enable status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TE0</name><description>Channel 0 counter enable status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TS: base1 + 54H, 8-bit W (reads 0x00), reset 0x00 -->
+    <register>
+      <name>TAUJ0TS</name>
+      <description>TAUJn Channel Start Trigger Register</description>
+      <addressOffset>0x54</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TS3</name><description>Enable counter operation for channel 3</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TS2</name><description>Enable counter operation for channel 2</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TS1</name><description>Enable counter operation for channel 1</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TS0</name><description>Enable counter operation for channel 0</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TT: base1 + 58H, 8-bit W (reads 0x00), reset 0x00 -->
+    <register>
+      <name>TAUJ0TT</name>
+      <description>TAUJn Channel Stop Trigger Register</description>
+      <addressOffset>0x58</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TT3</name><description>Stop counter operation for channel 3</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TT2</name><description>Stop counter operation for channel 2</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TT1</name><description>Stop counter operation for channel 1</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TT0</name><description>Stop counter operation for channel 0</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TO: base1 + 5CH, 8-bit R/W, reset 0x00 -->
+    <register>
+      <name>TAUJ0TO</name>
+      <description>TAUJn Channel Output Register</description>
+      <addressOffset>0x5C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TO3</name><description>Channel 3 TTOUTm level (0=low, 1=high)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TO2</name><description>Channel 2 TTOUTm level (0=low, 1=high)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TO1</name><description>Channel 1 TTOUTm level (0=low, 1=high)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TO0</name><description>Channel 0 TTOUTm level (0=low, 1=high)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TOE: base1 + 60H, 8-bit R/W, reset 0x00 -->
+    <register>
+      <name>TAUJ0TOE</name>
+      <description>TAUJn Channel Output Enable Register</description>
+      <addressOffset>0x60</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TOE3</name><description>Channel 3 independent timer output enable</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TOE2</name><description>Channel 2 independent timer output enable</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TOE1</name><description>Channel 1 independent timer output enable</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TOE0</name><description>Channel 0 independent timer output enable</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TOL: base1 + 64H, 8-bit R/W, reset 0x00 -->
+    <register>
+      <name>TAUJ0TOL</name>
+      <description>TAUJn Channel Output Active Level Register</description>
+      <addressOffset>0x64</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TOL3</name><description>Channel 3 output logic (0=active high, 1=active low)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TOL2</name><description>Channel 2 output logic (0=active high, 1=active low)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TOL1</name><description>Channel 1 output logic (0=active high, 1=active low)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TOL0</name><description>Channel 0 output logic (0=active high, 1=active low)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- RDT: base1 + 68H, 8-bit W (reads 0x00), reset 0x00 -->
+    <register>
+      <name>TAUJ0RDT</name>
+      <description>TAUJn Channel Reload Data Trigger Register</description>
+      <addressOffset>0x68</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>RDT3</name><description>Trigger simultaneous rewrite pending for channel 3</description><bitRange>[3:3]</bitRange></field>
+        <field><name>RDT2</name><description>Trigger simultaneous rewrite pending for channel 2</description><bitRange>[2:2]</bitRange></field>
+        <field><name>RDT1</name><description>Trigger simultaneous rewrite pending for channel 1</description><bitRange>[1:1]</bitRange></field>
+        <field><name>RDT0</name><description>Trigger simultaneous rewrite pending for channel 0</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- RSF: base1 + 6CH, 8-bit R, reset 0x00 -->
+    <register>
+      <name>TAUJ0RSF</name>
+      <description>TAUJn Channel Reload Status Register</description>
+      <addressOffset>0x6C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>RSF3</name><description>Channel 3 simultaneous rewrite pending status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>RSF2</name><description>Channel 2 simultaneous rewrite pending status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>RSF1</name><description>Channel 1 simultaneous rewrite pending status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>RSF0</name><description>Channel 0 simultaneous rewrite pending status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ======================================================================= -->
+<!-- TAUJ1_CFG: base0 registers (0xFF812080 .. 0xFF8120A4)                  -->
+<!-- ======================================================================= -->
+<peripheral>
+  <name>TAUJ1_CFG</name>
+  <description>Timer Array Unit J 1 - Configuration Registers (base0)</description>
+  <baseAddress>0xFF812080</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x25</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>TAUJ1CMOR0</name>
+      <description>TAUJn Channel Mode OS Register 0</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even channels only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture register update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CMOR1</name>
+      <description>TAUJn Channel Mode OS Register 1</description>
+      <addressOffset>0x4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even channels only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture register update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CMOR2</name>
+      <description>TAUJn Channel Mode OS Register 2</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even channels only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture register update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CMOR3</name>
+      <description>TAUJn Channel Mode OS Register 3</description>
+      <addressOffset>0xC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even channels only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture register update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1TPS</name>
+      <description>TAUJn Prescaler Clock Select Register</description>
+      <addressOffset>0x10</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field><name>PRS3</name><description>CK3_PRE clock prescaler select [3:0]</description><bitRange>[15:12]</bitRange></field>
+        <field><name>PRS2</name><description>CK2 clock prescaler select [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>PRS1</name><description>CK1 clock prescaler select [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>PRS0</name><description>CK0 clock prescaler select [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1BRS</name>
+      <description>TAUJn Prescaler Baud Rate Setting Register</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>BRS</name><description>CK3_PRE division factor for CK3 [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1TOM</name>
+      <description>TAUJn Channel Output Mode Register</description>
+      <addressOffset>0x18</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TOM3</name><description>Channel 3 output mode (0=independent, 1=synchronous)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TOM2</name><description>Channel 2 output mode (0=independent, 1=synchronous)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TOM1</name><description>Channel 1 output mode (0=independent, 1=synchronous)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TOM0</name><description>Channel 0 output mode (0=independent, 1=synchronous)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1TOC</name>
+      <description>TAUJn Channel Output Configuration Register</description>
+      <addressOffset>0x1C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TOC3</name><description>Channel 3 output configuration (0=toggle mode)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TOC2</name><description>Channel 2 output configuration (0=toggle mode)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TOC1</name><description>Channel 1 output configuration (0=toggle mode)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TOC0</name><description>Channel 0 output configuration (0=toggle mode)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1RDE</name>
+      <description>TAUJn Channel Reload Data Enable Register</description>
+      <addressOffset>0x20</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>RDE3</name><description>Channel 3 simultaneous rewrite enable</description><bitRange>[3:3]</bitRange></field>
+        <field><name>RDE2</name><description>Channel 2 simultaneous rewrite enable</description><bitRange>[2:2]</bitRange></field>
+        <field><name>RDE1</name><description>Channel 1 simultaneous rewrite enable</description><bitRange>[1:1]</bitRange></field>
+        <field><name>RDE0</name><description>Channel 0 simultaneous rewrite enable</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1RDM</name>
+      <description>TAUJn Channel Reload Data Mode Register</description>
+      <addressOffset>0x24</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>RDM3</name><description>Channel 3 simultaneous rewrite trigger timing select</description><bitRange>[3:3]</bitRange></field>
+        <field><name>RDM2</name><description>Channel 2 simultaneous rewrite trigger timing select</description><bitRange>[2:2]</bitRange></field>
+        <field><name>RDM1</name><description>Channel 1 simultaneous rewrite trigger timing select</description><bitRange>[1:1]</bitRange></field>
+        <field><name>RDM0</name><description>Channel 0 simultaneous rewrite trigger timing select</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ======================================================================= -->
+<!-- TAUJ1: base1 registers (0xFFFFC300 .. 0xFFFFC36C)                      -->
+<!-- ======================================================================= -->
+<peripheral>
+  <name>TAUJ1</name>
+  <description>Timer Array Unit J 1 - Channel Registers (base1)</description>
+  <baseAddress>0xFFFFC300</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x6D</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>TAUJ1CDR0</name>
+      <description>TAUJn Channel Data Register 0 (compare/capture)</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>32-bit data register (compare or capture value)</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CDR1</name>
+      <description>TAUJn Channel Data Register 1 (compare/capture)</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>32-bit data register (compare or capture value)</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CDR2</name>
+      <description>TAUJn Channel Data Register 2 (compare/capture)</description>
+      <addressOffset>0x8</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>32-bit data register (compare or capture value)</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CDR3</name>
+      <description>TAUJn Channel Data Register 3 (compare/capture)</description>
+      <addressOffset>0xC</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>32-bit data register (compare or capture value)</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CNT0</name>
+      <description>TAUJn Channel Counter Register 0</description>
+      <addressOffset>0x10</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>32-bit counter value</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CNT1</name>
+      <description>TAUJn Channel Counter Register 1</description>
+      <addressOffset>0x14</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>32-bit counter value</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CNT2</name>
+      <description>TAUJn Channel Counter Register 2</description>
+      <addressOffset>0x18</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>32-bit counter value</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CNT3</name>
+      <description>TAUJn Channel Counter Register 3</description>
+      <addressOffset>0x1C</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>32-bit counter value</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CMUR0</name>
+      <description>TAUJn Channel Mode User Register 0</description>
+      <addressOffset>0x20</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>Valid edge select for TAUJnTTINm [1:0]</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CMUR1</name>
+      <description>TAUJn Channel Mode User Register 1</description>
+      <addressOffset>0x24</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>Valid edge select for TAUJnTTINm [1:0]</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CMUR2</name>
+      <description>TAUJn Channel Mode User Register 2</description>
+      <addressOffset>0x28</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>Valid edge select for TAUJnTTINm [1:0]</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CMUR3</name>
+      <description>TAUJn Channel Mode User Register 3</description>
+      <addressOffset>0x2C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>Valid edge select for TAUJnTTINm [1:0]</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CSR0</name>
+      <description>TAUJn Channel Status Register 0</description>
+      <addressOffset>0x30</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>OVF</name><description>Counter overflow flag (capture modes only)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CSR1</name>
+      <description>TAUJn Channel Status Register 1</description>
+      <addressOffset>0x34</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>OVF</name><description>Counter overflow flag (capture modes only)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CSR2</name>
+      <description>TAUJn Channel Status Register 2</description>
+      <addressOffset>0x38</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>OVF</name><description>Counter overflow flag (capture modes only)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CSR3</name>
+      <description>TAUJn Channel Status Register 3</description>
+      <addressOffset>0x3C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>OVF</name><description>Counter overflow flag (capture modes only)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CSC0</name>
+      <description>TAUJn Channel Status Clear Trigger Register 0</description>
+      <addressOffset>0x40</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag TAUJnCSRm.OVF</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CSC1</name>
+      <description>TAUJn Channel Status Clear Trigger Register 1</description>
+      <addressOffset>0x44</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag TAUJnCSRm.OVF</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CSC2</name>
+      <description>TAUJn Channel Status Clear Trigger Register 2</description>
+      <addressOffset>0x48</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag TAUJnCSRm.OVF</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1CSC3</name>
+      <description>TAUJn Channel Status Clear Trigger Register 3</description>
+      <addressOffset>0x4C</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag TAUJnCSRm.OVF</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1TE</name>
+      <description>TAUJn Channel Enable Status Register</description>
+      <addressOffset>0x50</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TE3</name><description>Channel 3 counter enable status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TE2</name><description>Channel 2 counter enable status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TE1</name><description>Channel 1 counter enable status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TE0</name><description>Channel 0 counter enable status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1TS</name>
+      <description>TAUJn Channel Start Trigger Register</description>
+      <addressOffset>0x54</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TS3</name><description>Enable counter operation for channel 3</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TS2</name><description>Enable counter operation for channel 2</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TS1</name><description>Enable counter operation for channel 1</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TS0</name><description>Enable counter operation for channel 0</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1TT</name>
+      <description>TAUJn Channel Stop Trigger Register</description>
+      <addressOffset>0x58</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TT3</name><description>Stop counter operation for channel 3</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TT2</name><description>Stop counter operation for channel 2</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TT1</name><description>Stop counter operation for channel 1</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TT0</name><description>Stop counter operation for channel 0</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1TO</name>
+      <description>TAUJn Channel Output Register</description>
+      <addressOffset>0x5C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TO3</name><description>Channel 3 TTOUTm level (0=low, 1=high)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TO2</name><description>Channel 2 TTOUTm level (0=low, 1=high)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TO1</name><description>Channel 1 TTOUTm level (0=low, 1=high)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TO0</name><description>Channel 0 TTOUTm level (0=low, 1=high)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1TOE</name>
+      <description>TAUJn Channel Output Enable Register</description>
+      <addressOffset>0x60</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TOE3</name><description>Channel 3 independent timer output enable</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TOE2</name><description>Channel 2 independent timer output enable</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TOE1</name><description>Channel 1 independent timer output enable</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TOE0</name><description>Channel 0 independent timer output enable</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1TOL</name>
+      <description>TAUJn Channel Output Active Level Register</description>
+      <addressOffset>0x64</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TOL3</name><description>Channel 3 output logic (0=active high, 1=active low)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TOL2</name><description>Channel 2 output logic (0=active high, 1=active low)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TOL1</name><description>Channel 1 output logic (0=active high, 1=active low)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TOL0</name><description>Channel 0 output logic (0=active high, 1=active low)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1RDT</name>
+      <description>TAUJn Channel Reload Data Trigger Register</description>
+      <addressOffset>0x68</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>RDT3</name><description>Trigger simultaneous rewrite pending for channel 3</description><bitRange>[3:3]</bitRange></field>
+        <field><name>RDT2</name><description>Trigger simultaneous rewrite pending for channel 2</description><bitRange>[2:2]</bitRange></field>
+        <field><name>RDT1</name><description>Trigger simultaneous rewrite pending for channel 1</description><bitRange>[1:1]</bitRange></field>
+        <field><name>RDT0</name><description>Trigger simultaneous rewrite pending for channel 0</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAUJ1RSF</name>
+      <description>TAUJn Channel Reload Status Register</description>
+      <addressOffset>0x6C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>RSF3</name><description>Channel 3 simultaneous rewrite pending status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>RSF2</name><description>Channel 2 simultaneous rewrite pending status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>RSF1</name><description>Channel 1 simultaneous rewrite pending status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>RSF0</name><description>Channel 0 simultaneous rewrite pending status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

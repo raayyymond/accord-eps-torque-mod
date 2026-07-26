@@ -1,0 +1,160 @@
+dudei@RAY-LAPTOP:~/firmware-analysis-kit/flashing-2020accord$ python3 eps-read-dtcs.py --bus 1 --debug
+==========================================================================
+  EPS DTC + FAULT REGISTER READ - strictly read-only
+  Target: 2020 Honda Accord EPS  39990-TVA-A160  V850/TVA
+  UDS services: 0x3E 0x22 0x10 0x27 0x19 0x23 only
+==========================================================================
+  CAN address : 0x18DA30F1
+  CAN bus     : 1
+  SA handshake: yes
+  DTC read    : after extended session
+  debug       : True
+==========================================================================
+INFO: connecting to panda 4b001c001151313338343730
+
+[uds] tester present
+ISO-TP: REQUEST - 0x18da30f1 0x3e00
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x023e000000000000
+CAN-RX: 0x18daf130 - 0x027e005555555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7e00
+ISO-TP: REQUEST - 0x18da30f1 0x22f181
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x0322f18100000000
+CAN-RX: 0x18daf130 - 0x101362f181333939
+ISO-TP: RX - first frame - 0x18daf130 idx=0 done=False
+ISO-TP: TX - flow control continue - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x3000000000000000
+CAN-RX: 0x18daf130 - 0x2139302d5456412c
+ISO-TP: RX - consecutive frame - 0x18daf130 idx=1 done=False
+CAN-RX: 0x18daf130 - 0x2241313630000055
+ISO-TP: RX - consecutive frame - 0x18daf130 idx=2 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x62f18133393939302d5456412c413136300000
+[uds] app id (0xF181) = b'39990-TVA,A160\x00\x00'
+[uds] diagnostic session = EXTENDED_DIAGNOSTIC (0x03)
+ISO-TP: REQUEST - 0x18da30f1 0x1003
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x0210030000000000
+CAN-RX: 0x18daf130 - 0x0250035555555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x5003
+[sa]  requesting seed (0x27 0x01)
+ISO-TP: REQUEST - 0x18da30f1 0x2701
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x0227010000000000
+CAN-RX: 0x18daf130 - 0x0467013387555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x67013387
+[sa]  received seed: 0x3387
+[sa]  computed key : 0x38A6
+ISO-TP: REQUEST - 0x18da30f1 0x270238a6
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x04270238a6000000
+CAN-RX: 0x18daf130 - 0x0267025555555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x6702
+[sa]  SA handshake succeeded
+
+==========================================================================
+  STORED DTCs (ReadDTCInformation 0x19)
+==========================================================================
+ISO-TP: REQUEST - 0x18da30f1 0x1902ff
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x031902ff00000000
+CAN-RX: 0x18daf130 - 0x10175902ce540011
+ISO-TP: RX - first frame - 0x18daf130 idx=0 done=False
+ISO-TP: TX - flow control continue - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x3000000000000000
+CAN-RX: 0x18daf130 - 0x2140c4166808d483
+ISO-TP: RX - consecutive frame - 0x18daf130 idx=1 done=False
+CAN-RX: 0x18daf130 - 0x229440f000490ef0
+ISO-TP: RX - consecutive frame - 0x18daf130 idx=2 done=False
+CAN-RX: 0x18daf130 - 0x2300554055555555
+ISO-TP: RX - consecutive frame - 0x18daf130 idx=3 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x5902ce54001140c4166808d4839440f000490ef0005540
+  [0x19/0x02] 4 stored DTC(s):
+    DTC 0x001140  status=0xC4  (pendingDTC|testNotCompletedThisOperationCycle|warningIndicatorRequested)
+    DTC 0x166808  status=0xD4  (pendingDTC|testNotCompletedSinceLastClear|testNotCompletedThisOperationCycle|warningIndicatorRequested)
+    DTC 0x839440  status=0xF0  (testNotCompletedSinceLastClear|testFailedSinceLastClear|testNotCompletedThisOperationCycle|warningIndicatorRequested)
+    DTC 0x00490E  status=0xF0  (testNotCompletedSinceLastClear|testFailedSinceLastClear|testNotCompletedThisOperationCycle|warningIndicatorRequested)
+
+==========================================================================
+  FAULT REGISTER READS (ReadMemoryByAddress 0x23)
+       address  name                  raw  interpretation
+  ----------------------------------------------------------------------
+ISO-TP: REQUEST - 0x18da30f1 0x2314fedf672c04
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x072314fedf672c04
+CAN-RX: 0x18daf130 - 0x037f231155555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7f2311
+  0xFEDF672C  gp-0x18d4      READ DENIED NRC 0x11  (Fault status flags (bit0=EPS-disable, bit2=zero-output fault))
+ISO-TP: REQUEST - 0x18da30f1 0x2314fedf673004
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x072314fedf673004
+CAN-RX: 0x18daf130 - 0x037f231155555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7f2311
+  0xFEDF6730  gp-0x18d0      READ DENIED NRC 0x11  (Fault status flags (OR'd with gp-0x18d4 in checks))
+ISO-TP: REQUEST - 0x18da30f1 0x2314fedf17a401
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x072314fedf17a401
+CAN-RX: 0x18daf130 - 0x037f231155555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7f2311
+  0xFEDF17A4  gp-0x685c      READ DENIED NRC 0x11  (Deferred fault flag (1 -> init SM forces fault state))
+ISO-TP: REQUEST - 0x18da30f1 0x2314fedf528402
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x072314fedf528402
+CAN-RX: 0x18daf130 - 0x037f231155555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7f2311
+  0xFEDF5284  gp-0x2d7c      READ DENIED NRC 0x11  (Flash CRC walk result (0=pass, non-zero=block+error code))
+ISO-TP: REQUEST - 0x18da30f1 0x2314fedf3bb101
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x072314fedf3bb101
+CAN-RX: 0x18daf130 - 0x037f231155555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7f2311
+  0xFEDF3BB1  gp-0x444f      READ DENIED NRC 0x11  (EPS disable flag A (non-zero -> EPS disabled))
+ISO-TP: REQUEST - 0x18da30f1 0x2314fedf31ad01
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x072314fedf31ad01
+CAN-RX: 0x18daf130 - 0x037f231155555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7f2311
+  0xFEDF31AD  gp-0x4e53      READ DENIED NRC 0x11  (EPS disable flag B (non-zero -> EPS disabled))
+ISO-TP: REQUEST - 0x18da30f1 0x2314fedf180601
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x072314fedf180601
+CAN-RX: 0x18daf130 - 0x037f231155555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7f2311
+  0xFEDF1806  gp-0x67fa      READ DENIED NRC 0x11  (Init state machine state byte (8=emergency fault state))
+ISO-TP: REQUEST - 0x18da30f1 0x2314fedf411804
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x072314fedf411804
+CAN-RX: 0x18daf130 - 0x037f231155555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7f2311
+  0xFEDF4118  gp-0x3ee8      READ DENIED NRC 0x11  (State-8-force latch (non-zero=already forced state 8))
+
+==========================================================================
+  FAULT SUMMARY
+==========================================================================
+  EPS disabled (flag A or B non-zero) : UNKNOWN (reads denied)
+  Fault state active (init SM = 8)    : UNKNOWN
+  Deferred fault flag set (gp-0x685c) : UNKNOWN (read denied)
+  Flash CRC walk failed (gp-0x2d7c)   : UNKNOWN
+  State-8 force latch (gp-0x3ee8)     : UNKNOWN
+  gp-0x18d4 | gp-0x18d0              : UNKNOWN (both reads denied)
+
+  DTCs (4 stored):
+    0x001140  status=0xC4  (pendingDTC|testNotCompletedThisOperationCycle|warningIndicatorRequested)
+    0x166808  status=0xD4  (pendingDTC|testNotCompletedSinceLastClear|testNotCompletedThisOperationCycle|warningIndicatorRequested)
+    0x839440  status=0xF0  (testNotCompletedSinceLastClear|testFailedSinceLastClear|testNotCompletedThisOperationCycle|warningIndicatorRequested)
+    0x00490E  status=0xF0  (testNotCompletedSinceLastClear|testFailedSinceLastClear|testNotCompletedThisOperationCycle|warningIndicatorRequested)
+
+  ECU app ID (0xF181): b'39990-TVA,A160\x00\x00'
+==========================================================================

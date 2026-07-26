@@ -1,0 +1,475 @@
+<!-- Section 7: Clock Generation — V850E2/Px4 (UPD70F3508) -->
+<!-- Peripherals: BRGA0 (Baud-Rate Generator for CLKOUT, 4 registers),
+                  CLMA0 (Clock Monitor A instance 0, 6 registers),
+                  CLMA1 (Clock Monitor A instance 1, 6 registers),
+                  CLMA2 (Clock Monitor A instance 2, 6 registers) -->
+
+<!-- ================================================================
+     BRGA0 — Baud-Rate Generator for CLKOUT
+     Registers are scattered across three non-contiguous ranges:
+       BRGCKCTL  FF42 0030H  (clock selection)
+       BRGA0CTL  FF83 9008H  (control)
+       BRGA0CMP  FF83 900CH  (compare)
+       BRGA0FLG  FFFF FD00H  (flag / status)
+     baseAddress = lowest address = 0xFF420030
+     addressBlock size covers only to BRGCKCTL + 1 byte; the
+     higher-address registers are reached via large offsets.
+     ================================================================ -->
+<peripheral>
+  <name>BRGA0</name>
+  <description>Baud-Rate Generator A0 for CLKOUT pin clock output</description>
+  <baseAddress>0xFF420030</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <!-- Span: BRGCKCTL(0xFF420030) through BRGA0FLG(0xFFFFFD00)+1 byte -->
+    <!-- Effective sparse coverage; only 4 actual registers in this range -->
+    <size>0xBDFCD1</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <!-- BRGCKCTL: FF42 0030H; offset = 0xFF420030 - 0xFF420030 = 0x0 -->
+    <register>
+      <name>BRGCKCTL</name>
+      <description>BRGA0 Clock Selection Register — selects input clock for BRGA0</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>BRGCKSL1</name>
+          <description>Clock select bit 1 (with BRGCKSL0: 00=SCLK1, 01=PCLK, 10=SCLK2, 11=prohibited)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>BRGCKSL0</name>
+          <description>Clock select bit 0</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- BRGA0CTL: FF83 9008H; offset = 0xFF839008 - 0xFF420030 = 0x418FD8 -->
+    <register>
+      <name>BRGA0CTL</name>
+      <description>BRGA0 Control Register — enables counter, sets prescaler, controls CLKOUT output</description>
+      <addressOffset>0x418FD8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>BRGA0CE</name>
+          <description>Baud-rate counter enable: 0=disabled, 1=enabled (INTBRG0 generated)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>BRGA0ODIS</name>
+          <description>CLKOUT output disable: 0=BRG signal output, 1=fixed low on CLKOUT</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>BRGA0CCS1</name>
+          <description>Counter clock select bit 1 (with CCS0: 00=BRGATCLK/1, 01=/2, 10=/4, 11=/8)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>BRGA0CCS0</name>
+          <description>Counter clock select bit 0</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- BRGA0CMP: FF83 900CH; offset = 0xFF83900C - 0xFF420030 = 0x418FDC -->
+    <register>
+      <name>BRGA0CMP</name>
+      <description>BRGA0 Compare Register — baud-rate counter comparison value [7:0]</description>
+      <addressOffset>0x418FDC</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>BRGA0CMP7_0</name>
+          <description>Compare value bits [7:0]; counter match generates INTBRG0 and toggles CLKOUT</description>
+          <bitRange>[7:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- BRGA0FLG: FFFF FD00H; offset = 0xFFFFFD00 - 0xFF420030 = 0xBDFCD0 -->
+    <register>
+      <name>BRGA0FLG</name>
+      <description>BRGA0 Flag Register — baud-rate counter operation status (read-only)</description>
+      <addressOffset>0xBDFCD0</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>BRGA0CEF</name>
+          <description>Counter enable flag: 0=stopped, 1=in operation</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================
+     CLMA0 — Clock Monitor A, instance 0
+     Monitors: main oscillator (CLMAnTMON), sampled by internal OSC (CLMAnTSMP)
+     Base address: FF80 2000H = 0xFF802000
+     Registers (Table 7-17):
+       CTL0  +00H   8-bit  R/W (write-protected)
+       CTL1  +04H   8-bit  R/W
+       CMPL  +08H  16-bit  R/W
+       CMPH  +0CH  16-bit  R/W
+       PCMD  +10H   8-bit  W
+       PS    +14H   8-bit  R
+     addressBlock size = 0x14 + 1 = 0x15 bytes
+     ================================================================ -->
+<peripheral>
+  <name>CLMA0</name>
+  <description>Clock Monitor A, instance 0 — monitors main oscillator</description>
+  <baseAddress>0xFF802000</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x18</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <register>
+      <name>CLMA0CTL0</name>
+      <description>CLMA0 Control Register 0 — enables/disables clock monitor (write-protected)</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CLMA0CLME</name>
+          <description>Clock monitor enable: 0=disabled, 1=enabled (can only be cleared by reset)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA0CTL1</name>
+      <description>CLMA0 Control Register 1 — selects output signal on under-frequency detection</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CLMA0OSEL</name>
+          <description>Output select: 0=reset request CLMAnRES, 1=error interrupt CLMAnTI + CLMAnTERR</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA0CMPL</name>
+      <description>CLMA0 Compare Register L — lower frequency threshold [11:0]</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0001</resetValue>
+      <fields>
+        <field>
+          <name>CLMA0CMPL11_0</name>
+          <description>Lower threshold (min valid CLMAnTMON edge count in 16 sampling cycles); minimum 0001H</description>
+          <bitRange>[11:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA0CMPH</name>
+      <description>CLMA0 Compare Register H — upper frequency threshold [11:0]</description>
+      <addressOffset>0xC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x03FF</resetValue>
+      <fields>
+        <field>
+          <name>CLMA0CMPH11_0</name>
+          <description>Upper threshold (max valid CLMAnTMON edge count in 16 sampling cycles); minimum = CMPL+0003H</description>
+          <bitRange>[11:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA0PCMD</name>
+      <description>CLMA0 Protection Command Register — write A5H before write sequence to CTL0</description>
+      <addressOffset>0x10</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <!-- Initial value: Undefined — resetValue omitted -->
+      <fields>
+        <field>
+          <name>CLMA0REG7_0</name>
+          <description>Protection command byte; write A5H to unlock CTL0 write sequence</description>
+          <bitRange>[7:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA0PS</name>
+      <description>CLMA0 Protection Status Register — indicates success/failure of CTL0 write</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CLMA0PRERR</name>
+          <description>Protection write error: 0=write succeeded, 1=write failed</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================
+     CLMA1 — Clock Monitor A, instance 1
+     Monitors: internal system clock (CLMAnTMON), sampled by main OSC (CLMAnTSMP)
+     Base address: FF80 3000H = 0xFF803000
+     Same register layout as CLMA0 (+00H..+14H)
+     ================================================================ -->
+<peripheral>
+  <name>CLMA1</name>
+  <description>Clock Monitor A, instance 1 — monitors internal system clock</description>
+  <baseAddress>0xFF803000</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x18</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <register>
+      <name>CLMA1CTL0</name>
+      <description>CLMA1 Control Register 0 — enables/disables clock monitor (write-protected)</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CLMA1CLME</name>
+          <description>Clock monitor enable: 0=disabled, 1=enabled (can only be cleared by reset)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA1CTL1</name>
+      <description>CLMA1 Control Register 1 — selects output signal on under-frequency detection</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CLMA1OSEL</name>
+          <description>Output select: 0=reset request CLMAnRES, 1=error interrupt CLMAnTI + CLMAnTERR</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA1CMPL</name>
+      <description>CLMA1 Compare Register L — lower frequency threshold [11:0]</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0001</resetValue>
+      <fields>
+        <field>
+          <name>CLMA1CMPL11_0</name>
+          <description>Lower threshold (min valid CLMAnTMON edge count in 16 sampling cycles); minimum 0001H</description>
+          <bitRange>[11:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA1CMPH</name>
+      <description>CLMA1 Compare Register H — upper frequency threshold [11:0]</description>
+      <addressOffset>0xC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x03FF</resetValue>
+      <fields>
+        <field>
+          <name>CLMA1CMPH11_0</name>
+          <description>Upper threshold (max valid CLMAnTMON edge count in 16 sampling cycles); minimum = CMPL+0003H</description>
+          <bitRange>[11:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA1PCMD</name>
+      <description>CLMA1 Protection Command Register — write A5H before write sequence to CTL0</description>
+      <addressOffset>0x10</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <!-- Initial value: Undefined — resetValue omitted -->
+      <fields>
+        <field>
+          <name>CLMA1REG7_0</name>
+          <description>Protection command byte; write A5H to unlock CTL0 write sequence</description>
+          <bitRange>[7:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA1PS</name>
+      <description>CLMA1 Protection Status Register — indicates success/failure of CTL0 write</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CLMA1PRERR</name>
+          <description>Protection write error: 0=write succeeded, 1=write failed</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================
+     CLMA2 — Clock Monitor A, instance 2
+     Monitors: internal oscillator (CLMAnTMON), sampled by main OSC (CLMAnTSMP)
+     Base address: FF80 4000H = 0xFF804000
+     Same register layout as CLMA0/CLMA1 (+00H..+14H)
+     ================================================================ -->
+<peripheral>
+  <name>CLMA2</name>
+  <description>Clock Monitor A, instance 2 — monitors internal oscillator</description>
+  <baseAddress>0xFF804000</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x18</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <register>
+      <name>CLMA2CTL0</name>
+      <description>CLMA2 Control Register 0 — enables/disables clock monitor (write-protected)</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CLMA2CLME</name>
+          <description>Clock monitor enable: 0=disabled, 1=enabled (can only be cleared by reset)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA2CTL1</name>
+      <description>CLMA2 Control Register 1 — selects output signal on under-frequency detection</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CLMA2OSEL</name>
+          <description>Output select: 0=reset request CLMAnRES, 1=error interrupt CLMAnTI + CLMAnTERR (note: SGA detects internal OSC stop regardless)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA2CMPL</name>
+      <description>CLMA2 Compare Register L — lower frequency threshold [11:0]</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0001</resetValue>
+      <fields>
+        <field>
+          <name>CLMA2CMPL11_0</name>
+          <description>Lower threshold (min valid CLMAnTMON edge count in 16 sampling cycles); minimum 0001H</description>
+          <bitRange>[11:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA2CMPH</name>
+      <description>CLMA2 Compare Register H — upper frequency threshold [11:0]</description>
+      <addressOffset>0xC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x03FF</resetValue>
+      <fields>
+        <field>
+          <name>CLMA2CMPH11_0</name>
+          <description>Upper threshold (max valid CLMAnTMON edge count in 16 sampling cycles); minimum = CMPL+0003H</description>
+          <bitRange>[11:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA2PCMD</name>
+      <description>CLMA2 Protection Command Register — write A5H before write sequence to CTL0</description>
+      <addressOffset>0x10</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <!-- Initial value: Undefined — resetValue omitted -->
+      <fields>
+        <field>
+          <name>CLMA2REG7_0</name>
+          <description>Protection command byte; write A5H to unlock CTL0 write sequence</description>
+          <bitRange>[7:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>CLMA2PS</name>
+      <description>CLMA2 Protection Status Register — indicates success/failure of CTL0 write</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CLMA2PRERR</name>
+          <description>Protection write error: 0=write succeeded, 1=write failed</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

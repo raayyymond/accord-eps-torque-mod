@@ -1,0 +1,1768 @@
+=== PAGE 1100 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1080 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+Section 16 TPBA (TPBA0 and TPBA1)
+16.1
+Functions of TPBAn
+Instances
+This product provides 2 instances of TPBAn.
+Instances index n
+Throughout this section, the instances of the TPBA are identified by the index 
+"n" (n = 0, 1), for example TPBAnCTL for TPBAn control register.
+Buffers index m
+Buffers are identified by index m (m = 00 to 63).
+Register
+addresses
+TPBAn register addresses are given as address offsets from the individual 
+base addresses <TPBAn_base0> or <TPBAn_base1>. Table 16-2 shows the 
+base address of TPBAn.
+Clock supply
+TPBAn is connected to PCLK and is supplied with the PCLK clock signal input 
+as listed below.
+I/O signals
+The I/O signals of the TPBA are listed in table 16-4.
+Table 16-1
+Instances of TPBA
+Timer Option
+Instances
+2
+Name
+TPBA0, TPBA1
+Table 16-2
+TPBAn Register Base Addresses
+TPBAn
+<TPBAn_base0> Address
+<TPBAn_base1> Address
+TPBA0
+FF83 2000H
+FFFF F000H
+TPBA1
+FF83 3000H
+FFFF F400H
+Table 16-3
+TPBAn Clock Supply
+TPBAn
+Supplied Clock
+TPBA0, TPBA1
+PCLK
+Table 16-4
+List of TPBA I/O signals
+TPBAn Signal
+Function
+Connected to
+TPBnO
+Timer output
+Port
+TPBAnSST
+Synchronous start trigger input
+PIC (input)
+
+
+=== PAGE 1101 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1081 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+Interrupts
+The TPBA interrupt requests are listed in table 16-5.
+16.2
+Functional Overview
+TPBAn is a 16-bit PWM timer with the duty setting buffer.
+• Count clock resolution: Min. 12.5 ns (count clock: 80 MHz)
+• 16-bit counter
+• 16-bit duty register
+• 16-bit period setting register
+• 7-bit address counter register
+• 7-bit pattern number setting register
+• Interrupt request signals
+– Period-matched detection interrupt
+– Duty-cycle-matched detection interrupt
+– Number-of-patterns matched detection interrupt
+• Number of duty patterns
+– 64 patterns (16 bits) or 128 patterns (8 bits)
+• Automatic duty generation according to the number of patterns
+• Output control by software
+• The count clock can be selected from PCLK, PCLK/2, PCLK/4, and PCLK/8 
+according to the prescaler set value.
+• Synchronous start with another timer
+Table 16-5
+List of TPBA Interrupt Requests
+TPBAn Interrupt 
+Request
+Function
+Connected to
+INTTPBAnIPRD
+Period-matched detection 
+interrupt
+Interrupt controller
+DMA, DTS
+INTTPBAnIDTY
+Duty-cycle-matched detection 
+interrupt
+Interrupt controller
+DMA, DTS
+INTTPBAnIPAT
+Number-of-patterns matched 
+detection interrupt
+Interrupt controller
+DMA, DTS
+
+
+=== PAGE 1102 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1082 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+16.3
+Configuration
+Figure 16-1
+Block Diagram of TPBAn
+16-bit counter
+7-bit counter
+TPBAnSST
+PCLK
+Prescaler
+Controller
+TPBAnTS
+TPBAnTT
+TPBAnTE
+TPBAnRSF0
+TPBAnCMP0
+TPBAnCB0 
+Reload
+TPBAnRDM
+Selector
+Compare register
+INTTPBAnIPRD
+INTTPBAnIDTY
+TPBnO 
+TPBAnTO
+TPBAnTOE
+TPBAnTOL
+Enable
+TPBAnCNT1
+Clear
+Reload
+TPBAnBUF 63-00 
+Buffer
+TPBAnCB2 
+Compare register
+TPBAnCNT0
+Clear
+TPBAnDPS
+TPBAnRSF1
+TPBAnCMP1
+Reload
+TPBAnCB1
+Compare register
+TPBAnPRS1-0
+INTTPBAnIPAT
+TO controller
+
+
+=== PAGE 1103 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1083 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+16.4
+Registers
+This section contains a description of all registers of the TPBAn.
+16.4.1
+TPBAn Registers Overview
+The TPBAn is controlled and operated based on the settings of the following 
+registers listed in table 16-6.
+Table 16-6
+TPBAn Registers
+Register Name
+Symbol
+Address
+TPBAn control register
+TPBAnCTL
+<TPBAn_base0> + 200H
+TPBAn reload data mode register
+TPBAnRDM
+<TPBAn_base1> + 118H
+TPBAn reload status register
+TPBAnRSF
+<TPBAn_base1> + 110H
+TPBAn reload data trigger register
+TPBAnRDT
+<TPBAn_base1> + 114H
+TPBAn timer output enable register
+TPBAnTOE
+<TPBAn_base1> + 120H
+TPBAn timer output register
+TPBAnTO
+<TPBAn_base1> + 11CH
+TPBAn timer output level register
+TPBAnTOL
+<TPBAn_base1> + 124H
+TPBAn period setting register
+TPBAnCMP0
+<TPBAn_base1> + 100H
+TPBAn duty setting register
+TPBAnBUFm
+<TPBAn_base1> + 000H to 0FCH
+TPBAn pattern number setting register
+TPBAnCMP1
+<TPBAn_base1> + 104H
+TPBAn timer counter register
+TPBAnCNT0
+<TPBAn_base1> + 108H
+TPBAn address counter register
+TPBAnCNT1
+<TPBAn_base1> + 10CH
+TPBAn enable status register
+TPBAnTE
+<TPBAn_base1> + 128H
+TPBAn start trigger register
+TPBAnTS
+<TPBAn_base1> + 12CH
+TPBAn stop trigger register
+TPBAnTT
+<TPBAn_base1> + 130H
+
+
+=== PAGE 1104 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1084 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+16.4.2
+TPBAn Registers Details
+(1)
+TPBAn Control Register (TPBAnCTL)
+This register specifies the operation of the TPBAn.
+Access
+This register can be read/written in 8-bit units.
+Address
+<TPBAn_base0> + 200H
+Initial value
+00H
+This register is initialized by a reset from any source.
+Caution
+This register should be set when the timer is stopped (TPBAnTE = 0). If this 
+register is erroneously rewritten, set the register again after stopping the timer.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+TPBAn
+PRS1
+TPBAn
+PRS0
+-
+-
+-
+TPBAn
+DPS
+R
+R
+R/W
+R/W
+R
+R
+R
+R/W
+Table 16-7
+TPBAnCTL0 Register Contents
+Bit Position
+Bit Name
+Function
+4, 5
+TPBAnPRS
+[1:0]
+Selects the count clock.
+TPBAnPRS1
+TPBAnPRS0
+Description
+0
+0
+PCLK is selected.
+0
+1
+PCLK/2 is selected.
+1
+0
+PCLK/4 is selected.
+1
+1
+PCLK/8 is selected.
+0
+TPBAnDPS
+Selects the duty setting pattern mode.
+0: 16 bits  64 patterns mode
+1: 8 bits  128 patterns mode
+
+
+=== PAGE 1105 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1085 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(2)
+TPBAn Reload Data Mode Register (TPBAnRDM)
+This register controls the reload timing of the TPBAn period setting register 
+and TPBAn timer output level register values.
+Access
+This register can be read/written in 8-bit units.
+Address
+<TPBAn_base1> + 118H
+Initial value
+00H
+This register is initialized by a reset from any source.
+Caution
+Although this register can be rewritten during operation, the rewritten value is 
+reflected at any time. Accordingly, during operation, this register should be 
+rewritten when the reload request flag (TPBAnRSF) is 0.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+-
+-
+-
+-
+-
+TPBAn
+RDM0
+R
+R
+R
+R
+R
+R
+R
+R/W
+Table 16-8
+TPBAnRDM Register Contents
+Bit Position
+Bit Name
+Function
+0
+TPBAnRDM0
+Controls the reload timing of the TPBAn period setting register (TPBAnCMP0) 
+and TPBAn timer output level register (TPBAnTOL) values.
+0: Reloads the values synchronously with a number-of-patterns matched 
+detection interrupt (INTTPBAnIPAT).
+1: Reloads the values synchronously with a period-matched detection interrupt 
+(INTTPBAnIPRD).
+
+
+=== PAGE 1106 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1086 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(3)
+TPBAn Reload Status Register (TPBAnRSF)
+This register indicates whether or not reload requests from the corresponding 
+registers have been generated.
+Access
+This register can be read in 8-bit units.
+Address
+<TPBAn_base1> + 110H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+-
+-
+-
+-
+TPBAn
+RSF1
+TPBAn
+RSF0
+R
+R
+R
+R
+R
+R
+R
+R
+Table 16-9
+TPBAnRFS Register Contents
+Bit Position
+Bit Name
+Function
+1
+TPBAnRSF1
+Indicates whether or not a reload request from TPBAnCMP1 has been 
+generated.
+0: No reload request generated or reload completed.
+1: Reload request has been generated. This bit is set to 1 when 1 is written to 
+the TPBAnRDT1 bit in the TPBAnRDT register. This bit is cleared at the 
+timing when reload is performed.
+0
+TPBAnRSF0
+Indicates whether or not a reload request from TPBAnCMP0 and TPBAnTOL 
+has been generated.
+0: No reload request generated or reload completed.
+1: Reload request has been generated. This bit is set to 1 when 1 is written to 
+the TPBAnRDT0 bit in the TPBAnRDT register. This bit is cleared at the 
+timing when reload is performed.
+
+
+=== PAGE 1107 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1087 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(4)
+TPBAn Reload Data Trigger Register (TPBAnRDT)
+This register enables reload of the register values.
+Access
+This register can be written in 8-bit units. It is always read as 0.
+Address
+<TPBAn_base1> + 114H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+-
+-
+-
+-
+TPBAn
+RDT1
+TPBAn
+RDT0
+R
+R
+R
+R
+R
+R
+W
+W
+Table 16-10
+TPBAnRDT Register Contents
+Bit Position
+Bit Name
+Function
+1
+TPBAnRDT1
+Enables reload of the TPBAnCMP1 values.
+0: Write access is ignored.
+1: Reload is enabled (TPBAnRSF1 is set to 1). The values are updated 
+simultaneously at the next reload timing (reload).
+0
+TPBAnRDT0
+Enables reload of the TPBAnCMP0 and TPBAnTOL values.
+0: Write access is ignored.
+1: Reload is enabled (TPBAnRSF0 is set to 1). The values are updated 
+simultaneously at the next reload timing (reload).
+
+
+=== PAGE 1108 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1088 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(5)
+TPBAn Timer Output Enable Register (TPBAnTOE)
+This register enables or disables the timer output.
+Access
+This register can be read/written in 8-bit units.
+Address
+<TPBAn_base1> + 120H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+-
+-
+-
+-
+-
+TPBAn
+TOE0
+R
+R
+R
+R
+R
+R
+R
+R/W
+Table 16-11
+TPBAnTOE Register Contents
+Bit Position
+Bit Name
+Function
+0
+TPBAnTOE0
+Enables or disables the timer output (TPBnO).
+0: Disables the timer output based on counter operation.
+1: Enables the timer output based on counter operation.
+•
+When the timer output is disabled, the level specified in TPBAnTO is output 
+from the TPBnO pin, and can be controlled by software.
+•
+When the timer output is enabled, TPBAnTO is set or cleared by the timer 
+operation, and a PWM signal is output. Write access is prohibited (ignored).
+
+
+=== PAGE 1109 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1089 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(6)
+TPBAn Timer Output Register (TPBAnTO)
+This register reads the output settings and the output level.
+Access
+This register can be read/written in 8-bit units.
+Address
+<TPBAn_base1> + 11CH
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+-
+-
+-
+-
+-
+TPBAn
+TO0
+R
+R
+R
+R
+R
+R
+R
+R/W
+Table 16-12
+TPBAnTO Register Contents
+Bit Position
+Bit Name
+Function
+0
+TPBAnTO0
+Reads the setting of the TPBnO pin output and the output level
+•
+When the timer output is disabled (TPBAnTOE.TPBAnTOE0 = 0)
+0: Outputs low level.
+1: Outputs high level.
+•
+When the timer output is enabled (TPBAnTOE.TPBAnTOE0 = 1)
+0: Low level is being output by the timer output.
+1: High level is being output by the timer output.
+When the timer output is enabled, rewrite to this register is ignored.
+
+
+=== PAGE 1110 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1090 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(7)
+TPBAn Timer Output Level Register (TPBAnTOL)
+This register controls the timer output level.
+Access
+This register can be read/written in 8-bit units.
+Address
+<TPBAn_base1> + 124H
+Initial value
+00H
+This register is initialized by a reset from any source.
+Caution
+This register is a register to be reloaded. Rewrite during timer operation is 
+reflected at the next reload timing. For details on reload, see section 16.5.2, 
+Compare Register Rewrite Operation.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+-
+-
+-
+-
+-
+TPBAn
+TOL0
+R
+R
+R
+R
+R
+R
+R
+R/W
+Table 16-13
+TPBAnTOL Register Contents
+Bit Position
+Bit Name
+Function
+0
+TPBAnTOL0
+Specifies the active level of the timer output.
+0: High
+1: Low.
+•
+Setting of this bit is enabled when the timer output is enabled 
+(TPBAnTOE.TPBAnTOE0 = 1).
+•
+Setting of this bit is reflected when the timer output is started, and change of 
+the output level is reflected at the next reload timing.
+
+
+=== PAGE 1111 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1091 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(8)
+TPBAn Period Setting Register (TPBAnCMP0)
+This is a 16-bit compare register for setting the PWM period.
+Access
+This register can be read/written in 16-bit units.
+Address
+<TPBAn_base1> + 100H
+Initial value
+0000H
+This register is initialized by a reset from any source.
+Caution
+The PWM period is (TPBAnCMP0 + 1) count clock periods. Accordingly, for 
+PWM output with 100% duty cycle, the maximum settable value is FFFEH 
+(FEH).
+Caution
+This register is a register to be reloaded. Rewrite during timer operation is 
+reflected at the next reload timing. For details on reload, see section 16.5.2, 
+Compare Register Rewrite Operation.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TPBAnCMP0
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 16-14
+TPBAnCMP0 Register Setting
+Operating Mode
+PWM Period
+Minimum Value (Period)
+Maximum Value (Period)
+8 bits
+TPBAnCMP0 + 1
+1
+100H
+16 bits
+TPBAnCMP0 + 1
+1
+10000H
+
+
+=== PAGE 1112 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1092 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(9)
+TPBAn Duty Setting Register (TPBAnBUFm)
+This register is a 16  64 buffer register for duty setting.
+Access
+This register can be read/written in 16-bit units.
+Address
+<TPBAn_base1> + 000H to 0FCH
+Initial value
+0000H
+This register is initialized by a reset from any source.
+Caution
+The value set to this register is transferred to the duty setting buffer register 
+(TPBAnCB2) synchronously with a period-matched detection interrupt 
+(INTTPBAnIPRD). Rewrite during timer operation is reflected at any time. For 
+details, see section 16.5.3, Duty Rewrite Operation.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TPBAnBUFm
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 16-15
+TPBAnBUFm Register Contents
+Bit Position
+Bit Name
+Function
+15 to 0
+TPBAnBUFm15 
+to 
+TPBAnBUFm0
+Sets the duty value.
+This register can set the duty value either in 16 bits  64 patterns mode 
+(TPBAnDPS = 0) or 8 bits  128 patterns mode (TPBAnDPS = 1) by setting the 
+TPBAnDPS bit.
+In either mode, this register is accessed in 16-bit units by the CPU.
+For details, see section 16.5.3, Duty Rewrite Operation.
+
+
+=== PAGE 1113 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1093 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(10)
+TPBAn Pattern Number Setting Register (TPBAnCMP1)
+This register sets the number of PWM output patterns.
+Access
+This register can be read/written in 8-bit units.
+Address
+<TPBAn_base1> + 104H
+Initial value
+00H
+This register is initialized by a reset from any source.
+Caution
+This register is a register to be reloaded. Rewrite during timer operation is 
+reflected at the next reload timing. For details on reload, see section 16.5.2, 
+Compare Register Rewrite Operation.
+Caution
+If 64 or a greater number is set as the number of patterns when the duty 
+setting pattern is in 16 bits  64 patterns mode (TPBAnDPS = 0), the address 
+pointer changes from 63 to 00, and the duty value is transferred from 00 again. 
+A number-of-patterns matched detection interrupt signal (INTTPBAnIPAT) is 
+output by the match of the specified number of patterns and the lower 7-bit 
+values of TPBAnCNT1.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+TPBAnCMP1
+R
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 16-16
+TPBAnCMP1 Register Contents
+Bit Position
+Bit Name
+Function
+6 to 0
+TPBAnCMP1
+[6:0]
+Sets the number of patterns within the following range.
+TPBAnDPS = 0: 0 to 63
+TPBAnDPS = 1: 0 to 127
+
+
+=== PAGE 1114 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1094 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(11)
+TPBAn Timer Counter Register (TPBAnCNT0)
+This register is a 16-bit counter that generates PWM output.
+Access
+This register can only be read in 16-bit units.
+Address
+<TPBAn_base1> + 108H
+Initial value
+FFFFH
+This register is initialized by a reset from any source.
+16-bit counter
+This register is a counter register through which the 16-bit counter value can 
+be read.
+(12)
+TPBAn Address Counter Register (TPBAnCNT1)
+This register is a counter register that indicates the address pointer to the duty 
+setting register.
+Access
+This register can only be read in 8-bit units.
+Address
+<TPBAn_base1> + 10CH
+Initial value
+00H
+This register is initialized by a reset from any source.
+7-bit counter
+This register indicates TPBAnBUFm that holds the duty value to be transferred 
+next.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TPBAnCNT0
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+7
+6
+5
+4
+3
+2
+1
+0
+-
+TPBAnCNT1
+R
+R
+R
+R
+R
+R
+R
+R
+
+
+=== PAGE 1115 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1095 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(13)
+TPBAn Enable Status Register (TPBAnTE)
+This register indicates whether the timer counter is operating or stopped.
+Access
+This register can only be read in 8-bit units.
+Address
+<TPBAn_base1> + 128H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+-
+-
+-
+-
+-
+TPBAn
+TE0
+R
+R
+R
+R
+R
+R
+R
+R
+Table 16-17
+TPBAnTE Register Contents
+Bit Position
+Bit Name
+Function
+0
+TPBAnTE0
+Indicates whether the timer counter is operating or stopped.
+0: The timer counter is stopped.
+1: The timer counter is operating.
+•
+The TPBAnTE0 bit is set to 1 when 1 is written to the TPBAnTS bit or when a 
+synchronous start trigger is input.
+•
+The TPBAnTE0 bit is cleared to 0 when 1 is written to the TPBAnTT bit.
+
+
+=== PAGE 1116 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1096 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(14)
+TPBAn Start Trigger Register (TPBAnTS)
+This register controls the timer counter start trigger.
+Access
+This register can only be written in 8-bit units. It is always read as 0.
+Address
+<TPBAn_base1> + 12CH
+Initial value
+00H
+This register is initialized by a reset from any source.
+Caution
+Write access to this register during counting (TPBAnTE = 1) is ignored.
+(15)
+TPBAn Stop Trigger Register (TPBAnTT)
+This register controls the timer counter stop trigger.
+Access
+This register can only be written in 8-bit units. It is always read as 0.
+Address
+<TPBAn_base1> + 130H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+-
+-
+-
+-
+-
+TPBAn
+TS0
+R
+R
+R
+R
+R
+R
+R
+W
+Table 16-18
+TPBAnTS Register Contents
+Bit Position
+Bit Name
+Function
+0
+TPBAnTS0
+This bit is a trigger bit that enables the timer counter.
+0: Write access is ignored.
+1: Starts counting (TPBAnTE = 1).
+7
+6
+5
+4
+3
+2
+1
+0
+-
+-
+-
+-
+-
+-
+-
+TPBAn
+TT0
+R
+R
+R
+R
+R
+R
+R
+W
+Table 16-19
+TPBAnTT Register Contents
+Bit Position
+Bit Name
+Function
+0
+TPBAnTT0
+This bit is a trigger bit that disables the timer counter.
+0: Write access is ignored.
+1: Disables counting (TPBAnTE = 0).
+
+
+=== PAGE 1117 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1097 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+16.5
+Basic Operation
+16.5.1
+Basic Operation of Counter
+(1)
+Basic Operation of 16-Bit Counter (TPBAnCNT0)
+Counting start
+The 16-bit counter (TPBAnCNT0) starts counting from the initial value FFFFH.
+Counter clear
+The 16-bit counter is cleared by the match of the counter value and the buffer 
+register (TPBAnCB0) set value of TPBAnCMP0.
+Counter
+read during
+counting
+The 16-bit counter value during counting can be read through TPBAnCNT0.
+(2)
+Basic Operation of 7-Bit Counter (TPBAnCNT1)
+Counting start
+The 7-bit counter (TPBAnCNT1) is initialized to 00H and starts counting. 
+Subsequently, the counter value is incremented synchronously with a period-
+matched detection interrupt (INTTPBAnIPRD).
+Counter clear
+The 7-bit counter is cleared by the match of the counter value and the buffer 
+register (TPBAnCB1) set value of TPBAnCMP1.
+Counter
+read during
+counting
+The 7-bit counter value during counting can be read through TPBAnCNT1. The 
+read value indicates TPBAnBUFm in which the duty value to be transferred 
+next is stored.
+
+
+=== PAGE 1118 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1098 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+16.5.2
+Compare Register Rewrite Operation
+The following registers are rewritten by reload.
+• TPBAnCMP0
+• TPBAnCMP1
+• TPBAnTOL
+Reload mode
+(simultaneous
+rewrite function)
+Writing to TPBAnRDT enables reload of the registers corresponding to the set 
+bits (sets the reload request flag (TPBAnRSF.TPBAnRSFk)), and the values of 
+all the pertinent registers are updated simultaneously at the next reload timing 
+(reload).
+The reload timing of TPBAnCMP0 and TPBAnTOL is set by TPBAnRDM.
+The reload timing of TPBAnCMP1 is the match timing (INTTPBAnIPAT) of the 
+7-bit counter (TPBAnCNT1) and the buffer register (TPBAnCB1) of 
+TPBAnCMP1.
+The registers to be reloaded should be rewritten when the reload request flag 
+(TPBAnRFS.TPBAnRSFk) is 0.
+Note: k = 0, 1
+
+
+=== PAGE 1119 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1099 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+Setting Flow for Registers to Be Reloaded
+The rewritten values of the registers to be reloaded (TPBAnCMP0, 
+TPBAnCMP1, and TPBAnTOL) can be transferred to the respective buffer 
+registers simultaneously at the reload timing.
+Figure 16-2
+Basic Operation Flow of Reload (Simultaneous Rewrite Function)
+Note: k = 0, 1
+Caution
+Setting the TPBAnRDTk bit to 1 enables reload. Accordingly, the TPBAnRDTk 
+bit should be rewritten after the registers to be reloaded have been rewritten.
+NO
+NO
+START
+Initial setting
+• Make various settings including settings of the count clock 
+  and duty setting patterns to activate the TPBA.
+    
+Timer enabled (TPBAnTS.TPBAnTS0 = 1).
+• Transfer the set values of the compare register 
+  and the timer output level register to the buffer register 
+  at the timing when counting begins.
+TPBAnRSF flag = 0?
+YES
+Rewrite TPBAnCMPk.
+Rewrite TPBAnTOL.
+Write “1” to the reload trigger bit (TPBAnRDTk).
+• Set the TPBAnRSFk flag to “1” in the compare register 
+  to be rewritten.
+Reload timing?
+YES
+Ԙ
+ԙ
+Ԛ
+• Reload the compare register (TPBAnCMPk) value 
+  to the buffer register.
+• Reload the timer output level register (TPBAnTOL) value 
+  to the buffer register.
+• Clear the TPBAnRSFk flag.
+
+
+=== PAGE 1120 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1100 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+Figure 16-3
+Simultaneous Rewrite Timing (TPBAnDPS = 0, TPBAnRDM = 0, and 
+TPBAnTOL = 0)
+16-bit counter
+TPBAnCMP0
+TPBAnCB0
+TPBAnRDT0
+TPBAnRSF0
+INTTPBAnIPRD
+D00
+D01
+D01
+D00
+Reload timing
+Updated simultaneously 
+at reload timing.
+Reload request flag is set.
+Reload request flag 
+is cleared after reloading.
+
+
+=== PAGE 1121 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1101 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+16.5.3
+Duty Rewrite Operation
+TPBAnBUFm can be rewritten during operation.
+The rewritten setting is reflected immediately.
+(1)
+TPBAnBUFm Setting Flow
+Figure 16-4
+Basic Rewrite Flow of TPBAnBUFm
+Note
+* Since TPBAnBUFm can be written at any time, it is recommended that this 
+register is rewritten during last duty cycle output (TPBAnCNT1 = 00H) of the 
+pattern period (the number of patterns specified by TPBAnCMP1).
+START 
+YES
+NO
+END
+Read TPBAnCNT1.
+Read TPBAnCMP1.
+Determine whether TPBAnBUFm can 
+be rewritten based on the values 
+of both registers.*
+Rewritable?
+Rewrite TPBAnBUFm.
+
+
+=== PAGE 1122 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1102 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(2)
+Access to TPBAnBUFm
+TPBAnBUFm is accessed in 16 bit units. The following shows the access in 16 
+bits  64 patterns mode and the access in 8 bits  128 patterns mode.
+• In 16 bits  64 patterns mode (TPBAnDPS = 0)
+This register is accessed by the CPU in units of one 16-bit pattern.
+• In 8 bits  128 patterns mode (TPBAnDPS = 1)
+This register is accessed by the CPU in units of two 8-bit patterns.
+15
+0
+Pattern 64
+00FCH
+Pattern 63
+00F8H
+:
+:
+Pattern 3
+0008H
+Pattern 2
+0004H
+Pattern 1
+0000H
+15
+0
+Pattern 128
+Pattern 127
+00FCH
+Pattern 126
+Pattern 125
+00F8H
+:
+:
+:
+Pattern 6
+Pattern 5
+0008H
+Pattern 4
+Pattern 3
+0004H
+Pattern 2
+Pattern 1
+0000H
+
+
+=== PAGE 1123 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1103 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(3) Relationship between TPBAnCNT1 Read Value and TPBAnBUFm
+The duty value of the currently output PWM waveform can be obtained by 
+reading the TPBAnCNT1 count value during operation. TPBAnBUFm in 
+which the currently output duty value is stored can be found by one of the 
+following formulas.
+(1)
+When TPBAnDPS = 0 and the TPBAnCNT1  00H
+The applicable register is found by the formula TPBAnCNT1 - 01H.
+(Example) When TPBAnCNT1 = 08H: 08H - 01H = 07H -> TPBA0BUF07
+(2)
+When TPBAnDPS = 0 and the TPBAnCNT1 = 00H
+The applicable register is found by the TPBAnCMP1 value.
+(Example) When TPBAnCMP1 = 08H: TPBAnBUF08
+(3)
+When TPBAnDPS = 1 and the TPBAnCNT1 = an odd number
+The applicable register is found by the formula TPBAnCNT1 / 2
+(Example) When TPBAnCNT1 = 07H: 07H / 02H = 03H -> TPBAnBUF03 
+(lower 8 bits)
+(4)
+When TPBAnDPS = 1 and the TPBAnCNT1 = an even number
+The applicable register is found by the formula (TPBAnCNT1 / 2) - 01H.
+(Example) When TPBAnCNT1 = 08H: (08H / 02H) - 01H = 03H -> 
+TPBAnBUF03 (upper 8 bits)
+(5)
+When TPBAnDPS = 1 and the TPBAnCNT1 = 00H
+The applicable register is found by the formula TPBAnCMP1 / 2.
+(Example) When TPBAnCMP1 = 08H: 08H / 2 = 04H -> TPBAnBUF04 
+(lower 8 bits)
+TPBAnDPS0 Bit
+Formula
+TPBAnCNT1  00H
+TPBAnCNT1 = 00H
+0: 16 bits  64 
+patterns mode
+(1) TPBAnCNT1 - 01H
+(2) TPBAnCMP1
+1: 8 bits  128 
+patterns mode
+TPBAnCNT1 value is 
+an odd number
+(3) TPBAnCNT1/2
+(5) TPBAnCMP1/2
+TPBAnCNT1 value is 
+an even number
+(4) (TPBAnCNT1 / 2) 
+- 01H
+
+
+=== PAGE 1124 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1104 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+16.5.4
+Basic Operation Example
+Overview
+A PWM signal is output from the TPBnO pin according to the PWM period set 
+in the TPBAnCMP0 register and duty cycle set in the TPBAnBUF00 to 
+TPBAnBUF63 registers.
+Prerequisites
+• Select 16 bits  64 patterns mode or 8 bits  128 patterns mode by setting 
+TPBAnDPS.
+• Set the duty cycle to TPBAnBUF00 to TPBAnBUF63.
+• Set the number of patterns to TPBAnCMP1.
+Functional
+description
+Set the PWM period, the number of patterns, duty cycle, and level to be output. 
+Set TPBAnTS.TPBSnTS0 = 1 (or input a synchronous start trigger) to start 
+incrementing the timer counter value.
+The TPBnO output is set to the active level at the same time the counting 
+begins. TPBAnCNT1 is incremented, and points to the address of the buffer in 
+which the subsequent duty value is stored.
+The output is set to the inactive level by the match of the 16-bit counter and the 
+TPBAnBUFm buffer register (TPBAnCB2).
+The duty value is then transferred from TPBAnBUFm to the buffer register 
+(TPBAnCB2) by the match of the 16-bit counter and the TPBAnCMP0 buffer 
+register (TPBAnCB0). Then, TPBAnCNT1 is incremented, and a period-
+matched detection interrupt (INTTPBAnIPRD) is generated. The TPBnO 
+output is set to the active level after one count clock.
+During counting, a duty-cycle-matched detection interrupt (INTTPBAnIDTY) is 
+generated by the match of the 16-bit counter and the buffer register 
+(TPBAnCB2) of TPBAnBUFm.
+A number-of-patterns matched detection interrupt (INTTPBAnIPAT) is 
+generated by the match of the 7-bit counter and the TPBAnCMP1 buffer 
+register (TPBAnCB1).
+
+
+=== PAGE 1125 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1105 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+(1)
+List of Operations
+Table 16-20
+16-Bit Counter Function
+Operation
+Setting Condition
+16-bit 
+counter
+Start
+Writing 1 to TPBAnTS or synchronous start trigger
+Clear
+Compare match of TPBAnCMP0 buffer register and 16-bit counter
+Stop
+Writing 1 to TPBAnTT
+Table 16-21
+7-Bit Counter Function
+Operation
+Setting Condition
+7-bit 
+counter
+Start
+Writing 1 to TPBAnTS or synchronous start trigger
+Clear
+Compare match of TPBAnCMP1 buffer register and 7-bit counter
+Stop
+Writing 1 to TPBAnTT
+Table 16-22
+Functions of Compare Registers
+Register
+Rewrite Method
+Rewrite during 
+Operation
+Function
+TPBAnCMP0
+Reload
+Possible
+Setting period
+TPBAnCMP1
+Reload
+Possible
+Setting number of patterns
+TPBAnBUFm
+Rewrite at any time
+Possible
+Setting duty
+TPBAnTOL
+Reload
+Possible
+Setting output level
+Table 16-23
+Timer Output Function
+Pin
+Function
+TPBnO
+•
+When output is enabled (TPBAnTOE = 01H)
+PWM output by compare match of the TPBAnBUFm buffer register 
+(TPBAnCB2) and the 16-bit counter 
+•
+When output is disabled (TPBAnTOE = 00H)
+TPBAnTO set value
+Table 16-24
+Interrupt Requests
+Interrupt
+Function
+INTTPBAnIPRD
+Period-matched detection interrupt
+INTTPBAnIDTY
+Duty-cycle-matched detection interrupt
+INTTPBAnIPAT
+Number-of-patterns matched detection interrupt
+
+
+=== PAGE 1126 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1106 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+Table 16-25
+Compare Match Timing
+Compare Match
+Timing
+TPBAnCMP0
+When the 16-bit counter changes from TPBAnCMP0 to 0000H.
+TPBAnCMP1
+When the 7-bit counter changes from TPBAnCMP1 to 00H.
+TPBAnBUFm
+When the 16-bit counter matches with the buffer register (TPBAnCB2).
+Table 16-26
+Example of Setting Each Timer Output Condition
+Pin
+Item
+Output Period
+Output Duty
+Output Condition
+Setting Condition
+TPBnO
+PWM 
+output
+(TPBAnCMP0 + 1)  
+count clock
+Outputs an inactive level 
+throughout one period (duty 
+cycle 0%).
+TPBAnBUFm = 0000H
+Outputs an active level of 
+one count clock in one 
+period.
+TPBAnBUFm = 0001H
+Outputs an inactive level of 
+one count clock in one 
+period
+TPBAnBUFm = 
+TPBAnCMP0
+Outputs an active level 
+throughout one period (duty 
+cycle 100%).
+TPBAnBUFm 
+TPBAnCMP0 + 1
+
+
+=== PAGE 1127 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1107 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+Figure 16-5
+Example of Basic Timing (1/2)
+When a number-of-patterns matched detection interrupt is used as a trigger of 
+the TPBAnCMP0 and TPBAnTOL reload timing (TPBAnIRDM.TPBAnRDM0 = 
+0 and TPBAnTOL = 0)
+Note 1.
+PWM duty cycle = (TPBAnBUFm) / (TPBAnCMP0 set value + 1)
+PWM period = (TPBAnCMP0 set value + 1)  (count clock period)
+Note 2.
+▲: Writing 1 to TPBAnRDT
+2
+4
+3
+3
+0
+2
+3
+0
+1
+2
+0
+1
+2
+3
+3
+2
+4
+A pattern
+B pattern
+C pattern
+B pattern duty setting period
+C pattern duty setting period
+FFFFH
+16-bit counter
+0000H
+TPBAnTE 
+TPBAnCMP0
+TPBAnCB0
+TPBAnCNT1
+TPBAnCMP1
+TPBAnCB1
+TPBAnBUFm
+TPBAnCB2
+TPBAnRSF
+TPBnO pin
+INTTPBAnIPRDI interrupt
+INTTPBAnIDTY interrupt
+INTTPBAnIPAT interrupt
+D10 
+D00
+D11
+D12
+D13
+D20
+D21
+D01
+D22
+D30
+D02
+D31
+D32 
+Pattern period
+D00
+D01
+D00
+D01
+D02
+D02
+D03
+D10
+D11
+D10
+D12
+D11
+D13
+D12
+D20
+D13
+D21
+D20
+D22
+D30
+D31
+D32
+D33
+D32
+D31
+D30
+D22
+D21
+1
+Pattern period
+Pattern period
+
+
+=== PAGE 1128 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1108 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 16　TPBA (TPBA0 and TPBA1)
+Figure 16-5
+Example of Basic Timing (2/2)
+When a period-matched detection interrupt is used as a trigger of the 
+TPBAnCMP0 and TPBAnTOL reload timing (TPBAnIRDM.TPBAnRDM0 = 1 
+and TPBAnTOL = 0)
+Note 1.
+PWM duty cycle = (TPBAnBUFm) / (TPBAnCMP0 set value + 1)
+PWM period = (TPBAnCMP0 set value + 1)  (count clock period)
+Note 2.
+▲ Writing 1 to TPBAnRDT0
+Note 3.
+Δ: Writing 1 to TPBAnRDT1
+2
+4
+3
+3
+0
+1
+2
+3
+0
+1
+2
+0
+1
+2
+16-bit counter
+D12
+D32
+3
+4
+B pattern
+C pattern
+B pattern duty setting period
+C pattern duty setting period
+INTTPBAnIPAT interrupt
+INTTPBAnIDTY interrupt
+INTTPBAnIPRD interrupt
+TPBnO pin
+TPBAnRSF1 flag
+TPBAnRSF0 flag
+TPBAnCB2
+TPBAnBUFm
+A pattern
+TPBAnCB1
+TPBAnCMP1
+TPBAnCNT1
+TPBAnCB0
+TPBAnCMP0
+TPBAnTE
+0000H
+FFFFH
+D10
+D00
+D11
+D01
+D13
+D20
+D21
+D30
+D02
+D31
+D02
+D02
+D01
+D01
+D00
+D00
+D10
+D10
+D10 
+D12
+D11
+D12
+D13
+D13
+D20
+D21
+D20
+D30
+D21
+D30
+D31
+D32
+D31
+D33
+D32
+Pattern period
+Pattern period
+Pattern period
+2
+

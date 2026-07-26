@@ -1,0 +1,908 @@
+<!-- Section 23: Synchronous/Asynchronous Serial Interface H (UARTH) -->
+<!-- V850E2/Px4 (UPD70F3508) — 3 instances: UARTH0, UARTH1, UARTH2 -->
+<!-- Base addresses resolved from Table 23-2 (PDF page 1471 / manual page 1471): -->
+<!--   UARTH0: <URTHn_base0>=0xFF5C0000, <URTHn_base1>=0xFFFFEA00 -->
+<!--   UARTH1: <URTHn_base0>=0xFF5D0000, <URTHn_base1>=0xFFFFEB00 -->
+<!--   UARTH2: <URTHn_base0>=0xFF5E0000, <URTHn_base1>=0xFFFFEC00 -->
+<!-- NOTE: Each peripheral's register set spans two non-contiguous address ranges. -->
+<!--   baseAddress is set to the lower range (base0 = 0xFF5x0000). -->
+<!--   base1 registers use absolute offsets from baseAddress accordingly. -->
+<!-- IC0REG0/IC0REG1 are singleton LIN baud-rate detection registers at fixed addresses -->
+<!--   0xFFFFFE00 / 0xFFFFFE04; emitted as a separate peripheral UARTH_IC0. -->
+
+<!-- ═══════════════════════════════════════════════════════════ UARTH0 -->
+<peripheral>
+  <name>UARTH0</name>
+  <description>Synchronous/Asynchronous Serial Interface H, instance 0</description>
+  <baseAddress>0xFF5C0000</baseAddress>
+  <!-- addressBlock covers the base0 window (CTL1/CTL2/OPT0 at offsets 0x40..0x4A) -->
+  <!-- base1 registers start at 0xFFFFEA00 which is far above base0; they are -->
+  <!-- represented with their absolute offset from baseAddress. -->
+  <addressBlock><offset>0x40</offset><size>0xC</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- ── base0 registers ── -->
+
+    <register>
+      <name>URTH0CTL1</name>
+      <description>UARTHn Control Register 1 — data frame properties</description>
+      <addressOffset>0x40</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x5002</resetValue>
+      <fields>
+        <field><name>URTHnSLBM</name><description>BF reception mode selection (0=disabled during data reception, 1=enabled)</description><bitRange>[15:15]</bitRange></field>
+        <field><name>URTHnBLG2</name><description>BF bit length during transmission [2]</description><bitRange>[14:14]</bitRange></field>
+        <field><name>URTHnBLG1</name><description>BF bit length during transmission [1]</description><bitRange>[13:13]</bitRange></field>
+        <field><name>URTHnBLG0</name><description>BF bit length during transmission [0]</description><bitRange>[12:12]</bitRange></field>
+        <field><name>URTHnCLG</name><description>Bit length of transmit/receive data (0=7 bits, 1=8/9 bits)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>URTHnSLP1</name><description>Parity bit selection [1]</description><bitRange>[7:7]</bitRange></field>
+        <field><name>URTHnSLP0</name><description>Parity bit selection [0]</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnTDL</name><description>Transmit data level control (0=normal, 1=inverted)</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnRDL</name><description>Received data level control (0=normal, 1=inverted)</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnLPM</name><description>Loop back mode control (0=disabled, 1=enabled)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>URTHnSLG</name><description>Stop bit count for transmit (0=1 bit, 1=2 bits)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>URTHnSLD</name><description>Transfer direction (0=MSB-first, 1=LSB-first)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>URTHnSLIT</name><description>Transmission interrupt timing (0=at start, 1=at completion)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0CTL2</name>
+      <description>UARTHn Control Register 2 — baud rate</description>
+      <addressOffset>0x44</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xEFFF</resetValue>
+      <fields>
+        <field><name>URTHnPRS2</name><description>Prescaler clock division [2]</description><bitRange>[15:15]</bitRange></field>
+        <field><name>URTHnPRS1</name><description>Prescaler clock division [1]</description><bitRange>[14:14]</bitRange></field>
+        <field><name>URTHnPRS0</name><description>Prescaler clock division [0]</description><bitRange>[13:13]</bitRange></field>
+        <field><name>URTHnBRS</name><description>Baud-rate clock division value [11:0]</description><bitRange>[11:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0OPT0</name>
+      <description>UARTHn Option Register 0 — optional serial transfer features</description>
+      <addressOffset>0x48</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>URTHnEBE</name><description>Enhanced bit operation enable (0=disabled, 1=enabled)</description><bitRange>[15:15]</bitRange></field>
+        <field><name>URTHnEGE</name><description>Enhanced bit detection interrupt enable (0=disabled, 1=enabled)</description><bitRange>[14:14]</bitRange></field>
+        <field><name>URTHnEJL</name><description>Enhanced bit detection condition (0=detect 0, 1=detect 1)</description><bitRange>[13:13]</bitRange></field>
+        <field><name>URTHnSCFR</name><description>Noise filter for synchronizing clock (0=enabled, 1=disabled)</description><bitRange>[12:12]</bitRange></field>
+        <field><name>URTHnRSFR</name><description>Noise filter for handshake signal input (0=enabled, 1=disabled)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>URTHnRXFR</name><description>Noise filter for received data (0=enabled, 1=disabled)</description><bitRange>[10:10]</bitRange></field>
+        <field><name>URTHnRTSL</name><description>Active level of handshake output (0=low, 1=high)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>URTHnCTSL</name><description>Active level of handshake input (0=low, 1=high)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>URTHnHS</name><description>Handshaking enable (0=disabled, 1=enabled)</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnDM</name><description>Sampling timing in clock synchronous mode (0=rising, 1=falling)</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnMSS</name><description>Master/slave selection in clock sync mode (0=master, 1=slave)</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnSAS</name><description>Operating mode (0=asynchronous, 1=synchronous)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>URTHnF2R</name><description>Reception frame length (0=1 frame, 1=2 frames)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>URTHnF2T</name><description>Transmission frame length (0=1 frame, 1=2 frames)</description><bitRange>[1:1]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- ── base1 registers: offsets relative to baseAddress 0xFF5C0000 ── -->
+    <!-- base1 = 0xFFFFEA00; offset from baseAddress = 0xFFFFEA00 - 0xFF5C0000 = 0x00A3EA00 -->
+
+    <register>
+      <name>URTH0CTL0</name>
+      <description>UARTHn Control Register 0 — basic serial-transfer control</description>
+      <addressOffset>0x00A3EA00</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnPW</name><description>UARTHn enable (0=disabled, 1=enabled)</description><bitRange>[7:7]</bitRange></field>
+        <field><name>URTHnTXE</name><description>Transmission operation enable (0=disabled, 1=enabled)</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnRXE</name><description>Reception operation enable (0=disabled, 1=enabled)</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnSLDC</name><description>Data consistency check enable (0=disabled, 1=enabled)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0OPT1</name>
+      <description>UARTHn Option Register 1 — ID match detection enable</description>
+      <addressOffset>0x00A3EA04</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnIDCN</name><description>ID match detection enable (0=disabled, 1=enabled)</description><bitRange>[7:7]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0OPT2</name>
+      <description>UARTHn Option Register 2 — ID comparison value and mask</description>
+      <addressOffset>0x00A3EA08</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>URTHnIDCD</name><description>ID value for comparison at enhanced-bit transfer [7:0]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>URTHnMID</name><description>ID comparison mask [7:0] (1=bit not compared)</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0TRG</name>
+      <description>UARTHn Trigger Register — BF transmission/reception triggers</description>
+      <addressOffset>0x00A3EA0C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnBRT</name><description>BF reception trigger (write 1 to enable BF reception)</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnBTT</name><description>BF transmission trigger (write 1 to trigger BF transmission)</description><bitRange>[5:5]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0STR0</name>
+      <description>UARTHn Status Register 0 — current transmission/reception state</description>
+      <addressOffset>0x00A3EA10</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnSSBR</name><description>BF reception enable status (0=disabled, 1=enabled/busy)</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnSSBT</name><description>BF transmission enable status (0=disabled, 1=enabled/busy)</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnSSR</name><description>Data reception state (0=not in progress, 1=in progress)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>URTHnSST</name><description>Data transmission state (0=none pending, 1=pending or in progress)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0STR1</name>
+      <description>UARTHn Status Register 1 — transmission/reception result flags</description>
+      <addressOffset>0x00A3EA14</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnIDM</name><description>ID value match detection flag</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnEBD</name><description>Enhanced bit detection flag</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnBSF</name><description>BF reception successful flag</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnDCE</name><description>Data consistency error flag</description><bitRange>[3:3]</bitRange></field>
+        <field><name>URTHnPE</name><description>Parity error flag</description><bitRange>[2:2]</bitRange></field>
+        <field><name>URTHnFE</name><description>Framing error flag</description><bitRange>[1:1]</bitRange></field>
+        <field><name>URTHnOVE</name><description>Overrun error flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0STC</name>
+      <description>UARTHn Status Clear Register — clears STR1 status bits</description>
+      <addressOffset>0x00A3EA18</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnCLIM</name><description>Clear URTHnIDM flag (write 1)</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnCLEB</name><description>Clear URTHnEBD flag (write 1)</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnCLBS</name><description>Clear URTHnBSF flag (write 1)</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnCLDC</name><description>Clear URTHnDCE flag (write 1)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>URTHnCLP</name><description>Clear URTHnPE flag (write 1)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>URTHnCLF</name><description>Clear URTHnFE flag (write 1)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>URTHnCLOV</name><description>Clear URTHnOVE flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0RX</name>
+      <description>UARTHn Receive Data Register — 7/8-bit received data</description>
+      <addressOffset>0x00A3EA1C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0xFF</resetValue>
+      <fields>
+        <field><name>URTHnRX</name><description>Received data [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0RXHL</name>
+      <description>UARTHn Receive Data Register HL — 9-bit / 2-frame received data</description>
+      <addressOffset>0x00A3EA20</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field><name>URTHnRXH</name><description>Received data high byte [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>URTHnRXL</name><description>Received data low byte [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0ERX</name>
+      <description>UARTHn Enhanced Bit Receive Data Register</description>
+      <addressOffset>0x00A3EA24</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x11</resetValue>
+      <fields>
+        <field><name>URTHnERXH8</name><description>Enhanced bit of high frame received data</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnERXL8</name><description>Enhanced bit of low frame received data</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0ERXW</name>
+      <description>UARTHn Enhanced Bit Receive Word Data Register — 32-bit combined</description>
+      <addressOffset>0x00A3EA28</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x0011FFFF</resetValue>
+      <fields>
+        <field><name>URTHnERXH8</name><description>Enhanced bit of high frame received data</description><bitRange>[20:20]</bitRange></field>
+        <field><name>URTHnERXL8</name><description>Enhanced bit of low frame received data</description><bitRange>[16:16]</bitRange></field>
+        <field><name>URTHnRX</name><description>Received data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0TX</name>
+      <description>UARTHn Transmit Data Register — 7/8-bit transmit data</description>
+      <addressOffset>0x00A3EA2C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0xFF</resetValue>
+      <fields>
+        <field><name>URTHnTX</name><description>Transmit data [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0TXHL</name>
+      <description>UARTHn Transmit Data Register HL — 9-bit / 2-frame transmit data</description>
+      <addressOffset>0x00A3EA30</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field><name>URTHnTXH</name><description>Transmit data high byte [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>URTHnTXL</name><description>Transmit data low byte [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0ETX</name>
+      <description>UARTHn Enhanced Bit Transmit Data Register</description>
+      <addressOffset>0x00A3EA34</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x11</resetValue>
+      <fields>
+        <field><name>URTHnETXH8</name><description>Enhanced bit for high frame transmit data</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnETXL8</name><description>Enhanced bit for low frame transmit data</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH0ETXW</name>
+      <description>UARTHn Enhanced Bit Transmit Word Data Register — 32-bit combined</description>
+      <addressOffset>0x00A3EA38</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0011FFFF</resetValue>
+      <fields>
+        <field><name>URTHnETXH8</name><description>Enhanced bit for high frame transmit data</description><bitRange>[20:20]</bitRange></field>
+        <field><name>URTHnETXL8</name><description>Enhanced bit for low frame transmit data</description><bitRange>[16:16]</bitRange></field>
+        <field><name>URTHnTX</name><description>Transmit data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ═══════════════════════════════════════════════════════════ UARTH1 -->
+<peripheral>
+  <name>UARTH1</name>
+  <description>Synchronous/Asynchronous Serial Interface H, instance 1</description>
+  <baseAddress>0xFF5D0000</baseAddress>
+  <addressBlock><offset>0x40</offset><size>0xC</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>URTH1CTL1</name>
+      <description>UARTHn Control Register 1 — data frame properties</description>
+      <addressOffset>0x40</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x5002</resetValue>
+      <fields>
+        <field><name>URTHnSLBM</name><description>BF reception mode selection</description><bitRange>[15:15]</bitRange></field>
+        <field><name>URTHnBLG2</name><description>BF bit length [2]</description><bitRange>[14:14]</bitRange></field>
+        <field><name>URTHnBLG1</name><description>BF bit length [1]</description><bitRange>[13:13]</bitRange></field>
+        <field><name>URTHnBLG0</name><description>BF bit length [0]</description><bitRange>[12:12]</bitRange></field>
+        <field><name>URTHnCLG</name><description>Bit length (0=7 bits, 1=8/9 bits)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>URTHnSLP1</name><description>Parity selection [1]</description><bitRange>[7:7]</bitRange></field>
+        <field><name>URTHnSLP0</name><description>Parity selection [0]</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnTDL</name><description>Transmit data level inversion</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnRDL</name><description>Received data level inversion</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnLPM</name><description>Loop back mode</description><bitRange>[3:3]</bitRange></field>
+        <field><name>URTHnSLG</name><description>Stop bit count (0=1, 1=2)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>URTHnSLD</name><description>Transfer direction (0=MSB-first, 1=LSB-first)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>URTHnSLIT</name><description>Transmission interrupt timing</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1CTL2</name>
+      <description>UARTHn Control Register 2 — baud rate</description>
+      <addressOffset>0x44</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xEFFF</resetValue>
+      <fields>
+        <field><name>URTHnPRS2</name><description>Prescaler clock division [2]</description><bitRange>[15:15]</bitRange></field>
+        <field><name>URTHnPRS1</name><description>Prescaler clock division [1]</description><bitRange>[14:14]</bitRange></field>
+        <field><name>URTHnPRS0</name><description>Prescaler clock division [0]</description><bitRange>[13:13]</bitRange></field>
+        <field><name>URTHnBRS</name><description>Baud-rate clock division [11:0]</description><bitRange>[11:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1OPT0</name>
+      <description>UARTHn Option Register 0 — optional serial features</description>
+      <addressOffset>0x48</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>URTHnEBE</name><description>Enhanced bit operation enable</description><bitRange>[15:15]</bitRange></field>
+        <field><name>URTHnEGE</name><description>Enhanced bit detection interrupt enable</description><bitRange>[14:14]</bitRange></field>
+        <field><name>URTHnEJL</name><description>Enhanced bit detection condition</description><bitRange>[13:13]</bitRange></field>
+        <field><name>URTHnSCFR</name><description>Noise filter for sync clock (0=enabled)</description><bitRange>[12:12]</bitRange></field>
+        <field><name>URTHnRSFR</name><description>Noise filter for handshake input (0=enabled)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>URTHnRXFR</name><description>Noise filter for received data (0=enabled)</description><bitRange>[10:10]</bitRange></field>
+        <field><name>URTHnRTSL</name><description>Active level of handshake output</description><bitRange>[9:9]</bitRange></field>
+        <field><name>URTHnCTSL</name><description>Active level of handshake input</description><bitRange>[8:8]</bitRange></field>
+        <field><name>URTHnHS</name><description>Handshaking enable</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnDM</name><description>Delayed sampling mode</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnMSS</name><description>Master/slave selection</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnSAS</name><description>Async/sync mode select</description><bitRange>[3:3]</bitRange></field>
+        <field><name>URTHnF2R</name><description>Reception 1/2 frame</description><bitRange>[2:2]</bitRange></field>
+        <field><name>URTHnF2T</name><description>Transmission 1/2 frame</description><bitRange>[1:1]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- base1 for UARTH1 = 0xFFFFEB00; offset from 0xFF5D0000 = 0x00A2EB00 -->
+
+    <register>
+      <name>URTH1CTL0</name>
+      <description>UARTHn Control Register 0 — basic serial-transfer control</description>
+      <addressOffset>0x00A2EB00</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnPW</name><description>UARTHn enable</description><bitRange>[7:7]</bitRange></field>
+        <field><name>URTHnTXE</name><description>Transmission enable</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnRXE</name><description>Reception enable</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnSLDC</name><description>Data consistency check enable</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1OPT1</name>
+      <description>UARTHn Option Register 1 — ID match detection</description>
+      <addressOffset>0x00A2EB04</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnIDCN</name><description>ID match detection enable</description><bitRange>[7:7]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1OPT2</name>
+      <description>UARTHn Option Register 2 — ID comparison value and mask</description>
+      <addressOffset>0x00A2EB08</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>URTHnIDCD</name><description>ID value for comparison [7:0]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>URTHnMID</name><description>ID comparison mask [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1TRG</name>
+      <description>UARTHn Trigger Register — BF triggers</description>
+      <addressOffset>0x00A2EB0C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnBRT</name><description>BF reception trigger</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnBTT</name><description>BF transmission trigger</description><bitRange>[5:5]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1STR0</name>
+      <description>UARTHn Status Register 0 — current state</description>
+      <addressOffset>0x00A2EB10</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnSSBR</name><description>BF reception enable status</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnSSBT</name><description>BF transmission enable status</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnSSR</name><description>Data reception state</description><bitRange>[1:1]</bitRange></field>
+        <field><name>URTHnSST</name><description>Data transmission state</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1STR1</name>
+      <description>UARTHn Status Register 1 — result flags</description>
+      <addressOffset>0x00A2EB14</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnIDM</name><description>ID match flag</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnEBD</name><description>Enhanced bit detection flag</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnBSF</name><description>BF reception success flag</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnDCE</name><description>Data consistency error flag</description><bitRange>[3:3]</bitRange></field>
+        <field><name>URTHnPE</name><description>Parity error flag</description><bitRange>[2:2]</bitRange></field>
+        <field><name>URTHnFE</name><description>Framing error flag</description><bitRange>[1:1]</bitRange></field>
+        <field><name>URTHnOVE</name><description>Overrun error flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1STC</name>
+      <description>UARTHn Status Clear Register</description>
+      <addressOffset>0x00A2EB18</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnCLIM</name><description>Clear URTHnIDM</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnCLEB</name><description>Clear URTHnEBD</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnCLBS</name><description>Clear URTHnBSF</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnCLDC</name><description>Clear URTHnDCE</description><bitRange>[3:3]</bitRange></field>
+        <field><name>URTHnCLP</name><description>Clear URTHnPE</description><bitRange>[2:2]</bitRange></field>
+        <field><name>URTHnCLF</name><description>Clear URTHnFE</description><bitRange>[1:1]</bitRange></field>
+        <field><name>URTHnCLOV</name><description>Clear URTHnOVE</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1RX</name>
+      <description>UARTHn Receive Data Register</description>
+      <addressOffset>0x00A2EB1C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0xFF</resetValue>
+      <fields>
+        <field><name>URTHnRX</name><description>Received data [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1RXHL</name>
+      <description>UARTHn Receive Data Register HL</description>
+      <addressOffset>0x00A2EB20</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field><name>URTHnRXH</name><description>Received data [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>URTHnRXL</name><description>Received data [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1ERX</name>
+      <description>UARTHn Enhanced Bit Receive Data Register</description>
+      <addressOffset>0x00A2EB24</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x11</resetValue>
+      <fields>
+        <field><name>URTHnERXH8</name><description>Enhanced bit of high frame</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnERXL8</name><description>Enhanced bit of low frame</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1ERXW</name>
+      <description>UARTHn Enhanced Bit Receive Word Data Register</description>
+      <addressOffset>0x00A2EB28</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x0011FFFF</resetValue>
+      <fields>
+        <field><name>URTHnERXH8</name><description>Enhanced bit high frame</description><bitRange>[20:20]</bitRange></field>
+        <field><name>URTHnERXL8</name><description>Enhanced bit low frame</description><bitRange>[16:16]</bitRange></field>
+        <field><name>URTHnRX</name><description>Received data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1TX</name>
+      <description>UARTHn Transmit Data Register</description>
+      <addressOffset>0x00A2EB2C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0xFF</resetValue>
+      <fields>
+        <field><name>URTHnTX</name><description>Transmit data [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1TXHL</name>
+      <description>UARTHn Transmit Data Register HL</description>
+      <addressOffset>0x00A2EB30</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field><name>URTHnTXH</name><description>Transmit data [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>URTHnTXL</name><description>Transmit data [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1ETX</name>
+      <description>UARTHn Enhanced Bit Transmit Data Register</description>
+      <addressOffset>0x00A2EB34</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x11</resetValue>
+      <fields>
+        <field><name>URTHnETXH8</name><description>Enhanced bit high frame transmit</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnETXL8</name><description>Enhanced bit low frame transmit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH1ETXW</name>
+      <description>UARTHn Enhanced Bit Transmit Word Data Register</description>
+      <addressOffset>0x00A2EB38</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0011FFFF</resetValue>
+      <fields>
+        <field><name>URTHnETXH8</name><description>Enhanced bit high frame transmit</description><bitRange>[20:20]</bitRange></field>
+        <field><name>URTHnETXL8</name><description>Enhanced bit low frame transmit</description><bitRange>[16:16]</bitRange></field>
+        <field><name>URTHnTX</name><description>Transmit data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ═══════════════════════════════════════════════════════════ UARTH2 -->
+<peripheral>
+  <name>UARTH2</name>
+  <description>Synchronous/Asynchronous Serial Interface H, instance 2</description>
+  <baseAddress>0xFF5E0000</baseAddress>
+  <addressBlock><offset>0x40</offset><size>0xC</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>URTH2CTL1</name>
+      <description>UARTHn Control Register 1 — data frame properties</description>
+      <addressOffset>0x40</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x5002</resetValue>
+      <fields>
+        <field><name>URTHnSLBM</name><description>BF reception mode selection</description><bitRange>[15:15]</bitRange></field>
+        <field><name>URTHnBLG2</name><description>BF bit length [2]</description><bitRange>[14:14]</bitRange></field>
+        <field><name>URTHnBLG1</name><description>BF bit length [1]</description><bitRange>[13:13]</bitRange></field>
+        <field><name>URTHnBLG0</name><description>BF bit length [0]</description><bitRange>[12:12]</bitRange></field>
+        <field><name>URTHnCLG</name><description>Bit length (0=7 bits, 1=8/9 bits)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>URTHnSLP1</name><description>Parity selection [1]</description><bitRange>[7:7]</bitRange></field>
+        <field><name>URTHnSLP0</name><description>Parity selection [0]</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnTDL</name><description>Transmit data level inversion</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnRDL</name><description>Received data level inversion</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnLPM</name><description>Loop back mode</description><bitRange>[3:3]</bitRange></field>
+        <field><name>URTHnSLG</name><description>Stop bit count (0=1, 1=2)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>URTHnSLD</name><description>Transfer direction (0=MSB-first, 1=LSB-first)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>URTHnSLIT</name><description>Transmission interrupt timing</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2CTL2</name>
+      <description>UARTHn Control Register 2 — baud rate</description>
+      <addressOffset>0x44</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xEFFF</resetValue>
+      <fields>
+        <field><name>URTHnPRS2</name><description>Prescaler clock division [2]</description><bitRange>[15:15]</bitRange></field>
+        <field><name>URTHnPRS1</name><description>Prescaler clock division [1]</description><bitRange>[14:14]</bitRange></field>
+        <field><name>URTHnPRS0</name><description>Prescaler clock division [0]</description><bitRange>[13:13]</bitRange></field>
+        <field><name>URTHnBRS</name><description>Baud-rate clock division [11:0]</description><bitRange>[11:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2OPT0</name>
+      <description>UARTHn Option Register 0 — optional serial features</description>
+      <addressOffset>0x48</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>URTHnEBE</name><description>Enhanced bit operation enable</description><bitRange>[15:15]</bitRange></field>
+        <field><name>URTHnEGE</name><description>Enhanced bit detection interrupt enable</description><bitRange>[14:14]</bitRange></field>
+        <field><name>URTHnEJL</name><description>Enhanced bit detection condition</description><bitRange>[13:13]</bitRange></field>
+        <field><name>URTHnSCFR</name><description>Noise filter for sync clock (0=enabled)</description><bitRange>[12:12]</bitRange></field>
+        <field><name>URTHnRSFR</name><description>Noise filter for handshake input (0=enabled)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>URTHnRXFR</name><description>Noise filter for received data (0=enabled)</description><bitRange>[10:10]</bitRange></field>
+        <field><name>URTHnRTSL</name><description>Active level of handshake output</description><bitRange>[9:9]</bitRange></field>
+        <field><name>URTHnCTSL</name><description>Active level of handshake input</description><bitRange>[8:8]</bitRange></field>
+        <field><name>URTHnHS</name><description>Handshaking enable</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnDM</name><description>Delayed sampling mode</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnMSS</name><description>Master/slave selection</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnSAS</name><description>Async/sync mode select</description><bitRange>[3:3]</bitRange></field>
+        <field><name>URTHnF2R</name><description>Reception 1/2 frame</description><bitRange>[2:2]</bitRange></field>
+        <field><name>URTHnF2T</name><description>Transmission 1/2 frame</description><bitRange>[1:1]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- base1 for UARTH2 = 0xFFFFEC00; offset from 0xFF5E0000 = 0x00A1EC00 -->
+
+    <register>
+      <name>URTH2CTL0</name>
+      <description>UARTHn Control Register 0 — basic serial-transfer control</description>
+      <addressOffset>0x00A1EC00</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnPW</name><description>UARTHn enable</description><bitRange>[7:7]</bitRange></field>
+        <field><name>URTHnTXE</name><description>Transmission enable</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnRXE</name><description>Reception enable</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnSLDC</name><description>Data consistency check enable</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2OPT1</name>
+      <description>UARTHn Option Register 1 — ID match detection</description>
+      <addressOffset>0x00A1EC04</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnIDCN</name><description>ID match detection enable</description><bitRange>[7:7]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2OPT2</name>
+      <description>UARTHn Option Register 2 — ID comparison value and mask</description>
+      <addressOffset>0x00A1EC08</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>URTHnIDCD</name><description>ID value for comparison [7:0]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>URTHnMID</name><description>ID comparison mask [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2TRG</name>
+      <description>UARTHn Trigger Register — BF triggers</description>
+      <addressOffset>0x00A1EC0C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnBRT</name><description>BF reception trigger</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnBTT</name><description>BF transmission trigger</description><bitRange>[5:5]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2STR0</name>
+      <description>UARTHn Status Register 0 — current state</description>
+      <addressOffset>0x00A1EC10</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnSSBR</name><description>BF reception enable status</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnSSBT</name><description>BF transmission enable status</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnSSR</name><description>Data reception state</description><bitRange>[1:1]</bitRange></field>
+        <field><name>URTHnSST</name><description>Data transmission state</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2STR1</name>
+      <description>UARTHn Status Register 1 — result flags</description>
+      <addressOffset>0x00A1EC14</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnIDM</name><description>ID match flag</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnEBD</name><description>Enhanced bit detection flag</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnBSF</name><description>BF reception success flag</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnDCE</name><description>Data consistency error flag</description><bitRange>[3:3]</bitRange></field>
+        <field><name>URTHnPE</name><description>Parity error flag</description><bitRange>[2:2]</bitRange></field>
+        <field><name>URTHnFE</name><description>Framing error flag</description><bitRange>[1:1]</bitRange></field>
+        <field><name>URTHnOVE</name><description>Overrun error flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2STC</name>
+      <description>UARTHn Status Clear Register</description>
+      <addressOffset>0x00A1EC18</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>URTHnCLIM</name><description>Clear URTHnIDM</description><bitRange>[6:6]</bitRange></field>
+        <field><name>URTHnCLEB</name><description>Clear URTHnEBD</description><bitRange>[5:5]</bitRange></field>
+        <field><name>URTHnCLBS</name><description>Clear URTHnBSF</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnCLDC</name><description>Clear URTHnDCE</description><bitRange>[3:3]</bitRange></field>
+        <field><name>URTHnCLP</name><description>Clear URTHnPE</description><bitRange>[2:2]</bitRange></field>
+        <field><name>URTHnCLF</name><description>Clear URTHnFE</description><bitRange>[1:1]</bitRange></field>
+        <field><name>URTHnCLOV</name><description>Clear URTHnOVE</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2RX</name>
+      <description>UARTHn Receive Data Register</description>
+      <addressOffset>0x00A1EC1C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0xFF</resetValue>
+      <fields>
+        <field><name>URTHnRX</name><description>Received data [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2RXHL</name>
+      <description>UARTHn Receive Data Register HL</description>
+      <addressOffset>0x00A1EC20</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field><name>URTHnRXH</name><description>Received data [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>URTHnRXL</name><description>Received data [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2ERX</name>
+      <description>UARTHn Enhanced Bit Receive Data Register</description>
+      <addressOffset>0x00A1EC24</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x11</resetValue>
+      <fields>
+        <field><name>URTHnERXH8</name><description>Enhanced bit high frame</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnERXL8</name><description>Enhanced bit low frame</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2ERXW</name>
+      <description>UARTHn Enhanced Bit Receive Word Data Register</description>
+      <addressOffset>0x00A1EC28</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x0011FFFF</resetValue>
+      <fields>
+        <field><name>URTHnERXH8</name><description>Enhanced bit high frame</description><bitRange>[20:20]</bitRange></field>
+        <field><name>URTHnERXL8</name><description>Enhanced bit low frame</description><bitRange>[16:16]</bitRange></field>
+        <field><name>URTHnRX</name><description>Received data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2TX</name>
+      <description>UARTHn Transmit Data Register</description>
+      <addressOffset>0x00A1EC2C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0xFF</resetValue>
+      <fields>
+        <field><name>URTHnTX</name><description>Transmit data [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2TXHL</name>
+      <description>UARTHn Transmit Data Register HL</description>
+      <addressOffset>0x00A1EC30</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field><name>URTHnTXH</name><description>Transmit data [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>URTHnTXL</name><description>Transmit data [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2ETX</name>
+      <description>UARTHn Enhanced Bit Transmit Data Register</description>
+      <addressOffset>0x00A1EC34</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x11</resetValue>
+      <fields>
+        <field><name>URTHnETXH8</name><description>Enhanced bit high frame transmit</description><bitRange>[4:4]</bitRange></field>
+        <field><name>URTHnETXL8</name><description>Enhanced bit low frame transmit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>URTH2ETXW</name>
+      <description>UARTHn Enhanced Bit Transmit Word Data Register</description>
+      <addressOffset>0x00A1EC38</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x0011FFFF</resetValue>
+      <fields>
+        <field><name>URTHnETXH8</name><description>Enhanced bit high frame transmit</description><bitRange>[20:20]</bitRange></field>
+        <field><name>URTHnETXL8</name><description>Enhanced bit low frame transmit</description><bitRange>[16:16]</bitRange></field>
+        <field><name>URTHnTX</name><description>Transmit data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ═══════════════════════════════════════════════════════ UARTH_IC0 -->
+<!-- Singleton LIN baud-rate detection registers (not instance-specific) -->
+<!-- Addresses FFFFFE00H and FFFFFE04H from Table 23-7 (PDF p.1475) -->
+<peripheral>
+  <name>UARTH_IC0</name>
+  <description>LIN Communications Slave Operation Baud-Rate Detection Registers (IC0REG0/IC0REG1)</description>
+  <baseAddress>0xFFFFFE00</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x8</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>IC0REG0</name>
+      <description>LIN Baud-Rate Detection Register 0 — TAUA0 channel input selection</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <!-- Each channel m (0-15) has 2-bit field IC0REG00m1:IC0REG00m0 -->
+      <!-- Selecting input to TAUA0 ch(m): 00=TAUA0Im, 01=RXDH0, 10=RXDH1, 11=RXDH2 -->
+      <!-- Fields not individually enumerated (32 packed 1-bit sub-fields) -->
+    </register>
+
+    <register>
+      <name>IC0REG1</name>
+      <description>LIN Baud-Rate Detection Register 1 — TAUA1 channel input selection</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <!-- Each channel m (0-15) has 2-bit field IC0REG11m1:IC0REG11m0 -->
+      <!-- Selecting input to TAUA1 ch(m): 00=TAUA1Im, 01=RXDH0, 10=RXDH1, 11=RXDH2 -->
+    </register>
+
+  </registers>
+</peripheral>

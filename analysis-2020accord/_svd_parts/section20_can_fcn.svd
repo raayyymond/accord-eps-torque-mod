@@ -1,0 +1,755 @@
+<!-- Section 20: CAN Controller (FCN) — UPD70F3508 V850E2/Px4
+     Two instances: FCN0, FCN1
+     FCN0 base: 0xFF480000  (Table 20-3: FF48 0000H)
+     FCN1 base: 0xFF4A0000  (Table 20-3: FF4A 0000H)
+     All offsets from Table 20-9 (global+module) and Table 20-14 (message buffers).
+     "X x" offset notation: concatenate digits, e.g. "1 00C0H" -> 0x100C0.
+     Message buffer registers: base offset + m*0x40, m = 0..63.
+     For message buffers only m=0 is emitted here as the representative instance;
+     the step size (0x40) is noted in the description.  Alias access widths (e.g.
+     FCNnMmDAT0W is 32-bit alias of FCNnMmDAT0H at 0x9000+m*40) are noted in
+     descriptions; only the primary width variant is emitted per register to avoid
+     address collisions.
+-->
+
+<!-- ===================================================================== -->
+<!--  FCN0 — CAN Controller instance 0                                     -->
+<!-- ===================================================================== -->
+<peripheral>
+  <name>FCN0</name>
+  <description>CAN Controller (FCN) instance 0</description>
+  <baseAddress>0xFF480000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x12000</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- ============================================================ -->
+    <!-- FCN Global Registers (Table 20-9, Table 20-10)               -->
+    <!-- ============================================================ -->
+
+    <register>
+      <name>FCN0GMCSPRE</name>
+      <description>FCN0 global clock selection register</description>
+      <addressOffset>0x00008</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x0F</resetValue>
+      <fields>
+        <field><name>FCN0GMCSPRSC</name><description>Clock prescaler selection [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0GMADCTL</name>
+      <description>FCN0 global automatic block transmission delay register</description>
+      <addressOffset>0x00020</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>FCN0GMADSSAD</name><description>ABT delay setting [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0GMCLCTL</name>
+      <description>FCN0 global control register (bit-set/clear mechanism; read gives status, write uses SE/CL upper/lower byte)</description>
+      <addressOffset>0x08000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <!-- reset 00x0H: bit 4 (SORF) state-dependent; treat x as 0 -> 0x0000 -->
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <!-- Read fields (bits present on read) -->
+        <field><name>FCN0GMCLSSMO</name><description>Message buffer / history register access enable (read-only; set by HW)</description><bitRange>[15:15]</bitRange></field>
+        <field><name>FCN0GMCLECCF</name><description>Message buffer RAM read error detect flag</description><bitRange>[5:5]</bitRange></field>
+        <field><name>FCN0GMCLSORF</name><description>Software reset execution status</description><bitRange>[4:4]</bitRange></field>
+        <field><name>FCN0GMCLESDE</name><description>Forced shut-down enable flag</description><bitRange>[1:1]</bitRange></field>
+        <field><name>FCN0GMCLPWOM</name><description>Global operating mode (0=disabled, 1=enabled)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0GMABCTL</name>
+      <description>FCN0 global automatic block transmission register (bit-set/clear mechanism)</description>
+      <addressOffset>0x08018</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>FCN0GMABCLRF</name><description>ABT clear flag (read)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>FCN0GMABABTT</name><description>ABT active flag (read)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0DNBMRX0</name>
+      <description>FCN0 global data new bit monitor register 0 (buffers 0-31, one bit per buffer)</description>
+      <addressOffset>0x100C0</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>FCN0DNBMSSDN_31_0</name><description>Data new flags for message buffers 31:0</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0DNBMRX1</name>
+      <description>FCN0 global data new bit monitor register 1 (buffers 32-63, one bit per buffer)</description>
+      <addressOffset>0x100D0</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>FCN0DNBMSSDN_63_32</name><description>Data new flags for message buffers 63:32</description><bitRange>[31:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- ============================================================ -->
+    <!-- FCN Module Mask Registers — 8 masks, each has two 16-bit     -->
+    <!-- halves (H/W) and one 32-bit alias (W).  Only the 16-bit      -->
+    <!-- halves and 32-bit aliases are emitted; overlap noted.        -->
+    <!-- Mask N: low-half at 0x8300+(N-1)*0x10, high-half +8,        -->
+    <!--         32-bit alias at 0x10300+(N-1)*0x10 (step 0x10).      -->
+    <!-- Reset: 0x0000 / 0x00000000 (Note 2).                         -->
+    <!-- ============================================================ -->
+
+    <!-- Mask 1 -->
+    <register>
+      <name>FCN0CMMKCTL01H</name>
+      <description>FCN0 module mask 1 low 16-bit register (ID bits [15:0])</description>
+      <addressOffset>0x08300</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>FCN0CMMKSSID_15_0</name><description>Mask ID bits [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL02H</name>
+      <description>FCN0 module mask 1 high 16-bit register (ID bits [28:16])</description>
+      <addressOffset>0x08308</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>FCN0CMMKSSID_28_16</name><description>Mask ID bits [28:16]</description><bitRange>[12:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL01W</name>
+      <description>FCN0 module mask 1 32-bit register (full ID bits [28:0])</description>
+      <addressOffset>0x10300</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>FCN0CMMKSSID_28_0</name><description>Mask ID bits [28:0]</description><bitRange>[28:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- Mask 2 -->
+    <register>
+      <name>FCN0CMMKCTL03H</name>
+      <description>FCN0 module mask 2 low 16-bit register (ID bits [15:0])</description>
+      <addressOffset>0x08310</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL04H</name>
+      <description>FCN0 module mask 2 high 16-bit register (ID bits [28:16])</description>
+      <addressOffset>0x08318</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL03W</name>
+      <description>FCN0 module mask 2 32-bit register (full ID bits [28:0])</description>
+      <addressOffset>0x10310</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <!-- Mask 3 -->
+    <register>
+      <name>FCN0CMMKCTL05H</name>
+      <description>FCN0 module mask 3 low 16-bit register (ID bits [15:0])</description>
+      <addressOffset>0x08320</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL06H</name>
+      <description>FCN0 module mask 3 high 16-bit register (ID bits [28:16])</description>
+      <addressOffset>0x08328</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL05W</name>
+      <description>FCN0 module mask 3 32-bit register (full ID bits [28:0])</description>
+      <addressOffset>0x10320</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <!-- Mask 4 -->
+    <register>
+      <name>FCN0CMMKCTL07H</name>
+      <description>FCN0 module mask 4 low 16-bit register (ID bits [15:0])</description>
+      <addressOffset>0x08330</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL08H</name>
+      <description>FCN0 module mask 4 high 16-bit register (ID bits [28:16])</description>
+      <addressOffset>0x08338</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL07W</name>
+      <description>FCN0 module mask 4 32-bit register (full ID bits [28:0])</description>
+      <addressOffset>0x10330</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <!-- Mask 5 -->
+    <register>
+      <name>FCN0CMMKCTL09H</name>
+      <description>FCN0 module mask 5 low 16-bit register (ID bits [15:0])</description>
+      <addressOffset>0x08340</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL10H</name>
+      <description>FCN0 module mask 5 high 16-bit register (ID bits [28:16])</description>
+      <addressOffset>0x08348</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL09W</name>
+      <description>FCN0 module mask 5 32-bit register (full ID bits [28:0])</description>
+      <addressOffset>0x10340</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <!-- Mask 6 -->
+    <register>
+      <name>FCN0CMMKCTL11H</name>
+      <description>FCN0 module mask 6 low 16-bit register (ID bits [15:0])</description>
+      <addressOffset>0x08350</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL12H</name>
+      <description>FCN0 module mask 6 high 16-bit register (ID bits [28:16])</description>
+      <addressOffset>0x08358</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL11W</name>
+      <description>FCN0 module mask 6 32-bit register (full ID bits [28:0])</description>
+      <addressOffset>0x10350</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <!-- Mask 7 -->
+    <register>
+      <name>FCN0CMMKCTL13H</name>
+      <description>FCN0 module mask 7 low 16-bit register (ID bits [15:0])</description>
+      <addressOffset>0x08360</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL14H</name>
+      <description>FCN0 module mask 7 high 16-bit register (ID bits [28:16])</description>
+      <addressOffset>0x08368</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL13W</name>
+      <description>FCN0 module mask 7 32-bit register (full ID bits [28:0])</description>
+      <addressOffset>0x10360</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <!-- Mask 8 -->
+    <register>
+      <name>FCN0CMMKCTL15H</name>
+      <description>FCN0 module mask 8 low 16-bit register (ID bits [15:0])</description>
+      <addressOffset>0x08370</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL16H</name>
+      <description>FCN0 module mask 8 high 16-bit register (ID bits [28:16])</description>
+      <addressOffset>0x08378</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0CMMKCTL15W</name>
+      <description>FCN0 module mask 8 32-bit register (full ID bits [28:0])</description>
+      <addressOffset>0x10370</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <!-- ============================================================ -->
+    <!-- FCN Module Control Registers (Table 20-9 part 2, Table 20-13)-->
+    <!-- ============================================================ -->
+
+    <register>
+      <name>FCN0CMLCSTR</name>
+      <description>FCN0 module last error information register</description>
+      <addressOffset>0x00248</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>FCN0CMLCSSLC</name><description>Last error code [2:0]</description><bitRange>[2:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0CMINSTR</name>
+      <description>FCN0 module information register</description>
+      <addressOffset>0x0024C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>FCN0CMINBOFF</name><description>Bus-off status flag</description><bitRange>[4:4]</bitRange></field>
+        <field><name>FCN0CMINSSRE</name><description>Receive error status [1:0]</description><bitRange>[1:0]</bitRange></field>
+        <field><name>FCN0CMINSSTE</name><description>Transmit error status [1:0] (bits [3:2])</description><bitRange>[3:2]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0CMBRPRS</name>
+      <description>FCN0 module bit-rate prescaler register</description>
+      <addressOffset>0x00268</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0xFF</resetValue>
+      <fields>
+        <field><name>FCN0CMBRPRS</name><description>Bit-rate prescaler value [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0CMLISTR</name>
+      <description>FCN0 module last in-pointer register (receive history list)</description>
+      <addressOffset>0x00278</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <!-- reset: Undefined — omit resetValue -->
+      <fields>
+        <field><name>FCN0CMLISSLR</name><description>Last receive history in-pointer [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0CMLOSTR</name>
+      <description>FCN0 module last out-pointer register (transmit history list)</description>
+      <addressOffset>0x00288</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <!-- reset: Undefined — omit resetValue -->
+      <fields>
+        <field><name>FCN0CMLOSSLT</name><description>Last transmit history out-pointer [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0CMCLCTL</name>
+      <description>FCN0 module control register (bit-set/clear mechanism)</description>
+      <addressOffset>0x08240</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <!-- Read side -->
+        <field><name>FCN0CMCLERCF</name><description>Error counter overflow flag (bit 15)</description><bitRange>[15:15]</bitRange></field>
+        <field><name>FCN0CMCLALBF</name><description>Arbitration lost flag (bit 14)</description><bitRange>[14:14]</bitRange></field>
+        <field><name>FCN0CMCLVALF</name><description>Valid protocol operation flag (bit 13)</description><bitRange>[13:13]</bitRange></field>
+        <field><name>FCN0CMCLMDPF</name><description>Module operating mode phase flags [1:0] (bits [12:11])</description><bitRange>[12:11]</bitRange></field>
+        <field><name>FCN0CMCLMDOF</name><description>Module operating mode flags [2:0] (bits [10:8])</description><bitRange>[10:8]</bitRange></field>
+        <field><name>FCN0CMCLSSRS</name><description>Single-shot mode status (bit 1)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>FCN0CMCLSSTS</name><description>Self-test mode status (bit 0)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0CMERCNT</name>
+      <description>FCN0 module error counter register</description>
+      <addressOffset>0x08250</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>FCN0CMERTECF</name><description>Transmit error counter [7:0] (bits [15:8])</description><bitRange>[15:8]</bitRange></field>
+        <field><name>FCN0CMERRPSF</name><description>Receive passive error flag (bit 7)</description><bitRange>[7:7]</bitRange></field>
+        <field><name>FCN0CMERRECF</name><description>Receive error counter [6:0] (bits [6:0])</description><bitRange>[6:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0CMIECTL</name>
+      <description>FCN0 module interrupt enable register (bit-set/clear mechanism)</description>
+      <addressOffset>0x08258</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>FCN0CMIEINTF</name><description>Interrupt flag bits [6:0] (read, bits [14:8])</description><bitRange>[14:8]</bitRange></field>
+        <field><name>FCN0CMIESIE</name><description>Status interrupt enable bits [6:0] (write, bits [6:0])</description><bitRange>[6:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0CMISCTL</name>
+      <description>FCN0 module interrupt status register (bit-set/clear mechanism)</description>
+      <addressOffset>0x08260</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>FCN0CMISITSF</name><description>Interrupt status flag bits [6:0] (read, bits [14:8])</description><bitRange>[14:8]</bitRange></field>
+        <field><name>FCN0CMISCLTS</name><description>Interrupt status clear bits [6:0] (write, bits [14:8])</description><bitRange>[14:8]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0CMBTCTL</name>
+      <description>FCN0 module bit-rate register</description>
+      <addressOffset>0x08270</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x370F</resetValue>
+      <fields>
+        <field><name>FCN0CMBTS1LG</name><description>Bit segment 1 length [3:0] (bits [11:8])</description><bitRange>[11:8]</bitRange></field>
+        <field><name>FCN0CMBTJWLG</name><description>Synchronization jump width [1:0] (bits [5:4])</description><bitRange>[5:4]</bitRange></field>
+        <field><name>FCN0CMBTS2LG</name><description>Bit segment 2 length [2:0] (bits [2:0])</description><bitRange>[2:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0CMRGRX</name>
+      <description>FCN0 module receive history list register (bit-set/clear mechanism; reset xx02H, x=don&apos;t-care)</description>
+      <addressOffset>0x08280</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0002</resetValue>
+      <fields>
+        <field><name>FCN0CMRGSSPM</name><description>History list write pointer overflow flag (read, bit 9)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>FCN0CMRGRVFF</name><description>History list full flag (read, bit 8)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>FCN0CMRDSSPT</name><description>History list read pointer [7:0] (read, bits [7:0])</description><bitRange>[7:0]</bitRange></field>
+        <field><name>FCN0CMRGCLRV</name><description>History list clear (write, bit 0)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0CMTGTX</name>
+      <description>FCN0 module transmit history list register (bit-set/clear mechanism; reset xx02H, x=don&apos;t-care)</description>
+      <addressOffset>0x08290</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0002</resetValue>
+      <fields>
+        <field><name>FCN0CMTGSSPM</name><description>Transmit history list overflow flag (read, bit 9)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>FCN0CMTGTVFF</name><description>Transmit history list full flag (read, bit 8)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>FCN0CMTGSSPT</name><description>Transmit history list read pointer [7:0] (read, bits [7:0])</description><bitRange>[7:0]</bitRange></field>
+        <field><name>FCN0CMTGCLTV</name><description>Transmit history list clear (write, bit 0)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>FCN0CMTSCTL</name>
+      <description>FCN0 module time stamp register (bit-set/clear mechanism)</description>
+      <addressOffset>0x08298</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <!-- Read side (bits [2:0]) -->
+        <field><name>FCN0CMTSLOKE</name><description>Time stamp lock enable flag (read, bit 2)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>FCN0CMTSSELE</name><description>Time stamp select enable flag (read, bit 1)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>FCN0CMTSTSGE</name><description>Time stamp trigger enable flag (read, bit 0)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- ============================================================ -->
+    <!-- FCN Message Buffer Registers (Table 20-14)                   -->
+    <!-- m = 0..63; base offset for buffer m = m * 0x40               -->
+    <!-- Only buffer 0 (m=0) is emitted here as representative;       -->
+    <!-- all others follow the same pattern at +m*0x40.               -->
+    <!-- 32-bit access variants (DAT0W, DAT4W, MID0W) at 0x11000+;   -->
+    <!-- 16-bit access variants (DAT0H, DAT4H, MID0H, MID1H, CTL)    -->
+    <!--   at 0x09000+; 8-bit access (DAT*B, DTLGB, STRB) at 0x01000+-->
+    <!-- For each buffer the primary register set is emitted once at  -->
+    <!-- the 8-bit offset, plus 16-bit and 32-bit aliases noted.      -->
+    <!-- ============================================================ -->
+
+    <!-- Buffer 0 — 8-bit data byte registers (0x01000 + m*0x40) -->
+    <register>
+      <name>FCN0M0DAT0B</name>
+      <description>FCN0 message buffer 0 data byte 0 register (8-bit access; array step 0x40 for buffers 1-63)</description>
+      <addressOffset>0x01000</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>FCN0M0SSD0</name><description>Data byte 0 [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>FCN0M0DAT1B</name>
+      <description>FCN0 message buffer 0 data byte 1 register (8-bit)</description>
+      <addressOffset>0x01004</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+    <register>
+      <name>FCN0M0DAT2B</name>
+      <description>FCN0 message buffer 0 data byte 2 register (8-bit)</description>
+      <addressOffset>0x01008</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+    <register>
+      <name>FCN0M0DAT3B</name>
+      <description>FCN0 message buffer 0 data byte 3 register (8-bit)</description>
+      <addressOffset>0x0100C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+    <register>
+      <name>FCN0M0DAT4B</name>
+      <description>FCN0 message buffer 0 data byte 4 register (8-bit)</description>
+      <addressOffset>0x01010</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+    <register>
+      <name>FCN0M0DAT5B</name>
+      <description>FCN0 message buffer 0 data byte 5 register (8-bit)</description>
+      <addressOffset>0x01014</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+    <register>
+      <name>FCN0M0DAT6B</name>
+      <description>FCN0 message buffer 0 data byte 6 register (8-bit)</description>
+      <addressOffset>0x01018</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+    <register>
+      <name>FCN0M0DAT7B</name>
+      <description>FCN0 message buffer 0 data byte 7 register (8-bit)</description>
+      <addressOffset>0x0101C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+    <!-- Buffer 0 — data length and config (8-bit, at 0x1020/0x1024) -->
+    <register>
+      <name>FCN0M0DTLGB</name>
+      <description>FCN0 message buffer 0 data length register (8-bit)</description>
+      <addressOffset>0x01020</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>FCN0M0DTLG</name><description>Data length code [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>FCN0M0STRB</name>
+      <description>FCN0 message buffer 0 configuration register (8-bit)</description>
+      <addressOffset>0x01024</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>FCN0M0SSOW</name><description>Message buffer direction (0=RX, 1=TX) (bit 7)</description><bitRange>[7:7]</bitRange></field>
+        <field><name>FCN0M0SSMT</name><description>Message buffer type [3:0] (bits [6:3])</description><bitRange>[6:3]</bitRange></field>
+        <field><name>FCN0M0SSRT</name><description>Remote frame type (bit 2)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>FCN0M0SSAM</name><description>Accept mask selection (bit 0)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- Buffer 0 — 16-bit data word aliases (0x09000 + m*0x40) -->
+    <register>
+      <name>FCN0M0DAT0H</name>
+      <description>FCN0 message buffer 0 data bytes 0-1 register (16-bit alias; array step 0x40)</description>
+      <addressOffset>0x09000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0M0DAT2H</name>
+      <description>FCN0 message buffer 0 data bytes 2-3 register (16-bit alias)</description>
+      <addressOffset>0x09008</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0M0DAT4H</name>
+      <description>FCN0 message buffer 0 data bytes 4-5 register (16-bit alias)</description>
+      <addressOffset>0x09010</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>FCN0M0DAT6H</name>
+      <description>FCN0 message buffer 0 data bytes 6-7 register (16-bit alias)</description>
+      <addressOffset>0x09018</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+
+    <!-- Buffer 0 — ID registers (16-bit at 0x9028, 0x9030; 32-bit alias at 0x11028) -->
+    <register>
+      <name>FCN0M0MID0H</name>
+      <description>FCN0 message buffer 0 message ID register low word (16-bit; ID bits [15:0])</description>
+      <addressOffset>0x09028</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>FCN0M0SSID_15_0</name><description>Message ID bits [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>FCN0M0MID1H</name>
+      <description>FCN0 message buffer 0 message ID register high word (16-bit; ID bits [28:16] + IDE bit)</description>
+      <addressOffset>0x09030</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>FCN0M0SSID_28_24</name><description>Message ID bits [28:24] (bits [4:0])</description><bitRange>[4:0]</bitRange></field>
+        <field><name>FCN0M0SSIE</name><description>IDE flag — extended frame (bit 13)</description><bitRange>[13:13]</bitRange></field>
+        <field><name>FCN0M0SSID_23_16</name><description>Message ID bits [23:16] (bits [7:0] in high byte)</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- Buffer 0 — 32-bit ID alias (0x11028 + m*0x40) -->
+    <register>
+      <name>FCN0M0MID0W</name>
+      <description>FCN0 message buffer 0 message ID register 32-bit alias (ID [28:0] + IDE bit)</description>
+      <addressOffset>0x11028</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>FCN0M0SSID_28_0</name><description>Message ID bits [28:0]</description><bitRange>[28:0]</bitRange></field>
+        <field><name>FCN0M0SSIE_W</name><description>IDE flag — extended frame (bit 29)</description><bitRange>[29:29]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- Buffer 0 — 32-bit data aliases (0x11000, 0x11010 + m*0x40) -->
+    <register>
+      <name>FCN0M0DAT0W</name>
+      <description>FCN0 message buffer 0 data bytes 0-3 register (32-bit alias)</description>
+      <addressOffset>0x11000</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>FCN0M0DAT4W</name>
+      <description>FCN0 message buffer 0 data bytes 4-7 register (32-bit alias)</description>
+      <addressOffset>0x11010</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+
+    <!-- Buffer 0 — control register (16-bit at 0x9038 + m*0x40) -->
+    <register>
+      <name>FCN0M0CTL</name>
+      <description>FCN0 message buffer 0 control register (bit-set/clear mechanism)</description>
+      <addressOffset>0x09038</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <!-- Read side (upper byte = status flags) -->
+        <field><name>FCN0M0NHMF</name><description>New history message flag (read, bit 14)</description><bitRange>[14:14]</bitRange></field>
+        <field><name>FCN0M0MOWF</name><description>Message overwrite flag (read, bit 12)</description><bitRange>[12:12]</bitRange></field>
+        <field><name>FCN0M0IENF</name><description>Interrupt enable flag (read, bit 11)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>FCN0M0DTNF</name><description>Data new flag (read, bit 10)</description><bitRange>[10:10]</bitRange></field>
+        <field><name>FCN0M0TRQF</name><description>Transmit request pending flag (read, bit 9)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>FCN0M0RDYF</name><description>Buffer ready flag (read, bit 8)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>FCN0M0MUCF</name><description>Multiple use counter flag (read, bit 5)</description><bitRange>[5:5]</bitRange></field>
+        <field><name>FCN0M0TCPF</name><description>Transmit cancel pending flag (read, bit 1)</description><bitRange>[1:1]</bitRange></field>
+        <!-- Write side (lower byte = SE/CL bits) -->
+        <field><name>FCN0M0SENH</name><description>Set new history flag (write-SE, bit 6)</description><bitRange>[6:6]</bitRange></field>
+        <field><name>FCN0M0SEIE</name><description>Set interrupt enable (write-SE, bit 3)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>FCN0M0CSETR</name><description>Set/cancel transmit request (write, bit 2)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>FCN0M0SERY</name><description>Set buffer ready (write, bit 0)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===================================================================== -->
+<!--  FCN1 — CAN Controller instance 1 (derived from FCN0, base shifted)  -->
+<!-- ===================================================================== -->
+<peripheral derivedFrom="FCN0">
+  <name>FCN1</name>
+  <description>CAN Controller (FCN) instance 1</description>
+  <baseAddress>0xFF4A0000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x12000</size><usage>registers</usage></addressBlock>
+</peripheral>

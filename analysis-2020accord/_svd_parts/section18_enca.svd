@@ -1,0 +1,626 @@
+<!-- Section 18: Encoder Timer (ENCA) — UPD70F3508 V850E2/Px4
+     Two instances: ENCA0, ENCA1.
+     Each instance has registers in TWO disjoint address regions:
+       <ENCAn_base0>: CTL (offset 0x40) and IOC1 (offset 0x44)
+       <ENCAn_base1>: CCR0/CCR1/CNT/FLG/FGC/TE/TS/TT/IOC0 (offsets 0x00..0x20)
+     Because the two regions are ~8 MB apart, each instance is split into
+     two peripherals: ENCA0 / ENCA1 (base1 group) and ENCA0_CTL / ENCA1_CTL (base0 group).
+     Source: Table 18-2 (base addresses), Table 18-6 (register overview),
+             register detail sections (1)–(11), pages 1159-1173.
+-->
+
+<!-- ===== ENCA0 base1 group (0xFFFFD800) ===== -->
+<peripheral>
+  <name>ENCA0</name>
+  <description>Encoder Timer 0 — main register bank (base1 = 0xFFFFD800)</description>
+  <baseAddress>0xFFFFD800</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x22</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>ENCA0CCR0</name>
+      <description>ENCA0 Capture/Compare Register 0</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>CCR0</name>
+          <description>Capture/compare value [15:0]</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA0CCR1</name>
+      <description>ENCA0 Capture/Compare Register 1</description>
+      <addressOffset>0x4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>CCR1</name>
+          <description>Capture/compare value [15:0]</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA0CNT</name>
+      <description>ENCA0 Counter Register</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>CNT</name>
+          <description>16-bit up/down counter value</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA0FLG</name>
+      <description>ENCA0 Status Flag Register</description>
+      <addressOffset>0xC</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CSF</name>
+          <description>Count direction flag: 0=counting up, 1=counting down</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>UDF</name>
+          <description>Underflow flag: set when counter wraps FFFF-&gt;0000 (down)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>OVF</name>
+          <description>Overflow flag: set when counter wraps FFFF-&gt;0000 (up)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA0FGC</name>
+      <description>ENCA0 Status Flag Clear Register (always reads 00H)</description>
+      <addressOffset>0x10</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CLUD</name>
+          <description>Write 1 to clear UDF underflow flag</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>CLOV</name>
+          <description>Write 1 to clear OVF overflow flag</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA0TE</name>
+      <description>ENCA0 Timer Enable Status Register</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TE</name>
+          <description>Timer operation status: 0=stopped, 1=enabled</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA0TS</name>
+      <description>ENCA0 Timer Start Trigger Register (always reads 00H)</description>
+      <addressOffset>0x18</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS</name>
+          <description>Write 1 to start timer (sets TE bit to 1)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA0TT</name>
+      <description>ENCA0 Timer Stop Trigger Register (always reads 00H)</description>
+      <addressOffset>0x1C</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TT</name>
+          <description>Write 1 to stop timer (clears TE bit to 0)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA0IOC0</name>
+      <description>ENCA0 I/O Control Register 0 — capture trigger edge selection</description>
+      <addressOffset>0x20</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TIS3</name>
+          <description>Capture trigger 1 (ENCAnI1) valid edge bit 1</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TIS2</name>
+          <description>Capture trigger 1 (ENCAnI1) valid edge bit 0</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TIS1</name>
+          <description>Capture trigger 0 (ENCAnI0) valid edge bit 1</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TIS0</name>
+          <description>Capture trigger 0 (ENCAnI0) valid edge bit 0</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== ENCA0 base0 group (0xFF819040) ===== -->
+<peripheral>
+  <name>ENCA0_CTL</name>
+  <description>Encoder Timer 0 — control register bank (base0+0x40 = 0xFF819040)</description>
+  <baseAddress>0xFF819040</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x6</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>ENCA0CTL</name>
+      <description>ENCA0 Control Register — 16-bit, write prohibited during operation</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>CME</name>
+          <description>Compare-match interrupt mask enable: 0=disable masking, 1=enable masking</description>
+          <bitRange>[15:15]</bitRange>
+        </field>
+        <field>
+          <name>MCS</name>
+          <description>Mask cancel trigger select: 0=write to CCR1, 1=counter clear/underflow load</description>
+          <bitRange>[14:14]</bitRange>
+        </field>
+        <field>
+          <name>CRM1</name>
+          <description>CCR1 mode select: 0=comparison register, 1=capture register</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>CRM0</name>
+          <description>CCR0 mode select: 0=comparison register, 1=capture register</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>CTS</name>
+          <description>CCR1 capture trigger select: 0=ENCAnI1 input, 1=ENCAnEC input (valid when CRM1=1)</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>LDE</name>
+          <description>Underflow load enable: 0=disable CCR0 load on underflow, 1=enable (valid when CRM0=0)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>ECM1</name>
+          <description>CCR1 compare-match clear: 0=no clear, 1=clear counter to 0000H if next count down</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>ECM0</name>
+          <description>CCR0 compare-match clear: 0=no clear, 1=clear counter to 0000H if next count up</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>UDS1</name>
+          <description>Up/down control bit 1</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>UDS0</name>
+          <description>Up/down control bit 0</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA0IOC1</name>
+      <description>ENCA0 I/O Control Register 1 — encoder/clearing edge and level selection, write prohibited during operation</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>SCE</name>
+          <description>Clear method select: 0=edge detection on ENCAnEC, 1=level detection on ENCAnEC/E0/E1</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>ZCL</name>
+          <description>ENCAnEC active clear level: 0=low, 1=high (valid when SCE=1)</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>BCL</name>
+          <description>ENCAnE1 active clear level: 0=low, 1=high (valid when SCE=1)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>ACL</name>
+          <description>ENCAnE0 active clear level: 0=low, 1=high (valid when SCE=1)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>ECS1</name>
+          <description>Encoder-clear input (ENCAnEC) valid edge bit 1 (valid when SCE=0)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>ECS0</name>
+          <description>Encoder-clear input (ENCAnEC) valid edge bit 0 (valid when SCE=0)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>EIS1</name>
+          <description>Encoder input (ENCAnE0/E1) valid edge bit 1 (valid when UDS[1:0]=00B or 01B)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>EIS0</name>
+          <description>Encoder input (ENCAnE0/E1) valid edge bit 0 (valid when UDS[1:0]=00B or 01B)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== ENCA1 base1 group (0xFFFFD900) ===== -->
+<peripheral>
+  <name>ENCA1</name>
+  <description>Encoder Timer 1 — main register bank (base1 = 0xFFFFD900)</description>
+  <baseAddress>0xFFFFD900</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x22</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>ENCA1CCR0</name>
+      <description>ENCA1 Capture/Compare Register 0</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>CCR0</name>
+          <description>Capture/compare value [15:0]</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA1CCR1</name>
+      <description>ENCA1 Capture/Compare Register 1</description>
+      <addressOffset>0x4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>CCR1</name>
+          <description>Capture/compare value [15:0]</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA1CNT</name>
+      <description>ENCA1 Counter Register</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>CNT</name>
+          <description>16-bit up/down counter value</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA1FLG</name>
+      <description>ENCA1 Status Flag Register</description>
+      <addressOffset>0xC</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CSF</name>
+          <description>Count direction flag: 0=counting up, 1=counting down</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>UDF</name>
+          <description>Underflow flag: set when counter wraps FFFF-&gt;0000 (down)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>OVF</name>
+          <description>Overflow flag: set when counter wraps FFFF-&gt;0000 (up)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA1FGC</name>
+      <description>ENCA1 Status Flag Clear Register (always reads 00H)</description>
+      <addressOffset>0x10</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CLUD</name>
+          <description>Write 1 to clear UDF underflow flag</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>CLOV</name>
+          <description>Write 1 to clear OVF overflow flag</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA1TE</name>
+      <description>ENCA1 Timer Enable Status Register</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TE</name>
+          <description>Timer operation status: 0=stopped, 1=enabled</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA1TS</name>
+      <description>ENCA1 Timer Start Trigger Register (always reads 00H)</description>
+      <addressOffset>0x18</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS</name>
+          <description>Write 1 to start timer (sets TE bit to 1)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA1TT</name>
+      <description>ENCA1 Timer Stop Trigger Register (always reads 00H)</description>
+      <addressOffset>0x1C</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TT</name>
+          <description>Write 1 to stop timer (clears TE bit to 0)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA1IOC0</name>
+      <description>ENCA1 I/O Control Register 0 — capture trigger edge selection</description>
+      <addressOffset>0x20</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TIS3</name>
+          <description>Capture trigger 1 (ENCAnI1) valid edge bit 1</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TIS2</name>
+          <description>Capture trigger 1 (ENCAnI1) valid edge bit 0</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TIS1</name>
+          <description>Capture trigger 0 (ENCAnI0) valid edge bit 1</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TIS0</name>
+          <description>Capture trigger 0 (ENCAnI0) valid edge bit 0</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== ENCA1 base0 group (0xFF81A040) ===== -->
+<peripheral>
+  <name>ENCA1_CTL</name>
+  <description>Encoder Timer 1 — control register bank (base0+0x40 = 0xFF81A040)</description>
+  <baseAddress>0xFF81A040</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x6</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>ENCA1CTL</name>
+      <description>ENCA1 Control Register — 16-bit, write prohibited during operation</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>CME</name>
+          <description>Compare-match interrupt mask enable: 0=disable masking, 1=enable masking</description>
+          <bitRange>[15:15]</bitRange>
+        </field>
+        <field>
+          <name>MCS</name>
+          <description>Mask cancel trigger select: 0=write to CCR1, 1=counter clear/underflow load</description>
+          <bitRange>[14:14]</bitRange>
+        </field>
+        <field>
+          <name>CRM1</name>
+          <description>CCR1 mode select: 0=comparison register, 1=capture register</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>CRM0</name>
+          <description>CCR0 mode select: 0=comparison register, 1=capture register</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>CTS</name>
+          <description>CCR1 capture trigger select: 0=ENCAnI1 input, 1=ENCAnEC input (valid when CRM1=1)</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>LDE</name>
+          <description>Underflow load enable: 0=disable CCR0 load on underflow, 1=enable (valid when CRM0=0)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>ECM1</name>
+          <description>CCR1 compare-match clear: 0=no clear, 1=clear counter to 0000H if next count down</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>ECM0</name>
+          <description>CCR0 compare-match clear: 0=no clear, 1=clear counter to 0000H if next count up</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>UDS1</name>
+          <description>Up/down control bit 1</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>UDS0</name>
+          <description>Up/down control bit 0</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>ENCA1IOC1</name>
+      <description>ENCA1 I/O Control Register 1 — encoder/clearing edge and level selection, write prohibited during operation</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>SCE</name>
+          <description>Clear method select: 0=edge detection on ENCAnEC, 1=level detection on ENCAnEC/E0/E1</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>ZCL</name>
+          <description>ENCAnEC active clear level: 0=low, 1=high (valid when SCE=1)</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>BCL</name>
+          <description>ENCAnE1 active clear level: 0=low, 1=high (valid when SCE=1)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>ACL</name>
+          <description>ENCAnE0 active clear level: 0=low, 1=high (valid when SCE=1)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>ECS1</name>
+          <description>Encoder-clear input (ENCAnEC) valid edge bit 1 (valid when SCE=0)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>ECS0</name>
+          <description>Encoder-clear input (ENCAnEC) valid edge bit 0 (valid when SCE=0)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>EIS1</name>
+          <description>Encoder input (ENCAnE0/E1) valid edge bit 1 (valid when UDS[1:0]=00B or 01B)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>EIS0</name>
+          <description>Encoder input (ENCAnE0/E1) valid edge bit 0 (valid when UDS[1:0]=00B or 01B)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

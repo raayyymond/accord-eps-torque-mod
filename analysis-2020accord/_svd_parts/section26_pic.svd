@@ -1,0 +1,624 @@
+<!-- Section 26: Peripheral Interconnection (PIC) — UPD70F3508 V850E2/Px4
+     Source: UPD70F3508GJA2-GBG-AX-1.pdf, pages 1842-2025 (Table 26-2 + per-register detail)
+     Peripherals emitted: PIC0 (main cluster FF81C080..FF81C0E8), PIC0_CTRL (isolated control registers)
+
+     Address notes:
+       PIC0EN: Table 26-2 lists FFFF DB00H; detail page 1847 (section 26.3.1) lists FF81 DB00H.
+               Using FF81 DB00H (detail page). Both addresses documented; possible aliasing.
+       PIC0SST: FFFF DB04H confirmed in both table 26-2 and detail page 1853.
+       PIC0HIZCEN0 / PIC0HIZCEN1: Addresses from Table 26-2 only (FF81C0B4 / FF81C0B8).
+               No per-register detail subsection found in section 26; bit-level fields omitted.
+-->
+
+<peripheral>
+  <name>PIC0</name>
+  <description>Peripheral Interconnection Controller 0 — main register cluster</description>
+  <baseAddress>0xFF81C080</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x6C</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <!-- Simultaneous Start Trigger Function registers -->
+
+    <register>
+      <name>PIC0SSER0</name>
+      <description>Simultaneous start control register 0 — enables simultaneous start trigger for TAUA0 channels</description>
+      <addressOffset>0x000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PIC0SSER015</name><description>Enable simultaneous start trigger for TAUA0 CH15</description><bitRange>[15:15]</bitRange></field>
+        <field><name>PIC0SSER014</name><description>Enable simultaneous start trigger for TAUA0 CH14</description><bitRange>[14:14]</bitRange></field>
+        <field><name>PIC0SSER013</name><description>Enable simultaneous start trigger for TAUA0 CH13</description><bitRange>[13:13]</bitRange></field>
+        <field><name>PIC0SSER012</name><description>Enable simultaneous start trigger for TAUA0 CH12</description><bitRange>[12:12]</bitRange></field>
+        <field><name>PIC0SSER011</name><description>Enable simultaneous start trigger for TAUA0 CH11</description><bitRange>[11:11]</bitRange></field>
+        <field><name>PIC0SSER010</name><description>Enable simultaneous start trigger for TAUA0 CH10</description><bitRange>[10:10]</bitRange></field>
+        <field><name>PIC0SSER009</name><description>Enable simultaneous start trigger for TAUA0 CH09</description><bitRange>[9:9]</bitRange></field>
+        <field><name>PIC0SSER008</name><description>Enable simultaneous start trigger for TAUA0 CH08</description><bitRange>[8:8]</bitRange></field>
+        <field><name>PIC0SSER007</name><description>Enable simultaneous start trigger for TAUA0 CH07</description><bitRange>[7:7]</bitRange></field>
+        <field><name>PIC0SSER006</name><description>Enable simultaneous start trigger for TAUA0 CH06</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0SSER005</name><description>Enable simultaneous start trigger for TAUA0 CH05</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0SSER004</name><description>Enable simultaneous start trigger for TAUA0 CH04</description><bitRange>[4:4]</bitRange></field>
+        <field><name>PIC0SSER003</name><description>Enable simultaneous start trigger for TAUA0 CH03</description><bitRange>[3:3]</bitRange></field>
+        <field><name>PIC0SSER002</name><description>Enable simultaneous start trigger for TAUA0 CH02</description><bitRange>[2:2]</bitRange></field>
+        <field><name>PIC0SSER001</name><description>Enable simultaneous start trigger for TAUA0 CH01</description><bitRange>[1:1]</bitRange></field>
+        <field><name>PIC0SSER000</name><description>Enable simultaneous start trigger for TAUA0 CH00</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0SSER1</name>
+      <description>Simultaneous start control register 1 — enables simultaneous start trigger for TAUA1 channels</description>
+      <addressOffset>0x004</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PIC0SSER115</name><description>Enable simultaneous start trigger for TAUA1 CH15</description><bitRange>[15:15]</bitRange></field>
+        <field><name>PIC0SSER114</name><description>Enable simultaneous start trigger for TAUA1 CH14</description><bitRange>[14:14]</bitRange></field>
+        <field><name>PIC0SSER113</name><description>Enable simultaneous start trigger for TAUA1 CH13</description><bitRange>[13:13]</bitRange></field>
+        <field><name>PIC0SSER112</name><description>Enable simultaneous start trigger for TAUA1 CH12</description><bitRange>[12:12]</bitRange></field>
+        <field><name>PIC0SSER111</name><description>Enable simultaneous start trigger for TAUA1 CH11</description><bitRange>[11:11]</bitRange></field>
+        <field><name>PIC0SSER110</name><description>Enable simultaneous start trigger for TAUA1 CH10</description><bitRange>[10:10]</bitRange></field>
+        <field><name>PIC0SSER109</name><description>Enable simultaneous start trigger for TAUA1 CH09</description><bitRange>[9:9]</bitRange></field>
+        <field><name>PIC0SSER108</name><description>Enable simultaneous start trigger for TAUA1 CH08</description><bitRange>[8:8]</bitRange></field>
+        <field><name>PIC0SSER107</name><description>Enable simultaneous start trigger for TAUA1 CH07</description><bitRange>[7:7]</bitRange></field>
+        <field><name>PIC0SSER106</name><description>Enable simultaneous start trigger for TAUA1 CH06</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0SSER105</name><description>Enable simultaneous start trigger for TAUA1 CH05</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0SSER104</name><description>Enable simultaneous start trigger for TAUA1 CH04</description><bitRange>[4:4]</bitRange></field>
+        <field><name>PIC0SSER103</name><description>Enable simultaneous start trigger for TAUA1 CH03</description><bitRange>[3:3]</bitRange></field>
+        <field><name>PIC0SSER102</name><description>Enable simultaneous start trigger for TAUA1 CH02</description><bitRange>[2:2]</bitRange></field>
+        <field><name>PIC0SSER101</name><description>Enable simultaneous start trigger for TAUA1 CH01</description><bitRange>[1:1]</bitRange></field>
+        <field><name>PIC0SSER100</name><description>Enable simultaneous start trigger for TAUA1 CH00</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0SSER2</name>
+      <description>Simultaneous start control register 2 — enables simultaneous start trigger for TAUJ/TSG2/TPBA/OSTM/ENCA</description>
+      <addressOffset>0x008</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PIC0SSER215</name><description>Enable simultaneous start trigger for ENCA1</description><bitRange>[15:15]</bitRange></field>
+        <field><name>PIC0SSER214</name><description>Enable simultaneous start trigger for ENCA0</description><bitRange>[14:14]</bitRange></field>
+        <field><name>PIC0SSER213</name><description>Enable simultaneous start trigger for OSTM1</description><bitRange>[13:13]</bitRange></field>
+        <field><name>PIC0SSER212</name><description>Enable simultaneous start trigger for OSTM0</description><bitRange>[12:12]</bitRange></field>
+        <field><name>PIC0SSER211</name><description>Enable simultaneous start trigger for TPBA1</description><bitRange>[11:11]</bitRange></field>
+        <field><name>PIC0SSER210</name><description>Enable simultaneous start trigger for TPBA0</description><bitRange>[10:10]</bitRange></field>
+        <field><name>PIC0SSER209</name><description>Enable simultaneous start trigger for TSG21</description><bitRange>[9:9]</bitRange></field>
+        <field><name>PIC0SSER208</name><description>Enable simultaneous start trigger for TSG20</description><bitRange>[8:8]</bitRange></field>
+        <field><name>PIC0SSER207</name><description>Enable simultaneous start trigger for TAUJ1 CH03</description><bitRange>[7:7]</bitRange></field>
+        <field><name>PIC0SSER206</name><description>Enable simultaneous start trigger for TAUJ1 CH02</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0SSER205</name><description>Enable simultaneous start trigger for TAUJ1 CH01</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0SSER204</name><description>Enable simultaneous start trigger for TAUJ1 CH00</description><bitRange>[4:4]</bitRange></field>
+        <field><name>PIC0SSER203</name><description>Enable simultaneous start trigger for TAUJ0 CH03</description><bitRange>[3:3]</bitRange></field>
+        <field><name>PIC0SSER202</name><description>Enable simultaneous start trigger for TAUJ0 CH02</description><bitRange>[2:2]</bitRange></field>
+        <field><name>PIC0SSER201</name><description>Enable simultaneous start trigger for TAUJ0 CH01</description><bitRange>[1:1]</bitRange></field>
+        <field><name>PIC0SSER200</name><description>Enable simultaneous start trigger for TAUJ0 CH00</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- Timer I/O control registers (TAUA0 group, n=0) -->
+
+    <register>
+      <name>PIC0REG200</name>
+      <description>Timer I/O control register 200 (PIC0REG2n0, n=0) — selects TIN input signal for TAUA0; used by high-accuracy triangle-wave PWM and three-phase pulse input functions</description>
+      <addressOffset>0x00C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <!-- Bits 11:8 used by three-phase pulse input function (26.4.10) -->
+        <field><name>PIC0REG20011</name><description>TS0PET signal select (high bits) for three-phase pulse input (TAUA0)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>PIC0REG20010</name><description>TS0PET signal select (low bits) for three-phase pulse input (TAUA0)</description><bitRange>[10:10]</bitRange></field>
+        <field><name>PIC0REG20009</name><description>TS0PET signal select (high bits) for three-phase pulse input (TAUA0)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>PIC0REG20008</name><description>TS0PET signal select (low bits) for three-phase pulse input (TAUA0)</description><bitRange>[8:8]</bitRange></field>
+        <!-- Bits 3:0 used by three-phase pulse input function (26.4.10) -->
+        <field><name>PIC0REG20003</name><description>Select TAUA0 TAI007 pin or TS0PTE signal of TSG20</description><bitRange>[3:3]</bitRange></field>
+        <field><name>PIC0REG20002</name><description>Select TAUA0 TAI006 pin or TS0PTE signal of TSG20</description><bitRange>[2:2]</bitRange></field>
+        <field><name>PIC0REG20001</name><description>Select TAUA0 TAI005 pin or TS0PTE signal of TSG20</description><bitRange>[1:1]</bitRange></field>
+        <field><name>PIC0REG20000</name><description>Select TAUA0 TAI004 pin or TS0PTE signal of TSG20</description><bitRange>[0:0]</bitRange></field>
+        <!-- Note: bit 18 (PIC0REG2n018) used by high-accuracy triangle-wave function (26.4.4) -->
+        <field><name>PIC0REG20018</name><description>Select TIN input of TAUA0 CH10/CH12/CH14 — selects TOUT of TAUA0 CH02 when set</description><bitRange>[18:18]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0REG201</name>
+      <description>Timer I/O control register 201 (PIC0REG2n1, n=0) — selects TIN input signal for TAUA0 one-phase PWM; combinational circuit input select</description>
+      <addressOffset>0x010</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>PIC0REG2n127</name><description>Select A input of FN05 per TOL of TAUA0 CH09 (bit 27)</description><bitRange>[27:27]</bitRange></field>
+        <field><name>PIC0REG2n126</name><description>Select A input of FN05 per TOL of TAUA0 CH09 (bit 26)</description><bitRange>[26:26]</bitRange></field>
+        <field><name>PIC0REG2n125</name><description>Select A input of FN04 per TOL of TAUA0 CH08 (bit 25)</description><bitRange>[25:25]</bitRange></field>
+        <field><name>PIC0REG2n124</name><description>Select A input of FN04 per TOL of TAUA0 CH08 (bit 24)</description><bitRange>[24:24]</bitRange></field>
+        <field><name>PIC0REG2n123</name><description>Select A input of FN03 per TOL of TAUA0 CH07 (bit 23)</description><bitRange>[23:23]</bitRange></field>
+        <field><name>PIC0REG2n122</name><description>Select A input of FN03 per TOL of TAUA0 CH07 (bit 22)</description><bitRange>[22:22]</bitRange></field>
+        <field><name>PIC0REG2n121</name><description>Select A input of FN02 per TOL of TAUA0 CH06 (bit 21)</description><bitRange>[21:21]</bitRange></field>
+        <field><name>PIC0REG2n120</name><description>Select A input of FN02 per TOL of TAUA0 CH06 (bit 20)</description><bitRange>[20:20]</bitRange></field>
+        <field><name>PIC0REG2n119</name><description>Select A input of FN01 per TOL of TAUA0 CH05 (bit 19)</description><bitRange>[19:19]</bitRange></field>
+        <field><name>PIC0REG2n118</name><description>Select A input of FN01 per TOL of TAUA0 CH05 (bit 18)</description><bitRange>[18:18]</bitRange></field>
+        <field><name>PIC0REG2n117</name><description>Select A input of FN00 per TOL of TAUA0 CH04 (bit 17)</description><bitRange>[17:17]</bitRange></field>
+        <field><name>PIC0REG2n116</name><description>Select A input of FN00 per TOL of TAUA0 CH04 (bit 16)</description><bitRange>[16:16]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0REG202</name>
+      <description>Timer I/O control register 202 (PIC0REG2n2, n=0) — selects TIN input signal for TAUA0 one-phase PWM output / three-phase PWM output functions</description>
+      <addressOffset>0x014</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>PIC0REG2n227</name><description>Select TIN input of TAUA0 CH15 (bit 27 — upper of pair)</description><bitRange>[27:27]</bitRange></field>
+        <field><name>PIC0REG2n226</name><description>Select TIN input of TAUA0 CH15 (bit 26 — lower of pair)</description><bitRange>[26:26]</bitRange></field>
+        <field><name>PIC0REG2n225</name><description>Select TIN input of TAUA0 CH14 (bit 25 — upper of pair; high-accuracy triangle-wave)</description><bitRange>[25:25]</bitRange></field>
+        <field><name>PIC0REG2n224</name><description>Select TIN input of TAUA0 CH14 (bit 24 — lower of pair; high-accuracy triangle-wave)</description><bitRange>[24:24]</bitRange></field>
+        <field><name>PIC0REG2n223</name><description>Select TIN input of TAUA0 CH13 (bit 23 — upper of pair)</description><bitRange>[23:23]</bitRange></field>
+        <field><name>PIC0REG2n222</name><description>Select TIN input of TAUA0 CH13 (bit 22 — lower of pair)</description><bitRange>[22:22]</bitRange></field>
+        <field><name>PIC0REG2n221</name><description>Select TIN input of TAUA0 CH12 (bit 21 — upper of pair; high-accuracy triangle-wave)</description><bitRange>[21:21]</bitRange></field>
+        <field><name>PIC0REG2n220</name><description>Select TIN input of TAUA0 CH12 (bit 20 — lower of pair; high-accuracy triangle-wave)</description><bitRange>[20:20]</bitRange></field>
+        <field><name>PIC0REG2n219</name><description>Select TIN input of TAUA0 CH11 (bit 19 — upper of pair)</description><bitRange>[19:19]</bitRange></field>
+        <field><name>PIC0REG2n218</name><description>Select TIN input of TAUA0 CH11 (bit 18 — lower of pair)</description><bitRange>[18:18]</bitRange></field>
+        <field><name>PIC0REG2n217</name><description>Select TIN input of TAUA0 CH10 (bit 17 — upper of pair; high-accuracy triangle-wave)</description><bitRange>[17:17]</bitRange></field>
+        <field><name>PIC0REG2n216</name><description>Select TIN input of TAUA0 CH10 (bit 16 — lower of pair; high-accuracy triangle-wave)</description><bitRange>[16:16]</bitRange></field>
+        <field><name>PIC0REG2n204</name><description>Select TIN signal for TAUA0 CH15 (0=TOUT from CH09)</description><bitRange>[4:4]</bitRange></field>
+        <field><name>PIC0REG2n203</name><description>Select TIN signal for TAUA0 CH13 (0=TOUT from CH07)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>PIC0REG2n202</name><description>Select TIN signal for TAUA0 CH11 (0=TOUT from CH05)</description><bitRange>[2:2]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0REG203</name>
+      <description>Timer I/O control register 203 (PIC0REG2n3, n=0) — logical operation circuit select for TAUA0 high-accuracy triangle-wave PWM with dead time</description>
+      <addressOffset>0x018</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>PIC0REG2n322</name><description>Logical operation select for TAUA0 CH09 (bit 22)</description><bitRange>[22:22]</bitRange></field>
+        <field><name>PIC0REG2n321</name><description>Logical operation select for TAUA0 CH09 (bit 21)</description><bitRange>[21:21]</bitRange></field>
+        <field><name>PIC0REG2n320</name><description>Logical operation select for TAUA0 CH09 (bit 20)</description><bitRange>[20:20]</bitRange></field>
+        <field><name>PIC0REG2n318</name><description>Logical operation select for TAUA0 CH08 (bit 18)</description><bitRange>[18:18]</bitRange></field>
+        <field><name>PIC0REG2n317</name><description>Logical operation select for TAUA0 CH08 (bit 17)</description><bitRange>[17:17]</bitRange></field>
+        <field><name>PIC0REG2n316</name><description>Logical operation select for TAUA0 CH08 (bit 16)</description><bitRange>[16:16]</bitRange></field>
+        <field><name>PIC0REG2n314</name><description>Logical operation select for TAUA0 CH07 (bit 14)</description><bitRange>[14:14]</bitRange></field>
+        <field><name>PIC0REG2n313</name><description>Logical operation select for TAUA0 CH07 (bit 13)</description><bitRange>[13:13]</bitRange></field>
+        <field><name>PIC0REG2n312</name><description>Logical operation select for TAUA0 CH07 (bit 12)</description><bitRange>[12:12]</bitRange></field>
+        <field><name>PIC0REG2n310</name><description>Logical operation select for TAUA0 CH06 (bit 10)</description><bitRange>[10:10]</bitRange></field>
+        <field><name>PIC0REG2n309</name><description>Logical operation select for TAUA0 CH06 (bit 9)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>PIC0REG2n308</name><description>Logical operation select for TAUA0 CH06 (bit 8)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>PIC0REG2n306</name><description>Logical operation select for TAUA0 CH05 (bit 6)</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0REG2n305</name><description>Logical operation select for TAUA0 CH05 (bit 5)</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0REG2n304</name><description>Logical operation select for TAUA0 CH05 (bit 4)</description><bitRange>[4:4]</bitRange></field>
+        <field><name>PIC0REG2n302</name><description>Logical operation select for TAUA0 CH04 (bit 2)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>PIC0REG2n301</name><description>Logical operation select for TAUA0 CH04 (bit 1)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>PIC0REG2n300</name><description>Logical operation select for TAUA0 CH04 (bit 0)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- Timer I/O control registers (TAUA1 group, n=1) -->
+
+    <register>
+      <name>PIC0REG210</name>
+      <description>Timer I/O control register 210 (PIC0REG2n0, n=1) — selects TIN input signal for TAUA1; used by high-accuracy triangle-wave PWM and three-phase pulse input functions</description>
+      <addressOffset>0x01C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>PIC0REG21011</name><description>TS1PET signal select (high bits) for three-phase pulse input (TAUA1)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>PIC0REG21010</name><description>TS1PET signal select (low bits) for three-phase pulse input (TAUA1)</description><bitRange>[10:10]</bitRange></field>
+        <field><name>PIC0REG21009</name><description>TS1PET signal select (high bits) for three-phase pulse input (TAUA1)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>PIC0REG21008</name><description>TS1PET signal select (low bits) for three-phase pulse input (TAUA1)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>PIC0REG21003</name><description>Select TAUA1 TAI107 pin or TS1PTE signal of TSG21</description><bitRange>[3:3]</bitRange></field>
+        <field><name>PIC0REG21002</name><description>Select TAUA1 TAI106 pin or TS1PTE signal of TSG21</description><bitRange>[2:2]</bitRange></field>
+        <field><name>PIC0REG21001</name><description>Select TAUA1 TAI105 pin or TS1PTE signal of TSG21</description><bitRange>[1:1]</bitRange></field>
+        <field><name>PIC0REG21000</name><description>Select TAUA1 TAI104 pin or TS1PTE signal of TSG21</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0REG211</name>
+      <description>Timer I/O control register 211 (PIC0REG2n1, n=1) — selects TIN input signal for TAUA1 one-phase PWM; combinational circuit input select</description>
+      <addressOffset>0x020</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <!-- Fields identical in structure to PIC0REG201; bit names use n=1 suffix implicitly -->
+      <fields>
+        <field><name>PIC0REG211_27</name><description>Select A input of FN05 per TOL of TAUA1 CH09 (bit 27)</description><bitRange>[27:27]</bitRange></field>
+        <field><name>PIC0REG211_26</name><description>Select A input of FN05 per TOL of TAUA1 CH09 (bit 26)</description><bitRange>[26:26]</bitRange></field>
+        <field><name>PIC0REG211_25</name><description>Select A input of FN04 per TOL of TAUA1 CH08 (bit 25)</description><bitRange>[25:25]</bitRange></field>
+        <field><name>PIC0REG211_24</name><description>Select A input of FN04 per TOL of TAUA1 CH08 (bit 24)</description><bitRange>[24:24]</bitRange></field>
+        <field><name>PIC0REG211_23</name><description>Select A input of FN03 per TOL of TAUA1 CH07 (bit 23)</description><bitRange>[23:23]</bitRange></field>
+        <field><name>PIC0REG211_22</name><description>Select A input of FN03 per TOL of TAUA1 CH07 (bit 22)</description><bitRange>[22:22]</bitRange></field>
+        <field><name>PIC0REG211_21</name><description>Select A input of FN02 per TOL of TAUA1 CH06 (bit 21)</description><bitRange>[21:21]</bitRange></field>
+        <field><name>PIC0REG211_20</name><description>Select A input of FN02 per TOL of TAUA1 CH06 (bit 20)</description><bitRange>[20:20]</bitRange></field>
+        <field><name>PIC0REG211_19</name><description>Select A input of FN01 per TOL of TAUA1 CH05 (bit 19)</description><bitRange>[19:19]</bitRange></field>
+        <field><name>PIC0REG211_18</name><description>Select A input of FN01 per TOL of TAUA1 CH05 (bit 18)</description><bitRange>[18:18]</bitRange></field>
+        <field><name>PIC0REG211_17</name><description>Select A input of FN00 per TOL of TAUA1 CH04 (bit 17)</description><bitRange>[17:17]</bitRange></field>
+        <field><name>PIC0REG211_16</name><description>Select A input of FN00 per TOL of TAUA1 CH04 (bit 16)</description><bitRange>[16:16]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0REG212</name>
+      <description>Timer I/O control register 212 (PIC0REG2n2, n=1) — selects TIN input signal for TAUA1 one-phase PWM / three-phase PWM output functions</description>
+      <addressOffset>0x024</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>PIC0REG212_27</name><description>Select TIN input of TAUA1 CH15 (bit 27)</description><bitRange>[27:27]</bitRange></field>
+        <field><name>PIC0REG212_26</name><description>Select TIN input of TAUA1 CH15 (bit 26)</description><bitRange>[26:26]</bitRange></field>
+        <field><name>PIC0REG212_25</name><description>Select TIN input of TAUA1 CH14 (bit 25)</description><bitRange>[25:25]</bitRange></field>
+        <field><name>PIC0REG212_24</name><description>Select TIN input of TAUA1 CH14 (bit 24)</description><bitRange>[24:24]</bitRange></field>
+        <field><name>PIC0REG212_23</name><description>Select TIN input of TAUA1 CH13 (bit 23)</description><bitRange>[23:23]</bitRange></field>
+        <field><name>PIC0REG212_22</name><description>Select TIN input of TAUA1 CH13 (bit 22)</description><bitRange>[22:22]</bitRange></field>
+        <field><name>PIC0REG212_21</name><description>Select TIN input of TAUA1 CH12 (bit 21)</description><bitRange>[21:21]</bitRange></field>
+        <field><name>PIC0REG212_20</name><description>Select TIN input of TAUA1 CH12 (bit 20)</description><bitRange>[20:20]</bitRange></field>
+        <field><name>PIC0REG212_19</name><description>Select TIN input of TAUA1 CH11 (bit 19)</description><bitRange>[19:19]</bitRange></field>
+        <field><name>PIC0REG212_18</name><description>Select TIN input of TAUA1 CH11 (bit 18)</description><bitRange>[18:18]</bitRange></field>
+        <field><name>PIC0REG212_17</name><description>Select TIN input of TAUA1 CH10 (bit 17)</description><bitRange>[17:17]</bitRange></field>
+        <field><name>PIC0REG212_16</name><description>Select TIN input of TAUA1 CH10 (bit 16)</description><bitRange>[16:16]</bitRange></field>
+        <field><name>PIC0REG212_4</name><description>Select TIN signal for TAUA1 CH15 (0=TOUT from CH09)</description><bitRange>[4:4]</bitRange></field>
+        <field><name>PIC0REG212_3</name><description>Select TIN signal for TAUA1 CH13 (0=TOUT from CH07)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>PIC0REG212_2</name><description>Select TIN signal for TAUA1 CH11 (0=TOUT from CH05)</description><bitRange>[2:2]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0REG213</name>
+      <description>Timer I/O control register 213 (PIC0REG2n3, n=1) — logical operation circuit select for TAUA1 high-accuracy triangle-wave PWM with dead time</description>
+      <addressOffset>0x028</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>PIC0REG213_22</name><description>Logical operation select for TAUA1 CH09 (bit 22)</description><bitRange>[22:22]</bitRange></field>
+        <field><name>PIC0REG213_21</name><description>Logical operation select for TAUA1 CH09 (bit 21)</description><bitRange>[21:21]</bitRange></field>
+        <field><name>PIC0REG213_20</name><description>Logical operation select for TAUA1 CH09 (bit 20)</description><bitRange>[20:20]</bitRange></field>
+        <field><name>PIC0REG213_18</name><description>Logical operation select for TAUA1 CH08 (bit 18)</description><bitRange>[18:18]</bitRange></field>
+        <field><name>PIC0REG213_17</name><description>Logical operation select for TAUA1 CH08 (bit 17)</description><bitRange>[17:17]</bitRange></field>
+        <field><name>PIC0REG213_16</name><description>Logical operation select for TAUA1 CH08 (bit 16)</description><bitRange>[16:16]</bitRange></field>
+        <field><name>PIC0REG213_14</name><description>Logical operation select for TAUA1 CH07 (bit 14)</description><bitRange>[14:14]</bitRange></field>
+        <field><name>PIC0REG213_13</name><description>Logical operation select for TAUA1 CH07 (bit 13)</description><bitRange>[13:13]</bitRange></field>
+        <field><name>PIC0REG213_12</name><description>Logical operation select for TAUA1 CH07 (bit 12)</description><bitRange>[12:12]</bitRange></field>
+        <field><name>PIC0REG213_10</name><description>Logical operation select for TAUA1 CH06 (bit 10)</description><bitRange>[10:10]</bitRange></field>
+        <field><name>PIC0REG213_9</name><description>Logical operation select for TAUA1 CH06 (bit 9)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>PIC0REG213_8</name><description>Logical operation select for TAUA1 CH06 (bit 8)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>PIC0REG213_6</name><description>Logical operation select for TAUA1 CH05 (bit 6)</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0REG213_5</name><description>Logical operation select for TAUA1 CH05 (bit 5)</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0REG213_4</name><description>Logical operation select for TAUA1 CH05 (bit 4)</description><bitRange>[4:4]</bitRange></field>
+        <field><name>PIC0REG213_2</name><description>Logical operation select for TAUA1 CH04 (bit 2)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>PIC0REG213_1</name><description>Logical operation select for TAUA1 CH04 (bit 1)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>PIC0REG213_0</name><description>Logical operation select for TAUA1 CH04 (bit 0)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- Hi-Z output control registers 0 and 1: addresses from Table 26-2 only; no detail subsection found -->
+    <!-- Bit definitions not available from section 26 text; fields omitted -->
+
+    <register>
+      <name>PIC0HIZCEN0</name>
+      <!-- Note: no per-register detail subsection found in section 26; fields not extractable -->
+      <description>Hi-Z output control register 0 (address from Table 26-2 only; bit definitions not detailed in this section)</description>
+      <addressOffset>0x034</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+    <register>
+      <name>PIC0HIZCEN1</name>
+      <!-- Note: no per-register detail subsection found in section 26; fields not extractable -->
+      <description>Hi-Z output control register 1 (address from Table 26-2 only; bit definitions not detailed in this section)</description>
+      <addressOffset>0x038</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+    </register>
+
+    <!-- Timer I/O control register 30 — trigger and pulse width measurement / A/D trigger encoder capture / two-phase and three-phase encoder control -->
+
+    <register>
+      <name>PIC0REG30</name>
+      <description>Timer I/O control register 30 — multi-function: A/D trigger encoder capture (bits 14:12, 4:2), two-phase encoder control (bits 9:8, 7:6, 1:0), three-phase encoder control</description>
+      <addressOffset>0x03C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <!-- A/D trigger encoder capture function (26.4.7) -->
+        <field><name>PIC0REG3014</name><description>Select signal input to ENCAT1TIN1 (bit 14 — ADC trigger select high)</description><bitRange>[14:14]</bitRange></field>
+        <field><name>PIC0REG3013</name><description>Select signal input to ENCAT1TIN1 (bit 13 — ADC trigger select mid)</description><bitRange>[13:13]</bitRange></field>
+        <field><name>PIC0REG3012</name><description>Select signal input to ENCAT1TIN1 (bit 12 — ADC trigger select low)</description><bitRange>[12:12]</bitRange></field>
+        <field><name>PIC0REG3004</name><description>Select signal input to ENCAT0TIN1 (bit 4 — ADC trigger select high)</description><bitRange>[4:4]</bitRange></field>
+        <field><name>PIC0REG3003</name><description>Select signal input to ENCAT0TIN1 (bit 3 — ADC trigger select mid)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>PIC0REG3002</name><description>Select signal input to ENCAT0TIN1 (bit 2 — ADC trigger select low)</description><bitRange>[2:2]</bitRange></field>
+        <!-- Two-phase / three-phase encoder control function (26.4.8, 26.4.9, 26.4.11) -->
+        <field><name>PIC0REG3009</name><description>Select ENCA1E1 pin input / TS1PUD signal of TSG21 (bit 9)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>PIC0REG3008</name><description>Select ENCA1E1 pin input / TS1PUD signal of TSG21 (bit 8)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>PIC0REG3007</name><description>Select ENCA1E0 pin input / TS1PEC signal of TSG21 (bit 7)</description><bitRange>[7:7]</bitRange></field>
+        <field><name>PIC0REG3006</name><description>Select ENCA1E0 pin input / TS1PEC signal of TSG21 (bit 6)</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0REG3001</name><description>Select TS0PUD signal of TSG20 / ENCA0E1 pin input</description><bitRange>[1:1]</bitRange></field>
+        <field><name>PIC0REG3000</name><description>Select TS0PEC signal of TSG20 / ENCA0E0 pin input</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- Timer I/O control register 31 — trigger and pulse width measurement + CAN time stamp -->
+
+    <register>
+      <name>PIC0REG31</name>
+      <description>Timer I/O control register 31 — trigger and pulse width measurement (ENCA/TAUA/TAUJ signal routing) and CAN time stamp function</description>
+      <addressOffset>0x040</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <!-- Trigger/pulse width measurement (26.4.6) -->
+        <field><name>PIC0REG3122</name><description>Select TIN signal input of TAUA1 CH02 (bit 22)</description><bitRange>[22:22]</bitRange></field>
+        <field><name>PIC0REG3121</name><description>Select TIN signal input of TAUA1 CH02 (bit 21)</description><bitRange>[21:21]</bitRange></field>
+        <field><name>PIC0REG3120</name><description>Select TIN signal input of TAUA1 CH01 (signal selected with bits 17:15)</description><bitRange>[20:20]</bitRange></field>
+        <field><name>PIC0REG3119</name><description>Select TIN signal input of TAUA1 CH00 (bit 19)</description><bitRange>[19:19]</bitRange></field>
+        <field><name>PIC0REG3118</name><description>Select TIN signal input of TAUA1 CH00 (bit 18)</description><bitRange>[18:18]</bitRange></field>
+        <field><name>PIC0REG3117</name><description>Select TIN signal input of TAUA1 CH00 and CH01 (bit 17)</description><bitRange>[17:17]</bitRange></field>
+        <field><name>PIC0REG3116</name><description>Select TIN signal input of TAUA1 CH00 and CH01 (bit 16)</description><bitRange>[16:16]</bitRange></field>
+        <field><name>PIC0REG3115</name><description>Select TIN signal input of TAUA1 CH00 and CH01 (bit 15)</description><bitRange>[15:15]</bitRange></field>
+        <field><name>PIC0REG3113</name><description>Select TIN signal input of TAUA0 CH02 (bit 13)</description><bitRange>[13:13]</bitRange></field>
+        <field><name>PIC0REG3112</name><description>Select TIN signal input of TAUA0 CH02 (bit 12)</description><bitRange>[12:12]</bitRange></field>
+        <field><name>PIC0REG3111</name><description>Select TIN signal input of TAUA0 CH01 (signal selected with bits 8:6)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>PIC0REG3110</name><description>Select TIN signal input of TAUA0 CH00 (bit 10)</description><bitRange>[10:10]</bitRange></field>
+        <field><name>PIC0REG3109</name><description>Select TIN signal input of TAUA0 CH00 (bit 9)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>PIC0REG3108</name><description>Select TIN signal input of TAUA0 CH00 and CH01 (bit 8)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>PIC0REG3107</name><description>Select TIN signal input of TAUA0 CH00 and CH01 (bit 7)</description><bitRange>[7:7]</bitRange></field>
+        <field><name>PIC0REG3106</name><description>Select TIN signal input of TAUA0 CH00 and CH01 (bit 6)</description><bitRange>[6:6]</bitRange></field>
+        <!-- CAN time stamp function (26.4.12) -->
+        <field><name>PIC0REG3105</name><description>Select input of TAUJ0 CH3 — CAN1 time stamp (bit 5)</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0REG3104</name><description>Select TIN of TAUJ0 CH03 / CAN1 TSOUT (bit 4)</description><bitRange>[4:4]</bitRange></field>
+        <field><name>PIC0REG3103</name><description>Select TIN of TAUJ0 CH02 (DT output from ENCAT1IEC)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>PIC0REG3102</name><description>Select input of TAUJ0 CH1 — CAN0 time stamp (bit 2)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>PIC0REG3101</name><description>Select TIN of TAUJ0 CH01 / CAN0 TSOUT (bit 1)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>PIC0REG3100</name><description>Select TIN of TAUJ0 CH00 (DT output from ENCAT0IEC)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- A/D converter trigger output control registers (TAUA0 and TAUA1 channels -> ADC trigger) -->
+
+    <register>
+      <name>PIC0ADTEN400</name>
+      <description>A/D converter trigger output control register 400 — enables TAUA0 channel interrupt trigger signals as ADC trigger for channel group 0</description>
+      <addressOffset>0x044</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PIC0ADTEN40015</name><description>Enable TAUA0 CH15 trigger as ADC trigger</description><bitRange>[15:15]</bitRange></field>
+        <field><name>PIC0ADTEN40014</name><description>Enable TAUA0 CH14 trigger as ADC trigger</description><bitRange>[14:14]</bitRange></field>
+        <field><name>PIC0ADTEN40013</name><description>Enable TAUA0 CH13 trigger as ADC trigger</description><bitRange>[13:13]</bitRange></field>
+        <field><name>PIC0ADTEN40012</name><description>Enable TAUA0 CH12 trigger as ADC trigger</description><bitRange>[12:12]</bitRange></field>
+        <field><name>PIC0ADTEN40011</name><description>Enable TAUA0 CH11 trigger as ADC trigger</description><bitRange>[11:11]</bitRange></field>
+        <field><name>PIC0ADTEN40010</name><description>Enable TAUA0 CH10 trigger as ADC trigger</description><bitRange>[10:10]</bitRange></field>
+        <field><name>PIC0ADTEN40009</name><description>Enable TAUA0 CH09 trigger as ADC trigger</description><bitRange>[9:9]</bitRange></field>
+        <field><name>PIC0ADTEN40008</name><description>Enable TAUA0 CH08 trigger as ADC trigger</description><bitRange>[8:8]</bitRange></field>
+        <field><name>PIC0ADTEN40007</name><description>Enable TAUA0 CH07 trigger as ADC trigger</description><bitRange>[7:7]</bitRange></field>
+        <field><name>PIC0ADTEN40006</name><description>Enable TAUA0 CH06 trigger as ADC trigger</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0ADTEN40005</name><description>Enable TAUA0 CH05 trigger as ADC trigger</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0ADTEN40004</name><description>Enable TAUA0 CH04 trigger as ADC trigger</description><bitRange>[4:4]</bitRange></field>
+        <field><name>PIC0ADTEN40003</name><description>Enable TAUA0 CH03 trigger as ADC trigger</description><bitRange>[3:3]</bitRange></field>
+        <field><name>PIC0ADTEN40002</name><description>Enable TAUA0 CH02 trigger as ADC trigger</description><bitRange>[2:2]</bitRange></field>
+        <field><name>PIC0ADTEN40001</name><description>Enable TAUA0 CH01 trigger as ADC trigger</description><bitRange>[1:1]</bitRange></field>
+        <field><name>PIC0ADTEN40000</name><description>Enable TAUA0 CH00 trigger as ADC trigger</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0ADTEN401</name>
+      <description>A/D converter trigger output control register 401 — enables TAUA0 channel interrupt trigger signals as ADC trigger for channel group 1</description>
+      <addressOffset>0x048</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PIC0ADTEN40115</name><description>Enable TAUA0 CH15 trigger as ADC group 1 trigger</description><bitRange>[15:15]</bitRange></field>
+        <field><name>PIC0ADTEN40100</name><description>Enable TAUA0 CH00 trigger as ADC group 1 trigger</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0ADTEN402</name>
+      <description>A/D converter trigger output control register 402 — enables TAUA0 channel interrupt trigger signals as ADC trigger for channel group 2</description>
+      <addressOffset>0x04C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PIC0ADTEN40215</name><description>Enable TAUA0 CH15 trigger as ADC group 2 trigger</description><bitRange>[15:15]</bitRange></field>
+        <field><name>PIC0ADTEN40200</name><description>Enable TAUA0 CH00 trigger as ADC group 2 trigger</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0ADTEN410</name>
+      <description>A/D converter trigger output control register 410 — enables TAUA1 channel interrupt trigger signals as ADC trigger for channel group 0</description>
+      <addressOffset>0x050</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PIC0ADTEN41015</name><description>Enable TAUA1 CH15 trigger as ADC group 0 trigger</description><bitRange>[15:15]</bitRange></field>
+        <field><name>PIC0ADTEN41000</name><description>Enable TAUA1 CH00 trigger as ADC group 0 trigger</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0ADTEN411</name>
+      <description>A/D converter trigger output control register 411 — enables TAUA1 channel interrupt trigger signals as ADC trigger for channel group 1</description>
+      <addressOffset>0x054</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PIC0ADTEN41115</name><description>Enable TAUA1 CH15 trigger as ADC group 1 trigger</description><bitRange>[15:15]</bitRange></field>
+        <field><name>PIC0ADTEN41100</name><description>Enable TAUA1 CH00 trigger as ADC group 1 trigger</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0ADTEN412</name>
+      <description>A/D converter trigger output control register 412 — enables TAUA1 channel interrupt trigger signals as ADC trigger for channel group 2</description>
+      <addressOffset>0x058</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>PIC0ADTEN41215</name><description>Enable TAUA1 CH15 trigger as ADC group 2 trigger</description><bitRange>[15:15]</bitRange></field>
+        <field><name>PIC0ADTEN41200</name><description>Enable TAUA1 CH00 trigger as ADC group 2 trigger</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- Hi-Z output control register 2 — three-phase PWM / encoder control functions -->
+
+    <register>
+      <name>PIC0HIZCEN2</name>
+      <description>Hi-Z output control register 2 — controls Hi-Z output for TSG20/TAPA2 with INTADCA0TERR, ERROROUT, INTTSG20IER, ESO2 signals</description>
+      <addressOffset>0x05C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>PIC0HIZCEN26</name><description>Enable Hi-Z output control with INTADCA0TERR interrupt signal</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0HIZCEN25</name><description>Enable Hi-Z output control with ERROROUT signal</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0HIZCEN23</name><description>Enable Hi-Z output control with INTTSG20IER interrupt signal</description><bitRange>[3:3]</bitRange></field>
+        <field><name>PIC0HIZCEN20</name><description>Enable Hi-Z output control with ESO2 pin input</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- Timer I/O control register 50 — two-phase encoder / three-phase pulse input / three-phase encoder control -->
+
+    <register>
+      <name>PIC0REG50</name>
+      <description>Timer I/O control register 50 — selects timer input signal for two-phase encoder (ENCA0/TSG20) and three-phase pulse input / encoder functions</description>
+      <addressOffset>0x060</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>PIC0REG506</name><description>Select TS0OPCI0 input: ENCA0TEQ1 or ENCA1TEQ1 / TAUA0CDEN5 (bit 6 — function-dependent)</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0REG505</name><description>Select TS0OPCI0 input: ENCA0TEQ1 or ENCA1TEQ1 / TAUA0CDEN5 (bit 5 — function-dependent)</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0REG500</name><description>Select TSG20PTSI0..2 pin inputs (three-phase encoder / three-phase pulse input)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- Hi-Z output control register 3 — three-phase PWM / encoder control functions (TSG21/TAPA3) -->
+
+    <register>
+      <name>PIC0HIZCEN3</name>
+      <description>Hi-Z output control register 3 — controls Hi-Z output for TSG21/TAPA3 with INTADCA0TERR, ERROROUT, INTTSG21IER, ESO3 signals</description>
+      <addressOffset>0x064</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>PIC0HIZCEN36</name><description>Enable Hi-Z output control with INTADCA0TERR interrupt signal</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0HIZCEN35</name><description>Enable Hi-Z output control with ERROROUT signal</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0HIZCEN34</name><description>Enable Hi-Z output control with INTTSG21IER interrupt signal</description><bitRange>[4:4]</bitRange></field>
+        <field><name>PIC0HIZCEN30</name><description>Enable Hi-Z output control with ESO3 pin input</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- Timer I/O control register 51 — two-phase encoder / three-phase pulse input / three-phase encoder control (ENCA1/TSG21) -->
+
+    <register>
+      <name>PIC0REG51</name>
+      <description>Timer I/O control register 51 — selects timer input signal for two-phase encoder (ENCA1/TSG21) and three-phase pulse input / encoder functions</description>
+      <addressOffset>0x068</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>PIC0REG516</name><description>Select TS1OPCI0 input: ENCA0TEQ1 or ENCA1TEQ1 / TAUA1CDEN5 (bit 6 — function-dependent)</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0REG515</name><description>Select TS1OPCI0 input: ENCA0TEQ1 or ENCA1TEQ1 / TAUA1CDEN5 (bit 5 — function-dependent)</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0REG510</name><description>Select TSG21PTSI0..2 pin inputs (three-phase encoder / three-phase pulse input)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- PIC0_CTRL: isolated control registers at addresses outside the main cluster -->
+<!-- PIC0EN at 0xFF81DB00 (register detail page) / 0xFFFFDB00 (Table 26-2) — see note at top of file -->
+<!-- PIC0SST at 0xFFFFDB04 (confirmed in both sources) -->
+<!-- These two registers are in separate address ranges; baseAddress set to the lower (PIC0EN detail-page address) -->
+
+<peripheral>
+  <name>PIC0_CTRL</name>
+  <description>Peripheral Interconnection Controller 0 — isolated control registers (PIC0EN enable + PIC0SST simultaneous start trigger)</description>
+  <!-- Note: PIC0EN address 0xFF81DB00 is from register detail page 1847; Table 26-2 lists 0xFFFFDB00.
+             PIC0SST address 0xFFFFDB04 is confirmed in both sources.
+             These registers are NOT contiguous — PIC0EN and PIC0SST differ by 0x7E020004 bytes if using
+             the respective confirmed addresses. Placing both under PIC0EN base with correct offsets. -->
+  <baseAddress>0xFF81DB00</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x4</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <register>
+      <name>PIC0EN</name>
+      <description>Control register EN — enables or disables all PIC functions (PIC0EN0 bit)</description>
+      <!-- Address 0xFF81DB00 per detail page; Table 26-2 lists 0xFFFFDB00 — discrepancy noted -->
+      <addressOffset>0x000</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>PIC0EN0</name><description>Enable PIC functions (0=disable, 1=enable)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- PIC0_SST: PIC0SST simultaneous start trigger register at 0xFFFFDB04 -->
+<!-- Placed as a separate peripheral because its address (0xFFFFDB04) cannot share a baseAddress
+     with PIC0EN (0xFF81DB00) without creating an implausibly large addressBlock. -->
+
+<peripheral>
+  <name>PIC0_SST</name>
+  <description>Peripheral Interconnection Controller 0 — Simultaneous Start Trigger register</description>
+  <baseAddress>0xFFFFDB04</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x1</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <register>
+      <name>PIC0SST</name>
+      <description>Simultaneous start trigger control register — write 1 to SYNCTRG to generate simultaneous start pulse</description>
+      <addressOffset>0x000</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>SYNCTRG</name><description>Generate simultaneous start trigger (write 1 = output 1-PCLK-wide pulse; always reads 0)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

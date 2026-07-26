@@ -1,0 +1,481 @@
+=== PDF PAGE 498 (index 497) ===
+R01UH0098EJ0100 Rev.1.00
+Page 478 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 11　Data CRC Function A (DCRA)
+Section 11 Data CRC Function A (DCRA)
+This section contains a generic description of the data CRC function A 
+(DCRA).
+11.1
+DCRA Features
+Instances
+This product has the following number of instances of the data CRC function A.
+Instances
+index n
+Throughout this section, the individual instances of a data CRC function A is 
+identified by the index "n" (n = 0, 1), for example, DCRAnCTL for the DCRAn 
+control register.
+Register
+addresses
+All DCRAn register addresses are given as address offsets to the individual 
+base address <DCRAn_base0> or <DCRAn_base1>.
+The base addresses <DCRAn_base0> and <DCRAn_base1> of each DCRAn 
+are listed in the following table.
+Clock supply
+All data CRC function A provide one clock input.
+Table 11-1
+Instances of DCRA
+Data CRC Function A
+Instance
+2
+Name
+DCRAn
+Table 11-2
+Register Base Addresses <DCRAn_base0> and <DCRAn_base1>
+DCRAn
+<DCRAn_base0> Address
+<DCRAn_base1> Address
+DCRA0
+FFFF FA00H
+FF83 6000H
+DCRA1
+FFFF FB00H
+FF83 7000H
+Table 11-3
+DCRAn Clock Supply
+DCRAn Instance
+DCRAn Clock
+Connected to
+DCRAn
+PCLK
+Clock generator
+
+=== PDF PAGE 499 (index 498) ===
+R01UH0098EJ0100 Rev.1.00
+Page 479 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 11　Data CRC Function A (DCRA)
+11.2
+Functional Overview
+Features
+summary
+The data CRC function A can be used to verify or generate CRC protected 
+data streams of arbitrary length and different bit widths.
+• 32-bit Ethernet CRC (04C11DB7H)
+(X32 + X26 + X23 + X22 + X16 + X12 + X11 + X10 + X8 + X7 + X5 + X4 + X2 + X1 + 1)
+XOR of the result for the generated CRC code and FFFFFFFFH
+• 16-bit CCITT CRC (1021H)
+(X16 + X12 + X5 + 1)
+XOR of the result for the generated CRC code and 0000H
+• CRC generation to an arbitrary data block length
+• After initialization of the CRC input register, every write access to the CRC 
+input register generates a new CRC according to the chosen polynomial 
+and the result is stored in the CRC data register.
+Calculation result (DCRAnCOUT)
+Shift register
+Input data (DCRAnCIN)
+(for 8-bit effective bit width)
+31
+30
+2928
+27
+2625
+24
+23 22
+21
+20
+19181716
+15141312 1110
+9
+8 7 6
+5 4 3 2 1 0
+5 4 3 2 1 0
+7 6
+: EXOR
+Calculation result (DCRAnCOUT)
+Shift register
+15141312
+1110 9 8 7 6 5
+4 3 2 1 0
+Input data (DCRAnCIN)
+(for 8-bit effective bit width)
+5 4 3 2 1 0
+7 6
+: EXOR
+
+=== PDF PAGE 500 (index 499) ===
+R01UH0098EJ0100 Rev.1.00
+Page 480 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 11　Data CRC Function A (DCRA)
+The following figure shows the block diagram of the data CRC function A.
+Figure  11-1
+Block Diagram of Data CRC Function A
+PBUS
+PBUS
+DCRAnCOUT
+Selector
+DCRAnCTL.
+DCRAnPOL
+DCRAnCIN (8/16/32 bits)
+32-bit Ethernet 
+CRC code generator
+16-bit CCITT 
+CRC code generator
+EXOR
+
+=== PDF PAGE 501 (index 500) ===
+R01UH0098EJ0100 Rev.1.00
+Page 481 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 11　Data CRC Function A (DCRA)
+11.3
+Functional Description
+The data CRC function A generates a CRC (cyclic redundancy check) of an 
+arbitrary data block length. The data is forwarded to the data CRC function in 
+8-, 16-, or 32-bit units. The CRC polynomial can either be selected for 32-bit 
+Ethernet or 16-bit CCITT. The initial starting value must be set at the 
+DCRAnCOUT register before the first write access to the CRC input register 
+(DCRAnCIN) is performed.
+The flow chart below shows the CRC generating procedure.
+Figure  11-2
+Data CRC Function A Flow Diagram
+Note
+For the settings of the individual registers and points for caution regarding the 
+settings, see section 11.4.2, DCRA Registers Details.
+Start
+End
+Write to DCRAnCTL.
+Write to DCRAnCIN.
+CRC code generation
+Read from DCRAnCOUT.
+Input data?
+No
+Yes
+Write to DCRAnCOUT 
+with the initial starting value.
+
+=== PDF PAGE 502 (index 501) ===
+R01UH0098EJ0100 Rev.1.00
+Page 482 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 11　Data CRC Function A (DCRA)
+11.4
+Registers
+This section contains a description of all registers of the DCRA.
+11.4.1
+DCRA Registers Overview
+The DCRA is controlled and operated by the following registers.
+Table 11-4
+DCRA Registers Overview
+Register Name
+Symbol
+Address
+DATA-DCRA input register n
+DCRAnCIN
+<DCRAn_base0> + 00H
+DATA-DCRA data register n
+DCRAnCOUT
+<DCRAn_base0> + 04H
+DCRA control register n
+DCRAnCTL
+<DCRAn_base1> + 20H
+
+=== PDF PAGE 503 (index 502) ===
+R01UH0098EJ0100 Rev.1.00
+Page 483 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 11　Data CRC Function A (DCRA)
+11.4.2
+DCRA Registers Details
+(1)
+DCRAnCIN ― CRC Input Register
+This register holds the input data for the CRC calculation. The effective bit 
+width used for CRC calculation must be set by DCRAnCTL.DCRAnISZ[1:0].
+When data is written to this register, the CRC code is generated.
+The CRC calculation is immediately started after the DCRAnCIN register is 
+written. The DCRAnCOUT register must be initialized, with the initial starting 
+value, before the first data of the data block is written to the DCRAnCIN 
+register.
+Byte order
+The byte order in DCRAnCIN depends on the selected CRC generating 
+function.
+• 32-bit Ethernet CRC polynomial generation (DCRAnCTL.DCRAnPOL = 0)
+The byte order is LSB (least significant byte) first, means LSB at bit position 
+7...0 of the DCRAnCIN register.
+• 16-bit CCITT CRC polynomial generation (DCRAnCTL.DCRAnPOL = 1)
+The byte order is MSB (most significant byte) first, means MSB at bit 
+position 7...0 of the DCRAnCIN register.
+Access
+This register can be read/written in 32-bit units.
+Address
+<DCRAn_base0> + 00H
+Initial value
+0000 0000H
+This register is initialized by any reset sources.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+DCRAnCIN[31:16]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+DCRAnCIN[15:0]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 11-5
+DCRAnCIN Register Contents
+Bit Position
+Bit Name
+Function
+31 to 0
+DCRAnCIN[31:0]
+Input data for CRC calculation.
+The valid bits are:
+•
+For 32-bit effective bit width: DCRAnCIN[31:0]
+•
+For 16-bit effective bit width: DCRAnCIN[15:0]
+•
+For 8-bit effective bit width: DCRAnCIN[7:0]
+
+=== PDF PAGE 504 (index 503) ===
+R01UH0098EJ0100 Rev.1.00
+Page 484 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 11　Data CRC Function A (DCRA)
+(2)
+DCRAnCOUT ― CRC Data Register
+This register stores the result of the CRC code generated by the 32-bit 
+Ethernet or 16-bit CCITT polynomial.
+Access
+This register can be read/written in 32-bit units.
+Address
+<DCRAn_base0> + 04H
+Initial value
+FFFF FFFFH
+This register is initialized by any reset sources.
+Caution
+This register must be initialized with the starting value before the first data of 
+the data block is written to the DCRAnCIN register.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+DCRAnCOUT[31:16]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+DCRAnCOUT[15:0]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 11-6
+DCRAnCOUT Register Contents
+Bit Position
+Bit Name
+Function
+31 to 0
+DCRAnCOUT[31:0]
+Result of the CRC code generation.
+When the 16-bit CCITT polynomial is enabled, bits 15 to 0 show the CRC 
+result. The bits 31 to 16 are undefined.
+On reading these bits, the value read out is the XOR of the value 
+described below and the DCRAnCOUT.DCRAnCOUT bits (this does not 
+affect the DCRAnCOUT.DCRAnCOUT bits).
+•
+32-bit Ethernet polynomial: FFFF FFFFH
+•
+16-bit CCITT CRC polynomial: 0000H
+Therefore, for the 32-bit Ethernet polynomial, 0000 0000H is read from this 
+register even in the initial state (FFFF FFFFH).
+
+=== PDF PAGE 505 (index 504) ===
+R01UH0098EJ0100 Rev.1.00
+Page 485 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 11　Data CRC Function A (DCRA)
+(3)
+DCRAnCTL ― CRC Control Register
+This register controls the CRC generation process.
+Access
+This register can be read/written in 8-bit units.
+Address
+<DCRAn_base1> + 20H
+Initial value
+00H
+This register is initialized by any reset sources.
+Note
+After changing the CRC generating function (DCRAnCTL.DCRAnPOL), the 
+DCRAnCOUT register must be initialized.
+Caution
+The CRC bit width (DCRAnCTL.DCRAnISZn) must be set according to the 
+data block bit width. Switching the CRC bit width is not allowed during 
+processing of a data block (a data block consists of N bytes, half words, or 
+words). After the final CRC result is read from the DCRAnCOUT register, the 
+bit width can be changed. In that case, the register should be set again 
+according to figure11-2 Data CRC Function A Flow Diagram.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+DCRAnISZ[1:0]
+DCRAn
+POL
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 11-7
+DCRAnCTL Register Contents
+Bit Position
+Bit Name
+Function
+2, 1
+DCRAnISZ[1:0]
+Specifies the CRC input bit width.
+00: 32 bits (DCRAnCIN[31:0])
+01: 16 bits (DCRAnCIN[15:0])
+10: 8 bits (DCRAnCIN[7:0])
+11: Setting prohibited
+0
+DCRAnPOL
+Specifies the CRC generating function.
+0: 32-bit Ethernet CRC polynomial generation 
+The byte order of the DCRAnCIN register is LSB (least significant byte) 
+first, means LSB at bit position 7...0 of the DCRAnCIN register.
+1: 16-bit CCITT CRC polynomial generation 
+The byte order of the DCRAnCIN register is MSB (most significant byte) 
+first, means MSB at bit position 7...0 of the DCRAnCIN register.
+

@@ -1,0 +1,340 @@
+<!-- Section 8: Reset Controller + POF/LVI — V850E2/Px4 (UPD70F3508) -->
+<!-- Source: UPD70F3508GJA2-GBG-AX-1.pdf, pages 402-428 (Table 8-2, Table 8-10) -->
+
+<peripheral>
+  <name>RESET</name>
+  <description>Reset Controller (protection command, status, reset flags, software reset)</description>
+  <baseAddress>0xFF420014</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1A</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>CSCPCMD</name>
+      <description>Protection Command Register — write A5H to begin protected-register write sequence</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <!-- No named fields: bits 7:0 are the command data; no individual bit names in manual -->
+    </register>
+
+    <register>
+      <name>CSCPS</name>
+      <description>Protection Status Register — reports whether the protected write sequence succeeded</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>CSCPRERR</name>
+          <description>Protected write sequence error: 0=no error, 1=error occurred</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>RESF</name>
+      <description>Reset Source Register — flags indicating which reset sources have fired since last SYSRES</description>
+      <addressOffset>0xC</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x8000</resetValue>
+      <fields>
+        <field>
+          <name>RESF15</name>
+          <description>External reset (RESET/DBRES) flag: 1=RESET or DBRES occurred</description>
+          <bitRange>[15:15]</bitRange>
+        </field>
+        <field>
+          <name>RESF7</name>
+          <description>Self-diagnostic BIST reset (BISTRES) flag: 1=BISTRES occurred</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>RESF6</name>
+          <description>Safety guardian reset (SGARES) flag: 1=SGARES occurred</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>RESF5</name>
+          <description>Clock monitor CLMA2 reset (CLMA2RES) flag: 1=CLMA2RES occurred</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>RESF4</name>
+          <description>Clock monitor CLMA1 reset (CLMA1RES) flag: 1=CLMA1RES occurred</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>RESF3</name>
+          <description>Clock monitor CLMA0 reset (CLMA0RES) flag: 1=CLMA0RES occurred</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>RESF2</name>
+          <description>Watchdog timer WDTA0 reset (WDTA0RES) flag: 1=WDTA0RES occurred</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>RESF1</name>
+          <description>Software reset (SWRES) flag: 1=SWRES occurred</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>RESF0</name>
+          <description>Low voltage indicator reset (LVIRES) flag: 1=LVIRES occurred</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>RESFS</name>
+      <description>Reset Source Set Register — software-force set of RESF flags (test use); reads as 0000H</description>
+      <addressOffset>0x10</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>RESFS15</name>
+          <description>Force-set external reset flag (RESF.RESF15): 1=sets flag</description>
+          <bitRange>[15:15]</bitRange>
+        </field>
+        <field>
+          <name>RESFS7</name>
+          <description>Force-set BISTRES flag (RESF.RESF7): 1=sets flag</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>RESFS6</name>
+          <description>Force-set SGARES flag (RESF.RESF6): 1=sets flag</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>RESFS5</name>
+          <description>Force-set CLMA2RES flag (RESF.RESF5): 1=sets flag</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>RESFS4</name>
+          <description>Force-set CLMA1RES flag (RESF.RESF4): 1=sets flag</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>RESFS3</name>
+          <description>Force-set CLMA0RES flag (RESF.RESF3): 1=sets flag</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>RESFS2</name>
+          <description>Force-set WDTA0RES flag (RESF.RESF2): 1=sets flag</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>RESFS1</name>
+          <description>Force-set SWRES flag (RESF.RESF1): 1=sets flag</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>RESFS0</name>
+          <description>Force-set LVIRES flag (RESF.RESF0): 1=sets flag</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>RESFC</name>
+      <description>Reset Source Clear Register — clears RESF flags; reads as 0000H</description>
+      <addressOffset>0x14</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>RESFC15</name>
+          <description>Clear external reset flag (RESF.RESF15): 1=clears flag</description>
+          <bitRange>[15:15]</bitRange>
+        </field>
+        <field>
+          <name>RESFC7</name>
+          <description>Clear BISTRES flag (RESF.RESF7): 1=clears flag</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>RESFC6</name>
+          <description>Clear SGARES flag (RESF.RESF6): 1=clears flag</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>RESFC5</name>
+          <description>Clear CLMA2RES flag (RESF.RESF5): 1=clears flag</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>RESFC4</name>
+          <description>Clear CLMA1RES flag (RESF.RESF4): 1=clears flag</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>RESFC3</name>
+          <description>Clear CLMA0RES flag (RESF.RESF3): 1=clears flag</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>RESFC2</name>
+          <description>Clear WDTA0RES flag (RESF.RESF2): 1=clears flag</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>RESFC1</name>
+          <description>Clear SWRES flag (RESF.RESF1): 1=clears flag</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>RESFC0</name>
+          <description>Clear LVIRES flag (RESF.RESF0): 1=clears flag</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>SWRESA</name>
+      <description>Software Reset Register — write 1 to bit 0 to trigger software reset SWRES; protected by CSCPCMD sequence; reads as 00H</description>
+      <addressOffset>0x18</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>SWRESA</name>
+          <description>Software reset control: 0=no effect, 1=generate SWRES</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- POF/LVI: two disjoint address clusters within the same functional block.
+     Cluster 1 (POF/POFC/POFS/LVISF) base: 0xFFFFFC00  (Table 8-10)
+     Cluster 2 (LVICNT) base: 0xFF450020  (Table 8-10)
+     Emitted as two separate peripherals per EXTRACTION_SPEC (one peripheral per address range). -->
+
+<peripheral>
+  <name>POFLVI</name>
+  <description>Power-On Flag and LVI Status registers (base cluster 0xFFFFFC00)</description>
+  <baseAddress>0xFFFFFC00</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x11</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>POF</name>
+      <description>Power-on Flag Register — bit 0 set when EVDD falls below POF detection voltage; read-only 8-bit</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x01</resetValue>
+      <fields>
+        <field>
+          <name>POF</name>
+          <description>Power-on flag: 0=EVDD above detection voltage, 1=EVDD below detection voltage</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>POFC</name>
+      <description>Power-on Flag Clear Register — write 1 to bit 0 to clear POF.POF; reads as 00H</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>POFC</name>
+          <description>POF clear: writing 1 clears POF.POF to 0</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>POFS</name>
+      <description>Power-on Flag Set Register — write 1 to bit 0 to set POF.POF (test use); reads as 00H</description>
+      <!-- Address from Table 8-10 (overview list): FFFF FC08H.
+           Note: the per-register detail on page 426 incorrectly repeats FFFF FC04H for POFS — this is a manual typo;
+           the overview table (Table 8-10) is the authoritative source and gives FFFF FC08H. -->
+      <addressOffset>0x8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>POFS</name>
+          <description>POF set: writing 1 sets POF.POF to 1</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>LVISF</name>
+      <description>LVI Status Flag Register — bit 0 indicates current LVI detection state; read-only 8-bit</description>
+      <addressOffset>0x10</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>LVISF</name>
+          <description>LVI detection flag: 0=EVDD not low (or LVI not operating), 1=EVDD low</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<peripheral>
+  <name>LVICNT</name>
+  <description>LVI Control Register (address cluster 0xFF450020) — part of POF/LVI functional block</description>
+  <baseAddress>0xFF450020</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>LVICNT</name>
+      <description>LVI Control Register — selects LVI output mode (reset vs interrupt) and enables voltage detection</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>LVIMD</name>
+          <description>LVI output mode: 0=output interrupt (INTLVI), 1=output reset (LVIRES)</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>LVICNT1</name>
+          <description>LVI enable bit 1 (see Table 8-14 for device-specific detection voltage encoding)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>LVICNT0</name>
+          <description>LVI enable bit 0 (see Table 8-14 for device-specific detection voltage encoding)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

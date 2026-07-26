@@ -1,0 +1,804 @@
+<!-- Section 10: Safety Guardian (SGA) — UPD70F3508 -->
+<!-- Base addresses (Table 10-2):                      -->
+<!--   SGAM_base = 0xFF83C000                          -->
+<!--   SGAC_base = 0xFF83D000                          -->
+<!--   SGA_base  = 0xFF83E000                          -->
+<!-- SGAEPCTL at absolute 0xFF83F020 (own peripheral)  -->
+
+<!-- ═══════════════════════════════════════════════════
+     SGAM — SGA Master register area
+     Registers: Table 10-8 + detail subsections (1)–(7)
+     ═══════════════════════════════════════════════════ -->
+<peripheral>
+  <name>SGAM</name>
+  <description>Safety Guardian Master register area</description>
+  <baseAddress>0xFF83C000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x38</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- (1) SGAMESET — SGA Master Error Set Trigger Register -->
+    <register>
+      <name>SGAMESET</name>
+      <description>SGA master error set trigger register</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>SGAMEST</name>
+          <description>SGA error set trigger: 1=initiate active state of SGATERROUTZ (low)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- (2) SGAMECLR — SGA Master Error Clear Trigger Register -->
+    <register>
+      <name>SGAMECLR</name>
+      <description>SGA master error clear trigger register</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>SGAMECT</name>
+          <description>SGA error clear trigger: 1=initiate inactive state of SGATERROUTZ (high)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- (3) SGAMESSTR0 — SGA Master Error Source Status Register 0 -->
+    <register>
+      <name>SGAMESSTR0</name>
+      <description>SGA master error source status register 0</description>
+      <addressOffset>0x8</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAMSSE019</name><description>SGATERRIN19 error status</description><bitRange>[19:19]</bitRange></field>
+        <field><name>SGAMSSE018</name><description>SGATERRIN18 error status</description><bitRange>[18:18]</bitRange></field>
+        <!-- bit 17 reserved -->
+        <field><name>SGAMSSE016</name><description>SGATERRIN16 error status (not present on UPD70F3508/3509)</description><bitRange>[16:16]</bitRange></field>
+        <field><name>SGAMSSE015</name><description>SGATERRIN15 error status</description><bitRange>[15:15]</bitRange></field>
+        <field><name>SGAMSSE014</name><description>SGATERRIN14 error status</description><bitRange>[14:14]</bitRange></field>
+        <field><name>SGAMSSE013</name><description>SGATERRIN13 error status</description><bitRange>[13:13]</bitRange></field>
+        <field><name>SGAMSSE012</name><description>SGATERRIN12 error status</description><bitRange>[12:12]</bitRange></field>
+        <field><name>SGAMSSE011</name><description>SGATERRIN11 error status</description><bitRange>[11:11]</bitRange></field>
+        <field><name>SGAMSSE010</name><description>SGATERRIN10 error status</description><bitRange>[10:10]</bitRange></field>
+        <field><name>SGAMSSE009</name><description>SGATERRIN9 error status</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAMSSE008</name><description>SGATERRIN8 error status</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAMSSE007</name><description>SGATERRIN7 error status</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAMSSE006</name><description>SGATERRIN6 error status</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAMSSE005</name><description>SGATERRIN5 error status</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAMSSE004</name><description>SGATERRIN4 error status</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAMSSE003</name><description>SGATERRIN3 error status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAMSSE002</name><description>SGATERRIN2 error status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAMSSE001</name><description>SGATERRIN1 error status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAMSSE000</name><description>SGATERRIN0 error status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (4) SGAMESSTR1 — SGA Master Error Source Status Register 1 -->
+    <register>
+      <name>SGAMESSTR1</name>
+      <description>SGA master error source status register 1</description>
+      <addressOffset>0xC</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAMSSE131</name><description>Error output loop-back state (SGATERRLB): 0=low, 1=high</description><bitRange>[31:31]</bitRange></field>
+        <field><name>SGAMSSE130</name><description>SGAmESET write status (SGATERRSWS): 1=error set by SGAmEST</description><bitRange>[30:30]</bitRange></field>
+        <field><name>SGAMSSE109</name><description>SGATERRIN41 error status</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAMSSE108</name><description>SGATERRIN40 error status</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAMSSE107</name><description>SGATERRIN39 error status</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAMSSE106</name><description>SGATERRIN38 error status</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAMSSE105</name><description>SGATERRIN37 error status</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAMSSE104</name><description>SGATERRIN36 error status</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAMSSE103</name><description>SGATERRIN35 error status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAMSSE102</name><description>SGATERRIN34 error status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAMSSE101</name><description>SGATERRIN33 error status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAMSSE100</name><description>SGATERRIN32 error status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (5) SGAMPCMD0 — SGA Master Protection Command Register -->
+    <register>
+      <name>SGAMPCMD0</name>
+      <description>SGA master protection command register</description>
+      <addressOffset>0x10</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <!-- Initial value: Undefined — resetValue omitted -->
+      <fields>
+        <field><name>SGAM0REG</name><description>Protection command [7:0] to enable writing to SGAM registers</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (6a) SGAMESSTR0A — SGA Master Error Source Status Register 0A (majority A) -->
+    <register>
+      <name>SGAMESSTR0A</name>
+      <description>SGA master error source status register 0A (majority A)</description>
+      <addressOffset>0x20</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAMSSE019A</name><description>SGATERRIN19 majority-A status</description><bitRange>[19:19]</bitRange></field>
+        <field><name>SGAMSSE018A</name><description>SGATERRIN18 majority-A status</description><bitRange>[18:18]</bitRange></field>
+        <field><name>SGAMSSE016A</name><description>SGATERRIN16 majority-A status (not present on UPD70F3508/3509)</description><bitRange>[16:16]</bitRange></field>
+        <field><name>SGAMSSE015A</name><description>SGATERRIN15 majority-A status</description><bitRange>[15:15]</bitRange></field>
+        <field><name>SGAMSSE014A</name><description>SGATERRIN14 majority-A status</description><bitRange>[14:14]</bitRange></field>
+        <field><name>SGAMSSE013A</name><description>SGATERRIN13 majority-A status</description><bitRange>[13:13]</bitRange></field>
+        <field><name>SGAMSSE012A</name><description>SGATERRIN12 majority-A status</description><bitRange>[12:12]</bitRange></field>
+        <field><name>SGAMSSE011A</name><description>SGATERRIN11 majority-A status</description><bitRange>[11:11]</bitRange></field>
+        <field><name>SGAMSSE010A</name><description>SGATERRIN10 majority-A status</description><bitRange>[10:10]</bitRange></field>
+        <field><name>SGAMSSE009A</name><description>SGATERRIN9 majority-A status</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAMSSE008A</name><description>SGATERRIN8 majority-A status</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAMSSE007A</name><description>SGATERRIN7 majority-A status</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAMSSE006A</name><description>SGATERRIN6 majority-A status</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAMSSE005A</name><description>SGATERRIN5 majority-A status</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAMSSE004A</name><description>SGATERRIN4 majority-A status</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAMSSE003A</name><description>SGATERRIN3 majority-A status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAMSSE002A</name><description>SGATERRIN2 majority-A status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAMSSE001A</name><description>SGATERRIN1 majority-A status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAMSSE000A</name><description>SGATERRIN0 majority-A status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (7a) SGAMESSTR1A — SGA Master Error Source Status Register 1A (majority A) -->
+    <register>
+      <name>SGAMESSTR1A</name>
+      <description>SGA master error source status register 1A (majority A)</description>
+      <addressOffset>0x24</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAMSSE130A</name><description>Error set trigger state majority-A (SGATERRSWS)</description><bitRange>[30:30]</bitRange></field>
+        <field><name>SGAMSSE109A</name><description>SGATERRIN41 majority-A status</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAMSSE108A</name><description>SGATERRIN40 majority-A status</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAMSSE107A</name><description>SGATERRIN39 majority-A status</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAMSSE106A</name><description>SGATERRIN38 majority-A status</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAMSSE105A</name><description>SGATERRIN37 majority-A status</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAMSSE104A</name><description>SGATERRIN36 majority-A status</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAMSSE103A</name><description>SGATERRIN35 majority-A status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAMSSE102A</name><description>SGATERRIN34 majority-A status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAMSSE101A</name><description>SGATERRIN33 majority-A status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAMSSE100A</name><description>SGATERRIN32 majority-A status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (6b) SGAMESSTR0B — SGA Master Error Source Status Register 0B (majority B) -->
+    <register>
+      <name>SGAMESSTR0B</name>
+      <description>SGA master error source status register 0B (majority B)</description>
+      <addressOffset>0x28</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAMSSE019B</name><description>SGATERRIN19 majority-B status</description><bitRange>[19:19]</bitRange></field>
+        <field><name>SGAMSSE018B</name><description>SGATERRIN18 majority-B status</description><bitRange>[18:18]</bitRange></field>
+        <field><name>SGAMSSE016B</name><description>SGATERRIN16 majority-B status</description><bitRange>[16:16]</bitRange></field>
+        <field><name>SGAMSSE015B</name><description>SGATERRIN15 majority-B status</description><bitRange>[15:15]</bitRange></field>
+        <field><name>SGAMSSE014B</name><description>SGATERRIN14 majority-B status</description><bitRange>[14:14]</bitRange></field>
+        <field><name>SGAMSSE013B</name><description>SGATERRIN13 majority-B status</description><bitRange>[13:13]</bitRange></field>
+        <field><name>SGAMSSE012B</name><description>SGATERRIN12 majority-B status</description><bitRange>[12:12]</bitRange></field>
+        <field><name>SGAMSSE011B</name><description>SGATERRIN11 majority-B status</description><bitRange>[11:11]</bitRange></field>
+        <field><name>SGAMSSE010B</name><description>SGATERRIN10 majority-B status</description><bitRange>[10:10]</bitRange></field>
+        <field><name>SGAMSSE009B</name><description>SGATERRIN9 majority-B status</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAMSSE008B</name><description>SGATERRIN8 majority-B status</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAMSSE007B</name><description>SGATERRIN7 majority-B status</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAMSSE006B</name><description>SGATERRIN6 majority-B status</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAMSSE005B</name><description>SGATERRIN5 majority-B status</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAMSSE004B</name><description>SGATERRIN4 majority-B status</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAMSSE003B</name><description>SGATERRIN3 majority-B status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAMSSE002B</name><description>SGATERRIN2 majority-B status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAMSSE001B</name><description>SGATERRIN1 majority-B status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAMSSE000B</name><description>SGATERRIN0 majority-B status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (7b) SGAMESSTR1B — SGA Master Error Source Status Register 1B (majority B) -->
+    <register>
+      <name>SGAMESSTR1B</name>
+      <description>SGA master error source status register 1B (majority B)</description>
+      <addressOffset>0x2C</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAMSSE130B</name><description>Error set trigger state majority-B (SGATERRSWS)</description><bitRange>[30:30]</bitRange></field>
+        <field><name>SGAMSSE109B</name><description>SGATERRIN41 majority-B status</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAMSSE108B</name><description>SGATERRIN40 majority-B status</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAMSSE107B</name><description>SGATERRIN39 majority-B status</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAMSSE106B</name><description>SGATERRIN38 majority-B status</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAMSSE105B</name><description>SGATERRIN37 majority-B status</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAMSSE104B</name><description>SGATERRIN36 majority-B status</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAMSSE103B</name><description>SGATERRIN35 majority-B status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAMSSE102B</name><description>SGATERRIN34 majority-B status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAMSSE101B</name><description>SGATERRIN33 majority-B status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAMSSE100B</name><description>SGATERRIN32 majority-B status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (6c) SGAMESSTR0C — SGA Master Error Source Status Register 0C (majority C) -->
+    <register>
+      <name>SGAMESSTR0C</name>
+      <description>SGA master error source status register 0C (majority C)</description>
+      <addressOffset>0x30</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAMSSE019C</name><description>SGATERRIN19 majority-C status</description><bitRange>[19:19]</bitRange></field>
+        <field><name>SGAMSSE018C</name><description>SGATERRIN18 majority-C status</description><bitRange>[18:18]</bitRange></field>
+        <field><name>SGAMSSE016C</name><description>SGATERRIN16 majority-C status</description><bitRange>[16:16]</bitRange></field>
+        <field><name>SGAMSSE015C</name><description>SGATERRIN15 majority-C status</description><bitRange>[15:15]</bitRange></field>
+        <field><name>SGAMSSE014C</name><description>SGATERRIN14 majority-C status</description><bitRange>[14:14]</bitRange></field>
+        <field><name>SGAMSSE013C</name><description>SGATERRIN13 majority-C status</description><bitRange>[13:13]</bitRange></field>
+        <field><name>SGAMSSE012C</name><description>SGATERRIN12 majority-C status</description><bitRange>[12:12]</bitRange></field>
+        <field><name>SGAMSSE011C</name><description>SGATERRIN11 majority-C status</description><bitRange>[11:11]</bitRange></field>
+        <field><name>SGAMSSE010C</name><description>SGATERRIN10 majority-C status</description><bitRange>[10:10]</bitRange></field>
+        <field><name>SGAMSSE009C</name><description>SGATERRIN9 majority-C status</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAMSSE008C</name><description>SGATERRIN8 majority-C status</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAMSSE007C</name><description>SGATERRIN7 majority-C status</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAMSSE006C</name><description>SGATERRIN6 majority-C status</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAMSSE005C</name><description>SGATERRIN5 majority-C status</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAMSSE004C</name><description>SGATERRIN4 majority-C status</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAMSSE003C</name><description>SGATERRIN3 majority-C status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAMSSE002C</name><description>SGATERRIN2 majority-C status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAMSSE001C</name><description>SGATERRIN1 majority-C status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAMSSE000C</name><description>SGATERRIN0 majority-C status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (7c) SGAMESSTR1C — SGA Master Error Source Status Register 1C (majority C) -->
+    <register>
+      <name>SGAMESSTR1C</name>
+      <description>SGA master error source status register 1C (majority C)</description>
+      <addressOffset>0x34</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAMSSE130C</name><description>Error set trigger state majority-C (SGATERRSWS)</description><bitRange>[30:30]</bitRange></field>
+        <field><name>SGAMSSE109C</name><description>SGATERRIN41 majority-C status</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAMSSE108C</name><description>SGATERRIN40 majority-C status</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAMSSE107C</name><description>SGATERRIN39 majority-C status</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAMSSE106C</name><description>SGATERRIN38 majority-C status</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAMSSE105C</name><description>SGATERRIN37 majority-C status</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAMSSE104C</name><description>SGATERRIN36 majority-C status</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAMSSE103C</name><description>SGATERRIN35 majority-C status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAMSSE102C</name><description>SGATERRIN34 majority-C status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAMSSE101C</name><description>SGATERRIN33 majority-C status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAMSSE100C</name><description>SGATERRIN32 majority-C status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ═══════════════════════════════════════════════════
+     SGAC — SGA Checker register area
+     Registers: Table 10-9 (mirror of SGAM layout)
+     ═══════════════════════════════════════════════════ -->
+<peripheral>
+  <name>SGAC</name>
+  <description>Safety Guardian Checker register area</description>
+  <baseAddress>0xFF83D000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x38</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>SGACESET</name>
+      <description>SGA checker error set trigger register</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGACEST</name><description>SGA error set trigger: 1=initiate active state of SGATERROUTZ (low)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>SGACECLR</name>
+      <description>SGA checker error clear trigger register</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGACECT</name><description>SGA error clear trigger: 1=initiate inactive state of SGATERROUTZ (high)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>SGACESSTR0</name>
+      <description>SGA checker error source status register 0</description>
+      <addressOffset>0x8</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGACSSE019</name><description>SGATERRIN19 error status</description><bitRange>[19:19]</bitRange></field>
+        <field><name>SGACSSE018</name><description>SGATERRIN18 error status</description><bitRange>[18:18]</bitRange></field>
+        <field><name>SGACSSE016</name><description>SGATERRIN16 error status</description><bitRange>[16:16]</bitRange></field>
+        <field><name>SGACSSE015</name><description>SGATERRIN15 error status</description><bitRange>[15:15]</bitRange></field>
+        <field><name>SGACSSE014</name><description>SGATERRIN14 error status</description><bitRange>[14:14]</bitRange></field>
+        <field><name>SGACSSE013</name><description>SGATERRIN13 error status</description><bitRange>[13:13]</bitRange></field>
+        <field><name>SGACSSE012</name><description>SGATERRIN12 error status</description><bitRange>[12:12]</bitRange></field>
+        <field><name>SGACSSE011</name><description>SGATERRIN11 error status</description><bitRange>[11:11]</bitRange></field>
+        <field><name>SGACSSE010</name><description>SGATERRIN10 error status</description><bitRange>[10:10]</bitRange></field>
+        <field><name>SGACSSE009</name><description>SGATERRIN9 error status</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGACSSE008</name><description>SGATERRIN8 error status</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGACSSE007</name><description>SGATERRIN7 error status</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGACSSE006</name><description>SGATERRIN6 error status</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGACSSE005</name><description>SGATERRIN5 error status</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGACSSE004</name><description>SGATERRIN4 error status</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGACSSE003</name><description>SGATERRIN3 error status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGACSSE002</name><description>SGATERRIN2 error status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGACSSE001</name><description>SGATERRIN1 error status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGACSSE000</name><description>SGATERRIN0 error status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>SGACESSTR1</name>
+      <description>SGA checker error source status register 1</description>
+      <addressOffset>0xC</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGACSSE131</name><description>Error output loop-back state (SGATERRLB): 0=low, 1=high</description><bitRange>[31:31]</bitRange></field>
+        <field><name>SGACSSE130</name><description>SGAmESET write status (SGATERRSWS): 1=error set</description><bitRange>[30:30]</bitRange></field>
+        <field><name>SGACSSE109</name><description>SGATERRIN41 error status</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGACSSE108</name><description>SGATERRIN40 error status</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGACSSE107</name><description>SGATERRIN39 error status</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGACSSE106</name><description>SGATERRIN38 error status</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGACSSE105</name><description>SGATERRIN37 error status</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGACSSE104</name><description>SGATERRIN36 error status</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGACSSE103</name><description>SGATERRIN35 error status</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGACSSE102</name><description>SGATERRIN34 error status</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGACSSE101</name><description>SGATERRIN33 error status</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGACSSE100</name><description>SGATERRIN32 error status</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>SGACPCMD0</name>
+      <description>SGA checker protection command register</description>
+      <addressOffset>0x10</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <!-- Initial value: Undefined — resetValue omitted -->
+      <fields>
+        <field><name>SGAC0REG</name><description>Protection command [7:0] to enable writing to SGAC registers</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>SGACESSTR0A</name>
+      <description>SGA checker error source status register 0A (majority A)</description>
+      <addressOffset>0x20</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGACSSE019A</name><description>SGATERRIN19 majority-A status</description><bitRange>[19:19]</bitRange></field>
+        <field><name>SGACSSE018A</name><description>SGATERRIN18 majority-A status</description><bitRange>[18:18]</bitRange></field>
+        <field><name>SGACSSE016A</name><description>SGATERRIN16 majority-A status</description><bitRange>[16:16]</bitRange></field>
+        <field><name>SGACSSE000A</name><description>SGATERRIN0-15 majority-A status [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>SGACESSTR1A</name>
+      <description>SGA checker error source status register 1A (majority A)</description>
+      <addressOffset>0x24</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGACSSE130A</name><description>Error set trigger state majority-A</description><bitRange>[30:30]</bitRange></field>
+        <field><name>SGACSSE100A</name><description>SGATERRIN32-41 majority-A status [9:0]</description><bitRange>[9:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>SGACESSTR0B</name>
+      <description>SGA checker error source status register 0B (majority B)</description>
+      <addressOffset>0x28</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGACSSE019B</name><description>SGATERRIN19 majority-B status</description><bitRange>[19:19]</bitRange></field>
+        <field><name>SGACSSE018B</name><description>SGATERRIN18 majority-B status</description><bitRange>[18:18]</bitRange></field>
+        <field><name>SGACSSE016B</name><description>SGATERRIN16 majority-B status</description><bitRange>[16:16]</bitRange></field>
+        <field><name>SGACSSE000B</name><description>SGATERRIN0-15 majority-B status [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>SGACESSTR1B</name>
+      <description>SGA checker error source status register 1B (majority B)</description>
+      <addressOffset>0x2C</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGACSSE130B</name><description>Error set trigger state majority-B</description><bitRange>[30:30]</bitRange></field>
+        <field><name>SGACSSE100B</name><description>SGATERRIN32-41 majority-B status [9:0]</description><bitRange>[9:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>SGACESSTR0C</name>
+      <description>SGA checker error source status register 0C (majority C)</description>
+      <addressOffset>0x30</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGACSSE019C</name><description>SGATERRIN19 majority-C status</description><bitRange>[19:19]</bitRange></field>
+        <field><name>SGACSSE018C</name><description>SGATERRIN18 majority-C status</description><bitRange>[18:18]</bitRange></field>
+        <field><name>SGACSSE016C</name><description>SGATERRIN16 majority-C status</description><bitRange>[16:16]</bitRange></field>
+        <field><name>SGACSSE000C</name><description>SGATERRIN0-15 majority-C status [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>SGACESSTR1C</name>
+      <description>SGA checker error source status register 1C (majority C)</description>
+      <addressOffset>0x34</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGACSSE130C</name><description>Error set trigger state majority-C</description><bitRange>[30:30]</bitRange></field>
+        <field><name>SGACSSE100C</name><description>SGATERRIN32-41 majority-C status [9:0]</description><bitRange>[9:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ═══════════════════════════════════════════════════
+     SGA_COMMON — SGA Common register area (SGA_base)
+     Registers: Table 10-10 + detail subsections (8)–(19)
+     ═══════════════════════════════════════════════════ -->
+<peripheral>
+  <name>SGA_COMMON</name>
+  <description>Safety Guardian common register area (accessed simultaneously by both master and checker)</description>
+  <baseAddress>0xFF83E000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x30</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- (8) SGAEPCFG — SGA Error Pulse Configuration Register -->
+    <register>
+      <name>SGAEPCFG</name>
+      <description>SGA error pulse configuration register</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>SGASL0</name>
+          <description>Error output operation: 0=non-dynamic, 1=dynamic (toggles per SGATTIN)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- (9) SGAICFG1 — SGA Interrupt Configuration Register 1 -->
+    <register>
+      <name>SGAICFG1</name>
+      <description>SGA interrupt configuration register 1</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <!-- bits 9:0 = SGAIE109:SGAIE100 → SGATERRIN41:SGATERRIN32 -->
+        <field><name>SGAIE109</name><description>SGATI interrupt enable for SGATERRIN41 (note: setting to 1 does not generate interrupt)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAIE108</name><description>SGATI interrupt enable for SGATERRIN40: 0=disabled, 1=enabled</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAIE107</name><description>SGATI interrupt enable for SGATERRIN39</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAIE106</name><description>SGATI interrupt enable for SGATERRIN38</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAIE105</name><description>SGATI interrupt enable for SGATERRIN37</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAIE104</name><description>SGATI interrupt enable for SGATERRIN36</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAIE103</name><description>SGATI interrupt enable for SGATERRIN35</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAIE102</name><description>SGATI interrupt enable for SGATERRIN34</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAIE101</name><description>SGATI interrupt enable for SGATERRIN33</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAIE100</name><description>SGATI interrupt enable for SGATERRIN32</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (10) SGAIRCFG0 — SGA Internal Reset Configuration Register 0 -->
+    <register>
+      <name>SGAIRCFG0</name>
+      <description>SGA internal reset configuration register 0</description>
+      <addressOffset>0x8</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAIRE019</name><description>SGARES enable for SGATERRIN19: 0=disabled, 1=enabled</description><bitRange>[19:19]</bitRange></field>
+        <field><name>SGAIRE018</name><description>SGARES enable for SGATERRIN18</description><bitRange>[18:18]</bitRange></field>
+        <!-- bit 17 reserved -->
+        <field><name>SGAIRE016</name><description>SGARES enable for SGATERRIN16 (not present on UPD70F3508/3509)</description><bitRange>[16:16]</bitRange></field>
+        <field><name>SGAIRE015</name><description>SGARES enable for SGATERRIN15</description><bitRange>[15:15]</bitRange></field>
+        <field><name>SGAIRE014</name><description>SGARES enable for SGATERRIN14</description><bitRange>[14:14]</bitRange></field>
+        <field><name>SGAIRE013</name><description>SGARES enable for SGATERRIN13</description><bitRange>[13:13]</bitRange></field>
+        <field><name>SGAIRE012</name><description>SGARES enable for SGATERRIN12</description><bitRange>[12:12]</bitRange></field>
+        <field><name>SGAIRE011</name><description>SGARES enable for SGATERRIN11</description><bitRange>[11:11]</bitRange></field>
+        <field><name>SGAIRE010</name><description>SGARES enable for SGATERRIN10</description><bitRange>[10:10]</bitRange></field>
+        <field><name>SGAIRE009</name><description>SGARES enable for SGATERRIN9</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAIRE008</name><description>SGARES enable for SGATERRIN8</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAIRE007</name><description>SGARES enable for SGATERRIN7</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAIRE006</name><description>SGARES enable for SGATERRIN6</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAIRE005</name><description>SGARES enable for SGATERRIN5</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAIRE004</name><description>SGARES enable for SGATERRIN4</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAIRE003</name><description>SGARES enable for SGATERRIN3</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAIRE002</name><description>SGARES enable for SGATERRIN2</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAIRE001</name><description>SGARES enable for SGATERRIN1</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAIRE000</name><description>SGARES enable for SGATERRIN0</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (11) SGAIRCFG1 — SGA Internal Reset Configuration Register 1 -->
+    <register>
+      <name>SGAIRCFG1</name>
+      <description>SGA internal reset configuration register 1</description>
+      <addressOffset>0xC</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAIRE109</name><description>SGARES enable for SGATERRIN41: 0=disabled, 1=enabled</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAIRE108</name><description>SGARES enable for SGATERRIN40</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAIRE107</name><description>SGARES enable for SGATERRIN39</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAIRE106</name><description>SGARES enable for SGATERRIN38</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAIRE105</name><description>SGARES enable for SGATERRIN37</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAIRE104</name><description>SGARES enable for SGATERRIN36</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAIRE103</name><description>SGARES enable for SGATERRIN35</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAIRE102</name><description>SGARES enable for SGATERRIN34</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAIRE101</name><description>SGARES enable for SGATERRIN33</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAIRE100</name><description>SGARES enable for SGATERRIN32</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (12) SGAEMK0 — SGA Error Mask Register 0 -->
+    <register>
+      <name>SGAEMK0</name>
+      <description>SGA SGATERROUTZ mask register 0</description>
+      <addressOffset>0x10</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAEMK019</name><description>Mask SGATERRIN19 from SGATERROUTZ: 0=not masked, 1=masked</description><bitRange>[19:19]</bitRange></field>
+        <field><name>SGAEMK018</name><description>Mask SGATERRIN18 from SGATERROUTZ</description><bitRange>[18:18]</bitRange></field>
+        <!-- bit 17 reserved -->
+        <field><name>SGAEMK016</name><description>Mask SGATERRIN16 from SGATERROUTZ (not present on UPD70F3508/3509)</description><bitRange>[16:16]</bitRange></field>
+        <field><name>SGAEMK015</name><description>Mask SGATERRIN15 from SGATERROUTZ</description><bitRange>[15:15]</bitRange></field>
+        <field><name>SGAEMK014</name><description>Mask SGATERRIN14 from SGATERROUTZ</description><bitRange>[14:14]</bitRange></field>
+        <field><name>SGAEMK013</name><description>Mask SGATERRIN13 from SGATERROUTZ</description><bitRange>[13:13]</bitRange></field>
+        <field><name>SGAEMK012</name><description>Mask SGATERRIN12 from SGATERROUTZ</description><bitRange>[12:12]</bitRange></field>
+        <field><name>SGAEMK011</name><description>Mask SGATERRIN11 from SGATERROUTZ</description><bitRange>[11:11]</bitRange></field>
+        <field><name>SGAEMK010</name><description>Mask SGATERRIN10 from SGATERROUTZ</description><bitRange>[10:10]</bitRange></field>
+        <field><name>SGAEMK009</name><description>Mask SGATERRIN9 from SGATERROUTZ</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAEMK008</name><description>Mask SGATERRIN8 from SGATERROUTZ</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAEMK007</name><description>Mask SGATERRIN7 from SGATERROUTZ</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAEMK006</name><description>Mask SGATERRIN6 from SGATERROUTZ</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAEMK005</name><description>Mask SGATERRIN5 from SGATERROUTZ</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAEMK004</name><description>Mask SGATERRIN4 from SGATERROUTZ</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAEMK003</name><description>Mask SGATERRIN3 from SGATERROUTZ</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAEMK002</name><description>Mask SGATERRIN2 from SGATERROUTZ</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAEMK001</name><description>Mask SGATERRIN1 from SGATERROUTZ</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAEMK000</name><description>Mask SGATERRIN0 from SGATERROUTZ</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (13) SGAEMK1 — SGA Error Mask Register 1 -->
+    <register>
+      <name>SGAEMK1</name>
+      <description>SGA SGATERROUTZ mask register 1</description>
+      <addressOffset>0x14</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAEMK109</name><description>Mask SGATERRIN41 (note: setting 1 does not mask SGATERRIN41): 0=not masked, 1=masked</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAEMK108</name><description>Mask SGATERRIN40 from SGATERROUTZ</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAEMK107</name><description>Mask SGATERRIN39 from SGATERROUTZ</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAEMK106</name><description>Mask SGATERRIN38 from SGATERROUTZ</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAEMK105</name><description>Mask SGATERRIN37 from SGATERROUTZ</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAEMK104</name><description>Mask SGATERRIN36 from SGATERROUTZ</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAEMK103</name><description>Mask SGATERRIN35 from SGATERROUTZ</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAEMK102</name><description>Mask SGATERRIN34 from SGATERROUTZ</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAEMK101</name><description>Mask SGATERRIN33 from SGATERROUTZ</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAEMK100</name><description>Mask SGATERRIN32 from SGATERROUTZ</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (14) SGAESSTC0 — SGA Error Source Status Clear Register 0 -->
+    <register>
+      <name>SGAESSTC0</name>
+      <description>SGA error source status clear register 0</description>
+      <addressOffset>0x18</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGACLSSE019</name><description>Clear SGAmESSTR0.SGASSE019: 1=clear</description><bitRange>[19:19]</bitRange></field>
+        <field><name>SGACLSSE018</name><description>Clear SGAmESSTR0.SGASSE018: 1=clear</description><bitRange>[18:18]</bitRange></field>
+        <!-- bit 17 reserved -->
+        <field><name>SGACLSSE016</name><description>Clear SGAmESSTR0.SGASSE016: 1=clear (not present on UPD70F3508/3509)</description><bitRange>[16:16]</bitRange></field>
+        <field><name>SGACLSSE015</name><description>Clear SGAmESSTR0.SGASSE015: 1=clear</description><bitRange>[15:15]</bitRange></field>
+        <field><name>SGACLSSE014</name><description>Clear SGAmESSTR0.SGASSE014: 1=clear</description><bitRange>[14:14]</bitRange></field>
+        <field><name>SGACLSSE013</name><description>Clear SGAmESSTR0.SGASSE013: 1=clear</description><bitRange>[13:13]</bitRange></field>
+        <field><name>SGACLSSE012</name><description>Clear SGAmESSTR0.SGASSE012: 1=clear</description><bitRange>[12:12]</bitRange></field>
+        <field><name>SGACLSSE011</name><description>Clear SGAmESSTR0.SGASSE011: 1=clear</description><bitRange>[11:11]</bitRange></field>
+        <field><name>SGACLSSE010</name><description>Clear SGAmESSTR0.SGASSE010: 1=clear</description><bitRange>[10:10]</bitRange></field>
+        <field><name>SGACLSSE009</name><description>Clear SGAmESSTR0.SGASSE009: 1=clear</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGACLSSE008</name><description>Clear SGAmESSTR0.SGASSE008: 1=clear</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGACLSSE007</name><description>Clear SGAmESSTR0.SGASSE007: 1=clear</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGACLSSE006</name><description>Clear SGAmESSTR0.SGASSE006: 1=clear</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGACLSSE005</name><description>Clear SGAmESSTR0.SGASSE005: 1=clear</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGACLSSE004</name><description>Clear SGAmESSTR0.SGASSE004: 1=clear</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGACLSSE003</name><description>Clear SGAmESSTR0.SGASSE003: 1=clear</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGACLSSE002</name><description>Clear SGAmESSTR0.SGASSE002: 1=clear</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGACLSSE001</name><description>Clear SGAmESSTR0.SGASSE001: 1=clear</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGACLSSE000</name><description>Clear SGAmESSTR0.SGASSE000: 1=clear</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (15) SGAESSTC1 — SGA Error Source Status Clear Register 1 -->
+    <register>
+      <name>SGAESSTC1</name>
+      <description>SGA error source status clear register 1</description>
+      <addressOffset>0x1C</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGACLSSE130</name><description>Clear SGAmESSTR1.SGASSE130: 1=clear</description><bitRange>[30:30]</bitRange></field>
+        <field><name>SGACLSSE109</name><description>Clear SGAmESSTR1.SGASSE109: 1=clear</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGACLSSE108</name><description>Clear SGAmESSTR1.SGASSE108: 1=clear</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGACLSSE107</name><description>Clear SGAmESSTR1.SGASSE107: 1=clear</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGACLSSE106</name><description>Clear SGAmESSTR1.SGASSE106: 1=clear</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGACLSSE105</name><description>Clear SGAmESSTR1.SGASSE105: 1=clear</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGACLSSE104</name><description>Clear SGAmESSTR1.SGASSE104: 1=clear</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGACLSSE103</name><description>Clear SGAmESSTR1.SGASSE103: 1=clear</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGACLSSE102</name><description>Clear SGAmESSTR1.SGASSE102: 1=clear</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGACLSSE101</name><description>Clear SGAmESSTR1.SGASSE101: 1=clear</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGACLSSE100</name><description>Clear SGAmESSTR1.SGASSE100: 1=clear</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (16) SGAPCMD1 — SGA Protection Command Register -->
+    <register>
+      <name>SGAPCMD1</name>
+      <description>SGA protection command register</description>
+      <addressOffset>0x20</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <!-- Initial value: Undefined — resetValue omitted -->
+      <fields>
+        <field><name>SGA1REG</name><description>Protection command [7:0] to enable writing to SGA common registers</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (17) SGAPS — SGA Protection Status Register -->
+    <register>
+      <name>SGAPS</name>
+      <description>SGA protection status register</description>
+      <addressOffset>0x24</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>SGAPRERR</name>
+          <description>Protected register write result: 0=success, 1=failed</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- (18) SGAPE0 — SGA Pseudo Error Register 0 -->
+    <register>
+      <name>SGAPE0</name>
+      <description>SGA pseudo error trigger register 0</description>
+      <addressOffset>0x28</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAPE019</name><description>Pseudo error for SGATERRIN19: 1=inject</description><bitRange>[19:19]</bitRange></field>
+        <field><name>SGAPE018</name><description>Pseudo error for SGATERRIN18: 1=inject</description><bitRange>[18:18]</bitRange></field>
+        <!-- bit 17 reserved -->
+        <field><name>SGAPE016</name><description>Pseudo error for SGATERRIN16 (not present on UPD70F3508/3509): 1=inject</description><bitRange>[16:16]</bitRange></field>
+        <field><name>SGAPE015</name><description>Pseudo error for SGATERRIN15: 1=inject</description><bitRange>[15:15]</bitRange></field>
+        <field><name>SGAPE014</name><description>Pseudo error for SGATERRIN14: 1=inject</description><bitRange>[14:14]</bitRange></field>
+        <field><name>SGAPE013</name><description>Pseudo error for SGATERRIN13: 1=inject</description><bitRange>[13:13]</bitRange></field>
+        <field><name>SGAPE012</name><description>Pseudo error for SGATERRIN12: 1=inject</description><bitRange>[12:12]</bitRange></field>
+        <field><name>SGAPE011</name><description>Pseudo error for SGATERRIN11: 1=inject</description><bitRange>[11:11]</bitRange></field>
+        <field><name>SGAPE010</name><description>Pseudo error for SGATERRIN10: 1=inject</description><bitRange>[10:10]</bitRange></field>
+        <field><name>SGAPE009</name><description>Pseudo error for SGATERRIN9: 1=inject</description><bitRange>[9:9]</bitRange></field>
+        <field><name>SGAPE008</name><description>Pseudo error for SGATERRIN8: 1=inject</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAPE007</name><description>Pseudo error for SGATERRIN7: 1=inject</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAPE006</name><description>Pseudo error for SGATERRIN6: 1=inject</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAPE005</name><description>Pseudo error for SGATERRIN5: 1=inject</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAPE004</name><description>Pseudo error for SGATERRIN4: 1=inject</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAPE003</name><description>Pseudo error for SGATERRIN3: 1=inject</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAPE002</name><description>Pseudo error for SGATERRIN2: 1=inject</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAPE001</name><description>Pseudo error for SGATERRIN1: 1=inject</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAPE000</name><description>Pseudo error for SGATERRIN0: 1=inject</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- (19) SGAPE1 — SGA Pseudo Error Register 1 -->
+    <register>
+      <name>SGAPE1</name>
+      <description>SGA pseudo error trigger register 1</description>
+      <addressOffset>0x2C</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>SGAPE108</name><description>Pseudo error for SGATERRIN40: 1=inject</description><bitRange>[8:8]</bitRange></field>
+        <field><name>SGAPE107</name><description>Pseudo error for SGATERRIN39: 1=inject</description><bitRange>[7:7]</bitRange></field>
+        <field><name>SGAPE106</name><description>Pseudo error for SGATERRIN38: 1=inject</description><bitRange>[6:6]</bitRange></field>
+        <field><name>SGAPE105</name><description>Pseudo error for SGATERRIN37: 1=inject</description><bitRange>[5:5]</bitRange></field>
+        <field><name>SGAPE104</name><description>Pseudo error for SGATERRIN36: 1=inject</description><bitRange>[4:4]</bitRange></field>
+        <field><name>SGAPE103</name><description>Pseudo error for SGATERRIN35: 1=inject</description><bitRange>[3:3]</bitRange></field>
+        <field><name>SGAPE102</name><description>Pseudo error for SGATERRIN34: 1=inject</description><bitRange>[2:2]</bitRange></field>
+        <field><name>SGAPE101</name><description>Pseudo error for SGATERRIN33: 1=inject</description><bitRange>[1:1]</bitRange></field>
+        <field><name>SGAPE100</name><description>Pseudo error for SGATERRIN32: 1=inject</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ═══════════════════════════════════════════════════
+     SGA_EPCTL — SGAEPCTL standalone register
+     Absolute address: 0xFF83F020 (Table 10-10, explicit)
+     8-bit access
+     ═══════════════════════════════════════════════════ -->
+<peripheral>
+  <name>SGA_EPCTL</name>
+  <description>SGA error pulse output control register (timer select for dynamic mode)</description>
+  <baseAddress>0xFF83F020</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- (20) SGAEPCTL — SGA Error Pulse Output Control Register -->
+    <register>
+      <name>SGAEPCTL</name>
+      <description>SGA error pulse output control register</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>SGATMSL</name>
+          <description>Timer select for dynamic mode error output: 0=TAUA1 ch15, 1=OSTM1</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

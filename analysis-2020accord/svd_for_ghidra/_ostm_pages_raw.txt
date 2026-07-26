@@ -1,0 +1,1779 @@
+=== PAGE 1129 (index 1128) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1109 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+ Section 17 OS Timer (OSTM)
+This section contains a generic description of the OS timer.
+17.1
+OSTM Features
+Instances
+This product has the following number of instances of the OS timer.
+Instances
+index n
+Throughout this section, the individual instances of the OS timer are identified 
+by the index "n" (n = 0, 1), for example OSTMnTO for the OS timer n output 
+register.
+Register
+address
+All OS timer register addresses are given as address offsets from the 
+individual base addresses <OSTMn_base0>.or <OSTMn_base1>. 
+The <OSTMn_base> addresses of each OSTMn are listed in the following 
+table.
+Clock supply
+All OS timers provide one clock input.
+Interrupts
+The OS timers can generate the following interrupt requests.
+Table 17-1
+Instances of OS timer
+OS Timer
+Instances
+2
+Name
+OSTMn
+Table 17-2
+Register Base Addresses
+OSTMn
+<OSTMn_base0> Address
+<OSTMn_base1> Address
+OSTM0
+FF80 0000H
+FFFF C000H
+OSTM1
+FF80 1000H
+FFFF C100H
+Table 17-3
+OSTM Clock Supply
+OSTMn
+OSTMn Clock
+Connected to
+OSTM0
+PCLK
+Clock controller
+OSTM1
+Table 17-4
+OSTMn Interrupt Requests
+OSTMn Signals
+Function
+Connected to
+OSTM0TINT
+OSTM0 interrupt
+Interrupt controller INTOSTM0
+OSTM1TINT
+OSTM1 interrupt
+Interrupt controller INTOSTM1
+
+=== PAGE 1130 (index 1129) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1110 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+I/O signals
+The I/O signals of the OS timers are listed in the following table.
+Note 1.
+The counter clock supplied as the OSTMnTCKE signal depends on the 
+settings for TAUA and TAUJ in the IC0CKSELn register. For details, refer to 
+section 17.3.1, Clock Signal to Drive Counting.
+Note 2.
+If you wish to use the synchronous counting start trigger (OSTMnTSST), refer 
+to section 26.4.1, Simultaneous Start Trigger Function.
+Table 17-5
+OSTMn I/O Signals
+OSTNn Signals
+Function 
+Connected to
+OSTM0TTOUT
+OS timer output
+OSTM0O
+OSTM1TTOUT
+OSTM1O
+Table 17-6
+OSTMn Signal Processing
+OSTNn Signals
+Function
+Connected to
+OSTMnTCKE
+Enabling the counter clock
+The clock signal selected by the setting 
+of the IC0CKSELn register
+OSTMnTSST
+Synchronous counting start trigger
+PIC function
+
+=== PAGE 1131 (index 1130) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1111 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+17.2
+Functional Overview
+Features
+summary
+The OS timer has the following features.
+• Two operating modes
+– Interval timer mode
+– Free-running comparison mode
+• Two output modes
+– Software control mode
+– Timer-output toggling mode
+• Synchronized starting of the timers is possible
+The following block diagram shows the main components of the OS timer.
+Figure 17-1
+Block Diagram of the OS Timer
+OSTMnCNT
+OSTMnTE
+OSTMnTS
+OSTMnCTL
+OSTMnTOE
+OSTMnTO
+OSTMnTINT
+OSTMnTTOUT
+OSTMnTSST
+ (PIC function)
+OSTMnCMP
+OSTMnTCKE
+(IC0CKSELn register)
+OSTMnTT
+Counter 
+clock control
+Counter clock
+32-bit counter
+Enabling counting
+Match
+INT 
+generator
+Start 
+trigger control
+Set
+Reset
+Selecting to enable 
+or disable counter-start 
+interrupts
+Output 
+control circuit
+Internal bus
+Selecting 
+timer mode
+
+=== PAGE 1132 (index 1131) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1112 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+17.3
+Functional Description
+Each OS timer is a 32-bit timer/counter. The settings for operating mode 
+specify the direction of counting (up or down) and the generation of interrupt 
+requests.
+17.3.1
+Clock Signal to Drive Counting
+The clock for counting by the OS timer is defined by the level of the 
+OSTMnTCKE input signal.
+• The OSTMnTCKE signal becoming 1 (at the high level) while 
+IC0KSELn.IC0TMEN0 = 0 selects counting of cycles of PCLK.
+• If IC0KSELn.IC0TMEN0 is set to 1, counting of cycles of the selected clock 
+signal from TAUA or TAUJ is selected.
+This is illustrated in the following figures.
+Figure 17-2
+Counter Operation with the High Level on OSTMnTCKE 
+(IC0KSELn.IC0TMEN0 = 0)
+Figure 17-3
+Counter Operation with OSTMnTCKE Set to the High Level in Every 3rd 
+Cycle of PCLK (IC0KSELn.IC0TMEN0 = 1)
+Each OSTM is capable of intermittent operation with an external signal 
+(OSTMnTCKE) disabling and enabling the clock for counting. 
+The counter-clock-enable signal can be selected by the IC0CKSELn register 
+from among 40 timer-output channels:16 from each of TAUA0 and TAUA1, and 
+4 from each of TAUJ0 and TAUJ1.
+PCLK 
+OSTMnCNT 
+OSTMnTCKE 
+0000 0000 H 
+FFFF FFFF  H 
+Fixed to 1
+PCLK 
+OSTMnCNT 
+OSTMnTCKE 
+0000 0000 H 
+FFFF FFFF H
+
+=== PAGE 1133 (index 1132) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1113 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+Caution 1. 
+Select a counter-clock-enable signal for OSTMn while the operation of OSTMn 
+is stopped (the OSTMnTE.OSTMnTE bit is 0).
+Caution 2. 
+After using the IC0CKSELn.IC0CKSELn[13:0] bits to select the counter-clock-
+enable signal for OSTMn, set the IC0CKSELn.IC0TMENn bit to 1.
+Caution 3. 
+If TAUAn or TAUJn is selected as the source of a counter-clock-enable signal 
+for OSTMn (the IC0CKSELn.IC0TMENn bit is 1), do not change the operation 
+of TAUAn or TAUJn while the OSTMn is operating (the OSTMnTE.OSTMnTE 
+bit is 1).
+[Setting procedure]
+(1) Confirm that the OSTMnTE.OSTMnTE bit is 0 (OSTMn operation is 
+stopped).
+(2) Set the IC0CKSELn.IC0CKSELn[13:0] bits to select a counter-clock-
+enable signal for the OSTMn.
+(3) Set the IC0CKSELn.IC0TMENn bit to 1.
+(4) Enable OSTMn operation by setting the OSTMnTS.OSTMnTS bit to 1.
+
+=== PAGE 1134 (index 1133) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1114 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+17.3.2
+Output Modes
+The OS timer has the following output modes. The mode is selected by the 
+setting of the OSTMnTOE.OSTMnTOE bit.
+• Software control mode (the OSTMnTOE.OSTMnTOE bit is 0)
+The level on the OSTMnTTOUT signal corresponds to the setting of the 
+OSTMnTO.OSTMnTO bit.
+• Timer-output toggling mode (the OSTMnTOE.OSTMnTOE bit is 1)
+The OSTMnTTOUT output is toggled each time an OSTMnTINT request is 
+generated.
+Both output modes are illustrated in the following figure.
+Figure 17-4
+Timing Diagram of Output Modes
+The above timing diagram shows the following operations.
+• In software control mode, the level of the OSTMnTTOUT output changes in 
+accord with the value set in the OSTMnTO.OSTMnTO bit.
+• In timer-output toggling mode, the value of the OSTMnTO.OSTMnTO bit 
+and level of the OSTMnTTOUT output are toggled each time an 
+OSTMnTINT interrupt request is generated.
+OSTMnTOE
+OSTMnTINT
+OSTMnTTOUT
+(Write to 
+OSTMnTO register)
+
+
+
+
+
+
+Write 1
+Write 0
+Write 1
+Write 0
+Write 1
+Write 0
+OSTMnTO
+Software control mode
+Software control mode
+Timer-output toggling mode
+Invalid
+Invalid
+Invalid
+Invalid
+Invalid
+
+=== PAGE 1135 (index 1134) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1115 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+17.3.3
+Interrupt Request Generation
+An OSTMnTINT interrupt request is generated whenever the counter reaches 
+0000 0000H (in interval timer mode) or matches the comparison value (in free-
+running comparison mode).
+An interrupt request can also be generated on starting and restarting of the 
+counter. This is controlled by the OSTMnCTL.OSTMnMD0 bit.
+Since OSTMnTINT triggers toggling of the OSTMnTTOUT output in timer-
+output toggling mode (OSTMnTOE.OSTMnTOE is 1), the setting of the 
+OSTMnCTL.OSTMnMD0 bit also affects the output (OSTMnTTOUT).
+This is illustrated in the following figure.
+Figure 17-5
+Generating an Interrupt When Counting Starts
+OSTMnTS or 
+OSTMnTSST
+OSTMnTE 
+OSTMnTINT 
+OSTMnTTOUT 
+OSTMnTT 
+OSTMnMD0 = 1 (Enabling an interrupt at the start of counting)
+OSTMnMD0 = 0 (Disabling an interrupt at the start of counting)
+OSTMnTINT 
+OSTMnTTOUT
+Counting operation
+Counting operation
+
+=== PAGE 1136 (index 1135) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1116 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+17.3.4
+Starting and Stopping the Timer
+The OS timer is started and stopped as follows.
+Starting
+the timer
+The timer is started in either of the following ways:
+• setting the OSTMnTS.OSTMnTS bit to 1
+• placing the high level on the OSTMnTSST signal (when starting 
+synchronous counting).
+Status bit OSTMnTE.OSTMnTE is set to 1.
+The counter starts to count up or down in accord with the settings for operating 
+mode. For details, refer to section 17.3.5, Interval Timer Mode and section 
+17.3.6, Free-Running Comparison Mode.
+Stopping
+the timer
+Setting the OSTMnTT.OSTMnTT bit to 1 stops the timer. 
+This also clears the OSTMnTE.OSTMnTE status flag.
+When the counter is stopped, values in the OSTMnTO and OSTMnCNT 
+registers and the level of the OSTMnTTOUT output are retained until further 
+counting operations start.
+Synchronous
+start
+The OSTMnTSST signal output from the PIC module can be used to start 
+multiple timers at the same time.
+Refer to section 26, Peripheral Interconnection (PIC).
+Initialization
+To initialize interval timer mode and free-running comparison mode after reset 
+release, take the following steps.
+1.
+Set the value where the down-counter is to start counting or the value for 
+comparison in the OSTMnCMP register.
+2.
+In case of output (OSTMnTTOUT) toggling:
+– initialize the OSTMnTO register during operation in software control 
+mode (OSTMnTOE.OSTMnTOE = 0) and
+– select timer-output toggling (OSTMnTOE.OSTMnTOE = 1).
+3.
+Set the OSTMnCTL.OSTMnMD1 bit to select interval timer mode or free-
+running comparison mode.
+4.
+Select the interrupt mode for the start of counting 
+(OSTMnCTL.OSTMnMD0 = 1 or 0).
+
+=== PAGE 1137 (index 1136) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1117 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+17.3.5
+Interval Timer Mode
+Select the interval timer mode when an OS timer is to be used as a reference 
+timer for generating interrupt requests at a fixed interval.
+(1)
+Basic Operation in Interval Timer Mode
+In interval timer mode, the timer counts down from the value specified in the 
+OSTMnCMP register. An OSTMnTINT interrupt request is generated when the 
+counter underflows (reaches 0000 0000H).
+Select interval timer mode by setting OSTMnCTL.OSTMnMD1 = 0.
+New values can be written to the OSTMnCMP register at any time. If it is 
+rewritten during count operation, the counter loads the new OSTMnCMP value 
+when the next 0000 0000H is reached. Then the counter continues with the 
+new value.
+Periods of
+OSTMnTINT and
+OSTMnTTOUT
+output
+The periods of OSTMnTINT and OSTMnTTOUT output are as follows.
+• OSTMnTINT generation period = counter-clock period  (OSTMnCMP + 1)
+• OSTMnTTOUT output period = OSTMnTINT generation period  2
+The following figure shows the basic operation of the OS timer in interval timer 
+mode with counter-start interrupts enabled (OSTMnCTL.OSTMnMD0 = 1) and 
+OSTMnTTOUT output in timer-output toggling mode 
+(OSTMnTOE.OSTMnTOE = 1).
+Figure 17-6
+Timing Diagram of OS Timer in Interval Timer Mode
+OSTMnTS 
+or OSTMnTSST
+OSTMnTE 
+OSTMnCNT 
+OSTMnCMP 
+OSTMnTINT 
+OSTMnTTOUT 
+OSTMnTT 
+FFFF FFFF 
+0000 0000 H
+H
+A 
+B 
+A 
+A 
+B 
+B 
+B 
+B 
+B 
+A + 1 
+A + 1 
+B + 1 
+B + 1 
+B + 1 
+(1) 
+(2) 
+(2) 
+(2) 
+(2) 
+(4) 
+(2)
+(3)
+
+=== PAGE 1138 (index 1137) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1118 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+The above timing diagram shows the following operations.
+1.
+The counter starts counting when OSTMnTS.OSTMnTS = 1 or 
+OSTMnTSST is high (if a synchronous start trigger is in use). The counter 
+starts counting-down from the value of OSTMnCMP. 
+If OSTMnCTL.OSTMnMD0 is 1, OSTMnTINT interrupt requests are 
+generated at the start of counting and the OSTMnTTOUT output is 
+toggled. The OSTMnCNT register contains the current value as the 
+counter. 
+2.
+When the counter reaches 0000 0000H, an OSTMnTINT interrupt request 
+is generated and the OSTMnTTOUT output is toggled. The counter loads 
+the new initial value from OSTMnCMP and continues counting down.
+3.
+When the counter is stopped (OSTMnTT.OSTMnTT = 1), the 
+OSTMnTE.OSTMnTE bit is cleared to indicate disabling of the counter. 
+The counter retains its current value until it is restarted.
+4.
+When counting is restarted (OSTMnTS.OSTMnTS = 1, or OSTMnTSST is 
+high if the synchronous start trigger is in use), the counter loads the new 
+initial value from OSTMnCMP and continues counting down.
+
+=== PAGE 1139 (index 1138) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1119 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+Forced restart
+The counter is forcibly restarted by setting OSTMnTS.OSTMnTS = 1 or by 
+setting the OSTMnTSST signal at the high level (if the synchronous start 
+trigger is in use) during counting.
+The counter loads the initial value from the OSTMnCMP register and continues 
+counting down.
+The following figure shows a forced restart of the OS timer in interval timer 
+mode, with counter-start interrupts enabled (OSTMnCTL.OSTMnMD0 = 1) and 
+OSTMnTTOUT output in timer-output toggling mode 
+(OSTMnTOE.OSTMnTOE = 1).
+Figure 17-7
+Timing Diagram for a Forced Restart in Interval Timer Mode
+Operations shown in the above timing diagram are as follows.
+1.
+The counter is started and stopped as shown in and described under 
+figure17-6 Timing Diagram of OS Timer in Interval Timer Mode.
+2.
+Writing OSTMnTS.OSTMnTS = 1 or placing the high level on 
+OSTMnTSST (if the synchronous start trigger is in use) forcibly restarts the 
+counter while counting is in progress (i.e. while OSTMnTE.OSTMnTE = 1).
+The counter immediately loads the start value from the OSTMnCMP 
+register and continues counting down. When OSTMnCTL.OSTMnMD0 = 
+1, an OSTMnTINT interrupt request is generated and the OSTMnTTOUT 
+output is toggled.
+A
+A
+OSTMnTS 
+or OSTMnTSST 
+OSTMnTE
+OSTMnCNT
+OSTMnCMP
+OSTMnTINT
+OSTMnTTOUT
+OSTMnTT
+B
+B
+B
+A
+A
+B
+FFFF FFFF 
+0000 0000 H
+H
+A
+B
+(1)
+(2)
+Forced restart
+Counting operation
+
+=== PAGE 1140 (index 1139) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1120 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+(2)
+Operation when OSTMnCMP = 0000 0000H
+When OSTMnCMP = 0000 0000H, the OS timer behaves as follows.
+• When PCLK is selected as the counter clock, the OSTMnTINT interrupt 
+request signal stays fixed to the high level from the start of counting to the 
+end of counting. Accordingly, output of the OSTMnTINT interrupt is not 
+possible when OSTMnCMP = 0000 0000H. However, the timer output 
+(OSTMnTTOUT) is available in this situation. When the timer output 
+(OSTMnTTOUT) is in timer-output toggling mode, the output is toggled 
+every time a cycle of the clock is counted. 
+The following figure shows operations of the OS timer when OSTMnCMP = 
+0000 0000H, counter-start interrupts are enabled (OSTMnCTL.OSTMnMD0 = 
+1), and output on OSTMnTTOUT is in timer-output toggling mode 
+(OSTMnTOE.OSTMnTOE = 1).
+Figure 17-8
+Timing Diagram for Operations When OSTMnCMP = 0000 0000H in 
+Interval Timer Mode (PCLK Is Selected as the Counter Clock, i.e. 
+OSTMnTCKE Is High)
+The timing diagram above shows the following.
+1.
+The counter is reloaded with the value in OSTMnCMP as soon as it starts 
+counting, so the value 0000 0000H is retained in OSTMnCMP.
+2.
+Toggling of the OSTMnTTOUT output starts on generation of the 
+OSTMnTINT interrupt request (OSTMnTINT is fixed to the high level 
+because PCLK is selected as the counter clock in the figure).
+3.
+After the counter stops, the OSTMnTINT interrupt request signal is 
+deasserted and the level of the OSTMnTTOUT output is retained.
+OSTMnTS 
+or OSTMnTSST
+OSTMnTE 
+OSTMnCNT 
+OSTMnCMP 
+OSTMnTINT 
+OSTMnTTOUT 
+OSTMnTT 
+PCLK 
+0000 0000 H 
+FFFF FFFF  H 
+OSTMnTCKE
+0000 0000 H 
+(1) 
+(2) 
+(3) 
+Fixed to 1
+Counting operation
+Counting operation
+
+=== PAGE 1141 (index 1140) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1121 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+17.3.6
+Free-Running Comparison Mode
+(1)
+Basic Operation in Free-Running Comparison Mode
+In free-running comparison mode, the counter counts up from 0000 0000H to 
+FFFF FFFFH. An OSTMnTINT interrupt request is output when the current 
+value of the counter matches the value of the OSTMnCMP register. The free-
+running comparison mode is selected by setting the OSTMnCTL.OSTMnMD1 
+bit to 1.
+New values can be written to the OSTMnCMP register at any time.
+The following figure shows the basic operation of the OS timer in free-running 
+comparison mode with the start of counting enabled (OSTMnTS.OSTMnTS = 
+1) and OSTMnTTOUT output in timer-output toggling mode 
+(OSTMnTOE.OSTMnTOE = 1).
+Figure 17-9
+Timing Diagram of OS Timer in Free-Running Comparison Mode
+The timing diagram above shows the following.
+1.
+The counter starts counting when OSTMnTS.OSTMnTS = 1, or when 
+OSTMnTSST is high if the synchronous start trigger is in use. The 
+OSTMnTE.OSTMnTE bit is set to indicate enabling of the counter.
+The counter counts up from 0000 0000H to FFFF FFFFH. The OSTMnCNT 
+register is the counter, so it contains the current value.
+2.
+When the current counter value matches the value in the OSTMnCMP 
+register, an OSTMnTINT interrupt request is generated and the 
+OSTMnTTOUT output is toggled.
+3.
+When the counter is stopped (OSTMnTT.OSTMnTT = 1), the 
+OSTMnTE.OSTMnTE bit is cleared to indicate disabling of the counter. 
+The counter retains its current value until it is restarted.
+4.
+Counting by the counter restarts from 0000 0000H when 
+OSTMnTS.OSTMnTS = 1, or when OSTMnTSST is high if the 
+synchronous start trigger is in use. 
+OSTMnTS 
+or OSTMnTSST
+OSTMnTE 
+OSTMnCNT 
+OSTMnCMP 
+OSTMnTINT 
+OSTMnTTOUT 
+OSTMnTT 
+FFFF FFFF  
+0000 0000 H 
+H 
+A 
+B 
+C 
+D 
+E 
+A 
+B 
+C 
+D 
+E 
+A 
+(a) 
+(b) 
+(c) 
+(d) 
+(1) 
+(2) 
+(3) 
+(2) 
+(2) 
+(2) 
+(2)
+(4)
+
+=== PAGE 1142 (index 1141) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1122 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+The OSTMnTINT interrupt-generation period depends on the timing for 
+updating of the OSTMnCMP register and the counter value at the time. For 
+the formula to calculate the period for generation of the OSTMnTINT 
+interrupt, refer to the table below. 
+Note
+A, B, C and D indicate the values of OSTMnCMP over the intervals thus 
+labeled in figure17-9 Timing Diagram of OS Timer in Free-Running 
+Comparison Mode.
+Forced restart
+Forced restarting does not proceed during counting even if the 
+OSTMnTS.OSTMnTS bit is set, or if OSTMnTSST is high when the 
+synchronous start trigger is in use.
+The counter ignores the attempted setting and continues counting.
+Table 17-7
+OSTMnTINT Generation Timing
+Old Value 
+for 
+Compari-
+son
+New Value 
+for 
+Compari-
+son
+Counter Value at the 
+Time of Rewriting
+Period of OSTMnTINT Generation
+Label in
+Timing
+Diagram
+Counter starts
+(A + 1)  counter clock period
+(a)
+A
+A
+No rewriting
+(FFFF FFFFH + 1)  counter clock period
+(b)
+B
+C > B
+B < counter value < C
+(C - B)  counter clock period
+(c)
+C
+D < C
+Counter value > D, C
+(FFFF FFFFH - C + D + 1)  counter clock period
+(d)
+
+=== PAGE 1143 (index 1142) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1123 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+(2)
+Operation when OSTMnCMP = 0000 0000H
+The following figure shows the operation of the OS timer when OSTMnCMP = 
+0000 0000H, counter-start interrupts are enabled (OSTMnCTL.OSTMnMD0 = 
+1), and OSTMnTTOUT is in timer-output toggling mode 
+(OSTMnTOE.OSTMnTOE = 1).
+Figure 17-10
+Timing Diagram when OSTMnCMP = 0000 0000H in Free-Running 
+Comparison Mode with PCLK Selected as the Counter Clock 
+(OSTMnTCKE Is High)
+The above timing diagram shows the following operations.
+1.
+Once the counter starts, it counts up from 0000 0000H to FFFF FFFFH.
+2.
+An OSTMnTINT interrupt request is generated when counting starts (and 
+the OSTMnTTOUT output is toggled). 
+3.
+The OSTMnTTOUT output is toggled. A comparison interrupt is only 
+generated if the current value of the counter matches that in the 
+OSTMnCMP register.
+Note
+When PCLK is selected as the counter clock (OSTMnTCKE is high) and the 
+value for comparison is 0 (OSTMnCMP = 0000 0000H), OSTMnTINT initially 
+stays at the high level over two cycles of PCLK, and one interrupt request is 
+generated for every rising edge of OSTMnTINT.
+PCLK 
+OSTMnTCKE
+OSTMnTS 
+or OSTMnTSST
+OSTMnTE 
+OSTMnCMP 
+OSTMnCNT 
+OSTMnTINT 
+OSTMnTTOUT 
+FFFF FFFF
+0000 0000 H 
+H 
+0000 0000 H 
+Fixed to 1
+(1) (2) (3) 
+(3) 
+(3) 
+(3) 
+Counting operation
+
+=== PAGE 1144 (index 1143) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1124 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+17.4
+Registers
+This section describes all registers of the OS timer.
+17.4.1
+OS Timer Registers Overview
+The OS timer is controlled and operated by the following registers.
+Table 17-8
+List of OS Timer Registers 
+Register Name
+Symbol
+Address
+OSTM compare register
+OSTMnCMP
+<OSTMn_base1>
+OSTM counter register
+OSTMnCNT
+<OSTMn_base1> + 4H
+OSTM output register
+OSTMnTO
+<OSTMn_base1> + 8H
+OSTM output enable register
+OSTMnTOE
+<OSTMn_base1> + CH
+OSTM count enable status register
+OSTMnTE
+<OSTMn_base1> + 10H
+OSTM count start trigger register
+OSTMnTS
+<OSTMn_base1> + 14H
+OSTM count stop trigger register
+OSTMnTT
+<OSTMn_base1> + 18H
+OSTM control register
+OSTMnCTL
+<OSTMn_base0> + 20H
+OSTM input clock select function 
+register 0
+IC0CKSEL0
+FF83F000H
+OSTM input clock select function 
+register 1
+IC0CKSEL1
+FF83F004H
+
+=== PAGE 1145 (index 1144) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1125 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+17.4.2
+OS Timer Registers in Detail
+(1)
+OSTMnCMP - OSTM Compare Register
+Depending on the mode of operation, this register holds the start value for the 
+down-counter or the value for comparison with that of the counter.
+Access
+This register is readable/writable in 32-bit units.
+Address
+<OSTMn_base1>
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+OSTMnCMP[31:16]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+OSTMnCMP[15:0]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 17-9
+OSTMnCMP Register Contents
+Bit Position
+Bit Name
+Function
+31 to 0
+OSTMnCMP[31:0]
+•
+In interval timer mode: start value of the down-counter
+•
+In free-running comparison mode: value for comparison
+
+=== PAGE 1146 (index 1145) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1126 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+(2)
+OSTMnCNT - OSTM Counter Register
+This register indicates the counter value of the timer.
+Access
+This register is readable in 32-bit units.
+Address
+<OSTMn_base1> + 4H
+Initial value
+The initial value depends on the operating mode of the OS timer. Refer to table 
+17-11, Correspondence between Operating Mode, Counting Direction and 
+Initial Value. This register is initialized by a reset from any source.
+The following table shows the correspondence between operating mode, 
+counting direction and initial value. The initial value is the value read from the 
+counter after a change to the operating mode.
+Note * Value after reset
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+OSTMnCNT[31:16]
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+OSTMnCNT[15:0]
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table 17-10
+OSTMnCNT Register Contents
+Bit Position
+Bit Name
+Function
+31 to 0
+OSTMnCNT[31:0]
+32-bit counter value
+Table 17-11
+Correspondence between Operating Mode, Counting Direction 
+and Initial Value
+Timer Operating Mode
+OSTMnCTL.OSTMnMD1
+Counting Direction
+Initial value
+Interval timer mode
+0*
+Down
+FFFF FFFFH
+Free-running comparison mode
+1
+Up
+0000 0000H
+
+=== PAGE 1147 (index 1146) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1127 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+(3)
+OSTMnTO - OSTM Output Register
+This register is for specifying or reading of the level of the OSTMnTTOUT 
+output signal.
+Access
+This register is readable and writable in 8-bit units. Writing can only proceed 
+when the software control mode is selected (OSTMnTOE.OSTMnTOE = 0).
+Address
+<OSTMn_base1> + 8H
+Initial value
+00H
+This register is initialized by a reset from any source.
+(4)
+OSTMnTOE - OSTM Output Enable Register
+This register specifies OSTMnTTOUT output mode.
+Access
+This register is readable/writable in 8-bit units.
+Address
+<OSTMn_base1> + CH
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+OSTMnTO
+R
+R
+R
+R
+R
+R
+R
+R/W
+Table 17-12
+OSTMnTO Register Contents
+Bit Position
+Bit Name
+Function
+0
+OSTMnTO
+For specifying or reading the level of the OSTMnTTOUT output signal
+0: Low level
+1: High level
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+OSTMn
+TOE
+R
+R
+R
+R
+R
+R
+R
+R/W
+Table 17-13
+OSTMnTOE Register Contents
+Bit Position
+Bit Name
+Function
+0
+OSTMnTOE
+This bit specifies the OSTMnTTOUT output mode.
+0: Software control mode: The level corresponding to the setting of 
+OSTMnTO.OSTMnTO is output to OSTMnTTOUT.
+1: Timer-output toggling mode: OSTMnTTOUT output is toggled whenever 
+an OSTMnTINT interrupt request is generated.
+
+=== PAGE 1148 (index 1147) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1128 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+(5)
+OSTMnTE - OSTM Count Enable Status Register
+This register indicates whether the counter is enabled or disabled.
+Access
+This register is readable in 8-bit units.
+Address
+<OSTMn_base1> + 10H
+Initial value
+00H
+This register is initialized by a reset from any source.
+Note
+When OSTMnTE = 0, the counter retains its value.
+If the counter is restarted, it 
+• restarts counting down from the value in the OSTMnCMP register if it is 
+in interval timer mode or 
+• restarts counting up from the counter value 0000 0000H if it is in free-
+running comparison mode.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+OSTMnTE
+R
+R
+R
+R
+R
+R
+R
+R
+Table 17-14
+OSTMnTE Register Contents
+Bit Position
+Bit Name
+Function
+0
+OSTMnTE
+This bit indicates whether the counter is enabled or disabled.
+0: Counter disabled
+1: Counter enabled
+This bit is set to 1 in response to OSTMnTS.OSTMnTS being set to 1, or 
+OSTMnTSST being at the high level if synchronous starting is in use.
+Setting OSTMnTT.OSTMnTT to 1 re-sets this bit to 0.
+
+=== PAGE 1149 (index 1148) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1129 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+(6)
+OSTMnTS - OSTM Count Start Trigger Register
+This register starts the counter.
+Access
+This register is writable in 8-bit units. It is always read as 00H.
+Address
+<OSTMn_base1> + 14H
+Initial value
+00H
+This register is initialized by a reset from any source.
+(7)
+OSTMnTT - OSTM Count Stop Trigger Register
+This register stops the counter.
+Access
+This register is writable in 8-bit units. It is always read as 00H.
+Address
+<OSTMn_base1> + 18H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+OSTMnTS
+R
+R
+R
+R
+R
+R
+R
+W
+Table 17-15
+OSTMnTS Register Contents
+Bit Position
+Bit Name
+Function
+0
+OSTMnTS
+This bit starts the counter.
+0: No function
+1: Starts the counter and sets OSTMnTE.OSTMnTE = 1.
+•
+In interval timer mode, a forced restart is executed if this bit is set while 
+OSTMnTE.OSTMnTE = 1.
+•
+In free-running comparison mode, setting this bit is ignored as long as 
+OSTMnTE.OSTMnTE = 1.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+OSTMnTT
+R
+R
+R
+R
+R
+R
+R
+W
+Table 17-16
+OSTMnTT Register Contents
+Bit Position
+Bit Name
+Function
+0
+OSTMnTT
+Stops the counter.
+0: No function
+1: Stops the counter and clears the OSTMnTE.OSTMnTE bit. When the 
+counter has stopped, this bit returns to 0.
+
+=== PAGE 1150 (index 1149) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1130 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+(8)
+OSTMnCTL - OSTM Control Register
+This register specifies the operating mode for the counter and controls the 
+generation of OSTMnTINT interrupt requests when counting starts.
+Access
+This register is readable/writable in 8-bit units. Writing to this register is only 
+possible if the counter is disabled (OSTMnTE.OSTMnTE = 0).
+Address
+<OSTMn_base0> + 20H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+OSTMn
+MD1
+OSTMn
+MD0
+R
+R
+R
+R
+R
+R
+R/W
+R/W
+Table 17-17
+OSTMnCTL Register Contents
+Bit Position
+Bit Name
+Function
+1
+OSTMnMD1
+Specifies the operating mode for the counter.
+0: Interval timer mode
+1: Free-running comparison mode
+0
+OSTMnMD0
+Controls the generation of OSTMnTINT interrupt requests at the start of 
+counting.
+0: Interrupts when counting starts are disabled.
+1: Interrupts when counting starts are enabled.
+
+=== PAGE 1151 (index 1150) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1131 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+(9)
+IC0CKSEL0 - OSTM Input Clock Select Function Register 0
+This register is used to select the clock-enable signal for the counter clock of 
+OSTM0.
+Access
+This register is readable/writable in 16-bit units.
+Address
+FF83F000H
+Initial value
+0000H
+This register is initialized by a reset from any source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+IC0
+TMEN0
+0
+IC0TMS
+EL01
+IC0TMS
+EL00
+IC0CKS
+EL031
+IC0CKS
+EL030
+IC0CKS
+EL021
+IC0CKS
+EL020
+IC0CKS
+EL013
+IC0CKS
+EL012
+IC0CKS
+EL011
+IC0CKS
+EL010
+IC0CKS
+EL003
+IC0CKS
+EL002
+IC0CKS
+EL001
+IC0CKS
+EL000
+R/W
+R
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 17-18
+IC0CKSEL0 Register Contents
+Bit Position
+Bit Name
+Function
+15
+IC0TMEN0
+Selects output of the counter-clock-enable signal.
+IC0TMEN0
+Description
+0
+Input the high level as the counter-clock-enable 
+signal for the OSTM0 (PCLK is selected as the 
+counter clock).
+1
+Input the counter-clock-enable signal selected by 
+IC0TMSEL00 and IC0TMSEL01 to OSTM0.
+13,12
+IC0TMSEL00,
+IC0TMSEL01
+According to the setting, these bits select the timer signal indicated below as the counter-
+clock-enable signal (from among the counter-clock-enable signals selected by bits 11 to 0).
+IC0TMSEL01
+IC0TMSEL00
+Description
+0
+0
+TAUA0
+0
+1
+TAUA1
+1
+0
+TAUJ0
+1
+1
+TAUJ1
+11,10
+IC0CKSEL030,
+IC0CKSEL031
+Select a counter-clock-enable signal for input to OSTM0.
+IC0CKSEL031
+IC0CKSEL030
+Description
+0
+0
+TAUJ1 timer channel 0
+0
+1
+TAUJ1 timer channel 1
+1
+0
+TAUJ1 timer channel 2
+1
+1
+TAUJ1 timer channel 3
+9,8
+IC0CKSEL020,
+IC0CKSEL021
+Select a counter-clock-enable signal for input to OSTM0.
+IC0CKSEL021
+IC0CKSEL020
+Description
+0
+0
+TAUJ0 timer channel 0
+0
+1
+TAUJ0 timer channel 1
+1
+0
+TAUJ0 timer channel 2
+1
+1
+TAUJ0 timer channel 3
+7 to 4
+IC0CKSEL010 
+to 
+IC0CKSEL013
+Select a counter-clock-enable signal for input to OSTM0.
+x = 0, 1
+IC0CKSEL0x3
+IC0CKSEL0x2
+IC0CKSEL0x1
+IC0CKSEL0x0
+Description
+3 to 0
+IC0CKSEL000 
+to 
+IC0CKSEL003
+0
+0
+0
+0
+TAUAx timer 
+channel 0
+0
+0
+0
+1
+TAUAx timer 
+channel 1
+…
+…
+…
+…
+…
+1
+1
+1
+0
+TAUAx timer 
+channel 14
+1
+1
+1
+1
+TAUAx timer 
+channel 15
+
+=== PAGE 1152 (index 1151) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1132 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+Caution 1. 
+Select a counter-clock-enable signal for OSTMn while the operation of OSTMn 
+is stopped (the OSTMnTE.OSTMnTE bit is 0).
+Caution 2. 
+After using the IC0CKSELn.IC0CKSELn[13:0] bits to select the counter-clock-
+enable signal for OSTMn, set the IC0CKSELn.IC0TMENn bit to 1.
+Caution 3. 
+If TAUAn or TAUJn is selected as the source of a counter-clock-enable signal 
+for OSTMn (the IC0CKSELn.IC0TMENn bit is 1), do not change the operation 
+of TAUAn or TAUJn while the OSTMn is operating (the OSTMnTE.OSTMnTE 
+bit is 1).
+[Setting procedure]
+(1) Confirm that the OSTMnTE.OSTMnTE bit is 0 (OSTMn operation is 
+stopped).
+(2) Set the IC0CKSELn.IC0CKSELn[13:0] bits to select a counter-clock-
+enable signal for the OSTMn.
+(3) Set the IC0CKSELn.IC0TMENn bit to 1.
+(4) Enable OSTMn operation by setting the OSTMnTS.OSTMnTS bit to 1.
+
+=== PAGE 1153 (index 1152) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1133 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+(10)
+IC0CKSEL1 - OSTM Input Clock Select Function Register 1
+This register is used to select the clock-enable signal for the counter clock of 
+OSTM1.
+Access
+This register is readable/writable in 16-bit units.
+Address
+FF83F004H
+Initial value
+0000H
+This register is initialized by a reset from any source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+IC0TME
+N1
+0
+IC0TMS
+EL11
+IC0TMS
+EL10
+IC0CKS
+EL131
+IC0CKS
+EL130
+IC0CKS
+EL121
+IC0CKS
+EL120
+IC0CKS
+EL113
+IC0CKS
+EL112
+IC0CKS
+EL111
+IC0CKS
+EL110
+IC0CKS
+EL103
+IC0CKS
+EL102
+IC0CKS
+EL101
+IC0CKS
+EL100
+R/W
+R
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 17-19
+IC0CKSEL1 Register Contents
+Bit Position
+Bit Name
+Function
+15
+IC0TMEN1
+Selects output of the counter-clock-enable signal.
+IC0TMEN1
+Description
+0
+Input the high level as the counter-clock-enable signal for 
+the OSTM1. 
+1
+Input the counter-clock-enable signal selected by 
+IC0TMSEL10 and IC0TMSEL11 to OSTM1.
+13,12
+IC0TMSEL10,
+IC0TMSEL11
+According to the setting, these bits select the timer signal indicated below as the counter-
+clock-enable signal (from among the counter-clock-enable signals selected by bits 11 to 0) . 
+IC0TMSEL11
+IC0TMSEL10
+Description
+0
+0
+TAUA0
+0
+1
+TAUA1
+1
+0
+TAUJ0
+1
+1
+TAUJ1
+11,10
+IC0CKSEL130,
+IC0CKSEL131
+Select a counter-clock-enable signal for input to OSTM1.
+IC0CKSEL131
+IC0CKSEL130
+Description
+0
+0
+TAUJ1 timer channel 0
+0
+1
+TAUJ1 timer channel 1
+1
+0
+TAUJ1 timer channel 2
+1
+1
+TAUJ1 timer channel 3
+9,8
+IC0CKSEL120,
+IC0CKSEL121
+Select a counter-clock-enable signal for input to OSTM1.
+IC0CKSEL121
+IC0CKSEL120
+Description
+0
+0
+TAUJ0 timer channel 0
+0
+1
+TAUJ0 timer channel 1
+1
+0
+TAUJ0 timer channel 2
+1
+1
+TAUJ0 timer channel 3
+7 to 4
+IC0CKSEL110 
+to
+IC0CKSEL113
+Select a counter-clock-enable signal for input to OSTM1.
+x = 0, 1
+3 to 0
+IC0CKSEL100 
+to
+IC0CKSEL103
+IC0CKSEL1x3
+IC0CKSEL1x2
+IC0CKSEL1x1
+IC0CKSEL1x0
+Description
+0
+0
+0
+0
+TAUAx timer 
+channel 0
+0
+0
+0
+1
+TAUAx timer 
+channel 1
+…
+…
+…
+…
+…
+1
+1
+1
+0
+TAUAx timer 
+channel 14
+1
+1
+1
+1
+TAUAx timer 
+channel 15
+
+=== PAGE 1154 (index 1153) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1134 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 17　OS Timer (OSTM)
+Caution 1. 
+Select a counter-clock-enable signal for OSTMn while the operation of OSTMn 
+is stopped (the OSTMnTE.OSTMnTE bit is 0).
+Caution 2. 
+After using the IC0CKSELn.IC0CKSELn[13:0] bits to select the counter-clock-
+enable signal for OSTMn, set the IC0CKSELn.IC0TMENn bit to 1.
+Caution 3. 
+If TAUAn or TAUJn is selected as the source of a counter-clock-enable signal 
+for OSTMn (the IC0CKSELn.IC0TMENn bit is 1), do not change the operation 
+of TAUAn or TAUJn while the OSTMn is operating (the OSTMnTE.OSTMnTE 
+bit is 1).
+[Setting procedure]
+(1) Confirm that the OSTMnTE.OSTMnTE bit is 0 (OSTMn operation is 
+stopped).
+(2) Set the IC0CKSELn.IC0CKSELn[13:0] bits to select a counter-clock-
+enable signal for the OSTMn.
+(3) Set the IC0CKSELn.IC0TMENn bit to 1.
+(4) Enable OSTMn operation by setting the OSTMnTS.OSTMnTS bit to 1.
+

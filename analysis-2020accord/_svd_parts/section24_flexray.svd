@@ -1,0 +1,5507 @@
+<!-- Section 24 FlexRay (FLX) - V850E2/Px4 UPD70F3508 -->
+<!-- FLX0 base: 0xFF580000 (Table 24-2) -->
+<!-- ECC_FLX base: 0xFF464000 (E7A0CTL..E7A6CTL) -->
+
+<peripheral>
+  <name>FLX0</name>
+  <description>FlexRay controller 0 (E-Ray)</description>
+  <baseAddress>0xFF580000</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x0718</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+        <register>
+          <name>FLX0CI</name>
+          <description>Controller information</description>
+          <addressOffset>0x0000</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x65726179</resetValue>
+          <fields>
+            <field>
+              <name>FLX0MN</name>
+              <description>Controller information (ASCII eray)</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0VI</name>
+          <description>Vendor information</description>
+          <addressOffset>0x0004</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x01050004</resetValue>
+          <fields>
+            <field>
+              <name>FLX0VI_ID</name>
+              <description>Vendor ID</description>
+              <bitRange>[31:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0FMR</name>
+              <description>FlexRay controller release number</description>
+              <bitRange>[23:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0PCN</name>
+              <description>Product code number</description>
+              <bitRange>[7:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0CS</name>
+          <description>Control setting</description>
+          <addressOffset>0x0008</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000002</resetValue>
+          <fields>
+            <field>
+              <name>FLX0CSLK</name>
+              <description>Control setting lock key</description>
+              <bitRange>[31:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MD</name>
+              <description>Controller disable</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SR</name>
+              <description>Software reset</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0TEST1</name>
+          <description>Test register 1</description>
+          <addressOffset>0x0010</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000300</resetValue>
+          <fields>
+            <field>
+              <name>FLX0CERB</name>
+              <description>Coding error report channel B</description>
+              <bitRange>[31:28]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CERA</name>
+              <description>Coding error report channel A</description>
+              <bitRange>[27:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TXENB</name>
+              <description>Control of channel B transmit enable signal</description>
+              <bitRange>[21:21]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TXENA</name>
+              <description>Control of channel A transmit enable signal</description>
+              <bitRange>[20:20]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TXB</name>
+              <description>Control of channel B transmit signal</description>
+              <bitRange>[19:19]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TXA</name>
+              <description>Control of channel A transmit signal</description>
+              <bitRange>[18:18]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXB</name>
+              <description>Monitor channel B receive signal</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXA</name>
+              <description>Monitor channel A receive signal</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0AOB</name>
+              <description>Activity detected on channel B</description>
+              <bitRange>[9:9]</bitRange>
+            </field>
+            <field>
+              <name>FLX0AOA</name>
+              <description>Activity detected on channel A</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TMC</name>
+              <description>Test multiplexer control</description>
+              <bitRange>[5:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0ELBE</name>
+              <description>External loop back enable</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WRTEN</name>
+              <description>Write test register enable</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0TEST2</name>
+          <description>Test register 2</description>
+          <addressOffset>0x0014</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0SSEL</name>
+              <description>RAM segment setting</description>
+              <bitRange>[6:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RS</name>
+              <description>RAM selection setting</description>
+              <bitRange>[2:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0LCK</name>
+          <description>Lock register</description>
+          <addressOffset>0x001C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0TMK</name>
+              <description>Test mode key</description>
+              <bitRange>[15:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CLK</name>
+              <description>Configuration lock key</description>
+              <bitRange>[7:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0EIR</name>
+          <description>Error interrupt register</description>
+          <addressOffset>0x0020</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0TABBE</name>
+              <description>Transmission slot boundary violation on channel B</description>
+              <bitRange>[26:26]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LTVBE</name>
+              <description>Latest transmit violation on channel B</description>
+              <bitRange>[25:25]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EDBE</name>
+              <description>Error detected on channel B</description>
+              <bitRange>[24:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TABAE</name>
+              <description>Transmission slot boundary violation on channel A</description>
+              <bitRange>[18:18]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LTVAE</name>
+              <description>Latest transmit violation on channel A</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EDAE</name>
+              <description>Error detected on channel A</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MHFE</name>
+              <description>Message handler constraints flag</description>
+              <bitRange>[11:11]</bitRange>
+            </field>
+            <field>
+              <name>FLX0IOBAE</name>
+              <description>Illegal output buffer access</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>FLX0IIBAE</name>
+              <description>Illegal input buffer access</description>
+              <bitRange>[9:9]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EFAE</name>
+              <description>Empty FIFO access</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFOE</name>
+              <description>Receive FIFO overrun</description>
+              <bitRange>[7:7]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CCLE</name>
+              <description>CHI command locked</description>
+              <bitRange>[5:5]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CCFE</name>
+              <description>Clock correction failure</description>
+              <bitRange>[4:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SFOE</name>
+              <description>Sync frame overflow</description>
+              <bitRange>[3:3]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SFBME</name>
+              <description>Sync frames below minimum</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CNAE</name>
+              <description>Command not accepted</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0PEMCE</name>
+              <description>POC error mode changed</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0SIR</name>
+          <description>Status interrupt register</description>
+          <addressOffset>0x0024</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0CLMTSB</name>
+              <description>Clear MTS channel B</description>
+              <bitRange>[25:25]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CLWUPB</name>
+              <description>Clear wakeup channel B</description>
+              <bitRange>[24:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CLMTSA</name>
+              <description>Clear MTS channel A</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WUPAF</name>
+              <description>Wakeup pattern received on channel A</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WUPBF</name>
+              <description>Wakeup pattern received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MTSB</name>
+              <description>MTS received on channel B</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MTSA</name>
+              <description>MTS received on channel A</description>
+              <bitRange>[13:13]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WSTAF</name>
+              <description>Wakeup status changed flag</description>
+              <bitRange>[12:12]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CYCS</name>
+              <description>Cycle start</description>
+              <bitRange>[11:11]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TXI</name>
+              <description>Transmission interrupt</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXI</name>
+              <description>Receive interrupt</description>
+              <bitRange>[9:9]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFNE</name>
+              <description>Receive FIFO not empty</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFCL</name>
+              <description>Receive FIFO critical level</description>
+              <bitRange>[7:7]</bitRange>
+            </field>
+            <field>
+              <name>FLX0NMVC</name>
+              <description>Network management vector changed</description>
+              <bitRange>[6:6]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TI1</name>
+              <description>Timer interrupt 1</description>
+              <bitRange>[5:5]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TI0</name>
+              <description>Timer interrupt 0</description>
+              <bitRange>[4:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TIBC</name>
+              <description>Transfer input buffer completed</description>
+              <bitRange>[3:3]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TOBC</name>
+              <description>Transfer output buffer completed</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SWE</name>
+              <description>Stop watch event</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SUCST</name>
+              <description>Startup completed successfully</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0EILS</name>
+          <description>Error interrupt line select</description>
+          <addressOffset>0x0028</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0TABBELS</name>
+              <description>TABBE interrupt line select</description>
+              <bitRange>[26:26]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LTVBELS</name>
+              <description>LTVBE interrupt line select</description>
+              <bitRange>[25:25]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EDBELS</name>
+              <description>EDBE interrupt line select</description>
+              <bitRange>[24:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TABAELS</name>
+              <description>TABAE interrupt line select</description>
+              <bitRange>[18:18]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LTVAELS</name>
+              <description>LTVAE interrupt line select</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EDAELS</name>
+              <description>EDAE interrupt line select</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MHFELS</name>
+              <description>MHFE interrupt line select</description>
+              <bitRange>[11:11]</bitRange>
+            </field>
+            <field>
+              <name>FLX0IOBAELS</name>
+              <description>IOBAE interrupt line select</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>FLX0IIBAELS</name>
+              <description>IIBAE interrupt line select</description>
+              <bitRange>[9:9]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EFAELS</name>
+              <description>EFAE interrupt line select</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFOELS</name>
+              <description>RFOE interrupt line select</description>
+              <bitRange>[7:7]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CCLELS</name>
+              <description>CCLE interrupt line select</description>
+              <bitRange>[5:5]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CCFELS</name>
+              <description>CCFE interrupt line select</description>
+              <bitRange>[4:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SFOELS</name>
+              <description>SFOE interrupt line select</description>
+              <bitRange>[3:3]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SFBMELS</name>
+              <description>SFBME interrupt line select</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CNAELS</name>
+              <description>CNAE interrupt line select</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0PEMCELS</name>
+              <description>PEMCE interrupt line select</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0SILS</name>
+          <description>Status interrupt line select</description>
+          <addressOffset>0x002C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0303FFFF</resetValue>
+          <fields>
+            <field>
+              <name>FLX0CLMTSBLS</name>
+              <description>CLMTSB line select</description>
+              <bitRange>[25:25]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CLWUPBLS</name>
+              <description>CLWUPB line select</description>
+              <bitRange>[24:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CLMTSALS</name>
+              <description>CLMTSA line select</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CLWUPALS</name>
+              <description>CLWUPA line select</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WUPBFLS</name>
+              <description>WUPBF line select</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MTSBLS</name>
+              <description>MTSB line select</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MTSALS</name>
+              <description>MTSA line select</description>
+              <bitRange>[13:13]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WSTAFLS</name>
+              <description>WSTAF line select</description>
+              <bitRange>[12:12]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CYCSFLS</name>
+              <description>CYCS line select</description>
+              <bitRange>[11:11]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TXILS</name>
+              <description>TXI line select</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXILS</name>
+              <description>RXI line select</description>
+              <bitRange>[9:9]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFNELS</name>
+              <description>RFNE line select</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFCLLS</name>
+              <description>RFCL line select</description>
+              <bitRange>[7:7]</bitRange>
+            </field>
+            <field>
+              <name>FLX0NMVCLS</name>
+              <description>NMVC line select</description>
+              <bitRange>[6:6]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TI1LS</name>
+              <description>TI1 line select</description>
+              <bitRange>[5:5]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TI0LS</name>
+              <description>TI0 line select</description>
+              <bitRange>[4:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TIBCLS</name>
+              <description>TIBC line select</description>
+              <bitRange>[3:3]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TOBCLS</name>
+              <description>TOBC line select</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SWELS</name>
+              <description>SWE line select</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SUCSLS</name>
+              <description>SUCST line select</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0EIES</name>
+          <description>Error interrupt enable set</description>
+          <addressOffset>0x0030</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0TABBEES</name>
+              <description>TABBE enable set</description>
+              <bitRange>[26:26]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LTVBEES</name>
+              <description>LTVBE enable set</description>
+              <bitRange>[25:25]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EDBEES</name>
+              <description>EDBE enable set</description>
+              <bitRange>[24:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TABAEES</name>
+              <description>TABAE enable set</description>
+              <bitRange>[18:18]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LTVAEES</name>
+              <description>LTVAE enable set</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EDAEES</name>
+              <description>EDAE enable set</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MHFEES</name>
+              <description>MHFE enable set</description>
+              <bitRange>[11:11]</bitRange>
+            </field>
+            <field>
+              <name>FLX0IOBAEES</name>
+              <description>IOBAE enable set</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>FLX0IIBAEES</name>
+              <description>IIBAE enable set</description>
+              <bitRange>[9:9]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EFAEES</name>
+              <description>EFAE enable set</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFOEESS</name>
+              <description>RFOE enable set</description>
+              <bitRange>[7:7]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CCLEE_S</name>
+              <description>CCLE enable set</description>
+              <bitRange>[5:5]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CCFEE_S</name>
+              <description>CCFE enable set</description>
+              <bitRange>[4:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SFOEES</name>
+              <description>SFOE enable set</description>
+              <bitRange>[3:3]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SFBMEES</name>
+              <description>SFBME enable set</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CNAEES</name>
+              <description>CNAE enable set</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0PEMCEES</name>
+              <description>PEMCE enable set</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0EIER</name>
+          <description>Error interrupt enable reset</description>
+          <addressOffset>0x0034</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0TABBEERS</name>
+              <description>TABBE enable reset</description>
+              <bitRange>[26:26]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LTVBEERS</name>
+              <description>LTVBE enable reset</description>
+              <bitRange>[25:25]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EDBEERS</name>
+              <description>EDBE enable reset</description>
+              <bitRange>[24:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TABAEERS</name>
+              <description>TABAE enable reset</description>
+              <bitRange>[18:18]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LTVAEERS</name>
+              <description>LTVAE enable reset</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EDAEERS</name>
+              <description>EDAE enable reset</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MHFEERS</name>
+              <description>MHFE enable reset</description>
+              <bitRange>[11:11]</bitRange>
+            </field>
+            <field>
+              <name>FLX0IOBAEEERS</name>
+              <description>IOBAE enable reset</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>FLX0IIBAEEERS</name>
+              <description>IIBAE enable reset</description>
+              <bitRange>[9:9]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EFAEERS</name>
+              <description>EFAE enable reset</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFOEERS</name>
+              <description>RFOE enable reset</description>
+              <bitRange>[7:7]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CCLEERS</name>
+              <description>CCLE enable reset</description>
+              <bitRange>[5:5]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CCFEERS</name>
+              <description>CCFE enable reset</description>
+              <bitRange>[4:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SFOEERS</name>
+              <description>SFOE enable reset</description>
+              <bitRange>[3:3]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SFBMEERS</name>
+              <description>SFBME enable reset</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CNAEERS</name>
+              <description>CNAE enable reset</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0PEMCEERS</name>
+              <description>PEMCE enable reset</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0SIES</name>
+          <description>Status interrupt enable set</description>
+          <addressOffset>0x0038</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0CLMTSAES</name>
+              <description>CLMTSA enable set</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CLWUPAES</name>
+              <description>CLWUPA enable set</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WUPBFES</name>
+              <description>WUPBF enable set</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MTSBES</name>
+              <description>MTSB enable set</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MTSAES</name>
+              <description>MTSA enable set</description>
+              <bitRange>[13:13]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WSTAFES</name>
+              <description>WSTAF enable set</description>
+              <bitRange>[12:12]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CYCSES</name>
+              <description>CYCS enable set</description>
+              <bitRange>[11:11]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TXIES</name>
+              <description>TXI enable set</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXIES</name>
+              <description>RXI enable set</description>
+              <bitRange>[9:9]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFNEES</name>
+              <description>RFNE enable set</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFCLES</name>
+              <description>RFCL enable set</description>
+              <bitRange>[7:7]</bitRange>
+            </field>
+            <field>
+              <name>FLX0NMVCES</name>
+              <description>NMVC enable set</description>
+              <bitRange>[6:6]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TI1ES</name>
+              <description>TI1 enable set</description>
+              <bitRange>[5:5]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TI0ES</name>
+              <description>TI0 enable set</description>
+              <bitRange>[4:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TIBCES</name>
+              <description>TIBC enable set</description>
+              <bitRange>[3:3]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TOBCES</name>
+              <description>TOBC enable set</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SWEES</name>
+              <description>SWE enable set</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SUCSTES</name>
+              <description>SUCST enable set</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0SIER</name>
+          <description>Status interrupt enable reset</description>
+          <addressOffset>0x003C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0CLMTSAER</name>
+              <description>CLMTSA enable reset</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CLWUPAER</name>
+              <description>CLWUPA enable reset</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WUPBFER</name>
+              <description>WUPBF enable reset</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MTSBER</name>
+              <description>MTSB enable reset</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MTSAER</name>
+              <description>MTSA enable reset</description>
+              <bitRange>[13:13]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WSTAFER</name>
+              <description>WSTAF enable reset</description>
+              <bitRange>[12:12]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CYCSER</name>
+              <description>CYCS enable reset</description>
+              <bitRange>[11:11]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TXIER</name>
+              <description>TXI enable reset</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXIER</name>
+              <description>RXI enable reset</description>
+              <bitRange>[9:9]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFNEER</name>
+              <description>RFNE enable reset</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFCLER</name>
+              <description>RFCL enable reset</description>
+              <bitRange>[7:7]</bitRange>
+            </field>
+            <field>
+              <name>FLX0NMVCER</name>
+              <description>NMVC enable reset</description>
+              <bitRange>[6:6]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TI1ER</name>
+              <description>TI1 enable reset</description>
+              <bitRange>[5:5]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TI0ER</name>
+              <description>TI0 enable reset</description>
+              <bitRange>[4:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TIBCER</name>
+              <description>TIBC enable reset</description>
+              <bitRange>[3:3]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TOBCER</name>
+              <description>TOBC enable reset</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SWEER</name>
+              <description>SWE enable reset</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SUCSTER</name>
+              <description>SUCST enable reset</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ILE</name>
+          <description>Interrupt line enable</description>
+          <addressOffset>0x0040</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0EINT1</name>
+              <description>Interrupt line 1 enable</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EINT0</name>
+              <description>Interrupt line 0 enable</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0T0C</name>
+          <description>Timer 0 configuration</description>
+          <addressOffset>0x0044</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0T0RC</name>
+              <description>Timer 0 repetition bit</description>
+              <bitRange>[26:26]</bitRange>
+            </field>
+            <field>
+              <name>FLX0T0MS</name>
+              <description>Timer 0 mode select</description>
+              <bitRange>[25:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0T0CC</name>
+              <description>Timer 0 cycle code</description>
+              <bitRange>[22:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0T0MO</name>
+              <description>Timer 0 macrotick offset</description>
+              <bitRange>[13:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0T1C</name>
+          <description>Timer 1 configuration</description>
+          <addressOffset>0x0048</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00020000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0T1RC</name>
+              <description>Timer 1 repetition bit</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0T1MS</name>
+              <description>Timer 1 mode select</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0T1MC</name>
+              <description>Timer 1 macrotick count</description>
+              <bitRange>[12:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0STPW1</name>
+          <description>Stop watch register 1</description>
+          <addressOffset>0x004C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0ESWT</name>
+              <description>Enable stop watch trigger</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SWMS</name>
+              <description>Stop watch mode select</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SWCC</name>
+              <description>Stop watch cycle code</description>
+              <bitRange>[13:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SWCV</name>
+              <description>Stop watch comparison value</description>
+              <bitRange>[5:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0STPW2</name>
+          <description>Stop watch register 2</description>
+          <addressOffset>0x0050</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0STMTV</name>
+              <description>Stop watch captured macrotick value</description>
+              <bitRange>[29:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0STCCV</name>
+              <description>Stop watch captured cycle counter value</description>
+              <bitRange>[13:8]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0SUCC1</name>
+          <description>SUC configuration register 1</description>
+          <addressOffset>0x0080</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0C401080</resetValue>
+          <fields>
+            <field>
+              <name>FLX0CCHB</name>
+              <description>Connected to channel B</description>
+              <bitRange>[27:27]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CCHA</name>
+              <description>Connected to channel A</description>
+              <bitRange>[26:26]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MTSB_S</name>
+              <description>Select channel B for MTS transmission</description>
+              <bitRange>[25:25]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MTSA_S</name>
+              <description>Select channel A for MTS transmission</description>
+              <bitRange>[24:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0HCSE</name>
+              <description>Halt due to clock sync error</description>
+              <bitRange>[23:23]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TSM</name>
+              <description>Transmission slot mode</description>
+              <bitRange>[22:22]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WUCS</name>
+              <description>Wakeup channel select</description>
+              <bitRange>[21:21]</bitRange>
+            </field>
+            <field>
+              <name>FLX0PTA</name>
+              <description>Passive to active</description>
+              <bitRange>[20:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CSA</name>
+              <description>Cold start attempts</description>
+              <bitRange>[15:11]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TXSY</name>
+              <description>Transmit sync frame in key slot</description>
+              <bitRange>[9:9]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TXST</name>
+              <description>Transmit startup frame in key slot</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0PBSY</name>
+              <description>POC busy</description>
+              <bitRange>[7:7]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CMD</name>
+              <description>CHI command vector</description>
+              <bitRange>[3:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0SUCC2</name>
+          <description>SUC configuration register 2</description>
+          <addressOffset>0x0084</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x01000504</resetValue>
+          <fields>
+            <field>
+              <name>FLX0LTN</name>
+              <description>Listen timeout noise</description>
+              <bitRange>[27:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LT</name>
+              <description>Listen timeout</description>
+              <bitRange>[20:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0SUCC3</name>
+          <description>SUC configuration register 3</description>
+          <addressOffset>0x0088</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000011</resetValue>
+          <fields>
+            <field>
+              <name>FLX0WCP</name>
+              <description>Wakeup CAS pattern repetitions</description>
+              <bitRange>[7:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WCF</name>
+              <description>Wakeup counter during first gap</description>
+              <bitRange>[3:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0NEMC</name>
+          <description>NEM configuration register</description>
+          <addressOffset>0x008C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0NML</name>
+              <description>Network management vector length</description>
+              <bitRange>[3:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0PRTC1</name>
+          <description>PRT configuration register 1</description>
+          <addressOffset>0x0090</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x084C0633</resetValue>
+          <fields>
+            <field>
+              <name>FLX0BRP</name>
+              <description>Baud rate prescaler</description>
+              <bitRange>[31:28]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SPPW</name>
+              <description>Samples per bit window</description>
+              <bitRange>[26:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SPP</name>
+              <description>Samples per bit</description>
+              <bitRange>[22:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CASM</name>
+              <description>CAS/MTS symbol length</description>
+              <bitRange>[14:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TSSY</name>
+              <description>Transmission start sequence length</description>
+              <bitRange>[5:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0PRTC2</name>
+          <description>PRT configuration register 2</description>
+          <addressOffset>0x0094</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0F2D0A0E</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXI</name>
+              <description>RX to idle delay</description>
+              <bitRange>[31:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXL</name>
+              <description>RX low idle delay</description>
+              <bitRange>[22:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TXI_D</name>
+              <description>TX to idle delay</description>
+              <bitRange>[13:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TXL</name>
+              <description>TX low idle delay</description>
+              <bitRange>[5:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0MHDC</name>
+          <description>MHD configuration register</description>
+          <addressOffset>0x0098</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0SLT</name>
+              <description>Static slot transmit buffer</description>
+              <bitRange>[28:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SFDL</name>
+              <description>Static frame data length</description>
+              <bitRange>[6:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0GTUC01</name>
+          <description>GTU configuration register 1</description>
+          <addressOffset>0x00A0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000280</resetValue>
+          <fields>
+            <field>
+              <name>FLX0UT</name>
+              <description>Microtick per cycle</description>
+              <bitRange>[19:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0GTUC02</name>
+          <description>GTU configuration register 2</description>
+          <addressOffset>0x00A4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0002000A</resetValue>
+          <fields>
+            <field>
+              <name>FLX0SNM</name>
+              <description>Sync node max</description>
+              <bitRange>[19:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MPC</name>
+              <description>Macrotick per cycle</description>
+              <bitRange>[13:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0GTUC03</name>
+          <description>GTU configuration register 3</description>
+          <addressOffset>0x00A8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x02020000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0UIOA</name>
+              <description>Microtick initial offset channel A</description>
+              <bitRange>[31:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0UIOB</name>
+              <description>Microtick initial offset channel B</description>
+              <bitRange>[23:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MIOA</name>
+              <description>Macrotick initial offset channel A</description>
+              <bitRange>[14:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MIOB</name>
+              <description>Macrotick initial offset channel B</description>
+              <bitRange>[6:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0GTUC04</name>
+          <description>GTU configuration register 4</description>
+          <addressOffset>0x00AC</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00080007</resetValue>
+          <fields>
+            <field>
+              <name>FLX0NIT</name>
+              <description>Network idle time start</description>
+              <bitRange>[18:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OCS</name>
+              <description>Offset correction start</description>
+              <bitRange>[6:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0GTUC05</name>
+          <description>GTU configuration register 5</description>
+          <addressOffset>0x00B0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0E000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DCA</name>
+              <description>Delay compensation channel A</description>
+              <bitRange>[28:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0DCB</name>
+              <description>Delay compensation channel B</description>
+              <bitRange>[12:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0GTUC06</name>
+          <description>GTU configuration register 6</description>
+          <addressOffset>0x00B4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00020000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0ASR</name>
+              <description>Accepted startup range</description>
+              <bitRange>[19:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0GTUC07</name>
+          <description>GTU configuration register 7</description>
+          <addressOffset>0x00B8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00020004</resetValue>
+          <fields>
+            <field>
+              <name>FLX0SSL</name>
+              <description>Static slot length</description>
+              <bitRange>[18:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0NSS</name>
+              <description>Number of static slots</description>
+              <bitRange>[6:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0GTUC08</name>
+          <description>GTU configuration register 8</description>
+          <addressOffset>0x00BC</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000002</resetValue>
+          <fields>
+            <field>
+              <name>FLX0MSL</name>
+              <description>Minislot length</description>
+              <bitRange>[13:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0NMS</name>
+              <description>Number of minislots</description>
+              <bitRange>[5:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0GTUC09</name>
+          <description>GTU configuration register 9</description>
+          <addressOffset>0x00C0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000101</resetValue>
+          <fields>
+            <field>
+              <name>FLX0APO</name>
+              <description>Action point offset</description>
+              <bitRange>[12:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MAPO</name>
+              <description>Minislot action point offset</description>
+              <bitRange>[4:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0GTUC10</name>
+          <description>GTU configuration register 10</description>
+          <addressOffset>0x00C4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00020005</resetValue>
+          <fields>
+            <field>
+              <name>FLX0MOC</name>
+              <description>Maximum offset correction</description>
+              <bitRange>[18:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MRC</name>
+              <description>Maximum rate correction</description>
+              <bitRange>[5:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0GTUC11</name>
+          <description>GTU configuration register 11</description>
+          <addressOffset>0x00C8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0ECAS</name>
+              <description>External clock correction channel A select</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EDCR</name>
+              <description>External delay correction</description>
+              <bitRange>[7:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0CCSV</name>
+          <description>CC status vector</description>
+          <addressOffset>0x0100</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00104000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0WSV</name>
+              <description>Wakeup status</description>
+              <bitRange>[31:29]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RCA</name>
+              <description>Remaining cold start attempts</description>
+              <bitRange>[28:28]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SLM</name>
+              <description>Slot mode</description>
+              <bitRange>[27:26]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CSNI</name>
+              <description>Cold start noise indicator</description>
+              <bitRange>[23:22]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CSAI</name>
+              <description>Cold start abort indicator</description>
+              <bitRange>[21:20]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CSI</name>
+              <description>Cold start inhibit</description>
+              <bitRange>[19:19]</bitRange>
+            </field>
+            <field>
+              <name>FLX0HRQ</name>
+              <description>Halt request</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0FSI</name>
+              <description>Freeze status indicator</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CCPBSY</name>
+              <description>POC busy</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0POCS</name>
+              <description>POC state</description>
+              <bitRange>[13:8]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0CCEV</name>
+          <description>CC error vector</description>
+          <addressOffset>0x0104</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0ERRM</name>
+              <description>Error mode</description>
+              <bitRange>[19:18]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LTVC</name>
+              <description>Listen timeout violation counter</description>
+              <bitRange>[15:10]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OFCR</name>
+              <description>Offset correction failed counter</description>
+              <bitRange>[9:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CCFC</name>
+              <description>Clock correction failed counter</description>
+              <bitRange>[5:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0SCV</name>
+          <description>Slot counter value</description>
+          <addressOffset>0x0110</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0SCCA</name>
+              <description>Slot counter channel A</description>
+              <bitRange>[21:10]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SCCB</name>
+              <description>Slot counter channel B</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0MTCCV</name>
+          <description>Macrotick and cycle counter value</description>
+          <addressOffset>0x0114</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0CCV</name>
+              <description>Cycle counter value</description>
+              <bitRange>[21:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MTV</name>
+              <description>Macrotick value</description>
+              <bitRange>[13:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RCV</name>
+          <description>Rate correction value</description>
+          <addressOffset>0x0118</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RCVVAL</name>
+              <description>Rate correction value</description>
+              <bitRange>[10:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OCV</name>
+          <description>Offset correction value</description>
+          <addressOffset>0x011C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0OCVVAL</name>
+              <description>Offset correction value</description>
+              <bitRange>[18:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0SFS</name>
+          <description>Sync frame status</description>
+          <addressOffset>0x0120</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0VSAE</name>
+              <description>Valid sync frames even channel A</description>
+              <bitRange>[15:12]</bitRange>
+            </field>
+            <field>
+              <name>FLX0VSBE</name>
+              <description>Valid sync frames even channel B</description>
+              <bitRange>[11:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0VSAO</name>
+              <description>Valid sync frames odd channel A</description>
+              <bitRange>[7:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0VSBO</name>
+              <description>Valid sync frames odd channel B</description>
+              <bitRange>[3:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0SWNIT</name>
+          <description>Symbol window and NIT status</description>
+          <addressOffset>0x0124</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0SESA</name>
+              <description>Syntax error symbol window channel A</description>
+              <bitRange>[25:25]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SBSA</name>
+              <description>Slot boundary violation symbol window channel A</description>
+              <bitRange>[24:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TCSA</name>
+              <description>Transmission conflict symbol window channel A</description>
+              <bitRange>[23:23]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SESB</name>
+              <description>Syntax error symbol window channel B</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SBSB</name>
+              <description>Slot boundary violation symbol window channel B</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0TCSB</name>
+              <description>Transmission conflict symbol window channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SENA</name>
+              <description>Syntax error NIT channel A</description>
+              <bitRange>[9:9]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SBNA</name>
+              <description>Slot boundary violation NIT channel A</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SENB</name>
+              <description>Syntax error NIT channel B</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SBNB</name>
+              <description>Slot boundary violation NIT channel B</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ACS</name>
+          <description>Aggregated channel status</description>
+          <addressOffset>0x0128</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0CEDBE</name>
+              <description>Content error detected channel B even</description>
+              <bitRange>[23:23]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SEDBE</name>
+              <description>Slot boundary violation channel B even</description>
+              <bitRange>[22:22]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CIBE</name>
+              <description>Content error in boundary channel B</description>
+              <bitRange>[21:21]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SBVBE</name>
+              <description>Slot boundary violation channel B</description>
+              <bitRange>[20:20]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CEDAE</name>
+              <description>Content error detected channel A even</description>
+              <bitRange>[19:19]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SEDAE</name>
+              <description>Slot boundary violation channel A even</description>
+              <bitRange>[18:18]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CIAE</name>
+              <description>Content error in boundary channel A</description>
+              <bitRange>[17:17]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SBVAE</name>
+              <description>Slot boundary violation channel A</description>
+              <bitRange>[16:16]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID01</name>
+          <description>Even sync ID register 01</description>
+          <addressOffset>0x0130</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB01</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA01</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID01</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID02</name>
+          <description>Even sync ID register 02</description>
+          <addressOffset>0x0134</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB02</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA02</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID02</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID03</name>
+          <description>Even sync ID register 03</description>
+          <addressOffset>0x0138</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB03</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA03</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID03</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID04</name>
+          <description>Even sync ID register 04</description>
+          <addressOffset>0x013C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB04</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA04</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID04</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID05</name>
+          <description>Even sync ID register 05</description>
+          <addressOffset>0x0140</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB05</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA05</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID05</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID06</name>
+          <description>Even sync ID register 06</description>
+          <addressOffset>0x0144</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB06</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA06</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID06</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID07</name>
+          <description>Even sync ID register 07</description>
+          <addressOffset>0x0148</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB07</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA07</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID07</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID08</name>
+          <description>Even sync ID register 08</description>
+          <addressOffset>0x014C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB08</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA08</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID08</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID09</name>
+          <description>Even sync ID register 09</description>
+          <addressOffset>0x0150</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB09</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA09</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID09</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID10</name>
+          <description>Even sync ID register 10</description>
+          <addressOffset>0x0154</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB10</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA10</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID10</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID11</name>
+          <description>Even sync ID register 11</description>
+          <addressOffset>0x0158</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB11</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA11</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID11</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID12</name>
+          <description>Even sync ID register 12</description>
+          <addressOffset>0x015C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB12</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA12</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID12</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID13</name>
+          <description>Even sync ID register 13</description>
+          <addressOffset>0x0160</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB13</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA13</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID13</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID14</name>
+          <description>Even sync ID register 14</description>
+          <addressOffset>0x0164</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB14</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA14</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID14</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ESID15</name>
+          <description>Even sync ID register 15</description>
+          <addressOffset>0x0168</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXEB15</name>
+              <description>Sync frame received on channel B</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXEA15</name>
+              <description>Sync frame received on channel A</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0EID15</name>
+              <description>Even sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID01</name>
+          <description>Odd sync ID register 01</description>
+          <addressOffset>0x0170</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB01</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA01</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID01</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID02</name>
+          <description>Odd sync ID register 02</description>
+          <addressOffset>0x0174</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB02</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA02</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID02</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID03</name>
+          <description>Odd sync ID register 03</description>
+          <addressOffset>0x0178</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB03</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA03</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID03</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID04</name>
+          <description>Odd sync ID register 04</description>
+          <addressOffset>0x017C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB04</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA04</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID04</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID05</name>
+          <description>Odd sync ID register 05</description>
+          <addressOffset>0x0180</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB05</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA05</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID05</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID06</name>
+          <description>Odd sync ID register 06</description>
+          <addressOffset>0x0184</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB06</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA06</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID06</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID07</name>
+          <description>Odd sync ID register 07</description>
+          <addressOffset>0x0188</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB07</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA07</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID07</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID08</name>
+          <description>Odd sync ID register 08</description>
+          <addressOffset>0x018C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB08</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA08</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID08</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID09</name>
+          <description>Odd sync ID register 09</description>
+          <addressOffset>0x0190</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB09</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA09</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID09</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID10</name>
+          <description>Odd sync ID register 10</description>
+          <addressOffset>0x0194</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB10</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA10</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID10</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID11</name>
+          <description>Odd sync ID register 11</description>
+          <addressOffset>0x0198</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB11</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA11</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID11</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID12</name>
+          <description>Odd sync ID register 12</description>
+          <addressOffset>0x019C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB12</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA12</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID12</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID13</name>
+          <description>Odd sync ID register 13</description>
+          <addressOffset>0x01A0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB13</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA13</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID13</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID14</name>
+          <description>Odd sync ID register 14</description>
+          <addressOffset>0x01A4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB14</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA14</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID14</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OSID15</name>
+          <description>Odd sync ID register 15</description>
+          <addressOffset>0x01A8</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RXOB15</name>
+              <description>Sync frame received on channel B odd</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RXOA15</name>
+              <description>Sync frame received on channel A odd</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OID15</name>
+              <description>Odd sync ID</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0NMV1</name>
+          <description>Network management vector register 1</description>
+          <addressOffset>0x01B0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0NM1D</name>
+              <description>Network management vector data</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0NMV2</name>
+          <description>Network management vector register 2</description>
+          <addressOffset>0x01B4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0NM2D</name>
+              <description>Network management vector data</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0NMV3</name>
+          <description>Network management vector register 3</description>
+          <addressOffset>0x01B8</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0NM3D</name>
+              <description>Network management vector data</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0MRC</name>
+          <description>Message RAM configuration</description>
+          <addressOffset>0x0300</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x01800000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0SPLM</name>
+              <description>Single payload limit mode</description>
+              <bitRange>[26:26]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SEC</name>
+              <description>Static frame ID rejection</description>
+              <bitRange>[25:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LCB</name>
+              <description>Last configured buffer</description>
+              <bitRange>[23:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0FFB</name>
+              <description>First FIFO buffer</description>
+              <bitRange>[15:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0FDB</name>
+              <description>First dynamic buffer</description>
+              <bitRange>[7:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0FRF</name>
+          <description>FIFO rejection filter</description>
+          <addressOffset>0x0304</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x01800000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RNF</name>
+              <description>Reject null frames</description>
+              <bitRange>[26:26]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RSS</name>
+              <description>Reject sync segment frames</description>
+              <bitRange>[25:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFID</name>
+              <description>Receive FIFO frame ID rejection</description>
+              <bitRange>[10:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0FRFM</name>
+          <description>FIFO rejection filter mask</description>
+          <addressOffset>0x0308</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RFIDM</name>
+              <description>FIFO frame ID rejection mask</description>
+              <bitRange>[10:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0FCL</name>
+          <description>FIFO critical level</description>
+          <addressOffset>0x030C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000080</resetValue>
+          <fields>
+            <field>
+              <name>FLX0CL</name>
+              <description>FIFO critical level</description>
+              <bitRange>[7:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0MHDS</name>
+          <description>Message handler status</description>
+          <addressOffset>0x0310</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0PIBF</name>
+              <description>Payload input buffer full</description>
+              <bitRange>[31:31]</bitRange>
+            </field>
+            <field>
+              <name>FLX0FMBD</name>
+              <description>Faulty message buffer detected</description>
+              <bitRange>[30:30]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MFMB</name>
+              <description>Maximum FIFO message buffer</description>
+              <bitRange>[29:29]</bitRange>
+            </field>
+            <field>
+              <name>FLX0CRAM</name>
+              <description>Clear RAM active</description>
+              <bitRange>[28:28]</bitRange>
+            </field>
+            <field>
+              <name>FLX0FMB</name>
+              <description>Faulty message buffer</description>
+              <bitRange>[27:27]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MBT</name>
+              <description>Message buffer transmit</description>
+              <bitRange>[23:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MBU</name>
+              <description>Message buffer update</description>
+              <bitRange>[7:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0LDTS</name>
+          <description>Last dynamic transmit slot</description>
+          <addressOffset>0x0314</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0LDTA</name>
+              <description>Last dynamic transmit slot channel A</description>
+              <bitRange>[20:10]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LDTB</name>
+              <description>Last dynamic transmit slot channel B</description>
+              <bitRange>[9:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0FSR</name>
+          <description>FIFO status register</description>
+          <addressOffset>0x0318</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RFOV</name>
+              <description>Receive FIFO overrun</description>
+              <bitRange>[25:25]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFFL</name>
+              <description>Receive FIFO fill level</description>
+              <bitRange>[23:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RFAI</name>
+              <description>Receive FIFO access index</description>
+              <bitRange>[7:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0MHDF</name>
+          <description>Message handler constraints flags</description>
+          <addressOffset>0x031C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0WAHPE</name>
+              <description>Write access to header partition error</description>
+              <bitRange>[6:6]</bitRange>
+            </field>
+            <field>
+              <name>FLX0DTBFBE</name>
+              <description>Data transmit buffer full error channel B</description>
+              <bitRange>[5:5]</bitRange>
+            </field>
+            <field>
+              <name>FLX0DTBFAE</name>
+              <description>Data transmit buffer full error channel A</description>
+              <bitRange>[4:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0FNFBE</name>
+              <description>FIFO not free channel B error</description>
+              <bitRange>[3:3]</bitRange>
+            </field>
+            <field>
+              <name>FLX0FNFAE</name>
+              <description>FIFO not free channel A error</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SNUBE</name>
+              <description>Sync node undefined error channel B</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0SNUAE</name>
+              <description>Sync node undefined error channel A</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0TXRQ1</name>
+          <description>Transmission request 1</description>
+          <addressOffset>0x0320</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0TXR031</name>
+              <description>Transmission request bits 031:000</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0TXRQ2</name>
+          <description>Transmission request 2</description>
+          <addressOffset>0x0324</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0TXR063</name>
+              <description>Transmission request bits 063:032</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0TXRQ3</name>
+          <description>Transmission request 3</description>
+          <addressOffset>0x0328</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0TXR095</name>
+              <description>Transmission request bits 095:064</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0TXRQ4</name>
+          <description>Transmission request 4</description>
+          <addressOffset>0x032C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0TXR127</name>
+              <description>Transmission request bits 127:096</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0NDAT1</name>
+          <description>New data 1</description>
+          <addressOffset>0x0330</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0ND031</name>
+              <description>New data bits 031:000</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0NDAT2</name>
+          <description>New data 2</description>
+          <addressOffset>0x0334</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0ND063</name>
+              <description>New data bits 063:032</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0NDAT3</name>
+          <description>New data 3</description>
+          <addressOffset>0x0338</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0ND095</name>
+              <description>New data bits 095:064</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0NDAT4</name>
+          <description>New data 4</description>
+          <addressOffset>0x033C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0ND127</name>
+              <description>New data bits 127:096</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0MBSC1</name>
+          <description>Message buffer status changed 1</description>
+          <addressOffset>0x0340</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0MBC031</name>
+              <description>Message buffer status changed bits 031:000</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0MBSC2</name>
+          <description>Message buffer status changed 2</description>
+          <addressOffset>0x0344</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0MBC063</name>
+              <description>Message buffer status changed bits 063:032</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0MBSC3</name>
+          <description>Message buffer status changed 3</description>
+          <addressOffset>0x0348</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0MBC095</name>
+              <description>Message buffer status changed bits 095:064</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0MBSC4</name>
+          <description>Message buffer status changed 4</description>
+          <addressOffset>0x034C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0MBC127</name>
+              <description>Message buffer status changed bits 127:096</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0CREL</name>
+          <description>Core release register</description>
+          <addressOffset>0x03F0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x10271031</resetValue>
+          <fields>
+            <field>
+              <name>FLX0REL</name>
+              <description>Core release</description>
+              <bitRange>[31:28]</bitRange>
+            </field>
+            <field>
+              <name>FLX0STEP</name>
+              <description>Core step</description>
+              <bitRange>[27:20]</bitRange>
+            </field>
+            <field>
+              <name>FLX0YEAR</name>
+              <description>Core release year</description>
+              <bitRange>[19:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MON</name>
+              <description>Core release month</description>
+              <bitRange>[15:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0DAY</name>
+              <description>Core release day</description>
+              <bitRange>[7:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0ENDN</name>
+          <description>Endian register</description>
+          <addressOffset>0x03F4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x87654321</resetValue>
+          <fields>
+            <field>
+              <name>FLX0ETV</name>
+              <description>Endian test value</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS01</name>
+          <description>Write data section register 01</description>
+          <addressOffset>0x0400</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW01</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS02</name>
+          <description>Write data section register 02</description>
+          <addressOffset>0x0404</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW02</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS03</name>
+          <description>Write data section register 03</description>
+          <addressOffset>0x0408</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW03</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS04</name>
+          <description>Write data section register 04</description>
+          <addressOffset>0x040C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW04</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS05</name>
+          <description>Write data section register 05</description>
+          <addressOffset>0x0410</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW05</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS06</name>
+          <description>Write data section register 06</description>
+          <addressOffset>0x0414</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW06</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS07</name>
+          <description>Write data section register 07</description>
+          <addressOffset>0x0418</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW07</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS08</name>
+          <description>Write data section register 08</description>
+          <addressOffset>0x041C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW08</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS09</name>
+          <description>Write data section register 09</description>
+          <addressOffset>0x0420</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW09</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS10</name>
+          <description>Write data section register 10</description>
+          <addressOffset>0x0424</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW10</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS11</name>
+          <description>Write data section register 11</description>
+          <addressOffset>0x0428</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW11</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS12</name>
+          <description>Write data section register 12</description>
+          <addressOffset>0x042C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW12</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS13</name>
+          <description>Write data section register 13</description>
+          <addressOffset>0x0430</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW13</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS14</name>
+          <description>Write data section register 14</description>
+          <addressOffset>0x0434</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW14</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS15</name>
+          <description>Write data section register 15</description>
+          <addressOffset>0x0438</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW15</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS16</name>
+          <description>Write data section register 16</description>
+          <addressOffset>0x043C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW16</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS17</name>
+          <description>Write data section register 17</description>
+          <addressOffset>0x0440</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW17</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS18</name>
+          <description>Write data section register 18</description>
+          <addressOffset>0x0444</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW18</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS19</name>
+          <description>Write data section register 19</description>
+          <addressOffset>0x0448</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW19</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS20</name>
+          <description>Write data section register 20</description>
+          <addressOffset>0x044C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW20</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS21</name>
+          <description>Write data section register 21</description>
+          <addressOffset>0x0450</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW21</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS22</name>
+          <description>Write data section register 22</description>
+          <addressOffset>0x0454</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW22</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS23</name>
+          <description>Write data section register 23</description>
+          <addressOffset>0x0458</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW23</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS24</name>
+          <description>Write data section register 24</description>
+          <addressOffset>0x045C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW24</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS25</name>
+          <description>Write data section register 25</description>
+          <addressOffset>0x0460</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW25</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS26</name>
+          <description>Write data section register 26</description>
+          <addressOffset>0x0464</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW26</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS27</name>
+          <description>Write data section register 27</description>
+          <addressOffset>0x0468</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW27</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS28</name>
+          <description>Write data section register 28</description>
+          <addressOffset>0x046C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW28</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS29</name>
+          <description>Write data section register 29</description>
+          <addressOffset>0x0470</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW29</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS30</name>
+          <description>Write data section register 30</description>
+          <addressOffset>0x0474</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW30</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS31</name>
+          <description>Write data section register 31</description>
+          <addressOffset>0x0478</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW31</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS32</name>
+          <description>Write data section register 32</description>
+          <addressOffset>0x047C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW32</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS33</name>
+          <description>Write data section register 33</description>
+          <addressOffset>0x0480</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW33</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS34</name>
+          <description>Write data section register 34</description>
+          <addressOffset>0x0484</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW34</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS35</name>
+          <description>Write data section register 35</description>
+          <addressOffset>0x0488</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW35</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS36</name>
+          <description>Write data section register 36</description>
+          <addressOffset>0x048C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW36</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS37</name>
+          <description>Write data section register 37</description>
+          <addressOffset>0x0490</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW37</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS38</name>
+          <description>Write data section register 38</description>
+          <addressOffset>0x0494</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW38</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS39</name>
+          <description>Write data section register 39</description>
+          <addressOffset>0x0498</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW39</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS40</name>
+          <description>Write data section register 40</description>
+          <addressOffset>0x049C</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW40</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS41</name>
+          <description>Write data section register 41</description>
+          <addressOffset>0x04A0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW41</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS42</name>
+          <description>Write data section register 42</description>
+          <addressOffset>0x04A4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW42</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS43</name>
+          <description>Write data section register 43</description>
+          <addressOffset>0x04A8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW43</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS44</name>
+          <description>Write data section register 44</description>
+          <addressOffset>0x04AC</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW44</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS45</name>
+          <description>Write data section register 45</description>
+          <addressOffset>0x04B0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW45</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS46</name>
+          <description>Write data section register 46</description>
+          <addressOffset>0x04B4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW46</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS47</name>
+          <description>Write data section register 47</description>
+          <addressOffset>0x04B8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW47</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS48</name>
+          <description>Write data section register 48</description>
+          <addressOffset>0x04BC</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW48</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS49</name>
+          <description>Write data section register 49</description>
+          <addressOffset>0x04C0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW49</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS50</name>
+          <description>Write data section register 50</description>
+          <addressOffset>0x04C4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW50</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS51</name>
+          <description>Write data section register 51</description>
+          <addressOffset>0x04C8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW51</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS52</name>
+          <description>Write data section register 52</description>
+          <addressOffset>0x04CC</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW52</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS53</name>
+          <description>Write data section register 53</description>
+          <addressOffset>0x04D0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW53</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS54</name>
+          <description>Write data section register 54</description>
+          <addressOffset>0x04D4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW54</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS55</name>
+          <description>Write data section register 55</description>
+          <addressOffset>0x04D8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW55</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS56</name>
+          <description>Write data section register 56</description>
+          <addressOffset>0x04DC</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW56</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS57</name>
+          <description>Write data section register 57</description>
+          <addressOffset>0x04E0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW57</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS58</name>
+          <description>Write data section register 58</description>
+          <addressOffset>0x04E4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW58</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS59</name>
+          <description>Write data section register 59</description>
+          <addressOffset>0x04E8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW59</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS60</name>
+          <description>Write data section register 60</description>
+          <addressOffset>0x04EC</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW60</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS61</name>
+          <description>Write data section register 61</description>
+          <addressOffset>0x04F0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW61</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS62</name>
+          <description>Write data section register 62</description>
+          <addressOffset>0x04F4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW62</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS63</name>
+          <description>Write data section register 63</description>
+          <addressOffset>0x04F8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW63</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRDS64</name>
+          <description>Write data section register 64</description>
+          <addressOffset>0x04FC</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0DW64</name>
+              <description>Data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRHS1</name>
+          <description>Write header section 1</description>
+          <addressOffset>0x0500</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0WHMBI</name>
+              <description>Message buffer interrupt enable</description>
+              <bitRange>[29:29]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WHTXM</name>
+              <description>Transmission mode</description>
+              <bitRange>[28:28]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WHPPIT</name>
+              <description>Payload preamble indicator transmit</description>
+              <bitRange>[27:27]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WHCFG</name>
+              <description>Buffer direction TX/RX</description>
+              <bitRange>[26:26]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WHCHB</name>
+              <description>Channel B assignment</description>
+              <bitRange>[25:25]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WHCHA</name>
+              <description>Channel A assignment</description>
+              <bitRange>[24:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WHCYC</name>
+              <description>Cycle counter filter</description>
+              <bitRange>[22:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WHFID</name>
+              <description>Frame ID</description>
+              <bitRange>[10:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRHS2</name>
+          <description>Write header section 2</description>
+          <addressOffset>0x0504</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0WHCRC</name>
+              <description>Header CRC</description>
+              <bitRange>[22:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0WHPLC</name>
+              <description>Payload length configured</description>
+              <bitRange>[6:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0WRHS3</name>
+          <description>Write header section 3</description>
+          <addressOffset>0x0508</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0WHDP</name>
+              <description>Data pointer</description>
+              <bitRange>[6:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0IBCM</name>
+          <description>Input buffer command mask</description>
+          <addressOffset>0x0510</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0LHSH</name>
+              <description>Write header section to IBF</description>
+              <bitRange>[5:5]</bitRange>
+            </field>
+            <field>
+              <name>FLX0LDSH</name>
+              <description>Write data section to IBF</description>
+              <bitRange>[4:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0STXR</name>
+              <description>Set transmission request</description>
+              <bitRange>[3:3]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0IBCR</name>
+          <description>Input buffer command request</description>
+          <addressOffset>0x0514</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0IBSYH</name>
+              <description>Input buffer host busy</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0IBSYS</name>
+              <description>Input buffer shadow busy</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0IBRH</name>
+              <description>Input buffer request host side</description>
+              <bitRange>[6:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS01</name>
+          <description>Read data section register 01</description>
+          <addressOffset>0x0600</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW01</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS02</name>
+          <description>Read data section register 02</description>
+          <addressOffset>0x0604</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW02</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS03</name>
+          <description>Read data section register 03</description>
+          <addressOffset>0x0608</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW03</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS04</name>
+          <description>Read data section register 04</description>
+          <addressOffset>0x060C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW04</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS05</name>
+          <description>Read data section register 05</description>
+          <addressOffset>0x0610</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW05</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS06</name>
+          <description>Read data section register 06</description>
+          <addressOffset>0x0614</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW06</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS07</name>
+          <description>Read data section register 07</description>
+          <addressOffset>0x0618</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW07</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS08</name>
+          <description>Read data section register 08</description>
+          <addressOffset>0x061C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW08</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS09</name>
+          <description>Read data section register 09</description>
+          <addressOffset>0x0620</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW09</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS10</name>
+          <description>Read data section register 10</description>
+          <addressOffset>0x0624</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW10</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS11</name>
+          <description>Read data section register 11</description>
+          <addressOffset>0x0628</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW11</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS12</name>
+          <description>Read data section register 12</description>
+          <addressOffset>0x062C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW12</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS13</name>
+          <description>Read data section register 13</description>
+          <addressOffset>0x0630</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW13</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS14</name>
+          <description>Read data section register 14</description>
+          <addressOffset>0x0634</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW14</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS15</name>
+          <description>Read data section register 15</description>
+          <addressOffset>0x0638</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW15</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS16</name>
+          <description>Read data section register 16</description>
+          <addressOffset>0x063C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW16</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS17</name>
+          <description>Read data section register 17</description>
+          <addressOffset>0x0640</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW17</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS18</name>
+          <description>Read data section register 18</description>
+          <addressOffset>0x0644</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW18</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS19</name>
+          <description>Read data section register 19</description>
+          <addressOffset>0x0648</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW19</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS20</name>
+          <description>Read data section register 20</description>
+          <addressOffset>0x064C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW20</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS21</name>
+          <description>Read data section register 21</description>
+          <addressOffset>0x0650</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW21</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS22</name>
+          <description>Read data section register 22</description>
+          <addressOffset>0x0654</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW22</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS23</name>
+          <description>Read data section register 23</description>
+          <addressOffset>0x0658</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW23</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS24</name>
+          <description>Read data section register 24</description>
+          <addressOffset>0x065C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW24</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS25</name>
+          <description>Read data section register 25</description>
+          <addressOffset>0x0660</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW25</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS26</name>
+          <description>Read data section register 26</description>
+          <addressOffset>0x0664</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW26</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS27</name>
+          <description>Read data section register 27</description>
+          <addressOffset>0x0668</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW27</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS28</name>
+          <description>Read data section register 28</description>
+          <addressOffset>0x066C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW28</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS29</name>
+          <description>Read data section register 29</description>
+          <addressOffset>0x0670</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW29</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS30</name>
+          <description>Read data section register 30</description>
+          <addressOffset>0x0674</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW30</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS31</name>
+          <description>Read data section register 31</description>
+          <addressOffset>0x0678</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW31</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS32</name>
+          <description>Read data section register 32</description>
+          <addressOffset>0x067C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW32</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS33</name>
+          <description>Read data section register 33</description>
+          <addressOffset>0x0680</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW33</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS34</name>
+          <description>Read data section register 34</description>
+          <addressOffset>0x0684</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW34</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS35</name>
+          <description>Read data section register 35</description>
+          <addressOffset>0x0688</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW35</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS36</name>
+          <description>Read data section register 36</description>
+          <addressOffset>0x068C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW36</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS37</name>
+          <description>Read data section register 37</description>
+          <addressOffset>0x0690</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW37</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS38</name>
+          <description>Read data section register 38</description>
+          <addressOffset>0x0694</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW38</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS39</name>
+          <description>Read data section register 39</description>
+          <addressOffset>0x0698</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW39</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS40</name>
+          <description>Read data section register 40</description>
+          <addressOffset>0x069C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW40</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS41</name>
+          <description>Read data section register 41</description>
+          <addressOffset>0x06A0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW41</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS42</name>
+          <description>Read data section register 42</description>
+          <addressOffset>0x06A4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW42</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS43</name>
+          <description>Read data section register 43</description>
+          <addressOffset>0x06A8</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW43</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS44</name>
+          <description>Read data section register 44</description>
+          <addressOffset>0x06AC</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW44</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS45</name>
+          <description>Read data section register 45</description>
+          <addressOffset>0x06B0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW45</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS46</name>
+          <description>Read data section register 46</description>
+          <addressOffset>0x06B4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW46</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS47</name>
+          <description>Read data section register 47</description>
+          <addressOffset>0x06B8</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW47</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS48</name>
+          <description>Read data section register 48</description>
+          <addressOffset>0x06BC</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW48</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS49</name>
+          <description>Read data section register 49</description>
+          <addressOffset>0x06C0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW49</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS50</name>
+          <description>Read data section register 50</description>
+          <addressOffset>0x06C4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW50</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS51</name>
+          <description>Read data section register 51</description>
+          <addressOffset>0x06C8</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW51</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS52</name>
+          <description>Read data section register 52</description>
+          <addressOffset>0x06CC</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW52</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS53</name>
+          <description>Read data section register 53</description>
+          <addressOffset>0x06D0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW53</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS54</name>
+          <description>Read data section register 54</description>
+          <addressOffset>0x06D4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW54</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS55</name>
+          <description>Read data section register 55</description>
+          <addressOffset>0x06D8</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW55</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS56</name>
+          <description>Read data section register 56</description>
+          <addressOffset>0x06DC</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW56</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS57</name>
+          <description>Read data section register 57</description>
+          <addressOffset>0x06E0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW57</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS58</name>
+          <description>Read data section register 58</description>
+          <addressOffset>0x06E4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW58</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS59</name>
+          <description>Read data section register 59</description>
+          <addressOffset>0x06E8</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW59</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS60</name>
+          <description>Read data section register 60</description>
+          <addressOffset>0x06EC</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW60</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS61</name>
+          <description>Read data section register 61</description>
+          <addressOffset>0x06F0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW61</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS62</name>
+          <description>Read data section register 62</description>
+          <addressOffset>0x06F4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW62</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS63</name>
+          <description>Read data section register 63</description>
+          <addressOffset>0x06F8</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW63</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDDS64</name>
+          <description>Read data section register 64</description>
+          <addressOffset>0x06FC</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDW64</name>
+              <description>Read data word</description>
+              <bitRange>[31:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDHS1</name>
+          <description>Read header section 1</description>
+          <addressOffset>0x0700</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RHMBI</name>
+              <description>Message buffer interrupt</description>
+              <bitRange>[29:29]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RHTXM</name>
+              <description>Transmission mode</description>
+              <bitRange>[28:28]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RHPPIT</name>
+              <description>Payload preamble indicator</description>
+              <bitRange>[27:27]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RHCFG</name>
+              <description>Buffer direction</description>
+              <bitRange>[26:26]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RHCHB</name>
+              <description>Channel B assignment</description>
+              <bitRange>[25:25]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RHCHA</name>
+              <description>Channel A assignment</description>
+              <bitRange>[24:24]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RHCYC</name>
+              <description>Cycle counter filter</description>
+              <bitRange>[22:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RHFID</name>
+              <description>Frame ID</description>
+              <bitRange>[10:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDHS2</name>
+          <description>Read header section 2</description>
+          <addressOffset>0x0704</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RHCRC</name>
+              <description>Header CRC</description>
+              <bitRange>[22:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RHPLR</name>
+              <description>Payload length received</description>
+              <bitRange>[14:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RHPLC</name>
+              <description>Payload length configured</description>
+              <bitRange>[6:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0RDHS3</name>
+          <description>Read header section 3</description>
+          <addressOffset>0x0708</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RHRCC</name>
+              <description>Receive cycle count</description>
+              <bitRange>[28:16]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RHDP</name>
+              <description>Data pointer</description>
+              <bitRange>[6:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0MBS</name>
+          <description>Message buffer status</description>
+          <addressOffset>0x070C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0MBSEDE</name>
+              <description>ECC double error detected</description>
+              <bitRange>[7:7]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MBSSCE</name>
+              <description>Single cycle error</description>
+              <bitRange>[6:6]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MBSCEOB</name>
+              <description>Content error odd channel B</description>
+              <bitRange>[5:5]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MBSCEOA</name>
+              <description>Content error odd channel A</description>
+              <bitRange>[4:4]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MBSVFRB</name>
+              <description>Valid frame received channel B</description>
+              <bitRange>[3:3]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MBSVFRA</name>
+              <description>Valid frame received channel A</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MBSFSEB</name>
+              <description>Frame start error B</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+            <field>
+              <name>FLX0MBSFSEA</name>
+              <description>Frame start error A</description>
+              <bitRange>[0:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OBCM</name>
+          <description>Output buffer command mask</description>
+          <addressOffset>0x0710</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0RDSS</name>
+              <description>Read data section from OBF</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+            <field>
+              <name>FLX0RHSS</name>
+              <description>Read header section from OBF</description>
+              <bitRange>[1:1]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLX0OBCR</name>
+          <description>Output buffer command request</description>
+          <addressOffset>0x0714</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <fields>
+            <field>
+              <name>FLX0OBSYS</name>
+              <description>Output buffer shadow busy</description>
+              <bitRange>[15:15]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OBSYH</name>
+              <description>Output buffer host busy</description>
+              <bitRange>[14:14]</bitRange>
+            </field>
+            <field>
+              <name>FLX0VIEW</name>
+              <description>Select view</description>
+              <bitRange>[9:9]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OBREQ</name>
+              <description>Transfer request</description>
+              <bitRange>[8:8]</bitRange>
+            </field>
+            <field>
+              <name>FLX0OBRS</name>
+              <description>Output buffer request shadow</description>
+              <bitRange>[6:0]</bitRange>
+            </field>
+          </fields>
+        </register>
+  </registers>
+</peripheral>
+
+<peripheral>
+  <name>ECC_FLX</name>
+  <description>FlexRay ECC error control registers (E7A0CTL..E7A6CTL)</description>
+  <baseAddress>0xFF464000</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x0604</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+        <register>
+          <name>E7A0CTL</name>
+          <description>FlexRay ECC0 control register</description>
+          <addressOffset>0x0000</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <fields>
+            <field>
+              <name>E7A0CTLER2C</name>
+              <description>ECC error clear bit</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>E7A0CTLECCER2</name>
+              <description>ECC error flag</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>E7A1CTL</name>
+          <description>FlexRay ECC1 control register</description>
+          <addressOffset>0x0100</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <fields>
+            <field>
+              <name>E7A1CTLER2C</name>
+              <description>ECC error clear bit</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>E7A1CTLECCER2</name>
+              <description>ECC error flag</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>E7A2CTL</name>
+          <description>FlexRay ECC2 control register</description>
+          <addressOffset>0x0200</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <fields>
+            <field>
+              <name>E7A2CTLER2C</name>
+              <description>ECC error clear bit</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>E7A2CTLECCER2</name>
+              <description>ECC error flag</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>E7A3CTL</name>
+          <description>FlexRay ECC3 control register</description>
+          <addressOffset>0x0300</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <fields>
+            <field>
+              <name>E7A3CTLER2C</name>
+              <description>ECC error clear bit</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>E7A3CTLECCER2</name>
+              <description>ECC error flag</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>E7A4CTL</name>
+          <description>FlexRay ECC4 control register</description>
+          <addressOffset>0x0400</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <fields>
+            <field>
+              <name>E7A4CTLER2C</name>
+              <description>ECC error clear bit</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>E7A4CTLECCER2</name>
+              <description>ECC error flag</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>E7A5CTL</name>
+          <description>FlexRay ECC5 control register</description>
+          <addressOffset>0x0500</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <fields>
+            <field>
+              <name>E7A5CTLER2C</name>
+              <description>ECC error clear bit</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>E7A5CTLECCER2</name>
+              <description>ECC error flag</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>E7A6CTL</name>
+          <description>FlexRay ECC6 control register</description>
+          <addressOffset>0x0600</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <fields>
+            <field>
+              <name>E7A6CTLER2C</name>
+              <description>ECC error clear bit</description>
+              <bitRange>[10:10]</bitRange>
+            </field>
+            <field>
+              <name>E7A6CTLECCER2</name>
+              <description>ECC error flag</description>
+              <bitRange>[2:2]</bitRange>
+            </field>
+          </fields>
+        </register>
+  </registers>
+</peripheral>

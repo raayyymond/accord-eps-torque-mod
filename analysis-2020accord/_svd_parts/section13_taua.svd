@@ -1,0 +1,3248 @@
+<peripheral>
+  <name>TAUA0</name>
+  <description>Timer Array Unit A 0</description>
+  <baseAddress>0xFF808000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x7F45CA</size><usage>registers</usage></addressBlock>
+  <registers>
+    <register>
+      <name>TAUA0CMOR0</name>
+      <description>TAUA0 Channel Mode OS Register 0</description>
+      <addressOffset>0x200</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR1</name>
+      <description>TAUA0 Channel Mode OS Register 1</description>
+      <addressOffset>0x204</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR2</name>
+      <description>TAUA0 Channel Mode OS Register 2</description>
+      <addressOffset>0x208</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR3</name>
+      <description>TAUA0 Channel Mode OS Register 3</description>
+      <addressOffset>0x20C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR4</name>
+      <description>TAUA0 Channel Mode OS Register 4</description>
+      <addressOffset>0x210</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR5</name>
+      <description>TAUA0 Channel Mode OS Register 5</description>
+      <addressOffset>0x214</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR6</name>
+      <description>TAUA0 Channel Mode OS Register 6</description>
+      <addressOffset>0x218</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR7</name>
+      <description>TAUA0 Channel Mode OS Register 7</description>
+      <addressOffset>0x21C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR8</name>
+      <description>TAUA0 Channel Mode OS Register 8</description>
+      <addressOffset>0x220</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR9</name>
+      <description>TAUA0 Channel Mode OS Register 9</description>
+      <addressOffset>0x224</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR10</name>
+      <description>TAUA0 Channel Mode OS Register 10</description>
+      <addressOffset>0x228</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR11</name>
+      <description>TAUA0 Channel Mode OS Register 11</description>
+      <addressOffset>0x22C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR12</name>
+      <description>TAUA0 Channel Mode OS Register 12</description>
+      <addressOffset>0x230</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR13</name>
+      <description>TAUA0 Channel Mode OS Register 13</description>
+      <addressOffset>0x234</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR14</name>
+      <description>TAUA0 Channel Mode OS Register 14</description>
+      <addressOffset>0x238</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMOR15</name>
+      <description>TAUA0 Channel Mode OS Register 15</description>
+      <addressOffset>0x23C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TPS</name>
+      <description>TAUA0 Prescaler Clock Select Register</description>
+      <addressOffset>0x240</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field><name>PRS3</name><description>CK3_PRE prescaler select [3:0]</description><bitRange>[15:12]</bitRange></field>
+        <field><name>PRS2</name><description>CK2 prescaler select [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>PRS1</name><description>CK1 prescaler select [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>PRS0</name><description>CK0 prescaler select [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0BRS</name>
+      <description>TAUA0 Prescaler Baud Rate Setting Register</description>
+      <addressOffset>0x244</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>BRS</name><description>CK3 division coefficient [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TOM</name>
+      <description>TAUA0 Channel Output Mode Register</description>
+      <addressOffset>0x248</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TOMm</name><description>Output mode per channel: 0=independent 1=synchronous</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TOC</name>
+      <description>TAUA0 Channel Output Configuration Register</description>
+      <addressOffset>0x24C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TOCm</name><description>Output config per channel: 0=mode1 1=mode2</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TDE</name>
+      <description>TAUA0 Channel Dead Time Output Enable Register</description>
+      <addressOffset>0x250</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TDEm</name><description>Dead time enable per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TDM</name>
+      <description>TAUA0 Channel Dead Time Output Mode Register</description>
+      <addressOffset>0x254</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TDMm</name><description>Dead time mode per channel: 0=duty 1=TIN-edge</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TRE</name>
+      <description>TAUA0 Channel Real-Time Output Enable Register</description>
+      <addressOffset>0x258</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TREm</name><description>Real-time output enable per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TRC</name>
+      <description>TAUA0 Channel Real-Time Output Control Register</description>
+      <addressOffset>0x25C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TRCm</name><description>Real-time trigger channel: 0=next upper 1=self</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0RDE</name>
+      <description>TAUA0 Channel Reload Data Enable Register</description>
+      <addressOffset>0x260</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>RDEm</name><description>Simultaneous rewrite enable per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0RDM</name>
+      <description>TAUA0 Channel Reload Data Mode Register</description>
+      <addressOffset>0x264</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>RDMm</name><description>Simultaneous rewrite timing: 0=master-start 1=triangle-peak</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0RDS</name>
+      <description>TAUA0 Channel Reload Data Control Channel Select Register</description>
+      <addressOffset>0x268</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>RDSm</name><description>Rewrite trigger source per channel: 0=master 1=upper</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0RDC</name>
+      <description>TAUA0 Channel Reload Data Control Register</description>
+      <addressOffset>0x26C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>RDCm</name><description>Simultaneous rewrite trigger channel select</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0DAS0</name>
+      <description>TAUA0 DMA Window Address Setting Register 0</description>
+      <addressOffset>0x270</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0DAS1</name>
+      <description>TAUA0 DMA Window Address Setting Register 1</description>
+      <addressOffset>0x274</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0DAS2</name>
+      <description>TAUA0 DMA Window Address Setting Register 2</description>
+      <addressOffset>0x278</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0DAS3</name>
+      <description>TAUA0 DMA Window Address Setting Register 3</description>
+      <addressOffset>0x27C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0DAS4</name>
+      <description>TAUA0 DMA Window Address Setting Register 4</description>
+      <addressOffset>0x280</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0DAS5</name>
+      <description>TAUA0 DMA Window Address Setting Register 5</description>
+      <addressOffset>0x284</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0DAS6</name>
+      <description>TAUA0 DMA Window Address Setting Register 6</description>
+      <addressOffset>0x288</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0DAS7</name>
+      <description>TAUA0 DMA Window Address Setting Register 7</description>
+      <addressOffset>0x28C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR0</name>
+      <description>TAUA0 Channel Data Register 0</description>
+      <addressOffset>0x7F4400</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR1</name>
+      <description>TAUA0 Channel Data Register 1</description>
+      <addressOffset>0x7F4404</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR2</name>
+      <description>TAUA0 Channel Data Register 2</description>
+      <addressOffset>0x7F4408</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR3</name>
+      <description>TAUA0 Channel Data Register 3</description>
+      <addressOffset>0x7F440C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR4</name>
+      <description>TAUA0 Channel Data Register 4</description>
+      <addressOffset>0x7F4410</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR5</name>
+      <description>TAUA0 Channel Data Register 5</description>
+      <addressOffset>0x7F4414</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR6</name>
+      <description>TAUA0 Channel Data Register 6</description>
+      <addressOffset>0x7F4418</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR7</name>
+      <description>TAUA0 Channel Data Register 7</description>
+      <addressOffset>0x7F441C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR8</name>
+      <description>TAUA0 Channel Data Register 8</description>
+      <addressOffset>0x7F4420</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR9</name>
+      <description>TAUA0 Channel Data Register 9</description>
+      <addressOffset>0x7F4424</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR10</name>
+      <description>TAUA0 Channel Data Register 10</description>
+      <addressOffset>0x7F4428</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR11</name>
+      <description>TAUA0 Channel Data Register 11</description>
+      <addressOffset>0x7F442C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR12</name>
+      <description>TAUA0 Channel Data Register 12</description>
+      <addressOffset>0x7F4430</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR13</name>
+      <description>TAUA0 Channel Data Register 13</description>
+      <addressOffset>0x7F4434</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR14</name>
+      <description>TAUA0 Channel Data Register 14</description>
+      <addressOffset>0x7F4438</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CDR15</name>
+      <description>TAUA0 Channel Data Register 15</description>
+      <addressOffset>0x7F443C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TOL</name>
+      <description>TAUA0 Channel Output Active Level Register</description>
+      <addressOffset>0x7F4440</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TOLm</name><description>Output logic per channel: 0=positive 1=inverted</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0RDT</name>
+      <description>TAUA0 Channel Reload Data Trigger Register</description>
+      <addressOffset>0x7F4444</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>RDTm</name><description>Trigger simultaneous rewrite pending per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0RSF</name>
+      <description>TAUA0 Channel Reload Status Register</description>
+      <addressOffset>0x7F4448</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>RSFm</name><description>Simultaneous rewrite pending status per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TRO</name>
+      <description>TAUA0 Channel Real-Time Output Register</description>
+      <addressOffset>0x7F444C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TROm</name><description>Real-time output value per channel: 0=low 1=high</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TME</name>
+      <description>TAUA0 Channel Modulation Output Enable Register</description>
+      <addressOffset>0x7F4450</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TMEm</name><description>Modulation output enable per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TDL</name>
+      <description>TAUA0 Channel Dead Time Output Level Register</description>
+      <addressOffset>0x7F4454</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TDLm</name><description>Dead time phase per channel: 0=normal 1=reverse</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TO</name>
+      <description>TAUA0 Channel Output Register</description>
+      <addressOffset>0x7F4458</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TOm</name><description>Output level per channel: 0=low 1=high</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TOE</name>
+      <description>TAUA0 Channel Output Enable Register</description>
+      <addressOffset>0x7F445C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TOEm</name><description>Timer output enable per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT0</name>
+      <description>TAUA0 Channel Counter Register 0</description>
+      <addressOffset>0x7F4480</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT1</name>
+      <description>TAUA0 Channel Counter Register 1</description>
+      <addressOffset>0x7F4484</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT2</name>
+      <description>TAUA0 Channel Counter Register 2</description>
+      <addressOffset>0x7F4488</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT3</name>
+      <description>TAUA0 Channel Counter Register 3</description>
+      <addressOffset>0x7F448C</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT4</name>
+      <description>TAUA0 Channel Counter Register 4</description>
+      <addressOffset>0x7F4490</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT5</name>
+      <description>TAUA0 Channel Counter Register 5</description>
+      <addressOffset>0x7F4494</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT6</name>
+      <description>TAUA0 Channel Counter Register 6</description>
+      <addressOffset>0x7F4498</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT7</name>
+      <description>TAUA0 Channel Counter Register 7</description>
+      <addressOffset>0x7F449C</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT8</name>
+      <description>TAUA0 Channel Counter Register 8</description>
+      <addressOffset>0x7F44A0</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT9</name>
+      <description>TAUA0 Channel Counter Register 9</description>
+      <addressOffset>0x7F44A4</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT10</name>
+      <description>TAUA0 Channel Counter Register 10</description>
+      <addressOffset>0x7F44A8</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT11</name>
+      <description>TAUA0 Channel Counter Register 11</description>
+      <addressOffset>0x7F44AC</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT12</name>
+      <description>TAUA0 Channel Counter Register 12</description>
+      <addressOffset>0x7F44B0</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT13</name>
+      <description>TAUA0 Channel Counter Register 13</description>
+      <addressOffset>0x7F44B4</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT14</name>
+      <description>TAUA0 Channel Counter Register 14</description>
+      <addressOffset>0x7F44B8</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CNT15</name>
+      <description>TAUA0 Channel Counter Register 15</description>
+      <addressOffset>0x7F44BC</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR0</name>
+      <description>TAUA0 Channel Mode User Register 0</description>
+      <addressOffset>0x7F44C0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR1</name>
+      <description>TAUA0 Channel Mode User Register 1</description>
+      <addressOffset>0x7F44C4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR2</name>
+      <description>TAUA0 Channel Mode User Register 2</description>
+      <addressOffset>0x7F44C8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR3</name>
+      <description>TAUA0 Channel Mode User Register 3</description>
+      <addressOffset>0x7F44CC</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR4</name>
+      <description>TAUA0 Channel Mode User Register 4</description>
+      <addressOffset>0x7F44D0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR5</name>
+      <description>TAUA0 Channel Mode User Register 5</description>
+      <addressOffset>0x7F44D4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR6</name>
+      <description>TAUA0 Channel Mode User Register 6</description>
+      <addressOffset>0x7F44D8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR7</name>
+      <description>TAUA0 Channel Mode User Register 7</description>
+      <addressOffset>0x7F44DC</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR8</name>
+      <description>TAUA0 Channel Mode User Register 8</description>
+      <addressOffset>0x7F44E0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR9</name>
+      <description>TAUA0 Channel Mode User Register 9</description>
+      <addressOffset>0x7F44E4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR10</name>
+      <description>TAUA0 Channel Mode User Register 10</description>
+      <addressOffset>0x7F44E8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR11</name>
+      <description>TAUA0 Channel Mode User Register 11</description>
+      <addressOffset>0x7F44EC</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR12</name>
+      <description>TAUA0 Channel Mode User Register 12</description>
+      <addressOffset>0x7F44F0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR13</name>
+      <description>TAUA0 Channel Mode User Register 13</description>
+      <addressOffset>0x7F44F4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR14</name>
+      <description>TAUA0 Channel Mode User Register 14</description>
+      <addressOffset>0x7F44F8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CMUR15</name>
+      <description>TAUA0 Channel Mode User Register 15</description>
+      <addressOffset>0x7F44FC</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0DWR0</name>
+      <description>TAUA0 DMA Window Register 0</description>
+      <addressOffset>0x7F4500</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR1</name>
+      <description>TAUA0 DMA Window Register 1</description>
+      <addressOffset>0x7F4504</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR2</name>
+      <description>TAUA0 DMA Window Register 2</description>
+      <addressOffset>0x7F4508</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR3</name>
+      <description>TAUA0 DMA Window Register 3</description>
+      <addressOffset>0x7F450C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR4</name>
+      <description>TAUA0 DMA Window Register 4</description>
+      <addressOffset>0x7F4510</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR5</name>
+      <description>TAUA0 DMA Window Register 5</description>
+      <addressOffset>0x7F4514</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR6</name>
+      <description>TAUA0 DMA Window Register 6</description>
+      <addressOffset>0x7F4518</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR7</name>
+      <description>TAUA0 DMA Window Register 7</description>
+      <addressOffset>0x7F451C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR8</name>
+      <description>TAUA0 DMA Window Register 8</description>
+      <addressOffset>0x7F4520</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR9</name>
+      <description>TAUA0 DMA Window Register 9</description>
+      <addressOffset>0x7F4524</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR10</name>
+      <description>TAUA0 DMA Window Register 10</description>
+      <addressOffset>0x7F4528</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR11</name>
+      <description>TAUA0 DMA Window Register 11</description>
+      <addressOffset>0x7F452C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR12</name>
+      <description>TAUA0 DMA Window Register 12</description>
+      <addressOffset>0x7F4530</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR13</name>
+      <description>TAUA0 DMA Window Register 13</description>
+      <addressOffset>0x7F4534</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR14</name>
+      <description>TAUA0 DMA Window Register 14</description>
+      <addressOffset>0x7F4538</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0DWR15</name>
+      <description>TAUA0 DMA Window Register 15</description>
+      <addressOffset>0x7F453C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA0CSR0</name>
+      <description>TAUA0 Channel Status Register 0</description>
+      <addressOffset>0x7F4540</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR1</name>
+      <description>TAUA0 Channel Status Register 1</description>
+      <addressOffset>0x7F4544</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR2</name>
+      <description>TAUA0 Channel Status Register 2</description>
+      <addressOffset>0x7F4548</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR3</name>
+      <description>TAUA0 Channel Status Register 3</description>
+      <addressOffset>0x7F454C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR4</name>
+      <description>TAUA0 Channel Status Register 4</description>
+      <addressOffset>0x7F4550</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR5</name>
+      <description>TAUA0 Channel Status Register 5</description>
+      <addressOffset>0x7F4554</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR6</name>
+      <description>TAUA0 Channel Status Register 6</description>
+      <addressOffset>0x7F4558</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR7</name>
+      <description>TAUA0 Channel Status Register 7</description>
+      <addressOffset>0x7F455C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR8</name>
+      <description>TAUA0 Channel Status Register 8</description>
+      <addressOffset>0x7F4560</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR9</name>
+      <description>TAUA0 Channel Status Register 9</description>
+      <addressOffset>0x7F4564</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR10</name>
+      <description>TAUA0 Channel Status Register 10</description>
+      <addressOffset>0x7F4568</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR11</name>
+      <description>TAUA0 Channel Status Register 11</description>
+      <addressOffset>0x7F456C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR12</name>
+      <description>TAUA0 Channel Status Register 12</description>
+      <addressOffset>0x7F4570</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR13</name>
+      <description>TAUA0 Channel Status Register 13</description>
+      <addressOffset>0x7F4574</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR14</name>
+      <description>TAUA0 Channel Status Register 14</description>
+      <addressOffset>0x7F4578</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSR15</name>
+      <description>TAUA0 Channel Status Register 15</description>
+      <addressOffset>0x7F457C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC0</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 0</description>
+      <addressOffset>0x7F4580</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC1</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 1</description>
+      <addressOffset>0x7F4584</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC2</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 2</description>
+      <addressOffset>0x7F4588</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC3</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 3</description>
+      <addressOffset>0x7F458C</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC4</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 4</description>
+      <addressOffset>0x7F4590</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC5</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 5</description>
+      <addressOffset>0x7F4594</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC6</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 6</description>
+      <addressOffset>0x7F4598</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC7</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 7</description>
+      <addressOffset>0x7F459C</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC8</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 8</description>
+      <addressOffset>0x7F45A0</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC9</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 9</description>
+      <addressOffset>0x7F45A4</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC10</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 10</description>
+      <addressOffset>0x7F45A8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC11</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 11</description>
+      <addressOffset>0x7F45AC</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC12</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 12</description>
+      <addressOffset>0x7F45B0</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC13</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 13</description>
+      <addressOffset>0x7F45B4</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC14</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 14</description>
+      <addressOffset>0x7F45B8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0CSC15</name>
+      <description>TAUA0 Channel Status Clear Trigger Register 15</description>
+      <addressOffset>0x7F45BC</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TE</name>
+      <description>TAUA0 Channel Enable Status Register</description>
+      <addressOffset>0x7F45C0</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TEm</name><description>Counter enable status per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TS</name>
+      <description>TAUA0 Channel Start Trigger Register</description>
+      <addressOffset>0x7F45C4</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TSm</name><description>Start counter per channel (write 1)</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA0TT</name>
+      <description>TAUA0 Channel Stop Trigger Register</description>
+      <addressOffset>0x7F45C8</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TTm</name><description>Stop counter per channel (write 1)</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+  </registers>
+</peripheral>
+<peripheral>
+  <name>TAUA1</name>
+  <description>Timer Array Unit A 1</description>
+  <baseAddress>0xFF809000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x7F39CA</size><usage>registers</usage></addressBlock>
+  <registers>
+    <register>
+      <name>TAUA1CMOR0</name>
+      <description>TAUA1 Channel Mode OS Register 0</description>
+      <addressOffset>0x200</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR1</name>
+      <description>TAUA1 Channel Mode OS Register 1</description>
+      <addressOffset>0x204</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR2</name>
+      <description>TAUA1 Channel Mode OS Register 2</description>
+      <addressOffset>0x208</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR3</name>
+      <description>TAUA1 Channel Mode OS Register 3</description>
+      <addressOffset>0x20C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR4</name>
+      <description>TAUA1 Channel Mode OS Register 4</description>
+      <addressOffset>0x210</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR5</name>
+      <description>TAUA1 Channel Mode OS Register 5</description>
+      <addressOffset>0x214</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR6</name>
+      <description>TAUA1 Channel Mode OS Register 6</description>
+      <addressOffset>0x218</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR7</name>
+      <description>TAUA1 Channel Mode OS Register 7</description>
+      <addressOffset>0x21C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR8</name>
+      <description>TAUA1 Channel Mode OS Register 8</description>
+      <addressOffset>0x220</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR9</name>
+      <description>TAUA1 Channel Mode OS Register 9</description>
+      <addressOffset>0x224</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR10</name>
+      <description>TAUA1 Channel Mode OS Register 10</description>
+      <addressOffset>0x228</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR11</name>
+      <description>TAUA1 Channel Mode OS Register 11</description>
+      <addressOffset>0x22C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR12</name>
+      <description>TAUA1 Channel Mode OS Register 12</description>
+      <addressOffset>0x230</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR13</name>
+      <description>TAUA1 Channel Mode OS Register 13</description>
+      <addressOffset>0x234</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR14</name>
+      <description>TAUA1 Channel Mode OS Register 14</description>
+      <addressOffset>0x238</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMOR15</name>
+      <description>TAUA1 Channel Mode OS Register 15</description>
+      <addressOffset>0x23C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CKS</name><description>Sampling clock select [1:0]</description><bitRange>[15:14]</bitRange></field>
+        <field><name>CCS</name><description>Count clock select [1:0]</description><bitRange>[13:12]</bitRange></field>
+        <field><name>MAS</name><description>Master/slave select (even ch only)</description><bitRange>[11:11]</bitRange></field>
+        <field><name>STS</name><description>External start trigger select [2:0]</description><bitRange>[10:8]</bitRange></field>
+        <field><name>COS</name><description>Capture update timing [1:0]</description><bitRange>[7:6]</bitRange></field>
+        <field><name>MD</name><description>Operating mode [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TPS</name>
+      <description>TAUA1 Prescaler Clock Select Register</description>
+      <addressOffset>0x240</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field><name>PRS3</name><description>CK3_PRE prescaler select [3:0]</description><bitRange>[15:12]</bitRange></field>
+        <field><name>PRS2</name><description>CK2 prescaler select [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>PRS1</name><description>CK1 prescaler select [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>PRS0</name><description>CK0 prescaler select [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1BRS</name>
+      <description>TAUA1 Prescaler Baud Rate Setting Register</description>
+      <addressOffset>0x244</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>BRS</name><description>CK3 division coefficient [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TOM</name>
+      <description>TAUA1 Channel Output Mode Register</description>
+      <addressOffset>0x248</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TOMm</name><description>Output mode per channel: 0=independent 1=synchronous</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TOC</name>
+      <description>TAUA1 Channel Output Configuration Register</description>
+      <addressOffset>0x24C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TOCm</name><description>Output config per channel: 0=mode1 1=mode2</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TDE</name>
+      <description>TAUA1 Channel Dead Time Output Enable Register</description>
+      <addressOffset>0x250</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TDEm</name><description>Dead time enable per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TDM</name>
+      <description>TAUA1 Channel Dead Time Output Mode Register</description>
+      <addressOffset>0x254</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TDMm</name><description>Dead time mode per channel: 0=duty 1=TIN-edge</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TRE</name>
+      <description>TAUA1 Channel Real-Time Output Enable Register</description>
+      <addressOffset>0x258</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TREm</name><description>Real-time output enable per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TRC</name>
+      <description>TAUA1 Channel Real-Time Output Control Register</description>
+      <addressOffset>0x25C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TRCm</name><description>Real-time trigger channel: 0=next upper 1=self</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1RDE</name>
+      <description>TAUA1 Channel Reload Data Enable Register</description>
+      <addressOffset>0x260</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>RDEm</name><description>Simultaneous rewrite enable per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1RDM</name>
+      <description>TAUA1 Channel Reload Data Mode Register</description>
+      <addressOffset>0x264</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>RDMm</name><description>Simultaneous rewrite timing: 0=master-start 1=triangle-peak</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1RDS</name>
+      <description>TAUA1 Channel Reload Data Control Channel Select Register</description>
+      <addressOffset>0x268</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>RDSm</name><description>Rewrite trigger source per channel: 0=master 1=upper</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1RDC</name>
+      <description>TAUA1 Channel Reload Data Control Register</description>
+      <addressOffset>0x26C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>RDCm</name><description>Simultaneous rewrite trigger channel select</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1DAS0</name>
+      <description>TAUA1 DMA Window Address Setting Register 0</description>
+      <addressOffset>0x270</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1DAS1</name>
+      <description>TAUA1 DMA Window Address Setting Register 1</description>
+      <addressOffset>0x274</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1DAS2</name>
+      <description>TAUA1 DMA Window Address Setting Register 2</description>
+      <addressOffset>0x278</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1DAS3</name>
+      <description>TAUA1 DMA Window Address Setting Register 3</description>
+      <addressOffset>0x27C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1DAS4</name>
+      <description>TAUA1 DMA Window Address Setting Register 4</description>
+      <addressOffset>0x280</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1DAS5</name>
+      <description>TAUA1 DMA Window Address Setting Register 5</description>
+      <addressOffset>0x284</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1DAS6</name>
+      <description>TAUA1 DMA Window Address Setting Register 6</description>
+      <addressOffset>0x288</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1DAS7</name>
+      <description>TAUA1 DMA Window Address Setting Register 7</description>
+      <addressOffset>0x28C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>DASodd</name><description>Odd channel DMA window address [15:8]</description><bitRange>[15:8]</bitRange></field>
+        <field><name>DASeven</name><description>Even channel DMA window address [7:0]</description><bitRange>[7:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR0</name>
+      <description>TAUA1 Channel Data Register 0</description>
+      <addressOffset>0x7F3800</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR1</name>
+      <description>TAUA1 Channel Data Register 1</description>
+      <addressOffset>0x7F3804</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR2</name>
+      <description>TAUA1 Channel Data Register 2</description>
+      <addressOffset>0x7F3808</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR3</name>
+      <description>TAUA1 Channel Data Register 3</description>
+      <addressOffset>0x7F380C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR4</name>
+      <description>TAUA1 Channel Data Register 4</description>
+      <addressOffset>0x7F3810</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR5</name>
+      <description>TAUA1 Channel Data Register 5</description>
+      <addressOffset>0x7F3814</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR6</name>
+      <description>TAUA1 Channel Data Register 6</description>
+      <addressOffset>0x7F3818</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR7</name>
+      <description>TAUA1 Channel Data Register 7</description>
+      <addressOffset>0x7F381C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR8</name>
+      <description>TAUA1 Channel Data Register 8</description>
+      <addressOffset>0x7F3820</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR9</name>
+      <description>TAUA1 Channel Data Register 9</description>
+      <addressOffset>0x7F3824</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR10</name>
+      <description>TAUA1 Channel Data Register 10</description>
+      <addressOffset>0x7F3828</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR11</name>
+      <description>TAUA1 Channel Data Register 11</description>
+      <addressOffset>0x7F382C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR12</name>
+      <description>TAUA1 Channel Data Register 12</description>
+      <addressOffset>0x7F3830</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR13</name>
+      <description>TAUA1 Channel Data Register 13</description>
+      <addressOffset>0x7F3834</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR14</name>
+      <description>TAUA1 Channel Data Register 14</description>
+      <addressOffset>0x7F3838</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CDR15</name>
+      <description>TAUA1 Channel Data Register 15</description>
+      <addressOffset>0x7F383C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CDR</name><description>Capture/compare data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TOL</name>
+      <description>TAUA1 Channel Output Active Level Register</description>
+      <addressOffset>0x7F3840</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TOLm</name><description>Output logic per channel: 0=positive 1=inverted</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1RDT</name>
+      <description>TAUA1 Channel Reload Data Trigger Register</description>
+      <addressOffset>0x7F3844</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>RDTm</name><description>Trigger simultaneous rewrite pending per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1RSF</name>
+      <description>TAUA1 Channel Reload Status Register</description>
+      <addressOffset>0x7F3848</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>RSFm</name><description>Simultaneous rewrite pending status per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TRO</name>
+      <description>TAUA1 Channel Real-Time Output Register</description>
+      <addressOffset>0x7F384C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TROm</name><description>Real-time output value per channel: 0=low 1=high</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TME</name>
+      <description>TAUA1 Channel Modulation Output Enable Register</description>
+      <addressOffset>0x7F3850</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TMEm</name><description>Modulation output enable per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TDL</name>
+      <description>TAUA1 Channel Dead Time Output Level Register</description>
+      <addressOffset>0x7F3854</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TDLm</name><description>Dead time phase per channel: 0=normal 1=reverse</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TO</name>
+      <description>TAUA1 Channel Output Register</description>
+      <addressOffset>0x7F3858</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TOm</name><description>Output level per channel: 0=low 1=high</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TOE</name>
+      <description>TAUA1 Channel Output Enable Register</description>
+      <addressOffset>0x7F385C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TOEm</name><description>Timer output enable per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT0</name>
+      <description>TAUA1 Channel Counter Register 0</description>
+      <addressOffset>0x7F3880</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT1</name>
+      <description>TAUA1 Channel Counter Register 1</description>
+      <addressOffset>0x7F3884</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT2</name>
+      <description>TAUA1 Channel Counter Register 2</description>
+      <addressOffset>0x7F3888</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT3</name>
+      <description>TAUA1 Channel Counter Register 3</description>
+      <addressOffset>0x7F388C</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT4</name>
+      <description>TAUA1 Channel Counter Register 4</description>
+      <addressOffset>0x7F3890</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT5</name>
+      <description>TAUA1 Channel Counter Register 5</description>
+      <addressOffset>0x7F3894</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT6</name>
+      <description>TAUA1 Channel Counter Register 6</description>
+      <addressOffset>0x7F3898</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT7</name>
+      <description>TAUA1 Channel Counter Register 7</description>
+      <addressOffset>0x7F389C</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT8</name>
+      <description>TAUA1 Channel Counter Register 8</description>
+      <addressOffset>0x7F38A0</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT9</name>
+      <description>TAUA1 Channel Counter Register 9</description>
+      <addressOffset>0x7F38A4</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT10</name>
+      <description>TAUA1 Channel Counter Register 10</description>
+      <addressOffset>0x7F38A8</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT11</name>
+      <description>TAUA1 Channel Counter Register 11</description>
+      <addressOffset>0x7F38AC</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT12</name>
+      <description>TAUA1 Channel Counter Register 12</description>
+      <addressOffset>0x7F38B0</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT13</name>
+      <description>TAUA1 Channel Counter Register 13</description>
+      <addressOffset>0x7F38B4</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT14</name>
+      <description>TAUA1 Channel Counter Register 14</description>
+      <addressOffset>0x7F38B8</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CNT15</name>
+      <description>TAUA1 Channel Counter Register 15</description>
+      <addressOffset>0x7F38BC</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <fields>
+        <field><name>CNT</name><description>16-bit counter value</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR0</name>
+      <description>TAUA1 Channel Mode User Register 0</description>
+      <addressOffset>0x7F38C0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR1</name>
+      <description>TAUA1 Channel Mode User Register 1</description>
+      <addressOffset>0x7F38C4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR2</name>
+      <description>TAUA1 Channel Mode User Register 2</description>
+      <addressOffset>0x7F38C8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR3</name>
+      <description>TAUA1 Channel Mode User Register 3</description>
+      <addressOffset>0x7F38CC</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR4</name>
+      <description>TAUA1 Channel Mode User Register 4</description>
+      <addressOffset>0x7F38D0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR5</name>
+      <description>TAUA1 Channel Mode User Register 5</description>
+      <addressOffset>0x7F38D4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR6</name>
+      <description>TAUA1 Channel Mode User Register 6</description>
+      <addressOffset>0x7F38D8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR7</name>
+      <description>TAUA1 Channel Mode User Register 7</description>
+      <addressOffset>0x7F38DC</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR8</name>
+      <description>TAUA1 Channel Mode User Register 8</description>
+      <addressOffset>0x7F38E0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR9</name>
+      <description>TAUA1 Channel Mode User Register 9</description>
+      <addressOffset>0x7F38E4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR10</name>
+      <description>TAUA1 Channel Mode User Register 10</description>
+      <addressOffset>0x7F38E8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR11</name>
+      <description>TAUA1 Channel Mode User Register 11</description>
+      <addressOffset>0x7F38EC</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR12</name>
+      <description>TAUA1 Channel Mode User Register 12</description>
+      <addressOffset>0x7F38F0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR13</name>
+      <description>TAUA1 Channel Mode User Register 13</description>
+      <addressOffset>0x7F38F4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR14</name>
+      <description>TAUA1 Channel Mode User Register 14</description>
+      <addressOffset>0x7F38F8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CMUR15</name>
+      <description>TAUA1 Channel Mode User Register 15</description>
+      <addressOffset>0x7F38FC</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TIS</name><description>TIN valid edge select: 00=fall 01=rise 10=both-low 11=both-high</description><bitRange>[1:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1DWR0</name>
+      <description>TAUA1 DMA Window Register 0</description>
+      <addressOffset>0x7F3900</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR1</name>
+      <description>TAUA1 DMA Window Register 1</description>
+      <addressOffset>0x7F3904</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR2</name>
+      <description>TAUA1 DMA Window Register 2</description>
+      <addressOffset>0x7F3908</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR3</name>
+      <description>TAUA1 DMA Window Register 3</description>
+      <addressOffset>0x7F390C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR4</name>
+      <description>TAUA1 DMA Window Register 4</description>
+      <addressOffset>0x7F3910</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR5</name>
+      <description>TAUA1 DMA Window Register 5</description>
+      <addressOffset>0x7F3914</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR6</name>
+      <description>TAUA1 DMA Window Register 6</description>
+      <addressOffset>0x7F3918</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR7</name>
+      <description>TAUA1 DMA Window Register 7</description>
+      <addressOffset>0x7F391C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR8</name>
+      <description>TAUA1 DMA Window Register 8</description>
+      <addressOffset>0x7F3920</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR9</name>
+      <description>TAUA1 DMA Window Register 9</description>
+      <addressOffset>0x7F3924</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR10</name>
+      <description>TAUA1 DMA Window Register 10</description>
+      <addressOffset>0x7F3928</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR11</name>
+      <description>TAUA1 DMA Window Register 11</description>
+      <addressOffset>0x7F392C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR12</name>
+      <description>TAUA1 DMA Window Register 12</description>
+      <addressOffset>0x7F3930</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR13</name>
+      <description>TAUA1 DMA Window Register 13</description>
+      <addressOffset>0x7F3934</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR14</name>
+      <description>TAUA1 DMA Window Register 14</description>
+      <addressOffset>0x7F3938</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1DWR15</name>
+      <description>TAUA1 DMA Window Register 15</description>
+      <addressOffset>0x7F393C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TAUA1CSR0</name>
+      <description>TAUA1 Channel Status Register 0</description>
+      <addressOffset>0x7F3940</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR1</name>
+      <description>TAUA1 Channel Status Register 1</description>
+      <addressOffset>0x7F3944</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR2</name>
+      <description>TAUA1 Channel Status Register 2</description>
+      <addressOffset>0x7F3948</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR3</name>
+      <description>TAUA1 Channel Status Register 3</description>
+      <addressOffset>0x7F394C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR4</name>
+      <description>TAUA1 Channel Status Register 4</description>
+      <addressOffset>0x7F3950</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR5</name>
+      <description>TAUA1 Channel Status Register 5</description>
+      <addressOffset>0x7F3954</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR6</name>
+      <description>TAUA1 Channel Status Register 6</description>
+      <addressOffset>0x7F3958</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR7</name>
+      <description>TAUA1 Channel Status Register 7</description>
+      <addressOffset>0x7F395C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR8</name>
+      <description>TAUA1 Channel Status Register 8</description>
+      <addressOffset>0x7F3960</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR9</name>
+      <description>TAUA1 Channel Status Register 9</description>
+      <addressOffset>0x7F3964</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR10</name>
+      <description>TAUA1 Channel Status Register 10</description>
+      <addressOffset>0x7F3968</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR11</name>
+      <description>TAUA1 Channel Status Register 11</description>
+      <addressOffset>0x7F396C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR12</name>
+      <description>TAUA1 Channel Status Register 12</description>
+      <addressOffset>0x7F3970</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR13</name>
+      <description>TAUA1 Channel Status Register 13</description>
+      <addressOffset>0x7F3974</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR14</name>
+      <description>TAUA1 Channel Status Register 14</description>
+      <addressOffset>0x7F3978</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSR15</name>
+      <description>TAUA1 Channel Status Register 15</description>
+      <addressOffset>0x7F397C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSF</name><description>Count direction: 0=up 1=down</description><bitRange>[1:1]</bitRange></field>
+        <field><name>OVF</name><description>Counter overflow flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC0</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 0</description>
+      <addressOffset>0x7F3980</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC1</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 1</description>
+      <addressOffset>0x7F3984</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC2</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 2</description>
+      <addressOffset>0x7F3988</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC3</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 3</description>
+      <addressOffset>0x7F398C</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC4</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 4</description>
+      <addressOffset>0x7F3990</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC5</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 5</description>
+      <addressOffset>0x7F3994</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC6</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 6</description>
+      <addressOffset>0x7F3998</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC7</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 7</description>
+      <addressOffset>0x7F399C</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC8</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 8</description>
+      <addressOffset>0x7F39A0</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC9</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 9</description>
+      <addressOffset>0x7F39A4</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC10</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 10</description>
+      <addressOffset>0x7F39A8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC11</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 11</description>
+      <addressOffset>0x7F39AC</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC12</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 12</description>
+      <addressOffset>0x7F39B0</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC13</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 13</description>
+      <addressOffset>0x7F39B4</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC14</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 14</description>
+      <addressOffset>0x7F39B8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1CSC15</name>
+      <description>TAUA1 Channel Status Clear Trigger Register 15</description>
+      <addressOffset>0x7F39BC</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CLOV</name><description>Clear overflow flag (write 1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TE</name>
+      <description>TAUA1 Channel Enable Status Register</description>
+      <addressOffset>0x7F39C0</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TEm</name><description>Counter enable status per channel</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TS</name>
+      <description>TAUA1 Channel Start Trigger Register</description>
+      <addressOffset>0x7F39C4</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TSm</name><description>Start counter per channel (write 1)</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+    <register>
+      <name>TAUA1TT</name>
+      <description>TAUA1 Channel Stop Trigger Register</description>
+      <addressOffset>0x7F39C8</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TTm</name><description>Stop counter per channel (write 1)</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+  </registers>
+</peripheral>

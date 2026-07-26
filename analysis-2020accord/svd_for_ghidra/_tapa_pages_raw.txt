@@ -1,0 +1,2303 @@
+=== PAGE 1205 (index 1204) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1185 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+ Section 19 Timer Option Module (TAPA)
+The timer option module is described in this section.
+19.1
+Features of the Timer Option Module
+Instances
+This product has the following number of instances of timer option modules.
+Instances
+index n
+Throughout this section, the individual instances of the timer option function 
+are identified by the index “n” (n = 0 to 3). For example, TAPAnFLG indicates 
+the TAPAn flag registers.
+Register
+addresses
+All TAPAn register addresses are given as address offsets from the given base 
+address, <TAPAn_base0> or <TAPAn_base1>.
+Each of the TAPAn base addresses is listed in the following table.
+Clock supply
+The following clock signal is input to the timer option.
+Table 19-1
+Instances of Timer Option Modules
+Timer Option
+Instances
+4
+Name
+TAPAn
+Table 19-2
+Register Base Address
+TAPAn
+<TAPAn_base0> Address
+<TAPAn_base1> Address
+TAPA0
+FF81 5000H
+FFFF D400H
+TAPA1
+FF81 6000H
+FFFF D500H
+TAPA2
+FF81 7000H
+FFFF D600H
+TAPA3
+FF81 8000H
+FFFF D700H
+Table 19-3
+TAPA Clock Supply
+TAPAn
+TAPAn Clock
+Connected to
+TAPA0
+PCLK
+Clock controller
+TAPA1
+TAPA2
+TAPA3
+
+=== PAGE 1206 (index 1205) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1186 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+Interrupt
+The timer option module can generate the following interrupt requests.
+Table 19-4
+TAPAn Interrupt Requests
+TAPAn Signals
+Function
+Connected to
+TAPA0
+TAPA0TIPEK0
+TAPA0 peak interrupt
+INTTAPA0IPEK0 signal for the 
+interrupt controller 
+TAPA0TIPEK1
+TAPA0 peak interrupt
+-
+TAPA0TIVLY0
+TAPA0 valley interrupt
+INTTAPA0IVLY0 signal for the 
+interrupt controller 
+TAPA0TIVLY1
+TAPA0 valley interrupt
+-
+TAPA1
+TAPA1TIPEK0
+TAPA1 peak interrupt
+INTTAPA1IPEK0 signal for the 
+interrupt controller
+TAPA1TIPEK1
+TAPA1 peak interrupt
+-
+TAPA1TIVLY0
+TAPA1 valley interrupt
+INTTAPA1IVLY0 signal for the 
+interrupt controller 
+TAPA1TIVLY1
+TAPA1 valley interrupt
+-
+TAPA2
+TAPA2TIPEK0
+TAPA2 peak interrupt
+-
+TAPA2TIPEK1
+TAPA2 peak interrupt
+-
+TAPA2TIVLY0
+TAPA2 valley interrupt
+-
+TAPA2TIVLY1
+TAPA2 valley interrupt
+-
+TAPA3
+TAPA3TIPEK0
+TAPA3 peak interrupt
+-
+TAPA3TIPEK1
+TAPA3 peak interrupt
+-
+TAPA3TIVLY0
+TAPA3 valley interrupt
+-
+TAPA3TIVLY1
+TAPA3 valley interrupt
+-
+
+=== PAGE 1207 (index 1206) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1187 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+Internal signals
+The internal signal connections of the timer option module are listed in the 
+following table.
+Table 19-5
+TAPAn Internal Signal (1/3)
+TAPAn Signals
+Function
+Connected to
+TAPA0
+TAPA0THASIN
+Asynchronous Hi-Z control 
+input signal
+PIC
+TAPA0TSIM0
+TAU-A master channel 0 
+interrupt input signal 
+PIC
+TAPA0TSIM1
+TAU-A master channel 0 
+interrupt input signal 
+-
+TAPA0TUDCM0
+TAU-A master channel 0 
+up/down input signal
+PIC
+TAPA0TUDCM1
+TAU-A master channel 0 
+up/down input signal
+-
+TAPA0TCDENS0
+TAU-A slave channel 0 
+match detection input signal
+PIC
+TAPA0TCDENS1
+TAU-A slave channel 1 
+match detection input signal
+PIC
+TAPA0TCDENM0
+TAU-A master channel 0 
+cycle detection input signal 
+-
+TAPA0TCDENM1
+TAU-A master channel 1 
+cycle detection input signal
+-
+TAPA0TOEM0
+TAU-A master channel 0 
+timer enabled input signal
+-
+TAPA0TOEM1
+TAU-A master channel 1 
+timer enabled input signal
+-
+TAPA0TADOUT0
+A/D converter trigger output 
+signal 0
+ADCA0
+TAPA0TADOUT1
+A/D converter trigger output 
+signal 1
+ADCA0
+TAPA1
+TAPA1THASIN
+Asynchronous Hi-Z control 
+input signal
+PIC
+TAPA1TSIM0
+TAU-A master channel 0 
+interrupt input signal
+PIC
+TAPA1TSIM1
+TAU-A master channel 0 
+interrupt input signal
+-
+TAPA1TUDCM0
+TAU-A master channel 0 
+up/down input signal
+PIC
+TAPA1TUDCM1
+TAU-A master channel 0 
+up/down input signal
+-
+TAPA1TCDENS0
+TAU-A slave channel 0 
+match detection input signal
+PIC
+TAPA1TCDENS1
+TAU-A slave channel 1 
+match detection input signal
+PIC
+TAPA1TCDENM0
+TAU-A master channel 0 
+cycle detection input signal 
+-
+
+=== PAGE 1208 (index 1207) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1188 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+TAPA1TCDENM1
+TAU-A master channel 1 
+cycle detection input signal
+-
+TAPA1TOEM0
+TAU-A master channel 0 
+timer enabled input signal
+-
+TAPA1TOEM1
+TAU-A master channel 1 
+timer enabled input signal
+-
+TAPA1TADOUT0
+A/D converter trigger output 
+signal 0
+ADCA0
+TAPA1TADOUT1
+A/D converter trigger output 
+signal 1
+ADCA0
+TAPA2
+TAPA2THASIN
+Asynchronous Hi-Z control 
+input signal
+PIC
+TAPA2TSIM0
+TAU-A master channel 0 
+interrupt input signal
+-
+TAPA2TSIM1
+TAU-A master channel 0 
+interrupt input signal
+-
+TAPA2TUDCM0
+TAU-A master channel 0 
+up/down input signal
+-
+TAPA2TUDCM1
+TAU-A master channel 0 
+up/down input signal 0
+-
+TAPA2TCDENS0
+TAU-A slave channel 0 
+match detection input signal 
+0
+-
+TAPA2TCDENS1
+TAU-A slave channel 1 
+match detection input signal
+-
+TAPA2TCDENM0
+TAU-A master channel 0 
+cycle detection input signal
+-
+TAPA2TCDENM1
+TAU-A master channel 1 
+cycle detection input signal
+-
+TAPA2TOEM0
+TAU-A master channel 0 
+timer enabled input signal
+-
+TAPA2TOEM1
+TAU-A master channel 1 
+timer enabled input signal
+-
+TAPA2TADOUT0
+A/D converter trigger output 
+signal 0
+-
+TAPA2TADOUT1
+A/D converter trigger output 
+signal 1
+-
+TAPA3
+TAPA3THASIN
+Asynchronous Hi-Z control 
+input signal
+PIC
+TAPA3TSIM0
+TAU-A master channel 0 
+interrupt input signal
+-
+TAPA3TSIM1
+TAU-A master channel 0 
+interrupt input signal
+-
+TAPA3TUDCM0
+TAU-A master channel 0 
+up/down input signal
+-
+TAPA3TUDCM1
+TAU-A master channel 0  
+up/down input signal
+-
+Table 19-5
+TAPAn Internal Signal (2/3)
+TAPAn Signals
+Function
+Connected to
+
+=== PAGE 1209 (index 1208) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1189 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+TAPA3TCDENS0
+TAU-A slave channel 0 
+match detection input signal
+-
+TAPA3TCDENS1
+TAU-A slave channel 1 
+match detection input signal
+-
+TAPA3TCDENM0
+TAU-A master channel 0 
+cycle detection input signal
+-
+TAPA3TCDENM1
+TAU-A master channel 1 
+cycle detection input signal
+-
+TAPA3TOEM0
+TAU-A master channel 0 
+timer enabled input signal
+-
+TAPA3TOEM1
+TAU-A master channel 1 
+timer enabled input signal
+-
+TAPA3TADOUT0
+A/D converter trigger output 
+signal 0
+-
+TAPA3TADOUT1
+A/D converter trigger output 
+signal 1
+-
+Table 19-5
+TAPAn Internal Signal (3/3)
+TAPAn Signals
+Function
+Connected to
+
+=== PAGE 1210 (index 1209) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1190 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(a)
+Hi-Z Control Signal for TAPA0 and TAPA1 (TAPA0THASIN and 
+TAPA1THASIN)
+(b)
+Hi-Z Control Signal for TAPA2 (TAPA2THASIN)
+(c)
+Hi-Z Control Signal for TAPA3 (TAPA3THASIN)
+Figure 19-1
+Hi-Z Control Signals for TAPA0 to TAPA3 (TAPAnTHASIN)
+0
+0/1
+0/1
+0
+0
+0
+0
+0/1
+PIC0HIZCENn (n = 0, 1)
+ESOn
+ERROROUT
+INTADCA0ERR
+TAPAnTHASIN
+0
+0/1
+0/1
+0
+0/1
+0
+0
+0/1
+PIC0HIZCEN2
+ESO2
+INTTSG20IER
+ERROROUT
+TAPA2THASIN
+INTADCA0ERR
+0
+0/1
+0/1
+0/1
+0
+0
+0
+0/1
+PIC0HIZCEN3
+ESO3
+INTTSG21IER
+ERROROUT
+TAPA3THASIN
+INTADCA0ERR
+
+=== PAGE 1211 (index 1210) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1191 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(1)
+Hi-Z Output Control Register 0 (PIC0HIZCEN0)
+This register selects input signals to control Hi-Z output.
+Access
+This register can be read/written in 8-bit units.
+Address
+FF81 C0B4H
+Initial value
+00H
+This register is initialized by a reset from any source.
+Caution 1. 
+Set the PIC0HIZCEN0 register before enabling asynchronous Hi-Z control.
+Caution 2. 
+When the ERROROUT signal is selected, select the rising edge 
+(TAPA0CTL0.TAPA0DCN, TAPA0DCP = 01) as the valid edge. 
+Note
+Set undefined bits in PIC0HIZCEN0 to 0.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+PIC0HIZ
+CEN06
+PIC0HIZ
+CEN05
+0
+0
+0
+0
+PIC0HIZ
+CEN00
+R
+R/W
+R/W
+R
+R
+R
+R
+R/W
+Table 19-6
+Contents of the PIC0HIZCEN0 Register
+Bit Position
+Bit Name
+Function
+6
+PIC0HIZCEN06
+Enables and disables Hi-Z output control by the INTADCA0TERR interrupt 
+signal.
+0: Disabled
+1: Enabled
+5
+PIC0HIZCEN05
+Enables and disables Hi-Z output control by the ERROROUT signal.
+0: Disabled
+1: Enabled
+0
+PIC0HIZCEN00
+Enables and disables Hi-Z output control by input to the ESO0 pin.
+0: Disabled
+1: Enabled
+
+=== PAGE 1212 (index 1211) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1192 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(2)
+Hi-Z Output Control Register 1 (PIC0HIZCEN1)
+This register selects input signals to control Hi-Z output.
+Access
+This register can be read/written in 8-bit units.
+Address
+FF81 C0B8H
+Initial value
+00H 
+This register is initialized by a reset from any source.
+Caution 1. 
+Set the PIC0HIZCEN1 register before enabling asynchronous Hi-Z control. 
+Caution 2. 
+When the ERROROUT signal is selected, select the rising edge 
+(TAPA1CTL0.TAPA1DCN, TAPA1DCP = 01) as the valid edge. 
+Note
+Set the undefined bits in PIC0HIZCEN1 to 0.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+PIC0HIZ
+CEN16
+PIC0HIZ
+CEN15
+0
+0
+0
+0
+PIC0HIZ
+CEN10
+R
+R/W
+R/W
+R
+R
+R
+R
+R/W
+Table 19-7
+Contents of the PIC0HIZCEN1 Register 
+Bit Position
+Bit Name
+Function
+6
+PIC0HIZCEN16
+Enables and disables Hi-Z output control by the INTADCA0TERR interrupt 
+signal. 
+0: Disabled
+1: Enabled
+5
+PIC0HIZCEN15
+Enables and disables Hi-Z output control by the ERROROUT signal.
+0: Disabled
+1: Enabled
+0
+PIC0HIZCEN10
+Enables and disables Hi-Z output control by input to the ESO1 pin.
+0: Disabled
+1: Enabled
+
+=== PAGE 1213 (index 1212) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1193 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(3)
+Hi-Z Output Control Register 2 (PIC0HIZCEN2)
+This register selects input signals to control Hi-Z output.
+Access
+This register can be read/written in 8-bit units.
+Address
+FF81 C0DCH
+Initial value
+00H
+This register is initialized by a reset from any source.
+Caution 1. 
+Set the PIC0HIZCEN2 register before enabling asynchronous Hi-Z control. 
+Caution 2. 
+When the ERROROUT signal is selected, select the rising edge 
+(TAPA2CTL0.TAPA2DCN, TAPA2DCP = 01) as the valid edge. 
+Note
+Set the undefined bits in PIC0HIZCEN2 to 0.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+PIC0HIZ
+CEN26
+PIC0HIZ
+CEN25
+0
+PIC0HIZ
+CEN23
+0
+0
+PIC0HIZ
+CEN20
+R
+R/W
+R/W
+R
+R/W
+R
+R
+R/W
+Table 19-8
+Contents of the PIC0HIZCEN2 Register
+Bit Position
+Bit Name
+Function
+6
+PIC0HIZCEN26
+Enables and disables Hi-Z output control by the INTADCA0TERR interrupt 
+signal.
+0: Disabled
+1: Enabled
+5
+PIC0HIZCEN25
+Enables and disables Hi-Z output control by the ERROROUT signal.
+0: Disabled
+1: Enabled
+3
+PIC0HIZCEN23
+Enables and disables Hi-Z output control by the INTTSG20IER interrupt 
+signal.
+0: Disabled
+1: Enabled
+0
+PIC0HIZCEN20
+Enables and disables Hi-Z output control by input to the ESO2 pin.
+0: Disabled
+1: Enabled
+
+=== PAGE 1214 (index 1213) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1194 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(4)
+Hi-Z Output Control Register 3 (PIC0HIZCEN3)
+This register selects input signals to control Hi-Z output.
+Access
+This register can be read/written in 8-bit units.
+Address
+FF81 C0E4H
+Initial value
+00H 
+This register is initialized by a reset from any source.
+Caution 1. 
+Set the PIC0HIZCEN3 register before enabling asynchronous Hi-Z control. 
+Caution 2. 
+When the ERROROUT signal is selected, select the rising edge 
+(TAPA3CTL0.TAPA3DCN, TAPA3DCP = 01) as the valid edge. 
+Note
+Set the undefined bits in PIC0HIZCEN3 to 0.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+PIC0HIZ
+CEN36
+PIC0HIZ
+CEN35
+PIC0HIZ
+CEN34
+0
+0
+0
+PIC0HIZ
+CEN30
+R
+R/W
+R/W
+R/W
+R
+R
+R
+R/W
+Table 19-9
+Contents of the PIC0HIZCEN3 Register
+Bit Position
+Bit Name
+Function
+6
+PIC0HIZCEN36
+Enables and disables Hi-Z output control by the INTADCA0TERR interrupt 
+signal.
+0: Disabled
+1: Enabled
+5
+PIC0HIZCEN35
+Enables and disables Hi-Z output control by the ERROROUT signal.
+0: Disabled
+1: Enabled
+4
+PIC0HIZCEN34
+Enables and disables Hi-Z output control by the INTTSG21IER interrupt 
+signal.
+0: Disabled
+1: Enabled
+0
+PIC0HIZCEN30
+Enables and disables Hi-Z output control by input to the ESO3 pin.
+0: Disabled
+1: Enabled
+
+=== PAGE 1215 (index 1214) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1195 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+I/O signals
+I/O signals for the timer option are listed in the following table.
+Table 19-10
+I/O Signals of TAPAn
+TAPAn Signals
+Function
+Connected to
+TAPA0
+TAPA0THZOUT0
+Hi-Z control signal 0 
+(phase U)
+Hi-Z control of phase U output 
+signal from TAUA0 (TOUT10/
+TOUT11)
+TAPA0THZOUT1
+Hi-Z control signal 1 
+(phase V)
+Hi-Z control of phase V output 
+signal from TAUA0 (TOUT12/
+TOUT13)
+TAPA0THZOUT2
+Hi-Z control signal 2 
+(phase W)
+Hi-Z control of phase W output 
+signal from TAUA0 (TOUT14/
+TOUT15)
+TAPA1
+TAPA1THZOUT0
+Hi-Z control signal 0 
+(phase U)
+Hi-Z control of phase U output 
+signal from TAUA1 (TOUT10/
+TOUT11)
+TAPA1THZOUT1
+Hi-Z control signal 1 
+(phase V)
+Hi-Z control of phase V output 
+signal from TAUA1 (TOUT12/
+TOUT13)
+TAPA1THZOUT2
+Hi-Z control signal 2 
+(phase W)
+Hi-Z control of phase W output 
+signal from TAUA1 (TOUT14/
+TOUT15)
+TAPA2
+TAPA2THZOUT0
+Hi-Z control signal 0
+Hi-Z control of TSG20O1 to 
+TSG20O6 pins of TSG20
+TAPA3
+TAPA3THZOUT0
+Hi-Z control signal 0
+Hi-Z control of TSG21O1 to 
+TSG21O6 pins of TSG21
+
+=== PAGE 1216 (index 1215) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1196 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+19.2
+Functional Overview
+Functional
+overview
+The timer option module (TAPA) is for use with the timer array unit A (TAUA) 
+and TSG2 modules. It provides optional functions for the timers.
+• Asynchronous Hi-Z control to deal with pin input 
+• Output of the INTn signal from the TAUA as a peak or valley interrupt is 
+selectable.
+• The INTn signal output by the TAUA provides the basis for the output of two 
+conversion-trigger signals for the A/D converter.
+19.2.1
+Block Diagram
+Edge detection 
+circuit
+TAPAnTHASIN
+Asynchronous 
+Hi-Z control
+TAPAnDCN
+TAPAnDCP
+TAPAnDCM
+TAPAnHOF2
+TAPAnACE
+TAPAnHOF1
+TAPAnHOF0
+ashzout
+TAPAnACTS
+TAPAnACWE
+TAPAnTCDENM0
+TAPAnTUDCM0
+TAPAnTOEM0
+TAPAnTCDENM1
+TAPAnTUDCM1
+TAPAnTOEM1
+TAPAnOPHS1 TAPAnOPHT0
+TAPAnACTT
+Hi-Z output 
+control
+TAPAnTCDENS0
+TAPAnTCDENS1
+Control of A/D trigger output
+TAPAnTSIM0
+TAPAnTSIM1
+Interrupt output control
+TAPAnTHZOUT0
+TAPAnTHZOUT1
+TAPAnTHZOUT2
+TAPAnTADOUT0
+TAPAnTADOUT1
+TAPAnTIVLY0
+TAPAnTIVLY1
+TAPAnTIPEK0
+TAPAnTIPEK1
+
+=== PAGE 1217 (index 1216) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1197 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+19.2.2
+Peak and Valley of Timer Counter, and Peak and Valley 
+Interrupts
+In this document, the period from a TAUA down status (counting-down status) 
+to generation of an interrupt by the master channel is defined as the valley 
+period, and an interrupt generated to indicate this period is defined as a valley 
+interrupt (INT-VLY). The period from a TAUA up status (counting-up status) to 
+generation of an interrupt from the master channel is defined as the peak 
+period, and an interrupt generated to indicate this period is defined as a peak 
+interrupt (INT-PEK).
+Master
+channel
+CNT
+(M) INT
+(M) TOUT
+INT-VLY
+Valley
+Valley
+Valley
+Valley
+Valley
+Valley
+Peak
+Down
+Down
+Down
+Up
+Up
+Up
+Peak
+Peak
+INT-PEK
+Slave
+ channel
+ (even)
+ CNT
+Peak
+Peak
+Peak
+Peak
+
+=== PAGE 1218 (index 1217) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1198 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+19.3
+Registers
+TAPAn is controlled and operated by means of the following registers.
+19.3.1
+Registers Overview
+<TAPAn_base>
+The base addresses <TAPAn_base> of the TAPAn are defined in the first part 
+of this section under the heading “Register addresses”.
+Table 19-11
+List of Control Registers
+Register Name
+Symbol
+Address
+TAPAn control register 0
+TAPAnCTL0
+<TAPAn_base0> + 20H
+TAPAn control register 1
+(n = 0, 1) *
+TAPAnCTL1
+(n = 0, 1) *
+<TAPAn_base0> + 24H
+(n = 0, 1) *
+TAPAn flag register
+TAPAnFLG
+<TAPAn_base1> + 00H
+TAPAn asynchronous control write 
+enable register
+TAPAnACWE
+<TAPAn_base1> + 04H
+TAPAn asynchronous control start 
+trigger register
+TAPAnACTS
+<TAPAn_base1> + 08H
+TAPAn asynchronous control stop 
+trigger register
+TAPAnACTT
+<TAPAn_base1> + 0CH
+TAPAn Hi-Z start trigger register
+TAPAnOPHS
+<TAPAn_base1> + 14H
+TAPAn Hi-Z stop trigger register
+TAPAnOPHT
+<TAPAn_base1> + 18H
+Note * TAPA2 and TAPA3 do not have TAPAn control register 1 (TAPAnCTL1) because 
+their functions do not include A/D converter trigger selection. 
+
+=== PAGE 1219 (index 1218) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1199 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+19.3.2
+Registers Details
+(1)
+TAPAnCTL0 - TAPAn Control Register 0
+Control register 0 is used to control Hi-Z.
+A value in this register can only be rewritten when TAPAnFLG.TAPAnASCE = 
+0, and TAUAnTE of the corresponding master channel of TAUA = 0.
+Access
+This register can be read/written in 16-bit units.
+Address
+<TAPAn_base0> + 20H
+Initial value
+0000H
+This register is initialized by a reset from any source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+TAPAn
+DCM
+TAPAn
+DCN
+TAPAn
+DCP
+0
+0
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R/W
+R/W
+R/W
+R
+R
+Table 19-12
+Contents of the TAPAnCTL0 Register 
+Bit Position
+Bit Name
+Function
+4
+TAPAnDCM
+Clearing condition specification bit
+This control bit specifies the condition for clearing of the Hi-Z control outputs.
+0: Manipulation of TAPAnOPHS0 and TAPAnOPHT0 is enabled regardless of 
+the TAPAnTHASIN signal input level.
+1: Manipulation of TAPAnOPHT0 is disabled when the TAPAnTHASIN input 
+signal is at the active level.
+Manipulation of TAPAnOPHT0 is enabled when the TAPAnTHASIN signal 
+input is inactive.
+3, 2
+TAPAnDCN, 
+TAPAnDCP
+Hi-Z input edge selection bits
+These control bits specify the valid edge of TAPAnTHASIN.
+TAPAn
+DCN
+TAPAn
+DCP
+Description
+0
+0
+Does not detect valid edges
+0
+1
+Detects a rising edge as the valid edge
+(active level = high)
+1
+0
+Detects a falling edge as the valid edge
+(active level = low)
+1
+1
+Setting prohibited
+
+=== PAGE 1220 (index 1219) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1200 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(2)
+TAPAnCTL1 - TAPAn Control Register 1
+This register selects a trigger for the A/D converter.
+Access
+This register can be read/written in 8-bit units.
+Address
+<TAPAn_base0> + 24H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+TAPAn
+ATS3
+TAPAn
+ATS2
+TAPAn
+ATS1
+TAPAn
+ATS0
+R
+R
+R
+R
+R/W
+R/W
+R/W
+R/W
+Table 19-13
+Contents of the TAPAnCTL1 Register
+Bit Position
+Bit Name
+Function
+3, 2
+TAPAn
+ATS[3:2]
+A/D converter trigger 1 select bits
+These control bits specify the signal for output as A/D converter conversion 
+trigger output 1 (TAPAnTADOUT1).
+TAPAn
+ATS3
+TAPAn
+ATS2
+Description
+0
+0
+Outputs INT while the master channel is in the 
+down state.
+0
+1
+Outputs INT while the master channel is in the up 
+state.
+1
+0
+Outputs INT while the master channel is in the 
+down/up state.
+1
+1
+Outputs INT and a valley interrupt of the master 
+channel (TAPAnTIVLY0) while the master channel 
+is in the down/up state.
+1, 0
+TAPAn
+ATS[1:0]
+A/D converter trigger 0 select bits
+These control bits specify the signal for output as A/D converter conversion 
+trigger output 0 (TAPAnTADOUT0).
+TAPAn
+ATS1
+TAPAn
+ATS0
+Description
+0
+0
+Outputs INT while the master channel is in the 
+down state.
+0
+1
+Outputs INT while the master channel is in the up 
+state.
+1
+0
+Outputs INT while the master channel is in the 
+down/up state.
+1
+1
+Outputs INT and a valley interrupt of the master 
+channel (TAPAnTIVLY0) while the master channel 
+is in the down/up state.
+
+=== PAGE 1221 (index 1220) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1201 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(3)
+TAPAnFLG - TAPAn Flag Register
+This flag register is used to control Hi-Z
+Access
+This register can only be read in 16-bit units.
+Address
+<TAPAn_base1> + 00H
+Initial value
+0000H
+This register is initialized by a reset from any source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+TAPAn
+HOF2
+TAPAn
+HOF1
+TAPAn
+HOF0
+0
+0
+0
+0
+0
+0
+0
+TAPAn
+ACE
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table 19-14
+Contents of the TAPAnFLG Register
+Bit Position
+Bit Name
+Function
+10 to 8
+TAPAn
+HOFm
+HZOUTm output monitor bit (m = 0 to 2)
+This bit monitors the TAPAnTHZOUTm output.
+0: The TAPAnTHZOUTm output is at the low level.
+1: The TAPAnTHZOUTm output is at the high level.
+0
+TAPAn
+ACE
+Asynchronous Hi-Z control enable bit
+This bit indicates the state of asynchronous Hi-Z control (TAPAnTHASIN).
+0: Asynchronous Hi-Z control is stopped.
+1: Asynchronous Hi-Z control is enabled.
+The conditions for setting and clearing this bit are as follows.
+Clearing condition: Writing 1 to TAPAnACTT while TAPAnACWE = 1.
+Setting condition: Writing 1 to TAPAnACTS while TAPAnACWE = 1.
+
+=== PAGE 1222 (index 1221) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1202 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(4)
+TAPAnACWE - TAPAn Asynchronous Control Write Enable Register
+This register enables writing for asynchronous Hi-Z control.
+Access
+This register can be read/written in 8-bit units.
+Address
+<TAPAn_base1> + 04H
+Initial value
+00H
+This register is initialized by a reset from any source.
+(5)
+TAPAnACTS - Asynchronous Control Start Trigger Register
+This register enables the start trigger for asynchronous Hi-Z control.
+Access
+This register can be read/written in 8-bit units.
+Address
+<TAPAn_base1> + 08H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+TAPAn
+ACWE
+R
+R
+R
+R
+R
+R
+R
+R/W
+Table 19-15
+Contents of the TAPAnACWE Register
+Bit Position
+Bit Name
+Function
+0
+TAPAn
+ACWE
+Asynchronous control write enable bit
+This is a write-enable bit for asynchronous Hi-Z control.
+After 1 has been written to this bit, it is automatically cleared to 0 by writing 1 to 
+TAPAnACTS and TAPAnACTT.
+0: Disables writing to TAPAnACTS and TAPAnACTT.
+1: Enables writing to TAPAnACTS and TAPAnACTT.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+TAPAn
+ACTS
+R
+R
+R
+R
+R
+R
+R
+W
+Table 19-16
+Contents of the TAPAnACTS Register
+Bit Position
+Bit Name
+Function
+0
+TAPAn
+ACTS
+Asynchronous control start trigger bit
+This bit enables the start trigger for asynchronous Hi-Z control.
+The setting of this bit is only valid when TAPAnACWE = 1.
+0: Writing 0 to this bit is ignored (no function).
+1: Enables asynchronous Hi-Z control if TAPAnACE = 1.
+
+=== PAGE 1223 (index 1222) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1203 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(6)
+TAPAnACTT - TAPAn Asynchronous Control Stop Trigger Register
+This register enables the stop trigger for asynchronous Hi-Z control.
+Access
+This register can be read/written in 8-bit units. This register is always read as 
+00H.
+Address
+<TAPAn_base1> + 0CH
+Initial value
+00H
+This register is initialized by a reset from any source.
+(7)
+TAPAnOPHS - TAPAn Hi-Z Start Trigger Register
+This register sets the start trigger for a Hi-Z control signal (TAPAnTHZOUT0, 
+TAPAnTHZOUT1 or TAPAnTHZOUT2).
+Access
+This register can be read/written in 8-bit units. This register is always read as 
+00H.
+Address
+<TAPAn_base1> + 14H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+TAPAn
+ACTT
+R
+R
+R
+R
+R
+R
+R
+W
+Table 19-17
+Contents of the TAPAnACTT
+Bit Position
+Bit Name
+Function
+0
+TAPAn
+ACTT
+Asynchronous control stop trigger bit
+This bit enables the stop trigger for asynchronous Hi-Z control.
+The setting of this bit is only valid when TAPAnACWE = 1.
+0: Writing 0 to this bit is ignored (no function).
+1: Stops asynchronous Hi-Z control if TAPAnACE = 0.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+TAPAn
+OPHS0
+R
+R
+R
+R
+R
+R
+R
+W
+Table 19-18
+Contents of the TAPAnOPHS Register
+Bit Position
+Bit Name
+Function
+0
+TAPAn
+OPHS0
+Hi-Z control signal start trigger 0 bit
+This bit sets the start trigger for a Hi-Z control signal.
+0: The read value is 0 and writing 0 to this bit is ignored (no function).
+1: Sets the corresponding Hi-Z control signal (TAPAnTHZOUT0, 
+TAPAnTHZOUT1 or TAPAnTHZOUT2) to the low level.
+
+=== PAGE 1224 (index 1223) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1204 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(8)
+TAPAnOPHT - TAPAn Hi-Z Stop Trigger Register
+This register sets the stop trigger for a Hi-Z control signal (TAPAnTHZOUT0, 
+TAPAnTHZOUT1 or TAPAnTHZOUT2).
+Access
+This register can be read/written in 8-bit units. This register is always read as 
+00H.
+Address
+<TAPAn_base1> + 18H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+TAPAn
+OPHT0
+R
+R
+R
+R
+R
+R
+R
+W
+Table 19-19
+Contents of the TAPAnOPHT Register 
+Bit Position
+Bit Name
+Function
+0
+TAPAn
+OPHT0
+Hi-Z control signal stop trigger 0 bit
+This bit sets the stop trigger for a Hi-Z control signal.
+0: The read value is 0 and writing 0 to this bit is ignored (no function).
+1: Sets a Hi-Z control signal (TAPAnTHZOUT0, TAPAnTHZOUT1 or 
+TAPAnTHZOUT2) to the high level.
+
+=== PAGE 1225 (index 1224) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1205 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+19.4
+Basic Functions
+19.4.1
+Hi-Z Control Functions
+(1)
+Purpose of Hi-Z Control Function
+Abnormal operation in timer motor-control under CPU control leads to rotation 
+of the externally connected motor also becoming abnormal. In such a case, 
+this function forcibly sets the motor control output to the Hi-Z state, 
+independently of control by the CPU.
+(2)
+Overview of Hi-Z Control Function
+The following method is available for controlling Hi-Z states
+• Asynchronous input Hi-Z control for pin inputs
+– Controls the Hi-Z control output signals (TAPAnTHZOUT0 (phase U), 
+TAPAnTHZOUT1 (phase V) and TAPAnTHZOUT2 (phase W) 
+asynchronously.
+(3)
+Hi-Z Control and Its Operation
+Function
+Operation
+Asynchronous 
+Hi-Z control 
+corresponding 
+to pin input
+This function detects analog inputs that are asynchronous and forcibly stops TOUTn output 
+from the corresponding timer module (TAUA, TSG2) in response.
+Device outputs become Hi-Z while TAPAnTHASIN is active and until software sends a stop 
+request.
+
+=== PAGE 1226 (index 1225) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1206 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+19.4.2
+Asynchronous Hi-Z Control for Pin Inputs
+(1)
+An Example of System Configuration of Asynchronous Hi-Z Control for 
+Pin Inputs
+When an external error detection signal is received, an interrupt is generated 
+and, at the same time, the motor-driving signal output is set to the Hi-Z state.
+This module assumes that microcontroller operation may hang when an error 
+occurs. To handle such situations, external error detection signals are 
+continuously processed so that the motor-driving signal can be set to the Hi-Z 
+state even if no clock signal is being supplied.
+This module only detects an error as an edge of the error-detection signal. A 
+fixed output level is not detected as an error (the signal has no edge).
+Timer
+(TAUA, TSG2)
+TAPAnTHZOUT0
+TAPAnTHZOUT1
+TAPAnTHZOUT2
+TAPAnTHASIN
+TAPA
+Interrupt controller
+Analog noise filter
+Error detection 
+circuit
+Motor 
+driver IC
+U
+U
+V
+V
+W
+W
+Port I/O
+
+=== PAGE 1227 (index 1226) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1207 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(2)
+Basic Operation in Hi-Z Control for Asynchronous Inputs
+(a)
+Hi-Z Control when TAPAnCTL0.TAPAnDCM = 0, TAPAnDCP = 0, and 
+TAPAnDCN = 0
+TAPAnTHZOUT0 goes to the low level on detection of a valid edge of the 
+asynchronous input (TAPAnTHASIN).
+Output is forcibly stopped (by port control for Hi-Z output) as long as the 
+TAPAnTHZOUT0 output is at the low level.
+TAPAnTHZOUT0 goes to the low level in response to detection of a rising 
+edge of the asynchronous input (TAPAnTHASIN).
+TAPAnTHZOUT0 goes to the high level in response to writing 1 to Hi-Z stop 
+trigger 0 (TAPAnOPHT0), regardless of the level of TAPAnTHASIN.
+Carrier cycle 
+(one cycle)
+TAPAnOPHT0 = write 1
+O
+Counter
+Positive phase output
+(timer)
+Negative phase output
+(timer)
+Positive phase output
+(pin)
+Negative phase output
+(pin)
+Asynchronous input 
+(TAPAnTHASIN)
+Hi-Z control output
+(TAPAnTHZOUT0)
+Hi-Z
+Hi-Z
+
+=== PAGE 1228 (index 1227) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1208 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(b)
+Hi-Z Control when TAPAnCTL0.TAPAnDCM = 1, TAPAnDCP = 1, 
+TAPAnDCN = 0
+TAPAnTHZOUT0 goes to the low level in response to detection of a valid edge 
+of the asynchronous input signal (TAPAnTHASIN).
+Output is forcibly stopped (by port control for Hi-Z output) as long as the 
+TAPAnTHZOUT0 output is at the low level.
+TAPAnTHZOUT0 goes to the low level in response to detection of a rising 
+edge of the asynchronous input signal (TAPAnTHASIN).
+Writing of 1 to Hi-Z stop trigger 0 (TAPAnOPHT0) is ignored as long as the 
+asynchronous input signal (TAPAnTHASIN) is at the active level (high because 
+TAPAnDCP = 1).
+After the asynchronous input signal (TAPAnTHASIN) is switched to the inactive 
+level (low because TAPAnDCP = 1), TAPAnTHZOUT0 goes to the high level 
+when 1 is written to Hi-Z stop trigger 0 (TAPAnOPHT0).
+Carrier cycle 
+(one cycle)
+TAPAnOPHT0 = write 1
+X
+TAPAnOPHT0 = write 1
+O
+Counter
+Positive phase output
+(timer)
+Negative phase output
+(timer)
+Positive phase output
+(pin)
+Negative phase output
+(pin)
+Asynchronous input
+(TAPAnTHASIN)
+Hi-Z control output 
+(TAPAnTHZOUT0)
+Hi-Z
+Hi-Z
+
+=== PAGE 1229 (index 1228) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1209 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(3)
+Software Operations for Asynchronous Input Hi-Z Control
+This module allows software control of the output of Hi-Z control signals.
+Hi-Z start trigger 0 (TAPAnOPHS0) and Hi-Z stop trigger 0 (TAPAnOPHT0) are 
+used to control TAPAnTHZOUT0, TAPAnTHZOUT1, and TAPAnTHZOUT2.
+(a) Operation of the Hi-Z Start Trigger (TAPAnOPHS)
+(b) Operation of the Hi-Z Stop Trigger (TAPAnOPHT) during Hi-Z Control 
+in Response to Asynchronous Input 
+The Hi-Z stop trigger operates as follows.
+TAPAn
+DCM
+Operation
+0/1
+Writing 1 to the TAPAnOPHS0 bit places the TAPAnTHZOUT0, 
+TAPAnTHZOUT1 and TAPAnTHZOUT2 signals at the low level.
+TAPAn
+DCM
+Operation
+0
+Writing 1 to the TAPAnOPHT0 bit places the TAPAnTHZOUT0, 
+TAPAnTHZOUT1 and TAPAnTHZOUT2 signals at the high level.
+1
+If TAPAnTHASIN is at the inactive level, writing 1 to the 
+TAPAnOPHT0 bit places the TAPAnTHZOUT0, TAPAnTHZOUT1 
+and TAPAnTHZOUT2 signals at the high level. If TAPAnTHASIN is at 
+the active level, writing of 1 to the TAPAnOPHT0 bit is ignored. 
+
+=== PAGE 1230 (index 1229) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1210 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+Figure 19-2
+Operation of TAPAnTHZOUT0 when TAPAnDCM = 0, TAPAnDCP = 1, and 
+TAPAnDCN = 0
+TAPAnTHZOUT0 goes to the low level in response to the writing of 1 to 
+TAPAnOPHS0.
+After that, TAPAnTHZOUT0 remains at the low level even if a rising edge of 
+TAPAnTHASIN is detected.
+Writing to TAPAnOPHT0 is ignored as long as TAPAnTHASIN is at the active 
+level (high when TAPAnDCN = 0 and TAPAnDCP = 1).
+After a falling edge of TAPAnTHASIN is detected, TAPAnTHZOUT0 goes to 
+the high level when 1 is written to TAPAnOPHT0 while TAPAnTHASIN is at the 
+inactive level (low when DCN = 0 and DCP = 1).
+Carrier cycle 
+(one cycle)
+TAPAnOPHT0 = write 1 
+TAPAnOPHT0 = write 1 
+X
+TAPAnOPHT0 = write 1 
+O
+Counter
+Positive phase output
+(timer)
+Negative phase output
+(timer)
+Positive phase output
+(pin)
+Negative phase output
+(pin)
+Asynchronous input
+(TAPAnTHASIN)
+Hi-Z control output
+(TAPAnTHZOUT0)
+Hi-Z
+Hi-Z
+
+=== PAGE 1231 (index 1230) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1211 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(4)
+Operating Procedure Example for Hi-Z Control in Response to 
+Asynchronous Input 
+An example of the operating procedure for Hi-Z control in response to 
+asynchronous input is as follows (the table only covers settings for the timer 
+option module because this operation does not depend on timer operations).
+Operation
+State of TAPA
+Initial settings
+Setting in the TAPAnCTL0 register.
+Set TAPAnDCP and TAPAnDCN (input edge 
+selection).
+Set TAPAnDCM (clearing mode selection).
+Hi-Z control in response to asynchronous input 
+is stopped (TAPAnFLG.TAPAnACE = 0).
+Starting 
+operation
+Setting in the TAPAnACWE register:
+Set the TAPAnACWE bit to 1.
+Setting in the TAPAnACTS register:
+Set the TAPAnACTS bit to 1.
+Writing to the TAPAnASTS bit is enabled.
+TAPAnFLG.TAPAnACE = 1, enabling Hi-Z 
+control in response to asynchronous input.
+During operation
+To start Hi-Z control of an output from the timer: 
+-
+Control is by the TAPAnOPHS0 bit of TAPA 
+(if TAPAnDCM = 0)
+-
+Control is by the Hi-Z input signal 
+(TAPAnTHASIN)
+for TAPA (if TAPAnDCM = 1)
+To stop Hi-Z control of output from the timer:
+-
+Control is by the TAPAnOPHT0 bit of TAPA 
+(if TAPAnDCM = 0)
+-
+TAPAnOPHT0 is used if the Hi-Z input signal 
+for TAPA (TAPAnTHASIN) is at the inactive 
+level (if TAPAnDCM = 1)
+The state of TAPA operations can be read from 
+the TAPAnFLG register at all times.
+On detection of input of the starting edge of the 
+Hi-Z input signal (TAPAnTHASIN) or setting of 
+the start trigger bit (TAPAnOPHS0 = 1), the Hi-
+Z controller switches the TAPAnTHZOUT0,
+TAPAnTHZOUT1 and TAPAnTHZOUT2 pins to 
+low-level output.
+In accord with the operating mode settings in 
+TAPAnDCM, the Hi-Z controller switches the 
+TAPAnTHZOUT0, TAPAnTHZOUT1 and 
+TAPAnTHZOUT2 pins to high-level outputs in 
+response to setting of the stop trigger bit 
+(TAPAnOPHT0 = 1).
+Stopping operation
+Setting in the TAPAnACWE register:
+Set the TAPAnACWE bit to 1.
+Setting in the TAPAnACTT register.
+Set the TAPAnACTT bit to 1.
+Writing to the TAPAnASTT bit is enabled.
+TAPAnFLG.ACE = 0, stopping asynchronous 
+Hi-Z control
+Restart operation
+
+=== PAGE 1232 (index 1231) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1212 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+19.4.3
+Selection of INT Signal Output
+(1)
+Configuration of INT Signal Output Selection
+This function outputs peak or valley interrupts by using the interrupt signal 
+(TAPAnTSIM0) and up/down input signal (TAPAnTUDCM0) output from the 
+triangle-wave carrier-cycle generation channel (master) of the TAUA module.
+The TAPAnTSIM0 signal from the master that arrives while the 
+TAPAnTUDCM0 signal from the master channel of the TAUA is at the high 
+level is regarded as a peak interrupt and leads to output of the TAPAnTIPEK0 
+signal.
+The TAPAnTSIM0 signal from the master that arrives while the 
+TAPAnTUDCM0 signal from the master channel of the TAUA is at the low level 
+is regarded as a valley interrupt and leads to output of the TAPAnTIVLY0 
+signal.
+The PIC0REG2n0 register selects the use of the TAUA channel 0, 2, or 8 for 
+the corresponding TAPAnTSIM0 and TAPAnTUDCM0 signals.
+Timer I/O control register 2n0 (PIC0REG2n0)
+Access
+Readable/writable in 32-bit units.
+Address
+FF81 C08CH (n = 0), FF81 C09CH (n = 1)
+Initial value
+0000 0000H
+This register is initialized by a reset from any source.
+31
+30
+29
+28
+27
+26
+25
+24
+0
+0
+0
+0
+0
+0
+PIC0REG
+2n025
+PIC0REG
+2n024
+R
+R
+R
+R
+R
+R
+R/W
+R/W
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+0
+0
+0
+0
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+0
+0
+0
+0
+0
+0
+0
+0
+R
+R
+R
+R
+R
+R
+R
+R
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+R
+R
+R
+R
+R
+R
+R
+R
+
+=== PAGE 1233 (index 1232) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1213 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+Caution
+Bits defined as 0 may also be defined in section 26, Peripheral Interconnection 
+(PIC). In that case, the definition of the bit for the relevant function becomes 
+applicable.
+Bit Position
+Bit Name
+Function
+25, 24
+PIC0REG2n
+025,
+PIC0REG2n
+024
+These bits select the channel of TAUA to be used for TAPAnTSIM0 and 
+TAPAnTUDCM0.
+00: Not selected
+01: TAUAn channel 0 is selected.
+10: TAUAn channel 2 is selected.
+11: TAUAn channel 8 is selected.
+
+=== PAGE 1234 (index 1233) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1214 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+Figure 19-3
+Example of Operations in Response to Master Channel 0 of TAUA
+TAUA
+• The master channel of TAUA generates a triangle-wave carrier-cycle.
+The TAUA module outputs the TAPAnTSIM0 signal and toggles the up/down 
+signal on TAPAnTUDCM0 per half cycle of this carrier wave.
+TAPA
+• The TAPA module handles the TAPAnTSIM0 signal arriving while 
+TAPAnTUDCM0 is high as a peak interrupt and outputs the TAPAnTIPEK0 
+signal in response.
+• The TAPA module handles the TAPAnTSIM0 signal arriving while 
+TAPAnTUDCM0 is low as a valley interrupt and outputs the TAPAnTIVLY0 
+signal in response.
+Caution
+Combined circuits handle output of the TAPAnTIPEK0/TAPAnTIVLY0 signals 
+and operate regardless of the operating mode.
+When the TAPAnTIPEK0/TAPAnTIVLY0 signals are not in use, they must be 
+controlled by using the interrupt mask bits as described under section 4.3, 
+Interrupt Controller Control Registers.
+Peak
+Peak
+Peak
+Peak
+Valley
+Valley
+Valley
+Valley
+Valley
+Valley
+TAUA master
+channel
+CNT0
+TAUA slave
+channel
+(even)
+CNT2
+TAPAnTIVLY0
+TAPAnTIPEK0
+(M) 
+TAPAnTUDCM0
+(M) 
+TAPAnTSIM0
+Peak
+Peak
+Peak
+
+=== PAGE 1235 (index 1234) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1215 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(2)
+Operating Procedure for Selecting INT Signal Output
+The procedure for selecting INT signal output is as follows.
+Operation
+States of the TAUA and TAPA Modules
+Initial settings
+The TAPA module does not require initial 
+settings. 
+TAUA and TAPA are stopped.
+Initialize the TAUA module. 
+Determine the timer operating mode.
+Starting 
+operation
+Start the TAUA module.
+TAUA starts counting.
+During 
+operation
+TAUA runs in accord with the settings for the 
+various functions.
+The INT signal output selector outputs a peak 
+interrupt (TAPAnTIPEK0) or a valley interrupt 
+(TAPAnTIVLY0) for control cycle 0. This is 
+based on interrupt input (TAPAnTSIM0) and up/
+down input (TAPAnTUDCM0) from TAUA.
+Stopping 
+operation
+Stop the TAUA module. 
+TAUA stops counting.
+Restart operation
+
+=== PAGE 1236 (index 1235) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1216 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+19.4.4
+Selecting a Trigger to Start Conversion by the A/D Converter
+The TAPA is capable of producing triggers to start conversion by the A/D 
+converter (TAPAnTADOUT0 and TAPAnTADOUT1). A trigger signal is 
+produced from the INT and TOUT signals from the triangle-wave carrier-cycle 
+generation channel (master) of the TAUA and the INT signal output from the 
+channel selected for operation with the trigger to start conversion by the A/D 
+converter.
+(1)
+Configuration for Selecting the Triggers for Conversion by the A/D 
+Converter
+Note
+•
+For the up/down input and valley interrupt signals, refer to section 
+19.4.3, Selection of INT Signal Output.
+• The slave match detection signal selects a slave channel according to 
+the settings of the following registers.
+For details on the individual registers, refer to section 26.4.2.3 (1) A/D 
+Converter Trigger Output Control Register 4nj (PIC0ADTEN4nj).
+TAPAnCDENS0: PIC0ADTEN4n1
+TAPAnCDENS1: PIC0ADTEN4n2
+Table 19-20
+Signals Used in Generating the TAPAnTADOUT Signals
+Output Signal
+Up/Down Input
+Slave Match 
+Detection Signal
+Valley Interrupt 
+Signal
+TAPAnTADOUT0
+TAPAnTUDCM0
+TAPAnTCDENS0
+TAPAnTIVLY0
+TAPAnTADOUT1
+TAPAnTUDCM0
+TAPAnTCDENS1
+TAPAnTIVLY0
+
+=== PAGE 1237 (index 1236) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1217 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+Table 19-21
+Operation of TAPAnCTL1.TAPAnATS[1:0] and TAPAnTADOUT0
+TAPAn
+ATS1
+TAPAn
+ATS0
+Description
+0
+0
+The INT signal from slave 0 is output as TAPAnTADOUT0 while master 0 of the TAUA 
+module is in the down state.
+0
+1
+The INT signal from slave 0 is output as TAPAnTADOUT0 while master 0 of the TAUA 
+module is in the up state.
+1
+0
+The INT signal from slave 0 of TAUA is output as TAPAnTADOUT0.
+1
+1
+The INT and TAPAnTIVLY0 (valley interrupt signal 0) signals from slave 0 of TAUA 
+are output as TAPAnTADOUT0.
+Table 19-22
+Operation of TAPAnCTL1.TAPAnATS[3:2] and TAPAnTADOUT1
+TAPAn
+ATS3
+TAPAn
+ATS2
+Function
+0
+0
+The INT signal from slave 1 is output as TAPAnTADOUT1 while master 0 of the TAUA 
+module is in the down state.
+0
+1
+The INT signal from slave 1 is output as TAPAnTADOUT1 while master 0 of the TAUA 
+module is in the up state.
+1
+0
+The INT signal from slave 1 of TAUA is output as TAPAnTADOUT1.
+1
+1
+The INT and TAPAnTIVLY0 (valley interrupt signal 0) signals from slave 1 of TAUA 
+are output as TAPAnTADOUT1.
+
+=== PAGE 1238 (index 1237) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1218 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(2)
+Waveforms in Control of A/D Converter Trigger Output in Triangle-Wave 
+PWM Mode
+Figure 19-4
+TAPAnATS = {0, 0}: INT Output while Master Channel is in the Down State
+An INT signal from the slave while the master is in the down state is output as 
+a trigger to start conversion by the A/D converter.
+An INT signal from the slave while the master is in the up state is not output.
+Carrier cycle
+TAPAnTADOUT0
+TAPAnTUDCM0
+(up/down)
+Positive phase output
+(timer)
+Negative phase output
+(timer)
+TAPAnTIVLY0
+TAPAnTCDENS0
+
+=== PAGE 1239 (index 1238) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1219 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+Figure 19-5
+TAPAnATS = {0,1}: INT Output while Master Channel is in the Up State
+An INT signal from the slave while the master is in the up state is output as a 
+trigger to start conversion by the A/D converter.
+An INT signal from the slave while the master is in the down state is not output.
+Figure 19-6
+TAPAnATS = {1, 0}: INT Output while Master Channel is in either the 
+Down or Up State
+An INT signal from the slave at any time is output as a trigger to start 
+conversion by the A/D converter.
+Carrier cycle
+TAPAnTADOUT0
+TAPAnTUDCM0
+(up/down)
+Positive phase output
+(timer)
+Negative phase output
+(timer)
+TAPAnTIVLY0
+TAPAnTCDENS0
+Carrier cycle
+TAPAnTADOUT0
+TAPAnTUDCM0
+(up/down)
+Positive phase output
+(timer)
+Negative phase output
+(timer)
+TAPAnTIVLY0
+TAPAnTCDENS0
+
+=== PAGE 1240 (index 1239) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1220 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+Figure 19-7
+TAPAnATS = {1, 1}: Output of INT and Valley Interrupt while Master 
+Channel is in either the Down or Up State
+An INT signal or valley interrupt signal from the slave is output as a trigger to 
+start conversion by the A/D converter.
+Carrier cycle
+TAPAnTADOUT0
+TAPAnTUDCM0
+(up/down)
+Positive phase output
+(timer)
+Negative phase output
+(timer)
+TAPAnTIVLY0
+TAPAnTCDENS0
+
+=== PAGE 1241 (index 1240) ===
+R01UH0098EJ0100 Rev.1.00
+Page 1221 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 19　Timer Option Module (TAPA)
+(3)
+Operating Procedure for Setting a Trigger to Start Conversion by the A/D 
+Converter
+The operating procedure for setting a trigger to start conversion by the A/D 
+converter is as follows.
+Operation
+States of TAUA and TAPA
+Initial settings
+Initialize TAUA.
+Determine the timer's operating mode.
+TAUA and TAPA are stopped.
+Setting in the TAPAnCTL1 register.
+Set TAPAnATS[1:0] bits (for TAPAnTADOUT0).
+Set TAPAnATS[3:2] (for TAPAnTADOUT1).
+Start 
+operation
+Start the TAUA module.
+TAUA starts counting.
+During operation
+TAUA runs in accord with the settings for the 
+various functions.
+The A/D converter conversion trigger selector 
+outputs TAPAnTADOUT0 in accord with the 
+settings of TAPAnATS[1:0] or TAPAnTADOUT1 
+in accord with the settings of TAPAnATS[3:2], 
+based on the slave match detection signal
+(TAPAnTCDENS1 or TAPAnTCDENS0) and up/
+down input (TAPAnTUDCM0) from the TAUA 
+and the valley interrupt signal (TAPAnTIVLY0) 
+generated by TAPA.
+Stopping 
+operation
+Stopping the TAUA module.
+TAUA stops counting.
+Restart operation

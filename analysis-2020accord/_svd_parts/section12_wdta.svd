@@ -1,0 +1,75 @@
+<!-- Section 12: Window Watchdog Timer A (WDTA) — UPD70F3508GJA2 -->
+<!-- Source: PDF pages 506-516 (manual pages 486-496) -->
+<!-- One instance: WDTA0, base 0xFF806000 -->
+<!-- Registers: WDTAnWDTE @ base+0x0000, WDTAnMD @ base+0x000C -->
+
+<peripheral>
+  <name>WDTA0</name>
+  <description>Window Watchdog Timer A, instance 0</description>
+  <baseAddress>0xFF806000</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x10</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <!-- (1) WDTAnWDTE — WDTA Enable Register (Table 12-7, page 495) -->
+    <!-- Address: <WDTAn_base> + 0000H = 0xFF806000 -->
+    <!-- Access: 8-bit R/W, Initial value: 2CH -->
+    <!-- Writing 0xAC triggers/restarts the counter (fixed activation code) -->
+    <register>
+      <name>WDTA0WDTE</name>
+      <description>WDTA0 Enable Register — start control and trigger register; write 0xAC to trigger</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x2C</resetValue>
+      <fields>
+        <field>
+          <name>WDTA0RUN</name>
+          <description>WDTA0 enable: 0=disabled, 1=enabled; cleared only by reset once set</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <!-- Bits [6:0] hold the trigger/activation pattern; no individually named sub-bits documented -->
+      </fields>
+    </register>
+
+    <!-- (2) WDTAnMD — WDTA Mode Register (Table 12-8, page 496) -->
+    <!-- Address: <WDTAn_base> + 000CH = 0xFF80600C -->
+    <!-- Access: 8-bit R/W, Initial value: 7FH -->
+    <!-- Bit 7 is read-only (always 0); writes to bit 7 are ignored -->
+    <register>
+      <name>WDTA0MD</name>
+      <description>WDTA0 Mode Register — overflow time, 75% interrupt, error mode, window-open period</description>
+      <addressOffset>0xC</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x7F</resetValue>
+      <fields>
+        <!-- Bit 7: read-only, always 0 — omitted per spec (reserved/0) -->
+        <field>
+          <name>WDTA0OVF</name>
+          <description>Overflow time select [OVF2:OVF1:OVF0]: 000=2^9, 001=2^10, 010=2^11, 011=2^12, 100=2^13, 101=2^14, 110=2^15, 111=2^16 (all /WDTATCKI)</description>
+          <bitRange>[6:4]</bitRange>
+        </field>
+        <field>
+          <name>WDTA0WIE</name>
+          <description>75% interrupt enable: 0=WDTAnTIT disabled, 1=WDTAnTIT enabled</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>WDTA0ERM</name>
+          <description>Error mode select: 0=NMI request mode (WDTAnTNMI), 1=Reset mode (WDTAnTRES)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>WDTA0WS</name>
+          <description>Window-open period [WS1:WS0]: 00=25%, 01=50%, 10=75%, 11=100%</description>
+          <bitRange>[1:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

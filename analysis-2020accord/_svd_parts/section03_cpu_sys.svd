@@ -1,0 +1,163 @@
+<!-- Section 3: CPU System Function — V850E2/Px4 (UPD70F3508) -->
+<!-- Source: UPD70F3508GJA2-GBG-AX-1.pdf, pp.157-164 (PDF pp.177-184) -->
+<!-- Peripherals: CPUREG (PEID), DFLASH (DCLKWAIT), SYSERR (SEG_CONT, SEG_FLAG) -->
+<!--
+  Notes:
+  - PPU registers (PPVn/PPTn/PPPn/PPSn, n=0..8): base <PPU_base>=0xFFFF5100 is defined
+    on p.164 (PDF p.164). Individual register offsets are defined in the V850E2M
+    Architecture Manual (R01US0001E), not in this PDF section. Skipped here; the INTC
+    section extractor should pick them up if they appear with offsets.
+  - TSU registers: base <TSU_base>=0xFFFF5000 given on p.168 (PDF p.168). Same situation
+    as PPU — offsets in arch manual only. Skipped.
+  - SEG_CONTL / SEG_FLAGL are 8-bit aliases for the lower byte of SEG_CONT / SEG_FLAG
+    at the same addresses. Represented here by the 16-bit master registers with full
+    field definitions. The lower-byte alias is noted in descriptions.
+-->
+
+<peripheral>
+  <name>CPUREG</name>
+  <description>CPU Processor Element Identifier Register (Section 3.6)</description>
+  <baseAddress>0xFFFF6490</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x2</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+    <register>
+      <name>PEID</name>
+      <description>Processor Element Identifier Register — returns the processor-element identifier of the last accessing CPU</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0001</resetValue>
+      <fields>
+        <field>
+          <name>PEID</name>
+          <description>Processor element ID; always reads as 0001H</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+  </registers>
+</peripheral>
+
+<peripheral>
+  <name>DFLASH</name>
+  <description>Data Flash Access Wait Setting Register (Section 3.6)</description>
+  <baseAddress>0xFF436000</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x1</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+    <register>
+      <name>DCLKWAIT</name>
+      <description>Data Flash Access Wait Setting Register — sets waiting time for access to data-flash memory</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x17</resetValue>
+      <fields>
+        <field>
+          <name>WAIT</name>
+          <description>Wait cycle setting for data-flash access; valid values: 08H=48MHz, 0AH=64MHz, 0BH=80MHz, 13H=160MHz, 17H=initial</description>
+          <bitRange>[4:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+  </registers>
+</peripheral>
+
+<peripheral>
+  <name>SYSERR</name>
+  <description>System Error Notification Function Registers (Section 3.7)</description>
+  <baseAddress>0xFFFF64B0</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x4</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+    <register>
+      <name>SEG_CONT</name>
+      <description>System Error Control Register — enables SYSERR exception generation per error source. Lower byte also accessible as SEG_CONTL (8- and 1-bit units)</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <!-- Bits [15:8] are reserved, read as 0 -->
+        <field>
+          <name>SEG_CONTDMAE</name>
+          <description>DMA/DTS error notification enable: 0=SYSERR not generated, 1=SYSERR generated on DMA/DTS ECC or reserved-area error</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <!-- Bit 6 reserved, read as 0 -->
+        <field>
+          <name>SEG_CONTSEGE</name>
+          <description>Reserved area access notification enable: 0=SYSERR not generated, 1=SYSERR generated on CPU access to reserved/undefined area</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>SEG_CONTRAME</name>
+          <description>CPU on-chip RAM area error notification enable: 0=SYSERR not generated, 1=SYSERR generated on uncorrectable RAM ECC error</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <!-- Bit 3 reserved, read as 0 -->
+        <field>
+          <name>SEG_CONTEXTE</name>
+          <description>EXT area error notification enable: 0=SYSERR not generated, 1=SYSERR generated on data-flash error or peripheral I/O SLV/UAA/ATO error</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>SEG_CONTFCHE</name>
+          <description>Code flash error notification enable: 0=SYSERR not generated, 1=SYSERR generated on uncorrectable code-flash ECC error</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <!-- Bit 0 reserved, read as 0 -->
+      </fields>
+    </register>
+
+    <register>
+      <name>SEG_FLAG</name>
+      <description>System Error Flag Register — stores system error detection results. Lower byte also accessible as SEG_FLAGL (8- and 1-bit units). Cleared by read-1/write-0 sequence</description>
+      <addressOffset>0x2</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <!-- Bits [15:8] are reserved, read as 0 -->
+        <field>
+          <name>SEG_FLAGDMAF</name>
+          <description>DMA/DTS error flag: set when DMA/DTS access causes code-flash ECC error, RAM ECC error, or reserved-area access</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <!-- Bit 6 reserved, read as 0 -->
+        <field>
+          <name>SEG_FLAGSEGF</name>
+          <description>Reserved area error flag: set when CPU accesses the reserved/undefined area</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>SEG_FLAGRAMF</name>
+          <description>CPU on-chip RAM area error flag: set when CPU access causes uncorrectable RAM ECC error</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <!-- Bit 3 reserved, read as 0 -->
+        <field>
+          <name>SEG_FLAGEXTF</name>
+          <description>EXT area error flag: set when CPU access to data-flash or peripheral I/O causes SLV/UAA/ATO/data-flash error</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>SEG_FLAGFCHF</name>
+          <description>Code flash error flag: set when CPU access to code-flash area causes uncorrectable ECC error</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <!-- Bit 0 reserved, read as 0 -->
+      </fields>
+    </register>
+  </registers>
+</peripheral>

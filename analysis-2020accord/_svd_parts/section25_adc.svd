@@ -1,0 +1,1742 @@
+<peripheral>
+  <name>ADCA0_CTRL</name>
+  <description>A/D Converter A0 - Control/Config register block (ADCAn_base0=0xFF81D000, offsets 0x100-0x123)</description>
+  <baseAddress>0xFF81D100</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x24</size><usage>registers</usage></addressBlock>
+  <registers>
+    <register>
+      <name>ADCA0CTL0</name>
+      <description>A/D Converter Mode Control Register 0</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0OEM4</name>
+          <description>Error interrupt mask for LCR overwrite (0=generate, 1=suppress)</description>
+          <bitRange>[12:12]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0OEM3</name>
+          <description>Error interrupt mask for DB2CR overwrite</description>
+          <bitRange>[11:11]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0OEM2</name>
+          <description>Error interrupt mask for DB1CR overwrite</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0OEM1</name>
+          <description>Error interrupt mask for DB0CR overwrite</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0OEM0</name>
+          <description>Error interrupt mask for CmCR overwrite</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0CE</name>
+          <description>A/D converter enable (0=disable, 1=enable)</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0SCT2</name>
+          <description>CG2 scan list repetitions in one-shot mode (00=1,01=2,10=3,11=4)</description>
+          <bitRange>[5:4]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0SCT1</name>
+          <description>CG1 scan list repetitions in one-shot mode</description>
+          <bitRange>[3:2]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0SCT0</name>
+          <description>CG0 scan list repetitions in one-shot mode</description>
+          <bitRange>[1:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0CTL1</name>
+      <description>A/D Converter Mode Control Register 1</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x01000008</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0T2ETS</name>
+          <description>Valid edge of HW trigger ADCAnTTRG2 (00=none,01=rise,10=fall,11=both)</description>
+          <bitRange>[31:30]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0T1ETS</name>
+          <description>Valid edge of HW trigger ADCAnTTRG1</description>
+          <bitRange>[29:28]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0T0ETS</name>
+          <description>Valid edge of HW trigger ADCAnTTRG0</description>
+          <bitRange>[27:26]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0CRAC</name>
+          <description>Conversion result alignment (0=right-aligned, 1=left-aligned)</description>
+          <bitRange>[24:24]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0MD1</name>
+          <description>CG0 start trigger mode (0=SW only, 1=HW+SW)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0MD0</name>
+          <description>CG0 conversion mode (0=one-shot, 1=continuous)</description>
+          <bitRange>[20:20]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0DISC</name>
+          <description>Discharge function enable (0=disable, 1=enable)</description>
+          <bitRange>[17:17]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0RCL</name>
+          <description>Result clear-on-read (0=retain until overwrite, 1=clear after read)</description>
+          <bitRange>[16:16]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0CTYP</name>
+          <description>Resolution select (0=12-bit, 1=10-bit)</description>
+          <bitRange>[15:15]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0STL</name>
+          <description>ADCAnCNVi signal polarity (0=high=active, 1=low=active)</description>
+          <bitRange>[12:12]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0FR</name>
+          <description>ADCAnTCLK clock divider (0000=PCLK/2 ... 1110=PCLK/16)</description>
+          <bitRange>[11:8]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0TRM</name>
+          <description>Higher-priority interrupt behavior (bit5=CG1, bit4=CG0)</description>
+          <bitRange>[5:4]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0BPC</name>
+          <description>Buffer amplifier enable (0=disable, 1=enable)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0GPS</name>
+          <description>A/D converter power (0=off, 1=on)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0TSEL0</name>
+      <description>A/D Converter Trigger Select Control Register 0 (CG0)</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0T0SEL</name>
+          <description>HW trigger source select bitmask for CG0 (bit n=TTINn0n)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0TSEL1</name>
+      <description>A/D Converter Trigger Select Control Register 1 (CG1)</description>
+      <addressOffset>0xC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0T1SEL</name>
+          <description>HW trigger source select bitmask for CG1 (bit n=TTINn0n)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0TSEL2</name>
+      <description>A/D Converter Trigger Select Control Register 2 (CG2)</description>
+      <addressOffset>0x10</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0T2SEL</name>
+          <description>HW trigger source select bitmask for CG2 (bit n=TTINn0n)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0CNT</name>
+      <description>A/D Converter Stabilization Counter</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0CNT</name>
+          <description>Stabilization time = CNT[7:0] x PCLK cycles</description>
+          <bitRange>[7:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0SHCTL</name>
+      <description>A/D Converter Channel Sample and Hold Control Register</description>
+      <addressOffset>0x18</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0CPS</name>
+          <description>Channel S/H power supply control bits [12:0] (bit x-1 = CHx)</description>
+          <bitRange>[28:16]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0CSEL</name>
+          <description>Channel S/H function enable bits [12:0] (bit x-1 = CHx)</description>
+          <bitRange>[12:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0DGCTL1</name>
+      <description>A/D Converter Self-Diagnosis Function Control Register 1</description>
+      <addressOffset>0x1C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0CDG</name>
+          <description>Diagnostic voltage select per channel (0=analog pin, 1=reference voltage)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0PDCTL0</name>
+      <description>A/D Converter Internal Pull-Down Resistance Control Register 0</description>
+      <addressOffset>0x20</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0PDNA</name>
+          <description>Internal pull-down resistor per channel (bit n-1 = CHn)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+  </registers>
+</peripheral>
+
+<peripheral>
+  <name>ADCA0_DATA</name>
+  <description>A/D Converter A0 - Data/Status/Trigger register block (ADCAn_base1=0xFFFFDC00, offsets 0x00-0xDD)</description>
+  <baseAddress>0xFFFFDC00</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0xDE</size><usage>registers</usage></addressBlock>
+  <registers>
+    <register>
+      <name>ADCA0CG0</name>
+      <description>A/D Converter Channel Group Register 0 (scan list)</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0DIAG</name>
+          <description>Enable diagnostic ADDIAGOUT conversion after CG0 scan (CG0 only)</description>
+          <bitRange>[31:31]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0CG0S</name>
+          <description>Channel scan list bitmask for CG0 (bit n-1=CHn, bits 23:0)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0CG1</name>
+      <description>A/D Converter Channel Group Register 1 (scan list)</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0CG1S</name>
+          <description>Channel scan list bitmask for CG1 (bit n-1=CHn, bits 23:0)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0CG2</name>
+      <description>A/D Converter Channel Group Register 2 (scan list)</description>
+      <addressOffset>0x8</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0CG2S</name>
+          <description>Channel scan list bitmask for CG2 (bit n-1=CHn, bits 23:0)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0IOC0</name>
+      <description>A/D Converter Interrupt Control Register 0</description>
+      <addressOffset>0xC</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0CG0IDG</name>
+          <description>Generate INTADCAnT0 on diagnostic conversion completion (CG0 only)</description>
+          <bitRange>[31:31]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0CG0I</name>
+          <description>Interrupt enable per channel for CG0 (bit n-1=CHn, 0=no INT, 1=INT)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0IOC1</name>
+      <description>A/D Converter Interrupt Control Register 1</description>
+      <addressOffset>0x10</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0CG1I</name>
+          <description>Interrupt enable per channel for CG1 (bit n-1=CHn, 0=no INT, 1=INT)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0IOC2</name>
+      <description>A/D Converter Interrupt Control Register 2</description>
+      <addressOffset>0x14</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0CG2I</name>
+          <description>Interrupt enable per channel for CG2 (bit n-1=CHn, 0=no INT, 1=INT)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0CTL2</name>
+      <description>A/D Conversion Result Check Register (upper/lower limit enable per channel)</description>
+      <addressOffset>0x18</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0RCK</name>
+          <description>Upper/lower limit comparison enable per channel (bit n-1=CHn)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0UL</name>
+      <description>A/D Conversion Result Upper Limit</description>
+      <addressOffset>0x1C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0ULV</name>
+          <description>Upper limit value for result range check (bits 11:0)</description>
+          <bitRange>[11:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0LL</name>
+      <description>A/D Conversion Result Lower Limit</description>
+      <addressOffset>0x20</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0LLV</name>
+          <description>Lower limit value for result range check (bits 11:0)</description>
+          <bitRange>[11:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0STR0</name>
+      <description>A/D Converter Result Upper/Lower Limit Comparison Error Flag</description>
+      <addressOffset>0x24</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0RCE</name>
+          <description>Result out-of-range error per channel (bit n-1=CHn)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0STR1</name>
+      <description>A/D Converter Overwrite Error Flag Register</description>
+      <addressOffset>0x28</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0OWE</name>
+          <description>Overwrite error per channel (bit n-1=CHn)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0STR2</name>
+      <description>A/D Converter Status Flag Register 2</description>
+      <addressOffset>0x2C</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0RQ</name>
+          <description>Conversion request pending per CG (bits 10:8, bit i=CGi)</description>
+          <bitRange>[10:8]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0ST</name>
+          <description>Conversion currently active per CG (bits 2:0, bit i=CGi)</description>
+          <bitRange>[2:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0STC0</name>
+      <description>ADCAnSTR0 Flag Clear Register</description>
+      <addressOffset>0x30</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0RCEC</name>
+          <description>Clear result range error flags (write 1 to clear; bit n-1=CHn)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0STC1</name>
+      <description>ADCAnSTR1 Flag Clear Register</description>
+      <addressOffset>0x34</addressOffset>
+      <size>32</size>
+      <access>write-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0OWEC</name>
+          <description>Clear overwrite error flags (write 1 to clear; bit n-1=CHn)</description>
+          <bitRange>[23:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0STC2</name>
+      <description>ADCAnSTR2 Flag Clear Register</description>
+      <addressOffset>0x38</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0LERC1</name>
+          <description>Clear LCR overwrite flag (write 1 to clear)</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0LERC0</name>
+          <description>Clear LCR result-check error flag</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0DB2ERC1</name>
+          <description>Clear DB2CR overwrite flag</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0DB2ERC0</name>
+          <description>Clear DB2CR result-check error flag</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0DB1ERC1</name>
+          <description>Clear DB1CR overwrite flag</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0DB1ERC0</name>
+          <description>Clear DB1CR result-check error flag</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0DB0ERC1</name>
+          <description>Clear DB0CR overwrite flag</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0DB0ERC0</name>
+          <description>Clear DB0CR result-check error flag</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C01CR</name>
+      <description>A/D Converter Conversion Result Register Channel 1</description>
+      <addressOffset>0x40</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03010000</resetValue>
+      <fields>
+        <field>
+          <name>C01CG</name>
+          <description>CG that produced CH1 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C01ER1</name>
+          <description>Overwrite error for CH1 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C01ER0</name>
+          <description>Result range error for CH1 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C01UR</name>
+          <description>Unread flag for CH1 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C01CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x01)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C01CR</name>
+          <description>A/D conversion result value for CH1 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C02CR</name>
+      <description>A/D Converter Conversion Result Register Channel 2</description>
+      <addressOffset>0x44</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03020000</resetValue>
+      <fields>
+        <field>
+          <name>C02CG</name>
+          <description>CG that produced CH2 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C02ER1</name>
+          <description>Overwrite error for CH2 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C02ER0</name>
+          <description>Result range error for CH2 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C02UR</name>
+          <description>Unread flag for CH2 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C02CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x02)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C02CR</name>
+          <description>A/D conversion result value for CH2 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C03CR</name>
+      <description>A/D Converter Conversion Result Register Channel 3</description>
+      <addressOffset>0x48</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03030000</resetValue>
+      <fields>
+        <field>
+          <name>C03CG</name>
+          <description>CG that produced CH3 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C03ER1</name>
+          <description>Overwrite error for CH3 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C03ER0</name>
+          <description>Result range error for CH3 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C03UR</name>
+          <description>Unread flag for CH3 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C03CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x03)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C03CR</name>
+          <description>A/D conversion result value for CH3 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C04CR</name>
+      <description>A/D Converter Conversion Result Register Channel 4</description>
+      <addressOffset>0x4C</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03040000</resetValue>
+      <fields>
+        <field>
+          <name>C04CG</name>
+          <description>CG that produced CH4 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C04ER1</name>
+          <description>Overwrite error for CH4 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C04ER0</name>
+          <description>Result range error for CH4 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C04UR</name>
+          <description>Unread flag for CH4 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C04CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x04)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C04CR</name>
+          <description>A/D conversion result value for CH4 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C05CR</name>
+      <description>A/D Converter Conversion Result Register Channel 5</description>
+      <addressOffset>0x50</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03050000</resetValue>
+      <fields>
+        <field>
+          <name>C05CG</name>
+          <description>CG that produced CH5 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C05ER1</name>
+          <description>Overwrite error for CH5 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C05ER0</name>
+          <description>Result range error for CH5 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C05UR</name>
+          <description>Unread flag for CH5 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C05CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x05)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C05CR</name>
+          <description>A/D conversion result value for CH5 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C06CR</name>
+      <description>A/D Converter Conversion Result Register Channel 6</description>
+      <addressOffset>0x54</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03060000</resetValue>
+      <fields>
+        <field>
+          <name>C06CG</name>
+          <description>CG that produced CH6 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C06ER1</name>
+          <description>Overwrite error for CH6 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C06ER0</name>
+          <description>Result range error for CH6 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C06UR</name>
+          <description>Unread flag for CH6 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C06CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x06)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C06CR</name>
+          <description>A/D conversion result value for CH6 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C07CR</name>
+      <description>A/D Converter Conversion Result Register Channel 7</description>
+      <addressOffset>0x58</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03070000</resetValue>
+      <fields>
+        <field>
+          <name>C07CG</name>
+          <description>CG that produced CH7 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C07ER1</name>
+          <description>Overwrite error for CH7 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C07ER0</name>
+          <description>Result range error for CH7 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C07UR</name>
+          <description>Unread flag for CH7 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C07CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x07)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C07CR</name>
+          <description>A/D conversion result value for CH7 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C08CR</name>
+      <description>A/D Converter Conversion Result Register Channel 8</description>
+      <addressOffset>0x5C</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03080000</resetValue>
+      <fields>
+        <field>
+          <name>C08CG</name>
+          <description>CG that produced CH8 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C08ER1</name>
+          <description>Overwrite error for CH8 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C08ER0</name>
+          <description>Result range error for CH8 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C08UR</name>
+          <description>Unread flag for CH8 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C08CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x08)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C08CR</name>
+          <description>A/D conversion result value for CH8 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C09CR</name>
+      <description>A/D Converter Conversion Result Register Channel 9</description>
+      <addressOffset>0x60</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03090000</resetValue>
+      <fields>
+        <field>
+          <name>C09CG</name>
+          <description>CG that produced CH9 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C09ER1</name>
+          <description>Overwrite error for CH9 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C09ER0</name>
+          <description>Result range error for CH9 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C09UR</name>
+          <description>Unread flag for CH9 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C09CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x09)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C09CR</name>
+          <description>A/D conversion result value for CH9 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C10CR</name>
+      <description>A/D Converter Conversion Result Register Channel 10</description>
+      <addressOffset>0x64</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x030A0000</resetValue>
+      <fields>
+        <field>
+          <name>C10CG</name>
+          <description>CG that produced CH10 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C10ER1</name>
+          <description>Overwrite error for CH10 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C10ER0</name>
+          <description>Result range error for CH10 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C10UR</name>
+          <description>Unread flag for CH10 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C10CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x0A)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C10CR</name>
+          <description>A/D conversion result value for CH10 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C11CR</name>
+      <description>A/D Converter Conversion Result Register Channel 11</description>
+      <addressOffset>0x68</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x030B0000</resetValue>
+      <fields>
+        <field>
+          <name>C11CG</name>
+          <description>CG that produced CH11 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C11ER1</name>
+          <description>Overwrite error for CH11 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C11ER0</name>
+          <description>Result range error for CH11 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C11UR</name>
+          <description>Unread flag for CH11 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C11CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x0B)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C11CR</name>
+          <description>A/D conversion result value for CH11 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C12CR</name>
+      <description>A/D Converter Conversion Result Register Channel 12</description>
+      <addressOffset>0x6C</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x030C0000</resetValue>
+      <fields>
+        <field>
+          <name>C12CG</name>
+          <description>CG that produced CH12 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C12ER1</name>
+          <description>Overwrite error for CH12 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C12ER0</name>
+          <description>Result range error for CH12 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C12UR</name>
+          <description>Unread flag for CH12 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C12CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x0C)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C12CR</name>
+          <description>A/D conversion result value for CH12 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C13CR</name>
+      <description>A/D Converter Conversion Result Register Channel 13</description>
+      <addressOffset>0x70</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x030D0000</resetValue>
+      <fields>
+        <field>
+          <name>C13CG</name>
+          <description>CG that produced CH13 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C13ER1</name>
+          <description>Overwrite error for CH13 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C13ER0</name>
+          <description>Result range error for CH13 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C13UR</name>
+          <description>Unread flag for CH13 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C13CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x0D)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C13CR</name>
+          <description>A/D conversion result value for CH13 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C14CR</name>
+      <description>A/D Converter Conversion Result Register Channel 14</description>
+      <addressOffset>0x74</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x030E0000</resetValue>
+      <fields>
+        <field>
+          <name>C14CG</name>
+          <description>CG that produced CH14 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C14ER1</name>
+          <description>Overwrite error for CH14 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C14ER0</name>
+          <description>Result range error for CH14 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C14UR</name>
+          <description>Unread flag for CH14 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C14CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x0E)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C14CR</name>
+          <description>A/D conversion result value for CH14 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C15CR</name>
+      <description>A/D Converter Conversion Result Register Channel 15</description>
+      <addressOffset>0x78</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x030F0000</resetValue>
+      <fields>
+        <field>
+          <name>C15CG</name>
+          <description>CG that produced CH15 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C15ER1</name>
+          <description>Overwrite error for CH15 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C15ER0</name>
+          <description>Result range error for CH15 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C15UR</name>
+          <description>Unread flag for CH15 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C15CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x0F)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C15CR</name>
+          <description>A/D conversion result value for CH15 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C16CR</name>
+      <description>A/D Converter Conversion Result Register Channel 16</description>
+      <addressOffset>0x7C</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03100000</resetValue>
+      <fields>
+        <field>
+          <name>C16CG</name>
+          <description>CG that produced CH16 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C16ER1</name>
+          <description>Overwrite error for CH16 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C16ER0</name>
+          <description>Result range error for CH16 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C16UR</name>
+          <description>Unread flag for CH16 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C16CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x10)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C16CR</name>
+          <description>A/D conversion result value for CH16 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C17CR</name>
+      <description>A/D Converter Conversion Result Register Channel 17</description>
+      <addressOffset>0x80</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03110000</resetValue>
+      <fields>
+        <field>
+          <name>C17CG</name>
+          <description>CG that produced CH17 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C17ER1</name>
+          <description>Overwrite error for CH17 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C17ER0</name>
+          <description>Result range error for CH17 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C17UR</name>
+          <description>Unread flag for CH17 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C17CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x11)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C17CR</name>
+          <description>A/D conversion result value for CH17 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C18CR</name>
+      <description>A/D Converter Conversion Result Register Channel 18</description>
+      <addressOffset>0x84</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03120000</resetValue>
+      <fields>
+        <field>
+          <name>C18CG</name>
+          <description>CG that produced CH18 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C18ER1</name>
+          <description>Overwrite error for CH18 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C18ER0</name>
+          <description>Result range error for CH18 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C18UR</name>
+          <description>Unread flag for CH18 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C18CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x12)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C18CR</name>
+          <description>A/D conversion result value for CH18 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C19CR</name>
+      <description>A/D Converter Conversion Result Register Channel 19</description>
+      <addressOffset>0x88</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03130000</resetValue>
+      <fields>
+        <field>
+          <name>C19CG</name>
+          <description>CG that produced CH19 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C19ER1</name>
+          <description>Overwrite error for CH19 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C19ER0</name>
+          <description>Result range error for CH19 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C19UR</name>
+          <description>Unread flag for CH19 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C19CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x13)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C19CR</name>
+          <description>A/D conversion result value for CH19 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C20CR</name>
+      <description>A/D Converter Conversion Result Register Channel 20</description>
+      <addressOffset>0x8C</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03140000</resetValue>
+      <fields>
+        <field>
+          <name>C20CG</name>
+          <description>CG that produced CH20 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C20ER1</name>
+          <description>Overwrite error for CH20 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C20ER0</name>
+          <description>Result range error for CH20 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C20UR</name>
+          <description>Unread flag for CH20 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C20CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x14)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C20CR</name>
+          <description>A/D conversion result value for CH20 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C21CR</name>
+      <description>A/D Converter Conversion Result Register Channel 21</description>
+      <addressOffset>0x90</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03150000</resetValue>
+      <fields>
+        <field>
+          <name>C21CG</name>
+          <description>CG that produced CH21 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C21ER1</name>
+          <description>Overwrite error for CH21 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C21ER0</name>
+          <description>Result range error for CH21 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C21UR</name>
+          <description>Unread flag for CH21 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C21CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x15)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C21CR</name>
+          <description>A/D conversion result value for CH21 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0C22CR</name>
+      <description>A/D Converter Conversion Result Register Channel 22</description>
+      <addressOffset>0x94</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03160000</resetValue>
+      <fields>
+        <field>
+          <name>C22CG</name>
+          <description>CG that produced CH22 result (00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>C22ER1</name>
+          <description>Overwrite error for CH22 (mirrors STR1.OWEm)</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>C22ER0</name>
+          <description>Result range error for CH22 (mirrors STR0.RCEm)</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>C22UR</name>
+          <description>Unread flag for CH22 (1=not yet read)</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>C22CN</name>
+          <description>Channel number of stored result (bits 20:16; fixed = 0x16)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>C22CR</name>
+          <description>A/D conversion result value for CH22 (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0DGCR</name>
+      <description>A/D Converter Diagnosis Conversion Result Register</description>
+      <addressOffset>0x9C</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0DGCRV</name>
+          <description>Diagnostic A/D conversion result (resolution/alignment per CTL1)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0LCR</name>
+      <description>A/D Converter Latest Conversion Result Register</description>
+      <addressOffset>0xA0</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x03000000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0LLCG</name>
+          <description>CG of latest result (bits 25:24; 00=CG0,01=CG1,10=CG2,11=none)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0LLER1</name>
+          <description>Overwrite error for latest result</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0LLER0</name>
+          <description>Result range error for latest result</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0LLUR</name>
+          <description>Latest result unread flag</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0LLCN</name>
+          <description>Channel number of latest result (bits 20:16)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>ADCA0LLCR</name>
+          <description>Latest A/D conversion result value (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0TRG0</name>
+      <description>A/D Converter Software Start Trigger Register 0 (CG0)</description>
+      <addressOffset>0xA4</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0STT0</name>
+          <description>Write 1 to start A/D conversion of CG0 (auto-clears)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0TRG1</name>
+      <description>A/D Converter Software Start Trigger Register 1 (CG1)</description>
+      <addressOffset>0xA8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0STT1</name>
+          <description>Write 1 to start A/D conversion of CG1 (auto-clears)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0TRG2</name>
+      <description>A/D Converter Software Start Trigger Register 2 (CG2)</description>
+      <addressOffset>0xAC</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0STT2</name>
+          <description>Write 1 to start A/D conversion of CG2 (auto-clears)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0TRG4</name>
+      <description>A/D Converter Software Stop Trigger Register 0 (CG0)</description>
+      <addressOffset>0xB4</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0SP0</name>
+          <description>Write 1 to stop A/D conversion of CG0</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0TRG5</name>
+      <description>A/D Converter Software Stop Trigger Register 1 (CG1)</description>
+      <addressOffset>0xB8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0SP1</name>
+          <description>Write 1 to stop A/D conversion of CG1</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0TRG6</name>
+      <description>A/D Converter Software Stop Trigger Register 2 (CG2)</description>
+      <addressOffset>0xBC</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0SP2</name>
+          <description>Write 1 to stop A/D conversion of CG2</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0DB0CR</name>
+      <description>A/D Converter CG0 DMA Buffer Register</description>
+      <addressOffset>0xC4</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>DB0CG</name>
+          <description>CG identifier in buffer (bits 25:24; fixed to CG0)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>DB0ER1</name>
+          <description>Overwrite error for CG0 buffer result</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>DB0ER0</name>
+          <description>Result range error for CG0 buffer result</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>DB0UR</name>
+          <description>Unread flag for CG0 buffer result</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>DB0CN</name>
+          <description>Channel number in CG0 buffer (bits 20:16)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>DB0CRV</name>
+          <description>A/D conversion result value in CG0 buffer (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0DB1CR</name>
+      <description>A/D Converter CG1 DMA Buffer Register</description>
+      <addressOffset>0xC8</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x01000000</resetValue>
+      <fields>
+        <field>
+          <name>DB1CG</name>
+          <description>CG identifier in buffer (bits 25:24; fixed to CG1)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>DB1ER1</name>
+          <description>Overwrite error for CG1 buffer result</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>DB1ER0</name>
+          <description>Result range error for CG1 buffer result</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>DB1UR</name>
+          <description>Unread flag for CG1 buffer result</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>DB1CN</name>
+          <description>Channel number in CG1 buffer (bits 20:16)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>DB1CRV</name>
+          <description>A/D conversion result value in CG1 buffer (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0DB2CR</name>
+      <description>A/D Converter CG2 DMA Buffer Register</description>
+      <addressOffset>0xCC</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x02000000</resetValue>
+      <fields>
+        <field>
+          <name>DB2CG</name>
+          <description>CG identifier in buffer (bits 25:24; fixed to CG2)</description>
+          <bitRange>[25:24]</bitRange>
+        </field>
+        <field>
+          <name>DB2ER1</name>
+          <description>Overwrite error for CG2 buffer result</description>
+          <bitRange>[23:23]</bitRange>
+        </field>
+        <field>
+          <name>DB2ER0</name>
+          <description>Result range error for CG2 buffer result</description>
+          <bitRange>[22:22]</bitRange>
+        </field>
+        <field>
+          <name>DB2UR</name>
+          <description>Unread flag for CG2 buffer result</description>
+          <bitRange>[21:21]</bitRange>
+        </field>
+        <field>
+          <name>DB2CN</name>
+          <description>Channel number in CG2 buffer (bits 20:16)</description>
+          <bitRange>[20:16]</bitRange>
+        </field>
+        <field>
+          <name>DB2CRV</name>
+          <description>A/D conversion result value in CG2 buffer (bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0DB0CRL</name>
+      <description>A/D Converter CG0 DMA Buffer Register (Result Only, 16-bit)</description>
+      <addressOffset>0xD0</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>DB0CRL</name>
+          <description>A/D conversion result for CG0 (mirrors DB0CR bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0DB1CRL</name>
+      <description>A/D Converter CG1 DMA Buffer Register (Result Only, 16-bit)</description>
+      <addressOffset>0xD4</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>DB1CRL</name>
+          <description>A/D conversion result for CG1 (mirrors DB1CR bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0DB2CRL</name>
+      <description>A/D Converter CG2 DMA Buffer Register (Result Only, 16-bit)</description>
+      <addressOffset>0xD8</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>DB2CRL</name>
+          <description>A/D conversion result for CG2 (mirrors DB2CR bits 15:0)</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>ADCA0DGCTL0</name>
+      <description>A/D Converter Self-Diagnosis Function Control Register 0</description>
+      <addressOffset>0xDC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>ADCA0PSEL</name>
+          <description>Reference voltage select for diagnostic conversion ADDIAGOUT (bits 2:0)</description>
+          <bitRange>[2:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+  </registers>
+</peripheral>

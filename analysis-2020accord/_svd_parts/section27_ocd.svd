@@ -1,0 +1,16 @@
+<!-- Section 27: On-chip Debugging Unit (OCD) — PDF pages 2026–2031 (manual pp. 2006–2011)
+
+     This section describes the Nexus/IEEE-ISTO-5001 Class 1 on-chip debug interface
+     of the V850E2/Px4 (UPD70F3508).  The OCD is accessed exclusively through dedicated
+     pins (DCUTRST, DCUTCK, DCUTMS, DCUTDI, DCUTDO, DCUTRDY) using a serial debug
+     protocol — it exposes NO memory-mapped control registers visible to the CPU address
+     space.  Consequently there are no <peripheral> elements to emit for this section.
+
+     Contents of the six pages:
+       27.1  Functional Overview  (debug monitor, hardware/software breaks, RRM, DMM, …)
+       27.2  Connection with the On-Chip Debugging Emulator  (pin diagram + Table 27-1)
+       27.3  Notes on On-Chip Debugging  (12 operational cautions)
+
+     No register-overview table, no "Register in Detail" subsection, and no hex addresses
+     appear anywhere in these pages.  Nothing to extract.
+-->

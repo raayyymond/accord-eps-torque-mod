@@ -1,0 +1,1817 @@
+<peripheral>
+  <name>TSG20</name>
+  <description>TSG2 Three-phase PWM Timer 0 (Section 15)</description>
+  <baseAddress>0xFF82E200</baseAddress>
+  <!-- base0 cluster: control/IO registers at 0xFF82E200..0xFF82E211 -->
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x12</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <!-- base1 cluster: timer operation registers at 0xFFFFCC00..0xFFFFCCC5 -->
+  <addressBlock>
+    <offset>0x7CEA00</offset>
+    <size>0xC6</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+    <register>
+      <name>TS0IOC0</name>
+      <description>TSG2n I/O Control Register 0</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x7E</resetValue>
+      <fields>
+        <field>
+          <name>TS0TOE6_1</name>
+          <description>Enables/disables writing to TSnIOC2 for outputs TSG2nO6 to TSG2nO1 (bit per output)</description>
+          <bitRange>[6:1]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0IOC1</name>
+      <description>TSG2n I/O Control Register 1</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS0PTS</name>
+          <description>Enables/disables edge detection signal (TSnPTE) and two-phase encoder count (TSnPEC) output</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS0EOC</name>
+          <description>Enables/disables error interrupt (INTTSG2nIER) detection</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS0WOC</name>
+          <description>Enables/disables warning interrupt (INTTSG2nIWN) detection</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS0TGS</name>
+          <description>Enables/disables diagnostic output</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TS0OE0</name>
+          <description>Enables/disables TSG2nO0 output</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0CTL0</name>
+      <description>TSG2n Control Register 0</description>
+      <addressOffset>0x8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS0DWD</name>
+          <description>Selects the pulse width for the diagnostic output (0: 8 clocks, 1: 16 clocks)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS0MD</name>
+          <description>Selects timer mode (00: PWM, 01: HT-PWM, 10: SP-PWM, 11: 120-DC)</description>
+          <bitRange>[1:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0CTL1</name>
+      <description>TSG2n Control Register 1</description>
+      <addressOffset>0xC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS0TBA2</name>
+          <description>Enables/disables simultaneous active state detection of TSG2nO5 and TSG2nO6</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>TS0TBA1</name>
+          <description>Enables/disables simultaneous active state detection of TSG2nO3 and TSG2nO4</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>TS0TBA0</name>
+          <description>Enables/disables simultaneous active state detection of TSG2nO1 and TSG2nO2</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>TS0PPC</name>
+          <description>Enables/disables pattern change detection interrupt (INTTSG2nIPC)</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS0PEC</name>
+          <description>Enables/disables two-phase encoder count interrupt (INTTSG2nIPEC)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TS0TDC</name>
+          <description>Enables/disables dead time compare error interrupt (INTTSG2nIDT)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS0NDC</name>
+          <description>Enables/disables negative-side dead time compare error interrupt</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS0PRC</name>
+          <description>Enables/disables PWM output reload complete interrupt (INTTSG2nIPRC)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS0PTC</name>
+          <description>Selects operation after detection of pattern change (PTC[1:0])</description>
+          <bitRange>[1:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0DTPR</name>
+      <description>TSG2n Dead Time Protection Register</description>
+      <addressOffset>0x10</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS0DTCM</name>
+          <description>Dead time register write protection (0: enable rewrite, 1: disable rewrite)</description>
+          <bitRange>[15:15]</bitRange>
+        </field>
+        <field>
+          <name>TS0DTPR_WP</name>
+          <description>Write protection code (0000H to 7FFFH)</description>
+          <bitRange>[14:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0IOC2</name>
+      <description>TSG2n I/O Control Register 2</description>
+      <addressOffset>0x7CEA00</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS0OL6_1</name>
+          <description>Active level for TSG2nO6 to TSG2nO1 (0: high, 1: low; one bit per output)</description>
+          <bitRange>[14:9]</bitRange>
+        </field>
+        <field>
+          <name>TS0TO6_1</name>
+          <description>Latch level of output buffer for TSG2nO6 to TSG2nO1 (one bit per output)</description>
+          <bitRange>[6:1]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0CTL3</name>
+      <description>TSG2n Control Register 3</description>
+      <addressOffset>0x7CEA04</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS0RIA</name>
+          <description>Selects reload timing (0: peak/valley reload, 1: peak/valley interrupt)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TS0RMC</name>
+          <description>Selects compare register transfer timing (0: reload mode, 1: anytime rewrite)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0CTL5</name>
+      <description>TSG2n Control Register 5</description>
+      <addressOffset>0x7CEA08</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS0ACC01</name>
+          <description>Skipping rate for A/D trigger TSnADTRG0 (00: none, 01: 1/2, 10: 1/4, 11: 1/8)</description>
+          <bitRange>[11:10]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT09</name>
+          <description>Generate TSnADTRG0 at sub-counter peak (HT-PWM peak timing)</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT08</name>
+          <description>Generate TSnADTRG0 at sub-counter valley (HT-PWM valley timing)</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT07</name>
+          <description>Generate TSnADTRG0 at TSnDCMP2 match during decrement</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT06</name>
+          <description>Generate TSnADTRG0 at TSnDCMP2 match during increment</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT05</name>
+          <description>Generate TSnADTRG0 at TSnDCMP1 match during decrement (HT-PWM only)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT04</name>
+          <description>Generate TSnADTRG0 at TSnDCMP1 match during increment</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT03</name>
+          <description>Generate TSnADTRG0 at TSnDCMP0 match during decrement (HT-PWM only)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT02</name>
+          <description>Generate TSnADTRG0 at TSnDCMP0 match during increment</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT01</name>
+          <description>Generate TSnADTRG0 at peak interrupt timing</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT00</name>
+          <description>Generate TSnADTRG0 at valley interrupt timing</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0CTL6</name>
+      <description>TSG2n Control Register 6</description>
+      <addressOffset>0x7CEA0C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS0ACC11</name>
+          <description>Skipping rate for A/D trigger TSnADTRG1 (00: none, 01: 1/2, 10: 1/4, 11: 1/8)</description>
+          <bitRange>[11:10]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT19</name>
+          <description>Generate TSnADTRG1 at sub-counter peak (HT-PWM peak timing)</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT18</name>
+          <description>Generate TSnADTRG1 at sub-counter valley (HT-PWM valley timing)</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT17</name>
+          <description>Generate TSnADTRG1 at TSnDCMP2 match during decrement</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT16</name>
+          <description>Generate TSnADTRG1 at TSnDCMP2 match during increment</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT15</name>
+          <description>Generate TSnADTRG1 at TSnDCMP1 match during decrement (HT-PWM only)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT14</name>
+          <description>Generate TSnADTRG1 at TSnDCMP1 match during increment</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT13</name>
+          <description>Generate TSnADTRG1 at TSnDCMP0 match during decrement (HT-PWM only)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT12</name>
+          <description>Generate TSnADTRG1 at TSnDCMP0 match during increment</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT11</name>
+          <description>Generate TSnADTRG1 at peak interrupt timing</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TS0AT10</name>
+          <description>Generate TSnADTRG1 at valley interrupt timing</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0STR0</name>
+      <description>TSG2n Status Register 0</description>
+      <addressOffset>0x7CEA10</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS0CUF</name>
+          <description>Count direction of 16-bit counter (0: incrementing, 1: decrementing; HT-PWM only)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS0SUF</name>
+          <description>Count direction of 16-bit sub-counter (0: incrementing, 1: decrementing; HT-PWM only)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS0RSF</name>
+          <description>Reload request flag (0: no request or complete, 1: pending; reload mode only)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TS0TE</name>
+          <description>TSG2n operation status (0: stopped, 1: operating)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0STR1</name>
+      <description>TSG2n Status Register 1</description>
+      <addressOffset>0x7CEA14</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS0TSF</name>
+          <description>Pattern change order indicator (0: normal rotation, 1: reverse rotation)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS0OPF</name>
+          <description>Output pattern of timer output pins TSG2nO1 to TSG2nO6 (OPF[2:0])</description>
+          <bitRange>[2:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0STR2</name>
+      <description>TSG2n Status Register 2</description>
+      <addressOffset>0x7CEA18</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS0TBF2</name>
+          <description>Simultaneous active flag for TSG2nO5/TSG2nO6 (0: not simultaneous, 1: simultaneous)</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>TS0TBF1</name>
+          <description>Simultaneous active flag for TSG2nO3/TSG2nO4</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>TS0TBF0</name>
+          <description>Simultaneous active flag for TSG2nO1/TSG2nO2</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>TS0PPF</name>
+          <description>Pattern change detection flag</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS0PEF</name>
+          <description>Two-phase encoder count signal flag</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TS0TDF</name>
+          <description>Dead time compare error flag (positive-side)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS0NDF</name>
+          <description>Dead time compare error flag (negative-side)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS0PRF</name>
+          <description>PWM reload complete flag</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS0PTF</name>
+          <description>Pattern change complete flag</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0STC</name>
+      <description>TSG2n Status Clear Trigger Register</description>
+      <addressOffset>0x7CEA1C</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS0TBR2</name>
+          <description>Clear trigger for TSnSTR2.TSnTBF2</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>TS0TBR1</name>
+          <description>Clear trigger for TSnSTR2.TSnTBF1</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>TS0TBR0</name>
+          <description>Clear trigger for TSnSTR2.TSnTBF0</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>TS0PPR</name>
+          <description>Clear trigger for TSnSTR2.TSnPPF</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS0PER</name>
+          <description>Clear trigger for TSnSTR2.TSnPEF</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TS0TDR</name>
+          <description>Clear trigger for TSnSTR2.TSnTDF</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS0NDR</name>
+          <description>Clear trigger for TSnSTR2.TSnNDF</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS0PRR</name>
+          <description>Clear trigger for TSnSTR2.TSnPRF</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS0PTR</name>
+          <description>Clear trigger for TSnSTR2.TSnPTF</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0OPT0</name>
+      <description>TSG2n Option Register 0</description>
+      <addressOffset>0x7CEA20</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS0SOC</name>
+          <description>Enables/disables software control of timer output (TSG2nO1 to TSG2nO6)</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS0STE</name>
+          <description>Enables/disables pattern output trigger (TSG2nPTSI0-2 and TSnOPCI0-1 inputs)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TS0POT</name>
+          <description>Selects pattern output trigger (0: external pattern pins, 1: TSnOPCI0/1 edges)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS0PSS</name>
+          <description>Enables pattern output order switch factor by TSnPSC</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS0IDC</name>
+          <description>Output pattern order determination factor</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS0PSC</name>
+          <description>Pattern output order switch control</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TS0FPS</name>
+          <description>Selects fixed-pattern output or compare-match output</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0OPT1</name>
+      <description>TSG2n Option Register 1</description>
+      <addressOffset>0x7CEA24</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS0SPC</name>
+          <description>Timer output pattern for software output/120-DC mode (SPC[2:0])</description>
+          <bitRange>[2:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0CNT</name>
+      <description>TSG2n Counter Read Buffer Register</description>
+      <addressOffset>0x7CEA28</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0SBC</name>
+      <description>TSG2n Sub-Counter Read Buffer Register</description>
+      <addressOffset>0x7CEA2C</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0TRG0</name>
+      <description>TSG2n Trigger Register 0</description>
+      <addressOffset>0x7CEA30</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS0TS</name>
+          <description>Timer start trigger (1: start/restart timer; always reads 0)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0TRG1</name>
+      <description>TSG2n Trigger Register 1</description>
+      <addressOffset>0x7CEA34</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS0TT</name>
+          <description>Timer stop trigger (1: stop timer; always reads 0)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0CMP1W</name>
+      <description>TSG2n Compare Register 1 and 2 (word)</description>
+      <addressOffset>0x7CEA40</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP5W</name>
+      <description>TSG2n Compare Register 5 and 6 (word)</description>
+      <addressOffset>0x7CEA44</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP9W</name>
+      <description>TSG2n Compare Register 9 and 10 (word)</description>
+      <addressOffset>0x7CEA48</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP3W</name>
+      <description>TSG2n Compare Register 3 and 4 (word)</description>
+      <addressOffset>0x7CEA4C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP7W</name>
+      <description>TSG2n Compare Register 7 and 8 (word)</description>
+      <addressOffset>0x7CEA50</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP11W</name>
+      <description>TSG2n Compare Register 11 and 12 (word)</description>
+      <addressOffset>0x7CEA54</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP0</name>
+      <description>TSG2n Compare Register 0</description>
+      <addressOffset>0x7CEA58</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0DCMP0W</name>
+      <description>TSG2n Diagnostic Output Compare Register 0 and 1</description>
+      <addressOffset>0x7CEA5C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0DCMP2</name>
+      <description>TSG2n Diagnostic Output Compare Register 2</description>
+      <addressOffset>0x7CEA60</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0PAT0W</name>
+      <description>TSG2n Pattern Register 0</description>
+      <addressOffset>0x7CEA64</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0PAT1W</name>
+      <description>TSG2n Pattern Register 1</description>
+      <addressOffset>0x7CEA68</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0DTC0W</name>
+      <description>TSG2n Dead Time Setting Register 0</description>
+      <addressOffset>0x7CEA6C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0DTC1W</name>
+      <description>TSG2n Dead Time Setting Register 1</description>
+      <addressOffset>0x7CEA70</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS0IOC3</name>
+      <description>TSG2n I/O Control Register 3</description>
+      <addressOffset>0x7CEA74</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>TS0TOL6_1</name>
+          <description>Set/clear level control for TSG2nO6 to TSG2nO1 (0: normal, 1: inverted)</description>
+          <bitRange>[6:1]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0CTL2</name>
+      <description>TSG2n Control Register 2</description>
+      <addressOffset>0x7CEA78</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>TS0CKS</name>
+          <description>Selects count clock (0: PCLK, 1: PCLK gated by TSG2nCLKI)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0CTL4</name>
+      <description>TSG2n Control Register 4</description>
+      <addressOffset>0x7CEA7C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>TS0PRE</name>
+          <description>Enables/disables peak reload timing</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>TS0VRE</name>
+          <description>Enables/disables valley reload timing (valid in HT-PWM mode only)</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>TS0PIE</name>
+          <description>Enables/disables peak interrupt (INTTSG2nIPEK) generation</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS0VIE</name>
+          <description>Enables/disables valley interrupt (INTTSG2nIVLY) generation (HT-PWM only)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS0CMP1</name>
+      <description>TSG2n Compare Register 1</description>
+      <addressOffset>0x7CEA80</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP2</name>
+      <description>TSG2n Compare Register 2</description>
+      <addressOffset>0x7CEA84</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP5</name>
+      <description>TSG2n Compare Register 5</description>
+      <addressOffset>0x7CEA88</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP6</name>
+      <description>TSG2n Compare Register 6</description>
+      <addressOffset>0x7CEA8C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP9</name>
+      <description>TSG2n Compare Register 9</description>
+      <addressOffset>0x7CEA90</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP10</name>
+      <description>TSG2n Compare Register 10</description>
+      <addressOffset>0x7CEA94</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP3</name>
+      <description>TSG2n Compare Register 3</description>
+      <addressOffset>0x7CEA98</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP4</name>
+      <description>TSG2n Compare Register 4</description>
+      <addressOffset>0x7CEA9C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP7</name>
+      <description>TSG2n Compare Register 7</description>
+      <addressOffset>0x7CEAA0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP8</name>
+      <description>TSG2n Compare Register 8</description>
+      <addressOffset>0x7CEAA4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP11</name>
+      <description>TSG2n Compare Register 11</description>
+      <addressOffset>0x7CEAA8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMP12</name>
+      <description>TSG2n Compare Register 12</description>
+      <addressOffset>0x7CEAAC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMPU</name>
+      <description>TSG2n HT-PWM U Phase Compare Register</description>
+      <addressOffset>0x7CEAB0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMPV</name>
+      <description>TSG2n HT-PWM V Phase Compare Register</description>
+      <addressOffset>0x7CEAB4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0CMPW</name>
+      <description>TSG2n HT-PWM W Phase Compare Register</description>
+      <addressOffset>0x7CEAB8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0UPW</name>
+      <description>TSG2n SP-PWM U Phase Active Width Setting Register</description>
+      <addressOffset>0x7CEABC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0VPW</name>
+      <description>TSG2n SP-PWM V Phase Active Width Setting Register</description>
+      <addressOffset>0x7CEAC0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS0WPW</name>
+      <description>TSG2n SP-PWM W Phase Active Width Setting Register</description>
+      <addressOffset>0x7CEAC4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+  </registers>
+</peripheral>
+
+<peripheral>
+  <name>TSG21</name>
+  <description>TSG2 Three-phase PWM Timer 1 (Section 15)</description>
+  <baseAddress>0xFF82F200</baseAddress>
+  <!-- base0 cluster: control/IO registers at 0xFF82F200..0xFF82F211 -->
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x12</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <!-- base1 cluster: timer operation registers at 0xFFFFD000..0xFFFFD0C5 -->
+  <addressBlock>
+    <offset>0x7CDE00</offset>
+    <size>0xC6</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+    <register>
+      <name>TS1IOC0</name>
+      <description>TSG2n I/O Control Register 0</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x7E</resetValue>
+      <fields>
+        <field>
+          <name>TS1TOE6_1</name>
+          <description>Enables/disables writing to TSnIOC2 for outputs TSG2nO6 to TSG2nO1 (bit per output)</description>
+          <bitRange>[6:1]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1IOC1</name>
+      <description>TSG2n I/O Control Register 1</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS1PTS</name>
+          <description>Enables/disables edge detection signal (TSnPTE) and two-phase encoder count (TSnPEC) output</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS1EOC</name>
+          <description>Enables/disables error interrupt (INTTSG2nIER) detection</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS1WOC</name>
+          <description>Enables/disables warning interrupt (INTTSG2nIWN) detection</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS1TGS</name>
+          <description>Enables/disables diagnostic output</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TS1OE0</name>
+          <description>Enables/disables TSG2nO0 output</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1CTL0</name>
+      <description>TSG2n Control Register 0</description>
+      <addressOffset>0x8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS1DWD</name>
+          <description>Selects the pulse width for the diagnostic output (0: 8 clocks, 1: 16 clocks)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS1MD</name>
+          <description>Selects timer mode (00: PWM, 01: HT-PWM, 10: SP-PWM, 11: 120-DC)</description>
+          <bitRange>[1:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1CTL1</name>
+      <description>TSG2n Control Register 1</description>
+      <addressOffset>0xC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS1TBA2</name>
+          <description>Enables/disables simultaneous active state detection of TSG2nO5 and TSG2nO6</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>TS1TBA1</name>
+          <description>Enables/disables simultaneous active state detection of TSG2nO3 and TSG2nO4</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>TS1TBA0</name>
+          <description>Enables/disables simultaneous active state detection of TSG2nO1 and TSG2nO2</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>TS1PPC</name>
+          <description>Enables/disables pattern change detection interrupt (INTTSG2nIPC)</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS1PEC</name>
+          <description>Enables/disables two-phase encoder count interrupt (INTTSG2nIPEC)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TS1TDC</name>
+          <description>Enables/disables dead time compare error interrupt (INTTSG2nIDT)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS1NDC</name>
+          <description>Enables/disables negative-side dead time compare error interrupt</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS1PRC</name>
+          <description>Enables/disables PWM output reload complete interrupt (INTTSG2nIPRC)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS1PTC</name>
+          <description>Selects operation after detection of pattern change (PTC[1:0])</description>
+          <bitRange>[1:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1DTPR</name>
+      <description>TSG2n Dead Time Protection Register</description>
+      <addressOffset>0x10</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS1DTCM</name>
+          <description>Dead time register write protection (0: enable rewrite, 1: disable rewrite)</description>
+          <bitRange>[15:15]</bitRange>
+        </field>
+        <field>
+          <name>TS1DTPR_WP</name>
+          <description>Write protection code (0000H to 7FFFH)</description>
+          <bitRange>[14:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1IOC2</name>
+      <description>TSG2n I/O Control Register 2</description>
+      <addressOffset>0x7CDE00</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS1OL6_1</name>
+          <description>Active level for TSG2nO6 to TSG2nO1 (0: high, 1: low; one bit per output)</description>
+          <bitRange>[14:9]</bitRange>
+        </field>
+        <field>
+          <name>TS1TO6_1</name>
+          <description>Latch level of output buffer for TSG2nO6 to TSG2nO1 (one bit per output)</description>
+          <bitRange>[6:1]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1CTL3</name>
+      <description>TSG2n Control Register 3</description>
+      <addressOffset>0x7CDE04</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS1RIA</name>
+          <description>Selects reload timing (0: peak/valley reload, 1: peak/valley interrupt)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TS1RMC</name>
+          <description>Selects compare register transfer timing (0: reload mode, 1: anytime rewrite)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1CTL5</name>
+      <description>TSG2n Control Register 5</description>
+      <addressOffset>0x7CDE08</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS1ACC01</name>
+          <description>Skipping rate for A/D trigger TSnADTRG0 (00: none, 01: 1/2, 10: 1/4, 11: 1/8)</description>
+          <bitRange>[11:10]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT09</name>
+          <description>Generate TSnADTRG0 at sub-counter peak (HT-PWM peak timing)</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT08</name>
+          <description>Generate TSnADTRG0 at sub-counter valley (HT-PWM valley timing)</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT07</name>
+          <description>Generate TSnADTRG0 at TSnDCMP2 match during decrement</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT06</name>
+          <description>Generate TSnADTRG0 at TSnDCMP2 match during increment</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT05</name>
+          <description>Generate TSnADTRG0 at TSnDCMP1 match during decrement (HT-PWM only)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT04</name>
+          <description>Generate TSnADTRG0 at TSnDCMP1 match during increment</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT03</name>
+          <description>Generate TSnADTRG0 at TSnDCMP0 match during decrement (HT-PWM only)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT02</name>
+          <description>Generate TSnADTRG0 at TSnDCMP0 match during increment</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT01</name>
+          <description>Generate TSnADTRG0 at peak interrupt timing</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT00</name>
+          <description>Generate TSnADTRG0 at valley interrupt timing</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1CTL6</name>
+      <description>TSG2n Control Register 6</description>
+      <addressOffset>0x7CDE0C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS1ACC11</name>
+          <description>Skipping rate for A/D trigger TSnADTRG1 (00: none, 01: 1/2, 10: 1/4, 11: 1/8)</description>
+          <bitRange>[11:10]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT19</name>
+          <description>Generate TSnADTRG1 at sub-counter peak (HT-PWM peak timing)</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT18</name>
+          <description>Generate TSnADTRG1 at sub-counter valley (HT-PWM valley timing)</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT17</name>
+          <description>Generate TSnADTRG1 at TSnDCMP2 match during decrement</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT16</name>
+          <description>Generate TSnADTRG1 at TSnDCMP2 match during increment</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT15</name>
+          <description>Generate TSnADTRG1 at TSnDCMP1 match during decrement (HT-PWM only)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT14</name>
+          <description>Generate TSnADTRG1 at TSnDCMP1 match during increment</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT13</name>
+          <description>Generate TSnADTRG1 at TSnDCMP0 match during decrement (HT-PWM only)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT12</name>
+          <description>Generate TSnADTRG1 at TSnDCMP0 match during increment</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT11</name>
+          <description>Generate TSnADTRG1 at peak interrupt timing</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TS1AT10</name>
+          <description>Generate TSnADTRG1 at valley interrupt timing</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1STR0</name>
+      <description>TSG2n Status Register 0</description>
+      <addressOffset>0x7CDE10</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS1CUF</name>
+          <description>Count direction of 16-bit counter (0: incrementing, 1: decrementing; HT-PWM only)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS1SUF</name>
+          <description>Count direction of 16-bit sub-counter (0: incrementing, 1: decrementing; HT-PWM only)</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS1RSF</name>
+          <description>Reload request flag (0: no request or complete, 1: pending; reload mode only)</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TS1TE</name>
+          <description>TSG2n operation status (0: stopped, 1: operating)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1STR1</name>
+      <description>TSG2n Status Register 1</description>
+      <addressOffset>0x7CDE14</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS1TSF</name>
+          <description>Pattern change order indicator (0: normal rotation, 1: reverse rotation)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS1OPF</name>
+          <description>Output pattern of timer output pins TSG2nO1 to TSG2nO6 (OPF[2:0])</description>
+          <bitRange>[2:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1STR2</name>
+      <description>TSG2n Status Register 2</description>
+      <addressOffset>0x7CDE18</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS1TBF2</name>
+          <description>Simultaneous active flag for TSG2nO5/TSG2nO6 (0: not simultaneous, 1: simultaneous)</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>TS1TBF1</name>
+          <description>Simultaneous active flag for TSG2nO3/TSG2nO4</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>TS1TBF0</name>
+          <description>Simultaneous active flag for TSG2nO1/TSG2nO2</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>TS1PPF</name>
+          <description>Pattern change detection flag</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS1PEF</name>
+          <description>Two-phase encoder count signal flag</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TS1TDF</name>
+          <description>Dead time compare error flag (positive-side)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS1NDF</name>
+          <description>Dead time compare error flag (negative-side)</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS1PRF</name>
+          <description>PWM reload complete flag</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS1PTF</name>
+          <description>Pattern change complete flag</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1STC</name>
+      <description>TSG2n Status Clear Trigger Register</description>
+      <addressOffset>0x7CDE1C</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TS1TBR2</name>
+          <description>Clear trigger for TSnSTR2.TSnTBF2</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>TS1TBR1</name>
+          <description>Clear trigger for TSnSTR2.TSnTBF1</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>TS1TBR0</name>
+          <description>Clear trigger for TSnSTR2.TSnTBF0</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>TS1PPR</name>
+          <description>Clear trigger for TSnSTR2.TSnPPF</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS1PER</name>
+          <description>Clear trigger for TSnSTR2.TSnPEF</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TS1TDR</name>
+          <description>Clear trigger for TSnSTR2.TSnTDF</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS1NDR</name>
+          <description>Clear trigger for TSnSTR2.TSnNDF</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS1PRR</name>
+          <description>Clear trigger for TSnSTR2.TSnPRF</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS1PTR</name>
+          <description>Clear trigger for TSnSTR2.TSnPTF</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1OPT0</name>
+      <description>TSG2n Option Register 0</description>
+      <addressOffset>0x7CDE20</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS1SOC</name>
+          <description>Enables/disables software control of timer output (TSG2nO1 to TSG2nO6)</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS1STE</name>
+          <description>Enables/disables pattern output trigger (TSG2nPTSI0-2 and TSnOPCI0-1 inputs)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TS1POT</name>
+          <description>Selects pattern output trigger (0: external pattern pins, 1: TSnOPCI0/1 edges)</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TS1PSS</name>
+          <description>Enables pattern output order switch factor by TSnPSC</description>
+          <bitRange>[3:3]</bitRange>
+        </field>
+        <field>
+          <name>TS1IDC</name>
+          <description>Output pattern order determination factor</description>
+          <bitRange>[2:2]</bitRange>
+        </field>
+        <field>
+          <name>TS1PSC</name>
+          <description>Pattern output order switch control</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TS1FPS</name>
+          <description>Selects fixed-pattern output or compare-match output</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1OPT1</name>
+      <description>TSG2n Option Register 1</description>
+      <addressOffset>0x7CDE24</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS1SPC</name>
+          <description>Timer output pattern for software output/120-DC mode (SPC[2:0])</description>
+          <bitRange>[2:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1CNT</name>
+      <description>TSG2n Counter Read Buffer Register</description>
+      <addressOffset>0x7CDE28</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1SBC</name>
+      <description>TSG2n Sub-Counter Read Buffer Register</description>
+      <addressOffset>0x7CDE2C</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1TRG0</name>
+      <description>TSG2n Trigger Register 0</description>
+      <addressOffset>0x7CDE30</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS1TS</name>
+          <description>Timer start trigger (1: start/restart timer; always reads 0)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1TRG1</name>
+      <description>TSG2n Trigger Register 1</description>
+      <addressOffset>0x7CDE34</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TS1TT</name>
+          <description>Timer stop trigger (1: stop timer; always reads 0)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1CMP1W</name>
+      <description>TSG2n Compare Register 1 and 2 (word)</description>
+      <addressOffset>0x7CDE40</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP5W</name>
+      <description>TSG2n Compare Register 5 and 6 (word)</description>
+      <addressOffset>0x7CDE44</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP9W</name>
+      <description>TSG2n Compare Register 9 and 10 (word)</description>
+      <addressOffset>0x7CDE48</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP3W</name>
+      <description>TSG2n Compare Register 3 and 4 (word)</description>
+      <addressOffset>0x7CDE4C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP7W</name>
+      <description>TSG2n Compare Register 7 and 8 (word)</description>
+      <addressOffset>0x7CDE50</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP11W</name>
+      <description>TSG2n Compare Register 11 and 12 (word)</description>
+      <addressOffset>0x7CDE54</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP0</name>
+      <description>TSG2n Compare Register 0</description>
+      <addressOffset>0x7CDE58</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1DCMP0W</name>
+      <description>TSG2n Diagnostic Output Compare Register 0 and 1</description>
+      <addressOffset>0x7CDE5C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1DCMP2</name>
+      <description>TSG2n Diagnostic Output Compare Register 2</description>
+      <addressOffset>0x7CDE60</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1PAT0W</name>
+      <description>TSG2n Pattern Register 0</description>
+      <addressOffset>0x7CDE64</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1PAT1W</name>
+      <description>TSG2n Pattern Register 1</description>
+      <addressOffset>0x7CDE68</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1DTC0W</name>
+      <description>TSG2n Dead Time Setting Register 0</description>
+      <addressOffset>0x7CDE6C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1DTC1W</name>
+      <description>TSG2n Dead Time Setting Register 1</description>
+      <addressOffset>0x7CDE70</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+    </register>
+    <register>
+      <name>TS1IOC3</name>
+      <description>TSG2n I/O Control Register 3</description>
+      <addressOffset>0x7CDE74</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>TS1TOL6_1</name>
+          <description>Set/clear level control for TSG2nO6 to TSG2nO1 (0: normal, 1: inverted)</description>
+          <bitRange>[6:1]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1CTL2</name>
+      <description>TSG2n Control Register 2</description>
+      <addressOffset>0x7CDE78</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>TS1CKS</name>
+          <description>Selects count clock (0: PCLK, 1: PCLK gated by TSG2nCLKI)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1CTL4</name>
+      <description>TSG2n Control Register 4</description>
+      <addressOffset>0x7CDE7C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>TS1PRE</name>
+          <description>Enables/disables peak reload timing</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>TS1VRE</name>
+          <description>Enables/disables valley reload timing (valid in HT-PWM mode only)</description>
+          <bitRange>[7:7]</bitRange>
+        </field>
+        <field>
+          <name>TS1PIE</name>
+          <description>Enables/disables peak interrupt (INTTSG2nIPEK) generation</description>
+          <bitRange>[6:6]</bitRange>
+        </field>
+        <field>
+          <name>TS1VIE</name>
+          <description>Enables/disables valley interrupt (INTTSG2nIVLY) generation (HT-PWM only)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+      </fields>
+    </register>
+    <register>
+      <name>TS1CMP1</name>
+      <description>TSG2n Compare Register 1</description>
+      <addressOffset>0x7CDE80</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP2</name>
+      <description>TSG2n Compare Register 2</description>
+      <addressOffset>0x7CDE84</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP5</name>
+      <description>TSG2n Compare Register 5</description>
+      <addressOffset>0x7CDE88</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP6</name>
+      <description>TSG2n Compare Register 6</description>
+      <addressOffset>0x7CDE8C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP9</name>
+      <description>TSG2n Compare Register 9</description>
+      <addressOffset>0x7CDE90</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP10</name>
+      <description>TSG2n Compare Register 10</description>
+      <addressOffset>0x7CDE94</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP3</name>
+      <description>TSG2n Compare Register 3</description>
+      <addressOffset>0x7CDE98</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP4</name>
+      <description>TSG2n Compare Register 4</description>
+      <addressOffset>0x7CDE9C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP7</name>
+      <description>TSG2n Compare Register 7</description>
+      <addressOffset>0x7CDEA0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP8</name>
+      <description>TSG2n Compare Register 8</description>
+      <addressOffset>0x7CDEA4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP11</name>
+      <description>TSG2n Compare Register 11</description>
+      <addressOffset>0x7CDEA8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMP12</name>
+      <description>TSG2n Compare Register 12</description>
+      <addressOffset>0x7CDEAC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMPU</name>
+      <description>TSG2n HT-PWM U Phase Compare Register</description>
+      <addressOffset>0x7CDEB0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMPV</name>
+      <description>TSG2n HT-PWM V Phase Compare Register</description>
+      <addressOffset>0x7CDEB4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1CMPW</name>
+      <description>TSG2n HT-PWM W Phase Compare Register</description>
+      <addressOffset>0x7CDEB8</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1UPW</name>
+      <description>TSG2n SP-PWM U Phase Active Width Setting Register</description>
+      <addressOffset>0x7CDEBC</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1VPW</name>
+      <description>TSG2n SP-PWM V Phase Active Width Setting Register</description>
+      <addressOffset>0x7CDEC0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+    <register>
+      <name>TS1WPW</name>
+      <description>TSG2n SP-PWM W Phase Active Width Setting Register</description>
+      <addressOffset>0x7CDEC4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+    </register>
+  </registers>
+</peripheral>

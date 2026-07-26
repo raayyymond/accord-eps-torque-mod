@@ -1,0 +1,161 @@
+[boot] eps-update-tva.py
+[boot] firmware file : 39990-TVA-A160-RECONSTRUCTED-v7b-0x14000-0xC6000.rwd
+[boot] CAN bus       : 1
+[boot] mode          : DANGER (will mutate ECU flash)
+
+[load] reading 39990-TVA-A160-RECONSTRUCTED-v7b-0x14000-0xC6000.rwd
+[load] detected container format: x31 (740602 bytes, magic 0x31)
+[x31] supported part numbers: ['39990-TVA-A110', '39990-TVA-A160']
+[x31] ! header (NOT used by V850 SA): ['001100121020', '001100121020']
+[x31] cipher key bytes: [191, 16, 158]
+[x31] 1 block(s) to transfer:
+        block 0: start=0x00014000 length=0xB2000
+[flash] CAN address resolved to 0x18DA30F1
+
+======================================================================
+  DANGER MODE - ABOUT TO MUTATE EPS ECU FLASH
+======================================================================
+  Firmware file : 39990-TVA-A160-RECONSTRUCTED-v7b-0x14000-0xC6000.rwd
+  Container     : x31
+  CAN bus       : 1
+  CAN address   : 0x18DA30F1
+
+  Required prerequisites (per docs/EPS-FLASH-RUNBOOK.md):
+    - Car ignition ON (engine off is fine)
+    - Panda is the only device on OBD-II
+    - openpilot/pandad killed on any comma device (tmux kill-server)
+    - firmware part-number matches the target car
+
+  UNVERIFIED V850/TVA ASSUMPTIONS (no factory-flash capture yet):
+    - cipher-key wire format (DID 0xF050 payload byte order)
+    - request_transfer_exit cadence (per-block vs end-only)
+    If the flash fails the ECU may end up in an unbootable state.
+======================================================================
+Type 'FLASH' (all caps) to proceed, anything else to abort: INFO: connecting to panda 4b001c001151313338343730
+[uds] Using real panda client, bus=1, addr=0x18DA30F1
+[uds] tester present...
+ISO-TP: REQUEST - 0x18da30f1 0x3e00
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x023e000000000000
+CAN-RX: 0x18daf130 - 0x027e005555555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7e00
+[uds] reading application software ID (0xF181)
+ISO-TP: REQUEST - 0x18da30f1 0x22f181
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x0322f18100000000
+CAN-RX: 0x18daf130 - 0x101362f181333939
+ISO-TP: RX - first frame - 0x18daf130 idx=0 done=False
+ISO-TP: TX - flow control continue - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x3000000000000000
+CAN-RX: 0x18daf130 - 0x2139302d5456412d
+ISO-TP: RX - consecutive frame - 0x18daf130 idx=1 done=False
+CAN-RX: 0x18daf130 - 0x2241313130000055
+ISO-TP: RX - consecutive frame - 0x18daf130 idx=2 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x62f18133393939302d5456412d413131300000
+[uds] application software ID = b'39990-TVA-A110\x00\x00'
+[ok]    ECU app id matches a supported part
+[uds] setting diagnostic session = EXTENDED_DIAGNOSTIC (0x03)
+ISO-TP: REQUEST - 0x18da30f1 0x1003
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x0210030000000000
+CAN-RX: 0x18daf130 - 0x0250035555555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x5003
+[sa]  requesting seed (0x27 0x01)
+ISO-TP: REQUEST - 0x18da30f1 0x2701
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x0227010000000000
+CAN-RX: 0x18daf130 - 0x046701e81e555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x6701e81e
+[sa]  received seed: 0xE81E
+[sa]  computed key : 0xED93 (via V850 Group-C firmware constants)
+[sa]  sending key (0x27 0x02)
+ISO-TP: REQUEST - 0x18da30f1 0x2702ed93
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x042702ed93000000
+CAN-RX: 0x18daf130 - 0x0267025555555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x6702
+[sa]  SA handshake succeeded
+[uds] setting diagnostic session = PROGRAMMING (0x02)
+ISO-TP: REQUEST - 0x18da30f1 0x1002
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x0210020000000000
+CAN-RX: 0x18daf130 - 0x0250025555555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x5002
+ISO-TP: REQUEST - 0x18da30f1 0x3e00
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x023e000000000000
+CAN-RX: 0x18daf130 - 0x027e005555555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7e00
+[flash] erasing flash memory
+ISO-TP: REQUEST - 0x18da30f1 0x3101ff00
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x043101ff00000000
+CAN-RX: 0x18daf130 - 0x037f317855555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7f3178
+UDS-RX: response pending
+CAN-RX: 0x18daf130 - 0x037f317855555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7f3178
+UDS-RX: response pending
+CAN-RX: 0x18daf130 - 0x037f317855555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7f3178
+UDS-RX: response pending
+CAN-RX: 0x18daf130 - 0x047101ff00555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7101ff00
+[flash] erase routine_status = (empty)
+ISO-TP: REQUEST - 0x18da30f1 0x3e00
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x023e000000000000
+CAN-RX: 0x18daf130 - 0x027e005555555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7e00
+[flash] writing firmware decryption key (x31): BF109E
+ISO-TP: REQUEST - 0x18da30f1 0x2ef101bf109e
+ISO-TP: TX - single frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x062ef101bf109e00
+CAN-RX: 0x18daf130 - 0x036ef10155555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x6ef101
+[flash] x31 multi-block transfer: 1 block(s), total 0xB2000 bytes
+[flash] block 0: request_download start=0x00014000 length=0xB2000
+ISO-TP: REQUEST - 0x18da30f1 0x34004400014000000b2000
+ISO-TP: TX - first frame - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x100b340044000140
+CAN-RX: 0x18daf130 - 0x3000005555555555
+ISO-TP: RX - flow control continue - 0x18da30f1
+CAN-TX: 0x18da30f1 - 0x2100000b20000000
+ISO-TP: TX - consecutive frame - 0x18da30f1 idx=1 done=True
+CAN-RX: 0x18daf130 - 0x037f343155555555
+ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
+ISO-TP: RESPONSE - 0x18daf130 0x7f3431
+[error] exception during flash flow:
+Traceback (most recent call last):
+  File "/home/dudei/firmware-analysis-kit/flashing-2020accord/eps-update-tva.py", line 521, in flash
+    _transfer_x31(uds_client, parsed, debug_output)
+  File "/home/dudei/firmware-analysis-kit/flashing-2020accord/eps-update-tva.py", line 624, in _transfer_x31
+    max_chunk_size = uds_client.request_download(block["start"], length)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dudei/openpilot/panda/python/uds.py", line 905, in request_download
+    resp = self._uds_request(SERVICE_TYPE.REQUEST_DOWNLOAD, subfunction=None, data=data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dudei/openpilot/panda/python/uds.py", line 637, in _uds_request
+    raise NegativeResponseError(f'{service_desc} - {error_desc}', service_id, error_code)
+panda.python.uds.NegativeResponseError: REQUEST_DOWNLOAD - request out of range
+
+
+[debug] debug output:
+  None
+  b'\xe8\x1e'
+  None
+  None
+  b''
+  None

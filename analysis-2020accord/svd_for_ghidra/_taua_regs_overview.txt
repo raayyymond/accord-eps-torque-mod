@@ -1,0 +1,1239 @@
+=== PDF PAGE 641 ===
+R01UH0098EJ0100 Rev.1.00
+Page 621 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.13.15
+Clock Divide Function
+(1)
+Overview
+Summary
+This function is used as a frequency divider. The frequency of the input signal 
+TAUAnTTINm is divided by a factor related to TAUAnCDRm, and the resulting 
+signal is output to TAUAnTTOUTm.
+Prerequisites
+• TAUAnTTINm should have a fixed frequency.
+• The operating mode should be set to interval timer mode. (See table 13-79, 
+TAUAnCMORm Settings for Clock Divide Function.)
+• The channel output mode should be set to independent channel output 
+mode 1. (See section 13.8, Channel Output Modes.)
+Functional
+description
+The counter is started by setting the channel trigger bit 
+(TAUAnTS.TAUAnTSm) to 1. This in turn sets TAUAnTE.TAUAnTEm = 1, 
+enabling count operation. The current value of TAUAnCDRm is loaded into 
+TAUAnCNTm and the counter starts to count down from this value, using 
+TAUAnTTINm as a count clock.
+When the counter value reaches 0000H, INTTAUAnIm occurs and 
+TAUAnTTOUTm signal is toggled. Then, TAUAnCDRm value is loaded into 
+TAUAnCNTm to continue operation subsequently. 
+The value of TAUAnCDRm can be rewritten at any time. The changed value of 
+TAUAnCDRm is applied when the counter starts to count down next time.
+The counter can be stopped by setting TAUAnTT.TAUAnTTm = 1. This sets 
+TAUAnTE.TAUAnTEm = 0. TAUAnCNTm and TAUAnTTOUTm stop but retain 
+their values. The function can be restarted by setting TAUAnTS.TAUAnTSm = 
+1. The counter can also be forcibly restarted without making a stop by setting 
+TAUAnTS.TAUAnTSm = 1 during operation (forced restart).
+Conditions
+If the TAUAnCMORm.TAUAnMD0 bit is set to 0, the first interrupt after a start 
+or restart is not generated, and therefore TAUAnTTOUTm does not toggle. 
+This results in an inverted TAUAnTTOUTm signal compared to when 
+TAUAnCMORm.TAUAnMD0 is set to 1. For details, see section 13.10, 
+TAUAnTTOUTm Output and INTTAUAnIm Generation when Counter Starts or 
+Restarts.
+Note
+TAUAnTTINm input signals are sampled at the frequency of a sampling clock 
+set by TAUAnCMORm.TAUAnCKS[1:0] bits. Therefore, the TAUAnTTOUTm 
+output clock cycle has an error of ± 1 sampling clock cycle.
+(2)
+Equations
+• When rising edge detection is selected:
+TAUAnTTOUTm frequency = TAUAnTTINm frequency/
+[(TAUAnCDRm + 1)  2] 
+• When falling edge detection is selected:
+TAUAnTTOUTm frequency = TAUAnTTINm frequency/
+[(TAUAnCDRm + 1)  2] 
+• When falling and rising edge detection is selected:
+TAUAnTTOUTm frequency = TAUAnTTINm frequency/
+(TAUAnCDRm + 1)
+
+
+=== PDF PAGE 777 ===
+R01UH0098EJ0100 Rev.1.00
+Page 757 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.15
+Registers
+This section contains a description of all the registers of the 16-bit timer array
+unit A.
+13.15.1
+Overview of TAUAn Registers
+TAUAn is controlled and operated by the registers listed below.
+Table 13-200
+Overview of TAUAn Registers (1/2) 
+Register Name 
+Abbreviation
+Address
+TAUAn prescaler registers
+TAUAn prescaler clock select register
+TAUAnTPS
+<TAUAn_base0> + 240H
+TAUAn prescaler baud rate setting register
+TAUAnBRS
+<TAUAn_base0> + 244H
+TAUAn control registers
+TAUAn channel data register m
+TAUAnCDRm
+<TAUAn_base1> + m  4H
+TAUAn channel counter register m
+TAUAnCNTm
+<TAUAn_base1> + 80H + m  4H
+TAUAn channel mode OS register m
+TAUAnCMORm
+<TAUAn_base0> + 200H + m  4H
+TAUAn channel mode user register m
+TAUAnCMURm
+<TAUAn_base1> + C0H + m  4H
+TAUAn channel status register m
+TAUAnCSRm
+<TAUAn_base1> + 140H + m  4H
+TAUAn channel status clear trigger register m
+TAUAnCSCm
+<TAUAn_base1> + 180H + m  4H
+TAUAn channel start trigger register
+TAUAnTS
+<TAUAn_base1> + 1C4H
+TAUAn channel enable status register
+TAUAnTE
+<TAUAn_base1> + 1C0H
+TAUAn channel stop trigger register
+TAUAnTT
+<TAUAn_base1> + 1C8H
+TAUAn output registers
+TAUAn channel output enable register
+TAUAnTOE
+<TAUAn_base1> + 5CH
+TAUAn channel output register
+TAUAnTO
+<TAUAn_base1> + 58H
+TAUAn channel output mode register
+TAUAnTOM
+<TAUAn_base0> + 248H
+TAUAn channel output configuration register
+TAUAnTOC
+<TAUAn_base0> + 24CH
+TAUAn channel output active level register
+TAUAnTOL
+<TAUAn_base1> + 40H
+TAUAn channel dead time output enable register
+TAUAnTDE
+<TAUAn_base0> + 250H
+TAUAn channel dead time output mode register
+TAUAnTDM
+<TAUAn_base0> + 254H
+TAUAn channel dead time output level register
+TAUAnTDL
+<TAUAn_base1> + 54H
+TAUAn channel real-time output register
+TAUAnTRO
+<TAUAn_base1> + 4CH
+TAUAn channel real-time output enable register
+TAUAnTRE
+<TAUAn_base0> + 258H
+TAUAn channel real-time output control register
+TAUAnTRC
+<TAUAn_base0> + 25CH
+TAUAn channel modulation output enable register
+TAUAnTME
+<TAUAn_base1> + 50H
+TAUAn simultaneous rewrite register
+TAUAn channel reload data enable register
+TAUAnRDE
+<TAUAn_base0> + 260H
+TAUAn channel reload data mode register
+TAUAnRDM
+<TAUAn_base0> + 264H
+TAUAn channel reload data control channel select 
+register
+TAUAnRDS
+<TAUAn_base0> + 268H
+TAUAn channel reload data control register
+TAUAnRDC
+<TAUAn_base0> + 26CH
+TAUAn channel reload data trigger register
+TAUAnRDT
+<TAUAn_base1> + 44H
+
+
+=== PDF PAGE 778 ===
+R01UH0098EJ0100 Rev.1.00
+Page 758 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+Note
+TAUAn base addresses <TAUAn_base0> and <TAUAn_base1> are defined 
+according to table 13-2, Register Base Addresses <TAUAn_basen>.
+Caution
+If a specified value is described for each register bit, any other value than the 
+specified one should not be written into the corresponding bit.
+TAUAn channel reload status register
+TAUAnRSF
+<TAUAn_base1> + 48H
+TAUAn DMA window registers 
+TAUAn DMA window address setting register 0
+TAUAnDAS0
+<TAUAn_base0> + 270H
+TAUAn DMA window address setting register 1
+TAUAnDAS1
+<TAUAn_base0> + 274H
+TAUAn DMA window address setting register 2
+TAUAnDAS2
+<TAUAn_base0> + 278H
+TAUAn DMA window address setting register 3
+TAUAnDAS3
+<TAUAn_base0> + 27CH
+TAUAn DMA window address setting register 4
+TAUAnDAS4
+<TAUAn_base0> + 280H
+TAUAn DMA window address setting register 5
+TAUAnDAS5
+<TAUAn_base0> + 284H
+TAUAn DMA window address setting register 6
+TAUAnDAS6
+<TAUAn_base0> + 288H
+TAUAn DMA window address setting register 7
+TAUAnDAS7
+<TAUAn_base0> + 28CH
+TAUAn DMA window register 0
+TAUAnDWR0
+<TAUAn_base1> + 100H
+TAUAn DMA window register 1
+TAUAnDWR1
+<TAUAn_base1> + 104H
+TAUAn DMA window register 2
+TAUAnDWR2
+<TAUAn_base1> + 108H
+TAUAn DMA window register 3
+TAUAnDWR3
+<TAUAn_base1> + 10CH
+TAUAn DMA window register 4
+TAUAnDWR4
+<TAUAn_base1> + 110H
+TAUAn DMA window register 5
+TAUAnDWR5
+<TAUAn_base1> + 114H
+TAUAn DMA window register 6
+TAUAnDWR6
+<TAUAn_base1> + 118H
+TAUAn DMA window register 7
+TAUAnDWR7
+<TAUAn_base1> + 11CH
+TAUAn DMA window register 8
+TAUAnDWR8
+<TAUAn_base1> + 120H
+TAUAn DMA window register 9
+TAUAnDWR9
+<TAUAn_base1> + 124H
+TAUAn DMA window register 10
+TAUAnDWR10
+<TAUAn_base1> + 128H
+TAUAn DMA window register 11
+TAUAnDWR11
+<TAUAn_base1> + 12CH
+TAUAn DMA window register 12
+TAUAnDWR12
+<TAUAn_base1> + 130H
+TAUAn DMA window register 13
+TAUAnDWR13
+<TAUAn_base1> + 134H
+TAUAn DMA window register 14
+TAUAnDWR14
+<TAUAn_base1> + 138H
+TAUAn DMA window register 15
+TAUAnDWR15
+<TAUAn_base1> + 13CH
+Table 13-200
+Overview of TAUAn Registers (2/2) 
+Register Name 
+Abbreviation
+Address
+
+
+=== PDF PAGE 779 ===
+R01UH0098EJ0100 Rev.1.00
+Page 759 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.15.2
+Details of TAUAn Prescaler Registers
+(1)
+TAUAnTPS - TAUAn Prescaler Clock Select Register
+This register specifies clocks CK0, CK1, CK2, and CK3_PRE for all channels 
+of the PCLK prescaler. CK3 is generated by dividing CK3_PRE by the factor 
+specified in TAUAnBRS.
+Access
+Readable/writable in 16-bit units.
+Address
+<TAUAn_base0> + 240H
+Initial value
+FFFFH
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUAnPRS3[3:0]
+TAUAnPRS2[3:0]
+TAUAnPRS1[3:0]
+TAUAnPRS0[3:0]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-201
+Description of TAUAnTPS Register (1/4)
+Bit Position
+Bit Name
+Function
+15 to 12
+TAUAnPRS3
+[3:0]
+Specifies CK3_PRE clock.
+CK3_PRE clock is an input clock to BRG unit which supplies prescaler output 
+CK3 to all channels.
+TAUAnPRS3[3:0]
+CK3_PRE Clock
+0000B
+PCLK/20
+0001B
+PCLK/21
+0010B
+PCLK/22
+0011B
+PCLK/23
+0100B
+PCLK/24
+0101B
+PCLK/25
+0110B
+PCLK/26
+0111B
+PCLK/27
+1000B
+PCLK/28
+1001B
+PCLK/29
+1010B
+PCLK/210
+1011B
+PCLK/211
+1100B
+PCLK/212
+1101B
+PCLK/213
+1110B
+PCLK/214
+1111B
+PCLK/215
+The above bits are rewritable only when all the counters using CK3 are stopped 
+(TAUAnTE.TAUAnTEm = 0).
+
+
+=== PDF PAGE 784 ===
+R01UH0098EJ0100 Rev.1.00
+Page 764 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.15.3
+Details of TAUAn Control Registers
+(1)
+TAUAnCDRm - TAUAn Channel Data Register m
+This register functions either as a compare register or as a capture register,
+depending on the operating mode specified in TAUAnCMORm.TAUAnMD[4:1].
+Access
+Readable/writable in 16-bit units.
+• Readable in capture mode. Any write operation is ignored.
+• Readable/writable in compare mode.
+Address
+<TAUAn_base1> + m  4H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUAnCDR[15:0]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-203
+Description of TAUAnCDRm Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnCDR
+[15:0]
+Data register for capture/compare values
+
+
+=== PDF PAGE 794 ===
+R01UH0098EJ0100 Rev.1.00
+Page 774 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.15.4
+Details of TAUAn Output Registers
+(1)
+TAUAnTOE - TAUAn Channel Output Enable Register
+This register enables/disables the independent channel output mode 
+controlled by software. 
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm bit = 0).
+Address
+<TAUAn_base1> + 5CH
+Initial value
+0000H
+This register is initialized by any reset source.
+Note
+The output from TAUAnTTOUTm pin is controlled by TAUAnTO.TAUAnTOm 
+(software control).
+(2)
+TAUAnTOM - TAUAn Channel Output Mode Register
+This register specifies the output mode of each channel.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 248H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTOE
+15
+TAUA
+nTOE
+14
+TAUA
+nTOE
+13
+TAUA
+nTOE
+12
+TAUA
+nTOE
+11
+TAUA
+nTOE
+10
+TAUA
+nTOE
+09
+TAUA
+nTOE
+08
+TAUA
+nTOE
+07
+TAUA
+nTOE
+06
+TAUA
+nTOE
+05
+TAUA
+nTOE
+04
+TAUA
+nTOE
+03
+TAUA
+nTOE
+02
+TAUA
+nTOE
+01
+TAUA
+nTOE
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-213
+Description of TAUAnTOE Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTOEm
+Enables/disables the independent timer output function.
+0: Disables the independent timer output function (software control).
+1: Enables the independent timer output function.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTOM
+15
+TAUA
+nTOM
+14
+TAUA
+nTOM
+13
+TAUA
+nTOM
+12
+TAUA
+nTOM
+11
+TAUA
+nTOM
+10
+TAUA
+nTOM
+09
+TAUA
+nTOM
+08
+TAUA
+nTOM
+07
+TAUA
+nTOM
+06
+TAUA
+nTOM
+05
+TAUA
+nTOM
+04
+TAUA
+nTOM
+03
+TAUA
+nTOM
+02
+TAUA
+nTOM
+01
+TAUA
+nTOM
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-214
+Description of TAUAnTOM Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTOMm
+Specifies an output mode.
+0: Independent channel operation
+1: Synchronous channel operation
+As described in table 13-9, Channel Output Modes, the output mode depends on 
+the setting of each channel output control bit.
+
+
+=== PDF PAGE 801 ===
+R01UH0098EJ0100 Rev.1.00
+Page 781 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.15.5
+Details of TAUAn Channel Output Level Registers
+(1)
+TAUAnTO - TAUAn Channel Output Register
+This register specifies and reads a TAUAnTTOUTm level.
+Access
+Readable/writable in 16-bit units.
+Address
+<TAUAn_base1> + 58H
+Initial value
+0000H
+This register is initialized by any reset source.
+(2)
+TAUAnTOL - TAUAn Channel Output Active Level Register
+This register specifies the output logic of channel output bit 
+(TAUAnTO.TAUAnTOm).
+Access
+Readable/writable in 16-bit units.
+Address
+<TAUAn_base1> + 40H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTO
+15
+TAUA
+nTO
+14
+TAUA
+nTO
+13
+TAUA
+nTO
+12
+TAUA
+nTO
+11
+TAUA
+nTO
+10
+TAUA
+nTO
+09
+TAUA
+nTO
+08
+TAUA
+nTO
+07
+TAUA
+nTO
+06
+TAUA
+nTO
+05
+TAUA
+nTO
+04
+TAUA
+nTO
+03
+TAUA
+nTO
+02
+TAUA
+nTO
+01
+TAUA
+nTO
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-223
+Description of TAUAnTO Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTOm
+Specifies and reads a TAUAnTTOUTm level.
+0: Low level
+1: High level
+TAUAnTOm bit is writable when TAUAnTOE.TAUAnTOEm = 0.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nTOL 
+15
+TAUA
+nTOL 
+14
+TAUA
+nTOL 
+13
+TAUA
+nTOL 
+12
+TAUA
+nTOL1
+1
+TAUA
+nTOL 
+10
+TAUA
+nTOL 
+09
+TAUA
+nTOL 
+08
+TAUA
+nTOL 
+07
+TAUA
+nTOL 
+06
+TAUA
+nTOL 
+05
+TAUA
+nTOL 
+04
+TAUA
+nTOL 
+03
+TAUA
+nTOL
+02
+TAUA
+nTOL
+01
+TAUA
+nTOL
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-224
+Description of TAUAnTOL Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnTOLm
+Specifies the output logic of channel m output bit (TAUAnTO.TAUAnTOm).
+0: Positive logic (active high)
+1: Inverted logic (active low)
+
+
+=== PDF PAGE 802 ===
+R01UH0098EJ0100 Rev.1.00
+Page 782 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.15.6
+Details of TAUAn Simultaneous Rewrite Registers
+(1)
+TAUAnRDE - TAUAn Channel Reload Data Enable Register
+This register enables/disables simultaneous rewrite of TAUAnCDRm/
+TAUAnTOLm data register.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 260H
+Initial value
+0000H
+This register is initialized by any reset source.
+(2)
+TAUAnRDS - TAUAn Channel Reload Data Control Channel Select 
+Register
+This register selects a channel that controls simultaneous rewrite.
+Access
+Readable/writable in 16-bit units. Writable only while the counter is stopped 
+(TAUAnTE.TAUAnTEm = 0).
+Address
+<TAUAn_base0> + 268H
+Initial value
+0000H
+This register is initialized by any reset source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nRDE
+15
+TAUA
+nRDE
+14
+TAUA
+nRDE
+13
+TAUA
+nRDE
+12
+TAUA
+nRDE
+11
+TAUA
+nRDE
+10
+TAUA
+nRDE
+09
+TAUA
+nRDE
+08
+TAUA
+nRDE
+07
+TAUA
+nRDE
+06
+TAUA
+nRDE
+05
+TAUA
+nRDE
+04
+TAUA
+nRDE
+03
+TAUA
+nRDE
+02
+TAUA
+nRDE
+01
+TAUA
+nRDE
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-225
+Description of TAUAnRDE Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnRDEm
+Enables/disables simultaneous rewrite of the data register of channel m.
+0: Disables simultaneous rewrite.
+1: Enables simultaneous rewrite.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nRDS
+15
+TAUA
+nRDS
+14
+TAUA
+nRDS
+13
+TAUA
+nRDS
+12
+TAUA
+nRDS
+11
+TAUA
+nRDS
+10
+TAUA
+nRDS
+09
+TAUA
+nRDS
+08
+TAUA
+nRDS
+07
+TAUA
+nRDS
+06
+TAUA
+nRDS
+05
+TAUA
+nRDS
+04
+TAUA
+nRDS
+03
+TAUA
+nRDS
+02
+TAUA
+nRDS
+01
+TAUA
+nRDS
+00
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-226
+Description of TAUAnRDS Register
+Bit Position
+Bit Name
+Function
+15 to 0
+TAUAnRDSm
+Selects a channel that monitors a simultaneous rewrite trigger.
+0: Master channel
+1: Another upper channel
+
+
+=== PDF PAGE 805 ===
+R01UH0098EJ0100 Rev.1.00
+Page 785 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+13.15.7
+TAUAn DMA Window Registers 
+(1)
+TAUAnDASi - TAUAn DMA Window Address Setting Register i (i = 0 to 7)
+This register specifies a window register address for DMA. Eight TAUAnDASi 
+registers control 16 TAUAnDWRm registers. In other words, each TAUAnDASi 
+register controls two TAUAnDWRm register.
+Access
+Readable/writable in 16-bit units.
+Address
+<TAUAn_base0> + 270H + m  4H
+Initial value
+0000H
+This register is initialized by any reset source.
+odd = 01, 03, 05, 07, 09, 11, 13, 15
+even = 00, 02, 04, 06, 08, 10, 12, 14
+The following table shows the relationship between the TAUAnDASi control 
+registers and the TAUAnDWRm registers.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+TAUA
+nDAS
+odd7
+TAUA
+nDAS
+odd6
+TAUA
+nDAS
+odd5
+TAUA
+nDAS
+odd4
+TAUA
+nDAS
+odd3
+TAUA
+nDAS
+odd2
+TAUA
+nDAS
+odd1
+TAUA
+nDAS
+odd0
+TAUA
+nDAS
+even7
+TAUA
+nDAS
+even6
+TAUA
+nDAS
+even5
+TAUA
+nDAS
+even4
+TAUA
+nDAS
+even3
+TAUA
+nDAS
+even2
+TAUA
+nDAS
+even1
+TAUA
+nDAS
+even0
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 13-231
+Relationship between TAUAnDASi and TAUAnDWRm Registers
+Control Register
+Control Bit
+Control Target Register
+TAUAnDWRm
+TAUAnDAS0
+Bits 7 to 0
+TAUAnDWR0
+TAUAnDAS0
+Bits 15 to 8
+TAUAnDWR1
+TAUAnDAS1
+Bits 7 to 0
+TAUAnDWR2
+TAUAnDAS1
+Bits 15 to 8
+TAUAnDWR3
+TAUAnDAS2
+Bits 7 to 0
+TAUAnDWR4
+TAUAnDAS2
+Bits 15 to 8
+TAUAnDWR5
+TAUAnDAS3
+Bits 7 to 0
+TAUAnDWR6
+TAUAnDAS3
+Bits 15 to 8
+TAUAnDWR7
+TAUAnDAS4
+Bits 7 to 0
+TAUAnDWR8
+TAUAnDAS4
+Bits 15 to 8
+TAUAnDWR9
+TAUAnDAS5
+Bits 7 to 0
+TAUAnDWR10
+TAUAnDAS5
+Bits 15 to 8
+TAUAnDWR11
+TAUAnDAS6
+Bits 7 to 0
+TAUAnDWR12
+TAUAnDAS6
+Bits 15 to 8
+TAUAnDWR13
+TAUAnDAS7
+Bits 7 to 0
+TAUAnDWR14
+TAUAnDAS7
+Bits 15 to 8
+TAUAnDWR15
+
+

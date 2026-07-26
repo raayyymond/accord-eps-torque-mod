@@ -1,0 +1,167 @@
+<!-- Section 11: Data CRC Function A (DCRA) — UPD70F3508 -->
+<!-- 2 instances: DCRA0, DCRA1.  Each instance has registers in two disjoint -->
+<!-- address ranges (base0 for CIN/COUT, base1 for CTL), so four peripherals  -->
+<!-- are emitted: DCRA0, DCRA0_CTL, DCRA1, DCRA1_CTL.                        -->
+<!-- Source: Table 11-2, Table 11-4, and detail sections 11.4.2 (1)-(3).     -->
+
+<!-- ================================================================ -->
+<!-- DCRA0 — base0 registers: DCRAn_base0 = 0xFFFFFA00               -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>DCRA0</name>
+  <description>Data CRC Function A, instance 0 — CIN/COUT registers (base0 = 0xFFFFFA00)</description>
+  <baseAddress>0xFFFFFA00</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x8</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>DCRA0CIN</name>
+      <description>CRC Input Register — instance 0</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>DCRA0CIN</name>
+          <description>Input data for CRC calculation (valid width controlled by DCRA0CTL.DCRA0ISZ)</description>
+          <bitRange>[31:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>DCRA0COUT</name>
+      <description>CRC Data Register — instance 0; stores CRC result; read returns value XOR'd with poly constant</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0xFFFFFFFF</resetValue>
+      <fields>
+        <field>
+          <name>DCRA0COUT</name>
+          <description>CRC result; initialize with starting value before first write to DCRA0CIN</description>
+          <bitRange>[31:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- DCRA0_CTL — base1 register: DCRAn_base1 = 0xFF836000            -->
+<!-- CTL is at base1 + 0x20 = 0xFF836020                             -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>DCRA0_CTL</name>
+  <description>Data CRC Function A, instance 0 — CTL register (base1 = 0xFF836000)</description>
+  <baseAddress>0xFF836020</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>DCRA0CTL</name>
+      <description>CRC Control Register — instance 0; selects polynomial and input bit width</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <!-- Bits 7:3 are reserved/0; not emitted per spec -->
+        <field>
+          <name>DCRA0ISZ</name>
+          <description>CRC input bit width: 00=32-bit, 01=16-bit, 10=8-bit, 11=prohibited</description>
+          <bitRange>[2:1]</bitRange>
+        </field>
+        <field>
+          <name>DCRA0POL</name>
+          <description>CRC polynomial select: 0=32-bit Ethernet (04C11DB7H) LSB-first, 1=16-bit CCITT (1021H) MSB-first</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- DCRA1 — base0 registers: DCRAn_base0 = 0xFFFFFB00               -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>DCRA1</name>
+  <description>Data CRC Function A, instance 1 — CIN/COUT registers (base0 = 0xFFFFFB00)</description>
+  <baseAddress>0xFFFFFB00</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x8</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>DCRA1CIN</name>
+      <description>CRC Input Register — instance 1</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>DCRA1CIN</name>
+          <description>Input data for CRC calculation (valid width controlled by DCRA1CTL.DCRA1ISZ)</description>
+          <bitRange>[31:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>DCRA1COUT</name>
+      <description>CRC Data Register — instance 1; stores CRC result; read returns value XOR'd with poly constant</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0xFFFFFFFF</resetValue>
+      <fields>
+        <field>
+          <name>DCRA1COUT</name>
+          <description>CRC result; initialize with starting value before first write to DCRA1CIN</description>
+          <bitRange>[31:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ================================================================ -->
+<!-- DCRA1_CTL — base1 register: DCRAn_base1 = 0xFF837000            -->
+<!-- CTL is at base1 + 0x20 = 0xFF837020                             -->
+<!-- ================================================================ -->
+<peripheral>
+  <name>DCRA1_CTL</name>
+  <description>Data CRC Function A, instance 1 — CTL register (base1 = 0xFF837000)</description>
+  <baseAddress>0xFF837020</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>DCRA1CTL</name>
+      <description>CRC Control Register — instance 1; selects polynomial and input bit width</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <!-- Bits 7:3 are reserved/0; not emitted per spec -->
+        <field>
+          <name>DCRA1ISZ</name>
+          <description>CRC input bit width: 00=32-bit, 01=16-bit, 10=8-bit, 11=prohibited</description>
+          <bitRange>[2:1]</bitRange>
+        </field>
+        <field>
+          <name>DCRA1POL</name>
+          <description>CRC polynomial select: 0=32-bit Ethernet (04C11DB7H) LSB-first, 1=16-bit CCITT (1021H) MSB-first</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

@@ -1,0 +1,630 @@
+<!-- Section 16: TPBA (TPBA0 and TPBA1) — V850E2/Px4 UPD70F3508
+     Source: Manual pages 1100-1128 (PDF 1-based), Table 16-2 base addresses, Table 16-6 register list.
+
+     Each TPBA instance spans TWO non-contiguous address regions:
+       <TPBAn_base0>        = control register region  (1 register: TPBAnCTL at base0+0x200)
+       <TPBAn_base1>        = data/status register region (TPBAnBUF00..TT at base1+0x000..+0x130)
+     Base addresses (Table 16-2):
+       TPBA0: base0=0xFF832000, base1=0xFFFFF000
+       TPBA1: base0=0xFF833000, base1=0xFFFFF400
+
+     Per-peripheral baseAddress is set to base0 (the lower of the two regions).
+     Registers in the base1 region carry large addressOffsets (base1 - base0).
+     Two <addressBlock> entries are present per peripheral to document both regions.
+
+     TPBAnBUFm is a 16-bit × 64-entry buffer array at base1+0x000 to base1+0x0FC.
+     Only the first entry (TPBAnBUF00, offset 0x000) is emitted as a representative
+     register with a note; the remaining 63 entries (BUF01..BUF63) are structurally
+     identical and are documented by the array comment below rather than 63 duplicate
+     <register> elements, keeping the file tractable for Ghidra import.
+-->
+
+<!-- ═══════════════════════════════════════════════════════════════════ TPBA0 -->
+<peripheral>
+  <name>TPBA0</name>
+  <description>Timer Pulse Buffer Array 0 — 16-bit PWM timer with duty setting buffer (instance 0)</description>
+  <baseAddress>0xFF832000</baseAddress>
+  <!-- addressBlock 1: CTL register at base0+0x200 -->
+  <addressBlock>
+    <offset>0x200</offset>
+    <size>0x1</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <!-- addressBlock 2: main register block at base1 (0xFFFFF000) = base0+0x7CD000, length 0x131 bytes -->
+  <addressBlock>
+    <offset>0x7CD000</offset>
+    <size>0x131</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <!-- ── base0 region ── -->
+
+    <register>
+      <name>TPBA0CTL</name>
+      <description>TPBA0 Control Register — selects count clock prescaler and duty pattern mode</description>
+      <!-- Absolute address: 0xFF832000 + 0x200 = 0xFF832200 -->
+      <addressOffset>0x200</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0PRS1</name>
+          <description>Count clock prescaler select bit 1 (with PRS0: 00=PCLK, 01=PCLK/2, 10=PCLK/4, 11=PCLK/8)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TPBA0PRS0</name>
+          <description>Count clock prescaler select bit 0</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TPBA0DPS</name>
+          <description>Duty setting pattern mode: 0=16-bit 64-patterns, 1=8-bit 128-patterns</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- ── base1 region (base1=0xFFFFF000 = baseAddress+0x7CD000) ── -->
+
+    <!-- TPBAnBUFm array: 64 × 16-bit duty registers at base1+0x000..+0x0FC (step 4 bytes per 16-bit reg,
+         but the manual states 0x000 to 0x0FC with 16-bit access — each entry is 2 bytes,
+         64 entries × 2 bytes = 0x80 bytes; however the table shows offsets 0x0000/0x0004/0x0008...
+         The manual page 1122 shows patterns at 0x0000, 0x0004, 0x0008, 0x00FC — step is 4 bytes
+         because the bus is 32-bit aligned. Emit representative BUF00 only; BUF01..BUF63 follow
+         the same layout at base1+0x004*m (m=0..63). -->
+    <register>
+      <name>TPBA0BUF00</name>
+      <description>TPBA0 Duty Setting Register 00 (representative; BUF01..BUF63 at base1+0x004*m, m=0..63). Sets duty value for pattern 1 (16-bit mode) or patterns 1-2 (8-bit mode).</description>
+      <!-- Absolute: 0xFFFFF000 + 0x000 = 0xFFFFF000 ; offset from base = 0x7CD000 -->
+      <addressOffset>0x7CD000</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0BUF00</name>
+          <description>Duty value bits [15:0]</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0CMP0</name>
+      <description>TPBA0 Period Setting Register — 16-bit compare register; PWM period = (CMP0+1) × count clock</description>
+      <!-- Absolute: 0xFFFFF000 + 0x100 = 0xFFFFF100 ; offset from base = 0x7CD100 -->
+      <addressOffset>0x7CD100</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0CMP0</name>
+          <description>Period compare value [15:0]</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0CMP1</name>
+      <description>TPBA0 Pattern Number Setting Register — sets number of PWM output patterns [6:0]</description>
+      <!-- Absolute: 0xFFFFF000 + 0x104 = 0xFFFFF104 ; offset from base = 0x7CD104 -->
+      <addressOffset>0x7CD104</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0CMP1</name>
+          <description>Number of patterns [6:0] (0-63 in 16-bit mode, 0-127 in 8-bit mode)</description>
+          <bitRange>[6:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0CNT0</name>
+      <description>TPBA0 Timer Counter Register — 16-bit counter current value (read-only)</description>
+      <!-- Absolute: 0xFFFFF000 + 0x108 = 0xFFFFF108 ; offset from base = 0x7CD108 -->
+      <addressOffset>0x7CD108</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0CNT0</name>
+          <description>16-bit counter value [15:0]</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0CNT1</name>
+      <description>TPBA0 Address Counter Register — 7-bit counter indicating address pointer to duty setting register</description>
+      <!-- Absolute: 0xFFFFF000 + 0x10C = 0xFFFFF10C ; offset from base = 0x7CD10C -->
+      <addressOffset>0x7CD10C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0CNT1</name>
+          <description>7-bit address counter value [6:0]</description>
+          <bitRange>[6:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0RSF</name>
+      <description>TPBA0 Reload Status Register — indicates pending reload requests</description>
+      <!-- Absolute: 0xFFFFF000 + 0x110 = 0xFFFFF110 ; offset from base = 0x7CD110 -->
+      <addressOffset>0x7CD110</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0RSF1</name>
+          <description>Reload request flag for CMP1: 0=none/complete, 1=reload request pending</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TPBA0RSF0</name>
+          <description>Reload request flag for CMP0 and TOL: 0=none/complete, 1=reload request pending</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0RDT</name>
+      <description>TPBA0 Reload Data Trigger Register — enables reload of compare/output-level registers (always read as 0)</description>
+      <!-- Absolute: 0xFFFFF000 + 0x114 = 0xFFFFF114 ; offset from base = 0x7CD114 -->
+      <addressOffset>0x7CD114</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0RDT1</name>
+          <description>Reload enable for CMP1: writing 1 enables reload (sets RSF1); 0 is ignored</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TPBA0RDT0</name>
+          <description>Reload enable for CMP0 and TOL: writing 1 enables reload (sets RSF0); 0 is ignored</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0RDM</name>
+      <description>TPBA0 Reload Data Mode Register — controls reload timing of CMP0 and TOL</description>
+      <!-- Absolute: 0xFFFFF000 + 0x118 = 0xFFFFF118 ; offset from base = 0x7CD118 -->
+      <addressOffset>0x7CD118</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0RDM0</name>
+          <description>Reload timing: 0=synchronous with INTTPBAnIPAT, 1=synchronous with INTTPBAnIPRD</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0TO</name>
+      <description>TPBA0 Timer Output Register — reads/sets TPBnO pin output level</description>
+      <!-- Absolute: 0xFFFFF000 + 0x11C = 0xFFFFF11C ; offset from base = 0x7CD11C -->
+      <addressOffset>0x7CD11C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0TO0</name>
+          <description>Output level: 0=low, 1=high (write ignored when timer output enabled)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0TOE</name>
+      <description>TPBA0 Timer Output Enable Register — enables/disables PWM output from TPBnO pin</description>
+      <!-- Absolute: 0xFFFFF000 + 0x120 = 0xFFFFF120 ; offset from base = 0x7CD120 -->
+      <addressOffset>0x7CD120</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0TOE0</name>
+          <description>Timer output enable: 0=output disabled (software control via TO), 1=PWM output enabled</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0TOL</name>
+      <description>TPBA0 Timer Output Level Register — specifies active level of PWM output (reload register)</description>
+      <!-- Absolute: 0xFFFFF000 + 0x124 = 0xFFFFF124 ; offset from base = 0x7CD124 -->
+      <addressOffset>0x7CD124</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0TOL0</name>
+          <description>Active output level: 0=high active, 1=low active</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0TE</name>
+      <description>TPBA0 Enable Status Register — indicates whether timer counter is running</description>
+      <!-- Absolute: 0xFFFFF000 + 0x128 = 0xFFFFF128 ; offset from base = 0x7CD128 -->
+      <addressOffset>0x7CD128</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0TE0</name>
+          <description>Timer enable status: 0=stopped, 1=operating</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0TS</name>
+      <description>TPBA0 Start Trigger Register — writing 1 starts the timer counter (always read as 0)</description>
+      <!-- Absolute: 0xFFFFF000 + 0x12C = 0xFFFFF12C ; offset from base = 0x7CD12C -->
+      <addressOffset>0x7CD12C</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0TS0</name>
+          <description>Start trigger: 0=ignored, 1=starts counting (TE0 set to 1)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA0TT</name>
+      <description>TPBA0 Stop Trigger Register — writing 1 stops the timer counter (always read as 0)</description>
+      <!-- Absolute: 0xFFFFF000 + 0x130 = 0xFFFFF130 ; offset from base = 0x7CD130 -->
+      <addressOffset>0x7CD130</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA0TT0</name>
+          <description>Stop trigger: 0=ignored, 1=stops counting (TE0 cleared to 0)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ═══════════════════════════════════════════════════════════════════ TPBA1 -->
+<peripheral>
+  <name>TPBA1</name>
+  <description>Timer Pulse Buffer Array 1 — 16-bit PWM timer with duty setting buffer (instance 1)</description>
+  <baseAddress>0xFF833000</baseAddress>
+  <!-- addressBlock 1: CTL register at base0+0x200 = 0xFF833200 -->
+  <addressBlock>
+    <offset>0x200</offset>
+    <size>0x1</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <!-- addressBlock 2: main register block at base1 (0xFFFFF400) = base0+0x7CC400, length 0x131 bytes -->
+  <addressBlock>
+    <offset>0x7CC400</offset>
+    <size>0x131</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <!-- ── base0 region ── -->
+
+    <register>
+      <name>TPBA1CTL</name>
+      <description>TPBA1 Control Register — selects count clock prescaler and duty pattern mode</description>
+      <!-- Absolute address: 0xFF833000 + 0x200 = 0xFF833200 -->
+      <addressOffset>0x200</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1PRS1</name>
+          <description>Count clock prescaler select bit 1 (with PRS0: 00=PCLK, 01=PCLK/2, 10=PCLK/4, 11=PCLK/8)</description>
+          <bitRange>[5:5]</bitRange>
+        </field>
+        <field>
+          <name>TPBA1PRS0</name>
+          <description>Count clock prescaler select bit 0</description>
+          <bitRange>[4:4]</bitRange>
+        </field>
+        <field>
+          <name>TPBA1DPS</name>
+          <description>Duty setting pattern mode: 0=16-bit 64-patterns, 1=8-bit 128-patterns</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- ── base1 region (base1=0xFFFFF400 = baseAddress+0x7CC400) ── -->
+
+    <!-- TPBAnBUFm array: 64 × 16-bit registers at base1+0x000..+0x0FC (step 4 bytes).
+         BUF01..BUF63 follow at base1+0x004*m. Only BUF00 emitted as representative. -->
+    <register>
+      <name>TPBA1BUF00</name>
+      <description>TPBA1 Duty Setting Register 00 (representative; BUF01..BUF63 at base1+0x004*m, m=0..63). Sets duty value for pattern 1 (16-bit mode) or patterns 1-2 (8-bit mode).</description>
+      <!-- Absolute: 0xFFFFF400 + 0x000 = 0xFFFFF400 ; offset from base = 0x7CC400 -->
+      <addressOffset>0x7CC400</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1BUF00</name>
+          <description>Duty value bits [15:0]</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1CMP0</name>
+      <description>TPBA1 Period Setting Register — 16-bit compare register; PWM period = (CMP0+1) × count clock</description>
+      <!-- Absolute: 0xFFFFF400 + 0x100 = 0xFFFFF500 ; offset from base = 0x7CC500 -->
+      <addressOffset>0x7CC500</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1CMP0</name>
+          <description>Period compare value [15:0]</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1CMP1</name>
+      <description>TPBA1 Pattern Number Setting Register — sets number of PWM output patterns [6:0]</description>
+      <!-- Absolute: 0xFFFFF400 + 0x104 = 0xFFFFF504 ; offset from base = 0x7CC504 -->
+      <addressOffset>0x7CC504</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1CMP1</name>
+          <description>Number of patterns [6:0] (0-63 in 16-bit mode, 0-127 in 8-bit mode)</description>
+          <bitRange>[6:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1CNT0</name>
+      <description>TPBA1 Timer Counter Register — 16-bit counter current value (read-only)</description>
+      <!-- Absolute: 0xFFFFF400 + 0x108 = 0xFFFFF508 ; offset from base = 0x7CC508 -->
+      <addressOffset>0x7CC508</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0xFFFF</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1CNT0</name>
+          <description>16-bit counter value [15:0]</description>
+          <bitRange>[15:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1CNT1</name>
+      <description>TPBA1 Address Counter Register — 7-bit counter indicating address pointer to duty setting register</description>
+      <!-- Absolute: 0xFFFFF400 + 0x10C = 0xFFFFF50C ; offset from base = 0x7CC50C -->
+      <addressOffset>0x7CC50C</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1CNT1</name>
+          <description>7-bit address counter value [6:0]</description>
+          <bitRange>[6:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1RSF</name>
+      <description>TPBA1 Reload Status Register — indicates pending reload requests</description>
+      <!-- Absolute: 0xFFFFF400 + 0x110 = 0xFFFFF510 ; offset from base = 0x7CC510 -->
+      <addressOffset>0x7CC510</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1RSF1</name>
+          <description>Reload request flag for CMP1: 0=none/complete, 1=reload request pending</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TPBA1RSF0</name>
+          <description>Reload request flag for CMP0 and TOL: 0=none/complete, 1=reload request pending</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1RDT</name>
+      <description>TPBA1 Reload Data Trigger Register — enables reload of compare/output-level registers (always read as 0)</description>
+      <!-- Absolute: 0xFFFFF400 + 0x114 = 0xFFFFF514 ; offset from base = 0x7CC514 -->
+      <addressOffset>0x7CC514</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1RDT1</name>
+          <description>Reload enable for CMP1: writing 1 enables reload (sets RSF1); 0 is ignored</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>TPBA1RDT0</name>
+          <description>Reload enable for CMP0 and TOL: writing 1 enables reload (sets RSF0); 0 is ignored</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1RDM</name>
+      <description>TPBA1 Reload Data Mode Register — controls reload timing of CMP0 and TOL</description>
+      <!-- Absolute: 0xFFFFF400 + 0x118 = 0xFFFFF518 ; offset from base = 0x7CC518 -->
+      <addressOffset>0x7CC518</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1RDM0</name>
+          <description>Reload timing: 0=synchronous with INTTPBAnIPAT, 1=synchronous with INTTPBAnIPRD</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1TO</name>
+      <description>TPBA1 Timer Output Register — reads/sets TPBnO pin output level</description>
+      <!-- Absolute: 0xFFFFF400 + 0x11C = 0xFFFFF51C ; offset from base = 0x7CC51C -->
+      <addressOffset>0x7CC51C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1TO0</name>
+          <description>Output level: 0=low, 1=high (write ignored when timer output enabled)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1TOE</name>
+      <description>TPBA1 Timer Output Enable Register — enables/disables PWM output from TPBnO pin</description>
+      <!-- Absolute: 0xFFFFF400 + 0x120 = 0xFFFFF520 ; offset from base = 0x7CC520 -->
+      <addressOffset>0x7CC520</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1TOE0</name>
+          <description>Timer output enable: 0=output disabled (software control via TO), 1=PWM output enabled</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1TOL</name>
+      <description>TPBA1 Timer Output Level Register — specifies active level of PWM output (reload register)</description>
+      <!-- Absolute: 0xFFFFF400 + 0x124 = 0xFFFFF524 ; offset from base = 0x7CC524 -->
+      <addressOffset>0x7CC524</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1TOL0</name>
+          <description>Active output level: 0=high active, 1=low active</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1TE</name>
+      <description>TPBA1 Enable Status Register — indicates whether timer counter is running</description>
+      <!-- Absolute: 0xFFFFF400 + 0x128 = 0xFFFFF528 ; offset from base = 0x7CC528 -->
+      <addressOffset>0x7CC528</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1TE0</name>
+          <description>Timer enable status: 0=stopped, 1=operating</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1TS</name>
+      <description>TPBA1 Start Trigger Register — writing 1 starts the timer counter (always read as 0)</description>
+      <!-- Absolute: 0xFFFFF400 + 0x12C = 0xFFFFF52C ; offset from base = 0x7CC52C -->
+      <addressOffset>0x7CC52C</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1TS0</name>
+          <description>Start trigger: 0=ignored, 1=starts counting (TE0 set to 1)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TPBA1TT</name>
+      <description>TPBA1 Stop Trigger Register — writing 1 stops the timer counter (always read as 0)</description>
+      <!-- Absolute: 0xFFFFF400 + 0x130 = 0xFFFFF530 ; offset from base = 0x7CC530 -->
+      <addressOffset>0x7CC530</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>TPBA1TT0</name>
+          <description>Stop trigger: 0=ignored, 1=stops counting (TE0 cleared to 0)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

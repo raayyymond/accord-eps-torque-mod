@@ -1,0 +1,49 @@
+=== PDF PAGE 517 ===
+R01UH0098EJ0100 Rev.1.00
+Page 497 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 13　Timer Array Unit A (TAUA)
+Section 13 Timer Array Unit A (TAUA)
+This section contains a generic description of the timer array unit A (TAUA).
+Caution
+TAUA may have unavailable channels depending on a channel combination or 
+port I/O selection.
+13.1
+TAUA Features
+Instances
+This product has the following number of instances of TAUA.
+Instances index n
+Throughout this section, each of the TAUA instances is identified by "n" (n = 0 
+or 1), such as TAUAn channel output mode register (TAUAnTOM).
+Channels index m
+TAUA has 16 channels. Throughout this section, each channel is dentified by 
+"m" (m = 0 to 15). Thus, a certain channel is denoted as CHm.
+The even numbered channels (m = 0, 2, 4, 6, 8, 10, 12, 14) are denoted as
+CHm_even.
+The odd numbered channels (m = 1, 3, 5, 7, 9, 11, 13, 15) are denoted as 
+CHm_odd.
+Register addresses
+All TAUAn register addresses are given as address offsets to the individual
+base addresses <TAUAn_base0>, <TAUAn_base1>.
+The base address of each TAUAn is listed in the following table.
+Table 13-1
+Instances of TAUA
+TAUA
+Instance
+2
+Name
+TAUA0, TAUA1
+Table 13-2
+Register Base Addresses <TAUAn_basen> 
+TAUAn
+<TAUAn_base0> Address
+<TAUAn_base1> Address
+TAUA0
+FF80 8000H
+FFFF C400H
+TAUA1
+FF80 9000H
+FFFF C800H
+
+

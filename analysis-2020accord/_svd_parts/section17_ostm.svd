@@ -1,0 +1,447 @@
+<!-- Section 17: OS Timer (OSTM) — UPD70F3508 V850E2/Px4
+     2 instances: OSTM0, OSTM1
+     Each instance has two disjoint register groups:
+       - OSTMnCTL at <OSTMn_base0> + 0x20
+       - OSTMnCMP..OSTMnTT at <OSTMn_base1> + 0x000..0x018
+     Per spec the baseAddress is set to the lowest absolute address (base0+0x20).
+     Global shared registers IC0CKSEL0/IC0CKSEL1 are in a separate OSTM_CKSEL peripheral.
+
+     Base addresses (Table 17-2):
+       OSTM0: base0=0xFF800000, base1=0xFFFFC000
+       OSTM1: base0=0xFF801000, base1=0xFFFFC100
+-->
+
+<peripheral>
+  <name>OSTM0</name>
+  <description>OS Timer 0 (OSTM0)</description>
+  <baseAddress>0xFF800020</baseAddress>
+  <!-- addressBlock spans two disjoint regions; the CTL register is at baseAddress+0x0,
+       while the remaining registers cluster at 0xFFFFC000..0xFFFFC018 (offset 0x7FBFE0..0x7FBFF8).
+       addressBlock size covers the highest offset + 1 byte. -->
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x7FBFF9</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <register>
+      <name>OSTM0CTL</name>
+      <description>OSTM0 Control Register</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnMD1</name>
+          <description>Operating mode: 0=interval timer mode, 1=free-running comparison mode</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>OSTMnMD0</name>
+          <description>Start-of-counting interrupt: 0=disabled, 1=enabled</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- Registers below are at base1=0xFFFFC000; offset from baseAddress (0xFF800020) = 0x7FBFE0 -->
+
+    <register>
+      <name>OSTM0CMP</name>
+      <description>OSTM0 Compare Register (down-counter start value or comparison value)</description>
+      <addressOffset>0x7FBFE0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnCMP</name>
+          <description>Compare/start value [31:0]</description>
+          <bitRange>[31:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>OSTM0CNT</name>
+      <description>OSTM0 Counter Register (current 32-bit counter value, read-only)</description>
+      <addressOffset>0x7FBFE4</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <!-- Initial value depends on operating mode; interval=0xFFFFFFFF, free-running=0x00000000 -->
+      <fields>
+        <field>
+          <name>OSTMnCNT</name>
+          <description>32-bit counter value</description>
+          <bitRange>[31:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>OSTM0TO</name>
+      <description>OSTM0 Output Register (OSTMnTTOUT output level)</description>
+      <addressOffset>0x7FBFE8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnTO</name>
+          <description>OSTMnTTOUT output level: 0=low, 1=high (write valid only in software control mode)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>OSTM0TOE</name>
+      <description>OSTM0 Output Enable Register (OSTMnTTOUT output mode)</description>
+      <addressOffset>0x7FBFEC</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnTOE</name>
+          <description>Output mode: 0=software control, 1=timer-output toggling on OSTMnTINT</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>OSTM0TE</name>
+      <description>OSTM0 Count Enable Status Register (counter enabled/disabled status)</description>
+      <addressOffset>0x7FBFF0</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnTE</name>
+          <description>Counter enable status: 0=disabled, 1=enabled</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>OSTM0TS</name>
+      <description>OSTM0 Count Start Trigger Register (write 1 to start counter)</description>
+      <addressOffset>0x7FBFF4</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnTS</name>
+          <description>Start trigger: 1=start counter (always reads 0)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>OSTM0TT</name>
+      <description>OSTM0 Count Stop Trigger Register (write 1 to stop counter)</description>
+      <addressOffset>0x7FBFF8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnTT</name>
+          <description>Stop trigger: 1=stop counter and clear OSTMnTE (always reads 0)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<peripheral>
+  <name>OSTM1</name>
+  <description>OS Timer 1 (OSTM1)</description>
+  <baseAddress>0xFF801020</baseAddress>
+  <!-- addressBlock spans two disjoint regions; CTL at baseAddress+0x0,
+       remaining registers at 0xFFFFC100..0xFFFFC118 (offset 0x7FB0E0..0x7FB0F8).
+       OSTM1 base1=0xFFFFC100, so offset from 0xFF801020 = 0xFFFFC100-0xFF801020 = 0x7FB0E0 -->
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x7FB0F9</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <register>
+      <name>OSTM1CTL</name>
+      <description>OSTM1 Control Register</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnMD1</name>
+          <description>Operating mode: 0=interval timer mode, 1=free-running comparison mode</description>
+          <bitRange>[1:1]</bitRange>
+        </field>
+        <field>
+          <name>OSTMnMD0</name>
+          <description>Start-of-counting interrupt: 0=disabled, 1=enabled</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <!-- Registers below are at base1=0xFFFFC100; offset from baseAddress (0xFF801020) = 0x7FB0E0 -->
+
+    <register>
+      <name>OSTM1CMP</name>
+      <description>OSTM1 Compare Register (down-counter start value or comparison value)</description>
+      <addressOffset>0x7FB0E0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnCMP</name>
+          <description>Compare/start value [31:0]</description>
+          <bitRange>[31:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>OSTM1CNT</name>
+      <description>OSTM1 Counter Register (current 32-bit counter value, read-only)</description>
+      <addressOffset>0x7FB0E4</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <!-- Initial value depends on operating mode; interval=0xFFFFFFFF, free-running=0x00000000 -->
+      <fields>
+        <field>
+          <name>OSTMnCNT</name>
+          <description>32-bit counter value</description>
+          <bitRange>[31:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>OSTM1TO</name>
+      <description>OSTM1 Output Register (OSTMnTTOUT output level)</description>
+      <addressOffset>0x7FB0E8</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnTO</name>
+          <description>OSTMnTTOUT output level: 0=low, 1=high (write valid only in software control mode)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>OSTM1TOE</name>
+      <description>OSTM1 Output Enable Register (OSTMnTTOUT output mode)</description>
+      <addressOffset>0x7FB0EC</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnTOE</name>
+          <description>Output mode: 0=software control, 1=timer-output toggling on OSTMnTINT</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>OSTM1TE</name>
+      <description>OSTM1 Count Enable Status Register (counter enabled/disabled status)</description>
+      <addressOffset>0x7FB0F0</addressOffset>
+      <size>8</size>
+      <access>read-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnTE</name>
+          <description>Counter enable status: 0=disabled, 1=enabled</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>OSTM1TS</name>
+      <description>OSTM1 Count Start Trigger Register (write 1 to start counter)</description>
+      <addressOffset>0x7FB0F4</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnTS</name>
+          <description>Start trigger: 1=start counter (always reads 0)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>OSTM1TT</name>
+      <description>OSTM1 Count Stop Trigger Register (write 1 to stop counter)</description>
+      <addressOffset>0x7FB0F8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field>
+          <name>OSTMnTT</name>
+          <description>Stop trigger: 1=stop counter and clear OSTMnTE (always reads 0)</description>
+          <bitRange>[0:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- IC0CKSEL0 and IC0CKSEL1 are global shared registers (not per OSTM instance).
+     They select the counter-clock-enable signal for OSTM0 and OSTM1 respectively.
+     Both live at fixed absolute addresses: IC0CKSEL0=0xFF83F000, IC0CKSEL1=0xFF83F004 -->
+<peripheral>
+  <name>OSTM_CKSEL</name>
+  <description>OSTM Input Clock Select Function Registers (shared, applies to both OSTM instances)</description>
+  <baseAddress>0xFF83F000</baseAddress>
+  <addressBlock>
+    <offset>0x0</offset>
+    <size>0x8</size>
+    <usage>registers</usage>
+  </addressBlock>
+  <registers>
+
+    <register>
+      <name>IC0CKSEL0</name>
+      <description>OSTM Input Clock Select Function Register 0 (for OSTM0)</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>IC0TMEN0</name>
+          <description>Counter-clock-enable signal select: 0=PCLK fixed high, 1=use selected timer signal</description>
+          <bitRange>[15:15]</bitRange>
+        </field>
+        <!-- bit 14: reserved (reads 0) — omitted per spec -->
+        <field>
+          <name>IC0TMSEL01</name>
+          <description>Timer source selector (MSB): selects TAUA0/TAUA1/TAUJ0/TAUJ1 group</description>
+          <bitRange>[13:13]</bitRange>
+        </field>
+        <field>
+          <name>IC0TMSEL00</name>
+          <description>Timer source selector (LSB): selects TAUA0/TAUA1/TAUJ0/TAUJ1 group</description>
+          <bitRange>[12:12]</bitRange>
+        </field>
+        <field>
+          <name>IC0CKSEL031</name>
+          <description>TAUJ1 channel select MSB (bits 11:10 together select TAUJ1 ch0-3)</description>
+          <bitRange>[11:11]</bitRange>
+        </field>
+        <field>
+          <name>IC0CKSEL030</name>
+          <description>TAUJ1 channel select LSB</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>IC0CKSEL021</name>
+          <description>TAUJ0 channel select MSB (bits 9:8 together select TAUJ0 ch0-3)</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>IC0CKSEL020</name>
+          <description>TAUJ0 channel select LSB</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>IC0CKSEL013_010</name>
+          <description>TAUA1 timer channel select (bits 7:4, selects ch0-15)</description>
+          <bitRange>[7:4]</bitRange>
+        </field>
+        <field>
+          <name>IC0CKSEL003_000</name>
+          <description>TAUA0 timer channel select (bits 3:0, selects ch0-15)</description>
+          <bitRange>[3:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+    <register>
+      <name>IC0CKSEL1</name>
+      <description>OSTM Input Clock Select Function Register 1 (for OSTM1)</description>
+      <addressOffset>0x4</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field>
+          <name>IC0TMEN1</name>
+          <description>Counter-clock-enable signal select: 0=PCLK fixed high, 1=use selected timer signal</description>
+          <bitRange>[15:15]</bitRange>
+        </field>
+        <!-- bit 14: reserved (reads 0) — omitted per spec -->
+        <field>
+          <name>IC0TMSEL11</name>
+          <description>Timer source selector (MSB): selects TAUA0/TAUA1/TAUJ0/TAUJ1 group</description>
+          <bitRange>[13:13]</bitRange>
+        </field>
+        <field>
+          <name>IC0TMSEL10</name>
+          <description>Timer source selector (LSB): selects TAUA0/TAUA1/TAUJ0/TAUJ1 group</description>
+          <bitRange>[12:12]</bitRange>
+        </field>
+        <field>
+          <name>IC0CKSEL131</name>
+          <description>TAUJ1 channel select MSB (bits 11:10 together select TAUJ1 ch0-3)</description>
+          <bitRange>[11:11]</bitRange>
+        </field>
+        <field>
+          <name>IC0CKSEL130</name>
+          <description>TAUJ1 channel select LSB</description>
+          <bitRange>[10:10]</bitRange>
+        </field>
+        <field>
+          <name>IC0CKSEL121</name>
+          <description>TAUJ0 channel select MSB (bits 9:8 together select TAUJ0 ch0-3)</description>
+          <bitRange>[9:9]</bitRange>
+        </field>
+        <field>
+          <name>IC0CKSEL120</name>
+          <description>TAUJ0 channel select LSB</description>
+          <bitRange>[8:8]</bitRange>
+        </field>
+        <field>
+          <name>IC0CKSEL113_110</name>
+          <description>TAUA1 timer channel select (bits 7:4, selects ch0-15)</description>
+          <bitRange>[7:4]</bitRange>
+        </field>
+        <field>
+          <name>IC0CKSEL103_100</name>
+          <description>TAUA0 timer channel select (bits 3:0, selects ch0-15)</description>
+          <bitRange>[3:0]</bitRange>
+        </field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

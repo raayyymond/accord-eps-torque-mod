@@ -1,0 +1,782 @@
+<!-- Section 22: Queue-Equipped Three-Line Serial Interface H (CSIHn) -->
+<!-- UPD70F3508 (V850E2/Px4) — 2 instances: CSIH0, CSIH1 -->
+<!--
+  Each CSIHn instance spans two disjoint physical banks:
+    _B0 (base0): control/config/baud registers
+    _B1 (base1): memory-interface, status, Tx/Rx registers
+
+  Base addresses (Table 22-2):
+    CSIH0: base0 = 0xFF6C0000, base1 = 0xFFFFE000
+    CSIH1: base0 = 0xFF6D0000, base1 = 0xFFFFE100
+
+  CFG4-7 exist only in CSIH0 (CSIH1 has 4 chip-select lines, CFG0-3 only).
+-->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CSIH0 — Bank 0 (base0 = 0xFF6C0000): control / config / baud
+     ═══════════════════════════════════════════════════════════════ -->
+<peripheral>
+  <name>CSIH0_B0</name>
+  <description>Queue-Equipped Three-Line Serial Interface H 0, Bank 0 (control/config registers at base0)</description>
+  <baseAddress>0xFF6C0000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1064</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- CTL1: base0 + 0x0010 -->
+    <register>
+      <name>CSIH0CTL1</name>
+      <description>CSIHn Control Register 1 — clock phase, interrupt timing, chip-select levels, job/loop-back/handshake modes</description>
+      <addressOffset>0x10</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnCKR</name><description>Clock phase of CSIHnTSCK (0=default high, 1=default low)</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIHnSLIT</name><description>Interrupt timing select for CSIHnTIC</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIHnCSL7</name><description>Chip-select 7 active output level (0=active-low, 1=active-high)</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnCSL6</name><description>Chip-select 6 active output level</description><bitRange>[14:14]</bitRange></field>
+        <field><name>CSIHnCSL5</name><description>Chip-select 5 active output level</description><bitRange>[13:13]</bitRange></field>
+        <field><name>CSIHnCSL4</name><description>Chip-select 4 active output level</description><bitRange>[12:12]</bitRange></field>
+        <field><name>CSIHnCSL3</name><description>Chip-select 3 active output level</description><bitRange>[11:11]</bitRange></field>
+        <field><name>CSIHnCSL2</name><description>Chip-select 2 active output level</description><bitRange>[10:10]</bitRange></field>
+        <field><name>CSIHnCSL1</name><description>Chip-select 1 active output level</description><bitRange>[9:9]</bitRange></field>
+        <field><name>CSIHnCSL0</name><description>Chip-select 0 active output level</description><bitRange>[8:8]</bitRange></field>
+        <field><name>CSIHnEDLE</name><description>Extended data length mode enable</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIHnJE</name><description>Job mode enable</description><bitRange>[6:6]</bitRange></field>
+        <field><name>CSIHnDCS</name><description>Data consistency check enable</description><bitRange>[5:5]</bitRange></field>
+        <field><name>CSIHnCSRI</name><description>Chip-select behavior after last transfer (0=hold active, 1=return inactive)</description><bitRange>[4:4]</bitRange></field>
+        <field><name>CSIHnLBM</name><description>Loop-back mode enable</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIHnSIT</name><description>Interrupt delay mode (0=no delay, 1=half-clock delay)</description><bitRange>[2:2]</bitRange></field>
+        <field><name>CSIHnHSE</name><description>Handshake function enable</description><bitRange>[1:1]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CTL2: base0 + 0x0014 -->
+    <register>
+      <name>CSIH0CTL2</name>
+      <description>CSIHn Control Register 2 — operating mode, prescaler, baud rate</description>
+      <addressOffset>0x14</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xE000</resetValue>
+      <fields>
+        <field><name>CSIHnPRS</name><description>Prescaler select [2:0] (000=PCLK, 001=PCLK/2, ..., 111=slave ext clock)</description><bitRange>[15:13]</bitRange></field>
+        <field><name>CSIHnBRS</name><description>Baud rate select [11:0]</description><bitRange>[11:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- MCTL0: base0 + 0x1040 -->
+    <register>
+      <name>CSIH0MCTL0</name>
+      <description>CSIHn Memory Control Register 0 — memory mode and time-out setting</description>
+      <addressOffset>0x1040</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x001F</resetValue>
+      <fields>
+        <field><name>CSIHnMMS</name><description>Memory mode select [1:0] (00=FIFO, 01=double-buffer, 10=Tx-only buffer)</description><bitRange>[9:8]</bitRange></field>
+        <field><name>CSIHnTO</name><description>Time-out setting [4:0] (00000=disabled, else n*8*BRG output clocks)</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG0: base0 + 0x1044 -->
+    <register>
+      <name>CSIH0CFG0</name>
+      <description>CSIHn Configuration Register 0 — chip-select 0 protocol settings</description>
+      <addressOffset>0x1044</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnPSCL0</name><description>Prescaler select for CS0 [1:0]</description><bitRange>[31:30]</bitRange></field>
+        <field><name>CSIHnPS0</name><description>Parity select for CS0 [1:0]</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIHnDLS0</name><description>Data length select for CS0 [3:0] (0000=16bit, 0001=1bit, ..., 1111=15bit)</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIHnRCB0</name><description>Recessive configuration for broadcasting CS0</description><bitRange>[19:19]</bitRange></field>
+        <field><name>CSIHnDIR0</name><description>Data direction for CS0 (0=MSB first, 1=LSB first)</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIHnCKP0</name><description>Clock phase for CS0</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIHnDAP0</name><description>Data phase for CS0</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIHnIDL0</name><description>Idle enforcement config for CS0</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnID0</name><description>Idle time select for CS0 [2:0]</description><bitRange>[14:12]</bitRange></field>
+        <field><name>CSIHnHD0</name><description>Hold time select for CS0 [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>CSIHnIN0</name><description>Inter-data delay time for CS0 [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>CSIHnSP0</name><description>Setup time for CS0 [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG1: base0 + 0x1048 -->
+    <register>
+      <name>CSIH0CFG1</name>
+      <description>CSIHn Configuration Register 1 — chip-select 1 protocol settings</description>
+      <addressOffset>0x1048</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnPSCL1</name><description>Prescaler select for CS1 [1:0]</description><bitRange>[31:30]</bitRange></field>
+        <field><name>CSIHnPS1</name><description>Parity select for CS1 [1:0]</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIHnDLS1</name><description>Data length select for CS1 [3:0]</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIHnRCB1</name><description>Recessive config for CS1</description><bitRange>[19:19]</bitRange></field>
+        <field><name>CSIHnDIR1</name><description>Data direction for CS1</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIHnCKP1</name><description>Clock phase for CS1</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIHnDAP1</name><description>Data phase for CS1</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIHnIDL1</name><description>Idle enforcement config for CS1</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnID1</name><description>Idle time select for CS1 [2:0]</description><bitRange>[14:12]</bitRange></field>
+        <field><name>CSIHnHD1</name><description>Hold time for CS1 [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>CSIHnIN1</name><description>Inter-data delay for CS1 [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>CSIHnSP1</name><description>Setup time for CS1 [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG2: base0 + 0x104C -->
+    <register>
+      <name>CSIH0CFG2</name>
+      <description>CSIHn Configuration Register 2 — chip-select 2 protocol settings</description>
+      <addressOffset>0x104C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnPSCL2</name><description>Prescaler select for CS2 [1:0]</description><bitRange>[31:30]</bitRange></field>
+        <field><name>CSIHnPS2</name><description>Parity select for CS2 [1:0]</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIHnDLS2</name><description>Data length select for CS2 [3:0]</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIHnRCB2</name><description>Recessive config for CS2</description><bitRange>[19:19]</bitRange></field>
+        <field><name>CSIHnDIR2</name><description>Data direction for CS2</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIHnCKP2</name><description>Clock phase for CS2</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIHnDAP2</name><description>Data phase for CS2</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIHnIDL2</name><description>Idle enforcement config for CS2</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnID2</name><description>Idle time select for CS2 [2:0]</description><bitRange>[14:12]</bitRange></field>
+        <field><name>CSIHnHD2</name><description>Hold time for CS2 [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>CSIHnIN2</name><description>Inter-data delay for CS2 [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>CSIHnSP2</name><description>Setup time for CS2 [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG3: base0 + 0x1050 -->
+    <register>
+      <name>CSIH0CFG3</name>
+      <description>CSIHn Configuration Register 3 — chip-select 3 protocol settings</description>
+      <addressOffset>0x1050</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnPSCL3</name><description>Prescaler select for CS3 [1:0]</description><bitRange>[31:30]</bitRange></field>
+        <field><name>CSIHnPS3</name><description>Parity select for CS3 [1:0]</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIHnDLS3</name><description>Data length select for CS3 [3:0]</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIHnRCB3</name><description>Recessive config for CS3</description><bitRange>[19:19]</bitRange></field>
+        <field><name>CSIHnDIR3</name><description>Data direction for CS3</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIHnCKP3</name><description>Clock phase for CS3</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIHnDAP3</name><description>Data phase for CS3</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIHnIDL3</name><description>Idle enforcement config for CS3</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnID3</name><description>Idle time select for CS3 [2:0]</description><bitRange>[14:12]</bitRange></field>
+        <field><name>CSIHnHD3</name><description>Hold time for CS3 [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>CSIHnIN3</name><description>Inter-data delay for CS3 [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>CSIHnSP3</name><description>Setup time for CS3 [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG4: CSIH0 only — base0 + 0x1054 -->
+    <register>
+      <name>CSIH0CFG4</name>
+      <description>CSIH0 Configuration Register 4 — chip-select 4 protocol settings (CSIH0 only)</description>
+      <addressOffset>0x1054</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIH0PSCL4</name><description>Prescaler select for CS4 [1:0]</description><bitRange>[31:30]</bitRange></field>
+        <field><name>CSIH0PS4</name><description>Parity select for CS4 [1:0]</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIH0DLS4</name><description>Data length select for CS4 [3:0]</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIH0RCB4</name><description>Recessive config for CS4</description><bitRange>[19:19]</bitRange></field>
+        <field><name>CSIH0DIR4</name><description>Data direction for CS4</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIH0CKP4</name><description>Clock phase for CS4</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIH0DAP4</name><description>Data phase for CS4</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIH0IDL4</name><description>Idle enforcement config for CS4</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIH0ID4</name><description>Idle time select for CS4 [2:0]</description><bitRange>[14:12]</bitRange></field>
+        <field><name>CSIH0HD4</name><description>Hold time for CS4 [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>CSIH0IN4</name><description>Inter-data delay for CS4 [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>CSIH0SP4</name><description>Setup time for CS4 [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG5: CSIH0 only — base0 + 0x1058 -->
+    <register>
+      <name>CSIH0CFG5</name>
+      <description>CSIH0 Configuration Register 5 — chip-select 5 protocol settings (CSIH0 only)</description>
+      <addressOffset>0x1058</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIH0PSCL5</name><description>Prescaler select for CS5 [1:0]</description><bitRange>[31:30]</bitRange></field>
+        <field><name>CSIH0PS5</name><description>Parity select for CS5 [1:0]</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIH0DLS5</name><description>Data length select for CS5 [3:0]</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIH0RCB5</name><description>Recessive config for CS5</description><bitRange>[19:19]</bitRange></field>
+        <field><name>CSIH0DIR5</name><description>Data direction for CS5</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIH0CKP5</name><description>Clock phase for CS5</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIH0DAP5</name><description>Data phase for CS5</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIH0IDL5</name><description>Idle enforcement config for CS5</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIH0ID5</name><description>Idle time select for CS5 [2:0]</description><bitRange>[14:12]</bitRange></field>
+        <field><name>CSIH0HD5</name><description>Hold time for CS5 [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>CSIH0IN5</name><description>Inter-data delay for CS5 [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>CSIH0SP5</name><description>Setup time for CS5 [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG6: CSIH0 only — base0 + 0x105C -->
+    <register>
+      <name>CSIH0CFG6</name>
+      <description>CSIH0 Configuration Register 6 — chip-select 6 protocol settings (CSIH0 only)</description>
+      <addressOffset>0x105C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIH0PSCL6</name><description>Prescaler select for CS6 [1:0]</description><bitRange>[31:30]</bitRange></field>
+        <field><name>CSIH0PS6</name><description>Parity select for CS6 [1:0]</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIH0DLS6</name><description>Data length select for CS6 [3:0]</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIH0RCB6</name><description>Recessive config for CS6</description><bitRange>[19:19]</bitRange></field>
+        <field><name>CSIH0DIR6</name><description>Data direction for CS6</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIH0CKP6</name><description>Clock phase for CS6</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIH0DAP6</name><description>Data phase for CS6</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIH0IDL6</name><description>Idle enforcement config for CS6</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIH0ID6</name><description>Idle time select for CS6 [2:0]</description><bitRange>[14:12]</bitRange></field>
+        <field><name>CSIH0HD6</name><description>Hold time for CS6 [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>CSIH0IN6</name><description>Inter-data delay for CS6 [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>CSIH0SP6</name><description>Setup time for CS6 [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG7: CSIH0 only — base0 + 0x1060 -->
+    <register>
+      <name>CSIH0CFG7</name>
+      <description>CSIH0 Configuration Register 7 — chip-select 7 protocol settings (CSIH0 only)</description>
+      <addressOffset>0x1060</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIH0PSCL7</name><description>Prescaler select for CS7 [1:0]</description><bitRange>[31:30]</bitRange></field>
+        <field><name>CSIH0PS7</name><description>Parity select for CS7 [1:0]</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIH0DLS7</name><description>Data length select for CS7 [3:0]</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIH0RCB7</name><description>Recessive config for CS7</description><bitRange>[19:19]</bitRange></field>
+        <field><name>CSIH0DIR7</name><description>Data direction for CS7</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIH0CKP7</name><description>Clock phase for CS7</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIH0DAP7</name><description>Data phase for CS7</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIH0IDL7</name><description>Idle enforcement config for CS7</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIH0ID7</name><description>Idle time select for CS7 [2:0]</description><bitRange>[14:12]</bitRange></field>
+        <field><name>CSIH0HD7</name><description>Hold time for CS7 [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>CSIH0IN7</name><description>Inter-data delay for CS7 [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>CSIH0SP7</name><description>Setup time for CS7 [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CSIH0 — Bank 1 (base1 = 0xFFFFE000): memory / Tx / Rx / status
+     ═══════════════════════════════════════════════════════════════ -->
+<peripheral>
+  <name>CSIH0_B1</name>
+  <description>Queue-Equipped Three-Line Serial Interface H 0, Bank 1 (memory/Tx/Rx/status registers at base1)</description>
+  <baseAddress>0xFFFFE000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x9C</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- CTL0: base1 + 0x0000 -->
+    <register>
+      <name>CSIH0CTL0</name>
+      <description>CSIHn Control Register 0 — operation clock, Tx/Rx enable, memory bypass</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSIHnPWR</name><description>Operation clock control (0=stop, 1=provide)</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIHnTXE</name><description>Transmission enable</description><bitRange>[6:6]</bitRange></field>
+        <field><name>CSIHnRXE</name><description>Reception enable</description><bitRange>[5:5]</bitRange></field>
+        <field><name>CSIHnJOBE</name><description>Job abort at end of current job</description><bitRange>[1:1]</bitRange></field>
+        <field><name>CSIHnMBS</name><description>Memory bypass (0=memory mode, 1=direct access mode)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- STR0: base1 + 0x0004 -->
+    <register>
+      <name>CSIH0STR0</name>
+      <description>CSIHn Status Register 0 — FIFO pointers, error flags, transfer status</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000010</resetValue>
+      <fields>
+        <field><name>CSIHnSRP</name><description>Received words in FIFO [7:0] (FIFO mode only)</description><bitRange>[31:24]</bitRange></field>
+        <field><name>CSIHnSPF</name><description>Untransmitted data count in FIFO [7:0] (FIFO mode only)</description><bitRange>[23:16]</bitRange></field>
+        <field><name>CSIHnTMOE</name><description>Time-out error flag</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnOFE</name><description>Overflow error flag</description><bitRange>[14:14]</bitRange></field>
+        <field><name>CSIHnTSF</name><description>Transfer status flag (0=idle, 1=active)</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIHnFLF</name><description>FIFO full flag</description><bitRange>[5:5]</bitRange></field>
+        <field><name>CSIHnEMF</name><description>FIFO empty flag</description><bitRange>[4:4]</bitRange></field>
+        <field><name>CSIHnDCE</name><description>Data consistency check error flag</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIHnPE</name><description>Parity error flag</description><bitRange>[1:1]</bitRange></field>
+        <field><name>CSIHnOVE</name><description>Overrun error flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- STCR0: base1 + 0x0008 -->
+    <register>
+      <name>CSIH0STCR0</name>
+      <description>CSIHn Status Clear Register 0 — clears STR0 flags; always reads as 0x0000</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CSIHnTMOEC</name><description>Clear time-out error flag (STR0.CSIHnTMOE)</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnOFEC</name><description>Clear overflow error flag (STR0.CSIHnOFE)</description><bitRange>[14:14]</bitRange></field>
+        <field><name>CSIHnPCT</name><description>FIFO pointer clear command</description><bitRange>[8:8]</bitRange></field>
+        <field><name>CSIHnDCEC</name><description>Clear data consistency error flag (STR0.CSIHnDCE)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIHnPEC</name><description>Clear parity error flag (STR0.CSIHnPE)</description><bitRange>[1:1]</bitRange></field>
+        <field><name>CSIHnOVEC</name><description>Clear overrun error flag (STR0.CSIHnOVE)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- MCTL1: base1 + 0x0080 -->
+    <register>
+      <name>CSIH0MCTL1</name>
+      <description>CSIHn Memory Control Register 1 — FIFO interrupt threshold levels</description>
+      <addressOffset>0x80</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnFES</name><description>Tx FIFO empty interrupt threshold [6:0] — CSIHnTIC generated when SPF reaches this value</description><bitRange>[22:16]</bitRange></field>
+        <field><name>CSIHnFFS</name><description>Rx FIFO full interrupt threshold [6:0] — CSIHnTIR generated when (128-SRP) equals this</description><bitRange>[6:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- MCTL2: base1 + 0x0084 -->
+    <register>
+      <name>CSIH0MCTL2</name>
+      <description>CSIHn Memory Control Register 2 — buffer transfer start, data count, send pointer</description>
+      <addressOffset>0x84</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnBTST</name><description>Buffer transfer start trigger (write 1; always reads 0)</description><bitRange>[31:31]</bitRange></field>
+        <field><name>CSIHnND</name><description>Number of data for double-buffer/Tx-only-buffer mode [7:0]</description><bitRange>[23:16]</bitRange></field>
+        <field><name>CSIHnSOP</name><description>Send pointer for Tx buffer [6:0]</description><bitRange>[6:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TX0W: base1 + 0x0088 -->
+    <register>
+      <name>CSIH0TX0W</name>
+      <description>CSIHn Transmission Register 0 for Word Access — Tx data + control flags + chip-select</description>
+      <addressOffset>0x88</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- initial value undefined; omitted per spec -->
+      <fields>
+        <field><name>CSIHnCIRE</name><description>Communication interrupt request enable for this frame</description><bitRange>[31:31]</bitRange></field>
+        <field><name>CSIHnEOJ</name><description>End-of-job marker for this frame</description><bitRange>[30:30]</bitRange></field>
+        <field><name>CSIHnEDL</name><description>Extended data length for this frame</description><bitRange>[29:29]</bitRange></field>
+        <field><name>CSIHnCS</name><description>Chip-select activation bitmap [7:0] (0=activated, 1=deactivated)</description><bitRange>[23:16]</bitRange></field>
+        <field><name>CSIHnTX</name><description>Transmission data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TX0H: base1 + 0x008C -->
+    <register>
+      <name>CSIH0TX0H</name>
+      <description>CSIHn Transmission Register 0 for Half Word Access — same as TX0W[15:0]</description>
+      <addressOffset>0x8C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <!-- initial value undefined -->
+      <fields>
+        <field><name>CSIHnTX</name><description>Transmission data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- RX0W: base1 + 0x0090 -->
+    <register>
+      <name>CSIH0RX0W</name>
+      <description>CSIHn Reception Register 0 for Word Access — received data + parity/consistency error flags + CS indicator</description>
+      <addressOffset>0x90</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <!-- initial value undefined -->
+      <fields>
+        <field><name>CSIHnRPE</name><description>Reception parity error on this frame</description><bitRange>[25:25]</bitRange></field>
+        <field><name>CSIHnTDCE</name><description>Transmission data consistency error on this frame</description><bitRange>[24:24]</bitRange></field>
+        <field><name>CSIHnCS</name><description>Chip-select active bitmap for this frame [7:0]</description><bitRange>[23:16]</bitRange></field>
+        <field><name>CSIHnRX</name><description>Received data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- RX0H: base1 + 0x0094 -->
+    <register>
+      <name>CSIH0RX0H</name>
+      <description>CSIHn Reception Register 0 for Half Word Access — same as RX0W[15:0]</description>
+      <addressOffset>0x94</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <!-- initial value undefined -->
+      <fields>
+        <field><name>CSIHnRX</name><description>Received data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- MRWP0: base1 + 0x0098 -->
+    <register>
+      <name>CSIH0MRWP0</name>
+      <description>CSIHn Memory Read/Write Pointer Register 0 — Rx and Tx buffer pointers</description>
+      <addressOffset>0x98</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnRRA</name><description>Rx buffer read pointer [6:0]</description><bitRange>[22:16]</bitRange></field>
+        <field><name>CSIHnTRWA</name><description>Tx buffer read/write pointer [6:0]</description><bitRange>[6:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CSIH1 — Bank 0 (base0 = 0xFF6D0000): control / config / baud
+     CSIH1 has 4 chip-select lines (CS0-CS3); CFG4-7 do not exist.
+     ═══════════════════════════════════════════════════════════════ -->
+<peripheral>
+  <name>CSIH1_B0</name>
+  <description>Queue-Equipped Three-Line Serial Interface H 1, Bank 0 (control/config registers at base0; CS0-CS3 only)</description>
+  <baseAddress>0xFF6D0000</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x1054</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- CTL1 -->
+    <register>
+      <name>CSIH1CTL1</name>
+      <description>CSIH1 Control Register 1 — clock phase, interrupt timing, chip-select levels (CS0-CS3), job/loop-back/handshake modes</description>
+      <addressOffset>0x10</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnCKR</name><description>Clock phase of CSIHnTSCK</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIHnSLIT</name><description>Interrupt timing select for CSIHnTIC</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIHnCSL3</name><description>Chip-select 3 active output level</description><bitRange>[11:11]</bitRange></field>
+        <field><name>CSIHnCSL2</name><description>Chip-select 2 active output level</description><bitRange>[10:10]</bitRange></field>
+        <field><name>CSIHnCSL1</name><description>Chip-select 1 active output level</description><bitRange>[9:9]</bitRange></field>
+        <field><name>CSIHnCSL0</name><description>Chip-select 0 active output level</description><bitRange>[8:8]</bitRange></field>
+        <field><name>CSIHnEDLE</name><description>Extended data length mode enable</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIHnJE</name><description>Job mode enable</description><bitRange>[6:6]</bitRange></field>
+        <field><name>CSIHnDCS</name><description>Data consistency check enable</description><bitRange>[5:5]</bitRange></field>
+        <field><name>CSIHnCSRI</name><description>Chip-select behavior after last transfer</description><bitRange>[4:4]</bitRange></field>
+        <field><name>CSIHnLBM</name><description>Loop-back mode enable</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIHnSIT</name><description>Interrupt delay mode</description><bitRange>[2:2]</bitRange></field>
+        <field><name>CSIHnHSE</name><description>Handshake function enable</description><bitRange>[1:1]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CTL2 -->
+    <register>
+      <name>CSIH1CTL2</name>
+      <description>CSIH1 Control Register 2 — operating mode, prescaler, baud rate</description>
+      <addressOffset>0x14</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0xE000</resetValue>
+      <fields>
+        <field><name>CSIHnPRS</name><description>Prescaler select [2:0]</description><bitRange>[15:13]</bitRange></field>
+        <field><name>CSIHnBRS</name><description>Baud rate select [11:0]</description><bitRange>[11:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- MCTL0 -->
+    <register>
+      <name>CSIH1MCTL0</name>
+      <description>CSIH1 Memory Control Register 0 — memory mode and time-out setting</description>
+      <addressOffset>0x1040</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x001F</resetValue>
+      <fields>
+        <field><name>CSIHnMMS</name><description>Memory mode select [1:0]</description><bitRange>[9:8]</bitRange></field>
+        <field><name>CSIHnTO</name><description>Time-out setting [4:0]</description><bitRange>[4:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG0 -->
+    <register>
+      <name>CSIH1CFG0</name>
+      <description>CSIH1 Configuration Register 0 — chip-select 0 protocol settings</description>
+      <addressOffset>0x1044</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnPSCL0</name><description>Prescaler select for CS0 [1:0]</description><bitRange>[31:30]</bitRange></field>
+        <field><name>CSIHnPS0</name><description>Parity select for CS0 [1:0]</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIHnDLS0</name><description>Data length select for CS0 [3:0]</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIHnRCB0</name><description>Recessive config for CS0</description><bitRange>[19:19]</bitRange></field>
+        <field><name>CSIHnDIR0</name><description>Data direction for CS0</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIHnCKP0</name><description>Clock phase for CS0</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIHnDAP0</name><description>Data phase for CS0</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIHnIDL0</name><description>Idle enforcement config for CS0</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnID0</name><description>Idle time select for CS0 [2:0]</description><bitRange>[14:12]</bitRange></field>
+        <field><name>CSIHnHD0</name><description>Hold time for CS0 [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>CSIHnIN0</name><description>Inter-data delay for CS0 [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>CSIHnSP0</name><description>Setup time for CS0 [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG1 -->
+    <register>
+      <name>CSIH1CFG1</name>
+      <description>CSIH1 Configuration Register 1 — chip-select 1 protocol settings</description>
+      <addressOffset>0x1048</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnPSCL1</name><description>Prescaler select for CS1 [1:0]</description><bitRange>[31:30]</bitRange></field>
+        <field><name>CSIHnPS1</name><description>Parity select for CS1 [1:0]</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIHnDLS1</name><description>Data length select for CS1 [3:0]</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIHnRCB1</name><description>Recessive config for CS1</description><bitRange>[19:19]</bitRange></field>
+        <field><name>CSIHnDIR1</name><description>Data direction for CS1</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIHnCKP1</name><description>Clock phase for CS1</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIHnDAP1</name><description>Data phase for CS1</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIHnIDL1</name><description>Idle enforcement config for CS1</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnID1</name><description>Idle time select for CS1 [2:0]</description><bitRange>[14:12]</bitRange></field>
+        <field><name>CSIHnHD1</name><description>Hold time for CS1 [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>CSIHnIN1</name><description>Inter-data delay for CS1 [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>CSIHnSP1</name><description>Setup time for CS1 [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG2 -->
+    <register>
+      <name>CSIH1CFG2</name>
+      <description>CSIH1 Configuration Register 2 — chip-select 2 protocol settings</description>
+      <addressOffset>0x104C</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnPSCL2</name><description>Prescaler select for CS2 [1:0]</description><bitRange>[31:30]</bitRange></field>
+        <field><name>CSIHnPS2</name><description>Parity select for CS2 [1:0]</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIHnDLS2</name><description>Data length select for CS2 [3:0]</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIHnRCB2</name><description>Recessive config for CS2</description><bitRange>[19:19]</bitRange></field>
+        <field><name>CSIHnDIR2</name><description>Data direction for CS2</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIHnCKP2</name><description>Clock phase for CS2</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIHnDAP2</name><description>Data phase for CS2</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIHnIDL2</name><description>Idle enforcement config for CS2</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnID2</name><description>Idle time select for CS2 [2:0]</description><bitRange>[14:12]</bitRange></field>
+        <field><name>CSIHnHD2</name><description>Hold time for CS2 [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>CSIHnIN2</name><description>Inter-data delay for CS2 [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>CSIHnSP2</name><description>Setup time for CS2 [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- CFG3 -->
+    <register>
+      <name>CSIH1CFG3</name>
+      <description>CSIH1 Configuration Register 3 — chip-select 3 protocol settings</description>
+      <addressOffset>0x1050</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnPSCL3</name><description>Prescaler select for CS3 [1:0]</description><bitRange>[31:30]</bitRange></field>
+        <field><name>CSIHnPS3</name><description>Parity select for CS3 [1:0]</description><bitRange>[29:28]</bitRange></field>
+        <field><name>CSIHnDLS3</name><description>Data length select for CS3 [3:0]</description><bitRange>[27:24]</bitRange></field>
+        <field><name>CSIHnRCB3</name><description>Recessive config for CS3</description><bitRange>[19:19]</bitRange></field>
+        <field><name>CSIHnDIR3</name><description>Data direction for CS3</description><bitRange>[18:18]</bitRange></field>
+        <field><name>CSIHnCKP3</name><description>Clock phase for CS3</description><bitRange>[17:17]</bitRange></field>
+        <field><name>CSIHnDAP3</name><description>Data phase for CS3</description><bitRange>[16:16]</bitRange></field>
+        <field><name>CSIHnIDL3</name><description>Idle enforcement config for CS3</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnID3</name><description>Idle time select for CS3 [2:0]</description><bitRange>[14:12]</bitRange></field>
+        <field><name>CSIHnHD3</name><description>Hold time for CS3 [3:0]</description><bitRange>[11:8]</bitRange></field>
+        <field><name>CSIHnIN3</name><description>Inter-data delay for CS3 [3:0]</description><bitRange>[7:4]</bitRange></field>
+        <field><name>CSIHnSP3</name><description>Setup time for CS3 [3:0]</description><bitRange>[3:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CSIH1 — Bank 1 (base1 = 0xFFFFE100): memory / Tx / Rx / status
+     ═══════════════════════════════════════════════════════════════ -->
+<peripheral>
+  <name>CSIH1_B1</name>
+  <description>Queue-Equipped Three-Line Serial Interface H 1, Bank 1 (memory/Tx/Rx/status registers at base1)</description>
+  <baseAddress>0xFFFFE100</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x9C</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <!-- CTL0 -->
+    <register>
+      <name>CSIH1CTL0</name>
+      <description>CSIH1 Control Register 0 — operation clock, Tx/Rx enable, memory bypass</description>
+      <addressOffset>0x0</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>CSIHnPWR</name><description>Operation clock control</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIHnTXE</name><description>Transmission enable</description><bitRange>[6:6]</bitRange></field>
+        <field><name>CSIHnRXE</name><description>Reception enable</description><bitRange>[5:5]</bitRange></field>
+        <field><name>CSIHnJOBE</name><description>Job abort at end of current job</description><bitRange>[1:1]</bitRange></field>
+        <field><name>CSIHnMBS</name><description>Memory bypass (0=memory mode, 1=direct access)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- STR0 -->
+    <register>
+      <name>CSIH1STR0</name>
+      <description>CSIH1 Status Register 0 — FIFO pointers, error flags, transfer status</description>
+      <addressOffset>0x4</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <resetValue>0x00000010</resetValue>
+      <fields>
+        <field><name>CSIHnSRP</name><description>Received words in FIFO [7:0]</description><bitRange>[31:24]</bitRange></field>
+        <field><name>CSIHnSPF</name><description>Untransmitted data count in FIFO [7:0]</description><bitRange>[23:16]</bitRange></field>
+        <field><name>CSIHnTMOE</name><description>Time-out error flag</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnOFE</name><description>Overflow error flag</description><bitRange>[14:14]</bitRange></field>
+        <field><name>CSIHnTSF</name><description>Transfer status flag</description><bitRange>[7:7]</bitRange></field>
+        <field><name>CSIHnFLF</name><description>FIFO full flag</description><bitRange>[5:5]</bitRange></field>
+        <field><name>CSIHnEMF</name><description>FIFO empty flag</description><bitRange>[4:4]</bitRange></field>
+        <field><name>CSIHnDCE</name><description>Data consistency check error flag</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIHnPE</name><description>Parity error flag</description><bitRange>[1:1]</bitRange></field>
+        <field><name>CSIHnOVE</name><description>Overrun error flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- STCR0 -->
+    <register>
+      <name>CSIH1STCR0</name>
+      <description>CSIH1 Status Clear Register 0 — clears STR0 flags; always reads 0x0000</description>
+      <addressOffset>0x8</addressOffset>
+      <size>16</size>
+      <access>write-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>CSIHnTMOEC</name><description>Clear time-out error flag</description><bitRange>[15:15]</bitRange></field>
+        <field><name>CSIHnOFEC</name><description>Clear overflow error flag</description><bitRange>[14:14]</bitRange></field>
+        <field><name>CSIHnPCT</name><description>FIFO pointer clear command</description><bitRange>[8:8]</bitRange></field>
+        <field><name>CSIHnDCEC</name><description>Clear data consistency error flag</description><bitRange>[3:3]</bitRange></field>
+        <field><name>CSIHnPEC</name><description>Clear parity error flag</description><bitRange>[1:1]</bitRange></field>
+        <field><name>CSIHnOVEC</name><description>Clear overrun error flag</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- MCTL1 -->
+    <register>
+      <name>CSIH1MCTL1</name>
+      <description>CSIH1 Memory Control Register 1 — FIFO interrupt threshold levels</description>
+      <addressOffset>0x80</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnFES</name><description>Tx FIFO empty interrupt threshold [6:0]</description><bitRange>[22:16]</bitRange></field>
+        <field><name>CSIHnFFS</name><description>Rx FIFO full interrupt threshold [6:0]</description><bitRange>[6:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- MCTL2 -->
+    <register>
+      <name>CSIH1MCTL2</name>
+      <description>CSIH1 Memory Control Register 2 — buffer transfer start, data count, send pointer</description>
+      <addressOffset>0x84</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnBTST</name><description>Buffer transfer start trigger</description><bitRange>[31:31]</bitRange></field>
+        <field><name>CSIHnND</name><description>Number of data for buffer modes [7:0]</description><bitRange>[23:16]</bitRange></field>
+        <field><name>CSIHnSOP</name><description>Send pointer [6:0]</description><bitRange>[6:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TX0W -->
+    <register>
+      <name>CSIH1TX0W</name>
+      <description>CSIH1 Transmission Register 0 for Word Access</description>
+      <addressOffset>0x88</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <!-- initial value undefined -->
+      <fields>
+        <field><name>CSIHnCIRE</name><description>Communication interrupt request enable for this frame</description><bitRange>[31:31]</bitRange></field>
+        <field><name>CSIHnEOJ</name><description>End-of-job marker</description><bitRange>[30:30]</bitRange></field>
+        <field><name>CSIHnEDL</name><description>Extended data length for this frame</description><bitRange>[29:29]</bitRange></field>
+        <field><name>CSIHnCS</name><description>Chip-select activation bitmap [7:0] (bits 19:16 used for CSIH1 CS0-CS3)</description><bitRange>[23:16]</bitRange></field>
+        <field><name>CSIHnTX</name><description>Transmission data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- TX0H -->
+    <register>
+      <name>CSIH1TX0H</name>
+      <description>CSIH1 Transmission Register 0 for Half Word Access — same as TX0W[15:0]</description>
+      <addressOffset>0x8C</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <!-- initial value undefined -->
+      <fields>
+        <field><name>CSIHnTX</name><description>Transmission data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- RX0W -->
+    <register>
+      <name>CSIH1RX0W</name>
+      <description>CSIH1 Reception Register 0 for Word Access</description>
+      <addressOffset>0x90</addressOffset>
+      <size>32</size>
+      <access>read-only</access>
+      <!-- initial value undefined -->
+      <fields>
+        <field><name>CSIHnRPE</name><description>Reception parity error on this frame</description><bitRange>[25:25]</bitRange></field>
+        <field><name>CSIHnTDCE</name><description>Transmission data consistency error on this frame</description><bitRange>[24:24]</bitRange></field>
+        <field><name>CSIHnCS</name><description>Chip-select active bitmap for this frame [7:0]</description><bitRange>[23:16]</bitRange></field>
+        <field><name>CSIHnRX</name><description>Received data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- RX0H -->
+    <register>
+      <name>CSIH1RX0H</name>
+      <description>CSIH1 Reception Register 0 for Half Word Access — same as RX0W[15:0]</description>
+      <addressOffset>0x94</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <!-- initial value undefined -->
+      <fields>
+        <field><name>CSIHnRX</name><description>Received data [15:0]</description><bitRange>[15:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <!-- MRWP0 -->
+    <register>
+      <name>CSIH1MRWP0</name>
+      <description>CSIH1 Memory Read/Write Pointer Register 0 — Rx and Tx buffer pointers</description>
+      <addressOffset>0x98</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>CSIHnRRA</name><description>Rx buffer read pointer [6:0]</description><bitRange>[22:16]</bitRange></field>
+        <field><name>CSIHnTRWA</name><description>Tx buffer read/write pointer [6:0]</description><bitRange>[6:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

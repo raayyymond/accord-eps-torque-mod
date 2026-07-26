@@ -1,0 +1,582 @@
+<!-- Section 19: Timer Option Module (TAPA) — UPD70F3508 -->
+<!-- 4 instances: TAPA0..TAPA3. Each instance has two disjoint address regions:
+       _CTL peripheral: <TAPAn_base0> + 0x20..0x24  (CTL0, CTL1)
+       main peripheral: <TAPAn_base1> + 0x00..0x18  (FLG, ACWE, ACTS, ACTT, OPHS, OPHT)
+     PIC0_TAPA peripheral: PIC0 HIZCEN and REG2n0 registers used by TAPA (absolute addrs).
+     Note: TAPA2 and TAPA3 do NOT have CTL1 (no A/D trigger select function). -->
+
+<!-- ===== TAPA0 control registers (base0 = 0xFF815000) ===== -->
+<peripheral>
+  <name>TAPA0_CTL</name>
+  <description>Timer Option Module 0 Control Registers (base0 region)</description>
+  <baseAddress>0xFF815020</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x5</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>TAPA0CTL0</name>
+      <description>TAPA0 Control Register 0 - Hi-Z edge/mode control</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TAPA0DCM</name><description>Clearing condition specification bit</description><bitRange>[4:4]</bitRange></field>
+        <field><name>TAPA0DCN</name><description>Hi-Z input edge selection bit N (falling)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TAPA0DCP</name><description>Hi-Z input edge selection bit P (rising)</description><bitRange>[2:2]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA0CTL1</name>
+      <description>TAPA0 Control Register 1 - A/D converter trigger select (n=0,1 only)</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA0ATS3</name><description>A/D converter trigger 1 select bit 1</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TAPA0ATS2</name><description>A/D converter trigger 1 select bit 0</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TAPA0ATS1</name><description>A/D converter trigger 0 select bit 1</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TAPA0ATS0</name><description>A/D converter trigger 0 select bit 0</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== TAPA0 status/trigger registers (base1 = 0xFFFFD400) ===== -->
+<peripheral>
+  <name>TAPA0</name>
+  <description>Timer Option Module 0 Status and Trigger Registers (base1 region)</description>
+  <baseAddress>0xFFFFD400</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x19</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>TAPA0FLG</name>
+      <description>TAPA0 Flag Register - Hi-Z output monitor and async control state</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TAPA0HOF2</name><description>HZOUTm output monitor bit 2 (phase W)</description><bitRange>[10:10]</bitRange></field>
+        <field><name>TAPA0HOF1</name><description>HZOUTm output monitor bit 1 (phase V)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>TAPA0HOF0</name><description>HZOUTm output monitor bit 0 (phase U)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>TAPA0ACE</name><description>Asynchronous Hi-Z control enable bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA0ACWE</name>
+      <description>TAPA0 Asynchronous Control Write Enable Register</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA0ACWE</name><description>Async control write enable bit (auto-cleared after ACTS/ACTT write)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA0ACTS</name>
+      <description>TAPA0 Asynchronous Control Start Trigger Register</description>
+      <addressOffset>0x8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA0ACTS</name><description>Async control start trigger bit (valid when ACWE=1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA0ACTT</name>
+      <description>TAPA0 Asynchronous Control Stop Trigger Register</description>
+      <addressOffset>0xC</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA0ACTT</name><description>Async control stop trigger bit (valid when ACWE=1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA0OPHS</name>
+      <description>TAPA0 Hi-Z Start Trigger Register</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA0OPHS0</name><description>Hi-Z control signal start trigger 0 bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA0OPHT</name>
+      <description>TAPA0 Hi-Z Stop Trigger Register</description>
+      <addressOffset>0x18</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA0OPHT0</name><description>Hi-Z control signal stop trigger 0 bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== TAPA1 control registers (base0 = 0xFF816000) ===== -->
+<peripheral>
+  <name>TAPA1_CTL</name>
+  <description>Timer Option Module 1 Control Registers (base0 region)</description>
+  <baseAddress>0xFF816020</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x5</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>TAPA1CTL0</name>
+      <description>TAPA1 Control Register 0 - Hi-Z edge/mode control</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TAPA1DCM</name><description>Clearing condition specification bit</description><bitRange>[4:4]</bitRange></field>
+        <field><name>TAPA1DCN</name><description>Hi-Z input edge selection bit N (falling)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TAPA1DCP</name><description>Hi-Z input edge selection bit P (rising)</description><bitRange>[2:2]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA1CTL1</name>
+      <description>TAPA1 Control Register 1 - A/D converter trigger select (n=0,1 only)</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA1ATS3</name><description>A/D converter trigger 1 select bit 1</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TAPA1ATS2</name><description>A/D converter trigger 1 select bit 0</description><bitRange>[2:2]</bitRange></field>
+        <field><name>TAPA1ATS1</name><description>A/D converter trigger 0 select bit 1</description><bitRange>[1:1]</bitRange></field>
+        <field><name>TAPA1ATS0</name><description>A/D converter trigger 0 select bit 0</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== TAPA1 status/trigger registers (base1 = 0xFFFFD500) ===== -->
+<peripheral>
+  <name>TAPA1</name>
+  <description>Timer Option Module 1 Status and Trigger Registers (base1 region)</description>
+  <baseAddress>0xFFFFD500</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x19</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>TAPA1FLG</name>
+      <description>TAPA1 Flag Register - Hi-Z output monitor and async control state</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TAPA1HOF2</name><description>HZOUTm output monitor bit 2 (phase W)</description><bitRange>[10:10]</bitRange></field>
+        <field><name>TAPA1HOF1</name><description>HZOUTm output monitor bit 1 (phase V)</description><bitRange>[9:9]</bitRange></field>
+        <field><name>TAPA1HOF0</name><description>HZOUTm output monitor bit 0 (phase U)</description><bitRange>[8:8]</bitRange></field>
+        <field><name>TAPA1ACE</name><description>Asynchronous Hi-Z control enable bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA1ACWE</name>
+      <description>TAPA1 Asynchronous Control Write Enable Register</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA1ACWE</name><description>Async control write enable bit (auto-cleared after ACTS/ACTT write)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA1ACTS</name>
+      <description>TAPA1 Asynchronous Control Start Trigger Register</description>
+      <addressOffset>0x8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA1ACTS</name><description>Async control start trigger bit (valid when ACWE=1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA1ACTT</name>
+      <description>TAPA1 Asynchronous Control Stop Trigger Register</description>
+      <addressOffset>0xC</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA1ACTT</name><description>Async control stop trigger bit (valid when ACWE=1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA1OPHS</name>
+      <description>TAPA1 Hi-Z Start Trigger Register</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA1OPHS0</name><description>Hi-Z control signal start trigger 0 bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA1OPHT</name>
+      <description>TAPA1 Hi-Z Stop Trigger Register</description>
+      <addressOffset>0x18</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA1OPHT0</name><description>Hi-Z control signal stop trigger 0 bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== TAPA2 control registers (base0 = 0xFF817000) ===== -->
+<!-- Note: TAPA2 has no CTL1 (no A/D trigger select) -->
+<peripheral>
+  <name>TAPA2_CTL</name>
+  <description>Timer Option Module 2 Control Registers (base0 region; no CTL1)</description>
+  <baseAddress>0xFF817020</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x2</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>TAPA2CTL0</name>
+      <description>TAPA2 Control Register 0 - Hi-Z edge/mode control</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TAPA2DCM</name><description>Clearing condition specification bit</description><bitRange>[4:4]</bitRange></field>
+        <field><name>TAPA2DCN</name><description>Hi-Z input edge selection bit N (falling)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TAPA2DCP</name><description>Hi-Z input edge selection bit P (rising)</description><bitRange>[2:2]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== TAPA2 status/trigger registers (base1 = 0xFFFFD600) ===== -->
+<peripheral>
+  <name>TAPA2</name>
+  <description>Timer Option Module 2 Status and Trigger Registers (base1 region)</description>
+  <baseAddress>0xFFFFD600</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x19</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>TAPA2FLG</name>
+      <description>TAPA2 Flag Register - Hi-Z output monitor and async control state</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TAPA2HOF2</name><description>HZOUTm output monitor bit 2</description><bitRange>[10:10]</bitRange></field>
+        <field><name>TAPA2HOF1</name><description>HZOUTm output monitor bit 1</description><bitRange>[9:9]</bitRange></field>
+        <field><name>TAPA2HOF0</name><description>HZOUTm output monitor bit 0</description><bitRange>[8:8]</bitRange></field>
+        <field><name>TAPA2ACE</name><description>Asynchronous Hi-Z control enable bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA2ACWE</name>
+      <description>TAPA2 Asynchronous Control Write Enable Register</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA2ACWE</name><description>Async control write enable bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA2ACTS</name>
+      <description>TAPA2 Asynchronous Control Start Trigger Register</description>
+      <addressOffset>0x8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA2ACTS</name><description>Async control start trigger bit (valid when ACWE=1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA2ACTT</name>
+      <description>TAPA2 Asynchronous Control Stop Trigger Register</description>
+      <addressOffset>0xC</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA2ACTT</name><description>Async control stop trigger bit (valid when ACWE=1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA2OPHS</name>
+      <description>TAPA2 Hi-Z Start Trigger Register</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA2OPHS0</name><description>Hi-Z control signal start trigger 0 bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA2OPHT</name>
+      <description>TAPA2 Hi-Z Stop Trigger Register</description>
+      <addressOffset>0x18</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA2OPHT0</name><description>Hi-Z control signal stop trigger 0 bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== TAPA3 control registers (base0 = 0xFF818000) ===== -->
+<!-- Note: TAPA3 has no CTL1 (no A/D trigger select) -->
+<peripheral>
+  <name>TAPA3_CTL</name>
+  <description>Timer Option Module 3 Control Registers (base0 region; no CTL1)</description>
+  <baseAddress>0xFF818020</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x2</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>TAPA3CTL0</name>
+      <description>TAPA3 Control Register 0 - Hi-Z edge/mode control</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-write</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TAPA3DCM</name><description>Clearing condition specification bit</description><bitRange>[4:4]</bitRange></field>
+        <field><name>TAPA3DCN</name><description>Hi-Z input edge selection bit N (falling)</description><bitRange>[3:3]</bitRange></field>
+        <field><name>TAPA3DCP</name><description>Hi-Z input edge selection bit P (rising)</description><bitRange>[2:2]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== TAPA3 status/trigger registers (base1 = 0xFFFFD700) ===== -->
+<peripheral>
+  <name>TAPA3</name>
+  <description>Timer Option Module 3 Status and Trigger Registers (base1 region)</description>
+  <baseAddress>0xFFFFD700</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x19</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>TAPA3FLG</name>
+      <description>TAPA3 Flag Register - Hi-Z output monitor and async control state</description>
+      <addressOffset>0x0</addressOffset>
+      <size>16</size>
+      <access>read-only</access>
+      <resetValue>0x0000</resetValue>
+      <fields>
+        <field><name>TAPA3HOF2</name><description>HZOUTm output monitor bit 2</description><bitRange>[10:10]</bitRange></field>
+        <field><name>TAPA3HOF1</name><description>HZOUTm output monitor bit 1</description><bitRange>[9:9]</bitRange></field>
+        <field><name>TAPA3HOF0</name><description>HZOUTm output monitor bit 0</description><bitRange>[8:8]</bitRange></field>
+        <field><name>TAPA3ACE</name><description>Asynchronous Hi-Z control enable bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA3ACWE</name>
+      <description>TAPA3 Asynchronous Control Write Enable Register</description>
+      <addressOffset>0x4</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA3ACWE</name><description>Async control write enable bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA3ACTS</name>
+      <description>TAPA3 Asynchronous Control Start Trigger Register</description>
+      <addressOffset>0x8</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA3ACTS</name><description>Async control start trigger bit (valid when ACWE=1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA3ACTT</name>
+      <description>TAPA3 Asynchronous Control Stop Trigger Register</description>
+      <addressOffset>0xC</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA3ACTT</name><description>Async control stop trigger bit (valid when ACWE=1)</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA3OPHS</name>
+      <description>TAPA3 Hi-Z Start Trigger Register</description>
+      <addressOffset>0x14</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA3OPHS0</name><description>Hi-Z control signal start trigger 0 bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>TAPA3OPHT</name>
+      <description>TAPA3 Hi-Z Stop Trigger Register</description>
+      <addressOffset>0x18</addressOffset>
+      <size>8</size>
+      <access>write-only</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>TAPA3OPHT0</name><description>Hi-Z control signal stop trigger 0 bit</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>
+
+<!-- ===== PIC0 TAPA-related registers (PIC0 peripheral interconnect space) ===== -->
+<!-- These registers live in PIC0 address space but are documented in Section 19.
+     PIC0REG200 (n=0): 0xFF81C08C; PIC0REG210 (n=1): 0xFF81C09C
+     PIC0HIZCEN0: 0xFF81C0B4; PIC0HIZCEN1: 0xFF81C0B8
+     PIC0HIZCEN2: 0xFF81C0DC; PIC0HIZCEN3: 0xFF81C0E4
+     Address block spans 0xFF81C08C to 0xFF81C0E4 (size 0x59). -->
+<peripheral>
+  <name>PIC0_TAPA</name>
+  <description>PIC0 TAPA-related registers: Hi-Z output control and INT signal selection</description>
+  <baseAddress>0xFF81C08C</baseAddress>
+  <addressBlock><offset>0x0</offset><size>0x59</size><usage>registers</usage></addressBlock>
+  <registers>
+
+    <register>
+      <name>PIC0REG200</name>
+      <description>Timer I/O Control Register 200 - TAUA channel select for TAPA0 INT/up-down signals</description>
+      <addressOffset>0x0</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>PIC0REG20025</name><description>TAUA channel select for TAPA0TSIM0/UDCM0 bit 1</description><bitRange>[25:25]</bitRange></field>
+        <field><name>PIC0REG20024</name><description>TAUA channel select for TAPA0TSIM0/UDCM0 bit 0</description><bitRange>[24:24]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0REG210</name>
+      <description>Timer I/O Control Register 210 - TAUA channel select for TAPA1 INT/up-down signals</description>
+      <addressOffset>0x10</addressOffset>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0x00000000</resetValue>
+      <fields>
+        <field><name>PIC0REG21025</name><description>TAUA channel select for TAPA1TSIM0/UDCM0 bit 1</description><bitRange>[25:25]</bitRange></field>
+        <field><name>PIC0REG21024</name><description>TAUA channel select for TAPA1TSIM0/UDCM0 bit 0</description><bitRange>[24:24]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0HIZCEN0</name>
+      <description>Hi-Z Output Control Register 0 - selects input signals for TAPA0 Hi-Z control</description>
+      <addressOffset>0x28</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>PIC0HIZCEN06</name><description>Enable Hi-Z control by INTADCA0TERR interrupt signal</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0HIZCEN05</name><description>Enable Hi-Z control by ERROROUT signal</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0HIZCEN00</name><description>Enable Hi-Z control by ESO0 pin input</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0HIZCEN1</name>
+      <description>Hi-Z Output Control Register 1 - selects input signals for TAPA1 Hi-Z control</description>
+      <addressOffset>0x2C</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>PIC0HIZCEN16</name><description>Enable Hi-Z control by INTADCA0TERR interrupt signal</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0HIZCEN15</name><description>Enable Hi-Z control by ERROROUT signal</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0HIZCEN10</name><description>Enable Hi-Z control by ESO1 pin input</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0HIZCEN2</name>
+      <description>Hi-Z Output Control Register 2 - selects input signals for TAPA2 Hi-Z control</description>
+      <addressOffset>0x50</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>PIC0HIZCEN26</name><description>Enable Hi-Z control by INTADCA0TERR interrupt signal</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0HIZCEN25</name><description>Enable Hi-Z control by ERROROUT signal</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0HIZCEN23</name><description>Enable Hi-Z control by INTTSG20IER interrupt signal</description><bitRange>[3:3]</bitRange></field>
+        <field><name>PIC0HIZCEN20</name><description>Enable Hi-Z control by ESO2 pin input</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+    <register>
+      <name>PIC0HIZCEN3</name>
+      <description>Hi-Z Output Control Register 3 - selects input signals for TAPA3 Hi-Z control</description>
+      <addressOffset>0x58</addressOffset>
+      <size>8</size>
+      <access>read-write</access>
+      <resetValue>0x00</resetValue>
+      <fields>
+        <field><name>PIC0HIZCEN36</name><description>Enable Hi-Z control by INTADCA0TERR interrupt signal</description><bitRange>[6:6]</bitRange></field>
+        <field><name>PIC0HIZCEN35</name><description>Enable Hi-Z control by ERROROUT signal</description><bitRange>[5:5]</bitRange></field>
+        <field><name>PIC0HIZCEN34</name><description>Enable Hi-Z control by INTTSG21IER interrupt signal</description><bitRange>[4:4]</bitRange></field>
+        <field><name>PIC0HIZCEN30</name><description>Enable Hi-Z control by ESO3 pin input</description><bitRange>[0:0]</bitRange></field>
+      </fields>
+    </register>
+
+  </registers>
+</peripheral>

@@ -1,0 +1,3005 @@
+=== PAGE 1155 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1135 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+Section 18 Encoder Timer (ENCA)
+18.1
+ENCA Features
+Instances
+This product has two encoder timers.
+Instances index n
+Throughout this section, both of the individual encoder timers are indicated by 
+the index "n" (where n = 0 and 1). For example, ENCAnCTL indicates both 
+ENCAn control registers.
+Meaning of both
+edges
+In this section, "both edges" refers to both rising and falling edges.
+Register
+addresses
+All ENCAn register addresses are given as address offsets to the individual 
+base address <ENCAn_base>.
+The base address <ENCAn_base> of each ENCAn is listed in the following 
+table:
+Clock supply
+The following clock input is provided to each ENCAn. That is, each ENCAn is 
+connected to the PCLK.
+Table 18-1
+Instances of ENCA
+Encoder Timer
+Instances
+2
+Name
+ENCA0, ENCA1
+Table 18-2
+Register Base Addresses <ENCAn_base>
+ENCAn Instance
+<ENCAn_base0> Address
+<ENCAn_base1> Address
+ENCA0
+FF81 9000H
+FFFF D800H
+ENCA1
+FF81 A000H
+FFFF D900H
+Table 18-3
+ENCAn Clock Supply
+ENCAn Instance
+Clock Supply
+ENCA0, ENCA1
+PCLK
+
+=== PAGE 1156 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1136 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+Interrupt requests
+Interrupt requests from ENCAn are listed in the following table:
+Input signals
+Input signals of ENCAn are listed in the following table:
+Table 18-4
+List of ENCAn Interrupt Requests
+ENCAn Signals
+Function
+Connected to
+INTENCAnIOV
+Overflow interrupt
+Interrupt controller, DMA, DTS
+INTENCAnIUD
+Underflow interrupt
+Interrupt controller, DMA, DTS
+INTENCAnI0
+Compare match 0 or 
+capture 0 interrupt
+Interrupt controller, DMA, DTS
+INTENCAnI1
+Compare match 1 or 
+capture 1 interrupt
+Interrupt controller, DMA, DTS
+INTENCAnIEC
+Interrupt to indicate clearing 
+due to clearing input from 
+the encoder
+Interrupt controller, DMA, DTS
+Table 18-5
+List of ENCAn Input Signals
+ENCAn Signals
+Function
+Connected to
+ENCAnI0
+ENCAn capture trigger 
+input 0
+Port 
+ENCAnI1
+ENCAn capture trigger 
+input 1
+Port
+ENCAnE0
+ENCAn encoder input 0
+Port
+ENCAnE1
+ENCAn encoder input 1
+Port
+ENCAnEC
+ENCAn encoder clearing 
+input
+Port
+ENCAnTSST
+ENCAn simultaneous start 
+trigger input
+PIC module (input)
+
+=== PAGE 1157 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1137 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+18.2
+Functional Overview
+Features
+summary
+• Generates a counter control signal from the encoder input signal and 
+executes counting in synchronization with PCLK.
+• Capture function for capturing the counter value with an external trigger 
+signal
+• Compare function for compare match judgment with the counter value
+• Two capture compare registers that can be set separately for capture 
+operation and for compare operation
+• Interrupt masking function for masking the output of interrupt signals as a 
+result of a match in judgment by comparison
+• Function for loading the value of the capture-compare register to the counter 
+when the latter underflows
+• An input signal from an encoder can be applied as the clearing condition for 
+the timer counter.
+• Edge or level detection is selectable for the encoder input signal that 
+provides the clearing condition for the timer counter.
+• Five interrupt outputs: 2 capture-compare interrupts, 1 counter-clear 
+interrupt, 1 overflow interrupt, and 1 underflow interrupt.
+
+=== PAGE 1158 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1138 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+18.2.1
+Block Diagram
+Figure 18-1
+Block Diagram of Encoder Timer
+Counter 
+controller
+16-bit counter
+ENCAnCRM0
+1
+0
+CKEN
+Capture
+Compare/clear
+Capture
+INTENCAnIEC 
+(encoder clearing interrupt)
+INTENCAnIOV 
+(overflow interrupt)
+INTENCAnIUD 
+(underflow interrupt)
+INTENCAnI0 
+(capture compare match 
+interrupt 0)
+INTENCAnI1 
+(capture/compare match 
+interrupt 1)
+ENCAnl1
+ (encoder capture trigger
+ input 1)
+ENCAnI0
+ (encoder capture trigger 
+input 0)
+ENCAnEC
+ (encoder clearing
+input signal)
+ENCAnE0
+(encoder input 0)
+ENCAnE1
+(encoder input 1)
+Capture 1
+Capture 0
+ENCAnCCR0
+(capture/compare)
+ENCAnCCR0
+(capture/compare)
+ENCAnLDE
+ENCAnECM0
+ENCAnCRM1
+ENCAnCTS
+ENCAnTS
+ENCAnTT
+ENCAnACL
+ENCAnCLOV
+ENCAnOVF
+ENCAnUFD
+ENCAnCSF
+ENCAnCLUD
+ENCAnCNT
+ENCAnBCL
+ENCAnZCL
+ENCAnSCE
+ENCAnTE
+ENCAnTIS
+[3:2]
+ENCAnECS
+[1:0]
+ENCAnEIS
+[1:0]
+ENCAnUDS
+[1:0]
+ENCAnTIS
+[1:0]
+ENCAnECM1
+ENCAnMCS
+ENCAnCME
+Edge 
+detector
+UDC
+CLR
+
+Compare/clear/load
+ENCAnTSST
+Simultaneous
+ start trigger
+ (controlled
+ by the PIC module)
+Edge 
+detector
+Edge 
+detector
+Edge 
+detector
+
+=== PAGE 1159 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1139 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+18.3
+ENCA Control Registers
+The ENCAn is controlled and operated by the following registers:
+<ENCAn_base>
+The base address <ENCAn_base> for each ENCAn is defined in section 18.1, 
+under "Register addresses".
+Table 18-6
+ENCAn Register Overview
+Register Function
+Name
+Address
+ENCAn capture/compare 
+register 0
+ENCAnCCR0
+<ENCAn_base1>
+ENCAn capture/compare 
+register 1
+ENCAnCCR1
+<ENCAn_base1> + 04H
+ENCAn counter register 
+ENCAnCNT
+<ENCAn_base1> + 08H
+ENCAn status flag register
+ENCAnFLG
+<ENCAn_base1> + 0CH
+ENCAn status flag clear 
+register
+ENCAnFGC
+<ENCAn_base1> + 10H
+ENCAn timer enable status 
+register
+ENCAnTE
+<ENCAn_base1> + 14H
+ENCAn timer start trigger 
+register
+ENCAnTS
+<ENCAn_base1> + 18H
+ENCAn timer stop trigger 
+register
+ENCAnTT
+<ENCAn_base1> + 1CH
+ENCAn I/O control register 0
+ENCAnIOC0
+<ENCAn_base1> + 20H
+ENCAn control register 
+ENCAnCTL
+<ENCAn_base0> + 40H
+ENCAn I/O control register 1
+ENCAnIOC1
+<ENCAn_base0> + 44H
+
+=== PAGE 1160 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1140 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(1)
+ENCAnCTL – ENCA Control Register
+This register is a 16-bit register that controls operation of the encoder timer.
+Access
+This register can be read/written in 16-bit units. 
+Writing to this register during operation is prohibited.
+Address
+<ENCAn_base0> + 40H
+Initial value
+0000H
+A reset from any source will initialize the bits. 
+15
+14
+13
+12
+11
+10
+9
+8
+ENCAn
+CME
+ENCAn
+MCS
+0
+0
+0
+0
+ENCAn
+CRM1
+ENCAn
+CRM0
+R/W
+R/W
+R
+R
+R
+R
+R/W
+R/W
+7
+6
+5
+4
+3
+2
+1
+0
+ENCAn
+CTS
+0
+0
+ENCAn
+LDE
+ENCAn
+ECM1
+ENCAn
+ECM0
+ENCAn
+UDS[1:0]
+R/W
+R
+R
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 18-7
+ENCAnCTL Register Contents (1/3)
+Bit Position 
+Bit Name
+Function
+15
+ENCAnCME
+This bit is used to enable or disable masking of compare-match interrupts when 
+comparison is in use.
+0: Disables masking.
+1: Enables masking.
+Caution 1. The setting of the ENCAnCME bit is only valid when ENCAnCRM1 = 
+0.
+Caution 2. While the ENCAnCME bit is set to 1, setting ENCAnECM1 to 1 is 
+prohibited.
+14
+ENCAnMCS
+This bit is used to select the trigger for canceling masking of compare match 
+interrupt detection when the compare function is used.
+0: Masking of compare match interrupt detection is canceled when the 
+ENCAnCCR1 register is written.
+1: Masking of compare match interrupt detection is canceled when one of the 
+following three operations is performed.
+-
+Timer counter clearing in response to the clearing input signal from the 
+encoder.
+-
+Timer counter clearing upon compare match between ENCAnCNT and 
+ENCAnCCR0 when ENCAnECM0 = 1
+-
+Loading from ENCAnCCR0 to timer counter upon underflow detection 
+when ENCAnLDE = 1
+Caution: The setting of the ENCAnMCS bit is only valid when 
+ENCAnCRM1 = 0.
+9
+ENCAnCRM1
+This bit selects how the ENCAnCCR1 register is to be used.
+0: Selects the use of ENCAnCCR1 as a comparison register.
+1: Selects the use of ENCAnCCR1 as a capture register.
+8
+ENCAnCRM0
+This bit selects how the ENCAnCCR0 register is to be used.
+0: Selects the use of ENCAnCCR0 as a comparison register.
+1: Selects the use of ENCAnCCR0 as a capture register.
+
+=== PAGE 1161 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1141 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+7
+ENCAnCTS
+This bit selects the trigger for capture by the ENCAnCCR1 register.
+0: The ENCAnl1 input is the capture trigger.
+1: The ENCAnEC input is the capture trigger.
+Caution: The setting of the ENCAnCTS bit is only valid when 
+ENCAnCRM1 = 1.
+4
+ENCAnLDE
+This bit is used to enable or disable the loading of settings of the ENCAnCCR0 
+register to the counter when the counter underflows.
+0: Disable loading to the counter.
+1. Enable loading to the counter.
+Caution 1. The setting of the ENCAnLDE bit is only valid when ENCAnCRM0 = 
+0.
+Caution 2. When ENCAnCRM0 = 1, the value in the ENCAnCCR0 register is 
+not loaded to the counter when the counter underflows, regardless 
+of the value of the ENCAnLDE bit.
+3
+ENCAnECM1
+This bit is used to select or deselect counter-clearing upon matches between 
+the values in the counter and in register ENCAnCCR1.
+0: The counter is not cleared to 0000H.
+1: The counter is cleared to 0000H if the next step in counting is counting 
+down.
+Caution: The setting of the ENCAnECM1 bit is only valid when ENCAnCRM1 = 
+0.
+2
+ENCAnECM0
+This bit is used to select or deselect counter-clearing upon matches between 
+the values in the counter and in register ENCAnCCR0.
+0: The counter is not cleared to 0000H.
+1: The counter is cleared to 0000H if the next step in counting is counting up.
+Caution: The setting of the ENCAnECM0 bit is only valid when ENCAnCRM0 = 
+0.
+Table 18-7
+ENCAnCTL Register Contents (2/3)
+Bit Position 
+Bit Name
+Function
+
+=== PAGE 1162 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1142 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+1, 0
+ENCAnUDS1,
+ENCAnUDS0
+Along with the inputs on the ENCAnE0 and ENCAnE1 pins, these bits control 
+whether counting is up or down.
+ENCAn
+UDS1
+ENCAn
+UDS1
+Operation
+0
+0
+Upon detection of a valid edge in the 
+ENCAnE0 input signal from the encoder, 
+counter operation depends on the state of the 
+ENCAnE1 input signal from the encoder. 
+Counting will be
+•
+down if ENCAnE1 is "high" and 
+•
+up if ENCAnE1 is "low".
+0
+1
+•
+Detection of a valid edge in the ENCAnE0 
+encoder input causes counting up.
+•
+Detection of a valid edge in the ENCAnE1 
+encoder input causes counting down.
+1
+0
+•
+A rising edge of the ENCAnE0 encoder 
+input causes counting down.
+•
+A falling edge of the ENCAnE0 encoder 
+input causes counting up.
+However, counting in either direction only 
+proceeds when ENCAnE1 is low.
+1
+1
+Both edges are detected in encoder inputs 
+ENCAnE0 and ENCAnE1.
+The combination of detected edge and input 
+level determines the counting operation.
+Table 18-7
+ENCAnCTL Register Contents (3/3)
+Bit Position 
+Bit Name
+Function
+
+=== PAGE 1163 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1143 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(2)
+ENCAnIOC0 – ENCA I/O Control Register 0
+This is an 8-bit register for use to control the valid edge in the input of capture 
+triggers 0 and 1 (i.e. input signals ENCAnI0 and ENCAnI1).
+Access
+This register can be read/written in 8-bit units.
+Address
+<ENCAn_base1> + 20H
+Initial value
+00H
+A reset from any source will initialize the bits.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+ENCAn
+TIS[3:2]
+ENCAn
+TIS[1:0]
+R
+R
+R
+R
+R/W
+R/W
+R/W
+R/W
+Table 18-8
+ENCAnIOC0 Register Contents
+Bit Position
+Bit Name
+Function
+3, 2
+ENCAnTIS3,
+ENCAnTIS2
+Selects the valid edge of capture trigger 1 (ENCAnl1).
+ENCAn
+TIS3
+ENCAn
+TIS2
+Operation
+0
+0
+Neither edge is detected.
+0
+1
+Rising edges are detected.
+1
+0
+Falling edges are detected.
+1
+1
+Both edges are detected.
+Caution: Settings in these bits are only valid when ENCAnCTL.ENCAnCRM1 
+= 1 and ENCAnCTS = 0. The settings are invalid with any other 
+settings of ENCAnCRM1 and ENCAnCTS.
+1, 0
+ENCAnTIS1,
+ENCAnTIS0
+Selects the valid edge of capture trigger 0 (ENCAnl0).
+ENCAn
+TIS1
+ENCAn
+TIS0
+Operation
+0
+0
+Neither edge is detected.
+0
+1
+Rising edges are detected.
+1
+0
+Falling edges are detected.
+1
+1
+Both edges are detected.
+Caution: Settings in these bits are only valid when ENCAnCTL.ENCAnCRM0 
+= 1.
+
+=== PAGE 1164 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1144 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(3)
+ENCAnIOC1 – ENCA I/O Control Register 1
+This is an 8-bit register that controls the clearing condition and valid edges for 
+the input and clearing input signals from the encoder (ENCAnE0, ENCAnE1 
+and ENCAnEC).
+Access
+This register can be read/written in 8-bit units.
+Writing to this register during operation is prohibited.
+Address
+<ENCAn_base0> + 44H
+Initial value
+00H
+A reset from any source will initialize the bits
+7
+6
+5
+4
+3
+2
+1
+0
+ENCAn
+SCE
+ENCAn
+ZCL
+ENCAn
+BCL
+ENCAn
+ACL
+ENCAn
+ECS[1:0]
+ENCAn
+EIS[1:0]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 18-9
+ENCAnIOC1 Register Contents (1/2)
+Bit Position
+Bit Name
+Function
+7
+ENCAnSCE
+This bit selects the method for clearing of the encoder counter.
+0: Detection of any valid edge in ENCAnEC causes clearing.
+1: Detection of the level of ENCAnEC selected as the clearing condition 
+causes clearing.
+When ENCAnSCE = 0, settings of the ENCAnZCL, ENCAnACL, and 
+ENCAnBCL bits become ineffective, and settings of the ENCAnECS1 and 
+ENCAnECS0 bits become effective.
+The counter is cleared to 0000H when ENCAnSCE = 1 and the clearing 
+conditions set in the ENCAnZCL, ENCAnACL, and ENCAnBCL bits are all 
+matched (settings of the ENCAnECS1 and ENCAnECS0 bits become 
+ineffective).
+Caution: When ENCAnSCE = 1, set bits ENCAnUDS1 and ENCAnUDS0 to 
+10B or 11B.
+6
+ENCAnZCL
+This bit is used to set the active level for clearing in the ENCAnEC encoder-
+clearing input signal.
+0: Clearing condition: Low level
+1: Clearing condition: High level
+Caution: This bit is valid when ENCAnSCE = 1.
+5
+ENCAnBCL
+This bit is used to set the active level for clearing in the ENCAnE1 encoder 
+input signal.
+0: Clearing condition: Low level
+1: Clearing condition: High level
+Caution: This bit is valid when ENCAnSCE = 1.
+4
+ENCAnACL
+This bit is used to set the active level for clearing in the ENCAnE0 encoder 
+input signal.
+0: Clearing condition: Low level
+1: Clearing condition: High level
+Caution: This bit is valid when ENCAnSCE = 1.
+
+=== PAGE 1165 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1145 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+3, 2
+ENCAnECS1,
+ENCAnECS0
+These bits set the valid edge of the encoder-clearing input signal (ENCAnEC). 
+ENCAn
+ECS1
+ENCAn
+ECS0
+Operation
+0
+0
+Neither edge is detected.
+0
+1
+Rising edges are detected.
+1
+0
+Falling edges are detected.
+1
+1
+Both edges are detected.
+Caution: These bits are valid when ENCAnSCE bit =0.
+1, 0
+ENCAnEIS1,
+ENCAnEIS0
+These bits set the valid edge for input signals from the encoder (signals on the 
+ENCAnE0 and ENCAnE1 pins).
+ENCAn
+EIS1
+ENCAn
+EIS0
+Operation
+0
+0
+Neither edge is detected.
+0
+1
+Rising edges are detected.
+1
+0
+Falling edges are detected.
+1
+1
+Both edges are detected.
+Caution: These bits are valid when the ENCAnUDS1 and ENCAnUDS0 bits 
+are 00B or 01 and invalid when the ENCAnUDS1 and ENCAnUDS0 
+are 10B or 11B.
+Table 18-9
+ENCAnIOC1 Register Contents (2/2)
+Bit Position
+Bit Name
+Function
+
+=== PAGE 1166 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1146 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(4)
+ENCAnFLG – ENCA Status Flag Register
+This 8-bit flag register indicates the state of the timer counter for the encoder.
+Access
+This register is read-only and readable in 8-bit units. 
+Address
+<ENCAn_base1> + 0CH
+Initial value
+00H
+A reset from any source will initialize the bits.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+ENCAn
+CSF
+ENCAn
+UDF
+ENCAn
+OVF
+R
+R
+R
+R
+R
+R
+R
+R
+Table 18-10
+ENCAnFLG Register Contents
+Bit Position
+Bit Name
+Function
+2
+ENCAnCSF
+This bit is a flag that indicates whether the timer counter is counting up or down.
+0: Counting up
+1: Counting down
+Caution: This bit is cleared at the start of counting operations.
+1
+ENCAnUDF
+This bit is a flag that indicates if an underflow has or has not occurred during 
+timer-counter operations.
+The value of the 16-bit counter changing from 0000H to FFFFH is an underflow of 
+the counter, and an underflow interrupt (INTENCAnIUD) is also generated if the 
+ENCAnUDF flag is set to 1.
+Setting condition
+An underflow during encoder timer-counter operations causes setting of this flag 
+to 1.
+Clearing condition
+Writing 1 to the ENCAnCLUD bit of the ENCAnFGC register, setting the 
+EnCAnTS bit to 1 while the ENCAnTE bit = 0, or input of the synchronous start 
+trigger signal (ENCAnTSST signal) at the high level causes clearing of this flag to 
+0.
+Caution: This bit is cleared at the start of counting operations.
+0
+ENCAnOVF
+This bit is a flag that indicates if an overflow has or has not occurred during timer-
+counter operations.
+The value of the 16-bit counter changing from FFFFH to 0000H is an overflow of 
+the counter, and an overflow interrupt (INTENCAnIOV) is also generated if the 
+ENCAnOVF flag is set to 1.
+Setting condition
+An overflow during encoder timer-counter operations causes setting of this flag 
+to 1.
+Clearing condition
+Writing 1 to the ENCAnCLOV bit of the ENCAnFGC register, setting the 
+ENCAnTS bit to 1 while the ENCAnTE bit = 0, or input of the synchronous start 
+trigger signal (ENCAnTSST signal) at the high level causes clearing of this flag to 
+0.
+Caution: This bit is cleared at the start of counting operations.
+
+=== PAGE 1167 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1147 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(5)
+ENCAnFGC – ENCA Status Flag Clear Register
+This register is an 8-bit register that controls clearing of the timer counter 
+status flags in the ENCAnFLG register.
+Access
+This register can be written in 8-bit units.
+This register always returns 00H when read.
+Address
+<ENCAn_base1> + 10H
+Initial value
+00H
+A reset from any source will initialize the bits.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+ENCAn
+CLUD
+ENCAn
+CLOV
+R
+R
+R
+R
+R
+R
+W
+W
+Table 18-11
+ENCAnFGC Register Contents
+Bit Position
+Bit Name
+Function
+1
+ENCAnCLUD
+This bit clears the underflow flag.
+0: Invalid
+1: Clears ENCAnUDF of the ENCAnFLG register (clears underflow detection).
+0
+ENCAnCLOV
+This bit clears the overflow flag.
+0: Invalid
+1: Clears ENCAnOVF of the ENCAnFLG register (clears overflow detection).
+
+=== PAGE 1168 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1148 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(6)
+ENCAnCCR0 – ENCA Capture/Compare Register 0
+This register is a 16-bit register that is used in both capture and comparison 
+roles (i.e. to hold captured values or values for use in comparison).
+Access
+This register can be read/written in 16-bit units. 
+This register can be written in 16-bit units when used as a comparison register 
+(ENCAnCTL.ENCAnCRM0 = 0). When used as a capture register 
+(ENCAnCTL.ENCAnCRM0 = 1), writing to this register during operation is 
+invalid.
+Address
+<ENCAn_base1> + 00H
+Initial value
+0000H
+A reset from any source will initialize the bits.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+ENCAnCCR0[15:0]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 18-12
+ENCAnCCR0 Register Contents
+Bit Position
+Bit Name
+Function
+15 to 0
+ENCAn
+CCR0[15:0]
+If ENCAnCTL.ENCAnCRM0 = 0, ENCAnCCR0 is comparison register.
+Set the value to be compared with the timer counter value.
+If ENCAnCTL.ENCAnCRM0 = 1, ENCAnCCR0 is capture register.
+The captured timer counter value is stored.
+Note: Upon occurrence of an underflow, the setting value of this register may be 
+loaded to the counter according to the ENCAnCTL.ENCAnLDE setting. For 
+details, refer to the description of the ENCAnLDE bit in ENCA control 
+register ENCAnCTL.
+
+=== PAGE 1169 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1149 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(7)
+ENCAnCCR1 – ENCA Capture/Compare Register 1
+This register is a 16-bit register that is used in both capture and comparison 
+roles (i.e. to hold captured values or values for use in comparison).
+Access
+This register can be read/written in 16-bit units.
+This register can be written in 16-bit units when used as a comparison register 
+(ENCAnCTL.ENCAnCRM0 = 0). When used as a capture register 
+(ENCAnCTL.ENCAnCRM0 = 1), writing to this register during operation is 
+invalid.
+Address
+<ENCAn_base1> + 04H
+Initial value
+0000H
+A reset from any source will initialize the bits.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+ENCAnCCR1[15:0]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 18-13
+ENCAnCCR1 Register Contents
+Bit Position
+Bit Name
+Function
+15 to 0
+ENCAn
+CCR1[15:0]
+If ENCAnCTL.ENCAnCRM1 = 0, ENCAnCCR1 is comparison register.
+Set the value to be compared with the timer counter value.
+If ENCAnCTL.ENCAnCRM1 = 1, ENCAnCCR1 is capture register.
+The captured timer counter value is stored.
+Note: During capture operation, the trigger for capturing to this register differs 
+according to the ENCAnCTL.ENCAnCTS setting. For details, refer to the 
+description of the ENCAnCTS bit in ENCA control register ENCAnCTL.
+
+=== PAGE 1170 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1150 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(8)
+ENCAnCNT – ENCA Counter Register
+This register is a 16-bit timer counter.
+Access
+This register can be read/written in 16-bit units.
+This register can be written only when the counting operation is stopped. 
+Writing to this register during counting operation is invalid.
+Address
+<ENCAn_base1> + 08H
+Initial value
+0000H
+A reset from any source will initialize the bits.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+ENCAnCNT[15:0]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 18-14
+ENCAnCNT Register Contents
+Bit Position
+Bit Name
+Function
+15 to 0
+ENCAnCNT
+[15:0]
+Operation of counter register
+ENCAnTE
+Counter 
+Status
+Operation
+0
+Stopped 
+(initial setting)
+Set a given value to timer counter register.
+0→1
+Starting 
+operation
+Start counting up/down from the set given 
+value.
+1
+In operation
+Counting up/down
+1→0
+Stopped
+Counting stopped (retains its value before 
+counting stopped).
+Note: ENCAnTE state refers to the state of the ENCAnTE bit in the ENCAnTE 
+register.
+
+=== PAGE 1171 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1151 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(9)
+ENCAnTE – ENCA Timer Enable Status Register
+This 8-bit register indicates the state of operation of the encoder timer.
+Access
+This register is read-only and readable in 8-bit units.
+Address
+<ENCAn_base1> + 14H
+Initial value
+00H
+A reset from any source will initialize the bits.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+ENCAn
+TE
+R
+R
+R
+R
+R
+R
+R
+R
+Table 18-15
+ENCAnTE Register Contents
+Bit Position
+Bit Name
+Function
+0
+ENCAnTE
+This is a status bit that indicates the operation enabled/stopped status of the 
+encoder timer.
+0: Operation stopped status
+1: Operation enabled status
+Clearing condition
+This bit is cleared to 0 when 1 is written to ENCAnTT.ENCAnTT.
+Setting condition
+Writing of 1 to the ENCAnTS.ENCAnTS bit or the input of a high level of the 
+simultaneous start trigger signal (ENCAnTSST) causes setting of this bit to 1.
+
+=== PAGE 1172 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1152 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(10)
+ENCAnTS – ENCA Timer Start Trigger Register
+This 8-bit register controls starting of the encoder timer.
+Access
+This register can be read/written in 8-bit units.
+This register always returns 00H when read. Writing to this register is only valid 
+when ENCAnTE.ENCAnTE = 0.
+Address
+<ENCAn_base1> + 18H
+Initial value
+00H
+A reset from any source will initialize the bits.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+ENCAn
+TS
+R
+R
+R
+R
+R
+R
+R
+W
+Table 18-16
+ENCAnTS Register Contents
+Bit Position
+Bit Name
+Function
+0
+ENCAnTS
+This is the trigger bit for placing the encoder timer in the operation-enabled state.
+0: Disabled
+1: Operation is enabled (setting the ENCAnTE.ENCAnTE bit to 1 when the 
+ENCAnTS bit to 1).
+
+=== PAGE 1173 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1153 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(11)
+ENCAnTT – ENCA Timer Stop Trigger Register
+This 8-bit register controls stopping of the encoder timer.
+Access
+This register can be read/written in 8-bit units.
+This register always returns 00H when read.
+Address
+<ENCAn_base1> + 1CH
+Initial value
+00H
+A reset from any source will initialize the bits.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+ENCAn
+TT
+R
+R
+R
+R
+R
+R
+R
+W
+Table 18-17
+ENCAnTT Register Contents
+Bit Position
+Bit Name
+Function
+0
+ENCAnTT
+This is the trigger bit for stopping ENCAn operations.
+0: Disabled
+1: Operation is stopped (setting the ENCAnTE.ENCAnTE bit to 0 when the 
+ENCAnTT bit to 1).
+
+=== PAGE 1174 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1154 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+18.4
+Functional Description
+The encoder inputs and encoder-clearing input (ENCAnE0, ENCAnE1, and 
+ENCAnEC) control the counter of ENCAn by causing it to count up or down or 
+by clearing it.
+The ENCAnCCR0 and ENCAnCCR1 registers are available for use as 
+comparison registers or as capture registers.
+18.4.1
+Timer Counter Operation
+Operations of the encoder timer are described below.
+The figure below shows the basic operations. For detailed descriptions of the 
+individual types of operation, refer to the corresponding passages.
+Figure 18-2
+Timer Counter Initial Value Setting/Start/Stop
+ENCAnTS bit
+ENCAnTE bit
+ENCAnTT bit
+16-bit counter
+ ENCAnCNT
+INTENCAnIOV interrupt
+INTENCAnIUD interrupt
+0000H
+FFFFH
+Initialize
+Counting up
+FFFFH
+Counting down
+Retaining count
+Overflow
+Underflow
+Count start
+Count stop
+Count start
+ENCAnOVF flag
+ENCAnUDF flag
+0000H
+0000H
+Count stop
+
+=== PAGE 1175 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1155 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(1)
+Timer Counter Initial Value Setting
+The initial value of the ENCAn counter register (ENCAnCNT) can be set in the 
+counter operation stopped status (ENCAnTE.ENCAnTE = 0).
+Combinations of compare/capture in ENCAnCCR0 and ENCAnCCR1 are 
+listed in the table below.
+(2)
+Timer Counter Startup
+Writing "1" to the timer start trigger bit (ENCAnTS.ENCAnTS) causes setting of 
+the timer status enable bit (ENCAnTE.ENCAnTE) to "1" (enables counting), 
+and counting proceeds upon detection of a valid edge in the input signal from 
+the encoder.
+Condition for Use
+ENCAnCCR0 
+Register
+ENCAnCCR1 
+Register
+Only comparison is in use 
+(encoder comparison mode).
+Comparison function
+Comparison function
+Comparison and capture are in use 
+(encoder capture and comparison mode)
+Comparison function
+Capture function
+Capture and capture are in use 
+(encoder capture mode).
+Capture function
+Capture function
+
+=== PAGE 1176 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1156 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(3)
+Overflow Operation
+An overflow occurs when up-counting is performed when the counter value is 
+FFFFH. When an overflow occurs, an overflow interrupt (INTENCAnIOV) is 
+output, and the overflow flag (ENCAnOVF) is set to "1". The overflow flag 
+(ENCAnOVF) is cleared to "0" when "1" is set to the overflow clear bit 
+(ENCAnCLOV).
+Operations in the generation of an overflow and clearing of the overflow flag 
+are described below.
+Figure 18-3
+Generation of an Overflow and Settings to Clear the Overflow Flag
+1.
+From label 1 in the figure, the counter value increases from FFFEH to 
+FFFFH.
+2.
+From label 2, the counter overflows when its value changes from FFFFH to 
+0000H. At the same time, an overflow interrupt is output and the overflow 
+flag is set to 1.
+3.
+Label 3 indicates the method for clearing of the overflow flag; i.e. the 
+overflow flag is cleared to 0 by setting ENCAnFGC.ENCAnCLOV to 1.
+Alternatively, the overflow flag may be cleared by setting 
+ENCAnTS.ENCAnTS to 1 while ENCAnTE.ENCAnTE = 0, or by placing 
+the signal input as ENCAnTSST (simultaneous start trigger input) at the 
+high level.
+PCLK
+ENCAnCNT register
+ENCAnCSF flag
+Counter clock
+ENCAnOVF flag
+INTENCAnIOV interrupt
+ENCAnCLOV bit
+= H (counting up)
+FFFCH
+FFFDH
+FFFEH
+FFFFH
+0000H
+0001H
+0002H
+Overflow occurs
+ENCAnOVF flag is output
+ENCAnOVF 
+flag is cleared 
+INTENCAnIOV interrupt is output
+.
+Overflow flag clear bit is set
+1
+2
+3
+
+=== PAGE 1177 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1157 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(4)
+Underflow Operation
+An underflow occurs when down-counting is performed when the counter 
+value is 0000H. When an underflow occurs, an underflow interrupt 
+(INTENCAnIUD) is output, and the underflow flag (ENCAnUDF) is set to "1". 
+The underflow flag (ENCAnUDF) is cleared to "0" when "1" is set to the 
+underflow clear bit (ENCAnCLUD).
+Operations in the generation of an underflow and clearing of the underflow flag 
+are described below.
+Figure 18-4
+Generation of an Underflow and Settings to Clear the Underflow Flag
+1.
+From label 1 in the figure, the counter value decreases from 0001H to 
+0000H.
+2.
+From label 2, the counter underflows when its value changes from 0000H 
+to FFFFH. At the same time, an underflow interrupt is output, setting the 
+underflow flag to 1.
+3.
+Label 3 indicates the method for clearing of the underflow flag; i.e. the 
+underflow flag is cleared to 0 by setting ENCAnFGC.ENCAnCLUD to 1.
+Alternatively, the underflow flag may be cleared by setting 
+ENCAnTS.ENCAnTS to 1 while ENCAnTE.ENCAnTE = 0, or by placing 
+the signal input as ENCAnTSST (synchronous start trigger) at the high 
+level.
+(5)
+Timer Counter Stop
+Writing "1" to the timer stop trigger bit (ENCAnTT.ENCAnTT) causes clearing 
+of the timer status enable bit (ENCAnTE) to "0" and stops the counter. At this 
+time, the timer counter is not reset to 0000H but retains its value from before 
+counting stopped.
+PCLK
+ENCAnCNT register
+ENCAnCSF flag
+Counter clock
+ENCAnUDF flag
+INTENCAnIUD interrupt
+ENCAnCLUD bit
+ENCAnUDF flag 
+is cleared 
+0003H
+0002H
+0001H
+0000H
+FFFEH
+Underflow occurs
+INTENCAnIUD interrupt is output
+Underflow flag clear bit is set
+1
+2
+3
+FFFDH
+FFFFH
+ENCAnUDF flag is output
+= L (counting down)
+
+=== PAGE 1178 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1158 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+18.4.2
+Up/Down Control of Timer Counter
+The setting of the ENCAnCTL.ENCAnUDS[1:0] bits and the phase of the 
+encoder inputs (ENCAnE0 and ENCAnE1) control counting up and down by 
+the timer.
+(1)
+When ENCAnCTL.ENCAnUDS[1:0] = 00B
+The valid edge specification for ENCAnE0 is made by setting 
+ENCAnIOC1.ENCAnEIS[1:0].
+"Counting operation" indicates that counting up or down proceeds when the 
+valid edges of the signals on ENCAnE0 and ENCAnE1 match.
+The timing chart below shows counting operation when 
+ENCAnCTL.ENCAnUDS[1:0] = 00B.
+Figure 18-5
+Counting Operation when ENCAnCTL.ENCAnUDS[1:0] = 00B
+ENCAnUDS1
+ENCAnUDS0
+Operation Description
+Signal on the 
+ENCAnE0 Pin
+Signal on the 
+ENCAnE1 Pin
+Counting 
+Operation
+0
+0
+Rising edge
+High level
+Counting down
+Falling edge
+Both edges
+Rising edge
+Low level
+Counting up
+Falling edge
+Both edges
+ENCAnE0 pin
+ENCAnE1 pin
+ENCAnCNT register
+0007H
+0006H
+0005H
+0004H
+0005H
+0006H
+0007H
+ENCAnUDS[1:0] = 00B
+ENCAnEIS[1:0] = 01B
+Rising edges of the signals on the ENCAnE0 and ENCAnE1 pins are detected 
+(ENCAnUDS[1:0] = 00B, so the high level or low level on ENCAnE1 is actually used).
+Counting down
+Counting up
+0008H
+
+=== PAGE 1179 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1159 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(2)
+When ENCAnCTL.ENCAnUDS[1:0] = 01B
+The valid edge specification for ENCAnE0 and ENCAnE1 is made by setting 
+ENCAnIOC1.ENCAnEIS[1:0].
+"Counting operation" indicates that counting up or down proceeds when the 
+valid edges of the signals on ENCAnE0 and ENCAnE1 match. When valid 
+edges coincide, the count is retained.
+The timing chart below shows counting operation when 
+ENCAnCTL.ENCAnUDS[1:0] = 01B.
+Figure 18-6
+Counting Operation of ENCAnCTL.ENCAnUDS[1:0] = 01B
+ENCAnUDS1
+ENCAnUDS0
+Description of Operation
+Signal on the 
+ENCAnE0 Pin
+Signal on the 
+ENCAnE1 Pin
+Counting 
+Operation
+0
+1
+Low level
+Rising edge
+Counting down
+Falling edge
+Both edges
+High level
+Rising edge
+Falling edge
+Both edges
+Rising edge
+Low level
+Counting up
+Falling edge
+Both edges
+Rising edge
+High level
+Falling edge
+Both edges
+Simultaneous input
+Retaining
+ENCAnUDS[1:0] = 01B
+ENCAnEIS[1:0] = 01B:
+Rising edges of the signals on ENCAnE0 and ENCAnE1 are detected.
+ENCAnE0 pin
+ENCAnE1 pin
+ENCAnCNT register
+0006H
+0007H
+0008H
+0008H
+0007H
+0006H
+0005H
+Retain
+0005H
+Counting up
+Counting down
+
+=== PAGE 1180 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1160 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(3)
+When ENCAnCTL.ENCAnUDS[1:0] = 10B
+The valid edge specification for ENCAnE0 and ENCAnE1 (setting of 
+ENCAnIOC1.ENCAnEIS[1:0] bits) is ineffective.
+The timing chart below shows counting operation when 
+ENCAnCTL.ENCAnUDS[1:0] = 10B.
+Figure 18-7
+Counting Operation of ENCAnCTL.ENCAnUDS[1:0] = 10B
+ENCAnUDS1
+ENCAnUDS0
+Description of Operation
+Signal on the 
+ENCAnE0 Pin
+Signal on the 
+ENCAnE1 Pin
+Counting 
+Operation
+1
+0
+Rising edge
+Low level
+Counting down
+Rising edge
+Falling edge
+Falling edge
+Low level
+Counting up
+Falling edge
+Falling edge
+Low level
+Rising edge
+Retaining
+Rising edge
+Rising edge
+High level
+Rising edge
+Falling edge
+Rising edge
+Low level
+Falling edge
+Rising edge
+High level
+High level
+Falling edge
+Falling edge
+High level
+ENCAnUDS[1:0] = 10B
+The setting of the ENCAnEIS[1:0] bits is invalid.
+ENCAnE0 pin
+ENCAnE1 pin
+ENCAnCNT register
+0007H
+0006H
+0005H
+0006H
+0005H
+0006H
+0005H
+Counting 
+down
+Counting 
+down
+Counting 
+down
+Retain
+Counting 
+down
+Counting 
+up
+Counting 
+up
+
+=== PAGE 1181 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1161 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(4)
+When ENCAnCTL.ENCAnUDS[1:0] = 11B
+The valid edge specification for ENCAnE0 and ENCAnE1 (setting of 
+ENCAnIOC1.ENCAnEIS[1:0] bits) is ineffective.
+When the valid edges of the signals on ENCAnE0 and ENCAnE1 coincide, the 
+count is retained.
+The timing chart below shows counting operation when 
+ENCAnCTL.ENCAnUDS[1:0] = 11B.
+Figure 18-8
+Counting Operation of ENCAnCTL.ENCAnUDS[1:0] = 11B
+ENCAnUDS1
+ENCAnUDS0
+Description of Operation
+Signal on the 
+ENCAnE0 Pin
+Signal on the 
+ENCAnE1 Pin
+Counting 
+Operation
+1
+1
+Low level
+Falling edge
+Counting down
+Rising edge
+Low level
+High level
+Rising edge
+Falling edge
+High level
+Rising edge
+High level
+Counting up
+High level
+Falling edge
+Falling edge
+Low level
+Low level
+Rising edge
+Simultaneous input
+Retaining
+ENCAnUDS[1:0] = 11B
+ENCAnE0 pin
+ENCAnE1 pin
+ENCAnCNT register
+0004H
+0003H
+0006H
+0005H
+0007H
+0008H
+0009H
+000AH
+0009H
+0008H
+0007H
+0006H
+0002H
+The setting of the ENCAnEIS[1:0] bits is invalid.
+If rising edges on ENCAnE0 and ENCAnE1 coincide, 
+the value in the ENCAnCNT register is retained.
+Counting up
+Counting down
+
+=== PAGE 1182 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1162 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+18.4.3
+Control of Timer Counter Clearing
+The following conditions lead to clearing of the timer counter.
+• Detection of a valid edge of the encoder clearing input signal (signal on the 
+ENCAnEC pin)
+• Level detection of the encoder input and encoder clearing input signals 
+(signals on the ENCAnE0, ENCAnE1, and ENCAnEC pins)
+Clearing refers to clearing in accord with the settings of the ENCAnSCE, 
+ENCAnZCL, ENCAnBCL, ENCAnACL, ENCAnECS1 and ENCAnECS0 bits in 
+the ENCAnIOC1 register.
+(1)-1
+Clearing on Detection of a Valid Edge of the Encoder-Clearing Input Signal (when 
+ENCAnIOC1.ENCAnSCE = 0).
+• Upon detection of the valid edge of ENCAnEC, the timer counter is cleared 
+to 0000H in synchronization with the operation clock.
+• The valid edge of ENCAnEC is specified by the setting of the ENCAnECS1 
+and ENCAnECS0 bits in the ENCAnIOC1 register.
+• The settings of the ENCAnZCL, ENCAnBCL, and ENCAnACL bits in the 
+ENCAnIOC1 register are ineffective.
+• A clear interrupt signal (INTENCAnIEC) is output simultaneously with timer 
+counter clearing.
+Figure 18-9
+Operations to Clear the Counter in Response to Encoder Clearing Input 
+(ENCAnEC)
+Condition for 
+Clearing
+ENCAnSCE
+ENCAnZCL
+ENCAnBCL
+ENCAnACL
+ENCAnECS1, 
+ENCAnECS0
+(1)
+0
+Invalid
+Invalid
+Invalid
+Valid
+(2)
+1
+Valid
+Valid
+Valid
+Invalid
+ENCAnCNT register
+ENCAnE0 pin
+ (after edge detection)
+INTENCAnIEC interrupt
+ENCAnE0 pin
+ (after edge detection)
+ENCAnEC pin
+PCLK
+Counter clock
+Clearing signal
+H
+L
+0000H
+m
+H
+m + 1
+0001H
+
+=== PAGE 1183 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1163 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(1)-2
+Operations for Counter Clearing and Capture in Response to Encoder Clearing 
+Input (ENCAnEC)
+Figure 18-10
+Timing of Counter Clearing and Capture Operations in Response to 
+Encoder Clearing Input (ENCAnEC)
+<Setting condition>
+ENCAnCTL.ENCAnCRM1 = 1: selects the ENCAnCCR1 register for capture.
+ENCAnCTL.ENCAnCTS = 1: selects the ENCAnEC pin input as capture 
+trigger input.
+ENCAnIOC1.ENCAnECS[1:0] = 01B: selects detection of the rising edge on 
+the ENCAnEC pin input
+1.
+Capture proceeds on the rising edge of the trigger signal input on the 
+ENCAnEC pin.
+2.
+Clearing of the counter's value to 0000H in response to the input on the 
+ENCAnEC pin proceeds.
+3.
+The pre-clearing value from the counter (0002H) is captured in the 
+ENCAnCCR1 register on the rising edge of the input signal on the 
+ENCAnEC pin.
+4.
+The cleared interrupt (INTENCAnIEC) and capture interrupt (INTENCAnI1) 
+in response to the input signal on the ENCAnEC pin are output at the same 
+time.
+PCLK
+ENCAnCNT counter
+ENCAnCCR1 register
+ENCAnI1 pin
+INTENCAnIEC interrupt
+ENCAnEC pin
+ENCAnEC pin:
+ rising-edge detection
+ENCAnCSF flag
+Counter clock
+ENCAnUDF flag
+INTENCAnIUD interrupt
+0002H
+0000H
+FFFFH
+FFFEH
+FFFDH
+• ENCAnEC valid edge: rising
+• Counting down
+0000H
+0002H
+Underflow occurs
+1
+2
+3
+4
+L = counting down
+Capture
+Counter 
+cleared
+
+=== PAGE 1184 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1164 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(2)
+Clearing in Response to Detection of the Input and Clearing Input Signals 
+from the Encoder
+Clearing is in accord with the settings of the ENCAnSCE, ENCAnZCL, 
+ENCAnBCL, ENCAnACL, ENCAnECS1 and ENCAnECS0 bits in the 
+ENCAnIOC1 register (when ENCAnIOC1.ENCAnSCE = 1).
+• Clearing levels on the ENCAnEC, ENCAnE1, and ENCAnE0 pins as 
+specified by the settings of the ENCAnZCL, ENCAnBCL, and ENCAnACL 
+bits in the ENCAnIOC1 register are detected and the timer counter is 
+cleared to 0000H in synchronization with the operating clock.
+• The setting of the ENCAnIOC1.ENCAnECS[1:0] bits is ineffective.
+• The encoder cleared interrupt signal (INTENCAnIEC) is output 
+simultaneously with the timer counter clearing.
+Conditions for clearing of the timer counter in accord with the setting of the 
+ENCAnZCL, ENCAnBCL and ENCAnACL bits in the ENCAnIOC1 register are 
+given in the table below.
+Counter Clearing Condition Settings
+Level Input on the Encoder Pin 
+ENCAnZCL
+ENCAnBCL
+ENCAnACL
+ENCAnEC
+ENCAnE1
+ENCAnE0
+0
+0
+0
+Low
+Low
+Low
+0
+0
+1
+Low
+Low
+High
+0
+1
+0
+Low
+High
+Low
+0
+1
+1
+Low
+High
+High
+1
+0
+0
+High
+Low
+Low
+1
+0
+1
+High
+Low
+High
+1
+1
+0
+High
+High
+Low
+1
+1
+1
+High
+High
+High
+
+=== PAGE 1185 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1165 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(a)
+When Input on the ENCAnEC Pin Follows Input on the ENCAnE1 Pin 
+during Counting up (When ENCAnIOC1.ENCAnACL = 1, 
+ENCAnIOC1.ENCAnBCL = 0, ENCAnIOC1.ENCAnZCL = 1, and 
+ENCAnCTL.ENCAnUDS[1:0] = 11B)
+Figure 18-11
+Timing of Clearing when Input on the ENCAnEC Pin Follows Input on the 
+ENCAnE1 Pin during Counting up
+ENCAnCNT register
+INTENCAnI0 interrupt
+ENCAnE0 pin
+ENCAnE1 pin
+ENCAnEC pin
+ENCAnCCR0 register
+INTENCAnI1 interrupt
+ENCAnCCR1 register
+PCLK register
+Counter clock
+Clearing signal
+H
+L
+0
+m
+m + 1
+0
+m + 1
+H
+Setting of ENCAnCCR0 = m + 1
+Setting of ENCAnCCR1 = 0000H 
+INTENCAnI0 is not output
+
+=== PAGE 1186 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1166 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(b)
+When the Timing of Input on the ENCAnEC and ENCAnE1 Pins Coincides 
+during Counting up (When ENCAnIOC1.ENCAnACL = 1, 
+ENCAnIOC1.ENCAnBCL = 0, ENCAnIOC1.ENCAnZCL = 1, and 
+ENCAnCTL.ENCAnUDS[1:0] = 11B)
+Figure 18-12
+Timing of Clearing when Input on the ENCAnEC and ENCAnE1 Pins 
+Coincides during Counting up
+(c)
+When Input on the ENCAnEC Pin Precedes Input on the ENCAnE1 Pin 
+during Counting up (When ENCAnIOC1.ENCAnACL = 1, 
+ENCAnIOC1.ENCAnBCL = 0, ENCAnIOC1.ENCAnZCL = 1, and 
+ENCAnCTL.ENCAnUDS[1:0] = 11B)
+Figure 18-13
+Timing of Clearing when Input on the ENCAnEC Pin Precedes Input on 
+the ENCAnE1 Pin during Counting up
+ENCAnCNT register
+ENCAnE0 pin
+ENCAnE1 pin
+ENCAnEC pin
+PCLK
+Counter clock
+Clearing signal
+H
+L
+0
+m
+H
+ENCAnCNT register
+ENCAnE0 pin
+ENCAnE1 pin
+ENCAnEC pin
+PCLK
+Counter clock
+Clearing signal
+H
+L
+0
+m
+H
+
+=== PAGE 1187 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1167 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(d)
+When Input on the ENCAnEC Pin Follows Input on the ENCAnE1 Pin 
+during Counting down (When ENCAnIOC1.ENCAnACL = 1, 
+ENCAnIOC1.ENCAnBCL = 0, ENCAnIOC1.ENCAnZCL = 1, and 
+ENCAnCTL.ENCAnUDS[1:0] = 11B)
+Figure 18-14
+Timing of Clearing when Input on the ENCAnEC Pin Follows Input on the 
+ENCAnE1 Pin during Counting down
+ENCAnCNT register
+ENCAnE0 pin
+ENCAnCCR0 register
+INTENCAnI0 interrupt
+ENCAnCCR1 register
+INTENCAnI1 interrupt
+ENCAnE1 pin
+ENCAnEC pin
+PCLK
+Counter clock
+Clearing signal
+H
+L
+0
+m
+H
+m - 1
+m - 1
+0
+Setting of ENCAnCCR0 = m - 1
+Setting of ENCAnCCR1 = 0000H
+INTENCAnI0 is not output
+
+=== PAGE 1188 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1168 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+18.4.4
+Detailed Description of the ENCAnCCR0 Register
+(1)
+Compare Function
+• When ENCAnCTL.ENCAnCRM0 = 0, the ENCAnCCR0 register functions 
+as a dedicated comparison register.
+• A compare 0 match interrupt (INTENCAnI0) is output when the values in the 
+timer counter and the ENCAnCCR0 register match.
+• When ENCAnCTL.ENCAnECM0 = 1, the timer counter is cleared to 0000H 
+in synchronization with the operating clock (PCLK) upon a compare match if 
+further counting is to be counting up.
+When ENCAnCTL.
+ENCAnLDE = 1
+• Upon occurrence of an underflow, the setting value of the ENCAnCCR0 
+register is loaded to the timer counter.
+• An underflow interrupt (INTENCAnIUD) is output.
+ENCAnCCR0 
+Function
+Compare Match 
+Clear Control
+Next Counting 
+Operation
+Timer Counter Clearing Upon Compare Match 
+with ENCAnCCR0
+ENCAnCRM0
+ENCAnECM0
+0
+(Compare)
+0
+Counting up
+Does not clear timer counter (continues counting 
+operation).
+Counting down
+1
+Counting up
+Clears timer counter to 0000H.
+Counting down
+Does not clear timer counter (continues counting 
+operation).
+
+=== PAGE 1189 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1169 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(2)
+Capture Function
+• When ENCAnCTL.ENCAnCRM0 = 1, the ENCAnCCR0 register functions 
+as a dedicated capture register.
+• On detection of the valid edge of capture trigger input 0 (ENCAnI0), the 
+value of the timer counter is stored in the ENCAnCCR0 register.
+• A capture 0 interrupt (INTENCAnI0) is output during a capture operation.
+Figure 18-15
+Capture Operation between Pulses of the Counter Clock (ENCAnCCR0)
+1.
+The following values are set at label 1: ENCAnCRM0 = 1, ENCAnTIS1 and 
+ENCAnTIS0 = 01B.
+2.
+Counting down proceeds at label 2.
+3.
+At label 3, a rising edge of the input signal on the ENCAnI0 pin is detected, 
+and the value reached by the counter is captured in the ENCAnCCR0 
+register.
+4.
+At label 4, the interrupt signal (INTENCAnI0) that corresponds to capture 
+to the ENCAnCCR0 register is output.
+PCLK
+ENCAnCNT register
+INTENCAnI0 interrupt
+INTENCAnI1 interrupt
+ENCAnCCR0 register
+ENCAnTIS[1:0]
+ENCAnCRM0
+ENCAnI0 pin
+ENCAnI0 pin: rising
+ENCAnCSF flag
+Counter clock
+= L (counting down)
+= H (capture)
+INTENCAnI0 is output
+0005H
+0004H
+0003H
+1H
+0002H
+0004H
+Counting down
+Value of ENCAnCNT is captured by ENCAnCCR0
+Counting down in the normal way
+Counting down in the normal way
+Detection of a rising edge on ENCAnI0
+1
+2
+3
+4
+
+=== PAGE 1190 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1170 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+18.4.5
+Detailed Description of the ENCAnCCR1 Register
+(1)
+Compare Function
+• When ENCAnCTL.ENCAnCRM1 = 0, the ENCAnCCR1 register functions 
+as a dedicated comparison register.
+• A compare 1 match interrupt (INTENCAnI1) is output when the values in the 
+timer counter and the ENCAnCCR1 register match.
+• When ENCAnCTL.ENCAnECM1 = 1, the timer counter is cleared to 0000H 
+in synchronization with the operating clock (PCLK) upon a compare match if 
+further counting is to be counting down.
+Compare match
+interrupt detection
+mask function
+• When ENCAnCTL.ENCAnCME = 1, masking of compare 1 match interrupt 
+detection is enabled. In this state, the compare 1 match interrupt is output 
+upon the first match of the value of the timer counter and the ENCAnCCR1 
+setting value, and interrupts are then masked for the second and 
+subsequent compare matches.
+• When ENCAnCTL.ENCAnMCS = 0, writing to the ENCAnCCR1 register 
+disables masking of compare 1 match interrupt detection.
+• When ENCAnCTL.ENCAnMCS = 1, clearing of the timer counter due to 
+input on the ENCAnEC pin or a match between the value in the 
+ENCAnCCR0 register and the timer counter disables masking of compare 1 
+match interrupt detection.
+• When ENCAnCTL.ENCAnMCS = 1 and ENCAnCTL.ENCAnLDE = 1, 
+loading of the value from the ENCAnCCR0 register to the timer counter 
+upon detection of an underflow disables masking of compare 1 match 
+interrupt detection.
+• Setting ENCAnCTL.ENCAnECM1 = 1 is prohibited while compare 1 match 
+interrupt detection masking is enabled.
+ENCAnCCR1 
+Function
+Compare Match
+Clear Control
+Next Counting 
+Operation
+Timer Counter Clearing upon Compare Match
+with ENCAnCCR1
+ENCAnCRM1
+ENCAnECM1
+0
+(Compare)
+0
+Counting up
+Does not clear timer counter 
+(continues count operation).
+Counting down
+1
+Counting up
+Does not clear timer counter 
+(continues count operation).
+Counting down
+Clears timer counter to 0000H.
+
+=== PAGE 1191 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1171 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(2)
+Capture Function
+• When ENCAnCTL.ENCAnCRM1 =1, the ENCAnCCR1 register functions as 
+a dedicated capture register.
+The capture operation to ENCAnCCR1 is shown in the timing chart in section 
+18.6, (4) Timing of Basic Encoder Operation 4 (Encoder Capture Mode).
+Operations corresponding to the settings of ENCAnCTL.ENCAnCTS are listed 
+in the table below.
+ENCAnCCR1
+Function
+Compare 1 
+Match Interrupt 
+Masking
+Interrupt Mask Cancel Trigger
+Compare 1 Match Interrupt 
+Output upon Compare Match 
+with ENCAnCCR1
+ENCAnCRM1
+ENCAnCME
+ENCAnMCS
+Underflow 
+Occurrence upon 
+ENCAnLDE = 0
+0
+(Compare)
+0 
+(Masking 
+disabled)
+
+(Setting invalid)
+
+Outputs compare 1 match 
+interrupt upon each compare 
+match.
+1
+(Masking 
+enabled)
+0
+(Writing to 
+ENCAnCCR1)
+Occurred
+(Loading of 
+ENCAnCCR0 to 
+timer counter)
+Outputs compare 1 match 
+interrupt once, upon the first 
+compare match. (Interrupts are 
+masked for the second and 
+subsequent matches until the 
+cancel trigger occurs.)
+1
+(Timer counter
+clearing)
+ENCAnCCR1 
+Function
+Capture Trigger 
+Selection
+Capture Trigger 
+Signal
+Timer Counter 
+Clearing
+Interrupt Occurrence
+ENCAnCRM1
+ENCAnCTS
+1
+(Capture)
+0
+Capture trigger 1 
+input (ENCAnI1)
+Does not clear 
+timer counter.
+(1) Capture 1 interrupt 
+(INTENCAnI1)
+1
+Encoder clearing 
+input (ENCAnEC)
+Clears timer 
+counter.
+(1) Capture 1 interrupt 
+(INTENCAnI1)
+(2)  Encoder clear interrupt 
+(INTENCAnIEC)
+
+=== PAGE 1192 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1172 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+The basic operations of the capture function are described below.
+Figure 18-16
+Capture between Pulses of the Counter Clock (ENCAnCCR1)
+1.
+The following values are set at label 1: ENCAnCRM1 = 1, ENCAnTIS3 and 
+ENCAnTIS2 = 01B.
+2.
+Counting up proceeds at label 2.
+3.
+At label 3, a rising edge of the input signal on the ENCAnI1 pin is detected, 
+and the value reached by the counter is captured in the ENCAnCCR1 
+register.
+4.
+At label 4, the interrupt signal (INTENCAnI1) that corresponds to capture 
+to the ENCAnCCR1 register is output.
+PCLK
+ENCAnCNT register
+INTENCAnI0 interrupt
+INTENCAnI1 interrupt
+ENCAnCCR1 register
+ENCAnTIS[3:2]
+ENCAnCRM1 bit
+ENCAnI1 pin
+Input on the ENCAnI1 pin:
+ rising
+ENCAnCSF flag
+Counter clock
+= H (counting up)
+= H (capture)
+INTENCAnI1 is output
+0002H
+0003H
+0004H
+1H
+0005H
+0003H
+Value of ENCAnCNT is captured by ENCAnCCR1
+Counting up in the normal way
+Counting up in the normal way
+Detection of a rising edge on ENCAnI1
+1
+2
+3
+4
+
+=== PAGE 1193 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1173 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(3)
+Timer Counter Clearing upon Comparison Register Match
+Clearing of the timer counter upon a match between its value and the setting of 
+ENCAnCCR0/1, in accord with the settings of the ENCAnECM1 and 
+ENCAnECM0 bits in the ENCAnCTL register, is detailed in the following table.
+ENCAnECM1 
+and 
+ENCAnECM0
+Next Counting 
+Operation
+Timer Counter Clearing upon 
+Compare Match with 
+ENCAnCCR1
+Timer Counter Clearing upon 
+Compare Match with 
+ENCAnCCR0
+00
+Counting up
+Does not clear timer counter 
+(continues counting operation).
+Does not clear timer counter 
+(continues counting operation).
+Counting down
+Does not clear timer counter 
+(continues counting operation).
+Does not clear timer counter 
+(continues counting operation).
+01
+Counting up
+Does not clear timer counter 
+(continues counting operation).
+Clears timer counter to 0000H.
+Counting down
+Does not clear timer counter 
+(continues counting operation).
+Does not clear timer counter 
+(continues counting operation).
+10
+Counting up
+Does not clear timer counter 
+(continues counting operation).
+Does not clear timer counter 
+(continues counting operation).
+Counting down
+Clears timer counter to 0000H.
+Does not clear timer counter 
+(continues counting operation).
+11
+Counting up
+Does not clear timer counter 
+(continues counting operation).
+Clears timer counter to 0000H.
+Counting down
+Clears timer counter to 0000H.
+Does not clear timer counter 
+(continues counting operation).
+
+=== PAGE 1194 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1174 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+18.4.6
+Timer Counter Operation Start/Stop
+(1)
+Starting the Timer in a Single Encoder-Timer Configuration
+Operation can be started by setting ENCAnTE.ENCAnTS = 1.
+(2)
+Starting the Timers in a Dual Encoder-Timer Configuration
+This product has two encoder timers, for which independent or synchronized 
+operation is selectable.
+In the case of independent operation, operation is started by setting the 
+ENCAnTS bits in the respective ENCAnTE registers to 1.
+Setting up input of the simultaneous start trigger (ENCAnTSST signal) to set 
+the enable status bit (ENCAnTE) to 1 causes the trigger to enable counting. 
+When edges are detected in the input signal from the encoder, counting can be 
+executed by the two timers in synchronization.
+Input of the simultaneous start trigger (ENCAnTSST) has the same effect on 
+the encoder-timers as setting the ENCAnTS bit in the ENCAnTS register to 1.
+(3)
+Stopping an Encoder Timer
+The timer is stopped by setting ENCAnTT.ENCAnTT = 1 and 
+ENCAnTE.ENCAnTE = 0.
+In a single encoder-timer configuration, setting the ENCAnTT.ENCAnTT bit to 
+1 changes the value of the ENCAnTE bit to 0 and thus stops the timer.
+(4)
+Stopping the Timers in a Dual Encoder-Timer Configuration
+Setting the ENCAnTT bit in the ENCAnTT register of a given encoder timer to 
+1 causes the ENCAnTE bit in the ENCAnTE register to be set to 0.
+Writing to the ENCAnTT bits in the ENCAnTT registers of the individual 
+encoder timers will lead to each encoder timer stopping with different timing, 
+creating a possible margin of error in the held counter values. Therefore, when 
+resuming operation after it has been stopped, the value in the counter must be 
+re-set or corrected as in the examples below. 
+Example 1: Remaking the Counter Setting Prior to Restarting Operation
+Condition:
+Input on the ENCAnEC pin while dual encoder timers are 
+operating with common ENCAnE0 and ENCAnE1 pins.
+Restart 
+procedure:
+Execute simultaneous restarting by setting the encoder timers to 
+the same value. Setting the timers to the same value eliminates 
+errors in the counted value due to operation being stopped and 
+allows restarting of the operation.
+Example 2: Correcting the Counter Setting Prior to Restarting Operation
+Condition:
+Input on the ENCAnEC pin while dual encoder timers are 
+operating with separate ENCAnE0 and ENCAnE1 pins.
+Restart 
+procedure:
+Execute simultaneous restarting by calculating the difference 
+between the values of the counters in the respective encoder 
+timers and compensate for the difference in setting the counters 
+for simultaneous restarting.
+Since the information of the CPU includes the information on the 
+differences between the values of the counters of the encoder 
+timers, operation can be restarted by correcting the error in the 
+counter value that arose when operation was stopped, i.e. by 
+calculating the difference and setting corrected values.
+
+=== PAGE 1195 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1175 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(5)
+Example of Connection in a Dual Encoder-Timer Configuration
+To simultaneously operate the counters of both encoder timer, make the same 
+settings in the ENCAnUDS[1:0] bits in the ENCAnIOC1 register and the 
+ENCAnCTL register.
+When using ENCAnCCR0 as the comparison register for both encoder timers, 
+set the same value in the ENCAnCCR0, ENCAnECM0, and ENCAnLDE 
+registers of both encoder timers.
+When using ENCAnCCR1 as the comparison register for both encoder timers, 
+set the same value in the ENCAnECM1 registers of both encoder timers.
+Since the values are separate if they are not the same, synchronized operation 
+will not be possible.
+An example where two encoder timers are installed is shown below.
+This setting example assumes the use of the ENCAnCCR0 register as a 
+comparison register, and the ENCAnCCR1 register as a capture register.
+Figure 18-17
+Example of Connection in a Dual Encoder-Timer Configuration
+ENCA0
+ENCA0CCR0
+ENCA0CCR1
+ENCA0CNT
+ENCA1
+ENCA1CCR0
+ENCA1CCR1
+ENCA1CNT
+ENCA0E0
+ENCA0E1
+ENCA0EC
+Counting by both ENCAnCNTs has reached 
+the same value.
+All encoder timers are set to the same value as that of the ENCAnLDE bits.
+All encoder timers are set to the same value as that of the ENCAnECM0 bits.
+All encoder macros are set to the same value as that of the ENCAnCCR0 bits.
+All encoder timers are set to the same value as that of the ENCA0ECM1 bits.
+ENCAnTSST
+ (simultaneous
+start trigger input)
+
+=== PAGE 1196 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1176 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+18.5
+Setting Sequences
+18.5.1
+Encoder Timer Setting Procedure
+The encoder timer setting procedure is described below.
+Action
+State of Setting
+Initial setting
+Reset release
+Power-on state, encoder-timer operation 
+stopped state (writing to the individual registers 
+is possible)
+Initial settings 
+of encoder 
+timer
+Perform the following initial settings.
+•
+Setting for counter
+•
+Setting for clearing counter
+•
+Setting for ENCAnCCR0 register
+•
+Setting for ENCAnCCR1 register
+Counting operations are stopped in this state.
+The value of the ENCAnTE bit indicating the 
+state of operation is 0.
+Perform the initial settings for counter.
+•
+Set any 16-bit value to ENCAnCNT register.
+(When, after setting this register, the 
+ENCAnTS bit is set to "1", the counter 
+operation starts from the set count value.)
+The set value is set as the initial value of the 
+counter register.
+Operation 
+start
+Perform the counter operation start setting.
+•
+Set the ENCAnTS bit to "1".
+Counting is started in this state.
+The value of the ENCAnTE bit indicating the 
+state of operation is 1, and the counter clock is 
+supplied to the internal circuit.
+Operating
+Only those registers whose setting can be 
+changed during operation can be rewritten.
+•
+ENCAnCCR0 register setting
+•
+ENCAnCCR1 register setting
+•
+ENCAnIOC0 register setting
+Count proceeds from the initial setting, and is 
+up or down in accord with the setting of the 
+ENCAnE0 and ENCAnE1 pins.
+Operation 
+stop
+Perform the counter operation stop setting 
+during operation.
+•
+Set the ENCAnTT bit to "1".
+Counting operations are stopped in this state.
+The value of the ENCAnTE bit indicating the 
+state of operation is 0.
+Encoder timer 
+stop
+Reset
+The setting registers are initialized.
+
+=== PAGE 1197 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1177 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(1)
+Initial Settings for Counter
+(2)
+Initial Settings for Counter Clearing
+(3)
+Initial Settings for the ENCAnCCR0 Register
+ENCAnCTL.ENCAnUDS
+[1:0] bits
+ENCAnIOC1.ENCAnEIS
+[1:0] bits
+Set the valid edges for input on the ENCAnE0 and ENCAnE1 pins.
+Set the method of counting in accord with the input signals 
+on the ENCAnE0 and ENCAnE1 pins.
+Only valid when ENCAnUDS[1:0] = 00B and ENCAnUDS[1:0] = 01B
+Invalid when ENCAnUDS[1:0] = 10B, and ENCAnUDS[1:0] = 11B
+= 1
+= 0
+ENCAnSCE
+bit
+ENCAnACL bit
+ENCAnBCL bit
+ENCAnECS[1:0] bits
+ENCAnZCL bit
+Settings for encoder clearing
+While ENCAnSCE = 0,
+  the ENCAnUDS[1:0] bits can be set to 00B, 01B, 10B, or 11B.
+While ENCAnSCE = 1,
+  setting the ENCAnUDS[1:0] bits to 00B or 01B is prohibited but
+  setting the ENCAnUDS[1:0] bits to 10B or 11B is possible.
+Set the level of the clearing input signal from the encoder on the ENCAnEC pin.
+Set the level of the clearing input signal from the encoder on the ENCAnE0 pin.
+Set the level of the clearing input signal from the encoder on the ENCAnE1 pin.
+Set the valid edge for the clearing signal from the encoder.
+Select how the ENCAnCCR0 register is to be used (0 for comparison, 1 for capture).
+Set the clearing operation upon a match between the value of the ENCAnCCR0 register 
+and the value of the counter.
+= 1 
+= 0 
+Set whether or not to load the counter with the value from ENCAnCCR0 
+when the counter underflows.
+Set the valid edge of capture trigger 0 (ENCAnI0 input).
+ENCAnTIS[1:0] bits
+ENCAnECM0 bit
+ENCAnLDE bit
+ENCAnCRM0
+bit
+
+=== PAGE 1198 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1178 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(4)
+Settings for the ENCAnCCR1 Register
+= 1 
+ENCAnCTS
+bit
+= 0 
+Set clearing 
+conditions.
+= 1 
+= 0 
+ENCAnECM1 bit
+ENCAnMCS bit
+= 0  
+= 1 
+Select how the ENCAnCCR1 register is to be used (0 for comparison, 1 for capture).
+Set the clearing operation upon a match between the value of the ENCAnCCR1 register 
+and the value of the counter.
+Enable or disable masking of compare match interrupts.
+Disable masking of compare match interrupt detection.
+Set the trigger for capture to the ENCAnCCR1 register.
+(0: capture trigger 1, 1: ENCAnEC input)
+Set the valid edge of capture trigger 1 (ENCAnT1 input).
+Refer to the ENCAnIOC1 register settings in section 18.5.1, (2) Initial Setting Procedure 
+for Counter Clearing.
+ENCAnTIS[3:2] bits
+Set the trigger condition for release of masking of compare match interrupt output.
+ENCAnCRM1
+bit
+ENCAnCME1 bit
+
+=== PAGE 1199 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1179 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+18.6
+Timing Charts for Encoder Operations
+(1)
+Timing of Basic Encoder Operation 1 (Encoder Comparison Mode 1)
+<Setting condition>
+• ENCAnCTL.ENCAnCRM[1:0] = 00B: 
+Comparison is selected as the function of the ENCAnCCR0 and 
+ENCAnCCR1 registers.
+• ENCAnCTL.ENCAnECM[1:0] = 01B:
+If counting after a match between the values in the counter and the 
+ENCAnCCR0 register is upwards, the counter is cleared.
+• ENCAnCTL.ENCAnLDE = 1:
+When the counter underflows, it is loaded with the value from the 
+ENCAnCCR0 register.
+Figure 18-18
+Timing of Basic Encoder Operation 1 (Encoder Comparison Mode 1)
+A compare match interrupt (INTENCAnI0) is generated when the values of the 
+counter and register ENCAnCCR0 (D0) match.
+If further counting is upwards, the counter is cleared to 0000H because 
+ENCAnECM0 = 1.
+A compare match interrupt (INTENCAnI1) is generated when the values of the 
+counter and register ENCAnCCR1 (D1) match.
+Counter clearing due to a match with ENCAnCCR1 does not proceed because 
+ENCAnECM1 = 0.
+An underflow interrupt  (INTENCAnIUD) is generated when the counter 
+underflows.
+ENCAnLDE = 1, so the counter is loaded with the value from the ENCAnCCR0 
+register (D0) when the counter underflows.
+ENCAnLDE = 1 and ENCAnECM[1:0] = 01B, so counting is from 0000H to the 
+setting of the ENCAnCCR0 register.
+ENCAnCCR0 register
+INTENCAnI0 interrupt
+ENCAnCSF flag
+ENCAnUDF flag
+ENCAnCCR1 register
+INTENCAnI1 interrupt
+D0
+D1
+0000H
+D0
+D1
+INTENCAnIUD interrupt
+16-bit counter
+
+=== PAGE 1200 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1180 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(2)
+Timing of Basic Encoder Operation 2 (Encoder Comparison Mode 2)
+<Setting condition>
+• ENCAnCTL.ENCAnCRM[1:0] = 00B: 
+Comparison is selected as the function of the ENCAnCCR0 and 
+ENCAnCCR1 registers.
+• ENCAnCTL.ENCAnECM[1:0] = 00B: 
+The counter is not cleared on a match between its value and that of the 
+ENCAnCCR0 register.
+• ENCAnCTL.ENCAnLDE = 0:
+The counter is not loaded with the value from the ENCAnCCR0 register.
+Figure 18-19
+Timing of Basic Encoder Operation 2 (Encoder Comparison Mode 2)
+A compare match interrupt (INTENCAnI0) is generated when the values of the 
+counter and register ENCAnCCR0 (D0) match.
+Counter clearing due to matching with ENCAnCCR0 does not proceed 
+because ENCAnECM0 = 0.
+A compare match interrupt (INTENCAnI1) is generated when the values of the 
+counter and register ENCAnCCR1 (D1 and D2) match.
+Counter clearing due to matching with ENCAnCCR1 does not proceed 
+because ENCAnECM1 = 0.
+Overflow interrupts (INTENCAnIOV) or underflow interrupts (INTENCAnIUD) 
+are generated in response to overflows or underflows of the counter.
+ENCAnCCR0 register
+INTENCAnI0 interrupt
+ENCAnCSF flag
+ENCAnUDF flag
+ENCAnCCR1 register
+INTENCAnI1 interrupt
+FFFFH
+D1
+0000H
+D0
+D1
+INTENCAnIUD interrupt
+16-bit counter
+D0
+D2
+ENCAnOVF flag
+D2
+INTENCAnIOV interrupt
+
+=== PAGE 1201 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1181 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(3)
+Timing of Basic Encoder Operation 3 (Encoder Comparison Mode 3)
+<Setting condition>
+• ENCAnCTL.ENCAnCRM[1:0] = 00B:
+Comparison is selected as the function of the ENCAnCCR0 and 
+ENCAnCCR1 registers.
+• ENCAnCTL.ENCAnECM[1:0] = 11B:
+If counting after a match between the values in the counter and the 
+ENCAnCCR0 register is upwards, the counter is cleared.
+If further counting after a match between the values in the counter and the 
+ENCAnCCR1 register is downwards, the counter is cleared.
+• ENCAnCTL.ENCAnLDE = 0
+The counter is not loaded with the value from the ENCAnCCR0 register.
+Figure 18-20
+Timing of Basic Encoder Operation 3 (Encoder Comparison Mode 3)
+A compare match interrupt (INTENCAnI0) is generated when the values of the 
+counter and register ENCAnCCR0 (D0) match.
+If further counting is upwards, the counter is cleared to 0000H because 
+ENCAnECM0 = 1.
+A compare match interrupt (INTENCAnI1) is generated when the values of the 
+counter and register ENCAnCCR1 (D1) match.
+If further counting is downwards, the counter is cleared to 0000H because 
+ENCAnECM1 = 1.
+ENCAnCCR0 register
+INTENCAnI0 interrupt
+ENCAnCSF flag
+ENCAnUDF flag
+ENCAnCCR1 register
+INTENCAnI1 interrupt
+FFFFH
+D1
+0000H
+D0
+D1
+INTENCAnIUD interrupt
+16-bit counter
+D0
+
+=== PAGE 1202 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1182 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(4)
+Timing of Basic Encoder Operation 4 (Encoder Capture Mode)
+<Setting condition>
+• ENCAnCTL.ENCAnCRM[1:0] = 11B:
+Capture is selected as the function of the ENCAnCCR0 and ENCAnCCR1 
+registers.
+• ENCAnCTL.ENCAnECM[1:0] = 00B:
+The counter is not cleared on a match between its value and that of the 
+ENCAnCCR0 register.
+• ENCAnCTL.ENCAnLDE = 0:
+The setting from the ENCAnCCR0 register is not loaded to the counter.
+• ENCAnIOC1.ENCAnSCE = 0, ENCAnECS[1:0] = 00B:
+Input on the ENCAnEC pin does not lead to edge detection.
+• ENCAnIOC0.ENCAnTIS[3:2] = 01B:
+Selects detection of rising edges of the signal on the ENCAnI1 pin.
+• ENCAnIOC0.ENCAnTIS[1:0] = 01B:
+Selects detection of rising edges of the signal on the ENCAnI0 pin.
+Figure 18-21
+Timing of Basic Encoder Operation 4 (Encoder Capture Mode)
+Detection of a rising edge on the ENCAnI0 pin leads to storage of the counter 
+value in the capture register (ENCANCCR0) and the generation of a capture 
+interrupt (INTENCAnI0).
+Detection of a rising edge on the ENCAnI1 pin leads to storage of the counter 
+value in the capture register (ENCANCCR1) and the generation of a capture 
+interrupt (INTENCAnI1).
+Overflow interrupts (INTENCAnIOV) or underflow interrupts (INTENCAnIUD) 
+are generated in response to overflows or underflows of the counter.
+ENCAnCCR0 register
+INTENCAnI0 interrupt
+ENCAnCSF flag
+ENCAnUDF flag
+ENCAnCCR1 register
+INTENCAnI1 interrupt
+FFFFH
+0000H
+D0
+D1
+INTENCAnIUD interrupt
+16-bit counter
+D0
+ENCAnOVF flag
+D3
+ENCAnl0 pin
+ENCAnl1 pin
+D2
+D1
+D3
+D2
+INTENCAnIOV interrupt
+
+=== PAGE 1203 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1183 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+(5)
+Timing of Basic Encoder Operation 5 
+(Encoder Capture and Comparison Mode)
+<Setting condition>
+• ENCAnCTL.ENCAnCRM[1:0] = 10B:
+Select the comparison function for the ENCAnCCR0 register and the 
+capture function for the ENCAnCCR1 register.
+• ENCAnCTL.ENCAnECM[1:0] = 01B:
+The counter is cleared when its value matches that of the ENCAnCCR0 
+register.
+• ENCAnCTL.ENCAnLDE = 1:
+When the counter underflows, it is loaded with the value from the 
+ENCAnCCR0 register.
+• ENCAnIOC1.ENCAnSCE = 0, ENCAnECS[1:0] = 00B
+• ENCAnIOC0.ENCAnTIS[3:2] = 11B
+Selects detection of both edges of the signal on the ENCAnI1 pin.
+Figure 18-22
+Timing of Basic Encoder Operation 5 
+(Encoder Capture and Comparison Mode)
+A compare match interrupt (INTENCAnI0) is generated when the values of the 
+counter and register ENCAnCCR0 (D0) match.
+If further counting is upwards, the counter is cleared to 0000H because 
+ENCAnECM0 = 1.
+Detection of both edges on the ENCAnI1 pin leads to storage of the counter 
+value in the capture register (ENCANCCR1) and the generation of a capture 
+interrupt (INTENCAnI1).
+An underflow interrupt  (INTENCAnIUD) is generated when the counter 
+underflows.
+ENCAnLDE = 1, so the counter is loaded with the value from the ENCAnCCR0 
+register (D0) when the counter underflows
+ENCAnCCR0 register
+INTENCAnI0 interrupt
+ENCAnCSF flag
+ENCAnUDF flag
+ENCAnCCR1 register
+INTENCAnI1 interrupt
+D0
+D1
+0000H
+D0
+INTENCAnIUD interrupt
+16-bit counter
+D1
+D2
+D2
+ENCAnI1 pin
+
+=== PAGE 1204 ===
+R01UH0098EJ0100 Rev.1.00
+Page 1184 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 18　Encoder Timer (ENCA)
+ENCAnLDE = 1 and ENCAnECM[1:0] = 01B, so counting is from 0000H to the 
+setting of the ENCAnCCR0 register.
+
