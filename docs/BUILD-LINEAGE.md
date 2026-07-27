@@ -41,7 +41,7 @@ result was buried in prose.
 | address | what | status |
 |---|---|---|
 | `0xC6AF0` Y-array | `FUN_0003a382` authority→output-bound LERP | **BLOCKED** — edit *direction* unresolved; needs `gp-0x6966` measured on-car |
-| `0xC62EA` 320→64 | low-speed steer lockout, 5 km/h → 1 km/h | located, analysed, cal-only, **unbuilt** |
+| `0xC62EA` 320→**0** | low-speed steer lockout, 5 km/h → 0 | **BUILT as V53** (2026-07-27), cal-only, **unflashed** |
 | `0x2a1ee` retarget → `0xC6CD0` | decouple 4× forward from the feedback readers | designed + verified, **unbuilt** |
 
 ---
@@ -95,6 +95,7 @@ flashed.**
 | vcantxtest | 340 | `0x55C0E` hook + cave — ⚠ carries the **STRB=0x80 defect** |
 | vfourframe | 853 | `0x55C0E` hook + cave — ⚠ **STRB=0x80 defect, never transmitted** |
 | **vfourframe2** | 853 | same, **STRB fixed to 0x01**, authority + reference-model signals |
+| **v53** | 855 | FOURFRAME2 byte-for-byte **+ `0xC62EA` 320→0** (+ CAL CRC). Exactly 6 bytes off FOURFRAME2 |
 
 ---
 
@@ -104,6 +105,8 @@ flashed.**
 V45, V46, V47, V48A (all null) → V48B (☠ bricked, recovered by reflash) → V52C (null for vibration,
 changed manual feel) → **FOURFRAME** (telemetry, silent due to the STRB defect).
 
-**Built and UNFLASHED:** V49, V50, V51P, V52, VCANTX-TEST, **FOURFRAME2**.
+**Built and UNFLASHED:** V49, V50, V51P, V52, VCANTX-TEST, FOURFRAME2, **V53** (= FOURFRAME2 + the
+minimum-steer-speed edit; supersedes FOURFRAME2 as the thing to flash — one drive answers both open
+questions).
 
 🛑 **Flash only on explicit operator instruction naming the file and the bus.**
