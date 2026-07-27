@@ -18,7 +18,8 @@ an already-flashed, already-falsified lever because the result was buried in pro
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
    **Mandatory before proposing any calibration edit.**
 3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session.
-   Latest: `HANDOFF-2026-07-27-fourframe-strb-defect-and-vibration-reframe.md`
+   Latest: `HANDOFF-2026-07-27-v53-fourframe2-plus-minsteerspeed0.md`
+   (its predecessor, same date, is `HANDOFF-2026-07-27-fourframe-strb-defect-and-vibration-reframe.md`)
 4. **`memory/MEMORY.md`** and **`memory/MEMORY_CONSTELLATION.md`** — the flat fact index and the
    relational layer. The constellation carries the *chains* between facts, which the flat list does not.
 

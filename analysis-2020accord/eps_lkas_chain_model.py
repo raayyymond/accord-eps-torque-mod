@@ -421,6 +421,19 @@ class Calibration:
     dec_gate6: int = 4096                # gp-0x4f68 >= this -> refuse (verdict 6)
     dec_gate7: int = 3584               # gp-0x6ba4 >= this -> verdict 7
 
+    # ---- Low-speed steer lockout: the two-sided speed window at the top of FUN_00028ea6 ------------
+    # [SOLVED 2026-07-24; sole-reader re-confirmed in Python 2026-07-27] Compared against gp-0x6a5e =
+    # VOTED VEHICLE SPEED at 64.0625 counts/km/h. Failing the window is the ONLY writer of
+    # STEER_STATUS=3, which gates BOTH STEER_CONTROL_ACTIVE and the authority ramp (intra-function
+    # `cmp 0x2` @0x29382). Each cal has exactly ONE reader image-wide.
+    speed_window_lo: int = 320           # tp+0x72ea (0xC62EA) = 4.995 km/h = 3.104 mph. V53 -> 0
+    speed_window_hi: int = 12800         # tp+0x72e8 (0xC62E8) = 199.8 km/h. NEVER edited: the 0x7FFF
+                                         #   SNA sentinel (32767) must keep failing this bound.
+    # NB the window BYPASS gp-0x68b3 is deliberately NOT a field here -- it is a runtime RAM flag, set
+    # in FUN_0004d0d0 only when gp-0x6a62 == 0 (exactly true standstill), so it is DERIVED from speed
+    # inside steer_status_low_speed_lockout() rather than configured. That derivation is what makes
+    # stock permit 0 km/h yet forbid 1-319 counts.
+
     # ---- Soft-EME windup shaper (V30 widens corridor; V31 adds the boost floor) --------------------
     corridor_upper: int = 1024           # corridor arm magnitude (driver-override arm). V31/V37 -> 4096
     corridor_lower: int = -1024          #                                               V31/V37 -> -4096
@@ -521,7 +534,7 @@ class Calibration:
         if name == "V31":
             return cal
         # --- V37 onward: gentle-EME debounce SM off + DTC-0x49 counter off -------------------------
-        if name in ("V37", "V38", "V39", "V40", "V41", "V42"):
+        if name in ("V37", "V38", "V39", "V40", "V41", "V42", "V53"):
             cal = replace(
                 cal,
                 deb_torque_rise=255, deb_torque_hold=255, deb_torque_and_hi=255, deb_torque_and_lo=255,
@@ -539,6 +552,13 @@ class Calibration:
             )
             if name == "V38":
                 return cal
+            # --- V53: the V38 cal set + the FOURFRAME2 read-only telemetry cave + min steer speed 0.
+            # BUILT 2026-07-27, UNFLASHED. The cave is PASSIVE (ld.hu reads straight into CAN mailbox
+            # DAT registers, never a store back into firmware RAM), so it changes nothing modelled
+            # here; the single modelled change is the speed-window LO bound. ⚠ V53 is cut from V38 like
+            # FOURFRAME2 and therefore does NOT carry V42's confirmed ratchet fix.
+            if name == "V53":
+                return replace(cal, speed_window_lo=0)
             if name == "V39":
                 return replace(cal, suppress_direct_torque_rate_assist=True)
             # --- V40: V38 baseline (NOT V39 -- the r24 guard is dropped entirely) + two cal edits.
@@ -561,7 +581,8 @@ class Calibration:
             # see gain_rescaling_invariance_analysis() for why it cannot touch the 5 mph vibration.
             if name == "V42":
                 return replace(cal, governor_slew_step_normal=2048, governor_slew_step_alt=820)
-        raise ValueError(f"unknown build {name!r} (expected V9, V31, V37, V38, V39, V40, V41, or V42)")
+        raise ValueError(
+            f"unknown build {name!r} (expected V9, V31, V37, V38, V39, V40, V41, V42, or V53)")
 
 
 # =====================================================================================================
@@ -592,14 +613,15 @@ class SensorInputs:
     # [VERIFIED] derived plant signals used downstream:
     steering_angle: float = 0.0              # column angle
     steering_angle_rate: float = 0.0         # column angular velocity (deg/s-ish, signed)
-    # *** CORRECTED 2026-07-21: this field does NOT drive anything downstream in this model, and that
-    # is now known to be firmware-faithful, not an omission -- a full audit of all 9 aggregator lanes
-    # plus the LKAS path found ZERO vehicle-speed input anywhere in the command chain. Every rate-
-    # adaptive table in the firmware (governor cap, damping Factor E, the shaper gates) is keyed on
-    # MOTOR/resolver electrical-angle rate (gp-0x6ac0), never road speed. Kept as an unused replay
-    # field for openpilot-side modeling only. See the SUB-3-MPH LKAS CUTOFF note in
-    # can_rx_stage_steer_torque() for the full no-speed-gate finding this corroborates.
-    vehicle_speed: float = 0.0               # km/h; NOT consumed anywhere in the firmware model below
+    # *** 2026-07-21 said this field drives nothing downstream because a full audit found ZERO
+    # vehicle-speed input anywhere in the command chain. 🛑 THAT SCOPE IS FALSIFIED -- see
+    # steer_status_low_speed_lockout() below and the corrected note in can_rx_stage_steer_torque().
+    # Two real speed consumers exist: (1) FUN_00028ea6's window vs cals 0xC62EA/0xC62E8, which gates
+    # STEER_CONTROL_ACTIVE and the authority ramp; (2) the G1 governor FUN_0004503c reading gp-0x6a64
+    # against cal 0xC6316 = 640 to SKIP the slew limiter below ~10 km/h. What SURVIVES from that audit
+    # is narrower and still true: none of the 9 AGGREGATOR LANES reads road speed, and every
+    # rate-adaptive TABLE is keyed on motor/resolver electrical-angle rate (gp-0x6ac0), not road speed.
+    vehicle_speed: float = 0.0               # km/h; consumed by steer_status_low_speed_lockout()
     eps_temperature: float = 25.0            # thermal-gain compensation input
     foc_rotor_angle: float = 0.0             # resolver atan2 electrical angle
     foc_phase_currents: tuple = (0.0, 0.0)   # measured phase currents (FOC feedback)
@@ -840,33 +862,68 @@ def can_rx_stage_steer_torque(frame: CanSteeringControl) -> Optional[int]:
     cannot cut LKAS based on a torque/rate *value*, so a road bump cannot trip them.
 
     -------------------------------------------------------------------------------------------------
-    SUB-3-MPH LKAS CUTOFF (why LKAS is "ignored" below ~3 mph) -- this is NOT a firmware pipeline stage
+    SUB-3-MPH LKAS CUTOFF -- ★ IT *IS* A FIRMWARE SPEED GATE. CAL 0xC62EA. [SOLVED 2026-07-24]
     -------------------------------------------------------------------------------------------------
-    The below-~3-mph ignore is enforced at the openpilot/comma layer, corroborated by an independent
-    EPS near-standstill lockout -- NOT by any speed gate in this firmware command chain (a dedicated
-    firmware trace found NO discrete speed threshold anywhere in CAN-decode -> arbitration -> decider
-    -> engage-SM -> mixer -> shaper). Two cooperating mechanisms:
-      1) [openpilot, CONFIRMED in opendbc_reference/honda] STEER_GLOBAL_MIN_SPEED = 3*MPH_TO_MS and
-         the Accord's minSteerSpeed = 3*MPH_TO_MS (values.py). Below max(those), controls runs
-         latActive=False, so create_steering_control TXes STEER_REQUEST=0 -- openpilot stops
-         *commanding* steer. This is the operative 3-mph number.
-      2) [EPS, partial] the EPS itself won't actuate near standstill and reports STEER_STATUS =
-         LOW_SPEED_LOCKOUT on CAN 399 (opendbc comment: "All Honda EPS cut off slightly above
-         standstill"). openpilot treats that status as EXPECTED below min_steer_speed (not a fault).
-         [OPEN] the firmware producer of LOW_SPEED_LOCKOUT is NOT in the LKAS command pipeline; it
-         lives in the STEER_STATUS producer / a wheel-speed CAN consumer (KFC_WHEEL_SPEED strings
-         exist @0xB9BA4 but their live decoder was not located -- the string trail dead-ends at a
-         DTC-name table). So the exact firmware low-speed threshold is unquantified.
-    Consequence for this model: there is nothing to add to the firmware chain below; the cutoff is an
-    upstream (openpilot) behavior + an out-of-band EPS status, both documented here for completeness.
+    🛑 EVERYTHING THIS BLOCK SAID BEFORE 2026-07-24 WAS WRONG AND IS RETAINED ONLY AS A METHOD LESSON.
+    It claimed "NOT by any speed gate in this firmware command chain" and "the exact firmware low-speed
+    threshold is unquantified", on the strength of a dedicated trace that found no discrete speed
+    threshold. That trace returned a FALSE NEGATIVE: it required a two-sided compare FOLLOWED BY a
+    boolean store, and the window's boolean `bVar2` is never stored to RAM -- it lives in a register and
+    is consumed immediately by the AND-chain. See docs/HANDOFF-2026-07-24-low-speed-steer-lockout.md
+    Sec.4d. *** Method rule: never require "compare -> boolean store"; search for the compare alone. ***
 
-    *** COMPLETENESS PASS 2026-07-21 -- NO VEHICLE-SPEED INPUT ANYWHERE, CONFIRMED BROADER. ***
-    All 9 motor_torque_demand_aggregator() lanes (LKAS + the five assist-shaping siblings + r24/r26 +
-    the FUN_00036682 filtered term) were checked this session, not just the arbitration/decider chain
-    cited above: NONE reads a road-speed signal. Every rate-adaptive table found in the firmware --
-    the motor-rate governor cap (a160_governor_rate_cap), the damping lane's Factor E (motor rate
-    gp-0x6ac0), and the shaper's gates -- is keyed on MOTOR/resolver electrical-angle rate, never
-    vehicle speed. This settles it as a whole-chain negative, not just an arbitration-local one.
+    THE REAL MECHANISM -- a two-sided speed window at the TOP of FUN_00028ea6 (the LIVE ~1 kHz
+    m_steer_torque_arbitration, sole caller FUN_0002214a @0x22522):
+        0x28EB6  ld.hu 0x72e8[tp],r2    ; r2 = cal 0xC62E8 = 12800 = 199.8 km/h   HI bound
+        0x28EBC  ld.hu 0x72ea[tp],lp    ; lp = cal 0xC62EA =   320 =   4.995 km/h LO bound  <== LEVER
+        0x290C8  cmp r2,r10  / setfnh r9  ; r9 = (speed <= 12800)
+        0x290D2  cmp lp,r10  / setfnc r7  ; r7 = (speed >=   320)      [unsigned]
+        0x290EA  ld.bu -0x68b3[gp],r13    ; BYPASS: if != 0 the window is ignored
+      compared against gp-0x6a5e = VOTED VEHICLE SPEED (FUN_00041eec, 5-channel voter; unit
+      64.0625 counts/km/h from FUN_000522fe's x41>>6 on CAN 0x158 XMISSION_SPEED2 @0.01 km/h).
+      Failing the window is the ONLY writer of STEER_STATUS=3 (0x29192 mov 3,r6 / 0x29194 st.b).
+      Each cal has EXACTLY ONE reader image-wide (re-confirmed by Python sweep of both V850E2
+      encodings, 2026-07-27: the `disp|1` halfword 0x72EB occurs once, at 0x28EBE).
+
+    ✅ IT IS AUTHORITY-BEARING, NOT REPORT-ONLY. The gating is INTRA-FUNCTION (an earlier sweep for
+    *external* gp-0x6807 readers structurally could not see it): 0x2937E ld.bu -0x6807 / 0x29382
+    cmp 0x2 / 0x29384 bnh guards BOTH the STEER_CONTROL_ACTIVE=1 write (0x293A6, gp-0x6806) AND the
+    authority ramp (0x293AC, gp-0x69b0 += cal 0xC63F8=33). All four live gp-0x6806=1 writers require
+    STEER_STATUS <= 2. So lowering 0xC62EA restores REAL authority, not just the reported label.
+
+    ★ THE STANDSTILL ASYMMETRY IS DELIBERATE. gp-0x68b3 (the window bypass) is written in FUN_0004d0d0
+    ONLY when gp-0x6a62 == 0, i.e. EXACTLY at true standstill. So stock PERMITS 0 km/h and FORBIDS
+    1-319 counts (0 < v < 5 km/h). That is designed, not incidental -- and it is why V53 sets the LO
+    bound to 0 rather than to 64: 0 REMOVES that discontinuity instead of moving it.
+
+    openpilot's contribution is real but is NOT the whole story, and the two numbers coincide:
+      1) [openpilot] STEER_GLOBAL_MIN_SPEED = 3*MPH_TO_MS. ⚠ The StarPilot fork actually on the car
+         runs CP.minSteerSpeed = 0.0 and steerAtStandstill = False, so openpilot is NOT the obstacle
+         below 3 mph -- it will command down to a dead stop but not AT one.
+      2) [EPS] the 0xC62EA window above, releasing at 4.995 km/h = 3.104 mph. On-car rlog measurement
+         puts the release edge in the 3-4 mph bucket, matching the cal to within the bucket width.
+
+    *** V53 CONSEQUENCE (BUILT 2026-07-27, UNFLASHED) -- A TESTABLE PREDICTION. ***
+    V53 sets 0xC62EA = 0, making the LO test unconditionally true. Combined with this model's separate
+    finding that STEER_STATUS 4 and 7 are UNREACHABLE on the V37/V38 cal set (see the engage-SM
+    section), STEER_STATUS=3 becomes unreachable too except on an implausible-speed HI-bound failure.
+    PREDICTION: on V53 the ST=3 excursion that today fires every time the car crosses ~3 mph
+    disappears, and with it that trigger's ramp restart (which holds gp-0x6806 at 0 through a full
+    ~993-cycle mode-0 ramp-up). Other disengage arms still zero gp-0x6806, so this removes ONE route,
+    not the mechanism. If the "transient vibration just after pulling away" reading is right, V53
+    should change it; if the sustained reading is right, V53 should not.
+    ⚠ The HI bound 0xC62E8 = 12800 is deliberately UNTOUCHED, so the 0x7FFF SNA sentinel (32767) still
+    fails the window and an invalid speed still locks out exactly as at stock.
+
+    *** COMPLETENESS PASS 2026-07-21 -- "NO VEHICLE-SPEED INPUT ANYWHERE": 🛑 FALSIFIED TWICE. ***
+    That pass concluded NONE of the 9 aggregator lanes reads a road-speed signal, and that every
+    rate-adaptive table is keyed on MOTOR/resolver electrical-angle rate. Two later results overturn
+    the "anywhere" scope, though the per-lane observation still stands for the aggregator lanes:
+      1) FUN_00028ea6 reads gp-0x6a5e (voted speed) for the window above -- in the command path.
+      2) The G1 governor FUN_0004503c reads gp-0x6a64 (voted speed) at 0x451E2/0x45308 against cal
+         0xC6316 = 640 (9.99 km/h) and SKIPS the slew-rate limiter below it (0x45310/14/16), so r26
+         tracks its MIN-chain value instantly -- more responsive at low speed, not more restrictive.
+    ⇒ Treat "no vehicle-speed input in the command path" as RETIRED. Do not cite it.
 
     *** PLANT ARCHITECTURE (external research, 2026-07-21) -- WHY THE VIBRATION PEAKS NEAR ~5 MPH. ***
     The 2020 Accord EPS is a DUAL-PINION design: the assist motor drives a SECOND pinion on the rack,
@@ -878,16 +935,66 @@ def can_rx_stage_steer_torque(frame: CanSteeringControl) -> Optional[int]:
     resolver (matches gp-0x6ac0's atan2 sin/cos decode elsewhere in this model). The measured ~21.4 Hz,
     Q~=13.6 mode is therefore best read as a RACK-COUPLED DRIVELINE RESONANCE, sensed at the torsion
     bar -- not a control-loop artifact. openpilot config for this platform: "Honda Bosch A connector",
-    minSteerSpeed=0, minEnableSpeed=3 mph. *** The observed amplitude peak near ~5 mph is therefore
-    NOT a firmware speed gate (none exists, per the negative above) -- it is openpilot's
-    minEnableSpeed=3 mph floor (LKAS simply cannot be engaged below it) COMBINED with ordinary plant
-    physics: assist demand is highest and road/tire noise is lowest at low speed, so the low-speed
-    window is where the resonance is both most excited and least masked. ***
+    minSteerSpeed=0, minEnableSpeed=3 mph.
+
+    🛑 CORRECTED 2026-07-24/27 -- the original claim here ("the ~5 mph peak is NOT a firmware speed
+    gate; none exists") rested on the falsified negative above and must not be cited. A firmware speed
+    gate DOES exist: cal 0xC62EA = 320 = 4.995 km/h = 3.104 mph, releasing within a bucket-width of the
+    observed edge. The honest current reading of the low-speed amplitude peak is that THREE effects are
+    collinear on every route captured so far and have never been separated:
+      (a) the EPS firmware window (0xC62EA) releasing at 3.104 mph;
+      (b) openpilot's own engage floor; and
+      (c) ordinary plant physics -- assist demand highest and road/tire noise lowest at low speed, so
+          the resonance is both most excited and least masked there.
+    Route 13's A/B/C split narrowed this a long way (openpilot commanding into the lockout produces
+    NOTHING, 1.33x over baseline; commanding AND applying gives 14,750x -- so APPLIED torque, not mere
+    transmission, is required) but could not break the speed/applied-torque collinearity, because on
+    that route STEER_CONTROL_ACTIVE is a deterministic function of speed: cells B and C have ZERO speed
+    overlap and the "engaged at low speed" cell is structurally EMPTY.
+    *** V53 (0xC62EA -> 0) is the experiment that fills that cell. It is the ONLY way to observe (c)
+    with (a) removed. Until it is driven, do not assert which of the three the peak belongs to. ***
     ---------------------------------------------------------------------------------------------------
     """
     if not (frame.checksum_ok and frame.counter_ok and frame.fresh):
         return None  # invalid frame -> downstream will use the fault sentinel
     return frame.steer_torque  # signed16, big-endian, as decoded from bytes[0:1]
+
+
+COUNTS_PER_KMH = 64.0625   # FUN_000522fe implements x41>>6 on a 0.01 km/h raw value (NOT a clean 64)
+
+
+def steer_status_low_speed_lockout(sensors: "SensorInputs", cal: Calibration) -> bool:
+    """True when the speed window FAILS, i.e. the firmware writes STEER_STATUS = 3 (LOW_SPEED_LOCKOUT).
+
+    ---------------------------------------------------------------------------------------------------
+    FIRMWARE MAP
+      Function     : FUN_00028ea6 (m_steer_torque_arbitration), the LIVE ~1 kHz arbitration.
+                     Sole caller FUN_0002214a @0x22522. FUN_0002a30e is the DEAD copy -- do not trace it.
+      Cals         : 0xC62EA (LO, tp+0x72ea) @0x28EBC ; 0xC62E8 (HI, tp+0x72e8) @0x28EB6.
+                     Exactly ONE reader each, image-wide, both V850E2 encodings swept.
+      Input        : gp-0x6a5e = VOTED vehicle speed (FUN_00041eec 5-channel voter), ld.hu = UNSIGNED.
+      Compares     : 0x290C8 cmp r2,r10 / setfnh  -> speed <= HI
+                     0x290D2 cmp lp,r10 / setfnc  -> speed >= LO
+      Bypass       : 0x290EA ld.bu -0x68b3[gp] -- nonzero ignores the window entirely. Written in
+                     FUN_0004d0d0 ONLY when gp-0x6a62 == 0, i.e. EXACTLY at true standstill.
+      Consequence  : failing the window is the ONLY writer of STEER_STATUS=3 (0x29192/0x29194), and
+                     0x2937E/0x29382 `cmp 0x2` gates BOTH the STEER_CONTROL_ACTIVE=1 write (0x293A6)
+                     and the authority ramp (0x293AC). So this is authority-bearing, not report-only.
+    CONFIDENCE     : [VERIFIED] cals, reader sites, compares, and the intra-function consumer.
+                     [CONFIRMED] on-car: ST=3 is 100% below 2 mph and 0% above 4 mph, 98,053 frames.
+
+    ⚠ This models the SPEED CONJUNCT ONLY. bVar2 is a 5-way AND -- the other conjuncts (voter-channel
+    validity, gp-0x67f4==1, gp-0x67fe==2, gp-0x69aa==0x8000 "no derate", gp-0x69ae within +/-0x4000)
+    are not replayed here, so a False from this function means "the speed window passed", NOT
+    "STEER_STATUS will be <= 2". In particular gp-0x69aa == 0x8000 shares the same ST=3 write, so an
+    on-car ST=3 cannot distinguish "speed window failed" from "a derate is active".
+    ---------------------------------------------------------------------------------------------------
+    """
+    counts = int(sensors.vehicle_speed * COUNTS_PER_KMH)
+    if counts == 0:
+        # gp-0x68b3 bypass: FUN_0004d0d0 sets it only when the voted speed cell is EXACTLY 0.
+        return False
+    return not (cal.speed_window_lo <= counts <= cal.speed_window_hi)
 
 
 def lkas_process_steer_cmd(steer_torque: Optional[int], st: EpsState, cal: Calibration) -> int:

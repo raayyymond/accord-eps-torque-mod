@@ -5,7 +5,8 @@ close-out; do not append new dated blocks (that is what made `CLAUDE.md` unreada
 each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed and falsified — check it before
-proposing any calibration edit) and the latest handoff.
+proposing any calibration edit) and the latest handoff,
+`docs/HANDOFF-2026-07-27-v53-fourframe2-plus-minsteerspeed0.md`.
 
 ---
 

@@ -282,3 +282,52 @@ independent governor remains a possible stateful ratchet participant. Revised V3
 at the exact V9 full-scale equivalent (`|LKAS lane|>=417`) and low driver torque, leaves adaptive `r26`, every V38 calibration, and the governor
 unchanged, and does not claim the ratchet is solved. The live golden edge map is
 `analysis-2020accord/eps_lkas_chain_model.py`; update it continuously and prefer it over stale prose.
+
+### 2026-07-27 — Era: V53 built (FOURFRAME2 + min steer speed 0), and the no-speed-gate claim collapses
+
+**New node:** `project-v53-fourframe2-plus-minsteerspeed0` — V53 = FOURFRAME2 byte-for-byte **+ six bytes**
+(`0xC62EA` 320→0, plus the CAL CRC). BUILT, UNFLASHED. Supersedes FOURFRAME2 as the flash candidate.
+
+**The load-bearing edge this session established is a RETRACTION chain, not a discovery:**
+
+```
+"a dedicated trace found NO speed threshold in the command chain"   (golden model, pre-07-24)
+   |  trace required  compare -> BOOLEAN STORE
+   |  bVar2 is never stored: register-only, consumed by the AND-chain
+   v  FALSE NEGATIVE
+0xC62EA IS the gate, in FUN_00028ea6, in the command chain      [SOLVED 07-24]
+   |
+   +-> "the firmware low-speed threshold is unquantified"   -> 320 = 4.995 km/h = 3.104 mph
+   +-> "NO VEHICLE-SPEED INPUT ANYWHERE" (07-21 pass)       -> falsified TWICE (the window; and the
+   |                                                            G1 governor vs cal 0xC6316=640)
+   +-> "the ~5 mph vibration peak is NOT a firmware speed gate, none exists"
+            -> retired; three effects (firmware window / OP engage floor / plant physics) are
+               COLLINEAR on every route so far and have never been separated
+```
+
+⇒ **Method rule, now in the model itself: never require "compare → boolean store"; search for the compare
+alone.** The same false-negative shape has now produced wrong answers twice in this kit (cf.
+`accord-v850-scan-traps-formatv-and-storezero`, `accord-gp4f60-two-encodings-enumeration-trap`). All three
+retracted claims had survived because the golden model asserted them in prose while the falsifying result
+sat in a handoff — the same failure mode that created `docs/BUILD-LINEAGE.md`.
+
+**Edges redrawn:**
+- `accord-low-speed-lockout-window-c62ea` → `reference-accord-vibration-needs-applied-torque`: **promoted
+  from "related" to LOAD-BEARING.** Route 13's A/B/C split cannot separate applied-torque from speed
+  because `STEER_CONTROL_ACTIVE` *is* the sub-5 km/h gate there — cells B and C have zero speed overlap and
+  the engaged-at-low-speed cell is structurally empty. The lockout edit is the *only* way to fill it, so
+  the lockout workstream and the vibration workstream are one experiment, not two.
+- `project-v53…` → `reference-accord-fourframe-strb-ssam-defect`: V53 inherits the STRB fix by **byte
+  equality with the verified image**, not by re-derivation — `build_v53_tva.py` imports the cave from
+  `build_vfourframe_tva.py` and asserts a 6-byte diff. ⇒ **new reusable pattern: "existing cave + one cal"
+  should always import, never re-type.** Zero transcription surface beats any re-disassembly gate.
+
+**A design intent recovered, not just a value read.** `gp-0x68b3` (the window bypass) is written only when
+`gp-0x6a62 == 0` — *exactly* true standstill. So stock **permits 0 km/h and forbids 1–319 counts**: the
+discontinuity is deliberate. That is why V53 uses 0 rather than the previously-recorded suggestion of 64 —
+0 removes the discontinuity, 64 would merely move it. **Reading a cal's value is not reading its intent;**
+the neighbouring bypass flag carried the intent and the value alone would have led to the worse edit.
+
+**Open, and honestly unresolved:** an on-car `STEER_STATUS=3` **cannot** distinguish "speed window failed"
+from "a derate is active" — `gp-0x69aa == 0x8000` is a second conjunct of the same AND sharing the same
+ST=3 write. Any drive analysis keying on ST=3 must state which it means.
