@@ -98,8 +98,30 @@ ADDRESS CONVENTION (kept OUT of the code per request; used only in the comment b
   Ghidra program  : code.bin  (flat base 0, so file-offset == address; 2113 functions)
   gp (r4)         = 0xFEDF8000   ->  a RAM var written "gp-0xNNNN" is absolute 0xFEDF8000 - 0xNNNN
   tp (r5)         = 0xBF000      ->  a calibration "tp+0x7NNN" is absolute 0xBF000 + 0x7NNN
-                                     (e.g. tp+0x746c == 0xC646C, the LKAS output gain cal)
+                                     (e.g. tp+0x746c == 0xC646C -- see the CORRECTION below)
   Tool note       : r2's default 'v850' plugin mis-decodes V850E2 -- use 'v850.gnu' or Ghidra.
+                    (Superseded: GhidraMCP is now the kit's only sanctioned disassembler.)
+
+  *** CORRECTION OF RECORD 2026-07-27 -- 0xC646C IS NOT "THE LKAS OUTPUT GAIN" ***
+  Everywhere this model calls tp+0x746c the "LKAS output gain", read it as: the firmware's SINGLE SHARED
+  Q15 sensor-to-command-domain SCALE. Enumerated twice independently (raw byte scan, BOTH tp encodings
+  including the disp|1 form used by ld.hu/ld.w): EXACTLY 6 readers, no stores, no float mirror, and
+  neither hard-shutdown monitor among them.
+      0x2a1ee  FUN_00028ea6 arbitration  -- FORWARD: the LKAS setpoint. The one this model describes.
+      0x2a904  unclaimed gap             -- DEAD (0 xrefs)
+      0x2b656  FUN_0002b62c (~100 Hz)    -- FEEDBACK (by elimination)
+      0x2c488  FUN_0002c478 (1 kHz)      -- feedback-shaped inputs, DEAD OUTPUT
+      0x36686  FUN_00036682              -- FEEDBACK: (gp-0x4f60 RAW SENSOR * gain)>>15, and its return
+                                            is summed into the aggregator (jarl @0x3acdc, add @0x3ace6)
+                                            -> gp-0x6b94 -> governor @0x453e0 -> motor. Verified.
+      0x3684a  FUN_00036828              -- FEEDBACK: same form, feeds 0x36686
+  CONSEQUENCE: V38's 891 -> 3564 raised the gain on TWO RAW-SENSOR FEEDBACK PATHS as well as the LKAS
+  setpoint. The forward path's clamps were raised 4x with it (0xC61B2/0xC61B4 512 -> 2048); the feedback
+  path's limit is a HARDCODED +/-0x200 literal (0x367E0/E4/EA/EE), byte-identical to stock.
+  Probably NOT the 21 Hz driver: FUN_00036682's output is IIR'd with tp+0x73d2=14/1024 (fc ~2.18 Hz,
+  -19.7 dB at 21 Hz) and clamped to 5% of the aggregator range; and the saturation hypothesis is
+  EMPIRICALLY DEAD (0 of 10,178 active-LKAS route-13 frames reach the clamp threshold).
+  See memory/reference-accord-c646c-shared-gain-not-lkas-only.md and docs/BUILD-LINEAGE.md.
 
 -------------------------------------------------------------------------------------------------------
 THE FIVE BUILDS THIS MODEL PARAMETERISES  (Calibration.for_build("V9"|"V31"|"V37"|"V38"|"V39"))

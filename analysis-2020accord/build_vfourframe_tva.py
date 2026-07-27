@@ -2,7 +2,7 @@
 build_vfourframe_tva.py -- FOURFRAME = V38 + a FOUR-FRAME passive READ-ONLY CAN telemetry code cave.
 EXTENDS the kit's first active-CAN-TX cave (build_vcantx_test_tva.py, mailbox 16 -> new ID 0x555, a fixed
 8-byte magic payload) from 1 frame to 4: mailboxes 16-19 -> new IDs 0x6A0-0x6A3, each carrying 4 live
-gp-relative RAM signals (torque/command/shaper cells) as big-endian s16 pairs, 62.5 Hz. STUDY ARTIFACT.
+gp-relative RAM signals (torque/command/shaper cells) as big-endian s16 pairs, 100 Hz. STUDY ARTIFACT.
 UNFLASHED. Do NOT flash. Do NOT send CAN.
 
 ⚠ ELEVATED RISK CLASS (unchanged from the single-frame seed, now 4x the bus load): this cave shares the
@@ -12,8 +12,8 @@ UNFLASHED. Do NOT flash. Do NOT send CAN.
     every read is `ld.hu` (load only, never a store) into a scratch register that is immediately written to
     a NEW hardware mailbox's DAT register, never back into firmware RAM. It does not touch, read-modify-
     write, or in any way alter gp-0x4f60, the aggregator, the governor, the damper, or any torque-shaping
-    cell -- it only OBSERVES them. Four extra 8-byte/11-bit-ID frames at 62.5 Hz add ~4*108*62.5 ~= 27 kbps
-    of bus traffic (~5% of a 500 kbps bus) -- not zero, but small, and quantified here rather than asserted.
+    cell -- it only OBSERVES them. Four extra 8-byte/11-bit-ID frames at 100 Hz add ~4*108*100 ~= 43 kbps
+    of bus traffic (~9% of a 500 kbps bus) -- not zero, but small, and quantified here rather than asserted.
 
 PURPOSE
     16 gp-relative RAM cells spanning the LKAS/base-assist demand aggregator, the shaper/governor chain, and
@@ -24,25 +24,47 @@ PURPOSE
     16-bit telemetry on all 16 cells simultaneously, every packer cycle.
 
 ★ SIGNAL PROVENANCE -- every gp-offset below is grounded against `eps_lkas_chain_model.py` (the kit's live
-    golden reference), not re-derived here. Two of the sixteen have a DATA-QUALITY CAVEAT the operator
-    should know before wiring up a decoder -- both are still SAFE to read (pure RAM loads), the caveat is
-    about what the channel will actually show, not about risk:
-      - gp-0x6ade (frame 0x6A2, byte6/7): eps_lkas_chain_model.py:1669/1755 -- "gp-0x6ade (DEAD -- read
-        @0x3aa48, ZERO writers image-wide)". This channel will telemeter whatever stale/never-written value
-        sits at that RAM address at boot and is NOT expected to vary. Included because the mission asked for
-        it (labelled "feedforward" there); flagged here so it is not mistaken for a live feedforward signal.
-      - gp-0x67ac (frame 0x6A3, byte6/7): eps_lkas_chain_model.py:1721-1727 -- confirmed (byte-level,
-        2026-07-19) that gp-0x61a0's 11-entry source-type array on the A160 is (0,0,5,0,5,5,0,0,0,5,0), so
-        the fold that would set gp-0x67ac=1 (REDUCED aggregator mode) can never trigger -- gp-0x67ac reads
-        0 every cycle on THIS firmware. It DOES have a real per-cycle writer (unlike gp-0x6ade), so it is
-        legitimate live telemetry -- it is just proven-constant on the A160, useful as a confirmatory
-        channel (a nonzero reading would itself be diagnostic) rather than a varying "suppression gate".
-    The other 14 are live, actively-written cells with no such caveat (see the per-frame table below).
+    golden reference), not re-derived here.
+
+    ⚠ 2026-07-26 -- THE TWO DATA-QUALITY CAVEATS THAT USED TO BE DOCUMENTED HERE ARE GONE, because both
+    wasted channels were REPLACED. For the record of what they were: gp-0x6ade was a DEAD cell (read
+    @0x3aa48, ZERO writers image-wide) that could only ever have telemetered a stale boot value, and
+    gp-0x67ac was proven-constant-0 on the A160 (gp-0x61a0's 11-entry source-type array is
+    (0,0,5,0,5,5,0,0,0,5,0), so the fold setting gp-0x67ac=1 can never trigger). Neither could answer a
+    live question, so the slots were re-spent on the two cells this investigation is actually blocked on:
+
+      - gp-0x6966 (frame 0x6A2, byte6/7) = AUTHORITY. Written at 0x432c8 inside Monitor 1 as
+        |gp-0x3570>>15| * 1092>>10, shadow-protected against gp-0x4c5a. Its ONLY command-path reader in the
+        whole image is 0x3a632 in FUN_0003a382, indexing the LERP at 0xC6AF0 which scales that lane's OUTPUT
+        BOUND: unity below authority 3277, clamped to ZERO above 3604. Whether the car crosses that knee
+        during the vibration decides the DIRECTION of the candidate 0xC6AF0 edit and is NOT statically
+        determinable -- two analysis passes reached opposite conclusions from inference alone.
+      - gp-0x6ad6 (frame 0x6A3, byte6/7) = the FUN_0003a382 REFERENCE MODEL (written 0x38142 in
+        FUN_00037fe6; read 0x3a6ba/0x3a798). With gp-0x4f60 (raw sensor, same frame) and gp-0x6ad4 (lane
+        output, frame 0x6A1) this captures all three terms of errorterm = clamp(gp-0x4f60 -
+        clamp(gp-0x6ad6, +/-8192), +/-0x2800) -> P+I+D -> gp-0x6ad4, so the lane's transfer function can be
+        IDENTIFIED from the drive instead of inferred. The damping-vs-anti-damping sign question -- the one
+        thing blocking a decision on this lane -- is a plant-transfer question that only this can answer.
+
+    All 16 channels are now live, actively-written cells (see the per-frame table below).
+
+⚠ ALIASING LIMIT OF THIS BUILD -- READ BEFORE INTERPRETING ANY FFT OF THIS TELEMETRY. The cave fires from
+    the CAN packer hook at 100 Hz and samples instantaneously, with no anti-alias filter. A true mechanical
+    mode at 78.91 Hz folds to EXACTLY 21.09 Hz at a 100.000 Hz sample rate (21.09 + 78.91 = 100.00), and
+    route-13 analysis could NOT close that ambiguity: the comma IMU test (ODR measured at 101.05 Hz, alias
+    target 22.14 Hz) came back a tie at the noise floor because steering barely couples into a windshield
+    mount. Indirect evidence leans 21.09 (implied Q would be 71.8 at 78.91 Hz, not credible for a bushed
+    steering system, vs 19.2 at 21.09) but is not decisive. ⇒ FFT-ing these 16 signals will show a 21.09 Hz
+    peak under EITHER hypothesis and settles nothing about the true frequency. Resolving it needs a
+    follow-up build that either transmits on a tick NON-COMMENSURATE with 100 Hz (e.g. every 7 ticks of the
+    1 kHz task = 142.86 Hz, putting 78.91 below Nyquist) or computes band power at 21 and 79 Hz inside the
+    1 kHz task. That was deliberately NOT stacked onto this build: this cave has never once transmitted, so
+    changing the transmit rate in the same step would make a null result uninterpretable. Prove TX first.
 
 TECHNIQUE (verbatim reuse of build_vcantx_test_tva.py's harness + encoders; only the cave BODY is new)
     HOOK: UNCHANGED -- site 0x55C0E `movea -0x1518,gp,r6` (CAN-330 packer FUN_00055a98's own pack-buffer-
     base setup) -> `jarl cave,lp`, re-exec the displaced movea last, `jmp [lp]` returns to 0x55C12. Same
-    62.5 Hz cadence as CAN 330 itself -- no extra divider needed, same as the seed.
+    100 Hz cadence as CAN 330 itself -- no extra divider needed, same as the seed.
 
     MAILBOXES 16-19 -- CONFIRMED FREE, re-verified THIS session by TWO independent methods (stronger than
     the seed's mailbox-16-only check, because this session found a POOL-WIDE result covering all four):
@@ -189,9 +211,12 @@ EXPECTED_HEADERS = [
     (b"%", [b"30"]),
 ]
 
-TAG = "newid0x6a0-0x6a3-mbx16-19-fcn0-62p5hz-4x4signal16bRAMtelemetry-dualgate-caveC4B34-onV38"
+TAG = "newid0x6a0-0x6a3-mbx16-19-fcn0-100hz-4x4signal16bRAMtelemetry-dualgate-caveC4B34-onV38-STRB01FIX-authority-refmodel"
 OUT = os.path.join(RWD_DIR, f"39990-TVA,A160-FOURFRAME-{TAG}-0x{START:X}-0x{END:X}.rwd")
-BIN_OUT = str(plain_image_path("_vfourframe_plain_image.bin"))
+# NOTE (2026-07-26): writes a NEW artifact name. `_vfourframe_plain_image.bin` is the image ACTUALLY
+# FLASHED on the car (the STRB=0x80 / SSAM=0 build that never transmitted) and is the reference Ghidra is
+# backed by -- it must be preserved as the record of what produced the route-13 rlog. Do not clobber it.
+BIN_OUT = str(plain_image_path("_vfourframe2_plain_image.bin"))
 
 V9B = dict(keys=(0xBF, 0x10, 0x9E), ops=(OPS[0], OPS[0], OPS[4]))
 
@@ -383,13 +408,30 @@ MAILBOXES = [
         ("gp-0x6b86", 0x6b86, "magnitude"),             # FUN_000352b4 output
         ("gp-0x6b26", 0x6b26, "friction"),               # FUN_00036c12 curve x angle term
         ("gp-0x6b62", 0x6b62, "return_centre"),          # FUN_00036388 slow accumulator w/ hysteresis
-        ("gp-0x6ade", 0x6ade, "feedforward_CAVEAT_DEAD"),   # see SIGNAL PROVENANCE: 0 writers image-wide
+        # 2026-07-26: was gp-0x6ade ("feedforward"), a DEAD cell with 0 writers image-wide -- it could only
+        # ever have transmitted zeros, so the slot was pure waste. Replaced with AUTHORITY, now the single
+        # most decision-bearing signal in the kit. gp-0x6966 = |gp-0x3570>>15| * 1092>>10, written at
+        # 0x432c8 inside Monitor 1, and its ONLY command-path reader is 0x3a632 in FUN_0003a382, where it
+        # indexes the LERP at 0xC6AF0 that scales that lane's OUTPUT BOUND:
+        #     X (authority) :     0    3277    3604   19661   32768
+        #     Y (Q15 gain)  : 32768   32768       0       0       0
+        # i.e. the lane runs at full authority below 3277 and is CLAMPED TO ZERO above 3604. Whether the
+        # car crosses that knee during the vibration decides the DIRECTION of the candidate 0xC6AF0 edit
+        # (mute vs keep-live) -- and it is not determinable statically. This measures it.
+        ("gp-0x6966", 0x6966, "AUTHORITY_lerp_index"),
     ]),
     dict(n=19, can_id=0x6A3, signals=[
         ("gp-0x4f60", 0x4f60, "raw_sensorB_torque"),    # SENSOR-B (TAS) driver column torque
         ("gp-0x4f62", 0x4f62, "torque_rate"),           # 4-sample finite difference of Sensor-B torque
         ("gp-0x69a4", 0x69a4, "r26_gain_input"),        # r26 lane input; producer UNRESOLVED
-        ("gp-0x67ac", 0x67ac, "aggreg_mode_CAVEAT_ALWAYS0"),  # see SIGNAL PROVENANCE: proven const 0 on A160
+        # 2026-07-26: was gp-0x67ac ("aggreg_mode"), proven constant 0 on A160 -- another wasted slot.
+        # Replaced with the FUN_0003a382 REFERENCE MODEL. Together with gp-0x4f60 (raw sensor, same frame)
+        # and gp-0x6ad4 (lane output, frame 0x6A1), this closes the loop: errorterm = clamp(gp-0x4f60 -
+        # clamp(gp-0x6ad6, +/-8192), +/-0x2800) is then P+I+D'd into gp-0x6ad4. Capturing all three lets the
+        # lane's transfer function be identified from the drive itself instead of inferred -- which is what
+        # the damping-vs-anti-damping sign question has been blocked on. Written at 0x38142 (FUN_00037fe6),
+        # read at 0x3a6ba/0x3a798.
+        ("gp-0x6ad6", 0x6ad6, "reference_model"),
     ]),
 ]
 
@@ -439,8 +481,19 @@ def build_cave():
         strb, dtlgb, mid0w, ctl = strb_addr(n), dtlgb_addr(n), mid0w_addr(n), ctl_addr(n)
 
         emit(body, mov32(strb, R6), f"mov 0x{strb:08X},r6    ; &STRB{n}")
-        emit(body, movea(0x80, R0, R7), "movea 0x80,r0,r7        ; r7 = 0x80 (TX)")
-        emit(body, stb(R7, 0x0, R6), f"st.b r7,0x0[r6]         ; STRB{n} = 0x80")
+        # STRB layout (V850E2/Px4 manual p.1249/1268): bit7 SSOW | bits6-3 SSMT[3:0] | bit2 SSRT | bit1 (0) | bit0 SSAM.
+        #   SSAM  0 = "Message buffer not used", 1 = "Message buffer used"
+        #   SSMT  0000B = transmit message buffer
+        # Sec 20.8.1 makes SSAM=1 a HARD PRECONDITION for a buffer to join the TX priority search.
+        # 2026-07-26 FIX: this emitted 0x80, which is SSAM=0 -> "buffer not used" -> the mailbox never
+        # transmits. 0x80 came from build_vcantx_test_tva.py:54 mislabelling bit7 SSOW as "TX direction";
+        # bit7 is the RECEIVE-side overwrite control and is 0 on every stock TX buffer. Stock's own
+        # FUN_0001cf30 writes 0x01 to all seven TX mailboxes (st.b r23,0x24[r24] with mov 0x1,r23 @0x1D02C)
+        # and 0x00 to the unused free pool -- 0x80 left mailboxes 16-19 configured exactly like the free pool.
+        # This is why FOURFRAME's 0x6A0-0x6A3 were absent from the route-13 rlog.
+        # movea keeps the identical 4-byte encoding as the old 0x80 form, so the cave layout is unchanged.
+        emit(body, movea(0x01, R0, R7), "movea 0x1,r0,r7         ; r7 = 0x01 (SSAM=1 used, SSMT=0000 TX)")
+        emit(body, stb(R7, 0x0, R6), f"st.b r7,0x0[r6]         ; STRB{n} = 0x01")
 
         emit(body, mov32(dtlgb, R6), f"mov 0x{dtlgb:08X},r6    ; &DTLGB{n}")
         emit(body, movi5(8, R7), "mov 0x8,r7               ; r7 = 8 (DLC)")

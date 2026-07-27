@@ -2,8 +2,13 @@
 
 ## How I must work
 - [🛑 Use SendMessage, not plain text — and stop on a failed anchor](feedback_use_sendmessage_not_plain_text.md) — plain-text reports are invisible to the lead; cost 3 exchanges of duplicated work.
+- [🛑 Grep build_v*_tva.py before proposing ANY cal address](feedback_check_build_scripts_before_proposing_cal_edit.md) — re-proposed 0xC6450, already flashed as V46 and falsified; 2nd time this trap has hit.
 
 ## Accord TVA-A160 (current project)
+
+### Engagement-gated feedback loop / 21Hz-only-while-engaged (2026-07-26)
+- [★★★★★ FUN_0003a382 residual loop: gp-0x6ad6 CONFIRMED carries the 4× LKAS gain (unity-weighted, via gp-0x6b70/PATH-A, ~16Hz EMA); gp-0x3570 windup driven by gp-0x6acc NOT gp-0x6806; gp-0x67a4 gate on gp-0x6b3c traced and is NOT an engagement switch (2/4 inputs pinned constants); damper has no engagement-linked cut](reference_accord_fun3a382_engagement_gated_residual_loop.md) — 4x likely shifts the reference's operating point/gain-scheduling, not a direct 21Hz injection. ⚠ 0xC6450/0xC644A cal tests = ALREADY FLASHED as V46/V43, FALSIFIED — grep build_v*_tva.py before proposing ANY address. Authority (gp-0x6966) direction genuinely unresolvable by inference (argued both ways) — awaits on-car telemetry, do not build 0xC6AF0 edit until measured. gp-0x67ab trigger still open.
+- [★★★★★ 4x gain cal 0xC646C: 6-reader enumeration + feedback classification — REVISED: real feedback path but NOT the 21Hz driver](reference_accord_c646c_gain_feedback_vs_forward_classification.md) — FUN_00036682/28 chain into gp-0x6b98 but is slow (2.18Hz)/small-authority(±512); its saturation nonlinearity (18830→4707 threshold shift, verified) never fires on 62,547 active-LKAS CAN399 frames across 2 confirmed-21Hz on-car routes. Free cal word found (0xC6CD0); no LKAS-only upstream gain substitute exists — recommended fix retargets only 0x2a1ee.
 
 ### CAN RX plumbing / vehicle speed (2026-07-24)
 - [★★★★★ SOLVED: low-speed lockout = speed WINDOW, cal 0xC62EA=320 (4.995 km/h) lo / 0xC62E8=12800 hi](reference_accord_low_speed_lockout_window_c62ea.md) — 1 reader each, cal-only lever; ST=3 → kills STEER_CONTROL_ACTIVE + authority ramp; corrects the "report-only" verdict (consumer is intra-function).
