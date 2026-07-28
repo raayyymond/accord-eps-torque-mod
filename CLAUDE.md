@@ -18,14 +18,20 @@ an already-flashed, already-falsified lever because the result was buried in pro
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
    **Mandatory before proposing any calibration edit.**
 3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session.
-   Latest: `HANDOFF-2026-07-28-v54-drive-authority-resolved-and-v55-partition-probe.md`
-   (predecessors: `HANDOFF-2026-07-27-v53-drive-result-and-v54-authority-probe.md`, then
+   Latest: `HANDOFF-2026-07-28-v55-drive-oscillation-is-internal-and-v56-mute.md`
+   (predecessors: `HANDOFF-2026-07-28-v54-drive-authority-resolved-and-v55-partition-probe.md`, then
+   `HANDOFF-2026-07-27-v53-drive-result-and-v54-authority-probe.md`, then
    `HANDOFF-2026-07-27-v53-fourframe2-plus-minsteerspeed0.md`, then
    `HANDOFF-2026-07-27-fourframe-strb-defect-and-vibration-reframe.md`)
 4. **`memory/MEMORY.md`** and **`memory/MEMORY_CONSTELLATION.md`** — the flat fact index and the
    relational layer. The constellation carries the *chains* between facts, which the flat list does not.
 
 Default to study/analysis mode unless told otherwise.
+
+🛑 **Explain firmware with simple Python that mirrors the decompiled arithmetic EXACTLY** — integer
+`>>`, the real Q-format, the real branch conditions, each line annotated with its instruction address,
+constants byte-read **little-endian** (V850 is LE). dB/Hz interpretation comes *after* the code, never
+instead of it. Standing operator instruction, 2026-07-28.
 
 ---
 

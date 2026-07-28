@@ -6,29 +6,31 @@ each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed and falsified — check it before
 proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-07-28-v54-drive-authority-resolved-and-v55-partition-probe.md`.
+`docs/HANDOFF-2026-07-28-v55-drive-oscillation-is-internal-and-v56-mute.md`.
+
+🛑 **Explain firmware with Python that mirrors the decompiled arithmetic exactly** — standing operator
+instruction, 2026-07-28. Integer `>>`, the real Q-format, the real branch conditions, each line annotated
+with its instruction address, constants byte-read **little-endian** (V850 is LE). dB/Hz interpretation
+comes *after* the code, never instead of it. See
+`memory/feedback-explain-with-python-mirroring-decompiled-arithmetic.md`.
 
 ---
 
 ## On the car right now
 
-**V54** = V38 calibration + `0xC62EA` 320→0 + the 5-bit `gp-0x6966` authority probe on `0x14A` byte4
-bits 7:3. Flashed 2026-07-27, driven (route `1b`, 61.5 s parking lot), **fault-free**
-(`steerFaultTemporary`/`Permanent` both 0; `canValid` true in 5,711/5,713 — the piggyback did not break
-the Honda checksum).
+**V55** = V38 calibration + `0xC62EA` 320→0 + the dual probe on `0x14A` byte4 (bit7 = damper variant
+index ≥ 10; bits 6:3 = 4-bit `gp-0x6b98` motor command). Flashed and driven 2026-07-28 (route `1c`,
+two segments, 113 s parking lot), **fault-free**.
 
-✅ **THE PROBE FIRED. This is the kit's first working firmware telemetry channel.** The A/B against the
-V53 drive is a single bit, and it is exactly the bit the cave writes:
+✅ **The probe is live and both of its questions are answered** — 10 distinct field values, 100%
+interior, no rails; `bit7 = 1` in 11,128/11,128.
 
-| route | build | `0x14A` byte4 | bits 7:3 (`wire`) | bits 2:0 (stock status) |
-|---|---|---|---|---|
-| `1a` | V53 (no probe) | `0x07` × 5,994 (100%) | 0 | 7 |
-| `1b` | **V54** | `0x0F` × 5,989 (100%) | **1** | 7 |
+**V54** (previous) = the 5-bit `gp-0x6966` authority probe. Its result stands: authority ≡ 0 by design on
+V31+, so the `0xC6AF0` LERP selects unity in 100% of normal operation. **V53** before it = FOURFRAME2 cave
++ `0xC62EA` 320→0; steer-to-zero confirmed. Both superseded as flash candidates.
 
-Stock's `STEER_SENSOR_STATUS` bits are preserved. **Retire the "new-mailbox is unobservable" workaround
-anxiety: the `0x14A` byte4 piggyback is proven end to end, wire to decoder.**
-
-**V53** (previous) = V38 cal + FOURFRAME2 cave + `0xC62EA` 320→0. Superseded.
+⚠ The `0x14A` byte4 bits 7:3 piggyback is now proven across **three** flashes (V54, V55). Use it for all
+future firmware telemetry; do not build another new-mailbox channel.
 
 ✅ **Steer-to-zero WORKS — confirmed from the rlog, not just by report.** Route `1a` segment 0:
 `STEER_STATUS = 0` in **5,995/5,995** frames (ST=3 never fires anywhere) and **226 frames of
@@ -50,37 +52,33 @@ reports `fw='39990-TVA,A160'`. (It *can* now be identified behaviourally: ST=3 n
 
 | build | what | status |
 |---|---|---|
-| **V55** | V38 + `0xC62EA`→0 + a **dual probe**: bit7 = damper variant index ≥ 10, bits 6:3 = 4-bit `gp-0x6b98` motor command @100 Hz | ✅ **BUILT, gated, ready — the one to flash.** It PARTITIONS the hypothesis space rather than testing another lever |
-| FOURFRAME2 | FOURFRAME + STRB fix + telemetry on IDs `0x6A0`-`0x6A3` | **retired** — the channel is unobservable |
+| **V56** | V55 (probe intact) + the `0xC6AF0` **mute**: `0xC6AFC` Y[0] and `0xC6AFE` Y[1] 32768→0 | ✅ **BUILT, gated, verified — the one to flash.** A lever *and* a measurement. 🛑 GATE 2 only partially closed |
+| `0x2a1ee` retarget → `0xC6CD0` | the `0xC646C` decoupling — correctness fix | verified safe + byte-minimal, **unbuilt**. Will NOT fix the vibration (see below) |
+| `0xC6372` / `0xC636E` | the untested wideband assist EMAs | candidate #2, **needs its own GATE 2 pass** first |
+| FOURFRAME2 | telemetry on IDs `0x6A0`-`0x6A3` | **retired** — the channel is unobservable |
 | V49, V50, V51P, V52, VCANTX-TEST | superseded or blocked | see `docs/BUILD-LINEAGE.md` |
 
 ```
-_v55_plain_image.bin  SHA 9ed79e68e1d02362efff5262a9f142e6e1a6596104d800d5fd6a95cef86e576c
+_v56_plain_image.bin  SHA 8c5c8a73425bf269c03b2e93144a7b8340983e5d873d70ea6009c0e68eacc7a0
+V56 .rwd              SHA ffccf6e779498379e5d31326ba5bd7ed68da189d362b5f7ed925499df68343f4
+_v55_plain_image.bin  SHA 9ed79e68e1d02362efff5262a9f142e6e1a6596104d800d5fd6a95cef86e576c  (ON THE CAR)
 V55 .rwd              SHA 2b0fbd61e6658726ea72248f5312f4521638acaebcbd6f09d8c999e1a9e81fbf
-_v54_plain_image.bin  SHA 233188ffa21d8ae685685a48410e0c15b49ffca8af2fa8d3684f987cf1a4710b  (ON THE CAR)
-V54 .rwd              SHA 97ea51d2fa6b21d4584247be5571c34a5d3d15df742c2033324aae456c1c7517
-_v53_plain_image.bin  SHA 6be6055357506b87afe21ea622d46bda35ececfe5bb9038834e643d0f0292e1f
+_v54_plain_image.bin  SHA 233188ffa21d8ae685685a48410e0c15b49ffca8af2fa8d3684f987cf1a4710b
 ```
 
-**V55 is 82 bytes off V38** in 5 runs: a 68-byte cave at `0xC4B34`, the 4-byte `0x55C0E` hook, `0xC62EA`,
-two CRC trailers. 50/50 CRC blocks, both bootloader walks, RWD decode-back with every gate re-run on the
-readback. **Every instruction in the cave is either byte-identical to V54's flashed cave or differs by a
-single register/condition field from a byte-confirmed real instruction** — no novel opcode value.
-Decoder: `rlog-tools/decode_v55_motorcmd.py`.
+**V56 is exactly 6 bytes off V55** — and only **2** of them are calibration: `32768 = 00 80`
+little-endian, so muting to 0 changes only the *high* byte of each halfword. 84 bytes off V38.
+50/50 CRC blocks, both bootloader walks, RWD decode-back with every gate re-run on the readback. The
+point-count word and the whole X row are asserted unchanged, `Y[2..4]` asserted stock, V55's cave and
+hook byte-identical. Decoder unchanged: `rlog-tools/decode_v55_motorcmd.py`.
 
-✅ **Pre-flash Ghidra gate CLOSED (2026-07-28).** The cave and hook were re-disassembled from the
-*written* image via GhidraMCP — SHA-verified copy imported under a distinct filename
-(`v55_cavecheck.bin`, `auto_analyze=false`, `dry_run=true`, never saved), defeating both the
-stale-import and modal-save traps. All 22 cave instructions decode as intended, and **Ghidra resolved
-all three branch targets independently onto their labels** (`bge`→`0xC4B4A`, `bnh`→`0xC4B56`,
-`bc`→`0xC4B64`). The hook re-confirms its four load-bearing facts: `jarl 0xC4B34,lp`; `mov 0x8,r7` at
-`0x55C12` (r7 provably dead); `movea 0x14a,r0,r8` (this IS the 330 builder); `jarl 0x57b24,lp` (the
-checksum runs after us and clobbers `lp` itself).
+**`build_v56_tva.py` is a POST-PROCESSOR over `_v55_plain_image.bin`** — it transcribes nothing from V55,
+not the cave, not the hook, not the encoders. Same principle V53 used with FOURFRAME2's cave.
 
-🛑 **The V55 decoder REFUSES to interpret a V54 rlog**, and this was a real catch: V54 packs its 5-bit
-wire into bits 7:3 of the same byte, so a V54 drive (`byte4` constant `0x0F`) decodes as a perfectly
-plausible V55 "field == 1, bit7 == 0" — confident, actionable, fabricated. The guard is that a live V55
-field samples the *motor command* and therefore **cannot be constant** on a driving car.
+⚠ **`V53.assert_stock_cals()` correctly refused this edit** ("the `0xC6AF0` LERP moved — its edit
+direction is UNRESOLVED"). V54's drive resolved the direction. **Do not weaken that shared guard** —
+five builders depend on it. V56 runs the *unmodified* guard against the pre-edit V55 source and
+re-expands its other two components against the post-edit image.
 
 🛑 **Flash only on explicit operator instruction naming the file and the bus.**
 
@@ -157,7 +155,38 @@ Panda Honda RX checks are `0x1A6`, `0x296`, `0x158`, `0x17C`, `0x326`, `0x1BE` �
 
 ## The two open workstreams
 
-### A. The 4×-gain vibration — ~20-22 Hz, still unresolved (but the `0xC6AF0` block is lifted)
+### A. The vibration — ★★ MEASURED 2026-07-28 as a closed-loop instability INTERNAL to the EPS
+
+**The V55 drive (route `1c`) settled the two biggest open questions.** Full numbers in
+`memory/reference-accord-v55-flashed-oscillation-is-internal.md`.
+
+1. **The vibration is unambiguous and physical.** 20.90 Hz; **877×** engaged/disengaged on the torsion
+   bar and **996×** on `STEER_ANGLE_RATE` — a *different physical quantity in the same CAN message*, so
+   it is not a torque-sensor artifact. It is **hands-OFF**: on `1b`, engaged+hands-off carries **26×**
+   the power of engaged+hands-on.
+2. **The ~21 Hz IS in `gp-0x6b98`**, the final merged command, in the same 0.195 Hz bin as the sensor
+   (coherence 0.93). **Route `1b` is a clean null control** — V54's constant field gives exactly zero
+   command power, so the pipeline cannot manufacture the peak.
+3. ★★ **openpilot is NOT the source.**
+   ```python
+   DC  = 4.0 * 3564 / 32768        # setpoint x(-4) then Q15 gain 0xC646C   = 0.4351
+   IIR = 1/sqrt(1 + (21/4.97)**2)  # gp-0x3d3c pole 0.96875 @1kHz            = 0.2314
+   31.7 * DC * IIR  ==   3.2       # what the LKAS lane can deliver from openpilot's 21 Hz
+   31.7 * DC        ==  13.8       # even with the low-pass DELETED
+   # MEASURED in gp-0x6b98:  120.5 counts   -> 38x over budget, 8.7x even unfiltered
+   ```
+   **And while openpilot is RAILED its own 21 Hz content is exactly 0.0, yet the command still carries
+   105.8 counts at 21 Hz.** The loop closes inside the EPS, downstream of the LKAS lane's low-pass.
+4. ★ **The carrier is UNFILTERED.** Sensor→command transfer (H1, 9 independent segments) is **flat:
+   0.192 @1 Hz → 0.216 @21 Hz**, with only ~28° of phase rotation across the band. **A lane behind a
+   pole cannot produce that** — which is what eliminates the entire `0xC646C` reader set.
+5. **Damper bit7 = 1** in 11,128/11,128 ⇒ V44/V47 hit the LIVE tables ⇒ the missing-damping hypothesis
+   is genuinely falsified. **Thread closed.**
+
+🛑 **Direction is still not proven.** H1 in closed loop with no external excitation cannot separate
+plant from controller, so the **damping sign remains open**. That is GATE 2 for V56.
+
+#### Historical framing kept below for context
 
 **What is established:**
 - **The mode MOVES with speed** (route `1b` vs `1a`, Welch, 0.195 Hz resolution — 8 bins apart, resolved,
@@ -242,16 +271,18 @@ is roughly 0.1–3 mph: creep, parking lots, stop-and-go.
 remains in scope as a *measurement instrument* (rlogs, CAN decode, correlation) only. See
 `memory/feedback-no-openpilot-side-modifications.md`.
 
-1. **V55 — a telemetry build on the proven piggyback**, to partition the hypothesis space before spending
-   another behavioural flash. Measurement builds are cheap: the operator can drive a parking-lot loop in
-   minutes, and the vibration reproduces there.
-2. **V56 = whichever lever V55's answer indicates** — the `0xC6AF0` mute, or the damper-product
-   continuation of V44/V47.
-3. **The `0xC646C` decoupling** (`0x2a1ee` retarget → `0xC6CD0`) — designed and verified, still unbuilt.
-   Framed as a correctness fix, but it separates the 4× forward gain from two **feedback-path** readers,
-   which is a loop-gain change and therefore a live vibration candidate too.
+1. **Flash V56**, one parking-lot loop, same conditions as `1c` (creep, hands off, engaged). Decode with
+   `rlog-tools/decode_v55_motorcmd.py` — the probe is unchanged, so it reads V56 directly. Three outcomes:
+   vibration gone ⇒ root cause; vibration persists **but the command's 21 Hz drops** ⇒ the lane was a
+   carrier, not the loop; neither moves ⇒ `gp-0x6ad4` eliminated as a class.
+2. **`0xC6372`/`0xC636E`** — candidate #2, the only other lanes unattenuated at 21 Hz (−1.29 dB).
+   🛑 **Needs its own GATE 2 pass first**: `gp-0x6bbe` is base power steering, and adding 60-73° of lag
+   to the always-on assist loop is the **V48B brick class**.
+3. **The `0xC646C` decoupling** (`0x2a1ee` retarget → `0xC6CD0`) — build it as the **correctness fix** it
+   is. ⚠ **It will NOT fix the vibration:** `FUN_0003a382` is not among the six readers (0 matches across
+   its 468 instructions), so the retarget cannot touch the carrier.
 4. **Re-derive the V31 boost-floor margin** (`0xC67D8`, `0xC61B4`) — the recorded arithmetic does not
-   reconcile with the image. Not blocking, but it is a live inconsistency in the record.
+   reconcile with the image. Not blocking; V54 measured the margin directly.
 
 🛑 **Do NOT re-drive at road speed merely to "see if authority moves."** It will not — `gp-0x6966` is
 wind-up-driven, not speed-driven, and V31's boost floor makes wind-up unreachable. Provoking it would
@@ -260,6 +291,22 @@ require the documented EME pattern (sustained hands-off hard turn), which V31 ex
 ---
 
 ## Corrections of record still worth knowing
+
+**New 2026-07-28 — four, all byte-verified:**
+- 🛑 **`0xC63D2` is `6`, not `14`.** Read little-endian from `_v55_plain_image.bin` *and* stock `code.bin`
+  (identical; no build touches it), confirmed three independent ways. `alpha = 6/1024` ⇒ **fc 0.933 Hz,
+  −27.1 dB at 21 Hz**, not the recorded 2.18 Hz / −19.7 dB. The golden model had this right all along.
+- 🛑 **LERP tables begin with a POINT-COUNT word.** `0xC6AF0` names the *table*; `Y[0]` is at
+  **`0xC6AFC`** and `Y[1]` at **`0xC6AFE`**. Writing to `0xC6AF0` would clobber the count. Proved by the
+  firmware's own `addi 0xc,r15,r13` / `addi 0x2,r15,ep` at `0x3a63a`/`0x3a63e`.
+- 🛑 **`gp-0x67fe` is NOT an openpilot-engagement gate** — it is the EPS's own FOC/assist substate
+  (`gp-0x6772 == 5 → 2`), measured by V31P at 1 in 100% of frames *including disengaged*. So
+  `gp-0x6ad4` is live during manual driving, and muting it changes manual feel.
+- 🛑 **V43/V46/V48A did not exonerate `FUN_0003a382`** — it has **three parallel branches** and each
+  build attenuated exactly one (`0xC644A`→64 = −7.1 dB; `0xC6450`→32 = −12.6 dB; one carrier muted).
+  Three nulls are precisely what you would predict. Only the `0xC6AF0` output-bound mute kills all three.
+- ⚠ **V52C's null is weaker than it looks** — its EMA was `alpha = 74/1024` ⇒ **fc ≈ 12 Hz, only
+  −6.1 dB at 21 Hz** while *adding* 61° of lag. It halved the 21 Hz content; it did not remove it.
 
 - **`0xC646C` is NOT "the LKAS authority gain."** It is the firmware's single shared Q15
   sensor-to-command-domain scale, with **6 readers across three subsystems**; two (`0x36686`, `0x3684a`)

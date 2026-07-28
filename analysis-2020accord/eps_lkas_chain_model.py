@@ -426,6 +426,14 @@ class Calibration:
     # VOTED VEHICLE SPEED at 64.0625 counts/km/h. Failing the window is the ONLY writer of
     # STEER_STATUS=3, which gates BOTH STEER_CONTROL_ACTIVE and the authority ramp (intra-function
     # `cmp 0x2` @0x29382). Each cal has exactly ONE reader image-wide.
+    # FUN_0003a382's output-bound scale: Y[0]/Y[1] of the LERP based at 0xC6AF0, i.e. the halfwords at
+    # 0xC6AFC / 0xC6AFE (the table starts with a POINT-COUNT word -- 0xC6AF0 is NOT the first value).
+    # Applied as a Q15 multiplier on the ceiling that clamps the lane's FINAL combined value:
+    #     ceiling = (headroom * lerp_y) >> 15     # mul r15,r10 ; sar 0xf,r10  @0x3a79e/0x3a7aa
+    #     gp-0x6ad4 = clamp(combined, -ceiling, +ceiling)                      @0x3a88c-0x3a8a0
+    # V54 measured the index gp-0x6966 in [0,127] for 5,989/5,989 frames, which selects Y[0]/Y[1] and
+    # therefore unity, in 100% of normal operation. V56 sets both to 0 -> the lane is muted outright.
+    resonance_lane_output_bound_q15: int = 32768   # 0xC6AFC / 0xC6AFE. V56 -> 0
     speed_window_lo: int = 320           # tp+0x72ea (0xC62EA) = 4.995 km/h = 3.104 mph. V53 -> 0
     speed_window_hi: int = 12800         # tp+0x72e8 (0xC62E8) = 199.8 km/h. NEVER edited: the 0x7FFF
                                          #   SNA sentinel (32767) must keep failing this bound.
@@ -534,7 +542,7 @@ class Calibration:
         if name == "V31":
             return cal
         # --- V37 onward: gentle-EME debounce SM off + DTC-0x49 counter off -------------------------
-        if name in ("V37", "V38", "V39", "V40", "V41", "V42", "V53", "V54", "V55"):
+        if name in ("V37", "V38", "V39", "V40", "V41", "V42", "V53", "V54", "V55", "V56"):
             cal = replace(
                 cal,
                 deb_torque_rise=255, deb_torque_hold=255, deb_torque_and_hi=255, deb_torque_and_lo=255,
@@ -595,12 +603,63 @@ class Calibration:
             #
             # V55 exists to PARTITION rather than to test a lever: every falsified vibration lever
             # (V39, V41, V42ch2, V43, V45, V46, V48A, V52C) sits on the command path and assumes the
-            # ~20 Hz is COMMANDED. If it is absent from gp-0x6b98, all eight were doomed by
-            # construction and the search moves to the plant. A null BOUNDS the command's 20 Hz content
-            # to ~<512 counts (one level) against the sensor's ~550 rms -- it does not prove zero, and
-            # a 100 Hz probe cannot separate 20 Hz from 80 Hz.
+            # ~20 Hz is COMMANDED.
+            #
+            # ★★ FLASHED AND DRIVEN 2026-07-28 (route 1c). THE ANSWER IS "COMMANDED", AND MORE:
+            #
+            #  1. The mode IS in gp-0x6b98, same 0.195 Hz bin as the sensor, coherence 0.93. Route 1b
+            #     is a clean null control -- V54's constant field yields EXACTLY zero command power.
+            #  2. openpilot is NOT the source:
+            #         DC  = 4.0 * 3564 / 32768         # setpoint x(-4) then Q15 gain  = 0.4351
+            #         IIR = 1/sqrt(1 + (21/4.97)**2)   # gp-0x3d3c pole 0.96875 @1kHz  = 0.2314
+            #         31.7 * DC * IIR ==   3.2   # what the LKAS lane can deliver
+            #         31.7 * DC       ==  13.8   # even with the low-pass DELETED
+            #         measured        == 120.5   # -> 38x over budget, 8.7x even unfiltered
+            #     And while openpilot is RAILED its own 21 Hz is exactly 0.0, yet the command still
+            #     carries 105.8 counts. ⇒ the loop closes INSIDE the EPS.
+            #  3. The sensor->command transfer is FLAT: 0.192 @1 Hz -> 0.216 @21 Hz, ~28 deg of total
+            #     phase rotation. A lane behind a pole cannot do that ⇒ the carrier is UNFILTERED,
+            #     which eliminates the whole 0xC646C reader set (FUN_00036682: alpha = 6/1024, fc
+            #     0.933 Hz, -27.1 dB at 21 Hz, contributing 0.0048 of the measured 0.221).
+            #  4. bit7 = 1 in 11,128/11,128 ⇒ V44/V47 hit the LIVE damper tables ⇒ missing-damping is
+            #     genuinely falsified. Thread closed.
+            #
+            # 🛑 Direction is still NOT proven: H1 in closed loop with no external excitation cannot
+            # separate plant from controller, so the damping sign stays open. That is V56's GATE 2.
             if name == "V55":
                 return replace(cal, speed_window_lo=0)
+            # --- V56: V55 byte-for-byte + the 0xC6AF0 MUTE. BUILT 2026-07-28, UNFLASHED.
+            #
+            # Writes 0 to Y[0] (0xC6AFC) and Y[1] (0xC6AFE). NOTE the table layout -- these LERPs begin
+            # with a POINT-COUNT word, so 0xC6AF0 names the TABLE, not the first value:
+            #     count = u16le(0xC6AF0) = 5
+            #     X     = 0xC6AF2..0xC6AFA = [0, 3277, 3604, 19661, 32768]
+            #     Y     = 0xC6AFC..0xC6B04 = [32768, 32768, 0, 0, 0]
+            # Confirmed by the firmware's own pointer arithmetic: `addi 0xc,r15,r13` (&Y[0]) and
+            # `addi 0x2,r15,ep` (&X[0]) at 0x3a63a/0x3a63e.
+            #
+            # The LERP result is a Q15 multiplier on the CEILING that clamps the lane's FINAL combined
+            # value, so the mute is BRANCH-AGNOSTIC:
+            #     r15     = lerp_y if authority <= 0x8000 else 0x8000   # cmovnh   @0x3a794
+            #     ceiling = (headroom * r15) >> 15                      # mul;sar  @0x3a79e/0x3a7aa
+            #     store   = clamp(combined, -ceiling, +ceiling)         #          @0x3a88c-0x3a8a0
+            #     # ceiling == 0 -> every path stores 0 to gp-0x6ad4, whatever `combined` is.
+            #
+            # This is why V43/V46/V48A were null WITHOUT exonerating the lane: FUN_0003a382 has THREE
+            # PARALLEL branches and each of those builds attenuated exactly one (0xC644A->64 = -7.1 dB;
+            # 0xC6450->32 = -12.6 dB; one carrier muted). Both poles are 1024/1024 = exact identities.
+            #
+            # Mute BOTH Y[0] and Y[1]: `bh` @0x3a648 sends authority exactly 0 down the below-knot path
+            # (loads Y[0] directly), while 1..3276 interpolates Y[0]->Y[1]; V54 measured gp-0x6966 in
+            # [0,127], straddling that boundary.
+            #
+            # 🛑 GATE 2 only PARTIALLY closed. Monitor risk CLOSED (gp-0x6ad4 has exactly 2 gp-relative
+            # accesses image-wide: writer 0x3a8a0, reader 0x3aca8; no lockstep/shadow/monitor).
+            # Protection removal CLOSED (Y[2..4] are never invoked). OPEN: the damping sign at 21 Hz,
+            # and manual steering feel -- gp-0x6ad4 is NOT LKAS-gated (its ceiling hangs off gp-0x67fe,
+            # the EPS FOC substate, which V31P measured at 1 in 100% of frames INCLUDING disengaged).
+            if name == "V56":
+                return replace(cal, speed_window_lo=0, resonance_lane_output_bound_q15=0)
             if name == "V39":
                 return replace(cal, suppress_direct_torque_rate_assist=True)
             # --- V40: V38 baseline (NOT V39 -- the r24 guard is dropped entirely) + two cal edits.
@@ -625,7 +684,7 @@ class Calibration:
                 return replace(cal, governor_slew_step_normal=2048, governor_slew_step_alt=820)
         raise ValueError(
             f"unknown build {name!r} "
-            f"(expected V9, V31, V37, V38, V39, V40, V41, V42, V53, V54, or V55)")
+            f"(expected V9, V31, V37, V38, V39, V40, V41, V42, V53, V54, V55, or V56)")
 
 
 # =====================================================================================================
@@ -2018,7 +2077,11 @@ def motor_torque_demand_aggregator(st: EpsState, lanes: dict, cal: Calibration) 
         damping = _range_gate(lanes["damping_6bd0"], 0x0800)
         boost = _range_gate(st.assist_lane, 0x0800)
         friction = _range_gate(lanes["friction_6b26"], 0x0400)
-        resonance = _range_gate(lanes["resonance_6ad4"], 0x2800)
+        # The 0xC6AF0 LERP scales the lane's own output ceiling BEFORE the aggregator's range gate.
+        # Modelled as a Q15 scale on the lane value, which is equivalent for the mute case that
+        # matters (bound 0 -> lane 0) and for the unity case that is live on every build to date.
+        resonance = (lanes["resonance_6ad4"] * cal.resonance_lane_output_bound_q15) >> 15
+        resonance = _range_gate(resonance, 0x2800)
         filtered = lanes["filtered_36682"]
 
         # Exact instruction order at 0x3acc8..0x3ace6.

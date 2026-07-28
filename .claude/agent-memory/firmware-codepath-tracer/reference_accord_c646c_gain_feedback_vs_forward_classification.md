@@ -217,6 +217,22 @@ This is SMALLER than my original fallback (1 retargeted site instead of 3) for t
 loop finding is real but is probably NOT the 21Hz driver. The `engagement-gated-lanes` teammate's parallel
 `FUN_0003a382`/`gp-0x6ad4` thread (unfiltered, engagement-coupled) remains the stronger candidate.
 
+## ⚠ Open discrepancy (2026-07-28, lane-inventory session) — `tp+0x73d2` re-read as 6, not 14
+
+Re-derived independently while inventorying every lane into `gp-0x6b98` (see
+[[reference_accord_gp6b98_aggregator_full_lane_inventory]]). Fresh `read_memory` on `code.bin` at `0xC63D2`
+(=`tp+0x73d2`) returns **6** (bytes `06 00`), not 14 as recorded in "Round 3" above. Cross-checked 3 ways
+this session, all agreeing on 6: (1) direct 2-byte read at `0xC63D2`; (2) a wider 16-byte context read
+`0xC63C8..0xC63D7` showing the surrounding small-constant cluster `10,719,0,1024,5,6,31,98` — no
+off-by-N alignment artifact; (3) `search_instructions` on `0x73d2` independently locates the sole
+reader `0x367fa: ld.hu 0x73d2,tp,r14` inside `FUN_00036682`, confirming the displacement itself, not just
+my arithmetic on `tp`. Did not identify the source of the "14" figure — possibly a different program
+snapshot, a transcription slip, or an address 1-2 cells off that I haven't checked. **Not resolving this
+here — flagging for whoever next touches this cal.** If 6 is correct, `FUN_00036682`'s IIR is slower than
+recorded (α=6/1024=0.00586, fc≈0.93Hz, ≈-26.6dB at 21Hz — an even weaker 21Hz carrier than "Round 3"
+already concluded, so the qualitative verdict "small-authority, not the smoking gun" is unaffected either
+way, only the exact dB number changes).
+
 - **Float-mirror question CLOSED with positive evidence.** Diffed the full `0xC0000-0xC8000` cal block
   (767 differing bytes, stock vs on-car). The specific cells team-lead flagged as float-mirror candidates
   from that diff (`0xC659A/9E`, `0xC65AE/B2`, `0xC65C6/CA/CE`, `0xC674F-0xC676D`) are upper/lower halves of

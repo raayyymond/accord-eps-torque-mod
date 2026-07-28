@@ -16,14 +16,14 @@ result was buried in prose.
 
 | address | what it is | build | flashed? | on-car result |
 |---|---|---|---|---|
-| `0xC6450` | `FUN_0003a382` Stage-A carrier pole (1024 = exact unity) | **V46** | ✅ | 🛑 **FALSIFIED** — vibration unchanged |
-| `0xC644A` | `FUN_0003a382` Stage-C dirty-derivative pole | **V43** | ✅ | 🛑 **FALSIFIED** — vibration unchanged |
+| `0xC6450` | `FUN_0003a382` Stage-A carrier pole (1024 = exact unity) | **V46** | ✅ | ⚠ **RE-FRAMED 2026-07-28 — NOT a falsification of the lane.** 1024→32 = only −12.6 dB at 21 Hz, and it attenuated **one of three PARALLEL branches** |
+| `0xC644A` | `FUN_0003a382` Stage-C dirty-derivative pole (a **discrete derivative**, `2·sin(w/2)`) | **V43** | ✅ | ⚠ **RE-FRAMED — same reason.** 1024→64 = −7.1 dB, one branch of three |
 | `0xC643F` / `0xC6445` + `0xC6A72/86/9A/AE` | `r26` adaptive torque-rate gain surface | **V42** ch.2 | ✅ | 🛑 **FALSIFIED** |
 | `0xC6440/42/46`, `0xC61F6` | `r24` direct Sensor-B rate lane | **V39** | ✅ | 🛑 **FALSIFIED** |
 | `0xD27C6` / `0xD27DA` | damper Factor C hands-off deadzone Y[0] — **variant-coded, entries 10/11** | **V44** | ✅ | 🛑 **FALSIFIED** (Factor E re-zeroes the product). ✅ **2026-07-28: confirmed it hit the LIVE table.** PN `39990-TVA-A160` → key `TVAA1` → config row 2 → INDEX **10** → `0xD27BC`, exactly what V44 edited. ⚠ one-bit residual: the coded row is in EEPROM, not the flash dump, and the TVA family splits ({TVAA0,2,4}→idx 4). **V55 carries a telemetry bit for it** |
 | `0xD2802/04/06`, `0xD2816/18/1A` | damper Factor E (motor-rate) deadzone — **variant-coded, entries 10/11** | **V47** | ✅ | 🛑 marginally quieter at 5 mph, **no effect in motion**. ✅ **2026-07-28: confirmed it hit the LIVE table** (same INDEX 10 chain as V44 → `0xD27F8`). ⇒ **the missing-damping hypothesis was genuinely tested and IS falsified** — do not resurrect it on a "wrong variant" theory |
-| `0xC4120` + `FUN_0003a382` `uVar27`→256 | type-8 carrier mute | **V48A** | ✅ | 🛑 **FALSIFIED** |
-| `gp-0x4f60` broad EMA (19 carriers → `gp-0x1300`) | V52C code cave | **V52C** | ✅ | 🛑 vibration unchanged; **did change manual feel** |
+| `0xC4120` + `FUN_0003a382` `uVar27`→256 | type-8 carrier mute | **V48A** | ✅ | ⚠ **RE-FRAMED — one branch of three, like V43/V46** |
+| `gp-0x4f60` broad EMA (19 carriers → `gp-0x1300`) | V52C code cave | **V52C** | ✅ | ⚠ **WEAKER THAN IT LOOKS.** `alpha = 74/1024` ⇒ fc ≈ 12 Hz ⇒ only **−6.1 dB at 21 Hz** while *adding* 61° of lag. It halved the mode's content, it did not remove it. **Did change manual feel** (so the cave fired) |
 | `0xC6206` (hands-off slew) | governor slew | **V45** | ✅ | 🛑 **FALSIFIED** |
 | `0xC6206`/`0xC6208` ← `0xFFFF` | governor slew, both | **V40** | ✅ | ☠ **EPS lamp + no power steering at ignition.** Magnitude, not direction: `0xFFFF` made the guard never fire → snap-to-target → DTC 0x1d → motor off |
 | `0xC5030`, `0xC521A`, `0xC5232` | motor-rate cap table | V40/**V41** | ✅ | 🛑 **FALSIFIED** (V41 = clean subtractive test) |
@@ -41,8 +41,22 @@ result was buried in prose.
 ### Untested levers currently on the table
 | address | what | status |
 |---|---|---|
-| `0xC6AF0` Y-array | `FUN_0003a382` authority→output-bound LERP | ✅ **DIRECTION MEASURED 2026-07-28, block lifted.** V54's on-car probe: `gp-0x6966` ∈ [0,127] in 5,989/5,989 frames ⇒ `Y = 32768` (unity) is selected in 100% of normal operation ⇒ the lane runs at **full bound** always ⇒ "keep-live" is a no-op and **mute (`Y[0]`,`Y[1]`→0) is the only meaningful edit.** 🛑 **GATE 2 still open** — the lane's damping-vs-anti-damping sign is undetermined, so this is a decisive *test*, not a known-good fix |
-| `0x2a1ee` retarget → `0xC6CD0` | decouple 4× forward from the feedback readers | designed + verified, **unbuilt** |
+| **`0xC6AFC` + `0xC6AFE`** (Y[0], Y[1] of the `0xC6AF0` LERP) | `FUN_0003a382` authority→output-bound LERP | ✅ **BUILT AS V56 2026-07-28.** Direction measured by V54; **completeness confirmed in Ghidra twice independently** — the LERP result is a Q15 multiplier on the ceiling that clamps the lane's **FINAL combined value** (`mul r15,r10`+`sar 0xf` @`0x3a79e`/`0x3a7aa` → the ±clamp @`0x3a88c-94` → `st.h` @`0x3a8a0`), so the mute is **branch-agnostic**, unlike V43/V46/V48A. 🛑 GATE 2: monitor risk CLOSED (1 writer/1 reader, no lockstep), **damping sign and manual feel OPEN** |
+| `0xC6372` / `0xC636E` | boost-assist + damping lane **input EMAs**, `alpha = 205/1024` ⇒ only **−1.29 dB at 21 Hz** | **UNTESTED** — V44 pins both in `STOCK_CALS` as "the rejected candidate B". Candidate #2. 🛑 **GATE 2 severe**: `gp-0x6bbe` is base power steering; 60-73° of added assist-loop lag is the **V48B brick class** |
+| `0x2a1ee` retarget → `0xC6CD0` | decouple 4× forward from the feedback readers | designed + **independently re-verified 2026-07-28**, still unbuilt. ⚠ **It cannot fix the vibration** — `FUN_0003a382` is not among the six readers (0 matches across its 468 instructions). Build it as a *correctness* fix |
+
+### 🛑 The `0xC646C` readers are ELIMINATED as the vibration carrier (measured, 2026-07-28)
+```python
+# FUN_00036682 (readers #5/#6) -- and it is not even a plain EMA: y[n-1] is subtracted twice,
+# giving y[n] = y[n-1]*(1-2a) + a*K*x[n], so DC gain is K/2, not K.
+alpha = u16le(img, 0xC63D2)        # == 6, NOT 14 -- byte-verified 3 ways, stock and V55 identical
+fc    = (6/1024) / (2*pi*1e-3)     # 0.933 Hz
+att21 = 1/sqrt(1 + (21/fc)**2)     # 0.0444  = -27.1 dB
+(3564/32768) * att21               # 0.0048  contribution at 21 Hz
+# MEASURED total sensor->command transfer at 21 Hz = 0.221  =>  reader #5 is 2.2% of it.
+# Reverting the gain to stock removes 1.6% of loop gain = 0.14 dB.
+```
+And the measured transfer is **flat from 1 Hz to 21 Hz** — a lane behind a 0.93 Hz pole cannot do that.
 
 ### 🛑 `0xD_xxx`-region LERPs are VARIANT-CODED — resolve the pointer before editing
 The damper factor tables (and the output clamp) are reached through **three** stages, and the selector is
@@ -121,6 +135,8 @@ flashed.**
 | **vfourframe2** | 853 | same, **STRB fixed to 0x01**, authority + reference-model signals |
 | **v53** | 855 | FOURFRAME2 byte-for-byte **+ `0xC62EA` 320→0** (+ CAL CRC). Exactly 6 bytes off FOURFRAME2 |
 | **v54** | 58 | `0x55C0E` hook + **44-byte** cave `0xC4B34` (5-bit `gp-0x6966` authority probe → `0x14A` byte4 bits 7:3) + `0xC62EA` 320→0. **No mailbox cave** |
+| **v55** | 82 | `0x55C0E` hook + **68-byte** cave `0xC4B34` (dual probe: damper variant bit + 4-bit `gp-0x6b98`) + `0xC62EA` 320→0 |
+| **v56** | 84 | V55 byte-for-byte **+ `0xC6AFC`/`0xC6AFE` 32768→0** (+ CAL CRC). Exactly **6 bytes** off V55 — and only **2** are cal, because `32768` = `00 80` LE so just the high byte of each halfword moves |
 
 ---
 
@@ -133,8 +149,14 @@ changed manual feel) → FOURFRAME (telemetry, silent — STRB defect) → V53 (
 **V54** (2026-07-27: ★ **the probe FIRED** — first working firmware telemetry channel in this kit;
 `0xC6AF0` direction measured and the block lifted; fault-free).
 
-**⚠ V54 is the image on the car now.** It does **not** carry the V42 ratchet fix (`0x454FE` is stock
-`0x65BA`), same as V38/V53/FOURFRAME.
+→ **V55** (2026-07-28: the dual probe FIRED and partitioned the hypothesis space — ★★ **the ~21 Hz IS in
+`gp-0x6b98` and the loop is INTERNAL to the EPS**; openpilot is 8.7× too small even with the LKAS
+low-pass deleted, and while RAILED its 21 Hz is exactly 0 yet the command still carries 105.8 counts;
+sensor→command transfer is **flat 0.19→0.22 from 1 Hz to 21 Hz**; damper bit7 = 1 ⇒ V44/V47 hit the LIVE
+tables). Fault-free.
+
+**⚠ V55 is the image on the car now.** It does **not** carry the V42 ratchet fix (`0x454FE` is stock
+`0x65BA`), same as V38/V53/V54/FOURFRAME.
 
 ★ **V54's telemetry result — the `0x14A` byte4 bits 7:3 piggyback is PROVEN end to end.** A/B against the
 V53 drive is a single bit and it is exactly ours: byte4 = `0x07` ×5,994 (100%) on V53 → `0x0F` ×5,989
