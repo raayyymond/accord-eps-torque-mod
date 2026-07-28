@@ -6,40 +6,80 @@ each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed and falsified — check it before
 proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-07-27-v53-fourframe2-plus-minsteerspeed0.md`.
+`docs/HANDOFF-2026-07-27-v53-drive-result-and-v54-authority-probe.md`.
 
 ---
 
 ## On the car right now
 
-**FOURFRAME** = V38 calibration + a passive read-only CAN-telemetry cave. Fault-free, drives normally.
+**V53** = V38 calibration + the FOURFRAME2 four-frame telemetry cave + `0xC62EA` 320→0.
+Flashed 2026-07-27, driven, fault-free.
 
-⚠ **FOURFRAME is built on V38 and does NOT carry the V42 ratchet fix** (`0x454FE` is stock `0x65BA`).
-The state-4 governor substitution block is live on the car.
+✅ **Steer-to-zero WORKS — confirmed from the rlog, not just by report.** Route `1a` segment 0:
+`STEER_STATUS = 0` in **5,995/5,995** frames (ST=3 never fires anywhere) and **226 frames of
+`STEER_CONTROL_ACTIVE = 1` below 5 km/h**, a cell that is structurally empty on V38. The §7 prediction
+from the previous handoff held exactly.
 
-⚠ An rlog **cannot** identify which build is flashed — every modified build reports
-`fw='39990-TVA,A160'`.
+🛑 **The four-frame telemetry still never arrived.** Zero frames of `0x6A0`-`0x6A3` across 301,824 CAN
+frames on buses 0/1/2/128/129. The STRB fix was necessary but not sufficient — **or it worked and the
+gateway ate the frames; the rlog cannot tell.** See "the measurement problem" below.
+
+⚠ **V53 does NOT carry the V42 ratchet fix** (`0x454FE` is stock `0x65BA`). The state-4 governor
+substitution block is live on the car.
+
+⚠ An rlog **cannot** identify which build is flashed from the version string — every modified build
+reports `fw='39990-TVA,A160'`. (It *can* now be identified behaviourally: ST=3 never firing ⇒ V53+.)
 
 ## Built and UNFLASHED
 
 | build | what | status |
 |---|---|---|
-| **V53** | FOURFRAME2 **+ minimum steer speed → 0** (`0xC62EA` 320→0) | ready; **the one to flash** — 18 bytes off the on-car image |
-| FOURFRAME2 | FOURFRAME + the STRB fix + authority/reference-model telemetry | ready; 12 bytes off the on-car image. **Superseded by V53** |
+| **V54** | V38 + `0xC62EA` 320→0 + a **5-bit `gp-0x6966` authority probe** on `0x14A` byte4 bits 7:3 | ready; **the one to flash** — it is the measurement that unblocks `0xC6AF0` |
+| FOURFRAME2 | FOURFRAME + STRB fix + authority/ref-model telemetry on IDs `0x6A0`-`0x6A3` | **retired** — the channel is unobservable |
 | V49, V50, V51P, V52, VCANTX-TEST | superseded or blocked | see `docs/BUILD-LINEAGE.md` |
 
 ```
-_v53_plain_image.bin          SHA 6be6055357506b87afe21ea622d46bda35ececfe5bb9038834e643d0f0292e1f
-_vfourframe2_plain_image.bin  SHA 826809239588355ae3724565612083a8cd219fd456d4d0a548237b7933f2976c
+_v54_plain_image.bin  SHA 233188ffa21d8ae685685a48410e0c15b49ffca8af2fa8d3684f987cf1a4710b
+V54 .rwd              SHA 97ea51d2fa6b21d4584247be5571c34a5d3d15df742c2033324aae456c1c7517
+_v53_plain_image.bin  SHA 6be6055357506b87afe21ea622d46bda35ececfe5bb9038834e643d0f0292e1f  (ON THE CAR)
 ```
 
-**V53 is FOURFRAME2 plus exactly six bytes** — `0xC62EA`/`0xC62EB` (320→0) and the CAL-block CRC trailer
-at `0xC6FFC`. Cave, hook and MAIN CRC are byte-identical to FOURFRAME2, asserted in the builder. It does
-**not** carry the V42 ratchet fix (`0x454FE` stays stock `0x65BA`), matching FOURFRAME on the car today.
-Built by `analysis-2020accord/build_v53_tva.py`, which imports the cave from the FOURFRAME2 builder rather
-than re-typing it, so there is no transcription surface.
+**V54 is 58 bytes off V38** in 5 runs: a 44-byte cave at `0xC4B34`, the 4-byte `0x55C0E` hook, `0xC62EA`,
+and two CRC trailers. Built by `analysis-2020accord/build_v54_tva.py`, which imports its encoders and CRC
+gates from the FOURFRAME builder and its lockout constants + safety scans from the V53 builder, so the
+only thing typed fresh is the cave. 50/50 CRC blocks, both bootloader walks, RWD decode-back with every
+gate re-run on the readback, and **the cave + hook re-disassembled from the written image via GhidraMCP.**
 
 🛑 **Flash only on explicit operator instruction naming the file and the bus.**
+
+---
+
+## ★ The measurement problem — why V54 exists
+
+The `0xC6AF0` edit has been blocked since 2026-07-27 on one runtime number, `gp-0x6966`. Two attempts to
+measure it via a **new CAN mailbox** have now produced silence, and the second silence is *uninterpretable*:
+
+- Six IDs the stock firmware genuinely broadcasts — `0x19F`, `0x32E`, `0x64D`, `0x660`, `0x722`, `0x723` —
+  are **also absent** from the same rlog, while the three openpilot's DBC knows (`0x14A`, `0x18F`,
+  `0x1AB`) run at 97-100 Hz.
+- Non-DBC IDs **are** logged (`0x669`, `0x750`, `0x674` all appear and are in no Honda DBC), so
+  "openpilot didn't know the ID" is excluded as an explanation.
+
+⇒ **A new-mailbox null says nothing about whether the cave fired.** Do not build a third one. Firmware
+telemetry rides the `0x14A` byte4 bits 7:3 piggyback — 4 successful flashes, hook at `0x55C0E`
+immediately before `FUN_00057b24` computes the checksum, and openpilot reads nothing in those bits.
+
+**Channel audit (this session, against the fork on disk):**
+
+| byte | DBC content | openpilot reads it? | free bits |
+|---|---|---|---|
+| `0x14A` byte4 | bits 2:0 = `STEER_SENSOR_STATUS_1/2/3` (live in firmware) | **no** (only bytes 0-3) | **5** @100 Hz |
+| `0x18F` byte5 | bits 3:0 = `STEER_CONFIG_INDEX`; **bits 5:4 LIVE** (`gp-0x6880 & 3`, packer `0x55CAE`) | no | 2 safe; no hook located |
+| `0x1AB` byte0 | bit7 `CONFIG_VALID`, bit3, bits 1:0 = `MOTOR_TORQUE[9:8]` | no (427 never parsed) | 4, non-contiguous, 48.7 Hz |
+
+Panda Honda RX checks are `0x1A6`, `0x296`, `0x158`, `0x17C`, `0x326`, `0x1BE` — **none of the three**.
+⚠ opendbc *does* verify Honda checksums (`opendbc/can/dbc.py`); a bad one drops `can_valid`, which is a
+**disengage**. Any piggyback must be written before the checksum call.
 
 ---
 
@@ -64,14 +104,23 @@ is gated by authority `gp-0x6966` via the LERP at `0xC6AF0` (unity below 3277, *
 
 🛑 **The edit direction is UNRESOLVED and must not be guessed.** Two analysis passes reached opposite
 conclusions (mute vs keep-live) from the same data, one turn apart, because both hinged on authority's
-runtime value — which is not statically determinable. **Measure `gp-0x6966` on-car first.** That is why
-FOURFRAME2 carries it.
+runtime value — which is not statically determinable. **Measure `gp-0x6966` on-car first.** That is what
+**V54** is for; FOURFRAME2's attempt at the same measurement is retired (unobservable channel, above).
+
+What V54 returns, and what each answer licenses:
+
+| observation | meaning | V55 candidate |
+|---|---|---|
+| wire **0** | 🛑 the cave did not fire — drive is VOID, not "low authority" | rebuild, do not interpret |
+| wire **1–25** | authority ≤ 3199 throughout: lane ran at FULL bound, so it **can** be the driver | **mute** it (Y→0) |
+| wire **30–31** | authority ≥ 3712: lane already clamped to zero, it **cannot** be injecting | hypothesis dies; keep-live (Y→32768) |
+| **mixed** | authority crosses the knee — correlate against the 21 Hz bursts | flatten the ramp |
 
 **Unresolved and it matters:** 21.09 and 78.91 Hz sum to exactly 100.00, and CAN 399 samples
 instantaneously at exactly 100.000 Hz. Indirect evidence leans 21.09 (implied Q would be 71.8 at 78.91 Hz,
-not credible) but **the rlog cannot close it, and neither can FOURFRAME2** — it also transmits at 100 Hz.
+not credible) but **the rlog cannot close it, and neither can V54** — `0x14A` is also 100 Hz.
 
-### B. Low-speed steer lockout — ✅ BUILT as V53 (2026-07-27), unflashed
+### B. Low-speed steer lockout — ✅ CLOSED, flashed and confirmed 2026-07-27
 
 `0xC62EA` = 320 ≈ 5 km/h is the LO half of a two-sided window against voted speed. Failing it sets
 `STEER_STATUS=3`, which zeroes `STEER_CONTROL_ACTIVE` and kills the authority ramp. **V53 sets it to 0**
@@ -91,24 +140,30 @@ and forbids 1–319 counts. Choosing 0 removes that discontinuity instead of mov
 - **`0xC62EE` left stock** (asserted). It is a permissive on a CAN-commanded assist-shutdown task, not a
   lockout, and must never be raised.
 
-**This is also the discriminating experiment for workstream A** — it populates the empty "engaged at low
-speed" cell that route 13 structurally could not produce, breaking the speed/applied-torque collinearity.
+**On-car result 2026-07-27 (route `1a`, 58 s, 301,824 CAN frames):** ST=3 never fires; 226 frames of
+`STEER_CONTROL_ACTIVE=1` below 5 km/h with `TORQUE_REQUEST=1` and `|torque|>50` in 224 of them. Carried
+forward into V54 unchanged.
+
+⚠ **The engaged-at-low-speed cell is now populated but has NOT yet been analysed for the vibration.**
+Route `1a` is a single 58 s segment and the operator did not report on the vibration at creep speed. The
+A/B/C collinearity break is *available* and unclaimed — do this before the next build.
 
 openpilot is not the obstacle (`CP.minSteerSpeed = 0.0`), but the StarPilot fork runs
-`steerAtStandstill = False`, so at a dead stop openpilot still will not command. The new behaviour window
-is roughly 0.1–3 mph: creep, parking lots, stop-and-go. Expect noticeably more EPS effort at walking pace.
+`steerAtStandstill = False`, so at a dead stop openpilot still will not command. The real behaviour window
+is roughly 0.1–3 mph: creep, parking lots, stop-and-go.
 
 ---
 
 ## Recommended next steps, in order
 
-1. **openpilot-side 21 Hz notch.** Zero brick risk, now known untested rather than null. Keep the ±4096
-   rail fraction matched between runs — 14% of frames are railed and railed windows show no 21 Hz.
-2. **Flash V53** — it merges what used to be steps 2 and 3, so **one parking-lot drive** measures
-   `gp-0x6966` (settling the `0xC6AF0` direction), captures all three terms of the suspect loop, *and*
-   populates the empty engaged-at-low-speed cell. ⚠ It still cannot settle 21 vs 78.91 Hz (100 Hz TX).
-3. **The `0xC646C` decoupling** — a correctness fix, not the vibration fix.
-4. Only then a `0xC6AF0` edit, in whichever direction the telemetry indicates.
+1. **openpilot-side 21 Hz notch.** Zero brick risk, still untested rather than null. Keep the ±4096 rail
+   fraction matched between runs — 14% of frames are railed and railed windows show no 21 Hz.
+2. **Mine route `1a` for the C-low cell** — free, no flash. V53 populated "engaged below 5 km/h" for the
+   first time; 226 frames is thin but it is the cell route 13 structurally could not produce.
+3. **Flash V54** and take one parking-lot drive. Decode with `rlog-tools/decode_v54_authority.py`.
+   ⚠ Check `wire == 0` **first** — that means the cave did not fire and the drive proves nothing.
+4. **The `0xC646C` decoupling** — a correctness fix, not the vibration fix.
+5. Only then a `0xC6AF0` edit, in whichever direction the telemetry indicates.
 
 ---
 

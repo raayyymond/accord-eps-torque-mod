@@ -30,6 +30,7 @@ result was buried in prose.
 | `0x454FE` `0x65BA`→`0x65B5` | state-4 governor ratchet `bne`→`br` | **V42** ch.1 | ✅ | ✅ **CONFIRMED ROOT CAUSE** — fixed the hard-turn ratchet. Carry forward. ⚠ **NOT present in V38/FOURFRAME** |
 | `0xC646C` 891→3564 | the 4× gain — **shared sensor-scale, 6 readers, 2 on feedback paths** | V22→ | ✅ | the change under investigation |
 | `0xC61B2`/`0xC61B4` 512→2048 | forward-path clamps, raised ×4 with the gain | V22→ | ✅ | correct and intentional |
+| `0xC62EA` 320→**0** | low-speed steer lockout, 4.995 km/h → 0 | **V53** | ✅ | ✅ **CONFIRMED WORKING** on-car 2026-07-27. Route `1a`: `STEER_STATUS=0` in 5,995/5,995 frames (ST=3 never fires) and **226 frames of `STEER_CONTROL_ACTIVE=1` below 5 km/h** — a cell that is structurally EMPTY on V38. No fault, no dash light |
 | `0xC64B8` 112→0xFF | DTC-0x49 fail-counter gate | **V37** | ✅ | ✅ **gentle EME RESOLVED**, no dash-light regression |
 | `0xC64B4-B7`, `0xC61C0-C5`, `0xC64E2` | `STEER_STATUS` debounce SM cals | **V36** | ✅ | ⚠ fixed gentle EME but **unmasked DTC 0x49** → superseded by V37 |
 | `0xC6312` 320→65535 | gentle-EME decider torque gate | **V33** | ❌ | wrong gate (fires ~10 Hz benign) |
@@ -40,9 +41,17 @@ result was buried in prose.
 ### Untested levers currently on the table
 | address | what | status |
 |---|---|---|
-| `0xC6AF0` Y-array | `FUN_0003a382` authority→output-bound LERP | **BLOCKED** — edit *direction* unresolved; needs `gp-0x6966` measured on-car |
-| `0xC62EA` 320→**0** | low-speed steer lockout, 5 km/h → 0 | **BUILT as V53** (2026-07-27), cal-only, **unflashed** |
+| `0xC6AF0` Y-array | `FUN_0003a382` authority→output-bound LERP | **STILL BLOCKED** — edit *direction* unresolved; needs `gp-0x6966` measured on-car. **V54 is the instrument built to measure it** (2026-07-27) |
 | `0x2a1ee` retarget → `0xC6CD0` | decouple 4× forward from the feedback readers | designed + verified, **unbuilt** |
+
+### 🛑 New-mailbox CAN TX is an UNOBSERVABLE channel — do not build another one
+`FOURFRAME` (STRB defect) and `FOURFRAME2`/`V53` (defect fixed) both produced **zero** frames of
+`0x6A0`-`0x6A3` at the comma. The V53 null is **uninterpretable**, not negative: six IDs the stock
+firmware genuinely broadcasts (`0x19F`, `0x32E`, `0x64D`, `0x660`, `0x722`, `0x723`) are equally absent
+from the same rlog while the three openpilot's DBC knows (`0x14A`, `0x18F`, `0x1AB`) run at 97-100 Hz.
+Non-DBC IDs *are* logged (`0x669`, `0x750`, `0x674` appear and are in no Honda DBC), so "openpilot didn't
+know the ID" is excluded. **Any future firmware telemetry must ride the `0x14A` byte4 bits 7:3 piggyback**
+(4 successful flashes, hook at `0x55C0E` before the checksum) until a tap upstream of the gateway exists.
 
 ---
 
@@ -96,6 +105,7 @@ flashed.**
 | vfourframe | 853 | `0x55C0E` hook + cave — ⚠ **STRB=0x80 defect, never transmitted** |
 | **vfourframe2** | 853 | same, **STRB fixed to 0x01**, authority + reference-model signals |
 | **v53** | 855 | FOURFRAME2 byte-for-byte **+ `0xC62EA` 320→0** (+ CAL CRC). Exactly 6 bytes off FOURFRAME2 |
+| **v54** | 58 | `0x55C0E` hook + **44-byte** cave `0xC4B34` (5-bit `gp-0x6966` authority probe → `0x14A` byte4 bits 7:3) + `0xC62EA` 320→0. **No mailbox cave** |
 
 ---
 
@@ -103,10 +113,14 @@ flashed.**
 
 **Flashed and currently the on-car baseline lineage:** V38 (fault-free) → V42 (ratchet fixed) → V43, V44,
 V45, V46, V47, V48A (all null) → V48B (☠ bricked, recovered by reflash) → V52C (null for vibration,
-changed manual feel) → **FOURFRAME** (telemetry, silent due to the STRB defect).
+changed manual feel) → FOURFRAME (telemetry, silent — STRB defect) → **V53** (2026-07-27: steer-to-zero
+✅ CONFIRMED; four-frame telemetry still absent, and the null is uninterpretable — see the box in Part 1).
 
-**Built and UNFLASHED:** V49, V50, V51P, V52, VCANTX-TEST, FOURFRAME2, **V53** (= FOURFRAME2 + the
-minimum-steer-speed edit; supersedes FOURFRAME2 as the thing to flash — one drive answers both open
-questions).
+**⚠ V53 is the image on the car now.** It does **not** carry the V42 ratchet fix (`0x454FE` is stock
+`0x65BA`), same as V38/FOURFRAME.
+
+**Built and UNFLASHED:** V49, V50, V51P, V52, VCANTX-TEST, FOURFRAME2, **V54** (= V38 + `0xC62EA` 320→0 +
+the 5-bit authority probe on the proven piggyback channel; **the one to flash** — it is the measurement
+that unblocks `0xC6AF0`). V53 is now flashed and no longer a candidate.
 
 🛑 **Flash only on explicit operator instruction naming the file and the bus.**

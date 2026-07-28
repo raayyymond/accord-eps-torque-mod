@@ -534,7 +534,7 @@ class Calibration:
         if name == "V31":
             return cal
         # --- V37 onward: gentle-EME debounce SM off + DTC-0x49 counter off -------------------------
-        if name in ("V37", "V38", "V39", "V40", "V41", "V42", "V53"):
+        if name in ("V37", "V38", "V39", "V40", "V41", "V42", "V53", "V54"):
             cal = replace(
                 cal,
                 deb_torque_rise=255, deb_torque_hold=255, deb_torque_and_hi=255, deb_torque_and_lo=255,
@@ -553,11 +553,24 @@ class Calibration:
             if name == "V38":
                 return cal
             # --- V53: the V38 cal set + the FOURFRAME2 read-only telemetry cave + min steer speed 0.
-            # BUILT 2026-07-27, UNFLASHED. The cave is PASSIVE (ld.hu reads straight into CAN mailbox
-            # DAT registers, never a store back into firmware RAM), so it changes nothing modelled
-            # here; the single modelled change is the speed-window LO bound. ⚠ V53 is cut from V38 like
-            # FOURFRAME2 and therefore does NOT carry V42's confirmed ratchet fix.
+            # ✅ FLASHED AND DRIVEN 2026-07-27 -- the speed-window prediction below is CONFIRMED on-car
+            # (route 1a: STEER_STATUS=0 in 5,995/5,995 frames, 226 frames of STEER_CONTROL_ACTIVE=1
+            # below 5 km/h). The cave is PASSIVE (ld.hu reads straight into CAN mailbox DAT registers,
+            # never a store back into firmware RAM), so it changes nothing modelled here; the single
+            # modelled change is the speed-window LO bound. ⚠ V53 is cut from V38 like FOURFRAME2 and
+            # therefore does NOT carry V42's confirmed ratchet fix.
+            # ⚠ The cave itself NEVER TRANSMITTED -- 0 frames of 0x6A0-0x6A3 -- and the null is
+            # uninterpretable (6 stock EPS broadcast IDs are equally absent at the comma tap). That is
+            # a channel fact, not a firmware-behaviour fact, so it does not affect this model.
             if name == "V53":
+                return replace(cal, speed_window_lo=0)
+            # --- V54: V38 + the SAME speed-window edit + a 5-bit gp-0x6966 authority probe piggybacked
+            # into CAN 330 (0x14A) byte4 bits 7:3. BUILT 2026-07-27, UNFLASHED. The probe is REPORT-ONLY
+            # -- it reads gp-0x6966 and writes one CAN payload byte that no control path consumes -- so
+            # V54 is behaviourally IDENTICAL to V53 in everything this model computes. Modelled as the
+            # same cal delta deliberately: if a future analysis finds V54 behaving differently from V53
+            # on the road, that difference is NOT explained by anything here and must be investigated.
+            if name == "V54":
                 return replace(cal, speed_window_lo=0)
             if name == "V39":
                 return replace(cal, suppress_direct_torque_rate_assist=True)
@@ -582,7 +595,7 @@ class Calibration:
             if name == "V42":
                 return replace(cal, governor_slew_step_normal=2048, governor_slew_step_alt=820)
         raise ValueError(
-            f"unknown build {name!r} (expected V9, V31, V37, V38, V39, V40, V41, V42, or V53)")
+            f"unknown build {name!r} (expected V9, V31, V37, V38, V39, V40, V41, V42, V53, or V54)")
 
 
 # =====================================================================================================
@@ -903,15 +916,23 @@ def can_rx_stage_steer_torque(frame: CanSteeringControl) -> Optional[int]:
       2) [EPS] the 0xC62EA window above, releasing at 4.995 km/h = 3.104 mph. On-car rlog measurement
          puts the release edge in the 3-4 mph bucket, matching the cal to within the bucket width.
 
-    *** V53 CONSEQUENCE (BUILT 2026-07-27, UNFLASHED) -- A TESTABLE PREDICTION. ***
+    *** V53 CONSEQUENCE -- PREDICTION MADE 2026-07-27, ✅ CONFIRMED ON-CAR THE SAME DAY. ***
     V53 sets 0xC62EA = 0, making the LO test unconditionally true. Combined with this model's separate
     finding that STEER_STATUS 4 and 7 are UNREACHABLE on the V37/V38 cal set (see the engage-SM
     section), STEER_STATUS=3 becomes unreachable too except on an implausible-speed HI-bound failure.
-    PREDICTION: on V53 the ST=3 excursion that today fires every time the car crosses ~3 mph
-    disappears, and with it that trigger's ramp restart (which holds gp-0x6806 at 0 through a full
-    ~993-cycle mode-0 ramp-up). Other disengage arms still zero gp-0x6806, so this removes ONE route,
-    not the mechanism. If the "transient vibration just after pulling away" reading is right, V53
-    should change it; if the sustained reading is right, V53 should not.
+    PREDICTED: the ST=3 excursion that fires every time the car crosses ~3 mph disappears.
+    MEASURED (route 75604b0a432fdc89_0000001a, segment 0, 58 s, raw CAN 399 decoded independently of
+    carState):
+        STEER_STATUS == 0 in 5,995 / 5,995 frames  -- ST=3 never fires, anywhere, at any speed
+        STEER_CONTROL_ACTIVE == 1 in 226 frames below 5 km/h, with openpilot TORQUE_REQUEST=1 and
+            |STEER_TORQUE| > 50 in 224 of them   -- a cell that is IDENTICALLY EMPTY on V38
+    This is a clean confirmation of the whole chain 0xC62EA -> window -> ST=3 -> STEER_CONTROL_ACTIVE,
+    and it is the first time the model has predicted an on-car state-machine change in advance.
+    ⚠ STILL OPEN: what this did to the VIBRATION is unanalysed. The prediction was two-sided ("if the
+    transient reading is right V53 should change it; if the sustained reading is right it should not")
+    and neither arm has been tested -- route 1a is a single 58 s segment and the low-speed engaged cell
+    has not been examined for 21 Hz content. Removing ONE ramp-restart route is not removing the
+    mechanism: other disengage arms still zero gp-0x6806.
     ⚠ The HI bound 0xC62E8 = 12800 is deliberately UNTOUCHED, so the 0x7FFF SNA sentinel (32767) still
     fails the window and an invalid speed still locks out exactly as at stock.
 
