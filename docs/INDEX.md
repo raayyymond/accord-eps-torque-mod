@@ -64,3 +64,4 @@ See `../CLAUDE.md` for the index and the standing behaviours.
 | Doc | What it is |
 |---|---|
 | [AGENTS.md](./AGENTS.md) | Light agent-collaboration conventions: bd (beads) for issue tracking, the "landing the plane" session-completion workflow. |
+- [HANDOFF-2026-07-28-v54-drive-authority-resolved-and-v55-partition-probe.md](HANDOFF-2026-07-28-v54-drive-authority-resolved-and-v55-partition-probe.md) — the V54 drive: the probe fired, authority is ~0 by design (0xC6AF0 unblocked), the vibration at creep moves with speed and dies at the rail, the damper reappraisal withdrawn, and V55 the partition probe.

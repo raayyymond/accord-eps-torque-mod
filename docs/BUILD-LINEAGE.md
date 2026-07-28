@@ -20,8 +20,8 @@ result was buried in prose.
 | `0xC644A` | `FUN_0003a382` Stage-C dirty-derivative pole | **V43** | ✅ | 🛑 **FALSIFIED** — vibration unchanged |
 | `0xC643F` / `0xC6445` + `0xC6A72/86/9A/AE` | `r26` adaptive torque-rate gain surface | **V42** ch.2 | ✅ | 🛑 **FALSIFIED** |
 | `0xC6440/42/46`, `0xC61F6` | `r24` direct Sensor-B rate lane | **V39** | ✅ | 🛑 **FALSIFIED** |
-| `0xD27C6` / `0xD27DA` | damper Factor C hands-off deadzone Y[0] | **V44** | ✅ | 🛑 **FALSIFIED** (Factor E re-zeroes the product) |
-| `0xD2802/04/06`, `0xD2816/18/1A` | damper Factor E (motor-rate) deadzone | **V47** | ✅ | 🛑 marginally quieter at 5 mph, **no effect in motion** |
+| `0xD27C6` / `0xD27DA` | damper Factor C hands-off deadzone Y[0] — **variant-coded, entries 10/11** | **V44** | ✅ | 🛑 **FALSIFIED** (Factor E re-zeroes the product). ✅ **2026-07-28: confirmed it hit the LIVE table.** PN `39990-TVA-A160` → key `TVAA1` → config row 2 → INDEX **10** → `0xD27BC`, exactly what V44 edited. ⚠ one-bit residual: the coded row is in EEPROM, not the flash dump, and the TVA family splits ({TVAA0,2,4}→idx 4). **V55 carries a telemetry bit for it** |
+| `0xD2802/04/06`, `0xD2816/18/1A` | damper Factor E (motor-rate) deadzone — **variant-coded, entries 10/11** | **V47** | ✅ | 🛑 marginally quieter at 5 mph, **no effect in motion**. ✅ **2026-07-28: confirmed it hit the LIVE table** (same INDEX 10 chain as V44 → `0xD27F8`). ⇒ **the missing-damping hypothesis was genuinely tested and IS falsified** — do not resurrect it on a "wrong variant" theory |
 | `0xC4120` + `FUN_0003a382` `uVar27`→256 | type-8 carrier mute | **V48A** | ✅ | 🛑 **FALSIFIED** |
 | `gp-0x4f60` broad EMA (19 carriers → `gp-0x1300`) | V52C code cave | **V52C** | ✅ | 🛑 vibration unchanged; **did change manual feel** |
 | `0xC6206` (hands-off slew) | governor slew | **V45** | ✅ | 🛑 **FALSIFIED** |
@@ -34,15 +34,30 @@ result was buried in prose.
 | `0xC64B8` 112→0xFF | DTC-0x49 fail-counter gate | **V37** | ✅ | ✅ **gentle EME RESOLVED**, no dash-light regression |
 | `0xC64B4-B7`, `0xC61C0-C5`, `0xC64E2` | `STEER_STATUS` debounce SM cals | **V36** | ✅ | ⚠ fixed gentle EME but **unmasked DTC 0x49** → superseded by V37 |
 | `0xC6312` 320→65535 | gentle-EME decider torque gate | **V33** | ❌ | wrong gate (fires ~10 Hz benign) |
-| `0xC65C4/C8/CC` + `0xC6768/6A/6C` | soft-EME boost floor (matched int/float) | **V31** | ✅ | ✅ soft EME resolved. **Do not desync the mirror pair** |
+| `0xC65C4/C8/CC` + `0xC6768/6A/6C` | soft-EME boost floor (matched int/float) | **V31** | ✅ | ✅ soft EME resolved. **Do not desync the mirror pair.** ⚠ **V31 set the floor to 4096; V38 RAISED it to 5120** (float 5.0) — byte-verified in `_v54_plain_image.bin` vs stock `0/1536/2048`, and the golden model carries both. The V31 memory's 4096 is correct *for V31*; the car runs V38+, so 5120 is the live value. ★ **On-car proof 2026-07-28:** V54's authority probe read `gp-0x6966` pinned at the bottom bucket for 5,989/5,989 frames *including 17% of requesting frames at openpilot's ±4096 rail* ⇒ the V31 fixpoint is **self-stable and attracting, measured under railed command**, not merely argued |
 | `0xC6202` | governor nominal | — | ❌ | **investigated and REJECTED** — buys nothing (4762 > max command), and `gp-0x4f64` is shadowed → fault `0x17`, hard-fault-eligible |
 | `0xC6194` | "LKAS-only rate limiter" | — | — | **DEAD calibration** — its gain cal `0xC63CC` = 0 |
 
 ### Untested levers currently on the table
 | address | what | status |
 |---|---|---|
-| `0xC6AF0` Y-array | `FUN_0003a382` authority→output-bound LERP | **STILL BLOCKED** — edit *direction* unresolved; needs `gp-0x6966` measured on-car. **V54 is the instrument built to measure it** (2026-07-27) |
+| `0xC6AF0` Y-array | `FUN_0003a382` authority→output-bound LERP | ✅ **DIRECTION MEASURED 2026-07-28, block lifted.** V54's on-car probe: `gp-0x6966` ∈ [0,127] in 5,989/5,989 frames ⇒ `Y = 32768` (unity) is selected in 100% of normal operation ⇒ the lane runs at **full bound** always ⇒ "keep-live" is a no-op and **mute (`Y[0]`,`Y[1]`→0) is the only meaningful edit.** 🛑 **GATE 2 still open** — the lane's damping-vs-anti-damping sign is undetermined, so this is a decisive *test*, not a known-good fix |
 | `0x2a1ee` retarget → `0xC6CD0` | decouple 4× forward from the feedback readers | designed + verified, **unbuilt** |
+
+### 🛑 `0xD_xxx`-region LERPs are VARIANT-CODED — resolve the pointer before editing
+The damper factor tables (and the output clamp) are reached through **three** stages, and the selector is
+an **EEPROM** value absent from every flash dump:
+
+```
+5-byte coded ID -> FUN_00057f8e() match vs 16 ASCII PN keys @0xCD000 (stride 0x24) -> ROW  (0-15)
+                -> index byte @0xCD012 + ROW*0x24                                   -> INDEX (0-57)
+                -> ptr_array[INDEX]                                                 -> the live table
+```
+
+**ROW is NOT INDEX.** Conflating them inverts the answer — it happened this session and nearly resurrected
+a correctly-falsified hypothesis. Our car: `TVAA1` → row 2 → **INDEX 10**. Arrays: Factor B `0xC9CCC`,
+D `0xC9DB4`, C `0xC9E9C`, E `0xC9F84`, clamp ptr `0xC77A0` — 58 entries each, one shared selector at
+`gp+0x63fd` (**positive** gp offset). Assume any `0xD_xxx` LERP is variant-coded until proven otherwise.
 
 ### 🛑 New-mailbox CAN TX is an UNOBSERVABLE channel — do not build another one
 `FOURFRAME` (STRB defect) and `FOURFRAME2`/`V53` (defect fixed) both produced **zero** frames of
@@ -113,14 +128,28 @@ flashed.**
 
 **Flashed and currently the on-car baseline lineage:** V38 (fault-free) → V42 (ratchet fixed) → V43, V44,
 V45, V46, V47, V48A (all null) → V48B (☠ bricked, recovered by reflash) → V52C (null for vibration,
-changed manual feel) → FOURFRAME (telemetry, silent — STRB defect) → **V53** (2026-07-27: steer-to-zero
-✅ CONFIRMED; four-frame telemetry still absent, and the null is uninterpretable — see the box in Part 1).
+changed manual feel) → FOURFRAME (telemetry, silent — STRB defect) → V53 (2026-07-27: steer-to-zero
+✅ CONFIRMED; four-frame telemetry absent and the null uninterpretable — see the box in Part 1) →
+**V54** (2026-07-27: ★ **the probe FIRED** — first working firmware telemetry channel in this kit;
+`0xC6AF0` direction measured and the block lifted; fault-free).
 
-**⚠ V53 is the image on the car now.** It does **not** carry the V42 ratchet fix (`0x454FE` is stock
-`0x65BA`), same as V38/FOURFRAME.
+**⚠ V54 is the image on the car now.** It does **not** carry the V42 ratchet fix (`0x454FE` is stock
+`0x65BA`), same as V38/V53/FOURFRAME.
 
-**Built and UNFLASHED:** V49, V50, V51P, V52, VCANTX-TEST, FOURFRAME2, **V54** (= V38 + `0xC62EA` 320→0 +
-the 5-bit authority probe on the proven piggyback channel; **the one to flash** — it is the measurement
-that unblocks `0xC6AF0`). V53 is now flashed and no longer a candidate.
+★ **V54's telemetry result — the `0x14A` byte4 bits 7:3 piggyback is PROVEN end to end.** A/B against the
+V53 drive is a single bit and it is exactly ours: byte4 = `0x07` ×5,994 (100%) on V53 → `0x0F` ×5,989
+(100%) on V54, stock `STEER_SENSOR_STATUS` bits 2:0 preserved, `canValid` true in 5,711/5,713. **Use this
+channel for all future firmware telemetry.**
+
+**Built and UNFLASHED:** **V55** (the one to flash — dual probe: damper variant bit + 4-bit `gp-0x6b98`
+motor command, 82 bytes off V38), plus V49, V50, V51P, V52, VCANTX-TEST, FOURFRAME2. V53 and V54 are both
+now flashed and no longer candidates.
+
+★ **V55 is a PARTITION, not a lever.** Every falsified vibration lever in Part 1 — V39, V41, V42 ch.2,
+V43, V45, V46, V48A, V52C — sits on the **command path** and assumes the ~20 Hz is *commanded*. V55
+samples `gp-0x6b98`, the final merged command and the only path to FOC, to test that assumption directly:
+if the mode is absent there, all eight were doomed by construction and the search moves to the plant.
+A null BOUNDS the command's 20 Hz content to ~<512 counts (one level) against the sensor's ~550 rms; it
+does not prove zero, and a 100 Hz probe still cannot separate 20 Hz from 80 Hz.
 
 🛑 **Flash only on explicit operator instruction naming the file and the bus.**

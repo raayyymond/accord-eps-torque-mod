@@ -534,7 +534,7 @@ class Calibration:
         if name == "V31":
             return cal
         # --- V37 onward: gentle-EME debounce SM off + DTC-0x49 counter off -------------------------
-        if name in ("V37", "V38", "V39", "V40", "V41", "V42", "V53", "V54"):
+        if name in ("V37", "V38", "V39", "V40", "V41", "V42", "V53", "V54", "V55"):
             cal = replace(
                 cal,
                 deb_torque_rise=255, deb_torque_hold=255, deb_torque_and_hi=255, deb_torque_and_lo=255,
@@ -565,12 +565,41 @@ class Calibration:
             if name == "V53":
                 return replace(cal, speed_window_lo=0)
             # --- V54: V38 + the SAME speed-window edit + a 5-bit gp-0x6966 authority probe piggybacked
-            # into CAN 330 (0x14A) byte4 bits 7:3. BUILT 2026-07-27, UNFLASHED. The probe is REPORT-ONLY
-            # -- it reads gp-0x6966 and writes one CAN payload byte that no control path consumes -- so
-            # V54 is behaviourally IDENTICAL to V53 in everything this model computes. Modelled as the
-            # same cal delta deliberately: if a future analysis finds V54 behaving differently from V53
-            # on the road, that difference is NOT explained by anything here and must be investigated.
+            # into CAN 330 (0x14A) byte4 bits 7:3. ✅ FLASHED AND DRIVEN 2026-07-27, fault-free.
+            # The probe is REPORT-ONLY (it reads gp-0x6966 and read-modify-writes ONE CAN payload byte
+            # that no control path consumes), so V54 is behaviourally IDENTICAL to V53 in everything
+            # this model computes.
+            #
+            # ⚠ CORRECTION to the V53 note above: these caves are NOT "never a store back into firmware
+            # RAM". They DO write firmware RAM -- st.b into the CAN TX payload buffer at gp-0x1514. The
+            # reason they are safe is narrower and must be stated correctly: the byte they write is a
+            # TX payload byte no control path reads, and they allocate no scratch RAM.
+            #
+            # ★★ THE MEASUREMENT (route 1b, 5,989/5,989 frames): wire == 1 throughout, i.e.
+            # gp-0x6966 in [0,127] -- 0.39% of its saturation -- with ZERO variation, including 17% of
+            # requesting frames at openpilot's +-4096 rail. This is not "authority happened to be low":
+            # gp-0x6966 is the soft-EME wind-up magnitude |gp-0x3570>>15| * 1092 >> 10, and V31's boost
+            # floor (0xC6768/6A/6C = 5120, NOT the 4096 the V31 memory records) holds the bound above
+            # the worst-case command so the integrator can never wind. Authority is therefore ~0 BY
+            # DESIGN on every V31+ build, at any speed, in any normal driving.
+            # ⇒ The 0xC6AF0 LERP selects Y = 32768 (unity) in 100% of normal operation, so the
+            # FUN_0003a382 residual lane runs at its FULL output bound -- "keep-live" is a no-op and
+            # mute is the only meaningful edit. GATE 2 (the lane's damping sign) remains OPEN.
+            # ⇒ Do NOT re-drive faster to move this reading. It is wind-up-driven, not speed-driven.
             if name == "V54":
+                return replace(cal, speed_window_lo=0)
+            # --- V55: V38 + the SAME speed-window edit + a DUAL report-only probe on the same proven
+            # 0x14A byte4 piggyback: bit7 = (damper variant INDEX >= 10), bits 6:3 = a 4-bit window on
+            # gp-0x6b98, the FINAL MERGED COMMAND (the only path to FOC). BUILT 2026-07-28, UNFLASHED.
+            # Report-only, so again behaviourally identical to V53/V54 here.
+            #
+            # V55 exists to PARTITION rather than to test a lever: every falsified vibration lever
+            # (V39, V41, V42ch2, V43, V45, V46, V48A, V52C) sits on the command path and assumes the
+            # ~20 Hz is COMMANDED. If it is absent from gp-0x6b98, all eight were doomed by
+            # construction and the search moves to the plant. A null BOUNDS the command's 20 Hz content
+            # to ~<512 counts (one level) against the sensor's ~550 rms -- it does not prove zero, and
+            # a 100 Hz probe cannot separate 20 Hz from 80 Hz.
+            if name == "V55":
                 return replace(cal, speed_window_lo=0)
             if name == "V39":
                 return replace(cal, suppress_direct_torque_rate_assist=True)
@@ -595,7 +624,8 @@ class Calibration:
             if name == "V42":
                 return replace(cal, governor_slew_step_normal=2048, governor_slew_step_alt=820)
         raise ValueError(
-            f"unknown build {name!r} (expected V9, V31, V37, V38, V39, V40, V41, V42, V53, or V54)")
+            f"unknown build {name!r} "
+            f"(expected V9, V31, V37, V38, V39, V40, V41, V42, V53, V54, or V55)")
 
 
 # =====================================================================================================
