@@ -166,6 +166,7 @@ reports `fw='39990-TVA,A160'`. (It *can* now be identified behaviourally: ST=3 n
 | build | what | status |
 |---|---|---|
 | **V55** | the **revert target** — probe intact, no mute | ✅ built, driven, fault-free. **Flash this to undo V56.** SHA `2b0fbd61e6658726ea72248f5312f4521638acaebcbd6f09d8c999e1a9e81fbf` |
+| **V57** | V55 + the **`0xC646C` decoupling** — 4× hits the LKAS forward path ONLY | ✅ **BUILT 2026-07-29, UNFLASHED.** `0x2A1F0` disp `0x746C`→`0x7CD0`; `0xC6CD0`←3564 (private); `0xC646C`→891 (stock). 14 bytes off V55, 88 off V38, 50/50 CRC, RWD round-trip gated, verified against the built image. 🛑 **Correctness fix — expected NULL for the grinding** (≤0.28 dB @22 Hz). ⚠ manual feel will change. RWD SHA `816d225522f7a327ee9b97bf096bec918e7e36c82f57a17225e0f5455216d019` |
 | ~~**V56**~~ | V55 + the `0xC6AF0` mute | 🛑 **FLASHED AND FALSIFIED 2026-07-29.** Null for the 21 Hz, costs damping, adds an 8.69 Hz mode. Do not re-flash |
 | `0x2a1ee` retarget → `0xC6CD0` | the `0xC646C` decoupling — correctness fix | verified safe + byte-minimal, **unbuilt**. Will NOT fix the vibration (see below) |
 | `0xC6372` / `0xC636E` | the untested wideband assist EMAs | candidate #2, **needs its own GATE 2 pass** first |
@@ -269,7 +270,55 @@ Panda Honda RX checks are `0x1A6`, `0x296`, `0x158`, `0x17C`, `0x326`, `0x1BE` �
 
 ## The two open workstreams
 
-### A. The vibration — ★★ still open; `gp-0x6ad4` ELIMINATED 2026-07-29
+### A. The vibration — ★★ still open. Suspect moved to the **ANGLE-RATE** domain, 2026-07-29
+
+★★ **THE TOP CANDIDATE IS NOW `gp-0x6bbe`'s ANGLE-RATE TRIBUTARY — the first ever outside the torque
+domain.** `FUN_00034a72` (boost) reads the steering **angle rate** `gp-0x6a56` **unfiltered** at
+`0x34AB8`/`0x34E8E` (byte-verified by the lead after two subagents disagreed) as one side of an FSM-result
+subtraction, clamped ±12000, then scaled by **two speed-indexed LERPs** (`gp-0x6a5e` avg, `gp-0x6a62` max).
+
+- `gp-0x6a56` is what the EPS **transmits** as `STEER_ANGLE_RATE` — `0x14A[2:3]` (via `gp-0x69ea`, `>>3`)
+  and the 10× finer `0x18F[2:3]`. **opendbc ground truth, not inference** — the only control-path signal
+  in this firmware with an external anchor.
+- The mode measures **996× on `STEER_ANGLE_RATE`** vs **877× on the torsion bar** (route `1c`). *The rate
+  channel carries it more strongly than torque does.*
+- ⇒ **The rate path BYPASSES the torque EMA**, so the recorded −1.29 dB/−14.91 dB figures characterise
+  only the torque tributary, and **the unresolved `FUN_00022ca0` task rate matters far less than it
+  appeared** — an unfiltered path passes 21 Hz either way.
+
+🛑🛑 **GATE 2 ANSWERED, AND IT ANSWERED *AGAINST* CUTTING THE LANE. THE LEVER INVERTS.**
+An earlier pass this same session called `gp-0x6bbe` "same-signed, reinforcing" off the torque-EMA
+framing. A full disassembly re-trace **corrects that**: the torque EMA is a **multiplicative amplitude
+scale** (`term3 = (term2 * blendedMagnitude) >> 14` @`0x34ffa`), not an additive branch, and the core
+signal is
+
+```
+0x34e96  sub r6,r28        rate_error = baseline - angle_rate_raw
+```
+
+All downstream multipliers are non-negative and polarity `gp-0x6752` = +1, so with `baseline` slow at
+22 Hz this is `gp-0x6bbe ≈ −(gain)·angle_rate` — **viscous DAMPING on angle rate.**
+
+⇒ **Cutting or muting this lane would REMOVE damping and would likely make the grinding WORSE.** That is
+the V56 error exactly, one build later. **The interesting direction is RAISING the gain to ADD damping at
+22 Hz** — cleanest single-point lever `K1` @ `0xD200C` = 43 (Q7, pointer base `0xCA324` has 1 hit
+image-wide). Three more candidates in `accord-angle-rate-lane-gp6bbe-top-candidate.md`; none appears in
+any build script, and all avoid V44/V47's specific bytes inside the shared `DAMP_BLOCK`.
+
+⚠ **[INFERRED, moderate-high confidence, NOT time-domain simulated.]** The verdict rests on `baseline`
+being slow at 22 Hz. 🛑 **Certify the sign by simulation before any build** — if `baseline` carries 22 Hz
+content with the wrong phase, raising the gain makes it worse. Nothing gets built here until that runs.
+
+⚠ Also corrected: **speedLERP2 (`0xD20C0`) is FLAT** — five entries of 512, a fixed ±512 clamp dressed as
+a table. And **speedLERP1 (`0xD2834`) is a broad hump peaking at 40 km/h** (0.55-0.62 at creep, 0.61-0.55
+on road), *not* a monotonic speed rise — so it does not by itself explain `f = 0.177·v + 20.48`.
+
+⚠ **Task-rate status:** `FUN_00022ca0` is **not pinned**, bounds 100-1000 Hz, but weight shifted to 1 kHz —
+the RTOS task table (base `0xBB858`, 7×48-byte records; `FUN_0002214a` @`0xBB928`, `FUN_00022ca0`
+@`0xBB9E8`) encodes **no period or divisor field**, there is **no in-task divider**, and **`OSTM1` is
+never configured anywhere in the image**. Three negatives, no positive evidence for a divider.
+
+#### Historical framing — `gp-0x6ad4` ELIMINATED 2026-07-29
 
 🛑 **STOP CALLING IT "21 Hz".** Presence-tested, steady-speed, pooled across builds:
 `f = 0.177·v + 20.48` (r = +0.650) — **24.61 Hz at 19-21 m/s, 25.00 Hz at 21.3 m/s**, in the worst events a
@@ -413,15 +462,21 @@ is roughly 0.1–3 mph: creep, parking lots, stop-and-go.
 remains in scope as a *measurement instrument* (rlogs, CAN decode, correlation) only. See
 `memory/feedback-no-openpilot-side-modifications.md`.
 
-1. 🛑 **Flash V55 back.** V56 is falsified *and* it degraded the car — it removed damping and added an
-   8.69 Hz mode without buying anything. V55 is already built, already driven, fault-free, and keeps the
-   probe. This is a straight revert, not a new experiment.
-2. **Enumerate the other 8 aggregator lanes.** This is the real opening. The 21 Hz survived a
-   branch-agnostic kill of `gp-0x6ad4`, so it enters `gp-0x6b98` through a **different summand** — and
-   the full list is now confirmed, every one folded in by a plain `add` at `FUN_0003aa2c`:
-   `gp-0x6b62`, `-0x6b4c`, `-0x6ade`, ~~`-0x6ad4`~~, `-0x6b26` (friction), `-0x6bbe` (boost),
-   `-0x6bd0` (damping), `-0x6b86`, plus `FUN_00036682`'s return. Rank them by attenuation at 21 Hz
-   before proposing any lever.
+1. 🛑 **Flash V55 back.** V56 is falsified *and* it degraded the car. V55 is already built, already driven,
+   fault-free, and keeps the probe. Straight revert, not a new experiment. **Do this before V57** — V57 is
+   cut from V55, so flashing it would revert the mute *and* change feedback gains at once, confounding
+   feel assessment and forfeiting the cleanest test that V56's mute was live (the 8.69 Hz line should
+   vanish on V55).
+2. ★★ **Characterise the `gp-0x6bbe` angle-rate tributary** (workstream A above) — end-to-end gain at
+   20-25 Hz, the two speed-LERP tables byte-read at creep *and* road speed, and the **sign/phase at
+   22 Hz**. That last one is GATE 2 and nothing gets built without it.
+3. **The aggregator has ELEVEN summands, not 9.** Confirmed by full disassembly of `FUN_0003aa2c`
+   (`0x3acc8`-`0x3ace6`), every one folded in by a plain `add`: `gp-0x6b62` (return-centre), `-0x6b4c`
+   (LKAS), `-0x6ade` (feedforward, likely always 0), ~~`-0x6ad4`~~ (eliminated), `-0x6b26` (friction,
+   driven by **motor** rate), `-0x6bbe` (boost), `-0x6bd0` (damping), `-0x6b86` (magnitude), **plus `r24`
+   and `r26`** (the torque-RATE lanes, computed inline at `0x3aa9c`-`0x3ac58` — omitted from every prior
+   list), plus `FUN_00036682`'s return. 🛑 **r24/r26 are already flashed and FALSIFIED** (V39, V42 ch.2) —
+   a subagent re-proposed them as novel this session; check `BUILD-LINEAGE.md` first, every time.
 3. **Re-scale the probe before the next telemetry build.** `SHIFT = 9` is ~6 bits too coarse for the
    observed ±512 range; use 6 or 7. Until then, treat every command-side amplitude in the record as void.
 4. **Re-establish or retract the `0xC646C` elimination.** It rests on the flat-H1 result, which is now
@@ -446,6 +501,54 @@ require the documented EME pattern (sustained hands-off hard turn), which V31 ex
 ---
 
 ## Corrections of record still worth knowing
+
+**New 2026-07-29 — the signal-identity audit. Several of these invalidate the *reasoning* behind flashed
+builds; none of them change a measured on-car outcome.**
+- 🛑★★ **`gp-0x6a5e`/`-0x6a62`/`-0x6a64` are VOTED VEHICLE SPEED.** Settled by fresh decompile of the voter
+  `FUN_00041eec` (5 channels, validity window −6400..32000, closest-to-previous fallback; zero overlap
+  with `gp-0x4f60`'s cluster). **Retire the "Sensor A" label — it was never a torque sensor.**
+  ⇒ **The damper Factor C LERP indexes on it** (pointer chase byte-verified: `0xC9E9C+10*4` →
+  `0x000D27BC`), X=(2240,3840,5120,8960) ≈ **35/60/80/140 km/h** ⇒ **`Y[0]=0` means "below ~35 km/h", not
+  "hands-off"** ⇒ **V44 and V47 tested a mechanism that does not exist.** Results stand; rationale
+  withdrawn. The "2240 counts driver torque" story is a **number collision** with the override curve's
+  unrelated torque breakpoint. Invalid speed ⇒ the factor defaults to **unity**, not zero.
+- ★★ **The driver-override curve is real and mapped** — `FUN_00028ea6` `0x29a74`, indexed by
+  `gp-0x682f = |gp-0x4f60|>>5` with direction from `sign(gp-0x4f60)`; X=[70,72,78,80] Y=[254,234,12,0] ⇒
+  **LKAS authority collapses 254→0 between raw torque 2240 and 3584.** This is the firmware behind the
+  operator's *"significant driver torque in a direction kills the grinding"*. It explains the **kill, not
+  the creation** — hands-off the curve is flat at 254. ⚠ The `0xC64B8` threshold branch is **dead** since
+  V37 set it to `0xFF`.
+- 🛑 **`gp-0x6806` is ON THE BUS** — CAN `0x18F` byte4 bit3 = `STEER_CONTROL_ACTIVE` (packer
+  `FUN_00055c42`, matches opendbc `BO_ 399`). Measured route 24: **==1 in 96.26%, TWO transitions in
+  180 s** ⇒ the `0xC61B8` deadband + sign relay is **bypassed in steady engaged driving** and cannot be a
+  20-25 Hz mechanism. **Before building against any internal flag, check whether it is already on the bus.**
+- 🛑 **Split every `FUN_00028ea6` scan at `0x2a30d`.** `gp-0x6806` has **16 raw writers = 8 live + 8
+  dead-echo**; `gp-0x6b30` has **4 refs = 2 live + 2 dead**. Everything above `0x2a30d` is the known-dead
+  `FUN_0002a30e`/`FUN_0002a93a` copies. Two subagents drew wrong conclusions from unsplit scans.
+- 🛑 **`gp-0x6ac0` is MOTOR resolver electrical rate, not steering-column rate.** Traced through CORDIC to
+  the resolver sin/cos ADC channels; label earned, domain mislabelled. The **column** rate is `gp-0x6a56`,
+  which is what both CAN frames actually carry.
+- 🛑 **`STEER_WHEEL_ANGLE` is NOT a second angle** — `gp-0x69ec` and `gp-0x69ee` are written from the same
+  register in every branch of their sole writer `FUN_00040a50`. Measured: bit-identical to `STEER_ANGLE`
+  in **11,999/11,999** frames, twist exactly 0.00. There is **one** angle, transmitted twice.
+- 🛑 **`reference_accord_no_steering_angle_tx_eps_does_not_own_angle.md` is WRONG, not stale** — it
+  searched for CAN ID `0x156`; this platform puts `STEERING_SENSORS` at `0x14A`. The EPS **does** own and
+  transmit steering angle.
+- **The real Main/Sub torque pair is INSIDE `gp-0x4f60`'s producer** — channel select `gp-0x4e3d ∈ {0,1}`
+  (`FUN_0007f3f8` ch0, `FUN_00080a54` ch1), each with its own CORDIC and calibration, cross-channel drift
+  integrator `gp-0x4f58`, DTC-gated failover. The firmware names them `KFC_STORQUE_0/1`. **Cannot chatter**
+  — matured DTCs only, and recovery additionally gated on `gp-0x6b94 == 0`.
+- ⚠ **`gp-0x6b86` is a PEAK-HOLD** ("keep unless bigger"), disasm-confirmed three ways. It converges to the
+  envelope and does not reproduce instantaneous phase, so the recorded "−3.9 dB, #2 strongest carrier"
+  ranking is invalid — that dB figure is the downstream IIR taken in isolation, applied to a waveform the
+  hold has already destroyed. **Low priority as a 21 Hz carrier.**
+- ⚠ **`FUN_0003a382`'s bias is a real continuous clamp**, not a 2-state ±8192 selector; and the
+  authority-scale LERP indexed by `gp-0x69aa` is a **complete no-op** (every Y = 1024, fallback 1024).
+  `gp-0x6ad6` has exactly **3 static references image-wide** — one write, two reads, both inside
+  `FUN_0003a382` ⇒ the "hidden reference-model side-channel" hypothesis is **closed**, V56 tested the only
+  exit door.
+
+
 
 **New 2026-07-28 — four, all byte-verified:**
 - 🛑 **`0xC63D2` is `6`, not `14`.** Read little-endian from `_v55_plain_image.bin` *and* stock `code.bin`

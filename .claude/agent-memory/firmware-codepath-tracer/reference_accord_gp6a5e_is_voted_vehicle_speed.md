@@ -82,6 +82,33 @@ that one really is the motor-rate axis (`gp-0x6ac0`), consistent with the kit.
   path (all 9 lanes checked)" is FALSIFIED.** So is "5 mph = openpilot `minEnableSpeed` + plant
   physics, NOT a firmware gate" — a firmware speed window provably exists.
 
+## ✅ RE-CONFIRMED 2026-07-29 via the independent pointer-chase route (team-lead's variant-coding recipe)
+
+Re-derived from scratch using a completely different method than the LERP-axis-roundness scan above, to
+close the "is this genuinely resolved or still disputed" question after a sister agent (SensorIdentity)
+re-traced the voter fresh. Team-lead's pointer-chase recipe: 5-byte coded ID -> `FUN_00057f8e` match vs
+16 ASCII PN keys @`0xCD000` stride `0x24` -> ROW -> index byte @`0xCD012+ROW*0x24` -> INDEX -> `ptr_array[INDEX]`.
+For our car (TVAA1 -> row 2 -> **INDEX 10**): `0xC9E9C + 10*4 = 0xC9EC4`, fresh `read_memory` = bytes
+`bc 27 0d 00` = **`0x000D27BC`** exactly. `0xC9F84 + 10*4 = 0xC9FAC` = bytes `f8 27 0d 00` =
+**`0x000D27F8`** exactly. Both match this file's already-recorded addresses byte-for-byte -- independent
+confirmation via pointer arithmetic, not just LERP-axis-roundness inference.
+
+**Index variable pinned by fresh disassembly of `FUN_00034350` itself** (not inferred from axis shape):
+`puVar11 = *(ushort*)(gp-0x6a5e)`, gated `if (puVar11 > 0x7d00 || gp-0x67f4 != 1) uVar13 = 0x400` else
+LERP against `0xC9E9C+mode*4`. **Confirms `gp-0x6a5e` is the literal index register, at the instruction
+level, not just consistent axis roundness.**
+
+**New nuance not previously on record: the gate is NOT simply "zero below 35km/h."** If `gp-0x67f4`
+(newly identified this session as the SPEED VOTER's OWN validity flag -- written by `FUN_00041eec` at
+`0x4218a`/`0x421a0`, the same function this file's voter trace already covers) is 0 (voted speed not
+trustworthy), the whole factor defaults to **UNITY (1024/1024)**, not zero. So "Factor C = 0" requires
+BOTH low speed AND a valid voted-speed reading -- a sensor-fault condition does not silently zero the
+damper, it defaults to full damping instead.
+
+Factor E `0xD27F8` byte-confirmed same session: `04 00 3c 00 90 01 c4 09 a0 0f 00 00 8c 00 1b 02 9f 03 00
+00` -> X=(60,400,2500,4000), Y=(0,140,539,927) -- matches this file's record, index = `gp-0x6ac0` (motor
+rate magnitude) confirmed at the instruction level in the same `FUN_00034350` decompile.
+
 ## Why the earlier traces missed it
 The wheel-speed payload is read **register-indirect via an address argument**, and the 0x1D0 *status*
 handler `FUN_00052E32` stores only validity/SNA flags (48 globals, **0** read by the assist path — a

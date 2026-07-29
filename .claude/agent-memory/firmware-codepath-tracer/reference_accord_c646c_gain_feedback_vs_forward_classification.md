@@ -244,3 +244,118 @@ way, only the exact dB number changes).
   `0xC747E`, `0xC7286` -- a disjoint range from `0xC65xx`/`0xC674x`). Combined with "neither hard-shutdown
   monitor is among the 6 readers" from the first pass, this closes the float-mirror question positively,
   not just by absence.
+
+## Round 4 (2026-07-29, V57-candidate re-verification for team-lead) -- independent re-derivation, two corrections
+
+Re-ran the enumeration completely from scratch (fresh Python scanner, not copy-pasted from this file) on
+`code.bin`, plus GhidraMCP corroboration on every hit. **Reproduced exactly: 6 readers, same addresses,
+zero stores, zero 6-byte extended hits, zero LE32 hits.** `0x2A904` is now even more solidly dead --
+on the fully-analyzed 2086-function `code.bin`, `get_assembly_context` returns "No instruction at
+address" (not just "no caller" as before). Edit-site bytes at `0x2A1EE` read directly: `25 3f 6c 74`,
+hand-decoded to `ld.h 0x746c[tp],r7` -- confirms the retarget is `6c 74`->`d0 7c` (2 bytes) exactly.
+`0xC6CD0` re-scanned fresh (disp16+disp23+LE32, all zero) and byte-dumped: the preceding LERP table at
+`0xC6C90` (header=4, ends at exactly `0xC6CA4`) is followed by solid `0xFF` through `0xC6FEF`, metadata
+resumes `0xC6FF0` -- `0xC6CD0` sits mid-desert. New float-mirror check (different method than the Round-3
+cal-block-diff): swept for ANY `ld.w`/`st.w` (32-bit) tp-relative access with disp in `[0x7440,0x74A0)`
+(brackets `0xC646C` generously) -- zero hits, corroborating no float twin exists near the gain word.
+
+**Two corrections to the record, both found by decompiling #5/#6 fresh rather than trusting the summary:**
+
+1. **`FUN_00036682` (#5) is confirmed NOT a plain EMA, and the exact z-domain math was re-derived.** The
+   decompile shows `error = x[n] - y[n-1]` (subtracting the function's OWN prior output) feeding the EMA,
+   which makes the recursion `accum += ((clamp(error,±512))*1024 - accum)*alpha>>10`, `y[n]=accum>>10`.
+   Substituting through: `y[n] ≈ y[n-1]*(1-2·alpha) + alpha*x[n]` -- DC gain **1/2**, pole at `1-2·alpha`
+   (not `1-alpha`), i.e. genuinely double the naive EMA bandwidth. Despite this, `|H(21Hz)|` computed
+   exactly from the real z-domain transfer `a/(1-(1-2a)z⁻¹)` comes out to **0.0446**, vs the simple
+   single-pole approximation's 0.0444 used in prior rounds -- a 0.4% difference, immaterial, because at
+   21Hz (≫ the ~1-2Hz cutoff either model implies) `|H(f)| ≈ alpha·fs/(2πf)` regardless of exact pole
+   placement. **The existing -27.1dB / 0.0048-contribution figure is CONFIRMED, now by exact rather than
+   approximate math.** Also newly noted: a hysteresis/dead-band stage sits between the raw error and the
+   ±512 clamp (a slew-toward-selector using `tp+0x719c`/`tp+0x71a6` as half-band thresholds) -- a
+   nonlinearity this linear estimate doesn't capture, which can only reduce real-world 21Hz throughput
+   further. 0.0048 is therefore an upper bound, not a point estimate.
+
+2. **Correction to the "#5/#6 matched pair, BOTH independently apply GAIN×raw-sensor to the motor"
+   framing.** Confirmed `FUN_00036828` (#6) does independently compute `(gp-0x4f60_RAW*GAIN)>>15`, but its
+   own output (`gp-0x6b44`/`gp-0x6b40`/`gp-0x6b42`/`gp-0x37a0`, plus a DTC-0x23 rate check) does **not**
+   additively enter the aggregator on its own path. `gp-0x6b44` is read back **inside #5** to size
+   `sVar12`, which widens/narrows #5's hysteresis dead-band (`sVar9=(sVar12>>1)+sVar15`,
+   `sVar10=sVar15-(sVar12>>1)`) -- i.e. #6 *modulates #5's nonlinearity*, it is not a second independent
+   additive summand into `gp-0x6b98`. True that both apply GAIN; **false** that both have independent
+   additive paths to the motor. #6's own 21Hz contribution is second-order (a dead-band-width perturbation,
+   not a direct signal path) and wasn't quantified via a describing-function treatment -- conservatively
+   bound the combined #5+#6 contribution at ~2x the #5-only figure (~4.4% of measured transfer, ~0.28dB),
+   almost certainly an overestimate.
+
+**Net effect on the V57 recommendation: unchanged from Round 3 (build it as the correctness fix), now on
+firmer footing** -- the loop-gain-at-21Hz question was reopened fresh (given `FUN_0003a382`'s elimination
+by V56) rather than assumed still-moot, and independently re-closes on the same "too slow, too small, too
+indirect" grounds via a different derivation path than before.
+
+## Round 5 (2026-07-29, same session, follow-up) -- reader #3's GAIN-multiplicand is domain-mixed, not pure torque; one input's identity is a genuine open question shared with a parallel session
+
+Team-lead followed up asking whether ANY reader touches the steering-ANGLE domain (operator's objection:
+this kit has never mapped a position/return-to-center path, and the ECU DOES transmit `STEER_ANGLE` on CAN
+`0x14A` bytes0-3 plus "a 10x finer rate copy" at `0x18F` bytes[2:4]). Ran full pcode dataflow traces
+(`analyze_dataflow`, SSA-level, not manual register reading) on reader #3 (`0x2B656`, `FUN_0002b62c`).
+
+**PROVEN (pcode-verified, 60-step forward trace from `0x2bbaa`):** `gp-0x6a56`'s SIGN (extracted via
+negate+compare, `0x2bdfa-0x2be02`) multiplies an LERP-interpolated term (`0x2bf3e`), sums with another
+interpolated term (`0x2c12c`), multiplies a third interpolated term to produce `r6` (`0x2c136-0x2c13e`).
+`r6` is compared against `r13`=`gp-0x6a02` at `0x2c140`, and via a `cmovge`(`0x2c150`)+phi(`0x2c154`) this
+selects `r10` -- **the exact value GAIN(`0xC646C`) multiplies at `0x2c1e0`** (a 3-way selector between a
+fixed per-mode cal constant from table `0xC70E8` and `r6` itself). So reader #3's own GAIN-multiplicand
+is NOT purely torque-domain -- its SELECTION depends on `gp-0x6a56` and `gp-0x6a02`.
+
+**`gp-0x6a56` = MOTOR ELECTRICAL RATE, high confidence.** Traced producer `FUN_0003f776` (called from
+`FUN_00022ca0`, same task as reader #3): `clamp(POLARITY*(gp-0x6abe*48*cal_0xC613A)>>15, ±12000)`.
+`gp-0x6abe` is independently corroborated as "filtered MOTOR rate"/"motor electrical-rate raw" across 5
+separate memory files (`reference_accord_fun34350_damping_term_live_and_gated.md`,
+`reference_accord_foc_inner_current_loop_architecture.md`,
+`reference_accord_fun41464_sign_filter_phase_response.md`, `reference_accord_post_governor_comp_add.md`,
+`reference_accord_gp6b98_aggregator_definitive_lane_table_v57.md`), all rooting in the same producer
+`FUN_00041464`. This ALSO resolves an open item in `reference_accord_can_tx_399_427_bitmap.md`: that
+memory's "`gp-0x6a56` is arbitration/setpoint-class, NOT a raw sensor" label (inferred from caller names)
+is superseded -- `gp-0x6a56` is `FUN_0003f776`'s own clamp of the motor-rate signal `gp-0x6abe`, and it is
+this exact cell that packs CAN 399 (`0x18F`) bytes 2:3 per that memory's byte map. Reconciles with the
+team-lead's "10x finer rate copy" framing if that means motor/steering angular rate (proportional via the
+fixed gear ratio), not literally the raw column-angle sensor.
+
+**`gp-0x6a02` -- domain NOT CLOSED, shared open question with a parallel session.** Traced producer
+`FUN_0003fc16` (called from confirmed-1kHz `FUN_0002214a`): `gp-0x6a02 = gp-0x69ca -
+slew_limited_delta(cal 0xC733A, gp-0x69e0)`, gated on `gp-0x67fe∈{1,2}`, reset alongside `gp-0x69ca`/
+`gp-0x69d4`/`gp-0x69de`/`gp-0x6bf0`/`gp-0x6bf4`/`gp-0x6bee`/`gp-0x6a10`/`gp-0x6a0a` in a shadow-lockstep
+reset function (`FUN_0003e760`) on assist-substate re-init. The SAME producer also computes `gp-0x6a10 =
+clamp(gp-0x6a02)` -- this is EXACTLY the "tracking error" signal a parallel teammate session (memory file
+`reference_accord_aggregator_domain_audit_no_angle_lane_found.md`, same day, auditing the 11 direct
+`gp-0x6b98` aggregator summands -- a different, non-overlapping consumer set from reader #3's `gp-0af0`)
+flagged as "NOT closed... a real, not-ruled-out candidate for an angle/angle-rate tracking signal." I
+pushed one level further: `gp-0x69ca`'s own producer is `FUN_0003bd7c` -- **the already-established EPS
+assist-state-machine function that derives `gp-0x67fe` from `gp-0x6772`**
+(`eps-gp67fe-trump-engaged-holding-substate.md`) -- via a call to `FUN_0003bd40` gated on a
+sentinel-checked (`0x7FFF`) read at **`gp+0x6470`** (positive gp offset, same pattern as the known
+variant-config byte at `gp+0x6409` in the CAN-427 bitmap). Did NOT decompile `FUN_0003bd40` or resolve what
+`gp+0x6470` configures -- real gap, not closed. **Reading (not proven): this looks at least as plausibly
+like an assist-state-machine/FOC-internal quantity (matching the shape of the unrelated `gp-0x6bda`/
+return-centre chain the parallel session traced to state-transition-timing, NOT position) as a literal
+steering-column-angle tracker.** One older memory fragment
+(`reference_accord_gp4f60_v48b_reader_closure_and_mode_gated_bypass.md`) flatly labels `gp-0x6a02` "an
+angle-domain signal" without its own producer trace -- may be right, may be a stale inference. Do not cite
+either verdict as settled; the next step is decompiling `FUN_0003bd40` + the `gp+0x6470` config read.
+
+**Driver-override gate, partial lead only.** Near the top of `FUN_0002b62c`, `bVar3`/`iVar45` are forced
+false/zero if `gp-0x4f60 > 9216` OR voted quantity `gp-0x6a5e > 32000` OR `gp-0x67f4 != 1` -- a plausible
+torque-threshold override. But this gates an EARLIER part of the function (a `tp-0x3d08`/`tp-0x3d0c`
+ramp-rate tracker feeding later LERP interpolations that reach `r6`/`r21` above), not a direct gate on the
+GAIN-multiply block itself (which is only mode-gated on `gp-0x677d∈{2,3}`). Not traced all the way through
+-- flagged as a lead, not a closed finding. (The parallel session found NO such gate among the 11
+aggregator summands, a negative-but-non-exhaustive result over a different function set.)
+
+**Net effect on V57: unchanged** -- the retarget mechanics (2-byte edit, isolates forward path, reverts
+#3-#6 to stock automatically) don't depend on resolving `gp-0x6a02`'s identity. What changes is reader #3's
+characterization: not pure torque feedback, but torque-cal(`0xC6428`) blended with a selector gated by a
+confirmed motor-rate signal and one signal of contested domain.
+
+See [[reference_accord_aggregator_domain_audit_no_angle_lane_found]] (parallel, complementary scope) and
+[[reference_accord_can_tx_399_427_bitmap]] (source of the `gp-0x6a56`/CAN-399 cross-reference, now
+corrected).
