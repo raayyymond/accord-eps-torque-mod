@@ -24,7 +24,12 @@ does not disturb.
 =======================================================================================================
 (A) WHY THE DECOUPLING -- and an honest statement of what it does NOT do
 =======================================================================================================
-`0xC646C` was raised 891 -> 3564 in V22 to obtain 4x LKAS authority. It is NOT an LKAS gain. It is the
+`0xC646C` was raised for LKAS authority in TWO steps -- 891 (stock/V9) -> 1782 (V22-V37) -> 3564
+(V38+), byte-verified across the plain-image archive, with the clamps 0xC61B2/0xC61B4 tracking each
+step (512 -> 1024 -> 2048). ⚠ BUILD-LINEAGE recorded this as a single "891->3564 at V22"; that is
+wrong. Note what did NOT track either doubling: the pre-gain deadband 0xC61B8, still 102.
+
+It is NOT an LKAS gain. It is the
 firmware's single shared Q15 sensor-to-command-domain scale with SIX readers, re-enumerated from scratch
 2026-07-29 by independent Python byte scan (both V850E2 encodings, plus an LE32 absolute-pointer scan)
 and corroborated instruction-by-instruction in Ghidra -- exactly 6, zero discrepancy:
@@ -95,8 +100,15 @@ GATE 2 (closed-loop stability):
   (A) no float mirror -- a fresh scan for ANY 32-bit tp-relative access in [0x7440,0x74A0) returned ZERO
       hits, so this cannot repeat the V27 mirror-desync brick. Forward authority is unchanged by
       construction (still 3564, new address). All four feedback readers move TOWARD factory 891.
-      ⚠ EXPECTED: manual steering feel WILL change -- those readers are not gated on openpilot
-      engagement. That is the point of the fix. V52C is the precedent.
+      ✅ MANUAL FEEL: NO CHANGE EXPECTED -- and this is on-car evidence, not an argument. The gain
+      went 891 (stock/V9) -> 1782 (V22-V37) -> 3564 (V38+), byte-verified across the image archive,
+      with 0xC61B2/0xC61B4 tracking each step (512 -> 1024 -> 2048). The operator has driven all
+      THREE values and reports no change in manual steering feel. When disengaged the FORWARD reader
+      (0x2A1EE, the CAN setpoint path) is idle, so manual feel depends ONLY on readers #3-#6 -- the
+      exact set V57 reverts. That experiment has therefore already been run, in both directions,
+      with a null result. (An earlier draft of this file claimed feel WOULD change; that was an
+      inference from "not engagement-gated", which establishes the readers are LIVE, not AUDIBLE.
+      Withdrawn on the operator's three-point A/B.)
   (B) VACUOUS -- report-only into a TX payload byte no control path reads. No filter, pole, gain, clamp,
       damper or authority value moves.
 
@@ -498,7 +510,8 @@ def build():
     print("  GATE 1: (A) vacuous; (B) inherited -- same cave base/hook/extent, read-only, no new RAM.")
     print("          *** still CODE in the 1 kHz TX path, a higher risk class than a cal-only build.")
     print("  GATE 2: (A) no float mirror; forward authority unchanged; feedback readers -> stock 891.")
-    print("          *** manual feel WILL change. (B) vacuous -- report-only.")
+    print("          manual feel: NO change expected -- the operator has driven 891/1782/3564 and")
+    print("          reports no difference; when disengaged only readers #3-#6 are live. (B) vacuous.")
     print("\n  *** Flash only on explicit operator instruction naming the file and the bus.")
 
 

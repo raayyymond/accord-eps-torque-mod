@@ -97,8 +97,15 @@ is read back INSIDE #5 to size the half-width of a hysteresis dead-band
   returned **zero hits**, so this cannot repeat the V27 mirror-desync brick. ✅ forward authority unchanged
   by construction (still 3564, new address). ⚠ **REASONED, not proven:** all four feedback readers move
   TOWARD factory 891; no plant model was used.
-- ⚠ **EXPECTED: manual steering feel WILL change.** Readers #3-#6 are not gated on openpilot engagement.
-  That is the point of the fix, but it is perceptible. V52C is the precedent.
+- ✅ **MANUAL FEEL: NO CHANGE EXPECTED — on-car evidence, not an argument.** The gain went **891
+  (stock/V9) → 1782 (V22-V37) → 3564 (V38+)**, byte-verified across the plain-image archive, clamps
+  tracking each step (512→1024→2048). **The operator has driven all three and reports no change in
+  manual steering feel.** When disengaged the FORWARD reader `0x2A1EE` is idle, so manual feel depends
+  only on readers #3-#6 — exactly the set V57 reverts. The experiment is already run, both directions,
+  null. ⇒ It is also independent evidence those four readers sit **below perception across a 4× range**,
+  corroborating the −46/−58 dB figure for #5 and extending it to #3/#4, never quantified.
+  🛑 An earlier draft claimed feel WOULD change. That was an inference from "not engagement-gated",
+  which establishes the readers are LIVE, not AUDIBLE. **Withdrawn.**
 
 ## Deliberately NOT included
 
