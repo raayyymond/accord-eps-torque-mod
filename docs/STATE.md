@@ -6,7 +6,7 @@ each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed and falsified — check it before
 proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-07-29-v56-drive-mute-is-null-and-costs-damping.md`.
+`docs/HANDOFF-2026-07-29-v57-decouple-and-the-angle-rate-turn.md`.
 
 🛑 **Explain firmware with Python that mirrors the decompiled arithmetic exactly** — standing operator
 instruction, 2026-07-28. Integer `>>`, the real Q-format, the real branch conditions, each line annotated

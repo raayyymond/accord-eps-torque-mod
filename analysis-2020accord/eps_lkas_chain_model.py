@@ -387,6 +387,17 @@ V9_FULL_SCALE_MIN_MAGNITUDE = min(abs(V9_FULL_SCALE_POSITIVE), abs(V9_FULL_SCALE
 class Calibration:
     # ---- LKAS reach (V14/V18 lineage, retained by V31 & V37) --------------------------------------
     lkas_output_gain: int = 891          # Q15 arb output gain. V31/V37=1782; V38=3564 (4x stock)
+    # ★ 2026-07-29: cal 0xC646C is NOT LKAS-only. It has SIX readers -- ONE forward (0x2A1EE, the CAN
+    # setpoint path modelled by lkas_output_gain), ONE dead (0x2A904, above FUN_00028ea6's end 0x2a30d
+    # in the known-dead FUN_0002a30e/FUN_0002a93a copies), and FOUR feedback (0x2B656, 0x2C488,
+    # 0x36686, 0x3684A). Through V56 both sets read the SAME word, so this field covered both.
+    # V57 decouples them: the forward load is retargeted to a private word at 0xC6CD0 (still 3564)
+    # while the shared cal reverts to stock 891, which only the four feedback readers now see.
+    # ⚠ The gain history is TWO doublings, not one: 891 (stock/V9) -> 1782 (V22-V37) -> 3564 (V38+),
+    # with arb/pack clamps tracking each step. BUILD-LINEAGE recorded a single "891->3564 at V22";
+    # this model had it right and that entry has been corrected.
+    shared_sensor_scale: int = 891       # 0xC646C as seen by the FOUR FEEDBACK readers. == lkas_output_gain
+                                         # on every build through V56; 891 on V57 (decoupled).
     arb_output_clamp: int = 512          # symmetric arb clamp. V31/V37=1024; V38=2048
     pack_output_clamp: int = 512         # symmetric limit&pack clamp. V31/V37=1024; V38=2048
     reengage_ramp_step: int = 0x11       # re-engage/debounce ramp ceiling (17). V31/V37 -> 0x1B (27)
@@ -529,20 +540,21 @@ class Calibration:
 
     @staticmethod
     def for_build(name: str) -> "Calibration":
-        """Return the calibration set for V9, V31, V37, V38, or the experimental V39."""
+        """Return the calibration set for any modelled build (V9 .. V57)."""
         cal = Calibration(build=name)
         if name == "V9":
             return cal
         # --- V31: 2x reach + soft-EME fix (corridor x4 + boost floor 4096) --------------------------
         cal = replace(
             cal,
-            lkas_output_gain=1782, arb_output_clamp=1024, pack_output_clamp=1024, reengage_ramp_step=0x1B,
+            lkas_output_gain=1782, shared_sensor_scale=1782,
+            arb_output_clamp=1024, pack_output_clamp=1024, reengage_ramp_step=0x1B,
             corridor_upper=4096, corridor_lower=-4096, boost_floor=4096, boost_y1=4096, boost_y2=4096,
         )
         if name == "V31":
             return cal
         # --- V37 onward: gentle-EME debounce SM off + DTC-0x49 counter off -------------------------
-        if name in ("V37", "V38", "V39", "V40", "V41", "V42", "V53", "V54", "V55", "V56"):
+        if name in ("V37", "V38", "V39", "V40", "V41", "V42", "V53", "V54", "V55", "V56", "V57"):
             cal = replace(
                 cal,
                 deb_torque_rise=255, deb_torque_hold=255, deb_torque_and_hi=255, deb_torque_and_lo=255,
@@ -553,7 +565,8 @@ class Calibration:
                 return cal
             cal = replace(
                 cal,
-                lkas_output_gain=3564, arb_output_clamp=2048, pack_output_clamp=2048,
+                lkas_output_gain=3564, shared_sensor_scale=3564,
+                arb_output_clamp=2048, pack_output_clamp=2048,
                 corridor_upper=5120, corridor_lower=-5120,
                 boost_floor=5120, boost_y1=5120, boost_y2=5120,
                 arb_setpoint_limit=16384,
@@ -676,6 +689,36 @@ class Calibration:
             # INCLUDING disengaged).
             if name == "V56":
                 return replace(cal, speed_window_lo=0, resonance_lane_output_bound_q15=0)
+            # --- V57: V55 (NOT V56 -- the 0xC6AF0 mute is FALSIFIED and reverted) + TWO changes.
+            #
+            # (A) THE 0xC646C DECOUPLING. 0x2A1F0's ld.h displacement 0x746C -> 0x7CD0, so the FORWARD
+            # reader resolves tp+0x7CD0 = 0xC6CD0, a private word set to 3564, while the shared cal
+            # 0xC646C reverts to stock 891 -- seen now only by the four FEEDBACK readers. LKAS
+            # authority is UNCHANGED by construction; what changes is that the feedback paths stop
+            # carrying a gain they were never meant to carry.
+            #   * expected NULL for the 20-25 Hz mode: <=0.28 dB at 22 Hz. Of the ELEVEN aggregator
+            #     summands exactly ONE reads this cal (FUN_00036682, -46 dB at 3564 / -58 dB at 891),
+            #     and it is the most deeply attenuated lane in the table.
+            #   * expected NULL for MANUAL FEEL, on-car evidence rather than an argument: the operator
+            #     has driven 891 (V9), 1782 (V22-V37) and 3564 (V38+) and reports no difference.
+            #     Disengaged, the forward reader is idle, so manual feel depends ONLY on the four
+            #     feedback readers -- exactly the set V57 reverts. The experiment has already been run
+            #     on-car, in both directions, null. (An earlier claim that feel WOULD change was an
+            #     inference from "not engagement-gated", which establishes those readers are LIVE, not
+            #     AUDIBLE. Withdrawn.)
+            #
+            # (B) THE DEADBAND-GATE PROBE, report-only, replacing V55's cave payload at the same base
+            # 0xC4B34 / hook 0x55C0E / 68-byte extent. Behaviourally identical to V55 in everything
+            # this model computes. 0x14A byte4: bit7=1 liveness, bit6=(gp-0x6806==0), bit5=(gp-0x69b0
+            # !=0), bit4=(gp-0x6b30==0), bit3=(gp-0x6b30<0).
+            #   * WHY: the deadband + sign relay at 0x2a1ae-0x2a206 was eliminated by measuring
+            #     STEER_CONTROL_ACTIVE, but the packer builds that bit with `andi 0x1` (0x55c7e) --
+            #     PARITY -- while the gate tests EXACT equality (`cmp r0,r12 ; bne`, 0x2a1ba/0x2a1bc).
+            #     Four of the flag's eight live writers store a REGISTER, not a literal, so a value of
+            #     2 reads as bit0=0 with the gate DISABLED, and a 0<->2 toggle at 22 Hz would be
+            #     invisible. bit6 is the exact test. Expected NEGATIVE.
+            if name == "V57":
+                return replace(cal, speed_window_lo=0, shared_sensor_scale=891)
             if name == "V39":
                 return replace(cal, suppress_direct_torque_rate_assist=True)
             # --- V40: V38 baseline (NOT V39 -- the r24 guard is dropped entirely) + two cal edits.
@@ -700,7 +743,7 @@ class Calibration:
                 return replace(cal, governor_slew_step_normal=2048, governor_slew_step_alt=820)
         raise ValueError(
             f"unknown build {name!r} "
-            f"(expected V9, V31, V37, V38, V39, V40, V41, V42, V53, V54, V55, or V56)")
+            f"(expected V9, V31, V37, V38, V39, V40, V41, V42, V53, V54, V55, V56, or V57)")
 
 
 # =====================================================================================================

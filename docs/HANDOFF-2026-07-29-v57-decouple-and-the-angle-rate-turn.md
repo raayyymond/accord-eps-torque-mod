@@ -236,3 +236,67 @@ Full detail in `STATE.md` "Corrections of record" and the five new memory files.
 correctness fix is wanted, and V58 only once the angle-rate lane's damping sign is settled.
 
 🛑 **Flash only on explicit operator instruction naming the file and the bus.**
+
+---
+
+## 7. LATE IN THE SESSION — the operator reopened the deadband, and found a real hole
+
+The lead had eliminated the deadband + sign relay by measuring `STEER_CONTROL_ACTIVE`. The operator
+asked for the telemetry to be repointed at it anyway. Checking the packer before arguing turned up the
+flaw in the lead's own "no":
+
+```
+0x55c76  ld.bu -0x6806,gp,r15
+0x55c7e  andi  0x1,r15,r15      <-- PARITY
+0x55c82  shl   0x3,r15
+```
+The bus carries `gp-0x6806 & 1`. The gate tests **exact equality** (`cmp r0,r12 ; bne`, `0x2a1ba`).
+Four of the flag's eight live writers store a **register**, not a literal, so a value of 2 reads as
+bit0 = 0 while the gate is DISABLED — and a 0↔2 toggle at 22 Hz would have been wholly invisible:
+bit3 flat, zero transitions. The elimination's last step rested on an argument, not a measurement.
+
+⇒ **V57 was modified to carry a deadband-gate probe**, replacing V55's cave payload at the same base
+`0xC4B34` / hook `0x55C0E` / 68-byte extent (no widening):
+
+```
+0x14A byte4  bit7 = 1                  liveness
+             bit6 = (gp-0x6806 == 0)   the EXACT gate test the bus cannot give
+             bit5 = (gp-0x69b0 != 0)   ramp gain live
+             bit4 = (gp-0x6b30 == 0)   gate output exactly zero
+             bit3 = (gp-0x6b30 <  0)   gate output sign
+```
+Bits 4+3 give the output's 3-state {neg, zero, pos}; a chattering relay visits zero between sign
+flips, so bit4's spectrum carries a 20-25 Hz line if the mechanism is real. Decoder:
+`rlog-tools/decode_v57_deadband.py`. **Expected NEGATIVE**, recorded up front.
+
+⚠ This raises V57's risk class: it is now **code in the 1 kHz TX path**, not a cal-only edit. GATE 1 is
+inherited rather than vacuous (same base/hook/extent, read-only, no scratch RAM, r6/r7 already scratch).
+
+## 8. Two corrections the operator forced, both against the lead
+
+**(a) "Manual steering feel WILL change" — WITHDRAWN.** The operator said feel had not changed from V9
+through V31 or V38. The plain-image archive makes it a THREE-point A/B:
+
+```
+              0xC646C   0xC61B2/B4
+stock / V9        891          512
+V22 - V37        1782         1024
+V38 +            3564         2048
+```
+All three driven, no felt difference. Disengaged, the forward reader `0x2A1EE` is idle, so manual feel
+depends ONLY on readers #3-#6 — exactly the set V57 reverts. **V57's experiment has already been run
+on-car, in both directions, with a null result.** The lead's claim was an inference from "not
+engagement-gated", which establishes those readers are LIVE, not AUDIBLE.
+⇒ It also strengthens the build: independent evidence the four feedback readers sit below perception
+across a 4× range, corroborating the −46/−58 dB figure for #5 and extending it to #3/#4.
+
+**(b) The gain was TWO doublings, not one.** `BUILD-LINEAGE` recorded `891→3564 at V22`. Wrong: V22 set
+**1782**, V38 set **3564**. ★ **The golden model had this right all along** (`V31: 1782`, `V38: 3564`) —
+the flat lineage file was the wrong source. Corrected. It also sharpens the deadband point: `0xC61B8`
+stayed at 102 through **both** doublings while its sibling clamps doubled twice.
+
+> **Session-wide pattern worth carrying forward.** Four times a confident answer had to be walked back:
+> the relay hypothesis (fit every symptom, killed by a bus measurement), the "reinforcing" boost lane
+> (sign backwards), the "net damping" reading (its one assumption contradicted by a 15.85 Hz filter),
+> and "feel will change" (three-point A/B says no). Every one was caught by going one level past the
+> first plausible answer — and two of the four were caught by the **operator**, not the analysis.
