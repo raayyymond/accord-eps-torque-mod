@@ -158,6 +158,35 @@ rise, so it does not by itself explain `f = 0.177·v + 20.48`.
 > only by going one level deeper than the first plausible answer. In this domain a lever's *sign* is worth
 > more scrutiny than its magnitude — magnitude errors are null results, sign errors make the car worse.
 
+### 🛑 The damping verdict's ONE assumption is contradicted by arithmetic — sign is UNRESOLVED both ways
+
+The "net damping" reading rests entirely on *"`baseline` is slow relative to 22 Hz"*. The slew blend
+named in `baseline`'s own construction is `PTR_DAT_ca06c[mode]` = **102/1024**:
+
+```
+alpha = 102/1024  ->  fc = 15.85 Hz
+   1.0 Hz : |H| = 0.998  ( -0.02 dB)  phase  -3.3 deg
+   8.7 Hz : |H| = 0.887  ( -1.04 dB)  phase -26.0 deg
+  22.0 Hz : |H| = 0.605  ( -4.36 dB)  phase -48.9 deg     <- NOT slow
+  25.0 Hz : |H| = 0.556  ( -5.10 dB)  phase -51.8 deg
+# what "slow" actually looks like in this firmware, for contrast:
+# FUN_00036682 alpha = 6/1024 -> fc = 0.933 Hz, |H(22)| = 0.043 (-27.4 dB)
+```
+
+⇒ `baseline` plausibly carries **~60% of a 22 Hz component at −48.9°**, so
+`rate_error = baseline − angle_rate` is **not** `≈ −angle_rate` — it is a difference of two comparable
+terms in quadrature. A quadrature component is exactly how a damper acquires enough phase shift to
+destabilise, depending on the plant's torque→angle-rate phase.
+
+🛑 **CONSEQUENCE: the sign is UNRESOLVED IN BOTH DIRECTIONS.** Cutting the lane may remove damping;
+**raising `K1` may amplify a term that is not damping.** Neither direction is safe on assumption, and
+"raise the gain" must NOT be read as a settled recommendation.
+
+⚠ The two traces also disagree on where the slew blend lands — one puts `102/1024` in the multiplicative
+`blendedMagnitude`, the other lists it inside `baseline`'s construction. **That ambiguity is itself the
+blocker**: it decides whether the 22 Hz content is an amplitude modulation (second-order) or an additive
+quadrature term (first-order). Resolve it before simulating, then simulate.
+
 ---
 
 ## 5. Corrections of record generated this session

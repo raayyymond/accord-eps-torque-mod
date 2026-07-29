@@ -1,6 +1,6 @@
 ---
 name: accord-angle-rate-lane-gp6bbe-top-candidate
-description: "The boost lane gp-0x6bbe reads the steering ANGLE RATE gp-0x6a56 UNFILTERED (0x34AB8/0x34E8E, byte-verified). That signal carries the 20-25 Hz mode at 996x — MORE than torque's 877x — and the lane is same-signed/reinforcing. First candidate ever in the angle-rate domain; all ~50 falsified builds were torque-domain."
+description: "The boost lane gp-0x6bbe reads the steering ANGLE RATE gp-0x6a56 UNFILTERED (0x34AB8/0x34E8E, byte-verified). That signal carries the 20-25 Hz mode at 996x — MORE than torque's 877x. First candidate ever in the angle-rate domain; all ~50 falsified builds were torque-domain. 🛑 SIGN UNRESOLVED IN BOTH DIRECTIONS — the net-damping reading rests on 'baseline is slow at 22 Hz', and the slew blend in baseline's own construction is 102/1024 = fc 15.85 Hz, passing 60% at -48.9 deg. DO NOT cut it AND DO NOT raise it until simulated."
 metadata:
   node_type: memory
   type: project
@@ -49,8 +49,8 @@ firmware, because it is what the EPS TRANSMITS:
    relative to 22 Hz then `gp-0x6bbe ≈ −(gain)·angle_rate` — viscous DAMPING on angle rate.**
    ⇒ **CUTTING THIS LANE WOULD REMOVE DAMPING AND LIKELY MAKE THE GRINDING WORSE.** That is the V56
    mistake exactly — muting a lane whose sign was unproven, one build later.
-   ⇒ **The lever inverts: the interesting direction is RAISING the gain to ADD damping at 22 Hz**, not
-   cutting it.
+   ⇒ **The lever appeared to invert** (raise the gain rather than cut it) — but see the boxed section
+   below: that reading is NOT safe either. The sign is unresolved in both directions.
    ⚠ **[INFERRED, moderate-high confidence, NOT time-domain simulated.]** It hinges on `baseline` being
    slow at 22 Hz (built from a slew-blended torque magnitude + a `gp-0x6a10`-indexed LERP +
    `sign(gp-0x6a02)`). **Certify by simulation before any build** — if `baseline` carries 22 Hz content
@@ -109,6 +109,35 @@ at bytes that do **not** overlap either build's edits (`0xD27C6/DA`, `0xD2802/04
 - `clampBound` @ `0xD2000` = 666 — first byte of the shared block; handle CRC with care.
 - speedLERP1 Y row @ `0xD2834+0xE..0x18`.
 - speedLERP2 flat clamp @ `0xD20C0+0xC..0x14` — already flat, so uniform change has no shape side effect.
+
+### 🛑 The damping verdict's ONE assumption is contradicted by arithmetic — sign is UNRESOLVED both ways
+
+The "net damping" reading rests entirely on *"`baseline` is slow relative to 22 Hz"*. The slew blend
+named in `baseline`'s own construction is `PTR_DAT_ca06c[mode]` = **102/1024**:
+
+```
+alpha = 102/1024  ->  fc = 15.85 Hz
+   1.0 Hz : |H| = 0.998  ( -0.02 dB)  phase  -3.3 deg
+   8.7 Hz : |H| = 0.887  ( -1.04 dB)  phase -26.0 deg
+  22.0 Hz : |H| = 0.605  ( -4.36 dB)  phase -48.9 deg     <- NOT slow
+  25.0 Hz : |H| = 0.556  ( -5.10 dB)  phase -51.8 deg
+# what "slow" actually looks like in this firmware, for contrast:
+# FUN_00036682 alpha = 6/1024 -> fc = 0.933 Hz, |H(22)| = 0.043 (-27.4 dB)
+```
+
+⇒ `baseline` plausibly carries **~60% of a 22 Hz component at −48.9°**, so
+`rate_error = baseline − angle_rate` is **not** `≈ −angle_rate` — it is a difference of two comparable
+terms in quadrature. A quadrature component is exactly how a damper acquires enough phase shift to
+destabilise, depending on the plant's torque→angle-rate phase.
+
+🛑 **CONSEQUENCE: the sign is UNRESOLVED IN BOTH DIRECTIONS.** Cutting the lane may remove damping;
+**raising `K1` may amplify a term that is not damping.** Neither direction is safe on assumption, and
+"raise the gain" must NOT be read as a settled recommendation.
+
+⚠ The two traces also disagree on where the slew blend lands — one puts `102/1024` in the multiplicative
+`blendedMagnitude`, the other lists it inside `baseline`'s construction. **That ambiguity is itself the
+blocker**: it decides whether the 22 Hz content is an amplitude modulation (second-order) or an additive
+quadrature term (first-order). Resolve it before simulating, then simulate.
 
 ## Open items
 
