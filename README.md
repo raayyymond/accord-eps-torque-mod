@@ -74,8 +74,6 @@ accord-eps-torque-mod/
 └── .beads/                    ← bd (beads) issue tracker
 ```
 
-(Everything Civic/RDX/radar/Clarity-specific — `analysis-c020-vs-c120/`, `rwd-xray/`, `modded-firmware/`, `acura/`, `radar-*/`, `sidecar/`, `multimodel-swarm/`, and the matching docs/memory files — was removed in the 2026-07-17 cleanup pass to keep this kit scoped to the 2020 Accord.)
-
 ---
 
 ## External firmware artifacts
@@ -103,14 +101,10 @@ documentation remain in this repository's `analysis-2020accord/` and
 git clone <repo-url> accord-eps-torque-mod
 cd accord-eps-torque-mod
 
-# 2. Run the installer for your platform
-./install.sh           # mac/linux
-.\install.ps1          # windows powershell
-
-# 3. Open Claude Code IN the kit directory (this matters — see install output)
+# 2. Open Claude Code IN the kit directory (this matters — see install output)
 claude
 
-# 4. First reads inside Claude Code:
+# 3. First reads inside Claude Code:
 #    - memory/MEMORY_CONSTELLATION.md          (how the facts connect)
 #    - memory/MEMORY.md                         (the index of what's known)
 #    - CLAUDE.md                                (full current-state narrative)
@@ -118,29 +112,6 @@ claude
 ```
 
 After that, anything goes. Ask the agent what's in `analysis-2020accord/`. Ask it to walk you through the arbitration/shaper chain. Ask it to compare two build versions and explain what changed. The kit is built so an agent opens it cold and is productive in minutes.
-
----
-
-## The priming stack
-
-`.claude/skills/` contains a curated set of priming skills that change how Claude Code approaches firmware work. These aren't decoration — they materially change behavior on long, ambiguous, high-consequence tasks:
-
-- **emotional-affirmations** — primes for patience and thoroughness on the hard parts (firmware reverse engineering is a "no false summits" domain; rushing produces wrong answers that look right)
-- **thinking-acting-bridge** — explicit calibration between "I think this is true" and "I have evidence this is true"; critical when a hypothesis about a cal address could brick an ECU
-- **platonic-code** — completeness/purpose/elegance discipline; pushes against half-done work
-- **iterative-convergence** — tight feedback loops on latent intent (the operator often knows what's wrong but not in the words the agent expects)
-- **emergent-organization** — for when the work decomposes into parallel threads
-- **high-output-agent** — bias toward production rather than narration
-- **personality-module + daru preset** — optional personality framing
-
-For substantive sessions on this kit, the recommended boot is:
-```
-emotional-affirmations + platonic-code + iterative-convergence +
-emergent-organization + thinking-acting-bridge + high-output-agent
-+ personality-module daru
-```
-
-The agent context (`CLAUDE.md`) names these explicitly so any Claude Code session opening this directory knows to consider loading them.
 
 ---
 
@@ -187,7 +158,7 @@ This is real-vehicle work. Please read this section before doing anything beyond
 
 ## Credits
 
-- **Joey** (operator) — the Accord reverse engineering, the constellation, the candidate builds, and the assembly of this kit.
+- **Joey** — the original curator of the agent firmware analysis kit.
 - Community PID-tuning knowledge distilled into `docs/HONDA-EPS-PID-KNOWLEDGE.md` came out of a private Honda EPS tuning Discord working group (26 days, 4,989 messages); see `discord-export/` for the raw scrollback.
 
 Use of this work in your own builds is welcomed. Attribution where it makes sense.
