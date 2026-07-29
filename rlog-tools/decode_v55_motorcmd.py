@@ -58,7 +58,13 @@ def cmd_range(field):
 
 
 def band_power(x, f0, nfft=256, hop=64):
-    """Mean power in a narrow band around f0, over Hanning-windowed segments."""
+    """Mean power in a narrow band around f0, over Hanning-windowed segments.
+
+    *** hop = nfft//4 is 75% OVERLAP, so the returned `n` OVERSTATES the true degrees of freedom by
+    roughly 4x. Coherence-significance and error bars must be computed from n/4, not n. Route 1c's
+    engaged data is 2 contiguous runs = 23.6 s => K = 3 non-overlapping 512-pt segments (significance
+    0.776), NOT the "9 independent segments / significance 0.312" the 2026-07-28 record claimed.
+    """
     if len(x) < nfft:
         return None, 0
     freqs = np.fft.rfftfreq(nfft, 1 / FS)
@@ -185,6 +191,24 @@ def main(paths):
         if rail_lo + rail_hi > 0.5:
             print("  ** over half the drive sits at a field endpoint -- the shift is too small;")
             print("     rebuild with CMD_SHIFT=10 before drawing spectral conclusions.")
+
+        # *** 2026-07-29: the railing guard above was the WRONG WAY ROUND. On the road drive (route 24)
+        # rails were 0.10% low / 0.00% high and field 15 never occurred in 943 s -- the probe does not
+        # clip, it UNDER-RANGES. 99.2% of engaged+hands-off frames sat in TWO ADJACENT levels, i.e.
+        # gp-0x6b98 lives inside +-512 while one LSB IS 512 counts => an effectively ~1.5-bit channel.
+        # So the check below is the one that actually fires, and CMD_SHIFT must go DOWN, not up.
+        counts = sorted(fc.items(), key=lambda kv: -kv[1])
+        top2 = sum(n for _, n in counts[:2])
+        if top2 / n330 > 0.80:
+            lv = ", ".join(f"{f}:{100*n/n330:.1f}%" for f, n in counts[:3])
+            print(f"\n  *** UNDER-RANGE: {100*top2/n330:.1f}% of frames sit in the top TWO levels "
+                  f"({lv})")
+            print(f"      One level is {1 << SHIFT} counts, so the command is not spanning the field.")
+            print(f"      => AMPLITUDE figures from this field are NOT defensible; presence and")
+            print(f"         frequency still are (a comparator preserves zero-crossing timing).")
+            print(f"      => Rebuild with CMD_SHIFT=7 (128 counts/level, OFFSET=8). *** If you drop to")
+            print(f"         CMD_SHIFT=6 you MUST also move OFFSET to 9: (x>>6)+8 == 0 for")
+            print(f"         x in [-512,-449], which collides with the 'cave did not fire' sentinel.")
 
     # ---- THE PARTITION: is ~20 Hz in the command? ----
     x = np.asarray(f330, float)

@@ -21,24 +21,66 @@ comes *after* the code, never instead of it. See
 **V56** = V55 + the `0xC6AF0` mute (`0xC6AFC`/`0xC6AFE` 32768→0). Flashed and driven 2026-07-29,
 route `24` — **16 segments, 15:43, the kit's first ROAD drive with a firmware probe.** Fault-free.
 
-🛑 **V56 IS THE RECOMMENDED REVERT. Flash V55 back.** The mute is **null for the 21 Hz** and **costs
-damping**. Full numbers in `memory/reference-accord-v56-flashed-mute-is-null-and-costs-damping.md`;
-narrative in `docs/HANDOFF-2026-07-29-v56-drive-mute-is-null-and-costs-damping.md`.
+🛑 **RECOMMENDED: flash V55 back.** The mute **bought nothing** for the vibration, and the operator reports
+degraded steering feel. Reverting costs nothing (existing, already-driven artifact) and restores a
+known-good state. Full numbers in
+`memory/reference-accord-v56-flashed-mute-is-null-and-costs-damping.md`; narrative in
+`docs/HANDOFF-2026-07-29-v56-drive-mute-is-null-and-costs-damping.md`.
 
 | | V56 route 24 | V55 route 1c |
 |---|---|---|
 | 15-26 Hz engaged/disengaged, speed-matched creep, full 16-bit CAN `0x18F` | **786×** (1.28e8 / 1.63e5) | 877× |
-| command's 21 Hz (probe field, matched creep) | 182 | 22 — **not reduced** |
+| — independent replication, 0.5-3.0 m/s, N=256 | 1,878× torque / 5,524× rate | 20,047× / 23,494× |
+| absolute engaged 15-27 Hz power (counts²) | 7.66e4 | 1.94e5 · R13 6.59e4 |
+| command's in-band content (probe field, matched creep) | 7.45e-2 level² | 3.94e-2 — **went UP ~1.9×** |
 | command transition rate, matched creep | 23.9/s | 21.9/s |
 
-⇒ pre-registered **outcome (iii)**. 🛑 **`gp-0x6ad4` / `FUN_0003a382` is ELIMINATED as the 21 Hz source** —
-V56 killed all three branches at once via the output bound, where V43/V46/V48A each killed one.
+⇒ pre-registered **outcome (iii)**, confirmed two independent ways. 🛑 **`gp-0x6ad4` / `FUN_0003a382` is
+ELIMINATED as the driver of the 20-25 Hz mode** — V56 killed all three branches at once via the output
+bound, where V43/V46/V48A each killed one. ⚠ Note the engaged/disengaged *ratio* spread across builds is
+driven by the **disengaged** baseline (parking-lot idle), not the engaged level — quote the absolute
+engaged power alongside it. And outcome (ii) is **not cleanly resolvable**: V56's command content rose,
+but its windows are 0.5° steering vs V55's 26.9°, n=57 vs 19.
 
-★ **GATE 2 answered, unfavourably.** The operator reports damping removed and a new few-Hz resonance;
-it reproduces as an **intermittent, sharp 8.69 Hz line** (1.18e8, **6.7×** its spectral neighbours,
-n=82 windows at 15-20 m/s, engaged + hands-off, NFFT=1024). Absent from every disengaged spectrum.
-⚠ Two control gaps: **no disengaged windows above 15 m/s**, and **no pre-V56 road baseline exists** —
-route `13` has only segments 12-15 on disk and they are creep (vEgo max 2.73 m/s).
+★★ **The few-Hz resonance is WHEEL ORDER 1 — a TYRE problem, not something V56 created.** Identified on
+the independent `STEER_ANGLE_RATE` channel (`0x18F` bytes[2:4] BE signed × **−0.1** deg/s — the 10× finer
+copy of the field openpilot reads at `0x14A[2:4]`, r = −0.9473):
+
+```
+f = 0.4890·v − 0.186 Hz      r = +0.9970    rms residual 0.037 Hz    intercept ≈ 0 (through the origin)
+implied rolling circumference 2.088 m   (p10-p90 2.076-2.099)
+# a 2020 Accord on 235/45R18 is 2.05-2.11 m  =>  ONE line per wheel revolution
+```
+
+| v (m/s) | n | f measured | v / 2.08 predicted | v/f (m) |
+|---|---|---|---|---|
+| 16.5-18.0 | 32 | 8.496 | 8.568 | 2.092 |
+| 18.0-19.5 | 12 | 8.691 | 8.687 | 2.083 |
+| 19.5-21.0 | 11 | 9.766 | 9.772 | 2.084 |
+
+⇒ **tyre/wheel imbalance, non-uniformity or runout.** A road input, present regardless of firmware, and
+invisible on every prior route because at 1.5 m/s wheel order 1 is 0.7 Hz, not 8.7. Burst-like:
+worst window Q=55, **1608× the local floor**, 77× in power. ⇒ **Get a wheel balance / road-force check.**
+The 2.088 m fit is specific enough to test physically.
+
+★ **AND there is a separate genuine FIXED ~7-8 Hz resonance, on every build** — V56 7.81, V55 7.03,
+V54 8.59, V53 7.03, R13 7.42 Hz at creep, where wheel order is only 0.3-0.8 Hz, so it cannot be wheel
+order. Both are visible simultaneously in the seg-11 high-resolution spectrum (7.275/7.52/7.715 Hz **and**
+the 9.766 Hz wheel-order line at 20.3 m/s). **At 15-20 m/s the wheel-order line sweeps UP THROUGH that
+resonance** — the classic recipe for an intermittent low-frequency shake that only ever appears on the
+road. That is the most likely thing the operator felt.
+
+⚠ **"V56 removed damping" is NOT supported by the data — but it is NOT closable either.** Matched creep
+(0.4-3.0 m/s), engaged + hands-off, torsion bar, 1-10 Hz band variance: **V56 9.75e3 vs V55 5.70e4
+(0.17×), V53 9.68e4 (0.10×), R13 4.03e4 (0.24×), V54 7.38e3 (1.32×)**; angle-controlled (|ang|<5°, only
+R13 survives) V56/R13 = 0.64×. Envelope-decay Q: V56 **3.6**, V55 7.4, V53 14.1, V54 4.8, R13 3.5 — V56 is
+not the least damped. 🛑 **But all of that is at CREEP, and the operator felt it at ROAD speed, where no
+prior build has any data at all.** Do not use the creep table to dismiss the report. GATE 2 stays open
+exactly where it matters.
+
+⚠ **Control gaps:** V56 has **zero disengaged windows above 3 m/s** — the whole road drive was engaged —
+and **no pre-V56 road baseline exists** (route `13` has only segments 12-15 on disk, creep, vEgo max
+2.73 m/s, 250 m total).
 
 🛑 **A 50% partial restore (`Y = 16384`) is NOT a candidate.** The lane at 100% (V55) and 0% (V56)
 produced the same 21 Hz, so intermediate authority is bounded between two agreeing measurements. It is a
@@ -49,19 +91,52 @@ partial revert wearing a candidate's clothes.
 (route `1c`, 113 s parking lot), fault-free. `bit7 = 1` in 11,128/11,128 and again in 94,369/94,369 on
 route `24`.
 
-🛑 **THE PROBE UNDER-RANGES — this invalidates the record's command-side amplitudes.** On the road drive,
-engaged + hands-off, **99.2% of frames sit in two adjacent levels** (field 7 = 59.0%, field 8 = 40.1%)
-⇒ `gp-0x6b98` lives inside **±512** while one LSB is **512 counts**. Rail occupancy is **0.0%**. We
-guarded against railing and got the opposite. The probe is a **~1-bit sign comparator**.
+🛑 **THE PROBE UNDER-RANGES — it is a ~1.5-bit channel, and the record must say so next to every number.**
+On the road drive, engaged + hands-off, **99.2% of frames sit in two adjacent levels** (field 7 = 59.0%,
+field 8 = 40.1%); route-wide it is 94.0% (field 7 = 52.0%, 8 = 42.1%). ⇒ `gp-0x6b98` lives inside **±512**
+while one LSB is **512 counts**. Rail occupancy **0.10% low / 0.00% high**; **field 15 never occurs in
+943 s**; `field == 0` in **0** samples (liveness guard intact). We guarded against railing and got the
+opposite. ⚠ **It is an amplitude comparator but a usable SPECTRAL probe** — that distinction is what makes
+the partition answerable at all, and the sections below split the claims accordingly.
+
+⚠ **Correction of record:** *"Probe live: 10 distinct field values, 100% interior, no rails"* is true of
+the **whole drive** but **false of the analysed engaged subset**, which has **4 distinct values, 93.2% in
+fields 7-8 — effective 1.5 bits.** Always state the subset.
 - **Survives:** presence and frequency (a comparator preserves zero-crossing timing), and the transition
-  rate as a robust statistic.
-- 🛑 **Void:** *"120.5 counts at 21 Hz"* and the *"38× over openpilot's budget"* that rests on it — that
-  is under a quarter of one LSB, set by the quantiser step, not the signal.
-- ⚠ **Provisional:** the *"flat H1 0.192 → 0.216, coherence 0.93"* result, and therefore the
-  **elimination of the `0xC646C` reader set that it licensed**. See §Corrections.
-- **Any future build must re-scale**: `SHIFT = 6` (64 counts/level) or `SHIFT = 7` (128) instead of 9.
+  rate as a robust statistic. Independent check: on V56 engaged+hands-off the **35-45 Hz control band sits
+  BELOW the uniform-quantiser floor** (Δ²/12/50 Hz = 1.667e-3 level²/Hz) while **18-27 Hz sits 3.6× above
+  it at creep** (peak 23.24 Hz, 61× floor). A control band below floor with the mode band well above it is
+  a real detection, not quantiser noise.
+- ⚠ **KEEP but RESTATE — `"120.5 counts at 21 Hz"` is a real detection, not an artifact.** Encoder gain is
+  **1.006 (unbiased)**, and the quantisation false-positive floor at route 1c's actual dither (224-336
+  counts rms) is **10-18 counts** ⇒ 120 counts is **7-12× above floor**. The "less than ¼ of one LSB"
+  objection is **wrong**: averaging K segments over 512 bins recovers far below the step size when dither
+  is present — the floor is set by the noise, not the LSB. Two required restatements: **(a) 120.5 is a
+  bin-RMS, not an amplitude** (÷0.5766 → ≈209 counts amplitude); **(b) 🛑 if openpilot's "31.7 counts" was
+  an amplitude and 120.5 a bin-RMS, the ratio is 66×, not 38×** — the record must state which estimator
+  each used. **Unresolved.** Either way the correction runs *against* openpilot as the source.
+  ⚠ The **railed** subset figure (105.8 counts) is 7.9 s non-contiguous ⇒ ≤1 segment, and its coherence
+  0.66 is at/below its own threshold. **Do not lean on it.**
+- ⚠ **UNCONFIRMED, not refuted:** *"flat H1 0.192 → 0.216."* **Quantisation is exonerated by
+  construction** — the encoder preserves H1's *shape* to a few percent even for a true 0.93 Hz pole, and
+  coherence bias is **downward**, so 0.93 is a lower bound. The real problem is dof: at ±19.6% a pole at
+  fc=16.8 Hz and flat are statistically indistinguishable, and the 0.192→0.216 rise is **not
+  significant**. ⇒ **The `0xC646C` elimination STANDS on its structural leg** (0 matches across all 468
+  instructions of `FUN_0003a382`); the transfer argument is corroborating only. **No candidate returns to
+  scope.**
+- **Re-scale on any future build — and mind the sentinel trap:**
+  🛑 **`SHIFT = 6` with `OFFSET = 8` COLLIDES WITH THE `field == 0` LIVENESS SENTINEL** — `(x>>6)+8 == 0`
+  for x ∈ [−512,−449], which would silently destroy the guard that already saved this kit once (a V54
+  image decoding as a plausible V55 reading). **Offset must go to 9 whenever shift goes to 6.**
+  **Recommended: `SHIFT = 7`, `OFFSET = 8`** (128 counts/level, 4× finer) — the only option whose railing
+  can be **bounded from data** (must-rail 0.13%, may-rail ≤0.83% on route 24 engaged+hands-off). It also
+  preserves enough range to measure the tails, so `SHIFT = 6 / OFFSET = 9` can be chosen on data next time.
 - The full 16-bit CAN `0x18F` sensor figures are **unaffected** — keep sensor-side and command-side
   numbers rigorously separate.
+- 🛑 **`rlog-tools/decode_v55_motorcmd.py` has the wrong guard** — it warns only when rails exceed 50% and
+  prescribes "rebuild with `CMD_SHIFT=10`", i.e. **the wrong direction**, guarding a failure that never
+  occurs while silent on the one that always does. Its `band_power(nfft=256, hop=64)` is 75% overlap, so
+  the printed `K` is ~4× the true dof. **Fixed 2026-07-29.**
 
 **V54** (previous) = the 5-bit `gp-0x6966` authority probe. Its result stands: authority ≡ 0 by design on
 V31+, so the `0xC6AF0` LERP selects unity in 100% of normal operation. **V53** before it = FOURFRAME2 cave
@@ -195,6 +270,19 @@ Panda Honda RX checks are `0x1A6`, `0x296`, `0x158`, `0x17C`, `0x326`, `0x1BE` �
 ## The two open workstreams
 
 ### A. The vibration — ★★ still open; `gp-0x6ad4` ELIMINATED 2026-07-29
+
+🛑 **STOP CALLING IT "21 Hz".** Presence-tested, steady-speed, pooled across builds:
+`f = 0.177·v + 20.48` (r = +0.650) — **24.61 Hz at 19-21 m/s, 25.00 Hz at 21.3 m/s**, in the worst events a
+cluster of extremely narrow lines (24.12/24.32/24.56/24.85/25.15 Hz, **Q = 160-228** at df = 0.0488 Hz).
+The recorded 20.12 @1.0 m/s → 21.68 @4.0 now extends to 25.0 @21.3. It is a **20-25 Hz** mode.
+⚠ It is **not** wheel order (the implied circumference would span 0.06-0.84 m).
+
+🛑 **NEW CONFOUNDER — steering angle moves the mode ~2 Hz, within a single firmware.** V56, creep, engaged,
+hands-off, speed held: |ang| 0-2° → **23.44 Hz** (n=18); 2-5° → 22.66 (n=9); 5-10° → 21.48 (n=17);
+10-20° → 21.48 (n=13). V56's creep data is near-straight (0.5° median, road entry/exit) while **every**
+prior build's creep data is wheel-turned (V55 26.9°, V53 42.2°, V54 17.6°, R13 12.6°). ⇒ the apparent
++2 Hz on V56 at matched *speed* is **fully confounded with angle** and cannot be attributed to firmware,
+**and the historical speed curve is angle-contaminated too.** Condition on angle from now on.
 
 🛑 **Read this before the 2026-07-28 material below.** V56's branch-agnostic mute of `gp-0x6ad4` changed
 **neither** the vibration (786× vs V55's 877×) **nor** the command's 21 Hz. The prime suspect named

@@ -1,12 +1,18 @@
-# HANDOFF 2026-07-29 — V56 drive: the mute is null, it costs damping, and the probe under-ranges
+# HANDOFF 2026-07-29 — V56 drive: the mute is null, the few-Hz shake is a TYRE, and the probe under-ranges
 
 **Route `24`** (`75604b0a432fdc89_00000024--bc45926e80--0..15`), 16 segments, **15:43**, mixed road
 driving up to 21.8 m/s. **The kit's first road drive carrying a firmware telemetry probe** — every prior
 vibration route was parking-lot creep.
 
-**Headline: revert to V55.** V56's `0xC6AF0` mute answered its question in the worst possible way — it
-did **nothing** for the 21 Hz and it **removed damping**. But the null is a real, hard-won result: it
-eliminates an entire lane, branch-agnostically, that three previous builds had only nibbled at.
+🛑 **READ §8 FIRST.** Two deep analysis passes landed after §§1-7 were drafted and **overturned two of
+them.** §8 is authoritative wherever it conflicts. The two big reversals: the ~8.7 Hz line is **wheel
+order 1 (a tyre), not a V56-induced resonance**, and §5's retraction of the command-side amplitude figure
+plus its downgrade of the `0xC646C` elimination were both **over-corrections that are withdrawn**.
+
+**Headline: revert to V55.** The `0xC6AF0` mute **bought nothing** for the 20-25 Hz mode — and the null is
+a real, hard-won result: it eliminates an entire lane, branch-agnostically, that three previous builds had
+only nibbled at. Revert because it gained nothing and the operator reports degraded feel, not because
+"it removed damping" is proven — the data does not support that claim, and cannot test it at road speed.
 
 ---
 
@@ -14,10 +20,10 @@ eliminates an entire lane, branch-agnostically, that three previous builds had o
 
 | # | question | verdict |
 |---|---|---|
-| 1 | is the vibration fixed? | 🛑 **No.** 786× engaged/disengaged, matched creep — V55 was 877× |
-| 2 | did we remove damping / is there new few-Hz resonance? | ★ **Yes, both.** Sharp intermittent **8.69 Hz**, 6.7× above its neighbours |
+| 1 | is the vibration fixed? | 🛑 **No.** 786× engaged/disengaged, matched creep (V55 877×); replicated 1,878×/5,524× |
+| 2 | did we remove damping / is there new few-Hz resonance? | ★★ **The few-Hz shake is WHEEL ORDER 1 — a tyre**, `f = 0.489·v − 0.186` through the origin, circumference **2.088 m** (§8.1). "V56 removed damping" is **unsupported by the data but not closable** — no prior build has road-speed data |
 | 3 | why does openpilot beep to take over? | ✅ **`commIssue`+`selfdrivedLagging` softDisable under chronic device CPU load.** Clean CAN/EPS null |
-| 4 | are we accounting for seeing only a few bits of the value? | 🛑 **No, and it matters more than expected** — the probe is a ~1-bit comparator |
+| 4 | are we accounting for seeing only a few bits of the value? | 🛑 **No — it is a ~1.5-bit channel.** But the audit **upheld** the conclusions: quantisation is exonerated by construction; three restatements needed, not retractions (§8.3) |
 
 ---
 
@@ -223,3 +229,131 @@ Analysis scripts left in the session scratchpad: `steerreq.py`, `xcheck_21hz.py`
 `spectrum_shape.py`, `probe_rails.py`, `field_v55_vs_v56.py`, `h1_v55_v56.py`, plus the subagents'
 `stageA`-`stageD` reports. `probe_rails.py` writes `route24_cache.npz`, which makes re-analysis of this
 route fast.
+
+---
+
+## 8. 🛑 CORRECTIONS — late-arriving analysis overturned two sections above
+
+Two deep passes landed after §§1-7 were written. **Read this section as authoritative where it conflicts.**
+
+### 8.1 The 8.69 Hz line is WHEEL ORDER 1, not a V56-induced resonance
+
+§3 above called it a new resonance. **It is a tyre.** Identified on the independent `STEER_ANGLE_RATE`
+channel — `0x18F` bytes[2:4] BE signed × **−0.1** deg/s, which is the **10× finer** copy of the field
+openpilot itself reads at `0x14A[2:4]` (r = −0.9473 vs `carState.steeringRateDeg`; and `carState`'s value
+is quantised to **1 deg/s**, a crippling quantiser for a ~1.5 deg/s rms line — use the CAN field):
+
+```
+f = 0.4890·v − 0.186 Hz    r = +0.9970    rms residual 0.037 Hz    intercept ~ 0 (THROUGH THE ORIGIN)
+implied rolling circumference 2.088 m  (p10-p90 2.076-2.099)   vs 2.05-2.11 m for 235/45R18
+```
+
+⇒ **one line per wheel revolution: tyre/wheel imbalance, non-uniformity or runout.** Firmware-independent.
+Invisible on every prior route because at 1.5 m/s wheel order 1 is 0.7 Hz, not 8.7. Burst-like — worst
+window Q=55 at **1608× the local floor**, while pooled envelope Q is only 3-4.
+⇒ **ACTION: wheel balance / road-force check.** The 2.088 m fit is specific enough to test physically.
+
+**My non-monotonic speed bins in §3 are explained:** the bins were too coarse (15-20 m/s spans 7.2-9.6 Hz
+of true wheel order, so the bin argmax lands wherever the most windows were) and in weak bins the argmax
+is noise. Restricted to present-and-steady windows it is monotonic and linear.
+
+**There is ALSO a genuine FIXED ~7-8 Hz resonance, on every build** — V56 7.81, V55 7.03, V54 8.59,
+V53 7.03, R13 7.42 Hz at creep, where wheel order is only 0.3-0.8 Hz, so it cannot be wheel order. Both
+appear together in the seg-11 high-resolution spectrum (7.275/7.52/7.715 Hz **and** the 9.766 Hz
+wheel-order line at 20.3 m/s). **At 15-20 m/s the wheel-order line sweeps UP THROUGH that resonance** —
+the classic recipe for an intermittent low-frequency shake that only ever appears on the road. That is
+most likely what was felt.
+
+**And "V56 removed damping" is not supported by the data.** Matched creep, 1-10 Hz band variance:
+V56 **9.75e3** vs V55 5.70e4 (**0.17×**), V53 9.68e4 (0.10×), R13 4.03e4 (0.24×), V54 7.38e3 (1.32×);
+angle-controlled (|ang|<5°, only R13 survives) V56/R13 = 0.64×. Envelope-decay Q: V56 **3.6**, V55 7.4,
+V53 14.1, V54 4.8, R13 3.5 — V56 is not the least damped.
+🛑 **But every one of those numbers is CREEP data, and the report was at ROAD speed where no prior build
+has any data at all.** The creep table does not test the claim. **GATE 2 stays open where it matters.**
+
+### 8.2 The mode is 20-25 Hz, and steering angle confounds every cross-route comparison
+
+**Stop calling it "21 Hz."** Presence-tested, steady-speed, pooled: `f = 0.177·v + 20.48` (r = +0.650) —
+**24.61 Hz at 19-21 m/s, 25.00 at 21.3 m/s**, in the worst events a cluster of very narrow lines
+(24.12/24.32/24.56/24.85/25.15 Hz, **Q = 160-228** at df = 0.0488 Hz). Not wheel order (implied
+circumference would span 0.06-0.84 m).
+
+🛑 **NEW CONFOUNDER: steering angle moves the mode ~2 Hz within one firmware.** |ang| 0-2° → 23.44 Hz
+(n=18); 2-5° → 22.66; 5-10° → 21.48; 10-20° → 21.48. V56's creep is near-straight (0.5° median, road
+entry/exit) while **every** prior build's creep is wheel-turned (V55 26.9°, V53 42.2°, V54 17.6°,
+R13 12.6°). ⇒ V56's apparent +2 Hz at matched *speed* is fully confounded with *angle*, **and the
+historical 20.12 → 21.68 Hz speed curve is angle-contaminated too.** Condition on angle from now on.
+
+### 8.3 §5 over-corrected: the amplitude figure and the `0xC646C` elimination both survive
+
+**"120.5 counts at 21 Hz" is a REAL detection — keep it, restate it.** My "under ¼ of one LSB ⇒ void"
+reasoning was wrong: averaging K segments over 512 bins recovers far below the step size when dither is
+present, so the floor is set by the noise, not the LSB. Encoder gain is **1.006 (unbiased)**; the
+false-positive floor at route 1c's actual dither (224-336 counts rms) is **10-18 counts** ⇒ **120 counts is
+7-12× above floor.** Required restatements: it is a **bin-RMS, not an amplitude** (÷0.5766 → ≈209 counts),
+and 🛑 **38× vs 66× depends on whether openpilot's "31.7 counts" was an amplitude or a bin-RMS — the record
+must say which. Unresolved.** Either way the correction runs *against* openpilot as the source.
+⚠ The railed-subset figure (105.8 counts) is 7.9 s non-contiguous with coherence 0.66 at/below its own
+threshold — **do not lean on it.**
+
+**"flat H1" is UNCONFIRMED, not refuted — and quantisation is EXONERATED by construction.** Ground-truth
+lanes through the exact encoder (Monte Carlo K=30 × 60 trials) reproduce H1's **shape** to a few percent,
+including a true 0.93 Hz pole (true ratio @21/@1 = 0.069, measured 0.071 ± 0.022). A memoryless
+nonlinearity applies one describing-function gain at every frequency — **it cannot flatten a pole.**
+Coherence bias is **downward** (0.963-0.976 for a true 1.000), so the recorded 0.93 is a **lower bound**.
+The real problem is dof: at ±19.6% a pole at fc = 16.8 Hz (rel-sse 0.215) and flat (0.245) are
+**statistically indistinguishable**, and the 0.192 → 0.216 rise is **not significant**.
+
+🛑 **Therefore the `0xC646C` elimination STANDS — my downgrade to "not yet tested" is withdrawn.** Rest it
+on the **structural** leg, which is a byte fact untouched by any of this: **`0xC646C` has 0 matches across
+all 468 instructions of `FUN_0003a382`.** The transfer argument is corroborating only.
+**No candidate cause returns to scope.**
+
+### 8.4 Further corrections of record
+
+- 🛑 **"9 independent segments, coherence significance 0.312" is WRONG.** Route 1c engaged is **2
+  contiguous runs** (998 + 1359 = 2,357 samples = **23.6 s**) ⇒ **K = 3** non-overlapping 512-pt segments,
+  **significance 0.776** (K=6 at 50% overlap → 0.451). Nine would need 46 s. **The quoted coherences
+  (0.672, 0.687) sit near or below their own threshold.** Root cause: `band_power(nfft=256, hop=64)` is
+  75% overlap, overstating dof ~4×.
+- ⚠ **"Probe live: 10 distinct field values, 100% interior, no rails"** is true of the whole drive but
+  **false of the analysed engaged subset** — 4 distinct values, 93.2% in fields 7-8, **effective 1.5 bits.**
+- **Route 24 structural checks all pass:** bit7 = 1 in 94,348/94,348; bits 2:0 = 7 in 94,348/94,348;
+  `field == 0` in **0** samples; **field 15 never occurs in 943 s**; rails 0.10% low / 0.00% high.
+- **Disengaged control is thinner than §3 said:** V56 has **zero** disengaged windows above **3 m/s**, not
+  15 — the entire road drive was engaged.
+- ⚠ **The level-spread is NOT a V55-vs-V56 discriminator**, with a mechanism: at low true sd, **a half-LSB
+  DC shift alone swings the 15-26 Hz statistic 1.45×** (83.6 → 121.4 counts with the true signal held
+  constant), and the two drives' DC differs by exactly that (mode at field 8 on 1c vs field 7 on 24). It
+  measures threshold placement, not the command.
+- ⚠ **A tempting discriminator, tested and KILLED** (so nobody re-runs it): pooled at 1.0-3.0 m/s the peak
+  appears to move 21.09 → 23.44 Hz at matched speed. **Per-segment it dissolves** — route 1c is locked
+  (21.09/21.09/21.09 Hz) while route 24 wanders (20.31/22.66/22.66/21.88/14.06/19.53/23.44/17.19/21.09/
+  20.31) over speeds spanning only 1.17-1.81 m/s. **On route 24 the mode is intermittent, not shifted;**
+  the pooled peak was one strong 5.4 s episode.
+- 🛑 **`SHIFT = 6` with `OFFSET = 8` collides with the `field == 0` sentinel** — `(x>>6)+8 == 0` for
+  x ∈ [−512,−449]. §5's "use 6 or 7" was unsafe as written. **Offset must go to 9 whenever shift goes to
+  6**; recommended is **`SHIFT = 7 / OFFSET = 8`**, the only option whose railing can be bounded from data
+  (must-rail 0.13%, may-rail ≤0.83% on route 24 engaged+hands-off).
+- 🛑 **A ~1.5-bit quantiser folds the mode's 5th harmonic into the few-Hz band** at fs = 100 Hz (25-79
+  counts, +5.1 to +7.1 dB over the local floor). It moves **5× faster with speed** than the mode — that is
+  the test **any** new few-Hz claim from this probe must clear. No evidence of it in existing data (route
+  1c's 5.47 Hz bin carries 3.07 counts, field/sensor ratio 0.059, lowest in the band).
+- **`rlog-tools/decode_v55_motorcmd.py` FIXED**: its railing guard fired only above 50% and prescribed
+  `CMD_SHIFT=10` — the wrong direction, guarding a failure that never occurs while silent on the one that
+  always does. It now flags >80% occupancy in ≤2 adjacent levels, prescribes `CMD_SHIFT=7`, warns about the
+  offset-9 sentinel collision, and documents the 4× dof overstatement. Re-validated on route 1c (fires at
+  90.7%).
+
+### 8.5 The recommendation is unchanged, and gains a non-firmware item
+
+**Revert to V55** — not because "V56 removed damping" is proven (it is not), but because **V56 bought
+nothing** for the mode and the operator reports degraded feel. Lived experience governs, the data cannot
+contradict it at road speed, and reverting is free.
+
+**Plus: get the wheels balanced / road-force checked.** That is a genuine, testable, non-firmware finding
+and the first mechanical lead this project has produced.
+
+**The test that would settle GATE 2 properly:** a hands-off drive on the **same road** at 17-21 m/s with
+the lane restored, **including a deliberate disengaged stretch at 18-20 m/s as the control** — the one
+condition no route in the archive contains.

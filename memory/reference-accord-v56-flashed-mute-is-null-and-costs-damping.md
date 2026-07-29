@@ -23,29 +23,47 @@ as active.
 one branch; V56 killed all three via the output bound. That whole thread is closed — see
 [[reference-accord-gp6ad4-lane-and-c6af0-output-gate]].
 
-## 2. ★ The mute COST damping — GATE 2 answered in the unfavourable direction
+## 2. ★★ The few-Hz resonance is WHEEL ORDER 1 — a TYRE problem, not V56's doing
 
-The operator reports steering feels like **damping was removed**, with a **new resonance at a few Hz in
-some instances**, absent before V56. That is exactly the risk `build_v56_tva.py` flagged as its one open
-gate (*"if the lane is a DAMPING term, muting it could make the vibration worse"*).
+⚠ **This section replaces a first-pass reading that called the ~8.7 Hz line a V56-induced resonance. It
+is not.** Identified on the **independent** `STEER_ANGLE_RATE` channel — `0x18F` bytes[2:4] BE signed
+× **−0.1** deg/s, the 10× finer copy of the field openpilot actually reads at `0x14A[2:4]`
+(r = −0.9473 vs `carState.steeringRateDeg`):
 
-It reproduces in the data. Welch, NFFT=1024 (0.0977 Hz), windows entirely engaged + hands-off +
-CAN-contiguous, split on `steeringPressed` (avoiding the known spurious-7.42 Hz mixing trap):
+```
+f = 0.4890·v − 0.186 Hz     r = +0.9970    rms residual 0.037 Hz    intercept ≈ 0  (through the ORIGIN)
+implied rolling circumference 2.088 m   (p10-p90 2.076-2.099)
+# a 2020 Accord on 235/45R18 is 2.05-2.11 m  =>  exactly ONE line per wheel revolution
+```
 
-| speed bin | n windows | top peak | vs next neighbour |
-|---|---|---|---|
-| 15-20 m/s | 82 | **8.69 Hz at 1.18e8** | **6.7×** (10.06 Hz @1.76e7) |
-| 20-30 m/s | 15 | 9.67 Hz @4.72e7 | — |
-| 10-15 m/s | 49 | 10.94 Hz @1.44e7 | no 8.69 line |
+| v (m/s) | n | f measured | v/2.08 predicted | v/f (m) |
+|---|---|---|---|---|
+| 16.5-18.0 | 32 | 8.496 | 8.568 | 2.092 |
+| 18.0-19.5 | 12 | 8.691 | 8.687 | 2.083 |
+| 19.5-21.0 | 11 | 9.766 | 9.772 | 2.084 |
 
-**Intermittent** — a handful of windows dominate (worst 09:23.21 and 09:21.94, vEgo ~18 m/s,
-P[2-9] = 8.17e7 / 5.22e7), matching "in some few instances". **No disengaged spectrum at any speed shows
-it**; disengaged is dominated by 1.2-3.3 Hz driver input.
+⇒ **tyre/wheel imbalance, non-uniformity or runout** — a road input, firmware-independent, invisible on
+every prior route because at 1.5 m/s wheel order 1 is 0.7 Hz. Burst-like: worst window Q=55, **1608× the
+local floor**, 77× in power; the *pooled* envelope Q is only 3-4, so the sharpness lives entirely in the
+bursts. ⇒ **Get a wheel balance / road-force check.** The 2.088 m fit is specific enough to test.
 
-⚠ **Two control gaps, stated rather than papered over:** there are **zero disengaged windows above
-15 m/s**, so the 8.69 Hz bin has no matched-speed disengaged control; and **there is no pre-V56 road
-baseline in the archive** — route `13`'s surviving segments (12-15 only) are creep, vEgo max 2.73 m/s.
-The operator's felt comparison is the primary evidence that the mode is *new*.
+★ **AND there is a separate genuine FIXED ~7-8 Hz resonance on EVERY build** — V56 7.81, V55 7.03,
+V54 8.59, V53 7.03, R13 7.42 Hz at creep, where wheel order is only 0.3-0.8 Hz, so it cannot be wheel
+order. Both appear simultaneously in the seg-11 high-resolution spectrum (7.275/7.52/7.715 Hz **and** the
+9.766 Hz wheel-order line at 20.3 m/s). **At 15-20 m/s the wheel-order line sweeps UP THROUGH that fixed
+resonance** — the classic recipe for an intermittent low-frequency shake that only ever shows on the road.
+**That is the most likely thing the operator felt.**
+
+⚠ **"V56 removed damping" is NOT supported by the data — and NOT closable.** Matched creep (0.4-3.0 m/s),
+engaged + hands-off, torsion bar, 1-10 Hz band variance: **V56 9.75e3** vs V55 5.70e4 (**0.17×**),
+V53 9.68e4 (0.10×), R13 4.03e4 (0.24×), V54 7.38e3 (1.32×); angle-controlled (|ang|<5°, only R13 survives)
+V56/R13 = **0.64×**. Envelope-decay Q: V56 **3.6**, V55 7.4, V53 14.1, V54 4.8, R13 3.5 — V56 is **not**
+the least damped. 🛑 **But every one of those numbers is at CREEP, and the operator felt it at ROAD speed,
+where no prior build has any data at all.** Do not use the creep table to dismiss the report.
+
+⚠ **Control gaps:** V56 has **zero disengaged windows above 3 m/s** (the whole road drive was engaged), and
+**no pre-V56 road baseline exists** — route `13` has only segments 12-15 on disk, creep, vEgo max
+2.73 m/s, 250 m total.
 
 ## 3. 🛑 A partial restore (`Y = 16384`) is NOT a candidate
 

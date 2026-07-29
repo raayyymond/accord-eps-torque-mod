@@ -46,18 +46,28 @@ result was buried in prose.
 | `0xC6372` / `0xC636E` | boost-assist + damping lane **input EMAs**, `alpha = 205/1024` ⇒ only **−1.29 dB at 21 Hz** | **UNTESTED** — V44 pins both in `STOCK_CALS` as "the rejected candidate B". Candidate #2. 🛑 **GATE 2 severe**: `gp-0x6bbe` is base power steering; 60-73° of added assist-loop lag is the **V48B brick class** |
 | `0x2a1ee` retarget → `0xC6CD0` | decouple 4× forward from the feedback readers | designed + **independently re-verified 2026-07-28**, still unbuilt. ⚠ **It cannot fix the vibration** — `FUN_0003a382` is not among the six readers (0 matches across its 468 instructions). Build it as a *correctness* fix |
 
-### ⚠ The `0xC646C` readers — elimination DOWNGRADED TO PROVISIONAL (2026-07-29)
+### 🛑 The `0xC646C` readers are ELIMINATED — the elimination STANDS, on its structural leg
 
-🛑 **Read this before using the block below.** The elimination turns on the *measured* transfer being
-**flat 1 → 21 Hz**. That measurement came from the `0x14A` probe, which we now know **under-ranges to a
-~1-bit sign comparator** (99.2% of engaged+hands-off frames in two adjacent levels; one LSB = 512 counts;
-`gp-0x6b98` inside ±512). Recomputing H1 with stricter windowing does **not** reproduce "flat 0.192 →
-0.216, coherence 0.93" on either build, and the figure rests on very few degrees of freedom. The
-arithmetic below is still correct *given* a measured 0.221; that input is what is now in doubt.
-⇒ Treat `0xC646C` as **not yet tested**, not as eliminated, until a re-scaled probe re-establishes it.
-See `memory/reference-accord-probe-underranges-to-a-one-bit-comparator.md`.
+⚠ **Correction of a correction, 2026-07-29.** An earlier pass this session downgraded this elimination to
+"not yet tested" on the grounds that the flat-transfer measurement came through a ~1-bit probe. **That
+downgrade was wrong and is withdrawn.** Two things were established:
 
-#### The original 2026-07-28 arithmetic, retained for provenance
+1. **Quantisation is EXONERATED, by construction.** Ground-truth lanes of known shape pushed through the
+   exact encoder `clamp((x>>9)+8,1,15)`, Monte Carlo K=30 × 60 trials: the encoder reproduces H1's
+   **shape** to within a few percent, including a true 0.93 Hz pole (true H1 ratio @21/@1 = 0.069,
+   measured 0.071 ± 0.022). A memoryless nonlinearity applies one describing-function gain at every
+   frequency — **it cannot flatten a pole.** H1 bias is −6%/−8% and shape-preserving; **coherence bias is
+   DOWNWARD** (0.963-0.976 measured for a true 1.000), so the recorded 0.93 is a **lower bound**.
+2. **But the transfer argument is still weak — for a different reason.** With K=3 and ±19.6% error bars,
+   a single pole at fc=16.8 Hz (rel-sse 0.215) and flat (0.245) are **statistically indistinguishable**.
+   ⇒ "the transfer is flat 1→21 Hz" is **UNCONFIRMED**, not refuted, and the rise 0.192→0.216 is **not
+   significant** at ±20%.
+
+⇒ **Rest the elimination on the STRUCTURAL kill, which is a byte fact and untouched by any of this:
+`0xC646C` has 0 matches across all 468 instructions of `FUN_0003a382`**, so the carrier cannot read it.
+The transfer argument is **corroborating only**. **No candidate cause returns to scope.**
+
+#### The 2026-07-28 arithmetic, retained — still correct *given* a measured 0.221
 ```python
 # FUN_00036682 (readers #5/#6) -- and it is not even a plain EMA: y[n-1] is subtracted twice,
 # giving y[n] = y[n-1]*(1-2a) + a*K*x[n], so DC gain is K/2, not K.
