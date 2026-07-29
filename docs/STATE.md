@@ -166,7 +166,7 @@ reports `fw='39990-TVA,A160'`. (It *can* now be identified behaviourally: ST=3 n
 | build | what | status |
 |---|---|---|
 | **V55** | the **revert target** — probe intact, no mute | ✅ built, driven, fault-free. **Flash this to undo V56.** SHA `2b0fbd61e6658726ea72248f5312f4521638acaebcbd6f09d8c999e1a9e81fbf` |
-| **V57** | V55 + the **`0xC646C` decoupling** — 4× hits the LKAS forward path ONLY | ✅ **BUILT 2026-07-29, UNFLASHED.** `0x2A1F0` disp `0x746C`→`0x7CD0`; `0xC6CD0`←3564 (private); `0xC646C`→891 (stock). 14 bytes off V55, 88 off V38, 50/50 CRC, RWD round-trip gated, verified against the built image. 🛑 **Correctness fix — expected NULL for the grinding** (≤0.28 dB @22 Hz). ⚠ manual feel will change. RWD SHA `816d225522f7a327ee9b97bf096bec918e7e36c82f57a17225e0f5455216d019` |
+| **V57** | V55 + the **`0xC646C` decoupling** + the **DEADBAND-GATE PROBE** | ✅ **BUILT 2026-07-29, UNFLASHED.** (A) `0x2A1F0` disp `0x746C`→`0x7CD0`; `0xC6CD0`←3564 (private); `0xC646C`→891 (stock). (B) V55's cave payload REPLACED at the same base/hook/extent (68 B): `0x14A` byte4 **bit7=liveness, bit6=(gp-0x6806==0) EXACT gate test, bit5=(gp-0x69b0!=0), bit4=(gp-0x6b30==0), bit3=(gp-0x6b30<0)**. 58 bytes off V55, 88 off V38, 50/50 CRC, RWD round-trip gated, cave re-decoded from the built image. 🛑 (A) is a correctness fix, expected NULL. (B) closes the **parity hole** in the deadband elimination. ⚠ code in the 1 kHz TX path — higher risk class than a cal-only build. RWD SHA `6263acf185a00849c4dd0556f15bd834faf63a9795c610228d83d64eadb5dd3b` |
 | ~~**V56**~~ | V55 + the `0xC6AF0` mute | 🛑 **FLASHED AND FALSIFIED 2026-07-29.** Null for the 21 Hz, costs damping, adds an 8.69 Hz mode. Do not re-flash |
 | `0x2a1ee` retarget → `0xC6CD0` | the `0xC646C` decoupling — correctness fix | verified safe + byte-minimal, **unbuilt**. Will NOT fix the vibration (see below) |
 | `0xC6372` / `0xC636E` | the untested wideband assist EMAs | candidate #2, **needs its own GATE 2 pass** first |
@@ -518,6 +518,12 @@ builds; none of them change a measured on-car outcome.**
   operator's *"significant driver torque in a direction kills the grinding"*. It explains the **kill, not
   the creation** — hands-off the curve is flat at 254. ⚠ The `0xC64B8` threshold branch is **dead** since
   V37 set it to `0xFF`.
+- ⚠ **…but the bus carries PARITY, not the gate's test.** The packer does `andi 0x1, r15` (`0x55c7e`)
+  while the gate tests **exact equality** (`cmp r0,r12 ; bne` @`0x2a1ba`/`0x2a1bc`). Four of the flag's
+  eight live writers store a **register**, not a literal, so a value of 2 reads as bit0 = 0 while the gate
+  is DISABLED — and a 0↔2 toggle at 22 Hz would be invisible (bit3 flat, zero transitions). Low
+  probability, but the elimination rests on an argument at that last step. **V57's probe bit6 is the exact
+  test and closes it.** Decoder: `rlog-tools/decode_v57_deadband.py`.
 - 🛑 **`gp-0x6806` is ON THE BUS** — CAN `0x18F` byte4 bit3 = `STEER_CONTROL_ACTIVE` (packer
   `FUN_00055c42`, matches opendbc `BO_ 399`). Measured route 24: **==1 in 96.26%, TWO transitions in
   180 s** ⇒ the `0xC61B8` deadband + sign relay is **bypassed in steady engaged driving** and cannot be a

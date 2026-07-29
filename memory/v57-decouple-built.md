@@ -1,21 +1,50 @@
 ---
 name: v57-decouple-built
-description: "V57 = V55 + the 0xC646C decoupling: 0x2A1EE retargeted to a private gain word at 0xC6CD0 so the 4x hits the LKAS forward path ONLY, while the four feedback readers revert to stock 891. BUILT and verified, UNFLASHED. Correctness fix, expected NULL for the 20-25 Hz mode."
+description: "V57 = V55 + the 0xC646C decoupling (4x hits the LKAS forward path ONLY) + the DEADBAND-GATE PROBE (V55 cave payload replaced; 0x14A byte4 bit6 = the EXACT gp-0x6806==0 test the bus cannot give, because the packer transmits parity). BUILT and verified, UNFLASHED."
 metadata:
   node_type: memory
   type: project
 ---
 
-**Built 2026-07-29. UNFLASHED.** 14 bytes off V55 (6 edit + 8 CRC), 88 bytes off V38.
+**Built 2026-07-29. UNFLASHED.** 58 bytes off V55, 88 off V38. TWO orthogonal changes.
 
 ```
+(A) DECOUPLING
 0x2A1F0  ld.h displacement  0x746C -> 0x7CD0   (tp+0x7CD0 = 0xC6CD0)   [MAIN block]
 0xC6CD0  new private LKAS gain word  0xFFFF -> 3564                    [CAL block]
 0xC646C  shared sensor scale         3564  -> 891 (stock)              [CAL block]
 
-_v57_plain_image.bin  SHA 9a027e82c065d48721bd194e315528516ef6963fc4821511c7e7242676ab13ea
-V57 .rwd              SHA 816d225522f7a327ee9b97bf096bec918e7e36c82f57a17225e0f5455216d019
+(B) DEADBAND-GATE PROBE -- V55's cave payload REPLACED, same base 0xC4B34, same hook 0x55C0E,
+    same 68-byte extent (no widening). 0x14A byte4:
+      bit7 = 1                    LIVENESS (field==0 => cave did not fire)
+      bit6 = (gp-0x6806 == 0)     the gate is ENABLED -- EXACT equality
+      bit5 = (gp-0x69b0 != 0)     ramp gain LIVE
+      bit4 = (gp-0x6b30 == 0)     gate output EXACTLY ZERO
+      bit3 = (gp-0x6b30 <  0)     gate output NEGATIVE
+      bits 2:0 stock STEER_SENSOR_STATUS, preserved
+
+_v57_plain_image.bin  SHA 351735984aa0ec43572e94a0592b2fe8758d9a8e93c9844fcc226dd091179125
+V57 .rwd              SHA 6263acf185a00849c4dd0556f15bd834faf63a9795c610228d83d64eadb5dd3b
+decoder               rlog-tools/decode_v57_deadband.py
 ```
+
+## 🛑 (B) WHY — the parity hole in this kit's own elimination
+
+The deadband elimination measured `STEER_CONTROL_ACTIVE` (CAN 0x18F byte4 bit3), which the packer
+sources from `gp-0x6806`:
+```
+0x55c76 ld.bu -0x6806,gp,r15 ; 0x55c7e andi 0x1,r15,r15 ; 0x55c82 shl 0x3,r15
+```
+**`andi 0x1` transmits PARITY. The gate tests EXACT EQUALITY** (`cmp r0,r12 ; bne`, `0x2a1ba`/`0x2a1bc`).
+Four of the flag's eight live writers store a **register** (r6/r14/r11/r6), not a literal, so a value of 2
+reads as bit0 = 0 while the gate is DISABLED -- and a 0<->2 toggle at 22 Hz would be wholly invisible
+(bit3 flat at 0, zero transitions). Low probability, but the last step of the elimination rested on an
+argument rather than a measurement. **Bit 6 closes it.** Bits 4/3 give the output's 3-state
+{neg, zero, pos}: a chattering relay visits zero between sign flips, so bit4's spectrum carries a
+20-25 Hz line if the mechanism is real. Bit 5 separates "zero because the ramp is zero" from "zero
+because the gate fired".
+
+⚠ **Expected result: NEGATIVE.** Recorded up front so a null is not re-litigated as a surprise.
 
 Verified against the BUILT image (not the build script's own claims):
 ```
@@ -56,7 +85,12 @@ is read back INSIDE #5 to size the half-width of a hysteresis dead-band
 
 ## Gates
 
-- **GATE 1: vacuous.** No cave, no RAM, no register-indirect. `0xC6CD0` verified free by fresh full-image
+- **GATE 1 (A): vacuous.** No RAM, no register-indirect. **(B): INHERITED, not widened** -- same cave base,
+  hook and 68-byte extent (four flashed builds), payload READ-ONLY, writes only the TX buffer byte stock
+  writes anyway, no scratch RAM, r6/r7 already scratch at the hook. 🛑 **Still CODE in the 1 kHz TX path --
+  a higher risk class than V57's cal-only half.** Cave re-decoded from the BUILT image: all 22
+  instructions correct, all 4 branch targets exact, the two loads with real counterparts differ from them
+  ONLY in the reg2 field (8437 vs 8467; 2437 vs 246f), tail 0xFF with no V55 remnants. `0xC6CD0` verified free by fresh full-image
   scan (0 disp16 loads, 0 stores, 0 extended-disp, 0 LE32 pointer hits); `0xFF` from `0xC6CA4` to
   `0xC6FEF`; preceding 4-point LERP at `0xC6C90` ends cleanly at `0xC6CA4`; footer resumes `0xC6FF0`.
 - **GATE 2:** ✅ **no float mirror** — a fresh scan for ANY 32-bit tp-relative access in `[0x7440,0x74A0)`
