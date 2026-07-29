@@ -1,12 +1,12 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-07-28.** This file is the single current-state record. Update it in place at every
+**Last updated: 2026-07-29.** This file is the single current-state record. Update it in place at every
 close-out; do not append new dated blocks (that is what made `CLAUDE.md` unreadable). The narrative of how
 each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed and falsified — check it before
 proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-07-28-v55-drive-oscillation-is-internal-and-v56-mute.md`.
+`docs/HANDOFF-2026-07-29-v56-drive-mute-is-null-and-costs-damping.md`.
 
 🛑 **Explain firmware with Python that mirrors the decompiled arithmetic exactly** — standing operator
 instruction, 2026-07-28. Integer `>>`, the real Q-format, the real branch conditions, each line annotated
@@ -67,7 +67,7 @@ guarded against railing and got the opposite. The probe is a **~1-bit sign compa
 V31+, so the `0xC6AF0` LERP selects unity in 100% of normal operation. **V53** before it = FOURFRAME2 cave
 + `0xC62EA` 320→0; steer-to-zero confirmed. Both superseded as flash candidates.
 
-⚠ The `0x14A` byte4 bits 7:3 piggyback is now proven across **three** flashes (V54, V55). Use it for all
+⚠ The `0x14A` byte4 bits 7:3 piggyback is now proven across **three** flashes (V54, V55, V56). Use it for all
 future firmware telemetry; do not build another new-mailbox channel.
 
 ✅ **Steer-to-zero WORKS — confirmed from the rlog, not just by report.** Route `1a` segment 0:
