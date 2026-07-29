@@ -16,8 +16,9 @@ result was buried in prose.
 
 | address | what it is | build | flashed? | on-car result |
 |---|---|---|---|---|
-| `0xC6450` | `FUN_0003a382` Stage-A carrier pole (1024 = exact unity) | **V46** | ✅ | ⚠ **RE-FRAMED 2026-07-28 — NOT a falsification of the lane.** 1024→32 = only −12.6 dB at 21 Hz, and it attenuated **one of three PARALLEL branches** |
-| `0xC644A` | `FUN_0003a382` Stage-C dirty-derivative pole (a **discrete derivative**, `2·sin(w/2)`) | **V43** | ✅ | ⚠ **RE-FRAMED — same reason.** 1024→64 = −7.1 dB, one branch of three |
+| **`0xC6AFC` + `0xC6AFE`** 32768→0 | `FUN_0003a382` output-bound LERP Y[0]/Y[1] — the **branch-agnostic mute** of the whole `gp-0x6ad4` lane | **V56** | ✅ | 🛑 **FALSIFIED FOR THE VIBRATION *AND* HARMFUL — 2026-07-29, route `24`.** 21 Hz unchanged (**786×** engaged/disengaged speed-matched, vs V55's 877×) and the command's 21 Hz did **not** drop ⇒ **the lane is ELIMINATED as the 21 Hz source, all three branches at once.** ★ It also **cost damping**: operator reports damping removed, and an intermittent **8.69 Hz** line appears (1.18e8, 6.7× its neighbours, 15-20 m/s, engaged+hands-off). **REVERT TO V55.** 🛑 A 50% partial restore (`Y=16384`) is **not** a candidate — 0% and 100% already agree, so intermediate authority is bounded between two agreeing measurements |
+| `0xC6450` | `FUN_0003a382` **Stage-A = the P term's own extra smoothing EMA** (1024 = exact unity) | **V46** | ✅ | ⚠ **RE-FRAMED twice.** 1024→32 = −12.6 dB at 21 Hz, one of three branches — *and* 2026-07-29: it was **re-introducing a defeated pole**, not filtering the lane. Moot now: V56 eliminated the lane |
+| `0xC644A` | `FUN_0003a382` **Stage-C = the D term's own extra smoothing EMA** (1024 = exact unity) | **V43** | ✅ | ⚠ **RE-FRAMED — same reason.** 1024→64 = −7.1 dB, one branch of three. Moot: lane eliminated by V56 |
 | `0xC643F` / `0xC6445` + `0xC6A72/86/9A/AE` | `r26` adaptive torque-rate gain surface | **V42** ch.2 | ✅ | 🛑 **FALSIFIED** |
 | `0xC6440/42/46`, `0xC61F6` | `r24` direct Sensor-B rate lane | **V39** | ✅ | 🛑 **FALSIFIED** |
 | `0xD27C6` / `0xD27DA` | damper Factor C hands-off deadzone Y[0] — **variant-coded, entries 10/11** | **V44** | ✅ | 🛑 **FALSIFIED** (Factor E re-zeroes the product). ✅ **2026-07-28: confirmed it hit the LIVE table.** PN `39990-TVA-A160` → key `TVAA1` → config row 2 → INDEX **10** → `0xD27BC`, exactly what V44 edited. ⚠ one-bit residual: the coded row is in EEPROM, not the flash dump, and the TVA family splits ({TVAA0,2,4}→idx 4). **V55 carries a telemetry bit for it** |
@@ -41,11 +42,22 @@ result was buried in prose.
 ### Untested levers currently on the table
 | address | what | status |
 |---|---|---|
-| **`0xC6AFC` + `0xC6AFE`** (Y[0], Y[1] of the `0xC6AF0` LERP) | `FUN_0003a382` authority→output-bound LERP | ✅ **BUILT AS V56 2026-07-28.** Direction measured by V54; **completeness confirmed in Ghidra twice independently** — the LERP result is a Q15 multiplier on the ceiling that clamps the lane's **FINAL combined value** (`mul r15,r10`+`sar 0xf` @`0x3a79e`/`0x3a7aa` → the ±clamp @`0x3a88c-94` → `st.h` @`0x3a8a0`), so the mute is **branch-agnostic**, unlike V43/V46/V48A. 🛑 GATE 2: monitor risk CLOSED (1 writer/1 reader, no lockstep), **damping sign and manual feel OPEN** |
+| ~~`0xC6AFC` + `0xC6AFE`~~ | moved to the flashed table above — **V56, falsified and harmful 2026-07-29** | 🛑 **DONE. Do not re-propose, at any authority value.** The GATE-2 "damping sign OPEN" caveat resolved *against* the mute on-car |
 | `0xC6372` / `0xC636E` | boost-assist + damping lane **input EMAs**, `alpha = 205/1024` ⇒ only **−1.29 dB at 21 Hz** | **UNTESTED** — V44 pins both in `STOCK_CALS` as "the rejected candidate B". Candidate #2. 🛑 **GATE 2 severe**: `gp-0x6bbe` is base power steering; 60-73° of added assist-loop lag is the **V48B brick class** |
 | `0x2a1ee` retarget → `0xC6CD0` | decouple 4× forward from the feedback readers | designed + **independently re-verified 2026-07-28**, still unbuilt. ⚠ **It cannot fix the vibration** — `FUN_0003a382` is not among the six readers (0 matches across its 468 instructions). Build it as a *correctness* fix |
 
-### 🛑 The `0xC646C` readers are ELIMINATED as the vibration carrier (measured, 2026-07-28)
+### ⚠ The `0xC646C` readers — elimination DOWNGRADED TO PROVISIONAL (2026-07-29)
+
+🛑 **Read this before using the block below.** The elimination turns on the *measured* transfer being
+**flat 1 → 21 Hz**. That measurement came from the `0x14A` probe, which we now know **under-ranges to a
+~1-bit sign comparator** (99.2% of engaged+hands-off frames in two adjacent levels; one LSB = 512 counts;
+`gp-0x6b98` inside ±512). Recomputing H1 with stricter windowing does **not** reproduce "flat 0.192 →
+0.216, coherence 0.93" on either build, and the figure rests on very few degrees of freedom. The
+arithmetic below is still correct *given* a measured 0.221; that input is what is now in doubt.
+⇒ Treat `0xC646C` as **not yet tested**, not as eliminated, until a re-scaled probe re-establishes it.
+See `memory/reference-accord-probe-underranges-to-a-one-bit-comparator.md`.
+
+#### The original 2026-07-28 arithmetic, retained for provenance
 ```python
 # FUN_00036682 (readers #5/#6) -- and it is not even a plain EMA: y[n-1] is subtracted twice,
 # giving y[n] = y[n-1]*(1-2a) + a*K*x[n], so DC gain is K/2, not K.

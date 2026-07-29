@@ -18,12 +18,50 @@ comes *after* the code, never instead of it. See
 
 ## On the car right now
 
-**V55** = V38 calibration + `0xC62EA` 320→0 + the dual probe on `0x14A` byte4 (bit7 = damper variant
-index ≥ 10; bits 6:3 = 4-bit `gp-0x6b98` motor command). Flashed and driven 2026-07-28 (route `1c`,
-two segments, 113 s parking lot), **fault-free**.
+**V56** = V55 + the `0xC6AF0` mute (`0xC6AFC`/`0xC6AFE` 32768→0). Flashed and driven 2026-07-29,
+route `24` — **16 segments, 15:43, the kit's first ROAD drive with a firmware probe.** Fault-free.
 
-✅ **The probe is live and both of its questions are answered** — 10 distinct field values, 100%
-interior, no rails; `bit7 = 1` in 11,128/11,128.
+🛑 **V56 IS THE RECOMMENDED REVERT. Flash V55 back.** The mute is **null for the 21 Hz** and **costs
+damping**. Full numbers in `memory/reference-accord-v56-flashed-mute-is-null-and-costs-damping.md`;
+narrative in `docs/HANDOFF-2026-07-29-v56-drive-mute-is-null-and-costs-damping.md`.
+
+| | V56 route 24 | V55 route 1c |
+|---|---|---|
+| 15-26 Hz engaged/disengaged, speed-matched creep, full 16-bit CAN `0x18F` | **786×** (1.28e8 / 1.63e5) | 877× |
+| command's 21 Hz (probe field, matched creep) | 182 | 22 — **not reduced** |
+| command transition rate, matched creep | 23.9/s | 21.9/s |
+
+⇒ pre-registered **outcome (iii)**. 🛑 **`gp-0x6ad4` / `FUN_0003a382` is ELIMINATED as the 21 Hz source** —
+V56 killed all three branches at once via the output bound, where V43/V46/V48A each killed one.
+
+★ **GATE 2 answered, unfavourably.** The operator reports damping removed and a new few-Hz resonance;
+it reproduces as an **intermittent, sharp 8.69 Hz line** (1.18e8, **6.7×** its spectral neighbours,
+n=82 windows at 15-20 m/s, engaged + hands-off, NFFT=1024). Absent from every disengaged spectrum.
+⚠ Two control gaps: **no disengaged windows above 15 m/s**, and **no pre-V56 road baseline exists** —
+route `13` has only segments 12-15 on disk and they are creep (vEgo max 2.73 m/s).
+
+🛑 **A 50% partial restore (`Y = 16384`) is NOT a candidate.** The lane at 100% (V55) and 0% (V56)
+produced the same 21 Hz, so intermediate authority is bounded between two agreeing measurements. It is a
+partial revert wearing a candidate's clothes.
+
+**V55** (the revert target) = V38 calibration + `0xC62EA` 320→0 + the dual probe on `0x14A` byte4
+(bit7 = damper variant index ≥ 10; bits 6:3 = 4-bit `gp-0x6b98` motor command). Driven 2026-07-28
+(route `1c`, 113 s parking lot), fault-free. `bit7 = 1` in 11,128/11,128 and again in 94,369/94,369 on
+route `24`.
+
+🛑 **THE PROBE UNDER-RANGES — this invalidates the record's command-side amplitudes.** On the road drive,
+engaged + hands-off, **99.2% of frames sit in two adjacent levels** (field 7 = 59.0%, field 8 = 40.1%)
+⇒ `gp-0x6b98` lives inside **±512** while one LSB is **512 counts**. Rail occupancy is **0.0%**. We
+guarded against railing and got the opposite. The probe is a **~1-bit sign comparator**.
+- **Survives:** presence and frequency (a comparator preserves zero-crossing timing), and the transition
+  rate as a robust statistic.
+- 🛑 **Void:** *"120.5 counts at 21 Hz"* and the *"38× over openpilot's budget"* that rests on it — that
+  is under a quarter of one LSB, set by the quantiser step, not the signal.
+- ⚠ **Provisional:** the *"flat H1 0.192 → 0.216, coherence 0.93"* result, and therefore the
+  **elimination of the `0xC646C` reader set that it licensed**. See §Corrections.
+- **Any future build must re-scale**: `SHIFT = 6` (64 counts/level) or `SHIFT = 7` (128) instead of 9.
+- The full 16-bit CAN `0x18F` sensor figures are **unaffected** — keep sensor-side and command-side
+  numbers rigorously separate.
 
 **V54** (previous) = the 5-bit `gp-0x6966` authority probe. Its result stands: authority ≡ 0 by design on
 V31+, so the `0xC6AF0` LERP selects unity in 100% of normal operation. **V53** before it = FOURFRAME2 cave
@@ -52,7 +90,8 @@ reports `fw='39990-TVA,A160'`. (It *can* now be identified behaviourally: ST=3 n
 
 | build | what | status |
 |---|---|---|
-| **V56** | V55 (probe intact) + the `0xC6AF0` **mute**: `0xC6AFC` Y[0] and `0xC6AFE` Y[1] 32768→0 | ✅ **BUILT, gated, verified — the one to flash.** A lever *and* a measurement. 🛑 GATE 2 only partially closed |
+| **V55** | the **revert target** — probe intact, no mute | ✅ built, driven, fault-free. **Flash this to undo V56.** SHA `2b0fbd61e6658726ea72248f5312f4521638acaebcbd6f09d8c999e1a9e81fbf` |
+| ~~**V56**~~ | V55 + the `0xC6AF0` mute | 🛑 **FLASHED AND FALSIFIED 2026-07-29.** Null for the 21 Hz, costs damping, adds an 8.69 Hz mode. Do not re-flash |
 | `0x2a1ee` retarget → `0xC6CD0` | the `0xC646C` decoupling — correctness fix | verified safe + byte-minimal, **unbuilt**. Will NOT fix the vibration (see below) |
 | `0xC6372` / `0xC636E` | the untested wideband assist EMAs | candidate #2, **needs its own GATE 2 pass** first |
 | FOURFRAME2 | telemetry on IDs `0x6A0`-`0x6A3` | **retired** — the channel is unobservable |
@@ -155,7 +194,22 @@ Panda Honda RX checks are `0x1A6`, `0x296`, `0x158`, `0x17C`, `0x326`, `0x1BE` �
 
 ## The two open workstreams
 
-### A. The vibration — ★★ MEASURED 2026-07-28 as a closed-loop instability INTERNAL to the EPS
+### A. The vibration — ★★ still open; `gp-0x6ad4` ELIMINATED 2026-07-29
+
+🛑 **Read this before the 2026-07-28 material below.** V56's branch-agnostic mute of `gp-0x6ad4` changed
+**neither** the vibration (786× vs V55's 877×) **nor** the command's 21 Hz. The prime suspect named
+throughout the rest of this section is **dead**. What remains true: the mode is physical, hands-off,
+engagement-dependent, moves with speed, and is internal to the EPS. What is now **provisional**: every
+command-side *amplitude*, because the probe under-ranges to ~1 bit (see "On the car right now").
+
+⇒ The search moves to the **other eight aggregator lanes**, all confirmed additive at `FUN_0003aa2c`.
+
+★ **New symptom introduced by V56:** an intermittent, sharp **8.69 Hz** line at 15-20 m/s, engaged +
+hands-off — 1.18e8, 6.7× its spectral neighbours, absent from every disengaged spectrum. Expected to
+disappear on reverting to V55; **confirm that on the next drive**, because it is also the cleanest
+available test that the mute was genuinely live on the car.
+
+#### Historical framing from 2026-07-28 — the suspect it names is now eliminated
 
 **The V55 drive (route `1c`) settled the two biggest open questions.** Full numbers in
 `memory/reference-accord-v55-flashed-oscillation-is-internal.md`.
@@ -271,18 +325,31 @@ is roughly 0.1–3 mph: creep, parking lots, stop-and-go.
 remains in scope as a *measurement instrument* (rlogs, CAN decode, correlation) only. See
 `memory/feedback-no-openpilot-side-modifications.md`.
 
-1. **Flash V56**, one parking-lot loop, same conditions as `1c` (creep, hands off, engaged). Decode with
-   `rlog-tools/decode_v55_motorcmd.py` — the probe is unchanged, so it reads V56 directly. Three outcomes:
-   vibration gone ⇒ root cause; vibration persists **but the command's 21 Hz drops** ⇒ the lane was a
-   carrier, not the loop; neither moves ⇒ `gp-0x6ad4` eliminated as a class.
-2. **`0xC6372`/`0xC636E`** — candidate #2, the only other lanes unattenuated at 21 Hz (−1.29 dB).
+1. 🛑 **Flash V55 back.** V56 is falsified *and* it degraded the car — it removed damping and added an
+   8.69 Hz mode without buying anything. V55 is already built, already driven, fault-free, and keeps the
+   probe. This is a straight revert, not a new experiment.
+2. **Enumerate the other 8 aggregator lanes.** This is the real opening. The 21 Hz survived a
+   branch-agnostic kill of `gp-0x6ad4`, so it enters `gp-0x6b98` through a **different summand** — and
+   the full list is now confirmed, every one folded in by a plain `add` at `FUN_0003aa2c`:
+   `gp-0x6b62`, `-0x6b4c`, `-0x6ade`, ~~`-0x6ad4`~~, `-0x6b26` (friction), `-0x6bbe` (boost),
+   `-0x6bd0` (damping), `-0x6b86`, plus `FUN_00036682`'s return. Rank them by attenuation at 21 Hz
+   before proposing any lever.
+3. **Re-scale the probe before the next telemetry build.** `SHIFT = 9` is ~6 bits too coarse for the
+   observed ±512 range; use 6 or 7. Until then, treat every command-side amplitude in the record as void.
+4. **Re-establish or retract the `0xC646C` elimination.** It rests on the flat-H1 result, which is now
+   known to be a few-dof estimate through a 1-bit output. Either re-derive it on a re-scaled probe or
+   demote it from "eliminated" to "not yet tested".
+5. **`0xC6372`/`0xC636E`** — candidate #2, the only other lanes unattenuated at 21 Hz (−1.29 dB).
    🛑 **Needs its own GATE 2 pass first**: `gp-0x6bbe` is base power steering, and adding 60-73° of lag
-   to the always-on assist loop is the **V48B brick class**.
-3. **The `0xC646C` decoupling** (`0x2a1ee` retarget → `0xC6CD0`) — build it as the **correctness fix** it
-   is. ⚠ **It will NOT fix the vibration:** `FUN_0003a382` is not among the six readers (0 matches across
-   its 468 instructions), so the retarget cannot touch the carrier.
-4. **Re-derive the V31 boost-floor margin** (`0xC67D8`, `0xC61B4`) — the recorded arithmetic does not
+   to the always-on assist loop is the **V48B brick class**. ⚠ V56 is now a cautionary precedent for
+   muting a lane whose damping sign is unproven.
+6. **The `0xC646C` decoupling** (`0x2a1ee` retarget → `0xC6CD0`) — build it as the **correctness fix** it
+   is. ⚠ It will NOT fix the vibration: `FUN_0003a382` is not among the six readers.
+7. **Re-derive the V31 boost-floor margin** (`0xC67D8`, `0xC61B4`) — the recorded arithmetic does not
    reconcile with the image. Not blocking; V54 measured the margin directly.
+8. **The take-over beep is closed and is not a firmware item** — `commIssue`/`selfdrivedLagging`
+   softDisable under chronic device CPU load, with a clean CAN/EPS null. See
+   `memory/accord-takeover-beep-is-openpilot-device-load.md`.
 
 🛑 **Do NOT re-drive at road speed merely to "see if authority moves."** It will not — `gp-0x6966` is
 wind-up-driven, not speed-driven, and V31's boost floor makes wind-up unreachable. Provoking it would

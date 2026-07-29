@@ -18,8 +18,9 @@ an already-flashed, already-falsified lever because the result was buried in pro
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
    **Mandatory before proposing any calibration edit.**
 3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session.
-   Latest: `HANDOFF-2026-07-28-v55-drive-oscillation-is-internal-and-v56-mute.md`
-   (predecessors: `HANDOFF-2026-07-28-v54-drive-authority-resolved-and-v55-partition-probe.md`, then
+   Latest: `HANDOFF-2026-07-29-v56-drive-mute-is-null-and-costs-damping.md`
+   (predecessors: `HANDOFF-2026-07-28-v55-drive-oscillation-is-internal-and-v56-mute.md`, then
+   `HANDOFF-2026-07-28-v54-drive-authority-resolved-and-v55-partition-probe.md`, then
    `HANDOFF-2026-07-27-v53-drive-result-and-v54-authority-probe.md`, then
    `HANDOFF-2026-07-27-v53-fourframe2-plus-minsteerspeed0.md`, then
    `HANDOFF-2026-07-27-fourframe-strb-defect-and-vibration-reframe.md`)

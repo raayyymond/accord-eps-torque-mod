@@ -653,11 +653,27 @@ class Calibration:
             # (loads Y[0] directly), while 1..3276 interpolates Y[0]->Y[1]; V54 measured gp-0x6966 in
             # [0,127], straddling that boundary.
             #
-            # 🛑 GATE 2 only PARTIALLY closed. Monitor risk CLOSED (gp-0x6ad4 has exactly 2 gp-relative
-            # accesses image-wide: writer 0x3a8a0, reader 0x3aca8; no lockstep/shadow/monitor).
-            # Protection removal CLOSED (Y[2..4] are never invoked). OPEN: the damping sign at 21 Hz,
-            # and manual steering feel -- gp-0x6ad4 is NOT LKAS-gated (its ceiling hangs off gp-0x67fe,
-            # the EPS FOC substate, which V31P measured at 1 in 100% of frames INCLUDING disengaged).
+            # 🛑🛑 V56 IS NOW FLASHED AND FALSIFIED -- route `24`, 2026-07-29, 16 segments, 15:43, the
+            # kit's FIRST ROAD DRIVE with a probe. GATE 2's open item resolved AGAINST the mute.
+            #
+            #   * 21 Hz UNCHANGED. Speed-matched creep (vEgo<=1.6), engaged+hands-off, full 16-bit
+            #     CAN 0x18F: P[15-26] engaged 1.28e8 vs disengaged 1.63e5 = 786x (V55 recorded 877x).
+            #     The command's 21 Hz did NOT drop either (probe field P[15-26] 182 vs V55's 22 at
+            #     matched creep; transition rate 23.9/s vs 21.9/s).
+            #     => pre-registered OUTCOME (iii): gp-0x6ad4 / FUN_0003a382 is ELIMINATED as the 21 Hz
+            #     source, all three branches at once. Do not re-propose this lane.
+            #   * IT COST DAMPING. Operator reports damping removed; an intermittent, sharp 8.69 Hz line
+            #     appears at 15-20 m/s engaged+hands-off (1.18e8, 6.7x its spectral neighbours, n=82
+            #     windows, NFFT=1024) and is absent from every disengaged spectrum.
+            #   * => REVERT TO V55. A 50% partial restore (Y=16384) is NOT a candidate: the lane at 0%
+            #     and at 100% produced the same 21 Hz, so intermediate authority is bounded between two
+            #     measurements that already agree.
+            #
+            # Monitor risk was and remains CLOSED (gp-0x6ad4 has exactly 2 gp-relative accesses
+            # image-wide: writer 0x3a8a0, reader 0x3aca8; no lockstep/shadow/monitor). Protection removal
+            # CLOSED (Y[2..4] never invoked). The manual-feel risk was real: gp-0x6ad4 is NOT LKAS-gated
+            # (its ceiling hangs off gp-0x67fe, the EPS FOC substate, measured at 1 in 100% of frames
+            # INCLUDING disengaged).
             if name == "V56":
                 return replace(cal, speed_window_lo=0, resonance_lane_output_bound_q15=0)
             if name == "V39":
@@ -1634,7 +1650,38 @@ def assist_shaping_lanes(sensors: SensorInputs, st: EpsState) -> dict:
                       build (V47) must get right, and it is why V47's build script must patch both. ***
       FUN_00036c12 -> gp-0x6b26 : LERP @0xCBE74 (AVG torque; gated gp-0x671a vs tp+0x74fd and
                       gp-0x67f4==1) multiplied by gp-0x6c2e, then range-limited. [INFERRED] friction.
-      FUN_0003a382 -> gp-0x6ad4 : 3-stage cascaded IIR/rate-limit over gp-0x6ac0 (motor rate),
+      FUN_0003a382 -> gp-0x6ad4 : *** 2026-07-29: IT IS A GENUINE DISCRETE PID, NOT "3 CASCADED LAGS"
+                      AND NOT "3 PARALLEL BRANCHES". All constants byte-verified TWO ways. ***
+                          ERR = clamp(gp_0x4f60 - bias, -0x2800, +0x2800)      @0x3a7ca-0x3a7e6
+                            # bias is a 2-STATE SELECTOR (+8192/-8192, cal 0xC6200 byte-read = 8192),
+                            # NOT a continuous subtraction of the model gp-0x6ad6. So ERR's AC content
+                            # IS gp-0x4f60's AC content: unity gain, zero phase.
+                          P   = ((gainA * ERR) >> 10) * 32                      @0x3a7e8-0x3a826
+                            # gainA = LERP(0xC6B26, motor_rate), Y = [256,256,225,153]
+                          I   = I_prev + ((98 * ERR) >> 10)                     @0x3a7e6-0x3a83c
+                            # gainB cal 0xC6B12 = 98, FLAT; true accumulator, anti-windup clamped
+                          D   = clamp(((ERR - ERR_prev) * 2048) >> 10, +-0x2800) * 32   @0x3a832-0x3a87a
+                            # gainC cal 0xC6AE6 = 2048 = 2.0 in Q10, FLAT.  RAW backward difference.
+                          gp_0x6ad4 = clamp((((D + I + P) >> 5) * gainD) >> 10, +-ceiling)
+                      *** THE TWO 1024/1024 CALS ARE EACH STAGE'S OWN *EXTRA* SMOOTHING EMA, AND BOTH
+                      COLLAPSE TO IDENTITY. That does NOT mean "no derivative" -- it means the
+                      derivative's extra smoothing is defeated, leaving the RAW derivative in the sum.
+                      V43 (0xC644A->64) and V46 (0xC6450->32) were each RE-INTRODUCING a defeated pole.
+                      Frequency response, fs=1000 Hz, cross-validated by z-transform AND time-domain sim
+                      (gainA=256 row): 3 Hz 0.279/-25.7deg | 5 Hz 0.255/-7.3deg | 8 Hz 0.257/+9.2deg |
+                      21 Hz 0.361/+41.8deg. P/32 = 0.250 FLAT at all f; |I|/32 falls 0.159->0.023 and
+                      |D|/32 rises 0.038->0.264 over 3->21 Hz. So: P-dominated at few-Hz, D rivals P by
+                      21 Hz. *** This CONTRADICTS the older "net -3.3 to -5.4deg, P dominates 8-10:1"
+                      note; the new figure is cross-validated twice -- re-derive before quoting the old.
+                      SIGN INTO THE AGGREGATOR IS PROVEN: ld.h @0x3aca8, validity gate `cmovc` @0x3acc4
+                      (NOT a sign flip), plain `add` @0x3acd8. All 9 lanes add; not one `sub`. Polarity
+                      gp-0x6752 is set to literal 1 at boot in FUN_000490ac (0x490b6-0x490c0),
+                      shadow-checked against gp-0x4c2d => +1, no inversion.
+                      *** 🛑 ELIMINATED AS THE 21 Hz SOURCE BY V56 (flashed 2026-07-29): the
+                      branch-agnostic output-bound mute changed neither the vibration (786x, vs V55's
+                      877x) nor the command's 21 Hz. It DID cost damping and introduced an 8.69 Hz mode.
+                      The 21 Hz enters gp-0x6b98 through one of the OTHER EIGHT additive lanes. ***
+                      [historic] 3-stage cascaded IIR/rate-limit over gp-0x6ac0 (motor rate),
                       gp-0x4f60 (sensor-B column torque), gp-0x6a5e, gp-0x67fe. [INFERRED] resonance
                       damping.
                       *** 2026-07-21 MAJOR CORRECTION -- THE "VERY HEAVILY DAMPED" VERDICT BELOW IS
