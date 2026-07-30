@@ -18,9 +18,11 @@ an already-flashed, already-falsified lever because the result was buried in pro
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
    **Mandatory before proposing any calibration edit.**
 3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session.
-   Latest: `HANDOFF-2026-07-29-golden-model-distillation.md` (documentation hygiene only, no firmware
-   change — the golden model's comments/docstrings were cut 4,709→2,200 lines)
-   (predecessors: `HANDOFF-2026-07-29-v57-decouple-and-the-angle-rate-turn.md`, then
+   Latest: `HANDOFF-2026-07-30-v57-drive-two-symptoms-and-v58.md` — 🛑 **the ~7.4 Hz mode is the
+   RATCHETING, the 20-25 Hz mode is the GRINDING; everything written before 2026-07-30 conflates them.**
+   Also: three rlog conventions that were producing wrong answers, and V58 built (probe, unflashed).
+   (predecessors: `HANDOFF-2026-07-29-golden-model-distillation.md`, then
+   `HANDOFF-2026-07-29-v57-decouple-and-the-angle-rate-turn.md`, then
    `HANDOFF-2026-07-29-v56-drive-mute-is-null-and-costs-damping.md`, then
    `HANDOFF-2026-07-28-v55-drive-oscillation-is-internal-and-v56-mute.md`, then
    `HANDOFF-2026-07-28-v54-drive-authority-resolved-and-v55-partition-probe.md`, then

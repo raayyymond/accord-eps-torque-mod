@@ -578,10 +578,20 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
     the angular-rate magnitude the decider/debounce gates compare against. [VERIFIED] 3 channels from
     TAUA0 capture regs -> FUN_00061ca0/FUN_0006195e (gp-0x4e8c/8a/88 + refs gp-0x4e94/92/90);
     plausibility FUN_00062948; voter FUN_00041eec -> MAX gp-0x6a62 (0xFFFF sentinel on quorum loss) /
-    AVG gp-0x6a5e; rate FUN_0003f776 -> gp-0x6a60 = |clamp(angle-rate, +/-12000)|. [CONFIRMED] the
+    AVG gp-0x6a5e; rate FUN_0003f776 -> gp-0x6a56 then gp-0x6a60 = |gp-0x6a56|. [CONFIRMED] the
     3-channel readings are the physical wheel-torque source. KEY FACT: gp-0x6a60 is a RATE magnitude,
     NOT a torque, and its rising edge is unfiltered (only a fall-limiter), so no debounce exists in the
     rising voter chain.
+    🛑 2026-07-30: gp-0x6a56 -- what the EPS transmits as STEER_ANGLE_RATE on 0x14A[2:4]/0x18F[2:4] --
+    is NOT independently sensed. FUN_0003f776 (its sole producer, 4 st.h, all inside it) computes
+    gp-0x6a56 = clamp(polarity(gp-0x6752) * ((gp-0x6abe * 48 * cal(tp+0x713a)) >> 15), +-12000),
+    i.e. a fixed Q15 scale of the MOTOR/resolver electrical rate. The +-12000 is a MAGNITUDE clamp
+    recomputed fresh each tick, not a rate/slew limit, and gp-0x6a60 just mirrors its magnitude
+    (the min-vs-65535 at 0x3f7f6 never binds). CONSEQUENCE: STEER_ANGLE_RATE is opendbc-named but is
+    NOT an independent angle sensor, so "996x on rate vs 877x on torque" is two EPS-internal
+    derivations, not independent corroboration -- and because gp-0x6bbe's `baseline` is ALSO
+    gp-0x6abe-derived, `rate_error = baseline - angle_rate` may partially cancel. That is why the
+    lane's damping sign is UNRESOLVED and why V58 measures its phase on-car instead.
     """
     coils = sensors.column_torque_coils
     valid = sum(1 for c in coils if c is not None)
@@ -661,7 +671,11 @@ ASSIST_CEILING_X = (0, 640, 2560, 5760, 6400)
 ASSIST_CEILING_Y = (512, 512, 512, 512, 512)
 ASSIST_CEILING_DEFAULT = 512                   # tp+0x715a
 ASSIST_SENTINEL = 0x7d01                       # >= this => invalid/saturated sensor path
-ASSIST_RATE_STEP = 0x3638                      # 13880/tick, FUN_0004613e rate limiter at fn entry
+# 🛑 0x3638 is NOT a rate step. FUN_0004613e only snapshots its params into log cells and calls
+# FUN_00016de6(0x1c,...) -- a fault LOGGER; 13880 is a diagnostic TAG (the same callee takes 0x38c7
+# elsewhere). Its call site @0x34a94 is a cross-tick computation-integrity WATCHDOG on gp-0x6bb2/4/6/8
+# re-verifying the SAME +-512 ceiling, with no forward path into any control signal. Corrected 2026-07-30.
+ASSIST_RATE_STEP = 0x3638                      # diagnostic tag, kept only so the watchdog is modelled
 
 
 def _lerp_flat(x: int, xs, ys) -> int:
@@ -689,7 +703,9 @@ def base_driver_assist_lane(sensors: SensorInputs, st: EpsState, cal: Calibratio
     select ld.bu gp+0x63fd (0..33); primary key gp-0x6a5e (AVG voter), ceiling key gp-0x6a62 (MAX
     voter); tables: boost @0xCA154, ceiling @0xC7970 (both byte-dumped), plus 4 undumped scaling tables
     [OPEN] (gain-scalar 0xCA324, rate-keyed LERP 0xCA4F4, clamp 0xC7A58, gp-0x69ba LERP 0xCA23C);
-    polarity gp-0x6752; rate limiter FUN_0004613e(0x3638) over gp-0x6bb2/4/6/8; its own 4-state ramp SM
+    polarity gp-0x6752; gp-0x6bb2/4/6/8 is a cross-tick integrity WATCHDOG, NOT a rate limiter
+    (corrected 2026-07-30 -- FUN_0004613e is a fault logger and 0x3638 is its diagnostic tag);
+    its own 4-state ramp SM
     (gp-0x682e, timer gp-0x68c8 vs tp+0x74d1*10), separate from the LKAS engage SM; writes gp-0x6bbe,
     lockstep-shadowed at gp-0x4cf0. [OPEN, not yet adopted] a 2026-07-25 trace argues
     gp-0x6a5e/gp-0x6a62/gp-0x6a64 are actually a 5-channel VOTED VEHICLE SPEED (not voted driver torque
@@ -722,13 +738,12 @@ def base_driver_assist_lane(sensors: SensorInputs, st: EpsState, cal: Calibratio
     xs, ys = ASSIST_BOOST_CURVE.get(mode, ASSIST_BOOST_CURVE[10])   # default = this car's curve
     raw = _lerp_flat(key_avg, xs, ys)
 
-    # --- rate limiter on the internal cluster, feeding the secondary rate-keyed curve --------------
-    delta = raw - st.assist_rate_state
-    if delta > ASSIST_RATE_STEP:
-        delta = ASSIST_RATE_STEP
-    elif delta < -ASSIST_RATE_STEP:
-        delta = -ASSIST_RATE_STEP
-    st.assist_rate_state += delta
+    # --- NO rate limiter here. 🛑 Corrected 2026-07-30: the gp-0x6bb2/4/6/8 cluster is a cross-tick
+    # WATCHDOG (FUN_00035154 re-derives this lane's ceiling in float and stores a +-5-count tolerance
+    # for FUN_00034a72 to check next tick), not a limiter -- it has no forward path into gp-0x6bbe.
+    # The model previously clamped `delta` to +-0x3638 here, which limited nothing (0x3638 = 13880
+    # against a lane clamped to +-512) and mis-taught the chain. Pass through.
+    st.assist_rate_state = raw
 
     # --- safety ceiling, keyed on the MAX voter (flat 512 in this image) ---------------------------
     key_max = abs(st.col_torque_max)
