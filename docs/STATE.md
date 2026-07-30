@@ -14,6 +14,13 @@ with its instruction address, constants byte-read **little-endian** (V850 is LE)
 comes *after* the code, never instead of it. See
 `memory/feedback-explain-with-python-mirroring-decompiled-arithmetic.md`.
 
+**Housekeeping, 2026-07-29 — no firmware change.** `analysis-2020accord/eps_lkas_chain_model.py` was
+distilled 4,709→2,200 lines: its comments/docstrings had grown into dated changelogs and multi-hundred-
+line findings essays. Cut to comments ≤1 sentence, docstrings ≤1 paragraph; addresses/Q-format/confidence
+tags kept. Verified byte-identical arithmetic (AST diff) and byte-identical self-check output before/after.
+No investigation conclusion below changed. See `memory/feedback-golden-model-distilled-keep-terse.md` and
+`docs/HANDOFF-2026-07-29-golden-model-distillation.md`.
+
 ---
 
 ## On the car right now
