@@ -455,9 +455,10 @@ class EpsState:
     motor_rate_raw: int = 0        # gp-0x6ac0: motor resolver electrical-angle rate
     assist_ramp_state: int = 0    # gp-0x682e 4-state assist engage ramp {0,1,2,3}
     assist_ramp_timer: int = 0    # gp-0x68c8 ramp timer vs (tp+0x74d1 * 10)
-    assist_rate_state: int = 0    # gp-0x6bb2/4/6/8 internal cluster behind the FUN_0004613e rate limiter
+    assist_rate_state: int = 0    # gp-0x6bb2/4/6/8 cross-tick integrity WATCHDOG (NOT a rate limiter)
     assist_polarity: int = 1      # gp-0x6752 assist polarity (-1/0/+1)
     assist_lane: int = 0          # gp-0x6bbe (0xFEDF1442) the base-assist aggregator lane
+    boost_fir_out: int = 0        # gp-0x6b9a, signed FUN_0003b66a output; gp-0x6ba6 is its magnitude
     assist_state_671a: int = 0     # exact branch input; physical state label unresolved
     assist_gate_671d: int = 0
     assist_gate_683c: int = 0
@@ -751,11 +752,43 @@ def base_driver_assist_lane(sensors: SensorInputs, st: EpsState, cal: Calibratio
                else _lerp_flat(key_max, ASSIST_CEILING_X, ASSIST_CEILING_Y))
 
     # --- gain modulation, polarity, and the final clamp against the ceiling ------------------------
-    # [SIMPLIFIED -- flagged] the four undumped tables (0xCA324 gain scalar, 0xCA4F4 rate curve,
-    # 0xC7A58 clamp, 0xCA23C) fold in here as additional multiplicative factors. Modelled as unity
-    # until their contents are dumped; this is the one place this function is NOT literal.
-    signed = int(st.assist_rate_state * ramp_scale) * st.assist_polarity   # gp-0x6752
+    # [SIMPLIFIED -- flagged] 0xCA324 (gain scalar) and 0xC7A58 (clamp) still fold in as unmodelled
+    # multiplicative factors; this is the one place this function is NOT literal.
+    # 0xCA4F4 and 0xCA23C are now DUMPED (2026-07-30): both are pointer tables indexed by mode*4,
+    # resolving at mode 10 to the two boost AMPLITUDE curves below. Both are indexed by
+    # `boost_amplitude_index` == gp-0x6ba6, applied as `(term * Y) >> 14`.
+    amp = boost_amplitude_index(st)
+    y1 = _lerp_flat(amp, BOOST_AMP1_X, BOOST_AMP1_Y)      # 0xD28DC via 0xCA4F4
+    y4 = _lerp_flat(amp, BOOST_AMP4_X, BOOST_AMP4_Y)      # 0xD2888 via 0xCA23C
+    scaled = (int(st.assist_rate_state * ramp_scale) * y1) >> 14
+    scaled = (scaled * y4) >> 14
+    signed = scaled * st.assist_polarity                                   # gp-0x6752
     return _clamp(signed, -ceiling, ceiling)                               # -> gp-0x6bbe
+
+
+# --- the boost AMPLITUDE index and its two curves -------------------------------------------------
+# 🛑 gp-0x6ba6 == abs(gp-0x6b9a). FUN_0003b66a writes both from one r28: `cmp r0,r28 / mov r28,r13 /
+# bge 0x3b886 / subr r0,r13` @0x3b874-87c, then st.h @0x3b892 (gp-0x6ba6) and @0x3b8b0 (gp-0x6b9a).
+# Sole writer each, byte-scanned for both gp-relative encodings.
+# gp-0x6b9a itself indexes NOTHING: its only live consumer is a 5-input plausibility gate
+# (|x| <= 25600 @0x34c9c-cb4 -> r21 -> zeroes r24 @0x34fc8), so its SIGN has no output effect, and two
+# of its three reads in FUN_00034a72 are dead (tp+0x7499 == 1 takes the branch @0x34b3c).
+# ⇒ V58 measured the SIGNED sibling crossing zero at 20.93 Hz only when LKAS applies, so this index is
+# that signal RECTIFIED -- a minimum at every zero crossing, sweeping both curves at ~2x the mode
+# frequency on the BASE ASSIST path. Depth is UNMEASURED until V59 flies: below X1 = 512 the
+# coefficient is pinned at 16384 and nothing modulates.
+BOOST_AMP1_X = (0, 512, 1490, 2529, 3645, 5120)     # 0xD28DC, byte-verified
+BOOST_AMP1_Y = (16384, 14657, 11672, 9365, 8244, 8187)
+BOOST_AMP4_X = (0, 307, 1024, 1741, 3072, 6144)     # 0xD2888, byte-verified
+BOOST_AMP4_Y = (16384, 14392, 10265, 8997, 8176, 8176)
+
+FAULT_SENTINEL_6BA6 = 0xFFFF    # FUN_0003b66a input-gate failure; > 25600 so r21 catches it
+FAULT_SENTINEL_6B9A = 0x7FFF
+
+
+def boost_amplitude_index(st: EpsState) -> int:
+    """gp-0x6ba6, the index into both boost amplitude curves; the magnitude of gp-0x6b9a."""
+    return abs(st.boost_fir_out)
 
 
 ASSIST_RATE_CROSS_X = (0, 640, 3200, 6400)  # gp-0x6a5e AVG-voted torque magnitude

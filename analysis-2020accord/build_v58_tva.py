@@ -53,6 +53,34 @@ landing as `blendedMagnitude` in `term3 = (term2 * blendedMagnitude) >> 14` @0x3
 oscillates at 20-25 Hz it amplitude-modulates the strongest identified carrier. Nobody has computed the
 FIR -> clamp -> 565-slew -> 2-EMA cascade response, so measure it rather than model it.
 
+🛑🛑 THE PARAGRAPH ABOVE IS WRONG ON BOTH COUNTS -- corrected 2026-07-30 AFTER V58 flew, by byte read
+of the image plus fresh disassembly. Kept as written (this kit does not rewrite history) with the
+correction attached. The bit4 MEASUREMENT is sound and reproduced across four runs; only the mechanism
+hung on it was wrong. See docs/HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md.
+
+  (1) `gp-0x6b9a` does NOT index anything. Its ONLY live consumer in FUN_00034a72 is a five-input
+      plausibility gate -- `|gp-0x6b9a| <= 25600` (addi 0x6400 / ori 0xc801 / cmp / bnc @0x34c9c-cb4)
+      ANDed with checks on gp-0x6ba6, gp-0x4f68, gp-0x4f60 and gp-0x6c2e into r21, which zeroes r24
+      @0x34fc8. r15 is OVERWRITTEN at 0x34ca4, so no value path survives. Its SIGN -- the thing bit4
+      measures -- has no effect on the output at all. Two of its three reads in that function
+      (@0x34b5e, @0x34b68) are DEAD CODE: tp+0x7499 = 1 (byte-verified) takes the branch @0x34b3c.
+  (2) `0xD28DC` is real but hangs off pointer table **0xca4f4**, NOT 0xca23c. Resolved from image
+      bytes LE across all 34 modes: 0xca4f4 -> ...0xD28DC... (PRESENT); 0xca23c -> ...0xD2888...
+      (0xD28DC ABSENT). 0xca154 / 0xc7970 / 0xca06c / 0xca40c / 0xca324: absent.
+
+  *** THE ACTUAL INDEX IS `gp-0x6ba6`, and `gp-0x6ba6 == |gp-0x6b9a|`. *** FUN_0003b66a writes both
+  from the same r28: `cmp r0,r28 / mov r28,r13 / bge 0x3b886 / subr r0,r13` @0x3b874-87c takes the
+  magnitude, then st.h r13,-0x6ba6[gp] @0x3b892 and st.h r28,-0x6b9a[gp] @0x3b8b0. Byte-scanned for
+  BOTH gp-relative encodings: exactly one writer each, image-wide.
+
+  CONSEQUENCE, and it is why V59 exists: V58 measured the SIGNED sibling crossing zero at 20.93 Hz
+  (per-run coherence 0.649/0.970/0.769/0.881; 13.69 toggles/s ENGAGED vs 0.61 DISENGAGED at matched
+  creep). The table index is therefore that signal RECTIFIED -- a minimum at every zero crossing,
+  sweeping the boost amplitude curve at ~2x the mode frequency on the BASE ASSIST path. The
+  parametric mechanism is real; it just lives one cell over. What V58 cannot say is DEPTH: a sign bit
+  carries no amplitude, and if |gp-0x6b9a| never clears X1 = 512 the coefficient stays pinned at 16384
+  and nothing modulates. V59 (thermometer on gp-0x6ba6 at 512/1024/2048) measures exactly that.
+
 CAVE DISCIPLINE
 ---------------
 Read-only. Four EXACT single comparisons, one arithmetic shift, no arithmetic on any signal, no new RAM,
