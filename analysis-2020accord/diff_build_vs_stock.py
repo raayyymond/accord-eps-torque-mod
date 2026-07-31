@@ -1,5 +1,7 @@
 """
-diff_v62_vs_stock.py -- enumerate EVERY difference between V62 and the STOCK 39990-TVA-A160 image.
+diff_build_vs_stock.py -- enumerate EVERY difference between a BUILD and the STOCK 39990-TVA-A160 image.
+
+Usage:  python diff_build_vs_stock.py [v62|v63|...]      (default: v63)
 
 Answers "what has this firmware actually had done to it, in total" -- not the per-build delta. Groups
 the raw byte diff into named edits, and 🛑 FAILS LOUDLY on any changed byte it cannot attribute, so an
@@ -50,6 +52,8 @@ EDITS = [
     (0xC6CD0, 0xC6CD2, "V57", "PRIVATE LKAS forward gain cell = 3564 (the decoupling's new cell)"),
     (0x3AB76, 0x3AB78, "V62", "r26 torsion-bar RATE lane: sar 0xa -> sar 0x9  (DOUBLE the lane)"),
     (0x3AC20, 0x3AC22, "V62", "r24 torsion-bar RATE lane: sar 0xa -> sar 0x9  (DOUBLE the lane)"),
+    (0xC643E, 0xC6440, "V63", "r26 RATE lane, OSCILLATION-only gain arm (state>=5) 1536 -> 3072"),
+    (0xC6440, 0xC6442, "V63", "r24 RATE lane, OSCILLATION-only gain arm (state>=5) 2048 -> 4096"),
 ]
 
 # 🛑 Deliberately NOT in the list, and worth stating because it surprises people:
@@ -64,29 +68,31 @@ ASSERT_STOCK = [
 
 
 def main():
-    v62 = open(str(plain_image_path("_v62_plain_image.bin")), "rb").read()
+    # ⚠ the EDITS loops below MUST NOT rebind this name -- they use `ebuild`.
+    build = (sys.argv[1] if len(sys.argv) > 1 else "v63").lower().lstrip("v")
+    v62 = open(str(plain_image_path(f"_v{build}_plain_image.bin")), "rb").read()
     stock = open(STOCK, "rb").read()
     assert len(v62) == len(stock) == 0x100000
 
     diff = [i for i in range(LO, HI) if v62[i] != stock[i]]
     crc_bytes = {i for lo, hi in CRC_WORDS for i in range(hi, hi + 4)}
 
-    print(f"V62 vs STOCK 39990-TVA-A160, range [0x{LO:X},0x{HI:X})")
+    print(f"V{build.upper()} vs STOCK 39990-TVA-A160, range [0x{LO:X},0x{HI:X})")
     print(f"total differing bytes: {len(diff)}\n")
 
     attributed, rows = set(), []
-    for lo, hi, build, what in EDITS:
+    for lo, hi, ebuild, what in EDITS:
         hits = [i for i in diff if lo <= i < hi]
         attributed |= set(hits)
         if hits:
-            rows.append((lo, hi, build, what, len(hits)))
+            rows.append((lo, hi, ebuild, what, len(hits)))
 
     rows.sort()
     print(f"{'address':>18}  {'build':<9} {'n':>3}  what")
     print("-" * 110)
-    for lo, hi, build, what, n in rows:
+    for lo, hi, ebuild, what, n in rows:
         span = f"0x{lo:05X}" if hi - lo <= 2 else f"0x{lo:05X}-0x{hi - 1:05X}"
-        print(f"{span:>18}  {build:<9} {n:>3}  {what}")
+        print(f"{span:>18}  {ebuild:<9} {n:>3}  {what}")
 
     crc_changed = sorted(set(diff) & crc_bytes - attributed)
     unattributed = sorted(set(diff) - attributed - crc_bytes)
@@ -110,12 +116,16 @@ def main():
         assert same, f"0x{a:05X} is not stock -- this file's claim is wrong"
 
     # the two V62 edits, spelled out at halfword level
-    print("\nV62's own two edits, halfword level:")
-    for a in (0x3AC20, 0x3AB76):
+    own = sorted({lo for lo, _hi, b, _w in EDITS if b.lower() == f"v{build}"})
+    print(f"\nV{build.upper()}'s own edits, halfword level:")
+    for a in own:
         s = struct.unpack_from("<H", stock, a)[0]
         v = struct.unpack_from("<H", v62, a)[0]
-        print(f"   0x{a:05X}  {s:04X} -> {v:04X}   sar imm5 {s & 0x1F} -> {v & 0x1F}, "
-              f"opcode 0x{(s >> 5) & 0x3F:02X} and reg2 r{(s >> 11) & 0x1F} UNCHANGED")
+        if a < 0xC0000:   # code halfword: show the Format-II field split
+            print(f"   0x{a:05X}  {s:04X} -> {v:04X}   sar imm5 {s & 0x1F} -> {v & 0x1F}, "
+                  f"opcode 0x{(s >> 5) & 0x3F:02X} and reg2 r{(s >> 11) & 0x1F} UNCHANGED")
+        else:             # calibration halfword: show the decimal values
+            print(f"   0x{a:05X}  {s:5d} -> {v:5d}   (calibration halfword, LE)")
 
 
 if __name__ == "__main__":
