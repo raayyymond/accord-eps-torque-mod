@@ -105,13 +105,25 @@ HEADROOM -- the lane is nowhere near saturating, so doubling stays LINEAR
 A saturating lead term is worse than useless (describing-function gain falls with amplitude), so this is
 the binding constraint. Producer FUN_0007e74a: gp-0x4f62 = ((current - delayed) << 1) / dt, delay D = 4
 (cal 0xC6C42, byte-verified), 1000 Hz. For a sinusoid, peak(current-delayed) = 2*A*sin(w*D/(2*Fs)).
-At the measured A = 1400 counts / 20.9 Hz:  peak dtorque ~= 367 counts = 7% of the shared +/-5120 clamp.
-r24 then sits at ~9% of its own +/-8192 clamp on the state>=5 arm (gain 2048).
-⚠ The headroom is ARM-DEPENDENT, so quote the range, not one number:
-      gate_671d arm (1024)        -> ~22x stock before clipping
-      state>=5 arm  (2048)        -> ~11x
-      natural LERP at stock max (3072) -> ~7.3x   <-- the WORST case
-Doubling therefore keeps >=3.6x margin under every arm. See rate_lane_damping_model.py.
+🛑 CORRECTED against the V61 drive. This section first assumed A = 1400 counts, the historical figure.
+   The V61 rlog MEASURED the mode far larger -- engaged creep hands-off pp median 3216 / p90 5451 /
+   p99 6437, i.e. **+/-3218 counts at p99, 3.4x V59's median** -- and the strict 18-26 Hz band
+   understated it 20-29% because the mode had MOVED BELOW that band. Redone on measured amplitudes:
+
+   bar amp   0x4f62   %in  | r24@2048  %lane   clip | r24@3072  %lane   clip
+       473      107   2.1% |      211   2.6%  38.3x |      318   3.9%  25.5x   V59 median
+      1610      366   7.1% |      729   8.9%  11.2x |     1095  13.4%   7.5x   V61 median
+      2726      619  12.1% |     1235  15.1%   6.6x |     1854  22.6%   4.4x   V61 p90
+      3218      731  14.3% |     1459  17.8%   5.6x |     2190  26.7%   3.7x   V61 p99  <-- BINDING
+
+   BINDING CASE = p99 amplitude AND the worst gain arm (natural LERP at stock max 3072): clips at
+   **3.7x** stock gain, so doubling reaches **54% of the clamp with ~1.9x margin left**.
+   ⚠ That is TIGHTER than the ">=3.6x under every arm" this file first claimed. It is still firmly in
+   the linear region and nothing saturates -- but the honest number at the loudest measured moment on
+   the worst arm is ~2x margin, not ~4x. Recorded rather than smoothed.
+   ⚠ Note also that the p99 row is V61's PATHOLOGICAL amplitude. V62's entire purpose is to reduce it,
+   which walks the operating point back up the table toward the V59 rows, where margin is 25-38x.
+   See rate_lane_damping_model.py.
 
 WHAT IT COSTS
 -------------

@@ -33,10 +33,36 @@ Hands-off, the mode is the steering-wheel inertia on the torsion bar. With
 The phi' coefficient is Kd*k/J_c > 0: POSITIVE DAMPING, linear in Kd. At Kd = 0 the mode has no damping
 term at all -- which is V61, and which is what the car did.
 
-The proportional gain K contributes NEGATIVE damping once the motor/current loop's lag tau is included
-(the K*k*phi term arrives late by tau, contributing ~ -K*k*tau/J_c to the phi' coefficient), so
+🛑 THE LAG MATTERS FOR **BOTH** TERMS -- and carrying it through the Kd term is what explains the
+   MEASURED FREQUENCY SHIFT. The first draft of this file only lagged the K term. That was incomplete,
+   and an analyst correctly objected that a PURE viscous damper cannot move a resonance frequency
+   (omega_d = omega_n*sqrt(1-zeta^2); at Q=15.7 removing damping moves it +0.05%, UPWARD -- while the
+   measurement is -12.8%, DOWNWARD). The objection is right and the resolution is below.
 
-    zeta_net  ~  (Kd - K*tau) * k / (2*J_c*omega)
+Motor torque arrives late by tau, so BOTH terms are evaluated at phi(t-tau), phi'(t-tau). For a sinusoid:
+    phi (t-tau) = phi *cos(w*tau) - (phi'/w)*sin(w*tau)
+    phi'(t-tau) = phi'*cos(w*tau) + (w*phi) *sin(w*tau)
+Substituting T_m = K*k*phi(t-tau) + Kd*k*phi'(t-tau) into the phi equation and collecting:
+
+    DAMPING   coefficient:  (k/J_c) * [  Kd*cos(w*tau)  -  K*sin(w*tau)/w  ]
+    STIFFNESS coefficient:  k*(1/J_w + 1/J_c) + (k/J_c) * [ K*cos(w*tau) + Kd*w*sin(w*tau) ]
+                                                                            ^^^^^^^^^^^^^^^^
+                                                            Kd ALSO ADDS STIFFNESS when lagged.
+
+=> Removing Kd removes that stiffness term, so **omega_n FALLS**. Direction matches the measurement.
+
+★ AND IT MAKES A SHARP, TESTED PREDICTION. For small w*tau, sin(w*tau) ~ w*tau, so
+    d(omega_n^2) = Kd*k*w^2*tau/J_c   =>   d(omega_n^2)/omega_n^2 ~ Kd*k*tau/J_c
+which is **FREQUENCY-INDEPENDENT**: every mode in the loop must shift by the SAME FRACTION.
+MEASURED, V61 vs V59: grinding 21.18 -> 18.32 Hz (x0.865); ratchet 7.73 -> 6.56 Hz (x0.849), or x0.923
+speed-restricted. **Two independent modes, same fractional shift.** A purely viscous term cannot produce
+that; a LAGGED derivative predicts it exactly. This is the strongest structural evidence in the session.
+
+⚠ Bound on tau, from the AMPLITUDE result rather than assumed: V61 made the mode 2.75-8.3x LOUDER, so Kd
+   was supplying REAL damping, so cos(w*tau) must be solidly positive. That rules out w*tau near 90 deg
+   (tau ~ 13.7 ms at 18.25 Hz), where the lagged derivative would be pure stiffness and no damping at all.
+
+    zeta_net  ~  (Kd*cos(w*tau) - K*sin(w*tau)/w) * k / (2*J_c*omega)
 
 Stock behaviour pins the operating point: the mode SUSTAINS with no ring-down at all (66 candidate
 decays, longest 0.63 cycles) => zeta_net ~ 0 => Kd ~ K*tau. Then:
@@ -119,19 +145,39 @@ def clip_multiple(rate: int, gain_q10: int) -> float:
     return float("inf") if per_unit == 0 else LANE_OUTPUT_CLAMP / per_unit
 
 
-def report(bar_amplitudes=(218, 829, 1400, 1451), f_hz=20.9):
-    print(f"torsion-bar rate lane authority at {f_hz} Hz, delay D={RATE_DELAY_D} @ {TASK1_HZ:.0f} Hz\n")
-    print(f"{'bar amp':>8} {'gp-0x4f62':>10} {'%inclamp':>9} {'r24@2048':>9} {'%lane':>7} "
-          f"{'%sum':>6} {'clip at':>9}")
-    for amp in bar_amplitudes:
+# MEASURED bar amplitudes (half of peak-to-peak), routes 31 / 2c, mode-TRACKING band.
+# ⚠ These SUPERSEDE the +/-1400 figure this file first used. The V61 drive measured the mode far larger,
+# and the strict 18-26 Hz band understated it by 20-29% because the mode had MOVED BELOW that band.
+MEASURED_AMPLITUDES = (
+    (473,  "V59 engaged creep hands-off, MEDIAN (pp 945)"),
+    (1610, "V61 engaged creep hands-off, MEDIAN (pp 3216) -- 3.4x V59"),
+    (2726, "V61 engaged creep hands-off, p90  (pp 5451)"),
+    (3218, "V61 engaged creep hands-off, p99  (pp 6437)   <-- the BINDING case"),
+)
+WORST_ARM_GAIN = 3072   # the natural LERP at its stock max: the tightest headroom of the four gain arms
+
+
+def report(f_hz=18.25):
+    print(f"torsion-bar rate lane authority at {f_hz} Hz, delay D={RATE_DELAY_D} @ {TASK1_HZ:.0f} Hz")
+    print("MEASURED amplitudes, mode-tracking band. Two gain arms: the state>=5 override (2048) and the")
+    print("natural LERP at stock max (3072), which is the WORST case.\n")
+    print(f"{'bar amp':>8} {'0x4f62':>8} {'%in':>6} | {'r24@2048':>9} {'%lane':>7} {'clip':>7} "
+          f"| {'r24@3072':>9} {'%lane':>7} {'clip':>7}  what")
+    for amp, what in MEASURED_AMPLITUDES:
         rate = column_torque_rate(amp, f_hz)
-        b = r24(rate, R24_GAIN_ARMS[0xC6440])
-        print(f"{amp:>8} {rate:>10} {100*abs(rate)/SHARED_INPUT_CLAMP:>8.1f}% {b:>9} "
-              f"{100*abs(b)/LANE_OUTPUT_CLAMP:>6.1f}% {100*abs(b)/AGGREGATOR_SUM_CLAMP:>5.1f}% "
-              f"{clip_multiple(rate, R24_GAIN_ARMS[0xC6440]):>8.1f}x")
-    print("\n=> the lane runs at a few percent of its own clamp, so the gain has room to be RAISED.")
-    print("   `clip at` is the multiple of stock gain at which r24 first saturates at that amplitude.")
-    print("   A saturating lead term is worse than useless, so this column is the binding constraint.")
+        b2, b3 = r24(rate, 2048), r24(rate, WORST_ARM_GAIN)
+        print(f"{amp:>8} {rate:>8} {100*abs(rate)/SHARED_INPUT_CLAMP:>5.1f}% |"
+              f" {b2:>9} {100*abs(b2)/LANE_OUTPUT_CLAMP:>6.1f}% {clip_multiple(rate, 2048):>6.1f}x |"
+              f" {b3:>9} {100*abs(b3)/LANE_OUTPUT_CLAMP:>6.1f}% "
+              f"{clip_multiple(rate, WORST_ARM_GAIN):>6.1f}x  {what}")
+    worst = column_torque_rate(MEASURED_AMPLITUDES[-1][0], f_hz)
+    m = clip_multiple(worst, WORST_ARM_GAIN)
+    print(f"\n=> BINDING CASE: p99 amplitude on the worst gain arm clips at {m:.1f}x stock gain.")
+    print(f"   V62 doubles => {200/m:.0f}% of the way to that clamp; {m/2:.1f}x margin remains.")
+    print("   ⚠ TIGHTER than the >=3.6x this file first claimed off a +/-1400 assumption. Still linear,")
+    print("   but the honest margin at the loudest measured moment on the worst arm is ~2x, not ~4x.")
+    print("   V62's purpose is to REDUCE the amplitude, which walks the operating point back UP this")
+    print("   table -- the p99 row is V61's pathological case, not V62's expected one.")
 
 
 if __name__ == "__main__":
