@@ -259,10 +259,35 @@ gain reducer. This is what pulls eps down from the raw-LERP values.
   Mode identity unconfirmed — the data exists, that is all.
 
 ### Open gates before V60
-1. 🛑 **Task rate of `FUN_00034a72`/`FUN_00034350` (RTOS task 5) is UNRESOLVED** — task 1 is the
-   confirmed 1 kHz anchor, but task 5's rate class was not located (all five TCB class pointers read
-   the same shared `0x000BB8B8`). The eps table above brackets both candidates, so it does not block
-   the verdict, but it does set the exact blend attenuation. Cheapest close: measure on-car.
+1. ✅✅ **RESOLVED 2026-07-31 — TASK 5 IS 100 Hz, and it invalidates the eps table above.**
+   The rate divider is `FUN_00014be4`, a mod-100 counter (`gp-0x4304`) on the 1 kHz tick. Verified by
+   the orchestrator: `tp-0x3814` = `0xBB7EC` byte-reads **`0x000BB920`**, and `idx*0x30 + 0xBB920`
+   reproduces **all seven** TCB entry points exactly (`+0x08`), so the wake argument is a **0-based
+   task-slot index**, not an abstract group ID:
+
+   | idx | TCB entry `+0x08` | task | condition | **rate** |
+   |---|---|---|---|---|
+   | 0 | `0x0002214A` | task 1 — arb, `FUN_0003b66a`, aggregator, governor, shaper | every tick | **1000 Hz** |
+   | 1 | `0x00022A88` | task 2 | `c & 1` | 500 Hz |
+   | 3 | `0x00022B24` | task 4 | `c % 5 == 2` | 200 Hz |
+   | **4** | **`0x00022CA0`** | **task 5 — boost `FUN_00034a72` + damping `FUN_00034350`** | `c % 10 == 4` | **100 Hz** |
+   | 5 | `0x0002351E` | task 6 | `c == 0x10` | 10 Hz |
+
+   ⇒ **The V59 eps table bracketed 1 kHz and 500 Hz. Both are wrong.** The boost-amplitude LERPs are
+   evaluated at **100 Hz**, so a 42 Hz index modulation is sampled ~2.4×/cycle — barely above Nyquist
+   and heavily ZOH-attenuated. **The pump could barely act at all**, which is an independent structural
+   reason for V60's null on top of the empirical one.
+
+   ★★ **THE BIGGER CONSEQUENCE — a 100 Hz damper cannot damp a 20.9 Hz mode.** `gp-0x6bd0` is
+   velocity-proportional damping (sign forced to `-sign(gp-0x6abe)`), and damping only works when the
+   force is in phase with velocity. A zero-order hold at 100 Hz costs `360 · 20.9 · T` of transport
+   lag: **37.6° average (T/2), 75.2° worst case**, before any plant phase. ⇒ **a structural explanation
+   for why EVERY damper lever was null (V44 FactorC, V47 FactorC+FactorE together) that does not depend
+   on the FactorC speed-axis argument** — even with both deadzones fully open, the damper is too slow
+   to act on this mode. It may even be anti-damping at 21 Hz.
+   ⇒ 🛑 **Any fix acting through boost or damping is fighting 38–75° of architectural lag at the mode
+   frequency. Prefer task 1 (1 kHz).** V61's edit is in `FUN_0003aa2c`, task 1 — on the right side of
+   this. Any future task-5 change needs this in its GATE 2.
 2. **`gp-0x6986` / `gp-0x6988` values unmeasured** — they scale the pump. Both are ≤1024 clamps so
    they can only pull eps *down*.
 
