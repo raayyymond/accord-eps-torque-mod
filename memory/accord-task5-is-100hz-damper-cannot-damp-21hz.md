@@ -70,3 +70,28 @@ of this. **Any future task-5 change must carry this in its GATE 2.**
 Related: [[accord-v60-null-closes-parametric-pump]], [[accord-v59-parametric-pump-marginal]],
 [[reference-accord-damper-two-deadzones-factorC-factorE]],
 [[reference-accord-collocation-motor-rate-damper-dead]].
+
+## ⚠⚠ SEPARATE THE TWO CLAIMS — one is solid, one is provisional (flagged 2026-07-31)
+
+**SOLID and clock-independent: the DIVIDER RATIO.** Task 5 fires once per **10** task-1 invocations.
+That is integer arithmetic in `FUN_00014be4` and holds whatever the clock turns out to be. So *"the
+damper is refreshed 10× slower than the 1 kHz chain that feeds it"* stands unconditionally, and so does
+the qualitative conclusion that a fix should prefer task 1.
+
+⚠ **CLOCK-DEPENDENT: every ABSOLUTE Hz, and therefore every DEGREE above.** The 1 kHz base tick rests on
+`OSTM0CMP = 79999` **and an assumed PCLK = 80 MHz** — and that 80 MHz was **never read from the
+datasheet.** The kit derived it by elimination: *"PCLK is one of {48, 64, 80, 160} MHz per
+`DFLASH.DCLKWAIT`; only 80 MHz gives a clean ~1 ms."* **That is circular** — it assumes the 1 ms answer
+in order to pick the clock that produces it.
+
+| assumed PCLK | base tick | task 5 | ZOH lag at 20.9 Hz (avg / worst) |
+|---|---|---|---|
+| 48 MHz | 1.67 ms | 60 Hz | 62.7° / 125.4° |
+| 80 MHz (kit's figure) | 1.00 ms | 100 Hz | **37.6° / 75.2°** |
+| 160 MHz | 0.50 ms | 200 Hz | 18.8° / 37.6° |
+
+⇒ **Treat 37.6° / 75.2° as PROVISIONAL.** A datasheet-grounded audit of the full clock tree (SVD
+`UPD70F3508_V850E2Px4.svd` as the only source of truth) is running at operator instruction. The on-car
+**100.000 Hz** CAN cadence (`0x14A`/`0x18F` measured at 99.999–100.008 Hz across whole drives) is an
+independent anchor the audit must reproduce. Note the damper conclusion survives at 48 and 80 MHz and
+weakens considerably at 160.

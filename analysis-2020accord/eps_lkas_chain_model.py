@@ -63,7 +63,25 @@ BUILDS THIS MODEL PARAMETERISES  (Calibration.for_build(...))
         unchanged) and cost hands-off damping -- REVERTED.
   V57 = V55 (not V56) + (A) decouple 0xC646C's forward LKAS reader onto a private cal cell, reverting
         the shared cal to stock 891 for the 4 feedback readers, and (B) a report-only deadband-gate
-        probe on CAN 0x14A. Current candidate.
+        probe on CAN 0x14A. FLASHED, fault-free; its calibration is carried by V58.
+  V58 = V57 + the angle-rate/boost-lane probe. FLASHED, flight-clean. Established the grinding is
+        ENGAGEMENT-GATED (absent disengaged, 60 s moving-but-disengaged control) and creep-dominant.
+  V59 = V58 + a thermometer on the boost-amplitude index gp-0x6ba6. FLASHED, flight-clean. Measured the
+        parametric pump's DEPTH (42.19 Hz = 2x the mode, absent disengaged).
+  V60 = V59 + the amplitude-blend coefficient 0xD2006 102 -> 43. FLASHED 2026-07-31: NULL. Built as a
+        DISCRIMINATOR, and it did its job -- the parametric-pump mechanism is CLOSED. It also closes
+        0xC63BA, whose only consumers are the same two amplitude LERPs.
+  V61 = V59 (NOT V60 -- the falsified blend is reverted by construction) + kill the torsion-bar RATE
+        lane at BOTH taps of its shared value: 0x3AB6C mul r1,r6,r0 -> mul r0,r6,r0 (r26) and
+        0x3AC16 mov r1,r8 -> mov r0,r8 (r24), two single-BIT reg1 r1->r0 changes, no cave. r24 and r26
+        are two gain-scalings of ONE value, r1 = clamp(gp-0x4f62, +/-5120); V39 killed only r24 and only
+        CONDITIONALLY, V42 killed only r26, and byte-checking every flashed image confirms NO build ever
+        had both dead -- so each recorded null was uninformative about the lane. BUILT, UNFLASHED.
+
+  🛑 V52C ("halved the mode") did NOT halve anything: -6.1 dB IS 0.496x IS the filter's own transfer
+     function at 20.9 Hz, written as a caveat on why its NULL was weak and later restated as a positive
+     result. Operator's on-car report was "did not fix the vibration; clearly changed manual feel", and
+     no V52C rlog exists. See memory/accord-a-caveat-can-mutate-into-a-result.md.
 
 -------------------------------------------------------------------------------------------------------
 EXECUTION MODEL
@@ -76,9 +94,40 @@ EXECUTION MODEL
                  qualifies (states {4,5,8,10,11} span the group; 0xd30 is a superset of 0xc30).
                  [VERIFIED] State 4 sits inside all three masks and is where the governor's ratchet
                  substitution (fixed in V42) used to fire.
-  TASK RATE    : UNRESOLVED in absolute Hz -- w_steer_control_task has no direct JARL callers found;
-                 it is reached through a runtime-loaded RTOS TCB table walker not yet located. Cycle
-                 counts in this model are exact; milliseconds are deliberately not asserted.
+  TASK RATE    : ✅ RESOLVED 2026-07-31. The dispatcher is FUN_00014be4, a mod-100 rate divider on the
+                 1 kHz tick (counter gp-0x4304); its wake argument is a 0-BASED TCB SLOT INDEX, proven
+                 by byte-reading tp-0x3814 = 0xBB7EC = 0x000BB920 and confirming idx*0x30 + 0xBB920
+                 reproduces all seven task entry points at +0x08 exactly. [VERIFIED]
+                     idx 0  FUN_0002214A  task 1  every tick     -> 1000 Hz
+                     idx 1  FUN_00022A88  task 2  c & 1          ->  500 Hz
+                     idx 3  FUN_00022B24  task 4  c % 5 == 2     ->  200 Hz
+                     idx 4  FUN_00022CA0  task 5  c % 10 == 4    ->  100 Hz   <<< boost + damping
+                     idx 5  FUN_0002351E  task 6  c == 0x10      ->   10 Hz
+                 Task 1 hosts arbitration, FUN_0003b66a, the aggregator, the governor and the shaper.
+                 ★★ LOAD-BEARING: boost (FUN_00034a72) and damping (FUN_00034350) run at 100 Hz, so a
+                 zero-order hold costs 37.6 deg average / 75.2 deg worst-case transport lag at 20.9 Hz
+                 BEFORE any plant phase. Damping needs force in phase with velocity => the damper
+                 structurally cannot damp the 20.9 Hz mode, and may be ANTI-damping there. That is an
+                 explanation for every null damper lever (V44 FactorC; V47 FactorC+FactorE together,
+                 byte-verified as a genuine simultaneous test) INDEPENDENT of the FactorC speed axis,
+                 and a candidate reason the damping-SIGN question flip-flopped for four sessions: a
+                 sign correct by construction can still act with the wrong phase when it is refreshed
+                 10x slower than the mode. It also invalidates V59's eps table, which bracketed 1 kHz
+                 and 500 Hz for task 5. 🛑 Prefer task 1 for any dynamics fix.
+                 See memory/accord-task5-is-100hz-damper-cannot-damp-21hz.md.
+                 ⚠⚠ SEPARATE THE TWO CLAIMS -- one is solid, one is under audit (2026-07-31):
+                   SOLID, clock-independent: the DIVIDER RATIO. Task 5 fires once per 10 task-1
+                     invocations. That is integer arithmetic in FUN_00014be4 and holds whatever the
+                     clock is, so "the damper is refreshed 10x slower than the 1 kHz chain" stands.
+                   ⚠ CLOCK-DEPENDENT: every ABSOLUTE Hz and therefore every DEGREE above. The 1 kHz
+                     base tick comes from OSTM0CMP = 79999 and an assumed PCLK = 80 MHz -- and that
+                     80 MHz was NEVER read from the datasheet. The kit derived it by elimination
+                     ("PCLK is one of {48,64,80,160}; only 80 gives a clean 1 ms"), which is CIRCULAR:
+                     it assumes the answer to select the clock that produces it. At 160 MHz task 5
+                     would be 200 Hz (lag halves); at 48 MHz, 60 Hz (lag rises ~1.7x).
+                     A datasheet-grounded audit of the whole clock tree is running. Treat 37.6/75.2
+                     deg as PROVISIONAL until it lands. The on-car 100.000 Hz CAN cadence is an
+                     independent anchor that the audit must reproduce.
   SENSOR-B RATE: FUN_0007f3f8/FUN_0007e74a produce gp-0x4f62 (torque-rate) with delay cal tp+0x7c42=4
                  producer samples; consumer/producer share the same state-mask phase, so no rate
                  mismatch exists. [VERIFIED functions/delay | OPEN wall-clock Hz]
