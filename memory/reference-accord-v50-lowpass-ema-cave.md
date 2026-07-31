@@ -27,7 +27,7 @@ metadata:
   the outer command gp-0x6b98 is ABSENT from the FOC core FUN_00071272 (read only for its sign); NO
   isolable Kp/Ki PI pair; the core is a ~5300-instr model-based/feedforward FPU computation reading a
   motor-characterization table at abs 0xC50D0-0xC5D84 — INSIDE the risky 0xC5000 block, OUTSIDE the tooled
-  0xC6xxx cal region. Loop rate ~8 kHz. Verdict: no clean cal-only FOC lever, and an 8 kHz loop whose
+  0xC6xxx cal region. Loop rate ~8 kHz. ⚠ **CORRECTED 2026-07-31: that figure was computed conditioned on PCLK = 80 MHz, and PCLK is 40 MHz — so the carrier is likely ~4 kHz, not 8. TSG20's own clock-select register has never been verified, so treat BOTH numbers as open.** It matters independently: it bounds what the actuator can physically do at the 20.9 Hz mode. See [[accord-task5-is-100hz-damper-cannot-damp-21hz]]. Verdict: no clean cal-only FOC lever, and an 8 kHz loop whose
   vibration frequency tracks ROAD speed is the ACTUATOR faithfully delivering a mechanical/outer-loop mode,
   not sourcing an electrical one.
 - **Cal-only outer-lane cuts: EXHAUSTED** (V39/V42/V43/V44/V45/V46/V47/V48A all null -> distributed

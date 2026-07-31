@@ -86,8 +86,17 @@ BUILDS THIS MODEL PARAMETERISES  (Calibration.for_build(...))
 -------------------------------------------------------------------------------------------------------
 EXECUTION MODEL
 -------------------------------------------------------------------------------------------------------
-  BASE TICK    : OSTM0 timer, compare 79999 -> ~80000-cycle period; strong-inference 1 kHz at 80 MHz,
-                 not independently confirmed. [VERIFIED: OSTM0 reload | INFERRED: 1 ms]
+  BASE TICK    : 🛑 CORRECTED 2026-07-31 -- this line used to read "OSTM0 timer, compare 79999 ->
+                 ~80000-cycle period; strong-inference 1 kHz at 80 MHz". BOTH HALVES WERE WRONG.
+                 OSTM0 is NOT the RTOS tick (the EI trampoline FUN_0001492a has no OSTM0 arm; the rate
+                 divider's trigger gp-0x42fc is written ONLY by EIIC 0x340 = TAUJ1I2), and PCLK is
+                 40 MHz not 80, so OSTM0 is a free-running 500 Hz timer with no path into the
+                 scheduler. The REAL tick is TAUJ1I2, whose period register has not been located.
+                 [VERIFIED: dispatcher + PCLK | OPEN: TAUJ1 period register]
+                 ✅ The 1 kHz figure itself SURVIVES on ON-CAR MEASUREMENT, which never used either:
+                 the STEER_STATUS=4 dwell (cal 0xC64DF = 100 counts, measured 100.00 ms => 1.000
+                 ms/decrement) and CAN 399 wire-fitted at exactly 100.000 Hz. [CONFIRMED, on-car]
+                 See the TASK RATE entry below and memory/accord-task5-is-100hz-damper-cannot-damp-21hz.md.
   STEERING TASK: w_steer_control_task (FUN_0002214a), RTOS task. Gate masks are ECU STATE-MACHINE
                  masks (gp-0x67fa), NOT phase/duty-cycle counters -- arbitration/aggregator/governor/
                  shaper/monitors all run in lockstep at the full task rate whenever the ECU state
