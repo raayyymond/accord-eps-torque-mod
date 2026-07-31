@@ -1,13 +1,13 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-07-30.** This file is the single current-state record. Update it in place at every
+**Last updated: 2026-07-31.** This file is the single current-state record. Update it in place at every
 close-out; do not append new dated blocks (that is what made `CLAUDE.md` unreadable). The narrative of how
 each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed, falsified, or **rejected on
 review** — check it before proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md`
-(predecessors: `HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`, then
+`docs/HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`
+(predecessors: `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md`, then `HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`, then
 `HANDOFF-2026-07-30-v57-drive-two-symptoms-and-v58.md`).
 
 🛑 **Explain firmware with Python that mirrors the decompiled arithmetic exactly** — standing operator
@@ -270,6 +270,31 @@ gain reducer. This is what pulls eps down from the raw-LERP values.
 
 ## On the car right now
 
+## 🛑 V60 FLASHED AND DRIVEN 2026-07-31 → **NULL. The parametric pump is CLOSED.**
+
+Operator: *"I drove on the V60 RWD. It did not fix the vibration issue."* **No rlogs** — V60 carries
+V59's probe unchanged, so there was no new telemetry to upload.
+
+**This null is a result, not a wasted drive.** V60 was built as a **discriminator** and the record
+predicted the outcome: *"Expect it to be NULL… a null closes the parametric mechanism and leaves the
+loop standing."* Pump causality was not settleable observationally (the index is `|x|` of a bar-derived
+signal, so 2f coupling is arithmetically forced) and `eps_crit = 2/Q` needed a passive Q that V59 could
+not measure. Only an intervention could separate drive from echo. It did.
+⇒ **V58/V59/V60's whole arc closes. The 42.19 Hz index modulation is real, engagement-gated, and is NOT
+the driver of the grinding.**
+
+★ **Consequence — `0xC63BA` is pre-falsified by the same null and must NOT be proposed as a fix.** It
+looked ideal (cal-only, 512 = 2-stage EMA α = 0.5 ≈ −0.30 dB at 21 Hz, exactly 2 readers at `0x3B7BA`/
+`0x3B7D4`, never edited, explicitly reserved by `build_v59_tva.py:444` as *"a V60 candidate"*). But a
+byte scan of its consumers closes it: readers of `gp-0x6b9a` (8) and `gp-0x6ba6` (7) are confined to
+`FUN_00034350` (damping), `FUN_00034a72` (boost), their producer, and V59's probe cave — so the index
+drives **only** the boost/damping amplitude LERPs, i.e. the mechanism V60 just falsified. Proposing it
+would repeat the V44/FactorC pattern exactly.
+
+⚠ **Two more lanes removed from the search, byte-verified:** `FUN_00036c12` (`gp-0x6b26`) and
+`FUN_00036388` (`gp-0x6b62`, the return-centre lane that was the operator's own hypothesis) read **no
+torque signal at all** — speed- and motor-rate-keyed only.
+
 **V58** = V57's calibration + the angle-rate/boost-lane probe in the cave. Flashed and driven 2026-07-30,
 route `2b` (normal commute, 14 segments, ~14 min, 83,959 frames, creep → highway → parking).
 
@@ -315,7 +340,7 @@ either arm in any qualifying speed bin. Everything above is "any hands", matched
 
 | build | what | status |
 |---|---|---|
-| **V60** | V59 + **the boost-amplitude BLEND coefficient `0xD2006`: 102 → 43** | ✅ **BUILT 2026-07-30, UNFLASHED.** **The intervention that settles whether the 42 Hz pump DRIVES the grinding or merely ECHOES it** — the only discriminator left, since causality is not settleable observationally and `eps_crit = 2/Q` needs a passive Q that V59 cannot measure. **5 bytes off V59**: one cal byte + the `[0xD2000,0xD2FFC)` block CRC. ⭐ **MAIN CRC and CAL CRC both UNCHANGED** = machine proof the cave/probe did not move and no `0xC6xxx` calibration moved. 91 bytes off V38. Q10 0.0996 → 0.0420; 42 Hz transmission ~0.37 → ~0.17; tau 10.0 → 23.8 ms @1 kHz. Predicted eps p99 **0.169 → 0.099**. 🛑 **The effect SATURATES** — the falling edge is instant regardless of the coefficient, so this lever buys ~1.7× and then flattens (cal 32 only reaches 0.086); 43 is the knee. **GATE 1 vacuous** (calibration halfword, no code, no RAM). **GATE 2 is the argument**: base-assist path, no LKAS-only decoupling point exists in this chain — but it is a pure *dynamics* change on a gain-**scheduling** variable, adds no gain, moves no static map, cannot change any steady-state value, and tau stays <50 ms worst case. Blast radius byte-verified: mode 10's cell is private (modes 11/12 have their own). **V59's probe is UNCHANGED and is the CONTROL** — it reads `gp-0x6ba6`, *upstream* of the blend, so the index distribution must return statistically identical (76.9/18.5/4.6/0.04). 50/50 CRC, RWD round-trips. Image SHA `6328cff064598cac8d9a7a4147626c8b55ddbad2e586ac3e1b8fca9c9459be5c`; RWD SHA `519aaab4908844d6a240d48f50d8a523b39353a3a4e3bffeb3de4bb4e1d19787` |
+| ~~V60~~ | V59 + the boost-amplitude BLEND coefficient `0xD2006`: 102 → 43 | 🛑 **FLASHED 2026-07-31 → NULL on the vibration. Do not re-flash.** The discriminator fired and returned the predicted null ⇒ **the parametric pump is CLOSED**, and `0xC63BA` goes with it (the index drives only the boost/damping amplitude LERPs). Original build note kept below for provenance. **BUILT 2026-07-30.** **The intervention that settles whether the 42 Hz pump DRIVES the grinding or merely ECHOES it** — the only discriminator left, since causality is not settleable observationally and `eps_crit = 2/Q` needs a passive Q that V59 cannot measure. **5 bytes off V59**: one cal byte + the `[0xD2000,0xD2FFC)` block CRC. ⭐ **MAIN CRC and CAL CRC both UNCHANGED** = machine proof the cave/probe did not move and no `0xC6xxx` calibration moved. 91 bytes off V38. Q10 0.0996 → 0.0420; 42 Hz transmission ~0.37 → ~0.17; tau 10.0 → 23.8 ms @1 kHz. Predicted eps p99 **0.169 → 0.099**. 🛑 **The effect SATURATES** — the falling edge is instant regardless of the coefficient, so this lever buys ~1.7× and then flattens (cal 32 only reaches 0.086); 43 is the knee. **GATE 1 vacuous** (calibration halfword, no code, no RAM). **GATE 2 is the argument**: base-assist path, no LKAS-only decoupling point exists in this chain — but it is a pure *dynamics* change on a gain-**scheduling** variable, adds no gain, moves no static map, cannot change any steady-state value, and tau stays <50 ms worst case. Blast radius byte-verified: mode 10's cell is private (modes 11/12 have their own). **V59's probe is UNCHANGED and is the CONTROL** — it reads `gp-0x6ba6`, *upstream* of the blend, so the index distribution must return statistically identical (76.9/18.5/4.6/0.04). 50/50 CRC, RWD round-trips. Image SHA `6328cff064598cac8d9a7a4147626c8b55ddbad2e586ac3e1b8fca9c9459be5c`; RWD SHA `519aaab4908844d6a240d48f50d8a523b39353a3a4e3bffeb3de4bb4e1d19787` |
 | **V59** | V58 + cave payload replaced by the **boost-index DEPTH probe** | ✅ **BUILT 2026-07-30, UNFLASHED.** `0x14A` byte4: bit7 liveness, bit6 = `gp-0x6ba6 < 0` (the `0xFFFF` fault sentinel), **bit5/4/3 = a THERMOMETER on `gp-0x6ba6` at 512 / 1024 / 2048** (sense is "index < T", which is what lets the whole cave run on the two pinned condition codes). **19 bytes off V58** (cave + MAIN CRC only; **CAL CRC unchanged** = machine proof no calibration moved), 86 off V38. Same base `0xC4B34`/hook `0x55C0E`/68-byte extent as V55/V57/V58, all flown clean. **No new encoder, no new condition code.** 50/50 CRC, RWD round-trip, cave re-disassembled from the built image; the build also asserts both LERPs still resolve at the same mode and `tp+0x7498/0x7499` are still 1. Decoder `rlog-tools/decode_v59_boostindex.py` (hard-stops above 1% non-monotonic rather than reporting on a surviving subset). RWD SHA `ce7f6af6d7475a94462505a5f989d282966e00c9717cf6f2bbbc8b43ccdd3fc7`; image SHA `c6020a32780c1c8d952782426deef25ae390afee4606f319b0aa3c3998158d6d` |
 | **V55** | the pre-V56 revert target | ✅ built, driven, fault-free. SHA `2b0fbd61e6658726ea72248f5312f4521638acaebcbd6f09d8c999e1a9e81fbf` |
 | ~~V56~~ | the `0xC6AF0` mute | 🛑 **FLASHED AND FALSIFIED.** Do not re-flash |
@@ -468,19 +493,30 @@ set's 12.6–42.2°).
 🛑 **NO openpilot-side modifications.** Standing operator instruction. openpilot remains a *measurement
 instrument* only.
 
-1. ★★★ **RE-DERIVE V52C's RESULT UNDER THE CORRECTED STATISTICS. Do this before any new build.**
-   V52C lowpassed the **torque sensor** `gp-0x4f60` (code cave, α = 74/1024, fc ≈ 12 Hz, only −6.1 dB
-   at 21 Hz, +61° lag), flashed, and **halved the mode** — the largest single effect any build has had
-   on the grinding, and the **only** lever that sat on the **feedback** path rather than the command
-   path. **That is exactly what the loop hypothesis predicts and nothing else on record predicts it.**
-   🛑 But `STATE.md`'s own methodology section warns that "halving" claims in this kit have been
-   **median artifacts** — the median is dominated by quiet time between bursts, and at least one such
-   halving evaporated under p99/envelope statistics. **V52C's number was never re-derived under lateral
-   engagement + sustained-effort hands-off + envelope/prominence statistics.** The rlogs exist; this is
-   analysis, not a drive. It either promotes the loop to the leading explanation or removes its best
-   supporting evidence. ⚠ Note the double edge: −6.1 dB of gain reduction came with **+61° of lag**, and
-   in a resonant loop added lag reduces phase margin. That it helped anyway suggests gain reduction
-   dominated — but that is inference.
+1. 🛑🛑 **RESOLVED 2026-07-31 — AND THE ANSWER WAS THAT THERE WAS NEVER A NUMBER. V52C DID NOT HALVE
+   ANYTHING.** This step used to read "re-derive V52C's halving under the corrected statistics; the
+   rlogs exist." **Both halves of that were false.**
+   - **"Halved the mode" is the FILTER'S OWN TRANSFER FUNCTION, relabelled as an on-car result.**
+     V52C's EMA at α = 74/1024, fs = 1 kHz, gives `|H(20.9 Hz)| = 0.4963` = **−6.08 dB**. −6.1 dB **is**
+     0.496× **is** "halved". The two figures in the record are the same statement written twice.
+     Independently recomputed 2026-07-31 in `analysis-2020accord/eps_feedback_path_coverage.py`.
+   - **Textual lineage, git-traced.** The phrase was born in `f0adb24`
+     (`HANDOFF-2026-07-28-v55-...md:205`) as a **caveat explaining why V52C's NULL is weak evidence**:
+     *"⚠ V52C's null is weak — only −6.1 dB at 21 Hz while adding 61° of lag. It halved the mode's
+     content; it did not remove it."* By `59acdd2` (the V59 handoff) it had become *"halved the mode —
+     the largest single effect any build has had"* and the word **null had vanished**.
+   - **Every contemporaneous on-car record says NULL, including the operator's own words:**
+     `HANDOFF-2026-07-26-route13-...md:8` — *"V52C did not fix the vibration; it clearly changed manual
+     feel."* `ARCHIVE-CLAUDE-MD-2026-07-27.md:56` — *"V52C's null is MEANINGFUL: −6.1 dB at 20.9 Hz, so
+     it WAS a fair test of the `gp-0x4f60` lane ⇒ real evidence AGAINST that lane."*
+   - **There are no V52C rlogs and there never were.** Routes on disk: `13,1a,1b,1c,24,28,29,2b,2c`.
+     The V52C window (`08`–`12`) is absent from the whole machine and was never in git.
+   ⇒ **The loop hypothesis loses its retrodiction entirely.** It now rests only on the two things that
+   were actually measured: the **21.09 Hz command→torsion-bar transfer peak** (global max over 3–46 Hz)
+   and the **traced absence of any motor-command feedforward**. Both stand.
+   ⚠ This does **not** falsify the loop: a 2× gain cut that also adds ~57–61° of lag is a poor
+   stabiliser, so a null is what a real loop with <6 dB gain margin would also produce. V52C is
+   **weak-to-moderate evidence against the `gp-0x4f60` VALUE path**, not against the loop.
 2. ★★ **Flash V60 (built, 5 bytes) as a DISCRIMINATOR, not as an expected fix.** It attacks the
    *pump*, and the pump now looks like a passenger. **A null is the informative outcome**: it would
    close the parametric mechanism this kit spent V58/V59/V60 on and leave the loop standing.

@@ -31,10 +31,20 @@ it → more motor torque → more twist. A closed loop. Unlike the parametric pu
   threshold `2/Q` cannot be pinned because the **passive Q is not measurable while the mode is active**
   — there is **no ring-down at all** (66 candidates, longest **0.63 cycles**). A linear loop at unity
   gain sustains indefinitely and never rings down. That is what the data looks like.
-- ★ **V52C retrodiction.** V52C lowpassed the **torque sensor** `gp-0x4f60` (cave, α = 74/1024,
-  fc ≈ 12 Hz, only −6.1 dB at 21 Hz, +61° lag) and **halved the mode** — the largest single effect any
-  build has had, and the **only** lever on the **feedback** path; every falsified one sat on the
-  command path. The loop predicts this; nothing else does.
+- 🛑🛑 **THE V52C RETRODICTION IS WITHDRAWN — 2026-07-31. It was never a measurement.**
+  This bullet used to read *"V52C … halved the mode — the largest single effect any build has had."*
+  **`−6.1 dB at 21 Hz` and `halved the mode` are the same number**: V52C's EMA (α = 74/1024, 1 kHz) has
+  `|H(20.9 Hz)| = 0.4963`. It is the **filter's own transfer function**, authored in
+  `HANDOFF-2026-07-28-v55-...md:205` as a **caveat explaining why V52C's NULL was weak evidence**, and
+  restated two handoffs later as a positive on-car result with the word "null" dropped.
+  **Every contemporaneous record says NULL**, including the operator's:
+  *"V52C did not fix the vibration; it clearly changed manual feel."*
+  **No V52C rlog exists** — routes on disk are `13,1a,1b,1c,24,28,29,2b,2c`; the V52C window `08`–`12`
+  is absent machine-wide and was never committed.
+  ⇒ The loop keeps its two **measured** legs (the 21.09 Hz transfer peak; no feedforward anywhere) and
+  loses its retrodiction. ⚠ Not falsified: a 2× gain cut carrying +57–61° of lag is a poor stabiliser,
+  so a null is also what a real loop with <6 dB gain margin produces. But it **is** evidence against the
+  `gp-0x4f60` **VALUE** path carrying the mode. See [[accord-a-caveat-can-mutate-into-a-result]].
 
 ## 🛑 What is NOT established
 - **The transfer-function peak shows the bar responds resonantly to command — it does not prove the

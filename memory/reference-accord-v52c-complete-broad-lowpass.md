@@ -1,11 +1,27 @@
 ---
 name: reference-accord-v52c-complete-broad-lowpass
-description: V52C = the EMA low-pass on gp-0x4f60 with ALL 19 command-path carriers repointed to gp-0x1300 — BUILT, every pre-flash gate passed, UNFLASHED.
+description: V52C = the EMA low-pass on gp-0x4f60, all 19 carriers repointed to gp-0x1300 — FLASHED ~2026-07-25 and NULL on the vibration (it changed manual feel). No rlog was ever captured.
 metadata:
   type: reference
 ---
 
-**V52C = the COMPLETE broad low-pass. BUILT + ALL PRE-FLASH GATES PASSED, UNFLASHED.**
+**V52C = the COMPLETE broad low-pass. BUILT, ALL PRE-FLASH GATES PASSED, and FLASHED ~2026-07-25.**
+
+🛑🛑 **CORRECTED 2026-07-31 — this file said UNFLASHED for six days after the flash.** On-car result,
+operator's own words: *"V52C did not fix the vibration; it clearly changed manual driving feel."*
+**A NULL.** `docs/BUILD-LINEAGE.md` Part 4 has it right: *"V52C (null for vibration, changed manual
+feel)."*
+🛑 **It did NOT "halve the mode."** That phrase is the filter's own transfer function (α = 74/1024 ⇒
+`|H(20.9 Hz)| = 0.4963` = −6.08 dB) quoted inside a caveat about why the null was weak evidence, and
+later restated as a positive result. See [[accord-a-caveat-can-mutate-into-a-result]].
+🛑 **No V52C rlog exists** — routes on disk are `13,1a,1b,1c,24,28,29,2b,2c`; the V52C window `08`–`12`
+is absent machine-wide and was never committed. The null is the operator's report, not a measurement,
+and it cannot be re-derived.
+⚠ Its filter is **not on the car**: `_v53_` through `_v60_` all read RAW `0xB0A0` at all five spot-checked
+repoint sites; only `_v52c_plain_image.bin` has them filtered. The lineage branched away and never
+carried it forward.
+★ **What V52C could NOT reach:** the torque **RATE** `gp-0x4f62` — a different cell, written by a
+different function, 9 sites, 0 repointed. See [[accord-torque-rate-lane-v52c-structurally-blind]].
 `_v52c_plain_image.bin` SHA `af01c8bd…`; 132 changed bytes vs V38 in 24 runs; 50/50 CRC; x31
 round-trip + RWD readback clean. Files: `build_v52c_tva.py`, `v52_cave_asm.py`,
 `verify_v52c_image.py`, `eps_v52c_gate2_broad.py`.
@@ -65,7 +81,7 @@ hard-fault eligible, and the direction is safer — an EMA attenuates the per-cy
 and the dual-path audit used 4-byte scans only, so a hidden 6-byte-form reader of the *destination*
 cells is low-risk but not formally excluded.
 
-🛑 **STILL UNFLASHED. A code cave is this kit's only bricking class (V24/V27/V48B). Flash ONLY on
+🛑 **A code cave is this kit's only bricking class (V24/V27/V48B). Re-flash ONLY on
 explicit operator instruction naming the file and the bus.**
 See [[reference-accord-gp4f60-carrier-surface]], [[accord-dtc-0x18-hard-eligible-cadence-watchdog]],
 [[accord-gp4f60-two-encodings-enumeration-trap]], [[feedback-stale-ghidra-import-defeats-hash-check]].

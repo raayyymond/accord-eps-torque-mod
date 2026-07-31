@@ -241,10 +241,20 @@ compensation anywhere in the chain** (`gp-0x6b98` appears only as a sign input t
 ceiling detector, and in `FUN_00043e44` whose output has **zero readers**). Measured: the
 **command→torsion-bar transfer function peaks at 21.09 Hz — the GLOBAL max over 3–46 Hz** — 15.6×
 baseline hands-off (K=5, coh 0.654 vs null 0.527), 25.7× any-hands (K=53). ⇒ **the pump is probably a
-passenger; the loop is the driver.** ⚠ The best supporting evidence is **V52C** (torque-sensor lowpass,
-the only feedback-path lever ever flashed, **halved the mode**) — **but that number was never re-derived
-under the corrected statistics and this kit's "halvings" have been median artifacts before. Re-derive it
-first.**
+passenger; the loop is the driver.**
+🛑🛑 **CORRECTION OF RECORD, 2026-07-31 — V52C DID NOT "HALVE THE MODE". THERE WAS NEVER A NUMBER.**
+This paragraph used to cite V52C as the loop hypothesis's best supporting evidence. **Struck.**
+`−6.1 dB at 21 Hz` and `halved the mode` are **the same statement**: V52C's EMA (α = 74/1024, 1 kHz)
+has `|H(20.9 Hz)| = 0.4963`. It is **the filter's designed attenuation, not a measurement.** The phrase
+was authored in `HANDOFF-2026-07-28-v55-...md:205` as a **caveat on why V52C's NULL was weak evidence**
+and mutated into a positive result two handoffs later. Every contemporaneous record — including the
+operator's own words in `HANDOFF-2026-07-26-route13-...md:8` (*"V52C did not fix the vibration; it
+clearly changed manual feel"*) — says **NULL**. **No V52C rlog exists** (routes on disk are
+`13,1a,1b,1c,24,28,29,2b,2c`; the V52C window `08`–`12` is absent machine-wide and was never in git),
+so the "re-derive it first" instruction was unexecutable. ⇒ The loop hypothesis rests **only** on the
+21.09 Hz transfer peak and the traced absence of feedforward. ⚠ Not a falsification of the loop — a
+2× gain cut carrying +57–61° of lag is a poor stabiliser — but it **is** weak-to-moderate evidence
+against the `gp-0x4f60` **VALUE** path specifically.
 
 **Built and UNFLASHED:** ★ **V60** (`0xD2006` 102→43, 5 bytes off V59 — fly as a discriminator, expected
 null), plus **V55** (dual probe: damper variant bit + 4-bit `gp-0x6b98`
