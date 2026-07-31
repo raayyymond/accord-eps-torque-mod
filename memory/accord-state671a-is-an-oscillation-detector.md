@@ -93,3 +93,50 @@ See [[feedback-delegate-firmware-tracing-to-subagents]].
 
 Related: [[accord-rate-lane-is-the-damper-not-the-amplifier]], [[accord-v62-doubles-the-rate-lane]],
 [[accord-v850-scan-traps-formatv-and-storezero]].
+
+---
+
+## 🛑🛑 ON-CAR RESULT, 2026-07-31 — **IT NEVER ARMS. THE GATED APPROACH IS CLOSED.**
+
+**V64 (V63's cal edits + a probe pointed at this detector) flashed and driven, route `35--77808fe7ce`.**
+`0x14A` byte4 read a **constant `0x87` across all 14,980 frames / 149.8 s** of all-creep driving with the
+grinding present throughout: liveness set, and **`gp-0x671a`, `gp-0x67df` and `gp-0x671d` all ZERO on
+every frame** — through **1,158 steering-rate sign reversals**.
+
+⇒ `|gp-0x6c2c|` **never crossed `T` = 12800 once**, the reversal counter never incremented, and
+**`0xC6440`/`0xC643E` were never in force for a single frame.** The grinding happens while this detector
+sits in neutral throughout. ⇒ **A null on the GATE, not on the damping hypothesis** — the direction V61
+signed remains untested on-car. 🛑 **Do not cite V64 as evidence against raising the rate lane.**
+
+**The earlier prediction in this note — that it "arms in ~125–150 ms at 18–21 Hz because the half-period
+is inside the 50 ms dwell timeout" — is FALSIFIED.** It reasoned from the dwell timeout alone and never
+asked whether the *input* reaches `T`. It does not. **When a detector has both a threshold and a timeout,
+check the threshold first; the timeout only matters once the threshold is crossed.**
+
+### Two things that make this permanent rather than a retune
+1. **`gp-0x6c2c` is a MOTOR-RATE DERIVATIVE**, not torque — see `accord-gp6c2c-is-the-detector-input.md`.
+   Sizing says the drive was only ~1.7–2× short, so `T` *is* viable on numbers alone.
+2. 🛑 **But `gp-0x671a` has FOUR external consumers besides the rate lanes** — `FUN_0003a382` (a
+   **continuous LERP index** into the live P/I/D lane `gp-0x6ad4`), `FUN_00036c12` (friction-comp, sums
+   into the *same* aggregator), `FUN_000352b4`, `FUN_00035b20`. **Lowering `T` changes five things at
+   once**, one of them a shape parameter on a lane already known to be load-bearing (V56). Not a clean
+   GATE 1, not a clean experiment.
+3. ⚠ **And even if armed, the rise is small.** Byte-read defaults at the hands-off-creep LERP axis (X=0):
+   r24 default `0xD2AEC` = **2305** vs osc arm 2048; r26 default `gain_A` rec0/rec1 = **3072** vs osc arm
+   1536. **Honda's oscillation arms are gain REDUCTIONS, not boosts** — V63/V64 largely cancel Honda's own
+   de-escalation. Delivered: r24 ×1.78, **r26 ×1.00 (a no-op)**, vs V62's clean ×2 on both lanes.
+
+### ✅ The polarity was right, and the enable gate is ruled out
+`0x3AA7C cmp r14,r12 / bc` ⇒ `r2 = 1` iff `gp-0x671a >= CEIL`; `0x3AB68`/`0x3AC12` load the arms iff
+`r2 != 0`. ⚠ The golden model's `selected_state_value` is **`r22`** (cals `0xC6138`=1/`0xC6136`=0), a
+*different register* from `r2` — both model readings were right about different variables.
+`FUN_000428d4`'s whole body is gated on `FUN_00046ea6(5)==0`; if bit 5 were set the cells would never be
+written, **indistinguishable from "T never crossed"**. Ruled out by raw byte scan of all **47** `jarl`
+sites (Ghidra found 44 — the documented undercount, so the conclusion survived the *more* complete
+method): **bit 5 has exactly one caller image-wide, the detector itself.** Dynamic indices are cals
+`0xB9A14-16` = 0/2/6. The mask is DTC-driven and self-clearing.
+
+🛑 **`0xC64FA` (CEIL) is a BYTE cal = 5** (`ld.bu` @`0x3AA78`); a halfword read gives 517 and is wrong.
+🛑 **`gp-0x671d` is not "r24's override flag"** — it is a saturating rising-edge counter on a
+torque-residual/observer check (`FUN_00041d56`) feeding DTC `0x5e`, with 8 readers including the motor-off
+dispatcher. It read 0 throughout, so r24 *was* covered.

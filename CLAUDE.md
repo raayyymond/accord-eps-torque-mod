@@ -18,15 +18,27 @@ an already-flashed, already-falsified lever because the result was buried in pro
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
    **Mandatory before proposing any calibration edit.**
 3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session.
-   Latest: `HANDOFF-2026-07-31-v61-worse-the-rate-lane-is-the-damper.md` — ★★★ **V61 made the grinding
+   Latest: `HANDOFF-2026-07-31-v64-the-null-is-on-the-gate.md` — 🛑🛑 **V64 flew and the grinding is
+   unfixed, but the probe read a CONSTANT `0x87` across all 14,980 frames: the oscillation detector
+   never armed, so `0xC6440`/`0xC643E` were never in force for one frame. A null on the GATE, not on the
+   damping hypothesis — do NOT cite V64 against raising the rate lane.** Spectra confirm V64 ≡ V59.
+   **V62 is promoted to the recommended next flash** (no detector anywhere in its path). `gp-0x6c2c` is a
+   **motor-rate derivative**, not torque; `gp-0x671a` has **four external consumers**, so lowering `T`
+   changes five things at once. 🛑 **Probe the gate and the input, not just the output.**
+   (predecessor: `HANDOFF-2026-07-31-v61-worse-the-rate-lane-is-the-damper.md` — ★★★ **V61 made the grinding
    WORSE and spread it to manual driving, which INVERTED the record: the torsion-bar RATE lane
    (`r24`/`r26` in `FUN_0003aa2c`) is the mode's DAMPER, not its amplifier.** The kit's first *signed*
    on-car result. V39, V42 and V61 all tested that lane **downward**; the gradient points **up**.
-   **V64 is built and is the recommended next flash** — V63's oscillation-gated cal edits (`0xC6440`, `0xC643E`) plus the cave probe repointed at the detector so a null is interpretable. V62 (unconditional doubling) is the fallback that cannot miss. 🛑 `gp-0x671a` is a **one-way latch** with a 5 s hold, so the gating is *"only after an oscillation has happened"*, not *"only while oscillating"*.
+   ⚠ **SUPERSEDED by the V64 drive above:** this handoff recommended V64 (V63's oscillation-gated cal
+   edits `0xC6440`/`0xC643E` + the detector probe) as the next flash. **It flew and was inert** — the
+   detector never armed. **V62 is now the recommendation.** 🛑 `gp-0x671a` is a **one-way latch** with a
+   5 s hold, so the gating would have been *"only after an oscillation has happened"* — moot, since it
+   never happened.
    🛑 The lesson pairs with the V44 trap: there a withdrawn *rationale* was mistaken for a withdrawn
    *result*; here every result stood and only the **direction** was wrong. **Check which WAY a lever was
    pushed, not just that it was pushed.**
-   (predecessors: `HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`, then
+   ) — end of the V61 predecessor summary.
+   (earlier: `HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`, then
    `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md` — the uncompensated-positive-feedback-loop
    framing, which the V61 result now *supports* and gives a lever for; then
    `HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`, then

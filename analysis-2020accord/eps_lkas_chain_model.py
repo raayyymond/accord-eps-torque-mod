@@ -545,8 +545,19 @@ class EpsState:
     # gp-0x357c. NEUTRAL zeroes dwell AND raw count EVERY tick (0x428FE/0x42906) and exits only if
     # |gp-0x6c2c| > T; a crossing of the OPPOSITE threshold increments; HYST=50 quiet ticks -> neutral.
     #   T = 12800 (0xC620A, ld.h) · HYST = 50 (0xC64DD, ld.bu) · CEIL = 5 (0xC64FA, ld.bu)
-    # => reads 0 during smooth steering; `>= 5` means AN OSCILLATION IS HAPPENING. Arms in ~125-150 ms
-    # at 18-21 Hz (half-period 24-28 ms, inside the 50 ms dwell timeout).
+    # => reads 0 during smooth steering; `>= 5` means AN OSCILLATION IS HAPPENING.
+    # 🛑🛑 MEASURED ON-CAR 2026-07-31 (V64, route 35): IT NEVER ARMS. gp-0x671a and gp-0x67df read ZERO
+    # on all 14,980 frames of a 149.8 s all-creep drive with the grinding present throughout, through
+    # 1,158 steering-rate sign reversals. The struck prediction below was wrong:
+    #   ~~"Arms in ~125-150 ms at 18-21 Hz (half-period 24-28 ms, inside the 50 ms dwell timeout)"~~
+    # It reasoned from the DWELL timeout only and never checked whether the INPUT reaches T at all.
+    # It does not: |gp-0x6c2c| never crossed 12800 once. => V63/V64's oscillation-gated cal edits
+    # (0xC6440, 0xC643E) are INERT on this firmware. Detector-gated damping is CLOSED at this threshold.
+    # gp-0x6c2c is a MOTOR-RATE DERIVATIVE, not torque -- see _detector_input_6c2c() below.
+    # ⚠ AND EVEN IF ARMED THE RISE IS SMALL: at the hands-off-creep LERP axis (X=0) the DEFAULT arms are
+    # r24 2305 (0xD2AEC) and r26 3072 (gain_A rec0/rec1), vs osc arms 2048 and 1536 -- i.e. Honda's
+    # oscillation arms are gain REDUCTIONS. V64 delivers r24 x1.78 and r26 x1.00 (a no-op) against
+    # V62's clean x2 on both lanes under every arm.
     # 🛑 THE OUTPUT IS A ONE-WAY LATCH WITH A 5 s HOLD (output stage 0x429A0-0x42A12, the sole st.b to
     # gp-0x671a is 0x42A12): once the held value reaches CEIL it is RE-PINNED to CEIL every tick. The
     # only way down is 5000 consecutive ticks (cal 0xC6270) with voted driver torque gp-0x6a5e >= 640
@@ -554,8 +565,21 @@ class EpsState:
     # timer reloads constantly. ⇒ once tripped it is STICKY and carries into manual steering.
     # ✅ The latch is PROTECTIVE: a per-tick-gated gain would modulate AT the mode frequency, i.e. a
     # parametric pump -- the exact failure mode V58/V59/V60 chased for three builds.
-    # ⚠ NOT private to r24/r26 -- also read by FUN_0003a382, FUN_000352b4, FUN_00035b20, FUN_00036c12.
-    # Irrelevant to raising the two arm cals; critical if anyone ever moves T/HYST/CEIL.
+    # 🛑 NOT private to r24/r26 -- also read by FUN_0003a382, FUN_000352b4, FUN_00035b20, FUN_00036c12.
+    # Irrelevant to raising the two arm cals; DECISIVE against ever moving T/HYST/CEIL. FUN_0003a382 uses
+    # it as a CONTINUOUS LERP INDEX (not a gate) shaping the live P/I/D lane gp-0x6ad4, and FUN_00036c12's
+    # friction-comp lane gp-0x6b26 sums into the SAME aggregator. => lowering T changes FIVE things at
+    # once, four uncontrolled, one a shape parameter on a lane already known to be load-bearing (V56).
+    # By contrast gp-0x67df is CLEAN (2 hits, both inside FUN_000428d4) and T has 4 readers, all inside
+    # the detector. CEIL (0xC64FA) is NOT private -- 3 external readers.
+    # 🛑 The whole detector body is gated on FUN_00046ea6(5)==0 (bit 5 of gp-0x18d0|gp-0x18d4). If set,
+    # FUN_000428d4 jumps 0x428E2 -> 0x42A76 and NEITHER cell is written -- indistinguishable from "T never
+    # crossed" on a bus log. RULED OUT as the cause of the V64 null: raw byte scan of all 47 jarl sites
+    # (Ghidra's search finds only 44 -- the documented undercount) shows bit 5 has exactly ONE caller
+    # image-wide, the detector itself @0x428DA; the only dynamic indices are cals 0xB9A14-16 = 0,2,6.
+    # The mask is DTC-driven (tp-0x72c4, stride 28, u32 at +8) and self-clearing (gp-0x18d4 is rebuilt by
+    # plain assignment each active-fault sweep); gp-0x18d0 is OR-only but written only on the rare
+    # "8+ simultaneous faults, evict oldest" overflow path.
     # The arm selection below is CORRECT as written and was verified in Ghidra 2026-07-31; a subagent's
     # prose summary claimed the opposite polarity and was wrong.
     assist_state_671a: int = 0
@@ -1028,6 +1052,34 @@ def _inline_torque_rate_b(st: EpsState) -> int:
         shaped = 0
     return _clamp(st.assist_polarity * shaped,
                   -ASSIST_TORQUE_RATE_OUTPUT_CLAMP, ASSIST_TORQUE_RATE_OUTPUT_CLAMP)
+
+
+def detector_input_6c2c(rate_raw: int, ema_old: int, state_fast: int) -> tuple:
+    """
+    FUN_00041464 @0x4184E -- produces gp-0x6c2c, the ONLY input to the oscillation detector's threshold
+    test. [VERIFIED 2026-07-31, cals byte-read LE.] It is a MOTOR-RATE DERIVATIVE off gp-0x4f50 (the
+    resolver/motor ELECTRICAL rate), NOT torque and NOT a raw per-tick difference: differencing kills DC,
+    so a sustained large steering input cannot drive it -- it needs the motor rate actively reversing.
+    Returns (gp_0x6c2c, ema_new, state_fast_new). A slower sibling gp-0x6c2e takes the same `acc` through
+    cal 0xC40DA = 3 (>>7).
+
+    Sizing: a 21.3 Hz sinusoid needs |gp-0x4f50| ~= 1683 counts @1 kHz (1821 @100 Hz) to reach T = 12800,
+    inside that signal's own +-13000 validity ceiling => the detector is NOT structurally blind to the
+    ~21 Hz mode; route 35 was ~1.7-2x short. Cross-checked in the frequency domain (|1-H1| = 0.43041 x
+    |H2| = 0.95375 => 7.5965*U => U = 1685), agreeing to 4 significant figures. The `acc` clamp bites at
+    U ~= 4017, so T sits at ~42% of saturation and the response is linear there.
+    🛑 Do NOT size T from bus torque -- gp-0x6c2c does not share the 0x18F torque LSB. [OPEN] gp-0x4f50's
+    physical units (needs the ISR writing gp-0x29c4, or a probe).
+    """
+    K1, K2 = 37, 22                                   # cals 0xC643C (>>7), 0xC40DC (>>6)
+    if abs(rate_raw) > 13000:                         # 0x415be-0x415ce plausibility gate
+        return 0x7FFF, 0, 0                           # 0x41AC2 fault sentinel; both EMAs reset
+    target = rate_raw * 1024                          # 0x415d0  Q10
+    step = ((target - ema_old) * K1) >> 7             # 0x415e8  EMA #1 increment -- THE DIFFERENCE
+    ema_new = ema_old + step
+    acc = _clamp(step * 0x20, -0xFA0000, 0xFA0000)    # 0x41604-0x4161a  x32, clamp +-16,384,000
+    state_fast = state_fast + (((acc - state_fast) * K2) >> 6)   # 0x41622  EMA #2
+    return state_fast >> 9, ema_new, state_fast       # 0x4184a/0x4184e  range +-32,000; T = 40.0% of it
 
 
 def _inline_torque_rate_a(st: EpsState) -> int:
