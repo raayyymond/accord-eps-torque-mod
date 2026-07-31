@@ -23,14 +23,41 @@ HARD-REVERSAL COUNTER, not a smoothness measure:
    "5+ hard reversals recently" = AN OSCILLATION IS HAPPENING. At 18-21 Hz the half-period is 24-28 ms,
    comfortably inside the 50 ms dwell timeout, so once it latches it stays latched (~125-150 ms to arm).
 
+🛑🛑 CORRECTION 2026-07-31, AFTER THIS FILE WAS FIRST WRITTEN AND BUILT. THE OUTPUT STAGE IS A ONE-WAY
+   LATCH WITH A 5 s HOLD, AND THIS DOCSTRING OVERSTATED THE DECOUPLING. Verified by the orchestrator in
+   Ghidra (0x429A0-0x42A12), cals byte-read:
+     0x429A0  ld.hu 0x72de[tp],r12   ; cal 0xC62DE = 640
+     0x429A4  ld.hu -0x6a5e[gp],r15  ; voted DRIVER TORQUE
+     0x429A8  cmp r15,r12 / bh       ; 640 > driver torque      -> RELOAD the hold timer
+     0x429AC  cmp r0,r14  / bne      ; revcount != 0            -> RELOAD the hold timer
+     0x429CA  ld.hu 0x7270[tp],r8    ; reload = cal 0xC6270 = 5000 ticks = 5.0 s @1 kHz
+     0x429DE  cmp r8,r6 / bh         ; CEIL > held -> output = revcount
+     0x429EA  ld.bu 0x74fa[tp],r8    ; else        -> output is RE-PINNED TO CEIL every tick
+   Once the held value reaches CEIL the output stays at CEIL. The ONLY way down is 5000 CONSECUTIVE
+   ticks with driver torque >= 640 AND revcount == 0 -- and driver torque dips below 640 on every
+   direction change, so the timer reloads constantly.
+   ⇒ **THE ACCURATE CLAIM IS NARROWER:** a drive that never oscillates never sees the raised gain (that
+     part survives, and it is still a real improvement over V62's always-on doubling). But once a single
+     5-reversal burst has occurred, the raised gain is LATCHED ON and carries into subsequent MANUAL
+     steering until the hold drains. V63 is "V62, but only after an oscillation has happened" -- not
+     "damping only while oscillating".
+   ✅ AND THE LATCH IS PROTECTIVE, NOT JUST A LIMITATION. If the arm switched per-tick with the
+     reversals, the gain would modulate AT THE MODE FREQUENCY -- a parametric pump, which is exactly the
+     failure mode V58/V59/V60 spent three builds chasing. Honda's hold prevents that. A per-tick-gated
+     damper would be actively dangerous; this one cannot be.
+   ⚠ ALSO CORRECTED: the per-tick zeroing at 0x42906 is on **gp-0x357c** (the raw reversal count), NOT
+     on gp-0x671a. gp-0x671a is the LATCHED OUTPUT written once at 0x42A12. An earlier version of this
+     docstring attributed that store to the wrong cell.
+
     r24:  gate_671d!=0 -> 0xC6442=1024 | gate_683c!=0 -> 0xC6446=512 (DEAD) |
           state>=5 -> 0xC6440=2048  <-- OSCILLATION ARM | else -> mode-indexed LERP (smooth steering)
     r26:  gate_683c!=0 -> 0xC6444=512 (DEAD) |
           state>=5 -> 0xC643E=1536  <-- OSCILLATION ARM | else -> gain_A LERP (smooth steering)
 
-⇒ RAISING ONLY THE state>=5 ARMS ADDS DAMPING ONLY WHILE AN OSCILLATION IS DETECTED, AND LEAVES SMOOTH
-  MANUAL STEERING ON ITS UNTOUCHED LERP DEFAULT. That is exactly what the operator asked for, and it is
-  a SMALLER edit than V62: two calibration halfwords, no code at all.
+⇒ RAISING ONLY THE state>=5 ARMS ADDS DAMPING ONLY ONCE AN OSCILLATION HAS BEEN DETECTED (see the
+  LATCH correction above -- it then HOLDS), AND A DRIVE THAT NEVER OSCILLATES KEEPS ITS UNTOUCHED LERP
+  DEFAULT. Narrower than 'only while oscillating', but still a real scope reduction against V62's
+  always-on doubling, and a SMALLER edit: two calibration halfwords, no code at all.
 
 🛑 THE POLARITY WAS DISPUTED BY TWO SUBAGENTS AND THE ORCHESTRATOR RESOLVED IT IN GHIDRA PERSONALLY.
    One trace read `0xC643E` as the state<5 arm, which would have made this edit exactly backwards --
@@ -72,7 +99,8 @@ GATE 1 (RAM ownership): VACUOUS. Calibration halfwords only. No cave, no code, n
    are this kit's ONLY bricking class (V24, V27, V48B).
 GATE 2: adds damping to a mode that is currently sustaining with zero net damping, in the one lane fast
    enough to act on it (task 1, 1 kHz, ~3.8 deg lag at 20 Hz vs task 5's 37.6-75.2 deg). It is gated on
-   an oscillation detector, so it cannot act during smooth steering at all.
+   an oscillation detector, so it cannot act on a drive that never oscillates. ⚠ But it DOES hold after
+   the first burst -- see the LATCH correction; it is not inert during all manual steering.
 Blast radius, both cals independently re-verified: single reader each, no float mirror, no sharing.
    0xC643E: exactly one real hit, `ld.hu 0x743e,tp,r8` @0x3AB68 (4 other matches are branch-target
    address-literal collisions, excluded -- the recurring over-count trap).

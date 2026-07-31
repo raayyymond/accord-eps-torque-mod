@@ -18,8 +18,12 @@ V62 doubles the torsion-bar rate lane **unconditionally**, which changes manual 
 problem that is worst with LKAS engaged and hands off. The operator pushed back on exactly that. The
 answer is [[accord-state671a-is-an-oscillation-detector]]: both lanes already branch on `gp-0x671a >= 5`,
 which is a **hard-reversal counter** reading 0 during smooth steering. Raising only those arms adds
-damping only while an oscillation is detected; both smooth-steering LERP defaults stay stock.
-⇒ **A smaller edit than V62, with the manual-feel cost removed by construction.**
+damping once an oscillation is detected. 🛑 **But the counter is a ONE-WAY LATCH with a 5 s hold that
+never clears at creep** (see [[accord-state671a-is-an-oscillation-detector]]), so the accurate claim is
+**"V62, but only after an oscillation has happened"** — not "only while oscillating". A drive that never
+oscillates never sees it; once tripped it carries into subsequent manual steering.
+⇒ **A smaller edit than V62 and a real scope reduction, but NOT zero manual-feel cost.** Stated plainly
+because an earlier version of this note claimed the stronger thing.
 
 ## Why there is no new arithmetic risk
 **3072 is already the gain_A LERP's own stock maximum** (`0xC6A68`/`0xC6A7C` Y[0]=Y[1]=3072), so the

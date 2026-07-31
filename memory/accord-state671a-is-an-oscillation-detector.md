@@ -2,7 +2,8 @@
 
 **Found 2026-07-31 while answering the operator's objection to V62** (*"we're affecting manual steering
 feel even though the symptom is LKAS-specific"*). It is the decoupling point that lets a rate-lane
-damping increase apply **only during an oscillation**, leaving smooth manual steering untouched.
+damping increase apply **only once an oscillation has occurred** rather than always. ⚠ Not "only while
+oscillating" — see the LATCH section below; the first version of this note claimed the stronger thing.
 
 ## The state machine — `FUN_000428d4`, 1 kHz
 States `{neutral, +latched, −latched}` at `gp-0x67df`; dwell at `gp-0x6759`; reversal count at
@@ -24,7 +25,27 @@ gp_0x671a = min(revcount, CEIL)                 # 0x42A12 -- the ONLY st.b write
 
 ⇒ **It reads 0 during smooth or neutral steering and RISES with reversals.** `state >= 5` means
 "5+ hard reversals recently" = **an oscillation is happening**. At 18–21 Hz the half-period is 24–28 ms,
-comfortably inside the 50 ms dwell timeout, so it arms in ~125–150 ms and stays latched.
+comfortably inside the 50 ms dwell timeout, so it arms in ~125–150 ms.
+
+## 🛑🛑 IT IS A ONE-WAY LATCH WITH A 5 s HOLD — the output stage, traced 2026-07-31
+The value the arms test is **not** the raw per-tick count. `FUN_000428d4`'s output stage (`0x429A0`–
+`0x42A12`, orchestrator-verified, cals byte-read) holds it:
+```
+0x429A8  cmp r15,r12 / bh   ; cal 0xC62DE = 640 > voted DRIVER TORQUE gp-0x6a5e -> RELOAD hold timer
+0x429AC  cmp r0,r14  / bne  ; revcount != 0                                     -> RELOAD hold timer
+0x429CA  reload = cal 0xC6270 = 5000 ticks = 5.0 s @ 1 kHz
+0x429DE  cmp r8,r6 / bh     ; CEIL > held -> output = revcount
+0x429EA                     ; else        -> output RE-PINNED TO CEIL every tick
+```
+Once the held value reaches CEIL it stays there. The only way down is **5000 consecutive ticks with
+driver torque >= 640 AND no reversals** — and driver torque dips below 640 on every direction change, so
+the timer reloads constantly. ⇒ **once tripped, the arm is sticky**, and it carries into subsequent
+manual steering.
+✅ **The latch is PROTECTIVE.** A gain that switched per-tick with the reversals would modulate **at the
+mode frequency** — a parametric pump, the exact failure mode V58/V59/V60 chased for three builds. Honda's
+hold prevents that. A per-tick-gated damper would be actively dangerous; this one cannot be.
+⚠ **Cell correction:** the per-tick zeroing at `0x42906` is on **`gp-0x357c`** (raw count), NOT on
+`gp-0x671a`, which is the latched output written once at `0x42A12`.
 🛑 It is a **hard AMPLITUDE gate**: if the driving signal never crosses ±12800, the counter never leaves 0.
 
 ## Why it matters — both rate lanes already branch on it
@@ -34,7 +55,8 @@ r24: gate_671d!=0 -> 0xC6442=1024 | gate_683c!=0 -> 0xC6446=512 (DEAD) |
 r26: gate_683c!=0 -> 0xC6444=512 (DEAD) |
      state>=5 -> 0xC643E=1536  <-- OSCILLATION ARM | else -> gain_A LERP        (smooth steering)
 ```
-⇒ **Raising only the `state>=5` arms adds damping only while an oscillation is detected.** That is
+⇒ **Raising only the `state>=5` arms adds damping only once an oscillation has been detected** (then it
+holds — see the LATCH section). That is
 [[accord-v63-oscillation-gated-rate-damping]]. `gate_683c` is dead (zero `st.b` writers image-wide) so
 r26's chain is clean; `gate_671d` **is** live (2 writers) and outranks r24's arm, so r24's coverage is
 not guaranteed.
