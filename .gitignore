@@ -140,3 +140,6 @@ docs/can-research/annas/candidates.json
 # baselines). Decode scripts read them locally; the captures themselves (.zst rlogs,
 # .hevc/.ts camera segments) are large and not versioned. Ignore the whole tree.
 analysis-2020accord/rlogs/
+
+# route rlog caches -- regenerate with analysis-2020accord/extract_r*_cache.py
+_cache_r*/

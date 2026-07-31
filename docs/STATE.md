@@ -375,9 +375,27 @@ observables agree, and the direction was predicted *before* the data was looked 
 | **MANUAL forward** | 5 | 18.54 Hz | **13.1×** | 3.82e6 |
 
 ⇒ **Manual reverse carries 151× the power of manual forward, at the same frequency as the engaged line.**
-That is the *same mode*, unmasked by the loss of damping — not a new one. Manual forward at 13× prominence
-is a floor, matching *"slightly… in some scenarios"*; reverse at 1910× is a real coherent mode, matching
-*"absolutely, definitely."*
+That is the *same mode*, unmasked by the loss of damping — not a new one.
+
+🛑 **REFINEMENT — "manual forward is a floor" is WRONG, and the error is instructive.** The 13.1× above
+is an **un-gated average** over all manual-forward driving, so it is diluted by ordinary quiet cruising.
+Gated on **sustained effort ≥ 1000** it is **146×** (n=2 windows, f0 18.40 Hz) — the phenomenon *is*
+present in manual forward, but **only while the driver is actually loading the wheel**, which is exactly
+what the operator said (*"in some scenarios"*). A second analyst reached the same place from the other
+side: the loudest manual windows are at **|v| = 0.00–0.6 m/s with the wheel cranked** (effort 2200–3300),
+and a `|v| ≥ 0.3 m/s` "moving" gate **drops them entirely**, taking that arm from *"median prominence
+5.3×, mostly floor"* to *"median 317×, envelope p99 median 2495"*, f0 **17.08 Hz, sd 0.76, n=7**.
+⇒ **Two different gates each hid the same population.** Manual/reverse sits at **17.0–17.8 Hz**, about
+0.5–1.3 Hz *below* the engaged 18.3 Hz — same mode family, frequency shifting with loading.
+⇒ ★ **Adopt a near-stationary, high-effort manual arm as a standing convention.** That is where manual
+EPS instability lives, and both a speed gate and a missing effort gate erase it.
+
+★ **The ratchet stayed LKAS-gated while the grinding did not.** Engaged: 10 of 14 windows reach 10×
+prominence at 6.56 Hz. Manual: **0 of 28**. Reverse: **0 of 10**. ⇒ under V61 the two symptoms
+**separated further** — the grinding escaped into base assist, the ratchet did not. That is independent
+support for them being different phenomena, and it is also the third exclusion of the
+ratchet-2nd-harmonic reading (a harmonic cannot live where its fundamental fails a presence test; and
+2 × 6.56 = 13.1 Hz, not 17.8).
 
 ⚠ **Caveats, stated:** n is small (3 engaged / 2 reverse runs) and this is one route against one control
 route. The effect sizes (7.9×, 151×, −2.93 Hz) are far larger than that weakness, but a repeat on V62 is
