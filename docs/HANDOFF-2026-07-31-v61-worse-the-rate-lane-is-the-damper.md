@@ -1,7 +1,7 @@
 # HANDOFF 2026-07-31 — V61 made it WORSE, and that is the best news this kit has had
 
-**Session shape:** operator reported the V61 drive; orchestrator + three subagents (two firmware tracers
-and an rlog analyst); **V62 and V63 both built, verified and unflashed at close-out.**
+**Session shape:** operator reported the V61 drive; orchestrator + four subagents (two firmware tracers,
+an rlog analyst, a builder); **V62, V63 and V64 built, verified and unflashed at close-out.**
 
 **One-line summary:** V61 removed the torsion-bar rate lane and the grinding got worse *and spread to
 manual driving* — which means the lane was the mode's **damper**, and every previous build on it pushed
@@ -9,7 +9,9 @@ the wrong way. **V62** doubles it in 6 bytes. Then the operator objected that th
 fix an LKAS-specific symptom, which turned out to be the most productive note of the session: the firmware
 has its **own oscillation detector** (`gp-0x671a`), both rate lanes already branch on it, and **V63**
 raises only the oscillation-gated arms — same damping, **zero manual-feel cost**, and a smaller edit.
-**Fly V63 first; V62 is the fallback that cannot miss.** See §5b.
+Then the operator asked why the probe was still measuring a falsified mechanism — also right — and **V64**
+is V63 plus a probe repointed at the detector, which is the build to fly. **Fly V64; V62 is the fallback
+that cannot miss.** See §5b and §5c.
 
 ---
 
@@ -348,9 +350,68 @@ load-bearing** — if not, V63 is inert and **a null is ambiguous**. Resolve wit
 fly V63 first, and if null fly V62, which cannot miss. And `gate_671d` outranks r24's arm and is live, so
 **expect r26 to carry V63**.
 
+## 5c. V64 — the probe repointed at the detector, and a correction it forced
+
+**Operator, after V63:** *"shouldn't we change the telemetry in V63 to observe things relevant to the
+oscillation detector and dampening output?"* **Right again.** V63 still carried V59's thermometer on
+`gp-0x6ba6` — the parametric-pump index **V60 already falsified** — so it was spending five bits on a
+closed question while V63's own ambiguity went unmeasured. A V63 null could not have distinguished "the
+detector never tripped" from "the damping rise was too small".
+
+**V64 = V63's two cal edits (CAL block byte-identical, machine-verified) + the cave repointed:**
+```
+bit7 = liveness            bit6 = gp-0x671a >= 5   (the raised arm is selected)
+bit5 = gp-0x671a != 0      bit4 = gp-0x67df != 0   (FSM left neutral => |gp-0x6c2c| crossed +/-12800)
+bit3 = gp-0x671d != 0      (r24's higher-priority override is active)
+```
+**Actionable in every failure mode**: bit4 clear ⇒ lower `T` (`0xC620A`); bit4 set + bit6 clear ⇒ lower
+`CEIL` (`0xC64FA`); bit6 live but no improvement ⇒ the rise was too small; bit3 set ⇒ also raise
+`0xC6442`. All single calibration bytes. **60 bytes off V59, 54 off V63 (cave + MAIN CRC only), 90 off
+V38.** Same base `0xC4B34` / hook `0x55C0E` / **68-byte extent** as V55/V57/V58/V59 — 68/68 used, zero
+budget left. GATE 1 vacuous. Image SHA `e9dcd3b6…`, RWD `7abbeba6…`.
+
+### 🛑🛑 THE CORRECTION IT FORCED — `gp-0x671a` IS A ONE-WAY LATCH
+Verifying the probe forced a read of `FUN_000428d4`'s **output stage** (`0x429A0`–`0x42A12`), untraced
+until now. Orchestrator-verified, cals byte-read:
+```
+0x429A8  cmp r15,r12 / bh   ; cal 0xC62DE = 640 > voted DRIVER TORQUE gp-0x6a5e -> RELOAD hold timer
+0x429AC  cmp r0,r14  / bne  ; revcount != 0                                     -> RELOAD hold timer
+0x429CA  reload = cal 0xC6270 = 5000 ticks = 5.0 s @ 1 kHz
+0x429EA  once held >= CEIL, the output is RE-PINNED to CEIL every tick
+```
+The only way down is **5000 consecutive ticks with driver torque ≥ 640 AND no reversals** — and torque
+dips below 640 on every direction change, so the timer reloads constantly.
+
+⇒ **§5b's claim that V63 has "zero manual-feel cost by construction" is WITHDRAWN.** Accurate: a drive
+that never oscillates never sees the raised gain (still a real scope reduction vs V62's always-on
+doubling), **but once one 5-reversal burst occurs the raised gain latches on and carries into subsequent
+manual steering.** V63/V64 is *"V62, but only after an oscillation has happened."*
+
+✅ **The latch is PROTECTIVE, not merely a limitation.** A gain switching per-tick with the reversals
+would modulate **at the mode frequency** — a parametric pump, the exact failure mode V58/V59/V60 spent
+three builds chasing. Honda's hold prevents that; a per-tick-gated damper would be actively dangerous.
+
+⚠ **Cell correction:** the per-tick zeroing at `0x42906` is on **`gp-0x357c`** (raw count), not
+`gp-0x671a`, which is the latched output written once at `0x42A12`.
+
+### ★ Two process notes worth keeping
+- **V850 `ld.bu` carries displacement bit 0 in `hw1` bit 5, not `hw2`.** My first verification of the
+  cave masked `hw2`'s LSB and reported two **false mismatches** on a correct build. Close cousin of the
+  `disp|1` trap and it will bite again.
+- **A subagent declined one of my recommendations, with arithmetic, and was right.** I proposed loading
+  `CEIL` from calibration instead of hardcoding 5. It costs +4 bytes against a 68/68 cave, needs a third
+  scratch register, and would put tp-relative addressing into a cave for the first time — against a `tp`
+  off-by-0x1000 trap that has recurred four times. Meanwhile `cmp imm5,reg2` is `V55.cmp_imm5`, **already
+  flashed on-car in V55**, and the exact halfword `6532` exists at `0x2A50C`. **Lower risk than mine.**
+  The builder asserts `0xC64FA == 5` on source, image and readback instead.
+
+🛑 **Route note:** start the log **before the first engagement**. The counter latches once per low-speed
+segment, so *time-to-first-set* — the informative statistic — is unmeasurable otherwise.
+
 ## 6. Next steps
 
-0. ★★★ **Flash V63, then V62 only if V63 is null.** V63 gets the same damping increase with zero
+0. ★★★ **Flash V64, then V62 only if V64 is null.** (V64 is V63 plus the detector probe — same cal
+   edits, so nothing is lost by flying it instead of V63.) V63 gets the same damping increase with zero
    manual-feel cost; V62 cannot miss but does change manual feel. That order also resolves V63's own
    ambiguity for free — V62 working after V63 nulls means the reversal detector was not tripping.
    Repeat the V61 route so the comparison is like-for-like: parking-lot creep,
