@@ -6,8 +6,9 @@ each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed, falsified, or **rejected on
 review** — check it before proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`
-(predecessor: `HANDOFF-2026-07-30-v57-drive-two-symptoms-and-v58.md`).
+`docs/HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md`
+(predecessors: `HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`, then
+`HANDOFF-2026-07-30-v57-drive-two-symptoms-and-v58.md`).
 
 🛑 **Explain firmware with Python that mirrors the decompiled arithmetic exactly** — standing operator
 instruction, 2026-07-28. Integer `>>`, the real Q-format, the real branch conditions, each line annotated
@@ -65,6 +66,208 @@ command drifts 510 counts while the torsion bar swings **2,791 counts through 3 
 
 ---
 
+## ★★ V59 FLEW 2026-07-30 (route `2c`) — the grinding mechanism is a PARAMETRIC PUMP, and it is MARGINAL
+
+**V59 is FLIGHT-CLEAN.** 50,963 frames / 9 segments (2,5,6,7 not uploaded). `ST==4`: **0/50,963**.
+No `steerUnavailable`/`steerTempUnavailable`/`canError`/`steerSaturated`. Probe **100% live, 100%
+thermometer-monotonic, fault sentinel 0.000%**, stock low bits `&0x07 == 0b111` with zero exceptions.
+`0x14A`/`0x18F` at 100 Hz. Two boundary transients only (a boot cluster in `wrongGear`, and one
+`controlsMismatch`/`immediateDisable` at the tail of seg 12 — parked, LKAS off). ⚠ The route was NOT
+the pure creep route specified: segs 4/8/9 are road speed to 23.6 m/s. It did deliver what `2b` could
+not — **50.2 s of engaged + creep + SUSTAINED hands-off**.
+
+### The mechanism
+`gp-0x6ba6` is `|filtered signal|` — **rectified** — so it sweeps the boost-amplitude LERP at **2× the
+mode frequency**. Measured, engaged+creep+hands-off (13 runs, K=30, periodograms averaged across
+DISJOINT runs, never spliced): the thermometer's own spectrum peaks at **42.19 Hz** (= 2 × 21.09 to
+within one bin), prominence 11.10×; the 18–26 Hz band shows only 1.23×. **Disengaged: bit5 NEVER
+toggles — 0/4 runs, 61.2 s, K=90, prominence 0.00×.** Depth 76.93% <512 / 18.46% 512-1k / 4.57% 1k-2k
+/ 0.04% ≥2048 engaged, vs **99.83% <512** disengaged. Toggle rate **25.55/s hands-off, 9.42/s
+hands-ON, 0.00/s disengaged** — hands-on the index sits *pinned high*, it does not modulate.
+`corr(env, lvl)` is **positive in 11/11 hands-off runs** (median +0.487, +0.485 partialling out
+effort); the negative hands-ON value is pure Simpson's paradox. **0 of 33 windows have the index
+sweeping with no grinding line.**
+
+🛑 **What V59 did NOT establish.** The index is `|x|` of a bar-derived signal, so 2f coupling and
+index-tracks-mode are **arithmetically forced** once the ripple exists — coherence against the bar is
+circular and is not evidence. What is new is the **depth**, and that it survives hands-off.
+**Causality is not settleable observationally.** Only an intervention separates drive from echo.
+
+### ⇒ It is an AMPLITUDE-GATED BOOTSTRAP, and it is MARGINAL
+A pump at 2f into a mode at f is the principal Mathieu resonance; threshold `eps_crit ≈ 2/Q = 0.147`
+at the recorded Q = 13.6. Simulating the **literal integer arithmetic** with the confirmed blend
+direction, across both open unknowns (task rate; series question):
+
+| `\|tq\|` amp | 1 kHz y4-only | 1 kHz both | 500 Hz y4-only | 500 Hz both |
+|---|---|---|---|---|
+| 218 (median) | 0.013 | 0.020 | 0.013 | 0.020 |
+| 829 (p90) | 0.072 | 0.104 | 0.055 | 0.080 |
+| 1451 (p99) | 0.104 | **0.169** | 0.070 | 0.116 |
+
+eps scales with amplitude ⇒ a **bootstrap**: a kick raises the oscillation → the index swings wider →
+the modulation deepens → more pumping, until the curve flattens past index 3645 and the clamps bite.
+That is why the grinding **bursts** rather than hums, and why it needs a road input to ignite.
+
+🛑🛑 **THE THRESHOLD COMPARISON IS UNDECIDABLE FROM THIS DATA — do not quote a verdict either way.**
+`eps_crit = 2/Q` needs the **PASSIVE** Q (the mode's damping when *not* being driven). That is not
+measurable while the mode is active, and V59 contains no free decay to measure it from:
+- **Ring-down: none exists.** 66 candidate decays, longest **0.63 cycles** — envelope wiggle, not
+  damping. The mode does not ring down; it is sustained while conditions hold.
+- **Autocorrelation analytic envelope** (biased-ACF triangular taper divided out, tau capped at 25%
+  of record) gives apparent **Q median 102, range 22–1083** (n=8 hands-off runs). ⚠ That is the
+  coherence of a *driven* oscillation, **NOT** the passive Q — a self-sustained limit cycle has
+  near-infinite apparent Q. It cannot be substituted into `2/Q`.
+
+| assumed Q | eps_crit | verdict vs measured eps (0.020 / 0.104 / 0.169) |
+|---|---|---|
+| 13.6 (recorded, provenance unverified) | 0.147 | marginal — crosses only at p99 |
+| 22 (lowest apparent) | 0.091 | **above** at p90 and p99 |
+| 102 (median apparent) | 0.020 | **above everywhere** |
+
+⚠ **What the coherence DOES support:** a passive Q=13.6 mode kicked by broadband road noise would
+show coherence ~`Q/(pi*f)` ≈ 205 ms. Observed is 0.33–17 s equivalent — **far more coherent than
+random excitation of a lightly-damped mode can produce.** ⇒ there is an **active, phase-coherent
+drive**. That is consistent with the parametric pump but does not prove it is the drive.
+
+⇒ **Only an intervention decides it. V60 is the discriminator, not just a candidate fix.**
+
+### The structure — golden model was WRONG, and there is a filter nobody had modelled
+`FUN_00034a72`: the two amplitude curves do **not** multiply in series. `0xD2888` scales the final
+assist term (`sar 0xe,r13` @`0x35008`); `0xD28DC` enters earlier (`shr 0xe,r28` @`0x34C26`) and is
+**differenced against `gp-0x6a56`** then clamped ±12000. ⚠ **UNRESOLVED DISPUTE:** a subagent holds
+`0xD28DC` is a dead end (3 image-wide refs to state cell `gp-0x69bc`, all in-function). That argument
+is **structurally invalid** — a scan of the STATE CELL cannot show whether the blended value is
+consumed in a REGISTER the same tick, which is what a slew-limited gain does. The decompiler shows the
+blended y1 as an operand of a `>>14`, and a byte scan finds exactly two `>>14` sites in the function,
+one of them at `0x34C26` inside the span the subagent claims to have traced. **Not called. It does not
+change the verdict** (see the table — both columns are mostly sub-threshold).
+
+★★ **BOTH LERP outputs are SLEW-BLENDED before use** — previously unmodelled entirely. Rate cal
+`0xCA06C[10] -> 0xD2006 = 102` (Q10). **Direction CONFIRMED @`0x34be4`** (`cmp r25,r10 / ble` →
+instant snap when raw ≤ old): **FALLING is instant, RISING is slowed** — a fast-attack/slow-release
+gain reducer. This is what pulls eps down from the raw-LERP values.
+
+### Levers — one clean, three closed
+- ★★ **`0xD2006` = 102, the blend coefficient. THE LEVER, and GATE 1 is CLEAN.** Lowering it
+  attenuates the 42 Hz pump **without moving the static gain map at all** (the blend converges to the
+  same steady state ⇒ DC assist and manual feel untouched). Blast radius byte-verified: exactly one
+  pointer (`0xCA094`) references it; the "three identical copies" in `0xD2000` are modes 10/11/12's
+  independent entries, not an array; distinct from the ceiling (`0xD2000`) and gain scalar
+  (`0xD200C`) for the same mode; not array-consumed. Only other hit is the CRC/block directory.
+  ⚠ Expected benefit is **modest and uncertain** — eps is already mostly sub-threshold, so this bites
+  only on the loudest bursts. The argument for it is that a *bootstrap* only needs to be kept below
+  threshold at the amplitudes where it currently crosses. Feel cost: slower gain recovery after a
+  sharp input (tau ≈ 10 ms now, ≈ 24 ms at cal 43 — short vs steering dynamics).
+- 🛑🛑 **FactorC damping (`0xD27BC`/`0xD27C6`) — ALREADY FLASHED AND FALSIFIED. DO NOT RE-PROPOSE.**
+  **`V44` set `0xD27C6` 0 → 235 and `0xD27DA` 0 → 234 (modes 10/11), flashed, and it was NULL** —
+  because **Factor E (`0xC9F84[mode]`, the motor-rate deadzone) re-zeroes the product downstream.**
+  **`V47` then attacked Factor E itself** (`0xD2802/04/06`, `0xD2816/18/1A`) → *"marginally quieter at
+  5 mph, no effect in motion."* **Both were confirmed 2026-07-28 to hit the LIVE table** (PN → key
+  `TVAA1` → config row 2 → INDEX 10 → `0xD27BC`). `BUILD-LINEAGE.md` states it outright: *"the
+  missing-damping hypothesis was genuinely tested and IS falsified — do not resurrect it on a 'wrong
+  variant' theory."*
+  ⚠ **Damping IS exactly zero below 35 km/h** (`Y[0]=0`, all 34 mode tables) and that remains true and
+  relevant as *context* — but the lever has been driven from **both** factors and neither moved the
+  grinding. V44's *rationale* was withdrawn (it thought the axis was driver torque; it is speed), yet
+  **its on-car NULL stands regardless of why it was built.**
+  🛑 **This was re-proposed on 2026-07-30 by the orchestrator as "V61", after the loop hypothesis made
+  it look freshly attractive — the operator caught it. The build script was written and deleted
+  unexecuted.** Cause: the address was named without grepping `build_v*_tva.py` first. **That grep is
+  mandatory and it is cheap. FALSIFIED ≠ untested, and a compelling new mechanism is exactly when the
+  check gets skipped.**
+
+  ✅ **Salvage — genuinely new and worth keeping regardless:** the damper's **int/float lockstep is
+  SAFE for a FactorC-class edit.** `FUN_000347b8` @`0x347b8` *reads* `gp-0x6bd0` (first line,
+  `(float)gp-0x6bd0 * 0.0009765625`) and only re-clamps it with an independently recomputed **ceiling**,
+  faulting via `FUN_000462e6(0x417a,…)` if the two differ by more than `0.0048828125` = **5/1024**. It
+  **never recomputes the four-factor product**, so FactorA/C/Ramp/MotorRate are *not* float-mirrored.
+  And the two ceilings are the **same table in two number formats**, byte-verified:
+  `INT 0xC77A0[10] → 0xD209C: X=[300,800] Y=[512,1024]` vs `FLOAT tp+0x7554 = 0xC6554: 300.0, 800.0,
+  0.5, 1.0`. ⇒ exact agreement, tolerance never approached. **Damper authority at creep is hard-clamped
+  to ±512 against the aggregator's ±10240 (≤5%)** — a firmware-enforced bound worth remembering for any
+  future damper-lane work. Confirmed 4 ways (`search_instructions`, raw LE byte scan, `get_xrefs_to`,
+  and a **split-encoding check** for `movhi`+`movea` construction of the address — only 2 `movhi 0xd`
+  exist image-wide and neither resolves near `0xC9E9C`). Modes 8/11 byte-identical to mode 10.
+  Escalation map, for any future damper work: `FUN_000347b8` → `FUN_000462e6(0x417a)` →
+  `FUN_00016de6(0x1d)`; and `FUN_00034350`'s own entry-time re-check → `FUN_0004613e(0x4179)` →
+  `FUN_00016de6(0x1c)` — **one tolerance in two representations** (0.0048828125 × 1024 = 5.0 exactly),
+  not two independent gates.
+- 🛑 **RECORD CORRECTION — `0xD2018` is not what we said.** It is **data**, one resolved pointer inside
+  `FUN_00035154`'s `0xC7888[mode]` ceiling array — `search_instructions` finds zero because it scans
+  instruction operands only. And `FUN_00035154` is simply the `gp-0x6bbe` **analog** of `FUN_000347b8`:
+  ceiling-only, same ±0.0048828125 tolerance, same escalation, keyed on `gp-0x6a62` instead of
+  `gp-0x6ac2`. The old note ("any edit to `gp-0x6bbe`'s ceiling math must update `FUN_00035154`/table
+  `0xD2018` or it may trip") implied a stronger, different mechanism. It is the same pattern.
+- 🛑 **`gp-0x6b70` — TRACED AND CLOSED 2026-07-30. It terminates at an already-falsified lever.**
+  Full chain, measured: `FUN_00038148` (1 kHz) sums **six UNITY-weighted terms** — `gp-0x6bd0` (damper)
+  and `gp-0x6bbe` (boost) among them, cals `0xC63A0/A2/A4/A6/A8/AA` **all = 1024 = exactly 1.0**,
+  byte-read — EMA-blended at `0xC63AC` = 102/1024, → `gp-0x6b70` → `FUN_00037fe6` (one of seven
+  unity-weighted terms, cals `0xC64AD-0xC64B3` all = 1) → `gp-0x6ad6` → **`FUN_0003a382`** (the real
+  PID) → `gp-0x6ad4` → `FUN_0003aa2c`'s aggregator → `gp-0x6b94` → governor → `gp-0x6b98`.
+  ⇒ **So boost and damper DO re-enter a second, parallel aggregator at unity gain.** That structural
+  fact is new. But **every weight in the whole chain is unity and stock — there is no hidden loop gain
+  in the aggregation.**
+  ★★ **And the chain's only output-shaping calibration is `0xC6AF0`** — `FUN_0003a382`'s authority
+  ceiling, which **V56 already zeroed, flashed: NULL on the grinding, and it cost damping** (V57/V58
+  both carry the assertion `"0xC6AF0 must stay STOCK -- V56's mute is falsified"`). Since `gp-0x6ad4`
+  has only 2 accesses image-wide, that mute was equivalent to deleting this entire chain's
+  contribution. ⇒ **a second independent reason not to hunt loop gain down this path.**
+  ⚠ Genuinely untouched by any build (`grep`ed): `0xC63A0-0xC63AC`, `0xC64AD-0xC64B3`, `0xC6200`, and
+  whatever produces `gp-0x67ab`/`gp-0x69aa`. Not proposed as levers — recorded as unexplored.
+  ⚠ Open: `gp-0x67ab` / `gp-0x69aa` semantic identity (structural role only); `FUN_00026c80`, the
+  11-channel mixer feeding them, only partially read.
+- ★ **SECOND instance of the over-count scan trap, same session.** `search_instructions` reported
+  **21 hits** for `gp-0x6b70`; **19 were false positives** — substring collision against
+  `jarl 0x0006b700,lp`. A raw byte scan finds **exactly 2** (writer `0x382d2`, reader `0x38006`).
+  Together with the `6bd0`/`0x00076bd0` collision this is now a **recurring** failure mode, not a
+  one-off. **Always confirm a hit is a gp-relative operand, not an address literal.**
+- ⚠ **The off-by-0x1000 tp trap recurred again** (a subagent computed `tp+0x73a8` as `0xC73A8`; it is
+  `0xC63A8`). Self-caught. That is now **five** recorded occurrences.
+- ★ **NEW SCAN TRAP — `search_instructions` can OVER-count too.** `operand_pattern="6bd0"` returned
+  false positives from **substring collision against the branch-target literal `0x00076bd0`** in
+  `FUN_0006bcb2`/`FUN_000757a2`. Every trap on record so far was about *undercounting*; this is the
+  first over-count. **Confirm the hit is a gp-relative operand, not an address literal.**
+- 🛑 **`0xC63BA` (=512) — PARTIAL ONLY.** Byte-verified 2-stage EMA, alpha 0.5 both stages, blast
+  radius fully contained (2 reads, both in `FUN_0003b66a`). But it filters only the **torque** lane;
+  the index is a **sum** of that and a **resolver-rate-derivative** lane (`gp-0x6abc`, via
+  `FUN_00041464` ← `FUN_00068f52`'s angle-delta differentiator). Both analysts were right.
+- 🛑 **Speed-keyed assist concentration — REFUTED.** `0xD2834` is nearly flat (rel 0.856 / 0.979 /
+  0.987 / 0.997 / 0.903 at 0.5 / 3 / 6 / 10 / 18 m/s).
+
+### Closed and corrected by this drive
+- ✅ **The damping SIGN is no longer open.** `gp-0x6bd0` (`FUN_00034350`, sole producer, 3 writes) has
+  its sign forced to `-sign(gp-0x6abe)` @`0x3469e-0x346a2` — textbook velocity-proportional damping,
+  correct by construction. Joins the aggregator at `0x3ac78` in `FUN_0003aa2c`.
+- ✅ **The frequency law is rejected a SECOND time.** Route 2c: `a = 0.177` rejected at **2.60σ**
+  presence-tested (n=19, 9 runs), up to 7.08σ without. `a = 0` fits at every cut, ~20.4–21.1 Hz flat.
+  Crucially the fitted subset is **confound-free** (`spearman(v,|ang|) = +0.068` vs 2b's −0.728).
+  ⇒ **The fixed ~20.9 Hz line is now the record.**
+- ✅ **V58/V59 control PASSES** — grinding statistically identical: 7 of 8 jointly speed-and-effort
+  matched cells in 0.76–1.41× with no systematic direction, peak frequency within 0.7 Hz everywhere.
+  Exactly what CAL-CRC-unchanged predicts; validates the comparison chain.
+- ⚠ **CORRECTION to "creep-only":** that holds for the **hands-off** arm. There is a second
+  population at **10–13 m/s under driver load** at large angle (prominence 174–651×), verified NOT a
+  tyre order (frequency CV 2.2% vs order CV 9.8%; 3.89 is not an integer order). Correct wording:
+  *strongest at creep 1–4 m/s; sampling gap at 6–10; still coherent at 10–13 under steering load;
+  absent above 14 m/s* (0 of 48 windows pass presence).
+- ⚠ **~21 Hz IS in openpilot's command**, confirmed again: native-`0xE4` prominence median 35× (max
+  46×) hands-off, coherence **5/5 above the K-appropriate 95% null**. **Direction still NOT settled**
+  — envelope cross-correlation splits 2 bar-leads / 3 command-leads, same as V58.
+- ★ **Route 2c contains hands-off engaged creep RATCHET episodes** — 7.56 ± 0.36 Hz, within-run sd
+  0.07–0.10 Hz, prominence median 783× (max 2142×), 15 windows / 5 runs, at both 9–15° and 133°.
+  `STATE.md` previously recorded route 2b gave **zero** and that a dedicated route was required.
+  Mode identity unconfirmed — the data exists, that is all.
+
+### Open gates before V60
+1. 🛑 **Task rate of `FUN_00034a72`/`FUN_00034350` (RTOS task 5) is UNRESOLVED** — task 1 is the
+   confirmed 1 kHz anchor, but task 5's rate class was not located (all five TCB class pointers read
+   the same shared `0x000BB8B8`). The eps table above brackets both candidates, so it does not block
+   the verdict, but it does set the exact blend attenuation. Cheapest close: measure on-car.
+2. **`gp-0x6986` / `gp-0x6988` values unmeasured** — they scale the pump. Both are ≤1024 clamps so
+   they can only pull eps *down*.
+
+---
+
 ## On the car right now
 
 **V58** = V57's calibration + the angle-rate/boost-lane probe in the cave. Flashed and driven 2026-07-30,
@@ -112,6 +315,7 @@ either arm in any qualifying speed bin. Everything above is "any hands", matched
 
 | build | what | status |
 |---|---|---|
+| **V60** | V59 + **the boost-amplitude BLEND coefficient `0xD2006`: 102 → 43** | ✅ **BUILT 2026-07-30, UNFLASHED.** **The intervention that settles whether the 42 Hz pump DRIVES the grinding or merely ECHOES it** — the only discriminator left, since causality is not settleable observationally and `eps_crit = 2/Q` needs a passive Q that V59 cannot measure. **5 bytes off V59**: one cal byte + the `[0xD2000,0xD2FFC)` block CRC. ⭐ **MAIN CRC and CAL CRC both UNCHANGED** = machine proof the cave/probe did not move and no `0xC6xxx` calibration moved. 91 bytes off V38. Q10 0.0996 → 0.0420; 42 Hz transmission ~0.37 → ~0.17; tau 10.0 → 23.8 ms @1 kHz. Predicted eps p99 **0.169 → 0.099**. 🛑 **The effect SATURATES** — the falling edge is instant regardless of the coefficient, so this lever buys ~1.7× and then flattens (cal 32 only reaches 0.086); 43 is the knee. **GATE 1 vacuous** (calibration halfword, no code, no RAM). **GATE 2 is the argument**: base-assist path, no LKAS-only decoupling point exists in this chain — but it is a pure *dynamics* change on a gain-**scheduling** variable, adds no gain, moves no static map, cannot change any steady-state value, and tau stays <50 ms worst case. Blast radius byte-verified: mode 10's cell is private (modes 11/12 have their own). **V59's probe is UNCHANGED and is the CONTROL** — it reads `gp-0x6ba6`, *upstream* of the blend, so the index distribution must return statistically identical (76.9/18.5/4.6/0.04). 50/50 CRC, RWD round-trips. Image SHA `6328cff064598cac8d9a7a4147626c8b55ddbad2e586ac3e1b8fca9c9459be5c`; RWD SHA `519aaab4908844d6a240d48f50d8a523b39353a3a4e3bffeb3de4bb4e1d19787` |
 | **V59** | V58 + cave payload replaced by the **boost-index DEPTH probe** | ✅ **BUILT 2026-07-30, UNFLASHED.** `0x14A` byte4: bit7 liveness, bit6 = `gp-0x6ba6 < 0` (the `0xFFFF` fault sentinel), **bit5/4/3 = a THERMOMETER on `gp-0x6ba6` at 512 / 1024 / 2048** (sense is "index < T", which is what lets the whole cave run on the two pinned condition codes). **19 bytes off V58** (cave + MAIN CRC only; **CAL CRC unchanged** = machine proof no calibration moved), 86 off V38. Same base `0xC4B34`/hook `0x55C0E`/68-byte extent as V55/V57/V58, all flown clean. **No new encoder, no new condition code.** 50/50 CRC, RWD round-trip, cave re-disassembled from the built image; the build also asserts both LERPs still resolve at the same mode and `tp+0x7498/0x7499` are still 1. Decoder `rlog-tools/decode_v59_boostindex.py` (hard-stops above 1% non-monotonic rather than reporting on a surviving subset). RWD SHA `ce7f6af6d7475a94462505a5f989d282966e00c9717cf6f2bbbc8b43ccdd3fc7`; image SHA `c6020a32780c1c8d952782426deef25ae390afee4606f319b0aa3c3998158d6d` |
 | **V55** | the pre-V56 revert target | ✅ built, driven, fault-free. SHA `2b0fbd61e6658726ea72248f5312f4521638acaebcbd6f09d8c999e1a9e81fbf` |
 | ~~V56~~ | the `0xC6AF0` mute | 🛑 **FLASHED AND FALSIFIED.** Do not re-flash |
@@ -264,26 +468,49 @@ set's 12.6–42.2°).
 🛑 **NO openpilot-side modifications.** Standing operator instruction. openpilot remains a *measurement
 instrument* only.
 
-1. ★★ **Flash V59 and drive the creep route below.** The whole question is **depth**: how far up the
-   amplitude curve does the index climb during the bursts? Read the thermometer to bracket the swept
-   Y range and hence the delivered gain swing (`<512 ⇒ ≤1.12×` … `≥5120 ⇒ 2.00×`). ⚠ A "stays below
-   512" result is **weak, not inert** — the curve interpolates from X = 0 — so the decision is whether
-   the swing justifies a GATE-2 review of a base-assist lever, not a clean yes/no.
-2. ★★ **The route to drive:** parking-lot / low-speed creep, **v ≤ 5 m/s** (the mode is creep-only —
-   route `2b` wasted most of 14 minutes on highway where there is no line at all), LKAS applying, wheel
-   held at a **fixed 20–30°**, and — the thing route `2b` could not give — **sustained hands-off
-   stretches ≥ 3 s** (`|lowpass(tq,3Hz)| ≤ 200`). Repeat ≥5 times with deliberate LKAS-on/off passes at
-   matched speed and angle. Add a slow driver-torque ramp 0 → 2240 → 3000 → 0, ≥3 s per ramp, ≥5 times,
-   for the override knee. *Why:* route `2b` had **zero** fully-hands-off windows in either arm, so every
-   V58 number is "any hands"; and its knee table shows the real transition between 200–500 and
-   500–1000 counts, with no feature at 2240 — but that measures openpilot's `e4tq` response, **not** the
-   firmware-internal knee, which is not on CAN.
-3. **Re-run the strict-band (18–26 Hz + presence test) analysis over the V55/V56/V57 routes** before
-   rewriting the frequency law. One route cannot kill a cross-route fit, but the cross-route fit is now
-   suspect (pooled, and speed/angle are anti-correlated at ρ = −0.728 here). Same pass should re-derive
-   the historical amplitude baselines on lateral engagement + sustained-effort hands-off + envelope
-   statistics; until then treat 7.66e4 as provisional.
-4. **The ratchet has no cal lever and no mechanism.** All rate-limit candidates are closed (see
+1. ★★★ **RE-DERIVE V52C's RESULT UNDER THE CORRECTED STATISTICS. Do this before any new build.**
+   V52C lowpassed the **torque sensor** `gp-0x4f60` (code cave, α = 74/1024, fc ≈ 12 Hz, only −6.1 dB
+   at 21 Hz, +61° lag), flashed, and **halved the mode** — the largest single effect any build has had
+   on the grinding, and the **only** lever that sat on the **feedback** path rather than the command
+   path. **That is exactly what the loop hypothesis predicts and nothing else on record predicts it.**
+   🛑 But `STATE.md`'s own methodology section warns that "halving" claims in this kit have been
+   **median artifacts** — the median is dominated by quiet time between bursts, and at least one such
+   halving evaporated under p99/envelope statistics. **V52C's number was never re-derived under lateral
+   engagement + sustained-effort hands-off + envelope/prominence statistics.** The rlogs exist; this is
+   analysis, not a drive. It either promotes the loop to the leading explanation or removes its best
+   supporting evidence. ⚠ Note the double edge: −6.1 dB of gain reduction came with **+61° of lag**, and
+   in a resonant loop added lag reduces phase margin. That it helped anyway suggests gain reduction
+   dominated — but that is inference.
+2. ★★ **Flash V60 (built, 5 bytes) as a DISCRIMINATOR, not as an expected fix.** It attacks the
+   *pump*, and the pump now looks like a passenger. **A null is the informative outcome**: it would
+   close the parametric mechanism this kit spent V58/V59/V60 on and leave the loop standing.
+   **Route:** parking-lot creep **v ≤ 5 m/s**, LKAS applying, **sustained hands-off ≥ 3 s**
+   (`|lowpass(tq,3Hz)| ≤ 200`), deliberate LKAS on/off passes at matched speed and angle, plus a pass
+   at the **10–13 m/s under-load** population. Decode with `rlog-tools/decode_v59_boostindex.py` — the
+   probe is **unchanged and is the CONTROL**: the index distribution must return statistically
+   identical to V59 (76.9 / 18.5 / 4.6 / 0.04 at engaged+creep+hands-off). If the index matches and the
+   grinding moved, the blend is the only thing that did.
+3. 🛑 **Sizing any loop fix needs the phase margin, and the bus cannot give it.** One 100 Hz mailbox
+   sample is **~76° at 21 Hz** — larger than any phase worth reading. Establishing loop phase needs a
+   **firmware-side probe** (a V59-class thermometer on a signal that crosses zero at 21 Hz), not more
+   rlog analysis. Until then, any gain reduction is empirical and iterative.
+4. ⚠ **Base-assist loop gain (`0xCA154[mode]` → `0xD2834`, speed-keyed) is the untested handle** — and
+   it is a **direct trade against steering weight**, so it is an operator decision, not an analyst's.
+   Grep it and state its history before proposing it. The amplitude curves `0xD28DC`/`0xD2888` and
+   `0xC63BA` are the other in-loop knobs; all sit on base assist, none has an LKAS-only decoupling
+   point (traced and confirmed — unlike V57's `0xC646C`, this chain has no fork).
+5. **Re-run the strict-band (18–26 Hz + presence test) analysis over the V55/V56/V57 routes.** Route 2c
+   independently rejected `a = 0.177` (2.60σ presence-tested, up to 7.08σ raw) and its fitted subset is
+   **confound-free** (`spearman(v,|ang|) = +0.068` vs 2b's −0.728), so the fixed ~20.9 Hz line is now
+   the record — but the historical amplitude baselines still need re-deriving on lateral engagement +
+   sustained-effort hands-off + envelope statistics. Treat `7.66e4` as provisional.
+6. ★ **The ratchet: route `2c` HAS clean episodes, and the record says it shouldn't.** 7.56 ± 0.36 Hz,
+   within-run sd 0.07–0.10 Hz, prominence median **783×** (max 2142×), **15 windows / 5 runs**,
+   hands-off + engaged + creep, at both 9–15° and 133°. `STATE.md` previously recorded that route 2b
+   gave **zero** and that a dedicated comma-commanded route would be required. **Mode identity
+   unconfirmed** — this was found incidentally by an analyst outside its brief. Verify before building
+   on it.
+7. **The ratchet still has no cal lever and no mechanism.** All rate-limit candidates are closed (see
    `BUILD-LINEAGE.md`). Next step is measurement, not a build. The return-centre lane `gp-0x6b62`
    (aggregator, ZERO-gated ±0x2000) has never been probed and is the operator's own hypothesis.
    🛑 **Route `2b` cannot speak to the ratchet in either direction, and the operator said so before the
@@ -293,12 +520,13 @@ instrument* only.
    episodes.** The driver-applied sharp turns don't show it either: 6–9 Hz sits at or below a strict
    quiet baseline in 8 of 11 long episodes, with the 5–10 Hz peak wandering 5.3–9.9 Hz rather than
    locking at 7.4 Hz with Q≈36. **A dedicated comma-commanded route is required.**
-5. 🛑 **Do NOT move `0xD28DC`, `0xD2888`, or `tp+0x73ba` (`0xC63BA` = 512) yet.** All three sit on the
-   **base assist** path, so they change manual feel, not just the LKAS lane, and all need GATE 2.
-   `tp+0x73ba` is the cascaded EMA alpha (0.5 at 1 kHz ⇒ corner ≈120 Hz for the pair, i.e. **wide open at
-   21 Hz**) and is the *upstream* candidate — attenuate there and the index stops carrying 21 Hz at all.
-   Gate all three on V59's depth answer.
-5. **Re-derive the V31 boost-floor margin** (`0xC67D8`, `0xC61B4`) — the recorded arithmetic does not
+8. 🛑 **Do NOT move `0xD28DC`, `0xD2888`, or `tp+0x73ba` (`0xC63BA` = 512).** All sit on the **base
+   assist** path with no LKAS-only decoupling point, so they change manual feel and all need GATE 2.
+   ⚠ `0xC63BA` is **partial by construction**: byte-verified as a 2-stage EMA (α = 0.5 both stages,
+   blast radius fully contained — 2 reads, both in `FUN_0003b66a`), but it filters only the **torque**
+   lane, and the index is a **sum** of that and a **resolver-rate-derivative** lane (`gp-0x6abc`, via
+   `FUN_00041464` ← `FUN_00068f52`'s angle-delta differentiator). It cannot touch the second lane.
+9. **Re-derive the V31 boost-floor margin** (`0xC67D8`, `0xC61B4`) — the recorded arithmetic does not
    reconcile with the image. Not blocking; V54 measured the margin directly.
 6. **The take-over beep is closed** — `commIssue`/`selfdrivedLagging` under device CPU load, clean CAN/EPS
    null. Seen again on both V57 routes (route 28's at t=126.5 s produced a real soft-disable).

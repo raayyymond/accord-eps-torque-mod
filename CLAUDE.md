@@ -18,10 +18,16 @@ an already-flashed, already-falsified lever because the result was buried in pro
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
    **Mandatory before proposing any calibration edit.**
 3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session.
-   Latest: `HANDOFF-2026-07-30-v57-drive-two-symptoms-and-v58.md` — 🛑 **the ~7.4 Hz mode is the
-   RATCHETING, the 20-25 Hz mode is the GRINDING; everything written before 2026-07-30 conflates them.**
-   Also: three rlog conventions that were producing wrong answers, and V58 built (probe, unflashed).
-   (predecessors: `HANDOFF-2026-07-29-golden-model-distillation.md`, then
+   Latest: `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md` — 🛑 **the grinding is most likely
+   an UNCOMPENSATED POSITIVE-FEEDBACK LOOP through the torque sensor** (LKAS torque twists the column and
+   is read back as driver input, then boosted; command→bar transfer peaks at 21.09 Hz, the global max;
+   **no motor-command feedforward compensation exists anywhere in the chain**). The parametric-pump story
+   V58/V59/V60 were built around is real but **marginal** and probably a passenger. Also: **six recorded
+   reversals**, including an already-falsified lever (FactorC/V44) re-proposed by the orchestrator and
+   caught by the operator — **a withdrawn RATIONALE is not a withdrawn RESULT.**
+   (predecessors: `HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`, then
+   `HANDOFF-2026-07-30-v57-drive-two-symptoms-and-v58.md`, then
+   `HANDOFF-2026-07-29-golden-model-distillation.md`, then
    `HANDOFF-2026-07-29-v57-decouple-and-the-angle-rate-turn.md`, then
    `HANDOFF-2026-07-29-v56-drive-mute-is-null-and-costs-damping.md`, then
    `HANDOFF-2026-07-28-v55-drive-oscillation-is-internal-and-v56-mute.md`, then

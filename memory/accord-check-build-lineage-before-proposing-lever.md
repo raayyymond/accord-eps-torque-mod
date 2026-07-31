@@ -15,6 +15,27 @@ the **second and third recorded occurrence** — CLAUDE.md already carried an ex
 
 Apply this to yourself and put it in every subagent brief.
 
+## 🛑 Fourth occurrence — 2026-07-30, the ORCHESTRATOR, on damper FactorC
+Proposed "V61" = `0xD27C6` `Y[0]` 0 → 64. **That is `V44` verbatim** — which used **235**, i.e. 3.7×
+stronger — flashed, **NULL**, because **Factor E (`0xC9F84[mode]`) re-zeroes the product downstream**.
+`V47` then attacked Factor E itself and got only *"marginally quieter at 5 mph, no effect in motion."*
+Both confirmed on-car to hit the LIVE table. `BUILD-LINEAGE.md` already said *"do not resurrect it on a
+'wrong variant' theory."* **The operator caught it; the script was written and deleted unexecuted.**
+
+**Two generalisable lessons, both new:**
+
+1. **A withdrawn RATIONALE is not a withdrawn RESULT.** V44's stated mechanism had been retracted (it
+   thought FactorC's axis was driver torque; it is voted vehicle speed), and that made the lever *feel*
+   reopened. It was not. **Grep the address, do not re-litigate the reasoning.** An on-car null stands
+   regardless of why the build was made.
+2. **In a multiplicative chain, raising one factor is worthless while any other still zeroes the
+   product.** The damper is four chained Q10 multiplies; V44 raised one while Factor E zeroed another.
+   **Before proposing a change to one element of a product chain, check every other element.**
+
+⚠ The trigger pattern to watch for: a **new mechanism** makes an **old address** look freshly
+motivated. That is the moment the check gets skipped, because the lever feels like a fresh deduction
+rather than a rediscovery.
+
 ## Why it keeps happening
 A structurally sound trace naturally rediscovers the same small set of levers — the analysis can be
 *correct* and the conclusion still worthless. **Structural plausibility is not evidence of novelty.** An

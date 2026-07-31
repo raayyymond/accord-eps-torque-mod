@@ -708,11 +708,32 @@ def base_driver_assist_lane(sensors: SensorInputs, st: EpsState, cal: Calibratio
     (corrected 2026-07-30 -- FUN_0004613e is a fault logger and 0x3638 is its diagnostic tag);
     its own 4-state ramp SM
     (gp-0x682e, timer gp-0x68c8 vs tp+0x74d1*10), separate from the LKAS engage SM; writes gp-0x6bbe,
-    lockstep-shadowed at gp-0x4cf0. [OPEN, not yet adopted] a 2026-07-25 trace argues
-    gp-0x6a5e/gp-0x6a62/gp-0x6a64 are actually a 5-channel VOTED VEHICLE SPEED (not voted driver torque
-    as labelled here) -- supported by unit math (cals 0xC62EA/0xC62E8 divide exactly to 5/200 km/h) but
-    not yet verification-passed; if adopted it would reclassify this curve's keys and the V44/V47
-    damper mechanism.
+    lockstep-shadowed at gp-0x4cf0.
+
+    🛑 SETTLED 2026-07-30, and this function has NOT yet been migrated: gp-0x6a5e/0x6a62/0x6a64 are a
+    5-channel VOTED VEHICLE SPEED, not voted driver torque. Producer chain FUN_00053216 ->
+    FUN_000534da -> FUN_00041eec (the voter, sole writer of all three), scale 64.0625 counts/km/h.
+    Independently corroborated here by byte-reading this very curve: mode 10 = 0xD2834 has
+    X = (0, 640, 2560, 5120, 7808, 10240) which divides to (0, 10.0, 40.0, 79.9, 121.9, 159.8) km/h --
+    textbook speed breakpoints that no torque axis would produce. See the agent memory
+    `reference_accord_gp6a5e_producer_chain_and_creep_zero_damping.md`.
+    ⚠ The model is INTERNALLY INCONSISTENT until the rename lands: lines ~157/191/524/541 already say
+    "voted vehicle speed", while EpsState still calls the cell `col_torque_avg` and lines ~600-604
+    still model the producer as averaging torque-sensor coils. `key_avg` below therefore keys the
+    boost curve off the WRONG axis. Deliberately not half-renamed mid-session -- it touches ~10 call
+    sites (600-604, 722, 738, 827, 906, 1160, 2074) and the V44/V47 damper mechanism reclassifies with
+    it. Fix as one contained pass, not piecemeal.
+
+    ★ Load-bearing consequence already byte-verified (all 34 mode tables, _v59_plain_image.bin):
+    damper FactorC (0xc9e9c[mode], mode 10 = 0xD27BC, X=(2240,3840,5120,8960) Y=(0,235,430,877)) has
+    Y[0] == 0 in EVERY mode, with X0 = 20/30/35 km/h. It is multiplicative and the LERP clamps to Y0
+    below X0, so BASE-ASSIST DAMPING IS EXACTLY ZERO BELOW 35 km/h on this car.
+    ⚠ But V59 shows that is NOT what suppresses the ~21 Hz grinding: engaged hands-off, speed-stable
+    windows (n=159) give mode prominence 1521x / 935x / 91x / 6.0x at 1-2 / 2-3 / 4-6 / 6-9.72 m/s --
+    the mode and the pump are BOTH already dead at 6 m/s, BELOW the 9.71 m/s FactorC onset. Raising
+    FactorC would buy a base-assist feel change for nothing. Lever NOT supported by the data.
+    ⚠ Also refuted: the speed-keyed boost curve does not concentrate assist at creep. It is nearly
+    flat -- relative gain 0.856 / 0.979 / 0.987 / 0.997 / 0.903 at 0.5 / 3 / 6 / 10 / 18 m/s.
     """
     mode = st.assist_mode                             # gp+0x63fd, range 0..33 (NOT 0..7)
 
@@ -752,18 +773,55 @@ def base_driver_assist_lane(sensors: SensorInputs, st: EpsState, cal: Calibratio
                else _lerp_flat(key_max, ASSIST_CEILING_X, ASSIST_CEILING_Y))
 
     # --- gain modulation, polarity, and the final clamp against the ceiling ------------------------
-    # [SIMPLIFIED -- flagged] 0xCA324 (gain scalar) and 0xC7A58 (clamp) still fold in as unmodelled
-    # multiplicative factors; this is the one place this function is NOT literal.
-    # 0xCA4F4 and 0xCA23C are now DUMPED (2026-07-30): both are pointer tables indexed by mode*4,
-    # resolving at mode 10 to the two boost AMPLITUDE curves below. Both are indexed by
-    # `boost_amplitude_index` == gp-0x6ba6, applied as `(term * Y) >> 14`.
+    # 🛑 CORRECTED 2026-07-30 from the decompile of FUN_00034a72 + a byte-level shift/multiply scan.
+    # The previous rendering ("both curves multiply the same assist term in series, >>14 twice") was
+    # WRONG about the structure. The two curves enter at DIFFERENT points and are separated by a
+    # subtraction and two clamps, so they compose multiplicatively only while none of those bind:
+    #
+    #   y1 @0xD28DC (via 0xCA4F4[mode]) -> blended -> * clamp(gp-0x6986, 0x400) >>14  @0x34C26
+    #        -> * 0xCA40C[mode] >>7 -> ... -> DIFFERENCED against gp-0x6a56 -> clamp +-12000
+    #   then * 0xCA324[mode] >>7 -> * boost curve 0xCA154[mode] (keyed on SPEED gp-0x6a5e)
+    #        -> clamp(>>10, +-0xC7A58[mode])
+    #   y4 @0xD2888 (via 0xCA23C[mode]) -> blended -> * clamp(gp-0x6988, 0x400) >>10
+    #        -> * (the above) >>14  @0x35008 -> * polarity (mulh @0x35010) -> clamp +-ceiling
+    #
+    # ⚠ A subagent argued y1 is a DEAD END (only 3 image-wide refs to its state cell gp-0x69bc, all
+    # in this function). That argument is INVALID: a byte scan of the STATE CELL cannot show whether
+    # the blended value is consumed in a REGISTER in the same tick -- which is exactly what a
+    # slew-limited gain does. Byte scan of FUN_00034a72 finds exactly two `>>14` sites:
+    # `shr 0xe,r28` @0x34C26 (the y1 multiply, before the subagent's trace start of 0x34F20) and
+    # `sar 0xe,r13` @0x35008 (y4). Both curves are live. gp-0x6986 / gp-0x6988 are DIFFERENT adjacent
+    # cells, one clamped companion per LERP -- the symmetric two-lane structure.
+    #
+    # ★★ AND BOTH LERP OUTPUTS ARE SLEW-BLENDED BEFORE USE -- previously unmodelled entirely:
+    #   y1: blended toward persisted gp-0x69bc, rate cal 0xCA06C[mode] -> 0xD2006 -> 102 (Q10)
+    #   y4: blended toward persisted gp-0x69ba, rate cal tp+0xB06C[mode] (same table)   -> 102
+    # Both lockstep-shadowed (gp-0x4c6e / gp-0x4c6c). A 1-pole blend at 102/1024 passes only ~0.37 of
+    # 42 Hz, so it ATTENUATES the parametric pump measured by V59. ⚠ The blend sits inside an `if`
+    # (guard ~0x34BF0) => it is an ASYMMETRIC slew, direction unresolved; simulating the literal
+    # integer arithmetic at 1 kHz gives eps 0.016-0.034 at median hands-off amplitude, 0.085-0.161 at
+    # p90, 0.132-0.255 at p99, against a Mathieu threshold of ~2/Q = 0.147. ⇒ the pump is
+    # SUB-THRESHOLD at typical amplitude and crosses only in the loudest bursts: an amplitude-gated
+    # bootstrap, which is what makes the grinding bursty rather than continuous.
+    # ⚠ gp-0x6986 / gp-0x6988 values are UNMEASURED; eps is not final until they are dumped.
+    # [STILL SIMPLIFIED] the model below keeps the flat series form for continuity. It is a
+    # first-order stand-in, NOT the literal chain -- see the sequence above before using it.
     amp = boost_amplitude_index(st)
-    y1 = _lerp_flat(amp, BOOST_AMP1_X, BOOST_AMP1_Y)      # 0xD28DC via 0xCA4F4
-    y4 = _lerp_flat(amp, BOOST_AMP4_X, BOOST_AMP4_Y)      # 0xD2888 via 0xCA23C
+    y1 = _lerp_flat(amp, BOOST_AMP1_X, BOOST_AMP1_Y)      # 0xD28DC via 0xCA4F4, then blended
+    y4 = _lerp_flat(amp, BOOST_AMP4_X, BOOST_AMP4_Y)      # 0xD2888 via 0xCA23C, then blended
     scaled = (int(st.assist_rate_state * ramp_scale) * y1) >> 14
     scaled = (scaled * y4) >> 14
     signed = scaled * st.assist_polarity                                   # gp-0x6752
     return _clamp(signed, -ceiling, ceiling)                               # -> gp-0x6bbe
+
+
+# Blend/slew rate applied to BOTH amplitude-LERP outputs before they multiply anything.
+# 0xCA06C[mode 10] -> 0xD2006, first u16 = 102 (Q10 = 0.0996). Byte-verified on _v59_plain_image.bin.
+# ⚠ 0xD2000 is a SHARED overlapping block: [666,666,666, 102,102,102, 43,43,43, 32896,128, 0,5,0...]
+#   0xC7A58[10] -> 0xD2000 reads 666 (output clamp) | 0xCA06C[10] -> 0xD2006 reads 102 (this blend)
+#   0xCA324[10] -> 0xD200C reads 43 (gain scalar).  Do NOT edit one offset without resolving what
+#   else reads the block -- that check is OPEN and gates any build on this lever.
+BOOST_AMP_BLEND_Q10 = 102
 
 
 # --- the boost AMPLITUDE index and its two curves -------------------------------------------------
@@ -775,8 +833,28 @@ def base_driver_assist_lane(sensors: SensorInputs, st: EpsState, cal: Calibratio
 # of its three reads in FUN_00034a72 are dead (tp+0x7499 == 1 takes the branch @0x34b3c).
 # ⇒ V58 measured the SIGNED sibling crossing zero at 20.93 Hz only when LKAS applies, so this index is
 # that signal RECTIFIED -- a minimum at every zero crossing, sweeping both curves at ~2x the mode
-# frequency on the BASE ASSIST path. Depth is UNMEASURED until V59 flies: below X1 = 512 the
-# coefficient is pinned at 16384 and nothing modulates.
+# frequency on the BASE ASSIST path.
+#
+# ★★ V59 FLEW 2026-07-30 (route 2c) AND MEASURED THE DEPTH. The mechanism is LIVE, not weak.
+# Thermometer probe on gp-0x6ba6, 50,963 frames, 100% live / 100% monotonic / fault sentinel 0.000%.
+# Conditioned on engaged + creep + SUSTAINED hands-off (|lowpass(tq,3Hz)| <= 200), 50.2 s, n=5016:
+#     depth   76.93% <512 | 18.46% 512-1k | 4.57% 1k-2k | 0.04% >=2048
+#             (disengaged + creep + hands-off, n=6944: 99.83% <512 -- the index barely leaves the pin)
+#     the index's OWN spectrum peaks at 42.19 Hz = 2 x the 21.09 Hz mode, prominence 11.10x,
+#     coherence 0.795 vs the torsion bar (K=30, periodograms averaged across 13 DISJOINT runs, never
+#     spliced). The 18-26 Hz band shows only 1.23x. That is the full-wave-rectification signature.
+#     Disengaged: bit5 NEVER toggles -- 0/4 runs, 61.2 s, K=90, prominence 0.00x. Pump absent.
+# ⇒ a parametric gain pump at 2f into a mode at f. Depth epsilon = (1-g)/(1+g) from the swept range:
+#     index 0..512 -> 0.162 | 0..1024 (p95) -> 0.333 | 0..2048 -> 0.490   [SERIES, see the >>14 pair
+#     below -- HALVE these if only one curve applies; that block is flagged non-literal]
+# 🛑 CAUSALITY IS NOT SETTLED AND CANNOT BE FROM THIS DATA. The index is |x| of a bar-derived signal,
+# so "pump tracks mode" is partly guaranteed by rectification: a mode dying for its own reasons quiets
+# the bar, pins the index, and produces identical numbers. Only an INTERVENTION (flatten the swept
+# range, re-fly) separates drive from echo.
+# ⚠ Blast radius, byte-verified on _v59_plain_image.bin: 0xD28DC and 0xD2888 are each referenced
+# EXACTLY ONCE image-wide (0xca51c and 0xca264, mode slot 10 of their own pointer tables); all 34
+# slots in both tables are distinct targets. Editing them touches mode 10 only. GATE 1 is clean;
+# GATE 2 is NOT -- both sit on the base-assist path and change manual feel.
 BOOST_AMP1_X = (0, 512, 1490, 2529, 3645, 5120)     # 0xD28DC, byte-verified
 BOOST_AMP1_Y = (16384, 14657, 11672, 9365, 8244, 8187)
 BOOST_AMP4_X = (0, 307, 1024, 1741, 3072, 6144)     # 0xD2888, byte-verified
