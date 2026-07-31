@@ -1,11 +1,13 @@
 # HANDOFF 2026-07-31 — V60 returns NULL and closes the pump; the V52C "halving" was never measured; V61 built; the clock tree refuted
 
 **Predecessor:** `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md`.
-**Session shape:** orchestrated, four parallel subagents (rlog/provenance, repo archaeology, two
-`firmware-codepath-tracer`). **No firmware was built and nothing was flashed.** Every decision-bearing
-claim was re-derived by the orchestrator with a second, independent method — and the two most important
-results of the session are a **fabricated number caught** and **the orchestrator's own hypothesis
-refuted by its own subagents.**
+**Session shape:** orchestrated, six subagents (rlog/provenance, repo archaeology, three
+`firmware-codepath-tracer`, one datasheet clock audit). **V61 was BUILT and is UNFLASHED; nothing was
+flashed this session.** ⚠ Sections 1-9 say "no firmware was built" was true when written — V61 came
+later; see PART TWO. Every decision-bearing claim was re-derived by the orchestrator with a second,
+independent method, and the most valuable results are all **corrections**: a **fabricated number
+caught** (§2), **the orchestrator's own hypothesis refuted by its own subagents** (§3), and **the
+kit's clock tree refuted from the datasheet** at the operator's instruction (§12).
 
 ---
 
