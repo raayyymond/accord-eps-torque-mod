@@ -256,7 +256,43 @@ so the "re-derive it first" instruction was unexecutable. ⇒ The loop hypothesi
 2× gain cut carrying +57–61° of lag is a poor stabiliser — but it **is** weak-to-moderate evidence
 against the `gp-0x4f60` **VALUE** path specifically.
 
-**Built and UNFLASHED:** ★ **V60** (`0xD2006` 102→43, 5 bytes off V59 — fly as a discriminator, expected
+### 2026-07-31 — V60 FLASHED → NULL, and V61 built
+
+🛑 **V60 (`0xD2006` 102→43) FLASHED and driven 2026-07-31 → NULL on the vibration.** Operator: *"It did
+not fix the vibration issue."* No rlogs (V60 carries V59's probe unchanged, so there was no new
+telemetry). **This is a result, not a wasted drive** — V60 was built as a **discriminator** and the
+record predicted the null in advance. Pump causality was not settleable observationally (the index is
+`|x|` of a bar-derived signal, so 2f coupling is arithmetically forced) and `eps_crit = 2/Q` needed a
+passive Q that V59 could not measure. ⇒ **the V58/V59/V60 parametric-pump arc is CLOSED.**
+★ **It also closes `0xC63BA`** — byte-scanned, the readers of `gp-0x6b9a`/`gp-0x6ba6` are confined to
+`FUN_00034350` (damping), `FUN_00034a72` (boost), their producer and V59's probe, so that cal's only
+effect is on the same amplitude LERPs V60 just falsified. **Do not propose it as a grinding fix.**
+⚠ Two more lanes eliminated, byte-verified: `FUN_00036c12` (`gp-0x6b26`) and `FUN_00036388`
+(`gp-0x6b62`, the return-centre lane) read **no torque signal at all** — speed/motor-rate keyed only.
+
+★★ **A structural finding that reframes every damper null: RTOS task 5 runs at 100 Hz.** The rate
+divider `FUN_00014be4` is mod-100 on the base tick; boost `FUN_00034a72` and damping `FUN_00034350`
+fire once per 10 task-1 invocations (integer arithmetic — clock-independent). ⇒ a ZOH costs
+**37.6° average / 75.2° worst-case** transport lag at 20.9 Hz before any plant phase, so the
+velocity-proportional damper **structurally cannot damp this mode** and may be anti-damping there.
+**That is a second, independent reason V44/V47 were null**, alongside the FactorC speed-axis argument.
+⚠ A datasheet audit then refuted the kit's clock chain — **PCLK is 40 MHz, not 80, and OSTM0 is NOT the
+RTOS tick** (no arm in the EI trampoline `FUN_0001492a`; the divider's trigger `gp-0x42fc` is written
+only by `EIIC 0x340` = TAUJ1I2). The 1 kHz/100 Hz figures **survive on ON-CAR measurement**, which never
+used that chain. But **the FOC/TSG20 "~8 kHz" carrier likely halves to ~4 kHz** — treat as OPEN.
+
+| lever | what | build | flashed | result |
+|---|---|---|---|---|
+| `0x3AB6C` `mul r1,r6,r0`→`mul r0,r6,r0` + `0x3AC16` `mov r1,r8`→`mov r0,r8` | ★★ **kill the torsion-bar RATE lane at BOTH taps of its shared value** `r1 = clamp(gp-0x4f62, ±5120)` | **V61** | ✅ **BUILT, UNFLASHED** | **The one decisive subtractive test never performed.** r24 and r26 are **not independent** — both are gain-scalings of ONE value, same sign, shared polarity load @`0x3AB78`. **V39 killed only r24 and only *conditionally*** (cave @`0x3AC78`, bypasses unless driver max torque < 320 AND \|LKAS\| ≥ 417); **V42 killed only r26** and says so outright. **Byte-checked every flashed image: NO build ever had both dead** ⇒ each recorded null was uninformative about the lane. Two single-**BIT** `reg1` r1→r0 changes, opcode/reg2 byte-identical, **no cave** ⇒ GATE 1 vacuous. 5 bytes off V59; CAL CRC and `0xD2000`-block CRC both unchanged. ⚠ Expect a manual-feel change (phase-lead term in **base** assist, no LKAS-only decoupling point); reversible via V59 |
+
+🛑 **A CORRECTION THAT MATTERS FOR THE FACTOR-C/E RECORD.** V44 raised FactorC alone → null. **V47
+raised FactorC AND FactorE together** — byte-verified 2026-07-31 across the images (`v47` has FactorC
+`Y[0]` = 235 *and* FactorE = (700,750,800), vs stock 0 and (0,140,539)). **So the multiplicative-chain
+concern WAS handled: the simultaneous test exists, was flashed, and gave "marginally quieter at 5 mph,
+no effect in motion."** V61 is the *additive dual* of that same trap, and unlike C/E its simultaneous
+test has genuinely never been run.
+
+**Built and UNFLASHED:** ★★ **V61** (above), plus ~~V60~~ (now flashed, null — do not re-flash;
 null), plus **V55** (dual probe: damper variant bit + 4-bit `gp-0x6b98`
 motor command, 82 bytes off V38), plus V49, V50, V51P, V52, VCANTX-TEST, FOURFRAME2. V53 and V54 are both
 now flashed and no longer candidates.

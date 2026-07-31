@@ -1,4 +1,4 @@
-# HANDOFF 2026-07-31 — V60 returns NULL and closes the pump; the V52C "halving" turns out never to have been measured
+# HANDOFF 2026-07-31 — V60 returns NULL and closes the pump; the V52C "halving" was never measured; V61 built; the clock tree refuted
 
 **Predecessor:** `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md`.
 **Session shape:** orchestrated, four parallel subagents (rlog/provenance, repo archaeology, two
@@ -183,3 +183,108 @@ turns on it, and §4 shows the previously-assumed explanation (the dead zone) is
 4. **Do not propose** `0xC63BA` (§5), a stronger low-pass (§4), or anything on the pump (§1).
 
 🛑 **Flash only on explicit operator instruction naming the file and the bus. Kill openpilot/pandad first.**
+
+---
+
+# PART TWO — written after the sections above, same session
+
+Sections 1-9 were written mid-session. Everything below happened afterwards and changes the picture.
+
+## 10. ★★ V61 BUILT — the one decisive subtractive test never performed
+
+**The operator asked directly: "Has this really not been tested before?"** It had not. Byte-checked
+every flashed image in the archive:
+
+| build | r24 tap `0x3AC16` | r26 tap `0x3AB6C` | r26 gain tables | V39 cave |
+|---|---|---|---|---|
+| V39 | live | live | stock | **present** (conditional r24 kill) |
+| V42 | live | live | **all zero** | **absent** |
+| V61 | **dead** | **dead** | stock | n/a |
+
+**No image has ever had both dead.** V42 zeroed r26's gain tables but carries no V39 cave, so r24 was
+fully live; V39 had the cave but stock r26. And r24/r26 are **not independent lanes** — both are
+gain-scalings of ONE value, `r1 = clamp(gp-0x4f62, ±5120)`, produced once at `0x3AAAC-0x3AAC0` and
+tapped twice, same sign via a single shared polarity load @`0x3AB78`. ⇒ **each recorded null was
+uninformative about the lane.**
+
+**V61 = V59 + two single-BIT register-field edits**, `0x37E1→0x37E0` (`mul r1,r6,r0`→`mul r0,r6,r0`) and
+`0x4001→0x4000` (`mov r1,r8`→`mov r0,r8`), both `reg1: r1→r0` with opcode and reg2 byte-identical —
+verified on the built image independently of the builder. **No cave** ⇒ GATE 1 vacuous, the kit's only
+bricking class avoided. r24's tail was **traced** to zero, not assumed (`mov 0x0,r6` @`0x3AC22` is the
+default; both deadzone arms skip at `r8 = 0`). Based on **V59, not V60**, so the falsified blend reverts
+by construction. 5 bytes off V59; **CAL CRC and `0xD2000`-block CRC both unchanged**.
+⚠ Expect a manual-feel change; reversible via V59. ⚠ V59's probe rides along but is **not a null
+control** — it reads upstream of the edit, so it is a *secondary readout*.
+
+## 11. The Factor C / Factor E question — answered, and it cuts both ways
+
+The operator asked whether V61's "they were only ever tested separately" argument is the same one made
+about the damper's multiplicative factors, and whether C and E were ever done together.
+
+**They ARE the same trap, with opposite arithmetic** — C×E is *multiplicative* (raising one is worthless
+while another zeroes the product); r24+r26 are *additive* (killing one is worthless while the other
+carries it).
+
+**But the C/E simultaneous test WAS performed.** Byte-verified across the images: **V47 carries FactorC
+`Y[0]` = 235 AND FactorE = (700,750,800)** (stock: 0 and (0,140,539)). V44 was the incomplete test; V47
+was the complete one, it was flashed, and it gave *"marginally quieter at 5 mph, no effect in motion."*
+⇒ The precedent **validates V61's logic** (V44's null genuinely was uninformative) while giving a
+**sobering base rate** (the complete test still came back ~null). Recorded honestly rather than cited
+one-sidedly.
+
+⚠ One thing distinguishes V61: the damper is dead on the **data** regardless of how completely it was
+opened — FactorC's LERP indexes on **speed** with `X[0] = 2240` ≈ 35 km/h ≈ 9.7 m/s, and the grinding is
+already gone at 6 m/s. **The damper never turns on where the grinding lives.** That objection does not
+apply to the rate lane, which is live at creep.
+
+## 12. 🛑 The clock tree was wrong, and the operator called for the audit that found it
+
+**Operator instruction: verify all clocks and task timings with the MCU datasheet as the ONLY source of
+truth.** It refuted two figures the kit had carried for months.
+
+- **PCLK = 40 MHz, not 80.** Likely original error: conflating **HEAPCLK** (80 MHz) with **PCLK** —
+  option-byte Table 6-7 makes `PCLK = HEAPCLK/2` the only legal setting at HEAPCLK = 80 MHz. HEAPCLK is
+  pinned by the firmware's own CLMA1 compare values, **orchestrator-verified in the stock dump**:
+  `0x0053` @`0x5C8D8` and `0x004D` @`0x5C8E0` → `CLMA1CMPH`/`CMPL`, an exact match to the datasheet's
+  worked row for CLMA1 @ 80 MHz / 16 MHz main OSC.
+  ⚠ A CAN-bit-timing chain was offered as corroboration but **is not a second witness** — the
+  orchestrator could not reproduce its field decode. With `FCN0CMBTCTL` = `0x030A`, whether `TS2LG` is
+  3 or 4 bits flips the answer between **40 and 80 MHz exactly**.
+- 🛑🛑 **OSTM0 IS NOT THE RTOS TICK, and never was.** Orchestrator-verified by decompiling the EI
+  trampoline `FUN_0001492a`: it dispatches only EIIC `0x970/0x600/0x340/0x470/0x110/0x100/0xf0` +
+  default — **no OSTM0 arm** — and `gp-0x42fc`, the rate divider's trigger, is written **only** by the
+  `0x340` arm = **TAUJ1I2**. ⇒ the *"OSTM0CMP = 79999 ⇒ 1 kHz control tick"* chain was a red herring at
+  **both ends**. TAUJ1's own period register was **not located** — the base rate is still not pinned to
+  a register value.
+- ✅ **The 1 kHz / 100 Hz figures SURVIVE** because they never used that chain: task 1 = 1 kHz is an
+  **on-car measurement** (`STEER_STATUS=4` dwell, cal `0xC64DF` = 100 counts at 100.00 ms; CAN 399
+  wire-fitted at exactly 100.000 Hz) and task 5 = task 1 / 10 is integer arithmetic.
+- ⚠ **What propagates: the FOC/TSG20 carrier.** "~8 kHz" was computed conditioned on PCLK = 80 MHz ⇒
+  likely **~4 kHz**; TSG20's clock-select is unverified, so both are OPEN. It bounds what the actuator
+  can do at 20.9 Hz. Also: `EIIC 0x600` is `CSIH1IR` (serial), not ADC-complete; `EIIC 0x970` is
+  `TSG21I05`, not TSG20 (`0x860`).
+
+🛑 **PROCESS FAILURE, recorded as a rule.** The PCLK/OSTM0 correction **had already been found and
+written down once**, in a tracer's agent-memory, and never propagated to `docs/` or the golden model.
+Second instance in one session of the same family as the V52C caveat mutation. **A finding that
+corrects a main-doc figure must be promoted the same day.** A sweep for the stale figures then caught a
+contradiction the orchestrator had itself just created — the golden model's `BASE TICK` header still
+asserted the refuted chain directly above the corrected `TASK RATE` entry. Fixed.
+⚠ Historical `HANDOFF-*`/`ARCHIVE` docs were **left as written** — records, not instructions. Rewriting
+them would destroy the provenance trail that made the V52C catch possible.
+
+## 13. Next steps (supersedes section 9)
+
+1. ★★ **Fly V61** on the V59 route shape: parking-lot creep ≤ 5 m/s, LKAS applying, sustained hands-off
+   ≥ 3 s, deliberate on/off passes at matched speed and angle, plus a 10-13 m/s under-load pass.
+2. ⚠ **If V61 is null**, the torque-feedback hypothesis is in serious trouble — value path (V52C),
+   amplitude index (V60), resonance lane (V56), damper (V44/V47) and the rate lane would all be closed.
+   What remains is base-assist **loop gain** (`0xD2834`/`0xCA154[mode]`, **zero build-script hits**), a
+   direct trade against steering weight ⇒ **an operator decision.**
+3. **Feedforward is specified but NOT sizeable.** `k` is a physical column-compliance constant, not
+   recoverable from any table. The dangerous failure is `k` right in magnitude and wrong in phase:
+   near 90° it adds quadrature noise, near 180° it **reinforces** the loop while looking like a fix.
+   Needs a phase probe read **inside the 1 kHz tick** (both signals same tick, no 100 Hz mailbox
+   penalty). Use `gp-0x6b3c` (arb output, LKAS-only), **not** `gp-0x6b98` (total command — would alter
+   manual feel and cancel genuine driver input). Static gain ⇒ **zero new RAM cells**.
+4. **Open:** TAUJ1's period register; TSG20's clock-select (4 vs 8 kHz).
