@@ -6,9 +6,15 @@ each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed, falsified, or **rejected on
 review** — check it before proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`
-(predecessors: `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md`, then `HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`, then
-`HANDOFF-2026-07-30-v57-drive-two-symptoms-and-v58.md`).
+`docs/HANDOFF-2026-07-31-v61-worse-the-rate-lane-is-the-damper.md`
+(predecessors: `HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`, then
+`HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md`, then
+`HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`).
+
+🛑🛑 **THE HEADLINE, 2026-07-31: V61 made the grinding WORSE, and that inverted the record.** The
+torsion-bar RATE lane (`r24`/`r26` in `FUN_0003aa2c`) is the mode's **DAMPER**, not its amplifier. Every
+build that touched it — V39, V42, V61 — tested it **downward**. The gradient points **up**. **V62 is
+built and is the recommended next flash.** See "On the car right now" below.
 
 🛑 **Explain firmware with Python that mirrors the decompiled arithmetic exactly** — standing operator
 instruction, 2026-07-28. Integer `>>`, the real Q-format, the real branch conditions, each line annotated
@@ -293,7 +299,58 @@ gain reducer. This is what pulls eps down from the raw-LERP values.
 
 ---
 
-## On the car right now
+## On the car right now — **V61**
+
+## ★★★ V61 FLASHED AND DRIVEN 2026-07-31 → **WORSE. And that is the best result this kit has had.**
+
+**The first SIGNED on-car outcome on any vibration lever.** Every prior build was a null or a fault.
+V61 made the symptom *worse*, which is strictly more informative — it measures the **gradient**, and the
+gradient says every previous attempt on this lane was pushing the wrong way.
+
+**What V61 did:** zeroed the torsion-bar torque-RATE lane at **both** taps of its shared
+`r1 = clamp(gp-0x4f62, ±5120)` (`0x3AB6C mul r1,r6,r0 → mul r0,r6,r0`; `0x3AC16 mov r1,r8 → mov r0,r8`).
+Two single-bit reg1 changes, no cave, no calibration moved.
+
+**Operator, authoritative:**
+- **LKAS ON, forward** — grinding still present and **significantly worse**: higher amplitude, louder.
+- **LKAS OFF, forward** — grinding **newly present** in manual driving when turning.
+- **LKAS OFF, reverse** — grinding **definitely newly present** in manual driving.
+
+### ⇒ The rate lane is the mode's DAMPER, not its amplifier
+Sign verified by the orchestrator from image bytes, not relayed:
+- `gp-0x6752` (polarity) is **one load @`0x3AB78` reused unmodified by both lanes**, and the *same byte*
+  is read by `FUN_0003a382`'s resonance lane @`0x3A71A` — the aggregator's one genuinely
+  torque-**proportional** P-term. ⇒ **polarity CANCELS**; its value is not needed to answer the question.
+- The combine chain `0x3ACC8`–`0x3ACDA` is **ten instructions, every lane entering with `add`**, each
+  add's `reg1` threading the previous add's `reg2`. **Not one `sub`.**
+- ⇒ `r24, r26 = +Kd·d(T_bar)/dt` **in phase with assist** — `Kp·x + Kd·dx/dt`, a lead compensator.
+
+For the hands-off mode (steering-wheel inertia on the torsion bar), with motor torque on the column only:
+```
+phi'' + (Kd·k/J_c)·phi' + k·(1/J_w + (1+K)/J_c)·phi = T_road/J_c
+```
+The `phi'` coefficient is **`Kd·k/J_c > 0` — positive damping, LINEAR in Kd. At `Kd = 0` the mode has no
+damping term at all.** That is V61, and that is what the car did — including in **manual** driving, where
+base assist is the only loop running, and worst in **reverse**.
+
+🛑 **A derivative term is DC-neutral** (zero at constant torque), so V61 cannot have "removed assist" — it
+changed **only** dynamics. That is what makes this a clean signed measurement rather than a confound.
+
+🛑 **This falsifies the golden model's framing.** `eps_lkas_chain_model.py:1792` called r26
+*"excitation-to-amplifier: faster slew → bigger derivative → bigger r26 → more motor torque → repeat"* and
+recommended the r26 kill. Both passages are **struck and corrected in place**. ⇒ **V39 (r24), V42 (r26)
+and V61 (both) all tested this lane DOWNWARD.** Their results stand; they bracket the **wrong side**.
+
+★ **Why this lane and not the dampers already tried:** `FUN_0003aa2c` is **task 1, 1000 Hz** ⇒ ~3.8° of
+ZOH lag at 20.9 Hz. Boost/damping are **task 5, 100 Hz** ⇒ **37.6–75.2°** — the structural reason V44 and
+V47 were null. **The rate lane is the only damping mechanism in the chain fast enough to act on this mode.**
+
+⚠ **No rlog analysis is folded in yet** — route `00000031--0441e00d2b` (4 segments) is the V61 drive and
+its quantification was still running at close-out. The conclusions above rest on the operator's report
+plus the firmware arithmetic, both of which are solid independently. **The rlog should still be analysed**
+— see next steps.
+
+---
 
 ## 🛑 V60 FLASHED AND DRIVEN 2026-07-31 → **NULL. The parametric pump is CLOSED.**
 
@@ -365,7 +422,8 @@ either arm in any qualifying speed bin. Everything above is "any hands", matched
 
 | build | what | status |
 |---|---|---|
-| **V61** | V59 + **kill the torsion-bar RATE lane at BOTH taps of its shared value** | ✅ **BUILT 2026-07-31, UNFLASHED. The one decisive subtractive test never performed.** r24 and r26 are **not independent** — both are gain-scalings of ONE value, `r1 = clamp(gp-0x4f62, ±5120)`, produced at `0x3AAAC-0x3AAC0` and tapped twice: `0x3AB6C mul r1,r6,r0` (r26) and `0x3AC16 mov r1,r8` (r24). **V39 killed only r24 — and only *conditionally*** (cave at `0x3AC78`, bypasses unless driver max torque < 320 AND \|LKAS\| ≥ 417); **V42 killed only r26** and says so outright (*"WHY r26 AND NOT r24: r24 was already zeroed by V39"*). Same sign, shared polarity load @`0x3AB78` ⇒ **killing either alone leaves the other transmitting, so each null is uninformative about the lane.** ⭐ **THE EDIT IS TWO SINGLE-BIT REGISTER-FIELD CHANGES** — `0x37E1→0x37E0` and `0x4001→0x4000`, both `reg1: r1→r0`, opcode and reg2 byte-identical (verified programmatically on the built image). **No cave** ⇒ GATE 1 vacuous, and the kit's only bricking class is avoided. r24's tail traced to zero: `mov 0x0,r6` @`0x3AC22` is the default and both deadzone arms skip. **5 bytes off V59** (2 code + 3 CRC), 88 off V38. ⭐ **CAL CRC unchanged** = machine proof no `0xC6xxx` cal moved; **`0xD2000`-block CRC unchanged** = machine proof V60's falsified blend is absent. Every r24/r26 gain cal (`0xC6440/42/46`, `0xC61F6`, `0xC6444`, `0xC643E`) and V42's `gain_A` Y rows asserted **STOCK**, so this is an independent lane test, not V39/V42 layered underneath. 50/50 CRC, RWD round-trips with every gate re-run on the readback. ⚠ **Expect a manual-feel change** — the rate lanes are a phase-lead term in **base** assist and this chain has no LKAS-only decoupling point. Reversible by reflashing V59. ⚠ V59's probe rides along but is **NOT a null control**: it reads `gp-0x6ba6`, upstream of the edit, so the edit cannot move it *directly* — but a quieter bar moves the index, making it a **secondary readout**. Image SHA `35da8600aa42584d0c5cf35bde8e9a751a0396e66f149f5fd18d07982498e23a`; RWD SHA `dd647870272aaa6342c425d25efb01a13eb540b1bd2c58fbbcbef132139f8a05` |
+| ★★ **V62** | V59 + **DOUBLE the torsion-bar RATE lane** — `sar 0xa` → `sar 0x9` on each lane's final shift | ✅ **BUILT 2026-07-31, UNFLASHED. The matched inverse of V61 and the recommended next flash.** `0x3AC20 42AA→42A9` (r24) and `0x3AB76 32AA→32A9` (r26). V61 took `Kd`→0 and the mode diverged; V62 takes `Kd`→2×, the same-sized step back. Stock sustains with **no ring-down at all** ⇒ `zeta_net ≈ 0`, so doubling should move it to `+zeta_lead`. **6 bytes off V59** (2 immediate bytes + MAIN CRC), 8 off V61, 88 off V38. ⭐ **CAL CRC unchanged** and ⭐ **`0xD2000`-block CRC unchanged** = machine proof no calibration moved and V60's falsified blend is absent. 50/50 CRC, RWD round-trips with every gate re-run on the readback; re-verified independently from the built image (taps back at `r1`, both shifts `sar 0x9`, `0x3AB70` still `sar 0xa`, exactly 2 code bytes). 🛑 **`sar` immediates chosen OVER the gain cals**, three traced reasons: the live gain arm is a **priority chain** that cannot be pinned statically (`gp-0x671a` is a bounded [0,5] *persistence ramp* that plausibly never saturates during a 21 Hz oscillation); **r24's default arm is MODE-INDEXED** via `gp+0x63fd` through four pointer arrays (`0xD2AEC`←`0xCC154` idx 10, `0xD6AEC`←`0xCC184` **idx 22** — ⚠ **a different MODE, not a redundancy twin; the "V27 desync" reading was wrong**); and `gp-0x683c` has **zero writers** ⇒ `0xC6446`/`0xC6444` are dead arms. A `sar` edit doubles the lane **under every arm and every mode**. 🛑 **`0x3AB76` not `0x3AB70`** — V850 `mul` discards the high word into `r0`, and doubling before the `×gain_A` multiply pushes the worst case to **94% of INT32_MAX** vs 47% (unchanged) after it. **Headroom is arm-dependent**: ~22× / ~11× / **~7.3× worst case**, so doubling keeps ≥3.6× margin. GATE 1 **vacuous** (no cave, no RAM, no new opcode). ⚠ **Residual:** `avg(gp-0x69a4)` magnitude is still unmeasured after three sessions — if r26 were already pinned at ±8192 doubling would deepen a saturation; bounded against by the fact that such a lane would dominate the ±10240 sum clamp and V61 would have been far more dramatic. r24 is immune. ⚠ Manual feel **will** change. Reversible by reflashing V59 or V61. Image SHA `80d9e1f721b741722a9d4b141a2d328fe8d999705765fedffab1ad23aa9264c7`; RWD SHA `1e0806a1eac69688e6d636fa02c5b1e864da40a65a4d3f8137d444d1ec5bff8e` |
+| ~~V61~~ | V59 + **kill the torsion-bar RATE lane at BOTH taps of its shared value** | ★★★ **FLASHED 2026-07-31 → WORSE. Do not re-flash except as a deliberate revert.** The signed result that inverted the record — see the section above. Original build note kept below for provenance. **The one decisive subtractive test never performed.** r24 and r26 are **not independent** — both are gain-scalings of ONE value, `r1 = clamp(gp-0x4f62, ±5120)`, produced at `0x3AAAC-0x3AAC0` and tapped twice: `0x3AB6C mul r1,r6,r0` (r26) and `0x3AC16 mov r1,r8` (r24). **V39 killed only r24 — and only *conditionally*** (cave at `0x3AC78`, bypasses unless driver max torque < 320 AND \|LKAS\| ≥ 417); **V42 killed only r26** and says so outright (*"WHY r26 AND NOT r24: r24 was already zeroed by V39"*). Same sign, shared polarity load @`0x3AB78` ⇒ **killing either alone leaves the other transmitting, so each null is uninformative about the lane.** ⭐ **THE EDIT IS TWO SINGLE-BIT REGISTER-FIELD CHANGES** — `0x37E1→0x37E0` and `0x4001→0x4000`, both `reg1: r1→r0`, opcode and reg2 byte-identical (verified programmatically on the built image). **No cave** ⇒ GATE 1 vacuous, and the kit's only bricking class is avoided. r24's tail traced to zero: `mov 0x0,r6` @`0x3AC22` is the default and both deadzone arms skip. **5 bytes off V59** (2 code + 3 CRC), 88 off V38. ⭐ **CAL CRC unchanged** = machine proof no `0xC6xxx` cal moved; **`0xD2000`-block CRC unchanged** = machine proof V60's falsified blend is absent. Every r24/r26 gain cal (`0xC6440/42/46`, `0xC61F6`, `0xC6444`, `0xC643E`) and V42's `gain_A` Y rows asserted **STOCK**, so this is an independent lane test, not V39/V42 layered underneath. 50/50 CRC, RWD round-trips with every gate re-run on the readback. ⚠ **Expect a manual-feel change** — the rate lanes are a phase-lead term in **base** assist and this chain has no LKAS-only decoupling point. Reversible by reflashing V59. ⚠ V59's probe rides along but is **NOT a null control**: it reads `gp-0x6ba6`, upstream of the edit, so the edit cannot move it *directly* — but a quieter bar moves the index, making it a **secondary readout**. Image SHA `35da8600aa42584d0c5cf35bde8e9a751a0396e66f149f5fd18d07982498e23a`; RWD SHA `dd647870272aaa6342c425d25efb01a13eb540b1bd2c58fbbcbef132139f8a05` |
 | ~~V60~~ | V59 + the boost-amplitude BLEND coefficient `0xD2006`: 102 → 43 | 🛑 **FLASHED 2026-07-31 → NULL on the vibration. Do not re-flash.** The discriminator fired and returned the predicted null ⇒ **the parametric pump is CLOSED**, and `0xC63BA` goes with it (the index drives only the boost/damping amplitude LERPs). Original build note kept below for provenance. **BUILT 2026-07-30.** **The intervention that settles whether the 42 Hz pump DRIVES the grinding or merely ECHOES it** — the only discriminator left, since causality is not settleable observationally and `eps_crit = 2/Q` needs a passive Q that V59 cannot measure. **5 bytes off V59**: one cal byte + the `[0xD2000,0xD2FFC)` block CRC. ⭐ **MAIN CRC and CAL CRC both UNCHANGED** = machine proof the cave/probe did not move and no `0xC6xxx` calibration moved. 91 bytes off V38. Q10 0.0996 → 0.0420; 42 Hz transmission ~0.37 → ~0.17; tau 10.0 → 23.8 ms @1 kHz. Predicted eps p99 **0.169 → 0.099**. 🛑 **The effect SATURATES** — the falling edge is instant regardless of the coefficient, so this lever buys ~1.7× and then flattens (cal 32 only reaches 0.086); 43 is the knee. **GATE 1 vacuous** (calibration halfword, no code, no RAM). **GATE 2 is the argument**: base-assist path, no LKAS-only decoupling point exists in this chain — but it is a pure *dynamics* change on a gain-**scheduling** variable, adds no gain, moves no static map, cannot change any steady-state value, and tau stays <50 ms worst case. Blast radius byte-verified: mode 10's cell is private (modes 11/12 have their own). **V59's probe is UNCHANGED and is the CONTROL** — it reads `gp-0x6ba6`, *upstream* of the blend, so the index distribution must return statistically identical (76.9/18.5/4.6/0.04). 50/50 CRC, RWD round-trips. Image SHA `6328cff064598cac8d9a7a4147626c8b55ddbad2e586ac3e1b8fca9c9459be5c`; RWD SHA `519aaab4908844d6a240d48f50d8a523b39353a3a4e3bffeb3de4bb4e1d19787` |
 | **V59** | V58 + cave payload replaced by the **boost-index DEPTH probe** | ✅ **BUILT 2026-07-30, UNFLASHED.** `0x14A` byte4: bit7 liveness, bit6 = `gp-0x6ba6 < 0` (the `0xFFFF` fault sentinel), **bit5/4/3 = a THERMOMETER on `gp-0x6ba6` at 512 / 1024 / 2048** (sense is "index < T", which is what lets the whole cave run on the two pinned condition codes). **19 bytes off V58** (cave + MAIN CRC only; **CAL CRC unchanged** = machine proof no calibration moved), 86 off V38. Same base `0xC4B34`/hook `0x55C0E`/68-byte extent as V55/V57/V58, all flown clean. **No new encoder, no new condition code.** 50/50 CRC, RWD round-trip, cave re-disassembled from the built image; the build also asserts both LERPs still resolve at the same mode and `tp+0x7498/0x7499` are still 1. Decoder `rlog-tools/decode_v59_boostindex.py` (hard-stops above 1% non-monotonic rather than reporting on a surviving subset). RWD SHA `ce7f6af6d7475a94462505a5f989d282966e00c9717cf6f2bbbc8b43ccdd3fc7`; image SHA `c6020a32780c1c8d952782426deef25ae390afee4606f319b0aa3c3998158d6d` |
 | **V55** | the pre-V56 revert target | ✅ built, driven, fault-free. SHA `2b0fbd61e6658726ea72248f5312f4521638acaebcbd6f09d8c999e1a9e81fbf` |
@@ -519,7 +577,33 @@ set's 12.6–42.2°).
 🛑 **NO openpilot-side modifications.** Standing operator instruction. openpilot remains a *measurement
 instrument* only.
 
-1. 🛑🛑 **RESOLVED 2026-07-31 — AND THE ANSWER WAS THAT THERE WAS NEVER A NUMBER. V52C DID NOT HALVE
+0. ★★★ **FLASH V62 — the recommended next action.** It is the matched inverse of the one build that
+   produced a signed result. `Kd`→0 diverged; `Kd`→2× is the same-sized step back, and the damping
+   coefficient is **linear in Kd**, so this is the highest-expected-value experiment on the board.
+   **Route:** repeat the V61 route so the comparison is like-for-like — parking-lot creep, deliberate
+   LKAS on/off passes at matched speed and angle, **plus the same manual-forward and manual-REVERSE
+   passes**. 🛑 **Manual reverse is the highest-information single test**: V61 introduced grinding there
+   from nothing, with no LKAS in the loop at all, so it reads the lane's damping with the cleanest
+   possible confound structure. Probe unchanged (`rlog-tools/decode_v59_boostindex.py`) — secondary
+   readout only, since `gp-0x6ba6` is upstream of the edit.
+   **Interpretation set in advance, so it cannot drift:**
+   - **BETTER** ⇒ the lane is the damper, the direction is confirmed, and the next question is *how much
+     more* (V63 = 4×, or the phase lever below).
+   - **NULL** ⇒ the lane's damping is already **phase-limited**, not gain-limited. Then the next lever is
+     the lead's **PHASE**, not its gain: **`0xC6C42` (delay D) 4 → 2 halves the differentiator's transport
+     lag, 15.1° → 7.6° at 20.9 Hz.** ⚠ Note the earlier objection to D — "it is half a lockstep pair" —
+     is **RETRACTED**: `0xC6C42` has exactly one reader (`FUN_0007e74a`) and D feeds a single computation
+     broadcast to both cells in sync. The real caveat is that D sets the differentiator's time window and
+     its response at other D is uncharacterised. Characterise it before building.
+   - **WORSE** ⇒ the lead has gone past optimum into noise amplification; back off to 1.5× rather than
+     abandoning the lane.
+1. **Analyse the V61 rlog, route `00000031--0441e00d2b`** (4 segments). Not blocking V62, but it is the
+   only quantitative record of a *signed* change and it answers two things nothing else can: whether the
+   newly-appearing **manual/reverse** line sits at the **same ~20.9 Hz and Q** as the engaged grinding
+   (⇒ same mode, unmasked) or elsewhere (⇒ a different finding, and V62's rationale needs revisiting),
+   and whether **`ST==4`** stayed at 0. Use the strict 18–26 Hz band + presence test, `latActive`,
+   sustained-effort hands-off, and peak-frequency **scatter** as the mode-vs-floor discriminator.
+2. 🛑🛑 **RESOLVED 2026-07-31 — AND THE ANSWER WAS THAT THERE WAS NEVER A NUMBER. V52C DID NOT HALVE
    ANYTHING.** This step used to read "re-derive V52C's halving under the corrected statistics; the
    rlogs exist." **Both halves of that were false.**
    - **"Halved the mode" is the FILTER'S OWN TRANSFER FUNCTION, relabelled as an on-car result.**
@@ -543,7 +627,8 @@ instrument* only.
    ⚠ This does **not** falsify the loop: a 2× gain cut that also adds ~57–61° of lag is a poor
    stabiliser, so a null is what a real loop with <6 dB gain margin would also produce. V52C is
    **weak-to-moderate evidence against the `gp-0x4f60` VALUE path**, not against the loop.
-2. ★★ **Flash V60 (built, 5 bytes) as a DISCRIMINATOR, not as an expected fix.** It attacks the
+2b. ~~**Flash V60 as a DISCRIMINATOR**~~ — ✅ **DONE 2026-07-31, null, pump closed.** Kept for provenance:
+   It attacks the
    *pump*, and the pump now looks like a passenger. **A null is the informative outcome**: it would
    close the parametric mechanism this kit spent V58/V59/V60 on and leave the loop standing.
    **Route:** parking-lot creep **v ≤ 5 m/s**, LKAS applying, **sustained hands-off ≥ 3 s**

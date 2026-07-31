@@ -1789,14 +1789,27 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     100ms steerActuatorDelay (stock's slow slew dominated and damped the loop; V38's fast slew lets
     the delay dominate instead -- a classic limit-cycle recipe). This is a comma-side scaling gap, not
     a firmware defect, and fits the on-car evidence (V38 onset, engaged-only, absent hands-on, worst
-    at low speed, immune to firmware-only V39/V41). It couples to r26 (the adaptive Sensor-B derivative
-    lane) as excitation-to-amplifier: faster slew -> bigger column-torque derivative -> bigger r26 ->
-    more motor torque -> more column motion -> repeat. Motor ripple is ruled out (hand steering
+    at low speed, immune to firmware-only V39/V41).
+    🛑🛑 THE r26 "AMPLIFIER" COUPLING BELOW IS FALSIFIED ON-CAR BY V61, 2026-07-31. It used to read:
+    "It couples to r26 (the adaptive Sensor-B derivative lane) as excitation-to-amplifier: faster slew ->
+    bigger column-torque derivative -> bigger r26 -> more motor torque -> more column motion -> repeat",
+    and it predicted that KILLING r26 helps. V61 killed BOTH rate taps unconditionally and the grinding
+    got WORSE with LKAS on AND appeared in manual driving (worst in reverse) where there was none.
+    r24/r26 are +Kd*d(T_bar)/dt added IN PHASE with assist (polarity gp-0x6752 is one load @0x3AB78
+    shared by both lanes and by FUN_0003a382's P-term, so it cancels; the combine chain 0x3ACC8-0x3ACDA
+    is ten `add`s, no `sub`). In the closed loop that is VISCOUS DAMPING ACROSS THE TORSION BAR: for the
+    wheel-inertia-on-bar mode, phi'' + (Kd*k/J_c)*phi' + k*(1/J_w + (1+K)/J_c)*phi = T_road/J_c, so the
+    phi' coefficient is positive and LINEAR in Kd. At Kd=0 the mode has no damping term at all.
+    ⇒ the lane is the mode's DAMPER, not its amplifier, and the direction of interest is RAISING it.
+    V62 doubles it via two `sar 0xa`->`sar 0x9` immediates (0x3AC20, 0x3AB76). See
+    rate_lane_damping_model.py and build_v62_tva.py. Motor ripple is ruled out (hand steering
     delivers comparable torque through the same smooth output stage), which leaves the LKAS-only
     segment upstream of the aggregator -- see lkas_iir_quantization_analysis() for the standout
     stateful element there (gp-0x3d3c). PROPOSED TEST, in order: comma-side STEER_DELTA_UP/DOWN
     3->0.75 first (reversible, no flash/brick risk) before building any firmware image; if the symptom
-    only softens, the r26 cal kill attacks the amplifier. [CONFIRMED] the PID rescale and engaged-only
+    only softens, ~~the r26 cal kill attacks the amplifier~~ 🛑 STRUCK 2026-07-31: the r26 kill was flown
+    (V42 alone, then V61 with r24) and made the grinding WORSE -- r26 is a damper, see above; the
+    remaining lever on this lane is RAISING it (V62). [CONFIRMED] the PID rescale and engaged-only
     character; [INFERRED] that this loosening causes the felt vibration (a control-theory prediction,
     not yet road-tested in isolation).
     """

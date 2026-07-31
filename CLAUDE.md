@@ -18,14 +18,18 @@ an already-flashed, already-falsified lever because the result was buried in pro
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
    **Mandatory before proposing any calibration edit.**
 3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session.
-   Latest: `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md` — 🛑 **the grinding is most likely
-   an UNCOMPENSATED POSITIVE-FEEDBACK LOOP through the torque sensor** (LKAS torque twists the column and
-   is read back as driver input, then boosted; command→bar transfer peaks at 21.09 Hz, the global max;
-   **no motor-command feedforward compensation exists anywhere in the chain**). The parametric-pump story
-   V58/V59/V60 were built around is real but **marginal** and probably a passenger. Also: **six recorded
-   reversals**, including an already-falsified lever (FactorC/V44) re-proposed by the orchestrator and
-   caught by the operator — **a withdrawn RATIONALE is not a withdrawn RESULT.**
-   (predecessors: `HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`, then
+   Latest: `HANDOFF-2026-07-31-v61-worse-the-rate-lane-is-the-damper.md` — ★★★ **V61 made the grinding
+   WORSE and spread it to manual driving, which INVERTED the record: the torsion-bar RATE lane
+   (`r24`/`r26` in `FUN_0003aa2c`) is the mode's DAMPER, not its amplifier.** The kit's first *signed*
+   on-car result. V39, V42 and V61 all tested that lane **downward**; the gradient points **up**.
+   **V62 (double it, 6 bytes, `sar 0xa`→`sar 0x9`) is built and is the recommended next flash.**
+   🛑 The lesson pairs with the V44 trap: there a withdrawn *rationale* was mistaken for a withdrawn
+   *result*; here every result stood and only the **direction** was wrong. **Check which WAY a lever was
+   pushed, not just that it was pushed.**
+   (predecessors: `HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`, then
+   `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md` — the uncompensated-positive-feedback-loop
+   framing, which the V61 result now *supports* and gives a lever for; then
+   `HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`, then
    `HANDOFF-2026-07-30-v57-drive-two-symptoms-and-v58.md`, then
    `HANDOFF-2026-07-29-golden-model-distillation.md`, then
    `HANDOFF-2026-07-29-v57-decouple-and-the-angle-rate-turn.md`, then
