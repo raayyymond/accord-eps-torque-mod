@@ -1,11 +1,15 @@
 # HANDOFF 2026-07-31 — V61 made it WORSE, and that is the best news this kit has had
 
-**Session shape:** operator reported the V61 drive; orchestrator + two subagents (a firmware tracer and an
-rlog analyst); V62 built, verified and unflashed at close-out.
+**Session shape:** operator reported the V61 drive; orchestrator + three subagents (two firmware tracers
+and an rlog analyst); **V62 and V63 both built, verified and unflashed at close-out.**
 
 **One-line summary:** V61 removed the torsion-bar rate lane and the grinding got worse *and spread to
-manual driving* — which means the lane was the mode's **damper**, every previous build on it pushed the
-wrong way, and the fix is to **double** it. V62 does exactly that in 6 bytes.
+manual driving* — which means the lane was the mode's **damper**, and every previous build on it pushed
+the wrong way. **V62** doubles it in 6 bytes. Then the operator objected that this changes manual feel to
+fix an LKAS-specific symptom, which turned out to be the most productive note of the session: the firmware
+has its **own oscillation detector** (`gp-0x671a`), both rate lanes already branch on it, and **V63**
+raises only the oscillation-gated arms — same damping, **zero manual-feel cost**, and a smaller edit.
+**Fly V63 first; V62 is the fallback that cannot miss.** See §5b.
 
 ---
 
@@ -120,11 +124,17 @@ damping coefficient is **linear in `Kd`**.
 
 The obvious lever was the gain cals. It is the **wrong instrument**:
 
-1. **The gain is a priority chain whose live arm cannot be pinned statically.** `assist_state gp-0x671a`
-   turns out to be a bounded **[0,5] persistence ramp** tracking *consistent sign* of a rate signal —
-   during a 21 Hz oscillation it plausibly never saturates. `gp-0x671d` is an **event/rising-edge counter**
-   (not "startup dwell", as an older memory said) that may be self-excited by the oscillation itself.
-   Editing a cal means betting on a branch.
+1. ~~**The gain is a priority chain whose live arm cannot be pinned statically.**~~
+   🛑🛑 **THIS REASON IS WITHDRAWN — see §5b. It was based on a WRONG reading of `gp-0x671a`.**
+   The original text said it was *"a bounded [0,5] persistence ramp tracking consistent sign of a rate
+   signal, which during a 21 Hz oscillation plausibly never saturates."* **It is the opposite**: a
+   hard-reversal **counter** that reads 0 during smooth steering and rises during an oscillation. So the
+   arm *can* be pinned, it *is* the oscillation arm, and editing that cal is not "betting on a branch" —
+   it is the **better** instrument, which is V63. Left visible rather than deleted because this is the
+   reasoning that produced V62.
+   ⚠ Still true and still relevant: `gp-0x671d` is an **event/rising-edge counter** (not "startup dwell",
+   as an older memory said), it outranks r24's `state>=5` arm, and it may be self-excited by the
+   oscillation — which is why **r26, not r24, is expected to carry V63.**
 2. **r24's default arm is MODE-INDEXED, not one location.** `FUN_0003ad74` reads a mode byte at
    `gp+0x63fd` and indexes four ROM pointer arrays (`0xCBF5C`, `0xCC044`, `0xCC12C`, `0xCC214`).
    `0xD2AEC`←`0xCC154` idx 10, `0xD2B28`←`0xCC23C` idx 10, **`0xD6AEC`←`0xCC184` idx 22**.
@@ -279,9 +289,71 @@ comes back null — because a null would mean the lane's damping is phase-limite
 
 ---
 
+## 5b. The operator's objection to V62 — and V63, which removes its cost
+
+**Operator, after V62 was built:** *"we seem to be affecting manual steering feel even though the symptom
+is specific to LKAS-engaged only. If the stock values of the doubled dampers is sufficient to remove
+vibration on manual steering, how come it's not enough for LKAS-engaged? The V62 edit kind of blindly
+ignores this question."* **Correct on both counts.**
+
+### The answer: stock `Kd` isn't sufficient for manual either — manual has `Kd` *plus your hands*
+The mode is the **steering wheel's inertia on the torsion bar**, and the driver's arms damp exactly that
+mass. Under LKAS hands-off, that damper is gone. Measured 2×2 (⚠ columns use different statistics —
+per-frame envelope for manual, window p99 for engaged — so read *within* a column):
+
+| | hands ON (manual) | hands OFF (LKAS) |
+|---|---|---|
+| `Kd` stock (V59) | clean, 9.2 | **marginal**, 1092 |
+| `Kd` = 0 (V61) | mode appears, 163 | **much worse**, 3007 |
+
+Removing `Kd` degraded **both** arms — proportionally *more* in manual (17.8× vs 2.75×), because engaged
+was already at the edge. `Kd` was doing real work in manual all along; it just had help. **And LKAS also
+injects energy at the mode frequency** (command→bar transfer peaks at **21.09 Hz**, the global max over
+3–46 Hz, coherence 0.917). Two differences, both real.
+
+### V62's residual cost is small, and computed rather than hoped
+The lane is a **derivative**, so it is inherently frequency-selective — its output scales with `f·A`:
+
+| condition | r24 @2048 | @4096 | added |
+|---|---|---|---|
+| deliberate steering, 1 Hz | 47 | 97 | **+50** (0.49% of the ±10240 sum clamp) |
+| the mode, 18.25 Hz | 729 | 1461 | **+732** |
+
+**14.6:1 selectivity.** Not a blunt global change — but a mitigation, not an answer to the objection.
+
+### ★★★ The real answer: the firmware already has an oscillation detector
+Both rate lanes' gain chains end in `assist_state gp-0x671a >= 5`, and `gp-0x671a` is a **hard-reversal
+counter** (`FUN_000428d4`, 1 kHz): the neutral state **resets it to 0 every tick** and only exits when
+`|gp-0x6c2c| > 12800`; a crossing of the *opposite* threshold increments it; 50 quiet ticks clear it.
+⇒ **0 during smooth steering; `state>=5` means an oscillation is happening.** At 18–21 Hz the half-period
+is 24–28 ms, inside the 50 ms timeout, so it arms in ~125–150 ms and latches.
+
+```
+r24: … | state>=5 -> 0xC6440=2048 <-- OSC ARM | else -> mode-indexed LERP (smooth)
+r26: … | state>=5 -> 0xC643E=1536 <-- OSC ARM | else -> gain_A LERP       (smooth)
+```
+
+**V63 raises only those two** (→4096 / →3072). Damping only while oscillating; both smooth-steering
+defaults stock. **6 bytes off V59, MAIN CRC unchanged, a smaller edit than V62 with the manual-feel cost
+removed by construction.** No new arithmetic risk: **3072 is already `gain_A`'s own stock maximum.**
+
+🛑 **The polarity was disputed by two subagents and I resolved it in Ghidra myself.** One trace read
+`0xC643E` as the `state<5` arm — which would have raised the *smooth-steering* gain: all of the cost,
+none of the benefit. `0x3AA7C cmp r14,r12`/`bc` ⇒ `r2=1` iff `state>=5`; `0x3AB66`/`0x3AC10` `be` skip
+the loads when `r2==0`. ★ **A branch polarity that decides a build's direction must be read by the
+orchestrator, not relayed.**
+
+🛑 **Residuals:** whether `gp-0x6c2c` crosses ±12800 in the real vibration is **unverified and
+load-bearing** — if not, V63 is inert and **a null is ambiguous**. Resolve with **no probe and no cave**:
+fly V63 first, and if null fly V62, which cannot miss. And `gate_671d` outranks r24's arm and is live, so
+**expect r26 to carry V63**.
+
 ## 6. Next steps
 
-0. ★★★ **Flash V62.** Repeat the V61 route so the comparison is like-for-like: parking-lot creep,
+0. ★★★ **Flash V63, then V62 only if V63 is null.** V63 gets the same damping increase with zero
+   manual-feel cost; V62 cannot miss but does change manual feel. That order also resolves V63's own
+   ambiguity for free — V62 working after V63 nulls means the reversal detector was not tripping.
+   Repeat the V61 route so the comparison is like-for-like: parking-lot creep,
    deliberate LKAS on/off at matched speed and angle, **plus the same manual-forward and manual-REVERSE
    passes**. 🛑 **Manual reverse is the highest-information single test** — V61 introduced grinding there
    from nothing, with no LKAS in the loop at all.
