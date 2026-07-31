@@ -1,0 +1,2448 @@
+===== PAGE 1010 =====
+R01UH0098EJ0100 Rev.1.00
+Page 991 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 15　TSG2 (TSG20, TSG21)
+(2)
+A/D Conversion Trigger Skipping Function
+Example of operation of the A/D conversion trigger skipping function is shown 
+in Figure 15-35.
+Figure 15-35
+Example of Operation of A/D Conversion Trigger Skipping Function
+Note
+Broken-lined pulses indicate A/D conversion trigger pulses skipped by the A/D 
+conversion trigger skipping function.
+16-bit counter
+INTTSG2nIPEK interrupt
+INTTSG2nIVLY interrupt
+TSnADTRG0 signal
+TSnDCMP0
+compare match
+TSnDCMP1
+compare match
+(When TSnAT09 to TSnAT00 bits = 0000100101B, TSnACC01, and TSnACC00 bits = 01B)
+TSnADTRG0 signal
+(When TSnAT09 to TSnAT00 bits = 0000100101B, TSnACC01, and TSnACC00 bits = 10B)
+TSnADTRG0 signal
+(When TSnAT09 to TSnAT00 bits = 0000100101B, TSnACC01, and TSnACC00 bits = 11B)
+
+
+===== PAGE 1011 =====
+R01UH0098EJ0100 Rev.1.00
+Page 992 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 15　TSG2 (TSG20, TSG21)
+Figure 15-36
+Example of Operation of A/D Conversion Trigger Skipping Function
+3 
+2 
+3 
+0 
+1 
+2 
+1 
+0 
+2
+3
+0
+1
+2 
+3 
+1 
+0 
+0
+1 
+0 
+2 
+3
+0
+1
+2
+3 
+0 
+When TSnDTC0 = TSnDTC1 = 0000H, TSnACC01 and TSnACC00 bits = 10B, and TSnAT09 to TSnAT00 bits = 0001000000B in TSnCTL5
+16-bit counter
+Valley of 
+16-bit sub-counter
+A/D conversion 
+trigger skipping counter
+TSnADTRG0 signal
+*
+Note: * Immediately after counting starts, a valley timing of the 16-bit sub-counter is not generated, 
+            and thus the A/D conversion trigger skipping counter is not incremented.
+When TSnDTC0 = 0000H, TSnDTC1 ≠ 0000H, TSnACC01 and TSnACC00 bits = 10B, and TSnAT09 to TSnAT00 bits = 0010000000B in TSnCTL5
+16-bit counter
+Peak of 
+16-bit sub-counter
+A/D conversion 
+trigger skipping counter
+TSnADTRG0 signal
+When TSnDTC0 = 0000H, TSnDTC1 ≠ 0000H, TSnACC01 and TSnACC00 bits = 10B, and TSnAT09 to 
+TSnAT00 bits = 0001000000B in TSnCTL5
+16-bit counter
+Valley of 
+16-bit sub-counter
+A/D conversion 
+trigger skipping counter
+TSnADTRG0 signal
+
+
+===== PAGE 1012 =====
+R01UH0098EJ0100 Rev.1.00
+Page 993 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 15　TSG2 (TSG20, TSG21)
+(3)
+Notes on A/D Conversion Trigger
+• If the same value is written to TSnDCMP0 and TSnDCMP1 or TSnDCMP2, 
+and the same condition (when the 16-bit counter increments or decrements) 
+is set as the valid A/D conversion trigger, A/D conversion trigger skipping 
+counter is incremented by one and one trigger pulse is output upon a match 
+of the 16-bit counter with these registers.
+• In PWM mode, SP-PWM mode, and 120-DC mode, a valley interrupt 
+(INTTSG2nIVLY) is not generated. Only a peak interrupt (INTTSG2nIPEK) 
+is valid.
+• In 120-DC mode, when the 16-bit counter is cleared during the carrier period 
+due to switch of the output pattern, the A/D conversion trigger is not 
+generated if TSnDCMP2 to TSnDCMP0 values do not match with the 16-bit 
+counter value and a peak interrupt (INTTSG2nIPEK) is not generated.
+
+
+===== PAGE 1013 =====
+R01UH0098EJ0100 Rev.1.00
+Page 994 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 15　TSG2 (TSG20, TSG21)
+15.10
+Error/Warning Interrupt
+15.10.1
+Error Interrupt Function
+If the simultaneous active state of the positive phase and inverse phase is 
+detected after the error interrupt function is enabled (TSnIOC1.TSnEOC = 1), 
+TSnSTR2.TSnTBF is set, and an error interrupt (INTTSG2nIER) of TSG2n is 
+generated. Whether or not to detect an error of each phase (TSG2nO1 and 
+TSG2nO2, TSG2nO3 and TSG2nO4, and TSG2nO5 and TSG2nO6 pins) can 
+be selected by TSnCTL1.TSnTBA2 to TSnTBA0, respectively.
+When an error occurs, outputs of the TSG2nO1 to TSG2nO6 pins can be set 
+to high-impedance. For details, see section 19.4.1, Hi-Z Control Functions.
+The following table shows whether or not the simultaneous active state of the 
+positive phase and inverse phase can be detected in each mode.
+Figure 15-37
+Error Interrupt (INTTSG2nIER) Generation Control Circuit
+Caution
+When an error interrupt is generated, the error status should be canceled 
+within an error interrupt handling. Otherwise, subsequent error interrupts are 
+not generated.
+Mode
+Positive Phase and Inverse Phase 
+Simultaneous Active State Detection
+PWM mode
+Possible
+HT-PWM mode
+Possible
+SP-PWM mode
+Possible
+120-DC mode
+Possible
+TSnSTR0.TSnTE
+TSnTBA0
+TSnCTL1.TSnTBA1
+TSnIOC1.TSnEOC
+TSG2nO1 pin
+TSnIOC2.TSnOL1
+TSG2nO2 pin
+TSnIOC2.TSnOL2
+TSG2nO3 pin
+TSnIOC2.TSnOL3
+TSG2nO4 pin
+TSnIOC2.TSnOL4
+TSG2nO5 pin
+TSnIOC2.TSnOL5
+TSG2nO6 pin
+TSnIOC2.TSnOL6
+Error detection
+ enabled mode
+To TSnSTR2.TSnTBF control
+INTTSG2nIER interrupt
+TSnTBA2
+
+
+===== PAGE 1014 =====
+R01UH0098EJ0100 Rev.1.00
+Page 995 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 15　TSG2 (TSG20, TSG21)
+(1)
+PWM Mode and 120-DC Mode
+In PWM mode, if TSnCMP1 and TSnCMP2, and TSnCMP3 and TSnCMP4 are 
+set so that the TSG2nO1 and TSG2nO2 pins output the active level 
+simultaneously, an error interrupt (INTTSG2nIER) is generated. With the same 
+setting, if TSnCMP5, TSnCMP6, TSnCMP7, TSnCMP8, TSnCMP9, 
+TSnCMP10, TSnCMP11, and TSnCMP12 are set so that the TSG2nO3 and 
+TSG2nO4, and TSG2nO5 and TSG2nO6 pins output the active level 
+simultaneously, an error interrupt (INTTSG2nIER) is generated.
+In 120-DC mode, if TSnCMP1, TSnCMP2, TSnCMP5, TSnCMP6, TSnCMP9, 
+and TSnCMP10, TSnCMP3, TSnCMP4, TSnCMP7, TSnCMP8, TSnCMP11, 
+and TSnCMP12, and TSnPAT0W and TSnPAT1W are set so that the 
+TSG2nO1 and TSG2nO2 pins output the active level simultaneously, an error 
+interrupt (INTTSG2nIER) is generated. With the same setting, the TSG2nO3 
+and TSG2nO4, and TSG2nO5 and TSG2nO6 pins also output the active level 
+simultaneously, an error interrupt (INTTSG2nIER) is generated.
+Figure 15-38
+Example of Error Interrupt (INTTSG2nIER) Generation (PWM Mode)
+Note
+TSG2nO3 and TSG2nO4, and TSG2nO5 and TSG2nO6 behave the same.
+Count clock 
+Internal count up signal
+16-bit counter
+Internal TSG2nO1 setting condition
+Internal TSG2nO1 clearing condition 
+Internal TSG2nO2 setting condition
+Internal TSG2nO2 clearing condition
+TSG2nO1 pin
+TSG2nO2 pin 
+INTTSG2nIER interrupt
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+If setting conditions are generated 
+simultaneously, the timer output is not activated.
+If setting conditions are generated 
+simultaneously, the timer output is not activated.
+FFFFH
+TSnDTC1
+TSnDTC0
+TSnDTC1
+
+
+===== PAGE 1015 =====
+R01UH0098EJ0100 Rev.1.00
+Page 996 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 15　TSG2 (TSG20, TSG21)
+When the active level of output is switched by operating TSnIOC2.TSnOL1 
+and TSnOL2, an error interrupt is generated as shown in Figure 15-39.
+Figure 15-39
+Example of Error Interrupt (INTTSG2nIER) Generation for each Active 
+Level
+(2)
+HT-PWM Mode and SP-PWM Mode
+Either TSG2n dead time setting register 0 or 1 (TSnDTC0 or TSnDTC1) is 
+0000H, an error may occur.
+Note
+If an error occurs when the dead time control function is used (both TSnDTC0 
+and TSnDTC1 are not 0000H), internal circuit failure may occur.
+Figure 15-40
+Example of Error Interrupt Operation
+Note
+* TSG2nO2 pin control circuit failure occurs.
+When TSnOL1 = 0, 
+TSnOL2 = 0
+When TSnOL1 = 1, 
+TSnOL2 = 0
+When TSnOL1 = 0, 
+TSnOL2 = 1
+When TSnOL1 = 1, 
+TSnOL2 = 1
+16-bit counter
+TSG2nO1 pin
+TSG2nO2 pin
+INTTSG2nIER 
+interrupt
+16-bit counter
+TSG2nO1 pin
+TSG2nO2 pin
+INTTSG2nIER 
+interrupt
+16-bit counter
+TSG2nO1 pin
+TSG2nO2 pin
+INTTSG2nIER 
+interrupt
+16-bit counter
+TSG2nO1 pin
+TSG2nO2 pin
+INTTSG2nIER 
+interrupt
+16-bit counter
+TSG2nO1 pin
+TSG2nO2 pin
+INTTSG2nIER 
+interrupt
+TSnTBF
+*
+Write 0 to clear the flag.
+
+
+===== PAGE 1016 =====
+R01UH0098EJ0100 Rev.1.00
+Page 997 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 15　TSG2 (TSG20, TSG21)
+15.10.2
+Warning Interrupt Function
+TSG2n has a warning interrupt (INTTSG2nIWN).
+Warning interrupt (INTTSG2nIWN) is generated when any of the following 
+conditions is detected.
+For details, see section 15.7, Flags.
+• When simultaneous change in two or more pins of TSG2nPTSI2 to 
+TSG2nPTSI0 is detected
+See section 15.7.4, Noise Detection Flag (TSnNDF).
+• When reversal is detected of the TSG2nPTSI2 to TSG2nPTSI0 pin input 
+pattern
+See section 15.7.7, Pattern Reversal Detection Flag (TSnPRF).
+• When 000 or 111 is detected from the TSG2nPTSI2 to TSG2nPTSI0 pins
+See section 15.7.6, Pattern Error Detection Flag (TSnPEF).
+• When a toggle of the TSnPTSI2 to TSG2nPTSI0 pins is generated three 
+times or more between TSnSTCI0 and TSnSTCI1 signal triggers.
+See section 15.7.8, TSG2nPTSI2 to TSG2nPTSI0 Pin Abnormal Toggle 
+Detection Flag (TSnPTF).
+• When the TSnSTCI0 and TSnSTCI1 signal triggers are detected 
+simultaneously
+See section 15.7.9, TSnSTCI0 and TSnSTCI1 Signal Simultaneous Trigger 
+Detection Flag (TSnTDF).
+• When the phase difference between the input pattern (TSG2nPTSI2 to 
+TSG2nPTSI0 pins) and output patterns (TSnOPF2 to TSnOPF0) is detected
+See section 15.7.10, Pattern Phase Difference Detection Flag (TSnPPF).
+Figure 15-41
+Detection of Abnormality of TSG2nPTSI2 to TSG2nPTSI0 Pins
+TSnWOC bit
+TSG2nPTSI2 pin
+TSG2nPTSI1 pin
+TSG2nPTSI0 pin
+INTTSG2nIWN 
+interrupt
+TSnSTR0.TSnTE bit
+D
+fPCLK
+
+
+===== PAGE 1017 =====
+R01UH0098EJ0100 Rev.1.00
+Page 998 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 15　TSG2 (TSG20, TSG21)
+15.11
+Operating Modes
+Table  15-48
+List of Modes
+TSnCTL0 Register
+Timer Modes
+TSnMD1
+TSnMD0
+0
+0
+PWM mode
+0
+1
+HT-PWM mode (HT-PWM)
+1
+0
+Shifted-pulse - pulse width modulation mode (SP-
+PWM)
+1
+1
+120-DC mode
+
+
+===== PAGE 1018 =====
+R01UH0098EJ0100 Rev.1.00
+Page 999 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 15　TSG2 (TSG20, TSG21)
+15.11.1
+PWM Mode
+Overview
+A PWM signal is output at the TSG2nO1 to TSG2nO6 pins according to set 
+timing/clear timing of TSnCMP1 to TSnCMP12 registers with the PWM period 
+set in the TSnCMP0 register.
+Prerequisites
+• Set the set timing to the compare register with an even number:
+TSnCMP2 (set timing of the TSG2nO1 output), TSnCMP4 (set timing of the 
+TSG2nO2 output), TSnCMP6 (set timing of the TSG2nO3 output), 
+TSnCMP8 (set timing of the TSG2nO4 output), TSnCMP10 (set timing of 
+the TSG2nO5 output) and TSnCMP12 (set timing of the TSG2nO6 output)
+• Set the clear timing to the compare register with an odd number:
+TSnCMP1 (clear timing of the TSG2nO1 output), TSnCMP3 (clear timing of 
+the TSG2nO2 output), TSnCMP5 (clear timing of the TSG2nO3 output), 
+TSnCMP7 (clear timing of the TSG2nO4 output), TSnCMP9 (clear timing of 
+the TSG2nO5 output) and TSnCMP11 (clear timing of the TSG2nO6 output)
+Functional
+description
+Set the PWM period and set/clear timing of the TSG2nO1 to TSG2nO6 
+outputs. Set TSnTRG0.TSnTS = 1 to start the timer counter.
+The TSG2nO1 to TSG2nO6 outputs are set to the inactive state at the same 
+time the counting begins. The outputs are set to the active state by the match 
+of the buffer registers TSnCMP2, TSnCMP4, TSnCMP6, TSnCMP8, 
+TSnCMP10, and TSnCMP12 with the 16-bit counter.
+Next, the TSG2nO1 to TSG2nO6 outputs are set to the inactive state by the 
+match of the buffer registers TSnCMP1, TSnCMP3, TSnCMP5, TSnCMP7, 
+TSnCMP9, and TSnCMP11 with the 16-bit counter.
+During counting, a compare match interrupt (INTTSG2nI00 to INTTSG2nI12) 
+is generated by the match of the buffer register TSnCMP0 to TSnCMP12 with 
+the 16-bit counter.
+Caution
+Reload is executed when writing to the TSnCMP1 register at 
+TSnCTL3.TSnRMC = 0. Therefore, even when it is needed to rewrite only the 
+value of the TSnCMP0 register, a write operation to the TSnCMP1 register is 
+necessary. When only the TSnCMP0 register is rewritten, reload is not done.
+Note
+The PWM mode is set when TSnCTL0.TSnMD1 and TSnMD0 = 00B.
+
+
+===== PAGE 1019 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1000 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 15　TSG2 (TSG20, TSG21)
+(a) When TSnCMP0 and TSnCMP1 to TSnCMP12 are Not Rewritten during Timer Operation
+Figure 15-42
+Basic Operation Flow of PWM Mode (1/2)
+Upon match of 16-bit counter and 
+TSnCMPm (m = 2, 4, 6, 8, 10, 12) buffer register (set timing), 
+TSG2nO1 to TSG2nO6 output active level.
+Timer operation enabled (TSnTRG0.TSnTS = 1)
+Transfer the values of TSnCMP0 to TSnCMP12 registers 
+to TSnCMP0 to TSnCMP12 buffer registers.
+Upon match of 16-bit counter and TSnCMPk 
+(k = 1, 3, 5, 7, 9, 11) 
+buffer register (clear timing), 
+TSG2nO1 to TSG2nO6 output inactive level.
+Upon match of 16-bit counter and TSnCMP0 buffer register, 
+clear and start of 16-bit counter
+INTTSG2nIm 
+interrupt generated 
+(m = 02, 04, 06, 08, 10, 12)
+INTTSG2nIk 
+interrupt generated 
+(k = 01, 03, 05, 07, 09, 11)
+INTTSG2nI00, 
+INTTSG2nIPEK 
+interrupts generated
+START
+· Setting of PWM mode 
+   (TSnCTL0.TSnMD1 and TSnMD0 = 00B)
+· Setting of compare register 
+  (TSnCMP0 to TSnCMP12 registers)
+· Setting of PWM output
+· Setting of interrupt (TSnCTL4.TSnPIE = 1)
+Initial setting
+
+
+===== PAGE 1255 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1236 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+The following table denotes the operations applied to the RWx bits.
+Example
+The following shows an example.
+The register with the content 1883H shall be changed so that
+• bit 3 shall be set to 1: SE3 = 1
+• bit 1 shall be cleared to 0: CL1 = 1
+Register read before bit manipulations:
+Register write access:
+Register read after bit manipulations:
+Table 20-15
+Bit Set/Clear Operation
+CLx
+SEx
+Operation on RWx
+0
+0
+No change of RWx
+0
+1
+RWx set to 1
+1
+0
+RWx cleared to 0
+1
+1
+No change of RWx
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+1
+1
+0
+0
+0
+1
+0
+0
+0
+0
+0
+1
+1
+May hold any value, here 18H
+RW7 to RW0: 83H
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+1
+0
+SE3 = 1: 08H
+CL1 = 1: 02H
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+1
+1
+0
+0
+0
+1
+0
+0
+0
+1
+0
+0
+1
+May hold any value, here 18H
+RW7 to RW0: 89H
+
+
+===== PAGE 1256 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1237 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+20.5
+Control Registers
+20.5.1
+FCN Global Registers
+(1)
+FCNnGMCLCTL - FCNn Global Control Register
+This register is used to control the operation of the FCN module.
+Access
+This register can be read/written in 16-bit units.
+Address
+<FCNn_base> + 0 8000H
+Initial value
+00x0H
+This register is initialized by various types of reset.
+(a)
+FCNnGMCLCTL Read
+Caution 1. 
+While FCNnGMCLCTL.FCNnGMCLSSMO is cleared to 0, software access to 
+the message buffer registers (i.e. all registers with name prefix FCNnMm...), or 
+registers related to transmit history or receive history (FCNnCMLOSTR, 
+FCNnCMTGTX, FCNnCMLISTR, and FCNnCMRGRX) is disabled.
+Caution 2. 
+FCNnGMCLCTL.FCNnGMCLSSMO is read-only. Even if 1 is written while it is 
+0, its value does not change, and access to the message buffer registers, or 
+registers related to transmit history or receive history remains disabled.
+15
+14
+13
+12
+11
+10
+9
+8
+FCNnGM
+CLSSMO
+0
+0
+0
+0
+0
+0
+0
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+FCNnGMC
+LECCF *1
+FCNnGMC
+LSORF*1
+0
+0
+FCNnGM
+CLESDE
+FCNnGM
+CLPWOM
+Note 1. Initial values are as follows: 
+- No error detection after software reset: 0000H
+- No error detection during software reset: 0010H
+- Error detection after software reset: 0020H
+- Error detection during software reset: 0030H
+FCNnGMCLSSMO
+Enabling Access to Message Buffer Register and 
+Transmit/Receive History Registers of FCN Module
+0
+Write access and read access to the message buffer 
+register and the transmit/receive history list registers is 
+disabled.
+1
+Write access and read access to the message buffer 
+register and the transmit/receive history list registers is 
+enabled.
+
+
+===== PAGE 1257 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1238 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+Note
+FCNnGMCLCTL.FCNnGMCLSSMO is cleared to 0 when the FCN module 
+enters FCN sleep mode/FCN stop mode, or when 
+FCNnGMCLCTL.FCNnGMCLPWOM is cleared to 0.
+FCNnGMCLSSMO is set to 1 when FCN sleep mode/FCN stop mode is 
+released, or when FCNnGMCLCTL.FCNnGMCLPWOM is set to 1.
+Note 1.
+FCNnGMCLCTL.FCNnGMCLECCF is set to 1 in case of detecting a memory 
+error when reading from the message buffer RAM during the software reset 
+process. Once FCNnGMCLECCF is set to 1, it keeps the level until it is cleared 
+to 0.
+Note 2.
+Use this bit only to check a memory error after software reset.
+Note 3.
+It is impossible to clear FCNnGMCLECCF to 0 while 
+FCNnGMCLCTL.FCNnGMCLSORF is set to 1 (software reset is ongoing).
+Note 1.
+While a software reset is ongoing (FCNnGMCLCTL.FCNnGMCLSORF is set 
+to 1), it is impossible to set FCNnGMCLCTL.FCNnGMCLPWOM and 
+FCNnGMCLCTL.EFSD. 
+It is possible to set start a software reset by setting 
+FCNnGMCLCTL.FCNnGMCLSESR to 1 while 
+FCNnGMCLCTL.FCNnGMCLPWOM is cleared to 0.
+Note 2.
+When FCNnGMCLCTL.FCNnGMCLSORF is set to 1, the initialization of 
+message buffer RAM starts. It is possible to detect error during initializing 
+message buffer RAM, if FCNnGMCLCTL.FCNnGMCLECCF is cleared before 
+setting FCNnGMCLSORF.
+Note 3.
+When FCNnGMCLCTL.FCNnGMCLSORF is set to 1 again while it has been 
+set to 1, the software reset procedure does not restart, but continues.
+Note 4.
+After release of the hardware reset, FCNnGMCLCTL.FCNnGMCLSORF is 
+automatically set to 1 and initialization of message buffer RAM starts.
+Note 5.
+It is impossible that clearing FCNnGMCLCTL.FCNnGMCLPWOM to 0 and 
+setting FCNnGMCLCTL.FCNnGMCLSORF to 1 are done at the same time.
+Note 6.
+If a hardware reset occurs while FCNnGMCLCTL.FCNnGMCLSORF = 1, the 
+software reset procedure is stopped (aborted), and the hardware reset starts.
+Caution
+To request a forced shut down, FCNnGMCLCTL.FCNnGMCLPWOM must be 
+cleared to 0 in a sub-sequent, immediately following access after 
+FCNnGMCLCTL.FCNnGMCLESDE has been set to 1. If any access to 
+another register (including reading the FCNnGMCLCTL register) is executed 
+without clearing FCNnGMCLPWOM immediately after FCNnGMCLESDE has 
+been set to 1, FCNnGMCLESDE is forcibly cleared to 0, and the forced shut 
+down request is invalid.
+FCNnGMCLECCF
+Message Buffer RAM Read Error Detect
+0
+Not detect error for reading from message buffer RAM.
+1
+Detect error for reading from message buffer RAM.
+FCNnGMCLSORF
+Software Reset Execution Status
+0
+No software reset 
+1
+Software reset is ongoing
+FCNnGMCLESDE
+Enabling Forced Shut Down
+0
+Forced shut down disabled.
+1
+Forced shut down of FCNnGMCLCTL.FCNnGMCLPWOM 
+bit = 0 enabled.
+
+
+===== PAGE 1258 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1239 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+Caution
+FCNnGMCLCTL.FCNnGMCLPWOM can be cleared only in initialization mode 
+or immediately after FCNnGMCLCTL.FCNnGMCLESDE is set (forced shut 
+down).
+(b)
+FCNnGMCLCTL Write
+Caution
+Set FCNnGMCLCTL.FCNnGMCLPWOM and 
+FCNnGMCLCTL.FCNnGMCLESDE bits always separately.
+FCNnGMCLPWOM
+Global Operating Mode 
+0
+FCN module is disabled to operate.
+1
+FCN module is enabled to operate.
+15
+14
+13
+12
+11
+10
+9
+8
+0
+0
+0
+FCNnGM
+CLSESR
+0
+0
+FCNnGM
+CLSESD
+FCNnGM
+CLSEOM
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+FCNnGM
+CLCLMB
+0
+0
+0
+0
+FCNnGM
+CLCLOM
+FCNnGMCLSESR
+Software Reset Start
+0
+No changes.
+1
+Start software reset.
+FCNnGMCLSESD
+FCNnGMCLSESD Setting
+0
+FCNnGMCLESDE bit remains unchanged.
+1
+FCNnGMCLESDE bit set to 1.
+FCNnGMCLSEOM
+FCNnGMCLCLOM
+FCNnGMCLPWOM Setting
+0
+1
+FCNnGMCLCTL.FCNnGMCLPW
+OM bit cleared to 0.
+1
+0
+FCNnGMCLCTL.FCNnGMCLPW
+OM bit set to 1.
+Other than above
+FCNnGMCLCTL.FCNnGMCLPW
+OM bit remains unchanged.
+FCNnGMCLCLMB
+FCNnGMCLCTL.FCNnGMCLECCF Clear
+0
+No change in FCNnGMCLCTL.FCNnGMCLECCF bit.
+1
+FCNnGMCLCTL.FCNnGMCLECCF bit cleared to 0.
+
+
+===== PAGE 1259 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1240 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(2)
+FCNnGMCSPRE - FCNn Global Clock Selection Register
+This register is used to select the FCN module system clock.
+Access
+This register can be read/written in 8-bit units.
+Address
+<FCNn_base> + 0008H
+Initial value
+0FH
+This register is initialized by various types of reset.
+Note
+fCAN = FCN reference clock
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+FCNnGMCSPRSC[3:0]
+FCNnGMCSPRSC[3:0]
+FCN Module System Clock (fCANMOD)
+0000B
+fCAN/1
+0001B
+fCAN/2
+0010B
+fCAN/3
+0011B
+fCAN/4
+0100B
+fCAN/5
+0101B
+fCAN/6
+0110B
+fCAN/7
+0111B
+fCAN/8
+1000B
+fCAN/9
+1001B
+fCAN/10
+1010B
+fCAN/11
+1011B
+fCAN/12
+1100B
+fCAN/13
+1101B
+fCAN/14
+1110B
+fCAN/15
+1111B
+fCAN/16 (default value)
+
+
+===== PAGE 1260 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1241 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(3)
+FCNnGMABCTL - FCNn Global Automatic Block Transmission Control 
+Register
+This register is used to control the automatic block transmission (ABT) 
+operation.
+Access
+This register can be read/written in 16-bit units.
+Address
+<FCNn_base> + 0 8018H
+Initial value
+0000H
+This register is initialized by various types of reset.
+(a)
+FCNnGMABCTL Read
+Note
+Start clearing the automatic transmission engine by setting 
+FCNnGMABCTL.FCNnGMABCLAT to 1 while 
+FCNnGMABCTL.FCNnGMABCLRF is 0.
+The operation is not guaranteed if FCNnGMABCLRF is set to 1 while 
+FCNnGMABCLRF = 1.
+15
+14
+13
+12
+11
+10
+9
+8
+0
+0
+0
+0
+0
+0
+0
+0
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+FCNnGM
+ABCLRF
+FCNnGM
+ABABTT
+FCNnGMABCLRF
+Automatic Block Transmission Engine Clear Status
+0
+Clearing the automatic transmission engine is completed.
+1
+The automatic transmission engine is being cleared.
+FCNnGMABABTT
+Automatic Block Transmission Status
+0
+Automatic block transmission is stopped.
+1
+Automatic block transmission is under execution.
+
+
+===== PAGE 1261 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1242 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(b)
+FCNnGMABCTL Write
+Note
+When the automatic block transmission engine is cleared by setting 
+FCNnGMABCTL.FCNnGMABSEAC to 1, FCNnGMABCLRF is automatically 
+set, and cleared to 0 as soon as the requested clearing processing is 
+completed.
+Caution 1. 
+Before changing normal operating mode with ABT to initialization mode, be 
+sure to set the FCNnGMABCTL register to the default value (0000H) and 
+confirm the FCNnGMABCTL register is surely initialized to the default value 
+(0000H).
+Caution 2. 
+Do not start automatic block transmission in initialization mode. If automatic 
+block transmission is started in initialization mode, the operation is not 
+guaranteed after the CAN controller has entered normal operating mode with 
+ABT.
+Caution 3. 
+Do not start automatic block transmission while 
+FCNnCMCLCTL.FCNnCMCLSSTS is set to 1 (transmission in progress). 
+Confirm FCNnCMCLSSTS = 0 directly in advance before starting automatic 
+block transmission.
+15
+14
+13
+12
+11
+10
+9
+8
+0
+0
+0
+0
+0
+0
+FCNnGM
+ABSEAC
+FCNnGM
+ABSEAT
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+FCNnGM
+ABCLAT
+FCNnGMABSEAC
+Automatic Block Transmission Engine Clear Request
+0
+The automatic block transmission engine is in idle status or 
+under operation.
+1
+Request to clear the automatic block transmission engine. 
+After the automatic block transmission engine has been 
+cleared, automatic block transmission is started from 
+message buffer 0 by setting 
+FCNnGMABCTL.FCNnGMABABTT to 1.
+FCNnGMABSEAT
+FCNnGMABCLAT
+Automatic Block Transmission 
+Start
+0
+1
+Request to stop automatic block 
+transmission.
+1
+0
+Request to start automatic block 
+transmission.
+Other than above
+No change of 
+FCNnGMABCTL.FCNnGMABABTT
+
+
+===== PAGE 1262 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1243 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(4)
+FCNnGMADCTL - FCNn Global Automatic Block Transmission Delay 
+Register
+This register is used to set the interval at which the data of the message buffer 
+assigned to ABT is to be transmitted in normal operating mode with ABT.
+Access
+This register can be read/written in 8-bit units.
+Address
+<FCNn_base> + 0020H
+Initial value
+00H
+This register is initialized by various types of reset.
+Note 1. Unit: Data bit time (DBT)
+Caution 1. 
+Do not change the contents of the FCNnGMADCTL register while 
+FCNnGMABCTL.FCNnGMABCLRF = 1 (clearing of ABT in progress).
+Caution 2. 
+The timing at which the ABT message is actually transmitted onto the CAN bus 
+differs depending on the status of transmission from the other station or how a 
+request to transmit a message other than an ABT message is made.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+FCNnGMADSSAD[3:0]
+FCNnGMADSSAD[3:0]
+Data Frame Interval during Automatic Block 
+Transmission in DBT Unit*1
+0000B
+0 DBT (default value)
+0001B
+25 DBT
+0010B
+26 DBT
+0011B
+27 DBT
+0100B
+28 DBT
+0101B
+29 DBT
+0110B
+210 DBT
+0111B
+211 DBT
+1000B
+212 DBT
+Other than above
+Setting prohibited
+
+
+===== PAGE 1263 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1244 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(5)
+FCNnDNBMRXk - FCNn Global Data New Bit Monitor Registers (k = 0, 1)
+These registers are used to read data new flags globally for several message 
+buffers at a time.
+Access
+These registers can be read in 32-bit units.
+Address
+FCNnDNBMRX0: <FCNn_base> + 1 00C0H
+FCNnDNBMRX1: <FCNn_base> + 1 00D0H
+Initial value
+00000000H
+31
+30
+29
+28
+27
+26
+25
+24
+FCNnDNBMSSDN[31:24]
+23
+22
+21
+20
+19
+18
+17
+16
+FCNnDNBMSSDN[23:16]
+15
+14
+13
+12
+11
+10
+9
+8
+FCNnDNBMSSDN[15:08]
+7
+6
+5
+4
+3
+2
+1
+0
+FCNnDNBMSSDN[07:00]
+FCNnDNBMSSDN[31:0]
+Message Buffer Data New
+0
+No remote or data frame has been stored into the 
+message buffer. 
+1
+A remote or data frame has been stored into the 
+message buffer.
+
+
+===== PAGE 1264 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1245 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+20.5.2
+FCN Module Registers
+(1)
+FCNnCMMKCTLaH - FCNn Module Mask Control Register
+These registers are used to extend the number of receivable messages into 
+the same message buffer by masking part of the identifier (ID) comparison of a 
+message and invalidating the ID of the masked part.
+Two 16-bit registers FCNnCMMKCTLaH (a = 01 to 16) can also be accessed 
+via a single 32-bit access to the registers FCNnCMMKCTLaW (a = 01, 03, 05, 
+07, 09, 11, 13, 15).
+Access
+The FCNnCMMKCTLaH registers can be read/written in 16-bit units.
+The FCNnCMMKCTLaW registers can be read/written in 32-bit units.
+Address
+FCNnCMMKCTL01H: <FCNn_base> + 0 8300H
+FCNnCMMKCTL02H: <FCNn_base> + 0 8308H
+FCNnCMMKCTL03H: <FCNn_base> + 0 8310H
+FCNnCMMKCTL04H: <FCNn_base> + 0 8318H
+FCNnCMMKCTL05H: <FCNn_base> + 0 8320H
+FCNnCMMKCTL06H: <FCNn_base> + 0 8328H
+FCNnCMMKCTL07H: <FCNn_base> + 0 8330H
+FCNnCMMKCTL08H: <FCNn_base> + 0 8338H
+FCNnCMMKCTL09H: <FCNn_base> + 0 8340H
+FCNnCMMKCTL10H: <FCNn_base> + 0 8348H
+FCNnCMMKCTL11H: <FCNn_base> + 0 8350H
+FCNnCMMKCTL12H: <FCNn_base> + 0 8358H
+FCNnCMMKCTL13H: <FCNn_base> + 0 8360H
+FCNnCMMKCTL14H: <FCNn_base> + 0 8368H
+FCNnCMMKCTL15H: <FCNn_base> + 0 8370H
+FCNnCMMKCTL16H: <FCNn_base> + 0 8378H
+FCNnCMMKCTL01W: <FCNn_base> + 1 0300H
+FCNnCMMKCTL03W: <FCNn_base> + 1 0310H
+FCNnCMMKCTL05W: <FCNn_base> + 1 0320H
+FCNnCMMKCTL07W: <FCNn_base> + 1 0330H
+FCNnCMMKCTL09W: <FCNn_base> + 1 0340H
+FCNnCMMKCTL11W: <FCNn_base> + 1 0350H
+FCNnCMMKCTL13W: <FCNn_base> + 1 0360H
+FCNnCMMKCTL15W: <FCNn_base> + 1 0370H
+Initial value
+0000H
+FCNnCMMKCTLaH (a = 01, 03, 05, 07, 09, 11, 13, 15)
+15
+14
+13
+12
+11
+10
+9
+8
+FCNnCMMKSSID[15:8]
+7
+6
+5
+4
+3
+2
+1
+0
+FCNnCMMKSSID[7:0]
+
+
+===== PAGE 1265 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1246 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(a)
+FCNnCMMKCTLaH (a = 02, 04, 06, 08, 10, 12, 14, 16)
+(b)
+FCNnCMMKCTLaW (a = 01, 03, 05, 07, 09, 11, 13, 15)
+Note 1. i = [28:0]
+Note
+Masking is always defined by an ID length of 29 bits. If a mask is assigned to a 
+message with a standard ID, FCNnCMMKSSID[17:0] are ignored. Therefore, 
+only FCNnCMMKSSID[28:18] of the received ID are masked. The same mask 
+can be used for both the standard and extended IDs.
+15
+14
+13
+12
+11
+10
+9
+8
+0
+0
+0
+FCNnCMMKSSID[28:24]
+7
+6
+5
+4
+3
+2
+1
+0
+FCNnCMMKSSID[23:16]
+31
+30
+29
+28
+27
+26
+25
+24
+0
+0
+0
+FCNnCMMKSSID[28:24]
+23
+22
+21
+20
+19
+18
+17
+16
+FCNnCMMKSSID[23:16]
+15
+14
+13
+12
+11
+10
+9
+8
+FCNnCMMKSSID[15:8]
+7
+6
+5
+4
+3
+2
+1
+0
+FCNnCMMKSSID[7:0]
+FCNnCMMKSSID[i] *1
+Mask Pattern Setting of ID
+0
+The ID bit i of the message buffer m set by 
+FCNnMmSSID[i] are compared with the ID bits of the 
+received message frame.
+1
+The ID bit i of the message buffer m set by 
+FCNnMmSSID[i] are not compared with the ID bits of the 
+received message frame (they are masked).
+
+
+===== PAGE 1266 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1247 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(2)
+FCNnCMCLCTL - FCNn Module Control Register
+This register is used to control operating mode of the FCN module.
+Access
+This register can be read/written in 16-bit units.
+Address
+<FCNn_base> + 0 8240H
+Initial value
+0000H
+This register is initialized by various types of reset.
+(a)
+FCNnCMCLCTL Read
+Note 1.
+FCNnCMCLSSRS is set to 1 under the following conditions (timing).
+• The SOF bit of a receive frame is detected
+• On occurrence of arbitration loss during a transmit frame
+Note 2.
+FCNnCMCLSSRS is cleared to 0 under the following conditions (timing).
+• When a recessive level is detected at the second bit of the inter-frame 
+space
+• On transition to initialization mode at the first bit of the inter-frame 
+space
+Note 1.
+FCNnCMCLSSTS is set to 1 under the following condition (timing).
+• The SOF bit of a transmit frame is detected
+Note 2.
+FCNnCMCLSSTS is cleared to 0 under the following conditions (timing).
+• During transition to bus-off state
+• On occurrence of arbitration loss in transmit frame
+• On detection of recessive level at the second bit of the inter-frame 
+space
+• On transition to initialization mode at the first bit of the inter-frame 
+space
+15
+14
+13
+12
+11
+10
+9
+8
+0
+0
+0
+0
+0
+0
+FCNnCM
+CLSSRS
+FCNnCM
+CLSSTS
+7
+6
+5
+4
+3
+2
+1
+0
+FCNnCM
+CLERCF
+FCNnCM
+CLALBF
+FCNnCM
+CLVALF
+FCNnCM
+CLMDPF[1:0]
+FCNnCM
+CLMDOF[2:0]
+FCNnCMCLSSRS
+Reception Status
+0
+Reception is stopped.
+1
+Reception is in progress.
+FCNnCMCLSSTS
+Transmission Status
+0
+Transmission is stopped.
+1
+Transmission is in progress.
+
+
+===== PAGE 1267 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1248 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+Caution
+The FCNnCMCLERCF bit is used to clear the error counter FCNnCMERCNT 
+and information register FCNnCMLCSTR for re-initialization or forced recovery 
+from the bus-off state. The error counter and the information register can be 
+cleared (by setting FCNnCMCLERCF to 1) under the following conditions.
+• In initialization mode during bus-off period
+• In initialization mode after the FCN module is started (by setting 
+FCNnGMCLPWOM to 1 from the FCNnGMCLPWOM = 0 state)
+• In initialization mode after all transmission requests are cleared according 
+to the transmission abort processing in Figure 20-24 in operating mode (In 
+normal operating mode with ABT, clear all transmission requests according 
+to the transmission abort processing in Figure 20-25.)
+Note 1.
+When the FCNnCMERCNT and FCNnCMLCSTR registers have been cleared, 
+FCNnCMCLERCF is also cleared to 0 automatically.
+Note 2.
+FCNnCMCLERCF can be set to 1 at the same time as a request to change 
+initialization mode to an operating mode is made.
+Note 3.
+FCNnCMCLERCF is read-only in FCN sleep mode or FCN stop mode.
+Note 4.
+The error counter is also cleared by normal shutdown or forced shutdown of 
+the CAN controller.
+Note
+FCNnCMCLALBF is valid only in single-shot mode.
+Note 1.
+Detection of a valid receive message frame is not dependent upon storage in 
+the receive message buffer (data frame) or transmit message buffer (remote 
+frame).
+Note 2.
+If only two CAN nodes are connected to the CAN bus with one transmitting a 
+message frame in normal mode and the other in receive-only mode, 
+FCNnCMCLVALF is not set to 1 before the transmitting node enters the error 
+passive state, because in receive-only mode no acknowledge is generated.
+Note 3.
+To clear FCNnCMCLVALF, set FCNnCMCLCLVL to 1 first and confirm that 
+FCNnCMCLVALF is cleared. If it is not cleared, perform clearing processing 
+again.
+FCNnCMCLERCF
+Error Counter Clear
+0
+The FCNnCMERCNT and FCNnCMLCSTR registers are 
+not cleared in initialization mode.
+1
+The FCNnCMERCNT and FCNnCMLCSTR registers are 
+cleared in initialization mode.
+FCNnCMCLALBF
+Setting Operation in Case of Arbitration Loss
+0
+Re-transmission is not executed in case of an arbitration 
+loss in single-shot mode.
+1
+Re-transmission is executed in case of an arbitration loss in 
+single-shot mode.
+FCNnCMCLVALF
+Valid Receive Message Frame Detection
+0
+A valid message frame has not been received since 
+FCNnCMCLVALF was last cleared to 0.
+1
+A valid message frame has been received since 
+FCNnCMCLVALF was last cleared to 0.
+
+
+===== PAGE 1268 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1249 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+Caution 1. 
+Transition to and from FCN stop mode must be made via FCN sleep mode. A 
+request for direct transition to and from FCN stop mode is ignored.
+Caution 2. 
+The FCNnGMCLSSMO flag of FCNnGMCLCTL must be checked after 
+releasing a power save mode prior to access the message buffers again.
+Caution 3. 
+FCN sleep mode requests are kept pending, until cancelled by software or 
+entered on appropriate bus condition (bus idle). Software can check the actual 
+status by reading FCNnCMCLMDPF[1:0].
+Caution 4. 
+Do not use power save mode in combination with the operating mode change. 
+Make these accesses in different steps.
+Note
+When initialization mode transitions to any communication mode, the FCN 
+module checks the CAN bus idle period and then participates in 
+communication. The FCN module can transition to sleep mode before 
+checking the idle period, but the wake-up condition is always a change from 
+recessive level to dominant level.
+Caution 1. 
+Transition to initialization mode or power save mode may take some time. Be 
+sure to verify the success of mode change by reading the values, before 
+proceeding.
+Caution 2. 
+If initialization mode is set during reception in operating mode, the last 
+reception in which the FCNnMmCTL.FCNnMmDTNF bit in the message buffer 
+is set may occur. A transition back to operating mode also clears the receive 
+history list. Therefore, confirm that initialization mode is reached by reading 
+operating mode. Before restarting operating mode, clear all set 
+FCNnMmCTL.FCNnMmDTNF bits in all valid receive message buffer.
+Note
+FCNnCMCLMDOF[2:0] are read-only in FCN sleep mode or FCN stop mode.
+FCNnCMCLMDPF[1:0]
+Power Save Mode
+00B
+No power save mode is selected.
+01B
+FCN sleep mode
+10B
+Setting prohibited
+11B
+FCN stop mode
+FCNnCMCLMDOF[2:0]
+Operating Mode
+000B
+No operating mode is selected (FCN module is in 
+initialization mode).
+001B
+Normal operating mode
+010B
+Normal operating mode with automatic block 
+transmission function (normal operating mode with ABT)
+011B
+Receive-only mode
+100B
+Single-shot mode
+101B
+Self-test mode
+Other than above
+Setting prohibited
+
+
+===== PAGE 1269 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1250 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(b)
+FCNnCMCLCTL Write
+15
+14
+13
+12
+11
+10
+9
+8
+FCNnCM
+CLSERC
+FCNnCM
+CLSEAL
+0
+FCNnCM
+CLSEPS[1:0]
+FCNnCM
+CLSEOP[2:0]
+7
+6
+5
+4
+3
+2
+1
+0
+0
+FCNnCM
+CLCLAL
+FCNnCM
+CLCLVL
+FCNnCM
+CLCLPS[1:0]
+FCNnCM
+CLCLOP[2:0]
+FCNnCMCLSERC
+Setting FCNnCMCLERCF
+1
+FCNnCMCLERCF is set to 1.
+Other than above
+FCNnCMCLERCF is not changed.
+FCNnCMCLSEAL
+FCNnCMCLCLAL
+Setting FCNnCMCLALBF
+0
+1
+FCNnCMCLALBF is cleared to 0.
+1
+0
+FCNnCMCLALBF is set to 1.
+Other than above
+FCNnCMCLALBF is not changed.
+FCNnCMCLCLVL
+Setting FCNnCMCLVALF
+0
+FCNnCMCLVALF is not changed.
+1
+FCNnCMCLVALF is cleared to 0.
+FCNnCMCLSEPS0
+FCNnCMCLCLPS0
+Setting FCNnCMCLMDPF0
+0
+1
+FCNnCMCLMDPF0 is cleared to 
+0.
+1
+0
+FCNnCMCLMDPF0 is set to 1.
+Other than above
+FCNnCMCLMDPF0 is not 
+changed.
+FCNnCMCLSEPS1
+FCNnCMCLCLPS1
+Setting FCNnCMCLMDPF1
+0
+1
+FCNnCMCLMDPF1 is cleared to 
+0.
+1
+0
+FCNnCMCLMDPF1 is set to 1.
+Other than above
+FCNnCMCLMDPF1 is not 
+changed.
+FCNnCMCLSEOP0
+FCNnCMCLCLOP0
+Setting FCNnCMCLMDOF0
+0
+1
+FCNnCMCLMDOF0 is cleared to 
+0.
+1
+0
+FCNnCMCLMDOF0 is set to 1.
+Other than above
+FCNnCMCLMDOF0 is not 
+changed.
+
+
+===== PAGE 1270 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1251 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(3)
+FCNnCMLCSTR - FCNn Module Last Error Information Register
+This register provides the error information of the CAN protocol.
+Access
+This register can be read/written in 8-bit units.
+Address
+<FCNn_base> + 0 0248H
+Initial value
+00H
+This register is initialized by various types of reset
+Note 1.
+The contents of the FCNnCMLCSTR register are not cleared when the FCN 
+module changes from an operating mode to initialization mode.
+Note 2.
+If an attempt is made to write a value other than 00H to the FCNnCMLCSTR 
+register by software, the access is ignored.
+FCNnCMCLSEOP1
+FCNnCMCLCLOP1
+Setting FCNnCMCLMDOF1
+0
+1
+FCNnCMCLMDOF1 is cleared to 
+0.
+1
+0
+FCNnCMCLMDOF1 is set to 1.
+Other than above
+FCNnCMCLMDOF1 is not 
+changed.
+FCNnCMCLSEOP2
+FCNnCMCLCLOP2
+Setting FCNnCMCLMDOF2
+0
+1
+FCNnCMCLMDOF2 is cleared to 
+0.
+1
+0
+FCNnCMCLMDOF2 is set to 1.
+Other than above
+FCNnCMCLMDOF2 is not 
+changed.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+FCNnCMLCSSLC[2:0]
+FCNnCMLCSSLC[2:0]
+Last FCN Protocol Error Information
+000B
+No error
+001B
+Stuff error
+010B
+Form error
+011B
+ACK error
+100B
+Bit error (The FCN module tried to transmit a recessive- 
+level bit as part of a transmit message (except the 
+arbitration field), but the value on the CAN bus is a 
+dominant-level bit.)
+101B
+Bit error (The FCN module tried to transmit a dominant-
+level bit as part of a transmit message, ACK bit, error 
+frame, or overload frame, but the value on the CAN bus 
+is a recessive-level bit.)
+110B
+CRC error
+111B
+Undefined
+
+
+===== PAGE 1271 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1252 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(4)
+FCNnCMINSTR - FCNn Module Information Register
+This register indicates the status of the FCN module.
+Access
+This register is read-only in 8-bit units.
+Address
+<FCNn_base> + 0 024CH
+Initial value
+00H 
+This register is initialized by various types of reset.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+FCNnCM
+INBOFF
+FCNnCM
+INSSTE[1:0]
+FCNnCM
+INSSRE[1:0]
+FCNnCMINBOFF
+Bus-off State
+0
+Not bus-off state (transmit error counter is 255 or less). 
+(The value of the transmit counter is less than 256.)
+1
+Bus-off state (transmit error counter is more than 255). 
+(The value of the transmit counter is 256 or more.)
+FCNnCMINSSTE[1:0]
+Transmission Error Counter Status
+00B
+The value of the transmission error counter is less than that 
+of the warning level (less than 96).
+01B
+The value of the transmission error counter is in the range of 
+the warning level (96 to 127).
+10B
+Setting prohibited
+11B
+The value of the transmission error counter is in the range of 
+the error passive or bus-off status (128 or more).
+FCNnCMINSSRE[1:0]
+Reception Error Counter Status
+00B
+The value of the reception error counter is less than that of 
+the warning level (less than 96).
+01B
+The value of the reception error counter is in the range of 
+the warning level (96 to 127).
+10B
+Setting prohibited
+11B
+The value of the reception error counter is in the range of 
+the error passive status (128 or more).
+
+
+===== PAGE 1272 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1253 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(5)
+FCNnCMERCNT - FCNn Module Error Counter Register
+This register indicates the count value of the transmission/reception error 
+counter.
+Access
+This register is read-only in 16-bit units.
+Address
+<FCNn_base> + 0 8250H
+Initial value
+0000H
+This register is initialized by various types of reset.
+Note
+FCNnCMERRECF[6:0] are invalid in the reception error passive state 
+(FCNnCMINSTR.FCNnCMINSSRE[1:0] = 11B).
+Note
+FCNnCMERTECF[7:0] are invalid in the bus-off state 
+(FCNnCMINSTR.FCNnCMINBOFF = 1).
+15
+14
+13
+12
+11
+10
+9
+8
+FCNnCM
+ERRPSF
+FCNnCM
+ERRECF[6:0]
+7
+6
+5
+4
+3
+2
+1
+0
+FCNnCM
+ERTECF[7:0]
+FCNnCMERRPSF
+Reception Error Passive Status
+0
+The reception error counter is not in the error passive 
+range (less than 128).
+1
+The reception error counter is in the error passive range 
+(128 or more).
+FCNnCMERRECF[6:0]
+Reception Error Counter
+0 to 127
+Number of reception errors. These bits reflect the status 
+of the reception error counter. The number of errors is 
+defined by the CAN protocol.
+FCNnCMERTECF[7:0]
+Transmission Error Counter
+0 to 255
+Number of transmission errors. These bits reflect the 
+status of the transmission error counter. The number of 
+errors is defined by the CAN protocol.
+
+
+===== PAGE 1273 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1254 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(6)
+FCNnCMIECTL - FCNn Module Interrupt Enable Register
+This register is used to enable or disable the interrupts of the FCN module.
+Access
+This register can be read/written in 16-bit units.
+Address
+<FCNn_base> + 0 8258H
+Initial value
+0000H 
+This register is initialized by various types of reset.
+(a)
+FCNnCMIECTL Read
+(b)
+FCNnCMIECTL Write
+15
+14
+13
+12
+11
+10
+9
+8
+0
+0
+0
+0
+0
+0
+0
+0
+7
+6
+5
+4
+3
+2
+1
+0
+0
+FCNnCMIEINTF[6:0]
+FCNnCMIEINTF[6:0]
+FCN Module Interrupt Enable
+0
+Output of the interrupt corresponding to interrupt status 
+register FCNnCMISCTL is disabled.
+1
+Output of the interrupt corresponding to interrupt status 
+register FCNnCMISCTL is enabled.
+15
+14
+13
+12
+11
+10
+9
+8
+0
+FCNnCMIESEIE[6:0]
+7
+6
+5
+4
+3
+2
+1
+0
+0
+FCNnCMIECLIE[6:0]
+FCNnCMIESEIE[6:0]
+FCNnCMIECLIE[6:0]
+Setting FCNnCMIEINTF[6:0]
+0
+1
+FCNnCMIEINTF[6:0] bits are 
+cleared to 0.
+1
+0
+FCNnCMIEINTF[6:0] bits are set to 
+1.
+Other than above
+FCNnCMIEINTF[6:0] bits are not 
+changed.
+
+
+===== PAGE 1274 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1255 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(7)
+FCNnCMISCTL - FCNn Module Interrupt Status Register
+This register indicates the interrupt status of the FCN module.
+Access
+This register can be read/written in 16-bit units.
+Address
+<FCNn_base> + 0 8260H
+Initial value
+0000H
+This register is initialized by various types of reset.
+(a)
+FCNnCMISCTL Read
+Note 1. FCNnCMISITSF5 is set only when the FCN module is woken up from FCN sleep 
+mode by a CAN bus operation. It is not set when FCN sleep mode has been 
+released by software.
+15
+14
+13
+12
+11
+10
+9
+8
+0
+0
+0
+0
+0
+0
+0
+0
+7
+6
+5
+4
+3
+2
+1
+0
+0
+FCNnCMISITSF[6:0]
+FCNnCMISITSF[6:0]
+FCN Interrupt Status
+0
+No related interrupt source event is pending.
+1
+A related interrupt source event is pending.
+Interrupt Status Bit
+Related Interrupt Source Event
+FCNnCMISITSF6
+FCN module transmission abort interrupt status bit
+FCNnCMISITSF5
+Wake-up interrupt from FCN sleep mode*1
+FCNnCMISITSF4
+Arbitration loss interrupt
+FCNnCMISITSF3
+CAN protocol error interrupt
+FCNnCMISITSF2
+CAN error status interrupt
+FCNnCMISITSF1
+Interrupt on completion of reception of valid message frame 
+to message buffer m
+FCNnCMISITSF0
+Interrupt on normal completion of transmission of message 
+frame from message buffer m
+
+
+===== PAGE 1275 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1256 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(b)
+FCNnCMISCTL Write
+Caution
+Clear the status bits of this register by software, when the confirmation of each 
+status is necessary in the interrupt processing because these bits are not 
+cleared automatically.
+(8)
+FCNnCMBRPRS - FCNn Module Bit-Rate Prescaler Register
+This register is used to select the CAN protocol layer reference system clock 
+(fTQ). The communication baud rate is set according to the FCNnCMBTCTL 
+register.
+Access
+This register can be read/written in 8-bit units.
+Address
+<FCNn_base> + 0 0268H
+Initial value
+FFH
+This register is initialized by various types of reset.
+15
+14
+13
+12
+11
+10
+9
+8
+0
+0
+0
+0
+0
+0
+0
+0
+7
+6
+5
+4
+3
+2
+1
+0
+0
+FCNnCMISCLTS[6:0]
+FCNnCMISCLTS[6:0]
+Clearing FCNnCMISITSF[6:0]
+0
+FCNnCMISITSF[6:0] bits are not changed.
+1
+FCNnCMISITSF[6:0] bits are cleared to 0.
+7
+6
+5
+4
+3
+2
+1
+0
+FCNnCMBRPRS[7:0]
+FCNnCMBRPRS
+[7:0]
+CAN Protocol Layer Reference System Clock (fTQ)
+0
+fCANMOD/1
+1
+fCANMOD/2
+n
+fCANMOD/(n+1)
+:
+ :
+255
+fCANMOD/256 (default value)
+
+
+===== PAGE 1276 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1257 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+Figure 20-2
+FCN Module Clock
+Note
+fCAN:
+FCN reference clock
+fCANMOD:
+FCN module system clock
+fTQ:
+CAN protocol layer reference system clock
+Caution
+FCNnCMBRPRS can be write-accessed only in initialization mode.
+FCNnGMCSPRSC[3:0]
+Prescaler
+FCNn module bit-rate prescaler register (FCNnCMBRPRS)
+Baud rate generator
+FCNn module
+bit-rate register
+(FCNnCMBTCTL)
+fCAN
+fCANMOD
+fTQ
+0
+0
+0
+0
+FCNnCMBRPRS[7:0]
+FCNn global clock selection register (FCNnGMCSPRE)
+
+
+===== PAGE 1277 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1258 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(9)
+FCNnCMBTCTL - FCNn Module Bit-Rate Register
+This register is used to control the data bit time of the communication baud 
+rate.
+Access
+This register can be read/written in 16-bit units.
+Address
+<FCNn_base> + 0 8270H
+Initial value
+0370FH
+This register is initialized by various types of reset.
+Figure 20-3
+Data Bit Time
+15
+14
+13
+12
+11
+10
+9
+8
+0
+0
+FCNnCM
+BTJWLG[1:0]
+0
+FCNnCM
+BTS2LG[2:0]
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+FCNnCMBTS1LG[3:0]
+FCNnCMBTJWLG[1:0]
+Length of Synchronization Jump Width (SJW)
+00B
+1TQ
+01B
+2TQ
+10B
+3TQ
+11B
+4TQ (default value)
+FCNnCMBTS2LG[2:0]
+Length of Time Segment 2 (TSEG2)
+000B
+1TQ
+001B
+2TQ
+010B
+3TQ
+011B
+4TQ
+100B
+5TQ
+101B
+6TQ
+110B
+7TQ
+111B
+8TQ (default value)
+Data bit time (DBT)
+Time segment 1
+䠄TSEG1䠅
+Phase segment 2
+Phase segment 1
+Sample point (SPT)
+Prop segment
+Sync segment
+Time segment 2
+䠄TSEG2䠅
+
+
+===== PAGE 1278 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1259 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+Note 1. This setting must not be made when the FCNnCMBRPRS register = 00H.
+Note
+TQ = 1/fTQ (fTQ: CAN protocol layer reference system clock)
+(10)
+FCNnCMLISTR - FCNn Module Last In-Pointer Register
+This register indicates the number of the message buffer in which a data frame 
+or a remote frame was last stored.
+Access
+This register is read-only in 8-bit units.
+Address
+<FCNn_base> + 0 0278H
+Initial value
+Undefined
+Note
+The read value of FCNnCMLISTR is undefined if a data frame or a remote 
+frame has never been stored in the message buffer. Therefore, if 
+FCNnCMRGRX.FCNnCMRGSSPM is set to 1 after the FCN module has 
+changed from initialization mode to an operating mode, the read value of 
+FCNnCMLISTR is undefined.
+FCNnCMBTS1LG[3:0]
+Length of Time Segment 1 (TSEG1)
+0000B
+Setting prohibited
+0001B
+2TQ *1
+0010B
+3TQ *1
+0011B
+4TQ
+0100B
+5TQ
+0101B
+6TQ
+0110B
+7TQ
+0111B
+8TQ
+1000B
+9TQ
+1001B
+10TQ
+1010B
+11TQ
+1011B
+12TQ
+1100B
+13TQ
+1101B
+14TQ
+1110B
+15TQ
+1111B
+16TQ (default value)
+7
+6
+5
+4
+3
+2
+1
+0
+FCNnCMLISSLR[7:0]
+FCNnCMLISSLR
+[7:0]
+Last In-pointer Register of Receive History List
+0 to 63
+When the FCNnCMLISTR register is read, the contents of 
+the element indexed by the last in-pointer 
+(FCNnCMLISSLR[7:0]) of the receive history list are read. 
+These contents indicate the number of the message buffer in 
+which a data frame or a remote frame was last stored.
+
+
+===== PAGE 1279 =====
+R01UH0098EJ0100 Rev.1.00
+Page 1260 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 20　CAN Controller (FCN)
+(11)
+FCNnCMRGRX - FCNn Module Receive History List Register
+This register is used to read the receive history list (RHL).
+Access
+This register can be read/written in 16-bit units.
+Address
+<FCNn_base> + 0 8280H
+Initial value
+xx02H
+This register is initialized by various types of reset.
+(a)
+FCNnCMRGRX Read
+Note 1. The read value of FCNnCMRGSSPT[7:0] is invalid when FCNnCMTGSSPM = 
+1.
+Note 1. If FCNnCMRGRVFF is set, FCNnCMRGSSPM is no longer cleared on 
+message storage, but FCNnCMRGSSPM is still set if all entries of 
+FCNnCMRGRX have been read by software.
+15
+14
+13
+12
+11
+10
+9
+8
+FCNnCMRGSSPT[7:0]
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+FCNnCM
+RGSSPM
+FCNnCM
+RGRVFF
+FCNnCMRGSSPT[7:0]
+Receive History List Read Pointer
+0 to 63 
+When FCNnCMRGRX is read, the contents of the 
+element indexed by the read pointer 
+(FCNnCMRGRX.FCNnCMRGSSPT) of the receive 
+history list are read. These contents indicate the number 
+of the message buffer in which a data frame or a remote 
+frame has been stored.
+FCNnCMRGSSPM*1
+Receive History List Pointer
+0
+The receive history list has at least one message buffer 
+number that has not been read.
+1
+The receive history list has no message buffer numbers 
+that have not been read.
+FCNnCMRGRVFF*1
+Receive History List Overflow
+0
+All the message buffer numbers that have not been read 
+are preserved. All the numbers of the message buffers in 
+which a new data frame or remote frame has been 
+received and stored are recorded to the receive history 
+list (the receive history list has a vacant element).
+1
+At least (i) entries have been stored since the host 
+processor has serviced the RHL last time (i.e. read 
+FCNnCMRGRX). The first (i-1) entries are sequentially 
+stored while the last entry can have been overwritten 
+whenever newly received message is stored, because 
+all buffer numbers are stored at position (i), when 
+FCNnCMRGRVFF is set. Thus, the sequence of 
+receptions cannot be recovered completely now.
+
+

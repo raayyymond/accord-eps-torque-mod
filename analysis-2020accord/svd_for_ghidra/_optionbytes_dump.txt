@@ -1,0 +1,1288 @@
+===== PAGE 360 =====
+R01UH0098EJ0100 Rev.1.00
+Page 341 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+ Section 6 Memory Modules
+This section describes the memory modules.
+Products of this series are equipped with code flash memory, data flash 
+memory, and RAM. Refer to table 6-1, On-Chip Memory of V850E2/Px4 
+Products for the memory size per product.
+Code flash memory is programmable in two ways: by a flash programmer or by 
+self-programming. Data flash memory is also programmable in two ways: by a 
+flash programmer or by the EEPROM emulation library.
+If the dedicated flash programmer is to program on-chip memory, it has to be 
+connected to the target system.
+For self-programming, an application program is used instead of the dedicated 
+flash programmer.
+Flash memory is commonly used for the following purposes in the 
+development environment and field of application:
+○ altering software after solder-mounting of the microcontroller on the target 
+system,
+○ differentiating software in the small-scale production of a variety of models, 
+and
+○ adjusting data when mass production starts.
+Table 6-1
+On-Chip Memory of V850E2/Px4 Products
+µPD70F3505A
+µPD70F3506, 
+µPD70F3507
+µPD70F3508, 
+µPD70F3509
+Code flash
+384 Kbytes
+512 Kbytes
+1 Mbyte
+Data flash
+32 Kbytes
+32 Kbytes
+32 Kbytes
+On-chip RAM
+24 Kbytes
+40 Kbytes
+80 Kbytes
+
+
+===== PAGE 361 =====
+R01UH0098EJ0100 Rev.1.00
+Page 342 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+6.1
+Features
+• All-block batch erasure or single-block erasure
+• Communicating with the dedicated flash programmer via a serial interface
+• Voltage for erasure/programming: erasure and programming only require a 
+single power supply
+• On-board programming
+• Self-programming of the flash memory
+6.1.1
+Code Flash Memory
+• ROM capacity: 384 Kbytes, 512 Kbytes, or 1 Mbyte
+• Erasure unit: single block (each block taking up 4 Kbytes)
+• ECC function
+Refer to section 9, Safety Functions, for details.
+• Methods of erasure and programming
+– Support for Nexus
+– Support for serial interfaces (one-line UART and three-line CSI-HS)
+– Support for self-programming
+• Other supported functions
+– Prohibition of erasure and programming (security function)
+– Boot changeover (boot swapping)
+Table 6-2
+Code Flash Memory of V850E2/Px4 Products
+Size
+Address
+µPD70F3505A
+384 Kbytes
+0000 0000H to 0005 FFFFH
+µPD70F3506, 
+µPD70F3507
+512 Kbytes
+0000 0000H to 0007 FFFFH
+µPD70F3508, 
+µPD70F3509
+1 Mbyte
+0000 0000H to 000F FFFFH
+
+
+===== PAGE 362 =====
+R01UH0098EJ0100 Rev.1.00
+Page 343 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+6.1.2
+Data Flash Memory
+• ROM capacity: 32 Kbytes
+• Erasure unit: single block (each taking up 2 Kbytes)
+• Methods of erasure and programming
+– Dedicated flash programmer
+– EEPROM emulation library
+6.1.3
+On-Chip RAM
+• RAM capacity: 24 Kbytes, 40 Kbytes, or 80 Kbytes
+Table 6-3
+Data Flash Memory of V850E2/Px4 Products
+Size
+Address
+µPD70F3505A
+32 Kbytes
+0200 0000H to 0200 7FFFH
+µPD70F3506, 
+µPD70F3507
+32 Kbytes
+0200 0000H to 0200 7FFFH
+µPD70F3508, 
+µPD70F3509
+32 Kbytes
+0200 0000H to 0200 7FFFH
+Table 6-4
+On-Chip RAM of V850E2/Px4 Products
+Size
+Address
+µPD70F3505A
+24 Kbytes
+FEDF A000H to FEDF FFFFH
+µPD70F3506, 
+µPD70F3507
+40 Kbytes
+FEDF 6000H to FEDF FFFFH
+µPD70F3508, 
+µPD70F3509
+80 Kbytes
+FEDE C000H to FEDF FFFFH
+
+
+===== PAGE 363 =====
+R01UH0098EJ0100 Rev.1.00
+Page 344 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+6.2
+Programming Environment
+Programming, erasure, etc. are handled through a serial interface between the 
+dedicated programmer and this product. Supply the operating clock for this 
+product by mounting oscillators and capacitors to configure an oscillation 
+circuit on the same board as this product.
+6.3
+Communications Methods
+(1)
+Nexus communications
+Transfer rate: 25 MHz (max.)
+(2)
+One-line UART communications
+Transfer rate: 1 Mbps (max.)
+(3)
+Three-line CSI-HS communications
+Transfer rate: 5 MHz (max.)
+
+
+===== PAGE 364 =====
+R01UH0098EJ0100 Rev.1.00
+Page 345 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+6.4
+Handling of Pins
+For on-board programming, the target system requires a connector for 
+connection to the dedicated flash programmer.
+When the transition is made to flash memory programming mode, all of the 
+pins which are not used for flash memory programming are in the same state 
+as just after a reset from normal operating mode (single-chip mode). 
+Consequently, the port pins are all in the high-impedance state. Pin settings 
+must be adjusted if this is not acceptable for an external device.
+6.4.1
+Power Supply
+Supply the same voltage as in the normal operating mode.
+Stabilize the power voltage by inserting capacitors between power-supply pins 
+and ground during operations in flash memory programming mode (including 
+flash-self programming).
+6.4.2
+Pins
+Pins to be used for each interface are as follows:
+• Nexus: FLMD0, RESET, DCUTRST, DCUTCK, DCUTMS, DCUTDI, 
+DCUTDO, DCUTRDY
+• One-line UART: RxD/ TxD, FLMD0, RESET
+• Three-line CSI-HS: SI, SO, SCK, FLMD0, RESET
+When connecting pins for interfaces which are already connected to other 
+devices on the board to the dedicated flash programmer, take care to avoid 
+signal conflicts, abnormal operation of other devices, and so on.
+6.4.3
+Reset Pin
+Connecting the reset signal of the dedicated flash programmer to the RESET 
+pin, which in turn is connected to the reset-signal generation circuit on the 
+board, leads to signal conflicts. To avoid these conflicts, isolate the pin's 
+connection with the reset generation circuit.
+A reset signal from the user system input during operation in flash memory 
+programming mode can cause abnormal programming operation. Therefore, 
+do not input any signals other than the reset signal from the dedicated flash 
+programmer.
+
+
+===== PAGE 365 =====
+R01UH0098EJ0100 Rev.1.00
+Page 346 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+6.4.4
+FLMD0 Pin
+Input the high level on FLMD0 except for intervals over which pulses are input 
+during operations in flash memory programming mode (programming, erasure, 
+or reading). After the pulse input, keep the pin at the high level until flash-
+memory operations are completed.
+6.4.5
+Port Pins
+All port pins other than those for communications with the dedicated flash 
+programmer will be in the high-impedance state when the settings for flash-
+memory programming mode are made. No adjustment is required for these 
+pins.
+However, if a pin being in the high-impedance state is not acceptable for an 
+external device to which it is connected, connect the port pin to EVDD or EVSS 
+via a resistor. 
+
+
+===== PAGE 366 =====
+R01UH0098EJ0100 Rev.1.00
+Page 347 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+6.5
+Option-Setting Bytes
+The “option bytes” specify product operation. Values of these bytes are 
+programmed by using the dedicated flash programmer or a function for writing 
+to them.
+Erasing the chip leads to erasure of the option bytes. The bytes thus have to 
+be programmed as required.
+Operation of the product with option bytes erased is not guaranteed.
+The option byte settings must produce a frequency in the corresponding range 
+and these settings will differ with the operating frequency settings.
+Note
+When a chip is erased, the setting of the FOP (option byte) is initialized 
+(HEAPCLK = 48 MHz, PCLK = 1/4 HEAPCLK). Therefore, remake the FOP 
+settings so that the serial communications speed is within the corresponding 
+range below.
+• One-line UART:
+Baud rate  750 kbps
+• Three-line CSI-HS:
+SCK  2 MHz
+6.5.1
+OPBT0 - Option Byte Verification Register
+This register is used to check the settings of option bytes. 
+Access
+This register can be read in 32-bit units.
+Address
+FF47 000CH
+Initial value
+The corresponding value is set when the source signal of any reset other than 
+the software reset is generated.
+FFFF FFC3H (µPD70F3505A, µPD70F3506, µPD70F3507: 
+when HEAPCLK = 80 MHz, PCLK = 80 MHz, and FlexRay is 
+disabled)
+FFFF FFEAH (µPD70F3508, µPD70F3509:
+when HEAPCLK = 160 MHz, PCLK = 80 MHz, and FlexRay is 
+enabled) 
+
+
+===== PAGE 367 =====
+R01UH0098EJ0100 Rev.1.00
+Page 348 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+(1)
+µPD70F3505A, µPD70F3507
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+FOP
+31
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+FOP5 FOP4 FOP3 FOP2 FOP1
+1
+Table 6-5
+Option Byte Verification Register of V850E2/Px4 Products
+Bit Position
+Bit Name
+Function
+31
+FOP31
+Switches the JTAG port
+0: Enabled
+1: Disabled
+When connecting the port to a development tool, set this bit to 1 ( = disabled).
+5
+FOP5
+Sets enabling or disabling of the FlexRay clock (SCLK2)
+0: Disabled
+1: Enabled
+Set the bit to 0 if the product does not have FlexRay.
+4, 3
+FOP[4:3]
+Sets the peripheral clock (PCLK)
+FOP4
+FOP3
+PCLK
+0
+0
+HEAPCLK
+0
+1
+HEAPCLK/2
+1
+0
+Setting prohibited
+1
+1
+Setting prohibited
+2, 1
+FOP[2:1]
+Sets the CPU clock (HEAPCLK)
+FOP2
+FOP1
+HEAPCLK
+0
+0
+64 MHz
+0
+1
+80 MHz
+1
+0
+Setting prohibited
+1
+1
+Setting prohibited
+
+
+===== PAGE 368 =====
+R01UH0098EJ0100 Rev.1.00
+Page 349 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+(2)
+µPD70F3506
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+FOP
+31
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+FOP5 FOP4 FOP3 FOP2 FOP1
+1
+Table 6-6
+Option Byte Verification Register of V850E2/Px4 Products
+Bit Position
+Bit Name
+Function
+31
+FOP31
+Switches the JTAG port
+0: Enabled
+1: Disabled
+When connecting the port to a development tool, set this bit to 1 (= disabled).
+5
+FOP5
+Sets enabling or disabling of the FlexRay clock (SCLK2)
+0: Disabled
+1: Enabled
+4, 3
+FOP[4:3]
+Sets the peripheral clock (PCLK)
+FOP4
+FOP3
+PCLK
+0
+0
+HEAPCLK
+0
+1
+HEAPCLK/2
+1
+0
+Setting prohibited
+1
+1
+Setting prohibited
+2, 1
+FOP[2:1]
+Sets the CPU clock (HEAPCLK)
+FOP2
+FOP1
+HEAPCLK
+0
+0
+64 MHz
+0
+1
+80 MHz
+1
+0
+Setting prohibited
+1
+1
+48 MHz
+
+
+===== PAGE 369 =====
+R01UH0098EJ0100 Rev.1.00
+Page 350 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+(3)
+µPD70F3508, µPD70F3509
+Note * The settings for PCLK = HEAPCLK/4 are only available when the HEAPCLK is running at 
+160 MHz.
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+FOP
+31
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+FOP5 FOP4 FOP3 FOP2 FOP1 FOP0
+Table 6-7
+Option Byte Verification Register of V850E2/Px4 Products
+Bit Position
+Bit Name
+Function
+31
+FOP31
+Switches the JTAG port
+0: Enabled
+1: Disabled
+When connecting the port to a development tool, set this bit to 1 (= disabled).
+5
+FOP5
+Sets enabling or disabling of the FlexRay clock (SCLK2)
+0: Disabled
+1: Enabled
+4, 3
+FOP[4:3]
+Sets the peripheral clock (PCLK)
+FOP4
+FOP3
+PCLK
+0
+0
+Setting prohibited
+0
+1
+HEAPCLK/2
+1
+0
+HEAPCLK/4*
+1
+1
+HEAPCLK/4*
+2 to 0
+FOP[2:0]
+Sets the CPU clock (HEAPCLK)
+FOP2
+FOP1
+FOP0
+HEAPCLK
+0
+1
+0
+160 MHz
+0
+1
+1
+80 MHz
+Other than the above
+Setting prohibited
+
+
+===== PAGE 370 =====
+R01UH0098EJ0100 Rev.1.00
+Page 351 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+6.6
+Product Identification
+(1)
+PRDNAME Register
+This register provides identifying information for the product.
+Access
+This register can be read in 32-bit units.
+Address
+FF47 0028H
+Initial value
+0DB11100H (version 1.0 of the µPD70F3505A)
+0DB20100H (version 1.0 of the µPD70F3506)
+0DB30100H (version 1.0 of the µPD70F3507)
+0DB40100H (version 1.0 of the µPD70F3508)
+0DB50100H (version 1.0 of the µPD70F3509)
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0
+0
+0
+0
+1
+1
+0
+1
+1
+0
+1
+1
+0
+0/1
+0/1
+1
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0/1
+0/1
+0/1
+0/1
+0/1
+0/1
+0/1
+0/1
+0/1
+0/1
+0/1
+0/1
+0/1
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table 6-8
+PRDNAME Register Contents
+Bit Position
+Function
+31 to 12
+Bits 31 to 12
+Description
+0DB11H
+µPD70F3505A
+0DB20H
+µPD70F3506
+0DB30H
+µPD70F3507
+0DB40H
+µPD70F3508
+0DB50H
+µPD70F3509
+11 to 0
+The information on the product version is set in these bits.
+
+
+===== PAGE 371 =====
+R01UH0098EJ0100 Rev.1.00
+Page 352 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+(2)
+PRDSELH Register
+This register provides identifying information for the product.
+Access
+This register can be read in 32-bit units.
+Address
+FF47 0024H
+Initial value
+FEDFA001H (µPD70F3505A)
+FEDF6002H (µPD70F3506, µPD70F3507)
+FEDEC004H (µPD70F3508, µPD70F3509)
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+1
+1
+1
+1
+1
+1
+1
+0
+1
+1
+0
+1
+1
+1
+1
+0/1
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0/1
+0/1
+0/1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0/1
+0/1
+0/1
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table 6-9
+PRDSELH Register Contents
+Bit Position
+Function
+31 to 8
+31 to 8 Bits
+Description
+FEDFA0H
+Address where on-chip RAM starts in the µPD70F3505A 
+(FEDF A000H)
+FEDF60H
+Address where on-chip RAM starts in the µPD70F3506, 
+µPD70F3507 (FEDF 6000H)
+FEDEC0H
+Address where on-chip RAM starts in the µPD70F3508, 
+µPD70F3509 (FEDE C000H)
+7 to 0
+7 to 0 Bits
+Description
+01H
+The µPD70F3505A has 384 Kbytes of code flash 
+memory.
+02H
+ The µPD70F3506 and PD70F3507 have 512 Kbytes of 
+code flash memory.
+04H
+ The µPD70F3508 and PD70F3509 have 1 Mbyte of 
+code flash memory.
+
+
+===== PAGE 372 =====
+R01UH0098EJ0100 Rev.1.00
+Page 353 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+(3)
+PRDSELL Register
+This register provides identifying information for the product.
+Access
+This register can be read in 32-bit units.
+Address
+FF47 0020H
+Initial value
+800020FFH (µPD70F3505A)
+000020FFH (µPD70F3506, µPD70F3507)
+000020FFH (µPD70F3508, µPD70F3509)
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+20
+19
+18
+17
+16
+0/1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+1
+0
+0
+0
+0
+0
+1
+1
+1
+1
+1
+1
+1
+1
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+R
+Table 6-10
+PRDSELL Register Contents
+Bit Position
+Function
+31 to 24
+31 to 24 Bits
+Description
+80H
+The µPD70F3505A has 384 Kbytes of code flash 
+memory.
+00H
+The µPD70F3506 and PD70F3507 have 512 Kbytes of 
+code flash memory.
+00H
+The µPD70F3508 and PD70F3509 have 1 Mbyte of 
+code flash memory.
+23 to 8
+23 to 8 Bits
+Description
+00 20H
+The product has 32 Kbytes of data flash memory.
+
+
+===== PAGE 373 =====
+R01UH0098EJ0100 Rev.1.00
+Page 354 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+6.7
+Setting the FLMD Pin
+Input the high level on the FLMD0 pin when flash-memory operations are to 
+proceed. Use of the on-chip pull-up resistor is selectable by setting a bit in the 
+FLMD control register (the FLMDCNT.FLMDPUP bit) to 1.
+6.7.1
+Registers
+(1)
+FLMDCNT - FLMD Control Register
+This eight-bit register specifies pulling the FLMD0 pin up or down. A 
+requirement for writing in a specified sequence protects the register. When 
+programming is not in the specified sequence, the FLMDPREPP bit in the 
+FLMDPS register is set to 1 to indicate the protection error.
+For details, refer to section 6.7.2, Setting the FLMDCNT Register.
+Access
+This register can be read/written in 8-bit units.
+Address
+FF43 8000H
+Initial value
+00H
+This register is initialized by a reset from any source.
+Table 6-11
+List of FLMD Pin Setting Registers
+Register Name
+Symbol
+Address
+FLMD control register
+FLMDCNT
+FF43 8000H
+FLMD protection command register
+FLMDPCMD
+FF43 8004H
+FLMD protection error status register
+FLMDPS
+FF43 8008H
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+FLMDPUP
+R
+R
+R
+R
+R
+R
+R
+R/W
+Table 6-12
+FLMDCNT Register Contents
+Bit Position
+Bit Name
+Function
+0
+FLMDPUP
+Specifies pulling up or pulling down for the FLMD0 pin
+0: FLMD0 pin is pulled down
+1: FLMD0 pin is pulled up
+
+
+===== PAGE 374 =====
+R01UH0098EJ0100 Rev.1.00
+Page 355 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+(2)
+FLMDPCMD - FLMD Protection Command Register
+This is the protection command register for FLMDCNT register.
+For details, refer to section 6.7.2, Setting the FLMDCNT Register.
+Access
+This register can be written in 8-bit units. The value read is always 00H.
+Address
+FF43 8004H
+Initial value
+Undefined
+(3)
+FLMDPS - FLMD Protection Error Status Register
+This register verifies whether writing to the write protection register 
+(FLMDCNT) was successful or not.
+For details, refer to section 6.7.2, Setting the FLMDCNT Register.
+Access
+This register can be read in 8-bit units.
+Address
+FF43 8008H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+FLMDPCMD[7:0]
+W
+W
+W
+W
+W
+W
+W
+W
+Table 6-13
+FLMDPCMD Register Contents
+Bit Position
+Bit Name
+Function
+7 to 0
+FLMDPCMD[7:0]
+Protection commands to enable writing to FLMDCNT
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+FLMD
+PRERR
+R
+R
+R
+R
+R
+R
+R
+R
+Table 6-14
+FLMDPS Register Contents
+Bit Position
+Bit Name
+Function
+0
+FLMDPRERR
+Indicates whether writing to the write protection 
+register (FLMDCNT) was successful or not
+0: Writing succeeded
+1: Writing failed
+
+
+===== PAGE 375 =====
+R01UH0098EJ0100 Rev.1.00
+Page 356 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 6　Memory Modules
+6.7.2
+Setting the FLMDCNT Register
+The FLMDCNT register is protected against writing. Specifically, writing is only 
+effective when performed in the following sequence.
+STEP1
+Write the fixed value (A5H) to the protection register (FLMDPCMD).
+STEP2
+Write the new setting to the corresponding register (FLMDCNT).
+STEP3
+Write the inverse of the new setting to the corresponding register (FLMDCNT).
+STEP4
+Write the new setting to the corresponding register (FLMDCNT).
+STEP5
+Confirm that the setting has been written to the protected register by checking 
+that the FLMDPS.FLMDPRERR bit is 0. 
+Writing to an FLMD pin setting register (for details, refer to table 6-11, List of 
+FLMD Pin Setting Registers) between steps 1 and 4 of the sequence specified 
+above leads to failure in writing to the protected register (, which is indicated 
+with the FLMDPS.FLMDPRERR set to 1).
+In such a case, the sequence has to be restarted from step 1.
+Access to registers other than FLMD pin setting registers can proceed during 
+the sequence without preventing its completion.
+The protection function operates as follows when the sequence is suspended.
+• Suspension of the sequence due to the arrival of an interrupt
+If an interrupt request is accepted while the above specified sequence for 
+writing is in progress and the interrupt service routine does not access any 
+of the FLMD pin setting registers (for details, refer to table 6-11, List of 
+FLMD Pin Setting Registers), the sequence is not obstructed. Writing to the 
+protected register can proceed successfully on return from the interrupt 
+service routine.
+• Suspension of the sequence due to halting of the emulator
+If the emulator is halted because it reached a break point, for example, while 
+the above specified sequence for writing is in progress, the sequence of 
+writing to the register is fully suspended until the emulator returns from the 
+halted state to normal operation.
+In other words, even access to an FLMD pin setting register (for details, 
+refer to table 6-11, List of FLMD Pin Setting Registers) while the emulator is 
+halted does not obstruct the sequence of writing. Furthermore, access to an 
+FLMD pin setting register does not lead to setting of the 
+FLMDPS.FLMDPRERR bit.
+
+
+===== PAGE 376 =====
+R01UH0098EJ0100 Rev.1.00
+Page 357 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+ Section 7 Clock Generation
+The clock generator (CG) controls the internal system clocks that are supplied 
+to individual on-board units such as the CPU.
+It also monitors the input clock to detect abnormalities and has a baud-rate 
+generator to produce the desired output clock signal on the CLKOUT pin.
+
+

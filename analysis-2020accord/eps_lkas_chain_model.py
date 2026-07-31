@@ -115,7 +115,30 @@ EXECUTION MODEL
                  10x slower than the mode. It also invalidates V59's eps table, which bracketed 1 kHz
                  and 500 Hz for task 5. 🛑 Prefer task 1 for any dynamics fix.
                  See memory/accord-task5-is-100hz-damper-cannot-damp-21hz.md.
-                 ⚠⚠ SEPARATE THE TWO CLAIMS -- one is solid, one is under audit (2026-07-31):
+                 ✅ CLOCK AUDIT RESOLVED 2026-07-31 -- the NUMBER survives, the REASON was wrong.
+                   🛑 PCLK = 40 MHz, NOT 80. Likely original error: conflating HEAPCLK (80 MHz) with
+                      PCLK; option-byte Table 6-7 makes PCLK = HEAPCLK/2 the ONLY legal setting at
+                      HEAPCLK = 80 MHz. HEAPCLK = 80 MHz is pinned by the firmware's own CLMA1 compare
+                      values, orchestrator-verified in the stock dump: 0x0053 @0x5C8D8 and 0x004D
+                      @0x5C8E0 -> CLMA1CMPH/CMPL, an exact match to the datasheet's worked row for
+                      CLMA1 @80 MHz / 16 MHz main OSC.
+                   🛑🛑 OSTM0 IS NOT THE RTOS TICK and never was. At 40 MHz it is 2.000 ms = 500 Hz,
+                      but that is moot: the EI trampoline FUN_0001492a dispatches only EIIC
+                      0x970/0x600/0x340/0x470/0x110/0x100/0xf0 + default -- NO OSTM0 arm exists, and
+                      gp-0x42fc (the rate divider's trigger flag) is written ONLY by the 0x340 arm.
+                      EIIC 0x340 = TAUJ1I2. Orchestrator-verified by decompile. ⇒ the whole
+                      "OSTM0CMP = 79999 ⇒ 1 kHz control tick" chain was a red herring at BOTH ends.
+                      ⚠ TAUJ1's own period register was NOT located, so the base rate is still not
+                      pinned to a register value.
+                   ✅ THE 1 kHz / 100 Hz FIGURES SURVIVE, because they never depended on that chain:
+                      task 1 = 1 kHz is an ON-CAR MEASUREMENT (STEER_STATUS=4 dwell, cal 0xC64DF = 100
+                      counts measured at 100.00 ms; CAN 399 wire-fitted at exactly 100.000 Hz), and
+                      task 5 = task 1 / 10 is integer arithmetic. 37.6/75.2 deg stand as written.
+                   ⚠ WHAT DOES PROPAGATE: the FOC/TSG20 carrier "~8 kHz" was computed explicitly
+                      conditioned on PCLK = 80 MHz => it is ~4 kHz at 40 MHz, and TSG20's own
+                      clock-select has never been verified. Treat both as OPEN. Also: EIIC 0x600 is
+                      CSIH1IR (serial), not ADC-complete; EIIC 0x970 is TSG21I05, not TSG20 (= 0x860).
+                 (superseded) the provisional flag that prompted the audit:
                    SOLID, clock-independent: the DIVIDER RATIO. Task 5 fires once per 10 task-1
                      invocations. That is integer arithmetic in FUN_00014be4 and holds whatever the
                      clock is, so "the damper is refreshed 10x slower than the 1 kHz chain" stands.

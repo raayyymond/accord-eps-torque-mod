@@ -1,0 +1,1931 @@
+===== PAGE 376 =====
+R01UH0098EJ0100 Rev.1.00
+Page 357 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+ Section 7 Clock Generation
+The clock generator (CG) controls the internal system clocks that are supplied 
+to individual on-board units such as the CPU.
+It also monitors the input clock to detect abnormalities and has a baud-rate 
+generator to produce the desired output clock signal on the CLKOUT pin.
+
+
+===== PAGE 377 =====
+R01UH0098EJ0100 Rev.1.00
+Page 358 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+7.1
+Overview of Clock Generation
+Functional
+overview
+Clock generation involves the following controls and functions.
+• Oscillator
+– External resonator: 16 MHz (µPD70F3506, µPD70F3508), 
+8 or 16 MHz (µPD70F3507, µPD70F3509), 
+8 MHz (µPD70F3505A)
+• Clock monitoring (CLMA0 to CLMA2) blocks
+– CLMA0 monitors the main oscillator and generates reset and interrupt-
+request signals.
+– CLMA1 monitors the internal system clock and generates reset and 
+interrupt-request signals.
+– CLMA2 monitors the internal oscillator and generates reset and interrupt-
+request signals.
+• Clock output: The frequency of the signal output on the CLKOUT pin is 
+adjustable.
+Note
+For the output frequencies, their allowed range, and other parameters, refer to 
+section 6.5, Option-Setting Bytes, and to the Data Sheet.
+
+
+===== PAGE 378 =====
+R01UH0098EJ0100 Rev.1.00
+Page 359 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+7.2
+Configuration
+Figure 7-1
+Clock Generating Circuit
+INTCLMA0
+CLMA0
+CLMA1
+CLMA2
+Main
+OSC
+X1
+X2
+Checker CPU system CLK
+CLMA1RES
+CLMA0RES
+CLMA2RES
+PLL1
+M
+S
+Prescaler
+PCLK
+Serial (Internal PRS and BRG)
+FlexRay
+SCLK2
+SCLK1
+PLL2*5
+M
+S
+1*1
+1/2*2
+1*3
+1/2*4
+1/8*1
+1/4*2
+M
+Internal
+OSC
+(flash)
+S
+Timer (Internal PRS and BRG)
+CAN (Internal PRS and BRG)
+A/D (Internal PRS and BRG)
+SEL
+BRGA0
+CLKOUT pin
+Option byte
+Master CPU system CLK
+BRGATCLK
+INTCLMA1
+INTCLMA2
+fx
+fxx
+Note 1. 
+When the frequency of the main oscillator (OSC) is 8 MHz
+Note 2. 
+When the frequency of the main oscillator is 16 MHz
+Note 3. 
+When the frequency of HEAPCLK is other than 160 MHz
+Note 4. 
+When the frequency of HEAPCLK is 160 MHz (for the μPD70F3508 and μPD70F3509)
+Note 5. 
+Not supported by the μPD70F3505A.
+
+
+===== PAGE 379 =====
+R01UH0098EJ0100 Rev.1.00
+Page 360 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+7.3
+Selecting the Input Clock Signal
+The clock generator consists of an oscillator and PLL synthesizers and is 
+capable of, for example, generating internal system clocks at 48, 64, 80, and 
+160 MHz when an external resonator (crystal oscillator or ceramic oscillator) 
+running at 8 or 16 MHz is connected to the X1 and X2 pins.
+For the oscillator to be connected to the X1 and X2 pins, refer to table 7-1, 
+Oscillators Connectable to the X1 and X2 Pins. The 8- or 16-MHz signal from 
+the external resonator is input to PLL1, which produces a frequency-multiplied 
+clock signal for supply that is supplied to the CPU as the operating clock and to 
+peripheral I/O via the prescaler. Moreover, the same resonator can be input to 
+PLL2, which generates an independent clock signal for the FlexRay interface.
+Note * 
+The only frequency for the µPD70F3505A is 8 MHz.
+The only frequency for the µPD70F3506 and µPD70F3508 is 16 MHz.
+Note
+For input frequency and multiplier settings, refer to section 6.5, Option-Setting 
+Bytes.
+Caution
+If you intend to use FlexRay, set PCLK to a frequency no higher than 64 MHz 
+(this is only applicable to the µPD70F3506 and µPD70F3507).
+Table 7-1
+Oscillators Connectable to the X1 and X2 Pins
+Oscillators Connectable to the X1 and X2 Pins
+8 MHz, 16 MHz*
+Table 7-2
+Operating Frequency
+Internal System 
+Clock
+Peripheral Input-
+Output Clock 
+(PCLK)
+Frequency of 
+External 
+Resonator
+48/64/80/160 MHz
+24/32/40/48/64/80 
+MHz
+8/16 MHz
+
+
+===== PAGE 380 =====
+R01UH0098EJ0100 Rev.1.00
+Page 361 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+7.4
+Clock Generating Circuit
+The structure of the clock generating circuit is described below.
+(1)
+Structure of Clock Generating Circuit
+The circuit consists of the clock oscillator circuit, PLL1, and PLL2.
+• Main oscillator circuit (Main OSC)
+The clock signal fX produced by the main oscillator circuit provides the clock 
+for the main systems and is input to the PLL. The oscillator circuit requires 
+the connection of an external resonator between X1 and X2.
+• PLL1
+The PLL1 circuit generates the clock signal for use in driving the 
+microcontrollers. The clock signal output from PLL1 is divided by one or two, 
+and then supplied to peripheral input and output.
+• PLL2
+The PLL2 circuit generates a clock signal for use if the microcontroller is to 
+conduct FlexRay operations.
+Resetting the clock
+generating circuit
+The clock generator is initialized by a reset from any source other than a 
+software reset. After release from the reset state, operation is restarted in 
+accord with the setting of the option byte.
+
+
+===== PAGE 381 =====
+R01UH0098EJ0100 Rev.1.00
+Page 362 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+7.5
+Clock Output Function (CLKOUT)
+The clock-output function handles the output of a clock signal from CLKOUT 
+pin. The signal for output from the CLKOUT pin can be frequency-divided by 
+the baud-rate generator.
+The figure below is a schematic view of the clock output function.
+7.5.1
+Baud-Rate Generator for CLKOUT Function (BRGA)
+The baud-rate generator frequency-divides the clock signal it receives as input 
+and can thus produce clock signals at various frequencies on the CLKOUT pin.
+BRGA0 inverts the output signal on CLKOUT when the value of the baud-rate 
+counter matches the setting of the BRGA0CMP[7:0] bits in the BRGA0CMP 
+register. If BRGA0CTL.BRGA0ODIS = 1, the low level is output on CLKOUT.
+When the counter reaches the value for comparison set in 
+BRGA0CMP.BRGA0CMP[7:0], the BRGA0 interrupt (INTBRG0) is generated.
+Note
+When BRGA0CMP.BRGA0CMP[7:0] = 00H, the initial counting value is 01H, 
+and the sequence of counting is 02H, 03H, ... FEH, FFH, 00H. Comparison after 
+the overflow of the counter overflows produces a match.
+Calculating the
+period of the signal
+from the baud-rate
+generator
+• For BRGA0CMP.BRGA0CMP[7:0] = 00H, the period of the output clock 
+signal (CLKOUT) from the baud-rate generator is calculated from:
+CLKOUT period = counter clock cycle  256  2
+• For BRGA0CMP.BRGA0CMP[7:0] = N = 01H to FFH, the period of the 
+output clock signal (CLKOUT) from the baud-rate generator is calculated 
+from:
+CLKOUT period = counter clock cycle  N  2
+CLKOUT pin
+BRGA0TCLK
+Prescaler
+(f/1, f/2, f/4, f/8)
+8-bit
+counter
+BRGA0CMP
+[7:0]
+BRG output 
+controller
+INTBRG0
+
+
+===== PAGE 382 =====
+R01UH0098EJ0100 Rev.1.00
+Page 363 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+Clock supply
+The baud-rate generator BRGA0 provides the following clock input.
+Interrupt
+The BRGA interrupt is as indicated in the following table.
+Register
+addresses
+A list of addresses of the frequency output registers and clock monitor 
+registers is given below.
+Table 7-3
+Clock Source for BRGA0
+BRGA0
+Clock Source
+BRGATCLK
+Clock selected in the BRGCKCTL register (SCLK1, 
+SCLK2, or PCLK)
+Table 7-4
+BRGA Interrupt
+BRGA Signal
+Function
+Connected to
+INTBRG0
+BRGA0 interrupt signal
+Interrupt controller
+Table 7-5
+List of Registers in the Baud-Rate Generator for CLKOUT
+Register Name
+Symbol
+Address
+BRGA0 flag register
+BRGA0FLG
+FFFF FD00H
+BRGA0 control register
+BRGA0CTL
+FF83 9008H
+BRGA0 compare register
+BRGA0CMP
+FF83 900CH
+BRGA0 clock selection register
+BRGCKCTL
+FF42 0030H
+
+
+===== PAGE 383 =====
+R01UH0098EJ0100 Rev.1.00
+Page 364 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+7.5.2
+BRGA Registers for CLKOUT Function
+(1)
+BRGA0 Clock Selection Register (BRGCKCTL)
+Register BRGCKCTL is an 8-bit register that selects the clock signal for input 
+to the baud-rate generator (BRGA0).
+Access
+This register can be read/written in 8-bit units.
+Address
+FF42 0030H
+Initial value
+00H
+This register is initialized by a reset from any source.
+Caution 1. 
+Write to BRGCKCTL (selection of BRGA0 operation clock) while BRGA0 is 
+stopped (the BRGA0CE bit of the BRGA0CTL register = 0).
+Caution 2. 
+Do not use the interrupt (INTBRG0) if SCLK2 (FlexRay clock) is selected in 
+register BRGCKCTL.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+BRGCKS
+L1
+BRGCKS
+L0
+R
+R
+R
+R
+R
+R
+R/W
+R/W
+Table 7-6
+BRGCKCTL Register Contents
+Bit Position
+Bit Name
+Function
+1, 0
+BRGCKSL1,
+BRGCKSL0
+This register selects the input clock signal on the BRGATCLK signal line.
+BRGCKSL1
+BRGCKSL0
+Input Clock
+0
+0
+Selects SCLK1 (OSC clock)
+0
+1
+Selects PCLK (peripheral clock)
+1
+0
+Selects SCLK2 (FlexRay clock)
+1
+1
+Setting prohibited
+
+
+===== PAGE 384 =====
+R01UH0098EJ0100 Rev.1.00
+Page 365 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+(2)
+BRGA0 Control Register (BRGA0CTL)
+Register BRGA0CTL is an 8-bit register that enables counting by the counter, 
+sets the prescaler period, and controls the output of BRGA0.
+The BRGA0ODIS and BRGA0CCS[1:0] bits can only be modified while the 
+BRGA0CEF bit of BRGA0FLG register is set to 0.
+Refer to the BRGA0FLG register for a description of the BRGA0CEF bit.
+Access
+This register can be read/written in 8-bit units.
+Address
+FF839008H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+BRGA0CE
+0
+BRGA0
+ODIS
+BRGA0
+CCS1
+BRGA0
+CCS0
+R
+R
+R
+R/W
+R
+R/W
+R/W
+R/W
+Table 7-7
+BRGA0CTL Register Contents
+Bit Position
+Bit Name
+Function
+4
+BRGA0CE
+This bit enables or disables operation of the baud-rate counter
+0: Baud-rate counter operation is disabled (INTBRG0 interrupts will not be 
+generated).
+1: Enable baud-rate counter operation (INTBRG0 interrupts will be 
+generated).
+2
+BRGA0ODIS
+This bit controls output from BRGA0.
+0: The signal from the baud-rate generator is output on the CLKOUT pin.
+1: The low level (fixed) is output on the CLKOUT pin.
+1, 0
+BRGA0CCS1,
+BRGA0CCS0
+This bit selects the counter-clock cycle for the baud-rate generator.
+BRGA0CCS1
+BRGA0CCS0
+Counter-clock cycle
+0
+0
+BRGATCLK/1
+0
+1
+BRGATCLK/2
+1
+0
+BRGATCLK/4
+1
+1
+BRGATCLK/8
+
+
+===== PAGE 385 =====
+R01UH0098EJ0100 Rev.1.00
+Page 366 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+Caution 1. 
+Only write to the bits BRGA0CTL.BRGA0ODIS, BRGA0CTL.BRGA0CCS[1:0] 
+and BRGA0CMP.BRGA0CMP[7:0] while the baud-rate counter is stopped 
+(BRGA0FLG.BRGA0CEF = 0). Only reading is possible while the baud-rate 
+generator is operating. The level of the CLKOUT signal and timing of 
+INTBRG0 interrupts become undefined if settings are modified during 
+operations.
+Caution 2. To restart the baud-rate counter after it has stopped, read the 
+BRGA0FLG.BRGA0CEF bit and confirm that the baud-rate counter is stopped 
+(BRGA0FLG.BRGA0CEF = 0).
+The level of the CLKOUT signal and timing of INTBRG0 interrupts become 
+undefined when the setting of the BRGA0CTL.BRGA0CE bit is 0 and 1 is 
+written to BRGA0CTL.BRGA0CE bit while the baud-rate counter is not stopped 
+(BRGA0FLG.BRGA0CEF = 1).
+Caution 3. BRGA0CTL.BRGA0CE is synchronized with BRGA0TCLK, so synchronization 
+requires 3 clock cycles of BRGA0TCLK. For this reason, CLKOUT and the 
+INTBRG0 interrupt are initialized (both signals are fixed to the low level) after 3 
+cycles of BRGA0TCLK by writing 0 to BRGA0CTL.BRGA0CE bit during 
+operations, which stops the baud-rate counter. For the states of operation of 
+the baud-rate counter, refer to the description of the BRGA0FLG.BRGA0CEF 
+bit.
+(3)
+BRGA0 Compare Register (BRGA0CMP)
+BRGA0CMP register stores the baud-rate counter comparison value.
+Access
+This register can be read/written in 8-bit units.
+Address
+FF83900CH
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+BRGA0CMP[7:0]
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 7-8
+BRGA0CMP Register Contents
+Bit Position
+Bit Name
+Function
+7 to 0
+BRGA0CMP
+[7:0]
+Value for comparison
+
+
+===== PAGE 386 =====
+R01UH0098EJ0100 Rev.1.00
+Page 367 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+(4)
+BRGA0 Flag Register (BRGA0FLG)
+BRGA0FLG register indicates the current operation status of the baud-rate 
+counter.
+Access
+This register can be read in 8-bit units.
+Address
+FFFF FD00H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+BRGA0
+CEF
+R
+R
+R
+R
+R
+R
+R
+R
+Table 7-9
+BRGA0FLG Register Contents
+Bit Position
+Bit Name
+Function
+0
+BRGA0CEF
+This bit indicates the status of the baud-rate counter.
+0: Baud-rate counter operation is stopped
+1: Baud-rate counter is in operation
+
+
+===== PAGE 387 =====
+R01UH0098EJ0100 Rev.1.00
+Page 368 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+7.6
+Clock Monitor A (CLMAn) Function
+This product has three instances of the clock monitor A.
+7.6.1
+Features of the Clock Monitors (CLMAn; n = 0, 1, 2)
+Instances index n
+Throughout this section, the individual instances of a clock monitor A are 
+identified by the index "n" (n = 0 to 2), for example, CLMAnCTL0 for the control 
+register 0 of CLMAn.
+<CLMAn_base>
+The base address <CLMAn_base> of each CLMAn is listed in the table below.
+Clock supply
+The monitored and the sampling clocks of all clock monitors A are listed in the 
+following table:
+Table 7-10
+Instances
+Clock Monitor A
+Number of 
+instances
+3
+Name
+CLMAn
+Table 7-11
+Register Base Address <CLMAn_base>
+CLMAn
+<CLMAn_base> Address
+CLMA0
+FF80_2000H
+CLMA1
+FF80_3000H
+CLMA2
+FF80_4000H
+Table 7-12
+CLMAn Clock Supply
+Clocks for CLMAn
+Function
+Connected to
+CLMA0:
+CLMA0TSMP
+Sampling clock for CLMA0
+Internal OSC
+CLMA0TMON
+Clock for monitoring by CLMA0
+Main OSC
+CLMA1:
+CLMA1TSMP
+Sampling clock for CLMA1
+Main OSC
+CLMA1TMON
+Clock for monitoring by CLMA1
+Internal system clock
+CLMA2:
+CLMA2TSMP
+Sampling clock for CLMA2
+Main OSC
+CLMA2TMON
+Clock for monitoring by CLMA2
+Internal OSC
+
+
+===== PAGE 388 =====
+R01UH0098EJ0100 Rev.1.00
+Page 369 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+Interrupts and
+reset outputs
+The interrupts and reset outputs of the CLMAn are listed in the table below.
+Output signal
+CLMAn output signals are listed in the following table.
+Table 7-13
+CLMAn Interrupts and Reset Outputs
+CLMAn Signal
+Function
+Connected to
+CLMA0:
+CLMA0RES
+CLMA0 error reset
+Reset controller CLMA0RES
+CLMA0TI
+CLMA0 error interrupt 
+request
+Interrupt controller 
+INTCLMA0
+CLMA1:
+CLMA1RES
+CLMA1 error reset
+Reset controller CLMA1RES
+CLMA1TI
+CLMA1 error interrupt 
+request
+Interrupt controller 
+INTCLMA1
+CLMA2:
+CLMA2RES
+CLMA2 error reset
+Reset controller CLMA2RES
+CLMA2TI
+CLMA2 error interrupt 
+request
+Interrupt controller 
+INTCLMA2
+Table 7-14
+Output Signals from CLMAn
+CLMAn Signal
+Function
+Connected to
+CLMA0:
+CLMA0TERR
+Error output signal from 
+CLMA0
+Safety guardian
+CLMA0RES
+Error reset signal from CLMA0
+CLMA1:
+CLMA1TERR
+Error output signal from 
+CLMA1
+Safety guardian
+CLMA1RES
+Error reset signal from CLMA1
+CLMA2:
+CLMA2TERR
+Error output signal from 
+CLMA2
+Safety guardian
+CLMA2RES
+Error reset signal from CLMA2
+
+
+===== PAGE 389 =====
+R01UH0098EJ0100 Rev.1.00
+Page 370 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+7.6.2
+CLMA Enable and Start-Up Options
+(1)
+CLMA Enable
+Monitoring of clock signals by a clock monitor is set up by setting the 
+CLMAnCTL1, CLMAnCMPL, and CLMAnCMPH registers, and starts when the 
+CLMAnCLME bit in the CLMAnCTL0 register is set to 1.
+7.6.3
+Functional Overview
+The clock monitor CLMAn indicates an abnormal frequency of the monitored 
+clock.
+Features
+summary
+The clock monitor has the following features:
+• monitoring of the frequency of an input clock CLMAnTMON by using a 
+sampling clock CLMAnTSMP
+• indication of abnormal clock frequencies by the following means:
+– output of a reset request signal, or
+– output of an error signal in combination with the generation of an error 
+interrupt request
+The following figure shows the main components of the clock monitor.
+Figure 7-2
+Block Diagram of the Clock Monitor A
+CLMAnTI
+CLMAnTSMP
+CLMAnTMON
+CLMAnTERR
+CLMAnRES
+CLMAnCMPH
+CLMAnCMPL
+CLMAnCTL0
+CLMAnCTL1
+Internal bus
+Internal bus
+12-bit counter
+Timer
+Upper limit
+Frequency 
+violation
+Output 
+control
+Match
+Lower limit
+
+
+===== PAGE 390 =====
+R01UH0098EJ0100 Rev.1.00
+Page 371 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+7.6.4
+Functional Description
+The clock monitor CLMAn is used to ensure that the frequency of a clock 
+(CLMAnTMON) stays between certain limits.
+(1)
+Detection of Abnormal Clock Frequencies
+Method
+1.
+CLMAn counts the rising edges of the monitored clock CLMAnTMON 
+within 16 cycles of the sampling clock CLMAnTSMP and then compares 
+the counter with the configured thresholds:
+– CLMAnCMPL.CLMAnCMPL[11:0] defines the lower threshold.
+– CLMAnCMPH.CLMAnCMPH[11:0] defines the upper threshold.
+2.
+When CLMAnTMON stops or its frequency is too low, the counter falls 
+below CLMAnCMPL.CLMAnCMPL[11:0].
+3.
+When the frequency of CLMAnTMON is too high, the counter exceeds 
+CLMAnCMPH.CLMAnCMPH[11:0].
+In both cases, CLMAn indicates an abnormal clock frequency as described in 
+7.6.4, (2) Indication of Abnormal Clock Frequency.
+Figure 7-3
+Example: fCLMAnTMON is low
+Figure 7-4
+Example: fCLMAnTMON is high
+Note
+When fCLMAnTMON changes within the sampling interval (16 cycles of the 
+CLMAnTSMP clock), the counter might be within the valid range even though 
+fCLMAnTMON has actually become too high or low.
+The abnormal fCLMAnTMON is detected one sampling interval later.
+CLMAnTMON
+CLMAnCMPL.CLMAnCMPL[11:0]
+CLMAnTSMP
+CLMAnCMPH.CLMAnCMPH[11:0]
+(1)
+(2)
+8
+1 2 3 4 5 6 7
+16
+9 10 11 12131415
+Counter
+CLMAnTMON
+Counter
+CLMAnCMPL.CLMAnCMPL[11:0]
+CLMAnTSMP
+CLMAnCMPH.CLMAnCMPH[11:0]
+(1)
+(3)
+8
+1 2 3 4 5 6 7
+16
+9 10 11 12131415
+
+
+===== PAGE 391 =====
+R01UH0098EJ0100 Rev.1.00
+Page 372 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+(a)
+Calculating the Thresholds of CLMAnCMPL.CLMAnCMPL[11:0] and 
+CLMAnCMPH.CLMAnCMPH[11:0]
+The compare registers CLMAnCMPL and CLMAnCMPH are configured with 
+the minimum and maximum number of clock cycles of CLMAnTMON that are 
+assumed to be valid within 16 cycles of the sampling clock CLMAnTSMP.
+The expected number of clock cycles is denoted by N.
+Considering the allowed frequency deviations of CLMAnTMON and 
+CLMAnTSMP, the threshold values can be calculated by the following 
+formulas:
+Note
+For examples of CLMAnCMPH and CLMAnCMPL registers of this product, 
+refer to table 7-16, Examples of CLMAnCMPH and CLMAnCMPL Register 
+Settings.
+Minimum
+thresholds
+The following restrictions must be taken into account:
+• CLMAnCMPL 0001H
+• CLMAnCMPH  CLMAnCMPL + 0003H
+=
+N
+=
+Lower threshold =
+Nmin
+=
+Upper threshold
+=
+Nmax
+=
+16
+fCLMAnTSMP
+--------------------------------
+N
+fCLMAnTMON
+---------------------------------
+fCLMAnTMON
+fCLMAnTSMP
+---------------------------------
+16
+
+fCLMAnTMON min
+
+
+fCLMAnTSMP max
+
+
+----------------------------------------------
+16
+1
+–
+
+fCLMAnTMON max
+
+
+fCLMAnTSMP min
+
+
+-----------------------------------------------
+16
+1
++
+
+
+
+===== PAGE 392 =====
+R01UH0098EJ0100 Rev.1.00
+Page 373 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+(2)
+Indication of Abnormal Clock Frequency
+fCLMAnTMON
+too high
+fCLMAnTMON exceeding the upper threshold indicates clock abnormalities as 
+follows:
+1.
+The reset request signal CLMAnRES (active low) is being output.
+2.
+The peripheral reset signal PERRES is being generated and is resetting 
+CLMAn.
+Figure 7-5
+Indication of Clock Abnormality when fCLMAnTMON Rises above the Upper 
+Threshold
+fCLMAnTMON
+too low
+The response by CLMAn to fCLMAnTMON falling below the lower threshold is 
+described by the entry in the table that corresponds to the current setting of 
+CLMAnCTL1.CLMAnOSEL
+Figure 7-6
+Indication of Clock Abnormality when fCLMAnTMON Falls below the Lower 
+Threshold (when CLMAnCTL1.CLMAnOSEL = 1)
+CLMAnTI
+CLMAnTERR
+CLMAnRES
+PERRES
+(2)
+(1)
+Table 7-15
+When fCLMAnTMON is too Low
+CLMAnCTL1.
+CLMAnOSEL
+Indication of Clock Abnormality when fCLMAnTMON Falls 
+below the Upper Threshold
+0
+CLMAn outputs a reset-request signal (CLMAnRES: active low). 
+This is the same response as when fCLMAnTMON is too high; see 
+the description above.
+1
+CLMAn outputs an error signal (CLMAnTERR: active high) and 
+generates an error-interrupt request (CLMAnTI).
+•
+The error signal (CLMAnTERR) is set to the high level and 
+remains there until CLMAn is reset (PERRES).
+•
+The error-interrupt request (CLMATI) is only generated once, 
+even if the clock frequency remains too low.
+CLMAnTI
+CLMAnTERR
+CLMAnRES
+PERRES
+
+
+===== PAGE 393 =====
+R01UH0098EJ0100 Rev.1.00
+Page 374 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+(3)
+Enabling CLMAn (Writing to the CLMAnCTL0 Register)
+The control register (CLMAnCTL0) is the write-protection register and is used 
+to enable CLMAn.
+Note
+Once CLMAn is enabled, it cannot be disabled by software; it can only be 
+disabled by a reset.
+(a)
+Initial Value of the CLMAnCTL0 Register
+The initial value of the CLMAnCTL0 register is 00H. Using software to set the 
+CLMAnCLME bit to 1 initiates CLMAn operation.
+(b)
+Procedure for Writing to Enable CLMAn
+Execute instructions in the sequence below to set the CLMAnCTL0 register to 
+01H.
+1.
+Write A5H to the CLMAnPCMD register.
+2.
+The following sequence is required for writing to the CLMAnCTL0 register.
+– Write 01H to enable CLMAn.
+– Write the inverse of that value, i.e. FEH.
+– Write the intended value (01H) again.
+3.
+Read the CLMAnCTL0 register.
+If the value of the register is 01H, CLMAn is enabled.
+If this was not the value, check the settings in the CLMAnCTL0 register 
+and in the write operation status register (CLMAnPS).
+– If the value in the CLMAnPS register is 01H, the instruction sequence 
+was not executed correctly. Restart the sequence for enabling CLMAn 
+from step 1.
+– If the value in the CLMAnPS register is 00H, write 00H to the 
+CLMAnPCMD register and only then re-execute the sequence from step 
+1.
+
+
+===== PAGE 394 =====
+R01UH0098EJ0100 Rev.1.00
+Page 375 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+(4)
+Examples of CLMAnCMPH and CLMAnCMPL Register Settings
+(5)
+Behavior on a Reset Due to CLMAn Detecting an Error (CLMAnRES)
+A reset is generated and conveyed to the SGA to notify it of the error.
+If the states of the main oscillator, PLL1 and the internal oscillator become 
+normal at that time, the chip is released from the reset state after the flash 
+reset sequence is finished, and the OSC stabilization time and PLL lock-up 
+time have elapsed.
+If any one of main oscillator, PLL1 and the internal oscillator is stopped or in an 
+abnormal state, the chip will not be released from the reset state.
+Table 7-16
+Examples of CLMAnCMPH and CLMAnCMPL Register Settings
+Operating 
+Frequency
+Main OSC
+Clock to be Monitored
+Sampling Clock
+CLMAn
+CMPH
+CLMAn
+CMPL
+Frequency
+Frequency
+CLMA0
+48 MHz
+64 MHz
+80 MHz
+160 MHz
+8 MHz
+Main OSC
+8 MHz
+Internal OSC/8
+2 MHz
+004EH
+0034H
+16 MHz
+Main OSC
+16 MHz
+Internal OSC/4
+4 MHz
+004EH
+0034H
+CLMA1
+48 MHz
+16 MHz
+Internal system 
+clock
+48 MHz
+Main OSC
+16 MHz
+0032H
+002EH
+64 MHz
+8 MHz
+Internal system 
+clock
+64 MHz
+Main OSC
+8 MHz
+0084H
+007CH
+16 MHz
+16 MHz
+0043H
+003DH
+80 MHz
+8 MHz
+Internal system 
+clock
+80 MHz
+Main OSC
+8 MHz
+00A5H
+009BH
+16 MHz
+16 MHz
+0053H
+004DH
+160 MHz
+8 MHz
+Internal system 
+clock/2
+80 MHz
+Main OSC
+8 MHz
+00A5H
+009BH
+16 MHz
+16 MHz
+0053H
+004DH
+CLMA2
+48 MHz
+64 MHz
+80 MHz
+160 MHz
+8 MHz
+Internal OSC
+16 MHz
+Main OSC
+8 MHz
+0028H
+0019H
+16 MHz
+Internal OSC
+16 MHz
+Main OSC/2
+8 MHz
+0028H
+0019H
+
+
+===== PAGE 395 =====
+R01UH0098EJ0100 Rev.1.00
+Page 376 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+(6)
+Behavior after a CLMAn Error-Interrupt Request (CLMAnTI)
+(a)
+After a CLMA0 Error Interrupt Request (CLMA0TI)
+The error signal is conveyed to the SGA, after which only the CPU and SGA 
+continue to operate with the clock signal generated at the corresponding 
+frequency by the free-running PLL.
+Stop operations by peripheral functions, including DMA transfer, since the 
+results cannot be guaranteed (except in the reading and writing of registers). 
+Once abnormal oscillation is detected, a subsequent return to normal 
+oscillation is not detectable.
+(b)
+After a CLMA1 Error Interrupt Request (CLMA1TI)
+The error signal is conveyed to the SGA. The CPU will not operate if its system 
+clock is stopped. Operation of the CPU and peripheral functions in this case is 
+not guaranteed.
+(c)
+After a CLMA2 Error Interrupt Request (CLMA2TI)
+The error signal is conveyed to the SGA. If the internal oscillator is stopped, 
+even if oscillation of the main oscillator is abnormal, the problem will not be 
+detectable by CLM0 or CLM1 so the operation of the CPU and peripheral 
+functions cannot be guaranteed. If the internal OSC is stopped at that time 
+even after the input of a reset, the flash reset sequence will not proceed, and 
+the chip will not be released from the reset state.
+
+
+===== PAGE 396 =====
+R01UH0098EJ0100 Rev.1.00
+Page 377 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+7.6.5
+Clock Monitor A Registers
+Clock monitor A is controlled and operated by the following registers.
+Register
+addresses
+The list of register addresses of clock monitor A is given below.
+<CLMAn_base>
+The base addresses <CLMAn_base> of the CLMAn are defined in table 7-11, 
+Register Base Address <CLMAn_base>.
+(1)
+CLMAnCTL0 – CLMAn Control Register 0
+This register is used to enable the clock monitor A (CLMAn).
+Access
+This register can be read/written in 8-bit units.
+Writing to this register is protected by a special sequence of instructions. For 
+details, refer to section 7.6.4, (3) Enabling CLMAn (Writing to the CLMAnCTL0 
+Register).
+Address
+<CLMAn_base> + 00H
+Initial value
+00H
+This register is initialized by a reset from any source.
+Table 7-17
+List of Clock Monitor Registers
+Register Name
+Symbol
+Address
+CLMAn control register 0
+CLMAnCTL0
+<CLMAn_base> + 00H 
+CLMAn control register 1
+CLMAnCTL1
+<CLMAn_base> + 04H 
+CLMAn compare register L
+CLMAnCMPL
+<CLMAn_base> + 08H 
+CLMAn compare register H
+CLMAnCMPH
+<CLMAn_base> + 0CH 
+CLMAn protection command register
+CLMAnPCMD
+<CLMAn_base> + 10H 
+CLMAn protection status register
+CLMAnPS
+<CLMAn_base> + 14H 
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+CLMAn
+CLME
+R
+R
+R
+R
+R
+R
+R
+R/W
+Table 7-18
+CLMAnCTL0 Register Contents
+Bit Position
+Bit Name
+Function
+0
+CLMAnCLME
+Enables/disables the clock monitor:
+0: Disable CLMAn
+1: Enable CLMAn
+This bit can only be cleared by a reset.
+
+
+===== PAGE 397 =====
+R01UH0098EJ0100 Rev.1.00
+Page 378 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+(2)
+CLMAnCTL1 – CLMAn Control Register 1
+This register specifies the signal to be output when the frequency of the clock 
+signal being monitored (CLMAnTMON) is beyond the specified range.
+For details, refer to section 7.6.4, (2) Indication of Abnormal Clock Frequency.
+Access
+This register can be read/written in 1- or 8-bit units. It can only be written when 
+CLMAn is disabled (CLMAnCTL0.CLMAnCLME = 0).
+Address
+<CLMAn_base> + 04H
+Initial value
+00H
+This register is initialized by a reset from any source.
+Caution
+When the internal oscillator is stopped, an internal reset is not generated (this 
+only applies to the µPD70F3508 and µPD70F3509).
+Even when CLMA2CTL1.CLMA2OSEL is set to 0 (reset request signal), the 
+SGA detects stopping of the internal oscillator, and the low level is output on 
+the ERROROUT pin.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+CLMAn
+OSEL
+R
+R
+R
+R
+R
+R
+R
+R/W
+Table 7-19
+CLMAnCTL1 Register Contents
+Bit Position
+Bit Name
+Function
+0
+CLMAnOSEL
+Specifies the signal(s) that are output when the 
+frequency of CLMAnTMON falls below the lower 
+threshold:
+0: Reset request signal CLMAnRES
+1: Error interrupt request CLMAnTI and error 
+signal CLMAnTERR
+
+
+===== PAGE 398 =====
+R01UH0098EJ0100 Rev.1.00
+Page 379 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+(3)
+CLMAnCMPH – CLMAn Compare Register H
+This register specifies the upper frequency threshold.
+For details, refer to section 7.6.4, (1)-(a), Calculating the Thresholds of 
+CLMAnCMPL.CLMAnCMPL[11:0] and CLMAnCMPH.CLMAnCMPH[11:0].
+Access
+This register can be read/written in 16-bit units. It can only be written when 
+CLMAn is disabled (CLMAnCTL0.CLMAnCLME = 0).
+Address
+<CLMAn_base> + 0CH
+Initial value
+03FFH
+This register is initialized by a reset from any source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+CLMAnCMPH[11:0]
+R
+R
+R
+R
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 7-20
+CLMAnCMPH Register Contents
+Bit Position
+Bit Name
+Function
+11 to 0
+CLMAnCMPH[11:0]
+Specifies the upper threshold.
+•
+The recommended value: Refer to table 7-16, Examples of 
+CLMAnCMPH and CLMAnCMPL Register Settings.
+•
+The minimum value: CLMAnCMPL + 0003H
+
+
+===== PAGE 399 =====
+R01UH0098EJ0100 Rev.1.00
+Page 380 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+(4)
+CLMAnCMPL – CLMAn Compare Register L
+This register specifies the lower frequency threshold.
+For details, refer to section 7.6.4, (1)-(a), Calculating the Thresholds of 
+CLMAnCMPL.CLMAnCMPL[11:0] and CLMAnCMPH.CLMAnCMPH[11:0].
+Access
+This register can be read/written in 16-bit units. It can be written only when 
+CLMAn is disabled (CLMAnCTL0.CLMAnCLME = 0).
+Address
+<CLMAn_base> + 08H
+Initial value
+0001H
+This register is initialized by a reset from any source.
+15
+14
+13
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+CLMAnCMPL[11:0]
+R
+R
+R
+R
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+R/W
+Table 7-21
+CLMAnCMPL Register Contents
+Bit Position
+Bit Name
+Function
+11 to 0
+CLMAnCMPL[11:0]
+Specifies the lower threshold.
+•
+The recommended value: Refer to table 7-16, Examples of 
+CLMAnCMPH and CLMAnCMPL Register Settings.
+•
+The minimum value: 0001H
+
+
+===== PAGE 400 =====
+R01UH0098EJ0100 Rev.1.00
+Page 381 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 7　Clock Generation
+(5)
+CLMAnPCMD – CLMAn Protection Command Register
+This is the protection command register for CLMAnCTL0.
+For details, refer to section 7.6.4, (3) Enabling CLMAn (Writing to the 
+CLMAnCTL0 Register).
+Access
+This register can be written in 8-bit units.
+Address
+<CLMAn_base> + 10H
+Initial value
+Undefined
+(6)
+CLMAnPS – CLMAn Protection Status Register
+This register verifies whether or not writing to the write protection register 
+(CLMAnCTL0) was successful.
+For details, refer to section 7.6.4, (3) Enabling CLMAn (Writing to the 
+CLMAnCTL0 Register).
+Access
+This register can be read in 8-bit units.
+Address
+<CLMAn_base> + 14H
+Initial value
+00H
+This register is initialized by a reset from any source.
+7
+6
+5
+4
+3
+2
+1
+0
+CLMAnREG[7:0]
+W
+W
+W
+W
+W
+W
+W
+W
+Table 7-22
+CLMAnPCMD Register Contents
+Bit Position
+Bit Name
+Function
+7 to 0
+CLMAnREG[7:0]
+Protection command to enable writing to 
+CLMAnCTL0 register.
+7
+6
+5
+4
+3
+2
+1
+0
+0
+0
+0
+0
+0
+0
+0
+CLMAn
+PRERR
+R
+R
+R
+R
+R
+R
+R
+R
+Table 7-23
+CLMAnPS Register Contents
+Bit Position
+Bit Name
+Function
+0
+CLMAnPRERR
+Indicates if writing to the write protection register 
+CLMAnCTL0 register was successful.
+0: Writing succeeded.
+1. Writing failed.
+
+
+===== PAGE 401 =====
+R01UH0098EJ0100 Rev.1.00
+Page 382 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 8　Reset Controller
+ Section 8 Reset Controller
+This section describes an overview of the reset controller.
+8.1
+Functional Overview
+This product incorporates a number of system reset functions.
+Features
+summary
+A reset can be caused by the following events.
+• External reset signal RESET
+Noise in the external reset signal is eliminated by an analog filter.
+• Overflow of the watchdog timer (WDTA0RES)
+• Clock monitors reset (CLMA0RES to CLMA2RES)
+• Low voltage indicator reset (LVIRES)
+• Software reset (SWRES)
+• Safety guardian reset (SGARES)
+• Self-diagnostic BIST reset (BISTRES)
+• Debug reset (DBRES)
+The following block diagram shows the main components of the reset 
+controller.
+Figure 8-1
+Block Diagram of the Reset Controller
+Reset 
+controller
+Watchdog timer reset
+Clock monitor CLMA0 reset
+Clock monitor CLMA1 reset
+Clock monitor CLMA2 reset
+Self-diagnostic BIST reset
+External reset
+Debug reset
+Software reset
+LVI reset
+Safety guardian reset
+RESF15
+RESF7
+RESF6
+RESF5
+RESF4
+RESF3
+RESF2
+RESF1 RESF0
+RESF register
+System reset 
+(SYSRES)
+LVI clear reset 
+(LVICLR)
+CPU reset (CPURES)
+Peripheral reset 
+(PERRES)
+or
+
+
+===== PAGE 402 =====
+R01UH0098EJ0100 Rev.1.00
+Page 383 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 8　Reset Controller
+Note 1.
+( - ) The signal is not available as an internal reset signal. ( ) The signal is 
+available as an internal reset signal.
+Note 2.
+( - ) The time is not considered. ( ) The time is considered by the internal 
+hardware counter.
+Note 3.
+( - ) Self-diagnostic BIST is not executed on release from the reset state.
+( ) Self-diagnostic BIST is executed on release from the reset state.
+Self-diagnostic BIST is not executed for the µPD70F3505A when skipping of 
+self-diagnostic BIST is selected. For details, see section 9.4.1, Self-Diagnostic 
+BIST Skip Function (Only for the µPD70F3505A).
+Note 4.
+All other RESF flags are cleared by SYSRES (RESET/DBRES).
+Note 5.
+The time is considered with the µPD70F3508 and µPD70F3509.
+Table 8-1
+Reset Sources and Timing of Operations
+Reset Input 
+Source
+Internal Reset Signals*1
+Flash Reset 
+Sequence 
+Time*2 
+PLL Lock-
+up Time*2
+OSC 
+Stabilization 
+Time*2
+Self-
+Diagnostic 
+BIST 
+Execution*3
+RESF Register
+SYSRES
+LVICLR
+CPURES
+PERRES
+RESET
+
+
+
+
+
+
+
+
+RESF15*4
+DBRES
+
+
+
+
+
+
+
+
+RESF15*4
+BISTRES
+
+
+
+
+
+*5
+
+
+RESF7
+SGARES
+
+
+
+
+
+
+
+
+RESF6
+CLMA2RES
+
+
+
+
+
+
+
+
+RESF5
+CLMA1RES
+
+
+
+
+
+
+
+
+RESF4
+CLMA0RES
+
+
+
+
+
+
+
+
+RESF3
+WDTA0RES
+
+
+
+
+
+
+
+
+RESF2
+SWRES
+
+
+
+
+
+
+
+
+RESF1
+LVIRES
+
+
+
+
+
+
+
+
+RESF0
+
+
+===== PAGE 403 =====
+R01UH0098EJ0100 Rev.1.00
+Page 384 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 8　Reset Controller
+(1)
+Internal Reset Signals
+The reset controller manages the generation of all internal reset signals upon 
+occurrence of reset requests from various reset sources.
+• System reset SYSRES
+The system reset is generated by an external reset or the debug reset. 
+SYSRES is applied to all microcontroller components.
+• CPU reset CPURES
+The CPU reset is generated by all reset sources. CPURES is applied to the 
+master and checker CPU sub-systems (such as DMA and INTC).
+• LVI clear reset LVICLR
+The LVI clear reset is generated by all reset sources except the LVIRES.
+• Peripheral reset PERRES
+The peripheral reset is generated by all reset sources.
+Caution
+With the µPD70F3508 and µPD70F3509, an internal reset is not generated if 
+the internal oscillator is stopped. Accordingly, to detect stopping of the internal 
+oscillator, monitoring of the ERROROUT pin by an external circuit is 
+recommended.
+• Enable monitoring of the internal oscillator by CLMA2 
+(CLMA2CTL0.CLMA2CLME = 1).
+• Enable CLMA2 source by SGA (SGAEMK0.SGAEMK002 = [initial value]).
+
+
+===== PAGE 404 =====
+R01UH0098EJ0100 Rev.1.00
+Page 385 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 8　Reset Controller
+8.2
+Functional Description
+8.2.1
+Reset Flags
+The reset flag register RESF provides reset flags for each reset source.
+If a reset has occurred, the assigned flag is set. This way the source of the 
+reset can be evaluated.
+All flags in RESF are only cleared by SYSRES or by software clear request via 
+the RESFC register. Thus, the operation of these registers is cumulative: each 
+reset source sets its own flag, independent of all others.
+
+
+===== PAGE 405 =====
+R01UH0098EJ0100 Rev.1.00
+Page 386 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 8　Reset Controller
+8.2.2
+Low-Voltage Indicator (LVI)
+The low-voltage indicator circuit (LVI) permanently compares the power supply 
+voltage EVDD with the LVI internal reference voltage VLVI.
+If EVDD falls below the internal reference voltage (EVDD < VLVI), the internal 
+reset signal LVIRES or the interrupt signal INTLVI is generated.
+Additionally, the LVIRES flag RESF.RESF0 is set.
+RESF.RESF0 is not automatically cleared, if EVDD exceeds VLVI. It is cleared 
+by
+• setting RESFC.RESFC0 = 1
+• SYSRES
+LVI reference
+voltage
+For the specification of the internal reference voltage (VLVI), see Section 28 
+Electrical Characteristics.
+Generation of
+LVIRES
+The generation of an interrupt instead of LVIRES is selectable.
+The following figure shows the timing of LVIRES and changes to 
+RESF.RESF0.
+Figure 8-2
+LVI Reset Timing
+Delay
+A delay time is induced between EVDD crossing the VLVI level and assertion of 
+LVIRES setting of RESF.RESF0.
+Time
+Delay
+RESFC.RESFC0 = 1
+RESFC.RESFC0 = 1
+EVDD
+VLVI
+RESF.RESF0
+LVIRES
+
+
+===== PAGE 406 =====
+R01UH0098EJ0100 Rev.1.00
+Page 387 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 8　Reset Controller
+8.2.3
+External RESET
+A system reset is performed when a low level signal is applied to the RESET 
+pin.
+SYSRES clears the RESF register to 8000H. The RESF.RESF15 bit 
+represents the external RESET event.
+The RESF.RESF15 bit is not automatically cleared. It is cleared by
+• setting RESFC.RESFC15 = 1
+The RESET signal is passed through an analog noise filter to prevent 
+erroneous resets due to noise.
+The following figure shows the timing when an external reset is performed. It 
+explains the effect of the noise eliminator.
+Figure 8-3
+External RESET Timing
+The analog delay is caused by the analog filter. The filter regards pulses up to 
+a certain width as noise and suppresses them.
+For the noise-cancelling intervals, see table 2-56, List of Noise-Cancelling 
+Intervals and Sampling Clock for Noise Cancellation, and for the minimum 
+RESET pulse width, see Section 28 Electrical Characteristics.
+SYSRES
+Analog 
+delay 
+("noise")
+Analog 
+delay 
+("noise")
+RESET
+Analog 
+delay
+Analog 
+delay
+
+
+===== PAGE 407 =====
+R01UH0098EJ0100 Rev.1.00
+Page 388 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 8　Reset Controller
+8.2.4
+Watchdog Timer Reset
+The watchdog timer can be configured to generate a reset if the watchdog time 
+expires. After a watchdog reset, RESF.RESF2 for the watchdog timer reset 
+flag (WDTA0RES) is set. RESF.RESF2 is not automatically cleared. It is 
+cleared by
+• setting RESFC.RESFC2 = 1
+• SYSRES
+8.2.5
+Software Reset
+The software reset SWRES can be asserted by setting SWRESA.SWRESA = 
+1.
+RESF.RESF1 is not automatically cleared. It is cleared by
+• setting RESFC.RESFC1 = 1
+• SYSRES
+
+
+===== PAGE 408 =====
+R01UH0098EJ0100 Rev.1.00
+Page 389 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 8　Reset Controller
+8.2.6
+Clock Monitor Reset
+The clock monitors supervise the various internal clock signals. On detecting 
+deviation of a clock signal from the expected range, the corresponding monitor 
+generates a reset.
+• CLMA0RES: A failure in the main oscillation circuit is being detected.
+• CLMA1RES: A failure in PLL1 is being detected.
+• CLMA2RES: A failure in the internal oscillator is being detected.
+Upon a clock monitor reset, the respective reset flags in the RESF register are 
+set.
+These flags are not cleared automatically. They are cleared by
+• setting RESFC.RESFC3 = 1 for CLMA0RES, RESFC.RESFC4 = 1 for 
+CLMA1RES, and RESFC.RESFC5 = 1 for CLMA2RES, respectively.
+• SYSRES
+
+
+===== PAGE 409 =====
+R01UH0098EJ0100 Rev.1.00
+Page 390 of 2239
+Jul 25, 2012
+V850E2/Px4
+Section 8　Reset Controller
+8.2.7
+Self-Diagnostic BIST Reset
+Self-diagnostic BIST is usually executed after release from any reset source 
+(except SWRES). This kind of reset is generated after self-diagnostic BIST to 
+initialize the circuits that are the target of self-diagnostic BIST.
+The generation of BISTRES is indicated by RESF.RESF7.
+RESF.RESF7 is not automatically cleared. It is cleared by
+• setting RESFC.RESFC7 = 1
+• SYSRES
+8.2.8
+Safety Guardian Reset
+The safety guardian (SGA) collects all internal error signals from different 
+monitoring units.
+All error inputs connected to the SGA are able to generate the SGARES reset 
+signal.
+After a safety guardian reset, the safety guardian reset flag RESF.RESF6 is 
+set.
+RESF.RESF6 is not automatically cleared. It is cleared by
+• setting RESFC.RESFC6 = 1
+• SYSRES
+
+

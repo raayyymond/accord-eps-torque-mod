@@ -71,7 +71,54 @@ Related: [[accord-v60-null-closes-parametric-pump]], [[accord-v59-parametric-pum
 [[reference-accord-damper-two-deadzones-factorC-factorE]],
 [[reference-accord-collocation-motor-rate-damper-dead]].
 
-## ⚠⚠ SEPARATE THE TWO CLAIMS — one is solid, one is provisional (flagged 2026-07-31)
+## ✅ AUDIT RESOLVED 2026-07-31 — the NUMBER survives, the REASON was wrong
+
+A datasheet-grounded clock audit (operator-instructed) **refuted two of the kit's standing figures**
+and left this file's conclusion standing on a different, better foundation.
+
+🛑 **PCLK = 40 MHz, not 80.** The likely original error is conflating **HEAPCLK** (80 MHz) with
+**PCLK**: option-byte Table 6-7 makes `PCLK = HEAPCLK/2` the *only legal* setting at HEAPCLK = 80 MHz.
+HEAPCLK = 80 MHz is pinned by the firmware's own CLMA1 compare values — **orchestrator-verified in the
+stock dump**: literal `0x0053` @`0x5C8D8` and `0x004D` @`0x5C8E0`, written to base `0xFF80` offsets
+`0x300C`/`0x3008` = `CLMA1CMPH`/`CLMA1CMPL`, an exact match to the datasheet's own worked row for
+CLMA1 @ 80 MHz with a 16 MHz main oscillator. (Three CLMA blocks exist: CLMA0 `0x4E`/`0x34`,
+CLMA1 `0x53`/`0x4D`, CLMA2 `0x28`/`0x19`.)
+⚠ A second CAN-bit-timing chain was offered as corroboration. **It is NOT independent confirmation** —
+the orchestrator could not reproduce its field decode. `FCN0CMBTCTL` = `0x030A`; whether `TS2LG` is a
+3-bit or 4-bit field flips DBT between 8 and 16 TQ and the answer between **40 and 80 MHz exactly**.
+The 3-bit reading gives a 62.5% sample point (plausible) vs 31.25% (implausible for automotive CAN),
+which favours it — but that is a plausibility argument, not a datasheet field reading. **Treat CLMA1 as
+the load-bearing chain.**
+
+🛑🛑 **OSTM0 IS NOT THE RTOS TICK — it never was.** `OSTM0CMP+1` = 80000 counts at 40 MHz = **2.000 ms
+= 500 Hz**, but that is irrelevant: **orchestrator-verified** by decompiling the EI trampoline
+`FUN_0001492a`, which dispatches only EIIC `0x970/0x600/0x340/0x470/0x110/0x100/0xf0` + default —
+**no OSTM0 arm exists**, and `gp-0x42fc`, the rate divider's trigger flag, is written **only** by the
+`0x340` arm. `EIIC 0x340` = **TAUJ1I2**. ⇒ the whole *"OSTMnCMP = 79999 ⇒ 1 kHz control tick"* chain
+this kit carried for months was a **red herring at both ends** — wrong clock AND wrong timer.
+
+⚠ **TAUJ1's own period register was NOT located** (`search_instructions` returned nothing for
+`TAUJ1CDR2` @`0xFFFFC308`; a raw LE byte scan past that tool's known blind spot is the next step).
+**So the base rate is still not pinned to any register value.**
+
+✅ **BUT THE CONCLUSION SURVIVES INTACT**, because it never depended on that chain: **task 1 = 1 kHz is
+an ON-CAR MEASUREMENT** (the `STEER_STATUS=4` dwell, cal `0xC64DF` = 100 counts, measured at 100.00 ms
+⇒ 1.000 ms/decrement; and CAN 399 wire-fitted at exactly 100.000 Hz), and **task 5 = task 1 / 10 is
+integer arithmetic**. Neither reads a clock register. ⇒ **100 Hz and 37.6°/75.2° stand as written.**
+
+⚠ **What DOES propagate: the FOC/PWM carrier.** The recorded "~8 kHz" was computed explicitly
+*conditioned on PCLK = 80 MHz*. At 40 MHz it is **~4 kHz** — and TSG20's own clock-select register has
+never been verified, so treat both numbers as open. This bounds what the actuator can do at 20.9 Hz.
+⚠ Also corrected: `EIIC 0x600` is **`CSIH1IR` (serial)**, not ADC-complete, and `EIIC 0x970` is
+**`TSG21I05`**, not TSG20 (`TSG20I05` is `0x860`).
+
+🛑 **PROCESS FAILURE WORTH ITS OWN NOTE: this had already been found and recorded once**, in the
+tracer's agent-memory (`reference_accord_pclk_40mhz_and_ostm0_is_500hz.md`), and **never propagated to
+`docs/` or the golden model**, which went on citing 80 MHz / 1 kHz / OSTM0. Same family as
+[[accord-a-caveat-can-mutate-into-a-result]]: a correct finding is worthless if it lives only where
+nobody reads it. **Agent-memory findings that correct a main-doc figure must be promoted the same day.**
+
+## (superseded) The provisional flag that prompted the audit
 
 **SOLID and clock-independent: the DIVIDER RATIO.** Task 5 fires once per **10** task-1 invocations.
 That is integer arithmetic in `FUN_00014be4` and holds whatever the clock turns out to be. So *"the
