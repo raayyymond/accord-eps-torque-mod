@@ -45,6 +45,31 @@ V61 (`Kd=0`) ⇒ `zeta_net < 0` ⇒ diverges. **Observed.**
 torque, so V61 could not have "removed assist" — it changed **only** dynamics. That is what makes this a
 clean signed measurement rather than a confound.
 
+## ★★ The rlog confirms it, and the MODE MOVED — the structural observable
+Route `31`, 22,052 frames / 222 s, **flight-clean** (`ST==4`: 0). Engaged creep, v ≤ 5.35 m/s, identical
+method, V59's route `2c` as control (`analysis-2020accord/analyze_r31_manual_vs_engaged.py`):
+
+| build | n | peak | prom | abs power |
+|---|---|---|---|---|
+| V59 `2c` | 9 | **21.18 Hz** | 227× | 5.26e8 |
+| V61 `31` | 3 | **18.25 Hz** | 486× | **4.15e9** |
+
+**−2.93 Hz, ×7.9 power.** ★★ **A pure GAIN change cannot move a resonance frequency; a PHASE change can**
+— removing a lead lowers the frequency where the loop phase reaches −180°. Predicted before the spectra
+were computed. Amplitude could be confounded by route/effort; **the frequency cannot.**
+
+Three conditions, ordered exactly as the operator reported: **ENGAGED** 18.25 Hz / 486× / **4.15e9** >
+**MANUAL REVERSE** 17.82 Hz / **1910×** / 5.78e8 > **MANUAL FORWARD** 18.54 Hz / **13.1×** / 3.82e6.
+⇒ reverse carries **151× forward's power at the same frequency as the engaged line** — the *same mode*,
+unmasked. ⚠ n small (3 engaged / 2 reverse runs), one route vs one control.
+
+🛑 **METHODOLOGY TRAP, new:** a first pass pre-restricted to the strict 18–26 Hz band and the argmax
+**pinned to the band edge, 18.04 Hz, sd 0.00** — a truncation artifact, because the mode had moved *below*
+the band. **The strict band presence-tests a mode whose frequency you already know; it cannot LOCATE one
+that has shifted.** Locate over 12–30 Hz, then interpret. (Ratchet-2nd-harmonic separately excluded: in
+reverse the 6–10 Hz fundamental is 9.6× vs ~1900× at 17.8 Hz — a "harmonic" 200× stronger than its
+fundamental is not a harmonic.)
+
 ## 🛑 What this FALSIFIES in the record
 `eps_lkas_chain_model.py:1792` framed r26 as **"excitation-to-amplifier: faster slew → bigger
 column-torque derivative → bigger r26 → more motor torque → more column motion → repeat"**, and

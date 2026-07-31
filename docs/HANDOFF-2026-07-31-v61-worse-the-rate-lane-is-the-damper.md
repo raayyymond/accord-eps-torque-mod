@@ -176,10 +176,59 @@ Model: `analysis-2020accord/rate_lane_damping_model.py`.
 - **Manual feel will change** — no LKAS-only decoupling point exists in this chain (traced). Risk
   direction is "nervous"/noise-sensitive rather than heavy. This is the lane whose *removal* the operator
   felt immediately, so a feel change is itself confirmation the edit is live.
-- **The V61 rlog is not folded in.** Route `00000031--0441e00d2b`, 4 segments. Analysis was still running
-  at close-out. The conclusions above rest on the operator's report plus the firmware arithmetic, both
-  solid independently — but the rlog is the only quantitative record of a *signed* change and should be
-  analysed. See §6.
+---
+
+## 4b. The rlog confirms it — and the mode MOVED, which is the stronger evidence
+
+Route `00000031--0441e00d2b`, **22,052 frames / 222 s**, parking lot (v max 1.5–5.4 m/s), segs 0/3 manual,
+segs 1/2 engaged. **FLIGHT-CLEAN:** `ST==4` in **0** frames (streak now past 143,000), `ST==0` in
+22,042/22,052, zero `steerUnavailable`/`steerTempUnavailable`/`canError`/`immediateDisable`/
+`steerSaturated`, one `controlsMismatch`. **2,851 frames ≈ 28 s of reverse.**
+
+**Engaged creep, speed-matched (v ≤ 5.35 m/s), identical method, V59's route `2c` as control:**
+
+| build | n | peak | prominence | abs power |
+|---|---|---|---|---|
+| V59 route `2c` | 9 | **21.18 Hz** | 227× | 5.26e8 |
+| V61 route `31` | 3 | **18.25 Hz** | 486× | **4.15e9** |
+
+**−2.93 Hz and ×7.9 power.**
+
+★★ **The frequency shift is the decisive observable and it is structural.** A pure **gain** change cannot
+move a resonance frequency. A **phase** change can — and removing a lead compensator lowers the frequency
+at which the loop phase reaches −180°, so the limit cycle settles lower. The direction was predicted from
+the arithmetic *before* the spectra were computed. Amplitude alone could be confounded by route or effort
+differences; the frequency cannot be.
+
+**The three conditions, in exactly the order the operator reported them:**
+
+| condition | n | peak | prominence | abs power |
+|---|---|---|---|---|
+| ENGAGED creep | 3 | 18.25 Hz | 486× | **4.15e9** |
+| **MANUAL reverse** | 2 | **17.82 Hz** | **1910×** | 5.78e8 |
+| MANUAL forward | 5 | 18.54 Hz | **13.1×** | 3.82e6 |
+
+⇒ Manual reverse carries **151× the power of manual forward at the same frequency as the engaged line** —
+the *same mode*, unmasked, not a new one. Forward at 13× is a floor (*"slightly, in some scenarios"*);
+reverse at 1910× is a coherent mode (*"absolutely, definitely"*).
+
+⚠ **Caveats:** n is small (3 engaged / 2 reverse runs), one route against one control route. The effect
+sizes dwarf that, but V62's drive is what confirms them.
+
+### ⚠ A methodology trap caught in-flight — worth adding to the conventions
+
+The first pass pre-restricted the search to the strict **18–26 Hz** band, and the argmax **pinned to the
+band edge at 18.04 Hz with sd 0.00** — a truncation artifact, because the mode had moved *below* the band.
+**The strict band is for presence-testing a mode whose frequency you already know; it is the wrong tool
+for locating one that has shifted.** Locate over 12–30 Hz, then interpret.
+(The ratchet-2nd-harmonic trap is separately excluded: in manual reverse the 6–10 Hz fundamental is 9.6×
+while the 17.8 Hz line is ~1900× — a "harmonic" 200× stronger than its fundamental is not a harmonic.)
+
+### ⇒ V62 now has TWO independent predicted observables
+- **(a) amplitude falls** — engaged power back toward 5e8, manual reverse back toward the forward floor.
+- **(b) frequency rises back to ≥ 21.2 Hz**, or the line disappears.
+**(b) is the sharper test.** If amplitude falls but the frequency does *not* move, the lane is acting as a
+plain gain and the lead interpretation is wrong — that must be reported, not explained away.
 
 ---
 

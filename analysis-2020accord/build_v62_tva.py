@@ -435,9 +435,19 @@ def build():
     print("     there from nothing, so it is the cleanest read on the lane's damping with no LKAS in the")
     print("     loop at all.")
     print("     Decode with rlog-tools/decode_v59_boostindex.py (probe unchanged, secondary readout).")
-    print("\n     PREDICTION: grinding reduced with LKAS on; manual forward + reverse back to V59-clean")
-    print("     or better. A NULL would mean the lane's damping is already saturated in phase, and the")
-    print("     next step is the 1 kHz lead's PHASE (delay D), not its gain.")
+    print("\n     PREDICTION -- TWO independent observables, because the V61 rlog showed the mode MOVED:")
+    print("       (a) AMPLITUDE falls. V61 raised engaged-creep power 7.9x (5.26e8 -> 4.15e9,")
+    print("           speed-matched vs V59 route 2c); manual reverse must return toward the manual-")
+    print("           forward floor (5.78e8 -> ~3.8e6 is the gap V61 opened).")
+    print("       (b) FREQUENCY rises back. V61 moved the engaged line 21.18 -> 18.25 Hz (-2.93 Hz).")
+    print("           🛑 A pure GAIN change CANNOT move a resonance frequency -- a PHASE change can, and")
+    print("           removing a lead lowers the frequency where the loop phase reaches -180 deg.")
+    print("           Doubling the lead should push it back to >= 21.2 Hz, or remove the line entirely.")
+    print("     (b) is the stronger test: it is structural, and amplitude alone could be confounded by")
+    print("     route/effort differences. If amplitude falls but the frequency does NOT move, the lane")
+    print("     is acting as a plain gain and the lead interpretation is wrong -- say so.")
+    print("     A NULL on both would mean the damping is phase-limited, not gain-limited, and the next")
+    print("     step is the 1 kHz lead's PHASE (delay D at 0xC6C42, 4->2), not its gain.")
     return code
 
 

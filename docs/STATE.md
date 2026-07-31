@@ -345,10 +345,51 @@ and V61 (both) all tested this lane DOWNWARD.** Their results stand; they bracke
 ZOH lag at 20.9 Hz. Boost/damping are **task 5, 100 Hz** ⇒ **37.6–75.2°** — the structural reason V44 and
 V47 were null. **The rate lane is the only damping mechanism in the chain fast enough to act on this mode.**
 
-⚠ **No rlog analysis is folded in yet** — route `00000031--0441e00d2b` (4 segments) is the V61 drive and
-its quantification was still running at close-out. The conclusions above rest on the operator's report
-plus the firmware arithmetic, both of which are solid independently. **The rlog should still be analysed**
-— see next steps.
+### ✅ The rlog CONFIRMS all three of the operator's observations — and the mode MOVED
+
+Route `00000031--0441e00d2b`, 4 segments, **22,052 frames / 222 s**, parking lot (v max 1.5–5.4 m/s),
+segs 0/3 manual, segs 1/2 engaged (latActive 47.2% / 18.1%). **FLIGHT-CLEAN:** `STEER_STATUS` = 0 in
+22,042/22,052, `ST==3` in 10 frames, **`ST==4`: 0** (the clean streak extends past 143,000 frames).
+Zero `steerUnavailable` / `steerTempUnavailable` / `canError` / `immediateDisable` / `steerSaturated`;
+one `controlsMismatch`. **2,851 frames ≈ 28 s of reverse** — a real analysable population.
+
+🛑🛑 **THE MODE MOVED DOWN 3 Hz AND GOT 7.9× LOUDER.** Engaged creep, v ≤ 5.35 m/s, *identical method,
+speed-matched, same channel*, V59's route `2c` as the control (`analyze_r31_manual_vs_engaged.py`):
+
+| build | n runs | peak | prominence | abs power |
+|---|---|---|---|---|
+| **V59** route `2c` | 9 | **21.18 Hz** | 227× | 5.26e8 |
+| **V61** route `31` | 3 | **18.25 Hz** | 486× | **4.15e9** |
+
+⇒ **−2.93 Hz and ×7.9 power.** ★★ **The frequency shift is the decisive observable, and it is
+structural: a pure GAIN change cannot move a resonance frequency — a PHASE change can.** Removing a lead
+compensator lowers the frequency at which the loop phase reaches −180°, so the limit cycle drops. Both
+observables agree, and the direction was predicted *before* the data was looked at.
+
+**The three conditions, route 31, ordered exactly as the operator reported them:**
+
+| condition | n | peak | prominence | abs power |
+|---|---|---|---|---|
+| **ENGAGED** creep | 3 | 18.25 Hz | 486× | **4.15e9** |
+| **MANUAL reverse** | 2 | **17.82 Hz** | **1910×** | 5.78e8 |
+| **MANUAL forward** | 5 | 18.54 Hz | **13.1×** | 3.82e6 |
+
+⇒ **Manual reverse carries 151× the power of manual forward, at the same frequency as the engaged line.**
+That is the *same mode*, unmasked by the loss of damping — not a new one. Manual forward at 13× prominence
+is a floor, matching *"slightly… in some scenarios"*; reverse at 1910× is a real coherent mode, matching
+*"absolutely, definitely."*
+
+⚠ **Caveats, stated:** n is small (3 engaged / 2 reverse runs) and this is one route against one control
+route. The effect sizes (7.9×, 151×, −2.93 Hz) are far larger than that weakness, but a repeat on V62 is
+what confirms them.
+
+⚠ **A methodology trap caught in-flight and worth recording:** the first pass pre-restricted the search to
+the strict 18–26 Hz band and the argmax **pinned to the band edge at 18.04 Hz with sd 0.00** — a
+truncation artifact, because the mode had moved *below* the band. **The strict band is for
+presence-testing a mode whose frequency you already know, not for locating one that has shifted.** Locate
+over 12–30 Hz, then interpret. (The ratchet-2nd-harmonic trap is separately excluded here: in manual
+reverse the 6–10 Hz fundamental is only 9.6× while the 17.8 Hz line is ~1900× — a "harmonic" 200× stronger
+than its own fundamental is not a harmonic.)
 
 ---
 
