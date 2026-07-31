@@ -540,10 +540,28 @@ class EpsState:
     assist_polarity: int = 1      # gp-0x6752 assist polarity (-1/0/+1)
     assist_lane: int = 0          # gp-0x6bbe (0xFEDF1442) the base-assist aggregator lane
     boost_fir_out: int = 0        # gp-0x6b9a, signed FUN_0003b66a output; gp-0x6ba6 is its magnitude
-    assist_state_671a: int = 0     # exact branch input; physical state label unresolved
-    assist_gate_671d: int = 0
-    assist_gate_683c: int = 0
-    assist_gate_6b5e: int = 0
+    # ★★★ RESOLVED 2026-07-31: gp-0x671a is an OSCILLATION DETECTOR -- a hard-REVERSAL COUNTER, latched.
+    # FUN_000428d4 @1 kHz, FSM {neutral, +latched, -latched} at gp-0x67df, dwell gp-0x6759, raw count
+    # gp-0x357c. NEUTRAL zeroes dwell AND raw count EVERY tick (0x428FE/0x42906) and exits only if
+    # |gp-0x6c2c| > T; a crossing of the OPPOSITE threshold increments; HYST=50 quiet ticks -> neutral.
+    #   T = 12800 (0xC620A, ld.h) · HYST = 50 (0xC64DD, ld.bu) · CEIL = 5 (0xC64FA, ld.bu)
+    # => reads 0 during smooth steering; `>= 5` means AN OSCILLATION IS HAPPENING. Arms in ~125-150 ms
+    # at 18-21 Hz (half-period 24-28 ms, inside the 50 ms dwell timeout).
+    # 🛑 THE OUTPUT IS A ONE-WAY LATCH WITH A 5 s HOLD (output stage 0x429A0-0x42A12, the sole st.b to
+    # gp-0x671a is 0x42A12): once the held value reaches CEIL it is RE-PINNED to CEIL every tick. The
+    # only way down is 5000 consecutive ticks (cal 0xC6270) with voted driver torque gp-0x6a5e >= 640
+    # (cal 0xC62DE) AND raw count == 0 -- and torque dips below 640 on every direction change, so the
+    # timer reloads constantly. ⇒ once tripped it is STICKY and carries into manual steering.
+    # ✅ The latch is PROTECTIVE: a per-tick-gated gain would modulate AT the mode frequency, i.e. a
+    # parametric pump -- the exact failure mode V58/V59/V60 chased for three builds.
+    # ⚠ NOT private to r24/r26 -- also read by FUN_0003a382, FUN_000352b4, FUN_00035b20, FUN_00036c12.
+    # Irrelevant to raising the two arm cals; critical if anyone ever moves T/HYST/CEIL.
+    # The arm selection below is CORRECT as written and was verified in Ghidra 2026-07-31; a subagent's
+    # prose summary claimed the opposite polarity and was wrong.
+    assist_state_671a: int = 0
+    assist_gate_671d: int = 0      # r24's HIGHER-priority override; live (2 writers: 0x3BD2A, 0x41EC6)
+    assist_gate_683c: int = 0      # DEAD -- zero st.b writers image-wide, so the 512 arms are unreachable
+    assist_gate_6b5e: int = 0      # LERP output on axis gp-0x6bda, tested only as a boolean; NOT hands-off
     assist_slope_q10: Optional[int] = None  # gp-0x69a4; unresolved producer, replay when captured
     previous_assist_slope_q10: int = 0
     assist_slope_history_valid: bool = False
@@ -1801,8 +1819,15 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     wheel-inertia-on-bar mode, phi'' + (Kd*k/J_c)*phi' + k*(1/J_w + (1+K)/J_c)*phi = T_road/J_c, so the
     phi' coefficient is positive and LINEAR in Kd. At Kd=0 the mode has no damping term at all.
     ⇒ the lane is the mode's DAMPER, not its amplifier, and the direction of interest is RAISING it.
-    V62 doubles it via two `sar 0xa`->`sar 0x9` immediates (0x3AC20, 0x3AB76). See
-    rate_lane_damping_model.py and build_v62_tva.py. Motor ripple is ruled out (hand steering
+    V62 doubles it via two `sar 0xa`->`sar 0x9` immediates (0x3AC20, 0x3AB76).
+    ★★ V63/V64 do it BETTER: gp-0x671a is an oscillation detector (see EpsState.assist_state_671a), so
+    raising only the state>=5 arms -- 0xC6440 2048->4096 and 0xC643E 1536->3072 -- adds damping only once
+    an oscillation has been detected, leaving a never-oscillating drive on its stock LERP default.
+    ⚠ NOT "only while oscillating": the counter is a ONE-WAY LATCH with a 5 s hold, so once tripped it
+    carries into subsequent manual steering. V63/V64 is "V62, but only after an oscillation has happened".
+    V64 = V63 + the cave probe repointed at the detector (0x14A byte4: bit6 state>=5, bit5 state!=0,
+    bit4 FSM left neutral, bit3 r24 override), so a null is interpretable instead of ambiguous.
+    See rate_lane_damping_model.py, build_v62_tva.py, build_v63_tva.py, build_v64_tva.py. Motor ripple is ruled out (hand steering
     delivers comparable torque through the same smooth output stage), which leaves the LKAS-only
     segment upstream of the aggregator -- see lkas_iir_quantization_analysis() for the standout
     stateful element there (gp-0x3d3c). PROPOSED TEST, in order: comma-side STEER_DELTA_UP/DOWN

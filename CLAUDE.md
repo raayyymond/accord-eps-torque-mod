@@ -22,7 +22,7 @@ an already-flashed, already-falsified lever because the result was buried in pro
    WORSE and spread it to manual driving, which INVERTED the record: the torsion-bar RATE lane
    (`r24`/`r26` in `FUN_0003aa2c`) is the mode's DAMPER, not its amplifier.** The kit's first *signed*
    on-car result. V39, V42 and V61 all tested that lane **downward**; the gradient points **up**.
-   **V62 (double it, 6 bytes, `sar 0xa`→`sar 0x9`) is built and is the recommended next flash.**
+   **V64 is built and is the recommended next flash** — V63's oscillation-gated cal edits (`0xC6440`, `0xC643E`) plus the cave probe repointed at the detector so a null is interpretable. V62 (unconditional doubling) is the fallback that cannot miss. 🛑 `gp-0x671a` is a **one-way latch** with a 5 s hold, so the gating is *"only after an oscillation has happened"*, not *"only while oscillating"*.
    🛑 The lesson pairs with the V44 trap: there a withdrawn *rationale* was mistaken for a withdrawn
    *result*; here every result stood and only the **direction** was wrong. **Check which WAY a lever was
    pushed, not just that it was pushed.**
