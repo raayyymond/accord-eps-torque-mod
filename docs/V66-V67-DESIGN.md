@@ -250,6 +250,34 @@ behaviour, and the boost is something the arm *adds* rather than something it *c
 Arithmetic: `5120 × 5244 = 26.8 M` = **1.25% of INT32_MAX**; the lane saturates at |dtorque| ≥ 1599
 against a measured 123–839. `0xC6444` (r26's arm, same gate) stays stock 512 — r26 is inert.
 
+### ✅✅ THE GATE IS VALIDATED ON-CAR — from data that was already on disk
+
+**V57's own probe put `(gp-0x6806 == 0)` on `0x14A` byte4 bit6 and flew routes `28` and `29` in July.
+Nobody had correlated it.** Decoded 2026-08-01:
+
+| | route `29` | route `28` |
+|---|---|---|
+| frames / span | 7,924 / 79.2 s | 29,990 / 299.9 s |
+| **agreement with `carControl.latActive`** | **99.90%** (8 frames disagree) | **99.94%** (17 frames) |
+| duty | 21.73% | 49.88% |
+| **transitions** | **4 in 79.2 s = 0.0505/s** | **9 in 299.9 s = 0.0300/s** |
+
+1. ✅ `gp-0x6806 != 0` ⟺ **LKAS is applying**. Polarity confirmed, at two very different duty cycles.
+2. ✅ **It does NOT drop out during steady engaged holding** — the one structural ambiguity a trace
+   had flagged (the cell is a ramp-FSM phase flag, `= 0` for "settled" phases 5/6/7, and static
+   analysis could not rule out those occurring mid-drive). 99.9% agreement over 37,914 frames says
+   they do not. **Measurement closed what structure could not.**
+3. ✅ **The parametric-pump kill criterion passes with enormous margin** — 0.03–0.05 toggles/s against
+   modes at 21 and 45 Hz, **three orders of magnitude**.
+
+⇒ **V67 does not have to wait for V66's drive.** The gate is the part that could have made it inert,
+and it is closed.
+
+🛑 The lesson is about where to look: this measurement existed since July while every session treated
+the polarity as an open Ghidra question. **Before tracing a signal, check whether a past probe already
+flew on it** — `BUILD-LINEAGE.md` lists every probe payload and `route_build_registry.py` maps every
+route to its build.
+
 ### 🛑 What it costs, stated plainly
 
 **Grind #2 SURVIVES under LKAS**, and at 2.21× — slightly *more* than V62's 2.00×, because a scalar

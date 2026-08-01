@@ -916,7 +916,24 @@ set's 12.6–42.2°).
 🛑 **NO openpilot-side modifications.** Standing operator instruction. openpilot remains a *measurement
 instrument* only.
 
-0. ★★★★ **FLASH V66 AND DRIVE IT LONG.** ✅ Built, verified, and it is exactly what the operator asked
+0. ★★★★ **OPERATOR'S DECISION 2026-08-01: FLASH V67 FOR THE LONG DRIVE.** V67 = V66 + the
+   grind #1 fix gated on LKAS — `0x3AA96` `c5`→`fb` (repoint the dead `gp-0x683c` gate to
+   `gp-0x6806`) + `0xC6446` 512→**5244**, with both `sar` sites left STOCK. **LKAS off is
+   byte-for-byte stock behaviour; LKAS on gets 2.00× at grind #1's operating point.**
+   ✅ **The gate is VALIDATED ON-CAR ALREADY** — V57's probe measured `gp-0x6806` at **99.90–99.94%
+   agreement with `latActive`** over 37,914 frames and **0.03–0.05 toggles/s**, so it is the
+   engagement flag, it does not drop out during steady holding, and it cannot parametrically pump.
+   **Pre-committed interpretation:**
+   - **grind #1 gone, grind #2 gone in manual, grind #2 remains under LKAS** ⇒ the expected outcome.
+     Next lever is `0xC6446` itself (one halfword) to trade the two.
+   - **grind #1 back** ⇒ check probe bit6 duty (gate not firing ⇒ wrong cell) then bit5
+     (`gp-0x671d` firing ⇒ the arm is masked and the gain is pinned to 1024, *below* stock).
+   - **grind #2 worse under LKAS** ⇒ 2.21× is too much there; lower `0xC6446`.
+   🛑 Do NOT read a V67 null without decoding the probe first — that is the V64 lesson.
+
+0a. **V66 remains built, verified and unflashed** — the pure stock-rate-lane control. It is still the
+   cleanest confirmatory revert if V67's result is ambiguous.
+   ~~FLASH V66 AND DRIVE IT LONG.~~ ✅ Built, verified, and it is exactly what the operator asked
    for: **V38 4× LKAS reach · steer-to-zero · stock rate lane (grind #1 left as V38 has it) · live
    telemetry.** It is simultaneously **the confirmatory revert** — the one knob that produced grind #2
    goes back to stock, so the drive tests the attribution for free — and **the pre-flight probe for
