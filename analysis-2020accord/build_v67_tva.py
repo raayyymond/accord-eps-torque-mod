@@ -44,6 +44,42 @@ high displacement byte are all untouched and only 0x3AA96 moves. Had the target 
 be a three-byte edit across both halfwords, and writing only hw2 would silently address the
 NEIGHBOURING cell. The build asserts hw1 is unchanged and re-decodes the result.
 
+★★ THE GATE IS VALIDATED ON-CAR. GATE 2 IS MEASURED, NOT ARGUED.
+-----------------------------------------------------------------
+V57 already flew a probe that put `(gp-0x6806 == 0)` on 0x14A byte4 bit6, in July, on routes 28/29 --
+nobody had correlated it. `analysis-2020accord/validate_gp6806_gate.py` (numbers reproduced by this
+build from `_gp6806_gate_validation.json`, and asserted, so the claim cannot rot):
+
+    route   frames    span     agreement with carControl.latActive   duty      transitions
+    29       7,924    79.2 s              99.899%                   21.73%    4  = 0.0505/s
+    28      29,990   299.9 s              99.943%                   49.88%    9  = 0.0300/s
+                                                    pooled: 37,914 frames, 379.1 s, 13 transitions
+
+⇒ **`gp-0x6806 != 0` IS "LKAS is applying"**, confirmed at two very different duty cycles (21.7% and
+49.9%), so it is not one route's pattern. And it does **not** drop out during steady engaged holding
+-- the one hole static analysis could not close, because gp-0x6806 is a ramp-FSM phase flag whose
+"settled" phases 5/6/7 could not be ruled out by reading the writers.
+
+🛑 THE POLARITY, AND THE ONE BYTE IT RESTS ON. V57's bit6 is the INVERSE of what V67 needs, so the
+validation only holds if that inversion is real. Read out of the FLOWN V57 image, not its docstring:
+
+    0xC4B38  8437fb97  ld.bu -0x6806[gp],r6
+    0xC4B3C  e031      cmp r0,r6
+    0xC4B3E  ba05      bne +6        <- condition 0xA = NE. Taken when r6 != 0, SKIPPING the movea.
+    0xC4B40  273e4000  movea 0x40,r7,r7    => bit6 is set ONLY when gp-0x6806 == 0
+
+So V57's bit6 == 1 means the cell is ZERO, the validation script's `~bit6` is correct, and the
+99.9% agreement belongs to `gp-0x6806 != 0`. V67's `setfne lp` @0x3AAA8 therefore gives lp = 1 while
+LKAS applies, the arm is taken there, and the polarity is as designed. Had that branch been `be`
+instead of `bne` the entire design would invert and 5244 would be the wrong number. Asserted from
+the V57 artifact on every build by `assert_v57_probe_polarity()`.
+
+⚠ ON THE PARAMETRIC-PUMP CRITERION, the transition COUNT is not the strong evidence -- 4 and 9 are
+small numbers. The strong evidence is STRUCTURAL: a signal that agrees with `latActive` to 99.9%
+over 37,914 frames toggles when the DRIVER engages and disengages, which is a human-scale event.
+It cannot toggle at 21 or 45 Hz without destroying that agreement. Three orders of magnitude of
+margin, and the margin is a consequence of the agreement rather than an independent count.
+
 ★ lp SURVIVES FROM THE setf TO BOTH CONSUMERS -- verified in Ghidra, not assumed
 --------------------------------------------------------------------------------
 The repoint only means anything if `lp` reaches 0x3AC04 intact. FUN_0003aa2c disassembled in full:
@@ -166,9 +202,7 @@ GATE 1 (RAM ownership): **VACUOUS, and asserted as a MEASUREMENT.** The repoint 
 GATE 2 (closed-loop stability):
     * The lane is a DERIVATIVE => DC-neutral. A gain step at engagement produces NO torque step;
       it changes the damping coefficient, not the operating point.
-    * The gain now switches with gp-0x6806, so the switching itself must be slow. Prior on-car:
-      **2 transitions in 180 s (<= 0.1 Hz)**, four orders of magnitude below the 21 Hz and 45 Hz
-      modes. bit6 re-measures it over a long mixed drive, and the decoder's kill band is 15-60 Hz.
+    * ★★ THE GATE ITSELF IS MEASURED, NOT ARGUED. See the section below.
     * Magnitude: 5120 x 5244 = 1.25% of INT32_MAX; lane saturation needs |dtorque| >= 1601 against a
       measured 123-839; the ten-lane sum clip was measured never reached.
     * State-mask residual (recorded, not ignored): arbitration runs under `andi 0x930` and the
@@ -192,6 +226,7 @@ Decoder: rlog-tools/decode_v67_gate.py
 """
 import hashlib
 import itertools
+import json
 import os
 import re
 import struct
@@ -763,6 +798,85 @@ _self_check_wire()
 # Image-level gates
 # =======================================================================================================
 
+# =======================================================================================================
+# The ON-CAR validation of the gate -- V57's flown probe, and the one byte its polarity rests on
+# =======================================================================================================
+V57_BIN = str(plain_image_path("_v57_plain_image.bin"))
+GATE_VALIDATION_JSON = os.path.join(HERE, "_gp6806_gate_validation.json")
+# V57's bit6 rung, at the SAME cave base V67 uses. `bne` (condition 0xA) means the movea is SKIPPED
+# when the cell is non-zero => bit6 == 1 <=> gp-0x6806 == 0, i.e. the INVERSE of V67's gate.
+V57_PROBE_RUNG = ((0xC4B38, bytes.fromhex("8437fb97"), "ld.bu -0x6806[gp],r6"),
+                  (0xC4B3C, bytes.fromhex("e031"), "cmp r0,r6"),
+                  (0xC4B3E, bytes.fromhex("ba05"), "bne +6   <- condition 0xA = NE"),
+                  (0xC4B40, bytes.fromhex("273e4000"), "movea 0x40,r7,r7"))
+COND_BNE = 0xA
+# Reproduced by analysis-2020accord/validate_gp6806_gate.py over V57's routes 28/29.
+GATE_VALIDATION = {"_cache_r29": dict(frames=7924, agreement_pct=99.899, duty_pct=21.73,
+                                      transitions=4, transitions_per_s=0.0505),
+                   "_cache_r28": dict(frames=29990, agreement_pct=99.943, duty_pct=49.88,
+                                      transitions=9, transitions_per_s=0.0300)}
+GATE_AGREEMENT_MIN = 99.0        # below this, gp-0x6806 is not the engagement flag and V67 inverts
+GATE_TPS_MAX = 1.0               # transitions/s; the kill band starts at 15 Hz = 30 transitions/s
+
+
+def assert_v57_probe_polarity(label="V67"):
+    """🛑 V57's bit6 is `gp-0x6806 == 0`; the validation inverts it. Prove the inversion is REAL.
+
+    The whole 99.9% agreement -- and therefore V67's polarity, and therefore the arm VALUE -- turns
+    on one branch byte in a DIFFERENT build's cave. If it were `be` (0x2) instead of `bne` (0xA) the
+    design would invert. Read out of the flown V57 artifact, never from its docstring.
+    Returns False (with a printed warning) if the V57 image is not present, rather than passing mute.
+    """
+    if not os.path.exists(V57_BIN):
+        print(f"    ⚠ {V57_BIN} missing -- V57's probe POLARITY is NOT verified this run, so the")
+        print("      on-car gate validation is quoted, not checked. Rebuild V57 to close this.")
+        return False
+    v57 = open(V57_BIN, "rb").read()
+    for addr, raw, what in V57_PROBE_RUNG:
+        got = bytes(v57[addr:addr + len(raw)])
+        assert got == raw, \
+            f"{label}: V57's probe rung at 0x{addr:05X} is {got.hex()}, not {raw.hex()} ({what}) -- " \
+            "the on-car validation's polarity cannot be confirmed"
+    hw = struct.unpack_from("<H", v57, 0xC4B3E)[0]
+    assert (hw >> 7) & 0xF == 0xB, f"{label}: 0x{0xC4B3E:05X} is not a Bcond at all"
+    assert hw & 0xF == COND_BNE, \
+        f"{label}: V57's bit6 branch is condition 0x{hw & 0xF:X}, not NE (0x{COND_BNE:X}) -- if it " \
+        "is BE then V57's bit6 means `gp-0x6806 != 0`, the validation's inversion is WRONG, and " \
+        "V67's polarity AND its 5244 arm invert with it. STOP."
+    assert hw & 0xF != V57.COND_BE, "V57's bit6 branch collapsed onto `be` -- the polarity inverts"
+    # and V57 read the SAME cell, with the SAME four bytes V67's own cave emits
+    assert V57_PROBE_RUNG[0][1] == V55.ldbu_any(-GATE_DISP, R6), \
+        f"{label}: V57 did not read gp-0x{GATE_DISP:04x} with the bytes this cave emits"
+    return True
+
+
+def assert_gate_validation(label="V67"):
+    """The on-car numbers, re-read from the artifact validate_gp6806_gate.py writes."""
+    if not os.path.exists(GATE_VALIDATION_JSON):
+        print(f"    ⚠ {GATE_VALIDATION_JSON} missing -- run validate_gp6806_gate.py; the docstring's")
+        print("      on-car numbers are then QUOTED, not checked.")
+        return False
+    got = json.load(open(GATE_VALIDATION_JSON, encoding="utf-8"))
+    for route, want in GATE_VALIDATION.items():
+        assert route in got, f"{label}: {route} missing from the gate-validation artifact"
+        for k, v in want.items():
+            g = got[route][k]
+            assert abs(g - v) <= (0.001 if isinstance(v, float) else 0), \
+                f"{label}: {route}.{k} is {g}, not the {v} the docstring states"
+        assert got[route]["agreement_pct"] >= GATE_AGREEMENT_MIN, \
+            f"{label}: {route} agreement {got[route]['agreement_pct']}% is below " \
+            f"{GATE_AGREEMENT_MIN}% -- gp-0x6806 is NOT the engagement flag and V67's design inverts"
+        assert got[route]["transitions_per_s"] <= GATE_TPS_MAX, \
+            f"{label}: {route} toggles at {got[route]['transitions_per_s']}/s -- the kill band " \
+            f"starts at 15 Hz = 30 transitions/s; a gate above {GATE_TPS_MAX}/s needs re-examining"
+    # the two routes must differ substantially in DUTY, or "not one route's pattern" is unearned
+    duties = sorted(got[r]["duty_pct"] for r in GATE_VALIDATION)
+    assert duties[-1] - duties[0] > 20.0, \
+        f"{label}: the two validation routes have duties {duties} -- too similar to claim the " \
+        "agreement is not one route's pattern"
+    return got
+
+
 def assert_probe_sites(code, label="V67"):
     """The hook and the cave, checked on whatever image is passed (pre-write, post-write, readback)."""
     assert bytes(code[HOOK_ADDR:HOOK_ADDR + 4]) == FF.jarl_lp(CAVE_BASE, HOOK_ADDR), \
@@ -1096,6 +1210,34 @@ def build():
     print(f"    0x{ARM_ADDR:05X} = {u16(v66, ARM_ADDR)}   0x{R26_ARM_ADDR:05X} = "
           f"{u16(v66, R26_ARM_ADDR)}   0x{CEIL_CAL:05X} = {v66[CEIL_CAL]} (BYTE)")
 
+    # ---- ★★ THE GATE, VALIDATED ON-CAR -----------------------------------------------------------
+    print("\n  ★★ GATE 2 IS MEASURED, NOT ARGUED -- gp-0x6806 validated on V57's flown probe:")
+    pol = assert_v57_probe_polarity("V67")
+    val = assert_gate_validation("V67")
+    if pol:
+        print("    POLARITY confirmed from the FLOWN V57 image, one byte at a time:")
+        for addr, raw, what in V57_PROBE_RUNG:
+            print(f"      0x{addr:05X}  {raw.hex():<10s} {what}")
+        print("      => V57's bit6 is set only when gp-0x6806 == 0, so the validation's inversion is")
+        print("         REAL and the 99.9% agreement belongs to `gp-0x6806 != 0`. If that branch had")
+        print("         been `be`, V67's polarity AND its 5244 arm would both invert.       PASS")
+    if val:
+        print(f"    {'route':>10s} {'frames':>8s} {'agree w/ latActive':>20s} {'duty':>8s} "
+              f"{'transitions':>13s}")
+        for route, v in val.items():
+            print(f"    {route.replace('_cache_r', 'route '):>10s} {v['frames']:>8d} "
+                  f"{v['agreement_pct']:>19.3f}% {v['duty_pct']:>7.2f}% "
+                  f"{v['transitions']:>4d} = {v['transitions_per_s']:.4f}/s")
+        tot = sum(v["frames"] for v in val.values())
+        trn = sum(v["transitions"] for v in val.values())
+        print(f"    pooled {tot:,} frames, {trn} transitions. Two very different duties (21.7% vs")
+        print("    49.9%) => not one route's pattern; and no dropout during steady engaged holding,")
+        print("    which is the one hole static analysis could not close (ramp-FSM phases 5/6/7).")
+        print("    ⚠ The transition COUNT is not the strong evidence -- 4 and 9 are small. The")
+        print("      STRUCTURAL argument is: a signal agreeing with latActive to 99.9% over 37,914")
+        print("      frames toggles when the DRIVER engages, and cannot also toggle at 21/45 Hz")
+        print("      without destroying that agreement.                                     PASS")
+
     baseline = bytearray(open(FF.V38_PLAIN, "rb").read())
     V55.V54.assert_v38_baseline(baseline)
     V62.assert_sar_sites(baseline, "V38 baseline", expect_doubled=False)
@@ -1427,9 +1569,12 @@ def build():
     print("  GATE 2 closed-loop stability:")
     print("          * the lane is a DERIVATIVE => DC-neutral: a gain step at engagement produces")
     print("            NO torque step, only a change of damping coefficient.")
-    print("          * gp-0x6806 measured on-car at 2 transitions in 180 s (<=0.1 Hz) -- four orders")
-    print("            of magnitude below the 21/45 Hz modes, so it cannot parametrically pump.")
-    print("            bit6 re-measures this over a long mixed drive; kill band 15-60 Hz.")
+    print("          * ★★ THE GATE IS VALIDATED ON-CAR, so this is MEASURED, not argued:")
+    print("            gp-0x6806 != 0 agrees with carControl.latActive at 99.899% / 99.943% over")
+    print("            V57's routes 29/28 (37,914 frames, 379.1 s, duties 21.7% and 49.9%), at")
+    print("            13 transitions total = 0.030-0.051/s. Three orders of magnitude below the")
+    print("            21/45 Hz modes; it cannot parametrically pump. V57's `bne` polarity byte is")
+    print("            asserted from the flown artifact. bit6 re-measures it on this drive.")
     print(f"          * magnitude: 5120 x {ARM_NEW} = 1.25% of INT32_MAX; lane saturation needs")
     print(f"            |dtorque| >= {sat} against a measured 123-839; the ten-lane sum clip was")
     print("            measured NEVER reached (120,049 frames).")

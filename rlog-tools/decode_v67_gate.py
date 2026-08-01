@@ -135,6 +135,18 @@ REPOINT_V66 = bytes.fromhex("847fc597")     # ld.bu -0x683c[gp],r15  -- the dead
 # The minimum duty gap between engaged and manual for bit6 to be called an engagement flag.
 GATE_TRACKS_MIN = 0.5
 
+# ★★ THE V57 BASELINE. gp-0x6806 was already validated on-car BEFORE V67 was flashed: V57's probe
+# put `(gp-0x6806 == 0)` on this same bit6 and flew routes 28/29 in July. Inverting it gives
+# `gp-0x6806 != 0`, which agreed with carControl.latActive at:
+#     route 29   7,924 frames /  79.2 s   99.899%   duty 21.73%   4 transitions = 0.0505/s
+#     route 28  29,990 frames / 299.9 s   99.943%   duty 49.88%   9 transitions = 0.0300/s
+# Two very different duties => not one route's pattern; no dropout during steady engaged holding.
+# 🛑 THIS DRIVE'S bit6 SHOULD REPRODUCE THAT. A materially lower agreement means either the gate
+# is not behaving as it did on V57, or the build on the car is not V67. Reproduce it, do not
+# assume it -- the whole point of putting the gate on a probe bit is that it is now LOAD-BEARING.
+V57_BASELINE = ((29, 7924, 99.899, 21.73, 0.0505), (28, 29990, 99.943, 49.88, 0.0300))
+V57_AGREEMENT_MIN = 99.0
+
 
 def collect(paths):
     """Pair each 0x14A probe frame with the most recent 0x18F frame (both ~100 Hz on src 1)."""
@@ -328,7 +340,7 @@ def report(tag, d):
         print(f"       expected file: {RWD_NAME}")
         return
     print("   ⚠ THE PAYLOAD SHAPE ALONE CANNOT TELL V66 FROM V67. Same four bits, same eight bytes,")
-    print("     different cells:")
+    print("     different cells -- and the two CAVES differ by only FOUR BYTES:")
     print(f"       V66  bit6 gp-0x6806 !=0 | bit5 gp-0x67f5 !=0 | bit4 gp-0x67fe !=0")
     print(f"       V67  bit6 gp-0x6806 !=0 | bit5 gp-0x671d !=0 | bit4 gp-0x671a >={CEIL}")
     print(f"     Confirm the file on the car:\n       V67: {RWD_NAME}\n       V66: {V66_RWD_NAME}")
@@ -390,6 +402,22 @@ def report(tag, d):
             verdict_ok = False
         else:
             print("   => the gate TRACKS lateral engagement, as designed.")
+        # ---- against the V57 baseline, which validated this cell BEFORE V67 was built ------------
+        agree = 100 * (m6 == d["lat"]).mean()
+        print("\n   ★★ AGAINST V57's ON-CAR VALIDATION of the same cell (routes 29 / 28):")
+        for rt, fr, ag, du, tps in V57_BASELINE:
+            print(f"      route {rt:<3d} {fr:6d} frames   agreement {ag:.3f}%   duty {du:5.2f}%   "
+                  f"{tps:.4f} transitions/s")
+        s6 = gate_stats(m6, np.ones(n, bool), fs, "")
+        print(f"      THIS DRIVE  {n:6d} frames   agreement {agree:.3f}%   duty "
+              f"{100 * s6['duty']:5.2f}%   {s6['tps']:.4f} transitions/s")
+        if agree < V57_AGREEMENT_MIN:
+            print(f"      *** AGREEMENT IS BELOW {V57_AGREEMENT_MIN}%, AND V57 GOT 99.9% ON THE SAME")
+            print("          CELL. Either gp-0x6806 is not behaving as it did on V57, or the build")
+            print("          on the car is not V67. STOP and confirm the .rwd before interpreting.")
+            verdict_ok = False
+        else:
+            print(f"      => reproduces V57's validation ({agree:.3f}% vs 99.90/99.94%).")
     else:
         print("   ⚠ carControl.latActive is absent or single-valued; falling back to")
         print("     STEER_CONTROL_ACTIVE for the duty comparison. Note the fallback in any writeup.")

@@ -81,13 +81,16 @@ measurement* of driver and motor-reaction torque combined, so no earlier tap sep
 
 | discriminator | grind #1 | grind #2 | separation |
 |---|---|---|---|
-| **driver torque** | hands-off | `tq_avg` **1600–2700**, \|angle\| 150–265° | **>8×** ★ |
+| **driver torque** | median **1268** | median **2158** | **1.70×** ⚠ *(this row read ">8×" until the closing addendum — that compared grind #2's measured torque against the DEFINITION of hands-off, not grind #1's measured distribution)* |
 | **LKAS engagement** | top-decile creep windows **100%** engaged, p99 **6.63×** | 84.5% vs a **54.7% base rate**, p99 **1.33×** | grind #1 only |
 | steering rate | med 128 counts | med 256 counts, **p90s overlap** (359 vs 371) | ~2× only |
 
-🛑 **Gating on LKAS alone cannot remove grind #2** — it is barely engagement-associated. The operator's
-*"make it LKAS-dependent"* requirement was formed before this was known; it still matters for not
-disturbing base steering, but it is **not sufficient on its own**. **Driver torque is the axis.**
+🛑 **Gating on LKAS alone cannot remove grind #2** — it is barely engagement-associated, and that
+remains true. ⚠ But *"driver torque is the axis"* is **WITHDRAWN**: measured best thresholds are
+**LKAS 98.7% / 15.7% · driver torque 96.8% / 50.5% · steering rate 81.1% / 48.5%** (keep grind #1
+boosted / remove grind #2). **No available axis cleanly separates them.** LKAS preserves grind #1's
+fix best and is the only one that leaves base steering exactly stock — which is why V67 uses it,
+accepting that grind #2 survives under LKAS. See the closing addendum.
 
 ---
 
@@ -112,17 +115,21 @@ code cave**, and caves are this kit's only bricking class.
 0x02A1B6 84 67 fb 97   ld.bu -0x6806[gp],r12    a REAL instruction, differs only in reg2
 ```
 
-**V67** = keep `sar 0x9`, repoint the gate, set `0xC6446` = **1536** (with ÷512 that is 3.0, exactly the
-stock creep gain 3072/1024). Driver light ⇒ LERP × 2, grind #1 stays fixed; driver cranking ⇒ flat
-stock, grind #2's regime removed.
-🛑 **V67 is BLOCKED on a chatter measurement.** The oscillation puts **±1400 counts** on the torsion
-bar; `gp-0x67f5`'s sustain is **10 ms** against a 21 Hz half-period of 24 ms, so **the mode's own
-amplitude may satisfy it** and switch the gain at the mode frequency — a parametric pump, the exact
-failure mode V58/V59/V60 chased for three builds. **That is V66's job.**
+🛑🛑 **THE PARAGRAPH THAT STOOD HERE IS SUPERSEDED — see the closing addendum.** It read *"V67 =
+keep `sar 0x9`, repoint the gate, set `0xC6446` = **1536**… V67 is BLOCKED on a chatter
+measurement… that is V66's job."* **All three parts are wrong now**, and the arm value would be a
+real build error if carried forward:
+- V67 was rebased on **V66** at the operator's direction, so both `sar` sites stay **stock** and
+  the arm **adds** the boost rather than cancelling it ⇒ **`0xC6446` = 5244**, not 1536.
+- The gate is **`gp-0x6806`**, not `gp-0x67f5`.
+- It is **NOT blocked**: `gp-0x6806` was validated on-car from V57's July probe (99.90–99.94% agreement
+  with `latActive` over 37,914 frames, 0.03–0.05 transitions/s).
+**Read the closing addendum for the built design. Do not size an arm from this section.**
 
 ---
 
-## ✅ V66 — BUILT, VERIFIED, AND IT IS THE RECOMMENDED NEXT FLASH
+## ✅ V66 — BUILT AND VERIFIED  ⚠ *(this heading said "THE RECOMMENDED NEXT FLASH"; the operator
+subsequently chose **V67**. V66 remains built and unflashed as the pure stock-rate-lane control.)*
 
 **V65 with both `sar` immediates reverted to stock + a 3-bit gate probe.** Exactly the operator's spec —
 V38 4× LKAS reach, steer-to-zero, stock rate lane, live telemetry — and simultaneously the

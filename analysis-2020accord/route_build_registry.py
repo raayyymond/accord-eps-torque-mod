@@ -159,6 +159,11 @@ def _self_check():
     assert "V65" in c and "V62" not in c, c
     c, _ = identify([0x87])                                  # route 35 -- genuinely ambiguous
     assert {"V64", "V65"} <= c, c
+    # 🛑 V66 and V67 always appear TOGETHER or not at all -- there is no payload that separates them.
+    for probe in ([0x87], [0x87, 0xC7], [0x87, 0xF7, 0xB7], [0x87, 0x97, 0xA7]):
+        c, _ = identify(probe)
+        assert ("V66" in c) == ("V67" in c), f"{probe}: V66/V67 must never be separable, got {c}"
+    assert "V66" not in identify([0x8F])[0], "bit3 set must EXCLUDE V66/V67"
     assert identify([0x07])[0] == {"V53"}
     assert identify([0x0F])[0] == {"V54"}
     # the table must be internally consistent
