@@ -322,13 +322,21 @@ reasons, in order of weight:
 the gate (when the arm is taken the LERP is discarded entirely, so the two cannot compose). If the
 LKAS gate proves unusable it is the fallback, at roughly half effectiveness.
 
-### 🛑 The gate cell is NOT yet chosen, and choosing it wrong is the whole risk
+### ✅ RESOLVED — the gate cell is `gp-0x6806`, and the candidate field is closed
+
+**Superseded but kept for provenance.** This section read *"the gate cell is NOT yet chosen, and
+choosing it wrong is the whole risk"* until `gp-0x6806` was validated on-car from V57's July probe
+(see above: 99.90–99.94% agreement with `latActive`, 0.03–0.05 transitions/s). The two rivals below
+are now moot for V67 and are left as the record of why:
+- `gp-0x67f5`'s chatter risk was never measured and no longer needs to be — ⚠ and the ">8×" claim in
+  its row is **WITHDRAWN** (the real driver-torque separation is **1.70×**, see the table above).
+- `gp-0x67fe`'s semantic dispute is **still open**; V66's probe would settle it if that build ever flies.
 
 | candidate | what it is | status |
 |---|---|---|
 | **`gp-0x67f5`** | governor slew-step selector, written only by the column-torque voter `FUN_00041eec`: driver torque ≥ cal `0xC531E` (1062) sustained cal `0xC64E7` (10) cycles | ★ **leading on the physics** — exactly the hands-on discriminator, and driver torque is the axis that separates the symptoms >8×. 🛑🛑 **KILL CRITERION: chatter.** The oscillation puts **±1400 counts** on the torsion bar; at 1 kHz a 10-cycle sustain is **10 ms** against a 21 Hz half-period of 24 ms — **the mode's own amplitude can satisfy it**, switching the gain at the mode frequency. That is a parametric pump. **Must be measured on-car before use.** |
 | **`gp-0x67fe`** | reported by a trace as the **LKAS engage state-machine's state byte** — sole writer `FUN_0003bd7c` (4 `st.b` @`0x3BDB8/0x3BE4E/0x3BE5A/0x3BE7A`), `==0` = assist down, `∈{1,2}` = up; even displacement `0x9802`; fresh in the tick | 🛑 **SEMANTICS DISPUTED.** `eps_lkas_chain_model.py` calls the same cell `assist_substate` — **BASE assist**, not LKAS. If that is right it is non-zero whenever the car is running and is **worthless as a gate.** One bit of on-car duty settles it: ≈100% ⇒ useless; tracks engagement ⇒ the best candidate found. **Do not resolve this by argument.** |
-| **`gp-0x6806`** | the LKAS enable; `STEER_CONTROL_ACTIVE` on CAN `0x18F` byte4 bit3 is sourced from it. Polarity resolved from the instruction (`0x2A1B6`–`0x2A1BC`): the deadband block runs **only when `gp-0x6806 == 0`**. Prior on-car: 96.26% high, **2 transitions in 180 s** | safe on chatter, **but the data above says it cannot remove grind #2** — only the disengaged share |
+| **`gp-0x6806`** | the LKAS enable; `STEER_CONTROL_ACTIVE` on CAN `0x18F` byte4 bit3 is sourced from it. Polarity resolved from the instruction (`0x2A1B6`–`0x2A1BC`): the deadband block runs **only when `gp-0x6806 == 0`**. Prior on-car: 96.26% high, **2 transitions in 180 s** | ✅ **CHOSEN.** Safe on chatter by a 3-orders-of-magnitude margin, and now measured to track engagement at 99.9%. ⚠ It still **cannot remove grind #2 under LKAS** — only the disengaged share. That is V67's stated cost, not a surprise |
 
 **Rejected, with reasons** — `gp-0x6807` (`STEER_STATUS`: multi-valued, and value 3 is the speed-gated
 *lockout*, the opposite of "applying"; odd displacement); `gp-0x67a4` (⚠ **corrects the record's "zero
