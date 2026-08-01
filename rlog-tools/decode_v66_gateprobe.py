@@ -4,25 +4,40 @@
 V66 packs three plain `!= 0` tests on gp-relative BYTE cells into CAN 330 (0x14A) byte4 at 100 Hz:
 
     bit 7 = 1                  LIVENESS (constant; 0 => the cave did not fire)
-    bit 6 = gp-0x6806 != 0     *** V67's PROPOSED GATE ***  (LKAS active, per FUN_00028ea6)
-    bit 5 = gp-0x67f5 != 0     driver-torque hands-on gate candidate
-    bit 4 = gp-0x683c != 0     *** THE CONTROL *** -- zero writers image-wide, MUST be 0 always
+    bit 6 = gp-0x6806 != 0     gate candidate A -- LKAS active, per FUN_00028ea6   (EVEN disp 0x97FA)
+    bit 5 = gp-0x67f5 != 0     gate candidate B -- 🛑 THREE-VALUED {0,1,0xFF}      (ODD  disp 0x980B)
+    bit 4 = gp-0x67fe != 0     gate candidate C -- DISPUTED SEMANTICS, see below   (EVEN disp 0x9802)
     bit 3 = 0                  UNUSED on V66. A set bit3 means the build on the car is NOT V66.
     bits 2:0 = stock STEER_SENSOR_STATUS_1/2/3, preserved
 
+🛑 THIS HEADER WAS STALE FOR ONE REVISION AND SAID bit4 = gp-0x683c ("the control"). IT IS NOT.
+The built image reads `ld.bu -0x67fe[gp],r6` @0xC4B50 (bytes `84 37 03 98`, verified from the
+artifact). gp-0x683c is NOT measured by V66 -- only three rungs fit the 68-byte extent, and all three
+slots went to GATE CANDIDATES. Confirm against the image before trusting any decoder header; this file
+is the exact class of trap it warns about two paragraphs down.
+
 WHAT THIS DRIVE DECIDES -- pre-committed in build_v66_tva.py, before the drive
 ------------------------------------------------------------------------------
-V66 is the pre-flight for V67, which repoints ONE BYTE at 0x3AA96 (`c5` -> `fb`) so that the dead
-`ld.bu -0x683c[gp],r15` @0x3AA94 reads `gp-0x6806` instead, turning cal `0xC6446` into an LKAS-only
-gain override for r24. Three things can kill that design, and each has a bit:
+V66 is the pre-flight for V67, which repoints ONE BYTE at 0x3AA96 so that the dead
+`ld.bu -0x683c[gp],r15` @0x3AA94 reads a chosen gate cell instead, turning cal `0xC6446` into a
+CONDITIONAL gain override for r24. **V66's job is to pick which cell.**
 
-  bit4 EVER 1  => gp-0x683c is NOT dead. The repoint is not a clean substitution. *** V67 CANCELLED. ***
-  bit6 TOGGLE RATE in 15-60 Hz => a gain switching near the mode frequency is a PARAMETRIC PUMP,
-       the exact failure mode V58/V59/V60 chased for three builds. *** V67 CANCELLED. ***
-  bit5 TOGGLE RATE in 15-60 Hz => gp-0x67f5 is unusable as an alternative gate, for the same reason.
+  bit5 or bit6 or bit4 TOGGLING in 15-60 Hz => that candidate is DEAD. A gain switching near the mode
+       frequency is a PARAMETRIC PUMP -- the exact failure mode V58/V59/V60 chased for three builds,
+       and worse than the symptom it would fix.
+  bit4 DUTY ~= 100%  => gp-0x67fe is the golden model's `assist_substate` (BASE assist), not an LKAS
+       flag, and it is worthless as a gate. Duty tracking engagement => it is the best candidate found.
+       This single number settles a dispute between a trace and the golden model.
+  bit6 DUTY vs latActive => confirms gp-0x6806 really is the engagement flag `STEER_CONTROL_ACTIVE`
+       is sourced from, on a long drive rather than the single 180 s route on record.
 
-The HEADLINE for each of bits 6 and 5 is therefore, in this order: DUTY CYCLE, TRANSITIONS PER
+The HEADLINE for each of bits 6, 5 and 4 is therefore, in this order: DUTY CYCLE, TRANSITIONS PER
 SECOND, and the DOMINANT TOGGLE FREQUENCY. Everything else in this tool is supporting evidence.
+
+⚠ gp-0x683c's deadness -- the premise of the repoint -- is NOT measured on this drive. It rests on two
+independent static methods (a raw byte scan in both encodings at every offset, and a 3-method
+cross-check). Static clearance has failed this kit before (`gp-0x1500`), so this is a real residual;
+the mitigation is that if gp-0x683c were live, V65's r24 gain would already be taking the 512 arm today.
 
 🛑 NYQUIST. The probe is 100 Hz, so the kill band 15-60 Hz is NOT fully observable: a true 58 Hz
 toggle aliases to 42 Hz and a true 51 Hz toggle to 49 Hz. This tool reports the observed peak and
@@ -85,7 +100,7 @@ KILL_LO_HZ, KILL_HI_HZ = 15.0, 60.0
 
 # Exactly eight payloads are reachable (probe bits only; bits 2:0 are the live status field).
 LEGAL = {BIT_LIVE | a | b | c
-         for a in (0, BIT_6806) for b in (0, BIT_67F5) for c in (0, BIT_683C)}
+         for a in (0, BIT_6806) for b in (0, BIT_67F5) for c in (0, BIT_67FE)}
 
 RWD_NAME = ("39990-TVA,A160-V66-LKAS-4x-mss0-decouple0xC646C-ratelane-STOCK-gateprobe3-"
             "can330byte4-0x13000-0x100000.rwd")
@@ -415,7 +430,7 @@ def report(tag, d):
                 print("      *** V67 IS CANCELLED. *** Do not flash the repoint.")
                 verdict_ok = False
             else:
-                print("      => gp-0x67f5 is UNUSABLE as an alternative gate. Do not substitute it.")
+                print(f"      => gp-0x{cell:04x} is UNUSABLE as an alternative gate. Do not substitute it.")
         elif rate_implies_hz >= KILL_LO_HZ:
             print(f"      ⚠ the raw transition RATE alone implies ~{rate_implies_hz:.1f} Hz of")
             print("        switching, which is inside the kill band even though the spectral peak is")
@@ -454,49 +469,106 @@ def report(tag, d):
         print("   ⚠ This is the 'start the log before the first engagement' failure. Re-drive.")
         verdict_ok = False
 
-    # ---- 7. bit5, in its own right ------------------------------------------------------------------
-    print(f"\n{'-' * 100}\n-- 7. bit5 = gp-0x67f5 != 0, AS A SIGNAL --")
+    # ---- 7. bit5 -- and the {0, 1, 0xFF} ambiguity the `!= 0` test cannot resolve --------------------
+    print(f"\n{'-' * 100}\n-- 7. bit5 = gp-0x67f5 != 0  🛑 A THREE-VALUED CELL SEEN THROUGH ONE BIT --")
+    print("   FUN_00041eec is the SOLE writer and it stores THREE distinct values:")
+    print("     0xFF @0x4222A  the INVALID / not-evaluated sentinel, taken while gp-0x67f4 == 0")
+    print("        1 @0x42258  latched, after a debounce")
+    print("        0 @0x42288  cleared, after a debounce")
+    print("   `!= 0` therefore CONFLATES the latched state with the sentinel. Disambiguation rule,")
+    print("   stated as a HYPOTHESIS: 0xFF is entered only under a persistent condition, so bit5 HIGH")
+    print("   continuously from the first frame reads as the sentinel, while bit5 debouncing up and")
+    print("   down reads as the latch. This tool cannot prove which; it reports the shape.")
+    first_run_high = bool(g67f5[0]) and (transitions(g67f5)[0] + transitions(g67f5)[1] == 0)
+    print(f"   bit5 high on frame 0: {bool(g67f5[0])};  never toggles: {first_run_high}")
+    if first_run_high and g67f5[0]:
+        print("   ⚠ HIGH FROM FRAME 0 AND NEVER TOGGLING => most consistent with the 0xFF SENTINEL,")
+        print("     i.e. gp-0x67f4 == 0 for the whole drive. NOT evidence of a latched gate.")
     if eng.sum() and (~eng).sum():
         print(f"   duty ENGAGED {100 * g67f5[eng].mean():6.2f}%   MANUAL {100 * g67f5[~eng].mean():6.2f}%")
     sus_hi = sus > 200
     if sus_hi.any() and (~sus_hi).any():
         print(f"   duty with SUSTAINED driver effort > 200 : {100 * g67f5[sus_hi].mean():6.2f}%")
         print(f"   duty hands-off (sustained <= 200)       : {100 * g67f5[~sus_hi].mean():6.2f}%")
-        print("   => a large gap is what a hands-on/driver-torque gate should look like; no gap means")
-        print("      the 'driver-torque' reading of this cell is not supported by the drive.")
+        print("   => a large gap would support the 'driver-torque hands-on gate' reading. NO gap")
+        print("      supports the code reading instead: FUN_00041eec reads NO torque cell -- it reads")
+        print("      the voted vehicle speed gp-0x6a5e and four wheel-speed-like halfwords, and")
+        print("      latches when their max deviation exceeds cal 0xC631E = 640 counts (~10 km/h) for")
+        print("      cal 0xC64E7 = 10 consecutive ticks. That is a PLAUSIBILITY FAULT LATCH.")
 
-    # ---- 8. BY SPEED --------------------------------------------------------------------------------
-    print(f"\n{'-' * 100}\n-- 8. BY SPEED --")
-    print(f"   {'band':>14s} {'n':>7s} {'bit6 duty':>11s} {'bit6 t/s':>10s} {'bit5 duty':>11s} "
-          f"{'bit5 t/s':>10s}")
+    # ---- 8. bit4 -- THE DISPUTE THIS BUILD EXISTS TO SETTLE ------------------------------------------
+    print(f"\n{'-' * 100}\n-- 8. *** bit4 = gp-0x67fe != 0 -- THE DISPUTED CELL *** --")
+    print(f"   duty over the whole log : {100 * g67fe.mean():6.2f}%")
+    if eng.sum() and (~eng).sum():
+        de, dm = g67fe[eng].mean(), g67fe[~eng].mean()
+        print(f"   duty ENGAGED {100 * de:6.2f}%   MANUAL {100 * dm:6.2f}%   "
+              f"agreement with SCA {100 * (g67fe == eng).mean():.2f}%")
+    print("   THE TWO READINGS, and what separates them:")
+    print("     (a) subagent : the LKAS engage state machine's own state byte, ==0 means assist DOWN,")
+    print("                    in {1,2} gates assist up. Sole live writer FUN_0003bd7c.")
+    print("     (b) golden model : `assist_substate` -- BASE ASSIST, valid only in {1,2}. If so the")
+    print("                    cell is non-zero whenever the car is running.")
+    if g67fe.mean() > 0.99:
+        print("   *** DUTY ~= 100% ==> READING (b). gp-0x67fe is the base-assist substate and is")
+        print("       WORTHLESS as an LKAS gate. RETIRE candidate C. The golden model was right.")
+    elif eng.sum() and (~eng).sum() and abs(g67fe[eng].mean() - g67fe[~eng].mean()) > 0.5:
+        print("   *** DUTY TRACKS ENGAGEMENT ==> READING (a). gp-0x67fe is the best gate candidate")
+        print("       available AND its displacement 0x9802 is EVEN, so the repoint at 0x3AA96 is a")
+        print("       ONE-BYTE edit (c5 -> 03, hw1 untouched). Prefer it over gp-0x6806 if its toggle")
+        print("       rate above is also clear of the kill band.")
+    else:
+        print("   *** NEITHER. The duty is neither ~100% nor engagement-tracking, so the cell is")
+        print("       something else again. Do NOT gate on it until it is identified.")
+    print("   ⚠ gp-0x67fe is LOCKSTEP-SHADOWED (pair gp-0x4c3a, mismatch -> FUN_0006b9fa). Read-only")
+    print("     probing is unaffected; any future WRITE or cal edit on this cell is not.")
+
+    # ---- 9. BY SPEED --------------------------------------------------------------------------------
+    print(f"\n{'-' * 100}\n-- 9. BY SPEED --")
+    print(f"   {'band':>12s} {'n':>7s} {'b6 duty':>9s} {'b6 t/s':>8s} {'b5 duty':>9s} {'b5 t/s':>8s} "
+          f"{'b4 duty':>9s} {'b4 t/s':>8s}")
     for lo, hi in ((0, 1), (1, 2), (2, 3), (3, 5), (5, 8), (8, 15), (15, 25), (25, 99)):
         sel = (d["v"] >= lo) & (d["v"] < hi)
         if sel.sum() < 2:
             continue
         s6 = gate_stats(g6806, sel, fs, "")
         s5 = gate_stats(g67f5, sel, fs, "")
-        print(f"   {f'{lo}-{hi} m/s':>14s} {int(sel.sum()):7d} {100 * s6['duty']:10.2f}% "
-              f"{s6['tps']:10.3f} {100 * s5['duty']:10.2f}% {s5['tps']:10.3f}")
+        s4 = gate_stats(g67fe, sel, fs, "")
+        print(f"   {f'{lo}-{hi} m/s':>12s} {int(sel.sum()):7d} {100 * s6['duty']:8.2f}% "
+              f"{s6['tps']:8.3f} {100 * s5['duty']:8.2f}% {s5['tps']:8.3f} "
+              f"{100 * s4['duty']:8.2f}% {s4['tps']:8.3f}")
 
     # ---- THE VERDICT --------------------------------------------------------------------------------
     print(f"\n{'-' * 100}\n-- THE VERDICT (pre-committed in build_v66_tva.py, before the drive) --")
-    print(f"   bit4 (the control) : 0 on all {n} frames  => the dead-cell claim survives")
-    s6 = headline.get(BIT_6806)
-    if s6:
-        print(f"   bit6 (the gate)    : duty {100 * s6['duty']:.2f}%, {s6['rise'] + s6['fall']} "
-              f"transitions in {s6['span']:.1f}s = {s6['tps']:.3f}/s")
+    for bit, name, cell, _why in GATES:
+        s = headline.get(bit)
+        if s:
+            print(f"   {name} : duty {100 * s['duty']:6.2f}%, {s['rise'] + s['fall']:5d} transitions "
+                  f"in {s['span']:.1f}s = {s['tps']:.3f}/s")
     if verdict_ok:
-        print("\n   *** V67 IS CLEARED ON EVERY CRITERION THIS DRIVE CAN TEST. ***")
-        print("   Next: 0x3AA96 c5 -> fb (repoint the dead gate to gp-0x6806) and 0xC6446 512 -> 6144.")
-        print("   ⚠ Still OUTSTANDING and NOT tested by this build: gp-0x671d, the masking risk. It")
-        print("      OUTRANKS the LKAS arm in r24's priority chain, so if it latches non-zero V67's")
-        print("      arm never applies. It did not fit in the 68-byte cave (a fourth rung needs 12")
-        print("      bytes and 8 were spare -- build_v66_tva.py carries the arithmetic). V64 measured")
-        print("      it 0 across 14,980 frames of route 35; that is the ONLY evidence, and it is one")
-        print("      route. A null V67 must be read against that gap, not as a falsified lever.")
+        print("\n   *** V67'S GATE IS CLEARED ON EVERY CRITERION THIS DRIVE CAN TEST. ***")
+        print("   Repoint byte at 0x3AA96, by chosen gate:  gp-0x6806 -> fb | gp-0x67f5 -> 0b |")
+        print("                                             gp-0x67fe -> 03")
+        print("   ARM VALUE 0xC6446 -- and it depends on whether V62's `sar 0x9` is KEPT:")
+        print("     KEEP sar 0x9 (the recommended shape): 512 -> 1536.  The arm divides by 512, so")
+        print("       1536 reproduces the stock creep gain 3072/1024 = 3.0 EXACTLY. Gate false =>")
+        print("       LERP x2 (grind #1 stays fixed); gate true => stock (grind #2's regime removed).")
+        print("       This requires the gate to be TRUE in grind #2's regime -- i.e. a HANDS-ON /")
+        print("       driver-torque cell. With an LKAS-active cell the polarity is inverted and this")
+        print("       value is WRONG.")
+        print("     REVERT sar to 0xa: 512 -> 6144 (= 2x the creep default 3072), with the gate TRUE")
+        print("       where the boost is WANTED. Flat across motor rate, so it does not track the")
+        print("       LERP's own rolloff -- more aggressive than V62 at high steering rate.")
+        print("   🛑 Pick the arm value AFTER the gate, never before: the two must agree on polarity.")
     else:
         print("\n   *** V67 IS NOT CLEARED. *** See the failing criterion above. Do not flash the")
         print("   repoint until it is explained.")
+    print("\n   ⚠ OUTSTANDING, and NOT testable from this log -- neither absence is a pass:")
+    print("      gp-0x683c, the CONTROL and V67's repoint site. Static evidence only (1 reader,")
+    print("        0 writers, 0 extended-form hits, two decoders). Its bit was cut for cave budget:")
+    print("        a rung costs 12 bytes and only 8 of the proven 68 were spare.")
+    print("      gp-0x671d, the MASKING RISK. It OUTRANKS the LKAS arm in r24's priority chain, so if")
+    print("        it latches non-zero V67's arm never applies. V64 measured it 0 across 14,980")
+    print("        frames of ONE route. A null V67 must be read against that gap.")
     if const87 > 0.99:
         print("\n   🛑 ...AND ALL OF THE ABOVE IS CONDITIONAL ON V66 ACTUALLY BEING FLASHED. byte4 was")
         print("      a constant 0x87, byte-identical to V64's null and V65's NEUTRAL bucket.")
