@@ -342,3 +342,66 @@ is recorded as a factual observation about the trigger, and the constraint is th
 and the `analyze_r37_*.py` set.
 
 **Predecessor:** `HANDOFF-2026-07-31-v64-the-null-is-on-the-gate.md`.
+
+---
+
+## ★★ V65 BUILT 2026-08-01, UNFLASHED — the saturation ladder
+
+**V65 = V62 with ONLY the cave payload replaced.** No calibration byte moves; **CAL CRC and the
+`0xD2000` block are byte-identical to V62** (machine proof). **56 bytes off V62** — 52 cave + 4 MAIN
+CRC, and nothing else. Same base `0xC4B34`, hook `0x55C0E`, 68-byte extent flown clean five times.
+Image SHA `f12171a827bbbfe324b3542c27e9db35f9e7667f4767cfbba9b7b201dedd2dd7`;
+RWD SHA `dabc924198d4660e67ab657c19f8056fa67a5d365cd6dbcb993c3bf277523f33`.
+
+**It answers the one question the ratchet's waveform poses.** The waveform is *symmetric* ⇒ an
+amplitude-saturated oscillation ⇒ something is hitting a limit and bouncing. V65 measures the
+aggregator output `gp-0x6b94` directly against its own ±10240 hard clip:
+
+| payload | bits | meaning |
+|---|---|---|
+| `0xE7` | 6+5 | **+RAIL** `[+8192, +10240]` |
+| `0xA7` | 5 | +HALF `[+4096, +8191]` |
+| `0x87` | — | NEUTRAL `[−4096, +4095]` |
+| `0x97` | 4 | −HALF `[−8192, −4097]` |
+| `0x9F` | 4+3 | **−RAIL** `[−10240, −8193]` |
+
+One `ld.h` + one `sar 0xc` + four cmp/branch/movea rungs = **62 of 68 bytes**. Three invariants the
+decoder hard-checks: `bit6⇒bit5`, `bit3⇒bit4`, and **never both sides in one frame** — the last is
+also the discriminator that rejects V59/V64 byte4 semantics.
+
+⭐ **Orchestrator-verified independently from the built image:** 56-byte diff confined to the cave +
+MAIN CRC; `0x3AB70`=`aa32` / `0x3AB76`=`a932` / `0x3AC20`=`a942` all unmoved; CAL block byte-equal and
+CRC word `cfa2c80e` identical; the cave's `ld.h` (`24376c94`) **byte-identical to the firmware's own
+read at `0x453E0`**, register field included; all four branches land exactly on their labels; and a
+wire model over **all 20,481 clamped values** gives exactly 5 payloads with **zero invariant
+violations**. Bucket widths 8192 / 4096 / 2048 / 4096 / **2049** — the `+RAIL` bucket is one count
+wider because `sar` floors, a 0.049% artefact the decoder prints beside the skew figure.
+
+### 🛑 What was dropped and why — the V64 lesson, applied one build early
+Draft 1 spent bit6/bit3 on **`gp-0x67ac`**, the nine-lane suppression latch. The builder found it is
+**structurally pinned at 0**: its value comes from `gp-0x3d98`, a sticky OR over 11 sources requiring
+`gp-0x61a0[i] ∈ {2,3,4}`, and cal `0xC4124` byte-reads **(0,0,5,0,5,5,0,0,0,5,0)** — nothing in that
+set. ⇒ **bit6 could not fire.** That is exactly V64's failure: an entire probe spent on a gate that
+never arms. Rebuilt, and the bits were re-spent on amplitude resolution, which is what the hypothesis
+actually needs. 🛑 The superseded draft's `.rwd` was **deleted** — two V65 files with different
+payloads is the "which build is on the car" trap this probe exists to prevent.
+
+⚠ **An encoding trap found while dropping it, worth keeping:** `gp-0x67ab` is a **real adjacent cell**
+(the other fold result, stored at `0x2773E`). Encoding `-0x67ac` with `hw1` bit 5 set yields
+`hw1 = 0x37A4` and silently reads **the wrong cell** — a plausible wrong answer, not a crash.
+🛑 And the mirror: `hw1` bit 5 reads **1** on both `ld.h` donors, where it is merely the low bit of
+opcode 0x39 and carries no displacement meaning at all.
+
+### Pre-committed interpretation, written before the drive
+- **bit6↔bit3 alternating at ~7 Hz** ⇒ rail-to-rail **and clipping**; the lever is loop gain upstream —
+  r24's `gain_B` **breakpoints** at `0xD2AEC`. Also re-reads the whole V39→V64 null run as *"aimed past
+  the clip."*
+- **bit5↔bit4 only** ⇒ large but **unclipped**; a linear-regime problem, and the damper lanes are back
+  in play. 🛑 Do **not** jump to `gain_B` in this case.
+- **All four quiet** ⇒ the nonlinearity is **downstream** of the aggregator; next target is `gp-0x6b98`
+  and the FOC/current loop, not another lane gain.
+- **A rail bit without its half bit, or both sides in one frame** ⇒ decode error, **not V65 on the car**.
+
+**Route:** ordinary driving plus creep, and revisit the burst corner — **v 2–4 m/s at high steering
+rate (≥32 deg/s) under LKAS**. Log from before first engagement. The same drive delivers the burst
+count that step 0 asks for.
