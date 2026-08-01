@@ -231,33 +231,68 @@ hw2) the opcode field, both register fields, and the high displacement byte are 
 
 ---
 
-## V67 — gate the doubling on the axis that actually separates the symptoms
+## V67 — V66 PLUS the grind #1 fix, gated on LKAS
 
-**The shape:** keep V62's `sar 0x9` (×2 everywhere), repoint the dead `gp-0x683c` gate to a
-**hands-on / driver-torque** indicator, and set `0xC6446` so the armed value **cancels the doubling**.
+**Operator's design, 2026-08-01, and it is the right shape.** Building on **V66** rather than on V65
+inverts the gate polarity usefully: the `sar` stays **stock**, so *gate false* is byte-for-byte stock
+behaviour, and the boost is something the arm *adds* rather than something it *cancels*.
 
 | # | site | from | to | what |
 |---|---|---|---|---|
-| 1 | `0x3AA96` | `c5` | *gate disp* | repoint the dead gate — **one byte** if the target displacement is even |
-| 2 | `0xC6446` | 512 | **1188** | sized AT THE POINT THE ARM IS TAKEN — see the correction below |
-| — | `0x3AC20`, `0x3AB76` | — | unchanged `a9` | V62's doubling is **kept** |
+| 1 | `0x3AA96` | `c5` | `fb` | repoint `ld.bu -0x683c[gp],r15` → `ld.bu -0x6806[gp],r15`. **ONE BYTE** |
+| 2 | `0xC6446` | 512 | **5244** | = 2.00× the LERP at grind #1's operating point (creep 7.2 km/h, 128 deg/s ⇒ LERP 2622) |
+| — | `0x3AC20`, `0x3AB76` | — | **stock `aa`** | V66's reverts are **kept** |
 
-- driver light / hands-off → gate 0 → LERP × 2 ⇒ **grind #1 stays fixed, exactly as V62**
-- driver cranking the wheel → gate 1 → flat `0xC6446` ⇒ **back to stock, grind #2's regime removed**
+- **LKAS off** → arm not taken → LERP × 1 ⇒ **exactly stock, every condition.** The
+  *"not affecting base steering"* requirement met exactly rather than approximately.
+- **LKAS on** → flat 5244 ⇒ **2.00× at grind #1's operating point**, i.e. V62's proven fix.
 
-🛑 **SIZING CORRECTION, caught by executing the model** (`analysis-2020accord/v66_v67_explained.py`).
-An earlier draft used **1536**, sized against the creep-and-**zero-rate** default of 3072. That was
-wrong: **the arm is only taken while the driver is loading the wheel**, and grind #2 lives at motor
-rate ~256 deg/s where the LERP has already rolled off to **2377**, not 3072. A flat 1536 therefore
-delivered **1.29× stock in the very regime it exists to neutralise.** The arm must be sized at the
-point it is taken: `arm ≈ LERP_there / 2` ⇒ **1188**, which lands on **1.00× exactly**.
-⚠ **Unavoidable residual: a scalar arm cannot track a curve.** 1188 is exact at grind #2's measured
-operating point and drifts to **0.81×–1.47×** across the rest of the hands-on regime — still far below
-V62's flat **2.00×**, which is the number that produced the 11.71×.
+Arithmetic: `5120 × 5244 = 26.8 M` = **1.25% of INT32_MAX**; the lane saturates at |dtorque| ≥ 1599
+against a measured 123–839. `0xC6444` (r26's arm, same gate) stays stock 512 — r26 is inert.
 
-`0xC6444` (r26's arm on the same gate) stays stock 512 — r26 is structurally inert, and 512 is below
-gain_A's defaults so it is conservative even if r26 ever became live.
-Arithmetic: `5120 × 1188 = 6.1 M` = **0.28% of INT32_MAX**. No saturation concern.
+### 🛑 What it costs, stated plainly
+
+**Grind #2 SURVIVES under LKAS**, and at 2.21× — slightly *more* than V62's 2.00×, because a scalar
+arm does not follow the LERP's own rolloff (it drifts ~1.8× at the slowest creep to ~2.7× at road
+speed with a fast wheel). `0xC6446` is one halfword, so it is trivially re-tunable after a drive.
+
+### 🛑 NO AVAILABLE AXIS CLEANLY SEPARATES THE TWO SYMPTOMS — measured, creep, top decile of each
+
+| axis | grind #1 | grind #2 | best single threshold: keep #1 boosted / remove #2 |
+|---|---|---|---|
+| **LKAS engaged** | **98.7%** | 84.3% (base rate 54.7%) | **98.7% / 15.7%** ← V67 uses this |
+| driver torque | median 1268 | median 2158 (**1.70×**) | 96.8% / 50.5% |
+| steering rate (**the LERP's own axis**) | median 128 deg/s | median 256 (**2.00×**) | 81.1% / 48.5% |
+
+🛑 **CORRECTION.** An earlier pass in this document said driver torque separates the symptoms
+**">8×"**. **It does not.** That number compared grind #2's *measured* torque (1600–2700) against the
+*definition* of hands-off (≤ 200) rather than against grind #1's *measured* distribution. The real
+separation is **1.70×**, with heavy overlap.
+
+⇒ LKAS preserves grind #1's fix best (98.7%) and is the only axis that leaves base steering exactly
+stock. It removes grind #2 only where LKAS is off — **15.7% of these PROVOKED test windows**, but
+these routes are 54.7% engaged *because they were test routes*; ordinary driving is mostly LKAS-off,
+so in practice it removes grind #2 from most real driving.
+
+## Why not just edit the LERP instead?
+
+You can — it is **cal-only** (no code edit at all), mode-10-private, one CRC block (**#41**,
+`[0xD2000,0xD2FFC)`), and in that one respect **safer** than the repoint. It was not chosen for three
+reasons, in order of weight:
+
+1. **The rate axis is the WEAKEST discriminator of the three.** Its best possible threshold keeps
+   81.1% of grind #1 boosted while removing only **48.5%** of grind #2 — *half* the grind #2
+   population sits below any threshold that preserves grind #1. The medians differ 2.00× and the
+   distributions overlap heavily (p90s 359 vs 371 counts).
+2. **It changes base steering at ALL times** — the LERP is the *default* arm, used in every condition,
+   LKAS or not. That is precisely what a gate avoids and what the operator asked to avoid.
+3. **Bigger surface**: 4 records × 8 halfwords = 32 halfwords plus CRC, versus one byte and one
+   halfword. ⚠ And `build_v62_tva.py`'s tripwire watches only 2 of the 4 records, so an edit landing
+   on `0xD2A74` or `0xD2AB0` would go unnoticed by the existing gates.
+
+⚠ It is **not closed** — it remains a legitimate cal-only lever, and it is mutually exclusive with
+the gate (when the arm is taken the LERP is discarded entirely, so the two cannot compose). If the
+LKAS gate proves unusable it is the fallback, at roughly half effectiveness.
 
 ### 🛑 The gate cell is NOT yet chosen, and choosing it wrong is the whole risk
 

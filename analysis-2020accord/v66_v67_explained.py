@@ -7,9 +7,11 @@ address, every constant byte-read little-endian from `_v65_plain_image.bin`.
 
 THE ONE-SENTENCE ANSWER
     V62 applied a x2 to the torsion-bar rate lane EVERYWHERE. That fixed grind #1 and caused grind #2.
-    V67 applies the SAME x2, but only in the operating regime where grind #1 lives, and leaves the
-    regime where grind #2 lives at exactly stock.
-    => V67 does not "fix" grind #2. It removes the thing that CAUSED grind #2, and stock never had it.
+    V67 = V66 (stock rate lane) PLUS that same x2, but taken ONLY while LKAS is applying.
+    So LKAS-off driving is byte-for-byte stock -- grind #2 gone there, because stock never had it --
+    and LKAS-on keeps grind #1's proven fix.
+    => V67 does not "fix" grind #2. It removes the thing that CAUSED grind #2 from every condition
+       where the gate is false. Grind #2 SURVIVES under LKAS. That is the honest trade.
 
 WHY A GATE AND NOT A FILTER -- the constraint that forces this design
     The lane is a 4-sample finite difference, so its gain RISES with frequency: measured 1.93x more
@@ -19,7 +21,17 @@ WHY A GATE AND NOT A FILTER -- the constraint that forces this design
     41.6/20.9 selectivity toward 1.0 and never below it. Two poles low enough to bite by 42 Hz cost
     ~ -92 deg at 20.9 Hz and destroy the +75 deg lead that IS the fix.
     => the separation cannot come from FREQUENCY. It has to come from an OPERATING CONDITION.
-    Measured separations: driver torque >8x, LKAS engagement (grind #1 only), steering rate ~2x.
+    Measured separations (creep, top decile of each symptom):
+        LKAS engaged   grind #1 98.7%  vs grind #2 84.3%   (base rate 54.7%)
+        steering rate  grind #1  128   vs grind #2  256 deg/s  = 2.00x, heavy overlap
+        driver torque  grind #1 1268   vs grind #2 2158       = 1.70x, heavy overlap
+    Best single threshold on each -- keep grind #1 boosted / remove grind #2:
+        LKAS active          98.7% / 15.7%      <- V67 uses this
+        driver torque @2158  96.8% / 50.5%
+        steering rate @282   81.1% / 48.5%      <- this is the LERP's own axis
+    🛑 NO available axis cleanly separates them. LKAS preserves grind #1 best and is the ONLY one
+    that leaves base steering exactly stock. It removes grind #2 only where LKAS is off -- 15.7% of
+    these PROVOKED test windows, but ordinary driving is mostly LKAS-off, so in practice far more.
 """
 
 # =================================================================================================
@@ -153,8 +165,20 @@ BUILDS = {
     "STOCK/V38":     dict(shift=10, arm_683c=ARM_683C, gate="(dead cell -- always 0)"),
     "V62 / V65":     dict(shift=9,  arm_683c=ARM_683C, gate="(dead cell -- always 0)"),
     "V66":           dict(shift=10, arm_683c=ARM_683C, gate="(dead cell -- always 0)"),
-    "V67":           dict(shift=9,  arm_683c=1188,     gate="HANDS-ON cell (repointed, 1 byte)"),
+    "V67":           dict(shift=10, arm_683c=5244,     gate="gp-0x6806 LKAS-ACTIVE (repointed)"),
 }
+
+# ★ V67 IS V66 PLUS THE GRIND #1 FIX, GATED ON LKAS -- the operator's design, and it is the right
+# shape. Building it on V66 rather than on V65 inverts the gate polarity in a useful way:
+#     shift stays STOCK `sar 0xa`  =>  gate FALSE (LKAS off) is BYTE-FOR-BYTE STOCK BEHAVIOUR.
+#     gate TRUE (LKAS applying)    =>  flat arm 5244 == 2.00x the LERP at grind #1's operating
+#                                      point (creep 7.2 km/h, 128 deg/s, LERP 2622).
+# Base steering is therefore untouched in every condition -- the requirement stated from the start,
+# now met exactly rather than approximately.
+#   0x3AA96  c5 -> fb   repoint `ld.bu -0x683c[gp],r15` -> `ld.bu -0x6806[gp],r15`.  ONE BYTE.
+#   0xC6446  512 -> 5244
+# Arithmetic: 5120 * 5244 = 26.8 M = 1.25% of INT32_MAX. Lane saturates at |dtorque| >= 1599,
+# against a measured 123-839. `0xC6444` (r26's arm, same gate) stays stock 512 -- r26 is inert.
 
 # 🛑 SIZING CORRECTION, made by running this file. The first draft used arm = 1536, sized against
 # the creep-and-ZERO-rate default of 3072. That was wrong: the arm is ONLY taken when the gate is
@@ -229,10 +253,23 @@ def v66_probe(gp_6806, gp_67f5, gp_67fe, can_payload_byte):
 #   grind #1: LKAS engaged, HANDS-OFF creep. 18-22 Hz. Steering rate ~48 raw counts.
 #   grind #2: creep with the driver CRANKING the wheel -- tq_avg 1600-2700, |angle| 150-265 deg,
 #             steering rate ~256 raw counts. ~44.9 Hz, Q~37. Engaged AND disengaged.
+# 🛑 CORRECTION I OWE. I earlier said driver torque separates the two symptoms ">8x". It does NOT.
+# That number came from comparing grind #2's MEASURED torque (1600-2700) against the DEFINITION of
+# hands-off (<=200), not against grind #1's MEASURED distribution. Creep windows, top decile of each:
+#     driver torque   grind #1 median 1268  vs  grind #2 median 2158   =  1.70x   (heavy overlap)
+#     steering rate   grind #1 median  128  vs  grind #2 median  256   =  2.00x   (heavy overlap)
+#     LKAS engaged    grind #1  98.7%       vs  grind #2   84.3%       (base rate 54.7%)
+# Best achievable single threshold on each axis -- keep grind #1 boosted / remove grind #2:
+#     steering rate  @282   ->  81.1% / 48.5%
+#     driver torque  @2158  ->  96.8% / 50.5%
+#     LKAS active           ->  98.7% / 15.7%
+# ⇒ NO available axis cleanly separates them. LKAS preserves grind #1's fix best and is the only one
+# that leaves base steering exactly stock; it removes grind #2 only from DISENGAGED driving.
 OPS = (
-    # label, voted-speed counts (2 m/s = 7.2 km/h), motor-rate counts, driver loading the wheel?
-    ("grind #1  hands-off creep", int(7.2 * 64.0625), int(48 * RATE_COUNTS_PER_DEGS), False),
-    ("grind #2  driver cranking", int(7.2 * 64.0625), int(256 * RATE_COUNTS_PER_DEGS), True),
+    # label, voted-speed counts (7.2 km/h), motor-rate counts, LKAS applying?
+    ("grind #1  hands-off creep", int(7.2 * 64.0625), int(128 * RATE_COUNTS_PER_DEGS), True),
+    ("grind #2  cranking, LKAS on", int(7.2 * 64.0625), int(256 * RATE_COUNTS_PER_DEGS), True),
+    ("grind #2  cranking, LKAS off", int(7.2 * 64.0625), int(256 * RATE_COUNTS_PER_DEGS), False),
 )
 
 
@@ -243,19 +280,21 @@ def main():
     print("  dtorque held at 400 counts (inside the measured 123-839 range) so the builds are")
     print("  compared on the GAIN, not on a different input.\n")
     dtorque = 400
-    hdr = f"  {'operating point':<28}{'build':<12}{'gain':>7}{'r24':>8}{'vs stock':>10}"
+    hdr = f"  {'operating point':<30}{'build':<12}{'gain':>7}{'r24':>8}{'vs stock':>10}"
     print(hdr + "\n  " + "-" * (len(hdr) - 2))
     base = {}
-    for label, speed, rate, hands_on in OPS:
+    for label, speed, rate, lkas in OPS:
         for name, cfg in BUILDS.items():
             # The gate is non-zero only on V67 AND only when the driver is loading the wheel.
-            gate_683c = 1 if (name == "V67" and hands_on) else 0
+            # V67's gate is LKAS-ACTIVE. Grind #1 is 98.7% engaged; grind #2 is 84.3% engaged
+            # against a 54.7% base rate, so on THESE routes the gate is true in both regimes.
+            gate_683c = 1 if (name == "V67" and lkas) else 0
             g = r24_gain_q10(speed, rate, gate_671d=0, gate_683c=gate_683c, state_671a=0,
                              arm_683c=cfg["arm_683c"])
             out = r24_lane(dtorque, g, cfg["shift"])
             if name == "STOCK/V38":
                 base[label] = out
-            print(f"  {label:<28}{name:<12}{g:>7}{out:>8}{out / base[label]:>9.2f}x")
+            print(f"  {label:<30}{name:<12}{g:>7}{out:>8}{out / base[label]:>9.2f}x")
         print()
 
     print("=" * 98)
@@ -263,13 +302,13 @@ def main():
     print("=" * 98)
     print("  Where the gate is TRUE, V67 delivers arm/512 against stock's LERP/1024, so it lands on")
     print("  stock only where arm == LERP/2. Across the hands-on regime the LERP moves:\n")
-    print(f"  {'speed':>8}{'rate deg/s':>12}{'LERP':>8}{'arm for 1.00x':>15}{'arm=1188 gives':>17}")
+    print(f"  {'speed':>8}{'rate deg/s':>12}{'LERP':>8}{'arm for 2.00x':>15}{'arm=5244 gives':>17}")
     for kmh in (2.0, 7.2, 20.0, 40.0):
         for degs in (100, 256, 400, 640):
             rc = int(degs * RATE_COUNTS_PER_DEGS)
             lerp = r24_gain_q10(int(kmh * 64.0625), rc, 0, 0, 0)
-            print(f"  {kmh:>7.1f}{degs:>12}{lerp:>8}{lerp / 2:>15.0f}"
-                  f"{(1188 / 512) / (lerp / 1024):>16.2f}x")
+            print(f"  {kmh:>7.1f}{degs:>12}{lerp:>8}{2 * lerp:>15.0f}"
+                  f"{5244 / lerp:>16.2f}x")
     print("\n  => 1188 is exact at grind #2's measured point (7.2 km/h, 256 deg/s) and stays within")
     print("     about +-25% across the rest of the hands-on regime. Every value there is far below")
     print("     V62's flat 2.00x, which is the number that produced the 11.71x at 40-49 Hz.\n")
