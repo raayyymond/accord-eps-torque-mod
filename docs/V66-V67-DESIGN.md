@@ -48,7 +48,9 @@ Anyone re-reading this must not stop at the first table.
 | **V65 `r3a`** | **2×** | 40 | **10** | **4046** |
 | **V65 `r3b`** | **2×** | 90 | **8** | 3024 |
 
-⇒ **27/219 blocks at Kd = 2× vs 1/91 at Kd ≤ 1×**, maximum **325 → 4046 (12.4×)**.
+⇒ **27/219 blocks at Kd = 2× vs 1/91 at Kd ≤ 1×**, maximum **325 → 4046 (12.4×)**. Block-level
+Fisher **p = 7.8e-4**, and an **FFT-free zigzag detector agrees independently** (p = 0.0072 in the
+provocation cell) — so the effect is not an artifact of spectral estimation.
 
 ### ★★★★ THE BAND-SPECIFICITY TEST — and it is the root-cause identification
 
@@ -112,6 +114,22 @@ Three things had to be checked; **all three came back for the mechanism**:
    **amplitude** is flat with dose, and the corner maxima are **362 / 448 / 314 → 3837**, an 8.6×
    rise. Perception cannot move a number. What survives of the hypothesis is only that *some* of the
    salience change is unmasking.
+
+### ✅ A REAL DEFECT FOUND AND FIXED IN THE MEASUREMENT ITSELF — and it invalidates earlier numbers
+
+`_r31_common.band_envelope`, the function every prior session used for band envelopes, **subtracts only
+the mean and applies no taper.** On a high-effort window the driver's own torque **ramp** has a 1/f
+spectrum plus a rectangular-window discontinuity, and both leak into 30–49 Hz **in proportion to the
+ramp — i.e. in proportion to driver effort**, which is precisely the covariate that separates these
+routes. Demonstrated on one V65 burst: the **steering-ANGLE** channel, which is visibly smooth,
+reported a **35.8 deg "30–49 Hz envelope"** that was pure leakage.
+
+⇒ Every number in this document uses a replacement (`_grind2_lib.win_env`): **linear detrend, Hann
+taper, read the central 60% with the taper divided back out**, plus two independent cross-checks — an
+**FFT-free zigzag/threshold-crossing counter** and the **steering-angle channel as a leakage control**.
+🛑 **Prior 30–49 Hz numbers computed with `band_envelope` are inflated on high-effort windows** — that
+includes the V62 handoff's "rank every engaged window by 30–49 Hz env99" instance table. **Re-derive
+before quoting any of them.**
 
 ✅ **The band-specificity test — the one that could have overturned it — PASSED.** See the table above:
 1–4 Hz flat, 10–16 Hz down, the effect confined to 24 Hz and above and rising monotonically with
@@ -244,6 +262,46 @@ Arithmetic: `5120 × 1536 = 7.9 M` = **0.37% of INT32_MAX**. No saturation conce
 readers"** — it has 1 writer + 1 reader and is a **saturation-dwell** monitor on the LKAS command's
 clamp ceiling, not an engagement flag); `gp-0x6b4c` (signed halfword, crosses zero during ordinary
 lane-keeping).
+
+### 🛑 A RISK TO V67 THAT GOT SHARPER, NOT SOFTER
+
+`gp-0x671d` **strictly outranks** the repointed arm — pinned at instruction level: `0x3ABFA cmp r0,r6`
+/ `0x3ABFC be 0x3AC04`, so if `gp-0x671d != 0` control falls through to `0xC6442` = **1024** and the
+`gp-0x683c` test at `0x3AC04` is **never reached at all**. 1024 is *below* the LERP default (3072 at
+creep), so a firing `gp-0x671d` does not merely mask V67's arm — it **cuts the lane to a third**.
+
+⚠ Unlike `gp-0x683c`, **`gp-0x671d` is LIVE**: two static `st.b` writers, `FUN_0003bcb2` @`0x3BD2A`
+(writes 0) and `FUN_00041d56` @`0x41EC6` (writes a computed value). Its producer is a 3-state float
+filter over `gp-0x501c` and `gp-0x4fd8` — **resolver/FOC domain, not LKAS** (`gp-0x4fd8` scales by
+0.0015339808 ≈ 2π/4096, i.e. radians per count of a 4096-count/rev resolver).
+🛑 **Domain is not the same as immunity.** A resolver-domain event counter can perfectly well fire
+*during a 21 or 45 Hz mechanical oscillation* — which would mask V67's arm **exactly when it is needed
+most**. V64's probe read it 0 across 14,980 frames, but that route was 149.8 s of creep.
+⚠ **V66 does not measure it** — the third rung went to `gp-0x67fe`. This is the largest unmeasured
+risk in the V67 design and it should be closed before or alongside the flash.
+
+### Units for any breakpoint move — now exact
+
+`gp-0x6ac0` is **`|gp-0x6abe|`**, verified at instruction level: both come from one EMA accumulator in
+`FUN_00041464` (`gp-0x6abe = state >> 10`, `gp-0x6ac0 = abs(state) >> 10`). Same signal, same scale.
+The **4.7121 counts per deg/s** figure was independently reproduced this session as an exact rational —
+`2^18 / (48 × 1159) = 16384/3477 = 4.71210813…` — so the mode-10 breakpoints are:
+
+| raw | deg/s |
+|---|---|
+| 400 | **84.89** |
+| 1400 (array1 / 10 km/h record only) | **297.11** |
+| 1500 | **318.33** |
+| 3000 | **636.66** |
+
+⚠ **A genuine step discontinuity at the top.** `0x3AAC8`/`0x3AACC` folds a rate **≥ 13001** to **0**,
+and 0 is the LERP's *first* breakpoint ⇒ **maximum** gain. 13001 counts = **2759 deg/s** (~7.7 wheel
+rev/s), so it is fault/glitch-level and not ordinary driving — but it is real, it doubles the gain
+(array1 jumps 1.5× → 3.0×), and anyone moving breakpoints near the top of the axis must know it exists.
+
+⚠ Two further structural residuals worth carrying: **`FUN_0003aa2c` is itself state-gated** (its caller
+invokes it only when the one-hot `gp-0x67fa` falls in mask `0xC30`), and **`gp-0x67ac`'s trigger is
+still unresolved** — if it is ever 1, r24/r26 **and six other lanes** silently drop out of the sum.
 
 ✅ **Two structural questions closed by the same trace:** there is **no V57-style cal fork** for r24 —
 the torque sensor `gp-0x4f60` is a *single physical measurement* of driver and motor-reaction torque

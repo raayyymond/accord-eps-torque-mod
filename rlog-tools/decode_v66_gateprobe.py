@@ -38,6 +38,31 @@ SECOND, and the DOMINANT TOGGLE FREQUENCY. Everything else in this tool is suppo
 independent static methods (a raw byte scan in both encodings at every offset, and a 3-method
 cross-check). Static clearance has failed this kit before (`gp-0x1500`), so this is a real residual;
 the mitigation is that if gp-0x683c were live, V65's r24 gain would already be taking the 512 arm today.
+⚠ gp-0x671d, the MASKING RISK that outranks the LKAS arm in r24's priority chain, is also NOT measured
+(dropped by the final spec). V64 read it 0 across 14,980 frames of ONE route. Neither absence is a pass.
+
+🛑 bit5's CELL IS THREE-VALUED AND THE PROBE IS ONE BIT -- and its "driver-torque" label is not
+   supported by the code
+--------------------------------------------------------------------------------------------------
+`FUN_00041eec` (body 0x41EEC-0x42375) is gp-0x67f5's SOLE writer and stores THREE distinct values:
+
+    0xFF @0x4222A   the INVALID / not-evaluated sentinel, taken while gp-0x67f4 == 0
+       1 @0x42258   latched, after a debounce
+       0 @0x42288   cleared, after a debounce
+
+So `!= 0` CONFLATES the latch with the sentinel. Disambiguation rule, stated as a HYPOTHESIS: 0xFF is
+entered only under a persistent condition, so bit5 HIGH from frame 0 and never toggling reads as the
+sentinel, while bit5 debouncing up and down reads as the latch.
+
+And FUN_00041eec reads NO TORQUE CELL. It reads the voted vehicle speed `gp-0x6a5e` into r7, loops
+four slots out of the halfwords gp-0x6a38/-0x6a3c/-0x6a40/-0x6a44 (plus gp-0x6a46) computing
+|speed - |slot||, reduces them to a max deviation r28 clamped to 0x7D00, and latches when
+
+    r28 >= cal tp+0x731e (0xC631E = 640 counts ~ 10 km/h) for cal tp+0x74e7 (0xC64E7 = 10) ticks.
+
+That reads as a DEBOUNCED WHEEL-SPEED-vs-VEHICLE-SPEED PLAUSIBILITY LATCH -- a fault flag near-
+constant 0 in normal driving -- not a hands-on gate. If so its toggle rate is trivially ~0 and a
+quiet bit5 is an UNEXERCISED gate, not a good one. Do not read silence as a pass.
 
 🛑 NYQUIST. The probe is 100 Hz, so the kill band 15-60 Hz is NOT fully observable: a true 58 Hz
 toggle aliases to 42 Hz and a true 51 Hz toggle to 49 Hz. This tool reports the observed peak and
@@ -104,6 +129,37 @@ LEGAL = {BIT_LIVE | a | b | c
 
 RWD_NAME = ("39990-TVA,A160-V66-LKAS-4x-mss0-decouple0xC646C-ratelane-STOCK-gateprobe3-"
             "can330byte4-0x13000-0x100000.rwd")
+
+# V67's repoint site: `ld.bu -0x683c[gp],r15` @0x3AA94, bytes 84 7f c5 97.
+REPOINT_ADDR = 0x3AA94
+REPOINT_CURRENT = bytes.fromhex("847fc597")
+
+
+def ldbu_bytes(disp, reg2, reg1=4):
+    """Encode `ld.bu -disp[reg1],reg2` -- V850E puts the displacement's bit 0 in hw1 BIT 5.
+
+    hw1 = (reg2 << 11) | (opcode << 5) | reg1, opcode = 0x3C | (d & 1)
+    hw2 = (d & 0xFFFE) | 1     <- the trailing 1 is the ld.bu/ld.hu WIDTH selector, not a disp bit
+    """
+    d = (0x10000 - disp) & 0xFFFF
+    return bytes([((reg2 << 11) | ((0x3C | (d & 1)) << 5) | reg1) & 0xFF,
+                  (((reg2 << 11) | ((0x3C | (d & 1)) << 5) | reg1) >> 8) & 0xFF,
+                  (d & 0xFE) | 1, (d >> 8) & 0xFF])
+
+
+def repoint_edit(cell, reg2=15):
+    """The exact byte edit that repoints REPOINT_ADDR to `cell`, and how many bytes it costs.
+
+    🛑 Derived, never hand-written. The design note's "ONE BYTE at 0x3AA96" holds only for an EVEN
+    target whose high displacement byte already matches; it is wrong for gp-0x67f5 and incomplete for
+    gp-0x67fe, and a wrong answer here silently reads the neighbouring cell.
+    """
+    want = ldbu_bytes(cell, reg2)
+    diff = [i for i in range(4) if want[i] != REPOINT_CURRENT[i]]
+    where = " ".join(f"0x{REPOINT_ADDR + i:05X}:{REPOINT_CURRENT[i]:02x}->{want[i]:02x}" for i in diff)
+    halfwords = sorted({i // 2 for i in diff})
+    return (f"gp-0x{cell:04x}: {want.hex(' ')}  ({len(diff)} byte(s), "
+            f"hw{'+'.join(str(h + 1) for h in halfwords)})  {where}")
 
 
 def collect(paths):
@@ -513,9 +569,9 @@ def report(tag, d):
         print("       WORTHLESS as an LKAS gate. RETIRE candidate C. The golden model was right.")
     elif eng.sum() and (~eng).sum() and abs(g67fe[eng].mean() - g67fe[~eng].mean()) > 0.5:
         print("   *** DUTY TRACKS ENGAGEMENT ==> READING (a). gp-0x67fe is the best gate candidate")
-        print("       available AND its displacement 0x9802 is EVEN, so the repoint at 0x3AA96 is a")
-        print("       ONE-BYTE edit (c5 -> 03, hw1 untouched). Prefer it over gp-0x6806 if its toggle")
-        print("       rate above is also clear of the kill band.")
+        print("       available AND its displacement 0x9802 is EVEN, so hw1 is untouched by the")
+        print("       repoint. Prefer it over gp-0x6806 if its toggle rate above is also clear of the")
+        print(f"       kill band.   {repoint_edit(0x67fe)}")
     else:
         print("   *** NEITHER. The duty is neither ~100% nor engagement-tracking, so the cell is")
         print("       something else again. Do NOT gate on it until it is identified.")
@@ -546,8 +602,14 @@ def report(tag, d):
                   f"in {s['span']:.1f}s = {s['tps']:.3f}/s")
     if verdict_ok:
         print("\n   *** V67'S GATE IS CLEARED ON EVERY CRITERION THIS DRIVE CAN TEST. ***")
-        print("   Repoint byte at 0x3AA96, by chosen gate:  gp-0x6806 -> fb | gp-0x67f5 -> 0b |")
-        print("                                             gp-0x67fe -> 03")
+        print("   THE REPOINT EDIT AT 0x3AA94, DERIVED not hand-written -- see repoint_edit():")
+        print("     current: 84 7f c5 97  =  ld.bu -0x683c[gp],r15")
+        for _bit, _nm, cell, _why in GATES:
+            print("     " + repoint_edit(cell))
+        print("   🛑 It is NOT always 'one byte at 0x3AA96'. For `ld.bu` the displacement's bit 0 lives")
+        print("      in hw1 BIT 5 (opcode 0x3C vs 0x3D) and hw2's own LSB is the width selector. An ODD")
+        print("      target needs hw1 changed too; writing only hw2 lands on the NEIGHBOURING cell, and")
+        print("      gp-0x67f6 is a real cell with a real reader @0x4276C.")
         print("   ARM VALUE 0xC6446 -- and it depends on whether V62's `sar 0x9` is KEPT:")
         print("     KEEP sar 0x9 (the recommended shape): 512 -> 1536.  The arm divides by 512, so")
         print("       1536 reproduces the stock creep gain 3072/1024 = 3.0 EXACTLY. Gate false =>")

@@ -54,11 +54,32 @@ speed.**
 🛑 The frequently-quoted *"r24 default arm = 2305"* is the **50 km/h** record. At the hands-off-creep
 operating point — where grind #1 lives — it is **3072**. Any ×2 sizing must use 3072, not 2305.
 
-⚠ `0x3AAC8`/`0x3AACC` (`addi -0x32c9,r11,r0` / `cmovc 0x0,r11,r13`) folds a motor rate **≥ 13001** to
-**0**, i.e. to MAXIMUM gain — a plausibility fold, and a discontinuity worth knowing about before
-moving any breakpoint. The load is `ld.hu` ⇒ the axis is a magnitude.
-⚠ `gp-0x6ac0`'s physical scale is **not confirmed** to be the same as the 4.7121 counts-per-deg/s
-figure recorded for the bus-facing chain. Confirm before converting any breakpoint to deg/s.
+⚠ `0x3AAC8`/`0x3AACC` folds a motor rate **≥ 13001** to **0** — and 0 is the LERP's *first*
+breakpoint, so the fold lands on **MAXIMUM gain**. Confirmed from the decompiler rather than from
+disassembly operand order (`rateKey = gp-0x6ac0 * (gp-0x6ac0 < 0x32c9)`), and one shared value feeds
+**both** r24's and r26's LERP evaluations. 13001 counts = **2759 deg/s** (~7.7 wheel rev/s), so it is
+fault/glitch-level rather than ordinary driving — but it is a **genuine 2× step discontinuity**
+(array1 jumps 1.5× → 3.0× at that instant), and anyone moving breakpoints near the top of the axis
+must know it exists. The load is `ld.hu` ⇒ the axis is a magnitude.
+
+⚠ Two further structural facts from the same trace: **`FUN_0003aa2c` is itself state-gated** — its
+caller invokes it only when the one-hot `gp-0x67fa` falls in mask `0xC30` — and **`gp-0x67ac`'s
+trigger is unresolved**: if it is ever 1, r24/r26 **and six other lanes** silently drop out of the sum.
+
+🛑 **And the mode-indexed LERP is only r24's gain when THREE override flags are all clear**
+(`gp-0x671d == 0` ∧ `gp-0x683c == 0` ∧ `gp-0x671a ≤ cal 0xC64FA`). The interpolation is computed
+unconditionally; only the *selector* is conditional. `gp-0x683c` is dead, but **`gp-0x671d` is live and
+outranks everything** — see [[accord-gp683c-dead-gate-is-a-free-lkas-arm]].
+✅ **`gp-0x6ac0`'s scale is now CONFIRMED, and the 4.7121 figure is exact.** `gp-0x6ac0` is
+**`|gp-0x6abe|`** — both come from ONE EMA accumulator in `FUN_00041464` (`gp-0x6abe = state >> 10`,
+`gp-0x6ac0 = abs(state) >> 10`), verified at instruction level. The counts-per-deg/s figure was
+independently reproduced as an exact rational: **`2^18 / (48 × 1159) = 16384/3477 = 4.71210813…`**.
+So the mode-10 breakpoints are **400 → 84.89 deg/s · 1400 → 297.11 · 1500 → 318.33 · 3000 → 636.66**.
+⚠ Note the asymmetry: **array1 (the 10 km/h record) uses 1400, not 1500** — a slightly tighter knee at
+low speed than the other three records.
+⚠ The **other** CAN copy does not cross-check cleanly (the `0x18F` route implies ~5.89 counts/deg/s
+against `0x14A`'s 4.7121 — a 0.1-vs-0.125 scale mismatch between the two packers, unreconciled).
+**Use 4.7121**; it is the one reproduced through the cited chain. Flagged for whoever revisits `0x18F`.
 
 See also [[accord-gp683c-dead-gate-is-a-free-lkas-arm]], [[accord-ratchet-is-a-saturated-resonance]],
 [[accord-v62-fixed-the-grinding]].
