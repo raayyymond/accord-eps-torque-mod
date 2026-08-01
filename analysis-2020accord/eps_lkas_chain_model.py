@@ -1934,6 +1934,40 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     >8x (grind #1 hands-off; grind #2 at tq_avg 1600-2700); LKAS engagement separates only grind #1
     (100% vs a 54.7% base rate, p99 6.63x, against grind #2's 84.5% and 1.33x).
     See analysis-2020accord/rate_lane_frequency_response.py and docs/V66-V67-DESIGN.md.
+
+    ★★ THE FIX: V67 = V66 + the grind #1 fix GATED ON LKAS. Two edits, no cave:
+        0x3AA96  c5 -> fb    ld.bu -0x683c[gp],r15 -> ld.bu -0x6806[gp],r15   ONE BYTE
+        0xC6446  512 -> 5244                                                  ONE HALFWORD
+      with BOTH sar sites left at STOCK 0xa. gp-0x683c has ONE access and ZERO writers image-wide,
+      and its flag `lp` already selects cal 0xC6446 for r24 (and 0xC6444 for r26) -- so the firmware
+      already HAS a conditional-gain arm and it is merely wired to a dead cell. Repointing it makes
+      the gain conditional with no code cave, this kit's only bricking class.
+        gate FALSE (LKAS off) -> the LERP, unchanged  => byte-for-byte STOCK base steering
+        gate TRUE  (LKAS on)  -> flat 5244 = 2.00x the LERP at grind #1's operating point
+                                 (creep 7.2 km/h, 128 deg/s, LERP 2622)
+      Arithmetic: 5120*5244 = 26.8M = 1.25% of INT32_MAX; lane saturates at |dtorque| >= 1599 vs a
+      measured 123-839. GATE 1 vacuous (read-only load displacement, no RAM claimed).
+      GATE 2: the lane is a DERIVATIVE => DC-neutral, so a gain step at engagement is not a torque
+      step; and the gate itself is measured below.
+
+    ✅✅ THE GATE IS VALIDATED ON-CAR, from V57's own probe (which flew routes 28/29 in July and had
+    never been correlated). `analysis-2020accord/validate_gp6806_gate.py`:
+        route 29   7,924 frames /  79.2 s   99.90% agreement with latActive   0.0505 transitions/s
+        route 28  29,990 frames / 299.9 s   99.94% agreement                  0.0300 transitions/s
+      => gp-0x6806 != 0 IS "LKAS is applying"; it does NOT drop out during steady engaged holding
+      (the one ambiguity static analysis could not close, since it is a ramp-FSM phase flag whose
+      "settled" phases 5/6/7 could not be ruled out); and it toggles THREE ORDERS OF MAGNITUDE below
+      the 21/45 Hz modes, so it cannot parametrically pump.
+
+    🛑 WHAT V67 DOES NOT DO. Grind #2 SURVIVES under LKAS, at 2.21x -- slightly above V62's 2.00x,
+    because a scalar arm does not follow the LERP's own rolloff. No available axis cleanly separates
+    the two symptoms; best single threshold, keep grind #1 boosted / remove grind #2:
+        LKAS active   98.7% / 15.7%      driver torque  96.8% / 50.5%     steering rate  81.1% / 48.5%
+    ⚠ An earlier claim that driver torque separates them ">8x" is WITHDRAWN -- it compared grind #2's
+    measured torque against the DEFINITION of hands-off, not against grind #1's measured
+    distribution. The real figure is 1.70x (1268 vs 2158), with heavy overlap.
+    🛑 gp-0x671d OUTRANKS the arm and is LIVE. If it fires, the gain is pinned to 0xC6442 = 1024,
+    BELOW the stock default, and V67 becomes worse than V66. V67's probe bit5 measures it.
     🛑🛑 BUT 0x3AB76 WAS A NO-OP: r26 is structurally inert -- avg's cal base 0xC6564 byte-reads as 40
     bytes of EXACT ZERO (bounded by non-zero data both sides) and no writer was found for the RAM
     adjustment at gp-0x641E..gp-0x6444, so stage1 = (dtorque*avg2)>>10 ~ 0 regardless of dtorque.
