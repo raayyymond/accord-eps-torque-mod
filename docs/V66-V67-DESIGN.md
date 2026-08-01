@@ -337,10 +337,10 @@ measures every load-bearing unknown in the design above, with no code risk.
 | 6 | `gp-0x6806 != 0` | gate candidate A — duty and toggle rate |
 | 5 | `gp-0x67f5 != 0` | gate candidate B, driver-torque — **its toggle rate is V67's kill criterion** |
 | 4 | `gp-0x67fe != 0` | gate candidate C — **settles the LKAS-vs-base-assist semantic dispute in one bit** |
-| 3 | `gp-0x683c != 0` | **the control.** Must be 0 in 100% of frames, or the cell is not dead and the repoint is not a clean substitution |
+| ~~3~~ | ~~`gp-0x683c != 0`~~ | 🛑 **DID NOT FIT — see below.** It was the control for the repoint's premise |
 
-✅ **BUILT AND VERIFIED 2026-08-01.** Image SHA `56177c189deb2533c334cc465b2c7e465191c68f63df1f6cf7316ef6459acf6f`;
-RWD SHA `2725908e22157512cc0548663a9d15f1ef9ff7495a74fd92846602dc9db8fa04`.
+✅ **BUILT AND VERIFIED 2026-08-01.** Image SHA `0d4a0a5361e8ba91b1a24ad3298dd617ad541903070b02a58b9ae6df6709f246`;
+RWD SHA `41a4476ae9fb29fd2afd1b41238bf19b409b256abb8adfa3a8fb7b5569548fa9`.
 **61 bytes off V65**, restricted to `[0x13000,0x100000)`: `0x3AB76` `a9`→`aa`, `0x3AC20` `a9`→`aa`, the
 cave `0xC4B38`–`0xC4B71`, and the MAIN CRC at `0xC4FFC`. ⭐ **CAL block byte-identical to V65** and the
 **`0xD2000` block identical**, with all four mode-10 `gain_B` records unchanged = machine proof no
@@ -361,11 +361,15 @@ movea -0x1518,gp,r6  ; jmp [lp]                                ; displaced hook 
 ⚠ `ld.bu -0x67f5[gp]` carries its displacement's **odd bit 0 in hw1 bit 5** (opcode field reads `0x3D`),
 which is correct and is exactly the trap that has produced false mismatches before.
 
-🛑 **ONLY THREE PROBE BITS FIT.** A fourth rung costs 12 bytes against ~6 spare in the 68-byte extent.
-`gp-0x671d` (the masking risk — V64 already read it 0 across 14,980 frames) and **`gp-0x67fe` (the
-disputed candidate C)** are therefore **NOT measured**. ⚠ **That leaves the `gp-0x67fe`
-LKAS-vs-base-assist semantic dispute open**, and it must be closed before `gp-0x67fe` is ever used as a
-gate — by a later probe or by a decisive trace, not by argument.
+🛑 **ONLY THREE PROBE BITS FIT.** A fourth rung costs 12 bytes against ~6 spare in the 68-byte extent,
+so the build carries **all three gate candidates** and drops the two lower-priority signals:
+- ❌ **`gp-0x683c`** — the control on the repoint's premise. Its deadness now rests on **two independent
+  static methods** (my raw byte scan in both encodings at every offset, and a tracer's 3-method
+  cross-check), which is why it was the one to give up. ⚠ **But static clearance has failed this kit
+  before** (`gp-0x1500` passed both static methods and still failed on-car), so this is a real residual:
+  if something writes `gp-0x683c` through a computed pointer, V67's arm would already be firing on V65
+  today. Nothing in V62/V65's behaviour suggests it is.
+- ❌ **`gp-0x671d`** — the masking risk. V64's probe already read it 0 across 14,980 frames.
 
 All four are plain `!= 0` boolean tests on gp-relative cells — no thresholds, no arithmetic, no new
 condition codes, and every emitted load pinned byte-for-byte to a real instance in the image.

@@ -129,7 +129,7 @@ V38 4× LKAS reach, steer-to-zero, stock rate lane, live telemetry — and simul
 **confirmatory revert** and the **pre-flight probe for V67's gate**.
 
 Probe on `0x14A` byte4: **bit7** liveness · **bit6** `gp-0x6806 != 0` · **bit5** `gp-0x67f5 != 0` ·
-**bit4** `gp-0x683c != 0` (the control — must read 0 in 100% of frames).
+**bit4** `gp-0x67fe != 0` (gate candidate C).
 
 **61 bytes off V65**, restricted to `[0x13000,0x100000)`. ⭐ **CAL block byte-identical to V65**,
 `0xD2000` block identical, **all four** mode-10 `gain_B` records unchanged = machine proof no
@@ -140,8 +140,8 @@ image**. GATE 1 vacuous. 62/68 cave bytes.
 🛑 **Only three probe bits fit** (a 4th rung is 12 bytes against ~6 spare) ⇒ `gp-0x671d` and
 **`gp-0x67fe`** are unmeasured.
 
-Image SHA `56177c189deb2533c334cc465b2c7e465191c68f63df1f6cf7316ef6459acf6f`
-RWD SHA `2725908e22157512cc0548663a9d15f1ef9ff7495a74fd92846602dc9db8fa04`
+Image SHA `0d4a0a5361e8ba91b1a24ad3298dd617ad541903070b02a58b9ae6df6709f246`
+RWD SHA `41a4476ae9fb29fd2afd1b41238bf19b409b256abb8adfa3a8fb7b5569548fa9`
 
 **Pre-committed interpretation** — see `STATE.md` step 0. Briefly: grind #2 gone ⇒ attribution closed,
 build V67. Grind #2 still there ⇒ the rate lane is the wrong tree and **V62 should go back on**.

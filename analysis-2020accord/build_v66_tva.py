@@ -16,8 +16,26 @@ steer-to-zero, the 0xC64DE = 27 re-engage ramp, V38's 4x LKAS enable. NO calibra
 the CAL block is asserted byte-identical to V65's and its CRC word asserted UNCHANGED, machine proof,
 printed on every build.
 
-V66 is therefore also the clean Kd = 1x CONTROL for the three-dose comparison V61(0x) / V66(1x) /
-V62(2x), on one instrument, with everything else held fixed.
+★ WHY THE REVERT IS THE RIGHT MOVE, AND WHY V66 IS ALSO A CONFIRMATORY INTERVENTION
+------------------------------------------------------------------------------------
+Corner-conditioned tail maxima, Kd = 1x vs Kd = 2x, 219 blocks:
+
+    band        ratio 2x / 1x
+    1- 4 Hz      1.01     <- the DRIVER band, flat: the control that says this is not a global gain
+    10-16 Hz     0.80
+    18-22 Hz     0.35     <- grind #1, CUT 2.9x   (this is V62's measured fix)
+    24-28 Hz     2.66
+    30-40 Hz     2.98
+    40-49 Hz    11.71     <- grind #2, RAISED 11.7x   (p = 0.0003)
+
+A MONOTONE response with a crossover at 22-24 Hz and a flat driver band. V62's x2 bought grind #1 at
+the direct cost of grind #2, and the exchange rate is 2.9x down against 11.7x up. Reverting both `sar`
+immediates is therefore the correct choice for a long, stable drive AND a confirmatory intervention:
+the same lever pushed back the other way must move both bands back, in the same monotone pattern. A
+null on V66 would mean the band table is not causal, which no other build can test as cheaply.
+
+V66 is also the clean Kd = 1x CONTROL for the three-dose comparison V61(0x) / V66(1x) / V62(2x), on
+one instrument, with everything else held fixed.
 
 THE PROBE -- CAN 0x14A byte4, 100 Hz, bits 7:3 (bits 2:0 stay stock STEER_SENSOR_STATUS)
 -----------------------------------------------------------------------------------------
@@ -27,18 +45,93 @@ unknown in that design. All three payload cells are plain `!= 0` tests on gp-rel
 no thresholds, no arithmetic, no new condition codes, no new opcodes.
 
     bit7 = 1                    LIVENESS. field == 0 => the cave did not fire => the reading is VOID
-    bit6 = gp-0x6806 != 0       THE PROPOSED GATE. Duty, and above all its TOGGLE RATE
-    bit5 = gp-0x67f5 != 0       driver-torque hands-on gate candidate. Its toggle rate is the KILL
-                                CRITERION: a gain keyed on a signal that toggles at 15-60 Hz is a
-                                parametric pump, the exact failure mode V58/V59/V60 chased
-    bit4 = gp-0x683c != 0       *** THE CONTROL. MUST read 0 in 100% of frames. ***
+    bit6 = gp-0x6806 != 0       gate candidate A -- has prior on-car data (2 transitions / 180 s)
+    bit5 = gp-0x67f5 != 0       gate candidate B -- its toggle rate is the KILL CRITERION: a gain
+                                keyed on a signal that toggles at 15-60 Hz is a parametric pump,
+                                the exact failure mode V58/V59/V60 chased for three builds
+    bit4 = gp-0x67fe != 0       gate candidate C -- semantics DISPUTED, one bit of duty settles it
     bit3 = 0                    UNUSED -- see the budget section. Never set by this cave.
+
+⚠ THE PARITY AND WIDTH OF EVERY CELL ENCODED, as the brief requires
+-------------------------------------------------------------------
+    cell         disp u16   parity   width   ld.bu opcode   emitted bytes   provenance
+    gp-0x6806      0x97FA   EVEN     BYTE    0x3C           8437fb97        BYTE-IDENTICAL @0x2A8C0
+    gp-0x67f5      0x980B   *ODD*    BYTE    0x3D           a4370b98        field-decomposed (WEAK)
+    gp-0x67fe      0x9802   EVEN     BYTE    0x3C           84370398        BYTE-IDENTICAL @0x34CE4
+    gp-0x683c      0x97C4   EVEN     BYTE    0x3C           (not emitted)   V67's repoint site
+
+Width is not assumed: the census below asserts that EVERY access to each cell image-wide is `ld.bu`
+or `st.b`, so a halfword read would fail the build rather than silently straddle the neighbour.
+
+🛑 gp-0x67f5's ODD PARITY, AND WHAT IT COSTS V67 (the probe is unaffected)
+--------------------------------------------------------------------------
+For `ld.bu` the displacement's bit 0 lives in **hw1 bit 5** -- the opcode field's own low bit, 0x3C
+vs 0x3D -- and hw2's LSB is the width selector, always 1. So repointing the EVEN-displacement
+`ld.bu -0x683c[gp],r15` @0x3AA94 (`84 7f c5 97`) to gp-0x67f5 is NOT a clean hw2 edit: it needs
+hw1 0x3C -> 0x3D as well, i.e. `0x3AA94: 84 -> A4` AND `0x3AA96..97: c5 97 -> 0b 98` -- THREE bytes
+across BOTH halfwords, versus ONE byte for an even-displacement target. gp-0x6806 (0x97FA) and
+gp-0x67fe (0x9802) are both EVEN and stay one-byte repoints.
+   ⚠ Mirror-image trap, recorded because getting it backwards is the same bug twice: for `st.b`
+   STORES hw2 IS the exact displacement and hw1 bit 5 is a fixed opcode bit with no displacement
+   meaning. The two forms disagree, which is why every emitted load below is decoded back through
+   scan_gp_accesses' independent decoder and its displacement asserted.
+
+🛑 gp-0x67f5 IS NOT A CLEAN 0 / NON-ZERO FLAG -- IT IS THREE-VALUED {0, 1, 0xFF}
+--------------------------------------------------------------------------------
+Read directly from FUN_00041eec (body 0x41EEC-0x42375, which contains ALL THREE of its writers, so
+that function is the sole writer of the cell). Ghidra listing verified byte-identical to the V65
+image over the whole body before it was trusted:
+
+    0x42222  cmp r0,r12              ; r12 = gp-0x67f4, the validity flag
+    0x42224  bne 0x42230
+    0x42226  movea 0xff,r0,r13
+    0x4222A  st.b r13,-0x67f5[gp]    ; *** writes 0xFF *** -- the INVALID/NOT-EVALUATED sentinel
+    ...
+    0x42256  mov 0x1,r7
+    0x42258  st.b r7,-0x67f5[gp]     ; *** writes 1 ***  -- latched, after a debounce
+    ...
+    0x42288  st.b r0,-0x67f5[gp]     ; *** writes 0 ***  -- cleared, after a debounce
+
+A plain `!= 0` test therefore CONFLATES the latched state (1) with the invalid sentinel (0xFF). That
+is a real loss of meaning and it is reported rather than papered over. The build keeps the `!= 0`
+test as specified -- deviating on semantics without being asked is worse than reporting -- and the
+decoder carries a disambiguation rule: 0xFF is entered only while gp-0x67f4 == 0, a persistent
+condition, so a bit5 that is HIGH continuously from the first frame is the sentinel, whereas a bit5
+that debounces up and down is the latch. Stated as a hypothesis, not a fact.
+
+⚠ AND THE "driver-torque hands-on gate" READING IS NOT SUPPORTED BY THE CODE
+-----------------------------------------------------------------------------
+FUN_00041eec reads NO torque cell. It reads the voted vehicle speed `gp-0x6a5e` into r7, then loops
+four slots (`cmp 0x4,r10` @0x4210C) computing |slot| and |speed - |slot|| out of the halfword cells
+gp-0x6a38 / -0x6a3c / -0x6a40 / -0x6a44, with gp-0x6a46 handled separately, and reduces them to a
+max deviation r28 clamped to 0x7D00. The latch is then
+
+    r28 >= cal tp+0x731e (0xC631E = 640) for cal tp+0x74e7 (0xC64E7 = 10, a BYTE) consecutive ticks
+
+640 counts is 9.99 km/h on this ROM's established speed axis (`0xC6010 = [0,640,3200,6400]` =
+0 / 9.99 / 49.95 / 99.9 km/h). So gp-0x67f5 reads as a DEBOUNCED WHEEL-SPEED-vs-VEHICLE-SPEED
+PLAUSIBILITY LATCH -- a fault flag -- not a hands-on gate. If that is right it is near-constant 0 in
+normal driving, its toggle rate is trivially ~0, and one bit is being spent on a foregone conclusion:
+the V64 mistake. It is built as specified because the operator ranked it highest and the measurement
+is cheap, but the ranking should be revisited BEFORE the drive, not after. Swapping it is a one-line
+change to CELLS.
+
+⚠ gp-0x67fe: FIVE WRITERS, NOT FOUR, AND IT IS LOCKSTEP-SHADOWED
+-----------------------------------------------------------------
+The subagent report of "sole writer FUN_0003bd7c, 4 st.b at 0x3BDB8/0x3BE4E/0x3BE5A/0x3BE7A" is
+INCOMPLETE. Both decoders find a FIFTH store, `st.b r0,-0x67fe[gp]` @0x3E770, inside FUN_0003e760 --
+a lockstep reset routine that clears the cell together with its shadow gp-0x4c3a and calls
+FUN_0006b9fa on a mismatch. So gp-0x67fe is LOCKSTEP-SHADOWED (pair gp-0x4c3a), which does not
+affect a read-only probe but is load-bearing for any future edit of the cell. 55 readers.
+Its `{1,2}` test that the report cites is real: `ld.bu -0x67fe[gp],r10` @0x41FF2 / `cmp 0x2,r10`
+@0x41FFA, inside the very FUN_00041eec above -- so the two candidate cells are coupled, and the
+duty of bit4 is what decides between "LKAS engage state" and "base-assist substate". Measured, not
+argued, exactly as instructed.
 
 🛑 BIT 3 IS DROPPED, AND HERE IS THE ARITHMETIC RATHER THAN AN APOLOGY
 ----------------------------------------------------------------------
-The brief asked for a fourth rung, `gp-0x671d != 0` (the masking risk: it OUTRANKS the LKAS arm in
-r24's priority chain, so if it latches non-zero V67's arm never applies). It does not fit, and the
-budget is not negotiable by cleverness:
+The final spec put `gp-0x683c` -- THE CONTROL -- on bit 3 and said to drop from the bottom. It does
+not fit, and the budget is not negotiable by cleverness:
 
     FIXED OVERHEAD                                                     bytes
       movea 0x80,r0,r7        liveness -- imm16, no 2-byte form exists     4
@@ -65,14 +158,16 @@ budget is not negotiable by cleverness:
 Every alternative was priced and every one is >= 12 bytes/rung: `cmp r0,r6` is the same 2 bytes as
 `cmp 0x1,r6`; `setf`+`shl`+`or` is 14; shift-accumulating into r7 is 14; `shl 3,r6 / or r6,r7` is 8
 but is WRONG unless the cell is provably 0/1 -- and `st.b` keeps only the low 8 bits, so any cell
-value >= 2 would bleed into a NEIGHBOURING probe bit. gp-0x671d has a live `st.b r28` writer
-@0x41EC6, so it is not provably 0/1 and that shortcut is unsafe, not merely unproven.
+value >= 2 would bleed into a NEIGHBOURING probe bit. gp-0x67f5 is DEMONSTRABLY not 0/1 (it takes
+0xFF, which would shift straight over the whole field), so that shortcut is unsafe, not merely
+unproven.
 
-Bit 3 was dropped ahead of bit 4 exactly as the brief pre-committed. ⚠ Recorded for the operator's
-call, not acted on: gp-0x683c (bit4) has ZERO writers image-wide, so its value cannot change during
-a drive and ONE frame settles it; gp-0x671d has two live writers and genuinely varies, so it is the
-one that actually needs a long drive. Swapping them is a one-line change to CELLS below. The brief's
-ordering is followed as written.
+⚠ WHAT DROPPING BIT 3 ACTUALLY COSTS, stated plainly: V66 no longer measures gp-0x683c ON-CAR, so
+the DEAD-CELL claim V67 rests on is now supported by STATIC evidence only -- 1 reader, 0 writers,
+0 extended-form candidates, reproduced by two independent decoders on every build and asserted in
+assert_cell_census(). What that cannot rule out is a non-zero value left by RAM init, or a write
+through a computed pointer that no displacement scan can see (the gp-0x61a0 precedent). If V67 is
+flashed and behaves as if 0xC6446 were already live, this is the first thing to re-examine.
 
 ⚠ `cmp 0x1,r6` + `blt` IS the `!= 0` test, and it introduces NOTHING NEW
 ------------------------------------------------------------------------
@@ -91,13 +186,14 @@ ENCODER PROVENANCE -- every emitted instruction pinned byte-for-byte to a real i
    INDEPENDENT decoder, and its displacement asserted.
 
     ld.bu -0x6806[gp],r6   8437fb97   BYTE-IDENTICAL to the real instance @0x2A8C0
-    ld.bu -0x67f5[gp],r6   a4370b98   hw1 a437 == the real `ld.bu -0x671d[gp],r6` @0x3AB98 (op 0x3D,
-                                      reg1=gp, reg2=r6); hw2 0x980b == the real
-                                      `ld.bu -0x67f5[gp],r7` @0x21DC0. Differs from that r7 instance
-                                      in the reg2 field ONLY.
-    ld.bu -0x683c[gp],r6   8437c597   hw1 8437 == the @0x2A8C0 instance (op 0x3C, reg1=gp, reg2=r6);
-                                      hw2 0x97c5 == the real `ld.bu -0x683c[gp],r15` @0x3AA94.
-                                      Differs from that r15 instance in the reg2 field ONLY.
+    ld.bu -0x67fe[gp],r6   84370398   BYTE-IDENTICAL to the real instance @0x34CE4 (also @0x36026,
+                                      0x3BE3C, 0x3E46A, 0x40888 -- five instances)
+    ld.bu -0x67f5[gp],r6   a4370b98   ⚠ WEAKER: no `ld.bu -0x67f5[gp],r6` exists image-wide, so this
+                                      is a THREE-WAY field decomposition. hw1 a437 == the real
+                                      `ld.bu -0x671d[gp],r6` @0x3AB98 (op 0x3D = the ODD-displacement
+                                      form, reg1=gp, reg2=r6); hw2 0x980b == the real
+                                      `ld.bu -0x67f5[gp],r7` @0x21DC0, which differs from ours in the
+                                      reg2 field ONLY. Both halves are real; the COMBINATION is ours.
     cmp   0x1,r6           6132       BYTE-IDENTICAL @0x14D46            (V65's pin)
     blt   +6               b605       BYTE-IDENTICAL @0x1C006            (V65's pin)
     movea 0x80,r0,r7       203e8000   flashed on V54/V55/V59/V64/V65
@@ -114,7 +210,8 @@ AND by scan_gp_accesses.scan (per-opcode decode, EVERY byte offset) plus its 48-
 displacement brute force. Both must agree, exactly:
 
     gp-0x6806   13 ld.bu readers, 16 st.b writers    the arbitration output (LKAS active)
-    gp-0x67f5    8 ld.bu readers,  3 st.b writers
+    gp-0x67f5    8 ld.bu readers,  3 st.b writers    ALL THREE in FUN_00041eec, values {0xFF, 1, 0}
+    gp-0x67fe   55 ld.bu readers,  5 st.b writers    FIVE, not four -- 0x3E770 is in FUN_0003e760
     gp-0x683c    1 ld.bu reader,   0 writers, 0 extended-form hits   <-- THE DEAD-CELL CLAIM
     gp-0x671d   14 ld.bu readers,  2 st.b writers    (asserted, though V66 cannot probe it)
 
@@ -145,18 +242,28 @@ session.
 
 PRE-COMMITTED INTERPRETATION -- written before the drive so it cannot be fitted afterwards
 -------------------------------------------------------------------------------------------
-    bit4 EVER 1
-        => gp-0x683c is NOT dead. The V67 repoint is not a clean substitution and V67 is CANCELLED
-           as designed. Nothing else in the log matters until this is explained.
-    bit6 toggles at <= ~1 Hz, duty tracks engagement
-        => the gate is usable. Proceed with V67 (0x3AA96 c5 -> fb, 0xC6446 512 -> 6144).
-    bit6 toggles anywhere in 15-60 Hz
-        => V67 is CANCELLED. A gain switching near the mode frequency is a parametric pump.
-    bit5 toggles in 15-60 Hz
-        => gp-0x67f5 is unusable as a gate for the same reason. Do not consider it as an alternative
-           to gp-0x6806, which was the point of measuring it.
+    ANY of bits 6/5/4 toggles inside 15-60 Hz
+        => that cell is DISQUALIFIED as a gate. A gain switching near the mode frequency is a
+           parametric pump. If it is bit6, V67 as currently drawn is CANCELLED.
+    bit6 toggles at <= ~1 Hz AND its duty tracks engagement
+        => gate candidate A is usable. Proceed with V67 (0x3AA96 c5 -> fb, 0xC6446 512 -> 6144).
+    bit4 duty ~= 100%
+        => gp-0x67fe is the BASE-ASSIST substate the golden model calls it, non-zero whenever the
+           car is running, and WORTHLESS as an LKAS gate. Retire candidate C.
+    bit4 duty TRACKS ENGAGEMENT
+        => gp-0x67fe is the LKAS engage state after all, it is EVEN-displacement (a one-byte
+           repoint), and it becomes the best candidate available. This is the whole reason it is
+           on the car instead of in a document.
+    bit5 HIGH continuously from the first frame
+        => that is most likely the 0xFF INVALID sentinel, not a latched gate. See the semantics
+           section; the `!= 0` test cannot separate 1 from 0xFF.
+    bit5 near-constant 0
+        => consistent with the wheel-speed plausibility reading above, i.e. a fault latch. Retire
+           candidate B rather than reading "quiet gate = good gate".
     field == 0 on any frame
         => the cave did not fire on that frame. Any non-zero count is a hard stop, not a filter.
+    ⚠ NOT TESTED BY THIS BUILD: gp-0x683c (the control, cut for budget) and gp-0x671d (the masking
+      risk, dropped by the final spec). Neither absence may be read as a pass.
 
     ⚠ 100 Hz sampling => NYQUIST 50 Hz. The 15-60 Hz kill band is NOT fully observable: a true 58 Hz
       toggle aliases to 42 Hz. The decoder says so instead of reporting a number that looks resolved.
@@ -210,21 +317,24 @@ CHECKSUM_FN = V54.CHECKSUM_FN                  # 0x55C18
 
 # ---- the probe bits -------------------------------------------------------------------------------
 BIT_LIVE = 0x80
-BIT_6806, BIT_67F5, BIT_683C = 0x40, 0x20, 0x10
+BIT_6806, BIT_67F5, BIT_67FE = 0x40, 0x20, 0x10
 BIT_UNUSED = 0x08              # bit3: never set by this cave. A set bit3 means the build is not V66.
 
 # (gp displacement, bit, label, what it decides).  EMISSION ORDER == descending bit order.
 CELLS = (
     (0x6806, BIT_6806, "gate_6806",
-     "LKAS-active gate candidate -- V67's proposed gate. Duty AND toggle rate."),
+     "LKAS gate candidate A -- has prior on-car data (2 transitions / 180 s)"),
     (0x67f5, BIT_67F5, "gate_67f5",
-     "driver-torque hands-on gate candidate -- its toggle rate is V67's KILL CRITERION"),
-    (0x683c, BIT_683C, "control_683c",
-     "THE CONTROL: zero writers image-wide. MUST be 0 in 100% of frames."),
+     "gate candidate B -- THREE-VALUED {0,1,0xFF}; see the semantics section"),
+    (0x67fe, BIT_67FE, "gate_67fe",
+     "gate candidate C -- semantics DISPUTED; one bit of duty settles it"),
 )
 
-# gp-0x671d: the masking risk. NOT probed (see the budget section) but its structure is asserted,
-# because V67's design depends on it and a silent change would invalidate V64's 14,980-frame null.
+# NOT probed, but their structure is asserted on every build because V67's design depends on both:
+#   gp-0x683c -- the dead gate V67 repoints. Its DEAD-CELL claim is verified STATICALLY here (1 reader,
+#                0 writers, 0 extended-form hits, by two decoders) but NOT on-car; see the budget note.
+#   gp-0x671d -- the masking risk. V64 measured it 0 across 14,980 frames; dropped per the final spec.
+CONTROL_DISP = 0x683c
 MASK_DISP = 0x671d
 
 COND_BLT = V65.COND_BLT        # 0x6, SIGNED <  -- pinned to the real `blt` @0x1C006
@@ -234,12 +344,19 @@ CMP_LEVEL = 1                  # `cmp 0x1,r6`; ld.bu zero-extends, so signed < 1
 PIN_CMP_P1_R6 = V65.PIN_CMP_P1_R6            # (0x14D46, 6132, 1, r6)  BYTE-IDENTICAL to ours
 PIN_BLT6 = V65.PIN_BLT6                      # (0x1C006, b605)         BYTE-IDENTICAL to ours
 
-# Real `ld.bu` donors. (address, bytes, displacement, reg2). None is byte-identical to ours except
-# the first; the other two are pinned by a THREE-WAY field decomposition -- see the docstring.
+# Real `ld.bu` donors. (address, bytes, displacement, reg2).
 PIN_LDBU_6806_R6 = (0x2A8C0, bytes.fromhex("8437fb97"), 0x6806, 6)    # BYTE-IDENTICAL to ours
-PIN_LDBU_683C_R15 = (0x3AA94, bytes.fromhex("847fc597"), 0x683c, 15)  # hw2 donor, EVEN-disp opcode
+PIN_LDBU_67FE_R6 = (0x34CE4, bytes.fromhex("84370398"), 0x67fe, 6)    # BYTE-IDENTICAL to ours
 PIN_LDBU_67F5_R7 = (0x21DC0, bytes.fromhex("a43f0b98"), 0x67f5, 7)    # hw2 donor, ODD-disp opcode
 PIN_LDBU_671D_R6 = (0x3AB98, bytes.fromhex("a437e398"), 0x671d, 6)    # hw1 donor for the ODD form
+PIN_LDBU_683C_R15 = (0x3AA94, bytes.fromhex("847fc597"), 0x683c, 15)  # V67's repoint site, must stay
+
+# ⚠ WEAKER PROVENANCE, stated as the brief requires. gp-0x67f5 has NO `ld.bu ...,r6` instance
+# image-wide, so our load is pinned by a THREE-WAY field decomposition instead of byte-identity:
+# hw1 from the real ODD-displacement `ld.bu -0x671d[gp],r6` @0x3AB98, hw2 from the real
+# `ld.bu -0x67f5[gp],r7` @0x21DC0. Both halves are real; the COMBINATION is ours. The other two
+# cells are byte-identical to real instances and carry no such caveat.
+WEAK_PIN_DISPS = (0x67f5,)
 
 TAG = "LKAS-4x-mss0-decouple0xC646C-ratelane-STOCK-gateprobe3-can330byte4"
 OUT = os.path.join(RWD_DIR, f"39990-TVA,A160-V66-{TAG}-0x{START:X}-0x{END:X}.rwd")
@@ -310,13 +427,15 @@ def _self_check_encoders():
         assert raw != FF.ldhu(disp, R6) and raw != V55.ldh(disp, R6), \
             f"{name}: ld.bu collapsed onto a HALFWORD load -- it would straddle the neighbouring cell"
 
-    # BYTE-IDENTICAL to a real instance, register field included.
-    assert V55.ldbu_any(-0x6806, R6) == PIN_LDBU_6806_R6[1], \
-        f"ld.bu -0x6806[gp],r6 must be byte-identical to the real instance @0x{PIN_LDBU_6806_R6[0]:05X}"
-    # THREE-WAY decomposition for the two that have no byte-identical instance image-wide:
+    # BYTE-IDENTICAL to a real instance, register field included -- the strongest provenance there is.
+    for pin in (PIN_LDBU_6806_R6, PIN_LDBU_67FE_R6):
+        assert V55.ldbu_any(-pin[2], R6) == pin[1], \
+            f"ld.bu -0x{pin[2]:04x}[gp],r6 must be byte-identical to the instance @0x{pin[0]:05X}"
+        assert pin[2] not in WEAK_PIN_DISPS, f"gp-0x{pin[2]:04x} is both byte-identical and 'weak'"
+    # THREE-WAY decomposition for the one cell that has no byte-identical instance image-wide:
     #   hw1 (opcode + reg1 + reg2) from one real instance, hw2 (displacement) from another.
-    for disp, hw1_pin, hw2_pin in ((0x683c, PIN_LDBU_6806_R6, PIN_LDBU_683C_R15),
-                                   (0x67f5, PIN_LDBU_671D_R6, PIN_LDBU_67F5_R7)):
+    for disp, hw1_pin, hw2_pin in ((0x67f5, PIN_LDBU_671D_R6, PIN_LDBU_67F5_R7),):
+        assert disp in WEAK_PIN_DISPS, f"gp-0x{disp:04x} is field-decomposed but not declared weak"
         ours = V55.ldbu_any(-disp, R6)
         assert ours[:2] == hw1_pin[1][:2], \
             f"ld.bu -0x{disp:04x}[gp],r6 hw1 {ours[:2].hex()} is not the real hw1 " \
@@ -330,8 +449,8 @@ def _self_check_encoders():
         assert (a & 0x07FF) == (b & 0x07FF), \
             f"the donor @0x{hw2_pin[0]:05X} differs from ours in more than the reg2 field"
         assert (b >> 11) == hw2_pin[3] and (a >> 11) == R6, "donor/emitted reg2 fields are not as read"
-    for addr, raw, disp, reg2 in (PIN_LDBU_6806_R6, PIN_LDBU_683C_R15, PIN_LDBU_67F5_R7,
-                                  PIN_LDBU_671D_R6):
+    for addr, raw, disp, reg2 in (PIN_LDBU_6806_R6, PIN_LDBU_67FE_R6, PIN_LDBU_67F5_R7,
+                                  PIN_LDBU_671D_R6, PIN_LDBU_683C_R15):
         assert struct.unpack("<H", raw[:2])[0] & 0x1F == GP, \
             f"the donor @0x{addr:05X} does not carry reg1 = r4 -- gp is not r4 after all"
         assert decode_ldbu(raw) == ("ld.bu", disp, GP, reg2), \
@@ -582,8 +701,8 @@ def assert_probe_sites(code, label="V66"):
 
 def assert_signal_sites(code, label="V66"):
     """The instruction donors every emitted encoder is pinned to, read FROM THE IMAGE."""
-    for addr, raw, _disp, _reg2 in (PIN_LDBU_6806_R6, PIN_LDBU_683C_R15, PIN_LDBU_67F5_R7,
-                                    PIN_LDBU_671D_R6):
+    for addr, raw, _disp, _reg2 in (PIN_LDBU_6806_R6, PIN_LDBU_67FE_R6, PIN_LDBU_67F5_R7,
+                                    PIN_LDBU_671D_R6, PIN_LDBU_683C_R15):
         assert bytes(code[addr:addr + 4]) == raw, \
             f"{label}: the pinned ld.bu at 0x{addr:05X} is {bytes(code[addr:addr+4]).hex()}, not " \
             f"{raw.hex()}"
@@ -643,15 +762,21 @@ CENSUS_EXPECTED = {
     0x6806: (13, 16, [0x293A6, 0x293E4, 0x2948C, 0x2958C, 0x29696, 0x296D2, 0x2970E, 0x29724,
                       0x2A582, 0x2A5B6, 0x2A658, 0x2A73C, 0x2A80A, 0x2A842, 0x2A862, 0x2A87E],
              {"ld.bu", "st.b"}),
+    # 🛑 all three writers are inside FUN_00041eec (body 0x41EEC-0x42375) and they store THREE
+    # DISTINCT VALUES -- 0xFF, 1 and 0. See the semantics section of the docstring.
     0x67f5: (8, 3, [0x4222A, 0x42258, 0x42288], {"ld.bu", "st.b"}),
-    0x683c: (1, 0, [], {"ld.bu"}),
+    # ⚠ FIVE writers, not four. 0x3E770 is in FUN_0003e760 (a lockstep reset routine), NOT in
+    # FUN_0003bd7c. The "sole writer FUN_0003bd7c" claim is corrected here.
+    0x67fe: (55, 5, [0x3BDB8, 0x3BE4E, 0x3BE5A, 0x3BE7A, 0x3E770], {"ld.bu", "st.b"}),
+    CONTROL_DISP: (1, 0, [], {"ld.bu"}),
     MASK_DISP: (14, 2, [0x3BD2A, 0x41EC6], {"ld.bu", "st.b"}),
 }
 # The consumer each cell is calibrated against -- these must survive as readers.
-CENSUS_CONSUMERS = {0x6806: 0x2A1B6,     # FUN_00028ea6's own read-back
+CENSUS_CONSUMERS = {0x6806: 0x2A1B6,        # FUN_00028ea6's own read-back
                     0x67f5: 0x21DC0,
-                    0x683c: 0x3AA94,     # the dead gate V67 proposes to repoint
-                    MASK_DISP: 0x3AB98}  # r24's priority chain, ahead of the LKAS arm
+                    0x67fe: 0x41FF2,        # `cmp 0x2,r10` in FUN_00041eec -- the {1,2} test
+                    CONTROL_DISP: 0x3AA94,  # the dead gate V67 proposes to repoint
+                    MASK_DISP: 0x3AB98}     # r24's priority chain, ahead of the LKAS arm
 _READ_MNEM = {"ld.b", "ld.h", "ld.w", "ld.bu", "ld.hu"}
 
 # Where THIS cave reads each cell, derived from the listing so it can never drift from the emitted code.
@@ -696,7 +821,8 @@ def assert_cell_census(buf, label="V66", in_cave=True):
 
         # ---- SECOND METHOD: scan_gp_accesses decodes per-opcode over EVERY byte offset, including
         # odd ones, and covers the 48-bit extended-displacement form the pattern scan is blind to.
-        SCAN.self_check(buf) if disp == 0x6806 else None
+        if disp == 0x6806:
+            SCAN.self_check(buf)
         alt = SCAN.scan(buf, (-disp) & 0xFFFF)
         alt_even = [h for h in alt if h["even"]]
         assert len(alt_even) == len(hits), \
@@ -717,8 +843,10 @@ def assert_cell_census(buf, label="V66", in_cave=True):
             d7 = SCAN.decode_fmt7(buf, h["addr"])
             if d7 is None or d7[4] != GP:
                 genuine.append(h)
-        if disp == 0x683c:
+        if disp == CONTROL_DISP:
             # 🛑 THE LOAD-BEARING NULL. V67 rests entirely on this cell having no writer at all.
+            # V66 can no longer measure it ON-CAR (the bit was cut for budget), so this STATIC
+            # verification is now the only evidence, and it is asserted on every build.
             assert not ext, f"{label}: gp-0x683c has {len(ext)} extended-displacement candidates"
             assert n_write == 0 and not writes, f"{label}: gp-0x683c has acquired a writer"
         assert not genuine, \
@@ -751,9 +879,14 @@ def build():
     assert_signal_sites(v65, "V65 source")
     assert_gain_b_surface(v65, v65, "V65 source")
     assert_cell_census(bytes(v65), "V65 source", in_cave=False)
-    print("    census OK (TWO decoders): gp-0x6806 13r/16w, gp-0x67f5 8r/3w, gp-0x683c 1r/0w,")
-    print("               gp-0x671d 14r/2w -- every access a BYTE, and V65's cave touches none")
-    print("               of them (the pre-edit baseline for GATE 1)")
+    print("    census OK (TWO decoders): gp-0x6806 13r/16w, gp-0x67f5 8r/3w, gp-0x67fe 55r/5w,")
+    print("               gp-0x683c 1r/0w, gp-0x671d 14r/2w -- every access a BYTE, and V65's cave")
+    print("               touches none of them (the pre-edit baseline for GATE 1)")
+    print("    ⚠ gp-0x67fe has FIVE writers, not four: 0x3E770 is in FUN_0003e760 (a lockstep reset")
+    print("      routine, shadow gp-0x4c3a), NOT in FUN_0003bd7c.")
+    print(f"    ⚠ gp-0x{CONTROL_DISP:04x} DEAD-CELL CLAIM verified STATICALLY only "
+          "(1 reader, 0 writers, 0 extended)")
+    print("      -- V66 does not measure it on-car; the bit was cut for budget.")
 
     baseline = bytearray(open(FF.V38_PLAIN, "rb").read())
     V55.V54.assert_v38_baseline(baseline)
@@ -980,15 +1113,23 @@ def build():
         off += len(raw)
     assert off == CAVE_BASE + len(CAVE_BYTES)
     # 🛑 and re-decode each cell load's DISPLACEMENT out of the readback bytes, independently
-    print("\n  cell loads re-decoded from the READBACK by scan_gp_accesses (the hw1-bit-5 guard):")
+    print("\n  cell loads re-decoded from the READBACK by scan_gp_accesses (the hw1-bit-5 guard),")
+    print("  with the PARITY of every encoded cell:")
+    print(f"    {'site':>9s}  {'bytes':<10s} {'cell':<12s} {'disp':<8s} {'parity':<7s} {'op':<5s} "
+          f"{'bit':<5s} provenance")
     for disp, bit, name, why in CELLS:
         a = CAVE_CELL_READS[disp]
         raw = bytes(readback[a:a + 4])
         mnem, got, reg1, reg2 = decode_ldbu(raw)
         assert (mnem, got, reg1, reg2) == ("ld.bu", disp, GP, R6), \
             f"{name}: readback @0x{a:05X} decodes as {mnem} gp-0x{got:04x} r{reg1}/r{reg2}"
-        print(f"    0x{a:05X}  {raw.hex()}  {mnem} -0x{got:04x}[gp],r{reg2}  -> bit{bit.bit_length()-1}"
-              f"   {name}")
+        d16 = (0x10000 - disp) & 0xFFFF
+        op = (struct.unpack_from("<H", raw, 0)[0] >> 5) & 0x3F
+        prov = "FIELD-DECOMPOSED (weak)" if disp in WEAK_PIN_DISPS else "byte-identical instance"
+        print(f"    0x{a:05X}  {raw.hex():<10s} gp-0x{disp:04x}    0x{d16:04X}   "
+              f"{'ODD' if d16 & 1 else 'EVEN':<7s} 0x{op:02X}  bit{bit.bit_length() - 1}  {prov}")
+    assert set(WEAK_PIN_DISPS) <= {d for d, _, _, _ in CELLS} , \
+        "a cell declared weakly pinned is not actually emitted"
     print(f"    {len(CAVE_BYTES)} bytes used of the {len(V55.CAVE_BYTES)}-byte proven extent; "
           f"{len(V55.CAVE_BYTES) - len(CAVE_BYTES)} spare (a fourth rung needs 12 -- see the docstring)")
     print(f"    sar sites read back: 0x{V62.R24_SAR:05X}={u16(readback, V62.R24_SAR):04X}  "

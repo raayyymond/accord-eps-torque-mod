@@ -70,14 +70,14 @@ sys.path.insert(0, str(Path(__file__).parent))
 from rlog_parse import read_messages  # noqa: E402
 
 BIT_LIVE = 0x80
-BIT_6806, BIT_67F5, BIT_683C = 0x40, 0x20, 0x10
+BIT_6806, BIT_67F5, BIT_67FE = 0x40, 0x20, 0x10
 BIT_UNUSED = 0x08
 PROBE_MASK = 0xF8
 
 # (bit, short name, gp cell, what it decides)
-GATES = ((BIT_6806, "bit6 gp-0x6806", 0x6806, "V67's PROPOSED GATE (LKAS active)"),
-         (BIT_67F5, "bit5 gp-0x67f5", 0x67f5, "driver-torque hands-on gate candidate"),
-         (BIT_683C, "bit4 gp-0x683c", 0x683c, "THE CONTROL -- must be 0 in 100% of frames"))
+GATES = ((BIT_6806, "bit6 gp-0x6806", 0x6806, "gate candidate A -- V67's currently drawn gate"),
+         (BIT_67F5, "bit5 gp-0x67f5", 0x67f5, "gate candidate B -- THREE-VALUED {0,1,0xFF}"),
+         (BIT_67FE, "bit4 gp-0x67fe", 0x67fe, "gate candidate C -- semantics DISPUTED"))
 
 # The kill band for a gate that switches a control gain. Below this a gain step is quasi-static;
 # inside it the switching itself pumps the mode.
@@ -281,7 +281,7 @@ def report(tag, d):
 
     g6806 = (d["b4"] & BIT_6806) != 0
     g67f5 = (d["b4"] & BIT_67F5) != 0
-    g683c = (d["b4"] & BIT_683C) != 0
+    g67fe = (d["b4"] & BIT_67FE) != 0
     bit3 = (d["b4"] & BIT_UNUSED) != 0
 
     # ---- 1. WHICH BUILD IS THIS? -- run BEFORE any verdict -----------------------------------------
@@ -315,25 +315,15 @@ def report(tag, d):
         print("      => CONFIRM THE FLASHED .rwd FILENAME before reading anything below:")
         print(f"         {RWD_NAME}")
 
-    # ---- 2. THE CONTROL -- a HARD STOP, per the build note -----------------------------------------
-    print("\n-- 2. *** THE CONTROL: bit4 = gp-0x683c != 0 *** --")
-    print(f"   frames with bit4 SET : {int(g683c.sum())} / {n}  ({100 * g683c.mean():.4f}%)")
-    if g683c.any():
-        first = d["t"][g683c][0] - d["t"][0]
-        print(f"\n   *** STOP. gp-0x683c is NOT DEAD. First non-zero at t+{first:.2f}s, "
-              f"{int(g683c.sum())} frames.")
-        print("       The byte scan finds exactly ONE access to this cell image-wide -- the very")
-        print("       `ld.bu -0x683c[gp],r15` @0x3AA94 that V67 proposes to repoint -- and ZERO")
-        print("       writers, in both the Format-VII and the 48-bit extended form. A non-zero value")
-        print("       therefore means either the RAM init leaves it non-zero, or something writes it")
-        print("       through a computed pointer that no displacement scan can see.")
-        print("       Either way the repoint is NOT a clean substitution: 0xC6446 = 512 is currently")
-        print("       LIVE for r24, and V67's arm value was sized on the assumption that it is not.")
-        print("       *** V67 IS CANCELLED AS DESIGNED. *** Re-derive the r24 gain arm actually in")
-        print("       force before proposing anything else on this lane.")
-        return
-    print("   => gp-0x683c reads 0 in 100% of frames. The dead-cell claim SURVIVES this drive, and")
-    print("      V67's repoint remains a clean substitution on this criterion.")
+    # ---- 2. WHAT THIS BUILD DOES **NOT** MEASURE ---------------------------------------------------
+    print("\n-- 2. NOT MEASURED BY V66 -- read before drawing any conclusion --")
+    print("   gp-0x683c (the CONTROL, V67's repoint site) -- the bit was cut for cave budget. Its")
+    print("     dead-cell claim rests on STATIC evidence only: 1 reader, 0 writers, 0 extended-form")
+    print("     candidates, reproduced by two independent decoders on every build. That cannot rule")
+    print("     out a non-zero RAM-init value or a write through a computed pointer.")
+    print("   gp-0x671d (the MASKING RISK) -- dropped by the final spec. V64 measured it 0 across")
+    print("     14,980 frames of ONE route. If V67 behaves as if its arm never applied, start here.")
+    print("   Neither absence may be read as a pass.")
 
     # ---- 3. THE HEADLINE: DUTY, TRANSITIONS/s, DOMINANT TOGGLE Hz ----------------------------------
     sus = sustained(d["tq"], fs)
@@ -354,8 +344,8 @@ def report(tag, d):
         print("     drive with no engagement, and 'bit6 duty 0%' below is then trivially true.")
 
     print(f"\n{'-' * 100}\n-- 4. *** THE HEADLINE: DUTY, TRANSITIONS/s, DOMINANT TOGGLE Hz *** --")
-    print(f"   V67 is CANCELLED if bit6 (or bit5, as an alternative gate) toggles inside "
-          f"{KILL_LO_HZ:.0f}-{KILL_HI_HZ:.0f} Hz.")
+    print(f"   ANY candidate that toggles inside {KILL_LO_HZ:.0f}-{KILL_HI_HZ:.0f} Hz is DISQUALIFIED "
+          "as a gate. If it is bit6, V67 as drawn is CANCELLED.")
     print("   exposure = selected samples / fs;  'r' = contiguous runs. Transitions are counted")
     print("   WITHIN runs only, and the spectrum comes from the LONGEST run -- never a concatenation.")
     print(f"   {'gate / subset':24s} {'n':>7s} {'expos':>8s} {'runs':>5s}  {'duty':>12s}  "
@@ -366,7 +356,7 @@ def report(tag, d):
                ("MANUAL", ~eng),
                ("ENGAGED+creep", eng & creep),
                ("MANUAL+creep", ~eng & creep)]
-    for bit, name, cell, why in GATES[:2]:
+    for bit, name, cell, why in GATES:
         m = (d["b4"] & bit) != 0
         print(f"   -- {name}   {why}")
         for sname, sel in subsets:
@@ -381,7 +371,7 @@ def report(tag, d):
     # ---- 5. THE KILL CRITERION ---------------------------------------------------------------------
     print(f"\n{'-' * 100}\n-- 5. THE KILL CRITERION --")
     verdict_ok = True
-    for bit, name, cell, why in GATES[:2]:
+    for bit, name, cell, why in GATES:
         s = headline.get(bit)
         if s is None:
             continue
@@ -397,10 +387,16 @@ def report(tag, d):
                 print("             were the LKAS-active flag it would have moved. Treat it as NOT")
                 print("             CONFIRMED and DO NOT FLASH V67.")
                 verdict_ok = False
-            elif bit == BIT_67F5 and (sus > 200).any() and (sus <= 200).any():
-                print("         *** AND THIS LOG HAS BOTH HANDS-ON AND HANDS-OFF FRAMES. gp-0x67f5 is")
-                print("             then not the driver-torque gate this kit reads it as -- which does")
-                print("             not block V67, but retires it as an alternative gate.")
+            elif bit == BIT_67F5 and eng.sum() and (~eng).sum():
+                print(f"         => consistent with the reading that gp-0x67f5 is a DEBOUNCED "
+                      f"WHEEL-SPEED")
+                print("            PLAUSIBILITY LATCH (r28 >= cal 0xC631E = 640 counts ~ 10 km/h for")
+                print("            10 ticks, in FUN_00041eec), i.e. a fault flag that is 0 in normal")
+                print("            driving. A quiet gate is NOT the same as a good gate: it has not")
+                print("            been shown to switch with anything. RETIRE candidate B.")
+            elif bit == BIT_67FE and eng.sum() and (~eng).sum():
+                print("         => gp-0x67fe never moved across engagement. It is not the LKAS engage")
+                print("            state. RETIRE candidate C.")
             continue
         pk_txt = (f"dominant {s['peak_hz']:.2f} Hz ({s['prom']:.1f}x median)"
                   if np.isfinite(s["peak_hz"])
