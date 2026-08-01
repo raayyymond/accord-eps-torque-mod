@@ -70,6 +70,7 @@ trigger is unresolved**: if it is ever 1, r24/r26 **and six other lanes** silent
 (`gp-0x671d == 0` ∧ `gp-0x683c == 0` ∧ `gp-0x671a ≤ cal 0xC64FA`). The interpolation is computed
 unconditionally; only the *selector* is conditional. `gp-0x683c` is dead, but **`gp-0x671d` is live and
 outranks everything** — see [[accord-gp683c-dead-gate-is-a-free-lkas-arm]].
+
 ✅ **`gp-0x6ac0`'s scale is now CONFIRMED, and the 4.7121 figure is exact.** `gp-0x6ac0` is
 **`|gp-0x6abe|`** — both come from ONE EMA accumulator in `FUN_00041464` (`gp-0x6abe = state >> 10`,
 `gp-0x6ac0 = abs(state) >> 10`), verified at instruction level. The counts-per-deg/s figure was
