@@ -405,3 +405,50 @@ opcode 0x39 and carries no displacement meaning at all.
 **Route:** ordinary driving plus creep, and revisit the burst corner — **v 2–4 m/s at high steering
 rate (≥32 deg/s) under LKAS**. Log from before first engagement. The same drive delivers the burst
 count that step 0 asks for.
+
+---
+
+## 🛑🛑 TWO OPERATOR CORRECTIONS, 2026-08-01 — both confirmed in the data, both supersede text above
+
+### 1. The two instants ARE the same phenomenon. "Two different phenomena" is WITHDRAWN.
+The operator said both remembered timestamps were the same symptom and that instant #1 *"should have a
+second instance."* **They were right.** Ranking every engaged window in route 37 by **30–49 Hz envelope
+p99** (NFFT=128, 50% overlap):
+
+| rank | env99 | wall | v m/s | sustained effort |
+|---|---|---|---|---|
+| 1–3 | 3829 / 3794 / 3477 | **10:12:14–15** | 1.9–2.4 | 939–2250 |
+| 4, 5 | 1225 / 1225 | **10:23:21–22** | 7.1–8.2 | 1259–2812 |
+| 8, 9 | 946 / 946 | **10:23:23–24** | 5.0–5.4 | 1266–2207 |
+| 6, 7, 10 | 1219 / 1219 / 926 | 10:15:59–16:00 | 15.6–17.7 | 768–1844 |
+| 11, 12 | 886 / 886 | 10:14:18–19 | 15.4–17.1 | 1053–2174 |
+
+⇒ **ONE phenomenon, at least FIVE instances, all engaged, all under real driver effort, spanning
+1.9–17.7 m/s.** The second instance lands *exactly* on the operator's remembered 10:23:24.
+
+🛑 **How the error was made, because it is instructive:** the "different phenomena" split came from a
+`|d(tq)| > 2000` threshold that **only instant #1 crossed**. Everything below the cutoff was
+reclassified as "ordinary roughness". `spec-newgrind` had independently concluded they were the **same
+class differing 3.7× in severity** (matching on every shape metric: dwell 1.24–1.50 samples, skew(dx/dt)
+−0.00/−0.08, 95.7%/77.6% of energy outside both known bands) — and the orchestrator over-weighted the
+threshold-based framing against it. **A hard threshold is a classifier, and a classifier with one class
+member on one side is not evidence of two populations.** Rank by a continuous statistic first.
+⇒ This also retires the orchestrator's "instant #1 is at 5.4 mph, NOT 10–20 mph" quibble: **the family
+spans the operator's whole reported range.**
+
+### 2. The RATCHET occurs HANDS-OFF as well as hands-on — and is far LOUDER hands-off.
+The operator corrected the "heavy load" characterisation. 6–12 Hz envelope p99, engaged, v < 4 m/s:
+
+| build | HANDS-OFF (sust eff < 200) | HANDS-ON (≥ 800) | ratio |
+|---|---|---|---|
+| **V62** | **2,665** (n=25) | 392 (n=14) | **6.8×** |
+| V59 | 1,265 (n=9) | 506 (n=7) | 2.5× |
+
+⇒ **The driver's hands DAMP it**, which is exactly what the wheel-inertia-on-torsion-bar mode predicts
+(hands add mass and damping to the resonating element). Any future ratchet analysis must use the
+**hands-off** arm as primary; conditioning on driver load selects *against* the phenomenon.
+⚠ V62 hands-off vs V59 hands-off is **2.1×**, inside the **2.2× noise floor** — still not a resolvable
+change, consistent with the retraction above.
+
+🛑 **Operator lived experience overrides analyst characterisation** — standing instruction, and it was
+correct on both counts here.
