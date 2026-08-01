@@ -239,15 +239,25 @@ hw2) the opcode field, both register fields, and the high displacement byte are 
 | # | site | from | to | what |
 |---|---|---|---|---|
 | 1 | `0x3AA96` | `c5` | *gate disp* | repoint the dead gate — **one byte** if the target displacement is even |
-| 2 | `0xC6446` | 512 | **1536** | with `sar 0x9` (÷512) this is 3.0 = exactly the stock creep gain 3072/1024 |
+| 2 | `0xC6446` | 512 | **1188** | sized AT THE POINT THE ARM IS TAKEN — see the correction below |
 | — | `0x3AC20`, `0x3AB76` | — | unchanged `a9` | V62's doubling is **kept** |
 
 - driver light / hands-off → gate 0 → LERP × 2 ⇒ **grind #1 stays fixed, exactly as V62**
 - driver cranking the wheel → gate 1 → flat `0xC6446` ⇒ **back to stock, grind #2's regime removed**
 
+🛑 **SIZING CORRECTION, caught by executing the model** (`analysis-2020accord/v66_v67_explained.py`).
+An earlier draft used **1536**, sized against the creep-and-**zero-rate** default of 3072. That was
+wrong: **the arm is only taken while the driver is loading the wheel**, and grind #2 lives at motor
+rate ~256 deg/s where the LERP has already rolled off to **2377**, not 3072. A flat 1536 therefore
+delivered **1.29× stock in the very regime it exists to neutralise.** The arm must be sized at the
+point it is taken: `arm ≈ LERP_there / 2` ⇒ **1188**, which lands on **1.00× exactly**.
+⚠ **Unavoidable residual: a scalar arm cannot track a curve.** 1188 is exact at grind #2's measured
+operating point and drifts to **0.81×–1.47×** across the rest of the hands-on regime — still far below
+V62's flat **2.00×**, which is the number that produced the 11.71×.
+
 `0xC6444` (r26's arm on the same gate) stays stock 512 — r26 is structurally inert, and 512 is below
 gain_A's defaults so it is conservative even if r26 ever became live.
-Arithmetic: `5120 × 1536 = 7.9 M` = **0.37% of INT32_MAX**. No saturation concern.
+Arithmetic: `5120 × 1188 = 6.1 M` = **0.28% of INT32_MAX**. No saturation concern.
 
 ### 🛑 The gate cell is NOT yet chosen, and choosing it wrong is the whole risk
 
