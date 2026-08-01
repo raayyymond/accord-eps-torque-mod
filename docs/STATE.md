@@ -6,20 +6,39 @@ each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed, falsified, or **rejected on
 review** — check it before proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-07-31-v61-worse-the-rate-lane-is-the-damper.md`
-(predecessors: `HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`, then
-`HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md`, then
-`HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`).
+`docs/HANDOFF-2026-08-01-v62-flew-and-the-grinding-is-fixed.md`
+(predecessors: `HANDOFF-2026-07-31-v64-the-null-is-on-the-gate.md`, then
+`HANDOFF-2026-07-31-v61-worse-the-rate-lane-is-the-damper.md`, then
+`HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`, then
+`HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md`).
 
-🛑🛑 **THE HEADLINE, 2026-07-31 (LATEST): V64 FLEW AND THE GRINDING IS UNFIXED — but the probe proves
-the lever was never pulled.** `0x14A` byte4 read a **constant `0x87` across all 14,980 frames**: liveness
-set, and the detector's four state bits **clear on every single frame**. `gp-0x671a` never left zero, so
-V64's two calibration edits (`0xC6440`, `0xC643E`) **were never in force for one frame of the drive.**
-⇒ **This is a null on the GATE, not on the damping hypothesis.** The direction V61 signed is still
-untested on-car. Spectra agree independently: **V64 ≡ V59** (2–3 m/s bin: 20.98 vs 20.99 Hz, env99 1811
-vs 1804), and V61's spread into manual driving is gone.
-⇒ ★★★ **V62 is promoted from fallback to THE RECOMMENDED NEXT FLASH.** It carries no detector anywhere
-in its path. See "On the car right now" below.
+★★★ **THE HEADLINE, 2026-08-01 (LATEST): V62 FLEW AND THE GRINDING IS FIXED. The kit's first measured
+fix.** Route `00000037--6231e33f3d`, 15 segs, 86,278 frames. Operator: *"Original grinding at 2–5 mph is
+gone!"* Engaged creep, speed-standardised, **episode-clustered** bootstrap: 18–22 Hz **0.124 [0.036,
+0.387]** vs V59 (8×), and **0.024 [0.016, 0.234] at |rate| 16–32 deg/s (42×)**, with a **30–40 Hz negative
+control at ~1.0** ⇒ band-specific, not a route offset. Transient rates **0.793 / 0.486 / 0.338** at
+>200/>500/>1000 counts per 10 ms — monotonically cleaner, and the **lowest p90/p99/>1000-rate of any
+build**. ★ V61 quantified on the same statistic: p50 roughness **730** vs V59's 101, >1000 excursions
+**376.7/s vs 24.3/s** — the operator's "significantly worse", at 15×.
+
+🛑 **The reported "new grinding at 10–20 mph" is NOT an established regression.** Wall clock measured
+(±0.05 s): **10:12:15 → seg 1 t=9.67 s** (5.4 mph, *not* 10–20), **10:23:24 → seg 12 t=18.63 s** (16.3 mph).
+Both relocated **independently of the operator's memory**. They are **two different phenomena**:
+instant #2 is an ordinary roughness burst **V59 produces ~3× MORE often** (1.042/s vs 0.354/s) — the
+*unmasking*; instant #1 is a **0.92 s singleton** carried by **38–46 Hz** (8,478× median) while 18–22 Hz
+sat at 1.4× median. 🛑🛑 **Its 43 excursions >2000 are ONE burst ⇒ n = 1.** By distinct bursts/engaged
+second: V62 **0.00142 [0.00004, 0.00793]**, V59 **0 [0, 0.00986]** — **V62's CI is INSIDE V59's**;
+V61 is **72×** V62. Exposure-matched (v 2–4 m/s ∧ |rate| ≥32 deg/s: 16.14 s vs 15.75 s, one event) ⇒
+**p = 0.51, a coin flip.**
+⇒ ★★★ **RECOMMENDED: NO NEW BUILD. Fly V62 again and count bursts.** The open question is the *rate of a
+rare event*, which needs exposure, not firmware. See "Recommended next steps".
+
+⇒ ★★★ **AND r26 IS STRUCTURALLY INERT.** `avg`'s cal base `0xC6564` byte-reads as **40 bytes of exact
+zero** (bounded by non-zero data both sides), with no writer for the RAM adjustment ⇒ `stage1 ≈ 0`
+regardless of dtorque. **V62's `0x3AB76` edit was a NO-OP, and r24 carries the entire rate lane.**
+This re-attributes V42 (null because r26 was *already* zero), V61 (WORSE = killing **r24**) and V62
+(fix = doubling **r24**), and **supersedes** the standing claim *"killing either alone leaves the other
+transmitting."*
 
 🛑 **THE PRIOR HEADLINE, still standing: V61 made the grinding WORSE, and that inverted the record.** The
 torsion-bar RATE lane (`r24`/`r26` in `FUN_0003aa2c`) is the mode's **DAMPER**, not its amplifier. Every
@@ -308,7 +327,18 @@ gain reducer. This is what pulls eps down from the raw-LERP values.
 
 ---
 
-## On the car right now — **V64**
+## On the car right now — **V62** (flashed 2026-07-31, driven route `37--6231e33f3d`)
+
+**See THE HEADLINE at the top of this file for the full V62 result** — it is the current state and is not
+repeated here. Summary: **the 20.9 Hz grinding is FIXED (8–42×)**, the route is flight-clean
+(`ST==4` 0/86,278, zero-EME streak now >229,278 frames), **no regression is established**, and the
+recommended next action is **another V62 drive, not a build**. V62 carries **V59's probe unchanged** —
+🛑 `0x14A` byte4 = `0x87` therefore means *"boost index ≥ 2048"* (the **deepest** thermometer reading),
+**not** V64's *"detector unarmed"*. Same byte, opposite meaning; it is 9.24% of route 37.
+
+---
+
+## Previously on the car — **V64**
 
 ## 🛑🛑 V64 FLASHED AND DRIVEN 2026-07-31 (route `35--77808fe7ce`) → **GRINDING UNFIXED, AND THE PROBE DIAGNOSED THE NULL**
 
@@ -775,16 +805,36 @@ set's 12.6–42.2°).
 🛑 **NO openpilot-side modifications.** Standing operator instruction. openpilot remains a *measurement
 instrument* only.
 
-0. ★★★ **FLASH V62. The V63/V64 gated route is CLOSED — it was flown and the detector never armed.**
-   V62 doubles the rate lane unconditionally, in 6 bytes, with **no detector, gate, threshold or counter
-   anywhere in its path**. It is the matched inverse of V61, the only signed on-car result this kit has.
-   **Route:** repeat route `31` for like-for-like — parking-lot creep, deliberate LKAS on/off passes at
-   matched speed and angle, **plus the manual-forward and manual-REVERSE passes**. 🛑 Manual reverse is
-   the highest-information single test: V61 introduced grinding there from nothing, with no LKAS in the
-   loop at all.
-   **Interpretation, pre-committed:** BETTER ⇒ direction confirmed, next question is how much more
-   (`sar 0x8` = 4×). NULL ⇒ the lane is **phase**-limited not gain-limited ⇒ next lever is `0xC6C42`
-   (delay D 4→2). WORSE ⇒ past optimum, back off to 1.5×.
+0. ★★★ **NO NEW BUILD. KEEP V62 ON THE CAR AND FLY IT AGAIN.** ✅ V62 flew and **BETTER** was the
+   pre-committed outcome — direction confirmed, and the grinding is fixed 8–42×. **There is nothing
+   established to fix.** The one candidate event is a **0.92 s singleton at p = 0.51** against an
+   exposure-matched control, and V62's burst-rate CI sits **inside** V59's. A fix would be aimed at a
+   coin flip.
+   **The open question is the RATE of a rare event, and that needs EXPOSURE, not firmware.** Two more
+   V62 routes make it estimable: if it never recurs it was a one-off; if it recurs at ~1/700 s there are
+   three events and a real CI.
+   **Route:** ordinary driving plus deliberate creep passes, and specifically **revisit the corner the
+   burst lived in — v 2–4 m/s at high steering rate (≥32 deg/s) under LKAS.** Log from before first
+   engagement. 🛑 Do **not** re-run the pre-committed `sar 0x8` (4×) escalation yet — it would trade a
+   confirmed fix against an unmeasured effect.
+
+0a. **When a build does come, the target is the RATCHET — and the search space just shrank.**
+   ❌ NOT the r26 revert (structurally inert — see the headline). ❌ NOT the base-assist damper
+   `gp-0x6bd0` (f5 = 0 at both operating points; a **third** independent reason V44/V47 were null).
+   ❌ NOT friction comp or a deadband — the ratchet waveform is **symmetric on every build**
+   (skew(dx/dt) −0.16…+0.06 vs a −3.27 sawtooth calibration) ⇒ an **amplitude-saturated resonance**,
+   pointing at damping/loop gain. ❌ NOT the motor-rate LERP as a discriminator — scale resolved at
+   **4.7121 counts per deg/s** (`0xC613A` = 1159), so ratchet 9.4 counts and grinding 73.0 counts both
+   sit inside gain_A's **flat first segment** (breakpoints 250/400).
+   ✅ **STILL OPEN, the leading idea:** the modes **do** separate on motor rate, and **breakpoints are
+   calibration**. r24's gain_B (mode 10, `0xD2AEC`) has X = [0, **400**, 1500, 3000], Y = [2305, 2304,
+   2149, 1948]. Moving them to bracket the two operating points — e.g. X = [0, 40, 100, 3000],
+   Y = [2305, 2305, 4610, 4610] — gives **stock gain where the ratchet lives and 2× where the grinding
+   lives**. Arithmetic safe (5120 × 4610 = 23.6M vs 2³¹). Hold until the ratchet is worth attacking.
+   ⚠ **The ratchet's trigger sits outside the firmware**: instant #1 occurs with openpilot's command
+   **railed at ±4096** for 0.64 s with the driver turning against it (engaged-creep rail duty **V62 42.4%
+   vs V59 25.3%** — itself a confound). 🛑 **NO openpilot-side modifications** is standing; recorded as
+   observation, and the constraint is the operator's call.
 
 0b. 🛑 **DO NOT re-propose lowering `T` (`0xC620A`) as a cheap fix.** It is *viable on sizing* — see the
    `gp-0x6c2c` section below, ~1.7–2× short, not 5× and not 30× — but `gp-0x671a` has **four external

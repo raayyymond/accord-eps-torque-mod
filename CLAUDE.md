@@ -18,27 +18,22 @@ an already-flashed, already-falsified lever because the result was buried in pro
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
    **Mandatory before proposing any calibration edit.**
 3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session.
-   Latest: `HANDOFF-2026-07-31-v64-the-null-is-on-the-gate.md` — 🛑🛑 **V64 flew and the grinding is
-   unfixed, but the probe read a CONSTANT `0x87` across all 14,980 frames: the oscillation detector
-   never armed, so `0xC6440`/`0xC643E` were never in force for one frame. A null on the GATE, not on the
-   damping hypothesis — do NOT cite V64 against raising the rate lane.** Spectra confirm V64 ≡ V59.
-   **V62 is promoted to the recommended next flash** (no detector anywhere in its path). `gp-0x6c2c` is a
-   **motor-rate derivative**, not torque; `gp-0x671a` has **four external consumers**, so lowering `T`
-   changes five things at once. 🛑 **Probe the gate and the input, not just the output.**
-   (predecessor: `HANDOFF-2026-07-31-v61-worse-the-rate-lane-is-the-damper.md` — ★★★ **V61 made the grinding
-   WORSE and spread it to manual driving, which INVERTED the record: the torsion-bar RATE lane
-   (`r24`/`r26` in `FUN_0003aa2c`) is the mode's DAMPER, not its amplifier.** The kit's first *signed*
-   on-car result. V39, V42 and V61 all tested that lane **downward**; the gradient points **up**.
-   ⚠ **SUPERSEDED by the V64 drive above:** this handoff recommended V64 (V63's oscillation-gated cal
-   edits `0xC6440`/`0xC643E` + the detector probe) as the next flash. **It flew and was inert** — the
-   detector never armed. **V62 is now the recommendation.** 🛑 `gp-0x671a` is a **one-way latch** with a
-   5 s hold, so the gating would have been *"only after an oscillation has happened"* — moot, since it
-   never happened.
-   🛑 The lesson pairs with the V44 trap: there a withdrawn *rationale* was mistaken for a withdrawn
-   *result*; here every result stood and only the **direction** was wrong. **Check which WAY a lever was
-   pushed, not just that it was pushed.**
-   ) — end of the V61 predecessor summary.
-   (earlier: `HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`, then
+   Latest: `HANDOFF-2026-08-01-v62-flew-and-the-grinding-is-fixed.md` — ★★★★ **V62 FLEW AND THE GRINDING
+   IS FIXED: 18–22 Hz down 8× at creep and 42× at |rate| 16–32 deg/s, with a clean negative-band control.
+   The kit's first measured fix.** 🛑 The reported "new grinding at 10–20 mph" is **NOT an established
+   regression** — it is ONE 0.92 s burst (n = 1) whose rate-CI sits *inside* V59's, at p = 0.51 against an
+   exposure-matched control. ⇒ **NO NEW BUILD; fly V62 again and count bursts.** 🛑🛑 **r26 is
+   STRUCTURALLY INERT** (`avg`'s cal base `0xC6564` = 40 bytes of exact zero) ⇒ **r24 carries the whole
+   rate lane**, re-attributing V42/V61/V62 and superseding *"killing either alone leaves the other
+   transmitting."* ★★ The remaining symptom is the **ratchet**: LKAS-gated at p = 1.09e-08, fixed in
+   hertz, and **symmetric on every build ⇒ an amplitude-saturated resonance, not stick-slip.**
+   🛑 **Bootstrap over EPISODES, not windows** — the noise floor here is 2.2×, and it retracted three
+   claims in one session.
+   (predecessors: `HANDOFF-2026-07-31-v64-the-null-is-on-the-gate.md` — V64's detector never armed, a null
+   on the GATE not the hypothesis; then `HANDOFF-2026-07-31-v61-worse-the-rate-lane-is-the-damper.md` —
+   V61 made it WORSE, which inverted the record and gave the gradient V62 then confirmed. 🛑 **Check which
+   WAY a lever was pushed, not just that it was pushed.** Then
+   `HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`, then
    `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md` — the uncompensated-positive-feedback-loop
    framing, which the V61 result now *supports* and gives a lever for; then
    `HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`, then

@@ -586,7 +586,14 @@ class EpsState:
     assist_gate_671d: int = 0      # r24's HIGHER-priority override; live (2 writers: 0x3BD2A, 0x41EC6)
     assist_gate_683c: int = 0      # DEAD -- zero st.b writers image-wide, so the 512 arms are unreachable
     assist_gate_6b5e: int = 0      # LERP output on axis gp-0x6bda, tested only as a boolean; NOT hands-off
-    assist_slope_q10: Optional[int] = None  # gp-0x69a4; unresolved producer, replay when captured
+    assist_slope_q10: Optional[int] = None  # gp-0x69a4; producer RESOLVED @0x355c6 (FUN_000352b4) --
+                                  # the local SLOPE of a 10-segment curve, gated |gp-0x4f60| <= 25600.
+                                  # 🛑 ~ZERO ON THIS CALIBRATION: FUN_00039702 shows the RAM array
+                                  # gp-0x641E..gp-0x6444 is an ADJUSTMENT added in Q10 float to a fixed
+                                  # cal base at tp+0x7564, and 0xC6564-0xC658C byte-reads as 40 bytes of
+                                  # EXACT ZERO with no writer found for the RAM side (10 of 18 cells
+                                  # checked). => r26 contributes ~nothing; r24 carries the lane.
+                                  # [BELIEF, not proof: live RAM is unreadable, 8 cells unchecked.]
     previous_assist_slope_q10: int = 0
     assist_slope_history_valid: bool = False
     assist_inline_a: int = 0       # r26 in FUN_0003aa2c, Sensor-B torque-rate x gp-0x69a4
@@ -1872,6 +1879,19 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     phi' coefficient is positive and LINEAR in Kd. At Kd=0 the mode has no damping term at all.
     ⇒ the lane is the mode's DAMPER, not its amplifier, and the direction of interest is RAISING it.
     V62 doubles it via two `sar 0xa`->`sar 0x9` immediates (0x3AC20, 0x3AB76).
+    ★★★★ V62 FLASHED 2026-07-31, DRIVEN route 37 -- THE GRINDING IS FIXED. Engaged creep, speed-
+    standardised, episode-clustered bootstrap: 18-22 Hz V62/V59 = 0.124 [0.036, 0.387] (8x), and
+    0.024 [0.016, 0.234] at |rate| 16-32 deg/s (42x), with a 30-40 Hz negative control at ~1.0 so the
+    effect is band-specific. Transient rates 0.793/0.486/0.338 at >200/>500/>1000. The kit's first
+    measured fix, and it confirms the V61 gradient.
+    🛑🛑 BUT 0x3AB76 WAS A NO-OP: r26 is structurally inert -- avg's cal base 0xC6564 byte-reads as 40
+    bytes of EXACT ZERO (bounded by non-zero data both sides) and no writer was found for the RAM
+    adjustment at gp-0x641E..gp-0x6444, so stage1 = (dtorque*avg2)>>10 ~ 0 regardless of dtorque.
+    => r24 (0x3AC20) carries the ENTIRE lane. This re-attributes V42 (null because r26 was already
+    zero), V61 (WORSE = killing r24) and V62 (fix = doubling r24), and SUPERSEDES the standing claim
+    that "killing either alone leaves the other transmitting". A revert of 0x3AB76 would do nothing.
+    ⚠ The pre-committed r24 saturation caveat did NOT bind: measured dtorque is 123-839 (the route's
+    most violent transient implies 739) against a clamp that needs 1820 under V62.
     ★★ V63/V64 do it BETTER: gp-0x671a is an oscillation detector (see EpsState.assist_state_671a), so
     raising only the state>=5 arms -- 0xC6440 2048->4096 and 0xC643E 1536->3072 -- adds damping only once
     an oscillation has been detected, leaving a never-oscillating drive on its stock LERP default.
