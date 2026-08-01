@@ -196,3 +196,68 @@ Lomb–Scargle test on true arrival timestamps both came back **underpowered** (
 toward the lower candidate; separation only 1.07–1.27). Recorded as open. Every candidate fix ranks
 identically for both candidates, because the lane's problem is a **selectivity ratio** that is bad at
 both.
+
+---
+
+## 🛑 CLOSING ADDENDUM — the operator chose V67, and two claims of mine were corrected
+
+### 1. Route ↔ firmware provenance was never recorded. It is now.
+Nothing in this kit mapped rlogs to flashed builds, so every session re-derived it from prose — and
+it left a `0x87` decode ambiguity sitting under a build decision. **`analysis-2020accord/route_build_registry.py`**
+now holds all 14 routes with the **evidence** pinning each, plus `identify()`, which re-derives the
+build from a route's own probe payloads so the table is checkable rather than asserted.
+It closes routes `3a`/`3b` outright: byte4 takes `{0x87, 0x97, 0xA7}`, and **`0x97` sets bit4 with
+bit3 clear — structurally impossible under V59/V62's nested thermometer**, so both are excluded; all
+three V65 ladder invariants hold over 120,049 frames; V64 is excluded twice (frozen constant, and
+18–22 Hz suppressed here). Route `37` independently narrows to `{V59, V62}` and excludes V65.
+**Standing practice: add the row when the route is added, and run `identify()` against the data.**
+
+### 2. ✅✅ V67's GATE IS VALIDATED ON-CAR — from data that was already on disk since July
+V57's own probe put `(gp-0x6806 == 0)` on `0x14A` byte4 bit6 and flew routes `28`/`29`. Nobody had
+correlated it:
+
+| | route `29` | route `28` |
+|---|---|---|
+| frames / span | 7,924 / 79.2 s | 29,990 / 299.9 s |
+| **agreement with `carControl.latActive`** | **99.90%** | **99.94%** |
+| duty | 21.73% | 49.88% |
+| **transitions** | **0.0505/s** | **0.0300/s** |
+
+`gp-0x6806 != 0` **is** "LKAS is applying"; it does **not** drop out during steady engaged holding
+(the one ambiguity static analysis could not close); and it toggles **three orders of magnitude**
+below the 21/45 Hz modes, so it cannot parametrically pump.
+⇒ **V67 does not have to wait for V66's drive.** Reproduce with `analysis-2020accord/validate_gp6806_gate.py`.
+🛑 **The lesson is where to look.** This sat in `_cache_r28`/`_cache_r29` for a month while every
+session treated the polarity as an open Ghidra question. **Check whether a past probe already flew on
+a signal before tracing it.**
+
+### 3. 🛑 TWO CORRECTIONS TO MY OWN CLAIMS
+- **"Driver torque separates the symptoms >8×" — WRONG.** I compared grind #2's *measured* torque
+  (1600–2700) against the *definition* of hands-off (≤ 200) rather than against grind #1's *measured*
+  distribution. Creep, top decile of each: **1268 vs 2158 = 1.70×**, heavy overlap. Steering rate is
+  **2.00×** with p90s at 359 vs 371. Best single threshold, keep grind #1 boosted / remove grind #2:
+  **LKAS 98.7% / 15.7% · driver torque 96.8% / 50.5% · steering rate 81.1% / 48.5%.**
+  ⇒ **No available axis cleanly separates them.** LKAS preserves grind #1 best and is the only one
+  leaving base steering exactly stock; it removes grind #2 only where LKAS is off.
+- **V67's arm value was mis-sized twice, and executing the model caught both.** First 1536 (sized at
+  creep-and-*zero*-rate, but the arm is only taken where the driver loads the wheel); then rebased on
+  V66 per the operator, which inverts the polarity — the arm now *adds* the boost rather than
+  cancelling it, so it is sized at **grind #1's** operating point: **`0xC6446` = 5244 = 2.00 × 2622**.
+
+### 4. V67, as built
+```
+0x3AA96   c5 -> fb     ld.bu -0x683c[gp],r15  ->  ld.bu -0x6806[gp],r15    ONE BYTE
+0xC6446   512 -> 5244                                                      ONE HALFWORD
+0x3AC20 / 0x3AB76      left at V66's STOCK `sar 0xa`
+```
+| operating point | STOCK | V62/V65 | V66 | **V67** |
+|---|---|---|---|---|
+| grind #1, LKAS on | 1.00× | 2.00× | 1.00× | **2.00×** |
+| grind #2, LKAS **off** | 1.00× | 2.00× | 1.00× | **1.00×** |
+| grind #2, LKAS **on** | 1.00× | 2.00× | 1.00× | **2.21×** |
+
+🛑 **Grind #2 survives under LKAS**, slightly above V62, because a scalar arm does not follow the
+LERP's rolloff. `0xC6446` is one halfword and is the tuning knob for that trade.
+🛑 **`gp-0x671d` outranks the arm and is LIVE.** If it fires the gain is pinned to `0xC6442` = 1024,
+*below* stock, and V67 becomes worse than V66. V67's probe bit5 measures it directly.
+🛑 **Do not read a V67 null without decoding the probe first.** That is the V64 lesson.
