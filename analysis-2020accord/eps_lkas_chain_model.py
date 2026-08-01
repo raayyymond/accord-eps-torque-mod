@@ -999,21 +999,46 @@ def boost_amplitude_index(st: EpsState) -> int:
     return abs(st.boost_fir_out)
 
 
-ASSIST_RATE_CROSS_X = (0, 640, 3200, 6400)  # gp-0x6a5e AVG-voted torque magnitude
+# tp+0x7010 = 0xC6010, byte-read [0, 640, 3200, 6400] = 0 / 9.99 / 49.95 / 99.9 km/h at 64.0625
+# counts/km/h. The key is gp-0x6a5e (VOTED VEHICLE SPEED -- see the rename note in
+# base_driver_assist_lane), substituting cal tp+0x7314 when gp-0x67f4 != 1.
+ASSIST_RATE_CROSS_X = (0, 640, 3200, 6400)
 
-# FUN_0003ad74 cross-interpolates each X/Y element across the four AVG-torque records, producing the
-# runtime arrays consumed by FUN_0003aa2c. Y is Q10 (1024 == 1.0); every value is byte-verified.
+# ★ RESOLVED 2026-08-01 from the FUN_0003ad74 decompile + byte reads (orchestrator, first-hand).
+# The two halves of FUN_0003ad74 are NOT symmetric, and the record had this wrong in two ways:
+#
+#   gain_B (r24)  -- MODE-INDEXED, through FOUR SEPARATE POINTER ARRAYS, each indexed by mode*4:
+#         0xCBF5C   0xCC044   0xCC12C   tp+0xD214 = 0xCC214
+#     For OUR CAR (gp+0x63fd == 10) they resolve to records 0xD2A74 / 0xD2AB0 / 0xD2AEC / 0xD2B28.
+#     ⚠ These are NOT four consecutive records at a stride -- reading them as consecutive from
+#     0xD2AEC lands on modes 10/11's interleaved rows and gives a nearly FLAT surface (2305->1948),
+#     understating the real rolloff by 2x. Records are PRIVATE per mode (mode 11 -> 0xD2A88/...).
+#     ⚠ build_v62_tva.py's GAIN_B_LERP_MODE10 tripwire watches only 0xD2AEC and 0xD2B28, so it is
+#     blind to an edit landing on 0xD2A74 or 0xD2AB0. Widen it before any cal work on this lane.
+#     Output: runtime X row -> gp-0x6e40, runtime Y row -> gp-0x6e38 (read by r24 @0x3AB9C-0x3ABF8).
+#
+#   gain_A (r26)  -- NOT mode-indexed at all. Four FIXED records at tp+0x7a68/0x7a7c/0x7a90/0x7aa4
+#     = 0xC6A68 / 0xC6A7C / 0xC6A90 / 0xC6AA4, hard-coded in the instruction stream.
+#     Output: runtime X row -> gp-0x6e30, runtime Y row -> gp-0x6e28.
+#     (Moot in practice -- r26 is structurally inert, see assist_slope_q10.)
+#
+# Y is Q10 (1024 == 1.0); every value below byte-verified in _v65_plain_image.bin.
 ASSIST_RATE_B_RECORDS = (
-    ((0, 400, 1400, 3000), (3072, 3072, 2322, 1536)),
-    ((0, 400, 1500, 3000), (2561, 2561, 2247, 1947)),
-    ((0, 400, 1500, 3000), (2305, 2304, 2149, 1948)),
-    ((0, 400, 1500, 3000), (2151, 2151, 2049, 1947)),
+    ((0, 400, 1400, 3000), (3072, 3072, 2322, 1536)),   # 0xD2A74  <- 0xCBF5C[10], speed 0 km/h
+    ((0, 400, 1500, 3000), (2561, 2561, 2247, 1947)),   # 0xD2AB0  <- 0xCC044[10], speed 10 km/h
+    ((0, 400, 1500, 3000), (2305, 2304, 2149, 1948)),   # 0xD2AEC  <- 0xCC12C[10], speed 50 km/h
+    ((0, 400, 1500, 3000), (2151, 2151, 2049, 1947)),   # 0xD2B28  <- 0xCC214[10], speed 100 km/h
 )
+# ⇒ THE SURFACE, which matters for any lever on this lane: at CREEP the gain is 3072 and FLAT out to
+# motor rate 400 counts (~85 deg/s at 4.7121 counts per deg/s), then falls to 1536 at 3000 (~637
+# deg/s) -- a genuine 2x rolloff. At road speed it flattens (0.80x at 32 km/h). So Honda ALREADY
+# de-escalates this lane when the wheel is moving fast, and only at low speed. The commonly-quoted
+# "r24 default arm = 2305" is the 50 km/h record; at the hands-off-creep operating point it is 3072.
 ASSIST_RATE_A_RECORDS = (
-    ((0, 400, 1600, 3000), (3072, 3072, 2434, 2048)),
-    ((0, 250, 1200, 3000), (3072, 3072, 2488, 1536)),
-    ((0, 400, 1250, 3000), (2664, 2664, 2243, 1436)),
-    ((0, 400, 1250, 3000), (2560, 2560, 2145, 1331)),
+    ((0, 400, 1600, 3000), (3072, 3072, 2434, 2048)),   # 0xC6A68
+    ((0, 250, 1200, 3000), (3072, 3072, 2488, 1536)),   # 0xC6A7C
+    ((0, 400, 1250, 3000), (2664, 2664, 2243, 1436)),   # 0xC6A90
+    ((0, 400, 1250, 3000), (2560, 2560, 2145, 1331)),   # 0xC6AA4
 )
 ASSIST_TORQUE_RATE_CLAMP = 5120             # aggregator input clamp on gp-0x4f62
 ASSIST_TORQUE_RATE_DEADZONE = 3              # tp+0x71f6 (0xC61F6)
@@ -1884,6 +1909,31 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     0.024 [0.016, 0.234] at |rate| 16-32 deg/s (42x), with a 30-40 Hz negative control at ~1.0 so the
     effect is band-specific. Transient rates 0.793/0.486/0.338 at >200/>500/>1000. The kit's first
     measured fix, and it confirms the V61 gradient.
+
+    🛑🛑🛑 AND IT IS ALSO THE CAUSE OF "GRIND #2" -- ESTABLISHED 2026-08-01 ON V65 ROUTES 3a/3b.
+    The "30-40 Hz negative control at ~1.0" above is a MEAN statistic and it is blind to the
+    phenomenon: the matched q99 threshold is 317 while the events are 3000-4000. Corner-conditioned
+    EXTREME-TAIL maxima (creep AND |driver torque| >= 1200 AND |angle| >= 100 deg), Kd=1x vs Kd=2x,
+    219 blocks:
+        1-4 Hz  1.01 | 6-9  1.20 | 10-16  0.80 | 18-22  0.35 | 24-28  2.66 | 30-40  2.98
+        40-49 Hz  11.71   (p = 0.0003)
+    A MONOTONE FREQUENCY RESPONSE WITH A CROSSOVER AT 22-24 Hz, driver band flat as a control =>
+    NOT generic roughness. ONE KNOB CUT GRIND #1 BY 2.9x AND RAISED GRIND #2 BY 11.7x.
+    Reproduced independently on the COMMA IMU (40-49 Hz p95 6.27x, max 6.71x; 1-4 Hz 0.76).
+    WHY: gp-0x4f62 is a 4-SAMPLE FINITE DIFFERENCE at 1 kHz (2*(x[n]-x[n-4])/4, delay cal 0xC6C42 = 4),
+    so its gain RISES with frequency -- 1.93x at 41.6 Hz vs 20.9 Hz. V62's x2 is FLAT in frequency, so
+    it raised the high band harder, in absolute terms, than the mode it fixed. V62's own note computed
+    selectivity only against the DRIVER (1 Hz, 14.6:1) and never against a HIGHER mode.
+    🛑 A FILTER CANNOT FIX IT: differentiator +20 dB/dec vs one real pole -20 dB/dec is FLAT above the
+    corner, so one pole drives the 41.6/20.9 selectivity toward 1.0 and never below; two poles low
+    enough to bite by 42 Hz cost -92 deg at 20.9 Hz and destroy the lead. Raising 0xC6C42 fails the
+    same way (D=24 zeroes 41.7 Hz but leaves -0.3 deg at 20.9 Hz = a pure spring). Confirmed
+    structurally: FUN_0007e74a has NO EMA/IIR anywhere, and gp-0x4f60 is a SINGLE physical measurement
+    of driver + motor-reaction torque, so no V57-style cal fork exists either.
+    => the separation must come from an OPERATING CONDITION. Driver torque separates the two symptoms
+    >8x (grind #1 hands-off; grind #2 at tq_avg 1600-2700); LKAS engagement separates only grind #1
+    (100% vs a 54.7% base rate, p99 6.63x, against grind #2's 84.5% and 1.33x).
+    See analysis-2020accord/rate_lane_frequency_response.py and docs/V66-V67-DESIGN.md.
     🛑🛑 BUT 0x3AB76 WAS A NO-OP: r26 is structurally inert -- avg's cal base 0xC6564 byte-reads as 40
     bytes of EXACT ZERO (bounded by non-zero data both sides) and no writer was found for the RAM
     adjustment at gp-0x641E..gp-0x6444, so stage1 = (dtorque*avg2)>>10 ~ 0 regardless of dtorque.

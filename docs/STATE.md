@@ -12,7 +12,74 @@ review** — check it before proposing any calibration edit) and the latest hand
 `HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`, then
 `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md`).
 
-★★★ **THE HEADLINE, 2026-08-01 (LATEST): V62 FLEW AND THE GRINDING IS FIXED. The kit's first measured
+★★★★ **THE HEADLINE, 2026-08-01 (LATEST): THE ROOT CAUSE OF "GRIND #2" IS V62's OWN FIX, AND THE
+BAND TABLE SHOWS IT AS ONE KNOB DOING BOTH THINGS.**
+
+The operator flew **V65** (= V62's control-path edits byte-identical + the saturation-ladder probe) on
+two new routes — `3a` (`4e55c1e0f4`, grind #2 demonstrated **with LKAS ON**) and `3b` (`a4a7f4dbf1`,
+demonstrated **with LKAS OFF**, then unrelated highway) — and reported that V62 fixed the original
+grinding but **introduced a second one**: a whole-car resonance at low speed under significant *driver*
+steering input, *"almost like I have a subwoofer"*, **present regardless of LKAS engagement**.
+
+**Corner-conditioned extreme-tail maxima, Kd = 1× vs Kd = 2×, 219 blocks** (corner = creep ∧ |driver
+torque| ≥ 1200 ∧ |angle| ≥ 100°):
+
+| band | Kd=1× | Kd=2× | **ratio** | p |
+|---|---|---|---|---|
+| 1–4 Hz (driver) | 4709 | 4763 | **1.01** | 1.00 |
+| 6–9 Hz (ratchet) | 2773 | 3335 | 1.20 | 0.037 |
+| 10–16 Hz | 2520 | 2005 | **0.80** | 1.00 |
+| **18–22 Hz — GRIND #1** | 3656 | 1269 | **0.35** | 1.00 |
+| 24–28 Hz | 485 | 1289 | **2.66** | 0.013 |
+| 30–40 Hz | 373 | 1113 | **2.98** | 0.013 |
+| **40–49 Hz — GRIND #2** | 301 | **3526** | **11.71** | **0.0003** |
+
+⇒ ★★★★ **A MONOTONE FREQUENCY RESPONSE WITH A CROSSOVER BETWEEN 22 AND 24 Hz** — `0.80 → 0.35 → 2.66
+→ 2.98 → 11.71`, with **1–4 Hz flat at 1.01** as a control. **Not generic roughness.** V62 **cut grind
+#1 by 2.9× and raised grind #2 by 11.7×, with one knob.**
+
+**Why:** `gp-0x4f62` is a **4-sample finite difference at 1 kHz** (`2*(x[n]−x[n−4])/4`, delay cal
+`0xC6C42` = 4). A differentiator's gain **rises** with frequency — **1.93× at 41.6 Hz vs 20.9 Hz** —
+so V62's *flat* ×2 raised the high band harder, in absolute terms, than the mode it fixed. V62's build
+note computed selectivity only against the **driver** (1 Hz, 14.6:1) and never against a **higher**
+mode, where the ratio runs the wrong way. Arithmetic: `analysis-2020accord/rate_lane_frequency_response.py`.
+
+🛑 **A FILTER CANNOT FIX IT — structural, not numeric.** A differentiator rises +20 dB/dec, one real
+pole falls −20 dB/dec ⇒ the cascade is **flat** above the corner, so one pole drives the 41.6/20.9
+selectivity toward 1.0 and never below. Two poles low enough to bite by 42 Hz cost −92° at 20.9 Hz and
+**destroy the damping V62 bought**. Raising the delay cal `0xC6C42` fails identically. **Do not
+re-propose either.** ⇒ the separation must come from an **operating condition**, not from frequency.
+
+✅✅ **AND THE COMMA IMU REPRODUCES THE DOSE-RESPONSE INDEPENDENTLY.** Same corner, Kd=2×/Kd=1× on the
+accelerometer/gyro — a sensor sharing **no signal path** with the EPS (first use of the IMU in this kit):
+**1–4 Hz p95 0.76 · 18–22 Hz 1.20 · 24–28 Hz 0.65 · 30–40 Hz 1.25 · 40–49 Hz p95 6.27, max 6.71.**
+Medians ~1 everywhere (the phenomenon is in the tail); the rise is confined to 40–49 Hz.
+⚠ **The IMU does NOT show grind #1's reduction and its grind-#1 positive control is weak** — a real
+limitation, but physically coherent: grind #1 is a **torsional column mode** that need not reach the
+chassis, grind #2 is the one the operator says *"makes the entire car vibrate"*. **The IMU's
+selectivity matches the operator's own description of which one shakes the car.**
+
+**Grind #2 itself:** ~**44.9 Hz**, sd 5.4, n = 43, **Q ≈ 37**; **NOT a harmonic** of grind #1 (slope
+0.173 [−0.92, 1.59] against the 2.0 a harmonic needs); during bursts the IMU carries **20–50× its own
+baseline**, ρ 0.23–0.55 with the CAN band at p ≪ 1e-70.
+🛑 **Its frequency is ALIASED and unresolved** — CAN is a ~100.5 Hz grid ⇒ 44.9 and ~55.6 Hz are the
+same observation; the IMU's ~101 Hz median is only 0.5 Hz away so **IMU/CAN agreement says nothing
+about the alias**. It does not block the fix.
+
+**Gating:** grind #1's top-decile creep windows are **100% engaged** (engaged/disengaged p99 **6.63×**);
+grind #2's are **84.5%** against a **54.7%** base rate (p99 **1.33×**) ⇒ **grind #1 is LKAS-gated,
+grind #2 is not.** Driver torque separates them **>8×** (grind #1 hands-off; grind #2 at `tq_avg`
+1600–2700, |angle| 150–265°); steering rate only ~2× at creep with overlapping p90s.
+
+⇒ **See `docs/V66-V67-DESIGN.md`** for the full design. **V66** (built this session) = V65 with both
+`sar` immediates reverted to stock + a four-bit **gate probe**; it is the operator's requested stable
+long-drive build **and** the confirmatory intervention. **V67** = keep the ×2 but gate it on a
+hands-on/driver-torque cell by repointing the **dead `gp-0x683c` gate** — a **ONE-BYTE** code edit into
+a calibration arm that already exists. 🛑 **V67 is blocked on V66's chatter measurement.**
+
+---
+
+★★★ **THE PRIOR HEADLINE, still standing: V62 FLEW AND THE GRINDING IS FIXED. The kit's first measured
 fix.** Route `00000037--6231e33f3d`, 15 segs, 86,278 frames. Operator: *"Original grinding at 2–5 mph is
 gone!"* Engaged creep, speed-standardised, **episode-clustered** bootstrap: 18–22 Hz **0.124 [0.036,
 0.387]** vs V59 (8×), and **0.024 [0.016, 0.234] at |rate| 16–32 deg/s (42×)**, with a **30–40 Hz negative
@@ -327,7 +394,20 @@ gain reducer. This is what pulls eps down from the raw-LERP values.
 
 ---
 
-## On the car right now — **V62** (flashed 2026-07-31, driven route `37--6231e33f3d`)
+## On the car right now — **V65** (flashed, driven routes `3a--4e55c1e0f4` and `3b--a4a7f4dbf1` 2026-08-01)
+
+**V65 = V62's control-path edits byte-identical + the 4-level saturation ladder on `gp-0x6b94`.** The
+operator drove two routes on it: `3a` (short — parking lot, then **grind #2 demonstrated with LKAS ON**)
+and `3b` (longer — parking lot, **grind #2 demonstrated with LKAS OFF**, then unrelated highway lateral
+tuning). **Grind #1 stays fixed on V65** (18–22 Hz 0.555 [0.467, 0.685] vs Kd=1×, replicating V62), and
+**grind #2 is confirmed and characterised** — see THE HEADLINE at the top of this file.
+⇒ ★★★ **RECOMMENDED NEXT FLASH: V66** (see "Built and UNFLASHED"). It is what the operator asked for —
+a stable long-drive build with stock base assist — and it is simultaneously the confirmatory revert and
+the pre-flight probe for V67's gate.
+
+---
+
+## Previously on the car — **V62** (flashed 2026-07-31, driven route `37--6231e33f3d`)
 
 **See THE HEADLINE at the top of this file for the full V62 result** — it is the current state and is not
 repeated here. Summary: **the 20.9 Hz grinding is FIXED (8–42×)**, the route is flight-clean
@@ -603,6 +683,7 @@ The only way down is **5000 consecutive ticks with driver torque ≥ 640 AND no 
 
 | build | what | status |
 |---|---|---|
+| ★★★★ **V66** | **V65 with BOTH `sar` immediates reverted to stock + a 3-bit GATE PROBE** — the operator's requested stable long-drive build, and the confirmatory revert | ✅ **BUILT 2026-08-01, UNFLASHED. ★ THE RECOMMENDED NEXT FLASH.** Restores **exactly stock** base assist (grind #1 returns as V38 has it; grind #2's cause is removed), carries V57's `0xC646C` decoupling + `0xC6CD0` = 3564 + `0xC62EA` = 0 + `0xC64DE` = 27 unchanged. Probe on `0x14A` byte4: **bit7** liveness · **bit6** `gp-0x6806 != 0` · **bit5** `gp-0x67f5 != 0` (**its toggle rate is V67's kill criterion**) · **bit4** `gp-0x683c != 0` (**the control — must read 0 in 100% of frames**). **61 bytes off V65** (2 code + 52 cave + MAIN CRC); ⭐ **CAL block byte-identical to V65**, `0xD2000` block identical, all four mode-10 `gain_B` records unchanged = machine proof no calibration moved; `0x3AB70` still `sar 0xa`; **`gp-0x683c`'s load at `0x3AA94` UNCHANGED**. Same base/hook/68-byte extent as six clean flights; **62/68 used**. GATE 1 vacuous. 50/50 CRC; x31 PASS; RWD decodes exactly back to the image; ⭐ orchestrator-verified from the built image with the cave re-decoded from the bytes. 🛑 **Only three probe bits fit**, so `gp-0x671d` and `gp-0x67fe` are unmeasured. **Route:** ordinary long driving plus deliberate parking-lot creep, **and specifically reproduce grind #2** — creep with heavy manual steering, |angle| ≥ 100°, both engaged and disengaged. **Log from before the first engagement.** Decoder `rlog-tools/decode_v66_gateprobe.py`. Image SHA `56177c189deb2533c334cc465b2c7e465191c68f63df1f6cf7316ef6459acf6f`; RWD SHA `2725908e22157512cc0548663a9d15f1ef9ff7495a74fd92846602dc9db8fa04` |
 | ~~**V64**~~ | V63's two cal edits + the probe repointed at the oscillation detector | 🛑 **FLASHED 2026-07-31 → GRINDING UNFIXED, DETECTOR NEVER ARMED. Do not re-flash for the damping.** See "On the car right now" above. The probe did its job — it converted an uninterpretable null into a diagnosed one. Original build note kept below for provenance. ✅ **BUILT 2026-07-31.** Operator's proposal, and it removes V63's fatal weakness: V63's probe still measured `gp-0x6ba6`, the parametric-pump index **V60 already falsified**, so a V63 null would have been uninterpretable. V64 keeps the cal edits byte-identical (**CAL block byte-identical to V63, machine-verified**) and repoints the cave: `0x14A` byte4 **bit7** liveness · **bit6** `gp-0x671a >= 5` (the arm is selected) · **bit5** `gp-0x671a != 0` · **bit4** `gp-0x67df != 0` (FSM left neutral ⇒ `\|gp-0x6c2c\|` crossed ±12800) · **bit3** `gp-0x671d != 0` (r24's override active). **Actionable in every failure mode:** bit6 never set + bit4 set ⇒ lower `CEIL` (`0xC64FA`); bit4 clear ⇒ lower `T` (`0xC620A`); bit6 live but no improvement ⇒ the rise was too small; bit3 set ⇒ also raise `0xC6442`. **60 bytes off V59** (50 cave + 2 cal + 8 CRC), **54 off V63 (cave + MAIN CRC only)**, 90 off V38. Same base `0xC4B34`, same hook `0x55C0E`, **same 68-byte extent** as V55/V57/V58/V59 — all four flown clean; **68/68 used, zero budget left.** GATE 1 vacuous (read-only; sole write is the existing CAN payload byte, bits 2:0 preserved). 50/50 CRC; RWD round-trips; cave re-decoded from the readback. ⭐ **Orchestrator-verified independently from the built image:** all three cave loads decode to `gp-0x671a`/`gp-0x67df`/`gp-0x671d` (V850 `ld.bu` carries displacement bit 0 in **hw1 bit 5**, not hw2 — a naive decode reports false mismatches), the `gp-0x671d` halfword is **byte-identical to the real firmware instance** @`0x3AB98`, and the only store is the CAN byte. Decoder `rlog-tools/decode_v64_detector.py` leads with **time-to-first-set** and **whether it ever clears** (see the latch note — occupancy saturates once set). 🛑 **Start the log BEFORE the first engagement**, or time-to-first-set is unmeasurable. Image SHA `e9dcd3b619cb35a4405861331a20807c4d0d2df074b6119a6690df728c68511e`; RWD SHA `7abbeba61ccc22852506e8747cedd12236210e93c23f8a13ad586e19914f0830` |
 | ★★ **V63** | V59 + raise **only the OSCILLATION-DETECTED gain arms** of both rate lanes | ✅ **BUILT 2026-07-31, UNFLASHED — superseded by V64, which is the same cal edit plus instrumentation.** `0xC6440` 2048→4096 (r24) and `0xC643E` 1536→3072 (r26). **6 bytes off V59** (2 cal bytes + CAL CRC), 88 off V38. ⭐ **MAIN CRC UNCHANGED** = machine proof no code byte moved. V62's `sar` shifts and V61's tap kill both **asserted absent** ⇒ independent experiment, not layered. 50/50 CRC, RWD round-trips, re-verified from the built image. **Built in response to the operator's objection that V62 changes manual feel to fix an LKAS-specific symptom** — and the firmware turns out to already discriminate: both lanes' gain chains end in `assist_state gp-0x671a >= 5`, and `gp-0x671a` is a **HARD-REVERSAL COUNTER** (`FUN_000428d4`: neutral state resets it to 0 **every tick** and only exits if `\|gp-0x6c2c\| > 12800`; a reversal increments; 50 quiet ticks clear it). ⇒ it reads **0 during smooth steering** and `state>=5` means **an oscillation is happening**. Raising only those arms adds damping **only while oscillating**; both smooth-steering LERP defaults stay stock ⇒ **zero manual-feel cost by construction, and a smaller edit than V62.** ✅ **No new arithmetic risk: 3072 is already gain_A's own stock maximum**, so worst-case `stage1×gain` stays at 47% of INT32_MAX, unchanged. GATE 1 vacuous. 🛑 **Residual 1 — a NULL IS AMBIGUOUS:** whether `gp-0x6c2c` actually crosses ±12800 during the vibration is **unverified and load-bearing**; if it does not, V63 is inert. **Resolve with no probe and no cave: fly V63 first, and if null fly V62, which cannot miss.** 🛑 **Residual 2:** `gate_671d` outranks r24's arm and is live, so **expect r26 to carry this build**; r26's chain is clean (`gate_683c` dead). Image SHA `2f843bce8ff6fcab72cd3fafddcbdea926b40701e1425cabad03791f1a09019c`; RWD SHA `5e5f83d7cd9281000dcfa602a6e70b252037ad782728502d82e82d42c72b9abc` |
 | ★★★ **V62** | V59 + **DOUBLE the torsion-bar RATE lane** — `sar 0xa` → `sar 0x9` on each lane's final shift | ✅ **BUILT 2026-07-31, UNFLASHED. ★★★ THE RECOMMENDED NEXT FLASH — promoted from fallback after V64's gate null.** It carries **no detector anywhere in its path**, so it is immune to the ambiguity that made V63/V64 inert. ⭐ **Re-verified from the built image 2026-07-31**: exactly 6 bytes vs V59 — `0x3AB76` `aa`→`a9`, `0x3AC20` `aa`→`a9`, MAIN CRC at `0xC4FFC`; `0x3AB70` correctly still `sar 0xa`; `0xC6440`/`0xC643E`/`0xC6442` confirmed stock. ✅ Lane clamps re-confirmed **±8192 each** (`0x3AB82`/`0x3AC42`), aggregate **±10240** ⇒ cannot produce an unbounded command. ⚠ **Pre-committed caveat:** r24 saturates once the input derivative exceeds `8192·1024/gain` — 3639 (71% of the ±5120 ceiling) at the stock 2305 default, **1820 (36%) under V62**; above that both clamp identically, so expect a **partial** improvement, not elimination. The benefit is that hitting the damping ceiling earlier in each cycle removes more energy per cycle from a limit cycle. **The matched inverse of V61.** `0x3AC20 42AA→42A9` (r24) and `0x3AB76 32AA→32A9` (r26). V61 took `Kd`→0 and the mode diverged; V62 takes `Kd`→2×, the same-sized step back. Stock sustains with **no ring-down at all** ⇒ `zeta_net ≈ 0`, so doubling should move it to `+zeta_lead`. **6 bytes off V59** (2 immediate bytes + MAIN CRC), 8 off V61, 88 off V38. ⭐ **CAL CRC unchanged** and ⭐ **`0xD2000`-block CRC unchanged** = machine proof no calibration moved and V60's falsified blend is absent. 50/50 CRC, RWD round-trips with every gate re-run on the readback; re-verified independently from the built image (taps back at `r1`, both shifts `sar 0x9`, `0x3AB70` still `sar 0xa`, exactly 2 code bytes). 🛑 **`sar` immediates chosen OVER the gain cals**, three traced reasons: the live gain arm is a **priority chain** that cannot be pinned statically (`gp-0x671a` is a bounded [0,5] *persistence ramp* that plausibly never saturates during a 21 Hz oscillation); **r24's default arm is MODE-INDEXED** via `gp+0x63fd` through four pointer arrays (`0xD2AEC`←`0xCC154` idx 10, `0xD6AEC`←`0xCC184` **idx 22** — ⚠ **a different MODE, not a redundancy twin; the "V27 desync" reading was wrong**); and `gp-0x683c` has **zero writers** ⇒ `0xC6446`/`0xC6444` are dead arms. A `sar` edit doubles the lane **under every arm and every mode**. 🛑 **`0x3AB76` not `0x3AB70`** — V850 `mul` discards the high word into `r0`, and doubling before the `×gain_A` multiply pushes the worst case to **94% of INT32_MAX** vs 47% (unchanged) after it. **Headroom is arm-dependent**: ~22× / ~11× / **~7.3× worst case**, so doubling keeps ≥3.6× margin. GATE 1 **vacuous** (no cave, no RAM, no new opcode). ⚠ **Residual:** `avg(gp-0x69a4)` magnitude is still unmeasured after three sessions — if r26 were already pinned at ±8192 doubling would deepen a saturation; bounded against by the fact that such a lane would dominate the ±10240 sum clamp and V61 would have been far more dramatic. r24 is immune. ⚠ Manual feel **will** change. Reversible by reflashing V59 or V61. Image SHA `80d9e1f721b741722a9d4b141a2d328fe8d999705765fedffab1ad23aa9264c7`; RWD SHA `1e0806a1eac69688e6d636fa02c5b1e864da40a65a4d3f8137d444d1ec5bff8e` |
@@ -805,7 +886,29 @@ set's 12.6–42.2°).
 🛑 **NO openpilot-side modifications.** Standing operator instruction. openpilot remains a *measurement
 instrument* only.
 
-0. ★★★ **NO NEW BUILD. KEEP V62 ON THE CAR AND FLY IT AGAIN.** ✅ V62 flew and **BETTER** was the
+0. ★★★★ **FLASH V66 AND DRIVE IT LONG.** ✅ Built, verified, and it is exactly what the operator asked
+   for: **V38 4× LKAS reach · steer-to-zero · stock rate lane (grind #1 left as V38 has it) · live
+   telemetry.** It is simultaneously **the confirmatory revert** — the one knob that produced grind #2
+   goes back to stock, so the drive tests the attribution for free — and **the pre-flight probe for
+   V67's gate**, which is the fix.
+   **Route:** ordinary long driving plus deliberate parking-lot creep, **and specifically reproduce
+   grind #2** — creep with heavy manual steering, |angle| ≥ 100°, both engaged and disengaged.
+   🛑 **Log from before the first engagement.** Decode with `rlog-tools/decode_v66_gateprobe.py`.
+   **Interpretation pre-committed, so it cannot drift:**
+   - **grind #2 GONE, grind #1 back** ⇒ attribution closed. Build V67 (gate the ×2 on whichever of
+     `gp-0x67f5` / `gp-0x6806` the probe shows is chatter-free).
+   - **grind #2 STILL THERE** ⇒ the rate lane is the wrong tree; V62 should go back on (it is a proven
+     fix and would be being given up for nothing), and grind #2 becomes a ~44.9 Hz mechanical mode to
+     attack in its own right.
+   - **bit5 (`gp-0x67f5`) toggling anywhere near 15–60 Hz** ⇒ that gate is DEAD; a gain keyed on it
+     would be a parametric pump. Fall back to `gp-0x6806`, or to V68's dose reduction.
+   - **bit4 (`gp-0x683c`) ever 1** ⇒ the cell is not dead, and V67's repoint is not a clean
+     substitution. Cancel it.
+
+0-old. ~~**NO NEW BUILD. KEEP V62 ON THE CAR AND FLY IT AGAIN.**~~ — **SUPERSEDED 2026-08-01.** The
+   "rare event needing exposure" framing was right to demand more data and the data arrived: the
+   operator flew V65 twice and the events are **not** rare in the corner, they are **11.7× at 40–49 Hz
+   with p = 0.0003**. See THE HEADLINE. ✅ V62 flew and **BETTER** was the
    pre-committed outcome — direction confirmed, and the grinding is fixed 8–42×. **There is nothing
    established to fix.** The one candidate event is a **0.92 s singleton at p = 0.51** against an
    exposure-matched control, and V62's burst-rate CI sits **inside** V59's. A fix would be aimed at a

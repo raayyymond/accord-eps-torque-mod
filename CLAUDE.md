@@ -18,7 +18,21 @@ an already-flashed, already-falsified lever because the result was buried in pro
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
    **Mandatory before proposing any calibration edit.**
 3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session.
-   Latest: `HANDOFF-2026-08-01-v62-flew-and-the-grinding-is-fixed.md` — ★★★★ **V62 FLEW AND THE GRINDING
+   Latest: `HANDOFF-2026-08-01-grind2-is-v62s-own-fix-at-high-frequency.md` — ★★★★ **GRIND #2 IS
+   V62's OWN FIX SEEN AT HIGH FREQUENCY.** Corner-conditioned tail maxima, Kd=1x vs Kd=2x, 219 blocks:
+   1-4 Hz **1.01** / 10-16 **0.80** / **18-22 0.35** / 24-28 **2.66** / 30-40 **2.98** / **40-49 11.71
+   (p=0.0003)** — a monotone response with a **crossover at 22-24 Hz**, driver band flat as a control.
+   **One knob cut grind #1 by 2.9x and raised grind #2 by 11.7x.** Confirmed independently on the
+   **comma IMU** (40-49 Hz p95 6.27x). Cause: `gp-0x4f62` is a 4-sample finite difference, so its gain
+   RISES with frequency and V62's *flat* x2 is not frequency-selective. 🛑 **A filter cannot fix it**
+   and neither can the delay cal — both destroy the 20.9 Hz lead; the separation must come from an
+   OPERATING CONDITION, and **driver torque separates the symptoms >8x** while LKAS engagement
+   separates only grind #1. ★★ The lever is the **dead `gp-0x683c` gate** — ONE access, ZERO writers,
+   gating private cals `0xC6446`/`0xC6444` ⇒ a **ONE-BYTE** repoint makes the rate-lane gain
+   conditional, no cave. ✅ **V66 BUILT + orchestrator-verified** (V65 with both `sar` reverted + a
+   3-bit gate probe) — the operator's requested long-drive build AND the confirmatory revert AND V67's
+   pre-flight. 🛑 **Report the MEAN and the TAIL together** — they disagreed in sign on this data.
+   (predecessor: `HANDOFF-2026-08-01-v62-flew-and-the-grinding-is-fixed.md` — ★★★★ **V62 FLEW AND THE GRINDING
    IS FIXED: 18–22 Hz down 8× at creep and 42× at |rate| 16–32 deg/s, with a clean negative-band control.
    The kit's first measured fix.** 🛑 The reported "new grinding at 10–20 mph" is **NOT an established
    regression** — it is ONE 0.92 s burst (n = 1) whose rate-CI sits *inside* V59's, at p = 0.51 against an
