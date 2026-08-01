@@ -71,6 +71,36 @@ grind #2's are **84.5%** against a **54.7%** base rate (p99 **1.33×**) ⇒ **gr
 grind #2 is not.** Driver torque separates them **>8×** (grind #1 hands-off; grind #2 at `tq_avg`
 1600–2700, |angle| 150–265°); steering rate only ~2× at creep with overlapping p90s.
 
+★★★ **AND V65's OWN PROBE ANSWERED ITS QUESTION: THE AGGREGATOR NEVER RAILS.** The 4-level ladder on
+`gp-0x6b94`, **120,049 frames**, orchestrator-verified from the caches: liveness **100%**, zero
+invariant violations, and **+RAIL 0 / −RAIL 0** — the sum never comes within 20% of its own ±10240
+clip. Only **54** frames pass ±4096 (48 negative, 6 positive), and `bit6↔bit3` alternation is
+**0.0000 flips/s in every arm**, not as a small number but because **no rail frame exists**.
+⇒ **The loop is LINEAR at the aggregator.** No describing-function or saturation reasoning is needed
+in this chain, and a linear gain change on any lane **propagates faithfully** — which is *why* V62's
+flat ×2 produced the band table above.
+★ **All 54 non-neutral frames sit inside grind #2 bursts**, at 36.3–106.1× the segment-median 30–49 Hz
+envelope (54/54) ⇒ the aggregator's only large excursions on either route are grind #2, independent
+corroboration that it is a real large-signal event **in the command path**.
+🛑 **DO NOT apply V65's pre-committed "all four quiet ⇒ NOT another lane gain" clause to grind #2.**
+That branch was written to test whether the **RATCHET** is a rail-to-rail limit cycle. Grind #2's
+attribution rests on an **on-car dose-response on exactly a lane gain**; an intervention outranks an
+inference drawn from a different hypothesis. What the null *does* close is the **ratchet's**
+"amplitude-saturated at the aggregator" reading, and the *clipping* rationale for the `0xD2AEC`
+breakpoint lever.
+⚠ **Stroboscopic caveat:** 100 Hz sampling a ~43 Hz burst cannot claim the sum touched ±4096 only 54
+times — the true count is higher and the peak under-estimated. The **route-wide ±8192 null is
+unconditional**; "never rails *during a burst*" is the weaker claim. Do not quote 54 as a rate.
+
+✅ **V65 IS FLIGHT-CLEAN AND ADDS TO THE ZERO-EME STREAK.** `ST == 4` = **0** across both routes
+(36,991 + 83,058), confirmed a second way by a raw-CAN recount off the `0x18F` src-1 frames rather than
+the gridded cache. `STEER_STATUS` only ever 0 or 3, every `ST == 3` in a park/reverse segment. Zero
+`steerUnavailable` / `steerTempUnavailable` / `canError` / `immediateDisable`; one `controlsMismatch`
+per route; three `steerSaturated` on 3b seg 5. `latActive` 88.2% / 75.4%; CAN 99.94–100.04 Hz.
+⚠ **Route `3b`'s highway section starts seg 3 (t ≈ 25 s) — exclude segs 3–12** from any parking-lot
+statistic. The demos: 3a LKAS-**ON** = segs 3/4 (six bursts); 3b LKAS-**OFF** = seg 2 only,
+`latActive` 0.00.
+
 ⇒ **See `docs/V66-V67-DESIGN.md`** for the full design. **V66** (built this session) = V65 with both
 `sar` immediates reverted to stock + a four-bit **gate probe**; it is the operator's requested stable
 long-drive build **and** the confirmatory intervention. **V67** = keep the ×2 but gate it on a
