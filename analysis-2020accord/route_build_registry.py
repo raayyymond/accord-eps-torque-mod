@@ -127,10 +127,24 @@ def identify(field_values):
         notes.append("all V65 ladder invariants HOLD on every distinct value -> V65 possible")
     else:
         notes.append("★ a V65 ladder invariant is VIOLATED -> V65 is EXCLUDED")
+    # V66 and V67: four INDEPENDENT booleans in bits 7:4, bit7 hard-wired 1, bit3 NEVER set.
+    # 🛑 They are structurally IDENTICAL to each other -- same eight payloads, different cells --
+    # and their caves differ by only FOUR bytes. Payload can never separate them; only the .rwd
+    # filename can. Recorded here because this is the tightest such pair the kit has produced.
+    free4_ok = all((v >> 7 & 1) and not (v >> 3 & 1) for v in vals)
+    if free4_ok:
+        cands |= {"V66", "V67"}
+        notes.append("bit7 set and bit3 clear on every value -> V66/V67 possible. 🛑 THEY ARE "
+                     "MUTUALLY INSEPARABLE BY PAYLOAD: V66 reads gp-0x6806/67f5/67fe, V67 reads "
+                     "gp-0x6806/671d/671a (>=5). CONFIRM THE .rwd FILENAME.")
+    else:
+        notes.append("★ bit3 set or bit7 clear somewhere -> V66 and V67 are EXCLUDED")
+
     if len(vals) == 1 and vals[0] == 0x87:
         cands |= {"V64"}
-        notes.append("🛑 a FROZEN constant 0x87 is V64's null AND V65's neutral bucket -- "
-                     "payload alone CANNOT separate them; use the 18-22 Hz Kd evidence")
+        notes.append("🛑 a FROZEN constant 0x87 is V64's null, V65's neutral bucket, V66's "
+                     "all-gates-zero AND V67's gate-never-true -- payload alone CANNOT separate "
+                     "them; use the 18-22 Hz Kd evidence and the flashed filename")
     elif 0x87 in vals:
         notes.append("0x87 present but NOT constant -> not V64's frozen null")
 
