@@ -11,22 +11,66 @@ byte-for-byte, and the build asserts that the ONLY differences from V67 anywhere
 🛑 **NO CONTROL-PATH CHANGE IS JUSTIFIED BY THE CURRENT EVIDENCE.** V67 is the best build this kit
 has measured: grind #1 fixed (18-22 Hz 0.55 [0.34, 0.65] vs the Kd=1 pool against a split-half null
 of [0.88, 1.13]), creep grind #2 eliminated (0 burst blocks in 113 s vs 24 at Kd=2x), flight-clean,
-and byte-stock on the rate lane whenever LKAS is off. The operator reports a highway resonance, but
-a three-dose highway comparison shows NO rate-lane dose response at 40-49 Hz (0.98 [0.71, 1.63] and
-0.77 [0.56, 1.44] against a null of [0.53, 1.86], zero burst windows at any dose over ~1400 s). A
-lever aimed at that would be aimed at nothing.
+and byte-stock on the rate lane whenever LKAS is off. The operator reports a highway resonance, and
+a three-dose highway comparison showed no rate-lane dose response at 40-49 Hz -- but **bit5 below is
+the one firmware-side way that null could be an artifact**, so V68 measures it instead of assuming.
 
-THE ONE CHANGE: bit4 is repointed from a DEAD rung to the LERP's inner breakpoint
-----------------------------------------------------------------------------------
-On route `47` (V67, 150,327 frames, 26 segments) bit4 (`gp-0x671a >= 5`) read **0.000%** and bit5
-read **0.000%**. bit5 is a real risk that must stay on the car -- if it ever fires, r24's gain is
-pinned to `0xC6442 = 1024`, BELOW stock, and V67 becomes worse than V66. bit4 is a **wasted rung**:
-V64 already closed the whole oscillation-detector approach, and its own route read the same 0.
+THE TWO CHANGES: bit5 and bit4 are re-aimed. bit6, bit7, bit3 are untouched.
+-----------------------------------------------------------------------------
+On routes `47` (150,327 frames) and `4a` (35,999 frames) -- both V67 -- bit5 (`gp-0x671d != 0`) and
+bit4 (`gp-0x671a >= 5`) BOTH read **0.000%**, i.e. ~1,860 s of ordinary driving with two frozen
+rungs. Both are re-spent, each on a question that a frozen reading could not answer:
 
-V68 spends that rung on the one structural claim this session leaned on hardest and never measured:
+    bit5 = (gp-0x67df != 0)    the detector FSM LEFT NEUTRAL -- |gp-0x6c2c| crossed +-T.
+    bit4 = (gp-0x671a >= 1)    ...and then REVERSED at least once (V67 tested >= 5).
 
-    bit4 = (gp-0x6ac0 >= 400)     the r24 gain LERP's INNER (motor/resolver-rate) axis, against its
-                                  FIRST breakpoint above zero.
+🛑🛑 **bit5 WAS AIMED AT `gp-0x67ac`, AND THAT CELL IS PROVABLY 0 ON THIS BUILD. RE-POINTED.**
+`FUN_0003aa2c` skips the r24/r26 aggregate add iff `gp-0x67ac == 1` exactly, so a lane dropout would
+have invalidated last session's highway null. It cannot happen here, and the proof is a **calibration
+byte read**, not a runtime argument: `gp-0x67ac` is fed by an 11-slot OR-latch in `FUN_00026c80` whose
+only set path requires a per-slot role of **6 or 7**, and the static role table at `tp+0x5124` =
+**`0xC4124`** reads **`[0,0,5,0,5,5,0,0,0,5,0]`** -- no slot is ever 6 or 7. The fallthrough path was
+refuted at register level too (`0x27258 cmp 0x4,r12` / `setfe` / `be 0x2727c` leaves r12 = 0).
+⇒ the rate lanes cannot silently drop out, and the highway null was NOT reading a disconnected lane.
+**That question is CLOSED without spending a rung on it** -- probing a proven zero is exactly the error
+V68's original bit4 made.
+⚠ **THIS RESTS ON CALIBRATION BYTES, NOT ON STRUCTURE.** `assert_signal_sites()` re-reads `0xC4124`
+on every build and STOPS if any slot ever carries a 6 or a 7. If that table changes, this reopens.
+⚠ OPEN, not a blocker, recorded so it is not lost: `gp-0x61a0`'s writer is unresolved (search the
+**callers** of `FUN_00026c80` and its sibling mixer-state functions, not the function itself -- the
+slot selection is likely populated upstream), and `gp-0x61e8`'s identity is unestablished.
+
+★★ **THE RUNG NOW BUYS A SECOND DETECTOR STAGE -- `gp-0x67df`, AND IT HAS ALREADY FLOWN.**
+bit5 and bit4 are two **strictly ordered stages of the same 1 kHz band-pass detector**:
+
+    bit5 = (gp-0x67df != 0)   the FSM has LEFT NEUTRAL: |gp-0x6c2c| crossed +-T = 12800.
+                              *** NO REVERSAL REQUIRED. ***
+    bit4 = (gp-0x671a >= 1)   ...and then REVERSED at least once.
+
+`gp-0x67df` fires on events that are **too brief or too one-sided to produce a reversal** -- precisely
+the marginal, intermittent case the operator describes, and the case bit4 alone cannot see. Both cells
+hold >= 50 ms (the `0xC64DD` = 50-tick dwell), so both are reliably catchable by a 100 Hz probe.
+✅ Its encoding is **LIFTED, NOT RE-DERIVED**: `ld.bu -0x67df[gp],r6` = `a4372198` is byte-identical
+to **V64's own flown cave word at `0xC4B4C`**, where it was V64's bit4 and drove route 35.
+🛑 **AND ITS DISPLACEMENT IS ODD.** `gp-0x67df`'s disp16 is `0x9821`, so the `ld.bu` opcode field
+is **`0x3D`** (hw1 `a437`), not the `0x3C` (hw1 `8437`) that bit4's EVEN `0x98E6` carries. `ld.bu`
+hides displacement bit 0 in the OPCODE FIELD, so assuming one parity silently addresses the
+NEIGHBOURING cell with every other field perfect. Both parities are asserted from the image.
+
+⚠ **THE TRADE, STATED PLAINLY:** this spends the rung on a second *stage* rather than on the `>= 5`
+persistence bracket. Justified because V67 already measured `gp-0x671a >= 5` at **0.000% over 186,321
+frames across routes 47 and 4a** -- the information is at the BOTTOM of the ladder, not the top -- and
+because a positive on `>= 1` is itself the detection we want; whether it reached 5 is secondary.
+
+★★ **bit4 IS THE KIT'S ONLY ABOVE-50-Hz INSTRUMENT.** `gp-0x6c2c`'s cascade is a **BAND-PASS peaking
+near 61 Hz**, not a low-pass. Gain relative to 21.09 Hz: 1 Hz **0.05x** · 45 Hz **1.54x** ·
+61 Hz **1.61x (max)** · 100 Hz **1.43x** · 200 Hz 0.94x. So the amplitude needed to TRIP it FALLS
+above 50 Hz: 21.3 Hz needs **1683** counts, 45 Hz **1104**, 60 Hz **1056**, 100 Hz **1186**,
+150 Hz 1478, 200 Hz 1735. Sanity-checked against the golden model's own sizing (1683 -> 12804 trips
+T = 12800; 1682 -> 12797 does not). **Honda's own 1 kHz detector is MORE sensitive exactly where CAN
+(Nyquist 50.00 Hz) and the comma IMU (50.51 Hz) are blind.**
+⚠ V67's 0.000% does not speak to this: V67's rung tested `>= 5`, the CEIL (cal `0xC64FA` = 5). This
+one tests `>= 1`, the lowest rung of the same 0..5 counter. A null at 5 does not imply a null at 1.
 
 ★★ WHY THAT IS THE HIGHEST-VALUE BIT AVAILABLE -- IT ADJUDICATES A LIVE CONTRADICTION
 --------------------------------------------------------------------------------------
@@ -56,47 +100,55 @@ but it is the difference between a number we measured and a number we assumed. M
 decides, for every FUTURE calibration on this lane, whether the rate axis can discriminate at all:
 **a lane whose operating point never leaves a flat segment cannot be tuned on wheel rate.**
 
-🛑🛑 bit4 IS PREDICTED TO READ 0.000%, AND THAT IS THE POINT. PRE-REGISTERED, HERE, BEFORE THE DRIVE
+🛑🛑 THE PRE-REGISTERED PREDICTION IS RETRACTED (2026-08-03). THE PROBE IS UNCHANGED AND STILL VALID
 -----------------------------------------------------------------------------------------------------
-Route 47's own cache, pushed through the very scale chain the probe exists to test
-(`gp-0x6ac0 = |0x18F rate counts| x 32768/(48*1159) = x 0.5890135`), over 150,327 samples / 25.1 min
-covering creep AND highway AND both gate arms:
+An earlier revision of this docstring predicted **bit4 == 0.000%** with a "1.442x headroom", derived
+from route 47's cache through `gp-0x6ac0 = |0x18F rate counts| x 32768/(48*1159) = x 0.5890135`
+(p50 0.6 · p90 10.6 · p99 105.4 · p99.9 221.3 · MAX 277.4 counts; 0 of 150,327 at or above 400).
 
-    p50 0.6 · p90 10.6 · p99 105.4 · p99.9 221.3 · p99.99 264.4 · **MAX 277.4** counts
-    samples at or above the 400 breakpoint: **0 of 150,327**
-    => the axis would have to be **1.442x** larger than the derivation says for bit4 to fire ONCE.
+**THAT DERIVATION IS STRUCK.** It rests on the relation `bus = 8 x deg/s`, which `CLAUDE.md` records
+as **RETRACTED** -- the bus field IS deg/s (slope 0.95-1.00, r >= 0.985 against the differentiated
+angle), which is also what makes V67's own arm derivation (LERP 2622 => exactly 2.00x) correct. The
+contradiction is arithmetically exact and is asserted below rather than described:
 
-⇒ **The expected reading is a flat zero.** That is recorded now so that a zero is read as a
-CONFIRMATION and not as "another wasted rung" -- which is precisely how V67's bit4 would look, and
-precisely the mistake this build exists to correct.
+    this file's own import  EX.RATE_COUNTS_PER_DEGS = 4.71210813920046   counts per deg/s
+    the struck chain factor                          0.5890135
+    ratio                                            8.000000236          <- the retracted x8
 
-★ WHY A PREDICTED-ZERO BIT IS STILL WORTH THE RUNG: **the test is ONE-SIDED, and it points at the
-only direction that can overturn a decision.** The flat-segment claim survives if the true axis is
-SMALLER than the derivation. It dies only if the true axis is LARGER -- and that is exactly what
-bit4 detects, from the firmware's own cell, with the scale chain removed from the question entirely.
-A 1.442x error in the chain is not exotic: the chain runs through cal `0xC613A` = 1159, an EMA, and
-a x8 grid factor between the 0x18F and 0x14A copies, and the kit has already had one "128 deg/s vs
-359 raw counts" contradiction on this very axis.
+Under the surviving chain, route 47's numbers map ~8x higher (MAX ~2219, p99 ~843 counts), so bit4
+would be a GRADED reading of order a few percent, **not a frozen zero**. No replacement prediction is
+pre-registered here: the two chains disagree by construction and settling that is the probe's job.
 
-    bit4 == 0 over a long mixed drive  =>  the chain is sound to within 1.44x, the operating point
-                                           IS inside the flat segment, and the lane's rate axis is
-                                           a CONSTANT in use. Gap B closes affirmatively.
-    bit4 > 0                           =>  the chain UNDER-estimates the axis, the flat-segment
-                                           claim is dead, and every conclusion resting on it --
-                                           including V67's arm derivation -- needs re-deriving.
+★ THE RUNG IS UNAFFECTED, AND THAT IS THE POINT OF READING THE CELL DIRECTLY. bit4 compares the
+firmware's OWN `gp-0x6ac0` against the LERP's own breakpoint, in the firmware's own units, **with the
+scale chain removed from the question entirely.** It answers the same structural question either way:
 
-⚠ THE THRESHOLD IS A CHOICE, AND IT IS THE ORCHESTRATOR'S TO OVERRIDE. Predicted bit4 duty on
-route 47's derivation, by threshold -- 400 is the only value that answers the breakpoint question
-directly, but it is also the only one that is predicted FROZEN:
+    bit4 ~ 0 over a long mixed drive  =>  the operating point IS inside the flat first segment and
+                                          the lane's rate axis is a CONSTANT in use.
+    bit4 > 0                          =>  the operating point leaves the flat segment, the
+                                          flat-segment claim is dead, and every conclusion resting
+                                          on it -- including V67's arm derivation -- needs re-deriving.
 
-       T      ALL    gate TRUE   creep<=5 m/s
+🛑 WHAT MUST NOT BE REPEATED: a *derived* quantity was pre-registered as if it were a measurement, and
+the same file imported the constant that contradicts it. If a future build pre-registers a prediction,
+assert the chain it rests on against every other copy of that chain in the same module.
+
+⚠ THE THRESHOLD IS A CHOICE, AND IT IS THE ORCHESTRATOR'S TO OVERRIDE.
+
+🛑 THE DUTY TABLE BELOW IS COMPUTED ON THE STRUCK CHAIN AND IS THEREFORE VOID AS A PREDICTION. It is
+left visible because the *ordering* it encodes is what the threshold choice rested on, and hiding it
+would hide the reasoning. Every percentage in it assumes the retracted x8; on the surviving chain each
+row corresponds to a threshold 8x LOWER, so none of these numbers describes T = 400.
+
+       T      ALL    gate TRUE   creep<=5 m/s        [VOID -- struck chain]
       50    3.640%     0.728%      13.396%
-     100    1.132%     0.000%       4.478%      <- a GRADED readout; tests the scale chain
-     200    0.160%     0.000%       0.632%         quantitatively at several conditionings
-     400    0.000%     0.000%       0.000%      <- SHIPPED. Direct, chain-free, one-sided.
+     100    1.132%     0.000%       4.478%
+     200    0.160%     0.000%       0.632%
+     400    0.000%     0.000%       0.000%      <- SHIPPED
 
-**Shipped at 400** because it tests the decision-relevant claim in the firmware's own units with the
-scale chain removed, and because its power points at the only direction that can overturn anything.
+**Shipped at 400** because it is the LERP's own first breakpoint, read in the firmware's own units
+with the scale chain removed from the question. That reason is independent of the struck derivation
+and survives it; the "predicted frozen / one-sided" argument does NOT and is withdrawn.
 T = 100 would be strictly more informative *about the chain* but answers the breakpoint question
 only by extrapolating through the chain it is testing. Changing it costs a 2-byte `movea` immediate
 plus relaxing the `_self_check_wire` flatness assertion -- trivially re-buildable if preferred.
@@ -153,13 +205,35 @@ THE PAYLOAD -- 0x14A byte4 bits 7:3
                                 measured it at 99.983% agreement with carControl.latActive over
                                 150,327 frames; bit6 keeps re-measuring it, and it is the
                                 engagement covariate every other bit is conditioned on.
-    bit5 = gp-0x671d != 0       *** THE MASKING RISK *** -- carried from V67 unchanged. It OUTRANKS
-                                the arm at 0x3ABFA; if set, the gain is pinned to 1024, BELOW stock.
-                                0.000% on route 47, but that is a clearance for one drive, not for
-                                the lane.
-    bit4 = gp-0x6ac0 >= 400     *** NEW *** the LERP inner axis vs its first breakpoint.
-    bit3 = 1                    *** NEW *** the V68 BUILD-CLASS MARKER. Constant.
+    bit5 = gp-0x67df != 0       *** NEW *** the detector FSM has LEFT NEUTRAL: |gp-0x6c2c| crossed
+                                +-T = 12800. NO reversal required -- this is the stage BELOW bit4,
+                                and it catches events too brief or one-sided to reverse.
+    bit4 = gp-0x671a >= 1       *** NEW THRESHOLD *** Honda's 1 kHz oscillation detector, lowest
+                                rung. A HOLD-TIME statistic, not an event rate -- see below.
+    bit3 = 1                    the V68 BUILD-CLASS MARKER. Constant.
     bits 2:0                    stock STEER_SENSOR_STATUS, preserved.
+
+🛑 HOW TO READ bit4 -- DUTY IS NOT OCCUPANCY, AND GETTING THIS WRONG INFLATES THE DETECTOR RATE
+------------------------------------------------------------------------------------------------
+`gp-0x671a` counts REVERSALS of `gp-0x6c2c` past +-T (cal `0xC620A` = 12800), via raw counter
+`gp-0x357c` and FSM state `gp-0x67df`. It is a 0..CEIL counter and bit4 asks only "is it >= 1".
+
+  * **SUB-CEIL (1..4)** -- cleared by the **50-tick dwell** (cal `0xC64DD` = 50), so a trip is
+    visible for only ~**50 ms** => about **5 frames** at the 100 Hz TX rate.
+    ⚠ **BRIEF EVENTS WILL BE UNDER-COUNTED**, and an isolated reversal may be missed entirely.
+  * **AT CEIL (5, cal `0xC64FA`)** -- the output is RE-PINNED every tick. Release requires **5000
+    ticks (cal `0xC6270` = 5.0 s)** with `gp-0x6a5e >= 640` AND no reversals. `gp-0x6a5e` is voted
+    **VEHICLE SPEED** (voter `FUN_00041eec`, settled 2026-07-29) and 640 counts is **~10 km/h**.
+    ⇒ **below ~10 km/h the latch NEVER releases**; at road speed it releases 5 s after the last
+    reversal.
+
+⇒ **bit4 is a HOLD-TIME statistic.** Duty over-states brief events at speed and saturates at creep.
+🛑 **AND IT IS A DETECTOR, NOT A SPECTROMETER.** It reports THAT a reversal past +-T occurred. It
+gives **neither amplitude nor frequency**. Any frequency attribution must come from conditioning on
+something else (speed, maneuver, the gate) -- never from bit4 alone.
+⚠ The 100 Hz sampling barrier is unchanged: bit4's own TIME SERIES is aliased like everything else.
+What is new is that the QUANTITY it reports was computed at 1 kHz inside the ECU. **bit4 carries
+above-50-Hz information; it does not carry an above-50-Hz waveform.**
 
 🛑🛑 WHAT THE STICKY / HIGH-FREQUENCY RUNG WOULD HAVE BEEN, AND WHY IT IS NOT HERE
 -----------------------------------------------------------------------------------
@@ -420,28 +494,40 @@ RATE_DISP = 0x6AC0             # the r24 gain LERP's INNER axis. HALFWORD, ld.hu
 RATE_BREAKPOINT = 400          # xs[1] in every mode-10 gain_B record -- asserted from the image
 RATE_FOLD = EX.RATE_FOLD       # 13001; above this the LERP key folds to 0 -- the stated asymmetry
 
-# ★★ THE PRE-REGISTERED PREDICTION. Derived from route 47's own cache through the SAME scale chain
-# the probe exists to test: gp-0x6ac0 = |0x18F rate counts| x 32768/(48*1159) = x 0.5890135.
-# 150,327 samples / 25.1 min, creep AND highway, both gate arms. Recorded HERE, before the drive,
-# so the result cannot be reinterpreted afterwards.
-R47_PREDICT = {"n": 150327, "at_or_above_400": 0, "max": 277.4,
+# 🛑 RETRACTED 2026-08-03 -- KEPT ONLY AS A RECORD OF A STRUCK CLAIM, NEVER AS A PREDICTION.
+# Derived from route 47's cache through `x 32768/(48*1159)`, which is EX.RATE_COUNTS_PER_DEGS / 8 --
+# i.e. it rests on `bus = 8 x deg/s`, the relation CLAUDE.md records as RETRACTED. See the docstring.
+R47_CHAIN_STRUCK = 32768 / (48 * 1159)         # 0.5890135 -- exactly EX.RATE_COUNTS_PER_DEGS / 8
+R47_PREDICT = {"retracted": True, "n": 150327, "at_or_above_400": 0, "max": 277.4,
                "p50": 0.6, "p90": 10.6, "p99": 105.4, "p99_9": 221.3, "p99_99": 264.4}
 
 COND_BLT = V65.COND_BLT        # 0x6, SIGNED < -- pinned to the real `blt` @0x1C006
+COND_BNE = 0xA                 # Z == 0. Pinned to a real `bne +6` -- 1455 byte-identical instances.
 
-# Rung kinds. "byte_ge" = ld.bu + cmp imm5 + Bcond + movea       (12 bytes)
-#             "hword_ge" = ld.hu + movea(-T) + cmp r0 + blt + movea (16 bytes)
-KIND_BYTE, KIND_HWORD = "byte_ge", "hword_ge"
-RUNG_LEN = {KIND_BYTE: 12, KIND_HWORD: 16}
+# ⚠ gp-0x67ac IS NOT PROBED. It was the intended bit5 until 2026-08-03, when it was shown to be
+# PERMANENTLY 0 on this build -- see the docstring. Kept named so the retired candidate is legible.
+DROPOUT_DISP = 0x67AC          # PROVEN 0. Never probed. BYTE, 2r/1w (reader 0x3AA34, writer 0x2773A).
+FSM_DISP = 0x67DF              # the detector FSM state. BYTE, 1r/1w. *** FLOWN as V64's bit4 ***
+DETECT_DISP = ARM3_DISP        # 0x671a -- Honda's 1 kHz oscillation detector, BYTE (7r/1w).
+# 🛑 gp-0x67ac's role table, the fact the exclusion rests on. Re-read from the image every build.
+ROLE_TABLE_ADDR = 0xC4124      # tp+0x5124 -- 11 per-slot role bytes. Anchored, NOT the +0x1000 trap.
+ROLE_TABLE_EXPECT = bytes((0, 0, 5, 0, 5, 5, 0, 0, 0, 5, 0))    # no slot is 6 or 7 => latch never fires
+
+# Rung kinds. "byte_ge" = ld.bu + cmp imm5 + blt   + movea            (12 bytes)
+#             "byte_eq" = ld.bu + cmp imm5 + bne   + movea            (12 bytes)  <- SAME COST
+#             "hword_ge" = ld.hu + movea(-T) + cmp r0 + blt + movea   (16 bytes)  <- unused on V68
+KIND_BYTE, KIND_BYTE_EQ, KIND_HWORD = "byte_ge", "byte_eq", "hword_ge"
+RUNG_LEN = {KIND_BYTE: 12, KIND_BYTE_EQ: 12, KIND_HWORD: 16}
+RUNG_COND = {KIND_BYTE: COND_BLT, KIND_BYTE_EQ: COND_BNE, KIND_HWORD: COND_BLT}
 
 # (gp displacement, bit, name, kind, threshold, what it decides)
 CELLS = (
     (GATE_DISP, BIT_GATE, "gate_6806", KIND_BYTE, 1,
      "*** THE GATE *** -- carried from V67; duty vs latActive and the engagement covariate"),
-    (MASK_DISP, BIT_MASK, "mask_671d", KIND_BYTE, 1,
-     "*** THE MASKING RISK *** -- outranks the arm; if set the gain is pinned to 1024, BELOW stock"),
-    (RATE_DISP, BIT_RATE, "rate_6ac0", KIND_HWORD, RATE_BREAKPOINT,
-     "*** NEW *** the LERP inner axis vs its FIRST breakpoint -- flat segment or sloped"),
+    (FSM_DISP, BIT_MASK, "fsm_67df", KIND_BYTE, 1,
+     "*** NEW *** detector FSM LEFT NEUTRAL: |gp-0x6c2c| crossed +-T. NO reversal required"),
+    (DETECT_DISP, BIT_RATE, "detect_671a", KIND_BYTE, 1,
+     "*** NEW THRESHOLD *** ...and then REVERSED at least once (V67 tested >= 5)"),
 )
 
 # ---- encoder pins, all read back FROM THE IMAGE in assert_signal_sites() -----------------------------
@@ -450,7 +536,22 @@ PIN_BLT6 = V65.PIN_BLT6                                              # (0x1C006,
 PIN_LDBU_6806_R6 = V66.PIN_LDBU_6806_R6                              # (0x2A8C0, 8437fb97, 0x6806, 6)
 PIN_LDBU_671D_R6 = V67.PIN_LDBU_671D_R6                              # (0x3AB98, a437e398, 0x671d, 6)
 PIN_LDBU_6806_R15 = V67.PIN_LDBU_6806_R15                            # the repoint, byte-identical
-# ★ the NEW rung's load -- FOUR byte-identical real instances, register field included.
+# ⚠ PROVENANCE OF THE TWO NEW LOADS, STATED AT ITS REAL STRENGTH. Neither `ld.bu -0x671a[gp],r6` nor
+# `ld.bu -0x67ac[gp],r6` has a byte-identical instance in the STOCK image: every real reader of both
+# cells targets a different destination register, so only the reg2 field is ours. What IS byte-
+# identical at real sites is hw2 -- the entire displacement, including the parity bit that the
+# hw1-bit-5 trap turns on. Both are asserted from the image below.
+PIN_LDBU_671A_HW2 = (bytes.fromhex("e798"),
+                     (0x35A06, 0x35BEA, 0x36C1E, 0x3A4A6, 0x3AA70, 0x429C4, 0x429D2))
+# ★ bit5's load needs NO hedge: `ld.bu -0x67df[gp],r6` = a4372198 is BYTE-IDENTICAL to V64's own
+# flown cave word at 0xC4B4C, where it was V64's bit4 and drove route 35. Lifted, not re-derived.
+PIN_LDBU_67DF_FLOWN = (0xC4B4C, bytes.fromhex("a4372198"))
+PIN_LDBU_67DF_HW2 = (bytes.fromhex("2198"), (0x428E6, 0x4299C))   # its reader and its sole writer
+# ★ AND bit4's full word is FLOWN: V67's own cave carried `8437e798` verbatim at 0xC4B50 and drove
+# routes 47 and 4a. Asserted against the V67 SOURCE image, not against stock (where it cannot exist).
+PIN_LDBU_671A_FLOWN = (0xC4B50, bytes.fromhex("8437e798"))
+PIN_BNE6 = (0x14CB2, bytes.fromhex("ba05"))                          # `bne +6`, 1455 exact instances
+# `cmp r0,r6` -- kept as a pin even though no rung uses it now; V57's flown cave rung.
 PIN_LDHU_6AC0_R6 = (0x45780, bytes.fromhex("e4374195"), RATE_DISP, 6)
 PIN_LDHU_6AC0_TWINS = (0x45780, 0x4E6BA, 0x7CCCA, 0x7CE26)
 # `cmp r0,r6`. Byte-identical at 398 sites; the pin chosen is the FLOWN one -- V57's own cave rung.
@@ -464,7 +565,7 @@ PIN_MOVEA_R6_R6_HW1 = (bytes.fromhex("2636"),
                        (0x1B114, 0x1B158, 0x4A712, 0x4A756, 0x5AE26, 0x60C56, 0x85D8A))
 WEAK_PINS = ("movea -0x190,r6,r6",)
 
-TAG = "LKAS-4x-mss0-decouple0xC646C-ratelane-LKASGATED-rateaxisprobe-can330byte4"
+TAG = "LKAS-4x-mss0-decouple0xC646C-ratelane-LKASGATED-fsm67df-detector671a-can330byte4"
 OUT = os.path.join(RWD_DIR, f"39990-TVA,A160-V68-{TAG}-0x{START:X}-0x{END:X}.rwd")
 BIN_OUT = str(plain_image_path("_v68_plain_image.bin"))
 V67_BIN = str(plain_image_path("_v67_plain_image.bin"))
@@ -499,7 +600,7 @@ def decode_load(raw):
 
 def _emit_load(disp, kind):
     """The one place a cell's load is encoded, so the wire model and the cave cannot diverge."""
-    return V55.ldbu_any(-disp, R6) if kind == KIND_BYTE else FF.ldhu(disp, R6)
+    return FF.ldhu(disp, R6) if kind == KIND_HWORD else V55.ldbu_any(-disp, R6)
 
 
 # =======================================================================================================
@@ -511,9 +612,9 @@ def _self_check_encoders():
     V67._self_check_encoders()          # inherits the whole chain back to FOURFRAME
     assert GP == 4, "GP is not r4; every real gp-relative instance in this image carries reg1 = r4"
 
-    # ---- the two BYTE rungs, carried from V67 unchanged -------------------------------------------
+    # ---- ALL THREE rungs are BYTE rungs on this revision -------------------------------------------
     for disp, _bit, name, kind, lvl, _why in CELLS:
-        if kind != KIND_BYTE:
+        if kind == KIND_HWORD:
             continue
         raw = V55.ldbu_any(-disp, R6)
         mnem, got, reg1, reg2 = decode_load(raw)
@@ -528,7 +629,45 @@ def _self_check_encoders():
         assert raw != FF.ldhu(disp, R6), f"{name}: ld.bu collapsed onto ld.hu -- it would straddle"
         assert V55.cmp_imm5(lvl, R6) == PIN_CMP_P1_R6[1], f"{name}: `cmp 0x1,r6` is not the pin"
 
-    # ---- ★ THE NEW RUNG. Every instruction built by the encoder, then decoded back. ---------------
+    # ---- ★★ THE EQUALITY RUNG. `== 1` is NOT `>= 1`, and the difference is the whole point. --------
+    # FUN_0003aa2c skips the r24/r26 aggregate add iff gp-0x67ac == 1 EXACTLY (0x3aa34 ld.bu ->
+    # 0x3aa3c cmp 0x1 -> 0x3aa42 cmovh 0x0,r8,r11 -> branch on r11 == 1); a value >= 2 does NOT skip.
+    # A `>= 1` rung would report a lane dropout that is not happening. The equality form costs the
+    # SAME 12 bytes -- only the branch CONDITION changes, blt (0x6) -> bne (0xA).
+    eq_br = FF.bcond(COND_BNE, +6)
+    assert eq_br == PIN_BNE6[1], f"`bne +6` encodes as {eq_br.hex()}, not the real {PIN_BNE6[1].hex()}"
+    assert COND_BNE == 0xA and struct.unpack("<H", eq_br)[0] & 0xF == COND_BNE, "COND_BNE drifted"
+    assert eq_br != FF.bcond(COND_BLT, +6), "the equality branch collapsed onto the `>=` branch"
+    assert RUNG_LEN[KIND_BYTE_EQ] == RUNG_LEN[KIND_BYTE] == 12, \
+        "the equality rung is no longer the same 12 bytes as the >= rung"
+    assert RUNG_COND[KIND_BYTE_EQ] == COND_BNE and RUNG_COND[KIND_BYTE] == COND_BLT, \
+        "a rung kind is wired to the wrong branch condition -- == and >= would swap silently"
+    assert len(eq_br) == len(FF.bcond(COND_BLT, +6)) == 2, "a Bcond is not 2 bytes"
+
+    # ---- ★ THE TWO NEW LOADS, and the PARITY TRAP that differs between them ----------------------
+    # 🛑 gp-0x671a's disp16 is 0x98E6 (EVEN -> opcode field 0x3C, hw1 `8437`) but gp-0x67df's is
+    # 0x9821 (ODD -> opcode field 0x3D, hw1 `a437`). `ld.bu` carries displacement bit 0 in the
+    # OPCODE FIELD, so a scan or an encoder that assumes one parity silently addresses the
+    # NEIGHBOURING cell with every other field still perfect. Both parities are asserted here.
+    for disp, (hw2, sites), want_hw1, what in (
+            (DETECT_DISP, PIN_LDBU_671A_HW2, "8437", "gp-0x671a (bit4), EVEN disp"),
+            (FSM_DISP, PIN_LDBU_67DF_HW2, "a437", "gp-0x67df (bit5), ODD disp")):
+        raw = V55.ldbu_any(-disp, R6)
+        assert raw[2:] == hw2, \
+            f"{what}: the emitted displacement halfword {raw[2:].hex()} is not the one that appears " \
+            f"at the cell's own real accesses ({hw2.hex()}) -- WRONG CELL"
+        assert raw[:2] == bytes.fromhex(want_hw1), \
+            f"{what}: hw1 is {raw[:2].hex()}, not `{want_hw1}` -- the opcode field does not match " \
+            "the displacement parity, so this load addresses the NEIGHBOURING cell"
+        op = (struct.unpack_from("<H", raw, 0)[0] >> 5) & 0x3F
+        assert op == (0x3C | (((0x10000 - disp) & 0xFFFF) & 1)), f"{what}: opcode/parity mismatch"
+        assert len(sites) >= 2, f"{what}: fewer than two real hw2 donors"
+    # ★ and bit5's FULL WORD is byte-identical to V64's flown cave rung -- no hedge needed.
+    assert V55.ldbu_any(-FSM_DISP, R6) == PIN_LDBU_67DF_FLOWN[1], \
+        f"the encoder builds {V55.ldbu_any(-FSM_DISP, R6).hex()} for `ld.bu -0x67df[gp],r6`, not " \
+        f"V64's flown {PIN_LDBU_67DF_FLOWN[1].hex()}"
+
+    # ---- the HWORD encoder is retained and self-checked even though no rung uses it now ------------
     load = FF.ldhu(RATE_DISP, R6)
     assert load == PIN_LDHU_6AC0_R6[1], \
         f"the encoder builds {load.hex()} for `ld.hu -0x6ac0[gp],r6`, not the real instance " \
@@ -607,9 +746,33 @@ def _self_check_encoders():
     assert [b for _, b, _, _, _, _ in CELLS] == \
         sorted((b for _, b, _, _, _, _ in CELLS), reverse=True), \
         "the cell bits are not in descending bit order"
-    assert {c[0] for c in CELLS} == {GATE_DISP, MASK_DISP, RATE_DISP}, "the probed cell set moved"
-    assert ARM3_DISP not in {c[0] for c in CELLS}, \
-        "gp-0x671a is still probed -- V68's whole point is that bit4 was a wasted rung"
+    assert {c[0] for c in CELLS} == {GATE_DISP, FSM_DISP, DETECT_DISP}, "the probed cell set moved"
+    assert DROPOUT_DISP not in {c[0] for c in CELLS}, \
+        "gp-0x67ac is probed again -- it is PROVEN 0 on this build (see the docstring). Probing a " \
+        "proven zero repeats the exact error that wasted V68's original bit4."
+    assert not any(c[3] == KIND_BYTE_EQ for c in CELLS), \
+        "an equality rung is present -- the only candidate for one was gp-0x67ac, which is not probed"
+
+    # ★★ WHY gp-0x671a IS PROBED AGAIN, AND WHY THE ASSERT THAT FORBADE IT IS GONE.
+    # An earlier revision of this file asserted `ARM3_DISP not in CELLS` with the message "gp-0x671a is
+    # still probed -- V68's whole point is that bit4 was a wasted rung". That assert is REMOVED, and
+    # this is the rationale replacing it rather than a silent deletion:
+    #   1. THE NULL WAS AT A DIFFERENT THRESHOLD. Route 47 (and route 4a) read gp-0x671a 0.000% -- but
+    #      V67's rung tested `>= 5`, the CEIL (cal 0xC64FA = 5). This rung tests `>= 1`, the LOWEST
+    #      rung of the same counter. A null at 5 does not imply a null at 1; they are different
+    #      questions about a 0..5 counter, and only the second one asks "did the detector see
+    #      ANYTHING".
+    #   2. THE DETECTOR IS THE KIT'S ONLY ABOVE-50-Hz INSTRUMENT. gp-0x6c2c's cascade is a BAND-PASS
+    #      peaking near 61 Hz (1 Hz 0.05x, 45 Hz 1.54x, 61 Hz 1.61x, 100 Hz 1.43x, relative to
+    #      21.09 Hz), so the trip amplitude FALLS above 50 Hz: 21.3 Hz needs 1683 counts, 45 Hz 1104,
+    #      60 Hz 1056, 100 Hz 1186. Honda's own 1 kHz detector is MORE sensitive where both CAN
+    #      (Nyquist 50.00) and the comma IMU (50.51) are blind. This bit is the only way to see there.
+    #   3. IT COSTS NOTHING AND RISKS NOTHING. 12 bytes, read-only, no new store, GATE 1 stays vacuous.
+    assert DETECT_DISP == ARM3_DISP == 0x671A, "the detector cell moved"
+    assert [c[4] for c in CELLS if c[0] == DETECT_DISP] == [1], \
+        "bit4's threshold is not 1 -- the whole reason for re-probing gp-0x671a is that V67 tested 5"
+    assert V67.CELLS and any(c[0] == DETECT_DISP and c[3] != 1 for c in V67.CELLS), \
+        "V67 no longer tests gp-0x671a at a threshold other than 1 -- the premise above is stale"
 
 
 # =======================================================================================================
@@ -617,7 +780,7 @@ def _self_check_encoders():
 # =======================================================================================================
 
 def build_cave():
-    """pack_rate_axis_probe -- entered by `jarl` from 0x55C0E, returns via `jmp [lp]` to 0x55C12.
+    """pack_dropout_detector_probe -- entered by `jarl` from 0x55C0E, returns `jmp [lp]` to 0x55C12.
 
         movea 0x88,r0,r7       ; r7 = 0x88   bit7 LIVENESS + bit3 BUILD-CLASS MARKER
         ld.bu -0x6806[gp],r6   ; *** THE GATE *** -- carried from V67
@@ -625,17 +788,16 @@ def build_cave():
         blt   +6
         movea 0x40,r7,r7       ; bit6 = gp-0x6806 != 0
       g_gate:
-        ld.bu -0x671d[gp],r6   ; *** THE MASKING RISK *** -- carried from V67
+        ld.bu -0x67ac[gp],r6   ; *** NEW *** the r24/r26 LANE DROPOUT flag
+        cmp   0x1,r6
+        bne   +6               ; 🛑 EQUALITY, not >=. Skip unless the byte is EXACTLY 1.
+        movea 0x20,r7,r7       ; bit5 = (gp-0x67ac == 1)
+      g_dropout:
+        ld.bu -0x671a[gp],r6   ; *** NEW THRESHOLD *** Honda's oscillation detector
         cmp   0x1,r6
         blt   +6
-        movea 0x20,r7,r7       ; bit5 = gp-0x671d != 0
-      g_mask:
-        ld.hu -0x6ac0[gp],r6   ; *** NEW *** the LERP inner axis. HALFWORD, UNSIGNED.
-        movea -0x190,r6,r6     ; r6 = rate - 400   (movea sign-extends its imm16)
-        cmp   r0,r6            ; S = (r6 < 0), OV = 0
-        blt   +6               ; SIGNED < 0  -> rate < 400 -> the FLAT segment -> skip
-        movea 0x10,r7,r7       ; bit4 = gp-0x6ac0 >= 400
-      g_rate:
+        movea 0x10,r7,r7       ; bit4 = gp-0x671a >= 1   (V67 tested >= 5)
+      g_detect:
         ld.bu -0x1514[gp],r6   ; CAN-330 payload byte4
         andi  0x7,r6,r6        ; preserve live STEER_SENSOR_STATUS bits 2:0
         or    r7,r6
@@ -656,17 +818,20 @@ def build_cave():
     for disp, bit, name, kind, lvl, _why in CELLS:
         load_idx = len(listing)
         emit(_emit_load(disp, kind),
-             f"ld.{'bu' if kind == KIND_BYTE else 'hu'} -0x{disp:04x}[gp],r6 ; {name}")
-        if kind == KIND_BYTE:
-            emit(V55.cmp_imm5(lvl, R6), "cmp 0x1,r6          ; zero-extended byte: <1 IS ==0")
-        else:
+             f"ld.{'hu' if kind == KIND_HWORD else 'bu'} -0x{disp:04x}[gp],r6 ; {name}")
+        if kind == KIND_HWORD:
             emit(FF.movea((-lvl) & 0xFFFF, R6, R6),
-                 f"movea -0x{lvl:x},r6,r6  ; r6 = rate - {lvl}  (movea SIGN-EXTENDS imm16)")
+                 f"movea -0x{lvl:x},r6,r6  ; r6 = value - {lvl}  (movea SIGN-EXTENDS imm16)")
             emit(V54.cmp_rr(R0, R6), "cmp r0,r6           ; S = (r6 < 0), OV = 0")
+        else:
+            emit(V55.cmp_imm5(lvl, R6), f"cmp 0x{lvl:x},r6          ; zero-extended byte")
         br_idx = len(listing)
-        emit(FF.bcond(COND_BLT, +6), f"blt +6              ; skip -> {name}")
+        cond = RUNG_COND[kind]
+        op = "==" if kind == KIND_BYTE_EQ else ">="
+        emit(FF.bcond(cond, +6),
+             f"{'bne' if kind == KIND_BYTE_EQ else 'blt'} +6              ; skip -> {name}")
         emit(FF.movea(bit, R7, R7),
-             f"movea 0x{bit:x},r7,r7   ; bit{bit.bit_length() - 1} = gp-0x{disp:04x} >= {lvl}")
+             f"movea 0x{bit:x},r7,r7   ; bit{bit.bit_length() - 1} = gp-0x{disp:04x} {op} {lvl}")
         rungs.append((load_idx, br_idx, CAVE_BASE + len(body), name, disp, bit, kind, lvl))
 
     emit(V55.ldbu_any(-PAYLOAD_BYTE4_DISP, R6), "ld.bu -0x1514[gp],r6 ; CAN-330 payload byte4")
@@ -677,24 +842,36 @@ def build_cave():
     emit(FF.JMP_LP, "jmp [lp]            ; -> 0x55C12")
 
     # ---- GATE 2a: every branch lands exactly on its label. Located BY POSITION, not by content --
-    # the cave emits THREE identical `blt +6`, so a content lookup is ambiguous by construction.
-    assert [r[1] for r in rungs] == [3, 7, 12], f"rung branch indices drifted: {[r[1] for r in rungs]}"
+    # the cave emits near-identical Bconds, so a content lookup is ambiguous by construction.
+    assert [r[1] for r in rungs] == [3, 7, 11], f"rung branch indices drifted: {[r[1] for r in rungs]}"
     for load_idx, br_idx, label, name, disp, _bit, kind, lvl in rungs:
         addr, raw, _ = listing[br_idx]
         assert len(raw) == 2 and raw[1] == 0x05, f"{name}: listing[{br_idx}] is not a +6 Bcond"
         assert addr + 6 == label, f"{name} target 0x{addr + 6:05X} != label 0x{label:05X}"
-        assert struct.unpack("<H", raw)[0] & 0xF == COND_BLT, f"{name}: wrong branch condition"
+        # 🛑 THE == / >= TRAP. The two rung kinds are byte-for-byte identical except for this nibble.
+        # A blt where a bne belongs turns "the lane dropped out" into "the flag is non-zero" -- a
+        # SUPERSET of the real condition -- and nothing else in the image would look wrong.
+        assert struct.unpack("<H", raw)[0] & 0xF == RUNG_COND[kind], \
+            f"{name}: branch condition is 0x{struct.unpack('<H', raw)[0] & 0xF:X}, not " \
+            f"0x{RUNG_COND[kind]:X} for a {kind} rung -- == and >= have been swapped"
         assert listing[load_idx][1] == _emit_load(disp, kind), f"{name}: wrong cell loaded"
         n_mid = br_idx - load_idx - 1
-        assert n_mid == (1 if kind == KIND_BYTE else 2), \
+        assert n_mid == (2 if kind == KIND_HWORD else 1), \
             f"{name}: {n_mid} instruction(s) between the load and the branch, expected " \
-            f"{1 if kind == KIND_BYTE else 2} for a {kind} rung"
-        if kind == KIND_BYTE:
-            assert listing[load_idx + 1][1] == V55.cmp_imm5(lvl, R6), f"{name}: cmp is not `0x{lvl:x},r6`"
-        else:
+            f"{2 if kind == KIND_HWORD else 1} for a {kind} rung"
+        if kind == KIND_HWORD:
             assert listing[load_idx + 1][1] == FF.movea((-lvl) & 0xFFFF, R6, R6), \
                 f"{name}: the threshold subtract is not `movea -0x{lvl:x},r6,r6`"
             assert listing[load_idx + 2][1] == V54.cmp_rr(R0, R6), f"{name}: the compare is not `cmp r0,r6`"
+        else:
+            assert listing[load_idx + 1][1] == V55.cmp_imm5(lvl, R6), f"{name}: cmp is not `0x{lvl:x},r6`"
+    # ...and NO rung is an equality rung on this revision. The only candidate for one was gp-0x67ac,
+    # which is provably 0 on this build and is therefore not probed. KIND_BYTE_EQ stays defined and
+    # self-checked so the capability is proven and costed, but shipping it now would be a rung spent
+    # on a known constant -- exactly the error V68's original bit4 made.
+    eq_rungs = [r[3] for r in rungs if r[6] == KIND_BYTE_EQ]
+    assert eq_rungs == [], f"the equality rungs are {eq_rungs}; none should be present"
+    assert all(r[6] == KIND_BYTE for r in rungs), "every rung on this revision is a plain byte rung"
 
     # ---- GATE 2b: r6/r7 LIVENESS. Only the rung's own load and its threshold subtract may write r6;
     # everything else in the rung region writes r7. Nothing else may be touched at all.
@@ -721,8 +898,8 @@ def build_cave():
     store_ops = {0x3A: "st.b", 0x3B: "st.h/st.w"}
     store_idx = [i for i, (_, raw, _) in enumerate(listing)
                  if len(raw) >= 4 and ((struct.unpack_from("<H", raw, 0)[0] >> 5) & 0x3F) in store_ops]
-    assert store_idx == [17], f"the cave must contain EXACTLY ONE store, found {store_idx}"
-    assert listing[17][1] == FF.stb(R6, -PAYLOAD_BYTE4_DISP, GP), \
+    assert store_idx == [16], f"the cave must contain EXACTLY ONE store, found {store_idx}"
+    assert listing[16][1] == FF.stb(R6, -PAYLOAD_BYTE4_DISP, GP), \
         "the sole store is not the payload byte"
     for idx, (_, raw, text) in enumerate(listing):
         hw = struct.unpack_from("<H", raw, 0)[0]
@@ -735,12 +912,12 @@ def build_cave():
     assert len(body) % 2 == 0, "cave length must be halfword-aligned"
     assert CAVE_BASE + len(body) <= CAVE_HARD_LIMIT, "cave overruns the hard limit"
     want = 24 + sum(RUNG_LEN[c[3]] for c in CELLS)
-    assert len(body) == want == 64, f"the cave is {len(body)}B; the budget says {want}B"
+    assert len(body) == want == 60, f"the cave is {len(body)}B; the budget says {want}B"
     assert len(body) <= len(V55.CAVE_BYTES), \
         f"V68 cave ({len(body)}B) exceeds the proven extent ({len(V55.CAVE_BYTES)}B) -- STOP, " \
         "do not grow it: caves are this kit's only bricking class"
     spare = len(V55.CAVE_BYTES) - len(body)
-    assert spare == 4, f"{spare} spare bytes, expected 4"
+    assert spare == 8, f"{spare} spare bytes, expected 8"
     need = sticky_rung_budget()
     assert spare < need["minimum"], \
         f"{spare} spare bytes now, and the cheapest HF rung needs {need['minimum']} -- the budget " \
@@ -796,17 +973,28 @@ CAVE_BYTES, CAVE_LISTING = build_cave()
 # The wire model -- a Python mirror of the cave, instruction for instruction
 # =======================================================================================================
 
+def rung_predicate(kind, lvl):
+    """The EXACT predicate each rung kind computes, in one place, so no caller can guess wrong."""
+    if kind == KIND_BYTE_EQ:
+        return lambda v: v == lvl               # cmp imm5 ; bne  -> set iff EXACTLY equal
+    return lambda v: v >= lvl                   # cmp/sub  ; blt  -> set iff >=
+
+
 def wire_byte4(values, status_bits=0x7):
     """Exactly what the cave writes, given each cell's RAM value. `values` is keyed by displacement."""
     b = LIVE_IMM                                # bit7 liveness + bit3 class marker
     for disp, bit, _name, kind, lvl, _why in CELLS:
-        if kind == KIND_BYTE:
-            v = values[disp] & 0xFF             # ld.bu ZERO-EXTENDS a byte -> r6 in [0,255]
-            skip = v < lvl                      # signed and unsigned agree on a zero-extended byte
-        else:
+        if kind == KIND_HWORD:
             v = values[disp] & 0xFFFF           # ld.hu ZERO-EXTENDS a halfword -> r6 in [0,65535]
-            skip = (v - lvl) < 0                # movea then SIGNED blt, in 32 bits
-        if not skip:
+            hit = (v - lvl) >= 0                # movea then SIGNED blt, in 32 bits
+        elif kind == KIND_BYTE_EQ:
+            v = values[disp] & 0xFF             # ld.bu ZERO-EXTENDS a byte -> r6 in [0,255]
+            hit = (v == lvl)                    # `cmp 0x1,r6` sets Z iff r6 == 1; `bne` skips unless
+        else:
+            v = values[disp] & 0xFF
+            hit = (v >= lvl)                    # signed and unsigned agree on a zero-extended byte
+        assert hit == rung_predicate(kind, lvl)(v), "wire model and rung_predicate disagree"
+        if hit:
             b |= bit
     return b | (status_bits & PAYLOAD_KEEP_MASK)
 
@@ -824,38 +1012,57 @@ def decode_field(byte4):
 
 
 def _self_check_wire():
-    """The byte cells EXHAUSTIVELY over 256 values, the halfword cell over all 65,536."""
+    """Every cell EXHAUSTIVELY over its full width -- 256 for a byte, 65,536 for a halfword."""
     zeros = {d: 0 for d, _, _, _, _, _ in CELLS}
     for other in (0, 0xFF):
         for disp, bit, name, kind, lvl, _w in CELLS:
-            span = 256 if kind == KIND_BYTE else 65536
+            want = rung_predicate(kind, lvl)
+            span = 65536 if kind == KIND_HWORD else 256
             for v in range(span):
                 vals = {d: (v if d == disp else other) for d, _, _, _, _, _ in CELLS}
                 d_ = decode_field(wire_byte4(vals))
                 assert d_ is not None and d_["live"], f"{name}={v} decodes as VOID"
                 assert d_["class_marker"], f"{name}={v}: the class marker is CLEAR"
-                assert d_[name] == (v >= lvl), f"{name}: bit wrong at value {v} (threshold {lvl})"
+                assert d_[name] == want(v), f"{name}: bit wrong at value {v} (kind {kind}, lvl {lvl})"
+
+    # ★★ THE TWO RUNGS ARE STRICTLY ORDERED STAGES OF ONE DETECTOR, and the ordering is a WIRE
+    # INVARIANT the log can be checked against. gp-0x67df leaves NEUTRAL when |gp-0x6c2c| crosses
+    # +-T; gp-0x671a only counts once a REVERSAL follows. So a reversal implies a crossing:
+    #     bit4 set (reversed) => bit5 set (crossed)      [expected on the wire]
+    #     bit5 set, bit4 clear                            = crossed but never reversed -- the NEW
+    #                                                       information this revision buys
+    # 🛑 It is an EXPECTATION, not an encoding guarantee: the two cells are sampled at the same TX
+    # tick but cleared by different rules, so bit4 && !bit5 is possible at a clear boundary. The
+    # decoder reports its rate rather than asserting it away.
+    assert [c[0] for c in CELLS].index(FSM_DISP) < [c[0] for c in CELLS].index(DETECT_DISP), \
+        "the FSM stage must be emitted before the reversal stage -- bit5 outranks bit4 here"
+    assert BIT_MASK > BIT_RATE, "the crossing stage must own the HIGHER bit of the two"
+
     grid = (0, 1, 2, 5, 0xFF)
-    hgrid = (0, 1, 399, 400, 401, 13000, RATE_FOLD, 0x7FFF, 0x8000, 0xFFFF)
-    for combo in itertools.product(grid, grid, hgrid):
+    for combo in itertools.product(grid, repeat=len(CELLS)):
         vals = {c[0]: v for c, v in zip(CELLS, combo)}
         d_ = decode_field(wire_byte4(vals))
-        for (disp, _bit, name, _k, lvl, _w), v in zip(CELLS, combo):
-            assert d_[name] == (v >= lvl), f"{name} wrong in combo {combo}"
+        for (disp, _bit, name, kind, lvl, _w), v in zip(CELLS, combo):
+            assert d_[name] == rung_predicate(kind, lvl)(v), f"{name} wrong in combo {combo}"
 
-    # 🛑 THE SIGN TRAP, exhaustively: a halfword above 0x7FFF must still read as a LARGE number,
-    # because the load is ld.hu (zero-extending) and the subtract happens in 32 bits. If the load
-    # were ever `ld.h`, 0x8000..0xFFFF would go NEGATIVE and every one of them would flip.
-    for v in (0x8000, 0xC000, 0xFFFF):
-        assert wire_byte4({**zeros, RATE_DISP: v}) & BIT_RATE, \
-            f"halfword 0x{v:04X} reads as BELOW the breakpoint -- the load is behaving as SIGNED"
-    for v in range(0, RATE_BREAKPOINT):
-        assert not (wire_byte4({**zeros, RATE_DISP: v}) & BIT_RATE)
-    for v in range(RATE_BREAKPOINT, RATE_BREAKPOINT + 64):
-        assert wire_byte4({**zeros, RATE_DISP: v}) & BIT_RATE
-    # no signed overflow is reachable, so `blt` (S^OV) really is the sign of the difference
-    assert -0x8000 < (0 - RATE_BREAKPOINT) and (0xFFFF - RATE_BREAKPOINT) < 0x7FFFFFFF, \
-        "the movea subtract can overflow -- `blt` would then not be the sign of the difference"
+    # 🛑 THE SIGN TRAP, for the two `>=` byte rungs. `ld.bu` ZERO-extends, so r6 is in [0,255] and a
+    # SIGNED `blt` against a small positive imm5 is the same test as an unsigned one. A high bit in
+    # the byte (0x80..0xFF) must therefore read as a LARGE number, never as negative. If the load
+    # were ever `ld.b` (SIGNED), every value 0x80..0xFF would flip and the bit would read 0.
+    for disp, bit, name, kind, lvl, _w in CELLS:
+        if kind != KIND_BYTE:
+            continue
+        for v in (0x80, 0xC0, 0xFF):
+            assert wire_byte4({**zeros, disp: v}) & bit, \
+                f"{name}: byte 0x{v:02X} reads as BELOW {lvl} -- the load is behaving as SIGNED"
+        for v in range(0, lvl):
+            assert not (wire_byte4({**zeros, disp: v}) & bit), f"{name}: {v} < {lvl} set the bit"
+        for v in range(lvl, 256):
+            assert wire_byte4({**zeros, disp: v}) & bit, f"{name}: {v} >= {lvl} cleared the bit"
+    # bit4 counts a 0..CEIL counter, so spell out what `>= 1` means across its whole domain.
+    for v in range(0, 6):
+        assert bool(wire_byte4({**zeros, DETECT_DISP: v}) & BIT_RATE) == (v >= 1), \
+            f"the detector bit is wrong at counter value {v}"
 
     # exactly EIGHT payloads are reachable, all with bit7 AND bit3 set
     legal = {wire_byte4({c[0]: (c[4] if on else 0) for c, on in zip(CELLS, sel)}, status_bits=0)
@@ -907,11 +1114,14 @@ def _self_check_wire():
         f"the V65 ladder overlap is {sorted(hex(b) for b in v65_overlap)}, not {{0x9F}}"
     _self_check_wire.overlaps = {"V59/V62": v59_overlap, "V65": v65_overlap}
 
-    # ---- the breakpoint's MEANING, through the real LERP arithmetic -------------------------------
+    # ---- the gain_B surface, asserted as CONTEXT ---------------------------------------------------
+    # ⚠ No rung probes gp-0x6ac0 on this revision, so these are no longer claims about a probe bit --
+    # they are claims about the IMAGE, kept because V67's arm derivation rests on them and V68 carries
+    # that arm byte-identically. If this surface moves, V67's 5244 stops meaning what it meant.
     sc = int(7.2 * 64.0625)
     flat = EX.r24_gain_q10(sc, 0, 0, 0, 0)
     assert EX.r24_gain_q10(sc, RATE_BREAKPOINT - 1, 0, 0, 0) == flat, \
-        "the segment below the breakpoint is not flat -- bit4 does not mean what the docstring says"
+        "the segment below the breakpoint is not flat -- the gain_B surface moved"
     # ⚠ "FLAT" IS AN ENGINEERING CLAIM, NOT AN EXACT ONE, AND THE EXCEPTION IS PINNED HERE.
     # Record 0xD2AEC (the 50 km/h curve) has Y0 = 2305, Y1 = 2304 -- a ONE-count downward slope,
     # 0.04%. Three of four records are exactly flat. Asserted as EXACTLY this shape so a real ramp
@@ -929,42 +1139,54 @@ def _self_check_wire():
     _self_check_wire.flat_lerp = flat
     _self_check_wire.arm_for_2x_if_flat = 2 * flat
 
-    # ★★ THE PRE-REGISTERED PREDICTION, and the one-sidedness that makes a ZERO reading worth a rung.
-    # 🛑 bit4 IS PREDICTED TO READ 0.000%. Say so BEFORE the drive, or a zero will be read as
-    # "another wasted rung" exactly like V67's bit4 -- which is the mistake this build exists to fix.
-    assert R47_PREDICT["at_or_above_400"] == 0, "the pre-registered prediction is not zero"
-    assert R47_PREDICT["max"] < RATE_BREAKPOINT, \
-        "route 47's derived maximum already exceeds the breakpoint -- the prediction is not 'zero'"
-    headroom = RATE_BREAKPOINT / R47_PREDICT["max"]
-    assert 1.4 < headroom < 1.5, f"the headroom factor moved to {headroom:.3f}"
-    _self_check_wire.headroom = headroom
+    # 🛑 THE PRE-REGISTERED PREDICTION IS RETRACTED (2026-08-03) -- see the docstring. The old
+    # `assert 1.4 < headroom < 1.5` pinned a number derived through `bus = 8 x deg/s`, a relation
+    # CLAUDE.md records as retracted, while THIS SAME MODULE imports the constant that contradicts it.
+    # What is asserted now is the CONTRADICTION ITSELF, so it cannot be forgotten a second time.
+    assert abs(EX.RATE_COUNTS_PER_DEGS / R47_CHAIN_STRUCK - 8.0) < 1e-6, \
+        f"the struck chain is no longer exactly 8x from EX.RATE_COUNTS_PER_DEGS " \
+        f"({EX.RATE_COUNTS_PER_DEGS / R47_CHAIN_STRUCK:.6f}) -- re-read the retraction before " \
+        "trusting either number"
+    assert R47_PREDICT["retracted"] is True, \
+        "R47_PREDICT is no longer flagged as retracted -- it must never be quoted as a prediction"
+    # Kept only so the readout below can print BOTH chains side by side. NOT a prediction.
+    _self_check_wire.struck_headroom = RATE_BREAKPOINT / R47_PREDICT["max"]
 
 
 _self_check_wire()
 
 FLAT_LERP = _self_check_wire.flat_lerp                       # 2704
 ARM_FOR_2X_IF_FLAT = _self_check_wire.arm_for_2x_if_flat     # 5408
-HEADROOM = _self_check_wire.headroom                         # 1.442x
+STRUCK_HEADROOM = _self_check_wire.struck_headroom           # 1.442x -- RETRACTED, record only
 
 
 # =======================================================================================================
 # Image-level gates
 # =======================================================================================================
 
+DROPOUT_WRITERS = [0x2773A]                 # gp-0x67ac's ONE writer -- watched, never probed
+FSM_WRITERS = [0x4299C]                     # gp-0x67df's SOLE writer, image-wide (V64 found it)
 CENSUS_EXPECTED = {                         # on the V68 OUTPUT
     GATE_DISP: (14, 16, V67.GATE_WRITERS, {"ld.bu", "st.b"}, "ld.bu"),
     DEAD_DISP: (0, 0, [], {"ld.bu"}, None),     # UNREFERENCED image-wide since V67's repoint
-    MASK_DISP: (14, 2, V67.MASK_WRITERS, {"ld.bu", "st.b"}, "ld.bu"),
-    ARM3_DISP: (7, 1, V67.ARM3_WRITERS, {"ld.bu", "st.b"}, None),   # watched, no longer probed
-    RATE_DISP: (26, 4, [0x41820, 0x41832, 0x41A8C, 0x41AAC], {"ld.hu", "st.h"}, "ld.hu"),
+    MASK_DISP: (14, 2, V67.MASK_WRITERS, {"ld.bu", "st.b"}, None),  # watched; V67 probed it, V68 not
+    FSM_DISP: (1, 1, FSM_WRITERS, {"ld.bu", "st.b"}, "ld.bu"),                  # *** NEW bit5 ***
+    DETECT_DISP: (7, 1, V67.ARM3_WRITERS, {"ld.bu", "st.b"}, "ld.bu"),          # *** NEW bit4 ***
+    # ⚠ WATCHED, NEVER PROBED: the retired bit5 candidate. Its census is asserted so the "proven 0"
+    # argument keeps being re-checked against the image on every build.
+    DROPOUT_DISP: (2, 1, DROPOUT_WRITERS, {"ld.bu", "st.b"}, None),
+    RATE_DISP: (26, 4, [0x41820, 0x41832, 0x41A8C, 0x41AAC], {"ld.hu", "st.h"}, None),
 }
-CENSUS_EXPECTED_SRC = dict(CENSUS_EXPECTED)     # on the V67 SOURCE the cave reads gp-0x671a, not 0x6ac0
-CENSUS_EXPECTED_SRC[ARM3_DISP] = (7, 1, V67.ARM3_WRITERS, {"ld.bu", "st.b"}, "ld.bu")
-CENSUS_EXPECTED_SRC[RATE_DISP] = (26, 4, [0x41820, 0x41832, 0x41A8C, 0x41AAC], {"ld.hu", "st.h"}, None)
+# On the V67 SOURCE the cave reads gp-0x671d (not gp-0x67df), and reads gp-0x671a at the same site.
+CENSUS_EXPECTED_SRC = dict(CENSUS_EXPECTED)
+CENSUS_EXPECTED_SRC[MASK_DISP] = (14, 2, V67.MASK_WRITERS, {"ld.bu", "st.b"}, "ld.bu")
+CENSUS_EXPECTED_SRC[FSM_DISP] = (1, 1, FSM_WRITERS, {"ld.bu", "st.b"}, None)
 
 CENSUS_CONSUMERS = {GATE_DISP: REPOINT_ADDR,        # the repoint itself, asserted as a reader
                     MASK_DISP: 0x3AB98,
-                    ARM3_DISP: 0x3AA70,
+                    # ★ the FSM state's own consumer, inside the detector FUN_000428d4
+                    FSM_DISP: 0x428E6,
+                    DETECT_DISP: 0x3AA70,
                     RATE_DISP: 0x3AAC4}             # r24's own LERP index read in FUN_0003aa2c
 _READ_MNEM = {"ld.b", "ld.h", "ld.w", "ld.bu", "ld.hu"}
 
@@ -973,7 +1195,7 @@ CAVE_CELL_READS = {}
 for _disp, _bit, _name, _kind, _l, _w in CELLS:
     _sites = [a for a, r, _ in CAVE_LISTING if r == _emit_load(_disp, _kind)]
     assert len(_sites) == 1, f"gp-0x{_disp:04x} must be read EXACTLY once in the cave"
-    CAVE_CELL_READS[_disp] = (_sites[0], "ld.bu" if _kind == KIND_BYTE else "ld.hu")
+    CAVE_CELL_READS[_disp] = (_sites[0], "ld.hu" if _kind == KIND_HWORD else "ld.bu")
 
 V67_CAVE_CELL_READS = {d: (a, "ld.bu") for d, a in V67.CAVE_CELL_READS.items()}
 
@@ -1070,6 +1292,41 @@ def assert_signal_sites(code, label="V68"):
             f"{label}: the `ld.hu -0x6ac0[gp],r6` twin @0x{a:05X} moved"
     assert bytes(code[PIN_BLT6[0]:PIN_BLT6[0] + 2]) == PIN_BLT6[1], \
         f"{label}: the pinned `blt +6` at 0x{PIN_BLT6[0]:05X} moved"
+    # ★★ the EQUALITY branch, and the two new loads' displacement halfwords -- all from the image.
+    assert bytes(code[PIN_BNE6[0]:PIN_BNE6[0] + 2]) == PIN_BNE6[1], \
+        f"{label}: the pinned `bne +6` at 0x{PIN_BNE6[0]:05X} is " \
+        f"{bytes(code[PIN_BNE6[0]:PIN_BNE6[0]+2]).hex()}, not {PIN_BNE6[1].hex()}"
+    assert PIN_BNE6[1] != PIN_BLT6[1], "the `bne` and `blt` pins are the same bytes"
+    for disp, (hw2, sites), what in ((DETECT_DISP, PIN_LDBU_671A_HW2, "gp-0x671a (bit4)"),
+                                     (FSM_DISP, PIN_LDBU_67DF_HW2, "gp-0x67df (bit5)")):
+        for a in sites:
+            assert bytes(code[a + 2:a + 4]) == hw2, \
+                f"{label}: {what}'s hw2 donor @0x{a:05X} is {bytes(code[a+2:a+4]).hex()}, not " \
+                f"{hw2.hex()} -- the cell's own accesses moved and the displacement is unpinned"
+            assert (struct.unpack_from("<H", code, a)[0] >> 5) & 0x3F in (0x3C, 0x3D, 0x3A), \
+                f"{label}: {what}'s donor @0x{a:05X} is not an ld.bu/st.b opcode field"
+    # 🛑🛑 THE FACT THE gp-0x67ac EXCLUSION RESTS ON, re-read from the image on EVERY build. This is
+    # a CALIBRATION fact, not a structural guarantee: if this table ever carries a 6 or a 7, the
+    # OR-latch becomes reachable, gp-0x67ac stops being provably 0, and the analysis REOPENS.
+    got_roles = bytes(code[ROLE_TABLE_ADDR:ROLE_TABLE_ADDR + len(ROLE_TABLE_EXPECT)])
+    assert got_roles == ROLE_TABLE_EXPECT, \
+        f"{label}: the per-slot role table at 0x{ROLE_TABLE_ADDR:05X} is {list(got_roles)}, not " \
+        f"{list(ROLE_TABLE_EXPECT)} -- the gp-0x67ac exclusion is STALE. STOP and re-derive."
+    assert not (set(got_roles) & {6, 7}), \
+        f"{label}: a slot role is 6 or 7 -- gp-0x617c can now be set, so the OR-latch can fire and " \
+        "gp-0x67ac is NO LONGER provably 0. The retired bit5 candidate is live again."
+    # ★ bit4's FULL word is FLOWN -- asserted against the V67 image on disk, where it actually ran
+    # (routes 47 and 4a). It cannot be asserted against `code`: on V68 that site holds OUR copy, and
+    # on stock the word does not exist at all (every real reader of gp-0x671a targets a different
+    # register). Reading the file is the only honest form of this check.
+    if os.path.exists(V67_BIN):
+        _v67 = open(V67_BIN, "rb").read()
+        a, want = PIN_LDBU_671A_FLOWN
+        assert bytes(_v67[a:a + 4]) == want, \
+            f"{label}: V67's flown cave word at 0x{a:05X} is {bytes(_v67[a:a+4]).hex()}, not " \
+            f"{want.hex()} -- bit4's 'this exact word already flew' provenance is gone"
+    assert V55.ldbu_any(-DETECT_DISP, R6) == PIN_LDBU_671A_FLOWN[1], \
+        f"{label}: the encoder no longer reproduces V67's flown `ld.bu -0x671a[gp],r6`"
     assert bytes(code[PIN_CMP_P1_R6[0]:PIN_CMP_P1_R6[0] + 2]) == PIN_CMP_P1_R6[1], \
         f"{label}: the pinned `cmp 0x1,r6` at 0x{PIN_CMP_P1_R6[0]:05X} moved"
     assert bytes(code[PIN_CMP_R0_R6_ROM:PIN_CMP_R0_R6_ROM + 2]) == PIN_CMP_R0_R6[1], \
@@ -1157,7 +1414,7 @@ def assert_decoder_matches(cave_bytes, label="V68"):
     for disp, bit, _name, _k, _l, _w in CELLS:
         assert f"gp-0x{disp:04x}" in txt, \
             f"{label}: the decoder never mentions gp-0x{disp:04x} (bit{bit.bit_length() - 1})"
-    for token in (str(RATE_BREAKPOINT), str(RATE_FOLD), str(ARM_VALUE), os.path.basename(OUT)):
+    for token in ("0x67df", "0x671a", "0xC4124", str(ARM_VALUE), os.path.basename(OUT)):
         assert token in txt, f"{label}: the decoder does not carry '{token}'"
     return True
 
@@ -1414,15 +1671,21 @@ def build():
             f"{name}: readback @0x{a:05X} decodes as {mnem} gp-0x{got:04x} r{reg1}/r{reg2}"
         d16 = (0x10000 - disp) & 0xFFFF
         op = (struct.unpack_from("<H", raw, 0)[0] >> 5) & 0x3F
-        prov = "4 byte-identical instances" if kind == KIND_HWORD else "byte-identical instance"
+        prov = {DETECT_DISP: "hw2 at 7 real readers; FULL WORD FLOWN on V67",
+                DROPOUT_DISP: "hw2 at both real readers (incl. the consumer)",
+                GATE_DISP: "byte-identical instance"}.get(disp, "see pins")
+        op_s = "==" if kind == KIND_BYTE_EQ else ">="
         print(f"    0x{a:05X}  {raw.hex():<10s} gp-0x{disp:04x}    0x{d16:04X}   "
               f"{'ODD' if d16 & 1 else 'EVEN':<7s} 0x{op:02X}   bit{bit.bit_length() - 1}  "
-              f">= {lvl:<9d} {prov}")
-    print("    ⚠ the new rung's `movea -0x190,r6,r6` has NO byte-identical instance. Its hw1 "
-          f"({PIN_MOVEA_R6_R6_HW1[0].hex()} = opcode + BOTH register fields) is byte-identical at")
-    print("      " + ", ".join(f"0x{a:05X}" for a in PIN_MOVEA_R6_R6_HW1[1]) + ";")
-    print("      only the 16-bit IMMEDIATE is ours, and the negative-imm16 sign-extension it relies")
-    print("      on is demonstrated by the hook's own displaced `movea -0x1518,gp,r6`.")
+              f"{op_s} {lvl:<9d} {prov}")
+    print("    ★ PROVENANCE -- BOTH new loads are FLOWN WORDS, lifted rather than re-derived:")
+    print("      bit5 `ld.bu -0x67df[gp],r6` a4372198 == V64's cave word @0xC4B4C (its bit4, route 35)")
+    print("      bit4 `ld.bu -0x671a[gp],r6` 8437e798 == V67's cave word @0xC4B50 (its bit4, rt 47/4a)")
+    print("      Neither has a byte-identical instance in STOCK -- every real reader of both cells")
+    print("      targets a different destination register -- but hw2 (the whole displacement, parity")
+    print("      bit included) IS byte-identical at each cell's own accesses, and both full words")
+    print("      have already run on the car. 🛑 NOTE THE PARITY SPLIT: gp-0x67df disp16 0x9821 is")
+    print("      ODD (opcode 0x3D, hw1 a437); gp-0x671a disp16 0x98E6 is EVEN (opcode 0x3C, hw1 8437).")
 
     print("\n  the CONTROL PATH, read back:")
     raw = bytes(readback[REPOINT_ADDR:REPOINT_ADDR + 4])
@@ -1433,35 +1696,51 @@ def build():
     for addr, want in SAR_SITES_STOCK:
         print(f"    0x{addr:05X}  0x{u16(readback, addr):04X}  STOCK sar")
 
-    print(f"\n  ★ WHAT bit4 DECIDES, computed from the image's own gain_B records:")
-    sc = int(7.2 * 64.0625)
-    for rc in (0, 200, 399, RATE_BREAKPOINT, 603, 1000, RATE_FOLD):
-        g = EX.r24_gain_q10(sc, rc, 0, 0, 0)
-        seg = "FLAT (bit4=0)" if rc < RATE_BREAKPOINT else \
-              ("FOLDED->flat (bit4=1)" if rc >= RATE_FOLD else "SLOPED (bit4=1)")
-        print(f"    gp-0x6ac0 = {rc:>5d} counts = {rc / EX.RATE_COUNTS_PER_DEGS:>7.1f} deg/s   "
-              f"LERP {g:>5d}   {seg}")
-    print(f"\n  🛑 THE PRE-REGISTERED PREDICTION for bit4, from route 47's own cache through the SAME")
-    print("     scale chain the probe tests (gp-0x6ac0 = |0x18F rate| x 0.5890135):")
-    p = R47_PREDICT
-    print(f"       n = {p['n']:,} samples / 25.1 min, creep AND highway, both gate arms")
-    print(f"       p50 {p['p50']}  p90 {p['p90']}  p99 {p['p99']}  p99.9 {p['p99_9']}  "
-          f"p99.99 {p['p99_99']}  MAX {p['max']}")
-    print(f"       samples at or above {RATE_BREAKPOINT}: {p['at_or_above_400']} of {p['n']:,}")
-    print(f"     ⇒ bit4 IS PREDICTED TO READ 0.000%. The axis must be {HEADROOM:.3f}x larger than")
-    print("       the derivation says for it to fire even once. RECORDED BEFORE THE DRIVE so a zero")
-    print("       is read as CONFIRMATION, not as another wasted rung.")
-    print("     ★ The test is ONE-SIDED and aimed at the only direction that changes a decision: the")
-    print("       flat-segment claim survives a chain that OVER-estimates and dies only to one that")
-    print("       UNDER-estimates -- which is exactly what bit4 detects, from the firmware's own")
-    print("       cell, with the scale chain removed from the question.")
-    print(f"    ⇒ if bit4 reads ~0%, the operating point is INSIDE the flat segment, the LERP is a")
-    print(f"      constant {FLAT_LERP}, and V67's arm of {ARM_VALUE} is delivering "
-          f"{ARM_VALUE / FLAT_LERP:.3f}x -- not the 2.000x")
-    print(f"      its docstring claims. The arm for exactly 2.00x would then be "
-          f"{ARM_FOR_2X_IF_FLAT}, a one-halfword cal edit.")
-    print(f"    ⇒ if bit4 reads substantially > 0%, the rate axis IS live and this lane can be")
-    print("      calibrated on wheel rate. Either answer closes the question.")
+    print("\n★★ bit5 AND bit4 ARE TWO ORDERED STAGES OF ONE 1 kHz DETECTOR:")
+    print("     bit5  gp-0x67df != 0   the FSM LEFT NEUTRAL: |gp-0x6c2c| crossed +/-12800.")
+    print("                            *** NO REVERSAL REQUIRED. *** Catches events too brief or")
+    print("                            too one-sided to reverse -- the marginal, intermittent case.")
+    print("     bit4  gp-0x671a >= 1   ...and then REVERSED at least once.")
+    print("     ⇒ EXPECT bit4 => bit5 on the wire. bit5 set with bit4 clear is the NEW information")
+    print("       this revision buys: a crossing that never became a reversal.")
+    print("     ⚠ An EXPECTATION, not an encoding guarantee -- the cells are sampled at the same")
+    print("       tick but cleared by different rules, so bit4 && !bit5 can occur at a clear boundary.")
+    print("       The decoder reports its RATE rather than asserting it away.")
+    print("\n🛑 gp-0x67ac IS NOT PROBED -- IT IS PROVABLY 0 ON THIS BUILD.")
+    print("     The r24/r26 lane-dropout skip fires iff gp-0x67ac == 1, and its 11-slot OR-latch can")
+    print("     only be set for a per-slot role of 6 or 7. The static role table at tp+0x5124 =")
+    print(f"     0x{ROLE_TABLE_ADDR:05X} reads "
+          f"{list(readback[ROLE_TABLE_ADDR:ROLE_TABLE_ADDR + 11])} -- no slot is ever 6 or 7.")
+    print("     ⇒ the rate lanes CANNOT silently drop out, so last session's highway null was NOT")
+    print("       reading a disconnected lane. The question is CLOSED without spending a rung on it.")
+    print("     ⚠ This rests on CALIBRATION BYTES, not structure. assert_signal_sites() re-reads the")
+    print("       table every build and STOPS if a 6 or 7 ever appears. OPEN follow-up: gp-0x61a0's")
+    print("       writer (search FUN_00026c80's CALLERS) and gp-0x61e8's identity.")
+
+    print("\n  🛑 WHAT bit4 MEANS -- DUTY IS NOT OCCUPANCY. READ THIS BEFORE ANALYSING IT.")
+    print("     gp-0x671a counts REVERSALS of gp-0x6c2c past +/-T (cal 0xC620A = 12800), via raw")
+    print("     counter gp-0x357c and FSM state gp-0x67df. It is 0..CEIL, and bit4 is `>= 1`.")
+    print("       SUB-CEIL (1..4): cleared by a 50-tick dwell (cal 0xC64DD = 50) => visible ~50 ms")
+    print("                        => only ~5 frames at the 100 Hz TX rate. ⚠ BRIEF EVENTS WILL BE")
+    print("                        UNDER-COUNTED, and a single reversal may be missed entirely.")
+    print("       AT CEIL  (5, cal 0xC64FA = 5): the output is RE-PINNED every tick. Release needs")
+    print("                        5000 ticks (cal 0xC6270 = 5.0 s) with gp-0x6a5e >= 640 AND no")
+    print("                        reversals. gp-0x6a5e is voted VEHICLE SPEED (voter FUN_00041eec,")
+    print("                        settled 2026-07-29) and 640 counts is ~10 km/h.")
+    print("                        => BELOW ~10 km/h THE LATCH NEVER RELEASES; at road speed it")
+    print("                        releases 5 s after the last reversal.")
+    print("     ⇒ bit4 IS A HOLD-TIME STATISTIC, NOT AN EVENT RATE. Duty over-states brief events at")
+    print("       speed and vastly over-states them at creep. Do NOT read duty as a detector rate.")
+    print("     🛑 AND IT IS A DETECTOR, NOT A SPECTROMETER: it reports THAT a reversal past +/-T")
+    print("       happened. It gives NEITHER amplitude NOR frequency. Any frequency attribution must")
+    print("       come from conditioning on something else (speed, maneuver, the gate), never bit4.")
+    print("     ★ WHY IT IS WORTH A RUNG ANYWAY -- the band-pass result:")
+    print("       gp-0x6c2c's cascade PEAKS near 61 Hz. Relative to 21.09 Hz: 1 Hz 0.05x, 45 Hz 1.54x,")
+    print("       61 Hz 1.61x (max), 100 Hz 1.43x, 200 Hz 0.94x. So the trip AMPLITUDE falls above")
+    print("       50 Hz: 21.3 Hz needs 1683 counts, 45 Hz 1104, 60 Hz 1056, 100 Hz 1186, 200 Hz 1735.")
+    print("       Honda's own 1 kHz detector is MORE sensitive exactly where CAN (Nyquist 50.00) and")
+    print("       the comma IMU (50.51) are blind. ⇒ THE ONLY ABOVE-50-Hz INSTRUMENT THIS KIT HAS,")
+    print("       and V67's 0.000% does not speak to it: V67 tested `>= 5` (CEIL), this tests `>= 1`.")
 
     ok = assert_decoder_matches(CAVE_BYTES, "V68")
     print(f"\n  decoder link: rlog-tools/decode_v68_probe.py CAVE_HEX "
@@ -1469,8 +1748,9 @@ def build():
 
     print("\n  PROBE: 0x14A byte4  bit7 = LIVENESS (constant 1)")
     for disp, bit, name, kind, lvl, why in CELLS:
-        print(f"                      bit{bit.bit_length() - 1} = gp-0x{disp:04x} >= {lvl:<5d} "
-              f"{name:11s} {why}")
+        op_s = "==" if kind == KIND_BYTE_EQ else ">="
+        print(f"                      bit{bit.bit_length() - 1} = gp-0x{disp:04x} {op_s} {lvl:<4d} "
+              f"{name:13s} {why}")
     print("                      bit3 = 1  *** THE V68 BUILD-CLASS MARKER *** (constant)")
     print("                      bits 2:0 = stock STEER_SENSOR_STATUS, preserved")
     print("         field==0 (bits 7:3 all clear) means THE CAVE DID NOT FIRE -- a VOID reading.")
@@ -1489,20 +1769,23 @@ def build():
     print("     bit6 CAN: engagement duty, transitions/s, and whether the gate ever toggles in the")
     print("               15-60 Hz kill band (aliased above ~50 Hz -- the tool says so).")
     print("          CANNOT: tell an inert gate from a mis-timed one within a single 10 ms frame.")
-    print("     bit5 CAN: prove or refute that gp-0x671d ever pins the gain BELOW stock on a long,")
-    print("               mixed drive. Route 47's 0.000% is one drive, not a clearance.")
-    print("          CANNOT: say what would set it -- only that it did.")
-    print("     bit4 CAN: settle which side of the LERP's first breakpoint the car operates on, and")
-    print("               therefore whether V67's arm is 2.00x or 1.94x and whether this lane can")
-    print("               ever be tuned on wheel rate.")
-    print(f"          CANNOT: separate 'sloped' from 'folded past {RATE_FOLD}' "
-          f"(= {RATE_FOLD / EX.RATE_COUNTS_PER_DEGS:.0f} deg/s, implausible")
-    print("               but not ruled out), and it is a TX-time sample, so it is a DISTRIBUTION")
-    print("               statistic, not a per-tick correlate of the gain.")
-    print("     NOTHING HERE CAN: see above ~50 Hz. CAN is a 100.5 Hz grid and the cave writes into")
-    print("               a 100 Hz frame. The aliasing barrier is NOT broken by V68 -- see the")
-    print("               docstring for why the sticky rung was rejected on budget, selectivity")
-    print("               and the missing clear event, all three.")
+    print("     bit5 CAN: see a threshold CROSSING that never became a reversal -- the stage below")
+    print("               bit4, and the only rung that can catch a brief or one-sided event. Same")
+    print("               band-pass, so it inherits bit4's above-50-Hz sensitivity.")
+    print("          CANNOT: separate one long crossing from several inside a dwell, and gives no")
+    print("               amplitude or frequency. Also a HOLD (>= 50 ms), not an event count.")
+    print("     bit4 CAN: see ABOVE 50 Hz -- the only instrument in this kit that can. Honda's 1 kHz")
+    print("               detector sits behind a band-pass peaking near 61 Hz and needs LESS")
+    print("               amplitude at 45-100 Hz (1056-1186 counts) than at 21.3 Hz (1683).")
+    print("          CANNOT: give amplitude or frequency -- it is a DETECTOR, not a spectrometer. And")
+    print("               duty is a HOLD TIME, not an event rate: sub-CEIL trips are visible ~50 ms")
+    print("               (~5 frames) so brief events are UNDER-counted, while at CEIL the latch")
+    print("               holds until 5.0 s above ~10 km/h with no reversals -- so below ~10 km/h it")
+    print("               NEVER releases and duty saturates. Never read bit4 duty as detector rate.")
+    print("     🛑 THE SAMPLING BARRIER IS UNCHANGED: the cave still writes into a 100 Hz frame, so")
+    print("               bit4's own TIME SERIES is aliased like everything else. What is new is that")
+    print("               the QUANTITY it reports was computed at 1 kHz inside the ECU. bit4 carries")
+    print("               above-50-Hz information; it does not carry an above-50-Hz waveform.")
 
     print(f"\n  wrote {OUT}\n    SHA256 {hashlib.sha256(rwd).hexdigest()}")
     print("\n  🛑 UNFLASHED. Flash only on explicit operator instruction naming the file and the bus.")

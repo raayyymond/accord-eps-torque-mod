@@ -79,6 +79,19 @@ an already-flashed, already-falsified lever because the result was buried in pro
 
 Default to study/analysis mode unless told otherwise.
 
+🛑 **EVERY investigation or firmware-fix session must be grounded in the WHOLE chain and the WHOLE
+recent record — not just the lever in front of you.** Standing operator instruction, 2026-08-03. Before
+proposing or evaluating any lever, and before briefing any subagent that will:
+- **`analysis-2020accord/eps_lkas_chain_model.py`** — the golden model, the full driver-assist chain
+  end to end. A lever is only understood once you can say where it sits in that chain, what feeds it,
+  and what it feeds. **Keep it updated when you learn something.**
+- **The entire post-V38 record — V38 → present — as one arc**, via `docs/BUILD-LINEAGE.md` and the
+  `HANDOFF-*.md` chain. Not just the latest handoff. A dose-response that only makes sense across four
+  builds is the kit's most-used form of evidence, and reading one session's slice has repeatedly
+  produced levers that were already flashed, already falsified, or pushed the wrong WAY.
+**Prime every subagent with both.** The failure mode this prevents is real and recorded: two agents in
+one session re-proposed an already-flashed, already-falsified lever.
+
 🛑 **Explain firmware with simple Python that mirrors the decompiled arithmetic EXACTLY** — integer
 `>>`, the real Q-format, the real branch conditions, each line annotated with its instruction address,
 constants byte-read **little-endian** (V850 is LE). dB/Hz interpretation comes *after* the code, never

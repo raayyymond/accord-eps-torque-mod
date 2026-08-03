@@ -69,7 +69,12 @@ Both halves fail:
    the overlap candidates `gp-0x1515`/`gp-0x1517` have **zero** accesses.
 ⇒ Breaking the barrier from firmware needs a **new hook on a task-1 site** — a fresh cave, not the
 68-byte extent that has flown clean nine times. The cheap alternative is the comma's **microphone**
-(`soundPressure`, computed from 16–48 kHz audio), which has no ceiling at all.
+(`soundPressure` — ⚠ **corrected 2026-08-03**: one RMS over 1600 samples of 16 kHz PCM ⇒ **0–8000 Hz
+analysed**, published at 10.000 Hz; this line previously said "16–48 kHz audio"), which has no ~50 Hz
+ceiling. 🛑 But it is a **weak** alternative for a tactile event: the 26.4 dB bandwidth-penalty
+argument that downgrades its null depends on the band being 0–8 kHz, so the old figure made the channel
+look more capable than it is. See [[accord-both-instruments-blind-above-50hz]]. ★★ The **real** answer
+is now `gp-0x671a` — Honda's own 1 kHz detector, whose input is a band-pass **peaking at ~61 Hz**.
 
 ## ✅ Two useful positives that fell out
 - **`gp-0x683c` IS a free RAM byte on V67 and later.** It is `.data` (boot value `flash[0x86874]` =

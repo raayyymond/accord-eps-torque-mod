@@ -72,8 +72,15 @@ What IS real at highway is **broadband**: 21 maneuvers vs 21 **matched** straigh
 bursts. A maneuver loads the wheel and everything gets noisier.
 
 ## ✅✅ FOUR INSTRUMENTS AGREE, and the microphone null is quantitative
-The comma's **microphone** (`soundPressure`, computed from **16–48 kHz** audio at 10.000 Hz) has **no
-frequency ceiling** — the only measurement here that can speak to a >50 Hz event.
+The comma's **microphone** (`soundPressure`) has **no ~50 Hz ceiling** — at the time, the only
+measurement here that could speak to a >50 Hz event.
+⚠ **CORRECTED 2026-08-03:** this line read *"computed from **16–48 kHz** audio at 10.000 Hz"*. It is one
+RMS over 1600 samples of **16 kHz** PCM ⇒ **0–8000 Hz analysed**, published at 10.000 Hz. **The
+correction weakens this section**: the 26.4 dB bandwidth-penalty argument that downgrades the mic null
+depends on the band being 0–8 kHz, so anyone reading "16–48 kHz" will **over-weight** the null below.
+★★ And it is no longer the only above-50 Hz instrument — `gp-0x671a`'s input is a band-pass **peaking at
+~61 Hz**. See [[accord-both-instruments-blind-above-50hz]] and
+[[accord-state671a-is-an-oscillation-detector]].
 - **Positive control: it HEARS the creep grind #2** — burst vs quiet **4.14×** un-weighted p95,
   **5.88×** max, **+9.7 dB(A)**. The operator's *"like a subwoofer"* is confirmed acoustically.
 - **Highway: nothing.** Un-weighted **1.067×** (my independent run 1.069 [0.960, 1.184], null
@@ -86,6 +93,19 @@ frequency ceiling** — the only measurement here that can speak to a >50 Hz eve
   acoustic amplitude.**
 ⚠ Bounds *absolute* amplitude only, and a narrow tone could be audible while barely moving a broadband
 10 Hz level.
+
+## 🛑 CORRECTION 2026-08-03 — the wheel-order-3 reading of this route is RETIRED
+`MEMORY.md` carried, against this file, *"at highway 40–49 Hz is **wheel order 3**, per-window order
+p50 **2.994**; anyone peak-finding there will find grind #2 and it will be a tyre."* **The order-3 half
+is an estimator tautology and is superseded** — `order = f0·CIRC/v` returns ≈3.00 whenever a
+band-limited argmax sits near the centre of 30–49.5 Hz at ~28 m/s. What replaces it:
+**there is no line at all in 30–49.5 Hz at highway** on any route, build or channel (averaged-periodogram
+prominence **1.23–3.83** vs the kit's **>4** criterion), while the 8–30 Hz positive control returns
+wheel order 1 at prominence up to **79**. ⚠ **The 10–16 Hz order-1 reading above STANDS**, and so does
+the general warning about mistaking a wheel order for a firmware effect.
+The three-dose highway null recorded above also **survives an independent event-rate re-test**
+(1.152 [0.496, 2.690], min detectable **1.61×**). See [[accord-highway-30-49hz-has-no-line]],
+[[accord-highway-event-rate-null-with-power]], [[feedback-average-periodograms-before-peak-finding]].
 
 ⇒ **KEEP V67. No control-path change is supported.** Reproduce with
 `analysis-2020accord/r47_orchestrator_checks.py` and `analysis-2020accord/r47_microphone_test.py`. See [[accord-r24-gain-is-a-speed-rate-surface]] and

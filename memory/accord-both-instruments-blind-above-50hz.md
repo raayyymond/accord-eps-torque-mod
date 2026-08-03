@@ -11,7 +11,7 @@ metadata:
 |---|---|---|
 | CAN `0x14A` / `0x18F` grid | **100.000 Hz exactly** | **50.00 Hz** |
 | comma IMU accelerometer (LSM6DS3TR-C) | **101.02 Hz** | **50.51 Hz** |
-| **comma MICROPHONE** (`soundPressure`, 10.000 Hz level) | audio at **16–48 kHz** | **NO ceiling** |
+| **comma MICROPHONE** (`soundPressure`, 10.000 Hz level) | **0–8000 Hz analysed** (⚠ corrected — see below) | **no ~50 Hz ceiling** |
 
 ⚠ **Corrected 2026-08-03.** My earlier 99.9–100.5 Hz came from the dt **mean**; ~1% of IMU samples are
 **dropped**, inserting 20/30 ms gaps that inflate the mean but not the **median** (9.899 ms → 101.02 Hz).
@@ -51,7 +51,19 @@ V48B. `gp-0x1500` passed both static clearance methods and still failed on-car. 
 or do not build it.
 
 ★★ **THE PRACTICAL ANSWER IS THE MICROPHONE, and it is already validated.** `soundPressure` is computed
-on-device from **16–48 kHz** audio and logged as a level at 10.000 Hz — no spectrum, but **no band limit**.
+on-device as **one RMS over 1600 samples of 16 kHz PCM ⇒ 0–8000 Hz analysed**, published at 10.000 Hz —
+no spectrum, but no ~50 Hz ceiling.
+
+🛑 **CORRECTED 2026-08-03, and the correction changes how much this channel is worth.** This file
+previously said *"audio at **16–48 kHz**"* in both the table above and here. That is wrong: `micd.py`
+samples at 16 kHz, so 8 kHz is the analysis ceiling, not the floor. **Why it matters** — the argument
+that downgrades the microphone null is a **bandwidth penalty**: one RMS over **0–8000 Hz** versus the
+driver's ear resolving ~1/3-octave critical bands is a **26.4 dB** disadvantage for a narrow tone. That
+arithmetic *depends* on the band being 0–8 kHz. **Anyone still reading "16–48 kHz" will over-weight the
+null** — they will think a null covers a band the sensor never analysed, and conclude "nothing is there"
+where the honest statement is "this instrument could not have seen it." Combined with a 64× validation
+gap (validated at creep, where the acoustic floor is 9.9× lower in power), the microphone bears very
+little weight on a **tactile** event the operator feels but does not hear.
 It has a **working positive control**: on the creep grind #2 it reads **4.14×** un-weighted p95 and
 **+9.7 dB(A)** burst-vs-quiet. 🛑 **A-weighting is the trap** — the A curve is −30 dB at 50 Hz, so
 `soundPressureWeighted*` suppresses exactly the band of interest; the **un-weighted** channel is primary,

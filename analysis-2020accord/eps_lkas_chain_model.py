@@ -270,7 +270,7 @@ class Calibration:
     arb_setpoint_limit: int = 15360      # symmetric +/- clamp on the LKAS setpoint. [VERIFIED,
                                          # byte-dumped] a degenerate 9-point LERP, flat 15360 at every
                                          # breakpoint in all 28 records/5 banks; axis gp-0x6a5e (voted
-                                         # driver torque) is moot since the Y row is flat. Selected by
+                                         # VEHICLE SPEED) is moot since the Y row is flat. Selected by
                                          # gp-0x674e, static per part number (A160 -> selector 1, record
                                          # 0xE41A8). openpilot's torqueBP*4=16384 clips the top 6.25% at
                                          # 15360; raising is safe (no float twin). V38 patches all 8
@@ -493,7 +493,10 @@ class EpsState:
 
     # ---- Driver-torque voter outputs ----
     col_torque_max: int = 0       # gp-0x6a62 (0xFEDF159E) MAX voter (0xFFFF = invalid-sensor sentinel)
-    col_torque_avg: int = 0       # gp-0x6a5e (0xFEDF15A2) AVG voter
+    # ✅ RENAMED 2026-08-03 from `col_torque_avg`. gp-0x6a5e is voted VEHICLE SPEED (voter
+    # FUN_00041eec, settled 2026-07-29), never column torque; the old name predated that
+    # reclassification and read as evidence of a role it never had. All 8 call sites moved together.
+    speed_voted: int = 0          # gp-0x6a5e (0xFEDF15A2) AVG voter -- VOTED VEHICLE SPEED
     col_rate_mag: int = 0         # gp-0x6a60 (0xFEDF15A0) angular-RATE magnitude (NOT torque)
 
     # ---- Engage/disengage decider ----
@@ -560,9 +563,17 @@ class EpsState:
     # V62's clean x2 on both lanes under every arm.
     # 🛑 THE OUTPUT IS A ONE-WAY LATCH WITH A 5 s HOLD (output stage 0x429A0-0x42A12, the sole st.b to
     # gp-0x671a is 0x42A12): once the held value reaches CEIL it is RE-PINNED to CEIL every tick. The
-    # only way down is 5000 consecutive ticks (cal 0xC6270) with voted driver torque gp-0x6a5e >= 640
-    # (cal 0xC62DE) AND raw count == 0 -- and torque dips below 640 on every direction change, so the
-    # timer reloads constantly. ⇒ once tripped it is STICKY and carries into manual steering.
+    # only way down is 5000 consecutive ticks (cal 0xC6270) with gp-0x6a5e >= 640 (cal 0xC62DE) AND
+    # raw count == 0.
+    # ⚠ CORRECTED 2026-08-03: gp-0x6a5e is VOTED VEHICLE SPEED, not driver torque (voter FUN_00041eec,
+    # settled 2026-07-29 -- the same reclassification that invalidated V44/V47's rationale).
+    # ✅ CONFIRMED from fresh disassembly (0x429a0-0x429d8): `bh`@0x429A8 RELOADS the hold timer (latch
+    # held) iff gp-0x6a5e < 0xC62DE=640=10.0 km/h OR a fresh reversal this tick; ABOVE 10 km/h with no
+    # reversal the timer decrements and the latch releases to EXACTLY 0 the tick it hits zero -- a clean
+    # 5.0 s timeout, not a probabilistic reload. The old "torque dips every direction change" reading is
+    # retired: at highway speed this is a real, self-clearing event flag, not a permanently-reloaded one.
+    # Also confirmed (0x429da-0x429f0, `mov r14,r8` fallthrough): the held value passes through 1,2,3,4
+    # before saturating at CEIL=5 -- `>=1` is genuinely more sensitive than `>=5`, not a relabel only.
     # ✅ The latch is PROTECTIVE: a per-tick-gated gain would modulate AT the mode frequency, i.e. a
     # parametric pump -- the exact failure mode V58/V59/V60 chased for three builds.
     # 🛑 NOT private to r24/r26 -- also read by FUN_0003a382, FUN_000352b4, FUN_00035b20, FUN_00036c12.
@@ -728,10 +739,10 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
     valid = sum(1 for c in coils if c is not None)
     if valid < 3:  # cal 0xC6501 = 3-of-4 quorum
         st.col_torque_max = 0xFFFF  # invalid-sensor sentinel (a distinct decider path, kept in V37)
-        st.col_torque_avg = 0xFFFF
+        st.speed_voted = 0xFFFF
     else:
         st.col_torque_max = max(abs(c) for c in coils)
-        st.col_torque_avg = sum(abs(c) for c in coils) // valid
+        st.speed_voted = sum(abs(c) for c in coils) // valid
     st.col_rate_mag = min(abs(int(sensors.steering_angle_rate)), 12000)  # rate magnitude, clamp +/-12000
 
     # Sensor-B is a signed, independently processed TAS torque channel (gp-0x4f60). During synthetic
@@ -847,12 +858,15 @@ def base_driver_assist_lane(sensors: SensorInputs, st: EpsState, cal: Calibratio
     X = (0, 640, 2560, 5120, 7808, 10240) which divides to (0, 10.0, 40.0, 79.9, 121.9, 159.8) km/h --
     textbook speed breakpoints that no torque axis would produce. See the agent memory
     `reference_accord_gp6a5e_producer_chain_and_creep_zero_damping.md`.
-    ⚠ The model is INTERNALLY INCONSISTENT until the rename lands: lines ~157/191/524/541 already say
-    "voted vehicle speed", while EpsState still calls the cell `col_torque_avg` and lines ~600-604
-    still model the producer as averaging torque-sensor coils. `key_avg` below therefore keys the
-    boost curve off the WRONG axis. Deliberately not half-renamed mid-session -- it touches ~10 call
-    sites (600-604, 722, 738, 827, 906, 1160, 2074) and the V44/V47 damper mechanism reclassifies with
-    it. Fix as one contained pass, not piecemeal.
+    ✅ THE RENAME HAS LANDED (2026-08-03): `col_torque_avg` -> `speed_voted`, all 8 call sites in one
+    contained pass, module re-imported and every self-check re-run. The identifier no longer asserts a
+    role the cell does not have. `col_torque_rate` is a DIFFERENT cell (gp-0x4f62, Sensor-B torque
+    finite difference) and was deliberately NOT touched.
+    ⚠ STILL OPEN, and it is a MODELLING issue rather than a naming one: the producer below is still
+    written as averaging torque-sensor *coils*. The averaging STRUCTURE is right -- FUN_00041eec
+    averages the agreeing channels -- but the local names and surrounding prose still describe those
+    channels as torque. Re-word against the voter's real 5-channel speed inputs. Separate contained
+    pass; it changes no numeric result.
 
     ★ Load-bearing consequence already byte-verified (all 34 mode tables, _v59_plain_image.bin):
     damper FactorC (0xc9e9c[mode], mode 10 = 0xD27BC, X=(2240,3840,5120,8960) Y=(0,235,430,877)) has
@@ -870,7 +884,7 @@ def base_driver_assist_lane(sensors: SensorInputs, st: EpsState, cal: Calibratio
     # --- validity gate ("bVar10"): ALL of these must hold or the lane collapses to the ramp-down path
     valid = (st.assist_substate in (1, 2)             # gp-0x67fe  EPS assist substate
              and st.plausibility_ok                    # gp-0x67f4 == 1, from the voter FUN_00041eec
-             and st.col_torque_avg < ASSIST_SENTINEL   # gp-0x6a5e not invalid/saturated
+             and st.speed_voted < ASSIST_SENTINEL   # gp-0x6a5e not invalid/saturated
              and abs(st.col_torque_sensor_b) <= 25600) # gp-0x4f60 plausibility window (same +/-25600
                                                        #   window the arb hard-bail uses @0x28f30)
 
@@ -886,7 +900,7 @@ def base_driver_assist_lane(sensors: SensorInputs, st: EpsState, cal: Calibratio
     ramp_scale = st.assist_ramp_state / 3.0           # 0 -> 1 over the 4 states
 
     # --- the boost curve proper: AVG driver torque -> raw assist -----------------------------------
-    key_avg = min(abs(st.col_torque_avg), 0xFFFF)
+    key_avg = min(abs(st.speed_voted), 0xFFFF)
     xs, ys = ASSIST_BOOST_CURVE.get(mode, ASSIST_BOOST_CURVE[10])   # default = this car's curve
     raw = _lerp_flat(key_avg, xs, ys)
 
@@ -1104,7 +1118,7 @@ def _generated_assist_rate_curve(avg_torque: int, records) -> tuple:
 
 def _assist_rate_gain_q10(st: EpsState, records) -> int:
     # Invalid voter path substitutes tp+0x7314=5120 for the AVG cross-axis.
-    avg_key = abs(st.col_torque_avg) if st.plausibility_ok else 5120
+    avg_key = abs(st.speed_voted) if st.plausibility_ok else 5120
     xs, ys = _generated_assist_rate_curve(avg_key, records)
     # Firmware folds an out-of-domain motor rate >=13001 back to zero before the LERP.
     rate_key = st.motor_rate_raw if 0 <= st.motor_rate_raw < 13001 else 0
@@ -1149,6 +1163,16 @@ def detector_input_6c2c(rate_raw: int, ema_old: int, state_fast: int) -> tuple:
     U ~= 4017, so T sits at ~42% of saturation and the response is linear there.
     🛑 Do NOT size T from bus torque -- gp-0x6c2c does not share the 0x18F torque LSB. [OPEN] gp-0x4f50's
     physical units (needs the ISR writing gp-0x29c4, or a probe).
+
+    ✅ FULL 1-500 Hz SWEEP 2026-08-0x (integer-exact simulation, sanity-checked against the 1683/1682 trip
+    pair above): it is a BAND-PASS, not a low-pass -- gain PEAKS at 61 Hz (1.61x the 21.09 Hz gain), stays
+    >90% of that out to ~180 Hz, and rejects 1 Hz driver-band content ~30x for free. Trip amplitude
+    (counts of gp-0x4f50) needs LESS at 45-100 Hz than at 21 Hz: 21.3->1683, 45->1104, 60->1056 (min),
+    80->1092, 100->1186, 150->1478, 200->1735 -- all inside the +-13000 clamp, nothing here is untrippable.
+    🛑 gp-0x4f50's deg/s scale is still [OPEN] -- do NOT borrow gp-0x6ac0's 4.7121 counts/deg-s here, a
+    different internal signal; that composition is exactly what produced the retracted "bus=8x deg/s".
+    ★ This makes gp-0x671a the kit's only above-50-Hz-capable instrument: CAN is Nyquist 50.00, the comma
+    IMU 50.51.
     """
     K1, K2 = 37, 22                                   # cals 0xC643C (>>7), 0xC40DC (>>6)
     if abs(rate_raw) > 13000:                         # 0x415be-0x415ce plausibility gate
@@ -1211,7 +1235,7 @@ def _inline_torque_rate_a(st: EpsState) -> int:
 def assist_shaping_lanes(sensors: SensorInputs, st: EpsState) -> dict:
     """
     The five sibling assist-shaping lanes (Section 3B), each writing its own aggregator lane rather than
-    applying in series to the boost curve; all read gp-0x6a5e (AVG torque) directly. [VERIFIED
+    applying in series to the boost curve; all read gp-0x6a5e (voted VEHICLE SPEED) directly. [VERIFIED
     addresses; INFERRED role labels] FUN_00034350 -> gp-0x6bd0 (damping) is the product of 5
     mode-indexed LERP gain factors (a MIN-clamped seed, a flat driver-torque table, an angle-deviation
     term, |motor rate| gp-0x6ac0, and gp-0x6ac2), sign forced opposite gp-0x6abe; two independent
@@ -2032,9 +2056,18 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     is real and is worse than that (2.44x at highway, V67's maximum, 22% above V62's flat 2.00x --
     see ASSIST_RATE_B_RECORDS note 3). But the SYMPTOM does not follow it. With route 2b (V58,
     Kd=1.00x, 227 s of highway -- a baseline two sessions assumed did not exist) brought in, the
-    three-dose highway comparison is NULL: 40-49 Hz ratios 0.98 [0.71, 1.63] and 0.77 [0.56, 1.44]
-    against a split-half null of [0.53, 1.86], no dose ordering, and ZERO burst windows at any dose
-    across ~1,400 s. Identity settled by amplitude: creep grind #2 runs f0 43-45 Hz at prominence
+    three-dose highway comparison is NULL: 40-49 Hz ratios 0.970 [0.787, 1.154] and 0.938 [0.764,
+    1.184] against a split-half null of [0.73, 1.37], no dose ordering, and the corpus-max highway
+    envelope (851.5) is on the STOCK Kd=1.00 lane.
+    🛑 CORRECTED 2026-08-03. This paragraph read "0.98 [0.71, 1.63] and 0.77 [0.56, 1.44] against a
+    split-half null of [0.53, 1.86] ... and ZERO burst windows at any dose across ~1,400 s". Those came
+    from an estimator that skipped the detrend + Hann taper and ran 1.4-1.9x LOW. Corrected values above.
+    ✅ INDEPENDENTLY CORROBORATED: an event-RATE re-test (a different statistic, blind to the pooled
+    level's weakness for rare threshold events) reaches the SAME null -- 0.855 [0.432, 1.702] and
+    1.152 [0.496, 2.690] vs split-half null [0.36, 2.50], min detectable ratio 1.61x -- with BOTH
+    positive controls firing: wheel order 1 at prominence 79, and grind #1's event rate falling
+    monotonically with dose, 0.319 [0.130, 0.661]. Two statistics, same answer.
+    Identity settled by amplitude: creep grind #2 runs f0 43-45 Hz at prominence
     48-1062x and envelope 2000-4000; the highway population runs f0 45-47 Hz at prominence ~6x and
     envelope 155-370 => NOT grind #2. What IS real at highway is BROADBAND: 21 maneuvers vs 21
     MATCHED straight-line controls give 6-9 Hz 2.78x and 40-49 Hz 2.13x -- 6-9 rises MORE.
@@ -2046,13 +2079,31 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     and IMU/CAN agreement carries NO information about the alias -- the discriminant is a 1.021 Hz
     apparent-peak difference against a measured sem of 0.856, so it needs a log at a different IMU
     ODR (208/416 Hz).
-    ✅ THE COMMA MICROPHONE HAS NO CEILING and is validated: `soundPressure` (audio at 16-48 kHz,
-    level at 10.000 Hz) reads 4.14x un-weighted p95 / +9.7 dB(A) on the creep grind #2, and ~1.0x on
-    highway manoeuvres -- on V67 AND on a stock-Kd build. 🛑 A-weighting is the trap (-30 dB at 50 Hz):
-    use the UN-weighted channel; un-weighted-up with A-weighted-flat IS the low-frequency signature.
+    ⚠ THE COMMA MICROPHONE has no FREQUENCY ceiling but bears VERY LITTLE WEIGHT on a TACTILE event,
+    and the operator reports FEELING rather than hearing. 🛑 CORRECTED 2026-08-03: `soundPressure` is
+    ONE RMS over 1600 samples of 16 kHz PCM => 0-8000 Hz ANALYSED, level at 10.000 Hz -- this line
+    previously said "audio at 16-48 kHz". The correction is load-bearing in the direction that WEAKENS
+    the null: the 26.4 dB bandwidth penalty vs the ear's ~1/3-octave critical bands (18.5 Hz at 80 Hz),
+    which is what downgrades this instrument, DEPENDS on the band being 0-8 kHz. Anyone reading the old
+    figure will OVER-weight the null. It reads 4.14x un-weighted p95 / +9.7 dB(A) on the creep grind #2
+    and ~1.0x on highway manoeuvres, but that sole positive control sits 64x above the smallest event
+    the highway null excludes (25.3% excess power), and it was validated at CREEP where the floor is
+    9.9x lower in power. 🛑 A-weighting is the trap (-30 dB at 50 Hz): use the UN-weighted channel.
     ⚠ Also: `_grind2_lib.fs_of()` is biased +0.5-1.4% route-dependently, so grind #2's long-quoted
-    "44.9 Hz" is 44.6 Hz. And at highway 40-49 Hz is WHEEL ORDER 3, 10-16 Hz is ORDER 1 -- peak-finding
-    in 40-49 on a highway log finds a tyre, not the mode.
+    "44.9 Hz" is 44.6 Hz.
+    🛑🛑 RETIRED 2026-08-03 -- this line read "at highway 40-49 Hz is WHEEL ORDER 3, 10-16 Hz is ORDER 1
+    -- peak-finding in 40-49 on a highway log finds a tyre, not the mode." The order-3 half is an
+    ESTIMATOR TAUTOLOGY: order = f0*CIRC/v returns ~3.00 BY ARITHMETIC whenever a band-limited argmax
+    sits near the centre of 30-49.5 Hz at ~28 m/s. The order-2 figure (1.995 for 26-32 Hz) has the
+    IDENTICAL defect -- band centre 29 Hz at 28-30 m/s -- so the two are one tautology counted twice,
+    not mutual corroboration. THERE IS NO LINE AT ALL in 30-49.5 Hz at highway: averaged-periodogram
+    prominence 1.23-3.83 against a >4 criterion, on every route, build and channel.
+    ⇒ Do NOT let this discourage looking there. ✅ SURVIVING: 10-16 Hz ORDER 1 is real (prominence up
+    to 79, order 1.00-1.02 per bin) and the general "do not mistake a wheel order for a firmware
+    effect" warning stands, better founded. GENERAL RULE: a matching order is evidence only when the
+    band is WIDE relative to the order spacing, or when the order is TRACKED ACROSS A SPEED SWEEP.
+    And: AVERAGE THE PERIODOGRAMS, THEN PEAK-FIND -- a median-of-per-window-argmax estimator
+    manufactures a line at band centre when none exists, and did so this session at ΔBIC 249-460.
     ⇒ KEEP V67. No control-path change is supported by this evidence.
     Reproduce: analysis-2020accord/r47_orchestrator_checks.py.
 
@@ -2519,7 +2570,7 @@ def _self_check():
     }
     assert {z: a160_governor_rate_cap(z) for z in expected_governors} == expected_governors
 
-    st = EpsState(col_torque_avg=0, col_torque_rate=512, motor_rate_raw=0)
+    st = EpsState(speed_voted=0, col_torque_rate=512, motor_rate_raw=0)
     assert _inline_torque_rate_b(st) == 1533
     st.col_torque_rate = -512
     assert _inline_torque_rate_b(st) == -1533

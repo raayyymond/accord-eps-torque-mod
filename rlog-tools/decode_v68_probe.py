@@ -13,11 +13,74 @@ MAIN CRC trailer, and the CAL CRC is UNCHANGED -- which is itself the proof.
 V68 packs FIVE bits into CAN 330 (0x14A) byte4 at ~100 Hz:
 
     bit 7 = 1                    LIVENESS (constant; 0 => the cave did not fire)
-    bit 6 = gp-0x6806 != 0       *** THE GATE *** -- carried from V67 unchanged   (EVEN disp 0x97FA)
-    bit 5 = gp-0x671d != 0       *** THE MASKING RISK *** -- carried unchanged    (ODD  disp 0x98E3)
-    bit 4 = gp-0x6ac0 >= 400     *** NEW *** the r24 gain LERP's INNER axis vs its FIRST breakpoint
-    bit 3 = 1                    *** NEW *** THE V68 BUILD-CLASS MARKER (constant)
+    bit 6 = gp-0x6806 != 0       *** THE GATE *** -- carried from V67 unchanged   (disp 0x97FA)
+    bit 5 = gp-0x67df != 0       *** FSM LEFT NEUTRAL *** |gp-0x6c2c| crossed +-T (disp 0x9821 ODD)
+    bit 4 = gp-0x671a >= 1       *** THE ABOVE-50-Hz DETECTOR *** lowest rung     (disp 0x98E6)
+    bit 3 = 1                    THE V68 BUILD-CLASS MARKER (constant)
     bits 2:0 = stock STEER_SENSOR_STATUS_1/2/3, preserved
+
+🛑🛑 bit5 AND bit4 ARE TWO ORDERED STAGES OF ONE 1 kHz DETECTOR
+-------------------------------------------------------------
+    bit5  gp-0x67df != 0   the FSM has LEFT NEUTRAL: |gp-0x6c2c| crossed +-T = 12800.
+                           *** NO REVERSAL REQUIRED. ***
+    bit4  gp-0x671a >= 1   ...and then REVERSED at least once.
+
+gp-0x67df fires on events too BRIEF or too ONE-SIDED to produce a reversal -- precisely the
+marginal, intermittent case the operator describes, and the case bit4 alone cannot see. Both cells
+hold >= 50 ms (the 0xC64DD = 50-tick dwell), so both are reliably catchable by a 100 Hz probe.
+⇒ EXPECT bit4 => bit5 on the wire. **bit5 set with bit4 clear is the new information**: a
+threshold crossing that never became a reversal.
+⚠ That is an EXPECTATION, not an encoding guarantee -- the two cells are sampled at the same TX
+tick but cleared by different rules, so bit4 && !bit5 can occur at a clear boundary. This tool
+REPORTS its rate rather than asserting it away.
+
+🛑 gp-0x67ac IS NOT PROBED. IT IS PROVABLY 0 ON THIS BUILD.
+-----------------------------------------------------------
+An earlier revision aimed bit5 at gp-0x67ac, whose `== 1` makes FUN_0003aa2c skip the r24/r26
+aggregate add -- a lane dropout that would have invalidated the highway null. It cannot happen
+here. The 11-slot OR-latch feeding it can only be set for a per-slot role of 6 or 7, and the static
+role table at tp+0x5124 = 0xC4124 reads [0,0,5,0,5,5,0,0,0,5,0]. No slot is ever 6 or 7.
+⇒ the rate lanes CANNOT silently drop out, so the highway null was NOT reading a disconnected
+lane. That question is CLOSED without spending a rung -- probing a proven zero is exactly the error
+V68's original bit4 made.
+⚠ It rests on CALIBRATION BYTES, not structure. The builder re-reads 0xC4124 every build and
+STOPS if a 6 or 7 ever appears. Open follow-up: gp-0x61a0's writer and gp-0x61e8's identity.
+
+★★ bit4 IS THE ONLY ABOVE-50-Hz INSTRUMENT THIS KIT HAS
+------------------------------------------------------------
+gp-0x6c2c's cascade is a BAND-PASS PEAKING NEAR 61 Hz, not a low-pass. Gain relative to 21.09 Hz:
+
+    1 Hz 0.05x  ·  45 Hz 1.54x  ·  61 Hz 1.61x (max)  ·  100 Hz 1.43x  ·  200 Hz 0.94x
+
+so the amplitude needed to TRIP the detector FALLS above 50 Hz:
+
+    21.3 Hz 1683  ·  45 Hz 1104  ·  60 Hz 1056  ·  100 Hz 1186  ·  150 Hz 1478  ·  200 Hz 1735 counts
+
+Sanity-checked against the golden model's own sizing: amplitude 1683 -> 12804 (trips T = 12800),
+1682 -> 12797 (does not). ⇒ Honda's own 1 kHz detector is MORE sensitive exactly where CAN
+(Nyquist 50.00 Hz) and the comma IMU (50.51 Hz) are both blind.
+⚠ V67's 0.000% does NOT speak to this: V67's rung tested `>= 5`, the CEIL (cal 0xC64FA = 5). This
+one tests `>= 1`, the lowest rung of the same 0..5 counter. A null at 5 does not imply a null at 1.
+
+🛑 HOW TO READ bit4 -- DUTY IS NOT OCCUPANCY
+------------------------------------------------
+gp-0x671a counts REVERSALS of gp-0x6c2c past +-T (cal 0xC620A = 12800), via raw counter gp-0x357c
+and FSM state gp-0x67df.
+
+  * SUB-CEIL (1..4): cleared by the 50-tick dwell (cal 0xC64DD = 50) => visible ~50 ms => about
+    5 frames at 100 Hz. ⚠ BRIEF EVENTS ARE UNDER-COUNTED; an isolated reversal may be missed.
+  * AT CEIL (5): the output is RE-PINNED every tick. Release needs 5000 ticks (cal 0xC6270 = 5.0 s)
+    with gp-0x6a5e >= 640 AND no reversals. gp-0x6a5e is voted VEHICLE SPEED (voter FUN_00041eec,
+    settled 2026-07-29) and 640 counts is ~10 km/h. => BELOW ~10 km/h THE LATCH NEVER RELEASES and
+    duty SATURATES; at road speed it releases 5.0 s after the last reversal.
+
+⇒ bit4 IS A HOLD-TIME STATISTIC, NOT AN EVENT RATE. Never quote its duty as a detector rate.
+🛑 AND IT IS A DETECTOR, NOT A SPECTROMETER: it reports THAT a reversal past +-T happened. It
+gives NEITHER amplitude NOR frequency. Any frequency attribution must come from conditioning on
+something else (speed, maneuver, the gate) -- never from bit4 alone.
+⚠ The 100 Hz sampling barrier is UNCHANGED. bit4's own time series is aliased like everything
+else; what is new is that the QUANTITY it reports was computed at 1 kHz inside the ECU. bit4 carries
+above-50-Hz INFORMATION, not an above-50-Hz WAVEFORM.
 
 ★★ V68 CARRIES A BUILD-CLASS MARKER -- AND HERE IS EXACTLY HOW STRONG IT IS
 ----------------------------------------------------------------------------
@@ -55,64 +118,7 @@ same instruction, same four bytes, different immediate, zero extra cave bytes), 
 
 ⚠ AND THE HARD LIMIT: the marker excludes PRIOR builds. It cannot exclude a FUTURE one, and it is
 not a substitute for knowing what was flashed. The .rwd filename remains the primary evidence:
-    39990-TVA,A160-V68-LKAS-4x-mss0-decouple0xC646C-ratelane-LKASGATED-rateaxisprobe-can330byte4-0x13000-0x100000.rwd
-
-THE HEADLINE -- bit4, and the contradiction it adjudicates
-------------------------------------------------------------
-Two of this kit's own load-bearing numbers disagree about which side of the LERP's first breakpoint
-the car operates on, and nothing in the record resolves it:
-
-  * The TELEMETRY derivation put 100% of symptom windows INSIDE the flat first segment [0, 400] --
-    bus counts = 1.697754 x gp-0x6ac0, through cal 0xC613A = 1159. Never measured directly.
-  * V67's ARM VALUE, 5244 = 2 x 2622, takes 2622 as the LERP at "motor rate 128 deg/s" -- which is
-    603 counts, i.e. on the SLOPED segment. The opposite side.
-
-Read from the four mode-10 gain_B records (0xD2A74/0xD2AB0/0xD2AEC/0xD2B28), X = (0, 400, 1400|1500,
-3000) and the segment [0,400] is EXACTLY flat in three of four records, flat to one count in the
-fourth. At 7.2 km/h the LERP is 2704 below the breakpoint and 2622 at 603 counts. So:
-
-    bit4 duty ~= 0%   =>  the operating point never leaves the FLAT segment. V67's arm is
-                          delivering 5244/2704 = 1.94x, not the 2.00x its docstring claims; the arm
-                          for exactly 2.00x is 5408 (a one-halfword cal edit). AND -- the bigger
-                          consequence -- THIS LANE CANNOT BE TUNED ON WHEEL RATE, because its rate
-                          axis is a constant in the regime the car actually uses.
-    bit4 duty >> 0%   =>  the rate axis IS live, the LERP really does roll off in use, and rate is
-                          available as a discriminator for any future calibration on this lane.
-
-Either answer closes the question. That is why the bit is worth a rung.
-
-🛑🛑 bit4 IS PRE-REGISTERED TO READ 0.000%, AND THAT IS THE POINT
-------------------------------------------------------------------
-Route 47's own cache, pushed through the very scale chain the probe exists to test
-(gp-0x6ac0 = |0x18F rate counts| x 32768/(48*1159) = x 0.5890135), 150,327 samples / 25.1 min,
-creep AND highway, both gate arms:
-
-    p50 0.6 · p90 10.6 · p99 105.4 · p99.9 221.3 · p99.99 264.4 · MAX 277.4 counts
-    samples at or above the 400 breakpoint: 0 of 150,327
-    => the axis must be 1.442x larger than the derivation says for bit4 to fire ONCE.
-
-⇒ A FLAT ZERO IS THE EXPECTED RESULT AND IS A CONFIRMATION, NOT A DEAD RUNG. This is written down
-before the drive precisely so it cannot be reinterpreted afterwards -- V67's bit4 read 0.000% and
-was (correctly) called wasted, and a reader who has that in mind will misread this one.
-
-★ The test is ONE-SIDED and aimed at the only direction that changes a decision: the flat-segment
-claim survives a scale chain that OVER-estimates the axis and dies only to one that UNDER-estimates.
-bit4 detects exactly that, from the firmware's own cell, with the chain removed from the question.
-A 1.442x error is not exotic -- the chain runs through cal 0xC613A = 1159, an EMA, and a x8 grid
-factor between the 0x18F and 0x14A copies, and this kit has already had one "128 deg/s vs 359 raw
-counts" contradiction on this very axis.
-
-⚠ ONE ASYMMETRY IN bit4, and it is NOT symmetric -- read this before quoting a duty.
-The LERP folds its key to 0 above RATE_FOLD = 13001 counts (0x3AAC8 `addi -0x32c9` / 0x3AACC
-`cmovc`), so a folded value ALSO lands on the flat first point. bit4 does not test the fold -- a
-second compare costs 6 more bytes than the 68-byte proven cave has. Therefore:
-
-    bit4 == 0  =>  DEFINITELY inside the flat segment.                          UNAMBIGUOUS
-    bit4 == 1  =>  on the sloped segment, OR folded past 13001.                 TWO READINGS
-
-13001 counts is 2759 deg/s of motor rate, roughly 20x the fastest this kit has recorded, so the fold
-is implausible rather than impossible. The asymmetry runs in the SAFE direction for the claim under
-test ("always flat"), and this tool prints the caveat next to every bit4 number rather than once.
+    39990-TVA,A160-V68-LKAS-4x-mss0-decouple0xC646C-ratelane-LKASGATED-fsm67df-detector671a-can330byte4-0x13000-0x100000.rwd
 
 🛑 WHAT V68 CANNOT DO: IT DOES NOT BREAK THE ALIASING BARRIER
 --------------------------------------------------------------
@@ -181,21 +187,24 @@ from decode_v67_gate import (collect, gate_stats, print_gate_row, sustained,   #
 # this string is not byte-for-byte the cave in the built artifact. V66's decoder header was stale
 # for one revision and claimed bit4 = gp-0x683c when the image read gp-0x67fe; this is the fix for
 # that class of error. Do not edit by hand -- rebuild and copy.
-CAVE_HEX = "203e88008437fb976132b605273e4000a437e3986132b605273e2000e4374195263670fee031b605273e10008437edeac636070007314437ecea2436e8ea7f00"  # noqa: E501
+CAVE_HEX = "203e88008437fb976132b605273e4000a43721986132b605273e20008437e7986132b605273e10008437edeac636070007314437ecea2436e8ea7f00"  # noqa: E501
 #
 #   0xC4B34  203e8800  movea 0x88,r0,r7        bit7 LIVENESS + bit3 BUILD-CLASS MARKER
 #   0xC4B38  8437fb97  ld.bu -0x6806[gp],r6  | 6132 cmp 0x1,r6 | b605 blt +6 | 273e4000 movea 0x40
-#   0xC4B44  a437e398  ld.bu -0x671d[gp],r6  | 6132 cmp 0x1,r6 | b605 blt +6 | 273e2000 movea 0x20
-#   0xC4B50  e4374195  ld.hu -0x6ac0[gp],r6    *** the NEW rung: an UNSIGNED HALFWORD ***
-#   0xC4B54  263670fe  movea -0x190,r6,r6      r6 = rate - 400  (movea SIGN-EXTENDS its imm16)
-#   0xC4B58  e031      cmp r0,r6             | b605 blt +6 | 273e1000 movea 0x10
-#   0xC4B60  8437edea  ld.bu -0x1514[gp],r6  | c6360700 andi 0x7,r6,r6 | 0731 or r7,r6
-#   0xC4B6A  4437ecea  st.b  r6,-0x1514[gp]     THE ONLY STORE. GATE 1 is vacuous.
+#   0xC4B44  a4372198  ld.bu -0x67df[gp],r6  | 6132 cmp 0x1,r6 | b605 blt +6 | 273e2000 movea 0x20
+#                                              *** ODD disp 0x9821 -> opcode 0x3D, hw1 a437 ***
+#   0xC4B50  8437e798  ld.bu -0x671a[gp],r6  | 6132 cmp 0x1,r6 | b605 blt +6 | 273e1000 movea 0x10
+#   0xC4B5C  8437edea  ld.bu -0x1514[gp],r6  | c6360700 andi 0x7,r6,r6 | 0731 or r7,r6
+#   0xC4B66  4437ecea  st.b  r6,-0x1514[gp]     THE ONLY STORE. GATE 1 is vacuous.
 #   0xC4B6E  2436e8ea  movea -0x1518,gp,r6     the displaced hook instruction
 #   0xC4B72  7f00      jmp [lp]                -> 0x55C12
-# ⚠ gp-0x671d's displacement 0x98E3 is ODD, so its opcode field reads 0x3D, not 0x3C. That is
-# correct and is exactly the hw1-bit-5 trap that has produced false mismatches before.
-# ⚠ 64 of the 68 proven cave bytes are used. 4 spare -- not enough for a fourth rung (12 minimum).
+# ⚠ All three probed cells have EVEN displacements on this revision (0x6806 -> 0x97FB is odd-valued
+# selector; 0x671a -> 0x98E6 is EVEN -> opcode 0x3C, hw1 8437; but gp-0x67df -> 0x9821 is
+# ODD -> opcode 0x3D, hw1 a437. `ld.bu` hides displacement bit 0 in the OPCODE FIELD, so
+# assuming one parity addresses the NEIGHBOURING cell with every other field perfect.
+# load's opcode field is 0x3C. The previous revision probed gp-0x671d, whose 0x98E3 is ODD and reads
+# 0x3D -- the hw1-bit-5 trap. If you see 0x3D on this build, the cave is not the one documented here.
+# ⚠ 60 of the 68 proven cave bytes are used. 8 spare -- still not enough for a fourth rung (12 min).
 
 BIT_LIVE = 0x80
 BIT_GATE, BIT_MASK, BIT_RATE = 0x40, 0x20, 0x10
@@ -206,7 +215,8 @@ CONSTANT_BITS = BIT_LIVE | BIT_CLASS      # 0x88 -- both must be set on EVERY le
 RATE_BREAKPOINT = 400         # xs[1] in every mode-10 gain_B record
 RATE_FOLD = 13001             # 0x3AAC8: at or above this the LERP key folds to 0 -> the flat point
 RATE_COUNTS_PER_DEGS = 16384 / 3477       # cal 0xC613A = 1159; 400 counts = 84.9 deg/s
-BUS_SCALE = 1.697754          # bus counts per gp-0x6ac0 count, via 0xC613A
+BUS_SCALE = 1.697754          # bus counts per gp-0x6ac0 count -- UNUSED on this revision (no rung
+                              # probes gp-0x6ac0); kept because r47_rate_axis.py imports it.
 
 ARM_VALUE = 5244              # cal 0xC6446 under V67 and V68
 ARM_MASK_VALUE = 1024         # cal 0xC6442, taken when bit5 is set -- BELOW the stock creep LERP
@@ -214,23 +224,36 @@ LERP_FLAT = 2704              # the mode-10 LERP at 7.2 km/h anywhere below the 
 LERP_AT_603 = 2622            # ...and at 603 counts (= 128 deg/s), which is what 5244 was derived from
 ARM_FOR_2X_IF_FLAT = 5408     # 2 x LERP_FLAT -- the arm V67 would need if bit4 reads ~0%
 
+# ---- bit4: Honda's 1 kHz oscillation detector ---------------------------------------------------
+DETECT_T = 12800              # cal 0xC620A -- the +-T that gp-0x6c2c must reverse past
+DETECT_CEIL = 5               # cal 0xC64FA -- the counter's ceiling
+DETECT_DWELL_TICKS = 50       # cal 0xC64DD -- SUB-CEIL clear dwell, 50 ms at 1 kHz => ~5 frames
+DETECT_HOLD_TICKS = 5000      # cal 0xC6270 -- AT-CEIL release, 5.0 s at 1 kHz
+DETECT_RELEASE_SPEED = 640    # cal 0xC62DE on gp-0x6a5e = voted VEHICLE SPEED => ~10 km/h
+SPEED_COUNTS_PER_KMH = 64.0625
+# 🛑 The band-pass that makes bit4 worth reading: gp-0x6c2c's cascade PEAKS near 61 Hz, so the trip
+# AMPLITUDE falls above 50 Hz -- where CAN (Nyquist 50.00) and the comma IMU (50.51) are both blind.
+DETECT_TRIP_AMPLITUDE = {21.3: 1683, 45: 1104, 60: 1056, 100: 1186, 150: 1478, 200: 1735}
+DETECT_BANDPASS_GAIN = {1: 0.05, 45: 1.54, 61: 1.61, 100: 1.43, 200: 0.94}   # relative to 21.09 Hz
+
 # (bit, short name, gp cell, test text, what it decides)
 GATES = (
     (BIT_GATE, "bit6 gp-0x6806", 0x6806, "!= 0",
      "*** THE GATE *** -- V67/V68's arm is taken here and nowhere else"),
-    (BIT_MASK, "bit5 gp-0x671d", 0x671d, "!= 0",
-     "*** THE MASKING RISK *** -- outranks the arm; gain pinned to 1024, BELOW stock"),
-    (BIT_RATE, "bit4 gp-0x6ac0", 0x6ac0, f">= {RATE_BREAKPOINT}",
-     "*** THE HEADLINE *** -- the LERP inner axis: flat segment or sloped"),
+    (BIT_MASK, "bit5 gp-0x67df", 0x67df, "!= 0",
+     "*** FSM LEFT NEUTRAL *** -- |gp-0x6c2c| crossed +-T. NO reversal required; the stage BELOW bit4"),
+    (BIT_RATE, "bit4 gp-0x671a", 0x671a, ">= 1",
+     "*** ABOVE-50-Hz DETECTOR *** -- Honda's 1 kHz osc counter, lowest rung. HOLD TIME, not rate"),
 )
 
 LEGAL = {CONSTANT_BITS | a | b | c
          for a in (0, BIT_GATE) for b in (0, BIT_MASK) for c in (0, BIT_RATE)}
 
-RWD_NAME = ("39990-TVA,A160-V68-LKAS-4x-mss0-decouple0xC646C-ratelane-LKASGATED-"
-            "rateaxisprobe-can330byte4-0x13000-0x100000.rwd")
-IMAGE_SHA = "704ece2ee91f8ad605bb41d72d5013c3a7ddc2c6cde1176610e7291c67861635"
-RWD_SHA = "387cc0be8ea8f4c5037dd4eb15f4d0f278a597881848fb9defe944ff24025c4a"
+# 🛑 ONE LINE, deliberately. The builder asserts this exact basename appears in this file; splitting
+# it across a string concatenation makes the substring vanish and the check silently harder to pass.
+RWD_NAME = "39990-TVA,A160-V68-LKAS-4x-mss0-decouple0xC646C-ratelane-LKASGATED-fsm67df-detector671a-can330byte4-0x13000-0x100000.rwd"  # noqa: E501
+IMAGE_SHA = "PENDING"
+RWD_SHA = "PENDING"
 
 ON_WIRE = {b | 0x07 for b in LEGAL}       # as transmitted, with all three status bits set
 
@@ -311,10 +334,46 @@ _self_check()
 
 
 def print_bit4_caveat(indent="   "):
-    print(f"{indent}⚠ bit4 == 0 is UNAMBIGUOUS (flat segment). bit4 == 1 means sloped OR folded")
-    print(f"{indent}  past {RATE_FOLD} counts = {RATE_FOLD / RATE_COUNTS_PER_DEGS:.0f} deg/s -- "
-          "implausible, not impossible. Do not")
-    print(f"{indent}  quote a bit4 duty without this sentence.")
+    """🛑 DUTY IS NOT OCCUPANCY. Print this beside every bit4 number, without exception."""
+    rel = DETECT_RELEASE_SPEED / SPEED_COUNTS_PER_KMH
+    print(f"{indent}🛑 bit4 IS A HOLD-TIME STATISTIC, NOT AN EVENT RATE.")
+    print(f"{indent}  gp-0x671a counts REVERSALS of gp-0x6c2c past +/-{DETECT_T} (cal 0xC620A), via")
+    print(f"{indent}  raw counter gp-0x357c and FSM state gp-0x67df. bit4 asks only 'is it >= 1'.")
+    print(f"{indent}  SUB-CEIL (1..{DETECT_CEIL - 1}): cleared by a {DETECT_DWELL_TICKS}-tick dwell "
+          f"(cal 0xC64DD) => visible ~{DETECT_DWELL_TICKS} ms")
+    print(f"{indent}     => only ~{DETECT_DWELL_TICKS // 10} frames at 100 Hz. BRIEF EVENTS ARE "
+          "UNDER-COUNTED; a single")
+    print(f"{indent}     reversal may be missed entirely.")
+    print(f"{indent}  AT CEIL ({DETECT_CEIL}, cal 0xC64FA): re-pinned every tick. Release needs "
+          f"{DETECT_HOLD_TICKS} ticks")
+    print(f"{indent}     (cal 0xC6270 = {DETECT_HOLD_TICKS / 1000:.1f} s) with gp-0x6a5e >= "
+          f"{DETECT_RELEASE_SPEED} AND no reversals. gp-0x6a5e is")
+    print(f"{indent}     voted VEHICLE SPEED (FUN_00041eec, settled 2026-07-29) => ~{rel:.0f} km/h.")
+    print(f"{indent}     => BELOW ~{rel:.0f} km/h THE LATCH NEVER RELEASES and duty SATURATES; at")
+    print(f"{indent}     road speed it releases {DETECT_HOLD_TICKS / 1000:.1f} s after the last "
+          "reversal.")
+    print(f"{indent}🛑 IT IS A DETECTOR, NOT A SPECTROMETER: neither amplitude nor frequency. Any")
+    print(f"{indent}  frequency attribution must come from conditioning on something else.")
+    print(f"{indent}★ Why it is worth reading: gp-0x6c2c's cascade is a BAND-PASS peaking near 61 Hz")
+    print(f"{indent}  ({', '.join(f'{k} Hz {v}x' for k, v in DETECT_BANDPASS_GAIN.items())} rel. "
+          "21.09 Hz), so the trip")
+    print(f"{indent}  AMPLITUDE FALLS above 50 Hz: "
+          + ", ".join(f"{k} Hz {v}" for k, v in DETECT_TRIP_AMPLITUDE.items()) + " counts.")
+    print(f"{indent}  It is the ONLY above-50-Hz instrument here -- but it carries above-50-Hz")
+    print(f"{indent}  INFORMATION, not an above-50-Hz WAVEFORM: the field is still sampled at 100 Hz.")
+
+
+def print_bit5_caveat(indent="   "):
+    """bit5 is the detector's FIRST stage: crossed +-T, no reversal required."""
+    print(f"{indent}★ bit5 = gp-0x67df != 0 -- the detector FSM has LEFT NEUTRAL, i.e."
+          f" |gp-0x6c2c| crossed")
+    print(f"{indent}  +/-{DETECT_T} (cal 0xC620A). *** NO REVERSAL REQUIRED. *** bit4 requires one.")
+    print(f"{indent}  ⇒ bit5 SET with bit4 CLEAR = a crossing that never became a reversal --")
+    print(f"{indent}    the brief or one-sided event bit4 alone cannot see. That is what this rung buys.")
+    print(f"{indent}  ⚠ Same band-pass as bit4, so it inherits the above-50-Hz sensitivity AND the")
+    print(f"{indent}    same limits: no amplitude, no frequency, and it is a HOLD (>= 50 ms), not a count.")
+    print(f"{indent}  ⚠ bit4 => bit5 is EXPECTED, not guaranteed: different clear rules, so a clear")
+    print(f"{indent}    boundary can show bit4 && !bit5. Its rate is reported below, not asserted away.")
 
 
 def report(tag, d):
@@ -465,12 +524,12 @@ def report(tag, d):
         print("       'start the log before the first engagement' failure. RE-DRIVE.")
         verdict_ok = False
 
-    # ---- 3. *** THE HEADLINE: bit4, the LERP inner axis *** ---------------------------------------
-    print(f"\n{'-' * 100}\n-- 3. *** THE HEADLINE: bit4 = gp-0x6ac0 >= {RATE_BREAKPOINT} *** --")
-    print("   This is what V68 was built to measure. It decides whether the r24 gain LERP's rate")
-    print("   axis is LIVE in the regime the car actually uses, or a constant.")
+    # ---- 3. *** THE HEADLINE: bit4, the above-50-Hz detector *** ----------------------------------
+    print(f"\n{'-' * 100}\n-- 3. *** THE HEADLINE: bit4 = gp-0x671a >= 1 *** --")
+    print("   Honda's own 1 kHz oscillation detector, at its LOWEST rung. This is the only quantity")
+    print("   in this log that was computed above the ~50 Hz barrier CAN and the IMU both hit.")
     duty4 = float(g6ac0.mean())
-    print(f"\n   bit4 duty, WHOLE LOG                    : {100 * duty4:6.2f}%   "
+    print(f"\nbit4 duty, WHOLE LOG                    : {100 * duty4:6.2f}%   "
           f"({int(g6ac0.sum())} / {n} frames)")
     for sname, sel in (("ENGAGED", eng), ("MANUAL", ~eng),
                        ("ENGAGED + creep(v<=5)", eng & creep),
@@ -485,47 +544,30 @@ def report(tag, d):
     print()
     print_bit4_caveat()
 
-    print("\n   THE ARITHMETIC THIS DECIDES (mode-10 gain_B, at 7.2 km/h):")
-    print(f"     gp-0x6ac0 <  {RATE_BREAKPOINT:5d} counts (< {RATE_BREAKPOINT / RATE_COUNTS_PER_DEGS:5.1f} deg/s"
-          f", < {RATE_BREAKPOINT * BUS_SCALE:.0f} bus counts)  ->  LERP = {LERP_FLAT}  FLAT")
-    print(f"     gp-0x6ac0 =    603 counts (= 128.0 deg/s)                        ->  LERP = "
-          f"{LERP_AT_603}  SLOPED   <- what V67's 5244 assumed")
-    print("\n   🛑 THE PRE-REGISTERED PREDICTION (route 47, 150,327 samples, via the same scale")
-    print("      chain this probe tests): p99 105 · p99.9 221 · MAX 277 counts · ZERO samples at or")
-    print("      above 400. bit4 IS PREDICTED TO READ 0.000% -- the axis must be 1.442x larger than")
-    print("      the derivation for it to fire once. A FLAT ZERO IS A CONFIRMATION, NOT A DEAD RUNG.")
+    print("\n⚠ READ THE CREEP ROWS SEPARATELY FROM THE ROAD-SPEED ROWS. Below ~10 km/h the")
+    print("      CEIL latch never releases, so a creep duty is a LATCH-STATE duty and cannot be")
+    print("      compared with a road-speed duty. They are different measurements.")
+    print("   ⚠ V67's rung read 0.000% at `>= 5`; this reads `>= 1`. A non-zero reading here is")
+    print("      NOT a contradiction of V67 -- it is the sub-CEIL activity V67 could not see.")
 
-    if duty4 < 0.01:
-        print(f"\n   ⇒ *** THE FLAT-SEGMENT CLAIM IS CONFIRMED (bit4 duty {100 * duty4:.2f}%). ***")
-        print("      This MATCHES the pre-registered prediction. The one-sided test passed: the")
-        print("      scale chain does not under-estimate the axis by 1.442x or more.")
-        print(f"      The LERP is a CONSTANT {LERP_FLAT} in the regime this car drives, so:")
-        print(f"        a) V67/V68's arm {ARM_VALUE} is delivering {ARM_VALUE / LERP_FLAT:.3f}x, "
-              f"NOT the 2.000x on record.")
-        print(f"           The arm for exactly 2.00x is {ARM_FOR_2X_IF_FLAT} -- ONE halfword at "
-              "0xC6446, cal-only,")
-        print("           inside a CRC block this kit recomputes routinely. A 3% correction: real,")
-        print("           but not a reason on its own to reflash a build that works.")
-        print("        b) *** NO FUTURE CALIBRATION ON THIS LANE CAN DISCRIMINATE ON WHEEL RATE. ***")
-        print("           Any proposal that shapes r24's gain by motor rate is shaping a constant.")
-        print("           This is the durable finding; (a) is the footnote.")
-    elif duty4 > 0.10:
-        print(f"\n   ⇒ *** THE FLAT-SEGMENT CLAIM IS REFUTED (bit4 duty {100 * duty4:.2f}%). ***")
-        print("      This CONTRADICTS the pre-registered prediction of 0.000%, which means the")
-        print("      |0x18F| x 0.5890135 scale chain UNDER-ESTIMATES gp-0x6ac0 by at least 1.442x.")
-        print("      🛑 That chain is load-bearing elsewhere -- r47_rate_axis.py's whole regime map")
-        print("         and V67's arm derivation both use it. Re-derive them before anything else.")
-        print("      The rate axis IS exercised. The LERP genuinely rolls off in use, wheel rate is")
-        print("      available as a discriminator for future calibration on this lane, and V67's")
-        print(f"      arm of {ARM_VALUE} is a scalar standing in for a CURVE -- the residual its own")
-        print("      build note flagged. Re-derive the arm against the MEASURED distribution of")
-        print("      gp-0x6ac0 above, not against a single assumed operating point.")
-        print("      🛑 Before concluding: check the fold caveat above, and check whether the bit4")
-        print("         frames are concentrated in one manoeuvre (see the by-speed table).")
+    if duty4 == 0.0:
+        print("\n⇒ bit4 NEVER SET. The detector saw no reversal past +/-12800 anywhere in this")
+        print("      log -- including above 50 Hz, where nothing else here can look. Combined with a")
+        print("      symptom the driver reports, that ARGUES AGAINST an amplitude large enough to")
+        print("      trip Honda's own detector, at any frequency in its 45-100 Hz sweet spot.")
+        print("      ⚠ It does NOT rule out a smaller-amplitude resonance: 1056-1186 counts is a")
+        print("         floor, not zero. And brief events are under-counted (~5 frames each).")
+    elif duty4 < 0.005:
+        print(f"\n⇒ bit4 set on a HANDFUL of frames ({int(g6ac0.sum())}). At ~5 frames per")
+        print("      sub-CEIL trip this is on the order of a few isolated reversals. Locate them in")
+        print("      time and cross-reference the maneuver log before reading anything into the rate.")
     else:
-        print(f"\n   ⇒ INTERMEDIATE (bit4 duty {100 * duty4:.2f}%). The axis is exercised, but rarely.")
-        print("      Report the duty CONDITIONED on regime -- the engaged/creep rows above are the")
-        print("      ones that matter for grind #1, and a whole-log duty pools regimes that differ.")
+        print(f"\n⇒ bit4 duty is SUBSTANTIAL ({100 * duty4:.2f}%). Before interpreting:")
+        print("      a) split creep from road speed -- the CEIL latch never releases below ~10 km/h;")
+        print("      b) check whether the set frames are contiguous HOLDS or scattered TRIPS. A hold")
+        print("         is ONE event, not N frames of events. Duty is not a rate.")
+        print("      c) condition on bit6: a detector firing only when LKAS is engaged is a different")
+        print("         finding from one that fires in manual steering too.")
 
     # ---- 4. bit6, THE GATE -- carried from V67 and still load-bearing ------------------------------
     print(f"\n{'-' * 100}\n-- 4. bit6 = THE GATE (carried from V67 unchanged) --")
@@ -574,20 +616,21 @@ def report(tag, d):
             if de - dm < GATE_TRACKS_MIN:
                 verdict_ok = False
 
-    # ---- 5. bit5, THE MASKING RISK ----------------------------------------------------------------
-    print(f"\n{'-' * 100}\n-- 5. bit5 = gp-0x671d, THE MASKING RISK --")
-    print("   gp-0x671d strictly OUTRANKS the arm at 0x3ABFA. Whenever it is set, r24's gain is")
-    print(f"   pinned to cal 0xC6442 = {ARM_MASK_VALUE} -- BELOW the stock creep LERP. It does not")
-    print("   merely mask the build, it cuts the lane. Route 47 read it 0.000% over 150,327 frames;")
-    print("   route 35 (V64) read it 0 over 14,980. Each is one drive, not a clearance.")
+    # ---- 5. bit5, THE r24/r26 LANE DROPOUT --------------------------------------------------------
+    print(f"\n{'-' * 100}\n-- 5. bit5 = gp-0x67df != 0, THE DETECTOR'S FIRST STAGE --")
+    print("   When this fires, FUN_0003aa2c SKIPS the aggregate add and BOTH rate lanes leave the")
+    print("   loop -- whichever gain arm was selected. It is not a mask on the arm; it removes the")
+    print("   lane. Routes 47 and 4a never exercised this cell (V67 probed gp-0x671d instead).")
+    print()
+    print_bit5_caveat()
     n5 = int(g671d.sum())
-    print(f"   bit5 set: {n5} / {n}  ({100 * g671d.mean():.4f}%)")
+    print(f"\nbit5 set: {n5} / {n}  ({100 * g671d.mean():.4f}%)")
     if n5 == 0:
-        print("   => never fired on this drive either. The arm was unmasked throughout.")
-        print("      🛑 This is an accumulating null, not a proof. It cannot be shown to be")
-        print("         UNREACHABLE from logs -- only to have not been reached.")
+        print("   => the lanes were CONNECTED throughout this drive. The highway 40-49 Hz dose null")
+        print("      is NOT a dropout artifact, and that alternative explanation is closed.")
+        print("      ⚠ One drive is not a proof of unreachability -- only of not-reached.")
     else:
-        print(f"   *** bit5 FIRED on {n5} frames. On those frames the gain was pinned to")
+        print(f"   *** bit5 FIRED on {n5} frames. On those frames BOTH r24 and r26 were OUT of the")
         print(f"       {ARM_MASK_VALUE}, BELOW stock -- the build was WORSE than baseline there, not")
         print("       merely inert. Report this separately from the rest of the drive; excluding")
         print("       those frames from a grind statistic is legitimate ONLY if it is stated.")
@@ -661,7 +704,7 @@ def report(tag, d):
         s4 = gate_stats(g6ac0, sel, fs, "")
         print(f"   {f'{lo}-{hi} m/s':>12s} {int(sel.sum()):7d} {100 * s6['duty']:8.2f}% "
               f"{100 * s5['duty']:8.2f}% {100 * s4['duty']:8.2f}% {s4['tps']:8.3f}")
-    print("   ⚠ gp-0x6ac0 is a MOTOR/RESOLVER rate, not vehicle speed. A high bit4 duty at low")
+    print("   ⚠ bit4 is a HOLD-TIME statistic. Below ~10 km/h the CEIL latch never releases, so")
     print("     vehicle speed is exactly what parking-lot steering should produce; the flat-segment")
     print("     claim is about the SYMPTOM windows, so read the creep rows against section 3.")
 

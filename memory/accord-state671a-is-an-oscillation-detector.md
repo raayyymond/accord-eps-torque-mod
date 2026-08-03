@@ -31,16 +31,41 @@ comfortably inside the 50 ms dwell timeout, so it arms in ~125–150 ms.
 The value the arms test is **not** the raw per-tick count. `FUN_000428d4`'s output stage (`0x429A0`–
 `0x42A12`, orchestrator-verified, cals byte-read) holds it:
 ```
-0x429A8  cmp r15,r12 / bh   ; cal 0xC62DE = 640 > voted DRIVER TORQUE gp-0x6a5e -> RELOAD hold timer
+0x429A8  cmp r15,r12 / bh   ; cal 0xC62DE = 640 > voted VEHICLE SPEED gp-0x6a5e -> RELOAD hold timer
 0x429AC  cmp r0,r14  / bne  ; revcount != 0                                     -> RELOAD hold timer
 0x429CA  reload = cal 0xC6270 = 5000 ticks = 5.0 s @ 1 kHz
 0x429DE  cmp r8,r6 / bh     ; CEIL > held -> output = revcount
 0x429EA                     ; else        -> output RE-PINNED TO CEIL every tick
 ```
-Once the held value reaches CEIL it stays there. The only way down is **5000 consecutive ticks with
-driver torque >= 640 AND no reversals** — and driver torque dips below 640 on every direction change, so
-the timer reloads constantly. ⇒ **once tripped, the arm is sticky**, and it carries into subsequent
-manual steering.
+🛑🛑 **LABEL AND CONCLUSION CORRECTED 2026-08-03.** The line above previously read *"voted **DRIVER
+TORQUE** gp-0x6a5e"*. It is **voted VEHICLE SPEED** — settled 2026-07-29 by the voter `FUN_00041eec`
+(see [[reference-accord-gp6a5e-is-speed-reclassifies-v44-v47]]), the same reclassification that
+invalidated V44/V47's rationale. At **64 counts/km/h**, cal `0xC62DE` = 640 = **10.0 km/h**, not a
+torque threshold.
+
+> ⚠ **SUPERSEDED, left visible rather than overwritten (the old text, verbatim):**
+> *"Once the held value reaches CEIL it stays there. The only way down is **5000 consecutive ticks with
+> driver torque >= 640 AND no reversals** — and driver torque dips below 640 on every direction change,
+> so the timer reloads constantly. ⇒ **once tripped, the arm is sticky**, and it carries into subsequent
+> manual steering."*
+
+**Why it does not survive the relabel.** The whole "sticky" conclusion rested on *"dips below 640 on
+every direction change"*, which is a property of **torque**, not of **speed** — road speed does not dip
+at a steering reversal. Re-read from the disassembly this session (`bh` @`0x429A8`) with both cals
+byte-read:
+
+- **Below ~10 km/h the latch never releases** — the reload condition is true continuously, so at creep
+  and in a parking lot the old "sticky" description is still right.
+- **At road speed it is a clean, self-clearing 5.0 s timeout** — the timer reloads only on a *fresh
+  reversal*, decrements otherwise, and the latch releases to exactly 0 the tick it hits zero
+  (`0xC6270` = 5000 ticks @ 1 kHz). ⇒ a real event flag, **not** a permanently-reloaded one.
+- Also confirmed (`0x429da`–`0x429f0`): the held value passes through 1, 2, 3, 4 before saturating at
+  CEIL = 5, so a `>= 1` rung is **genuinely more sensitive** than `>= 5`, not a relabel.
+
+★★ This matters beyond bookkeeping: the detector's input `gp-0x6c2c` is a **band-pass peaking at
+~61 Hz**, so `gp-0x671a` is the kit's only instrument that can see above the 50 Hz CAN/IMU Nyquist —
+and whether its output latches or clears decides what a null on it means. See
+[[accord-highway-30-49hz-has-no-line]] and `docs/HANDOFF-2026-08-03-the-detector-was-always-there.md`.
 ✅ **The latch is PROTECTIVE.** A gain that switched per-tick with the reversals would modulate **at the
 mode frequency** — a parametric pump, the exact failure mode V58/V59/V60 chased for three builds. Honda's
 hold prevents that. A per-tick-gated damper would be actively dangerous; this one cannot be.

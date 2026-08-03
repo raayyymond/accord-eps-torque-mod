@@ -1,13 +1,14 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-02.** This file is the single current-state record. Update it in place at every
+**Last updated: 2026-08-03.** This file is the single current-state record. Update it in place at every
 close-out; do not append new dated blocks (that is what made `CLAUDE.md` unreadable). The narrative of how
 each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed, falsified, or **rejected on
 review** — check it before proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-08-02-v67-flew-and-the-highway-grind-is-not-the-rate-lane.md`
-(predecessors: `HANDOFF-2026-08-01-grind2-is-v62s-own-fix-at-high-frequency.md`, then
+`docs/HANDOFF-2026-08-03-the-detector-was-always-there.md`
+(predecessors: `HANDOFF-2026-08-02-v67-flew-and-the-highway-grind-is-not-the-rate-lane.md`, then
+`HANDOFF-2026-08-01-grind2-is-v62s-own-fix-at-high-frequency.md`, then
 `HANDOFF-2026-08-01-v62-flew-and-the-grinding-is-fixed.md`, then
 `HANDOFF-2026-07-31-v64-the-null-is-on-the-gate.md`, then
 `HANDOFF-2026-07-31-v61-worse-the-rate-lane-is-the-damper.md`, then
@@ -16,7 +17,154 @@ review** — check it before proposing any calibration edit) and the latest hand
 
 ---
 
-★★★★ **THE HEADLINE, 2026-08-02 (LATEST): V67 FLEW AND IT IS THE BEST BUILD THIS KIT HAS MEASURED —
+★★★★ **THE HEADLINE, 2026-08-03 (LATEST): THE >50 Hz BLINDNESS WAS OURS, NOT THE CAR'S. HONDA RUNS A
+1 kHz OSCILLATION DETECTOR WHOSE INPUT IS A BAND-PASS PEAKING AT ~61 Hz — AND V67 HAS BEEN READING IT
+ALL ALONG, AT THE WRONG THRESHOLD.**
+
+`FUN_000428d4` runs in **task 1 (1 kHz, by construction** — TCB table `0xbb858`, mod-100 divider
+`0x14be4`, `syscall8(0)` unconditional**)**. Its input `gp-0x6c2c` (`FUN_00041464` @`0x4184E`, K1=37>>7,
+K2=22>>6, out >>9) is **not** a low-pass: the EMA increment `step[n] = ema1[n]−ema1[n−1]` is a
+differentiator in series with the low-pass, so the cascade is a **BAND-PASS**. Integer-exact simulation,
+gain relative to 21.09 Hz:
+
+| f (Hz) | 1 | 21.09 | 45 | **61** | 100 | 150 | 200 |
+|---|---|---|---|---|---|---|---|
+| rel. gain | **0.05×** | 1.00× | 1.54× | **1.61× (max)** | 1.43× | 1.15× | 0.94× |
+
+**>90% of the 21 Hz gain out to ~180 Hz, and ~30× rejection of 1 Hz driver content for free.**
+Trip amplitude on `gp-0x4f50` to reach `T` = `0xC620A` = 12800: 21.3 Hz **1683** · 45 **1104** · 60
+**1056** · 80 **1092** · 100 **1186** · 150 **1478** · 200 **1735** — ⇒ **45–100 Hz needs LESS amplitude
+than 21 Hz already required**, and none is near `gp-0x4f50`'s own ±13000 clamp. ✅ Validated against the
+golden model's recorded pair: **1683 → 12804 trips, 1682 → 12797 does not.** ⭐ **Orchestrator
+re-simulated independently and reproduced the table and the pair.** Reproduce:
+`analysis-2020accord/gp6c2c_freq_response.py`.
+🛑 **`gp-0x4f50`'s deg/s conversion is [OPEN]** — do **NOT** borrow `gp-0x6ac0`'s 4.7121 counts/deg-s.
+Composing those two is exactly what produced the retracted "bus = 8 × deg/s".
+
+★★ **`gp-0x671a` is the readout, and it is free.** It counts **REVERSALS** of `gp-0x6c2c` past ±T (raw
+counter `gp-0x357c`, FSM state `gp-0x67df` ∈ {0,1,2}); it **passes through 1,2,3,4** before saturating at
+CEIL = `0xC64FA` = 5 (⭐ verified in Ghidra at `0x429DA-0x429F2`: the pin to CEIL fires only when
+already-saturated AND the fresh count lags; **every other path is `mov r14,r8`, the raw count verbatim**).
+Dwell decay **50 ticks** (`0xC64DD`); the held output releases after **5000 ticks** (`0xC6270` = 5.0 s)
+gated on `gp-0x6a5e` ≥ `0xC62DE` = **640 = 10.0 km/h** (64 counts/km/h) ⇒ **below ~10 km/h it never
+releases; at road speed it clears 5.0 s after the last reversal.** Both cells hold ≥50 ms ⇒ **reliably
+catchable by the EXISTING 100 Hz probe.** 8 accesses image-wide, 1 writer — **reading is blast-radius
+free**, the same class flown 3× (V63/V64/V67).
+⇒ 🛑 **V67 read this detector and got 0.000% over 186,321 frames — but at threshold 5.** "Never reached
+5" is **not** "never incremented". ⇒ **NO new cave, NO code on the 1 kHz path, NO new RAM audit.** The
+1 kHz-cave design priced earlier this session is **WITHDRAWN as unnecessary** — its own author retracted
+it on this evidence.
+
+★★★★ **AND ROUTE `4a` CLOSED THE LAST OPEN ARM: ENGAGED-CREEP GRIND #2 IS RESOLVED.** Route
+`4a--346bf31d97` segs 20–25, **V67 confirmed from the probe** (byte4 ∈ {0x87, 0xC7}; **bit3 = 0/35,994**,
+and V68 emits `movea 0x88` so `0x87` cannot occur on it). 360 s, **149.2 s engaged creep — 6.8× route
+47's 22 s** — and **79.7 s of the grind-#2 corner in the armed state vs route 47's 6.9 s (11.6×)**.
+
+| arm | secs | bursts | 40–49 MAX | expected @Kd=2 | **P(0)** |
+|---|---|---|---|---|---|
+| `r47`+`r4a` **ON** | **158.7** | **0** | 156.6 | 7.62 | **0.0005** |
+| `r47`+`r4a` OFF | 151.0 | 0 | 96.9 | 6.50 | 0.0015 |
+
+Corner-conditioned, pooled ON: expected 9.80, **P(0) = 0.0001**. **Zero further seconds needed in either
+arm** ⇒ *"it needs a parking lot, not a build"* is **satisfied**. Observed max 156.6 vs Kd=2's 1830.7
+(11.7× down) ⇒ not a threshold artefact.
+★★ **GRIND #1 STILL FIXED, AND STRONGER**: `r4a` **0.38 [0.21, 0.55]**, V67 pooled **0.40 [0.27, 0.58]**
+vs the Kd=1 pool (null **[0.88, 1.13]**) — statistically **on top of the Kd=2 pool (0.39)** while leaving
+manual steering stock. Arm-matched: **engaged 0.321 [0.218, 0.541] vs disengaged 1.151 [0.698, 1.521]**,
+replicating route 47's one-arm-only suppression more strongly (placebo row 0.96–0.99). ✅ Flight-clean:
+`ST==4` **0/35,994** both ways, `ST==3` 0, zero `steerUnavailable`/`canError`/`controlsMismatch`.
+⚠ Grind #1 appeared **once** (seg 21, 21.5 Hz, 3684 counts p-p, 1 window of 114) — the route was not
+*incapable* of showing it. n = 1.
+
+🛑🛑 **THE HIGHWAY SYMPTOM: A WELL-POWERED NULL, AND A PRE-REGISTERED HYPOTHESIS OF MINE REFUTED.**
+I pre-registered **H1** — *"the highway resonance is grind #2's mechanism at a higher mode, so the EVENT
+RATE should rise with dose"* — with its predictions stated before looking, because the prior null used
+**pooled medians**, which are blind to a rare threshold event by construction. **H1 failed.**
+**The veto ran first and cleared decisively: there is NO LINE AT ALL in 30–49.5 Hz at highway** —
+averaged-periodogram prominence **1.32–3.83** (bar), **1.23–2.13** (`ay`), **1.26–1.76** (`gz`) against
+the kit's **>4** criterion, on **every route, every build, every channel**. The same estimator resolves
+**wheel order 1 at prominence up to 79** (10.94→12.61→13.66→15.40 Hz across speed bins; Theil-Sen
+**+0.4836 [+0.4806, +0.4863]** vs order 1's 0.4808).
+
+| band | 2.00/1.00 | 2.44/1.00 | split-half null | min detectable |
+|---|---|---|---|---|
+| **18–22 (positive control)** | **0.565 [0.329, 0.984]** | **0.319 [0.130, 0.661]** | [0.50, 2.30] | 1.51× |
+| **40–49** | 0.855 [0.432, 1.702] | **1.152 [0.496, 2.690]** | [0.36, 2.50] | **1.61×** |
+
+⇒ **Two independent statistics — pooled level and event rate — reach the same null**, with the positive
+control firing on both. **The earlier null was NOT a statistic-choice artefact.** Command↔bar coherence
+in event windows **0.169 vs 0.166** background (grind #1 was **0.917**).
+★ **What the highway events ARE:** the **top tail of smooth maneuver loading**, not a distinct mode.
+No step — P(event) rises through every decile of steering rate from the 5th up (ρ **+0.420**); trigger is
+a **~1.5 s steering-rate transient** (median |rate| 1.0 → 5.0 → 6.5 → **18.0** → 5.0 deg/s at constant
+speed); **hands-off confirmed 19/20**; **rail duty 0.00 on every event**; duration 0.22–0.87 s.
+⇒ 🛑 **NO CONTROL-PATH CHANGE IS SUPPORTED.** Below 50 Hz there is nothing to find. Either the operator
+is correctly perceiving the loading effect, or the symptom is **above 50 Hz** — and `gp-0x671a` is now the
+only instrument that can tell those apart.
+
+★★ **THE OPERATOR'S OWN CHARACTERISATION, 2026-08-03** (his answers reframed the session): **fixed pitch**
+⇒ a **mode, not a wheel order**; **hands OFF for sure**; **threshold-like**; **feels it, does not hear
+it**; **has never driven it LKAS-off at highway.** Data verdict: **hands-off CONFIRMED** (19/20);
+**threshold-like CONTRADICTED** (smooth through every decile); **fixed pitch rules out an ORDER but NOT
+>50 Hz** — aliasing preserves apparent-frequency stability.
+🛑🛑 **THE CORPUS HOLDS 1,177.4 s OF ENGAGED DRIVING AT v ≥ 25 m/s AND 0.0 s OF IT LKAS-OFF** — ⚠ quote a
+**threshold** with this number or it cannot be reconciled with the 2,035 s / 1,450 s figures below;
+engaged seconds by threshold are 2,403.9 (≥12) · 2,006.0 (≥15) · 1,438.3 (≥20) · **1,177.4 (≥25)** ·
+781.2 (≥28). ✅ **The load-bearing half needs no threshold: disengaged is 0.0 s at EVERY cut from 12 to
+28 m/s** — verified two independent ways
+(openpilot `carControl.latActive` **and** car-side raw CAN `0x18F STEER_CONTROL_ACTIVE`), across 6,034 s
+and eleven routes; **0.0 s off above 15 m/s vs 2,035 s on; 0.0 vs 1,450 above 20 m/s.** His
+*"only during LKAS-engaged"* report **has never been testable**. It is already **99.3% hands-off** at
+highway, so the published analyses were not diluted. ⇒ ★★★ **ONE HIGHWAY RUN WITH LKAS OFF IS THE
+HIGHEST-VALUE ACTION AVAILABLE** — no instrument, no toggle, no build.
+⚠ **79.8% of all corpus exposure above 28 m/s is route 47 alone** ⇒ above 28 m/s **dose is confounded
+1:1 with route.** ~4 min of engaged highway >28 m/s on another build breaks it.
+
+🛑 **SIX CORRECTIONS THIS SESSION — read before quoting any of the affected numbers.**
+1. **"At highway, 40–49 Hz IS wheel order 3 (p50 2.994)" is RETIRED** — that p50 is an **estimator
+   artefact**: `order = f0·CIRC/v` returns ≈3.00 *by arithmetic* whenever a band-limited argmax sits near
+   the centre of 30–49.5 Hz at ~28 m/s. **Order 1 at 10–16 Hz is real and survives** (prominence up to
+   79), and the general "don't mistake a wheel order for a firmware effect" warning stands.
+2. **A "fixed 42 Hz mode" was found and WITHDRAWN the same session** — a median-of-per-window-argmax
+   estimator manufactures a line at band centre when none exists, and it beat the alternative at
+   **ΔBIC 249–460**. Averaging the periodograms first made it vanish. ⇒ **Average periodograms, then
+   peak-find.** The CVT/engine-order alternative was also tested and killed (required slope
+   −0.0333 Hz/rpm vs measured **−0.00071 [−0.00251, +0.00084]**).
+3. **`gp-0x6a5e` is voted VEHICLE SPEED, not driver torque** (settled 2026-07-29; two live documents still
+   carried the stale label at the `gp-0x671a` release site). The downstream *"the timer reloads
+   constantly"* conclusion is **SUPERSEDED** — speed does not dip at every direction change.
+4. **`soundPressure` is 0–8000 Hz analysed** (one RMS over 1600 samples at 10.000 Hz), **not** the
+   recorded "16–48 kHz".
+5. **`diff_build_vs_stock.py` was emitting FALSE POSITIVES** — a stale table plus two latent bugs (a
+   compound-label selector that silently printed nothing, and `sar imm5` shape claimed for every code
+   edit). **A gate that cannot fail informatively is worse than no gate.** Fixed; `--self-test` now
+   injects a stray byte and proves it still fails. All ten builds V59→V68 exit 0, zero unattributed.
+6. **The retracted "bus = 8 × deg/s" was still live inside `build_v68_tva.py`** and is struck; the stale
+   `assert 1.4 < headroom < 1.5` is replaced by an assert on **the contradiction itself**, so it cannot
+   rot back in.
+
+★ **THE MICROPHONE NULL BEARS VERY LITTLE WEIGHT ON A TACTILE EVENT — quantified.** It detects a **25.3%
+excess in acoustic power** at highway; its only positive control is grind #2 at **4.14×**, so the one
+demonstrated detection sits **64× above** the smallest event the null excludes, with nothing in between.
+That control was validated at **creep** (floor 0.0193) but highway's floor is 0.0606 — **9.9× the power**.
+And `soundPressure` is one RMS over **0–8 kHz**, versus the ear's ~1/3-octave critical bands (18.5 Hz at
+80 Hz) ⇒ a **26.4 dB** bandwidth penalty. **The operator is the better instrument here and he reports
+feeling, not hearing.** ⇒ downgrade, do not quote it as independent corroboration.
+🛑 **RAISING THE COMMA IMU ODR IS DECLINED — and NOT only on the standing no-openpilot-modifications
+rule.** It is **not** confined to the measurement path: `locationd` → `livePose` →
+`controlsd.py:120-121` **lateral roll compensation**; and `locationd` derives its validity limits from the
+**declared** service frequency, so a real-vs-declared divergence silently mis-scales them. The fork also
+already shows **84 `selfdrivedLagging` / 52 `commIssue` / 24 `locationdTemporaryError`**, and `locationd`
+is precisely the process whose input rate would be multiplied. **Moot regardless** — the firmware route
+reaches the same band at lower cost. ⚠ Separately: `rawAudioData` (16 kHz PCM) is **already published
+live** and gated only by the user-facing **RecordAudio toggle** — available with **no code change**, if
+acoustic spectra are ever wanted.
+
+⇒ ★★★ **RECOMMENDED: KEEP V67's CONTROL PATH. FLASH THE REVISED V68 AND DRIVE HIGHWAY WITH LKAS OFF.**
+
+---
+
+★★★★ **THE PRIOR HEADLINE, 2026-08-02: V67 FLEW AND IT IS THE BEST BUILD THIS KIT HAS MEASURED —
 GRIND #1 FIXED AND THE CREEP GRIND #2 ELIMINATED. THE NEW HIGHWAY SYMPTOM IS *NOT* THE RATE LANE.**
 
 Route **`47`** (`75604b0a432fdc89_00000047--3e0b6134c0`), 26 segments, **1,495 s**, an ordinary
@@ -99,7 +247,13 @@ mode — *a statistic computed correctly over the wrong population* — for the 
 (nulls ~[0.6, 1.5]) ⇒ **broadband from 6 Hz up**, with 6–9 Hz rising *more* than 40–49 Hz, at absolute
 levels ~50× below the creep bursts. A maneuver loads the wheel and everything gets noisier.
 
-✅ **AND THE MICROPHONE — no frequency ceiling at all — ALSO SEES NOTHING.** `soundPressure` is computed from **16–48 kHz** audio. Highway maneuvers vs matched straight-line controls, paired: **un-weighted 1.069 [0.960, 1.184]** against a split-half null of **[0.793, 1.264]**; A-weighted 0.905 [0.647, 1.165]; dB 0.985. **All inside their nulls**, and a low-frequency event would have shown as un-weighted-up / A-weighted-flat. ⇒ **three independent instruments agree.** ⚠ Bounded power: a 10 Hz *level* under highway road noise, n = 21 pairs — it bounds the effect, it does not prove silence. `analysis-2020accord/r47_microphone_test.py`.
+⚠ **AND THE MICROPHONE ALSO SEES NOTHING — but see the headline: this null bears VERY LITTLE WEIGHT on a
+TACTILE event, and the operator reports feeling rather than hearing.** 🛑 **CORRECTED 2026-08-03:
+`soundPressure` is one RMS over 1600 samples of 16 kHz PCM ⇒ 0–8000 Hz ANALYSED**, published at
+10.000 Hz — **not** the "16–48 kHz" this line used to claim. That correction is load-bearing in the
+*other* direction: the **26.4 dB** bandwidth penalty versus the ear's ~1/3-octave critical bands, which is
+what downgrades this null, **depends** on the band being 0–8 kHz. Anyone trusting the old figure will
+**over-weight** the null. Highway maneuvers vs matched straight-line controls, paired: **un-weighted 1.069 [0.960, 1.184]** against a split-half null of **[0.793, 1.264]**; A-weighted 0.905 [0.647, 1.165]; dB 0.985. **All inside their nulls**, and a low-frequency event would have shown as un-weighted-up / A-weighted-flat. ⇒ **three independent instruments agree.** ⚠ Bounded power: a 10 Hz *level* under highway road noise, n = 21 pairs — it bounds the effect, it does not prove silence. `analysis-2020accord/r47_microphone_test.py`.
 
 🛑🛑 **THE HARD LIMIT: BOTH INSTRUMENTS ARE BLIND ABOVE ~50 Hz.** CAN grid **100.000 Hz exactly** (Nyquist **50.00**);
 comma IMU **101.02 Hz** (Nyquist **50.51**) — settled by a lattice fit (77 µs vs 2889 µs) and a synthetic
@@ -132,10 +286,23 @@ near 10 km/h** because `0xD2AB0` *is* the 10 km/h breakpoint record. **Not recom
 has grind #1 fixed and creep grind #2 at zero bursts** — it would trade a measured property for margin
 on quantities already at zero.
 
-🛑🛑 **A TYRE TRAP THAT WOULD MANUFACTURE "GRIND #2 AT HIGHWAY":** at highway the persistent 40–49 Hz
-**line is wheel order 3** (measured per-window order p50 **2.994**; 26–32 Hz is order 2 at **1.995**,
-n > 600). At 30.8 m/s order 3 = **44.3 Hz**, one bin from grind #2. The bursts themselves are NOT the
-order (on/off-order power ratio 6.94 in quiet windows, **0.82 inside bursts**). ⚠ And `fs_of()` is
+🛑🛑 **SUPERSEDED 2026-08-03 — BOTH ORDER FIGURES BELOW ARE ESTIMATOR TAUTOLOGIES. See the headline,
+item 1 of the corrections block.** `order = f0·CIRC/v` returns ≈3.00 *by arithmetic* whenever a
+band-limited argmax sits near the centre of 30–49.5 Hz at ~28 m/s — **and 1.995 has the same defect**
+(26–32 Hz has band centre 29 Hz; at 28–30 m/s that ratio is ≈2.0 whatever the spectrum contains), so the
+two do **not** corroborate each other; they are one tautology counted twice. Averaged-periodogram
+prominence in 30–49.5 Hz is **1.23–3.83** against a **>4** criterion, on every route/build/channel ⇒
+**there is no line there at all.** The generalised rule: a matching order is evidence only when the band
+is **wide relative to the order spacing**, or when the order is **tracked across a speed sweep**.
+✅ **What survives:** 10–16 Hz **order 1 is real** (prominence up to 79, order 1.00–1.02 per bin), and the
+general "do not mistake a wheel order for a firmware effect" warning stands — better founded, not weaker.
+Old text kept visible below rather than overwritten:
+> 🛑🛑 **A TYRE TRAP THAT WOULD MANUFACTURE "GRIND #2 AT HIGHWAY":** at highway the persistent 40–49 Hz
+> **line is wheel order 3** (measured per-window order p50 **2.994**; 26–32 Hz is order 2 at **1.995**,
+> n > 600). At 30.8 m/s order 3 = **44.3 Hz**, one bin from grind #2. The bursts themselves are NOT the
+> order (on/off-order power ratio 6.94 in quiet windows, **0.82 inside bursts**).
+
+⚠ And `fs_of()` is
 biased **+0.5–1.4% route-dependently**: the true `0x14A` rate is **100.000 Hz**, so grind #2's
 "44.9 Hz" is **44.6 Hz** and the between-route frequency spread was the instrument, not the car.
 
@@ -152,9 +319,18 @@ the cave **cannot observe 1 kHz content at all**; and **no stock writer ever cle
 `gp-0x1514` (8 accesses, all masked RMW), so a sticky latch could never clear. ✅ Separately,
 `gp-0x683c` **is** a free `.data` byte on V67+ (V67 removed its only reader; two boot loops zero it) —
 useful cave state in future, but it does not rescue the 100 Hz problem.
-⚠ **`gp-0x67ac` is OPEN and matters**: when it is 1, `FUN_0003aa2c`'s very first instruction routes
-around the branch that adds r24/r26 — **both lanes drop out of the aggregate entirely**, regardless of
-which gain arm was selected. Close it before any future r24 build.
+✅ **`gp-0x67ac` is CLOSED as of 2026-08-03 — it is provably 0 on this car, so the lanes CANNOT drop
+out.** (Was: *"OPEN and matters"*.) The mechanism is real — when it is **exactly 1** (`0x3aa3c cmp 0x1`
+→ `cmovh`; a value ≥ 2 does **not** skip), `FUN_0003aa2c` routes around the branch that adds r24/r26 and
+**both lanes leave the aggregate entirely**, regardless of arm. But it can never be 1 here: the per-slot
+role table `tp+0x5124` = `0xC4124` reads **`[0,0,5,0,5,5,0,0,0,5,0]`** and `gp-0x617c[slot]` is set to 1
+only for roles **6 or 7**, so the OR-latch never fires. ⇒ **the highway null was NOT reading a
+disconnected lane** — retired analytically rather than measured.
+🛑 **This is a CALIBRATION fact, re-checkable in one read — NOT a structural guarantee.** `build_v68_tva.py`
+now re-reads `0xC4124` every build and **STOPS** if any slot ever carries a 6 or 7; `verify_v68_image.py`
+asserts the same bytes independently. If that table ever changes, `gp-0x67ac` is live again and this
+paragraph reverts. ⚠ OPEN, not verdict-affecting: `gp-0x61a0`'s writer (search the **callers** of
+`FUN_00026c80`) and `gp-0x61e8`'s identity.
 
 ⇒ ★★★ **RECOMMENDED: KEEP V67 ON THE CAR. NO CONTROL-PATH CHANGE IS SUPPORTED.** The two real gaps are
 **(A)** 22 s of engaged-creep exposure — closed by a 5-minute parking-lot drive, not a build — and
@@ -599,18 +775,76 @@ the reported symptom.
 
 ## ✅ Built and UNFLASHED — **V68** (a MEASUREMENT build)
 
-V67's control path **byte-identical** — 39 bytes differ in `[0x13000,0x100000)`, all cave + MAIN CRC;
-orchestrator-verified from the image. Cave 64/68. Image SHA `704ece2e…`, RWD SHA `387cc0be…`.
-Probe, decoded from the built cave bytes: **bit6** `gp-0x6806` (the gate, kept) · **bit5** `gp-0x671d`
-(the masking risk, kept) · **bit4 → `gp-0x6ac0 >= 400`**, the rate LERP's own inner axis at its first
-breakpoint, replacing V67's `gp-0x671a` rung which read **0.000%** · **bit3 always 1**.
-★★ **bit3 is a BUILD FINGERPRINT** — V67 has it clear by construction, V68 set, so the two payload sets
-are structurally disjoint and a log now identifies its own firmware without the `.rwd` filename. That
-closes the probe audit's *"I cannot tell V66 from V67 from this log"* caveat.
-★ bit4 measures **inside the ECU** the one structural claim everything else rests on — where `gp-0x6ac0`
-sits relative to 400 counts (84.9 deg/s) — which until now was only inferred through a bus scale chain,
-the same chain I got wrong once this session.
-⇒ **V67 remains the recommended build on the car.** V68 buys measurement, not behaviour.
+🛑🛑 **THREE `.rwd` FILES CARRY A `V68` PREFIX. ONLY ONE IS LIVE. THE LIVE ONE CONTAINS `fsm67df`.**
+The other two are renamed **`SUPERSEDED-DO-NOT-FLASH-…`** (`-dropout67ac-` and `-rateaxisprobe-`); both
+were built this session and **neither was ever flashed**. **Confirm `fsm67df` in the filename before any
+flash.** This is exactly the confusion the `bit3` fingerprint catches *after* a drive — prevent it before.
+
+**⭐ REVISED 2026-08-03. V67's control path byte-identical — V68 vs V67 is EIGHT bytes: 4 cave + 4 MAIN
+CRC, zero outside the cave span.** Cave **60/68**, 8 spare. Image SHA `9106044a…`, RWD SHA `332c2cee…`
+(source `_v67_plain_image.bin` `5e01bcc4…`).
+`39990-TVA,A160-V68-…-LKASGATED-fsm67df-detector671a-can330byte4-0x13000-0x100000.rwd`
+
+**Probe, re-decoded from the READBACK bytes** — a **two-stage sensitivity ladder on Honda's own 1 kHz
+oscillation detector**, which the headline shows is a **band-pass peaking at ~61 Hz**:
+
+| bit | cell | test | meaning |
+|---|---|---|---|
+| 7 | — | const 1 | liveness (0 ⇒ cave did not fire ⇒ VOID) |
+| 6 | `gp-0x6806` | `!= 0` | **the LKAS gate — unchanged from V67** |
+| 5 | **`gp-0x67df`** | **`!= 0`** | detector FSM has **left neutral** ⇒ `\|gp-0x6c2c\|` crossed ±12800 — **no reversal required** |
+| 4 | **`gp-0x671a`** | **`>= 1`** | …**and then reversed** at least once |
+| 3 | — | const 1 | **build fingerprint** (V67 clear by construction) |
+
+★★★ **THIS IS THE KIT'S ONLY ABOVE-50-Hz-CAPABLE INSTRUMENT.** CAN is Nyquist 50.00 and the IMU 50.51;
+`gp-0x671a`/`gp-0x67df` integrate **1 kHz** information and both hold ≥50 ms, so the **existing** 100 Hz
+hook reads them. **No new cave, no code on the 1 kHz path, no new RAM audit** — the same risk class as
+every flight since V55.
+★ **Why `>= 1` and not `>= 5`:** V67 measured `gp-0x671a >= 5` at **0.000% over 186,321 frames on two
+routes**. *"Never reached 5"* is not *"never incremented"* — and `gp-0x671a` **passes through 1,2,3,4**
+(⭐ verified in Ghidra at `0x429DA-0x429F2`). The information is at the **bottom** of the ladder, so this
+extends **downward**: `gp-0x67df` fires on events too brief or too one-sided to produce a reversal.
+★ **`bit5` set with `bit4` clear is the new information this build buys.** ⚠ `bit4 ⇒ bit5` is an
+**expectation, not an encoding guarantee** — the cells are sampled on one tick but cleared by different
+rules, so `bit4 && !bit5` can occur at a clear boundary. The decoder **reports its rate** rather than
+asserting it away.
+⚠ **Both bits give NEITHER amplitude NOR frequency** — detectors, not spectrometers. They deliver
+above-50-Hz *information*, not an above-50-Hz *waveform*.
+🛑 **Latch semantics — two cases, do not collapse them.** Below **~10 km/h** (`gp-0x6a5e` < `0xC62DE` =
+640, at 64 counts/km/h) the CEIL latch **never releases** and duty saturates; at road speed it clears
+**5.0 s** (`0xC6270` = 5000 ticks) after the last reversal. Sub-CEIL counts clear on the **50-tick dwell**
+(`0xC64DD`) ⇒ ~50 ms ⇒ ~5 frames at 100 Hz, so **brief events are under-counted**. Duty is a **hold-time**
+statistic, not an event rate.
+⚠ **Encoding trap, recorded because it nearly bit:** the two rungs sit on **opposite displacement
+parities** — `gp-0x67df` disp16 `0x9821` **ODD** (opcode `0x3D`, hw1 `a437`), `gp-0x671a` disp16 `0x98E6`
+**EVEN** (opcode `0x3C`, hw1 `8437`). An encoder or scan assuming one parity silently addresses the
+**neighbouring cell** with every other field perfect. ✅ Both emitted words are **flown, not derived**:
+`a4372198` is byte-identical to V64's cave word at `0xC4B4C` (route 35), `8437e798` to V67's at `0xC4B50`
+(routes 47/4a). ⚠ Neither has a byte-identical instance in **stock** — every real reader targets a
+different destination register; what matches in stock is **hw2**, the displacement including its parity bit.
+
+**Verification, all green:** CAL block `[0xC6000,0xC6FFC)` **0 differing bytes** + CAL CRC trailer
+unchanged ⇒ **GATE 2 UN-ENGAGED** · **GATE 1 vacuous** (cave stores = 1, the CAN payload byte; both rungs
+`ld.bu` only) · **49/49 bootloader + 50/50 full CRC** on image and readback · RWD round-trips
+byte-identical across `[0x13000,0x100000)` · **cave re-decoded from the readback**, 19 instructions ·
+`verify_v68_image.py` **35/35** · `diff_build_vs_stock.py` v68/v67 exit 0, `--self-test` exit 1.
+
+★ **`gp-0x67ac` was CONSIDERED AND REJECTED — it is provably 0, so there is nothing to measure.** The
+per-slot role table `tp+0x5124` = `0xC4124` reads **`[0,0,5,0,5,5,0,0,0,5,0]`** (⭐ orchestrator-verified
+from the image bytes, and independently by the builder); `gp-0x617c[slot]` is set to 1 only for roles
+**6 or 7**, so the OR-latch never fires ⇒ `gp-0x67ac` ≡ 0 ⇒ **the r24/r26 lanes CANNOT silently drop out,
+so the highway null was NOT reading a disconnected lane.** That doubt is retired **analytically**, which
+is better than measuring it. 🛑 This rests on **calibration bytes, not a structural guarantee** — the
+build now **re-reads the table every time and STOPS** if any slot ever carries a 6 or 7, and a second
+assert forbids `gp-0x67ac` from re-entering `CELLS`, citing that probing a proven zero is the error V68's
+**original** bit4 made (`gp-0x6ac0 >= 400`, pre-registered as a flat zero, measured **0.000%** over
+186,321 frames — a wasted rung, now reclaimed).
+⚠ **OPEN residuals:** `gp-0x61a0`'s writer (search the **callers** of `FUN_00026c80`, not the function)
+and `gp-0x61e8`'s identity — neither affects the verdict.
+
+⇒ ★★★ **RECOMMENDED NEXT FLASH: V68, then DRIVE HIGHWAY WITH LKAS OFF.** V67's control path is
+untouched, so **grind #1 and the creep grind #2 keep their measured fixes**; V68 buys the one measurement
+nothing else in this kit can make. Decoder `rlog-tools/decode_v68_probe.py`.
 
 ---
 
@@ -889,13 +1123,32 @@ either arm in any qualifying speed bin. Everything above is "any hands", matched
 
 An earlier pass this session told the operator V63 had **"zero manual-feel cost by construction"**. **That was too strong and is withdrawn.** `FUN_000428d4`'s output stage (`0x429A0`–`0x42A12`, orchestrator-verified, cals byte-read) holds the counter:
 ```
-0x429A8  cmp r15,r12 / bh   ; cal 0xC62DE = 640 > voted DRIVER TORQUE gp-0x6a5e -> RELOAD hold timer
+0x429A8  cmp r15,r12 / bh   ; cal 0xC62DE = 640 > voted VEHICLE SPEED gp-0x6a5e -> RELOAD hold timer
 0x429AC  cmp r0,r14  / bne  ; revcount != 0                                     -> RELOAD hold timer
 0x429CA  reload = cal 0xC6270 = 5000 ticks = 5.0 s @ 1 kHz
 0x429EA  once held >= CEIL, the output is RE-PINNED TO CEIL every tick
 ```
-The only way down is **5000 consecutive ticks with driver torque ≥ 640 AND no reversals** — and driver torque dips below 640 on every direction change, so the timer reloads constantly.
-⇒ **Accurate claim: a drive that never oscillates never sees the raised gain** (a real scope reduction against V62's always-on doubling) — **but once a single 5-reversal burst occurs, the raised gain latches on and carries into subsequent manual steering.** V63/V64 is *"V62, but only after an oscillation has happened"*.
+🛑🛑 **LABEL CORRECTED 2026-08-03 — `gp-0x6a5e` is voted VEHICLE SPEED, not driver torque.** Settled
+2026-07-29 by the voter `FUN_00041eec` (`memory/reference-accord-gp6a5e-is-speed-reclassifies-v44-v47.md`);
+that is the same reclassification that invalidated V44/V47's rationale. The line above said "DRIVER
+TORQUE" and was wrong. 🛑 **The label is wrong; the CONSEQUENCE is under verification** — a tracer is
+re-reading the disassembly independently. Nothing below is a settled replacement.
+
+> ⚠ **SUPERSEDED, left visible rather than overwritten (the old text, verbatim):**
+> *"The only way down is **5000 consecutive ticks with driver torque ≥ 640 AND no reversals** — and
+> driver torque dips below 640 on every direction change, so the timer reloads constantly.
+> ⇒ **Accurate claim: a drive that never oscillates never sees the raised gain** (a real scope
+> reduction against V62's always-on doubling) — **but once a single 5-reversal burst occurs, the
+> raised gain latches on and carries into subsequent manual steering.** V63/V64 is "V62, but only
+> after an oscillation has happened"."*
+>
+> **Why it does not survive the relabel:** the "dips below 640 on every direction change" step was
+> load-bearing and was a claim about *driver torque*. **Speed does not dip at every direction change**,
+> and 640 counts is **~10 km/h** at the kit's 64.0625 counts/km-h. So the un-latch condition reads as
+> *5 s above ~10 km/h with no reversals* — a condition ordinary driving meets constantly, which would
+> make the latch **far less sticky**, not more. ⇒ the stickiness conclusion, and the "carries into
+> subsequent manual steering" scope argument that rests on it, are **both open**. Do not lean on
+> either reading until the tracer's result lands.
 ✅ **And the latch is PROTECTIVE.** A gain switching per-tick with the reversals would modulate **at the mode frequency** — a parametric pump, the exact failure mode V58/V59/V60 spent three builds chasing. Honda's hold prevents that; a per-tick-gated damper would be actively dangerous.
 ⚠ Cell correction: the per-tick zeroing at `0x42906` is on **`gp-0x357c`** (raw count), not `gp-0x671a`.
 
