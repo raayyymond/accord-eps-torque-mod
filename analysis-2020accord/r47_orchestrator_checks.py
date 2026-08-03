@@ -7,14 +7,16 @@ checkable rather than asserted. Deliberately small and self-contained: it duplic
 
 🛑 THE HEADLINE IT EXISTS TO SUPPORT: the operator's new HIGHWAY symptom shows NO rate-lane dose
 response, and I had predicted the opposite from arithmetic. The enabler was route `2b` (V58, Kd = 1.00x),
-which carries 227 s of highway-engaged driving that two sessions had assumed did not exist.
+which carries 227 s of highway-engaged driving that three sessions had assumed did not exist -- hidden by
+a hardcoded `_r31_common.SEGS_2B = [0,1,2,11,12,13]` that drops its highway leg (segments 3-10).
 
 Sections, each runnable alone:
     exposure   highway/creep seconds per cached route -- finds the missing Kd=1 highway baseline
     creep      the creep dose ladder: grind #1 (18-22 Hz) and grind #2 bursts (40-49 Hz), by engagement
     highway    the three-dose highway comparison + split-half null
     modeid     peak frequency + prominence of the loudest windows, creep vs highway
-    imurate    IMU vs CAN sample rate -- the >50 Hz blindness both instruments share
+    imurate    IMU vs CAN sample rate -- the >50 Hz blindness both VIBRATION instruments share
+               (the comma MICROPHONE has no ceiling; see r47_microphone_test.py)
 
 Usage:  python r47_orchestrator_checks.py [section ...]      (default: all)
 
@@ -26,8 +28,13 @@ METHOD RULES, each of which has retracted a claim in this kit:
   ENVELOPE   p99 of the analytic band envelope per window, then p90 or MAX across windows -- the
              phenomenon is bursty, so mean Welch power is the wrong statistic.
   EXPOSURE   seconds are printed next to every count. A burst census without exposure is meaningless.
-  ALIAS      fs ~ 100.5 Hz => Nyquist ~50 Hz, so 44.9 and ~55.6 Hz are ONE observation. Common mode
-             across builds, so it cannot affect a regression test -- only the identification.
+  ALIAS      fs is 100.000 Hz EXACTLY => Nyquist 50.00, so 44.6 and ~55.4 Hz are ONE observation.
+             Common mode across builds, so it cannot affect a regression test -- only the
+             identification. NOTE `_grind2_lib.fs_of()` is biased +0.5-1.4% route-dependently, which
+             is why grind #2 was long quoted as "44.9 Hz"; the between-route spread was the instrument.
+  ORDERS     At highway, 40-49 Hz is WHEEL ORDER 3 and 10-16 Hz is ORDER 1 (measured order p50 2.994
+             and 1.995). At 30.8 m/s order 3 = 44.3 Hz, ONE BIN from grind #2 -- peak-finding in that
+             band on a highway log will "find grind #2" and it will be a tyre.
 """
 from __future__ import annotations
 
@@ -262,10 +269,18 @@ def sec_imurate():
         d = dict(np.load(p))
         da = np.diff(d["at"])
         print(f"  {Path(p).name:34s} {len(d['at']):8d} {1 / np.mean(da):9.3f} {0.5 / np.mean(da):9.2f}")
-    print("\n  CAN 0x14A/0x18F grid: ~100.5 Hz => Nyquist 50.2 Hz")
-    print("  🛑 The IMU gives NO headroom over CAN. If the felt highway vibration is above ~50 Hz,")
-    print("     nothing in this kit can currently see it -- and IMU/CAN frequency agreement carries")
-    print("     NO information about the 44.9 vs 55.6 Hz alias, because the grids are 0.5 Hz apart.")
+    print("\n  CAN 0x14A/0x18F grid: 100.000 Hz EXACTLY => Nyquist 50.00 Hz")
+    print("  🛑 dt MEAN vs MEDIAN matters here: ~1% of IMU samples are DROPPED, so the mean reads")
+    print("     ~100.0 Hz while the true ODR is 101.02 (median 9.899 ms). Settled by a lattice fit")
+    print("     (77 us median-seeded vs 2889 us forced to 100.03) and a synthetic fold test in which")
+    print("     7 of 7 known tones fold per 101.02 Hz. => Nyquist 50.51, i.e. 0.51 Hz over CAN.")
+    print("  🛑 That headroom is NOT usable, and headroom is the wrong quantity anyway: the alias")
+    print("     discriminant is a 1.021 Hz apparent-peak difference (55.6 Hz shows at 44.400 on CAN")
+    print("     and 45.421 on the IMU) and the measured sem is 0.856 where <<0.34 is needed.")
+    print("     Resolving it needs a log at a different IMU ODR (208/416 Hz), not more of this data.")
+    print("  ★ THE MICROPHONE HAS NO CEILING (soundPressure, audio at 16-48 kHz, level at 10.000 Hz)")
+    print("     and a validated positive control: 4.14x un-weighted p95 on the creep grind #2.")
+    print("     See analysis-2020accord/r47_microphone_test.py.")
 
 
 SECTIONS = {"exposure": sec_exposure, "creep": sec_creep, "highway": sec_highway,

@@ -25,7 +25,14 @@ LKAS-off demo + unrelated highway), plus a cross-build re-analysis of `2c`/`31`/
 - ✅ **It is a real mechanical vibration** — visible on the **comma device's IMU**, a sensor sharing no
   path with the EPS. First use of the IMU in this kit. ⚠ An IMU detection is only interpretable
   alongside its **positive control** (grind #1 visible on the same sensor).
-- 🛑 **THE FREQUENCY IS ALIASED AND UNRESOLVED.** CAN is a ~100.5 Hz grid ⇒ Nyquist 50 Hz, so **44.9 Hz
+- 🛑 **THE FREQUENCY IS ALIASED AND UNRESOLVED.** ⚠ **Numbers corrected 2026-08-03:** the CAN grid is
+  **100.000 Hz exactly** (Nyquist **50.00**) — `_grind2_lib.fs_of()` is biased +0.5–1.4% route-
+  dependently, so the frequency quoted below as 44.9 Hz is really **44.6 Hz** and the between-route
+  spread was the instrument, not the car. The comma IMU is **101.02 Hz** (Nyquist 50.51), which is
+  **0.51 Hz** of headroom and not usable; the alias discriminant is a **1.021 Hz** apparent-peak
+  difference against a measured sem of **0.856**, so resolving it needs a log at a different IMU ODR
+  (208/416 Hz). ✅ The comma **MICROPHONE** has no ceiling and is validated at **4.14×** on this very
+  symptom — see [[accord-both-instruments-blind-above-50hz]]. Original text follows. CAN is a ~100.5 Hz grid ⇒ Nyquist 50 Hz, so **44.9 Hz
   and ~55.6 Hz are the same observation.** The IMU's median rate is **~101 Hz** — only 0.5 Hz from CAN —
   so **IMU/CAN frequency agreement carries NO information about the alias** and must never be quoted as
   if it did. A dedicated alias test came back **underpowered** (slope −1.16 [−4.15, 2.26]).

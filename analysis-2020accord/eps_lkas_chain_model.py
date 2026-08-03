@@ -2038,9 +2038,21 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     48-1062x and envelope 2000-4000; the highway population runs f0 45-47 Hz at prominence ~6x and
     envelope 155-370 => NOT grind #2. What IS real at highway is BROADBAND: 21 maneuvers vs 21
     MATCHED straight-line controls give 6-9 Hz 2.78x and 40-49 Hz 2.13x -- 6-9 rises MORE.
-    🛑 BOTH INSTRUMENTS ARE BLIND ABOVE ~50 Hz: CAN Nyquist 50.2, comma IMU 49.97-50.26 (NO headroom
-    over CAN), so every highway null is silent about a >50 Hz vibration, and IMU/CAN frequency
-    agreement carries NO information about the 44.9 vs 55.6 Hz alias.
+    🛑 BOTH VIBRATION INSTRUMENTS ARE BLIND ABOVE ~50 Hz: CAN is 100.000 Hz EXACTLY (Nyquist 50.00)
+    and the comma IMU is 101.02 Hz (Nyquist 50.51) -- 0.51 Hz of headroom, not usable. (An earlier
+    figure of 99.9-100.5 Hz for the IMU came from the dt MEAN; ~1% of samples are dropped, so use the
+    MEDIAN. Settled by a lattice fit, 77 us vs 2889 us, and a synthetic fold test where 7 of 7 known
+    tones fold per 101.02 Hz.) ⇒ every highway null on THESE channels is silent about a >50 Hz event,
+    and IMU/CAN agreement carries NO information about the alias -- the discriminant is a 1.021 Hz
+    apparent-peak difference against a measured sem of 0.856, so it needs a log at a different IMU
+    ODR (208/416 Hz).
+    ✅ THE COMMA MICROPHONE HAS NO CEILING and is validated: `soundPressure` (audio at 16-48 kHz,
+    level at 10.000 Hz) reads 4.14x un-weighted p95 / +9.7 dB(A) on the creep grind #2, and ~1.0x on
+    highway manoeuvres -- on V67 AND on a stock-Kd build. 🛑 A-weighting is the trap (-30 dB at 50 Hz):
+    use the UN-weighted channel; un-weighted-up with A-weighted-flat IS the low-frequency signature.
+    ⚠ Also: `_grind2_lib.fs_of()` is biased +0.5-1.4% route-dependently, so grind #2's long-quoted
+    "44.9 Hz" is 44.6 Hz. And at highway 40-49 Hz is WHEEL ORDER 3, 10-16 Hz is ORDER 1 -- peak-finding
+    in 40-49 on a highway log finds a tyre, not the mode.
     ⇒ KEEP V67. No control-path change is supported by this evidence.
     Reproduce: analysis-2020accord/r47_orchestrator_checks.py.
 

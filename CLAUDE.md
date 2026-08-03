@@ -24,15 +24,22 @@ an already-flashed, already-falsified lever because the result was buried in pro
    disengaged arm **1.055** ⇒ suppression in ONE arm only); **creep grind #2 ELIMINATED** (0 bursts vs
    Kd=2's 24, max 84 vs 1831). 🛑 Manual arm solid (P(0)=0.020); **engaged-creep arm UNRESOLVED — 22 s,
    P(0)=0.35.** Flight-clean, `ST==4` 0/150,327. 🛑🛑 **The operator's new HIGHWAY symptom is NOT the
-   rate lane** — three-dose highway comparison is **null** (0.98 / 0.77 vs a split-half null of
-   [0.53,1.86], **zero bursts in ~1,400 s**), and the highway line sits at prominence **~6×** against
-   the creep grind #2's **48–1062×** ⇒ a different phenomenon. **An arithmetically-correct prediction
-   of mine (V67 delivers 2.44× at highway) was REFUTED and withdrawn.** ⇒ **KEEP V67; no control-path
-   change is supported.** ★★ **r24's gain is a two-axis SPEED × RATE surface and its rate axis is
-   DEAD** — all three symptom populations sit in the flat `[0,400]` segment; only SPEED can separate,
-   and a flat arm cannot fix two operating points at once. 🛑 **Both CAN and the comma IMU are blind
-   above ~50 Hz** (Nyquist 50.2 vs 49.97–50.26 — no headroom), so a highway null above 50 Hz is
-   *silence, not absence*. 🛑 **Check whether the data already exists before concluding it doesn't** —
+   rate lane** — three-dose highway comparison is **null**: 40–49 Hz **0.970 [0.787, 1.154]** and
+   **0.938 [0.764, 1.184]** vs a split-half null of **[0.73, 1.37]**, and the **corpus-max highway
+   envelope is on the STOCK Kd=1.00 lane**. ✅ Positive control: 18–22 Hz **is** suppressed at highway
+   on Kd=2 (**0.509 [0.39, 0.92]**), so the 40–49 null is real, not insensitive. ⚠ 10–16 Hz is **wheel
+   order 1**, not a dose effect. **An arithmetically-correct prediction of mine (V67 delivers 2.44× at
+   highway) was REFUTED and withdrawn.** ⇒ **KEEP V67; no control-path change is supported.**
+   ★★ **r24's gain is a two-axis SPEED × RATE surface**, and the **RATE axis IS usable** — grind #1
+   (~603) and creep grind #2 (~1206) sit at different points on the `[400,1400]` rolloff, highway
+   (~141–198) is flat. 🛑 My *"the rate axis is arithmetically dead"* and *"bus = 8 × deg/s"* are
+   **RETRACTED**: the bus field IS deg/s (slope 0.95–1.00, r ≥ 0.985 vs the differentiated angle), so
+   V67's build note was **correct** (LERP 2622 ⇒ exactly 2.00×). A flat arm still cannot fix two
+   operating points at once. 🛑 **Both CAN and the comma IMU are blind
+   above ~50 Hz** (CAN **100.000 Hz exactly** ⇒ Nyquist **50.00**; IMU **101.02** ⇒ **50.51** — 0.51 Hz
+   of headroom, not usable), so a highway null above 50 Hz is *silence, not absence*. ★ **The comma's
+   MICROPHONE has NO ceiling** and a validated positive control (**4.14×** on grind #2) — it also reads
+   ~1.0× at highway, on V67 **and** on a stock-Kd build. 🛑 **Check whether the data already exists before concluding it doesn't** —
    route `2b` held 227 s of the "missing" Kd=1 highway baseline.
    (predecessor: `HANDOFF-2026-08-01-grind2-is-v62s-own-fix-at-high-frequency.md` — ★★★★ **GRIND #2 IS
    V62's OWN FIX SEEN AT HIGH FREQUENCY.** Corner-conditioned tail maxima, Kd=1x vs Kd=2x, 219 blocks:

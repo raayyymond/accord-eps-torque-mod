@@ -219,7 +219,9 @@ selectivity matches the operator's own description of which one shakes the car.*
 **Grind #2 itself:** ~**44.9 Hz**, sd 5.4, n = 43, **Q ≈ 37**; **NOT a harmonic** of grind #1 (slope
 0.173 [−0.92, 1.59] against the 2.0 a harmonic needs); during bursts the IMU carries **20–50× its own
 baseline**, ρ 0.23–0.55 with the CAN band at p ≪ 1e-70.
-🛑 **Its frequency is ALIASED and unresolved** — CAN is a ~100.5 Hz grid ⇒ 44.9 and ~55.6 Hz are the
+🛑 **Its frequency is ALIASED and unresolved** — ⚠ *numbers superseded 2026-08-03: the grid is 100.000 Hz
+exactly, `fs_of()` was biased +0.5–1.4%, so this line is really **44.6 Hz**; see the headline.* —
+CAN is a ~100.5 Hz grid ⇒ 44.9 and ~55.6 Hz are the
 same observation; the IMU's ~101 Hz median is only 0.5 Hz away so **IMU/CAN agreement says nothing
 about the alias**. It does not block the fix.
 
