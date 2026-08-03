@@ -19,7 +19,85 @@ review** — check it before proposing any calibration edit) and the latest hand
 
 ★★★★ **THE HEADLINE, 2026-08-03 (LATEST): THE >50 Hz BLINDNESS WAS OURS, NOT THE CAR'S. HONDA RUNS A
 1 kHz OSCILLATION DETECTOR WHOSE INPUT IS A BAND-PASS PEAKING AT ~61 Hz — AND V67 HAS BEEN READING IT
-ALL ALONG, AT THE WRONG THRESHOLD.**
+ALL ALONG, AT THE WRONG THRESHOLD. ★★★ AND THE MICROPHONE INDEPENDENTLY PLACES GRIND #2's ENERGY IN
+THAT SAME BAND — FROM DATA ALREADY ON DISK.**
+
+★★★ **THE ACOUSTIC INVERSION — the first DATA-BASED evidence of >50 Hz content in this kit, and it
+needed no transfer model.** `soundPressure` and `soundPressureWeighted` are a **two-point filter bank**:
+A-weighting is **−32.4 dB at 44.6 Hz** but only **−19.1 dB at 100 Hz**, so the *ratio* of the two channels
+reports where energy sits even though **neither channel can name a frequency**. On the 10 demonstrated
+creep grind #2 bursts, the excess carries a mean A-weight of **4.28× [2.28, 9.86]** that of a pure
+44.6 Hz excess ⇒ **the acoustic excess CANNOT be entirely at 40–49 Hz.** ⭐ Inverted against the IEC
+61672 A-curve (verified −30.27 dB @ 50 Hz / −19.14 @ 100 vs the standard −30.2 / −19.1):
+
+| mean A-weight vs W(44.6 Hz) | effective centroid |
+|---|---|
+| **4.28×** (point) | **63.5 Hz** |
+| 2.28× (CI low) | 54.2 Hz |
+| 9.86× (CI high) | 79.6 Hz |
+
+🛑 **THE RATIO IS A POWER RATIO, NOT AN AMPLITUDE RATIO.** An orchestrator pass inverted it as amplitude
+and published **95.5 Hz [66.8, 170.5]** — **WRONG, and retracted.** 95.5 Hz would require a power ratio of
+**18.29×**, not 4.28×. Settled by an independent consistency check: the same data's *"16.2% of energy at
+100 Hz"* decomposition gives a mean power weight of **4.277×**, reproducing 4.28 exactly, and that same
+mixture is only **2.068×** in amplitude terms. **Anyone re-deriving this must square the weights.**
+**The whole interval, 54–80 Hz, is still ABOVE the 50.00/50.51 Hz Nyquist ceiling** — margin **54.2 Hz**,
+not 66.8 — and a pure 44.6 Hz excess would read **1.00× by construction**, excluded (CI low 2.28 > 1).
+★ **And the corrected number is TIGHTER corroboration, not weaker: 63.5 Hz sits essentially ON
+`gp-0x6c2c`'s band-pass peak of 61 Hz.** Robust to the burst statistic (5.64 p90 / 3.07
+median / 3.31 max); the mic fires on **8 of 10** bursts and tracks torsion-bar magnitude.
+🛑🛑 **THE LIMIT, AT FULL STRENGTH: this is a MEAN-WEIGHT inversion. It proves the excess is not all
+sub-50 Hz; it does NOT LOCATE the energy.** Any mixture with the same mean weight fits equally well —
+**63.5 Hz is an effective centroid, not a line.** ⚠ The second harmonic of 44.6 Hz is **89.2 Hz**, which a
+44.6/89.2 mixture could produce; that reading (a contact nonlinearity) is **BELIEF, not measurement.**
+⚠ **Tyre scrub is NOT eliminated** — controls match the exact (speed, effort, |rate|) cell and the
+partial correlation survives it, but scrub intensity is driven by **rack force**, which is not among the
+controlled covariates.
+⇒ ★★ **THIS CORROBORATES V68 FROM A COMPLETELY DIFFERENT CHANNEL, WITH NO SHARED ASSUMPTION.** The
+acoustic centroid **63.5 Hz [54, 80]** sits essentially **ON** `gp-0x6c2c`'s band-pass peak of **61 Hz**
+(>90% of its 21 Hz gain out to ~180 Hz) — the detector V68's probe now reads. Firmware arithmetic and
+cabin audio, independently and with no shared assumption, point at the same band.
+🛑 **AND THE MICROPHONE READ 1.061 ON GRIND #1 — INSIDE ITS NULL — on a large, real, measured
+oscillation.** The cleanest demonstration in the corpus that **a mic null does NOT mean "no vibration."**
+⇒ **a mic POSITIVE is informative (and via the A/un-weighted contrast carries genuine spectral
+information); a mic NEGATIVE on a TACTILE event carries almost nothing.** Positive control replicated at
+**4.59× [2.95, 8.31]** (vs 4.14× on record) by a different estimator and control design.
+
+★★ **GRIND #1 DOES NOT REACH THE CHASSIS; GRIND #2 DOES — settled by two independent estimators.**
+Bar→chassis **coherence** (scale-free, uses no level at all): grind #2 **0.82–0.88 on EVERY axis** vs
+0.30–0.61 in matched controls; **grind #1, 48 events, NO contrast on ANY axis** — every one inside its own
+control. Amplitude agrees: grind #2 burst/control = bar **77.1** · `ay` **58.8** · `gz` **36.2** · `gy`
+21.3 · `ax` 20.1 · `az` 19.2 · `gx` 11.4 · mic 4.59, all clearing their nulls; grind #1 = bar **12.87**
+but **every IMU axis inside its null**. ⇒ **grind #1 is a TORSIONAL COLUMN MODE that does not reach the
+body — which is exactly why the IMU never showed its reduction.** ⚠ BELIEF: grind #2's axis ordering
+(lateral ≫ roll > pitch ≈ vertical ≈ longitudinal ≫ yaw) reads as a **lateral rack/subframe force with a
+roll couple** — translational-dominant with a rotational partner; **not** wheel-hop, **not** yaw.
+
+⚠ **THE HIGHWAY ENERGY BUDGET CANNOT BEAR THE WEIGHT — but the bound is now quantified.**
+κ = (fractional acoustic excess)/(fractional mechanical excess) = **0.0091 [0.0059, 0.0159]**. The
+κ-predicted acoustic signal at highway sits **2–9× BELOW the microphone's own highway floor** on every
+route (r2b 6× · r37 9× · r3b 4× · r47 2×) ⇒ **a highway acoustic null is UNINFORMATIVE**, quantified
+rather than asserted. 🛑 The joint detector is **MIC-LIMITED** — the mic is the minimum channel in **97%**
+of burst blocks ⇒ **"joint" buys SPECIFICITY, NOT SENSITIVITY.**
+⚠ **A real tri-channel coincidence DOES exist at highway** (`ay` 1.347/1.866/1.372/1.437, `gz` ~1.35–1.61,
+sound 2/4 routes) **but it is DOSE-INDEPENDENT** and the stock Kd = 1.00 lane is not the lowest ⇒ it is the
+already-characterised **manoeuvre-loading tail. THIS DOES NOT REVIVE THE RATE LANE.**
+
+🛑 **TWO INSTRUMENT CONSTANTS, both new, both will bite a future session.**
+1. **`1/median(dt)` IS THE WRONG CAN RATE.** Frames are timestamped **per log packet**, so on r47 **12% of
+   `dt` exceed 15 ms and p10 is exactly 0**; `median(dt)` reads **100.76 Hz** on a grid that is 100.000 Hz
+   to 2e-5. **Use the mean rate + an index lattice.** Recorded timestamps wander from it by up to
+   **7.5–10.3 ms** — that is the CAN alignment uncertainty.
+2. **The microphone pipeline delay is 115 ms** (measured against road impacts, 35 segments, peak ρ 0.512).
+   `micd.py` alone predicts 75 ms; the extra **~40 ms is audio-capture buffering.** Subtract it from any
+   sound↔CAN alignment.
+   ⚠ Accel and gyro are **separate streams with separate hardware-timestamp offsets** ⇒ **±50 ms is the
+   empirical lead/lag floor, and NO physical ordering between bar, chassis and sound is resolvable** —
+   true transit is 0.2 ms structure-borne / ~3 ms airborne, **30–500× below the finest instrument step.**
+   The bar→chassis discrimination is carried by **coherence**, not by timing.
+Reproduce all of the above: `analysis-2020accord/grind2_trichannel.py`.
+
+---
 
 `FUN_000428d4` runs in **task 1 (1 kHz, by construction** — TCB table `0xbb858`, mod-100 divider
 `0x14be4`, `syscall8(0)` unconditional**)**. Its input `gp-0x6c2c` (`FUN_00041464` @`0x4184E`, K1=37>>7,
