@@ -161,45 +161,102 @@ THE PAYLOAD -- 0x14A byte4 bits 7:3
     bit3 = 1                    *** NEW *** the V68 BUILD-CLASS MARKER. Constant.
     bits 2:0                    stock STEER_SENSOR_STATUS, preserved.
 
-🛑 WHAT THE STICKY / HIGH-FREQUENCY RUNG WOULD HAVE BEEN, AND WHY IT IS NOT HERE
----------------------------------------------------------------------------------
+🛑🛑 WHAT THE STICKY / HIGH-FREQUENCY RUNG WOULD HAVE BEEN, AND WHY IT IS NOT HERE
+-----------------------------------------------------------------------------------
 The brief asked for a latching rung sampling inside the 1 kHz task, to break the ~50 Hz aliasing
 barrier (CAN 100.5 Hz, comma IMU 99.9-100.5 Hz; grind #2's "44.9 Hz" is itself an alias of ~55.6).
-**It is not built, and the reason is not caution -- it is arithmetic, and three independent walls.**
+**It is not built, and the reason is not caution. FOUR independent walls, and the first one is
+fatal on its own.**
 
+  0. 🛑🛑 **THE HOOK RUNS AT 100 Hz, NOT 1 kHz. THE PREMISE IS FALSE.** Traced end to end this
+     session: `0x55C0E` sits in `FUN_00055a98`, the CAN-0x14A builder (`movea 0x14a,r0,r8`
+     @0x55C14). Its ONLY pointer image-wide is at `0xB72D4` = index 10 of handler table
+     `PTR_FUN_000b72ac`. Message-10's pending bit is set only by `FUN_0001eaa6(0xa)` @`0x5560C` in
+     `FUN_00055540`, whose sole caller is `FUN_00022ca0` @`0x234C4` = **TCB idx-4 = task 5 =
+     `c % 10 == 4` = 100 Hz.** The inner "frame due" test at `0x555F2-0x5560C` is a one-shot
+     power-on suppression (down-counter `gp-0x2f68` with NO reload path), so steady state is a
+     clean 100 Hz.
+     ⇒ **A latch at this hook cannot sample faster than the frame it is written into**, so it
+     degenerates to a plain sample no matter how many bytes or RAM cells it is given.
+     ⇒ 🛑 **NO PROBE ON THIS HOOK CAN EVER BREAK THE ALIASING BARRIER.** Doing so needs a SECOND
+     hook inside task 1, which is new code on the 1 kHz path and carries the DTC-0x18 cadence
+     watchdog's timing budget. That is a different and much larger decision.
+     ⚠ **V67's docstring says "the 1 kHz TX path". THAT IS WRONG** and is corrected here; the
+     `accord-can-tx-100hz-base-tick-and-gateway` memory was right all along.
   1. **BUDGET. It does not fit, and the cave must not grow.** V55's proven extent is 68 bytes and
      has flown eight times (V55/V57/V58/V59/V64/V65/V66/V67). Fixed overhead -- liveness, the
      payload read-modify-write, the displaced hook instruction, `jmp [lp]` -- is 24 bytes. Keeping
      bit6 and bit5 costs 12 bytes each. **That leaves 20 bytes.** A latch rung on `gp-0x4f62`
      needs, at minimum: `ld.h` (4) + abs via `cmp`/`bge`/`subr` (6) + a threshold compare (4+2+2)
      + the bit `movea` (4) = **22 bytes before any latch machinery at all**, and a genuine latch
-     adds a RAM-cell load, a store, and a clear -- 38 bytes more. Growing the cave past 68 is
-     precisely this kit's only bricking class (V24, V27, V48B).
+     adds a RAM-cell load, a store and a clear -- 42 bytes total, 2.1x the space. Growing the cave
+     past 68 is precisely this kit's only bricking class (V24, V27, V48B).
   2. **IT IS NOT FREQUENCY-SELECTIVE, so it would not answer the question.** `gp-0x4f62` is read
-     `ld.h` at 6 sites -- a SIGNED halfword, byte-verified -- and it is the raw 4-sample finite
-     difference. A scalar threshold on |it| is an amplitude detector, not a band detector. Its
-     low-frequency content (driver steering) already measures 123-839 counts, so any threshold that
-     ignores the driver must sit above ~839 -- at which point the bit fires exactly during large
-     driver inputs, which is *also* the condition under which grind #2 occurs. **The bit would be
-     confounded with its own hypothesis by construction.** Making it band-selective needs a filter,
-     and this kit has already established (see `docs/STATE.md`) that a filter able to bite by 42 Hz
-     destroys the 20.9 Hz lead V62/V67 bought.
-  3. **THE LATCH NEEDS A CLEAR EVENT THE CAVE CANNOT SEE.** A latch is only informative if it is
-     reset once per transmitted frame. The cave cannot detect transmission, and its own payload
-     write happens every invocation, so a self-cleared latch degenerates to a plain sample and a
-     never-cleared latch pins ON after the first trip -- a dead probe that still looks alive.
+     `ld.h` at 6 sites -- a SIGNED halfword, confirmed independently this session -- and it is the
+     raw 4-sample finite difference. A scalar threshold on |it| is an amplitude detector, not a band
+     detector. Its low-frequency content (driver steering) already measures 123-839 counts, so any
+     threshold that ignores the driver must sit above ~839 -- at which point the bit fires exactly
+     during large driver inputs, which is *also* the condition under which grind #2 occurs. **The
+     bit would be confounded with its own hypothesis by construction.** Making it band-selective
+     needs a filter, and this kit has already established (see `docs/STATE.md`) that a filter able
+     to bite by 42 Hz destroys the 20.9 Hz lead V62/V67 bought.
+  3. **THE CLEAR EVENT DOES NOT EXIST -- now CONFIRMED FROM THE CODE, not inferred.** A latch is
+     informative only if reset once per transmitted frame. `gp-0x1514` has exactly EIGHT accesses
+     image-wide (Ghidra and a raw byte scan agree) and **not one of them writes bits 7:3**:
+     `0x2194A`/`0x21964` is a WORD read-modify-write that ANDs with `0xff0000ff` and ORs in a term
+     whose low byte is zero, so our byte goes back **bit-identical**; the three pairs at
+     `0x55AAC`/`0x55AD4`/`0x55AF4` mask with `0xFB`/`0xFD`/`0xFE` and touch only bits 2:0. The
+     block-copy / memset / register-indirect class is CLEAN too: the only two `movea` constructions
+     into the frame region are our own hook and `0x56288` (a different frame's base), and
+     `gp-0x1515`/`gp-0x1517` have zero accesses while `gp-0x1516`'s single `st.h` writes bytes 2-3
+     only. ⇒ a never-cleared latch would pin ON after the first trip -- a dead probe that still
+     looks alive.
 
-⇒ **The sticky rung is not safe and not affordable, and it would not have measured what it was
-meant to measure. GATE 1 was never reached, so no RAM cell is claimed and GATE 1 stays VACUOUS.**
-V68 claims no RAM. Its only store is the existing CAN-330 payload byte `gp-0x1514`, asserted from
-the emitted listing to be the ONE AND ONLY store in the cave -- exactly as on V55 through V67.
+⇒ **The sticky rung is impossible at this hook, and would not have measured what it was meant to
+measure even if it were. GATE 1 was never reached, so no RAM cell is claimed and GATE 1 stays
+VACUOUS.** V68's only store is the existing CAN-330 payload byte `gp-0x1514`, asserted from the
+emitted listing to be the ONE AND ONLY store in the cave -- exactly as on V55 through V67.
 
-⚠ Recorded for whoever picks this up: `gp-0x683c` IS genuinely free after V67's repoint (0 readers,
-0 writers, 0 extended-form candidates -- asserted below on every build). It is the best RAM
-candidate this kit has. It is not used here because the *rung that would need it* fails on (1) and
-(2) above, not because the cell failed. Do not read this build as clearing it either -- GATE 1's
-register-indirect leg was never closed on it, and `gp-0x1500` passed both static methods and still
-failed on-car.
+★★ AND THE GATE-1 AUDIT ON `gp-0x683c` CAME BACK MOSTLY CLOSED -- RECORDED, STILL UNUSED
+------------------------------------------------------------------------------------------
+The cell is unreferenced by any displacement form after V67's repoint (0 readers, 0 writers, 0
+extended-form candidates -- asserted below on every build). This session took the audit further and
+**found the boot writers nobody in this kit had**, which is the leg a displacement scan is blind to:
+
+    0x146C0   mov 0xfedec000,ep / sst.w r0,{0,4,8,c}[ep] / addi 0x10,ep,ep / cmp r6,ep / bc
+              => zeroes ALL of 0xFEDEC000..0xFEDFFFFF        (the bss clear)
+    0x14766   mov 0xfedf11b0,ep, src r14 = 0x86260, end r10 = 0x8ab18
+              => copies flash 0x86260..0x8AB18 (18,616 B) into 0xFEDF11B0..0xFEDF5A68   (.data)
+
+Both go through `sst.w` with a COMPUTED `ep`, so they are invisible to disp16 scans, disp23 scans,
+`search_instructions` AND `get_xrefs_to` -- exactly the blind spot that let `gp-0x1500` pass two
+static methods and still fail on-car. ⇒ `gp-0x683c` (= 0xFEDF17C4) is **.data, not bss**, and its
+boot value is `flash[0x86260 + 0x614]` = `flash[0x86874]` = **0x00**. That *positively explains* the
+dead gate -- a declared object whose writer was compiled out, defaulting to 0 -- instead of merely
+failing to find a writer.
+
+Also closed: all 712 `movhi 0xFEDF/0xFEE0` resolved (nearest effective address 1,559 B away); every
+`mov imm32` enumerated (a +-1.5 KB pointer-free zone around the cell); the LE32 literal
+`0xFEDF17C2/C3/C4` appears **0** times; the `ep`-relative leg (three `ep` constants land in this
+page but all three converge on `sst.b r6,0x0,ep`, displacement 0); and the stack
+(`sp = 0xFEDEF91C`, growing down -- the cell sits 7,848 B above the stack top).
+Neighbourhood: 42 of the 49 bytes in `gp-0x6850..gp-0x6820` are individually gp-addressed from ~30
+different functions with **no base pointer anywhere in the page** ⇒ independent scalars, NOT an
+indexed struct.
+
+🛑 STILL OPEN, and this is why V68 does not use it: **(a)** a base pointer loaded from RAM/flash at
+runtime plus a computed index, **(b)** DMA, **(c)** transitive `ep` inheritance below
+`FUN_00046f20`. None leaves a constant in the image, so none is statically excludable for ANY
+candidate cell. The cell is not used here because the rung that would need it fails on walls 0-2 --
+not because the cell failed.
+🛑 AND THE VERDICT IS V67-AND-LATER ONLY. On a STOCK-based build `0x3AA94` still reads this byte,
+and writing it would flip `FUN_0003aa2c`'s r24/r26 gain arm onto cals `0xC6446`/`0xC6444`. Do not
+carry this clearance back to a stock base.
+
+★ A LEVER FOR LATER, free of cave bytes: because .data initializers live in flash at a computable
+offset, a build can CHOOSE a cell's boot value by editing `0x86260 + (addr - 0xFEDF11B0)`. That is
+inside the main-app CRC region, so it re-CRCs like any other edit. If a future rung needs a
+configured constant rather than a runtime latch, it costs **0 cave bytes**.
 
 THE NEW RUNG -- ENCODING, AND WHY IT IS 16 BYTES
 -------------------------------------------------
@@ -251,7 +308,9 @@ GATE 2 (closed-loop stability): **NOT ENGAGED.** V68 changes no control path. Th
     assertions below are the proof of that, not a summary of it: the CAL block is asserted
     byte-identical to V67's, and the only permitted differences image-wide are the cave and the CRCs.
     V67's own GATE 2 argument carries over unchanged and is not restated here.
-    *** Still CODE in the CAN-330 TX path, which is why base/hook/extent are reused, not moved.
+    *** Still CODE in the CAN-330 TX path -- which this session traced to **100 Hz** (task 5,
+    `c % 10 == 4`), NOT the 1 kHz V67's docstring claims. That is why base/hook/extent are reused
+    and not moved, and it is also why no probe on this hook can see above ~50 Hz.
 
 ⚠ ONE RESIDUAL ON THE NEW BIT, stated because it is real: the cave samples `gp-0x6ac0` at the TX
 hook, while the LERP reads it inside `FUN_0003aa2c`. They are different points in the schedule, so
@@ -325,6 +384,18 @@ R26_ARM_ADDR = V67.R26_ARM_ADDR                # 0xC6444, stays stock 512
 R26_AVG_CAL, R26_AVG_LEN = V67.R26_AVG_CAL, V67.R26_AVG_LEN
 GATE_DISP = V67.GATE_DISP                      # 0x6806
 DEAD_DISP = V67.DEAD_DISP                      # 0x683c -- UNREFERENCED after the repoint
+
+# ★★ THE BOOT-INIT MAP, found this session and pinned here so it cannot rot. These two loops write
+# RAM through `sst.w` with a COMPUTED `ep`, so they are invisible to disp16 scans, disp23 scans,
+# `search_instructions` AND `get_xrefs_to` -- the exact blind spot that let gp-0x1500 pass two
+# static methods and still fail on-car. Any future GATE 1 audit MUST clear this class.
+GP_ABS = 0xFEDF8000                            # derived at 0x140C0 `ori 0x8000,r0,r1`, not assumed
+BSS_CLEAR = (0x146C0, 0xFEDEC000)              # `mov 0xfedec000,ep` -> zeroes ..0xFEDFFFFF
+DATA_SRC = (0x1475C, 0x00086260)               # `mov 0x86260,r14`   -- flash source
+DATA_DST = (0x14766, 0xFEDF11B0)               # `mov 0xfedf11b0,ep` -- RAM destination
+DATA_END = (0x14786, 0x0008AB18)               # `mov 0x8ab18,r10`   -- flash source end
+# => gp-0x683c is .data, and its BOOT VALUE is this flash byte. Asserted == 0 on every build.
+DEAD_INIT_FLASH = DATA_SRC[1] + (GP_ABS - DEAD_DISP - DATA_DST[1])       # 0x86260 + 0x614 = 0x86874
 MASK_DISP = V67.MASK_DISP                      # 0x671d
 ARM3_DISP = V67.ARM3_DISP                      # 0x671a -- watched, but no longer probed
 
@@ -841,6 +912,16 @@ def _self_check_wire():
     flat = EX.r24_gain_q10(sc, 0, 0, 0, 0)
     assert EX.r24_gain_q10(sc, RATE_BREAKPOINT - 1, 0, 0, 0) == flat, \
         "the segment below the breakpoint is not flat -- bit4 does not mean what the docstring says"
+    # ⚠ "FLAT" IS AN ENGINEERING CLAIM, NOT AN EXACT ONE, AND THE EXCEPTION IS PINNED HERE.
+    # Record 0xD2AEC (the 50 km/h curve) has Y0 = 2305, Y1 = 2304 -- a ONE-count downward slope,
+    # 0.04%. Three of four records are exactly flat. Asserted as EXACTLY this shape so a real ramp
+    # could never hide behind the word "flat", and so no assertion elsewhere rests on Y0 == Y1.
+    exact = [ys[0] == ys[1] for _xs, ys in V66.GAIN_B_EXPECT]
+    assert exact == [True, True, False, True], f"the gain_B flatness pattern moved: {exact}"
+    droop = [ys[0] - ys[1] for _xs, ys in V66.GAIN_B_EXPECT]
+    assert droop == [0, 0, 1, 0], f"the first segment's droop is {droop}, not [0,0,1,0]"
+    assert max(abs(d) / ys[0] for d, (_xs, ys) in zip(droop, V66.GAIN_B_EXPECT)) < 0.0005, \
+        "the first segment droops by more than 0.05% -- it is a RAMP, not a flat segment"
     assert EX.r24_gain_q10(sc, RATE_BREAKPOINT + 200, 0, 0, 0) < flat, \
         "the segment above the breakpoint does not fall -- the breakpoint is not where we think"
     assert EX.r24_gain_q10(sc, RATE_FOLD, 0, 0, 0) == flat, \
@@ -948,9 +1029,15 @@ def assert_cell_census(buf, label="V68", cave_reads=None, expected=None):
             if d7 is None or d7[4] != GP:
                 genuine.append(h)
         if disp == DEAD_DISP:
-            # ⚠ The record, kept alive on every build: gp-0x683c is UNREFERENCED after V67's repoint.
-            # That makes it the best free-RAM candidate this kit has -- and V68 still does not use it.
+            # ⚠ The record, kept alive on every build: gp-0x683c is UNREFERENCED by ANY displacement
+            # form after V67's repoint. GATE 1's boot/pointer/ep/stack legs were closed separately
+            # this session (see the docstring); the runtime-base-pointer and DMA legs were NOT, and
+            # V68 does not use the cell. Its .data initializer is flash[0x86874].
             assert not ext, f"{label}: gp-0x683c has {len(ext)} extended-displacement candidates"
+            assert buf[DEAD_INIT_FLASH] == 0, \
+                f"{label}: gp-0x683c's .data initializer flash[0x{DEAD_INIT_FLASH:05X}] is " \
+                f"0x{buf[DEAD_INIT_FLASH]:02X}, not 0x00 -- the boot value of the DEAD gate MOVED, " \
+                "which would make V67's repointed-away cell non-zero at boot. STOP."
             assert n_read == 0 and n_write == 0 and not reads and not writes, \
                 f"{label}: gp-0x683c has acquired an access"
         assert not genuine, \
@@ -995,6 +1082,16 @@ def assert_signal_sites(code, label="V68"):
         assert bytes(code[a:a + 2]) == hw1, \
             f"{label}: the `movea imm,r6,r6` hw1 donor @0x{a:05X} is " \
             f"{bytes(code[a:a+2]).hex()}, not {hw1.hex()} -- the new rung's only provenance"
+    # ★★ the BOOT-INIT map, pinned from the image. `mov imm32,reg` is 6 bytes: 2 opcode + LE32.
+    for addr, imm in (BSS_CLEAR, DATA_SRC, DATA_DST, DATA_END):
+        got = struct.unpack_from("<H", code, addr + 2)[0] | \
+            (struct.unpack_from("<H", code, addr + 4)[0] << 16)
+        assert got == imm, \
+            f"{label}: the boot-init constant at 0x{addr:05X} is 0x{got:08X}, not 0x{imm:08X} -- " \
+            "the RAM map moved and every GATE 1 clearance derived from it is now STALE"
+    assert DATA_DST[1] <= (GP_ABS - DEAD_DISP) < DATA_END[1] - DATA_SRC[1] + DATA_DST[1], \
+        f"{label}: gp-0x683c is not inside the .data copy range -- it is not .data after all"
+    assert DEAD_INIT_FLASH == 0x86874, f"{label}: the initializer offset computed to {DEAD_INIT_FLASH:#x}"
     # r24's own LERP index read and the fold, so the new bit provably indexes the SAME cell the gain does
     assert bytes(code[0x3AAC4:0x3AAC8]) == bytes.fromhex("e45f4195"), \
         f"{label}: `ld.hu -0x6ac0[gp],r11` @0x3AAC4 moved -- r24's own read of the LERP index"
@@ -1171,11 +1268,26 @@ def build():
     print(f"      {b['with_latch']:2d}B  TOTAL WITH LATCH -- "
           f"{b['with_latch'] / b['free_after_bit6_bit5']:.1f}x the available space")
     print("    ⇒ it does not fit, and the cave MUST NOT GROW: caves are this kit's only bricking")
-    print("      class (V24, V27, V48B). Two further reasons in the docstring: the rung is not")
-    print("      frequency-selective (a scalar threshold on a signal whose LF content is already")
-    print("      123-839 counts is confounded with its own hypothesis), and a latch needs a clear")
-    print("      event once per transmitted frame that the cave cannot see.")
+    print("      class (V24, V27, V48B).")
+    print("    🛑🛑 AND THE PREMISE IS FALSE ANYWAY -- THIS HOOK RUNS AT 100 Hz, NOT 1 kHz.")
+    print("      0x55C0E is in FUN_00055a98 (the 0x14A builder); its ONLY pointer is 0xB72D4 =")
+    print("      index 10 of PTR_FUN_000b72ac; msg-10's pending bit is set only by")
+    print("      FUN_0001eaa6(0xa) @0x5560C, whose sole caller is FUN_00022ca0 @0x234C4 =")
+    print("      TCB idx-4 = task 5 = c%10==4 = 100 Hz. A latch here CANNOT sample faster than the")
+    print("      frame it is written into, so it degenerates to a plain sample at any budget.")
+    print("      ⇒ NO PROBE ON THIS HOOK CAN BREAK THE ALIASING BARRIER. That needs a SECOND hook")
+    print("        in task 1, i.e. new code on the 1 kHz path under the DTC-0x18 cadence watchdog.")
+    print("      ⚠ V67's docstring says '1 kHz TX path'. That is WRONG and is corrected here.")
+    print("    ⇒ two further reasons in the docstring: the rung is not frequency-selective, and the")
+    print("      clear event does not exist -- CONFIRMED, all 8 accesses to gp-0x1514 leave bits 7:3")
+    print("      untouched (the word RMW at 0x21964 ANDs 0xff0000ff and writes our byte back")
+    print("      bit-identical), and the block-copy/register-indirect class is clean.")
     print("    ⇒ GATE 1 WAS NEVER REACHED. No RAM cell is claimed by V68.")
+    print(f"    ⚠ RECORDED, UNUSED: gp-0x683c is .data (boot copy flash 0x{DATA_SRC[1]:05X} -> RAM "
+          f"0x{DATA_DST[1]:08X} @0x{DATA_DST[0]:05X}),")
+    print(f"      boot value flash[0x{DEAD_INIT_FLASH:05X}] = 0x{code[DEAD_INIT_FLASH]:02X}. The "
+          "pointer / ep / stack / boot legs are CLOSED;")
+    print("      the runtime-base-pointer and DMA legs are NOT, for this or any candidate.")
     print("    census (TWO decoders, on the OUTPUT):")
     for disp in (GATE_DISP, DEAD_DISP, MASK_DISP, ARM3_DISP, RATE_DISP):
         hits = V64.gp_access_census(bytes(code), disp)
@@ -1183,7 +1295,7 @@ def build():
         fw = [h for h in hits if h[0] not in span]
         r = len([h for h in fw if h[1] in _READ_MNEM])
         cv = [f"{hex(h[0])} {h[1]}" for h in hits if h[0] in span]
-        note = {DEAD_DISP: "  *** UNREFERENCED image-wide -- the best free-RAM candidate, UNUSED",
+        note = {DEAD_DISP: "  *** UNREFERENCED image-wide; .data, boot value 0x00 @flash 0x86874",
                 ARM3_DISP: "  (V67's bit4; V68 stops probing it -- it read 0.000% on route 47)",
                 RATE_DISP: "  *** V68's NEW bit4 -- the LERP inner axis"}.get(disp, "")
         print(f"      gp-0x{disp:04x}  {r:2d}r / {len(fw) - r:2d}w firmware, cave "

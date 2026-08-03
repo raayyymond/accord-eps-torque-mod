@@ -501,6 +501,43 @@ own byte dump the whole time.
 
 ---
 
+
+## ✅ V68 — BUILT, UNFLASHED. A MEASUREMENT BUILD, VERIFIED FROM THE IMAGE
+V67's control path is carried **byte-identical**: **39 bytes** differ in `[0x13000,0x100000)` and every
+one is inside the cave span `0xC4B36`–`0xC4B73` or the MAIN CRC at `0xC4FFC`. `0x3AA94` = `847ffb97`,
+all three `sar` sites stock `aa`, `0xC6440/42/44/46` = 2048/1024/512/**5244**, deadzone 3, lockout 0,
+decoupled gain 3564, and **all four mode-10 `gain_B` records unchanged**. Cave uses **64/68** bytes.
+Image SHA `704ece2e…` · RWD SHA `387cc0be…`.
+
+**Payload, decoded by the orchestrator from the built cave bytes** (not from the build script's claims):
+
+| bit | V67 | **V68** | cave instruction |
+|---|---|---|---|
+| 7 | liveness `0x80` | **`0x88` = liveness + bit3** | `movea 0x88,r0,r7` @`0xC4B34` |
+| 6 | `gp-0x6806 != 0` — the LKAS gate | **kept** | `ld.bu -0x6806[gp],r6` @`0xC4B38` |
+| 5 | `gp-0x671d != 0` — the masking risk | **kept** | `ld.bu -0x671d[gp],r6` @`0xC4B44` |
+| 4 | `gp-0x671a >= 5` — **read 0.000%, a wasted rung** | **`gp-0x6ac0 >= 400`** — the rate LERP's own inner axis, at its first breakpoint | `ld.hu -0x6ac0[gp],r6` / `addi -0x190,r6,r0` @`0xC4B50` |
+| 3 | must be 0 | **always 1** | — |
+
+★★ **bit3 is now a BUILD FINGERPRINT**, and it fixes a real gap the probe audit raised: *"I cannot tell
+V66 from V67 from this log — both emit the same eight payload bytes with different meanings."* V67's
+payloads have bit3 **clear** by construction; V68's have it **set** on every frame. The two builds'
+byte4 value sets are now **structurally disjoint**, so a log identifies its own firmware without relying
+on the `.rwd` filename or on a Kd-signature inference.
+
+★ **And bit4 now measures the load-bearing structural claim of this session directly.** Everything about
+which calibration cells the symptoms occupy rests on where `gp-0x6ac0` sits relative to its first
+breakpoint (400 counts = 84.9 deg/s), and that has only ever been *inferred* from bus telemetry through
+a scale chain — the same chain I got wrong once tonight. bit4 measures it **inside the ECU**.
+
+🛑 **The sticky >50 Hz rung was rejected on structure, not budget** — the hook `0x55C0E` runs at
+**100 Hz (task 5)**, so the cave cannot observe 1 kHz content at all, and **no stock writer clears bits
+7:3** of `gp-0x1514` (8 accesses, all masked RMW), so a latched bit could never clear. ✅ Separately
+established and worth keeping: `gp-0x683c` **is** a free `.data` byte on V67+ (boot value `0x00` from
+flash `0x86874`; V67 removed its only reader), useful cave state for some future build.
+
+---
+
 ## 🛑 METHOD NOTES FROM THIS SESSION
 
 1. **I made a confident arithmetic prediction and the data refuted it.** The 2.44× calculation is right;

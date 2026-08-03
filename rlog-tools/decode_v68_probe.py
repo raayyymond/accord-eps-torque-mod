@@ -118,17 +118,31 @@ test ("always flat"), and this tool prints the caveat next to every bit4 number 
 --------------------------------------------------------------
 CAN samples at ~100.5 Hz (Nyquist ~50.2) and the comma IMU at 99.9-100.5 Hz. Both instruments are
 blind above ~50 Hz, and grind #2's "44.9 Hz" is itself an alias -- 44.9 and ~55.6 Hz are the same
-observation. V68 does not change that. A sticky/latching rung sampling the 1 kHz task was designed
-and REJECTED on three independent grounds, all recorded in build_v68_tva.py's docstring:
+observation. V68 does not change that. A sticky/latching rung was designed and REJECTED on FOUR
+independent grounds, all recorded in build_v68_tva.py's docstring:
+
+  0. 🛑🛑 THE HOOK RUNS AT 100 Hz, NOT 1 kHz -- THE PREMISE IS FALSE, and this one is fatal alone.
+     Traced end to end: 0x55C0E is in FUN_00055a98 (the 0x14A builder); its ONLY pointer image-wide
+     is 0xB72D4 = index 10 of PTR_FUN_000b72ac; message-10's pending bit is set only by
+     FUN_0001eaa6(0xa) @0x5560C, whose sole caller is FUN_00022ca0 @0x234C4 = TCB idx-4 = task 5 =
+     c%10==4 = 100 Hz. A latch at this hook CANNOT sample faster than the frame it is written into,
+     so it degenerates to a plain sample at any budget and with any RAM cell.
+     ⇒ NO PROBE ON THIS HOOK CAN EVER BREAK THE ALIASING BARRIER. Doing so needs a SECOND hook
+       inside task 1 -- new code on the 1 kHz path, under the DTC-0x18 cadence watchdog's timing
+       budget. That is a different and much larger decision.
+     ⚠ V67's docstring calls this "the 1 kHz TX path". THAT IS WRONG.
   1. BUDGET -- 20 bytes are free after bit6 and bit5; the rung needs 22 before any latch machinery
-     and 60 with it. The cave must not grow: caves are this kit's only bricking class.
-  2. SELECTIVITY -- gp-0x4f62 is read `ld.h` (SIGNED halfword, byte-verified at 6 sites) and a
+     and 42 with it (2.1x). The cave must not grow: caves are this kit's only bricking class.
+  2. SELECTIVITY -- gp-0x4f62 is read `ld.h` (SIGNED halfword, confirmed two ways at 6 sites) and a
      scalar threshold on |it| is an amplitude detector, not a band detector. Its low-frequency
      content already measures 123-839 counts, so any threshold above the driver fires exactly during
      large driver inputs -- which is also when grind #2 occurs. Confounded by construction.
-  3. NO CLEAR EVENT -- a latch is informative only if reset once per transmitted frame, and the cave
-     cannot detect transmission. Self-cleared it degenerates to a plain sample; never cleared it
-     pins ON after the first trip, a dead probe that still looks alive.
+  3. NO CLEAR EVENT -- CONFIRMED from the code, not inferred. gp-0x1514 has exactly EIGHT accesses
+     image-wide and none writes bits 7:3: the WORD read-modify-write at 0x2194A/0x21964 ANDs with
+     0xff0000ff and ORs a term whose low byte is zero, so our byte returns BIT-IDENTICAL; the three
+     pairs at 0x55AAC/0x55AD4/0x55AF4 mask 0xFB/0xFD/0xFE and touch only bits 2:0. The
+     block-copy / register-indirect class is clean too. A latch would pin ON forever.
+
 Do not read any bit here as evidence about content above ~50 Hz.
 
 🛑 CONVENTIONS THIS TOOL ENFORCES -- all established the hard way:
@@ -147,6 +161,13 @@ from collections import Counter
 from pathlib import Path
 
 import numpy as np
+
+# 🛑 WINDOWS REDIRECT FIX (same as decode_v67_gate.py). cp1252 is chosen for a redirected stdout on
+# this machine and the first `print(__doc__)` raises UnicodeEncodeError on the 🛑/★/⚠ glyphs, so
+# `> out.txt` crashed before emitting a line. Set here as well as in the imported module, because
+# either file can be the __main__ one.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 sys.path.insert(0, str(Path(__file__).parent))
 # ⚠ The NUMERIC MACHINERY is shared with V67's decoder on purpose -- collect/sustained/gate_stats
@@ -362,22 +383,37 @@ def report(tag, d):
         print(f"         rwd   SHA256 {RWD_SHA}")
         return
 
-    # 🛑 THE FROZEN-CONSTANT REFUSAL. A single repeated payload is uninterpretable EVEN when it is
-    # structurally legal -- that is exactly how V64's null was misread for a session.
-    if len(vals) == 1:
+    # 🛑 THE FROZEN-CONSTANT REFUSAL -- GATED ON THE PROBE HAVING BEEN EXERCISED.
+    # A single repeated payload is uninterpretable EVEN when structurally legal; that is exactly how
+    # V64's null was misread for a session. BUT an ungated version of this test fires on every
+    # parked / never-engaged SEGMENT (it did so on r47 s24 and s25 in V67's decoder), where a single
+    # value is the CORRECT reading because bit6 could not move. False alarms are how a real one gets
+    # ignored, so the hard refusal requires the log to actually change engagement state.
+    _eng = d["sca"] == 1
+    exercised = bool(_eng.any() and (~_eng).any())
+    if len(vals) == 1 and exercised:
         v = vals[0]
-        print(f"\n   *** STOP. byte4 IS A FROZEN CONSTANT 0x{v:02X} across all {n} frames. ***")
-        print("       Zero variance in a field carrying three INDEPENDENT live signals is not a")
-        print("       measurement -- it is a symptom. Under V64 exactly this pattern was read as a")
+        print(f"\n   *** STOP. byte4 IS A FROZEN CONSTANT 0x{v:02X} across all {n} frames, AND this")
+        print("       log CHANGES engagement state -- so bit6 had the opportunity to move and did")
+        print("       not. Zero variance in a field carrying three INDEPENDENT live signals is not")
+        print("       a measurement, it is a symptom. Under V64 exactly this pattern was read as a")
         print("       physical null for a whole session before the probe was found to be unarmed.")
         print("       At minimum one of the following is true, and this tool will not choose:")
-        print("         - the drive never changed lateral engagement state (bit6 could not move);")
         print("         - a rung's cell is not what the build believes it is;")
+        print("         - the cave is not running the code this decoder describes;")
         print("         - the flashed image is not V68 despite the payload being legal for it.")
         print("       No duty, rate or spectrum below would mean anything. RE-DRIVE with the log")
         print("       started BEFORE the first engagement, and confirm the .rwd:")
         print(f"         {RWD_NAME}")
         return
+    if len(vals) == 1:
+        v = vals[0]
+        print(f"\n   -- byte4 is single-valued (0x{v:02X}) over all {n} frames, but this log NEVER")
+        print("      CHANGES engagement state, so bit6 had no opportunity to move. That is an")
+        print("      UNEXERCISED probe, NOT a frozen one, and it is the expected reading for a")
+        print("      parked or never-engaged segment. No ambiguity is claimed and the bit4 sections")
+        print("      below are still valid -- bit4 does not depend on engagement. Pool with an")
+        print("      engaged segment before reading section 4.")
     print("   => the payload is V68's and it VARIES. Exclusions, at their real strength:")
     print("      TIER 1 (structural, absolute): V53 emits only 0x07, V54 only 0x0F (bit7 clear),")
     print("        and V66/V67 both assert bit3 is NEVER set -- their whole payload space is")
@@ -646,10 +682,13 @@ def report(tag, d):
     print("\n   ⚠ OUTSTANDING, and NOT testable from this log:")
     print("      Anything above ~50 Hz. V68 does not break the aliasing barrier and was not built")
     print("        to -- see the docstring for the three reasons the sticky rung was rejected.")
-    print("      gp-0x683c is UNREFERENCED image-wide (0 readers, 0 writers) and is the best free-RAM")
-    print("        candidate this kit has. V68 does NOT use it and does NOT clear it: GATE 1's")
-    print("        register-indirect leg was never closed on it, and gp-0x1500 passed both static")
-    print("        methods and still failed on-car.")
+    print("      gp-0x683c is UNREFERENCED by any displacement form (0 readers, 0 writers) and is the")
+    print("        best free-RAM candidate this kit has. It is .data, boot value 0x00 from flash")
+    print("        0x86874 via the copy loop at 0x14766. The pointer / ep / stack / boot-init legs")
+    print("        of GATE 1 are CLOSED; the runtime-base-pointer and DMA legs are NOT -- and they")
+    print("        are not statically closable for ANY cell. V68 does not use it.")
+    print("        🛑 The clearance is V67-AND-LATER ONLY. On a stock base 0x3AA94 still reads this")
+    print("           byte and writing it flips r24/r26's gain arm onto cals 0xC6446/0xC6444.")
     print("      The r26 lane rides the SAME gate as r24 (cal 0xC6444, stock 512), so under LKAS")
     print("        r26's gain becomes 512 instead of its gain_A LERP. Harmless only because r26 is")
     print("        structurally inert (0xC6564 = 40 bytes of exact zero). If the ride reports LESS")

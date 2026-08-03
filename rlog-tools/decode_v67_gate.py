@@ -76,6 +76,13 @@ from pathlib import Path
 
 import numpy as np
 
+# 🛑 WINDOWS REDIRECT FIX. Python picks cp1252 for a redirected stdout on this machine, and the very
+# first `print(__doc__)` raises UnicodeEncodeError on the 🛑/★/⚠ glyphs in the header -- so
+# `decode_v67_gate.py ... > out.txt` crashed before emitting a single line. Found by the probe
+# audit. errors="replace" keeps the tool usable on a bare console that genuinely cannot render them.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 sys.path.insert(0, str(Path(__file__).parent))
 from rlog_parse import read_messages  # noqa: E402
 
@@ -347,15 +354,25 @@ def report(tag, d):
     print("     Weak, NON-structural hint only: V66's bit4 (base-assist substate) is expected near")
     print("     100% duty; V67's bit4 is a rare latch. This tool does not decide on that alone.")
 
+    # 🛑 THE AMBIGUITY WARNING IS GATED ON THE PROBE HAVING BEEN EXERCISED. Without this it fires on
+    # every parked / never-engaged SEGMENT (it did so on r47 s24 and s25), where a constant 0x87 is
+    # the CORRECT and expected reading -- bit6 cannot move if lateral never engaged. Crying
+    # "AMBIGUOUS" there is a false alarm, and false alarms are how a real one gets ignored.
     const87 = float((d["b4"] == 0x87).mean())
-    if const87 > 0.99:
-        print(f"\n   !! byte4 IS A CONSTANT 0x87 on {100 * const87:.2f}% of frames.")
+    _eng = d["sca"] == 1
+    exercised = bool(_eng.any() and (~_eng).any())
+    if const87 > 0.99 and exercised:
+        print(f"\n   !! byte4 IS A CONSTANT 0x87 on {100 * const87:.2f}% of frames, AND this log")
+        print("      changes engagement state, so bit6 HAD the opportunity to move and did not.")
         print("      *** AMBIGUOUS AND THE TOOL WILL NOT GUESS. *** Under V64 that was the NULL")
         print("      (detector never armed, 14,980 frames); under V65 the NEUTRAL bucket; under V66")
         print("      'all three gates zero'; under V67 'gate never true, no mask, no third arm'.")
-        print("      For bit6 over a drive that included engagement that would itself be a")
-        print("      contradiction, so the reading is suspect on its own terms.")
         print(f"      => CONFIRM THE FLASHED .rwd FILENAME first: {RWD_NAME}")
+    elif const87 > 0.99:
+        print(f"\n   -- byte4 is a constant 0x87 ({100 * const87:.2f}%), but this log NEVER CHANGES")
+        print("      engagement state, so bit6 had no opportunity to move. That is an UNEXERCISED")
+        print("      probe, NOT a frozen one, and it is the expected reading for a parked or")
+        print("      never-engaged segment. No ambiguity is claimed. Pool with an engaged segment.")
 
     # ---- 2. SUBSETS -------------------------------------------------------------------------------
     sus = sustained(d["tq"], fs)
@@ -597,7 +614,7 @@ def report(tag, d):
     print("        than less grinding, this is the first place to look.")
     print("      Grind #2 SURVIVES under LKAS by design. V67 removes V62's amplification only where")
     print("        the gate is false. Judge grind #2 on the MANUAL rows, not the engaged ones.")
-    if const87 > 0.99:
+    if const87 > 0.99 and exercised:
         print(f"\n   🛑 ...AND ALL OF THE ABOVE IS CONDITIONAL ON V67 ACTUALLY BEING FLASHED.")
         print(f"      Confirm the .rwd on the car: {RWD_NAME}")
     print()

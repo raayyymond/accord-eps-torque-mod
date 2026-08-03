@@ -595,6 +595,23 @@ the reported symptom.
 
 ---
 
+## ✅ Built and UNFLASHED — **V68** (a MEASUREMENT build)
+
+V67's control path **byte-identical** — 39 bytes differ in `[0x13000,0x100000)`, all cave + MAIN CRC;
+orchestrator-verified from the image. Cave 64/68. Image SHA `704ece2e…`, RWD SHA `387cc0be…`.
+Probe, decoded from the built cave bytes: **bit6** `gp-0x6806` (the gate, kept) · **bit5** `gp-0x671d`
+(the masking risk, kept) · **bit4 → `gp-0x6ac0 >= 400`**, the rate LERP's own inner axis at its first
+breakpoint, replacing V67's `gp-0x671a` rung which read **0.000%** · **bit3 always 1**.
+★★ **bit3 is a BUILD FINGERPRINT** — V67 has it clear by construction, V68 set, so the two payload sets
+are structurally disjoint and a log now identifies its own firmware without the `.rwd` filename. That
+closes the probe audit's *"I cannot tell V66 from V67 from this log"* caveat.
+★ bit4 measures **inside the ECU** the one structural claim everything else rests on — where `gp-0x6ac0`
+sits relative to 400 counts (84.9 deg/s) — which until now was only inferred through a bus scale chain,
+the same chain I got wrong once this session.
+⇒ **V67 remains the recommended build on the car.** V68 buys measurement, not behaviour.
+
+---
+
 ## Previously on the car — **V65** (flashed, driven routes `3a--4e55c1e0f4` and `3b--a4a7f4dbf1` 2026-08-01)
 
 **V65 = V62's control-path edits byte-identical + the 4-level saturation ladder on `gp-0x6b94`.** The
