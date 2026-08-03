@@ -1,6 +1,6 @@
 ---
 name: accord-mic-two-weightings-are-a-filter-bank
-description: soundPressure + soundPressureWeighted are a TWO-POINT FILTER BANK; inverting them shows the grind #2 acoustic excess is NOT all at 40-49 Hz — effective centroid 63.5 Hz [54.1, 79.6], the first data placing grind #2 energy above the 50 Hz ceiling
+description: soundPressure + soundPressureWeighted are a TWO-POINT FILTER BANK; inverting them shows the grind #2 acoustic excess is NOT all at 40-49 Hz — effective centroid 63.5 Hz [54.2, 79.6], the first data placing grind #2 energy above the 50 Hz ceiling
 metadata:
   type: reference
 ---
@@ -23,7 +23,7 @@ creep→highway) as wind/road noise must.
 | un-weighted burst/control amplitude | **4.591** | [2.946, 8.313] |
 | A-weighted burst/control amplitude | **6.514** | [3.609, 8.294] |
 | **excess mean A-weight / w(44.6 Hz)** | **4.28** | **[2.28, 9.86]** |
-| ⇒ **effective spectral centroid** | **63.5 Hz** | **[54.1, 79.6] Hz** |
+| ⇒ **effective spectral centroid** | **63.5 Hz** | **[54.2, 79.6] Hz** |
 | energy fraction above the band if f_h = 100 Hz | 16.2 % | [6.3, 43.8] |
 | energy fraction above the band if f_h = 250 Hz | 1.4 % | [0.5, 3.8] |
 
