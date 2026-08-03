@@ -1034,6 +1034,48 @@ ASSIST_RATE_B_RECORDS = (
 # deg/s) -- a genuine 2x rolloff. At road speed it flattens (0.80x at 32 km/h). So Honda ALREADY
 # de-escalates this lane when the wheel is moving fast, and only at low speed. The commonly-quoted
 # "r24 default arm = 2305" is the 50 km/h record; at the hands-off-creep operating point it is 3072.
+#
+# ★★★★ RESOLVED 2026-08-02, orchestrator-verified from the images and from route 47:
+#
+#   1. THE RATE AXIS IS ARITHMETICALLY DEAD FOR EVERY SYMPTOM ON RECORD. Mapping the measured
+#      populations onto this LERP's own inner axis, 100% of the windows in ALL THREE land inside the
+#      FLAT first segment [0, 400], where Y[0] == Y[1]:
+#          grind #1              ~128 bus counts -> gp-0x6ac0 ~  75
+#          grind #2 creep        ~256            ->            ~ 151
+#          grind #2 highway    30-42             ->            ~18-25
+#      => Y[2]/Y[3] never participate. The rate axis is not a WEAK discriminator, it is INCAPABLE of
+#      discriminating, which explains the previously measured 81.1%/48.5% rather than being a separate
+#      fact. ONLY THE SPEED AXIS CAN SEPARATE ANYTHING ON THIS SURFACE.
+#      🛑 Sharpening the rate breakpoints to force a rolloff between axis 75 and 151 is available and
+#      is REJECTED ON GATE 2: gp-0x6ac0 is a RECTIFIED filtered motor rate, so it sweeps at 2x the
+#      mode frequency, and a steep gain slope on it is a PARAMETRIC PUMP -- the failure mode
+#      V58/V59/V60 chased for three builds. Keeping the operating point inside the flat segment gives
+#      zero local slope. Do not propose a rate-breakpoint move.
+#
+#   2. UNITS, byte-read: cal tp+0x713a = 0xC613A = 1159, so the bus STEER_ANGLE_RATE field is
+#      bus = (gp-0x6abe * 48 * 1159) >> 15 = 1.697754 * gp-0x6ac0, and gp-0x6ac0 = 2^18/(48*1159) =
+#      4.71210813 counts per deg/s exactly => the two compose to BUS COUNTS = 8 x deg/s EXACTLY.
+#      🛑 V67's build note sized its arm as "creep 7.2 km/h, 128 deg/s => LERP 2622 => 5244 = 2.00x".
+#      It converted 128 BUS COUNTS as if they were 128 deg/s (axis 603 instead of 75). The true LERP
+#      at grind #1's operating point is 2704, so V67's arm delivers 1.94x, not 2.00x.
+#
+#   3. V67's FLAT ARM INVERTS HONDA'S OWN SCHEDULE. Because the surface rolls off with speed, a scalar
+#      arm delivers its LARGEST multiplier where the stock design wanted the LEAST:
+#          grind #1  creep 7.2 km/h   LERP 2704 -> 1.94x
+#          grind #2  creep 5 km/h     LERP 2409 -> 2.18x
+#          highway   100+ km/h        LERP 2151 -> 2.44x   <- the maximum
+#      🛑 A flat arm is STRUCTURALLY INCAPABLE of fixing the highway: one degree of freedom, two
+#      constraints. 1.00x at highway needs arm 2151, which is 0.80x at grind #1 (WORSE than stock);
+#      2.00x at grind #1 needs arm 5408, which is 2.51x at highway.
+#      ⚠ AND THE PREDICTED HIGHWAY COST DID NOT MATERIALISE -- see openpilot_command_slew_invariance().
+#
+#   4. BLAST RADIUS IS CLEAN for a cal-only speed schedule (raise Y[0]/Y[1] in the 0 and 10 km/h
+#      records only): EXACTLY ONE pointer image-wide per record (0xCBF84 / 0xCC06C / 0xCC154 /
+#      0xCC23C, full 32-bit LE scan), all four in ONE CRC block (0xD2000, 0xD2FFC), and a full-image
+#      32-bit float scan finds NO float mirror for any Y value and no clustered mirror table => the
+#      V27 int/float desync class does not apply. Buildable and safe -- but NOT recommended, because
+#      the highway dose response it would target does not exist in the data.
+#      Arithmetic + the edit's exact bytes: analysis-2020accord/v68_design_math.py.
 ASSIST_RATE_A_RECORDS = (
     ((0, 400, 1600, 3000), (3072, 3072, 2434, 2048)),   # 0xC6A68
     ((0, 250, 1200, 3000), (3072, 3072, 2488, 1536)),   # 0xC6A7C
@@ -1959,9 +2001,45 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
       "settled" phases 5/6/7 could not be ruled out); and it toggles THREE ORDERS OF MAGNITUDE below
       the 21/45 Hz modes, so it cannot parametrically pump.
 
-    🛑 WHAT V67 DOES NOT DO. Grind #2 SURVIVES under LKAS, at 2.21x -- slightly above V62's 2.00x,
-    because a scalar arm does not follow the LERP's own rolloff. No available axis cleanly separates
-    the two symptoms; best single threshold, keep grind #1 boosted / remove grind #2:
+    ★★★★ V67 FLASHED AND DRIVEN 2026-08-02, route 47 (26 segs, 150,327 frames, 1,495 s, an ordinary
+    street->highway->street->parking-lot commute). IT IS THE BEST BUILD THIS KIT HAS MEASURED.
+      ✅ PROBE LIVE: byte4 = {0x87, 0xC7} only; bit6 == carControl.latActive in 150,302/150,327 =
+         99.983% (the 25 disagreements are single-frame transition edges) => the gate is CONFIRMED
+         on-car; bit5 (gp-0x671d, the masking risk that pins the gain to 1024 BELOW stock) = 0 in
+         EVERY frame, as is bit4 => the arm was a clean binary. FLIGHT-CLEAN: ST==4 = 0/150,327.
+      ★★ GRIND #1 FIXED, and route 47 is the FIRST route to contain BOTH doses with the arm state
+         recorded per frame, so the contrast is WITHIN-ROUTE and needs no cross-route comparison:
+         18-22 Hz engaged creep, cell-stratified, episode-clustered --
+             ENGAGED arm     0.524 [0.337, 0.804] vs Kd=1   (1.183 [0.773, 1.617] vs Kd=2)
+             DISENGAGED arm  1.055 [0.669, 1.354] vs Kd=1
+         => suppression in ONE ARM ONLY, which is V67's conditional design and which no other built
+         artifact produces (it is also the first evidence ever to separate V66 from V67).
+         Independent orchestrator pass agrees: 0.55 [0.35, 0.65] on a monotone four-point ladder
+         1.50 (Kd=0) / 1.00 / 0.55 (V67) / 0.39 (Kd=2), split-half null [0.90, 1.12].
+      ★★ CREEP GRIND #2 ELIMINATED: 40-49 Hz bursts (window envelope p99 > 500; V62/V65 bursts ran
+         2000-4000) -- V67 0 in 22 s engaged and 0 in 91 s manual, max 83.5/48.8, against Kd=2x's
+         18 and 6 with max 1830.7/1469.6. 🛑 The arms are NOT equally supported: manual expects 3.91
+         bursts, P(0) = 0.020 (solid); engaged expects 1.04, P(0) = 0.35 => UNRESOLVED. Needs a
+         parking lot, not a build.
+
+    🛑🛑 THE PREDICTED HIGHWAY COST DID NOT MATERIALISE, AND THE PREDICTION IS WITHDRAWN.
+    The line that stood here read: "Grind #2 SURVIVES under LKAS, at 2.21x". The delivered multiplier
+    is real and is worse than that (2.44x at highway, V67's maximum, 22% above V62's flat 2.00x --
+    see ASSIST_RATE_B_RECORDS note 3). But the SYMPTOM does not follow it. With route 2b (V58,
+    Kd=1.00x, 227 s of highway -- a baseline two sessions assumed did not exist) brought in, the
+    three-dose highway comparison is NULL: 40-49 Hz ratios 0.98 [0.71, 1.63] and 0.77 [0.56, 1.44]
+    against a split-half null of [0.53, 1.86], no dose ordering, and ZERO burst windows at any dose
+    across ~1,400 s. Identity settled by amplitude: creep grind #2 runs f0 43-45 Hz at prominence
+    48-1062x and envelope 2000-4000; the highway population runs f0 45-47 Hz at prominence ~6x and
+    envelope 155-370 => NOT grind #2. What IS real at highway is BROADBAND: 21 maneuvers vs 21
+    MATCHED straight-line controls give 6-9 Hz 2.78x and 40-49 Hz 2.13x -- 6-9 rises MORE.
+    🛑 BOTH INSTRUMENTS ARE BLIND ABOVE ~50 Hz: CAN Nyquist 50.2, comma IMU 49.97-50.26 (NO headroom
+    over CAN), so every highway null is silent about a >50 Hz vibration, and IMU/CAN frequency
+    agreement carries NO information about the 44.9 vs 55.6 Hz alias.
+    ⇒ KEEP V67. No control-path change is supported by this evidence.
+    Reproduce: analysis-2020accord/r47_orchestrator_checks.py.
+
+    For the record, the pre-drive separation table (measured on V65's creep windows):
         LKAS active   98.7% / 15.7%      driver torque  96.8% / 50.5%     steering rate  81.1% / 48.5%
     ⚠ An earlier claim that driver torque separates them ">8x" is WITHDRAWN -- it compared grind #2's
     measured torque against the DEFINITION of hands-off, not against grind #1's measured

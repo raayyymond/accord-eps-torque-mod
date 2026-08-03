@@ -18,29 +18,36 @@ an already-flashed, already-falsified lever because the result was buried in pro
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
    **Mandatory before proposing any calibration edit.**
 3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session.
-   Latest: `HANDOFF-2026-08-01-grind2-is-v62s-own-fix-at-high-frequency.md` — ★★★★ **GRIND #2 IS
+   Latest: `HANDOFF-2026-08-02-v67-flew-and-the-highway-grind-is-not-the-rate-lane.md` —
+   ★★★★ **V67 IS ON THE CAR AND IS THE BEST BUILD MEASURED.** Route `47`, 150,327 frames.
+   **Grind #1 fixed** via a **within-route gate A/B** (engaged arm **0.524 [0.337, 0.804]** vs Kd=1,
+   disengaged arm **1.055** ⇒ suppression in ONE arm only); **creep grind #2 ELIMINATED** (0 bursts vs
+   Kd=2's 24, max 84 vs 1831). 🛑 Manual arm solid (P(0)=0.020); **engaged-creep arm UNRESOLVED — 22 s,
+   P(0)=0.35.** Flight-clean, `ST==4` 0/150,327. 🛑🛑 **The operator's new HIGHWAY symptom is NOT the
+   rate lane** — three-dose highway comparison is **null** (0.98 / 0.77 vs a split-half null of
+   [0.53,1.86], **zero bursts in ~1,400 s**), and the highway line sits at prominence **~6×** against
+   the creep grind #2's **48–1062×** ⇒ a different phenomenon. **An arithmetically-correct prediction
+   of mine (V67 delivers 2.44× at highway) was REFUTED and withdrawn.** ⇒ **KEEP V67; no control-path
+   change is supported.** ★★ **r24's gain is a two-axis SPEED × RATE surface and its rate axis is
+   DEAD** — all three symptom populations sit in the flat `[0,400]` segment; only SPEED can separate,
+   and a flat arm cannot fix two operating points at once. 🛑 **Both CAN and the comma IMU are blind
+   above ~50 Hz** (Nyquist 50.2 vs 49.97–50.26 — no headroom), so a highway null above 50 Hz is
+   *silence, not absence*. 🛑 **Check whether the data already exists before concluding it doesn't** —
+   route `2b` held 227 s of the "missing" Kd=1 highway baseline.
+   (predecessor: `HANDOFF-2026-08-01-grind2-is-v62s-own-fix-at-high-frequency.md` — ★★★★ **GRIND #2 IS
    V62's OWN FIX SEEN AT HIGH FREQUENCY.** Corner-conditioned tail maxima, Kd=1x vs Kd=2x, 219 blocks:
-   1-4 Hz **1.01** / 10-16 **0.80** / **18-22 0.35** / 24-28 **2.66** / 30-40 **2.98** / **40-49 11.71
-   (p=0.0003)** — a monotone response with a **crossover at 22-24 Hz**, driver band flat as a control.
-   **One knob cut grind #1 by 2.9x and raised grind #2 by 11.7x.** Confirmed independently on the
-   **comma IMU** (40-49 Hz p95 6.27x). Cause: `gp-0x4f62` is a 4-sample finite difference, so its gain
-   RISES with frequency and V62's *flat* x2 is not frequency-selective. 🛑 **A filter cannot fix it**
-   and neither can the delay cal — both destroy the 20.9 Hz lead; the separation must come from an
-   OPERATING CONDITION, and **driver torque separates the symptoms >8x** while LKAS engagement
-   separates only grind #1. ★★ The lever is the **dead `gp-0x683c` gate** — ONE access, ZERO writers,
-   gating private cals `0xC6446`/`0xC6444` ⇒ a **ONE-BYTE** repoint makes the rate-lane gain
-   conditional, no cave. ✅ **V66 BUILT + orchestrator-verified** (V65 with both `sar` reverted + a
-   3-bit gate probe) — the operator's requested long-drive build AND the confirmatory revert AND V67's
-   pre-flight. 🛑 **Report the MEAN and the TAIL together** — they disagreed in sign on this data.
-   (predecessor: `HANDOFF-2026-08-01-v62-flew-and-the-grinding-is-fixed.md` — ★★★★ **V62 FLEW AND THE GRINDING
-   IS FIXED: 18–22 Hz down 8× at creep and 42× at |rate| 16–32 deg/s, with a clean negative-band control.
-   The kit's first measured fix.** 🛑 The reported "new grinding at 10–20 mph" is **NOT an established
-   regression** — it is ONE 0.92 s burst (n = 1) whose rate-CI sits *inside* V59's, at p = 0.51 against an
-   exposure-matched control. ⇒ **NO NEW BUILD; fly V62 again and count bursts.** 🛑🛑 **r26 is
-   STRUCTURALLY INERT** (`avg`'s cal base `0xC6564` = 40 bytes of exact zero) ⇒ **r24 carries the whole
-   rate lane**, re-attributing V42/V61/V62 and superseding *"killing either alone leaves the other
-   transmitting."* ★★ The remaining symptom is the **ratchet**: LKAS-gated at p = 1.09e-08, fixed in
-   hertz, and **symmetric on every build ⇒ an amplitude-saturated resonance, not stick-slip.**
+   **18-22 0.35** / 24-28 **2.66** / 30-40 **2.98** / **40-49 11.71 (p=0.0003)** — a monotone response
+   with a **crossover at 22-24 Hz**. **One knob cut grind #1 by 2.9x and raised grind #2 by 11.7x.**
+   Cause: `gp-0x4f62` is a 4-sample finite difference, so its gain RISES with frequency and V62's
+   *flat* x2 is not frequency-selective. 🛑 **A filter cannot fix it** and neither can the delay cal.
+   ⚠ Its *">8x driver torque"* separator is **WITHDRAWN** — the real figure is **1.70x**.
+   🛑 **Report the MEAN and the TAIL together** — they disagreed in sign on this data.
+   Then `HANDOFF-2026-08-01-v62-flew-and-the-grinding-is-fixed.md` — ★★★★ **V62 FLEW AND THE GRINDING
+   IS FIXED: 18–22 Hz down 8× at creep and 42× at |rate| 16–32 deg/s. The kit's first measured fix.**
+   🛑🛑 **r26 is STRUCTURALLY INERT** (`avg`'s cal base `0xC6564` = 40 bytes of exact zero) ⇒ **r24
+   carries the whole rate lane**, re-attributing V42/V61/V62. ★★ The remaining symptom is the
+   **ratchet**: LKAS-gated at p = 1.09e-08, fixed in hertz, **symmetric on every build ⇒ an
+   amplitude-saturated resonance, not stick-slip.**
    🛑 **Bootstrap over EPISODES, not windows** — the noise floor here is 2.2×, and it retracted three
    claims in one session.
    (predecessors: `HANDOFF-2026-07-31-v64-the-null-is-on-the-gate.md` — V64's detector never armed, a null

@@ -48,14 +48,27 @@ BUILDS = {
     "V59/r2c":  dict(cache=ROOT / "_cache_r2c", pfx="r2cs", segs=[0, 1, 3, 4, 8, 9, 10, 11, 12],
                      kd=1.0),
     "V64/r35":  dict(cache=ROOT / "_cache_r35", pfx="r35s", segs=[0, 1, 2], kd=1.0),
+    # ★ V58 route 2b is the ONLY Kd=1.00 build with real highway exposure: 227 s engaged above
+    # 20 m/s, in segments 7-10. 🛑 `_r31_common.SEGS_2B` is [0,1,2,11,12,13] -- it EXCLUDES exactly
+    # those segments, which is why this baseline sat unused while three sessions recorded "no Kd=1
+    # highway sample exists." All 14 segments are listed here. The cache predates the probe-era
+    # extractor (no cs_gear / clk_* / probe fields); `wrecs` already guards cs_gear.
+    "V58/r2b":  dict(cache=ROOT / "_cache_r2b", pfx="r2bs", segs=list(range(0, 14)), kd=1.0),
     "V62/r37":  dict(cache=ROOT / "_cache_r37", pfx="r37s", segs=list(range(0, 15)), kd=2.0),
     "V65/r3a":  dict(cache=ROOT / "_cache_r3a", pfx="r3as", segs=list(range(0, 7)), kd=2.0),
     "V65/r3b":  dict(cache=ROOT / "_cache_r3b", pfx="r3bs", segs=list(range(0, 14)), kd=2.0),
+    # V67 is the first CONDITIONAL dose: Kd=2 only while the firmware's own LKAS gate gp-0x6806 is
+    # true, stock LERP otherwise. `kd=2.5` is a LABEL, not a dose -- read it as "2 when gated".
+    # 🛑 On route 47 the gate is g6806 == cc_lat in 150,302/150,327 frames, so the two arms of the
+    # within-route A/B are ALSO the two arms of LKAS engagement. See DOSE_LABEL.
+    "V67/r47":  dict(cache=ROOT / "_cache_r47", pfx="r47s", segs=list(range(0, 26)), kd=2.5),
 }
-ORDER = ["V61/r31", "V59/r2c", "V64/r35", "V62/r37", "V65/r3a", "V65/r3b"]
+ORDER = ["V61/r31", "V59/r2c", "V64/r35", "V62/r37", "V65/r3a", "V65/r3b", "V67/r47"]
 
 # Kd dose pools -- routes merged only inside a dose, never across.
-DOSE = {0.0: ["V61/r31"], 1.0: ["V59/r2c", "V64/r35"], 2.0: ["V62/r37", "V65/r3a", "V65/r3b"]}
+DOSE = {0.0: ["V61/r31"], 1.0: ["V59/r2c", "V64/r35"], 2.0: ["V62/r37", "V65/r3a", "V65/r3b"],
+        2.5: ["V67/r47"]}
+DOSE_LABEL = {0.0: "kd=0", 1.0: "kd=1 (stock)", 2.0: "kd=2", 2.5: "kd=2*gated"}
 
 # ---------------------------------------------------------------- bands -------------------------
 # 🛑 30-40 Hz was V62's own NEGATIVE CONTROL for the 18-22 Hz claim. It is the SUBJECT here, so it
@@ -66,6 +79,8 @@ BANDS = {
     "6-9":   (6.0, 9.0),      # the ratchet
     "10-16": (10.0, 16.0),
     "18-22": (18.0, 22.0),    # GRIND #1
+    "18-26": (18.0, 26.0),    # the kit's strict grinding band -- the PRESENCE test lives here
+    "12-30": (12.0, 30.0),    # FREE locate band: a strict band pins f0 to its own edge (V61)
     "24-28": (24.0, 28.0),    # pre-declared NEGATIVE CONTROL
     "30-40": (30.0, 40.0),
     "40-49": (40.0, 49.0),
@@ -153,10 +168,18 @@ def q_of(f, P, f0):
 
 
 # ---------------------------------------------------------------- window records ----------------
-def wrecs(build, nfft=NFFT, hop=HOP, chan="tq", keep_P=False):
+def wrecs(build, nfft=NFFT, hop=HOP, chan="tq", keep_P=False, maskkey="cc_lat"):
     """Every disjoint-ish window of one build, tagged with band envelopes, band prominences and
     covariates. Windows are cut inside contiguous runs of the ENGAGEMENT mask (both polarities),
-    never across an engagement transition."""
+    never across an engagement transition.
+
+    `maskkey` selects the partition variable and therefore what `eng` MEANS in the records:
+      "cc_lat" -- openpilot's carControl.latActive. The kit's standing convention; the only one
+                  available on every route.
+      "g6806"  -- V67 ONLY: the firmware's OWN gate bit, which is also what selects the Kd=2 arm.
+                  Use this for the within-route dose A/B so the split is on the thing the firmware
+                  actually branched on, not on openpilot's view of it.
+    """
     B = BUILDS[build]
     out = []
     for s in B["segs"]:
@@ -168,7 +191,7 @@ def wrecs(build, nfft=NFFT, hop=HOP, chan="tq", keep_P=False):
         f = np.fft.rfftfreq(nfft, 1 / fs)
         taper = np.hanning(nfft) + 1e-3
         cw = slice(int(0.2 * nfft), int(0.8 * nfft))
-        le = d["cc_lat"] > 0.5
+        le = d[maskkey] > 0.5
         for eng, mask in ((1, le), (0, ~le)):
             for a, b in runs_of(mask, d["t"], nfft):
                 x = np.asarray(d[chan][a:b], float)
@@ -199,6 +222,11 @@ def wrecs(build, nfft=NFFT, hop=HOP, chan="tq", keep_P=False):
                     r["ratep95"] = float(np.percentile(np.abs(d["rate_c"][sl]), 95))
                     r["e4"] = float(np.mean(np.abs(d["e4tq"][sl])))
                     r["gear"] = (float(np.median(d["cs_gear"][sl])) if "cs_gear" in d else np.nan)
+                    # V67 carries the firmware's own arm selector; keep BOTH views so a window can
+                    # be audited for gate/latActive disagreement instead of one silently standing in
+                    # for the other.
+                    r["gate"] = (float(np.mean(d["g6806"][sl])) if "g6806" in d else np.nan)
+                    r["lat"] = float(np.mean(d["cc_lat"][sl] > 0.5))
                     r["cell"] = (eng, binof(r["v"], V_BINS), binof(r["eff"], E_BINS),
                                  binof(r["rate"], R_BINS))
                     r["blk"] = r["ep"] + (nwin // 8,)      # ~10.2 s blocks inside the run

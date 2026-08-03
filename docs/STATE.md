@@ -1,16 +1,112 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-07-31.** This file is the single current-state record. Update it in place at every
+**Last updated: 2026-08-02.** This file is the single current-state record. Update it in place at every
 close-out; do not append new dated blocks (that is what made `CLAUDE.md` unreadable). The narrative of how
 each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed, falsified, or **rejected on
 review** — check it before proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-08-01-v62-flew-and-the-grinding-is-fixed.md`
-(predecessors: `HANDOFF-2026-07-31-v64-the-null-is-on-the-gate.md`, then
+`docs/HANDOFF-2026-08-02-v67-flew-and-the-highway-grind-is-not-the-rate-lane.md`
+(predecessors: `HANDOFF-2026-08-01-grind2-is-v62s-own-fix-at-high-frequency.md`, then
+`HANDOFF-2026-08-01-v62-flew-and-the-grinding-is-fixed.md`, then
+`HANDOFF-2026-07-31-v64-the-null-is-on-the-gate.md`, then
 `HANDOFF-2026-07-31-v61-worse-the-rate-lane-is-the-damper.md`, then
 `HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`, then
 `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md`).
+
+---
+
+★★★★ **THE HEADLINE, 2026-08-02 (LATEST): V67 FLEW AND IT IS THE BEST BUILD THIS KIT HAS MEASURED —
+GRIND #1 FIXED AND THE CREEP GRIND #2 ELIMINATED. THE NEW HIGHWAY SYMPTOM IS *NOT* THE RATE LANE.**
+
+Route **`47`** (`75604b0a432fdc89_00000047--3e0b6134c0`), 26 segments, **1,495 s**, an ordinary
+street → highway → street → parking-lot commute (not a provoked test route).
+
+✅ **The probe is live and the gate works.** 150,327 frames, decoded two ways: byte4 takes exactly two
+values `{0x87, 0xC7}`; **`bit6` == `carControl.latActive` in 150,302/150,327 = 99.983%** (the 25
+disagreements are single-frame transition edges); **`bit5` (`gp-0x671d`, the masking risk) = 0** and
+`bit4` (`gp-0x671a`) = **0 in every frame**; `illegal` = 0; VOID = 0. ⇒ V67's arm was a **clean binary**
+— stock LERP vs `0xC6446` = 5244, nothing masking it. ⚠ `bit4` is now a **wasted rung** (V64 closed it).
+✅ **FLIGHT-CLEAN:** `ST == 4` = **0/150,327** (zero-EME streak now past 500k frames), `ST == 3` = 12,
+zero `steerUnavailable`/`steerTempUnavailable`/`canError`/`controlsMismatch`/`immediateDisable`/
+`steerSaturated`.
+
+★★ **THE WITHIN-ROUTE GATE A/B — route 47 is the first route containing BOTH doses**, with the arm state
+recorded per frame, so the contrast needs no cross-route comparison. 18–22 Hz engaged-creep, cell-
+stratified, episode-clustered: **ENGAGED arm 0.524 [0.337, 0.804]** vs the Kd = 1 pool (and 1.183
+[0.773, 1.617] vs Kd = 2), **DISENGAGED arm 1.055 [0.669, 1.354]** vs Kd = 1. ⇒ **suppression in ONE arm
+only** — V67's conditional design, measured, and the first evidence ever to separate V66 from V67
+(their probe payloads cannot). 🛑 28 windows / 11 episodes — strong, not proof; confirm the `.rwd` name.
+
+★★ **GRIND #1 IS STILL FIXED** — engaged creep, 18–22 Hz, p90 of window envelope p99, episode-bootstrapped
+against the Kd = 1.00× pool (split-half null **[0.90, 1.12]**):
+
+| dose | route(s) | secs | 18–22 p90 | **ratio [95%]** |
+|---|---|---|---|---|
+| Kd = 0 | V61 `r31` | 33 | 1290.0 | **1.50 [1.40, 1.62]** |
+| Kd = 1.00× | V58 `r2b` + V59 `r2c` + V64 `r35` | 173 | 860.4 | 1.00 (ref) |
+| **Kd = gated (V67 `r47`)** | | **22** | **480.9** | **0.55 [0.35, 0.65]** |
+| Kd = 2.00× | V62 `r37` + V65 `r3a`/`r3b` | 375 | 337.2 | **0.39 [0.32, 0.48]** |
+
+Monotone in dose, all far outside the null. V67 ≈ V62 (CIs overlap), as the arithmetic predicts.
+⚠ **V67's engaged-creep exposure is only 22 s / 17 windows** — route 47 was a commute. Read the CI.
+
+★★ **THE CREEP GRIND #2 IS GONE.** Creep, 40–49 Hz, burst = a 2.56 s window with envelope p99 > 500
+(the V62/V65 bursts ran 2000–4000):
+
+| dose | LKAS ON secs / MAX / bursts | LKAS OFF secs / MAX / bursts |
+|---|---|---|
+| Kd = 1.00× | 173 / 110.6 / **0** | 137 / 89.8 / **0** |
+| **Kd = 2.00×** | 375 / **1830.7** / **18** | 140 / **1469.6** / **6** |
+| **V67** | 22 / **83.5** / **0** | 91 / **48.8** / **0** |
+
+🛑 **The two arms are NOT equally supported.** Manual: expected 3.91 bursts, **P(0) = 0.020** — solid.
+**Engaged: expected only 1.04, P(0) = 0.35 — UNRESOLVED**, and that is exactly the operator's own
+uncertainty. **It needs a parking lot, not a build.**
+
+🛑🛑 **AND THE HIGHWAY SYMPTOM SHOWS NO RATE-LANE DOSE RESPONSE — a prediction of mine, refuted.**
+The enabler: **route `2b` (V58, Kd = 1.00×) carries 227 s of highway-engaged driving** that two sessions
+had assumed did not exist. v > 20 m/s, engaged throughout:
+
+| dose pool | secs | 40–49 p90 | **40–49 MAX** | **bursts** | **ratio vs Kd=1 [95%]** |
+|---|---|---|---|---|---|
+| Kd = 1.00× (`r2b`+`r2c`) | 238 | 86.7 | 341.1 | **0** | 1.00 |
+| Kd = 2.00× (`r37`+`r3b`) | 361 | 84.9 | 154.5 | **0** | **0.98 [0.71, 1.63]** |
+| Kd = 2.44× (`r47`) | 797 | 67.1 | 267.0 | **0** | **0.77 [0.56, 1.44]** |
+
+**Split-half null [0.53, 1.86] — both ratios inside it. No ordering. Zero bursts anywhere in ~1,400 s.**
+And the identity question is settled by amplitude: creep grind #2 runs f0 43–45 Hz at prominence
+**48–1062×** and envelope **2000–4000**; the highway population runs f0 45–47 Hz at prominence **~6×**
+and envelope **155–370**. ⇒ **Not grind #2.** The operator's *"maybe this is a grind #3 or #2.5"* stands.
+
+⇒ 🛑 **I PREDICTED THE OPPOSITE FROM ARITHMETIC AND WITHDREW IT.** V67 genuinely delivers **2.44×** at
+highway — its maximum, 22% above V62's 2.00× — because a flat scalar arm replaces a surface Honda
+**rolls off with speed**. That is correct arithmetic and it makes a tidy story with the operator's
+report. **The data does not support it.** Building V68 on it would have been this kit's recorded failure
+mode — *a statistic computed correctly over the wrong population* — for the fourth time.
+
+**What IS real at highway:** within route 47, 21 maneuvers vs 21 **matched** straight-line controls give
+1–4 Hz 1.21 · **6–9 2.78** · 10–16 1.41 · 18–22 1.86 · 24–28 1.88 · 30–40 1.58 · **40–49 2.13**
+(nulls ~[0.6, 1.5]) ⇒ **broadband from 6 Hz up**, with 6–9 Hz rising *more* than 40–49 Hz, at absolute
+levels ~50× below the creep bursts. A maneuver loads the wheel and everything gets noisier.
+
+🛑🛑 **THE HARD LIMIT: BOTH INSTRUMENTS ARE BLIND ABOVE ~50 Hz.** CAN grid ~100.5 Hz (Nyquist 50.2);
+comma IMU **99.9–100.5 Hz** (Nyquist **49.97–50.26**). **The IMU gives NO headroom over CAN.** If the
+felt highway vibration is above 50 Hz, nothing in this kit can see it, and every null above is silent
+about it. This also re-confirms that IMU/CAN frequency agreement carries **no** information about the
+44.9 vs 55.6 Hz alias.
+
+⇒ ★★★ **RECOMMENDED: KEEP V67 ON THE CAR. NO CONTROL-PATH CHANGE IS SUPPORTED.** The two real gaps are
+**(A)** 22 s of engaged-creep exposure — closed by a 5-minute parking-lot drive, not a build — and
+**(B)** the >50 Hz blindness, which needs a probe that samples inside the 1 kHz task and reports a
+**sticky** HF flag. Reproduce every number above with
+`analysis-2020accord/r47_orchestrator_checks.py`; the surface arithmetic is in
+`analysis-2020accord/v68_design_math.py`.
+
+★ **Open lead, recorded not chased:** the highway symptom may be the **RATCHET** (6–9 Hz), not grind #2 —
+6–9 Hz rises most during maneuvers and the ratchet is strongly LKAS-gated (p = 1.09e-08), which matches
+*"only during LKAS-engaged"* far better than grind #2's weak 84.5%-vs-54.7% association. ⚠ Counter:
+between builds 6–9 Hz at highway runs 169.0 / 197.8 / **106.9** — V67 is the **lowest**.
 
 ★★★★ **THE HEADLINE, 2026-08-01 (LATEST): THE ROOT CAUSE OF "GRIND #2" IS V62's OWN FIX, AND THE
 BAND TABLE SHOWS IT AS ONE KNOB DOING BOTH THINGS.**
@@ -424,7 +520,21 @@ gain reducer. This is what pulls eps down from the raw-LERP values.
 
 ---
 
-## On the car right now — **V65** (flashed, driven routes `3a--4e55c1e0f4` and `3b--a4a7f4dbf1` 2026-08-01)
+## On the car right now — **V67** (flashed, driven route `47--3e0b6134c0` 2026-08-02)
+
+**V67 = V66 + the grind #1 fix gated on LKAS**: `0x3AA96` `c5`→`fb` (repoint the dead `gp-0x683c` gate to
+`gp-0x6806`) + `0xC6446` 512→5244, both `sar` sites left **stock**. See THE HEADLINE at the top of this
+file for the full route-47 result. Summary: **grind #1 fixed (0.55 [0.35, 0.65]), creep grind #2
+ELIMINATED (0 bursts in 113 s vs 24 at Kd = 2×), the gate confirmed on-car, `gp-0x671d` never fired**,
+and the new highway symptom shows **no rate-lane dose response**.
+⇒ ★★★ **RECOMMENDED: LEAVE V67 ON THE CAR.** The next action is a **targeted drive**, not a build:
+a parking-lot segment with LKAS engaged at creep (closes the 22 s exposure gap that leaves
+"creep grind #2 under LKAS" formally unresolved at P(0) = 0.35), plus the highway maneuvers that provoke
+the reported symptom.
+
+---
+
+## Previously on the car — **V65** (flashed, driven routes `3a--4e55c1e0f4` and `3b--a4a7f4dbf1` 2026-08-01)
 
 **V65 = V62's control-path edits byte-identical + the 4-level saturation ladder on `gp-0x6b94`.** The
 operator drove two routes on it: `3a` (short — parking lot, then **grind #2 demonstrated with LKAS ON**)

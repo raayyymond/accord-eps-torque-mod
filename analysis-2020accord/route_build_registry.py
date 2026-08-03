@@ -33,6 +33,9 @@ class Route:
 
 # ⚠ `kd=None` means the rate lane was not the variable under test and was not separately verified
 # for that route. It does NOT mean "unknown build".
+# ⚠ route 47 (V67) is the first CONDITIONAL dose: kd=2.0 there means "2x WHILE THE LKAS GATE IS
+# TRUE, stock 1x otherwise". Do not pool it with the unconditional 2x routes without saying which
+# arm you mean -- its disengaged arm is a Kd=1 population.
 ROUTES = (
     Route("13", "f484e75b00", "V52C-era", "no probe", None, evidence=(
         "Named in HANDOFF-2026-07-26-route13. 🛑 The V52C window 08-12 is ABSENT machine-wide, so no "
@@ -80,6 +83,30 @@ ROUTES = (
           image_sha="f12171a8", evidence=(
         "83,058 frames. byte4 takes {0x87, 0x97}; same structural exclusion of V59/V62 via 0x97, "
         "same zero invariant violations, same 18-22 Hz suppression. Highway from seg 3 (t ~ 25 s).",)),
+    Route("47", "3e0b6134c0", "V67", "3-bit ARM SELECTOR: bit6 gp-0x6806, bit5 gp-0x671d, "
+                                     "bit4 gp-0x671a>=5", 2.0, evidence=(
+        "150,327 frames over 26 segments. byte4 takes exactly TWO values, {0x87, 0xC7}: bit7 set "
+        "and bit3 clear on both, so the V66/V67 payload class holds and V53/V54 are excluded.",
+        "★ bit5 (gp-0x671d, the masking arm that OUTRANKS the gain arm) and bit4 (gp-0x671a) are "
+        "ZERO in all 150,327 frames, and bit3 and the VOID sentinel never fire ⇒ the arm is a clean "
+        "binary, stock mode-10 LERP vs cal 0xC6446 = 5244, with nothing masking it.",
+        "★ bit6 == carControl.latActive in 150,302/150,327 frames (99.983%); the 25 disagreements "
+        "are single-frame transition edges. That identifies bit6 as gp-0x6806, the LKAS "
+        "deadband/engage gate first probed on V57 -- and it EXCLUDES V59/V62 on semantics even "
+        "though their thermometer nesting survives both payloads structurally: under V59/V62 bit6 "
+        "is the FAULT sentinel, which read 0.000% on route 2c and route 37, not 77.5%.",
+        "★★ V66 IS EXCLUDED BY THE Kd SIGNATURE, which is the first thing that has ever separated "
+        "the V66/V67 pair -- payload cannot (see identify()). V66 reverts BOTH `sar` taps, so it is "
+        "Kd=1 in BOTH arms and must read ~1.0 against the Kd=1 pool in both. Measured "
+        "(analyze_r47_grind1.py S3c, 18-22 Hz engaged-creep envelope p99, cell-stratified, "
+        "episode-clustered): ENGAGED arm 0.524 [0.337, 0.804] vs the Kd=1 pool and 1.183 "
+        "[0.773, 1.617] vs the Kd=2 pool, while the DISENGAGED arm reads 1.055 [0.669, 1.354] vs "
+        "the Kd=1 pool. Suppression in ONE arm only is V67's conditional design and no other built "
+        "artifact produces it.",
+        "🛑 This is strong evidence, not proof: it rests on 28 engaged-creep windows / 11 episodes. "
+        "CONFIRM THE .rwd FILENAME as well.",
+        "flight health: ST==4 = 0/150,327; ST==3 = 12; zero steerUnavailable / steerTempUnavailable "
+        "/ canError / controlsMismatch / immediateDisable / steerSaturated.")),
 )
 
 BY_ROUTE = {r.route: r for r in ROUTES}

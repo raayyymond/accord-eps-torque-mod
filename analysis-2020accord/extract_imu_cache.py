@@ -31,14 +31,47 @@ from rlog_parse import read_messages  # noqa: E402
 
 RLOGDIR = ROOT / "analysis-2020accord" / "rlogs"
 ROUTES = {"r3a": "75604b0a432fdc89_0000003a--4e55c1e0f4",
-          "r3b": "75604b0a432fdc89_0000003b--a4a7f4dbf1"}
-NSEG = {"r3a": 7, "r3b": 14}
+          "r3b": "75604b0a432fdc89_0000003b--a4a7f4dbf1",
+          "r47": "75604b0a432fdc89_00000047--3e0b6134c0",
+          "r2b": "75604b0a432fdc89_0000002b--7926e8f7e5",
+          "r2c": "75604b0a432fdc89_0000002c--eb219f392c",
+          "r37": "75604b0a432fdc89_00000037--6231e33f3d"}
+# r2c/r37 segment lists are SPARSE (some segments were never pulled), so NSEG is the highest index
+# plus one and a missing rlog is skipped rather than fatal.
+NSEG = {"r3a": 7, "r3b": 14, "r47": 26, "r2b": 14, "r2c": 13, "r37": 15}
+
+
+def recover_t0(path):
+    """t=0 for caches written before `t0_mono` was stored (route 2b).
+
+    The old extractors set t=0 at the first src-1 0x14A arrival, so that is reproduced here by
+    re-reading the rlog. ⚠ If a pre-0x18F frame was dropped by the newer convention this can be off
+    by ONE frame (~10 ms) -- irrelevant for a band envelope over multi-second episodes, but the
+    alignment is CHECKED in analyze_r47_imu.sec_align rather than assumed.
+    """
+    for evt in read_messages(path):
+        try:
+            if evt.which() != "can":
+                continue
+        except Exception:
+            continue
+        for m in evt.can:
+            if int(m.src) == 1 and int(m.address) == 0x14A:
+                return evt.logMonoTime * 1e-9
+    return None
 
 
 def extract(tag, s):
     path = RLOGDIR / f"{ROUTES[tag]}--{s}--rlog.zst"
     out = ROOT / f"_cache_{tag}"
-    t0 = float(np.load(out / f"{tag}s{s}.npz")["t0_mono"][0])   # the CAN cache's t=0
+    z = np.load(out / f"{tag}s{s}.npz")
+    if "t0_mono" in z.files:
+        t0 = float(z["t0_mono"][0])                            # the CAN cache's t=0
+    else:
+        t0 = recover_t0(path)
+        if t0 is None:
+            print(f"{tag}s{s}: no 0x14A src1 frame -- SKIPPED")
+            return None
 
     a_hw, a_mono, a_v, a_st = [], [], [], []
     g_hw, g_mono, g_v, g_st = [], [], [], []
@@ -97,7 +130,10 @@ if __name__ == "__main__":
     segl = sys.argv[2:] or [str(i) for i in range(NSEG[tag])]
     fa, fg, DA, DG = [], [], [], []
     for s in segl:
-        a, g, da, dg = extract(tag, s)
+        r = extract(tag, s)
+        if r is None:
+            continue
+        a, g, da, dg = r
         fa.append(a); fg.append(g); DA.append(da); DG.append(dg)
     DA, DG = np.concatenate(DA), np.concatenate(DG)
     print(f"\n{tag.upper()} ROUTE-WIDE IMU SAMPLE RATE (hardware timestamps, {len(DA) + 1} samples)")
