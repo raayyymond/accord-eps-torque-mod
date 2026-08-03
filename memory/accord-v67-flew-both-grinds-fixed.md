@@ -50,10 +50,17 @@ The operator reported a resonance during highway lane changes, LKAS-engaged only
 predicted it: V67 delivers **2.44×** at highway — its maximum, 22% above V62's flat 2.00× — because a
 scalar arm replaces a surface Honda rolls off with speed. **The data refuted it.**
 
-With route **`2b` (V58, Kd = 1.00×, 227 s of highway** — a baseline two sessions had assumed did not
-exist) brought in, the three-dose highway comparison is **NULL**: 40–49 Hz ratios **0.98 [0.71, 1.63]**
-and **0.77 [0.56, 1.44]** against a split-half null of **[0.53, 1.86]**, no dose ordering, and **zero
-burst windows at any dose across ~1,400 s**.
+With route **`2b` (V58, Kd = 1.00×, 227 s of highway** — a baseline three sessions had assumed did not
+exist) brought in, the three-dose highway comparison is **NULL**: 40–49 Hz ratios **0.970
+[0.787, 1.154]** and **0.938 [0.764, 1.184]** against a split-half null of **[0.73, 1.37]**;
+manoeuvre-conditioned **0.999 [0.79, 1.31]** and **0.884 [0.67, 1.28]**. No dose ordering, and the
+**corpus-maximum highway envelope (851.5 counts) is on V58/`r2b` at Kd = 1.00× — the STOCK lane.**
+✅ **Positive control proves the estimator is live: 18–22 Hz IS suppressed at highway on the Kd = 2
+arms**, manoeuvre-conditioned median **0.509 [0.39, 0.92]**, outside the null.
+⚠ The one band outside the null, **10–16 Hz (1.55/1.50), is WHEEL ORDER 1** (order 0.996–0.999 on all
+five routes) — tyre balance between drives months apart, not a dose effect.
+🛑 My own first pass said *"max 341/155/267, zero windows above 500"* — **both halves wrong**; my
+estimator ran 1.4–1.9× low by skipping the detrend + Hann taper `_grind2_lib.win_env` applies.
 
 Identity settled by amplitude: creep grind #2 runs f0 43–45 Hz at prominence **48–1062×** and envelope
 **2000–4000**; the highway population runs f0 45–47 Hz at prominence **~6×** and envelope **155–370**.
@@ -64,7 +71,23 @@ What IS real at highway is **broadband**: 21 maneuvers vs 21 **matched** straigh
 **40–49 2.13** (nulls ~[0.6, 1.5]) — 6–9 Hz rises *more* than 40–49, at levels ~50× below the creep
 bursts. A maneuver loads the wheel and everything gets noisier.
 
+## ✅✅ FOUR INSTRUMENTS AGREE, and the microphone null is quantitative
+The comma's **microphone** (`soundPressure`, computed from **16–48 kHz** audio at 10.000 Hz) has **no
+frequency ceiling** — the only measurement here that can speak to a >50 Hz event.
+- **Positive control: it HEARS the creep grind #2** — burst vs quiet **4.14×** un-weighted p95,
+  **5.88×** max, **+9.7 dB(A)**. The operator's *"like a subwoofer"* is confirmed acoustically.
+- **Highway: nothing.** Un-weighted **1.067×** (my independent run 1.069 [0.960, 1.184], null
+  [0.793, 1.264]); A-weighted **−0.59 dB(A)**. The low-frequency signature (un-weighted up,
+  A-weighted flat) is **absent**.
+- **Kd = 1.00 control kills it:** `r2b`/V58 gives **1.071× [0.824, 1.559]** vs `r47`/V67's **0.976×
+  [0.814, 1.126]** — the *stock* rate lane shows a manoeuvre rise at least as large.
+- **Sensitivity bound:** highway is 4.0× louder broadband, so a grind-#2-sized *absolute* excess would
+  read **1.78×**. We measure ~1.0× ⇒ **the highway event is at most ~9% of grind #2's absolute
+  acoustic amplitude.**
+⚠ Bounds *absolute* amplitude only, and a narrow tone could be audible while barely moving a broadband
+10 Hz level.
+
 ⇒ **KEEP V67. No control-path change is supported.** Reproduce with
-`analysis-2020accord/r47_orchestrator_checks.py`. See [[accord-r24-gain-is-a-speed-rate-surface]] and
+`analysis-2020accord/r47_orchestrator_checks.py` and `analysis-2020accord/r47_microphone_test.py`. See [[accord-r24-gain-is-a-speed-rate-surface]] and
 [[accord-both-instruments-blind-above-50hz]]. Related: [[accord-gp6806-is-the-lkas-gate-validated-on-car]],
 [[feedback-mean-and-tail-must-be-reported-together]], [[accord-v62-fixed-the-grinding]].

@@ -157,15 +157,47 @@ older extractor (no `cs_gear`/`clk_*`/probe fields) but carries everything a ban
 v > 20 m/s, `latActive` throughout, 2.56 s windows, p90 of per-window envelope p99, ratio bootstrapped
 over ~10 s episodes:
 
-| dose pool | n win | secs | 40–49 p90 | **40–49 MAX** | **bursts > 500** | **ratio vs Kd=1 [95%]** |
-|---|---|---|---|---|---|---|
-| Kd = 1.00× (`r2b`+`r2c`) | 186 | 238 | 86.7 | **341.1** | **0** | 1.00 |
-| Kd = 2.00× (`r37`+`r3b`) | 282 | 361 | 84.9 | **154.5** | **0** | **0.98 [0.71, 1.63]** |
-| Kd = 2.44× (`r47`) | 623 | 797 | 67.1 | **267.0** | **0** | **0.77 [0.56, 1.44]** |
+| dose pool | blocks | secs | 40–49 p50 | p90 | p99 | **max** | blk > 300 | 30–49 max |
+|---|---|---|---|---|---|---|---|---|
+| Kd = 1.00× (`r2b`+`r2c`) | 27 | 276 | 43.3 | 117.4 | 409.6 | **648.4** | 2/27 | **851.5** |
+| Kd = 2.00× (`r37`+`r3b`) | 41 | 420 | 48.6 | 127.5 | 253.7 | **300.0** | 0/41 | 362.9 |
+| Kd = 2.44× (`r47`) | 83 | 850 | 39.6 | 93.6 | 330.8 | **488.2** | 6/83 | 672.0 |
 
-**Split-half null: [0.53, 1.86]. Both ratios sit inside it. No dose ordering, and V67 is if anything the
-lowest.** Over ~1,400 s of highway at three doses, **not one window anywhere exceeds 500**, against creep
-where Kd = 2× produced 24 of them up to 1831.
+🛑 **CORRECTION TO MY OWN FIRST PASS.** I published *"max 341.1 / 154.5 / 267.0, and zero windows
+above 500 at any dose."* **Both halves are wrong** — my envelope estimator ran ~1.4–1.9× low because it
+skipped the detrend + Hann taper (divided back out) that `_grind2_lib.win_env` applies, which is the
+estimator that produced the 2,000–4,000 creep-burst figures and therefore the only comparable scale.
+**It strengthens the conclusion rather than weakening it:** the corpus-maximum highway envelope,
+**851.5 counts, is on V58/`r2b` at Kd = 1.00×** — the *stock* rate lane — at prominence 2.26 (broadband).
+Block rates 7.4% / 0% / 7.2%: **no ordering.**
+
+Matched on speed × |rate| × angle-excursion, 1500 block-resampled draws, split-half null inside the
+Kd = 1.00 pool, same estimator throughout:
+
+| band | 2.00/1.00 [95%] | 2.44/1.00 [95%] | null |
+|---|---|---|---|
+| 1–4 | 0.843 [0.72, 1.00] | 0.778 [0.65, 0.96] | [0.79, 1.26] |
+| 6–9 | 1.213 [0.99, 1.52] | 0.876 [0.73, 1.21] | [0.64, 1.53] |
+| **10–16** | **1.551 [1.25, 1.83]** | **1.501 [1.24, 1.80]** | [0.69, 1.45] |
+| **18–22** | **0.828 [0.65, 0.99]** (p95) | **0.791** (p95) | [0.81, 1.22] |
+| 24–28 | 1.064 | 1.211 | [0.78, 1.29] |
+| 30–40 | 1.051 | 0.981 | [0.79, 1.25] |
+| **40–49** | **0.970 [0.787, 1.154]** | **0.938 [0.764, 1.184]** | [0.73, 1.37] |
+
+Manoeuvre-conditioned (`dang` ≥ 2°): 40–49 = **0.999 [0.79, 1.31]** and **0.884 [0.67, 1.28]**.
+My 0.98 / 0.77 are confirmed with ~2× tighter CIs.
+
+✅ **THE ESTIMATOR IS NOT DEAD — there is a working positive control.** **18–22 Hz IS suppressed at
+highway on the Kd = 2 arms**: p95 **0.828 [0.65, 0.99]**, manoeuvre-conditioned median **0.509
+[0.39, 0.92]**, outside the null. V62's grind #1 fix is visible even at road speed. So a null at
+40–49 Hz is a real null, not an insensitive one.
+
+⚠ **The one band outside the null — 10–16 Hz at 1.55/1.50 — is WHEEL ORDER 1, not a dose effect.** At
+20–33 m/s order 1 is 9.6–16 Hz; the order of the strongest 10–16 line is 0.996–0.999 on all five routes,
+with 87–99% of windows within 5% of order 1. It is tyre balance between drives months apart. **Do not
+publish it as a rate-lane effect.**
+
+
 
 ### And the amplitudes settle the identity question
 
@@ -212,39 +244,69 @@ This kit has already been burned once this way — the "8.69 Hz line V56 introdu
 "44.9 Hz" is **44.6 Hz**, and the between-route frequency spread was the instrument, not the car.
 
 
-### ✅ THE MICROPHONE — the only instrument with NO frequency ceiling — ALSO SEES NOTHING
-`soundPressure` is computed on-device from audio at **16–48 kHz** and logged as a level at ~10 Hz. It
-cannot give a spectrum, but it is **not band-limited**, so it is the only measurement here that can
-speak to a >50 Hz event. Highway maneuvers vs the atlas's **matched** straight-line controls, p90 level
-per episode, paired bootstrap over episode pairs:
+### ✅✅ THE MICROPHONE — the only instrument with NO frequency ceiling — AND ITS NULL HAS TEETH
+`soundPressure` is computed on-device from audio at **16–48 kHz**, logged as a level at exactly
+**10.000 Hz**. No spectrum, but **no band limit either** — the only measurement here that can speak to a
+>50 Hz event.
 
-| channel | maneuver | control | **paired ratio [95%]** | split-half null |
-|---|---|---|---|---|
-| **`soundPressure` (UN-weighted)** | 0.0857 | 0.0802 | **1.069 [0.960, 1.184]** | [0.793, 1.264] |
-| `soundPressureWeighted` (A) | 0.0203 | 0.0218 | 0.905 [0.647, 1.165] | [0.744, 1.359] |
-| `soundPressureWeightedDb` | 60.11 | 60.76 | 0.985 [0.942, 1.023] | — |
+★★ **POSITIVE CONTROL FIRST: the microphone HEARS the creep grind #2, loudly.** r3a+r3b engaged creep,
+18 burst windows (torsion-bar 40–49 env p99 > 500) vs 167 quiet:
 
-**All three sit inside their own nulls.** The un-weighted channel is the one that matters — A-weighting
-is −30 dB at 50 Hz and would suppress exactly the band in question, so a low-frequency event would show
-as *un-weighted up, A-weighted flat*. It does not.
+| statistic | burst | quiet | **ratio** |
+|---|---|---|---|
+| `soundPressure` p95 | 0.0671 [0.0513, 0.1040] | 0.0162 [0.0152, 0.0175] | **4.14×** |
+| `soundPressure` max | 0.1033 | 0.0176 | **5.88×** |
+| A-weighted dB p95 | 45.16 | 35.47 | **+9.7 dB(A)** |
 
-⇒ **Three independent instruments — the EPS torsion bar, the comma IMU, and the microphone — all show
-no maneuver-specific signature at highway beyond the broadband rise that matched controls already
-capture.**
-⚠ **Sensitivity limit, stated honestly:** cabin sound at 30 m/s is dominated by road and wind noise, the
-channel is a 10 Hz *level* rather than a spectrum (a short burst averages down), and n = 21 pairs. A
-modest added tone could sit under that floor. This is a null with real but bounded power — it does not
-prove silence, it bounds the effect to something smaller than the matched-control spread.
-Reproduce: `analysis-2020accord/r47_microphone_test.py`.
+The operator's *"almost like I have a subwoofer"* is confirmed **acoustically**. **The instrument works.**
+
+**HIGHWAY — nothing.** r47 atlas pairs (21 v 21, speed matched to 0.011 m/s): un-weighted **1.067×**
+(my independent run: 1.069 [0.960, 1.184] against a split-half null of [0.793, 1.264]), A-weighted
+**−0.59 dB(A)**, dB 0.985. The diagnostic signature — un-weighted up while A-weighted stays flat, which
+is what a low-frequency event looks like through a −30 dB-at-50 Hz curve — is **absent**: un-weighted
+barely moves and A-weighted goes *negative*.
+
+★★ **AND THE Kd = 1.00 CONTROL KILLS IT.** Identical CAN-only manoeuvre rule, common 22–29 m/s band:
+
+| route | build | Kd | n_man | n_ctl | v_man | v_ctl | **`soundPressure` p95 ratio [95%]** |
+|---|---|---|---|---|---|---|---|
+| **`r2b`** | **V58** | **1.00** | 42 | 12 | 26.14 | 24.83 | **1.071× [0.824, 1.559]** |
+| `r47` | V67 | 2.44 | 50 | 28 | 27.57 | 27.74 | **0.976× [0.814, 1.126]** |
+
+**The stock rate lane shows a manoeuvre-related acoustic rise at least as large as V67's.** Both CIs
+span 1.
+
+★ **SENSITIVITY — the null is quantitative, not merely quiet.** Highway is **4.0× louder** broadband
+(floor 0.0601 vs 0.0149 at creep). A creep-grind-#2-sized *absolute* acoustic excess dropped onto the
+highway floor would read **1.78×** — comfortably resolvable. We measure **~1.0×**.
+⇒ **The highway event is at most ~9% of grind #2's absolute acoustic amplitude.**
+
+⚠ **Two honest bounds:** this bounds *absolute* amplitude (felt similarity at 30 m/s need not mean equal
+amplitude), and a narrow tone could be audible while barely moving a broadband 10 Hz level.
+
+⇒ **FOUR independent instruments now agree** — EPS torsion bar, chassis IMU (no dose ordering; 40–49 Hz
+is the *least*-elevated manoeuvre band once exposure-normalised, 0.72–0.93×), the microphone (validated
+at 4.14× on grind #2, ~1.0× at highway on **both** V67 and a stock-Kd build), and the alias test
+(unresolvable at this precision).
+Reproduce: `analysis-2020accord/r47_microphone_test.py` and `analyze_r47_imu.py mic odr mic_dose atlas dose align`.
 
 ### 🛑 THE HARD LIMIT: BOTH INSTRUMENTS ARE BLIND ABOVE ~50 Hz
 
 | instrument | measured rate | Nyquist |
 |---|---|---|
-| CAN `0x14A`/`0x18F` grid | ~100.5 Hz | **50.2 Hz** |
-| comma IMU (accelerometer, hardware timestamps) | **99.9–100.5 Hz** | **49.97–50.26 Hz** |
+| CAN `0x14A`/`0x18F` grid | **100.000 Hz exactly** | **50.00 Hz** |
+| comma IMU (accelerometer) | **101.02 Hz** | **50.51 Hz** |
 
-The IMU gives **no headroom whatsoever** over CAN. ⇒ **If the felt highway vibration is above 50 Hz,
+⚠ **Both numbers corrected.** My 99.9–100.5 Hz came from the dt **mean**; ~1% of IMU samples are
+**dropped**, inserting 20/30 ms gaps that inflate the mean but not the **median** (9.899 ms → 101.02 Hz).
+Settled by test, not assertion: a lattice fit residual of **77 µs** median-seeded vs **2889 µs** forced to
+100.03 (38× worse), and a synthetic fold test that samples a known sinusoid at r47's *actual* timestamps
+— **7 of 7 test tones fold according to 101.02 Hz.** So the IMU has **0.51 Hz** of headroom over CAN.
+★ **But headroom is the wrong quantity for the alias anyway.** 55.6 Hz appears at 44.400 on CAN and
+45.421 on the IMU; 44.9 Hz appears at 44.900 on both. The discriminant is that **1.021 Hz apparent-peak
+difference**, and the measured paired shift over the 120 loudest windows is median +1.677 Hz with
+**sem 0.856** where ≪0.34 is needed. Resolving it needs a log at a different IMU ODR (208/416 Hz).
+⇒ *"essentially no usable headroom"* stands; only the raw numbers needed fixing. ⇒ **If the felt highway vibration is above 50 Hz,
 nothing in this kit can currently see it**, and every null above is a null about the *observable* band
 only. This also re-confirms that IMU/CAN frequency agreement carries **no** information about the
 44.9 vs 55.6 Hz alias — the two grids are 0.5 Hz apart.
@@ -399,11 +461,20 @@ divisor is the *measured* phase step, not a hard-coded 4. And `gp-0x6ac0` is an 
 own byte dump the whole time.
 
 ### Open leads, recorded not chased
-- ★ **The highway symptom may be the RATCHET, not grind #2.** 6–9 Hz rises **2.78×** during maneuvers —
-  more than 40–49 Hz — and the **ratchet is strongly LKAS-gated (p = 1.09e-08)**, which matches the
-  operator's *"only during LKAS-engaged"* far better than grind #2's weak 84.5%-vs-54.7% association.
-  ⚠ Counter-evidence: between builds, 6–9 Hz at highway runs 169.0 / 197.8 / **106.9** — V67 is the
-  **lowest**, so it is not elevated by dose. Worth a dedicated test; not concluded.
+- 🛑 **CLOSED, NEGATIVE — the highway symptom is NOT the ratchet.** I raised this as an open lead
+  because 6–9 Hz rose most in the within-route maneuver contrast. It does not survive:
+
+  | population | n | f0 | sd | prom | **2f0 lock** |
+  |---|---|---|---|---|---|
+  | parking-lot ratchet, V62 `r37` | 100 | **7.46** | 1.18 | 33.3 | **0.598** |
+  | parking-lot ratchet, V65 `r3a` | 115 | **7.69** | 2.08 | 7.9 | 0.304 |
+  | r47 highway manoeuvre | 35 | **9.13** | 1.69 | 8.3 | 0.294 |
+  | r47 highway cruise | 233 | **11.13** | 1.47 | 7.6 | 0.378 |
+
+  f0 is **9.13 Hz, not 7.4–7.7**, it **moves to 11.13 Hz in cruise** (a mode does not move), and the
+  15 Hz harmonic lock that is the ratchet's signature is **absent** (0.294 vs 0.598). Cross-dose,
+  manoeuvre-conditioned, 6–9 Hz is **1.050 [0.869, 1.546]** and **1.021 [0.683, 1.787]** against a null
+  of [0.68, 1.38] — both inside. The counter-evidence I flagged (V67 lowest at 6–9 Hz) was right.
 - **No route in the corpus has LKAS-off exposure above 10 m/s**, so the "is it the rate lane or is it
   LKAS torque" confound cannot be broken at highway by any engagement contrast on existing data.
   Confirmed independently: **zero** gate=0 seconds above 8 m/s on route 47.

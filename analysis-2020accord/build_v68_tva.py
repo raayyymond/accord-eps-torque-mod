@@ -56,6 +56,51 @@ but it is the difference between a number we measured and a number we assumed. M
 decides, for every FUTURE calibration on this lane, whether the rate axis can discriminate at all:
 **a lane whose operating point never leaves a flat segment cannot be tuned on wheel rate.**
 
+🛑🛑 bit4 IS PREDICTED TO READ 0.000%, AND THAT IS THE POINT. PRE-REGISTERED, HERE, BEFORE THE DRIVE
+-----------------------------------------------------------------------------------------------------
+Route 47's own cache, pushed through the very scale chain the probe exists to test
+(`gp-0x6ac0 = |0x18F rate counts| x 32768/(48*1159) = x 0.5890135`), over 150,327 samples / 25.1 min
+covering creep AND highway AND both gate arms:
+
+    p50 0.6 · p90 10.6 · p99 105.4 · p99.9 221.3 · p99.99 264.4 · **MAX 277.4** counts
+    samples at or above the 400 breakpoint: **0 of 150,327**
+    => the axis would have to be **1.442x** larger than the derivation says for bit4 to fire ONCE.
+
+⇒ **The expected reading is a flat zero.** That is recorded now so that a zero is read as a
+CONFIRMATION and not as "another wasted rung" -- which is precisely how V67's bit4 would look, and
+precisely the mistake this build exists to correct.
+
+★ WHY A PREDICTED-ZERO BIT IS STILL WORTH THE RUNG: **the test is ONE-SIDED, and it points at the
+only direction that can overturn a decision.** The flat-segment claim survives if the true axis is
+SMALLER than the derivation. It dies only if the true axis is LARGER -- and that is exactly what
+bit4 detects, from the firmware's own cell, with the scale chain removed from the question entirely.
+A 1.442x error in the chain is not exotic: the chain runs through cal `0xC613A` = 1159, an EMA, and
+a x8 grid factor between the 0x18F and 0x14A copies, and the kit has already had one "128 deg/s vs
+359 raw counts" contradiction on this very axis.
+
+    bit4 == 0 over a long mixed drive  =>  the chain is sound to within 1.44x, the operating point
+                                           IS inside the flat segment, and the lane's rate axis is
+                                           a CONSTANT in use. Gap B closes affirmatively.
+    bit4 > 0                           =>  the chain UNDER-estimates the axis, the flat-segment
+                                           claim is dead, and every conclusion resting on it --
+                                           including V67's arm derivation -- needs re-deriving.
+
+⚠ THE THRESHOLD IS A CHOICE, AND IT IS THE ORCHESTRATOR'S TO OVERRIDE. Predicted bit4 duty on
+route 47's derivation, by threshold -- 400 is the only value that answers the breakpoint question
+directly, but it is also the only one that is predicted FROZEN:
+
+       T      ALL    gate TRUE   creep<=5 m/s
+      50    3.640%     0.728%      13.396%
+     100    1.132%     0.000%       4.478%      <- a GRADED readout; tests the scale chain
+     200    0.160%     0.000%       0.632%         quantitatively at several conditionings
+     400    0.000%     0.000%       0.000%      <- SHIPPED. Direct, chain-free, one-sided.
+
+**Shipped at 400** because it tests the decision-relevant claim in the firmware's own units with the
+scale chain removed, and because its power points at the only direction that can overturn anything.
+T = 100 would be strictly more informative *about the chain* but answers the breakpoint question
+only by extrapolating through the chain it is testing. Changing it costs a 2-byte `movea` immediate
+plus relaxing the `_self_check_wire` flatness assertion -- trivially re-buildable if preferred.
+
 ⚠ ONE ASYMMETRY, STATED RATHER THAN DISCOVERED LATER. The LERP folds its key to 0 above
 `RATE_FOLD = 13001` (`0x3AAC8 addi -0x32c9 / 0x3AACC cmovc`), so a folded value ALSO lands on the
 flat first point. bit4 does not test the fold -- a second compare costs 6 more bytes than the cave
@@ -818,6 +863,7 @@ _self_check_wire()
 
 FLAT_LERP = _self_check_wire.flat_lerp                       # 2704
 ARM_FOR_2X_IF_FLAT = _self_check_wire.arm_for_2x_if_flat     # 5408
+HEADROOM = _self_check_wire.headroom                         # 1.442x
 
 
 # =======================================================================================================
@@ -1283,6 +1329,20 @@ def build():
               ("FOLDED->flat (bit4=1)" if rc >= RATE_FOLD else "SLOPED (bit4=1)")
         print(f"    gp-0x6ac0 = {rc:>5d} counts = {rc / EX.RATE_COUNTS_PER_DEGS:>7.1f} deg/s   "
               f"LERP {g:>5d}   {seg}")
+    print(f"\n  🛑 THE PRE-REGISTERED PREDICTION for bit4, from route 47's own cache through the SAME")
+    print("     scale chain the probe tests (gp-0x6ac0 = |0x18F rate| x 0.5890135):")
+    p = R47_PREDICT
+    print(f"       n = {p['n']:,} samples / 25.1 min, creep AND highway, both gate arms")
+    print(f"       p50 {p['p50']}  p90 {p['p90']}  p99 {p['p99']}  p99.9 {p['p99_9']}  "
+          f"p99.99 {p['p99_99']}  MAX {p['max']}")
+    print(f"       samples at or above {RATE_BREAKPOINT}: {p['at_or_above_400']} of {p['n']:,}")
+    print(f"     ⇒ bit4 IS PREDICTED TO READ 0.000%. The axis must be {HEADROOM:.3f}x larger than")
+    print("       the derivation says for it to fire even once. RECORDED BEFORE THE DRIVE so a zero")
+    print("       is read as CONFIRMATION, not as another wasted rung.")
+    print("     ★ The test is ONE-SIDED and aimed at the only direction that changes a decision: the")
+    print("       flat-segment claim survives a chain that OVER-estimates and dies only to one that")
+    print("       UNDER-estimates -- which is exactly what bit4 detects, from the firmware's own")
+    print("       cell, with the scale chain removed from the question.")
     print(f"    ⇒ if bit4 reads ~0%, the operating point is INSIDE the flat segment, the LERP is a")
     print(f"      constant {FLAT_LERP}, and V67's arm of {ARM_VALUE} is delivering "
           f"{ARM_VALUE / FLAT_LERP:.3f}x -- not the 2.000x")

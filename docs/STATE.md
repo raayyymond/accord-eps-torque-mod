@@ -68,13 +68,22 @@ uncertainty. **It needs a parking lot, not a build.**
 The enabler: **route `2b` (V58, Kd = 1.00×) carries 227 s of highway-engaged driving** that two sessions
 had assumed did not exist. v > 20 m/s, engaged throughout:
 
-| dose pool | secs | 40–49 p90 | **40–49 MAX** | **bursts** | **ratio vs Kd=1 [95%]** |
-|---|---|---|---|---|---|
-| Kd = 1.00× (`r2b`+`r2c`) | 238 | 86.7 | 341.1 | **0** | 1.00 |
-| Kd = 2.00× (`r37`+`r3b`) | 361 | 84.9 | 154.5 | **0** | **0.98 [0.71, 1.63]** |
-| Kd = 2.44× (`r47`) | 797 | 67.1 | 267.0 | **0** | **0.77 [0.56, 1.44]** |
+| dose pool | blocks | secs | 40–49 p90 | **40–49 MAX** | blk>300 | **ratio vs Kd=1 [95%]** |
+|---|---|---|---|---|---|---|
+| Kd = 1.00× (`r2b`+`r2c`) | 27 | 276 | 117.4 | **648.4** | 2/27 | 1.00 |
+| Kd = 2.00× (`r37`+`r3b`) | 41 | 420 | 127.5 | **300.0** | 0/41 | **0.970 [0.787, 1.154]** |
+| Kd = 2.44× (`r47`) | 83 | 850 | 93.6 | **488.2** | 6/83 | **0.938 [0.764, 1.184]** |
 
-**Split-half null [0.53, 1.86] — both ratios inside it. No ordering. Zero bursts anywhere in ~1,400 s.**
+**Split-half null [0.73, 1.37] — both ratios inside it. No ordering, and the corpus-maximum highway
+envelope (851.5 counts, 30–49 Hz) is on V58/`r2b` at Kd = 1.00× — the STOCK rate lane.** Manoeuvre-
+conditioned: 40–49 = **0.999 [0.79, 1.31]** and **0.884 [0.67, 1.28]**.
+✅ **Positive control, so this is not a dead estimator: 18–22 Hz IS suppressed at highway on the Kd = 2
+arms** — manoeuvre-conditioned median **0.509 [0.39, 0.92]**, outside the null.
+⚠ The one band outside the null, **10–16 Hz (1.55/1.50), is WHEEL ORDER 1** (order 0.996–0.999 on all
+five routes) — tyre balance between drives months apart, **not** a dose effect.
+🛑 My own first pass reported *"max 341/155/267, zero windows above 500"* — **both halves wrong**, my
+estimator ran 1.4–1.9× low by skipping the detrend + Hann taper that `_grind2_lib.win_env` applies. The
+corrected numbers **strengthen** the null.
 And the identity question is settled by amplitude: creep grind #2 runs f0 43–45 Hz at prominence
 **48–1062×** and envelope **2000–4000**; the highway population runs f0 45–47 Hz at prominence **~6×**
 and envelope **155–370**. ⇒ **Not grind #2.** The operator's *"maybe this is a grind #3 or #2.5"* stands.
@@ -92,8 +101,12 @@ levels ~50× below the creep bursts. A maneuver loads the wheel and everything g
 
 ✅ **AND THE MICROPHONE — no frequency ceiling at all — ALSO SEES NOTHING.** `soundPressure` is computed from **16–48 kHz** audio. Highway maneuvers vs matched straight-line controls, paired: **un-weighted 1.069 [0.960, 1.184]** against a split-half null of **[0.793, 1.264]**; A-weighted 0.905 [0.647, 1.165]; dB 0.985. **All inside their nulls**, and a low-frequency event would have shown as un-weighted-up / A-weighted-flat. ⇒ **three independent instruments agree.** ⚠ Bounded power: a 10 Hz *level* under highway road noise, n = 21 pairs — it bounds the effect, it does not prove silence. `analysis-2020accord/r47_microphone_test.py`.
 
-🛑🛑 **THE HARD LIMIT: BOTH INSTRUMENTS ARE BLIND ABOVE ~50 Hz.** CAN grid ~100.5 Hz (Nyquist 50.2);
-comma IMU **99.9–100.5 Hz** (Nyquist **49.97–50.26**). **The IMU gives NO headroom over CAN.** If the
+🛑🛑 **THE HARD LIMIT: BOTH INSTRUMENTS ARE BLIND ABOVE ~50 Hz.** CAN grid **100.000 Hz exactly** (Nyquist **50.00**);
+comma IMU **101.02 Hz** (Nyquist **50.51**) — settled by a lattice fit (77 µs vs 2889 µs) and a synthetic
+fold test in which **7 of 7 tones fold per 101.02 Hz**; my earlier 99.9–100.5 came from the dt *mean*,
+which ~1% dropped samples inflate. So there is **0.51 Hz** of headroom — but headroom is the wrong
+quantity: the alias discriminant is a **1.021 Hz apparent-peak difference** and the measured sem is
+**0.856** where ≪0.34 is needed. Resolving it needs a log at a different IMU ODR (208/416 Hz). If the
 felt highway vibration is above 50 Hz, nothing in this kit can see it, and every null above is silent
 about it. This also re-confirms that IMU/CAN frequency agreement carries **no** information about the
 44.9 vs 55.6 Hz alias.
@@ -150,10 +163,11 @@ which gain arm was selected. Close it before any future r24 build.
 `analysis-2020accord/r47_orchestrator_checks.py`; the surface arithmetic is in
 `analysis-2020accord/v68_design_math.py`.
 
-★ **Open lead, recorded not chased:** the highway symptom may be the **RATCHET** (6–9 Hz), not grind #2 —
-6–9 Hz rises most during maneuvers and the ratchet is strongly LKAS-gated (p = 1.09e-08), which matches
-*"only during LKAS-engaged"* far better than grind #2's weak 84.5%-vs-54.7% association. ⚠ Counter:
-between builds 6–9 Hz at highway runs 169.0 / 197.8 / **106.9** — V67 is the **lowest**.
+🛑 **CLOSED, NEGATIVE — the highway symptom is NOT the ratchet.** I raised it as an open lead because
+6–9 Hz rose most in the within-route maneuver contrast. It does not survive: highway-manoeuvre f0 is
+**9.13 Hz** (parking-lot ratchet 7.46/7.69), it **moves to 11.13 Hz in cruise** (a mode does not move),
+and the ratchet's 15 Hz harmonic lock is **absent** (0.294 vs 0.598). Cross-dose manoeuvre-conditioned
+6–9 Hz = **1.050 [0.869, 1.546]** and **1.021 [0.683, 1.787]**, null [0.68, 1.38] — both inside.
 
 ★★★★ **THE HEADLINE, 2026-08-01 (LATEST): THE ROOT CAUSE OF "GRIND #2" IS V62's OWN FIX, AND THE
 BAND TABLE SHOWS IT AS ONE KNOB DOING BOTH THINGS.**

@@ -81,6 +81,27 @@ fourth. At 7.2 km/h the LERP is 2704 below the breakpoint and 2622 at 603 counts
 
 Either answer closes the question. That is why the bit is worth a rung.
 
+🛑🛑 bit4 IS PRE-REGISTERED TO READ 0.000%, AND THAT IS THE POINT
+------------------------------------------------------------------
+Route 47's own cache, pushed through the very scale chain the probe exists to test
+(gp-0x6ac0 = |0x18F rate counts| x 32768/(48*1159) = x 0.5890135), 150,327 samples / 25.1 min,
+creep AND highway, both gate arms:
+
+    p50 0.6 · p90 10.6 · p99 105.4 · p99.9 221.3 · p99.99 264.4 · MAX 277.4 counts
+    samples at or above the 400 breakpoint: 0 of 150,327
+    => the axis must be 1.442x larger than the derivation says for bit4 to fire ONCE.
+
+⇒ A FLAT ZERO IS THE EXPECTED RESULT AND IS A CONFIRMATION, NOT A DEAD RUNG. This is written down
+before the drive precisely so it cannot be reinterpreted afterwards -- V67's bit4 read 0.000% and
+was (correctly) called wasted, and a reader who has that in mind will misread this one.
+
+★ The test is ONE-SIDED and aimed at the only direction that changes a decision: the flat-segment
+claim survives a scale chain that OVER-estimates the axis and dies only to one that UNDER-estimates.
+bit4 detects exactly that, from the firmware's own cell, with the chain removed from the question.
+A 1.442x error is not exotic -- the chain runs through cal 0xC613A = 1159, an EMA, and a x8 grid
+factor between the 0x18F and 0x14A copies, and this kit has already had one "128 deg/s vs 359 raw
+counts" contradiction on this very axis.
+
 ⚠ ONE ASYMMETRY IN bit4, and it is NOT symmetric -- read this before quoting a duty.
 The LERP folds its key to 0 above RATE_FOLD = 13001 counts (0x3AAC8 `addi -0x32c9` / 0x3AACC
 `cmovc`), so a folded value ALSO lands on the flat first point. bit4 does not test the fold -- a
@@ -433,8 +454,15 @@ def report(tag, d):
           f", < {RATE_BREAKPOINT * BUS_SCALE:.0f} bus counts)  ->  LERP = {LERP_FLAT}  FLAT")
     print(f"     gp-0x6ac0 =    603 counts (= 128.0 deg/s)                        ->  LERP = "
           f"{LERP_AT_603}  SLOPED   <- what V67's 5244 assumed")
+    print("\n   🛑 THE PRE-REGISTERED PREDICTION (route 47, 150,327 samples, via the same scale")
+    print("      chain this probe tests): p99 105 · p99.9 221 · MAX 277 counts · ZERO samples at or")
+    print("      above 400. bit4 IS PREDICTED TO READ 0.000% -- the axis must be 1.442x larger than")
+    print("      the derivation for it to fire once. A FLAT ZERO IS A CONFIRMATION, NOT A DEAD RUNG.")
+
     if duty4 < 0.01:
         print(f"\n   ⇒ *** THE FLAT-SEGMENT CLAIM IS CONFIRMED (bit4 duty {100 * duty4:.2f}%). ***")
+        print("      This MATCHES the pre-registered prediction. The one-sided test passed: the")
+        print("      scale chain does not under-estimate the axis by 1.442x or more.")
         print(f"      The LERP is a CONSTANT {LERP_FLAT} in the regime this car drives, so:")
         print(f"        a) V67/V68's arm {ARM_VALUE} is delivering {ARM_VALUE / LERP_FLAT:.3f}x, "
               f"NOT the 2.000x on record.")
@@ -447,6 +475,10 @@ def report(tag, d):
         print("           This is the durable finding; (a) is the footnote.")
     elif duty4 > 0.10:
         print(f"\n   ⇒ *** THE FLAT-SEGMENT CLAIM IS REFUTED (bit4 duty {100 * duty4:.2f}%). ***")
+        print("      This CONTRADICTS the pre-registered prediction of 0.000%, which means the")
+        print("      |0x18F| x 0.5890135 scale chain UNDER-ESTIMATES gp-0x6ac0 by at least 1.442x.")
+        print("      🛑 That chain is load-bearing elsewhere -- r47_rate_axis.py's whole regime map")
+        print("         and V67's arm derivation both use it. Re-derive them before anything else.")
         print("      The rate axis IS exercised. The LERP genuinely rolls off in use, wheel rate is")
         print("      available as a discriminator for future calibration on this lane, and V67's")
         print(f"      arm of {ARM_VALUE} is a scalar standing in for a CURVE -- the residual its own")

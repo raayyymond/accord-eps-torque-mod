@@ -1,25 +1,36 @@
 ---
 name: accord-both-instruments-blind-above-50hz
-description: CAN and the comma IMU both sample near 100 Hz, so nothing above ~50 Hz is observable — and the IMU gives NO headroom over CAN
+description: CAN and the comma IMU both Nyquist at ~50 Hz with no usable headroom between them; the microphone is the only uncapped instrument, and it has a validated positive control
 metadata:
   type: reference
 ---
 
-🛑🛑 **EVERY INSTRUMENT THIS KIT HAS IS BLIND ABOVE ~50 Hz.** Measured from hardware timestamps on
-route 47 and route 3a:
+🛑🛑 **EVERY *VIBRATION* INSTRUMENT THIS KIT HAS IS BLIND ABOVE ~50 Hz — but the MICROPHONE is not.**
 
 | instrument | measured rate | **Nyquist** |
 |---|---|---|
-| CAN `0x14A` / `0x18F` grid | ~100.5 Hz | **50.2 Hz** |
-| comma IMU accelerometer (LSM6DS3TR-C, hardware clock) | **99.9–100.5 Hz** | **49.97–50.26 Hz** |
+| CAN `0x14A` / `0x18F` grid | **100.000 Hz exactly** | **50.00 Hz** |
+| comma IMU accelerometer (LSM6DS3TR-C) | **101.02 Hz** | **50.51 Hz** |
+| **comma MICROPHONE** (`soundPressure`, 10.000 Hz level) | audio at **16–48 kHz** | **NO ceiling** |
 
-⇒ **The IMU gives NO headroom whatsoever over CAN.** It was introduced as the independent sensor for
-grind #2 and it is genuinely independent of the EPS signal path — but it is **not** an independent
-*bandwidth*.
+⚠ **Corrected 2026-08-03.** My earlier 99.9–100.5 Hz came from the dt **mean**; ~1% of IMU samples are
+**dropped**, inserting 20/30 ms gaps that inflate the mean but not the **median** (9.899 ms → 101.02 Hz).
+Settled by test: lattice-fit residual **77 µs** median-seeded vs **2889 µs** forced to 100.03 (38× worse),
+and a synthetic fold test sampling known tones at the *actual* timestamps — **7 of 7 fold per 101.02 Hz**.
+
+⇒ The IMU has **0.51 Hz** of headroom over CAN, which is **not usable**. ★ And headroom is the wrong
+quantity anyway: 55.6 Hz appears at 44.400 on CAN and 45.421 on the IMU while 44.9 Hz appears at 44.900
+on both, so the discriminant is that **1.021 Hz apparent-peak difference**. Measured paired shift over
+the 120 loudest windows: median +1.677 Hz, **sem 0.856**, where ≪0.34 is needed. **Resolving the alias
+needs a log at a different IMU ODR (208/416 Hz)**, not more of the same data.
+⚠ The IMU was introduced as the independent sensor for grind #2, and it genuinely is independent of the
+EPS *signal path* — but it is **not** an independent *bandwidth*. Those are different properties and the
+record conflated them.
 
 ## Two consequences that must be carried into every future analysis
 
-1. **A null above ~50 Hz is not a null — it is silence.** If a felt vibration is genuinely above 50 Hz,
+1. **A null above ~50 Hz on CAN or the IMU is not a null — it is silence.** (The microphone escapes this;
+   see below.) If a felt vibration is genuinely above 50 Hz,
    no measurement in this kit can see it, and any "we measured nothing" statement is only about the
    observable band. State that limit explicitly rather than letting the null read as an absence.
    This is live right now: the operator reports a highway resonance that shows **no** signature in
@@ -38,6 +49,14 @@ a threshold and cleared when the payload is written — would report HF *energy*
 🛑 It needs a RAM cell, so **GATE 1 stops being vacuous**, and that is the class that bricked V24/V27/
 V48B. `gp-0x1500` passed both static clearance methods and still failed on-car. Prove ownership two ways
 or do not build it.
+
+★★ **THE PRACTICAL ANSWER IS THE MICROPHONE, and it is already validated.** `soundPressure` is computed
+on-device from **16–48 kHz** audio and logged as a level at 10.000 Hz — no spectrum, but **no band limit**.
+It has a **working positive control**: on the creep grind #2 it reads **4.14×** un-weighted p95 and
+**+9.7 dB(A)** burst-vs-quiet. 🛑 **A-weighting is the trap** — the A curve is −30 dB at 50 Hz, so
+`soundPressureWeighted*` suppresses exactly the band of interest; the **un-weighted** channel is primary,
+and *un-weighted up with A-weighted flat* is itself the low-frequency signature.
+See `analysis-2020accord/r47_microphone_test.py` and `extract_sound_cache.py`.
 
 Raising the comma's IMU sample rate would also work but is **out of bounds** — no openpilot-side
 modifications ([[feedback-no-openpilot-side-modifications]]).
