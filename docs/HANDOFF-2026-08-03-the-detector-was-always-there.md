@@ -288,3 +288,151 @@ Image SHA <!-- SHA-PENDING --> · RWD SHA <!-- SHA-PENDING -->
    the seconds needed to improve it — which turns an open question into a **drive**, not a build.
 4. **Run the order veto first.** This kit has now come close to publishing a wheel order as a firmware
    effect three times.
+
+---
+
+# 10. ★★★ ADDENDUM — THE TRI-CHANNEL ANALYSIS: THE MICROPHONE PLACED GRIND #2 ABOVE 50 Hz
+
+*Appended after the sections above were written and committed. The analysis did not exist when §1–§9
+were drafted, and it changes what §1's "we were the only ones who could not see up there" is worth:
+we could, and the instrument was already in the logs.*
+
+## 10.1 What was asked, and what had never been done
+
+The operator asked for the **IMU data in the rlogs analysed alongside the steering-column torque and
+the audio**, on grind #2. Each channel had been used on grind #2 **separately** — the IMU dose
+response, the microphone's 4.14× positive control, the CAN torque band — and **never jointly on the
+same events**. Reproduce with `analysis-2020accord/grind2_trichannel.py`; every number below is
+printed by that script and stored in `_grind2_trichannel.json`.
+
+Event list: the kit's own 30–49 Hz burst detector restricted to creep (v ≤ 4 m/s) — **10 events**,
+8 LKAS **ON** (`3a`/V65) and 2 LKAS **OFF** (`3b` seg 2/V65), f0 31.0–48.5 Hz. Re-derived
+independently here: **12/12 (`3a`) and 22/23 (`3b`)** of the recorded bursts recovered. Every event
+matched to controls in its **exact** (speed, effort, |rate|) cell — 18–304 control blocks, no
+relaxation needed.
+
+## 10.2 ★★★ THE RESULT — the two weightings are a TWO-POINT FILTER BANK
+
+`soundPressure` and `soundPressureWeighted` are the same 100 ms RMS through two different filters.
+A-weighting is **−32.41 dB at 44.6 Hz** but **−19.14 dB at 100 Hz**, so their **ratio reports where
+the energy sits** even though neither channel alone can name a frequency. ✅ Validity checked first:
+`soundPressureWeightedDb = 20·log10(spw / 2.0000e-05)` with sd **1.7e-12** ⇒ `spw` is a real
+A-weighted RMS in Pa; and the ambient mean A-weight **rises with speed on every route**
+(`3b` 2.5e-3→6.5e-3, `2b` 5.2e-3→1.2e-2, `47` 1.2e-2→1.7e-2 creep→highway), as wind noise must.
+
+**The A-weighted channel rose MORE than the un-weighted one** — 6.514 vs 4.591 in amplitude:
+
+| quantity | point | 95 % CI (event bootstrap) |
+|---|---|---|
+| excess mean A-weight / w(44.6 Hz) | **4.28** | **[2.28, 9.86]** |
+| ⇒ **effective spectral centroid** | **63.5 Hz** | **[54.2, 79.6] Hz** |
+| energy fraction above the band if f_h = 100 Hz | 16.2 % | [6.3, 43.8] |
+
+⇒ **THE GRIND #2 ACOUSTIC EXCESS IS NOT ALL AT 40–49 Hz.** A pure 44.6 Hz excess gives 1.00× by
+construction and is **excluded** (CI lower bound 2.28). **The whole centroid interval is above the
+50 Hz ceiling.** This is the **first data-based evidence of >50 Hz content in this kit**, and it needs
+**no acoustic transfer model** — both numbers come from the same microphone on the same 100 ms blocks.
+
+★ **It corroborates V68 from a channel with no shared assumption.** 63.5 Hz sits essentially on
+`gp-0x6c2c`'s band-pass peak (**61 Hz**, §1). The firmware arithmetic and the acoustics reached the
+same band independently.
+
+Robust to the burst statistic — we/w(44.6) = **5.64** (p90) / **3.07** (median) / **3.31** (max) — and
+not one loud event: the mic fires on **8 of 10** bursts and tracks torsion-bar magnitude.
+
+## 10.3 🛑 RETRACTION — my "95.5 Hz [66.8, 170.5]" was WRONG
+
+I published an effective centroid of **95.5 Hz [66.8, 170.5]** in review. **It does not reproduce**:
+`a_weight(95.5)/a_weight(44.6)` is **18.29×**, not the measured 4.28×, and that interval maps to
+[5.20×, 97.2×]. The correct inversion is **63.5 Hz [54.2, 79.6]**.
+
+**Root cause: I inverted 4.28× against the AMPLITUDE weight `w(f)` instead of the POWER weight
+`w(f)²`.** Confirmed two ways, both reproducing 4.2769 exactly: the amplitude-weight ratio at 95.5 Hz
+is **4.277**, i.e. precisely `√18.29`; and the same run's *"16.2 % at 100 Hz"* decomposition gives
+`0.838·W(44.6) + 0.162·W(100) = 4.277·W(44.6)`.
+
+🛑 **THE RULE: A-weighting is tabulated in dB on POWER. `w = 10**(A_db/20)` is an AMPLITUDE weight and
+must be SQUARED before mixing energies.** Getting this backwards moves an inferred frequency by
+**+32 Hz** — enough to have put the answer outside `gp-0x6c2c`'s peak instead of on it.
+
+✅ The conclusion survived the correction and one part got **stronger**; but the margin above the
+ceiling is **54.2 Hz, not 66.8**. ⚠ Two roundings of this bound were produced in review (54.1 vs
+54.2) from A-curve implementations differing by ~0.02 Hz; **normalised to 54.2 everywhere** (exact
+54.157 Hz). 🛑 **The first decimal is below the resolution of the bootstrap that produced the
+interval — quote this bound as "~54 Hz" and do not treat the last digit as meaningful.**
+
+## 10.4 ★★ GRIND #1 IS TORSIONAL; GRIND #2 IS CHASSIS-BORNE — two independent estimators
+
+| channel | axis is | **grind #2** (40–49) | clears null | transfer | **grind #1** (18–22) | clears |
+|---|---|---|---|---|---|---|
+| `tq` 0x18F | torsion bar | **77.1** [53.5, 130.9] | ✅ | 1.000 | **12.87** [9.0, 14.9] | ✅ |
+| IMU `ay` | **lateral** | **58.8** [29.8, 87.6] | ✅ | **0.763** | 1.451 | ✗ |
+| IMU `gz` | **roll** | **36.2** [21.4, 49.3] | ✅ | 0.470 | 1.463 | ✗ |
+| IMU `gy` / `ax` / `az` | pitch / vert / long | 21.3 / 20.1 / 19.2 | ✅ | 0.28 / 0.26 / 0.25 | 1.51 / 1.68 / 2.10 | ✗ |
+| IMU `gx` | yaw | 11.4 [7.2, 14.3] | ✅ | 0.148 | 1.465 | ✗ |
+| mic un-weighted | 0–8 kHz | **4.59** [2.95, 8.31] | ✅ | 0.060 | **1.061** | ✗ |
+
+Axes identified **from the data**: `ax` carries 9.67 m/s² ⇒ vertical; `az` ρ **−0.839** vs d(vEgo)/dt
+⇒ longitudinal; `gx` ρ **+0.975** vs v·steer ⇒ yaw; `gy`/`gz` split by |ρ| vs d(surge)/dt **0.690**
+against d(sway)/dt **0.723** ⇒ pitch / roll.
+
+**Second estimator — bar→chassis COHERENCE, which uses no level at all:** grind #2 reads
+**0.823–0.880 on every axis** in event windows against **0.296–0.605** in controls; grind #1, over
+**48 events**, shows **no contrast on any axis** (0.270–0.403 vs 0.258–0.465 control).
+
+⇒ **grind #1 is a TORSIONAL COLUMN MODE**, and that is **why the IMU never showed its reduction** —
+the instrument was never coupled to it, at any frequency, independently of the 50 Hz ceiling.
+
+**BELIEF, not measurement:** the ordering lateral ≫ roll > pitch ≈ vertical ≈ longitudinal ≫ yaw reads
+as a **lateral rack/subframe force with a roll couple** (the comma sits high on the windscreen). Not
+wheel-hop, not a yaw mode.
+
+## 10.5 🛑 THE MICROPHONE READ 1.061 ON GRIND #1 — INSIDE ITS NULL
+
+On an oscillation measured at **12.87× [9.0, 14.9]** on the bar over 48 events, the microphone reads
+**1.061 [1.004, 1.233]** against a null of [1.03, 1.24]. **The cleanest demonstration of its blind
+spot in the corpus.**
+
+⇒ **A mic POSITIVE is informative** — its creep grind #2 control **replicates at 4.59× [2.95, 8.31]**
+against the 4.14× on record, by a different estimator *and* a different control design, and §10.2
+extracts real spectral information from it. **A mic NEGATIVE on a TACTILE event carries almost
+nothing.** Never read "the mic saw nothing" as "there was no vibration."
+
+## 10.6 ⚠ THE LIMITS, STATED AT FULL STRENGTH
+
+- **§10.2 is a MEAN-WEIGHT inversion.** It proves the excess is not all sub-50 Hz; it **does NOT
+  locate the energy**. 16 % at 100 Hz, 1.4 % at 250 Hz and 0.27 % at 1 kHz are identical to this test.
+  Harmonics at 89.2 / 133.8 / 178.4 Hz are **BELIEF**.
+- **Tyre scrub is NOT eliminated.** The partial correlation survives control for |rate|, effort and
+  speed (**+0.507 [+0.297, +0.634]**, n = 2956 creep blocks), but **rack force is uncontrolled**.
+- **The highway energy budget CANNOT BEAR THE WEIGHT.** κ = **0.0091 [0.0059, 0.0159]** predicts an
+  8.5–12.7 % acoustic excess against a measured mic floor of 19.3–109.9 % ⇒ **2–9× under the
+  instrument**. A highway acoustic null is therefore **uninformative**, and the honest output is the
+  **bound**: unexplained acoustic energy up to **2–9×** the sub-50 Hz-implied amount is invisible.
+  Three assumptions, each failing in a known direction: radiation efficiency ~f² against a 9.9×
+  louder ambient (partly cancelling, **neither measured**); a torsional highway mode would be
+  invisible to the IMU even at creep; the floor is a steady-tone floor.
+- **The joint detector is MIC-LIMITED** — the microphone is the minimum channel in **97 %** of burst
+  blocks ⇒ **"joint" buys SPECIFICITY, not sensitivity.** Highway counts 1/0/1/4 with exact Poisson
+  intervals that **all overlap**.
+- ⚠ **The highway tri-channel coincidence is REAL but DOSE-INDEPENDENT** — chassis clears its
+  circular-shift null on **4/4** routes (`ay` 1.347 / 1.866 / 1.372 / 1.437) and the mic on 2/4, but
+  it is not monotone and the **stock Kd = 1.00 lane is not the lowest**. It is §3's manoeuvre-loading
+  tail. 🛑 **IT DOES NOT REVIVE THE RATE LANE** — three independent statistics now agree.
+
+## 10.7 TWO INSTRUMENT CONSTANTS NOBODY HAD PINNED DOWN
+
+1. 🛑 **`1/median(dt)` is the WRONG CAN rate.** Frames are timestamped **per log packet**; on route
+   `47`, **12 % of `dt` exceed 15 ms and p10 is exactly 0**, so `median(dt)` reads **100.76 Hz** on a
+   grid that is **100.000 Hz to 2e-5**. Use the mean rate plus an index lattice. Recorded timestamps
+   wander **7.5–10.3 ms** — that is the CAN alignment uncertainty.
+2. ★ **The microphone pipeline delay is 115 ms**, MEASURED against road impacts (sound and chassis
+   shock are simultaneous to ~3 ms): 35 road segments, peak ρ **0.512**. `micd.py` alone predicts
+   **75 ms**; the extra **~40 ms is audio-capture buffering**. Subtract it from any sound↔CAN
+   alignment.
+3. 🛑 **No lead/lag is resolvable.** Accel and gyro carry **separate** hardware-timestamp offsets, and
+   bar→IMU lags read +45/+80 ms on bursts but **+90/+40 ms on road excitation with no grind — same
+   magnitudes, order swapped**. ⇒ **±50 ms is the empirical floor**, true transit is 0.2–3 ms
+   (30–500× below the finest step), and all three channels rise **within one 100 ms block**. A
+   lead/lag test **cannot** distinguish "column drives chassis which radiates" from "a common input
+   excites all three" — **coherence** (§10.4) carries that discrimination instead.
