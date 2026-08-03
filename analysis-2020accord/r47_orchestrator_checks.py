@@ -32,9 +32,20 @@ METHOD RULES, each of which has retracted a claim in this kit:
              Common mode across builds, so it cannot affect a regression test -- only the
              identification. NOTE `_grind2_lib.fs_of()` is biased +0.5-1.4% route-dependently, which
              is why grind #2 was long quoted as "44.9 Hz"; the between-route spread was the instrument.
-  ORDERS     At highway, 40-49 Hz is WHEEL ORDER 3 and 10-16 Hz is ORDER 1 (measured order p50 2.994
-             and 1.995). At 30.8 m/s order 3 = 44.3 Hz, ONE BIN from grind #2 -- peak-finding in that
-             band on a highway log will "find grind #2" and it will be a tyre.
+  ORDERS     RETIRED 2026-08-03. This read: "At highway, 40-49 Hz is WHEEL ORDER 3 and 10-16 Hz is
+             ORDER 1 (measured order p50 2.994 and 1.995) ... peak-finding in that band on a highway
+             log will find grind #2 and it will be a tyre."
+             The order-3 half is an ESTIMATOR TAUTOLOGY: order = f0*CIRC/v returns ~3.00 BY ARITHMETIC
+             whenever a band-limited argmax sits near the centre of 30-49.5 Hz at ~28 m/s, and the
+             order-2 figure has the identical defect (band centre 29 Hz at 28-30 m/s) -- one tautology
+             counted twice, not mutual corroboration. THERE IS NO LINE AT ALL in 30-49.5 Hz at highway:
+             averaged-periodogram prominence 1.23-3.83 vs a >4 criterion, every route/build/channel.
+             SURVIVING: 10-16 Hz order 1 IS real (prominence up to 79, order 1.00-1.02 per bin), and
+             the general "do not mistake a wheel order for a firmware effect" warning stands.
+             RULE: a matching order is evidence only when the band is WIDE relative to the order
+             spacing, or the order is TRACKED ACROSS A SPEED SWEEP. And average periodograms BEFORE
+             peak-finding -- a median-of-per-window-argmax estimator manufactures a line at band
+             centre when none exists. See highway_meanspec.py and the 2026-08-03 handoff.
 """
 from __future__ import annotations
 

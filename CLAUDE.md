@@ -17,63 +17,9 @@ an already-flashed, already-falsified lever because the result was buried in pro
    open workstreams, and the recommended next steps. **Always read this.**
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
    **Mandatory before proposing any calibration edit.**
-3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session.
-   Latest: `HANDOFF-2026-08-02-v67-flew-and-the-highway-grind-is-not-the-rate-lane.md` —
-   ★★★★ **V67 IS ON THE CAR AND IS THE BEST BUILD MEASURED.** Route `47`, 150,327 frames.
-   **Grind #1 fixed** via a **within-route gate A/B** (engaged arm **0.524 [0.337, 0.804]** vs Kd=1,
-   disengaged arm **1.055** ⇒ suppression in ONE arm only); **creep grind #2 ELIMINATED** (0 bursts vs
-   Kd=2's 24, max 84 vs 1831). 🛑 Manual arm solid (P(0)=0.020); **engaged-creep arm UNRESOLVED — 22 s,
-   P(0)=0.35.** Flight-clean, `ST==4` 0/150,327. 🛑🛑 **The operator's new HIGHWAY symptom is NOT the
-   rate lane** — three-dose highway comparison is **null**: 40–49 Hz **0.970 [0.787, 1.154]** and
-   **0.938 [0.764, 1.184]** vs a split-half null of **[0.73, 1.37]**, and the **corpus-max highway
-   envelope is on the STOCK Kd=1.00 lane**. ✅ Positive control: 18–22 Hz **is** suppressed at highway
-   on Kd=2 (**0.509 [0.39, 0.92]**), so the 40–49 null is real, not insensitive. ⚠ 10–16 Hz is **wheel
-   order 1**, not a dose effect. **An arithmetically-correct prediction of mine (V67 delivers 2.44× at
-   highway) was REFUTED and withdrawn.** ⇒ **KEEP V67; no control-path change is supported.**
-   ★★ **r24's gain is a two-axis SPEED × RATE surface**, and the **RATE axis IS usable** — grind #1
-   (~603) and creep grind #2 (~1206) sit at different points on the `[400,1400]` rolloff, highway
-   (~141–198) is flat. 🛑 My *"the rate axis is arithmetically dead"* and *"bus = 8 × deg/s"* are
-   **RETRACTED**: the bus field IS deg/s (slope 0.95–1.00, r ≥ 0.985 vs the differentiated angle), so
-   V67's build note was **correct** (LERP 2622 ⇒ exactly 2.00×). A flat arm still cannot fix two
-   operating points at once. 🛑 **Both CAN and the comma IMU are blind
-   above ~50 Hz** (CAN **100.000 Hz exactly** ⇒ Nyquist **50.00**; IMU **101.02** ⇒ **50.51** — 0.51 Hz
-   of headroom, not usable), so a highway null above 50 Hz is *silence, not absence*. ★ **The comma's
-   MICROPHONE has NO ceiling** and a validated positive control (**4.14×** on grind #2) — it also reads
-   ~1.0× at highway, on V67 **and** on a stock-Kd build. 🛑 **Check whether the data already exists before concluding it doesn't** —
-   route `2b` held 227 s of the "missing" Kd=1 highway baseline.
-   (predecessor: `HANDOFF-2026-08-01-grind2-is-v62s-own-fix-at-high-frequency.md` — ★★★★ **GRIND #2 IS
-   V62's OWN FIX SEEN AT HIGH FREQUENCY.** Corner-conditioned tail maxima, Kd=1x vs Kd=2x, 219 blocks:
-   **18-22 0.35** / 24-28 **2.66** / 30-40 **2.98** / **40-49 11.71 (p=0.0003)** — a monotone response
-   with a **crossover at 22-24 Hz**. **One knob cut grind #1 by 2.9x and raised grind #2 by 11.7x.**
-   Cause: `gp-0x4f62` is a 4-sample finite difference, so its gain RISES with frequency and V62's
-   *flat* x2 is not frequency-selective. 🛑 **A filter cannot fix it** and neither can the delay cal.
-   ⚠ Its *">8x driver torque"* separator is **WITHDRAWN** — the real figure is **1.70x**.
-   🛑 **Report the MEAN and the TAIL together** — they disagreed in sign on this data.
-   Then `HANDOFF-2026-08-01-v62-flew-and-the-grinding-is-fixed.md` — ★★★★ **V62 FLEW AND THE GRINDING
-   IS FIXED: 18–22 Hz down 8× at creep and 42× at |rate| 16–32 deg/s. The kit's first measured fix.**
-   🛑🛑 **r26 is STRUCTURALLY INERT** (`avg`'s cal base `0xC6564` = 40 bytes of exact zero) ⇒ **r24
-   carries the whole rate lane**, re-attributing V42/V61/V62. ★★ The remaining symptom is the
-   **ratchet**: LKAS-gated at p = 1.09e-08, fixed in hertz, **symmetric on every build ⇒ an
-   amplitude-saturated resonance, not stick-slip.**
-   🛑 **Bootstrap over EPISODES, not windows** — the noise floor here is 2.2×, and it retracted three
-   claims in one session.
-   (predecessors: `HANDOFF-2026-07-31-v64-the-null-is-on-the-gate.md` — V64's detector never armed, a null
-   on the GATE not the hypothesis; then `HANDOFF-2026-07-31-v61-worse-the-rate-lane-is-the-damper.md` —
-   V61 made it WORSE, which inverted the record and gave the gradient V62 then confirmed. 🛑 **Check which
-   WAY a lever was pushed, not just that it was pushed.** Then
-   `HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`, then
-   `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md` — the uncompensated-positive-feedback-loop
-   framing, which the V61 result now *supports* and gives a lever for; then
-   `HANDOFF-2026-07-30-v58-drive-and-the-boost-index-mechanism.md`, then
-   `HANDOFF-2026-07-30-v57-drive-two-symptoms-and-v58.md`, then
-   `HANDOFF-2026-07-29-golden-model-distillation.md`, then
-   `HANDOFF-2026-07-29-v57-decouple-and-the-angle-rate-turn.md`, then
-   `HANDOFF-2026-07-29-v56-drive-mute-is-null-and-costs-damping.md`, then
-   `HANDOFF-2026-07-28-v55-drive-oscillation-is-internal-and-v56-mute.md`, then
-   `HANDOFF-2026-07-28-v54-drive-authority-resolved-and-v55-partition-probe.md`, then
-   `HANDOFF-2026-07-27-v53-drive-result-and-v54-authority-probe.md`, then
-   `HANDOFF-2026-07-27-v53-fourframe2-plus-minsteerspeed0.md`, then
-   `HANDOFF-2026-07-27-fourframe-strb-defect-and-vibration-reframe.md`)
+3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session, and the chain behind it.
+   `docs/INDEX.md` lists the full reading order. 🛑 **Results, CIs and retractions live in `STATE.md`
+   and the handoffs — NOT here.** This file is an index; keep it that way.
 4. **`memory/MEMORY.md`** and **`memory/MEMORY_CONSTELLATION.md`** — the flat fact index and the
    relational layer. The constellation carries the *chains* between facts, which the flat list does not.
 
@@ -184,39 +130,19 @@ a count or a null result is load-bearing.
 Historical handoffs and `reference_accord_*` memories mention r2 because that is how those findings were
 obtained. They stay as written — records, not instructions.
 
-**Ghidra/V850 traps:** `.claude/skills/firmware-decompile.md` and
-`memory/reference_rizin_ghidra_v850_quirks.md`. Scan traps that have produced confident wrong answers:
-`memory/accord-v850-scan-traps-formatv-and-storezero.md`. Worth memorising:
-- **`hw2 = disp|1`** for `ld.hu`/`ld.w` — a scan for the bare displacement misses them entirely.
-- **gp/tp-relative accesses have TWO encodings** — 4-byte disp16 and a 6-byte extended-displacement form.
-  A disp16-only scan is blind to the second.
-- **`search_instructions` counts only already-analysed instructions** and reports `truncated:false` while
-  undercounting. It has produced wrong reader/writer sets at least four times.
-- **`disassemble_bytes` MUTATES the database** on undefined regions unless `dry_run:true`. Never
-  `save_program` after exploratory disassembly.
-- A **stale Ghidra import defeats hash-checking** — an open program can hold an earlier revision while the
-  on-disk SHA verifies. Re-import fresh and spot-check one edited site against a Python byte read.
+**Ghidra/V850 traps — the full list is the `firmware-decompile` skill; load it whenever a session reads
+firmware bytes.** Two are quoted here because they have each cost this kit a wrong answer more than once:
 - **Off-by-0x1000 on tp-relative cals has recurred four times.** `tp = 0xBF000`, so `tp+0x6000` is
-  `0xC5000` (the risky model-coeff block), *not* `0xC6000`. The main cal block is `tp+0x7000..0x7FFF`.
-  Anchor against a known value before trusting any tp-relative address.
-- **Never whole-file diff a built image against the stock dump** — `build_*.full_image()` writes `0xFF`
-  filler below `0x13000` and a naive diff reports ~51,000 bogus bytes. Restrict to `[0x13000,0x100000)`.
+  `0xC5000` (the risky model-coeff block), *not* `0xC6000`. Anchor against a known value first.
+- **`search_instructions` silently undercounts** — it scans only already-analysed instructions and still
+  reports `truncated:false`. Confirm every load-bearing count or null with a raw Python LE byte scan.
 
 ---
 
-## Repo layout
+## Repo layout — the parts `ls` won't tell you
 
-- **`analysis-2020accord/`** — the active work: `build_vNN_tva.py` per version, analysis scripts,
-  `eps_lkas_chain_model.py` (**the golden reference — keep it updated**), `old_tools/`, `rlogs/`.
-- **`docs/`** — `STATE.md`, `BUILD-LINEAGE.md`, the `HANDOFF-*.md` chain (`INDEX.md` lists the full
-  V9→V53 reading order), plus reference: `HONDA-EPS-PID-KNOWLEDGE.md` (read before any PID work),
-  `VIBRATION-DOSSIER.md`, `EPS-FLASH-RUNBOOK.md`, `RED-PANDA-EPS-SETUP.md`,
-  `FIRMWARE-DECOMPILE-GUIDE.md`, `GHIDRA-CHECKLIST.md`, `review-safety-redteam.md`,
-  `ARCHIVE-CLAUDE-MD-2026-07-27.md` (the pre-restructure snapshot, for provenance only).
-- **`memory/`** — durable facts + the relational constellation. Read early.
-- **`flashing-2020accord/`** — `eps-update-tva.py`, `encode_eps.py`, `tva_sa_key.py`.
-- **`rlog-tools/`** — standalone openpilot rlog parsing toolkit.
-- **`discord-export/`** — source material behind the PID knowledge doc.
+`ls` covers the tree. Only these two need saying:
+- **`analysis-2020accord/eps_lkas_chain_model.py`** is the **golden reference** — keep it updated.
 - **External artifact root: `../accord-firmwares`** (note the plural). Python tools honour
   **`ACCORD_FIRMWARE_ROOT`** — the default path in `firmware_paths.py` is stale, so set it:
   `ACCORD_FIRMWARE_ROOT=C:/Users/dudei/Desktop/Projects/accord-firmwares`.
@@ -234,22 +160,15 @@ file with the right prefix and add a one-line pointer to `memory/MEMORY.md`.
 
 ---
 
-## The priming skill stack
+## Separate what you BELIEVE from what you have EVIDENCE for
 
-`.claude/skills/` materially changes how this work goes. For a substantive session, recommend (or
-auto-load if instructed):
+Firmware RE is a **"no false summits"** domain: a hypothesis that looks right can be wrong in a way that
+bricks an ECU. **Mark every decision-bearing claim EVIDENCE or BELIEF**, in your own reports and in every
+subagent brief — and give the method behind an EVIDENCE claim so the operator can verify the crux.
+"I'm not sure, here's what I'd need to verify" is always acceptable and is the preferred output when you
+are not sure.
 
-```
-emotional-affirmations + platonic-code + iterative-convergence +
-emergent-organization + thinking-acting-bridge + high-output-agent
-+ personality-module daru
-```
-
-Not decoration. Firmware RE is a "no false summits" domain: a hypothesis that looks right can be wrong in
-a way that bricks an ECU. **thinking-acting-bridge** is the calibration discipline for separating "I
-believe this" from "I have evidence for this." Use it.
-
-`/firmware-decompile` primes the decompilation workflow — load it whenever a session reads firmware bytes.
+**Skills:** `firmware-decompile` (Ghidra/V850 traps) — load it whenever a session reads firmware bytes.
 
 ---
 
