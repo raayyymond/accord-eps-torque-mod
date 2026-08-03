@@ -96,6 +96,52 @@ felt highway vibration is above 50 Hz, nothing in this kit can see it, and every
 about it. This also re-confirms that IMU/CAN frequency agreement carries **no** information about the
 44.9 vs 55.6 Hz alias.
 
+🛑🛑 **THREE CLAIMS OF MINE, MADE AND RETRACTED THE SAME NIGHT — read this before quoting any
+rate-axis number.** I published (a) *"bus counts = 8 × deg/s"*, (b) *"the rate axis is arithmetically
+dead — all three populations sit in the flat `[0,400]` segment"*, and (c) *"V67's build note has a units
+error; its arm delivers 1.94×"*. **All three are WRONG.** Settled two ways: regressing `rate_c` on the
+differentiated ANGLE channel gives slope **0.95–1.00, r ≥ 0.985** ⇒ **the bus rate field IS deg/s**; and
+at 4.7121 counts/deg-s the inner breakpoints are **85 / 297 / 637 deg/s**, which real driving reaches
+(|rate| peaks at **521 deg/s** over 407,617 frames), whereas the wrong scale would put them at
+679 / 2377 / 5093 where Honda's 2× rolloff could **never engage**. ⇒ **V67's build note was CORRECT**
+(LERP 2622 ⇒ exactly **2.00×**), and **the rate axis IS usable**: grind #1 ~603, creep grind #2 ~1206
+(both on the `[400,1400]` rolloff), highway ~141–198 (flat; X1 = `0x0190` exactly and Y0 == Y1 in every
+curve of both LERPs). **The error was composing two unverified structural relations into a scale instead
+of measuring it against a channel already in the cache.**
+
+★ **DESIGN A — the best-characterised alternative, ONE halfword**: `0xD2ABC` (the 10 km/h record's
+`Y[1]`) **2561 → 7051**. grind #1 **2.00×** · creep grind #2 **1.22×** (vs V67's 2.18×) · highway
+**1.00×** (vs V67's 2.44×). Blast radius clean two ways, no float mirror, CRC block #41 only, never
+edited in any build; saturates at `|dtorque| ≥ 1190` vs a measured max of 839. 🛑 Costs: it is **not**
+LKAS-gated (so unlike V67 it changes manual feel at low speed), and the multiplier **humps to ~2.45×
+near 10 km/h** because `0xD2AB0` *is* the 10 km/h breakpoint record. **Not recommended while V67 already
+has grind #1 fixed and creep grind #2 at zero bursts** — it would trade a measured property for margin
+on quantities already at zero.
+
+🛑🛑 **A TYRE TRAP THAT WOULD MANUFACTURE "GRIND #2 AT HIGHWAY":** at highway the persistent 40–49 Hz
+**line is wheel order 3** (measured per-window order p50 **2.994**; 26–32 Hz is order 2 at **1.995**,
+n > 600). At 30.8 m/s order 3 = **44.3 Hz**, one bin from grind #2. The bursts themselves are NOT the
+order (on/off-order power ratio 6.94 in quiet windows, **0.82 inside bursts**). ⚠ And `fs_of()` is
+biased **+0.5–1.4% route-dependently**: the true `0x14A` rate is **100.000 Hz**, so grind #2's
+"44.9 Hz" is **44.6 Hz** and the between-route frequency spread was the instrument, not the car.
+
+🛑 **NO SPEED- OR TORQUE-CONDITIONAL BYTE EXISTS TO GATE ON**, over two independent search passes —
+every candidate is multi-valued, inline-only, standstill-only, dead (`0xC62EA` = 0 since V53), or
+answers the same "LKAS applying" question V67 already found insufficient. The architectural reason:
+this firmware's idiom for speed is **"always LERP, never threshold-and-latch."**
+🛑 **Do NOT repoint the mask arm `gp-0x671d`**: it is a rising-edge counter driving **DTC 0x5e**, read by
+**8 functions** including 4 reads in the motor-off dispatcher `FUN_0003d4a2`, where an edge-detector on
+the counter forces a retry path. Unlike the dead `gp-0x683c` it is a **live fault response**.
+🛑🛑 **The >50 Hz probe is DEAD at the proven cave site**: hook `0x55C0E` runs at **100 Hz (task 5)**,
+not 1 kHz — it is the CAN-`0x14A` frame builder reached only via handler slot 10 ← `FUN_00022ca0` — so
+the cave **cannot observe 1 kHz content at all**; and **no stock writer ever clears bits 7:3** of
+`gp-0x1514` (8 accesses, all masked RMW), so a sticky latch could never clear. ✅ Separately,
+`gp-0x683c` **is** a free `.data` byte on V67+ (V67 removed its only reader; two boot loops zero it) —
+useful cave state in future, but it does not rescue the 100 Hz problem.
+⚠ **`gp-0x67ac` is OPEN and matters**: when it is 1, `FUN_0003aa2c`'s very first instruction routes
+around the branch that adds r24/r26 — **both lanes drop out of the aggregate entirely**, regardless of
+which gain arm was selected. Close it before any future r24 build.
+
 ⇒ ★★★ **RECOMMENDED: KEEP V67 ON THE CAR. NO CONTROL-PATH CHANGE IS SUPPORTED.** The two real gaps are
 **(A)** 22 s of engaged-creep exposure — closed by a 5-minute parking-lot drive, not a build — and
 **(B)** the >50 Hz blindness, which needs a probe that samples inside the 1 kHz task and reports a

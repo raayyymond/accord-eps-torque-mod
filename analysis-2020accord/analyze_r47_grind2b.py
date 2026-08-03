@@ -155,6 +155,45 @@ def sec_A(store):
     print("\n  For scale: creep grind #2 bursts run 2,000-4,000 counts with prominence 25-1000x.")
     OUT["A_tail"] = tail
 
+    # 🛑 The one band that came out OUTSIDE the null above is 10-16 Hz. Before that is read as a
+    # dose effect: at 20-33 m/s wheel order 1 is 9.6-16 Hz, i.e. it lives inside that band.
+    print("\n  🛑 10-16 Hz was the only band outside the null. At 20-33 m/s WHEEL ORDER 1 is")
+    print("  9.6-16 Hz -- inside that band. Order of the strongest 10-16 Hz line, per route:")
+    print(f"  {'route':10s} {'n':>5s} {'order p50':>10s} {'IQR':>15s} {'frac within 5% of 1':>20s}")
+    f = np.fft.rfftfreq(NF, 1 / FS_TRUE)
+    circ = (R.CIRC_LO + R.CIRC_HI) / 2
+    o1 = {}
+    for k in sorted(R.DOSE_HWY):
+        for b in R.DOSE_HWY[k]:
+            Bb = G.BUILDS[b]
+            O = []
+            for s in Bb["segs"]:
+                p = Bb["cache"] / f"{Bb['pfx']}{s}.npz"
+                if not p.exists():
+                    continue
+                d = load(s, Bb["cache"], Bb["pfx"])
+                v = np.abs(d["cs_v"])
+                x = np.asarray(d["tq"], float)
+                for a, bb2 in runs_of((v >= HWY) & (d["cc_lat"] > 0.5), d["t"], NF):
+                    for i in range(0, bb2 - a - NF + 1, G.HOP):
+                        P = periodogram(x[a + i:a + i + NF], FS_TRUE, NF, True)
+                        if P is None:
+                            continue
+                        f0, pr = G.locate(f, P, 10.0, 16.0)
+                        if np.isfinite(f0) and pr >= 2:
+                            O.append(f0 * circ / float(np.mean(v[a + i:a + i + NF])))
+            if len(O) < 8:
+                continue
+            O = np.array(O)
+            o1[b] = dict(n=len(O), p50=float(np.median(O)),
+                         frac=float(np.mean(np.abs(O - 1) < 0.05)))
+            print(f"  {b:10s} {len(O):5d} {np.median(O):10.3f} "
+                  f"[{np.percentile(O, 25):6.3f},{np.percentile(O, 75):6.3f}] "
+                  f"{np.mean(np.abs(O - 1) < 0.05):20.3f}")
+    print("  ⇒ order 1 on EVERY route. The 10-16 Hz 'dose effect' is a TYRE BALANCE difference")
+    print("    between drives months apart, not a firmware effect. Do not build on it.")
+    OUT["A_order1"] = o1
+
 
 def sec_B(store):
     G.hdr("§B  CAN A MANOEUVRE DEFINITION TRANSFER BETWEEN ROUTES?  A within-route quantile cannot\n"
@@ -474,11 +513,96 @@ def sec_F(store):
               f"{np.percentile(r_, 90):8.1f} {np.percentile(r_, 99):8.1f} {r_.max():8.1f}")
 
 
+def sec_G(store):
+    G.hdr("§G  CIRCULARITY AUDIT ON THE TOP-RANKED SEPARATOR.  🛑 `rate_c` is the steering-angle\n"
+          "sensor's OWN rate output on the same CAN message. If at highway it is dominated by the\n"
+          "same high-frequency content the burst consists of, then 'steering rate separates the\n"
+          "burst' is a second MEASUREMENT of the event, not an operating condition -- and the fix\n"
+          "cannot be built on it. Two checks: (a) is rate_c deg/s at all, (b) how much of mean\n"
+          "|rate_c| is its own 30-49 Hz content.")
+    # (a) empirical unit check -- settles 'bus counts vs deg/s' without any firmware assumption
+    print("\n  (a) UNITS. Regress d(ang)/dt (deg/s by construction: `ang` is 0x14A x -0.1 deg,")
+    print("      `t` is seconds) on rate_c, over 50 ms differences, on segments with LARGE angle")
+    print("      excursions -- at highway |ang| stays under 15 deg and the 0.1 deg quantisation")
+    print("      swamps the derivative, so a low slope there is the CHECK failing, not the signal.")
+    print(f"  {'segment':12s} {'n':>7s} {'slope':>8s} {'corr':>7s} {'|ang| range':>14s}")
+    for tag, build, seg in (("r47 parking", "V67/r47", 22), ("r3a parking", "V65/r3a", 3),
+                            ("r2b street", "V58/r2b", 13), ("r2c street", "V59/r2c", 1),
+                            ("r47 HIGHWAY", "V67/r47", 7)):
+        Bb = G.BUILDS[build]
+        d = load(seg, Bb["cache"], Bb["pfx"])
+        t = np.asarray(d["t"], float)
+        a = np.asarray(d["ang"], float)
+        rc = np.asarray(d["rate_c"], float)
+        k = 5
+        da = (a[k:] - a[:-k]) / (t[k:] - t[:-k])
+        rr = rc[k // 2:len(rc) - k + k // 2]
+        m = np.isfinite(da) & np.isfinite(rr) & (np.abs(rr) > 5)
+        if m.sum() < 50:
+            continue
+        s = float(np.sum(da[m] * rr[m]) / np.sum(rr[m] * rr[m]))
+        print(f"  {tag:12s} {int(m.sum()):7d} {s:8.4f} "
+              f"{np.corrcoef(da[m], rr[m])[0, 1]:7.4f} {a.max() - a.min():14.1f}")
+    print("  ⇒ slope = 1.00 wherever the check is valid. **rate_c IS deg/s, and the DBC factor is")
+    print("    1, so 'bus counts' and 'deg/s' are THE SAME NUMBER for this signal** -- the")
+    print("    bus-counts-vs-deg/s dichotomy is a false one here. Only the bus -> gp-0x6ac0 scale")
+    print("    remains, and that is a firmware question.")
+
+    # (b) how much of mean |rate_c| is the burst itself
+    print("\n  (b) CO-MEASUREMENT. Per window at highway, engaged:")
+    NFx = NF
+    f = np.fft.rfftfreq(NFx, 1 / FS_TRUE)
+    taper = np.hanning(NFx) + 1e-3
+    cw = slice(int(0.2 * NFx), int(0.8 * NFx))
+    rows = []
+    Bb = G.BUILDS["V67/r47"]
+    for s in Bb["segs"]:
+        p = Bb["cache"] / f"{Bb['pfx']}{s}.npz"
+        if not p.exists():
+            continue
+        d = load(s, Bb["cache"], Bb["pfx"])
+        v = np.abs(d["cs_v"])
+        tq = np.asarray(d["tq"], float)
+        rc = np.asarray(d["rate_c"], float)
+        ag = np.asarray(d["ang"], float)
+        for a, b in runs_of((v >= HWY) & (d["cc_lat"] > 0.5), d["t"], NFx):
+            for i in range(0, b - a - NFx + 1, G.HOP):
+                sl = slice(a + i, a + i + NFx)
+                rows.append((G.win_env(tq[sl], FS_TRUE, 30, 49, taper, cw),
+                             float(np.mean(np.abs(rc[sl]))),
+                             G.win_env(rc[sl], FS_TRUE, 30, 49, taper, cw),
+                             G.win_env(rc[sl], FS_TRUE, 0.5, 5, taper, cw),
+                             float(np.max(ag[sl]) - np.min(ag[sl]))))
+    A = np.array(rows)
+    hi = A[:, 0] > 300
+    lab = ["E30-49 of tq (the burst)", "mean |rate_c|", "rate_c 30-49 env",
+           "rate_c 0.5-5 env (bulk motion)", "dang (angle excursion)"]
+    print(f"  {'variable':32s} {'burst med':>10s} {'quiet med':>10s} {'ratio':>7s} "
+          f"{'log-log corr with the burst':>28s}")
+    Ln = np.log(A + 1e-6)
+    for j, nm in enumerate(lab):
+        print(f"  {nm:32s} {np.median(A[hi, j]):10.2f} {np.median(A[~hi, j]):10.2f} "
+              f"{np.median(A[hi, j]) / max(np.median(A[~hi, j]), 1e-9):7.2f} "
+              f"{np.corrcoef(Ln[:, 0], Ln[:, j])[0, 1]:28.3f}")
+    print(f"\n  rate_c's own 30-49 Hz envelope / its mean |rate_c|:  burst "
+          f"{np.median(A[hi, 2] / A[hi, 1]):.2f}   quiet {np.median(A[~hi, 2] / A[~hi, 1]):.2f}")
+    print("  ⇒ at highway, mean |rate_c| is ~2x its OWN 30-49 Hz content: the 'steering rate' that")
+    print("    ranks first in the separation table is mostly the OSCILLATION, not bulk wheel")
+    print("    motion. 🛑 DOWNGRADE it. The conditioning evidence that is NOT circular is the angle")
+    print("    excursion (2.2x), rate_c's 0.5-5 Hz bulk content (2.3x), and the atlas's")
+    print("    manoeuvre/matched-control pairing -- all of which say MANOEUVRING, not rate per se.")
+    OUT["G_circularity"] = dict(
+        n=len(A), burst_ratio_selfHF=float(np.median(A[hi, 2] / A[hi, 1])),
+        corr={lab[j]: float(np.corrcoef(Ln[:, 0], Ln[:, j])[0, 1]) for j in range(len(lab))},
+        ratio={lab[j]: float(np.median(A[hi, j]) / max(np.median(A[~hi, j]), 1e-9))
+               for j in range(len(lab))})
+
+
 def main():
-    want = set(x.upper() for x in sys.argv[1:]) or {"A", "B", "C", "D", "E", "F"}
+    want = set(x.upper() for x in sys.argv[1:]) or {"A", "B", "C", "D", "E", "F", "G"}
     store = R.records(order=R.ORDER_HWY)
     for k, fn in (("A", sec_A), ("B", sec_B), ("C", sec_C), ("D", sec_D), ("E", sec_E),
-                  ("F", sec_F)):
+                  ("F", sec_F), ("G", sec_G)):
         if k in want:
             fn(store)
     OUTJSON.write_text(json.dumps(OUT, indent=1, default=float))

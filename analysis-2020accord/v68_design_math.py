@@ -7,35 +7,44 @@ that whole surface with a flat scalar (cal 0xC6446 = 5244) whenever LKAS applies
 Honda's own schedule, because the stock surface ROLLS OFF with speed (3072 at 0 km/h -> 2151 at
 100 km/h). So V67 delivers its LARGEST multiplier at the highest speed:
 
-    grind #1   (creep 7.2 km/h)   1.94x
-    grind #2 creep (5 km/h)       2.18x
-    grind #2 HIGHWAY (100+ km/h)  2.44x   <-- the maximum, and 22% ABOVE V62's flat 2.00x,
-                                              which is the dose that raised 40-49 Hz by 11.7x
+    grind #1   (creep 7.2 km/h, 128 deg/s)   2.00x
+    grind #2 creep (5 km/h, 256 deg/s)       2.18x
+    grind #2 HIGHWAY (100+ km/h, ~35 deg/s)  2.44x  <-- the maximum, and 22% ABOVE V62's flat 2.00x,
+                                                        the dose that raised 40-49 Hz by 11.7x
 
-★★ AND THE RATE AXIS IS ARITHMETICALLY DEAD. Measured on-car, 100% of the windows in ALL THREE
-symptom populations land inside the LERP's FLAT first segment [0, 400]:
+★★ UNITS -- SETTLED EMPIRICALLY 2026-08-02, after I got it WRONG once. See the retraction below.
+The 0x14A rate field IS deg/s (factor 1), and the LERP's inner axis gp-0x6ac0 is 4.71210813 counts
+per deg/s, so the breakpoints [0, 400, 1400/1500, 3000] are [0, 85, 297, 637] DEG/S.
 
-    population              bus counts   gp-0x6ac0   segment
-    grind #1                  ~128         ~75       [0,400] FLAT
-    grind #2 creep            ~256        ~151       [0,400] FLAT
-    grind #2 highway (r47)    30-42      ~18-25      [0,400] FLAT
+    population                    deg/s      gp-0x6ac0    LERP segment
+    grind #1                       ~128         ~603      [400, 1400]  <- ON the rolloff
+    grind #2 creep                 ~256        ~1206      [400, 1400]  <- ON the rolloff, further along
+    grind #2 highway (r47)        30-42     ~141-198      [0, 400] FLAT
 
-⇒ Y[2] and Y[3] never participate for any symptom. The ONLY usable axis on this surface is SPEED,
-and speed separates grind #1 (creep) from the HIGHWAY grind #2 cleanly -- but NOT from the creep
-grind #2, which shares grind #1's cells.
+⇒ the rate axis IS usable: grind #1 and the creep grind #2 sit at different points on the SAME
+rolloff segment, and the highway population sits in the flat region below it.
 
-🛑 UNITS CORRECTION, and it is a real error in V67's own build note. That note sized the arm as
-"creep 7.2 km/h, 128 deg/s => LERP 2622 => 5244 = 2.00x". It converted 128 BUS COUNTS as if they
-were 128 deg/s (axis 603 instead of 75). Byte-read chain: cal tp+0x713a = 0xC613A = 1159, so
-bus = (gp-0x6abe * 48 * 1159) >> 15 = 1.697754 * gp-0x6ac0, and gp-0x6ac0 = 4.71210813 counts per
-deg/s = 2^18/(48*1159) exactly, so the two compose to bus = 8 x deg/s exactly. The true LERP at
-grind #1's operating point is 2704, so V67's arm delivers 1.94x, not 2.00x.
+🛑🛑 RETRACTED, and this file said the opposite for several hours. I claimed (a) "bus counts =
+8 x deg/s exactly", (b) "the rate axis is arithmetically dead, all three populations are in the flat
+[0,400] segment", and (c) "V67's build note contains a units error; the arm delivers 1.94x". ALL
+THREE ARE WRONG. Two independent measurements settle it:
+  1. Regressing `rate_c` on the differentiated ANGLE channel (0x14A b0:1, factor -0.1 => degrees)
+     gives slope 0.95-1.00 with r >= 0.985 on every clean segment => the bus field IS deg/s.
+  2. Observed |rate| over 407,617 frames peaks at 521 deg/s (p99.9 = 408). At 4.7121 counts/deg-s
+     the breakpoints are 85/297/637 deg/s -- fully exercised by real driving. Under my erroneous
+     0.589 counts/deg-s the breakpoints would be 679/2377/5093 deg/s and Honda's 2x rolloff would
+     NEVER engage in any real drive. Physically decisive.
+The error was composing two structural relations I had NOT verified myself (`gp-0x6ac0 = |gp-0x6abe|`
+and `bus = (gp-0x6abe*48*1159)>>15`) into a scale, instead of measuring the scale. One of those two
+premises is wrong; which one is still OPEN and needs a Ghidra trace. ⇒ V67's build note was CORRECT:
+LERP 2622 at grind #1's operating point, arm 5244 = exactly 2.00x.
 
-🛑 A STEEPER RATE ROLLOFF IS AVAILABLE AND IS REJECTED ON GATE 2. Moving X[1]/X[2] to force a
-rolloff between axis 75 and 151 would separate grind #1 from the creep grind #2 -- but gp-0x6ac0 is
-a RECTIFIED filtered motor rate, so it sweeps at 2x the mode frequency, and a steep gain slope on it
-is a PARAMETRIC PUMP: the exact failure mode V58/V59/V60 chased for three builds. Keeping every
-operating point inside the FLAT segment means zero local slope and no pump. Do not propose it.
+⚠ GATE 2 CAUTION ON ANY RATE-AXIS EDIT (weakened, not withdrawn): gp-0x6ac0 is a RECTIFIED filtered
+motor rate, so it sweeps at 2x the mode frequency. A gain that varies steeply with it modulates at
+2f -- the parametric-pump failure mode V58/V59/V60 chased for three builds. Stock ALREADY has a
+rolloff there (3072 -> 1536 over 400..3000), so the mechanism is not new and is evidently tolerable
+at stock slope; but any edit that STEEPENS it must state the new slope and argue the pump margin.
+This is a quantitative caution, not the structural veto this file previously claimed.
 
 Everything below is byte-verified against stock code.bin and _v65/_v66/_v67_plain_image.bin, and the
 selector ladder is confirmed from the Ghidra listing of FUN_0003aa2c (addresses annotated inline).
@@ -106,9 +115,9 @@ def G(kmh: float, degs: float, recs=STOCK) -> int:
     return gain_q10(int(kmh * COUNTS_PER_KMH), int(degs * AXIS_PER_DEGS), recs)
 
 
-def G_bus(kmh: float, bus_counts: float, recs=STOCK) -> int:
-    """Operating points measured off the bus are in BUS counts -- convert before indexing."""
-    return gain_q10(int(kmh * COUNTS_PER_KMH), int(bus_counts / BUS_PER_AXIS), recs)
+def G_bus(kmh: float, degs: float, recs=STOCK) -> int:
+    """The bus rate field is deg/s (measured), so this is just G(). Kept for call-site clarity."""
+    return G(kmh, degs, recs)
 
 
 def lane_out(dtorque: int, gain: int) -> int:
@@ -129,10 +138,12 @@ def saturating_dtorque(gain: int) -> int:
 
 
 # ---------------------------------------------------------------------------------------------
-# V68 CANDIDATE: raise Y[0]/Y[1] in the 0 km/h and 10 km/h records ONLY, x2.
-# 50/100 km/h left BYTE-IDENTICAL to stock, so the highway returns to exactly 1.00x.
-# Y[2]/Y[3] left stock: no symptom ever reaches axis 400, so they are inert, and leaving them alone
-# keeps the edit to FOUR halfwords.
+# V68 CANDIDATE (NAIVE): scale Y[0]/Y[1] of the 0 and 10 km/h records by 2, 50/100 km/h untouched.
+# 🛑 KEPT ONLY AS A FOIL. With the units settled, grind #1 sits at axis ~603 -- ON the [400,1400]
+# rolloff, not in the flat region -- so scaling Y[0]/Y[1] delivers only 1.84x there while ALSO
+# delivering ~1.27x at the creep grind #2's own point. A better design exists: see DESIGN_A below,
+# which edits ONE halfword and exploits the fact that grind #1 (~128 deg/s) and the creep grind #2
+# (~256 deg/s) sit at DIFFERENT points on the same rolloff.
 # ---------------------------------------------------------------------------------------------
 def scaled_low_speed(mult: float = 2.0):
     out = []
@@ -144,6 +155,14 @@ def scaled_low_speed(mult: float = 2.0):
 
 
 V68 = scaled_low_speed(2.0)
+
+# ★ DESIGN A (the recommended shape, from the `surface` trace): edit ONLY 0xD2AB0's Y[1] -- the
+# halfword at 0xD2ABC -- 2561 -> 7051, leaving 0xD2A74 and both high-speed records byte-identical.
+# It hits exactly 2.00x at grind #1 while delivering far less at the creep grind #2's higher rate,
+# and exactly 1.00x at 50/100 km/h. Its known cost is a HUMP: the multiplier peaks near ~2.45x at
+# 9.9-10 km/h, because 0xD2AB0 IS the 10 km/h breakpoint record.
+DESIGN_A = [(a, r, x, (y if i != 1 else (y[0], 7051, y[2], y[3])))
+            for i, (a, r, x, y) in enumerate(STOCK)]
 
 # The operating points, in the units they were MEASURED in (bus counts off 0x14A).
 POINTS = [
@@ -167,13 +186,14 @@ def _report():
 
     print("\n" + "=" * 100)
     print("2. DELIVERED MULTIPLIER vs STOCK, at the measured operating points")
-    print(f"  {'operating point':38} {'km/h':>6} {'bus':>5} {'axis':>6} {'stock':>6} "
-          f"{'V62/65':>7} {'V67':>6} {'V68':>6}")
+    print(f"  {'operating point':38} {'km/h':>6} {'deg/s':>5} {'axis':>6} {'stock':>6} "
+          f"{'V62/65':>7} {'V67':>6} {'naive':>6} {'DesignA':>7}")
     for lab, kmh, b in POINTS:
         st = G_bus(kmh, b)
         v68 = G_bus(kmh, b, V68)
-        print(f"  {lab:38} {kmh:6.1f} {b:5.0f} {b / BUS_PER_AXIS:6.0f} {st:6} "
-              f"{2.00:7.2f} {V67_ARM / st:6.2f} {v68 / st:6.2f}")
+        da = G_bus(kmh, b, DESIGN_A)
+        print(f"  {lab:38} {kmh:6.1f} {b:5.0f} {b * AXIS_PER_DEGS:6.0f} {st:6} "
+              f"{2.00:7.2f} {V67_ARM / st:6.2f} {v68 / st:6.2f} {da / st:7.2f}")
 
     print("\n" + "=" * 100)
     print("3. V68 MULTIPLIER vs SPEED  (any rate below axis 400 -- i.e. every symptom on record)")

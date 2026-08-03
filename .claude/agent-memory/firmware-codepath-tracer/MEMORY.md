@@ -5,6 +5,9 @@
 - [🛑 Grep build_v*_tva.py before proposing ANY cal](feedback_check_build_scripts_before_proposing_cal_edit.md) — 0xC6450 was re-proposed after being flashed/falsified as V46.
 
 ## Accord TVA-A160 (current project)
+### RAM ownership / code-cave GATE 1 (2026-08-02)
+- [🛑★★★★★★ APP RAM MAP SOLVED: gp/tp/sp DERIVED, and TWO boot writers no scan can see](reference_accord_app_ram_layout_and_boot_init_loops.md) — zero-clear 0xFEDEC000-0xFEDFFFFF @0x146C0; .data copy flash 0x86260-0x8AB18 → gp-0x6E50..gp-0x2598 @0x14766; stack tops at 0xFEDEF91C.
+- [★★★★★★ GATE-1 audit of gp-0x683c: 7 access classes, all clear bar a named residual](reference_accord_gate1_gp683c_ram_ownership_audit.md) — 🛑 inverted heuristic: a LONG free run means ARRAY, not free RAM (69% of the gp window scans "free").
 ### Boost-amplitude index producer chain (2026-07-30, session 2)
 - [🛑★★★★★★ BOTH curves reach gp-0x6bbe, not a clean series product](reference_accord_boost_amp_series_question_corrected.md) — y1 via nonlinear path (diff vs gp-0x6a56, clamp ±12000, ramp-SM gated); y4 separate.
 - [★★★★★ Blend slows RISING only; 0xD2000 = modes 10/11/12 packed](reference_accord_boost_amp_blend_direction_and_d2000_block.md) — mode-10 edit isolated; task-5 rate now resolved (100Hz, see below).

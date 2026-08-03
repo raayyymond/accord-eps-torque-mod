@@ -1037,31 +1037,34 @@ ASSIST_RATE_B_RECORDS = (
 #
 # ★★★★ RESOLVED 2026-08-02, orchestrator-verified from the images and from route 47:
 #
-#   1. THE RATE AXIS IS ARITHMETICALLY DEAD FOR EVERY SYMPTOM ON RECORD. Mapping the measured
-#      populations onto this LERP's own inner axis, 100% of the windows in ALL THREE land inside the
-#      FLAT first segment [0, 400], where Y[0] == Y[1]:
-#          grind #1              ~128 bus counts -> gp-0x6ac0 ~  75
-#          grind #2 creep        ~256            ->            ~ 151
-#          grind #2 highway    30-42             ->            ~18-25
-#      => Y[2]/Y[3] never participate. The rate axis is not a WEAK discriminator, it is INCAPABLE of
-#      discriminating, which explains the previously measured 81.1%/48.5% rather than being a separate
-#      fact. ONLY THE SPEED AXIS CAN SEPARATE ANYTHING ON THIS SURFACE.
-#      🛑 Sharpening the rate breakpoints to force a rolloff between axis 75 and 151 is available and
-#      is REJECTED ON GATE 2: gp-0x6ac0 is a RECTIFIED filtered motor rate, so it sweeps at 2x the
-#      mode frequency, and a steep gain slope on it is a PARAMETRIC PUMP -- the failure mode
-#      V58/V59/V60 chased for three builds. Keeping the operating point inside the flat segment gives
-#      zero local slope. Do not propose a rate-breakpoint move.
+#   1. THE RATE AXIS IS USABLE -- the three symptom populations sit at DIFFERENT points on it:
+#          grind #1            ~128 deg/s -> gp-0x6ac0 ~ 603    [400,1400] ON the rolloff
+#          grind #2 creep      ~256       ->           ~1206    [400,1400] further along the rolloff
+#          grind #2 highway   30-42       ->         ~141-198   [0,400]    FLAT (Y0 == Y1)
+#      X1 = 400 = 0x0190 EXACTLY and Y0 == Y1 in every curve of BOTH LERPs (raw cal byte reads), so
+#      the [0,400] segment is genuinely flat at every speed -- confirmed, not inferred.
+#      GATE 2 caution on any rate-axis edit: gp-0x6ac0 is a RECTIFIED filtered motor rate, so it
+#      sweeps at 2x the mode frequency and a steeply rate-dependent gain modulates at 2f (the
+#      parametric-pump failure mode V58/V59/V60 chased). Stock ALREADY has a rolloff there, so the
+#      mechanism is not new and is tolerable at stock slope; any edit that STEEPENS it must state the
+#      new slope and argue the pump margin. Quantitative caution, not a structural veto.
 #
-#   2. UNITS, byte-read: cal tp+0x713a = 0xC613A = 1159, so the bus STEER_ANGLE_RATE field is
-#      bus = (gp-0x6abe * 48 * 1159) >> 15 = 1.697754 * gp-0x6ac0, and gp-0x6ac0 = 2^18/(48*1159) =
-#      4.71210813 counts per deg/s exactly => the two compose to BUS COUNTS = 8 x deg/s EXACTLY.
-#      🛑 V67's build note sized its arm as "creep 7.2 km/h, 128 deg/s => LERP 2622 => 5244 = 2.00x".
-#      It converted 128 BUS COUNTS as if they were 128 deg/s (axis 603 instead of 75). The true LERP
-#      at grind #1's operating point is 2704, so V67's arm delivers 1.94x, not 2.00x.
+#   2. UNITS -- SETTLED EMPIRICALLY, after the orchestrator got this WRONG once on 2026-08-02.
+#      The 0x14A rate field IS deg/s (factor 1): regressing `rate_c` on the differentiated ANGLE
+#      channel (0x14A b0:1, factor -0.1 => degrees) gives slope 0.95-1.00 with r >= 0.985 on every
+#      clean segment. And gp-0x6ac0 = 4.71210813 counts per deg/s, so the inner breakpoints
+#      [0, 400, 1400/1500, 3000] are [0, 85, 297, 637] DEG/S -- which real driving reaches (|rate|
+#      over 407,617 frames peaks at 521 deg/s, p99.9 = 408), whereas the erroneous 0.589 counts per
+#      deg/s would put them at 679/2377/5093 where Honda's 2x rolloff could never engage at all.
+#      RETRACTED: "bus counts = 8 x deg/s" and "V67's arm delivers 1.94x". V67's build note was
+#      CORRECT -- LERP 2622 at grind #1's operating point, arm 5244 = exactly 2.00x. The error was
+#      composing two UNVERIFIED structural relations (gp-0x6ac0 = |gp-0x6abe|, and
+#      bus = (gp-0x6abe*48*1159)>>15) into a scale instead of MEASURING it against a channel already
+#      in the cache. One of those two premises is wrong; which one is OPEN.
 #
 #   3. V67's FLAT ARM INVERTS HONDA'S OWN SCHEDULE. Because the surface rolls off with speed, a scalar
 #      arm delivers its LARGEST multiplier where the stock design wanted the LEAST:
-#          grind #1  creep 7.2 km/h   LERP 2704 -> 1.94x
+#          grind #1  creep 7.2 km/h   LERP 2622 -> 2.00x
 #          grind #2  creep 5 km/h     LERP 2409 -> 2.18x
 #          highway   100+ km/h        LERP 2151 -> 2.44x   <- the maximum
 #      🛑 A flat arm is STRUCTURALLY INCAPABLE of fixing the highway: one degree of freedom, two

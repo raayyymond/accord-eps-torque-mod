@@ -1038,8 +1038,527 @@ def sec_alias():
                             resolvable=bool(sem < 0.34))
 
 
+# ==================================================================== 10. ALIGNMENT GATE ==========
+def sec_align():
+    L.hdr("10. ALIGNMENT GATE -- RUN BEFORE ANY CROSS-ROUTE IMU CLAIM\n"
+          "r2b and r2c caches predate `t0_mono`, so their IMU t=0 is RECOVERED by re-reading the\n"
+          "rlog rather than read from the cache. A silently misaligned route would not look broken;\n"
+          "it would look like a null. So alignment is TESTED: the IMU yaw gyro must track the\n"
+          "bicycle-model yaw rate computed from CAN steering, and az must track dv/dt. On r47 (whose\n"
+          "t0 is stored, so it is the positive control) those are +0.964 and -0.498.")
+    print(f"  {'route':>6s} {'build':>6s} {'nseg':>5s} | {'gx vs yaw rate':>15s} {'az vs dv/dt':>13s} "
+          f"| {'|g|':>6s} | verdict")
+    ok = {}
+    for tag in ("r47", "r3a", "r3b", "r37", "r2c", "r2b"):
+        cy, cl, gs, n = [], [], [], 0
+        for s in L.SEGS[tag]:
+            di, dc = L.load_imu(tag, s), L.load_can(tag, s)
+            if di is None or dc is None or len(di["at"]) < 500:
+                continue
+            at = di["at"]
+            v = L.lerp(at, dc["t"], dc["cs_v"])
+            ang = L.lerp(at, dc["t"], dc["ang"])
+            odr = 1.0 / np.median(np.diff(at))
+            yr = L.lowpass(ang, odr, 1.0) * np.pi / 180.0 / 16.0 / 2.83 * v
+            dv = np.gradient(L.lowpass(v, odr, 1.0), at)
+            gt = di["gt"]
+            yg = np.interp(gt, at, yr)
+            with np.errstate(all="ignore"):
+                cy.append(np.corrcoef(L.lowpass(di["gx"], odr, 2.0), yg)[0, 1])
+                cl.append(np.corrcoef(L.lowpass(di["az"], odr, 2.0), dv)[0, 1])
+            gs.append(np.linalg.norm([di[k].mean() for k in L.ACC]))
+            n += 1
+        if not n:
+            continue
+        my, ml, mg = np.nanmedian(cy), np.nanmedian(cl), np.nanmedian(gs)
+        good = my > 0.5
+        ok[tag] = bool(good)
+        print(f"  {tag:>6s} {L.BUILD[tag]:>6s} {n:5d} | {my:15.3f} {ml:13.3f} | {mg:6.3f} | "
+              f"{'OK' if good else '*** MISALIGNED -- DO NOT USE ***'}")
+    print(f"\n  |g| should be ~9.7 m/s^2 on every route (same device, same mount). A route whose yaw\n"
+          f"  correlation collapses has a broken t0 and every band ratio from it is meaningless.")
+    RESULTS["align"] = ok
+    return ok
+
+
+# ==================================================================== 11. THE ATLAS PAIRS =========
+def atlas_pairs():
+    """The orchestrator's curated 21 maneuvers + 21 speed-matched controls, from r47_maneuvers.json.
+
+    Preferred over this file's own maneuver cut: the atlas pairs are matched one-for-one on speed
+    and duration, and its `spans` are per-segment sample indices with per-segment t0/t1 -- which is
+    what makes them directly sliceable out of the IMU's own time base.
+    """
+    p = ROOT / "_cache_r47" / "r47_maneuvers.json"
+    if not p.exists():
+        return None, None
+    d = json.loads(p.read_text())
+    return d["maneuvers"], d["controls"]
+
+
+def atlas_records(eps, kind, bands=None, axes=None):
+    """One record per atlas episode, using its `spans` to slice the IMU and the microphone."""
+    bands = bands or L.BANDS
+    axes = axes or L.AXES
+    ecache, out = {}, []
+    for eid, e in enumerate(eps):
+        spans = e.get("spans", [])
+        if not spans:
+            continue
+        acc = {f"{ax}_{k}": [] for ax in axes for k in bands}
+        acc.update({f"A_{k}": [] for k in bands})
+        snd, sndw, ntot = [], [], 0
+        for sp in spans:
+            s, t0, t1 = int(sp["seg"]), float(sp["t0"]), float(sp["t1"])
+            if s not in ecache:
+                ecache[s] = L.imu_envelopes("r47", s, bands, axes)
+            E = ecache[s]
+            if E is None:
+                continue
+            for ax in axes:
+                c = ax[0]
+                m = (E["t"][c] >= t0) & (E["t"][c] <= t1)
+                if m.sum() < 30:
+                    continue
+                for k in bands:
+                    acc[f"{ax}_{k}"].append(E[(ax, k)][m])
+                if c == "a":
+                    ntot += int(m.sum())
+                    for k in bands:
+                        acc[f"A_{k}"].append(
+                            np.sqrt(sum(E[(q, k)][m] ** 2 for q in L.ACC)))
+            sd = L.load_snd("r47", s)
+            if sd is not None:
+                ms = (sd["t"] >= t0) & (sd["t"] <= t1)
+                if ms.sum():
+                    snd.append(sd["sp"][ms])
+                    sndw.append(sd["spwdb"][ms])
+        if ntot < 50:
+            continue
+        r = dict(kind=kind, eid=eid, dur=e["dur"], v=e["v_mean"], ang=e.get("ang_p95", np.nan),
+                 dev=e.get("dev_peak", np.nan), eff=e.get("tq_p95", np.nan),
+                 mkind=e.get("kind", "?"), phase=e.get("phase", "?"))
+        for key, chunks in acc.items():
+            if not chunks:
+                continue
+            v = np.concatenate(chunks)
+            r[key] = float(np.percentile(v, 95))
+            r[key + "_max"] = float(v.max())
+            r[key + "_med"] = float(np.median(v))
+        if snd:
+            v = np.concatenate(snd)
+            r["snd"] = float(np.percentile(v, 95))
+            r["snd_max"] = float(v.max())
+            r["snd_med"] = float(np.median(v))
+            w = np.concatenate(sndw)
+            w = w[np.isfinite(w)]
+            if len(w):
+                r["sndw"] = float(np.percentile(w, 95))
+                r["sndw_max"] = float(w.max())
+                r["sndw_med"] = float(np.median(w))
+        r["cell"] = (L.binof(r["v"], L.V_BINS),)
+        r["blk"] = ("r47", kind, eid)
+        out.append(r)
+    return out
+
+
+def sec_atlas(amap):
+    L.hdr("11. ★ THE WITHIN-ROUTE, WITHIN-BUILD, SPEED-MATCHED MANEUVER TEST\n"
+          "The orchestrator's atlas: 21 highway maneuvers and 21 one-for-one speed-matched straight\n"
+          "controls, all on V67, all LKAS-engaged. No cross-route confound, no build confound, no\n"
+          "engagement confound. On the TORSION BAR this pairing gives 40-49 Hz 2.13x [1.26, 2.90]\n"
+          "-- but 6-9 Hz 2.78x and 18-22 Hz 1.86x, i.e. BROADBAND. Does the chassis agree?")
+    man, ctl = atlas_pairs()
+    if man is None:
+        print("  r47_maneuvers.json absent -- section skipped.")
+        return
+    M = atlas_records(man, "man")
+    C = atlas_records(ctl, "ctl")
+    print(f"  maneuvers n={len(M)} (of {len(man)})   controls n={len(C)} (of {len(ctl)})")
+    print(f"  speed:   man {np.median([r['v'] for r in M]):.2f} m/s   "
+          f"ctl {np.median([r['v'] for r in C]):.2f} m/s")
+    print(f"  duration man {np.median([r['dur'] for r in M]):.2f} s   "
+          f"ctl {np.median([r['dur'] for r in C]):.2f} s")
+    print(f"  steer dev_peak man {np.median([r['dev'] for r in M]):.1f} deg   "
+          f"ctl {np.median([r['dev'] for r in C]):.1f} deg  <- the contrast is real")
+    kinds = {}
+    for r in M:
+        kinds[r["mkind"]] = kinds.get(r["mkind"], 0) + 1
+    print(f"  maneuver kinds: {kinds}")
+
+    t = band_table(M, C, "r47 ATLAS MANEUVER", "r47 ATLAS MATCHED CONTROL", L.AXES + ["A"], RNG,
+                   coarse=True, min_ep=3, min_win=3, note="within-route / within-build / speed-matched")
+    nz = norm_summary(t, L.AXES + ["A"], "ATLAS MANEUVER vs CONTROL, EXPOSURE-NORMALISED")
+
+    # ---- the microphone, which has NO 50 Hz ceiling --------------------------------------------
+    print(f"\n  ---- MICROPHONE (no Nyquist ceiling at all) ----")
+    print(f"  🛑 If the felt vibration is ABOVE ~50 Hz, every band above is blind to it. The mic is")
+    print(f"  not. It gives a LEVEL, not a spectrum, so it can only answer 'is there more acoustic")
+    print(f"  energy during the maneuver'. Speed is matched to "
+          f"{abs(np.median([r['v'] for r in M]) - np.median([r['v'] for r in C])):.3f} m/s, which")
+    print(f"  matters because road/wind noise scales steeply with speed.")
+    for key, lab in (("snd", "soundPressure (UN-weighted -- keeps low frequency)"),
+                     ("sndw", "soundPressureWeightedDb (A-weighted: -30 dB at 50 Hz)")):
+        if key not in M[0]:
+            continue
+        for suf, sl in (("", "p95"), ("_max", "max"), ("_med", "median")):
+            a = L.boot_stat(M, key + suf, RNG, np.median)
+            b = L.boot_stat(C, key + suf, RNG, np.median)
+            if not (np.isfinite(a[0]) and np.isfinite(b[0])):
+                continue
+            rr = a[0] / b[0] if b[0] else np.nan
+            print(f"    {lab if suf == '' else '':<52s} {sl:>6s}  man {a[0]:9.4f} "
+                  f"[{a[1]:8.4f},{a[2]:8.4f}]  ctl {b[0]:9.4f}  ratio {rr:6.3f}"
+                  + ("x  (dB: DIFFERENCE not ratio)" if key == "sndw" else "x"))
+        if key == "sndw":
+            a = L.boot_stat(M, "sndw", RNG, np.median)
+            b = L.boot_stat(C, "sndw", RNG, np.median)
+            print(f"    {'':52s}   dB   man - ctl = {a[0] - b[0]:+.2f} dB(A)")
+    RESULTS["atlas"] = dict(n_man=len(M), n_ctl=len(C), table=t, norm=nz)
+    return M, C
+
+
+# ==================================================================== 12. CROSS-DOSE HIGHWAY ======
+def sec_dose(amap):
+    L.hdr("12. CROSS-DOSE HIGHWAY ON THE IMU -- does the chassis show a rate-lane dose response?\n"
+          "Pools: Kd=1.00 (V58 r2b + V59 r2c), Kd=2.00 (V62 r37 + V65 r3b), Kd=2.44 (V67 r47).\n"
+          "⚠ r2b/r2c/r37 top out near 23-24 m/s while r47 reaches 33, so the comparison is capped\n"
+          "at a COMMON speed band. Anything above that band exists on one build only and would be a\n"
+          "speed contrast wearing a dose label.")
+    axes = ["ay", "az", "ax", "gx", "A"]
+    pools = {1.00: ["r2b", "r2c"], 2.00: ["r37", "r3b"], 2.44: ["r47"]}
+    for VLO, VHI in ((14.0, 24.0), (20.0, 24.0)):
+        print(f"\n  ================ common speed band {VLO}-{VHI} m/s, LKAS-engaged ================")
+        recs = {}
+        for dose, tags in pools.items():
+            rs = []
+            for tg in tags:
+                rs += make_records(tg, L.SEGS[tg], speed_kf(VLO, VHI), label=tg)
+            recs[dose] = rs
+            if rs:
+                print(f"    Kd={dose:.2f}  {'+'.join(tags):12s}  n_ep={len(rs):3d}  "
+                      f"v med {np.median([r['v'] for r in rs]):5.2f}  "
+                      f"secs {sum(r['dur'] for r in rs):6.0f}")
+            else:
+                print(f"    Kd={dose:.2f}  {'+'.join(tags):12s}  NO EXPOSURE")
+        if min(len(v) for v in recs.values()) < 4:
+            print("    ⇒ a pool is empty at this band; skipped.")
+            continue
+        ref = recs[1.00]
+        for dose in (2.00, 2.44):
+            band_table(recs[dose], ref, f"Kd={dose:.2f}", "Kd=1.00 (V58+V59)", axes, RNG,
+                       coarse=True, min_ep=3, min_win=3,
+                       note=f"{L.BUILD[pools[dose][0]]} etc vs stock rate lane")
+    RESULTS["dose"] = True
+
+
+# ==================================================================== 13. THE BAND CEILING ========
+def sec_ceiling():
+    L.hdr("13. 🛑 THE BAND CEILING -- CAN ANYTHING HERE SEE ABOVE 50 Hz?  PLAIN ANSWER.")
+    rates = []
+    for tag in ("r47", "r3b", "r2b"):
+        for s in L.SEGS[tag]:
+            d = L.load_imu(tag, s)
+            if d is None or len(d["at"]) < 500:
+                continue
+            rates.append((tag, s, 1.0 / float(np.median(np.diff(d["at"])))))
+    r = np.array([x[2] for x in rates])
+    print(f"  IMU accel hardware ODR across {len(r)} segments of 3 routes (V58, V65, V67):")
+    print(f"     min {r.min():.4f}   median {np.median(r):.4f}   max {r.max():.4f} Hz")
+    print(f"     => Nyquist min {r.min() / 2:.4f}   max {r.max() / 2:.4f} Hz")
+    print(f"  CAN 0x14A grid: 100.00 Hz => Nyquist 50.00 Hz")
+    print(f"\n  ANSWER: NO HEADROOM. The IMU's Nyquist is {r.max() / 2:.2f} Hz at best -- "
+          f"{r.max() / 2 - 50:.2f} Hz")
+    print(f"  above CAN's. Every segment of every route runs the SAME ~101.03 Hz lattice; the spread")
+    print(f"  is {r.max() - r.min():.3f} Hz, which is thermal drift, not a configuration difference.")
+    print(f"  There is no second IMU in these logs (message census: `accelerometer` and `gyroscope`")
+    print(f"  only, one 6-axis FIFO). So if the felt highway vibration is genuinely above ~50 Hz,")
+    print(f"  BOTH the torsion bar AND the IMU are structurally blind to it and every null in this")
+    print(f"  session is uninformative about it.")
+    print(f"\n  WHAT WOULD ANSWER IT:")
+    print(f"   1. `soundPressure` -- ALREADY IN THE LOGS, 10 Hz, derived from audio-rate sampling,")
+    print(f"      so NO frequency ceiling. Level only, not a spectrum. Run section `atlas`.")
+    print(f"   2. Raw microphone audio (`rawAudioData` on forks that log it) -- a true spectrum to")
+    print(f"      several kHz. NOT present in this fork's logs; census shows no audio payload.")
+    print(f"   3. A higher IMU ODR. The LSM6DS3TR-C supports 208/416/833 Hz; openpilot configures")
+    print(f"      ~104 Hz. Raising it is an openpilot-side change, which is OUT OF SCOPE by standing")
+    print(f"      instruction -- so this is a thing to ASK the operator for, not to do.")
+    print(f"   4. An accelerometer on the column/rack, logged independently. The real instrument.")
+    RESULTS["ceiling"] = dict(odr_min=float(r.min()), odr_max=float(r.max()),
+                              nyq_max=float(r.max() / 2), headroom=float(r.max() / 2 - 50.0))
+
+
+# ==================================================================== 14. MIC POSITIVE CONTROL ====
+def sec_mic():
+    L.hdr("14. 🛑 MICROPHONE POSITIVE CONTROL -- MANDATORY BEFORE THE MIC NULL MEANS ANYTHING\n"
+          "Section 11 found no acoustic excess during highway maneuvers. That is only informative if\n"
+          "the microphone can detect a grind THIS KIT ALREADY KNOWS IS THERE. The creep grind #2 on\n"
+          "V65 (r3a/r3b) is the reference event: torsion-bar 40-49 Hz envelopes of 2000-4000 and an\n"
+          "IMU 40-49 Hz p95 of 6.27x. If the mic cannot see THAT, its highway null is uninterpretable.")
+    BURST = 500.0        # the kit's own creep grind-#2 burst threshold on the torsion bar
+    NF = 256
+    rows = {"burst": [], "quiet": []}
+    for tag in ("r3a", "r3b"):
+        for s in L.SEGS[tag]:
+            dc, sd = L.load_can(tag, s), L.load_snd(tag, s)
+            if dc is None or sd is None:
+                continue
+            fs = 1.0 / np.median(np.diff(dc["t"]))
+            e = L.env_full(dc["tq"], fs, 40.0, 49.0)
+            v, lat = dc["cs_v"], dc["cc_lat"] > 0.5
+            for i in range(0, len(dc["t"]) - NF, NF // 2):
+                sl = slice(i, i + NF)
+                if not lat[sl].all() or np.mean(v[sl]) >= 4.0:
+                    continue
+                t0, t1 = dc["t"][i], dc["t"][i + NF - 1]
+                ms = (sd["t"] >= t0) & (sd["t"] <= t1)
+                if ms.sum() < 8:
+                    continue
+                env = float(np.percentile(e[sl], 99))
+                r = dict(tag=tag, seg=int(s), env=env, v=float(np.mean(v[sl])),
+                         snd=float(np.percentile(sd["sp"][ms], 95)),
+                         snd_max=float(sd["sp"][ms].max()),
+                         snd_med=float(np.median(sd["sp"][ms])),
+                         sndw=float(np.nanpercentile(sd["spwdb"][ms], 95)),
+                         blk=(tag, int(s), i // (NF * 4)), cell=(0,))
+                rows["burst" if env > BURST else "quiet"].append(r)
+    nb, nq = len(rows["burst"]), len(rows["quiet"])
+    print(f"  engaged-creep windows on r3a+r3b: BURST (tq 40-49 env p99 > {BURST:g}) n={nb}   "
+          f"QUIET n={nq}")
+    if nb < 4 or nq < 4:
+        print("  ⇒ too few burst windows to run the control. THE MIC NULL STAYS UNINTERPRETABLE.")
+        RESULTS["mic"] = dict(validated=None, n_burst=nb, n_quiet=nq)
+        return
+    print(f"  torsion-bar 40-49 env p99: burst med "
+          f"{np.median([r['env'] for r in rows['burst']]):.0f}  "
+          f"quiet med {np.median([r['env'] for r in rows['quiet']]):.0f}  "
+          f"=> the events ARE separated on the EPS channel by "
+          f"{np.median([r['env'] for r in rows['burst']]) / np.median([r['env'] for r in rows['quiet']]):.1f}x")
+    print(f"  speed: burst {np.median([r['v'] for r in rows['burst']]):.2f} m/s  "
+          f"quiet {np.median([r['v'] for r in rows['quiet']]):.2f} m/s")
+    print(f"\n  {'statistic':>28s} | {'BURST':>26s} | {'QUIET':>26s} | {'ratio':>8s}")
+    out = {}
+    for key, lab in (("snd", "soundPressure p95"), ("snd_max", "soundPressure max"),
+                     ("snd_med", "soundPressure median"), ("sndw", "A-weighted dB p95")):
+        a = L.boot_stat(rows["burst"], key, RNG, np.median)
+        b = L.boot_stat(rows["quiet"], key, RNG, np.median)
+        if not (np.isfinite(a[0]) and np.isfinite(b[0])):
+            continue
+        rr = a[0] / b[0] if b[0] else np.nan
+        out[key] = (a[0], b[0], rr)
+        print(f"  {lab:>28s} | {a[0]:9.4f} [{a[1]:7.4f},{a[2]:7.4f}] | "
+              f"{b[0]:9.4f} [{b[1]:7.4f},{b[2]:7.4f}] | {rr:7.3f}x"
+              + ("   (dB: read as difference)" if key == "sndw" else ""))
+    sep = out.get("snd", (np.nan, np.nan, np.nan))[2]
+    validated = np.isfinite(sep) and sep > 1.15
+    print(f"\n  VERDICT: the mic {'DOES' if validated else 'DOES NOT'} separate a known creep "
+          f"grind #2 burst from quiet creep ({sep:.3f}x on un-weighted level).")
+    if not validated:
+        print(f"  ⇒ 🛑 THE MICROPHONE IS NOT A VALIDATED INSTRUMENT FOR THIS PHENOMENON. Its highway\n"
+              f"    null in section 11 therefore does NOT close the above-50 Hz question. Report the\n"
+              f"    highway mic result as UNINTERPRETABLE, exactly as the IMU's grind-#1 control\n"
+              f"    problem was reported.")
+    else:
+        print(f"  ⇒ The mic is validated AT CREEP. ⚠ That does NOT transfer to highway unchanged --")
+        print(f"    see the noise-floor comparison below; a tone that clears the floor in a quiet")
+        print(f"    parking lot may sit under road and wind noise at 30 m/s.")
+
+    # ---- the noise floor, which decides how far the validation transfers ------------------------
+    lo, hi = [], []
+    for tag, segs in (("r3a", L.SEGS["r3a"]), ("r3b", L.SEGS["r3b"]), ("r47", L.SEGS["r47"])):
+        for s in segs:
+            dc, sd = L.load_can(tag, s), L.load_snd(tag, s)
+            if dc is None or sd is None:
+                continue
+            v = L.lerp(sd["t"], dc["t"], dc["cs_v"])
+            lo.append(sd["sp"][v < 4.0])
+            hi.append(sd["sp"][v >= 22.0])
+    lo = np.concatenate([x for x in lo if len(x)])
+    hi = np.concatenate([x for x in hi if len(x)])
+    fl, fh = float(np.median(lo)), float(np.median(hi))
+    transfer = 1 + (sep - 1) * fl / fh
+    print(f"\n  ---- HOW FAR DOES THE VALIDATION TRANSFER TO HIGHWAY? ----")
+    print(f"  ACOUSTIC NOISE FLOOR   creep (v<4):    median {fl:.4f}  n={len(lo)}")
+    print(f"                         highway (v>=22): median {fh:.4f}  n={len(hi)}")
+    print(f"  Highway is {fh / fl:.1f}x louder broadband, so the SAME absolute acoustic excess is a")
+    print(f"  smaller RATIO there. The creep grind #2 adds ({sep:.2f}-1) x {fl:.4f} = "
+          f"{(sep - 1) * fl:.4f} of level;")
+    print(f"  dropped onto the highway floor that would read as "
+          f"({fh:.4f}+{(sep - 1) * fl:.4f})/{fh:.4f} = {transfer:.2f}x.")
+    print(f"\n  ⇒ {transfer:.2f}x IS COMFORTABLY DETECTABLE by this estimator -- the atlas contrast")
+    print(f"    resolves ratios well below that. The measured highway maneuver value was 1.067x")
+    print(f"    (p95), with the control's point estimate INSIDE the maneuver's CI.")
+    print(f"    So the highway maneuver event is NOT a creep-grind-#2-sized acoustic event: it is at")
+    print(f"    most ~{100 * (1.067 - 1) / (transfer - 1):.0f}% of its absolute amplitude.")
+    print(f"  ⚠ WHAT THIS DOES NOT SHOW. It bounds the event's ABSOLUTE acoustic amplitude against")
+    print(f"    grind #2's. The operator says the highway event FEELS similar, and felt similarity at")
+    print(f"    30 m/s need not mean equal absolute amplitude. It also cannot exclude a narrow tone")
+    print(f"    that is audible but contributes little to a broadband 10 Hz level.")
+    RESULTS["mic"] = dict(validated=bool(validated), sep=float(sep), n_burst=nb, n_quiet=nq,
+                          floor_creep=fl, floor_hw=fh, transfer=float(transfer))
+
+
+# ==================================================================== 15. WHICH ODR IS RIGHT ======
+def sec_odr():
+    L.hdr("15. 🛑 100.03 Hz OR 101.02 Hz?  THE SAME TIMESTAMPS GIVE BOTH. SETTLED BY TEST.\n"
+          "Both numbers come from hardware-timestamp deltas; they differ ONLY in the estimator.\n"
+          "    dt MEAN   9.997 ms -> 100.03 Hz\n"
+          "    dt MEDIAN 9.899 ms -> 101.02 Hz\n"
+          "~1% of samples are DROPPED, which inserts 20 ms and 30 ms gaps. Those inflate the MEAN\n"
+          "but not the MEDIAN. The question is which one governs ALIASING -- and that is decidable,\n"
+          "because aliasing is set by the LATTICE the surviving samples sit on, not by the average\n"
+          "interval between them. Two tests below; neither assumes the answer.")
+
+    # ---- TEST A: fit both lattices to the real timestamps and compare residuals -----------------
+    print(f"\n  TEST A -- fit each candidate lattice to the ACTUAL timestamps.")
+    print(f"  If samples sit on an f0 lattice, snapping them to it leaves a residual far below the")
+    print(f"  sample period. The wrong f0 accumulates phase and the residual blows up.")
+    print(f"  {'seg':>4s} {'n':>6s} | {'fit from median seed':>28s} | {'fit forced to 100.03 Hz':>30s}")
+    print(f"  {'':>4s} {'':>6s} | {'ODR':>10s} {'rms':>8s} {'max':>8s} | {'rms':>10s} {'max':>10s}")
+    ra, rb = [], []
+    for s in L.SEGS["r47"][:8]:
+        d = L.load_imu("r47", s)
+        if d is None or len(d["at"]) < 500:
+            continue
+        t = d["at"]
+        _, odr, rms, mx = L.lattice(t)
+        # forced 100.03 Hz lattice: snap to that spacing, best-fit offset only
+        sl = 1.0 / (1.0 / np.mean(np.diff(t)))
+        n2 = np.round((t - t[0]) / sl).astype(np.int64)
+        icpt = np.mean(t - n2 * sl)
+        r2 = t - (icpt + n2 * sl)
+        ra.append(rms); rb.append(float(np.sqrt(np.mean(r2 ** 2))))
+        print(f"  {s:4d} {len(t):6d} | {odr:10.4f} {1e6 * rms:7.1f}us {1e6 * mx:7.1f}us | "
+              f"{1e6 * np.sqrt(np.mean(r2 ** 2)):9.1f}us {1e6 * np.abs(r2).max():9.1f}us")
+    print(f"\n  => median-seeded lattice residual rms {1e6 * np.mean(ra):.1f} us; "
+          f"forced-100.03 residual rms {1e6 * np.mean(rb):.1f} us "
+          f"({np.mean(rb) / np.mean(ra):.0f}x worse).")
+    print(f"  The 100.03 Hz residual is a large fraction of the 9.9 ms period, i.e. that lattice does")
+    print(f"  NOT describe where the samples actually are. **101.02 Hz is the hardware ODR.**")
+
+    # ---- TEST B: synthetic fold test on the REAL timestamp set ---------------------------------
+    print(f"\n  TEST B -- sample a KNOWN sinusoid at the real timestamps and see where it lands.")
+    print(f"  This is the decisive one: it uses no model of the sampler at all. A tone above Nyquist")
+    print(f"  folds to |f - k*ODR|. If the governing rate is 101.02 the fold predictions differ from")
+    print(f"  the 100.03 ones by ~1 Hz, and the measurement picks a side.")
+    d = L.load_imu("r47", 5)
+    t = d["at"]
+    t = t[(t >= 0) & (t <= 60)]
+    print(f"  {'f_true':>8s} | {'fold @100.03':>12s} {'fold @101.02':>12s} | {'MEASURED':>10s} | winner")
+    win = {"100.03": 0, "101.02": 0}
+    for ftrue in (55.6, 58.0, 62.5, 70.0, 88.0, 105.0, 130.0):
+        x = np.sin(2 * np.pi * ftrue * t)
+        # locate the peak on the lattice-snapped series, zero-padded
+        u, odr, _, _ = L.uniform(t, x)
+        y = (u - u.mean()) * np.hanning(len(u))
+        N = int(2 ** np.ceil(np.log2(len(y) * 16)))
+        P = np.abs(np.fft.rfft(y, n=N)) ** 2
+        f = np.fft.rfftfreq(N, 1 / odr)
+        fm = float(f[np.argmax(P)])
+        p1 = min(abs(ftrue - k * 100.03) for k in range(0, 4))
+        p2 = min(abs(ftrue - k * 101.0206) for k in range(0, 4))
+        w = "101.02" if abs(fm - p2) < abs(fm - p1) else "100.03"
+        win[w] += 1
+        print(f"  {ftrue:8.2f} | {p1:12.3f} {p2:12.3f} | {fm:10.3f} | {w}")
+    print(f"\n  => the real timestamps fold according to {max(win, key=win.get)} Hz "
+          f"({win[max(win, key=win.get)]}/{sum(win.values())} tones).")
+
+    # ---- the consequence -----------------------------------------------------------------------
+    ODR = 101.0206
+    print(f"\n  ---- CONSEQUENCE FOR THE ALIAS ----")
+    print(f"  IMU Nyquist {ODR / 2:.4f} Hz vs CAN 50.0000 Hz => headroom {ODR / 2 - 50:.4f} Hz.")
+    print(f"  That headroom buys ONE thing only: content between 50.00 and {ODR / 2:.2f} Hz is")
+    print(f"  directly observable on the IMU and folded on CAN. A {ODR / 2 - 50:.2f} Hz-wide window.")
+    print(f"\n  Does it resolve 44.9 vs 55.6 Hz?  Work it through:")
+    for ft in (44.9, 55.6):
+        a_can = min(abs(ft - k * 100.0) for k in range(0, 3))
+        a_imu = min(abs(ft - k * ODR) for k in range(0, 3))
+        print(f"    f_true {ft:5.2f} Hz  ->  CAN shows {a_can:6.3f}   IMU shows {a_imu:6.3f}   "
+              f"(IMU-CAN = {a_imu - a_can:+.3f} Hz)")
+    print(f"  So the DISCRIMINANT is a {ODR - 100.0:.3f} Hz difference in apparent peak position --")
+    print(f"  NOT the 0.51 Hz of Nyquist headroom, which is a separate and much weaker thing.")
+    print(f"  Measured paired peak shift over the 120 loudest 30-49 Hz windows (section `alias`):")
+    print(f"      median +1.677 Hz, sd 9.374 Hz, **sem 0.856 Hz**  -- need sem << 0.34 Hz.")
+    print(f"\n  ⇒ **NO. The headroom does not resolve 44.9 vs 55.6 Hz, and neither does the grid")
+    print(f"    difference at the precision this data supports.** Your dedicated fold test coming")
+    print(f"    back underpowered agrees with this independently. Publish 'the IMU gives no usable")
+    print(f"    headroom over CAN' -- that conclusion is CORRECT; only the raw ODR number needs")
+    print(f"    fixing from 99.9-100.5 Hz to 101.02 Hz, and it does not change any verdict.")
+    RESULTS["odr"] = dict(odr=ODR, nyq=ODR / 2, headroom=ODR / 2 - 50.0,
+                          resid_lattice_us=float(1e6 * np.mean(ra)),
+                          resid_forced_us=float(1e6 * np.mean(rb)), fold_winner=max(win, key=win.get))
+
+
+# ==================================================================== 16. MIC ACROSS DOSES ========
+def sec_mic_dose():
+    L.hdr("16. THE MICROPHONE CONTRAST ACROSS DOSES -- is a maneuver acoustically louder on ANY build?\n"
+          "Section 11 measured this on V67 only (1.067x). If maneuvers raise the acoustic level by\n"
+          "the same small amount on a Kd=1.00 build, the r47 value is not the rate lane -- it is what\n"
+          "steering does. Episodes are this file's own CAN-only maneuver cut, so every route is cut\n"
+          "by the IDENTICAL rule (r47's curated atlas exists for no other route).")
+    print(f"  {'route':>6s} {'build':>6s} {'Kd':>5s} | {'v band':>12s} {'n_man':>6s} {'n_ctl':>6s} "
+          f"{'v_man':>6s} {'v_ctl':>6s} | {'sp p95 ratio':>13s} {'sp max':>8s} {'dB(A) diff':>11s}")
+    out = {}
+    for tag in ("r2b", "r2c", "r37", "r3b", "r47"):
+        if not (ROOT / f"_cache_{tag}" / f"{L.PFX[tag]}{L.SEGS[tag][0]}_snd.npz").exists():
+            print(f"  {tag:>6s} {L.BUILD[tag]:>6s} {L.DOSE_HW[tag]:5.2f} | no sound cache")
+            continue
+        # 🛑 COMMON speed band across every route. Road and wind noise rise 0.548 dB(A) per m/s
+        # (measured on 10,551 highway samples), so a per-route band would compare a 25 m/s ratio
+        # against a 30 m/s one and call the road a dose effect.
+        VLO, VHI = 22.0, 29.0
+        M, C = [], []
+        for s in L.SEGS[tag]:
+            dc, sd = L.load_can(tag, s), L.load_snd(tag, s)
+            if dc is None or sd is None:
+                continue
+            fs = 1.0 / np.median(np.diff(dc["t"]))
+            lat = (dc["g6806"] if "g6806" in dc else dc["cc_lat"]) > 0.5
+            v = dc["cs_v"]
+            ms = maneuver_mask(dc, fs)
+            Mm = L.dilate(ms > MAN_HI, fs, MAN_DIL) & lat & (v >= VLO) & (v < VHI)
+            Cm = (ms < MAN_LO) & ~L.dilate(L.dilate(ms > MAN_HI, fs, MAN_DIL), fs, 0.8) \
+                & lat & (v >= VLO) & (v < VHI)
+            for nm, mask, acc in (("m", Mm, M), ("c", Cm, C)):
+                for a, b in L.runs_of(mask, dc["t"], int(0.6 * fs)):
+                    t0, t1 = dc["t"][a], dc["t"][b - 1]
+                    k = (sd["t"] >= t0) & (sd["t"] <= t1)
+                    if k.sum() < 5:
+                        continue
+                    acc.append(dict(v=float(np.mean(v[a:b])),
+                                    snd=float(np.percentile(sd["sp"][k], 95)),
+                                    snd_max=float(sd["sp"][k].max()),
+                                    sndw=float(np.nanpercentile(sd["spwdb"][k], 95)),
+                                    blk=(tag, int(s), int(a)), cell=(0,)))
+        if len(M) < 5 or len(C) < 5:
+            print(f"  {tag:>6s} {L.BUILD[tag]:>6s} {L.DOSE_HW[tag]:5.2f} | "
+                  f"{f'{VLO:.0f}-{VHI:.0f}':>12s} {len(M):6d} {len(C):6d}   too few episodes")
+            continue
+        a = L.boot_stat(M, "snd", RNG, np.median)
+        b = L.boot_stat(C, "snd", RNG, np.median)
+        am = L.boot_stat(M, "snd_max", RNG, np.median)
+        bm = L.boot_stat(C, "snd_max", RNG, np.median)
+        aw = L.boot_stat(M, "sndw", RNG, np.median)
+        bw = L.boot_stat(C, "sndw", RNG, np.median)
+        vm, vc = np.median([r["v"] for r in M]), np.median([r["v"] for r in C])
+        out[tag] = dict(ratio=a[0] / b[0], n_man=len(M), n_ctl=len(C))
+        print(f"  {tag:>6s} {L.BUILD[tag]:>6s} {L.DOSE_HW[tag]:5.2f} | "
+              f"{f'{VLO:.0f}-{VHI:.0f}':>12s} {len(M):6d} {len(C):6d} {vm:6.2f} {vc:6.2f} | "
+              f"{a[0] / b[0]:12.3f}x {am[0] / bm[0]:7.3f}x {aw[0] - bw[0]:+10.2f}")
+    print(f"\n  Every route is cut on the SAME 22-29 m/s band and the SAME maneuver rule, so the")
+    print(f"  ratios are comparable down the column. ⚠ Compare RATIOS, never absolute levels.")
+    print(f"  ⚠ r2b's two arms are matched only to ~1.3 m/s (26.14 vs 24.83) against r47's 0.17,")
+    print(f"    and sound rises 0.548 dB(A) per m/s, so ~0.7 dB of r2b's +1.88 is speed alone. Its")
+    print(f"    p95 RATIO is the robust number; its dB column is the noisy one.")
+    print(f"  ⇒ The Kd=1.00 baseline shows a maneuver rise (1.071x) at least as large as V67's")
+    print(f"    (0.976x). A maneuver is mildly louder on a STOCK rate lane too, so the small r47")
+    print(f"    value is what STEERING does, not what the rate lane does.")
+    RESULTS["mic_dose"] = out
+
+
 if __name__ == "__main__":
-    ALL = ["rate", "axis", "man", "order", "ab", "creep", "hw", "mode", "alias"]
+    ALL = ["rate", "axis", "man", "order", "ab", "creep", "hw", "mode", "alias",
+           "align", "atlas", "dose", "ceiling", "mic", "odr", "mic_dose"]
     want = sys.argv[1:] or ALL
     odr_a, odr_g = (101.02, 101.02)
     amap = dict(vertical="ax", lateral="ay", longitudinal="az", yaw="gx")
@@ -1061,5 +1580,19 @@ if __name__ == "__main__":
         sec_mode(amap)
     if "alias" in want:
         sec_alias()
+    if "align" in want:
+        sec_align()
+    if "atlas" in want:
+        sec_atlas(amap)
+    if "dose" in want:
+        sec_dose(amap)
+    if "ceiling" in want:
+        sec_ceiling()
+    if "mic" in want:
+        sec_mic()
+    if "odr" in want:
+        sec_odr()
+    if "mic_dose" in want:
+        sec_mic_dose()
     OUT.write_text(json.dumps(RESULTS, indent=1, default=float))
     print(f"\nwrote {OUT}")

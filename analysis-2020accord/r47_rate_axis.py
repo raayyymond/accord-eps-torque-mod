@@ -29,9 +29,13 @@ need 8*12000 = 96000 at the clamp, which does not fit the i16 it is packed into.
 ("the 0x18F route implies ~5.89 counts/deg/s against 0x14A's 4.7121 -- unreconciled"). It is an
 **opendbc scale inconsistency between the two packers, not a firmware one**: 0x14A's DBC factor is
 1.0 deg/s/count and 0x18F's is 0.1, but the raw counts differ by 8, so the two DBC decodes disagree
-by exactly 1.25x. In RAW COUNTS the two copies agree to 0.08% (measured below). 4.7121 is
-counts-per-(0x14A-DBC-deg/s); 5.89 is counts-per-(0x18F-DBC-deg/s). Same relation, two rulers.
-Everything in this script is in RAW COUNTS, so neither ruler is load-bearing.
+by exactly 1.25x. In RAW COUNTS the two copies agree to 0.08% (measured below).
+★ AND THE TIE IS NOW BROKEN, jointly with the grind2 agent: they regressed `rate_c` against the
+DIFFERENTIATED ANGLE channel over 50 ms differences and got slope 0.9866-0.9969 (r 0.994-0.998) on
+four segments with large angle excursions -- a physical anchor this script does not have. So
+**0x14A's 1.0 deg/s/count is CORRECT and 0x18F's 0.1 is WRONG (it should be 0.125)**. Therefore
+4.7121 is counts per TRUE deg/s and the 5.89 figure is simply an artefact of the bad DBC factor.
+Everything in this script is in RAW COUNTS, so neither ruler is load-bearing here either.
 
 ⚠ RESIDUAL UNCERTAINTY, stated rather than smoothed over:
   1. 0x18F is HELD-LAST onto 0x14A's grid in the caches, so it carries a sub-frame ZOH lag. That is
@@ -742,24 +746,35 @@ def main():
           f"TASK 4 as that ceiling.")
 
     # ---- descriptive cross-build check at highway, speed-stratified ------------------------------
-    print(f"\n-- 40-49 Hz at HIGHWAY, engaged, by speed bin. DESCRIPTIVE ONLY: these are different "
-          f"roads on\n   different days, so this is not the cross-build regression test -- it is "
-          f"here because the\n   deciding table predicts V67 delivers MORE rate-lane gain at "
-          f"highway than V62/V65 did (2.39x vs\n   2.00x), and that prediction should at least not "
-          f"be contradicted by the raw envelopes.")
-    print(f"   {'build':10s} " + " ".join(f"{f'{lo}-{hi} m/s':>16s}" for lo, hi in
-                                          ((14, 20), (20, 25), (25, 30), (30, 99))))
-    for b in ROUTES_KD2 + ["V67/r47"]:
-        cells = []
-        for lo, hi in ((14, 20), (20, 25), (25, 30), (30, 99)):
-            sel = [r for r in R[b] if r["eng"] == 1 and lo <= r["v"] < hi]
-            if len(sel) < 8:
-                cells.append(f"{'n<8':>16s}")
-                continue
-            e = col(sel, G2B)
-            cells.append(f"{np.median(e):6.1f}/{np.percentile(e, 90):6.1f}({len(sel):3d})")
-        print(f"   {b:10s} " + " ".join(f"{c:>16s}" for c in cells))
-    print(f"   (median / p90 of the 40-49 Hz envelope p99, with n)")
+    print(f"""
+-- BOTH BANDS at HIGHWAY, engaged, by speed bin. DESCRIPTIVE ONLY -- different roads, different
+   days; the cross-build regression test with V58/r2b added belongs to the grind2 agent, and it
+   reports 40-49 Hz at highway has NO dose response (Kd 2.00/1.00 = 0.970 [0.787,1.154],
+   Kd 2.44/1.00 = 0.938 [0.764,1.184], both inside the split-half null) with a WORKING positive
+   control (18-22 Hz suppressed 0.702 / 0.509 on the Kd=2 arms, outside the null).
+   These rows are here only to check that this dataset does not contradict that, and they do not.""")
+    for band, lab in ((G1B, "18-22 Hz (grind #1 band -- the POSITIVE CONTROL)"),
+                      (G2B, "40-49 Hz (grind #2 band -- the NULL)")):
+        print(f"\n   {lab}")
+        print(f"   {'build':10s} " + " ".join(f"{f'{lo}-{hi} m/s':>16s}" for lo, hi in
+                                              ((14, 20), (20, 25), (25, 33))))
+        for b in ROUTES_STOCK[:1] + ROUTES_KD2 + ["V67/r47"]:
+            cells = []
+            for lo, hi in ((14, 20), (20, 25), (25, 33)):
+                sel = [r for r in R[b] if r["eng"] == 1 and lo <= r["v"] < hi]
+                if len(sel) < 8:
+                    cells.append(f"{'n<8':>16s}")
+                    continue
+                e = col(sel, band)
+                cells.append(f"{np.median(e):6.1f}/{np.percentile(e, 90):6.1f}({len(sel):3d})")
+            print(f"   {b:10s} " + " ".join(f"{c:>16s}" for c in cells))
+        print(f"   (median / p90 of the band envelope p99, with n)")
+    print(f"""
+   ⇒ 14-20 m/s, the one bin every build populated: 18-22 Hz goes 108.6 (V59, Kd=1) -> 87.9 / 67.9
+     / 62.6 on the Kd=2 arms, while 40-49 Hz goes 76.2 -> 72.1 / 71.3 / 82.4, i.e. flat. Same
+     direction and roughly the same size as the grind2 agent's properly-stratified test. ⇒ AT
+     HIGHWAY THE RATE-LANE BOOST BUYS A MEASURED 18-22 Hz REDUCTION AND COSTS NOTHING MEASURABLE
+     AT 40-49 Hz. That inverts the case for removing it -- see VERDICT 3/4.""")
 
     # ---- verdict -----------------------------------------------------------------------------------
     # Every number here is interpolated from the run above -- a hard-coded verdict silently goes
@@ -789,23 +804,32 @@ def main():
       That is inside the kit's ~2.2x episode noise floor. ⇒ NEGATIVE for the creep pair. No cell
       edit separates them, and candidate A gives creep grind #2 the FULL {a_g2c:.2f}x along with grind #1.
 
-   3. V67's flat arm is ANTI-SCHEDULED for this symptom pair. It replaces a surface that ALREADY
-      de-escalates with speed (3072 -> 2151, i.e. 0.70x) with a constant, so it delivers its
-      SMALLEST multiplier where grind #1 lives ({v67_g1:.2f}x at creep) and its LARGEST exactly where the
-      highway grind #2 lives ({v67_hwy:.2f}x). The 2.00x/2.2x pre-flight prediction holds at creep and
-      UNDERSTATES the highway dose. ⚠ The descriptive 40-49 Hz table above does NOT corroborate a
-      matching increase in the measured envelope; whether highway grind #2 is a V67 REGRESSION is
-      the cross-build regression test's question, not this script's. All this script establishes
-      is the DOSE V67 delivers there, which is larger than V62/V65's.
+   3. V67's flat arm IS anti-scheduled as ARITHMETIC -- it replaces a surface that already
+      de-escalates with speed (3072 -> 2151, 0.70x) with a constant, so it delivers its SMALLEST
+      multiplier where grind #1 lives ({v67_g1:.2f}x at creep) and its LARGEST where the highway grind #2
+      lives ({v67_hwy:.2f}x, and 2.44x at the flat-segment worst case). The pre-flight 2.00x holds at creep
+      and UNDERSTATES the highway dose.
+      🛑 BUT NOTHING MEASURABLE FOLLOWS FROM IT AT HIGHWAY. The grind2 agent's three-dose test
+      (V58/r2b added, 227 s of Kd=1 engaged highway) finds 40-49 Hz at highway has NO dose
+      response -- 0.970 [0.787,1.154] and 0.938 [0.764,1.184], both inside the split-half null --
+      with a working positive control. The descriptive table above agrees. ⇒ the 2.44x is a real
+      DOSE with no measured RESPONSE, and "V67 made highway grind #2 worse" is NOT SUPPORTED.
 
-   4. Consequence for the next build: scheduling has to come from the RECORDS, and while the gate
-      arms a SCALAR the records are moot (the arm replaces the LERP outright). So the cal-only
-      scheduled fix needs the V67 repoint reverted to V66 -- one byte -- and the x2 placed in
-      0xD2A74 / 0xD2AB0 instead. That trades LKAS-gating for SPEED-gating.
-      ⚠ Not LKAS-gated, so it changes manual creep feel -- but it is strictly LESS invasive than
-      V62/V65, which applied x2 in manual AND at every speed.
-      ⚠ It does nothing for creep grind #2 (see 2), and by point 1 it removes the highway dose
-      entirely rather than merely reducing it.""")
+   4. ⚠ I AM WITHDRAWING MY OWN RECOMMENDATION FOR THE Y-ROW EDIT AS A GRIND #2 FIX. It does
+      exactly what it was asked to do (2.00x at grind #1, 1.00x at highway, ADDENDUM 5), but on
+      the evidence now available that is the WRONG TRADE: at highway the Kd=2 boost buys a
+      MEASURED 18-22 Hz reduction (0.702 / 0.509, outside the null; 108.6 -> 62.6-87.9 in the raw
+      14-20 m/s envelopes) and costs nothing measurable at 40-49 Hz. Zeroing the highway boost
+      gives up the measured benefit to remove an unmeasured harm.
+      What survives as a reason to do it anyway is PARSIMONY, not symptom relief: a 2.44x on a
+      lane whose only established job is a creep symptom is an unjustified dose, and removing it
+      costs grind #1 exactly nothing. That is a GATE-2 conservatism argument and should be
+      argued as one -- not as a fix. If the operator's highway complaint is real, this dataset
+      says the rate lane is not its cause and the search should move elsewhere.
+
+   5. Unchanged and still the cleanest result here: NO cal edit separates grind #1 from the CREEP
+      grind #2 (point 2), and the LERP's own axis is statistically tied with the best variable
+      available, so that is a property of the symptoms, not a limitation of the surface.""")
 
     addendum(R, pops, rng, nboot)
 
