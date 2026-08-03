@@ -1041,8 +1041,10 @@ ASSIST_RATE_B_RECORDS = (
 #          grind #1            ~128 deg/s -> gp-0x6ac0 ~ 603    [400,1400] ON the rolloff
 #          grind #2 creep      ~256       ->           ~1206    [400,1400] further along the rolloff
 #          grind #2 highway   30-42       ->         ~141-198   [0,400]    FLAT (Y0 == Y1)
-#      X1 = 400 = 0x0190 EXACTLY and Y0 == Y1 in every curve of BOTH LERPs (raw cal byte reads), so
-#      the [0,400] segment is genuinely flat at every speed -- confirmed, not inferred.
+#      X1 = 400 = 0x0190 EXACTLY, and Y0 == Y1 in every curve EXCEPT mode-10's 50 km/h
+#      record 0xD2AEC, which is Y0 = 2305 / Y1 = 2304 (byte-verified `01 09` then `00 09`) -- a +1
+#      cal-tool rounding artifact, 0.04%, behaviourally nil, but an exact Y0 == Y1 equality test
+#      WILL break on it. The [0,400] segment is flat to within 1 count at every speed.
 #      GATE 2 caution on any rate-axis edit: gp-0x6ac0 is a RECTIFIED filtered motor rate, so it
 #      sweeps at 2x the mode frequency and a steeply rate-dependent gain modulates at 2f (the
 #      parametric-pump failure mode V58/V59/V60 chased). Stock ALREADY has a rolloff there, so the

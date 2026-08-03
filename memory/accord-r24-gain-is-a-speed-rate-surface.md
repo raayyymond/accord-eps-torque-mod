@@ -56,6 +56,12 @@ is evidently tolerable at stock slope; any edit that **steepens** it must state 
 the pump margin. (An earlier version of this note called that a structural veto. It is a quantitative
 caution.)
 
+⚠ **One precision correction to my own wording:** I wrote *"Y0 == Y1 in every curve of both LERPs"*.
+It is true in every curve **except mode-10's 50 km/h record `0xD2AEC`**, which byte-reads Y0 = **2305**,
+Y1 = **2304** (`01 09` then `00 09`). A +1 cal-tool rounding artifact — 0.04%, behaviourally nil — but
+**an exact `Y0 == Y1` equality test WILL break on it**, and the value was in my own byte dump the whole
+time. The `[0, 400]` segment is flat *to within 1 count*, not exactly flat.
+
 ## ★★ A FLAT ARM INVERTS HONDA'S SCHEDULE
 | operating point | stock LERP | V62/V65 | **V67** | **Design A** |
 |---|---|---|---|---|

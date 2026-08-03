@@ -105,8 +105,7 @@ at 4.7121 counts/deg-s the inner breakpoints are **85 / 297 / 637 deg/s**, which
 (|rate| peaks at **521 deg/s** over 407,617 frames), whereas the wrong scale would put them at
 679 / 2377 / 5093 where Honda's 2× rolloff could **never engage**. ⇒ **V67's build note was CORRECT**
 (LERP 2622 ⇒ exactly **2.00×**), and **the rate axis IS usable**: grind #1 ~603, creep grind #2 ~1206
-(both on the `[400,1400]` rolloff), highway ~141–198 (flat; X1 = `0x0190` exactly and Y0 == Y1 in every
-curve of both LERPs). **The error was composing two unverified structural relations into a scale instead
+(both on the `[400,1400]` rolloff), highway ~141–198 (flat; X1 = `0x0190` exactly, and Y0 == Y1 in every curve **except** mode-10's 50 km/h record `0xD2AEC` (2305 vs 2304 — a +1 rounding artifact, 0.04%, behaviourally nil, but an exact equality test breaks on it)). **The error was composing two unverified structural relations into a scale instead
 of measuring it against a channel already in the cache.**
 
 ★ **DESIGN A — the best-characterised alternative, ONE halfword**: `0xD2ABC` (the 10 km/h record's

@@ -366,8 +366,11 @@ evidence.** The cheap alternative is the comma's microphone, which has no ceilin
 (9 accesses, all `ld.h`/`st.h`), produced in `FUN_0007e74a` at **1 kHz** (task 1, `FUN_0002214a` →
 `FUN_0006bb08` → `FUN_0007f3f8`) as `((x[n] − x[n−D]) << 1) / phase_delta` — the `<<1` is the ×2 and the
 divisor is the *measured* phase step, not a hard-coded 4. And `gp-0x6ac0` is an **unsigned** halfword
-(30 accesses, all `ld.hu`), with **X1 = 400 = 0x0190 exactly** and **Y0 == Y1 in every curve of both
-LERPs** ⇒ the `[0, 400]` segment is genuinely flat at every speed.
+(30 accesses, all `ld.hu`), with **X1 = 400 = 0x0190 exactly**, and **Y0 == Y1 in every curve except mode-10's
+50 km/h record `0xD2AEC`** (2305 vs 2304, byte-verified) ⇒ the `[0, 400]` segment is flat to within
+**1 count** at every speed. ⚠ That +1 is a cal-tool rounding artifact (0.04%, behaviourally nil) but
+**an exact `Y0 == Y1` equality test WILL break on it** — I asserted the stronger claim and it was in my
+own byte dump the whole time.
 
 ### Open leads, recorded not chased
 - ★ **The highway symptom may be the RATCHET, not grind #2.** 6–9 Hz rises **2.78×** during maneuvers —
