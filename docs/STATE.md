@@ -90,6 +90,8 @@ mode — *a statistic computed correctly over the wrong population* — for the 
 (nulls ~[0.6, 1.5]) ⇒ **broadband from 6 Hz up**, with 6–9 Hz rising *more* than 40–49 Hz, at absolute
 levels ~50× below the creep bursts. A maneuver loads the wheel and everything gets noisier.
 
+✅ **AND THE MICROPHONE — no frequency ceiling at all — ALSO SEES NOTHING.** `soundPressure` is computed from **16–48 kHz** audio. Highway maneuvers vs matched straight-line controls, paired: **un-weighted 1.069 [0.960, 1.184]** against a split-half null of **[0.793, 1.264]**; A-weighted 0.905 [0.647, 1.165]; dB 0.985. **All inside their nulls**, and a low-frequency event would have shown as un-weighted-up / A-weighted-flat. ⇒ **three independent instruments agree.** ⚠ Bounded power: a 10 Hz *level* under highway road noise, n = 21 pairs — it bounds the effect, it does not prove silence. `analysis-2020accord/r47_microphone_test.py`.
+
 🛑🛑 **THE HARD LIMIT: BOTH INSTRUMENTS ARE BLIND ABOVE ~50 Hz.** CAN grid ~100.5 Hz (Nyquist 50.2);
 comma IMU **99.9–100.5 Hz** (Nyquist **49.97–50.26**). **The IMU gives NO headroom over CAN.** If the
 felt highway vibration is above 50 Hz, nothing in this kit can see it, and every null above is silent

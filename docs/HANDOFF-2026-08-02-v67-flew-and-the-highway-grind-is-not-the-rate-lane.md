@@ -211,6 +211,32 @@ This kit has already been burned once this way — the "8.69 Hz line V56 introdu
 **+0.5–1.4%, route-dependently**. The true `0x14A` rate is **100.000 Hz on every route**, so grind #2's
 "44.9 Hz" is **44.6 Hz**, and the between-route frequency spread was the instrument, not the car.
 
+
+### ✅ THE MICROPHONE — the only instrument with NO frequency ceiling — ALSO SEES NOTHING
+`soundPressure` is computed on-device from audio at **16–48 kHz** and logged as a level at ~10 Hz. It
+cannot give a spectrum, but it is **not band-limited**, so it is the only measurement here that can
+speak to a >50 Hz event. Highway maneuvers vs the atlas's **matched** straight-line controls, p90 level
+per episode, paired bootstrap over episode pairs:
+
+| channel | maneuver | control | **paired ratio [95%]** | split-half null |
+|---|---|---|---|---|
+| **`soundPressure` (UN-weighted)** | 0.0857 | 0.0802 | **1.069 [0.960, 1.184]** | [0.793, 1.264] |
+| `soundPressureWeighted` (A) | 0.0203 | 0.0218 | 0.905 [0.647, 1.165] | [0.744, 1.359] |
+| `soundPressureWeightedDb` | 60.11 | 60.76 | 0.985 [0.942, 1.023] | — |
+
+**All three sit inside their own nulls.** The un-weighted channel is the one that matters — A-weighting
+is −30 dB at 50 Hz and would suppress exactly the band in question, so a low-frequency event would show
+as *un-weighted up, A-weighted flat*. It does not.
+
+⇒ **Three independent instruments — the EPS torsion bar, the comma IMU, and the microphone — all show
+no maneuver-specific signature at highway beyond the broadband rise that matched controls already
+capture.**
+⚠ **Sensitivity limit, stated honestly:** cabin sound at 30 m/s is dominated by road and wind noise, the
+channel is a 10 Hz *level* rather than a spectrum (a short burst averages down), and n = 21 pairs. A
+modest added tone could sit under that floor. This is a null with real but bounded power — it does not
+prove silence, it bounds the effect to something smaller than the matched-control spread.
+Reproduce: `analysis-2020accord/r47_microphone_test.py`.
+
 ### 🛑 THE HARD LIMIT: BOTH INSTRUMENTS ARE BLIND ABOVE ~50 Hz
 
 | instrument | measured rate | Nyquist |

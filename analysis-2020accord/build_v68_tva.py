@@ -304,6 +304,13 @@ RATE_DISP = 0x6AC0             # the r24 gain LERP's INNER axis. HALFWORD, ld.hu
 RATE_BREAKPOINT = 400          # xs[1] in every mode-10 gain_B record -- asserted from the image
 RATE_FOLD = EX.RATE_FOLD       # 13001; above this the LERP key folds to 0 -- the stated asymmetry
 
+# ★★ THE PRE-REGISTERED PREDICTION. Derived from route 47's own cache through the SAME scale chain
+# the probe exists to test: gp-0x6ac0 = |0x18F rate counts| x 32768/(48*1159) = x 0.5890135.
+# 150,327 samples / 25.1 min, creep AND highway, both gate arms. Recorded HERE, before the drive,
+# so the result cannot be reinterpreted afterwards.
+R47_PREDICT = {"n": 150327, "at_or_above_400": 0, "max": 277.4,
+               "p50": 0.6, "p90": 10.6, "p99": 105.4, "p99_9": 221.3, "p99_99": 264.4}
+
 COND_BLT = V65.COND_BLT        # 0x6, SIGNED < -- pinned to the real `blt` @0x1C006
 
 # Rung kinds. "byte_ge" = ld.bu + cmp imm5 + Bcond + movea       (12 bytes)
@@ -795,6 +802,16 @@ def _self_check_wire():
         "the fold above RATE_FOLD does not land on the flat first point -- the stated asymmetry is wrong"
     _self_check_wire.flat_lerp = flat
     _self_check_wire.arm_for_2x_if_flat = 2 * flat
+
+    # ★★ THE PRE-REGISTERED PREDICTION, and the one-sidedness that makes a ZERO reading worth a rung.
+    # 🛑 bit4 IS PREDICTED TO READ 0.000%. Say so BEFORE the drive, or a zero will be read as
+    # "another wasted rung" exactly like V67's bit4 -- which is the mistake this build exists to fix.
+    assert R47_PREDICT["at_or_above_400"] == 0, "the pre-registered prediction is not zero"
+    assert R47_PREDICT["max"] < RATE_BREAKPOINT, \
+        "route 47's derived maximum already exceeds the breakpoint -- the prediction is not 'zero'"
+    headroom = RATE_BREAKPOINT / R47_PREDICT["max"]
+    assert 1.4 < headroom < 1.5, f"the headroom factor moved to {headroom:.3f}"
+    _self_check_wire.headroom = headroom
 
 
 _self_check_wire()
