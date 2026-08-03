@@ -208,6 +208,9 @@ def recs(build):
         ax14 = np.rint(np.abs(d["rate_c"]) * AXIS_PER_14A).astype(np.int64)          # cross-check
         spc = np.rint(np.abs(d["cs_v"]) * 3.6 * SPEED_COUNTS_PER_KMH).astype(np.int64)
         gain = stock_gain_q10(spc, ax18)              # the stock surface, evaluated per sample
+        bar = np.asarray(d["tq"], float)
+        dtq = np.zeros_like(bar)
+        dtq[4:] = 2.0 * (bar[4:] - bar[:-4]) / 4.0    # gp-0x4f62's form, at the 100 Hz grid
         eng = d[mk] > 0.5
         for pol, mask in ((1, eng), (0, ~eng)):
             for a, b in runs_of(mask, d["t"], NFFT):
@@ -237,6 +240,9 @@ def recs(build):
                     # evaluated on these 256 samples, exactly as the firmware would.
                     r["sp_s"] = spc[sl].astype(np.int32)
                     r["ax_s"] = ax18[sl].astype(np.int32)
+                    # 100 Hz proxy for the lane's input gp-0x4f62 = 2*(bar[n]-bar[n-4])/4, used
+                    # ONLY to reweight a gain average. ⚠ The real producer runs at ~1 kHz.
+                    r["dtq_s"] = dtq[sl].astype(np.float32)
                     r["eff"] = float(np.mean(np.abs(sustained(d["tq"][sl], fs))))
                     r["ang"] = float(np.mean(np.abs(d["ang"][sl])))
                     r["e4"] = float(np.mean(np.abs(d["e4tq"][sl])))
@@ -1145,12 +1151,132 @@ def y_row_edit(pops):
           f"     are SEPARATE records -- byte-verified here -- so this edit does not touch mode 11.")
 
 
+def design_a(pops):
+    """★ ADDENDUM 6 -- the `surface` agent's DESIGN A, evaluated on the MEASURED rate distribution.
+
+    Design A = ONE halfword: 0xD2ABC (= record 0xD2AB0 + 0x0C = Y[1] of the 10 km/h record, the
+    knot at rate breakpoint 400) 2561 -> 7051. Byte-verified as 2561 in _v67_plain_image.bin.
+
+    🛑 THE SHAPE THIS CREATES. Y[0] stays 2561, so the curve is a RAMP from 1.00x at rate 0 to its
+    peak at rate 400, then decays to stock by rate 1500. The boost is therefore RATE-PROPORTIONAL
+    over exactly the interval where grind #1 lives, and its peak sits at the breakpoint, not at
+    grind #1's measured centre of mass. Evaluating it at a single assumed operating point of
+    ~603 counts gives 2.00x; evaluating it on the measured DISTRIBUTION does not.
+    """
+    print(f"\n{'=' * 108}\n== ADDENDUM 6 -- DESIGN A (0xD2ABC 2561->7051) ON THE MEASURED "
+          f"DISTRIBUTION\n{'=' * 108}")
+    YA, XA = REC_Y.copy(), REC_X.copy()
+    YA[1, 1] = 7051
+    # a shape-corrected sibling: same peak value, but the plateau starts at rate 0 so the boost is
+    # delivered where grind #1's samples actually are, and the knee is pulled in to 700.
+    YB, XB = REC_Y.copy(), REC_X.copy()
+    YB[1] = [5122, 5122, 2247, 1947]
+    YB[0] = [6144, 6144, 2322, 1536]
+    XB[0] = [0, 400, 900, 3000]
+    XB[1] = [0, 400, 900, 3000]
+
+    print(f"   Curves, Q10, after cross-interpolation at each population's own median speed:")
+    for lab, (Y, X) in (("STOCK", (REC_Y, REC_X)), ("DESIGN A", (YA, XA)), ("shape-corrected B",
+                                                                           (YB, XB))):
+        print(f"      {lab:20s} 10 km/h record  X={list(map(int, X[1]))} Y={list(map(int, Y[1]))}"
+              f"   0 km/h record Y={list(map(int, Y[0]))}")
+
+    print(f"\n   Delivered multiplier vs the ASSUMED single operating point, then vs the MEASURED "
+          f"distribution:")
+    print(f"   {'population':28s} {'assumed pt':>12s} {'mult@pt':>8s} | "
+          f"{'measured, SAMPLE-WISE':>22s} {'vs assumed':>11s}")
+    for lab, k, assumed in (("grind #1 (V62/V65 creep)", "G1 V62/V65 creep [ENG]", 603),
+                            ("grind #1 (stock-located)", "G1 stock/V59+V64 creep [ENG]", 603),
+                            ("grind #2 CREEP", "G2creep V62/V65 creep [ENG]", 1206),
+                            ("grind #2 MID 14-50 km/h", "G2mid V67/r47 mid-speed [ENG]", 170),
+                            ("grind #2 HIGHWAY", "G2hwy V67/r47 highway [ENG]", 170)):
+        rs = pops[k][0]
+        if not rs:
+            continue
+        sp = int(np.median(col(rs, "spc")))
+        at_pt = (stock_gain_q10([sp], [assumed], YA, XA)[0]
+                 / max(stock_gain_q10([sp], [assumed])[0], 1))
+        m, lo, hi = delivered(rs, YA, XA)
+        print(f"   {lab:28s} {assumed:8d} cnt {at_pt:8.2f} | {m:8.2f}x [{lo:4.2f}-{hi:4.2f}] "
+              f"{m / at_pt:10.2f}x")
+    print(f"\n   Same populations under the shape-corrected sibling B (plateau from rate 0, knee "
+          f"at 900):")
+    for lab, k in (("grind #1 (V62/V65 creep)", "G1 V62/V65 creep [ENG]"),
+                   ("grind #1 (stock-located)", "G1 stock/V59+V64 creep [ENG]"),
+                   ("grind #2 CREEP", "G2creep V62/V65 creep [ENG]"),
+                   ("grind #2 MID 14-50 km/h", "G2mid V67/r47 mid-speed [ENG]"),
+                   ("grind #2 HIGHWAY", "G2hwy V67/r47 highway [ENG]")):
+        rs = pops[k][0]
+        if not rs:
+            continue
+        m, lo, hi = delivered(rs, YB, XB)
+        print(f"   {lab:28s} {'':12s} {'':8s} | {m:8.2f}x [{lo:4.2f}-{hi:4.2f}]")
+
+    # where the multiplier actually lands across the rate axis, at grind #1's speed
+    sp = int(np.median(col(pops["G1 V62/V65 creep [ENG]"][0], "spc")))
+    print(f"\n   Design A's multiplier vs RATE at grind #1's measured speed "
+          f"({sp} counts = {sp / SPEED_COUNTS_PER_KMH:.1f} km/h), against where grind #1's "
+          f"samples actually are:")
+    g1s = np.concatenate([r["ax_s"] for r in pops["G1 V62/V65 creep [ENG]"][0]]).astype(float)
+    g2s = np.concatenate([r["ax_s"] for r in pops["G2creep V62/V65 creep [ENG]"][0]]).astype(float)
+    print(f"      {'rate':>6s} {'stock':>7s} {'DesA':>7s} {'mult':>6s} | "
+          f"{'% of G1 samples <=':>23s} {'% of G2creep <=':>16s}")
+    for rt in (0, 100, 136, 200, 300, 400, 500, 603, 800, 1206, 1500, 2000):
+        s0 = int(stock_gain_q10([sp], [rt])[0])
+        s1 = int(stock_gain_q10([sp], [rt], YA, XA)[0])
+        print(f"      {rt:6d} {s0:7d} {s1:7d} {s1 / s0:6.2f} | {100 * float((g1s <= rt).mean()):23.1f}% "
+              f"{100 * float((g2s <= rt).mean()):16.1f}%")
+    # ---- robustness: does |dtorque|-weighting change the ranking? -----------------------------
+    # The plain sample average assumes the gain matters equally at every instant. What the lane
+    # actually delivers is sum(dtorque * gain), so if gain and |dtorque| correlate within an
+    # oscillation cycle the plain average is biased. Reweight by a 100 Hz proxy for gp-0x4f62
+    # (2*(bar[n]-bar[n-4])/4) and re-rank. ⚠ A proxy: the real producer runs at ~1 kHz.
+    print(f"\n   ROBUSTNESS -- the same multipliers weighted by |dtorque| (100 Hz proxy for "
+          f"gp-0x4f62)\n   instead of weighted equally in time. If the ranking survives, the "
+          f"gain/dtorque phase\n   correlation flagged in ADDENDUM 3 is not driving the result.")
+    print(f"   {'population':28s} {'DesA plain':>11s} {'DesA wtd':>10s} {'B plain':>9s} "
+          f"{'B wtd':>8s}")
+    for lab, k in (("grind #1 (V62/V65 creep)", "G1 V62/V65 creep [ENG]"),
+                   ("grind #2 CREEP", "G2creep V62/V65 creep [ENG]")):
+        rs = pops[k][0]
+        if not rs:
+            continue
+        cells = []
+        for Y, X in ((YA, XA), (YB, XB)):
+            sp = np.concatenate([r["sp_s"] for r in rs]).astype(np.int64)
+            ax = np.concatenate([r["ax_s"] for r in rs]).astype(np.int64)
+            w = np.concatenate([np.abs(np.r_[np.zeros(4), r["dtq_s"][4:]]) for r in rs])
+            ratio = stock_gain_q10(sp, ax, Y, X) / np.maximum(stock_gain_q10(sp, ax), 1)
+            cells += [float(ratio.mean()), float(np.average(ratio, weights=w + 1e-9))]
+        print(f"   {lab:28s} {cells[0]:11.2f} {cells[1]:10.2f} {cells[2]:9.2f} {cells[3]:8.2f}")
+
+    print(f"""
+   ⇒ ★★ THE MEASURED SPREAD UNDERMINES DESIGN A's SHAPE, and it is a shape problem, not a sign
+     problem. Design A peaks AT the 400 breakpoint and returns to 1.00x at rate 0, but grind #1
+     spends 83% of its samples BELOW 400 (ADDENDUM 2) with a sample median near 120. So the
+     population sits on the RAMP, not the peak, and the sample-wise multiplier lands well under
+     the 2.00x computed at an assumed 603.
+   ⇒ The 2.00x figure is not wrong, it is CONDITIONAL: it is what Design A delivers IF grind #1
+     really sits at 603 counts. 603 is this dataset's WINDOW-p90, not its centre of mass. Both
+     numbers are real; they answer different questions, and the LERP integrates the distribution.
+   ⇒ Sibling B shows the fix is available and cheap: start the plateau at rate 0 (raise Y[0] too)
+     and put the knee at 900. That restores ~2x across grind #1's actual mass while keeping the
+     highway at exactly 1.00x -- at the cost of giving creep grind #2 more than Design A does,
+     which is the same trade every candidate in TASK 5 faces.
+   ⚠ One correlation this cannot resolve: the axis is modulated at the grind frequency
+     (ADDENDUM 3), so gain and |dtorque| are not independent within a cycle. A time-average of
+     the gain is the right first-order figure and is what is computed here, but if gain and
+     |dtorque| correlate in phase the effective damping differs from it. Only a 1 kHz probe
+     settles that.""")
+
+
 def addendum(R, pops, rng, nboot):
     maneuver_axis()
     units_and_breakpoints(pops)
     ema_bound(pops)
     threshold_sweep(pops)
     y_row_edit(pops)
+    design_a(pops)
 
 
 if __name__ == "__main__":

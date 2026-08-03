@@ -167,6 +167,23 @@ def identify(field_values):
     else:
         notes.append("★ bit3 set or bit7 clear somewhere -> V66 and V67 are EXCLUDED")
 
+    # ★★ V68: bit7 AND bit3 are BOTH hard-wired constants (one `movea 0x88,r0,r7`), so V68 never
+    # emits 0x87 and every legal frame carries both. This is the first build in the kit that any
+    # payload test can pin -- and it is NOT absolute. Stated at its real strength:
+    #   * ABSOLUTE against V53 (0x07), V54 (0x0F, bit7 clear) and V66/V67 (bit3 NEVER set).
+    #   * WEAK against V59/V62: six of V68's eight payloads {0x8F,0x9F,0xBF,0xCF,0xDF,0xFF} are
+    #     also thermometer-legal, so the thermometer branch above stays in the candidate set and
+    #     is only resolved by V59/V62's recorded routes containing 0x87 (which V68 cannot emit).
+    #   * NEARLY absolute against V65: only 0x9F is ladder-legal.
+    v68_ok = all((v >> 7 & 1) and (v >> 3 & 1) for v in vals) and 0x87 not in vals
+    if v68_ok:
+        cands |= {"V68"}
+        notes.append("bit7 AND bit3 set on every value and 0x87 absent -> V68 possible. This "
+                     "EXCLUDES V53/V54/V66/V67 absolutely; V59/V62 overlap 6 of 8 payloads and are "
+                     "excluded only because their recorded routes contain 0x87.")
+    else:
+        notes.append("★ a value lacks bit3 or bit7, or 0x87 is present -> V68 is EXCLUDED")
+
     if len(vals) == 1 and vals[0] == 0x87:
         cands |= {"V64"}
         notes.append("🛑 a FROZEN constant 0x87 is V64's null, V65's neutral bucket, V66's "
@@ -193,6 +210,22 @@ def _self_check():
     assert "V66" not in identify([0x8F])[0], "bit3 set must EXCLUDE V66/V67"
     assert identify([0x07])[0] == {"V53"}
     assert identify([0x0F])[0] == {"V54"}
+    # ---- V68: the first build any payload test can pin, and its limits, both asserted ----------
+    v68_all = sorted({0x88 | a | b | c | 0x07
+                      for a in (0, 0x40) for b in (0, 0x20) for c in (0, 0x10)})
+    c, _ = identify(v68_all)
+    assert "V68" in c, "V68's own full payload set does not identify as V68"
+    assert not ({"V53", "V54", "V66", "V67", "V65"} & c), \
+        f"V68's payload set must exclude V53/V54/V65/V66/V67 absolutely, got {c}"
+    # 🛑 ...and the honest limit: a V68 log restricted to thermometer-legal bytes does NOT exclude
+    # V59/V62. Asserted so nobody can quietly upgrade the claim.
+    c, _ = identify([0x8F, 0xCF])
+    assert {"V68", "V59", "V62"} <= c, \
+        f"V59/V62 must REMAIN candidates on thermometer-legal V68 bytes, got {c}"
+    assert "V68" not in identify([0x87, 0xCF])[0], "0x87 present must EXCLUDE V68"
+    assert "V68" not in identify([0x87])[0] and "V68" not in identify([0x97, 0xA7])[0]
+    for probe in ([0x87], [0x87, 0xC7], [0x87, 0x97, 0xA7]):
+        assert "V68" not in identify(probe)[0], f"{probe} must not identify as V68"
     # the table must be internally consistent
     assert len({r.route for r in ROUTES}) == len(ROUTES), "duplicate route id"
     for r in ROUTES:

@@ -78,16 +78,28 @@ That ambiguity has already cost this kit a session.
 V68 ends it for itself by folding bit3 into the liveness immediate: `movea 0x88,r0,r7` instead of
 `movea 0x80,r0,r7`. **Same instruction, same four bytes, same encoder, different immediate.** So:
 
-    EVERY legal V68 frame has BOTH bit7 AND bit3 set.
+    EVERY legal V68 frame has BOTH bit7 AND bit3 set, and V68 NEVER emits 0x87.
 
-No prior build can produce that. V53 emits `0x07` and V54 `0x0F` (bit7 clear). V59/V62/V65 all emit
-`0x87` (bit3 clear) on their own recorded routes. V66/V67 never set bit3 at all -- both builds
-assert it. So "bit7 set and bit3 set on every distinct value" is a signature unique to V68, and
-`identify()` is extended to say so. It also doubles as a second liveness bit: a frame with bit7 set
-and bit3 clear is ILLEGAL under V68 and means the log is not V68's.
+🛑 STATED AT ITS REAL STRENGTH, IN TWO TIERS -- both machine-checked below, not typed. An earlier
+draft of this docstring said "no prior build can produce that". **That is FALSE**, and the check in
+`_self_check_wire()` caught it:
 
-⚠ It is a marker, not proof of the flashed file. It EXCLUDES every prior build; it cannot exclude a
-future one. The .rwd filename remains the primary evidence and the decoder still says so.
+  TIER 1 -- STRUCTURALLY DISJOINT, absolute. V53 emits only `0x07`; V54 only `0x0F` (bit7 clear);
+    V66 and V67 both ASSERT that bit3 is never set by their caves, so their entire eight-payload
+    space is disjoint from V68's. These can never be confused with V68 by payload.
+  TIER 2 -- EXCLUDED BY THEIR RECORDED ROUTES ONLY, and against V59/V62 the marker is WEAK:
+      V59/V62 thermometer space ∩ V68 = {0x8F, 0x9F, 0xBF, 0xCF, 0xDF, 0xFF}   SIX of eight
+      V65 ladder space          ∩ V68 = {0x9F}                                 one of eight
+    So V65 is nearly excluded on structure; **V59/V62 are not excluded on structure at all.** They
+    are excluded because both of their recorded routes contain `0x87`, which V68 cannot emit. A
+    hypothetical V59 log whose boost index never dropped below 512 would be indistinguishable from
+    V68 by payload alone. `identify()` and the decoder both say this rather than rounding it up.
+
+The marker also doubles as a second liveness bit: a frame with bit7 set and bit3 clear is ILLEGAL
+under V68, so a partial or foreign write is caught rather than silently interpreted.
+
+⚠ It is a marker, not proof of the flashed file. It cannot exclude a FUTURE build. The .rwd
+filename remains the primary evidence and the decoder still says so.
 
 THE PAYLOAD -- 0x14A byte4 bits 7:3
 ------------------------------------
@@ -423,6 +435,18 @@ def _self_check_encoders():
         "the displaced hook instruction is not `movea -0x1518,gp,r6` -- the sign-extension pin is gone"
     assert struct.unpack("<H", HOOK_STOCK[2:])[0] & 0x8000, \
         "the hook's movea imm16 is not negative -- it no longer demonstrates sign-extension"
+    # ...and the reg1 == reg2 "movea as add-immediate" SHAPE is FLOWN, not merely present in ROM:
+    # V67's own cave (on the car) carries `movea 0x40,r7,r7`, the same shape with r7 for r6.
+    assert FF.movea(BIT_GATE, R7, R7) in V67.CAVE_BYTES, \
+        "the reg1==reg2 movea shape is not byte-present in V67's FLOWN cave"
+    assert struct.unpack("<H", FF.movea(BIT_GATE, R7, R7)[:2])[0] & 0x1F == R7, \
+        "the flown reg1==reg2 precedent does not actually carry reg1 == reg2"
+    assert (struct.unpack("<H", sub[:2])[0] & 0x1F) == (struct.unpack("<H", sub[:2])[0] >> 11), \
+        "our movea's reg1 and reg2 fields are not equal -- it is not the flown shape"
+    # ⚠ The ONLY genuinely new thing is the register NUMBER (r6 instead of r7). reg2 == r6 in a
+    # movea is itself real and flown -- it is the hook's own displaced instruction.
+    assert (struct.unpack("<H", HOOK_STOCK[:2])[0] >> 11) == R6, \
+        "the hook's movea does not target r6 -- the reg2 = r6 leg of the provenance is gone"
 
     cmp_rr = V54.cmp_rr(R0, R6)
     assert cmp_rr == PIN_CMP_R0_R6[1], f"`cmp r0,r6` encodes as {cmp_rr.hex()}, not e031"
@@ -592,14 +616,53 @@ def build_cave():
     assert len(body) <= len(V55.CAVE_BYTES), \
         f"V68 cave ({len(body)}B) exceeds the proven extent ({len(V55.CAVE_BYTES)}B) -- STOP, " \
         "do not grow it: caves are this kit's only bricking class"
-    # 🛑 the sticky-rung finding, as an executable fact rather than a paragraph: a latching HF rung
-    # needs >= 22 bytes before any latch machinery, and only this much is free.
     spare = len(V55.CAVE_BYTES) - len(body)
     assert spare == 4, f"{spare} spare bytes, expected 4"
-    assert spare < 22, \
-        "there are now >= 22 spare bytes -- re-examine the sticky/HF rung, the budget argument in " \
-        "this build's docstring assumed it did not fit"
+    need = sticky_rung_budget()
+    assert spare < need["minimum"], \
+        f"{spare} spare bytes now, and the cheapest HF rung needs {need['minimum']} -- the budget " \
+        "argument in this build's docstring no longer holds. RE-EXAMINE the sticky rung."
+    build_cave.sticky_budget = need
     return bytes(body), listing
+
+
+def sticky_rung_budget():
+    """🛑 The sticky/HF rung's byte cost, SUMMED FROM THE REAL ENCODERS -- not asserted in prose.
+
+    The brief asked for a latching rung on `gp-0x4f62` to break the ~50 Hz aliasing barrier. This
+    function is why it is not here: the arithmetic, executable, so a future session can re-run it
+    instead of trusting a paragraph. Fixed overhead is 24 bytes and bit6 + bit5 cost 12 each, so
+    exactly 20 bytes are free after the two rungs that must stay.
+
+    ⚠ `subr r0,r6` (the negate, Format I) has NO encoder in this kit and is counted at its
+    architectural width of 2 bytes rather than built -- introducing an opcode into a cave for a
+    budget calculation would be exactly the risk this function exists to avoid.
+    """
+    negate_bytes = 2                       # `subr r0,r6`, Format I -- counted, deliberately NOT built
+    threshold = 0x400                      # any value needing more than a signed imm5
+    parts = [("ld.h  -0x4f62[gp],r6  (SIGNED halfword -- byte-verified at 6 read sites)",
+              len(V55.ldh(0x4F62, R6))),
+             ("cmp   r0,r6           (sign test for the abs)", len(V54.cmp_rr(R0, R6))),
+             ("bge   +4              (skip the negate)", len(FF.bcond(0xE, +4))),
+             ("subr  r0,r6           (the negate -- counted, not encoded)", negate_bytes),
+             (f"movea -0x{threshold:x},r6,r6   (subtract the threshold)",
+              len(FF.movea((-threshold) & 0xFFFF, R6, R6))),
+             ("cmp   r0,r6", len(V54.cmp_rr(R0, R6))),
+             ("blt   +6", len(FF.bcond(COND_BLT, +6))),
+             ("movea 0x10,r7,r7      (set the bit)", len(FF.movea(BIT_RATE, R7, R7)))]
+    minimum = sum(n for _, n in parts)
+    # ...and the LATCH machinery on top, if a free RAM byte were ever proven safe.
+    latch = [("st.b  r7,-LATCH[gp]   (set the latch)", len(FF.stb(R7, -0x683C, GP))),
+             ("ld.bu -LATCH[gp],r6   (read it back)", len(V55.ldbu_any(-0x683C, R6))),
+             ("cmp   0x1,r6", len(V55.cmp_imm5(1, R6))),
+             ("blt   +6", len(FF.bcond(COND_BLT, +6))),
+             ("movea 0x10,r7,r7", len(FF.movea(BIT_RATE, R7, R7))),
+             ("st.b  r0,-LATCH[gp]   (clear it)", len(FF.stb(R0, -0x683C, GP)))]
+    free = len(V55.CAVE_BYTES) - 24 - 2 * RUNG_LEN[KIND_BYTE]
+    assert (minimum, free) == (22, 20), \
+        f"the sticky-rung budget moved: {minimum} needed vs {free} free (was 22 vs 20)"
+    return {"parts": parts, "minimum": minimum, "latch": latch,
+            "with_latch": minimum + sum(n for _, n in latch), "free_after_bit6_bit5": free}
 
 
 _self_check_encoders()
@@ -687,6 +750,7 @@ def _self_check_wire():
     v66_legal = {V66.wire_byte4({d: (1 if on else 0) for (d, _, _, _), on in zip(V66.CELLS, sel)},
                                 status_bits=0)
                  for sel in itertools.product((0, 1), repeat=len(V66.CELLS))}
+    # TIER 1 -- structural disjointness from V66/V67 (both of which never set bit3).
     assert not (legal & v67_legal), \
         f"V68 and V67 share payloads {sorted(hex(b) for b in legal & v67_legal)} -- the marker fails"
     assert not (legal & v66_legal), "V68 and V66 share a payload -- the marker fails"
@@ -696,6 +760,29 @@ def _self_check_wire():
     assert 0x87 not in on_wire and 0x8F in on_wire, \
         "V68 must never emit 0x87 (the four-way-ambiguous byte) and must emit 0x8F"
     assert all(b & 0xF8 != 0 for b in legal), "a legal payload collides with the VOID sentinel"
+    assert not (on_wire & {0x07, 0x0F}), "V68 overlaps V53's or V54's payload"
+
+    # 🛑 TIER 2 -- the HONEST overlap, DERIVED from each build's own invariant rather than typed.
+    # This is the assertion that caught the docstring claiming "no prior build can produce that".
+    def _therm(v):      # V59/V62: bit5 => bit4 => bit3
+        return (not (v >> 5 & 1) or (v >> 4 & 1)) and (not (v >> 4 & 1) or (v >> 3 & 1))
+
+    def _ladder(v):     # V65: bit6 => bit5, bit3 => bit4, never both sides
+        return ((not (v >> 6 & 1) or (v >> 5 & 1)) and (not (v >> 3 & 1) or (v >> 4 & 1))
+                and not (((v >> 5) & 3) and ((v >> 3) & 3)))
+
+    space = [b for b in range(0x80, 0x100) if b & 0x07 == 0x07]
+    v59_overlap = {b for b in space if _therm(b)} & on_wire
+    v65_overlap = {b for b in space if _ladder(b)} & on_wire
+    assert v59_overlap == {0x8F, 0x9F, 0xBF, 0xCF, 0xDF, 0xFF}, \
+        f"the V59/V62 thermometer overlap is {sorted(hex(b) for b in v59_overlap)}, not the six " \
+        "payloads the docstring states -- the TIER 2 numbers are stale"
+    assert len(v59_overlap) == 6, \
+        "V59/V62 overlap V68 in SIX of eight payloads. The marker does NOT separate them " \
+        "structurally, and no wording in this file may say that it does."
+    assert v65_overlap == {0x9F}, \
+        f"the V65 ladder overlap is {sorted(hex(b) for b in v65_overlap)}, not {{0x9F}}"
+    _self_check_wire.overlaps = {"V59/V62": v59_overlap, "V65": v65_overlap}
 
     # ---- the breakpoint's MEANING, through the real LERP arithmetic -------------------------------
     sc = int(7.2 * 64.0625)
@@ -1004,6 +1091,28 @@ def build():
     print(f"    GATE 1  cave stores = {n_store} (the CAN-330 payload byte only); NO RAM cell is")
     print("            claimed and no store is added                                       PASS")
     print("    GATE 2  NOT ENGAGED -- V68 changes no control path (CAL block 0 bytes differ) PASS")
+
+    # ---- 🛑 the sticky/HF rung, priced from the real encoders ------------------------------------
+    b = build_cave.sticky_budget
+    print("\n  🛑 WHY THE STICKY / HIGH-FREQUENCY RUNG IS NOT HERE -- priced, not argued:")
+    print(f"    proven cave extent {len(V55.CAVE_BYTES)}B - fixed overhead 24B - bit6 12B - bit5 12B "
+          f"= {b['free_after_bit6_bit5']}B FREE")
+    print("    the CHEAPEST possible HF rung on gp-0x4f62 (no latch at all):")
+    for text, nb in b["parts"]:
+        print(f"      {nb:2d}B  {text}")
+    print(f"      {b['minimum']:2d}B  TOTAL  -- already {b['minimum'] - b['free_after_bit6_bit5']}B "
+          f"over budget, before any latch exists")
+    print("    and a real latch (set / read-back / clear) adds:")
+    for text, nb in b["latch"]:
+        print(f"      {nb:2d}B  {text}")
+    print(f"      {b['with_latch']:2d}B  TOTAL WITH LATCH -- "
+          f"{b['with_latch'] / b['free_after_bit6_bit5']:.1f}x the available space")
+    print("    ⇒ it does not fit, and the cave MUST NOT GROW: caves are this kit's only bricking")
+    print("      class (V24, V27, V48B). Two further reasons in the docstring: the rung is not")
+    print("      frequency-selective (a scalar threshold on a signal whose LF content is already")
+    print("      123-839 counts is confounded with its own hypothesis), and a latch needs a clear")
+    print("      event once per transmitted frame that the cave cannot see.")
+    print("    ⇒ GATE 1 WAS NEVER REACHED. No RAM cell is claimed by V68.")
     print("    census (TWO decoders, on the OUTPUT):")
     for disp in (GATE_DISP, DEAD_DISP, MASK_DISP, ARM3_DISP, RATE_DISP):
         hits = V64.gp_access_census(bytes(code), disp)
@@ -1176,10 +1285,17 @@ def build():
     print("                      bit3 = 1  *** THE V68 BUILD-CLASS MARKER *** (constant)")
     print("                      bits 2:0 = stock STEER_SENSOR_STATUS, preserved")
     print("         field==0 (bits 7:3 all clear) means THE CAVE DID NOT FIRE -- a VOID reading.")
-    print("  ★★ V68 NEVER EMITS 0x87. Every legal frame carries bit7 AND bit3, which no prior build")
-    print("     with a probe can produce -- V53/V54 clear bit7, V59/V62/V65 all emit 0x87, and")
-    print("     V66/V67 never set bit3. The four-way 0x87 ambiguity does not apply to this build.")
-    print("     ⚠ It EXCLUDES every prior build; it cannot exclude a future one. Confirm the .rwd.")
+    ov = _self_check_wire.overlaps
+    print("  ★★ V68 NEVER EMITS 0x87. Every legal frame carries bit7 AND bit3. Strength, in two")
+    print("     tiers, both DERIVED above rather than asserted:")
+    print("       TIER 1 structural, absolute: V53 (0x07), V54 (0x0F, bit7 clear), and V66/V67")
+    print("              (bit3 NEVER set -- both builds assert it) are wholly disjoint from V68.")
+    print(f"       TIER 2 empirical, and WEAK vs V59/V62: their thermometer reaches "
+          f"{len(ov['V59/V62'])} of V68's 8")
+    print(f"              payloads {sorted(hex(b) for b in ov['V59/V62'])};")
+    print(f"              V65's ladder reaches only {sorted(hex(b) for b in ov['V65'])}. V59/V62 are")
+    print("              excluded ONLY because both of their recorded routes contain 0x87.")
+    print("     ⚠ None of this excludes a FUTURE build. Confirm the .rwd on the car.")
     print("  🛑 WHAT EACH BIT CAN AND CANNOT DISTINGUISH:")
     print("     bit6 CAN: engagement duty, transitions/s, and whether the gate ever toggles in the")
     print("               15-60 Hz kill band (aliased above ~50 Hz -- the tool says so).")

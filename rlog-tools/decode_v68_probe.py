@@ -131,8 +131,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 # ⚠ The NUMERIC MACHINERY is shared with V67's decoder on purpose -- collect/sustained/gate_stats
 # are instrument code, not semantics, and two copies would drift. Everything V68-SPECIFIC (the bit
 # map, the identification, the verdict) is defined here and nowhere else.
-from decode_v67_gate import (collect, gate_stats, print_gate_row,   # noqa: E402
-                             sustained, transitions, runs_of, dominant_hz,
+from decode_v67_gate import (collect, gate_stats, print_gate_row, sustained,   # noqa: E402
                              KILL_LO_HZ, KILL_HI_HZ, GATE_TRACKS_MIN,
                              V57_BASELINE, V57_AGREEMENT_MIN)
 
