@@ -5,6 +5,8 @@
 - [🛑 Grep build_v*_tva.py before proposing ANY cal](feedback_check_build_scripts_before_proposing_cal_edit.md) — 0xC6450 was re-proposed after being flashed/falsified as V46.
 
 ## Accord TVA-A160 (current project)
+### 1 kHz oscillation detector gate/liveness (2026-08-03)
+- [★★★★★ Detector gate self-clears, input is live ISR-fed, gp-0x6c2c bypasses the gate entirely](reference_accord_detector_gate_input_liveness_verified.md) — gp-0x67df exhaustively 2 accesses (1 writer); TCB table 0xBB858 re-derived via LE32 scan; recommends probing gp-0x6c2c directly to sidestep the DTC-gate ambiguity.
 ### RAM ownership / code-cave GATE 1 (2026-08-02)
 - [🛑★★★★★★ APP RAM MAP SOLVED: gp/tp/sp DERIVED, and TWO boot writers no scan can see](reference_accord_app_ram_layout_and_boot_init_loops.md) — zero-clear 0xFEDEC000-0xFEDFFFFF @0x146C0; .data copy flash 0x86260-0x8AB18 → gp-0x6E50..gp-0x2598 @0x14766; stack tops at 0xFEDEF91C.
 - [★★★★★★ GATE-1 audit of gp-0x683c: 7 access classes, all clear bar a named residual](reference_accord_gate1_gp683c_ram_ownership_audit.md) — 🛑 inverted heuristic: a LONG free run means ARRAY, not free RAM (69% of the gp window scans "free").
