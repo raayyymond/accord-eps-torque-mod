@@ -75,9 +75,10 @@ other arms — zero slack.** So:
 | 4 | `0xD2A80` | `00 0c` (3072) | `00 18` (6144) | rec0 Y[1] | same |
 | 5 | `0xD2ABA` | `01 0a` (2561) | `02 14` (5122) | rec1 (**10 km/h**) Y[0] | same |
 | 6 | `0xD2ABC` | `01 0a` (2561) | `02 14` (5122) | rec1 Y[1] | same |
-| 7 | `0xC4B54` | `61` | `60` | probe: `cmp 0x1,r6` → `cmp 0x0,r6`, making **bit4 constant 1** = the V69 build fingerprint | MAIN |
+| 7 | `0xC4B36` | `88` | `80` | probe: the liveness `movea` immediate — **bit3 constant 0** (§7) | MAIN |
+| 8 | `0xC4B54` | `61` | `60` | probe: `cmp 0x1,r6` → `cmp 0x0,r6` — **bit4 constant 1** (§7) | MAIN |
 
-**Seven bytes. Three CRC blocks.** No cave growth, no new instruction, no new RAM cell.
+**Eight bytes. Three CRC blocks.** No cave growth, no new instruction, no new RAM cell.
 
 Edits 3–6 are each an **exact doubling** of the low-rate end of the two lowest-speed records.
 Y lives at record+0x0A, X at +0x02, count at +0x00 — confirmed from the firmware's own accessor
@@ -250,13 +251,21 @@ and chose it.**
 
 ---
 
-## 7. PROBE — build identity for **7 bytes** of risk, of which one is the probe
+## 7. PROBE — build identity for **two in-place immediate bytes**
 
 V68 and V69 would otherwise emit **identical payloads** and be indistinguishable from a log: bit6
 reads `gp-0x6806` in the *cave*, independent of the control-path gate at `0x3AA94`. That is
 unacceptable — V68 is what is on the car, so V68-vs-V69 is exactly the confusion that matters.
 
-**Edit 7 changes `cmp 0x1,r6` → `cmp 0x0,r6` at `0xC4B54` (one byte, no new instruction).** `ld.bu`
+**Edit 7 — the structural half.** V68's bit3 is **not derived from any signal**: it is baked into the
+liveness `movea 0x88,r0,r7`'s immediate. V69 emits `movea 0x80` instead — **one byte at `0xC4B36`,
+the same instruction, no new bytes.** V68 therefore sets bit3 in *every* frame and V69 clears it in
+*every* frame. **The two payload sets are structurally disjoint; no measurement can make them
+overlap.**
+
+**Edit 8 — the practical half, because bit3 alone is not enough.** ⚠ **V67 already emits
+`movea 0x80`** (verified: `0xC4B34` = `20 3e 80 00` on V67), so Tier 0 alone makes V69's payload set
+*identical to V66/V67's*. Edit 8 changes `cmp 0x1,r6` → `cmp 0x0,r6` at `0xC4B54`: `ld.bu`
 zero-extends, so `r6 ∈ [0,255]` and a signed `blt` against 0 is **never** taken ⇒ **bit4 is set in
 every frame.**
 
@@ -265,21 +274,48 @@ every frame.**
 | 7 | liveness |
 | 6 | `gp-0x6806 != 0` — the LKAS gate (still a useful arm split for analysis) |
 | 5 | `gp-0x67df != 0` — the 1 kHz detector's crossing stage. **Kept: now proven live** (§8) |
-| **4** | **constant 1 — the V69 build fingerprint** |
-| 3 | constant 1 — the V68-class marker (unchanged) |
+| **4** | **constant 1** |
+| **3** | **constant 0** |
 
-**Decision rule, with its limit stated:** V69 emits `{0x9F, 0xDF}` (plus `0xBF`/`0xFF` if bit5 ever
-fires). V68 emits bit4 = 1 only when `gp-0x671a ≥ 1`, which read **0 in 53,991 frames (V68)** and
-**0 in 186,321 (V67)**. So *"bit4 = 1 in every frame ⇒ V69; bit4 = 0 in any frame ⇒ not V69"* is a
-**practical** rule of overwhelming strength, not a structural disjointness proof — a 5-bit field
-cannot make three build classes structurally disjoint. Burning bit4 costs nothing: it is redundant
-with bit5 (a reversal implies a crossing) and has never fired.
+**Legal payload sets, and the decision rule:**
 
-⚠ **Not taken, and worth a future build:** `gp-0x6c2c`'s *production* (`FUN_00041464`, state mask
-`0xd30`) bypasses the detector's DTC gate entirely, so an amplitude ladder read **directly** on
-`gp-0x6c2c` would sidestep both open ambiguities and give this kit the **positive control the FSM
-flags have never once provided**. It needs new cave instructions (a signed magnitude test costs more
-than the `cmp`/`blt` idiom) and V69's whole safety argument is "no cave growth." **Defer to V70.**
+| build | byte4 set |
+|---|---|
+| V66 / V67 | `{0x87, 0x97, 0xA7, 0xB7, 0xC7, 0xD7, 0xE7, 0xF7}` — in practice only `0x87`/`0xC7` |
+| V68 | `{0x8F, 0x9F, 0xAF, 0xBF, 0xCF, 0xDF, 0xEF, 0xFF}` (bit3 = 1 always) |
+| **V69** | **`{0x97, 0xB7, 0xD7, 0xF7}`** (bit3 = 0, bit4 = 1) |
+
+⇒ *"bit3 clear in every frame"* excludes V68 **structurally**. *"bit4 set in every frame"* excludes
+V66/V67 **practically** — their bit4 (`gp-0x671a ≥ 5`) read **0 in 186,321 frames**. A 5-bit field
+cannot make three classes structurally disjoint; this is the best available and its limit is stated.
+Burning bit4 costs nothing: it is redundant with bit5 (a reversal implies a crossing) and has never
+fired in any build.
+
+### 7.1 ⚠ The `gp-0x6c2c` ladder — designed and costed, DEFERRED TO V70
+
+`gp-0x6c2c`'s *production* (`FUN_00041464`) contains **zero calls to `FUN_00046EA6`** — confirmed
+from its decompile, not merely cited — so it bypasses the detector's DTC gate entirely, and reading
+it directly also sidesteps the `T` = 12800 / `CEIL` = 5 quantisation. It would give this kit the
+**positive control the FSM flags have never once provided**.
+
+It has been fully designed and it *fits*: a 2-rung monotone ladder at T/4 = 3200 and T/2 = 6400,
+sharing one absolute-value prefix (`ld.h` / `cmp r0,r6` / `bge +4` / `subr r0,r6`) and subtracting
+the **incremental** 3200 in place, so both rungs are the byte-identical `movea -0xc80,r6,r6`.
+Cost **58 B** against the proven 68 B extent — *smaller than V68's 60 B* — staying within the
+r6/r7-only, exactly-one-store discipline every flown cave has met. A 3rd rung at T/8 needs 46 B
+against a 44 B ceiling: **2 bytes over.**
+
+🛑 **Not taken for V69, and the reason is the standing rule, not the byte count.** *"Every success
+since V29 has been cal-only or a single in-place branch/displacement edit."* Edits 1–8 are all in
+that class. The ladder **rewrites ~34 bytes of cave body** with instructions (`subr`, `bge`, signed
+`ld.h`, negative-immediate `movea`) that this cave has never carried — and code caves are this kit's
+**only bricking class** (V24, V27, V48B). V69's job is the fix; **P1 needs no probe at all.** Fly
+V69, learn whether P1 held, then spend risk on the instrument in V70.
+⚠ Two caveats to carry forward: the hook fires at **100 Hz (task 5)** while `gp-0x6c2c` refreshes at
+1 kHz, so the ladder is a **decimated snapshot, not a peak-hold** — it can show "≥ threshold at this
+sample", never "never crossed between samples". And the proposed bytes are **hand-derived**,
+cross-validated against three real reference points but **not yet run through the kit's own encoder
+and self-check pipeline**, which must be the final gate.
 
 ---
 
@@ -331,7 +367,7 @@ ordinary 20–30 min engaged highway commute gives ~5–7× that, enough to test
    **span-based, not value-based** — a wrong value inside an existing `EDITS` span is silently
    attributed and the gate passes. Anchor every one of the 7 bytes, plus `0xC4124` **and `0xC6564`**
    (which `verify_v68_image.py` does *not* check).
-6. **Add `EDITS` rows** for `0xD2A7E-0xD2A81`, `0xD2ABA-0xD2ABD`, `0x3AA96`, `0xC4B54`, and change
+6. **Add `EDITS` rows** for `0xD2A7E-0xD2A81`, `0xD2ABA-0xD2ABD`, `0x3AA96`, `0xC4B36`, `0xC4B54`, and change
    the `0xC6446` row to 512.
 7. **Re-read `0xC4124` every build and STOP if any slot carries 6 or 7** (inherited from V68).
 8. Verify with a fresh Ghidra import — 🛑 a stale import defeats hash-checking.
