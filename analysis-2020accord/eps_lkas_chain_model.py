@@ -51,8 +51,20 @@ BUILDS THIS MODEL PARAMETERISES  (Calibration.for_build(...))
   V41 = V38 + motor-rate cap flattened only (slew untouched). FLASHED, boots clean, FALSIFIED as a
         vibration/ratchet cause; isolates V40's fault to the slew-step edit.
   V42 = V38 + (1) one-byte governor state-4 substitution disable (0x454fe) + (2) r26 adaptive gain
-        zeroed. FLASHED: (1) CONFIRMED root cause, fixed the hard-turn ratchet, kept in all later
-        builds; (2) FALSIFIED, no effect on the vibration.
+        zeroed. FLASHED: (1) CONFIRMED root cause, fixed the hard-turn ratchet; (2) FALSIFIED, no
+        effect on the vibration.
+        🛑🛑 CORRECTED 2026-08-04 -- "kept in all later builds" WAS FALSE. Byte-read across all 60
+        built images: 0x454FE is carried by V42-V52C ONLY and is STOCK in V53 -> V70, lost at the
+        V38/FOURFRAME rebase because V53+ descends from a branch point BEFORE V42. Nobody decided
+        it. ⚠ And the argument that later retired it as a cause of the CURRENT ratchet --
+        "STEER_STATUS == 4 fires 0/37,922" -- was VOIDED when bus STEER_STATUS was shown not to be
+        gp-0x67fa (state 4 sits inside all three gate masks). It was never actually eliminated.
+        The same audit found V62's 0x3AB76/0x3AC20 sar pair -- the kit's ONLY measured grind-#1 fix
+        -- carried by V62 and V65 ONLY, removed as V66's confirmatory control and never restored.
+        ⇒ FROM V66 TO V70 THE CAR CARRIED NEITHER CONFIRMED FIX. Both are restored in V71.
+        ⇒ RULE 3 (docs/BUILD-LINEAGE.md): byte-check the CURRENT image before reasoning from any
+        recorded result, and when you remove a confirmed fix to run a control, write the restore
+        into the next build's spec.
   V53 = V38 + FOURFRAME2 read-only telemetry cave + min steer speed 0 (0xC62EA -> 0). FLASHED: speed
         window prediction CONFIRMED on-car; the telemetry cave never transmitted (uninterpretable null).
   V54 = V38 + speed-window-0 + a report-only gp-0x6966 (soft-EME authority) probe on CAN 0x14A. FLASHED:
@@ -118,9 +130,33 @@ EXECUTION MODEL
                  state-4 handler) -- 0x199CC (diagnostic, tp+0x74d0 == 0xa) and 0x19A72 (NORMAL,
                  gated on bit 15 of gp-0x6d78, with bit 16 -> state 11 taking priority). Writer set
                  over 33 st.b sites (Ghidra and a raw LE byte scan agree exactly, no undercount):
-                 {1,3,4,5,6,7,8,9,10,11}, max 11. [OPEN] what bit 15 of gp-0x6d78 means, which is
-                 what decides how OFTEN state 10 is visited.
-                 ⇒ 🛑 THIS IS A LIVE ALTERNATIVE EXPLANATION FOR THE FIVE-BUILD DETECTOR NULL
+                 {1,3,4,5,6,7,8,9,10,11}, max 11.
+                 ✅✅ SETTLED ON-CAR 2026-08-04 (route 50, V70's bit5): gp-0x67fa == 10 reads 0.0000%
+                 of 18,010 frames ⇒ state ∈ {4,5,11} ⇒ FUN_00036388 AND FUN_000428d4 WERE INVOKED
+                 ⇒ the gp-0x67df detector nulls on V64/V67/V68 are GENUINE and the state-gate
+                 explanation below is REFUTED. Five builds vindicated, on a PRE-REGISTERED
+                 prediction. [EVIDENCE] ⚠ It licenses "the call was made", NOT "the body ran" --
+                 FUN_00046ea6(5) stays OPEN (see below).
+                 🛑 AND THE STATE MACHINE HAS NO CADENCE [EVIDENCE, instruction level 2026-08-04]:
+                 gp-0x68ad can NEVER be set in the field (both SET paths need permanently-zero flags
+                 -- gp-0x437c, a UDS artifact, and gp-0x679d, whose sole writer FUN_000567c0
+                 @0x567e2 reads gp-0x67ba, which has exactly ONE access image-wide and ZERO writers)
+                 ⇒ FUN_00019970's `if (gp-0x68ad != 1) return;` ⇒ 4->5 NEVER FIRES; state 5 is DEAD
+                 CODE on the road. And gp-0x6d78 bit 15 is a ONE-WAY, OR-ONLY latch (15 sites, one
+                 writer FUN_000197b8 @0x197ca `|= 1<<n`, NO clear anywhere image-wide) ⇒ 4->10 is a
+                 ONE-SHOT DRIFT and 10->4 can never fire after. ⇒ state 4 is STICKY once entered,
+                 then leaves permanently; "the state-4 entry/exit cadence sets the ratchet's period"
+                 is REFUTED structurally. Reachable set on a normal drive: {4, 11}.
+                 ⚠ TENSION TO CARRY: the V42 substitution (0x454FE) is ASYMMETRIC (clamps command
+                 increases, passes decreases) so continuously active it should print a RECTIFIED
+                 waveform -- yet the ratchet measures SYMMETRIC (skew -0.16..+0.06, crest 2.07-2.45
+                 vs a sine's 1.414). Evidence AGAINST it shaping the CURRENT ratchet. V71 restores
+                 0x454FE because it is a confirmed fix LOST BY ACCIDENT (stock in V53->V70), not
+                 because this mechanism is established.
+                 [OPEN] what sets bits 15/16 of gp-0x6d78 mid-drive -- FUN_000197b8 has 21 callers,
+                 untraced. That decides whether state 4 is sticky for a whole drive or only briefly.
+                 ⇒ 🛑 (SUPERSEDED BY THE ABOVE, kept for the reasoning) A LIVE ALTERNATIVE
+                 EXPLANATION FOR THE FIVE-BUILD DETECTOR NULL
                  (gp-0x67df 0/14,980 V64, 0/186,321 V67, 0/53,991 V68): "FUN_000428d4 was never
                  CALLED" has never been on the table and has the identical signature to "it ran and
                  found nothing".
@@ -1251,10 +1287,62 @@ def _inline_torque_rate_a(st: EpsState) -> int:
     0xC64FA) that r24 lacks. GAIN_A is a 4-point flat LERP over motor-rate gp-0x6ac0 (zeroed >= 13001)
     against a table FUN_0003ad74 rebuilds each cycle from 4 ROM records on the AVG-torque axis
     (ASSIST_RATE_A_RECORDS, cals 0xC6A68/7C/90/A4); the cal-only kill surface is 18 halfwords (16 Y
-    values 0xC6A72-B4, overrides 0xC6444/0xC643E), all single-reader, no float mirror. [OPEN] r26's
-    realistic magnitude (clips only if avg(gp-0x69a4) > ~546); the mechanical loop sign
+    values 0xC6A72-B4, overrides 0xC6444/0xC643E), all single-reader, no float mirror.
+
+    ★★★★ r26 IS LIVE ON-CAR -- MEASURED 2026-08-04, route 50 (V70). [EVIDENCE, existence proof]
+    V70's bit4/bit3 sign pair read gp-0x6adc (r26's post-clamp RAM mirror) STRICTLY NEGATIVE on
+    1,644 of 18,010 frames. A cell pinned at zero can never clear a `>= 0` test, so r26 is not
+    identically zero. ⇒ "r26 is inert / r24 carries the entire lane" is REFUTED, and every
+    re-attribution of V42/V61/V62 that rested on it must be re-priced.
+    ⚠ Magnitude still unmeasured -- the probe gives SIGN only, so `a = gp-0x69a4/1024` is bounded
+    away from 0 but not otherwise known. NEW asymmetry the same-sign model does NOT predict, and it
+    must be carried: `bit3 => bit4` STRICTLY (0/18,010 frames with r24 >= 0 while r26 < 0), which is
+    explained by "r26 is ZERO part of the time and same-signed otherwise" -- a `>= 0` test cannot
+    separate zero from positive. Same-sign-when-nonzero stands; "always the same sign" does not.
+
+    🛑🛑 r24 AND r26 HAVE SEPARATE GAIN SELECTORS SHARING ONE GATE -- and every multiplier this kit
+    has published is an r24-only number. [EVIDENCE, orchestrator disassembly 2026-08-04]
+        r26 -> gain_A: 0x3AB5E ld.hu 0x7444,tp,r8 (0xC6444=512, taken when lp != 0)
+                     ▸ 0x3AB68 0xC643E ▸ else gain_A's own LERP (3072 at creep)
+        r24 -> gain_B: 0x3ABFE ld.hu 0x7442,tp,r10 (0xC6442=1024, gp-0x671d, OUTRANKS ALL)
+                     ▸ 0x3AC08 0xC6446 (lp != 0) ▸ 0x3AC12 0xC6440=2048 ▸ else the mode-10 surface
+    The SAME `lp` gates both, so V67/V68's one-byte gate repoint raises r24 AND cuts r26 6.00x
+    (3072 -> 512) simultaneously. Net vs stock = (5244 + 512a)/(3072 + 3072a): 1.707x at a=0,
+    PARITY at a=0.848, BELOW stock above it. V69/V70 edited the mode-10 gain_B records only, so they
+    never touched r26 at all.
+    🛑🛑 AND THERE **IS** ONE CLEAN SINGLE-VARIABLE SERIES, AND IT SAYS r24 IS NEAR-INERT.
+    [EVIDENCE 2026-08-04, medians recomputed from _grind2_lib.wrecs] stock -> V70 -> V69 holds r26 at
+    x1 and steps r24 x1 -> x2 -> x4, reading 879 -> 729 -> 746, ALL THREE CIs MUTUALLY OVERLAPPING.
+    => r24 is close to INERT for grind #1 across a 4:1 dose range. And every build that FIXED grind #1
+    changed r26 (V62 x2; V67/V68 /6.00), while every build that changed only r24 did not.
+    => THE HEADLINE IS NOT "nothing is single-variable" -- IT IS "THE DOSE AXIS THIS KIT HAS USED
+    SINCE V62 IS THE WRONG LANE."
+    ★ Four supporting byte facts: (1) gain_A's records 0xC6A68/0xC6A7C/0xC6A90/0xC6AA4 are
+    BYTE-IDENTICAL across all 11 images => V67/V68's /6.00 (= 512/3072) is EXACT and engaged-only;
+    (2) the two LERPs live in separate RAM -- gp-0x6e40/gp-0x6e38 for gain_B, gp-0x6e30/gp-0x6e28 for
+    gain_A -- filled by the two halves of FUN_0003ad74; (3) gain_B is filled from the MODE-INDEXED
+    arrays and gain_A from FIXED, non-mode-indexed records, which is why V69/V70's mode-10 surface
+    edit could not reach r26 even in principle; (4) there is NO gp-0x671d mask arm on the r26 side --
+    gain_A is 2 arms + default, not 3.
+    ⚠⚠ CARRY THIS UNEXPLAINED, DO NOT SMOOTH IT: r26 x2 (V62/V65) AND r26 /6.00 (V67/V68) BOTH HELPED,
+    and /6 helped MORE (168 vs 109 against stock's 879). A monotone "more r26 damping is better" story
+    and a monotone "less is better" story are BOTH refuted by the same two rows. The corpus cannot say
+    why, and that is the leading open question. Anyone proposing an r26 dose must state which
+    direction they are betting on and why.
+    ⚠ Grind #1 is BLIND to r24 gain -- log-log slope -0.144 [-0.991, +0.347], pairwise
+    P = 0.667/0.610/0.426 -- so it CANNOT be used as an in-force check for the r24 lane on any future
+    build. Structural, not a power limit.
+    ⇒ NO TWO POST-V38 RATE-LANE BUILDS ARE A SINGLE-VARIABLE CONTRAST. Measured grind #1 medians:
+    V61 (both x0) 2501 · stock 879 · V70 (r24 x2, r26 x1) 729 · V69 (r24 x4, r26 x1) 746 ·
+    V62/V65 (BOTH x2) 168 · V67/V68 (r24 x1.71, r26 /6, gated) 109. r24's dose is FLAT across
+    x2 -> x4; the only always-on build that fixed grind #1 is the only one that also doubled r26.
+    ✅ V62/V65's `sar` route (0x3AB76 AND 0x3AC20, 0xa -> 0x9) is the ONLY encoding that is
+    dose-exact independent of `a`, because it scales both lanes identically.
+
+    [OPEN] r26's realistic MAGNITUDE (clips only if avg(gp-0x69a4) > ~546); the mechanical loop sign
     (positive-feedback vs feedforward, needs live telemetry, not disassembly); gp-0x6752's concrete
-    runtime value.
+    runtime value; and whether gain_A's LERP rolls off with rateKey the same way gain_B's does --
+    if not, the a=0.848 parity point moves.
     """
     if st.assist_slope_q10 is None:
         return 0
@@ -1508,7 +1596,52 @@ def motor_torque_demand_aggregator(st: EpsState, lanes: dict, cal: Calibration) 
     gp-0x6bbe (boost assist), gp-0x6bd0 (damping), gp-0x6b86 (magnitude), inline r26/r24 (torque-rate),
     and FUN_00036682's filtered term. Eight of these are ZERO-type range gates (out-of-window
     contributes 0, not clipped): 6b62 +/-0x2000, 6b4c +/-0x2800, 6ade +/-0x400, 6b86 +/-0x3000, 6bbe
-    +/-0x800, 6bd0 +/-0x800, 6b26 +/-0x400, 6ad4 +/-0x2800 (@0x3aa38-0x3acc4). r24/r26 are instead
+    +/-0x800, 6bd0 +/-0x800, 6b26 +/-0x400, 6ad4 +/-0x2800 (@0x3aa38-0x3acc4).
+    🛑 ALL EIGHT ARE STRUCTURALLY VACUOUS -- MEASURED 2026-08-04, every ceiling byte-read. Each gate
+    is capped by its OWN PRODUCER's ceiling at or inside its gate window, on every drive, every
+    build: boost 512 vs 2048 · damping EXACTLY 0 at creep (FactorC 0xD27BC Y[0]=0, multiplicative,
+    ~35 km/h onset) and <=1024 at highway vs 2048 · friction 511 vs 1024 · magnitude +/-0x3000 ==
+    window exactly (inclusive) · LKAS +/-0x2800 == window exactly · gp-0x6ade 0 writers · resonance
+    max 1024 (164-341 at the ratchet's speeds) vs 2800 · return-centre gp-0x6b62 max 5786 vs 8192.
+    ⇒ THE AGGREGATOR STAGE CONTAINS NO REACHABLE HARD NONLINEARITY, joining the aggregator SUM
+    (V65, 120,049 frames). The relay / limit-cycle framing for the aggregator is REFUTED -- do not
+    re-propose it. [EVIDENCE] ★ FUN_00036388's own counters give ~20-40 ms or ~1 s periods, nowhere
+    near 7.8 Hz ⇒ it INHERITS the ratchet, it does not GENERATE it.
+    ★★★ AND THE RATCHET'S Q IS NOW MEASURED: Q ~= 40 at f0 = 7.793 Hz (route 50, one 12.81 s
+    provoked episode), confirmed by a WINDOW-CAP INVARIANCE TEST -- 39.0 at cap 54, 40.0 at cap 111,
+    where a window-limited estimate would have doubled. ⇒ zeta ~= 0.0125, ~3x more lightly damped
+    than the 21 Hz mode. ✅ Q ~= 40 CONFIRMS the record's Q ~= 36; the ONLY thing superseded is
+    "Q is not measurable at NFFT 256" -- the claim it could not be measured, not the value.
+    ✅ And it is measured on the RIGHT data: the episode reconciles with the transition trace below
+    (2 x 2,452 = 4,904 ~= 4,894; speed span = the post-engagement window, NOT the operator's
+    cranking), so it is not contaminated by driver input. ⚠ ONE episode, and f0 drift inside the
+    window would DEFLATE it ⇒ 40 is a LOWER BOUND.
+    ★★★★ THE RATCHET IS ENGAGEMENT-**REQUIRED**, AND NO BUILD IN THIS KIT HAS EVER MOVED IT.
+    [EVIDENCE 2026-08-04] Grip confound removed (BOTH arms hands-off, |lowpass(tq,3Hz)| <= 300, creep
+    < 4 m/s), pooled over four routes/builds: engaged hands-off 73/88 = 83.0% vs manual hands-off
+    0/118 = 0.0%, Fisher p = 3.8e-41 -- ZERO hits in 118 manual hands-off creep windows / 302 s.
+    Per-build rate 80/81/79/94% (V70/V69/V62/V59) => BUILD-INDEPENDENT. This SUPERSEDES the earlier
+    "engagement-conditional, 44/46 windows" statement.
+    ★ Converse: a hand on the wheel SUPPRESSES it while engaged (V59 94->14%, p=3.5e-4; V69 81->37%,
+    p=4.5e-3). ★★ Transition trace at constant speed (6-9 Hz Butterworth, sosfiltfilt): lat 0.06 /
+    effort 320 -> 134 counts, then lat 0.31 / effort 441 -> 1,179 counts -- 8.8x in 0.7 s with speed
+    FALLING 1.75 -> 1.60 m/s; the death is effort 1,548 -> 2,129 over 0.6 s collapsing 910 -> 273.
+    🛑 CORRECTION TO THE OPERATOR'S FRAMING, and it corroborates rather than contradicts him: his hard
+    MANUAL provocation produced NO ratchet at all (6-9 Hz p-p 422-797, prominence 1-6). The manoeuvres
+    SET UP the condition (creep, loaded wheel, LKAS about to take over); the ratchet fires WHEN LKAS
+    ENGAGES AND HE LETS GO. Both parts of his account are right; the causal order is reversed.
+    ★★ Two consequences: 0x454FE is a GENUINELY UNTESTED lever for the ratchet (absent from all four
+    measurements -- V59/V62/V69/V70 are post-V53 and stock there); and engagement-required +
+    hands-off-conditional + Q ~= 40 + base-assist damping exactly ZERO below ~35 km/h fuse into
+    "AT CREEP THE DRIVER'S HAND IS THE ONLY DAMPING IN THE SYSTEM".
+    ⚠ THE LEVER THIS RE-OPENS: base-assist damping is EXACTLY ZERO below ~35 km/h (the FactorC row
+    above) while the ratchet lives at 4.9-8.0 km/h with Q ~= 40 -- and V47 raised FactorC AND FactorE
+    together and reported "marginally quieter at 5 mph", filed null against the 21 Hz vibration.
+    That positive whisper has never been evaluated against the RATCHET. Deferred to V72.
+    ⚠ Note the overlap with GATE 3: the resonance row (164-341 reachable vs a 2800 window) is the
+    same arithmetic that made V69's bit4 vacuous. A gate's width says what the CONSUMER accepts; it
+    says nothing about what the PRODUCER can emit.
+    r24/r26 are instead
     SATURATING CLIPS to +/-0x2000 (`cmovle`, @0x3ab82-94/@0x3ac42-54), summed ungated -- the lowest
     discontinuity risk of the group, consistent with V39's r24 suppression not moving the on-car
     vibration. Add order @0x3acc8-0x3ace6: r26+r24 -> +6b86 -> +6bd0 -> +6bbe -> +6b26 -> +[6b62/6ade]
@@ -2268,9 +2401,16 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     a 6.00x CUT) would put their engaged TOTAL at ~0.94x stock -- essentially ON stock -- yet they
     measured the best grind #1 result in the kit (109 vs stock's 879).
     🛑 CONSEQUENCE FOR ANY GATE-RESTORING BUILD: 0xC6444 = 512 is carried by every build including
-    V69, so restoring the V67 gate also restores a 6x r26 cut whenever LKAS applies. RAISING 0xC6444
-    is GENUINELY UNTESTED (V42 tested it DOWNWARD, 512 -> 0, FALSIFIED); blast radius is 1 reader /
-    0 writers, no float mirror, same CRC block #48 as 0xC6446; overflow ceiling <= 6553.
+    V69, so restoring the V67 gate also restores a 6x r26 cut whenever LKAS applies.
+    🛑🛑 STRUCK 2026-08-04 -- 0xC6444 IS A NULL BY CONSTRUCTION, NOT AN UNTESTED LEVER. [EVIDENCE] it
+    is read ONLY at 0x3AB5E, and only when lp != 0. On every GATELESS build -- stock, V62, V65, V69,
+    V70, V71 -- the gate 0x3AA96 is 0xc5, so lp derives from gp-0x683c, which has 0 WRITERS
+    image-wide => that load NEVER EXECUTES. Raising it changes NOTHING unless 0x3AA96 is also
+    repointed, which reintroduces the V67/V68 control path the operator rejected. => it is reachable
+    only on a build whose control path is already ruled out, and THERE IS NO SINGLE-VARIABLE r26 TEST
+    ON THE CURRENT TOPOLOGY. The old "genuinely untested upward (V42 tested it downward, 512 -> 0,
+    FALSIFIED)" framing was correct arithmetic about the wrong question. Blast radius, kept for the
+    record: 1 reader / 0 writers, no float mirror, same CRC block #48 as 0xC6446, ceiling <= 6553.
     ★ MEASURE IT, DO NOT ARGUE IT: gp-0x6adc is r26's post-clamp mirror (st.h @0x3AD4E, 0 readers /
     1 writer image-wide), the same blast-radius-free class as gp-0x6ada. Because r24 and r26 share
     ONE polarity load (ld.b -0x6752[gp],r14 @0x3AB78, reused at 0x3AB7E for r26 and 0x3AC3E for r24)

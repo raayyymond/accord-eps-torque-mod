@@ -540,3 +540,159 @@ test, doing the work the arm was credited with.
   is contradicted by crest **2.07-2.45** (a steady sine gives 1.414).
 - **What excites the lane-change transient**, now that gain is excluded. One manual route, CI not
   cleared: a direction, not a finding.
+
+
+---
+
+## 2026-08-04 (later) — V70 flew: both confirmed fixes were OFF THE CAR, and the dose axis was the WRONG LANE
+
+**This session closed four of the five unresolved items listed above, and it closed them by finding
+that the record's own chain had two broken links.** Read this before quoting anything about the rate
+lane, the detector nulls, or the ratchet's Q.
+
+### Chain 1 — the record described a car that did not exist
+
+```
+V42  0x454FE bne->br      "CONFIRMED ROOT CAUSE, carry forward"
+       |                   carried V42..V52C only -- STOCK in V53 -> V70
+       |                   lost at the V38/FOURFRAME rebase; NOBODY DECIDED IT
+V62  0x3AB76/0x3AC20      "the kit's first measured fix" (grind #1, 8x at creep)
+       |                   carried V62 and V65 only
+       |                   removed as V66's CONTROL and never restored
+       v
+V66 .. V70                the car carried NEITHER, for ten builds
+```
+
+**New edge:** `accord-both-confirmed-fixes-were-off-the-car` -> **every** build-result node after V66.
+It does not falsify those results; it re-labels the arm they were measured on.
+**The rule that falls out is RULE 3** (`docs/BUILD-LINEAGE.md`): a "CONFIRMED" result is about a
+*lever*, not about the car you are driving. And: **when you remove a confirmed fix to run a control,
+write the restore into the next build's spec.**
+
+### Chain 2 — one gate, two selectors: the ladder's rungs were never the same quantity
+
+```
+                 lp (ONE gate, 0x3AA96)
+                   /                     \
+     r26 -> gain_A                         r24 -> gain_B
+     0xC6444=512 | 0xC643E | LERP 3072     0xC6442=1024 (gp-0x671d mask, outranks all)
+                                           | 0xC6446 | 0xC6440=2048 | mode-10 surface
+
+V67/V68  repoint lp  ==>  r24 UP and r26 DOWN 6.00x, in ONE byte
+V69/V70  edit gain_B only ==> r24-only dose
+V62/V65  sar on BOTH lanes ==> the ONLY dose-exact encoding, for every a
+```
+
+★★★★ **AND THERE IS A CLEAN SINGLE-VARIABLE r24 SERIES HIDING IN THE CORPUS — the strongest result of
+the session.** `stock -> V70 -> V69` holds r26 at x1 and steps r24 **x1 -> x2 -> x4**, reading
+**879 / 729 / 746, all three CIs overlapping** ⇒ **r24 is NEAR-INERT for grind #1 across a 4:1 range.**
+**Every build that FIXED grind #1 changed r26; every build that changed only r24 did not.**
+⇒ **the edge to draw is not "nothing is single-variable" — it is `dose axis -> WRONG LANE`.**
+⚠⚠ **And carry the part nobody can explain: r26 x2 AND r26 /6.00 BOTH helped, /6 more.** Both monotone
+stories die on the same two rows. **Leading open question.**
+
+**`a = gp-0x69a4/1024` is no longer the open question it was** — V70's bit4 read `gp-0x6adc` **strictly
+negative on 1,644/18,010 frames**, and a pinned-zero cell cannot clear a `>= 0` test.
+⇒ **`accord-r26-is-structurally-inert` LEG 2 is REFUTED**, and the node is superseded in place by
+`accord-r24-r26-two-selectors-one-gate`.
+⇒ **`accord-v69-flew-dose-response-non-monotone`'s "minimum near 2x" edge is CUT** — it priced every
+build on r24 alone at `a = 0`.
+
+### Chain 3 — the detector nulls are vindicated, and the state machine has no cadence
+
+```
+V64 / V67 / V68   gp-0x67df null   --(was)-->  "maybe the callee was never invoked" (state 10)
+V70 bit5          gp-0x67fa == 10 : 0.0000% --> state in {4,5,11} --> IT WAS INVOKED
+                                              --> the nulls are GENUINE. Five builds vindicated.
+gp-0x68ad never settable in the field  --> 4->5 never fires; state 5 is DEAD CODE
+gp-0x6d78 bit15 one-way OR-only latch  --> 4->10 one-shot; 10->4 never
+                                       --> reachable set on a normal drive = {4, 11}
+                                       --> "the state-4 cadence sets the ratchet period" REFUTED
+```
+
+⚠ **The edge that survives as a tension, not a conclusion:** the V42 substitution is **asymmetric**
+while the ratchet measures **symmetric** (skew −0.16…+0.06, crest 2.07–2.45). That is evidence
+*against* `0x454FE` shaping the *current* ratchet — which is why V71 justifies restoring it as
+**a confirmed fix lost by accident, and nothing more**.
+
+### Chain 3b — the RATCHET separates from every build in the kit
+
+```
+grip confound REMOVED (both arms hands-off, creep < 4 m/s), 4 routes / 4 builds
+   engaged hands-off  73/88 = 83.0%      manual hands-off  0/118 = 0.0%   p = 3.8e-41
+   per-build rate     80 / 81 / 79 / 94%  (V70 / V69 / V62 / V59)
+      => BUILD-INDEPENDENT => NO BUILD IN THIS KIT HAS EVER MOVED THE RATCHET
+   converse: a hand on the wheel SUPPRESSES it while engaged (V59 94->14%, V69 81->37%)
+```
+
+**New node:** `accord-ratchet-is-engagement-required`. It **supersedes** the
+`engagement-conditional 44/46` edge in `accord-ratchet-characterised-on-route-4f`.
+★ **The transition trace is the mechanism, second by second, at constant speed:** `lat` 0.06 -> 0.31
+takes 6-9 Hz p-p **134 -> 1,179 in 0.7 s with speed FALLING**; a grip takes it **910 -> 273 in 0.6 s**.
+🛑 **And it corrects the operator's causal order without contradicting him** — his hard *manual*
+provocation produced no ratchet; the manoeuvres **set up** the condition and it fires **when LKAS
+engages and he lets go**. `feedback_operator_lived_experience_overrides_analyst_recs` gains a
+corroborating instance, not a counterexample.
+★★ **Two consequences that reach the build programme:** `0x454FE` is a **genuinely untested** lever for
+the ratchet (absent from all four measurements), and *engagement-required + hands-off + Q ~= 40 +
+base-assist damping exactly zero below ~35 km/h* fuse into **"at creep the driver's hand is the only
+damping in the system"** — which is what promotes the deferred FactorC/FactorE lever.
+
+### Chain 4 — four probes in a row died the same death
+
+```
+V64, V67, V68  read a lane OUTPUT (gp-0x67df)        -> uninterpretable zero
+V70 bit6       read a lane OUTPUT (gp-0x6ada>=+512)  -> zero, but NOT vacuous:
+                 replay on route 50's own data predicts 311 hits; stock predicts 52
+                 => delivered gain < ~1574 Q10, BELOW stock
+                 => 0xC6442=1024 (the gp-0x671d mask arm) is the only arm predicting 0
+```
+
+⚠⚠ **The arm-selection reading is the WEAKER one, and the edge must be drawn dashed:** the same rung
+read **0/47,990 on V69's `4f` at DOUBLE the dose**, needing only **49 counts** — which arm selection
+cannot produce, since the mask arm is 1024 on *every* build; and V67 read `gp-0x671d` **0/150,327** on
+route 47. ⇒ **[BELIEF] an under-ranged or mis-reconstructed rung is better-supported. The corpus cannot
+settle it** — and `grind #1` cannot adjudicate, being **blind to r24 gain**.
+
+**New feedback node:** `feedback-probe-the-gain-in-force-not-a-lane-output` (**GATE 4**). It sits
+beside `feedback-size-probe-rungs-against-lane-reachable-output` (**GATE 3**, which *threshold*) and
+`feedback-probe-the-gate-not-just-the-output`. GATE 4 answers **which cell**. 🛑 **The durable part is
+the rule, not the mechanism.**
+
+### Chain 5 — the search space shrinks: the aggregator is out, and the ratchet is characterised
+
+`accord-aggregator-zero-gates-all-vacuous` joins `accord-aggregator-never-rails-loop-is-linear`:
+**all eight zero-type range gates are capped by their own producers**, so **the aggregator stage
+contains no reachable hard nonlinearity** and the relay/limit-cycle framing for it is **REFUTED**.
+`FUN_00036388`'s own counters (~20–40 ms, ~1 s) mean **it inherits the ratchet, it does not generate
+it.**
+`accord-ratchet-q-measured-40` **confirms** the record's **Q ≈ 36** and supersedes only the
+*"Q is not measurable at NFFT 256"* edge: **Q ≈ 40 at f0 = 7.793 Hz**, with a **window-cap invariance
+test** (39.0 at 54, 40.0 at 111). ⚠ **One episode; a lower bound.** ✅ **Measured on the right data** —
+the 6,502-vs-591 discrepancy resolved to *raw broadband = the operator cranking*, and the Q episode sits
+**after** engagement, not in it.
+★ **It re-opens a dormant node:** damping is **exactly zero below ~35 km/h** while the ratchet lives at
+**4.9–8.0 km/h**, and **V47's FactorC+FactorE *"marginally quieter at 5 mph"* has never been evaluated
+against the ratchet** — `project_v46_falsified_v47_dampers_only` gets a new outgoing edge.
+
+### What is honestly unresolved after this session
+
+- **`FUN_00046ea6(5)` / bit 5 of `gp-0x18d0`** — the detector's *second* entry gate. V70's bit5
+  licenses *"the call was made"*, **not** *"the body ran"*. Still the same claim it always was.
+- **What sets `gp-0x6d78` bits 15/16 mid-drive** — `FUN_000197b8` has **21 untraced callers**. Decides
+  whether state 4 is sticky for a whole drive or only briefly.
+- **WHICH DIRECTION the r26 effect runs.** r24 is near-inert across ×1→×4, so the authority is r26's —
+  but **r26 ×2 AND r26 ÷6.00 both helped, and ÷6 helped more.** **The leading open question**, and the
+  corpus cannot answer it. 🛑 **`0xC6444` is NOT the test** — it is a **null by construction** on every
+  gateless build (read only at `0x3AB5E`, only when `lp != 0`; `gp-0x683c` has 0 writers).
+  ✅ **But the single-variable r26 test EXISTS via `gain_A`'s records** — rec0 `0xC6A68` / rec1
+  `0xC6A7C`, same 4×4 layout on the same `0xC6010` speed cross-axis as `gain_B`; doubling their whole
+  rate axis doses r26 alone below 50 km/h and is exactly 1.000× above it (rec2/rec3 stock). **That is
+  V71B**, and it is the test the ×2-vs-÷6 question needs.
+- **What produced four consecutive probe zeros** — arm selection is the weaker reading; an under-ranged
+  or mis-reconstructed `dtorque` is better-supported; neither is settled.
+- **Whether restoring V62's lane brings back creep grind #2**, which V62 introduced. Given r26 is now
+  known live, that may have been r26's doubling rather than r24's — **untested**.
+- **What "stiffer" refers to.** No bus-side instrument detects it; the saturation mechanism is refuted.
+  [BELIEF] the ratchet itself (4,894 counts at Q ≈ 40, 0.8 s after engagement).
+- **What excites the lane-change transient** — unchanged from the previous session.

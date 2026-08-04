@@ -1,11 +1,19 @@
 ---
 name: accord-v69-flew-dose-response-non-monotone
-description: "★★★★ V69 flew route 4f 2026-08-04. Grind #1 is BACK at creep, the dose was fully delivered, and the rate-lane dose-response is NON-MONOTONE with a minimum near 2x — so V70 keeps V69's gateless speed-shaped topology at HALF the dose (x2)."
+description: "★★★★ V69 flew route 4f 2026-08-04. Grind #1 is BACK at creep and the dose was fully delivered — those measurements stand. 🛑 But the 'NON-MONOTONE dose-response with a minimum near 2x' is RETIRED: it priced every build on r24 alone at a=0, and r26 is now known LIVE. See accord-r24-r26-two-selectors-one-gate."
 metadata:
   type: project
 ---
 
-# ★★★★ V69 FLEW — GRIND #1 IS BACK AT CREEP, AND THE DOSE–RESPONSE IS NON-MONOTONE
+# ★★★★ V69 FLEW — GRIND #1 IS BACK AT CREEP
+
+🛑🛑 **RETIRED 2026-08-04 — THE DOSE LADDER BELOW, NOT THE MEASUREMENTS.** r26 is now known **LIVE**
+on-car (V70's probe: `gp-0x6adc` strictly negative on 1,644/18,010 frames), so V62/V65's "2×" (**both**
+lanes, via `sar`) and V69/V70's "2×/4×" (**gain_B only**) **were never the same quantity**, and
+*"a minimum near 2×"* was an artefact of pricing them as if they were.
+**The numbers below are measurements and stand; the DOSE LABELS on them do not.**
+⇒ **Read [[accord-r24-r26-two-selectors-one-gate]] for the re-priced ladder** and
+[[accord-v70-flew-grind1-back-at-stock]] for what V70 then measured.
 
 Route **`4f--61171e660d`**, 8 segs, **481.7 s**, 47,990–47,996 frames.
 ✅ **FLIGHT-CLEAN two ways** — `ST==4` **0**, `ST==3` **0**, gridded *and* raw un-gridded `0x18F`;
@@ -51,6 +59,13 @@ indistinguishable from stock — 1.070 [0.383, 1.396], inside null** — while e
 ⇒ **the mechanism is inside the CLOSED LKAS LOOP, not open-loop damping quality.**
 
 ## 🛑 MECHANISM — BELIEF, with the dose–response as the EVIDENCE
+🛑 **PROVENANCE CORRECTION 2026-08-04: `A_rk = 1927` was NEVER a burst measurement.** It is
+`v70_parametric_gain_collapse.py:132`, the **top decile of the WHOLE-DRIVE `|rate|` distribution** (hard
+manoeuvres), not the rate index during a grind. Measured directly over **424 burst windows**, the
+oscillation's own 18–22 Hz rate swing is **p50 140 / p90 327 counts**; even raw max `|rate_c|` in-window
+is **p50 542**. The monotone window needs **A_rk ≳ 1400** — **9.20%** of windows on scale A, **0.00%**
+on scale B. ⇒ **(b) survives on scale A only, at the ~90th-percentile worst instant, and is DEAD on
+scale B.**
 **(a)** a plain derivative-feedback optimum overshot; **(b)** a **parametric gain collapse** —
 `gp-0x6ac0` is loaded **`ld.hu` (UNSIGNED) @`0x3AAC4`**, so the gain index sweeps **0→peak→0 twice per
 cycle**, and V69 turned Honda's 2.0× rate rolloff into **8.0×**, making the damper **weakest at peak
@@ -76,7 +91,9 @@ probe. 🛑 **Restoring V67/V68's scalar arm was tried, BUILT, and OVERRIDDEN by
 high-speed grind. **An instrument null in 30–49.5 Hz was never evidence about a >50 Hz mode** — both
 vibration instruments are blind above 50 Hz; see [[feedback_operator_lived_experience_overrides_analyst_recs]]. The two unknowns worth probe
 bits: **`gp-0x67fa`'s runtime state** ([[accord-gp67fa-state-gate-on-assist-chain]]) and
-**`a = gp-0x69a4/1024`** ([[accord-r26-is-structurally-inert]] — reversed).
+**`a = gp-0x69a4/1024`** ([[accord-r26-is-structurally-inert]]). ✅ **Both were spent, and both
+answered**: `gp-0x67fa == 10` reads **0.0000%** (the detector nulls are genuine) and **r26 is LIVE**
+([[accord-r24-r26-two-selectors-one-gate]]).
 🛑 **Do not aim V70's rate lane at the lane-change transient** —
 [[accord-lane-change-transient-is-dose-independent]].
 

@@ -1,11 +1,28 @@
 ---
 name: accord-r26-is-structurally-inert
-description: "🛑 SPLIT 2026-08-04 into two legs. LEG 1 (the GATE) is REVERSED [EVIDENCE] — it does not kill r26 in ordinary driving. LEG 2 (the MAGNITUDE) is DOWNGRADED to BELIEF — 0xC6564's link to gp-0x69a4 was never verified. 'r24 carries the entire lane' now rests on LEG 2 alone."
+description: "🛑🛑 REFUTED ON-CAR 2026-08-04. LEG 1 (the GATE) was already REVERSED; LEG 2 (the MAGNITUDE) is now REFUTED — V70's probe read gp-0x6adc strictly negative on 1,644/18,010 frames, and a pinned-zero cell cannot clear a >=0 test. r26 is LIVE and 'r24 carries the entire lane' is GONE. Read accord-r24-r26-two-selectors-one-gate."
 metadata:
   type: reference
 ---
 
-# 🛑 THE "r26 IS INERT" CLAIM HAS TWO LEGS. ONE IS REVERSED, ONE IS DOWNGRADED.
+# 🛑🛑 REFUTED ON-CAR — r26 IS LIVE
+
+🛑🛑 **CORRECTED 2026-08-04, AFTER ROUTE `50`. [EVIDENCE]** V70's bit4 read `gp-0x6adc` — r26's
+post-clamp mirror — **strictly negative on 1,644 of 18,010 frames.** **A pinned-zero cell cannot clear a
+`>= 0` test.** ⇒ **LEG 2 IS REFUTED, r26 is LIVE, and *"r24 carries the entire lane"* is GONE.**
+**The prediction table at the bottom of this note was non-vacuous in both directions and it fired in
+the "r26 is LIVE" direction.**
+⇒ 🛑 **Every published multiplier in this kit is an r24-only number computed at `a = 0`, and the "dose
+ladder" was never one ladder.** **Read [[accord-r24-r26-two-selectors-one-gate]] first** — it carries
+the two-selector structure, the `a`-dependence table, and the re-priced ladder.
+★ **New asymmetry [EVIDENCE]: `bit3 ⇒ bit4` STRICTLY** — 0 of 18,010 frames with r24 ≥ 0 while r26 < 0.
+**[BELIEF]** *"r26 is ZERO part of the time, same-signed otherwise."*
+
+**Everything below is kept as the reasoning that set up that measurement.**
+
+---
+
+# 🛑 (as written pre-flight) THE "r26 IS INERT" CLAIM HAS TWO LEGS. ONE IS REVERSED, ONE IS DOWNGRADED.
 
 **Filename kept so existing `[[accord-r26-is-structurally-inert]]` links resolve.**
 🛑 **This is NOT a flat reversal of the whole claim** — writing it that way would be the mirror image of
@@ -57,7 +74,12 @@ r24/r26 share **ONE polarity load** — `ld.b -0x6752[gp],r14` @`0x3AB78`, reuse
 
 **Non-vacuous in both directions. Resolvable on the next drive.**
 
-## `0xC6444` — a CANDIDATE, not a recommendation
+## 🛑🛑 `0xC6444` — STRUCK. A NULL BY CONSTRUCTION, not a candidate
+**[EVIDENCE, 2026-08-04]** it is read **ONLY** at `0x3AB5E` and **only when `lp != 0`**. On every
+**gateless** build — stock, V62, V65, V69, V70, V71 — the gate `0x3AA96` is `c5`, so `lp` derives from
+`gp-0x683c`, which has **0 writers image-wide** ⇒ **the load never executes and raising it changes
+nothing**, unless `0x3AA96` is also repointed, which reintroduces the control path the operator
+rejected. **This supersedes everything below, which was correct arithmetic about the wrong question.**
 ⚠ **Raising it is genuinely UNTESTED.** V42 tested it **downward** (512 → 0, FALSIFIED) — the same
 *"tested downward ≠ tested upward"* distinction the V61 → V62 correction turned on
 ([[accord-rate-lane-is-the-damper-not-the-amplifier]]).

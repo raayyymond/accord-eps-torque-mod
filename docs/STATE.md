@@ -4,10 +4,12 @@
 close-out; do not append new dated blocks (that is what made `CLAUDE.md` unreadable). The narrative of how
 each state was reached lives in `docs/HANDOFF-*.md`.
 
-**Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed, falsified, or **rejected on
-review** — check it before proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-08-04-v69-flew-grind1-back-at-creep.md`
-(predecessors: `HANDOFF-2026-08-04-v69-recut-4x-and-ratchet-probe.md`, then
+**Read alongside:** `docs/BUILD-LINEAGE.md` — 🛑 **start with `RULE 3` at the top of that file: a
+"CONFIRMED" result is about a LEVER, not about the car you are driving. Byte-check the current image
+before reasoning from any recorded result.** Then the latest handoff,
+`docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
+(predecessors: `HANDOFF-2026-08-04-v69-flew-grind1-back-at-creep.md`, then
+`HANDOFF-2026-08-04-v69-recut-4x-and-ratchet-probe.md`, then
 `HANDOFF-2026-08-04-v69-built-speed-shaped-rate-lane.md`, then
 `HANDOFF-2026-08-03-v68-flew-the-lane-change-is-28hz.md`, then `HANDOFF-2026-08-03-the-detector-was-always-there.md`, then
 `HANDOFF-2026-08-02-v67-flew-and-the-highway-grind-is-not-the-rate-lane.md`, then
@@ -20,95 +22,518 @@ review** — check it before proposing any calibration edit) and the latest hand
 
 ---
 
-★★★★ **THE HEADLINE, 2026-08-04 (LATEST): V69 FLEW. GRIND #1 IS BACK AT CREEP, AND THE DOSE–RESPONSE
-IS NON-MONOTONE WITH A MINIMUM NEAR 2×. ⇒ V70 IS BUILT AND UNFLASHED, WITH A REPAIRED PROBE.**
+★★★★ **THE HEADLINE, 2026-08-04 (LATEST): THE CAR WAS MISSING BOTH OF ITS CONFIRMED FIXES. V70 FLEW AND
+GRIND #1 IS BACK AT THE STOCK LEVEL. THE DOSE AXIS THIS KIT HAS USED SINCE V62 IS THE WRONG LANE — r24
+IS NEAR-INERT AND r26 IS LIVE. AND THE RATCHET IS ENGAGEMENT-***REQUIRED***, WITH NO BUILD IN THIS KIT
+HAVING EVER MOVED IT. ⇒ V71 IS BUILT: BOTH FIXES RESTORED, PLUS A PROBE THAT READS THE GAIN IN FORCE.**
 
-✅ **THE SUPERSEDED FIRST V70 IS RENAMED AND OUT OF THE WAY** — `SUPERSEDED-DO-NOT-FLASH-…-V68CONTROLPATH-…`
-(`accord-firmwares` commit `9d44efc`). **Verified from the filesystem: exactly ONE flashable
-`V70`-prefixed file remains.** ⚠ The rename was load-bearing, not cosmetic: its cave is
-**byte-identical** to the current build's, so **the probe could not have told them apart on-car** — the
-filename was the only discriminator. Detail below.
+🛑🛑 **Read `RULE 3` at the top of `docs/BUILD-LINEAGE.md` before anything else in this file.**
+Full narrative: `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`.
 
 ---
 
-## 🛠 V70 — **BEING RE-CUT 2026-08-04.** On the car right now: **V69**.
+## 🛑🛑 1. BOTH CONFIRMED FIXES HAD FALLEN OFF THE CAR
 
-🛑 **A FIRST V70 WAS BUILT AND IS SUPERSEDED. DO NOT FLASH IT.** It restored V67/V68's control path
-(gate `0x3AA96` = `fb`, arm `0xC6446` = 5244, surface back to stock); image `8bfcb1fa…`, RWD
-`d716b1a5…`, pushed to `accord-firmwares` as commit `d920cee`. **The operator overrode it**, and he
-was right: *"V70 just reverts back to V68, which has the high-speed grind #2 issue."*
+**[EVIDENCE — byte-read across all 60 `_v*_plain_image.bin` in `../accord-firmwares/analysis-2020accord/`.]**
 
-★★ **WHY THAT BUILD WAS WRONG — and it is the session's most transferable lesson.** It optimised for
-the two symptoms our instruments can measure and dismissed the operator's high-speed report because
-there is no line in 30–49.5 Hz. **That inference was invalid: CAN's Nyquist is 50.00 Hz and the comma
-IMU's is 50.51, so BOTH vibration instruments are BLIND above 50 Hz**, and the acoustic inversion
-independently places the excess at a centroid of **63.5 Hz [54, 80]** — on `gp-0x6c2c`'s 61 Hz
-band-pass peak. **An instrument null inside a band the instrument cannot resolve is not evidence of
-absence.** The operator is the only instrument that can see that band, and his reports are a
-dose–response: the high-speed grind is present on V67/V68 (**2.44×** at highway) and he reported it
-**GONE** on V69 (**1.000×** = stock at highway).
-
-★ **And the arithmetic agrees: a scalar arm is the worst-shaped lever in the kit for that symptom.**
-It REPLACES a surface Honda rolls off 3072 → 2151, so `arm/LERP` **rises** with speed and peaks at
-highway — and the rate lane is a differentiator whose gain climbs with frequency, so the peak lands
-hardest exactly where he feels it. Delivered r24 multiplier at 0 km/h, from the image bytes:
-
-| operating point | V62 flat | **V67/V68 arm** | V69 ×4 | **×2 surface (V70)** |
+| lever | what it did | recorded as | actually carried by | how it was lost |
 |---|---|---|---|---|
-| grind #1 (rateKey 603) | 2.00 | 1.80 | 3.52 | **1.84** |
-| grind #2 creep (rateKey 1206) | 2.00 | **2.13** | 1.72 | **1.24** |
-| **engaged HIGHWAY ≥50 km/h** | 2.00 | **2.44** | 1.00 | **1.00** |
+| **`0x454FE`** `65BA`(`bne`) → `65B5`(`br`) | V42's **state-4 governor ratchet** kill | *"CONFIRMED ROOT CAUSE, carry forward"* | **V42–V52C only**; **stock in V53 → V70** | 🛑 **silent rebase loss** — V53+ descends from the V38/FOURFRAME branch point, which is *before* V42. **Nobody decided this** |
+| **`0x3AB76` + `0x3AC20`** `sar 0xa` → `0x9` | V62's **×2 on BOTH rate lanes** — the kit's only measured grind-#1 fix (8× at creep, 42× at \|rate\| 16–32) | the reference "2×" rung of the dose ladder | **V62 and V65 only** | ⚠ removed as **V66's confirmatory control**, **never restored**; the effect was then re-created twice in encodings that dose **r24 only**, and the ladder kept calling those "2×" |
 
-⇒ **V70 IS NOW V69's TOPOLOGY AT HALF THE DOSE.** Gate stays `c5` (dead), arm stays 512, and only the
-surface halves: `0xD2A7E`/`0xD2A80` 12288 → **6144**, `0xD2ABA`/`0xD2ABC` 10244 → **5122**. Delivered
-**2.000× to 10 km/h → 1.270 @40 → EXACTLY 1.000× at and above 50 km/h**, both arms. The edit-order
-invariant reverts to V69's form (`arm == 512 ⇒ gate == 0xc5`).
-**It attacks all three rather than trading them:** highway is **structurally** stock (the 2-point
-record interpolation reads only rec2/rec3, untouched); grind #1 gets **1.84×**, on the dose–response
-minimum near 2× that V62 flew to *"the original grinding at 2–5 mph is gone"*; and grind #2 at creep
-gets only **1.24×** — less than half V62's 2.00× that caused it — because the edit raises only the
-flat `[0,400]` rate segment while **19 of 24** recorded bursts sit at rateKey ≥ 1126. **That is better
-than V62 at grind #2, not a trade.** ✅ Max anywhere is exactly 2.000×, so every operating point stays
-inside the flown bracket [stock 1.00×, V62/V65 2.00×], both flight-clean.
-**The probe is unchanged from the superseded build** — bit6 `gp-0x6ada ≥ +512`, bit3 sign, bit5
-`gp-0x67fa == 10`, bit4 `gp-0x6adc` sign; T=512 still sizes correctly at this dose.
-⚠ **TWO HONEST LIMITS.** The high-speed evidence is the operator's **perception**, not an instrument —
-legitimate given the blindness above 50 Hz, but the mechanism is inferred from the arm's shape, not
-measured. And **1.84× at grind #1 is an interpolation**: the record has no measured dose between
-2.00× and 4.00×.
-### ✅ V70 AS BUILT — **BUILT 2026-08-04, UNFLASHED**
-```
-image  3760d9c0688bb1aa4ff05ca0aba60c46a6119895f12ce717814903a5e0290988
-rwd    0bdfb0da603cf4d0fbf5e2b21b2f783a20695f31f3c05a3ca0c045b51e7efe10
-39990-TVA,A160-V70-LKAS-4x-mss0-decouple0xC646C-ratelane-SPEEDSHAPED-gateREVERTED-
-gainB-rec0rec1-x2-signprobe-6ada-67fa10-6adc-can330byte4-0x13000-0x100000.rwd
-```
-Builder `analysis-2020accord/build_v70_tva.py` · verifier `verify_v70_image.py` · decoder
-`rlog-tools/decode_v70_probe.py`. **V70 vs V69 = 64 bytes = 56 functional (48 cave + 8 surface) +
-8 CRC (two blocks: the cave block and the `0xD2000` block), ZERO unattributed.** Gate and arm
-asserted **untouched** relative to V69; byte-identity to `_v69_plain_image.bin` asserted over all of
-`[0x13000,0x100000)` outside the cave, the surface bytes and the CRC trailers — in builder, verifier
-**and** on the decoded readback. ✅ 50/50 CRC PASS · **77 anchors PASS** · `diff_build_vs_stock.py
-v70` **0 unattributed** · self-test still fails informatively · reproducible bit-for-bit.
-⭐ **Orchestrator verified first-hand from the image bytes:** topology (gate `c5`, arm 512, both
-`sar` stock — all == V69), the surface (6144 / 5122, with rec0 Y[2..3] and rec2/rec3 stock), the
-full V69↔V70 diff, and the CRC walk.
-★ **Sweep-asserted, not argued (24,321 points):** **MAX anywhere = 2.000000×, MIN = 1.000000×** ⇒
-every operating point inside the flown bracket and **no point ever below stock**; and all **12,221**
-points at ≥3200 counts are **byte-identical to stock** ⇒ exactly 1.000000× at highway **on either
-axis scale**. ⚠ Honest limit the builder insisted on: the ×2 is *exact* at the two edited records'
-own breakpoints (0 and 640 counts) but the cross-axis `divq` truncates toward zero **between** them,
-so the ratio is bounded rather than exact there — worst case **0.000390 (0.0195%)** at 637 counts,
-one count of a Q10 gain.
-★ **Halving also repairs the one metric where V69 was worse than V68:** peak gain 6144 rails the r24
-lane at `|dtorque|` **1365** vs the recorded max **839** (margin **1.63×**) and V69's own flight max
-633.9 (2.15×). At ×4 the rail was **683 — BELOW the recorded max.** The builder now asserts
-`sat > 839` outright, so a future dose increase cannot silently re-cross it.
-⚠ **The superseded first cut is renamed `SUPERSEDED-DO-NOT-FLASH-…-V68CONTROLPATH-…rwd`** in the
-flash directory. ⚠ Its full path from a sibling checkout exceeds Windows MAX_PATH (280 chars) —
-open it from `flashing-2020accord/rwd/` or with an absolute short path.
+⇒ **From V66 to V70 the car carried NEITHER.** 🛑 **The `0x454FE` case is worse than bookkeeping:** the
+argument that later retired it as a cause of the *current* ratchet — *"`STEER_STATUS == 4` fires
+0/37,922"* — was **voided** when bus `STEER_STATUS` was shown not to be `gp-0x67fa`. **It was never
+actually eliminated.** ★ **And the second case is the more dangerous general form:** a lever removed
+*on purpose* as a control is, six builds later, indistinguishable from a lever that was never needed.
+**When you remove a confirmed fix to run a control, write the restore into the next build's spec.**
 
 ---
+
+## 🛠 2. ON THE CAR RIGHT NOW: **V70** (flown, route `50`). **V71 IS BUILT AND UNFLASHED.**
+
+### V71 — V70 carrier + both restored fixes + a gain-in-force probe
+
+⏳ **SHAs PENDING — see the V71 build report; they are deliberately not transcribed here.**
+
+| # | addr | before → after | what |
+|---|---|---|---|
+| 1 | `0x454FE` | `ba` → `b5` | **restore V42's ratchet fix** |
+| 2–3 | `0x3AB76` / `0x3AC20` | `aa` → `a9` | **restore V62's ×2 on BOTH lanes** |
+| 4–7 | `0xD2A7E`/`0xD2A80`/`0xD2ABA`/`0xD2ABC` | → **stock** | revert V69/V70's mode-10 surface |
+| 8 | `0xC4B34`… | the cave | the **gain-in-force** probe (below) |
+
+⇒ **the rate lane is byte-identical to V62/V65**, which flew **twice**, both flight-clean.
+CRC blocks `0xC4FFC` + `0xD2FFC`.
+★★ **WHICH HALF IS LOAD-BEARING, now that §3 is in: `0x3AB76` — the r26 `sar` — IS THE LEVER.**
+`0x3AC20` (the r24 `sar`) is restored **for exact V62 parity, NOT because r24's dose is expected to
+matter**: the clean single-variable r24 series reads flat across a 4:1 range (§3). Say it that way in
+any V71 pre-flight note, so a null on r24 is not later read as a null on the build.
+
+**Probe:** bit7 liveness · **bit6 `gp-0x671d != 0`** — ★★ **THE MASK: which gain is actually in force** ·
+**bit5 `gp-0x67fa == 4`** — 📋 **pre-registered BIMODAL ~100%/~0%**, a **complete** discriminator now
+that states 5 and 10 are excluded · **bit4 `gp-0x6ada >= +512`** — positive control, and **stronger
+here** because the `sar` doubles r24 under **every** branch · **bit3 `gp-0x671a >= 5`**.
+
+🛑 **THE `0x454FE` JUSTIFICATION, STATED HONESTLY AND KEPT STATED:** it is restored because it is a
+**confirmed fix lost by accident** — **NOT** because it is established to cause the current ratchet.
+§6's symmetry tension is evidence *against* that mechanism, and V71 does not resolve it.
+⚠ **KNOWN RISK, disclosed: V62 is also the build that introduced creep grind #2.** Restoring its lane
+may bring it back. Given r26 is now known live, that may have been **r26's** doubling rather than
+r24's — **untested.**
+
+---
+
+## ★★★★ 3. THE DOSE AXIS THIS KIT HAS USED SINCE V62 IS THE WRONG LANE
+
+### 3.0 🛑 THERE **IS** A CLEAN SINGLE-VARIABLE r24 SERIES, AND IT SAYS r24 IS NEAR-INERT
+
+**[EVIDENCE — medians recomputed from `_grind2_lib.wrecs`, not quoted from the record.]**
+**stock → V70 → V69 is a PURE r24 dose series with r26 held at ×1:**
+
+| build | r24 | r26 | median `e_18-22` (engaged creep) |
+|---|---|---|---|
+| stock | **×1** | ×1 | **879** |
+| **V70** | **×2** | ×1 | **729** |
+| **V69** | **×4** | ×1 | **746** |
+
+**All three CIs mutually overlapping** ⇒ 🛑 **r24 is close to INERT for grind #1 across a 4:1 dose
+range.** And the converse holds across the whole corpus: **every build that FIXED grind #1 changed
+r26** (V62 ×2; V67/V68 ÷6.00), and **every build that changed only r24 did not.**
+
+⇒ **The headline is NOT "nothing is single-variable".** It is: **the dose axis this kit has used since
+V62 is the wrong lane.** Correct any text that says otherwise.
+
+### 3.1 The structure — two selectors, one gate
+
+**[EVIDENCE — orchestrator-disassembled, both selectors read out of the image.]** r24 and r26 have
+**separate gain selectors** sharing **one** gate `lp`:
+
+**`r26 → gain_A`** — `0x3AB5E ld.hu 0x7444[tp],r8` (`0xC6444` = 512, taken when `lp != 0`) ▸
+`0x3AB68` `0xC643E` ▸ else **gain_A's own LERP (3072 at creep)**.
+**`r24 → gain_B`** — `0x3ABFE` `0xC6442` = 1024 (the `gp-0x671d` mask arm, **outranks all**) ▸
+`0x3AC08` `0xC6446` (when `lp != 0`) ▸ `0x3AC12` `0xC6440` = 2048 ▸ else **the mode-10 surface**.
+
+⇒ **V67/V68's ONE-BYTE gate repoint at `0x3AA96` raises r24 AND cuts r26 6.00× at once.**
+Net vs stock = `(5244 + 512·a) / (3072 + 3072·a)`, with `a = gp-0x69a4/1024`:
+
+| `a` | net vs stock |
+|---|---|
+| 0 | **1.707×** |
+| **0.848** | **1.000× — PARITY** |
+| > 0.848 | **BELOW stock** |
+
+**V69 and V70 edited gain_B only.** ⇒ 🛑 **every published multiplier in this kit is an r24-only number
+computed at `a = 0` — i.e. a number on the lane §3.0 shows to be near-inert.**
+
+★ **Four supporting byte facts, all [EVIDENCE]:**
+1. **gain_A's four records `0xC6A68` / `0xC6A7C` / `0xC6A90` / `0xC6AA4` are BYTE-IDENTICAL across all
+   11 images** ⇒ **V67/V68's ÷6.00 (= 512/3072) is EXACT, and engaged-only.**
+2. **The two LERPs live in separate RAM** — `gp-0x6e40`/`gp-0x6e38` for gain_B, `gp-0x6e30`/`gp-0x6e28`
+   for gain_A — filled by the **two halves of `FUN_0003ad74`**.
+3. **gain_B is filled from the MODE-INDEXED arrays; gain_A from FIXED, non-mode-indexed records.**
+   That is why V69/V70's mode-10 surface edit could not reach r26 even in principle.
+4. **There is NO `gp-0x671d` mask arm on the r26 side** — gain_A is **2 arms + default**, not 3.
+
+### 🛑 r26 IS LIVE — existence proof, and it REFUTES the inertness claim on-car
+
+**[EVIDENCE]** V70's probe read `gp-0x6adc` (r26's post-clamp mirror) **strictly negative on
+1,644 of 18,010 frames.** **A pinned-zero cell cannot clear a `>= 0` test.**
+⇒ **"r26 is inert / r24 carries the entire lane" is REFUTED** — not merely downgraded (§9.1).
+
+★ **New asymmetry [EVIDENCE]: `bit3 ⇒ bit4` STRICTLY** — **0 of 18,010** frames with r24 ≥ 0 while
+r26 < 0. **[BELIEF]** the natural reading is *"r26 is ZERO part of the time, same-signed otherwise"*,
+consistent with the shared polarity load (`ld.b -0x6752[gp],r14` @`0x3AB78`, reused at `0x3AB7E` for
+r26 and `0x3AC3E` for r24).
+
+⚠⚠ **AND HERE IS THE PART TO CARRY UNEXPLAINED — do not smooth it.** **r26 ×2 (V62/V65) AND r26 ÷6.00
+(V67/V68) BOTH HELPED, and ÷6 helped MORE** (median 168 vs 109 against stock's 879). **A monotone
+"more r26 damping is better" story and a monotone "less is better" story are both refuted by the same
+two rows. The corpus cannot say why, and that is the leading open question of this session.**
+🛑 **Anyone proposing an r26 dose must state which direction they are betting on and why** — the record
+does not supply it.
+
+★ **Independent bus-side support for the r26 attribution, arrived at WITHOUT the disassembly
+[EVIDENCE]:** median `e_18-22` by **bar-torque reversal count**, engaged creep — in the **rev ≥ 40**
+regime (where the ratchet lives), **V62 reads 396 against 1155–1403 for V59 / V64 / V69 / V70.**
+**V62 is the odd one out, and it is the only build with r26 ×2.**
+
+✅ **V62's `sar` route is the ONLY encoding whose dose is exact independently of `a`** — it scales both
+lanes identically, **2.000× on the total for every value of `a`.** That is why V71 restores this route
+rather than re-deriving the dose through a cal arm.
+
+### The ladder, re-read against what each build actually carried
+
+Median `e_18-22`, engaged creep:
+
+| build | r24 | r26 | median `e_18-22` |
+|---|---|---|---|
+| V61 | ×0 | ×0 | **2501** |
+| stock | ×1 | ×1 | **879** |
+| **V70** | ×2 | ×1 | **729** |
+| **V69** | ×4 | ×1 | **746** |
+| **V62 / V65** | **×2** | **×2** | **168** |
+| **V67 / V68** | gated arm | **÷6** | **109** |
+
+⇒ **r24's dose is FLAT from ×1 through ×4 (879 / 729 / 746 — §3.0), and both builds that fixed grind #1
+changed r26.** [EVIDENCE] is the **flatness of the r24 rung** and the **co-occurrence**; ⚠ the
+**direction** of the r26 effect is **not** established (see the unexplained ×2-and-÷6 result above).
+
+---
+
+## 4. ROUTE `50` — V70's FLIGHT
+
+**`75604b0a432fdc89_00000050--50f2e00e8f`**, segments 0–2, **181.6 s**, **18,010 frames**.
+✅ **FLIGHT-CLEAN:** `ST == 4` **0** and `ST == 3` **0**, on the gridded cache *and* the raw un-gridded
+`0x18F` stream; watchlist absent (`steerUnavailable`/`canError`/`controlsMismatch`/`immediateDisable`).
+⚠ **THE CENSUS MATTERS MORE THAN USUAL — this is a SMALL route.** Engaged **72.4 s**, manual
+**107.8 s**, **engaged creep 28.9 s**, **highway ≥ 50 km/h 7.9 s**, and **ZERO manual highway
+exposure**. **Segment 0 is PARKED — boot only.** Read every null below against that census, not `4f`'s.
+
+### 4.1 🛑 GRIND #1 IS BACK AT THE STOCK LEVEL — [EVIDENCE]
+
+Median `e_18-22`, engaged creep: **729.1**. Resampling **V70's exact 5-block structure** from each arm:
+
+| arm | verdict |
+|---|---|
+| stock | **CONSISTENT** (P = 0.635) |
+| V69 | **CONSISTENT** (P = 0.495) |
+| **V62 / V65** | **EXCLUDED** (P = 0.0000) |
+| **V67 / V68** | **EXCLUDED** (P = 0.0000) |
+
+Survives **(effort, |rate|)-matching**.
+⚠ **The 24–28 Hz negative control is NOT flat** — V70 reads **1.88× stock** there, because provoked
+steering raises the floor. Subject-band **excess over control** vs V62 is still **2.59×**, so the
+exclusion survives, but the raw ratio is inflated by a floor shift.
+⚠ **On the scale-free 18-22/24-28 ratio, V70 (37.4) sits BELOW stock (76.0).** 🛑 **That view does not
+rank-order the builds the way `e_18-22` does. Report both; pick neither.** The disagreement is itself
+the finding.
+
+★★ **A METHODOLOGICAL CORRECTION WORTH ITS OWN LINE: CI OVERLAP IS NOT A TEST.** The
+subsample-at-matched-exposure test above (resample V70's exact 5-block structure from each arm)
+**excludes V62's level at P < 5 × 10⁻⁵**, where a CI comparison called the same contrast undecided.
+⇒ **"V70 is not at V62's level" IS ESTABLISHED. Where V70 sits BETWEEN stock and V62 is NOT.** Both
+halves of that sentence are load-bearing; quote them together.
+
+🛑 **AND GRIND #1 IS BLIND TO r24 GAIN — this retires a MEASUREMENT TOOL, not just a hypothesis.**
+Log-log slope of median `e_18-22` on r24 gain: **−0.144 [−0.991, +0.347]** — **contains 0**; stock /
+V70 / V69 pairwise **indistinguishable** (P = 0.667 / 0.610 / 0.426). ⇒ **grind #1 cannot be used as an
+in-force check for the r24 lane on ANY future build.** That is a **structural** limit, not a power
+limit — more exposure will not fix it. ⊕ It also means **grind #1 cannot adjudicate the bit6
+(a)-vs-(b) question** (§5.1), so the bit6 zero carries that diagnostic load alone.
+
+### 4.2 GRIND #2 — not a regression, but **"gone" is NOT established**
+
+**0 bursts everywhere**, max **94.6** vs V62/V65's **1830.7**. But at V62's own burst rate:
+**P(0) = 0.34 engaged-creep · 0.56 corner · 0.98 highway**; power **66% / 44% / 2%.**
+⇒ **the highway cell says nothing at all.** And **V67 already eliminated engaged-creep grind #2**
+(P(0) = 0.0005), so a clean V70 creep arm **REPLICATES an already-clean arm — it does not credit V70.**
+🛑 **Do not write this up as "V70 fixed grind #2".**
+
+### 4.3 ★★★★ THE RATCHET — ENGAGEMENT-**REQUIRED**, Q ≈ 40, AND NO BUILD HAS EVER MOVED IT
+
+#### 4.3.1 🛑 ENGAGEMENT-**REQUIRED**, NOT ENGAGEMENT-CONDITIONAL — the grip confound is removed
+
+**[EVIDENCE]** Both arms **hands-off** (`|lowpass(tq, 3 Hz)| ≤ 300`), **creep < 4 m/s**, pooled over
+**four routes and four builds**:
+
+| route | engaged hands-off | manual hands-off | Fisher p |
+|---|---|---|---|
+| V70 `r50` | 4/5 = **80%** | 0/35 = **0%** | 5.5 × 10⁻⁵ |
+| V69 `r4f` | 22/27 = **81%** | 0/20 = **0%** | 9.4 × 10⁻⁹ |
+| V62 `r37` | 31/39 = **79%** | 0/39 = **0%** | 2.3 × 10⁻¹⁴ |
+| V59 `r2c` | 16/17 = **94%** | 0/24 = **0%** | 1.7 × 10⁻¹⁰ |
+| **POOLED** | **73/88 = 83.0%** | **0/118 = 0.0%** | **3.8 × 10⁻⁴¹** |
+
+**ZERO hits in 118 manual hands-off creep windows / 302 s across four builds.**
+⇒ 🛑🛑 **AND THE RATE IS BUILD-INDEPENDENT (80 / 81 / 79 / 94%) — NO BUILD IN THIS KIT HAS EVER MOVED
+THE RATCHET.** ⚠ **This SUPERSEDES the earlier "engagement-conditional, 44/46 windows" statement** —
+same phenomenon, far better-controlled data, far stronger claim.
+★ **And the converse: a hand on the wheel SUPPRESSES it while engaged** — V59 94% → 14%
+(p = 3.5 × 10⁻⁴), V69 81% → 37% (p = 4.5 × 10⁻³).
+
+#### 4.3.2 ★★★★ THE TRANSITION TRACE — the mechanism, second by second, at constant speed
+
+**[EVIDENCE — 4th-order Butterworth 6–9 Hz, `sosfiltfilt`, 2.56 s windows, hop 64; seg-local `t`,
+mono = t + 100.6; orchestrator-verified from `_cache_r50/r50s1.npz`.]**
+
+| seg1 `t` | mono | `lat` | effort | **RAW p-p** | **6–9 Hz p-p** |
+|---|---|---|---|---|---|
+| 27.5 | 128.1 | 0.00 | 2646 | **6502** | **190** |
+| 28.2 | 128.8 | 0.00 | 2235 | **6502** | 255 |
+| 33.3 | 133.9 | 0.00 | 942 | 3237 | 136 |
+| **33.9** | **134.5** | **0.06** | **320** | 1423 | **134** |
+| **34.6** | **135.2** | **0.31** | **441** | 3182 | **1179** |
+| 35.2 | 135.8 | 0.56 | 645 | 4039 | 2156 |
+| 36.5 | 137.1 | 1.00 | 998 | 5070 | **2452** |
+| 46.1 | 146.7 | 1.00 | 1548 | 4204 | 910 |
+| 46.7 | 147.3 | 1.00 | 2129 | 3019 | **273** |
+
+★★ **THE HEADLINE PAIR — use this one, it is the cleanest in the corpus.** `t = 33.9` (`lat` 0.06,
+effort 320) → **134 counts**; `t = 34.6` (`lat` 0.31, effort 441) → **1,179 counts**. **8.8× in 0.7 s**,
+with **speed FALLING (1.75 → 1.60 m/s)** and effort roughly flat — **speed moves the WRONG way for any
+confound.**
+**And the death is as sharp:** effort **1,548 → 2,129** over **0.6 s** collapses the band
+**910 → 273.** ⇒ **it comes on tracking `latActive` and goes off when the driver grips.**
+
+✅ **THE 6,502-vs-591 INSTRUMENT DISCREPANCY IS SETTLED, NOT OPEN.** At mono 127.5–128.1 the car is at
+`lat = 0.00`, effort **2,550–2,646**, speed 0.6–0.8 m/s, and the **6–9 Hz content is 190 counts**.
+⇒ **the 6,502 peak is RAW BROADBAND — the operator cranking the wheel, not the ratchet.**
+★ **THE RATCHET PROPER RUNS seg1 `t` ≈ 34.6 → 46.1 (mono 135.2 → 146.7), ~11.5 s.** 🛑 **Burst #0's
+ratchet onset is mono ≈ 135.2 — NOT 123.69. That is the clean-material window; correct any text using
+the older figure.**
+
+#### 4.3.3 🛑 A CORRECTION TO THE OPERATOR'S FRAMING — the causal order, not the facts
+
+**His hard manual provocation produced NO ratchet at all** (effort 2,500–2,900; 6–9 Hz p-p only
+**422–797**, prominence **1–6**). **The manoeuvres SET UP the condition** — creep, loaded wheel, LKAS
+about to take over — **and the ratchet fires when LKAS ENGAGES AND HE LETS GO.**
+★ **Both parts of his account are correct; the causal order is the other way round.** His report is
+**corroborated, not contradicted** — he identified the setup and the event, and named the right
+segments before the data did.
+
+#### 4.3.4 ★★★ Q ≈ 40 at f0 = 7.793 Hz — [EVIDENCE], and measured on the RIGHT data
+
+From a **12.81 s provoked episode**. ★ **The invariance test is what makes it real:** Q reads **39.0
+with a window cap of 54** and **40.0 with a cap of 111** — a window-limited estimate would have
+**doubled** when the cap doubled. It did not. ⇒ **ζ ≈ 0.0125, ~3× more lightly damped than the 21 Hz
+mode.**
+✅ **Q ≈ 40 CONFIRMS the record's Q ≈ 36.** 🛑 **The only thing SUPERSEDED is *"Q is not measurable at
+NFFT 256"* — the claim that it could not be measured, not the value.**
+✅ **And it is not contaminated by the driver's input** — the episode reconciles exactly with §4.3.2
+(envelope-based p-p, 2 × 2,452 = 4,904 ≈ 4,894; speed span matches `t` ≈ 33–46, i.e. the
+**post-engagement** window, **not** the cranking). That was the one real risk in the discrepancy and it
+is closed.
+⚠ **It rests on ONE episode** — a second ≥ 10 s episode would make it two. ⚠ **f0 drift inside the
+window would DEFLATE Q, so 40 is a LOWER BOUND**, not a point estimate.
+
+Also from route 50, all [EVIDENCE]:
+- **10 windows / 25.6 s at ≥ 1200 counts p-p, max 4,894.** Zero-crossing f0 **7.75 Hz**.
+- **Speed-invariant:** Theil-Sen **+0.068 [+0.005, +0.247]** Hz per m/s vs wheel-order-1's **0.482**.
+- **In the bar (prom 59), angle-rate (22), angle (15) — and NOT in openpilot's command (1.25)**
+  ⇒ **the loop closes inside the EPS + plant.** Replicates `4f`.
+- **Per-engaged-window ratchet rate is identical across builds** — V70 **32.1%**, V69 **34.4%**,
+  V62 **32.8%** ⇒ **V70 did not add ratchet events**, consistent with §4.3.1's build-independence.
+
+#### 4.3.5 ⇒ WHAT THE BUILD-INDEPENDENCE BUYS
+
+★★ **`0x454FE` is a genuinely UNTESTED lever for the ratchet** — it has **not been on the car during a
+single one of the four measurements above** (V59, V62, V69, V70 are all post-V53, all stock at
+`0x454FE`). ⚠ **That is a reason it is worth restoring; it is NOT evidence that it will work**, and
+§6's symmetry tension still argues against the mechanism.
+★★ **And four facts now fit into one picture:** *engagement-required* + *hands-off-conditional* +
+*Q ≈ 40* + *base-assist damping exactly ZERO below ~35 km/h* ⇒ **at creep, the driver's hand is the
+only damping in the system.** That is what makes §8's deferred FactorC/FactorE lever materially more
+compelling than when it was filed.
+
+### 4.4 "STIFFER" — no bus-side instrument sees it, and the proposed mechanism is REFUTED
+
+**[EVIDENCE — arithmetic.]** The clamp at `0x3AC42` is **HARD** (`clamp(., ±0x2000)`), **exactly linear
+below the rail**, and **V69 spent 0.0000% of engaged time at or above its 683 rail** (max **633.9**).
+⇒ **there is no compression difference to feel — the saturation story is REFUTED** (§9.4).
+Effort/impedance put V70 at **0.79–0.97×** every predecessor, **every CI containing 1**.
+**[BELIEF]** the likeliest referent is **the ratchet itself** — 4,894 counts at Q ≈ 40 arriving 0.8 s
+after engagement. No instrument separates "stiffer steering" from "a big ratchet event early".
+
+---
+
+## 5. THE PROBE READOUTS (V70, route 50)
+
+### 5.1 🛑🛑 bit6 (`gp-0x6ada >= +512`) READ **ZERO — 0/18,010 — AND IT IS NOT VACUOUS**
+
+**[EVIDENCE]** A replay through the **shipped** surface driven by **route 50's own data** predicts
+**311 hits**; **stock predicts 52.** Observed **0**. And `|dtorque|` off a 100 Hz grid is a **LOWER**
+bound, so **the gap cannot be closed in the safe direction.**
+⇒ **delivered gain < ~1574 Q10, below stock's 3072** ⇒ 🛑 **`0xC6442` = 1024 — the `gp-0x671d` mask
+arm — is the only arm in the selector that predicts exactly 0.**
+✅ **The identification is NOT the problem:** the orchestrator verified first-hand that
+`0x3AC42`–`0x3AC54` is `r24 = clamp(r6, ±0x2000)` and that `0x3AD5A st.h r24,-0x6ada,gp` stores exactly
+that, r24 unclobbered through the add chain.
+⚠⚠ **BUT THE ARM-SELECTION READING IS THE WEAKER ONE — SOFTENED 2026-08-04, and this matters.**
+**The same rung read 0 / 47,990 frames on V69's route `4f`, at DOUBLE V70's dose**, where it needed only
+**49 counts** of `|dtorque|` against a repo max of **839**. **That anomaly is far larger than V70's, and
+it does NOT fit arm selection**: under (b) the mask arm is **1024 on every build**, so it cannot produce
+a **dose-dependent** miss. And **V67's probe read `gp-0x671d` 0 / 150,327 on route 47**, so the mask
+would have to be set near-continuously on `4f` *and* `50` but never on `47`.
+⇒ **[BELIEF] (a) — an under-ranged or MIS-RECONSTRUCTED rung — is the better-supported reading.** The
+`dtorque` figure is a **4-sample 1 kHz difference rebuilt from a 100 Hz bus copy of a different,
+filtered torque cell**; polarity is the other candidate. **(b) arm selection is possible but less
+parsimonious. The corpus cannot settle it** — and per §4.1, grind #1 cannot adjudicate it either.
+
+🛑 **THE DURABLE PART IS THE LESSON, NOT THE MECHANISM: this is the FOURTH probe in a row to return an
+uninterpretable zero by reading a lane OUTPUT.** ⇒ **read the GAIN IN FORCE, not a lane output.**
+✅ **V71 answers it both ways** — `gp-0x671d` **directly** (bit6), plus a **two-sided, low-threshold**
+r24 mirror rung so an under-ranged reconstruction cannot hide again.
+
+### 5.2 ★★ bit5 (`gp-0x67fa == 10`) = **0.0000%** — FIVE BUILDS VINDICATED
+
+**[EVIDENCE]**, encoding independently verified. ⇒ **the aggregator ran** ⇒ **state ∈ {4, 5, 11}** ⇒
+**`FUN_00036388` and `FUN_000428d4` WERE INVOKED.**
+⇒ 🛑 **the `gp-0x67df` detector nulls on V64 / V67 / V68 are GENUINE, and the state-gate explanation
+for them is REFUTED.** The **pre-registered** prediction (*"bit5 reads LOW"*) held, which is what makes
+this interpretable rather than a lucky null.
+⚠ **It licenses "the call was made", NOT "the body ran."** `FUN_00046ea6(5)` on `gp-0x18d0` bit 5 —
+the detector's second, independent entry gate — **remains OPEN.**
+
+### 5.3 bit4 / bit3 — the r26 pair
+See §3. **bit4 tracked bit3 ⇒ r26 is LIVE**, and `bit3 ⇒ bit4` holds **strictly** (0/18,010 violations).
+
+---
+
+## 6. THE STATE MACHINE — THE CADENCE IS REFUTED AT INSTRUCTION LEVEL
+
+**[EVIDENCE — instruction level; gp-relative *and* absolute encodings both checked.]**
+
+**`gp-0x68ad` can NEVER be set in the field.** Both SET paths need permanently-zero flags: `gp-0x437c`
+(a UDS artifact) and — **newly closed** — `gp-0x679d`, whose sole writer `FUN_000567c0` @`0x567e2`
+reads `gp-0x67ba`, and **`gp-0x67ba` has exactly ONE access image-wide and ZERO writers.**
+`FUN_00019970` opens with `if (gp-0x68ad != 1) return;` ⇒ **4 → 5 NEVER FIRES; state 5 is DEAD CODE on
+the road.**
+
+**`gp-0x6d78` bit 15 is a ONE-WAY, OR-ONLY latch** — 15 sites, one writer (`FUN_000197b8` @`0x197ca`,
+`|= 1<<n`), **no clear anywhere image-wide** ⇒ **4 → 10 is a ONE-SHOT DRIFT; 10 → 4 can never fire
+afterwards.**
+
+⇒ 🛑 **State 4 is STICKY once entered, then leaves permanently. There is NO periodic cadence** —
+**refuted structurally, not merely unconfirmed.** With §5.2's 0.0000%, **the reachable set on a normal
+drive is {4, 11}.**
+
+⚠ **A TENSION TO CARRY, not to resolve by assertion.** The V42 substitution is **ASYMMETRIC** (it
+clamps command-magnitude *increases* and passes *decreases*), so continuously active it should print a
+**rectified** waveform. **Yet the ratchet measures SYMMETRIC** — skew **−0.16 … +0.06**, crest
+**2.07–2.45** against a sine's 1.414. ⇒ **evidence AGAINST the state-4 substitution shaping the
+CURRENT ratchet.** It is *not* evidence that restoring `0x454FE` is wrong — see §2 for how V71 states
+its justification.
+
+✅ **Safety re-verified against `_v70_plain_image.bin` [EVIDENCE]:** `FUN_0004595a` `[0x4595A,0x45A1F)`
+and `FUN_000462e6` `[0x462E6,0x46360)` are **0 diff bytes vs stock**; the DTC-0x1d-no-debounce path is
+unchanged. The *"the substitution only ever makes `gp-0x6ace` smaller ⇒ safe side"* argument
+**transfers**, but remains **[INFERRED]**, not verified. `0x454FE` sits in the bridged main CRC block
+`[0x13000, 0xC4FFC)`.
+
+🛑 **[OPEN]** what sets `gp-0x6d78` bits 15/16 mid-drive — `FUN_000197b8` has **21 callers, untraced**.
+That decides whether state 4 is sticky for a whole drive or only briefly.
+
+---
+
+## 7. THE AGGREGATOR IS ELIMINATED
+
+**[EVIDENCE — every ceiling byte-read.]** **All EIGHT zero-type range gates are STRUCTURALLY VACUOUS** —
+each capped by its own producer's ceiling at or inside its gate window, **on every drive, every build**:
+
+| lane | producer ceiling | gate window |
+|---|---|---|
+| boost | 512 | 2048 |
+| damping | **exactly 0 at creep** (FactorC `0xD27BC` Y[0] = 0, multiplicative; ≈ 35 km/h onset); ≤ 1024 at highway | 2048 |
+| friction | 511 | 1024 |
+| magnitude | ±0x3000 | **== window, exactly, inclusive** |
+| LKAS | ±0x2800 | **== window, exactly** |
+| `gp-0x6ade` | **0 writers** | — |
+| resonance | max 1024 (**164–341** at the ratchet's speeds) | 2800 |
+| return-centre `gp-0x6b62` | max 5786 | 8192 |
+
+⇒ **the aggregator stage contains NO reachable hard nonlinearity**, joining the aggregator **SUM**
+(V65, 120,049 frames). **The relay / limit-cycle framing for the aggregator is REFUTED** (§9.3).
+★ Also [EVIDENCE]: `FUN_00036388`'s own counters give **~20–40 ms or ~1 s** periods — nowhere near
+7.8 Hz ⇒ **it INHERITS the ratchet, it does not GENERATE it.**
+
+---
+
+## 8. ⚠ DEFERRED TO V72 — deliberately not stacked on V71
+
+★★ **ONE LEVER, AND IT IS NOW MATERIALLY MORE COMPELLING THAN WHEN IT WAS DEFERRED: FactorC + FactorE
+TOGETHER, re-read against the RATCHET.**
+**Base-assist damping is EXACTLY ZERO below ~35 km/h** (FactorC `0xD27BC` Y[0] = 0, multiplicative)
+while **the ratchet lives at 4.9–8.0 km/h with Q ≈ 40.** And **V47 — FactorC and FactorE raised
+TOGETHER — reported *"marginally quieter at 5 mph"*** and was filed **null against the 21 Hz
+vibration.** 🛑 **That positive whisper has never been evaluated against the RATCHET.**
+★★ **§4.3 is what strengthens it.** *Engagement-required* + *hands-off-conditional* + *Q ≈ 40* +
+*base-assist damping exactly zero below ~35 km/h* fit into a single picture:
+**at creep, the driver's hand is the only damping in the system.** ⚠ **Still DEFERRED** — it is a
+two-cal change on a lane V47 already touched, and it deserves its own single-variable drive.
+
+🛑🛑 **STRUCK 2026-08-04 — `0xC6444` IS NOT A LEVER. IT IS A NULL BY CONSTRUCTION.**
+**[EVIDENCE]** `0xC6444` is read **only** at `0x3AB5E`, and **only when `lp != 0`**. On **every gateless
+build** — stock, V62, V65, V69, V70, **V71** — the gate `0x3AA96` is `c5`, so `lp` derives from
+`gp-0x683c`, which has **0 writers image-wide** ⇒ **that load never executes.** **Raising it changes
+NOTHING** unless `0x3AA96` is *also* repointed — which reintroduces **the V67/V68 control path the
+operator rejected.** ⇒ **this supersedes the standing *"candidate, not a recommendation"* framing;
+it is not a candidate at all on the builds this kit is flying.**
+
+---
+
+## 9. 🛑 RETRACTIONS THIS SESSION — recorded as retractions, with what replaced each
+
+1. **"r26 is INERT / r24 carries the entire lane" — REFUTED ON-CAR.** LEG 2 was the last leg holding it
+   up; V70's bit4 killed it (1,644/18,010 strictly negative). **Replaced by §3.**
+2. **The "peak-velocity / rateKey collapse" hypothesis — DEAD ON SCALE B, ALIVE ONLY AT THE ~90th
+   PERCENTILE WORST INSTANT ON SCALE A. (A sharper retraction than "refuted", and the honest one.)**
+   🛑 **Its founding number was never a burst measurement.** `A_rk = 1927` is
+   `v70_parametric_gain_collapse.py:132` — **the top decile of the WHOLE-DRIVE `|rate|` distribution
+   (hard manoeuvres)**, not the rate index during a grind. **Measured directly over 424 burst
+   windows**, the oscillation's own 18–22 Hz rate swing is **p50 140 / p90 327 counts**; even **raw**
+   max `|rate_c|` in-window is **p50 542**. The monotone window needs **A_rk ≳ 1400**, reached by
+   **9.20%** of windows on scale A and **0.00%** on scale B.
+   Corroborating: grind #1 lives **97.8% (scale A) / 100% (scale B)** inside the flat `[0,400]` rate
+   segment over **19,378 burst samples / 11 routes**; re-pricing made Spearman **worse**
+   (−0.638 → −0.657). ⚠ **The two analysts disagreed and the orchestrator adjudicated — record the
+   adjudication:** the outcome data (V70 excluded from V62's class at P < 5 × 10⁻⁵) is **sound**, but
+   the rateKey axis is the **bus angle rate converted by an assumed scale** while `gp-0x6ac0` is the
+   **motor/resolver rate** — **a proxy that cannot settle it either way.**
+   **Replaced by:** §3 — r24 is near-inert and the lane was never the r24 lane, which accounts for the
+   same outcomes **with no rateKey claim at all.**
+3. **The aggregator zero-gate / relay hypothesis — REFUTED** (§7, all 8 vacuous).
+4. **"V69 ran just under saturation, so V70 feels stiffer" — REFUTED** (§4.4; hard clamp, 0.0000% at
+   the rail).
+5. **"Q is not measurable at NFFT 256" — SUPERSEDED** (§4.3). 🛑 **Note the scope precisely: Q ≈ 40
+   CONFIRMS the record's Q ≈ 36. The only thing superseded is the claim that Q could not be
+   measured** — not the value. ⚠ one episode; lower bound.
+6. **The "non-monotone dose–response with a minimum near 2×" is RETIRED.** It priced **every** build on
+   r24 alone at `a = 0`; with r26 live, V62/V65's "2×" and V69/V70's "2×/4×" were never the same
+   quantity. **Replaced by §3.**
+7. 🛑 **"Grind #1 can be used to check whether an r24 dose is in force" — RETIRED as an INSTRUMENT**
+   (§4.1). Log-log slope **−0.144 [−0.991, +0.347]**, pairwise P = 0.667 / 0.610 / 0.426. **Structural,
+   not a power limit.** **Replaced by:** V71's `gp-0x671d` mask rung, which reads the gain in force.
+8. ⚠ **"The ratchet is engagement-CONDITIONAL (44/46 windows)" — SUPERSEDED by a far stronger,
+   better-controlled statement: it is engagement-REQUIRED** (§4.3.1; **0 of 118** manual hands-off
+   creep windows across four builds, and the rate is **build-independent**).
+9. ⚠ **The bit6 "arm-selection" reading is DOWNGRADED to the weaker of two candidates** (§5.1) —
+   it cannot explain the **dose-dependent** miss on route `4f`. **Replaced by:** [BELIEF] an
+   under-ranged or mis-reconstructed rung, with the corpus unable to settle it.
+10. 🛑 **`0xC6444` is STRUCK as a lever — a NULL BY CONSTRUCTION, not "untested upward"** (§8). It is
+    read only at `0x3AB5E` and only when `lp != 0`; on every gateless build `gp-0x683c` has 0 writers,
+    so the load never executes. **This supersedes the standing "candidate, not a recommendation"
+    framing.** ✅ **BUT A SINGLE-VARIABLE r26 TEST DOES EXIST — via `gain_A`'s RECORDS, not the arm.**
+    [EVIDENCE, orchestrator byte-read] `gain_A` has the **same 4-record × 4-point layout on the same
+    `0xC6010` speed cross-axis** (`[0, 640, 3200, 6400]` counts = `[0, 10, 50, 100]` km/h) as `gain_B`:
+    rec0 `0xC6A68` Y=[3072,3072,2434,2048] · rec1 `0xC6A7C` Y=[3072,3072,2488,1536] · rec2 `0xC6A90` ·
+    rec3 `0xC6AA4`. ⇒ **doubling rec0/rec1's WHOLE rate axis doses r26 alone, below 50 km/h, and is
+    EXACTLY 1.000× at and above 50 km/h by construction** (rec2/rec3 untouched — V69/V70's proven
+    structural guarantee, applied to the lane that actually matters). **That is V71B.**
+
+---
+
+## ⇒ ★★★ NEXT
+
+1. **Fly V71** (operator's call; flash only on explicit instruction naming the file and the bus). It is
+   the **first build since V65 whose rate lane is byte-identical to a twice-flown, flight-clean
+   configuration**, plus a lever the record says was confirmed and then lost by accident.
+2. **The two verdict-affecting reads V71 buys:** **bit6 `gp-0x671d != 0`** answers §5.1's four-in-a-row
+   zero directly — *which gain is in force* — and **bit5 `gp-0x67fa == 4`** is a **complete**
+   discriminator now that 5 and 10 are excluded, **pre-registered bimodal**.
+3. 🛑 **Do not stack V72's two levers onto V71** (§8). One of them (FactorC/FactorE) is the most
+   under-examined positive whisper in the archive and deserves its own single-variable drive.
+4. 🛑 **Do not re-quote any pre-2026-08-04 rate-lane multiplier without saying it is r24-only at
+   `a = 0`** (§3).
+
+---
+
+★★★ **THE PRIOR HEADLINE, 2026-08-04: V69 FLEW AND GRIND #1 CAME BACK AT CREEP.**
+→ Kept for the route `4f` measurements, which stand. 🛑 **THREE of its conclusions have since
+been retracted or superseded and are marked in place below:** its **dose–response ladder** priced every
+build on r24 alone at `a = 0` (**RETIRED** — THE HEADLINE §3), its **§7 "r26 is inert" split** is now
+**REFUTED on-car** (THE HEADLINE §3), and its **§4 "Q is not measurable"** is **SUPERSEDED**
+(**Q ≈ 40**, THE HEADLINE §4.3).
 
 **Route `4f--61171e660d`** — 8 segments, **481.7 s**, 47,990–47,996 frames. Full narrative:
 `docs/HANDOFF-2026-08-04-v69-flew-grind1-back-at-creep.md`.
@@ -152,6 +577,12 @@ structural prediction, measured. ⚠ **The other half — "elevated vs V67/V68 a
 **633.9**, **0.0000%** above V69's 683 rail ⇒ **≥ 99.9% of engaged time received the full 4.000×.**
 The pre-flight 0.81× margin worry did not bite, and the result below **cannot** be explained as clipping.
 
+🛑🛑 **RETIRED 2026-08-04 — READ THE HEADLINE §3 INSTEAD. The ladder below prices EVERY build on r24
+alone at `a = 0`.** r26 is now known **LIVE** on-car (1,644/18,010 frames strictly negative), so
+V62/V65's "2×" (both lanes, via `sar`) and V69/V70's "2×/4×" (gain_B only) **were never the same
+quantity**, and *"a minimum near 2×"* was an artefact of pricing them as if they were. The **numbers**
+below are measurements and stand; the **dose labels** on them do not.
+
 ★★★ **THE DOSE–RESPONSE IS NON-MONOTONE — the session's central result.** Median `e_18-22`, engaged
 creep:
 
@@ -177,7 +608,15 @@ EVIDENCE.** Two candidates both fit every number above:
 **(a)** a plain derivative-feedback optimum, overshot;
 **(b)** a **parametric gain collapse** — `gp-0x6ac0` is loaded **`ld.hu` (UNSIGNED) @ `0x3AAC4`**, so the
 gain index sweeps **0 → peak → 0 twice per cycle**, and V69 turned Honda's **2.0× rate rolloff into
-8.0×**, making the damper **weakest at peak velocity**. Modulation depth at `A_rk` 1927: **1.00×**
+8.0×**, making the damper **weakest at peak velocity**.
+🛑 **PROVENANCE CORRECTION 2026-08-04 — `A_rk = 1927` WAS NEVER A BURST MEASUREMENT.** It is
+`v70_parametric_gain_collapse.py:132`, the **top decile of the WHOLE-DRIVE `|rate|` distribution**
+(hard manoeuvres), not the rate index during a grind. Measured directly over **424 burst windows**, the
+oscillation's own 18–22 Hz rate swing is **p50 140 / p90 327 counts**, and even raw max `|rate_c|`
+in-window is **p50 542**. The monotone window needs **A_rk ≳ 1400** — reached by **9.20%** of windows on
+scale A and **0.00%** on scale B. ⇒ **the hypothesis survives on scale A only, at the ~90th-percentile
+worst instant, and is DEAD on scale B.** See THE HEADLINE §9.2.
+Modulation depth at `A_rk` 1927: **1.00×**
 (V67's flat arm) / **1.49×** (V62) / **5.96×** (V69), with the effective-gain crossover at `A_rk` ≈
 **1300** (orchestrator) and **1200–1330** (`RateLaneTrace`, Fourier on the integer chain) — **two
 methods.** ⚠ (b) explains the engagement-conditionality more naturally, but that is not a discriminator
@@ -240,10 +679,17 @@ oscillator.**
 
 **Engagement-conditional:** **44/46 windows engaged, 0 manual**; Fisher one-sided **p = 4.6 × 10⁻⁵**;
 matched **6.65 [2.45, 12.85]** vs null [1.03, 3.96].
+⚠ **SUPERSEDED 2026-08-04 — THE HEADLINE §4.3.1.** The grip confound is now removed (both arms
+hands-off, creep < 4 m/s) and pooled over four routes: **73/88 = 83.0% engaged vs 0/118 = 0.0% manual,
+p = 3.8 × 10⁻⁴¹**. ⇒ the ratchet is **engagement-REQUIRED, not merely conditional**, and the rate is
+**build-independent (80/81/79/94%) ⇒ no build in this kit has ever moved it.**
 
 ⚠ **Widen the record's "creep only"** — one **4,843-count** episode at **12.7 m/s**.
-⚠ **Q is NOT measurable at NFFT 256** (the main lobe caps it at ~13.3) ⇒ the recorded **Q ≈ 36** is
-**neither confirmed nor refuted** here.
+⚠ ~~**Q is NOT measurable at NFFT 256** (the main lobe caps it at ~13.3) ⇒ the recorded **Q ≈ 36** is
+**neither confirmed nor refuted** here.~~ 🛑 **SUPERSEDED 2026-08-04 — THE HEADLINE §4.3: Q ≈ 40 at
+f0 = 7.793 Hz**, measured on route 50 from a 12.81 s provoked episode and confirmed by a **window-cap
+invariance test** (39.0 at cap 54, 40.0 at cap 111). ⚠ **One episode; and f0 drift would DEFLATE it, so
+40 is a LOWER BOUND.** The statement above was true of `4f`'s windows and is kept for that reason.
 ⚠ **The "amplitude-saturated / flat-topped" premise behind V69's rung choice is NOT what `4f` shows** —
 crest **2.07–2.45** on a band-pass where a steady sine gives **1.414**, and **no flat-topping on any
 filter**. **BELIEF-level re-framing; flag it for re-examination**, do not treat the saturation model as
@@ -341,6 +787,13 @@ from a V68/V69 image** — high confidence it is unchanged (far outside any cave
 
 ### 7. ★★★ THE "r26 IS INERT" CLAIM SPLITS — one leg REVERSED, one DOWNGRADED
 
+🛑🛑 **RESOLVED ON-CAR 2026-08-04 — LEG 2 IS NOW REFUTED, NOT MERELY BELIEF. READ THE HEADLINE §3.**
+V70's bit4 read `gp-0x6adc` **strictly negative on 1,644 of 18,010 frames**, and **a pinned-zero cell
+cannot clear a `>= 0` test** ⇒ **r26 is LIVE.** The prediction table at the end of this section was
+**non-vacuous in both directions and it fired in the "r26 is LIVE" direction.** Everything below is
+kept as the reasoning that set up that measurement; **the verdict is settled, and "r24 carries the
+entire lane" is gone.**
+
 🛑 **This is NOT a flat reversal of the whole claim** — writing it that way would be the mirror image of
 the original error. The claim rested on **two independent legs** and they resolved differently.
 
@@ -388,7 +841,13 @@ always carry the same sign.** Therefore `sign(gp-0x6adc)` vs `sign(gp-0x6ada)` i
 
 **Non-vacuous in both directions. Resolvable on the next drive.**
 
-⚠ **`0xC6444` — a CANDIDATE, NOT A RECOMMENDATION.** Raising it is genuinely **UNTESTED**: V42 tested it
+🛑🛑 **STRUCK 2026-08-04 — `0xC6444` IS A NULL BY CONSTRUCTION, NOT A CANDIDATE.** [EVIDENCE] it is read
+**only** at `0x3AB5E` and **only when `lp != 0`**; on every **gateless** build (stock, V62, V65, V69,
+V70, V71) the gate `0x3AA96` is `c5`, so `lp` derives from `gp-0x683c`, which has **0 writers
+image-wide** ⇒ **the load never executes and raising it changes nothing**, unless `0x3AA96` is also
+repointed — which reintroduces the control path the operator rejected. **THE HEADLINE §8.**
+The paragraph below is the superseded framing, kept for the reasoning:
+⚠ ~~**`0xC6444` — a CANDIDATE, NOT A RECOMMENDATION.**~~ Raising it is genuinely **UNTESTED**: V42 tested it
 **downward** (512 → 0, FALSIFIED) — the same *"tested downward ≠ tested upward"* distinction the
 V61 → V62 correction turned on. Blast radius **1 reader / 0 writers, no float mirror, same CRC block #48
 as `0xC6446`**, overflow ceiling ≤ **6553**. 🛑 **V70 does not take it** — `a` is unmeasured and
@@ -1540,11 +1999,18 @@ gain reducer. This is what pulls eps down from the raw-LERP values.
 
 ---
 
-## ★★ V70's PROBE — design detail (the build itself is in THE HEADLINE)
+## ★★ V70's PROBE — design detail (**it has now FLOWN**; the readouts are in THE HEADLINE §5)
 
-🛑 **This is NOT a build-status block** — SHAs, filenames and the control path live in
-**"V70 — BEING RE-CUT"** at the top of this file, because they change on every re-cut. **The probe does
-not**: it is unchanged from the superseded first V70, and everything below holds for any V70 cut.
+✅ **FLOWN 2026-08-04 on route `50`. Outcome in one line:** **bit6 = 0/18,010 and it is NOT vacuous**
+(the replay predicts 311 hits on route 50's own data, stock predicts 52) ⇒ the delivered gain is
+**below stock** and `0xC6442` = 1024 is the only arm predicting 0; **bit5 = 0.0000%** ⇒ the five-build
+detector null is **GENUINE**; **bit4 tracked bit3** ⇒ **r26 is LIVE**, refuting the inertness claim.
+📋 **The pre-registered prediction at the bottom of this section (bit5 reads LOW) HELD** — which is
+what makes that null interpretable rather than lucky. **The design rationale below stands as written.**
+
+🛑 **This is NOT a build-status block** — SHAs, filenames and the control path live in the
+**"On the car right now — V70"** block further down. **The probe is unchanged from the superseded first
+V70**, and everything below holds for any V70 cut.
 
 ✅ **DONE — the superseded first V70 is renamed `SUPERSEDED-DO-NOT-FLASH-39990-TVA,A160-V70-…-LKASGATED-
 V68CONTROLPATH-…rwd`** and pushed (`accord-firmwares` **`9d44efc`**). The flash directory now holds
@@ -1617,7 +2083,24 @@ both directions** — the failure every V69 rung shared.
 🛑 **Flash only on explicit operator instruction naming the file and the bus.**
 
 
-## On the car right now — **V69** (flashed, driven route `4f--61171e660d` 2026-08-04)
+## On the car right now — **V70** (flashed, driven route `50--50f2e00e8f` 2026-08-04)
+
+**V70 = V69's gateless topology at half the dose** (gate `0x3AA96` stays `c5` (dead), arm `0xC6446`
+stays 512; `0xD2A7E`/`0xD2A80` 12288 → **6144**, `0xD2ABA`/`0xD2ABC` 10244 → **5122**) + the 4-bit
+**sign probe**. Delivered **2.000× to 10 km/h → 1.000× at and above 50 km/h**, r24 only.
+✅ **Flight-clean** (`ST==4` 0, `ST==3` 0, both methods). **See THE HEADLINE for the full route-50
+result.** Summary: **grind #1 is BACK at the stock level** (median `e_18-22` engaged creep **729.1**;
+CONSISTENT with stock P = 0.635 and V69 P = 0.495, **EXCLUDED** from V62/V65 and V67/V68 at
+P = 0.0000); **grind #2 shows 0 bursts but "gone" is NOT established** (highway power 2%); **the
+ratchet's Q is measured at ≈ 40**; **bit6 read an uninterpretable zero, bit5 read 0.0000% and
+vindicated five builds, and bit4 proved r26 LIVE.**
+⇒ ★★★ **V71 IS BUILT AND UNFLASHED** — both lost confirmed fixes restored (`0x454FE`, `0x3AB76`/
+`0x3AC20`), the surface reverted to stock, and a probe that reads **the gain in force** rather than a
+lane output. SHAs in the V71 build report.
+
+---
+
+## Previously on the car — **V69** (flashed, driven route `4f--61171e660d` 2026-08-04)
 
 **V69 = the gate REVERTED + Honda's own low-speed rate-gain surface scaled ×4** (`0x3AA96` `fb`→`c5`,
 `0xC6446` 5244→512, `0xD2A7E`/`0xD2A80` 3072→12288, `0xD2ABA`/`0xD2ABC` 2561→10244) + the RATCHET probe.
@@ -1626,10 +2109,10 @@ Image SHA `48bb4192…`, RWD SHA `e62fcbba…`. See THE HEADLINE at the top of t
 is BACK at creep (2.244 [1.438, 3.191] vs V62, holding under both resampling units); the dose–response is
 NON-MONOTONE with a minimum near 2×; the lane-change transient — V69's stated purpose — is
 DOSE-INDEPENDENT; all three probe rungs failed for the reasons in §5.**
-⇒ ★★★ **V70 IS BUILT AND UNFLASHED**, with a repaired 4-rung probe that measures the two unknowns worth
-spending bits on (`gp-0x67fa`'s runtime state, and r26's liveness). 🛑 **Two `.rwd` files carry a V70
-prefix; the superseded first cut has the OPPOSITE control path and a byte-identical cave, and is now
-renamed `SUPERSEDED-DO-NOT-FLASH-…`** (`9d44efc`, filesystem-verified).
+⇒ **V70 has since flown and answered both** — `gp-0x67fa == 10` reads **0.0000%** and **r26 is LIVE**;
+see THE HEADLINE. 🛑 **Two `.rwd` files carry a V70 prefix; the superseded first cut has the OPPOSITE
+control path and a byte-identical cave, and is renamed `SUPERSEDED-DO-NOT-FLASH-…`** (`9d44efc`,
+filesystem-verified).
 
 ---
 
@@ -1640,7 +2123,9 @@ renamed `SUPERSEDED-DO-NOT-FLASH-…`** (`9d44efc`, filesystem-verified).
 (0.55 [0.35, 0.65]), creep grind #2 ELIMINATED (0 bursts in 113 s vs 24 at Kd = 2×), the gate confirmed
 on-car, `gp-0x671d` never fired**, and the new highway symptom shows **no rate-lane dose response**.
 ⚠ **RE-READ 2026-08-04 — V67's GATE MAY ALSO CUT r26 6.00×, and this is now an OPEN question rather than
-a settled harmlessness.** The repoint makes **both** cal arms live under LKAS, and `0xC6444` (r26's arm)
+a settled harmlessness.** ⊕ **RESOLVED 2026-08-04: r26 IS live, so this IS a 6.00× cut whenever the
+gate is repointed — and `0xC6444` is only reachable ON such a build** (THE HEADLINE §3, §8).
+The repoint makes **both** cal arms live under LKAS, and `0xC6444` (r26's arm)
 stays at **512** against r26's live LERP value of **3072**. That was recorded as harmless *because r26
 was believed inert* — a justification that no longer stands on its own (THE HEADLINE §7: the GATE leg is
 reversed, the MAGNITUDE leg is only BELIEF). **If r26 is live, V67/V68 is "r24 up 2×, r26 down 6×"**, and
@@ -2048,12 +2533,14 @@ re-reading the disassembly independently. Nothing below is a settled replacement
 🛑 **THE `status` COLUMN BELOW IS STALE FOR V67 AND EARLIER — READ IT AS A BUILD NOTE, NOT A FLASH
 STATUS.** Every row that says "BUILT, UNFLASHED" for V62/V67 was written before those builds flew.
 **`docs/BUILD-LINEAGE.md` Part 4 and "On the car right now" above are the authorities on what has been
-flashed.** Flash order since: **V62 → V64 → V65 → V67 → V68 → V69 (on the car now, 2026-08-04).**
+flashed.** Flash order since: **V62 → V64 → V65 → V67 → V68 → V69 → V70 (on the car now, 2026-08-04).**
+⏳ **V71 is BUILT and UNFLASHED** — V70 carrier + `0x454FE` `ba`→`b5` + `0x3AB76`/`0x3AC20` `aa`→`a9` +
+the mode-10 surface reverted to stock + a **gain-in-force** probe. **SHAs in the V71 build report.**
 
 | build | what | status |
 |---|---|---|
 | ★★★ **V69** | the gate REVERTED + Honda's own low-speed rate-gain surface scaled **×4** + the RATCHET probe | 🛑 **FLASHED 2026-08-04, driven route `4f--61171e660d` → grind #1 is BACK at creep and the dose–response is NON-MONOTONE.** See THE HEADLINE. Flight-clean; the dose was fully delivered; all three probe rungs failed. **Do not re-flash for grind #1.** Image `48bb4192…`, RWD `e62fcbba…` |
-| ★★★★ **V67** | **V66 + the grind #1 fix, GATED ON LKAS** — `0x3AA96` `c5`→`fb` + `0xC6446` 512→5244, both `sar` sites STOCK | ✅ **BUILT 2026-08-01, UNFLASHED. ★★★★ THE OPERATOR'S CHOICE FOR THE LONG DRIVE.** ★★★★ **THE FIX, AND THE OPERATOR'S CHOICE FOR THE LONG DRIVE.** V66's calibration and reverts, plus the grind #1 fix made conditional on LKAS. **LKAS off is byte-for-byte STOCK base steering; LKAS on gets 2.00× at grind #1's operating point** (creep 7.2 km/h, 128 deg/s, LERP 2622 ⇒ arm 5244). ✅✅ **THE GATE IS VALIDATED ON-CAR BEFORE THE FLASH** — V57's own probe put `(gp-0x6806 == 0)` on `0x14A` byte4 bit6 and flew routes `28`/`29` in July, and nobody had correlated it: **99.90% / 99.94% agreement with `carControl.latActive`** over **37,914 frames** at two very different duty cycles (21.73% / 49.88%), with **0.0505 / 0.0300 transitions per second**. ⇒ `gp-0x6806 != 0` **is** "LKAS is applying"; it does **NOT** drop out during steady engaged holding (the one ambiguity static analysis could not close — it is a ramp-FSM phase flag whose "settled" phases 5/6/7 could not be ruled out); and it toggles **three orders of magnitude** below the 21/45 Hz modes, so the parametric-pump criterion passes with enormous margin. Reproduce with `analysis-2020accord/validate_gp6806_gate.py`. ⭐ **Orchestrator-verified independently from the built image.** **15 bytes off V66**, restricted to `[0x13000,0x100000)`: `0x3AA96` (1), cave `0xC4B46`/`0xC4B52`/`0xC4B54`/`0xC4B56` (4), MAIN CRC (4), `0xC6446` (2), CAL CRC (4). The repoint leaves **hw1 untouched** and the result `84 7f fb 97` differs from the real `ld.bu -0x6806[gp],r12` = `84 67 fb 97` @`0x02A1B6` **only in the reg2 field**. `0xC6444` (r26's arm on the same gate) stays **stock 512** — ~~r26 is inert~~ 🛑 **CORRECTED 2026-08-04: that justification no longer holds on its own.** The GATE leg of the inertness claim is reversed and the MAGNITUDE leg is only BELIEF (THE HEADLINE §7). **If r26 is live, leaving `0xC6444` at 512 while the gate is repointed is a 6.00× CUT on r26 whenever LKAS applies** (its live LERP value at creep is 3072) ⇒ V67/V68 would be *"r24 up 2×, r26 down 6×"*. ⚠ The dose–response argues `a` is small, i.e. that the cut is immaterial — **but that is an inference, not a measurement.** V70's `gp-0x6adc`/`gp-0x6ada` sign pair settles it. Both `sar` sites confirmed **stock `0xa`**, `0x3AB70` untouched, `0xD2000` block and **all four** mode-10 `gain_B` records byte-identical to V66. 50/50 CRC; x31 checksum PASS; **the RWD decodes exactly back to the image**. GATE 1 **vacuous** — the repoint is a read-only load displacement claiming no RAM, and the cave's sole store is the existing CAN-330 payload byte with bits 2:0 preserved. GATE 2 is **measured, not argued**: the lane is a **derivative ⇒ DC-neutral**, so a gain step at engagement is not a torque step, and the gate's toggle rate is the table above. Arithmetic `5120 × 5244 = 26.8 M` = **1.25% of INT32_MAX**; the lane saturates at |dtorque| ≥ 1599 against a measured 123–839. **Probe** (`0x14A` byte4): **bit7** liveness · **bit6** `gp-0x6806 != 0` (**the gate** — low duty while engaged ⇒ wrong cell and V67 is inert) · **bit5** `gp-0x671d != 0` (**the masking risk** — it OUTRANKS the arm and pins the gain to `0xC6442` = 1024, *below* stock, so if it fires V67 is worse than V66) · **bit4** `gp-0x671a >= 5` (the third arm). Cave re-decoded from the built image; the odd displacement `-0x671d` (bit 0 in **hw1 bit 5**) and the even `-0x671a` / `-0x6806` all encoded correctly. ⚠ bit4 **hardcodes 5** rather than reading cal `0xC64FA`; the cal is 5 and V67 does not move it, but a future change to `0xC64FA` would silently desync the probe from the firmware. 🛑 **GRIND #2 SURVIVES UNDER LKAS**, at **2.21×** — slightly above V62's 2.00×, because a scalar arm does not follow the LERP's own rolloff. That is the stated cost of an LKAS gate: measured gating is **98.7%** engaged for grind #1 but **84.3%** for grind #2 against a **54.7%** base rate. `0xC6446` is one halfword and is the knob for that trade. 🛑 **Do not read a V67 null without decoding the probe first** — that is the V64 lesson. Decoder `rlog-tools/decode_v67_gate.py`. Image SHA `5e01bcc4b34a52831fd524cb9af765a01a8dfa3e2c4782d81b3efcb6c94f8c96`; RWD SHA `33457613ea8635686baf94833e75688fe200c616d76cb4b38b3152d4a47a1caf` |
+| ★★★★ **V67** | **V66 + the grind #1 fix, GATED ON LKAS** — `0x3AA96` `c5`→`fb` + `0xC6446` 512→5244, both `sar` sites STOCK | ✅ **BUILT 2026-08-01, UNFLASHED. ★★★★ THE OPERATOR'S CHOICE FOR THE LONG DRIVE.** ★★★★ **THE FIX, AND THE OPERATOR'S CHOICE FOR THE LONG DRIVE.** V66's calibration and reverts, plus the grind #1 fix made conditional on LKAS. **LKAS off is byte-for-byte STOCK base steering; LKAS on gets 2.00× at grind #1's operating point** (creep 7.2 km/h, 128 deg/s, LERP 2622 ⇒ arm 5244). ✅✅ **THE GATE IS VALIDATED ON-CAR BEFORE THE FLASH** — V57's own probe put `(gp-0x6806 == 0)` on `0x14A` byte4 bit6 and flew routes `28`/`29` in July, and nobody had correlated it: **99.90% / 99.94% agreement with `carControl.latActive`** over **37,914 frames** at two very different duty cycles (21.73% / 49.88%), with **0.0505 / 0.0300 transitions per second**. ⇒ `gp-0x6806 != 0` **is** "LKAS is applying"; it does **NOT** drop out during steady engaged holding (the one ambiguity static analysis could not close — it is a ramp-FSM phase flag whose "settled" phases 5/6/7 could not be ruled out); and it toggles **three orders of magnitude** below the 21/45 Hz modes, so the parametric-pump criterion passes with enormous margin. Reproduce with `analysis-2020accord/validate_gp6806_gate.py`. ⭐ **Orchestrator-verified independently from the built image.** **15 bytes off V66**, restricted to `[0x13000,0x100000)`: `0x3AA96` (1), cave `0xC4B46`/`0xC4B52`/`0xC4B54`/`0xC4B56` (4), MAIN CRC (4), `0xC6446` (2), CAL CRC (4). The repoint leaves **hw1 untouched** and the result `84 7f fb 97` differs from the real `ld.bu -0x6806[gp],r12` = `84 67 fb 97` @`0x02A1B6` **only in the reg2 field**. `0xC6444` (r26's arm on the same gate) stays **stock 512** — ~~r26 is inert~~ 🛑 **CORRECTED 2026-08-04: that justification no longer holds on its own.** The GATE leg of the inertness claim is reversed and the MAGNITUDE leg is only BELIEF (THE HEADLINE §7). **If r26 is live, leaving `0xC6444` at 512 while the gate is repointed is a 6.00× CUT on r26 whenever LKAS applies** (its live LERP value at creep is 3072) ⇒ V67/V68 would be *"r24 up 2×, r26 down 6×"*. ⚠ The dose–response argues `a` is small, i.e. that the cut is immaterial — **but that is an inference, not a measurement.** V70's `gp-0x6adc`/`gp-0x6ada` sign pair settles it. Both `sar` sites confirmed **stock `0xa`**, `0x3AB70` untouched, `0xD2000` block and **all four** mode-10 `gain_B` records byte-identical to V66. 50/50 CRC; x31 checksum PASS; **the RWD decodes exactly back to the image**. GATE 1 **vacuous** — the repoint is a read-only load displacement claiming no RAM, and the cave's sole store is the existing CAN-330 payload byte with bits 2:0 preserved. GATE 2 is **measured, not argued**: the lane is a **derivative ⇒ DC-neutral**, so a gain step at engagement is not a torque step, and the gate's toggle rate is the table above. Arithmetic `5120 × 5244 = 26.8 M` = **1.25% of INT32_MAX**; the lane saturates at \|dtorque\| ≥ 1599 against a measured 123–839. **Probe** (`0x14A` byte4): **bit7** liveness · **bit6** `gp-0x6806 != 0` (**the gate** — low duty while engaged ⇒ wrong cell and V67 is inert) · **bit5** `gp-0x671d != 0` (**the masking risk** — it OUTRANKS the arm and pins the gain to `0xC6442` = 1024, *below* stock, so if it fires V67 is worse than V66) · **bit4** `gp-0x671a >= 5` (the third arm). Cave re-decoded from the built image; the odd displacement `-0x671d` (bit 0 in **hw1 bit 5**) and the even `-0x671a` / `-0x6806` all encoded correctly. ⚠ bit4 **hardcodes 5** rather than reading cal `0xC64FA`; the cal is 5 and V67 does not move it, but a future change to `0xC64FA` would silently desync the probe from the firmware. 🛑 **GRIND #2 SURVIVES UNDER LKAS**, at **2.21×** — slightly above V62's 2.00×, because a scalar arm does not follow the LERP's own rolloff. That is the stated cost of an LKAS gate: measured gating is **98.7%** engaged for grind #1 but **84.3%** for grind #2 against a **54.7%** base rate. `0xC6446` is one halfword and is the knob for that trade. 🛑 **Do not read a V67 null without decoding the probe first** — that is the V64 lesson. Decoder `rlog-tools/decode_v67_gate.py`. Image SHA `5e01bcc4b34a52831fd524cb9af765a01a8dfa3e2c4782d81b3efcb6c94f8c96`; RWD SHA `33457613ea8635686baf94833e75688fe200c616d76cb4b38b3152d4a47a1caf` |
 | ★★★★ **V66** | **V65 with BOTH `sar` immediates reverted to stock + a 3-bit GATE PROBE** — the operator's requested stable long-drive build, and the confirmatory revert | ✅ **BUILT 2026-08-01, UNFLASHED. ★ THE RECOMMENDED NEXT FLASH.** Restores **exactly stock** base assist (grind #1 returns as V38 has it; grind #2's cause is removed), carries V57's `0xC646C` decoupling + `0xC6CD0` = 3564 + `0xC62EA` = 0 + `0xC64DE` = 27 unchanged. Probe on `0x14A` byte4: **bit7** liveness · **bit6** `gp-0x6806 != 0` · **bit5** `gp-0x67f5 != 0` (**its toggle rate is V67's kill criterion**) · **bit4** `gp-0x67fe != 0` (**gate candidate C — one bit settles whether it is an LKAS flag or base assist**). **61 bytes off V65** (2 code + 52 cave + MAIN CRC); ⭐ **CAL block byte-identical to V65**, `0xD2000` block identical, all four mode-10 `gain_B` records unchanged = machine proof no calibration moved; `0x3AB70` still `sar 0xa`; **`gp-0x683c`'s load at `0x3AA94` UNCHANGED**. Same base/hook/68-byte extent as six clean flights; **62/68 used**. GATE 1 vacuous. 50/50 CRC; x31 PASS; RWD decodes exactly back to the image; ⭐ orchestrator-verified from the built image with the cave re-decoded from the bytes. 🛑 **Only three probe bits fit**, so `gp-0x671d` and `gp-0x67fe` are unmeasured. **Route:** ordinary long driving plus deliberate parking-lot creep, **and specifically reproduce grind #2** — creep with heavy manual steering, |angle| ≥ 100°, both engaged and disengaged. **Log from before the first engagement.** Decoder `rlog-tools/decode_v66_gateprobe.py`. Image SHA `0d4a0a5361e8ba91b1a24ad3298dd617ad541903070b02a58b9ae6df6709f246`; RWD SHA `41a4476ae9fb29fd2afd1b41238bf19b409b256abb8adfa3a8fb7b5569548fa9` |
 | ~~**V64**~~ | V63's two cal edits + the probe repointed at the oscillation detector | 🛑 **FLASHED 2026-07-31 → GRINDING UNFIXED, DETECTOR NEVER ARMED. Do not re-flash for the damping.** See "On the car right now" above. The probe did its job — it converted an uninterpretable null into a diagnosed one. Original build note kept below for provenance. ✅ **BUILT 2026-07-31.** Operator's proposal, and it removes V63's fatal weakness: V63's probe still measured `gp-0x6ba6`, the parametric-pump index **V60 already falsified**, so a V63 null would have been uninterpretable. V64 keeps the cal edits byte-identical (**CAL block byte-identical to V63, machine-verified**) and repoints the cave: `0x14A` byte4 **bit7** liveness · **bit6** `gp-0x671a >= 5` (the arm is selected) · **bit5** `gp-0x671a != 0` · **bit4** `gp-0x67df != 0` (FSM left neutral ⇒ `\|gp-0x6c2c\|` crossed ±12800) · **bit3** `gp-0x671d != 0` (r24's override active). **Actionable in every failure mode:** bit6 never set + bit4 set ⇒ lower `CEIL` (`0xC64FA`); bit4 clear ⇒ lower `T` (`0xC620A`); bit6 live but no improvement ⇒ the rise was too small; bit3 set ⇒ also raise `0xC6442`. **60 bytes off V59** (50 cave + 2 cal + 8 CRC), **54 off V63 (cave + MAIN CRC only)**, 90 off V38. Same base `0xC4B34`, same hook `0x55C0E`, **same 68-byte extent** as V55/V57/V58/V59 — all four flown clean; **68/68 used, zero budget left.** GATE 1 vacuous (read-only; sole write is the existing CAN payload byte, bits 2:0 preserved). 50/50 CRC; RWD round-trips; cave re-decoded from the readback. ⭐ **Orchestrator-verified independently from the built image:** all three cave loads decode to `gp-0x671a`/`gp-0x67df`/`gp-0x671d` (V850 `ld.bu` carries displacement bit 0 in **hw1 bit 5**, not hw2 — a naive decode reports false mismatches), the `gp-0x671d` halfword is **byte-identical to the real firmware instance** @`0x3AB98`, and the only store is the CAN byte. Decoder `rlog-tools/decode_v64_detector.py` leads with **time-to-first-set** and **whether it ever clears** (see the latch note — occupancy saturates once set). 🛑 **Start the log BEFORE the first engagement**, or time-to-first-set is unmeasurable. Image SHA `e9dcd3b619cb35a4405861331a20807c4d0d2df074b6119a6690df728c68511e`; RWD SHA `7abbeba61ccc22852506e8747cedd12236210e93c23f8a13ad586e19914f0830` |
 | ★★ **V63** | V59 + raise **only the OSCILLATION-DETECTED gain arms** of both rate lanes | ✅ **BUILT 2026-07-31, UNFLASHED — superseded by V64, which is the same cal edit plus instrumentation.** `0xC6440` 2048→4096 (r24) and `0xC643E` 1536→3072 (r26). **6 bytes off V59** (2 cal bytes + CAL CRC), 88 off V38. ⭐ **MAIN CRC UNCHANGED** = machine proof no code byte moved. V62's `sar` shifts and V61's tap kill both **asserted absent** ⇒ independent experiment, not layered. 50/50 CRC, RWD round-trips, re-verified from the built image. **Built in response to the operator's objection that V62 changes manual feel to fix an LKAS-specific symptom** — and the firmware turns out to already discriminate: both lanes' gain chains end in `assist_state gp-0x671a >= 5`, and `gp-0x671a` is a **HARD-REVERSAL COUNTER** (`FUN_000428d4`: neutral state resets it to 0 **every tick** and only exits if `\|gp-0x6c2c\| > 12800`; a reversal increments; 50 quiet ticks clear it). ⇒ it reads **0 during smooth steering** and `state>=5` means **an oscillation is happening**. Raising only those arms adds damping **only while oscillating**; both smooth-steering LERP defaults stay stock ⇒ **zero manual-feel cost by construction, and a smaller edit than V62.** ✅ **No new arithmetic risk: 3072 is already gain_A's own stock maximum**, so worst-case `stage1×gain` stays at 47% of INT32_MAX, unchanged. GATE 1 vacuous. 🛑 **Residual 1 — a NULL IS AMBIGUOUS:** whether `gp-0x6c2c` actually crosses ±12800 during the vibration is **unverified and load-bearing**; if it does not, V63 is inert. **Resolve with no probe and no cave: fly V63 first, and if null fly V62, which cannot miss.** 🛑 **Residual 2:** `gate_671d` outranks r24's arm and is live, so **expect r26 to carry this build**; r26's chain is clean (`gate_683c` dead). Image SHA `2f843bce8ff6fcab72cd3fafddcbdea926b40701e1425cabad03791f1a09019c`; RWD SHA `5e5f83d7cd9281000dcfa602a6e70b252037ad782728502d82e82d42c72b9abc` |
@@ -2257,24 +2744,38 @@ set's 12.6–42.2°).
 🛑 **NO openpilot-side modifications.** Standing operator instruction. openpilot remains a *measurement
 instrument* only.
 
-000. 🛑🛑 **2026-08-04, BLOCKING: NAME THE V70 FILE BEFORE ANY FLASH.** More than one `.rwd` carries a
-   `V70` prefix, and **the superseded first cut has the OPPOSITE control path**
-   (`…LKASGATED-V68CONTROLPATH…`, gate `fb` / arm 5244 / surface stock) to the current one
-   (gateless, surface ×2). **Their caves are byte-identical**, so the probe **cannot** tell them apart
-   on-car — the filename is the only discriminator before the drive, and the superseded image has been
-   overwritten so the kit's own verifier cannot check it either. **Rename the superseded file
-   `SUPERSEDED-DO-NOT-FLASH-…` before anything else.** This is the V68 three-file trap repeating.
+0000. 🛑🛑 **2026-08-04, STANDING: BYTE-CHECK THE CURRENT IMAGE BEFORE CITING ANY CONFIRMED RESULT.**
+   `RULE 3`, `docs/BUILD-LINEAGE.md`. Both of this kit's confirmed fixes — V42's `0x454FE` and V62's
+   `0x3AB76`/`0x3AC20` — **had fallen off the car and nobody noticed for ten builds.** A confirmed fix
+   that is no longer carried is not evidence about the car you are driving.
 
-00. ★★★★ **2026-08-04: V70 IS BUILT AND UNFLASHED, WITH A REPAIRED PROBE.**
-   The four reasons are ranked in THE HEADLINE's closing section: the dose–response bottoms out near 2×
-   and V67/V68 is the best-measured arm in the corpus; all three of V69's probe rungs were wasted or
-   under-exposed and §5 says how to size the next three; **`gp-0x67fa`'s runtime state is the highest-
-   value unknown in the kit** (if the ECU sits in state 10 while driving, five builds' detector nulls are
-   nulls on a gate); and **`a = gp-0x69a4/1024`** decides whether V67/V68's gate is a 6× cut on a live
-   r26 or a no-op. 🛑 **Do NOT aim V70's rate lane at the lane-change transient** — it is
-   **dose-independent** and excitation, not gain, is the live candidate. 🛑 **Do not re-flash V69 for
-   grind #1.**
-   ⚠ **Everything below this line predates the V69 flight.** Read steps 0–0c as the reasoning that got
+000. 🛑 **NAME THE FILE BEFORE ANY FLASH.** More than one `.rwd` carries a `V70` prefix, and the
+   superseded first cut has the **OPPOSITE** control path (`…LKASGATED-V68CONTROLPATH…`) with a
+   **byte-identical cave**, so the probe cannot tell them apart on-car. It is renamed
+   `SUPERSEDED-DO-NOT-FLASH-…` (`9d44efc`, filesystem-verified). ⚠ **The same discipline now applies to
+   V70 vs V71.**
+
+00. ★★★★ **2026-08-04: V71 IS BUILT AND UNFLASHED — restore both lost fixes, and probe the GAIN IN
+   FORCE.** Its rate lane is **byte-identical to V62/V65**, which flew twice, both flight-clean. The two
+   verdict-affecting reads it buys: **bit6 `gp-0x671d != 0`** (which gain is actually in force — the
+   direct answer to four consecutive probes that returned uninterpretable zeros by reading a lane
+   *output*) and **bit5 `gp-0x67fa == 4`** (a **complete** discriminator now that states 5 and 10 are
+   excluded; **pre-registered bimodal**).
+   🛑 **State the `0x454FE` justification honestly: it is restored because it is a confirmed fix lost by
+   accident, NOT because it is established to cause the current ratchet** — the ratchet measures
+   **symmetric** while the substitution is **asymmetric**, which is evidence against that mechanism.
+   ⚠ **Known risk, disclosed: V62 is also the build that introduced creep grind #2.**
+   🛑 **Do NOT stack V72's lever onto V71** — **FactorC/FactorE together, re-read against the RATCHET**
+   (V47's *"marginally quieter at 5 mph"*, never evaluated against it) deserves its own single-variable
+   drive. ★★ It is **materially more compelling** now: *engagement-required* + *hands-off-conditional*
+   + *Q ≈ 40* + *damping exactly zero below ~35 km/h* ⇒ **at creep the driver's hand is the only damping
+   in the system.**
+   🛑🛑 **`0xC6444` is STRUCK — a NULL BY CONSTRUCTION on any gateless build** (THE HEADLINE §8). Do not
+   re-propose it.
+   🛑 **Do NOT aim any rate-lane dose at the lane-change transient** — dose-independent; excitation, not
+   gain. 🛑 **Do not re-quote any pre-2026-08-04 rate-lane multiplier without saying it is r24-only at
+   `a = 0`.**
+   ⚠ **Everything below this line predates the V70 flight.** Read steps 0–0c as the reasoning that got
    here, not as current recommendations.
 
 0. ★★★★ **OPERATOR'S DECISION 2026-08-01: FLASH V67 FOR THE LONG DRIVE.** V67 = V66 + the

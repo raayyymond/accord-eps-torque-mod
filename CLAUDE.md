@@ -123,6 +123,20 @@ A three-part deliverable, every time, without being re-asked:
 objdump, or `disasm_v850.py` (retired).** This binds you *and every subagent* — prime each one explicitly,
 because the default instinct is to reach for r2.
 
+🛑 **WORK BACKWARDS: DECOMPILE FIRST, THEN READ THE ASSEMBLY.** Standing operator instruction,
+2026-08-04. Start from `decompile_function` / `analyze_function_complete` to get the **structure** —
+what the function computes, which branch is which, what feeds what — and only then drop to
+`disassemble_function` / `disassemble_bytes` to pin the exact instruction, encoding or byte. **Never
+build an understanding upward from raw assembly.** This kit makes materially more mistakes that way,
+and they are the expensive kind: a mis-decoded condition nibble or displacement reads as a *fact*, not
+as a guess, and it propagates. Recorded instances — a `jarl` Format-V mask bug returning zero hits for
+functions Ghidra had just given callers for; `ba05`/`b205` (`bne` vs `be`) inverting a probe rung's
+meaning; `hw2 = (disp | 1)` and the odd-displacement `0x3D`-vs-`0x3C` opcode field; and (2026-08-04) an
+orchestrator hand-decoding a cave from bytes and nearly declaring a correct build broken, when the
+decompile showed the structure — a 5-bit accumulator plus one `shl 0x3` — at a glance.
+⇒ **Assembly is for CONFIRMING a specific claim you already framed, and for byte-exact build work.
+It is not for forming the claim.**
+
 Byte-level work — diffing builds, CRC checks, dumping a table, checking an extent — is **Python** and is
 unaffected. Prefer Python for anything that is just bytes; it is also the required second method whenever
 a count or a null result is load-bearing.

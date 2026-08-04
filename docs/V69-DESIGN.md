@@ -1,6 +1,44 @@
 # V69 — DESIGN SPEC
 
-**Status: BUILT, NOT FLASHED.** `analysis-2020accord/build_v69_tva.py`.
+🛑🛑 **SUPERSEDED 2026-08-04. THIS IS A HISTORICAL RECORD OF HOW V69 WAS CHOSEN — NOT CURRENT STATE.**
+**V69 FLEW** (route `4f`) and so did V70 (route `50`). The analysis below is kept because it is the
+honest record of the reasoning; **three of its load-bearing premises are now refuted.** Read
+`docs/STATE.md` and `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md` first.
+
+1. 🛑 **THE `A_rk` FIGURE IS NOT A BURST MEASUREMENT.** `A_rk = 1927` traces to
+   `v70_parametric_gain_collapse.py:132` — the top decile of the **whole-drive** `|rate|` distribution
+   (hard manoeuvres), **not** the rate index during a grind. Measured directly over **424 grind-#1
+   burst windows**: the oscillation's own 18–22 Hz rate swing is **p50 140 counts / p90 327**. The
+   peak-velocity framing needs `A_rk ≳ 1400`, reached by **9.20% of windows on scale A and 0.00% on
+   scale B** ⇒ **dead on scale B; alive on scale A only at the ~90th-percentile worst instant.**
+2. 🛑 **THE rateKey / PEAK-VELOCITY DOSE FRAMING IS REFUTED — with the scope in (1) kept, not
+   widened.** Grind #1 lives **97.8% (scale A) / 100% (scale B)** inside the flat `[0,400]` rate
+   segment, over 19,378 burst samples on 11 routes. V70 delivered **exactly 2.000×** at grind #1's
+   real operating point and did **not** reproduce V62's result.
+   ⚠ **Say it as `STATE.md` says it: dead on scale B, alive on scale A only at the ~90th-percentile
+   worst instant.** ⚠ **And record the adjudication, not just the verdict:** two analysts disagreed
+   and the orchestrator ruled. The *outcome* data is sound (V70 excluded from V62's class at
+   **P < 5 × 10⁻⁵**), but the rateKey axis is the **bus angle rate converted by an assumed scale**
+   while `gp-0x6ac0` is the **motor/resolver rate** — **a proxy that cannot settle it either way.**
+   The r26 explanation in (3) is preferred because it accounts for the same outcomes **with no
+   rateKey claim at all**.
+   ⚠ **The two `rateKey` mentions in the BODY of this file** (§0.1's fold row and §4's *"one accepted
+   discontinuity"*) are about the **≥ 13001-count fold** — different arithmetic, still correct, and
+   **not** the retracted framing. Left as written.
+3. 🛑🛑 **EVERY MULTIPLIER IN THIS FILE IS r24-ONLY, COMPUTED AT `a = 0`.** r24 and r26 have
+   **separate gain selectors** — r24 reads `gain_B` (the mode-10 surface this spec edits), r26 reads
+   `gain_A` (fixed records at `0xC6A68/7C/90/A4`, **not** mode-indexed). **V69's and V70's surface
+   edits could never reach r26.** And r26 is now **measured LIVE on-car** (V70's probe: `gp-0x6adc`
+   strictly negative on 1,644/18,010 frames; a pinned-zero cell cannot clear a `>= 0` test).
+   ⇒ **The dose axis this spec reasons on is the wrong lane.** A pure r24 series with r26 held at ×1
+   — **stock → V70 → V69, ×1 → ×2 → ×4 — reads 879 / 729 / 746, all CIs overlapping**: r24 is
+   near-inert for grind #1. Every build that *fixed* grind #1 changed **r26**.
+
+⚠ **Also retired here:** the "non-monotone dose–response with a minimum near 2×" (it priced every
+build on r24 alone), and *"Q is not measurable at NFFT 256"* (the ratchet's **Q ≈ 40 at f0 = 7.793 Hz**
+is now measured, with a window-invariance test).
+
+**Status: FLOWN.** `analysis-2020accord/build_v69_tva.py`.
 
 ---
 
@@ -16,6 +54,10 @@ the 2× design; §0 supersedes it wherever they disagree**, and each affected se
 and above 50 km/h**, on both open axis scales, no hump anywhere, highway still structurally stock.
 Only the dose moved. Three costs, each strictly worse than at 2×:
 
+🛑 **IN-PLACE MARKER — see banner (3): every multiplier in this table is r24-only at `a = 0`, and
+this edit could not reach r26 at all.** The **arithmetic** is correct and was confirmed on-car (the
+dose was fully delivered); what is wrong is the premise that this axis is the one that moves grind #1.
+
 | | 2× (as specced) | **4× (as built)** |
 |---|---|---|
 | max multiplier | 2.000× | **4.000×** |
@@ -30,6 +72,10 @@ Only the dose moved. Three costs, each strictly worse than at 2×:
    twice the largest dose this kit has ever driven.** What still holds: phase is untouched (no
    filter, no pole, no delay, no `sar` moved), the lane is linear, V65 measured the aggregator never
    railing over 120,049 frames, and grind #1's dose–response was monotone through 2.00×.
+   ⚠ **RETIRED 2026-08-04 — that last clause priced every build on r24 alone at `a = 0`.** With r26
+   measured live, V62/V65's "2×" (**both** lanes, via `sar`) and V69's "4×" (gain_B only) were never
+   the same quantity, so there was no single monotone curve to be on. **The broken-bracket warning
+   itself was sound and is NOT retracted.**
 2. 🛑 **Saturation crosses the record.** At 2× the lane could not rail in recorded driving; at 4× it
    can. During the largest low-speed transients the damping lane goes from linear to a hard rail —
    a describing-function regime the 2× design deliberately stayed out of. ⚠ And every `|dtorque|`
@@ -37,6 +83,14 @@ Only the dose moved. Three costs, each strictly worse than at 2×:
    still rising through), so the true margin is *worse* than 0.81×, not better.
    ★ **bit6 of the new probe measures exactly this on-car** (§0.2) — the cost is instrumented, not
    just disclosed.
+   🛑 **OUTCOME: bit6 returned an UNINTERPRETABLE ZERO on BOTH drives** — **0/47,990** on V69's `4f`
+   (at this ×4 dose, where the rung needed only **49 counts**) and **0/18,010** on V70's `50` (where a
+   replay on the route's own data predicts **311** hits and stock predicts **52**). ⇒ **[BELIEF] the
+   better-supported reading is an under-ranged or MIS-RECONSTRUCTED rung** — `dtorque` is a 4-sample
+   1 kHz difference rebuilt from a 100 Hz bus copy of a different, filtered torque cell — **not arm
+   selection, which cannot produce a dose-dependent miss.** ⇒ **the cost was instrumented but never
+   measured.** The durable lesson is **GATE 4** in `docs/BUILD-LINEAGE.md`: **read the GAIN IN FORCE,
+   not a lane output.**
 3. ⚠ **Manual creep is 4.000×** on the pessimistic axis scale. Manual highway stays byte-identical
    to stock.
 
@@ -350,6 +404,10 @@ which is the symptom currently at zero and the one V62's ungated 2× demonstrabl
 ⚠ **Cost: grind #1's dose falls 2.00× → 1.835×.** On the recorded dose–response (Kd = 1.00 → 1.00
 ref; Kd = 2.00 → 0.39; V67 gated → 0.40 [0.27, 0.58]; null [0.88, 1.13]) that should still land near
 0.42–0.45, far outside the null — but it **spends margin**, and if grind #1 returns, this is why.
+🛑 **OUTCOME: grind #1 DID return — and this was NOT why.** The prediction failed because the
+dose–response it leans on is an **r24-only** curve priced at `a = 0`, and **r24 is now measured
+near-inert**: the clean r24 ladder reads **flat from ×1 to ×4 (879 / 729 / 746)**, while the two builds
+that fixed grind #1 are the two that changed **r26**. See banner (3).
 
 ---
 
@@ -394,6 +452,11 @@ design's PEAK gain — the peak is what sets the margin.**
 | **V69** | **6144** | **1366** | **1.63×** |
 | Design A | 7051 | 1191 | 1.42× |
 
+✅ **SETTLED ON-CAR — the concern below did NOT bite.** Route `4f` measured transfer-corrected
+`|dtorque|` max **633.9**, with **0.0000%** of engaged time at or above V69's **683** rail ⇒ **the full
+4.000× was delivered**, and V69's result cannot be explained as clipping. The pre-flight reasoning is
+kept as written because it was the right thing to worry about.
+
 ⚠ **V69's saturation margin is 1.63×, WORSE than the 1.91× on the car today** (better than Design
 A's 1.42×). Quoted against the repo's recorded max `|dtorque|` of **839**; against the 511 measured
 directly on the two V68 routes it is 2.67×, and the 28 Hz burst itself is only **254** counts.
@@ -422,11 +485,16 @@ have single f32 hits (`0xC661C`, `0x55B5A`), so moving a breakpoint would reopen
 **Safety anchors, re-verified across stock and all 11 archived images:** role table `0xC4124` =
 `[0,0,5,0,5,5,0,0,0,5,0]` — **no slot ever 6 or 7**, so `gp-0x67ac` stays 0 and the rate lanes cannot
 silently drop out; `0xC6564` = **40 zero bytes**, so ~~r26 is structurally inert and r24 carries the
-whole lane~~ 🛑 **DOWNGRADED 2026-08-04 to BELIEF.** `0xC6564` really is 40 zero bytes with no writer
+whole lane~~ 🛑🛑 **REFUTED ON-CAR — NOT merely downgraded.** V70's probe read `gp-0x6adc` (r26's
+post-clamp mirror) **strictly negative on 1,644 of 18,010 frames**, and **a pinned-zero cell cannot
+clear a `>= 0` test** ⇒ **r26 is LIVE.** What follows is the pre-flight *downgrade*, kept for its
+reasoning; **the verdict is now settled against it.**
+🛑 **DOWNGRADED 2026-08-04 to BELIEF.** `0xC6564` really is 40 zero bytes with no writer
 found for the RAM adjustment (10 of 18 cells) — but **its link to `gp-0x69a4` was NEVER VERIFIED**, and
 `gp-0x69a4`'s real producer is a **live runtime 10-segment LERP at `0x355C6` in `FUN_000352b4`**.
-⇒ *"r24 carries the whole lane"* may still be right (the dose–response argues it is), but it is an
-inference, not a byte fact. **`0xC6564` remains a valid *byte* anchor** — it is simply not evidence
+⇒ ~~*"r24 carries the whole lane"* may still be right (the dose–response argues it is), but it is an
+inference, not a byte fact.~~ 🛑 **It is not right — see the on-car refutation above.** And the
+dose–response that *"argues it is"* has itself been retired, for pricing every build on r24 alone. **`0xC6564` remains a valid *byte* anchor** — it is simply not evidence
 about r26's liveness. ⚠ Separately, the **GATE** leg of the same claim **is** reversed: the gate kills
 r26 only at `|gp-0x6bda| ≥ 384`, and hands-off `gp-0x6bda` ≈ 9262 = 24× that.
 
