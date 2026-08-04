@@ -239,6 +239,38 @@ cal-only or a single in-place branch/displacement edit.
 **A 2-byte in-place displacement or branch-condition edit is a different, far lower risk class than a
 trampoline + cave.** Do not conflate them.
 
+### 🛑 A RE-CUT UNDER THE SAME BUILD NUMBER DESTROYS ITS PREDECESSOR'S PLAIN IMAGE — open, 2026-08-04
+
+**The hazard, stated as it actually happened.** Two V70 cuts were built 19 minutes apart. **Both wrote
+`_v70_plain_image.bin`**, so the second silently **overwrote** the first's snapshot. The first cut's
+`.rwd` survived and was flashable. ⇒ **a flashable artefact existed that NO gate in this kit could
+check**: `verify_v70_image.py` asserts the *current* topology (`0x3AA96 == 0xC5`, `0xC6446 == 512`), so
+it **fails on the superseded build by construction**, and `diff_build_vs_stock.py` has no image to read.
+
+⚠ **The only reason the superseded cut's bytes are documented at all is that they were read inside the
+19-minute window before the overwrite.** That is luck, not process.
+✅ The *flash* risk was closed by renaming it `SUPERSEDED-DO-NOT-FLASH-…` (`accord-firmwares` `9d44efc`).
+🛑 **The verifiability hazard is NOT closed and applies to every future re-cut.**
+
+**RECOMMENDED FIX FOR THE NEXT BUILDER — NOT DONE, and deliberately not retrofitted this session:**
+- write **`_v<NN><tag>_plain_image.bin`** (tag from the build's own `TAG`), so a re-cut cannot collide;
+  **or**
+- **refuse to overwrite** an existing snapshot whose SHA differs from the one about to be written,
+  unless explicitly forced.
+
+**Every builder in the tree still writes the fixed `_vNN_plain_image.bin` name.** This entry is a
+recommendation, not a description of a fix that exists — do not read it as done.
+
+⚠ **The superseded V70 image cannot be trivially regenerated** — its builder configuration no longer
+exists in the tree. In principle it could be recovered by decoding the surviving `.rwd` back to an
+image. **That was NOT attempted**, and was judged not worth it for a superseded do-not-flash artefact;
+recorded so the gap is explicit rather than ambiguous.
+
+★ Related and distinct: **`bit6 ⇒ bit3` gives build-CLASS identity, never FILE identity** — a probe
+cannot separate two cuts of the same version, because their caves are identical. **The filename is the
+only pre-drive discriminator between re-cuts**, which is why the rename is load-bearing rather than
+cosmetic.
+
 ### 🛑 GATE 3 for PROBES, added 2026-08-04 — size a rung against the LANE's own reachable output
 
 **A probe cannot brick an ECU, but it can waste the only telemetry budget this kit has, and V69 wasted

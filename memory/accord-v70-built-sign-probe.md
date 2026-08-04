@@ -11,18 +11,17 @@ metadata:
 path change with each cut — those live in `docs/STATE.md`'s **"V70 — BEING RE-CUT"** block. **The probe
 does not change**, so it is recorded here.
 
-## 🛑 THE SUPERSEDED FIRST V70 IS STILL IN THE FLASH DIRECTORY
-A first V70 was built that **restored V67/V68's control path** (gate `0x3AA96` = `fb`, arm `0xC6446` =
-5244, surface back to stock) and **the operator overrode it** — *"V70 just reverts back to V68, which
-has the high-speed grind #2 issue."* Its `.rwd` (`…LKASGATED-V68CONTROLPATH…`) is **still on disk**, and
-**its cave is byte-identical to the current one** ⇒ **the probe cannot separate them on-car; the
-filename is the only discriminator before a drive.** ⇒ **rename it `SUPERSEDED-DO-NOT-FLASH-…`**, as the
-two stale V68 files were.
-⚠ **It is also unverifiable by the kit's own gates now** — both cuts write `_v70_plain_image.bin`, so
-the newer cut **overwrote** the older image; only the `.rwd` survives and `verify_v70_image.py` asserts
-the current topology.
-⚠ **Lesson: a builder that writes a fixed `_vNN_plain_image.bin` silently destroys the previous cut of
-the same version number.**
+## THE SUPERSEDED FIRST V70 — built, OVERRIDDEN by the operator, renamed
+A first V70 **restored V67/V68's control path** (gate `0x3AA96` = `fb`, arm `0xC6446` = 5244, surface
+back to stock). **The operator overrode it** — *"V70 just reverts back to V68, which has the high-speed
+grind #2 issue"* — and he was right; that decision is **why the current V70 exists**, and the reasoning
+is [[feedback_operator_lived_experience_overrides_analyst_recs]]. **It was never a live alternative.**
+✅ **Renamed `SUPERSEDED-DO-NOT-FLASH-…`** (`accord-firmwares` `9d44efc`), filesystem-verified: exactly
+ONE flashable `V70` file remains. ⚠ **The rename was load-bearing** — its cave is **byte-identical** to
+the current one, so **the probe could not have separated them on-car** and the filename was the only
+discriminator before a drive.
+🛑 **What is NOT fixed: its image is gone and it is unverifiable by the kit's own gates.** See
+[[accord-recut-overwrites-the-previous-plain-image]].
 
 ## ★★ THE PROBE — 68 of the proven 68 cave bytes, ZERO spare
 Base `0xC4B34`, hook `0x55C0E`, extent unchanged.

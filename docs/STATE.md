@@ -1554,10 +1554,12 @@ exactly **one** flashable `V70`-prefixed file, the ×2 re-cut. Verified from the
 **FILE** identity, and it cannot tell two cuts of the same version apart. **The filename was the only
 discriminator before a drive.** ⇒ **Any re-cut under the same version number MUST be renamed
 `SUPERSEDED-DO-NOT-FLASH-…` the moment it is superseded**, exactly as the two stale V68 artefacts were.
-⚠ **And it is now unverifiable by the kit's own gates**: both builds write `_v70_plain_image.bin`, so
-the newer cut **overwrote** the older image — only the `.rwd` survives, and `verify_v70_image.py` asserts
-the current topology, so it fails on the old one by construction. ⚠ **Lesson: a builder that writes a
-fixed `_vNN_plain_image.bin` silently destroys the previous cut of the same version number.**
+🛑 **AND A SECOND HAZARD IS STILL OPEN — the rename fixed the flash risk, NOT this one.** Both cuts write
+`_v70_plain_image.bin`, so the newer one **overwrote** the older image; only the superseded `.rwd`
+survives, and `verify_v70_image.py` asserts the current topology so it fails on the old one **by
+construction**. ⇒ **a flashable artefact exists that NO gate in this kit can check.**
+**The hazard, the recommended builder fix (not yet applied) and what was not attempted are recorded in
+`docs/BUILD-LINEAGE.md` Part 2.**
 
 ★★ **THE PROBE: 68 of the proven 68 cave bytes, ZERO spare** (base `0xC4B34`, hook `0x55C0E`, extent
 unchanged):
@@ -1655,10 +1657,19 @@ sit on stock yet measure 8× better than stock. ⇒ **V67/V68 probably is what i
 🛑 **STATUS CORRECTED 2026-08-04: V68 is no longer "built and unflashed" — it flew, and V69 has since
 replaced it on the car.** The build note below is kept as written for provenance.
 
-🛑🛑 **THREE `.rwd` FILES CARRY A `V68` PREFIX. ONLY ONE IS LIVE. THE LIVE ONE CONTAINS `fsm67df`.**
-The other two are renamed **`SUPERSEDED-DO-NOT-FLASH-…`** (`-dropout67ac-` and `-rateaxisprobe-`); both
-were built this session and **neither was ever flashed**. **Confirm `fsm67df` in the filename before any
-flash.** This is exactly the confusion the `bit3` fingerprint catches *after* a drive — prevent it before.
+🛑🛑 **TWO `.rwd` FILES CARRY A `V68` PREFIX. ONLY ONE IS LIVE. THE LIVE ONE CONTAINS `fsm67df`.**
+The other is renamed **`SUPERSEDED-DO-NOT-FLASH-…-rateaxisprobe-…`** and was never flashed.
+**Confirm `fsm67df` in the filename before any flash.** This is exactly the confusion the `bit3`
+fingerprint catches *after* a drive — prevent it before.
+⚠ **CORRECTED 2026-08-04: this block previously said THREE files, naming a third, `-dropout67ac-`.
+That file does not exist and never did** — `git ls-files` and a full-history search of
+`accord-firmwares` return **zero** hits for `dropout67ac`, and the only tracked `V68`-prefixed
+artefacts are `-fsm67df-detector671a-` (live) and `SUPERSEDED-…-rateaxisprobe-`. The four tracked
+`V68`/`V70` artefacts in total are those two plus `-SPEEDSHAPED-…-x2-signprobe-` (live V70) and
+`SUPERSEDED-…-V68CONTROLPATH-` (the overridden first V70). 🛑 **A phantom entry in a
+DO-NOT-FLASH list is not harmless bookkeeping** — it inflates the apparent hazard, and a future
+reader who cannot find the file has to decide whether it was deleted, renamed, or imagined. Verify
+this list against `git ls-files` before quoting it.
 
 **⭐ REVISED 2026-08-03. V67's control path byte-identical — V68 vs V67 is EIGHT bytes: 4 cave + 4 MAIN
 CRC, zero outside the cave span.** Cave **60/68**, 8 spare. Image SHA `9106044a…`, RWD SHA `332c2cee…`
