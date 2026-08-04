@@ -43,12 +43,12 @@ RATCHET_ADDR = 0x454FE
 CRC_WORDS = {a + k for a in (0xC4FFC, 0xC6FFC, 0xD2FFC) for k in range(4)}
 
 # The 68 cave bytes, as a LITERAL -- independent of the builder's encoders by construction.
-CAVE_HEX = ("203e1000a437e3986132a605483a843707986432aa05443a24372695a9326132a605423a"
-            "8437e7986532a105413ac33a8437edeac636070007314437ecea2436e8ea7f00")
+CAVE_HEX = ("203e1000a437e3986132a605483a843707986432aa05443a24372695a7326132be057f32"
+            "ae05423ae031a605413ac33a8437edeac636070007314437ecea2436e8ea7f00")
 
 # (offset from CAVE_BASE, raw hex, mnemonic) -- every one of the 25 instructions, by value.
 CAVE_LISTING = (
-    (0x00, "203e1000", "movea 0x10,r0,r7      bit7 LIVENESS, pre-shift weight"),
+    (0x00, "203e1000", "movea 0x10,r0,r7      bit7 LIVENESS, pre-shift weight (0x10 << 3 = 0x80)"),
     (0x04, "a437e398", "ld.bu -0x671d[gp],r6  THE MASK  (ODD disp => opcode field 0x3D)"),
     (0x08, "6132", "cmp 0x1,r6"),
     (0x0A, "a605", "blt +4"),
@@ -58,14 +58,15 @@ CAVE_LISTING = (
     (0x14, "aa05", "bne +4"),
     (0x16, "443a", "add 0x4,r7            bit5 = (gp-0x67fa == 4)"),
     (0x18, "24372695", "ld.h -0x6ada[gp],r6   r24 lane out, post-clip"),
-    (0x1C, "a932", "sar 0x9,r6"),
-    (0x1E, "6132", "cmp 0x1,r6"),
-    (0x20, "a605", "blt +4"),
-    (0x22, "423a", "add 0x2,r7            bit4 = gp-0x6ada >= +512"),
-    (0x24, "8437e798", "ld.bu -0x671a[gp],r6  the reversal counter"),
-    (0x28, "6532", "cmp 0x5,r6            CEIL == cal 0xC64FA"),
-    (0x2A, "a105", "bl +4                 UNSIGNED, as the firmware's own `bc` @0x3AA7E"),
-    (0x2C, "413a", "add 0x1,r7            bit3 = gp-0x671a >= 5"),
+    (0x1C, "a732", "sar 0x7,r6            🛑 0x7, NOT 0x9 -- a932 is the FIRST CUT's failed rung"),
+    (0x1E, "6132", "cmp 0x1,r6            the POSITIVE bound"),
+    (0x20, "be05", "bge +6                🛑 be05 = bge; b205 = be, which would INVERT the rung"),
+    (0x22, "7f32", "cmp -0x1,r6           the NEGATIVE bound (imm5 SIGNED; -1 encodes 0x1F)"),
+    (0x24, "ae05", "bge +4"),
+    (0x26, "423a", "add 0x2,r7            bit4 = |gp-0x6ada| >= 128, TWO-SIDED"),
+    (0x28, "e031", "cmp r0,r6             the SAME shifted value"),
+    (0x2A, "a605", "blt +4"),
+    (0x2C, "413a", "add 0x1,r7            bit3 = gp-0x6ada >= 0   THE SIGN"),
     (0x2E, "c33a", "shl 0x3,r7            the 5-bit field -> bits 7:3"),
     (0x30, "8437edea", "ld.bu -0x1514[gp],r6  CAN-330 payload byte4"),
     (0x34, "c6360700", "andi 0x7,r6,r6        keep live status bits 2:0"),
@@ -74,6 +75,11 @@ CAVE_LISTING = (
     (0x3E, "2436e8ea", "movea -0x1518,gp,r6   the displaced hook instruction"),
     (0x42, "7f00", "jmp [lp]"),
 )
+# 🛑 THE CONDITION NIBBLES, as an INDEPENDENT check on the listing above: bge = 0xE, be = 0x2,
+# blt = 0x6, bne = 0xA. A wrong nibble inverts a rung silently and the payload still looks legal.
+COND_NIBBLES = ((0x0A, 0x6, "blt +4  (bit6)"), (0x14, 0xA, "bne +4  (bit5)"),
+                (0x20, 0xE, "bge +6  (bit4 POSITIVE bound)"), (0x24, 0xE, "bge +4  (bit4 NEGATIVE)"),
+                (0x2A, 0x6, "blt +4  (bit3 SIGN)"))
 
 RATE_LANE_SPANS = ((0x3A300, 0x3AE00, "both inline rate lanes + the aggregator"),
                    (0xC6000, 0xC7000, "every gain arm, deadzone, CEIL and gain_A record"),
@@ -202,11 +208,26 @@ def main(path=None):
     # ld.bu = 0x3C/0x3D / st.b = 0x3A are each ONE BIT apart, and gp-0x6ada's only real instance IS
     # the st.h form carrying the same displacement halfword. Decode the OPCODE FIELD by value.
     for off, want_op, what in ((0x04, 0x3D, "ld.bu -0x671d (ODD disp)"), (0x0E, 0x3C, "ld.bu -0x67fa"),
-                               (0x18, 0x39, "ld.h -0x6ada"), (0x24, 0x3C, "ld.bu -0x671a"),
+                               (0x18, 0x39, "ld.h -0x6ada"),
                                (0x30, 0x3C, "ld.bu -0x1514"), (0x3A, 0x3A, "st.b -0x1514")):
         op = (struct.unpack_from("<H", cave, off)[0] >> 5) & 0x3F
         check(op == want_op, f"cave+0x{off:02X} opcode field == 0x{want_op:02X}  ({what})",
               hex(op), hex(want_op))
+    # 🛑 THE CONDITION NIBBLES, decoded independently of the listing literals above.
+    for off, want, what in COND_NIBBLES:
+        got = struct.unpack_from("<H", cave, off)[0] & 0xF
+        check(got == want, f"cave+0x{off:02X} condition nibble == 0x{want:X}  ({what})",
+              hex(got), hex(want))
+    # 🛑 THE RE-CUT'S DEFINING BYTE. V71's FIRST CUT had `sar 0x9` here and its rung read ZERO on two
+    # routes; this cut has `sar 0x7` and a second, NEGATIVE bound. A span differ cannot see it.
+    check(cave[0x1C:0x1E].hex() == "a732",
+          "cave+0x1C is `sar 0x7,r6` (a732) -- NOT the first cut's `sar 0x9,r6` (a932), whose rung "
+          "read 0/18,010 on V70 and 0/47,990 on V69", cave[0x1C:0x1E].hex(), "a732")
+    check(cave[0x22:0x24].hex() == "7f32",
+          "cave+0x22 is `cmp -0x1,r6` -- the SECOND bound that makes the test TWO-SIDED",
+          cave[0x22:0x24].hex(), "7f32")
+    check(bytes.fromhex("6532") not in cave and bytes.fromhex("8437e798") not in cave,
+          "the retired gp-0x671a rung (`ld.bu -0x671a`, `cmp 0x5,r6`) is ABSENT from the cave")
     stores = [off for off in range(0, CAVE_LEN, 2)
               if ((struct.unpack_from("<H", cave, off)[0] >> 5) & 0x3F) in (0x3A, 0x3B)
               and off in [o for o, _w, *_ in CAVE_LISTING]]

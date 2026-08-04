@@ -6,12 +6,12 @@ WHY THIS PROBE READS SELECTORS AND NOT A LANE OUTPUT
 V64, V68, V69 and V70 each returned an uninterpretable zero, and each one had read an OUTPUT. V70's
 own positive control -- `gp-0x6ada >= +512`, r24's post-clip lane mirror -- read **0 / 18,010**
 against a replay predicting **311** from the route's own data (52 even under STOCK firmware). A lane
-output that reads zero cannot tell you WHY. V71 spends four of its five rungs on the inputs to the
-gain PRIORITY CHAIN, so every outcome is actionable:
+output that reads zero cannot tell you WHY. V71 puts bit6 on the chain's TOP selector and
+repairs the positive control so a null is finally interpretable:
 
     0x3ABFA  gp-0x671d != 0  ->  cal 0xC6442 = 1024   *** OUTRANKS EVERYTHING ***      bit6
     0x3AC04  lp != 0         ->  cal 0xC6446 =  512   DEAD on V71 (gp-0x683c: 0 writers)
-    0x3AC0E  gp-0x671a >= 5  ->  cal 0xC6440 = 2048   (5 = cal 0xC64FA, a BYTE)         bit3
+    0x3AC0E  gp-0x671a >= 5  ->  cal 0xC6440 = 2048   (rung CUT -- V67: 0.000%/186,321)
     0x3AC16  else                the mode-10 gain_B LERP -- STOCK on V71
     0x3AC20  sar 0xa -> 0x9      *** V71 DOUBLES THE LANE HERE, under EVERY arm ***
 
@@ -28,45 +28,56 @@ THE PAYLOAD -- CAN 0x14A byte4, bits 7:3
                                fired -- the fix and its own test on a single drive. `gp-0x67fa`'s
                                runtime value has never been read for state 4 in this kit; V70 tested
                                `== 10` and read 0, which left the state in {4,5,11}.
-    bit4 = gp-0x6ada >= +512   THE POSITIVE CONTROL. r24's lane output after its own +/-0x2000
-                               saturating clip, mirrored to RAM by Honda's own code at 0x3AD5A every
-                               1 kHz tick. 0 READERS / 1 WRITER image-wide.
-    bit3 = gp-0x671a >= 5      the THIRD arm. 📋 PRE-REGISTERED PREDICTION: reads 0 (V67: 0.000%
-                               over 186,321 frames on two routes; V64: 0 for both `>= 5` and `!= 0`).
+    bit4 = |gp-0x6ada| >= 128  *** THE REPAIRED POSITIVE CONTROL -- TWO-SIDED AND LOW. *** r24's
+                               lane output after its own +/-0x2000 saturating clip, mirrored to RAM
+                               by Honda's own code at 0x3AD5A every 1 kHz tick. 0 READERS / 1 WRITER
+                               image-wide.
+    bit3 = gp-0x6ada >= 0      *** THE SIGN. *** Read it WITH bit4: together they give the lane's
+                               side AND its magnitude, which is what settles the polarity leg.
 
-⚠ HOW STRONG bit4 REALLY IS -- stated precisely, because the loose version is wrong.
-On the three ARM branches bit4 IS strictly stronger than V70's equivalent rung, because a `sar` edit
-doubles r24 whichever arm wins while V70's surface edit applied ONLY on the LERP branch. On the LERP
-branch it is stronger AWAY from 0 km/h and exactly EQUAL at the breakpoints V70's surface dose
-doubled. The rung fires at |dtorque| >= 512 x 2^sar / gain; re-derived from the two images by
-build_v71_tva.py's own sweep, not quoted:
+🛑🛑 WHY bit4 IS TWO-SIDED, AND WHY `gp-0x671a` WAS CUT TO PAY FOR IT
+`gp-0x6ada >= +512` has now returned ZERO twice: 0/18,010 frames on V70's route and **0/47,990 on
+V69's route `4f`** -- at DOUBLE V70's dose, where the rung needed only **49 counts** of |dtorque|
+against a repo-recorded max of **839**. That is not an arm-selection story. It points at either
+  (a) the `dtorque` RECONSTRUCTION -- a 4-sample difference at 1 kHz rebuilt from a 100 Hz bus copy
+      of a different, filtered torque cell; or
+  (b) POLARITY -- a one-sided `>= +512` test is structurally blind to a lane living on the negative
+      side.
+A one-sided rung cannot separate them, and re-flying it would be the fifth uninterpretable zero in a
+row. So bit4 is now TWO-SIDED and eight times lower, and the freed budget buys bit3 = the SIGN, which
+reads (b) out directly. `gp-0x671a >= 5` was the designated cut: V67 measured it at **0.000% over
+186,321 frames on two routes** and V64 measured both `>= 5` and `!= 0` at zero.
 
-    operating point                     V70 thr   V71 thr
-    creep 0 km/h, rateKey 0                85.3      85.3   <- IDENTICAL (V70's dose was exactly 2x)
-    grind #1 op pt 7.2 km/h, rk 603       108.9     100.0
-    grind #2 creep 7.2 km/h, rk 1206      172.0     110.3
-    engaged highway 93 km/h, rk 300       241.3     120.6
+⚠ THE EXACT TEST, because it is ONE COUNT asymmetric and that must not be glossed:
 
-⇒ bit4 is NOWHERE less sensitive than V70's rung. Therefore:
-    bit6 = 0 AND bit3 = 0 AND bit4 = 0  =>  the LERP arm WAS selected and the lane output really is
-                                            below +512, at a threshold NO HIGHER than the one that
-                                            already read 0/18,010. The arm-selection explanation for
-                                            V70's null is REFUTED, and the problem is upstream --
-                                            dtorque itself, or the mirror's writer not being reached.
-    bit6 = 1 or bit3 = 1                =>  an arm was selected, V70's surface edit was masked, the
-                                            null is explained, and the lever moves to that arm's cal.
-Either outcome is actionable. That is the property V64/V68/V69/V70 lacked.
+        bit4  =  (gp-0x6ada >= +128)  OR  (gp-0x6ada <= -129)
+
+`sar` FLOORS, so `x sar 7 == -1` spans x in [-128,-1] and no single shifted compare can split
+x = -128 from x = -127. The negative arm therefore trips at -129. That is |x| >= 128 for every value
+EXCEPT x == -128 exactly -- one count out of a +/-8192 lane. Proven exhaustively over all 65,536
+halfword patterns in `_self_check()` below, not asserted in prose.
+
+📋 THE PRE-REGISTERED THRESHOLDS. The rung fires at |dtorque| >= 128 x 2^7 / gain, i.e. **5 to 32
+counts on EVERY branch of the priority chain**, against a recorded max of 839 and V69's own flight
+max of 633.9 (re-derived from the image by build_v71_tva.py's own sweep, not quoted):
+    mask arm 0xC6442 = 1024 -> 16.0 · third arm 0xC6440 = 2048 -> 8.0 · dead arm 0xC6446 -> 32.0
+    LERP creep (3072) -> 5.3 · grind #1 (2622) -> 6.2 · grind #2 creep (2377) -> 6.9 · hwy -> 7.5
+The rung this replaces needed 85-241 counts on the LERP branch and read ZERO on both routes.
+⇒ a null at these thresholds refutes BOTH (a)-as-arms and (b), and moves the next probe onto
+  dtorque's PRODUCER or onto gp-0x6ada's writer @0x3AD5A. Either outcome is actionable, which is the
+  property V64/V68/V69/V70 lacked.
 
 🛑 IDENTIFICATION IS WEAKER ON V71 THAN ON V70, AND THAT IS STATED RATHER THAN PAPERED OVER.
-V70 carried an arithmetic invariant (bit6 => bit3, because x >= +512 implies x >= 0) that excluded
-six builds absolutely from the VALUE SET alone. V71's four rungs are INDEPENDENT, so its reachable
-space is all 16 payloads and no payload is forbidden. What remains:
+V70 carried an arithmetic invariant (its bit6 => its bit3, because x >= +512 implies x >= 0) that
+excluded six builds absolutely from the VALUE SET alone. V71's four rungs are INDEPENDENT -- all four
+(bit4, bit3) combinations are reachable, asserted at build time -- so all 16 payloads are legal and
+none is forbidden. What remains:
   * HARD: bit7 must be set in every frame. A VOID frame means the cave did not run.
-  * STRONG NEGATIVE: on V71, bit3 is a LATCHED REVERSAL COUNTER test predicted to read 0, and it
-    cannot toggle quickly -- `gp-0x671a` integrates 1 kHz information and holds >= 50 ms. On V70,
-    bit3 was r24's SIGN, which toggles with the limit cycle. **A fast-toggling bit3 means the
-    flashed image is V70, not V71.** That test is checked below and is reported at its real strength.
+  * A bit4=1/bit3=0 frame is V71-shaped and V70 cannot emit its analogue (bit6=1/bit3=0).
   * The .rwd FILENAME is the pre-drive discriminator, and V71's is unique on disk.
+🛑 THE "FAST-TOGGLING bit3 MEANS V70" FALSIFIER THAT V71's FIRST CUT CARRIED IS **RETIRED**. On this
+cut bit3 IS a sign bit, exactly like V70's, so that test would now return a confidently WRONG answer.
+Do not reintroduce it.
 
 WHAT V71 IS -- so a reader of this file cannot mistake the artefact
 -------------------------------------------------------------------
@@ -103,7 +114,7 @@ from decode_v70_probe import episode_ratio, episodes_of                     # no
 # 🛑 THE MECHANICAL LINK TO THE IMAGE. build_v71_tva.assert_decoder_matches() fails the BUILD if this
 # hex does not equal the cave it just emitted, so this decoder cannot silently describe a different
 # build. Do not hand-edit it.
-CAVE_HEX = "203e1000a437e3986132a605483a843707986432aa05443a24372695a9326132a605423a8437e7986532a105413ac33a8437edeac636070007314437ecea2436e8ea7f00"  # noqa: E501
+CAVE_HEX = "203e1000a437e3986132a605483a843707986432aa05443a24372695a7326132be057f32ae05423ae031a605413ac33a8437edeac636070007314437ecea2436e8ea7f00"  # noqa: E501
 #
 #   0xC4B34  203e1000  movea 0x10,r0,r7      bit7 LIVENESS, in PRE-SHIFT weights
 #   0xC4B38  a437e398  ld.bu -0x671d[gp],r6  THE MASK  (⚠ ODD displacement 0x98E3 => opcode 0x3D)
@@ -115,20 +126,26 @@ CAVE_HEX = "203e1000a437e3986132a605483a843707986432aa05443a24372695a9326132a605
 #   0xC4B48  aa05      bne   +4              🛑 `be` (a205) is its twin and would INVERT this rung
 #   0xC4B4A  443a      add   0x4,r7          bit5 = (gp-0x67fa == 4)
 #   0xC4B4C  24372695  ld.h  -0x6ada[gp],r6  r24 lane out, post +/-0x2000 clip  (0 readers)
-#   0xC4B50  a932      sar   0x9,r6          ARITHMETIC -- units of 512, sign preserved
-#   0xC4B52  6132      cmp   0x1,r6
-#   0xC4B54  a605      blt   +4
-#   0xC4B56  423a      add   0x2,r7          bit4 = gp-0x6ada >= +512
-#   0xC4B58  8437e798  ld.bu -0x671a[gp],r6  the third arm's latched reversal counter
-#   0xC4B5C  6532      cmp   0x5,r6          CEIL, asserted == cal 0xC64FA (a BYTE = 5)
-#   0xC4B5E  a105      bl    +4              UNSIGNED, matching the firmware's own `bc` @0x3AA7E
-#   0xC4B60  413a      add   0x1,r7          bit3 = gp-0x671a >= 5
+#   0xC4B50  a732      sar   0x7,r6          ARITHMETIC -- units of 128, sign preserved
+#   0xC4B52  6132      cmp   0x1,r6          the POSITIVE bound
+#   0xC4B54  be05      bge   +6              s >=  1 => x >= +128           -> SET
+#   0xC4B56  7f32      cmp   -0x1,r6         the NEGATIVE bound (imm5 is SIGNED; -1 encodes 0x1F)
+#   0xC4B58  ae05      bge   +4              s >= -1 => |x| is small        -> SKIP
+#   0xC4B5A  423a      add   0x2,r7          bit4 = |gp-0x6ada| >= 128, TWO-SIDED (fallthrough)
+#   0xC4B5C  e031      cmp   r0,r6           the SAME shifted value: (x sar 7) >= 0 <=> x >= 0
+#   0xC4B5E  a605      blt   +4
+#   0xC4B60  413a      add   0x1,r7          bit3 = gp-0x6ada >= 0   THE SIGN
 #   0xC4B62  c33a      shl   0x3,r7          the 5-bit field -> bits 7:3.  V31P FLASHED this 4x;
 #                                            Honda's own idiom @0x4FB82 (shl 0x3,r7 / andi 0xf8).
 #   0xC4B64  8437edea  ld.bu -0x1514[gp],r6  | c6360700 andi 0x7,r6,r6 | 0731 or r7,r6
 #   0xC4B6E  4437ecea  st.b  r6,-0x1514[gp]  THE ONLY STORE. GATE 1 is vacuous.
 #   0xC4B72  2436e8ea  movea -0x1518,gp,r6   the displaced hook instruction
 #   0xC4B76  7f00      jmp   [lp]            -> 0x55C12
+# 🛑🛑 THE CONDITION-NIBBLE TWINS. `bge +6` is **be05** and `be +6` is **b205** -- ONE NIBBLE apart,
+# and the wrong one INVERTS the rung silently. Likewise `bge +4` = ae05 vs `be +4` = a205, and
+# `blt +4` = a605. If you are hand-decoding, check the LOW nibble of the first byte: 0xE = bge,
+# 0x6 = blt, 0xA = bne, 0x2 = be. Both `bge`s above are pinned BY VALUE against real instructions
+# (0x6B176 and 0x244CE) and against the real `be +6` @0x3ABFC, in the builder and in the verifier.
 # 🛑 `ld.h` is opcode 0x39 and `st.h` is 0x3B -- ONE BIT apart -- and gp-0x6ada's only real instance
 # IS the st.h form carrying the same displacement halfword. `ld.bu` 0x3C/0x3D vs `st.b` 0x3A is
 # likewise one bit, on THREE rungs, one of them a LIVE state variable with 128 readers. If you ever
@@ -139,14 +156,16 @@ CAVE_HEX = "203e1000a437e3986132a605483a843707986432aa05443a24372695a9326132a605
 # carrying role 6 or 7 makes gp-0x67ac live and the rate lanes can drop out entirely.
 
 BIT_LIVE = 0x80
-BIT_MASK671D = 0x40           # bit6  gp-0x671d != 0     THE MASK -- outranks every arm
-BIT_STATE4 = 0x20             # bit5  gp-0x67fa == 4     THE RATCHET STATE this build disables
-BIT_R24_HALF = 0x10           # bit4  gp-0x6ada >= +512  THE POSITIVE CONTROL
-BIT_ARM3 = 0x08               # bit3  gp-0x671a >= 5     the THIRD arm
+BIT_MASK671D = 0x40           # bit6  gp-0x671d != 0        THE MASK -- outranks every arm
+BIT_STATE4 = 0x20             # bit5  gp-0x67fa == 4        THE RATCHET STATE this build disables
+BIT_R24_ABS = 0x10            # bit4  |gp-0x6ada| >= 128    THE REPAIRED POSITIVE CONTROL
+BIT_R24_SIGN = 0x08           # bit3  gp-0x6ada >= 0        THE SIGN
 PROBE_MASK = 0xF8
-THRESHOLD = 512               # bit4: ld.h -> sar 0x9 -> cmp 0x1  =>  cell >= 1 << 9
+THRESHOLD = 128               # bit4: ld.h -> sar 0x7 -> cmp 0x1 / cmp -0x1  =>  |cell| >= 1 << 7
+NEG_THRESHOLD = -129          # ⚠ `sar` FLOORS, so the NEGATIVE arm trips at -129, not -128. The test
+                              # is |x| >= 128 for every value EXCEPT x == -128 exactly. One count out
+                              # of a +/-8192 lane; proven exhaustively at build time, not hand-waved.
 STATE_VALUE = 4
-CEIL_VALUE = 5                # cal 0xC64FA, a BYTE -- hardcoded in the cave, asserted at build time
 
 # The dispatcher's three masks. state in mask  <=>  (1 << (state & 0xf)) & mask.
 MASK_DETECTOR = 0x830         # {4,5,11}     FUN_00036388 @0x22882, FUN_000428d4 @0x22926
@@ -159,25 +178,24 @@ RUNGS = (
      "THE MASK is SET -> r24's gain is pinned to cal 0xC6442 = 1024, BELOW the stock LERP"),
     (BIT_STATE4, "bit5 gp-0x67FA", 0x67FA,
      f"the ECU is in STATE {STATE_VALUE} -- where the governor substitution WOULD have ratcheted"),
-    (BIT_R24_HALF, "bit4 gp-0x6ADA", 0x6ADA,
-     f"r24 lane out >= +{THRESHOLD} (post +/-8192 clip) -- 0 readers image-wide. POSITIVE CONTROL"),
-    (BIT_ARM3, "bit3 gp-0x671A", 0x671A,
-     f"the reversal counter reached CEIL {CEIL_VALUE} -> the THIRD arm, cal 0xC6440 = 2048"),
+    (BIT_R24_ABS, "bit4 gp-0x6ADA", 0x6ADA,
+     f"|r24 lane out| >= {THRESHOLD} (post +/-8192 clip), TWO-SIDED -- 0 readers image-wide"),
+    (BIT_R24_SIGN, "bit3 gp-0x6ADA", 0x6ADA,
+     "r24 lane out >= 0 -- THE SIGN. Read WITH bit4: together they give side AND magnitude"),
 )
 
 CREEP_MAX_MS = 4.0            # the ratchet is a creep symptom (1-4 m/s in the recorded episodes)
 HANDS_OFF_TQ = 300            # |sustained torsion-bar| below which the recorded episodes sit
-FAST_TOGGLE_PER_S = 2.0       # bit3 above this is a SIGN bit, i.e. V70 -- see identify()
 
 # ⚠ V71's four rungs are INDEPENDENT: all 16 payloads are reachable and none is forbidden.
 LEGAL = {BIT_LIVE | a | b | c | d
          for a in (0, BIT_MASK671D) for b in (0, BIT_STATE4)
-         for c in (0, BIT_R24_HALF) for d in (0, BIT_ARM3)}
+         for c in (0, BIT_R24_ABS) for d in (0, BIT_R24_SIGN)}
 ON_WIRE = {b | 0x07 for b in LEGAL}       # as transmitted, with all three status bits set
 
 # 🛑 ONE LINE, deliberately. The builder asserts this exact basename appears in this file; splitting
 # it across a string concatenation makes the substring vanish and the check silently harder to pass.
-RWD_NAME = "39990-TVA,A160-V71-LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-ratchet-V62sar-BOTHLANES-surfaceREVERTED-gaininforce-probe-671d-67fa4-6ada-671a-can330byte4-0x13000-0x100000.rwd"  # noqa: E501
+RWD_NAME = "39990-TVA,A160-V71-LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-V62sar-BOTHLANES-surfREVERTED-probe2-671d-67fa4-6adaABS128-sign-can330byte4-0x13000-0x100000.rwd"  # noqa: E501
 
 STRUCTURALLY_DISJOINT = {
     "V53 (emits only 0x07 -- bit7 CLEAR)": {0x07},
@@ -185,17 +203,18 @@ STRUCTURALLY_DISJOINT = {
 }
 
 
-def wire_byte4(v671d, v67fa, v6ada, v671a, status_bits=0x7):
-    """EXACTLY what the cave computes -- the same five instructions, in the same order."""
+def wire_byte4(v671d, v67fa, v6ada, status_bits=0x7):
+    """EXACTLY what the cave computes -- the same instructions, in the same order."""
     r7 = 0x10                                       # movea 0x10,r0,r7
-    if not ((v671d & 0xFF) < 1):
+    if not ((v671d & 0xFF) < 1):                    # cmp 0x1,r6  ; blt +4
         r7 += 0x08
-    if not ((v67fa & 0xFF) != STATE_VALUE):
+    if not ((v67fa & 0xFF) != STATE_VALUE):         # cmp 0x4,r6  ; bne +4
         r7 += 0x04
     x = (v6ada - 0x10000) if v6ada & 0x8000 else v6ada
-    if not ((x >> 9) < 1):
+    s = x >> 7                                      # ld.h ; sar 0x7   (Python >> floors == `sar`)
+    if (s >= 1) or not (s >= -1):                   # cmp 0x1 ; bge SET ; cmp -0x1 ; bge SKIP ; SET
         r7 += 0x02
-    if not ((v671a & 0xFF) < CEIL_VALUE):
+    if not (s < 0):                                 # cmp r0,r6 ; blt +4
         r7 += 0x01
     return ((r7 << 3) & 0xFF) | (status_bits & 0x07)
 
@@ -204,22 +223,33 @@ def _self_check():
     """The payload claims, as executable assertions rather than a paragraph."""
     assert len(LEGAL) == 16, f"{len(LEGAL)} legal payloads, expected all 16 (independent rungs)"
     assert all(b & BIT_LIVE for b in LEGAL), "a legal payload has bit7 clear"
-    assert BIT_LIVE | BIT_MASK671D | BIT_STATE4 | BIT_R24_HALF | BIT_ARM3 == PROBE_MASK, \
+    assert BIT_LIVE | BIT_MASK671D | BIT_STATE4 | BIT_R24_ABS | BIT_R24_SIGN == PROBE_MASK, \
         "the probe bits do not cover exactly 7:3"
     assert PROBE_MASK & 0x07 == 0, "the probe bits collide with STEER_SENSOR_STATUS"
     # the wire model, against the bit map above
-    assert wire_byte4(0, 0, 0, 0) & PROBE_MASK == BIT_LIVE, "an all-zero input is not bare liveness"
-    assert wire_byte4(1, 0, 0, 0) & BIT_MASK671D, "bit6 does not fire on gp-0x671d == 1"
-    assert not wire_byte4(0, 0, 0, 0) & BIT_MASK671D, "bit6 fires on gp-0x671d == 0"
-    assert wire_byte4(0, STATE_VALUE, 0, 0) & BIT_STATE4, f"bit5 does not fire on state {STATE_VALUE}"
-    assert not wire_byte4(0, 10, 0, 0) & BIT_STATE4, "bit5 fires on state 10 -- that is V70's rung"
-    assert wire_byte4(0, 0, THRESHOLD, 0) & BIT_R24_HALF, "bit4 does not fire at exactly +512"
-    assert not wire_byte4(0, 0, THRESHOLD - 1, 0) & BIT_R24_HALF, "bit4 fires below +512"
-    assert not wire_byte4(0, 0, 0xFFFF, 0) & BIT_R24_HALF, "bit4 fires on -1: the test is UNSIGNED"
-    assert wire_byte4(0, 0, 0, CEIL_VALUE) & BIT_ARM3, "bit3 does not fire at CEIL"
-    assert not wire_byte4(0, 0, 0, CEIL_VALUE - 1) & BIT_ARM3, "bit3 fires below CEIL"
+    assert wire_byte4(0, 0, 0) & PROBE_MASK == BIT_LIVE | BIT_R24_SIGN, \
+        "an all-zero input is not `liveness + sign` (0 is >= 0, so bit3 fires)"
+    assert wire_byte4(1, 0, 0) & BIT_MASK671D, "bit6 does not fire on gp-0x671d == 1"
+    assert not wire_byte4(0, 0, 0) & BIT_MASK671D, "bit6 fires on gp-0x671d == 0"
+    assert wire_byte4(0, STATE_VALUE, 0) & BIT_STATE4, f"bit5 does not fire on state {STATE_VALUE}"
+    assert not wire_byte4(0, 10, 0) & BIT_STATE4, "bit5 fires on state 10 -- that is V70's rung"
+    # ---- bit4, EXHAUSTIVELY over all 65,536 halfword patterns, including the one-count asymmetry --
+    def _s16(r):
+        return r - 0x10000 if r & 0x8000 else r
+    for r in range(0x10000):
+        x = _s16(r)
+        assert bool(wire_byte4(0, 0, r) & BIT_R24_ABS) == (x >= THRESHOLD or x <= NEG_THRESHOLD), \
+            f"bit4 is not `x >= {THRESHOLD} or x <= {NEG_THRESHOLD}` at x = {x}"
+        assert bool(wire_byte4(0, 0, r) & BIT_R24_SIGN) == (x >= 0), f"bit3 is not `>= 0` at x = {x}"
+    mismatch = {_s16(r) for r in range(0x10000)
+                if bool(wire_byte4(0, 0, r) & BIT_R24_ABS) != (abs(_s16(r)) >= THRESHOLD)}
+    assert mismatch == {-THRESHOLD}, \
+        f"bit4 differs from |x| >= {THRESHOLD} at {sorted(mismatch)[:6]}, expected exactly " \
+        f"{{{-THRESHOLD}}} -- `sar` floors and that is the ONLY value it can miss"
+    assert wire_byte4(0, 0, 0xFF00) & BIT_R24_ABS, "bit4 does not fire at x = -256: NOT two-sided"
+    assert not wire_byte4(0, 0, 0xFFFF) & BIT_R24_SIGN, "bit3 fires on -1: the sign test is unsigned"
     for status in range(8):
-        assert wire_byte4(0xFF, STATE_VALUE, 0x7FFF, 0xFF, status) == 0xF8 | status, \
+        assert wire_byte4(0xFF, STATE_VALUE, 0x7FFF, status) == 0xF8 | status, \
             "the preserved STEER_SENSOR_STATUS bits are not passed through untouched"
     # the three dispatcher masks, decoded back to state sets so a typo cannot survive review
     assert {s for s in range(16) if (1 << s) & MASK_DETECTOR} == {4, 5, 11}, "0x830 is not {4,5,11}"
@@ -236,14 +266,24 @@ def _self_check():
     # checks the wrong halfword and the guard silently passes on a cave that WRITES.
     for off, hw1, disp, what in ((4, "a437", 0x671D, "ld.bu odd-disp"),
                                  (14, "8437", 0x67FA, "ld.bu even-disp"),
-                                 (24, "2437", 0x6ADA, "ld.h"),
-                                 (36, "8437", 0x671A, "ld.bu even-disp")):
+                                 (24, "2437", 0x6ADA, "ld.h")):
         assert raw[off:off + 2] == bytes.fromhex(hw1), \
             f"CAVE_HEX offset {off} is not a `{what} ...,r6` -- a 0x44../0x64.. hw1 would be a STORE"
         want = (0x10000 - disp) & 0xFFFF
         want = want if hw1 == "2437" else (want | 1)     # ld.bu/ld.hu carry hw2 = disp | 1
         assert raw[off + 2:off + 4] == want.to_bytes(2, "little"), \
             f"CAVE_HEX offset {off} does not carry the displacement -0x{disp:04x}"
+    assert raw[28:30] == bytes.fromhex("a732"), "CAVE_HEX offset 28 is not `sar 0x7,r6` -- if it " \
+        "reads a932 this is V71's FIRST CUT, whose rung read ZERO on two routes. Do not fly it."
+    # 🛑 THE CONDITION NIBBLES, BY VALUE. bge = 0xE, be = 0x2, blt = 0x6, bne = 0xA.
+    for off, want, what in ((10, "a605", "blt +4 (bit6)"), (20, "aa05", "bne +4 (bit5)"),
+                            (32, "be05", "bge +6 (bit4 POSITIVE bound)"),
+                            (36, "ae05", "bge +4 (bit4 NEGATIVE bound)"),
+                            (30, "6132", "cmp 0x1,r6"), (34, "7f32", "cmp -0x1,r6"),
+                            (40, "e031", "cmp r0,r6"), (42, "a605", "blt +4 (bit3 SIGN)")):
+        assert raw[off:off + 2] == bytes.fromhex(want), \
+            f"CAVE_HEX offset {off} is not {want} ({what}) -- a wrong nibble INVERTS the rung"
+    assert raw[32:34] != bytes.fromhex("b205"), "bit4's positive bound is `be` (b205), not `bge`"
     assert raw[46:48] == bytes.fromhex("c33a"), "CAVE_HEX offset 46 is not `shl 0x3,r7`"
 
 
@@ -266,37 +306,31 @@ def identify(b4):
     for name in STRUCTURALLY_DISJOINT:
         print(f"  ✅ EXCLUDED ABSOLUTELY: {name}")
     n6 = int(np.count_nonzero((b4 & BIT_MASK671D) != 0))
-    n3 = int(np.count_nonzero((b4 & BIT_ARM3) != 0))
+    n4 = int(np.count_nonzero((b4 & BIT_R24_ABS) != 0))
+    n3 = int(np.count_nonzero((b4 & BIT_R24_SIGN) != 0))
     print(f"  bit6 set (📋 pre-registered prediction: 0)     : {n6} / {len(b4)}")
-    print(f"  bit3 set (📋 pre-registered prediction: 0)     : {n3} / {len(b4)}")
+    print(f"  bit4 set (|r24 lane| >= {THRESHOLD}, TWO-SIDED)     : {n4} / {len(b4)}")
+    print(f"  bit3 set (r24 lane >= 0, the SIGN)             : {n3} / {len(b4)}")
     if n6:
         print("  ★★ bit6 IS SET. `gp-0x671d != 0` has never been observed non-zero in this kit")
         print("     (V64: 0; V67: 0/186,321 over two routes). If it holds here, the LERP arm never")
         print("     ran, V70's surface dose was MASKED, and V70's null is explained outright.")
-    if any((v & BIT_MASK671D) and not (v & BIT_ARM3) for v in vals):
-        print("  ✅ EXCLUDED ABSOLUTELY: V70 -- it emits bit6 only with bit3 (x >= +512 implies")
-        print("     x >= 0), and this route carries a bit6=1 / bit3=0 frame, which V70 cannot emit.")
-    return True
-
-
-def bit3_is_not_a_sign_bit(m3, fs):
-    """★ THE STRONGEST AVAILABLE V70-vs-V71 DISCRIMINATOR, and it is a NEGATIVE test.
-
-    On V71 bit3 is `gp-0x671a >= CEIL` -- a latched reversal counter that integrates 1 kHz
-    information and holds >= 50 ms, so it CANNOT toggle quickly. On V70 bit3 was r24's SIGN, which
-    toggles with the limit cycle (V70 measured it non-constant). A fast-toggling bit3 therefore means
-    the flashed image is V70, not V71.
-    🛑 This is a FALSIFIER, not a proof: a quiet bit3 is consistent with V71 AND with several older
-    builds. The .rwd filename remains the pre-drive discriminator.
-    """
-    tog = float(np.count_nonzero(np.diff(m3.astype(np.int8)) != 0)) / (len(m3) / fs)
-    print(f"\n  bit3 toggle rate: {tog:.3f} /s   (threshold {FAST_TOGGLE_PER_S:.1f} /s)")
-    if tog > FAST_TOGGLE_PER_S:
-        print("  🛑 bit3 TOGGLES FAST. On V71 bit3 is a latched counter test that holds >= 50 ms; a")
-        print("     rate like this is a SIGN bit, i.e. V70's probe. STOP -- confirm which .rwd is on")
-        print(f"     the car before interpreting anything. V71 is: {RWD_NAME}")
-        return False
-    print("  ✅ consistent with V71's latched-counter rung (falsifier not triggered)")
+    # ---- bit4 WITH bit3 clear is the payload class that settles the POLARITY leg ----------------
+    if any((v & BIT_R24_ABS) and not (v & BIT_R24_SIGN) for v in vals):
+        print("  ★★ bit4 = 1 with bit3 = 0 IS PRESENT ⇒ the lane reaches |x| >= 128 on the NEGATIVE")
+        print("     side. A one-sided `>= +512` rung was structurally blind to exactly this, which")
+        print("     is why V69's and V70's nulls could not be interpreted.")
+        print("  ✅ EXCLUDED ABSOLUTELY: V70 -- its bit6 (`x >= +512`) implies its bit3 (`x >= 0`),")
+        print("     so V70 can NEVER emit a bit6=1/bit3=0 payload; V71's bit4 sits one bit lower and")
+        print("     is two-sided, so this payload is V71-shaped, not V70-shaped.")
+    # 🛑 NO STRONGER IDENTIFICATION IS AVAILABLE AND NONE IS CLAIMED. V71's four rungs are
+    # independent, so all 16 payloads are reachable and no payload is forbidden. In particular the
+    # "a fast-toggling bit3 means V70" falsifier that V71's FIRST CUT carried is RETIRED and MUST NOT
+    # be reintroduced: on this cut bit3 IS a sign bit, exactly like V70's, so that test would now
+    # return a confidently WRONG answer.
+    print("  ⚠ NOT excluded by the value set: V55, V57, V58, V64 and V70 -- probes with INDEPENDENT")
+    print("     bits, whose reachable space is all 16 payloads. The .rwd FILENAME is the pre-drive")
+    print(f"     discriminator: {RWD_NAME}")
     return True
 
 
@@ -324,9 +358,8 @@ def main(paths):
 
     m6 = (b4 & BIT_MASK671D) != 0
     m5 = (b4 & BIT_STATE4) != 0
-    m4 = (b4 & BIT_R24_HALF) != 0
-    m3 = (b4 & BIT_ARM3) != 0
-    bit3_is_not_a_sign_bit(m3, fs)
+    m4 = (b4 & BIT_R24_ABS) != 0
+    m3 = (b4 & BIT_R24_SIGN) != 0
 
     cells = (
         ("WHOLE ROUTE", np.ones(len(b4), bool)),
@@ -358,34 +391,41 @@ def main(paths):
 
     # =================================================================================================
     print("\n" + "=" * 102)
-    print("★★ READOUT 1 -- WHICH GAIN ARM WAS IN FORCE?  Read bit6 and bit3 FIRST; bit4 is the")
-    print("   consequence, not the question. The chain is a strict priority: bit6 outranks the dead")
-    print("   `lp` arm, which outranks bit3, which outranks the mode-10 LERP.")
+    print("★★ READOUT 1 -- WHICH GAIN ARM WAS IN FORCE?  Read bit6 FIRST -- it is the only rung left")
+    print("   on the priority chain, and it OUTRANKS everything. The `lp` arm is structurally dead on")
+    print("   V71 (gate 0x3AA96 = 0xC5 ⇒ gp-0x683c, ZERO writers image-wide). The third arm's rung")
+    print("   (`gp-0x671a >= 5`) was CUT to pay for the two-sided bit4; V67 measured it at 0.000%")
+    print("   over 186,321 frames on two routes, so `bit6 == 0` is taken to mean the LERP arm ran.")
     eps = episodes_of(lat)
     print(f"\n   engaged episodes >= {MIN_SAMPLES} samples: {len(eps)}   "
           f"total {sum(b - a for a, b in eps) / fs:.1f} s")
     ones = np.ones(len(b4), float)
     for label, mask in (("bit6  gp-0x671d != 0  -> arm 1024", m6),
-                        ("bit3  gp-0x671a >= 5  -> arm 2048", m3),
-                        ("bit4  gp-0x6ada >= +512 (positive control)", m4)):
+                        (f"bit4  |gp-0x6ada| >= {THRESHOLD}  TWO-SIDED", m4),
+                        ("bit3  gp-0x6ada >= 0   (the SIGN)", m3),
+                        ("bit4 AND bit3 clear -> lane NEGATIVE and large", m4 & ~m3)):
         pt, (lo, hi) = episode_ratio(eps, mask.astype(float), ones)
-        print(f"   {label:<44s} engaged duty {pt:.5f}  [{lo:.5f}, {hi:.5f}]")
-    lerp = (~m6) & (~m3)
-    pt, (lo, hi) = episode_ratio(eps, lerp.astype(float), ones)
-    print(f"   {'=> the mode-10 LERP arm was selected':<44s} engaged duty {pt:.5f}  [{lo:.5f}, {hi:.5f}]")
+        print(f"   {label:<46s} engaged duty {pt:.5f}  [{lo:.5f}, {hi:.5f}]")
+    lerp = ~m6
     n4_on_lerp = int(np.count_nonzero(m4 & lerp & lat))
     n_lerp = int(np.count_nonzero(lerp & lat))
-    print(f"\n   bit4 set WHILE on the LERP arm, engaged: {n4_on_lerp} / {n_lerp}")
+    print(f"\n   bit4 set WHILE bit6 is clear (the LERP arm), engaged: {n4_on_lerp} / {n_lerp}")
     if n_lerp and n4_on_lerp == 0:
-        print("   🛑🛑 THE ARM-SELECTION EXPLANATION FOR V70'S NULL IS REFUTED. On the LERP branch")
-        print("        V71's rung fires at a |dtorque| threshold NO HIGHER than V70's (identical at")
-        print("        the 0 km/h breakpoints, up to 2x lower elsewhere). If bit4 is still 0 with no")
-        print("        arm selected, the lane output really is below +512 and the problem is")
-        print("        UPSTREAM -- dtorque itself, or gp-0x6ada's writer @0x3AD5A not being reached.")
-        print("        Probe THOSE next, not the arms.")
+        print("   🛑🛑 THE LANE IS NOT REACHING +/-128 AT ALL, AND POLARITY CANNOT EXPLAIN IT.")
+        print("        This rung is TWO-SIDED and needs only 5-32 counts of |dtorque| on every branch")
+        print("        of the priority chain, against a repo-recorded max of 839 and V69's own flight")
+        print("        max of 633.9. A null here refutes BOTH remaining explanations for the")
+        print("        V69/V70 zeros that were arm-selection or polarity. What is left is the dtorque")
+        print("        RECONSTRUCTION itself, or gp-0x6ada's writer @0x3AD5A not being reached.")
+        print("        Probe THOSE next -- do not spend another build on the arms.")
     elif n4_on_lerp:
-        print("   ✅ the positive control FIRES on the LERP branch ⇒ the lane is live and the dose is")
-        print("      being delivered. V70's null was an instrument problem, not a control-path one.")
+        print("   ✅ THE POSITIVE CONTROL FIRES. The lane is live, the dose is being delivered, and")
+        print("      the V69/V70 zeros were a THRESHOLD/POLARITY artefact of the one-sided rung, not")
+        print("      a statement about the control path. Read bit3 alongside it for the side.")
+    n_neg = int(np.count_nonzero(m4 & ~m3 & lat))
+    if n_neg:
+        print(f"   ★ {n_neg} engaged frames have bit4 = 1 with bit3 = 0 ⇒ the lane goes LARGE and")
+        print("     NEGATIVE. A one-sided `>= +512` rung was blind to every one of them.")
 
     # =================================================================================================
     print("\n" + "=" * 102)
