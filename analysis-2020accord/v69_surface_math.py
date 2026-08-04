@@ -2,6 +2,19 @@
 """v69_surface_math.py -- the mode-10 gain_B surface rebuilt FROM IMAGE BYTES, and every design
 that can be cut out of it with 1-3 calibration halfwords.
 
+🛑 WHAT SHIPPED IS **x4**, NOT THE x2 THIS FILE SCORES. Operator instruction, 2026-08-04: V69 was
+re-cut in place to 3072->12288 and 2561->10244. The design named `V62_MATCHED` below (6144/5122) is
+the x2 cut and is kept as the SELECTION RECORD -- it is how Design A was rejected and how the
+Pareto front was chosen, and those arguments are about SHAPE, which x4 does not change (still
+scale-invariant on both axis candidates, still no hump, still exactly 1.000x at and above 50 km/h).
+What x4 DOES change is dose-dependent and is NOT re-derived here:
+  - max multiplier 2.000x -> 4.000x, which BREAKS the flown `[stock 1.00x, V62/V65 2.00x]` bracket;
+  - `saturating_dtorque(12288)` = 683 vs the recorded max |dtorque| 839 => margin 0.81x, i.e. the
+    r24 lane CAN rail (at 6144 it rails at 1366 and could not).
+To score the shipped design here, use
+    `edit(r0Y=(12288, 12288, None, None), r1Y=(10244, 10244, None, None))`.
+Authoritative: `build_v69_tva.py` (the SCALE constant), `docs/V69-DESIGN.md` §0.
+
 Successor to `v68_design_math.py`. That file hard-coded the records as literals; this one READS
 them, resolves the pointer arrays, and re-derives every number it prints. Run it and every figure
 quoted in the report comes back out.
