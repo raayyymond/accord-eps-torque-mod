@@ -98,11 +98,49 @@ EXECUTION MODEL
                  ms/decrement) and CAN 399 wire-fitted at exactly 100.000 Hz. [CONFIRMED, on-car]
                  See the TASK RATE entry below and memory/accord-task5-is-100hz-damper-cannot-damp-21hz.md.
   STEERING TASK: w_steer_control_task (FUN_0002214a), RTOS task. Gate masks are ECU STATE-MACHINE
-                 masks (gp-0x67fa), NOT phase/duty-cycle counters -- arbitration/aggregator/governor/
-                 shaper/monitors all run in lockstep at the full task rate whenever the ECU state
-                 qualifies (states {4,5,8,10,11} span the group; 0xd30 is a superset of 0xc30).
+                 masks (gp-0x67fa), NOT phase/duty-cycle counters.
+                 🛑🛑 "ALL RUN IN LOCKSTEP WHENEVER THE STATE QUALIFIES" IS FALSIFIED -- corrected
+                 2026-08-04. THE MASKS DIFFER, AND STATE 10 SPLITS THE CHAIN IN HALF. Verified at
+                 instruction level in FUN_0002214a (0x2214a-0x22a84); the guard wraps the `jarl`
+                 in the CALLER, so a masked-out state means the callee is NEVER INVOKED -- no stack
+                 frame, 0% of body. Index is a plain `1 << (gp-0x67fa & 0xf)`, no off-by-one
+                 (0x2214e ld.bu / 0x22172 andi 0xf / 0x2217c shl, recomputed identically @0x221bc).
+                     0x221d6  andi 0x830 -> {4,5,11}     FUN_00036388 @0x22882 (return-to-centre)
+                                                         FUN_000428d4 @0x22926 (OSC DETECTOR)
+                     0x22518  andi 0x930 -> {4,5,8,11}   FUN_00028ea6 / FUN_0002b422 / FUN_0002b57a
+                                                         (ARBITRATION = gp-0x6806's producer)
+                     0x2269a  andi 0xc30 -> {4,5,10,11}  FUN_0003a382 @0x226a0 (residual lane)
+                                                         FUN_0003aa2c @0x2291e (THE AGGREGATOR)
+                 ⇒ IN STATE 10 THE AGGREGATOR AND THE RESIDUAL LANE RUN, WHILE THE DETECTOR, THE
+                 RETURN-TO-CENTRE LANE AND ARBITRATION DO NOT. Assist is delivered from a stale
+                 gp-0x6806. [EVIDENCE]
+                 ★ State 10 is REACHABLE IN NORMAL OPERATION: written twice in FUN_00019970 (the
+                 state-4 handler) -- 0x199CC (diagnostic, tp+0x74d0 == 0xa) and 0x19A72 (NORMAL,
+                 gated on bit 15 of gp-0x6d78, with bit 16 -> state 11 taking priority). Writer set
+                 over 33 st.b sites (Ghidra and a raw LE byte scan agree exactly, no undercount):
+                 {1,3,4,5,6,7,8,9,10,11}, max 11. [OPEN] what bit 15 of gp-0x6d78 means, which is
+                 what decides how OFTEN state 10 is visited.
+                 ⇒ 🛑 THIS IS A LIVE ALTERNATIVE EXPLANATION FOR THE FIVE-BUILD DETECTOR NULL
+                 (gp-0x67df 0/14,980 V64, 0/186,321 V67, 0/53,991 V68): "FUN_000428d4 was never
+                 CALLED" has never been on the table and has the identical signature to "it ran and
+                 found nothing".
+                 ⚠ BUT V67's OWN PROBE ARGUES AGAINST IT, and this must be quoted alongside: state
+                 10 is absent from 0x930 too, so arbitration -- gp-0x6806's producer -- is also
+                 skipped there and the flag would go STALE. V67 measured gp-0x6806 == latActive in
+                 150,302/150,327 = 99.983% of frames, all 25 disagreements single-frame transition
+                 edges. A stale flag cannot track transitions that closely ⇒ the ECU is
+                 predominantly NOT in state 10 while engaged, and the detector nulls are probably
+                 GENUINE. [BELIEF -- indirect.] V70's bit5 rung (gp-0x67fa == 10) settles it
+                 directly, and is non-vacuous in BOTH directions.
+                 ⚠ FUN_000428d4 carries a SECOND, independent entry gate: FUN_00046ea6(5) on bit 5
+                 of gp-0x18d0/gp-0x18d4, a fault/DTC-style bitmask, falling to a 0x8000 sentinel if
+                 set. The record's earlier closure established only that that FUNCTION has one
+                 caller -- NOT that the BIT is clear in operation. Still [OPEN].
                  [VERIFIED] State 4 sits inside all three masks and is where the governor's ratchet
                  substitution (fixed in V42) used to fire.
+                 🛑 BUS `STEER_STATUS` IS NOT gp-0x67fa: route 4f reads ST == 0 on 47,990/47,990
+                 frames while the car steered, and state 0 is in no mask. Any reasoning that equated
+                 them (e.g. "ST==4 fires 0/37,922" as evidence about gp-0x67fa == 4) is invalid.
   TASK RATE    : ✅ RESOLVED 2026-07-31. The dispatcher is FUN_00014be4, a mod-100 rate divider on the
                  1 kHz tick (counter gp-0x4304); its wake argument is a 0-BASED TCB SLOT INDEX, proven
                  by byte-reading tp-0x3814 = 0xBB7EC = 0x000BB920 and confirming idx*0x30 + 0xBB920
@@ -596,7 +634,21 @@ class EpsState:
     assist_state_671a: int = 0
     assist_gate_671d: int = 0      # r24's HIGHER-priority override; live (2 writers: 0x3BD2A, 0x41EC6)
     assist_gate_683c: int = 0      # DEAD -- zero st.b writers image-wide, so the 512 arms are unreachable
-    assist_gate_6b5e: int = 0      # LERP output on axis gp-0x6bda, tested only as a boolean; NOT hands-off
+    assist_gate_6b5e: int = 0      # LERP output on axis gp-0x6bda, tested only as a boolean.
+                                  # ★★ RESOLVED 2026-08-04, and it REVERSES the old reading:
+                                  # gp-0x6b5e = ((LERP(gp-0x6bda)*0xC63C2)>>10)*polarity, producer
+                                  # FUN_000361c8 @0x36256/0x36264 (shadow pair gp-0x4cd8). Trapezoid
+                                  # @0xC66CC: X=[-384,-128,128,294,384] Y=[0,4762,4762,717,0],
+                                  # 0xC63C2 = 1024 (Q10 unity). r26 == 0 IFF gp-0x6b5e != 0, so r26
+                                  # is killed only where the LERP is ZERO -- i.e. |gp-0x6bda| >= 384.
+                                  # AND gp-0x6bda is a MARGIN TO A PEAK-HOLD ENVELOPE of driver
+                                  # assist torque gp-0x6bf0 (FUN_00036022 @0x36068-0x3608C; envelope
+                                  # gp-0x6bd8/gp-0x6bd6 from FUN_00035d38, half-width never < 9390;
+                                  # 0xC614A = +-10048, margin cal 0xC614C = 128). HANDS-OFF the
+                                  # margin is ~9262 = 24x the threshold.
+                                  # => THE GATE DOES NOT KILL r26 IN ORDINARY DRIVING, and least of
+                                  # all hands-off at creep. The kill window is a ~512-count sliver at
+                                  # the DRIVER-OVERRIDE end (cf. 0xC6156 = 9216).
     assist_slope_q10: Optional[int] = None  # gp-0x69a4; producer RESOLVED @0x355c6 (FUN_000352b4) --
                                   # the local SLOPE of a 10-segment curve, gated |gp-0x4f60| <= 25600.
                                   # 🛑 ~ZERO ON THIS CALIBRATION: FUN_00039702 shows the RAM array
@@ -2121,37 +2173,74 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     is REFUTED at 40-49 Hz (maneuver/control 2.516 [1.561,3.701] engaged vs 2.558 [1.469,3.747]
     manual) -- the engagement-conditional part is at 18-28 Hz, not grind #2's band.
 
-    V69 (BUILT 2026-08-04, UNFLASHED) removes the mechanism named at item 3 above rather than
-    trimming it. The gate branch 0x3AC04-0x3AC0C is cmp(2)+be(2)+ld.hu(4)+br(2) = 10 bytes with ZERO
-    SLACK, and it REPLACES the LERP rather than scaling it -- so speed shaping can reach the engaged
-    lane ONLY if the gate is off. Composing "gated AND speed-shaped" needs new instructions on the
-    1 kHz path, i.e. a cave, the only bricking class. Hence:
+    V69 (BUILT 2026-08-04, RE-CUT to x4, FLASHED, DRIVEN route 4f--61171e660d 2026-08-04) removed
+    the mechanism named at item 3 above rather than trimming it. The gate branch 0x3AC04-0x3AC0C is
+    cmp(2)+be(2)+ld.hu(4)+br(2) = 10 bytes with ZERO SLACK, and it REPLACES the LERP rather than
+    scaling it -- so speed shaping can reach the engaged lane ONLY if the gate is off. Hence:
 
         0x3AA96  fb -> c5      gate REVERTS to the dead gp-0x683c (0 writers image-wide)
         0xC6446  5244 -> 512   the now-unreachable arm returns to stock
-        0xD2A7E/0xD2A80  3072 -> 6144    mode-10 gain_B  0 km/h record Y[0..1]
-        0xD2ABA/0xD2ABC  2561 -> 5122    mode-10 gain_B 10 km/h record Y[0..1]
+        0xD2A7E/0xD2A80  3072 -> 12288   mode-10 gain_B  0 km/h record Y[0..1]   (x4 as SHIPPED)
+        0xD2ABA/0xD2ABC  2561 -> 10244   mode-10 gain_B 10 km/h record Y[0..1]   (x4 as SHIPPED)
 
-    Delivered multiplier: 2.000x to 10 km/h -> 1.886 @15 -> 1.769 @20 -> 1.526 @30 -> 1.270 @40 ->
-    EXACTLY 1.000x at and above 50 km/h, in BOTH arms. The highway 1.000x is STRUCTURAL, not tuned:
-    >= 50 km/h lies in the cross-axis [3200,6400] segment, so the interpolation reads ONLY rec2/rec3
-    and this edit touches neither (12,221-point sweep in the builder). And it is INVARIANT to the
-    [OPEN] inner-axis scale (4.7121 vs 0.58901 counts/deg-s) because it doubles the whole flat
-    [0,400] segment rather than leaning on where a breakpoint falls. Max anywhere = exactly 2.000x
-    => inside [stock 1.00x, V62/V65 2.00x], both flown flight-clean.
+    Delivered multiplier: 4.000x to 10 km/h -> 3.658 @15 -> 3.307 @20 -> 2.578 @30 -> 1.808 @40 ->
+    EXACTLY 1.000x at and above 50 km/h, in BOTH arms. ⚠ THE x2 FIGURES THAT STOOD HERE
+    (6144/5122, "2.000x ... 1.270 @40") WERE THE SPEC, NOT THE SHIP. Corrected 2026-08-04.
 
-    🛑 EDIT-ORDER INVARIANT: writing 0xC6446 = 512 while the gate is STILL repointed leaves the arm
-    LIVE at ~5x BELOW the stock LERP -- worse than stock everywhere. build_v69_tva.py asserts
-    arm == 512 => gate byte == 0xc5 and refuses to emit otherwise.
+    ★★★★ V69 FLEW AND GRIND #1 CAME BACK -- AT CREEP, NOT AT SPEED. Route 4f, 481.7 s, 8 segs,
+    flight-clean (ST==4 0/47,996 and ST==3 0, gridded AND raw 0x18F). Engaged pooled 18-22 Hz
+    f0 20.42 Hz prominence 13.47 (criterion >4), f0 IDENTICAL across all 8 search bands, manual 1.25
+    = no line. Order veto cleared by the engaged-vs-manual WITHIN-ROUTE speed-matched contrast --
+    4.726 [1.082, 18.20] vs null [0.36, 3.24] -- which no tyre or engine order can survive.
+        creep <20 km/h vs V62/r37   2.244 [1.438, 3.191] blk, 2.235 [1.533, 3.429] ep  (BOTH units)
+        >= 50 km/h vs stock          1.066 [0.690, 1.677] INSIDE NULL  => LANDS ON STOCK
+    ⚠ the ALL-SPEEDS headline (1.381 [1.026, 1.724] vs Kd2) loses its CI under the conservative
+    episode unit; the CREEP result does not.
+
+    ★★★ THE DOSE-RESPONSE IS NON-MONOTONE, and this is the finding:
+        0x (V61) 2501 | 1x stock 879 | 2x (V62/V65) 168 | 2x gated (V67/V68) 109 | 4x (V69) 746
+    median e_18-22, engaged creep. THE MINIMUM IS AROUND 2x AND V69's 4x OVERSHOT IT.
+    ⚠ cross-route medians without covariate matching -- read beside the matched contrasts above.
+
+    ★★ AND THE EFFECT IS ENGAGEMENT-CONDITIONAL THOUGH THE DOSE IS NOT. V69's 4x applies identically
+    in both arms (the gate is dead), yet manual at 4x is INDISTINGUISHABLE FROM STOCK (1.070
+    [0.383, 1.396], inside null) while engaged is 2.244x. => the mechanism is inside the CLOSED LKAS
+    LOOP, not open-loop damping quality.
+
+    🛑 SATURATION IS ELIMINATED AS THE CAUSE, two independent ways. (a) MEASURED: |dtorque| max
+    633.9 on 4f, 0.0000% above V69's 683 rail => >=99.9% of engaged time received the FULL 4.000x;
+    it is not a partially-delivered dose. (b) ARITHMETIC: stock and V69 share the SAME +-8192 clip,
+    and N(A) is monotone increasing in K, so V69/stock decays toward 1.0 FROM ABOVE and never
+    crosses -- minimum 1.049x over the entire reachable input domain. A rail cannot produce
+    sub-stock damping. See analysis-2020accord/v70_rail_describing_function.py.
+
+    ⚠ MECHANISM NOT UNIQUELY DETERMINED [BELIEF]. Two candidates fit the dose-response equally:
+      (a) a plain derivative-feedback optimum, overshot;
+      (b) PARAMETRIC GAIN COLLAPSE -- gp-0x6ac0 is loaded `ld.hu` (UNSIGNED) @0x3AAC4, so the gain
+          index is a MAGNITUDE that sweeps 0 -> peak -> 0 TWICE PER CYCLE. V69 turned Honda's 2.00x
+          rate rolloff into 8.00x (Y[0]/Y[1] raised, Y[2]/Y[3] left stock), making the damper
+          STRONGEST at the zero-crossing and WEAKEST at peak velocity. Modulation depth within one
+          cycle at A_rk 1927: stock/V62 1.49x, V69 5.96x, and V67's scalar arm EXACTLY 1.00x -- the
+          arm does not merely raise the gain, it LINEARISES it, a virtue never articulated at the
+          time. Effective-gain crossover below V62 at A_rk ~1300 (two independent derivations).
+          See v70_parametric_gain_collapse.py and v70_surface_vs_rate.py.
+    The dose-response is the EVIDENCE; the mechanism is BELIEF.
+
+    🛑🛑 V69's OWN STATED PURPOSE FAILED. The ~26-30 Hz lane-change transient is DOSE-INDEPENDENT:
+    it survived (2599 and 4094 counts p-p vs V68's 1468) and runs at FULL amplitude on the STOCK
+    rate lane -- V59/r2c at dose 1.000x carries the corpus's LARGEST p-p, 3283 @27.07 Hz. Pooled
+    speed-matched 2.000x/1.000x = 1.176 [0.641, 2.320] inside null; route-level Theil-Sen slope on
+    dose +5.736 [-25.432, +34.934], 0 inside. ★ The live candidate is EXCITATION, not gain: within
+    dose = 1.000x exactly, ALC vs driver-commanded = 2.389 [1.453, 4.898]. Holding excitation fixed
+    collapsed the 2.403x contrast 2.849 -> 2.013 with its CI crossing 1 -- an excitation contrast
+    wearing a dose label. => DO NOT CHASE THE RATE LANE FOR THIS SYMPTOM.
+
+    🛑 EDIT-ORDER INVARIANT, and it INVERTS for V70: V69 asserts arm == 512 => gate byte == 0xc5.
+    V70 restores the gate, so it must assert gate == 0xfb => arm == 5244. Shipping 0xfb with 512
+    pins the engaged lane ~5x BELOW stock everywhere -- worse than V61, which measured worse on-car.
     🛑 NEIGHBOUR TRAP: mode 11/12's 0 km/h records are BYTE-IDENTICAL to mode 10's, so the target
     pattern occurs 3x within 40 bytes; address absolutely, never by pattern.
-    ⚠ COSTS: manual steering below ~50 km/h now gets the rate damping (manual highway is
-    byte-identical to stock); saturation margin 1.91x -> 1.63x, the one metric worse than V68; and
-    on the pessimistic axis scale manual creep and creep grind #2 are both 2.000x (= V62/V65's dose).
-    🛑 THE MECHANISM IS SUGGESTIVE, NOT ESTABLISHED: the 26-30 Hz maneuver dose ratio is
-    3.334 [1.201, 6.492] inside a split-half null of [0.33, 3.36]. P3 (40-49 Hz does not move) and
-    P4 (1-4 Hz does not move) are the negative controls that catch it being wrong.
-    See docs/V69-DESIGN.md and docs/HANDOFF-2026-08-04-v69-built-speed-shaped-rate-lane.md.
+    See docs/V69-DESIGN.md and docs/HANDOFF-2026-08-04-v69-flew-grind1-back-at-creep.md.
 
     For the record, the pre-drive separation table (measured on V65's creep windows):
         LKAS active   98.7% / 15.7%      driver torque  96.8% / 50.5%     steering rate  81.1% / 48.5%
@@ -2160,12 +2249,34 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     distribution. The real figure is 1.70x (1268 vs 2158), with heavy overlap.
     🛑 gp-0x671d OUTRANKS the arm and is LIVE. If it fires, the gain is pinned to 0xC6442 = 1024,
     BELOW the stock default, and V67 becomes worse than V66. V67's probe bit5 measures it.
-    🛑🛑 BUT 0x3AB76 WAS A NO-OP: r26 is structurally inert -- avg's cal base 0xC6564 byte-reads as 40
-    bytes of EXACT ZERO (bounded by non-zero data both sides) and no writer was found for the RAM
-    adjustment at gp-0x641E..gp-0x6444, so stage1 = (dtorque*avg2)>>10 ~ 0 regardless of dtorque.
-    => r24 (0x3AC20) carries the ENTIRE lane. This re-attributes V42 (null because r26 was already
-    zero), V61 (WORSE = killing r24) and V62 (fix = doubling r24), and SUPERSEDES the standing claim
-    that "killing either alone leaves the other transmitting". A revert of 0x3AB76 would do nothing.
+    🛑🛑 "0x3AB76 WAS A NO-OP / r26 IS STRUCTURALLY INERT" -- DOWNGRADED TO BELIEF 2026-08-04, AND
+    HALF OF ITS ARGUMENT IS NOW REVERSED. The claim rested on TWO legs. Separate them:
+      LEG 1, the GATE -- REVERSED. r26 == 0 iff gp-0x6b5e != 0, and gp-0x6b5e is a trapezoid LERP on
+        gp-0x6bda, which is a MARGIN TO A PEAK-HOLD ENVELOPE of driver assist torque. Hands-off the
+        margin sits ~24x above the kill threshold => THE GATE LEAVES r26 LIVE in ordinary driving and
+        most strongly live in hands-off creep -- exactly where the grinds and the ratchet occur.
+        See assist_gate_6b5e above for the full byte-level derivation.
+      LEG 2, the MAGNITUDE -- STILL BELIEF, unresolved either way. avg's cal base 0xC6564 byte-reads
+        as 40 bytes of EXACT ZERO, and no writer was found for the RAM adjustment at
+        gp-0x641E..gp-0x6444 (10 of 18 cells checked) => stage1 ~ 0 IF that cal base is really what
+        feeds gp-0x69a4. ⚠ THAT LINK WAS NEVER VERIFIED; gp-0x69a4's actual producer is a LIVE
+        runtime 10-segment LERP at 0x355C6 in FUN_000352b4, 1 writer / 3 readers (0x355A4, 0x3575A,
+        and 0x3AB3A = the aggregator).
+    => "r24 carries the ENTIRE lane" is a BELIEF resting on LEG 2 alone. It may still be right, and
+    one indirect argument says it is: the measured dose-response is only self-consistent if
+    a = gp-0x69a4/1024 is SMALL, because at a ~ 1 the V67/V68 gate (which forces gain_A 3072 -> 512,
+    a 6.00x CUT) would put their engaged TOTAL at ~0.94x stock -- essentially ON stock -- yet they
+    measured the best grind #1 result in the kit (109 vs stock's 879).
+    🛑 CONSEQUENCE FOR ANY GATE-RESTORING BUILD: 0xC6444 = 512 is carried by every build including
+    V69, so restoring the V67 gate also restores a 6x r26 cut whenever LKAS applies. RAISING 0xC6444
+    is GENUINELY UNTESTED (V42 tested it DOWNWARD, 512 -> 0, FALSIFIED); blast radius is 1 reader /
+    0 writers, no float mirror, same CRC block #48 as 0xC6446; overflow ceiling <= 6553.
+    ★ MEASURE IT, DO NOT ARGUE IT: gp-0x6adc is r26's post-clamp mirror (st.h @0x3AD4E, 0 readers /
+    1 writer image-wide), the same blast-radius-free class as gp-0x6ada. Because r24 and r26 share
+    ONE polarity load (ld.b -0x6752[gp],r14 @0x3AB78, reused at 0x3AB7E for r26 and 0x3AC3E for r24)
+    they ALWAYS carry the same sign -- so sign(gp-0x6adc) vs sign(gp-0x6ada) is a matched pair:
+    bit4 pinned at 1 while bit3 toggles => r26 is zero; bit4 tracking bit3 => r26 is live. V70 flies
+    exactly that pair. This re-attribution of V42/V61/V62 stands only if LEG 2 holds.
     ⚠ The pre-committed r24 saturation caveat did NOT bind: measured dtorque is 123-839 (the route's
     most violent transient implies 739) against a clamp that needs 1820 under V62.
     ★★ V63/V64 do it BETTER: gp-0x671a is an oscillation detector (see EpsState.assist_state_671a), so

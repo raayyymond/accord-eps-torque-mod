@@ -222,6 +222,17 @@ def identify(b4):
     return True
 
 
+MIN_SAMPLES = 128
+# 🛑 128, NOT 256, AND THE REASON IS A REAL BUG THIS FILE SHIPPED. The split-half null below halves
+# each episode before scoring it. Route 4f's ratchet episodes are 268-462 samples, so with a
+# 256-sample minimum EVERY HALF FAILED, the null came back n = 0 / floor = NaN, and the verdict
+# table printed "0 / 9" -- which reads as a clean negative but is a TAUTOLOGY: nothing can exceed
+# NaN. A gate that cannot fail informatively is the V64 lesson, and it was sitting in the scorer.
+# 128 samples = 1.28 s = 0.78 Hz resolution, so 6-9 Hz still spans ~4 bins. Corrected 2026-08-04
+# from `analysis-2020accord/r4f_v69_readout.py`, which also adds the matched negative control that
+# `matched_null()` below now implements.
+
+
 def ratchet_line(mask, fs):
     """The ratchet statistic: is there a 6-9 Hz line in THIS BIT's own 100 Hz time series?
 
@@ -230,7 +241,7 @@ def ratchet_line(mask, fs):
     Returns (peak Hz, prominence) over the band, or (nan, nan) if the bit never toggles.
     """
     mask = np.asarray(mask, bool)
-    if mask.sum() in (0, len(mask)) or len(mask) < 256:
+    if mask.sum() in (0, len(mask)) or len(mask) < MIN_SAMPLES:
         return float("nan"), float("nan")
     x = mask.astype(float)
     x = x - x.mean()
@@ -245,6 +256,54 @@ def ratchet_line(mask, fs):
     i = np.argmax(P[band])
     floor = np.median(P[bg])
     return float(f[band][i]), float(P[band][i] / floor) if floor > 0 else float("nan")
+
+
+def analog_line(x, fs):
+    """The SAME 6-9 Hz statistic on a CONTINUOUS channel (bar torque / angle rate).
+
+    ★ WHY THIS EXISTS. Every probe bit on route 4f was CONSTANT, so `ratchet_line` returned NaN for
+    all of them -- and a null on a bit is only interpretable if the SYMPTOM was present. The analog
+    channels answer that: route 4f's ratchet cell carries 7.56 Hz at 2,823 counts p-p in four
+    episodes, which is what turned "0.0000%" from uninterpretable into a real one-sided bound.
+    """
+    x = np.asarray(x, float)
+    if len(x) < MIN_SAMPLES or not np.isfinite(x).all() or x.std() == 0:
+        return float("nan"), float("nan")
+    x = x - x.mean()
+    P = np.abs(np.fft.rfft(x * np.hanning(len(x)))) ** 2
+    f = np.fft.rfftfreq(len(x), 1 / fs)
+    band = (f >= RATCHET_LO_HZ) & (f <= RATCHET_HI_HZ)
+    bg = (f >= 2.0) & (f <= 20.0) & ~band
+    floor = np.median(P[bg])
+    i = np.argmax(P[band])
+    return float(f[band][i]), float(P[band][i] / floor) if floor > 0 else float("nan")
+
+
+def matched_null(chans, outside, fs, lengths, draws=400, seed=69):
+    """★ THE NEGATIVE CONTROL the split-half null is not: same-length windows from OUTSIDE the cell.
+
+    A split-half null is contaminated by its own signal -- halving an episode that contains the
+    line leaves the line in both halves, so it floors HIGH and understates a detection. This draws
+    matched-length windows from engaged-but-not-in-the-cell time, where a generic-roughness 6-9 Hz
+    line would also live. Use max(split_half_95, matched_95) as the floor: conservative for a
+    DETECTION claim, which is the direction that matters.
+    """
+    rr = [ab for ab in runs_of(outside) if ab[1] - ab[0] >= MIN_SAMPLES]
+    if not rr or not lengths:
+        return []
+    rng = np.random.default_rng(seed)
+    out = []
+    for _ in range(draws):
+        a, b = rr[rng.integers(len(rr))]
+        L = min(int(lengths[rng.integers(len(lengths))]), b - a)
+        if L < MIN_SAMPLES:
+            continue
+        s0 = a + int(rng.integers(0, b - a - L + 1))
+        for ch in chans:
+            _, p = analog_line(ch[s0:s0 + L], fs)
+            if np.isfinite(p):
+                out.append(p)
+    return out
 
 
 def main(paths):
@@ -313,17 +372,46 @@ def main(paths):
         print("     The recorded episodes are hands-off + ENGAGED + CREEP with |angle| 9-133 deg.")
         print("     Route 2b failed exactly this test and the operator said so before the data did.")
     else:
-        null = []
+        # ★ STEP 0 -- WAS THE SYMPTOM EVEN PRESENT? If the analog channels carry no 6-9 Hz line in
+        # the cell, this route cannot speak to the ratchet and NOTHING below is interpretable.
+        chans = (tq, rate)
+        lengths = [b - a for a, b in rr]
+        mnull = matched_null(chans, np.asarray(lat, bool) & ~sel, fs, lengths)
+        snull = []
         for a, b in rr:
             m = (a + b) // 2
             for aa, bb in ((a, m), (m, b)):
-                if bb - aa >= 256:
-                    for bit, _n, _d, _w, _t in RUNGS:
-                        _, p = ratchet_line(((b4 & bit) != 0)[aa:bb], fs)
-                        if np.isfinite(p):
-                            null.append(p)
-        floor = float(np.percentile(null, 95)) if null else float("nan")
-        print(f"  split-half null, 95th percentile prominence: {floor:.2f}  (n = {len(null)})")
+                for ch in chans:
+                    _, p = analog_line(ch[aa:bb], fs)
+                    if np.isfinite(p):
+                        snull.append(p)
+        f_split = float(np.percentile(snull, 95)) if snull else float("nan")
+        f_match = float(np.percentile(mnull, 95)) if mnull else float("nan")
+        floor = float(np.nanmax([f_split, f_match]))
+        print(f"  NULL 1 split-half   (n={len(snull):4d}): 95th {f_split:8.2f}   "
+              f"⚠ contaminated by its own signal, floors HIGH")
+        print(f"  NULL 2 matched OUTSIDE the cell (n={len(mnull):4d}): 95th {f_match:8.2f}   "
+              f"⇐ the clean negative control")
+        print(f"  ⇒ FLOOR = max(NULL1, NULL2) = {floor:.2f}  (conservative for a DETECTION claim)")
+        an_hits, an_pks = 0, []
+        for a, b in rr:
+            p_tq, _ = analog_line(tq[a:b], fs)
+            v = max(analog_line(ch[a:b], fs)[1] for ch in chans)
+            if np.isfinite(v) and v > floor:
+                an_hits += 1
+                an_pks.append(p_tq)
+        med_an = float(np.median(an_pks)) if an_pks else float("nan")
+        print(f"\n  ★ SYMPTOM PRESENT? analog bar-torque / angle-rate 6-9 Hz line above the floor "
+              f"in {an_hits} / {len(rr)} episodes, median {med_an:.2f} Hz "
+              f"(recorded ratchet {RATCHET_F0} Hz)")
+        if not an_hits:
+            print("    🛑 NO ANALOG LINE ⇒ the ratchet did not occur in this route's cell. Every")
+            print("       per-bit null below is then a bound on nothing. Do not interpret it.")
+        else:
+            n_fr = sum(b - a for a, b in rr)
+            print(f"    ⇒ the symptom IS present over {n_fr} frames / {n_fr / fs:.2f} s "
+                  f"(~{med_an * n_fr / fs:.0f} cycles). The per-bit nulls below are REAL "
+                  f"one-sided bounds.")
         print(f"\n  {'bit':<18s} {'episodes with a 6-9 Hz line above the null':>44s}  "
               f"{'median pk Hz':>13s}")
         for bit, name, _d, _w, _t in RUNGS:
@@ -336,6 +424,14 @@ def main(paths):
             med = float(np.median(pks)) if pks else float("nan")
             flag = "  ⇐ DETECTION" if hits and abs(med - RATCHET_F0) < 1.0 else ""
             print(f"  {name:<18s} {hits:>3d} / {len(rr):<40d}  {med:13.2f}{flag}")
+        print("  🛑 A bit that never toggles scores NaN, which cannot exceed any floor -- so '0 / N'")
+        print("     on a CONSTANT bit is a statement about the bit, not a failed test. Read it with")
+        print("     the duty table and the SYMPTOM PRESENT line above, never alone.")
+        print("  🛑🛑 bit4 gp-0x6ad4 IS STRUCTURALLY VACUOUS AT THIS THRESHOLD -- FUN_0003a382's")
+        print("     output is clamped to +/-CEILING = min of three LERPs, and cal 0xC67C8's max is")
+        print("     1024, so |gp-0x6ad4| <= 1024 EVERYWHERE and <= 341 at creep. It can never reach")
+        print("     +4096. See analysis-2020accord/v70_rung_reachability.py. bit5 is NOT vacuous")
+        print("     (gp-0x6b62 reaches +/-8192).")
 
     print("\n" + "=" * 102)
     print("THE 4x DOSE, PRICED ON-CAR -- bit6 is a rail-proximity meter on the lane V69 scales")

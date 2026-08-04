@@ -29,6 +29,18 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
+# 🛑 A GATE MUST BE ABLE TO REACH THE CONSOLE WITH ITS VERDICT. On a Windows cp1252 console this
+# script died with UnicodeEncodeError on the first '⚠'/'🛑' it printed -- exiting 1 BEFORE saying
+# whether it had actually found unattributed bytes. It exits 1 either way, so the gate still
+# "looked" right, and a reader could mistake a real failure for the encoding crash or vice versa.
+# Found 2026-08-04 while verifying V70. Same failure class as the 256-sample floor that made
+# decode_v69_ratchet's own null vacuous: a gate that cannot report informatively is worse than none.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):        # already wrapped, or not a real stream
+        pass
+
 from firmware_paths import plain_image_path   # noqa: E402
 
 STOCK = r"C:\Users\dudei\Desktop\Projects\accord-firmwares\analysis-2020accord\stock_fw_dump\code.bin"
@@ -74,9 +86,23 @@ EDITS = [
     # 🛑 0x3AA96 and 0xC6446 appear ABOVE as V67 edits and here as V69 REVERTS. This differ is
     # SPAN-based, so it cannot tell 5244 from 512 at 0xC6446 -- only verify_v69_image.py's exact
     # value anchors can. Run both; neither is sufficient alone.
-    (0xD2A7E, 0xD2A82, "V69", "mode-10 gain_B 0 km/h record Y[0..1] 3072 -> 12288 (x4; speed-shaped "
-                              "rate lane; rec2/rec3 untouched => highway EXACTLY 1.000x)"),
-    (0xD2ABA, 0xD2ABE, "V69", "mode-10 gain_B 10 km/h record Y[0..1] 2561 -> 10244 (x4)"),
+    # 🛑 SPAN-based, so it cannot tell V69's x4 from V70's x2 at these addresses -- only
+    # verify_v69_image.py / verify_v70_image.py's exact value anchors can. The DOSE is per build:
+    # V69 = x4 (12288 / 10244), V70 = x2 (6144 / 5122). Both leave rec2/rec3 untouched.
+    # 🛑🛑 "V70" IS AMBIGUOUS ON DISK AS OF 2026-08-04 -- TWO .rwd FILES CARRY A V70 PREFIX AND THEY
+    # HAVE OPPOSITE CONTROL PATHS. The line above describes ONLY the SPEEDSHAPED-gateREVERTED-x2
+    # artefact (rwd 0bdfb0da..., image 3760d9c0..., 08:04), which is what _v70_plain_image.bin and
+    # verify_v70_image.py currently are. The OTHER artefact
+    # (rwd d716b1a5..., image 8bfcb1fa..., 07:45, "LKASGATED-V68CONTROLPATH") keeps V68's gate=0xFB
+    # / arm=5244 and leaves 0xD2A7E/0xD2ABA at STOCK, so this entry matches ZERO bytes on it.
+    # ⚠ Attribution here is therefore only as good as which image you fed it. Confirm the .rwd
+    # filename AND run the matching verify_v*_image.py -- this differ alone cannot tell them apart.
+    # Same trap as the three V68-prefixed .rwd files; see docs/STATE.md.
+    (0xD2A7E, 0xD2A82, "V69/V70", "mode-10 gain_B 0 km/h record Y[0..1] 3072 -> 6144 (V70 x2) or "
+                                  "12288 (V69 x4); speed-shaped rate lane, rec2/rec3 untouched "
+                                  "=> highway EXACTLY 1.000x"),
+    (0xD2ABA, 0xD2ABE, "V69/V70", "mode-10 gain_B 10 km/h record Y[0..1] 2561 -> 5122 (V70 x2) or "
+                                  "10244 (V69 x4)"),
 ]
 
 # 🛑 The cave span carries a DIFFERENT payload on every build. Labelling it "V59 boost-index
@@ -99,6 +125,13 @@ CAVE_BY_BUILD = {
     "69": ("V39->V69", "3-bit RATCHET probe: bit6 gp-0x6ada>=+4096 (r24 lane out, post +/-0x2000 "
                        "clip), bit5 gp-0x6b62>=+4096 (return-to-centre), bit4 gp-0x6ad4>=+4096 "
                        "(unfiltered residual); bit3 CONSTANT 0 = build class"),
+    # 🛑 V70 REPAIRS all three of V69's rungs -- each returned an uninterpretable zero for a
+    # DIFFERENT reason (bit4 structurally unreachable, bit5 insensitive, bit6 no exposure) -- and
+    # spends 6 bytes on a SIGN bit. bit3 is a RUNG here, not a constant: that is what makes V70
+    # distinguishable from V68 (bit3 constant 1) and V66/V67/V69 (bit3 constant 0) at the same time.
+    "70": ("V39->V70", "4-bit SIGN probe: bit6 gp-0x6ada>=+512 (r24 lane out, post-clip), "
+                       "bit5 gp-0x67fa==10 (THE STATE GATE), bit4 gp-0x6adc>=0 (r26 mirror SIGN), "
+                       "bit3 gp-0x6ada>=0 (r24 mirror SIGN; bit6 => bit3 is an INVARIANT)"),
 }
 
 # 🛑 Deliberately NOT in the list, and worth stating because it surprises people:

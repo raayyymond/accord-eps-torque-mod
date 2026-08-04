@@ -8,6 +8,31 @@ metadata:
   modified: 2026-08-04T04:35:31.656Z
 ---
 
+🛑🛑 **POST-FLIGHT, 2026-08-04 — ALL THREE RUNGS FAILED, AND THE RESIDUALS AT THE BOTTOM ARE NOT WHY.**
+Route `4f--61171e660d`, 481.7 s.
+- **bit4 (`gp-0x6ad4` ≥ +4096) was STRUCTURALLY VACUOUS — it could never have fired, on any build, on
+  any drive.** `±0x2800` is the **ERR *input* clamp**, not the lane's output range. The **output** is
+  clamped to **±CEILING = MIN of three LERPs**; the binding one is `0xC67C2`/`0xC67C8`, indexed on
+  **voted vehicle speed**, **max 1024**, starting at **ZERO** — at the four ratchet episodes' speeds
+  (4.9/6.8/7.8/8.0 km/h) CEILING was **164–341** ⇒ the test sat **12–25× above the lane's entire
+  reachable range.** ★ Also explains why **V56's mute of this lane changed nothing.**
+- **bit5 (`gp-0x6b62` ≥ +4096) was INSENSITIVE, not vacuous** — reachable max **5786**
+  (`|gp-0x6b5e| ≤ 4762` from the trapezoid `0xC66CC` X = [−384, −128, 128, 294, 384],
+  Y = [0, 4762, 4762, 717, 0] with `0xC63C2` = 1024, plus a latched `|sVar8| ≤ 1024`) ⇒ 4096 was
+  **71% of full range** and the rung saw only the **top 29%**.
+- **bit6 (`gp-0x6ada`) had NO EXPOSURE** — replay predicts **~1** one-sided hit, observed **0**,
+  **p ≈ 0.37**. A power problem, **not** the V64 gate failure — and **not a positive control**, so
+  bits 5/4 could not be interpreted against it.
+
+⇒ **Both middle rungs were sized against a DOWNSTREAM GATE WIDTH rather than the lane's own reachable
+output.** That is the transferable lesson —
+[[feedback-size-probe-rungs-against-lane-reachable-output]].
+✅ `rlog-tools/decode_v69_ratchet.py` was **fixed in place** the same session — a **128-sample floor
+replaces a 256** that made its own null vacuous (its printed `0/9` was a tautology); `analog_line()`
+and `matched_null()` fixed alongside. **Do not regress it.**
+
+**Original design note follows.**
+
 ★★★ **V69's `0x14A` byte4 probe reads RATCHET candidates, not the grinds.** Operator instruction,
 2026-08-04. Decoder `rlog-tools/decode_v69_ratchet.py`, linked mechanically — the build **fails** if
 its `CAVE_HEX` is not byte-for-byte the built cave.

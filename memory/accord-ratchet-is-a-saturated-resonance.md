@@ -34,6 +34,15 @@ Dwell on the >4 Hz high-passed bar, against synthetic calibration:
 not friction compensation or a deadband. **Build-invariant** — V62 changed its amplitude, not its
 mechanism.
 
+⚠ **RE-FRAMED 2026-08-04 — the SATURATED half is now BELIEF, not measurement.** Route `4f` shows crest
+factor **2.07–2.45** on a band-pass where a **steady sine gives 1.414**, and **no flat-topping on any
+filter**. The symmetry above is unaffected (it kills stick-slip either way); what is not supported is
+*"flat-topped / clipping"*, which is what justified V69's probe rung choice.
+**Flag it for re-examination — do not treat the saturation model as dead, and do not quote it as
+established.** ⚠ Separately, **Q is NOT measurable at NFFT 256** (main lobe caps it at ~13.3), so the
+recorded **Q ≈ 36** is neither confirmed nor refuted by `4f`.
+See [[accord-ratchet-characterised-on-route-4f]].
+
 ## Fixed in hertz, not a tyre order
 Domain test 0.3–11 m/s: **CV(Hz) 0.211 vs CV(order) 0.829** on V62; fixed in hertz on all five builds.
 🛑 **Order 1 (`0.489·v`) enters 6–9 Hz at v = 12.3 m/s and leaves at 18.4 m/s — every ratchet number
@@ -63,4 +72,6 @@ operating points — e.g. X = [0, 40, 100, 3000], Y = [2305, 2305, 4610, 4610] �
 the ratchet lives and 2× where the grinding lives.** Arithmetic safe (5120 × 4610 = 23.6M vs 2³¹).
 🛑 Not a build proposal: it would aim at an unmeasured effect. See [[accord-v62-flashed-grinding-is-fixed]].
 
-See also [[accord-r26-is-structurally-inert]], [[feedback-episodes-not-windows-and-the-noise-floor]].
+See also [[accord-r26-is-structurally-inert]] (🛑 **its title claim is REVERSED as of 2026-08-04 —
+r26 is LIVE**), [[accord-ratchet-characterised-on-route-4f]],
+[[feedback-episodes-not-windows-and-the-noise-floor]].

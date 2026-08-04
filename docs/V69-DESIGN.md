@@ -65,7 +65,7 @@ saturating lane clips. None has ever been measured.
 | 7 | — | constant 1 | — | LIVENESS; field == 0 ⇒ VOID |
 | **6** | `gp-0x6ada` | ≥ +4096 | ±0x2000 **saturating clip** | r24's **lane output**, the damping/torque-rate lane the record points at and the lane V69 scales. Honda mirrors it to RAM at `0x3AD5A` every 1 kHz tick. 🛑 **0 readers / 1 writer image-wide** ⇒ the strongest GATE-1 statement available: nothing consumes it, so the probe cannot perturb anything even in principle. +4096 = half its rail ⇒ duty is a **rail-proximity meter**. |
 | **5** | `gp-0x6b62` | ≥ +4096 | ±0x2000 **ZERO gate** | **The operator's own hypothesis, never probed in 69 builds.** Return-to-centre: `FUN_00036388`, a slow ±1/tick accumulator **with hysteresis**. |
-| **4** | `gp-0x6ad4` | ≥ +4096 | ±0x2800 **ZERO gate** | The **unfiltered** residual/resonance lane (`FUN_0003a382`: two passthroughs + a **raw derivative** on the physical torque sensor, straight into the aggregator). Its gain is LERP-indexed by `gp-0x671a` — Honda's oscillation counter — so this lane **closes a loop from the detector back into assist**. Live hands-off, which the boost lane is not. |
+| **4** | `gp-0x6ad4` | ≥ +4096 | 🛑 ~~±0x2800 **ZERO gate**~~ — **WRONG, CORRECTED 2026-08-04 AFTER THE FLIGHT** | The **unfiltered** residual/resonance lane (`FUN_0003a382`: two passthroughs + a **raw derivative** on the physical torque sensor, straight into the aggregator). Its gain is LERP-indexed by `gp-0x671a` — Honda's oscillation counter — so this lane **closes a loop from the detector back into assist**. Live hands-off, which the boost lane is not. 🛑🛑 **THIS RUNG WAS STRUCTURALLY VACUOUS AND COULD NEVER HAVE FIRED, ON ANY BUILD, ON ANY DRIVE.** `±0x2800` is the **ERR *input* clamp**, not the lane's output range. The **output** is clamped to ±CEILING = **MIN of three LERPs**; the binding one is `0xC67C2`/`0xC67C8`, indexed on **voted vehicle speed**, **max 1024**, and it **starts at ZERO** — at the four ratchet episodes' speeds (4.9/6.8/7.8/8.0 km/h) CEILING was **164–341**. A ≥ 4096 test is **12–25× above the lane's entire reachable range**. ★ It also explains why **V56's mute of this lane changed nothing.** ⇒ **the lesson: size a rung against the producing lane's own reachable output, never against a downstream gate width.** |
 | 3 | — | constant **0** | — | V69 BUILD CLASS. V68 emits bit3 = 1 in **100.000%** of 53,991 frames ⇒ V68 excluded absolutely. |
 
 **bit6 is freed from the LKAS gate** to buy the third rung. Justified, not assumed: `gp-0x6806`
@@ -421,8 +421,14 @@ have single f32 hits (`0xC661C`, `0x55B5A`), so moving a breakpoint would reopen
 
 **Safety anchors, re-verified across stock and all 11 archived images:** role table `0xC4124` =
 `[0,0,5,0,5,5,0,0,0,5,0]` — **no slot ever 6 or 7**, so `gp-0x67ac` stays 0 and the rate lanes cannot
-silently drop out; `0xC6564` = **40 zero bytes**, so r26 is structurally inert and r24 carries the
-whole lane.
+silently drop out; `0xC6564` = **40 zero bytes**, so ~~r26 is structurally inert and r24 carries the
+whole lane~~ 🛑 **DOWNGRADED 2026-08-04 to BELIEF.** `0xC6564` really is 40 zero bytes with no writer
+found for the RAM adjustment (10 of 18 cells) — but **its link to `gp-0x69a4` was NEVER VERIFIED**, and
+`gp-0x69a4`'s real producer is a **live runtime 10-segment LERP at `0x355C6` in `FUN_000352b4`**.
+⇒ *"r24 carries the whole lane"* may still be right (the dose–response argues it is), but it is an
+inference, not a byte fact. **`0xC6564` remains a valid *byte* anchor** — it is simply not evidence
+about r26's liveness. ⚠ Separately, the **GATE** leg of the same claim **is** reversed: the gate kills
+r26 only at `|gp-0x6bda| ≥ 384`, and hands-off `gp-0x6bda` ≈ 9262 = 24× that.
 
 ---
 

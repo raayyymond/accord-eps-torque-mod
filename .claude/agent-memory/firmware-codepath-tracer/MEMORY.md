@@ -5,6 +5,10 @@
 - [🛑 Grep build_v*_tva.py before proposing ANY cal](feedback_check_build_scripts_before_proposing_cal_edit.md) — 0xC6450 was re-proposed after being flashed/falsified as V46.
 
 ## Accord TVA-A160 (current project)
+### Rate lane V62→V69 cross-build arc (2026-08-04)
+- [🛑★★★★★★ V66 REVERTED V62's `sar` doubling — V69 is a DIFFERENT mechanism, not a re-cut](reference_accord_rate_lane_v62_to_v69_gain_arc.md) — full speed×rate gain table vs stock; V69 = exactly 1.000× ≥50 km/h and 4.000× in MANUAL creep; rails at |dt| 683 vs repo max 839; saturation alone CANNOT make V69 weaker than V62 (DF monotone in K) — the rate-axis rolloff can. ⚠ r26 inertness is OPEN.
+- ★★★★★★ Same file §7/§8: **FUN_0003ad74 rebuilds BOTH tables (first half IS gain_B)**, blend is STRICT 2-POINT ⇒ ≥50.000 km/h exact; and with the gate live the arm (engaged) and the surface (manual) are **provably independent knobs, cave-free** — but V69's edit-order invariant INVERTS.
+- 🛑★★★★★★ Same file §6 (RESOLVED 2026-08-04): **r26 is LIVE — the "structurally inert / 0xC6564" memory is WRONG.** gp-0x6bda is a margin to a ≥±9390 peak-hold envelope of DRIVER ASSIST, so hands-off sits 24× clear of the ±384 kill window. ⇒ V67/V68's one-byte repoint **cut r26 6.00× engaged** and their total may be BELOW stock; measure `a = gp-0x69a4/1024` via a `gp-0x6adc` rung. 0xC6444 only ever tested downward; overflow ceiling 6553.
 ### 1 kHz oscillation detector gate/liveness (2026-08-03)
 - [★★★★★ Detector gate self-clears, input is live ISR-fed, gp-0x6c2c bypasses the gate entirely](reference_accord_detector_gate_input_liveness_verified.md) — gp-0x67df exhaustively 2 accesses (1 writer); TCB table 0xBB858 re-derived via LE32 scan; recommends probing gp-0x6c2c directly to sidestep the DTC-gate ambiguity.
 ### RAM ownership / code-cave GATE 1 (2026-08-02)

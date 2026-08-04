@@ -1,0 +1,134 @@
+{
+ "grind2_creep": {
+  "power": {
+   "V67 r47+r4a (PRIOR)|LKAS ON": {
+    "secs": 158.72,
+    "obs": 0,
+    "exp": 7.617747440273037,
+    "p0": 0.0004916480513319143
+   },
+   "V67 r47+r4a (PRIOR)|LKAS OFF": {
+    "secs": 151.04,
+    "obs": 0,
+    "exp": 6.4954128440366965,
+    "p0": 0.001510351544934549
+   },
+   "V69 r4f  (THIS ROUTE)|LKAS ON": {
+    "secs": 113.92,
+    "obs": 0,
+    "exp": 5.467576791808874,
+    "p0": 0.004221449224296902
+   },
+   "V69 r4f  (THIS ROUTE)|LKAS OFF": {
+    "secs": 69.12,
+    "obs": 0,
+    "exp": 2.9724770642201834,
+    "p0": 0.05117638600227579
+   }
+  },
+  "kd2_rate": {
+   "LKAS ON": 0.047994880546075085,
+   "LKAS OFF": 0.0430045871559633
+  },
+  "census": {
+   "Kd=1.00  (V58 r2b + V59 r2c + V64 r35)|LKAS ON": [
+    172.8,
+    0
+   ],
+   "Kd=1.00  (V58 r2b + V59 r2c + V64 r35)|LKAS OFF": [
+    136.96,
+    0
+   ],
+   "Kd=2.00  (V62 r37 + V65 r3a/r3b)|LKAS ON": [
+    375.04,
+    18
+   ],
+   "Kd=2.00  (V62 r37 + V65 r3a/r3b)|LKAS OFF": [
+    139.52,
+    6
+   ],
+   "Kd=gated (V67 r47+r4a)|LKAS ON": [
+    158.72,
+    0
+   ],
+   "Kd=gated (V67 r47+r4a)|LKAS OFF": [
+    151.04,
+    0
+   ],
+   "Kd=4x<50 (V69 r4f)  *** THIS ROUTE ***|LKAS ON": [
+    113.92,
+    0
+   ],
+   "Kd=4x<50 (V69 r4f)  *** THIS ROUTE ***|LKAS OFF": [
+    69.12,
+    0
+   ]
+  }
+ },
+ "grind2_corner": {
+  "power": {
+   "V67 r47+r4a (PRIOR)|LKAS ON": {
+    "secs": 128.0,
+    "obs": 0,
+    "exp": 9.803921568627452,
+    "p0": 5.523456800944938e-05
+   },
+   "V67 r47+r4a (PRIOR)|LKAS OFF": {
+    "secs": 96.0,
+    "obs": 0,
+    "exp": 5.769230769230768,
+    "p0": 0.0031221582508793263
+   },
+   "V69 r4f  (THIS ROUTE)|LKAS ON": {
+    "secs": 26.88,
+    "obs": 0,
+    "exp": 2.058823529411765,
+    "p0": 0.12760400397979493
+   },
+   "V69 r4f  (THIS ROUTE)|LKAS OFF": {
+    "secs": 42.24,
+    "obs": 0,
+    "exp": 2.5384615384615383,
+    "p0": 0.07898782609432885
+   }
+  },
+  "kd2_corner_rate": {
+   "LKAS ON": 0.07659313725490197,
+   "LKAS OFF": 0.06009615384615384
+  },
+  "census": {
+   "Kd=1.00  (V58 r2b + V59 r2c + V64 r35)|LKAS ON": [
+    26.88,
+    0
+   ],
+   "Kd=1.00  (V58 r2b + V59 r2c + V64 r35)|LKAS OFF": [
+    84.48,
+    0
+   ],
+   "Kd=2.00  (V62 r37 + V65 r3a/r3b)|LKAS ON": [
+    195.84,
+    15
+   ],
+   "Kd=2.00  (V62 r37 + V65 r3a/r3b)|LKAS OFF": [
+    99.84,
+    6
+   ],
+   "Kd=gated (V67 r47+r4a)|LKAS ON": [
+    128.0,
+    0
+   ],
+   "Kd=gated (V67 r47+r4a)|LKAS OFF": [
+    96.0,
+    0
+   ],
+   "Kd=4x<50 (V69 r4f)  *** THIS ROUTE ***|LKAS ON": [
+    26.88,
+    0
+   ],
+   "Kd=4x<50 (V69 r4f)  *** THIS ROUTE ***|LKAS OFF": [
+    42.24,
+    0
+   ]
+  }
+ }
+}

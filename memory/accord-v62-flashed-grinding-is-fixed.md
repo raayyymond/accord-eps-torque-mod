@@ -49,7 +49,27 @@ p90 they are indistinguishable (438 vs 329) — an ordinary distribution with on
 
 ⇒ **RECOMMENDED: no new build. Fly V62 again and count bursts.** The open question is the *rate of a rare
 event*, which needs exposure, not firmware. Revisit the burst corner: **v 2–4 m/s at high steering rate
-under LKAS.** See [[accord-r26-is-structurally-inert]], [[accord-ratchet-is-a-saturated-resonance]].
+under LKAS.**
+
+🛑 **CORRECTION 2026-08-04 — "`0x3AB76` WAS A NO-OP" IS NO LONGER SUPPORTED, BUT IT IS NOT REFUTED
+EITHER.** The companion r26-inert claim splits into two legs and only one reversed:
+**LEG 1 (the GATE) is REVERSED [EVIDENCE]** — it does not kill r26 in ordinary driving, and least of all
+hands-off at creep. **LEG 2 (the MAGNITUDE) is DOWNGRADED to BELIEF** — `0xC6564` really is 40 zero
+bytes, but **its link to `gp-0x69a4` was never verified**, and `gp-0x69a4`'s real producer is a live
+runtime 10-segment LERP at `0x355C6` in `FUN_000352b4`.
+⇒ **"r24 carries the entire lane" now rests on LEG 2 alone, and the re-attribution of V42/V61/V62 is
+CONTINGENT ON IT.** It may still be right — the indirect argument is that at `a ≈ 1` V67/V68's 6.00× cut
+on gain_A would put their engaged total at ~0.94× stock, essentially *on* stock, yet they measured the
+best grind #1 result in the kit. **The measured results in this note are unaffected either way** — only
+the attribution is. Full chain, and the sign-pair measurement that settles it:
+[[accord-r26-is-structurally-inert]].
+
+★ **AND V62's dose is now known to be near the OPTIMUM, not on a ramp.** V69 flew 4× on 2026-08-04 and
+grind #1 came back: median `e_18-22` engaged creep runs **2501 (0×) → 879 (1×) → 168 (2×) → 109 (2×
+gated) → 746 (4×)** ⇒ **non-monotone, minimum around 2×.** Do not read V62's 8–42× as "more would be
+better" — see [[accord-v69-flew-dose-response-non-monotone]].
+
+See [[accord-r26-is-structurally-inert]], [[accord-ratchet-is-a-saturated-resonance]].
 
 ⚠ **Trigger sits outside the firmware:** instant #1 occurs with openpilot's command **railed at ±4096**
 for 0.64 s with the driver turning against it. Engaged-creep rail duty **V62 42.4% vs V59 25.3%** — itself
