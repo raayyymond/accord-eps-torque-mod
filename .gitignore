@@ -141,5 +141,7 @@ docs/can-research/annas/candidates.json
 # .hevc/.ts camera segments) are large and not versioned. Ignore the whole tree.
 analysis-2020accord/rlogs/
 
-# route rlog caches -- regenerate with analysis-2020accord/extract_r*_cache.py
+# route rlog caches -- regenerate with analysis-2020accord/extract_*_cache.py
+# (the V68 caches are _cache_v68/, not _cache_r*/ -- the rule below missed them once)
 _cache_r*/
+_cache_v68/

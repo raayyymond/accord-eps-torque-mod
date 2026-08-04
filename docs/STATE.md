@@ -6,8 +6,9 @@ each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed, falsified, or **rejected on
 review** — check it before proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-08-03-the-detector-was-always-there.md`
-(predecessors: `HANDOFF-2026-08-02-v67-flew-and-the-highway-grind-is-not-the-rate-lane.md`, then
+`docs/HANDOFF-2026-08-03-v68-flew-the-lane-change-is-28hz.md`
+(predecessors: `HANDOFF-2026-08-03-the-detector-was-always-there.md`, then
+`HANDOFF-2026-08-02-v67-flew-and-the-highway-grind-is-not-the-rate-lane.md`, then
 `HANDOFF-2026-08-01-grind2-is-v62s-own-fix-at-high-frequency.md`, then
 `HANDOFF-2026-08-01-v62-flew-and-the-grinding-is-fixed.md`, then
 `HANDOFF-2026-07-31-v64-the-null-is-on-the-gate.md`, then
@@ -17,7 +18,113 @@ review** — check it before proposing any calibration edit) and the latest hand
 
 ---
 
-★★★★ **THE HEADLINE, 2026-08-03 (LATEST): THE >50 Hz BLINDNESS WAS OURS, NOT THE CAR'S. HONDA RUNS A
+★★★★ **THE HEADLINE, 2026-08-03 (LATEST): V68 FLEW. THE LANE-CHANGE VIBRATION IS CAPTURED AND IT IS
+A ~28 Hz TRANSIENT, NOT GRIND #2. THE CORPUS'S MISSING LKAS-OFF HIGHWAY ARM IS CLOSED, AND
+"ONLY WHEN ENGAGED" IS REFUTED AT 40–49 Hz. HONDA'S 1 kHz DETECTOR STAYED AT ZERO.**
+
+Routes **`4c`** (`d0ea3c14b4` segs 4–8, **LKAS OFF** manual highway — operator: *"no grind vibration
+felt"*) and **`4e`** (`11f5b814b6` segs 31–34, **LKAS ON** — *"definitely felt the grind #2-like
+vibration when changing lanes"*). Full narrative:
+`docs/HANDOFF-2026-08-03-v68-flew-the-lane-change-is-28hz.md`. Reproduce with
+`analysis-2020accord/analyze_v68_highway_arms.py`, `_followups.py`, `_engaged_line.py`,
+`_line28.py`, `_line28_identity.py`.
+
+✅ **V68 CONFIRMED FROM THE PROBE, NOT THE FILENAME.** byte4 ∈ `{0x8F, 0xCF}`, **bit3 = 100.000%**
+of 53,991 frames (V66/V67 emit bit3 = 0 ⇒ excluded absolutely); VOID 0, illegal 0, ord_viol 0.
+Cave verified by hand from `_v68_plain_image.bin`: `movea 0x88,r0,r7` @`0xC4B34`,
+`ld.bu -0x6806[gp],r6` @`0xC4B38`, **`ld.bu -0x67df[gp],r6` = `a4372198` @`0xC4B44` (ODD disp
+`0x9821`, hw1 `a437`)**, `cmp 0x1,r6`/`blt +6`, `ld.bu -0x671a[gp],r6` @`0xC4B50`.
+⚠ **NAMING TRAP:** `build_v68_tva.py` still calls bit4's constant `BIT_RATE` with `RATE_DISP =
+0x6AC0` — leftovers from the SUPERSEDED rate-axis probe. **Read `CELLS`, not the constant name.**
+✅ **FLIGHT-CLEAN both routes, two methods:** `ST == 4` **0**, `ST == 3` **0** gridded *and* on the
+raw un-gridded `0x18F` stream; watchlist (steerUnavailable/canError/controlsMismatch/…) CLEAN.
+
+★★★ **THE MISSING ARM IS CLOSED.** `4c` supplies **234.8 s disengaged above 20 m/s** (148.4 s above
+25, 42.7 s above 28) against the entire prior corpus's **0.0 s at every cut from 12 to 28 m/s**.
+🛑🛑 **BUT ARM AND DOSE ARE THE SAME VARIABLE.** V68's control path is V67's, whose rate-lane arm is
+CONDITIONAL on `gp-0x6806`: **LKAS ON = gate open = Kd 2.00× ; LKAS OFF = gate closed = Kd 1
+(stock)**. Every cross-arm number is "engaged AND doubled" vs "disengaged AND stock".
+
+★★ **"ONLY WHEN ENGAGED" IS REFUTED FOR 40–49 Hz.** Maneuver-vs-control computed INSIDE each arm
+against its own split-half null (road/day/tyre cancel), one absolute cut pair (|rate|pk ≥ 19.0 /
+≤ 11.0 deg/s):
+
+| band | **ON (4e)** | **OFF (4c)** | null |
+|---|---|---|---|
+| 1–4 (validity) | 1.182 [0.818, 1.506] | 1.592 [0.807, 1.823] | [0.78, 1.29] |
+| **18–22** | **3.129 [2.408, 5.298]** | 1.780 [1.444, 1.927] | [0.66, 1.51] |
+| **24–28** | **5.098 [2.798, 6.160]** | 2.056 [1.470, 2.812] | [0.79, 1.23] |
+| 30–40 | 2.072 [1.550, 2.292] | 2.081 [1.667, 2.711] | [0.72, 1.42] |
+| **40–49** | **2.516 [1.561, 3.701]** | **2.558 [1.469, 3.747]** | [0.77, 1.31] |
+
+⇒ grind #2's band rises by **the same factor in both arms**; 30–40 Hz too. ⇒ ★★ **the
+engagement-conditional part is at 18–28 Hz**, a different band from the one this kit has hunted.
+⚠ **The raw cross-arm LEVEL contrast is uninterpretable and is kept only to be dismissed:** the 1–4
+Hz exposure check fails at **0.213** (effort p50 **565** manual vs **96** engaged), the (speed,
+effort, |rate|) matcher finds **zero** shared cells, and **0.0%** of manual windows fall below the
+engaged arm's p90 effort. Only the within-arm contrast carries weight.
+
+★★★★ **THE EVENT, CAPTURED — `4e` seg 33, t = 51.3 s.** `preLaneChangeRight` → ALC right lane change
+at **25.93 m/s / 1566 rpm**, angle −4.8 → **−11.3°**, rate peak **38 deg/s**, engaged, `ST == 0`:
+**bar 1468 counts p-p**, **26–30 Hz envelope 614** (route median 31 ⇒ **20×**), lines at
+27.73 / **28.12** / **28.51** Hz at **prominence 100–107** — while **40–49 Hz reads 69** in the same
+window. Identity, with the arithmetic: wheel order 2 = **24.93**, order 3 = **37.40**, engine order 1
+= **26.10**, order 2 = **52.20** Hz — **it is none of them.** ✅ Positive control in the SAME window:
+lines at **37.10/37.49 Hz** sit on wheel order 3, so the estimator does find orders when present.
+⇒ **the felt lane-change vibration is a ~28 Hz transient and grind #2's band is quiet during it.**
+
+🛑 **THE DETECTOR STAYED AT ZERO — bit5 `gp-0x67df != 0` fired 0/53,991 frames**, including straight
+through that burst; bit4 likewise 0. With V67 (186,321 frames at `>= 5`) and V64's route 35 on the
+same word, **the bottom rung is now measured and empty.** 🛑🛑 **AT FULL STRENGTH: this cell has
+NEVER been observed non-zero in this kit — there is NO POSITIVE CONTROL.** It bounds amplitude only
+if the detector is live; *"disabled / input dead / `FUN_000428d4` not reached"* is **not excluded**.
+⇒ **`gp-0x67df`'s writer and `FUN_000428d4`'s enable condition are now VERDICT-AFFECTING and OPEN.**
+
+⚠ **THE RATE-LANE SUGGESTION — REAL SHAPE, INSUFFICIENT POWER, AND NOT MORE THAN THAT.** Pooling all
+highway windows by **arm-resolved** dose. Within-dose maneuver/control (null [0.86, 1.15]): 24–28 Hz
+**6.694 → 12.874**, 26–30 Hz **3.665 → 11.822**, but 40–49 Hz **3.304 → 3.903** and 30–40 flat.
+Direct dose ratio Kd2/Kd1 on maneuver windows (106 vs 39 windows, 41 vs 17 blocks): **26–30 Hz
+3.334 [1.201, 6.492] against a split-half null of [0.33, 3.36] — the CI does NOT clear its own
+floor.** Control windows flat (1.034 [0.904, 1.290]). ⚠ Also confounded with arm and route (Kd=1
+maneuvers are driver-initiated on `4c`; Kd=2 is dominated by `r47`'s ALC).
+⇒ ★★★ **RECOMMENDED, NO BUILD: ONE HIGHWAY RUN ALTERNATING LKAS ON/OFF EVERY ~60 s ON ONE STRETCH,
+WITH DELIBERATE LANE CHANGES IN BOTH ARMS.** V68's gate already carries both doses, so dose, road,
+tyres and time all become within-route. Power computed, not asserted — Kd=1 maneuver blocks 17
+(today) → null 3.65× ; 51 → **2.42×** ; 102 → **1.96×**; the measured point is 3.334×, so a ceiling
+below ~2.2× is decisive ⇒ **~150–250 s more of ACTIVE maneuvering LKAS-OFF ≈ 20–30 deliberate lane
+changes**, plus a matching set engaged. ⚠ If it confirms, the lever is the **same `sar 0xa` →
+`sar 0x9` site in `FUN_0003aa2c`** that V62 doubled and V67 made conditional — i.e. partially
+reverting what fixed grind #1. **Price that trade before building.**
+
+✅ **THE ORDER VETO RAN FIRST AND 30–49.5 Hz IS EMPTY ON BOTH ARMS** — averaged-periodogram
+prominence **1.89–2.45** (`4c` disengaged) and **1.81–2.02** (`4e` engaged) against the **> 4**
+criterion, with the 8–30 Hz control recovering wheel order 1 to 0.17 Hz. **Sixth confirmation, and
+the first on a disengaged arm.**
+
+🛑 **THREE CORRECTIONS OF MINE THIS SESSION.**
+1. **"An engaged-only fixed 28 Hz line" — WITHDRAWN.** It passed the band-centre test (peak fixed as
+   the search band swept 24–30 … 15–45 Hz) and I was ready to call it a mode. A **per-window**
+   census killed it: 26–30 Hz appears in **133/177 = 75.1%** of MANUAL windows at median prominence
+   **7.50** vs **88/121 = 72.7%** at **6.27** engaged — *more* on the manual route — and `4c`'s
+   version is **wheel order 2** (Theil-Sen **+1.0352 [+1.0012, +1.0616]** vs order 2's +0.9616,
+   per-bin agreement 0.1–0.35 Hz). ⇒ 🛑 **NEW RULE: an averaged spectrum compares two routes only
+   if their SPEED DISTRIBUTIONS MATCH** — a moving order concentrates in a narrow-speed route and
+   smears in a wide-speed one, manufacturing an "only on route X" line. **And the band-centre test
+   is necessary but NOT sufficient; follow it with a per-window prominence census.**
+2. **Coherence was computed against `e4req`** — the engagement BIT `(d[2]>>7)&1` — not `e4tq` =
+   `i16be(d,0)`, the command. That is why every band read exactly `0.000`. **An exact 0.000 across
+   every band is a wiring error, not a result.** Redone: `4e` engaged **0.343** at 26.5–29.5 Hz vs
+   **0.016** at 40–49; `r47` 0.269/0.002; grind #1's recorded benchmark 0.917. ⚠ the manual
+   negative-control column is **degenerate (n = 1)** and must not be quoted.
+3. **The maneuver contrast was first run with per-arm decile cuts and no null.** Both fixed above.
+
+⚠ **`4c` and `4e` are different roads 14 h apart** (02:48 vs 17:15 local) — every cross-route number
+is caveated in place. ⚠ **The 28 Hz burst is n = 1 well-characterised event** plus a broader 24–30 Hz
+maneuver amplification: a capture, not a rate.
+
+---
+
+★★★★ **THE PRIOR HEADLINE, 2026-08-03: THE >50 Hz BLINDNESS WAS OURS, NOT THE CAR'S. HONDA RUNS A
 1 kHz OSCILLATION DETECTOR WHOSE INPUT IS A BAND-PASS PEAKING AT ~61 Hz — AND V67 HAS BEEN READING IT
 ALL ALONG, AT THE WRONG THRESHOLD. ★★★ AND THE MICROPHONE INDEPENDENTLY PLACES GRIND #2's ENERGY IN
 THAT SAME BAND — FROM DATA ALREADY ON DISK.**
