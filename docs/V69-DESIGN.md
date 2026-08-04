@@ -135,6 +135,37 @@ byte-unchanged in both the builder and the verifier.**
 Flat 2× to 10 km/h, linear taper, **exactly 1.000× at and above 50 km/h — byte-identical to stock at
 highway, in BOTH arms.** That is the fix.
 
+★ **AND THE HIGHWAY 1.000× IS STRUCTURAL, NOT TUNED.** The lane-change point is 93.35 km/h = 5980
+counts, which lies in the cross-axis `[3200, 6400]` segment — so the interpolation there reads
+**only rec2 and rec3**. **Any edit confined to rec0 and rec1 is exactly 1.000× at every speed
+≥ 50 km/h, at every rate, on every axis scale.** It cannot drift with a re-tune or a re-derived
+scale; it is a property of which records the interpolation touches.
+
+### 4.1b ★ SCALE-INVARIANCE — this design does not bet on an open question
+
+🛑 The inner axis's counts-per-deg/s is **[OPEN]**: the repo runs 4.7121 (scale A), but the same
+derivation chain has one wrong premise and the arithmetically-surviving alternative is 0.58901
+(scale B). Every rate-axis figure in this kit is conditional on that.
+
+**V69 doubles the whole flat `[0, 400]` segment rather than leaning on where a breakpoint falls**,
+so its creep dose is **2.000× on BOTH scales**. Design A swings **2.00× (A) → 1.22× (B)** at grind
+#1 — it is a bet on scale A.
+
+⚠ **The price, stated honestly: the same property makes the manual-creep cost scale-dependent.**
+grind #1 and manual creep share the same speed cells, so only the rate axis could separate them —
+and on scale B they are both deep inside the flat segment and **nothing** separates them:
+
+| | scale A (repo live) | scale B (chain-direct) |
+|---|---|---|
+| grind #1 region (2–5 mph × 16–128 deg/s) | min 1.75, median **2.00** | min 1.90, median **2.00** |
+| creep grind #2 | **1.27×** | **2.00×** |
+| manual creep | median 1.27, max 1.75 | median **2.00** |
+| highway | **1.000×** | **1.000×** |
+
+⇒ **Worst case (scale B), manual creep and creep grind #2 both sit at 2.00× — exactly the dose
+V62/V65 flew.** That is bounded and known rather than speculative: the operator drove V62/V65 for
+weeks. But if creep grind #2 returns, **this is the mechanism**, and P6 is the test.
+
 ### 4.2 The four operating points
 
 | point | stock | V68 engaged | **V69** |
@@ -155,12 +186,32 @@ peaking exactly on the `X[1] = 400` breakpoint:
 | **Design A** | **2.753** | 10 km/h, \|dtq\| 400 | **11.300** | **2.753** | **1.98%** |
 | **V69** | **2.000** | ≤10 km/h | 3.850 | 1.122 | **0.00%** |
 
-The record understates the hump as "~2.45×". Measured over **318,144 frames** of real driving
-(`_cache_r3a/r3b/r37/r4a/r31/v68`), Design A spends **1.99%** of the time above 2.00× — above the
-highest gain this kit has ever flown — concentrated at **6–28 km/h**, precisely where V62's ungated
-2× produced the creep grind #2 "subwoofer" that V67/V68 now holds at **zero bursts**. Trading a
-measured zero for an unmeasured pocket is the wrong direction.
-⚠ The `|dtorque|` figures are a **LOWER BOUND** — reconstructed at 100 Hz from a 1 kHz signal.
+The record understates the hump as "~2.45×" — that is its value at grind #1's 128 deg/s only. The
+true maximum is **2.753× at 10.0 km/h / 86 deg/s**, and it exceeds 2.5× across **9–16 km/h**, a band
+cars drive through constantly. Reproduced independently, twice.
+
+⭐ **AND A SECOND, INDEPENDENT REASON TO REJECT IT — Design A is sized for the wrong rate band.**
+Its boost is a **ramp that only starts at the axis-400 breakpoint**, but V62's measured fix was
+**largest at |rate| 16–32 deg/s** (42× suppression). Design A delivers only **1.1–1.5×** there:
+
+| deg/s | 3.2 km/h | 5.0 | 7.2 | 10.0 | 14.4 |
+|---|---|---|---|---|---|
+| **16** | 1.09 | 1.15 | 1.22 | 1.33 | 1.30 |
+| **32** | 1.18 | 1.30 | 1.45 | 1.66 | 1.59 |
+| 128 | 1.41 | 1.67 | **2.00** | 2.46 | 2.31 |
+
+**V69 delivers exactly 2.000× across that whole band** (16–32 deg/s sits inside the flat `[0, 400]`
+segment on *either* scale), because it lifts the segment uniformly instead of tilting it. Region
+scores: **V69 min 1.75 / median 2.00** vs **Design A min 1.09 / median 1.45** on scale A, and
+**1.90 / 2.00** vs **1.01 / 1.05** on scale B.
+
+⚠ 🛑 **CORRECTION TO MY OWN EARLIER REACHABILITY FIGURE.** I first reported "Design A exceeds 2.00×
+in 1.99% of 318k frames" using a **torsion-bar torque rate** reconstructed from the `tq` channel.
+**That is the wrong quantity for this axis** — the inner axis is a steering/motor *rate*, not a
+torque rate. The *surface* properties above (max 2.753×, the region tables, the operating points)
+are computed on the axis in its own counts and are unaffected; **the percentage-of-driving figure is
+withdrawn.** The rejection does not depend on it: the hump's magnitude and the wrong-rate-band
+argument each suffice on their own.
 
 ### 4.4 The Pareto front, and what was given up
 
@@ -207,13 +258,22 @@ half-cycle. Stock **1.032**, V69 **1.122**, Design A **2.753**. V69 sits ~9% abo
 
 **Saturation margin** — r24 clamps at `|dtorque| ≥ 8192·1024/gain`; measured max `|dtorque|` = 839:
 
-| | gain at grind #1 | saturates at | margin |
-|---|---|---|---|
-| stock | 2621 | 3200 | 3.81× |
-| V67/V68 arm | 5244 | 1599 | 1.91× |
-| **V69** | **4810** | **1743** | **2.08×** |
+🛑 **Corrected from my first draft, which quoted the gain at grind #1's point rather than the
+design's PEAK gain — the peak is what sets the margin.**
 
-**V69 has MORE saturation margin than what is on the car today.**
+| | **peak** gain | saturates at \|dtorque\| | margin vs 839 |
+|---|---|---|---|
+| stock | 3072 | 2731 | 3.25× |
+| V67/V68 arm | 5244 | 1599 | **1.91×** |
+| **V69** | **6144** | **1366** | **1.63×** |
+| Design A | 7051 | 1191 | 1.42× |
+
+⚠ **V69's saturation margin is 1.63×, WORSE than the 1.91× on the car today** (better than Design
+A's 1.42×). Quoted against the repo's recorded max `|dtorque|` of **839**; against the 511 measured
+directly on the two V68 routes it is 2.67×, and the 28 Hz burst itself is only **254** counts.
+🛑 Every `|dtorque|` figure in this kit is a **LOWER BOUND** — CAN's 50 Hz Nyquist hides content
+whose contribution to the real `gp-0x4f62` is *rising* through that band. **This is the one metric
+on which V69 is worse than V68, and it is disclosed rather than buried.**
 
 **⚠ One accepted discontinuity, stated because it is real.** `rateKey` folds to 0 at ≥ 13001 counts
 (`0x3AAC8`/`0x3AACC`), i.e. **2759 deg/s** — fault-level, not reachable in ordinary driving. Raising
@@ -370,7 +430,13 @@ ordinary 20–30 min engaged highway commute gives ~5–7× that, enough to test
 6. **Add `EDITS` rows** for `0xD2A7E-0xD2A81`, `0xD2ABA-0xD2ABD`, `0x3AA96`, `0xC4B36`, `0xC4B54`, and change
    the `0xC6446` row to 512.
 7. **Re-read `0xC4124` every build and STOP if any slot carries 6 or 7** (inherited from V68).
-8. Verify with a fresh Ghidra import — 🛑 a stale import defeats hash-checking.
+8. 🛑🛑 **ASSERT THE EDIT-ORDER INVARIANT — this one can make the car worse than stock.**
+   Edits 1 and 2 are **jointly** safe and **individually** dangerous in one direction: writing
+   `0xC6446 = 512` while the gate at `0x3AA96` stays repointed to `gp-0x6806` leaves the arm LIVE at
+   **512, which is ~5× BELOW the stock LERP**, degrading engaged steering everywhere. The builder
+   must assert **`0xC6446 == 512` ⟹ `0x3AA96 == 0xc5`** and refuse to emit otherwise.
+   (Reverting the gate alone is harmless: nothing then reaches `0xC6446`.)
+9. Verify with a fresh Ghidra import — 🛑 a stale import defeats hash-checking.
 
 ---
 
