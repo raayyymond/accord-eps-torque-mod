@@ -1462,7 +1462,13 @@ def motor_torque_demand_aggregator(st: EpsState, lanes: dict, cal: Calibration) 
     vibration. Add order @0x3acc8-0x3ace6: r26+r24 -> +6b86 -> +6bd0 -> +6bbe -> +6b26 -> +[6b62/6ade]
     -> +6ad4 -> +filtered (FUN_00036682). The output clamp @0x3acf0-0x3ad2a is a true SATURATING clamp
     (not a zeroing gate) to +/-0x2800, lockstep-checked at gp-0x4ce0 on all three paths (mismatch, not
-    saturation, trips FUN_0006b9fa) -- so the aggregator output is not itself a chatter source. A
+    saturation, trips FUN_0006b9fa) -- so the aggregator output is not itself a chatter source.
+    [VERIFIED 2026-08-04] ** BOTH INLINE LANES ARE MIRRORED TO RAM, POST-CLAMP, AND NOTHING READS
+    THEM: ** st.h r26 -> gp-0x6adc @0x3AD4E and st.h r24 -> gp-0x6ada @0x3AD5A, each 0 readers /
+    1 writer image-wide (V64.gp_access_census, two decoders). They are free, blast-radius-zero
+    telemetry taps on the exact quantity the rate-lane builds scale -- V69's probe reads gp-0x6ada.
+    Note the ld.h/st.h one-bit trap: gp-0x6ada's only real instance IS the st.h form (opcode 0x3B)
+    and carries the same displacement halfword as the ld.h (0x39) a probe must emit. A
     REDUCED mode exists (gp-0x67ac==1 selects LKAS+s62 only, skipping 6 sibling lanes + r24/r26 + the
     filtered term) but is UNREACHABLE on the A160: its selector traces to distribute's per-source TYPE
     array gp-0x61a0 (mirrors cal tp+0x5124/0xC4124), which on this ROM is (0,0,5,0,5,5,0,0,0,5,0) and

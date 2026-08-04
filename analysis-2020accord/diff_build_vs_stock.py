@@ -74,9 +74,9 @@ EDITS = [
     # 🛑 0x3AA96 and 0xC6446 appear ABOVE as V67 edits and here as V69 REVERTS. This differ is
     # SPAN-based, so it cannot tell 5244 from 512 at 0xC6446 -- only verify_v69_image.py's exact
     # value anchors can. Run both; neither is sufficient alone.
-    (0xD2A7E, 0xD2A82, "V69", "mode-10 gain_B 0 km/h record Y[0..1] 3072 -> 6144 (speed-shaped "
+    (0xD2A7E, 0xD2A82, "V69", "mode-10 gain_B 0 km/h record Y[0..1] 3072 -> 12288 (x4; speed-shaped "
                               "rate lane; rec2/rec3 untouched => highway EXACTLY 1.000x)"),
-    (0xD2ABA, 0xD2ABE, "V69", "mode-10 gain_B 10 km/h record Y[0..1] 2561 -> 5122"),
+    (0xD2ABA, 0xD2ABE, "V69", "mode-10 gain_B 10 km/h record Y[0..1] 2561 -> 10244 (x4)"),
 ]
 
 # 🛑 The cave span carries a DIFFERENT payload on every build. Labelling it "V59 boost-index
@@ -94,6 +94,11 @@ CAVE_BY_BUILD = {
     "67": ("V39->V67", "3-bit ARM SELECTOR: bit6 gp-0x6806, bit5 gp-0x671d, bit4 gp-0x671a>=5"),
     "68": ("V39->V68", "4-bit probe: bit6 gp-0x6806, bit5 gp-0x671d, "
                        "bit4 gp-0x6ac0>=400, bit3 BUILD FINGERPRINT"),
+    # 🛑 V69 re-aims the probe from the GRIND detector to the RATCHET: three SIGNED-halfword rungs on
+    # the aggregator's own hard nonlinearities, all `ld.h`+`sar 0xc`+`cmp 0x1` at threshold +4096.
+    "69": ("V39->V69", "3-bit RATCHET probe: bit6 gp-0x6ada>=+4096 (r24 lane out, post +/-0x2000 "
+                       "clip), bit5 gp-0x6b62>=+4096 (return-to-centre), bit4 gp-0x6ad4>=+4096 "
+                       "(unfiltered residual); bit3 CONSTANT 0 = build class"),
 }
 
 # 🛑 Deliberately NOT in the list, and worth stating because it surprises people:

@@ -21,6 +21,8 @@ sys.path.insert(0, str(HERE))
 from firmware_paths import plain_image_path          # noqa: E402
 from verify_bootloader_crc import walk, walk_all_blocks   # noqa: E402
 
+SCALE = 4          # 🛑 the surface dose. Operator instruction 2026-08-04: was 2.
+
 FAIL = []
 
 
@@ -64,16 +66,22 @@ def main(path=None):
         check(u16(b, a) == want, f"0x{a:05X} sar site == 0x{want:04X} (stock, NOT V62's 0x9)",
               hex(u16(b, a)), hex(want))
 
-    print("\nSURFACE -- mode-10 rec0/rec1 doubled, rec2/rec3 untouched")
-    for a, want, name in ((0xD2A7E, 6144, "rec0 (0 km/h)  Y[0]"),
-                          (0xD2A80, 6144, "rec0 (0 km/h)  Y[1]"),
-                          (0xD2ABA, 5122, "rec1 (10 km/h) Y[0]"),
-                          (0xD2ABC, 5122, "rec1 (10 km/h) Y[1]")):
-        check(u16(b, a) == want, f"0x{a:05X} {name} == {want}", u16(b, a), want)
-    check(rec(b, 0xD2A74)[1] == [6144, 6144, 2322, 1536], "rec0 Y == [6144,6144,2322,1536]",
-          rec(b, 0xD2A74)[1], [6144, 6144, 2322, 1536])
-    check(rec(b, 0xD2AB0)[1] == [5122, 5122, 2247, 1947], "rec1 Y == [5122,5122,2247,1947]",
-          rec(b, 0xD2AB0)[1], [5122, 5122, 2247, 1947])
+    # 🛑 SCALE is the dose. Operator instruction 2026-08-04: 2x -> 4x. Every expected value below is
+    # DERIVED from the stock halfword x SCALE, so a hand-edited literal cannot drift out of step.
+    print(f"\nSURFACE -- mode-10 rec0/rec1 scaled x{SCALE}, rec2/rec3 untouched")
+    for a, stock, name in ((0xD2A7E, 3072, "rec0 (0 km/h)  Y[0]"),
+                           (0xD2A80, 3072, "rec0 (0 km/h)  Y[1]"),
+                           (0xD2ABA, 2561, "rec1 (10 km/h) Y[0]"),
+                           (0xD2ABC, 2561, "rec1 (10 km/h) Y[1]")):
+        want = stock * SCALE
+        check(u16(b, a) == want, f"0x{a:05X} {name} == {want} (= {stock} x {SCALE})",
+              u16(b, a), want)
+        check(0 < want < 0x8000, f"0x{a:05X} {name} stays a POSITIVE SIGNED halfword "
+              "(>= 0x8000 would invert the lane under an `ld.h` accessor)")
+    r0y = [3072 * SCALE, 3072 * SCALE, 2322, 1536]
+    r1y = [2561 * SCALE, 2561 * SCALE, 2247, 1947]
+    check(rec(b, 0xD2A74)[1] == r0y, f"rec0 Y == {r0y}", rec(b, 0xD2A74)[1], r0y)
+    check(rec(b, 0xD2AB0)[1] == r1y, f"rec1 Y == {r1y}", rec(b, 0xD2AB0)[1], r1y)
     check(rec(b, 0xD2A74)[0] == [0, 400, 1400, 3000], "rec0 X UNCHANGED [0,400,1400,3000] "
           "(X values have float mirrors; Y do not -- V69 edits Y ONLY)",
           rec(b, 0xD2A74)[0], [0, 400, 1400, 3000])
@@ -101,20 +109,62 @@ def main(path=None):
                   (0xD2B50, [2150, 2150, 2049, 1947])):   # m12 rec3 -- NOT m11's
         check(rec(b, a)[1] == wy, f"0x{a:05X} mode-11/12 record UNTOUCHED", rec(b, a)[1], wy)
 
-    print("\nPROBE -- two in-place immediates, cave otherwise byte-identical to V68's")
-    check(b[0xC4B36] == 0x80, "0xC4B36 liveness immediate == 0x80 (bit3 CLEAR ⇒ NOT V68)",
-          hex(b[0xC4B36]), "0x80")
-    check(bytes(b[0xC4B34:0xC4B38]) == bytes.fromhex("203e8000"),
-          "0xC4B34 == movea 0x80,r0,r7", bytes(b[0xC4B34:0xC4B38]).hex(), "203e8000")
-    check(b[0xC4B54] == 0x60, "0xC4B54 == cmp 0x0,r6 ⇒ bit4 CONSTANT 1", hex(b[0xC4B54]), "0x60")
-    check(bytes(b[0xC4B38:0xC4B3C]) == bytes.fromhex("8437fb97"),
-          "0xC4B38 ld.bu -0x6806[gp],r6 (the gate rung, carried)")
-    check(bytes(b[0xC4B44:0xC4B48]) == bytes.fromhex("a4372198"),
-          "0xC4B44 ld.bu -0x67df[gp],r6 (ODD disp 0x9821, hw1 a437)")
-    check(bytes(b[0xC4B50:0xC4B54]) == bytes.fromhex("8437e798"),
-          "0xC4B50 ld.bu -0x671a[gp],r6 (EVEN disp, hw2 = disp|1)")
-    check(bytes(b[0xC4B6C:0xC4B70]) == bytes.fromhex("e8ea7f00"),
-          "cave epilogue ends jmp [lp]", bytes(b[0xC4B6C:0xC4B70]).hex(), "e8ea7f00")
+    print("\nPROBE -- RE-AIMED AT THE RATCHET: three SIGNED-halfword rungs on the aggregator's own")
+    print("  hard nonlinearities. 🛑 EVERY byte of the 68-byte cave extent is anchored below, because")
+    print("  a cave is this kit's ONLY bricking class (V24, V27, V48B all bricked the ECU).")
+    CAVE = bytes.fromhex(
+        "203e8000"                          # movea 0x80,r0,r7   bit7 LIVENESS, bit3 CLEAR = V69
+        "24372695" "ac32" "6132" "b605" "273e4000"   # bit6 = gp-0x6ada >= +4096
+        "24379e94" "ac32" "6132" "b605" "273e2000"   # bit5 = gp-0x6b62 >= +4096
+        "24372c95" "ac32" "6132" "b605" "273e1000"   # bit4 = gp-0x6ad4 >= +4096
+        "8437edea" "c6360700" "0731" "4437ecea"      # payload read / mask / or / THE ONLY STORE
+        "2436e8ea" "7f00"                            # displaced movea, then jmp [lp]
+    ) + b"\xff" * 2
+    check(len(CAVE) == 68, "the anchored cave is the PROVEN 68-byte extent", len(CAVE), 68)
+    check(bytes(b[0xC4B34:0xC4B34 + 68]) == CAVE, "0xC4B34 cave is byte-exact over all 68 bytes",
+          bytes(b[0xC4B34:0xC4B34 + 68]).hex(), CAVE.hex())
+    check(b[0xC4B36] == 0x80, "0xC4B36 liveness immediate == 0x80 (bit3 CLEAR ⇒ NOT V68, which "
+          "emits bit3 = 1 in 100.000% of frames)", hex(b[0xC4B36]), "0x80")
+    # 🛑🛑 THE ONE-BIT TRAP, CHECKED BY VALUE. `ld.h` is opcode 0x39; `st.h` is 0x3B. gp-0x6ada's
+    # only real instance @0x3AD5A IS the st.h form and carries the SAME displacement halfword we
+    # emit -- one bit turns each of these reads into a WRITE into a 1 kHz aggregator lane.
+    for a, disp, name in ((0xC4B38, 0x6ADA, "r24 lane out (0 readers image-wide)"),
+                          (0xC4B46, 0x6B62, "return-to-centre (the operator's hypothesis)"),
+                          (0xC4B54, 0x6AD4, "unfiltered residual / resonance")):
+        raw = bytes(b[a:a + 4])
+        hw1, hw2 = struct.unpack("<HH", raw)
+        check(((hw1 >> 5) & 0x3F) == 0x39, f"0x{a:05X} opcode field == 0x39 (ld.h, SIGNED) -- "
+              f"NOT 0x3B (st.h) and NOT 0x3F (ld.hu): {name}", hex((hw1 >> 5) & 0x3F), "0x39")
+        check(hw2 == (0x10000 - disp) & 0xFFFF and hw2 & 1 == 0,
+              f"0x{a:05X} displacement == -0x{disp:04x}, hw2 LSB clear", hex(hw2),
+              hex((0x10000 - disp) & 0xFFFF))
+        check((hw1 & 0x1F) == 4 and (hw1 >> 11) == 6, f"0x{a:05X} reg1 == gp(r4), reg2 == r6")
+    # the three shifts are ARITHMETIC and the three compares are SIGNED -- an `shr` or a `bl` would
+    # fire every rung on the wrong half-cycle of a symmetric limit cycle and still look plausible.
+    for a in (0xC4B3C, 0xC4B4A, 0xC4B58):
+        check(bytes(b[a:a + 2]) == bytes.fromhex("ac32"), f"0x{a:05X} == sar 0xc,r6 (ARITHMETIC, "
+              "not shr)", bytes(b[a:a + 2]).hex(), "ac32")
+    for a in (0xC4B3E, 0xC4B4C, 0xC4B5A):
+        check(bytes(b[a:a + 2]) == bytes.fromhex("6132"), f"0x{a:05X} == cmp 0x1,r6 ⇒ threshold "
+              "+4096", bytes(b[a:a + 2]).hex(), "6132")
+    for a in (0xC4B40, 0xC4B4E, 0xC4B5C):
+        check(bytes(b[a:a + 2]) == bytes.fromhex("b605"), f"0x{a:05X} == blt +6 (SIGNED; bl 0x1 is "
+              "the UNSIGNED twin and would invert every negative sample)",
+              bytes(b[a:a + 2]).hex(), "b605")
+    # EXACTLY ONE STORE in the whole cave, and it is the CAN payload byte.
+    stores = [0xC4B34 + i for i in range(0, 68 - 3, 2)
+              if ((struct.unpack_from("<H", CAVE, i)[0] >> 5) & 0x3F) in (0x3A, 0x3B)]
+    check(stores == [0xC4B6C], "the cave contains EXACTLY ONE store, at 0xC4B6C (the payload byte)",
+          [hex(s) for s in stores], ["0xc4b6c"])
+    check(bytes(b[0xC4B74:0xC4B76]) == bytes.fromhex("7f00"), "cave ends jmp [lp]",
+          bytes(b[0xC4B74:0xC4B76]).hex(), "7f00")
+    check(bytes(b[0xC4B70:0xC4B74]) == bytes.fromhex("2436e8ea"),
+          "0xC4B70 re-executes the displaced hook instruction `movea -0x1518,gp,r6`")
+    # 🛑 A gate that cannot fail informatively is worse than no gate (the 2026-08-03 differ lesson).
+    # The hook is anchored BY VALUE: `jarl 0xC4B34,lp` at 0x55C0E, the same 4 bytes flown 8 times.
+    check(bytes(b[0x55C0E:0x55C12]) == bytes.fromhex("86ff26ef"),
+          "0x55C0E == jarl 0xC4B34,lp (the cave entry, byte-identical to V55..V68)",
+          bytes(b[0x55C0E:0x55C12]).hex(), "86ff26ef")
 
     print("\nSAFETY ANCHORS -- both revert a published conclusion if they ever drift")
     role = list(b[0xC4124:0xC4124 + 11])

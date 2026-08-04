@@ -6,8 +6,9 @@ each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` (what has already been flashed, falsified, or **rejected on
 review** — check it before proposing any calibration edit) and the latest handoff,
-`docs/HANDOFF-2026-08-03-v68-flew-the-lane-change-is-28hz.md`
-(predecessors: `HANDOFF-2026-08-03-the-detector-was-always-there.md`, then
+`docs/HANDOFF-2026-08-04-v69-recut-4x-and-ratchet-probe.md`
+(predecessors: `HANDOFF-2026-08-04-v69-built-speed-shaped-rate-lane.md`, then
+`HANDOFF-2026-08-03-v68-flew-the-lane-change-is-28hz.md`, then `HANDOFF-2026-08-03-the-detector-was-always-there.md`, then
 `HANDOFF-2026-08-02-v67-flew-and-the-highway-grind-is-not-the-rate-lane.md`, then
 `HANDOFF-2026-08-01-grind2-is-v62s-own-fix-at-high-frequency.md`, then
 `HANDOFF-2026-08-01-v62-flew-and-the-grinding-is-fixed.md`, then
@@ -18,30 +19,98 @@ review** — check it before proposing any calibration edit) and the latest hand
 
 ---
 
-★★★★ **THE HEADLINE, 2026-08-04 (LATEST): V69 IS BUILT AND UNFLASHED — THE HIGHWAY LANE-CHANGE FIX.
-IT STOPS DELIVERING A FLAT ARM THAT PEAKS AT HIGHWAY AND SHAPES HONDA'S OWN SPEED SCHEDULE INSTEAD.**
+★★★★ **THE HEADLINE, 2026-08-04 (LATEST): V69 IS BUILT AND UNFLASHED — RE-CUT ON TWO OPERATOR
+INSTRUCTIONS. THE SURFACE DOSE IS NOW 4×, AND THE TELEMETRY IS RE-AIMED FROM THE GRINDS TO THE
+RATCHET.**
 
-**Spec: `docs/V69-DESIGN.md`. Builder: `analysis-2020accord/build_v69_tva.py`. Verifier:
-`analysis-2020accord/verify_v69_image.py`.** Image SHA `e6bcb2dd…`, RWD SHA `a0a7fd92…`, both pushed
-to `accord-firmwares`. **8 edits / 11 changed bytes, 3 CRC blocks, no cave growth.**
+**Spec: `docs/V69-DESIGN.md` §0 (the revision; the rest of that file still describes the ×2 cut).
+Builder: `analysis-2020accord/build_v69_tva.py`. Verifier: `analysis-2020accord/verify_v69_image.py`.
+Decoder: `rlog-tools/decode_v69_ratchet.py`.** Image SHA `48bb4192…`, RWD SHA `e62fcbba…`.
+**7 edit sites / 70 changed bytes, 3 CRC blocks, cave extent UNCHANGED (66 of the proven 68 B).**
 
 | # | addr | before → after | what |
 |---|---|---|---|
 | 1 | `0x3AA96` | `fb` → `c5` | gate **REVERTS** to the dead `gp-0x683c` |
 | 2 | `0xC6446` | 5244 → 512 | the now-unreachable arm returns to stock |
-| 3–4 | `0xD2A7E`/`0xD2A80` | 3072 → **6144** | mode-10 gain_B **0 km/h** record Y[0..1] |
-| 5–6 | `0xD2ABA`/`0xD2ABC` | 2561 → **5122** | mode-10 gain_B **10 km/h** record Y[0..1] |
-| 7 | `0xC4B36` | `88` → `80` | probe: bit3 **CLEAR** ⇒ structurally disjoint from V68 |
-| 8 | `0xC4B54` | `61` → `60` | probe: `cmp 0x0,r6` ⇒ bit4 **CONSTANT 1** |
+| 3–4 | `0xD2A7E`/`0xD2A80` | 3072 → **12288** | mode-10 gain_B **0 km/h** record Y[0..1] (**×4**) |
+| 5–6 | `0xD2ABA`/`0xD2ABC` | 2561 → **10244** | mode-10 gain_B **10 km/h** record Y[0..1] (**×4**) |
+| 7 | `0xC4B34`–`0xC4B77` | V68's cave | **the RATCHET probe** — 3 signed-halfword rungs |
 
-**Multiplier: 2.000× to 10 km/h → 1.886 @15 → 1.769 @20 → 1.526 @30 → 1.270 @40 → EXACTLY 1.000× at
+**Multiplier: 4.000× to 10 km/h → 3.658 @15 → 3.307 @20 → 2.578 @30 → 1.808 @40 → EXACTLY 1.000× at
 and above 50 km/h**, in BOTH arms. ★ **That 1.000× is STRUCTURAL, not tuned**: the lane-change point
 (93.35 km/h = 5980 counts) sits in the cross-axis `[3200,6400]` segment, so the interpolation there
 reads **only rec2/rec3**, which this edit does not touch — proven by a **12,221-point sweep**.
-★ **And it does not bet on the OPEN axis scale** (4.7121 vs 0.58901 counts/deg-s): V69 doubles the
-whole flat `[0,400]` segment instead of leaning on a breakpoint, so its creep dose is **2.000× on
-BOTH scales**. **MAX anywhere = exactly 2.000×** ⇒ inside `[stock 1.00×, V62/V65 2.00×]`, both flown
-flight-clean.
+★ **And it does not bet on the OPEN axis scale** (4.7121 vs 0.58901 counts/deg-s): V69 scales the
+whole flat `[0,400]` segment instead of leaning on a breakpoint, so its creep dose is **4.000× on
+BOTH scales**, and there is **no hump anywhere**.
+
+🛑🛑 **WHAT 4× COSTS, AND IT IS NOT HIDDEN.** The shape is identical to the ×2 cut; only the dose
+moved. **(a) THE FLOWN BRACKET IS BROKEN** — at 2.000× GATE 2's magnitude leg was an *interpolation*
+between stock (1.00×) and V62/V65 (2.00×, flown flight-clean); **4.000× is an extrapolation to twice
+the largest dose this kit has ever driven.** Phase is untouched (no filter, no pole, no delay, no
+`sar` moved), the lane is linear, V65 measured the aggregator never railing over 120,049 frames, and
+grind #1's dose–response was monotone through 2.00×. **(b) SATURATION CROSSES THE RECORD** — peak
+gain 12288 rails the r24 lane at `|dtorque|` **683**, against the repo-recorded max **839** (margin
+**0.81×** ⇒ *it can rail*) and the V68-route max 511 (1.34×); at ×2 it could not. ⚠ every `|dtorque|`
+figure here is a **LOWER BOUND**, so the true margin is worse, not better. **(c) manual creep is
+4.000×** on the pessimistic axis scale; manual highway stays byte-identical to stock. The fold step
+at rateKey ≥ 13001 (2759 deg/s, fault-level, unreachable) widens to 2.00 → **8.00×**.
+★ **bit6 of the new probe measures cost (b) on-car** — it is instrumented, not merely disclosed.
+
+★★★ **THE TELEMETRY IS RE-AIMED AT THE RATCHET.** Bits 6/5/4 no longer read Honda's oscillation
+detector. **That instrument is exhausted**: `gp-0x67df` has never been observed non-zero in this kit
+(0/53,991 on V68, 0/186,321 on V67, straight through the captured 28 Hz burst), and with no positive
+control the null cannot separate "no oscillation" from "detector disabled / input dead". ★ **And the
+ratchet is the one symptom this channel can RESOLVE** — at ~7.4–7.6 Hz a 100 Hz probe gets ~13.5
+samples/cycle, so each bit's own time series carries the line; at 21 Hz and 43 Hz it never could.
+
+The ratchet's signature — **symmetric, amplitude-saturated, Q ≈ 36, creep, engaged, hands-off, NOT
+the V42 state-4 governor** — is the describing-function signature of a **hard nonlinearity inside
+the loop**. V65 killed the obvious one (the aggregator SUM never rails, 120,049 frames). What that
+null never covered is **each lane's own nonlinearity upstream of the sum**: eight ZERO-type range
+gates (out-of-window contributes **0, not clipped** — a crossing is a *step*) and two saturating lane
+clips. **None has ever been measured.** `0x14A` byte4:
+
+| bit | cell | test | its lane's hard nonlinearity | why |
+|---|---|---|---|---|
+| 7 | — | 1 | — | LIVENESS; field == 0 ⇒ VOID |
+| **6** | `gp-0x6ada` | ≥ +4096 | ±0x2000 **saturating clip** | ★★ **r24's LANE OUTPUT** — the damping/torque-rate lane the record points at *and* the lane V69 scales. Honda mirrors it to RAM at `0x3AD5A` every 1 kHz tick. 🛑 **0 readers / 1 writer image-wide** ⇒ the strongest GATE-1 statement in the chain: nothing consumes it. +4096 = half its rail ⇒ duty is a **rail-proximity meter** |
+| **5** | `gp-0x6b62` | ≥ +4096 | ±0x2000 **ZERO gate** | ★★ **THE OPERATOR'S OWN HYPOTHESIS, never probed in 69 builds.** Return-to-centre: `FUN_00036388`, a slow ±1/tick accumulator **with hysteresis** |
+| **4** | `gp-0x6ad4` | ≥ +4096 | ±0x2800 **ZERO gate** | the **unfiltered** residual lane (`FUN_0003a382`: raw derivative on the torque sensor, straight into the aggregator), whose gain is LERP-indexed by `gp-0x671a` ⇒ it **closes a loop from Honda's own detector back into assist**. Live hands-off, which the boost lane is not |
+| 3 | — | **0** | — | V69 BUILD CLASS. V68 emits bit3 = 1 in **100.000%** of 53,991 frames ⇒ V68 excluded absolutely |
+
+**bit6 is freed from the LKAS gate** to buy the third rung: `gp-0x6806` agreed with `latActive` in
+**99.983%** of 150,327 frames, `0x18F` b4 bit3 and `0xE4` byte2 bit7 agree 99.94–100%, and V69
+*reverts* the gate so that cell no longer steers anything on this build.
+**Encoding (14 B/rung):** `ld.h` · `sar 0xc` · `cmp 0x1` · `blt +6` · `movea BIT,r7,r7`. All three
+lanes are **signed** halfwords; `sar` is arithmetic and `blt` signed, asserted by an **exhaustive
+wire model over all 65,536 patterns**. 🛑🛑 **THE ONE-BIT TRAP IS LIVE HERE:** `ld.h` = 0x39,
+`st.h` = 0x3B, and `gp-0x6ada`'s *only* real instance **is** the `st.h` form carrying **the same
+displacement halfword** — one bit turns the read into a **write into a 1 kHz aggregator lane**.
+Asserted by value in the builder *and* independently in the verifier.
+**Provenance:** `ld.h -0x6ad4[gp],r6` is **BYTE-IDENTICAL** to the aggregator's own read @`0x3ACA8`;
+`gp-0x6b62` has **eight** real instances differing only in reg2; `sar 0xc,r6`/`cmp 0x1,r6`/`blt +6`
+are all byte-identical real instructions. **66 of the proven 68 cave bytes; the extent is NOT grown**
+(a fourth rung needs 14 more — that arithmetic, not preference, is why there are three).
+
+🛑 **THREE RESIDUALS ON THE PROBE.** **(1) ONE-SIDED** — each rung tests the positive side only
+(two-sided costs 8 B/rung and does not fit); a symmetric limit cycle still puts 7.4 Hz in the bit's
+spectrum, but **a null bounds only that lane's POSITIVE excursions.** **(2) NO POSITIVE CONTROL on
+bits 5/4** — only bit6 is expected to fire on any real drive; if bit6 also reads 0.000%, check bit7
+and the `.rwd` name **before** interpreting bits 5/4 (the V64 lesson). **(3) V69-vs-V66/V67 is NOT
+structural** — those also emit bit3 = 0 with bits 5:4 measured 0 over 186,321 frames, so `{0x87,
+0xC7}` is a *subset* of V69's payload space; discrimination rests on bit5/bit4 ever firing plus the
+filename. V68 — the build on the car — **is** excluded absolutely.
+
+⚠ **NOT taken, so it is not re-proposed:** `gp-0x6bbe` boost (±0x800, the narrowest gate on a live
+lane) is indexed on **driver torque** and the ratchet is hands-off; `gp-0x6bd0` damping (±0x800) has
+f5 = 0 at both operating points on a **static** claim — **first cut if a rung frees up**;
+`gp-0x6b4c` is already on CAN `0xE4`; `gp-0x4f62` (r24's input) is rung 4 if the cave ever grows.
+
+★ **NEW STRUCTURAL FINDING, folded into the golden model:** **both inline lanes are mirrored to RAM
+post-clamp and nothing reads them** — `st.h r26 → gp-0x6adc` @`0x3AD4E` and `st.h r24 → gp-0x6ada`
+@`0x3AD5A`, each **0 readers / 1 writer** image-wide (two decoders). They are free, blast-radius-zero
+telemetry taps on exactly the quantity every rate-lane build scales.
 
 🛑 **THE DESIGN IS FORCED.** The gate branch `0x3AC04-0x3AC0C` is `cmp`+`be`+`ld.hu`+`br` = **10
 bytes, zero slack**, and it **REPLACES** the LERP rather than scaling it ⇒ speed shaping reaches the
@@ -57,10 +126,15 @@ V69's exact four addresses and values.
 
 ⚠ **THE THREE COSTS, STATED.** (1) **Manual steering below ~50 km/h now gets the rate damping** — the
 operator was shown this trade with the cave alternative priced and **chose it**; manual highway is
-byte-identical to stock. (2) **Saturation margin drops 1.91× → 1.63×** (peak gain 6144 saturates at
-`|dtorque|` 1366 vs the recorded max 839) — **the one metric where V69 is WORSE than V68**. (3) On the
-pessimistic axis scale, **manual creep and creep grind #2 are both 2.000×** — exactly the dose
-V62/V65 flew.
+byte-identical to stock. (2) **Saturation margin** ~~drops 1.91× → 1.63×~~ — **at the as-built ×4 it
+is 0.81×** (peak gain 12288 rails at `|dtorque|` 683 vs the recorded max 839), i.e. the lane can rail
+in ordinary driving. **The one metric where V69 is WORSE than V68**, and at ×4 it crosses the record
+rather than merely narrowing. (3) On the pessimistic axis scale, **manual creep and creep grind #2
+are both 4.000×** — ~~exactly the dose V62/V65 flew~~ **twice it**.
+🛑 The ×2 numbers in the paragraphs immediately above (Design A comparison, region min/median, the
+Pareto reasoning) were computed for the 2.000× cut and are **kept as the design record**. The dose
+that shipped is **4.000×** — see the headline table. The *shape* arguments (structural highway
+1.000×, scale-invariance, no hump, neighbour safety) are dose-independent and carry over unchanged.
 
 🛑🛑 **TWO TRAPS THE BUILDER ASSERTS AGAINST.** (a) **EDIT-ORDER INVARIANT**: writing `0xC6446 = 512`
 while the gate stays repointed leaves the arm **LIVE at ~5× BELOW the stock LERP** — worse than stock
@@ -79,9 +153,18 @@ gate re-run on the readback; `verify_v69_image.py` all anchors PASS (incl. `0xC6
 drive that would settle it and **declined**; V69 is built on it by explicit decision. Six
 pre-registered predictions, two of them negative controls, are in `docs/V69-DESIGN.md` §9 — **P3
 (40–49 Hz does not move) and P4 (1–4 Hz does not move) are what catch this being wrong.**
+⚠ **P1/P2/P6 were sized for ×2 and are NOT re-derived for ×4** — the dose–response is measured only
+out to 2.00×, so quoting their intervals at 4× would be inventing precision. Read them as
+*directions*. **P3/P4/P5 are dose-independent and stand. P7/P8/P9 are new and pre-registered for the
+×4 cut and the ratchet probe** (§9).
 ⇒ ★★★ **NEXT: flash V69 on the operator's explicit instruction, then an ORDINARY 20–30 min engaged
 highway commute** — route `4e` gave 18 maneuver windows in ~4 min at speed, so a commute yields
-5–7× that. **No scripted drive is needed.**
+5–7× that. **No scripted drive is needed for the highway question.**
+⇒ ★★★ **AND, FOR THE RATCHET, ADD PARKING-LOT CREEP: engaged, hands-off, |angle| large.** The
+recorded ratchet episodes are 7.56 ± 0.36 Hz, hands-off + engaged + creep, at both 9–15° and 133°.
+🛑 **Route `2b` could not speak to the ratchet in either direction and the operator said so before
+the data did** — the decoder prints the episode count first and says so outright when there are none.
+Decode with `rlog-tools/decode_v69_ratchet.py`.
 
 ---
 
