@@ -2107,6 +2107,46 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     ⇒ KEEP V67. No control-path change is supported by this evidence.
     Reproduce: analysis-2020accord/r47_orchestrator_checks.py.
 
+    ★★★ SUPERSEDED 2026-08-04 BY V69 -- and by a symptom this chain now explains. Routes 4c/4e
+    captured the operator's highway lane-change vibration: 4e seg 33 t=51.3 s, an ALC right lane
+    change at 25.93 m/s -- bar 1468 counts p-p, 26-30 Hz envelope 614 (20x the route median), lines
+    at 28.12/28.51 Hz at prominence 100-107, while 40-49 Hz reads 69 IN THE SAME WINDOW. Not wheel
+    order 2 (24.93) or 3 (37.40); not engine order 1 (26.10) or 2 (52.20). And "only when engaged"
+    is REFUTED at 40-49 Hz (maneuver/control 2.516 [1.561,3.701] engaged vs 2.558 [1.469,3.747]
+    manual) -- the engagement-conditional part is at 18-28 Hz, not grind #2's band.
+
+    V69 (BUILT 2026-08-04, UNFLASHED) removes the mechanism named at item 3 above rather than
+    trimming it. The gate branch 0x3AC04-0x3AC0C is cmp(2)+be(2)+ld.hu(4)+br(2) = 10 bytes with ZERO
+    SLACK, and it REPLACES the LERP rather than scaling it -- so speed shaping can reach the engaged
+    lane ONLY if the gate is off. Composing "gated AND speed-shaped" needs new instructions on the
+    1 kHz path, i.e. a cave, the only bricking class. Hence:
+
+        0x3AA96  fb -> c5      gate REVERTS to the dead gp-0x683c (0 writers image-wide)
+        0xC6446  5244 -> 512   the now-unreachable arm returns to stock
+        0xD2A7E/0xD2A80  3072 -> 6144    mode-10 gain_B  0 km/h record Y[0..1]
+        0xD2ABA/0xD2ABC  2561 -> 5122    mode-10 gain_B 10 km/h record Y[0..1]
+
+    Delivered multiplier: 2.000x to 10 km/h -> 1.886 @15 -> 1.769 @20 -> 1.526 @30 -> 1.270 @40 ->
+    EXACTLY 1.000x at and above 50 km/h, in BOTH arms. The highway 1.000x is STRUCTURAL, not tuned:
+    >= 50 km/h lies in the cross-axis [3200,6400] segment, so the interpolation reads ONLY rec2/rec3
+    and this edit touches neither (12,221-point sweep in the builder). And it is INVARIANT to the
+    [OPEN] inner-axis scale (4.7121 vs 0.58901 counts/deg-s) because it doubles the whole flat
+    [0,400] segment rather than leaning on where a breakpoint falls. Max anywhere = exactly 2.000x
+    => inside [stock 1.00x, V62/V65 2.00x], both flown flight-clean.
+
+    🛑 EDIT-ORDER INVARIANT: writing 0xC6446 = 512 while the gate is STILL repointed leaves the arm
+    LIVE at ~5x BELOW the stock LERP -- worse than stock everywhere. build_v69_tva.py asserts
+    arm == 512 => gate byte == 0xc5 and refuses to emit otherwise.
+    🛑 NEIGHBOUR TRAP: mode 11/12's 0 km/h records are BYTE-IDENTICAL to mode 10's, so the target
+    pattern occurs 3x within 40 bytes; address absolutely, never by pattern.
+    ⚠ COSTS: manual steering below ~50 km/h now gets the rate damping (manual highway is
+    byte-identical to stock); saturation margin 1.91x -> 1.63x, the one metric worse than V68; and
+    on the pessimistic axis scale manual creep and creep grind #2 are both 2.000x (= V62/V65's dose).
+    🛑 THE MECHANISM IS SUGGESTIVE, NOT ESTABLISHED: the 26-30 Hz maneuver dose ratio is
+    3.334 [1.201, 6.492] inside a split-half null of [0.33, 3.36]. P3 (40-49 Hz does not move) and
+    P4 (1-4 Hz does not move) are the negative controls that catch it being wrong.
+    See docs/V69-DESIGN.md and docs/HANDOFF-2026-08-04-v69-built-speed-shaped-rate-lane.md.
+
     For the record, the pre-drive separation table (measured on V65's creep windows):
         LKAS active   98.7% / 15.7%      driver torque  96.8% / 50.5%     steering rate  81.1% / 48.5%
     ⚠ An earlier claim that driver torque separates them ">8x" is WITHDRAWN -- it compared grind #2's

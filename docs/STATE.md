@@ -18,7 +18,74 @@ review** — check it before proposing any calibration edit) and the latest hand
 
 ---
 
-★★★★ **THE HEADLINE, 2026-08-03 (LATEST): V68 FLEW. THE LANE-CHANGE VIBRATION IS CAPTURED AND IT IS
+★★★★ **THE HEADLINE, 2026-08-04 (LATEST): V69 IS BUILT AND UNFLASHED — THE HIGHWAY LANE-CHANGE FIX.
+IT STOPS DELIVERING A FLAT ARM THAT PEAKS AT HIGHWAY AND SHAPES HONDA'S OWN SPEED SCHEDULE INSTEAD.**
+
+**Spec: `docs/V69-DESIGN.md`. Builder: `analysis-2020accord/build_v69_tva.py`. Verifier:
+`analysis-2020accord/verify_v69_image.py`.** Image SHA `e6bcb2dd…`, RWD SHA `a0a7fd92…`, both pushed
+to `accord-firmwares`. **8 edits / 11 changed bytes, 3 CRC blocks, no cave growth.**
+
+| # | addr | before → after | what |
+|---|---|---|---|
+| 1 | `0x3AA96` | `fb` → `c5` | gate **REVERTS** to the dead `gp-0x683c` |
+| 2 | `0xC6446` | 5244 → 512 | the now-unreachable arm returns to stock |
+| 3–4 | `0xD2A7E`/`0xD2A80` | 3072 → **6144** | mode-10 gain_B **0 km/h** record Y[0..1] |
+| 5–6 | `0xD2ABA`/`0xD2ABC` | 2561 → **5122** | mode-10 gain_B **10 km/h** record Y[0..1] |
+| 7 | `0xC4B36` | `88` → `80` | probe: bit3 **CLEAR** ⇒ structurally disjoint from V68 |
+| 8 | `0xC4B54` | `61` → `60` | probe: `cmp 0x0,r6` ⇒ bit4 **CONSTANT 1** |
+
+**Multiplier: 2.000× to 10 km/h → 1.886 @15 → 1.769 @20 → 1.526 @30 → 1.270 @40 → EXACTLY 1.000× at
+and above 50 km/h**, in BOTH arms. ★ **That 1.000× is STRUCTURAL, not tuned**: the lane-change point
+(93.35 km/h = 5980 counts) sits in the cross-axis `[3200,6400]` segment, so the interpolation there
+reads **only rec2/rec3**, which this edit does not touch — proven by a **12,221-point sweep**.
+★ **And it does not bet on the OPEN axis scale** (4.7121 vs 0.58901 counts/deg-s): V69 doubles the
+whole flat `[0,400]` segment instead of leaning on a breakpoint, so its creep dose is **2.000× on
+BOTH scales**. **MAX anywhere = exactly 2.000×** ⇒ inside `[stock 1.00×, V62/V65 2.00×]`, both flown
+flight-clean.
+
+🛑 **THE DESIGN IS FORCED.** The gate branch `0x3AC04-0x3AC0C` is `cmp`+`be`+`ld.hu`+`br` = **10
+bytes, zero slack**, and it **REPLACES** the LERP rather than scaling it ⇒ speed shaping reaches the
+engaged lane only if the gate is OFF. *Gated AND speed-shaped* needs a cave on the 1 kHz path — the
+only bricking class (V24/V27/V48B). **Rejected.**
+
+🛑 **~~Design A~~ (`0xD2ABC` alone → 7051) REJECTED on three counts**: hump **2.753×** (the recorded
+"~2.45×" is only its value at 128 deg/s); it swings **2.00× → 1.22×** across the two axis scales; and
+at **|rate| 16–32 deg/s — where V62's fix measured LARGEST (42×)** — it delivers only **1.1–1.5×**,
+because its boost is a ramp starting at the axis-400 breakpoint. Region min/median **1.75/2.00**
+(V69) vs **1.09/1.45** (Design A). An independent directed search over 8 edit families converged on
+V69's exact four addresses and values.
+
+⚠ **THE THREE COSTS, STATED.** (1) **Manual steering below ~50 km/h now gets the rate damping** — the
+operator was shown this trade with the cave alternative priced and **chose it**; manual highway is
+byte-identical to stock. (2) **Saturation margin drops 1.91× → 1.63×** (peak gain 6144 saturates at
+`|dtorque|` 1366 vs the recorded max 839) — **the one metric where V69 is WORSE than V68**. (3) On the
+pessimistic axis scale, **manual creep and creep grind #2 are both 2.000×** — exactly the dose
+V62/V65 flew.
+
+🛑🛑 **TWO TRAPS THE BUILDER ASSERTS AGAINST.** (a) **EDIT-ORDER INVARIANT**: writing `0xC6446 = 512`
+while the gate stays repointed leaves the arm **LIVE at ~5× BELOW the stock LERP** — worse than stock
+everywhere. (b) **NEIGHBOUR TRAP**: mode 11/12's 0 km/h records are **BYTE-IDENTICAL** to mode 10's,
+so the target pattern occurs **3× within 40 bytes**; `diff_build_vs_stock.py` is **span-based** and
+would not catch a stray hit. All 8 neighbours are asserted, in both builder and verifier.
+
+✅ **NO FLOAT MIRROR** on any Y value — four encodings over the whole image; a mirror must carry ALL
+the values and 2561/2247/1947/2322/1400/3000 are absent in every one. ⚠ **X values DO have f32 hits**,
+which is why **V69 edits Y ONLY**. ✅ 50/50 CRC, x31 PASS, RWD decodes back to the image with every
+gate re-run on the readback; `verify_v69_image.py` all anchors PASS (incl. `0xC6564`, which
+`verify_v68_image.py` does not check); `diff_build_vs_stock.py v69` **0 unattributed**.
+
+🛑 **THE MECHANISM IS SUGGESTIVE, NOT ESTABLISHED** — the 26–30 Hz maneuver dose ratio is
+**3.334 [1.201, 6.492]** inside a split-half null of **[0.33, 3.36]**. The operator was offered the
+drive that would settle it and **declined**; V69 is built on it by explicit decision. Six
+pre-registered predictions, two of them negative controls, are in `docs/V69-DESIGN.md` §9 — **P3
+(40–49 Hz does not move) and P4 (1–4 Hz does not move) are what catch this being wrong.**
+⇒ ★★★ **NEXT: flash V69 on the operator's explicit instruction, then an ORDINARY 20–30 min engaged
+highway commute** — route `4e` gave 18 maneuver windows in ~4 min at speed, so a commute yields
+5–7× that. **No scripted drive is needed.**
+
+---
+
+★★★★ **THE PRIOR HEADLINE, 2026-08-03: V68 FLEW. THE LANE-CHANGE VIBRATION IS CAPTURED AND IT IS
 A ~28 Hz TRANSIENT, NOT GRIND #2. THE CORPUS'S MISSING LKAS-OFF HIGHWAY ARM IS CLOSED, AND
 "ONLY WHEN ENGAGED" IS REFUTED AT 40–49 Hz. HONDA'S 1 kHz DETECTOR STAYED AT ZERO.**
 

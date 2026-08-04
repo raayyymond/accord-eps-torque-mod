@@ -70,6 +70,13 @@ EDITS = [
     (0xC6440, 0xC6442, "V63", "r24 RATE lane, OSCILLATION-only gain arm (state>=5) 2048 -> 4096"),
     (0x3AA96, 0x3AA97, "V67", "repoint ld.bu gp-0x683c -> gp-0x6806: r24's gain arm GATED ON LKAS"),
     (0xC6446, 0xC6448, "V67", "r24's LKAS gain arm 512 -> 5244 -- FLASHED, grind #1 fixed on-car"),
+    # ---- V69: the gate REVERTS and Honda's own low-speed surface is shaped instead --------------
+    # 🛑 0x3AA96 and 0xC6446 appear ABOVE as V67 edits and here as V69 REVERTS. This differ is
+    # SPAN-based, so it cannot tell 5244 from 512 at 0xC6446 -- only verify_v69_image.py's exact
+    # value anchors can. Run both; neither is sufficient alone.
+    (0xD2A7E, 0xD2A82, "V69", "mode-10 gain_B 0 km/h record Y[0..1] 3072 -> 6144 (speed-shaped "
+                              "rate lane; rec2/rec3 untouched => highway EXACTLY 1.000x)"),
+    (0xD2ABA, 0xD2ABE, "V69", "mode-10 gain_B 10 km/h record Y[0..1] 2561 -> 5122"),
 ]
 
 # 🛑 The cave span carries a DIFFERENT payload on every build. Labelling it "V59 boost-index
