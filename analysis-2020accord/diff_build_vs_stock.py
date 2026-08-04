@@ -108,6 +108,14 @@ EDITS = [
                                   "=> highway EXACTLY 1.000x"),
     (0xD2ABA, 0xD2ABE, "V69/V70", "mode-10 gain_B 10 km/h record Y[0..1] 2561 -> 5122 (V70 x2) or "
                                   "10244 (V69 x4)"),
+    # ---- V71: BOTH confirmed fixes restored, and the surface dose dropped ------------------------
+    # 🛑 On V71 the two 0xD2A7E/0xD2ABA entries above match ZERO bytes -- the surface is back at
+    # STOCK -- and 0x3AB76/0x3AC20 revert to their V62 attribution. The one genuinely new span is
+    # 0x454FE, which V42 introduced and which NO build between V53 and V70 carried.
+    (0x454FE, 0x454FF, "V42/V71", "state-4 governor ratchet: `bne 0x455C4` -> `br 0x455C4` (V850 "
+                                  "cond nibble 0xA -> 0x5; displacement and TARGET unchanged). The "
+                                  "kit's one CONFIRMED root cause, lost at the V38/FOURFRAME rebase "
+                                  "and restored by V71."),
 ]
 
 # 🛑 The cave span carries a DIFFERENT payload on every build. Labelling it "V59 boost-index
@@ -137,6 +145,14 @@ CAVE_BY_BUILD = {
     "70": ("V39->V70", "4-bit SIGN probe: bit6 gp-0x6ada>=+512 (r24 lane out, post-clip), "
                        "bit5 gp-0x67fa==10 (THE STATE GATE), bit4 gp-0x6adc>=0 (r26 mirror SIGN), "
                        "bit3 gp-0x6ada>=0 (r24 mirror SIGN; bit6 => bit3 is an INVARIANT)"),
+    # 🛑 V71 reads the gain-chain SELECTORS instead of a lane output -- four probes in a row had
+    # returned an uninterpretable zero by reading an OUTPUT. Its four rungs are INDEPENDENT, so all
+    # 16 payloads are reachable and it carries NO value-set invariant: identification from the wire
+    # is WEAKER than V70's, and the .rwd filename is the pre-drive discriminator.
+    "71": ("V39->V71", "5-rung GAIN-IN-FORCE probe: bit6 gp-0x671d!=0 (THE MASK, outranks every "
+                       "arm), bit5 gp-0x67fa==4 (THE RATCHET STATE this build disables), "
+                       "bit4 gp-0x6ada>=+512 (positive control), bit3 gp-0x671a>=5 (the third arm); "
+                       "r7 accumulates 5 weights and one `shl 0x3,r7` moves them into bits 7:3"),
 }
 
 # 🛑 Deliberately NOT in the list, and worth stating because it surprises people:
@@ -148,6 +164,11 @@ ASSERT_STOCK = [
     (0xC646C, "shared sensor scale -- reverted to stock by V57, gain lives at 0xC6CD0 now"),
     (0x454FE, "V42 state-4 governor bne->br -- NOT carried into this build line"),
 ]
+# 🛑 V71 DELIBERATELY RESTORES 0x454FE, so the blanket claim above is false for it -- and a gate that
+# emits a known-false failure is the most dangerous kind, because a genuine stray edit then hides in
+# the noise (exactly the V67/V68 lesson recorded at the top of this file). The exception is per
+# build and per address, never a blanket skip.
+ASSERT_STOCK_EXCEPTIONS = {"71": {0x454FE: "V71 RESTORES V42's ratchet fix -- expected NOT stock"}}
 
 
 def resolve_edits(build):
@@ -217,8 +238,13 @@ def main():
         raise SystemExit("unattributed differences exist")
 
     print("\nasserted STILL STOCK (things people assume are changed and are not):")
+    exceptions = ASSERT_STOCK_EXCEPTIONS.get(build, {})
     for a, why in ASSERT_STOCK:
         same = v62[a:a + 2] == stock[a:a + 2]
+        if a in exceptions:
+            print(f"   0x{a:05X}  {'STOCK' if same else 'CHANGED (expected)':<18} {exceptions[a]}")
+            assert not same, f"0x{a:05X} IS stock, but V{build.upper()} is supposed to change it"
+            continue
         print(f"   0x{a:05X}  {'STOCK' if same else '*** CHANGED ***':<15} {why}")
         assert same, f"0x{a:05X} is not stock -- this file's claim is wrong"
 
