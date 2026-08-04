@@ -435,7 +435,8 @@ probably what it says it is. **V70's sign pair confirms or refutes it directly.*
 **1 reader / 0 writers, no float mirror, same CRC block #48 as `0xC6446`**, overflow ceiling ≤ **6553**.
 
 🛑 **V70 does not take it**, and nothing else should until `a` is bounded: V67/V68's control path is the
-measured best in the corpus, and trading it against an unmeasured parameter is the wrong bet.
+best-measured arm **on the two instrumented symptoms** (though it carries the high-speed grind), and
+trading that against an unmeasured parameter is the wrong bet.
 
 ✅ **V62/V65's `sar` route remains the only edit in this kit that is dose-exact independent of `a`** —
 it delivers 2.000× on the total for **every** value of `a`. That is a real and under-appreciated
@@ -471,8 +472,10 @@ property of that edit family.
 
 ## 9. WHERE THIS LEAVES V70
 
-**The headline recommendation is to restore V67/V68's control path with a repaired probe.** The reasons,
-in order of weight:
+**V70 keeps V69's gateless speed-shaped topology and halves the dose to ×2**, with a repaired probe.
+🛑 **This supersedes an earlier recommendation in this handoff's own drafting — "restore V67/V68's
+control path" — which the operator overrode and which was WRONG; see §10 row 8.** The reasons, in order
+of weight:
 
 1. **The dose–response has a minimum near 2×, and V67/V68 (2× gated) is the best-measured arm in the
    corpus.** V69's 4× is past the optimum at creep. Going back is a measured move, not a retreat.
@@ -505,6 +508,65 @@ about the ratchet's Q** (§4.5), or **route `4a` as evidence about the ratchet a
 | 5 | The ratchet is *"amplitude-saturated / flat-topped"* | ⚠ **RE-FRAMED, BELIEF-level.** Crest 2.07–2.45 vs 1.414 for a sine; no flat-topping on any filter (§4.5) |
 | 6 | *"the 0.81× rail margin was overstated tenfold"* (raised mid-session) | ⚠ **WITHDRAWN by its author.** The repo's `|dtorque|` figures are already transfer-corrected (§8.2) |
 | 7 | *"V69 is byte-identical to stock below 50 km/h"* — never claimed, but implied by the ×2/×4 tables | ⚠ **PRECISION FIX.** At 49.984 km/h V69 is **1.0013×** — a continuous ramp. Only *at and above* 50.000 is it byte-identical (§8.3) |
+| **8** | 🛑🛑 **THIS HANDOFF'S OWN LEAD RECOMMENDATION — *"V70 restores V67/V68's control path"*** | 🛑 **WRONG, AND OVERRIDDEN BY THE OPERATOR THE SAME DAY.** A first V70 was built on it and is **superseded — do not flash it.** Operator: *"V70 just reverts back to V68, which has the high-speed grind #2 issue. This needs to change. V70 needs to try to fix all grind issues."* **He was right.** See below for why the reasoning was invalid — it is the session's most transferable lesson |
+
+---
+
+### 🛑🛑 Row 8 in full — AN INSTRUMENT NULL INSIDE A BAND THE INSTRUMENT CANNOT RESOLVE IS NOT EVIDENCE OF ABSENCE
+
+**What the recommendation did wrong:** it optimised for the two symptoms our instruments *can* measure —
+grind #1 at 21 Hz and grind #2 at ~45 Hz — and **dismissed the operator's high-speed report because
+there is no line in 30–49.5 Hz.**
+
+**That inference is invalid on its own terms.** **CAN's Nyquist is 50.00 Hz and the comma IMU's is
+50.51** — *both* vibration instruments are **BLIND above 50 Hz** — and the acoustic inversion
+independently places the excess at a centroid of **63.5 Hz [54, 80]**, sitting on `gp-0x6c2c`'s 61 Hz
+band-pass peak. So the band where he reports the symptom is precisely the band neither instrument can
+see. **"No line below 50 Hz" was never evidence about a >50 Hz mode.**
+
+⇒ **The operator is the only instrument this kit has above 50 Hz, and his reports are a dose–response**,
+not an anecdote: the high-speed grind is **present on V67/V68 (2.44× at highway)** and he reported it
+**GONE on V69 (1.000× = stock at highway)**. That is a two-point dose–response on the only channel that
+can observe the band — and it was being treated as uninformative.
+
+★ **This is the same failure the record already documents in a different costume.** The κ analysis
+quantified that a **highway acoustic null is uninformative** (the κ-predicted signal sits 2–9× *below*
+the mic's own floor), and the mic-null memory states plainly that **a negative on a TACTILE event
+carries almost nothing** — grind #1 read **1.061** on the mic, inside its null, on a large real
+oscillation. **Those two results were on the record and were not applied here.**
+See `memory/accord-mic-negative-carries-almost-nothing.md`,
+`memory/accord-highway-acoustic-budget-bound.md`, `memory/accord-both-instruments-blind-above-50hz.md`.
+
+★ **And the arithmetic agrees with him, which is what settles it.** A scalar arm **REPLACES** a surface
+Honda rolls off 3072 → 2151, so `arm/LERP` **rises** with speed and **peaks at highway** — and the rate
+lane is a differentiator whose gain climbs with frequency, so that peak lands hardest exactly in the
+band he feels. **The scalar arm is the worst-shaped lever in the kit for that symptom.** Delivered r24
+multiplier at 0 km/h, from the image bytes:
+
+| operating point | V62 flat | **V67/V68 arm** | V69 ×4 | **×2 surface (V70)** |
+|---|---|---|---|---|
+| grind #1 (rateKey 603) | 2.00 | 1.80 | 3.52 | **1.84** |
+| grind #2 creep (rateKey 1206) | 2.00 | **2.13** | 1.72 | **1.24** |
+| **engaged HIGHWAY ≥ 50 km/h** | 2.00 | **2.44** | 1.00 | **1.00** |
+
+⇒ **V70 IS NOW V69's TOPOLOGY AT HALF THE DOSE** — gate stays `c5` (dead), arm stays 512, and only the
+surface halves (`0xD2A7E`/`0xD2A80` 12288 → **6144**, `0xD2ABA`/`0xD2ABC` 10244 → **5122**). Delivered
+**2.000× to 10 km/h → 1.270 @40 → EXACTLY 1.000× at and above 50 km/h**, both arms. The edit-order
+invariant **reverts to V69's form** (`arm == 512 ⇒ gate == 0xc5`); the *"it inverts"* instruction that
+accompanied the superseded build is **withdrawn**.
+
+★ **It attacks all three symptoms rather than trading them.** Highway is **structurally** stock (the
+2-point record interpolation reads only rec2/rec3, which the edit does not touch). Grind #1 gets
+**1.84×**, on the dose–response minimum near 2× that V62 flew to *"the original grinding at 2–5 mph is
+gone."* And grind #2 at creep gets only **1.24×** — **less than half V62's 2.00× that caused it** —
+because the edit raises only the flat `[0,400]` rate segment while **19 of 24** recorded bursts sit at
+rateKey ≥ 1126. **That is better than V62 at grind #2, not a trade.** Max anywhere is exactly 2.000×, so
+every operating point stays inside the flown bracket [stock 1.00×, V62/V65 2.00×], both flight-clean.
+
+⚠ **TWO HONEST LIMITS, and they are not small.** (1) The high-speed evidence is the operator's
+**perception**, not an instrument reading — legitimate given the blindness above 50 Hz, but it means the
+**mechanism is inferred from the arm's shape, not measured.** (2) **1.84× at grind #1 is an
+interpolation**: the record has **no measured dose between 2.00× and 4.00×.**
 
 ---
 

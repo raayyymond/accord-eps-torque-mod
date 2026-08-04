@@ -1,6 +1,6 @@
 ---
 name: accord-v69-flew-dose-response-non-monotone
-description: "★★★★ V69 flew route 4f 2026-08-04. Grind #1 is BACK at creep, the dose was fully delivered, and the rate-lane dose-response is NON-MONOTONE with a minimum near 2x — so V70 goes back to V67/V68's control path."
+description: "★★★★ V69 flew route 4f 2026-08-04. Grind #1 is BACK at creep, the dose was fully delivered, and the rate-lane dose-response is NON-MONOTONE with a minimum near 2x — so V70 keeps V69's gateless speed-shaped topology at HALF the dose (x2)."
 metadata:
   type: project
 ---
@@ -70,7 +70,11 @@ bursts **V67 ran 99.8 s at 2.719× — more than V62's flat 2.000× — and prod
 clean single-variable contrast (V67 also carries `0xC646C` decouple, `0xC6CD0`=3564, mss0) — fine for
 refuting sufficiency, not fine for a positive claim.
 
-⇒ ★★★ **V70 = RESTORE V67/V68's CONTROL PATH WITH A REPAIRED PROBE.** The two unknowns worth probe
+⇒ ★★★ **V70 KEEPS V69's GATELESS SPEED-SHAPED TOPOLOGY AND HALVES THE DOSE TO ×2**, with a repaired
+probe. 🛑 **Restoring V67/V68's scalar arm was tried, BUILT, and OVERRIDDEN by the operator** — that arm
+**replaces** a surface Honda rolls off, so `arm/LERP` peaks at highway (**2.44×**) and re-introduces the
+high-speed grind. **An instrument null in 30–49.5 Hz was never evidence about a >50 Hz mode** — both
+vibration instruments are blind above 50 Hz; see [[feedback_operator_lived_experience_overrides_analyst_recs]]. The two unknowns worth probe
 bits: **`gp-0x67fa`'s runtime state** ([[accord-gp67fa-state-gate-on-assist-chain]]) and
 **`a = gp-0x69a4/1024`** ([[accord-r26-is-structurally-inert]] — reversed).
 🛑 **Do not aim V70's rate lane at the lane-change transient** —

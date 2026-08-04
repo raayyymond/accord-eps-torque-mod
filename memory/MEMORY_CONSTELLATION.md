@@ -429,8 +429,9 @@ premise was byte-checkable and satisfying, and the step from premise to conclusi
 - **`0xC6444` is a CANDIDATE, not a recommendation.** Raising it is genuinely untested — V42 tested it
   **downward** (512 → 0, falsified), the same *"tested downward ≠ tested upward"* distinction the
   V61 → V62 correction turned on. 1 reader / 0 writers, no float mirror, CRC block #48, ceiling ≤ 6553.
-  **V70 does not take it**: `a` is unmeasured and V67/V68's control path is the measured best as it
-  stands.
+  **V70 does not take it**: `a` is unmeasured, and while V67/V68's control path is the best-measured arm
+  on the two instrumented symptoms, it carries the **high-speed grind** (scalar arm = 2.44x at highway),
+  so restoring it was overridden.
 - **A property nobody had credited:** V62/V65's `sar` route is the **only** edit in this kit whose dose
   is exact **independent of `a`** (2.000x on the total for every `a`). Every cal-arm edit is
   `a`-dependent. That is an argument for the `sar` family that has nothing to do with byte count.

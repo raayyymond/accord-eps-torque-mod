@@ -23,10 +23,11 @@ review** — check it before proposing any calibration edit) and the latest hand
 ★★★★ **THE HEADLINE, 2026-08-04 (LATEST): V69 FLEW. GRIND #1 IS BACK AT CREEP, AND THE DOSE–RESPONSE
 IS NON-MONOTONE WITH A MINIMUM NEAR 2×. ⇒ V70 IS BUILT AND UNFLASHED, WITH A REPAIRED PROBE.**
 
-🛑🛑 **BUT TWO `.rwd` FILES CARRY A `V70` PREFIX AND THEY HAVE OPPOSITE CONTROL PATHS — the
-authoritative one is UNRESOLVED. DO NOT FLASH EITHER UNTIL THE OPERATOR NAMES THE FILE.** Their caves
-are byte-identical, so the probe is settled for both; only the control path differs. Full table and the
-byte evidence: **"Built and UNFLASHED — V70"** below.
+✅ **THE SUPERSEDED FIRST V70 IS RENAMED AND OUT OF THE WAY** — `SUPERSEDED-DO-NOT-FLASH-…-V68CONTROLPATH-…`
+(`accord-firmwares` commit `9d44efc`). **Verified from the filesystem: exactly ONE flashable
+`V70`-prefixed file remains.** ⚠ The rename was load-bearing, not cosmetic: its cave is
+**byte-identical** to the current build's, so **the probe could not have told them apart on-car** — the
+filename was the only discriminator. Detail below.
 
 ---
 
@@ -391,7 +392,7 @@ always carry the same sign.** Therefore `sign(gp-0x6adc)` vs `sign(gp-0x6ada)` i
 **downward** (512 → 0, FALSIFIED) — the same *"tested downward ≠ tested upward"* distinction the
 V61 → V62 correction turned on. Blast radius **1 reader / 0 writers, no float mirror, same CRC block #48
 as `0xC6446`**, overflow ceiling ≤ **6553**. 🛑 **V70 does not take it** — `a` is unmeasured and
-V67/V68's control path is the measured best as it stands.
+V67/V68's control path is the best-measured arm **on the two instrumented symptoms** — but it carries the **high-speed grind** (scalar arm = **2.44×** at highway), which is why restoring it was overridden.
 ✅ **V62/V65's `sar` route is the only edit in this kit that is dose-exact independent of `a`** — 2.000×
 on the total for **every** value of `a`.
 
@@ -420,17 +421,17 @@ on the total for **every** value of `a`.
 
 ### ⇒ ★★★ NEXT: V70 IS BUILT AND UNFLASHED, WITH A REPAIRED PROBE
 
-🛑🛑 **BEFORE ANYTHING ELSE: TWO `.rwd` FILES CARRY A `V70` PREFIX WITH OPPOSITE CONTROL PATHS — V70-A
-`…V68CONTROLPATH…` (`d716b1a5…`, gate `fb` / arm 5244 / surface stock) and V70-B
-`…SPEEDSHAPED-gateREVERTED…x2…` (`0bdfb0da…`, gate `c5` / arm 512 / surface ×2). Their caves are
-byte-identical. The authoritative one is UNRESOLVED — do not flash until the operator names the file.**
-The kit's builder and verifier currently reproduce **V70-B only**. See "Built and UNFLASHED — V70".
+✅ **RESOLVED: the superseded first V70 is renamed `SUPERSEDED-DO-NOT-FLASH-…-V68CONTROLPATH-…`**
+(`accord-firmwares` `9d44efc`); filesystem-verified, **exactly ONE flashable `V70` file remains.**
+⚠ It mattered because that build has the **opposite control path** (gate `fb` / arm 5244 / surface stock
+vs the current gateless ×2) and a **byte-identical cave** — so the probe could not have separated them
+on-car. **Still confirm the filename against the operator's instruction before any flash.**
 
-1. **The dose–response has a minimum near 2×** — V69's 4× is past the optimum at creep, so **both** V70
-   candidates step back from it, by different routes: V70-A returns to V67/V68's gated flat arm (the
-   best-measured arm in the corpus), V70-B keeps V69's speed-shaped surface at **half** the dose, inside
-   the flown `[1.00×, 2.00×]` bracket. **Either is a measured move, not a retreat** — but they are not
-   the same experiment and the record should not pretend they are.
+1. **The dose–response has a minimum near 2×**, so V69's 4× is past the optimum at creep. **V70 keeps
+   V69's gateless speed-shaped topology and halves the dose to ×2** — creep lands at 1.84× (on the
+   minimum) while highway stays **structurally** stock. 🛑 **Going back to V67/V68's scalar arm was
+   tried and OVERRIDDEN**: it re-introduces the high-speed grind, because a scalar arm replaces a
+   surface Honda rolls off, so `arm/LERP` **peaks at highway** — see the headline table.
 2. **The probe budget is the scarce resource and all three of V69's rungs were wasted or under-exposed**
    — §5 says exactly how to size the next three, and V70's four rungs are sized that way.
 3. **Two probe bits settle two verdict-affecting unknowns, and both are non-vacuous in BOTH
@@ -1539,41 +1540,27 @@ gain reducer. This is what pulls eps down from the raw-LERP values.
 
 ---
 
-## ✅ Built and UNFLASHED — **V70** (the SIGN probe)
+## ★★ V70's PROBE — design detail (the build itself is in THE HEADLINE)
 
-🛑🛑 **TWO `.rwd` FILES CARRY A `V70` PREFIX AND THEY HAVE OPPOSITE CONTROL PATHS. THE AUTHORITATIVE
-ONE IS UNRESOLVED AS OF THIS WRITING — DO NOT FLASH EITHER UNTIL THE OPERATOR NAMES THE FILE.**
-This is the V68 three-file trap repeating, and it is the one failure this record exists to prevent.
-Both were built 2026-08-04, 19 minutes apart, and **their caves are BYTE-IDENTICAL** — so the probe
-below is settled for either, and **only the control path differs.**
+🛑 **This is NOT a build-status block** — SHAs, filenames and the control path live in
+**"V70 — BEING RE-CUT"** at the top of this file, because they change on every re-cut. **The probe does
+not**: it is unchanged from the superseded first V70, and everything below holds for any V70 cut.
 
-| | **V70-A** `…LKASGATED-V68CONTROLPATH…` | **V70-B** `…SPEEDSHAPED-gateREVERTED…x2…` |
-|---|---|---|
-| RWD SHA | `d716b1a5…` | `0bdfb0da…` |
-| image SHA | `8bfcb1fa…` | `3760d9c0…` |
-| built | 07:45 | **08:04 (newer)** |
-| gate `0x3AA96` | **`fb`** — gated on `gp-0x6806` | **`c5`** — REVERTED to the dead `gp-0x683c` |
-| arm `0xC6446` | **5244** | **512** (stock, and unreachable with the gate off) |
-| surface `0xD2A7E`/`80` | **3072** (stock) | **6144** (**×2**) |
-| surface `0xD2ABA`/`BC` | **2561** (stock) | **5122** (**×2**) |
-| vs V68, `[0x13000,0x100000)` | **66 B** — cave + MAIN CRC only, **zero outside** | **83 B** — cave + gate + arm + surface + 3 CRCs |
-| cal CRCs | **both return to V68's exact stored checksums** | blk#48 = V69's, blk#41 new |
-| in one line | **V68 + a new cave** | **V69's structure at half the dose** |
+✅ **DONE — the superseded first V70 is renamed `SUPERSEDED-DO-NOT-FLASH-39990-TVA,A160-V70-…-LKASGATED-
+V68CONTROLPATH-…rwd`** and pushed (`accord-firmwares` **`9d44efc`**). The flash directory now holds
+exactly **one** flashable `V70`-prefixed file, the ×2 re-cut. Verified from the filesystem, not assumed.
+🛑 **WHY IT MATTERED, and the rule it leaves behind: its cave is BYTE-IDENTICAL to the current one**, so
+**the probe cannot distinguish the two on-car** — `bit6 ⇒ bit3` gives build-**CLASS** identity, never
+**FILE** identity, and it cannot tell two cuts of the same version apart. **The filename was the only
+discriminator before a drive.** ⇒ **Any re-cut under the same version number MUST be renamed
+`SUPERSEDED-DO-NOT-FLASH-…` the moment it is superseded**, exactly as the two stale V68 artefacts were.
+⚠ **And it is now unverifiable by the kit's own gates**: both builds write `_v70_plain_image.bin`, so
+the newer cut **overwrote** the older image — only the `.rwd` survives, and `verify_v70_image.py` asserts
+the current topology, so it fails on the old one by construction. ⚠ **Lesson: a builder that writes a
+fixed `_vNN_plain_image.bin` silently destroys the previous cut of the same version number.**
 
-⚠ **The kit's own tooling currently points at V70-B**: `_v70_plain_image.bin`, `build_v70_tva.py`
-(`SCALE = 2`, `TAG = "…SPEEDSHAPED-gateREVERTED…"`) and `verify_v70_image.py` (which *asserts*
-`0x3AA96 == 0xC5` **and** `0xC6446 == 512`) all describe V70-B, and `verify_v70_image.py:41` records the
-dose as *"halved on the operator override."* **V70-A is not reproducible from the current builder.**
-⚠ **All of the above is EVIDENCE — byte-read by me from both images**, not relayed.
-
-🛑 **THE EDIT-ORDER INVARIANT IS DIRECTIONAL AND BOTH BUILDS SATISFY IT — which is exactly why the
-filename cannot be skipped.** `gate == 0xFB` ⇒ `0xC6446` **must** be 5244 (shipping `fb` with 512 pins
-the engaged lane ~5× **below** stock everywhere — worse than V61); `gate == 0xC5` ⇒ the arm is
-unreachable and 512 is correct. **A-with-B's arm, or B-with-A's arm, is the brick-adjacent combination**,
-and it is asserted in both directions in the builder, the verifier and on the readback.
-
-★★ **THE PROBE — settled, and identical on both artefacts. 68 of the proven 68 cave bytes, ZERO spare**
-(base `0xC4B34`, hook `0x55C0E`, extent unchanged):
+★★ **THE PROBE: 68 of the proven 68 cave bytes, ZERO spare** (base `0xC4B34`, hook `0x55C0E`, extent
+unchanged):
 
 | bit | cell | test | bytes |
 |---|---|---|---|
@@ -1582,12 +1569,12 @@ and it is asserted in both directions in the builder, the verifier and on the re
 | **4** | `gp-0x6adc` | ≥ 0 — **r26 mirror SIGN** | 12 |
 | **3** | `gp-0x6ada` | ≥ 0 — **r24 mirror SIGN**, reusing the already-shifted `r6` (valid: `sar` preserves sign) | 6 |
 
-⭐ **Re-decoded from the image by me, independently of the builder:** loads at `0xC4B38` / `0xC4B4C` /
+⭐ **Re-decoded from the image bytes independently of the builder:** the loads at `0xC4B38` / `0xC4B4C` /
 `0xC4B58` carry opcodes **`0x39` (`ld.h`) / `0x3C` (`ld.bu`) / `0x39` (`ld.h`)** on `gp-0x6ADA` /
 `gp-0x67FA` / `gp-0x6ADC`, with the `ld.bu` displacement parity handled (`hw2 = 0x9807` encodes
 `disp = 0x9806`); and **there is exactly ONE store in the cave** — `st.b` @`0xC4B6E` to the CAN payload
 byte `gp-0x1514`. **No `st.h` (`0x3B`) anywhere.**
-🛑 **The one-bit trap is live on THREE rungs now**, including **`ld.bu` `0x3C` vs `st.b` `0x3A` on
+🛑 **The one-bit trap is live on THREE rungs**, including **`ld.bu` `0x3C` vs `st.b` `0x3A` on
 `gp-0x67fa`, which has 128 readers** — a slipped opcode there writes the ECU state variable.
 ★ **V70 is structurally SAFER than V69 here:** V69's third rung read `gp-0x6ad4`, which the aggregator
 *consumes* at `0x3ACA8`, so a slip would have corrupted a live lane; **V70's two `ld.h` rungs are both
@@ -1598,14 +1585,16 @@ is **guaranteed non-constant**, which creates the hard invariant **bit6 ⇒ bit3
 an **impossible frame**, so only **12 of 16** payloads are reachable. That excludes **absolutely: V53,
 V54, V65, V66, V67, V68, V69** — every build from V65 on, **including the one on the car.**
 ⚠ **Residual, and it stays on the record: V55 / V57 / V58 / V64** are independent-bit probes spanning
-all 16 payloads, so they are separated by **filename only**. They are six-plus builds back, and this is
-**strictly smaller than V69's residual** (which was its immediate predecessors) — but it is not zero.
+all 16 payloads, so they are separated by **filename only**. Six-plus builds back, and **strictly
+smaller than V69's residual** (which was its immediate predecessors) — but not zero.
+🛑 **Note what this does NOT do: it cannot separate two V70 cuts from each other**, because their caves
+are identical. Build-class identity is not file identity.
 
 🛑 **bit4 IS THE SIGN, NOT A MATCHED `+512` THRESHOLD — a deliberate deviation from the spec, and the
 reason belongs in the record.** The cave was **exactly 2 bytes short**, and a `≥ +512` null on r26 was
 the *predicted* outcome given `0xC6564` = 40 zero bytes — i.e. it would have landed straight back in the
-uninterpretable-zero class that wasted V69's rungs.
-**COST, STATED: V70 measures r26 LIVENESS, not the quantitative `a`.** Readings:
+uninterpretable-zero class that wasted all three of V69's rungs.
+**COST, STATED: V70 measures r26 LIVENESS, not the quantitative `a`.**
 
 | observation | verdict |
 |---|---|
@@ -1621,16 +1610,10 @@ could have said.**
 `gp-0x6806` tracked `latActive` at **99.983%**, which a flag going stale in state 10 could not do. ⇒
 **bit5 ≈ 0 ⇒ the five-build detector null is GENUINE and those builds are vindicated; bit5 materially
 non-zero ⇒ the nulls were on the gate** and the detector programme needs replanning. **Non-vacuous in
-both directions** — the failure V69's rungs all shared.
+both directions** — the failure every V69 rung shared.
 
-✅ **GATES (as reported by the tooling for the artefact it targets):** **50/50 CRC PASS**, **71 anchors
-PASS**, `diff_build_vs_stock.py v70` **0 unattributed** (exit 0, re-run by me), RWD round-trips to the
-image with every gate re-run, reproducible bit-for-bit.
-**Artefacts:** `analysis-2020accord/build_v70_tva.py`, `verify_v70_image.py`,
-`rlog-tools/decode_v70_probe.py`, and a `"70"` entry in `diff_build_vs_stock.py`.
 🛑 **Flash only on explicit operator instruction naming the file and the bus.**
 
----
 
 ## On the car right now — **V69** (flashed, driven route `4f--61171e660d` 2026-08-04)
 
@@ -1643,8 +1626,8 @@ NON-MONOTONE with a minimum near 2×; the lane-change transient — V69's stated
 DOSE-INDEPENDENT; all three probe rungs failed for the reasons in §5.**
 ⇒ ★★★ **V70 IS BUILT AND UNFLASHED**, with a repaired 4-rung probe that measures the two unknowns worth
 spending bits on (`gp-0x67fa`'s runtime state, and r26's liveness). 🛑 **Two `.rwd` files carry a V70
-prefix with opposite control paths and the authoritative one is UNRESOLVED** — see
-"Built and UNFLASHED — V70" before naming a file to flash.
+prefix; the superseded first cut has the OPPOSITE control path and a byte-identical cave, and is now
+renamed `SUPERSEDED-DO-NOT-FLASH-…`** (`9d44efc`, filesystem-verified).
 
 ---
 
@@ -2263,13 +2246,13 @@ set's 12.6–42.2°).
 🛑 **NO openpilot-side modifications.** Standing operator instruction. openpilot remains a *measurement
 instrument* only.
 
-000. 🛑🛑 **2026-08-04, BLOCKING: NAME THE V70 FILE BEFORE ANY FLASH.** Two `.rwd` files carry a `V70`
-   prefix and they have **opposite control paths** — `…LKASGATED-V68CONTROLPATH…` (`d716b1a5…`, gate
-   `fb` / arm 5244 / surface stock) vs `…SPEEDSHAPED-gateREVERTED…x2…` (`0bdfb0da…`, gate `c5` / arm 512
-   / surface ×2). **Their caves are byte-identical**, so the probe cannot tell them apart on-car and the
-   filename is the only discriminator before the drive. The builder and verifier reproduce **V70-B
-   only.** Full table and byte evidence: "Built and UNFLASHED — V70". **This is the V68 three-file trap
-   repeating; resolve it, then flash.**
+000. 🛑🛑 **2026-08-04, BLOCKING: NAME THE V70 FILE BEFORE ANY FLASH.** More than one `.rwd` carries a
+   `V70` prefix, and **the superseded first cut has the OPPOSITE control path**
+   (`…LKASGATED-V68CONTROLPATH…`, gate `fb` / arm 5244 / surface stock) to the current one
+   (gateless, surface ×2). **Their caves are byte-identical**, so the probe **cannot** tell them apart
+   on-car — the filename is the only discriminator before the drive, and the superseded image has been
+   overwritten so the kit's own verifier cannot check it either. **Rename the superseded file
+   `SUPERSEDED-DO-NOT-FLASH-…` before anything else.** This is the V68 three-file trap repeating.
 
 00. ★★★★ **2026-08-04: V70 IS BUILT AND UNFLASHED, WITH A REPAIRED PROBE.**
    The four reasons are ranked in THE HEADLINE's closing section: the dose–response bottoms out near 2×

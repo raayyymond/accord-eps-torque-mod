@@ -30,11 +30,16 @@ if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
 # 🛑 A GATE MUST BE ABLE TO REACH THE CONSOLE WITH ITS VERDICT. On a Windows cp1252 console this
-# script died with UnicodeEncodeError on the first '⚠'/'🛑' it printed -- exiting 1 BEFORE saying
-# whether it had actually found unattributed bytes. It exits 1 either way, so the gate still
-# "looked" right, and a reader could mistake a real failure for the encoding crash or vice versa.
-# Found 2026-08-04 while verifying V70. Same failure class as the 256-sample floor that made
-# decode_v69_ratchet's own null vacuous: a gate that cannot report informatively is worse than none.
+# script died with UnicodeEncodeError on the first '🛑' it printed -- which is only ever printed on
+# the FAILING path, so the crash suppressed exactly the message that says WHICH bytes were
+# unattributed. Found 2026-08-04 while verifying V70.
+# ⚠ PRECISION, because the first version of this comment overstated it: the EXIT CODE was never
+# wrong. A clean run exits 0 (it prints no 🛑 and never crashed); --self-test exits 1 either way,
+# because the encoding crash and the real detection both exit non-zero. So the machine-readable
+# verdict was always correct and only the human-readable one was lost -- but a reader watching the
+# console could not tell a real failure from an encoding crash, and that is enough to matter.
+# Same family as the 256-sample floor that made decode_v69_ratchet's own null vacuous: a gate whose
+# report cannot reach the reader degrades toward one that cannot fail informatively.
 for _stream in (sys.stdout, sys.stderr):
     try:
         _stream.reconfigure(encoding="utf-8", errors="replace")
