@@ -59,7 +59,7 @@ halfword patterns in `_self_check()` below, not asserted in prose.
 
 📋 THE PRE-REGISTERED THRESHOLDS. The rung fires at |dtorque| >= 128 x 2^7 / gain, i.e. **5 to 32
 counts on EVERY branch of the priority chain**, against a recorded max of 839 and V69's own flight
-max of 633.9 (re-derived from the image by build_v71_tva.py's own sweep, not quoted):
+max of 633.9 (re-derived from the image by build_v71a_tva.py's own sweep, not quoted):
     mask arm 0xC6442 = 1024 -> 16.0 · third arm 0xC6440 = 2048 -> 8.0 · dead arm 0xC6446 -> 32.0
     LERP creep (3072) -> 5.3 · grind #1 (2622) -> 6.2 · grind #2 creep (2377) -> 6.9 · hwy -> 7.5
 The rung this replaces needed 85-241 counts on the LERP branch and read ZERO on both routes.
@@ -78,6 +78,22 @@ none is forbidden. What remains:
 🛑 THE "FAST-TOGGLING bit3 MEANS V70" FALSIFIER THAT V71's FIRST CUT CARRIED IS **RETIRED**. On this
 cut bit3 IS a sign bit, exactly like V70's, so that test would now return a confidently WRONG answer.
 Do not reintroduce it.
+
+🛑🛑 THIS DECODER SERVES **TWO** BUILDS, AND THEY ARE NOT SEPARABLE ON THE WIRE.
+**V71A** and **V71B** carry a **BYTE-IDENTICAL 68-byte cave**, so every payload this file decodes is
+consistent with both. The **.rwd FILENAME is the only pre-drive discriminator**:
+    V71A  39990-TVA,A160-V71A-LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-V62sar-BOTHLANES-surfREVERTED-probe2-671d-67fa4-6adaABS128-sign-can330byte4-0x13000-0x100000.rwd
+    V71B  39990-TVA,A160-V71B-LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-gainA-rec0rec1-x2-SPEEDSHAPED-sarSTOCK-probe2-671d-67fa4-6adaABS128-sign-can330byte4-0x13000-0x100000.rwd
+They differ ONLY in how r26 is dosed and whether r24 is dosed at all:
+  * **V71A** -- both `sar` sites at 0x9. r24 AND r26 doubled, FLAT 2.000000x at every speed.
+  * **V71B** -- both `sar` sites STOCK; `gain_A` rec0/rec1 Y[0..3] doubled instead. **r26 alone**,
+    2.000000x at <= 10 km/h tapering to EXACTLY 1.000000x at >= 50 km/h. **r24 is fully STOCK.**
+⇒ **A STATISTICAL, NOT STRUCTURAL, DISCRIMINATOR:** bit4 reads `gp-0x6ada`, which is **r24's** mirror.
+On V71A that lane is doubled, so bit4 trips at half the |dtorque| it needs on V71B. A markedly higher
+bit4 duty is V71A-shaped. **Do not treat that as identification** -- confirm the filename.
+⚠ AND THE CONSEQUENCE FOR V71B: **its probe cannot see its own dose.** bit4 watches an undosed lane on
+that build. The one-byte fix -- cave+0x1A `0x26` -> `0x24`, making it `ld.h -0x6adc[gp],r6`, r26's own
+mirror -- was NOT applied; the brief specified the same probe for both.
 
 WHAT V71 IS -- so a reader of this file cannot mistake the artefact
 -------------------------------------------------------------------
@@ -111,7 +127,7 @@ from decode_v67_gate import collect, runs_of, sustained, transitions        # no
 from decode_v69_ratchet import MIN_SAMPLES, ratchet_line                    # noqa: E402
 from decode_v70_probe import episode_ratio, episodes_of                     # noqa: E402
 
-# 🛑 THE MECHANICAL LINK TO THE IMAGE. build_v71_tva.assert_decoder_matches() fails the BUILD if this
+# 🛑 THE MECHANICAL LINK TO THE IMAGE. build_v71a_tva/build_v71b_tva assert_decoder_matches() fails the BUILD if this
 # hex does not equal the cave it just emitted, so this decoder cannot silently describe a different
 # build. Do not hand-edit it.
 CAVE_HEX = "203e1000a437e3986132a605483a843707986432aa05443a24372695a7326132be057f32ae05423ae031a605413ac33a8437edeac636070007314437ecea2436e8ea7f00"  # noqa: E501
@@ -195,7 +211,7 @@ ON_WIRE = {b | 0x07 for b in LEGAL}       # as transmitted, with all three statu
 
 # 🛑 ONE LINE, deliberately. The builder asserts this exact basename appears in this file; splitting
 # it across a string concatenation makes the substring vanish and the check silently harder to pass.
-RWD_NAME = "39990-TVA,A160-V71-LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-V62sar-BOTHLANES-surfREVERTED-probe2-671d-67fa4-6adaABS128-sign-can330byte4-0x13000-0x100000.rwd"  # noqa: E501
+RWD_NAME = "39990-TVA,A160-V71A-LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-V62sar-BOTHLANES-surfREVERTED-probe2-671d-67fa4-6adaABS128-sign-can330byte4-0x13000-0x100000.rwd"  # noqa: E501
 
 STRUCTURALLY_DISJOINT = {
     "V53 (emits only 0x07 -- bit7 CLEAR)": {0x07},

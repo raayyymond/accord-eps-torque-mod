@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""build_v71_tva.py -- V71 = V70 MINUS the falsified surface dose, PLUS both confirmed fixes back.
+"""build_v71a_tva.py -- V71A = V70 MINUS the falsified surface dose, PLUS both confirmed fixes back.
 
-    V71  ==  V62/V65's RATE LANE, byte for byte,  +  V42's `0x454FE` ratchet byte,  +  a new cave.
+    V71A ==  V62/V65's RATE LANE, byte for byte,  +  V42's `0x454FE` ratchet byte,  +  a new cave.
 
 That identity is not aimed at -- it is ASSERTED against `_v62_plain_image.bin` AND
 `_v65_plain_image.bin`, over the whole image, and it is the build's central safety claim: the lane
@@ -17,15 +17,20 @@ as V66's confirmatory control and never restored. Every build since has re-creat
 DIFFERENT encoding that doses **r24 only**, and grind #1 came back. **r26 is now proven live on-car**
 (V70's probe: 1,644/18,010 frames with `gp-0x6adc` strictly negative; a pinned-zero cell cannot clear
 a `>= 0` test), and V62's `sar` route is the **only** encoding that is dose-exact independent of
-r26's share. V71 restores both confirmed fixes and drops the falsified surface dose.
+r26's share. V71A restores both confirmed fixes and drops the falsified surface dose.
+
+🛑 V71A HAS A SIBLING: **V71B** (`build_v71b_tva.py`) doses r26 ALONE through `gain_A`'s speed-
+shaped surface and leaves BOTH `sar` sites stock, so it is EXACTLY 1.000000x at and above 50 km/h.
+The two builds carry a BYTE-IDENTICAL CAVE and are therefore NOT distinguishable on the wire --
+**the .rwd FILENAME is the only pre-drive discriminator.** See V71B's note for the trade.
 
 🛑🛑 THE STATED COST, PUT FIRST BECAUSE IT IS THE ONE THING THIS BUILD TRADES AWAY
 ----------------------------------------------------------------------------------
-V71's rate-lane dose is a **FLAT 2.000000x at every speed and every rate**, because a `sar` immediate
+V71A's rate-lane dose is a **FLAT 2.000000x at every speed and every rate**, because a `sar` immediate
 is speed-independent. That is exactly V62/V65's configuration -- and the record says that flat 2.00x
 is what **CAUSED grind #2 (11.71x)**. V69/V70 chose a SPEED-SHAPED surface dose precisely to avoid
 it: V70 delivers 2.000000x at creep tapering to **EXACTLY 1.000000x at and above 50 km/h**, which is
-the configuration the operator reported clean at highway. **V71 gives up that taper.** The trade is
+the configuration the operator reported clean at highway. **V71A gives up that taper.** V71B exists precisely to buy it back on the r26 lane. The trade is
 deliberate and was specified: the surface encoding doses r24 only, and r26 is now proven live, so the
 surface route cannot deliver a known dose to the lane as a whole. Score grind #2 at speed
 SEPARATELY on this drive, and treat a highway regression as expected-and-informative rather than as a
@@ -200,7 +205,7 @@ Base 0xC4B34, hook 0x55C0E, extent **68 of the proven 68 B** -- unchanged, flown
 (V55/V57/V58/V59/V64/V65/V66/V67/V70, all clean). 🛑 ZERO spare. Growing a cave is this kit's ONLY
 bricking class (V24, V27 and V48B all bricked the ECU).
 
-Usage:  python build_v71_tva.py
+Usage:  python build_v71a_tva.py
 """
 import hashlib
 import os
@@ -366,8 +371,8 @@ TAG = ("LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-V62sar-BOTHLANES-"
 # ⚠ SHORTER THAN THE FIRST CUT'S ON PURPOSE: the fuller name overran Windows' 260-char path limit
 # and the .rwd write failed AFTER the image had been written. `probe2` + `6adaABS128-sign` is the
 # discriminator that matters -- it names the rung that changed.
-OUT = os.path.join(RWD_DIR, f"39990-TVA,A160-V71-{TAG}-0x{START:X}-0x{END:X}.rwd")
-BIN_OUT = str(plain_image_path("_v71_plain_image.bin"))
+OUT = os.path.join(RWD_DIR, f"39990-TVA,A160-V71A-{TAG}-0x{START:X}-0x{END:X}.rwd")
+BIN_OUT = str(plain_image_path("_v71a_plain_image.bin"))
 SRC_BIN = plain_image_path("_v70_plain_image.bin")
 V62_BIN = plain_image_path("_v62_plain_image.bin")
 V65_BIN = plain_image_path("_v65_plain_image.bin")
@@ -950,7 +955,7 @@ def assert_sar_sites(buf, label, expect_doubled):
         "to 94% of INT32_MAX and V850 `mul` truncates the high word silently"
 
 
-def assert_decoder_matches(cave_bytes, label="V71"):
+def assert_decoder_matches(cave_bytes, label="V71A"):
     """🛑 The decoder's header must match the BUILT image, not a previous revision."""
     if not os.path.exists(DECODER):
         print(f"    ⚠ {DECODER} not found -- the decoder/image link is NOT verified")
@@ -1323,7 +1328,7 @@ def build():
 
     d_stock = [i for i in range(START, END) if code[i] != stock[i]]
     print(f"\n  EXACT DIFF vs STOCK: {len(d_stock)} bytes in [0x{START:X},0x{END:X}) -- run "
-          "`python diff_build_vs_stock.py v71` for the full attribution table.")
+          "`python diff_build_vs_stock.py v71a` for the full attribution table.")
 
     # ---- write, encode, and RE-RUN every gate on the DECODED READBACK ---------------------------
     if existing is not None and existing != bytes(code):
@@ -1387,7 +1392,7 @@ def build():
     rwd_sha = hashlib.sha256(rwd).hexdigest()
     print(f"\n  wrote {OUT}\n    SHA256 {rwd_sha}")
     print("\n" + "=" * 102)
-    print("  V71 BUILT. Both confirmed fixes restored; the falsified surface dose dropped;")
+    print("  V71A BUILT. Both confirmed fixes restored; the falsified surface dose dropped;")
     print("  a 5-rung probe that reads WHICH GAIN IS IN FORCE rather than a lane output.")
     print("  🛑 Flash only on the operator's explicit instruction, naming the file and the bus.")
     return img_sha, rwd_sha

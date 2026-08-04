@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""verify_v71_image.py -- EXACT-VALUE anchors for V71, independent of the builder.
+"""verify_v71a_image.py -- EXACT-VALUE anchors for V71A, independent of the builder.
 
 🛑 WHY THIS FILE EXISTS, AND WHY THE DIFFER IS NOT ENOUGH.
 `diff_build_vs_stock.py` is **span-based, not value-based**: an address inside an existing `EDITS`
@@ -9,7 +9,7 @@ V61), `0xD2A7E`/`0xD2ABA` (V69 x4 vs V70 x2 vs V71 STOCK) and `0x454FE` (V42 vs 
 so only exact values can tell the builds apart. Run BOTH.
 
 This re-reads the built image from disk and re-derives everything; it shares no state with
-`build_v71_tva.py` beyond the addresses.
+`build_v71a_tva.py` beyond the addresses.
 
 ★ V71 CARRIES A STRONGER ANCHOR THAN ANY PREVIOUS VERIFIER: its RATE LANE is byte-identical to
 `_v62_plain_image.bin` AND `_v65_plain_image.bin`, and the WHOLE IMAGE is byte-identical to V62
@@ -23,7 +23,7 @@ also catches anything nobody thought to list.
   * mode-10 `gain_B` rec0/rec1       -- back to STOCK 3072 / 2561 (V69: x4, V70: x2).
   * gate `0x3AA96` = 0xC5, arm `0xC6446` = 512 -- V69/V70's control path, UNCHANGED.
 
-Usage:  python verify_v71_image.py [path-to-_v71_plain_image.bin]
+Usage:  python verify_v71a_image.py [path-to-_v71_plain_image.bin]
 """
 import struct
 import sys
@@ -116,14 +116,14 @@ def decode_bcond(b, a):
 
 
 def main(path=None):
-    p = Path(path) if path else Path(plain_image_path("_v71_plain_image.bin"))
+    p = Path(path) if path else Path(plain_image_path("_v71a_plain_image.bin"))
     b = p.read_bytes()
     stock = Path(stock_fw_path("code.bin")).read_bytes()
     v62 = Path(plain_image_path("_v62_plain_image.bin")).read_bytes()
     v65 = Path(plain_image_path("_v65_plain_image.bin")).read_bytes()
     v70 = Path(plain_image_path("_v70_plain_image.bin")).read_bytes()
     v42 = Path(plain_image_path("_v42_plain_image.bin")).read_bytes()
-    print(f"verify_v71_image.py -- {p}\n  {len(b)} bytes\n")
+    print(f"verify_v71a_image.py -- {p}\n  {len(b)} bytes\n")
     check(len(b) == 0x100000, "image is exactly 1 MiB", len(b), 0x100000)
 
     # =================================================================================================
@@ -316,7 +316,7 @@ def main(path=None):
         for f in FAIL:
             print(f"   - {f}")
         return 1
-    print("✅ ALL CHECKS PASSED -- the image on disk is V71 by exact value, not by span.")
+    print("✅ ALL CHECKS PASSED -- the image on disk is V71A by exact value, not by span.")
     print("🛑 UNFLASHED. Flash only on the operator's explicit instruction, naming the file and bus.")
     return 0
 

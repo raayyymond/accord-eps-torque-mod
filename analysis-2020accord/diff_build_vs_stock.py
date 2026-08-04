@@ -112,7 +112,11 @@ EDITS = [
     # 🛑 On V71 the two 0xD2A7E/0xD2ABA entries above match ZERO bytes -- the surface is back at
     # STOCK -- and 0x3AB76/0x3AC20 revert to their V62 attribution. The one genuinely new span is
     # 0x454FE, which V42 introduced and which NO build between V53 and V70 carried.
-    (0x454FE, 0x454FF, "V42/V71", "state-4 governor ratchet: `bne 0x455C4` -> `br 0x455C4` (V850 "
+    (0xC6A72, 0xC6A7A, "V71B", "gain_A rec0 (0 km/h) Y[0..3] ALL doubled -> [6144,6144,4868,4096] "
+                              "-- r26's default arm, speed-shaped on the SHARED 0xC6010 cross-axis"),
+    (0xC6A86, 0xC6A8E, "V71B", "gain_A rec1 (10 km/h) Y[0..3] ALL doubled -> [6144,6144,4976,3072]; "
+                              "rec2/rec3 untouched => EXACTLY 1.000000x at and above 50 km/h"),
+    (0x454FE, 0x454FF, "V42/V71A/V71B", "state-4 governor ratchet: `bne 0x455C4` -> `br 0x455C4` (V850 "
                                   "cond nibble 0xA -> 0x5; displacement and TARGET unchanged). The "
                                   "kit's one CONFIRMED root cause, lost at the V38/FOURFRAME rebase "
                                   "and restored by V71."),
@@ -149,10 +153,15 @@ CAVE_BY_BUILD = {
     # returned an uninterpretable zero by reading an OUTPUT. Its four rungs are INDEPENDENT, so all
     # 16 payloads are reachable and it carries NO value-set invariant: identification from the wire
     # is WEAKER than V70's, and the .rwd filename is the pre-drive discriminator.
-    "71": ("V39->V71", "5-rung GAIN-IN-FORCE probe: bit6 gp-0x671d!=0 (THE MASK, outranks every "
+    "71a": ("V39->V71A", "5-rung GAIN-IN-FORCE probe: bit6 gp-0x671d!=0 (THE MASK, outranks every "
                        "arm), bit5 gp-0x67fa==4 (THE RATCHET STATE this build disables), "
                        "bit4 gp-0x6ada>=+512 (positive control), bit3 gp-0x671a>=5 (the third arm); "
                        "r7 accumulates 5 weights and one `shl 0x3,r7` moves them into bits 7:3"),
+    # 🛑 V71B's cave is BYTE-IDENTICAL to V71A's. That is deliberate and it means this differ -- and
+    # the CAN wire -- cannot tell the two builds apart from the cave at all. They are separated by
+    # the `sar` sites and gain_A, both listed in EDITS, and by the .rwd FILENAME.
+    "71b": ("V39->V71A", "the SAME 68-byte cave as V71A, byte for byte -- see the '71a' entry. "
+                         "V71B is distinguished by STOCK `sar` sites + doubled gain_A rec0/rec1"),
 }
 
 # 🛑 Deliberately NOT in the list, and worth stating because it surprises people:
@@ -168,7 +177,8 @@ ASSERT_STOCK = [
 # emits a known-false failure is the most dangerous kind, because a genuine stray edit then hides in
 # the noise (exactly the V67/V68 lesson recorded at the top of this file). The exception is per
 # build and per address, never a blanket skip.
-ASSERT_STOCK_EXCEPTIONS = {"71": {0x454FE: "V71 RESTORES V42's ratchet fix -- expected NOT stock"}}
+ASSERT_STOCK_EXCEPTIONS = {b: {0x454FE: f"V{b.upper()} RESTORES V42's ratchet fix -- expected NOT stock"}
+                           for b in ("71a", "71b")}
 
 
 def resolve_edits(build):
