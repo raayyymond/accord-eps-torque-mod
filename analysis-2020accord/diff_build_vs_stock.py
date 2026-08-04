@@ -160,8 +160,10 @@ CAVE_BY_BUILD = {
     # 🛑 V71B's cave is BYTE-IDENTICAL to V71A's. That is deliberate and it means this differ -- and
     # the CAN wire -- cannot tell the two builds apart from the cave at all. They are separated by
     # the `sar` sites and gain_A, both listed in EDITS, and by the .rwd FILENAME.
-    "71b": ("V39->V71A", "the SAME 68-byte cave as V71A, byte for byte -- see the '71a' entry. "
-                         "V71B is distinguished by STOCK `sar` sites + doubled gain_A rec0/rec1"),
+    "71b": ("V39->V71B", "the same 5-rung probe as V71A but with bit4/bit3 RETARGETED to "
+                         "gp-0x6adc = r26's post-clip mirror (V71A watches gp-0x6ada = r24's). "
+                         "ONE cave byte apart, at 0xC4B4E -- a build must instrument the lane it "
+                         "doses, and V71B doses r26 alone. 🛑 That byte is NOT visible on the wire"),
 }
 
 # 🛑 Deliberately NOT in the list, and worth stating because it surprises people:

@@ -30,9 +30,11 @@ CAVE_BASE, CAVE_LEN = 0xC4B34, 68
 RATCHET_ADDR = 0x454FE
 CRC_WORDS = {a + k for a in (0xC4FFC, 0xC6FFC, 0xD2FFC) for k in range(4)}
 
-# The 68 cave bytes -- IDENTICAL to V71A's, by design. A literal, independent of any encoder.
-CAVE_HEX = ("203e1000a437e3986132a605483a843707986432aa05443a24372695a7326132be057f32"
+# The 68 cave bytes. 🛑 ONE BYTE apart from V71A's, at offset 0x1A: V71A reads `ld.h -0x6ada`
+# (r24's mirror), V71B reads `ld.h -0x6adc` (r26's). Each build watches the lane IT doses.
+CAVE_HEX = ("203e1000a437e3986132a605483a843707986432aa05443a24372495a7326132be057f32"
             "ae05423ae031a605413ac33a8437edeac636070007314437ecea2436e8ea7f00")
+CAVE_HEX_V71A_MIRROR_BYTE = 0x26           # what V71A has at offset 0x1A -- must NOT appear here
 
 RATE_A = ((0xC6A68, (0, 400, 1600, 3000), (3072, 3072, 2434, 2048), True, "rec0    0 km/h"),
           (0xC6A7C, (0, 250, 1200, 3000), (3072, 3072, 2488, 1536), True, "rec1   10 km/h"),
@@ -140,7 +142,7 @@ def main(path=None):
     check(cave.hex() == CAVE_HEX, "the whole 68-byte cave matches the expected literal",
           cave.hex(), CAVE_HEX)
     for off, want_op, what in ((0x04, 0x3D, "ld.bu -0x671d (ODD disp)"), (0x0E, 0x3C, "ld.bu -0x67fa"),
-                               (0x18, 0x39, "ld.h -0x6ada"), (0x30, 0x3C, "ld.bu -0x1514"),
+                               (0x18, 0x39, "ld.h -0x6adc"), (0x30, 0x3C, "ld.bu -0x1514"),
                                (0x3A, 0x3A, "st.b -0x1514")):
         op = (struct.unpack_from("<H", cave, off)[0] >> 5) & 0x3F
         check(op == want_op, f"cave+0x{off:02X} opcode field == 0x{want_op:02X}  ({what})",
@@ -151,6 +153,13 @@ def main(path=None):
         got = struct.unpack_from("<H", cave, off)[0] & 0xF
         check(got == want, f"cave+0x{off:02X} condition nibble == 0x{want:X}  ({what})",
               hex(got), hex(want))
+    # 🛑🛑 THE BYTE THAT DEFINES THIS BUILD'S PROBE. A span differ cannot see it, and V71A's
+    # verifier would pass on it. bit4/bit3 MUST watch r26's mirror, because r26 is what V71B doses.
+    check(struct.unpack_from("<H", cave, 0x1A)[0] == (0x10000 - 0x6ADC) & 0xFFFF,
+          "cave+0x1A carries displacement -0x6adc (r26's mirror) -- NOT V71A's -0x6ada",
+          hex(struct.unpack_from("<H", cave, 0x1A)[0]), hex((0x10000 - 0x6ADC) & 0xFFFF))
+    check(cave[0x1A] != CAVE_HEX_V71A_MIRROR_BYTE,
+          "the mirror byte is not V71A's 0x26 ⇒ this image instruments the lane it DOSES")
     stores = [off for off in (0x00, 0x04, 0x08, 0x0A, 0x0C, 0x0E, 0x12, 0x14, 0x16, 0x18, 0x1C,
                               0x1E, 0x20, 0x22, 0x24, 0x26, 0x28, 0x2A, 0x2C, 0x2E, 0x30, 0x34,
                               0x38, 0x3A, 0x3E, 0x42)
@@ -164,9 +173,14 @@ def main(path=None):
           hex(0x55C0E + jd), hex(CAVE_BASE))
     if a_path.exists():
         a_img = a_path.read_bytes()
-        check(cave == bytes(a_img[CAVE_BASE:CAVE_BASE + CAVE_LEN]),
-              "the cave is BYTE-IDENTICAL to V71A's ⇒ 🛑 the wire CANNOT separate the two builds; "
-              "the .rwd FILENAME is the only pre-drive discriminator")
+        a_cave = bytes(a_img[CAVE_BASE:CAVE_BASE + CAVE_LEN])
+        d = [i for i in range(CAVE_LEN) if cave[i] != a_cave[i]]
+        check(d == [0x1A],
+              "the cave differs from V71A's in EXACTLY ONE byte, 0x1A (the mirror displacement)",
+              [hex(x) for x in d], ["0x1a"])
+        check(a_cave[0x1A] == 0x26 and cave[0x1A] == 0x24,
+              "V71A watches gp-0x6ada (r24), V71B watches gp-0x6adc (r26) 🛑 that byte is NOT on the "
+              "wire -- the .rwd FILENAME is still the only pre-drive discriminator")
 
     print("\nCONTROL PATH -- unchanged from V69/V70:")
     check(b[0x3AA96] == 0xC5, "0x3AA96 gate byte == 0xC5 (the DEAD gp-0x683c)", hex(b[0x3AA96]), "0xc5")

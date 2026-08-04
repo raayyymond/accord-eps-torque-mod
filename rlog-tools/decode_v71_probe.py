@@ -130,7 +130,14 @@ from decode_v70_probe import episode_ratio, episodes_of                     # no
 # 🛑 THE MECHANICAL LINK TO THE IMAGE. build_v71a_tva/build_v71b_tva assert_decoder_matches() fails the BUILD if this
 # hex does not equal the cave it just emitted, so this decoder cannot silently describe a different
 # build. Do not hand-edit it.
-CAVE_HEX = "203e1000a437e3986132a605483a843707986432aa05443a24372695a7326132be057f32ae05423ae031a605413ac33a8437edeac636070007314437ecea2436e8ea7f00"  # noqa: E501
+CAVE_HEX_A = "203e1000a437e3986132a605483a843707986432aa05443a24372695a7326132be057f32ae05423ae031a605413ac33a8437edeac636070007314437ecea2436e8ea7f00"  # noqa: E501
+CAVE_HEX_B = "203e1000a437e3986132a605483a843707986432aa05443a24372495a7326132be057f32ae05423ae031a605413ac33a8437edeac636070007314437ecea2436e8ea7f00"  # noqa: E501
+# 🛑 ONE BYTE separates them, at offset 0x1A: V71A's bit4/bit3 read `ld.h -0x6ada[gp],r6`
+# (**r24**'s post-clip mirror, st.h @0x3AD5A); V71B's read `ld.h -0x6adc[gp],r6` (**r26**'s,
+# st.h @0x3AD4E). Each build watches the lane IT doses -- V71A doses both lanes via the `sar`
+# sites, V71B doses r26 alone via gain_A. Both cells are 0 readers / 1 writer image-wide.
+# ⇒ **A CROSS-BUILD COMPARISON OF bit4 OR bit3 BETWEEN A AND B IS NOT LIKE-FOR-LIKE.** They
+# measure different lanes on different scales (r26 carries an extra `avg(gp-0x69a4)` factor).
 #
 #   0xC4B34  203e1000  movea 0x10,r0,r7      bit7 LIVENESS, in PRE-SHIFT weights
 #   0xC4B38  a437e398  ld.bu -0x671d[gp],r6  THE MASK  (⚠ ODD displacement 0x98E3 => opcode 0x3D)
@@ -189,16 +196,35 @@ MASK_AGGREGATOR = 0xC30       # {4,5,10,11}  FUN_0003a382 @0x226A0, FUN_0003aa2c
 MASK_ARBITRATION = 0x930      # {4,5,8,11}   the arbitration trio
 
 # (bit, short name, gp cell, what a 1 means)
-RUNGS = (
-    (BIT_MASK671D, "bit6 gp-0x671D", 0x671D,
-     "THE MASK is SET -> r24's gain is pinned to cal 0xC6442 = 1024, BELOW the stock LERP"),
-    (BIT_STATE4, "bit5 gp-0x67FA", 0x67FA,
-     f"the ECU is in STATE {STATE_VALUE} -- where the governor substitution WOULD have ratcheted"),
-    (BIT_R24_ABS, "bit4 gp-0x6ADA", 0x6ADA,
-     f"|r24 lane out| >= {THRESHOLD} (post +/-8192 clip), TWO-SIDED -- 0 readers image-wide"),
-    (BIT_R24_SIGN, "bit3 gp-0x6ADA", 0x6ADA,
-     "r24 lane out >= 0 -- THE SIGN. Read WITH bit4: together they give side AND magnitude"),
-)
+# 🛑 THE BUILD MUST BE NAMED. V71A and V71B differ in ONE cave byte and are NOT separable from the
+# wire, so this decoder REFUSES to guess: `--v71a` or `--v71b` is required. Guessing would be exactly
+# the confident-wrong-answer failure this probe arc exists to end.
+BUILDS = {
+    "v71a": dict(cave=CAVE_HEX_A, lane="r24", cell=0x6ADA,
+                 dose="both `sar` sites 0x9 -- r24 AND r26 doubled, FLAT 2.000000x at every speed",
+                 rwd="39990-TVA,A160-V71A-LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-V62sar-BOTHLANES-surfREVERTED-probe2-671d-67fa4-6adaABS128-sign-can330byte4-0x13000-0x100000.rwd"),  # noqa: E501
+    "v71b": dict(cave=CAVE_HEX_B, lane="r26", cell=0x6ADC,
+                 dose="`sar` sites STOCK; gain_A rec0/rec1 Y[0..3] x2 -- r26 ALONE, 2.000000x at "
+                      "<= 10 km/h tapering to EXACTLY 1.000000x at >= 50 km/h. r24 fully STOCK",
+                 rwd="39990-TVA,A160-V71B-LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-gainA-rec0rec1-x2-SPEEDSHAPED-sarSTOCK-probe2-671d-67fa4-6adcABS128-sign-can330byte4-0x13000-0x100000.rwd"),  # noqa: E501
+}
+
+
+def rungs_for(build):
+    """The bit map, with bit4/bit3's CELL resolved for the named build."""
+    b = BUILDS[build]
+    return ((BIT_MASK671D, "bit6 gp-0x671D", 0x671D,
+             "THE MASK is SET -> r24's gain is pinned to cal 0xC6442 = 1024, BELOW the stock LERP"),
+            (BIT_STATE4, "bit5 gp-0x67FA", 0x67FA,
+             f"the ECU is in STATE {STATE_VALUE} -- where the governor substitution WOULD have "
+             "ratcheted"),
+            (BIT_R24_ABS, f"bit4 gp-0x{b['cell']:04X}", b["cell"],
+             f"|{b['lane']} lane out| >= {THRESHOLD} (post +/-8192 clip), TWO-SIDED -- 0 readers"),
+            (BIT_R24_SIGN, f"bit3 gp-0x{b['cell']:04X}", b["cell"],
+             f"{b['lane']} lane out >= 0 -- THE SIGN. Read WITH bit4: side AND magnitude"))
+
+
+RUNGS = rungs_for("v71a")        # the default bit MAP; main() re-resolves it from the CLI selector
 
 CREEP_MAX_MS = 4.0            # the ratchet is a creep symptom (1-4 m/s in the recorded episodes)
 HANDS_OFF_TQ = 300            # |sustained torsion-bar| below which the recorded episodes sit
@@ -275,14 +301,20 @@ def _self_check():
         "0x930 is not {4,5,8,11}"
     assert all((1 << STATE_VALUE) & m for m in (MASK_DETECTOR, MASK_AGGREGATOR, MASK_ARBITRATION)), \
         f"state {STATE_VALUE} must be in ALL THREE masks -- bit5 = 1 means the whole chain is running"
-    raw = bytes.fromhex(CAVE_HEX)
-    assert len(raw) == 68, f"CAVE_HEX is {len(raw)} bytes, not the 68-byte V71 cave"
-    assert CAVE_HEX.endswith("2436e8ea7f00"), "CAVE_HEX does not end in the displaced movea + jmp [lp]"
+    assert len(CAVE_HEX_A) == len(CAVE_HEX_B) == 136, "a CAVE_HEX is not 68 bytes"
+    ndiff = sum(1 for x, y in zip(CAVE_HEX_A, CAVE_HEX_B) if x != y)
+    assert ndiff and bytes.fromhex(CAVE_HEX_A)[0x1A] == 0x26         and bytes.fromhex(CAVE_HEX_B)[0x1A] == 0x24,         "the two caves must differ at offset 0x1A ONLY: 0x26 (gp-0x6ada) vs 0x24 (gp-0x6adc)"
+    assert sum(1 for x, y in zip(bytes.fromhex(CAVE_HEX_A), bytes.fromhex(CAVE_HEX_B)) if x != y) == 1,         "the two caves differ in more than the one mirror byte"
+    for raw, mdisp in ((bytes.fromhex(CAVE_HEX_A), 0x6ADA), (bytes.fromhex(CAVE_HEX_B), 0x6ADC)):
+        assert raw[0x18:0x1A] == bytes.fromhex("2437"), "the mirror load is not an `ld.h ...,r6`"
+        assert raw[0x1A:0x1C] == ((0x10000 - mdisp) & 0xFFFF).to_bytes(2, "little"),             f"the mirror load does not carry -0x{mdisp:04x}"
+    raw = bytes.fromhex(CAVE_HEX_A)
+    assert CAVE_HEX_A.endswith("2436e8ea7f00") and CAVE_HEX_B.endswith("2436e8ea7f00"),         "a CAVE_HEX does not end in the displaced movea + jmp [lp]"
     # 🛑 Offsets are (address - 0xC4B34), DERIVED from the listing above, not guessed -- an off-by-4
     # checks the wrong halfword and the guard silently passes on a cave that WRITES.
     for off, hw1, disp, what in ((4, "a437", 0x671D, "ld.bu odd-disp"),
                                  (14, "8437", 0x67FA, "ld.bu even-disp"),
-                                 (24, "2437", 0x6ADA, "ld.h")):
+                                 ):
         assert raw[off:off + 2] == bytes.fromhex(hw1), \
             f"CAVE_HEX offset {off} is not a `{what} ...,r6` -- a 0x44../0x64.. hw1 would be a STORE"
         want = (0x10000 - disp) & 0xFFFF
@@ -346,12 +378,23 @@ def identify(b4):
     # return a confidently WRONG answer.
     print("  ⚠ NOT excluded by the value set: V55, V57, V58, V64 and V70 -- probes with INDEPENDENT")
     print("     bits, whose reachable space is all 16 payloads. The .rwd FILENAME is the pre-drive")
-    print(f"     discriminator: {RWD_NAME}")
+    for k, v in BUILDS.items():
+        print(f"     {k.upper()}: {v['rwd']}")
     return True
 
 
-def main(paths):
+def main(paths, build):
+    global RUNGS
+    RUNGS = rungs_for(build)
+    info = BUILDS[build]
     print(__doc__)
+    print("=" * 102)
+    print(f"BUILD SELECTED: {build.upper()}   bit4/bit3 watch gp-0x{info['cell']:04X} = "
+          f"{info['lane']}'s post-clip mirror")
+    print(f"  dose: {info['dose']}")
+    print(f"  rwd : {info['rwd']}")
+    print("  🛑 CONFIRM THAT FILENAME IS WHAT FLEW. V71A and V71B differ in ONE cave byte and are")
+    print("     NOT separable from the wire; every number below is read through the selected map.")
     d = collect(paths)
     b4, t = d["b4"], d["t"]
     if len(b4) == 0:
@@ -472,7 +515,13 @@ def main(paths):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    sel = [a[2:].lower() for a in sys.argv[1:] if a.startswith("--")]
+    if len(args) < 1 or len(sel) != 1 or sel[0] not in BUILDS:
         print(__doc__)
-        raise SystemExit("give me one or more rlog paths / route directories")
-    raise SystemExit(main(sys.argv[1:]))
+        raise SystemExit(
+            "usage: decode_v71_probe.py --v71a|--v71b <rlog-or-route-dir> [...]\n"
+            "🛑 The build MUST be named. V71A and V71B carry caves that differ in ONE byte and are\n"
+            "   NOT separable from the CAN payload, so this decoder refuses to guess which map to\n"
+            "   apply. Read it off the .rwd filename that was flashed.")
+    raise SystemExit(main(args, sel[0]))

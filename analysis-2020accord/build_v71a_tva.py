@@ -313,6 +313,10 @@ BIT_R24SIGN = W_R24SIGN << PAYLOAD_SHIFT
 MASK_DISP = V67.MASK_DISP                  # 0x671D -- odd displacement => ld.bu opcode field 0x3D
 STATE_DISP = 0x67FA                        # the ECU state byte
 R24_MIRROR_DISP = 0x6ADA                   # r24's post-clip lane mirror: 0 readers / 1 writer
+R26_MIRROR_DISP = 0x6ADC                   # r26's post-clip lane mirror: 0 readers / 1 writer.
+# ★ THE CAVE IS PARAMETERISED ON WHICH MIRROR IT WATCHES. V71A doses BOTH lanes, so it watches r24;
+# V71B doses r26 ALONE and watches r26. A build must instrument the lane it doses -- instrumenting the
+# other one is exactly the failure that ran for four builds. The two caves differ in ONE byte.
 STATE_VALUE = 4                            # the ratchet state
 SHIFT, LEVEL = 7, 1                        # 🛑 was 9 on V71's FIRST CUT -- the rung that read ZERO
 THRESHOLD = LEVEL << SHIFT                 # = +128
@@ -330,8 +334,10 @@ COND_BNE = 0xA                             # 0xA  !=           🛑 be (0x2) is 
 PROBE_CENSUS = {
     # disp: (firmware readers, firmware writers, writer addresses, allowed mnemonics)
     R24_MIRROR_DISP: (0, 1, [0x3AD5A], {"st.h"}),      # pure mirror of r24: NOTHING reads it
+    R26_MIRROR_DISP: (0, 1, [0x3AD4E], {"st.h"}),      # pure mirror of r26: NOTHING reads it
     MASK_DISP: (14, 2, [0x3BD2A, 0x41EC6], {"ld.bu", "st.b"}),
 }
+MIRRORS = (R24_MIRROR_DISP, R26_MIRROR_DISP)
 RETIRED_DISPS = (V67.ARM3_DISP,)           # 0x671A -- the designated cut. See the docstring.
 
 # 🛑 Independently verified stock-vs-V70; asserted here so that EVERYTHING decompiled off the STOCK
@@ -344,6 +350,8 @@ STOCK_IDENTICAL_SPANS = ((0x454F8, 0x45620, "the governor FUN_0004503c"),
 PIN_LDH_6AD4 = (0x3ACA8, bytes.fromhex("24372c95"))   # hw1 donor: a real `ld.h ...,gp,r6`
 PIN_LDH_6B94 = (0x453E0, bytes.fromhex("24376c94"))   # hw1 donor #2 (V65's), different cell
 PIN_STH_6ADA = (0x3AD5A, bytes.fromhex("64c72695"))   # 🛑 opcode 0x3B -- ONE BIT from our 0x39
+PIN_STH_6ADC = (0x3AD4E, bytes.fromhex("64d72495"))   # 🛑 likewise, for r26's mirror
+PIN_STH = {0x6ADA: PIN_STH_6ADA, 0x6ADC: PIN_STH_6ADC}
 PIN_LDBU_671D = (0x3AB98, bytes.fromhex("a437e398"))  # BYTE-IDENTICAL to what we emit (4 instances)
 PIN_LDBU_67FA = (0x18C7C, bytes.fromhex("84370798"))  # BYTE-IDENTICAL to what we emit
 PIN_SAR7_R6 = (0x558CE, bytes.fromhex("a732"))        # `sar 0x7,r6`   -- Ghidra-confirmed
@@ -514,7 +522,7 @@ def _wire_model():
         f"only {combos} reachable -- if an invariant exists it must be documented, not discovered"
 
 
-def _self_check_encoders():
+def _self_check_encoders(mirror=R24_MIRROR_DISP):
     """Every halfword we emit is pinned to a REAL instruction, or to a self-checked ancestor.
 
     🛑 Caves are this kit's ONLY bricking class (V24, V27 and V48B all bricked the ECU).
@@ -531,21 +539,26 @@ def _self_check_encoders():
             f"the donor @0x{addr:05X} is not {raw.hex()} on the STOCK image -- re-pin"
 
     # ---- the ld.h rung. THE ONE-BIT TRAP: ld.h = 0x39, st.h = 0x3B ---------------------------
-    ours = V55.ldh(R24_MIRROR_DISP, R6)
+    assert mirror in MIRRORS, \
+        f"the cave may only watch a ZERO-READER mirror, not gp-0x{mirror:04x}"
+    ours = V55.ldh(mirror, R6)
     hw1, hw2 = struct.unpack("<HH", ours)
     assert ((hw1 >> 5) & 0x3F) == 0x39, \
         f"emitted opcode field is 0x{(hw1 >> 5) & 0x3F:02X}, MUST be 0x39 (ld.h), not 0x3B (st.h)"
-    assert ours != FF.sth(R6, -R24_MIRROR_DISP, GP) and \
-        ours[:2] != FF.sth(R6, -R24_MIRROR_DISP, GP)[:2], \
+    assert ours != FF.sth(R6, -mirror, GP) and ours[:2] != FF.sth(R6, -mirror, GP)[:2], \
         "the emitted load shares an opcode field with `st.h` -- that would WRITE a 1 kHz lane"
-    assert ours != FF.ldhu(R24_MIRROR_DISP, R6), "ld.h collapsed onto ld.hu -- the SIGN would be lost"
+    assert ours != FF.ldhu(mirror, R6), "ld.h collapsed onto ld.hu -- the SIGN would be lost"
     assert hw1 & 0x1F == GP == 4 and (hw1 >> 11) == R6, "ld.h reg1/reg2 fields are wrong"
     assert hw2 & 1 == 0, "ld.h hw2 LSB must be CLEAR (LSB set is the ld.w/ld.hu form)"
-    assert hw2 == (0x10000 - R24_MIRROR_DISP) & 0xFFFF, "ld.h displacement is not -0x6ada"
+    assert hw2 == (0x10000 - mirror) & 0xFFFF, f"ld.h displacement is not -0x{mirror:04x}"
     assert hw1 == struct.unpack_from("<H", PIN_LDH_6AD4[1], 0)[0] == \
         struct.unpack_from("<H", PIN_LDH_6B94[1], 0)[0], "hw1 differs from BOTH real `ld.h ...,r6`"
-    assert hw2 == struct.unpack_from("<H", PIN_STH_6ADA[1], 2)[0], \
-        f"displacement halfword does not match the real st.h @0x{PIN_STH_6ADA[0]:05X}"
+    assert hw2 == struct.unpack_from("<H", PIN_STH[mirror][1], 2)[0], \
+        f"displacement halfword does not match the real st.h @0x{PIN_STH[mirror][0]:05X}"
+    # 🛑 ONE BYTE separates the two builds' caves. Assert the two loads are DISTINCT, so a
+    # copy-paste cannot silently point V71B's probe at the lane it does not dose.
+    assert V55.ldh(R24_MIRROR_DISP, R6) != V55.ldh(R26_MIRROR_DISP, R6), \
+        "the two mirror loads are byte-identical -- the builds could not be told apart"
 
     # ---- the two `ld.bu` rungs. ANOTHER ONE-BIT TRAP: ld.bu = 0x3C/0x3D, st.b = 0x3A ----------
     # 🛑 THE hw1-BIT-5 PARITY TRAP. `ld.bu` carries the displacement's bit 0 in the OPCODE FIELD
@@ -624,7 +637,7 @@ def _self_check_encoders():
     _wire_model()
 
 
-def build_cave():
+def build_cave(mirror=R24_MIRROR_DISP):
     """pack_gain_in_force -- entered by `jarl` from 0x55C0E, returns `jmp [lp]` to 0x55C12.
 
         movea 0x10,r0,r7       ; r7 = 0x10   bit7 LIVENESS, in PRE-SHIFT weights
@@ -658,7 +671,7 @@ def build_cave():
         movea -0x1518,gp,r6    ; re-execute the displaced instruction, LAST (r6 was scratch)
         jmp   [lp]
     """
-    _self_check_encoders()
+    _self_check_encoders(mirror)
     body = bytearray()
     listing = []
 
@@ -684,8 +697,9 @@ def build_cave():
         rungs.append((br_idx, CAVE_BASE + len(body), cond, 4, name))
 
     # ---- bit4: ONE load, ONE shift, TWO signed bounds. 🛑 The whole point of the re-cut. --------
-    emit(V55.ldh(R24_MIRROR_DISP, R6),
-         "ld.h -0x6ada[gp],r6 ; r24 lane out, post-clip (SIGNED, 0 readers)")
+    emit(V55.ldh(mirror, R6),
+         f"ld.h -0x{mirror:04x}[gp],r6 ; "
+         f"{'r24' if mirror == R24_MIRROR_DISP else 'r26'} lane out, post-clip (SIGNED, 0 readers)")
     emit(V55.sar(SHIFT, R6), f"sar 0x{SHIFT:x},r6           ; ARITHMETIC -- units of {THRESHOLD}")
     emit(V55.cmp_imm5(LEVEL, R6), f"cmp 0x{LEVEL:x},r6           ; the POSITIVE bound")
     br_hi = len(listing)
@@ -761,8 +775,11 @@ def build_cave():
         hw = struct.unpack_from("<H", raw, 0)[0]
         assert (len(raw) == 2 and raw[1] == 0x05) or ((hw >> 5) & 0x3F) in (0x13, 0x0F) \
             or (hw >> 11) == R7, f"'{text}' clobbers r6 between the shift and bit3's test"
-    assert sum(1 for _, r, _ in listing if r == V55.ldh(R24_MIRROR_DISP, R6)) == 1, \
-        "gp-0x6ada is loaded more than once"
+    assert sum(1 for _, r, _ in listing if r == V55.ldh(mirror, R6)) == 1, \
+        f"gp-0x{mirror:04x} is loaded more than once"
+    unwatched = R26_MIRROR_DISP if mirror == R24_MIRROR_DISP else R24_MIRROR_DISP
+    assert not [1 for _, r, _ in listing if r == V55.ldh(unwatched, R6)], \
+        f"the cave loads gp-0x{unwatched:04x} too -- it must watch EXACTLY the lane this build doses"
     assert sum(1 for _, r, _ in listing if r == V55.sar(SHIFT, R6)) == 1, "more than one `sar`"
     for disp in (MASK_DISP, STATE_DISP):
         assert sum(1 for _, r, _ in listing if r == V55.ldbu_any(-disp, R6)) == 1, \
@@ -795,14 +812,19 @@ def build_cave():
     return bytes(body), listing
 
 
-def assert_probe_census(buf, cave_span):
+def assert_probe_census(buf, cave_span, mirror=R24_MIRROR_DISP):
     """Re-derive each probed cell's reader/writer set from RAW BYTES and assert it exactly.
 
     🛑 Python, not `search_instructions` -- that tool counts only already-analysed instructions and
     reports truncated:false while undercounting. It has produced wrong reader/writer sets four times.
     """
     read_mnem = {"ld.b", "ld.h", "ld.w", "ld.bu", "ld.hu"}
+    unwatched = R26_MIRROR_DISP if mirror == R24_MIRROR_DISP else R24_MIRROR_DISP
     for disp, (n_read, n_write, writers, mnems) in PROBE_CENSUS.items():
+        if disp == unwatched:                 # the mirror this build does NOT watch
+            assert not [h for h in V64.gp_access_census(buf, disp) if h[0] in cave_span], \
+                f"the cave touches gp-0x{disp:04x}, the mirror of the lane it does NOT dose"
+            continue
         hits = V64.gp_access_census(buf, disp)
         fw = [h for h in hits if h[0] not in cave_span]
         assert all(m in mnems for _, m, _ in fw), \
@@ -815,13 +837,13 @@ def assert_probe_census(buf, cave_span):
             f"gp-0x{disp:04x} writers are {[hex(a) for a, _, _ in writes]}, expected " \
             f"{[hex(w) for w in writers]}"
         cave = [h for h in hits if h[0] in cave_span]
-        want_mnem = "ld.h" if disp == R24_MIRROR_DISP else "ld.bu"
+        want_mnem = "ld.h" if disp in MIRRORS else "ld.bu"
         assert len(cave) == 1 and cave[0][1] == want_mnem and cave[0][2] == R6, \
             f"gp-0x{disp:04x}: cave accesses are {[(hex(a), m, r) for a, m, r in cave]}, expected " \
             f"exactly one `{want_mnem} ...,r6`"
     # 🛑 The probed HALFWORD cell has ZERO firmware readers -- the strongest GATE-1 statement
     # available, AND it means a one-bit ld.h->st.h slip could only corrupt a cell nobody reads.
-    assert PROBE_CENSUS[R24_MIRROR_DISP][0] == 0, "gp-0x6ada acquired a reader -- no longer free"
+    assert PROBE_CENSUS[mirror][0] == 0, f"gp-0x{mirror:04x} acquired a reader -- no longer free"
 
     # ---- the state cell gets a SHAPE check, not an equality: it is live, with ~128 readers -----
     hits = V64.gp_access_census(buf, STATE_DISP)
@@ -961,22 +983,28 @@ def assert_decoder_matches(cave_bytes, label="V71A"):
         print(f"    ⚠ {DECODER} not found -- the decoder/image link is NOT verified")
         return False
     txt = open(DECODER, encoding="utf-8").read()
-    m = re.search(r'^CAVE_HEX\s*=\s*"([0-9a-f]+)"', txt, re.M)
-    assert m, f"{label}: the decoder carries no CAVE_HEX -- it cannot be checked against the image"
+    m = re.search(r'^CAVE_HEX_A\s*=\s*"([0-9a-f]+)"', txt, re.M)
+    assert m, f"{label}: the decoder carries no CAVE_HEX_A -- it cannot be checked against the image"
     assert m.group(1) == cave_bytes.hex(), \
-        f"{label}: the decoder's CAVE_HEX is STALE.\n  decoder: {m.group(1)}\n  image:   {cave_bytes.hex()}"
+        f"{label}: the decoder's CAVE_HEX_A is STALE.\n  decoder: {m.group(1)}\n  image:   {cave_bytes.hex()}"
     for token in ("0xC4124", os.path.basename(OUT)):
         assert token in txt, f"{label}: the decoder does not carry '{token}'"
     assert re.search(rf"^THRESHOLD\s*=\s*{THRESHOLD}\b", txt, re.M), \
         f"{label}: the decoder's THRESHOLD is not {THRESHOLD}"
     assert re.search(rf"^STATE_VALUE\s*=\s*{STATE_VALUE}\b", txt, re.M), \
         f"{label}: the decoder's STATE_VALUE is not {STATE_VALUE} -- it applies V70's semantics"
-    m = re.search(r"^RUNGS\s*=\s*\((.*?)^\)", txt, re.M | re.S)
-    assert m, f"{label}: the decoder has no RUNGS literal -- its bit map cannot be checked"
+    # 🛑 The decoder now serves BOTH siblings, so its bit map is a FUNCTION of the build, not a
+    # literal. Check the region that defines it, and check that THIS build's entry names THIS
+    # build's mirror -- a decoder pointing V71A at r26's cell would misread every frame.
+    m = re.search(r"^BUILDS = \{(.*?)^RUNGS = rungs_for", txt, re.M | re.S)
+    assert m, f"{label}: the decoder has no BUILDS/rungs_for bit map -- it cannot be checked"
     up = m.group(1).upper()                  # ⚠ so is the needle: `0x` upper-cases to `0X`
-    for disp in (MASK_DISP, STATE_DISP, R24_MIRROR_DISP):
-        assert f"{disp:04X}" in up, f"{label}: gp-0x{disp:04x} is not a rung in the decoder's bit map"
-    for stale in RETIRED_DISPS + (0x6ADC, 0x6B62, 0x6AD4, 0x67DF, 0x6806):
+    for disp in (MASK_DISP, STATE_DISP, R24_MIRROR_DISP, R26_MIRROR_DISP):
+        assert f"{disp:04X}" in up, f"{label}: gp-0x{disp:04x} is missing from the decoder's bit map"
+    assert re.search(rf'"{label.lower()}": dict\(cave=CAVE_HEX_A, lane="r24", cell=0x6ADA',
+                     txt), f"{label}: the decoder's {label} entry does not watch gp-0x6ada"
+    # ⚠ 0x6ADC is NO LONGER stale: it is V71B's mirror and the decoder legitimately carries it.
+    for stale in RETIRED_DISPS + (0x6B62, 0x6AD4, 0x67DF, 0x6806):
         assert f"{stale:04X}" not in up, \
             f"{label}: gp-0x{stale:04x} is still a LIVE RUNG in the decoder's bit map -- V71 retired it"
     # 🛑 AND THE DECODER MUST CARRY THE RE-CUT'S SEMANTICS, not the first cut's. A stale THRESHOLD

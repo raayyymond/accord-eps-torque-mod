@@ -19,6 +19,34 @@ V69 is r24 x1 -> x2 -> x4 with r26 held at x1 -- and grind #1 reads **879 -> 729
 CIs mutually overlapping ⇒ r24 is close to INERT for grind #1 across a 4:1 range. Both builds that
 DID fix grind #1 changed r26 (V62 x2, V67/V68 /6.00). V71B moves r26 and NOTHING else.
 
+🛑 A CORRECTION TO THIS BUILD'S OWN RATIONALE -- `gain_A` HAS BEEN EDITED BEFORE, AND IT FAILED
+------------------------------------------------------------------------------------------------
+An earlier framing of V71B called `gain_A` untouched. **It is not. V42 ZEROED IT** -- byte-verified
+across the images by this builder's own gate:
+
+    stock / V38 / V59 / V62 / V70   rec0 [3072,3072,2434,2048]  rec1 [3072,3072,2488,1536]
+                                    rec2 [2664,2664,2243,1436]  rec3 [2560,2560,2145,1331]
+                                    0xC6444 = 512    0xC643E = 1536
+    V42                             rec0/rec1/rec2/rec3 ALL [0,0,0,0]
+                                    0xC6444 = 0      0xC643E = 0
+
+V42 zeroed **all four records and both override arms** ⇒ r26 identically 0 in every state -- and it
+was **FALSIFIED on-car ("no effect")**. ⚠ Weak evidence about grind #1 *specifically*: V42 predates
+the `e_18-22` harness and was aimed at the vibration, not the grind. But it is a real prior.
+
+⇒ **THE CLAIM, STATED CORRECTLY: V71B is the first UPWARD test of `gain_A`, not the first test.**
+That is exactly the distinction the V61 -> V62 correction turned on: V39, V42 and V61 all pushed the
+rate lane DOWN and were null-or-worse; V62 pushed it UP and it worked. "Tested downward" is not
+"tested". That precedent is what makes this upward test worth running.
+
+⚠ AND THE TENSION, RECORDED RATHER THAN SMOOTHED. No single-lane story fits all five points:
+    r26 -> 0 alone           did NOTHING          (V42, falsified)
+    r24 up alone             does NOTHING         (V70 729 / V69 746 vs stock 879)
+    BOTH up together         the only measured fix (V62, 168)
+V71B tests **half of V62's change**. It is therefore the cleaner EXPERIMENT -- single-variable, no
+highway cost, the first upward `gain_A` test -- and **not** the higher-probability fix. The
+orchestrator's recommendation has moved to **V71A** on exactly this basis. Read V71B that way.
+
 THE STRUCTURE -- CONFIRMED FROM THE DECOMPILATION, not from the bytes upward
 ----------------------------------------------------------------------------
 `FUN_0003ad74` has two halves. Both walk the SAME 4-entry speed cross-axis at `tp+0x7010` =
@@ -84,19 +112,24 @@ operands at stock magnitude; that is precisely why V62 chose it.
 ⇒ **[BELIEF] V71A is the arithmetically safer of the two; V71B is the better-targeted one.** The
    trade is real and it is the operator's to make.
 
-⚠ TWO LIMITATIONS OF THIS BUILD, STATED UP FRONT
---------------------------------------------------
-1. **V71B's PROBE CANNOT SEE V71B's OWN DOSE.** The probe is byte-identical to V71A's, and its
-   positive control bit4 reads `gp-0x6ada` -- **r24's** mirror. V71B leaves r24 completely stock, so
-   bit4 observes an UNDOSED lane. It is still a valid liveness and reachability test, but it does not
-   confirm that r26's dose was delivered. ★ **A ONE-BYTE change fixes it**: cave offset 0x1A,
-   `0x26` -> `0x24`, turning `ld.h -0x6ada[gp],r6` into `ld.h -0x6adc[gp],r6` -- r26's own post-clamp
-   mirror, also 0 readers / 1 writer image-wide. That single byte would ALSO make V71A and V71B
-   distinguishable on the wire. **Not applied: the brief said "same probe as V71A".** Recommended.
-2. **V71A AND V71B CARRY A BYTE-IDENTICAL CAVE**, so they are NOT distinguishable from the CAN
-   payload. **The .rwd FILENAME is the only pre-drive discriminator** -- the exact hazard that has
-   already produced two indistinguishable builds in this kit. Their plain images are separate files
-   by construction and neither builder will overwrite the other's.
+★ THE PROBE WATCHES THE LANE THIS BUILD DOSES
+-----------------------------------------------
+bit4/bit3 read **`gp-0x6adc` -- r26's OWN post-clip mirror** (`st.h r26,-0x6adc,gp` @0x3AD4E, **0
+readers / 1 writer** image-wide, and flight-proven: V70's probe already read this cell). V71A doses
+both lanes and watches r24's mirror; V71B doses r26 alone and watches r26's. **A build must
+instrument the lane it moves** -- pointing V71B's positive control at r24 would have dosed one lane
+and measured the other, which is precisely the failure that ran for four builds.
+bit6 (`gp-0x671d`) and bit5 (`gp-0x67fa == 4`) are lane-independent and unchanged.
+
+⚠ TWO CONSEQUENCES, STATED UP FRONT
+1. **THE TWO CAVES DIFFER IN EXACTLY ONE BYTE** -- cave+0x1A, `0x26` -> `0x24` -- and **that byte is
+   not visible on the wire.** V71A and V71B are still NOT distinguishable from the CAN payload; the
+   **.rwd FILENAME is the only pre-drive discriminator**. Their plain images are separate files and
+   neither builder will overwrite the other's. `decode_v71_probe.py` now **REFUSES to run without
+   `--v71a` or `--v71b`** rather than guess which bit map to apply.
+2. **A CROSS-BUILD COMPARISON OF bit4 OR bit3 IS NOT LIKE-FOR-LIKE.** They measure different lanes on
+   different scales: r26 carries an extra `avg(gp-0x69a4)` factor that r24 does not. Compare each
+   build's bit4 against ITS OWN prediction, never against the sibling's reading.
 
 Usage:  python build_v71b_tva.py
 """
@@ -158,8 +191,12 @@ RECORDED_DTORQUE_MAX = 839
 
 CAL_BLOCK = (0xC6000, 0xC6FFC)
 
+# 🛑 THE PROBE WATCHES THE LANE THIS BUILD DOSES. V71A doses both lanes and watches r24's mirror;
+# V71B doses r26 ALONE, so it watches r26's. One cave byte apart (cave+0x1A, 0x26 -> 0x24).
+MIRROR = A.R26_MIRROR_DISP                 # 0x6ADC -- st.h r26 @0x3AD4E, 0 readers / 1 writer
+
 TAG = ("LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-gainA-rec0rec1-x2-SPEEDSHAPED-"
-       "sarSTOCK-probe2-671d-67fa4-6adaABS128-sign-can330byte4")
+       "sarSTOCK-probe2-671d-67fa4-6adcABS128-sign-can330byte4")
 OUT = os.path.join(RWD_DIR, f"39990-TVA,A160-V71B-{TAG}-0x{START:X}-0x{END:X}.rwd")
 BIN_OUT = str(plain_image_path("_v71b_plain_image.bin"))
 SRC_BIN = plain_image_path("_v70_plain_image.bin")
@@ -229,12 +266,15 @@ def assert_decoder_matches(cave_bytes):
         print(f"    ⚠ {DECODER} not found -- the decoder/image link is NOT verified")
         return False
     txt = open(DECODER, encoding="utf-8").read()
-    m = re.search(r'^CAVE_HEX\s*=\s*"([0-9a-f]+)"', txt, re.M)
-    assert m and m.group(1) == cave_bytes.hex(), "V71B: the decoder's CAVE_HEX is STALE"
+    m = re.search(r'^CAVE_HEX_B\s*=\s*"([0-9a-f]+)"', txt, re.M)
+    assert m and m.group(1) == cave_bytes.hex(), "V71B: the decoder's CAVE_HEX_B is STALE"
     assert "V71B" in txt, \
         "V71B: the decoder does not mention V71B -- it carries a byte-identical cave and the reader " \
         "MUST be told the wire cannot tell the two apart"
     assert os.path.basename(OUT) in txt, "V71B: the decoder does not carry V71B's .rwd basename"
+    assert re.search(r'"v71b": dict\(cave=CAVE_HEX_B, lane="r26", cell=0x6ADC', txt),         "V71B: the decoder's v71b entry does not watch gp-0x6adc -- it would misread every frame"
+    assert re.search(r'"v71a": dict\(cave=CAVE_HEX_A, lane="r24", cell=0x6ADA', txt),         "V71B: the decoder's v71a entry drifted"
+    assert "NOT LIKE-FOR-LIKE" in txt.upper(),         "V71B: the decoder does not warn that a cross-build bit4/bit3 comparison is not like-for-like"
     return True
 
 
@@ -317,20 +357,22 @@ def build():
           + ", ".join(f"0x{a:05X} = {v}" for a, v, _ in R26_ARMS))
 
     # ---- EDIT 4 -- the probe, byte-identical to V71A's ------------------------------------------
-    print("\n  EDIT 4 -- THE PROBE, BYTE-IDENTICAL to V71A's (68 of 68 bytes, ZERO spare):")
-    cave_bytes, cave_listing = A.build_cave()
+    print("\n  EDIT 4 -- THE PROBE, RETARGETED TO r26 (68 of 68 bytes, ZERO spare):")
+    cave_bytes, cave_listing = A.build_cave(MIRROR)
     code[CAVE_BASE:CAVE_BASE + CAVE_EXTENT] = cave_bytes
     for addr, raw, text in cave_listing:
         print(f"    0x{addr:05X}  {raw.hex():<12s} {text}")
     cave_span = range(CAVE_BASE, CAVE_BASE + CAVE_EXTENT)
-    nr, nw = A.assert_probe_census(bytes(code), cave_span)
+    nr, nw = A.assert_probe_census(bytes(code), cave_span, MIRROR)
     print(f"    ✅ GATE 1 re-measured from raw bytes: gp-0x67fa {nr}r/{nw}w, read-only by the cave; "
           "the sole store is the CAN-330 payload byte")
-    print("    🛑 V71B's PROBE CANNOT SEE V71B's OWN DOSE -- bit4 reads gp-0x6ada, which is r24's")
-    print("       mirror, and V71B leaves r24 STOCK. One byte fixes it (cave+0x1A 0x26 -> 0x24 ⇒")
-    print("       gp-0x6adc, r26's own mirror); NOT applied because the brief said 'same probe'.")
-    print("    🛑 THE CAVE IS BYTE-IDENTICAL TO V71A's ⇒ THE WIRE CANNOT TELL THE TWO APART.")
-    print("       The .rwd FILENAME is the only pre-drive discriminator.")
+    print(f"    ✅ bit4/bit3 watch gp-0x{MIRROR:04X} = r26's OWN post-clip mirror (st.h @0x3AD4E,")
+    print("       0 readers / 1 writer image-wide, and FLIGHT-PROVEN: V70's probe already read it).")
+    print("       V71B doses r26, so V71B instruments r26. A build must watch the lane it moves.")
+    print("    🛑 THE TWO CAVES DIFFER IN EXACTLY ONE BYTE (cave+0x1A: 0x26 -> 0x24), which is NOT")
+    print("       visible on the wire. The .rwd FILENAME is still the only pre-drive discriminator,")
+    print("       and a cross-build comparison of bit4/bit3 is NOT like-for-like: different lanes,")
+    print("       different scales (r26 carries the extra avg(gp-0x69a4) factor).")
     if assert_decoder_matches(cave_bytes):
         print("    ✅ rlog-tools/decode_v71_probe.py matches this cave and names BOTH siblings")
 
@@ -380,6 +422,36 @@ def build():
 
     # ---- SATURATION -- the number that decides between the siblings ------------------------------
     peak_a = max(gain_a_q10(code, v, r) for v, r in grid)
+    # ---- 📋 SIZING bit4's THRESHOLD AGAINST r26's OWN REACHABLE OUTPUT --------------------------
+    # 🛑 THIS IS THE V69 FAILURE MODE. V69's bit4 tested a lane at >= 4096 whose entire reachable
+    # range topped out at 164-341 -- 12-25x above anything it could ever produce. Sizing T against
+    # r24's numbers would repeat it, because r26 carries an EXTRA `avg(gp-0x69a4)` factor that r24
+    # does not: r26 = (dtorque * avg >> 10) * gain_A >> 10 vs r24 = (dtorque * gain_B) >> 10.
+    T = A.THRESHOLD                            # 128, inherited from V71A's rung SHAPE (sar 0x7)
+    print(f"\n  📋 bit4 SIZING -- against r26's OWN output, not r24's. T = {T}, two-sided.")
+    print(f"     |r26| >= {T}  <=>  |dtorque| * avg >= {T} * 2^{SAR1 + SAR2} / gain_A")
+    print(f"    {'avg':>7} {'x unity':>8}  {'|dtorque| to trip @gain_A ' + str(peak_a):>34}")
+    need = {}
+    for avg in (16, 32, 64, 128, 256, 512, 1024, 2048, 4096):
+        need[avg] = T * (1 << (SAR1 + SAR2)) / (avg * peak_a)
+        flag = "  🛑 VACUOUS (> the recorded max 839)" if need[avg] > RECORDED_DTORQUE_MAX else ""
+        print(f"    {avg:>7} {avg / 1024:>7.3f}x  {need[avg]:>34.1f}{flag}")
+    avg_vacuous = T * (1 << (SAR1 + SAR2)) / (RECORDED_DTORQUE_MAX * peak_a)
+    print(f"    ⇒ the rung goes VACUOUS only below avg = {avg_vacuous:.1f} "
+          f"({avg_vacuous / 1024:.4f}x unity) -- i.e. it stays live over a ~2500:1 range of `avg`.")
+    assert avg_vacuous < 64, \
+        f"bit4 needs avg >= {avg_vacuous:.0f} to be non-vacuous -- size T lower (the V69 lesson)"
+    print(f"    ⇒ at unity avg (1024) it trips at |dtorque| = {need[1024]:.1f}, against a recorded")
+    print(f"      max of {RECORDED_DTORQUE_MAX} and V69's flight max of 633.9. Very sensitive.")
+    print("    ⚠ THE OTHER TAIL, stated: if `avg` is large the rung may read a HIGH duty rather than")
+    print("      a mid-band one. That is still informative -- combined with bit3 it says the lane is")
+    print("      live and large, which is what a positive control is for -- but do not read a 100%")
+    print("      duty as 'the dose worked'; read it as 'the lane reaches +/-128 nearly always'.")
+    print(f"    ★ bit3 (the SIGN of gp-0x{MIRROR:04X}) IS INDEPENDENTLY GUARANTEED NON-VACUOUS: V70's")
+    print("      probe read this exact cell and measured 1,644 / 18,010 frames STRICTLY NEGATIVE")
+    print("      (9.13%). A pinned-zero cell cannot do that ⇒ r26 is live and signed-varying on-car.")
+    print("      That is the one rung on this build whose informativeness is already measured.")
+
     print("\n  🛑 SATURATION -- r26's rail as a FUNCTION OF avg(gp-0x69a4), which is UNMEASURED.")
     print(f"     r26 = clamp(polarity * ((dtorque * avg) >> {SAR1}) * gain_A >> {SAR2}, +/-{LANE_CLIP})")
     print(f"     rail |dtorque| = {LANE_CLIP} * 2^{SAR1 + SAR2} / (avg * gain_A)")
@@ -445,10 +517,23 @@ def build():
     if os.path.exists(V71A_BIN):
         a_img = Path(V71A_BIN).read_bytes()
         da = [i for i in range(START, END) if code[i] != a_img[i]]
-        fa = [i for i in da if i not in crc_only and i not in {0xC4FFC + k for k in range(4)}]
-        print(f"\n  DIFF vs V71A (the sibling): {len(da)} bytes -- the two `sar` bytes, gain_A's 16, "
-              "and CRC. The CAVE is byte-identical, which is why the wire cannot separate them.")
-        assert not [i for i in fa if i in cave_range], "the cave differs from V71A's -- it must not"
+        fa = [i for i in da if i not in crc_only]
+        in_cave = [i for i in fa if i in cave_range]
+        n_sar = len([i for i in fa if i in (A.R26_SAR, A.R24_SAR)])
+        n_gaina = len([i for i in fa if i in gaina_bytes])
+        print(f"\n  DIFF vs V71A (the sibling): {len(da)} bytes = {n_sar} `sar` + {n_gaina} gain_A + "
+              f"{len(in_cave)} cave + {len(da) - len(fa)} CRC")
+        # 🛑 EXACTLY ONE CAVE BYTE, and it must be the mirror displacement. That single byte is the
+        # difference between a build that watches the lane it doses and one that does not.
+        assert in_cave == [CAVE_BASE + 0x1A], \
+            f"the caves differ at {[hex(x) for x in in_cave]}, expected EXACTLY " \
+            f"[0x{CAVE_BASE + 0x1A:05X}] -- the mirror displacement byte"
+        assert code[CAVE_BASE + 0x1A] == 0x24 and a_img[CAVE_BASE + 0x1A] == 0x26, \
+            "the mirror byte is not 0x24 (gp-0x6adc) on V71B / 0x26 (gp-0x6ada) on V71A"
+        print(f"    ✅ the caves differ in EXACTLY ONE byte, 0x{CAVE_BASE + 0x1A:05X}: "
+              "0x26 (gp-0x6ada, r24) on V71A -> 0x24 (gp-0x6adc, r26) on V71B.")
+        print("       🛑 That byte is NOT visible on the wire. The .rwd FILENAME remains the only")
+        print("          pre-drive discriminator, and bit4/bit3 are NOT comparable across the two.")
 
     d_stock = [i for i in range(START, END) if code[i] != stock[i]]
     print(f"  EXACT DIFF vs STOCK: {len(d_stock)} bytes -- run `python diff_build_vs_stock.py v71b`")
@@ -477,7 +562,7 @@ def build():
     A.assert_sar_sites(dec, "V71B readback", expect_doubled=False)
     A.assert_governor_monitor_safety(dec, "V71B readback")
     assert_gain_a(dec, "V71B readback", doubled=True)
-    A.assert_probe_census(bytes(dec), cave_span)
+    A.assert_probe_census(bytes(dec), cave_span, MIRROR)
     assert bytes(dec[CAVE_BASE:CAVE_BASE + CAVE_EXTENT]) == cave_bytes, "readback cave differs"
     for base in UNTOUCHED_A_RECS:
         assert bytes(dec[base:base + REC_STRIDE]) == bytes(stock[base:base + REC_STRIDE])
