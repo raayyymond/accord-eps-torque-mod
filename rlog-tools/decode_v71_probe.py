@@ -207,6 +207,13 @@ BUILDS = {
                  dose="`sar` sites STOCK; gain_A rec0/rec1 Y[0..3] x2 -- r26 ALONE, 2.000000x at "
                       "<= 10 km/h tapering to EXACTLY 1.000000x at >= 50 km/h. r24 fully STOCK",
                  rwd="39990-TVA,A160-V71B-LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-gainA-rec0rec1-x2-SPEEDSHAPED-sarSTOCK-probe2-671d-67fa4-6adcABS128-sign-can330byte4-0x13000-0x100000.rwd"),  # noqa: E501
+    # 🛑 V71C shares V71A's cave BYTE FOR BYTE -- it doses r24 ~2x at creep through a scalar ARM
+    # rather than a `sar` immediate, so it watches the same mirror. A and C are therefore the ONE
+    # like-for-like bit4 comparison in this set; B is not comparable to either.
+    "v71c": dict(cave=CAVE_HEX_A, lane="r24", cell=0x6ADA,
+                 dose="V67/V68's LKAS gate + arm 5244 (r24) + arm 3072 (r26, the ~6x CUT REMOVED); "
+                      "`sar` sites STOCK, gain_B STOCK. MANUAL is byte-for-byte stock",
+                 rwd="39990-TVA,A160-V71C-LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-V67gate-arm5244-r26arm3072UNCUT-sarSTOCK-probe2-671d-67fa4-6adaABS128-sign-can330byte4-0x13000-0x100000.rwd"),  # noqa: E501
 }
 
 

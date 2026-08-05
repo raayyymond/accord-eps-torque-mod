@@ -85,8 +85,12 @@ EDITS = [
     (0x3AC20, 0x3AC22, "V62", "r24 torsion-bar RATE lane: sar 0xa -> sar 0x9  (DOUBLE the lane)"),
     (0xC643E, 0xC6440, "V63", "r26 RATE lane, OSCILLATION-only gain arm (state>=5) 1536 -> 3072"),
     (0xC6440, 0xC6442, "V63", "r24 RATE lane, OSCILLATION-only gain arm (state>=5) 2048 -> 4096"),
-    (0x3AA96, 0x3AA97, "V67", "repoint ld.bu gp-0x683c -> gp-0x6806: r24's gain arm GATED ON LKAS"),
-    (0xC6446, 0xC6448, "V67", "r24's LKAS gain arm 512 -> 5244 -- FLASHED, grind #1 fixed on-car"),
+    (0x3AA96, 0x3AA97, "V67/V71C", "repoint ld.bu gp-0x683c -> gp-0x6806: BOTH gain arms GATED "
+                                   "ON LKAS. 🛑 This byte is what makes 0xC6444/0xC6446 LIVE at all"),
+    (0xC6446, 0xC6448, "V67/V71C", "r24's LKAS gain arm 512 -> 5244 -- FLASHED, grind #1 fixed"),
+    (0xC6444, 0xC6446, "V71C", "r26's LKAS gain arm 512 -> 3072 -- removes V67/V68's ~6x CUT. "
+                               "🛑 LIVE only when 0x3AA96 is repointed; null by construction on "
+                               "any gateless build (V71A/V71B)"),
     # ---- V69: the gate REVERTS and Honda's own low-speed surface is shaped instead --------------
     # 🛑 0x3AA96 and 0xC6446 appear ABOVE as V67 edits and here as V69 REVERTS. This differ is
     # SPAN-based, so it cannot tell 5244 from 512 at 0xC6446 -- only verify_v69_image.py's exact
@@ -160,6 +164,8 @@ CAVE_BY_BUILD = {
     # 🛑 V71B's cave is BYTE-IDENTICAL to V71A's. That is deliberate and it means this differ -- and
     # the CAN wire -- cannot tell the two builds apart from the cave at all. They are separated by
     # the `sar` sites and gain_A, both listed in EDITS, and by the .rwd FILENAME.
+    "71c": ("V39->V71A", "the SAME 68-byte cave as V71A, byte for byte -- V71C doses r24 through a "
+                         "scalar ARM rather than a `sar`, so it watches the same mirror gp-0x6ada"),
     "71b": ("V39->V71B", "the same 5-rung probe as V71A but with bit4/bit3 RETARGETED to "
                          "gp-0x6adc = r26's post-clip mirror (V71A watches gp-0x6ada = r24's). "
                          "ONE cave byte apart, at 0xC4B4E -- a build must instrument the lane it "
@@ -180,7 +186,7 @@ ASSERT_STOCK = [
 # the noise (exactly the V67/V68 lesson recorded at the top of this file). The exception is per
 # build and per address, never a blanket skip.
 ASSERT_STOCK_EXCEPTIONS = {b: {0x454FE: f"V{b.upper()} RESTORES V42's ratchet fix -- expected NOT stock"}
-                           for b in ("71a", "71b")}
+                           for b in ("71a", "71b", "71c")}
 
 
 def resolve_edits(build):
