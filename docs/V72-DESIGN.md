@@ -80,29 +80,39 @@ at 20.9 Hz**. A **flat** gain increase on that lane therefore feeds the 40–49 
 with the EPS (40–49 Hz p95 **6.27×**) — matching the operator's description of grind #2 as the one felt
 through the whole car.
 
-🛑🛑 **REVERSED BY DIRECT MEASUREMENT — GRIND #2 *IS* GRIND #1's 2nd HARMONIC.**
-An earlier revision of this section said they were **not** the same mode, citing a Theil-Sen slope of
-**0.173 [−0.92, +1.59]** from the record. **The direct measurement on routes 54/58 overturns it**
-[EVIDENCE]: with **free** peak-finding geometry (which permits ratios from 1.35 to 3.27, so 2.000 cannot
-be manufactured), **f_hi / f_lo = 2.003 [1.997, 2.008]** on route 54 and **2.005 [1.988, 2.255]** on route
-58 — reproduced at **2.004** on V69's route `4f`. Four stress tests:
-- **Negative control** (a 10–16 Hz "fundamental", where 2.000 is geometrically unreachable) returns
-  **3.91–3.99** ⇒ passes, *and* reveals a **harmonic ladder at ~10.6 / 21.2 / 42.9 Hz**.
-- **Which fundamental**: residual sd of f_hi about **2 × grind #1** beats **5 × the ratchet** on every
-  route (5.40 vs 7.53 · 7.29 vs 9.64 · 4.20 vs 7.39).
-- ⚠ **Co-occurrence**: a 35–49 Hz line stands in **20.7–28.4%** of windows where the 18–22 line is
-  *absent* ⇒ **enriched by, not strictly conditional on**, grind #1. The one test that does not fully
-  support a pure-harmonic reading.
-- ⚠ **Amplitude locking is weak** (ρ 0.30–0.44 engaged-only), so the all-window correlation is common
-  broadband effort, not locking.
+🛑🛑 **A HARMONIC "REVERSAL" WAS CLAIMED HERE AND IS ITSELF WITHDRAWN. THEY ARE NOT THE SAME MODE.**
+An intermediate revision of this section recorded, as [EVIDENCE], that grind #2 **is** grind #1's 2nd
+harmonic, citing **f_hi/f_lo = 2.003 [1.997, 2.008]**. **That was a bad test and the claim is retracted.**
 
-⇒ **The FREQUENCY relation is [EVIDENCE] and very tight; the MECHANISM is [BELIEF]:** with this mode's
-crest factor of **2.07–2.45** against a sine's 1.414, the natural reading is that **grind #2 is the
-waveform SHAPE of grind #1 — a distortion product of a clipping nonlinearity.**
-★★ **This is the direct answer to the operator's own observation that *"they feel like the same thing."*
-They are one phenomenon at two harmonics** — which is why one lever moves both, and why the r24/r26 lane
-(whose input is a differentiator with 1.93× more gain at 41.6 Hz than at 20.9 Hz) moves them in opposite
-directions when raised flat.
+**Why it was wrong:** a **ratio of two narrow lines is not a harmonic test.** If f_lo sits near 21 Hz
+(sd ≈ 1.2) and f_hi near 43 Hz (sd ≈ 2.6), then `median(f_hi/f_lo) ≈ 2` **whether or not the two ever
+move together** — it is a property of the marginal distributions alone. Orchestrator-verified by
+simulation: two **independent** lines with exactly those marginals return **median ratio 2.048,
+CI [2.012, 2.072]**. Harmonicity requires f_hi to **TRACK** f_lo window-to-window, i.e. a **SLOPE** of
+2.0, not a ratio of 2.0.
+
+**The decisive check — shuffle the pairing** [EVIDENCE]. If the ratio encoded real locking, destroying
+the window pairing must destroy it:
+
+| route | n | observed ratio | **shuffled ratio** | **tracking SLOPE** |
+|---|---|---|---|---|
+| V71B/`r54` | 525 | 2.238 | **2.227 [2.215, 2.238]** | **0.106 [−0.056, +0.264]** |
+| V71C/`r58` | 296 | 2.288 | **2.268 [2.252, 2.284]** | **0.097 [−0.120, +0.337]** |
+| V69/`r4f` | 236 | 2.199 | — | −0.186 [−0.510, +0.099] |
+| V62/`r37` | 393 | 2.249 | — | 0.119 [−0.070, +0.322] |
+
+**The shuffled ratio reproduces the observed one.** ⇒ **the ratio carries NO pairing information.** Every
+tracking slope **contains 0 and excludes 2.0**, on four routes.
+⇒ 🛑 **The record's ORIGINAL finding — Theil-Sen slope 0.173 [−0.92, +1.59], NOT a harmonic — is
+CONFIRMED on both new routes, not reversed.** The 2.003 figure is also not reproducible: free-geometry
+peak-finding returns **2.24–2.29**, and a ±0.005 CI on a ratio of two lines this broad was implausibly
+tight on its face.
+
+★ **What stands instead:** grind #1 (18–22 Hz, ~100% engagement-gated) and grind #2 (~44.9 Hz, only
+weakly so) are **two separate excitations sharing ONE differentiator-fed lever.** They feel identical
+through the wheel because **one knob moves them in opposite directions** — which is what the crossover
+table above measures, and what §2.1.5's two-lane rule operationalises. **That reading was right all
+along and needed no harmonic.**
 
 🛑 **CORRECTION — grind #2's 40–49 Hz TAIL IS ENGAGED, NOT MANUAL.** An earlier revision of this document
 said grind #2 *"is excited by hard MANUAL cornering."* The **torque/angle description of the corner is

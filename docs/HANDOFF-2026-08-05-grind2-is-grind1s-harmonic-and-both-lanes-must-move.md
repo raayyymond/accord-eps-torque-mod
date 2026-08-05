@@ -1,4 +1,7 @@
-# HANDOFF 2026-08-05 — GRIND #2 IS GRIND #1's SECOND HARMONIC, AND THE TWO-LANE RULE IS THE ANSWER
+# HANDOFF 2026-08-05 — THE TWO-LANE RULE ANSWERS THE OPERATOR'S CENTRAL QUESTION
+
+*(An earlier title of this file claimed grind #2 is grind #1's 2nd harmonic. That claim was retracted
+within the session — see the headline. The filename is kept for link stability.)*
 
 **Session type:** operator-directed global re-investigation. He asked for a step back from the kit's
 accumulated analysis, a fresh read of the whole firmware, and a **V72** that fixes grind #1 without
@@ -14,22 +17,20 @@ findings are in `docs/V72-DESIGN.md` and `memory/`.
 
 > *"Somehow one of our grind #1 fixes introduces a grind #2 … they feel like the same thing."*
 
-**They ARE the same thing.** [EVIDENCE, routes 54/58, free peak-finding geometry permitting ratios
-1.35–3.27 so 2.000 cannot be manufactured]:
+**They are TWO separate excitations sharing ONE differentiator-fed lever, and that lever moves them in
+OPPOSITE directions.** One knob; raise it and grind #1 falls while grind #2 rises. That is why every fix
+for one has fed the other, and why they feel the same through the wheel.
 
-| route | windows | f_lo | f_hi | **f_hi / f_lo** |
-|---|---|---|---|---|
-| **V71B/`r54`** | 156 | 21.20 | 42.91 | **2.003 [1.997, 2.008]** |
-| **V71C/`r58`** | 58 | 21.34 | 43.79 | **2.005 [1.988, 2.255]** |
-| V69/`r4f` | 78 | 20.71 | 41.86 | **2.004 [1.998, 2.030]** |
-
-Negative control (10–16 Hz fundamental, where 2.000 is geometrically unreachable) returns **3.91–3.99** —
-passes, **and reveals a harmonic ladder at ~10.6 / 21.2 / 42.9 Hz**. Residual-fit test: **2 × grind #1
-beats 5 × the ratchet** on every route. ⚠ [BELIEF] on mechanism — 20.7–28.4% of upper lines stand without
-a fundamental, and amplitude locking is weak (ρ 0.30–0.44 engaged-only).
-⇒ With this mode's crest factor **2.07–2.45** (a sine is 1.414), the reading is that **grind #2 is the
-waveform SHAPE of grind #1 — a distortion product of a clipping nonlinearity.**
-🛑 **This REVERSES the record's "not a harmonic, Theil-Sen slope 0.173" claim.**
+🛑🛑 **A HARMONIC CLAIM WAS PUBLISHED AS THIS SESSION'S HEADLINE AND RETRACTED THE SAME SESSION.** An
+agent measured **f_hi/f_lo = 2.003 [1.997, 2.008]** and concluded grind #2 **is** grind #1's 2nd
+harmonic; the orchestrator promoted it to the design doc, this handoff, a memory file, the commit
+message and the operator report. **It was a bad test.** A ratio of two narrow lines is a property of
+their **marginals** — two *independent* lines with these marginals return **median ratio 2.048
+[2.012, 2.072]** (orchestrator-verified by simulation). Harmonicity needs f_hi to **TRACK** f_lo: a
+**SLOPE** of 2.0. **Shuffling the window pairing REPRODUCED the observed ratio** (2.238 → 2.227;
+2.288 → 2.268), and every tracking slope **contains 0 and excludes 2.0** on four routes.
+⇒ **The corpus's original finding — slope 0.173 [−0.92, +1.59], NOT a harmonic — is CONFIRMED, not
+reversed.** Method rule recorded in `memory/feedback-a-ratio-is-not-a-tracking-test.md`.
 
 ### And the two-lane rule explains every build in the corpus
 High-rate corner of both surfaces (creep, rate index 3000), gains read from the shipped images:
@@ -71,7 +72,10 @@ which is far more salient. His V71C observation is exactly what a gated design p
 
 ---
 
-## 2. 🛑 FOUR RETRACTIONS, THREE OF THEM THE ORCHESTRATOR'S OWN
+## 2. 🛑 FIVE RETRACTIONS, FOUR OF THEM THE ORCHESTRATOR'S OWN
+
+0. **"Grind #2 IS grind #1's 2nd harmonic" — RETRACTED, see the headline.** Published as the session
+   headline and withdrawn the same session after a shuffle control reproduced the statistic.
 
 1. **`0x454FE` is NOT falsified for the ratchet — the test was VACUOUS.** V71's bit5 measured
    `gp-0x67fa == 4` at **0/123,277** (r54) and **8/92,826** (r58), all eight an 80 ms burst **in park**.
