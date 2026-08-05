@@ -862,7 +862,26 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # two inline Sensor-B torque-rate lanes, and one filtered Sensor-B term:
 #     FUN_00034a72 -> gp-0x6bbe   the boost curve proper (the "assist" everyone means)
 #     FUN_00034350 -> gp-0x6bd0   5 multiplied gain factors, sign forced opposite gp-0x6abe [damping]
-#     FUN_00036c12 -> gp-0x6b26   curve x gp-0x6c2e angle term                   [friction comp]
+# 🛑🛑 ALL FIVE DAMPING FACTORS ARE MODE-TABLE SELECTED (2026-08-05). FUN_00034350 picks B/C/D/E AND the
+# ceiling through pointer arrays indexed by mode*4, mode = *(byte)(gp+0x63fd), 13 variants:
+#     FactorB 0xC9CCC[m]  FactorC 0xC9E9C[m]  FactorD 0xC9DB4[m]  FactorE 0xC9F84[m]  ceiling 0xC77A0[m]
+# The product carries NO signal magnitude -- it is five Q10 GAINS; rate enters via FactorE's LERP index
+# and speed via FactorC's, and the SIGN comes from gp-0x6abe. seed = gp-0x698a (the "FactorA" long sought
+# as a separate table) is pinned at 1024 by construction.
+# ★★★★ V72 edited modes 10/11 ONLY, on the ASSUMPTION that 39990-TVA-A160 -> row 2 'TVAA1' of the config
+# table at 0xCD000 (matched by FUN_00057f8e against a 5-byte key at gp+0x6408, returning 0 on NO MATCH).
+# In modes 10/11 V72 gives |gp-0x6bd0| = 389 UNCONDITIONALLY, so its bit4 rung (>=64) would read 100%.
+# IT READ 0/87,940, incl. 0/34,275 above 35 km/h => THE CAR IS NOT IN MODE 10/11 and V72's Levers B/C were
+# INERT BY TABLE SELECTION. => EVERY prior "damping is null" result (V44, V47, V72) is UNINTERPRETABLE,
+# not falsified. Live mode OPEN: 4/5 and 12 consistent with the data, 0-3 marginal, 10/11 excluded.
+# 🛑 The base-assist "damping is EXACTLY ZERO below 35 km/h" claim elsewhere in this file is derived from
+# MODE 10's FactorC X[0]=2240. Other modes have different breakpoints (mode 0: X[0]=1280 = 20 km/h) and
+# entirely different Y rows -- do not quote the 35 km/h figure without stating the mode it assumes.
+# ⚠ GATE 2 NOTE: V72 set mode 10's FactorE Y[0..2] -> 927, i.e. FLAT across the whole rate axis, turning a
+# rate-proportional damper into a near-BANG-BANG RELAY (magnitude ~constant, sign = -sgn(gp-0x6abe)). A
+# relay in a loop at a lightly-damped resonance is a limit-cycle GENERATOR. Had it been delivered it could
+# have made the ratchet WORSE. V73 instead sets Y[0] := that record's own Y[1], preserving proportionality.
+#     FUN_00036c12 -> gp-0x6b26   speed-LERP x gp-0x6c2c motor-rate-deriv, LINEAR [friction comp]
 #     FUN_0003a382 -> gp-0x6ad4   UNFILTERED residual lane (2 passthroughs + a raw derivative)
 #     FUN_00036388 -> gp-0x6b62   slow +/-1/tick accumulator w/ hysteresis       [return-to-centre]
 #     FUN_000352b4 -> gp-0x6b86 + gp-0x69a4                                      [friction magnitude]
@@ -1384,7 +1403,11 @@ def assist_shaping_lanes(sensors: SensorInputs, st: EpsState) -> dict:
     raised only by V47), and its output clamp is a dynamic LERP keyed on gp-0x6ac2 (@0xD209C/D20A8)
     with a float-mirror lockstep at cal 0xC6554/58/5C/60 (DTC-0x1d no-debounce hard shutdown on
     divergence -- any edit to the int clamp table needs a bit-exact float twin). FUN_00036c12 ->
-    gp-0x6b26 (friction comp) is LERP(AVG torque, @0xCBE74) x gp-0x6c2e, range-limited. FUN_0003a382 ->
+    gp-0x6b26 (friction comp) is LERP(gp-0x6a5e voted VEHICLE SPEED, @0xCBE74, mode10@0xD2A44) x
+    gp-0x6c2c (motor-rate derivative), a plain signed multiply -- NO sign()/abs/hysteresis anywhere in
+    the lane, so it is smooth and continuous through zero and cannot itself generate stick-slip; magnitude
+    is LARGEST at 0 km/h (Y[0]=-9830) and falls ~5x by 90 km/h (Y[2]=-1966); self-clamps +/-511 (0xC407E)
+    before the aggregator's own +/-0x400 gate. [VERIFIED 2026-08-04, disasm 0x36c12-0x36cbe]. FUN_0003a382 ->
     gp-0x6ad4 (resonance lane) is a genuine discrete PID on ERR = clamp(gp-0x4f60 - bias, +/-0x2800):
     P = (LERP(motor_rate)*ERR>>10)*32, I = accumulate(98*ERR>>10), D = clamp((ERR-ERR_prev)*2048>>10,
     +/-0x2800)*32, summed and rescaled to +/-ceiling; both of its smoothing EMAs (cals 0xC6450, 0xC644A)

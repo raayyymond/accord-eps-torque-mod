@@ -1,6 +1,6 @@
 ---
 name: reference_accord_r24_gainb_table_structure_and_priority_gate
-description: FUN_0003ad74's four mode-indexed ROM-record pointer arrays fully enumerated (one array, not two, at 0xCC12C -- resolves the old 0xCC154/0xCC184 ambiguity); mode-10 records byte-read and blast-radius-confirmed private; r24's gain_B is a 4-way PRIORITY GATE (gp-0x671d / gp-0x683c / gp-0x671a-vs-cal5 / mode-table default), not unconditionally the mode table; CRC blocks identified; evaluation axis gp-0x6ac0 scale (4.7121 counts/deg/s) independently re-derived exact, plus the >=13001 fold-to-MAX-gain discontinuity confirmed via decompiler.
+description: FUN_0003ad74's four mode-indexed ROM-record pointer arrays fully enumerated (one array, not two, at 0xCC12C -- resolves the old 0xCC154/0xCC184 ambiguity); mode-10 records byte-read and blast-radius-confirmed private; r24's gain_B is a 4-way PRIORITY GATE (gp-0x671d / gp-0x683c / gp-0x671a-vs-cal5 / mode-table default), not unconditionally the mode table; CRC blocks identified; evaluation axis gp-0x6ac0 scale (4.7121 counts/deg/s) independently re-derived exact, plus the >=13001 fold-to-MAX-gain discontinuity confirmed via decompiler. 🛑 CORRECTED 2026-08-05: section 2's "array N (X=...)" speed labels were rotated by one position (records[0] is dead stack, never used); true mapping is 0xD2A74=0km/h/0xD2AB0=10/0xD2AEC=50/0xD2B28=100, matching V72's own build-script framing -- see the in-file correction and reference_accord_gain_a_index_and_leak_v73.md.
 metadata:
   type: reference
 ---
@@ -26,14 +26,33 @@ real second table.
 
 ## 2. Mode-10's four records -- byte-read, EXACT match to the pre-existing golden-model numbers
 
+🛑 **CORRECTION 2026-08-05, orchestrator session (V73 hypothesis task): the "X=" column below is
+ROTATED BY ONE POSITION and is WRONG.** The pointer-slot addresses and record addresses in the table
+are still correct (re-verified independently), but which SPEED each array/record functionally serves
+is not what the "X=" label says. Re-derived from a fresh decompile of `FUN_0003ad74`'s search+
+interpolate logic: the stack layout is really a 5-slot `records[0..4]` array where `records[0]` is
+NEVER initialized (only `records[1..4]` are, from the four pointer arrays in address order). The
+search loop always advances past index 0 on the FIRST call regardless of speed (an `||iVar7==iVar5`
+OR-condition forces at least one iteration even at speed==cross[0]==0), so `records[0]` is
+structurally dead and the TRUE mapping is `records[1]=0xCBF5C[mode]`->0 km/h,
+`records[2]=0xCC044[mode]`->10 km/h, `records[3]=0xCC12C[mode]`->50 km/h,
+`records[4]=0xCC214[mode]`->100 km/h -- i.e. **exactly what team-lead's own V72/build-script framing
+already used** (`0xD2A74`=0km/h, `0xD2AB0`=10km/h, `0xD2AEC`=50km/h, `0xD2B28`=100km/h), NOT what this
+table's "array0 (X=0)"/"array1 (X=640)" labels say. Confirmed three ways this session: (a) the
+decompile-derived interpolation-weight algebra, (b) independent pointer re-dereference
+(`v73_dump.py`), (c) Y values form the expected monotone speed rolloff only under the corrected
+mapping. Read the "array N (X=...)" column below as **array-declaration-order**, not speed; for the
+real speed a given record serves, add 1 to the array index (array1's record is the 0 km/h one, not
+10 km/h). See `reference_accord_gain_a_index_and_leak_v73.md` for the full derivation.
+
 Cross-axis breakpoints `tp+0x7010=0xC6010`: X=[0,640,3200,6400] (v65, confirmed). Cal `tp+0x713a=0xC613A=1159`.
 
-| array (cross-axis pt) | pointer slot | record addr | X | Y |
-|---|---|---|---|---|
-| array0 (X=0) | `0xCC23C` | `0xD2B28` | [0,400,1500,3000] | [2151,2151,2049,1947] |
-| array1 (X=640) | `0xCBF84` | `0xD2A74` | [0,400,1400,3000] | [3072,3072,2322,1536] |
-| array2 (X=3200) | `0xCC06C` | `0xD2AB0` | [0,400,1500,3000] | [2561,2561,2247,1947] |
-| array3 (X=6400) | `0xCC154` | `0xD2AEC` | [0,400,1500,3000] | [2305,2304,2149,1948] |
+| array (cross-axis pt) | pointer slot | record addr | X | Y | ⚠ ACTUAL speed served (corrected) |
+|---|---|---|---|---|---|
+| array0 (X=0) | `0xCC23C` | `0xD2B28` | [0,400,1500,3000] | [2151,2151,2049,1947] | **100 km/h**, not 0 |
+| array1 (X=640) | `0xCBF84` | `0xD2A74` | [0,400,1400,3000] | [3072,3072,2322,1536] | **0 km/h**, not 10 |
+| array2 (X=3200) | `0xCC06C` | `0xD2AB0` | [0,400,1500,3000] | [2561,2561,2247,1947] | **10 km/h**, not 50 |
+| array3 (X=6400) | `0xCC154` | `0xD2AEC` | [0,400,1500,3000] | [2305,2304,2149,1948] | **50 km/h**, not 100 |
 
 Record layout: 20-byte stride, `u16 count(=4); i16 X[4]; i16 Y[4]` (18 bytes payload + 2 pad).
 **Blast radius**: whole-image LE32 scan, each of the 4 record addresses has EXACTLY 1 pointer reference

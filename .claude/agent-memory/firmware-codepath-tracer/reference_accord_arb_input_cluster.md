@@ -7,6 +7,17 @@ metadata:
 
 Full inventory scan completed 2026-05-27. Program: code.bin (V850:LE:32, gp=0xFEDF8000, tp=0xBF000). 185,116 instructions scanned.
 
+🛑 **CORRECTION 2026-08-04/05** — the `gp-0x6b38` line below ("Read by `w_lkas_setpoint_consumer2`")
+is STALE and WRONG. Fresh `search_instructions -0x6b38` (183,429 instrs scanned, 3 hits total, cross-
+checked twice: once 2026-07-29, once 2026-08-04/05) plus a full decompile of the sole reader show its
+**only reader is `FUN_0004e82e`, a pure byte-packer that writes `gp-0x6b38` into a 56-byte diagnostic/
+UDS-style output record** (`param_1+8` buffer, record length `0x38`=56 stored at `param_1+0xc`) — it does
+not write back to any live control-path variable. `w_lkas_setpoint_consumer2` was very likely a stale/
+premature custom label for this same function, assigned before it was decompiled and understood. See
+[[reference_accord_near_centre_structure_hunt_angle_tracking_chain_found]] for the full re-derivation
+this correction is part of (the `0xC61B8` pre-gain-deadband elimination re-examination). Do not cite the
+old label.
+
 ## Key structural facts
 
 **gp-0x69ae (LKAS setpoint):** Written only by `s_lkas_process_steer_cmd` (4 stores). Read by `m_steer_torque_arbitration` (2 reads) and `w_lkas_setpoint_consumer2`. Clean single-producer chain.

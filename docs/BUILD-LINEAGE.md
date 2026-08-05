@@ -10,6 +10,37 @@ result was buried in prose.
 
 ---
 
+## 🛑🛑 RULE 6, added 2026-08-05 — **A LEVER IS ONLY IN FORCE IF THE CAR READS THE TABLE YOU EDITED**
+
+**V72 raised the base-assist damper at creep. The bytes were correct, the arithmetic was correct, the
+CRC passed, and the car never read them.**
+
+`FUN_00034350` selects **all five** damping factors — B, C, D, E **and the ceiling** — through pointer
+arrays indexed by `mode * 4`, where `mode = *(byte)(gp + 0x63fd)`. **There are 13 mode variants.** V72
+edited **modes 10 and 11 only**, because `39990-TVA-A160` *reads as* row 2 `'TVAA1'` in the config table
+at `0xCD000` ⇒ modes 10/11.
+
+🛑 **That part-number → key mapping is an ASSUMPTION recorded in this file. It was never a measurement.**
+`build_v44_tva.py` has patched modes 10 **and** 11 since V44 *because of it*, and every damping build
+since inherited it.
+
+**The probe settled it arithmetically.** On V72, modes 10/11 give `|gp-0x6bd0| = 389` **unconditionally**
+(FactorC ≥ 430 at every speed, FactorE = 927 at every rate) ⇒ `bit4` (`|gp-0x6bd0| ≥ 64`) would fire on
+**100%** of frames. **It fired on 0 of 87,940, including 0 of 34,275 above 35 km/h.**
+⇒ **[EVIDENCE] the car is not in mode 10 or 11; Levers B and C were inert by TABLE SELECTION.**
+
+> **RULE 6: before recording a cal edit as tested, establish that the car reads THAT RECORD — not merely
+> that the bytes changed and the CRC passed. For any mode-, variant- or config-indexed table, the
+> selector is part of the lever. Probe the selector, or treat the result as a null by construction.**
+
+★ The general form is worse than this instance: **a mode-indexed table makes a lever look flashed,
+verified and driven while being structurally unreachable.** Every prior "damping is null" result on this
+kit (V44, V47, V72) is now **uninterpretable**, not falsified.
+⚠ Still open: **which mode is live.** Modes 4/5 and 12 are fully consistent with the measurement, 0–3
+marginally disfavoured, 10/11 excluded. **V73 reads `gp+0x63fd` directly.**
+
+---
+
 ## 🛑🛑 RULE 4, added 2026-08-05 — **TWO LEDGER ERRORS FOUND, BOTH RUNNING THE DANGEROUS WAY**
 
 A machine byte-diff of **all 65 built plain images** vs stock over `[0x13000,0x100000)` found two errors

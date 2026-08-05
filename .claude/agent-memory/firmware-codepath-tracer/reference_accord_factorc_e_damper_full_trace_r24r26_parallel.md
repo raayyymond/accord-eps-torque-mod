@@ -116,7 +116,7 @@ until 2026-08-04). Delivers ≈160-184 counts hands-off authority at creep (min/
 ## Follow-up round (same session): seed traced, GATE-2 phase closed further, neighbor records named
 
 **Seed (`gp-0x698a`) producer found**: sole writer `FUN_00026c80` (0x26c80, `search_instructions` 1 hit,
-`st.h r16,-0x698a,gp`), decompiled in full. It is an 11-tap rolling-history MAX-reducer over a
+`st.h r16,-0x698a,gp`), decompiled in full. It is an 11-tap rolling-history reducer over a
 mode-selected composite (per-sample state byte `tp+0x5124`, states 0-7 blend different raw driver-side
 signals from a `gp-0x62e0[]`-relative array — base signal not further chased). **Same function ALSO
 produces `gp-0x6b4c`** (a DIFFERENT additive lane in `FUN_0003aa2c`'s 11-term sum) **and the
@@ -126,6 +126,18 @@ both FactorC's axis (gp-0x6a5e) and FactorE's axis (gp-0x6ac0). ⇒ the damper i
 `seed(urgency-like,NOT velocity) * FactorB(inert) * FactorC(speed) * FactorD(inert) * FactorE(|rate|) *
 -sign(rate)` — quasi-velocity-proportional via FactorE's rising shape, gated by speed, modulated by a
 third non-velocity factor, sign strictly velocity-opposing. Not a clean `b*v` damper; state it precisely.
+
+🛑 **CORRECTED 2026-08-05**: "MAX-reducer" above is WRONG — re-decompiled fresh and it is a **MIN-reduce**
+(`acc = acc*(acc<new) + new*(acc>=new)`: when the new sample is bigger the OLD, SMALLER value is kept;
+when the new sample is smaller-or-equal, it's taken). Seeded at `0x400`=1024 each call, so **seed is a
+CEILING of 1024 (unity, Q10) that can only be pulled DOWN by a small sample, never pushed up.**
+Independently confirmed by a separate monitor `FUN_00027b0a`, which faults (DTC `0x3cea`/`0x3ce9`) if
+either of seed's two sibling min-reduces (`gp-0x6986`/`gp-0x6988`, same producer/pattern) is EVER
+measured `>1024` — i.e. 1024 is the DESIGNED ceiling, not an assumption. See
+[[reference_accord_gp698a_seed_factora_ceiling_and_v72_probe_null_investigation]] for the full V73-task
+trace (candidate #1/#2 unification, candidates #3/#4 ruled out, recommended probe rung) — that file is
+the current reference for "is the base-assist damper ever actually zero"; this file's numeric surface
+(§ "seed=1024 max-authority assumption") is only valid IF seed reads at its ceiling, which is UNVERIFIED.
 
 **Task rate re-verified first-hand** (not from memory): `get_function_callers(0x34350)` → sole caller
 **`FUN_00022ca0`** = the kit's established task-5/100Hz entry point [MEMORY] — independent confirmation.
@@ -151,7 +163,12 @@ the ceiling table, which no proposal does.
 X=0-640-2560-5120-7808-10240) — **NOT FactorC/E, pointer array/reader not identified this session.**
 
 ## Open items
-- gp-0x62e0[] (seed's ultimate raw signal) and the 7 mode states in FUN_00026c80 — not chased further.
+- gp-0x62e0[] (seed's ultimate raw signal) and the 7 mode states in FUN_00026c80 — traced one function
+  further (2026-08-05, see [[reference_accord_gp698a_seed_factora_ceiling_and_v72_probe_null_investigation]]):
+  the array is populated by `FUN_00025c32`, a GENERIC per-channel plausibility/redundancy state machine
+  (states 0-5, timers vs `tp+0x51ac`/`tp+0x74fb`), not a simple named signal. Its caller (which would
+  give the physical identity) is STILL not identified — chased 3 functions deep and still generic
+  infrastructure. Recommend a direct probe on `gp-0x698a` over more static tracing.
 - 0xD2834's owning pointer array/reader — unidentified.
 - Whether the ratchet's own motor-rate amplitude clears FactorE's 12.7 deg/s deadzone — undetermined;
   argues for opening BOTH factors together (as V47 already did) rather than FactorC alone.

@@ -1,13 +1,15 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-05.** This file is the single current-state record. Update it in place at every
-close-out; do not append new dated blocks (that is what made `CLAUDE.md` unreadable). The narrative of how
-each state was reached lives in `docs/HANDOFF-*.md`.
+**Last updated: 2026-08-05 (V72 flight + V73 build).** This file is the single current-state record.
+Update it in place at every close-out; do not append new dated blocks (that is what made `CLAUDE.md`
+unreadable). The narrative of how each state was reached lives in `docs/HANDOFF-*.md`.
 
 **Read alongside:** `docs/BUILD-LINEAGE.md` — 🛑 **start with `RULE 3` at the top of that file: a
 "CONFIRMED" result is about a LEVER, not about the car you are driving. Byte-check the current image
-before reasoning from any recorded result.** Then the latest handoff,
-`docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
+before reasoning from any recorded result.** 🛑 **Then `RULE 6` — a lever is only in force if the car
+reads the TABLE you edited.** Then the latest handoff,
+`docs/HANDOFF-2026-08-05-v72-flew-the-damper-was-never-in-force.md` (spec: `docs/V73-DESIGN.md`),
+then `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
 (predecessors: `HANDOFF-2026-08-04-v69-flew-grind1-back-at-creep.md`, then
 `HANDOFF-2026-08-04-v69-recut-4x-and-ratchet-probe.md`, then
 `HANDOFF-2026-08-04-v69-built-speed-shaped-rate-lane.md`, then
@@ -22,15 +24,78 @@ before reasoning from any recorded result.** Then the latest handoff,
 
 ---
 
-★★★★★ **THE HEADLINE, 2026-08-05 (LATEST): THE TWO-LANE RULE. CREEP GRIND #2 REQUIRES r24 HIGH-RATE
-≳3.4× *AND* r26 HIGH-RATE ≳1.5× — CUTTING EITHER KILLS IT, SIX BUILDS, NO EXCEPTIONS. THAT IS WHY EVERY
-FIX FOR ONE GRIND FED THE OTHER: EACH MOVED ONLY ONE LANE. ⇒ V72 IS BUILT — V67/V68's CREEP
-CONFIGURATION REPRODUCED EXACTLY, STRUCTURALLY STOCK AT HIGHWAY, PLUS THE FIRST REAL DAMPING AT CREEP.**
+★★★★★ **THE HEADLINE, 2026-08-05 (LATEST): V72's DAMPING LEVERS WERE NEVER IN FORCE. `FUN_00034350`
+SELECTS ALL FIVE DAMPING FACTORS THROUGH A 13-VARIANT MODE TABLE; V72 EDITED MODES 10/11 ONLY; AND THE
+PROBE PROVES THE CAR IS NOT IN THEM. ⇒ THE DAMPING APPROACH TO THE RATCHET HAS NEVER BEEN TESTED.**
 
-Full narrative: `docs/HANDOFF-2026-08-05-grind2-is-grind1s-harmonic-and-both-lanes-must-move.md`.
-Spec and every risk: `docs/V72-DESIGN.md`.
+`mode = *(byte)(gp + 0x63fd)`, selected by a config lookup (`FUN_00057f8e`) matching a 5-byte ASCII key at
+`gp+0x6408..0x640C` against 16 records at `0xCD000`. On V72, modes 10/11 give `|gp-0x6bd0| = 389`
+**unconditionally** (FactorC ≥ 430 at every speed, FactorE = 927 at every rate) ⇒ `bit4` would fire on
+**100%** of frames. **It fired on 0 of 87,940, including 0 of 34,275 above 35 km/h.**
+⇒ **[EVIDENCE] Not mode 10/11. Levers B and C were INERT BY TABLE SELECTION** — not a broken probe, not a
+vacuous seed, not a missing factor; all three were independently eliminated first.
+★ It hid for a dozen builds because `39990-TVA-A160` *reads as* row 2 `'TVAA1'` ⇒ modes 10/11 — **an
+assumption in `BUILD-LINEAGE.md`, never a measurement.** `build_v44_tva.py` has patched 10 **and** 11
+since V44 because of it.
+⚠ **Which mode IS live is open.** Graded on route 59's own telemetry: **modes 4/5 and 12 fully
+consistent** (highway `gp-0x6ac0` peaked at **329.8** vs their 330–335 thresholds), **0–3 marginally
+disfavoured** (11/34,277 frames), **10/11 excluded.** V73's probe settles it.
 
-## 🛑 ON THE CAR: **V71C** (route `58`). **V72 IS BUILT AND UNFLASHED.**
+Full narrative: `docs/HANDOFF-2026-08-05-v72-flew-the-damper-was-never-in-force.md`.
+Spec and every risk: `docs/V73-DESIGN.md`.
+
+## 🛑 ON THE CAR: **V72** (route `59`). **V73 IS BUILT, VERIFIED AND UNFLASHED.**
+
+| | value |
+|---|---|
+| V73 image SHA256 | `918a37151876a1a321103fbd7252684d944773109ff454a08a41fe2c191ee63a` |
+| V73 rwd SHA256 | `d15e848f86f11245db16822bb06dadde39d5112aa6ce0444d3219aa5dee7c7d5` |
+| V73 rwd | `39990-TVA,A160-V73-V72BASE-frictionx1.5-C407E850-ratchet-modes0_5_12_14-Y0eqY1-probe-MODEBYTE-0x13000-0x100000.rwd` |
+
+**V73 verified:** 50/50 CRC PASS · exactly 6 trailers · **nothing in `[0xC5000,0xC5FFC)`** · 89 functional
+bytes all attributable (cave 61, ratchet 20, friction 6, clamp 2) · V72's levers byte-identical.
+⚠ An earlier V73 cut targeting modes 0/2 only is renamed `SUPERSEDED-DO-NOT-FLASH-…`.
+
+### V72's FLIGHT (route `59`) — one fix real, one not
+| symptom | verdict |
+|---|---|
+| **creep grind #2** | ✅ **ESTABLISHED.** Routes 58/59 identical **691.2 s** exposure, r59 more in every burst cell, **7 vs 0**, exact Poisson **p = 0.0078**; pooled two-lane row **0 in 2,656 s vs 31, p = 6e-5** |
+| **highway grind #2** | ❌ **STRUCK.** 0 in 253.4 s ⇒ **P(0) = 0.456**; no build ever produced a highway burst. Real result is a **non-regression** (0.448 vs V71C, outside null, 91 counts) |
+| **micro ratchet (7.79 Hz)** | ❌ **NOT FIXED — attenuation 1.0**, three instruments. Column moves **2.1–2.5× FURTHER** |
+| **macro ratchet** | ⚠ fixed per operator, **UNMEASURABLE** — 64/65 comparisons inside null and both instruments **fail their own positive control** |
+| **grind #1** | ❌ **614 [311, 1187] — the STOCK band** (P = 0.985 vs stock; excluded HIGHER than V62/V65/V67/V68/V71C at P < 0.0001) |
+
+🛑 **THERE ARE TWO RATCHETS, per the operator.** **MACRO** = the large one he reports fixed. **MICRO ==
+the 7.79 Hz line** — *"not audible, felt in the column"* is exactly right, **7.7 Hz is below the ~20 Hz
+hearing threshold.** All three data agents measured MICRO; nobody measured MACRO.
+
+### ★★★★ GRIND #1 IS A LIMIT CYCLE — [EVIDENCE, 8 routes]
+**duty spans 0.015 → 0.958 (64×) while in-burst amplitude spans 1232 → 1533 (1.24×)** against a **5.62×**
+dose ladder; two-moded on exactly the arms that have it, one-moded on the arms that suppress it.
+⇒ **successful builds stop the cycle STARTING, they never shrink it.** Excess over its own 24-28 Hz
+control floors at **2.21** (V67/V68) and **reaches 1.0 on no build.**
+⊕ And sweeping `a` (`gp-0x69a4`) 0→32.0, summed and differential, **no value makes the ladder monotone**
+(best |τ| = 0.429) ⇒ **not a scalar-gain phenomenon.**
+★★ **At ≤10 km/h V72's delivered gain is BIT-IDENTICAL to V67/V68's and it scored stock's grind**
+(dose-matched: consistent with stock P = 0.874, excluded higher than V67+V68 P < 0.0001).
+⇒ **the rate lane is exhausted as a grind-#1 lever.**
+
+### The two symptoms share a driver but are DISTINCT MODES
+Partial `r(6-9, 18-22 | 24-28)` = **0.460**, circular-shift null [−0.102, +0.023], **p = 0.0002**,
+build-independent — **but opposite-signed dependence on steering position** (Spearman **+0.23/+0.32** vs
+**+0.05/+0.06**, two pipelines). **Two amplitudes of one oscillation cannot do that.**
+⇒ 🛑 **Score BOTH bands on every future build.** ⚠ The angle result is **diagnostic, not a lever** —
+no firmware structure of adequate magnitude found, and **nothing separates firmware from plant.**
+
+---
+
+★★★★★ **THE HEADLINE, 2026-08-05 (SUPERSEDED — still valid as the grind-#2 rule): THE TWO-LANE RULE.
+CREEP GRIND #2 REQUIRES r24 HIGH-RATE ≳3.4× *AND* r26 HIGH-RATE ≳1.5× — CUTTING EITHER KILLS IT, SIX
+BUILDS, NO EXCEPTIONS.** ⇒ V72 occupied the safe row and **grind #2 is confirmed fixed on-car.**
+⚠ Its companion claim — that V72 would deliver "the first real damping at creep" — is **REFUTED**: see
+the headline above. Narrative: `docs/HANDOFF-2026-08-05-grind2-is-grind1s-harmonic-and-both-lanes-must-move.md`.
+
+## 🛑 SUPERSEDED — WAS ON THE CAR: **V71C** (route `58`)
 
 | | value |
 |---|---|
