@@ -52,28 +52,67 @@ actually eliminated.** ★ **And the second case is the more dangerous general f
 
 ## 🛠 2. ON THE CAR RIGHT NOW: **V70** (flown, route `50`). **V71 IS BUILT AND UNFLASHED.**
 
-### V71 — V70 carrier + both restored fixes + a gain-in-force probe
+### THREE V71 SIBLINGS ARE BUILT AND UNFLASHED. **All three restore `0x454FE`.**
 
-⏳ **SHAs PENDING — see the V71 build report; they are deliberately not transcribed here.**
+**All orchestrator-verified from the image bytes.** 🛑 **They are NOT separable on the wire** — A and C
+carry a byte-identical cave, and B differs by one cave byte that never reaches the CAN payload.
+**THE FILENAME IS THE ONLY PRE-DRIVE DISCRIMINATOR.**
 
-| # | addr | before → after | what |
-|---|---|---|---|
-| 1 | `0x454FE` | `ba` → `b5` | **restore V42's ratchet fix** |
-| 2–3 | `0x3AB76` / `0x3AC20` | `aa` → `a9` | **restore V62's ×2 on BOTH lanes** |
-| 4–7 | `0xD2A7E`/`0xD2A80`/`0xD2ABA`/`0xD2ABC` | → **stock** | revert V69/V70's mode-10 surface |
-| 8 | `0xC4B34`… | the cave | the **gain-in-force** probe (below) |
+| | image SHA256 | rwd SHA256 | rate-lane levers | probe watches |
+|---|---|---|---|---|
+| **V71A** | `acc62e0930c9fa8f5176e22d1751f3f9544b1228c90d0b1e09188c67448c78e5` | `5c5138d960192d7d0a4e37301a0c82ad29e02ccff0cc116b62d6ac1cb0337e9e` | both `sar` → `0x9`; **flat 2.000× at every speed** | `gp-0x6ada` (**r24**) |
+| **V71B** ← **RECOMMENDED** | `d4543d02b2fa113df7ab394ba0131859e3193a8c75604ddf3165768b6e5dd3f4` | `3bc9347aa54449b2ccfe7896b076f57bf0b932ed1de3d41ae45be838ceaa8157` | `gain_A` rec0/rec1 Y[0..3] ×2; **2.000× ≤10 km/h → EXACTLY 1.000× ≥50**; r24 stock | `gp-0x6adc` (**r26**) |
+| **V71C** | `30b63fdd59bdf9221fec0942d9ccdbc6f0582d2e8c3acbc4d30b0acd89ff1607` | `4ce568b6fd85ad0ad2a5a6159ede09276f705a1e00d66ac129b8f60679c4e609` | gate `0x3AA96`→`fb`; `0xC6446`=5244; **`0xC6444` 512→3072 (r26 CUT REMOVED)**; `sar` stock | `gp-0x6ada` (**r24**) |
 
-⇒ **the rate lane is byte-identical to V62/V65**, which flew **twice**, both flight-clean.
-CRC blocks `0xC4FFC` + `0xD2FFC`.
-★★ **WHICH HALF IS LOAD-BEARING, now that §3 is in: `0x3AB76` — the r26 `sar` — IS THE LEVER.**
-`0x3AC20` (the r24 `sar`) is restored **for exact V62 parity, NOT because r24's dose is expected to
-matter**: the clean single-variable r24 series reads flat across a 4:1 range (§3). Say it that way in
-any V71 pre-flight note, so a null on r24 is not later read as a null on the build.
+**Which constraint each satisfies** — the four are not jointly satisfiable by any build in the set:
 
-**Probe:** bit7 liveness · **bit6 `gp-0x671d != 0`** — ★★ **THE MASK: which gain is actually in force** ·
-**bit5 `gp-0x67fa == 4`** — 📋 **pre-registered BIMODAL ~100%/~0%**, a **complete** discriminator now
-that states 5 and 10 are excluded · **bit4 `gp-0x6ada >= +512`** — positive control, and **stronger
-here** because the `sar` doubles r24 under **every** branch · **bit3 `gp-0x671a >= 5`**.
+| | grind #1 | creep grind #2 | **highway grind #2** | ratchet |
+|---|---|---|---|---|
+| V71A | ✓ V62's lane (168) | ✗ **V62 caused it** | ✗ flat 2× | ✓ |
+| **V71B** | ✓ r26 moved | **? UNTESTED** | **✓ STRUCTURAL 1.000×** | ✓ |
+| V71C | ~ V67/V68's arm | ✓ gated ⇒ manual stock | ✗ **r24 stays 2.438×** | ✓ |
+
+★ **Why V71B is recommended:** it is the **minimal change from V70**, the configuration the operator
+reports as having grind #2 gone. It keeps V70's exact highway property (**both lanes byte-identical to
+stock at ≥3200 counts, 12,221 sweep points**) and adds the one thing V70 lacks — **r26 movement**, which
+every build that fixed grind #1 had (§3). Its probe watches the lane it doses.
+**V71C is the fallback** if V71B does not move grind #1: it carries V67/V68's best-in-kit creep numbers
+(grind #1 **109**, creep grind #2 **0 bursts**), 71 bytes off V67 = cave + `0x454FE` + `0xC6445` + CRC.
+
+🛑🛑 **A SCALAR GATED ARM CAN NEVER BE HIGHWAY-CLEAN WHILE DOSING AT CREEP.** [EVIDENCE] The arm
+**replaces** a LERP that rolls off with speed, so `arm/LERP` necessarily **rises** toward highway:
+V67/V68 and V71C both deliver **r24 2.438× at 100 km/h** against V69/V70's 1.000×. No value of
+`0xC6446` fixes it — lowering it enough for highway puts creep **below** stock. ⇒ **only the ungated
+speed-shaped surface (V71B's route) can be structurally stock at highway.** ⚠ This also corrects a
+premise used to justify V71C: V67/V68 differs from the highway-clean builds in **BOTH** lanes (r26 cut
+~5× **and** r24 raised 2.438×), so **V71C removes only one of two candidate causes.** Named follow-up
+if r24 proves to be the highway culprit: `0xC6446` 5244 → ~2151–2400.
+
+★★ **On V71A, `0x3AB76` — the r26 `sar` — IS THE LOAD-BEARING HALF.** `0x3AC20` (r24) is restored **for
+exact V62 parity, NOT because r24's dose is expected to matter**: the clean single-variable r24 series is
+flat across a 4:1 range (§3). State it that way in any pre-flight note, so a null on r24 is not later
+read as a null on the build.
+
+⚠ **INT32 headroom at `mul r8,r6` @`0x3AB72`** (structural worst case, % of INT32_MAX): stock / **V71A**
+/ **V71C** = **46.87%**; **V71B = 93.75%** — the band V62's own build note rejected. **No overflow is
+reachable** (`ld.hu` bounds `avg` at 65535), but V71B has half the margin. Ceiling `0xC6444` ≤ **6553**,
+re-derived as `2³¹ / ((5120 × 65535) >> 10)`; V71C's 3072 asserted inside it.
+
+🛑 **`0xC6444` IS LIVE ON V71C AND NULL ON V71A/V71B.** It is read at `0x3AB5E` **only when `lp != 0`**,
+and `lp` derives from `gp-0x683c` (**zero writers**) unless `0x3AA96` is repointed. The record's STRIKE
+of this cell is correct for gateless builds and **WRONG for V71C — do not strike the lever that makes
+that build work.** It is a property of the **gate byte**, not of the calibration.
+
+**Probe (all three, 68/68 cave bytes, zero spare):** bit7 liveness (seed `movea 0x10,r0,r7`, which
+becomes bit7 via one `shl 0x3,r7` — 🛑 **NOT V67's `0x80`; this has already tripped one careful reader**)
+· **bit6 `gp-0x671d != 0`** — ★★ **THE MASK: which gain is actually in force** · **bit5 `gp-0x67fa == 4`**
+— 📋 **pre-registered BIMODAL ~100%/~0%**, a **complete** discriminator now that states 5 and 10 are
+excluded · **bit4 `|mirror| >= 128`, TWO-SIDED** (⚠ the negative arm trips at **−129**: `sar` floors, so
+the mismatch set against `|x| >= 128` is exactly `{−128}`, proven over all 65,536 patterns) ·
+**bit3 `mirror >= 0`** — the SIGN. ⚠ `gp-0x671a` was dropped to fund the two-sided test: `bit6 = 0` can
+no longer separate arm3 (2048) from the LERP (3072) — a 1.5× gain ambiguity that cannot flip a null,
+since bit4 trips at 8.0 vs 5.3 counts on those branches. **`decode_v71_probe.py` refuses to run without
+`--v71a` / `--v71b` / `--v71c`.**
 
 🛑 **THE `0x454FE` JUSTIFICATION, STATED HONESTLY AND KEPT STATED:** it is restored because it is a
 **confirmed fix lost by accident** — **NOT** because it is established to cause the current ratchet.

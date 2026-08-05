@@ -504,8 +504,29 @@ supersedes the standing "candidate, not a recommendation" framing.**
 
 ## 8. V71 — BUILT THIS SESSION BY A SEPARATE AGENT
 
-⏳ **SHAs PENDING — see the build report.** (Written deliberately: this document must not carry invented
-hashes.)
+**THREE siblings were built, all unflashed, all restoring `0x454FE`. Orchestrator-verified from the
+image bytes.** 🛑 **Not separable on the wire — the filename is the only pre-drive discriminator.**
+
+| | image SHA256 | rwd SHA256 | probe |
+|---|---|---|---|
+| **V71A** | `acc62e0930c9fa8f5176e22d1751f3f9544b1228c90d0b1e09188c67448c78e5` | `5c5138d960192d7d0a4e37301a0c82ad29e02ccff0cc116b62d6ac1cb0337e9e` | `gp-0x6ada` (r24) |
+| **V71B** | `d4543d02b2fa113df7ab394ba0131859e3193a8c75604ddf3165768b6e5dd3f4` | `3bc9347aa54449b2ccfe7896b076f57bf0b932ed1de3d41ae45be838ceaa8157` | `gp-0x6adc` (r26) |
+| **V71C** | `30b63fdd59bdf9221fec0942d9ccdbc6f0582d2e8c3acbc4d30b0acd89ff1607` | `4ce568b6fd85ad0ad2a5a6159ede09276f705a1e00d66ac129b8f60679c4e609` | `gp-0x6ada` (r24) |
+
+**A** = both `sar` → `0x9`, flat 2.000× everywhere (V62's lane exactly).
+**B** = `gain_A` rec0/rec1 Y[0..3] ×2 ⇒ 2.000× ≤10 km/h → **exactly 1.000× ≥50 km/h**, r24 stock.
+**C** = V67/V68's gate + arm 5244, with **`0xC6444` 512→3072 removing the ~6× r26 cut**; 71 bytes off V67.
+
+**Recommended: V71B** — the minimal change from V70 (the configuration the operator reports as having
+grind #2 gone), keeping V70's structural highway-stock property while adding r26 movement, which every
+build that fixed grind #1 had. **V71C is the fallback**, carrying V67/V68's best-in-kit creep numbers.
+
+⚠ **Recorded because it cost time:** the orchestrator recommended A, then C, then B. The reversals were
+forced by two real corrections — the r24/r26 confound, then the finding that **a scalar gated arm can
+never be highway-clean while dosing at creep** — but the second was derivable from V70's own build note
+*before* V71C was specced, and was not. ⚠ Also recorded: a subagent was reused to **~700k tokens**
+against the kit's ~50% context budget, and the replacement was spawned on a **stale brief** that nearly
+overwrote finished artifacts. Both were process failures, not analysis failures.
 
 **V70 carrier, plus:**
 1. **`0x454FE` `ba` → `b5`** — restore V42's ratchet fix.

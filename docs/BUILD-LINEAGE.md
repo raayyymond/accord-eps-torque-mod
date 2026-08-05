@@ -692,8 +692,35 @@ V62 → V64 → V65 → V67 → V68 → V69 → V70.**
 **`0x3AB76`/`0x3AC20` `aa`→`a9`** (restore V62's ×2 on BOTH lanes) + the mode-10 surface
 (`0xD2A7E`/`0xD2A80`/`0xD2ABA`/`0xD2ABC`) reverted to stock + a probe that reads **the gain in force**
 (bit6 `gp-0x671d != 0`) rather than a lane output. Its rate lane is **byte-identical to V62/V65**, which
-flew twice, both flight-clean. CRC blocks `0xC4FFC` + `0xD2FFC`. **SHAs: ⏳ PENDING — see the V71 build
-report; deliberately not transcribed here.**
+flew twice, both flight-clean. CRC blocks `0xC4FFC` + `0xD2FFC`.
+
+★★ **THREE V71 SIBLINGS WERE BUILT, ALL UNFLASHED, ALL RESTORING `0x454FE`. Orchestrator-verified from
+the image bytes.** 🛑 **They are NOT separable on the wire — the filename is the only pre-drive
+discriminator** (A and C share a byte-identical cave; B differs by one cave byte that never reaches the
+payload).
+
+| | image SHA256 | rate-lane levers | probe |
+|---|---|---|---|
+| **V71A** | `acc62e0930c9fa8f5176e22d1751f3f9544b1228c90d0b1e09188c67448c78e5` | both `sar` → `0x9`; flat 2.000× at every speed | `gp-0x6ada` (r24) |
+| **V71B** ← recommended | `d4543d02b2fa113df7ab394ba0131859e3193a8c75604ddf3165768b6e5dd3f4` | `gain_A` rec0/rec1 Y[0..3] ×2 ⇒ 2.000× ≤10 km/h → **EXACTLY 1.000× ≥50**; r24 stock | `gp-0x6adc` (r26) |
+| **V71C** | `30b63fdd59bdf9221fec0942d9ccdbc6f0582d2e8c3acbc4d30b0acd89ff1607` | gate `fb` + `0xC6446`=5244 + **`0xC6444` 512→3072 (r26 CUT REMOVED)**; `sar` stock | `gp-0x6ada` (r24) |
+
+rwd SHAs: A `5c5138d960192d7d0a4e37301a0c82ad29e02ccff0cc116b62d6ac1cb0337e9e` · B
+`3bc9347aa54449b2ccfe7896b076f57bf0b932ed1de3d41ae45be838ceaa8157` · C
+`4ce568b6fd85ad0ad2a5a6159ede09276f705a1e00d66ac129b8f60679c4e609`.
+**V71C is 71 bytes off V67** = the 68-byte cave + `0x454FE` + `0xC6445` + 8 CRC, and nothing else.
+
+🛑🛑 **A SCALAR GATED ARM CAN NEVER BE HIGHWAY-CLEAN WHILE DOSING AT CREEP** — the arm **replaces** a
+LERP that rolls off with speed, so `arm/LERP` **rises** toward highway (V67/V68 and V71C both deliver
+**r24 2.438× at 100 km/h** vs V69/V70's 1.000×). No `0xC6446` value fixes it: lowering it enough for
+highway puts creep **below** stock. ⇒ **only the ungated speed-shaped surface can be structurally stock
+at highway.** ⚠ Consequently **V67/V68 differs from the highway-clean builds in BOTH lanes** (r26 cut
+~5× **and** r24 raised 2.438×), so **V71C removes only one of two candidate causes**; if the highway
+symptom is r24's, V71C will not fix it. Named follow-up: `0xC6446` 5244 → ~2151–2400.
+
+⚠ **INT32 headroom at `mul r8,r6` @`0x3AB72`:** stock / V71A / V71C = **46.87%**; **V71B = 93.75%** —
+the band V62's own build note rejected. **No overflow is reachable** (`ld.hu` bounds `avg` at 65535),
+but V71B carries half the margin. `0xC6444` ceiling **6553** = `2³¹ / ((5120 × 65535) >> 10)`.
 🛑 **A first V70** (`…LKASGATED-V68CONTROLPATH…`) restored V67/V68's scalar arm and **the operator
 overrode it** — it re-introduces the high-speed grind. ✅ **It is renamed
 `SUPERSEDED-DO-NOT-FLASH-…`** (`accord-firmwares` `9d44efc`), filesystem-verified: **exactly ONE
