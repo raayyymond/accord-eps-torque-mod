@@ -708,7 +708,11 @@ payload).
 rwd SHAs: A `5c5138d960192d7d0a4e37301a0c82ad29e02ccff0cc116b62d6ac1cb0337e9e` · B
 `3bc9347aa54449b2ccfe7896b076f57bf0b932ed1de3d41ae45be838ceaa8157` · C
 `4ce568b6fd85ad0ad2a5a6159ede09276f705a1e00d66ac129b8f60679c4e609`.
-**V71C is 71 bytes off V67** = the 68-byte cave + `0x454FE` + `0xC6445` + 8 CRC, and nothing else.
+**V71C is 71 bytes off V67** = **61 differing cave bytes** + `0x454FE` + `0xC6445` + 8 CRC (61+1+1+8 = 71),
+in **9 strictly contiguous runs**. ⚠ **The cave is 68 bytes but only 61 of them DIFFER** — V67's cave and
+V71C's coincide at 7 positions, so the cave region is **not** one contiguous run. *(Corrected: an earlier
+figure of "5 runs / 66-byte cave" came from a diff script using a +3 merge tolerance, and summed to 76.
+Re-derive run decompositions with STRICT contiguity.)*
 
 🛑🛑 **A SCALAR GATED ARM CAN NEVER BE HIGHWAY-CLEAN WHILE DOSING AT CREEP** — the arm **replaces** a
 LERP that rolls off with speed, so `arm/LERP` **rises** toward highway (V67/V68 and V71C both deliver

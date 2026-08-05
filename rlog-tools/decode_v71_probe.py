@@ -527,8 +527,10 @@ if __name__ == "__main__":
     if len(args) < 1 or len(sel) != 1 or sel[0] not in BUILDS:
         print(__doc__)
         raise SystemExit(
-            "usage: decode_v71_probe.py --v71a|--v71b <rlog-or-route-dir> [...]\n"
-            "🛑 The build MUST be named. V71A and V71B carry caves that differ in ONE byte and are\n"
-            "   NOT separable from the CAN payload, so this decoder refuses to guess which map to\n"
-            "   apply. Read it off the .rwd filename that was flashed.")
+            "usage: decode_v71_probe.py --v71a|--v71b|--v71c <rlog-or-route-dir> [...]\n"
+            "🛑 The build MUST be named. NONE of the three siblings is separable from the CAN\n"
+            "   payload: V71A and V71C carry a BYTE-IDENTICAL cave (both watch gp-0x6ada / r24),\n"
+            "   and V71B differs by ONE cave byte (gp-0x6adc / r26) that never reaches the wire.\n"
+            "   This decoder refuses to guess. Read the build off the .rwd filename that was\n"
+            "   flashed — it is the ONLY pre-drive discriminator.")
     raise SystemExit(main(args, sel[0]))
