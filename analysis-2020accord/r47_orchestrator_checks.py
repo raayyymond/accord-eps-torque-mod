@@ -106,6 +106,13 @@ def _windows(cache, tag, vsel):
             rows.append(dict(tag=tag, ep=(p, i // (n * 4)), v=v, lat=float(lat[sl].mean()),
                              ang=float(np.abs(d["ang"][sl]).max()),
                              rate=float(np.percentile(np.abs(d["rate_c"][sl]), 90)),
+                             # ADDITIVE 2026-08-04 (r58_r54_highrate_4049.py): the PEAK |rate_c|,
+                             # for binding a window to the rate-lane gain it actually received.
+                             # `gp-0x6ac0` is |rate|, so the gain index sweeps 0 -> peak -> 0 twice
+                             # per cycle and the dose that matters is the one at PEAK velocity. A
+                             # NEW KEY ONLY -- no existing statistic here is touched, so every
+                             # count already on record is unchanged.
+                             ratemax=float(np.abs(d["rate_c"][sl]).max()),
                              raw=d["tq"][sl].copy(), fs=fs,
                              **{k: float(np.percentile(env[k][sl], 99)) for k in BANDS}))
     return rows

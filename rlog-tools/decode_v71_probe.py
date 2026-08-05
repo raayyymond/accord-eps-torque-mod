@@ -88,12 +88,24 @@ They differ ONLY in how r26 is dosed and whether r24 is dosed at all:
   * **V71A** -- both `sar` sites at 0x9. r24 AND r26 doubled, FLAT 2.000000x at every speed.
   * **V71B** -- both `sar` sites STOCK; `gain_A` rec0/rec1 Y[0..3] doubled instead. **r26 alone**,
     2.000000x at <= 10 km/h tapering to EXACTLY 1.000000x at >= 50 km/h. **r24 is fully STOCK.**
-⇒ **A STATISTICAL, NOT STRUCTURAL, DISCRIMINATOR:** bit4 reads `gp-0x6ada`, which is **r24's** mirror.
-On V71A that lane is doubled, so bit4 trips at half the |dtorque| it needs on V71B. A markedly higher
-bit4 duty is V71A-shaped. **Do not treat that as identification** -- confirm the filename.
-⚠ AND THE CONSEQUENCE FOR V71B: **its probe cannot see its own dose.** bit4 watches an undosed lane on
-that build. The one-byte fix -- cave+0x1A `0x26` -> `0x24`, making it `ld.h -0x6adc[gp],r6`, r26's own
-mirror -- was NOT applied; the brief specified the same probe for both.
+🛑🛑 CORRECTED 2026-08-04 -- THE PREVIOUS TEXT HERE WAS WRONG IN BOTH DIRECTIONS AND MISLED A BRIEF.
+It said bit4 "reads `gp-0x6ada`" on every sibling and that V71B's one-byte mirror fix "was NOT
+applied". **Both are false.** The fix WAS applied: `CAVE_HEX_B[0x1A] == 0x24` (asserted in
+`_self_check()` below), and `build_v71b_tva.py` sets `MIRROR = A.R26_MIRROR_DISP`. **Each build
+watches the lane IT doses** -- V71A/V71C read `gp-0x6ada` (**r24**), V71B reads `gp-0x6adc` (**r26**).
+⇒ **A bit4 or bit3 duty from V71B and one from V71A/V71C MEASURE DIFFERENT CELLS ON DIFFERENT SCALES**
+(r26 carries an extra `avg(gp-0x69a4)` factor) **and must never be ratioed.** Read the cell off
+`BUILDS[<build>]["cell"]`; never assume it, and confirm the .rwd filename (`6adaABS128` vs
+`6adcABS128` is in the basename).
+✅ **MEASURED 2026-08-04 -- THE RUNG WORKS, and the five-build null is BROKEN.** Routes 54 (V71B) and
+58 (V71C), 100.0000% bit7 liveness on both, 0 VOID / 0 illegal. V71C's WITHIN-ROUTE positive control
+-- engaged (arm 5244) vs manual (byte-for-byte stock), same cell, same drive -- reads **416x
+[171.7, 1748.0]** episode-unit, **p = 0/20,000** label permutations, and **99.5x [11.0, 169.0]** with
+both arms restricted to 5-20 km/h so neither is standing still. bit4 fired **4,478 / 50,546** engaged
+frames on route 58 and **148 / 66,385** on route 54. ⇒ the fault behind V64/V68/V69/V70 was **never**
+`gp-0x6ada`'s writer @0x3AD5A nor the cave's own read. r24's large excursions are near-symmetric
+(2,245 positive / 2,233 negative), so the two-sided repair was the right call -- though symmetry alone
+does not explain a zero, and the one-sided rung's THRESHOLD remains a live part of that story.
 
 WHAT V71 IS -- so a reader of this file cannot mistake the artefact
 -------------------------------------------------------------------
