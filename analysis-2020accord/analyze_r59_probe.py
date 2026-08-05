@@ -173,6 +173,51 @@ def main():
         print(f"     ⇒ every bit6=1 frame has |cs_tq| >= {tq[a512].min():.0f}; the engaged-highway "
               f"p99 of |cs_tq| is {thr:.0f} ⇒ `a` crosses 0.5 only under EXTREME sustained effort.")
 
+    # ---------------------------------------------------------------- 1b. `a` vs ITS INDEX -------
+    # ★★ F4-surface-lever traced `a`'s producer (the 10-segment LERP at 0x355C6 in FUN_000352b4) to
+    #    index = abs( clamp(gp-0x4f60, +-cal 0xC6200) + gp-0x6b4a )   clamped +-0x6400
+    # gp-0x4f60 = DRIVER column torque (Sensor B, raw); gp-0x6b4a = the type-8 MIXER output torque.
+    # ⇒ the bus proxy for the index is |driver torque + commanded torque|, and near a centred wheel
+    # with light hands BOTH terms are small. This block prices `a` against each term separately and
+    # against the sum, because that is the operator's exact conditional (near centre, engaged,
+    # while commanding).
+    hdr("§1b  `a` CONDITIONED ON WHAT INDEXES IT -- |driver torque|, |command|, |angle|")
+    # the operator reports a ~+/-4 deg sensor offset; estimate it from straight highway cruising
+    off = float(np.median(cat(segs, "cs_ang")[(v > HIGHWAY_MS) & (np.abs(cat(segs, "rate_c")) < 5)]))
+    angc = np.abs(cat(segs, "cs_ang") - off)
+    print(f"  angle offset from straight-highway median cs_ang: {off:+.2f} deg  "
+          f"(operator reports ~+/-4 deg); `angc` below is offset-corrected")
+    e4 = np.abs(cat(segs, "e4tq"))          # 0x0E4 bytes 0:1 -- openpilot's COMMANDED torque
+    both = np.abs(cat(segs, "tq") + cat(segs, "e4tq"))
+    diff = np.abs(cat(segs, "tq") - cat(segs, "e4tq"))
+    for lab, x, edges in (("|cs_tq| driver torque", tq, (0, 500, 1000, 1500, 2000, 2500, 3000, 1e9)),
+                          ("|e4tq|  LKAS command ", e4, (0, 100, 300, 600, 1000, 2000, 1e9)),
+                          ("|angc|  angle (corr) ", angc, (0, 4, 10, 30, 100, 1e9)),
+                          ("|tq+e4tq| INDEX proxy", both, (0, 500, 1000, 1500, 2000, 2500,
+                                                           3000, 1e9)),
+                          ("|tq-e4tq| sign check ", diff, (0, 500, 1000, 1500, 2000, 2500,
+                                                           3000, 1e9))):
+        print(f"\n  bit6 (`a` >= 512) duty vs {lab}:")
+        print(f"    {'bin':>16s} {'ALL':>22s} {'ENGAGED CREEP <4':>24s} {'ENGAGED HWY >13.9':>24s}")
+        for lo, hi in zip(edges[:-1], edges[1:]):
+            m = (x >= lo) & (x < hi)
+            cells = []
+            for sel in (m, m & eng & (v < CREEP_MS), m & eng & (v > HIGHWAY_MS)):
+                p, k, nn = duty(a512, sel)
+                cells.append(f"{p:6.2f}% ({k:5d}/{nn:6d})" if nn else f"{'EMPTY':>21s}")
+            rng = f"{lo:.0f}-{hi:.0f}" if hi < 1e9 else f">={lo:.0f}"
+            print(f"    {rng:>16s} {cells[0]:>22s} {cells[1]:>24s} {cells[2]:>24s}")
+    print("\n  ★ THE OPERATOR'S EXACT REGIME -- engaged, moving creep 0.5-4 m/s, near centre:")
+    nc = eng & (v >= 0.5) & (v < CREEP_MS) & (angc <= 10)
+    p, k, nn = duty(a512, nc)
+    print(f"     |angc| <= 10 deg: n={nn} ({dt[nc].sum():.1f} s)   bit6 duty {p:.4f}% ({k})")
+    if nn:
+        for lab, x in (("|cs_tq|", tq), ("|e4tq|", e4), ("|tq+e4tq|", both)):
+            q = np.percentile(x[nc], [50, 95, 99, 100])
+            print(f"       {lab:>10s} p50/p95/p99/max = {q[0]:7.0f} {q[1]:7.0f} {q[2]:7.0f} "
+                  f"{q[3]:7.0f}")
+    print("     ⇒ compare against the engaged-HIGHWAY frames where `a` DOES cross 0.5.")
+
     # ---------------------------------------------------------------- 2. the damper --------------
     hdr("§2  bit4 -- |gp-0x6bd0| >= 64: IS LEVER B (the base damper) IN FORCE? "
         "WITH ITS OWN POSITIVE CONTROL")
