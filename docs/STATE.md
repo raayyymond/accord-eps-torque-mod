@@ -98,6 +98,33 @@ read as a null on the build.
 reachable** (`ld.hu` bounds `avg` at 65535), but V71B has half the margin. Ceiling `0xC6444` ≤ **6553**,
 re-derived as `2³¹ / ((5120 × 65535) >> 10)`; V71C's 3072 asserted inside it.
 
+🛑🛑 **V71C's HIGHWAY r26 IS 1.15–2.31× STOCK, NOT 1.000× — "remove the cut" is EXACT ONLY AT CREEP.**
+[EVIDENCE — independent audit, image re-derived bit-identically from scratch.] `0xC6444` is a **scalar
+arm**; `gain_A` is a **SURFACE**. 3072 equals gain_A's value only at **0–10 km/h low rate** (grind #1's
+and the ratchet's own region). gain_A rolls to **2560** at 100 km/h and lower at high rate, so the arm
+**overshoots**: engaged r26 vs stock runs **1.000× → 2.308×** across the grid.
+⇒ **at highway V71C has BOTH lanes elevated** (r24 **2.438×**, r26 up to **2.31×**) — nearer V62's
+direction than the highway-clean builds. **This further weakens V71C as a highway fix**, on top of the
+scalar-arm problem above. ⚠ No single-cal encoding is speed-shaped: a lower arm (e.g. 2560, ≤1.0× at
+100 km/h) would cost **0.833× at creep**, re-cutting the region where V67/V68's 109 was measured.
+⇒ **V71C's honest scope is grind #1 + creep grind #2. Do not fly it expecting a highway fix.**
+★ Confirmed by the same audit: the **ONLY** row that moves vs V67/V68 is **engaged r26** (a flat
+**6.000×** un-cut); r24 moves at **0 of 24,321** grid points, engaged and manual, and manual differs
+from stock at **0 of 24,321** points on both lanes.
+⚠ r26 saturation crosses the recorded `|dtorque|` max 839 at **avg ≈ 3333 (3.25× unity)** on V71C vs
+19,997 on V67/V68 — **plausible in normal driving**, but it is a **saturation, not a wrap** (it costs
+describing-function gain, it cannot produce garbage), and it is **stock's own crossing at creep**.
+
+⚠ **V71C's probe watches `gp-0x6ada` (r24), and that is a known divergence, not an oversight.** The
+audit's judgement — which I accept as reasonable and did **not** act on — is that `gp-0x6adc` (r26)
+would have been the better cell, because **V71C's r24 configuration is byte-identical to V67/V68, which
+flew twice**, so an r24 magnitude rung measures nothing new about *this* build, while the r26 arm is
+V71C's **only** novel byte. The counter-case: r24 is the four-in-a-row zero and V71C is its most
+sensitive test yet (**25.0 counts** of `|dtorque|` on the engaged arm, vs V70's 85–241 which read
+0/18,010 and 0/47,990). **Left as built** because V71A already covers r24-dosed and V71B covers
+r26-dosed, and V71C is the fallback, not the recommended flight. **A one-byte re-cut is available**
+(cave `+0x1A`, `0x26` → `0x24`) and needs a new filename **and** a decoder entry.
+
 🛑 **`0xC6444` IS LIVE ON V71C AND NULL ON V71A/V71B.** It is read at `0x3AB5E` **only when `lp != 0`**,
 and `lp` derives from `gp-0x683c` (**zero writers**) unless `0x3AA96` is repointed. The record's STRIKE
 of this cell is correct for gateless builds and **WRONG for V71C — do not strike the lever that makes
