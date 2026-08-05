@@ -50,6 +50,22 @@ THE PAYLOAD -- CAN 0x14A byte4, bits 7:3
                                  (512 counts / 4.7121 counts-per-deg-s).
     bits 2:0 = stock STEER_SENSOR_STATUS_1/2/3, preserved.
 
+⚠ SIGNEDNESS, because bit6 and bit3 branch on a shift's Z flag rather than on a `cmp`, and that
+looks like it could be fooled by a negative value. IT CANNOT BE, and the reason is the LOAD:
+
+    +0x04  e4375d96  ld.hu -0x69a4[gp],r6   opcode 0x3F  ZERO-extends   (`a`)
+    +0x14  24373094  ld.h  -0x6bd0[gp],r6   opcode 0x39  SIGN-extends   (damper -- the ONLY one)
+    +0x24  e4374195  ld.hu -0x6ac0[gp],r6   opcode 0x3F  ZERO-extends   (rate)
+
+[EVIDENCE, GhidraMCP `disassemble_bytes` on the analysed image: 0x3AB3A `e4375d96` decodes as
+`ld.hu -0x69a4,gp,r6` -- the aggregator's OWN read of `a`, byte-identical to the cave's -- and
+0x34730 `64373094` as `st.h r6,-0x6bd0,gp`, the one-bit store twin the cave must not be.]
+⇒ r6 is in [0, 65535] for bit6/bit5/bit3, so `sar` == `shr` and bit6 is `raw16 >= 512` as an
+UNSIGNED test. IF `a` were semantically a signed int16 and NEGATIVE, its raw pattern would be
+>= 0x8000 = 32768, hence >= 1024, and **bit5 would fire**. bit5 read 0 in 87,940 / 87,940 frames on
+route 59 ⇒ `raw16 < 1024` in every frame ⇒ **no frame carried a negative value, measured rather than
+assumed**, and the `a` bracket holds under either signed or unsigned reading.
+
 🛑 **`bit5 => bit6` IS A MONOTONE INVARIANT ON V72**, structurally guaranteed: both rungs come from
 ONE `sar 0x9` (`a >= 512` is `s != 0`, `a >= 1024` is `s >= 2`). Only **12 of the 16** payloads are
 legal, and a frame with bit5 SET and bit6 CLEAR **proves the artefact is not V72**. This cache
@@ -202,11 +218,20 @@ def _assert_cave_bytes():
     assert raw[0:4] == bytes.fromhex("203e1000"), "offset 0 is not `movea 0x10,r0,r7`"
     assert raw.hex().endswith("2436e8ea7f00"), "the cave does not end in the displaced movea + jmp"
     # ---- the three loads, by displacement AND by opcode field ------------------------------------
-    for off, hw1, disp, kind, what in ((4, "e437", A_DISP, "odd", "ld.hu `a` gp-0x69a4"),
-                                       (20, "2437", DAMP_DISP, "even", "ld.h damper gp-0x6bd0"),
-                                       (36, "e437", RATE_DISP, "odd", "ld.hu rate gp-0x6ac0")):
+    # ⚠ THE OPCODE FIELD IS THE SIGNEDNESS, and the signedness is load-bearing on bit6 (see the
+    # module docstring): 0x3F = `ld.hu` ZERO-extends, 0x39 = `ld.h` SIGN-extends. Only the damper
+    # load is signed. Asserted here so a silent swap cannot turn bit6 into a two-sided rung.
+    for off, hw1, disp, kind, opc, what in (
+            (4, "e437", A_DISP, "odd", 0x3F, "ld.hu `a` gp-0x69a4"),
+            (20, "2437", DAMP_DISP, "even", 0x39, "ld.h damper gp-0x6bd0"),
+            (36, "e437", RATE_DISP, "odd", 0x3F, "ld.hu rate gp-0x6ac0")):
         assert raw[off:off + 2] == bytes.fromhex(hw1), \
             f"CAVE_HEX offset {off} is not `{what},r6` -- a 0x44../0x64.. hw1 would be a STORE"
+        got = (int.from_bytes(raw[off:off + 2], "little") >> 5) & 0x3F
+        assert got == opc, \
+            f"CAVE_HEX offset {off} has opcode 0x{got:02X}, expected 0x{opc:02X} ({what}) -- " \
+            f"0x3F is ld.hu (zero-extends) and 0x39 is ld.h (sign-extends); swapping them changes " \
+            f"what the rung MEANS, not just what it reads"
         want = (0x10000 - disp) & 0xFFFF
         want = (want & 0xFFFE) | 1 if kind == "odd" else (want & 0xFFFE)
         assert raw[off + 2:off + 4] == want.to_bytes(2, "little"), \

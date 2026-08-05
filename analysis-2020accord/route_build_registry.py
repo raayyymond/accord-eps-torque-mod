@@ -142,6 +142,12 @@ ROUTES = (
         "(342.8 s) above 35 km/h, where the rung's own pre-registered positive control says stock "
         "already damps ⇒ that rung's creep reading is UNINTERPRETABLE. It does not bear on build "
         "identification: bit3 and bit6 both vary, so the cave demonstrably ran.",
+        "⚠ SIGNEDNESS OF THE `a` RUNGS, RESOLVED: the cave's `a` and rate loads are `ld.hu` "
+        "(opcode 0x3F, ZERO-extending) and only the damper load is `ld.h` (0x39) -- GhidraMCP "
+        "decodes 0x3AB3A `e4375d96`, byte-identical to the cave's own load, as `ld.hu -0x69a4,gp,"
+        "r6`. So bit6 is `raw16 >= 512` UNSIGNED, and a negative int16 `a` (raw >= 0x8000) would "
+        "necessarily have set bit5. bit5 read 0 / 87,940 ⇒ raw16 < 1024 in EVERY frame ⇒ no frame "
+        "carried a negative value, and the bracket holds under either signed or unsigned reading.",
         "★★★★ `a` = gp-0x69a4 < 512 (< 0.5 in Q10) in 100.000% of 39,160 creep frames, including "
         "1,503 engaged-creep frames at |cs_tq| >= 2517 where the engaged-HIGHWAY arm fires 41.1% "
         "⇒ a POWERED null, not an empty regime. bit5 (a >= 1024) is 0 / 87,940 route-wide.",
