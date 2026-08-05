@@ -10,6 +10,47 @@ result was buried in prose.
 
 ---
 
+## 🛑🛑 RULE 4, added 2026-08-05 — **TWO LEDGER ERRORS FOUND, BOTH RUNNING THE DANGEROUS WAY**
+
+A machine byte-diff of **all 65 built plain images** vs stock over `[0x13000,0x100000)` found two errors
+in this file. Both made a lever look *tested* when it was not — the direction that suppresses work.
+
+1. 🛑 **Part 1 attributes four cals to V39 that V39 NEVER WROTE.** The row
+   `` `0xC6440/42/46`, `0xC61F6` | V39 | ✅ | FALSIFIED `` is **false**. **V39's entire delta vs V38 is
+   `0x3AC78` (4 bytes, a cave hook).**
+   - **`0xC6442`** — written by **0 of 65 images**. **UNTESTED**, and separately **unreachable**:
+     `gp-0x671d` reads **0 / 402,424 frames** across four routes.
+   - **`0xC61F6`** — written by **0 of 65 images**. **UNTESTED.**
+   - `0xC6440` — V63/V64 only, null-by-construction. `0xC6446` — V67/V68/V71C only, and only with the gate.
+2. 🛑 **V71B and V71C do NOT carry V62's `sar` fix.** `0x3AB76`/`0x3AC20` = `a9` in **exactly three
+   images: V62, V65, V71A** — and V71A is unflashed. **The two builds flown 2026-08-04/05 carry NEITHER
+   of V62's bytes.** Say this before anyone reads V71B/V71C as "V62 plus something".
+✅ **No third silent loss exists** — every carried edit was checked across all 65 images.
+
+> **RULE 4: attribute a lever to a build only from that build's own byte diff, never from this table's
+> prose. Two of the entries here were wrong, and both errors ran toward "already tested".**
+
+---
+
+## 🛑🛑 RULE 5, added 2026-08-05 — **A NULL IS ONLY A NULL IF THE LEVER WAS IN FORCE**
+
+**`0x454FE` was recorded mid-session as FALSIFIED for the ratchet because V71B and V71C flew with it
+restored and the operator reported no change. That was wrong.** V71's own probe measured
+**`gp-0x67fa == 4` at 0 / 123,277 (route 54) and 8 / 92,826 (route 58) — all eight in PARK.**
+**State 4 never occurred while driving, so V42's substitution never ran on either drive.**
+⇒ **a null by construction**, the same class as `0xC6444` on gateless builds.
+
+> **RULE 5: before recording any lever as FALSIFIED, state HOW you know it was in force on that drive.
+> If the answer is "the build carried the byte", that is not sufficient — a byte that never executes is
+> not a test. Prefer a probe rung on the lever's own enabling condition.**
+
+★ What survives is stronger than the retracted claim: since state 4 never occurs, the substitution
+**never runs on stock either** ⇒ **structurally eliminated** as the 7.79 Hz ratchet's cause.
+⚠ **[OPEN]:** V42 was CONFIRMED on-car against the *hard-turn recovery* ratchet. If state 4 never occurs,
+that fix could not have acted either. Unresolved.
+
+---
+
 ## 🛑🛑 RULE 3, added 2026-08-04 — **"CONFIRMED" DOES NOT MEAN "STILL ON THE CAR"**
 
 **This file records what a lever DID. Until now it did not record whether the current build still

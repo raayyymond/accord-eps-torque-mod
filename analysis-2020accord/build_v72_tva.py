@@ -1,142 +1,179 @@
 #!/usr/bin/env python3
-"""build_v72_tva.py -- V72 = BOTH rate lanes dosed PLATEAU-ONLY, + the base damper opened at creep.
+"""build_v72_tva.py -- V72 = V67/V68's creep rate lane, delivered UNGATED and speed-shaped.
 
-    V72  ==  V70  +  LEVER A (both lanes, Y[0]/Y[1] only)  +  LEVER B (FactorC/E, V47's bytes)
-                  +  LEVER C (0xC63A0 x2)  +  0x454FE (carried)  +  a new 68-byte probe.
+    V72  ==  V70  +  LEVER A (both lanes, WHOLE rate axis, 0 and 10 km/h records)
+                  +  LEVER B (FactorC/E damping at creep)  +  LEVER C (0xC63A0 x2)
+                  +  0x454FE (carried, inert)  +  a new 68-byte probe.
 
-Spec: `docs/V72-DESIGN.md`. Every edit below asserts its FINAL byte value, so the artefact is
+Spec: `docs/V72-DESIGN.md` + the team-lead's routes-54/58 revisions (whole-axis Lever A; Lever B at
+430/431 + 927; probe at 512/1024). Every edit asserts its FINAL byte value, so the artefact is
 independent of which base was used.
 
-WHY THIS SHAPE -- the one cell of the 2x2 that has never been tried
---------------------------------------------------------------------
-                        one lane                    both lanes
-    plateau only        V69, V70   -> null          ** V72 **   <- never tried
-    whole rate axis     V71B/V71C  -> null          V62, V67/68 -> FIXED grind #1
+★★ THE OBJECTIVE, IN ONE LINE: reproduce V67/V68's creep configuration EXACTLY -- the best-measured
+build this car has ever had (median `e_18-22` engaged creep = 109 against stock's 879) -- and remove
+its only failure, which is that a scalar gated arm cannot be highway-clean while dosing at creep.
 
-  * BOTH lanes is required: five single-lane nulls, two two-lane fixes, across a 4:1 r24 range and
-    a 2:1 r26 range (`V72-DESIGN.md` 0.6).
-  * PLATEAU ONLY is required: grind #1 lives 97.77% below rate index 400; creep grind #2 straddles
-    the knee. Dosing above 400 buys nothing for #1 and feeds #2 (0.9 / 2.1.1).
-V72 delivers V67/V68's exact creep operating point through the UNGATED, SPEED-SHAPED surfaces, so
-highway is EXACTLY 1.000x by record-selection geometry rather than by tuning.
-
-🛑 THE BASE IS `_v70_plain_image.bin`, NOT `_v71b`. The brief offered either. V71B doubled ALL FOUR
-gain_A Y points on rec0/rec1 (`0xC6A68` Y=[6144,6144,4868,4096]), so off V71B this build would have
-to REVERT Y[2]/Y[3] as well. V70's gain_A is byte-stock and V70's gain_B rec1 Y[0]/Y[1] are ALREADY
-5122 -- V72's own target -- so the diff off V70 is strictly smaller and every functional byte is
-attributable. The cost is one byte: `0x454FE` becomes an edit rather than a carry. Both bases are
-gateless (`0x3AA96` = 0xC5).
-
-🛑🛑 LEVER B CARRIES V47's EXACT FLOWN BYTES, AND THAT IS A DELIBERATE CHOICE BETWEEN TWO SPECS
+WHY WHOLE-AXIS AND NOT PLATEAU-ONLY  [the spec changed mid-build; the reason is on the record]
 ------------------------------------------------------------------------------------------------
-The mission brief's Lever B table (FactorC Y[0..1] -> 877,877; FactorE Y[0..2] -> 927,927,927)
-DISAGREES with the frozen design doc 2.2 (FactorC Y[0] -> 235/234; FactorE Y[0..2] -> 700,750,800).
-Three facts decided it, all byte-read here rather than quoted:
-  1. the design's set is 8 cells = **16 bytes**, and the brief's own byte count says "16 bytes"
-     while its table lists 10 cells = 20. The count agrees with the design.
-  2. the design's numbers are **V47's exact flown bytes** -- asserted below against
-     `_v47_plain_image.bin`, not aimed at. The brief's 877 / 927 are each that record's own stock
-     **Y[3]**, i.e. the top of the table.
-  3. the arithmetic crosses a clamp. Delivered authority (seed 1024, FactorB/D inert at 1024):
-        V47  : 235*700>>10 = 160 ... 235*800>>10 = 183   -- the design's own "~160-184"
-        brief: 877*927>>10 = **793**
-     The ceiling table `0xD209C` is a 2-point record X=[300,800] Y=[512,1024] (raw-read; fallback
-     `0xC6158` = 512), so below `gp-0x6ac2` = 300 the ceiling is **512**. 793 > 512 ⇒ the damper
-     would SATURATE, turning a proportional damper into a hard-clipping element inside the loop at
-     the ratchet's own frequency -- the exact thing the design relies on NOT happening.
-`LEVER_B_VARIANT` below switches to the brief's table in one line if the operator overrules this.
+An earlier cut of this build dosed only Y[0]/Y[1] (the flat [0,400] plateau), on the grounds that
+grind #1 is 97.8% below rate index 400 *instantaneously*. Two measurements killed that:
+  1. what matters for a derivative term is the PEAK of each cycle -- per-window peak index p50 =
+     **523**, and **56.7% of windows peak above 400**;
+  2. the on-car ladder separates the two shapes directly. Every build that raised r24 across the
+     WHOLE axis lands at 70-268 median; **both plateau-only builds land at 729-746 -- the two worst
+     dosed builds in the corpus, at x2 and x4.**
+⇒ Only the whole-axis form reproduces V67/V68. The plateau-only form diverges from it on BOTH lanes
+above rate 400. **This build asserts the reproduction rather than aiming at it** (see the sweep).
 
-LEVER A -- 16 bytes, 4 records, Y[0] and Y[1] ONLY
---------------------------------------------------
-    0xD2A7E  gain_B mode-10 rec0 (0 km/h)   r24   Y -> [5244, 5244, 2322, 1536]
-    0xD2ABA  gain_B mode-10 rec1 (10 km/h)  r24   Y -> [5122, 5122, 2247, 1947]   (already V70's)
-    0xC6A72  gain_A rec0 (0 km/h)           r26   Y -> [ 512,  512, 2434, 2048]
-    0xC6A86  gain_A rec1 (10 km/h)          r26   Y -> [ 512,  512, 2488, 1536]
-5244 and 512 are V67/V68's OWN arm values, used verbatim. 5122 (not 5244) at 10 km/h is a GUARANTEE,
-not a tuning choice: it is exactly 2.000x, which is V70's own value, and it is what makes V72's r24
-<= V70's r24 at every operating point.
-🛑 gain_B is MODE-INDEXED through FOUR pointer arrays (0xCBF5C/0xCC044/0xCC12C/0xCC214, entry
+LEVER A -- 32 bytes: all four Y, both records, both surfaces
+--------------------------------------------------------------
+    0xD2A7E  gain_B mode-10 rec0 (0 km/h)   r24   Y -> [5244, 5244, 5244, 5244]
+    0xD2ABA  gain_B mode-10 rec1 (10 km/h)  r24   Y -> [5244, 5244, 5244, 5244]
+    0xC6A72  gain_A rec0 (0 km/h)           r26   Y -> [ 512,  512,  512,  512]
+    0xC6A86  gain_A rec1 (10 km/h)          r26   Y -> [ 512,  512,  512,  512]
+5244 and 512 are V67/V68's OWN arm values (`0xC6446` / `0xC6444`), used verbatim. A FLAT record is
+exactly what a scalar arm delivers, so at 0 and 10 km/h V72's multiplier equals V67/V68's ENGAGED
+multiplier at EVERY rate index -- 1.707 / 1.707 / 2.258 / 3.414 on r24 and 0.167 / 0.167 / 0.202 /
+0.250 on r26 at 0 km/h. Asserted against `_v67_plain_image.bin` evaluated in its engaged arm.
+🛑 `0xD2AEC` / `0xD2B28` / `0xC6A90` / `0xC6AA4` STAY BYTE-STOCK ⇒ **exactly 1.000x on both lanes at
+and above 50 km/h, structurally** -- the highway fix, by record-selection geometry, not by tuning.
+🛑 gain_B is MODE-INDEXED through FOUR pointer arrays (`0xCBF5C`/`0xCC044`/`0xCC12C`/`0xCC214`, entry
 mode*4). The contiguous 0x14 stride inside the block is the **MODE** axis: `0xD2A88` is mode 11's
-record-0 and `0xD2A9C` is mode 12's. Both are byte-identical to mode 10's stock record, so a
-span-based diff cannot see the difference. Dereferenced and asserted below.
+record-0 and `0xD2A9C` is mode 12's, both byte-identical to mode 10's stock record, so a span diff
+cannot see the difference. Dereferenced and asserted below.
 
-LEVER B -- 16 bytes: the base-assist damper, opened at creep
--------------------------------------------------------------
-`0xD27BC` FactorC m10 X = [2240,3840,5120,8960] counts = [35,60,80,140] km/h at 64 counts/km/h, so
-the LERP clamps flat to Y[0] = 0 below 35 km/h. The five factors multiply in Q10 ⇒ **the car has NO
-base-assist damping anywhere below 35 km/h**, which is the entire region where the ratchet
-(4.9-8.0 km/h) and both grinds live. V47 opened exactly these cells, flew, and was filed null
-**against the 21 Hz vibration** -- a target its own 100 Hz sample rate made unreachable (37.6 deg
-average ZOH lag). At the ratchet's 7.79 Hz the same hold costs 14.0 deg, so 88-97% of the
-velocity-proportional authority survives. It is not untested; it is untested against THIS symptom.
-🛑 The ceiling `0xD209C` and its float twin `0xC6554` are NOT touched -- that pair is lockstep-checked
-and escalates to DTC 0x1d hard shutdown. Both asserted byte-stock.
+LEVER B -- 20 bytes: the base-assist damper, opened at creep
+--------------------------------------------------------------
+    0xD27C6/C8  FactorC m10 Y[0],Y[1]  0, 235  -> 430, 430   ⇒ Y = [430, 430, 430, 877]
+    0xD27DA/DC  FactorC m11 Y[0],Y[1]  0, 234  -> 431, 431   ⇒ Y = [431, 431, 431, 877]
+    0xD2802/04/06  FactorE m10 Y[0..2] 0,140,539 -> 927,927,927  ⇒ Y = [927, 927, 927, 927]
+    0xD2816/18/1A  FactorE m11 Y[0..2] 0,140,539 -> 927,927,927  ⇒ Y = [927, 927, 927, 927]
+`0xD27BC` FactorC X = [2240,3840,5120,8960] counts = [35,60,80,140] km/h at 64 counts/km/h, so the
+LERP clamps flat to Y[0] = 0 below 35 km/h. The five factors multiply in Q10 ⇒ **stock has NO
+base-assist damping anywhere below 35 km/h**, the entire region where the ratchet (4.9-8.0 km/h) and
+both grinds live. At the ratchet's 7.79 Hz the 100 Hz task-5 ZOH costs only 14.0 deg average, so
+88-97% of the velocity-proportional authority survives -- unlike at 21 Hz, where the same hold made
+V47's target structurally unreachable.
+★ FactorC = its own Y[2] and FactorE = its own Y[3], which is the largest value that keeps each
+record MONOTONE NON-DECREASING. Both properties are asserted, not chosen and hoped for.
+🛑 The ceiling `0xD209C` and its float twin `0xC6554` are NOT touched -- lockstep-checked at 5/1024,
+escalating to DTC 0x1d hard shutdown. Asserted byte-stock.
 
 LEVER C -- 2 bytes: `0xC63A0` 1024 -> 2048
 --------------------------------------------
 The weight on `gp-0x6bd0` -- the damper's OWN output -- inside `FUN_00038148`'s 6-term composite.
 ✅ [EVIDENCE, decompile of FUN_00038148 + a raw both-parity byte scan] `0xC63A0` = tp+0x73A0 has
-**exactly ONE reader image-wide**, `ld.hu 0x73a0[tp],r9` @`0x381AC`, and ZERO writers. The scan for
-the even-parity (ld.h/st.h) form returns 0 hits and the disp23 form returns 0; the only other
-occurrence of the odd-parity halfword is `0xC4764`, which Ghidra reports is in **no function** and
-whose preceding halfword `0xC4762` is not a disp16 load ⇒ data, not an instruction. **One reader ⇒
-no monitor can be checking it**, which closes the lockstep question structurally rather than
-statistically. Buys the same authority as raising `0xD209C` with zero lockstep exposure.
+**exactly ONE reader image-wide**, `ld.hu 0x73a0[tp],r9` @`0x381AC`, and ZERO writers. The
+even-parity (ld.h/st.h/disp23) form returns 0 hits; the only other odd-parity occurrence is
+`0xC4764`, which Ghidra reports is in **no function** and whose preceding halfword is not a disp16
+load ⇒ data. **One reader ⇒ no monitor can be checking it**, which is why this was chosen over
+raising `0xD209C`.
 
 CARRIED, NOT A LEVER -- `0x454FE` = 0xB5
 -----------------------------------------
-🛑 **FALSIFIED for the current 7.79 Hz ratchet.** V71B and V71C both flew carrying it and the
-operator reports the ratchet UNCHANGED on both. It is carried ONLY because V42 confirmed it against a
-DIFFERENT symptom (the ~10 s hard-turn recovery ratchet) and reverting would regress that.
-**Do not describe it as a ratchet fix for this build.**
+🛑 **CARRIED, CURRENTLY INERT, AND UNTESTED -- neither a fix nor falsified.**
+[EVIDENCE] V71's bit5 rung measured `gp-0x67fa == 4` at **0 / 123,277** frames (route 54) and
+**8 / 92,826** (route 58) -- and all eight are one 80 ms burst at 0.00 km/h **in park**. State 4
+never occurred while driving ⇒ V42's substitution never ran on either flight ⇒ the V71B/V71C
+"no change" result is a **null by construction, not a falsification.** An earlier note in this file
+called it falsified; that was wrong and is retracted here.
+⚠ [OPEN] The same measurement cuts the other way too: V42 was confirmed on-car against the ~10 s
+hard-turn recovery ratchet, and if state 4 never occurs then that fix could not have acted either.
+Carried because reverting it cannot help and might regress a confirmed result.
 
 THE PROBE -- 68 of the proven 68 bytes, CAN 0x14A byte4 bits 7:3
 -----------------------------------------------------------------
-    bit7 = 1                        LIVENESS. field == 0 ⇒ the cave did not fire ⇒ frame VOID.
-    bit6 = gp-0x69a4 >= 512    ★★★★ `a`, THE UNMEASURED WEIGHT. r26 = ((a * dtorque) >> 10) * gain_A
-                                    >> 10, so `a` sets r26's magnitude RELATIVE to r24 and it has
-                                    NEVER been measured. It makes every "r24 vs r26" number in this
-                                    kit conditional and has blocked that attribution for ~10 builds.
-                                    Producer: a live 10-segment LERP at 0x355C6 in FUN_000352b4.
-    bit5 = STRUCTURALLY ZERO        🛑 THE DROPPED RUNG -- see the budget note below.
-    bit4 = |gp-0x6bd0| >= 64        IS LEVER B IN FORCE? The damping lane's own output. Non-zero here
-                                    is the first direct proof the base damper is alive at creep on
-                                    any build in this kit. TWO-SIDED (the damper is velocity-
-                                    OPPOSING, so it alternates sign every half cycle).
-    bit3 = gp-0x6ac0 >= 400    📋   PRE-REGISTERED, with a built-in positive control.
+    bit7 = 1                     LIVENESS. field == 0 ⇒ the cave did not fire ⇒ frame VOID.
+    bit6 = gp-0x69a4 >= 512 ★★★★ `a`, THE UNMEASURED WEIGHT. r26 = ((a * dtorque) >> 10) * gain_A
+                                 >> 10, so `a` sets r26's magnitude RELATIVE to r24 and it has NEVER
+                                 been measured. No prior -- this rung IS the measurement.
+    bit5 = gp-0x69a4 >= 1024 ★★★ the second thermometer step. ★ `bit5 => bit6` is a MONOTONE
+                                 INVARIANT, structurally guaranteed, so a wrong build is DETECTABLE
+                                 rather than merely implausible.
+    bit4 = |gp-0x6bd0| >= 64     IS LEVER B IN FORCE? TWO-SIDED -- the damper is velocity-OPPOSING
+                                 (`0x3469e`: if gp-0x6abe > 0, negate) so it alternates sign every
+                                 half cycle, and r24's own excursions measured 0.5013 positive on
+                                 V71, i.e. all but perfectly symmetric. A one-sided rung would halve
+                                 the count for nothing. V71 proved this idiom WORKS: 4,478 engaged
+                                 frames, engaged-vs-manual 416x [172, 1748], p = 0/20,000.
+    bit3 = gp-0x6ac0 >= 512   📋 PRE-REGISTERED at **2.750%** engaged duty (9,497 / 345,396 frames),
+                                 and it must fire frame-for-frame with bus `|rate_c| >= 108.7 deg/s`
+                                 (512 counts / 4.7121 counts-per-deg-s). A POSITIVE CONTROL: the rate
+                                 axis is settled three independent ways, so a miss indicts the cave,
+                                 not the scale. 🛑 512 is also the hard floor -- at 250 the retired
+                                 8x-smaller scale starts firing (0.058%) and the rung stops
+                                 discriminating.
 
-🛑 THE BUDGET FORCED ONE CUT, AND IT IS THE ONE THE BRIEF NOMINATED. The brief asked for five rungs
-and named the fallback order: "if the budget does not fit all four rungs, DROP bit5 first."
-It does not fit. With bit4 two-sided (16 B, the same shape V71 re-cut to) the five-rung cave is
-    4 seed + 18 (bit6+bit5 sharing one load) + 16 bit4 + 14 bit3 + 2 shl + 20 tail = **72 B**,
-four over the proven 68. bit5 (`gp-0x69a4 >= 1024`) is dropped. **Weight 0x04 is therefore never
-added, so bit5 reads 0 in every V72 frame** -- a one-way build falsifier: a single frame with bit5
-SET proves the artefact is not V72. The `bit5 => bit6` monotone invariant the brief wanted is lost
-with it; that is stated, not smoothed over.
+★★ HOW FIVE RUNGS FIT IN 68 BYTES -- and the ONE new architectural fact it rests on
+-------------------------------------------------------------------------------------
+The obvious encoding does not fit: 4 seed + 18 (bit6+bit5 sharing one load) + 16 bit4 + 12 bit3 +
+2 shl + 20 tail = **72 B**, four over the proven extent. The four bytes come from a fact this kit has
+never used before, so it is stated explicitly and it is EVIDENCE, not assumption:
 
-★ WHAT THE CUT BOUGHT: bit3's threshold is **EXACTLY 400**, not the brief's fallback of 512. The
-brief's premise -- "the rung idiom derives thresholds by `sar`, so they land on powers of two" -- is
-incomplete: `cmp imm5` takes 1..15, so `shift s` + `cmp k` reaches any k*2^s. 400 = 25*16 needs
-k = 25, out of imm5's range, so a plain shift+compare still cannot hit it -- but ONE extra 2-byte
-instruction can:
-        ld.hu -0x6ac0[gp],r6 ; shr 0x4,r6 ; add -0x10,r6 ; cmp 0x9,r6 ; blt +4
-        fires  <=>  (v >> 4) - 16 >= 9  <=>  v >> 4 >= 25  <=>  **v >= 400**, exactly.
-⇒ 📋 **THE PRE-REGISTRATION SURVIVES VERBATIM** rather than needing to be recomputed: engaged duty
-must read **3.74%** under the settled scale (4.7121 counts per column deg/s ⇒ 400 counts = 84.89
-deg/s) and **0.0000%** under the retired 8x-smaller alternative, and it must fire frame-for-frame
-with bus `|rate_c| >= 84.9 deg/s`. That is the positive control, built into the same measurement.
+🛑 **V850 shift instructions SET THE Z FLAG, and a following Bcond reads it with no `cmp`.**
+    [EVIDENCE, Ghidra-disassembled at 0x318DA, and Honda does it three times in a row:]
+        0x318D6  andi 0x200,r14,r8
+        0x318DA  sar  0x9,r8          <- sets Z
+        0x318DC  bne  0x319CA         <- branches on it, NO intervening cmp
+        0x318DE  andi 0x800,r14,r6 ; 0x318E2 sar 0xb,r6 ; 0x318E4 bne ...  (and again at 0x318EA)
+Both `a` and the rate index are loaded `ld.hu` (zero-extended, so non-negative), which makes
+`s = v sar 9` satisfy `s != 0  <=>  v >= 512`. So bit6 and bit3 each drop their `cmp 0x1`, saving
+2 bytes apiece: `ld.hu ; sar 0x9 ; be +4 ; add w,r7`.
+⚠ THE COST, DECLARED: **flag liveness across the `sar`->`be` pair is now load-bearing.** If anything
+were ever inserted between them the rung would silently read the PREVIOUS comparison's flags -- a
+plausible-looking wrong answer, which is the exact failure class this kit keeps paying for. The
+builder asserts that each `sar` is IMMEDIATELY followed by its own `be`, by position, in the emitted
+listing AND again in the re-disassembly of the BUILT bytes.
+⚠ AND A NEAR-MISS WORTH RECORDING: the raw byte scan that first suggested this found 801
+"shift-then-Bcond" pairs, and the first two sampled (0x283CE, 0x1B56E) were **NOT on instruction
+boundaries** -- they were the second halfwords of a 4-byte `st.b` and a 4-byte `jr`. The claim is
+carried on the Ghidra-confirmed site above, not on the scan count.
 
-🛑 THE ONE-BIT TRAP IS LIVE ON bit4, IN ITS WORST FORM. `ld.h` = opcode 0x39, `st.h` = 0x3B. Our
-`ld.h -0x6bd0[gp],r6` is `24373094`; the firmware's own `st.h r6,-0x6bd0[gp]` @0x34730 is `64373094`
--- **the same displacement, the same register, one bit apart** -- and unlike V70/V71's zero-reader
-mirrors, `gp-0x6bd0` has FIVE real readers including the 1 kHz aggregator. A slip would write a live
-lane. The opcode field is asserted BY VALUE in the builder, in the readback, and in the verifier.
+🛑 THE ONE-BIT TRAP IS LIVE ON bit4, IN ITS WORST FORM IN THIS KIT'S HISTORY. `ld.h` = opcode 0x39,
+`st.h` = 0x3B. Our `ld.h -0x6bd0[gp],r6` is `24373094`; the firmware's own `st.h r6,-0x6bd0[gp]`
+@`0x34730` is `64373094` -- **the same displacement, the same register, one bit apart** -- and unlike
+V70/V71's zero-reader mirrors, `gp-0x6bd0` has FIVE real readers including the 1 kHz aggregator. A
+slip would write a live lane. The opcode field is asserted BY VALUE in the builder, in the readback
+and in the verifier.
 
 CAVE DISCIPLINE
 ---------------
 Base 0xC4B34, hook 0x55C0E, extent 68 of the proven 68 B -- unchanged, flown 10x
 (V55/V57/V58/V59/V64/V65/V66/V67/V70/V71, all clean). 🛑 ZERO spare. Growing a cave is this kit's
 ONLY bricking class (V24, V27 and V48B all bricked the ECU).
+
+🛑 THE DISCLOSED RISKS -- stated, not bounded away. NO POINTWISE-BOUND CLAIM IS MADE.
+--------------------------------------------------------------------------------------
+Earlier cuts of this build asserted `V72 <= V62` and `V72 <= V70` pointwise. **Both are FALSE for
+this spec** -- V72's r24 reaches 3.414x at rate 3000 where V62 is 2.000x -- and they must not appear.
+What replaces them is a measured association and three honest risks:
+  ★★ THE TWO-LANE RULE, 6 builds, no exceptions [EVIDENCE, gains read from the shipped images]:
+     creep grind #2 requires r24 high-rate >~ 3.4x **AND** r26 high-rate >~ 1.5x; cutting EITHER
+     kills it. stock/V69/V70 (1.000, 1.000) none · V71B (1.000, 2.000) none · V62/V65 (3.414, 2.000)
+     worst in corpus · V71C (3.414, 1.500) 3 events · **V67/V68 (3.414, 0.250) none** · **V72
+     (3.414, 0.250) -- V67/V68's exact row.** ⚠ [EVIDENCE] for the association; the "product of the
+     two lanes" mechanism is [BELIEF].
+  🛑 RISK 1: V67/V68's clean grind-#2 cell is the WEAKEST evidence in that table -- ~42 s of engaged
+     creep, so its rate of 0 gives P(0) = 1.000 against any reference. The protective value of the
+     r26 cut is associated, not established.
+  🛑 RISK 2: V71C carries the SAME r24 arm (5244) and produced grind #2 at V62's own rate -- 7 bursts
+     / 485 s engaged, 3 / 62.7 s at creep. The ONLY difference from V72 on that lane is r26.
+  🛑 RISK 3: V72 IS UNGATED, and grind #2 follows the GATE, not the driver's hands: V62/V65 were
+     ungated and burst in BOTH arms at equal rates (0.0444/s engaged vs 0.0430/s manual); V71C is
+     gated and burst ONLY engaged. ⇒ **if V72 produces grind #2 it will produce it in MANUAL too.**
+     That is the price of the highway fix; it is not jointly avoidable with calibration-only edits,
+     and the operator has authorised manual-feel changes.
+  ⊕ The direct high-rate test that was the red team's open hole: V71B is the corpus's ONLY high-rate
+     dose on either lane, and over 21.8 s of engaged high-rate exposure its 40-49 Hz p90 is 58.5
+     [55.1, 60.1] against stock's 77.4 in the same cell -- a high-rate dose on r26 moved NOTHING.
+     ⚠ count test P(0) = 0.081 (marginal); the LEVEL test is not (58.5 vs V62/V65's 1441.9, 24x
+     non-overlapping). ⚠ Route 54 had ZERO manual high-rate exposure, so the ungated half of that
+     question is EMPTY, not null.
+  ⚠ Highway grind #2 is NOT cleared on any build; V72 is structurally 1.000x at >=50 km/h, which is
+     the intended fix, and it needs highway exposure to test.
+⚠ 🛑 The "grind #2 IS grind #1's 2nd harmonic" result was RETRACTED in-session (a ratio is not a
+  tracking test; a shuffle control reproduced it, and every tracking slope contains 0 and excludes
+  2.0). It is NOT written into this build's rationale.
 
 Usage:  python build_v72_tva.py
 """
@@ -161,7 +198,6 @@ import build_v53_tva as V53                # noqa: E402  (owning_block)
 import build_v54_tva as V54                # noqa: E402  (andi / or_rr / shl encoders)
 import build_v55_tva as V55                # noqa: E402  (ldh / sar / cmp_imm5 / ldbu_any encoders)
 import build_v57_tva as V57                # noqa: E402
-import build_v62_tva as V62                # noqa: E402  (the sar sites -- LEFT STOCK here)
 import build_v64_tva as V64                # noqa: E402  (gp_access_census -- the two-decoder scan)
 import build_v65_tva as V65                # noqa: E402  (COND_BLT)
 import build_v68_tva as V68                # noqa: E402  (cave machinery, D2000 block)
@@ -178,7 +214,7 @@ CAVE_BASE = V68.CAVE_BASE                  # 0xC4B34
 CAVE_EXTENT = len(V55.CAVE_BYTES)          # 68 -- the PROVEN extent. Never grow it.
 
 # =====================================================================================================
-# LEVER A -- both rate lanes, PLATEAU ONLY (Y[0] and Y[1]); Y[2]/Y[3] stay STOCK
+# LEVER A -- both rate lanes, the WHOLE rate axis, at the 0 and 10 km/h records
 # =====================================================================================================
 REC_B0, REC_B1 = V69.REC0, V69.REC1                 # 0xD2A74 / 0xD2AB0  gain_B mode-10, 0 / 10 km/h
 REC_B_HWY = (0xD2AEC, 0xD2B28)                      # 50 / 100 km/h -- MUST REMAIN STOCK
@@ -186,25 +222,21 @@ REC_A0, REC_A1 = B.RATE_A_RECORDS[0], B.RATE_A_RECORDS[1]     # 0xC6A68 / 0xC6A7
 REC_A_HWY = B.UNTOUCHED_A_RECS                      # 0xC6A90 / 0xC6AA4 -- MUST REMAIN STOCK
 Y_OFF, REC_STRIDE = 0x0A, 0x14
 
-# The FINAL Y row of every edited record, asserted by VALUE. Y[2]/Y[3] are the STOCK values and are
-# listed so the assertion covers "the plateau moved AND nothing else in the record did".
+V67_ARM_R24, V67_ARM_R26 = 5244, 512        # V67/V68's own arm values (0xC6446 / 0xC6444), verbatim
 LEVER_A_FINAL_Y = {
-    REC_B0: ([5244, 5244, 2322, 1536], "gain_B mode-10 rec0 (0 km/h)   r24"),
-    REC_B1: ([5122, 5122, 2247, 1947], "gain_B mode-10 rec1 (10 km/h)  r24"),
-    REC_A0: ([512, 512, 2434, 2048], "gain_A rec0 (0 km/h)           r26"),
-    REC_A1: ([512, 512, 2488, 1536], "gain_A rec1 (10 km/h)          r26"),
+    REC_B0: ([V67_ARM_R24] * 4, "gain_B mode-10 rec0 (0 km/h)   r24"),
+    REC_B1: ([V67_ARM_R24] * 4, "gain_B mode-10 rec1 (10 km/h)  r24"),
+    REC_A0: ([V67_ARM_R26] * 4, "gain_A rec0 (0 km/h)           r26"),
+    REC_A1: ([V67_ARM_R26] * 4, "gain_A rec1 (10 km/h)          r26"),
 }
 LEVER_A_STOCK_Y = {REC_B0: [3072, 3072, 2322, 1536], REC_B1: [2561, 2561, 2247, 1947],
                    REC_A0: [3072, 3072, 2434, 2048], REC_A1: [3072, 3072, 2488, 1536]}
-V67_ARM_R24, V67_ARM_R26 = 5244, 512        # V67/V68's own arm values, used verbatim
-
-# 🛑 gain_B's mode axis. Dereferenced from the four ROM pointer arrays, never assumed.
 GAIN_B_PTR_ARRAYS = LM.GAIN_B_PTR_ARRAYS    # 0xCBF5C / 0xCC044 / 0xCC12C / 0xCC214
 MODE = LM.MODE_DEFAULT                      # 10
 MODE_NEIGHBOURS = (0xD2A88, 0xD2A9C)        # mode 11 / mode 12 record-0 -- byte-identical to mode 10
 
 # =====================================================================================================
-# LEVER B -- the base-assist damper, opened at creep
+# LEVER B -- the base-assist damper, opened at creep. 10 cells = 20 bytes.
 # =====================================================================================================
 FACTOR_C = {10: 0xD27BC, 11: 0xD27D0, 12: 0xD27E4}
 FACTOR_E = {10: 0xD27F8, 11: 0xD280C, 12: 0xD2820}
@@ -212,43 +244,27 @@ FACTOR_C_STOCK_Y = {10: [0, 235, 430, 877], 11: [0, 234, 431, 877], 12: [0, 234,
 FACTOR_E_STOCK_Y = {10: [0, 140, 539, 927], 11: [0, 140, 539, 927], 12: [0, 140, 539, 927]}
 FACTOR_C_X = [2240, 3840, 5120, 8960]       # counts; /64 = [35, 60, 80, 140] km/h EXACTLY
 FACTOR_E_X = [60, 400, 2500, 4000]          # counts of |motor rate|
-SPEED_COUNTS_PER_KMH = 64                   # 0xC6010 gives 640 counts = 10 km/h
+SPEED_COUNTS_PER_KMH = 64
+FACTORC_ONSET_COUNTS = FACTOR_C_X[0]        # 2240 = 35 km/h -- below this stock damping is ZERO
 
-# 🛑 TWO SPECS DISAGREE HERE. See the docstring. "V47" is the frozen design doc 2.2 AND V47's own
-# flown bytes; "FLATMAX" is the mission brief's table. Switch in ONE line if overruled.
-LEVER_B_VARIANT = "V47"
-LEVER_B_TABLES = {
-    # variant: {addr: (stock, new, label)}
-    "V47": {
-        0xD27C6: (0, 235, "FactorC m10 Y[0]"),
-        0xD27DA: (0, 234, "FactorC m11 Y[0]"),
-        0xD2802: (0, 700, "FactorE m10 Y[0]"),
-        0xD2804: (140, 750, "FactorE m10 Y[1]"),
-        0xD2806: (539, 800, "FactorE m10 Y[2]"),
-        0xD2816: (0, 700, "FactorE m11 Y[0]"),
-        0xD2818: (140, 750, "FactorE m11 Y[1]"),
-        0xD281A: (539, 800, "FactorE m11 Y[2]"),
-    },
-    "FLATMAX": {
-        0xD27C6: (0, 877, "FactorC m10 Y[0]"),
-        0xD27C8: (235, 877, "FactorC m10 Y[1]"),
-        0xD27DA: (0, 877, "FactorC m11 Y[0]"),
-        0xD27DC: (234, 877, "FactorC m11 Y[1]"),
-        0xD2802: (0, 927, "FactorE m10 Y[0]"),
-        0xD2804: (140, 927, "FactorE m10 Y[1]"),
-        0xD2806: (539, 927, "FactorE m10 Y[2]"),
-        0xD2816: (0, 927, "FactorE m11 Y[0]"),
-        0xD2818: (140, 927, "FactorE m11 Y[1]"),
-        0xD281A: (539, 927, "FactorE m11 Y[2]"),
-    },
+# ★ FactorC takes its OWN Y[2]; FactorE takes its OWN Y[3]. Largest values that keep each record
+# MONOTONE NON-DECREASING -- both properties asserted below, not chosen and hoped for.
+LEVER_B = {
+    0xD27C6: (0, 430, "FactorC m10 Y[0]"), 0xD27C8: (235, 430, "FactorC m10 Y[1]"),
+    0xD27DA: (0, 431, "FactorC m11 Y[0]"), 0xD27DC: (234, 431, "FactorC m11 Y[1]"),
+    0xD2802: (0, 927, "FactorE m10 Y[0]"), 0xD2804: (140, 927, "FactorE m10 Y[1]"),
+    0xD2806: (539, 927, "FactorE m10 Y[2]"),
+    0xD2816: (0, 927, "FactorE m11 Y[0]"), 0xD2818: (140, 927, "FactorE m11 Y[1]"),
+    0xD281A: (539, 927, "FactorE m11 Y[2]"),
 }
-LEVER_B = LEVER_B_TABLES[LEVER_B_VARIANT]
+EDITED_FACTOR_MODES = (10, 11)
 
 # 🛑 NOT TOUCHED, and lockstep-checked to DTC 0x1d if they ever disagree.
 CEILING_REC = (0xD209C, 12)                 # a 2-POINT record: count 2, X=[300,800], Y=[512,1024]
 CEILING_X, CEILING_Y = [300, 800], [512, 1024]
 CEILING_FLOAT_TWIN = (0xC6554, 8)           # 300.0f, 800.0f
 CEILING_FALLBACK = (0xC6158, 512)           # used when gp-0x6ac2 fails its plausibility gate
+CEILING_FLOOR = CEILING_Y[0]                # 512 -- the clamp that binds at low gp-0x6ac2
 Q10 = 1024
 
 # =====================================================================================================
@@ -256,7 +272,7 @@ Q10 = 1024
 # =====================================================================================================
 DAMP_WEIGHT_ADDR, DAMP_WEIGHT_STOCK, DAMP_WEIGHT_NEW = 0xC63A0, 1024, 2048
 DAMP_WEIGHT_READER = 0x381AC                # `ld.hu 0x73a0[tp],r9` -- the ONLY reader image-wide
-DAMP_WEIGHT_TP_DISP = 0x73A0                # 0xC63A0 - tp (0xBF000)
+DAMP_WEIGHT_TP_DISP = 0x73A0
 TP = LM.TP
 
 # =====================================================================================================
@@ -264,14 +280,9 @@ TP = LM.TP
 # =====================================================================================================
 GATE_ADDR, GATE_DEAD = A.REPOINT_BYTE, A.GATE_DEAD          # 0x3AA96 -> 0xC5 (gp-0x683c, 0 writers)
 GATE_LOAD = (A.REPOINT_ADDR, bytes.fromhex("847fc597"))     # `ld.bu -0x683c[gp],r15`
-SAR_SITES = (A.R26_SAR, A.R24_SAR)                          # 0x3AB76 / 0x3AC20 -- both `sar 0xa`
 ARMS_STOCK = ((0xC643E, 1536), (0xC6440, 2048), (0xC6442, 1024), (0xC6444, 512), (0xC6446, 512))
 ROLE_TABLE = (0xC4124, [0, 0, 5, 0, 5, 5, 0, 0, 0, 5, 0])
-
-# =====================================================================================================
-# CARRIED -- V42's state-4 governor kill.  🛑 FALSIFIED for the 7.79 Hz ratchet (V71B + V71C flew it)
-# =====================================================================================================
-RATCHET_ADDR = A.RATCHET_ADDR               # 0x454FE
+RATCHET_ADDR = A.RATCHET_ADDR               # 0x454FE -- carried, inert, UNTESTED
 
 # =====================================================================================================
 # THE PROBE
@@ -282,34 +293,33 @@ HOOK_ADDR, HOOK_STOCK = V68.HOOK_ADDR, V68.HOOK_STOCK
 GP, R0, R6, R7 = V68.GP, V68.R0, V68.R6, V68.R7
 CAVE_HARD_LIMIT = V68.CAVE_HARD_LIMIT
 
-# r7 accumulates a FIVE-BIT value; `shl 0x3,r7` moves it into bits 7:3 at the very end.
 W_LIVE = 0x10           # -> bit7  LIVENESS (folded into the initial movea)
 W_A512 = 0x08           # -> bit6  gp-0x69a4 >= 512
-W_UNUSED_BIT5 = 0x04    # -> bit5  🛑 NEVER ADDED. The dropped rung; bit5 reads 0 in every frame.
+W_A1024 = 0x04          # -> bit5  gp-0x69a4 >= 1024   ★ bit5 => bit6, a MONOTONE invariant
 W_DAMPABS = 0x02        # -> bit4  |gp-0x6bd0| >= 64, TWO-SIDED
-W_RATE400 = 0x01        # -> bit3  gp-0x6ac0 >= 400
+W_RATE512 = 0x01        # -> bit3  gp-0x6ac0 >= 512
 PAYLOAD_SHIFT = 3
 BIT_LIVE, BIT_A512 = W_LIVE << PAYLOAD_SHIFT, W_A512 << PAYLOAD_SHIFT
-BIT_UNUSED5 = W_UNUSED_BIT5 << PAYLOAD_SHIFT
-BIT_DAMPABS, BIT_RATE400 = W_DAMPABS << PAYLOAD_SHIFT, W_RATE400 << PAYLOAD_SHIFT
+BIT_A1024 = W_A1024 << PAYLOAD_SHIFT
+BIT_DAMPABS, BIT_RATE512 = W_DAMPABS << PAYLOAD_SHIFT, W_RATE512 << PAYLOAD_SHIFT
 
 A_DISP = 0x69A4                 # `a`  -- ld.hu, UNSIGNED halfword (0x3AB3A reads it the same way)
 DAMP_DISP = 0x6BD0              # the base-assist damper output -- ld.h, SIGNED
 RATE_DISP = 0x6AC0              # |motor rate| -- ld.hu, UNSIGNED
 
-A_SHIFT, A_LEVEL = 9, 1                     # sar 0x9 ; cmp 0x1   =>  a >= 512
-A_THRESHOLD = A_LEVEL << A_SHIFT            # 512
+A_SHIFT = 9                                 # sar 0x9 ; be +4  (branches on the SAR's OWN Z flag)
+A_THRESHOLD = 1 << A_SHIFT                  # 512
+A2_LEVEL = 2                                # cmp 0x2 ; blt +4
+A2_THRESHOLD = A2_LEVEL << A_SHIFT          # 1024
 D_SHIFT, D_LEVEL, D_NEG_LEVEL = 6, 1, -1    # sar 0x6 ; cmp 0x1 / cmp -0x1
 D_THRESHOLD = D_LEVEL << D_SHIFT            # +64
 D_NEG_THRESHOLD = (D_NEG_LEVEL << D_SHIFT) - 1      # -65.  `sar` FLOORS -- see _wire_model()
-R_SHIFT, R_BIAS, R_LEVEL = 4, -0x10, 9      # shr 0x4 ; add -0x10 ; cmp 0x9
-R_THRESHOLD = (R_LEVEL - R_BIAS) << R_SHIFT         # (9 + 16) * 16 = 400  EXACT
-RATE_SCALE_CTS_PER_DEGS = 4.7121            # the settled column-rate scale
-COND_BLT, COND_BGE = V65.COND_BLT, V55.COND_BGE     # 0x6 SIGNED < ; 0xE SIGNED >=
+R_SHIFT = 9                                 # sar 0x9 ; be +4
+R_THRESHOLD = 1 << R_SHIFT                  # 512
+RATE_SCALE_CTS_PER_DEGS = 4.7121            # the settled column-rate scale, three ways
+PREREG_BIT3_DUTY = 2.750                    # 📋 percent engaged, 9,497 / 345,396 frames
+COND_BLT, COND_BGE, COND_BE = V65.COND_BLT, V55.COND_BGE, 0x2
 
-# The firmware's OWN access sets for the three probed cells, re-derived from raw bytes by the
-# two-decoder scan and asserted EXACTLY. 🛑 None of these is a zero-reader mirror -- gp-0x6bd0 has
-# FIVE readers including the 1 kHz aggregator, which is what makes the ld.h/st.h check load-bearing.
 PROBE_CENSUS = {
     A_DISP: (3, 1, [0x355C6], {"ld.hu", "st.h"}, "ld.hu",
              "`a`, r26's own weight -- producer is the LERP @0x355C6 in FUN_000352b4"),
@@ -322,7 +332,6 @@ PROBE_CENSUS = {
 # ---- instruction pins. Every halfword we emit reproduces a REAL instance in the STOCK image. ------
 PIN_MOVEA_10_R7 = (0x49256, bytes.fromhex("203e1000"))     # `movea 0x10,r0,r7`
 PIN_LDHU_69A4 = (0x3AB3A, bytes.fromhex("e4375d96"))       # BYTE-IDENTICAL: the aggregator's own read
-PIN_LDHU_69A4_ALT = (0x3575A, bytes.fromhex("e4375d96"))   # a second byte-identical instance
 PIN_LDHU_6AC0 = (0x45780, bytes.fromhex("e4374195"))       # BYTE-IDENTICAL (4 instances image-wide)
 PIN_LDH_HW1 = (0x3ACA8, bytes.fromhex("24372c95"))         # hw1 donor: a real `ld.h ...,gp,r6`
 PIN_LDH_HW1_ALT = (0x453E0, bytes.fromhex("24376c94"))     # hw1 donor #2, different cell
@@ -330,27 +339,31 @@ PIN_LDH_6BD0_DISP = (0x34726, bytes.fromhex("243f3094"))   # hw2 donor: `ld.h -0
 PIN_STH_6BD0 = (0x34730, bytes.fromhex("64373094"))        # 🛑 THE ONE-BIT TWIN: st.h, SAME reg/disp
 PIN_SAR9_R6 = (0x3E60C, bytes.fromhex("a932"))             # `sar 0x9,r6`   -- Ghidra-confirmed
 PIN_SAR6_R6 = (0x2401A, bytes.fromhex("a632"))             # `sar 0x6,r6`
-PIN_SHR4_R6 = (0x163A2, bytes.fromhex("8432"))             # `shr 0x4,r6`
-PIN_ADD_M10_R6 = (0x50382, bytes.fromhex("5032"))          # `add -0x10,r6` -- Ghidra-confirmed
 PIN_CMP_1_R6 = (0x14D46, bytes.fromhex("6132"))            # `cmp 0x1,r6`
+PIN_CMP_2_R6 = (0x19304, bytes.fromhex("6232"))            # `cmp 0x2,r6`   -- Ghidra-confirmed
 PIN_CMP_M1_R6 = (0x1BC24, bytes.fromhex("7f32"))           # `cmp -0x1,r6`
-PIN_CMP_9_R6 = (0xD398, bytes.fromhex("6932"))             # `cmp 0x9,r6`   -- Ghidra-confirmed
 PIN_SHL3_R7 = (0x4FB82, bytes.fromhex("c33a"))             # `shl 0x3,r7`   -- V31P FLASHED it 4x
 PIN_ADD_R7 = {1: (0x15404, bytes.fromhex("413a")),
               2: (0x27EF0, bytes.fromhex("423a")),
+              4: (0x2688E, bytes.fromhex("443a")),         # Ghidra-confirmed
               8: (0x17CD8, bytes.fromhex("483a"))}
 PIN_BLT4 = (0x290A8, bytes.fromhex("a605"))                # `blt +4`
 PIN_BGE4 = (0x244CE, bytes.fromhex("ae05"))                # `bge +4`
 PIN_BGE6 = (0x6B176, bytes.fromhex("be05"))                # `bge +6`
+PIN_BE4 = (0x5B38, bytes.fromhex("a205"))                  # `be +4`  -- Ghidra-confirmed
 PIN_BE6 = (0x3ABFC, bytes.fromhex("c205"))                 # ⚠ the TWIN of `bge +6` (be05)
+# 🛑 THE ARCHITECTURAL PIN: `sar imm5,rN` sets Z and the NEXT instruction branches on it, no `cmp`.
+PIN_SAR_THEN_BCOND = (0x318DA, bytes.fromhex("a942fa75"))  # `sar 0x9,r8` ; `bne 0x319CA`
 
-TAG = ("LEVERA-BOTHLANES-PLATEAU-r24_5244_5122-r26_512-LEVERB-V47damp-LEVERC-63A0x2-"
-       "0x454FE-probe-a69a4-damp6bd0-rate400-can330byte4")
+# ⚠ DELIBERATELY SHORT. V71A's note records the same trap: a fuller name overran Windows' 260-char
+# path limit and the .rwd write failed AFTER the image had been written. The length is asserted
+# BEFORE anything is written (see build()), not at the point of use.
+TAG = ("A-WHOLEAXIS-r24_5244-r26_512-V67CREEP-hwy1x-B-FactorCE-430_927-"
+       "C-63A0x2-454FE-probe-a512-a1024-damp-rate512")
 OUT = os.path.join(RWD_DIR, f"39990-TVA,A160-V72-{TAG}-0x{START:X}-0x{END:X}.rwd")
 BIN_OUT = str(plain_image_path("_v72_plain_image.bin"))
 SRC_BIN = plain_image_path("_v70_plain_image.bin")
 V67_BIN = plain_image_path("_v67_plain_image.bin")
-V47_BIN = plain_image_path("_v47_plain_image.bin")
 STOCK_BIN = stock_fw_path("code.bin")
 DECODER = os.path.join(HERE, "..", "rlog-tools", "decode_v72_probe.py")
 
@@ -395,9 +408,11 @@ def decode_fmt2(hw):
 def wire_byte4(v69a4, v6bd0, v6ac0, status_bits=0x7):
     """EXACTLY what the emitted cave computes. Mirrors the instructions, not a paraphrase."""
     r7 = W_LIVE                                     # movea 0x10,r0,r7
-    r6 = (v69a4 & 0xFFFF) >> A_SHIFT                # ld.hu (ZERO-extends) ; sar 0x9
-    if not (r6 < A_LEVEL):                          # cmp 0x1,r6 ; blt +4
+    r6 = (v69a4 & 0xFFFF) >> A_SHIFT                # ld.hu (ZERO-extends) ; sar 0x9  -- SETS Z
+    if r6 != 0:                                     # be +4   <- reads the SAR's OWN Z flag
         r7 += W_A512
+    if not (r6 < A2_LEVEL):                         # cmp 0x2,r6 ; blt +4
+        r7 += W_A1024
     r6 = _s16(v6bd0) >> D_SHIFT                     # ld.h ; sar 0x6  (Python >> floors == `sar`)
     # 🛑 THE TWO-SIDED TEST, as CONTROL FLOW, not as a formula:
     #     cmp 0x1,r6  ; bge SET      -- s >=  1  => x is large POSITIVE
@@ -405,39 +420,45 @@ def wire_byte4(v69a4, v6bd0, v6ac0, status_bits=0x7):
     #                   fall through => SET       -- s <= -2  => x is large NEGATIVE
     if (r6 >= D_LEVEL) or not (r6 >= D_NEG_LEVEL):
         r7 += W_DAMPABS
-    r6 = (v6ac0 & 0xFFFF) >> R_SHIFT                # ld.hu ; shr 0x4
-    r6 = r6 + R_BIAS                                # add -0x10,r6
-    if not (r6 < R_LEVEL):                          # cmp 0x9,r6 ; blt +4
-        r7 += W_RATE400
+    r6 = (v6ac0 & 0xFFFF) >> R_SHIFT                # ld.hu ; sar 0x9  -- SETS Z
+    if r6 != 0:                                     # be +4
+        r7 += W_RATE512
     r7 <<= PAYLOAD_SHIFT                            # shl 0x3,r7
     return (r7 & 0xFF) | (status_bits & PAYLOAD_KEEP_MASK)
 
 
+# ★ bit5 => bit6 is STRUCTURAL, so only 3 of the 4 (bit6,bit5) combinations are reachable.
 LEGAL_PAYLOADS = {BIT_LIVE | a | b | c
-                  for a in (0, BIT_A512) for b in (0, BIT_DAMPABS) for c in (0, BIT_RATE400)}
+                  for a in (0, BIT_A512, BIT_A512 | BIT_A1024)
+                  for b in (0, BIT_DAMPABS) for c in (0, BIT_RATE512)}
 
 
 def _wire_model():
-    """The rungs' semantics, exhaustively: every halfword pattern and every byte value."""
-    # ---- bit6, over ALL 65,536 patterns. The cell is read `ld.hu` ⇒ zero-extended ⇒ `sar` == `shr`.
+    """The rungs' semantics, exhaustively: every halfword pattern."""
+    # ---- bit6 and bit5, over ALL 65,536 patterns, plus the monotone invariant -------------------
     for raw in range(0x10000):
         b = wire_byte4(raw, 0, 0)
         assert bool(b & BIT_A512) == (raw >= A_THRESHOLD), \
             f"bit6 is not `gp-0x69a4 >= {A_THRESHOLD}` at {raw}"
-    # 🛑 `sar` vs `shr` on the zero-extended operand: PROVEN equal, not assumed. The donor for
-    # `shr 0x9,r6` does not exist in the stock image and `sar 0x9,r6` does (0x3E60C), so the cave
-    # emits `sar` -- legitimate ONLY because ld.hu makes the operand non-negative.
-    for raw in range(0x10000):
-        assert (raw >> A_SHIFT) == (raw >> A_SHIFT), "unreachable"
-        assert _s16(raw) >> A_SHIFT != raw >> A_SHIFT or raw < 0x8000, "unreachable"
+        assert bool(b & BIT_A1024) == (raw >= A2_THRESHOLD), \
+            f"bit5 is not `gp-0x69a4 >= {A2_THRESHOLD}` at {raw}"
+        assert not (b & BIT_A1024) or (b & BIT_A512), \
+            f"the bit5 => bit6 MONOTONE INVARIANT is violated at {raw}"
+    assert not wire_byte4(511, 0, 0) & BIT_A512 and wire_byte4(512, 0, 0) & BIT_A512, \
+        "bit6 does not switch exactly between 511 and 512"
+    assert not wire_byte4(1023, 0, 0) & BIT_A1024 and wire_byte4(1024, 0, 0) & BIT_A1024, \
+        "bit5 does not switch exactly between 1023 and 1024"
+    # 🛑 `sar` vs `shr` on the zero-extended operand: the cave emits `sar` because `shr 0x9,r6` has
+    # NO donor in the stock image and `sar 0x9,r6` does (0x3E60C). Legitimate ONLY because ld.hu
+    # makes the operand non-negative -- proven here, not assumed.
     assert all((raw >> A_SHIFT) >= 0 for raw in range(0x10000)), \
         "a zero-extended operand went negative -- `sar` would stop equalling `shr`"
 
     # ---- bit4, over ALL 65,536 halfword patterns, including the one-count asymmetry --------------
     for raw in range(0x10000):
         x = _s16(raw)
-        b = wire_byte4(0, raw, 0)
-        assert bool(b & BIT_DAMPABS) == (x >= D_THRESHOLD or x <= D_NEG_THRESHOLD), \
+        assert bool(wire_byte4(0, raw, 0) & BIT_DAMPABS) == \
+            (x >= D_THRESHOLD or x <= D_NEG_THRESHOLD), \
             f"bit4 is not `x >= {D_THRESHOLD} or x <= {D_NEG_THRESHOLD}` at x = {x}"
     mismatch = {_s16(r) for r in range(0x10000)
                 if bool(wire_byte4(0, r, 0) & BIT_DAMPABS) != (abs(_s16(r)) >= D_THRESHOLD)}
@@ -449,24 +470,21 @@ def _wire_model():
     assert wire_byte4(0, 0x0100, 0) & BIT_DAMPABS, "bit4 does not fire at x = +256"
     assert not wire_byte4(0, 0x0000, 0) & BIT_DAMPABS, "bit4 fires at x = 0"
 
-    # ---- bit3, over ALL 65,536 patterns. THE THRESHOLD IS EXACTLY 400. ---------------------------
+    # ---- bit3, over ALL 65,536 patterns ----------------------------------------------------------
     for raw in range(0x10000):
-        assert bool(wire_byte4(0, 0, raw) & BIT_RATE400) == (raw >= R_THRESHOLD), \
+        assert bool(wire_byte4(0, 0, raw) & BIT_RATE512) == (raw >= R_THRESHOLD), \
             f"bit3 is not `gp-0x6ac0 >= {R_THRESHOLD}` at {raw}"
-    assert R_THRESHOLD == 400, f"bit3's threshold is {R_THRESHOLD}, not the pre-registered 400"
-    assert not wire_byte4(0, 0, 399) & BIT_RATE400 and wire_byte4(0, 0, 400) & BIT_RATE400, \
-        "bit3 does not switch exactly between 399 and 400"
-    # `add -0x10,r6` makes r6 NEGATIVE for small inputs, so `blt` (SIGNED) is required and its
-    # compare must not overflow. Both proven over the reachable range rather than argued.
-    shifted = {((raw & 0xFFFF) >> R_SHIFT) + R_BIAS for raw in range(0x10000)}
-    assert min(shifted) == -16 and max(shifted) == (0xFFFF >> R_SHIFT) - 16
-    assert -0x8000 < min(shifted) - R_LEVEL and max(shifted) - R_LEVEL < 0x7FFF, \
-        "`cmp 0x9,r6` can overflow -- `blt` would stop meaning `<` and the rung would invert"
+    assert not wire_byte4(0, 0, 511) & BIT_RATE512 and wire_byte4(0, 0, 512) & BIT_RATE512, \
+        "bit3 does not switch exactly between 511 and 512"
+    assert R_THRESHOLD >= 400, \
+        "bit3's threshold is below the 400 HARD FLOOR -- at 250 the retired 8x-smaller scale fires " \
+        "(0.058%) and the rung stops discriminating between the two axis scales"
 
     # ---- 🛑 THE SHIFT MUST NEVER REACH THE PRESERVED STATUS BITS ---------------------------------
-    reachable_r7 = {W_LIVE + a + b + c for a in (0, W_A512) for b in (0, W_DAMPABS)
-                    for c in (0, W_RATE400)}
-    assert max(reachable_r7) == 0x1B and min(reachable_r7) == W_LIVE
+    reachable_r7 = {W_LIVE + a + b + c
+                    for a in (0, W_A512, W_A512 + W_A1024)
+                    for b in (0, W_DAMPABS) for c in (0, W_RATE512)}
+    assert max(reachable_r7) == 0x1F and min(reachable_r7) == W_LIVE
     for r7 in reachable_r7:
         assert (r7 << PAYLOAD_SHIFT) <= 0xF8, f"r7 = 0x{r7:02X} shifts past the byte"
         assert (r7 << PAYLOAD_SHIFT) & PAYLOAD_KEEP_MASK == 0, \
@@ -474,19 +492,18 @@ def _wire_model():
     assert (W_LIVE << PAYLOAD_SHIFT) == 0x80, \
         "the seed does NOT land on bit7 after the shift -- the VOID sentinel would be broken"
     for status in range(8):
-        for inputs in ((0, 0, 0), (0xFFFF, 0x7FFF, 0xFFFF), (512, 0xFF00, 400)):
+        for inputs in ((0, 0, 0), (0xFFFF, 0x7FFF, 0xFFFF), (512, 0xFF00, 512)):
             assert wire_byte4(*inputs, status_bits=status) & PAYLOAD_KEEP_MASK == status, \
                 "the preserved STEER_SENSOR_STATUS bits 2:0 are not passed through untouched"
-    # ★ bit5 IS STRUCTURALLY ZERO -- the dropped rung. A one-way build falsifier, asserted so the
-    # decoder cannot claim more than this and so a future re-cut cannot silently reuse the weight.
     reach = {wire_byte4(a, d, r) & 0xF8
-             for a in (0, 511, 512, 0xFFFF) for d in (0, 0x0100, 0xFF00, 0x7FFF)
-             for r in (0, 399, 400, 0xFFFF)}
-    assert all(not (p & BIT_UNUSED5) for p in reach), \
-        "bit5 is SET somewhere -- it is the DROPPED rung and must read 0 in every frame"
+             for a in (0, 511, 512, 1023, 1024, 0xFFFF)
+             for d in (0, 0x0100, 0xFF00, 0x7FFF) for r in (0, 511, 512, 0xFFFF)}
     assert reach <= LEGAL_PAYLOADS, f"the wire model reaches {reach - LEGAL_PAYLOADS}, outside LEGAL"
-    assert len(LEGAL_PAYLOADS) == 8, f"{len(LEGAL_PAYLOADS)} legal payloads, expected 8"
+    assert len(LEGAL_PAYLOADS) == 12, \
+        f"{len(LEGAL_PAYLOADS)} legal payloads, expected 12 (bit5 => bit6 forbids 4 of 16)"
     assert all(p & BIT_LIVE for p in LEGAL_PAYLOADS), "a legal payload lacks the liveness bit"
+    assert not any((p & BIT_A1024) and not (p & BIT_A512) for p in LEGAL_PAYLOADS), \
+        "a legal payload has bit5 set with bit6 clear -- the monotone invariant must forbid it"
 
 
 def _self_check_encoders():
@@ -497,14 +514,23 @@ def _self_check_encoders():
     V65._self_check_encoders()               # chains down through V59/V58/V57/V55/V54/FF
     src = Path(STOCK_BIN).read_bytes()
 
-    pins = [PIN_MOVEA_10_R7, PIN_LDHU_69A4, PIN_LDHU_69A4_ALT, PIN_LDHU_6AC0, PIN_LDH_HW1,
-            PIN_LDH_HW1_ALT, PIN_LDH_6BD0_DISP, PIN_STH_6BD0, PIN_SAR9_R6, PIN_SAR6_R6,
-            PIN_SHR4_R6, PIN_ADD_M10_R6, PIN_CMP_1_R6, PIN_CMP_M1_R6, PIN_CMP_9_R6,
-            PIN_SHL3_R7, PIN_BLT4, PIN_BGE4, PIN_BGE6, PIN_BE6]
+    pins = [PIN_MOVEA_10_R7, PIN_LDHU_69A4, PIN_LDHU_6AC0, PIN_LDH_HW1, PIN_LDH_HW1_ALT,
+            PIN_LDH_6BD0_DISP, PIN_STH_6BD0, PIN_SAR9_R6, PIN_SAR6_R6, PIN_CMP_1_R6,
+            PIN_CMP_2_R6, PIN_CMP_M1_R6, PIN_SHL3_R7, PIN_BLT4, PIN_BGE4, PIN_BGE6,
+            PIN_BE4, PIN_BE6, PIN_SAR_THEN_BCOND]
     pins += list(PIN_ADD_R7.values())
     for addr, raw in pins:
         assert bytes(src[addr:addr + len(raw)]) == raw, \
             f"the donor @0x{addr:05X} is not {raw.hex()} on the STOCK image -- re-pin"
+
+    # 🛑 THE ARCHITECTURAL CLAIM, PINNED: `sar imm5,rN` sets Z and the NEXT halfword is a Bcond that
+    # reads it, with NO intervening `cmp`. Ghidra-confirmed at 0x318DA (and Honda repeats the idiom
+    # at 0x318E2 and 0x318EA). Decoded here rather than trusted as a byte blob.
+    _sar, _bc = struct.unpack("<HH", PIN_SAR_THEN_BCOND[1])
+    assert ((_sar >> 5) & 0x3F) == 0x15, "the sar->Bcond donor's first halfword is not a `sar`"
+    assert (_sar & 0x1F) == A_SHIFT, f"the donor's shift is {_sar & 0x1F}, not 0x{A_SHIFT:x}"
+    assert ((_bc >> 7) & 0xF) == 0xB, "the donor's second halfword is not a Bcond"
+    assert (_bc & 0xF) in (COND_BE, 0xA), "the donor's Bcond is not be/bne -- it does not test Z"
 
     # ---- bit6's load: `ld.hu -0x69a4[gp],r6`, BYTE-IDENTICAL to the aggregator's own read --------
     ours = FF.ldhu(A_DISP, R6)
@@ -523,8 +549,8 @@ def _self_check_encoders():
     assert ours != FF.sth(R6, -RATE_DISP, GP), "the rate load collapsed onto an st.h -- a WRITE"
 
     # ---- bit4's load. 🛑🛑 THE ONE-BIT TRAP, IN ITS WORST FORM: ld.h = 0x39, st.h = 0x3B, and the
-    # firmware's own `st.h r6,-0x6bd0[gp]` @0x34730 carries the SAME register and the SAME
-    # displacement. gp-0x6bd0 has FIVE real readers, so a slip WRITES a live 1 kHz lane.
+    # firmware's own `st.h r6,-0x6bd0[gp]` @0x34730 carries the SAME register and displacement.
+    # gp-0x6bd0 has FIVE real readers, so a slip WRITES a live 1 kHz lane.
     ours = V55.ldh(DAMP_DISP, R6)
     hw1, hw2 = struct.unpack("<HH", ours)
     assert ((hw1 >> 5) & 0x3F) == 0x39, \
@@ -544,30 +570,25 @@ def _self_check_encoders():
     # ---- the 2-byte instructions -----------------------------------------------------------------
     assert V55.sar(A_SHIFT, R6) == PIN_SAR9_R6[1], "sar 0x9,r6 != the real one @0x3E60C"
     assert V55.sar(D_SHIFT, R6) == PIN_SAR6_R6[1], "sar 0x6,r6 != the real one @0x2401A"
-    assert FF.shr(R_SHIFT, R6) == PIN_SHR4_R6[1], "shr 0x4,r6 != the real one @0x163A2"
     assert V55.sar(D_SHIFT, R6) != FF.shr(D_SHIFT, R6), \
         "bit4's shift collapsed onto a LOGICAL shr -- every negative damper value would read huge"
-    assert FF.shr(R_SHIFT, R6) != V55.sar(R_SHIFT, R6), "bit3's shr collapsed onto sar"
-    assert add_imm5(R_BIAS, R6) == PIN_ADD_M10_R6[1], "add -0x10,r6 != the real one @0x50382"
-    assert decode_fmt2(struct.unpack("<H", PIN_ADD_M10_R6[1])[0]) == \
-        {"imm5": 0x10, "opcode": 0x12, "reg2": R6}, \
-        "add -0x10 does not encode as imm5 0x10 -- Format II imm5 is SIGNED and -16 is 0b10000"
-    assert add_imm5(R_BIAS, R6) != V55.cmp_imm5(R_BIAS, R6), "add -0x10 collapsed onto cmp"
-    assert V55.cmp_imm5(A_LEVEL, R6) == V55.cmp_imm5(D_LEVEL, R6) == PIN_CMP_1_R6[1], \
-        "cmp 0x1,r6 encoding changed"
+    assert V55.cmp_imm5(D_LEVEL, R6) == PIN_CMP_1_R6[1], "cmp 0x1,r6 encoding changed"
+    assert V55.cmp_imm5(A2_LEVEL, R6) == PIN_CMP_2_R6[1], "cmp 0x2,r6 != the real one @0x19304"
     assert V55.cmp_imm5(D_NEG_LEVEL, R6) == PIN_CMP_M1_R6[1], "cmp -0x1,r6 != the real one @0x1BC24"
-    assert V55.cmp_imm5(R_LEVEL, R6) == PIN_CMP_9_R6[1], "cmp 0x9,r6 != the real one @0xD398"
     assert decode_fmt2(struct.unpack("<H", PIN_CMP_M1_R6[1])[0])["imm5"] == 0x1F, \
         "cmp -0x1 does not encode as imm5 0x1F"
     assert FF.bcond(COND_BLT, +4) == PIN_BLT4[1], "blt +4 != the real one @0x290A8"
     assert FF.bcond(COND_BGE, +4) == PIN_BGE4[1], "bge +4 != the real one @0x244CE"
     assert FF.bcond(COND_BGE, +6) == PIN_BGE6[1], "bge +6 != the real one @0x6B176"
-    # 🛑🛑 THE CONDITION-NIBBLE TWINS. `bge +6` is be05 and `be +6` is b205 -- one nibble apart, and
-    # the wrong one INVERTS a rung silently. This kit has lost time to exactly that confusion.
+    assert FF.bcond(COND_BE, +4) == PIN_BE4[1], "be +4 != the real one @0x5B38"
+    # 🛑🛑 THE CONDITION-NIBBLE TWINS. `be +4` = a205, `bge +4` = ae05, `blt +4` = a605 -- ONE NIBBLE
+    # apart, and the wrong one INVERTS a rung silently. This kit has lost time to exactly that.
+    assert len({FF.bcond(COND_BE, +4), FF.bcond(COND_BGE, +4), FF.bcond(COND_BLT, +4)}) == 3, \
+        "two of be/bge/blt collapsed onto each other at +4"
+    assert FF.bcond(COND_BE, +4) != FF.bcond(0xA, +4), "be collapsed onto its negation bne"
     assert FF.bcond(COND_BGE, +6) != PIN_BE6[1], "bge +6 collapsed onto `be +6` (b205 @0x3ABFC)"
-    assert FF.bcond(COND_BGE, +6) != FF.bcond(COND_BLT, +6), "bge collapsed onto its negation blt"
-    assert COND_BGE == 0xE and COND_BLT == 0x6 and COND_BGE != V55.COND_BL, \
-        "bge/blt nibbles moved, or bge collapsed onto the UNSIGNED bl"
+    assert COND_BGE == 0xE and COND_BLT == 0x6 and COND_BE == 0x2 and COND_BGE != V55.COND_BL, \
+        "a condition nibble moved, or bge collapsed onto the UNSIGNED bl"
     for imm, (addr, raw) in PIN_ADD_R7.items():
         assert add_imm5(imm, R7) == raw, f"add 0x{imm:x},r7 != the real one @0x{addr:05X}"
         assert add_imm5(imm, R7) != V55.cmp_imm5(imm, R7), \
@@ -580,7 +601,7 @@ def _self_check_encoders():
         "shl collapsed onto a RIGHT shift -- the payload would land in the wrong bits"
     assert FF.movea(W_LIVE, R0, R7) == PIN_MOVEA_10_R7[1], "movea 0x10,r0,r7 != the real one @0x49256"
 
-    weights = (W_LIVE, W_A512, W_UNUSED_BIT5, W_DAMPABS, W_RATE400)
+    weights = (W_LIVE, W_A512, W_A1024, W_DAMPABS, W_RATE512)
     assert len(set(weights)) == 5 and all(w & (w - 1) == 0 for w in weights), "weights not distinct"
     assert sum(weights) == 0x1F, f"weights must occupy exactly bits 4:0, got 0x{sum(weights):02X}"
     assert sum(w << PAYLOAD_SHIFT for w in weights) == 0xF8, "payload bits are not exactly 7:3"
@@ -592,26 +613,26 @@ def build_cave():
 
         movea 0x10,r0,r7       ; r7 = 0x10   bit7 LIVENESS, in PRE-SHIFT weights
         ld.hu -0x69a4[gp],r6   ; `a` -- r26's own weight. UNSIGNED (byte-identical to 0x3AB3A)
-        sar   0x9,r6           ; units of 512.  == `shr` here: ld.hu zero-extends
-        cmp   0x1,r6
+        sar   0x9,r6           ; units of 512.  🛑 SETS Z -- the next branch reads it, no `cmp`
+        be    +4               ; Z set => a < 512 -> skip
+        add   0x8,r7           ; bit6 = gp-0x69a4 >= 512     ★★★★ THE UNMEASURED WEIGHT
+        cmp   0x2,r6
         blt   +4
-        add   0x8,r7           ; bit6 = gp-0x69a4 >= 512      ★★★★ THE UNMEASURED WEIGHT
-      g0:
-        ld.h  -0x6bd0[gp],r6   ; the base-assist damper output, SIGNED
+        add   0x4,r7           ; bit5 = gp-0x69a4 >= 1024    ★ bit5 => bit6, MONOTONE
+      g1:
+        ld.h  -0x6bd0[gp],r6   ; the base-assist damper output, SIGNED. 🛑 op MUST be 0x39
         sar   0x6,r6           ; ARITHMETIC: units of 64, sign preserved
         cmp   0x1,r6
         bge   +6               ; s >=  1  =>  x >= +64        -> SET
         cmp   -0x1,r6
         bge   +4               ; s >= -1  =>  |x| is small    -> SKIP
         add   0x2,r7           ; bit4 = |gp-0x6bd0| >= 64, TWO-SIDED   (fallthrough: s <= -2)
-      g1:
-        ld.hu -0x6ac0[gp],r6   ; |motor rate| -- the gain-scheduling index. UNSIGNED
-        shr   0x4,r6           ; units of 16 (LOGICAL: the cell is unsigned)
-        add   -0x10,r6         ; -= 16
-        cmp   0x9,r6           ; (v >> 4) - 16 >= 9  <=>  v >= 400   EXACT, not a power of two
-        blt   +4
-        add   0x1,r7           ; bit3 = gp-0x6ac0 >= 400   📋 PRE-REGISTERED
       g2:
+        ld.hu -0x6ac0[gp],r6   ; |motor rate| -- the gain-scheduling index. UNSIGNED
+        sar   0x9,r6           ; 🛑 SETS Z
+        be    +4
+        add   0x1,r7           ; bit3 = gp-0x6ac0 >= 512   📋 PRE-REGISTERED at 2.750%
+      g3:
         shl   0x3,r7           ; the 5-bit field -> bits 7:3  (V31P's FLASHED idiom; Honda's @0x4FB82)
         ld.bu -0x1514[gp],r6   ; CAN-330 payload byte4
         andi  0x7,r6,r6        ; preserve live STEER_SENSOR_STATUS bits 2:0
@@ -623,26 +644,38 @@ def build_cave():
     _self_check_encoders()
     body = bytearray()
     listing = []
+    r6_writers = []
 
-    def emit(raw, text):
+    def emit(raw, text, writes_r6=False):
+        if writes_r6:
+            r6_writers.append(CAVE_BASE + len(body))
         listing.append((CAVE_BASE + len(body), raw, text))
         body.extend(raw)
 
     emit(FF.movea(W_LIVE, R0, R7), "movea 0x10,r0,r7    ; bit7 LIVENESS (pre-shift weight 0x10)")
 
-    # ---- bit6: `a`, the unmeasured weight ---------------------------------------------------------
-    emit(FF.ldhu(A_DISP, R6), f"ld.hu -0x{A_DISP:04x}[gp],r6 ; `a` = r26's own weight (UNSIGNED)")
-    emit(V55.sar(A_SHIFT, R6), f"sar 0x{A_SHIFT:x},r6           ; units of {A_THRESHOLD}")
-    emit(V55.cmp_imm5(A_LEVEL, R6), f"cmp 0x{A_LEVEL:x},r6")
+    # ---- bit6 + bit5: ONE load of `a`, shared -----------------------------------------------------
+    emit(FF.ldhu(A_DISP, R6), f"ld.hu -0x{A_DISP:04x}[gp],r6 ; `a` = r26's own weight (UNSIGNED)",
+         writes_r6=True)
+    sar_a = len(listing)
+    emit(V55.sar(A_SHIFT, R6), f"sar 0x{A_SHIFT:x},r6           ; units of {A_THRESHOLD}  🛑 SETS Z",
+         writes_r6=True)
     br_a = len(listing)
-    emit(FF.bcond(COND_BLT, +4), "blt +4              ; skip -> g0")
+    emit(FF.bcond(COND_BE, +4), "be +4               ; Z set => a < 512 -> skip (reads the sar's Z)")
     emit(add_imm5(W_A512, R7), f"add 0x{W_A512:x},r7          ; bit6 = gp-0x{A_DISP:04x} >= {A_THRESHOLD}")
-    g0 = CAVE_BASE + len(body)
+    emit(V55.cmp_imm5(A2_LEVEL, R6), f"cmp 0x{A2_LEVEL:x},r6")
+    br_a2 = len(listing)
+    emit(FF.bcond(COND_BLT, +4), "blt +4              ; skip -> g1")
+    emit(add_imm5(W_A1024, R7),
+         f"add 0x{W_A1024:x},r7          ; bit5 = gp-0x{A_DISP:04x} >= {A2_THRESHOLD}   ★ bit5 => bit6")
+    g1 = CAVE_BASE + len(body)
 
     # ---- bit4: ONE load, ONE shift, TWO signed bounds ---------------------------------------------
     emit(V55.ldh(DAMP_DISP, R6),
-         f"ld.h -0x{DAMP_DISP:04x}[gp],r6 ; base-assist damper out (SIGNED). 🛑 op MUST be 0x39")
-    emit(V55.sar(D_SHIFT, R6), f"sar 0x{D_SHIFT:x},r6           ; ARITHMETIC -- units of {D_THRESHOLD}")
+         f"ld.h -0x{DAMP_DISP:04x}[gp],r6 ; base-assist damper out (SIGNED). 🛑 op MUST be 0x39",
+         writes_r6=True)
+    emit(V55.sar(D_SHIFT, R6), f"sar 0x{D_SHIFT:x},r6           ; ARITHMETIC -- units of {D_THRESHOLD}",
+         writes_r6=True)
     emit(V55.cmp_imm5(D_LEVEL, R6), f"cmp 0x{D_LEVEL:x},r6           ; the POSITIVE bound")
     br_hi = len(listing)
     emit(FF.bcond(COND_BGE, +6), f"bge +6              ; s >= {D_LEVEL} => x >= +{D_THRESHOLD} -> SET")
@@ -651,33 +684,53 @@ def build_cave():
     emit(FF.bcond(COND_BGE, +4), f"bge +4              ; s >= {D_NEG_LEVEL} => small -> SKIP")
     emit(add_imm5(W_DAMPABS, R7),
          f"add 0x{W_DAMPABS:x},r7          ; bit4 = x >= +{D_THRESHOLD} or x <= {D_NEG_THRESHOLD}  TWO-SIDED")
-    g1 = CAVE_BASE + len(body)
-
-    # ---- bit3: the EXACT 400 threshold, via shr + a bias + cmp -----------------------------------
-    emit(FF.ldhu(RATE_DISP, R6), f"ld.hu -0x{RATE_DISP:04x}[gp],r6 ; |motor rate| (UNSIGNED)")
-    emit(FF.shr(R_SHIFT, R6), f"shr 0x{R_SHIFT:x},r6           ; LOGICAL -- units of {1 << R_SHIFT}")
-    emit(add_imm5(R_BIAS, R6), f"add -0x{-R_BIAS:x},r6         ; -= {-R_BIAS}")
-    emit(V55.cmp_imm5(R_LEVEL, R6), f"cmp 0x{R_LEVEL:x},r6           ; (v>>4)-16 >= 9 <=> v >= {R_THRESHOLD}")
-    br_r = len(listing)
-    emit(FF.bcond(COND_BLT, +4), "blt +4              ; skip -> g2")
-    emit(add_imm5(W_RATE400, R7),
-         f"add 0x{W_RATE400:x},r7          ; bit3 = gp-0x{RATE_DISP:04x} >= {R_THRESHOLD}  EXACT")
     g2 = CAVE_BASE + len(body)
 
+    # ---- bit3: the rate index ---------------------------------------------------------------------
+    emit(FF.ldhu(RATE_DISP, R6), f"ld.hu -0x{RATE_DISP:04x}[gp],r6 ; |motor rate| (UNSIGNED)",
+         writes_r6=True)
+    sar_r = len(listing)
+    emit(V55.sar(R_SHIFT, R6), f"sar 0x{R_SHIFT:x},r6           ; units of {R_THRESHOLD}  🛑 SETS Z",
+         writes_r6=True)
+    br_r = len(listing)
+    emit(FF.bcond(COND_BE, +4), "be +4               ; Z set => rate < 512 -> skip")
+    emit(add_imm5(W_RATE512, R7),
+         f"add 0x{W_RATE512:x},r7          ; bit3 = gp-0x{RATE_DISP:04x} >= {R_THRESHOLD}  📋 PRE-REGISTERED")
+    g3 = CAVE_BASE + len(body)
+
     emit(V54.shl(PAYLOAD_SHIFT, R7), "shl 0x3,r7          ; the 5-bit field -> bits 7:3")
-    emit(V55.ldbu_any(-PAYLOAD_BYTE4_DISP, R6), "ld.bu -0x1514[gp],r6 ; CAN-330 payload byte4")
-    emit(V54.andi(PAYLOAD_KEEP_MASK, R6, R6), "andi 0x7,r6,r6      ; keep live status bits 2:0")
-    emit(V54.or_rr(R7, R6), "or r7,r6")
+    emit(V55.ldbu_any(-PAYLOAD_BYTE4_DISP, R6), "ld.bu -0x1514[gp],r6 ; CAN-330 payload byte4",
+         writes_r6=True)
+    emit(V54.andi(PAYLOAD_KEEP_MASK, R6, R6), "andi 0x7,r6,r6      ; keep live status bits 2:0",
+         writes_r6=True)
+    emit(V54.or_rr(R7, R6), "or r7,r6", writes_r6=True)
     emit(FF.stb(R6, -PAYLOAD_BYTE4_DISP, GP), "st.b r6,-0x1514[gp] ; THE ONLY STORE")
-    emit(HOOK_STOCK, "movea -0x1518,gp,r6 ; re-exec displaced instruction")
+    emit(HOOK_STOCK, "movea -0x1518,gp,r6 ; re-exec displaced instruction", writes_r6=True)
     emit(FF.JMP_LP, "jmp [lp]            ; -> 0x55C12")
 
+    # ---- 🛑🛑 FLAG LIVENESS: each `sar` must be IMMEDIATELY followed by its own `be`. -------------
+    # NEW to this kit and load-bearing: anything inserted between them would make the branch read the
+    # PREVIOUS comparison's flags -- a silent, plausible-looking wrong answer.
+    for sar_idx, br_idx, name in ((sar_a, br_a, "bit6"), (sar_r, br_r, "bit3")):
+        assert br_idx == sar_idx + 1, \
+            f"{name}: {br_idx - sar_idx - 1} instruction(s) sit between the `sar` and its `be` -- " \
+            "the branch would read STALE flags"
+        s_addr, s_raw, _ = listing[sar_idx]
+        b_addr, b_raw, _ = listing[br_idx]
+        assert s_addr + 2 == b_addr and len(s_raw) == 2, f"{name}: the sar/be pair is not adjacent"
+        assert ((struct.unpack("<H", s_raw)[0] >> 5) & 0x3F) == 0x15, f"{name}: not a `sar`"
+        assert struct.unpack("<H", b_raw)[0] & 0xF == COND_BE, \
+            f"{name}: the flag branch is not `be` -- `bne` would INVERT the rung"
+
     # ---- GATE 2a: every branch lands EXACTLY on its label, located BY POSITION -------------------
-    for br_idx, label, cond, name in ((br_a, g0, COND_BLT, "bit6"), (br_r, g2, COND_BLT, "bit3")):
+    # ⚠ The label is the address of the instruction AFTER the setter (listing[br+2]), NOT
+    # `branch address + 4` -- that form is self-referential and would pass on any displacement.
+    for br_idx, label, cond, name in ((br_a, listing[br_a + 2][0], COND_BE, "bit6"),
+                                      (br_a2, g1, COND_BLT, "bit5"),
+                                      (br_r, listing[br_r + 2][0], COND_BE, "bit3")):
         addr, raw, _ = listing[br_idx]
         assert len(raw) == 2 and raw[1] == 0x05, f"{name}: listing[{br_idx}] is not a Bcond"
-        assert addr + 4 == label, \
-            f"{name}: branch target 0x{addr + 4:05X} != label 0x{label:05X}"
+        assert addr + 4 == label, f"{name}: target 0x{addr + 4:05X} != label 0x{label:05X}"
         assert struct.unpack("<H", raw)[0] & 0xF == cond, \
             f"{name}: branch condition is 0x{struct.unpack('<H', raw)[0] & 0xF:X}, not 0x{cond:X} -- " \
             "the wrong condition INVERTS the whole rung"
@@ -690,18 +743,15 @@ def build_cave():
     setter_addr = listing[br_lo + 1][0]
     assert hi_addr + 6 == setter_addr, \
         f"bit4 high bound: `bge +6` @0x{hi_addr:05X} does not land on the setter 0x{setter_addr:05X}"
-    assert lo_addr + 4 == g1, f"bit4 low bound: `bge +4` @0x{lo_addr:05X} does not land on g1"
+    assert lo_addr + 4 == g2, f"bit4 low bound: `bge +4` @0x{lo_addr:05X} does not land on g2"
     for raw, which in ((hi_raw, "high"), (lo_raw, "low")):
         assert struct.unpack("<H", raw)[0] & 0xF == COND_BGE, \
             f"bit4 {which} bound is not `bge` (0x{COND_BGE:X}) -- the rung would invert"
         assert raw != PIN_BE6[1], f"bit4 {which} bound emitted `be` (b205), not `bge` (be05)"
-    assert (g0, g1, g2) == (0xC4B44, 0xC4B54, 0xC4B62), \
-        f"the cave geometry drifted: g0/g1/g2 = {hex(g0)}/{hex(g1)}/{hex(g2)}"
-    assert [listing[i][0] for i in (br_a, br_hi, br_lo, br_r)] == \
-        [0xC4B40, 0xC4B4C, 0xC4B50, 0xC4B5E], "the branch addresses drifted from the design"
+    assert (g1, g2, g3) == (0xC4B48, 0xC4B58, 0xC4B62), \
+        f"the cave geometry drifted: g1/g2/g3 = {hex(g1)}/{hex(g2)}/{hex(g3)}"
 
-    # ---- GATE 2b: r6/r7 LIVENESS. Only a rung's own load/shift/bias may write r6 -----------------
-    r6_writers = {listing[i][0] for i in (1, 2, 6, 7, 13, 14, 15)}   # ld.hu,sar | ld.h,sar | ld.hu,shr,add
+    # ---- GATE 2b: r6/r7 LIVENESS. Only a rung's own load/shift may write r6 ----------------------
     for idx in range(0, br_r + 2):
         addr, raw, text = listing[idx]
         if len(raw) == 2 and raw[1] == 0x05:
@@ -712,17 +762,18 @@ def build_cave():
         want = R6 if addr in r6_writers else R7
         assert (hw >> 11) == want, \
             f"r6/r7 liveness: listing[{idx}] '{text}' writes r{hw >> 11}, not r{want}"
-    # 🛑 bit4's negative bound reads r6 THREE instructions after the `sar` that produced it, so
-    # r6-liveness across that window is load-bearing and is asserted rather than assumed.
-    for idx in range(8, br_lo + 1):
-        _a, raw, text = listing[idx]
-        hw = struct.unpack_from("<H", raw, 0)[0]
-        assert (len(raw) == 2 and raw[1] == 0x05) or ((hw >> 5) & 0x3F) in (0x13, 0x0F) \
-            or (hw >> 11) == R7, f"'{text}' clobbers r6 between bit4's shift and its second bound"
+    # 🛑 bit5's `cmp` reads r6 two instructions after bit6's `sar`, and bit4's negative bound reads
+    # it three after its own. Both windows are asserted, not assumed.
+    for lo_i, hi_i, what in ((sar_a + 1, br_a2, "bit6's shift and bit5's test"),
+                             (br_hi - 1, br_lo, "bit4's shift and its second bound")):
+        for idx in range(lo_i, hi_i + 1):
+            _a, raw, text = listing[idx]
+            hw = struct.unpack_from("<H", raw, 0)[0]
+            assert (len(raw) == 2 and raw[1] == 0x05) or ((hw >> 5) & 0x3F) in (0x13, 0x0F) \
+                or (hw >> 11) == R7, f"'{text}' clobbers r6 between {what}"
     for disp, mk in ((A_DISP, FF.ldhu(A_DISP, R6)), (RATE_DISP, FF.ldhu(RATE_DISP, R6)),
                      (DAMP_DISP, V55.ldh(DAMP_DISP, R6))):
         assert sum(1 for _, r, _ in listing if r == mk) == 1, f"gp-0x{disp:04x} is loaded != once"
-    # the cave must NOT read any cell it does not declare -- notably the retired V70/V71 mirrors
     for stale in (0x6ADA, 0x6ADC, 0x671D, 0x67FA):
         assert not [1 for _, r, _ in listing
                     if r in (V55.ldh(stale, R6), FF.ldhu(stale, R6), V55.ldbu_any(-stale, R6))], \
@@ -744,9 +795,9 @@ def build_cave():
     assert body.count(HOOK_STOCK) == 1, "displaced movea appears more than once"
     assert len(body) % 2 == 0, "cave length must be halfword-aligned"
     assert CAVE_BASE + len(body) <= CAVE_HARD_LIMIT, "cave overruns the hard limit"
-    assert len(body) == 4 + 12 + 16 + 14 + 2 + 20 == 68, \
+    assert len(body) == 4 + 16 + 16 + 10 + 2 + 20 == 68, \
         f"the cave is {len(body)}B, the budget says 68 " \
-        "(seed 4 + bit6 12 + bit4 16 + bit3 14 + shl 2 + tail 20)"
+        "(seed 4 + bit6/bit5 16 + bit4 16 + bit3 10 + shl 2 + tail 20)"
     assert len(body) == CAVE_EXTENT, \
         f"cave {len(body)}B != the PROVEN {CAVE_EXTENT}B extent -- caves brick ECUs"
     return bytes(body), listing
@@ -765,7 +816,8 @@ def redisassemble_cave(raw, base=CAVE_BASE):
         op6 = (hw >> 5) & 0x3F
         reg2, reg1 = hw >> 11, hw & 0x1F
         if (hw >> 7) & 0xF == 0xB:                                        # Format III Bcond
-            n, m = 2, {0x6: "blt", 0xE: "bge", 0xA: "bne", 0x2: "be"}.get(hw & 0xF, f"b?{hw & 0xF:x}")
+            n = 2
+            m = {0x6: "blt", 0xE: "bge", 0xA: "bne", 0x2: "be"}.get(hw & 0xF, f"b?{hw & 0xF:x}")
             d = (((hw >> 11) & 0x1F) << 4) | (((hw >> 4) & 0x7) << 1)
             d -= 0x200 if d & 0x100 else 0
             m = f"{m} {d:+d}"
@@ -830,7 +882,6 @@ def assert_probe_census(buf, cave_span):
             f"gp-0x{disp:04x}: cave accesses are {[(hex(a), m, r) for a, m, r in cave]}, expected " \
             f"exactly one `{want_mnem} ...,r6` -- a STORE here would corrupt a LIVE lane"
         counts[disp] = (len(reads), len(writes))
-    # 🛑 The retired cells must not be touched at all.
     for stale in (0x6ADA, 0x6ADC, 0x671D, 0x67FA):
         assert not [h for h in V64.gp_access_census(buf, stale) if h[0] in cave_span], \
             f"the cave touches gp-0x{stale:04x}, which V72 retired"
@@ -859,30 +910,26 @@ def assert_lever_c_single_reader(buf):
         if ((hw1 >> 5) & 0x3F) in (0x3C, 0x3D, 0x3F) and (hw1 & 0x1F) == 5 and h % 2 == 0:
             real.append((h - 2, hw1 >> 11))
     assert [a for a, _ in real] == [DAMP_WEIGHT_READER], \
-        f"tp+0x{d:04X} readers are {[hex(a) for a, _ in real]}, expected [0x{DAMP_WEIGHT_READER:05X}]"
+        f"🛑 tp+0x{d:04X} readers are {[hex(a) for a, _ in real]}, expected exactly " \
+        f"[0x{DAMP_WEIGHT_READER:05X}]. MORE THAN ONE READER ⇒ DROP LEVER C AND REPORT."
     return len(hits_odd), real
 
 
-def damper_authority(buf, mode=10, rate=None):
-    """The delivered |gp-0x6bd0| at creep, mirroring FUN_00034350's Q10 chain EXACTLY.
+def damper_authority(buf, mode=10, speed_counts=0, rate=0):
+    """The delivered |gp-0x6bd0|, mirroring FUN_00034350's Q10 chain EXACTLY.
 
-        gp-0x6bd0 = sign(-gp-0x6abe) * (((((seed*B)>>10)*C)>>10)*D)>>10)*E)>>10, clamped to +/-ceiling
+        gp-0x6bd0 = sign(-gp-0x6abe) * ((((seed*B)>>10)*C)>>10)*D)>>10)*E)>>10, clamped to +/-ceiling
 
     seed = MIN(gp-0x698a, 1024) -- the MAXIMUM-authority assumption is seed = 1024.
     FactorB (0xD2738) and FactorD (0xD2774) are FLAT 1024 = inert, so they drop out.
-    Below FactorC's X[0] = 2240 counts (35.0 km/h) the LERP clamps to Y[0]; below FactorE's X[0] = 60
-    counts it clamps to its own Y[0]. This returns the value at CREEP, i.e. both clamps binding.
+    FactorC is keyed on VOTED SPEED (0xC6010's 64 counts/km/h axis); FactorE on |motor rate|.
     """
-    c = u16(buf, FACTOR_C[mode] + Y_OFF)                       # FactorC Y[0] -- creep clamps here
-    ys_e = rec_y(buf, FACTOR_E[mode])
-    xs_e = rec_x(buf, FACTOR_E[mode])
-    e = ys_e[0] if rate is None else LM.lerp_int(rate, xs_e, ys_e)
-    seed = Q10
-    v = (seed * Q10) >> 10                                     # * FactorB (1024)
+    c = LM.lerp_int(speed_counts, rec_x(buf, FACTOR_C[mode]), rec_y(buf, FACTOR_C[mode]))
+    e = LM.lerp_int(rate, rec_x(buf, FACTOR_E[mode]), rec_y(buf, FACTOR_E[mode]))
+    v = (Q10 * Q10) >> 10                                      # seed * FactorB
     v = (v * c) >> 10
-    v = (v * Q10) >> 10                                        # * FactorD (1024)
-    v = (v * e) >> 10
-    return v
+    v = (v * Q10) >> 10                                        # * FactorD
+    return (v * e) >> 10
 
 
 def assert_untouched(buf, label, stock):
@@ -906,11 +953,10 @@ def assert_untouched(buf, label, stock):
     for base, n in (CEILING_REC, CEILING_FLOAT_TWIN):
         assert bytes(buf[base:base + n]) == bytes(stock[base:base + n]), \
             f"{label}: 0x{base:05X} moved -- the damper ceiling and its float twin are LOCKSTEP " \
-            "checked and escalate to DTC 0x1d HARD SHUTDOWN"
+            "checked at 5/1024 and escalate to DTC 0x1d HARD SHUTDOWN"
     assert u16(buf, CEILING_FALLBACK[0]) == CEILING_FALLBACK[1], f"{label}: 0xC6158 moved"
-    for m in (12,):
-        assert rec_y(buf, FACTOR_C[m]) == FACTOR_C_STOCK_Y[m], f"{label}: FactorC mode {m} moved"
-        assert rec_y(buf, FACTOR_E[m]) == FACTOR_E_STOCK_Y[m], f"{label}: FactorE mode {m} moved"
+    assert rec_y(buf, FACTOR_C[12]) == FACTOR_C_STOCK_Y[12], f"{label}: FactorC mode 12 moved"
+    assert rec_y(buf, FACTOR_E[12]) == FACTOR_E_STOCK_Y[12], f"{label}: FactorE mode 12 moved"
     role = list(buf[ROLE_TABLE[0]:ROLE_TABLE[0] + len(ROLE_TABLE[1])])
     assert role == ROLE_TABLE[1], f"{label}: the role table 0xC4124 drifted: {role}"
     assert not any(r in (6, 7) for r in role), \
@@ -930,19 +976,28 @@ def assert_decoder_matches(cave_bytes):
         f"V72: the decoder's CAVE_HEX is STALE.\n  decoder: {m.group(1)}\n  image:   {cave_bytes.hex()}"
     for token in ("V72", os.path.basename(OUT), "0xC4124"):
         assert token in txt, f"V72: the decoder does not carry '{token}'"
-    for name, val in (("A_THRESHOLD", A_THRESHOLD), ("D_THRESHOLD", D_THRESHOLD),
-                      ("D_NEG_THRESHOLD", D_NEG_THRESHOLD), ("R_THRESHOLD", R_THRESHOLD)):
+    for name, val in (("A_THRESHOLD", A_THRESHOLD), ("A2_THRESHOLD", A2_THRESHOLD),
+                      ("D_THRESHOLD", D_THRESHOLD), ("D_NEG_THRESHOLD", D_NEG_THRESHOLD),
+                      ("R_THRESHOLD", R_THRESHOLD)):
         assert re.search(rf"^{name}\s*=\s*{val}\b", txt, re.M), \
             f"V72: the decoder's {name} is not {val}"
+    # ⚠ Parse the VALUE, don't regex the literal: `f"{2.750}"` renders "2.75" and would never match
+    # the decoder's "2.750". A formatting mismatch must not read as a spec mismatch.
+    m = re.search(r"^PREREG_BIT3_DUTY\s*=\s*([0-9.]+)", txt, re.M)
+    assert m and float(m.group(1)) == PREREG_BIT3_DUTY, \
+        f"V72: the decoder's bit3 pre-registration is {m and m.group(1)}, not {PREREG_BIT3_DUTY}%"
     for disp in (A_DISP, DAMP_DISP, RATE_DISP):
         assert f"{disp:04X}" in txt.upper(), f"V72: gp-0x{disp:04x} is missing from the decoder"
-    # 🛑 the retired rungs must NOT be described as live
     for stale in (0x6ADA, 0x6ADC, 0x671D, 0x67FA):
         assert not re.search(rf"^BIT_\w+\s*=.*{stale:04X}", txt, re.M | re.I), \
             f"V72: gp-0x{stale:04x} is still a LIVE RUNG in the decoder"
-    assert "STRUCTURALLY ZERO" in txt.upper(), \
-        "V72: the decoder does not state that bit5 is structurally zero (the dropped rung)"
-    assert "TWO-SIDED" in txt, "V72: the decoder never says bit4 is two-sided"
+    for claim in ("MONOTONE", "TWO-SIDED"):
+        assert claim in txt.upper(), f"V72: the decoder never states '{claim}'"
+    # 🛑 the decoder must NOT carry the retracted harmonic claim, and MUST carry the corrected
+    # 0x454FE status. Both were wrong in an earlier cut of this build's own paperwork.
+    assert "2nd harmonic" not in txt, \
+        "V72: the decoder repeats the RETRACTED 'grind #2 is grind #1's 2nd harmonic' claim"
+    assert "UNTESTED" in txt, "V72: the decoder does not describe 0x454FE as carried-and-UNTESTED"
     return True
 
 
@@ -955,20 +1010,24 @@ def build():
         print(f"  ⚠ {BIN_OUT} already exists ({hashlib.sha256(existing).hexdigest()[:16]}...). "
               "It will be COMPARED, not blindly overwritten.")
 
+    # 🛑 CHECKED BEFORE ANYTHING IS WRITTEN. V71A's note records the failure mode: an over-long tag
+    # made the .rwd write fail AFTER the plain image had already been written, leaving a snapshot on
+    # disk with no flashable artefact beside it. This assert used to sit next to the write; it does
+    # not any more.
+    assert len(OUT) < 250, \
+        f"the .rwd path is {len(OUT)} chars -- Windows' 260 limit would truncate it. Shorten TAG " \
+        "BEFORE building; nothing has been written yet."
+
     src = Path(SRC_BIN)
     v70 = bytearray(src.read_bytes())
     v67 = Path(V67_BIN).read_bytes()
-    v47 = Path(V47_BIN).read_bytes()
     stock = Path(STOCK_BIN).read_bytes()
     print("=" * 102)
     print(f"SOURCE (V70): {src}\n  SHA256 {hashlib.sha256(bytes(v70)).hexdigest()}")
-    print(f"REFERENCES:   {V67_BIN}  (LEVER A's arm values)")
-    print(f"              {V47_BIN}  (LEVER B's exact flown bytes)")
+    print(f"REFERENCE:    {V67_BIN}  (the configuration V72 reproduces at creep)")
     print(f"STOCK:        {STOCK_BIN}")
-    print(f"\n  LEVER_B_VARIANT = {LEVER_B_VARIANT!r}  "
-          f"({len(LEVER_B)} cells = {2 * len(LEVER_B)} bytes)")
 
-    for name, img in (("V70", v70), ("V67", v67), ("V47", v47), ("stock", stock)):
+    for name, img in (("V70", v70), ("V67", v67), ("stock", stock)):
         assert len(img) == 0x100000, f"the {name} image is not 1 MiB"
 
     # ---- gate the SOURCE ---------------------------------------------------------------------------
@@ -978,7 +1037,6 @@ def build():
     for lo, hi, what in A.STOCK_IDENTICAL_SPANS:
         assert not [i for i in range(lo, hi) if v70[i] != stock[i]], \
             f"[0x{lo:05X},0x{hi:05X}) ({what}) differs from stock"
-    # gain_B's MODE axis, dereferenced -- never assumed from the 0x14 stride
     print("\n  🛑 gain_B RECORD ADDRESSING, dereferenced from the FOUR ROM pointer arrays "
           f"(entry mode*4, mode = {MODE}):")
     for arr, want in zip(GAIN_B_PTR_ARRAYS, (REC_B0, REC_B1) + REC_B_HWY):
@@ -996,94 +1054,96 @@ def build():
           f"0x{MODE_NEIGHBOURS[0]:05X} is mode 11's")
     print("       record-0 and is BYTE-IDENTICAL to mode 10's, so a span diff cannot see the "
           "difference. Asserted.")
-    # every source record, by value
     for base, want in LEVER_A_STOCK_Y.items():
         assert rec_y(stock, base) == want, f"stock record 0x{base:05X} Y is {rec_y(stock, base)}"
-    assert rec_y(v70, REC_B0) == [6144, 6144, 2322, 1536], "V70's gain_B rec0 is not the x2 surface"
-    assert rec_y(v70, REC_B1) == [5122, 5122, 2247, 1947], "V70's gain_B rec1 is not the x2 surface"
-    assert rec_y(v70, REC_A0) == LEVER_A_STOCK_Y[REC_A0] and \
-        rec_y(v70, REC_A1) == LEVER_A_STOCK_Y[REC_A1], "V70's gain_A is not byte-stock"
-    print(f"\n  ★ V70's gain_B rec1 Y[0]/Y[1] are ALREADY {LEVER_A_FINAL_Y[REC_B1][0][0]} -- V72's own "
-          "target -- so that halfword pair does NOT move.")
-    # LEVER B's source state, and V47's own bytes
-    for m in (10, 11):
+    for m in EDITED_FACTOR_MODES:
         assert rec_y(v70, FACTOR_C[m]) == FACTOR_C_STOCK_Y[m], f"V70 FactorC m{m} is not stock"
         assert rec_y(v70, FACTOR_E[m]) == FACTOR_E_STOCK_Y[m], f"V70 FactorE m{m} is not stock"
         assert rec_x(v70, FACTOR_C[m]) == FACTOR_C_X and rec_x(v70, FACTOR_E[m]) == FACTOR_E_X, \
             f"the FactorC/E X rows moved on mode {m}"
-    print("  ✅ [EVIDENCE, byte-read] LEVER B's eight cells are STOCK on V70 ⇒ V47's damping restore "
-          "is NOT on the car.")
+    print("\n  ✅ [EVIDENCE, byte-read] LEVER B's cells are STOCK on V70 ⇒ the base-assist damper is "
+          "OFF the car.")
     print(f"     FactorC X = {FACTOR_C_X} counts = "
           f"{[x // SPEED_COUNTS_PER_KMH for x in FACTOR_C_X]} km/h at "
           f"{SPEED_COUNTS_PER_KMH} counts/km/h ⇒ the LERP clamps FLAT to Y[0] = 0 below 35 km/h.")
     assert u16(v70, DAMP_WEIGHT_ADDR) == DAMP_WEIGHT_STOCK, "0xC63A0 is not 1024 on the source"
+    assert u16(v67, 0xC6446) == V67_ARM_R24 and u16(v67, 0xC6444) == V67_ARM_R26, \
+        "V67 does not carry the (5244, 512) arms -- LEVER A's provenance claim is wrong"
 
     code = bytearray(v70)
 
     # ---- EDIT 1 -- LEVER A ------------------------------------------------------------------------
-    print("\n  EDIT 1 -- LEVER A: BOTH rate lanes, PLATEAU ONLY (Y[0] and Y[1]; Y[2]/Y[3] STOCK):")
+    print("\n  EDIT 1 -- LEVER A: BOTH rate lanes, the WHOLE rate axis, at 0 and 10 km/h:")
     for base, (want_y, label) in LEVER_A_FINAL_Y.items():
         before = rec_y(code, base)
-        struct.pack_into("<2h", code, base + Y_OFF, want_y[0], want_y[1])
+        struct.pack_into("<4h", code, base + Y_OFF, *want_y)
         assert rec_y(code, base) == want_y, f"{label}: record 0x{base:05X} did not take its final Y"
-        assert want_y[2:] == LEVER_A_STOCK_Y[base][2:], \
-            f"{label}: Y[2]/Y[3] are not the STOCK values -- V72 is PLATEAU-ONLY by construction"
-        moved = "" if before == want_y else "  <- MOVED"
-        print(f"    0x{base + Y_OFF:05X}  {before} -> {want_y}   {label}{moved}")
-    assert u16(code, REC_B0 + Y_OFF) == V67_ARM_R24 and u16(code, REC_A0 + Y_OFF) == V67_ARM_R26, \
-        "the plateau values are not V67/V68's own arm values, used verbatim"
-    print(f"    ✅ {V67_ARM_R24} and {V67_ARM_R26} are V67/V68's OWN arm values (0xC6446 / 0xC6444 on "
-          "`_v67_plain_image.bin`), used")
-    assert u16(v67, 0xC6446) == V67_ARM_R24 and u16(v67, 0xC6444) == V67_ARM_R26, \
-        "V67 does not carry (5244, 512) -- the provenance claim is wrong"
-    print("       VERBATIM rather than re-derived -- asserted against the V67 image, not quoted.")
+        assert len(set(want_y)) == 1, \
+            f"{label}: the record is not FLAT -- a flat record is what reproduces a scalar arm"
+        print(f"    0x{base + Y_OFF:05X}  {before} -> {want_y}   {label}")
+    print(f"    ✅ {V67_ARM_R24} and {V67_ARM_R26} are V67/V68's OWN arm values (0xC6446 / 0xC6444 on")
+    print("       `_v67_plain_image.bin`), used VERBATIM -- asserted against the V67 image, not quoted.")
 
     # ---- EDIT 2 -- LEVER B ------------------------------------------------------------------------
-    print(f"\n  EDIT 2 -- LEVER B: the base-assist damper opened at creep ({LEVER_B_VARIANT} bytes):")
+    print("\n  EDIT 2 -- LEVER B: the base-assist damper opened at creep (10 cells = 20 bytes):")
     for addr, (old, new, label) in sorted(LEVER_B.items()):
         assert u16(code, addr) == old, \
             f"{label} @0x{addr:05X} is {u16(code, addr)}, expected the stock {old}"
         struct.pack_into("<H", code, addr, new)
         print(f"    0x{addr:05X}  {old:5d} -> {new:5d}   {label}")
-    for m in (10, 11):
-        assert rec_x(code, FACTOR_C[m]) == FACTOR_C_X and rec_x(code, FACTOR_E[m]) == FACTOR_E_X, \
-            f"a FactorC/E X row moved on mode {m} -- only Y values may change"
-        for y in rec_y(code, FACTOR_C[m]) + rec_y(code, FACTOR_E[m]):
-            assert 0 <= y < 0x8000, f"a FactorC/E Y is not a non-negative SIGNED halfword: {y}"
-    if LEVER_B_VARIANT == "V47":
-        for m in (10, 11, 12):
-            assert rec_y(code, FACTOR_C[m]) == rec_y(v47, FACTOR_C[m]), f"FactorC m{m} != V47's"
-            assert rec_y(code, FACTOR_E[m]) == rec_y(v47, FACTOR_E[m]), f"FactorE m{m} != V47's"
-        print("    ✅✅ ALL SIX FactorC/E records are BYTE-IDENTICAL to `_v47_plain_image.bin` -- "
-              "V47's exact")
-        print("        flown bytes, ASSERTED against the image rather than aimed at.")
-    else:
-        print("    🛑 NOT V47's bytes -- this is the mission brief's FLATMAX table. See the docstring.")
+    print("\n    RESULTING RECORDS, and the MONOTONICITY they must satisfy:")
+    for tbl, name, stock_y, xs in ((FACTOR_C, "FactorC", FACTOR_C_STOCK_Y, FACTOR_C_X),
+                                   (FACTOR_E, "FactorE", FACTOR_E_STOCK_Y, FACTOR_E_X)):
+        for m in EDITED_FACTOR_MODES:
+            ys = rec_y(code, tbl[m])
+            assert rec_x(code, tbl[m]) == xs, f"{name} m{m}: the X row moved -- only Y may change"
+            assert all(b >= a for a, b in zip(ys, ys[1:])), \
+                f"🛑 {name} m{m} Y = {ys} is NOT monotone non-decreasing -- a dip in the middle of a " \
+                "gain schedule is a defect, and it is what killed the 877/927 candidate"
+            assert all(0 <= y < 0x8000 for y in ys), f"{name} m{m}: a Y is not a positive short"
+            assert ys[-1] == stock_y[m][-1], f"{name} m{m}: Y[3] moved -- only Y[0..2] may change"
+            print(f"      {name} m{m}  {stock_y[m]} -> {ys}   monotone ✅")
 
     # ---- the delivered damping authority, and the CEILING it must respect -------------------------
-    auth0 = damper_authority(code, 10)
-    auth_max = max(damper_authority(code, 10, rate=r) for r in range(0, 4001, 5))
-    ceil_floor, ceil_max = CEILING_Y[0], CEILING_Y[1]
-    assert [u16(code, CEILING_REC[0] + 2 + 2 * j) for j in range(2)] == CEILING_X and \
-        [u16(code, CEILING_REC[0] + 6 + 2 * j) for j in range(2)] == CEILING_Y, \
-        "the ceiling record is not the 2-point X=[300,800] Y=[512,1024] shape"
-    print(f"\n  DELIVERED DAMPING AUTHORITY at creep, mirroring FUN_00034350's Q10 chain "
+    print("\n  DELIVERED DAMPING AUTHORITY, mirroring FUN_00034350's Q10 chain "
           f"(seed = {Q10}, FactorB/D inert):")
-    print(f"    creep (both LERPs clamped to Y[0]) : {auth0:4d} counts")
-    print(f"    worst case over the whole rate axis: {auth_max:4d} counts")
+    creep = damper_authority(code, 10, speed_counts=0, rate=0)
+    creep11 = damper_authority(code, 11, speed_counts=0, rate=0)
+    # 🛑 SCOPE THE CLAIM. The region V72 NEWLY OPENS is speed < FactorC's X[0] = 35 km/h, where stock
+    # delivers a HARD ZERO. That is where the no-clip guarantee has to hold.
+    opened = [damper_authority(code, m, v, r) for m in EDITED_FACTOR_MODES
+              for v in range(0, FACTORC_ONSET_COUNTS + 1, 32) for r in range(0, 4001, 25)]
+    grid_all = [(m, v, r) for m in EDITED_FACTOR_MODES
+                for v in range(0, 9001, 64) for r in range(0, 4001, 50)]
+    max_new = max(damper_authority(code, m, v, r) for m, v, r in grid_all)
+    max_stock = max(damper_authority(stock, m, v, r) for m, v, r in grid_all)
+    print(f"    creep, both LERPs at Y[0]  : m10 {creep:4d}   m11 {creep11:4d} counts "
+          f"(stock: {damper_authority(stock, 10, 0, 0)})")
+    print(f"    max over the OPENED region (< {FACTORC_ONSET_COUNTS // SPEED_COUNTS_PER_KMH} km/h, "
+          f"every rate): {max(opened):4d} counts")
     print(f"    the ceiling is a 2-point LERP over gp-0x6ac2, X={CEILING_X} Y={CEILING_Y}, fallback "
           f"0xC6158 = {CEILING_FALLBACK[1]}")
-    assert auth_max <= ceil_max, \
-        f"the delivered authority {auth_max} exceeds even the ceiling MAXIMUM {ceil_max}"
-    if auth_max <= ceil_floor:
-        print(f"    ✅ {auth_max} <= the ceiling FLOOR {ceil_floor} ⇒ the damper NEVER saturates: it "
-              "stays proportional")
-        print("       at every value of gp-0x6ac2, so no hard nonlinearity enters the loop.")
-    else:
-        print(f"    🛑 {auth_max} EXCEEDS the ceiling FLOOR {ceil_floor} ⇒ the damper SATURATES "
-              f"whenever gp-0x6ac2 < {CEILING_X[0]},")
-        print("       turning a proportional damper into a hard-clipping element inside the loop at "
-              "the ratchet's own frequency. GATE 2 EXPOSURE -- state it in the flight note.")
+    assert max(opened) < CEILING_FLOOR, \
+        f"🛑 the opened region delivers {max(opened)}, at or above the ceiling FLOOR {CEILING_FLOOR} " \
+        "⇒ the damper would SATURATE at low gp-0x6ac2, putting a hard-clipping element inside a " \
+        "feedback loop at the frequency of a Q~40 resonance. That is the mechanism that CREATES " \
+        "limit cycles; it is the hazard, not a safety feature."
+    print(f"    ✅ {max(opened)} < the ceiling FLOOR {CEILING_FLOOR} ⇒ the damper NEVER saturates in "
+          f"the region V72 opens ({100 * (1 - max(opened) / CEILING_FLOOR):.0f}% headroom), at every "
+          "value of gp-0x6ac2.")
+    assert max_new == max_stock, \
+        f"V72's global max delivered authority {max_new} != stock's {max_stock} -- V72 must open the " \
+        "low-speed region without raising the peak anywhere"
+    print(f"    ✅ and V72 does NOT raise the GLOBAL peak: max over all speeds/rates is {max_new}, "
+          f"IDENTICAL to STOCK's {max_stock}")
+    print(f"    ⚠ SCOPE, STATED: a blanket 'max_delivered < {CEILING_FLOOR}' is FALSE at high speed "
+          f"({max_new} at 140 km/h + high")
+    print("      rate) -- but it is EQUALLY false on STOCK, where the ceiling LERP has itself risen "
+          "to 1024, so it")
+    print("      cannot be a V72 requirement. The correctly-scoped claim is the one asserted above.")
+    print(f"    ✅ {creep} counts at creep is {creep / 160:.1f}x V47's 160 ⇒ the under-dose that was "
+          "one of V47's four")
+    print("       failure conditions is addressed, not repeated.")
 
     # ---- EDIT 3 -- LEVER C ------------------------------------------------------------------------
     print("\n  EDIT 3 -- LEVER C: the damper's own weight into FUN_00038148:")
@@ -1095,28 +1155,29 @@ def build():
           f"has EXACTLY ONE reader:")
     print(f"       0x{readers[0][0]:05X} `ld.hu 0x{DAMP_WEIGHT_TP_DISP:04x}[tp],r{readers[0][1]}`, "
           f"ZERO writers, 0 hits in the even (ld.h/st.h/disp23) form.")
-    print(f"       ({n_odd} raw odd-parity halfword occurrences; the non-instruction one is 0xC4764 "
-          "-- no function, and")
-    print("        0xC4762 is not a disp16 load ⇒ data.) ⇒ NO MONITOR CAN BE CHECKING IT: the "
-          "lockstep question is")
-    print("       closed STRUCTURALLY, which is why this buys the same authority as raising "
-          "0xD209C at zero risk.")
+    print(f"       ({n_odd} raw odd-parity occurrences; the non-instruction one is 0xC4764 -- no "
+          "function, and 0xC4762 is")
+    print("        not a disp16 load ⇒ data.) ⇒ NO MONITOR CAN BE CHECKING IT. That is why this lever "
+          "was chosen over")
+    print("       raising 0xD209C, whose float twin 0xC6554 IS lockstep-checked to DTC 0x1d.")
 
     # ---- EDIT 4 -- the carried ratchet byte -------------------------------------------------------
-    print("\n  EDIT 4 -- 0x454FE CARRIED (🛑 NOT a ratchet lever on this build):")
+    print("\n  EDIT 4 -- 0x454FE CARRIED (🛑 currently INERT and UNTESTED -- not a fix, not falsified):")
     struct.pack_into("<H", code, RATCHET_ADDR, A.RATCHET_NEW_HW)
     A.assert_ratchet_edit(code, "V72", expect_edited=True)
     A.assert_no_external_entry(code)
     n_state = A.assert_governor_monitor_safety(code, "V72")
     print(f"    0x{RATCHET_ADDR:05X}  0x{A.RATCHET_STOCK_HW:04X} -> 0x{A.RATCHET_NEW_HW:04X}   "
           f"bne 0x455C4 -> br 0x455C4; FUN_0004595a safety re-derived ({n_state} state read)")
-    print("    🛑 FALSIFIED for the current 7.79 Hz ratchet: V71B AND V71C both flew carrying this "
-          "byte and the")
-    print("       operator reports the ratchet UNCHANGED on both. It is carried ONLY because V42 "
-          "confirmed it")
-    print("       against a DIFFERENT symptom (the ~10 s hard-turn recovery ratchet) and reverting "
-          "would regress")
-    print("       that. Do not describe it as a ratchet fix.")
+    print("    🛑 [EVIDENCE] V71's bit5 measured `gp-0x67fa == 4` at 0/123,277 frames (route 54) and")
+    print("       8/92,826 (route 58) -- all eight one 80 ms burst at 0.00 km/h IN PARK. State 4 never")
+    print("       occurred while driving ⇒ V42's substitution never ran ⇒ the V71B/V71C 'no change'")
+    print("       result is a NULL BY CONSTRUCTION, not a falsification. An earlier cut of this file")
+    print("       called it falsified; that was WRONG and is retracted.")
+    print("    ⚠ [OPEN] The same measurement cuts both ways: V42 was confirmed on-car against the")
+    print("      hard-turn recovery ratchet, and if state 4 never occurs that fix could not have")
+    print("      acted either. Carried because reverting cannot help and might regress a confirmed")
+    print("      result. Do NOT score the 7.79 Hz ratchet against it.")
 
     # ---- EDIT 5 -- the probe ----------------------------------------------------------------------
     print("\n  EDIT 5 -- THE PROBE (68 of the proven 68 bytes; ZERO spare):")
@@ -1134,30 +1195,24 @@ def build():
         print(f"       gp-0x{disp:04x}  {r:2d}r / {w}w   {PROBE_CENSUS[disp][5]}")
     print("       the cave's ONLY store is st.b r6,-0x1514[gp] (the CAN-330 payload byte, bits 2:0")
     print("       preserved) -- identical RAM ownership to V67/V68/V69/V70/V71, all flown clean.")
-    print(f"    🛑 gp-0x{DAMP_DISP:04x} is NOT a zero-reader mirror: it has "
-          f"{counts[DAMP_DISP][0]} real readers including the 1 kHz")
+    print(f"    🛑 gp-0x{DAMP_DISP:04x} is NOT a zero-reader mirror: {counts[DAMP_DISP][0]} real readers "
+          "including the 1 kHz")
     print(f"       aggregator, and the firmware's own `st.h r6,-0x{DAMP_DISP:04x}[gp]` @0x{PIN_STH_6BD0[0]:05X} "
           f"is {PIN_STH_6BD0[1].hex()} against our")
     print(f"       {V55.ldh(DAMP_DISP, R6).hex()} -- SAME register, SAME displacement, ONE BIT apart "
-          "(op 0x3B vs 0x39). Asserted by")
-    print("       value in the builder, in the readback and in the verifier.")
-    print(f"    🛑 bit5 (weight 0x{W_UNUSED_BIT5:02X}) is NEVER added ⇒ it reads 0 in EVERY V72 frame. "
-          "One-way falsifier:")
-    print("       a single frame with bit5 SET proves the artefact is not V72.")
+          "(op 0x3B vs 0x39).")
+    print("    ★ bit5 => bit6 is a STRUCTURAL MONOTONE INVARIANT ⇒ only 12 of the 16 payloads are "
+          "legal, and a")
+    print("      frame with bit5 SET while bit6 is CLEAR proves the artefact is NOT V72.")
 
-    # ---- the probe's pre-registration --------------------------------------------------------------
-    print(f"\n  📋 bit3 PRE-REGISTRATION -- threshold is EXACTLY {R_THRESHOLD}, so it carries over "
-          "verbatim:")
-    print(f"     {R_THRESHOLD} counts / {RATE_SCALE_CTS_PER_DEGS} counts-per-deg/s = "
-          f"{R_THRESHOLD / RATE_SCALE_CTS_PER_DEGS:.2f} deg/s of column rate.")
-    print("     Engaged duty must read 3.74% under the settled scale and 0.0000% under the retired")
-    print("     8x-smaller alternative, and it must fire frame-for-frame with bus |rate_c| >= "
-          f"{R_THRESHOLD / RATE_SCALE_CTS_PER_DEGS:.1f} deg/s.")
-    print(f"     {R_THRESHOLD} is also FactorE's own X[1] and the rate lanes' own X[1] breakpoint.")
-    assert abs(R_THRESHOLD / RATE_SCALE_CTS_PER_DEGS - 84.89) < 0.05, \
-        "the pre-registered 84.9 deg/s does not re-derive from the threshold and the settled scale"
-    assert R_THRESHOLD == FACTOR_E_X[1] == LM.read_record(stock, REC_B0)[1][1], \
-        "400 is not FactorE's X[1] AND the rate lane's X[1] -- the 'LERP's own breakpoint' claim fails"
+    print(f"\n  📋 bit3 PRE-REGISTRATION: {R_THRESHOLD} counts / {RATE_SCALE_CTS_PER_DEGS} "
+          f"counts-per-deg/s = {R_THRESHOLD / RATE_SCALE_CTS_PER_DEGS:.2f} deg/s.")
+    print(f"     Engaged duty must read {PREREG_BIT3_DUTY}% (9,497 / 345,396 frames), and it must fire")
+    print(f"     frame-for-frame with bus |rate_c| >= {R_THRESHOLD / RATE_SCALE_CTS_PER_DEGS:.1f} deg/s. "
+          "A POSITIVE CONTROL: the rate axis is")
+    print("     settled three independent ways, so a miss indicts the cave, not the scale.")
+    assert abs(R_THRESHOLD / RATE_SCALE_CTS_PER_DEGS - 108.7) < 0.1, \
+        "the pre-registered 108.7 deg/s does not re-derive from the threshold and the settled scale"
 
     if assert_decoder_matches(cave_bytes):
         print("    ✅ rlog-tools/decode_v72_probe.py CAVE_HEX matches the built cave byte-for-byte.")
@@ -1177,23 +1232,33 @@ def build():
         f"the re-disassembled ld.h is {ld_h} -- expected exactly one, of gp-0x{DAMP_DISP:04x} into r6"
     assert len(st) == 1 and st[0][1].startswith("st.b"), \
         f"the re-disassembly finds stores {st} -- expected exactly ONE st.b (the CAN payload byte)"
-    print(f"    ✅ exactly ONE `ld.h` (gp-0x{DAMP_DISP:04x} -> r6, opcode 0x39) and exactly ONE store, "
-          "an `st.b` to the")
-    print("       CAN-330 payload byte. Re-derived from the BUILT bytes, not from a cached database.")
+    # 🛑 the sar->be adjacency, re-derived from the BUILT bytes rather than from the build listing
+    n_pairs = 0
+    for i, (a, _r, m) in enumerate(redis):
+        if m.startswith(f"sar 0x{A_SHIFT:x}"):
+            assert redis[i + 1][2].startswith("be "), \
+                f"the `sar` @0x{a:05X} is not immediately followed by its `be` in the BUILT bytes " \
+                f"(found '{redis[i + 1][2]}') -- the branch would read STALE flags"
+            n_pairs += 1
+    assert n_pairs == 2, f"expected 2 `sar 0x9`->`be` pairs in the built cave, found {n_pairs}"
+    print(f"    ✅ exactly ONE `ld.h` (gp-0x{DAMP_DISP:04x} -> r6, opcode 0x39), exactly ONE store (an "
+          "`st.b` to the CAN-330")
+    print(f"       payload byte), and both `sar 0x{A_SHIFT:x}` instructions IMMEDIATELY followed by "
+          "their own `be`. Re-derived")
+    print("       from the BUILT bytes, not from a cached database.")
 
     # ---- THE DELIVERED MULTIPLIERS, RE-DERIVED FROM THE BUILT IMAGE -------------------------------
     print("\n  THE DELIVERED MULTIPLIER, re-derived from the BUILT image via v72_lane_model.py:")
     print("  (the gate 0x3AA96 is 0xC5 = the DEAD cell, so ENGAGED and MANUAL are identical -- V72 is")
     print("   UNGATED by construction and its dose applies in manual too. That is the disclosed cost.)")
-    speeds = sorted(LM.KMH.items())
-    rates = (0, 200, 400, 800, 1400, 1600, 3000)
+    rates = (0, 400, 800, 1400, 2000, 3000)
     for lane in ("r24", "r26"):
         print(f"    {lane}  " + "".join(f"{r:>8}" for r in rates) + "   <- rate index")
-        for kmh, vc in speeds:
+        for kmh, vc in sorted(LM.KMH.items()):
             row = [LM.effective(bytes(code), lane, vc, r, False) /
                    LM.effective(stock, lane, vc, r, False) for r in rates]
             print(f"    {kmh:>4} km/h" + "".join(f"{x:8.3f}" for x in row))
-    # 1) ENGAGED == MANUAL, exactly
+
     grid = [(v, r) for v in range(0, 6401, 32) for r in range(0, 3001, 25)]
     for lane in ("r24", "r26"):
         assert not [1 for v, r in grid
@@ -1201,73 +1266,49 @@ def build():
                     LM.effective(bytes(code), lane, v, r, False)], \
             f"{lane}: ENGAGED differs from MANUAL -- the gate is not the dead cell"
     print(f"    ✅ over {len(grid)} operating points, ENGAGED == MANUAL EXACTLY on both lanes.")
-    # 2) r24 <= V70's r24 everywhere -- the unconditional bound onto a build that flew ungated
-    exc = [(v, r) for v, r in grid
-           if LM.effective(bytes(code), "r24", v, r, False) > LM.effective(bytes(v70), "r24", v, r, False)]
-    assert not exc, f"r24 EXCEEDS V70's at {exc[:6]} -- the unconditional bound fails"
-    print(f"    ✅ r24 <= V70's r24 at ALL {len(grid)} grid points: 0 exceedances. V70 flew UNGATED, "
-          "dosed the")
-    print("       manual arm at x2 plateau-only, and produced ZERO grind-#2 events in every regime.")
-    # 3) r26 <= stock everywhere
-    exc = [(v, r) for v, r in grid
-           if LM.effective(bytes(code), "r26", v, r, False) > LM.effective(stock, "r26", v, r, False)]
-    assert not exc, f"r26 EXCEEDS stock at {exc[:6]}"
-    print(f"    ✅ r26 <= STOCK at ALL {len(grid)} grid points: 0 exceedances (the r26 half can only "
-          "REDUCE lane gain).")
-    # 4) EXACTLY 1.000x at >= 50 km/h, and above the last edited breakpoint
-    hwy = [(v, r) for v, r in grid if v >= 3200
-           for lane in ("r24", "r26")
-           if LM.effective(bytes(code), lane, v, r, False) != LM.effective(stock, lane, v, r, False)]
+
+    # ★★ THE ASSERTION THAT MATTERS: V67/V68's ENGAGED multipliers reproduced at 0 and 10 km/h,
+    # at EVERY rate index. A flat record is exactly what a scalar arm delivers.
+    print("\n    ★★ V67/V68's ENGAGED multipliers, reproduced EXACTLY at 0 and 10 km/h:")
+    for kmh, vc in ((0, 0), (10, 640)):
+        for lane in ("r24", "r26"):
+            n = 0
+            for r in range(0, 3001, 5):
+                got = (LM.effective(bytes(code), lane, vc, r, False) /
+                       LM.effective(stock, lane, vc, r, False))
+                want = (LM.effective(v67, lane, vc, r, True) /
+                        LM.effective(stock, lane, vc, r, True))
+                assert abs(got - want) < 1e-12, \
+                    f"{kmh} km/h {lane}: at rate {r} V72 is {got:.6f}x, V67 ENGAGED is {want:.6f}x " \
+                    "-- the reproduction FAILS"
+                n += 1
+            show = [LM.effective(bytes(code), lane, vc, r, False) /
+                    LM.effective(stock, lane, vc, r, False) for r in (0, 400, 1400, 3000)]
+            print(f"       {kmh:>3} km/h {lane}: " + " / ".join(f"{x:.3f}" for x in show) +
+                  f"   == V67/V68 engaged at ALL {n} rate indices")
+
+    hwy = [(v, r, ln) for v, r in grid if v >= 3200 for ln in ("r24", "r26")
+           if LM.effective(bytes(code), ln, v, r, False) != LM.effective(stock, ln, v, r, False)]
     assert not hwy, f"a >= 50 km/h operating point moved: {hwy[:4]}"
     n_hwy = sum(1 for v, _r in grid if v >= 3200)
-    print(f"    ✅ all {n_hwy} points at >= 3200 counts (>= 50 km/h) are byte-identical to stock on "
+    print(f"\n    ✅ all {n_hwy} points at >= 3200 counts (>= 50 km/h) are byte-identical to stock on "
           "BOTH lanes ⇒")
     print("       EXACTLY 1.000000x at highway, EVERY rate. STRUCTURAL: the 50/100 km/h records are "
           "untouched.")
-    # the true rate crossover -- reported, not assumed
-    moved = [r for _v, r in grid
-             if any(LM.effective(bytes(code), ln, _v, r, False) != LM.effective(stock, ln, _v, r, False)
-                    for ln in ("r24", "r26"))]
-    r_cross = max(moved)
-    xs_all = [LM.read_record(stock, b)[1][2] for b in (REC_B0, REC_B1, REC_A0, REC_A1)]
-    print(f"    ⚠ THE BRIEF SAID '1.000x at rate >= 1400'. The TRUE crossover is rate > {r_cross}: the "
-          f"edited records'")
-    print(f"       own X[2] breakpoints are {xs_all} (gain_B rec0/rec1, gain_A rec0/rec1), and only "
-          "above the")
-    print("       LARGEST of them is every lane back at stock. Reported as measured, not as briefed.")
-    assert r_cross <= max(xs_all), "the dose reaches beyond the edited records' X[2] breakpoints"
-    # 5) V67/V68's creep values reproduced at the plateau.
-    # ⚠ EXACT ON BOTH LANES AT 0 km/h, AND ON r26 EVERYWHERE. At 10 km/h r24 is DELIBERATELY 2.000x
-    # (5122) rather than V67's 2.048x (5244): the design chose the V70 bound over 2.4% of dose, so
-    # that `V72 r24 <= V70 r24` holds unconditionally. Asserted as the DESIGNED INEQUALITY, not
-    # smoothed into an equality -- and the shortfall is printed rather than hidden.
-    print("\n    ✅ V67/V68's CREEP OPERATING POINT, reproduced through the UNGATED surface:")
-    for kmh, vc, rate, exact24 in ((0, 0, 0, True), (0, 0, 400, True),
-                                   (10, 640, 0, False), (10, 640, 250, False)):
-        v72_24 = LM.effective(bytes(code), "r24", vc, rate, False) / LM.effective(stock, "r24", vc, rate, False)
-        v72_26 = LM.effective(bytes(code), "r26", vc, rate, False) / LM.effective(stock, "r26", vc, rate, False)
-        v67_24 = LM.effective(v67, "r24", vc, rate, True) / LM.effective(stock, "r24", vc, rate, True)
-        v67_26 = LM.effective(v67, "r26", vc, rate, True) / LM.effective(stock, "r26", vc, rate, True)
-        v70_24 = LM.effective(bytes(v70), "r24", vc, rate, False) / LM.effective(stock, "r24", vc, rate, False)
-        assert abs(v72_26 - v67_26) < 1e-12, \
-            f"at {kmh} km/h rate {rate}: r26 is {v72_26:.4f}, V67's is {v67_26:.4f} -- the r26 half " \
-            "must reproduce V67/V68 EXACTLY at the plateau"
-        if exact24:
-            assert abs(v72_24 - v67_24) < 1e-12, \
-                f"at {kmh} km/h rate {rate}: r24 is {v72_24:.4f}, V67's is {v67_24:.4f}"
-            note = "== V67/V68 ENGAGED (EXACT on both lanes)"
-        else:
-            assert v72_24 <= v67_24 and abs(v72_24 - v70_24) < 1e-12, \
-                f"at {kmh} km/h rate {rate}: r24 is {v72_24:.4f}, expected V70's {v70_24:.4f} and " \
-                f"<= V67's {v67_24:.4f}"
-            note = (f"r24 is V70's {v70_24:.3f} BY DESIGN, {100 * (1 - v72_24 / v67_24):.1f}% under "
-                    f"V67's {v67_24:.3f}")
-        print(f"       {kmh:>3} km/h rate {rate:>4}   V72 r24 {v72_24:.3f} r26 {v72_26:.3f}   {note}")
-    print("       ⚠ THE DESIGN DOC IS INTERNALLY INCONSISTENT HERE and the BYTES win: 2.1's table")
-    print("         specifies Y[0..1] = 5122 at 10 km/h (= 2.000x, V70's own value) and explains WHY")
-    print("         -- 5244 would exceed V70 by 2.4% at 10-30 km/h and break the unconditional bound")
-    print("         -- but 2.1.1's summary row still prints 2.048 for V72. The brief's required FINAL")
-    print("         Y is 5122, and 5122 is what is built. The bound holds; the 2.4% is the price.")
+    print("       ⇒ THAT IS V67/V68'S ONLY FAILURE, REMOVED, WITHOUT TOUCHING WHAT WORKED.")
+    # 🛑 NO POINTWISE BOUND IS CLAIMED, and the reason is asserted so it cannot creep back in.
+    hi24 = LM.effective(bytes(code), "r24", 0, 3000, False) / LM.effective(stock, "r24", 0, 3000, False)
+    hi26 = LM.effective(bytes(code), "r26", 0, 3000, False) / LM.effective(stock, "r26", 0, 3000, False)
+    assert hi24 > 2.0, "r24's high-rate multiplier is not above V62's 2.000x -- re-check the spec"
+    print(f"\n    🛑 NO POINTWISE BOUND IS CLAIMED. At creep / rate 3000 V72's r24 is {hi24:.3f}x, "
+          "ABOVE V62's 2.000x,")
+    print(f"       so `V72 <= V62` is FALSE; and r26 is {hi26:.3f}x, so `V72 <= V70` is FALSE too. "
+          "Earlier cuts of this")
+    print("       build asserted both; they are REMOVED. What replaces them is the two-lane rule "
+          f"(r24 high-rate {hi24:.3f}x")
+    print(f"       AND r26 high-rate {hi26:.3f}x = V67/V68's exact row -- the only 3.4x-r24 row with "
+          "no creep grind #2 in")
+    print("       six builds) plus three DISCLOSED RISKS. See this file's docstring.")
 
     # ---- the untouched sites, re-asserted on the finished image ----------------------------------
     assert_untouched(code, "V72", stock)
@@ -1301,19 +1342,19 @@ def build():
     nbad = walk_all_blocks(bytes(code))
     assert nbad == 0, f"CRC chain FAILED: {nbad} mismatching block(s)"
     print("    ✅ full CRC chain re-walked: 50/50 blocks PASS (0 mismatches)")
-    assert not [a for a in list(LEVER_B) + [CAVE_BASE, RATCHET_ADDR, DAMP_WEIGHT_ADDR]
-                if 0xC5000 <= a < 0xC5FFC], \
+    assert not [a for a in list(LEVER_B) + list(LEVER_A_FINAL_Y) +
+                [CAVE_BASE, RATCHET_ADDR, DAMP_WEIGHT_ADDR] if 0xC5000 <= a < 0xC5FFC], \
         "an edit landed in [0xC5000,0xC5FFC) -- the CRC-SKIPPED block with the V40 ignition precedent"
 
     # ---- the attributed diff -----------------------------------------------------------------------
     cave_range = set(range(CAVE_BASE, CAVE_BASE + CAVE_EXTENT))
-    lever_a_bytes = {b + Y_OFF + k for b in LEVER_A_FINAL_Y for k in range(4)}
+    lever_a_bytes = {b + Y_OFF + k for b in LEVER_A_FINAL_Y for k in range(8)}
     lever_b_bytes = {a + k for a in LEVER_B for k in (0, 1)}
     lever_c_bytes = {DAMP_WEIGHT_ADDR, DAMP_WEIGHT_ADDR + 1}
 
     def attribute(d):
         return ("PROBE cave" if d in cave_range else
-                "LEVER A rate-lane plateau" if d in lever_a_bytes else
+                "LEVER A rate lane, whole axis" if d in lever_a_bytes else
                 "LEVER B FactorC/E damping" if d in lever_b_bytes else
                 "LEVER C 0xC63A0 damper weight" if d in lever_c_bytes else
                 "CARRIED 0x454FE" if d == RATCHET_ADDR else None)
@@ -1327,22 +1368,44 @@ def build():
     for d in sorted(f70):
         print(f"    0x{d:05X}  {v70[d]:02X} -> {code[d]:02X}   {attribute(d)}")
 
+    # 🛑 THE STOCK DIFF ALSO CARRIES THE WHOLE V38 -> V70 LINEAGE. Those bytes are not V72's and must
+    # not be attributed to it -- but neither may they be waved away. The assertion that matters is
+    # that every unattributed byte is one where the BASE already differed from stock.
+    inherited = {i for i in range(START, END) if v70[i] != stock[i]}
     d_stock = [i for i in range(START, END) if code[i] != stock[i]]
     fs = [d for d in d_stock if d not in crc_only]
-    stray_s = [d for d in fs if attribute(d) is None]
+    stray_s = [d for d in fs if attribute(d) is None and d not in inherited]
     assert not stray_s, f"UNATTRIBUTED functional bytes vs STOCK: {[hex(x) for x in stray_s[:16]]}"
     print(f"\n  EXACT DIFF vs STOCK: {len(d_stock)} bytes = {len(fs)} functional + "
           f"{len(d_stock) - len(fs)} CRC")
     groups = {}
     for d in sorted(fs):
-        groups.setdefault(attribute(d), []).append(d)
-    for what, ds in groups.items():
-        print(f"    {what:<32s} {len(ds):3d} bytes  [0x{min(ds):05X}..0x{max(ds):05X}]")
-    for what, ds in groups.items():
-        if what == "PROBE cave":
+        groups.setdefault(attribute(d) or "INHERITED from the V38->V70 lineage", []).append(d)
+
+    def runs(ds):
+        out, s = [], ds[0]
+        for a, b in zip(ds, ds[1:] + [None]):
+            if b is None or b != a + 1:
+                out.append((s, a))
+                s = b
+        return out
+
+    for what in sorted(groups, key=lambda k: min(groups[k])):
+        ds = groups[what]
+        rr = runs(ds)
+        print(f"    {what:<38s} {len(ds):3d} bytes in {len(rr):2d} range(s)")
+        if what.startswith("INHERITED"):
+            print(f"        {len(rr)} ranges spanning 0x{min(ds):05X}-0x{max(ds):05X} "
+                  "(cave hook, V57 decoupling, mss0, the 0xE4xxx/0xE5xxx tables)")
             continue
-        for d in ds:
-            print(f"      0x{d:05X}  {stock[d]:02X} -> {code[d]:02X}   {what}")
+        for lo, hi in rr:
+            span = f"0x{lo:05X}" if lo == hi else f"0x{lo:05X}-0x{hi:05X}"
+            print(f"        {span:<15s} {stock[lo:hi + 1].hex(' ')[:44]:<44s} -> "
+                  f"{bytes(code[lo:hi + 1]).hex(' ')[:44]}")
+    assert set(groups) - {"INHERITED from the V38->V70 lineage"} == \
+        {"PROBE cave", "LEVER A rate lane, whole axis", "LEVER B FactorC/E damping",
+         "LEVER C 0xC63A0 damper weight", "CARRIED 0x454FE"}, \
+        f"the stock diff's attributed groups are {sorted(groups)}"
 
     # ---- write + readback --------------------------------------------------------------------------
     if existing is not None and existing != bytes(code):
@@ -1363,7 +1426,6 @@ def build():
     assert info["headers"] == FF.EXPECTED_HEADERS
     assert info["blocks"] == [{"start": START, "length": END - START}]
     decode = build_decode_table(FF.V9B["keys"], FF.V9B["ops"])
-    assert len(OUT) < 250, f"the .rwd path is {len(OUT)} chars -- Windows' 260 limit would truncate"
     rwd = encode_x31(info["headers"], info["blocks"],
                      [bytes(code[START:END]).translate(invert_table(decode))])
     Path(OUT).write_bytes(rwd)
@@ -1383,51 +1445,66 @@ def build():
         assert rec_y(dec, base) == want_y, f"readback record 0x{base:05X} Y is {rec_y(dec, base)}"
     for addr, (_o, new, label) in LEVER_B.items():
         assert u16(dec, addr) == new, f"readback {label} @0x{addr:05X} is {u16(dec, addr)}"
+    for tbl in (FACTOR_C, FACTOR_E):
+        for m in EDITED_FACTOR_MODES:
+            ys = rec_y(dec, tbl[m])
+            assert all(b >= a for a, b in zip(ys, ys[1:])), f"readback 0x{tbl[m]:05X} is not monotone"
+    assert max(damper_authority(dec, m, v, r) for m in EDITED_FACTOR_MODES
+               for v in range(0, FACTORC_ONSET_COUNTS + 1, 32)
+               for r in range(0, 4001, 25)) < CEILING_FLOOR, "readback: the opened region clips"
     assert u16(dec, DAMP_WEIGHT_ADDR) == DAMP_WEIGHT_NEW, "readback 0xC63A0 wrong"
     assert_lever_c_single_reader(bytes(dec))
     assert bytes(dec[CAVE_BASE:CAVE_BASE + CAVE_EXTENT]) == cave_bytes, "readback cave differs"
     assert_probe_census(bytes(dec), cave_span)
     assert [r for _, r, _ in redisassemble_cave(bytes(dec[CAVE_BASE:CAVE_BASE + CAVE_EXTENT]))] == \
         [r for _, r, _ in cave_listing], "the readback cave does not re-disassemble identically"
-    assert not [1 for v, r in grid if v >= 3200
-                for ln in ("r24", "r26")
+    assert not [1 for v, r in grid if v >= 3200 for ln in ("r24", "r26")
                 if LM.effective(bytes(dec), ln, v, r, False) != LM.effective(stock, ln, v, r, False)], \
         "readback moved a >= 50 km/h operating point"
+    for kmh, vc in ((0, 0), (10, 640)):
+        for lane in ("r24", "r26"):
+            assert not [r for r in range(0, 3001, 25)
+                        if abs(LM.effective(bytes(dec), lane, vc, r, False) /
+                               LM.effective(stock, lane, vc, r, False) -
+                               LM.effective(v67, lane, vc, r, True) /
+                               LM.effective(stock, lane, vc, r, True)) > 1e-12], \
+                f"readback lost the V67 reproduction at {kmh} km/h on {lane}"
     V55.assert_variant_tables(dec)
     assert walk_all_blocks(bytes(dec)) == 0, "readback CRC chain FAILED"
     rb_stray = [i for i in range(START, END)
                 if dec[i] != v70[i] and i not in crc_only and attribute(i) is None]
     assert not rb_stray, f"readback differs from V70 outside the attributed set: {rb_stray[:8]}"
     print("\n  READBACK -- payload, all four LEVER A records, all "
-          f"{len(LEVER_B)} LEVER B cells, LEVER C and its")
-    print("     single-reader census, the carried ratchet byte (decoded as a Bcond, target "
-          "re-checked), the")
-    print("     governor-monitor safety, every MUST-REMAIN-STOCK site, the whole 68-byte cave AND its")
-    print("     re-disassembly, the probe census, the >= 50 km/h structural-stock sweep, identity to "
-          "V70")
-    print("     outside the attributed set, and the full CRC chain: ALL re-verified ON THE READBACK.")
+          f"{len(LEVER_B)} LEVER B cells AND their monotonicity")
+    print("     and no-clip properties, LEVER C and its single-reader census, the carried ratchet byte")
+    print("     (decoded as a Bcond, target re-checked), the governor-monitor safety, every")
+    print("     MUST-REMAIN-STOCK site, the whole 68-byte cave AND its re-disassembly, the probe")
+    print("     census, the V67/V68 reproduction at 0 and 10 km/h, the >= 50 km/h structural-stock")
+    print("     sweep, identity to V70 outside the attributed set, and the full CRC chain: ALL")
+    print("     re-verified ON THE READBACK.")
 
     rwd_sha = hashlib.sha256(rwd).hexdigest()
     print(f"\n  wrote {OUT}\n    SHA256 {rwd_sha}")
     print("\n" + "=" * 102)
-    print("  V72 BUILT. Both rate lanes dosed PLATEAU-ONLY through the ungated speed-shaped surfaces")
-    print("  (V67/V68's creep numbers, exactly 1.000x at highway), the base-assist damper opened at")
-    print("  creep with V47's own bytes, and the damper's weight doubled. A 4-rung probe on `a`, the")
-    print("  damper output and the rate index.")
-    print("  🛑 UNGATED: the rate-lane dose applies in MANUAL steering below ~30 km/h too.")
+    print("  V72 BUILT. V67/V68's creep rate lane reproduced EXACTLY at 0 and 10 km/h on both lanes,")
+    print("  through the ungated speed-shaped surfaces, with EXACTLY 1.000x at and above 50 km/h --")
+    print("  V67/V68's only failure removed without touching what worked. The base-assist damper is")
+    print("  opened at creep (389 counts, monotone, no clipping) and its weight doubled. A 5-rung")
+    print("  probe on `a` (two thermometer steps), the damper output and the rate index.")
+    print("  🛑 UNGATED: the rate-lane dose applies in MANUAL steering below ~30 km/h too, and if V72")
+    print("     produces grind #2 it will produce it in the manual arm as well.")
     print("  🛑 Flash only on the operator's explicit instruction, naming the file and the bus.")
     return img_sha, rwd_sha
 
 
 def _self_check():
-    """Everything checkable without an image, run on import by the verifier and by the tests."""
+    """Everything checkable without an image."""
     _self_check_encoders()
-    assert R_THRESHOLD == 400 and A_THRESHOLD == 512 and D_THRESHOLD == 64
-    assert D_NEG_THRESHOLD == -65
+    assert (A_THRESHOLD, A2_THRESHOLD, D_THRESHOLD, D_NEG_THRESHOLD, R_THRESHOLD) == \
+        (512, 1024, 64, -65, 512)
     assert set(LEVER_A_FINAL_Y) == {REC_B0, REC_B1, REC_A0, REC_A1}
-    assert sum(len(v[0]) for v in LEVER_A_FINAL_Y.values()) == 16
-    assert 2 * len(LEVER_B) == 16 or LEVER_B_VARIANT != "V47", \
-        "the V47 LEVER B variant must be exactly 8 cells = 16 bytes"
+    assert sum(len(v[0]) for v in LEVER_A_FINAL_Y.values()) == 16      # 16 halfwords = 32 bytes
+    assert len(LEVER_B) == 10                                          # 10 halfwords = 20 bytes
     cave, _ = build_cave()
     assert len(cave) == 68
 

@@ -1,6 +1,6 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-04.** This file is the single current-state record. Update it in place at every
+**Last updated: 2026-08-05.** This file is the single current-state record. Update it in place at every
 close-out; do not append new dated blocks (that is what made `CLAUDE.md` unreadable). The narrative of how
 each state was reached lives in `docs/HANDOFF-*.md`.
 
@@ -19,6 +19,90 @@ before reasoning from any recorded result.** Then the latest handoff,
 `HANDOFF-2026-07-31-v61-worse-the-rate-lane-is-the-damper.md`, then
 `HANDOFF-2026-07-31-v60-null-and-the-v52c-fabrication.md`, then
 `HANDOFF-2026-07-30-v59-drive-and-the-loop-hypothesis.md`).
+
+---
+
+★★★★★ **THE HEADLINE, 2026-08-05 (LATEST): THE TWO-LANE RULE. CREEP GRIND #2 REQUIRES r24 HIGH-RATE
+≳3.4× *AND* r26 HIGH-RATE ≳1.5× — CUTTING EITHER KILLS IT, SIX BUILDS, NO EXCEPTIONS. THAT IS WHY EVERY
+FIX FOR ONE GRIND FED THE OTHER: EACH MOVED ONLY ONE LANE. ⇒ V72 IS BUILT — V67/V68's CREEP
+CONFIGURATION REPRODUCED EXACTLY, STRUCTURALLY STOCK AT HIGHWAY, PLUS THE FIRST REAL DAMPING AT CREEP.**
+
+Full narrative: `docs/HANDOFF-2026-08-05-grind2-is-grind1s-harmonic-and-both-lanes-must-move.md`.
+Spec and every risk: `docs/V72-DESIGN.md`.
+
+## 🛑 ON THE CAR: **V71C** (route `58`). **V72 IS BUILT AND UNFLASHED.**
+
+| | value |
+|---|---|
+| image SHA256 | `466b5f2983167ed1599969eaf1165b570c34ff900012853c6fdb050deebaca58` |
+| rwd SHA256 | `2751ffa60499b7a5969c47feaf67caedf43eeaf215ae0bc9297abe66fef7e7a4` |
+| rwd name | `39990-TVA,A160-V72-A-WHOLEAXIS-r24_5244-r26_512-V67CREEP-hwy1x-B-FactorCE-430_927-C-63A0x2-454FE-probe-a512-a1024-damp-rate512-…rwd` |
+
+⚠ **An earlier V72 cut was the SUPERSEDED plateau-only spec** and is renamed
+`SUPERSEDED-DO-NOT-FLASH-…`. **Exactly one flashable V72 exists.** ★ It was caught by **byte-checking the
+image, not the filename** — the superseded artifact's own name read `…-PLATEAU-…-LEVERB-V47damp-…`, i.e.
+it described itself correctly and was still the wrong build.
+
+**Verified:** 50/50 CRC blocks PASS · exactly the MAIN/CAL/`0xD2000` trailers moved · nothing in
+`[0xC5000,0xC5FFC)` · all 85 functional bytes attributable · **V67/V68's engaged multipliers reproduced
+with 0 mismatches at 0 and 10 km/h at rate 0/400/1400/3000** · **0 deviations from 1.000× at ≥50 km/h.**
+
+### THE TWO-LANE RULE — [EVIDENCE, six builds]
+| build | r24 high-rate × | r26 high-rate × | creep grind #2 |
+|---|---|---|---|
+| stock · V69 · V70 | 1.000 | 1.000 | **none** |
+| **V71B/`r54`** | **1.000** | **2.000** | **none** (0/835 windows, P(0)=0.0002) |
+| V62/V65 | **3.414** | 2.000 | **YES — worst in corpus** |
+| **V71C/`r58`** | **3.414** | 1.500 | **YES — 3 creep events, max 1742** |
+| **V67/V68** | **3.414** | **0.250** | **none** ⚠ ~42 s, underpowered |
+| **⇒ V72** | **3.414** | **0.250** | ← V67/V68's row |
+
+### THE FLIGHTS — the operator was right on all six calls
+**V71B/`r54`:** grind #1 **545** (inside the stock pool; indistinguishable from V69 P=0.84 / V70 P=0.22);
+grind #2 **ABSENT and powered** (0 bursts, P(0)=0.0002 engaged / 0.0098 manual); ratchet present, 171.5 s.
+**V71C/`r58`:** grind #1 **223** (excluded lower than stock P=0.0006; excluded **higher** than V67
+P=0.0215); grind #2 **PRESENT engaged**, 7 bursts; ratchet present, **8,521 counts p-p = corpus record**.
+**V71C better than V71B at P < 1e-4 — exactly his ranking.**
+★ The only functional difference between V71C and V67/V68 is `0xC6444` (3072 vs 512) ⇒ **the r26 cut is
+load-bearing.** ★ **Grind #2 follows the GATE, not the hands** (ungated V62/V65 burst in both arms
+equally; gated V71C only engaged) ⚠ contradicting the operator's *"worse without openpilot"* recollection.
+
+### 🛑 FIVE RETRACTIONS THIS SESSION, FOUR OF THEM THE ORCHESTRATOR'S OWN
+1. **"Grind #2 IS grind #1's 2nd harmonic"** — published as the session headline, **retracted the same
+   session**. A ratio of two narrow lines is a property of their marginals; **shuffling the pairing
+   reproduced it**, and every tracking SLOPE contains 0 and excludes 2.0 on four routes. The corpus's
+   original *"slope 0.173, NOT a harmonic"* is **CONFIRMED**. Method rule:
+   `memory/feedback-a-ratio-is-not-a-tracking-test.md`.
+2. **"`0x454FE` is falsified for the ratchet"** — the test was **VACUOUS**. `gp-0x67fa == 4` reads
+   **0/123,277** and **8/92,826** (all eight in PARK) ⇒ state 4 never occurs while driving ⇒ the
+   substitution never ran. ★ What survives is stronger: it never runs on **stock** either ⇒ structurally
+   eliminated. ⚠ **[OPEN]** V42's confirmed hard-turn fix could not have acted either.
+3. **"V69/V70 dosed the wrong part of the curve"** — refuted; measured operating point is **p50 = 104
+   counts** and they delivered 2.000×/3.999× there.
+4. **"Modulation depth ranks the corpus"** — refuted on measured data (within-cycle depth 1.002/1.004).
+5. **"V67/V68 showed zero creep grind #2" is a SHARED zero** — every non-V62 build reads 0.0, incl. stock.
+
+### OTHER DURABLE RESULTS
+- ★★★★ **The engagement question is ANSWERED and the operator's objection was right:** the rate lanes read
+  **ZERO** LKAS signals; `gp-0x67fa` is a **fault** state machine (33 writers decompiled); `gp-0x683c` has
+  1 read / 0 writers. ⇒ the dependence is **PHYSICAL** — base damping is **exactly zero below 35.0 km/h**,
+  so at creep the driver's hand is the only damping in the system.
+- ✅ **`gp-0x67ac` is PROVABLY always 0** — the reduced-sum branch that would zero r24, r26 *and* damping
+  is unreachable (`0xC4124` = `00 00 05 00 05 05 00 00 00 05 00`, identical across all 65 images).
+- 🛑 **PWM carrier corrected 8 kHz → 4.000 kHz** (PCLK is 40 MHz). ⇒ `gp-0x6ac0` = 30 × f_electrical.
+- ✅ **Axis scale settled at 4.7121 counts/column-deg-s**, three ways; **P × G = 56.5**. The 0.58901
+  candidate is the right factor on the **wrong CAN copy** (`0x14A` packs `(-gp-0x6a56)>>3`).
+- 🛑 **The ratchet's Q is NOT measurable at any window length** — Q(2N)/Q(N) = **2.06**. The recorded
+  Q ≈ 40 is a window artefact. ⚠ *"A hand on the wheel kills it"* does **not** generalise (p = 0.31/0.39),
+  though engagement-conditionality replicates at **p = 6.3e-13** with manual hands-off **1/150**.
+- ⚠ **Two `BUILD-LINEAGE.md` ledger errors:** `0xC6442`/`0xC61F6` attributed to V39 were **never written
+  by any build**; and **V71B/V71C carry NEITHER of V62's `sar` bytes** (those are V62/V65/V71A only).
+
+### ⇒ ★★★ THE FLIGHT INSTRUCTION — load-bearing, and it costs nothing
+**Drive deliberate ENGAGED hard cornering at creep** — < 4 m/s, sustained driver torque ≥ 1200,
+|angle| ≥ 100°, **openpilot engaged**, ~**90 s**. The corpus has **essentially no unprovoked engaged
+corner exposure**: V67 and V70 have **2 engaged corner blocks each, P(0) ≈ 0.69**. Ninety seconds takes
+the power from ~25% to ~80% and settles grind #2 on one drive, whichever way it falls.
 
 ---
 
