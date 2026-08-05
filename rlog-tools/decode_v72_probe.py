@@ -447,13 +447,17 @@ def main(argv):
     for target in argv[1:]:
         print("=" * 100)
         print(f"  {target}")
-        data = collect(target)
-        b4 = np.asarray(data["byte4"], dtype=np.uint8)
+        # 🛑 GLUE, fixed 2026-08-04 while extracting route 59: `collect()` takes a LIST of paths and
+        # returns `b4` / `lat` / `v`. Passing the bare string made it iterate the path's CHARACTERS
+        # (FileNotFoundError: 'a'), and `byte4`/`engaged`/`speed_ms` are not keys it ever returns.
+        # Semantics below are untouched.
+        data = collect([target])
+        b4 = np.asarray(data["b4"], dtype=np.uint8)
         if not len(b4):
             print("  🛑 no 0x14A frames found.")
             continue
-        engaged = np.asarray(data["engaged"], dtype=bool) if "engaged" in data else None
-        speed_ms = data.get("speed_ms")
+        engaged = np.asarray(data["lat"], dtype=bool) if data.get("has_lat") else None
+        speed_ms = data.get("v")
         print(f"  frames: {len(b4)}")
         print(f"  payload histogram: {dict(Counter(hex(int(v)) for v in b4).most_common(12))}")
         if not identify(b4):

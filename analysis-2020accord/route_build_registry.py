@@ -107,6 +107,52 @@ ROUTES = (
         "CONFIRM THE .rwd FILENAME as well.",
         "flight health: ST==4 = 0/150,327; ST==3 = 12; zero steerUnavailable / steerTempUnavailable "
         "/ canError / controlsMismatch / immediateDisable / steerSaturated.")),
+    # ⚠ ROUTES 4f / 50 / 54 / 58 ARE MISSING FROM THIS TABLE. They were flown and cached (V69, V70,
+    # V71B, V71C) but never rowed here, so the standing practice lapsed for four routes. Not
+    # back-filled from route 59's seat -- fabricating their evidence would be worse than the gap.
+    Route("59", "9070b9dcee", "V72",
+          "5 rungs on THREE cells: bit6/bit5 = `a` (gp-0x69a4) thermometer at 512/1024, "
+          "bit4 = |gp-0x6bd0| >= 64 (base damper), bit3 = gp-0x6ac0 >= 512 (rate axis)", 2.0,
+          image_sha="466b5f29", rwd_sha="2751ffa6", evidence=(
+        "87,953 raw 0x14A src-1 byte4 frames over 15 segments (879.4 s) take exactly THREE values: "
+        "{0x87: 82,965, 0x8F: 4,788, 0xC7: 200}. bit7 set on every one ⇒ VOID = 0 and V53 (0x07) "
+        "and V54 (0x0F) are EXCLUDED ABSOLUTELY.",
+        "★★ The bit5 => bit6 MONOTONE INVARIANT holds with ZERO violations in all 87,953 frames. On "
+        "V72 both `a` rungs come from ONE `sar 0x9`, so the implication is structural and a single "
+        "violation would have falsified V72. ⚠ ONE-WAY: holding does not prove it.",
+        "★ 0xC7 sets bit6 with bit5 CLEAR ⇒ V65's ladder invariant (bit6 => bit5) is VIOLATED ⇒ V65 "
+        "EXCLUDED. 0x8F sets bit3 ⇒ V66/V67 EXCLUDED (bit3 is never set there). 0x87 is present ⇒ "
+        "V68 EXCLUDED; and 0x87 is NOT constant ⇒ this is not V64's frozen null.",
+        "V59/V62 survive the STRUCTURAL test -- all three values are thermometer-legal -- and are "
+        "excluded on SEMANTICS instead: under V59/V62 bit6 is the FAULT sentinel, measured at "
+        "0.000% on routes 2c and 37, whereas here it fires in 200 frames (0.227%), all engaged, all "
+        "at 84-105 km/h. Same style of argument as route 47's.",
+        "★★ THE CAVE IS PINNED BY ITS OWN POSITIVE CONTROL. bit3 agrees frame-for-frame with bus "
+        "|rate_c| >= 108.66 deg/s (512 counts / 4.7121) in 87,914 / 87,940 frames = 99.9704% "
+        "(recall 99.69%, precision 99.77%), and a 1 deg/s sweep peaks at 109 deg/s ⇒ implied scale "
+        "4.697 counts-per-deg-s vs the settled 4.7121, a 0.3% error. Engaged duty 3.373% against "
+        "the PRE-REGISTERED 2.750% -- inside the factor-of-1.5 band written before the drive.",
+        "★ THE TWO V72 CUTS ARE SEPARABLE ON THIS ROUTE, unlike the V70 re-cut. `_v72_plain_image."
+        "bin` carries decode_v72_probe.CAVE_HEX byte-for-byte at 0xC4B34 (Python byte read); the "
+        "SUPERSEDED plateau-only image's 68 cave bytes DIFFER, and the difference is in the bit3 "
+        "rung. The observed rung is `>= 512 counts` at 99.970% agreement, against 92.340% for the "
+        "next candidate threshold tried (144 counts) ⇒ the flown artefact is the WHOLEAXIS cut. "
+        "🛑 CONFIRM THE .rwd FILENAME as well: payload narrows, it does not prove.",
+        "🛑 bit4 (|gp-0x6bd0| >= 64) read ZERO in all 87,953 frames INCLUDING 34,275 frames "
+        "(342.8 s) above 35 km/h, where the rung's own pre-registered positive control says stock "
+        "already damps ⇒ that rung's creep reading is UNINTERPRETABLE. It does not bear on build "
+        "identification: bit3 and bit6 both vary, so the cave demonstrably ran.",
+        "★★★★ `a` = gp-0x69a4 < 512 (< 0.5 in Q10) in 100.000% of 39,160 creep frames, including "
+        "1,503 engaged-creep frames at |cs_tq| >= 2517 where the engaged-HIGHWAY arm fires 41.1% "
+        "⇒ a POWERED null, not an empty regime. bit5 (a >= 1024) is 0 / 87,940 route-wide.",
+        "⚠ kd = 2.0 IS SPEED-CONDITIONAL AND UNGATED on this build: the whole rate axis is armed at "
+        "the 0 and 10 km/h records (r24 -> 5244, r26 -> 512) and the 50/100 km/h records are "
+        "BYTE-STOCK ⇒ highway is EXACTLY 1.000000x by record-selection geometry, and the dose "
+        "applies in the MANUAL arm too. Route 59's manual data is NOT a stock control.",
+        "flight health: ST==4 = 0/87,940; ST==3 = 13 (all in segment 14, parked); no "
+        "steerUnavailable / steerTempUnavailable / canError / controlsMismatch / steerSaturated. "
+        "The soft-disable events are wrongGear (parked) plus commIssue / selfdrivedLagging, the "
+        "known device-load signature.")),
 )
 
 BY_ROUTE = {r.route: r for r in ROUTES}
@@ -184,6 +230,20 @@ def identify(field_values):
     else:
         notes.append("★ a value lacks bit3 or bit7, or 0x87 is present -> V68 is EXCLUDED")
 
+    # ★★ V72: bit7 hard-wired 1, and `bit5 => bit6` MONOTONE because both `a` rungs come from ONE
+    # `sar 0x9`. A single bit5-set/bit6-clear frame falsifies V72 outright -- the strongest
+    # single-frame falsifier any build in this table carries. 🛑 It is ONE-WAY: 12 of 16 payloads
+    # remain legal and six of them are thermometer-legal too, so V59/V62 are NOT excluded by
+    # structure and V72 is NOT confirmed by it. Semantics and the .rwd filename do the rest.
+    v72_ok = all((v >> 7 & 1) and (not (v >> 5 & 1) or (v >> 6 & 1)) for v in vals)
+    if v72_ok:
+        cands |= {"V72"}
+        notes.append("bit7 set and bit5 => bit6 on every value -> V72 possible. 🛑 ONE-WAY: this "
+                     "cannot CONFIRM V72, only fail to falsify it. V72's own positive control is "
+                     "bit3 == (bus |rate_c| >= 108.66 deg/s) frame-for-frame.")
+    else:
+        notes.append("★ bit7 clear somewhere, or bit5 set with bit6 clear -> V72 is EXCLUDED")
+
     if len(vals) == 1 and vals[0] == 0x87:
         cands |= {"V64"}
         notes.append("🛑 a FROZEN constant 0x87 is V64's null, V65's neutral bucket, V66's "
@@ -226,6 +286,17 @@ def _self_check():
     assert "V68" not in identify([0x87])[0] and "V68" not in identify([0x97, 0xA7])[0]
     for probe in ([0x87], [0x87, 0xC7], [0x87, 0x97, 0xA7]):
         assert "V68" not in identify(probe)[0], f"{probe} must not identify as V68"
+    # ---- V72 (route 59): the monotone invariant, and its honest one-way limit ------------------
+    c, _ = identify([0x87, 0x8F, 0xC7])                      # route 59's ACTUAL payload set
+    assert "V72" in c, "route 59's own payloads must not falsify V72"
+    assert not ({"V53", "V54", "V64", "V65", "V66", "V67", "V68"} & c), \
+        f"route 59's payloads must exclude V53/V54/V64-V68, got {c}"
+    assert {"V59", "V62"} <= c, \
+        "🛑 V59/V62 must REMAIN candidates on V72 payloads -- they are excluded on SEMANTICS " \
+        "(bit6 is their fault sentinel, measured 0.000%), never on structure. Do not upgrade this."
+    # 0xA7 = bit5 set, bit6 clear -- the single-frame falsifier. (0x97 is bit4, not bit5.)
+    assert "V72" not in identify([0x87, 0xA7])[0], "bit5 set with bit6 clear must EXCLUDE V72"
+    assert "V72" not in identify([0x07])[0] and "V72" not in identify([0x0F])[0]
     # the table must be internally consistent
     assert len({r.route for r in ROUTES}) == len(ROUTES), "duplicate route id"
     for r in ROUTES:
