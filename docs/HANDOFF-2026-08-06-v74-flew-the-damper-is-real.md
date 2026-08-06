@@ -291,11 +291,60 @@ sits in-band at 12.5–18.7 m/s, so the clean windows remain 9.4–12.5 m/s and 
 probe first, before anything else in either log: on V75 a constant thermometer field means the cave never
 fired; on V76 a constant `bit6` means the gate never fired and nothing else in the log is interpretable.
 
-If a flight order has to be chosen, V76 first is the better bet. Grind #1 is the audible complaint, and
-V76 reproduces the only mechanism in this corpus with a measured effect on it. V75's expected effect, per
-Section 3, is small enough that it reads more as a science flight — confirming the damper's dose-response
-shape — than as a fix flight on its own. Both remain the operator's decision; neither flashes without him
-naming the file and the bus.
+## 🛑 THE FLIGHT ORDER — the operator challenged it, he was right, and TWO premises were false
+
+**Read this before acting on anything above.** An earlier draft of this handoff recommended **V76 first**.
+That recommendation is **WITHDRAWN**, and so is the counter-recommendation that replaced it. The operator
+asked *"what makes it different this time?"* — the honest answer is **nothing did**, and the investigation
+his challenge triggered found **four record defects**, three of which had been steering decisions.
+
+1. **A TRANSCRIPTION DEFECT, not a measurement conflict.** The original reads *"Only V62/V65 **and V71C**
+   have ever produced bursts"* (`HANDOFF-2026-08-05-grind2-…:93`, `V72-DESIGN.md:355`). `STATE.md:453`
+   dropped the `and V71C` clause — which is what made the record contradict itself.
+2. **THE OPERATOR'S OWN HEDGE WAS RECORDED AS A NULL.** On V67 he wrote: *"Grind #2 might still be there
+   somewhat during LKAS-disengaged or more so LKAS-engaged at low-speed, I am not sure. **Might just be
+   dampened.**"* That became **"none"** in the two-lane table, and a later session cited the "none" as
+   evidence. His multi-day exposure vastly exceeds the **11.5 s** of log that contradicted it ⇒ **his
+   report was the better-powered instrument.** See `memory/feedback-never-log-a-hedge-as-a-null.md`.
+3. **THE TABLE'S r24 COLUMN WAS NOMINAL, NOT DELIVERED.** Byte-read: V62/V65 deliver **2.000×** (the `sar`
+   is a flat doubling, not the arm); V72/V73/V74 deliver **1.000×** (RULE 7 — their 5244 sits at mode 10,
+   inert). ⇒ **the rule's "r24 ≳ 3.4×" threshold is wrong — V62/V65 burst at 2.000×.** The *shape* ("both
+   lanes elevated") survives; the number does not.
+4. **"THE RATE LANE IS EXHAUSTED AS A GRIND-#1 LEVER" IS WITHDRAWN** — RULE 7 in disguise, and the subtlest
+   instance in the record. It rested on *"V72's delivered gain is BIT-IDENTICAL to V67/V68's."*
+   Orchestrator-verified false: **V67/V68** carry gate `0xFB` + `0xC6446` = **5244** (the arm **fires**);
+   **V72/V74** carry gate `0xC5` (a dead cell) + `0xC6446` = **512** (never fires, and stock anyway). *The
+   same literal 5244 appears in both images with opposite delivery.* The data agrees — V72's grind #1 did
+   not move (0.953) while V67 = **0.430** and V68 = **0.229** did.
+   ⇒ **STANDING LINE: compare DELIVERED gains, never cal values.**
+
+### ★★★★★ THE COLLINEARITY — `BUILD-LINEAGE.md` **RULE 9**
+The builds that measurably moved grind #1 are **exactly {V62, V65, V67, V68, V71C}**. **Three show grind
+#2.** The other two hold **11.5 s** of engaged creep-corner exposure and **0.0 s** of engaged high-rate
+creep — the cell containing **20 of 24** burst windows.
+⇒ **Every build with adequate grind-#2 exposure failed to move grind #1. No build has ever shown one
+without the other at usable power.** Treat "fix grind #1 via the rate lane without grind #2" as
+**undemonstrated**, not as solved.
+⊕ **(A) "the `sar` alone causes grind #2" is DEAD**: V71C has both `sar` sites byte-stock and produced a
+grind-#2 event — 44.31 Hz, prominence 106,227 against a same-segment floor of 25.5, **12.2×** above the
+maximum on any non-bursting build's engaged creep.
+
+### The trade, stated correctly
+- **V76 is the strongest grind-#1 lever anyone has built** — its arm produced 0.430 and 0.229, the corpus's
+  two best numbers — **and its grind-#2 cost is UNKNOWN**: not ruled out, not established.
+  **P(0) = 0.607** at the creep corner, **39% power**, **0.0 s** in the high-rate cell where bursts live.
+- **V75 buys less and risks nothing** — it touches only the damper lane; both `sar` sites and the entire
+  r24/r26 lane are byte-identical to V74.
+- **No analysis of existing routes can settle V76** — grind #2 only appears with the rate lane elevated.
+  The only thing that converts the unknown into a fact is flying it with **~90 s of deliberate ENGAGED hard
+  cornering at creep early in the drive**, which moves P(0) from 0.61 to **< 0.05**. A regression shows up
+  in minutes rather than after a week, and is revertible.
+⊕ Separately verified and **still standing**: *"the r26 cut is load-bearing"* — V71C vs V67/V68 differ
+**only** at `0xC6444` (3072 vs 512); identical gate, identical r24 arm, identical `sar`. **Only its
+grind-#2 half is underpowered.**
+
+🛑 **Do not present either build as the safe choice.** Both remain the operator's decision; neither flashes
+without him naming the file and the bus.
 
 ---
 
