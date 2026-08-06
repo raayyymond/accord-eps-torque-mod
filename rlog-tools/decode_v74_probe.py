@@ -171,73 +171,158 @@ CREEP_MAX_MS = 4.0            # the ratchet and grind #1 are creep symptoms (1-4
 RWD_NAME = "39990-TVA,A160-V74-V73BASE-ENGCOLS13-x12-addonly-FactorCY0eqY2-FactorEX0to12-Y1eqY2-frictionx1p5-C407E850-probe-67fa-6bd0nz-0x13000-0x100000.rwd"  # noqa: E501
 
 
-def identify(b4, engaged=None, override=False):
-    """Is this a V74 payload at all? 🛑 The FILENAME is the pre-drive discriminator; this is the
-    post-hoc one, and it can only ever say 'consistent with', never 'is'.
+NEARZERO_RATE_DEGS = 0.5      # |column rate| below this is "the wheel is not moving"
+FACTORC_ONSET_MS = 9.72       # 35 km/h -- below it, mode 24's stock FactorC Y[0] = 0
+MAX_LAG_S = 3.5               # V73's mode byte lags engagement by 1.02 s rise / 2.08 s fall
 
-    🛑🛑 THE BUILD-IDENTITY GUARD -- ADDED AFTER THIS DECODER WAS RUN AGAINST V73's OWN FLIGHT.
-    Every V7x cave writes the SAME cell (`gp-0x1514`, CAN 0x14A byte4) in the SAME bit positions,
-    so a V73 log fed to this decoder is *structurally* decodable and produced a CONFIDENT, WRONG
-    headline: on route 5a it read "bit7 fires on 100.000% of frames ⇒ LEVER E' IS DELIVERING and
-    the damper is in force for the first time in this kit." What it was actually reading was V73's
-    CONSTANT liveness seed. Nothing in the payload schema flagged it:
-        · V73's bit7 is a hard-wired 1              -> reads as "the damper is never zero"
-        · V73's bits 6:3 are the MODE byte & 0xF, and this car's modes are 24 / 26
-          -> **8 and 10, BOTH of which are legal V74 `gp-0x67fa` states**
-    ⇒ The two builds' payload alphabets OVERLAP, so no positive test for "this is V74" exists. The
-    only sound behaviour is to REFUSE when the evidence fits a different build better.
 
-    THE DECISIVE TEST IS bit7 SATURATION, and it is structural, not statistical. Under V74's schema
-    `bit7 = (gp-0x6bd0 != 0)`, and `gp-0x6bd0 = (FactorC * FactorE) >> 10` with **FactorE's Y[0]
-    preserved at 0** -- that is the whole design. At zero motor rate FactorE LERPs to 0, so the
-    product is 0 and **bit7 MUST read 0 on some frames of any real drive**. A duty of exactly
-    100.000% is therefore not a strong V74 result; it is evidence the bit is not V74's bit.
+def _lagged_agreement(field_hi, engaged, t):
+    """Best agreement between a 2-valued field and latActive over ANY lag in +/-MAX_LAG_S.
+
+    🛑 A LAG SWEEP IS REQUIRED, not a zero-lag correlation. V73's mode byte follows engagement with
+    a 1.02 s rise / 2.08 s fall, so at zero lag the agreement understates badly -- and understating
+    is the dangerous direction here, because it lets a V73 log through.
     """
-    # ⚠ DECISIVE vs CORROBORATING, kept apart on purpose. A guard that refuses too eagerly would
-    # block a real V74 drive whose state machine happened to sit in two states -- so only the
-    # STRUCTURAL test, and the mode-toggle signature CONFIRMED against latActive, can refuse.
-    decisive, corroborating = [], []
-    duty = float(np.mean((b4 & BIT_DAMP_NZ) != 0))
+    n = len(field_hi)
+    if n < MIN_SAMPLES or len(t) != n:
+        return None, None
+    span = float(t[-1] - t[0])
+    fs = (n - 1) / span if span > 0 else 100.0
+    best, best_lag = 0.0, 0
+    for k in range(-int(MAX_LAG_S * fs), int(MAX_LAG_S * fs) + 1, max(1, int(fs / 20))):
+        a = field_hi[k:] if k >= 0 else field_hi[:k]
+        b = engaged[:len(a)] if k >= 0 else engaged[-len(a):]
+        if len(a) < MIN_SAMPLES:
+            continue
+        agree = float(np.mean(a == b))
+        if agree > best:
+            best, best_lag = agree, k / fs
+    return best, best_lag
+
+
+def identify(b4, engaged=None, speed_ms=None, rate_degs=None, t=None, override=False):
+    """Is this a V74 payload? 🛑 THE GUARD CAN ONLY EVER REJECT, NEVER CONFIRM.
+
+    🛑🛑 ADDED AFTER THIS DECODER WAS RUN AGAINST V73's OWN FLIGHT AND CERTIFIED A LEVER THAT DOES
+    NOT EXIST ON THAT CAR. Every V7x cave writes the SAME cell (`gp-0x1514`, CAN 0x14A byte4) in the
+    SAME bit positions, so another build's log is *structurally* decodable here. On route 5a this
+    file printed "bit7 fires on 100.000% of frames => LEVER E' IS DELIVERING and the damper is in
+    force for the first time in this kit." It was reading V73's CONSTANT liveness seed. Nothing in
+    the schema tripped: V73's `bits 6:3` are `mode & 0xF`, and this car's modes 24/26 give 8/10 --
+    BOTH legal V74 `gp-0x67fa` states. **The two alphabets overlap, so no positive test exists.**
+
+    FOUR DISCRIMINATORS, each derived from the design rather than from a threshold that felt right.
+      D1  [DECISIVE] **MANUAL CREEP.** V74 doses only the ENGAGED column; mode 24 (manual) is
+          byte-stock, so FactorC Y[0] = 0 => dose 0 => `gp-0x6bd0` = 0 => `bit7` = 0. On V73 bit7
+          was a constant-1 liveness bit. ⚠ SCOPED ON PURPOSE: manual ABOVE ~35 km/h legitimately
+          gives bit7 = 1 on V74 (FactorC is non-zero there), so the cell is manual **AND** creep.
+      D1b [DECISIVE] **NEAR-ZERO STEERING RATE, any mode.** FactorE's Y[0] is preserved at 0, so at
+          zero rate the product is 0 and bit7 must be 0 -- engaged or not, fast or slow. This one
+          stays powered on an all-manual or an all-engaged segment, where D1 and D2 do not.
+          ⊕ Column rate stands in for motor rate here: the rigid-body relation is exact at DC, and
+          this test only ever looks at the DC end.
+      D2  [DECISIVE] **THE FIELD MUST NOT TRACK ENGAGEMENT.** On V73 it was the mode byte and
+          tracked latActive at ~99% at matched lag. On V74 it is `gp-0x67fa`, a fault-state machine
+          with no business toggling with engagement. Swept over lag, > 90% is decisive.
+      D3  [corroborating] **THE V73 FINGERPRINT:** exactly two values differing by bit1 (8/10).
+
+    🛑 AN UNPOWERED CELL IS REPORTED AS **UNPOWERED**, NEVER AS A PASS. That distinction is the
+    whole lesson of V64/V68's five uninterpretable nulls.
+    """
+    decisive, corroborating, unpowered = [], [], []
+    nz = (b4 & BIT_DAMP_NZ) != 0
     st = (b4 & STATE_FIELD) >> STATE_SHIFT
     seen = {int(s) for s in st}
-    if duty == 1.0:
-        decisive.append("bit7 duty is EXACTLY 100.000% -- STRUCTURALLY impossible for V74's bit7, "
-                        "which must read 0 whenever the motor rate is 0, because FactorE's Y[0] is "
-                        "preserved at 0 by design. This is V73's hard-wired liveness seed.")
-    two_valued = bool(seen) and seen <= V73_MODE_FIELD_VALUES
-    if two_valued:
-        corroborating.append(
-            f"bits 6:3 take only {sorted(seen)}, which is exactly this car's MODE byte & 0xF "
-            f"({MANUAL_MODE} & 0xF = {MANUAL_MODE & 0xF}, {LIVE_MODE} & 0xF = {LIVE_MODE & 0xF}) "
-            "-- V73's field. ⚠ On its own this is only suggestive: a real V74 drive could sit in "
-            "two states, and both values are legal gp-0x67FA states.")
-    if engaged is not None and len(engaged) == len(b4) and len(seen) == 2:
-        agree = float(np.mean((st == max(seen)) == engaged))
-        line = (f"bits 6:3 track latActive at {100 * agree:.1f}% -- V73's mode byte TOGGLES with "
-                "engagement (24 manual / 26 engaged); V74's assist-chain state is not a 2-valued "
-                "function of it")
-        (decisive if two_valued and agree > 0.85 else corroborating).append(line)
+    eng = np.asarray(engaged, bool) if engaged is not None and len(engaged) == len(b4) else None
+    v = np.asarray(speed_ms, float) if speed_ms is not None and len(speed_ms) == len(b4) else None
+    r = np.asarray(rate_degs, float) if rate_degs is not None and len(rate_degs) == len(b4) else None
+
+    # ---- D1: manual creep ----------------------------------------------------------------------
+    if eng is None or v is None:
+        unpowered.append("D1 (manual creep): no latActive/vEgo in this log")
+    else:
+        m = (~eng) & np.isfinite(v) & (v <= CREEP_MAX_MS)
+        n = int(m.sum())
+        if n < MIN_SAMPLES:
+            unpowered.append(f"D1 (manual creep): only {n} frames (< {MIN_SAMPLES}) -- UNPOWERED, "
+                             "NOT a pass")
+        elif nz[m].all():
+            decisive.append(f"D1 MANUAL CREEP: bit7 is set on ALL {n} manual-creep frames. Mode "
+                            f"{MANUAL_MODE} is byte-stock on V74, so FactorC Y[0] = 0 => dose 0 => "
+                            "bit7 MUST be 0 there. This is V73's constant liveness seed.")
+        else:
+            corroborating.append(f"D1 passes: bit7 is clear on "
+                                 f"{100 * (1 - nz[m].mean()):.1f}% of {n} manual-creep frames")
+
+    # ---- D1b: near-zero steering rate ------------------------------------------------------------
+    if r is None:
+        unpowered.append("D1b (near-zero rate): no 0x18F rate in this log")
+    else:
+        m = np.isfinite(r) & (np.abs(r) < NEARZERO_RATE_DEGS)
+        n = int(m.sum())
+        if n < MIN_SAMPLES:
+            unpowered.append(f"D1b (near-zero rate): only {n} frames (< {MIN_SAMPLES}) -- "
+                             "UNPOWERED, NOT a pass")
+        elif nz[m].all():
+            decisive.append(f"D1b NEAR-ZERO RATE: bit7 is set on ALL {n} frames with |column rate| "
+                            f"< {NEARZERO_RATE_DEGS} deg/s. FactorE's Y[0] is preserved at 0 by "
+                            "design, so the product is 0 and bit7 MUST be 0 there.")
+        else:
+            corroborating.append(f"D1b passes: bit7 is clear on "
+                                 f"{100 * (1 - nz[m].mean()):.1f}% of {n} near-zero-rate frames")
+
+    # ---- D2: the field must not track engagement -------------------------------------------------
+    if eng is None or len(seen) != 2 or t is None:
+        unpowered.append(f"D2 (engagement tracking): field takes {len(seen)} value(s) -- "
+                         "UNPOWERED, NOT a pass")
+    else:
+        agree, lag = _lagged_agreement(st == max(seen), eng, np.asarray(t, float))
+        if agree is None:
+            unpowered.append("D2 (engagement tracking): too few frames -- UNPOWERED")
+        elif agree > 0.90:
+            decisive.append(f"D2 ENGAGEMENT TRACKING: bits 6:3 track latActive at "
+                            f"{100 * agree:.1f}% at lag {lag:+.2f} s. V73's mode byte toggles with "
+                            "engagement; V74's fault-state machine does not.")
+        else:
+            corroborating.append(f"D2 passes: best lagged agreement with latActive is only "
+                                 f"{100 * agree:.1f}% (at {lag:+.2f} s)")
+
+    # ---- D3: the V73 fingerprint -----------------------------------------------------------------
+    if len(seen) == 2:
+        a, b = sorted(seen)
+        if (a ^ b) == 2 and seen <= V73_MODE_FIELD_VALUES:
+            corroborating.append(f"D3 FINGERPRINT: exactly two values {sorted(seen)} differing by "
+                                 f"bit1 -- this car's mode byte & 0xF ({MANUAL_MODE} -> "
+                                 f"{MANUAL_MODE & 0xF}, {LIVE_MODE} -> {LIVE_MODE & 0xF})")
+
+    # ---- verdict ---------------------------------------------------------------------------------
+    if unpowered:
+        print("  ⚠ UNPOWERED CHECKS (these are NOT passes):")
+        for u in unpowered:
+            print(f"     · {u}")
     if decisive:
-        print("  🛑🛑 REFUSING TO DECODE: this payload fits a DIFFERENT build's cave better than "
-              "V74's.")
+        print("\n  " + "=" * 92)
+        print("  🛑🛑 REFUSING TO DECODE -- THIS LOOKS LIKE A **V73** PAYLOAD, NOT V74.")
+        print("  🛑 The V73 MODE-BYTE schema applies to these bytes, not V74's damper/state schema.")
+        print("  " + "=" * 92)
         for w in decisive:
             print(f"     · [DECISIVE] {w}")
         for w in corroborating:
             print(f"     · [corroborating] {w}")
-        print("     ⇒ This is almost certainly a **V73** log (its cave writes the same byte in the")
-        print("       same bit positions, and its alphabet OVERLAPS V74's, so it decodes silently).")
+        print("     ⇒ V73's cave writes the same byte in the same bit positions and its alphabet")
+        print("       OVERLAPS V74's, so it decodes here silently and produces a CONFIDENT WRONG")
+        print("       answer. Read it with decode_v73_probe.py instead.")
         print(f"     🛑 Confirm the flashed .rwd is {RWD_NAME}")
         print("     Re-run with --i-confirm-v74 to override AFTER checking the filename.")
         if not override:
             return False
         print("  ⚠ --i-confirm-v74 given: proceeding under protest. Every number below is suspect.")
     elif corroborating:
-        print("  ⚠ BUILD IDENTITY IS NOT CLEAN -- proceeding, but read this first:")
+        print("  ⊕ build-identity checks that ran clean:")
         for w in corroborating:
             print(f"     · {w}")
-        print(f"     🛑 Confirm the flashed .rwd is {RWD_NAME}")
-    vals = sorted({int(v) & PROBE_MASK for v in b4})
-    states = {(v & STATE_FIELD) >> STATE_SHIFT for v in vals}
+
+    states = seen
     if states == {0}:
         print("  🛑🛑 VOID: bits 6:3 are IDENTICALLY 0 across the whole drive. gp-0x67FA can never")
         print("     hold 0 (value set {1,3..11}, all 33 writers verified), so THE CAVE DID NOT FIRE.")
@@ -248,8 +333,10 @@ def identify(b4, engaged=None, override=False):
     if unknown:
         print(f"  ⚠ states {sorted(unknown)} are outside the verified value set "
               f"{list(STATE_VALUE_SET)} -- either the cell moved or the reading is wrong.")
-    print(f"  ✅ consistent with V74: states seen {sorted(states)}, "
-          f"bit7 duty {100.0 * np.mean((b4 & BIT_DAMP_NZ) != 0):.3f}%")
+    print(f"  ✅ not excluded as V74: states seen {sorted(states)}, "
+          f"bit7 duty {100.0 * np.mean(nz):.3f}%")
+    print("     🛑 'not excluded' is NOT 'confirmed' -- the payload alphabets overlap and the")
+    print("        FILENAME remains the only pre-drive discriminator.")
     return True
 
 
@@ -323,7 +410,8 @@ def main(argv):
         speed_ms = data.get("v")
         print(f"  frames: {len(b4)}")
         print(f"  payload histogram: {dict(Counter(hex(int(v)) for v in b4).most_common(12))}")
-        if not identify(b4, engaged, override=override):
+        if not identify(b4, engaged, speed_ms, data.get("rate"), data.get("t"),
+                        override=override):
             refused += 1
             continue
         report(b4, engaged, speed_ms)

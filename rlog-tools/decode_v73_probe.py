@@ -308,6 +308,14 @@ def identify(b4):
     if void:
         print("  🛑 HARD FAIL. A VOID frame means the cave did not run. Nothing below may be")
         print(f"     interpreted. Check the .rwd filename against:\n       {RWD_NAME}")
+        # ⊕ THE REVERSE GUARD, AND IT IS FREE. On **V74** this same bit is `gp-0x6bd0 != 0` -- the
+        # damper's own output -- which reads 0 whenever the motor rate is 0. So a V74 log fed to
+        # THIS decoder trips the line above and is refused, without a dedicated test. ⚠ The residual:
+        # a V74 log whose damper never read zero would decode here as a mode reading. That is
+        # implausible (FactorE's Y[0] is preserved at 0, so zero rate forces zero output), but it is
+        # not impossible, so the FILENAME remains the discriminator in both directions.
+        # 🛑 The forward direction is NOT free and needed a real guard: see decode_v74_probe.py's
+        # identify(), added after this decoder's own flight was certified as a V74 success.
         return False
     for name in STRUCTURALLY_DISJOINT:
         print(f"  ✅ EXCLUDED ABSOLUTELY: {name}")
