@@ -314,6 +314,36 @@ not cite the raw number as though it were the more rigorous one. **Honest read:*
 correctly signed, did not extinguish either mode on this route's exposure, and the gate genuinely holds
 once investigated — not a rubber stamp on the first favourable number.
 
+### V76 — V75's SIBLING (SAME V74 BASE). **BUILT, VERIFIED, UNFLASHED — and UN-DERISKED, not superseded.**
+`_v76_gate_fb_arm5244_gateprobe_plain_image.bin`. Restores V67/V68's rate lane on the V74 base: gate
+`0x3AA96` `0xC5 → 0xFB`, `0xC6446` = 5244, `0xC6444` = 512 (already equal — asserted, never written),
+**both `sar` sites left stock**. 🛑 **Do NOT rename or supersede this artifact.** It is a live candidate.
+
+**[EVIDENCE, byte-read 2026-08-06]** V76's **engaged** rate lane is **byte-identical to V67/V68**, and
+therefore delivers `(r24, r26)` = **(3.414, 0.250)** at 0 km/h / rateKey 3000. ⚠ Its r24 dose is
+**rate-dependent, 1.707× → 3.414× across the creep rate axis** — a flat arm replacing a rolling-off LERP,
+so quoting "≈1.71×" alone understates it. ⊕ V76's **manual** r26 is also cut to 0.167× (V74's ungated
+`0xC6A68`/`0xC6A7C` = 512), where V67/V68's manual is stock — a further cut, in the safe direction.
+⊕ **The masking risk is already closed by existing data**: V67's own probe read `gp-0x671d != 0` in
+**0 of 150,327 frames**, so `0xC6442` never outranks the arm.
+
+🛑🛑 **GRIND-#2 RISK: NOT ESTABLISHED.** V76 sits in the cell whose only occupants are V67/V68, and that
+cell's evidence is:
+
+| cell | V67+V68 exposure | P(0) at V71C's own rate | power | MDE @ 80% |
+|---|---|---|---|---|
+| non-highway 0.3–14 m/s | 224.0 s | 0.063 | 94% | 0.58× ref |
+| creep 0.3–4 m/s | 42.2 s | 0.510 | 49% | 2.39× ref |
+| **engaged creep CORNER** | **11.5 s** | **0.607** | **39%** | **3.22× ref** |
+| **engaged HIGH-RATE creep** | **0.0 s** | — | **0%** | — |
+
+⇒ **It is un-derisked, not de-risked.** The powered r26-cut evidence (V72/V73/V74, 212.5 s, P(0) = 0.016)
+is at **r24 = 1.000×** and does **not** transfer to a build that raises r24. Combined with the
+collinearity above, **no build has ever moved grind #1 and been well-powered against grind #2.**
+✅ **THE RESOLUTION IS CHEAP AND COSTS NO BYTES: ~90 s of deliberate ENGAGED hard cornering at creep**
+(< 4 m/s, |ang| ≥ 100°, openpilot engaged) moves P(0) below 0.05 **on a single drive**, whichever way it
+falls. Fly it with that instruction or do not fly it.
+
 ### V75's PRE-REGISTRATION — Falsifier B and C RETIRED in their anchored form, not re-sized
 🛑🛑 **`memory/reference-accord-falsifier-b-anchored-search-presupposes-answer.md` — read before
 scoring V75.** Falsifier B (anchored `5×f0` prominence, ±4/±2 bins) and Falsifier C (raw `Δf0`) are not
@@ -364,7 +394,7 @@ bytes all attributable (cave 61, ratchet 20, friction 6, clamp 2) · V72's lever
 ### V72's FLIGHT (route `59`) — one fix real, one not
 | symptom | verdict |
 |---|---|
-| **creep grind #2** | ✅ **ESTABLISHED.** Routes 58/59 identical **691.2 s** exposure, r59 more in every burst cell, **7 vs 0**, exact Poisson **p = 0.0078**; pooled two-lane row **0 in 2,656 s vs 31, p = 6e-5** |
+| **creep grind #2** | ✅ **ESTABLISHED.** Routes 58/59 identical **691.2 s** exposure, r59 more in every burst cell, **7 vs 0 (ALL-SPEED windows)**, exact Poisson **p = 0.0078**; pooled two-lane row **0 in 2,656 s vs 31, p = 6e-5** — 🛑 **BOTH FIGURES ARE *WINDOW* COUNTS AT 50% OVERLAP**, so a single 2 s burst contributes 2–3 of them (~3× inflation). **Restated on MERGED EVENTS: 0 vs 13, and the p-value moves ~2 orders.** ⊕ V72's own zero is **genuine but is a `(1.000, 0.250)` result, not `(3.414, 0.250)`** — see the corrected two-lane table |
 | **highway grind #2** | ❌ **STRUCK.** 0 in 253.4 s ⇒ **P(0) = 0.456**; no build ever produced a highway burst. Real result is a **non-regression** (0.448 vs V71C, outside null, 91 counts) |
 | **micro ratchet (7.79 Hz)** | ❌ **NOT FIXED — attenuation 1.0**, three instruments. Column moves **2.1–2.5× FURTHER** |
 | **macro ratchet** | ⚠ fixed per operator, **UNMEASURABLE** — 64/65 comparisons inside null and both instruments **fail their own positive control** |
@@ -381,9 +411,26 @@ dose ladder; two-moded on exactly the arms that have it, one-moded on the arms t
 control floors at **2.21** (V67/V68) and **reaches 1.0 on no build.**
 ⊕ And sweeping `a` (`gp-0x69a4`) 0→32.0, summed and differential, **no value makes the ladder monotone**
 (best |τ| = 0.429) ⇒ **not a scalar-gain phenomenon.**
-★★ **At ≤10 km/h V72's delivered gain is BIT-IDENTICAL to V67/V68's and it scored stock's grind**
+~~★★ **At ≤10 km/h V72's delivered gain is BIT-IDENTICAL to V67/V68's and it scored stock's grind**
 (dose-matched: consistent with stock P = 0.874, excluded higher than V67+V68 P < 0.0001).
-⇒ **the rate lane is exhausted as a grind-#1 lever.**
+⇒ **the rate lane is exhausted as a grind-#1 lever.**~~
+
+🛑🛑 **RETRACTED 2026-08-06 — THE PREMISE IS FALSE AND THE CONCLUSION DOES NOT FOLLOW.** [EVIDENCE,
+byte-read] At ≤10 km/h **V72 delivers r24 = 1.000× and V67/V68 deliver 1.707–2.048×.** They are
+identical on **r26 only** (both 0.167×). ⇒ **not bit-identical, and not dose-matched.**
+★ **This is RULE 7 wearing a disguise, and it is the most dangerous form of it seen so far:** both
+builds carry the literal value **5244** — V72 in the **mode-10 `gain_B` surface** (inert on a mode-24/26
+car) and V67/V68 in the **`0xC6446` gated arm** (live, mode-proof). *Same number, same lane, opposite
+delivery.* Any comparison keyed on the cal value rather than on the delivered gain will make this
+mistake. **Compare DELIVERED gains, never cal values.**
+⊕ The measurements agree with the correction, not with the retracted claim: on one instrument with the
+split-half null computed first, **V72's grind #1 did not move (ratio 0.953) while V67 = 0.430 and
+V68 = 0.229 did.** If the two configurations really delivered the same gain, that split could not exist.
+⇒ 🛑 **"The rate lane is exhausted as a grind-#1 lever" is WITHDRAWN.** It rested entirely on the false
+equality. The r24 arm remains the only lever that has ever produced the kit's best grind-#1 numbers, and
+**V76 is the build that carries it** — see the V76 section. What *is* still true, and is the real
+constraint, is [[accord-grind1-fix-and-grind2-are-collinear]]: the trade against grind #2 has never been
+separated at usable power.
 
 ### The two symptoms share a driver but are DISTINCT MODES
 Partial `r(6-9, 18-22 | 24-28)` = **0.460**, circular-shift null [−0.102, +0.023], **p = 0.0002**,
@@ -395,10 +442,16 @@ no firmware structure of adequate magnitude found, and **nothing separates firmw
 ---
 
 ★★★★★ **THE HEADLINE, 2026-08-05 (SUPERSEDED — still valid as the grind-#2 rule): THE TWO-LANE RULE.
-CREEP GRIND #2 REQUIRES r24 HIGH-RATE ≳3.4× *AND* r26 HIGH-RATE ≳1.5× — CUTTING EITHER KILLS IT, SIX
-BUILDS, NO EXCEPTIONS.** ⇒ V72 occupied the safe row and **grind #2 is confirmed fixed on-car.**
+CREEP GRIND #2 REQUIRES **BOTH** LANES ELEVATED — CUTTING EITHER KILLS IT, SIX BUILDS, NO EXCEPTIONS.**
+⇒ V72 occupied the safe row and **grind #2 is confirmed fixed on-car.**
 ⚠ Its companion claim — that V72 would deliver "the first real damping at creep" — is **REFUTED**: see
 the headline above. Narrative: `docs/HANDOFF-2026-08-05-grind2-is-grind1s-harmonic-and-both-lanes-must-move.md`.
+
+🛑🛑 **CORRECTED 2026-08-06 — THE RULE'S *SHAPE* SURVIVES, ITS *NUMBERS* DO NOT.** The original wording
+was "r24 high-rate ≳**3.4×** AND r26 high-rate ≳1.5×". **The 3.4× threshold is WRONG: V62/V65 burst at a
+delivered r24 of 2.000×.** The table below is rebuilt on **DELIVERED** multipliers, byte-read from every
+shipped image on a **mode-24/26** car (`analysis-2020accord/_grind2_delivered_lib.py`,
+`grind2_delivered_table.py`). Do not quote a numeric r24 threshold; quote the shape.
 
 ## 🛑 SUPERSEDED — WAS ON THE CAR: **V71C** (route `58`)
 
@@ -417,21 +470,110 @@ it described itself correctly and was still the wrong build.
 `[0xC5000,0xC5FFC)` · all 85 functional bytes attributable · **V67/V68's engaged multipliers reproduced
 with 0 mismatches at 0 and 10 km/h at rate 0/400/1400/3000** · **0 deviations from 1.000× at ≥50 km/h.**
 
-### THE TWO-LANE RULE — [EVIDENCE, six builds]
-| build | r24 high-rate × | r26 high-rate × | creep grind #2 |
-|---|---|---|---|
-| stock · V69 · V70 | 1.000 | 1.000 | **none** |
-| **V71B/`r54`** | **1.000** | **2.000** | **none** (0/835 windows, P(0)=0.0002) |
-| V62/V65 | **3.414** | 2.000 | **YES — worst in corpus** |
-| **V71C/`r58`** | **3.414** | 1.500 | **YES — 3 creep events, max 1742** |
-| **V67/V68** | **3.414** | **0.250** | **none** ⚠ ~42 s, underpowered |
-| **⇒ V72** | **3.414** | **0.250** | ← V67/V68's row |
+### THE TWO-LANE RULE — REBUILT ON **DELIVERED** MULTIPLIERS, 2026-08-06 [EVIDENCE, byte-read]
+🛑 The r24 column below is **DELIVERED**, not nominal. It is computed by mirroring the decompiled ladder
+(`0x3AB56` r26 / `0x3ABFA` r24, both `sar` sites) against the **mode-24/26** `gain_B` records, from each
+shipped image. Exposure is the **engaged creep CORNER** cell — |ang| ≥ 100°, 0.3–4 m/s — because **18 of
+21 creep burst windows live there**; only **DOSED** arms are counted (a gated build's manual arm runs
+byte-stock and does not test the lever). Events are **merged bursts**, not overlapping windows.
+
+| group | build(s) | **DELIVERED r24** | **DELIVERED r26** | *(old nominal r24)* | dosed corner-creep | events |
+|---|---|---|---|---|---|---|
+| stock lane | V58·V59·V61·V64·**V69·V70** | 1.000 | 1.000 | 1.000 | 346.9 s | **0** · P(0)=0.0012 |
+| r26 cut only | **V72·V73·V74** | **1.000** ⚠ | 0.250 | ~~3.414~~ | 212.5 s | **0** · P(0)=0.016 |
+| r26 up only | **V71B/`r54`** | 1.000 | 2.000 | 1.000 | 102.4 s | **0** · P(0)=0.136 |
+| **both up (`sar`)** | **V62 · V65** | **2.000** ⚠ | 2.000 | ~~3.414~~ | 387.8 s | **7 — worst in corpus** |
+| **both up (gate)** | **V71C/`r58`** | 3.414 | 1.500 | 3.414 | 23.0 s | **1** (3 windows, max 1742) |
+| **r24 up, r26 cut** | **V67/V68** → **V76** | 3.414 | 0.250 | 3.414 | **11.5 s** | 0 ⚠ **P(0)=0.80** |
+
+⚠ **TWO CELLS WERE WRONG AND ARE CORRECTED ABOVE.**
+- **V62/V65 delivered r24 = 2.000×, not 3.414×.** Their lever is `sar 0xa → 0x9` at `0x3AC20`/`0x3AB76` —
+  a **flat doubling of both lanes at every speed and rate**, not the arm. 3.414× was the *arm* figure
+  copied across the whole column.
+- **V72/V73/V74 delivered r24 = 1.000×, not 3.414×** — **RULE 7.** Their `0xD2A74`/`0xD2AB0` = 5244 sits
+  at **mode 10** and is **inert** on a mode-24/26 car. Byte-read: `gain_B` m24 and m26 are **stock** on
+  every one of them. ⇒ **V72 never occupied V67/V68's row** — it occupied `(1.000, 0.250)`.
+- ⊕ The **V67/V68** and **V71C** rows were already correct: 3.414 / 0.250 and 3.414 / 1.500 are the true
+  delivered values at 0 km/h, rateKey 3000, engaged.
+
+🛑 **A THIRD DEFECT, IN CODE, WITH ITS BLAST RADIUS AUDITED.** `analysis-2020accord/_r58_lib.py` computed
+route 58's "delivered dose surface" **against `_v70_plain_image.bin` at mode 10**, so its docstring
+asserted — emphatically, as *"the single most load-bearing arithmetic fact on this route"* — that
+**V71C's creep r24 is a CUT (0.854×)**. It is a **BOOST (1.707× at low rate → 3.414× at rateKey 3000)**.
+The signature is unambiguous: its "stock r24" row `6144 5633 5122 …` **is** V70's doubled mode-10 rec0/rec1
+(`Y[0]` 3072→6144, 2561→5122, byte-read), while its ≥50 km/h entries are the undoubled rec2/rec3 — because
+V70 edited only rec0/rec1.
+✅ **Audited, and the blast radius is CONTAINED:** the "cut at creep" framing **never propagated into
+`STATE.md` or `BUILD-LINEAGE.md`** (grepped), and **no script consumed `V71C_R24_DOSE`** — it is defined,
+re-exported once by `_r59_lib.py`, and read by nothing. The damage was to *readers* of the docstring.
+⊕ The **2.438× at 100 km/h** figures used in the highway argument below are **unaffected and correct** —
+they sit above 50 km/h where V70's mode-10 edit never reached. **Do not revise them.**
+⊕ `V71B_R26_DOSE` / `V71C_R26_DOSE` were also always right: `gain_A` is not mode-indexed and V70 never
+touched it, so neither cause could reach them (re-derived, agree to ≤ 0.03).
+**Fixed in place 2026-08-06** with the wrong text quoted rather than deleted; the memory
+`memory/accord-two-lane-rule-grind2.md` carried the same "0.93× cut" line and is corrected.
+
+★ **What survives:** every bursting build has **both** lanes elevated, and each single-lane arm is clean —
+r26 = 2.000× alone (V71B) and r26 = 0.250× with r24 stock (V72/V73/V74) both produce zero.
+🛑 **What does NOT survive:** the numeric threshold, and the *necessity* of the r26 cut — see the power
+row above. **V67/V68's cell rests on 11.5 s and P(0) = 0.80.**
+
+🛑🛑 **THE V67/V68 CELL NEVER SAID "none" — THE TABLE FLATTENED THE OPERATOR'S HEDGE INTO A RESULT.**
+His verbatim report on V67 (`docs/HANDOFF-2026-08-02-v67-flew-and-the-highway-grind-is-not-the-rate-lane.md:23`):
+
+> *"Grind #2 seems **mostly** gone. However, and maybe this is a grind #3 or #2.5, on the way, when doing
+> somewhat significant turns, there is sometimes a resonance that I can feel is similar to grind #2. …
+> Grind #2 **might still be there somewhat** during LKAS-disengaged or **more so LKAS-engaged at
+> low-speed, I am not sure. Might just be dampened.**"*
+
+⇒ He named **engaged low-speed** — the exact cell with 11.5 s of exposure — as where he was unsure. That
+hedge was recorded as **"none"**, and a later session then cited the "none" as evidence for a build
+recommendation. **The correct entry for that cell is UNMEASURED, never a null.** Rule:
+`memory/feedback-never-log-a-hedge-as-a-null.md`.
+
+### ★★★★★ THE COLLINEARITY — 2026-08-06, [EVIDENCE], and it is the strategic fact in this corpus
+**Split-half null computed FIRST inside the stock-lane pool with the identical estimator = [0.663, 1.502];
+grind #1 = p90 of the 18–22 Hz envelope over engaged-creep windows, episodes resampled.**
+
+**The builds that measurably moved grind #1 are EXACTLY {V62, V65, V67, V68, V71C}.**
+
+| moved grind #1? | build | grind-#2 events | engaged creep-CORNER s | engaged HIGH-RATE creep s |
+|---|---|---|---|---|
+| **YES** | V62 · V65 · V71C | **present** | 74.2 · 189.4 · 23.0 | 21.8 · 120.3 · 6.4 |
+| **YES** | **V67 · V68** | not observed | **11.5 · 0.0** | **0.0 · 0.0** |
+| no | V58·V59·V61·V64·V69·V70·V71B·V72·V73·V74 | none | 3.8 – 56.3 | 0.0 – 21.8 |
+
+⇒ 🛑🛑 **EVERY BUILD WITH ADEQUATE GRIND-#2 EXPOSURE FAILED TO MOVE GRIND #1, AND EVERY BUILD THAT MOVED
+GRIND #1 EITHER SHOWS GRIND #2 OR HAS ESSENTIALLY NO EXPOSURE IN THE BURST REGIME.** The two are
+**perfectly collinear** — **no build has ever demonstrated one without the other at usable power.**
+★ Corpus-wide, all **13** merged events fall in the **29.4%** of dosed non-highway exposure held by the
+two "both lanes up" groups: **p = 1.2e-7**. V71C alone holds **3 of 13** in **5.28%** of exposure,
+**P(≥3) = 0.028**.
+🛑 **DO NOT PROPOSE A RATE-LANE GRIND-#1 FIX AS IF THE TRADE WERE SOLVED.** It has never been separated.
+The cheapest way to break the collinearity costs no bytes: **~90 s of deliberate ENGAGED hard cornering
+at creep** on the next rate-lane build. Scripts: `analysis-2020accord/grind2_collinearity.py`,
+`grind2_delivered_verdict.py`.
+
+### (A) THE `sar` vs (B) THE MULTIPLIERS — **(A) IS DEAD** [EVIDENCE, 2026-08-06]
+`sar 0x9` is carried by **V62, V65, V71A ONLY** (byte-read; the `BUILD-LINEAGE` ledger correction holds).
+**V71C has both `sar` sites STOCK at `0x3AB76`/`0x3AC20` and produced a grind-#2 event**, so "V62's `sar`
+is what causes grind #2 ⇒ a `sar`-stock build is safe" is **refuted**:
+- one merged event, `r58s1` t = 11.6–16.7 s, v 1.77–2.05 m/s, |ang| 392°, engaged
+- p99 = **1741.9** vs a max of **142.2** on *any* non-bursting build's engaged creep ⇒ **12.2×**
+- **spectrally identical** — peak **44.31 Hz** at 0.198 Hz resolution, P = 106,227 against a
+  same-segment non-burst floor of **25.5** (V65 43.29 Hz, V62 41.81 Hz).
+  ⚠ A coarse 0.396 Hz pass reads 46.29 Hz; **the fine pass is the correct one.**
+- V71C's own **manual arm is byte-stock** on the same drive, same day, same road: max 70.6, zero events
+⚠ **It is n = 1.** Enough to refute (A); **not** enough to size the effect.
 
 ### THE FLIGHTS — the operator was right on all six calls
 **V71B/`r54`:** grind #1 **545** (inside the stock pool; indistinguishable from V69 P=0.84 / V70 P=0.22);
 grind #2 **ABSENT and powered** (0 bursts, P(0)=0.0002 engaged / 0.0098 manual); ratchet present, 171.5 s.
 **V71C/`r58`:** grind #1 **223** (excluded lower than stock P=0.0006; excluded **higher** than V67
-P=0.0215); grind #2 **PRESENT engaged**, 7 bursts; ratchet present, **8,521 counts p-p = corpus record**.
+P=0.0215); grind #2 **PRESENT engaged**, **7 burst windows in the ALL-SPEED cell / 3 in the CREEP cell**
+(🛑 **LABEL THE CELL** — the same instrument gives 7 and 3 for the two cells, and quoting the bare "7"
+next to a creep claim reads as 7 creep bursts, which it is not. On **merged events** the same route is
+**3 events non-highway / 1 event at creep**); ratchet present, **8,521 counts p-p = corpus record**.
 **V71C better than V71B at P < 1e-4 — exactly his ranking.**
 ★ The only functional difference between V71C and V67/V68 is `0xC6444` (3072 vs 512) ⇒ **the r26 cut is
 load-bearing.** ★ **Grind #2 follows the GATE, not the hands** (ungated V62/V65 burst in both arms
@@ -451,6 +593,12 @@ equally; gated V71C only engaged) ⚠ contradicting the operator's *"worse witho
    counts** and they delivered 2.000×/3.999× there.
 4. **"Modulation depth ranks the corpus"** — refuted on measured data (within-cycle depth 1.002/1.004).
 5. **"V67/V68 showed zero creep grind #2" is a SHARED zero** — every non-V62 build reads 0.0, incl. stock.
+   **Only V62/V65 *and V71C* have ever produced bursts.**
+   🛑 **THE CLAUSE IN BOLD WAS DROPPED WHEN THIS LINE WAS TRANSCRIBED INTO `STATE.md`, and without it the
+   sentence asserts the opposite of what the corpus shows** — it reads as "V71C has no bursts either",
+   contradicting the table 30 lines above. Restored 2026-08-06. The original is intact at
+   `docs/HANDOFF-2026-08-05-grind2-is-grind1s-harmonic-and-both-lanes-must-move.md:93` and
+   `docs/V72-DESIGN.md:355`. **There was never a measurement conflict — only a lost clause.**
 
 ### OTHER DURABLE RESULTS
 - ★★★★ **The engagement question is ANSWERED and the operator's objection was right:** the rate lanes read

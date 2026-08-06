@@ -53,11 +53,21 @@ reports fixed. **MICRO == the 7.79 Hz line** — *"not audible, felt in the colu
 exactly right: **7.7 Hz is below the ~20 Hz hearing threshold**, so it is felt and not heard. All three
 data agents measured the MICRO one; nobody measured MACRO, because nobody knew to look separately.
 
-★★ **THE CRUX: at <= 10 km/h V72's delivered gain is BIT-IDENTICAL to V67/V68's** — the same absolute
-numbers 5244 / 512 at every rate index, not merely the same ratio — **and V72 scored stock's grind.**
-Restricted to that dose-matched stratum V72 is **consistent with stock (P = 0.874)** and excluded higher
-than V67+V68 at **P < 0.0001**; effort-matching runs *against* V72 twice. ⇒ **the creep rate-lane gain
-is not what separated them, and the rate lane is exhausted as a lever.**
+🛑🛑 **THIS "CRUX" IS RETRACTED, 2026-08-06 — ITS PREMISE IS FALSE.** Quoted, not deleted, because it was
+load-bearing for V73's design rationale:
+
+> ~~**THE CRUX: at <= 10 km/h V72's delivered gain is BIT-IDENTICAL to V67/V68's** — the same absolute
+> numbers 5244 / 512 at every rate index, not merely the same ratio — **and V72 scored stock's grind.**
+> Restricted to that dose-matched stratum V72 is **consistent with stock (P = 0.874)** and excluded
+> higher than V67+V68 at **P < 0.0001**; effort-matching runs *against* V72 twice. ⇒ *the creep
+> rate-lane gain is not what separated them, and the rate lane is exhausted as a lever.*~~
+
+**[EVIDENCE, byte-read]** At ≤ 10 km/h **V72 delivers r24 = 1.000× and V67/V68 deliver 1.707–2.048×**;
+they match on **r26 only** (both 0.167×). ★ Both images contain the literal **5244** — V72 in the
+**mode-10 `gain_B` surface (INERT** on a mode-24/26 car, RULE 7**)** and V67/V68 in the **`0xC6446` gated
+arm (LIVE, mode-proof)**. *Same number, same lane, opposite delivery.* ⇒ **compare DELIVERED gains, never
+cal values** (`analysis-2020accord/_grind2_delivered_lib.py`). The withdrawal is recorded in
+`docs/STATE.md` and `memory/accord-grind1-is-a-limit-cycle.md`.
 
 ---
 

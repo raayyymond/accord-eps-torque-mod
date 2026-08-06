@@ -97,10 +97,41 @@ the observed envelope showed headroom the grid-only view could not see was usabl
 | # | correction |
 |---|---|
 | 1 | 🛑 **V69 AND V70 DID NOTHING.** `sar` stock (`aa32`/`aa42`), gate `c5`, arms 512/512, and the only edit is `gain_B` **mode 10** ⇒ **byte-stock behaviour**. The recorded *"clean single-variable r24 series ×1→×2→×4 = 879/729/746, CIs overlap ⇒ r24 is near-inert"* was **three replications of ONE condition.** ⇒ **r24's dose is UNTESTED, not near-inert** |
-| 2 | **V72's two-lane row is `r24 ×1.000 / r26 ×0.250`**, not `3.414 / 0.250` — its r24 half was mode-10 `gain_B`. Its grind-#2 result is therefore **confounded with stock**; what governs grind #2 is **V62's `sar`**, which V72 does not carry |
+| 2 | **V72's two-lane row is `r24 ×1.000 / r26 ×0.250`**, not `3.414 / 0.250` — its r24 half was mode-10 `gain_B`. Its grind-#2 result is therefore **confounded with stock**. 🛑🛑 **THE SECOND HALF OF THIS ROW IS RETRACTED 2026-08-06:** it read *"what governs grind #2 is V62's `sar`, which V72 does not carry"* — **that is hypothesis (A) and it is REFUTED.** `V71C` carries **neither** `sar` byte (`0x3AB76` = `aa32`, `0x3AC20` = `aa42`, byte-read) and produced a spectrally identical grind-#2 event: **44.31 Hz**, p99 **1741.9** = **12.2×** the max of any non-bursting build, against a same-segment non-burst floor of **25.5**. V71C holds **3 of the corpus's 13 merged events in 5.28% of the exposure, P(≥3) = 0.028.** ⇒ **a `sar`-stock build is NOT safe by construction** |
+| 2b | **V62/V65's delivered r24 is `×2.000`, not `×3.414`** — `sar 0xa → 0x9` is a **flat doubling of BOTH lanes at every speed and rate** (mode-proof, one instruction each), not the `0xC6446` arm. The 3.414 figure was the *arm* value copied across the whole column. ⇒ **the two-lane rule's "r24 ≳ 3.4×" threshold is WRONG — V62/V65 burst at 2.000×.** The rule's *shape* ("both lanes elevated") survives; its *numbers* do not. Rebuilt table: `docs/STATE.md`; model: `analysis-2020accord/_grind2_delivered_lib.py` |
 | 3 | ★★★★ **V42's fix was the r26 KILL, not `0x454FE`.** V42 vs V41: `gain_A` **all four records → `[0,0,0,0]`**, `0xC643E` 1536→0, `0xC6444` 512→0, plus a revert of V41's motor-rate cap. `0x454FE` never executes. **This closes a two-session [OPEN]** — and V42 ch.2 sat in this table marked *FALSIFIED* the whole time (see RULE 7's last paragraph) |
 | 4 | **V72/V73's r26 cut is PARTIAL** — `gain_A` `rec0`/`rec1` → flat 512, but **`rec2` `0xC6A90` and `rec3` `0xC6AA4` are byte-stock** ⇒ the cut is **creep-only by record selection**; at and above ~50 km/h r26 is untouched |
 | 5 | **`tp+0x71b2` IS load-bearing** — LKAS reaches the motor via the second accumulator `gp-0x62b0[ch]` → `gp-0x3d88` → `gp-0x6b4c`. **No V14 correction is needed** (one was proposed and withdrawn). Lineage byte-verified over 66 images: stock **512** → **1024 by V22** → **2048 at V38**, `0xC61B2`/`0xC61B4` always in lockstep. ⚠ The V14/V15 first step is build-script prose only — no image exists before V22 |
+
+---
+
+## 🛑🛑🛑 RULE 9, added 2026-08-06 — **THE GRIND-#1 FIX AND GRIND #2 HAVE NEVER BEEN SEPARATED**
+
+**Before proposing any rate-lane lever for grind #1, read this row. It is the reason the trade looks
+solved in the record and is not.**
+
+**[EVIDENCE]** Split-half null computed **first** inside the stock-lane pool with the identical estimator
+= **[0.663, 1.502]**; grind #1 = p90 of the 18–22 Hz envelope over engaged-creep windows, episodes
+resampled. **The builds that measurably moved grind #1 are EXACTLY {V62, V65, V67, V68, V71C}.**
+
+| moved grind #1? | build | grind-#2 events | engaged creep-CORNER s | engaged HIGH-RATE creep s |
+|---|---|---|---|---|
+| **YES** | V62 · V65 · V71C | **present** | 74.2 · 189.4 · 23.0 | 21.8 · 120.3 · 6.4 |
+| **YES** | **V67 · V68** | not observed | **11.5 · 0.0** | **0.0 · 0.0** |
+| no | V58·V59·V61·V64·V69·V70·V71B·V72·V73·V74 | none | 3.8 – 56.3 | 0.0 – 21.8 |
+
+⇒ **EVERY BUILD WITH ADEQUATE GRIND-#2 EXPOSURE FAILED TO MOVE GRIND #1, AND EVERY BUILD THAT MOVED
+GRIND #1 EITHER SHOWS GRIND #2 OR HAS ESSENTIALLY NO EXPOSURE IN THE BURST REGIME.**
+The two are **perfectly collinear.** **No build has ever demonstrated one without the other at usable
+power.** 18 of 21 creep burst windows sit at |ang| ≥ 100°, and V67/V68 hold **11.5 s** and **0.0 s** there.
+
+🛑 **A "grind #2 = none" cell for V67/V68 is NOT a measurement — it is 11.5 s at P(0) = 0.80.** The
+operator's own V67 report hedged precisely there (*"might still be there somewhat … more so LKAS-engaged
+at low-speed … might just be dampened"*) and the hedge was recorded as "none".
+✅ **The fix costs no bytes: ~90 s of deliberate ENGAGED hard cornering at creep on the next rate-lane
+build** takes P(0) from ~0.61 to < 0.05 in one drive. **Ship that instruction with every such build.**
+Scripts: `analysis-2020accord/grind2_collinearity.py`, `grind2_delivered_verdict.py`,
+`grind2_delivered_census.py`.
 
 ---
 

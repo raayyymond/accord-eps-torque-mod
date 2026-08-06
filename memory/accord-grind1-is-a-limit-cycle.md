@@ -30,12 +30,31 @@ buys almost nothing.
 summed and differential models, **no value makes the cross-build ladder monotone** (best |tau| = 0.429,
 optimum at a = 0). ⇒ **grind #1 is not a scalar-gain phenomenon** — it is amplitude- or shape-dependent.
 
-★★ **The decisive on-car datum:** at ≤10 km/h **V72's delivered gain is BIT-IDENTICAL to V67/V68's** —
-the same absolute 5244 / 512 at every rate index, not merely the same ratio — **and V72 scored stock's
-grind** (614 [311, 1187]; dose-matched stratum: consistent with stock **P = 0.874**, excluded higher than
-V67+V68 **P < 0.0001**, effort-matching runs against V72 twice).
-⇒ **the creep rate-lane gain is not what separated them, and the rate lane is exhausted as a grind-#1
-lever.** Ten builds of dosing it floored at ~8x for this reason.
+🛑🛑 **RETRACTED 2026-08-06 — WHAT FOLLOWS WAS THE "DECISIVE ON-CAR DATUM" AND ITS PREMISE IS FALSE.**
+
+> ~~At ≤10 km/h **V72's delivered gain is BIT-IDENTICAL to V67/V68's** — the same absolute 5244 / 512 at
+> every rate index, not merely the same ratio — **and V72 scored stock's grind** (614 [311, 1187];
+> dose-matched stratum: consistent with stock **P = 0.874**, excluded higher than V67+V68
+> **P < 0.0001**). ⇒ *the creep rate-lane gain is not what separated them, and the rate lane is
+> exhausted as a grind-#1 lever.*~~
+
+**[EVIDENCE, byte-read]** At ≤10 km/h **V72 delivers r24 = 1.000× and V67/V68 deliver 1.707–2.048×.**
+They match on **r26 only** (both 0.167×). **Not bit-identical, not dose-matched.**
+
+★ **This is RULE 7 wearing a disguise, and it is the subtlest instance on record.** Both builds contain
+the literal **5244** — V72 in the **mode-10 `gain_B` surface** (inert on a mode-24/26 car) and V67/V68 in
+the **`0xC6446` gated arm** (live, mode-proof). *Same number, same lane, opposite delivery.* The phrase
+"the same absolute numbers 5244 / 512" is precisely the reasoning that fails.
+🛑 **Compare DELIVERED gains, never cal values.** `analysis-2020accord/_grind2_delivered_lib.py`.
+
+⊕ The data agree with the correction: on one instrument with the split-half null computed first, **V72's
+grind #1 did not move (ratio 0.953 vs the stock pool) while V67 = 0.430 and V68 = 0.229 did.** Equal
+delivered gain could not produce that split.
+⇒ **"The rate lane is exhausted as a grind-#1 lever" is WITHDRAWN.** The r24 arm is still the only lever
+that has produced this kit's best grind-#1 numbers. The real constraint is
+[[accord-grind1-fix-and-grind2-are-collinear]] — the trade against grind #2 has never been separated.
+⚠ **The rest of this memory — the limit-cycle finding itself — is unaffected**; it rests on the duty /
+amplitude split and the `a`-sweep, neither of which uses this comparison.
 
 ## RELATION TO THE 7.79 Hz RATCHET — one driver, two modes
 - **Shared driver [EVIDENCE]:** partial `r(6-9, 18-22 | 24-28)` = **0.460**, circular-shift null

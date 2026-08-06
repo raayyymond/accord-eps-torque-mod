@@ -32,18 +32,33 @@ adds exactly the same three things `_r50_lib` adds, plus the two routes' deliver
 
    ★ ROUTE 58 / V71C -- BOTH lanes, flat arms, ENGAGED ONLY (gate at gp-0x6806 is live).
      `r24` arm = 5244 @0xC6446, `r26` arm = 3072 @0xC6444, each REPLACING the stock LERP.
-     🛑 THE DELIVERED r24 DOSE IS A **CUT** AT CREEP, not a boost -- this is the single most
-     load-bearing arithmetic fact on this route and it inverts the naive reading of "5244":
+
+     🛑🛑 CORRECTED 2026-08-06 -- THE r24 ROW BELOW WAS WRONG, AND WRONG IN DIRECTION.
+     WHAT IT SAID: *"THE DELIVERED r24 DOSE IS A **CUT** AT CREEP, not a boost -- the single most
+     load-bearing arithmetic fact on this route"*, with `stock r24 = 6144 5633 5122 ...` and
+     `r24x = 0.854 0.931 1.024 ...`.
+     WHY IT WAS WRONG -- TWO COMPOUNDING ERRORS, both in the BASELINE, not in V71C:
+       1. it swept V71C against **`_v70_plain_image.bin`**, not against stock; and
+       2. it read `gain_B` at **mode 10**, which RULE 7 later showed is not this car's mode.
+     V70's mode-10 edit DOUBLES rec0/rec1 (`Y[0]` 3072 -> 6144, 2561 -> 5122 -- byte-read), which is
+     exactly the "stock r24" row that was recorded; the >=50 km/h entries (2305, 2213) are the
+     UNDOUBLED rec2/rec3, because V70 edited only rec0/rec1. That signature identifies the defect
+     unambiguously. ⇒ the denominator was ~2x too large below 50 km/h, turning a BOOST into a "CUT".
+
+     THE CORRECT SURFACE -- vs TRUE STOCK at **mode 26** (engaged), byte-read via
+     `_grind2_delivered_lib.py`:
 
          km/h      0     5    10    15    20    30    40    50    80        (at rateKey 100)
-         stock r24 6144 5633 5122  4770  4418  3714  3010  2305  2213
-         r24x     0.854 0.931 1.024 1.099 1.187 1.412 1.742 2.275 2.370
-         stock r26 3072 3072 3072  3021  2970  2868  2766  2664  2602
-         r26x     1.000 1.000 1.000 1.017 1.034 1.071 1.111 1.153 1.181
+         stock r24 3072 2816 2560  2528  2496  2432  2368  2303  2212
+         r24x     1.707 1.862 2.048 2.074 2.101 2.156 2.215 2.277 2.371
+         stock r26 3072 3072 3072  3021  2970  2868  2766  2664  2602     <-- these two rows were
+         r26x     1.000 1.000 1.000 1.017 1.034 1.071 1.111 1.153 1.181       ALWAYS RIGHT
 
-     ⇒ at creep on the low rate axis V71C ENGAGED is ~STOCK IN BOTH LANES (r24 0.85-1.02x,
-     r26 1.000x). It is at HIGHWAY that it doses (r24 2.37x, r26 1.18x). The rate axis pushes both
-     up: at 0 km/h rateKey 2000, r24x = 2.59 and r26x = 1.32.
+     ⇒ V71C ENGAGED at creep is a **BOOST on r24 (1.71x at low rate, rising to 3.41x at rateKey
+     3000) and EXACTLY STOCK on r26**. It is NOT "~stock in both lanes". The r26 rows were never
+     affected because `gain_A` is NOT mode-indexed and V70 did not touch it.
+     ⊕ Nothing in this repo consumed `V71C_R24_DOSE` -- the damage was to READERS, via this
+     docstring, which is why the wrong text is quoted above rather than deleted.
      ★ MANUAL ON ROUTE 58 IS BYTE-FOR-BYTE STOCK -- the only within-route, within-driver,
      within-day stock control in the corpus. `V71C_MANUAL_IS_STOCK = True` marks it.
 
@@ -110,14 +125,27 @@ KMH = 1.0 / 3.6
 VBINS = R50.VBINS_V70                             # identical edges as V69/V70 -- comparability
 VBIN_NAMES = R50.VBIN_NAMES
 V70_DOSE, V69_DOSE = R50.V70_DOSE, R50.V69_DOSE
-# Swept from `_v71b_plain_image.bin`; flat in the rate axis (see module docstring).
-V71B_R26_DOSE = {"0-10": 2.000, "10-15": 1.918, "15-20": 1.804, "20-30": 1.597, "30-40": 1.343,
-                 "40-50": 1.109, "50+": 1.000}
-# V71C engaged, at rateKey 100 / bin midpoint. 🛑 r24 is a CUT below ~10 km/h.
-V71C_R24_DOSE = {"0-10": 0.931, "10-15": 1.099, "15-20": 1.140, "20-30": 1.290, "30-40": 1.560,
-                 "40-50": 1.995, "50+": 2.370}
-V71C_R26_DOSE = {"0-10": 1.000, "10-15": 1.017, "15-20": 1.026, "20-30": 1.052, "30-40": 1.090,
-                 "40-50": 1.132, "50+": 1.181}
+# 🛑🛑 ALL THREE DICTS RE-DERIVED 2026-08-06 from the SHIPPED IMAGES vs TRUE STOCK at **mode 26**,
+# at rateKey 100 / bin midpoint (0-10 -> 5, 10-15 -> 12.5, 15-20 -> 17.5, 20-30 -> 25, 30-40 -> 35,
+# 40-50 -> 45, 50+ -> 60 km/h). Regenerate with:
+#     python -c "import _grind2_delivered_lib as D; B=D.load_all(); print(D.delivered(B['V71C'],B['stock'],5,100))"
+# ⚠ ONLY `V71C_R24_DOSE` MOVED. The two r26 dicts were always right -- `gain_A` is not mode-indexed
+# and V70 never touched it, so neither of this defect's two causes could reach them. Verified, not
+# assumed: the re-derived r26 values reproduce the old ones to <= 0.03.
+V71B_R26_DOSE = {"0-10": 2.000, "10-15": 1.945, "15-20": 1.833, "20-30": 1.658, "30-40": 1.409,
+                 "40-50": 1.141, "50+": 1.000}
+# 🛑 CORRECTED. WAS `{"0-10": 0.931, "10-15": 1.099, "15-20": 1.140, "20-30": 1.290, "30-40": 1.560,
+#    "40-50": 1.995, "50+": 2.370}` with the comment "🛑 r24 is a CUT below ~10 km/h" -- computed
+#    against `_v70_plain_image.bin` at **mode 10**, so the denominator was ~2x too large below
+#    50 km/h and the direction INVERTED. V71C's engaged r24 is a BOOST everywhere. See the module
+#    docstring for the full defect account. No script in this repo consumed these values.
+V71C_R24_DOSE = {"0-10": 1.862, "10-15": 2.061, "15-20": 2.088, "20-30": 2.128, "30-40": 2.185,
+                 "40-50": 2.245, "50+": 2.307}
+# ⚠ rateKey 100 is the FLAT part of the rate axis. V71C's r24 arm is flat while stock's LERP rolls
+# off, so the dose RISES with rate: at 0 km/h it is 1.707 / 1.707 / 2.258 / 2.586 / 3.414 at
+# rateKey 100 / 400 / 1400 / 2000 / 3000. A single-number "r24 dose" for this build is meaningless.
+V71C_R26_DOSE = {"0-10": 1.000, "10-15": 1.008, "15-20": 1.025, "20-30": 1.052, "30-40": 1.091,
+                 "40-50": 1.131, "50+": 1.162}
 
 CIRC_LO, CIRC_HI, CIRC = R4F.CIRC_LO, R4F.CIRC_HI, R4F.CIRC
 wheel_order = R4F.wheel_order
