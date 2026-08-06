@@ -218,3 +218,44 @@ did not fire and nothing else is interpretable.
 5. ⚠ **Coupling direction** (7.8 → 21, or a shared driver) is unresolved.
 6. ⚠ **Column vs motor:** the rate conversion is rigid-body, exact at DC and progressively wrong through a
    torsional resonance. If the motor end swings more, the **true dose is higher** than 50.
+
+---
+
+## 8. 🛑🛑 A DECODER TRAP FOUND AT CLOSE-OUT — AND IT WOULD HAVE FAKED THE NEXT HEADLINE
+
+Run against route `5a` — **V73's flight, on which V74 has never been flashed** — `decode_v74_probe.py`
+reported, in full confidence and with no error:
+
+> `✅ consistent with V74: states seen [8, 10], bit7 duty 100.000%`
+> `✅ bit7 fires on 100.000% of frames ⇒ **LEVER E' IS DELIVERING** and the damper is in force for the
+> first time in this kit.`
+
+**That is the exact sentence this kit would have celebrated after the V74 drive.** ★ **Why nothing caught
+it: every `V7x` cave writes the SAME cell in the SAME bit positions, and the alphabets OVERLAP.** V73's
+`bit7` is a hard-wired liveness `1` (reads as *"the damper is never zero"*), and V73's `bits 6:3` are
+`mode & 0xF` — which on this car is **24/26 → 8/10, and BOTH are legal `gp-0x67fa` states.** There is no
+internal inconsistency to trip on.
+
+🛑 **This is the session's own headline failure in a new costume: the right number read off the wrong
+object.** Same as V72's damping written to an unread table, V69/V70's ladder measuring three copies of
+stock, and the `9.4`-vs-`98.9` rate row.
+
+**Fixed** — `identify()` now separates **DECISIVE** from **corroborating** and refuses without a verdict:
+- **[DECISIVE]** `bit7` duty **exactly 100.000%** is *structurally* impossible for V74, because
+  `bit7 = (gp-0x6bd0 != 0)` and **FactorE's `Y[0]` is preserved at 0 by design** ⇒ at zero motor rate the
+  damper output is 0 ⇒ the bit must read 0 on some frames of any real drive. Saturation ⇒ not V74's bit.
+- **[DECISIVE]** field ⊆ {8,10} **AND** tracking `latActive` > 85% — V73's mode-toggle signature
+  (measured **94.8%** on the test log). Works even where the first test is unpowered.
+- **[corroborating only]** field ⊆ {8,10} alone — a real V74 drive could legitimately sit in two states.
+✅ **Negative control run in BOTH directions:** refuses real V73 logs and a synthetic V73 signature;
+accepts five synthetic V74 cases — **including `bit7` duty 0%**, because *"the cave ran and the damper is
+still dead"* is a real result and a guard that swallowed it would be worse than the bug.
+✅ **Exits non-zero (3) on refusal** — the banner is for a human; the exit code is for anything that
+pipes, wraps or CI-checks it, which is exactly how the wrong log gets decoded silently.
+⊕ The old `identify()` "illegal bits" check was **vacuous** — it masked with `PROBE_MASK` then tested for
+bits outside it, so it could never fire. Removed.
+
+🛑 **[OPEN] EVERY `decode_v7*_probe.py` IN THIS KIT HAS THE SAME EXPOSURE.** They all read `0x14A` byte4
+and none of the others carries a build-identity guard. V70/V71/V72 at least had structural invariants in
+their value sets; **V73's does not.** ⇒ **Before trusting any historical probe re-read, check which build
+the log actually came from.**

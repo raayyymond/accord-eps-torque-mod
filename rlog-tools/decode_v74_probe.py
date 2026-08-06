@@ -47,9 +47,14 @@ drive can ONLY mean the cave never fired. V64 and V68 each burned a build on a n
 told apart from "the gate never armed"; this payload cannot have that ambiguity.
 🛑 **READ THE LIVENESS FIRST.** If `bits 6:3` is constant 0, nothing else in the log is interpretable.
 
-⚠ WEAK BUILD IDENTITY, STATED: 32 payload values are legal and there is no structural invariant among
-them, so the value SET alone proves only that "some V74-shaped cave ran". **The .rwd FILENAME is the
-pre-drive discriminator and CAVE_HEX below is the post-hoc one.**
+🛑🛑 WEAK BUILD IDENTITY -- AND IT HAS ALREADY BITTEN. 32 payload values are legal and there is no
+structural invariant among them, so the value SET alone proves only that "some V74-shaped cave ran".
+**Every V7x cave writes the SAME cell in the SAME bit positions**, so a log from another build is
+structurally decodable here. Fed V73's own flight (route 5a) this decoder reported *"bit7 fires on
+100.000% of frames ⇒ LEVER E' IS DELIVERING and the damper is in force for the first time in this
+kit"* -- reading V73's CONSTANT liveness seed as V74's damper. `identify()` now REFUSES on that
+signature (see its docstring for the three tests). **The .rwd FILENAME remains the pre-drive
+discriminator and CAVE_HEX below the post-hoc one; the guard can only reject, never confirm.**
 
 HOW TO READ THE ANSWER
 -----------------------
@@ -150,6 +155,9 @@ FRICTION_PTR_ARRAY = 0xCBE74
 ENGAGED_MODES = (2, 3, 5, 11, 14, 15, 17, 23, 26, 27, 29, 32, 33)
 DISENGAGED_MODES = (0, 1, 4, 10, 12, 13, 16, 22, 24, 25, 28, 30, 31)
 LIVE_MODE = 26                # row 11 TVCA4, e014 -- V73's on-car probe, not an inference
+# 🛑 V73's bits 6:3 were `mode & 0xF`, and this car's modes are 24 (manual) / 26 (engaged) -> 8 / 10.
+# BOTH are legal V74 gp-0x67FA states, so the two builds' payload alphabets OVERLAP. See identify().
+V73_MODE_FIELD_VALUES = {24 & 0xF, 26 & 0xF}
 MANUAL_MODE = 24
 BURST_RATE = 99               # measured |gp-0x6ac0| p50 IN-BURST, [94.2, 113.0]
 LIVE_DOSE = 50                # counts at BURST_RATE on mode 26, against a requirement of ~43 [30,60]
@@ -163,14 +171,72 @@ CREEP_MAX_MS = 4.0            # the ratchet and grind #1 are creep symptoms (1-4
 RWD_NAME = "39990-TVA,A160-V74-V73BASE-ENGCOLS13-x12-addonly-FactorCY0eqY2-FactorEX0to12-Y1eqY2-frictionx1p5-C407E850-probe-67fa-6bd0nz-0x13000-0x100000.rwd"  # noqa: E501
 
 
-def identify(b4):
+def identify(b4, engaged=None, override=False):
     """Is this a V74 payload at all? 🛑 The FILENAME is the pre-drive discriminator; this is the
-    post-hoc one, and it can only ever say 'consistent with', never 'is'."""
+    post-hoc one, and it can only ever say 'consistent with', never 'is'.
+
+    🛑🛑 THE BUILD-IDENTITY GUARD -- ADDED AFTER THIS DECODER WAS RUN AGAINST V73's OWN FLIGHT.
+    Every V7x cave writes the SAME cell (`gp-0x1514`, CAN 0x14A byte4) in the SAME bit positions,
+    so a V73 log fed to this decoder is *structurally* decodable and produced a CONFIDENT, WRONG
+    headline: on route 5a it read "bit7 fires on 100.000% of frames ⇒ LEVER E' IS DELIVERING and
+    the damper is in force for the first time in this kit." What it was actually reading was V73's
+    CONSTANT liveness seed. Nothing in the payload schema flagged it:
+        · V73's bit7 is a hard-wired 1              -> reads as "the damper is never zero"
+        · V73's bits 6:3 are the MODE byte & 0xF, and this car's modes are 24 / 26
+          -> **8 and 10, BOTH of which are legal V74 `gp-0x67fa` states**
+    ⇒ The two builds' payload alphabets OVERLAP, so no positive test for "this is V74" exists. The
+    only sound behaviour is to REFUSE when the evidence fits a different build better.
+
+    THE DECISIVE TEST IS bit7 SATURATION, and it is structural, not statistical. Under V74's schema
+    `bit7 = (gp-0x6bd0 != 0)`, and `gp-0x6bd0 = (FactorC * FactorE) >> 10` with **FactorE's Y[0]
+    preserved at 0** -- that is the whole design. At zero motor rate FactorE LERPs to 0, so the
+    product is 0 and **bit7 MUST read 0 on some frames of any real drive**. A duty of exactly
+    100.000% is therefore not a strong V74 result; it is evidence the bit is not V74's bit.
+    """
+    # ⚠ DECISIVE vs CORROBORATING, kept apart on purpose. A guard that refuses too eagerly would
+    # block a real V74 drive whose state machine happened to sit in two states -- so only the
+    # STRUCTURAL test, and the mode-toggle signature CONFIRMED against latActive, can refuse.
+    decisive, corroborating = [], []
+    duty = float(np.mean((b4 & BIT_DAMP_NZ) != 0))
+    st = (b4 & STATE_FIELD) >> STATE_SHIFT
+    seen = {int(s) for s in st}
+    if duty == 1.0:
+        decisive.append("bit7 duty is EXACTLY 100.000% -- STRUCTURALLY impossible for V74's bit7, "
+                        "which must read 0 whenever the motor rate is 0, because FactorE's Y[0] is "
+                        "preserved at 0 by design. This is V73's hard-wired liveness seed.")
+    two_valued = bool(seen) and seen <= V73_MODE_FIELD_VALUES
+    if two_valued:
+        corroborating.append(
+            f"bits 6:3 take only {sorted(seen)}, which is exactly this car's MODE byte & 0xF "
+            f"({MANUAL_MODE} & 0xF = {MANUAL_MODE & 0xF}, {LIVE_MODE} & 0xF = {LIVE_MODE & 0xF}) "
+            "-- V73's field. ⚠ On its own this is only suggestive: a real V74 drive could sit in "
+            "two states, and both values are legal gp-0x67FA states.")
+    if engaged is not None and len(engaged) == len(b4) and len(seen) == 2:
+        agree = float(np.mean((st == max(seen)) == engaged))
+        line = (f"bits 6:3 track latActive at {100 * agree:.1f}% -- V73's mode byte TOGGLES with "
+                "engagement (24 manual / 26 engaged); V74's assist-chain state is not a 2-valued "
+                "function of it")
+        (decisive if two_valued and agree > 0.85 else corroborating).append(line)
+    if decisive:
+        print("  🛑🛑 REFUSING TO DECODE: this payload fits a DIFFERENT build's cave better than "
+              "V74's.")
+        for w in decisive:
+            print(f"     · [DECISIVE] {w}")
+        for w in corroborating:
+            print(f"     · [corroborating] {w}")
+        print("     ⇒ This is almost certainly a **V73** log (its cave writes the same byte in the")
+        print("       same bit positions, and its alphabet OVERLAPS V74's, so it decodes silently).")
+        print(f"     🛑 Confirm the flashed .rwd is {RWD_NAME}")
+        print("     Re-run with --i-confirm-v74 to override AFTER checking the filename.")
+        if not override:
+            return False
+        print("  ⚠ --i-confirm-v74 given: proceeding under protest. Every number below is suspect.")
+    elif corroborating:
+        print("  ⚠ BUILD IDENTITY IS NOT CLEAN -- proceeding, but read this first:")
+        for w in corroborating:
+            print(f"     · {w}")
+        print(f"     🛑 Confirm the flashed .rwd is {RWD_NAME}")
     vals = sorted({int(v) & PROBE_MASK for v in b4})
-    illegal = [v for v in vals if v & ~PROBE_MASK]
-    if illegal:
-        print(f"  🛑 payload values {illegal} carry bits outside 7:3 -- NOT a V74 log.")
-        return False
     states = {(v & STATE_FIELD) >> STATE_SHIFT for v in vals}
     if states == {0}:
         print("  🛑🛑 VOID: bits 6:3 are IDENTICALLY 0 across the whole drive. gp-0x67FA can never")
@@ -236,10 +302,13 @@ def report(b4, engaged, speed_ms):
 
 
 def main(argv):
-    if len(argv) < 2:
+    args = [a for a in argv[1:] if not a.startswith("--")]
+    override = "--i-confirm-v74" in argv[1:]
+    if not args:
         print(__doc__)
         return 2
-    for target in argv[1:]:
+    refused = 0
+    for target in args:
         print("=" * 100)
         print(f"  {target}")
         # 🛑 GLUE: `collect()` takes a LIST of paths and returns `b4` / `lat` / `v`. Passing the bare
@@ -248,12 +317,14 @@ def main(argv):
         b4 = np.asarray(data["b4"], dtype=np.uint8)
         if not len(b4):
             print("  🛑 no 0x14A frames found.")
+            refused += 1
             continue
         engaged = np.asarray(data["lat"], dtype=bool) if data.get("has_lat") else None
         speed_ms = data.get("v")
         print(f"  frames: {len(b4)}")
         print(f"  payload histogram: {dict(Counter(hex(int(v)) for v in b4).most_common(12))}")
-        if not identify(b4):
+        if not identify(b4, engaged, override=override):
+            refused += 1
             continue
         report(b4, engaged, speed_ms)
         print(f"\n  🛑 REMINDER: the ENGAGED column {list(ENGAGED_MODES)} is dosed; the DISENGAGED")
@@ -261,6 +332,13 @@ def main(argv):
         print(f"     are UNTOUCHED by LEVER E'/D'. This car's manual mode is {MANUAL_MODE}.")
         print("  🛑 V74 still carries V72's UNGATED r24/r26 rate lane -- that dose applies in MANUAL")
         print("     below ~30 km/h too, and it is NOT what this probe measures. Score it separately.")
+    # 🛑 EXIT NON-ZERO ON ANY REFUSAL. A guard that returns success is only half a guard: the loud
+    # banner is for a human, this is for anything that pipes, wraps or CI-checks the decoder. The
+    # failure it exists to stop -- V73's payload certified as "LEVER E' IS DELIVERING" -- was found by
+    # running the decoder on the wrong log, which is exactly what a script would do silently.
+    if refused:
+        print(f"\n🛑 {refused} of {len(args)} target(s) REFUSED or empty -- exiting non-zero.")
+        return 3
     return 0
 
 
