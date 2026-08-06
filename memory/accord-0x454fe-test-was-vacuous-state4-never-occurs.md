@@ -1,3 +1,7 @@
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** ✅ **The [OPEN] at the end of this file is CLOSED**: V42's confirmed hard-turn fix was its **ch.2 r26 kill**, not `0x454FE`. See [[reference-accord-v42-fix-was-the-r26-kill]].
+
+---
+
 # 🛑🛑 `0x454FE`'s test was VACUOUS — `gp-0x67fa == 4` NEVER occurs while driving
 
 **Measured 2026-08-05 by V71's own bit5 rung, on both flights.** This corrects a claim the orchestrator

@@ -5,6 +5,8 @@ metadata:
   type: reference
 ---
 
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** ★ This file is **correct and now load-bearing**: because `gain_B` is mode-indexed, **every r24 edit V69/V70/V72/V73 made was written at mode 10 and was INERT** on a mode-24/26 car. Modes 24/26 live at `0xD6A9C`/`0xD6AD8` and `0xD7A88`/`0xD7AC4`.
+
 # ★ `FUN_0003ad74`: r24's gain surface, resolved — and the trap in reading it
 
 Orchestrator-verified 2026-08-01 from the `FUN_0003ad74` decompile plus byte reads of

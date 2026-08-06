@@ -5,6 +5,8 @@ metadata:
   type: project
 ---
 
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** **Grind #1 read at stock level because V70 WAS stock** — its only edit was mode-10 `gain_B` on a mode-24/26 car. This is not a dose result; it is a replication of the stock condition.
+
 # ★★★★ V70 FLEW — GRIND #1 IS BACK AT THE STOCK LEVEL
 
 Route **`75604b0a432fdc89_00000050--50f2e00e8f`**, segments 0–2, **181.6 s**, **18,010 frames**.

@@ -1,3 +1,7 @@
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** V62's `sar` edits are **CODE, therefore MODE-PROOF** — this build really did deliver x2 on both lanes, and it is one of the few that delivered anything at all. 🛑 **Strike every comparison against V69/V70 "doses"**, which were inert.
+
+---
+
 # ★★ V62 BUILT — double the torsion-bar rate lane via two `sar` immediates (6 bytes off V59)
 
 Built 2026-07-31, **UNFLASHED**. The exact inverse of V61, which is what makes it a matched experiment:

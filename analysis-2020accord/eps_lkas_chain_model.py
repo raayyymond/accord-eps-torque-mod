@@ -601,8 +601,15 @@ class EpsState:
     shaper_term_r20: int = 0      # gp-0x6b04 on V38/V39 (C64C9==0)
 
     # ---- Base driver assist (Section 3B) ----
-    assist_mode: int = 10         # gp+0x63fd (0xFEDFE3FD) POSITIVE displacement; assist curve select
-                                  #   0..33. =10 for THIS car (ECU-ID slot 2, col tp+0xE012)
+    assist_mode: int = 26         # gp+0x63fd (0xFEDFE3FD) POSITIVE displacement; assist curve select
+                                  #   0..33. NOT static (2026-08-05): V73's probe read it live over 104,061
+                                  #   frames, switching on EVERY LKAS engagement edge (1.02s on rise, 2.08s
+                                  #   on fall, 18/18 transitions, 99.09% lag-matched).
+                                  #   🛑 The probe field is 4 BITS and DROPS BIT 4, so its {8,10} readings mean
+                                  #   true in {8,24} and {10,26}. Raw 8 is in NO row of 0xCD000 => manual = 24;
+                                  #   only row 11 'TVCA4' holds 24 and all four columns come from one row =>
+                                  #   engaged = 26 (this default). The car is TVCA4, NOT TVAA1.
+                                  #   Writer = FUN_00042746, see below.
     assist_substate: int = 1      # gp-0x67fe EPS assist substate; assist valid only in {1,2}
     plausibility_ok: bool = True  # gp-0x67f4 == 1, converge/plausible flag from the voter FUN_00041eec
     col_torque_sensor_b: int = 0  # gp-0x4f60 (0xFEDF30A0) SENSOR-B (TAS) column torque -- the signal
@@ -868,19 +875,49 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # The product carries NO signal magnitude -- it is five Q10 GAINS; rate enters via FactorE's LERP index
 # and speed via FactorC's, and the SIGN comes from gp-0x6abe. seed = gp-0x698a (the "FactorA" long sought
 # as a separate table) is pinned at 1024 by construction.
-# ★★★★ V72 edited modes 10/11 ONLY, on the ASSUMPTION that 39990-TVA-A160 -> row 2 'TVAA1' of the config
-# table at 0xCD000 (matched by FUN_00057f8e against a 5-byte key at gp+0x6408, returning 0 on NO MATCH).
-# In modes 10/11 V72 gives |gp-0x6bd0| = 389 UNCONDITIONALLY, so its bit4 rung (>=64) would read 100%.
-# IT READ 0/87,940, incl. 0/34,275 above 35 km/h => THE CAR IS NOT IN MODE 10/11 and V72's Levers B/C were
-# INERT BY TABLE SELECTION. => EVERY prior "damping is null" result (V44, V47, V72) is UNINTERPRETABLE,
-# not falsified. Live mode OPEN: 4/5 and 12 consistent with the data, 0-3 marginal, 10/11 excluded.
-# 🛑 The base-assist "damping is EXACTLY ZERO below 35 km/h" claim elsewhere in this file is derived from
-# MODE 10's FactorC X[0]=2240. Other modes have different breakpoints (mode 0: X[0]=1280 = 20 km/h) and
-# entirely different Y rows -- do not quote the 35 km/h figure without stating the mode it assumes.
+# ★★★★★ THE LIVE MODE IS SETTLED (2026-08-05, V73's probe, 104,061 frames): the car is row 11 'TVCA4' and
+# runs mode 24 DISENGAGED / 26 ENGAGED -- the mode TOGGLES with engagement (gp-0x67f6 picks e012 when
+# settled-disengaged, e014 when settled-engaged). Forced by the MANUAL arm: the 4-bit probe field drops
+# bit 4, so observed 8 means true in {8,24}, and raw 8 appears in NO row of 0xCD000 => manual = 24; only
+# row 11 holds 24, and all four columns come from one row => engaged = 26. The engaged reading of 10
+# alone would NOT have closed it (rows 2/3/6/7 all carry raw 10).
+# => V72 edited modes 10/11 on the ASSUMPTION that 39990-TVA-A160 -> row 2 'TVAA1'. That was wrong, and
+# V44, V47, V72's Levers B/C and BOTH of V73's levers were INERT BY TABLE SELECTION -- uninterpretable,
+# not falsified. RULE 7 (docs/BUILD-LINEAGE.md): a lever is mode-proof, or it is a bet.
+# ★ Engaged (e014/e015) and disengaged (e012/e013) column sets are DISJOINT across all 16 rows, so dosing
+# the engaged columns delivers whatever row is live while leaving manual byte-stock.
+#
+# 🛑🛑 THERE ARE TWO DEAD ZONES, ON DIFFERENT AXES, AND TOGETHER THEY ARE WHY CREEP HAS NEVER HAD DAMPING:
+#     FactorC 0xC9E9C[m]  axis = SPEED gp-0x6a5e   X[0] = 2240 = 35.0 km/h on the live modes   Y[0] = 0
+#     FactorE 0xC9F84[m]  axis = RATE  gp-0x6ac0   X[0] = 60                                   Y[0] = 0
+# A LERP clamps flat to Y[0] below X[0], and zero x anything = 0, so the speed factor alone forces the
+# damper to exactly zero at creep. ⚠ The speed onset is MODE-DEPENDENT: X[0] = 1280 (20 km/h) on modes
+# 0-3, 1920 (30 km/h) on 4/5, 2240 (35 km/h) on 10-15 and 22-27. Never quote "35 km/h" without the mode.
+# 🛑 CONSEQUENCE FOR SIZING: because both Y[0] are zero, SCALING a record by any k is structurally vacuous
+# at creep (k x 0 = 0); only lifting Y[0] delivers, and Y[0] := Y[1] is the largest monotone lift of Y[0]
+# alone. Raising FactorC costs NO rate-proportionality (it is speed-indexed); FactorE's shape IS the
+# rate-proportionality.
+# ★★★★ MEASURED OPERATING POINT: gp-0x6ac0 in-burst = 99 counts [94, 113] -- INSIDE FactorE's dead zone,
+# on its first rising segment. Priced there against a requirement of ~43 [30,60]: stock 0; FactorC
+# Y[0]:=Y[2] alone 6; FactorC Y[0]:=Y[3] alone 14; BOTH dead zones opened ~50. => NO FactorC rung alone
+# reaches it. The lever is FactorC Y[0]:=Y[2] + FactorE X[0]: 60 -> 12 + FactorE Y[1]:=Y[2], on the 13
+# ENGAGED modes. ★ It OPENS THE RATE DEAD ZONE rather than raising a gain, so the damper becomes genuinely
+# rate-proportional in the symptom's range -- the OPPOSITE of V72's flatten-to-relay error, not a larger
+# version of it. 🛑 Always price a damper rung at the symptom's OWN measured rate: 330 vs 99 inverted the
+# recommendation here.
+# 🛑 X[0] IS 12, NOT 6, AND THE REASONING MUST SURVIVE (a bare "12" invites re-optimising it down):
+#   (1) a firmware review flagged X0 < 30 with Y1 > 300 as the zone it would not fly without telemetry;
+#       12 is the TOP of its own 6-12 band and halves that concern for a ~6% dose cost (53 -> ~50).
+#   (2) the rate conversion is rigid-body and biased LOW through a resonance -- measured at the COLUMN,
+#       indexed at the MOTOR, and 18-22 Hz is TORSIONAL, so the true dose is HIGHER than computed.
+#       Erring low is the correct side of that error.
 # ⚠ GATE 2 NOTE: V72 set mode 10's FactorE Y[0..2] -> 927, i.e. FLAT across the whole rate axis, turning a
 # rate-proportional damper into a near-BANG-BANG RELAY (magnitude ~constant, sign = -sgn(gp-0x6abe)). A
 # relay in a loop at a lightly-damped resonance is a limit-cycle GENERATOR. Had it been delivered it could
 # have made the ratchet WORSE. V73 instead sets Y[0] := that record's own Y[1], preserving proportionality.
+# ⚠ Both this lane and the friction lane below are gated by the SAME andi 0x830 state mask on gp-0x67fa
+# (damper via FUN_00022ca0; friction via FUN_0002214a @0x228cc) => if the live state is outside {4,5,11},
+# NEITHER delivers. 0x830 is a SUBSET of 0xc30, so no state runs the aggregator without the damper.
 #     FUN_00036c12 -> gp-0x6b26   speed-LERP x gp-0x6c2c motor-rate-deriv, LINEAR [friction comp]
 #     FUN_0003a382 -> gp-0x6ad4   UNFILTERED residual lane (2 passthroughs + a raw derivative)
 #     FUN_00036388 -> gp-0x6b62   slow +/-1/tick accumulator w/ hysteresis       [return-to-centre]
@@ -907,12 +944,40 @@ ASSIST_BOOST_CURVE = {                         # pointer array @0xCA154, 6-point
     33: (ASSIST_BOOST_X_FALLING, (526, 629, 646, 436, 351, 351)),      # 0xD986C (lightest assist in image)
 }   # (representative subset; indices 1-3,5,7-9,12-27,29-32 are duplicates/near-duplicates of the above)
 
-# [CONFIRMED] SPORT MODE is NOT implemented by this ECU: all 3 writers of gp+0x63fd were traced and
-# none reads a CAN RX buffer (FUN_00042692 boot-latch, FUN_00042746 sensor-fault failover reselector,
-# FUN_0004a798 UDS/PasCom bench command only); A160 = ID-table slot 2 "TVAA1" (gp-0x674e=1, gp+0x63fd=10)
-# via FUN_00057f8e's own-HW-ID match (the HW-ID itself is programmed at manufacture, not in code.bin).
+# [CONFIRMED] SPORT MODE is NOT implemented by this ECU: no writer of gp+0x63fd reads a CAN RX buffer.
+# 🛑🛑 CORRECTED 2026-08-05 (full enumeration, disp16 + disp23 + UDS-indirect, cross-validated by
+# independent Python byte scan against search_instructions -- both agree exactly): 3 REAL runtime/boot
+# writers (not "sensor-fault failover", ENGAGEMENT-linked, matches V73's {8,10} probe):
+#   FUN_00042692 (1 write) -- BOOT-TIME populator, gated `gp-0x6d78 & 8 != 0`; resolves the row via
+#     FUN_00057f8e (HW-ID match) and copies column tp+0xE012. Was previously "never boot-populated in
+#     any path found" -- that gap is now closed.
+#   FUN_00042746 (4 writes) -- the RUNTIME re-selector. Picks one of 4 HW-ID-row columns (tp+0xE012/13/
+#     14/15) keyed on two 2-state flags (gp-0x67f6, gp-0x67e2); those flags' own transitions are driven
+#     by gp-0x6806 (== latActive, 99.983% per prior memory) and gp-0x69b0 (engagement gate) crossing
+#     sentinels -0x8000/0. This is the engagement-edge writer V73's probe found; NOT a fault failover in
+#     the ordinary sense, though gp-0x67e2's branch also depends on a consistency check vs cal tp+0x7182.
+#   FUN_0004a798 (1 write, extended disp23 encoding) -- UDS WDBI, request-ID case 1; bench-only, folded
+#     into the same gp+0x63e8..0x6427 config cluster as gp+0x6408 (see [[reference_accord_tva_hw_id_provenance]]).
+# Plus a UDS RDBI reader (FUN_0004a8ca, register-indirect `mov 0xfedfe3fd,r6`) and a diagnostics packer
+# (FUN_000508e8, 2 reads) that reports the raw byte as telemetry -- neither is a torque-path consumer.
+# A160 = ID-table slot 2 "TVAA1" (gp-0x674e=1, gp+0x63fd=10 when engaged, =8 manual) via FUN_00057f8e's
+# own-HW-ID match (the HW-ID itself is programmed at manufacture, not in code.bin).
 # Every real TVAA* slot yields the same FALLING assist family and a flat-15360 setpoint record, so
 # whatever tightens the wheel in Sport is not this firmware.
+# 🛑 READERS (13 total distinct pointer arrays confirmed this session, up from 2 previously mapped):
+#   already known: FUN_00034350's 5 damping factors (0xC9CCC/0xC9E9C/0xC9DB4/0xC9F84/0xC77A0, see above),
+#   FUN_00036c12 friction (0xCBE74), FUN_0003ad74 r24/r26 speed-blend coefficient sets (LAB_000cbf5c/
+#   c044/c12c + tp+0xd214, keyed 0/10/50/100 km/h breakpoints at tp+0x7010).
+#   NEW: FUN_00034a72 boost (PTR_DAT_000ca324, scalar per-mode cal); FUN_000348e0 angle-tracking blend
+#   (5 arrays, already the gp-0x6a10 "flat zero at creep" chain); FUN_00035154 (PTR_DAT_000c7888, speed
+#   gp-0x6a62-keyed float LERP); FUN_000382d8 (LAB_000cc9fc/PTR_DAT_000c7b40, speed gp-0x6a64-keyed
+#   selector, same shape as FUN_0003ad74); FUN_0003b338 (0xC8198), FUN_0003b416 (0xCA5DC, speed
+#   gp-0x6a5e-keyed), FUN_0003b49a (0xCBCA4, feeds gp-0x6b28) -- roles of these last 3 NOT resolved this
+#   session (index variables / downstream consumers open).
+# ⇒ Engagement re-indexes damping, friction, boost, and both rate lanes simultaneously -- wide reach, but
+#   FactorC's Y[0]=0 floor holds at BOTH mode 8 (X0=1280=20km/h) and mode 10 (X0=2240=35km/h), so the
+#   "damping architecturally zero at 8 km/h" finding is UNCHANGED by which mode is active. Whether any of
+#   the 7 NEW arrays differ meaningfully between mode 8/10 at low speed is OPEN -- not checked this session.
 # Safety-ceiling curve, pointer array @0xC7970, keyed on the MAX voter. In THIS image every mode is a
 # FLAT 512 -- it is a constant ceiling, not a shaped curve. Default fallback tp+0x715a (0xC615A) = 512
 # is used when the key is >= 0x7d01 (saturated / the 0xFFFF invalid-sensor sentinel). [VERIFIED]

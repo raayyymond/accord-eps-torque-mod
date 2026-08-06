@@ -5,6 +5,8 @@ metadata:
   type: reference
 ---
 
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** 🛑 **Q ~= 40 is SUPERSEDED — the measured value is Q ~= 14**, and the mode is a **ring-down** with **load-dependent f0**. See [[reference-accord-78hz-mode-characterisation]].
+
 # ★★★ THE RATCHET'S Q IS MEASURED — Q ≈ 40 at f0 = 7.793 Hz
 
 **[EVIDENCE]** From a **12.81 s provoked episode** on route `50--50f2e00e8f`.

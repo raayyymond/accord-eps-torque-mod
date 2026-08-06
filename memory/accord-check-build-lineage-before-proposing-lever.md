@@ -1,3 +1,7 @@
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** ⊕ **Add RULE 7 to this pre-flight check**: classify the lever MODE-PROOF vs MODE-INDEXED before naming it, and state which SYMPTOM any recorded "FALSIFIED" verdict was scored against. See [[feedback-rule7-mode-proof-or-a-bet]].
+
+---
+
 # 🛑 Check the build lineage before proposing ANY calibration lever — FALSIFIED != untested
 
 **2026-07-27: two independent agents, in the same session, proposed `0xC6450` 1024 -> 32 as a "new,

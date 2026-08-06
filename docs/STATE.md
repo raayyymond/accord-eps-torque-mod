@@ -1,6 +1,6 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-05 (V72 flight + V73 build).** This file is the single current-state record.
+**Last updated: 2026-08-05 (V73 flight + V74 build).** This file is the single current-state record.
 Update it in place at every close-out; do not append new dated blocks (that is what made `CLAUDE.md`
 unreadable). The narrative of how each state was reached lives in `docs/HANDOFF-*.md`.
 
@@ -24,7 +24,48 @@ then `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
 
 ---
 
-★★★★★ **THE HEADLINE, 2026-08-05 (LATEST): V72's DAMPING LEVERS WERE NEVER IN FORCE. `FUN_00034350`
+★★★★★ **THE HEADLINE, 2026-08-05 (LATEST): THE CAR IS CONFIG ROW 11 `TVCA4`, MODES 24 (MANUAL) / 26
+(ENGAGED) — NOT `TVAA1`/10/11. EVERY MODE-INDEXED LEVER THIS KIT EVER FLEW WAS INERT. AND THE DAMPER HAS
+**TWO** DEAD ZONES — SPEED *AND* RATE — WHICH IS WHY THIS CAR HAS NEVER HAD CREEP DAMPING, STOCK INCLUDED.**
+
+V73's probe read `*(byte)(gp+0x63fd)` over **104,061 frames** through a **4-bit** field that drops bit 4.
+**[EVIDENCE, orchestrator-verified from `stock_fw_dump/code.bin`, table `0xCD000` stride `0x24`]** an
+observed *v* means true ∈ {*v*, *v*+16}; observed **8** ⇒ {8,24}, and **raw 8 appears in NO row** ⇒
+manual = **24**, forced. Only row 11 `TVCA4` contains 24 ⇒ engaged = **26**, forced. ★ **It is the MANUAL
+arm that closes it** — observed 10 alone never would have (rows 2/3/6/7 carry raw 10), which is exactly
+why the `TVAA1` assumption survived a dozen builds. ⚠ The part number is `TVA` but the ECU is coded to a
+`TVC` chassis row; `build_v73_tva.py`'s assertion that every `TVA*`-reachable mode is < 16 is **void**.
+⇒ **Inert by table selection: V44, V47, V72's Levers B/C, BOTH of V73's levers, and the ENTIRE r24 dose of
+V69/V70/V72/V73.** See `BUILD-LINEAGE.md` **RULE 7**.
+
+★★ **The mode TOGGLES with engagement** — 18 transitions, all engagement edges, **1.0209 s** rise lag
+(sd 4.9 ms) / **2.0798 s** fall lag (sd 0.8 ms), 99.09% lag-matched, **zero exceptions**. ⚠ But it is a
+**RELABELING, not a RETUNING**: of 21 mode-indexed records diffed 24-vs-26, **19 are byte-identical** ⇒
+**it does NOT explain engagement-conditionality.**
+
+★★ **THE TWO DEAD ZONES.** `dose = (FactorC × FactorE) >> 10` (seed `gp-0x698a` structurally pinned at
+1024; FactorB/D flat unity). **FactorC** is speed-indexed and dead below `X[0]` = 2240 = **35 km/h**;
+**FactorE** is rate-indexed and dead below `X[0]` = **60 counts**. **Both have `Y[0] = 0` in all 34 modes.**
+Measured `gp-0x6ac0` in-burst = **98.9** [94.2, 113.0]. ⇒ **stock dose 0 · FactorC alone 6 · FactorC at
+maximum 14 · both dead zones opened 50** against a ~43 requirement — **neither factor alone can reach it.**
+⊕ **This retires V72's `bit4` null with no exotic explanation**: **98.72%** of engaged-highway frames sit
+below `FactorE X[0]` ⇒ output zero, stock dose mean **0.10**. The damper runs and produces nothing.
+
+🛑 **The symptom is ONE lightly-damped resonance, Q ≈ 14, ring-down 4.4 cycles, NO trigger in any recorded
+channel, and f0 FALLS 9.0 → 7.7 Hz with load** ⇒ **not stick-slip** (a stick-slip rate rises with drive
+velocity). The operator's *"same frequency, one audible"* is right: the hand feels **rim motion**, which
+6-9 Hz dominates at every speed; the 21 Hz ring only decides audibility. Supersedes the recorded Q ≈ 40.
+
+**Struck this session, with arithmetic:** saturation/headroom (0/127 in-burst frames at rail, and the four
+summed mixer channels are **base assist**, not LKAS) · a 7.8 Hz firmware divider (mod-100 scheduler) ·
+stick-slip · state 8 (`0x830 ⊂ 0xc30`) · `gp-0x67fa` aliasing (all 33 writers store literals ≤ 11).
+
+Full narrative: `docs/HANDOFF-2026-08-05-the-car-is-tvca4-and-both-dead-zones.md`.
+
+---
+
+★★★★★ **THE HEADLINE, 2026-08-05 (⚠ SUPERSEDED — the mode is 24/26, not "not 10/11"; the `bit4` null is
+explained by the RATE dead zone, not by table selection): V72's DAMPING LEVERS WERE NEVER IN FORCE. `FUN_00034350`
 SELECTS ALL FIVE DAMPING FACTORS THROUGH A 13-VARIANT MODE TABLE; V72 EDITED MODES 10/11 ONLY; AND THE
 PROBE PROVES THE CAR IS NOT IN THEM. ⇒ THE DAMPING APPROACH TO THE RATCHET HAS NEVER BEEN TESTED.**
 
@@ -44,7 +85,57 @@ disfavoured** (11/34,277 frames), **10/11 excluded.** V73's probe settles it.
 Full narrative: `docs/HANDOFF-2026-08-05-v72-flew-the-damper-was-never-in-force.md`.
 Spec and every risk: `docs/V73-DESIGN.md`.
 
-## 🛑 ON THE CAR: **V72** (route `59`). **V73 IS BUILT, VERIFIED AND UNFLASHED.**
+## 🛑 ON THE CAR: **V73** (flown, route `5a`). **V74 IS BUILT, VERIFIED AND UNFLASHED.**
+
+### V73's FLIGHT (route `5a`, 104,061 frames / 1,040.6 s) — what it actually tested
+| lever | in force? | result |
+|---|---|---|
+| **Lever E** (damping, modes 0-5/12/14) | ❌ **0 / 104,061 frames** | zero exposure — **not** an under-dose |
+| **Lever D LERP** (friction ×1.5 at `0xD2A44` = mode **10**) | ❌ **inert** | null by construction |
+| **`0xC407E` 511→850** (not mode-indexed) | ✅ **live**, ~80% of burst frames | **no** band change ⇒ weak but real falsification, bounded at +339 counts |
+| probe | ✅ 100% liveness, `bits 2:0` preserved | **the mode** |
+
+Operator: grind #2 **resolved** · macro ratchet **still fixed** · **grind #1 and micro ratchet both
+present**, *"the same vibration frequency; grind #1 is audible, the micro ratcheting is not."*
+🛑 **And his reframing, which the byte evidence independently confirms: "grind #2 was never an independent
+issue — it only ever came to be through proposed fixes for grind #1."** V62's `sar` (mode-proof code)
+governs it; V72/V73 do not carry it. **The fix is an ABSENCE** ⇒ V74 retains it by leaving the lanes alone.
+
+### V74 — the design principle, earned twice over: **write the ENGAGED COLUMN OF EVERY ROW**
+Engaged set {2,3,5,11,14,15,17,23,26,27,29,32,33} and the disengaged set are **disjoint across all 16
+rows** ⇒ delivers whatever row is live **while leaving manual/parking steering byte-stock**.
+- **LEVER E′** — `FactorC Y[0] := Y[2]` · **`FactorE X[0]: 60 → 12`** · `FactorE Y[1] := Y[2]`.
+  ★ **Opens the RATE dead zone rather than raising a gain** ⇒ genuinely rate-proportional in the symptom's
+  range. 🛑 **The OPPOSITE of V72's error, not a larger version:** V72 raised `FactorE`'s floor, giving a
+  *constant* (near-bang-bang relay). Here **`Y[0] = 0` is preserved**, so magnitude vanishes with rate and
+  the bare `sign()` relay multiplies a vanishing quantity ⇒ **no discontinuity, no chatter mechanism.**
+- **LEVER D′** — friction ×1.5 on the same 13 modes; `0xC407E` = 850. ⚠ **not** mode-indexed ⇒ applies in
+  manual too (disclosed). 🛑 **Hard cap 1000, never 1024** — the aggregator's ±0x400 window is a
+  **zero-reject**, so a lane on the cliff contributes *nothing*.
+- **UNTOUCHED** — the whole r24/r26 lane incl. V72's r26 cut (`0xC6A68`/`0xC6A7C` flat 512), the `sar`
+  sites, the gate, both scalar arms. ⚠ That cut is **PARTIAL** — `rec2 0xC6A90` / `rec3 0xC6AA4` are stock.
+- **PROBE** — `bits 6:3 = gp-0x67fa` (lossless; 0 impossible ⇒ liveness structural) · **`bit7 =
+  (gp-0x6bd0 != 0)`** — the damper's own output, **the positive control the last five probes lacked.**
+- **GATE 2 [EVIDENCE]** — both lanes dissipative at both frequencies; both phasors have positive real part
+  ⇒ **their sum does too, by construction.** DTC-0x18 cost **zero** (cal-only).
+
+📋 **PRE-REGISTERED:** success = 6-9 Hz duty **and** duration fall with **f0 unchanged** (|Δf0| ≤ 0.3 Hz).
+**ABORT the lever if 5×f0 prominence > 3.0** (baseline 0.80) — that is the relay generating a new cycle.
+Also abort-worthy: duty ratio > 1.2 *with* prominence ratio > 1.3, or |Δf0| > 0.5 Hz.
+**Honest expectation:** *meaningfully reduces amplitude and should shorten ring-down, plausibly enough to
+break a marginal limit cycle, but not certain to extinguish a robust one.*
+
+### FLIGHT INSTRUCTION — 🛑 congestion beats an empty lot
+Continuous engagement yields ~**1** episode (MDE 2.91×) and openpilot needs lane markings. **Stop-and-go
+traffic is strictly better** — LKAS drops at each halt and re-engages, which is why route 5a gave 18
+episodes in 120 s. **(1) ESSENTIAL:** congested lane-marked arterial, engaged, ~15 min ⇒ grind #1 to
+**2.0×** and ~40 events. **(2) ESSENTIAL:** steady **≥ 20 m/s** cruise, 8-10 min ⇒ the first
+tyre-order-clean high-speed 6-9 Hz test. (3) opportunistic: mid-motion disengagements at 2-3 m/s, ×24.
+⚠ Tyre order 1 is in-band at **12.5-18.7 m/s**, order 2 at 6.2-9.4, order 3 at 4.2-6.2 ⇒ **clean windows
+9.4-12.5 m/s and ≥ 20 m/s.** ⚠ **Read the probe first** — a constant `bits 6:3` means the cave never fired
+and nothing else is interpretable.
+
+## ⚠ SUPERSEDED — WAS ON THE CAR: **V72** (route `59`)
 
 | | value |
 |---|---|

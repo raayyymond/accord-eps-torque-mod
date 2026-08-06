@@ -159,6 +159,148 @@ ROUTES = (
         "steerUnavailable / steerTempUnavailable / canError / controlsMismatch / steerSaturated. "
         "The soft-disable events are wrongGear (parked) plus commIssue / selfdrivedLagging, the "
         "known device-load signature.")),
+
+    # -------------------------------------------------------------------------------------------
+    # Added 2026-08-05. These eight routes were present in `analysis-2020accord/rlogs/` and ABSENT
+    # from this table, which is exactly the gap this module exists to close. Every attribution below
+    # is sourced to the route's OWN byte4 payload set (raw 0x14A src-1 walk) or to the cache's
+    # mechanically-asserted `probe_rwd`, never to handoff prose. 🛑 Two are flagged UNRESOLVED and
+    # must not be used as build-attributed data until the .rwd filename is checked.
+    # -------------------------------------------------------------------------------------------
+    Route("4a", "346bf31d97", "V66-or-V67 (UNRESOLVED)",
+          "V66/V67 payload class: bit6 = gp-0x6806 (LKAS gate), bits 5/4/3 silent", None, evidence=(
+        "35,994 frames over 12 segments. byte4 takes exactly TWO values, {0x87: 17,086, "
+        "0xC7: 18,913}: bit7 set and bit3 clear on both ⇒ the V66/V67 payload class holds, and "
+        "V53 (0x07) / V54 (0x0F) / V68 (never emits 0x87) are EXCLUDED.",
+        "★ bit6 == carControl.latActive in 35,980 / 35,994 frames (99.9611%); the 14 disagreements "
+        "are single-frame transition edges. Same signature route 47 used to identify bit6 as "
+        "gp-0x6806. bits 5/4/3 read 0.000% route-wide.",
+        "🛑 UNRESOLVED, AND DELIBERATELY SO: route 47's own entry records that the PAYLOAD CANNOT "
+        "SEPARATE V66 FROM V67 -- that pair needed the Kd dose signature (a one-armed 18-22 Hz "
+        "suppression) to break. That analysis has NOT been run on this route, so the build is left "
+        "as a pair and `kd` is None rather than guessed. V66 is Kd=1 in BOTH arms; V67 is Kd=2 in "
+        "the engaged arm only, so a wrong pick here would mislabel the dose in every cross-build "
+        "pool this route entered.",
+        "⇒ TO RESOLVE: run the route-47 Kd argument (engaged vs disengaged 18-22 Hz envelope p99 "
+        "against the Kd=1 and Kd=2 pools, cell-stratified, episode-clustered), or read the .rwd "
+        "filename from the flash record for this drive.")),
+
+    Route("4c", "d0ea3c14b4", "V68",
+          "V68 probe; bit3 CONSTANT 1 is the class discriminator, bit6 tracks engagement", None,
+          evidence=(
+        "30,000 raw 0x14A src-1 byte4 frames over 5 segments (independent rlog walk, no cache) "
+        "take exactly TWO values: {0x8F: 25,036, 0xCF: 4,964}.",
+        "★ bit3 is SET on 30,000 / 30,000 frames. That is the discriminator route 59's entry names "
+        "from the other side: '0x87 is present ⇒ V68 EXCLUDED' -- i.e. V68 never emits a bit3-clear "
+        "payload. It simultaneously EXCLUDES V66/V67 (route 47: 'bit3 is never set there'), V53, "
+        "V54 and V69 (route 4f below is constant 0x87).",
+        "bit6 fires on 4,964 / 30,000 = 16.5% of frames, i.e. it varies ⇒ the cave demonstrably ran "
+        "and this is not a frozen-null stream.",
+        "🛑 `kd` left None: V68's rate-lane dose is GATED and speed-conditional, so no single scalar "
+        "multiplier is correct for this route and a number here would be pooled as if it were.",
+        "⚠ CONFIRM THE .rwd FILENAME. The payload class pins V68; it does not pin which V68 cut.")),
+
+    Route("4e", "11f5b814b6", "V68",
+          "V68 probe; bit3 CONSTANT 1, bit6 CONSTANT 1 (the drive is fully engaged)", None,
+          evidence=(
+        "23,999 raw 0x14A src-1 byte4 frames over the 4 segments held locally take exactly ONE "
+        "value: {0xCF: 23,999}. bit7 set ⇒ VOID = 0.",
+        "★ SAME PAYLOAD CLASS AS ROUTE 4c: bit3 SET on every frame ⇒ V68, and V66/V67/V69/V53/V54 "
+        "excluded by the same argument recorded there.",
+        "bit6 constant 1 ⇒ latActive true throughout, consistent with this route's role as the "
+        "highway lane-change capture (BUILD-LINEAGE records the ~28 Hz transient at seg 33).",
+        "⚠ ONLY 4 OF THIS ROUTE'S SEGMENTS ARE PRESENT LOCALLY -- the lineage references seg 33, so "
+        "the local copy is a SUBSET. Any exposure census computed from these files is a census of "
+        "the subset, not of the drive.",
+        "🛑 A CONSTANT payload is the weakest possible build evidence: it proves only that a "
+        "bit3-setting, bit6-setting cave ran. CONFIRM THE .rwd FILENAME before using this route in "
+        "a cross-build comparison.")),
+
+    Route("4f", "61171e660d", "V69",
+          "V69 ratchet probe: bit6 gp-0x6ada>=+4096, bit5 gp-0x6b62>=+4096, bit4 gp-0x6ad4>=+4096, "
+          "bit3 CONSTANT 0", None, evidence=(
+        "47,997 byte4 frames over 8 segments take exactly ONE value: {0x87: 47,997}, bit7 set.",
+        "★ THIS MATCHES THE FLIGHT RESULT ALREADY RECORDED IN docs/BUILD-LINEAGE.md FOR V69 EXACTLY "
+        "-- 'byte4 = 0x87 on 100% of frames, bit7 set, bit3 = 0 ⇒ V68 excluded absolutely'. The "
+        "row is therefore a cross-check of an existing attribution, not a new inference.",
+        "🛑 ALL THREE OF V69's RUNGS READ ZERO, so the payload carries no within-build information "
+        "and the identification rests on (a) the constant-0x87 signature excluding V68 (bit3≡1), "
+        "V66/V67 (bit6≡latActive, and this route is 345.7 s engaged with bit6 = 0 throughout) and "
+        "V53/V54, and (b) the lineage record. ⚠ A constant 0x87 is ALSO V64's frozen-null "
+        "signature and V73's mode 0 -- neither applies here on route ordering, but the payload "
+        "alone cannot say so. CONFIRM THE .rwd FILENAME.",
+        "🛑 `kd` left None ON PURPOSE: V69's dose is 4.000x to 10 km/h falling to EXACTLY 1.000x at "
+        "and above 50 km/h, by record-selection geometry. No scalar is correct.")),
+
+    Route("50", "50f2e00e8f", "V70",
+          "V70 4-bit SIGN probe: bit6 gp-0x6ada>=+512, bit5 gp-0x67fa==10, bit4 gp-0x6adc>=0, "
+          "bit3 gp-0x6ada>=0", None, evidence=(
+        "18,012 byte4 frames over 3 segments take THREE values: {0x87: 1,644, 0x97: 2,360, "
+        "0x9F: 14,008}. bit7 set on all ⇒ VOID = 0.",
+        "★ V70's structural invariant bit6 => bit3 HOLDS -- vacuously, because bit6 never fires in "
+        "any of the three values. That is consistent with V70 but, being vacuous, it does NOT "
+        "discriminate; the invariant only excludes builds when bit6 actually sets.",
+        "★ bit5 (gp-0x67fa == 10, the state gate) reads 0 in every frame, which is exactly the "
+        "PRE-REGISTERED prediction recorded for V70 ('bit5 reads LOW').",
+        "🛑🛑 V70 WAS RE-CUT, AND THE TWO CUTS SHARE A BYTE-IDENTICAL CAVE ⇒ THE PAYLOAD CANNOT "
+        "SEPARATE THEM. The first cut is renamed `SUPERSEDED-DO-NOT-FLASH-…`. Unlike route 59 -- "
+        "where the two V72 cuts differ in the bit3 rung and so ARE separable from the data -- here "
+        "the .rwd FILENAME is the ONLY discriminator. Treat this row as 'V70, cut unknown'.")),
+
+    Route("54", "4e67ae1164", "V71B",
+          "V71 4-rung probe (see rlog-tools/decode_v71_probe.py)", None,
+          evidence=(
+        "★ ATTRIBUTED FROM CACHE PROVENANCE, NOT PAYLOAD: `_cache_r54/r54s*.npz` carries "
+        "`probe_build = 'V71B'` and `probe_rwd = '39990-TVA,A160-V71B-LKAS-4x-mss0-decouple0xC646C-"
+        "RESTORE-0x454FE-gainA…'`. `extract_r54_cache.py` re-reads CAVE_HEX and RWD_NAME out of the "
+        "decoder at import time and FAILS the extraction if either has drifted, so the label is "
+        "mechanically linked to the decoded artefact rather than typed in.",
+        "223,296 byte4 frames over 21 segments: {0x87: 13,019, 0x8F: 110,128, 0x97: 61, "
+        "0x9F: 88} -- four values, bit7 set on all, so the cave ran and multiple rungs vary.",
+        "🛑 `kd` left None: V71B's LKAS 4x is not the r24 rate-lane scalar this field means.")),
+
+    Route("58", "1d1005262f", "V71C",
+          "V71 4-rung probe (see rlog-tools/decode_v71_probe.py)", None,
+          evidence=(
+        "★ ATTRIBUTED FROM CACHE PROVENANCE: `_cache_r58/r58s*.npz` carries `probe_build = 'V71C'` "
+        "and `probe_rwd = '39990-TVA,A160-V71C-LKAS-4x-mss0-decouple0xC646C-RESTORE-0x454FE-V67ga…'`"
+        ", under the same import-time CAVE_HEX/RWD_NAME assertion as route 54.",
+        "92,840 byte4 frames over 16 segments: {0x87: 26,667, 0x8F: 61,677, 0x97: 2,239, "
+        "0x9F: 2,249, 0xAF: 8} -- five values, bit7 set on all.",
+        "🛑 `kd` left None, same reason as route 54.")),
+
+    Route("5a", "2d32bec040", "V73",
+          "bit7 liveness; bits 6:3 = (gp+0x63FD) & 0xF, THE BASE-ASSIST DAMPER MODE SELECTOR; "
+          "bits 2:0 = stock STEER_SENSOR_STATUS", None, evidence=(
+        "★ ATTRIBUTED FROM CACHE PROVENANCE: `_cache_r5a/r5as*.npz` carries `probe_build = 'V73'` "
+        "and the full V73 `probe_rwd`; `extract_r5a_cache.py` re-reads CAVE_HEX and RWD_NAME out of "
+        "`rlog-tools/decode_v73_probe.py` at import and fails the extraction on any drift.",
+        "104,061 byte4 frames over 18 segments take exactly TWO values: {0xC7: 26,295, "
+        "0xD7: 77,766} ⇒ mode 8 (25.27%) and mode 10 (74.73%). bit7 set on 104,061/104,061 ⇒ "
+        "VOID = 0, 0 illegal. Confirmed by an independent raw rlog walk on segs 0/2/13/16 that "
+        "shares no code with the cache decoder: counts matched EXACTLY.",
+        "★★★★ THE MODE IS A DETERMINISTIC FUNCTION OF ENGAGEMENT, not of HW-ID coding as the traced "
+        "structure predicted: mode 8 while disengaged, mode 10 while engaged, with a 1.02 s "
+        "ON-delay (n=9, sd 4.9 ms) and a 2.08 s OFF-delay (n=9, sd 0.8 ms). Modelling that "
+        "asymmetric delay leaves 4 residual frames / 104,061 = 0.0038%, all single-frame edge "
+        "quantisation. All 18 mode edges pair 1:1 with an engagement edge of the same direction.",
+        "🛑 THE READING IS `mode & 0xF`. The probe emits 4 bits, so 8 aliases 24 and 10 aliases 26. "
+        "The 0xCD000 config-row table contains NO row with raw mode 8; row 11 (TVCA4) -> "
+        "[24,25,26,27] is the only row aliasing to (8,10) ⇒ THE CAR RUNS MODES 24 (manual) / 26 "
+        "(engaged), and the 4-bit reading alone could not have said so.",
+        "🛑🛑 CONSEQUENCE FOR EVERY PRIOR DAMPING/FRICTION BUILD: modes 24 and 26 point at FactorC "
+        "0xD67E4 / 0xD77D0, FactorE 0xD6820 / 0xD780C and friction 0xD6A64 / 0xD7A54, and ALL SIX "
+        "records are BYTE-IDENTICAL TO STOCK in the V73 image (Python byte read). V44/V47/V72 wrote "
+        "modes 10/11; V73 wrote 0-5/12/14 plus mode 10's friction record. NONE of them was ever "
+        "READ by this car. ⇒ V73's Lever E was in force on 0 / 104,061 frames.",
+        "⚠ ALL 16 payload values are legal on V73 (no `bit5 => bit6` analogue), so the value SET "
+        "proves only that SOME bit7-setting cave ran. mode 0 would transmit as 0x87, colliding with "
+        "V64's frozen null. The .rwd FILENAME remains the pre-drive discriminator.",
+        "⚠ An earlier V73 cut targeting modes 0/2 ONLY exists, renamed `SUPERSEDED-DO-NOT-FLASH-…`. "
+        "Its probe is identical, so the stream cannot separate the cuts -- the V70 hazard again.",
+        "flight health: ST==4 = 0/104,061; ST==3 = 5 (segment 17, parked); fs = 99.98-100.03 Hz. "
+        "⚠ segment 0's wall clock is unusable (wall_t0 07:05:06 against segment 1's 09:01:38, clk "
+        "sd 1.5e7); relative time within the segment is unaffected.")),
 )
 
 BY_ROUTE = {r.route: r for r in ROUTES}

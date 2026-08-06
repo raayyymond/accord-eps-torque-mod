@@ -8,6 +8,8 @@ metadata:
   modified: 2026-08-04T04:35:31.656Z
 ---
 
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** V69 flew, but its **calibration dose was INERT** (mode-10 `gain_B` on a mode-24/26 car). The probe-design lessons stand; **every dose-response conclusion in this file is void**.
+
 🛑🛑 **POST-FLIGHT, 2026-08-04 — ALL THREE RUNGS FAILED, AND THE RESIDUALS AT THE BOTTOM ARE NOT WHY.**
 Route `4f--61171e660d`, 481.7 s.
 - **bit4 (`gp-0x6ad4` ≥ +4096) was STRUCTURALLY VACUOUS — it could never have fired, on any build, on

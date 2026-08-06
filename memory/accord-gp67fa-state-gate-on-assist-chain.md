@@ -5,6 +5,8 @@ metadata:
   type: reference
 ---
 
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** 🛑 **0x830 is a SUBSET of 0xc30** ({4,5,11} within {4,5,10,11}) => every state that runs the aggregator also runs the damper, so **this variable cannot explain "aggregator live, damper inert"**. The state-10 split is struck as an explanation of the damper null. ⊕ All 33 writers store literal constants, value set {1,3,4,5,6,7,8,9,10,11} => **no aliasing**; the 4-bit mask is a provable no-op.
+
 # ★★★★ `gp-0x67fa` STATE-GATES THE ASSIST CHAIN — and state 10 splits it in half
 
 **The guard wraps the `jarl` IN THE CALLER**, not inside the four functions. Each has exactly one call

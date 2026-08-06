@@ -8,6 +8,8 @@ metadata:
   modified: 2026-08-04T04:34:47.697Z
 ---
 
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** The "4.000x to 10 km/h" dose was written into **mode-10 `gain_B`** and the car is **mode 24/26** => **IT WAS NEVER DELIVERED**. V69 is byte-stock in behaviour. Treat this file as a record of INTENT only; every multiplier in it is void.
+
 🛑 **STATUS UPDATE 2026-08-04: V69 IS NO LONGER UNFLASHED — IT FLEW ROUTE `4f--61171e660d` AND IT IS THE
 IMAGE ON THE CAR.** Flight-clean; the ×4 dose was **fully delivered** (transfer-corrected `|dtorque|`
 max 633.9, **0.0000%** above the 683 rail, so the pre-flight 0.81× saturation worry did not bite); but

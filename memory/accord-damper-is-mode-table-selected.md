@@ -5,6 +5,8 @@ metadata:
   type: reference
 ---
 
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** ✅ **Resolved 2026-08-05: the live modes are 24 (manual) / 26 (engaged), row 11 `TVCA4`.** The "modes 4/5 and 12 consistent, 0-3 marginal" grading in this file is **superseded**. See [[reference-accord-car-is-tvca4-mode-24-26]].
+
 ★★★★★ **V72's damping levers were never in force, and it is provable arithmetically.**
 
 `FUN_00034350` selects **all five** damping factors — B, C, D, E **and the ceiling** — through pointer

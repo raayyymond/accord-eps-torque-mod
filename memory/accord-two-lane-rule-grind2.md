@@ -1,3 +1,7 @@
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** ⚠ **V72's row is r24 x1.000 / r26 x0.250, not 3.414 / 0.250** — its r24 half was mode-10 `gain_B` and therefore inert. The rule survives, but **V72's grind-#2 result is confounded with stock**. What governs grind #2 is **V62's `sar`**.
+
+---
+
 # ★★★★★ THE TWO-LANE RULE — why fixing one grind always fed the other
 
 **Measured 2026-08-05 across six builds including the two new flights (V71B = route `54`,

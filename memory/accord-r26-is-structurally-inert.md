@@ -5,6 +5,8 @@ metadata:
   type: reference
 ---
 
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** **Fully refuted.** r26 is the **LIVE** lane and the only one V72/V73 actually move (`gain_A`, which is not mode-indexed). V42's confirmed fix was an **r26 kill**. See [[reference-accord-v42-fix-was-the-r26-kill]].
+
 # 🛑🛑 REFUTED ON-CAR — r26 IS LIVE
 
 🛑🛑 **CORRECTED 2026-08-04, AFTER ROUTE `50`. [EVIDENCE]** V70's bit4 read `gp-0x6adc` — r26's

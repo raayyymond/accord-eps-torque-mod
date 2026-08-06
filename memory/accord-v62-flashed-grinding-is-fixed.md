@@ -5,6 +5,8 @@ metadata:
   type: project
 ---
 
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** The fix is **REAL and mode-proof** (`sar`, code). 🛑 **Strike "2x is near the OPTIMUM, not on a ramp"** — that rested on V69's 4x, which was **never delivered**. ⊕ And V62's `sar` is what **CAUSES grind #2**: later builds are free of it precisely because they leave the `sar` stock.
+
 # ★★★ V62 FLASHED → THE GRINDING IS FIXED. First measured fix in 60+ builds.
 
 **Route `00000037--6231e33f3d`**, 15 segs, 86,278 frames, 862.65 s. V62 = `sar 0xa`→`sar 0x9` at

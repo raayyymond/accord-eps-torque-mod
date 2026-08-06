@@ -1,6 +1,6 @@
 ---
 name: reference_accord_gp6b26_friction_lane_damping_candidate
-description: gp-0x6b26 (FUN_00036c12, "friction comp") is a 1kHz, velocity(motor-rate)-proportional, sign-clean aggregator lane not yet touched by any build script (RULE-4 byte-diff confirmed virgin across all 67 built images) -- the kit's top candidate for adding 21Hz damping. FINAL SIZED LEVER (2026-08-05): 0xD2A44 Y-values x1.5-2.0 paired with 0xC407E 511->850-1024; GATE 2 clean at every tested rung (45Hz suppressed 1.5-2.9x harder than 20.9Hz, no sign flips); manual-feel cost is a transient quick-input catch concentrated at parking speed, not steady heaviness. Phase (fs=1000Hz, corrected from an earlier 312.5Hz error): cos=-0.63@20.9Hz, cos=-0.96@45Hz.
+description: gp-0x6b26 (FUN_00036c12, "friction comp") is a 1kHz, velocity(motor-rate)-proportional, sign-clean aggregator lane not yet touched by any build script (RULE-4 byte-diff confirmed virgin across all 67 built images) -- the kit's top candidate for adding 21Hz damping. FINAL SIZED LEVER (2026-08-05): 0xD2A44 Y-values x1.5 paired with 0xC407E 511->850 (NOT 1024 -- aggregator's own +/-0x400 gate is a ZERO-REJECT cliff, confirmed by disasm, see the V74-mission memory); GATE 2 proven dissipative by a vector-sum argument (D'+E' both cos>0 in a common convention at 7.79/20.9/45Hz). 🛑 2026-08-05 6th follow-up: the gp-0x6c2c/gp-0x4f50 gain figure was WRONG (reported as -18.6dB attenuation; it is actually a 7.496x/3.081x GAIN at 20.9/7.79Hz, peer-cross-validated) -- the 5th-follow-up lever-ladder counts below are SUPERSEDED, corrected numbers are in the 6th-follow-up section.
 metadata:
   type: reference
 ---
@@ -288,6 +288,38 @@ concentrated at parking speed since `Y_speed` peaks at 0km/h and falls ~5x by 90
 essentially gone by highway speed. Different character from V72's friction/breakaway offset (a roughly
 constant, rate-independent DC effect) — name it to the operator as "momentary extra resistance on quick
 low-speed steering inputs," not a general steering-weight change.
+
+## 🛑🛑🛑 2026-08-05, 6th follow-up (V74 GATE 2 mission): `gp-0x6c2c`'s "-18.6dB/|H|=0.1171" gain figure was WRONG — it is a 7.496x/3.081x GAIN, not attenuation. Ladder table above is SUPERSEDED.
+
+Re-derived from scratch this session by including the cascade's fixed scalars that the earlier |H| figure
+dropped: `y0 += ((x<<10)-y0)*K0>>7` (x is scaled **UP by 1024** before filtering), `d32=(y0[n]-y0[n-1])*32`
+(a further **×32**), `gp-0x6c2c = EMA(d32,...)>>9` (÷512 at the end). Fixed scalars alone: `1024*32/512=64`.
+Combined with the frequency-dependent shape (EMA1 x derivative x EMA2), the END-TO-END gain
+`|gp-0x6c2c / gp-0x4f50|` is:
+```
+7.79Hz:  3.081x   (was reported as an attenuation; WRONG)
+20.9Hz:  7.496x   (was "-18.6dB / 0.1171"; WRONG)
+```
+**Independently matches a team-lead peer's fresh derivation to 3 decimals** — cross-validated, not a lone
+recompute. The earlier `|H|=0.1171` figure was very likely a "shape-only" cascade magnitude (EMA1 x deriv x
+EMA2, each normalized) that never got multiplied by the `1024/32/512` fixed scalars before being reported
+as the real signal-domain gain. **Every downstream number in the "Lever ladder"/"clamp-crossing amplitude"
+sections above (5th follow-up, and the `4th follow-up` corpus-percentile crossings) inherits this error and
+should be treated as SUPERSEDED, not just imprecise** — the true gain is **64x higher** than what those
+sections used, so the true clamp-crossing amplitudes are correspondingly lower. Recomputed clean numbers
+(1.5x, 20.9Hz, creep, using `gp-0x6ac0` percentiles p50=104/p90=254/p99=505/V72-measured=614 as a proxy for
+raw-rate amplitude): **combined gain ≈1.50** (not the old ladder's implied ~0.20), giving delivered
+pre-clamp torque p50=156/p90=380/p99=756(clears the new 850 cap)/V72-measured=919(clips@850). Full working
+in the team-lead thread, 2026-08-05 "GATE 2 on the actual V74 lever set" mission.
+
+**Phase, recomputed the same session with the corrected framing (torque vs raw rate, cos=-1=ideal damper;
+peer's convention is the negation, cos=+1=ideal)**: cascade-lead-only + 180° sign flip, no extra ZOH
+(gp-0x6c2c updates at the same 1kHz the task reads it): 7.79Hz cos=-0.233, 20.9Hz cos=-0.574, 45Hz
+cos=-0.917 (mine); +0.233/+0.574/+0.917 in the peer's convention — reconciles cleanly against the peer's
+E'-lane figures (0.92@7.79Hz, 0.47-0.54@20.9Hz), same sign, no actual contradiction, just different
+reference axis. **Vector-sum argument**: both lanes have cos>0 (positive real part) at every tested
+frequency in the common convention ⇒ their SUM also has positive real part ⇒ the combined D'+E' phase is
+provably dissipative at 7.79Hz and 18-22Hz, not just checked at sampled points.
 
 ## Related
 [[reference_accord_task5_100hz_live_verified_full_producer_census]] — the live task-rate verification this

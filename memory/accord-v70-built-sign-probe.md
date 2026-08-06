@@ -5,6 +5,8 @@ metadata:
   type: project
 ---
 
+> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** V70's **calibration dose was INERT** (mode-10 `gain_B`; the car is mode 24/26) => V70 delivered **byte-stock behaviour**. The 4-bit SIGN probe design and the `bit6 => bit3` build-class identity **stand**; the dose and ladder statements do not.
+
 # ★★★ V70's SIGN PROBE — the durable part of V70
 
 🛑 **NO SHAs OR BUILD STATUS HERE ON PURPOSE.** V70 has been re-cut and its hashes, filename and control
