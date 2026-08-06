@@ -212,11 +212,12 @@ STOCK_BIN = stock_fw_path("code.bin")
 # could check. The recorded FIX is `_v<NN><tag>_plain_image.bin`; this build applies it, and the tag
 # carries the ONE parameter that distinguishes this cut from the retired X0=6 one.
 # ⊕ TWO EARLIER V74 CUTS ARE RETIRED, both renamed `SUPERSEDED-DO-NOT-FLASH-…`, neither flashed:
-#     x0_6  -- built against a stale `X[0] = 6`
-#     x0_12 -- correct X[0], but it still carried the WITHDRAWN 0xD2A7E/0xD2ABA revert
+#     …x0_6_staleX0…      -- built against a stale `X[0] = 6`
+#     …x0_12_hybridD2A7E… -- correct X[0], but it carried the WITHDRAWN 0xD2A7E/0xD2ABA revert,
+#                            leaving `[3072, 5244, 5244, 5244]` -- a row attributable to NO build
 #   🛑 All three cuts share a BYTE-IDENTICAL cave, so the payload cannot tell them apart and the
 #   x0_12 cut even shares this one's MAIN CRC trailer. **The FILENAME is the only discriminator.**
-BIN_OUT = str(plain_image_path("_v74_engagedcols_x12_plain_image.bin"))
+BIN_OUT = str(plain_image_path("_v74_engagedcols_x0_12_addonly_plain_image.bin"))
 
 # 🛑 V73's / V72's own levers, re-declared HERE as literals (not imported) so a drift in either fails.
 V72_GAIN_A = {0xC6A68: [512] * 4, 0xC6A7C: [512] * 4}     # r26 -- V72's cut. KEEP EXACTLY.
@@ -351,8 +352,8 @@ COND_BNE = FF.COND_BNE                                      # 0xA -- the INVERTI
 
 # ⚠ DELIBERATELY SHORT and asserted BEFORE anything is written -- V71A's note records an over-long
 # tag that overran Windows' 260-char path limit and failed the .rwd write AFTER the image was on disk.
-TAG = ("V73BASE-ENGAGEDCOLS13-x12-FactorCY0eqY2-FactorEX0to12-Y1eqY2-"
-       "frictionx1p5-C407E850-noRevert-probe-67fa-6bd0nz")
+TAG = ("V73BASE-ENGCOLS13-x12-addonly-FactorCY0eqY2-FactorEX0to12-Y1eqY2-"
+       "frictionx1p5-C407E850-probe-67fa-6bd0nz")
 OUT = os.path.join(RWD_DIR, f"39990-TVA,A160-V74-{TAG}-0x{START:X}-0x{END:X}.rwd")
 DECODER = os.path.join(HERE, "..", "rlog-tools", "decode_v74_probe.py")
 
@@ -1040,6 +1041,45 @@ def derive_friction_edits(buf, modes):
 # The MUST-REMAIN sites
 # =====================================================================================================
 
+def assert_no_partial_record_write(buf, base_img, label):
+    """★ THE GENERAL FORM OF THE HYBRID-RECORD DEFECT: a UNIFORM Y row must stay uniform.
+
+    🛑 WHY THIS EXISTS. An earlier V74 cut reverted `0xD2A7E`/`0xD2ABA` -- Y[0] of the two gain_B
+    mode-10 records -- to stock. But V72 had set ALL FOUR Y cells of each record to 5244, so a
+    two-cell revert produced `[3072, 5244, 5244, 5244]`: **neither stock nor V72, and attributable
+    to no build.** This kit's expensive failures have all been artefacts that LOOKED interpretable.
+
+    The rule is the general one, not a spot check on those two addresses: **if a record's Y row was
+    UNIFORM on the base image, it must still be uniform on the output.** Any partial write to a
+    multi-cell row breaks that, whichever record it lands in. It is deliberately one-directional --
+    V74 legitimately makes already-non-uniform rows (FactorC, FactorE) more so, and that is allowed;
+    what is forbidden is *manufacturing* a hybrid out of a row that carried a single decided value.
+    """
+    checked, uniform = 0, 0
+    recs = {u32(buf, arr + m * 4)
+            for arr in (FRICTION_PTR_ARRAY, FACTOR_B_PTRS, FACTOR_C_PTRS, FACTOR_D_PTRS,
+                        FACTOR_E_PTRS, CEILING_PTRS)
+            for m in range(34)}
+    recs |= set(V72_GAIN_A) | set(GAIN_B_M10_KEEP) | set(GAIN_A_STOCK_RECS)
+    for base in sorted(recs):
+        n_b, _xb, yb = rec_any(base_img, base)
+        n_o, _xo, yo = rec_any(buf, base)
+        checked += 1
+        assert n_b == n_o, f"{label}: the record @0x{base:05X} changed its point COUNT {n_b} -> {n_o}"
+        if len(set(yb)) == 1 and len(yb) > 1:
+            uniform += 1
+            assert len(set(yo)) == 1, \
+                f"🛑 {label}: record 0x{base:05X} had a UNIFORM Y row {yb} on the base and is now " \
+                f"{yo} -- a PARTIAL WRITE to a multi-cell record. That is the exact shape of the " \
+                "0xD2A7E hybrid: a row attributable to no build. Write the whole row or none of it."
+    # the two that motivated the rule, named explicitly so a reader sees the instance and the rule
+    for base, want in GAIN_B_M10_KEEP.items():
+        got = rec4_y(buf, base)
+        assert len(set(got)) == 1 and got == want, \
+            f"🛑 {label}: gain_B mode-10 0x{base:05X} Y is {got}, expected the UNIFORM {want}"
+    return checked, uniform
+
+
 def assert_must_not_change(buf, label, stock, base_img):
     """🛑 The frozen keep-list, by VALUE. A span check passes on the wrong build."""
     for addr, raw in SAR_SITES.items():
@@ -1107,6 +1147,10 @@ def assert_must_not_change(buf, label, stock, base_img):
     assert exc2 == [A.RATCHET_ADDR], \
         f"{label}: the V57 guard relaxation covers {[hex(x) for x in exc2]}, expected " \
         f"exactly [0x{A.RATCHET_ADDR:05X}]"
+    # ---- ★ no PARTIAL write to any multi-cell record (the 0xD2A7E hybrid's general form) --------
+    if base_img is not None:
+        nrec, nuni = assert_no_partial_record_write(buf, base_img, label)
+        assert nuni >= 6, f"{label}: only {nuni} uniform-Y records found across {nrec} -- the guard "             "is not seeing the records it is supposed to protect"
     # ---- the DISENGAGED column: every one of its records byte-identical to the V73 base -----------
     if base_img is not None:
         for mode in DISENGAGED_EXPECTED:

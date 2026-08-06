@@ -160,7 +160,7 @@ CREEP_MAX_MS = 4.0            # the ratchet and grind #1 are creep symptoms (1-4
 
 # 🛑 ONE LINE, deliberately. build_v74_tva.py asserts this exact basename appears in this file;
 # splitting it across a concatenation makes the substring vanish and the check silently harder.
-RWD_NAME = "39990-TVA,A160-V74-V73BASE-ENGAGEDCOLS13-x12-FactorCY0eqY2-FactorEX0to12-Y1eqY2-frictionx1p5-C407E850-noRevert-probe-67fa-6bd0nz-0x13000-0x100000.rwd"  # noqa: E501
+RWD_NAME = "39990-TVA,A160-V74-V73BASE-ENGCOLS13-x12-addonly-FactorCY0eqY2-FactorEX0to12-Y1eqY2-frictionx1p5-C407E850-probe-67fa-6bd0nz-0x13000-0x100000.rwd"  # noqa: E501
 
 
 def identify(b4):

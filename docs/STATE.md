@@ -87,6 +87,43 @@ Spec and every risk: `docs/V73-DESIGN.md`.
 
 ## 🛑 ON THE CAR: **V73** (flown, route `5a`). **V74 IS BUILT, VERIFIED AND UNFLASHED.**
 
+| | value |
+|---|---|
+| V74 image SHA256 | `8ae58cb8f41d0486a72454608835e399276bfdcfad464c6c9b52bc7107bfa959` |
+| V74 rwd SHA256 | `d1c2671f5a830897496cba51d8f7af53e178101e0a6018608be17caf70d02daf` |
+| V74 image | `_v74_engagedcols_x0_12_addonly_plain_image.bin` |
+| V74 rwd | `39990-TVA,A160-V74-V73BASE-ENGCOLS13-x12-addonly-FactorCY0eqY2-FactorEX0to12-Y1eqY2-frictionx1p5-C407E850-probe-67fa-6bd0nz-0x13000-0x100000.rwd` |
+
+**Verified 232/232 on the plain image AND the decoded `.rwd`** · 50/50 CRC · 10 trailers, each confirmed
+moved · **nothing in `[0xC5000,0xC5FFC)`** · 179 functional bytes all attributable (cave 42 · FactorC 24 ·
+FactorE `X[0]` 13 · FactorE `Y[1]` 22 · friction 78) · keep-list byte-identical to V73 · **all 13
+disengaged modes × 6 records byte-identical to V73.**
+🛑 **Orchestrator-verified TWO WAYS** (standing instruction — `memory/feedback-verify-with-ghidra-and-bytes-both.md`):
+**Ghidra**, fresh import of the *built* image — cave decodes as `ld.h -0x6bd0` → `cmp r0` → `be` (correct
+polarity at the `b205` trap) → `movea 0x10` → `ld.bu -0x67fa` → `andi 0xf` → `or` → `shl 3` → merge with
+`andi 0x7` of the payload → **a single `st.b` to the CAN staging byte and nothing else** (GATE 1);
+**and bytes** — mode 26 records, mode 24 identical to V73, keep-list, `sar` = stock, 0 bytes in the CRC gap,
+219-byte total diff.
+
+🛑 **THREE V74 CUTS EXIST. Two are renamed `SUPERSEDED-DO-NOT-FLASH-…` with the reason in the name**
+(`…x0_6_staleX0…` `70dcfca5`, built from a stale spec; `…x0_12_hybridD2A7E…` `00a06480`, carried a
+withdrawn revert). ★ **All three share a byte-identical cave** — no probe payload distinguishes them, and
+the hybrid cut differs from the live one by **8 bytes**. **The filename is the only pre-drive discriminator.**
+
+⊕ **Three durable findings from the build**, recorded in `build_v74_tva.py`'s header:
+**(1)** V73's flat `0x18` guard window **spills 4 bytes past a 4-point record** (`0x14`) into the *next*
+mode's record — it false-positived here. Fix: `rec_len = 4 + 4n`. Anything reusing V73's idiom across
+adjacent modes will false-positive. **(2)** `gp-0x67fa` is **lockstep-shadowed at `gp-0x4c39`**; the probe
+reads only, and since 0 is unreachable in its value set, **a constant `bits 6:3` is a VOID drive, not a
+null result.** **(3)** Modes 2/3 carry a different FactorE record entirely (`X=[70,450,1000,4000]`,
+`Y=[115,115,177,253]`) — the only engaged modes whose dose is unchanged by the 6→12 revision.
+
+⚠ **THE SIZING'S HONEST LIMIT:** the ~43-count requirement is in **torsion-bar** counts and the ~50-count
+delivery is in **aggregator** counts. **Nobody could convert between them** (the attempted transfer
+estimate had coherence 0.072 and was correctly refused). ⇒ **the direction is solid — correct phase,
+dissipative, opening a dead zone where there was none — but the magnitude could be off by a factor of a
+few either way.** That is what the ladder and the pre-registered abort criterion are for.
+
 ### V73's FLIGHT (route `5a`, 104,061 frames / 1,040.6 s) — what it actually tested
 | lever | in force? | result |
 |---|---|---|

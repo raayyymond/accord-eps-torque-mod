@@ -21,15 +21,19 @@ the **ENGAGED COLUMN (e014/e015) OF ALL 16 ROWS** -- the 13 modes {2,3,5,11,14,1
 so manual and parking steering are untouched. That disjointness is checked HERE from the table, not
 taken on trust.
 
-🛑 THIS FILE VERIFIES THE `x12` / NO-REVERT CUT. Two earlier V74 cuts are retired, both renamed
-`SUPERSEDED-DO-NOT-FLASH-…`, neither flashed:
-    `x0_6`   -- built against a stale `X[0] = 6`
-    `x0_12`  -- correct `X[0]`, but still carrying the WITHDRAWN 0xD2A7E/0xD2ABA revert
-🛑 **ALL THREE SHARE A BYTE-IDENTICAL CAVE**, so no probe payload can tell them apart, and x0_12 even
-shares this cut's MAIN CRC trailer. **The FILENAME is the only pre-drive discriminator** -- which is
-exactly why the retired ones are renamed rather than left alongside.
+🛑 THIS FILE VERIFIES THE `x0_12_addonly` CUT. Two earlier V74 cuts are retired, both renamed
+`SUPERSEDED-DO-NOT-FLASH-…` with the REASON in the name, and neither was ever flashed:
+    `…x0_6_staleX0…`      -- built against a stale `X[0] = 6`
+    `…x0_12_hybridD2A7E…` -- correct `X[0]`, but it carried the WITHDRAWN 0xD2A7E/0xD2ABA revert,
+                             leaving `[3072, 5244, 5244, 5244]` -- a row attributable to NO build
+🛑 **ALL THREE SHARE A BYTE-IDENTICAL CAVE**, so no probe payload can tell them apart, and the
+hybrid cut differs from this one by only EIGHT bytes. **The FILENAME is the only pre-drive
+discriminator** -- which is exactly why the retired ones are renamed rather than left alongside.
 
-Usage:  python verify_v74_image.py [IMAGE]  (default: _v74_engagedcols_x12_plain_image.bin)
+★ `verify_no_partial_record_write()` below is the GENERAL form of the hybrid defect: a Y row that was
+UNIFORM on the base must still be uniform on the output. It would have caught 0xD2A7E automatically.
+
+Usage:  python verify_v74_image.py [IMAGE]  (default: _v74_engagedcols_x0_12_addonly_plain_image.bin)
         python verify_v74_image.py --rwd PATH     (decode a .rwd and verify the payload)
 """
 from __future__ import annotations
@@ -381,6 +385,41 @@ def verify_friction_and_clamp(img, base):
           f"the clamp {val} breaches the hard cap")
 
 
+def verify_no_partial_record_write(img, base):
+    """★ THE GENERAL FORM OF THE HYBRID DEFECT: a UNIFORM Y row must stay uniform.
+
+    An earlier V74 cut reverted Y[0] of the two gain_B mode-10 records to stock while V72 had set
+    ALL FOUR cells to 5244, producing `[3072, 5244, 5244, 5244]` -- neither stock nor V72, and
+    attributable to no build. This is the rule rather than a spot check on two addresses: any
+    partial write to a multi-cell row that carried ONE decided value manufactures a hybrid.
+    """
+    print("\n  ★ NO PARTIAL WRITE TO ANY MULTI-CELL RECORD (the general form of the hybrid defect)")
+    recs = {u32(img, arr + m * 4)
+            for arr in (0xCBE74, 0xC9CCC, 0xC9E9C, 0xC9DB4, 0xC9F84, 0xC77A0)
+            for m in range(34)}
+    recs |= set(EXPECT_GAIN_A) | set(EXPECT_GAIN_B_M10_KEEP) | set(EXPECT_GAIN_A_STOCK)
+    bad, uniform = [], 0
+    for b_ in sorted(recs):
+        n_b, _x, yb = rec(base, b_)
+        n_o, _x2, yo = rec(img, b_)
+        if n_b != n_o:
+            bad.append((hex(b_), "count", n_b, n_o))
+            continue
+        if len(set(yb)) == 1 and len(yb) > 1:
+            uniform += 1
+            if len(set(yo)) != 1:
+                bad.append((hex(b_), "hybrid", yb, yo))
+    check(not bad,
+          f"all {len(recs)} records keep their point count, and all {uniform} with a UNIFORM Y row "
+          "on V73 are still uniform ⇒ no hybrid was manufactured",
+          f"PARTIAL WRITE detected: {bad[:4]}")
+    for b_, want in EXPECT_GAIN_B_M10_KEEP.items():
+        got = list(struct.unpack_from("<4h", img, b_ + 0x0A))
+        check(len(set(got)) == 1 and got == want,
+              f"gain_B mode-10 0x{b_:05X} Y = {got} -- UNIFORM, the instance that motivated the rule",
+              f"gain_B mode-10 0x{b_:05X} Y is {got}, expected the uniform {want}")
+
+
 def verify_hygiene(img, base, stock):
     """🛑 The WITHDRAWN revert: these cells must be byte-identical to V73, not reverted."""
     print("\n  🛑 gain_B mode-10 -- the WITHDRAWN revert. V74 is ADD-ONLY on V73.")
@@ -574,6 +613,7 @@ def verify(img, base, stock, label):
     verify_no_clip_and_dose(img, base)
     verify_friction_and_clamp(img, base)
     verify_hygiene(img, base, stock)
+    verify_no_partial_record_write(img, base)
     verify_must_not_change(img, base, stock)
     verify_cave(img)
     verify_crc_and_diff(img, base, stock)
@@ -602,7 +642,7 @@ def main():
         verify(bytes(img), base, stock, f"{args.rwd} (decoded payload)")
     else:
         p = Path(args.image) if args.image \
-            else Path(plain_image_path("_v74_engagedcols_x12_plain_image.bin"))
+            else Path(plain_image_path("_v74_engagedcols_x0_12_addonly_plain_image.bin"))
         verify(p.read_bytes(), base, stock, str(p))
 
     print("\n" + "=" * 100)
