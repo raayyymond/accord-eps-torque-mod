@@ -211,13 +211,28 @@ RATE_COUNTS_PER_COLUMN_DEGS = 4.7121   # recorded for the next reader; deliberat
 
 # 🛑 ONE LINE, deliberately. build_v75_tva.py asserts this exact basename appears in this file;
 # splitting it across a concatenation makes the substring vanish and the check silently harder.
-RWD_NAME = "39990-TVA,A160-V75-V74BASE-ENGCOLS13-levers-CY0.566-EX1.200-magprobe-6bd0-thermo-6ac2-0x13000-0x100000.rwd"  # noqa: E501
+RWD_NAME = "39990-TVA,A160-V75-V74BASE-ENGCOLS13-levers-CY0.566-magprobe-6bd0-thermo-6ac2-0x13000-0x100000.rwd"  # noqa: E501
 # 🛑🛑 THE LEVER SET IS IN THAT FILENAME FOR A REASON. V75's two edits (`CY0` = FactorC Y[0] := 566,
 # `EX1` = FactorE X[1] := 200) are independently toggleable, and **the cave is BYTE-IDENTICAL across
 # every lever set** -- so this decoder reads a CY0-only, an EX1-only and a both cut exactly alike.
 # The payload CANNOT tell them apart. If a re-cut is flown, `build_v75_tva.py` will refuse to build
 # until this constant names that cut's own .rwd. Do not "fix" a mismatch by editing it to match a
 # file you did not flash.
+#
+# ⊕ RETARGETED 2026-08-06 — from the BOTH-levers cut to the CY0-ONLY cut. **THE BOTH-LEVERS CUT FLEW
+# AND HARD-FAULTED THE ECU**: after a stoplight stop, pulling away with openpilot engaged, the EPS
+# lamp lit and ALL power steering was lost, latched. 🛑 The superseded cut's full basename is
+# DELIBERATELY NOT WRITTEN ANYWHERE IN THIS FILE — `build_v75_tva.py`'s guard is a plain substring
+# test, so naming both cuts here would make it vacuous for BOTH. Refer to it in prose only (the
+# `…-CY0.566` + `EX1.200` cut) and never paste its filename back in.
+# Why the re-cut: the ramp-regime incremental gain k = (C_Y0*Y[1]>>10)/(X[1]-X[0]) is a
+# FREQUENCY-INDEPENDENT scalar on the whole damper path — stock 0.0000 · V74 0.5799 (1,011 s clean) ·
+# BOTH-cut 1.5798 (+8.70 dB over V74, faulted) · this CY0-only cut 0.7655 (+2.41 dB). Dropping EX1
+# keeps the plateau (M = 297) and so ~99% of the grind-band and ~88% of the ratchet damping, while
+# spending only 2.41 of the ≤8.70 dB of margin V74 empirically demonstrated. It is ALSO
+# single-variable against BOTH flown builds (V74 + CY0 ; the faulted cut − EX1).
+# ⚠ Consequence, accept it knowingly: this decoder will now WARN on a log from the faulted cut. That
+# is correct — there are no rlogs from that drive, and a decoder that silently accepts both is worse.
 
 
 def level(b4):

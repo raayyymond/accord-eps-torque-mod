@@ -252,6 +252,28 @@ TARGET_E_X1 = 200                          # LEVER EX1 -- FactorE's low-rate bre
 # cap -- which is correct behaviour, not a bug. It is never hand-copied.
 LEVERS = {"CY0": True, "EX1": True}
 
+# ⊕ 2026-08-06, AFTER V75 FLEW AND HARD-FAULTED: the re-spec anticipated above is now REAL, but for a
+# reason the header did not foresee -- not a relay harmonic, a GATE 2 loop-gain overshoot. The ramp-regime
+# incremental gain k = (C_Y0*Y[1]>>10)/(X[1]-X[0]) is a FREQUENCY-INDEPENDENT scalar on the whole damper
+# path, so it scales loop gain equally at every frequency and no plant model is needed to compare builds:
+#     stock k = 0.0000 (no loop through this path)  |  V74 k = 0.5799, flew 1,011 s CLEAN
+#     V75   k = 1.5798 = +8.70 dB over V74          |  FAULTED (latched loss of assist, stoplight launch)
+# => the critical gain is bracketed k* in (0.580, 1.580]; V74's margin here is >0 dB and <8.70 dB.
+# Dropping EX1 alone gives k = 0.7655 = +2.41 dB over V74 while keeping the plateau (M = 297) and thus
+# ~99% of V75's grind-band and ~88% of its ratchet damping. That cut is SINGLE-VARIABLE against BOTH
+# flown builds (V74 + CY0 ; V75 - EX1), which no other candidate is.
+# 🛑 Do NOT hand-edit the dict for a re-cut -- set ACCORD_V75_LEVERS instead, so this file keeps
+# reproducing the FLOWN V75 byte-for-byte. The cap search still re-derives against whatever E axis is
+# actually written (see the one-way dependence note above); it is never hand-copied.
+#     ACCORD_V75_LEVERS=CY0        -> drop EX1, keep CY0   (the post-fault re-cut)
+#     ACCORD_V75_LEVERS=CY0,EX1    -> the flown V75
+#     ACCORD_V75_LEVERS=EX1        -> EX1 only
+if os.environ.get("ACCORD_V75_LEVERS"):
+    _sel = {t.strip().upper() for t in os.environ["ACCORD_V75_LEVERS"].split(",") if t.strip()}
+    assert _sel <= {"CY0", "EX1"}, f"unknown lever(s): {_sel - {'CY0', 'EX1'}}"
+    LEVERS = {"CY0": "CY0" in _sel, "EX1": "EX1" in _sel}
+    print(f"[LEVERS] overridden from ACCORD_V75_LEVERS -> {LEVERS}")
+
 
 def lever_token():
     """The lever set as a filename-safe token. 🛑 The ONLY pre-drive discriminator between cuts.

@@ -58,10 +58,28 @@ symptom is not a verdict.
 **V75's clip check produced two DIFFERENT verdicts from the SAME arithmetic, because two agents (and the
 operator) policed two different envelopes.** A rectangular (speed × rate) grid rule checks every combination
 the axes can independently reach — including corners the car never visits. On this build, the grid's worst
-corner assumes **849°/s** of column rate. **Route 5d's actual measured maximum was 330°/s, and zero of its
-101,118 frames exceeded 2000 counts** on the axis that matters. A lever that clips at the grid's corner but
-never at the corridor the car actually drives is not unsafe — it is untested at a speed/rate combination
-that does not occur.
+corner assumes **849°/s** of column rate. **Route 5d's actual measured maximum was ~~330°/s~~ 412°/s
+(1,941 counts), and zero of its 101,118 frames exceeded 2000 counts** on the axis that matters. A lever
+that clips at the grid's corner but never at the corridor the car actually drives is not unsafe — it is
+untested at a speed/rate combination that does not occur.
+
+🛑 **CORRECTION, 2026-08-06 (same day): the "330°/s" above was a UNITS ERROR and it flattered the margin
+by 25%.** 330 is `|rate_f|`'s maximum in the extractor's own units — the fine CAN field carries a DBC
+factor of 0.1 where the true LSB is 0.125 °/s, so the °/s figure under-states the counts by 1.25×. **The
+counts figure — 1,941 — is convention-independent and both CAN channels (0x18F fine and 0x14A coarse)
+agree on it exactly.** Quote counts, not °/s, whenever a margin depends on it.
+
+🛑🛑 **AND THE BIGGER PROBLEM WITH THIS RULE, LEARNED THE HARD WAY WHEN V75 HARD-FAULTED:
+AN OBSERVED-ENVELOPE CHECK IS ONLY AS GOOD AS THE ENVELOPE, AND ROUTE 5d'S ENVELOPE HAD A HOLE IN IT
+EXACTLY WHERE V75 FAILED.** **Route 5d contains ZERO engaged stoplight stops** — 12 full stops, 343.5 s
+stopped, `latActive` = 0.000 in every one. V75 then latched the ECU (total loss of power steering) on a
+stoplight launch with openpilot engaged. ⇒ **every check V75 passed — the 98,988-point grid, the
+101,118-frame replay, peak-354 — ran on telemetry that STRUCTURALLY COULD NOT CONTAIN THE REGIME THAT
+FAULTED.** The route's own flight instruction had already recorded that it lacked stop-and-go; that
+shortfall was filed as a *measurement* problem and nobody noticed it was also a *safety* hole.
+> **RULE 8b: before citing an observed-envelope pass, state which regimes the envelope DOES NOT CONTAIN,
+> and check that list against what the lever changes.** ⚠ And note a clip rule tests **magnitude only** —
+> it is structurally blind to step size, switching rate and phase. Those are GATE 2 questions.
 
 > **RULE 8: run BOTH checks, and say which is which.** The grid rule (`new > old AND new > ceiling` swept
 > over the full rectangular domain) is the CONSERVATIVE, cheap-to-compute bound — pass it and you are safe

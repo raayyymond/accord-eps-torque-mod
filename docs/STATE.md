@@ -24,9 +24,73 @@ then `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
 
 ---
 
-★★★★★ **THE HEADLINE, 2026-08-06 (LATEST): V74 FLEW, ROUTE `5d` — THE DAMPER IS REAL ON THIS CAR FOR THE
+★★★★★ **THE HEADLINE, 2026-08-06 (LATEST): V75 FLEW, FIXED THE AUDIBLE GRIND #1 — AND HARD-FAULTED THE
+ECU. LATCHED TOTAL LOSS OF POWER STEERING AT A STOPLIGHT LAUNCH. THE CAUSE IS A GATE-2 LOOP-GAIN
+OVERSHOOT WE INTRODUCED, AND `k*` IS NOW BRACKETED BY OUR OWN TWO FLIGHTS.**
+
+🛑🛑🛑 **SAFETY FIRST: V75 IS ON THE CAR AND PRODUCED A MID-DRIVE LOSS OF ASSIST.** Operator report: after
+stopping at a stoplight and pulling away normally with openpilot engaged, the EPS lamp lit, comma reported
+an LKAS fault, and **all power steering was lost — the wheel went to manual effort and stayed there.**
+This is a **more dangerous failure class than anything in this kit's history**: V24/V27/V48B bricked at
+flash or at ignition, V40 bricked at ignition. **This is the first fault that fired mid-drive.** ⚠ n = 1;
+no rlogs. ✅ Operator also reports V75 **fixed the audible grind #1 and strongly attenuated the micro
+ratchet** — the best symptom result the kit has had. **Both facts are real and they are the whole trade.**
+
+★★★★★ **THE MECHANISM — and it is the one number that survives.** The damper's **ramp-regime incremental
+gain** `k = (C_Y0·Y[1]>>10)/(X[1]−X[0])` is a **FREQUENCY-INDEPENDENT SCALAR** on the whole damper path,
+so it scales loop gain equally at every frequency and **no plant model is needed to compare builds**:
+
+| build | `C_Y0` | `E_X1` | plateau M | **k** | **vs V74** | on-car |
+|---|---|---|---|---|---|---|
+| stock | 0 | 400 | 0 | **0.0000** | **−∞ dB** | damper **identically zero below 35 km/h** |
+| **V74** | 429 | 400 | 225 | **0.5799** | **0 dB** | **1,011 s CLEAN** |
+| **V75** | 566 | **200** | 297 | **1.5798** | **+8.70 dB** | **FAULTED** |
+| **new cut** | 566 | 400 | 297 | **0.7655** | **+2.41 dB** | built, unflashed |
+
+⇒ **`k* ∈ (0.580, 1.580]` — V74's gain margin through this path is >0 dB and <8.70 dB.** The first
+quantitative statement this kit has about it, and it says the margin was **thin before V75 spent 8.7 dB of
+it.** Firmware-side phase is only **−20.9°@7.79 Hz / −55.4°@21 Hz** (PID + 16 Hz IIR + rate EMA + 100 Hz
+ZOH, all byte-extracted) ⇒ **the firmware alone cannot invert the damping; the instability is in the
+plant** (measured Q ≈ 13.6). ⚠ No absolute Nyquist/gain-margin exists — the plant transfer function is not
+measured, and one was deliberately **not invented**. The *relative* answer does not need it.
+
+⊕ **What V74/V75 also did, undocumented until now: `FactorE Y[1] := Y[2]` created a BANG-BANG RELAY.**
+Stock `Y = [0,140,539,927]` is a monotone ramp with **no flat segment**; V74/V75 `[0,539,539,927]` is
+**constant** across `X[1]→X[2]` with the sign taken from `gp-0x6abe` ⇒ relay band **85–531 °/s (V74)** →
+**42–531 °/s (V75)**. 🛑 **This is exactly V72's error, which this file claimed the design avoided** —
+*"`Y[0]=0` is preserved ⇒ no chatter mechanism"* is true only **below `X[1]`**. ★ It is a **100 Hz
+sampled-data artifact**, not a table discontinuity. **But the relay is NOT the fault**: at a gentle
+stoplight launch the car sits in the **ramp** (engaged creep is above 200 ct only 21.8% of the time), and
+a 5,224-point search shows that at matched peak gain a no-flat surface damps the symptom band the same
+⇒ **the plateau is not what buys the damping; the gain is.**
+
+🛑 **EIGHT MECHANISMS WERE REFUTED, ALL ON THE SAME CONSTRAINT — V74 FLEW CLEAN.** Surface arithmetic ·
+`FUN_000347b8` (215-count margin) · int/float lockstep (**no float mirror of FactorC/E exists in the
+ROM**) · governor slew-step · `FUN_00045a20` (`gp-0x6bd0` **cancels** in its subtraction) · duty ·
+dwell (**V74 sits 210 consecutive 1 kHz cycles = 21× the trip requirement, 35×, and never faulted**) ·
+per-event/at-rail transitions (**V74 is MORE rail-coincident per transition than V75**). ⇒ **the
+proximate monitor is NOT identified.** Prime suspect remains **Monitor 2** (`FUN_00043e44`, ±5/1024,
+charge:leak 2:1, break-even duty 1/3, **10 consecutive cycles = 10 ms → DTC 0x1c/0x1d → `0xF00049`,
+latched**) — its corridor compares `gp-0x6b04` (PRE-clamp) vs `gp-0x6b98` (POST) and **can only open when
+a clamp BINDS.** ✅ **That binding path is now CLOSED as impossible**: the bus→`gp-0x6b98` scale is exactly
+**`k = 891/2048 = 0.4351`**, so a **rail-pinned openpilot command delivers only 1782 of the 4762 governor
+ceiling (37.4%)** and even the damper's loosest aggregator bound leaves `1782+2048 = 3830 < 4762`. **And
+the scale is byte-identical on V74 and V75, so it could never have discriminated them.**
+
+✅ **THE DECISIVE MEASUREMENT NOT YET TAKEN: read the stored DTC.** `flashing-2020accord/eps-read-dtcs.py`
+(source-asserted read-only) — UDS **`19 02 FF`**, **bus 1**, `0x18DA30F1`/`0x18DAF130`; proven on THIS ECU
+(a real `0xF00049 status=0x48 confirmedDTC` capture exists from the V24 era). Fallback `22 48 01`.
+🛑 **Requires the operator's explicit confirmation of payload and bus. Not sent.**
+
+Full narrative: `docs/HANDOFF-2026-08-06-v75-faulted-and-the-gate2-gain.md`.
+
+---
+
+★★★★ **SUPERSEDED HEADLINE, 2026-08-06 (earlier): V74 FLEW, ROUTE `5d` — THE DAMPER IS REAL ON THIS CAR FOR THE
 FIRST TIME EVER MEASURED. THE ABORT GATE READ AMBIGUOUS ON FIRST PASS, WAS INVESTIGATED PROPERLY, AND
 RESOLVES CLEAR — NOT A RELAY, A PRE-EXISTING HARMONIC. V75 (2.74× THE DOSE) IS BUILT.**
+🛑 **The abort-gate conclusion stands; the SAFETY conclusion did not.** The gate asked only about a relay
+harmonic. Nothing in it, or in the no-clip rule, tests loop gain or phase — see the V75 headline above.
 
 `bit7 = (gp-0x6bd0 != 0)`, the damper's OWN output — **the kit's first positive control on this cell** —
 fires **67.44% duty engaged at creep vs 0.29% disengaged (230.7× contrast)**; engaged overall **39.93%**,
@@ -181,8 +245,37 @@ disfavoured** (11/34,277 frames), **10/11 excluded.** V73's probe settles it.
 Full narrative: `docs/HANDOFF-2026-08-05-v72-flew-the-damper-was-never-in-force.md`.
 Spec and every risk: `docs/V73-DESIGN.md`.
 
-## 🛑 ON THE CAR: **V74** (flown, route `5d`, 101,118 frames / 1,011.2 s). **V75 IS BUILT, VERIFIED AND
-UNFLASHED — SHAs TODO, pending `build75`.** ⚠ **The abort gate for V75 was flagged ambiguous mid-session
+## 🛑🛑 ON THE CAR: **V75 (BOTH-LEVERS CUT) — AND IT HARD-FAULTED. DO NOT RE-FLY IT.**
+
+| | value |
+|---|---|
+| **ON THE CAR (faulted)** | `39990-TVA,A160-V75-V74BASE-ENGCOLS13-levers-CY0.566-EX1.200-magprobe-…rwd` |
+| **BUILT THIS SESSION, UNFLASHED** | `…-levers-**CY0.566**-magprobe-6bd0-thermo-6ac2-0x13000-0x100000.rwd` |
+| new-cut rwd SHA256 | `b245e1d17ed1ca4ec51a06a0a17a41afe37ba369b819eb0e2db02d2d49781765` |
+| new-cut image SHA256 | `9a96b7fe0cb5263f9cbc528cb0a0a67744048f439373f326f5a7c966ff37f3d1` |
+| new-cut image | `_v75_CY0.566_magprobe_plain_image.bin` |
+
+**The new cut = `LEVERS = {"CY0": True, "EX1": False}`** — keeps V75's `FactorC Y[0] = 566`, reverts
+`FactorE X[1]` to **400**. ★ **Single-variable against BOTH flown builds** (V74 + CY0 ; V75 − EX1) — no
+other candidate is. Keeps **~99%** of V75's grind-band and **~88%** of its ratchet damping (plateau
+untouched at M = 297), restores V74's plateau-entry statistics (~0.53/s at creep vs V75's 7.25), and
+spends **2.41 of the ≤8.70 dB** margin V74 empirically demonstrated.
+**Verified:** 50/50 CRC PASS · full readback re-verification · **mode 24 (manual/parking) byte-stock across
+all six mode-indexed record types, resolved through the pointer arrays** (orchestrator-checked; a first
+spot-check using a guessed byte range read "False" and was wrong — the same record-length trap V73 hit).
+🛑 **NOT CLEARANCE TO FLY.** Built per the standing "build without asking" instruction; the flash decision
+is the operator's and needs the file and bus named back.
+⊕ `build_v75_tva.py` now takes **`ACCORD_V75_LEVERS`** (env) so it still reproduces the flown V75
+byte-for-byte. `rlog-tools/decode_v75_probe.py`'s `RWD_NAME` now names the new cut — and the faulted cut's
+full basename is **deliberately absent** from that file, because the build guard is a substring test and
+naming both would make it vacuous for both.
+
+⚠ **Fallback if you want to drive before any of this is settled: V74** (`d1c2671f…`), 1,011 s flown clean.
+**It is the empirical choice, not a proven-safe one** — it carries the same relay at a higher entry rate
+(85 °/s) and the same 2× weight at `0xC63A0`. The only *structurally* clean option for this lever is
+stock FactorC/FactorE, which gives up the damper entirely.
+
+### ⚠ SUPERSEDED — V74 was on the car until V75 (flown, route `5d`, 101,118 frames / 1,011.2 s) ⚠ **The abort gate for V75 was flagged ambiguous mid-session
 (K-free/creep-arm numbers omitted from the first pass), investigated with a tracking test + an
 odd-harmonic check, and resolved CLEAR — see the headline for the full picture, not just this line.**
 
