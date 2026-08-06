@@ -7,6 +7,33 @@ metadata:
 
 # Damper FUN_00034350 -> gp-0x6bd0 -- five factors, two deadzones (traced 2026-07-21, DampFactors)
 
+> 🛑🛑 **SUPERSEDED IN THREE PLACES, 2026-08-06. Read [[reference-accord-two-dead-zones-speed-and-rate]]
+> first — this file is kept for its factor-by-factor trace, not for its labels.**
+>
+> 1. **FACTOR C's AXIS IS VEHICLE SPEED, NOT DRIVER TORQUE.** The table below calls it *"`gp-0x6a5e`
+>    voted driver torque"*. It is **voted vehicle SPEED**, at **64 counts per km/h**. [EVIDENCE, three
+>    ways] `X = [2240, 3840, 5120, 8960] / 64 = [35, 60, 80, 140] km/h` — clean round numbers, which a
+>    torque axis has no reason to produce; the friction lane's `X = [0, 1280, 5760] = [0, 20, 90] km/h`
+>    uses the same cell and `build_v74_tva.friction_authority` names it *voted speed*; and on route 5d,
+>    predicting V74's `bit7` with **speed** as FactorC's index agrees on **91.240 %** of 101,118 frames
+>    versus **88.334 %** with `|driver torque|` — which cannot even reach the top two breakpoints
+>    (`|tq|` max 4093 vs `X[3] = 8960`). ⚠ `gp-0x6a5e` is labelled "driver torque" in at least one other
+>    memory (`reference_accord_setpoint_limit_15360_lerp`); **that labelling is unchecked, not
+>    corrected here.** The golden model already has this right.
+> 2. **THE MODE.** These are the **mode 10/11** records. The car is row 11 `TVCA4` running **mode 24
+>    manual / 26 engaged**, so every lever aimed at 10/11 was inert by table selection —
+>    [[reference-accord-car-is-tvca4-mode-24-26]], RULE 7.
+> 3. **THE OUTPUT CLAMP IS EFFECTIVELY A CONSTANT 512.** *"DYNAMIC ±512..±1024 keyed on `gp-0x6ac2`"* is
+>    true of the table and misleading in practice: `gp-0x6ac2` is a **sign-gated back-drive detector**
+>    that reads **0** whenever the motion agrees with the command, so the LERP clamps flat to `Y[0]` and
+>    **the ceiling is pinned at its 512 floor in ordinary driving**.
+>    See [[reference-accord-gp6ac2-is-a-backdrive-detector]]. Size against **512**, never 1024.
+>
+> ✅ **What this file got RIGHT and is worth keeping:** the five-factor product, B and D dead-flat, and
+> above all **"V44 opened only C, so E re-zeroed the product"** — the two-deadzone insight that V74
+> finally acted on. V74 opened **both** and the damper measured live on-car for the first time:
+> [[accord-v74-flew-damper-is-in-force]].
+
 Corrects the earlier "product of four Q10 factors" record. It is **FIVE** factors, all Q10 (÷1024),
 then a sign flip (`gp-0x6abe>0 → negate`, velocity-opposing), then a dynamic clamp:
 

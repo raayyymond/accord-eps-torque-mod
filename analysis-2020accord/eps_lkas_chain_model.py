@@ -918,6 +918,30 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # ⚠ Both this lane and the friction lane below are gated by the SAME andi 0x830 state mask on gp-0x67fa
 # (damper via FUN_00022ca0; friction via FUN_0002214a @0x228cc) => if the live state is outside {4,5,11},
 # NEITHER delivers. 0x830 is a SUBSET of 0xc30, so no state runs the aggregator without the damper.
+# ✅ SETTLED ON-CAR (route 5d, 101,118 frames): gp-0x67fa reads 5 on 101,117 and 4 on 1 (the last frame,
+# in PARK), and FUN_0002214a's guard is literally `uVar2 = 1 << (gp-0x67fa & 0xf)` then `uVar2 & MASK`, so
+# state 5 => 0x20 clears 0x830 / 0x930 / 0xc30 / 0xd30 / 0xd38 / 0xdfa / 0x83a / 0x820 -- the whole chain
+# ran on every frame, and gp-0x67fa == 4 is dead (third replication; 0x454FE never executes).
+#
+# 🛑🛑 THE OUTPUT CEILING IS EFFECTIVELY A CONSTANT 512, NOT A DYNAMIC 512..1024 (2026-08-06).
+# ceiling = LERP(gp-0x6ac2, 0xC77A0[mode*4]), and all 26 modes carry an identical X=[300,800] Y=[512,1024].
+# gp-0x6ac2 is NOT a rate: FUN_00041464 sets it to |motor rate| >> 10 only when sign(motor rate) differs
+# from sign(gp-0x6b98), and to 0 otherwise -- a SIGN-GATED BACK-DRIVE (kickback) DETECTOR. In ordinary
+# same-sign driving the index is 0, the LERP clamps flat to Y[0], and the ceiling sits on its 512 floor.
+# => SIZE EVERY DAMPER LEVER AGAINST 512. The build-time rule (FactorC x FactorE[3]) >> 10 <= 512 is the
+# real constraint, not a conservative one. ⚠ The validity bypass at 0x41852 (|gp-0x6b98| outside +/-0x2000)
+# writes a 0xFFFF SENTINEL to gp-0x6ac2, it does not hold; whether the ceiling's reader is ld.h or ld.hu
+# then floors it (-1) or rails it (65535) is [OPEN] -- one bit, opposite answers.
+#
+# ★★★★ FIRST EMPIRICAL ANCHOR ON gp-0x6bd0 (V74, route 5d, 101,118 frames -- the kit's first positive
+# control on the damper). bit7 = (gp-0x6bd0 != 0) fired on 23,603 frames = 23.342%: ENGAGED 39.927%,
+# ENGAGED CREEP <=4 m/s 67.443% vs MANUAL CREEP 0.292% (230.7x). V72's probe on the same cell read
+# 0/87,940. All 943 manual bit7 frames lie within 5 s of a disengagement and 0 of 40,398 beyond it, which
+# confirms the engaged-column-only design AND re-measures the 2.08 s mode fall lag on a different cell.
+# Delivered dose at the ratchet's own 99 counts = exactly 50 (design target); stock 0 at every creep
+# speed; 0 frames reached the ceiling. 🛑 The ~43 requirement is TORSION-BAR counts and this is AGGREGATOR
+# counts -- still unconverted. ⚠ A (speed, column-rate) model reproduces bit7 on 91.240% of frames with a
+# one-way residual (under-predicts), so every modelled dose is a LOWER BOUND.
 #     FUN_00036c12 -> gp-0x6b26   speed-LERP x gp-0x6c2c motor-rate-deriv, LINEAR [friction comp]
 #     FUN_0003a382 -> gp-0x6ad4   UNFILTERED residual lane (2 passthroughs + a raw derivative)
 #     FUN_00036388 -> gp-0x6b62   slow +/-1/tick accumulator w/ hysteresis       [return-to-centre]
@@ -1687,8 +1711,10 @@ def motor_torque_demand_aggregator(st: EpsState, lanes: dict, cal: Calibration) 
     +/-0x800, 6bd0 +/-0x800, 6b26 +/-0x400, 6ad4 +/-0x2800 (@0x3aa38-0x3acc4).
     🛑 ALL EIGHT ARE STRUCTURALLY VACUOUS -- MEASURED 2026-08-04, every ceiling byte-read. Each gate
     is capped by its OWN PRODUCER's ceiling at or inside its gate window, on every drive, every
-    build: boost 512 vs 2048 · damping EXACTLY 0 at creep (FactorC 0xD27BC Y[0]=0, multiplicative,
-    ~35 km/h onset) and <=1024 at highway vs 2048 · friction 511 vs 1024 · magnitude +/-0x3000 ==
+    build: boost 512 vs 2048 · damping <=512 (the gp-0x6ac2 ceiling floor) vs 2048 -- ⚠ the old
+    "EXACTLY 0 at creep (FactorC Y[0]=0)" holds for stock and V44-V73 but NOT for V74, which opened
+    both dead zones and measured 67.4% duty at engaged creep; the gate stays vacuous either way
+    because 388 is the surface max at creep · friction 511 vs 1024 · magnitude +/-0x3000 ==
     window exactly (inclusive) · LKAS +/-0x2800 == window exactly · gp-0x6ade 0 writers · resonance
     max 1024 (164-341 at the ratchet's speeds) vs 2800 · return-centre gp-0x6b62 max 5786 vs 8192.
     ⇒ THE AGGREGATOR STAGE CONTAINS NO REACHABLE HARD NONLINEARITY, joining the aggregator SUM
@@ -2234,7 +2260,15 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     """
     openpilot rate-limits the steering command in NORMALIZED units, upstream of both STEER_MAX and the
     firmware gain (STEER_DELTA_UP/DOWN=3, DT_CTRL=0.01, STEER_MAX=4096, identity lookup for the
-    Accord). [VERIFIED against opendbc] Quartering the PID restored the loop GAIN but left the command
+    Accord). [VERIFIED against opendbc]
+    ★★★ BOTH RAILS ARE NOW MEASURED, NOT MODELLED (2026-08-06). The slew rail reads 123 counts/frame with
+    ZERO frames exceeding it, which is exactly this function's 0.03*STEER_MAX term; and the AMPLITUDE rail
+    is matched EXACTLY to the firmware intake FUN_00052676 = clamp(req * -4, +/-0x4000), since
+    4096 * 4 = 0x4000. => RAISING STEER_MAX ALONE BUYS ZERO -- the intake clamp removes every extra count,
+    so amplitude work must move both sides and the firmware side binds. 16.07% of engaged time sits against
+    one rail or the other, slew dominating at highway speed. ⚠ Sibling-agent measurement, not replicated
+    here; the 4096*4 identity is arithmetic. Not a licence to edit openpilot (it stays an instrument).
+    Quartering the PID restored the loop GAIN but left the command
     SLEW RATE untouched: the slew ceiling in firmware lane counts is (0.03*STEER_MAX*4*gain)>>15, so it
     scales with the FIRMWARE gain -- stock 13.4 counts/10ms tick vs V38 53.5 (4x faster, uncompensated),
     cutting the time to full physical torque from ~170ms to ~42ms and crossing INSIDE openpilot's

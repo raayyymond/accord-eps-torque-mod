@@ -68,6 +68,9 @@
 - [🛑🛑 Mixer "4 identical channels" FALSIFIED — ch2/4/5/9 = BASE ASSIST not LKAS; LKAS path: ch1(arb)→gp-0x62b0→gp-0x3d88→gp-0x6b4c](reference_accord_mixer_channels_independent_not_4x_replica.md).
 - [★★ gp-0x6c2c transfer fn TRIPLE-VERIFIED 7.5x/17.5dB@20.9Hz, 3.08x/9.8dB@7.79Hz; 🛑 K1/K2 is a BAD lever, cannibalizes V74's friction ×1.5 — STRUCK](reference_accord_gp6c2c_transfer_function_triple_verified.md).
 - [★★ Shaper ±0x2000 rail has companion guard @0x41852 (back-drive detector), never co-priced; fail-path = stale-hold not zero](reference_accord_shaper_rail_companion_guard_0x41852.md).
+- [🛑★★ V75 headroom: ceiling table 0xC77A0 quantified (floor 512@mode26), E_Y1-vs-E_Y3 no-clip asymmetry = free 1.72x headroom, aggregator zero-reject INCLUSIVE at exact limit, seed's "9 hardcoded" claim REFINED (8-state machine, not fixed)](reference_accord_v75_ceiling_c77a0_noclip_asymmetry_and_aggregator_inclusive_bound.md).
+- [🛑🛑★★ gp-0x6ac2 (the ceiling's index) is a BACK-DRIVE RATE, sign-gated vs gp-0x6b98, ZERO whenever motor moves WITH command — NOT a gp-0x6ac0 twin](reference_accord_gp6ac2_is_backdrive_rate_not_gp6ac0_twin.md) — revises the ceiling-headroom memory's open item.
+- [🛑🛑🛑★★ CORRECTED: full-grid binary search shows FactorE has ZERO headroom (V74 already at its own ceiling on 5 grid cells); true safe C_Y0 max is 566 not 908 — both my Rung A/B AND team-lead's C_Y0→908 clip on the real grid](reference_accord_v75_true_headroom_e_exhausted_c_max_566.md) — hand-picked-corner checks are NOT sufficient for this table family, use the full sweep.
 
 ## C120/A030/TVA UDS+SA (cross-platform)
 - [TVA/Accord bootloader map+delta](reference_tva_accord_bootloader_map.md) — BL=0-0xFFFF, SA uses HW RNG, algo unresolved.

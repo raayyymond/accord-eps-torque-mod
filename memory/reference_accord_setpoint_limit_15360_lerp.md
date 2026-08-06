@@ -1,12 +1,24 @@
 ---
 name: reference-accord-setpoint-limit-15360-lerp
-description: "The LKAS setpoint's +/-15360 clamp is a DEGENERATE LERP (flat Y row in all 28 records, 5 banks) selected by gp-0x674e via pointer array 0xCB844 -- the only code site referencing it. Live record for A160 = 0xE41A8. Raising it 15360->16384 is +6.71% top-end at every build tier and is EME-safe (no float twin; the gentle-EME channel is driver-torque-fed). RESOLVED + SHIPPED IN V38 2026-07-18: the former CRC build blocker is cleared by adding (0xE4000,0xE4FFC)+(0xE5000,0xE5FFC) to TOUCHED_BLOCKS -- first build to touch a bootloader block outside 0xC6xxx; chain survives because the linked-list page fields at block_start-8/-6 live in the PRECEDING block. V38 patches all 8 selector-reachable records, not just the live one"
+description: "The LKAS setpoint's +/-15360 clamp is a DEGENERATE LERP (flat Y row in all 28 records, 5 banks) selected by gp-0x674e via pointer array 0xCB844 -- the only code site referencing it, axis gp-0x6a5e = VEHICLE SPEED (corrected 2026-08-06, was mislabeled driver torque). Live record for A160 (row 11 TVCA4, gp-0x674e=7, corrected 2026-08-06 from a stale row-2/TVAA1 assumption) = 0xE51A8. Raising it 15360->16384 is +6.71% top-end at every build tier and is EME-safe (no float twin; the gentle-EME channel is driver-torque-fed). RESOLVED + SHIPPED IN V38 2026-07-18: the former CRC build blocker is cleared by adding (0xE4000,0xE4FFC)+(0xE5000,0xE5FFC) to TOUCHED_BLOCKS -- first build to touch a bootloader block outside 0xC6xxx; chain survives because the linked-list page fields at block_start-8/-6 live in the PRECEDING block. V38 patches all 8 selector-reachable records including the live one, so the raise stands regardless of the slot correction"
 metadata:
   node_type: memory
   type: reference
 ---
 
 The `+/-15360` clamp applied to the LKAS setpoint inside `m_steer_torque_arbitration`, fully characterized 2026-07-18. Verified against stock `code.bin` by direct disassembly + raw byte dump (both by the lead and by two independent `firmware-codepath-tracer` passes that converged).
+
+🛑🛑 **TWO CORRECTIONS, 2026-08-06 — read before trusting the axis label or the slot number below.**
+1. **The axis is `gp-0x6a5e`, and `gp-0x6a5e` is voted VEHICLE SPEED, not driver column torque.** Settled
+   independently in [[reference-accord-gp6a5e-is-speed-reclassifies-v44-v47]]. This file's line calling
+   it "the AVG voter = driver column torque" is wrong; do not cite it for the axis identity.
+2. **The car is row 11 `TVCA4`, not row 2 `TVAA1`** (see [[reference-accord-car-is-tvca4-mode-24-26]], the
+   whole-kit correction that postdates this file). `gp-0x674e` on this car is **7, not 1** — the live
+   record is **`0xE51A8` (sel 7), not `0xE41A8` (sel 1)`.** This does **not** change what is flashed:
+   V38 already patches **all 8** selector-reachable records (table below), and `0xE51A8` is one of them,
+   so the delivered raise (1782 in later builds' gain-tier arithmetic below) stands — only the "which
+   record is THIS car's live one" identification changes, and only matters if a future build ever
+   narrows the patch back down to a single record.
 
 ## The mechanism is a DEGENERATE LERP, not a curve
 
@@ -28,7 +40,7 @@ Record format = 40 bytes: `[u16 count=9][9x u16 X][9x u16 Y][u16 pad]`.
 
 **Every record's Y row is FLAT 15360 at all 9 breakpoints.** The X row is identical everywhere too: `(3200, 3413, 3627, 3840, 4736, 5632, 6528, 7424, 8320)`. Both out-of-range early exits also return 15360 (`0x28fec` -> Y[0], `0x29002` -> Y[8]). **The axis input is irrelevant to the output value.**
 
-The axis is `gp-0x6a5e` (the AVG voter = driver column torque), read `@0x28f0e`. So this table was *designed* to taper LKAS authority as the driver pushes back — and was then shipped flattened. That is a latent tuning surface, not just a clamp.
+The axis is `gp-0x6a5e`, read `@0x28f0e`. 🛑 **CORRECTED 2026-08-06: `gp-0x6a5e` is voted VEHICLE SPEED, not driver column torque** — see the correction box above. So this table was *designed* to taper LKAS authority by SPEED (a top-end assist curve), and was then shipped flattened. That is a latent tuning surface, not just a clamp — the "tapers as the driver pushes back" framing below is retracted.
 
 ## Banks, selector, and the live record
 
@@ -48,7 +60,7 @@ Pointer array `0xCB844` (u32 LE) — **the ONLY code site referencing it is `0x2
 0x4272a  st.b  r8, -0x674e, gp
 ```
 
-Across all 16 slots `gp-0x674e` takes only `{0,1,3,4,6,7,8,9}`. **Our A160 = slot 2 (key `TVAA1`) -> gp-0x674e = 1 -> live record `0xE41A8`, Y row at `0xE41BC..0xE41CC`.** See [[reference-accord-ecu-id-variant-table]] for the table layout and the HW-ID provenance caveat.
+Across all 16 slots `gp-0x674e` takes only `{0,1,3,4,6,7,8,9}`. 🛑 **CORRECTED 2026-08-06 — the slot-2/`TVAA1` premise below is superseded by [[reference-accord-car-is-tvca4-mode-24-26]]: our A160 = row 11 `TVCA4` -> `gp-0x674e` = 7 -> live record `0xE51A8`, Y row at `0xE51BC..0xE51CC`.** (Original, now-wrong claim, kept for the record of how the error happened: "slot 2 (key `TVAA1`) -> gp-0x674e = 1 -> live record `0xE41A8`".) See [[reference-accord-ecu-id-variant-table]] for the table layout and the HW-ID provenance caveat.
 
 ## Why raising it is safe (and what it buys)
 
@@ -98,7 +110,7 @@ Across all 16 variant slots `gp-0x674e` takes only `{0,1,3,4,6,7,8,9}`. Rather t
 | sel | record | sel | record |
 |---|---|---|---|
 | 0 | `0xE4180` | 6 | `0xE5180` |
-| **1** | **`0xE41A8`** (LIVE, A160) | 7 | `0xE51A8` |
+| 1 | `0xE41A8` (was wrongly marked LIVE — see the 2026-08-06 correction above) | **7** | **`0xE51A8`** (LIVE, A160, corrected) |
 | 3 | `0xE41F8` | 8 | `0xE51D0` |
 | 4 | `0xE4220` | 9 | `0xE51F8` |
 

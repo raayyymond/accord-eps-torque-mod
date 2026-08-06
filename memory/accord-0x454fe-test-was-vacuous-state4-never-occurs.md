@@ -1,4 +1,18 @@
 > 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** ✅ **The [OPEN] at the end of this file is CLOSED**: V42's confirmed hard-turn fix was its **ch.2 r26 kill**, not `0x454FE`. See [[reference-accord-v42-fix-was-the-r26-kill]].
+>
+> ✅✅ **CLOSED PERMANENTLY 2026-08-06 — THIRD INDEPENDENT REPLICATION, and this file needs no further
+> re-opening.** V74's probe on route `5d` read `gp-0x67fa` over **101,118 frames**: **state 5 on 101,117,
+> state 4 on exactly ONE** — and that one frame is the **last frame of the route, at vEgo −0.0, stationary**.
+> The three drives now agree: `0 / 123,277` · `8 / 92,826` (all PARK) · `1 / 101,118` (PARK).
+> ⇒ **`0x454FE` NEVER EXECUTES. A one-byte restoration would deliver nothing. Do not price it again.**
+>
+> ⊕ **And nothing is starved by state gating either** — the alternative that used to keep this open.
+> `FUN_0002214a` computes `uVar2 = 1 << (*(byte *)(gp - 0x67fa) & 0xf)` and guards each `jarl` on
+> `uVar2 & MASK`; **state 5 ⇒ `0x20`, which clears `0x830` (detector), `0x930` (arbitration), `0xc30`
+> (aggregator), `0xd30`, `0xd38`, `0xdfa`, `0x83a` and `0x820`** — every assist-chain mask. The full
+> driver-assist chain ran on **100 % of route 5d**, including `FUN_000428d4` (the detector's enable) and
+> `FUN_00036c12` (the friction lane). [EVIDENCE: decompile of `code.bin` + raw LE byte scan finding 8 ×
+> `andi 0x830`, 4 × `andi 0x930`, 12 × `andi 0xc30`.] See [[accord-gp67fa-state-gate-on-assist-chain]].
 
 ---
 

@@ -143,8 +143,11 @@ STATE_SHADOW_DISP = 0x4C39    # 🛑 gp-0x67FA is LOCKSTEP-SHADOWED here. Every 
 #                               store an inline literal, and the 3 that store a register were read in
 #                               Ghidra -- 0x19862 -> 3, 0x19D24 -> 6, and 0x1A0BA re-stores the
 #                               cell's OWN value during the shadow compare.
-#                               ⇒ 🛑 **0 IS UNREACHABLE, so a CONSTANT `bits 6:3` field means THE
+#                               ⇒ 🛑 **0 IS UNREACHABLE, so a CONSTANT ZERO `bits 6:3` field means THE
 #                               CAVE NEVER FIRED. It is not a null result -- it is a VOID drive.**
+#                               (🛑 fixed 2026-08-06 -- the prior wording dropped "ZERO" and read as
+#                               if ANY constant value voided the drive; a non-zero constant, e.g. the
+#                               observed constant 5 on route 5d, is a normal, informative reading.)
 # ⊕ Modes 2/3 have a DIFFERENT FactorE record entirely: X = [70,450,1000,4000], Y = [115,115,177,253]
 #   -- stock X[0] is 70, not 60, and Y[0] is non-zero. They are the only engaged modes whose dose is
 #   unchanged by the X[0] 6->12 revision (168 either way). Not an error.

@@ -1,6 +1,6 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-05 (V73 flight + V74 build).** This file is the single current-state record.
+**Last updated: 2026-08-06 (V74 flight + V75 build).** This file is the single current-state record.
 Update it in place at every close-out; do not append new dated blocks (that is what made `CLAUDE.md`
 unreadable). The narrative of how each state was reached lives in `docs/HANDOFF-*.md`.
 
@@ -24,9 +24,105 @@ then `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
 
 ---
 
-★★★★★ **THE HEADLINE, 2026-08-05 (LATEST): THE CAR IS CONFIG ROW 11 `TVCA4`, MODES 24 (MANUAL) / 26
-(ENGAGED) — NOT `TVAA1`/10/11. EVERY MODE-INDEXED LEVER THIS KIT EVER FLEW WAS INERT. AND THE DAMPER HAS
-**TWO** DEAD ZONES — SPEED *AND* RATE — WHICH IS WHY THIS CAR HAS NEVER HAD CREEP DAMPING, STOCK INCLUDED.**
+★★★★★ **THE HEADLINE, 2026-08-06 (LATEST): V74 FLEW, ROUTE `5d` — THE DAMPER IS REAL ON THIS CAR FOR THE
+FIRST TIME EVER MEASURED. THE ABORT GATE READ AMBIGUOUS ON FIRST PASS, WAS INVESTIGATED PROPERLY, AND
+RESOLVES CLEAR — NOT A RELAY, A PRE-EXISTING HARMONIC. V75 (2.74× THE DOSE) IS BUILT.**
+
+`bit7 = (gp-0x6bd0 != 0)`, the damper's OWN output — **the kit's first positive control on this cell** —
+fires **67.44% duty engaged at creep vs 0.29% disengaged (230.7× contrast)**; engaged overall **39.93%**,
+manual **2.13%**; **23,603 of 101,118 frames = 234.2 s of live damping.** V72's IDENTICAL probe on the
+SAME cell fired **0 of 87,940**. ⇒ **[EVIDENCE] LEVER E′ IS IN FORCE** — the two-dead-zone diagnosis
+below is now confirmed fixed on-car, not just argued from bytes.
+★ **Negative control holds**: 100% of the 943 manual `bit7` frames are within 5 s of a disengagement
+(the mode-lag hysteresis band), **0 of 40,398 beyond 5 s** ⇒ the engaged-column-only design is confirmed
+**on-car** — manual and parking steering really is byte-stock, not merely asserted from the build.
+★ **Probe validated in both directions**: 157 disengaged frames clearing *both* stock breakpoints read
+**100.000%** — the STOCK damper working correctly whenever its own (narrower) dead zones are met. (🛑
+corrected 2026-08-06: an earlier "183 / 99.45%" reading used the superseded 10.0 rate scale — the
+settled scale is 4.7121, see `memory/reference-accord-rate-scale-4p7121-stands.md`.)
+
+🛑 **`gp-0x67fa` = CONSTANT 5** (101,117 of 101,118 frames; state 4 on exactly one frame, the LAST of
+the route, at vEgo −0.0, in PARK). State 5 clears every assist-chain mask (`0x830`/`0x930`/`0xc30`).
+⇒ **`0x454FE` / the state-4 governor is DEFINITIVELY DEAD — retire it as a candidate for good.** (Carried
+inertly by every build since V71; this closes the two-session-old [OPEN] for real.)
+
+📋 **THE PRE-REGISTERED ABORT GATE — THE FULL PICTURE, NOT JUST THE FAVOURABLE NUMBER.**
+🛑 **First pass (route-wide averaged-spectrum point estimate) understated the concern and was
+corrected same-session.** `5×f0` prominence **2.227** (NFFT 2048) / **1.719** (NFFT 512) vs the **3.0**
+threshold reads clear on its own point estimate, but its own CI is **[1.247, 5.293]** — crosses 3.0.
+**Two things the first pass omitted, both real:** (1) the **K-free per-window method** (the script's own
+comment calls it "the safer number" when the two disagree) puts V74 at **2.884 [2.301, 3.575]** — the
+**HIGHEST median of any build in the corpus**, CI crossing 3.0. (2) The **creep-only arm** — the exact
+regime V75's dose lands hardest, `FactorC Y[0]` is the creep cell — reads **5.844** at **K=2**
+(pooled-corpus creep baseline **0.632** at K=24): nearly 2× the abort threshold, uninterpretable alone
+at K=2 but not dismissible either.
+✅ **Investigated properly, not waved off — TWO independent, unconfounded checks, both against the
+hypothesis "V74 excited a new relay harmonic":**
+1. **The tracking test** [EVIDENCE]: both anchored searches above are constrained to hunt within a few
+   bins of that build's OWN predicted `5×f0`, so they cannot tell "peak moves with f0" from "peak is
+   fixed and 5×f0 happened to land near it." An UN-anchored wideband (33–47 Hz) peak search, regressed
+   across all 11 corpus builds, resolves it: peak location correlates with **2×grind-#1's own frequency**
+   (r = **0.759**, p = **0.0068**, slope 1.478 [0.477, 2.255] — CI excludes 0, includes 1) and does
+   **NOT** correlate with `5×f0` (r = **0.144**, p = **0.673**, slope 0.165 [−0.461, 0.913] — CI
+   includes 0). V74's own independently-found peak sits at **40.20 Hz**, **0.01 Hz** from `2×grind-1`
+   (40.19 Hz) and **2.11 Hz** from its own `5×f0` (42.31 Hz) — a gap far larger than the 0.049 Hz NFFT
+   bin width. **Mechanism**: V74 has the **highest measured f0 (8.46 Hz) of all 11 corpus builds**, which
+   places its `5×f0` closer to the pre-existing ~40–42 Hz grind-#1-2nd-harmonic zone (documented since
+   V59, `memory/accord-v59-parametric-pump-marginal.md`, 42.19 Hz = 2×21.09 Hz) than any other build's —
+   a coincidental proximity, not a causal one.
+2. **The odd-harmonic-series check** [EVIDENCE]: a genuine relay excites the WHOLE odd series, not just
+   the 5th. V74's `3×f0` prominence is **1.374 [1.05, 2.56] — rank 5 of 11 builds, unremarkable**
+   (corpus range 0.47–18.34). The series is **incomplete** — independent evidence against a relay. ⚠ `3×f0`
+   is itself confounded for TWO OTHER builds (V62, V71B — their `3×f0` lands within 0.6 Hz of their own
+   grind-#1 fundamental, producing spuriously huge readings of 15.8 / 18.3) but **not for V74**, whose
+   high f0 gives it the **largest gap to its own grind-1 fundamental of any build (5.29 Hz)** — the same
+   property that confounds V74 at `5×f0` makes it the *cleanest* reading at `3×f0`, and that clean
+   reading is ordinary.
+⇒ **VERDICT: the gate resolves CLEAR, but as a checked conclusion, not a first-pass reading.** The
+elevated readings on both anchored statistics are explained, mechanistically and with two independent
+confirmations, by V74 happening to have the corpus's highest ratchet frequency — not by a new relay
+cycle. **Falsifier A does not fire** (duty ratio **0.797**, wrong side of 1.2). **Falsifier C, raw**, is
+clean vs V73 (Δf0 = **−0.035 Hz**) and fires only vs V72 (**+0.780 Hz**, discounted — corpus f0 spans
+8.01–9.79 Hz build-to-build and the CIs overlap); **speed-matched** it is worse than the raw figure
+(**+0.481 Hz** vs V73, **+0.543 Hz** vs V72 — the latter crosses the 0.5 Hz abort line), which the raw
+number should not be read as having cleared. ⚠ **A single secondary check (does the ~42 Hz elevation
+appear in V74's byte-stock manual creep arm too) came back mixed** — different peak location (46.99 Hz
+vs 40.20 Hz), but both arms are thin (manual K=10 at a different f0=8.93; engaged creep K=2) — **not
+load-bearing**, the tracking test and the odd-harmonic check are both better-powered and already
+decisive. Scripts: `analysis-2020accord/r5d_falsifiers.py`, `r5d_tracking_test.py`, `r5d_3xf0_check.py`.
+📋 **SUCCESS: UNDERPOWERED, DIRECTION FAVOURABLE.** duty **0.797** [0.544, 1.045] · duration **0.934**
+[0.804, 1.152] · envp99 **0.835** [0.492, 1.197] — all trend down, none clears its own CI. MDE ≈
+**2.0–2.9×** on **9 episodes** (route 5d delivered 9 against a planned ~40). V74's absolute ratchet
+`duty_rel` **0.1036** is the LOWEST in the whole 12-build inventory. **Both symptoms remain active**:
+6-9 Hz sits at **3.27×** and 18-22 Hz at **2.72×** over the 24-28 Hz control in the clean 9.4-12.5 m/s
+window — the damper did not eliminate either mode, consistent with a real, correctly-signed but
+partial effect that this route lacked the power to size cleanly.
+⚠ **The shortfall is EXPOSURE, not the lever**: only **78 s** of engaged creep and **200.3 s** of engaged
+time sat inside tyre order 1's contaminated speed band. **V75's flight needs genuine stop-and-go
+congestion**, not a repeat of route 5d's shape — see the flight instruction below.
+
+⊕ **Three structural corrections, this session:**
+1. ★ **`gp-0x6ac2` is a SIGN-GATED BACK-DRIVE DETECTOR, not a rate signal** [EVIDENCE, decompile
+   `FUN_00041464`]: `|state| >> 10` when `sign(rate) != sign(gp-0x6b98)`, else **0**. ⇒ the damper's own
+   ceiling (`0xC77A0`, `X=[300,800] Y=[512,1024]`) sits **pinned at its 512 floor in ordinary driving**
+   and only lifts during genuine kickback. All 26 modes byte-identical here. Corrects a prior memory:
+   the `0x41852` bypass writes a **0xFFFF sentinel** at `0x41b44` — it does NOT hold the previous value.
+2. **`gp-0x6ac0` = 30 counts per Hz of electrical frequency**, `column_deg/s = counts / 4.7121` — the
+   firmware chain re-verified byte-for-byte this session. An on-car fit of **5.80** is explained by the
+   estimator's column-vs-motor-rate bias, **not** a firmware error — do not revise 4.7121 from that fit.
+3. **openpilot has TWO hard rails, both measured**: amplitude **4096** (`FUN_00052676` =
+   `clamp(req × -4, ±0x4000)`, so **4096 × 4 = 0x4000 EXACTLY** — zero upstream headroom,
+   orchestrator-verified in Ghidra) and a slew cap at **123 counts/frame** = `0.03 × STEER_MAX`, zero
+   frames exceeding. **16.07% of engaged time sits against one rail or the other.**
+
+Full narrative: `docs/HANDOFF-2026-08-06-v74-flew-and-v75-is-built.md`.
+
+---
+
+★★★★★ **THE HEADLINE, 2026-08-05 (confirmed and now flown, see above): THE CAR IS CONFIG ROW 11 `TVCA4`,
+MODES 24 (MANUAL) / 26 (ENGAGED) — NOT `TVAA1`/10/11. EVERY MODE-INDEXED LEVER THIS KIT EVER FLEW WAS
+INERT. AND THE DAMPER HAS **TWO** DEAD ZONES — SPEED *AND* RATE — WHICH IS WHY THIS CAR HAS NEVER HAD
+CREEP DAMPING, STOCK INCLUDED (until V74 — see above).**
 
 V73's probe read `*(byte)(gp+0x63fd)` over **104,061 frames** through a **4-bit** field that drops bit 4.
 **[EVIDENCE, orchestrator-verified from `stock_fw_dump/code.bin`, table `0xCD000` stride `0x24`]** an
@@ -85,7 +181,10 @@ disfavoured** (11/34,277 frames), **10/11 excluded.** V73's probe settles it.
 Full narrative: `docs/HANDOFF-2026-08-05-v72-flew-the-damper-was-never-in-force.md`.
 Spec and every risk: `docs/V73-DESIGN.md`.
 
-## 🛑 ON THE CAR: **V73** (flown, route `5a`). **V74 IS BUILT, VERIFIED AND UNFLASHED.**
+## 🛑 ON THE CAR: **V74** (flown, route `5d`, 101,118 frames / 1,011.2 s). **V75 IS BUILT, VERIFIED AND
+UNFLASHED — SHAs TODO, pending `build75`.** ⚠ **The abort gate for V75 was flagged ambiguous mid-session
+(K-free/creep-arm numbers omitted from the first pass), investigated with a tracking test + an
+odd-harmonic check, and resolved CLEAR — see the headline for the full picture, not just this line.**
 
 | | value |
 |---|---|
@@ -93,6 +192,8 @@ Spec and every risk: `docs/V73-DESIGN.md`.
 | V74 rwd SHA256 | `d1c2671f5a830897496cba51d8f7af53e178101e0a6018608be17caf70d02daf` |
 | V74 image | `_v74_engagedcols_x0_12_addonly_plain_image.bin` |
 | V74 rwd | `39990-TVA,A160-V74-V73BASE-ENGCOLS13-x12-addonly-FactorCY0eqY2-FactorEX0to12-Y1eqY2-frictionx1p5-C407E850-probe-67fa-6bd0nz-0x13000-0x100000.rwd` |
+| V75 image | TODO (`build75`) |
+| V75 rwd | TODO (`build75`) |
 
 **Verified 232/232 on the plain image AND the decoded `.rwd`** · 50/50 CRC · 10 trailers, each confirmed
 moved · **nothing in `[0xC5000,0xC5FFC)`** · 179 functional bytes all attributable (cave 42 · FactorC 24 ·
@@ -114,8 +215,10 @@ the hybrid cut differs from the live one by **8 bytes**. **The filename is the o
 **(1)** V73's flat `0x18` guard window **spills 4 bytes past a 4-point record** (`0x14`) into the *next*
 mode's record — it false-positived here. Fix: `rec_len = 4 + 4n`. Anything reusing V73's idiom across
 adjacent modes will false-positive. **(2)** `gp-0x67fa` is **lockstep-shadowed at `gp-0x4c39`**; the probe
-reads only, and since 0 is unreachable in its value set, **a constant `bits 6:3` is a VOID drive, not a
-null result.** **(3)** Modes 2/3 carry a different FactorE record entirely (`X=[70,450,1000,4000]`,
+reads only, and since 0 is unreachable in its value set, **a constant ZERO `bits 6:3` is a VOID drive, not
+a null result** (🛑 fixed 2026-08-06 — the prior wording dropped the "== 0" and misled a reader this
+session; a non-zero constant, e.g. the observed constant 5, is a normal, informative reading).
+**(3)** Modes 2/3 carry a different FactorE record entirely (`X=[70,450,1000,4000]`,
 `Y=[115,115,177,253]`) — the only engaged modes whose dose is unchanged by the 6→12 revision.
 
 ⚠ **THE SIZING'S HONEST LIMIT:** the ~43-count requirement is in **torsion-bar** counts and the ~50-count
@@ -124,7 +227,43 @@ estimate had coherence 0.072 and was correctly refused). ⇒ **the direction is 
 dissipative, opening a dead zone where there was none — but the magnitude could be off by a factor of a
 few either way.** That is what the ladder and the pre-registered abort criterion are for.
 
-### V73's FLIGHT (route `5a`, 104,061 frames / 1,040.6 s) — what it actually tested
+### V74's FLIGHT (route `5d`, 101,118 frames / 1,011.2 s) — what it actually tested, and what it proved
+| lever | in force? | result |
+|---|---|---|
+| **Lever E′** (damper, `FactorC`/`FactorE`, engaged column) | ✅ **LIVE — 23,603/101,118 frames (23.3%)**, 67.44% duty engaged-creep vs 0.29% disengaged | **THE FIRST TIME THIS CAR HAS MEASURED DAMPER OUTPUT** — V72's identical probe on the same cell read 0/87,940 |
+| **Lever D′** (friction ×1.5, engaged column) | ✅ live on the same 13 modes as Lever E′ (shares the `0x830` gate) | not independently probed this build; rides the damper's liveness evidence |
+| **`gp-0x67fa` state gate** | ✅ constant **5** ∈ {4,5,11}/{4,5,8,11}/{4,5,10,11} — every mask open | `0x454FE` proven definitively dead (state 4 = 1/101,118 frame, in PARK) |
+| **pre-registered abort gate** | ✅ **CLEAR, ON INVESTIGATION** — first-pass point estimate looked clear but omitted the K-free (2.884, corpus MAX) and creep-only (5.844 @ K=2) numbers; tracking test + odd-harmonic check then showed the elevation is grind #1's pre-existing 2nd harmonic, not a relay | see headline for the full chain — this cell is a summary, not the record |
+| **pre-registered success** | ⚠ **UNDERPOWERED** — duty/duration/envp99 all trend down, none clears its CI | MDE 2.0–2.9× on 9 episodes (planned ~40); **not** a null result, an exposure shortfall |
+| probe (`bit7`/`bits 6:3`) | ✅ both validated — positive control fires (157/100.000%), negative control holds (0/40,398 manual frames past the 5 s hysteresis band) | the kit's cleanest probe result to date |
+
+**Both symptoms remain measurably active** — 6-9 Hz at **3.27×** and 18-22 Hz at **2.72×** over the
+24-28 Hz control in the clean 9.4-12.5 m/s window — but V74's absolute ratchet `duty_rel` (**0.1036**) is
+the LOWEST of the whole 12-build inventory, and every trend (duty, duration, envp99 vs V73) points the
+right way without clearing its own CI on 9 episodes. ⇒ **the honest read is "real, correctly-signed,
+partial effect that this route lacked the power to size" — not "no effect" and not "fixed."**
+🛑 **This is a genuinely different situation from V73's flight below**: V73 flew with BOTH levers at
+**zero exposure** (wrong mode, per RULE 7); V74 is the first build where the exposure question is
+answered and the remaining question is purely statistical power.
+
+### V75 — 2.74× THE DOSE, SAME ENGAGED-COLUMN DESIGN. **BUILT, VERIFIED, UNFLASHED.**
+`FactorC Y[0]` 429→**566** and `FactorE X[1]` 400→**200**, on the same engaged column of all 16 rows as
+V74 (13-mode disjoint design, unchanged). **2.74×** V74's dose at the symptom's own measured rate
+(**50 → 137** counts at rate 99). 🛑 **`FactorE Y[]` has ZERO headroom — do not touch it.**
+✅ **Verified clip-free TWO WAYS** (see `BUILD-LINEAGE.md` **RULE 8** — this is exactly the rule it
+records): 0 new clips on the 98,988-point rectangular-grid rule (`new > old AND new > 512`), **and** 0
+clips on the 101,118 frames actually driven (observed peak **354** = 69% of the 512 ceiling). The grid's
+worst corner assumes 849°/s; route 5d's actual maximum was 330°/s and zero frames exceeded 2000 counts —
+both checks were run and agree, not just the permissive one.
+★ **`FactorE X[1]` is a free lever**: it steepens the low-rate ramp without raising the plateau that sets
+the surface maximum, so it costs nothing under either the grid rule or the dose ladder — neither found it
+by construction; the probe-5d telemetry did.
+**PROBE redesigned to a magnitude thermometer**, not a liveness bit (V74's `bit7` already answered
+liveness; asking it again wastes a bit): `bit7` = nonzero · `bit6/5/4` = `|output| ≥ 128/288/448` ·
+`bit3` = `(gp-0x6ac2 != 0)` (the back-drive detector — see the structural correction above).
+⏳ **Image/rwd SHA256: TODO, pending `build75`.**
+
+### ⚠ SUPERSEDED — WAS ON THE CAR (before V74): V73's FLIGHT (route `5a`, 104,061 frames / 1,040.6 s)
 | lever | in force? | result |
 |---|---|---|
 | **Lever E** (damping, modes 0-5/12/14) | ❌ **0 / 104,061 frames** | zero exposure — **not** an under-dose |
@@ -136,9 +275,10 @@ Operator: grind #2 **resolved** · macro ratchet **still fixed** · **grind #1 a
 present**, *"the same vibration frequency; grind #1 is audible, the micro ratcheting is not."*
 🛑 **And his reframing, which the byte evidence independently confirms: "grind #2 was never an independent
 issue — it only ever came to be through proposed fixes for grind #1."** V62's `sar` (mode-proof code)
-governs it; V72/V73 do not carry it. **The fix is an ABSENCE** ⇒ V74 retains it by leaving the lanes alone.
+governs it; V72/V73 do not carry it. **The fix is an ABSENCE** ⇒ V74/V75 retain it by leaving the lanes
+alone.
 
-### V74 — the design principle, earned twice over: **write the ENGAGED COLUMN OF EVERY ROW**
+### V74/V75 — the design principle, earned twice over: **write the ENGAGED COLUMN OF EVERY ROW**
 Engaged set {2,3,5,11,14,15,17,23,26,27,29,32,33} and the disengaged set are **disjoint across all 16
 rows** ⇒ delivers whatever row is live **while leaving manual/parking steering byte-stock**.
 - **LEVER E′** — `FactorC Y[0] := Y[2]` · **`FactorE X[0]: 60 → 12`** · `FactorE Y[1] := Y[2]`.
@@ -156,21 +296,58 @@ rows** ⇒ delivers whatever row is live **while leaving manual/parking steering
 - **GATE 2 [EVIDENCE]** — both lanes dissipative at both frequencies; both phasors have positive real part
   ⇒ **their sum does too, by construction.** DTC-0x18 cost **zero** (cal-only).
 
-📋 **PRE-REGISTERED:** success = 6-9 Hz duty **and** duration fall with **f0 unchanged** (|Δf0| ≤ 0.3 Hz).
-**ABORT the lever if 5×f0 prominence > 3.0** (baseline 0.80) — that is the relay generating a new cycle.
-Also abort-worthy: duty ratio > 1.2 *with* prominence ratio > 1.3, or |Δf0| > 0.5 Hz.
-**Honest expectation:** *meaningfully reduces amplitude and should shorten ring-down, plausibly enough to
-break a marginal limit cycle, but not certain to extinguish a robust one.*
+📋 **V74's PRE-REGISTRATION, CHECKED 2026-08-06 — see the headline for the full chain, this is a summary.**
+success = 6-9 Hz duty **and** duration fall with **f0 unchanged** (|Δf0| ≤ 0.3 Hz) ⇒ **UNDERPOWERED**
+(trends favourable, none clears its CI on 9 episodes). **ABORT if 5×f0 prominence > 3.0** (baseline 0.80)
+⇒ **CLEAR, but only after investigation** — the route-wide point estimate (2.227/1.719) looked clear on
+its own, but omitted the K-free per-window number (corpus MAXIMUM, 2.884, CI crossing 3.0) and the
+creep-only arm (5.844 at K=2). A tracking test (peak location vs 5×f0 across 11 builds: r=0.144, p=0.673,
+NOT significant) and an odd-harmonic check (V74's 3×f0 prominence 1.374, rank 5/11, unremarkable — the
+series is incomplete) both independently showed the elevation is grind #1's pre-existing 2nd harmonic
+(peak vs 2×grind-1: r=0.759, p=0.0068), not a new relay cycle, and explained WHY V74 specifically reads
+high on the anchored statistics (it has the corpus's highest f0, so its 5×f0 sits closest to that
+pre-existing line — a coincidence of this build's own frequency, not a causal effect of the dose).
+Also checked and clear: duty ratio > 1.2 with prominence ratio > 1.3 (duty ratio 0.797, wrong side); raw
+|Δf0| > 0.5 Hz (clean vs V73 at −0.035 Hz, fires only vs V72 at +0.780 Hz, discounted). ⚠ **Speed-matched
+Δf0 is worse than the raw figure** — +0.481 Hz vs V73, +0.543 Hz vs V72 (crosses the 0.5 Hz line) — do
+not cite the raw number as though it were the more rigorous one. **Honest read:** the lever is real,
+correctly signed, did not extinguish either mode on this route's exposure, and the gate genuinely holds
+once investigated — not a rubber stamp on the first favourable number.
 
-### FLIGHT INSTRUCTION — 🛑 congestion beats an empty lot
-Continuous engagement yields ~**1** episode (MDE 2.91×) and openpilot needs lane markings. **Stop-and-go
-traffic is strictly better** — LKAS drops at each halt and re-engages, which is why route 5a gave 18
-episodes in 120 s. **(1) ESSENTIAL:** congested lane-marked arterial, engaged, ~15 min ⇒ grind #1 to
-**2.0×** and ~40 events. **(2) ESSENTIAL:** steady **≥ 20 m/s** cruise, 8-10 min ⇒ the first
-tyre-order-clean high-speed 6-9 Hz test. (3) opportunistic: mid-motion disengagements at 2-3 m/s, ×24.
+### V75's PRE-REGISTRATION — Falsifier B and C RETIRED in their anchored form, not re-sized
+🛑🛑 **`memory/reference-accord-falsifier-b-anchored-search-presupposes-answer.md` — read before
+scoring V75.** Falsifier B (anchored `5×f0` prominence, ±4/±2 bins) and Falsifier C (raw `Δf0`) are not
+being loosened or tightened for V75 — they are **RETIRED**, because they are structurally incapable of
+separating "genuine relay harmonic" from "a fixed pre-existing line the prediction happened to land
+near" (proven on real data: V74's true peak sat 43 NFFT-2048 bins outside the anchored search's reach).
+**Replacement instrument for V75 and every future gate check:**
+1. The **un-anchored wideband peak search + cross-build tracking regression**
+   (`analysis-2020accord/r5d_tracking_test.py` — the reference instrument, run it as a matter of course,
+   not only when a number looks concerning) — peak-vs-`5×f0` slope near 1 with a significant correlation
+   is what a genuine relay looks like; near 0 is what a fixed pre-existing line looks like.
+2. The **`3×f0` odd-harmonic-completeness check** (`r5d_3xf0_check.py`) — a real relay excites the WHOLE
+   odd series, so `3×f0` should be elevated roughly in proportion to `5×f0`, not merely unremarkable.
+3. Before trusting EITHER harmonic for a given build, **check its gap to that build's own grind-1
+   fundamental / `2×grind-1` first** — whichever harmonic sits closer to that fixed line is the one at
+   confound risk, and this varies build to build (V74 was confounded at `5×f0`, clean at `3×f0`; V62 and
+   V71B are the reverse).
+Score against **both** V73 and V74 as comparators (V74 gives the cleaner same-mechanism baseline now that
+Lever E′ is confirmed live). Score BOTH 6-9 Hz and 18-22 Hz, clean-window first, exactly as done for V74.
+
+### FLIGHT INSTRUCTION FOR V75 — 🛑 route 5d under-delivered on EXPOSURE, not on the lever
+Route 5d gave **9 episodes** against the ~40 planned, and only **78 s** of engaged creep — the MDE
+(2.0–2.9×) was set by this shortfall, not by the lever being small. **Repeating route 5d's shape will
+under-power V75 the same way.** **(1) ESSENTIAL: genuine stop-and-go congestion** — a congested
+lane-marked arterial, engaged, ~15-20 min, targeting **≥ 30 episodes** and **≥ 200 s of engaged creep**
+(2.5× route 5d's creep exposure). **(2) ESSENTIAL:** steady **≥ 20 m/s** cruise, 8-10 min — route 5d's
+own clean high-speed arm was only 3 episodes/97 s, the thinnest in this report. (3) opportunistic:
+mid-motion disengagements, any speed.
 ⚠ Tyre order 1 is in-band at **12.5-18.7 m/s**, order 2 at 6.2-9.4, order 3 at 4.2-6.2 ⇒ **clean windows
-9.4-12.5 m/s and ≥ 20 m/s.** ⚠ **Read the probe first** — a constant `bits 6:3` means the cave never fired
-and nothing else is interpretable.
+9.4-12.5 m/s and ≥ 20 m/s** — route 5d put 200.3 s of engaged time inside the dirty order-1 band vs only
+158.7 s clean; weight the drive toward the clean bands if the route allows a choice.
+⚠ **Read the probe first** — V75's probe is a magnitude thermometer, not a liveness bit (V74 already
+settled liveness); a constant ZERO across `bit7`/`bits 6:3` means the cave never fired and nothing else
+is interpretable, but a non-zero constant is a normal, informative reading, not a void drive.
 
 ## ⚠ SUPERSEDED — WAS ON THE CAR: **V72** (route `59`)
 
