@@ -313,8 +313,142 @@ image (low search specificity — many unrelated `0xD0000`-range accesses share 
 half). Judged low-risk given the single-caller / no-parameter structure of `FUN_00034350`, but **not
 formally closed.** It would matter only for a relocation, not for an in-place cell edit.
 
+---
+
+## 7b. ★★★★★ THE OPERATOR CAUGHT A MISSING 2× — `0xC63A0` — AND IT BROKE THE FORWARD-PATH MODEL
+
+**Operator, 2026-08-07:** *"Did we take into account that we removed the flat 2× gain on one of the
+paths… it should be 3× not just 1.5× vs V75?"* **They were right on the byte facts, and the orchestrator
+had read the relevant line and not carried it into the arithmetic.**
+
+`0xC63A0` (`tp+0x73a0`), byte-verified across every image:
+| **2048** | **1024** |
+|---|---|
+| V72, V73, **V74, V75** | stock, V38, **V76 (flew), V78** |
+A V38 base reverts it for free — the V76 handoff lists it as *"reverted free"*. V76/V78 silently lost a
+2× that every earlier damper build carried.
+
+**What it actually scales [EVIDENCE, orchestrator-decompiled].** `gp-0x6bd0` reaches the aggregator by
+**two** routes, and they **converge**:
+```
+gp-0x6bd0 --(x 0xC63A0)--> FUN_00038148 --> gp-0x6b70 --(x tp+0x74b0)--> FUN_00037fe6
+          --> gp-0x6ad6 --> FUN_0003a382 (PID) --> gp-0x6ad4 --\
+                                                                +--> FUN_0003aa2c --> gp-0x6b94
+gp-0x6bd0 ------------------(bare, weight 1)-------------------/
+```
+⇒ `0xC63A0` scales **one of two additive terms in the same sum**, and the scaled one passes a **PID**, so
+its contribution is **frequency-dependent — there is no scalar ratio.** `(D + 2W)/(D + W)` ∈ (1,2).
+`tp+0x74b0` and its six siblings `0xC64AD..0xC64B3` are all **1** (enable flags, not gains), and the
+`tp+0x7aba` LERP is flat 1024 ⇒ **`FUN_00037fe6` is a unity-gain adder on stock.**
+
+★★ **THE ROAD SETTLES IT WHERE THE DISASSEMBLY COULD NOT [BELIEF, strong].** V75 and V76 have
+**identical damper dose at the reference rate** (137 ct at r=99, byte-derived), and differ essentially in
+`0xC63A0`:
+| | grind #1 rel. excess | operator |
+|---|---|---|
+| **V75** (2048) | 1.572 [0.552, 3.006] — straddles 1 | grinding *imperceptible* |
+| **V76** (1024) | 1.956 [1.214, 4.154] — excludes 1 | grind #1 **back** |
+| ratio | **2.073 [1.085, 6.929]**, excludes 1 | |
+⚠ **Not single-variable** — V76 also rebased to V38 (losing `0xC62EA`=0 and V57's decouple) and its C/E
+shapes differ away from r=99. Strong BELIEF, not EVIDENCE.
+
+🛑🛑 **CONFOUND IN THE DOSE-RESPONSE FIT OF §2.** **V76 is the ONLY build in that ladder at 1024**;
+V74 and V75 both carried 2048, and V72/V73 sit at k=0 where the weight cannot matter. ⇒ the `k` axis and
+the delivered-damper axis **diverge at exactly the point that made the fit falsifiable.** The
+dose-limited *direction* likely survives (V76's effective dose is *lower* than plotted and it measured
+*worse*, which steepens the slope), but **"V76 landed on the interpolation to 0.19 dB" is withdrawn as
+evidence** pending a re-plot on delivered damper rather than on `k`.
+
+### 🛑🛑🛑 THE FORWARD PATH FROM THE AGGREGATOR TO THE MOTOR IS **NOT FOUND** — five methods
+`gp-0x6b94`'s only consumers are a self-referential smoothing loop (`FUN_00036bec` → `gp-0x6b48` →
+`FUN_00036682`, which `FUN_0003aa2c` itself calls), a **diagnostic snapshot** (`FUN_0004503c`:
+`st.h r6,-0x138a,gp` + a flag byte at `gp-0x1388`), a redundancy monitor (`FUN_0004595a`), and a boot
+gate (`FUN_0007ff08`). `FUN_00042af8`'s `gp-0x6acc` read at `0x431C4` sits beside `tp+0x71d4` and
+`gp-0x4f64` — the **Monitor-1/2 envelope** terms, not the command.
+Methods tried and failed: **(1)** disp16 gp-relative byte scan (`reg1==gp` validated, orchestrator);
+**(2)** extended-displacement scan; **(3)** scoped `search_instructions` on both writer functions;
+**(4)** full-decompile text grep of `FUN_00042af8` (1,424 lines); **(5)** an **`ep`-relative `sld`/`sst`
+sweep** (orchestrator's hypothesis) — refuted by three full decompiles, every `sld.h 0x0,ep` in
+`FUN_00026c80` resolving to a disjoint scratch region `gp-0x6100..gp-0x6340`.
+⊕ **`gp-0x6afe` and the damper chain are PARALLEL FORKS of a common accumulator** — `FUN_00026c80`'s
+`sVar38` goes both to `gp-0x6b4e` (a `FUN_00038148` sibling) and, via `FUN_00042ac6`, to `gp-0x6afe`.
+**Two genuinely independent actuator chains.**
+🛑 **STATE IT AS: the path has not been FOUND, not that it does not exist.** V62's rate-lane ×2 — computed
+inside that same sum — produced the kit's **first measured fix** (8× at creep). **The road outranks the
+trace; a failed search is a fact about the search.**
+📋 **NEXT METHOD — INVERT IT: walk BACKWARD from the motor peripheral.** Every method so far asked "where
+does this go?". Find the PWM/timer-compare/FOC duty registers (the kit has `svd_for_ghidra/`), find every
+store into them, and walk back two hops. **The unexamined assumption is that `gp-0x6b98` is the motor
+command at all** — and the parallel-fork finding weakens it.
+
+### The build the operator directed
+🛑 **Operator, explicitly: *"Do not double `0xC63A0`, that is what was causing hard faults. You need to
+double the tables at least at 5 mph and keep both tables relu like or monotone increasing."*** An
+orchestrator plan to restore `0xC63A0` = 2048 was **OVERRULED and cancelled** — it was stopped before any
+file was written (no script, no image, no `.rwd`; V78 verified still at 1024). **`0xC63A0` = 2048 flew
+only on V74 and V75 and both hard-faulted**; V72/V73 carried it with a structurally-zero damper, so it
+was inert. ⇒ **`0xC63A0` is a DO-NOT-RAISE cell alongside `0xC407E`.**
+
+**V79 = V78 + two u16 cells in the mode-26 FactorE record**, `0xC63A0` left at stock 1024:
+```
+FactorE m26:  Y[1] 449 -> 897,  Y[2] 539 -> 912   =>  X=[0,119,2500,4000]  Y=[0,897,912,927]
+FactorC unchanged [566,566,566,908]
+```
+`dose(5 mph, r=99)` **206 → 412 = 2.000× V78 = 3.007× V75.** Guards: FactorE strictly monotone
+increasing · X strictly increasing · FactorC monotone non-decreasing · `E_Y[0]`=0 retained · max product
+`(566*927)>>10` = **512** = the ceiling floor ⇒ **no clipping V78 did not already have** · add-only vs
+stock 0 violations over r=0..4000. Holds ≥1.85× V78 to 255 °/s.
+🛑 **`k` = 2.084 → 4.160 is FORCED, not chosen** — with `E_X0`=0, `dose(99) = k·99`, so doubling the dose
+doubles the loop gain. **3.00× the V76 that flew clean, 2.63× the V75 that hard-faulted — the highest `k`
+ever built here.** GATE 2 is not satisfiable by argument at that level.
+⚠ The carried V78 probe changes character: bit7 (`|gp-0x6bd0| >= 448`) now trips at ~111 ct instead of
+~221 ct, so it becomes a routinely-firing rung rather than a rare no-clip guarantee.
+
+---
+
+## 7c. V79 → V80: the rail, the ratchet byte, and two builder failures
+
+**V79** (dose ×2, `FactorE Y[1] 449→897, Y[2] 539→912`) was cut, verified, and **superseded within the
+hour** for two independent reasons:
+1. 🛑 **It rails.** V79 clips **38.9%** of the RULE-8 (speed, rate) envelope at ceiling floor 512;
+   stock and V78 clip **0.00%**. First clip **85 km/h / 25 °/s**, and **140 km/h / 16 °/s** — ordinary
+   highway steering. **A railed damper is a Coulomb relay** (sign `gp-0x6abe`, index `gp-0x6ac0` — RULE
+   12(b)), the exact hazard the operator invoked to overrule the ReLU plan. The orchestrator's own
+   no-clip guard **missed it because it was scoped to `FactorC = 566`**, which only holds ≤ 80.17 km/h.
+   **The builder caught it and flagged that no brief guard covered it.**
+2. 🛑 **It shipped without the operator's requested ratchet byte** — `0x454FE` read `0xBA`. **Two
+   builders were told, twice each, and both omitted it**; the second then reported the artifact as frozen.
+
+**V80** = V79 + `0x454FE` `0xBA→0xB5` + **FactorC `Y[3]` 908 → 566** (flat `[566,566,566,566]`).
+Flattening makes the supremum `(566*927)>>10` = **512** = the ceiling floor exactly ⇒ **0.00% clipping at
+ceiling 512 AND 1024**, and it costs nothing: worst post-clamp drop vs stock is **0 inside RULE-8 at both
+ceilings**. It also erases **V75's FactorC dip** (234 at 60 km/h, where V75's damper collapsed to 56).
+⚠ **Correction the builder made to the orchestrator's claim:** "worst drop 0" is true *as scoped* but
+**false globally** — 310 counts on the whole gated domain at ceiling 1024, first drop at 97 km/h AND
+847 °/s. Scope every add-only claim to a stated envelope.
+⊕ `k` = **4.1597, unchanged from V79** — flattening FactorC removes the **rail**, not the **gain**.
+
+### 🛑 THE PROCESS FAILURE, AND THE FIX — this is the durable part
+`TaskList` returned **empty all session** because the ten agents were spawned without being registered as
+tasks. **So the roll-call in `CLAUDE.md` was unexecutable** — the orchestrator could not enumerate live
+agents and fell back to guessing from file mtimes, then declared "taking it over" on a *live* builder's
+script (caught by the operator). The existing rule was not sufficient; it assumed a roll-call mechanism
+that this session never wired up.
+📋 **AMENDMENT: register every spawned agent as a task at spawn time** (`TaskCreate` + `owner`), so
+`TaskList`/`TaskStop` can actually roll-call them. A rule that cannot be executed is not a control.
+📋 **Second amendment: a builder must assert every requested edit is PRESENT IN THE EMITTED IMAGE before
+reporting hashes.** Both V79 failures would have been caught by that one gate.
+
+---
+
 ## 8. OPEN, in priority order
 
+0. 🛑🛑 **THE FORWARD PATH FROM THE AGGREGATOR TO THE MOTOR — five methods have failed.** This now
+   outranks everything else: no dose target is trustworthy until it is closed, and it puts a question
+   mark over the mechanism of V44, V62, V74 and V75 alike. **Next method: walk BACKWARD from the PWM /
+   FOC duty registers, and stop assuming `gp-0x6b98` is the motor command.**
+0b. **Re-plot the §2 dose-response on DELIVERED damper, not on `k`** — V76 is the only ladder point at
+   `0xC63A0` = 1024, so the two axes diverge exactly where the fit was falsifiable.
 1. **The micro-ratchet needs a non-dose lever.** Dose is resolved-flat across k = 0 → 1.58.
 2. **`gp-0x67f4`** — the unprobed enable that turns FactorC's whole speed shaping to unity.
 3. **`gp-0x6ac2`** — the ceiling index. Every rail figure in this document assumes it sits at 0

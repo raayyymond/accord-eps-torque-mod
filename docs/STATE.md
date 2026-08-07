@@ -103,6 +103,52 @@ comparison; the only flash writer `FUN_0000d934` has zero static callers; the CR
 ⊕ **A free, never-touched lane: FactorD is n=5, flat `Y=1024` (inert) in modes 24 AND 26**, axis
 `gp-0x6a10` (angle-tracking error), gated `gp-0x67fe ∈ {1,2}`. UNTESTED, not falsified.
 
+## ✅ BUILT, VERIFIED, **UNFLASHED** — **V80** ← THE CURRENT CANDIDATE
+`39990-TVA,A160-V80-V79BASE-flatC566-ratchet454FE-dose412-probe-6bd0-63fd-67fa-0x13000-0x100000.rwd`
+rwd `3ea81bd734e6845393d09099754eccb7a0b5682ce147d65d26511c29d37e230d` ·
+image `_v80_v79base_flatC566_ratchet454FE_dose412_plain_image.bin` `2606d557da9c3a09de6f2b63bd74308e8d6023c3d423e64d9a3b90a3e66211e7`
+Base V79 `dc87ee1c…8c86`. **Three edits, all orchestrator-verified from the artifact on disk:**
+```
+0x454FE   0xBA -> 0xB5    V42's macro-ratchet fix restored (bne 0x455C4 -> br; cond 0xA -> 0x5)
+FactorC m26 Y[3] 908->566 =>  Y = [566,566,566,566]   flat at every road speed
+FactorE m26              =>  X = [0,119,2500,4000]  Y = [0,897,912,927]   (carried from V79)
+```
+**dose(r=99) = 412 at EVERY speed 5→140 km/h** — 2.000× V78, **3.007× V75**, flat. `k` = **4.1597**.
+🛑 `0xC63A0` = **1024, untouched** — **operator directive, 2026-08-07: *"Do not double 0xC63A0, that is
+what was causing hard faults."*** `0xC407E` = 511; friction m26 byte-stock; mode 24 byte-stock; six
+pointer arrays byte-stock over all 34 modes; probe cave byte-identical to V79 (68 B @`0xC4B34`).
+**Byte diff V79→V80 = 4 runs / 11 bytes**, all attributed (FactorC Y[3] · the governor byte · two CRC
+trailers). **CRC 50/50 PASS**; re-run reproduces bit-for-bit.
+
+★★ **Why FactorC was flattened: V79 RAILED.** V79 clips **38.9%** of the RULE-8 (speed, rate) envelope at
+ceiling floor 512 — stock and V78 clip **0.00%** — first clip at 85 km/h / 25 °/s, at 140 km/h / 16 °/s.
+**A railed damper takes its sign from `gp-0x6abe` and its index from `gp-0x6ac0` ⇒ it IS a Coulomb relay**
+(RULE 12(b) — the hazard that got the ReLU plan overruled). Flat FactorC makes the supremum
+`(566*927)>>10` = **512** = the ceiling floor exactly ⇒ **V80 clips 0.00% at ceiling 512 AND 1024.**
+⊕ It also removes V75's FactorC **dip** (234 at 60 km/h — V75's damping *collapsed* mid-range to 56).
+⚠ **Add-only correction (builder-caught, orchestrator's scope was too narrow):** worst post-clamp drop vs
+stock is **0 inside the RULE-8 envelope at both ceilings** — but **310 counts on the whole gated domain at
+ceiling 1024** (first drop 97 km/h AND 847 °/s). vs V79 it is deliberately subtractive above 80 km/h.
+
+🛑 **NOT CLEARED TO FLY.** `k` = 4.1597 is the **highest loop gain ever built here** — 2.00× V78, **2.63×
+the V75 that hard-faulted**, 3.00× the V76 that flew clean once. **`k` is FORCED**: with `E_X0` = 0,
+`dose(r) = k·r`, so doubling the dose at the reference rate doubles the loop gain. GATE 2 is **not**
+satisfied by argument. **The damper's forward path to the motor is NOT FOUND** ⇒ the 2× is predicted, not
+proven. **Grind #1 only from edits 2/3; edit 1 targets the MACRO-ratchet** — the ~7.79 Hz micro-ratchet is
+dose-independent and is **not** expected to move.
+⚠ **The probe cannot discriminate V80 from V79 below 80 km/h** (creep dose identical by construction);
+both rungs are now speed-invariant — bit6 47 ct (10.0 °/s), bit7 108 ct (22.9 °/s). **A non-zero bit7 is
+EXPECTED on V80, not a fault.**
+🛑 **`0xC63A0` and `0x454FE` are now DO-NOT-RAISE / MUST-CARRY cells respectively**, joining `0xC407E`.
+**`0xC64C8` and `0xC64C9` (the "2D-map mux") are DO-NOT-TOUCH-WITHOUT-TRACING** — unknown function,
+never written by any build.
+
+⊘ **V79 SUPERSEDED** — renamed `SUPERSEDED-2026-08-07-BY-V80-NO-RATCHET-FIX-RAILS-…`. It shipped without
+the ratchet byte (two builders dropped it) and rails at speed. Its plain image keeps its own name as
+evidence, per the V75/V76 precedent.
+
+---
+
 ## ✅ BUILT, VERIFIED, **UNFLASHED** — V78 on a V76 base (the operator's 150% dose, in ONE cell)
 `39990-TVA,A160-V78-V76BASE-EY1.449-dose206-probe-6bd0-63fd-67fa-0x13000-0x100000.rwd`
 rwd `305234c37f797d0476b89ac793b414d6b0d5ba7cbbadf665d6e64778fe091afb` ·
