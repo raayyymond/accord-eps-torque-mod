@@ -98,6 +98,37 @@ Work on `main`; no per-task feature branches. **Two repos, both pushed to `main`
   **push every new firmware artifact here**: built `.rwd` files and `_*_plain_image.bin` snapshots.
   Standing instruction, 2026-07-27. These are gitignored in the kit repo and live only in that repo.
 
+### 🛑🛑 AGENT ROLL-CALL BEFORE CLOSE-OUT — you do not know an agent has stopped
+**Recurring failure, and the operator has had to point it out repeatedly (latest 2026-08-07, twice in
+one session): the orchestrator writes the handoff, commits, and reports "done" while subagents are
+still running and still changing files.** An agent's last message means *it sent a message* — **not**
+that it finished, and **not** that it stopped. Agents keep editing after they report.
+
+**Close-out does not begin until every spawned agent is confirmed stopped.** In order:
+1. **`TaskList` / roll-call every agent you spawned this session.** Name them. An agent you forgot is
+   the one still writing.
+2. **`TaskStop` each one.** 🛑 **A `SendMessage` "stand down / you're done" does NOT stop an agent.**
+   It will acknowledge and keep working.
+3. **Then** `git status` on **both** repos and re-hash every reported artifact. **Confirm from the
+   filesystem, never from an agent's reply.**
+4. Only then: collaterals → commit → push → report.
+If `git status` is dirty *after* you thought you were finished, **assume an agent is live** and go
+back to step 1.
+
+**This applies to EVERY agent, not just builders** — tracers rewrite their own agent-memory, analysts
+overwrite caches and scripts, designers re-issue specs that contradict the one you just shipped. Any
+of them can invalidate a conclusion you have already written into `STATE.md` or reported.
+
+**Corollary — once you have REPORTED something, it is FROZEN.** That covers a build's SHA256 and the
+script constants behind it (`OUT` / `TAG` / `BIN_OUT`), but equally a cache an analysis quotes, a
+memory file, or a spec another agent is building against.
+- **Anything you reported, re-verify from disk at close-out** — re-hash the artifact, re-run the
+  script and assert it reproduces bit-for-bit, re-read the file. Agent replies are not evidence.
+- **Exactly ONE flashable `.rwd` per build number on disk.** Byte-identical duplicates carry zero
+  evidence — delete them. Differing ones get `SUPERSEDED-DO-NOT-FLASH-…`.
+- Late findings from any agent are **reports, not licence to act**. Put this in every brief:
+  *"If you find a defect after I've accepted your work, report it — do not fix it."*
+
 ### What "close out the session" means
 A three-part deliverable, every time, without being re-asked:
 1. **Update the collaterals** — `docs/STATE.md` (in place, not appended), `docs/BUILD-LINEAGE.md` if a
