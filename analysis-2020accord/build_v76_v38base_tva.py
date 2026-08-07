@@ -63,7 +63,7 @@ from verify_bootloader_crc import walk_all_blocks                              #
 
 START, END = FF.START, FF.END                      # 0x13000 .. 0x100000
 GP, R0, R6, R7 = V68.GP, V68.R0, V68.R6, V68.R7    # gp = r4
-R11, R15 = 11, 15
+R9, R11, R15 = 9, 11, 15
 
 # =====================================================================================================
 # THE BASE -- V38
@@ -122,6 +122,12 @@ NOT_CARRIED = {
 # Records are `[u16 count][count x int16 X][count x int16 Y]`, little-endian, resolved through a
 # pointer array of u32s, stride 4, indexed by mode.
 FACTOR_C_PTRS, FACTOR_E_PTRS = 0xC9E9C, 0xC9F84
+FACTOR_B_PTRS, FACTOR_D_PTRS, CEILING_PTRS = 0xC9CCC, 0xC9DB4, 0xC77A0
+ALL_PTR_ARRAYS = {"FactorB": FACTOR_B_PTRS, "FactorC": FACTOR_C_PTRS, "FactorD": FACTOR_D_PTRS,
+                  "FactorE": FACTOR_E_PTRS, "ceiling": CEILING_PTRS}
+# ⚠ 58, not 34. The FactorC array spans 0xC9E9C..0xC9F84 = 232 B = 58 u32 entries; a 34- or 40-slot
+# scan was only ACCIDENTALLY sound. Widened on TableDesign's finding.
+N_SLOTS_SCAN = 58
 N_MODES = 34
 LIVE_MODE = 26                      # engaged. V73's on-car probe, not an inference.
 MANUAL_MODE = 24                    # 🛑 must stay BYTE-STOCK -- manual steering
@@ -194,39 +200,41 @@ BC8_DISP = -0x6BC8          # halfword, SIGNED
 B26_DISP = -0x6B26          # halfword, SIGNED -- THE MONITORED SIGNAL (see the interlock above)
 CELL_CENSUS = {STATE_DISP: (128, 33), MODEIDX_DISP: (22, 5), BC6_DISP: (1, 1),
                BC8_DISP: (1, 1), B26_DISP: (4, 1), -PAYLOAD_BYTE4_DISP: (3, 3)}
-# The cells the cave actually READS -- exactly one load each, no stores. 🛑 `gp-0x6b26` is censused
-# but NOT read: its thermometer (bits 6/7) is HELD and did not fit in 68 bytes. It stays in the
-# census so the FIRMWARE's own 4r/1w on the fault-monitor cell is still asserted untouched.
-CAVE_READS = (STATE_DISP, MODEIDX_DISP, BC6_DISP, BC8_DISP)
+# The cells the cave READS -- exactly one load each, no stores.
+# 🛑 `gp-0x6bc6` / `gp-0x6bc8` (the shadow pair) are censused but NOT read: the shadow-pair rung was
+# DROPPED from COMBO B to make room for the friction-margin bit. They stay in the census so the
+# firmware's own 1r/1w on each is still asserted untouched, and so a stray re-introduction fails.
+CAVE_READS = (STATE_DISP, MODEIDX_DISP, B26_DISP)
+CAVE_MUST_NOT_READ = (BC6_DISP, BC8_DISP)
 
 # ---- instruction pins. Every halfword emitted reproduces a REAL instance in the V38 image, address
 # ---- and bytes. Verified here by a raw byte read, not by a cached Ghidra database.
-PIN_LDBU_STATE_R6 = (0x18C7C, bytes.fromhex("84370798"))   # `ld.bu -0x67fa[gp],r6`
-PIN_LDBU_MODEIDX_R6 = (0x346B4, bytes.fromhex("a437fd63"))  # `ld.bu 0x63fd[gp],r6`  (op 0x3D, ODD)
-PIN_LDH_BC6_R15 = (0x3435C, bytes.fromhex("247f3a94"))     # `ld.h -0x6bc6[gp],r15`
-PIN_LDH_BC8_R11 = (0x34358, bytes.fromhex("245f3894"))     # `ld.h -0x6bc8[gp],r11`
-PIN_LDH_B26_R6 = (0x3815C, bytes.fromhex("2437da94"))      # `ld.h -0x6b26[gp],r6`
-PIN_LDH_B26_R11 = (0x3AC98, bytes.fromhex("245fda94"))     # `ld.h -0x6b26[gp],r11`
-PIN_MOVI5_0_R7 = (0x14BD4, bytes.fromhex("003a"))          # `mov 0x0,r7`
-PIN_MOVI5_1_R7 = (0x14D40, bytes.fromhex("013a"))          # `mov 0x1,r7`
-PIN_CMP_5_R6 = (0x16FA4, bytes.fromhex("6532"))            # `cmp 0x5,r6`
-PIN_CMP_10_R15 = (0x22FFC, bytes.fromhex("6a7a"))          # `cmp 0xa,r15`
-PIN_ANDI_HW1_R6_R6 = (0x1FEA0, bytes.fromhex("c636"))      # hw1 donor: `andi imm,r6,r6`
-# hw2 donor: the immediate half of the real `andi 0x2,r22,r15` @0x164F4 (`d67e0200`), so hw2 is +2.
-PIN_ANDI_IMM2_HW2 = (0x164F6, bytes.fromhex("0200"))
-PIN_ANDI_7_R6 = (0x1FEA0, bytes.fromhex("c6360700"))       # `andi 0x7,r6,r6`
-PIN_ADD_2_R7 = (0x27EF0, bytes.fromhex("423a"))            # `add 0x2,r7`
-PIN_ADD_4_R7 = (0x2688E, bytes.fromhex("443a"))            # `add 0x4,r7`
-PIN_ADD_5_R15 = (0x43494, bytes.fromhex("457a"))           # `add 0x5,r15`
-PIN_SUB_R11_R15 = (0x34364, bytes.fromhex("ab79"))         # ★ `sub r11,r15` -- see LOCKSTEP_TRIPLE
-PIN_BNE_4 = (0x1A8A6, bytes.fromhex("aa05"))               # `bne +4`
-PIN_BE_4 = (0x1AFD0, bytes.fromhex("a205"))                # `be +4`
-PIN_BNH_4 = (0x2784E, bytes.fromhex("a305"))               # `bnh +4` (unsigned <=; cond 0x3)
-PIN_OR_R7_R6 = (0x68728, bytes.fromhex("0731"))            # `or r7,r6`
-PIN_SHL3_R7 = (0x4FB82, bytes.fromhex("c33a"))             # `shl 0x3,r7`
-PIN_LDBU_BYTE4 = (0x55AD4, bytes.fromhex("8437edea"))      # `ld.bu -0x1514[gp],r6`
-PIN_STB_BYTE4 = (0x55AE8, bytes.fromhex("4437ecea"))       # `st.b r6,-0x1514[gp]` -- THE ONLY STORE
-PIN_MOVEA_HOOK = (0x55C0E, bytes.fromhex("2436e8ea"))      # the displaced `movea -0x1518,gp,r6`
+# 🛑 EVERY pin below is IN-SPAN (>= 0x13000). ProbeDesign supplied six donors below 0x13000
+# (0x07380, 0x04EC8, 0x0A56E, 0x074F4, 0x0C176, 0x1E4); the .rwd payload covers only
+# [0x13000, 0x100000), so the plain image is ALL-0xFF there and those pins are uncheckable against
+# the artifact we actually flash. Each has been re-pinned to a real in-span instance.
+PIN_LDBU_STATE_R6 = (0x18C7C, bytes.fromhex("84370798"))    # `ld.bu -0x67fa[gp],r6`
+PIN_CMP_5_R6 = (0x16FA4, bytes.fromhex("6532"))             # `cmp 0x5,r6`
+PIN_SETFE_R7 = (0x261E4, bytes.fromhex("e23f0000"))         # 🛑 `setfe r7` -- FOUR bytes, Format IX
+PIN_LDBU_MODEIDX_R15 = (0x34470, bytes.fromhex("a47ffd63"))  # `ld.bu 0x63fd[gp],r15` (op 0x3D, ODD)
+PIN_ANDI_2_R15_R6 = (0x4DA3C, bytes.fromhex("cf360200"))    # `andi 0x2,r15,r6`
+PIN_OR_R6_R7 = (0x1C1C4, bytes.fromhex("0639"))             # `or r6,r7`
+PIN_LDH_HW1_R15 = (0x14C60, bytes.fromhex("247f"))          # hw1 donor: `ld.h ...,gp,r15`
+PIN_LDH_6B26_HW2 = (0x3815E, bytes.fromhex("da94"))         # hw2 donor: the -0x6b26 displacement
+PIN_MOVEA_HW1_R0_R9 = (0x18116, bytes.fromhex("204e"))      # hw1 donor: `movea imm,r0,r9`
+PIN_IMM_1C0_HW2 = (0xC498A, bytes.fromhex("c001"))          # hw2 donor: the literal 0x01C0 = 448
+PIN_CMP_R9_R15 = (0x2AB6E, bytes.fromhex("e979"))           # `cmp r9,r15`
+PIN_BGT = (0x1D5BC, bytes.fromhex("cf05"))                  # `bgt +8`  (cond 0xF)
+PIN_BGE = (0x1EFD0, bytes.fromhex("be05"))                  # `bge +6`  (cond 0xE)
+PIN_SUBR_R0_R9 = (0x29E5C, bytes.fromhex("8049"))           # `subr r0,r9` -> r9 = 0 - r9
+PIN_ADDI_HW1_R7_R7 = (0x2A0E0, bytes.fromhex("073e"))       # hw1 donor: `addi imm,r7,r7`
+PIN_IMM_10_HW2 = (0x146D6, bytes.fromhex("1000"))           # hw2 donor: the literal 0x0010 = 16
+PIN_SHL3_R7 = (0x4FB82, bytes.fromhex("c33a"))              # `shl 0x3,r7`
+PIN_LDBU_BYTE4 = (0x55AD4, bytes.fromhex("8437edea"))       # `ld.bu -0x1514[gp],r6`
+PIN_ANDI_7_R6 = (0x1FEA0, bytes.fromhex("c6360700"))        # `andi 0x7,r6,r6`
+PIN_OR_R7_R6 = (0x68728, bytes.fromhex("0731"))             # `or r7,r6`
+PIN_STB_BYTE4 = (0x55AE8, bytes.fromhex("4437ecea"))        # `st.b r6,-0x1514[gp]` -- THE ONLY STORE
+PIN_MOVEA_HOOK = (0x55C0E, bytes.fromhex("2436e8ea"))       # the displaced `movea -0x1518,gp,r6`
 # ⚠ NOT V74's 0x1E4. The plain image carries ONLY the flashable span and is all-0xFF below
 # 0x13000, so a bootloader-region pin cannot be checked against the artifact we actually build.
 # 0x14AAA is in-span, identical in STOCK and V38, and Ghidra renders it `jmp lp` on a real
@@ -235,11 +243,12 @@ PIN_JMP_LP = (0x14AAA, bytes.fromhex("7f00"))              # `jmp [lp]`
 
 ALL_PINS = {n: v for n, v in sorted(globals().items()) if n.startswith("PIN_")}
 
-# 🛑 The ONLY registers the cave may write. r10 is LIVE across the hook.
-ALLOWED_WRITE_REGS = {R6, R7, R11, R15}
+# 🛑 The ONLY registers the cave may write, per the operator's authoritative COMBO B spec.
+ALLOWED_WRITE_REGS = {R6, R7, R9, R15}
 FORBIDDEN_WRITE_REGS = {10}
 
 COND_BE, COND_BNE = FF.COND_BE, FF.COND_BNE
+COND_BGT, COND_BGE = 0xF, 0xE       # signed >, signed >=. The INVERTING twins of each other.
 
 # =====================================================================================================
 # 🛑🛑 REGISTER LIVENESS AT THE HOOK -- the bricking-class question, resolved by DISASSEMBLY
@@ -256,50 +265,54 @@ COND_BE, COND_BNE = FF.COND_BE, FF.COND_BNE
 #   3. NO CALLER CAN DEPEND ON THEM. FUN_00055a98's prologue saves r7/r28/lp/r8/r6 and its
 #      epilogue restores ONLY lp and r28 -- it clobbers r11/r15 freely.
 #   r6 is written by the displaced `movea` itself; r7 by `mov 0x8,r7` @0x55C12. Both dead.
+#   r9's last read is 0x55BC4 (`or r9,r12`, from `andi 0x3,r11,r9` @0x55BBE); nothing after the hook
+#   reads it. ProbeDesign reached the same result independently via `analyze_dataflow`.
 #
 # ⚠ [EVIDENCE] r10 is the ABI RETURN register, not a value carried across the hook: FUN_00057b24
 #   ends `andi 0xf,r12,r10 ; jmp [lp]`, and 0x55C20 `andi 0xf,r10,r8` consumes THAT return.
 #   An earlier analysis called r10 "live across the hook"; that is not what the code does. It makes
 #   NO difference to this build -- the cave writes no r10 and that is asserted -- but the record
-#   should be right.
+#   should be right. ProbeDesign has accepted this correction.
 HOOK_FN = (0x55A98, 0x55C41)
 DEAD_AT_HOOK = {R6: "written by the displaced movea @0x55C0E",
                 R7: "written by `mov 0x8,r7` @0x55C12",
-                R11: "last read 0x55BBE; FUN_00057b24 writes it @0x57B58 before reading",
+                R9: "last read 0x55BC4; nothing after the hook reads it",
                 R15: "last read 0x55B82; FUN_00057b24 writes it @0x57B28 before reading"}
 
-# ★ The firmware computes bit5's quantity ITSELF, with these very registers, at FUN_00034350's
-# entry -- our three halfwords are BYTE-IDENTICAL to the firmware's own:
-#     0x34358  ld.h -0x6bc8,gp,r11    245f3894
-#     0x3435C  ld.h -0x6bc6,gp,r15    247f3a94
-#     0x34364  sub  r11,r15           ab79
-# It then compares that difference against gp-0x6bc4 and gp-0x6bca -- the "entry lockstep quad"
-# corridor. bit5 reports whether the corridor's own input has moved more than +/-5.
-LOCKSTEP_TRIPLE = (0x34358, 0x3435C, 0x34364)
-
 # ---------------------------------------------------------------------------------------------------
-# ProbeDesign's APPROVED core: bits 3/4/5. Bits 6/7 (the |gp-0x6b26| thermometer) are HELD.
-# 🛑 [EVIDENCE] The thermometer does not fit and was never a live option. Budget, in bytes:
-#     fixed overhead (accumulator init, shl 0x3, payload read/mask/or/store, replayed movea,
-#     jmp [lp]) = 24  =>  44 available.
-#     bit3 10 + bit4 12 + bit5 18 = 40  =>  4 spare.
-#     A |gp-0x6b26| thermometer needs a materialised absolute value (mov/sar/xor/sub = 8 B) plus a
-#     4-byte `movea` per threshold, because 256 and 448 are outside imm5 range: ~30 B against 4.
-#   Growing the cave to fit is NOT an option -- V24, V27 and V48B bricked the ECU that way.
-# ⇒ bits 6 and 7 are ZERO BY CONSTRUCTION in this build. The decoder must not read them as a
-#   measurement. This coincides with ProbeDesign holding them pending the SlewFix work.
+# 🛑 COMBO B -- the operator's AUTHORITATIVE allocation, superseding every earlier description.
+#   bit7  |gp-0x6b26| vs 448   the FRICTION-LANE MARGIN -- the root-cause lane
+#   bit6  clear, always 0
+#   bit5  clear, always 0      🛑 the shadow-pair rung is DROPPED, not held-for-later
+#   bit4  gp+0x63fd & 0x2      the mode index
+#   bit3  gp-0x67fa == 5       ★ THE POSITIVE CONTROL
+#   2:0   live STEER_SENSOR_STATUS, PRESERVED
+#
+# 🛑 THE THRESHOLD IS 448 (0x1C0), NOT 512. `gp-0x6b26` is clamped to +/-cal(0xC407E) = 511 on this
+#   build, so a `>= 512` test could never fire on any drive -- a structurally dead bit, which is
+#   exactly what wasted V64 and V68. 448 sits inside the live band under the clamp.
+#
+# ⚠ THE BOUNDARY. ProbeDesign's pinned `bgt`/`bge` pair implements `|v| > 448` (band 449..511); the
+#   operator's table states `>= 448` (band 448..511). One count in 64. `B26_INCLUSIVE` selects
+#   between them and is a ONE-NIBBLE change in each of the two branch conditions. The value below is
+#   whatever the operator last ruled -- it is NOT the builder's choice to make.
 # ---------------------------------------------------------------------------------------------------
-PROBE_SOURCE = "ProbeDesign-core-3 (bits 6/7 held; see the budget note)"
-BIT_STATE5 = 3       # gp-0x67fa == 5              ★ THE POSITIVE CONTROL
-BIT_MODEIDX = 4      # gp+0x63fd & 0x2             the mode index -- closes the mode-lag question
-BIT_BCDIFF = 5       # |gp-0x6bc6 - gp-0x6bc8| > 5 the Surface-A corridor, pre-registered null
-BITS_HELD = (6, 7)   # the |gp-0x6b26| thermometer -- HELD, emitted as constant 0
+PROBE_SOURCE = "operator COMBO B (authoritative) + ProbeDesign pinned sequence"
+BIT_STATE5 = 3        # gp-0x67fa == 5     weight 1  -> <<3 -> 0x08   ★ POSITIVE CONTROL
+BIT_MODEIDX = 4       # gp+0x63fd & 0x2    weight 2  -> <<3 -> 0x10
+BIT_FRICTION = 7      # |gp-0x6b26| vs 448 weight 16 -> <<3 -> 0x80
+BITS_CLEAR = (5, 6)   # 🛑 no code path can set these -- structurally impossible
 STATE_EQ = 5
 MODEIDX_MASK = 0x2
-BCDIFF_THRESH = 5
-PROBE_MASK = 0x38    # bits 5:3 only -- bits 7:6 are constant 0, bits 2:0 the live status
+B26_THRESH = 448      # 0x1C0
+B26_INCLUSIVE = False  # False => |v| > 448 (ProbeDesign's bytes). True => |v| >= 448 (the table).
+W_STATE, W_MODE, W_FRICTION = 1, 2, 16
+PROBE_MASK = 0x98     # bits 7,4,3 -- the only bits the cave can set
+ILLEGAL_MASK = 0x60   # bits 6,5 -- any payload with these set is `state_impossible`
+LEGAL_PAYLOAD_HI = {(f * W_FRICTION | m * W_MODE | s * W_STATE) << 3
+                    for f in (0, 1) for m in (0, 1) for s in (0, 1)}   # 8 values
 PAYLOAD_SHIFT = 3
-BR_SKIP = 4          # every skip jumps the 2-byte setter that follows it
+BR_ADD, BR_SKIP = 8, 6      # bgt -> the setter (+8); bge -> past the setter (+6)
 
 
 def u16(buf, a):
@@ -346,17 +359,56 @@ def write_rec(buf, ptrs, mode, X, Y):
 
 
 def assert_no_aliasing(buf):
-    """🛑 A record shared by two modes would make a mode-26 edit leak into another mode."""
+    """🛑 A record shared by two modes would make a mode-26 edit leak into another mode.
+
+    ⚠ Scans N_SLOTS_SCAN slots across ALL FIVE pointer arrays, not just C and E over 34 modes.
+    TableDesign found the FactorC array spans 0xC9E9C..0xC9F84 = 232 B = 58 entries, so a 34- or
+    40-slot scan was only ACCIDENTALLY sound. The write addresses are checked against every record
+    of every array, which is the assertion that actually matters.
+    """
+    write_addrs = set(EXPECTED_WRITES)
+    for name, ptrs in ALL_PTR_ARRAYS.items():
+        owners = {}
+        for m in range(N_SLOTS_SCAN):
+            owners.setdefault(rec_addr(buf, ptrs, m), []).append(m)
+        for a in write_addrs:
+            for rec, modes in owners.items():
+                if rec <= a < rec + REC_STRIDE:
+                    assert name in ("FactorC", "FactorE") and modes == [LIVE_MODE], (
+                        f"🛑 write 0x{a:05X} lands inside {name} record 0x{rec:05X}, owned by "
+                        f"modes {modes} -- it would leak outside mode {LIVE_MODE}")
     for name, ptrs in (("FactorC", FACTOR_C_PTRS), ("FactorE", FACTOR_E_PTRS)):
         owners = {}
-        for m in range(N_MODES):
+        for m in range(N_SLOTS_SCAN):
             owners.setdefault(rec_addr(buf, ptrs, m), []).append(m)
         live = rec_addr(buf, ptrs, LIVE_MODE)
         assert owners[live] == [LIVE_MODE], \
             f"{name} mode-{LIVE_MODE} record 0x{live:05X} is ALSO used by modes " \
             f"{[m for m in owners[live] if m != LIVE_MODE]} -- the edit would leak"
-        manual = rec_addr(buf, ptrs, MANUAL_MODE)
-        assert manual != live, f"{name}: mode {MANUAL_MODE} and {LIVE_MODE} share a record"
+        assert rec_addr(buf, ptrs, MANUAL_MODE) != live, \
+            f"{name}: mode {MANUAL_MODE} and {LIVE_MODE} share a record"
+
+
+def assert_untouched_surfaces(buf, base, label):
+    """FactorB, FactorD and the ceiling must stay stock in BOTH modes -- this build touches C and E.
+
+    Also asserts the two edited records' HEADERS and TAILS: the header carries the point count (a
+    change would move rec_len) and the tail is the 2 bytes whose mis-sizing produced the V73 spill.
+    """
+    for name, ptrs in (("FactorB", FACTOR_B_PTRS), ("FactorD", FACTOR_D_PTRS),
+                       ("ceiling", CEILING_PTRS)):
+        for mode in (MANUAL_MODE, LIVE_MODE):
+            off = rec_addr(buf, ptrs, mode)
+            n = u16(buf, off)
+            ln = 2 + 4 * n
+            assert bytes(buf[off:off + ln]) == bytes(base[off:off + ln]), \
+                f"🛑 {label}: {name} mode {mode} @0x{off:05X} CHANGED -- this build touches only C/E"
+    for kind, ptrs in (("C", FACTOR_C_PTRS), ("E", FACTOR_E_PTRS)):
+        off = rec_addr(buf, ptrs, LIVE_MODE)
+        assert u16(buf, off) == 4 == u16(base, off), \
+            f"🛑 {label}: Factor{kind} m{LIVE_MODE} HEADER changed -- the point count must stay 4"
+        assert bytes(buf[off + REC_DATA_LEN:off + REC_STRIDE]) == b"\x00\x00", \
+            f"🛑 {label}: Factor{kind} m{LIVE_MODE} TAIL is not 0x0000 -- the V73 spill signature"
 
 
 def assert_record_geometry(buf, label):
@@ -568,65 +620,80 @@ def _fmt1(op6, reg1, reg2):
     return struct.pack("<H", ((reg2 & 0x1F) << 11) | ((op6 & 0x3F) << 5) | (reg1 & 0x1F))
 
 
-def add_imm5(imm5, reg2):
-    """ADD imm5,reg2 (Format II, op 0x12) -- reg2 += sign_extend(imm5)."""
-    assert -16 <= imm5 <= 15, "Format II imm5 is SIGNED"
-    return _fmt1(0x12, imm5 & 0x1F, reg2)
+def addi(imm16, reg1, reg2):
+    """ADDI imm16,reg1,reg2 (Format VI, op 0x30) -- reg2 = reg1 + sign_extend(imm16). FOUR bytes.
+
+    🛑 Needed rather than `add imm5` because the friction weight is 16, outside Format II's
+    signed 5-bit range (-16..15). The same trap V74 hit with `movea 0x10,r0,r7`.
+    """
+    return _fmt1(0x30, reg1, reg2) + struct.pack("<H", imm16 & 0xFFFF)
 
 
-def sub_rr(reg1, reg2):
-    """SUB reg1,reg2 (Format I, op 0x0D) -- reg2 = reg2 - reg1. 🛑 NOT reg1 - reg2."""
-    return _fmt1(0x0D, reg1, reg2)
+def subr_rr(reg1, reg2):
+    """SUBR reg1,reg2 (Format I, op 0x0C) -- reg2 = reg1 - reg2. 🛑 NOT reg2 - reg1; that is SUB."""
+    return _fmt1(0x0C, reg1, reg2)
 
 
-COND_BNH = 0x3          # unsigned <= : CY or Z. The INVERTING twin `bh` is 0xB, asserted away.
+def setfe(reg2):
+    """SETF cccc,reg2 (Format IX, op 0x3F sub-form) -- reg2 = (cond) ? 1 : 0. 🛑 FOUR BYTES.
+
+    ★ `setfe` (cond = E/Z) collapses "zero the accumulator" and "set bit0 on equality" into ONE
+    instruction, which is what buys this cave its margin. The spec handed to this builder listed it
+    as 2 bytes; Ghidra renders 0x261E4 as `setfe r7`, LENGTH 4, bytes e23f0000. Emitting 2 would
+    have desynchronised every following instruction.
+    """
+    assert reg2 == R7, "only the r7 form is pinned"
+    return PIN_SETFE_R7[1]
 
 
 def _self_check_encoders(buf):
-    """Every encoder reproduces a REAL instance in THIS image, at a named address."""
+    """Every encoder reproduces a REAL instance in THIS image, at a named IN-SPAN address."""
     checks = [
-        (FF.movi5(0, R7), PIN_MOVI5_0_R7, "mov 0x0,r7"),
-        (FF.movi5(1, R7), PIN_MOVI5_1_R7, "mov 0x1,r7"),
-        (V55.cmp_imm5(STATE_EQ, R6), PIN_CMP_5_R6, "cmp 0x5,r6"),
-        (V55.cmp_imm5(2 * BCDIFF_THRESH, R15), PIN_CMP_10_R15, "cmp 0xa,r15"),
-        (V54.andi(PAYLOAD_KEEP_MASK, R6, R6), PIN_ANDI_7_R6, "andi 0x7,r6,r6"),
-        (add_imm5(2, R7), PIN_ADD_2_R7, "add 0x2,r7"),
-        (add_imm5(4, R7), PIN_ADD_4_R7, "add 0x4,r7"),
-        (add_imm5(BCDIFF_THRESH, R15), PIN_ADD_5_R15, "add 0x5,r15"),
-        (sub_rr(R11, R15), PIN_SUB_R11_R15, "sub r11,r15"),
-        (FF.bcond(COND_BNE, BR_SKIP), PIN_BNE_4, "bne +4"),
-        (FF.bcond(COND_BE, BR_SKIP), PIN_BE_4, "be +4"),
-        (FF.bcond(COND_BNH, BR_SKIP), PIN_BNH_4, "bnh +4"),
-        (V54.or_rr(R7, R6), PIN_OR_R7_R6, "or r7,r6"),
-        (V54.shl(PAYLOAD_SHIFT, R7), PIN_SHL3_R7, "shl 0x3,r7"),
         (V55.ldbu_any(STATE_DISP, R6), PIN_LDBU_STATE_R6, "ld.bu -0x67fa[gp],r6"),
-        (V55.ldbu_any(MODEIDX_DISP, R6), PIN_LDBU_MODEIDX_R6, "ld.bu 0x63fd[gp],r6"),
-        (V55.ldh(-BC6_DISP, R15), PIN_LDH_BC6_R15, "ld.h -0x6bc6[gp],r15"),
-        (V55.ldh(-BC8_DISP, R11), PIN_LDH_BC8_R11, "ld.h -0x6bc8[gp],r11"),
+        (V55.cmp_imm5(STATE_EQ, R6), PIN_CMP_5_R6, "cmp 0x5,r6"),
+        (setfe(R7), PIN_SETFE_R7, "setfe r7"),
+        (V55.ldbu_any(MODEIDX_DISP, R15), PIN_LDBU_MODEIDX_R15, "ld.bu 0x63fd[gp],r15"),
+        (V54.andi(MODEIDX_MASK, R15, R6), PIN_ANDI_2_R15_R6, "andi 0x2,r15,r6"),
+        (V54.or_rr(R6, R7), PIN_OR_R6_R7, "or r6,r7"),
+        (V54.cmp_rr(R9, R15), PIN_CMP_R9_R15, "cmp r9,r15"),
+        (subr_rr(R0, R9), PIN_SUBR_R0_R9, "subr r0,r9"),
+        (V54.shl(PAYLOAD_SHIFT, R7), PIN_SHL3_R7, "shl 0x3,r7"),
         (V55.ldbu_any(-PAYLOAD_BYTE4_DISP, R6), PIN_LDBU_BYTE4, "ld.bu -0x1514[gp],r6"),
+        (V54.andi(PAYLOAD_KEEP_MASK, R6, R6), PIN_ANDI_7_R6, "andi 0x7,r6,r6"),
+        (V54.or_rr(R7, R6), PIN_OR_R7_R6, "or r7,r6"),
         (FF.stb(R6, -PAYLOAD_BYTE4_DISP, GP), PIN_STB_BYTE4, "st.b r6,-0x1514[gp]"),
         (FF.JMP_LP, PIN_JMP_LP, "jmp [lp]"),
     ]
     for enc, (addr, want), text in checks:
         assert enc == want, f"encoder '{text}' emits {enc.hex()}, the pin says {want.hex()}"
+        assert addr >= START, f"pin for '{text}' @0x{addr:05X} is BELOW 0x13000 -- uncheckable"
         assert bytes(buf[addr:addr + len(want)]) == want, \
             f"pin for '{text}' @0x{addr:05X} does not read back"
-    # `andi 0x2,r6,r6` has no exact instance: pin hw1 and hw2 to separate real donors, as V74 does.
-    a2 = V54.andi(MODEIDX_MASK, R6, R6)
-    assert a2[:2] == PIN_ANDI_HW1_R6_R6[1] and a2[2:] == PIN_ANDI_IMM2_HW2[1], \
-        f"`andi 0x2,r6,r6` = {a2.hex()} does not match its two half-pins"
-    assert bytes(buf[PIN_ANDI_HW1_R6_R6[0]:PIN_ANDI_HW1_R6_R6[0] + 2]) == PIN_ANDI_HW1_R6_R6[1]
-    assert bytes(buf[PIN_ANDI_IMM2_HW2[0]:PIN_ANDI_IMM2_HW2[0] + 2]) == PIN_ANDI_IMM2_HW2[1]
-    # 🛑 the inverting twins, asserted AWAY -- each of these has flipped a probe rung's meaning before
-    assert FF.bcond(COND_BNE, BR_SKIP) != FF.bcond(COND_BE, BR_SKIP), "bne/be collapsed"
-    assert FF.bcond(COND_BNH, BR_SKIP) != FF.bcond(0xB, BR_SKIP), "bnh/bh collapsed"
-    assert sub_rr(R11, R15) != sub_rr(R15, R11), "sub operand order collapsed"
-    # ★ the firmware's own three instructions, byte-identical to ours
-    a11, a15, asub = LOCKSTEP_TRIPLE
-    assert bytes(buf[a11:a11 + 4]) == V55.ldh(-BC8_DISP, R11)
-    assert bytes(buf[a15:a15 + 4]) == V55.ldh(-BC6_DISP, R15)
-    assert bytes(buf[asub:asub + 2]) == sub_rr(R11, R15)
-    return len(checks) + 1
+    # ---- branch donors: the cond nibble is a FIELD, so pin the FORM and assert both twins exist --
+    for cond, (addr, want), text in ((COND_BGT, PIN_BGT, "bgt"), (COND_BGE, PIN_BGE, "bge")):
+        assert addr >= START and bytes(buf[addr:addr + 2]) == want, \
+            f"pin for '{text}' @0x{addr:05X} does not read back"
+        hw = struct.unpack("<H", want)[0]
+        assert hw & 0xF == cond, f"the '{text}' donor carries cond 0x{hw & 0xF:x}, not 0x{cond:x}"
+        assert (hw >> 7) & 0xF == 0xB, f"the '{text}' donor is not a Bcond"
+    # ---- the three encodings with NO exact in-span instance: hw1 and hw2 pinned separately -------
+    for enc, hw1_pin, hw2_pin, text in (
+            (V55.ldh(-B26_DISP, R15), PIN_LDH_HW1_R15, PIN_LDH_6B26_HW2, "ld.h -0x6b26[gp],r15"),
+            (FF.movea(B26_THRESH, R0, R9), PIN_MOVEA_HW1_R0_R9, PIN_IMM_1C0_HW2, "movea 0x1c0,r0,r9"),
+            (addi(W_FRICTION, R7, R7), PIN_ADDI_HW1_R7_R7, PIN_IMM_10_HW2, "addi 0x10,r7,r7")):
+        assert enc[:2] == hw1_pin[1], f"'{text}' hw1 {enc[:2].hex()} != pin {hw1_pin[1].hex()}"
+        assert enc[2:] == hw2_pin[1], f"'{text}' hw2 {enc[2:].hex()} != pin {hw2_pin[1].hex()}"
+        for a, w in (hw1_pin, hw2_pin):
+            assert a >= START and bytes(buf[a:a + 2]) == w, \
+                f"'{text}' half-pin @0x{a:05X} does not read back"
+    # ---- 🛑 the INVERTING twins, asserted AWAY ---------------------------------------------------
+    assert FF.bcond(COND_BGT, BR_ADD) != FF.bcond(COND_BGE, BR_ADD), "bgt/bge collapsed"
+    assert subr_rr(R0, R9) != _fmt1(0x0D, R0, R9), "subr/sub collapsed -- op 0x0C vs 0x0D"
+    assert V54.cmp_rr(R9, R15) != V54.cmp_rr(R15, R9), "cmp operand order collapsed"
+    assert addi(W_FRICTION, R7, R7) != addi(W_FRICTION, R9, R7), "addi reg1 field collapsed"
+    # 🛑 the weight is outside `add imm5`'s SIGNED range, which is exactly why `addi` is required
+    assert not (-16 <= W_FRICTION <= 15), "W_FRICTION would fit imm5 -- the 4-byte addi is wasteful"
+    return len(checks) + 2 + 3
 
 
 # =====================================================================================================
@@ -642,40 +709,43 @@ def build_cave():
             writes.append((CAVE_BASE + len(body), wreg))
         body.extend(raw)
 
-    emit(FF.movi5(0, R7), "mov 0x0,r7           ; r7 = the 5-bit field accumulator", R7)
+    cond_hi = COND_BGE if B26_INCLUSIVE else COND_BGT     # v vs +448  -> SET
+    cond_lo = COND_BGT if B26_INCLUSIVE else COND_BGE      # v vs -448  -> SKIP
+    rel = ">=" if B26_INCLUSIVE else ">"
 
     # ---- bit3: gp-0x67fa == 5. ★ THE POSITIVE CONTROL ------------------------------------------
+    # ★ `setfe` both ZEROES r7 and sets bit0 on equality, so no separate `mov 0x0,r7` is needed.
     emit(V55.ldbu_any(STATE_DISP, R6), "ld.bu -0x67fa[gp],r6 ; THE STATE (byte, neg disp)", R6)
     c1 = len(listing)
     emit(V55.cmp_imm5(STATE_EQ, R6), "cmp 0x5,r6           ; Z iff state == 5")
-    b1 = len(listing)
-    emit(FF.bcond(COND_BNE, BR_SKIP), "bne +4               ; not 5 -> skip the setter")
-    emit(FF.movi5(1, R7), f"mov 0x1,r7           ; bit{BIT_STATE5} <- (state == 5)", R7)
-    l1 = CAVE_BASE + len(body)   # the branch target: AFTER the setter
+    s1 = len(listing)
+    emit(setfe(R7), f"setfe r7             ; r7 = (state == 5)  bit{BIT_STATE5}  🛑 4 BYTES", R7)
 
     # ---- bit4: gp+0x63fd & 0x2 -- the mode index ------------------------------------------------
-    emit(V55.ldbu_any(MODEIDX_DISP, R6), "ld.bu 0x63fd[gp],r6  ; MODE INDEX (ODD disp, op 0x3D)", R6)
-    c2 = len(listing)
-    emit(V54.andi(MODEIDX_MASK, R6, R6), "andi 0x2,r6,r6       ; Z iff bit1 clear", R6)
-    b2 = len(listing)
-    emit(FF.bcond(COND_BE, BR_SKIP), "be +4                ; bit1 clear -> skip")
-    emit(add_imm5(2, R7), f"add 0x2,r7           ; bit{BIT_MODEIDX} <- (mode & 2)", R7)
-    l2 = CAVE_BASE + len(body)   # the branch target: AFTER the setter
+    emit(V55.ldbu_any(MODEIDX_DISP, R15), "ld.bu 0x63fd[gp],r15 ; MODE INDEX (ODD disp, op 0x3D)", R15)
+    emit(V54.andi(MODEIDX_MASK, R15, R6), f"andi 0x2,r15,r6      ; r6 = mode & 2 (weight {W_MODE})", R6)
+    emit(V54.or_rr(R6, R7), f"or r6,r7             ; bit{BIT_MODEIDX}  🛑 NOT `or r7,r6`", R7)
 
-    # ---- bit5: |gp-0x6bc6 - gp-0x6bc8| > 5 -- the Surface-A corridor ----------------------------
-    # ★ the loads and the sub are BYTE-IDENTICAL to FUN_00034350's own entry (LOCKSTEP_TRIPLE).
-    # ★ the range trick: |d| > 5  <=>  (unsigned)(d + 5) > 10. Saves 6 B over a materialised abs,
-    #   which is what makes three rungs fit in 68 bytes at all.
-    emit(V55.ldh(-BC6_DISP, R15), "ld.h -0x6bc6[gp],r15 ; corridor A (SIGNED, op 0x39)", R15)
-    emit(V55.ldh(-BC8_DISP, R11), "ld.h -0x6bc8[gp],r11 ; corridor B (SIGNED, op 0x39)", R11)
-    emit(sub_rr(R11, R15), "sub r11,r15          ; r15 = A - B   🛑 NOT `sub r15,r11`", R15)
-    emit(add_imm5(BCDIFF_THRESH, R15), "add 0x5,r15          ; r15 = d + 5", R15)
-    c3 = len(listing)
-    emit(V55.cmp_imm5(2 * BCDIFF_THRESH, R15), "cmp 0xa,r15          ; UNSIGNED compare vs 10")
-    b3 = len(listing)
-    emit(FF.bcond(COND_BNH, BR_SKIP), "bnh +4               ; (u)(d+5) <= 10 <=> |d| <= 5 -> skip")
-    emit(add_imm5(4, R7), f"add 0x4,r7           ; bit{BIT_BCDIFF} <- (|A-B| > 5)", R7)
-    l3 = CAVE_BASE + len(body)   # the branch target: AFTER the setter
+    # ---- bit7: |gp-0x6b26| vs 448 -- THE FRICTION-LANE MARGIN ----------------------------------
+    # 🛑 448 (0x1C0), NOT 512: gp-0x6b26 is clamped to +/-511, so a >=512 test could never fire.
+    # ★ Two-sided range test, no materialised absolute value: compare against +448, then negate the
+    #   constant in place with `subr r0,r9` and compare against -448. Saves a second `movea`.
+    emit(V55.ldh(-B26_DISP, R15), "ld.h -0x6b26[gp],r15 ; THE MONITORED SIGNAL (SIGNED, op 0x39)", R15)
+    emit(FF.movea(B26_THRESH, R0, R9), f"movea 0x1c0,r0,r9    ; r9 = +{B26_THRESH}", R9)
+    ch = len(listing)
+    emit(V54.cmp_rr(R9, R15), "cmp r9,r15           ; flags <- v - 448")
+    bh = len(listing)
+    emit(FF.bcond(cond_hi, BR_ADD), f"b{'ge' if B26_INCLUSIVE else 'gt'} +8              ; v {rel} +448 -> SET")
+    emit(subr_rr(R0, R9), f"subr r0,r9           ; r9 = 0 - r9 = -{B26_THRESH}  🛑 NOT `sub`", R9)
+    cl = len(listing)
+    emit(V54.cmp_rr(R9, R15), "cmp r9,r15           ; flags <- v + 448")
+    bl = len(listing)
+    emit(FF.bcond(cond_lo, BR_SKIP),
+         f"b{'gt' if B26_INCLUSIVE else 'ge'} +6              ; v {'>' if B26_INCLUSIVE else '>='} -448 -> SKIP")
+    add_at = CAVE_BASE + len(body)
+    emit(addi(W_FRICTION, R7, R7),
+         f"addi 0x10,r7,r7      ; bit{BIT_FRICTION} <- (|v| {rel} {B26_THRESH})  weight {W_FRICTION}", R7)
+    skip_at = CAVE_BASE + len(body)
 
     # ---- pack into the CAN-330 payload byte, preserving bits 2:0 --------------------------------
     emit(V54.shl(PAYLOAD_SHIFT, R7), "shl 0x3,r7           ; the field -> bits 5:3", R7)
@@ -694,35 +764,49 @@ def build_cave():
     if pad:
         emit(bytes(pad), f"<{pad} x 0x00, AFTER `jmp [lp]` => UNREACHABLE; extent stays 68>")
 
-    # ---- 🛑 FLAG LIVENESS: each test must be IMMEDIATELY followed by its branch -----------------
-    for ci, bi, name in ((c1, b1, "bit3 cmp/bne"), (c2, b2, "bit4 andi/be"), (c3, b3, "bit5 cmp/bnh")):
-        assert bi == ci + 1, \
-            f"{name}: {bi - ci - 1} instruction(s) sit between the test and its branch -- the " \
-            f"branch would read STALE flags, a silent and plausible-looking wrong answer"
+    # ---- 🛑 FLAG LIVENESS: each test must be IMMEDIATELY followed by its consumer ---------------
+    # `cmp 0x5,r6` -> `setfe r7`, and each `cmp r9,r15` -> its branch. An instruction in between
+    # would make the consumer read STALE flags: silent, and plausible-looking in a log.
+    for ci, ui, name in ((c1, s1, "bit3 cmp/setfe"), (ch, bh, "bit7 cmp/b-high"),
+                         (cl, bl, "bit7 cmp/b-low")):
+        assert ui == ci + 1, \
+            f"{name}: {ui - ci - 1} instruction(s) sit between the test and its consumer -- STALE flags"
         ca, craw, _ = listing[ci]
-        ba, braw, _ = listing[bi]
-        assert ca + len(craw) == ba, f"{name}: the test/branch pair is not adjacent"
+        ua, _uraw, _ = listing[ui]
+        assert ca + len(craw) == ua, f"{name}: the test/consumer pair is not adjacent"
 
     # ---- 🛑 the INVERTING twins, on the EMITTED bytes -------------------------------------------
-    assert struct.unpack("<H", listing[b1][1])[0] & 0xF == COND_BNE, \
-        "bit3's branch is not `bne` -- `be` would invert it: bit3 would read HIGH off state 5"
-    assert struct.unpack("<H", listing[b2][1])[0] & 0xF == COND_BE, \
-        "bit4's branch is not `be` -- `bne` would invert the mode-index rung"
-    assert struct.unpack("<H", listing[b3][1])[0] & 0xF == COND_BNH, \
-        "bit5's branch is not `bnh` -- `bh` would invert the corridor rung"
+    assert listing[s1][1] == PIN_SETFE_R7[1] and len(listing[s1][1]) == 4, \
+        "bit3's setter is not the pinned 4-byte `setfe r7`"
+    assert struct.unpack("<H", listing[bh][1])[0] & 0xF == cond_hi, \
+        f"bit7's high branch carries the wrong condition -- the twin would invert the rung"
+    assert struct.unpack("<H", listing[bl][1])[0] & 0xF == cond_lo, \
+        f"bit7's low branch carries the wrong condition -- the twin would invert the rung"
+    assert cond_hi != cond_lo, "both friction branches carry the same condition"
 
     # ---- GATE 2a: every branch lands EXACTLY on an emitted instruction boundary -----------------
     bounds = {a for a, _r, _t in listing}
-    for bi, label, name in ((b1, l1, "bit3"), (b2, l2, "bit4"), (b3, l3, "bit5")):
-        ba, braw, _ = listing[bi]
-        assert ba + BR_SKIP == label, f"{name}: `b* +{BR_SKIP}` @0x{ba:05X} does not target 0x{label:05X}"
-        assert label in bounds, f"{name}: branch target 0x{label:05X} is not an instruction boundary"
-        assert label == listing[bi + 2][0], f"{name}: the branch does not skip exactly the setter"
-        assert len(listing[bi + 1][1]) == 2, f"{name}: the skipped setter is not 2 bytes"
-        assert ba < label <= ret_addr, f"{name}: the branch is not a forward jump before the return"
+    bha, _r, _t = listing[bh]
+    bla, _r, _t = listing[bl]
+    assert bha + BR_ADD == add_at, \
+        f"the high branch @0x{bha:05X} targets 0x{bha + BR_ADD:05X}, not the setter 0x{add_at:05X}"
+    assert bla + BR_SKIP == skip_at, \
+        f"the low branch @0x{bla:05X} targets 0x{bla + BR_SKIP:05X}, not past the setter 0x{skip_at:05X}"
+    for tgt, name in ((add_at, "the SET path"), (skip_at, "the SKIP path")):
+        assert tgt in bounds, f"{name} target 0x{tgt:05X} is not an instruction boundary"
+        assert tgt <= ret_addr, f"{name} target is past the return"
+    assert add_at < skip_at and skip_at - add_at == 4, \
+        "the SET path does not fall through exactly the 4-byte `addi` into the SKIP path"
+    assert bha < add_at and bla < skip_at, "a friction branch is not a FORWARD jump"
     branches = [i for i, (_a, r, _t) in enumerate(listing)
                 if len(r) == 2 and (struct.unpack("<H", r)[0] >> 7) & 0xF == 0xB]
-    assert branches == [b1, b2, b3], f"the cave has branches at {branches}, expected {[b1, b2, b3]}"
+    assert branches == [bh, bl], f"the cave has branches at {branches}, expected {[bh, bl]}"
+
+    # ---- 🛑 the DROPPED rung must not have crept back in ---------------------------------------
+    for disp in CAVE_MUST_NOT_READ:
+        enc_forms = [V55.ldh(-disp, r) for r in range(32)]
+        assert not any(e in bytes(body) for e in enc_forms), \
+            f"the cave reads gp{disp:+#x} -- the shadow-pair rung is DROPPED from COMBO B"
 
     # ---- SINGLE EXIT: no jr/jarl anywhere ------------------------------------------------------
     for _a, raw, text in listing:
@@ -761,18 +845,20 @@ def build_cave():
             continue
         dest = hw >> 11
         assert dest in ALLOWED_WRITE_REGS, \
-            f"'{text}' @0x{addr:05X} writes r{dest} -- only r6/r7/r11/r15 are proven dead here"
+            f"'{text}' @0x{addr:05X} writes r{dest} -- only r6/r7/r9/r15 are proven dead here"
         assert dest not in FORBIDDEN_WRITE_REGS, f"'{text}' writes r{dest} -- FORBIDDEN"
     dests = {(hw := struct.unpack_from("<H", r, 0)[0]) >> 11
              for _a, r, _t in listing
              if len(r) in (2, 4) and r not in (FF.JMP_LP, HOOK_STOCK) and r != bytes(len(r))
              and (hw >> 7) & 0xF != 0xB and ((hw >> 5) & 0x3F) not in (0x13, 0x0F, 0x3A, 0x3B)}
     assert dests <= ALLOWED_WRITE_REGS, f"the cave writes {sorted(dests)}"
-    assert 10 not in dests, "🛑 the cave writes r10"
+    assert 10 not in dests, "🛑 the cave writes r10 -- the operator's hard stop"
 
     # ---- geometry ------------------------------------------------------------------------------
-    assert code_len == 2 + 4 + 2 + 2 + 2 + 4 + 4 + 2 + 2 + 4 + 4 + 2 + 2 + 2 + 2 + 2 \
-        + 2 + 4 + 4 + 2 + 4 + 4 + 2 == 64, f"the cave code is {code_len}B, the budget says 64"
+    # 🛑 `setfe` is 4 B, not the 2 B the handed-down listing stated. That correction is why this
+    #    sums to 64 and not 62; emitting 2 would have desynchronised every following instruction.
+    assert code_len == (4 + 2 + 4) + (4 + 4 + 2) + (4 + 4 + 2 + 2 + 2 + 2 + 2 + 4) \
+        + (2 + 4 + 4 + 2 + 4) + (4 + 2) == 64, f"the cave code is {code_len}B, the budget says 64"
     assert bytes(body[code_len:]) == bytes(pad), "the padding is not all zero"
     assert len(body) % 2 == 0, "cave length must be halfword-aligned"
     assert CAVE_BASE + len(body) <= CAVE_HARD_LIMIT, "cave overruns the hard limit"
@@ -781,32 +867,51 @@ def build_cave():
     return bytes(body), listing
 
 
-def wire_model(state, mode_idx, bc6, bc8, status_bits=0x7):
-    """A Python mirror of EXACTLY what the cave computes -- instruction for instruction."""
-    r7 = 0
-    if (state & 0xFF) == STATE_EQ:                       # ld.bu is UNSIGNED; cmp is on the byte
-        r7 = 1
-    if (mode_idx & 0xFF) & MODEIDX_MASK:
-        r7 += 2
-    d = bc6 - bc8                                        # both ld.h -> SIGNED
-    if ((d + BCDIFF_THRESH) & 0xFFFFFFFF) > 2 * BCDIFF_THRESH:   # UNSIGNED compare
-        r7 += 4
+def wire_model(state, mode_idx, b26, status_bits=0x7):
+    """A Python mirror of EXACTLY what the cave computes -- instruction for instruction.
+
+    `setfe` writes 1/0 into r7 (it does NOT accumulate), so it must come FIRST; the mode rung then
+    ORs in, and the friction rung ADDs. Signedness matters: the two byte cells are `ld.bu`
+    (zero-extend) and `gp-0x6b26` is `ld.h` (SIGN-extend), matching FUN_00036d74's own (short) cast.
+    """
+    r7 = 1 if (state & 0xFF) == STATE_EQ else 0          # setfe -- assignment, not accumulation
+    r7 |= W_MODE if ((mode_idx & 0xFF) & MODEIDX_MASK) else 0
+    v = b26 - 0x10000 if b26 & 0x8000 else b26           # ld.h is SIGNED
+    hit = (v >= B26_THRESH or v <= -B26_THRESH) if B26_INCLUSIVE else \
+          (v > B26_THRESH or v < -B26_THRESH)
+    r7 += W_FRICTION if hit else 0
     return ((r7 << PAYLOAD_SHIFT) | (status_bits & PAYLOAD_KEEP_MASK)) & 0xFF
 
 
 def _check_wire_model():
-    """The mirror's truth table, including the sign cases the range trick exists to handle."""
-    assert wire_model(5, 0, 0, 0, 0) == 0x08
-    assert wire_model(4, 0, 0, 0, 0) == 0x00
-    assert wire_model(5, 0x02, 0, 0, 0) == 0x18
-    assert wire_model(5, 0xFD, 0, 0, 0) == 0x08          # bit1 clear in 0xFD
-    for d in (6, 7, 100, 32767):
-        assert wire_model(0, 0, d, 0, 0) == 0x20, f"+{d} should set bit5"
-        assert wire_model(0, 0, -d, 0, 0) == 0x20, f"-{d} should set bit5"   # the SIGNED case
-    for d in (-5, -1, 0, 1, 5):
-        assert wire_model(0, 0, d, 0, 0) == 0x00, f"{d} must NOT set bit5"
-    assert wire_model(5, 0x02, 0, -6, 0b101) == 0x3D     # all three + preserved status
-    assert wire_model(0, 0, 0, 0, 0xFF) == 0x07, "bits 2:0 must be preserved and masked to 3"
+    """The mirror's truth table, including the sign cases the two-sided test exists to handle."""
+    assert wire_model(5, 0, 0, 0) == 0x08, "bit3 alone"
+    assert wire_model(4, 0, 0, 0) == 0x00, "state 4 must not set bit3"
+    assert wire_model(5, 0x02, 0, 0) == 0x18, "bit3 + bit4"
+    assert wire_model(5, 0xFD, 0, 0) == 0x08, "bit1 is clear in 0xFD"
+    assert wire_model(0, 0x02, 0, 0) == 0x10, "bit4 alone"
+    edge = B26_THRESH if B26_INCLUSIVE else B26_THRESH + 1
+    for v in (edge, edge + 1, 511):
+        assert wire_model(0, 0, v, 0) == 0x80, f"+{v} should set bit7"
+        assert wire_model(0, 0, v & 0xFFFF if v < 0 else (-v) & 0xFFFF, 0) == 0x80, \
+            f"-{v} should set bit7 (the SIGNED case)"
+    for v in (0, 1, 100, B26_THRESH - 1):
+        assert wire_model(0, 0, v, 0) == 0x00, f"+{v} must NOT set bit7"
+        assert wire_model(0, 0, (-v) & 0xFFFF, 0) == 0x00, f"-{v} must NOT set bit7"
+    assert wire_model(5, 0x02, 511, 0b101) == 0x9D, "all three rungs + preserved status"
+    assert wire_model(0, 0, 0, 0xFF) == 0x07, "bits 2:0 preserved and masked to 3"
+    # 🛑 bits 6 and 5 are STRUCTURALLY unreachable -- exhaustive over the whole input space
+    seen = set()
+    for st in (0, 4, 5, 6, 255):
+        for md in (0, 1, 2, 3, 255):
+            for v in (0, 1, 447, 448, 449, 511, 0xFFFF, 0xFE01, 0x8000):
+                for stat in range(8):
+                    p = wire_model(st, md, v, stat)
+                    assert p & ILLEGAL_MASK == 0, f"payload 0x{p:02X} sets bit6/bit5 -- impossible"
+                    seen.add(p & 0xF8)
+    assert seen <= LEGAL_PAYLOAD_HI, f"the mirror produced payloads outside the legal set: {seen}"
+    assert LEGAL_PAYLOAD_HI == {0x00, 0x08, 0x10, 0x18, 0x80, 0x88, 0x90, 0x98}, \
+        "the legal payload set does not match the operator's decoder spec"
 
 
 def redisassemble_cave(raw, base=CAVE_BASE):
@@ -823,20 +928,25 @@ def redisassemble_cave(raw, base=CAVE_BASE):
         imm5 = hw & 0x1F
         if hw == 0x0000:
             n, m = 2, "nop"
+        elif raw[i:i + 4] == PIN_SETFE_R7[1]:
+            # 🛑 Format IX, FOUR bytes. Decoded by exact match against the pinned encoding so a
+            #    2-byte misread -- the error in the handed-down listing -- cannot recur here.
+            n, m = 4, "setfe r7"
         elif (hw >> 7) & 0xF == 0xB:
             n = 2
-            m = {0x2: "be", 0x3: "bnh", 0xA: "bne", 0xB: "bh", 0x6: "blt", 0xE: "bge"}.get(
-                hw & 0xF, f"b?{hw & 0xF:x}")
+            m = {0x2: "be", 0x3: "bnh", 0xA: "bne", 0xB: "bh", 0x6: "blt",
+                 0xE: "bge", 0xF: "bgt"}.get(hw & 0xF, f"b?{hw & 0xF:x}")
             d = (((hw >> 11) & 0x1F) << 4) | (((hw >> 4) & 0x7) << 1)
             d -= 0x200 if d & 0x100 else 0
             m = f"{m} {d:+d}"
-        elif op6 in (0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3F, 0x31, 0x36):
+        elif op6 in (0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3F, 0x30, 0x31, 0x36):
             n = 4
             hw2 = struct.unpack_from("<H", raw, i + 2)[0]
             disp = hw2 - 0x10000 if hw2 & 0x8000 else hw2
             m = {0x39: "ld.h", 0x3A: "st.b", 0x3B: "st.h", 0x3C: "ld.bu", 0x3D: "ld.bu",
-                 0x3F: "ld.hu" if hw2 & 1 else "ld.w", 0x31: "movea", 0x36: "andi"}[op6]
-            if op6 in (0x31, 0x36):
+                 0x3F: "ld.hu" if hw2 & 1 else "ld.w", 0x30: "addi", 0x31: "movea",
+                 0x36: "andi"}[op6]
+            if op6 in (0x30, 0x31, 0x36):
                 m = f"{m} 0x{hw2:04x},r{reg1},r{reg2}"
             else:
                 eff = ((disp & ~1) | (op6 & 1)) if op6 in (0x3C, 0x3D) else disp
@@ -850,8 +960,12 @@ def redisassemble_cave(raw, base=CAVE_BASE):
             n, m = 2, f"cmp 0x{imm5:x},r{reg2}"
         elif op6 == 0x16:
             n, m = 2, f"shl 0x{imm5:x},r{reg2}"
+        elif op6 == 0x0C:
+            n, m = 2, f"subr r{reg1},r{reg2}"      # 🛑 reg2 = reg1 - reg2
         elif op6 == 0x0D:
-            n, m = 2, f"sub r{reg1},r{reg2}"
+            n, m = 2, f"sub r{reg1},r{reg2}"       # 🛑 reg2 = reg2 - reg1
+        elif op6 == 0x0F:
+            n, m = 2, f"cmp r{reg1},r{reg2}"
         elif op6 == 0x08:
             n, m = 2, f"or r{reg1},r{reg2}"
         elif hw == 0x007F:
@@ -868,7 +982,7 @@ def main():
     print("  V76 -- RE-CUT ON THE V38 BASE. Supersedes V76 / V77 / V77B.")
     print("=" * 102)
     assert TABLE_SOURCE.startswith("TableDesign-validated"), TABLE_SOURCE
-    assert PROBE_SOURCE.startswith("ProbeDesign-core-3"), PROBE_SOURCE
+    assert PROBE_SOURCE.startswith("operator COMBO B"), PROBE_SOURCE
     assert len(OUT) < 250, \
         f"the .rwd path is {len(OUT)} chars -- Windows' 260 limit would truncate it"
 
@@ -883,6 +997,7 @@ def main():
     _check_wire_model()
     n_pins = assert_pins(base, "V38 base")
     assert_no_aliasing(base)
+    assert_untouched_surfaces(base, base, "V38 base")
     assert_record_geometry(base, "V38 base")
     clamp, thresh, fric = assert_fault_interlock(base, "V38 base")
     assert_not_carried(base, "V38 base")
@@ -1044,6 +1159,7 @@ def main():
     assert bytes(dec[CAVE_BASE:CAVE_BASE + CAVE_EXTENT]).count(HOOK_STOCK) == 1, \
         "readback: the displaced `movea` is not replayed EXACTLY once in the cave"
     assert_no_aliasing(dec)
+    assert_untouched_surfaces(dec, base, "readback")
     assert_record_geometry(dec, "readback")
     rb_clamp, rb_thresh, rb_fric = assert_fault_interlock(dec, "readback")
     assert_not_carried(dec, "readback")
@@ -1088,9 +1204,15 @@ def main():
     print(f"  ★ mode 26 damper: FactorC Y -> {NEW_C26[1]}, FactorE X -> {NEW_E26[0]}, "
           f"Y -> {NEW_E26[1]}")
     print("  🛑 MODE 24 (manual) IS BYTE-STOCK -- asserted from the pointer arrays, twice.")
-    print(f"  ★ probe: bit{BIT_STATE5} state==5 (POSITIVE CONTROL) · bit{BIT_MODEIDX} mode&2 · "
-          f"bit{BIT_BCDIFF} |6bc6-6bc8|>5 · bits {BITS_HELD} ZERO BY CONSTRUCTION")
-    print("     Read bit3 FIRST: all-zero on bits 5:3 for a whole drive = the cave never fired.")
+    rel = ">=" if B26_INCLUSIVE else ">"
+    print(f"  ★ probe COMBO B: bit{BIT_FRICTION} |gp-0x6b26| {rel} {B26_THRESH} (friction margin) · "
+          f"bit{BIT_MODEIDX} mode&2 · bit{BIT_STATE5} state==5 (POSITIVE CONTROL)")
+    print(f"     bits {BITS_CLEAR} are STRUCTURALLY ZERO. Legal byte4 & 0xF8 = "
+          f"{sorted(hex(v) for v in LEGAL_PAYLOAD_HI)}")
+    print("     Any payload with byte4 & 0x60 != 0 is `state_impossible` -- an integrity failure.")
+    print("     Read bit3 FIRST: all-zero on bits 7,4,3 for a whole drive = the cave never fired.")
+    print(f"  🛑 The threshold is {B26_THRESH}, NOT 512: gp-0x6b26 clamps to +/-{rb_clamp}, so a "
+          f">=512 test could never fire.")
     print("  🛑 Flash ONLY on the operator's explicit instruction, naming the file and the bus.")
     return img_sha, rwd_sha
 
