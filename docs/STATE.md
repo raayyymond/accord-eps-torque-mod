@@ -76,9 +76,9 @@ debounce is the ~**0.1 s** accumulator inside each monitor (`gp-0x3564` / `gp-0x
 two** — the best structural match yet to the slew result. The `gp-0x6b98 == 0` leg is the **weakest**
 (it is a *sum* including an additive driver term, `FUN_00042af8`).
 
-🛑🛑🛑 **V77's STATUS IS UNDETERMINED — IT IS NOT CLEARED TO FLY, AND IT MAY BE A NULL EXPERIMENT.**
-Two of three monitor trip surfaces are **orchestrator-verified blind** to `0xC63A0`; a third is live
-**only if** an unresolved link holds. See "THE THIRD SURFACE" below — that link is the flash decision.
+🛑🛑🛑 **V77 IS A NULL EXPERIMENT FOR THIS FAULT CLASS — RESOLVED. DO NOT FLY IT EXPECTING A SAFETY
+RESULT.** **ALL THREE** monitor trip surfaces are structurally blind to `0xC63A0`, verified along three
+independent lines (see "THE THIRD SURFACE" below for the one that took three attempts to settle).
 
 [EVIDENCE, **orchestrator-verified in Ghidra**, not relayed.] Surfaces **A and B** feed fid 28/29 and
 **`0xC63A0` reaches neither**:
@@ -106,15 +106,28 @@ weight) → `gp-0x3540`/`gp-0x3550` → `FUN_000462e6(0x3f1b,…)` → **fid 29*
 cycle later in `FUN_00042af8` (`gp-0x3564`, +10/cycle, thr 100) → `FUN_0004613e` @`0x43D42` → **fid 28**.
 `fVar23` is built from `gp-0x4f64` + corridor tables `tp+0x71d4`/`tp+0x71d8`, **no Path-2 terms** ⇒ only
 the left side could move. **IF `0xC63A0` reaches `gp-0x6b98`, V77 has a real mechanism.**
-🛑 **THAT PREMISE IS DISPUTED AND UNRESOLVED.** It was justified by *"Path 2 closes through
-`gp-0x6b98`"* — **wrong direction**: `FUN_0003b8f6` *reads* `gp-0x6b98` back **into** Path 2, making it
-an **input**. A second tracer decompiled `FUN_00042af8` in full and reports `gp-0x6b94` (the
-aggregator's output) appears **nowhere** in its 1,424 lines — the governor runs on
-`gp-0x6afe`/`gp-0x6b08`/`gp-0x4f64`, i.e. `gp-0x6b98 = clamp(clamp(gate(gp-0x6afe) + uVar34))`.
-⇒ **THE ONE QUESTION: what writes `gp-0x6afe`, and does it carry `gp-0x6ad4`/`gp-0x6b94` (anything
-downstream of `0x381AC`)?** Unresolved at close of session. **Answer it before flashing V77.**
-⚠ Settle it by reading the body and following the binding — **NOT** by grepping the displacement.
-⚠ Not exhaustive: several further `FUN_0004613e`/`FUN_000462e6` callers untraced.
+✅ **RESOLVED — THE PREMISE IS FALSE, AND SURFACE C IS BLIND TOO.** It had been justified by *"Path 2
+closes through `gp-0x6b98`"* — **the wrong direction**: `FUN_0003b8f6` *reads* `gp-0x6b98` back **into**
+Path 2, making it an **input**, not an output. The forward trace:
+- **`gp-0x6afe` has exactly ONE writer program-wide** — `FUN_00042ac6` @`0x42ad6` (`st.h r15,-0x6afe,gp`),
+  a 6-line clamp/store: `gp-0x6afe = (param_1 + 0x2800 > 0x5000) ? 0x7fff : param_1`
+  [**orchestrator-verified** — decompiled directly; it reads nothing else]. Its sole caller is
+  `FUN_00026c80` @`0x277f6`, passing `sVar38 = clamp(iVar14, ±0x2800)`, accumulated **entirely inside
+  that function** from local stack buffers filled from mode-table constants.
+- `search_instructions` scoped to `FUN_00026c80`: **989 instructions, ZERO hits** for `6ad4`, `6b94`,
+  `6ad6`, `6b70`. Same scan over `FUN_00042af8` (1,769 instructions) for `uVar34`: **zero hits**,
+  independently reproducing the second tracer's full decompile.
+⊕ Real but non-decisive: `sVar38` is *also* stored to **`gp-0x6b4e`**, one of `FUN_00038148`'s six
+weighted inputs and a **sibling** of `gp-0x6bd0` ⇒ `gp-0x6afe` and the damper's Path-2 term share a
+common ancestor but run in **PARALLEL, not series**; `gp-0x6afe` bypasses `FUN_00038148` entirely.
+⇒ `gp-0x6b98 = clamp(clamp(gate(gp-0x6afe) + uVar34))` — **neither term carries anything downstream of
+`0x381AC`.** **ALL THREE SURFACES ARE BLIND. V77 cannot structurally prevent a Monitor-1/2 trip.**
+⚠ Not exhaustive: 8 further `FUN_0004613e`/`FUN_000462e6` callers (`FUN_00027b0a`, `FUN_00027802`,
+`FUN_00036388`, `FUN_00036c12`, `FUN_00041464`, `FUN_000365d2`, `FUN_00036d74`, `FUN_00041b8e`)
+untraced; none is in the Path-2 dataflow by name, but a fourth surface is not formally excluded.
+⚠ **This answer took the tracer three attempts** (structural NO → conditional YES → final NO). The
+YES rested on an unverified directional premise. Recorded because the *pattern* matters: a subagent
+reversing itself reads as diligence and is easy to accept unchallenged.
 ⚠ `0xC63A0`'s effect was in any case **confounded with damper liveness** across V72/V73/V74/V75 —
 V72/V73 carried 2048 without a manual fault, but their damper was structurally **zero**, so it was inert.
 

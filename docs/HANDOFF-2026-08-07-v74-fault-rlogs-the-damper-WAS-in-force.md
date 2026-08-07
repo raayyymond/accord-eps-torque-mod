@@ -324,7 +324,7 @@ finding (§4 — `FUN_00018738` trips on the *first* qualifying call for fid 28/
 un-debounced window is **precisely** what a large single-cycle transient trips. **Two independent
 lines of evidence — the on-car slew statistics and the ROM's monitor structure — converge.**
 
-### 🛑 A THIRD SURFACE was then found, and it flips the answer — CONDITIONALLY. **UNRESOLVED.**
+### A THIRD SURFACE was found, briefly looked like it flipped the answer - and does NOT. RESOLVED.
 
 The **original** Monitor 1 / Monitor 2 pair (`gp-0x3564` / `gp-0x3550`) is a *third*, distinct surface,
 and it does **not** compare `gp-0x6bd0` at all. It compares **`gp-0x6b98` — the merged command
@@ -339,24 +339,30 @@ comparison recurs one cycle later in `FUN_00042af8` (Monitor 1, `gp-0x3564`, +10
 → `FUN_0004613e` @`0x43D42` → **fid 28**. `fVar23` is built from `gp-0x4f64` and corridor tables
 `tp+0x71d4`/`tp+0x71d8` with **no Path-2 references**, so only the *left* side could move.
 
-⇒ **IF `0xC63A0` reaches `gp-0x6b98`, this surface is a live lever and V77 is NOT dead on arrival.**
+It would be a live lever **if** `0xC63A0` reached `gp-0x6b98`. **It does not.** RESOLVED:
+- **`gp-0x6afe` has exactly ONE writer program-wide** - `FUN_00042ac6` @`0x42ad6`
+  (`st.h r15,-0x6afe,gp`), six lines: `gp-0x6afe = (param_1 + 0x2800 > 0x5000) ? 0x7fff : param_1`
+  [**orchestrator-verified by direct decompile**; it reads nothing else]. Sole caller `FUN_00026c80`
+  @`0x277f6`, passing `sVar38 = clamp(iVar14, +/-0x2800)`, accumulated **entirely inside that
+  function** from local stack buffers filled from mode-table constants.
+- `search_instructions` scoped to `FUN_00026c80`: **989 instructions, ZERO hits** for `6ad4`, `6b94`,
+  `6ad6`, `6b70`. Same scan over `FUN_00042af8` (1,769 instructions) for `uVar34`: **zero hits** -
+  independently reproducing the second tracer's full decompile, which found `gp-0x6b94` absent from
+  all 1,424 lines.
 
-🛑🛑 **BUT THAT PREMISE IS DISPUTED AND UNRESOLVED, AND IT DECIDES THE FLASH.**
-The tracer justified it by citing *"Path 2 closes through `gp-0x6b98`"* — **that citation is about the
-wrong direction.** `FUN_0003b8f6` **reads** `gp-0x6b98` and feeds it back **into** Path 2, making it an
-**input**, not an output. For the lever to work, `0xC63A0` must reach it **forward**.
-A second tracer decompiled `FUN_00042af8` in full and reports the opposite: **`gp-0x6b94` (the
-aggregator's output) appears nowhere in its 1,424 lines**; the governor's sum runs on
-`gp-0x6afe` / `gp-0x6b08` / `gp-0x4f64`, i.e. `gp-0x6b98 = clamp(clamp(gate(gp-0x6afe) + uVar34))`.
-If so, the forward chain **dead-ends before `gp-0x6b98`** and all three surfaces are blind to `0xC63A0`.
+(+) **Real but non-decisive:** `sVar38` is *also* stored to **`gp-0x6b4e`**, one of `FUN_00038148`'s
+six weighted inputs and a **sibling** of `gp-0x6bd0`. => they share a common ancestor but run in
+**PARALLEL, not series** - `gp-0x6afe` bypasses `FUN_00038148` entirely, so `0xC63A0`'s multiply
+(which scales only `gp-0x6bd0`'s contribution to `gp-0x6b70`) never reaches it.
 
-**The single question that settles it: what writes `gp-0x6afe`, and does it carry `gp-0x6ad4`/`gp-0x6b94`
-(anything downstream of `0x381AC`)?** Dispatched; **unresolved at close of session.**
-🛑 **Until it is answered, V77's status is UNDETERMINED — neither cleared as a real lever nor confirmed
-as a null experiment.** Surfaces A and B remain blind to `0xC63A0` either way (orchestrator-verified);
-this third surface is the only route by which V77 could matter.
-⚠ Settle it by **reading the body and following the binding — NOT by grepping the displacement**
-(see §7.7).
+=> `gp-0x6b98 = clamp(clamp(gate(gp-0x6afe) + uVar34))` - **neither term carries anything downstream
+of `0x381AC`. ALL THREE SURFACES ARE BLIND; V77 is a null experiment for this fault class.**
+
+WARNING **This answer took the tracer three attempts** (structural NO -> conditional YES -> final NO),
+and the YES rested on an unverified directional premise: it cited *"Path 2 closes through
+`gp-0x6b98`"*, but `FUN_0003b8f6` **reads** `gp-0x6b98` back **into** Path 2, making it an **input**,
+not an output. Recorded because the *pattern* matters: **a subagent reversing its own earlier finding
+reads as diligence and is easy to accept unchallenged.**
 
 ⚠ **Not exhaustive:** several further `FUN_0004613e`/`FUN_000462e6` callers (`FUN_00027b0a`,
 `FUN_00027802`, `FUN_00036388`, `FUN_00036c12`, `FUN_00041464`, `FUN_000365d2`, `FUN_00036d74`,
