@@ -5,7 +5,14 @@ metadata:
   type: reference
 ---
 
-🛑🛑 **THE `tp+0x74a4` TRAP — MADE TWICE NOW, AND IT NEARLY CLOSED THE ONLY SURVIVING CANDIDATE.**
+> 🛑🛑 **UPDATE 2026-08-06 — THIRD OCCURRENCE.** The same off-by-`0x1000` was made again this session
+> and caught again by the orchestrator's own byte read. **Re-verified this session:
+> `0xC64A4 = 0x00` on STOCK, V74 AND V75 ⇒ Monitor 2 is ARMED in every build.** The wrong address
+> `0xC74A4` reads `0xEA` and falsely says "gated off." Fix it in place wherever it appears; it is now
+> one of four errors this rule caught in a single session
+> ([[feedback-verify-the-crux-yourself-it-caught-four-errors]]).
+
+🛑🛑 **THE `tp+0x74a4` TRAP — MADE THREE TIMES NOW, AND IT NEARLY CLOSED THE ONLY SURVIVING CANDIDATE.**
 
 `FUN_00043e44`'s gate at `0x44950` is `ld.bu 0x74a4[tp],r11`. With **`tp = 0xBF000`**:
 ```
@@ -67,6 +74,13 @@ post-clamp pipelines transiently disagree.
 (`0xC6202`), openpilot's own amplitude rail **4096** (= 86% of it), **16.07% of engaged time already sits
 against an openpilot rail**, and a relay sign-flip injects **594 counts (V75) / 450 (V74)** on top.
 **A stoplight launch with openpilot holding the lane is the maximum-demand, minimum-speed corner.**
+
+🛑 **CORRECTED 2026-08-06 — that sizing is REFUTED.** On route `5e` the **faulting launch was the
+MILDEST of four**: launch #2 sat on the ±4096 rail **76 %** of its window and drove the damper to a
+*higher* bracket without faulting, and launch #4 had **0.00 % rail contact**. ⇒ **magnitude and rail
+contact are not the discriminator, and every magnitude-based mechanism — including this one — is dead
+as an explanation.** See [[accord-v75-fault-pinned-to-the-frame]]. What survives of this section is the
+*structure* (pre- vs post-clamp equality, the edge-vs-dwell argument), not the amplitude story.
 
 ✅ **`gp-0x6dac` is CLOSED and is NOT the path** [EVIDENCE, two methods — `search_instructions` over
 183,429 instrs **and** a raw whole-1 MB LE byte scan]: exactly 1 writer / 1 reader.

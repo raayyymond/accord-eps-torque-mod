@@ -13,7 +13,13 @@ When reasoning about the ~21 Hz LKAS vibration, keep two categories strictly sep
 - r26 adaptive rate lane — V42 (Change 2).
 - `FUN_0003a382` Stage C / dirty-derivative pole `0xC644A` (1024→32) — V43.
 - `FUN_0003a382` Stage A pole `0xC6450` (1024→32, "~4.8 Hz low-pass") — V46.
-- hands-off damping (Factor C, V44; Factor C+E, V47).
+- ~~hands-off damping (Factor C, V44; Factor C+E, V47).~~ 🛑 **STRUCK 2026-08-06 — STALE AND VOID UNDER
+  RULE 7.** V44 and V47 wrote **modes 10/11** on a **modes-24/26** car
+  ([[reference-accord-car-is-tvca4-mode-24-26]], [[accord-damper-is-mode-table-selected]]) ⇒ their edits
+  were **never in force**; the nulls are **UNINTERPRETABLE, not falsifications.** **The FactorC/FactorE
+  damping approach was never actually tested until V74** — which then measured a real, band-specific
+  dose-response ([[accord-damper-fixes-the-grind-but-is-flat-on-the-ratchet]]). Do **not** cite V44/V47
+  to block a damper lever.
 These are REAL falsifications — do not re-propose them. ⚠ **`0xC6450` and `0xC644A` are BOTH dead**: the
 `FUN_0003a382` → `gp-0x6ad4` "resonance lane" was tested via BOTH its poles and neither moved the vibration.
 (A 2026-07-24 backward-chain trace `foc-backward-map` mis-ranked `0xC6450` as a "genuinely new, untouched"

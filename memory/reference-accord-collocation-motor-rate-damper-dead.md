@@ -5,8 +5,23 @@ metadata:
   type: reference
 ---
 
-**★ The keystone that explains why every damper build (V44, V47) failed on-car — and closes that
-direction for good.**
+> 🛑 **CORRECTION 2026-08-06 — THE EMPIRICAL LEG IS GONE; ONLY THE THEORY REMAINS.** This memory's
+> headline evidence was *"V44 and V47 nulls are this theorem confirmed on-car."* **They are not.** V44
+> and V47 wrote **modes 10/11** on a **modes-24/26** car ⇒ their damper edits were **never in force**
+> and their nulls are **UNINTERPRETABLE, not falsifications** —
+> [[accord-damper-is-mode-table-selected]], [[reference-accord-car-is-tvca4-mode-24-26]],
+> [[feedback-rule7-mode-proof-or-a-bet]].
+>
+> **The first build that actually delivered damping was V74**, and it measured a real, band-specific
+> dose-response: **18–22 Hz slope −0.599 [−0.856, −0.348] — the CI EXCLUDES ZERO**
+> ([[accord-damper-fixes-the-grind-but-is-flat-on-the-ratchet]]). ⇒ **"you cannot damp this mode from
+> the motor-rate sensor at any gain" is CONTRADICTED on-car for grind #1.** The collocation argument may
+> still explain *why the required gain is large*, but it can no longer be cited to close the direction.
+> ⊕ What DOES survive empirically: the damper is **flat on the 6–9 Hz micro-ratchet** (−0.089 [−0.350,
+> +0.163], CI includes zero) — so the "wrong sensor for this mode" reading holds **there**, not at 21 Hz.
+
+**★ ~~The keystone that explains why every damper build (V44, V47) failed on-car — and closes that
+direction for good.~~** (See the correction banner: V44/V47 never delivered, and V74 did.)
 
 The ~21.4 Hz steering vibration is a **two-inertia torsional mode**: assist motor/rack inertia
 oscillating against steering-wheel/column inertia, with the **torsion bar (= the torque sensor) as the
@@ -29,8 +44,12 @@ the other side of the torsion bar.**
   velocity sensor at any gain.**
 
 **Consequences (load-bearing):**
-1. **STOP tuning the motor-rate damper for the vibration.** V44 (Factor C) and V47 (Factor C + Factor E,
-   aggressive) nulls are this theorem confirmed on-car — not bad luck. Do not spend another flash there.
+1. ~~**STOP tuning the motor-rate damper for the vibration.** V44 (Factor C) and V47 (Factor C + Factor E,
+   aggressive) nulls are this theorem confirmed on-car — not bad luck. Do not spend another flash there.~~
+   🛑 **RETRACTED 2026-08-06** — V44/V47 were **mode-inert** and never tested the lever; V74 did, and the
+   18–22 Hz dose-response **excludes zero**. The damper direction is **open for grind #1** and closed
+   only for the 6–9 Hz micro-ratchet (where the required `k` = **4.2–13.5** against a **1.5798** that
+   hard-faulted).
 2. Corroboration: the voter `gp-0x6a5e` that Factor C keys on is too slew-limited to even track 21 Hz
    (max trackable ≈ 4.6–45 counts vs the 2240 gate) — so that factor sees DC hand torque, not the ripple.
 3. The loop-gain model quantifies it: **bare-plant Q≈1.7, but the 4× gain drives the derivative

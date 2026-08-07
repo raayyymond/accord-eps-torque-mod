@@ -1,6 +1,8 @@
 # Firmware Codepath Tracer — Memory Index
 
 ## V75 stoplight-launch incident (gp-0x6bd0 / FUN_00034350 / FUN_000347b8 cluster)
+- [🛑🛑🛑★★★ Path 2 closes through gp-0x6b98 ITSELF (FUN_0003b8f6, one-tick-delayed), NOT just the plant — corrects the V77 gate2 topology note; 0xC63A0 fully sized (single reader, no float mirror, -6.02dB exact reverting 2048→1024, zero phase, doesn't touch Path 1)](reference_accord_path2_is_a_real_closed_loop_via_gp6b98_and_0xc63a0_sizing.md).
+- [🛑🛑🛑★★ ACTUAL DTC READ decoded: 0xF00049 (0x1c/0x1d's group) BYTE-IDENTICAL to a pre-V21 baseline capture; 0xD48394 change traced to a documented V36-era (2026-07-14) event, structurally dead since V37; group-status is a PRIORITY-SELECTED single representative, not an OR — masking caveat open](reference_accord_v75_dtc_read_interpretation_and_group_status_mechanism.md).
 - [🛑🛑★★ Full hard-shutdown map: gain-collapse actuator (ch0 not ch3), 6 shadow pairs, NEW undebounced FUN_00045a20, per-DTC latch table](reference_accord_hard_shutdown_full_map_v75_incident.md).
 - [🛑🛑★★ gp-0x6bd0 census: 5 readers/3 writers; enters gp-0x6b98 TWICE (direct ±2048 lane + FUN_00038148→gp-0x6b70→FUN_00037fe6→gp-0x6ad6→FUN_0003a382)](reference_accord_gp6bd0_full_reader_enumeration_and_dual_path.md).
 - [🛑🛑★★ monitor=int/float clamp-shadow FUN_00034350(0x4179)/FUN_000347b8(0x417a)→DTC 0x1c/0x1d, not gated by 0xC74A4, ±5/1024 tolerance on the CLAMP not a magnitude limit](reference_accord_gp6bd0_shadow_faultpath_0x4179_0x417a.md); [N=1@100Hz debounce, sizing superseded below](reference_accord_gp6bd0_damper_own_ceiling_consistency_monitor_fun347b8.md).
@@ -12,6 +14,8 @@
 - [🛑🛑★★ gp-0x6ac2 (ceiling index)=BACK-DRIVE RATE, sign-gated vs gp-0x6b98, ZERO when motor moves WITH command — not a gp-0x6ac0 twin](reference_accord_gp6ac2_is_backdrive_rate_not_gp6ac0_twin.md)
 - [🛑🛑★★ Monitor1(FUN_00042af8 int)/Monitor2(FUN_00043e44 float) full accumulator mechanics: corrects a same-session Monitor-2-gate off-by-0x1000 error (0xC64A4=0x00 LIVE, not 0xC74A4); charge:leak=2:1 in BOTH monitors, break-even duty=1/3 exact; sign-alternation does NOT cancel; no min-duration gate](reference_accord_monitor1_monitor2_full_accumulator_mechanics_v75.md).
 - [🛑★★ gp-0x6dac producer CLOSED: driver hand-torque-sensor consistency-vote byproduct (FUN_00027b0a→FUN_00042adc), 1w/1r confirmed by raw whole-image byte scan — structurally UNRELATED to gp-0x6bd0/relay, closes one of Monitor 2's fVar23 terms](reference_accord_gp6dac_producer_closed_driver_torque_not_relay.md).
+- [🛑🛑★★ DTC 0x18 requires a PRIOR MCU RESET to raise at all — FUN_00014b3e (4-task liveness) does NOT call the DTC chain; FUN_00014ba0 does, gated behind state-1/reset-cause-NVM-read, not live-trippable mid-cycle](reference_accord_dtc18_requires_prior_reset_not_live_trippable.md).
+- [🛑🛑★★ V74↔V75 cave: 15instr/18cy vs 28instr/35cy worst-case (+17cy≈212ns@80MHz) — 4-5 orders of magnitude below any DTC-0x18 window; cave EXONERATED on timing AND structural grounds](reference_accord_v75_cave_timing_refutes_cadence_watchdog.md).
 
 ## Other high-signal
 - [gp+0x6408 config-key: UDS-only writer, boot-populate path open](reference_accord_config_key_gp6408_udsonly_writer_bss_no_boot_populator.md).

@@ -191,8 +191,10 @@ EXECUTION MODEL
                  zero-order hold costs 37.6 deg average / 75.2 deg worst-case transport lag at 20.9 Hz
                  BEFORE any plant phase. Damping needs force in phase with velocity => the damper
                  structurally cannot damp the 20.9 Hz mode, and may be ANTI-damping there. That is an
-                 explanation for every null damper lever (V44 FactorC; V47 FactorC+FactorE together,
-                 byte-verified as a genuine simultaneous test) INDEPENDENT of the FactorC speed axis,
+                 explanation for every null damper lever (V44 FactorC; V47 FactorC+FactorE together --
+                 🛑 CORRECTED 2026-08-06: both wrote modes 10/11 on a modes-24/26 car, so they were
+                 INERT BY TABLE SELECTION and their nulls carry no information about this at all)
+                 INDEPENDENT of the FactorC speed axis,
                  and a candidate reason the damping-SIGN question flip-flopped for four sessions: a
                  sign correct by construction can still act with the wrong phase when it is refreshed
                  10x slower than the mode. It also invalidates V59's eps table, which bracketed 1 kHz
@@ -942,6 +944,20 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # speed; 0 frames reached the ceiling. 🛑 The ~43 requirement is TORSION-BAR counts and this is AGGREGATOR
 # counts -- still unconverted. ⚠ A (speed, column-rate) model reproduces bit7 on 91.240% of frames with a
 # one-way residual (under-predicts), so every modelled dose is a LOWER BOUND.
+#
+# 🛑🛑🛑 AND V74 HARD-FAULTED (2026-08-06): a latched total loss of power steering, LKAS DISENGAGED, over
+# a bump -- and these edits were NOT IN FORCE when it did. [EVIDENCE, verified two ways] disengaged is
+# MODE 24, and all five mode-24 damper records are BYTE-IDENTICAL TO STOCK on V74 and V75 (FactorC
+# 0xD67E4, FactorE 0xD6820, FactorB 0xD6760, FactorD 0xD67A4, ceiling 0xD60B4), and 0 of the 54 non-CRC
+# V73->V74 diff runs lands inside a mode-24 record. ⇒ a MANUAL fault can only come from the MODE-PROOF
+# residue, not from this lane's dose, and on V74 that residue included 0xC63A0 = 2048 (end of section).
+# 🛑 k* in (0.580, 1.580] is VOID: it was fitted from "V74 flew clean" + "V75 faulted", and V74 did not
+# fly clean. No build in the current lineage has demonstrated safety. V75 then hard-faulted too.
+# ★★★★ DOSE-RESPONSE over V72 (k=0) / V73 (k=0) / V74 (k=0.5799) / V75 (k=1.5798): the 18-22 Hz slope is
+# -0.599 [-0.856, -0.348] = -5.20 dB per unit k, CI EXCLUDES ZERO, while the 6-9 Hz slope is
+# -0.089 [-0.350, +0.163], CI INCLUDES ZERO -- FLAT.
+# ⇒ THE DAMPER FIXES THE GRIND AND CANNOT FIX THE MICRO-RATCHET: the ratchet needs k = 4.2-13.5 against
+# the 1.5798 that faulted, so stop sizing this lane for it.
 #     FUN_00036c12 -> gp-0x6b26   speed-LERP x gp-0x6c2c motor-rate-deriv, LINEAR [friction comp]
 #     FUN_0003a382 -> gp-0x6ad4   UNFILTERED residual lane (2 passthroughs + a raw derivative)
 #     FUN_00036388 -> gp-0x6b62   slow +/-1/tick accumulator w/ hysteresis       [return-to-centre]
@@ -950,6 +966,26 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #     inline r26   <- gp-0x4f62 x avg(gp-0x69a4) x generated Q10 gain             [VERIFIED torque-rate]
 #     FUN_00036682 -> filtered Sensor-B term, final slow IIR (6/1024)              [role OPEN]
 # Bracketed roles are [INFERRED] from structure; addresses/plumbing are [VERIFIED].
+#
+# ★★★★ gp-0x6bd0 REACHES THE MOTOR TWO WAYS, AND ONLY ONE OF THEM DELIVERS THE DAMPING (2026-08-06).
+#   PATH 1 = FUN_0003aa2c, the aggregator above: UNITY weight, ZERO phase -- this is the damping.
+#   PATH 2 = FUN_00038148 stage 1: six gated terms, plain ADD, each (x * gate * w) >> 10, with weights
+#     tp+0x73a0/a2/a4/a6/a8/aa == 0xC63A0/A2/A4/A6/A8/AA.
+#   The gates are ZEROING, not clamping (out of window contributes 0); gp-0x6bd0's is |x| <= 2048.
+#   Stage 1's sum is then x polarity x tp+0x7468 (0xC6468 = 2639) >> 10, then a 1 kHz IIR with
+#   tp+0x73ac (0xC63AC = 102) => corner 16.70 Hz, then stage 2 -> gp-0x6b70 -> FUN_00037fe6 ->
+#   gp-0x6ad6 -> FUN_0003a382 (the PID) -> the aggregator -> gp-0x6b98.
+# 🛑 PATH 2 IS A CLOSED LOOP INSIDE THE FIRMWARE: gp-0x6b98 re-enters via FUN_0003b8f6 one sample later.
+#   [OPEN] the re-entry term's own gain and phase are UNQUANTIFIED, and 0xC63A0 does NOT touch them, so
+#   reverting the weight lowers the forward gain only -- the highest-value next trace.
+# ★★ 0xC63A0 IS THE DAMPER'S PATH-2 WEIGHT: stock 1024, V72 set 2048, and NO build reverted it until V77
+#   (V77/V77B -> 1024 = -6.02 dB, zero phase, zero cost to Path 1).
+#   It is MODE-PROOF -- a bare tp scalar reached without an index -- so it is live in MANUAL as well as
+#   ENGAGED (RULE 7), and it has 1 reader (0x381AC), 0 writers, no monitor and no float mirror.
+#   It is the odd one out of the six siblings (all stock 1024) and the only one any build ever moved.
+#   ⚠ It was only FUNCTIONALLY ARMED AT V74: gp-0x6bd0 was 0 at creep on every build through V73 and
+#   2 x 0 = 0, so V74 -- which opened both dead zones -- is the first build whose doubled weight carried
+#   signal, and the first to hard-fault. [EVIDENCE: plumbing, byte lineage, arming | BELIEF: causal link]
 # -----------------------------------------------------------------------------------------------------
 
 # [VERIFIED, byte-dumped] mode-indexed assist tables, selector = byte at gp+0x63fd (0xFEDFE3FD, NOT the
@@ -2097,11 +2133,14 @@ def vibration_hands_off_analysis(cal: Calibration) -> dict:
     target, whose STEP is driver-torque-gated (see governor_step_selector_bandwidth()) -- this
     survives the gain-rescaling invariance argument because it is sourced from a PHYSICAL sensor
     reacting to REAL delivered torque (which scales 4x with V38), not a digital replay. ROOT CAUSE
-    [CONFIRMED, V44 restored damping]: the base-assist DAMPING lane FUN_00034350->gp-0x6bd0 is
+    [🛑 CORRECTED 2026-08-06: this read "[CONFIRMED, V44 restored damping]" and that is VOID under RULE 7
+    -- V44 and V47 wrote modes 10/11 on a modes-24/26 car, so neither table was ever read and neither
+    restored anything; they are INERT BY TABLE SELECTION, not falsified, and the FactorC/FactorE approach
+    was not actually tested until V74]: the base-assist DAMPING lane FUN_00034350->gp-0x6bd0 is
     multiplied by a Q10 factor that is exactly ZERO below 2240 counts of driver torque (hands-off), and
     the firmware has no notch filter anywhere, so the resonance rings undamped hands-off and is damped
-    hands-on -- V44 raises that floor; V47 additionally raises a second independent hands-off deadzone
-    (motor-rate Factor E). Eliminated as causes, on-car: r24 (V39), r26 (V42), the dirty-derivative
+    hands-on -- V44 targeted that floor and V47 additionally targeted a second independent hands-off
+    deadzone (motor-rate Factor E), both at the wrong mode. Eliminated as causes, on-car: r24 (V39), r26 (V42), the dirty-derivative
     pole (V43), the governor slew-step selector (V45), and the FUN_0003a382 Stage A carrier filter
     (V46). Eliminated analytically: the soft-EME wall/boost-latch oscillator (cannot bootstrap under
     LKAS-alone) and the governor's thermal/energy budget term (structurally unreachable). NOTE this
@@ -2147,15 +2186,18 @@ def vibration_hands_off_analysis(cal: Calibration) -> dict:
             "provably unreachable (2026-07-21); RELABELED motor-rate-adaptive total-command ceiling, "
             "does not bind at the resonance's own ~139-count amplitude",
         ],
-        "leading_candidate": {
+        "voided_candidate_v44_v47": {
             "name": "base-assist DAMPING lane FUN_00034350 -> gp-0x6bd0, BOTH hands-off deadzones "
                      "(Factor C driver-torque LERP Y[0], Factor E motor-rate LERP Y[0])",
-            "edit": "V44 opened only Factor C (0xD27C6/0xD27DA 0->235/234); V47 additionally raises "
+            "edit": "V44 opened only Factor C (0xD27C6/0xD27DA 0->235/234); V47 additionally raised "
                     "Factor E's low breakpoints (0xD2802/04/06 mode 10, 0xD2816/18/1A mode 11 -> "
-                    "700/750/800) so the damper is live at low motor rate too, not just high driver "
-                    "torque -- see assist_shaping_lanes()'s FUN_00034350 factor breakdown",
-            "status": "[VERIFIED] both deadzones + table contents; [INFERRED] as sufficient cause; "
-                      "V47 BUILT + verified, UNFLASHED (current candidate, 2026-07-21)",
+                    "700/750/800) -- both MODE 10/11 records on a modes-24/26 car",
+            "status": "🛑 VOID UNDER RULE 7 (2026-08-06): this entry used to read 'leading_candidate' "
+                      "with V47 as the current candidate. Neither V44 nor V47 was ever read by the car "
+                      "-- INERT BY TABLE SELECTION, not falsified. The FactorC/FactorE approach was "
+                      "first genuinely tested at V74 (engaged columns of all 16 rows), which measured "
+                      "the damper live (67.4% duty at engaged creep) and then HARD-FAULTED in MANUAL, "
+                      "where its records are byte-stock -- see SECTION 3B",
             "see": "assist_shaping_lanes()",
         },
         "elimination_downgraded": "motor torque ripple -- the damping confound, see docstring",

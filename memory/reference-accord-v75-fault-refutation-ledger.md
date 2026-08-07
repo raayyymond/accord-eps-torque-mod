@@ -37,12 +37,24 @@ The deduction: since a dwell rule would have latched V74 repeatedly and did not,
 where the builds diverge **8.1×** rather than the **1.32×** magnitude that killed mechanisms 1–5.
 **Not numerically closed** — needs the aggregate command's headroom-to-clamp at a transition.
 
-🛑 **THE VALIDATION GAP, and it generalises.** **Route 5d contains ZERO engaged stoplight stops** — 12 full
-stops, 343.5 s stopped, `latActive` = 0.000 in every one. So every check V75 passed (the 98,988-point
-grid, the 101,118-frame observed-envelope replay, peak-354) ran on telemetry that **structurally could not
-contain the regime that faulted.** ⇒ **RULE 8's observed-envelope check is only ever as good as the
-envelope, and a route's own flight-instruction shortfall is a hole in the SAFETY argument, not just in the
-measurement.** The flight instruction had already recorded that route 5d lacked stop-and-go.
+⚠ **THE VALIDATION GAP — RESTATED 2026-08-06; the original wording overclaimed.** ~~Route 5d contains
+ZERO engaged stoplight stops ⇒ it structurally could not contain the faulting regime.~~ **True only for
+*engaged while STOPPED*** (0.0 s — 12 full stops, 343.5 s stopped, `latActive` = 0.000 in every one).
+**Route 5d DOES contain 5–6 engaged stoplight LAUNCHES** (two independent counts). ⇒ **V74 FLEW the
+faulting regime and did NOT fault** — which **strengthens** the V74/V75 contrast rather than voiding it.
+
+What survives, in its honest form: **RULE 8's observed-envelope check is only ever as good as the
+envelope**, and a route's flight-instruction shortfall is a hole in the SAFETY argument, not just in the
+measurement. But the specific "could not contain the regime" escape hatch is **closed** — the regime was
+there.
+
+🛑🛑 **AND THE LEDGER'S ANCHOR HAS SINCE COLLAPSED.** *"V74 flew 1,011 s clean"* is **no longer a safety
+anchor** — **V74 hard-faulted in MANUAL, over a bump, on 2026-08-06**, with its FactorC/FactorE edits
+**not in force** (mode 24 is byte-stock). See
+[[accord-v74-hard-faulted-in-manual-over-a-bump]]. ⇒ every dwell/duty refutation below that reads *"V74
+did X and never faulted"* is weakened accordingly, and **`k* ∈ (0.580, 1.580]` is VOID**.
+⊕ Mechanism 6's magnitude framing is separately dead: **the faulting launch was the MILDEST of four**
+([[accord-v75-fault-pinned-to-the-frame]]).
 
 ⚠ **GATE 2 was never run for this edit**, and the kit's own memory flagged it
 (`reference-accord-factore-x1-is-the-free-dose-lever.md`: *"The tradeoff is PHASE, not magnitude … that is
@@ -51,6 +63,10 @@ a GATE 2 question and cannot be settled from a log"*). Same structural gap as V4
 ⚠ **n = 1.** The fault has been observed once. Correlation with the flash is strong but a single event
 cannot exclude an unrelated cause.
 
-✅ **The decisive outstanding measurement is a DTC read** — `flashing-2020accord/eps-read-dtcs.py`,
-UDS `19 02 FF`, bus 1, `0x18DA30F1`/`0x18DAF130`; proven on this ECU (a real `0xF00049 confirmedDTC`
-capture exists from the V24 era). Fallback `22 48 01`. **Requires operator confirmation of the payload.**
+~~✅ **The decisive outstanding measurement is a DTC read**~~ — 🛑 **WITHDRAWN 2026-08-06: the DTC read
+is STRUCTURALLY BLIND here.** `0xF00049` is a catch-all shared by ~42 fault_ids, its UDS status is **not**
+an OR across members (a priority pick from a **RAM** log the power cycle clears, falling back to fid 4,
+a power-on self-test), and `0x23 ReadMemoryByAddress` is **not implemented** on this ECU (NRC `0x11`,
+three eras). See [[accord-dtc-read-is-structurally-blind-here]]. The discriminating instrument is a
+probe-cave bit on the descriptor word — [[accord-descriptor-bit13-is-the-fault-fingerprint]].
+🛑 Any live CAN/UDS send still requires explicit operator confirmation of the exact payload.

@@ -29,9 +29,26 @@ Each node holds **`0x8000` (Q15 unity = full LKAS authority) or `0` (cut)**.
 ```
 authority=0 → demand=0 → `gp-0x6b98`=0 → motor torque removed → self-aligning torque returns wheel to center = **the snap**. **Any single SM** zeroing its node is sufficient.
 
-## Cut is INSTANT, recovery is RAMPED [V — Agent B @0x439d8-0x439ea]
+## Cut is INSTANT, recovery is RAMPED — and 🛑 **IT CANNOT LATCH** [V — Agent B @0x439d8-0x439ea; recovery branch re-decompiled 2026-08-06]
 
 At the slew stage, a node value of 0 is **detected and BYPASSES the slew** → the gate snaps to 0 in one tick (the abrupt cut). The opposite direction (re-engage) ramps back up through slew step **`sp+0x38`** — this is the ~10 s ratchet recovery. (`sp+0x38` is a caller-passed stack value, not yet mapped to a cal address — see TODO.)
+
+> 🛑 **CORRECTION 2026-08-06 — THE SM1/SM2/SM3 CUT CANNOT LATCH.** [EVIDENCE, fresh decompile] the
+> authority-node **recovery branch is a single fixed-step rise with NO bypass condition**, regardless of
+> which SM caused the cut ⇒ **it self-clears, always.** Any claim that this mechanism produces a
+> *latched* loss of power steering — including as a candidate for V74's or V75's hard fault — is
+> **wrong**; a latch requires the DTC-eligibility chain
+> ([[reference-accord-monitor2-corridor-and-the-c64a4-trap]],
+> [[accord-descriptor-bit13-is-the-fault-fingerprint]]).
+>
+> ⊕ **`gp-0x3570` is a PURE UNATTENUATED INTEGRATOR** — it adds the **entire** `(cmd − bound)` every
+> 1 kHz cycle, **not** ¼ per cycle. A sustained **100-count excess arms SM2 in 153 ms**. Any dwell-time
+> reasoning built on a ¼-per-cycle tracker is void.
+>
+> ⊕ **Measured near-inert on-car:** V54 read authority **≤ 119 over 5,989 frames** against a **3,073**
+> knee — see [[reference-accord-v54-flashed-authority-is-zero-by-design]]. And **boost-floor margin
+> erosion is REFUTED as the V75 cause** (margin **+215** clamp-sum / **+481** realized, never crossing
+> zero).
 
 ## The arming threshold is the whole story for "why 2×-only" [V — Agent C]
 

@@ -5,6 +5,15 @@ metadata:
   type: project
 ---
 
+> 🛑 **BANNER 2026-08-06 — the DAMPER half of this record is VOID under RULE 7.** V44 and V47 wrote
+> **modes 10/11** on a **modes-24/26** car ⇒ the Factor C / Factor E edits were **never in force**; any
+> V47-derived damper null is **UNINTERPRETABLE, not a falsification**. The damper approach was **not
+> actually tested until V74**, which measured a real 18–22 Hz dose-response
+> ([[accord-damper-fixes-the-grind-but-is-flat-on-the-ratchet]],
+> [[accord-damper-is-mode-table-selected]], [[feedback-rule7-mode-proof-or-a-bet]]).
+> The **V46 / lever-A** half of this record is unaffected — `0xC6450` was mode-proof and is validly
+> falsified.
+
 In-flight build state as of 2026-07-21 (supersedes the V44/V45 candidate state).
 
 - **V46 FLASHED → vibration unchanged → LEVER A FALSIFIED.** V46 = V38 + ratchet + Stage A carrier

@@ -24,9 +24,87 @@ then `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
 
 ---
 
-★★★★★ **THE HEADLINE, 2026-08-06 (LATEST): V75 FLEW, FIXED THE AUDIBLE GRIND #1 — AND HARD-FAULTED THE
+★★★★★ **THE HEADLINE, 2026-08-06 (LATEST, late): V74 ALSO HARD-FAULTED — IN MANUAL, OVER A BUMP, WITH THE
+FACTOR C/E EDITS BYTE-STOCK IN THE ACTIVE MODE. THE FAULT CLASS IS NOT A DAMPER-DOSE PROBLEM, `k*` IS VOID,
+AND NO BUILD IN THIS LINEAGE HAS DEMONSTRATED SAFETY.**
+
+🛑🛑🛑 **SAFETY: TWO HARD FAULTS IN TWO DAYS, ON TWO DIFFERENT BUILDS.** V75 faulted engaged at a stoplight
+launch; **V74 faulted DISENGAGED, driving over a bump** — latched total loss of power steering, EPS lamp on
+continuously, still on after an engine restart, extinguished only after ~30 s of driving (textbook DTC
+maturation, and it matches the `gp-0x3ee8` state-8 force latch, which is **set once and never cleared anywhere
+in ROM**). V74 is on the car. **There is currently no build known to be safe.**
+
+★★★★★ **[EVIDENCE, verified two ways] THE FACTOR C/E EDITS WERE NOT IN FORCE WHEN V74 FAULTED.** Disengaged
+= **mode 24**, and all five mode-24 damper records are **byte-identical to stock** on V74 and V75 — FactorC
+`0xD67E4` `X=[2240,3840,5120,8960] Y=[0,234,429,908]`, FactorE `0xD6820` `X=[60,400,2500,4000] Y=[0,140,539,927]`,
+FactorB `0xD6760`, FactorD `0xD67A4`, Ceiling `0xD60B4`. Independently, **0 of the 54 non-CRC V73→V74 diff runs
+land inside any mode-24 record.**
+🛑🛑 ⇒ **`k* ∈ (0.580, 1.580]` IS VOID** and *"V74 flew 1,011 s clean"* is no longer a safety anchor. Every
+gain-margin argument below inherited from it and must be read with that in mind.
+
+★★★★ **THE ONE MECHANISM THAT CAN EXPLAIN A MANUAL FAULT: `0xC63A0`.** `tp+0x73a0 = 0xBF000+0x73A0`, u16 Q10,
+one of **six sibling weights** at `0xC63A0..0xC63AA` in `FUN_00038148`'s stage-1 sum — **all stock 1024, and it
+is the ONLY one any build has ever moved** (V72 → **2048**, never reverted until V77). It is a **bare `tp`
+scalar, mode-proof, live in manual AND engaged**, with 1 reader (`0x381AC`), 0 writers, **no monitor and no
+float mirror** (two-method null). It weights the damper output `gp-0x6bd0` into **Path 2**, which is a **closed
+feedback loop inside the FIRMWARE** — `gp-0x6b98` re-enters one sample later via **`FUN_0003b8f6`** (`0x2240e`,
+before the governor at `0x229ce`). Reverting it is **−6.02 dB, zero phase, and costs nothing on Path 1**
+(`FUN_0003aa2c`, unity weight — the lane that actually delivers the damping).
+⚠ It was only *functionally* armed at V74, when the damper it weights first became non-zero at creep.
+⚠ **n = 1**: V72/V73 carried the same value and manual configuration without a manual fault.
+🛑 **`0xC63A0` does NOT touch the `gp-0x6b98` re-entry term, which may dominate. OPEN, highest-value next trace.**
+
+✅ **BUILT: V77 = V74 base + `0xC63A0` 2048→1024, single variable.** `V74→V77 = 2 runs / 5 bytes`
+(`0xC63A1` `08`→`04` + `0xC6FFC` CRC). rwd `fd8db4e2ed140035782a55b2e6808bcf87a0ea85692cbe547960a13de1cfc8c5`,
+image `a0f7c09c038931cabc419ccf79d4bb9819e647e88c0fb817ebc23cd44d102782`. **V77B** = same revert on the V75 base
+(rwd `f2c2dc0b…`, image `acbc2187…`) — **UNFLASHED, NOT RECOMMENDED.** 🛑 **Neither is clearance to fly. V77 is a
+hypothesis test, not a known-good.**
+
+★★★★ **V75's FAULT IS PINNED TO ONE 100 Hz FRAME** — route `5e`, **t = 284.7947 s**. STEER_STATUS→7,
+STEER_CONTROL_ACTIVE→0, `gp-0x6880`→1, the `0x1AB` DTC-active flag→1, all three `0x14A` angle fields→`0x7FFF`,
+STEER_SENSOR_STATUS 7→4 — all latched, all in one transmission. **Three facts kill every magnitude-based
+mechanism:** the faulting launch was the **MILDEST of four** (an earlier one sat on the ±4096 rail **76%** of
+its window without faulting; this one had **0.00%** rail contact); the damper **never reached the `≥448` probe
+rung (0/39,961 frames)**; and 300 ms pre-fault there was a **20.0 Hz oscillation absent from openpilot's
+command**. ⇒ **a fast-transient sensitivity, not a dose problem.** Post-fault the control task and CAN stack are
+both alive with MOTOR_TORQUE frozen ⇒ **motor-off latch, not a reset.**
+
+★★★★ **THE bit13 FINGERPRINT [orchestrator-verified in Ghidra].** `FUN_00040a50` forces the angle sentinel on
+`FUN_00046ea6(0xd)` — **bit13 of the OR-aggregate `(gp-0x18d0|gp-0x18d4)`** over descriptor words at
+`tp-0x72bc = 0xB7D44`, stride `0x1c`. ⇒ **the angle invalidation is a CONSEQUENCE, not a cause**, and bit13
+**rules out** fid 4, fid 80 (`0xC41668`) and fid 72 (`0xD48394`), and **rules in fid 28 (Monitor 1)** and
+**fid 29 (Monitor 2 / `FUN_00045a20`)** — both `0x00003D01`, both **un-debounced single-cycle latches on the
+damper's own chain**. This is the operator's "plausibility window" in its true form: a **±0.001 consistency
+corridor between two representations of the same signal**, sized when the creep damper was structurally zero.
+
+🛑 **THE DTC READ IS STRUCTURALLY BLIND HERE.** `0xF00049` is a **catch-all shared by ~42 fault_ids**; a
+multi-member group's UDS status is **not an OR** — the display picks a winner from a **live RAM** log
+(`tp-0x7fcc`) cleared by the power cycle, defaulting to fid 4. Today's read is byte-identical to a **stock,
+pre-V21** capture except two bits (`0xC41668` +pending, `0xD48394` +confirmed). **`0x23` is not implemented on
+this ECU** (NRC 0x11, three captures, three eras). ⇒ **catch it on-car, not over UDS.**
+
+★★★★ **THE DAMPER FIXES THE GRIND AND CANNOT FIX THE MICRO-RATCHET.** Dose-response over the four builds that
+differ only in the damper cells: **18–22 Hz slope −0.599 [−0.856, −0.348] = −5.20 dB/unit k (CI excludes zero)**;
+**6–9 Hz slope −0.089 [−0.350, +0.163] (CI includes zero — FLAT)**. V75/V74 grind **0.349 [0.192, 0.784]**,
+limit-cycle duty **0.034 — lowest of 13 builds**, ratio **0.067 [0.000, 0.283]**, negative controls flat.
+🛑 **k required for the ratchet = 4.2–13.5 vs the 1.5798 that faulted** ⇒ **it needs a different lever.**
+★ V75 is the first build where the bands decoupled: `(6-9)/(18-22)` 1.40 → **2.75 [2.09, 3.72]**.
+
+🛑 **REFUTED THIS SESSION:** the cadence watchdog (**DTC `0x18` is a boot-time reset-cause report, not
+live-trippable**); the probe cave's 45→68 B growth (**+17 cycles ≈ 212 ns — EXONERATED, keep the probe**); the
+soft-EME boost-floor margin (**SM1/2/3 cannot latch** — the recovery ramp has no bypass); the angle domain as a
+cause; a second consumer of the FactorC/E tables (`FUN_00034350` is the **sole reader** at all 40 modes).
+
+Full narrative: `docs/HANDOFF-2026-08-06-v74-also-faulted-and-the-damper-was-not-in-force.md`.
+
+---
+
+★★★★ **SUPERSEDED HEADLINE, 2026-08-06 (earlier): V75 FLEW, FIXED THE AUDIBLE GRIND #1 — AND HARD-FAULTED THE
 ECU. LATCHED TOTAL LOSS OF POWER STEERING AT A STOPLIGHT LAUNCH. THE CAUSE IS A GATE-2 LOOP-GAIN
 OVERSHOOT WE INTRODUCED, AND `k*` IS NOW BRACKETED BY OUR OWN TWO FLIGHTS.**
+🛑 **SUPERSEDED — the loop-gain-overshoot framing does NOT survive V74's manual fault, and `k*` is VOID.**
+The V75 symptom result and the fault characterisation below both stand; the *causal attribution to the damper
+dose* does not.
 
 🛑🛑🛑 **SAFETY FIRST: V75 IS ON THE CAR AND PRODUCED A MID-DRIVE LOSS OF ASSIST.** Operator report: after
 stopping at a stoplight and pulling away normally with openpilot engaged, the EPS lamp lit, comma reported
@@ -245,11 +323,33 @@ disfavoured** (11/34,277 frames), **10/11 excluded.** V73's probe settles it.
 Full narrative: `docs/HANDOFF-2026-08-05-v72-flew-the-damper-was-never-in-force.md`.
 Spec and every risk: `docs/V73-DESIGN.md`.
 
-## 🛑🛑 ON THE CAR: **V75 (BOTH-LEVERS CUT) — AND IT HARD-FAULTED. DO NOT RE-FLY IT.**
+## 🛑🛑 ON THE CAR: **V74 — AND IT HARD-FAULTED TOO (manual, over a bump, 2026-08-06 late).**
+
+**Updated 2026-08-06 (late).** After V75's stoplight-launch fault the operator pulled over, **reflashed V74**,
+and drove on it. **V74 then hard-faulted as well** — disengaged, over a bump, latched total loss of power
+steering, recovered only by an engine restart. **[EVIDENCE] The FactorC/E edits were byte-stock in the active
+mode (24).** ⇒ **`k*` is VOID and there is currently NO build known to be safe.** See the top-of-file headline.
+**V77** (V74 + `0xC63A0` 2048→1024, single variable) is **built and unflashed** — a hypothesis test, not a
+known-good. **V77B** (same revert on the V75 base) is built, unflashed and **NOT recommended.**
+🛑 **The V75 section below is retained as the fault's primary record. Its causal attribution to the damper dose
+does not survive V74's manual fault; the characterisation does.**
+
+### Retained record — the V75 cut that faulted
+
+🛑🛑 **THE TWO V75 CUTS DIFFER BY ONE SUBSTRING (`-EX1.200`) AND THE PROBE CANNOT TELL THEM APART.**
+`build_v75_tva.py` emits a **byte-identical cave for every lever set**, so no payload, no log and no
+on-car reading distinguishes them — **the filename is the only discriminator, for a build that cost the
+operator power steering.** Unrenamed they sorted adjacent in `ls`. ✅ **The faulted cut is therefore
+renamed with the reason IN THE NAME**, per the V70 precedent:
+`SUPERSEDED-DO-NOT-FLASH-HARDFAULT-LOSS-OF-ASSIST-2026-08-06-V75-CY0.566-EX1.200.rwd`.
+⚠ **Deliberate asymmetry: its PLAIN IMAGE keeps its original name** (`_v75_CY0.566-EX1.200_…bin`).
+It is not flashable, and it is the fault's own primary evidence — every `v75_fault_*.py` and
+`v75_step_*.py` script reads it by that path. **Renaming it would break the analysis and protect
+nothing.** The hazard is the `.rwd`; that is what was renamed.
 
 | | value |
 |---|---|
-| **ON THE CAR (faulted)** | `39990-TVA,A160-V75-V74BASE-ENGCOLS13-levers-CY0.566-EX1.200-magprobe-…rwd` |
+| **ON THE CAR (faulted)** | `SUPERSEDED-DO-NOT-FLASH-HARDFAULT-LOSS-OF-ASSIST-2026-08-06-V75-CY0.566-EX1.200.rwd` |
 | **BUILT THIS SESSION, UNFLASHED** | `…-levers-**CY0.566**-magprobe-6bd0-thermo-6ac2-0x13000-0x100000.rwd` |
 | new-cut rwd SHA256 | `b245e1d17ed1ca4ec51a06a0a17a41afe37ba369b819eb0e2db02d2d49781765` |
 | new-cut image SHA256 | `9a96b7fe0cb5263f9cbc528cb0a0a67744048f439373f326f5a7c966ff37f3d1` |
@@ -2625,7 +2725,14 @@ gain reducer. This is what pulls eps down from the raw-LERP values.
   only on the loudest bursts. The argument for it is that a *bootstrap* only needs to be kept below
   threshold at the amplitudes where it currently crosses. Feel cost: slower gain recovery after a
   sharp input (tau ≈ 10 ms now, ≈ 24 ms at cal 43 — short vs steering dynamics).
-- 🛑🛑 **FactorC damping (`0xD27BC`/`0xD27C6`) — ALREADY FLASHED AND FALSIFIED. DO NOT RE-PROPOSE.**
+- 🛑🛑 **VOID — CORRECTED 2026-08-06.** The block below says FactorC damping was "already flashed and
+  falsified." **That is wrong and was wrong when written.** V44/V47 wrote **modes 10/11** under the `TVAA1`
+  assumption; **this car is config row 11 `TVCA4`, modes 24 (manual) / 26 (engaged)** — see `BUILD-LINEAGE.md`
+  RULE 7. Both builds were **inert by table selection, not falsified.** The FactorC/FactorE damping approach
+  was **never actually tested until V74**, and it is now measured to work on grind #1 (**−5.20 dB per unit `k`,
+  CI excludes zero**) while being **flat on the micro-ratchet**. Retained below only as a record of the
+  superseded reasoning. **Do not cite it as evidence against the damper.**
+- ~~🛑🛑 **FactorC damping (`0xD27BC`/`0xD27C6`) — ALREADY FLASHED AND FALSIFIED. DO NOT RE-PROPOSE.**~~
   **`V44` set `0xD27C6` 0 → 235 and `0xD27DA` 0 → 234 (modes 10/11), flashed, and it was NULL** —
   because **Factor E (`0xC9F84[mode]`, the motor-rate deadzone) re-zeroes the product downstream.**
   **`V47` then attacked Factor E itself** (`0xD2802/04/06`, `0xD2816/18/1A`) → *"marginally quieter at
