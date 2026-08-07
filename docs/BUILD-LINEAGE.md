@@ -10,6 +10,40 @@ result was buried in prose.
 
 ---
 
+## 🛑🛑🛑 RULE 11 — **A CLAMP MAY BE AN INTERLOCK. NEVER RAISE ONE WITHOUT FINDING ITS MONITOR.**
+
+**Added 2026-08-07, and it is the most expensive lesson in this file: it cost two mid-drive total
+losses of power steering.**
+
+**`0xC407E` is a DO-NOT-RAISE CELL.** It clamps the friction lane `gp-0x6b26`. Stock value **511**.
+One instruction later, in the same 1 kHz tick, **`FUN_00036d74` — called *unconditionally* from
+`FUN_0002214a` @`0x2290a` — tests `|gp-0x6b26| / 1024 > cal(0xC4004)`, where `0xC4004` = float `0.5`
+= **512 raw counts**, and faults straight to DTC `0x1d`.**
+
+⇒ **Honda set that clamp to exactly ONE COUNT below the monitor's own trip threshold.** It is an
+interlock: a clamped signal cannot trip its own fault check. It looks like an ordinary output limit.
+**It is not.**
+
+**V73 raised `0xC407E` 511 → 850 — 338 counts past the ceiling — and removed the interlock without
+knowing it was one.** V73 flew clean only because crossing still needed a large motor-rate event
+(`gp-0x6c2c` ≈ 6258). **V74 then multiplied the mode-26 friction table (`0xD7A54`) by 1.5, dropping
+that to ≈ 4180. V74 and V75 both hard-faulted with latched total loss of assist.** The cell is
+**mode-proof**, which is why V74 faulted with LKAS *disengaged* — no mode-indexed lever could have.
+
+**The rule, generally:** before raising any clamp, saturation or output limit, **search for a monitor
+that tests the same cell**, and check whether the stock clamp sits just inside that monitor's
+threshold. A clamp one count under a fault ceiling is a **design invariant**, not slack to be spent.
+Two methods; a null here is load-bearing.
+
+⚠ Corollary: **do not "fix" this by raising `0xC4004` instead.** That loosens the monitor rather than
+the signal, and no other consumer of that ceiling has been surveyed.
+
+Full detail: `memory/accord-friction-lane-ceiling-is-the-hard-fault.md`.
+
+---
+
+---
+
 ## 🛑🛑 RULE 7, added 2026-08-05 — **A LEVER IS MODE-PROOF, OR IT IS A BET**
 
 **The car is `TVCA4` — row 11 — running mode 24 disengaged / 26 engaged. It is NOT `TVAA1`, and it was

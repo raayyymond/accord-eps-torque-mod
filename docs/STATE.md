@@ -24,8 +24,59 @@ then `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
 
 ---
 
-★★★★★ **THE HEADLINE, 2026-08-07 (LATEST): THE V74 BUMP-FAULT RLOGS ARRIVED. THE DAMPER EDITS *WERE* IN
+★★★★★ **THE HEADLINE, 2026-08-07 (LATEST, late): THE HARD-FAULT MECHANISM IS FOUND. IT IS THE **FRICTION**
+LANE CROSSING A FLAT 512-COUNT MONITOR CEILING — AN INTERLOCK V73 REMOVED WITHOUT KNOWING IT WAS ONE.
+**V76 IS BUILT ON A V38 BASE AND CLOSES IT BY CONSTRUCTION.** NOT FLASHED.**
+
+`FUN_00036d74` — called **UNCONDITIONALLY** from the 1 kHz task `FUN_0002214a` @`0x2290a` (`get_xrefs_to`
+returns exactly that one call) — tests `|gp-0x6b26| / 1024 > cal(tp+0x5004 = 0xC4004)`, where `0xC4004`
+= float **0.5 = 512 raw counts** (bytes `0000003f`, byte-identical in every image), and faults straight to
+DTC `0x1d`. 🛑 **Flat, symmetric, unconditional — no re-sampled comparator, no race, no timing escape.**
+
+| build | ceiling | clamp `0xC407E` | relationship | on-car |
+|---|---|---|---|---|
+| stock / V38 / V72 | 512 | **511** | **1 count UNDER — structurally untrippable** | clean, always |
+| **V73** | 512 | **850** | **338 counts OVER** | clean (needed a big event) |
+| **V74 / V75** | 512 | 850 | 338 over + friction m26 **×1.5** (`0xD7A54`) | **BOTH HARD-FAULTED** |
+
+★★ **Honda set the clamp exactly one count below the monitor's own trip threshold — an interlock.**
+V73 raised it to 850; V74's ×1.5 friction then dropped the `gp-0x6c2c` needed to cross from ≈6258 to
+≈4180. **Mode-proof ⇒ live in MANUAL — the only candidate that explains V74 faulting disengaged.**
+Explains the single-frame latch (threshold-0 dwell) and the exact build history. **It was never the damper.**
+✅ **FIX = `0xC407E` → 511**, one cell, loosens no monitor — **a V38 base gets it free.**
+🛑 **RULE 11** added to `BUILD-LINEAGE.md`: *a clamp may be an interlock — never raise one without finding
+its monitor.* **`0xC407E` is a DO-NOT-RAISE cell.**
+⚠ OPEN: `gp-0x6c2c`'s physical scale undetermined ⇒ mechanism **[EVIDENCE]**, "it caused both faults"
+strong **[BELIEF]**.
+
+## ✅ BUILT, VERIFIED, **UNFLASHED** — V76 on a V38 base
+`39990-TVA,A160-V76-V38BASE-RELU-C566-damper-frictionCLAMP511-probe-6b26-63fd-0x13000-0x100000.rwd`
+rwd `1fba57b243534538a7d533436387a98c673bf038dc579f9a3c6796d4c6030c89` ·
+image `_v76_v38base_relu_damper_plain_image.bin` `54a212a269623ef3d674fe7711eefdf7db32ebc3f25bf3e20c7bc5a14c830f33`
+Base `_v38_plain_image.bin` `a7391972…afa8`. **V38→V76 = 8 runs / 91 bytes**, all attributed; **CRC 50/50 PASS**.
+Damper, mode 26 only (mode 24 byte-stock): **FactorC `Y=[566,566,566,908]`** (flat/ReLU) ·
+**FactorE `X=[0,119,2500,4000] Y=[0,300,539,927]`** (plateau removed). `k`=1.3866.
+**Dose 137 flat 0–80 km/h** = V75's creep peak, **2.45× V75 at 60 km/h**, at **12% lower loop gain than the
+build that faulted**. **Grind #2: 0.57× / 0.61× / 0.76× vs V75** at 42/85/255 °/s.
+Probe (64 B of 68): **bit7 `|gp-0x6b26| > 448`** (live band 449–511 — margin on the fault lane) ·
+**bit4 `gp+0x63fd & 2`** (mode index, closes the mode-lag question) · **bit3 `gp-0x67fa == 5`** (positive
+control). Bits 6/5 constant 0 — **must not be read as a measurement.**
+🛑 **NOT CLEARED TO FLY.** Residual risk: **3.10× V74's time-weighted `k` across 47.3% of engaged driving**
+(286.4 s at 35–80 km/h, clean evidence only at the lower gain). Driven by dose, not by flatness.
+🛑 **V76B / 8× LKAS NOT BUILT** — never built, no on-car data, GATE 2 unquantified (~21 ms to full torque
+inside a 100 ms `steerActuatorDelay`), and on a V38 base it needs V57's decouple carried forward
+(`0xC6CD0` reads `0xFFFF`). Fly V76 first; one variable at a time.
+
+Full narrative: `docs/HANDOFF-2026-08-07-v76-v38base-and-the-friction-ceiling.md`.
+
+---
+
+★★★★ **SUPERSEDED HEADLINE, 2026-08-07 (earlier): THE V74 BUMP-FAULT RLOGS ARRIVED. THE DAMPER EDITS *WERE* IN
 FORCE, AND THE VARIABLE THAT UNIFIES BOTH HARD FAULTS IS ANGLE-RATE **SLEW**, NOT DOSE.**
+🛑 **The "damper edits were in force" refutation and the mode-lag finding STAND.** The *slew* framing is
+**superseded** — the trip is a flat magnitude ceiling on the **friction** lane, not a rate limit on the
+damper. `|d(angle rate)/dt|` remains the empirical correlate (route max on both faults, n=1 each) but is
+**not** the mechanism.
 
 Route `75604b0a432fdc89_00000061--3b8f2f9278`, segs 0–12, 75,901 frames / 760.7 s. **Fault pinned to
 t = 732.3872 s, seg 12** — `gp-0x67fa` **5 → 8**, `0x1AB` DTC-active 0→1, all three `0x14A` angle fields

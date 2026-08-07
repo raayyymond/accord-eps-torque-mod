@@ -221,8 +221,20 @@ PIN_ANDI_2_R15_R6 = (0x4DA3C, bytes.fromhex("cf360200"))    # `andi 0x2,r15,r6`
 PIN_OR_R6_R7 = (0x1C1C4, bytes.fromhex("0639"))             # `or r6,r7`
 PIN_LDH_HW1_R15 = (0x14C60, bytes.fromhex("247f"))          # hw1 donor: `ld.h ...,gp,r15`
 PIN_LDH_6B26_HW2 = (0x3815E, bytes.fromhex("da94"))         # hw2 donor: the -0x6b26 displacement
-PIN_MOVEA_HW1_R0_R9 = (0x18116, bytes.fromhex("204e"))      # hw1 donor: `movea imm,r0,r9`
-PIN_IMM_1C0_HW2 = (0xC498A, bytes.fromhex("c001"))          # hw2 donor: the literal 0x01C0 = 448
+PIN_MOVEA_HW1_R0_R9 = (0x18116, bytes.fromhex("204e"))      # hw1: Ghidra `movea 0x50,r0,r9`
+
+# 🛑 THERE IS NO IN-SPAN DONOR CARRYING 0x01C0 AS A PLAIN imm16, and a byte-pattern match is NOT a
+# substitute. An earlier cut of this file pinned `c001` at 0xC498A, having found it with an
+# opcode-field-only scan that called it a `movhi`. Ghidra disassembles 0xC4988 as
+# `dispose 0x0,{ r23,r28,r29 }` -- a Format XIII instruction whose second halfword is a register
+# list, not an immediate. The only other in-span `c001` halfwords are `st.h` DISPLACEMENTS
+# (0x7BC62, 0x7BC6C). Matching two bytes proves nothing about what those bytes MEAN.
+# ⇒ The immediate is validated by ROUND-TRIPPING the encoder against real in-span instances of the
+#   exact instruction form, which proves the imm16 field is a plain LE value here, and then by
+#   asserting the emitted halfword unpacks to 448. That is a stronger check than a donor twin.
+MOVEA_R0_R9_DONORS = {0x18116: 0x0050, 0x1AD68: 0x00FF, 0x1D0E4: 0x005E,
+                      0x1D24C: 0x0089, 0x21BF4: 0x0010}
+ADDI_R7_R7_DONORS = {0x2064E: 0xFFC2, 0x2A0E0: 0x0012, 0x463C6: 0x0032}
 PIN_CMP_R9_R15 = (0x2AB6E, bytes.fromhex("e979"))           # `cmp r9,r15`
 PIN_BGT = (0x1D5BC, bytes.fromhex("cf05"))                  # `bgt +8`  (cond 0xF)
 PIN_BGE = (0x1EFD0, bytes.fromhex("be05"))                  # `bge +6`  (cond 0xE)
