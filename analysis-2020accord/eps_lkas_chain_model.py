@@ -974,10 +974,52 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #   The gates are ZEROING, not clamping (out of window contributes 0); gp-0x6bd0's is |x| <= 2048.
 #   Stage 1's sum is then x polarity x tp+0x7468 (0xC6468 = 2639) >> 10, then a 1 kHz IIR with
 #   tp+0x73ac (0xC63AC = 102) => corner 16.70 Hz, then stage 2 -> gp-0x6b70 -> FUN_00037fe6 ->
-#   gp-0x6ad6 -> FUN_0003a382 (the PID) -> the aggregator -> gp-0x6b98.
-# 🛑 PATH 2 IS A CLOSED LOOP INSIDE THE FIRMWARE: gp-0x6b98 re-enters via FUN_0003b8f6 one sample later.
-#   [OPEN] the re-entry term's own gain and phase are UNQUANTIFIED, and 0xC63A0 does NOT touch them, so
-#   reverting the weight lowers the forward gain only -- the highest-value next trace.
+#   gp-0x6ad6 -> FUN_0003a382 -> gp-0x6ad4 -> the aggregator.
+# 🛑🛑 THREE CORRECTIONS TO THIS CHAIN, 2026-08-07 -- the line above USED to end "-> gp-0x6b98":
+#   (a) THE AGGREGATOR DOES NOT FEED gp-0x6b98. FUN_0003aa2c's sum output is gp-0x6b94 (+shadow
+#       gp-0x4ce0). FUN_00042af8 -- the governor that actually WRITES gp-0x6b98 -- never references
+#       gp-0x6b94 in its 1,424-line body; it runs on gp-0x6afe / gp-0x6b08 / gp-0x4f64. [EVIDENCE,
+#       full decompile] => there is AT LEAST ONE UNRESOLVED HOP here. gp-0x6b94's 4 unchecked
+#       readers: FUN_00036bec, FUN_0004503c, FUN_0004595a, FUN_0007ff08.  [OPEN]
+#   (b) FUN_0003a382 IS A GAIN-SCHEDULED PID -- the model's original wording was RIGHT.
+#       🛑 A subagent claimed this round that "gp-0x6ad6 is a GATE input only, never a DATA input,
+#       therefore 0xC63A0 changes delivered damping by 0.00 dB". THAT IS FALSE and was caught by the
+#       orchestrator reading the decompile. gp-0x6ad6 appears THREE times in FUN_0003a382:
+#         1. the entry gate    if (|gp-0x6ad6| > 0x6400 || |gp-0x4f60| > 0x6400) -> bVar1 = false
+#                              (plus gp-0x2588/gp-0x2584 bit 27, and gp-0x6ac0 < 0x32c9);
+#                              when bVar1 is false the function returns gp-0x6ad4 = 0 unconditionally.
+#         2. uVar19 = (uint)*(short *)(gp - 0x6ad6)     <-- A DATA READ
+#         3. its sign bit, for the symmetric-clamp comparison.
+#       uVar19 is clamped to +/-(tp+0x7200) into uVar24, then  iVar30 = gp-0x4f60 - uVar24  forms the
+#       ERROR, clamped to +/-0x2800 as iVar31, which drives three gain-scheduled lanes that sum into
+#       gp-0x6ad4:
+#         P: iVar14 = IIR((iVar31 * LERP_uVar20) >> 10 * 0x20, tp+0x7450)      state gp-0x367c
+#         I: iVar18 = ((LERP_uVar16 * iVar31) >> 10) + gp-0x3688               state gp-0x3688
+#         D: iVar29 = ((iVar31 - gp-0x3684) * LERP_uVar12) >> 10               state gp-0x3684
+#       final: gp-0x6ad4 = (((I + D + P) >> 5) * LERP_uVar27) >> 10 * polarity gp-0x6752, then a
+#       symmetric magnitude clamp against iVar10 (the feedforward term).
+#       => gp-0x6ad6 IS the PID's FEEDBACK term. Path 2 therefore DOES reach gp-0x6ad4 proportionally,
+#          and 0xC63A0's effect on delivered command is REAL, not 0.00 dB.
+#       LERP index sources: gp-0x6ac0 (P/I/D gains), gp-0x671a, gp-0x6a5e, gp-0x6966, gp-0x6bda.
+#   (c) FUN_00037fe6 is EXACTLY UNITY: all 7 term weights tp+0x74ad..0x74b3 read 1 in stock/V74/V77,
+#       and the LERP(gp-0x69aa) table 0xC6ABA-0xC6AD8 is a constant 1024/1024 across its domain.
+# 🛑 PATH 2 IS A CLOSED LOOP INSIDE THE FIRMWARE -- but it is a SUBTRACTION, not positive feedback.
+#   The re-entry closes through gp-0x6bfc alone -> FUN_0003bc20 (0x3bc20 @0x22416, pure identity
+#   passthrough) -> gp-0x6bfe -> FUN_00038148 @0x38218 reads iVar5 = gp-0x6bfe - (iVar4 >> 4), where
+#   iVar4 is Path 2's OWN forward six-term sum. 0xC63A0 scales BOTH operands of that subtraction.
+#   gp-0x6bf6 / gp-0x6c00 / gp-0x6ae0 / gp-0x6ae2 have ZERO readers anywhere -- write-only telemetry.
+#   The "B" input branch (gp-0x4f60) is DEAD CODE in every build: its combine coefficients
+#   0xC4048 / 0xC404C / 0xC4050 are all 0x0000 in stock, V74, V77 and V77B.
+#   The re-entry is NOT a bare z^-1 -- the 2-pole LPF (0xC40D4 = 573/4096) gives:
+#       7.79 Hz: -0.87 dB, -36.06 deg   |   21.09 Hz: -4.96 dB, -82.84 deg (incl. 1-tick transport)
+#   vs Path 2's own iVar4 IIR: -0.85 dB/-23.63 deg and -4.13 dB/-47.90 deg.
+#   => the two operands sit ~12 deg apart at 7.79 Hz but ~35 deg apart at 21 Hz, so they cancel best
+#      at low frequency and WORST near the resonance.
+# ★ 0xC63A0 ACTS ON PATH 2 ONLY. Path 1 (gp-0x6bd0 unity-weighted straight into FUN_0003aa2c's sum,
+#   unweighted and gate-only) is untouched by it. And gp-0x6ad4 is the ONLY thing this whole branch
+#   feeds, so when bVar1 is off the entire Path-2 loop is DISCONNECTED from the motor command, not
+#   merely attenuated. [OPEN] what sets gp-0x2588/gp-0x2584 bit 27 -- so whether bVar1 was off at
+#   V74's fault is NOT established, and given the 2.5 s mode lag it plausibly was still ON.
 # ★★ 0xC63A0 IS THE DAMPER'S PATH-2 WEIGHT: stock 1024, V72 set 2048, and NO build reverted it until V77
 #   (V77/V77B -> 1024 = -6.02 dB, zero phase, zero cost to Path 1).
 #   It is MODE-PROOF -- a bare tp scalar reached without an index -- so it is live in MANUAL as well as
@@ -989,8 +1031,27 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # -----------------------------------------------------------------------------------------------------
 
 # [VERIFIED, byte-dumped] mode-indexed assist tables, selector = byte at gp+0x63fd (0xFEDFE3FD, NOT the
-# LKAS setpoint-limit mode gp-0x674e), range 0..33; written only by factory/diagnostic paths (no CAN RX
-# reaches it). Our A160 = ECU-ID slot 2 -> gp+0x63fd = 10 -> curve @0xD2834.
+# LKAS setpoint-limit mode gp-0x674e), range 0..33.
+# 🛑 "gp+0x63fd = 10" AND "written only by factory/diagnostic paths (no CAN RX reaches it)" ARE BOTH
+#   STALE -- CORRECTED 2026-08-05 and 2026-08-07. THIS CAR IS TVCA4: gp+0x63fd = 24 DISENGAGED /
+#   26 ENGAGED, and the selector is REWRITTEN LIVE, every 100 Hz task-5 tick, by FUN_00042746 (sole
+#   caller FUN_00022ca0), gated on (1 << (gp-0x67fa & 0xF)) & 0x30 == states {4,5}. It picks one of
+#   four HW-ID column tables DAT_0000e012/13/14/15 via FUN_00057f8e(), selected by gp-0x67f6 in {0,1}
+#   x gp-0x67e2 in {1,2}.  All five factor evaluators read it: 0x34470 / 0x34502 / 0x34592 / 0x34616
+#   / 0x346b4.  [EVIDENCE, decompile + byte reads]
+# ★★★★ THE MODE FALLS 26 -> 24 WITH A MULTI-SECOND LAG, AND THAT LAG IS LOAD-BEARING FOR SAFETY.
+#   Measured on-car, two routes of V74 (61 and 5d): the engaged-column damper stays live for ~4 s
+#   after openpilot drops lateral control, then is HARD ZERO -- 0 of 9,286 and 0 of 39,794 frames
+#   beyond the band. V74's hard fault fired at 2.509 s past disengagement, i.e. STILL ON MODE 26.
+#   => "disengaged" on the bus does NOT mean "mode 24 is active". Any argument of the form
+#      "the operator was in manual, therefore the engaged-column edits were not in force" IS UNSOUND.
+#      This exact inference produced a wrong EVIDENCE-marked conclusion on 2026-08-06.
+#   [OPEN] the ROM mechanism for the multi-second hold. The only real debounce found is 0xC624E = 40
+#   (=40 ms at 1 kHz; ~150 ms with the ramp-settle requirement) -- NOT 2.5 s. The candidate is the
+#   gp-0x6733 == -1 "transitioning" sentinel written by FUN_000527da, which blocks the reselect from
+#   even arming, but that function's callers resolve to null under both get_function_callers and
+#   get_xrefs_to (register-indirect/RTOS dispatch). Closeable only with a live probe on gp+0x63fd
+#   across a disengage event -- bytes alone will not get the number.
 ASSIST_BOOST_X_RISING = (0, 640, 2560, 5120, 8960, 12800)   # the "rising" family (high top-end assist)
 ASSIST_BOOST_X_FALLING = (0, 640, 2560, 5120, 7808, 10240)  # the "falling" family -- what THIS car runs
 ASSIST_BOOST_CURVE = {                         # pointer array @0xCA154, 6-point LERP, indices 0..33

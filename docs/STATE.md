@@ -24,9 +24,114 @@ then `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
 
 ---
 
-★★★★★ **THE HEADLINE, 2026-08-06 (LATEST, late): V74 ALSO HARD-FAULTED — IN MANUAL, OVER A BUMP, WITH THE
+★★★★★ **THE HEADLINE, 2026-08-07 (LATEST): THE V74 BUMP-FAULT RLOGS ARRIVED. THE DAMPER EDITS *WERE* IN
+FORCE, AND THE VARIABLE THAT UNIFIES BOTH HARD FAULTS IS ANGLE-RATE **SLEW**, NOT DOSE.**
+
+Route `75604b0a432fdc89_00000061--3b8f2f9278`, segs 0–12, 75,901 frames / 760.7 s. **Fault pinned to
+t = 732.3872 s, seg 12** — `gp-0x67fa` **5 → 8**, `0x1AB` DTC-active 0→1, all three `0x14A` angle fields
+→ `0x7FFF`, STEER_SENSOR_STATUS 7→4, bus STEER_STATUS 0→7, **all in ONE 100 Hz transmission**. Exactly
+**one** state transition in the whole route; state 8 never exits. `0x14A` holds **99.97 Hz** for the
+28.3 s tail ⇒ **authority/motor-off latch, not a reset.** Same class as V75's fault.
+
+🛑🛑 **[EVIDENCE] "THE FACTOR C/E EDITS WERE NOT IN FORCE" IS REFUTED — AND WITH IT, `k*` IS NOT VOID.**
+The byte facts stand (mode 24 *is* byte-stock); the **inference** from them was wrong. "Disengaged" was
+taken from the operator's verbal report and silently equated with "mode 24". The car says otherwise:
+`bit7` (`gp-0x6bd0 != 0`) = **1 at the fault frame** and continuously for **560 ms** before, at
+**33.29 km/h** — *below* stock mode-24 FactorC `X[0]` = 2240 ct = 35.00 km/h, where the evaluator
+**hard-clamps to `Y[0]` = 0** (disasm `0x3451e`→`0x34522`) and the factor chain is **purely
+multiplicative** — four back-to-back `mulu`+`shr 0xa` at `0x34684`–`0x3469c`, **zero `add`/`or`** ⇒
+FactorC = 0 forces the damper to 0, with **no additive rescue path**. openpilot had dropped lateral
+control only **2.509 s** earlier. ⇒ **the ECU was still on the ENGAGED column** (mode 26: `C_Y0`=429).
+★ **Negative control, replicated on two routes of the same build:** manual `bit7` fires **only** inside
+a ~4 s post-disengage tail and is **hard zero beyond it — 0 of 9,286 (route 61) and 0 of 39,794
+(route 5d)**, i.e. **49,080 true-manual frames with zero damper activity.** The three manual episodes
+that looked like they disagreed agree once ordered by time-since-disengage: the one reading **0.00%**
+(and it *crosses* the knee) had **never been engaged at all**.
+⚠ **HONEST GAP:** the ~2.5 s hold is empirical; its ROM mechanism is **not** pinned. Mode cell is
+**`gp+0x63fd`**; the only real debounce found is `0xC624E` = **40 ms** (~150 ms with ramp-settle), not
+2.5 s. The `gp-0x6733 = −1` sentinel (`FUN_000527da`) blocks reselect entirely but its caller is
+register-indirect and **unresolved**. The conclusion follows from the arithmetic regardless of *why*
+the mode was held.
+
+★★★★ **THE UNIFYING VARIABLE IS SLEW.** One metric, both fault drives, sentinel-free:
+| | \|torque\| peak, 100 ms pre | pct | **\|d(angle rate)/dt\|** | pct |
+|---|---|---|---|---|
+| **V74** (r61) | 3,676 | 99.999 | **5,400 /s** | **route MAX, n=1** |
+| **V75** (r5e) | 922 | **86.3** | **6,900 /s** | **route MAX, n=1** |
+Magnitude does **not** unify them; slew does — each fault at its drive's single largest value.
+**This dissolves V75's "mildest of four launches" paradox.** Corroborated on V74: the bump was **real
+but ORDINARY** — IMU (101.03 Hz, vertical axis = **`ax`**) shows −1.494 m/s² at −15 ms, ranking **#84
+of 388**, **78.6th pct**, route max **2.94×** larger; and V74 **survived 8 earlier damper-live episodes
+above 3,000 counts.** ⇒ **a fast-transient sensitivity, not a dose problem.**
+⚠ At the fault the rate was 20–78 ct — inside FactorE's **ramp**, *not* the flat band ⇒ **the V74/V75
+bang-bang relay is cleanly ELIMINATED for this fault.**
+🛑 **SENTINEL TRAP:** a derivative window touching the fault frame imports the `0x7FFF` spike and
+inflates `|d(rate)/dt|` **~300×**. All numbers above use a strict pre-fault prefix with an assertion.
+
+★★★★ **`gp-0x685c` CLOSED, and the fid-28/29 "debounce" is a STRUCTURAL NO-OP.** 4 writers / 1 reader
+(the state-8 trap block's leg 2). **fid 28 @`0xB8054` and fid 29 @`0xB8070` are BOTH `0x3D01`** ⇒ both
+eligible, both able to set it — **ROM statics cannot discriminate them.** ★ The trip test's threshold
+field reads **`0x0000` for both** ⇒ `FUN_00018738` **trips on the FIRST qualifying call**; the only real
+debounce is the ~**0.1 s** accumulator inside each monitor (`gp-0x3564` / `gp-0x3550`). **One stage, not
+two** — the best structural match yet to the slew result. The `gp-0x6b98 == 0` leg is the **weakest**
+(it is a *sum* including an additive driver term, `FUN_00042af8`).
+
+🛑🛑🛑 **V77's STATUS IS UNDETERMINED — IT IS NOT CLEARED TO FLY, AND IT MAY BE A NULL EXPERIMENT.**
+Two of three monitor trip surfaces are **orchestrator-verified blind** to `0xC63A0`; a third is live
+**only if** an unresolved link holds. See "THE THIRD SURFACE" below — that link is the flash decision.
+
+[EVIDENCE, **orchestrator-verified in Ghidra**, not relayed.] Surfaces **A and B** feed fid 28/29 and
+**`0xC63A0` reaches neither**:
+| surface | int leg (fid 28) | float leg (fid 29) | compares |
+|---|---|---|---|
+| **A** damper ceiling-clamp | `FUN_00034350` → `FUN_0004613e(0x4179,…)` | `FUN_000347b8` → `FUN_000462e6(0x417a,…)` | **`gp-0x6bd0` ITSELF**, ±5/1024 |
+| **B** comp-envelope (NEW) | `FUN_000456a4` → `FUN_0004613e(0x3c35,…)` | `FUN_00045a20` → `FUN_000462e6(0x3a09,…)` | `gp-0x6acc` vs `gp-0x6ace` |
+- `FUN_000347b8`: `fVar5 = (float)(int)*(short *)(gp - 0x6bd0) * 0.0009765625` — reads the damper cell
+  **directly by value**, tests against `0x3ba00000` (= 5/1024), reports `0x417a`.
+- `FUN_00038148`: `gp-0x6bd0` appears **exactly once**, a read-only summand weighted by `tp+0x73a0`
+  (=`0xC63A0`) behind a `|x| ≤ 2048` zeroing gate; the function's **only store is `gp-0x6b70`**.
+  **No write to `gp-0x6bd0` exists anywhere in it.**
+⇒ **`0xC63A0` is strictly DOWNSTREAM of what the monitors read. Reverting it changes not one bit they
+see.** Surface B is a parallel pipeline (`FUN_000456a4`'s comp term uses only `gp-0x6a10`/`gp-0x6ac0`/
+`gp-0x6abe` — **zero** references to `gp-0x6b98`/`gp-0x6bd0`/`gp-0x6b70`).
+★ **Both surfaces are per-cycle STATIC int-vs-float consistency checks — neither computes a
+derivative.** With the threshold-`0x0000` no-op above, a static un-debounced window is *exactly* what a
+large single-cycle transient trips ⇒ **the on-car slew statistics and the ROM's monitor structure
+converge independently.**
+🛑🛑 **THE THIRD SURFACE — and it is the whole flash decision.** The *original* Monitor 1/Monitor 2
+pair (`gp-0x3564`/`gp-0x3550`) does **not** compare `gp-0x6bd0` at all. It compares **`gp-0x6b98`, the
+merged command itself**, against a float envelope `gp-0x6dbc`/`fVar23` at ±5/1024:
+`fVar12 = −((float)*(short*)(gp-0x6b98) * 0.0009765625 − fVar23)`, else flag **32.0** (the "torque arm"
+weight) → `gp-0x3540`/`gp-0x3550` → `FUN_000462e6(0x3f1b,…)` → **fid 29**; the same check recurs one
+cycle later in `FUN_00042af8` (`gp-0x3564`, +10/cycle, thr 100) → `FUN_0004613e` @`0x43D42` → **fid 28**.
+`fVar23` is built from `gp-0x4f64` + corridor tables `tp+0x71d4`/`tp+0x71d8`, **no Path-2 terms** ⇒ only
+the left side could move. **IF `0xC63A0` reaches `gp-0x6b98`, V77 has a real mechanism.**
+🛑 **THAT PREMISE IS DISPUTED AND UNRESOLVED.** It was justified by *"Path 2 closes through
+`gp-0x6b98`"* — **wrong direction**: `FUN_0003b8f6` *reads* `gp-0x6b98` back **into** Path 2, making it
+an **input**. A second tracer decompiled `FUN_00042af8` in full and reports `gp-0x6b94` (the
+aggregator's output) appears **nowhere** in its 1,424 lines — the governor runs on
+`gp-0x6afe`/`gp-0x6b08`/`gp-0x4f64`, i.e. `gp-0x6b98 = clamp(clamp(gate(gp-0x6afe) + uVar34))`.
+⇒ **THE ONE QUESTION: what writes `gp-0x6afe`, and does it carry `gp-0x6ad4`/`gp-0x6b94` (anything
+downstream of `0x381AC`)?** Unresolved at close of session. **Answer it before flashing V77.**
+⚠ Settle it by reading the body and following the binding — **NOT** by grepping the displacement.
+⚠ Not exhaustive: several further `FUN_0004613e`/`FUN_000462e6` callers untraced.
+⚠ `0xC63A0`'s effect was in any case **confounded with damper liveness** across V72/V73/V74/V75 —
+V72/V73 carried 2048 without a manual fault, but their damper was structurally **zero**, so it was inert.
+
+🛑🛑🛑 **SAFETY UNCHANGED: V74 IS ON THE CAR AND HAS HARD-FAULTED. Two hard faults in two days, both
+total loss of power steering. NO BUILD IN THIS LINEAGE HAS DEMONSTRATED SAFETY. Nothing here is
+clearance to fly.**
+
+Full narrative: `docs/HANDOFF-2026-08-07-v74-fault-rlogs-the-damper-WAS-in-force.md`.
+
+---
+
+★★★★ **SUPERSEDED HEADLINE, 2026-08-06 (late): V74 ALSO HARD-FAULTED — IN MANUAL, OVER A BUMP, WITH THE
 FACTOR C/E EDITS BYTE-STOCK IN THE ACTIVE MODE. THE FAULT CLASS IS NOT A DAMPER-DOSE PROBLEM, `k*` IS VOID,
 AND NO BUILD IN THIS LINEAGE HAS DEMONSTRATED SAFETY.**
+🛑 **SUPERSEDED 2026-08-07 — the "edits not in force" conclusion and the `k*`-is-void consequence are
+REFUTED by the fault drive's own telemetry (above). The fault characterisation, the bit13 fingerprint,
+and the eight refuted mechanisms all STAND. The safety statement stands and is unchanged.**
 
 🛑🛑🛑 **SAFETY: TWO HARD FAULTS IN TWO DAYS, ON TWO DIFFERENT BUILDS.** V75 faulted engaged at a stoplight
 launch; **V74 faulted DISENGAGED, driving over a bump** — latched total loss of power steering, EPS lamp on
