@@ -24,9 +24,93 @@ then `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
 
 ---
 
-★★★★★ **THE HEADLINE, 2026-08-07 (LATEST, late): THE HARD-FAULT MECHANISM IS FOUND. IT IS THE **FRICTION**
+★★★★★ **THE HEADLINE, 2026-08-07 (LATEST, evening): V76 FLEW AND FLEW CLEAN. GRIND #1 IS **DOSE-LIMITED**
+AND THE MICRO-RATCHET IS **DOSE-INDEPENDENT** — a resolved split. THE OPERATOR'S "150% OF V75'S 5 mph
+DOSE" IS RIGHT AND COSTS **ONE u16 CELL** (**V78**); THE "BOTH FACTORS AS ReLUs + BIGGER TABLES" HALF
+**INVERTS** — 4 points was never the obstacle, and a literal ReLU FactorC RE-CREATES THE COULOMB RELAY
+AT THE CEILING CLAMP.**
+
+**Route `75604b0a432fdc89_00000065--ae43aa0f27`, segs 0–10, 636.30 s / 63,477 frames, 0–96.7 km/h,
+engaged 450.98 s (70.87%). ZERO DTC transitions, zero `0x7FFF` sentinels, no frame-rate collapse.**
+Build identity settled **four independent ways** (bits 6/5 structurally unreachable: 0/63,477 · 8-value
+legal payload set: 0 violations · V75's thermometer invariant violated on 70.0% ⇒ not V75 · the
+superseded V76's structurally-zero bit3 reads 99.926% here).
+
+★★ **THE FRICTION-MARGIN NULL IS REAL, NOT AN UNARMED GATE.** bit7 (`|gp-0x6b26| > 448`) fired
+**0 / 63,477** with the positive control (bit3) at 99.93% in the same frames, across every speed band
+and both arms. ⚠ **Weakens but does not refute** the V73-interlock story — it bounds `gp-0x6c2c` from
+one side only; the physical scale stays OPEN.
+★ **Mode lag measured directly: median 994.9 ms [830.0, 1575.0]**, n=6 episodes — **2.5× shorter than
+the ~2.5 s in prior handoffs.** Treat this as the better number; n=6 on one route does not prove the
+older figure measured the same thing.
+
+★★★★ **THE DOSE-RESPONSE SPLIT** (fit over V72/V73 k=0, V74 0.5799, V75 1.5798, V76 1.3866; creep,
+speed-stratified, **episode**-bootstrapped; V76 sits *between* V74 and V75 so the model made a
+falsifiable point prediction):
+| band | V76 observed | monotone prediction | slope b [95% CI] | verdict |
+|---|---|---|---|---|
+| ratchet 6–9 Hz | 3.877 [3.098, 5.161] | 3.906 (−0.06 dB) | **−0.094 [−0.291, +0.098]** | **DOSE-INDEPENDENT** |
+| grind #1 18–22 Hz | 1.577 [1.380, 1.831] | 1.613 (−0.19 dB) | **−0.614 [−0.810, −0.416]** | **DOSE-LIMITED** |
+🛑 **More damper will NOT fix the micro-ratchet.** Grind #1 present on V76 at rel. excess
+**1.956 [1.214, 4.154]** (worse than V75's 1.572, far better than V74's 9.154); ratchet **5.026
+[3.824, 6.592]**, indistinguishable from V74/V75. **Both match the operator's report exactly.**
+🛑 **V76's grind-#2 prediction was FALSIFIED** at the one powered rung: predicted 0.57× vs V75 at
+42 °/s, **measured 1.394 [1.017, 1.768]** — opposite direction. Discount the arithmetic surface's
+ability to predict *delivered* grind #2; the `k` dose axis itself was validated.
+
+★★★★★ **THE EVALUATOR, orchestrator-verified by decompile (`FUN_00034350`, sole caller `FUN_00022ca0`):**
+- Records are reached through a **pointer array per factor** (`FactorB 0xC9CCC · FactorC 0xC9E9C ·
+  FactorD 0xC9DB4 · FactorE 0xC9F84 · ceiling 0xC77A0 · friction 0xCBE74`), `u32 @ arr + mode*4`,
+  **34 distinct records over 34 modes, zero sharing.**
+- Layout: `base+0` u16 n · `base+2` n×i16 X · `base+2+2n` n×i16 Y · `base+2+4n` u16 terminator; `4+4n`.
+  🛑 **X starts at base+2, NOT base+4** (reading at +4 silently yields `[X1,X2,X3,Y0]`).
+- 🛑 **THE COUNT FIELD IS NEVER READ.** The lookup is a real `while (X[i] <= idx) i++` loop, but `n` is
+  pinned per factor by three hardcoded immediates — B/C/E `rec+10 / rec+8 / rec+0x10` (n=4), D
+  `rec+0xc / rec+10 / rec+0x14` (n=5), ceiling `rec+6 / rec+4 / rec+8` (n=2). **More points = a CODE
+  edit to the always-on base-assist damper = the class that bricked V24/V27/V48B.**
+- ★★ **THE OUTPUT IS HARD-CLAMPED**: `gp-0x6bd0 = clamp(product, ±ceiling_LERP(gp-0x6ac2))`, ceiling
+  record n=2 `X=[300,800] Y=[512,1024]`, fallback `*(u16*)0xC6158 = 512`. **`|gp-0x6bd0|` can never
+  exceed 1024, and is 512 at low ceiling index.** This — not the point count — is the binding constraint.
+- `gp-0x6bd0` is **lockstep-shadowed at `gp-0x4cf2`**. Two gates zero the chain: FactorC → unity if
+  `(gp-0x6a5e > 0x7d00) || (gp-0x67f4 != 1)`; damper → 0 unless
+  `(gp-0x6ac0 < 0x32c9) && (gp-0x6abe + 13000 <= 0x6590)`.
+  🛑 **`gp-0x67f4` has never been probed** and disables FactorC's speed shaping entirely.
+
+★★★★ **WHY THE ReLU PLAN INVERTS.** A ReLU is 2 DOF; a 4-point table has 8 numbers and spends 3 on
+collinearity, so **more points buy EXACTLY ZERO for a pure ReLU** (constructive witness in the handoff).
+**The constraint that breaks is parameter-free:** a ReLU FactorC is speed-proportional, so
+`dose(v,99)/dose(515,99) = v/515` *whatever values you pick* — pinning 206 at 5 mph forces **3,593 counts
+at 140 km/h = 7.02× the 512 ceiling**, railing above **3.2 °/s at 140 km/h, 7.0 at 60, 21 at 20 km/h**.
+★★ **A railed damper whose sign comes from a different cell (`gp-0x6abe`) than its index (`gp-0x6ac0`)
+IS the Coulomb relay — you would forbid it at `E_Y[0]` and re-create it at the ceiling.** On V76's flat
+FactorC the same dose rails no earlier than **563 °/s — 176.7× more usable linear range.**
+⚠ **"Which factor isn't a ReLU" has two readings that point at OPPOSITE tables** — literal
+`max(0,k(x−x0))` indicts **FactorC** (566 floor); the operator's own recorded gloss in `v76_surface.py`
+(*"FLAT — no taper down, like a rectified linear unit"*, read as a floor clamp) indicts **FactorE**
+(three slopes: 2.521 / 0.100 / 0.259 per count). **Neither should be made a literal ReLU.**
+📋 **RULE: ask anyone proposing a re-point which FOURTH segment they need. If they can't name it, n=4 is
+enough.**
+
+⊕ **Relocation is AVAILABLE though not needed** — it is **cal-only**: one u32 into `0xC9F04` /
+`0xC9FEC`. **`0xD7BB8`–`0xD7FEF` = 1,080 B virgin `0xFF`, same page, same CRC block `0xD7FFC` V76
+already recomputes**; the same run exists at the same offset in every mode-record page. Confirmed
+unreferenced by a byte-granular whole-image u32 scan. **V74's "pointer arrays must stay byte-identical"
+was a SELF-IMPOSED BUILD GUARD, not a firmware requirement** (sole reader dereferences without
+comparison; the only flash writer `FUN_0000d934` has zero static callers; the CRC verifier
+`FUN_0000b006` is UDS-only). 🛑 Leave `0xD7FF0`–`0xD7FFB` alone (`0xD7FF8` is the block self-descriptor).
+⊕ **New Ghidra trap: `get_xrefs_to(0xD780C)` returns "No references found"** though the pointer exists at
+`0xC9FEC`; the twin `0xD77D0` resolved fine. **Do not trust xref completeness on pointer-array slots.**
+⊕ **A free, never-touched lane: FactorD is n=5, flat `Y=1024` (inert) in modes 24 AND 26**, axis
+`gp-0x6a10` (angle-tracking error), gated `gp-0x67fe ∈ {1,2}`. UNTESTED, not falsified.
+
+Full narrative: `docs/HANDOFF-2026-08-07-v76-flew-and-the-relu-plan-inverts.md`.
+
+---
+
+★★★★ **SUPERSEDED HEADLINE, 2026-08-07 (late): THE HARD-FAULT MECHANISM IS FOUND. IT IS THE **FRICTION**
 LANE CROSSING A FLAT 512-COUNT MONITOR CEILING — AN INTERLOCK V73 REMOVED WITHOUT KNOWING IT WAS ONE.
-**V76 IS BUILT ON A V38 BASE AND CLOSES IT BY CONSTRUCTION.** NOT FLASHED.**
+**V76 IS BUILT ON A V38 BASE AND CLOSES IT BY CONSTRUCTION.** ✅ **NOW FLASHED AND FLOWN CLEAN** — see
+the current headline above.**
 
 `FUN_00036d74` — called **UNCONDITIONALLY** from the 1 kHz task `FUN_0002214a` @`0x2290a` (`get_xrefs_to`
 returns exactly that one call) — tests `|gp-0x6b26| / 1024 > cal(tp+0x5004 = 0xC4004)`, where `0xC4004`

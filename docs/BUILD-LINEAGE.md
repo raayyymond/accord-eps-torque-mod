@@ -10,6 +10,38 @@ result was buried in prose.
 
 ---
 
+## 🛑🛑 RULE 12 — **A TABLE'S SHAPE IS BOUNDED BY ITS OUTPUT CLAMP, NOT BY ITS BREAKPOINT COUNT.**
+
+**Added 2026-08-07.** A proposal arrived to make the damper's FactorC and FactorE literal ReLUs and, if
+4 breakpoints proved too few, to build larger tables in free memory and repoint every reader. **Both
+halves of that mechanism were wrong, and the reasons generalise.**
+
+**(a) Count the DOF before asking for more points.** A ReLU is **2 DOF**. A 4-point record carries 8
+numbers and spends 3 of them on collinearity. `n` buys **n−1 slope segments**; n=4 gives **three**, so
+ReLU, ReLU+hold and ReLU+hold+rise are all reachable. **More points bought EXACTLY ZERO here**, proven
+by explicit construction. 📋 **Ask which FOURTH segment is needed. If nobody can name it, n=4 is enough.**
+
+**(b) The binding constraint was a clamp nobody had written down.** `gp-0x6bd0` is hard-clamped to
+±`ceiling_LERP(gp-0x6ac2)` — **≤ 1024, and 512 at low ceiling index**. A ReLU FactorC is
+speed-proportional, so `dose(v,99)/dose(515,99) = v/515` **whatever values are chosen**; pinning the
+requested dose at 5 mph forces **7.02× the ceiling at 140 km/h** and rails from **3.2 °/s** upward.
+★★ **A railed factor whose sign comes from a different cell (`gp-0x6abe`) than its index (`gp-0x6ac0`)
+IS the Coulomb relay this kit already forbids at `E_Y[0]` — the "ReLU" re-creates it at the ceiling.**
+
+**(c) Check how the operator used the shape word LAST time.** "Which factor isn't a ReLU" had two
+readings indicting **opposite tables**: literal `max(0,k(x−x0))` indicts FactorC (nonzero 566 floor);
+the operator's own recorded gloss in `v76_surface.py` — *"FLAT — no taper down, like a rectified linear
+unit"*, read there as a **floor clamp** — indicts FactorE. **When a shape word is load-bearing for a
+flash decision, grep the kit for how it was recorded before designing to it.**
+
+⊕ Recorded for future use: relocating a **same-size** record IS cal-only — one u32 into the factor's
+pointer array — and **`0xD7BB8`–`0xD7FEF` is 1,080 B of virgin `0xFF` in the same CRC block the build
+path already recomputes. V74's "the six pointer arrays must stay byte-identical to stock" was a
+SELF-IMPOSED BUILD GUARD, not a firmware requirement.** But **adding** breakpoints is a code edit to the
+always-on base-assist damper — the V24/V27/V48B bricking class.
+
+---
+
 ## 🛑🛑🛑 RULE 11 — **A CLAMP MAY BE AN INTERLOCK. NEVER RAISE ONE WITHOUT FINDING ITS MONITOR.**
 
 **Added 2026-08-07, and it is the most expensive lesson in this file: it cost two mid-drive total

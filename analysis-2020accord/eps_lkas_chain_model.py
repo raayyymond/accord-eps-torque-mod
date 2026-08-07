@@ -871,12 +871,22 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # two inline Sensor-B torque-rate lanes, and one filtered Sensor-B term:
 #     FUN_00034a72 -> gp-0x6bbe   the boost curve proper (the "assist" everyone means)
 #     FUN_00034350 -> gp-0x6bd0   5 multiplied gain factors, sign forced opposite gp-0x6abe [damping]
-# 🛑🛑 ALL FIVE DAMPING FACTORS ARE MODE-TABLE SELECTED (2026-08-05). FUN_00034350 picks B/C/D/E AND the
-# ceiling through pointer arrays indexed by mode*4, mode = *(byte)(gp+0x63fd), 13 variants:
+# 🛑🛑 ALL FIVE DAMPING FACTORS ARE MODE-TABLE SELECTED (2026-08-05). FUN_00034350 (sole caller
+# FUN_00022ca0) picks B/C/D/E AND the ceiling through pointer arrays indexed by mode*4,
+# mode = *(byte)(gp+0x63fd), 13 variants:
 #     FactorB 0xC9CCC[m]  FactorC 0xC9E9C[m]  FactorD 0xC9DB4[m]  FactorE 0xC9F84[m]  ceiling 0xC77A0[m]
+# ★ RECORD LAYOUT (byte-verified on modes 24/26, 2026-08-07): u16 n@+0, i16 X[]@+2 (🛑 NOT +4 -- that
+# misread yields [X1,X2,X3,Y0]), i16 Y[] Q10 @+2+2n, u16 terminator 0x0000 @+2+4n. Below X[0] clamps to
+# Y[0] (STRICT <=, so idx==X[0] clamps too); above X[n-1] clamps to Y[n-1]; else truncating LERP.
+# 🛑🛑 n IS NEVER READ BY THE EVALUATOR: each factor's `while(X[i]<=idx) i++` loop is real, but its
+# length is PINNED by hardcoded immediates -- FactorB/C/E n=4, FactorD n=5, ceiling n=2, confirmed
+# against every shipped record (friction n=3, same mechanism). => adding a breakpoint is a CODE edit;
+# relocating a same-size record is cal-only (one u32 pointer-array write).
 # The product carries NO signal magnitude -- it is five Q10 GAINS; rate enters via FactorE's LERP index
 # and speed via FactorC's, and the SIGN comes from gp-0x6abe. seed = gp-0x698a (the "FactorA" long sought
-# as a separate table) is pinned at 1024 by construction.
+# as a separate table) is MIN-clamped to <=1024 -- corrected 2026-08-07, it is NOT "pinned"; an
+# unclamped seed below 1024 passes through, matching the "MIN-clamped seed" phrase already used in
+# assist_shaping_lanes' docstring, which this line previously contradicted.
 # ★★★★★ THE LIVE MODE IS SETTLED (2026-08-05, V73's probe, 104,061 frames): the car is row 11 'TVCA4' and
 # runs mode 24 DISENGAGED / 26 ENGAGED -- the mode TOGGLES with engagement (gp-0x67f6 picks e012 when
 # settled-disengaged, e014 when settled-engaged). Forced by the MANUAL arm: the 4-bit probe field drops
@@ -924,16 +934,29 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # in PARK), and FUN_0002214a's guard is literally `uVar2 = 1 << (gp-0x67fa & 0xf)` then `uVar2 & MASK`, so
 # state 5 => 0x20 clears 0x830 / 0x930 / 0xc30 / 0xd30 / 0xd38 / 0xdfa / 0x83a / 0x820 -- the whole chain
 # ran on every frame, and gp-0x67fa == 4 is dead (third replication; 0x454FE never executes).
+# 🛑 TWO MORE GATES, INSIDE FactorC/FactorE THEMSELVES, byte+decompile confirmed 2026-08-07:
+#   FactorC: if (gp-0x6a5e > 0x7d00) || (gp-0x67f4 != 1) -> FC forced to UNITY (0x400), bypassing the
+#     LERP and its speed dead zone entirely. [OPEN] gp-0x67f4 != 1 (voter implausible) forcing UNITY
+#     rather than a fail-safe zero has never been probed on this car.
+#   FactorE: if !((gp-0x6ac0 < 0x32c9) && (gp-0x6abe + 13000 <= 0x6590)) -> the WHOLE damper term is 0,
+#     not just FactorE -- a second validity/kickback window layered on top of the rate dead zone above.
 #
 # 🛑🛑 THE OUTPUT CEILING IS EFFECTIVELY A CONSTANT 512, NOT A DYNAMIC 512..1024 (2026-08-06).
-# ceiling = LERP(gp-0x6ac2, 0xC77A0[mode*4]), and all 26 modes carry an identical X=[300,800] Y=[512,1024].
-# gp-0x6ac2 is NOT a rate: FUN_00041464 sets it to |motor rate| >> 10 only when sign(motor rate) differs
-# from sign(gp-0x6b98), and to 0 otherwise -- a SIGN-GATED BACK-DRIVE (kickback) DETECTOR. In ordinary
-# same-sign driving the index is 0, the LERP clamps flat to Y[0], and the ceiling sits on its 512 floor.
+# ceiling = LERP(gp-0x6ac2, 0xC77A0[mode*4]), and all 26 modes carry an identical X=[300,800] Y=[512,1024]
+# (byte-verified on modes 24/26 too, 2026-08-07). gp-0x6ac2 is NOT a rate: FUN_00041464 sets it to
+# |motor rate| >> 10 only when sign(motor rate) differs from sign(gp-0x6b98), and to 0 otherwise -- a
+# SIGN-GATED BACK-DRIVE (kickback) DETECTOR. In ordinary same-sign driving the index is 0, the LERP
+# clamps flat to Y[0], and the ceiling sits on its 512 floor.
 # => SIZE EVERY DAMPER LEVER AGAINST 512. The build-time rule (FactorC x FactorE[3]) >> 10 <= 512 is the
-# real constraint, not a conservative one. ⚠ The validity bypass at 0x41852 (|gp-0x6b98| outside +/-0x2000)
-# writes a 0xFFFF SENTINEL to gp-0x6ac2, it does not hold; whether the ceiling's reader is ld.h or ld.hu
-# then floors it (-1) or rails it (65535) is [OPEN] -- one bit, opposite answers.
+# real constraint, not a conservative one.
+# ✅ RESOLVED 2026-08-07 (was: "ld.h or ld.hu, floors to -1 or rails to 65535, one bit, opposite
+# answers"). There is a THIRD path AHEAD of the LERP: `if gp-0x6ac2 >= 0x32c9: uVar10 = *(u16*)0xC6158`
+# (=512, byte-verified) BEFORE the LERP runs. The 0x41852 validity bypass's 0xFFFF sentinel is >= 0x32c9
+# under either a signed or unsigned read, so it lands on this SAFE LOW override, not on the LERP's own
+# Y[n-1]=1024 -- the ld.h/ld.hu question is moot either way.
+# gp-0x6bd0 = clamp(product, -uVar10, +uVar10), symmetric, and is itself int/int lockstep-shadowed at
+# gp-0x4cf2 (`if cur == shadow: store both; else FUN_0006b9fa(gp-0x4cf2)`) -- distinct from the ceiling
+# LERP's own int/float lockstep at cal 0xC6554/58/5C/60 noted at assist_shaping_lanes below.
 #
 # ★★★★ FIRST EMPIRICAL ANCHOR ON gp-0x6bd0 (V74, route 5d, 101,118 frames -- the kit's first positive
 # control on the damper). bit7 = (gp-0x6bd0 != 0) fired on 23,603 frames = 23.342%: ENGAGED 39.927%,
@@ -958,6 +981,22 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # -0.089 [-0.350, +0.163], CI INCLUDES ZERO -- FLAT.
 # ⇒ THE DAMPER FIXES THE GRIND AND CANNOT FIX THE MICRO-RATCHET: the ratchet needs k = 4.2-13.5 against
 # the 1.5798 that faulted, so stop sizing this lane for it.
+#
+# ★ DOSE AXIS, for consistency with the build scripts: dose(v,r) = min((C(v)*E(r))>>10, ceiling), with
+# FactorB and FactorD byte-read flat 1024 (inert unity) in BOTH modes 24 and 26 on this car (confirmed
+# 2026-08-07), so it collapses to just C x E, ceiling-clamped. Reference rate R_OP = 99 counts =
+# 21.0 deg/s (in-burst p50 for grind #1). SPEED_CTS_PER_KMH = 64.0625 (== COUNTS_PER_KMH above);
+# RATE_CTS_PER_DEGS = 4.7121 (== gp-0x6ac0's scale, cited above). On the ramp segment, incremental gain
+# k = ((C_Y0 * E_Y1) >> 10) / (E_X1 - E_X0), and dose(r) = k * (r - E_X0) exactly (r on [E_X0, E_X1]).
+# Flown creep doses at r=99, all from the build scripts, not re-derived here: stock/V38 = 0 ·
+# V74 (C_Y0=429, E_X0=12, E_X1=400, E_Y1=539) = 50, k=0.5799 · V75 (E_X0 carried at 12, EX1 dropped) =
+# 137, k=1.5798 (this is the pair the slope fit above uses) · V76 (mode 26 only, C_Y0=566, E_X0=0
+# (operator-authorised override of V74's own E_X0_MIN_SAFE=12 guard -- E_Y0 stays 0, so no torque at
+# zero rate), E_X1=119, E_Y1=300) = 137, k=1.3866 -- same dose as V75 off a shallower ramp starting at
+# zero. ✅ FLOWN 2026-08-07 (route 65, 636 s / 63,477 frames, clean) and IS in the slope fit above --
+# it sits BETWEEN V74 and V75, so the monotone model made a falsifiable POINT prediction: grind #1
+# observed 1.577 vs predicted 1.613 (held to 0.19 dB) => DOSE-LIMITED, slope -0.614 [-0.810, -0.416];
+# ratchet observed 3.877 vs predicted 3.906 => DOSE-INDEPENDENT, slope -0.094 [-0.291, +0.098].
 #     FUN_00036c12 -> gp-0x6b26   speed-LERP x gp-0x6c2c motor-rate-deriv, LINEAR [friction comp]
 #     FUN_0003a382 -> gp-0x6ad4   UNFILTERED residual lane (2 passthroughs + a raw derivative)
 #     FUN_00036388 -> gp-0x6b62   slow +/-1/tick accumulator w/ hysteresis       [return-to-centre]
