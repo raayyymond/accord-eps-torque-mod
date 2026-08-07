@@ -75,11 +75,26 @@ STOCK_BIN = stock_fw_path("code.bin")
 # ⚠ A DISTINCT tag. It must not collide with `_v76_gate_fb_arm5244_gateprobe_plain_image.bin`, the
 # superseded V76's snapshot -- a same-number re-cut has destroyed a predecessor's snapshot before.
 BIN_OUT = str(plain_image_path("_v76_v38base_relu_damper_plain_image.bin"))
-FORBIDDEN_OVERWRITE = str(plain_image_path("_v76_gate_fb_arm5244_gateprobe_plain_image.bin"))
+# 🛑 Paths this build must NEVER write: the superseded V76's snapshot, and the two retired cuts of
+# THIS build (the bit5 shadow-pair probe, and the COMBO B cut made under the pre-correction name).
+FORBIDDEN_OVERWRITE = {
+    str(plain_image_path("_v76_gate_fb_arm5244_gateprobe_plain_image.bin")),
+    str(plain_image_path("_v76_v38base_relu_damper_probe6b26_plain_image.bin")),
+}
 
 # ⚠ DELIBERATELY SHORT -- V71A overran Windows' 260-char path limit and failed the .rwd write AFTER
 # the image was already on disk. The length is asserted BEFORE anything is written.
+# ★ The tag names the three cells the probe actually READS -- 6b26 (bit7), 63fd (bit4), 67fa (bit3).
+# An earlier cut carried `probe-6b26-63fd` while the probe read 6bc6/6bc8 instead; the filename is
+# this kit's ONLY pre-drive discriminator, so a wrong one is worse than an unhelpful one.
 TAG = "V76-V38BASE-RELU-C566-damper-frictionCLAMP511-probe-6b26-63fd"
+# 🛑 FROZEN 2026-08-07 by the orchestrator. This tag and BIN_OUT reproduce the artifacts whose
+#   SHA256s are recorded in STATE.md and reported to the operator:
+#     rwd   1fba57b243534538a7d533436387a98c673bf038dc579f9a3c6796d4c6030c89
+#     image 54a212a269623ef3d674fe7711eefdf7db32ebc3f25bf3e20c7bc5a14c830f33
+#   A "more complete" name (…-67fa) was staged and REVERTED: renaming after the SHAs are
+#   published orphans them, and the filename is this kit's only pre-drive discriminator.
+#   The probe does read gp-0x67fa; the tag is accurate, just not exhaustive. DO NOT RENAME.
 OUT = os.path.join(RWD_DIR, f"39990-TVA,A160-{TAG}-0x{START:X}-0x{END:X}.rwd")
 
 # =====================================================================================================
@@ -280,11 +295,14 @@ COND_BGT, COND_BGE = 0xF, 0xE       # signed >, signed >=. The INVERTING twins o
 #   r9's last read is 0x55BC4 (`or r9,r12`, from `andi 0x3,r11,r9` @0x55BBE); nothing after the hook
 #   reads it. ProbeDesign reached the same result independently via `analyze_dataflow`.
 #
-# ⚠ [EVIDENCE] r10 is the ABI RETURN register, not a value carried across the hook: FUN_00057b24
-#   ends `andi 0xf,r12,r10 ; jmp [lp]`, and 0x55C20 `andi 0xf,r10,r8` consumes THAT return.
-#   An earlier analysis called r10 "live across the hook"; that is not what the code does. It makes
-#   NO difference to this build -- the cave writes no r10 and that is asserted -- but the record
-#   should be right. ProbeDesign has accepted this correction.
+# ⚠ r10 -- TWO READINGS ON RECORD, DISPUTED, AND IMMATERIAL HERE. Both are kept so neither silently
+#   becomes "the" record; the operator's instruction was to record both and adjudicate neither.
+#     READING A (this builder): r10 is the ABI RETURN register. FUN_00057b24 ends
+#       `andi 0xf,r12,r10 ; jmp [lp]`, and 0x55C20 `andi 0xf,r10,r8` consumes THAT return, so r10
+#       carries nothing across the hook -- its last pre-hook read is 0x55BF6.
+#     READING B (ProbeDesign, via analyze_dataflow): r10 is LIVE across the hook (0x55BDA -> 0x55C20).
+#   🛑 BOTH IMPLY THE SAME OPERATIONAL RULE: do not touch r10. This cave writes no r10, and that is
+#   asserted from the emitted encodings, so the build is correct under either reading.
 HOOK_FN = (0x55A98, 0x55C41)
 DEAD_AT_HOOK = {R6: "written by the displaced movea @0x55C0E",
                 R7: "written by `mov 0x8,r7` @0x55C12",
@@ -304,10 +322,22 @@ DEAD_AT_HOOK = {R6: "written by the displaced movea @0x55C0E",
 #   build, so a `>= 512` test could never fire on any drive -- a structurally dead bit, which is
 #   exactly what wasted V64 and V68. 448 sits inside the live band under the clamp.
 #
-# ⚠ THE BOUNDARY. ProbeDesign's pinned `bgt`/`bge` pair implements `|v| > 448` (band 449..511); the
-#   operator's table states `>= 448` (band 448..511). One count in 64. `B26_INCLUSIVE` selects
-#   between them and is a ONE-NIBBLE change in each of the two branch conditions. The value below is
-#   whatever the operator last ruled -- it is NOT the builder's choice to make.
+# ✅ THE BOUNDARY -- RULED, 2026-08-07: the predicate is **`|v| > 448`, live band 449..511**.
+#   The operator's spec table said `>= 448`; the pinned bytes say `>`. THE BYTES WIN AND THE DOC
+#   FOLLOWS THE BYTES. Rationale, recorded verbatim: the one-count difference is immaterial to every
+#   argument the bit supports, and flipping a condition nibble `bgt`<->`bge` is exactly the
+#   inverting-twin class this kit has been burned by (`ba05`/`b205`, `bne` vs `be`, reversed a probe
+#   rung's meaning). A one-count gain is not worth touching a condition field on a cave.
+#   ⇒ `B26_INCLUSIVE` stays False. Do not flip it without a fresh operator ruling.
+#
+# ★ WHAT bit7 IS FOR (record this): it is a VERIFICATION instrument, not a safety one. The friction
+#   lane provably cannot fault on this build (|gp-0x6b26| <= 511 < 512), so bit7 tests whether the
+#   FAULT DIAGNOSIS ITSELF is right:
+#     - if |gp-0x6b26| regularly reaches ~448 (87.7% of the 511 clamp), then under V73/V74's 850
+#       clamp it would certainly have crossed 512 => mechanism CONFIRMED by proximity;
+#     - if it never approaches, the fault needed a rarer event and confidence in the whole diagnosis
+#       should DROP.
+#   It also settles `gp-0x6c2c`'s scale by telemetry rather than another trace.
 # ---------------------------------------------------------------------------------------------------
 PROBE_SOURCE = "operator COMBO B (authoritative) + ProbeDesign pinned sequence"
 BIT_STATE5 = 3        # gp-0x67fa == 5     weight 1  -> <<3 -> 0x08   ★ POSITIVE CONTROL
@@ -688,16 +718,33 @@ def _self_check_encoders(buf):
         hw = struct.unpack("<H", want)[0]
         assert hw & 0xF == cond, f"the '{text}' donor carries cond 0x{hw & 0xF:x}, not 0x{cond:x}"
         assert (hw >> 7) & 0xF == 0xB, f"the '{text}' donor is not a Bcond"
-    # ---- the three encodings with NO exact in-span instance: hw1 and hw2 pinned separately -------
+    # ---- encodings with NO exact in-span instance: hw1 pinned, hw2 handled per its KIND ----------
+    # `ld.h` and `addi` have real in-span hw2 donors carrying the same FIELD KIND (a displacement /
+    # a plain imm16), so those are pinned normally.
     for enc, hw1_pin, hw2_pin, text in (
             (V55.ldh(-B26_DISP, R15), PIN_LDH_HW1_R15, PIN_LDH_6B26_HW2, "ld.h -0x6b26[gp],r15"),
-            (FF.movea(B26_THRESH, R0, R9), PIN_MOVEA_HW1_R0_R9, PIN_IMM_1C0_HW2, "movea 0x1c0,r0,r9"),
             (addi(W_FRICTION, R7, R7), PIN_ADDI_HW1_R7_R7, PIN_IMM_10_HW2, "addi 0x10,r7,r7")):
         assert enc[:2] == hw1_pin[1], f"'{text}' hw1 {enc[:2].hex()} != pin {hw1_pin[1].hex()}"
         assert enc[2:] == hw2_pin[1], f"'{text}' hw2 {enc[2:].hex()} != pin {hw2_pin[1].hex()}"
         for a, w in (hw1_pin, hw2_pin):
             assert a >= START and bytes(buf[a:a + 2]) == w, \
                 f"'{text}' half-pin @0x{a:05X} does not read back"
+    # `movea 0x1c0,r0,r9`: hw1 pinned; the immediate is validated by ROUND-TRIP, because no in-span
+    # halfword carries 0x01C0 as a plain imm16 (see the note at MOVEA_R0_R9_DONORS).
+    mv = FF.movea(B26_THRESH, R0, R9)
+    assert mv[:2] == PIN_MOVEA_HW1_R0_R9[1], f"movea hw1 {mv[:2].hex()} != pin"
+    assert struct.unpack("<H", mv[2:])[0] == B26_THRESH == 448, \
+        f"the movea immediate unpacks to {struct.unpack('<H', mv[2:])[0]}, not {B26_THRESH}"
+    for addr, imm in MOVEA_R0_R9_DONORS.items():
+        assert addr >= START, f"movea donor 0x{addr:05X} is below 0x13000"
+        real = bytes(buf[addr:addr + 4])
+        assert real == FF.movea(imm, R0, R9), (
+            f"the movea encoder does not reproduce the real instance @0x{addr:05X} "
+            f"({real.hex()}) for imm 0x{imm:04X} -- the imm16 field is not a plain LE value")
+        assert struct.unpack("<H", real[2:])[0] == imm, f"movea donor @0x{addr:05X} imm mismatch"
+    for addr, imm in ADDI_R7_R7_DONORS.items():
+        assert addr >= START and bytes(buf[addr:addr + 4]) == addi(imm, R7, R7), \
+            f"the addi encoder does not reproduce the real instance @0x{addr:05X}"
     # ---- 🛑 the INVERTING twins, asserted AWAY ---------------------------------------------------
     assert FF.bcond(COND_BGT, BR_ADD) != FF.bcond(COND_BGE, BR_ADD), "bgt/bge collapsed"
     assert subr_rr(R0, R9) != _fmt1(0x0D, R0, R9), "subr/sub collapsed -- op 0x0C vs 0x0D"
@@ -1129,7 +1176,9 @@ def main():
     print(f"    TOTAL {sum(len(v) for v in groups.values())} runs, {total} bytes, ALL ATTRIBUTED")
 
     # ---- write + .rwd ---------------------------------------------------------------------------
-    assert BIN_OUT != FORBIDDEN_OVERWRITE, "refusing to write the superseded V76's snapshot path"
+    assert BIN_OUT not in FORBIDDEN_OVERWRITE, \
+        f"🛑 {BIN_OUT} is a RETIRED snapshot path -- a same-number re-cut has destroyed a " \
+        "predecessor's snapshot before and produced an artefact no gate could check"
     existing = Path(BIN_OUT).read_bytes() if os.path.exists(BIN_OUT) else None
     if existing is not None and existing != bytes(code):
         raise SystemExit(
