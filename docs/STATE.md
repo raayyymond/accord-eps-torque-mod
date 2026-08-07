@@ -103,6 +103,44 @@ comparison; the only flash writer `FUN_0000d934` has zero static callers; the CR
 ⊕ **A free, never-touched lane: FactorD is n=5, flat `Y=1024` (inert) in modes 24 AND 26**, axis
 `gp-0x6a10` (angle-tracking error), gated `gp-0x67fe ∈ {1,2}`. UNTESTED, not falsified.
 
+## ✅ BUILT, VERIFIED, **UNFLASHED** — V78 on a V76 base (the operator's 150% dose, in ONE cell)
+`39990-TVA,A160-V78-V76BASE-EY1.449-dose206-probe-6bd0-63fd-67fa-0x13000-0x100000.rwd`
+rwd `305234c37f797d0476b89ac793b414d6b0d5ba7cbbadf665d6e64778fe091afb` ·
+image `_v78_v76base_ey1_449_dose206_plain_image.bin` `c8d8e5e1c606dd920ccec8d41ea6398c73dbe473f58912092770e700ffd50ab1`
+Base `_v76_v38base_relu_damper_plain_image.bin` `54a212a2…c830f33` — **the build that flew.**
+🛑 **Named V78, not V77** — V77/V77B are consumed build numbers with artifacts on disk.
+
+**The edit: FactorE mode-26 `Y[1]` 300 → 449**, i.e. **ONE byte at `0xD7818`** (`0x2C`→`0xC1`;
+`300 = 0x012C` and `449 = 0x01C1` share their high byte — the "count CELLS, not bytes" trap again).
+```
+V76:  E X = [0, 119, 2500, 4000]   Y = [0, 300, 539, 927]      FactorC UNCHANGED [566,566,566,908]
+V78:  E X = [0, 119, 2500, 4000]   Y = [0, 449, 539, 927]      mode 24 byte-stock
+```
+**dose(5 mph = 515 ct, r = 99 ct) 137 → 206 = 1.5036× · k 1.3866 → 2.0840.**
+★ **The lift DECAYS with rate — the design's whole virtue:** ×1.50 at 21 °/s · ×1.46 at 42 · ×1.40 at 85 ·
+×1.20 at 255 · **×1.00 at 530 and above.** Max product stays `(566*927)>>10 = 512` = the ceiling floor ⇒
+**introduces no clipping V76 did not already have.**
+
+**V76 → V78 = 51 bytes / 7 runs, all attributed** (orchestrator-verified from the artifact on disk,
+`verify_v78.py` — not relayed): 42 B cave (**inside the proven 68-byte extent `[0xC4B34,0xC4B78)`,
+NOT grown**) · **1 B table** · 8 B the two CRC trailers V76 already recomputes.
+**All guards PASS:** Y monotone · `E_Y[0]=0` retained · FactorC m26 identical to V76 · **all six factors'
+mode-24 records byte-stock** · **all six pointer arrays byte-stock over all 34 modes**.
+
+Probe (bit3 mandatory positive control retained): **bit7 `|gp-0x6bd0| >= 448`** — 448 < 512 ≤ every
+reachable ceiling, so **a zero reading PROVES no clipping and no Coulomb relay at the rail** ·
+**bit6 `|gp-0x6bd0| >= 192`** — the **V76→V78 dose discriminator** (same threshold needs 598 ct on V76,
+93 ct on V78, a **6.4× shift**, and 93 ct sits just under `R_OP` = 99) · **bit4** mode · **bit3
+`gp-0x67fa == 5`.**
+🛑 The orchestrator specified bit6 as `>= 512`; **the builder refused it and was right** — `>=512` is
+implied by `>=448`, so it would be a bit spent refining a null (the V64/V68/V69 failure mode).
+
+🛑 **NOT CLEARED TO FLY.** k time-weighted 35–80 km/h: V74 0.449 → V76 1.393 → **V78 2.086 = 4.64× V74,
+1.50× V76.** **First point in this lineage above V75's creep loop gain, and V75 hard-faulted.** [BELIEF]
+the fault was the friction lane and the V38 base closes it ⇒ a GATE-2 stability exposure, not a re-opened
+DTC-0x1d one — **but the two have never been separated on-car.** V76 has ONE flight. **And the micro-
+ratchet is NOT expected to improve** — it is dose-independent.
+
 Full narrative: `docs/HANDOFF-2026-08-07-v76-flew-and-the-relu-plan-inverts.md`.
 
 ---

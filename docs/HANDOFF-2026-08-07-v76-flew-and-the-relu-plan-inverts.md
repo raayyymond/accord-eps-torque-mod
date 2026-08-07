@@ -245,7 +245,59 @@ relay) · add-only vs stock ✓ · mode 24 byte-stock ✓ · six pointer arrays 
 
 ## 7. ARTIFACTS
 
-*(filled at close-out — see `docs/STATE.md` for the frozen names and SHA256s)*
+**V78 — BUILT, VERIFIED, UNFLASHED.** Build script `analysis-2020accord/build_v78_tva.py`.
+- rwd `39990-TVA,A160-V78-V76BASE-EY1.449-dose206-probe-6bd0-63fd-67fa-0x13000-0x100000.rwd`
+  sha256 `305234c37f797d0476b89ac793b414d6b0d5ba7cbbadf665d6e64778fe091afb`
+- image `_v78_v76base_ey1_449_dose206_plain_image.bin`
+  sha256 `c8d8e5e1c606dd920ccec8d41ea6398c73dbe473f58912092770e700ffd50ab1`
+- base `_v76_v38base_relu_damper_plain_image.bin` `54a212a2…c830f33`
+
+**V76 → V78 = 51 bytes in 7 runs, all attributed** (orchestrator-verified independently from the
+artifact on disk, script `verify_v78.py`, not relayed from the builder):
+| run | bytes | attribution |
+|---|---|---|
+| `0xC4B4A`–`0xC4B76` (4 runs) | 42 | the probe cave — **entirely inside the proven 68-byte extent** `[0xC4B34, 0xC4B78)`; extent NOT grown |
+| `0xD7818` | **1** | **the calibration edit** — FactorE m26 `Y[1]` `0x2C`→`0xC1` |
+| `0xC4FFC`, `0xD7FFC` | 8 | the two CRC trailers, the same two V76 already recomputes |
+
+🛑 **ONE byte, not two** — `300 = 0x012C` and `449 = 0x01C1` share their high byte, so only the low byte
+moves. The "count CELLS, not bytes" trap, hit again; the orchestrator's own spec said 2 bytes.
+
+**Independent verification, all PASS:** FactorE m26 `X=[0,119,2500,4000] Y=[0,449,539,927]` · Y monotone
+and `E_Y[0]=0` · FactorC m26 byte-identical to V76 `[566,566,566,908]` · **all six factors' mode-24
+records byte-stock** · **all six pointer arrays byte-stock over all 34 modes** · `dose(515 ct, 99 ct)`
+**137 → 206, ratio 1.5036, k 2.0840**.
+
+### The probe — and the builder corrected the orchestrator's spec
+| bit | predicate | why it earns its bit |
+|---|---|---|
+| 7 | `\|gp-0x6bd0\| >= 448` | **448 < 512 ≤ ceiling at EVERY value the LERP can produce**, so **bit7 == 0 across a drive PROVES no clipping occurred, whichever ceiling was in force** — i.e. no Coulomb relay at the rail, the exact hazard raising dose creates. Its null IS the answer. |
+| 6 | `\|gp-0x6bd0\| >= 192` | **the V76→V78 DOSE DISCRIMINATOR.** The same threshold needs **598 ct (127 °/s)** on V76 and **93 ct (20 °/s)** on V78 — a **6.4× shift**, and 93 ct sits just under `R_OP` = 99 ct, so it runs at ~50% duty inside exactly the bursts this build is dosed for. Also calibrates the unobservable `gp-0x6ac0` against CAN steering rate. |
+| 4 | `gp+0x63fd & 0x2` | mode index — the mode-lag measurement is still only n=6 |
+| 3 | `gp-0x67fa == 5` | **the positive control** |
+
+🛑 **The orchestrator specified bit6 as `>= 512`; the builder refused it and was right.** `>= 512` is
+*implied by* `>= 448`, so if bit7 reads zero the 512 rung is zero **without having been measured** — a
+bit spent on a conditional refinement of a null, which is precisely the V64/V68/V69 failure mode
+(*"size a probe rung against the lane's own reachable output"*). Recorded because the orchestrator
+issued the bad spec and the subagent caught it, which is the direction this kit less often sees.
+⊕ Sizing context: the kit's observed rate maximum across its whole corpus is **1,941 counts**
+(RULE 8, route 5d, both CAN channels agreeing). At r = 1,941 this build's damper tops out at **285**
+counts to 80 km/h and **333** at 96.7 km/h — comfortably under 448.
+
+🛑 **REPO DEFECT, reported and deliberately NOT fixed this session:**
+**`rlog-tools/decode_v76_probe.py` decodes the SUPERSEDED V76** (the V74-base `GATE-FB-ARM5244` build),
+**not the V38-base build that actually flew.** It was caught before use — the census agent wrote a fresh
+decoder (`analysis-2020accord/v76flight_extract.py`) that re-reads the bit weights, thresholds and
+`wire_model()` straight out of `build_v76_v38base_tva.py` at import time and cross-checks its own decode
+against the builder's own function exhaustively. **That re-read-the-builder discipline is the pattern to
+keep**; a stale hand-maintained decoder is exactly how a drive gets analysed through the wrong build.
+
+⚠ **One residual the tracer flagged honestly and did not close:** its exactly-once byte scans cannot rule
+out a `movhi`+`movea` **split-immediate** reference to a record or pointer-array address elsewhere in the
+image (low search specificity — many unrelated `0xD0000`-range accesses share the same `movhi` high
+half). Judged low-risk given the single-caller / no-parameter structure of `FUN_00034350`, but **not
+formally closed.** It would matter only for a relocation, not for an in-place cell edit.
 
 🛑 **REPO DEFECT, reported and deliberately NOT fixed this session:**
 **`rlog-tools/decode_v76_probe.py` decodes the SUPERSEDED V76** (the V74-base `GATE-FB-ARM5244` build),
