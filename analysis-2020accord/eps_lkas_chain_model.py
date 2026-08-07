@@ -1067,6 +1067,43 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #   ⚠ It was only FUNCTIONALLY ARMED AT V74: gp-0x6bd0 was 0 at creep on every build through V73 and
 #   2 x 0 = 0, so V74 -- which opened both dead zones -- is the first build whose doubled weight carried
 #   signal, and the first to hard-fault. [EVIDENCE: plumbing, byte lineage, arming | BELIEF: causal link]
+#
+# ★★★ 0xC63A0's BLAST RADIUS IS A STRICT SINGLE-FILE CHAIN (orchestrator, 2026-08-07, reg1==gp-validated
+#   byte scan + decompiles). Every hop has exactly ONE functional consumer -- no branch, no telemetry tap:
+#     0xC63A0        1 reader  0x381AC (FUN_00038148)
+#     FUN_00038148   stores gp-0x6b70 (out) and gp-0x374c (its OWN IIR state; 2 refs, both internal)
+#     gp-0x6b70      2 refs = the store + ONE read @0x38006 in FUN_00037fe6
+#     FUN_00037fe6   1 store -> gp-0x6ad6      (7-lane sum; its byte weights 0xC64AD..0xC64B3 are ALL 1,
+#                    and the tp+0x7aba LERP is flat 1024 => a UNITY-GAIN adder on stock)
+#     gp-0x6ad6      2 real refs, BOTH inside FUN_0003a382 (the PID)
+#     FUN_0003a382   1 store -> gp-0x6ad4
+#     gp-0x6ad4      1 real ref @0x3ACA8 in FUN_0003aa2c (the aggregator)
+#   ⚠ 3 raw byte hits discarded as FALSE POSITIVES: 0x767a8 / 0x767b2 land INSIDE 4-byte `mulf.s`
+#   instructions (not on an instruction boundary), and 0xBCC52 / 0xBDF92 sit in data with no function.
+#   => not even UDS telemetry reads this chain. ⚠ disp16 gp/tp only; extended-disp and ep-relative
+#   forms were not swept image-wide (ep was refuted by decompile for FUN_00026c80/42af8/36682 only).
+#   🛑 0xC63A0 scales ONE SUMMAND, not a signal: FUN_00038148 sums 6 weighted inputs and FUN_00037fe6
+#   sums 7, so the friction / main-command / boost terms on the same wires are untouched by it.
+#
+# ★★★ FUN_0003a382 IS A REAL THREE-TERM CONTROLLER -- a TORQUE-TRACKING SERVO (decompiled 2026-08-07):
+#     feedback = clamp(gp-0x6ad6, +/- tp+0x7200)          # Path 2 arrives HERE, as the FEEDBACK term
+#     err      = clamp(gp-0x4f60 - feedback, +/- 0x2800)  # setpoint = driver torsion-bar torque
+#     filtP: gp-0x367c += ((K_p*err*32) - gp-0x367c) * (tp+0x7450) >> 10      # first-order lag
+#     integ: gp-0x3688 += (K_i*err) >> 10, CLAMPED into a window built from the authority limit (anti-windup)
+#     deriv: gp-0x3684 holds err_prev; (err-err_prev)*K_d, clamp +/-0x2800, then low-passed into
+#            gp-0x3680 with alpha = tp+0x744a                                # a DIRTY DERIVATIVE
+#     out = ((D + I + P) >> 5) * LERP(gp-0x671a) * polarity(gp-0x6752), clamped to +/- authority
+#     authority soft-starts via gp-0x3678 (up tp+0x744e / down tp+0x744c), scaled by LERP(gp-0x6966)
+#     HARD GATE -> output 0 unless |gp-0x6ad6| <= 0x6400 AND |gp-0x4f60| <= 0x6400 AND gp-0x6ac0 < 0x32c9
+#   🛑🛑 ALL THREE LANE GAINS ARE LERPs INDEXED ON gp-0x6ac0 (tables tp+0x7b1e / tp+0x7b0a / tp+0x7ade)
+#   -- the SAME rectified motor rate that indexes FactorE. So a FactorE slope change and this PID's own
+#   gain schedule move on ONE axis; they are NOT independent. That is the mechanism behind the recorded
+#   +41.8..+55.0 deg phase lead at 21 Hz with |D| ~ |P|: at the grind frequency this loop is
+#   derivative-dominated, exactly where a rate-scheduled gain on a RECTIFIED index (which sweeps at 2f)
+#   interacts with the parametric pump. [GATE 2 -- size any FactorE edit against this, not just dose.]
+#   ⚠ [OPEN] the damper's NET SIGN through this loop: err = setpoint - feedback, so more gp-0x6ad6 means
+#   LESS output, but whether the damper raises or lowers gp-0x6ad6 needs the full sign chain through
+#   FUN_00038148 + FUN_00037fe6 and their +/- clamps walked. NOT asserted here.
 # -----------------------------------------------------------------------------------------------------
 
 # [VERIFIED, byte-dumped] mode-indexed assist tables, selector = byte at gp+0x63fd (0xFEDFE3FD, NOT the
