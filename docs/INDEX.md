@@ -17,7 +17,25 @@ needed.
 3. **`../flashing-2020accord/EPS_UPDATE_TVA_README.md`** — the current Accord flashing workflow.
 4. **EPS-FLASH-RUNBOOK.md** + **RED-PANDA-EPS-SETUP.md** — the physical red-panda + comma-harness rig (car-agnostic hardware/procedure, still the setup in use).
 5. 🛑 **START WITH `STATE.md`, then `BUILD-LINEAGE.md` (RULES 3–8), then the LATEST handoff:**
-   **`HANDOFF-2026-08-06-v74-flew-the-damper-is-real.md`** — V74 flew route `5d`; the damping lever reached
+   **`HANDOFF-2026-08-07-v80-flew-the-damper-is-a-relay.md`** — ★★★★★ **V80 flew route `66` and produced the
+   worst grinding in the kit's history — without faulting.** Root cause: the damper became a **near-bang-bang
+   Coulomb relay** (constant ~495 counts above ~25 °/s **at every speed**, 97% of its 512 ceiling), and the
+   build's own no-clip gate was **structurally blind** to it because it tests `product > ceiling` and V80's
+   supremum *equals* the ceiling. Settled by both builds' own probes: `|damper| ≥ 448` engaged — **V75 0.000%
+   vs V80 19.4%**, 71% through the worst 29 s event. What V80 bought: a **2.09× broadband lift above ~24 Hz**
+   (IMU-negative, so not road) plus a **sustained 27.4 Hz, Q ≈ 140 limit cycle no other build produces even
+   once**. 🛑 **TWO RETRACTIONS: grind #1 is INERT to the damper dose** across k = 0.58 → 4.16 (every point
+   inside its own split-half null — V75-vs-V76 was a creep-EXPOSURE difference), and **V80's creep numbers are
+   an exposure artefact**. 🛑 **`0xC407E` is the hard-fault interlock** (`gp-0x6b26` has ONE writer, storing an
+   already-clamped value; monitor trips at 512; Honda ships 511) — and **`0xC63A0` is EXONERATED**, refuting the
+   standing "do not double `0xC63A0`" directive. 🛑 **The V38 rebase silently reverted three levers** (V57's
+   decouple, the low-speed lockout removal, the V42 ratchet fix) ⇒ V80-vs-V75 was never single-variable.
+   ⇒ **V81 built, UNFLASHED**: the flown V75 with `0xC407E` 850→511 and the friction table back to stock —
+   **126 bytes**, and restoring them reproduces the flown V75 bit-for-bit.
+   Predecessors: `HANDOFF-2026-08-07-v76-flew-and-the-relu-plan-inverts.md`,
+   `HANDOFF-2026-08-07-v74-fault-rlogs-the-damper-WAS-in-force.md`,
+   `HANDOFF-2026-08-06-v75-faulted-and-the-gate2-gain.md`,
+   `HANDOFF-2026-08-06-v74-flew-the-damper-is-real.md` — V74 flew route `5d`; the damping lever reached
    the car for the first time (`bit7` 67.44% engaged creep vs 0.29% manual, against V72's 0/87,940), the
    pre-registered abort criterion was found **structurally defective** and retired, and **two sibling
    candidates (V75, V76) are built and unflashed**. Predecessor: `HANDOFF-2026-08-05-the-car-is-tvca4-and-both-dead-zones.md`.

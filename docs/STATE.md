@@ -1,6 +1,7 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-06 (V74 flight + V75 build).** This file is the single current-state record.
+**Last updated: 2026-08-07 (night) — V80 FLEW and produced the worst grinding in the kit's history;
+V81 built, verified, unflashed.** This file is the single current-state record.
 Update it in place at every close-out; do not append new dated blocks (that is what made `CLAUDE.md`
 unreadable). The narrative of how each state was reached lives in `docs/HANDOFF-*.md`.
 
@@ -8,6 +9,13 @@ unreadable). The narrative of how each state was reached lives in `docs/HANDOFF-
 "CONFIRMED" result is about a LEVER, not about the car you are driving. Byte-check the current image
 before reasoning from any recorded result.** 🛑 **Then `RULE 6` — a lever is only in force if the car
 reads the TABLE you edited.** Then the latest handoff,
+`docs/HANDOFF-2026-08-07-v80-flew-the-damper-is-a-relay.md` (V80's flight and V81),
+then `docs/HANDOFF-2026-08-07-v76-flew-and-the-relu-plan-inverts.md`, then
+`docs/HANDOFF-2026-08-07-v76-v38base-and-the-friction-ceiling.md`, then
+`docs/HANDOFF-2026-08-07-v74-fault-rlogs-the-damper-WAS-in-force.md`, then
+`docs/HANDOFF-2026-08-06-v74-also-faulted-and-the-damper-was-not-in-force.md`, then
+`docs/HANDOFF-2026-08-06-v75-faulted-and-the-gate2-gain.md`, then
+`docs/HANDOFF-2026-08-06-v74-flew-the-damper-is-real.md`, then
 `docs/HANDOFF-2026-08-05-v72-flew-the-damper-was-never-in-force.md` (spec: `docs/V73-DESIGN.md`),
 then `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
 (predecessors: `HANDOFF-2026-08-04-v69-flew-grind1-back-at-creep.md`, then
@@ -24,7 +32,337 @@ then `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
 
 ---
 
-★★★★★ **THE HEADLINE, 2026-08-07 (LATEST, evening): V76 FLEW AND FLEW CLEAN. GRIND #1 IS **DOSE-LIMITED**
+★★★★★ **THE HEADLINE, 2026-08-07 (LATEST, night): V80 FLEW. IT DID NOT FAULT, AND IT PRODUCED THE WORST
+GRINDING THIS CAR HAS EVER MADE. THE CAUSE IS ITS OWN DAMPER — A FLAT `FactorC` AT `k` = 4.16 TURNS THE
+DAMPER INTO A NEAR-BANG-BANG COULOMB RELAY, AND THE BUILD'S NO-CLIP GATES WERE STRUCTURALLY BLIND TO IT.
+**V81 — A 126-BYTE REVERT FROM THE FLOWN V75, WITH BOTH LEGS OF THE FAULT MECHANISM REMOVED — IS BUILT,
+VERIFIED AND UNFLASHED. THE FLASH DECISION IS THE OPERATOR'S.**
+
+**Route `75604b0a432fdc89|00000066--276b942769`, 15 segments, 901.71 s, 89,997 frames @ 100.0 Hz,
+downloaded to `analysis-2020accord/rlogs/`. Engaged (`carControl.latActive`) 30,260 frames = 302.6 s =
+33.62%**, 9 engaged episodes ≥ 2 s, speed −0.09 … 31.34 m/s (112.8 km/h).
+**Operator's verdict: the WORST grinding the car has ever produced** — loud, strong, felt through the
+whole car, ~90% of LKAS-engaged time, at both low and high speed, causing noticeable vehicle instability.
+🛑 **V80 DID NOT FAULT. This is a STABILITY failure, not a fault-class failure.** `0x1AB` DTC-active:
+**0 transitions, 0.000% duty**, 0 × `0x7FFF` sentinels; `STEER_STATUS` histogram {0: 63,861, 3: 26,136},
+same shape as route 65. [EVIDENCE]
+⊕ `build_v80_tva.py`'s own header says verbatim *"GATE 2 (magnitude AND phase) is NOT satisfied by
+argument. **V80 IS NOT CLEARED TO FLY.**"* It was flown anyway.
+
+### ★★★★★ ROOT CAUSE — V80's damper is a near-bang-bang Coulomb relay
+
+Damper dose vs motor rate at **5 km/h**, recomputed by the orchestrator from the shipped plain images,
+records dereferenced through their pointer arrays (`FactorC 0xC9E9C`, `FactorE 0xC9F84`,
+`ceiling 0xC77A0`, `friction 0xCBE74`), **mode 26** (this car is `TVCA4`: 26 engaged / 24 manual):
+
+| rate (ct) | 20 | 40 | 99 | **119** | 150 | 255 | 530 | 1000 | 1941 | 4000 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ≈ °/s (4.7121 ct per °/s) | 4 | 8 | 21 | **25** | 32 | 54 | 112 | 212 | 412 | 849 |
+| **V75** | 12 | 44 | 137 | 169 | 218 | 297 | 297 | 297 | 297 | 512 |
+| **V80** | 82 | 166 | 412 | **495** | 495 | 495 | 496 | 498 | 501 | 512 |
+
+⇒ **V80 emits a constant 495 counts — 3.4% variation across a 34× rate range — at 97% of the 512 ceiling,
+above only ~25 °/s, at EVERY speed** (FactorC is flat). V75 plateaus at 297 (58% of ceiling) and only
+above 54 °/s. [EVIDENCE, orchestrator's own Python LE read of the flashed images]
+
+🛑🛑 **WHY THE BUILD'S OWN GATES WERE BLIND.** Every no-clip guard tests `product > ceiling`. V80's
+supremum is `(566*927)>>10 = 512` = the ceiling **exactly**, so it clips **0.00%** and passes. The flat
+FactorC did not remove the relay — it **moved** it from the ceiling clamp to **FactorE's own knee**,
+**17 counts under the rail** (slope drops ~1200× at `X[1] = 119`). **"Does not clip" and "is not a relay"
+are different statements, and only the first was ever checked.** [EVIDENCE]
+
+**Describing function** `N(R)` (fundamental-harmonic gain of `force = −sign(rate)·M(|rate|)`; constant
+`N` = viscous = stabilising, `N` rising as amplitude falls = relay = limit-cycle generator):
+
+| R (ct) | 25 | 50 | **99** | 150 | 250 | 500 | 1000 |
+|---|---|---|---|---|---|---|---|
+| V75 @creep | 0.580 | 1.065 | **1.319** | 1.410 | 1.317 | 0.734 | 0.375 |
+| V80 @creep | 4.007 | 4.087 | **4.127** | 3.698 | 2.421 | 1.250 | 0.632 |
+| V80/V75 @60 km/h | 17.7× | 9.4× | **7.6×** | 6.4× | 4.5× | 4.1× | — |
+
+Relay-ness index `N(50)/N(500)`: **V75 = 1.45× (creep) / 1.43× (60 km/h); V80 = 3.27× at both.**
+Small-signal loop gain `k`: **V75 1.5798 · V76 1.3866 · V74 0.5799 · V80 4.1597** — 2.63× V75, 3.00× V76,
+extrapolating 2.6× beyond the last measured point. [EVIDENCE]
+
+★★★★ **THE MEASUREMENT THAT SETTLES IT — both builds' own cave probes.**
+
+| | damper `\|gp-0x6bd0\| ≥ 448 counts`, engaged |
+|---|---|
+| **V75** (route `5e`, 28,317 pre-fault frames) | **0.000%** — never above 128 counts *at all* above 40 km/h |
+| **V80** (route `66`) | **19.4%** overall · 32.7% above 15 m/s · **71% through the worst 29 s event** |
+
+V75's engaged level census: L0 (dead) 56.8% · L1 (1–127) 25.3% · L2 (128–287) 9.3% · L3 (288–447) 8.6% ·
+**L4 (≥448) 0.000%.** **V75's damper never entered its saturated regime. V80's lives there.**
+[EVIDENCE — the single cleanest statement of the root cause]
+
+★★ **THE DAMPER'S NET SIGN IS RESOLVED, AND IT IS DISSIPATIVE.** `gp-0x6abe` is the **signed twin of
+`gp-0x6ac0`** (both filtered from `gp-0x4f50` in `FUN_00041464`; `0x41b56`:
+`gp-0x6abe = (short)(uVar16>>10)` signed vs `gp-0x6ac0 = |uVar16|>>10` rectified). Sign applied at
+`0x3469E`–`0x346A2` (`cmp r0,r11 / ble / subr r0,r8`) ⇒ `sign(gp-0x6bd0) = −sign(motor rate)`.
+**Path 2 through the PID is NON-INVERTING**: the Stage-2 subtraction in `FUN_00038148` and the PID's
+`err = setpoint − feedback` cancel, and the two `polarity(gp-0x6752)` multiplications cancel regardless of
+value ⇒ `(−P)(+1)(−1)(+P) = P² = +1`. `FUN_00037fe6` is a genuine unity adder (all 7 weights at
+`tp+0x74ad..0x74b3` read `01`). Path 1 (bare) and Path 2 both enter `FUN_0003aa2c` with unity weight and
+**REINFORCE** ⇒ **dissipative by construction at `gp-0x6b94`, high confidence.** [EVIDENCE]
+⚠ **STILL OPEN: the `gp-0x6b94` → motor forward hop.** New node: **`gp-0x6ace`** = the governor-clamped
+form of `gp-0x6b94` (written by `FUN_0004503c` via `FUN_00049a90`); its only readers are `FUN_000456a4` /
+`FUN_00045a20`, both hard-shutdown monitors. Both of `FUN_00042af8`'s documented external inputs are
+RULED OUT: `gp-0x6b08` is self-referential; `gp-0x6afe`'s sole writer `FUN_00042ac6` is fed by
+`FUN_00026c80`, an independent Sensor-B lane that runs BEFORE `FUN_0003aa2c` in the same tick.
+**A missing link, not a discovered inversion.**
+
+### WHAT ROUTE 66 ACTUALLY SHOWS
+
+★★★ **(a) A broadband HF floor lift — the dominant effect.** Median engaged periodogram, **V80 minus
+V76**, matched 10–40 km/h stratum:
+```
+ Hz    7.8   12.1   18.0   19.9   21.9   23.8   26.2   28.1   30.1   34.0   35.9   39.9   44.2   48.1
+dB   -6.03  -0.20  +0.05  -0.72  -0.58  +2.44  +3.75  +5.27  +5.70  +9.22 +10.41  +8.15  +8.49 +11.47
+```
+**Grind #1's own band is UNCHANGED; the ratchet is 6 dB DOWN; everything above ~24 Hz lifts by a flat,
+prominence-neutral offset.** Cell-stratified V80/V76 = **2.09× [1.46, 2.70]** on the 30–49 Hz floor, and a
+pre-declared **32–38 Hz negative control fails identically (2.035)** ⇒ the whole HF region moved together.
+**This is NOT "grind #2 got worse".** [EVIDENCE]
+**Falsifiers, all cell-stratified V80/V76:** torsion bar 30–49 Hz **2.09 [1.40, 2.71]** · steering angle
+30–49 Hz (a **different CAN message**, `0x14A`) **1.60 [1.26, 2.03]** · **IMU vertical 20–49 Hz 1.07
+[0.92, 1.33] ⇒ NOT a rougher road** · openpilot `0x0E4` command 1.25 [1.12, 1.44] · 1–4 Hz driver-input
+exposure check 1.14 [0.88, 1.47].
+★ **FFT-FREE CONFIRMATION** — sample-to-sample sign reversals, immune to spectral leakage. Engaged windows
+containing ≥1 reversal of `|step| > 300` counts: **V75 3.0% · V74 22.0% · V76 22.0% · V80 73.0%**. At
+`|step| > 800`: **V75 0.0% · V74 0.5% · V76 0.6% · V80 23.3%.** Exactly the near-Nyquist chatter a
+bang-bang relay injects. [EVIDENCE]
+
+★★★★ **(b) A sustained ~27.4 Hz limit cycle that NO other build produces.** Engaged windows with 26–31 Hz
+envelope > 1000 counts: **V74 0/413 · V76 0/328 · V75 0/133 · V80 32/215 (14.9%)**, in segments 8, 12, 13,
+at 54–104 km/h.
+**THE WORST EVENT — segment 8, route-global t ≈ 500.9–530.3 s, 99–104 km/h, ~30 s unbroken.**
+Orchestrator's own Welch spectrum over the window: **27.56 Hz at ×92 over the in-band median**; manual at
+the same speed peaks at ×3.1. Torsion bar **6,830 counts p-p**, σ = 1,059. At 10.24 s resolution the line
+is **27.344 Hz, prominence 292, Q ≈ 140.** Steering angle p-p **1.92°**, angle rate p-p 234 °/s. Damper
+`≥448` duty through the event: **71%**. `sstat`=0, `sca`=1, `cc_lat`=1 throughout — **no fault, no
+lockout.** Envelope goes 50 → 3000+ counts within ~1.5 s of engagement and collapses to ~150 the instant
+LKAS disengages.
+**Relay tests:** amplitude clamped ±15% over 30 s ✅ · crest factor **1.838** (sine 1.414, square 1.000) =
+near-sinusoidal limit cycle ✅ · **NOT wheel order 2**: measured `df/dv` = **−0.131 [−0.231, −0.016]** Hz
+per m/s where order 2 demands **+0.961**; at 54–62 km/h the line sits at 28.7–30.1 Hz where order 2 would
+be 14.4–16.7 Hz ❌.
+Speed-tracking check (engaged, 26–30 Hz peak): 1–5 m/s → 30.3 Hz ×2.1 · 10–15 → 26.2 Hz ×1.6 · 15–20 →
+29.1 Hz ×10.3 · **24–32 → 27.6 Hz ×94.9.** **Frequency pinned across a 20× speed range** (wheel order 1
+would sweep 1.5 → 13.7 Hz), **amplitude exploding with speed.**
+⚠ **The mode is NOT new to V80 — it is the kit's ~28 Hz line, amplified.** V74's strongest windows
+29.4–29.5 Hz, e = 450–531 ct @106–114 km/h; V76's 28.3–28.9 Hz, e = 815–920 ct; V80's 26.8–28.2 Hz,
+**e = 1759–2686 ct**. V80 raised it ~2.7×, dropped f0 by 1–2 Hz, and turned intermittent episodes into a
+sustained limit cycle. [BELIEF] the f0 drop with loop gain is what a control-loop mode does and a fixed
+mechanical resonance does not.
+⚠ **Aliasing (common mode):** fs ≈ 100.0 Hz, so 27.344 Hz is indistinguishable from 72.66/127.34 Hz.
+Identical on all four routes ⇒ cannot affect the contrast, only the identification.
+⚠ **Command caveat:** openpilot's own `0x0E4` carries 25–30 Hz at rms 45.8 ct, correlated +0.93 at lag 0
+with the bar; bar/command ratio at 27 Hz is **15.8×**. [BELIEF] an echo, not a cause — the EPS LKAS lane
+is a ~1–5 Hz low-pass on standing EVIDENCE, so a 27 Hz command component cannot reach the motor that way.
+**Settling it needs a phase-resolved coherence, not the lag-0 correlation that was run.**
+
+★★ **(c) Damper-saturation dose–response** (engaged 2.56 s windows), 17–30 Hz band power binned by the
+fraction of the window the damper spent ≥448 counts:
+`0–5% → 1.1e3 · 5–20% → 9.2e3 · 20–40% → 3.0e4 · 40–60% → 2.1e5 · 60–80% → 1.4e6.`
+**Three orders of magnitude, monotone.** ⚠ speed and saturation duty are mutually confounded ⇒
+**[EVIDENCE] on the association, [BELIEF] on causal direction.**
+
+★★ **(d) "~90% of engaged time" — quantified, scored on the band that MOVED (30–49 Hz).** Thresholds taken
+from V76's own engaged distribution (so V76 reads 50/25/10% by construction):
+
+| threshold | V74 | V76 | V75 | **V80** |
+|---|---|---|---|---|
+| V76 p50 (85.7 ct) | 42.9% | 50.0% | 42.9% | **79.5% [70.3, 87.7]** |
+| V76 p75 (128.1 ct) | 21.1% | 25.0% | 11.3% | **75.3% [66.2, 83.9]** |
+| V76 p90 (203.5 ct) | 6.8% | 10.1% | 4.5% | **64.7% [52.8, 74.9]** |
+
+Per stratum at V76-p50: creep 37.1% · **10–40 km/h 93.9%** · **40–80 km/h 80.0%** · **>80 km/h 100%.**
+Independently, on the 17–30 Hz p-p criterion: **89.1% of engaged windows ≥100 ct p-p**, and **17.1% of
+engaged time >1,500 ct p-p — an amplitude reached in ZERO of 432 manual windows.** Engagement test: median
+per-edge ratio **×2476** (18–22 Hz) within 4 s of the `latActive` rising edge, 6/7 edges up; falling edges
+×0.34. **[EVIDENCE] engagement-conditional, switches on within seconds.**
+
+### 🛑🛑 TWO RETRACTIONS THE RECORD NOW CARRIES
+
+🛑 **(1) GRIND #1 IS INERT TO THE DAMPER DOSE.** Four-point ladder on ONE instrument
+(`rlog-tools/compare_v75_v76_v80_grind.py`, NFFT 256/hop 128, p99 analytic band envelope, ~10.2 s
+bootstrap blocks nested inside engagement runs), ratio to V76:
+
+| band | V74 k=0.58 | V76 k=1.39 | V75 k=1.58 | V80 k=4.16 |
+|---|---|---|---|---|
+| **18–22 grind #1** | 1.166 [0.98,1.41] | 1.000 ref | 0.735 [0.50,1.22] | 0.835 [0.64,1.07] |
+| 6–9 micro-ratchet | 0.818 [0.70,1.09] | 1.000 ref | 0.821 [0.66,1.09] | **0.418 [0.33,0.61]** |
+| 26–31 | 0.823 [0.72,1.02] | 1.000 ref | 0.865 [0.71,1.20] | 1.197 [0.80,1.52] |
+| **40–49 grind #2** | 0.810 [0.70,0.97] | 1.000 ref | 0.961 [0.77,1.24] | **2.017 [1.32,2.83]** |
+| **30–49 HF floor** | 0.820 [0.73,1.01] | 1.000 ref | 0.953 [0.81,1.26] | **2.091 [1.46,2.70]** |
+| **32–38 neg control** | 0.865 [0.76,1.03] | 1.000 ref | 0.959 [0.82,1.22] | **2.035 [1.45,2.57]** |
+
+Split-half nulls (300 halvings, per route): 18–22 Hz ≈ **[0.63, 1.60]**. **Every grind-#1 point sits inside
+its own noise floor across k = 0.58 → 4.16.** ⇒ 🛑 **V80 did NOT "overshoot an optimum" on grind #1 —
+grind #1 never responded to `k` at all.** On this instrument V75's "no grind #1" vs V76's "still grind #1"
+is a **creep-EXPOSURE difference** (V76's creep windows carry 3.4× V75's steering effort), not a dose
+difference. **This retracts the "grind #1 is DOSE-LIMITED" verdict in the superseded headline below.**
+[EVIDENCE]
+★ The operationally useful statement: **something switches on between `k` = 1.58 and 4.16 that costs 2×
+broadband HF plus a limit cycle. Where in that gap it switches on is UNMEASURED.**
+🛑 **CORRECTED 2026-08-07 by the orchestrator:** an earlier draft of this line read *"`k` ∈ [1.39, 1.58]
+buys most of the ratchet benefit at zero HF cost"* — **that clause is withdrawn.** It contradicts the very
+next paragraph: 6–9 Hz is FLAT from `k` = 0.58 to 1.58, so that bracket buys **no measurable ratchet
+benefit over a LOWER dose**. The only ratchet gain in the corpus is at `k` = 4.16, and it is the point that
+also carries the HF penalty. **There is no measured "free ratchet benefit" bracket.**
+★ **The micro-ratchet's own reading, stated precisely:** on this ladder (ratio to V76, split-half null
+≈ **[0.66, 1.45]**) 6–9 Hz is **FLAT across `k` = 0.58 → 1.58** — V74 0.818 [0.70, 1.09], V75 0.821
+[0.66, 1.09], both **inside** the null ⇒ the earlier **"dose-independent" verdict was ACCURATE over the
+range then available, and is not refuted — its DOMAIN is bounded above.** It improves significantly **only
+at `k` = 4.16**, the first point outside the null: **0.418 [0.33, 0.61]** [EVIDENCE]. ⇒ **V80 bought a real
+ratchet gain and paid for it with the HF floor.**
+⚠ **Calling the four points MONOTONE is [BELIEF], not EVIDENCE** — three of the four are inside the null,
+so only the top point carries it.
+
+🛑 **(2) V80's CREEP NUMBERS ARE AN EXPOSURE ARTEFACT — do not read them.** V80's engaged creep windows
+have median sustained effort **173 counts** and median `|angle rate|` **1.3 °/s**, against V74/V76/V75's
+685/588/1113 counts and 33/33/48 °/s. **Zero matched cells.** An earlier claim this session that "V80 is
+3–30× quieter than V76 at creep" is **RETRACTED — the driver was not turning the wheel.** Also
+unresolvable: whether V80's near-zero creep angle rate is itself an *effect* of a 412-count-at-all-speeds
+damper making the wheel feel sticky.
+⚠ Also not comparable: the **>80 km/h** stratum — V75 never exceeded 65 km/h and V80 has **1 engagement
+run / 3 blocks** there (the limit-cycle event itself). **The 10–40 and 40–80 km/h strata are well matched
+and carry the load.**
+
+### ★★★★★ THE FAULT MECHANISM — CONFIRMED IN GHIDRA, AND THE `0xC63A0` PREMISE IS REFUTED
+
+**`0xC407E` (= `tp+0x507E`; anchored `0xBF000+0x507E`, the off-by-0x1000 trap avoided) is the whole story.**
+- **Monitor `FUN_00036d74`** — orchestrator's own decompile: `fVar3 = gp-0x6b26 * 0.0009765625`; if
+  `|fVar3| > *(float*)(tp+0x5004)` → `FUN_000462e6(0x39bc,…)` → `FUN_00016de6(0x1d,…)` = **DTC 0x1d,
+  latched total loss of assist**. `0xC4004` bytes `0000003f` = f32 **0.5** ⇒ trip at **512 counts**.
+  Symmetric, **no debounce.** Called from the 1 kHz task `FUN_0002214a` @`0x2290A`; the caller's
+  `gp-0x67fa ∈ {4,5,11}` gate is the SAME gate that wraps the producer's call ⇒ unconditional *relative to
+  the producer* — no path writes `gp-0x6b26` without the monitor checking it that cycle.
+- **Sole writer of `gp-0x6b26`**: `st.h r6,-0x6b26[gp]` @`0x36CF0` in `FUN_00036c12` — **exactly one writer
+  image-wide**, confirmed by Ghidra + a raw Python LE scan covering disp16, the 6-byte disp23 form, LE32
+  address literals and movhi/movea pairs (**0 hits on all three alternatives**). The stored value is
+  already clamped to ±`0xC407E` (clamp arms at `0x36CCC`–`0x36CE2`).
+- **`0xC407E` itself**: 0 writers, 3 readers, all `ld.h` SIGNED, **all three inside `FUN_00036c12`** ⇒ the
+  cell's entire blast radius is one lane's clamp magnitude.
+- **Margins**: stock / V38 / V76 / V78 / V79 / V80 **511 → +1, UNTRIPPABLE** · V73 / V74 / V75 **850 →
+  −338, TRIPPABLE** · **V81 511 → +1, UNTRIPPABLE.**
+⇒ **At 511 the monitor is untrippable BY CONSTRUCTION** — the only value that ever reaches the cell is
+already clamped below the trip, whatever the plant, mode or lever set does. [EVIDENCE]
+
+🛑🛑 **THE `0xC63A0` PREMISE IS REFUTED.** The standing operator directive *"do not double `0xC63A0`, that
+is what was causing hard faults"* rests on a **false premise**. `0xC63A0` (= `tp+0x73A0`) has **exactly one
+reader**, `ld.hu` @`0x381AC`, **0 writers, 0 disp23 hits**. Its only reader `FUN_00038148` writes exactly
+two cells — `gp-0x374c` (accumulator) and `gp-0x6b70` (output) — and **never** `gp-0x6b26`, `gp-0x6c2c` or
+`gp-0x6a5e`. `gp-0x6c2c`'s two writers are both inside `FUN_00041464` (`0x4184E`, `0x41AC2`).
+**There is NO firmware data path from `0xC63A0` to the faulting monitor.** A *physical* path exists
+(aggregator → motor → plant → motor rate → `gp-0x6c2c`) and is irrelevant, because **the clamp acts before
+the store.** [EVIDENCE]
+⊕ `build_v80_tva.assert_c63a0_block` still hard-asserts 1024 with the old rationale — **the comment there
+is now known-wrong** and should be corrected. (V80 is a different lineage, so nothing conflicts.)
+
+★ **V75's fault was NOT the damper.** In the last 5 s before the trip the damper was identically **zero for
+4.98 s** and reached only level 2 (128–288) **19 ms** before the fault. The car was stationary T−5→T−1 s
+then launched (0 → 7.6 km/h). Column rate reversed sign twice in the final 150 ms (+55, +31, −38 °/s);
+**peak jerk 7,154 °/s² = 4.3× that route's own p99.9 (1,664)** and the route maximum. Exactly what the
+`0xC407E` mechanism predicts. [EVIDENCE]
+⚠ **[BELIEF, not EVIDENCE]** "`0xC407E` = 850 caused BOTH faults" — **the DTC number was never confirmed
+on-car.** What is EVIDENCE: the mechanism exists, is single-frame, is mode-proof, and the build history
+lines up exactly. **V81 closes it whether or not it fired.**
+
+### 🛑 THE V38 REBASE SILENTLY REVERTED THREE LEVERS
+
+Orchestrator's own byte read across the lineage:
+
+| lever | V62 · V68 · **V74 · V75** | **V76 · V78 · V80** |
+|---|---|---|
+| `0x2A1F0` reader disp | `0x7CD0` → **decoupled** `0xC6CD0` = 3564 | `0x746C` → **shared** `0xC646C` = 3564 |
+| `0xC646C` shared sensor scale | stock **891** | **3564 (4×)** |
+| `0xC62EA` low-speed steer lockout | **0** (removed) | **320** (restored) |
+| `0xC63A0` Path-2 damper weight | **2048** | 1024 |
+| `0x454FE` V42 macro-ratchet fix | `0xB5` | `0xBA` (V80 restored it to `0xB5`) |
+
+🛑 **V80 vs V75 was NEVER a single-variable damper comparison.** V76 was cut from V38, which predates V57's
+decouple, and nothing in the V76→V78→V79→V80 chain re-applies it.
+
+**`0xC646C` — full reader map, and why it is NOT the 27 Hz driver.** Exactly **6 static readers, 0 stores,
+0 disp23 hits, 0 LE32-pointer hits** (three independent methods: Ghidra `search_instructions`, a fresh raw
+Python LE scan of both encodings, fresh decompiles). **Q15 dimensionless multiplicative scale** —
+`(x * cal) >> 0xf` at every site; 3564 = 4×891 exactly.
+
+| # | addr | function | role |
+|---|---|---|---|
+| 1 | `0x2a1ee` | `FUN_00028ea6` | **LKAS arbitration / CAN-setpoint→command — the one V57 decoupled** |
+| 2 | `0x2a904` | *(orphan)* | **DEAD** — no function, no xrefs |
+| 3 | `0x2b656` | `FUN_0002b62c` | **RECLASSIFIED**: output `gp-0x6af0` reaches only a private 2-function mode-flag debounce loop (`gp-0x677d` has exactly 2 static refs image-wide) + a UDS packer with 0 static callers. **No torque path.** |
+| 4 | `0x2c488` | `FUN_0002c478` | output `gp-0x6b10` has **3 refs, all `st.h`, ZERO loads** — proven dead |
+| 5 | `0x36686` | `FUN_00036682` | **the only one reaching the motor** — multiplies RAW `gp-0x4f60`, adds into `FUN_0003aa2c` → governor → `gp-0x6b98` |
+| 6 | `0x3684a` | `FUN_00036828` | modulates #5's hysteresis half-band via `gp-0x6b44` (2nd-order) |
+
+**Reader #5 cannot drive a 27 Hz limit cycle — a BANDWIDTH argument.** Its output passes an IIR with
+`alpha = tp+0x73d2 = 6` ⇒ `6/1024 = 0.00586`, corner **≈0.93 Hz, ≈−26.6 dB at 21 Hz.** [EVIDENCE]
+(This also settles the prior "6 vs 14" open discrepancy **in favour of 6**.)
+**Reachability screen of reader #5's pre-filter `±0x200` clamp**, whose trigger on `|gp-0x4f60|` drops from
+~18,829 counts at stock to **~4,707 at 4×** — never previously run against a V76-lineage log: on route 66,
+`|bar|` engaged p50 174 · p90 1,424 · p99 3,346 · p99.9 3,712 · **max 3,849**; `|bar| ≥ 4707` fired
+**0 / 89,997 frames**; worst event max 3,437. ⇒ **It did not bind.** ⚠ **Margin only 22%**, and the CAN
+sensor's count scale is not proven identical to `gp-0x4f60`'s internal scale ⇒ **"did not fire on this
+drive", NOT "cannot fire".** Worth a probe.
+⇒ **NET: the shared-cell 4× is a real, uncosted regression in headroom that nobody signed off on, but it is
+NOT the 27 Hz driver.** **V81 removes the exposure for free by being cut from the V75 base.**
+✅ `0xC6CD0` = `0xFFFF` on V76/V78/V80 is **provably inert** — 0 instructions read `tp+0x7cd0` anywhere.
+
+### 🛑 TOOLING / HYGIENE FINDINGS FROM THIS SESSION
+
+1. 🛑 **`rlog-tools/decode_v76_probe.py` is the WRONG decoder for route 65** and will give a confident wrong
+   answer. It documents the **superseded** V74-base V76 (`V76-V74BASE-GATE-FB-ARM5244`), whose bit7 is
+   `gp-0x6bd0 != 0` — the damper, not the friction lane. The build that flew route 65 is
+   `V76-V38BASE-RELU-C566-damper-frictionCLAMP511-probe-6b26-63fd`; its extractor is
+   `analysis-2020accord/v76flight_extract.py` → `analysis-2020accord/_cache_r65_records.pkl`
+   (**not** `_cache_r65/`).
+2. 🛑 **Two `_v76*plain_image.bin` on disk.** `_v76_gate_fb_arm5244_gateprobe_plain_image.bin` is the
+   abandoned V74-base candidate and still carries the V57 decouple; a first `Glob` returns it FIRST. The
+   V78/V80 ancestor is `_v76_v38base_relu_damper_plain_image.bin`. The `.rwd` was correctly renamed
+   `SUPERSEDED-…`; **the stale plain-image snapshot still reads as current.**
+3. **`build_v75_tva.py`'s default lever set does NOT produce the flown V75** — you must pass
+   `ACCORD_V75_LEVERS=CY0,EX1`. The default (`CY0` only) writes the never-flown `…CY0.566…` artefacts. No
+   overwrite hazard (`lever_token()` is in both filenames), but the comment at line 269 is easy to misread.
+   **The flown V75 is the `EX1.200` cut, dose 137, k = 1.5798.**
+4. **V74's first (clean, symptom-measurement) flight — route `5d` — has NO raw rlogs anywhere in the repo.**
+   Only the extracted `_cache_r5d/*.npz` + `.pkl` survive. **Every downstream V74 conclusion in this file
+   runs against that cache, not the raw log.**
+5. **V80's probe cannot distinguish V80 from V78/V79** — byte-identical cave, identical trip rates below
+   80 km/h. Build identity rests on the `.rwd` filename plus the absolute exclusion of V76-V38BASE (13,183
+   frames set bit6 with bit5 clear, structurally impossible on that cave). Route 66's `0x14A` byte4 took
+   only {`0x0F`, `0x1F`, `0x5F`, `0xDF`}; bit5 0/89,997; bit3 positive control **100.000%**.
+6. The bash/PowerShell default `python` (anaconda base) has a **broken numpy DLL.** Either prepend
+   `C:\Users\dudei\anaconda3\Library\bin` to `PATH` or use
+   `C:/Users/dudei/anaconda3/envs/bin_decompile/python.exe` (which also has `capnp`).
+
+### ⇒ ★★★ NEXT
+
+1. **Fly V81.** A 126-byte revert from the only build that has ever eliminated the grinding, with both legs
+   of the recorded fault mechanism removed. 🛑 **Flash decision is the operator's; the file and the bus must
+   be named back.**
+2. **Bracket the switch-on point in `k` ∈ (1.58, 4.16]** — the HF floor is flat at/below baseline for
+   `k` ≤ 1.58 and 2.09× at 4.16, and nothing exists in between. 🛑 **With the RAMP PRESERVED** — the data's
+   own recommendation is *"restore the ramp, don't merely lower `k`"*.
+3. **The micro-ratchet's only significant improvement in the ladder is at V80's dose** (`k` = 4.16,
+   **0.418 [0.33, 0.61]** — the sole point outside the ≈[0.66, 1.45] null; 6–9 Hz is **flat from 0.58 to
+   1.58**). If the operator wants that back it is a **V82 question**, not a reason to keep V80's flat top.
+4. **Probe the friction lane at 320/352/416** if variant B is ever wanted — converts the bet into a
+   measurement for ~30 cave bytes.
+5. **Close `gp-0x6b94` → motor** with a raw Python LE scan for the 6-byte extended-disp encoding of
+   `gp-0x6ace`/`gp-0x6b94`/`gp-0x6afe`/`gp-0x6b08`, plus `analyze_dataflow`/`get_bulk_xrefs` as an
+   independent method, plus a **full decompile of `FUN_00042af8`** (its "no `gp-0x6b94` reference"
+   characterisation was inherited, never re-verified).
+6. **Settle the 27 Hz command-vs-plant question** with a phase-resolved coherence on `sendcan` `0x0E4` vs
+   the torsion bar.
+7. **Correct `build_v80_tva.assert_c63a0_block`'s now-known-wrong rationale comment.**
+8. **Re-run reader #5's `±0x200` clamp screen** with a proven `gp-0x4f60` scale — the 22% margin is thin.
+
+---
+
+★★★★ **SUPERSEDED HEADLINE, 2026-08-07 (evening): V76 FLEW AND FLEW CLEAN. GRIND #1 IS ~~DOSE-LIMITED~~
 AND THE MICRO-RATCHET IS **DOSE-INDEPENDENT** — a resolved split. THE OPERATOR'S "150% OF V75'S 5 mph
 DOSE" IS RIGHT AND COSTS **ONE u16 CELL** (**V78**); THE "BOTH FACTORS AS ReLUs + BIGGER TABLES" HALF
 **INVERTS** — 4 points was never the obstacle, and a literal ReLU FactorC RE-CREATES THE COULOMB RELAY
@@ -50,8 +388,19 @@ falsifiable point prediction):
 | band | V76 observed | monotone prediction | slope b [95% CI] | verdict |
 |---|---|---|---|---|
 | ratchet 6–9 Hz | 3.877 [3.098, 5.161] | 3.906 (−0.06 dB) | **−0.094 [−0.291, +0.098]** | **DOSE-INDEPENDENT** |
-| grind #1 18–22 Hz | 1.577 [1.380, 1.831] | 1.613 (−0.19 dB) | **−0.614 [−0.810, −0.416]** | **DOSE-LIMITED** |
-🛑 **More damper will NOT fix the micro-ratchet.** Grind #1 present on V76 at rel. excess
+| grind #1 18–22 Hz | 1.577 [1.380, 1.831] | 1.613 (−0.19 dB) | **−0.614 [−0.810, −0.416]** | ~~DOSE-LIMITED~~ 🛑 **RETRACTED 2026-08-07 (night)** |
+🛑🛑 **THE GRIND-#1 "DOSE-LIMITED" VERDICT IS RETRACTED — see the current headline, retraction (1).** On a
+four-point ladder run on ONE instrument across `k` = 0.58 → 4.16, **every grind-#1 point sits inside its own
+split-half noise floor [0.63, 1.60]**. What this three-point fit read as a dose slope is a **creep-EXPOSURE
+difference** between the routes (V76's creep windows carry 3.4× V75's steering effort).
+✅ **THE 6–9 Hz DOSE-INDEPENDENT LEG IS *NOT* REFUTED — its DOMAIN is now bounded above.** On the four-build
+ladder (ratio to V76, split-half null ≈ **[0.66, 1.45]**) the micro-ratchet is **FLAT across `k` = 0.58 →
+1.58** — V74 **0.818 [0.70, 1.09]**, V75 **0.821 [0.66, 1.09]**, both inside the null ⇒ **"dose-independent"
+was ACCURATE over the range then available.** It improves significantly **only at `k` = 4.16**, the first
+point outside the null: **0.418 [0.33, 0.61]** [EVIDENCE].
+⚠ **Reading all four points as a monotone trend is [BELIEF], not EVIDENCE** — three of the four sit inside
+the null, so **only the top point carries it.**
+🛑 ~~More damper will NOT fix the micro-ratchet.~~ Grind #1 present on V76 at rel. excess
 **1.956 [1.214, 4.154]** (worse than V75's 1.572, far better than V74's 9.154); ratchet **5.026
 [3.824, 6.592]**, indistinguishable from V74/V75. **Both match the operator's report exactly.**
 🛑 **V76's grind-#2 prediction was FALSIFIED** at the one powered rung: predicted 0.57× vs V75 at
@@ -103,7 +452,106 @@ comparison; the only flash writer `FUN_0000d934` has zero static callers; the CR
 ⊕ **A free, never-touched lane: FactorD is n=5, flat `Y=1024` (inert) in modes 24 AND 26**, axis
 `gp-0x6a10` (angle-tracking error), gated `gp-0x67fe ∈ {1,2}`. UNTESTED, not falsified.
 
-## ✅ BUILT, VERIFIED, **UNFLASHED** — **V80** ← THE CURRENT CANDIDATE
+## ✅ BUILT, VERIFIED, **UNFLASHED** — **V81** ← THE CURRENT CANDIDATE
+
+**V81 = the FLOWN V75, with the friction lane returned to Honda's configuration. CAL-ONLY. NO CAVE CHANGE.**
+A **126-byte revert** from the only build that has ever eliminated the grinding, with **both legs of the
+recorded fault mechanism removed.** 🛑 **The flash decision is the operator's; the file and the bus must be
+named back.**
+
+| | value |
+|---|---|
+| builder | `analysis-2020accord/build_v81_tva.py` |
+| base | `_v75_CY0.566-EX1.200_magprobe_plain_image.bin` sha256 `e16ba4093205772e3a1bfb48f8790ade5c12f0e042b6608e51a48faaf1edf61c` — **the cut that FLEW route `5e`** |
+| image | `_v81_C407E.511-FRICTION.STOCK_plain_image.bin` sha256 **`4ddbd0e2fca5c37873f4c1b633e88a81d4d62a3b45743ce2c13e1c7403bfd65b`** |
+| rwd | `39990-TVA,A160-V81-V75BASE-C407E.511-FRICTION.STOCK-magprobe-6bd0-thermo-6ac2-0x13000-0x100000.rwd` sha256 **`fc4d4f74956c76dbda340e17ecf4c3ecbe3f86bbc47418cbc3b3185c52aea109`** (986,042 B) |
+
+**EDIT 1** — `0xC407E` **850 → 511** (bytes `5203` → `ff01`). Restores Honda's interlock.
+**EDIT 2** — the ×1.5 friction table → **stock at all 14 sites** (`0xCF6E0 0xCF6F0 0xD0A5C 0xD2A4C 0xD2A5C
+0xD3A5C 0xD3A6C 0xD4A5C 0xD6A5C 0xD7A5C 0xD7A6C 0xD8A5C 0xD9A5C 0xD9A6C`), `67c667de7bf4` → `9ad99ae952f8`.
+🛑 **CORRECTION TO THE RECORD: the ×1.5 friction was introduced by V73, NOT V74.** Verified across the
+lineage: stock / V70 / V71c / V72 carry Honda's row; **V73 / V74 / V75 carry ×1.5** (V73 also raised
+`0xC407E`).
+🛑 **`0xD2A4C` is mode 10 — a DISENGAGED-column record.** V74's derivation only ever wrote the 13 engaged
+modes, so it never saw m10. **V81's edit there is a revert TO stock**, so that column can only become more
+stock. Asserted as *"all 34 friction records byte-identical to STOCK"*.
+
+**Orchestrator's own from-disk verification — ALL PASS:**
+- **25 differing runs / 126 bytes** vs the flown V75: 15 functional (86 B) + 10 CRC words (40 B).
+  **0 unexpected functional runs. 14/14 friction sites.**
+- **Value-anchored**: restoring exactly those 126 bytes reproduces the flown V75 **bit-for-bit**
+  (sha256 back to `e16ba409…`). A total statement over all `0x100000`, not a span check.
+- **Exactly 1 flashable V81 `.rwd` and 1 V81 plain image on disk.**
+- **All 34 friction records byte-stock.** Mode 24 (manual) identical to V75 across all six record types,
+  each resolved through its pointer array.
+- **Unchanged from V75**: m26 FactorC `[566,234,429,908]` · FactorE X `[12,200,2500,4000]` Y
+  `[0,539,539,927]` ⇒ **`k` = 1.5798 identical** · `0xC63A0` = 2048 · `0xC62EA` = 0 · `0x454FE` = `0xB5` ·
+  `0x2A1F0` disp = `0x7CD0` · `0xC6CD0` = 3564 · `0xC646C` = **891 stock** · `0xC4004` = f32 0.5 frozen ·
+  the 68-byte cave @`0xC4B34` and hook @`0x55C0E` byte-identical (also re-derived from scratch by V75's own
+  `build_cave()` and re-disassembled out of the built image).
+- **CRC**: exactly 10 blocks moved (asserted, not observed), full chain **50/50 PASS**; **no edited byte in
+  `[0xC5000, 0xC5FFC)`**. Full `.rwd` encode → decode → re-verify-from-readback, plus a separate from-disk
+  decode of the shipped `.rwd`.
+
+**GATE 1 — RAM OWNERSHIP: PASS, vacuous by construction.** Cal-only: no new RAM, no code, no instruction,
+no cave byte. Measured anyway: `gp-0x6b26` 1w/4r (no literal, no movhi pair) · shadow `gp-0x4cd0` 1w/1r ·
+`0xC407E` 0w/3r signed, all in one function · `0xC4004` 0w byte-frozen · `gp-0x6c2c` 2w unmoved. Friction
+records are pure data behind pointer array `0xCBE74`; V81 writes 6 bytes inside 14 of them and **never the
+count word, X axis or slack bytes.**
+
+**GATE 2 — CLOSED-LOOP STABILITY (magnitude AND phase): PASS, empirically.** **V81 does not change any
+loop.** Damper surface, rate lanes, gate, both `sar` sites, `0xC63A0`, every filter coefficient —
+byte-identical to the build that flew route `5e`. The only dynamic element it touches is a **saturation
+bound, moved DOWN.**
+- **MAGNITUDE**: `k = ((C_Y0·E_Y1)>>10)/(E_X1−E_X0) = 297/188 = 1.5798`, a **frequency-independent scalar**
+  on the whole damper path ⇒ loop gain equals V75's at every frequency, no plant model needed. The friction
+  revert lowers an open-loop feed-forward coefficient; the clamp revert lowers a bound. **Neither can raise
+  gain anywhere.** [EVIDENCE]
+- **PHASE**: no new filter, delay, state or sample point. Every pole, zero and task-order relationship is
+  bit-identical to V75 ⇒ **the phase response of every loop is literally unchanged.** [EVIDENCE]
+- **The one nonlinearity that moves, stated plainly**: `|gp-0x6c2c|` needed to REACH the clamp at creep —
+  stock **3189** · flown V75 **3539** · **V81-A 3189** · V81-B 2126. So **V81-A clamps ~10% MORE often than
+  V75 did (0.90×)** — harmless, and that is the point: at 511 the clamp sits *below* the 512 trip, so
+  **clamping cannot fault.** V81-A's threshold is byte-for-byte stock's ⇒ its duty cycle is Honda's exactly.
+  511 also sits far inside the aggregator's ±1024 zero-reject window ⇒ **no contribution cliff.**
+- ★ **The decisive empirical bound**: on **V76** — Honda's friction row with `0xC407E` = 511, i.e. exactly
+  V81's configuration in this lane — the probe bit `|gp-0x6b26| > 448` fired **0 / 63,477 frames** over
+  route 65, positive control (`gp-0x67fa == 5`) **99.926%**, bit4 70.0%. The lane doesn't reach 448, let
+  alone 511. **The Coulomb-relay hazard in this lane isn't merely bounded, it's measured to be
+  unexercised.** [EVIDENCE]
+- ★ **The strongest GATE 2 case this kit has made**: V75's damper surface FLEW and eliminated the grinding,
+  with `|gp-0x6bd0| ≥ 448` at **0.000%** of 28,317 engaged frames.
+
+⚠ **V81 removes drag the operator may be used to.** Creep effort will differ from V75's — that is intended
+(the V75 handoff attributes the *creep heaviness* complaint to V73/V74's friction ×1.5 plus `0xC407E`
+511→850, and `0xC407E` is a bare `tp` scalar so it raised the drag ceiling in **manual** too) — but it is a
+**feel change as well as a safety change and the operator should be told.**
+⚠ `gp-0x6c2c`'s physical scale is still underived ⇒ *"3189 counts is a rare excursion"* rests on V76's
+measured zero, **not on a unit conversion.**
+
+⊕ **Variant B** (`ACCORD_V81_FRICTION=V75`, keep the ×1.5) is implemented but **NOT cut.** Both variants'
+tokens appear in BOTH output filenames so they can never collide. Rationale for choosing A: a measured zero
+backs it; the ×1.5 contributed nothing to the grinding fix (V74 already carried it and still measured grind
+#1 at 2.72×); it is implicated in the creep-heaviness complaint; and it removes the second leg of the fault
+mechanism. 🛑 **The probe could not discriminate**: ×1.5 pins at 511 when the stock-equivalent raw ≥ **340.7**
+and the rung is at **448** — 340.7 is 76% of 448, so **the entire decision lives inside the comparator's
+first cell.** A calibrated model puts ×1.5's pinning at **rare tail events (~one per 285 s of mixed
+driving), not a duty cycle** [BELIEF]. Settling it properly needs rungs at **320/352/416** (V75's `shr 0x5`
++ `cmp imm5` idiom, ~30 B inside the proven 68 B extent).
+
+---
+
+## 🛑🛑 FLASHED AND FLOWN — **V80** (route `66`, 2026-08-07). **THE WORST GRINDING THIS CAR HAS PRODUCED.**
+
+🛑 **This block previously read "BUILT, VERIFIED, UNFLASHED ← THE CURRENT CANDIDATE". It was flashed and
+flown.** On-car result, route `75604b0a432fdc89|00000066--276b942769`, 901.71 s / 89,997 frames:
+**no fault (0 DTC transitions, 0.000% duty, 0 × `0x7FFF`), and the worst grinding in the kit's history** —
+~90% of engaged time, both low and high speed, with noticeable vehicle instability. **Mechanism: the flat
+FactorC makes the damper a near-Coulomb relay — 495 counts constant above ~25 °/s at EVERY speed, 97% of
+the 512 ceiling — and `|damper| ≥ 448` fired on 19.4% of engaged frames against V75's 0.000%.**
+**Full route-66 result, the describing-function analysis and both retractions are in THE HEADLINE above.**
+🛑 **DO NOT RE-FLASH V80 for grind #1** — grind #1 never responded to `k` at all.
+
 `39990-TVA,A160-V80-V79BASE-flatC566-ratchet454FE-dose412-probe-6bd0-63fd-67fa-0x13000-0x100000.rwd`
 rwd `3ea81bd734e6845393d09099754eccb7a0b5682ce147d65d26511c29d37e230d` ·
 image `_v80_v79base_flatC566_ratchet454FE_dose412_plain_image.bin` `2606d557da9c3a09de6f2b63bd74308e8d6023c3d423e64d9a3b90a3e66211e7`
@@ -115,7 +563,12 @@ FactorE m26              =>  X = [0,119,2500,4000]  Y = [0,897,912,927]   (carri
 ```
 **dose(r=99) = 412 at EVERY speed 5→140 km/h** — 2.000× V78, **3.007× V75**, flat. `k` = **4.1597**.
 🛑 `0xC63A0` = **1024, untouched** — **operator directive, 2026-08-07: *"Do not double 0xC63A0, that is
-what was causing hard faults."*** `0xC407E` = 511; friction m26 byte-stock; mode 24 byte-stock; six
+what was causing hard faults."*** 🛑🛑 **THE PREMISE BEHIND THAT DIRECTIVE IS REFUTED (2026-08-07, night,
+orchestrator-verified in Ghidra): `0xC63A0` has NO firmware data path to the faulting monitor.** Its only
+reader `FUN_00038148` (`ld.hu` @`0x381AC`, 0 writers, 0 disp23 hits) writes only `gp-0x374c` and
+`gp-0x6b70`, **never** `gp-0x6b26` / `gp-0x6c2c` / `gp-0x6a5e`. **The hard faults are the `0xC407E`
+interlock, not this cell** — see THE HEADLINE. The directive is still honoured as an operator instruction;
+the *reason* recorded for it is wrong. `0xC407E` = 511; friction m26 byte-stock; mode 24 byte-stock; six
 pointer arrays byte-stock over all 34 modes; probe cave byte-identical to V79 (68 B @`0xC4B34`).
 **Byte diff V79→V80 = 4 runs / 11 bytes**, all attributed (FactorC Y[3] · the governor byte · two CRC
 trailers). **CRC 50/50 PASS**; re-run reproduces bit-for-bit.
@@ -130,16 +583,29 @@ ceiling floor 512 — stock and V78 clip **0.00%** — first clip at 85 km/h / 2
 stock is **0 inside the RULE-8 envelope at both ceilings** — but **310 counts on the whole gated domain at
 ceiling 1024** (first drop 97 km/h AND 847 °/s). vs V79 it is deliberately subtractive above 80 km/h.
 
-🛑 **NOT CLEARED TO FLY.** `k` = 4.1597 is the **highest loop gain ever built here** — 2.00× V78, **2.63×
+🛑 **IT WAS NOT CLEARED TO FLY — AND IT WAS FLOWN ANYWAY. The pre-flight text below stands as written, and
+it called the outcome.** `k` = 4.1597 is the **highest loop gain ever built here** — 2.00× V78, **2.63×
 the V75 that hard-faulted**, 3.00× the V76 that flew clean once. **`k` is FORCED**: with `E_X0` = 0,
 `dose(r) = k·r`, so doubling the dose at the reference rate doubles the loop gain. GATE 2 is **not**
 satisfied by argument. **The damper's forward path to the motor is NOT FOUND** ⇒ the 2× is predicted, not
 proven. **Grind #1 only from edits 2/3; edit 1 targets the MACRO-ratchet** — the ~7.79 Hz micro-ratchet is
-dose-independent and is **not** expected to move.
+~~dose-independent and is **not** expected to move~~.
+🛑 **POST-FLIGHT, 2026-08-07 (night): both of those last two predictions were wrong, in opposite
+directions.** Grind #1 **did not move** (0.835 [0.64, 1.07] vs V76, inside its own [0.63, 1.60] noise
+floor) — it is **inert to `k`**, not merely dose-limited. The **micro-ratchet DID move, and improved** —
+**0.418 [0.33, 0.61]** vs V76 at 6–9 Hz, **the first point in the whole ladder to fall outside the
+≈[0.66, 1.45] split-half null** [EVIDENCE]. ⚠ That does **not** refute the earlier "dose-independent"
+verdict: 6–9 Hz is flat across `k` = 0.58 → 1.58 (V74 0.818, V75 0.821, both inside the null), so the old
+verdict was **accurate over the range then available and is merely bounded above now**; calling all four
+points monotone is **[BELIEF]**. What V80 actually
+bought was a real ratchet gain paid for with a **2.09× broadband HF floor lift and a sustained ~27.4 Hz
+limit cycle.**
 ⚠ **The probe cannot discriminate V80 from V79 below 80 km/h** (creep dose identical by construction);
 both rungs are now speed-invariant — bit6 47 ct (10.0 °/s), bit7 108 ct (22.9 °/s). **A non-zero bit7 is
 EXPECTED on V80, not a fault.**
 🛑 **`0xC63A0` and `0x454FE` are now DO-NOT-RAISE / MUST-CARRY cells respectively**, joining `0xC407E`.
+⚠ **`0xC63A0`'s DO-NOT-RAISE status is now an operator instruction WITHOUT a mechanism** — the fault
+rationale is refuted (above). `0xC407E` keeps its mechanism and keeps RULE 11.
 **`0xC64C8` and `0xC64C9` (the "2D-map mux") are DO-NOT-TOUCH-WITHOUT-TRACING** — unknown function,
 never written by any build.
 
@@ -204,12 +670,16 @@ DTC `0x1d`. 🛑 **Flat, symmetric, unconditional — no re-sampled comparator, 
 | build | ceiling | clamp `0xC407E` | relationship | on-car |
 |---|---|---|---|---|
 | stock / V38 / V72 | 512 | **511** | **1 count UNDER — structurally untrippable** | clean, always |
-| **V73** | 512 | **850** | **338 counts OVER** | clean (needed a big event) |
-| **V74 / V75** | 512 | 850 | 338 over + friction m26 **×1.5** (`0xD7A54`) | **BOTH HARD-FAULTED** |
+| **V73** | 512 | **850** | **338 counts OVER** + friction **×1.5** | clean (n = 1) |
+| **V74 / V75** | 512 | 850 | 338 over + friction **×1.5** | **BOTH HARD-FAULTED** |
 
+🛑 **CORRECTION 2026-08-07 (night), from a byte read across the lineage: the ×1.5 friction table was
+introduced by V73, NOT V74.** stock / V70 / V71c / V72 carry Honda's row; **V73 / V74 / V75 carry ×1.5, and
+V73 raised `0xC407E` in the same build.** ⇒ **the two-step "V73 raised the clamp, then V74 added the
+friction ×1.5, dropping the crossing requirement from ≈6258 to ≈4180" narrative is WRONG** — V73 already
+carried both legs and flew clean anyway (n = 1). The mechanism is unaffected; only the attribution is.
 ★★ **Honda set the clamp exactly one count below the monitor's own trip threshold — an interlock.**
-V73 raised it to 850; V74's ×1.5 friction then dropped the `gp-0x6c2c` needed to cross from ≈6258 to
-≈4180. **Mode-proof ⇒ live in MANUAL — the only candidate that explains V74 faulting disengaged.**
+**Mode-proof ⇒ live in MANUAL — the only candidate that explains V74 faulting disengaged.**
 Explains the single-frame latch (threshold-0 dwell) and the exact build history. **It was never the damper.**
 ✅ **FIX = `0xC407E` → 511**, one cell, loosens no monitor — **a V38 base gets it free.**
 🛑 **RULE 11** added to `BUILD-LINEAGE.md`: *a clamp may be an interlock — never raise one without finding
@@ -217,7 +687,9 @@ its monitor.* **`0xC407E` is a DO-NOT-RAISE cell.**
 ⚠ OPEN: `gp-0x6c2c`'s physical scale undetermined ⇒ mechanism **[EVIDENCE]**, "it caused both faults"
 strong **[BELIEF]**.
 
-## ✅ BUILT, VERIFIED, **UNFLASHED** — V76 on a V38 base
+## ✅ FLASHED AND FLOWN CLEAN (route `65`) — V76 on a V38 base
+🛑 **This header read "BUILT, VERIFIED, UNFLASHED" — V76 flew route `65` (63,477 frames, zero DTC
+transitions) and is the spectral baseline every V80 contrast is scored against.**
 `39990-TVA,A160-V76-V38BASE-RELU-C566-damper-frictionCLAMP511-probe-6b26-63fd-0x13000-0x100000.rwd`
 rwd `1fba57b243534538a7d533436387a98c673bf038dc579f9a3c6796d4c6030c89` ·
 image `_v76_v38base_relu_damper_plain_image.bin` `54a212a269623ef3d674fe7711eefdf7db32ebc3f25bf3e20c7bc5a14c830f33`
@@ -379,7 +851,14 @@ land inside any mode-24 record.**
 🛑🛑 ⇒ **`k* ∈ (0.580, 1.580]` IS VOID** and *"V74 flew 1,011 s clean"* is no longer a safety anchor. Every
 gain-margin argument below inherited from it and must be read with that in mind.
 
-★★★★ **THE ONE MECHANISM THAT CAN EXPLAIN A MANUAL FAULT: `0xC63A0`.** `tp+0x73a0 = 0xBF000+0x73A0`, u16 Q10,
+🛑🛑 **RETRACTED 2026-08-07 (night) — `0xC63A0` DID NOT CAUSE THE HARD FAULTS.** [EVIDENCE,
+orchestrator-verified in Ghidra] It has **exactly one reader** (`ld.hu` @`0x381AC`), **0 writers, 0 disp23
+hits**, and that reader `FUN_00038148` writes only `gp-0x374c` and `gp-0x6b70` — **never `gp-0x6b26`,
+`gp-0x6c2c` or `gp-0x6a5e`.** There is **no firmware data path from `0xC63A0` to the faulting monitor**;
+the physical path (aggregator → motor → plant → motor rate → `gp-0x6c2c`) is irrelevant because **the clamp
+acts before the store.** The mechanism is `0xC407E` (see THE HEADLINE). **The block below is retained for
+provenance — it was the leading hypothesis and it is wrong.**
+~~★★★★ **THE ONE MECHANISM THAT CAN EXPLAIN A MANUAL FAULT: `0xC63A0`.**~~ `tp+0x73a0 = 0xBF000+0x73A0`, u16 Q10,
 one of **six sibling weights** at `0xC63A0..0xC63AA` in `FUN_00038148`'s stage-1 sum — **all stock 1024, and it
 is the ONLY one any build has ever moved** (V72 → **2048**, never reverted until V77). It is a **bare `tp`
 scalar, mode-proof, live in manual AND engaged**, with 1 reader (`0x381AC`), 0 writers, **no monitor and no
@@ -660,7 +1139,10 @@ disfavoured** (11/34,277 frames), **10/11 excluded.** V73's probe settles it.
 Full narrative: `docs/HANDOFF-2026-08-05-v72-flew-the-damper-was-never-in-force.md`.
 Spec and every risk: `docs/V73-DESIGN.md`.
 
-## 🛑🛑 ON THE CAR: **V74 — AND IT HARD-FAULTED TOO (manual, over a bump, 2026-08-06 late).**
+## ⚠ SUPERSEDED — WAS ON THE CAR: **V74 — AND IT HARD-FAULTED TOO (manual, over a bump, 2026-08-06 late).**
+
+🛑 **NOT CURRENT. Flash order since: V74 → V76 (route `65`, clean) → V80 (route `66`, clean of faults,
+worst grinding ever). THE HEADLINE at the top of this file is the authority on what is on the car.**
 
 **Updated 2026-08-06 (late).** After V75's stoplight-launch fault the operator pulled over, **reflashed V74**,
 and drove on it. **V74 then hard-faulted as well** — disengaged, over a bump, latched total loss of power
@@ -3288,7 +3770,8 @@ both directions** — the failure every V69 rung shared.
 🛑 **Flash only on explicit operator instruction naming the file and the bus.**
 
 
-## On the car right now — **V70** (flashed, driven route `50--50f2e00e8f` 2026-08-04)
+## ⚠ SUPERSEDED — was on the car: **V70** (flashed, driven route `50--50f2e00e8f` 2026-08-04)
+🛑 **NOT CURRENT — V70 was followed by V71C, V72, V73, V74, V75, V76 and V80. See THE HEADLINE.**
 
 **V70 = V69's gateless topology at half the dose** (gate `0x3AA96` stays `c5` (dead), arm `0xC6446`
 stays 512; `0xD2A7E`/`0xD2A80` 12288 → **6144**, `0xD2ABA`/`0xD2ABC` 10244 → **5122**) + the 4-bit
@@ -3735,6 +4218,12 @@ re-reading the disassembly independently. Nothing below is a settled replacement
 
 ## Built and UNFLASHED
 
+🛑🛑 **2026-08-07 (night): THE ONLY CURRENT UNFLASHED CANDIDATE IS V81** — see its block at the top of this
+file (image `4ddbd0e2…`, rwd `fc4d4f74…`). Flash order since V70: **V71C → V72 → V73 → V74 → V75 (hard
+fault) → V74 (reflash, hard fault) → V76 (route `65`, clean) → V80 (route `66`, no fault, worst grinding
+ever).** **V78 and V79 were built and never flown; V79 is renamed `SUPERSEDED-…`.** Everything in the table
+below is historical.
+
 🛑 **THE `status` COLUMN BELOW IS STALE FOR V67 AND EARLIER — READ IT AS A BUILD NOTE, NOT A FLASH
 STATUS.** Every row that says "BUILT, UNFLASHED" for V62/V67 was written before those builds flew.
 **`docs/BUILD-LINEAGE.md` Part 4 and "On the car right now" above are the authorities on what has been
@@ -3948,6 +4437,20 @@ set's 12.6–42.2°).
 
 🛑 **NO openpilot-side modifications.** Standing operator instruction. openpilot remains a *measurement
 instrument* only.
+
+00000. ★★★★★ **2026-08-07 (night) — THE CURRENT LIST IS IN THE HEADLINE (`⇒ ★★★ NEXT`). Everything below
+   this entry predates the V80 flight.** In short: **(1) fly V81** (126-byte revert from the flown V75,
+   both legs of the fault mechanism removed — the flash decision is the operator's and the file and bus
+   must be named back); **(2) bracket the switch-on point in `k` ∈ (1.58, 4.16] WITH THE RAMP PRESERVED**,
+   not by merely lowering `k`; **(3)** the micro-ratchet's only significant improvement is at V80's dose
+   (6–9 Hz is **flat from `k` = 0.58 to 1.58**; only `k` = 4.16 clears the null, at 0.418 [0.33, 0.61]) —
+   that is a **V82** question, not a reason to keep V80's flat top; **(4)** probe the friction lane at
+   **320/352/416** if variant B is ever wanted; **(5)** close **`gp-0x6b94` → motor**; **(6)** settle the
+   27 Hz command-vs-plant question with a **phase-resolved coherence** on `sendcan` `0x0E4` vs the torsion
+   bar; **(7)** correct `build_v80_tva.assert_c63a0_block`'s now-known-wrong rationale comment;
+   **(8)** re-run reader #5's `±0x200` clamp screen with a proven `gp-0x4f60` scale (22% margin is thin).
+   🛑 **Do NOT chase grind #1 with damper dose** — it is **inert to `k` across 0.58 → 4.16**.
+   🛑 **Do NOT cite `0xC63A0` as a fault mechanism** — refuted.
 
 0000. 🛑🛑 **2026-08-04, STANDING: BYTE-CHECK THE CURRENT IMAGE BEFORE CITING ANY CONFIRMED RESULT.**
    `RULE 3`, `docs/BUILD-LINEAGE.md`. Both of this kit's confirmed fixes — V42's `0x454FE` and V62's

@@ -5,6 +5,16 @@ metadata:
   type: project
 ---
 
+> 🛑🛑 **RETRACTED IN PART, 2026-08-07 (later the same day) — READ
+> [[accord-grind1-is-inert-to-the-damper-dose]] FIRST.** V80 added a fourth dose point (`k` = 4.16) and
+> all four builds were re-scored on **one** instrument with a **split-half null**: the 18–22 Hz null is
+> ≈ [0.63, 1.60] and **every grind-#1 point lies inside it**. ⇒ **the "grind #1 is DOSE-LIMITED, slope
+> −0.614 [−0.810, −0.416]" headline below is WITHDRAWN**, and the V75-vs-V76 grind-#1 difference is a
+> **creep-EXPOSURE** difference (V76's creep windows carry 3.4× V75's steering effort).
+> ✅ **The ratchet leg SURVIVES and is EXTENDED**: it is flat up to `k` = 1.58 as stated, and it *does*
+> move at V80's `k` = 4.16 (0.418 [0.33, 0.61] vs V76) — consistent with the older "needs `k` = 4.2–13.5".
+> ✅ The flight facts, build identity, friction-margin null and mode-lag measurement below all stand.
+
 **V76 was flashed and driven 2026-08-07**: route `75604b0a432fdc89_00000065--ae43aa0f27`, segs 0–10,
 **636.30 s / 63,477 frames**, 0–96.7 km/h, engaged 450.98 s (**70.87%**). **Clean** — zero DTC-active
 transitions, zero STEER_SENSOR_STATUS 7→4, zero `0x7FFF` angle sentinels, no frame-rate collapse.

@@ -1,6 +1,6 @@
 ---
 name: reference_accord_c646c_gain_feedback_vs_forward_classification
-description: Definitive 6-reader enumeration of gain cal 0xC646C (tp+0x746c, the 4x LKAS authority gain) with FORWARD/FEEDBACK classification per site; 3 of 6 sites multiply raw Sensor-B torque gp-0x4f60 directly and two (FUN_00036682/FUN_00036828) chain into gp-0x6b98, BUT that lane is slow/small-authority (2.18Hz, +/-512) and its saturation nonlinearity empirically never fires on 2 confirmed-vibration on-car datasets -- probably not the 21Hz driver. Includes a found free cal word (0xC6CD0) and a negative result on an LKAS-only upstream gain substitute.
+description: Definitive 6-reader enumeration of gain cal 0xC646C (tp+0x746c, the 4x LKAS authority gain) with FORWARD/FEEDBACK classification per site. Round 6 (2026-08-07) sharpens the verdict: only FUN_00036682 (reader #5) has a proven path to gp-0x6b98 (slow 0.93Hz-corner IIR, alpha=6/1024); FUN_00036828 (#6) reaches it only indirectly (dead-band modulation + uncertain DTC-0x23 threshold); FUN_0002b62c (#3) and FUN_0002c478 (#4) do NOT reach the motor command at all (#3 terminates in a private 2-function mode-debounce loop + diagnostics, #4's output gp-0x6b10 is proven dead 4 independent times). Also resolves a real "two different V76 images on disk" naming collision -- V78/V80 descend from _v76_v38base_relu_damper_plain_image.bin (V38 base, pre-dates the V57 decouple), NOT the earlier _v76_gate_fb_arm5244_gateprobe one.
 metadata:
   type: reference
 ---
@@ -359,3 +359,112 @@ confirmed motor-rate signal and one signal of contested domain.
 See [[reference_accord_aggregator_domain_audit_no_angle_lane_found]] (parallel, complementary scope) and
 [[reference_accord_can_tx_399_427_bitmap]] (source of the `gp-0x6a56`/CAN-399 cross-reference, now
 corrected).
+
+## Round 6 (2026-08-07, V76/V78/V80 4x-blast-radius audit) -- fresh re-derivation, one reclassification, one build-identity finding
+
+Re-ran the whole enumeration from scratch with an independently-written Python scanner (not copy-pasted)
+plus fresh `decompile_function`/`get_assembly_context` calls, prompted by a team-lead question: V76/V78/V80
+apply the 4x GAIN at `0xC646C` directly (reader #1's `ld.h` displacement stayed `0x746c`), instead of the
+V62/68/74/75 family's decoupled `0xC6CD0` (reader #1 repointed to `0x7cd0`) -- so V76/V78/V80 4x every
+reader, not just the forward one. **All 6 static readers, same addresses, reproduced exactly**
+(`0x2a1ee`/`0x2a904`(dead)/`0x2b656`/`0x2c488`/`0x36686`/`0x3684a`); zero stores, zero 6-byte extended-disp23
+hits, zero LE32-pointer hits, confirmed by a fresh whole-image LE16 scan whose "extra" 6 raw hits
+(`0xbabb9`,`0xbb085`,`0xbb119`,`0xbb224`,`0xbb24c`,`0xc8200`) are ASCII bytes inside a German diagnostic
+string (`"...age 0xYYYY : Ein-/ausschalten der Endstufensignal..."`, confirmed via `read_memory` at
+`0xbaba0` and `get_function_by_address`/`get_assembly_context` both returning no-instruction there) --
+not a 6th encoding form.
+
+**RECLASSIFICATION: reader #3 (`0x2b656`, `FUN_0002b62c`) does NOT reach the motor command -- downgrade
+from "FEEDBACK, medium-high confidence" to "feedback-shaped input, LOCALLY CONTAINED, no path to torque."**
+Its output `gp-0x6af0` has exactly 2 readers (fresh raw scan + decompile, both agree):
+`FUN_0002c246` (`0x2c260`, `ld.h`) and `FUN_0004e96a` (`0x4ea6a`, `ld.h`) -- no third reader exists.
+- `FUN_0004e96a`: a diagnostic/UDS-style response-buffer packer (writes a 0x38-byte (56-byte) fixed-length
+  record at `*(int*)(param_1+8)`, right-shifts several `gp-0x6aXX` telemetry cells by 2 into it, gated on
+  bit `0x20000` at `gp+0x6400`-ish). **`get_function_callers` finds ZERO static callers** -- almost
+  certainly reached only via an indirect UDS/RDBI dispatch-table call the xref engine can't see (matches
+  the kit's documented `a160_rdbi_handlerptr_live_dispatch` pattern). Either way: diagnostic telemetry
+  only, not a control path.
+- `FUN_0002c246`: reads `gp-0x6af0` at entry (`sVar7 = *(short*)(gp-0x6af0)`), clamps it against a
+  mode-indexed table (`&DAT_000c7090`), and the ONLY other thing it touches that leaves the function is
+  `gp-0x677d` (`st.b r14,-0x677d,gp` @`0x2c354`) -- a state-machine byte with a debounce-counter gate
+  (`FUN_0001cba6()` fires only if a transition repeats `param_1` times running). **`gp-0x677d` has exactly
+  2 static references in the WHOLE image** (confirmed by `search_instructions`): the write at `0x2c354`
+  (this function) and the ONE read at `0x2c1b4` inside reader #3 itself (`FUN_0002b62c`), which is exactly
+  the branch that decides whether GAIN is applied at all (`gp-0x677d ∈ {2,3}`). So the entire downstream
+  effect of reader #3's GAIN application is: a private, self-contained, hysteretic 2-function mode-flag
+  loop that never leaves this task-local pair except into diagnostics. **Not a torque-command closed loop
+  at any point.** This corrects/sharpens the Round-1 "GAIN-multiplicand is domain-mixed... classified
+  FEEDBACK by elimination" note -- FEEDBACK was right about the multiplicand's domain, wrong about where
+  it goes.
+
+**RECONFIRMED (2 independent fresh methods, not reused from prior rounds): reader #4's output `gp-0x6b10`
+has ZERO readers anywhere in `code.bin`.** `search_instructions` on `0x6b10` returns exactly 3 matches, ALL
+`st.h` (`0x2c4c6`,`0x2c764`,`0x2c7c2`, all inside `FUN_0002c478` itself) -- zero `ld.h`/`ld.hu`. A
+freshly-written raw Python LE16 scanner (independent implementation, both parities, reg1==gp(4) filter)
+reproduces the identical 3 hits, still zero loads. Fourth independent confirmation of this null across two
+sessions now.
+
+**Reader #5's IIR alpha RE-READ fresh: `tp+0x73d2` = `0xC63D2` = 6** (bytes `06 00`), confirming the
+2026-07-28 correction over the original "Round 3" figure of 14 -- that 14 figure is now considered
+superseded, not just disputed. alpha=6/1024=0.00586, corner ≈0.93Hz, ≈-26.6dB at 21Hz. `FUN_00036682`'s
+caller reconfirmed as `FUN_0003aa2c` only (the aggregator) -- this remains the ONE reader with a proven
+path to `gp-0x6b98`.
+
+**New, unresolved thread: reader #6's DTC-0x23 threshold cal reads anomalously large.**
+`FUN_00036828`'s tail does `if ((uint)*(ushort*)(tp+0x71a4) <= (uint)((!bVar2*uVar19)>>5)) FUN_00016de6(0x23,0,1,1);`
+-- a fresh `read_memory` at `0xC71A4` (=tp+0x71a4) returns bytes `4e a0` = unsigned 0xA04E = 41038. The
+RHS (`uVar19>>5`) is bounded well under 2048 given `uVar19` is a clamped 16-bit magnitude, so at face value
+this branch is structurally unreachable -- i.e. the DTC-0x23 rate-fault this function guards may never
+trip regardless of GAIN. **Not fully resolved this session** -- didn't rule out a misread cal-cluster
+boundary (the neighbouring `0xC719C`/`0xC71A6` cells read as an odd pair too, `0xa04a`/`0x000e`, suggesting
+possibly a LERP-table fragment rather than 3 independent scalars). Flagged for whoever next needs the
+DTC-0x23 reachability question, not load-bearing for the GAIN blast-radius verdict either way.
+
+**Physical meaning / Q-format, reconfirmed for ALL 6 sites, fresh disassembly at #1 this session:**
+`0x2a1ee: ld.h 0x746c[tp],r7` -> `0x2a1f6: mulh r7,r13` (r13 = POLARITY(gp-0x6752, sign-extended byte) *
+GAIN, plain 16x16 multiply, no shift yet) -> `0x2a1fe: mul r13,r11,r0` (r11 = combined_torque_term *
+(POLARITY*GAIN)) -> `0x2a202: sar 0xf,r11` (Q15 descale) -> clamp against `tp+0x71b4`=`0xC61B4`=512
+(stock, freshly read `00 02`). Readers #3-#6's decompiled C show the identical `(x * cal_0x746c) >> 0xf`
+idiom directly. **GAIN is used ONLY as the multiplicand of a `mul`/`mulh` immediately followed by `sar
+0xf`/`>>0xf` at every site** -- never as a divisor operand (no `div`/`divq` touches it anywhere), never as
+a pointer/array offset. Confirms: dimensionless Q15 fixed-point scale, stock 891/32768=0.02719,
+V76-family 3564/32768=0.10883, **3564 = 4*891 exactly** (integer arithmetic, and independently confirmed
+by direct `read_memory` at both `0xC646C` and `0xC6CD0` across 5 on-disk images this session -- see below).
+
+**Build-identity finding: there are TWO DIFFERENT on-disk images both named "V76."** Direct `read_memory`
+byte reads (this session, 5 images):
+
+| image | reader #1 disp | `0xC646C` | `0xC6CD0` |
+|---|---|---|---|
+| `stock/code.bin` | `0x746c` | 891 | 0xFFFF (free) |
+| `_v62_plain_image.bin` | `0x7cd0` | 891 | 3564 |
+| `_v76_gate_fb_arm5244_gateprobe_plain_image.bin` | `0x7cd0` | 891 | 3564 |
+| `_v76_v38base_relu_damper_plain_image.bin` | **`0x746c`** | **3564** | 0xFFFF |
+| `_v78_v76base_ey1_449_dose206_plain_image.bin` | `0x746c` | 3564 | 0xFFFF |
+| `_v80_v79base_flatC566_ratchet454FE_dose412_plain_image.bin` | `0x746c` | 3564 | 0xFFFF |
+
+`_v76_gate_fb_arm5244_gateprobe_...` (built by `build_v76_tva.py`, base = `_v74_engagedcols_x0_12_addonly_
+plain_image.bin`, a V57-and-later-descended lineage) is a DIFFERENT, EARLIER V76 candidate that still
+carries the V57 decouple -- it is NOT the ancestor of V78/V80. `_v76_v38base_relu_damper_...` (built by
+`build_v76_v38base_tva.py`, base = `_v38_plain_image.bin` directly, SHA pinned) is the one V78 and V80
+actually descend from (`_v78_v76base_...`/`_v80_v79base_...` filenames name it), and its own header says
+so explicitly: **"V76 RE-CUT ON A V38 BASE. Supersedes V76/V77/V77B"**, and separately notes the old
+`.rwd` was renamed `SUPERSEDED-2026-08-07-BY-V76-V38BASE-...` -- i.e. the kit's own re-cut safety practice
+(`accord-recut-overwrites-the-previous-plain-image.md`) was correctly followed for the `.rwd`, but the
+STALE plain_image snapshot for the abandoned gateprobe V76 is still on disk under a filename that reads as
+current. A careless glob for `_v76*plain_image.bin` returns both and does NOT sort the right one first --
+confirmed this session as a near-miss (the first file this scan read WAS the stale one). **Anyone tracing
+this lineage must anchor on `_v76_v38base_relu_damper_plain_image.bin` by exact name, not a `v76*` glob.**
+This also makes the mechanism concrete: rebasing onto V38 (pre-dates V57, `SRC_SHA256` pinned in
+`build_v76_v38base_tva.py`) is EXACTLY why V76-v38base/V78/V80 read `0xC646C` at reader #1 instead of the
+decoupled `0xC6CD0` -- V38 predates the retarget, so its own `0xC646C` was already 3564 (carried from the
+pre-V57 4x-gain lineage), and nothing in the V76-v38base/V78/V80 chain re-applies V57's 2-byte fix.
+
+**Net effect on the operator's blast-radius question: SHARPENED, not overturned.** Of the 4 live
+non-forward readers, only **#5 (`FUN_00036682`) has a proven path to `gp-0x6b98`** (direct additive,
+through a slow 0.93Hz-corner IIR); **#6 (`FUN_00036828`) reaches it only indirectly** (modulates #5's
+dead-band width) plus an uncertain DTC-0x23 threshold; **#3 (`FUN_0002b62c`) and #4 (`FUN_0002c478`)
+do NOT reach it at all** -- #3 terminates in a private mode-debounce state machine + diagnostics, #4's
+numeric output is proven dead. A 4x GAIN on #3/#4 is a no-op for torque regardless of family; the
+V76-family's extra exposure over the V62-family is real but concentrated in #5 (primary) and #6
+(secondary/threshold), not spread evenly across all 5 non-forward sites.

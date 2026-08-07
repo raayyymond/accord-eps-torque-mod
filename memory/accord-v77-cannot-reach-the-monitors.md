@@ -103,5 +103,18 @@ code (`0xC4048`/`0xC404C`/`0xC4050` all zero) — reported, not orchestrator-che
 `FUN_00036388`, `FUN_00036c12`, `FUN_00041464`, `FUN_000365d2`, `FUN_00036d74`, `FUN_00041b8e`)
 untraced; none is in the Path-2 dataflow by name, but a fourth surface is not formally excluded.
 
+## ✅ 2026-08-07 — THE FOURTH SURFACE IS BLIND TOO, AND THE FAULT'S REAL MECHANISM IS FOUND
+
+The caveat above (*"a fourth surface is not formally excluded"*) is **closed**. The surface that actually
+matters is `FUN_00036d74` on **`gp-0x6b26`** (the friction lane), and `0xC63A0` cannot reach it either:
+its only reader `FUN_00038148` writes **exactly two cells** — `gp-0x374c` and `gp-0x6b70` — and **never**
+`gp-0x6b26`, `gp-0x6c2c` or `gp-0x6a5e`; `gp-0x6c2c`'s two writers are both in `FUN_00041464`
+(`0x4184E`, `0x41AC2`). A *physical* path (aggregator → motor → plant → motor rate → `gp-0x6c2c`) exists
+and is irrelevant, because the `0xC407E` clamp acts **before** the store. [EVIDENCE]
+⇒ **ALL FOUR surfaces blind**, and the fault mechanism is `0xC407E` = 850 removing Honda's one-count
+interlock. See [[accord-c63a0-exonerated-of-the-hard-faults]] and
+[[accord-friction-lane-ceiling-is-the-hard-fault]].
+
 Related: [[accord-v77-built-c63a0-revert]] · [[accord-path2-is-a-closed-firmware-loop-and-c63a0-weights-it]] ·
-[[accord-v74-fault-damper-WAS-in-force-mode-lag]] · [[feedback-verify-the-crux-yourself-it-caught-four-errors]]
+[[accord-v74-fault-damper-WAS-in-force-mode-lag]] · [[feedback-verify-the-crux-yourself-it-caught-four-errors]] ·
+[[accord-c63a0-exonerated-of-the-hard-faults]]

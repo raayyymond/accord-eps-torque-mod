@@ -39,6 +39,11 @@ effectively unreachable.
 | **V73** | 512 | **850** | **338 counts OVER** | clean (needs a big event) |
 | **V74 / V75** | 512 | 850 | 338 over, **friction table ×1.5** | **BOTH HARD-FAULTED** |
 
+🛑 **CORRECTION 2026-08-07: the ×1.5 friction table was introduced by V73, NOT V74.** Verified across the
+lineage — stock/V70/V71c/V72 carry Honda's row; **V73, V74 and V75 all carry ×1.5**, and V73 raised
+`0xC407E` in the same build. The table above understates V73's exposure by one build; V73 carried *both*
+legs and simply never met a big enough event.
+
 ★★ **Honda set the clamp to exactly one count below the monitor's own trip threshold.** That is an
 interlock: a clamped signal cannot trip its own fault check. **V73 raised it to 850 and removed the
 interlock without knowing it was one.** V74 then multiplied the mode-26 friction table by 1.5
@@ -77,5 +82,37 @@ known-scale sibling — **or the V76 probe's `|gp-0x6b26| ≥ 448` margin bit, w
 telemetry.** ⇒ the mechanism and the interlock breach are **[EVIDENCE]**; *"this caused both faults"*
 is a strong **[BELIEF]** resting on the build history lining up exactly.
 
+---
+
+## ✅ 2026-08-07 — CONFIRMED IN GHIDRA BY THE ORCHESTRATOR, and the blast radius is now CLOSED
+
+- **Sole writer of `gp-0x6b26`**: `st.h r6,-0x6b26[gp]` @`0x36CF0` in `FUN_00036c12` — **exactly ONE
+  writer image-wide**, confirmed by Ghidra **plus** a raw Python LE scan covering disp16, the 6-byte
+  disp23 form, LE32 address literals and `movhi`/`movea` pairs (**0 hits on all three alternatives**).
+  The stored value is **already clamped** to ±`0xC407E` (clamp arms `0x36CCC`–`0x36CE2`).
+- **`0xC407E` itself**: **0 writers, 3 readers, all `ld.h` SIGNED, all three inside `FUN_00036c12`** ⇒
+  the cell's entire blast radius is one lane's clamp magnitude.
+- **The monitor's gate is unconditional *relative to the producer*.** `FUN_00036d74`'s caller gate
+  `gp-0x67fa ∈ {4,5,11}` is the **same** gate that wraps the producer's call ⇒ **no path writes
+  `gp-0x6b26` without the monitor checking it that cycle.**
+- **Margins**: stock/V38/**V76/V78/V79/V80** and **V81** = **511 ⇒ +1, UNTRIPPABLE BY CONSTRUCTION**
+  (the only value that can reach the cell is already clamped below the trip, whatever the plant, mode or
+  lever set does); **V73/V74/V75 = 850 ⇒ −338, TRIPPABLE.** [EVIDENCE]
+- **★ V75's fault was NOT the damper.** In the last 5 s before the trip the damper was identically
+  **zero for 4.98 s** and reached only level 2 (128–288) **19 ms** before the fault. The car was
+  stationary T−5 → T−1 s then launched (0 → 7.6 km/h); column rate reversed sign twice in the final
+  150 ms (+55, +31, −38 °/s) and **peak jerk hit 7,154 °/s² = 4.3× that route's own p99.9 (1,664) and
+  the route maximum** — exactly what this mechanism predicts. [EVIDENCE]
+- 🛑 **`0xC63A0` is EXONERATED** — there is **no firmware data path** from it to `gp-0x6b26`. The
+  standing directive *"do not double `0xC63A0`, that caused the hard faults"* rests on a false premise.
+  See [[accord-c63a0-exonerated-of-the-hard-faults]].
+- ✅ **V81 closes both legs** (`0xC407E` → 511 **and** the friction table → stock):
+  [[accord-v81-built-c407e511-friction-stock]].
+
+⚠ Unchanged: *"`0xC407E`=850 caused BOTH faults"* is still **[BELIEF]** — **the DTC number was never
+confirmed on-car.** What is **[EVIDENCE]** is that the mechanism exists, is single-frame, is mode-proof,
+and the build history lines up exactly. V81 closes it whether or not it fired.
+
 Related: [[accord-v74-fault-damper-WAS-in-force-mode-lag]] · [[accord-both-faults-fired-at-max-angle-rate-slew]] ·
-[[accord-v77-cannot-reach-the-monitors]] · [[accord-check-build-lineage-before-proposing-lever]]
+[[accord-v77-cannot-reach-the-monitors]] · [[accord-check-build-lineage-before-proposing-lever]] ·
+[[accord-c63a0-exonerated-of-the-hard-faults]] · [[accord-v81-built-c407e511-friction-stock]]

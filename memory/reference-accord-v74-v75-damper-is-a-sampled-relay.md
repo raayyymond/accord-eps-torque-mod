@@ -67,5 +67,24 @@ engaged, coherent at 29.67 Hz**, with openpilot's own command at 29.33 Hz. V74 s
 its plateau there; V75 spends 14. Damper p-p 445 → 728. ⚠ This is a **replay** of V75's surface over
 V74's telemetry — it shows contact, not amplification.
 
+## ✅ 2026-08-07 — MEASURED ON-CAR, AND V80 IS THE EXTREME CASE
+
+The relay reading is now **measured**, not replayed. Probe `|gp-0x6bd0| ≥ 448`, engaged:
+
+| build | duty | note |
+|---|---|---|
+| **V75** (route 5e, 28,317 pre-fault frames) | **0.000%** | never above 128 counts *at all* over 40 km/h; level census L0 56.8 / L1 25.3 / L2 9.3 / L3 8.6 / **L4 0.000%** |
+| **V80** (route 66) | **19.4%** | 32.7% above 15 m/s, **71%** through its worst 29 s event |
+
+⇒ 🛑 **V75's damper NEVER entered its saturated regime**, so the sampled-relay exposure modelled above was
+real in structure but **not exercised on the road** at V75's dose. **V80's damper lives there** — a
+constant **495 counts, 3.4% variation over a 34× rate range**, `k` = 4.1597, relay-ness `N(50)/N(500)` =
+3.27× against V75's 1.45× — and it produced **the worst grinding the car has ever made plus a sustained
+~27.4 Hz limit cycle**. See [[accord-v80-flew-the-damper-is-a-relay]] for the surface, the describing
+function and the FFT-free confirmation.
+🛑 **And the relay does NOT require a plateau in the table**: V80's supremum equals the ceiling exactly,
+so it clips **0.00%** — the relay moved to **FactorE's own knee, 17 counts under the rail**. "Does not
+clip" ≠ "is not a relay".
+
 See [[reference-accord-v75-fault-refutation-ledger]] for the six mechanisms ruled out, and
 [[reference-accord-monitor2-corridor-and-the-c64a4-trap]] for the surviving candidate.

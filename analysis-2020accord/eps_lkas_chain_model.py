@@ -35,6 +35,23 @@ ADDRESS CONVENTION
   0x3684a, modelled by shared_sensor_scale). V38's 891->3564 raised the gain on the feedback paths
   too; V57 decouples the forward reader onto its own cal cell (0xC6CD0) and reverts 0xC646C to stock
   891 for the feedback readers only. See memory/reference-accord-c646c-shared-gain-not-lkas-only.md.
+  ✅ RE-ENUMERATED 2026-08-07 (Ghidra + a fresh raw Python LE scan of both encodings + fresh
+  decompiles, all three agreeing): exactly 6 readers, 0 stores, 0 disp23 hits, 0 LE32-pointer hits;
+  every site is (x * cal) >> 0xf, and 3564 = 4 x 891 exactly. Two roles CHANGE:
+    #3 (0x2b656, FUN_0002b62c) RECLASSIFIED -- its output gp-0x6af0 reaches only a private
+       2-function mode-flag debounce (gp-0x677d has exactly 2 static refs image-wide) and a UDS
+       packer with 0 static callers => NO TORQUE PATH at all, not a feedback lane.
+    #4 (0x2c488, FUN_0002c478) output gp-0x6b10 has 3 refs, ALL st.h, ZERO loads => proven dead.
+  => #5 (0x36686) is the ONLY reader that reaches the motor. 🛑 It CANNOT drive a 21-27 Hz mode, on a
+  BANDWIDTH argument: its IIR alpha = tp+0x73d2 = 6 (6/1024 = 0.00586) => corner ~0.93 Hz, ~-26.6 dB
+  at 21 Hz. [EVIDENCE] This settles the prior "6 vs 14" discrepancy in favour of 6.
+  ⚠ Reader #5's pre-filter +-0x200 clamp trips at |gp-0x4f60| ~18,829 counts at stock but ~4,707 at
+  4x. On route 66 (V80) |bar| engaged max was 3,849 and >= 4707 fired 0/89,997 => it did NOT bind --
+  but the margin is only 22% and the CAN count scale is not proven identical to gp-0x4f60's.
+  🛑 THE V57 DECOUPLE IS OFF THE CAR since the V38 rebase: V76/V78/V79/V80 read 0x2A1F0 disp 0x746C
+  (shared 0xC646C = 3564), where V62/V68/V74/V75 read 0x7CD0 (private 0xC6CD0 = 3564, 0xC646C stock
+  891). Nothing in V76->V80 re-applies it. Real uncosted headroom regression; NOT the 27 Hz driver.
+  ✅ 0xC6CD0 = 0xFFFF on V76/V78/V80 is provably inert -- 0 instructions read tp+0x7cd0 anywhere.
 
 -------------------------------------------------------------------------------------------------------
 BUILDS THIS MODEL PARAMETERISES  (Calibration.for_build(...))
@@ -276,6 +293,8 @@ class Calibration:
     # the feedback readers only. Gain history is TWO doublings: 891 (V9) -> 1782 (V22-V37) -> 3564 (V38+).
     shared_sensor_scale: int = 891       # 0xC646C as seen by the 4 feedback readers; == lkas_output_gain
                                          # through V56, reverts to stock 891 on V57 (decoupled).
+                                         # 🛑 3564 again on V76/V78/V79/V80 -- the V38 rebase silently
+                                         # dropped V57's decouple (see the header block).
     arb_output_clamp: int = 512          # symmetric arb clamp. V31/V37=1024; V38=2048
     pack_output_clamp: int = 512         # symmetric limit&pack clamp. V31/V37=1024; V38=2048
     reengage_ramp_step: int = 0x11       # re-engage/debounce ramp ceiling (17). V31/V37 -> 0x1B (27)
@@ -714,7 +733,9 @@ class EpsState:
 
     # ---- Runtime governor chain ----
     runtime_governor_value: int = 4762  # gp-0x4f64
-    governed_demand: int = 0             # gp-0x6ace, after FUN_0004503c clamp/Q15/slew
+    governed_demand: int = 0             # gp-0x6ace, after FUN_0004503c clamp/Q15/slew (via FUN_00049a90);
+                                         # its ONLY readers are FUN_000456a4/FUN_00045a20, both
+                                         # hard-shutdown monitors -- NOT a forward path to the motor.
     governor_initialized: bool = False    # gp-0x1388
     governor_held: int = 0                # gp-0x138a
     post_governor_compensation: int = 0  # gp-0x6ad0
@@ -883,7 +904,13 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # against every shipped record (friction n=3, same mechanism). => adding a breakpoint is a CODE edit;
 # relocating a same-size record is cal-only (one u32 pointer-array write).
 # The product carries NO signal magnitude -- it is five Q10 GAINS; rate enters via FactorE's LERP index
-# and speed via FactorC's, and the SIGN comes from gp-0x6abe. seed = gp-0x698a (the "FactorA" long sought
+# and speed via FactorC's, and the SIGN comes from gp-0x6abe.
+# ✅ RESOLVED 2026-08-07 -- gp-0x6abe IS THE SIGNED TWIN OF gp-0x6ac0. Both are filtered from gp-0x4f50
+# in FUN_00041464 and stored at 0x41b56: gp-0x6abe = (short)(uVar16 >> 10) SIGNED, gp-0x6ac0 =
+# |uVar16| >> 10 RECTIFIED. So the damper's index and its sign are the SAME motor-rate signal, and
+# sign(gp-0x6bd0) = -sign(motor rate) exactly (applied at 0x3469E-0x346A2, `cmp r0,r11 / ble /
+# subr r0,r8`). [EVIDENCE] ⇒ gp-0x6bd0 is -sign(rate) x M(|rate|): a viscous damper when M is
+# proportional to |rate|, a COULOMB RELAY when M is flat. seed = gp-0x698a (the "FactorA" long sought
 # as a separate table) is MIN-clamped to <=1024 -- corrected 2026-08-07, it is NOT "pinned"; an
 # unclamped seed below 1024 passes through, matching the "MIN-clamped seed" phrase already used in
 # assist_shaping_lanes' docstring, which this line previously contradicted.
@@ -979,6 +1006,9 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # ★★★★ DOSE-RESPONSE over V72 (k=0) / V73 (k=0) / V74 (k=0.5799) / V75 (k=1.5798): the 18-22 Hz slope is
 # -0.599 [-0.856, -0.348] = -5.20 dB per unit k, CI EXCLUDES ZERO, while the 6-9 Hz slope is
 # -0.089 [-0.350, +0.163], CI INCLUDES ZERO -- FLAT.
+# 🛑🛑 THE 18-22 Hz LEG IS RETRACTED 2026-08-07 -- see "GRIND #1 IS INERT TO THE DAMPER DOSE" below.
+# On one instrument across k = 0.58 -> 4.16 every grind-#1 point sits inside its own split-half null.
+# The 6-9 Hz leg SURVIVES and is EXTENDED: it does move, but only at V80's k = 4.16.
 # ⇒ THE DAMPER FIXES THE GRIND AND CANNOT FIX THE MICRO-RATCHET: the ratchet needs k = 4.2-13.5 against
 # the 1.5798 that faulted, so stop sizing this lane for it.
 #
@@ -997,6 +1027,76 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # it sits BETWEEN V74 and V75, so the monotone model made a falsifiable POINT prediction: grind #1
 # observed 1.577 vs predicted 1.613 (held to 0.19 dB) => DOSE-LIMITED, slope -0.614 [-0.810, -0.416];
 # ratchet observed 3.877 vs predicted 3.906 => DOSE-INDEPENDENT, slope -0.094 [-0.291, +0.098].
+#
+# ═══ V80 FLEW 2026-08-07 AND THE DAMPER SURFACE IS A RELAY. THE SINGLE MOST IMPORTANT DAMPER RESULT. ═══
+# Route 66 (75604b0a432fdc89|00000066), 901.71 s / 89,997 frames, engaged 33.62%. Operator's verdict:
+# THE WORST GRINDING THE CAR HAS EVER PRODUCED -- ~90% of engaged time, both low and high speed, with
+# noticeable vehicle instability. 🛑 IT DID NOT FAULT (0x1AB DTC-active 0 transitions, 0.000% duty,
+# 0 sentinels) ⇒ a STABILITY failure, not a fault-class failure. [EVIDENCE]
+# k (small-signal loop gain, = ((C_Y0*E_Y1)>>10)/(E_X1-E_X0)):  V74 0.5799 · V76 1.3866 · V75 1.5798 ·
+# V80 4.1597 (2.63x V75; V81 == V75's 1.5798 exactly, it does not touch the surface).
+# Damper dose vs motor rate at 5 km/h, mode 26, from the shipped plain images (identical at EVERY speed
+# on V80 -- its FactorC is flat):
+#   rate ct     20   40   99  119  150  255  530 1000 1941 4000     (4.7121 ct per deg/s)
+#   V75         12   44  137  169  218  297  297  297  297  512
+#   V80         82  166  412  495  495  495  496  498  501  512
+# ⇒ V80 emits a CONSTANT 495 counts -- 3.4% variation over a 34x rate range -- at 97% of the 512 ceiling,
+#   above only ~25 deg/s. That is -sign(rate) x const: a Coulomb RELAY, not a viscous damper.
+# 🛑🛑 WHY EVERY BUILD-TIME GATE WAS BLIND: they all test `product > ceiling`. V80's supremum is
+#   (566*927)>>10 = 512 = the ceiling EXACTLY, so it clips 0.00% and passes. The relay was not removed by
+#   the flat-FactorC edit, it was MOVED from the ceiling clamp to FactorE's OWN KNEE, 17 counts under the
+#   rail (slope drops ~1200x at X[1]=119). "DOES NOT CLIP" AND "IS NOT A RELAY" ARE DIFFERENT
+#   STATEMENTS, AND ONLY THE FIRST WAS EVER CHECKED. [EVIDENCE]
+# Describing function N(R) of force = -sign(rate)*M(|rate|) (constant N = viscous = stabilising; N rising
+# as amplitude falls = relay = limit-cycle generator), numerically integrated:
+#   R ct         25     50     99    150    250    500   1000
+#   V75 creep  0.580  1.065  1.319  1.410  1.317  0.734  0.375
+#   V80 creep  4.007  4.087  4.127  3.698  2.421  1.250  0.632
+#   relay-ness N(50)/N(500):  V75 1.45x (creep) / 1.43x (60 km/h);  V80 3.27x at BOTH.
+# ★ MEASURED, by both builds' own cave probes -- the cleanest statement of the root cause:
+#   |gp-0x6bd0| >= 448 counts, engaged:  V75 (route 5e, 28,317 pre-fault frames) 0.000%, never above 128
+#   counts at all over 40 km/h;  V80 (route 66) 19.4% overall, 32.7% above 15 m/s, 71% through the worst
+#   29 s event. V75's level census L0 56.8 / L1 25.3 / L2 9.3 / L3 8.6 / L4 0.000% ⇒ V75's damper never
+#   entered its saturated regime; V80's LIVES there. [EVIDENCE]
+# ★ WHAT V80 DID ON THE ROAD: a broadband HF FLOOR LIFT, not a new peak -- median engaged periodogram
+#   V80-V76 is ~0 dB through 22 Hz and +8..+11 dB from 34 Hz up; cell-stratified 30-49 Hz 2.09x
+#   [1.46, 2.70] with a pre-declared 32-38 Hz negative control failing identically (2.035). IMU vertical
+#   20-49 Hz 1.07 [0.92, 1.33] ⇒ not a rougher road. FFT-free confirmation: engaged windows containing a
+#   sample-to-sample reversal of |step| > 800 counts -- V75 0.0% · V74 0.5% · V76 0.6% · V80 23.3% --
+#   exactly the near-Nyquist chatter a bang-bang relay injects.
+# ★ AND A SUSTAINED ~27.4 Hz LIMIT CYCLE NO OTHER BUILD PRODUCES: 26-31 Hz envelope > 1000 counts in
+#   32/215 engaged windows (V74 0/413, V76 0/328, V75 0/133); worst event ~30 s unbroken at 99-104 km/h,
+#   27.56 Hz at x92 over the in-band median (manual x3.1 at the same speed), bar 6,830 counts p-p,
+#   Q ~ 140, crest 1.838 (near-sinusoidal), damper >= 448 duty 71%, no fault and no lockout throughout.
+#   NOT wheel order 2 (measured df/dv = -0.131 [-0.231, -0.016] Hz per m/s where order 2 needs +0.961);
+#   frequency pinned across a 20x speed range while amplitude explodes with speed. ⚠ It is the kit's
+#   own ~28 Hz line AMPLIFIED (~2.7x, f0 down 1-2 Hz), not a new mode. ⚠ fs ~ 100 Hz, so 27.34 Hz aliases
+#   with 72.66/127.34 -- identical on all four routes, so it cannot affect the contrast.
+# 🛑 MODELLING NOTE: k is a FREQUENCY-INDEPENDENT scalar on the whole damper path, so it is the loop gain
+#   at every frequency -- no plant model is needed to compare two builds that differ only in k, and a
+#   phase argument is only needed when a filter, delay or sample point moves.
+#
+# 🛑🛑 RETRACTION -- GRIND #1 IS INERT TO THE DAMPER DOSE (2026-08-07, four builds on ONE instrument,
+# rlog-tools/compare_v75_v76_v80_grind.py, NFFT 256, p99 analytic band envelope, ~10.2 s bootstrap blocks
+# nested inside engagement runs; ratio to V76):
+#   band            V74 k=0.58        V76 k=1.39   V75 k=1.58        V80 k=4.16
+#   18-22 grind #1  1.166 [.98,1.41]  1.000 ref    0.735 [.50,1.22]  0.835 [0.64,1.07]
+#   6-9 ratchet     0.818 [.70,1.09]  1.000 ref    0.821 [.66,1.09]  0.418 [0.33,0.61]
+#   40-49 grind #2  0.810 [.70,0.97]  1.000 ref    0.961 [.77,1.24]  2.017 [1.32,2.83]
+#   30-49 HF floor  0.820 [.73,1.01]  1.000 ref    0.953 [.81,1.26]  2.091 [1.46,2.70]
+#   32-38 neg ctrl  0.865 [.76,1.03]  1.000 ref    0.959 [.82,1.22]  2.035 [1.45,2.57]
+# Split-half null for 18-22 Hz is [0.63, 1.60]: EVERY grind-#1 point lies inside its own noise floor over
+# k = 0.58 -> 4.16. ⇒ V80 did NOT "overshoot an optimum" on grind #1; grind #1 never responded to k at
+# all, and V75-vs-V76's apparent difference is a creep-EXPOSURE difference (V76's creep windows carry
+# 3.4x V75's steering effort). ★ The operationally useful statement: k in [1.39, 1.58] buys most of the
+# ratchet benefit at ZERO HF cost, and something switches on between 1.58 and 4.16 that costs 2x
+# broadband HF plus a limit cycle -- WHERE in that gap it switches on is UNMEASURED. The micro-ratchet is
+# the one band that improves with k and is best at V80's dose (0.418), consistent with the older
+# "the ratchet needs k = 4.2-13.5" estimate.
+# ⚠ DO NOT READ V80's CREEP NUMBERS: its engaged creep windows have median sustained effort 173 counts
+# and |angle rate| 1.3 deg/s against V74/V76/V75's 685/588/1113 and 33/33/48 -- ZERO matched cells. The
+# 10-40 and 40-80 km/h strata are well matched and carry the load; >80 km/h is 1 engagement run on V80
+# and never reached on V75.
 #     FUN_00036c12 -> gp-0x6b26   speed-LERP x gp-0x6c2c motor-rate-deriv, LINEAR [friction comp]
 #     FUN_0003a382 -> gp-0x6ad4   UNFILTERED residual lane (2 passthroughs + a raw derivative)
 #     FUN_00036388 -> gp-0x6b62   slow +/-1/tick accumulator w/ hysteresis       [return-to-centre]
@@ -1005,6 +1105,41 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #     inline r26   <- gp-0x4f62 x avg(gp-0x69a4) x generated Q10 gain             [VERIFIED torque-rate]
 #     FUN_00036682 -> filtered Sensor-B term, final slow IIR (6/1024)              [role OPEN]
 # Bracketed roles are [INFERRED] from structure; addresses/plumbing are [VERIFIED].
+#
+# ═══ THE HARD-FAULT MECHANISM: 0xC407E IS THE WHOLE STORY (Ghidra-confirmed 2026-08-07) ═══════════════
+# 0xC407E = tp+0x507E (anchor 0xBF000+0x507E -- the off-by-0x1000 trap avoided).
+#   MONITOR FUN_00036d74, from the 1 kHz task FUN_0002214a @0x2290A:
+#       fVar3 = gp-0x6b26 * 0.0009765625;  if |fVar3| > *(float*)(tp+0x5004) -> FUN_000462e6(0x39bc,..)
+#       -> FUN_00016de6(0x1d,..) = DTC 0x1d, LATCHED TOTAL LOSS OF ASSIST.
+#   0xC4004 bytes 0000003f = f32 0.5 ⇒ trips at 512 counts. Symmetric, NO debounce. The caller's
+#   gp-0x67fa in {4,5,11} gate is the SAME gate that wraps the producer's call ⇒ unconditional
+#   RELATIVE TO THE PRODUCER: no path writes gp-0x6b26 without the monitor checking it that cycle.
+#   SOLE WRITER of gp-0x6b26: st.h r6,-0x6b26[gp] @0x36CF0 in FUN_00036c12 -- exactly ONE writer
+#   image-wide (Ghidra + a raw Python LE scan of disp16, the 6-byte disp23 form, LE32 address literals
+#   and movhi/movea pairs: 0 hits on all three alternatives). The stored value is ALREADY clamped to
+#   +-0xC407E (clamp arms 0x36CCC-0x36CE2). 0xC407E itself: 0 writers, 3 readers, all ld.h SIGNED, all
+#   three INSIDE FUN_00036c12 ⇒ the cell's entire blast radius is one lane's clamp magnitude.
+#   MARGINS: stock/V38/V76/V78/V79/V80/V81 = 511 ⇒ +1, UNTRIPPABLE BY CONSTRUCTION (the only value that
+#   can reach the cell is already clamped below the trip, whatever the plant or mode does).
+#   V73/V74/V75 = 850 ⇒ -338, TRIPPABLE. [EVIDENCE] 🛑 0xC407E is a DO-NOT-RAISE cell.
+#   ⚠ The ×1.5 friction table was introduced by V73, NOT V74 (verified across the lineage:
+#   stock/V70/V71c/V72 carry Honda's row; V73/V74/V75 carry ×1.5, and V73 also raised 0xC407E).
+# 🛑 AND 0xC63A0 IS EXONERATED. The standing directive "do not double 0xC63A0, that is what was causing
+#   hard faults" rests on a FALSE PREMISE. 0xC63A0 = tp+0x73A0 has exactly ONE reader (ld.hu @0x381AC),
+#   0 writers, 0 disp23 hits; its reader FUN_00038148 writes exactly two cells -- gp-0x374c (its own
+#   accumulator) and gp-0x6b70 (its output) -- and NEVER gp-0x6b26, gp-0x6c2c or gp-0x6a5e. gp-0x6c2c's
+#   two writers are both inside FUN_00041464 (0x4184E, 0x41AC2). NO FIRMWARE DATA PATH from 0xC63A0 to
+#   the faulting monitor. A physical path exists (aggregator -> motor -> plant -> motor rate ->
+#   gp-0x6c2c) and is IRRELEVANT, because the clamp acts BEFORE the store. [EVIDENCE]
+#   ⇒ Keep the two questions apart: 0xC63A0 DOES move delivered torque (Path 2, above) and CANNOT move
+#   what any monitor compares. Raising it is a GATE 2 loop-gain question, not a fault question.
+# ★ V75's FAULT WAS NOT THE DAMPER: in the last 5 s the damper was identically ZERO for 4.98 s and
+#   reached only level 2 (128-288) 19 ms before the trip. The car was stationary T-5..T-1 s then launched
+#   (0 -> 7.6 km/h); column rate reversed sign twice in the final 150 ms (+55, +31, -38 deg/s) and PEAK
+#   JERK hit 7,154 deg/s^2 = 4.3x that route's own p99.9 and the route maximum -- exactly what the
+#   0xC407E mechanism predicts. [EVIDENCE] ⚠ "0xC407E=850 caused BOTH faults" is still [BELIEF]: the DTC
+#   number was never confirmed on-car. EVIDENCE is that the mechanism exists, is single-frame, is
+#   mode-proof, and the build history lines up exactly.
 #
 # ★★★★ gp-0x6bd0 REACHES THE MOTOR TWO WAYS, AND ONLY ONE OF THEM DELIVERS THE DAMPING (2026-08-06).
 #   PATH 1 = FUN_0003aa2c, the aggregator above: UNITY weight, ZERO phase -- this is the damping.
@@ -1020,6 +1155,15 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #       gp-0x6b94 in its 1,424-line body; it runs on gp-0x6afe / gp-0x6b08 / gp-0x4f64. [EVIDENCE,
 #       full decompile] => there is AT LEAST ONE UNRESOLVED HOP here. gp-0x6b94's 4 unchecked
 #       readers: FUN_00036bec, FUN_0004503c, FUN_0004595a, FUN_0007ff08.  [OPEN]
+#       🛑 STILL OPEN 2026-08-07, and NARROWED, not closed. New node: gp-0x6ace = the GOVERNOR-CLAMPED
+#       form of gp-0x6b94 (written by FUN_0004503c via FUN_00049a90), and its ONLY readers are
+#       FUN_000456a4 / FUN_00045a20 -- both HARD-SHUTDOWN MONITORS, not a forward path. Both of
+#       FUN_00042af8's documented external inputs are now RULED OUT as the bridge: gp-0x6b08 is
+#       self-referential, and gp-0x6afe's sole writer FUN_00042ac6 is fed by FUN_00026c80, an
+#       independent Sensor-B lane that runs BEFORE FUN_0003aa2c in the same tick. ⇒ A MISSING LINK,
+#       NOT A DISCOVERED INVERSION. Next: a raw LE scan for the 6-byte extended-disp encoding of
+#       gp-0x6ace/6b94/6afe/6b08 (a disp16 scan is blind to it), plus a full decompile of
+#       FUN_00042af8 -- its "no gp-0x6b94 reference" characterisation was inherited, never re-verified.
 #   (b) FUN_0003a382 IS A GAIN-SCHEDULED PID -- the model's original wording was RIGHT.
 #       🛑 A subagent claimed this round that "gp-0x6ad6 is a GATE input only, never a DATA input,
 #       therefore 0xC63A0 changes delivered damping by 0.00 dB". THAT IS FALSE and was caught by the
@@ -1101,9 +1245,15 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #   +41.8..+55.0 deg phase lead at 21 Hz with |D| ~ |P|: at the grind frequency this loop is
 #   derivative-dominated, exactly where a rate-scheduled gain on a RECTIFIED index (which sweeps at 2f)
 #   interacts with the parametric pump. [GATE 2 -- size any FactorE edit against this, not just dose.]
-#   ⚠ [OPEN] the damper's NET SIGN through this loop: err = setpoint - feedback, so more gp-0x6ad6 means
-#   LESS output, but whether the damper raises or lowers gp-0x6ad6 needs the full sign chain through
-#   FUN_00038148 + FUN_00037fe6 and their +/- clamps walked. NOT asserted here.
+#   ✅ RESOLVED 2026-08-07 -- THE DAMPER'S NET SIGN IS DISSIPATIVE AT gp-0x6b94, AND PATH 2 IS
+#   NON-INVERTING. Was [OPEN] here for four sessions. The Stage-2 subtraction in FUN_00038148 and the
+#   PID's own err = setpoint - feedback CANCEL, and the two polarity(gp-0x6752) multiplications cancel
+#   whatever that value is: (-P)(+1)(-1)(+P) = P^2 = +1. FUN_00037fe6 is a genuine UNITY adder (all 7
+#   weights tp+0x74ad..0x74b3 read 01). So Path 1 (bare, unity) and Path 2 (via the PID) both enter
+#   FUN_0003aa2c with unity weight and REINFORCE -- they do not fight. Combined with
+#   sign(gp-0x6bd0) = -sign(motor rate) above ⇒ DISSIPATIVE BY CONSTRUCTION at gp-0x6b94. [EVIDENCE]
+#   ⚠ This is a sign result at gp-0x6b94, NOT at the motor: the gp-0x6b94 -> motor hop is still missing
+#   (below), and the 100 Hz zero-order hold still costs 37.6/75.2 deg of phase at 21 Hz on top.
 # -----------------------------------------------------------------------------------------------------
 
 # [VERIFIED, byte-dumped] mode-indexed assist tables, selector = byte at gp+0x63fd (0xFEDFE3FD, NOT the
@@ -1669,7 +1819,9 @@ def assist_shaping_lanes(sensors: SensorInputs, st: EpsState) -> dict:
     gp-0x6c2c (motor-rate derivative), a plain signed multiply -- NO sign()/abs/hysteresis anywhere in
     the lane, so it is smooth and continuous through zero and cannot itself generate stick-slip; magnitude
     is LARGEST at 0 km/h (Y[0]=-9830) and falls ~5x by 90 km/h (Y[2]=-1966); self-clamps +/-511 (0xC407E)
-    before the aggregator's own +/-0x400 gate. [VERIFIED 2026-08-04, disasm 0x36c12-0x36cbe]. FUN_0003a382 ->
+    before the aggregator's own +/-0x400 gate -- and that 511, one count under FUN_00036d74's 512 trip, is
+    Honda's HARD-FAULT INTERLOCK (raised to 850 by V73-V75, restored by V81; see Section 3B).
+    [VERIFIED 2026-08-04, disasm 0x36c12-0x36cbe]. FUN_0003a382 ->
     gp-0x6ad4 (resonance lane) is a genuine discrete PID on ERR = clamp(gp-0x4f60 - bias, +/-0x2800):
     P = (LERP(motor_rate)*ERR>>10)*32, I = accumulate(98*ERR>>10), D = clamp((ERR-ERR_prev)*2048>>10,
     +/-0x2800)*32, summed and rescaled to +/-ceiling; both of its smoothing EMAs (cals 0xC6450, 0xC644A)

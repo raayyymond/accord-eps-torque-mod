@@ -7,6 +7,15 @@ metadata:
 
 # ★★★★ THE DAMPER FIXES THE GRIND AND IS **FLAT** ON THE RATCHET
 
+> 🛑🛑 **THE GRIND HALF OF THIS TITLE IS RETRACTED, 2026-08-07 — read
+> [[accord-grind1-is-inert-to-the-damper-dose]] first.** With V80's `k` = 4.16 added and all four builds
+> re-scored on **one** instrument against a **split-half null of ≈ [0.63, 1.60]**, every grind-#1 point
+> lies inside its own noise floor across `k` = 0.58 → 4.16. **The −0.599 [−0.856, −0.348] slope below
+> does not survive**, and neither does "V75 vs V74 = 0.349 speed-matched" as a *dose* statement.
+> ✅ **The RATCHET half stands** — and V80 shows the ratchet *does* respond once `k` reaches ~4.16
+> (0.418 [0.33, 0.61]), which **confirms** the "`k` = 4.2–13.5 needed" arithmetic below rather than
+> contradicting it. ✅ The V75-vs-V74 band DECOUPLING and the V75r 48% correction also stand.
+
 Four builds differing **only** in the damper cells — **V72 k = 0, V73 k = 0, V74 k = 0.5799,
 V75 k = 1.5798** — episode-bootstrapped ([[feedback-episodes-not-windows-and-the-noise-floor]]).
 

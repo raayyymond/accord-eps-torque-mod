@@ -63,6 +63,18 @@ writer `FUN_0000d934` has zero static callers, and the CRC verifier `FUN_0000b00
 periodic app-side re-check. 🛑 Leave `0xD7FF0`–`0xD7FFB` alone — `0xD7FF8` is the block self-descriptor
 (`d7 00 01 00`).
 
+## 🛑 2026-08-07 — CONFIRMED ON-CAR, AND THE FLAT-FactorC ESCAPE IS **NOT** A SAFEGUARD
+
+V80 did exactly what the "flat FactorC" line above suggested — flat `[566,566,566,566]`, **0.00% clip at
+both ceiling 512 and 1024** — and **still flew as a Coulomb relay**, producing the worst grinding the car
+has ever made ([[accord-v80-flew-the-damper-is-a-relay]]).
+**The relay did not need the ceiling.** It moved to **FactorE's own knee, 17 counts under the rail**:
+V80's FactorE `Y = [0,897,912,927]` makes the slope drop ~**1200×** at `X[1]` = 119, so dose is a constant
+**495** (97% of 512) over a 34× rate range.
+⇒ 📋 **RULE, and it generalises past ReLUs: a no-clip guard tests `product > ceiling` and is BLIND to a
+relay formed by a knee below the ceiling. Gate the SHAPE — `dose(2r)/dose(r)`, or the describing-function
+ratio `N(50)/N(500)` — not just the rail.** "Does not clip" and "is not a relay" are different statements.
+
 ⊕ **New Ghidra trap:** `get_xrefs_to(0xD780C)` returned **"No references found"** although the pointer
 demonstrably exists at `0xC9FEC`; the twin `0xD77D0` resolved correctly. **Do not trust Ghidra xref
 completeness on pointer-array slots** — cf. [[accord-v850-scan-traps-formatv-and-storezero]].

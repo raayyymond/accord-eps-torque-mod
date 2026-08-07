@@ -56,4 +56,28 @@ except the one site the operator intended. One in-place displacement edit — **
 ⚠ A displacement scan **cannot** find free cal space on its own: 1723 of 2048 words in `tp+0x6000..0x6FFE`
 show zero displacement-readers purely because LERP tables are read via `movea base,tp,rX` + index.
 
+## ✅ 2026-08-07 — RE-ENUMERATED, TWO READERS RECLASSIFIED, AND THE DECOUPLE IS OFF THE CAR
+
+Three independent methods agree exactly (Ghidra `search_instructions`, a fresh raw Python LE scan of both
+encodings, fresh decompiles): **6 readers, 0 stores, 0 disp23 hits, 0 LE32-pointer hits.** Every site is
+`(x * cal) >> 0xf`; `3564 = 4 × 891` exactly.
+- **#3 (`0x2b656`, `FUN_0002b62c`) RECLASSIFIED — it has NO TORQUE PATH.** Its output `gp-0x6af0` reaches
+  only a private 2-function mode-flag debounce loop (`gp-0x677d` has exactly **2** static refs
+  image-wide) plus a UDS packer with **0** static callers. The "FEEDBACK (by elimination)" label above is
+  wrong.
+- **#4 (`0x2c488`) output `gp-0x6b10` has 3 refs, ALL `st.h`, ZERO loads** — proven dead, confirming the
+  "DEAD OUTPUT" call above.
+- ⇒ **#5 is the ONLY reader that reaches the motor**, and the **α = 6** correction above is re-confirmed
+  from a third source: corner **≈ 0.93 Hz, ≈ −26.6 dB at 21 Hz** ⇒ it **cannot drive a 21–27 Hz mode.**
+  The "6 vs 14" discrepancy is settled in favour of **6**.
+- ⚠ **The ±0x200 pre-filter screen, re-run on a V76-lineage log for the first time** (route 66, V80):
+  `|bar|` engaged p50 174 · p90 1,424 · p99 3,346 · p99.9 3,712 · **max 3,849**; `|bar| ≥ 4707` fired
+  **0 / 89,997**. **It did not bind** — but the margin is only **22%** and the CAN count scale is not
+  proven identical to `gp-0x4f60`'s, so this is "did not fire on this drive", not "cannot fire".
+- 🛑 **THE V57 DECOUPLE IS OFF THE CAR since the V38 rebase**: V76/V78/V79/V80 read `0x2A1F0` disp
+  `0x746C` (shared `0xC646C` = **3564**) where V62/V68/V74/V75 read `0x7CD0`. A real, uncosted headroom
+  regression that nobody signed off on — **and not the 27 Hz driver.** V81 removes it for free by being
+  cut from the V75 base. ✅ `0xC6CD0` = `0xFFFF` on V76/V78/V80 is provably inert (0 instructions read
+  `tp+0x7cd0` anywhere). See [[accord-v38-rebase-silently-reverted-three-levers]].
+
 See [[accord-check-build-lineage-before-proposing-lever]].

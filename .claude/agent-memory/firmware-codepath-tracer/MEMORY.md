@@ -1,5 +1,11 @@
 # Firmware Codepath Tracer - Memory Index
 
+## Damper net-sign question (V80 grinding), 2026-08-07
+- [★★★★ RESOLVED at gp-0x6b94: dissipative by construction (-sign(gp-0x6abe)), both paths reinforce; gp-0x6b94->motor hop STILL NOT FOUND, gp-0x6afe/gp-0x6b08 both RULED OUT as bridges](reference_accord_damper_net_sign_resolved_and_gp6b94_forward_gap_narrowed.md) — gp-0x6abe identity closed (signed twin of gp-0x6ac0, same root gp-0x4f50); Path-2 double-cancellation proof (two subtractions + two polarity flips both wash out).
+
+## V75 stoplight-launch incident — 0xC63A0 CANNOT reach the friction lane (CLOSED, fresh Ghidra) 2026-08-07
+- [🛑🛑🛑★★★ 0xC63A0 has 1 reader (FUN_00038148); gp-0x6b26 has 1 writer fed only by gp-0x6a5e/gp-0x6c2c, whose sole writers (FUN_00041464/FUN_00041eec) are disjoint from 0xC63A0's downstream — no code path exists](reference_accord_c63a0_cannot_reach_gp6b26_friction_lane.md) — also re-confirms FUN_00036d74 monitor, 0xC407E clamp, 0xD70A8 ceiling record, Surface A byte-exact via fresh reads.
+
 ## V75 stoplight-launch incident — Surface A (gp-0x6bd0 ceiling-race): CONFIRMED DEAD 2026-08-07
 - [🛑🛑🛑★★★ DEAD: telemetry peak 448<floor-5=507; mode24 forces gp-0x6bd0=0; DTC 0x1c/0x1d shared by 4 monitors, index alone can't ID one](reference_accord_ceiling_race_v74_manual_reconciliation_and_dtc_index_sharing.md) — supersedes mechanics below as fault candidate (mechanics stand).
 - Mechanics as-built: [race var=gp-0x6ac2 not gp-0x6bd0, one-sided clamp-shrink, +/-5/1024](reference_accord_v75_step_size_hypothesis_refuted_and_fun347b8_precise_trigger.md); [full-grid proof: unreachable in creep band](reference_accord_v75_float_mirror_search_negative_and_ceiling_race_mathematically_unreachable.md); [8-access census+PATH2 dual-entry](reference_accord_gp6bd0_full_reader_enumeration_and_dual_path.md); [ceiling 0xC77A0 floor=512@m26](reference_accord_v75_ceiling_c77a0_noclip_asymmetry_and_aggregator_inclusive_bound.md); [C_Y0 safe max=566, E zero headroom](reference_accord_v75_true_headroom_e_exhausted_c_max_566.md); [gp-0x6ac2=back-drive rate](reference_accord_gp6ac2_is_backdrive_rate_not_gp6ac0_twin.md); [FactorC=0=>gp-0x6bd0=0](reference_accord_fun34350_purely_multiplicative_and_mode_index_debounce_chain.md).

@@ -796,3 +796,107 @@ angle — and it adds the direction the others do not: **verify the SAFE answer 
   but **which** monitor, and on what edge, is not closed. UDS cannot answer it.
 - **The micro-ratchet needs a different lever.** The damper is flat on 6–9 Hz and the required
   `k = 4.2–13.5` is 3–9× past a dose that hard-faulted.
+
+---
+
+## 2026-08-07 — Era: V80 flew, the damper is a RELAY, and the fault interlock is `0xC407E`
+
+**Why this matters relationally:** this session **cut two edges the whole post-V72 record was hanging
+from** — "grind #1 responds to damper dose" and "`0xC63A0` caused the hard faults" — and replaced them
+with one mechanism (**a shape, not a level**) and one cell (**`0xC407E`, not `0xC63A0`**). It is the first
+era in this kit where the *headline lever* and the *headline cause* were both wrong at the same time, and
+both were caught by the orchestrator's own reads rather than by a new drive.
+
+### THE CHAIN
+
+```
+V72..V75:  "grind #1 is DOSE-LIMITED"   (slope -0.599, then -0.614, CI excludes zero)
+      |    [[accord-damper-fixes-the-grind-but-is-flat-on-the-ratchet]]
+      |    [[accord-grind1-dose-limited-ratchet-dose-independent]]
+      v
+V80:  k = 4.1597 -- a FOURTH dose point, 2.63x V75
+      |  re-scored with V74/V75/V76 on ONE instrument, split-half null [0.63, 1.60]
+      v
+  🛑 EVERY grind-#1 point is INSIDE its own noise floor across k = 0.58 -> 4.16
+      |  [[accord-grind1-is-inert-to-the-damper-dose]]
+      |  => there was never an optimum in k to overshoot
+      v
+  BUT V80 IS THE WORST GRINDING THE CAR HAS EVER MADE -- and it did NOT fault
+      |  the lever that moved was the SHAPE: dose flat at 495 ct (97% of the ceiling)
+      |  over a 34x rate range, at EVERY speed  =>  a COULOMB RELAY
+      |  [[accord-v80-flew-the-damper-is-a-relay]]
+      |  every build gate tested `product > ceiling`; V80 clips 0.00% and passed
+      v
+  27.4 Hz LIMIT CYCLE + a 2.09x broadband HF floor lift (neg control fails identically)
+
+IN PARALLEL, THE FAULT:
+  "do not double 0xC63A0, that caused the hard faults"   <- operator directive, 6 builds old
+      |  traced: 0xC63A0 has ONE reader; that reader writes only gp-0x374c and gp-0x6b70
+      v
+  🛑 NO firmware path to gp-0x6b26. THE FOURTH monitor surface is blind too.
+      |  [[accord-c63a0-exonerated-of-the-hard-faults]]  closes the last caveat in
+      |  [[accord-v77-cannot-reach-the-monitors]]
+      v
+  0xC407E = 850 IS the mechanism: sole writer @0x36CF0, value pre-clamped, 511 = +1 = untrippable
+      |  [[accord-friction-lane-ceiling-is-the-hard-fault]]
+      v
+V81:  0xC407E -> 511 AND the x1.5 friction row -> stock, on the FLOWN V75 base. 126 bytes, cal-only.
+      [[accord-v81-built-c407e511-friction-stock]]
+```
+
+### The load-bearing edges this session created
+
+| edge | direction | rationale |
+|---|---|---|
+| `v80-flew-the-damper-is-a-relay` → `relu-plan-inverts-at-the-ceiling` | **confirms, and widens** | the ReLU node predicted a rail-formed relay; V80 built a relay **with 0.00% clipping** ⇒ the hazard is the **knee**, not the rail |
+| `v80-flew-the-damper-is-a-relay` → `v74-v75-damper-is-a-sampled-relay` | **completes it** | that node modelled the relay from a replay; V80's own probe **measures** it (L4 duty 19.4% vs V75's 0.000%) |
+| `grind1-is-inert-to-the-damper-dose` → `damper-fixes-the-grind…` | **RETRACTS its title half** | one instrument + a split-half null over four builds |
+| `grind1-is-inert-to-the-damper-dose` → `grind1-dose-limited-ratchet-dose-independent` | **RETRACTS "dose-limited"**, **EXTENDS "dose-independent"** | the ratchet *does* move, but only at `k` = 4.16 — which **vindicates** the older `k` = 4.2–13.5 estimate |
+| `c63a0-exonerated…` → `v77-cannot-reach-the-monitors` | **closes its open caveat** | "a fourth surface is not formally excluded" — it is excluded now |
+| `c63a0-exonerated…` → `friction-lane-ceiling-is-the-hard-fault` | **transfers causation** | the directive named the wrong cell; `0xC407E` is the whole story |
+| `fun3a382-is-a-torque-tracking-pid` → `v80-flew-the-damper-is-a-relay` | **resolves its `[OPEN]`, and shows the answer is not enough** | net sign is **dissipative** and Path 2 is **non-inverting** — and V80 is dissipative *and* unstable |
+| `v38-rebase-silently-reverted-three-levers` → every V76-lineage contrast | **confounds them** | V80 vs V75 carried four differences, not one |
+
+### Edges REDRAWN (retractions)
+
+- **"Grind #1 is dose-limited" is WITHDRAWN.** It was the kit's cleanest-looking dose-response (a point
+  prediction held to 0.19 dB) and it does not survive a fourth point plus a split-half null on one
+  instrument. ⇒ 📋 the standing rule from [[feedback-episodes-not-windows-and-the-noise-floor]] now has a
+  second, more expensive instance: **re-score every build on ONE instrument before fitting an axis across
+  them, and get the null first.**
+- **"V80 is 3–30× quieter than V76 at creep"** — asserted earlier in the *same session* and **RETRACTED**:
+  V80's engaged creep windows carry median effort 173 ct / 1.3 °/s against 588–1113 ct / 33–48 °/s.
+  **Zero matched cells.** An exposure artefact, not a result.
+- **"`0xC63A0` caused the hard faults" is REFUTED at the code level**, and with it the *reason* behind a
+  standing operator directive that had propagated into two build scripts. The directive may still be a
+  sound caution; **its stated cause is not a fact.**
+- **"the ×1.5 friction table came from V74"** is off by one build — **V73** introduced it, and V73 also
+  raised `0xC407E`, so V73 carried **both** legs of the fault mechanism and simply never met a big enough
+  event.
+- **V57's `0xC646C` decouple has been off the car since the V38 rebase**, and reader #3 loses its
+  "feedback" label entirely (**no torque path**). Neither changes the 27 Hz verdict; both change the
+  headroom ledger.
+
+### The method node this session promoted
+
+**Gate the SHAPE, not the rail.** Every damper gate this kit has ever written tests `product > ceiling`.
+V80 passed all of them at 0.00% clipping and flew as a near-bang-bang relay, because the relay lives at
+**FactorE's knee, 17 counts under the rail**. The cheap invariant that would have caught it is
+`dose(2r)/dose(r)` — or the describing-function ratio `N(50)/N(500)`, which reads **1.45× on V75 and
+3.27× on V80**. ⇒ **"does not clip" and "is not a relay" are different statements.**
+
+### What is honestly unresolved after this session
+
+- **Where in `k ∈ (1.58, 4.16]` the HF cost switches on.** Flat at/below baseline up to 1.58, 2.09× at
+  4.16, and **nothing in between**. The data's own recommendation is *restore the ramp*, not merely lower
+  `k`.
+- **`gp-0x6b94` → the motor.** Narrowed, not closed: `gp-0x6ace` is the governor-clamped form and its only
+  readers are hard-shutdown monitors; `gp-0x6afe` and `gp-0x6b08` are **ruled out** as bridges. **A
+  missing link, not a discovered inversion.**
+- **Whether the 27 Hz line is commanded or plant.** `0x0E4` correlates +0.93 at lag 0, but the bar is
+  **15.8×** the command there and the LKAS lane is a ~1–5 Hz low-pass. Needs a **phase-resolved
+  coherence**, not a lag-0 correlation.
+- **Reader #5's `±0x200` clamp margin is 22%** on a scale that is not proven identical to the CAN
+  sensor's. "Did not fire on this drive" ≠ "cannot fire".
+- **Whether V81's friction revert is the right variant.** The probe **could not discriminate**: ×1.5 pins
+  at 76% of the rung's threshold, so the whole decision lives inside the comparator's first cell.

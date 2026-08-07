@@ -33,9 +33,28 @@ recorded **+41.8° to +55.0° phase lead at 21 Hz with |D| ≈ |P|**: at the gri
 ⇒ **Size any FactorE edit against this, not just against dose.** See
 [[accord-relu-plan-inverts-at-the-ceiling]] and [[accord-damper-evaluator-fun34350-ceiling-clamp]].
 
-⚠ **[OPEN] the damper's NET SIGN through this loop.** `err = setpoint − feedback`, so more `gp-0x6ad6`
-means **less** output — but whether the damper raises or lowers `gp-0x6ad6` needs the full sign chain
-through `FUN_00038148` + `FUN_00037fe6` and their ± clamps walked. **Not asserted.**
+## ✅ RESOLVED 2026-08-07 — THE NET SIGN IS **DISSIPATIVE**, AND PATH 2 IS **NON-INVERTING**
+*(was `⚠ [OPEN] the damper's NET SIGN through this loop … not asserted` — open for four sessions.)*
+
+1. **`gp-0x6abe` is the SIGNED TWIN of `gp-0x6ac0`.** Both are filtered from `gp-0x4f50` in
+   `FUN_00041464`; at `0x41b56` the **signed** form `(short)(uVar16 >> 10)` goes to `gp-0x6abe` and the
+   **rectified** `|uVar16| >> 10` to `gp-0x6ac0`. ⇒ the damper's index and its sign are the **same**
+   motor-rate signal, and `sign(gp-0x6bd0) = −sign(motor rate)` exactly (applied `0x3469E`–`0x346A2`:
+   `cmp r0,r11 / ble / subr r0,r8`).
+2. **Path 2 does NOT invert.** The Stage-2 subtraction in `FUN_00038148` and the PID's own
+   `err = setpoint − feedback` **cancel**, and the two `polarity(gp-0x6752)` multiplications cancel
+   **regardless of that value**: `(−P)(+1)(−1)(+P) = P² = +1`. `FUN_00037fe6` is a genuine **unity**
+   adder (all 7 weights `tp+0x74ad..0x74b3` read `01`).
+3. ⇒ **Path 1 (bare) and Path 2 (via this PID) both enter `FUN_0003aa2c` with unity weight and
+   REINFORCE** — they do not fight. **DISSIPATIVE BY CONSTRUCTION at `gp-0x6b94`.** [EVIDENCE]
+
+⚠ **This is a sign result at `gp-0x6b94`, not at the motor.** The `gp-0x6b94` → motor hop is still
+missing (new node `gp-0x6ace` = the governor-clamped form, whose only readers are the hard-shutdown
+monitors `FUN_000456a4`/`FUN_00045a20`; `gp-0x6afe` and `gp-0x6b08` are both RULED OUT as the bridge) —
+**a missing link, not a discovered inversion.** And the 100 Hz zero-order hold still costs 37.6°/75.2° of
+phase at 21 Hz on top ([[accord-task5-is-100hz-damper-cannot-damp-21hz]]).
+🛑 **A correct sign does not make a surface safe**: V80's damper is dissipative *and* a Coulomb relay, and
+it produced the worst grinding the car has ever made ([[accord-v80-flew-the-damper-is-a-relay]]).
 
 ## `0xC63A0`'s blast radius is a STRICT SINGLE-FILE CHAIN
 [EVIDENCE — `reg1==gp`-validated byte scan over `[0x13000,0x100000)` plus decompiles.] Every hop has
