@@ -94,49 +94,15 @@ Most other edges between ACCORD EME / TORQUE-MOD MECHANISM nodes are called out 
 
 ## Temporal layers
 
-- **Era — TWO HARD FAULTS, AND THE DAMPER WAS NOT IN FORCE FOR ONE OF THEM (2026-08-06, late)** — the chain that
-  reframed the whole V74/V75 arc, and the only causal thread that survives both events.
-  - **The chain, end to end.** **V72 set `0xC63A0` 1024 → 2048** — one of **six sibling weights** at
-    `0xC63A0..0xC63AA` in `FUN_00038148`'s stage-1 sum, **all stock 1024, and the only one any build has ever
-    moved.** At the time it was *functionally* inert: it weights the damper output `gp-0x6bd0`, and on this car
-    (`TVCA4`, modes 24/26) the damper was structurally **zero at creep**, so ×2 on zero is zero. → **V74 armed it**
-    by making the engaged-column damper non-zero for the first time in the kit's history. → **V75 added +8.70 dB**
-    on top via `FactorC Y[0]` 429→566 and `FactorE X[1]` 400→200, **fixed the audible grind**, and **hard-faulted
-    at a stoplight launch**. → **V74 then hard-faulted too — in MANUAL, over a bump.** → **V77 reverts `0xC63A0`
-    to 1024**, single variable.
-  - **The fact that breaks the previous era's story.** Disengaged = **mode 24**, and all five mode-24 damper
-    records are **byte-identical to stock** on V74 and V75 (FactorC `0xD67E4`, FactorE `0xD6820`, FactorB
-    `0xD6760`, FactorD `0xD67A4`, ceiling `0xD60B4`); **0 of the 54 non-CRC V73→V74 diff runs land inside a
-    mode-24 record**. ⇒ **the FactorC/FactorE edits were NOT in force when V74 faulted**, `k* ∈ (0.580, 1.580]`
-    is **VOID**, and *"V74 flew 1,011 s clean"* is retired as a safety anchor. **No build in this lineage has
-    demonstrated safety.** See [[accord-v74-hard-faulted-in-manual-over-a-bump]].
-  - **Why `0xC63A0` is the surviving suspect.** It is a **bare `tp` scalar — mode-proof, live in manual AND
-    engaged**, which is the only property that can explain a manual fault. 1 reader (`0x381AC`), 0 writers, **no
-    monitor, no float mirror** (two-method null). It weights the damper into **Path 2**, which
-    [[accord-path2-is-a-closed-firmware-loop-and-c63a0-weights-it]] shows is a **feedback loop closing inside the
-    firmware** — `gp-0x6b98` re-enters one sample later via `FUN_0003b8f6`. Reverting = **−6.02 dB, zero phase,
-    zero cost to Path 1** (`FUN_0003aa2c`, unity weight, the lane that actually delivers the damping).
-    🛑 **`0xC63A0` does not touch the `gp-0x6b98` re-entry term, which may dominate — OPEN, the highest-value
-    next trace.** ⚠ **n = 1**: V72/V73 carried the same value and manual configuration without a manual fault.
-  - **The fault's fingerprint** — [[accord-descriptor-bit13-is-the-fault-fingerprint]]. `FUN_00040a50` forces the
-    `0x14A` angle sentinel on `FUN_00046ea6(0xd)` = **bit13 of `(gp-0x18d0 | gp-0x18d4)`** over descriptor words at
-    `tp-0x72bc = 0xB7D44`. ⇒ the angle invalidation is a **consequence, not a cause**, and bit13 **rules out**
-    fid 4, fid 80 (`0xC41668`) and fid 72 (`0xD48394`), **ruling in fid 28 (Monitor 1)** and **fid 29 (Monitor 2 /
-    `FUN_00045a20`)** — both un-debounced single-cycle latches on the damper's own chain. This is the operator's
-    "plausibility window" in its true form: a **±0.001 consistency corridor between two representations of the
-    same signal**, sized when the creep damper was structurally zero.
-  - **What the damper actually buys** — [[accord-damper-fixes-the-grind-but-is-flat-on-the-ratchet]]. Dose-response
-    over the four builds differing only in the damper cells: **18–22 Hz −0.599 [−0.856, −0.348] = −5.20 dB per
-    unit `k`, CI excludes zero**; **6–9 Hz −0.089 [−0.350, +0.163], CI includes zero — FLAT.** The `k` needed for
-    the micro-ratchet is **4.2–13.5** against the **1.5798** that faulted ⇒ **the ratchet needs a different lever.**
-  - **Refuted this era:** the cadence watchdog (**DTC `0x18` is a boot-time reset-cause report, not
-    live-trippable**), the probe cave's 45→68 B growth (**+17 cycles ≈ 212 ns — exonerated**), soft-EME
-    boost-floor margin erosion (**SM1/2/3 cannot latch**), the angle domain as a cause, and a second consumer of
-    the FactorC/E tables (`FUN_00034350` is the sole reader at all 40 modes).
-  - **The DTC read is structurally blind here** — [[accord-dtc-read-is-structurally-blind-here]]. `0xF00049` is a
-    catch-all for ~42 fault_ids, a group's UDS status is **not an OR** across members, the winner comes from a
-    **RAM** log cleared by the power cycle, and `0x23` is not implemented on this ECU. **Catch it on-car.**
-  - **Last updated: 2026-08-06 (late — V74's manual fault, V77 built and unflashed).**
+- **Era — TWO HARD FAULTS, AND THE DAMPER WAS NOT IN FORCE FOR ONE OF THEM (2026-08-06, late)** — V75 faulted
+  engaged at a stoplight launch; **V74 then faulted DISENGAGED, over a bump, with the FactorC/FactorE edits
+  byte-stock in the active mode (24)**. ⇒ `k* ∈ (0.580, 1.580]` is **VOID** and no build in this lineage has
+  demonstrated safety. The surviving causal thread is `0xC63A0` — a mode-proof weight raised at V72, armed by
+  V74, sitting inside a loop that closes *inside the firmware*. **V77 reverts it, single variable.**
+  🛑 **Full chain, evidence and refutations: see the dated section "2026-08-06 — Era: the LOOP-GAIN chain, and
+  BOTH hard faults" at the end of this file.** Key memories: [[accord-v74-hard-faulted-in-manual-over-a-bump]],
+  [[accord-path2-is-a-closed-firmware-loop-and-c63a0-weights-it]], [[accord-descriptor-bit13-is-the-fault-fingerprint]],
+  [[accord-damper-fixes-the-grind-but-is-flat-on-the-ratchet]], [[accord-v77-built-c63a0-revert]].
 
 - **Era — V37 FLASHED: GENTLE EME RESOLVED ON-CAR + full CAN→MOTOR PSEUDOCODE MODEL (2026-07-14, later)** — the operator **flashed V37 and reports the gentle EME is RESOLVED** (the felt sharp wheel-straightening mid-turn is gone). This is the decisive outcome of the V36→V37 discriminating experiment: since disabling the `STEER_STATUS` debounce SM (the `gp-0x682f` torque / `param_1` rate condition) eliminated the felt cut, the gentle EME **is** driven by that same debounce condition. New artifact: **`analysis-2020accord/eps_lkas_chain_model.py`** — a runnable, address-free Python pseudocode of the entire LKAS chain (CAN 0xE4 → setpoint → arbitration+inlined SMs → limit/distribute/mixer/gate → soft-EME shaper → FOC → TSG20 PWM), parameterized for **V9 (stock) / V31 (soft-EME fix) / V37 (gentle-EME fix)**; memory addresses live only in per-function comment blocks, cals are named constants. Built + verified this session by 3 `firmware-codepath-tracer` subagents against stock `code.bin`.
   - **Execution model corrected/confirmed (Ghidra):** the firmware runs a small **RTOS** — steering/decider tasks are dispatched indirectly off a TCB-like table (~`0xbb900`), returning via `FUN_000847be` (`eiret`), NOT from a main loop. **Base tick = OSTM0** (`FUN_00014c5c` compare `0x1387F`=79999 → ~80000-cycle period → *likely* 1 kHz/1 ms, but the OSTM0 input clock is unconfirmed). **`m_steer_torque_arbitration` (+ its inlined debounce/DTC SMs) is PHASE-GATED** — call @`0x22522` guarded by `andi 0x930` on a 16-phase counter → runs on 4 of 16 phases, **refuting "runs every tick"** (so the debounce "5 cycles" / DTC "100 cycles" tick at a divided sub-rate). Decider/deliver run from sibling RTOS task `FUN_00022ca0` (`jarl 0x413ae`/`0x3d4a2`). **FOC + PWM share ONE EI trampoline `FUN_0001492a`** dispatching on EIIC: `0x600`→`FUN_0006404c` (ADC-complete → Park/Clarke/PI/SVPWM `0x71272`), `0x970`→`FUN_00061614`→`FUN_0006c5ce` (writes TSG20 CMPU/V/W `0xFFFFCCB0/B4/B8` = MOTOR, byte-exact). PWM carrier Hz + CAN-RX EIIC entry remain OPEN.
@@ -314,7 +280,7 @@ cal edit  ->  int/float mirror divergence  ->  flag (weight 1/2/32)
 
 **Three alarms raised and retracted in one session — the meta-lesson.** (1) residual-scaling-at-4× (refuted by the kit's own falsified-V28 record); (2) "V38 spent all its SM margin" (cross-domain comparison; `r13` traced to authority, SM1's 2048 sits inside a driver-opposition AND); (3) "governor headroom collapsed 7.6×" (true observation, wrong implication — the governor doesn't bind at nominal, and the taper *is* the thermal protection). **Overstating a risk is as much a calibration failure as understating one**, and it is the more insidious failure here because it can talk the operator out of a sound build. Before escalating anything to "top risk," check whether this kit's own falsified-hypothesis record already answers it.
 
-**Also corrected in place:** an agent-memory verdict *"Monitor 2 PERMANENTLY GATED OFF, never needs fixing"* rested on an **off-by-`0x1000`** tp+disp slip — the gate is `tp+0x74a4` = **`0xC64A4` = `0x00` = ENABLED**, not `0xC74A4` = `0xEA`. Struck through in place; that conclusion would have told a future session to skip mirror discipline during corridor work.
+**Also corrected in place:** an agent-memory verdict *"Monitor 2 PERMANENTLY GATED OFF, never needs fixing"* rested on an **off-by-`0x1000`** tp+disp slip — the gate is `tp+0x74a4` = **`0xC64A4` = `0x00` = ENABLED**, not `0xC74A4` = `0xEA`. Struck through in place; that conclusion would have told a future session to skip mirror discipline during corridor work. ⚠ **The same slip has now been made THREE times (2026-07-18, 2026-08-06 ×2)** and re-verified each time: **`0xC64A4 = 0x00` on stock, V74 and V75 ⇒ Monitor 2 is ARMED in every build.** See [[reference-accord-monitor2-corridor-and-the-c64a4-trap]] and [[feedback-verify-the-crux-yourself-it-caught-four-errors]].
 
 ### 2026-07-19 — Era: V38 on-car clean, V39 direct-rate vibration experiment
 
@@ -740,3 +706,93 @@ against the ratchet** — `project_v46_falsified_v47_dampers_only` gets a new ou
 - **What "stiffer" refers to.** No bus-side instrument detects it; the saturation mechanism is refuted.
   [BELIEF] the ratchet itself (4,894 counts at Q ≈ 40, 0.8 s after engagement).
 - **What excites the lane-change transient** — unchanged from the previous session.
+
+---
+
+## 2026-08-06 — Era: the LOOP-GAIN chain, and BOTH hard faults
+
+**Why this matters relationally:** this session added the *edge nobody had drawn* — a **loop-gain weight
+raised four builds ago** sitting **inside a closed firmware loop**, which the damper builds then **armed**.
+It reframes V74 and V75 not as two damper doses but as **two points on one loop-gain ramp**, and it is the
+first chain in this kit that runs **through** a lever rather than **from** it.
+
+### THE CHAIN
+
+```
+V72:  0xC63A0  1024 -> 2048   (mode-proof, tp+0x73a0, 1 reader, 0 writers,
+      |                        no monitor, no float mirror)  = +6.02 dB on PATH 2
+      |                        -- and PATH 2 is a CLOSED loop: gp-0x6b98 re-enters
+      |                        one sample later via FUN_0003b8f6 @0x2240e
+      |                        [[accord-path2-is-a-closed-firmware-loop-and-c63a0-weights-it]]
+      |  nothing consumed it -- gp-0x6bd0 was ZERO at creep on V72/V73
+      v                         (both dead zones shut)
+V74:  the damper is ARMED for the first time  (k = 0.5799)
+      |  [[accord-v74-flew-damper-is-in-force]] -- bit7 fires 67.443% engaged creep
+      |  the raised weight now has a live signal to multiply
+      v
+V75:  k = 1.5798  =>  +8.70 dB into the same loop
+      |  grind #1 responds: d ln(y)/dk = -0.599 [-0.856, -0.348], CI excludes zero
+      |  [[accord-damper-fixes-the-grind-but-is-flat-on-the-ratchet]]
+      v
+TWO HARD FAULTS
+      |  V75 -- engaged, one frame, route 5e t=284.7947 s
+      |         [[accord-v75-fault-pinned-to-the-frame]]
+      |  V74 -- MANUAL, over a bump, with its damper edits NOT in force
+      |         [[accord-v74-hard-faulted-in-manual-over-a-bump]]
+      |  the common factor across BOTH arms is the MODE-PROOF cell, not the damper
+      v
+V77:  0xC63A0  2048 -> 1024   single variable, ONE cell, 5 bytes
+      [[accord-v77-built-c63a0-revert]] -- a HYPOTHESIS TEST, not a known-good
+```
+
+### The load-bearing edges this session created
+
+| edge | direction | rationale |
+|---|---|---|
+| `path2-closed-loop-c63a0` → `v74-hard-faulted-in-manual` | explains | `0xC63A0` is the only **mode-proof** non-stock loop weight ⇒ the only lever live in the manual arm where V74 faulted |
+| `path2-closed-loop-c63a0` → `v77-built-c63a0-revert` | motivates | −6.02 dB at **zero phase**, costing Path 1 nothing |
+| `v74-flew-damper-is-in-force` → `damper-fixes-the-grind…` | enables | V74 is what made a **dose** exist at all; V44/V47/V72 had none |
+| `damper-fixes-the-grind…` → `collocation-motor-rate-damper-dead` | **CONTRADICTS** | the collocation theorem said "cannot damp at any gain"; the measured 18–22 Hz slope **excludes zero** |
+| `v75-fault-pinned-to-the-frame` → `monitor2-corridor-and-the-c64a4-trap` | **refutes its sizing** | the faulting launch was the **mildest of four** ⇒ magnitude/rail-contact mechanisms are dead |
+| `descriptor-bit13…` → `v75-fault-pinned-to-the-frame` | **re-reads** | the `0x7FFF` angle sentinel is a **consequence** of a bit13 fault, not an angle-sensor cause |
+| `dtc-read-is-structurally-blind` → `v75-fault-refutation-ledger` | **closes its last action item** | the ledger's "decisive DTC read" is withdrawn — the group is a ~42-member catch-all and the RAM log is cleared by the power cycle |
+
+### Edges REDRAWN (retractions)
+
+- **`collocation-motor-rate-damper-dead` loses its empirical leg.** Its evidence was *"V44/V47 nulls are
+  the theorem confirmed on-car."* Both were **mode-inert** (modes 10/11 on a **TVCA4** modes-24/26 car,
+  [[reference-accord-car-is-tvca4-mode-24-26]], [[accord-damper-is-mode-table-selected]]) ⇒
+  **UNINTERPRETABLE, not falsifications.** The theory may still explain why the required gain is large;
+  it can no longer close the direction.
+- **`override-snap-state-machines` / `soft-eme-bound-arm-gating`: the cut CANNOT LATCH.** The recovery
+  branch is a single fixed-step rise with **no bypass condition** ⇒ it self-clears. A latched loss of
+  assist requires the **DTC-eligibility chain**, which is now the only surviving latch mechanism in the
+  model. Companion fix: `gp-0x3570` is a **pure unattenuated integrator**, not a ¼-per-cycle tracker.
+- **`v75-fault-refutation-ledger`'s anchor is gone.** *"V74 flew 1,011 s clean"* was the reference point
+  for every gain-margin argument, and **`k* ∈ (0.580, 1.580]` is VOID.** ⚠ Its route-5d escape hatch is
+  also closed: 5d has **5–6 engaged stoplight LAUNCHES** (only *engaged-while-stopped* is 0.0 s) ⇒ V74
+  **flew** the faulting regime and did not fault, which **strengthens** the contrast.
+- **`dtc-0x18-hard-eligible-cadence-watchdog` is boot-only.** It never was a live per-task deadline
+  monitor ⇒ **no cave in this kit has ever had a `0x18` timing budget**, and V75's 45→68 B cave
+  (+17 cycles ≈ 212 ns) is **EXONERATED**.
+
+### The method node this session promoted
+
+[[feedback-verify-the-crux-yourself-it-caught-four-errors]] — **four** decision-bearing errors caught by
+the orchestrator's own byte reads and decompiles in one session (the `tp+0x74a4` off-by-`0x1000` for the
+**third** time, a reversed DTC-map byte order, a fault_id off-by-one, and a `0x1AB` flag mis-scoped as
+narrow when **bit10 covers 75 fault_ids**). It joins [[feedback-verify-subagent-conclusions]] and
+[[feedback-verify-with-ghidra-and-bytes-both]] as the third node saying the same thing from a different
+angle — and it adds the direction the others do not: **verify the SAFE answer too.**
+
+### What is honestly unresolved after this session
+
+- **The `gp-0x6b98` RE-ENTRY term in Path 2.** `0xC63A0` does not touch it, and it may dominate the loop
+  gain ⇒ **a V77 null does NOT exonerate the loop.** Highest-value next trace.
+- **Why V74 faulted in MANUAL.** Its manual-mode config (`0xC63A0`, `0xC407E`, `0xC61B2/B4`, boost floor,
+  `0xC62EA`) is **unchanged since V73**, which did not fault ⇒ **n = 1** and "first sufficient bump" is
+  still live.
+- **What actually latches.** bit13 rules in the `0x3D01` monitors (fid 28/29) and rules out fid 4/72/80 —
+  but **which** monitor, and on what edge, is not closed. UDS cannot answer it.
+- **The micro-ratchet needs a different lever.** The damper is flat on 6–9 Hz and the required
+  `k = 4.2–13.5` is 3–9× past a dose that hard-faulted.
