@@ -1,7 +1,68 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-07 (night) — V80 FLEW and produced the worst grinding in the kit's history;
-V81 built, verified, unflashed.** This file is the single current-state record.
+**Last updated: 2026-08-08 — V81 FLEW (route 67), fault-free. THE `gp-0x6b94` → MOTOR GAP IS CLOSED.
+V83a built, verified, unflashed.** This file is the single current-state record.
+
+---
+
+## ★★★★★ HEADLINE, 2026-08-08 — full narrative in `docs/HANDOFF-2026-08-08-v81-flew-and-the-aggregator-reaches-the-motor.md`
+
+**V81 flew route 67 and was FAULT-FREE** (78,760 frames, 789 s, 85.23% engaged, 0–104.2 km/h;
+`STEER_STATUS` {0: 78,751, 3: 9}, 0 DTC transitions, 0 sentinels). `0xC407E` = 511 did its job.
+Operator: grinding at slow-turn-while-braking and at highway lane change; **all grinding stopped the
+instant LKAS disengaged; hand mass did not damp it; highway was worst;** LKAS angle rate felt limited;
+**manual steering much heavier when engaged, even turning WITH the command.**
+
+**1. 🛑🛑 THE AGGREGATOR DOES REACH THE MOTOR.** `gp-0x6b94` → governor `FUN_0004503c` → `gp-0x6ace` →
+comp-add `FUN_000456a4` → **`gp-0x6acc`** → shaper reads it @`0x431C4` → `gp-0x6b08` @`0x43206` → Q15
+blend → **ADD to `gp-0x6afe`** → clamps → `gp-0x6b98` → FOC → PWM. Additive, same-signed, no sign flip.
+**Orchestrator byte-verified the crux**: predicted encodings `244f3495` / `645ff894` both MATCH; mode cal
+`0xC64C8` = **0 (pass-through) on stock and every build**. **Eleven methods missed it because they all
+asked "who reads `gp-0x6b94`" — nobody asked about `gp-0x6acc`, two hops out.** Explains V40's brick
+mechanistically and the graded V74→V81 dose-response. ⇒ `memory/accord-aggregator-reaches-motor-via-gp6acc-bridge.md`
+🛑 **`0xC64C8` is a pure cal (0 writers, 1 reader): mode 1 DELETES the entire aggregator contribution.** UNTESTED.
+
+**2. 🛑 STOCK SHIPS MODE 24 ≡ MODE 26 BYTE-IDENTICAL** for all six factor families. **The engaged-only
+damper is OURS, armed at V74.** Sign is `−sign(motor rate)` ⇒ it fights the driver too. Measured
+engaged/manual effort per °/s at 10–40 km/h **1.471 [0.980, 1.812]**, direction-independent.
+★ `gp-0x67f4` CLOSED — the speed voter's validity flag, not an engagement gate.
+
+**3. 🛑 V81 CARRIED NEITHER MEASURED GRIND-#1 FIX** (`0x3AB76`/`0x3AC20` and `0x3AA96`/`0xC6446` all
+byte-stock). Route 67's grinding is an **absence of any fix, not a regression** — the third silent loss.
+
+**4. THE ANGLE-RATE CLAIM IS REFUTED.** ach/dem = 1.09 creep · 1.22 at 14–40 · **1.88 above 86 km/h**,
+replicated independently. What the operator felt is **impedance**, not a rate limit.
+🛑 **Three independent lines say MORE AUTHORITY MAKES IT WORSE** ⇒ the 8× path and the governor-slew lever
+are **closed**. Do not raise openpilot's 123 ct/frame cap.
+
+**5. THE 27.7 Hz LIMIT CYCLE — the ring STOPS, it does not decay.** A step control through the identical
+bandpass yields apparent Q 9.0–11.6, so **both analysts' ring-down Q values were filter artefacts**.
+**Q ≲ 6, τ ≲ 1.8 cycles** ⇒ **not a forced resonance by anything**; an actively sustained limit cycle with
+an **engaged-only** energy source. Only two things switch at the disengage edge — openpilot's command
+(bounded ≲ 2.6–5.2%) and the mode-26 damper ⇒ **the damper is the prime suspect**, by a route independent
+of the harmonics and the loop gain. Nonlinearity is **cubic-like, not a relay** (5f/3f = 0.023 vs 0.600).
+Not a wheel order (`df/dv` +0.043 vs +0.96 over a 20 m/s span), not road input, not commanded.
+
+## ✅ BUILT, VERIFIED, **UNFLASHED** — **V83a** ← THE CURRENT CANDIDATE
+
+**Cal-only, 12 cells, EVERY target value is Honda's own.** Base = the flown V81 (`4ddbd0e2…`).
+image `_v83a_FACTORE.STOCK-GAINA.STOCK-C63A0.1024_plain_image.bin` sha **`bb717ce8322d35c587e95084e697a5ad98ba6564ee9265bb09a88a2a241cd25a`** ·
+rwd `39990-TVA,A160-V83A-V81BASE-FACTORE.STOCK-GAINA.STOCK-C63A0.1024-magprobe-6bd0-thermo-6ac2-0x13000-0x100000.rwd`
+sha **`0be75e670ebf0c7e57f443eff7ff6976af1d276f54cef61a60e399827ac532aa`** (986,042 B).
+FactorE m26 → Honda's ramp (`k` 1.5798 → **0.2265**) · `gain_A` rec0/rec1 → stock (manual-arm revert) ·
+**`0xC63A0` 2048 → 1024** — the standing directive was **retired explicitly, by operator decision, on
+evidence**. Orchestrator's from-disk verification ALL PASS; value-anchored round trip reproduces V81
+bit-for-bit; CRC 50/50; **4× LKAS intact**; exactly one flashable V83 `.rwd`.
+🛑 **PRE-REGISTERED**: ring dose **96 = 0.42× V76** ⇒ *if V83a's 26–31 Hz ring is not below V76's, the dose
+model is wrong.* Also: in-ring `MOTOR_TORQUE` < 15; asymmetry gone above **~60 km/h**; ratchet slightly
+worse; 18–22 Hz unchanged. **Fly with ≥60 s of MANUAL driving above 50 km/h** (isolates `0xC63A0`).
+
+🛑 **INSTRUMENT CORRECTIONS**: `0x18F` is **one frame (~10 ms) stale** vs `0x14A` — corrects every
+`cmd`→`bar` phase ever computed here · `band_envelope` is **peak-to-peak scale**, not amplitude ·
+**a ring-down through a bandpass MUST be quoted against a step control through the identical filter** ·
+`rate_f` scale ~25% low · for N ≥ 5 only a phase-lock test establishes a harmonic.
+
+---
 Update it in place at every close-out; do not append new dated blocks (that is what made `CLAUDE.md`
 unreadable). The narrative of how each state was reached lives in `docs/HANDOFF-*.md`.
 
@@ -32,7 +93,7 @@ then `docs/HANDOFF-2026-08-04-both-confirmed-fixes-were-off-the-car.md`
 
 ---
 
-★★★★★ **THE HEADLINE, 2026-08-07 (LATEST, night): V80 FLEW. IT DID NOT FAULT, AND IT PRODUCED THE WORST
+★★★★ **SUPERSEDED HEADLINE, 2026-08-07 (night) — superseded by the 2026-08-08 headline above: V80 FLEW. IT DID NOT FAULT, AND IT PRODUCED THE WORST
 GRINDING THIS CAR HAS EVER MADE. THE CAUSE IS ITS OWN DAMPER — A FLAT `FactorC` AT `k` = 4.16 TURNS THE
 DAMPER INTO A NEAR-BANG-BANG COULOMB RELAY, AND THE BUILD'S NO-CLIP GATES WERE STRUCTURALLY BLIND TO IT.
 **V81 — A 126-BYTE REVERT FROM THE FLOWN V75, WITH BOTH LEGS OF THE FAULT MECHANISM REMOVED — IS BUILT,

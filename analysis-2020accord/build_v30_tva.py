@@ -11,13 +11,21 @@ WHY 4096 (operator-directed: "increase the corridor to also contain the added CO
 The value compared against the wall is gp-0x6acc = governed_LKAS + COMP_TERM:
   - governed_LKAS  : clamp-bounded by the arb/pack clamp 0xC61B4 -> <= 1024 (V18 2x).
   - COMP_TERM      : driver-override compensation added in FUN_000456a4 (post-governor), engaged only at
-                     high driver torque (gate LERP1(|driver torque gp-0x69ca|) < gp-0x6ac0 LKAS cmd).
+                     high column ANGLE (gate LERP1(|gp-0x69ca|) < gp-0x6ac0 LKAS cmd).
+                     🛑 CORRECTED 2026-08-08: gp-0x69ca is the ANGLE ACCUMULATOR (0.1 deg/count),
+                     NOT driver torque. Sole writers FUN_0003bd7c@0x3c09a + a zero-reset; it sums at Q7
+                     unity into 0x14A STEER_WHEEL_ANGLE, and FUN_0003fd9c holds (float)gp-0x69ca * 0.1.
+                     The 'driver torque' label predates the angle chain being decompiled and was never
+                     re-verified. See memory/accord-factord-is-the-angle-error-lever.md.
+                     ⊕ NOTE: this header's COMP_TERM / gp-0x6acc description is the SAME post-governor
+                     comp-add that 2026-08-08 confirmed is the bridge carrying the 11-lane aggregator to
+                     the delivered motor command. See memory/accord-aggregator-reaches-motor-via-gp6acc-bridge.md.
                      COMP_TERM = MIN(|raw|, LERP2_cap), LERP2_cap (cal 0xC67D8 table) reaches **2560**.
   Worst-case |gp-0x6acc| = |governed_LKAS| + |COMP_TERM| = 1024 + 2560 = 3584.
   -> corridor 4096 (= 4x stock, float 4.0) contains it with ~512 LSB margin, regardless of the comp sign.
 
   ⚠ UNCERTAINTY (honest): the *realized* COMP_TERM = (gp-0x6ac0 - LERP1)*3072>>10 capped at 2560. Because
-  the gate requires LERP1 < gp-0x6ac0 and LERP1 only drops to ~1000 at very high driver torque, the actual
+  the gate requires LERP1 < gp-0x6ac0 and LERP1 only drops to ~1000 at very high column angle, the actual
   term may be far below 2560 unless gp-0x6ac0's range is large (NOT pinned this session). 4096 is the
   CONSERVATIVE worst-case sizing; if the comp term is actually small, V29's 2048 would already suffice and
   4096 is harmless headroom EXCEPT that it further loosens the integrator cutback (see SAFETY TRADE).

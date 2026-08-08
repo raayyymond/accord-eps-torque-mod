@@ -1252,8 +1252,45 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #   weights tp+0x74ad..0x74b3 read 01). So Path 1 (bare, unity) and Path 2 (via the PID) both enter
 #   FUN_0003aa2c with unity weight and REINFORCE -- they do not fight. Combined with
 #   sign(gp-0x6bd0) = -sign(motor rate) above ⇒ DISSIPATIVE BY CONSTRUCTION at gp-0x6b94. [EVIDENCE]
-#   ⚠ This is a sign result at gp-0x6b94, NOT at the motor: the gp-0x6b94 -> motor hop is still missing
-#   (below), and the 100 Hz zero-order hold still costs 37.6/75.2 deg of phase at 21 Hz on top.
+#   ⚠ This was a sign result at gp-0x6b94, NOT at the motor. The 100 Hz zero-order hold still costs
+#   37.6/75.2 deg of phase at 21 Hz on top.
+#
+#   ✅✅ RESOLVED 2026-08-08 -- THE gp-0x6b94 -> MOTOR HOP IS FOUND. Was [OPEN] for five sessions and
+#   survived ELEVEN independent static methods returning the same wrong null. The bridge is two hops
+#   past where every check stopped, and every hop is instruction-verified:
+#
+#     gp-0x6b94  (FUN_0003aa2c, 1 kHz: damper gp-0x6bd0 + friction + boost + r24/r26, clamp +/-0x2800)
+#       -> FUN_0004503c  GOVERNOR, slew step 0xC6206 (512, <16.6 km/h) / 0xC6208 (205, >)  -> gp-0x6ace
+#       -> FUN_000456a4  comp-add:  st.h r8,-0x6acc,gp @0x45932                            -> gp-0x6acc
+#       -> FUN_00042af8  SHAPER: ld.h -0x6acc,gp @0x431C4 (bytes 244f3495), validity gate |x|<=0x2000,
+#                        mode cal 0xC64C8 (=0 on stock and EVERY build => pass-through)
+#                        st.h r11,-0x6b08,gp @0x43206 (bytes 645ff894)                     -> gp-0x6b08
+#       -> Q15 blend (mux 0xC64C9=0, scale 0xC61DA=1092, integrator gp-0x3570)
+#       -> ADD to gp-0x6afe -> clamp vs gp-0x4f64 -> hard clamp +/-0x2000                  -> gp-0x6b98
+#       -> FUN_000757a2 (1 kHz) -> Iq_ref/Id_ref -> FOC PI+FF (4 kHz) -> SVPWM -> duty regs
+#
+#   ADDITIVE, SAME-SIGNED, NO SIGN FLIP. The delivered command is the CAN-arbitrated term PLUS a scaled
+#   copy of the aggregator's governor-and-comp-added contribution. [EVIDENCE -- orchestrator byte-verified
+#   the crux independently: predicted encodings 244f3495 / 645ff894 both MATCH.]
+#
+#   🛑 WHY ELEVEN METHODS MISSED IT: every one asked "does the shaper reference gp-0x6b94?" -- it does
+#   not, and that is true. NOBODY ASKED ABOUT gp-0x6acc. And gp-0x6b08's "self-referential ramp state,
+#   one writer inside the function itself" characterisation was individually true and collectively
+#   misleading: it asked whether anything OUTSIDE reads it and stopped, never whether the function's own
+#   next instructions consume it. They do, at 0x4320a.
+#   📋 RULE: trace a FUNCTION'S OUTPUTS forward hop by hop. Do not enumerate one cell's readers and stop
+#   when they look like monitors. A "monitor-only" output two hops from the motor is a red flag.
+#
+#   ⇒ EXPLAINS V40's brick mechanistically (0xFFFF removes the governor slew => gp-0x6ace snaps to
+#   target => unbounded step into the SM2/SM3 integrator with a divergence monitor downstream), and the
+#   graded V74->V81 damper dose-response (dose in, dose out, every cycle). The DTC-0x1d side-channel
+#   hypothesis is SUPERSEDED, not merely abandoned.
+#   🛑 0xC64C8 is a PURE BUILD-TIME CAL (0 runtime writers, 1 static reader @0x431CC): mode 1 DISCARDS
+#   the entire aggregator contribution for a static cal tp+0x71d4; mode 2 blends it, clamp +/-0x3000.
+#   UNTESTED, zero hits in any build script. Clean experimental control; equally dangerous.
+#   ⚠ Not reduced to a single scalar: the aggregator-leg gain from gp-0x6b08 to gp-0x6b98 (near
+#   0xC61DA/1024 = 1.066 x the integrator's settled ratio at nominal blend).
+#   See memory/accord-aggregator-reaches-motor-via-gp6acc-bridge.md.
 # -----------------------------------------------------------------------------------------------------
 
 # [VERIFIED, byte-dumped] mode-indexed assist tables, selector = byte at gp+0x63fd (0xFEDFE3FD, NOT the

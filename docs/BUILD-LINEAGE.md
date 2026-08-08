@@ -10,6 +10,72 @@ result was buried in prose.
 
 ---
 
+## 🛑🛑 RULE 13 — **TRACE A FUNCTION'S OUTPUTS FORWARD. DO NOT ENUMERATE ONE CELL'S READERS AND STOP.**
+
+**Added 2026-08-08, after eleven independent methods returned the same wrong answer.**
+
+For three rounds the kit asked *"who reads `gp-0x6b94`?"* — disp16 and disp23 byte scans, LE32 absolute
+literals, movhi/movea pairs, ep-address materialisation, pcode dataflow, and two register-return checks.
+**All null.** Against six flashed on-car results (V61, V62, V67/V68, V74, V75, V80) that could only have
+worked if that lane reached the motor.
+
+**The lane does reach the motor.** The bridge is two hops past where every check stopped:
+
+```
+gp-0x6b94 -> FUN_0004503c (governor) -> gp-0x6ace -> FUN_000456a4 (comp-add) -> gp-0x6acc
+          -> FUN_00042af8 reads gp-0x6acc @0x431C4 -> gp-0x6b08 @0x43206 -> ... -> gp-0x6b98
+```
+
+**Nobody asked about `gp-0x6acc`.** And `gp-0x6b08` had been dismissed as *"self-referential ramp state,
+one writer inside the function itself"* — **individually true, collectively misleading**: that check asked
+whether anything *outside* the function reads it and stopped, never asking whether the function's **own
+next instructions** consume it. They do.
+
+⊕ The chain was **already documented** in `reference_accord_post_governor_comp_add.md` (May 2026) with
+the exact address `0x431c4`, and in `build_v30_tva.py`'s own header. Neither was cross-checked against the
+newer "cannot reach" conclusion. **When a new negative contradicts an old positive, diff them explicitly.**
+
+★ **A "monitor-only" output two hops from the motor is a red flag, not a conclusion.** And a governor
+whose cals bricked the car (V40) is not on a dead path — **a coherent account of V40 is the acceptance
+test for any claim about this chain.**
+
+Full detail: `memory/accord-aggregator-reaches-motor-via-gp6acc-bridge.md` and
+`docs/HANDOFF-2026-08-08-v81-flew-and-the-aggregator-reaches-the-motor.md`.
+
+---
+
+## CATCH-UP: V76 → V83a  (Part 1 had fallen five builds behind; 2026-08-08)
+
+| build | base | levers | on-car |
+|---|---|---|---|
+| **V76** | V38 | FactorC m26 `[566,566,566,908]`, FactorE `X=[0,119,…] Y=[0,300,539,927]`, `k`=1.3866 | **FLEW route 65, clean.** ⚠ V38 rebase silently reverted the V57 decouple, `0xC62EA`, `0xC63A0` |
+| V78 | V76 | FactorE `Y[1]`→449, dose 206 | built, **never flown** |
+| V79 | V78 | `Y[1]`→897, `Y[2]`→912, `k`=4.16 | built, superseded |
+| **V80** | V79 | + flat FactorC `[566]×4`, `0x454FE`→`B5` | **FLEW route 66. WORST GRINDING EVER**, no fault. 2.09× broadband HF lift + a 30 s 27.4 Hz limit cycle |
+| **V81** | flown V75 | `0xC407E` 850→511, friction ×1.5→stock | **FLEW route 67. FAULT-FREE** — the clamp revert worked. Grinding present (no grind-#1 fix was on board) |
+| **V83a** | flown V81 | FactorE m26 → Honda's ramp (`k` 1.5798→0.2265) · `gain_A` rec0/rec1 → stock · **`0xC63A0` 2048→1024** | **BUILT, VERIFIED, UNFLASHED.** Cal-only, 12 cells, **every target = Honda's own value** |
+
+**V83a artifacts** — image sha `bb717ce8322d35c587e95084e697a5ad98ba6564ee9265bb09a88a2a241cd25a`;
+rwd `39990-TVA,A160-V83A-V81BASE-FACTORE.STOCK-GAINA.STOCK-C63A0.1024-magprobe-6bd0-thermo-6ac2-0x13000-0x100000.rwd`
+sha `0be75e670ebf0c7e57f443eff7ff6976af1d276f54cef61a60e399827ac532aa`.
+
+🛑 **`0xC63A0`: the standing "do not double it" directive was RETIRED EXPLICITLY on 2026-08-08, by
+operator decision, on evidence** — one reader, zero writers, no firmware data path to the faulting
+monitor; the real fault mechanism was `0xC407E` = 850, reverted in V81. Recorded as a decision, not an
+oversight.
+
+🛑 **CORRECTION: `0xC6206`/`0xC6208` are NOT "hands-off/hands-on"** as this file and the build
+scripts label them. The selector `gp-0x67f5` flips on **voted vehicle speed crossing 16.6 km/h**
+(cal `0xC531E` = 1062, 10-cycle debounce at `0xC64E7`).
+
+★ **Never written by any build, and now named:** `0xC64C8` (aggregator mode selector — **mode 1 deletes
+the entire aggregator contribution**; 0 writers, 1 reader), `0xC64C9` (blend mux), `0xC61DA` (1092, Q10
+integrator scale), `gain_A` rec2/rec3 `0xC6A90`/`0xC6AA4` (the ≥50 km/h r26 records), mode-26 `gain_B`
+`0xD7A88`/`0xD7AC4`, and **FactorD** `0xC9DB4` (n=5, flat-unity in every mode, axis `gp-0x6a10` =
+angle-tracking error at 0.1°/count).
+
+---
+
 ## 🛑🛑 RULE 12 — **A TABLE'S SHAPE IS BOUNDED BY ITS OUTPUT CLAMP, NOT BY ITS BREAKPOINT COUNT.**
 
 **Added 2026-08-07.** A proposal arrived to make the damper's FactorC and FactorE literal ReLUs and, if
