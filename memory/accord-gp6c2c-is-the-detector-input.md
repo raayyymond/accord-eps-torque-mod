@@ -1,4 +1,26 @@
-# ★★ `gp-0x6c2c` is a MOTOR-RATE DERIVATIVE — the oscillation detector's only input
+---
+name: accord-gp6c2c-is-the-detector-input
+description: "gp-0x6c2c is filtered motor ACCELERATION (two cascaded IIRs on the one-cycle delta of the filtered rate), not a motor rate. ⇒ the friction lane gp-0x6b26 outputs ~0 under steady motion at any speed or torque and responds only to oscillation — so 'remove friction to fix steady-state heaviness' is NOT supported by this lane's structure. Scale ~0.3016 counts per deg/s^2."
+metadata:
+  type: reference
+---
+
+# ★★ `gp-0x6c2c` is FILTERED MOTOR **ACCELERATION** — the oscillation detector's only input
+
+> 🛑 **THE NAME TO USE IS "ACCELERATION", AND IT HAS A CONSEQUENCE.** Restated 2026-08-08 because the
+> phrase *"filtered motor rate"* kept propagating into other memories and into the friction-lane
+> reasoning. `FUN_00041464` runs **two cascaded IIRs on the ONE-CYCLE DELTA of the filtered rate** — the
+> differencing stage is the whole point, and it kills DC.
+>
+> ⇒ **THE FRICTION LANE `gp-0x6b26` OUTPUTS ≈ 0 UNDER STEADY MOTION, AT ANY SPEED OR TORQUE.** Its
+> multiplier is this cell, so the lane **only responds to oscillation.**
+> 🛑 **"Remove the friction lane to fix steady-state heaviness" is NOT SUPPORTED by this lane's
+> structure.** Whatever makes the wheel feel heavy while holding a steady turn, it is not this.
+>
+> **Scale ≈ 0.3016 counts per °/s²**, cross-validated: solving the chain for the V74/V75 fault trip
+> requires **7,076 °/s²**, against an **independently measured 7,154 °/s² peak jerk** on that drive —
+> a 1.1% agreement from two unrelated routes to the number. ⇒ this also **closes the "physical scale
+> undetermined" [OPEN]** carried in [[accord-friction-lane-ceiling-is-the-hard-fault]].
 
 **Traced 2026-07-31** while deciding whether lowering `T` (cal `0xC620A` = 12800) could rescue the
 detector-gated damping approach after V64's null. It is the **only** signal `FUN_000428d4`'s FSM tests

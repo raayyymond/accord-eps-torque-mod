@@ -48,9 +48,10 @@ ADDRESS CONVENTION
   ⚠ Reader #5's pre-filter +-0x200 clamp trips at |gp-0x4f60| ~18,829 counts at stock but ~4,707 at
   4x. On route 66 (V80) |bar| engaged max was 3,849 and >= 4707 fired 0/89,997 => it did NOT bind --
   but the margin is only 22% and the CAN count scale is not proven identical to gp-0x4f60's.
-  🛑 THE V57 DECOUPLE IS OFF THE CAR since the V38 rebase: V76/V78/V79/V80 read 0x2A1F0 disp 0x746C
-  (shared 0xC646C = 3564), where V62/V68/V74/V75 read 0x7CD0 (private 0xC6CD0 = 3564, 0xC646C stock
-  891). Nothing in V76->V80 re-applies it. Real uncosted headroom regression; NOT the 27 Hz driver.
+  🛑 THE V57 DECOUPLE WAS OFF THE CAR FOR V76/V78/V79/V80 ONLY -- those read 0x2A1F0 disp 0x746C
+  (shared 0xC646C = 3564). ✅ CORRECTED 2026-08-08: V81/V83A/V84 read disp 0x7CD0 (private 0xC6CD0 =
+  3564, 0xC646C stock 891) because they descend from V75, as do V62/V68/V74/V75. Real uncosted headroom
+  regression on that four-build window; NOT the 27 Hz driver.
   ✅ 0xC6CD0 = 0xFFFF on V76/V78/V80 is provably inert -- 0 instructions read tp+0x7cd0 anywhere.
 
 -------------------------------------------------------------------------------------------------------
@@ -204,10 +205,14 @@ EXECUTION MODEL
                      idx 4  FUN_00022CA0  task 5  c % 10 == 4    ->  100 Hz   <<< boost + damping
                      idx 5  FUN_0002351E  task 6  c == 0x10      ->   10 Hz
                  Task 1 hosts arbitration, FUN_0003b66a, the aggregator, the governor and the shaper.
-                 ★★ LOAD-BEARING: boost (FUN_00034a72) and damping (FUN_00034350) run at 100 Hz, so a
-                 zero-order hold costs 37.6 deg average / 75.2 deg worst-case transport lag at 20.9 Hz
-                 BEFORE any plant phase. Damping needs force in phase with velocity => the damper
-                 structurally cannot damp the 20.9 Hz mode, and may be ANTI-damping there. That is an
+                 ★★ LOAD-BEARING: boost (FUN_00034a72) and the TABLE DAMPER (FUN_00034350, sole caller
+                 FUN_00022ca0) run in TASK 5 = 100 Hz, while the aggregator FUN_0003aa2c and the
+                 residual lane FUN_0003a382 run in TASK 1 = 1 kHz. A zero-order hold costs 37.6 deg
+                 average / 75.2 deg worst-case transport lag at 20.9 Hz BEFORE any plant phase, and the
+                 ZOH CROSSOVER IS 25 Hz -- above it the 100 Hz damper can be sampled into an
+                 ANTI-DAMPING force. Damping needs force in phase with velocity => the damper
+                 structurally cannot damp the 20.9 Hz mode. ⇒ THE 1 kHz RATE LANES r24/r26 ARE THE ONLY
+                 DAMPING IN THIS FIRMWARE FAST ENOUGH TO ACT ON A 20 Hz MODE. That is an
                  explanation for every null damper lever (V44 FactorC; V47 FactorC+FactorE together --
                  🛑 CORRECTED 2026-08-06: both wrote modes 10/11 on a modes-24/26 car, so they were
                  INERT BY TABLE SELECTION and their nulls carry no information about this at all)
@@ -658,7 +663,7 @@ class EpsState:
     # It reasoned from the DWELL timeout only and never checked whether the INPUT reaches T at all.
     # It does not: |gp-0x6c2c| never crossed 12800 once. => V63/V64's oscillation-gated cal edits
     # (0xC6440, 0xC643E) are INERT on this firmware. Detector-gated damping is CLOSED at this threshold.
-    # gp-0x6c2c is a MOTOR-RATE DERIVATIVE, not torque -- see _detector_input_6c2c() below.
+    # gp-0x6c2c is filtered motor ACCELERATION, not rate and not torque -- see detector_input_6c2c().
     # ⚠ AND EVEN IF ARMED THE RISE IS SMALL: at the hands-off-creep LERP axis (X=0) the DEFAULT arms are
     # r24 2305 (0xD2AEC) and r26 3072 (gain_A rec0/rec1), vs osc arms 2048 and 1536 -- i.e. Honda's
     # oscillation arms are gain REDUCTIONS. V64 delivers r24 x1.78 and r26 x1.00 (a no-op) against
@@ -896,8 +901,10 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # FUN_00022ca0) picks B/C/D/E AND the ceiling through pointer arrays indexed by mode*4,
 # mode = *(byte)(gp+0x63fd), 13 variants:
 #     FactorB 0xC9CCC[m]  FactorC 0xC9E9C[m]  FactorD 0xC9DB4[m]  FactorE 0xC9F84[m]  ceiling 0xC77A0[m]
-# ★ RECORD LAYOUT (byte-verified on modes 24/26, 2026-08-07): u16 n@+0, i16 X[]@+2 (🛑 NOT +4 -- that
-# misread yields [X1,X2,X3,Y0]), i16 Y[] Q10 @+2+2n, u16 terminator 0x0000 @+2+4n. Below X[0] clamps to
+# ★ RECORD LAYOUT (byte-verified on modes 24/26, 2026-08-07): [npt][X x npt][Y x npt] -- u16 n@+0,
+# i16 X[]@+2 (🛑 NOT +4 -- that misread yields [X1,X2,X3,Y0]), i16 Y[] Q10 at base + 2 + 2*npt, i.e.
+# 🛑 +0x0A for a 4-point record and +0x0C for 5-point FactorD; u16 terminator 0x0000 @+2+4n.
+# Below X[0] clamps to
 # Y[0] (STRICT <=, so idx==X[0] clamps too); above X[n-1] clamps to Y[n-1]; else truncating LERP.
 # 🛑🛑 n IS NEVER READ BY THE EVALUATOR: each factor's `while(X[i]<=idx) i++` loop is real, but its
 # length is PINNED by hardcoded immediates -- FactorB/C/E n=4, FactorD n=5, ceiling n=2, confirmed
@@ -1097,7 +1104,9 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # and |angle rate| 1.3 deg/s against V74/V76/V75's 685/588/1113 and 33/33/48 -- ZERO matched cells. The
 # 10-40 and 40-80 km/h strata are well matched and carry the load; >80 km/h is 1 engagement run on V80
 # and never reached on V75.
-#     FUN_00036c12 -> gp-0x6b26   speed-LERP x gp-0x6c2c motor-rate-deriv, LINEAR [friction comp]
+#     FUN_00036c12 -> gp-0x6b26   speed-LERP x gp-0x6c2c motor ACCELERATION, LINEAR [friction comp]
+#         🛑 gp-0x6c2c is ACCELERATION (two cascaded IIRs on the one-cycle delta of the filtered rate,
+#         FUN_00041464), so this lane is ~0 under steady motion and fires only on oscillation.
 #     FUN_0003a382 -> gp-0x6ad4   UNFILTERED residual lane (2 passthroughs + a raw derivative)
 #     FUN_00036388 -> gp-0x6b62   slow +/-1/tick accumulator w/ hysteresis       [return-to-centre]
 #     FUN_000352b4 -> gp-0x6b86 + gp-0x69a4                                      [friction magnitude]
@@ -1706,9 +1715,12 @@ def _inline_torque_rate_b(st: EpsState) -> int:
 def detector_input_6c2c(rate_raw: int, ema_old: int, state_fast: int) -> tuple:
     """
     FUN_00041464 @0x4184E -- produces gp-0x6c2c, the ONLY input to the oscillation detector's threshold
-    test. [VERIFIED 2026-07-31, cals byte-read LE.] It is a MOTOR-RATE DERIVATIVE off gp-0x4f50 (the
-    resolver/motor ELECTRICAL rate), NOT torque and NOT a raw per-tick difference: differencing kills DC,
-    so a sustained large steering input cannot drive it -- it needs the motor rate actively reversing.
+    test. [VERIFIED 2026-07-31, cals byte-read LE.] ★ It is FILTERED MOTOR ACCELERATION off gp-0x4f50
+    (the resolver/motor ELECTRICAL rate) -- TWO CASCADED IIRs on the ONE-CYCLE DELTA of the filtered
+    rate -- NOT torque and NOT rate: differencing kills DC, so a sustained large steering input cannot
+    drive it and it needs the motor rate actively reversing. ⇒ the friction lane FUN_00036c12 ->
+    gp-0x6b26, whose magnitude term is this same signal, outputs ~0 UNDER STEADY MOTION and responds
+    only to oscillation.
     Returns (gp_0x6c2c, ema_new, state_fast_new). A slower sibling gp-0x6c2e takes the same `acc` through
     cal 0xC40DA = 3 (>>7).
 
@@ -1778,13 +1790,11 @@ def _inline_torque_rate_a(st: EpsState) -> int:
     (3072 -> 512) simultaneously. Net vs stock = (5244 + 512a)/(3072 + 3072a): 1.707x at a=0,
     PARITY at a=0.848, BELOW stock above it. V69/V70 edited the mode-10 gain_B records only, so they
     never touched r26 at all.
-    🛑🛑 AND THERE **IS** ONE CLEAN SINGLE-VARIABLE SERIES, AND IT SAYS r24 IS NEAR-INERT.
-    [EVIDENCE 2026-08-04, medians recomputed from _grind2_lib.wrecs] stock -> V70 -> V69 holds r26 at
-    x1 and steps r24 x1 -> x2 -> x4, reading 879 -> 729 -> 746, ALL THREE CIs MUTUALLY OVERLAPPING.
-    => r24 is close to INERT for grind #1 across a 4:1 dose range. And every build that FIXED grind #1
-    changed r26 (V62 x2; V67/V68 /6.00), while every build that changed only r24 did not.
-    => THE HEADLINE IS NOT "nothing is single-variable" -- IT IS "THE DOSE AXIS THIS KIT HAS USED
-    SINCE V62 IS THE WRONG LANE."
+    🛑🛑 RETRACTED 2026-08-08 -- "ONE CLEAN SINGLE-VARIABLE SERIES SAYS r24 IS NEAR-INERT" IS VOID.
+    Its entire basis was stock -> V70 -> V69 reading 879 -> 729 -> 746 with r24 stepped x1 -> x2 -> x4,
+    but V69 and V70 wrote MODE-10 gain_B on a mode-24/26 car, so both were functionally BYTE-STOCK and
+    the "4:1 dose range" was three copies of stock -- mutually overlapping CIs are what that predicts.
+    See the corrected dose table below: r24 IS the grind-#1 actor.
     ★ Four supporting byte facts: (1) gain_A's records 0xC6A68/0xC6A7C/0xC6A90/0xC6AA4 are
     BYTE-IDENTICAL across all 11 images => V67/V68's /6.00 (= 512/3072) is EXACT and engaged-only;
     (2) the two LERPs live in separate RAM -- gp-0x6e40/gp-0x6e38 for gain_B, gp-0x6e30/gp-0x6e28 for
@@ -1792,20 +1802,21 @@ def _inline_torque_rate_a(st: EpsState) -> int:
     arrays and gain_A from FIXED, non-mode-indexed records, which is why V69/V70's mode-10 surface
     edit could not reach r26 even in principle; (4) there is NO gp-0x671d mask arm on the r26 side --
     gain_A is 2 arms + default, not 3.
-    ⚠⚠ CARRY THIS UNEXPLAINED, DO NOT SMOOTH IT: r26 x2 (V62/V65) AND r26 /6.00 (V67/V68) BOTH HELPED,
-    and /6 helped MORE (168 vs 109 against stock's 879). A monotone "more r26 damping is better" story
-    and a monotone "less is better" story are BOTH refuted by the same two rows. The corpus cannot say
-    why, and that is the leading open question. Anyone proposing an r26 dose must state which
-    direction they are betting on and why.
-    ⚠ Grind #1 is BLIND to r24 gain -- log-log slope -0.144 [-0.991, +0.347], pairwise
-    P = 0.667/0.610/0.426 -- so it CANNOT be used as an in-force check for the r24 lane on any future
-    build. Structural, not a power limit.
-    ⇒ NO TWO POST-V38 RATE-LANE BUILDS ARE A SINGLE-VARIABLE CONTRAST. Measured grind #1 medians:
-    V61 (both x0) 2501 · stock 879 · V70 (r24 x2, r26 x1) 729 · V69 (r24 x4, r26 x1) 746 ·
-    V62/V65 (BOTH x2) 168 · V67/V68 (r24 x1.71, r26 /6, gated) 109. r24's dose is FLAT across
-    x2 -> x4; the only always-on build that fixed grind #1 is the only one that also doubled r26.
-    ✅ V62/V65's `sar` route (0x3AB76 AND 0x3AC20, 0xa -> 0x9) is the ONLY encoding that is
-    dose-exact independent of `a`, because it scales both lanes identically.
+    ✅✅ RESOLVED 2026-08-08 -- THE "r26 x2 AND r26 /6 BOTH HELPED" TENSION IS GONE: NEITHER HELPED.
+    Delivered dose at grind #1's operating point (7 km/h, 128 deg/s, engaged), mode-10 builds EXCLUDED:
+        build              r26 x    r24 x    grind #1 median e_18-22
+        V61                0.000    0.000            2501
+        stock/V69/V70      1.000    1.000       879 / 746 / 729   (V69/V70 = byte-stock, mode-10 writes)
+        V72                0.177    1.000       unmoved (0.953)
+        V62/V65            2.000    2.000             168
+        V67/V68            0.177    1.994             109
+    r24 is MONOTONE across x0 -> x1 -> x2, while r26 swings 11.3x at fixed r24 (V72 vs stock) without
+    moving grind #1, and the two builds that fixed it sit at OPPOSITE r26 ends with the SAME r24.
+    => r24 is the actor and r26 is the confound. The old "⚠ grind #1 is BLIND to r24 gain, so it cannot
+    be used as an in-force check" line is RETRACTED with its premise -- it was measured across three
+    byte-stock builds.
+    ✅ V62/V65's `sar` route (0x3AB76 AND 0x3AC20, 0xa -> 0x9) is the ONLY encoding that is dose-exact
+    independent of `a`, but it doses BOTH lanes; V67/V68 beat it (109 vs 168) with the r24 half alone.
 
     [OPEN] r26's realistic MAGNITUDE (clips only if avg(gp-0x69a4) > ~546); the mechanical loop sign
     (positive-feedback vs feedforward, needs live telemetry, not disassembly); gp-0x6752's concrete
@@ -2357,11 +2368,13 @@ def gain_rescaling_invariance_analysis(cal: Calibration, op_pid_scale: float = 0
 def governor_step_selector_bandwidth(cal: Calibration, tick_hz: float = 1000.0,
                                      command_counts: int = 4342) -> dict:
     """
-    The governor's per-cycle slew STEP is selected by gp-0x67f5 (written only by FUN_00041eec, the
-    column-torque voter): sustained driver column torque >= cal 0xC531E (1062) for cal 0xC64E7 (10)
-    cycles selects the SLOW step (205, more damped); below that, or on reset, selects FAST (512, less
-    damped) -- so hands-off runs ~2.5x wider bandwidth than hands-on, matching the operator's
-    hands-off/hands-on discriminator direction. [VERIFIED] the selector, cals, debounce, and step
+    🛑 CORRECTED 2026-08-08: gp-0x67f5 IS VOTED VEHICLE SPEED, NOT hands-off/hands-on. The governor's
+    per-cycle slew STEP is selected by gp-0x67f5 (written only by FUN_00041eec, the SPEED voter):
+    voted speed >= cal 0xC531E (1062 = 16.6 km/h) for cal 0xC64E7 (10, a BYTE) cycles selects the SLOW
+    step (205, more damped); below that, or on reset, selects FAST (512, less damped) -- so the car runs
+    ~2.5x wider governor bandwidth BELOW 16.6 km/h than above it. Every "hands-off vs hands-on" label on
+    0xC6206/0xC6208 in the build scripts and BUILD-LINEAGE is wrong for the same reason.
+    [VERIFIED] the selector, cals, debounce, and step
     ratio. A per-cycle slew limit is a bandwidth gate (ripple amplitude passed at frequency f is
     A_max = STEP*tick/(2*pi*f)), so this is a genuine TRANSMISSION PATH for tens-of-Hz content -- but
     [INFERRED, not established] that anything actually oscillates in that band upstream (the
@@ -2382,27 +2395,28 @@ def governor_step_selector_bandwidth(cal: Calibration, tick_hz: float = 1000.0,
 
     return {
         "build": cal.build,
-        "selector_var": "gp-0x67f5 (written only by FUN_00041eec, the column-torque voter producer)",
-        "selector_threshold_cal": {"addr": "0xC531E", "value": 1062, "domain": "driver column torque"},
-        "selector_debounce_cal": {"addr": "0xC64E7", "cycles": 10},
-        "step_hands_off_fast": fast,
-        "step_hands_on_slow": slow,
+        "selector_var": "gp-0x67f5 (written only by FUN_00041eec, the VEHICLE-SPEED voter producer)",
+        "selector_threshold_cal": {"addr": "0xC531E", "value": 1062, "domain": "voted vehicle speed",
+                                   "km_h": 16.6},
+        "selector_debounce_cal": {"addr": "0xC64E7", "cycles": 10, "width": "byte"},
+        "step_below_16_6_kmh_fast": fast,
+        "step_above_16_6_kmh_slow": slow,
         "step_ratio": round(fast / slow, 3),
         "cycles_to_full_command": {
-            "hands_off": -(-command_counts // fast),
-            "hands_on": -(-command_counts // slow),
+            "below_16_6_kmh": -(-command_counts // fast),
+            "above_16_6_kmh": -(-command_counts // slow),
         },
         "corner_hz_at_full_command": {
-            "hands_off": round(corner_hz(fast, command_counts), 1),
-            "hands_on": round(corner_hz(slow, command_counts), 1),
+            "below_16_6_kmh": round(corner_hz(fast, command_counts), 1),
+            "above_16_6_kmh": round(corner_hz(slow, command_counts), 1),
         },
         # The decisive number: ripple amplitude transmitted at the symptom frequency.
         "max_ripple_counts_at_30hz": {
-            "hands_off": round(max_ripple(fast, 30.0)),
-            "hands_on": round(max_ripple(slow, 30.0)),
+            "below_16_6_kmh": round(max_ripple(fast, 30.0)),
+            "above_16_6_kmh": round(max_ripple(slow, 30.0)),
         },
         "tick_hz_assumed": tick_hz,
-        "status": "[VERIFIED] transmission path gated by driver torque; [INFERRED] as the cause",
+        "status": "[VERIFIED] transmission path gated by VOTED SPEED; [INFERRED] as the cause",
     }
 
 
@@ -2456,7 +2470,7 @@ def vibration_hands_off_analysis(cal: Calibration) -> dict:
     ~10x stronger at low speed. [VERIFIED] the mechanism chain gp-0x4f60 (raw Sensor-B torque) ->
     FUN_0003a382's model-vs-reality residual (a genuine PID, not cascaded lags -- see
     assist_shaping_lanes()) -> gp-0x6ad4 -> the aggregator -> gp-0x6b94, which IS the governor's slew
-    target, whose STEP is driver-torque-gated (see governor_step_selector_bandwidth()) -- this
+    target, whose STEP is VOTED-SPEED-gated (see governor_step_selector_bandwidth()) -- this
     survives the gain-rescaling invariance argument because it is sourced from a PHYSICAL sensor
     reacting to REAL delivered torque (which scales 4x with V38), not a digital replay. ROOT CAUSE
     [🛑 CORRECTED 2026-08-06: this read "[CONFIRMED, V44 restored damping]" and that is VOID under RULE 7
@@ -2909,9 +2923,12 @@ def openpilot_command_slew_invariance(cal: Calibration, steer_delta: float = 3.0
     exactly that pair. This re-attribution of V42/V61/V62 stands only if LEG 2 holds.
     ⚠ The pre-committed r24 saturation caveat did NOT bind: measured dtorque is 123-839 (the route's
     most violent transient implies 739) against a clamp that needs 1820 under V62.
-    ★★ V63/V64 do it BETTER: gp-0x671a is an oscillation detector (see EpsState.assist_state_671a), so
-    raising only the state>=5 arms -- 0xC6440 2048->4096 and 0xC643E 1536->3072 -- adds damping only once
-    an oscillation has been detected, leaving a never-oscillating drive on its stock LERP default.
+    🛑🛑 STRUCK 2026-08-08 -- ~~V63/V64 do it BETTER by raising only the state>=5 arms 0xC6440
+    2048->4096 and 0xC643E 1536->3072~~. gp-0x671a is the OSCILLATION DETECTOR's debounced authority
+    level (FUN_000428d4, ONE writer image-wide `st.b r7,-0x671a[gp]` @0x42A12, sourced from gp-0x67df
+    and the raw count gp-0x357c), and gp-0x67df has NEVER been non-zero in this kit (0/53,991 on V68,
+    0/186,321 on V67, 0/14,980 on V64) => the state>=5 arms are DEAD IN PRACTICE, not merely rare, and
+    a cell spent on either buys nothing. The latch description below is correct but moot.
     ⚠ NOT "only while oscillating": the counter is a ONE-WAY LATCH with a 5 s hold, so once tripped it
     carries into subsequent manual steering. V63/V64 is "V62, but only after an oscillation has happened".
     V64 = V63 + the cave probe repointed at the detector (0x14A byte4: bit6 state>=5, bit5 state!=0,
@@ -3011,8 +3028,9 @@ def motor_torque_governor(sensors: SensorInputs, st: EpsState, cal: Calibration)
     asymmetric slew, writing gp-0x6ace) then FUN_000456a4 (adds gp-0x6ad0, writes gp-0x6acc, read by
     the shaper). [VERIFIED] Motion away from zero is capped to HELD+/-STEP; motion toward zero, or a
     sign-crossing, is immediate (a sign-crossing also zeroes HELD). STEP is selected by gp-0x67f5 (see
-    governor_step_selector_bandwidth()): the fast 512 step applies only when the driver holds steady
-    AND below 640 counts, so a hard dynamic turn pins the slow 205 step -- combined with V38's ~4x
+    governor_step_selector_bandwidth()): 🛑 CORRECTED 2026-08-08 -- the fast 512 step applies BELOW
+    16.6 km/h of VOTED SPEED, not "when the driver holds steady", so ordinary road speed pins the slow
+    205 step and creep does not -- combined with V38's ~4x
     larger target, ramp time (target/step) grew ~4x while the sign-crossing reset stayed instant,
     producing a ratchet (see slew_ramp_time_analysis()). ROOT CAUSE, CONFIRMED ON-CAR (V42 Change 1):
     while gp-0x67fa (ECU state) == 4, FUN_0004503c substitutes the fresh governed value with a
@@ -3129,15 +3147,15 @@ def soft_eme_windup_shaper(sensors: SensorInputs, st: EpsState, cal: Calibration
         st.boost_latch_state = 1
     st.boost_latched_off = st.boost_latch_state == 2 and previous_authority != 0
 
-    # gp-0x6acc drives the integrator through a ONE-SIDED zero-gate (NOT symmetric +/-8192): the
-    # condition is the plain inequality x<=8192 (@0x431c4-0x431d8), so the entire negative range passes
-    # unchanged and only x>+8192 is zeroed -- any chatter riding this gate could only appear on the
-    # POSITIVE command side. Mode selector cal 0xC64C8=0 confirms the default path below is live.
+    # 🛑 CORRECTED 2026-08-08: gp-0x6acc drives the integrator through a SYMMETRIC +/-0x2000 zero-gate --
+    # the decompile is (x + 0x2000U) < 0x4001 (@0x431c4-0x431d8), an unsigned-wrap range test, NOT the
+    # one-sided x<=8192 this comment used to claim; the "chatter can only appear on the POSITIVE side"
+    # corollary is WITHDRAWN. Mode selector cal 0xC64C8=0 confirms the default path below is live.
     # [VERIFIED] max|gp-0x6ace|=4762 (Q15 bank seeded at exact unity, no amplifying op on that path) +
     # max|gp-0x6ad0|=2560 (LERP2 ceilings at INDEX>=4150, no extrapolation) = 7322 < 8192, an 870-count
-    # margin that genuinely holds; excursions past -8192 hit the separate SATURATING +/-0x2000 clamp
-    # near the function's end instead, a smooth clamp with no chatter mechanism.
-    sanitized = 0 if _signed16(st.post_governor_command) > 0x2000 else _signed16(st.post_governor_command)
+    # margin that now bounds BOTH sides, so the gate is unreached in either direction on this envelope.
+    _gated = _signed16(st.post_governor_command)
+    sanitized = _gated if -0x2000 <= _gated <= 0x2000 else 0
     if cal.shaper_mode == 1:
         command = cal.shaper_bias
     elif cal.shaper_mode == 2:

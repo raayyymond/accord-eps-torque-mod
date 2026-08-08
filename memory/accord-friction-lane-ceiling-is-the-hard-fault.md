@@ -61,7 +61,13 @@ to cross 512 from `gp-0x6c2c` ≈ **6258** to ≈ **4180**. Both V74 and V75 fau
   needed a large event. V74/V75 needed a third less. Faults are new at V74.
 - **Explains why every damper theory came up empty** — wrong lane entirely.
 - **Torque magnitude never unified the two faults** (V75 was 86th percentile); `|d(angle rate)/dt|` did,
-  n=1 each. The lane's multiplier is `gp-0x6c2c`, a **filtered motor rate** — a rate-family signal.
+  n=1 each. The lane's multiplier is `gp-0x6c2c` — 🛑 **CORRECTED 2026-08-08: filtered motor
+  ACCELERATION, not a "filtered motor rate."** `FUN_00041464` runs two cascaded IIRs on the **one-cycle
+  delta** of the filtered rate, so the lane is **DC-blind: `gp-0x6b26` ≈ 0 under steady motion at any
+  speed or torque, and responds only to oscillation.** That is why `|d(angle rate)/dt|` unified the
+  faults and magnitude did not — the lane is *literally* a jerk detector.
+  ⇒ **"Remove the friction lane to fix steady-state heaviness" is NOT supported by this structure.**
+  See [[accord-gp6c2c-is-the-detector-input]].
   ⚠ Its index is `gp-0x6a5e` (**vehicle speed**), and **bar torque appears nowhere in the arithmetic**;
   an earlier "route-max bar torque maximises it" framing was wrong at the code level.
   ⚠ There is **no bare `sign()` flip**: the output's sign tracks `gp-0x6c2c`'s own EMA-filtered value
@@ -75,7 +81,12 @@ exposure, and **loosens no monitor**. ⇒ **A V38 base gets this for free** — 
 change in this kit's history. Raising `0xC4004` instead would loosen the monitor itself and must not be
 done casually.
 
-⚠ **OPEN:** `gp-0x6c2c`'s physical scale (deg/s per raw count) is not derived, so it is unknown whether
+✅ **CLOSED 2026-08-08 — `gp-0x6c2c`'s scale is ≈ 0.3016 counts per °/s²** (it is an **acceleration**,
+so the units are °/s² per count, not °/s). Cross-validated: solving this chain for the V74/V75 trip
+demands **7,076 °/s²** against an **independently measured 7,154 °/s² peak jerk** on that drive — 1.1%.
+⇒ ~4180 is an **extreme** value, and the mechanism's sizing now stands on two independent numbers.
+
+⚠ **(superseded) OPEN:** `gp-0x6c2c`'s physical scale (deg/s per raw count) is not derived, so it is unknown whether
 ~4180 is an ordinary or an extreme motor-rate value. Closing it needs `FUN_00041464`'s
 `gp-0x35a0 → gp-0x6c2c` EMA chain (α = 22/64 on `gp-0x4f50<<5`, final `>>9`) anchored against a
 known-scale sibling — **or the V76 probe's `|gp-0x6b26| ≥ 448` margin bit, which answers it by

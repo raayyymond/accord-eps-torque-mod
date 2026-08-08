@@ -30,6 +30,8 @@ needed.
    already-clamped value; monitor trips at 512; Honda ships 511) — and **`0xC63A0` is EXONERATED**, refuting the
    standing "do not double `0xC63A0`" directive. 🛑 **The V38 rebase silently reverted three levers** (V57's
    decouple, the low-speed lockout removal, the V42 ratchet fix) ⇒ V80-vs-V75 was never single-variable.
+   ⚠ **The count is now SEVEN, walked 2026-08-08 (late) — `gain_A` rec0/rec1 was never logged anywhere.
+   See `docs/STATE.md` → "THE V38 REBASE SILENTLY REVERTED SEVEN THINGS".**
    ⇒ **V81 built, UNFLASHED**: the flown V75 with `0xC407E` 850→511 and the friction table back to stock —
    **126 bytes**, and restoring them reproduces the flown V75 bit-for-bit.
    Predecessors: `HANDOFF-2026-08-07-v76-flew-and-the-relu-plan-inverts.md`,

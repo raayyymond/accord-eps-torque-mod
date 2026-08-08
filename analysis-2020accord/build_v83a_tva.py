@@ -356,8 +356,11 @@ GAIN_A_FROZEN = (GAIN_A_REC2, GAIN_A_REC3)      # V72's cut is PARTIAL by record
 KEEP_CELLS = {
     0xC6CD0: (3564, "V57's decoupled forward-reader cell."),
     0xC646C: (891,  "the SHARED sensor scale -- V57 decoupled the forward reader OFF it. STOCK."),
-    0xC61B2: (2048, "pre-gain deadband arm."),
-    0xC61B4: (2048, "pre-gain deadband arm."),
+    # 🛑 RELABELLED 2026-08-08. These are NOT a deadband arm -- the pre-gain deadband is
+    # 0xC61B8 = 102, the NEXT cell, and it was never rescaled alongside the gain. Both of
+    # these are output clamps and both are 4x Honda (512 -> 1024 at V22 -> 2048 at V38).
+    0xC61B2: (2048, "ARBITRATION output clamp (FUN_0002b422, +/-tp+0x71b2). 4x Honda's 512."),
+    0xC61B4: (2048, "LKAS-GAIN output clamp (+/-tp+0x71b4). 4x Honda's 512."),
     0xC407E: (511,  "🛑 THE DTC-0x1d INTERLOCK. Honda's clamp, one count under its own 512 trip. "
                     "V81 restored it after V73 raised it to 850 and V74/V75 hard-faulted."),
     0xC62EA: (0,    "the low-speed steer lockout, removed since V52."),

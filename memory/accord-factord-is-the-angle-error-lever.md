@@ -5,6 +5,32 @@ metadata:
   type: reference
 ---
 
+> ✅ **REINFORCED 2026-08-08 — THIS MEMORY IS CORRECT, AND HERE IS WHAT MAKES IT CHECKABLE.**
+> FactorD is genuinely **flat unity**: `npt = 5`, `X = [0, 50, 100, 150, 700]`, `Y = [1024] × 5`,
+> verified across **2,924 records (86 images × 34 modes)**. No build has ever moved a byte of it.
+>
+> 🛑 **THE LAYOUT RULE THAT PREVENTS THE RECURRING MISPARSE.** Record layout is
+> **`X` at `base + 2`, `Y` at `base + 2 + 2·npt`** ⇒ **`+0x0A` for the 4-point FactorB/C/E, but
+> `+0x0C` for the 5-point FactorD.** **A 4-point parse of FactorD misreads `X[4] = 700` as `Y[0]`** —
+> which is exactly the shape of a confident wrong answer (a plausible non-unity Y row out of thin air).
+> Anchor the offset on `npt`, never on a remembered constant.
+>
+> ★ **The excursion estimate, which changes the design.** Physics (angle amplitude ∝ 1/ω at fixed
+> velocity amplitude) puts `gp-0x6a10` at **6.71 ct @27.75 Hz · 9.31 @20 Hz · 23.89 @7.79 Hz** — i.e.
+> **the entire operating range sits inside the FIRST FLAT SEGMENT (`X[0]`=0 → `X[1]`=50).**
+> ⇒ 🛑 **`X` MUST BE RESHAPED, NOT JUST `Y`.** A Y-only edit on the shipped breakpoints is a no-op for
+> every symptom this kit has measured. *(This sharpens — and agrees with — the "likely deep in the flat
+> segment" caveat below, and it is now a computed number rather than an inference from one datum.)*
+>
+> ✅ **Blast radius, and it is small:** the **sole reader of the FactorD table is `FUN_00034350`.** The
+> other **seven** `gp-0x6a10` consumers read the **raw cell**, not the table ⇒ **a table edit is
+> fault-isolated to the damper evaluator.** ⚠ `gp-0x6a10` is **word-aligned** and lockstep-shadowed at
+> **`gp-0x4c90`** — see [[accord-lockstep-shadows-67fe-4c3a-and-6a10-4c90]] and
+> [[accord-two-cave-encoding-traps-sar-floor-and-opcode-bit]] before probing it.
+> ⊕ `gp-0x67fe`'s domain is exactly **{0,1,2}**, so gate #2 below needs **one** telemetry bit, not two.
+> ⚠ And note [[accord-task5-is-100hz-damper-cannot-damp-21hz]]: FactorD rides the **100 Hz** evaluator,
+> so above 25 Hz it is shaping an anti-damping term. Its value is at **7.79 Hz**, not at the ring.
+
 ★★★★ **FactorD is the only factor in the damper chain indexed by something other than a raw rate, and no
 build has ever written it.** It is the one structural candidate for serving "remove the grinding" and
 "maximise LKAS angle rate" **simultaneously**, because the other levers are all rate-indexed and therefore

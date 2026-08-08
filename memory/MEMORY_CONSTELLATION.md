@@ -900,3 +900,112 @@ V80 passed all of them at 0.00% clipping and flew as a near-bang-bang relay, bec
   sensor's. "Did not fire on this drive" ≠ "cannot fire".
 - **Whether V81's friction revert is the right variant.** The probe **could not discriminate**: ×1.5 pins
   at 76% of the rung's threshold, so the whole decision lives inside the comparator's first cell.
+
+---
+
+## 2026-08-08 — Era: V83a flew, the dose axis moves to r24, and a SECOND engaged column is found
+
+**Why this matters relationally:** the two nodes that carried the most weight in the post-V60 record —
+*"the damper dose is the axis"* and *"r26 is the lane"* — **both moved off their anchors on the same
+day, and for the same underlying reason: a build that was believed to test one variable was testing
+another.** V83a's falsifier fired on the ring; RULE 7's mode-proof deletion of the mode-10 ladder
+re-priced the r24/r26 attribution; and a **second engaged mode column (27)** turned up carrying the very
+damper V83a thought it had removed. ⊕ A **stale memory snapshot** was the proximate cause of six
+already-corrected conclusions being re-derived inside this session — a tooling edge, not an analysis one.
+
+### THE CHAIN
+
+```
+V81 flew route 67 (grinding, no fix on the car)
+  |    [[accord-v81-carries-neither-grind1-fix]]
+  v
+V83a: revert the engaged damper, predict the 26-31 Hz ring moves  <- PRE-REGISTERED falsifier
+  |
+  v  route 68, fault-free, cell-stratified vs V81
+  18-22 Hz  2.674 [1.956, 3.885]   null [0.63, 1.55], 10/10 cells > 1   -- WORSE
+   6-9  Hz  1.526 [1.174, 2.019]                                        -- WORSE
+  26-31 Hz  1.021                                                       -- FLAT
+      |    [[accord-v83a-flew-worst-modern-build]]
+      v
+  🛑 THE DAMPER-DOSE MODEL OF THE 26-31 Hz RING IS FALSIFIED (by its own falsifier)
+      |
+      +--> and it was never a clean test anyway:
+           mode 27 is a SECOND ENGAGED COLUMN, still carrying V81's relay damper
+           (539 FactorE plateau, N(50)/N(500) = 1.45 vs Honda 0.00, 9.5x m26 at 200 ct)
+           Honda's own pairing is 24<->26 and 25<->27
+           [[accord-mode-27-is-a-second-engaged-column]]
+           v
+      V84: FactorC m26+m27 Y[0] -> 0, FactorE m27 -> Honda, lever B restored
+           => engaged == manual EXHAUSTIVELY, 0..14000 speed counts, BOTH pairs
+           => damper surface byte-identical to V67/V68 (the measured best)
+           [[accord-v84-built-engaged-equals-manual]]
+
+IN PARALLEL, THE DOSE AXIS:
+  RULE 7 deletes the mode-10 ladder as byte-stock   [[reference-accord-car-is-tvca4-mode-24-26]]
+      |
+      v  re-price every build at 7 km/h / 128 deg/s engaged
+  r24 MONOTONE 0 -> 1 -> 2x   (2501 -> ~790 -> 109-168)
+  r26 swings 11.3x at fixed r24 and grind #1 moves ~5%   (V72: 0.953; V71B: 545)
+      |    [[accord-r24-is-the-grind1-actor-r26-nearly-blind]]
+      v
+  🛑 "r26 x2 AND r26 /6 BOTH helped" -- the tension is GONE. Neither did.
+```
+
+### The load-bearing edges this session created
+
+| edge | direction | rationale |
+|---|---|---|
+| `r24-is-the-grind1-actor…` → `r26-is-structurally-inert` | **VOIDS its follow-on leg** | the "r24 is near-inert" reading rested on the mode-10 ladder RULE 7 deleted; **LEG 1 (the gate) stays reversed, r26 is still LIVE** |
+| `r24-is-the-grind1-actor…` → `v42-fix-was-the-r26-kill` | **weakens its pattern table** | the ratchet column is untouched; the **grind** column now points at r24 |
+| `r24-is-the-grind1-actor…` → `rate-lane-builds-were-never-single-variable` | **completes it** | that node said the lanes were confounded; this one says **which lane won** |
+| `v83a-flew-worst-modern-build` → `grind1-is-inert-to-the-damper-dose` | **extends it to a second band** | the ring joins grind #1 as dose-independent — and this time the null was **pre-registered** |
+| `mode-27-is-a-second-engaged-column` → `stock-mode24-equals-mode26-damper-is-ours` | **generalises it** | Honda ships **two** manual/engaged pairs; the "engaged damper is ours" finding holds on both |
+| `mode-27-is-a-second-engaged-column` → every engaged-column edit ever made | **confounds the half-applied ones** | V83a is the caught instance; **assert both pairs or the edit is half applied** |
+| `can-telemetry-surface-census…` → `can-tx-gateway-whitelist-and-20-free-bits` | **confirms the ledger, adds the transport proof** | 16 clean bits by a completely different method, **plus** byte-transparency for `0x14A` — which that node assumed and never proved |
+| `gp6c2c-is-the-detector-input` → `friction-lane-ceiling-is-the-hard-fault` | **closes its `[OPEN]` scale caveat** | ≈0.3016 ct per °/s², cross-validated 7,076 vs a measured 7,154 °/s² peak jerk |
+| `task5-is-100hz…` → `factord-is-the-angle-error-lever` | **bounds where FactorD is worth anything** | FactorD rides the 100 Hz evaluator ⇒ its value is at **7.79 Hz**, not at the 27.7 Hz ring |
+| `feedback-read-the-repo-memory-not-the-stale-snapshot` → the whole constellation | **gates access to all of it** | six corrections were re-derived from a snapshot; the map is only as current as the copy being read |
+
+### Edges REDRAWN (retractions)
+
+- **"The damper dose moves the 26–31 Hz ring" is FALSIFIED**, by V83a's own pre-registered test. Combined
+  with [[accord-grind1-is-inert-to-the-damper-dose]], **the damper dose now has no measured effect on any
+  band the kit scores** — its only demonstrated effect is the **shape** hazard (the V80 relay).
+- **"r26 is the lane the symptom follows" is VOID.** Not a reversal back to the original "r26 is inert" —
+  r26 is LIVE — but **grind #1 follows r24**, and the two builds that "proved" r26 both moved r24 too.
+- **"The V38 rebase reverted THREE levers" is SEVEN**, and the seventh (`gain_A` rec0/rec1,
+  `0xC6A72`–`0xC6A8E`) **had never been logged anywhere** ⇒ every V80-vs-V75 contrast carries **five**
+  confounds. Same family as the three silent fix losses already on record.
+- **"V42 killed the r26 lane completely" narrows**: `0xC643E`/`0xC6444` are **unreachable**
+  (`gp-0x671a` ← one writer @`0x42A12` ← `gp-0x67df`, never non-zero) ⇒ **`gain_A` → 0 was V42's only
+  live change vs stock.**
+- **"`gp-0x6c2c` is a filtered motor rate" → ACCELERATION.** The differencing stage is load-bearing:
+  the friction lane is **DC-blind**, so *"remove friction to fix steady-state heaviness"* has **no
+  structural support** and must not be proposed again on that reasoning.
+- **"The damper runs at 1 kHz" vs "at 100 Hz" was never a contradiction** — it is a **naming collision**
+  between `FUN_00034350` (task 5, 100 Hz) and `FUN_0003aa2c`/`FUN_0003a382` (task 1, 1 kHz).
+
+### The method node this session promoted
+
+**An empirical zero is not a free bit.** `0x18F byte5[4]` reads flat zero on **28 of 30 routes** and is a
+**live `STEER_STATUS`→7 indicator** on the other two. The only thing that settles "free" is the
+**instruction census** — who writes the cell, and what every read-modify-write preserves.
+⊕ Its mirror image, from the same census: `0x14A`'s byte-transparency was proved by a **counterfactual**
+(85.5% of frames would have carried a wrong checksum under the competing model) rather than by an
+absence. **Design the observation so the two hypotheses predict different data.**
+⊕ And the build-time corollary: **enumerate a comparator's whole input range** — the `sar`-floor
+asymmetry (16,385 values checked) and the `ld.h`/`st.h` one-bit trap were both caught by gates, not by
+review. See [[accord-two-cave-encoding-traps-sar-floor-and-opcode-bit]].
+
+### What is honestly unresolved after this session
+
+- **What DOES move the 26–31 Hz ring.** Dose is out; shape is untested as a separate axis; the
+  100 Hz ZOH says a table damper is **anti**-damping up there at all.
+- **The seventh V38-rebase lever is named but the audit's count implies one more is not itemised.**
+  The lever list is not proven exhaustive.
+- **`0x18F`'s end-to-end transparency** — [BELIEF] only. Settle it with one non-stock pattern in
+  `0x18F byte4[2:0]` flown alongside a live `0x14A` write as an in-flight positive control.
+- **The macro ratchet is still uninstrumented.** Two detectors, 64/65 comparisons inside their own
+  nulls, both failing their own positive control. Nothing this session changes that.
+- **V84 is UNFLASHED**, and lever B is known **not** to be the highway answer — V67/V68 flew it and the
+  highway grind persisted.

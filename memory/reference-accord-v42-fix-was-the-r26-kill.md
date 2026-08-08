@@ -1,3 +1,24 @@
+---
+name: reference-accord-v42-fix-was-the-r26-kill
+description: "V42's confirmed fix was the r26 kill, not 0x454FE. 🛑 CORRECTED 2026-08-08 — 0xC643E and 0xC6444 are UNREACHABLE (gp-0x671a's only writer is fed by gp-0x67df, never non-zero), so V42's only live change vs stock was gain_A -> 0."
+metadata:
+  type: reference
+---
+
+> 🛑 **CORRECTED 2026-08-08 — TWO OF THE FOUR "LIVE" ROWS ARE UNREACHABLE.**
+> The table below lists **`0xC643E` (1536 → 0)** and **`0xC6444` (512 → 0)** as live changes. **They are
+> not.** Both are read only through the `lp` arm, whose gate derives from **`gp-0x671a`**, and
+> `gp-0x671a` has **exactly ONE writer, @`0x42A12`, fed only by `gp-0x67df` — which has never been
+> non-zero in this kit.** ⇒ **those two loads never execute; zeroing them changes nothing.**
+> *(Consistent with [[accord-r26-is-structurally-inert]]'s `0xC6444` strike, and with
+> [[accord-gp671a-blast-radius-not-a-free-lever]].)*
+>
+> ⇒ **V42's ONLY live change vs stock was `gain_A` → 0.** That narrows this note's attribution rather
+> than overturning it — but it also means the r26 kill was **not** as deep as the four-row table implies.
+> ⚠ And the pattern table further down is separately weakened: **grind #1 follows r24, not r26** —
+> [[accord-r24-is-the-grind1-actor-r26-nearly-blind]]. The **ratchet** column is untouched by that
+> finding (different symptom, still operator-report-only).
+
 # ★★★★ V42's CONFIRMED FIX WAS THE **r26 KILL**, not `0x454FE` — a two-session [OPEN] closed
 
 **Byte diff of `_v42_plain_image.bin` vs `_v41_plain_image.bin` over `[0x13000, 0x100000)`, 2026-08-05.**

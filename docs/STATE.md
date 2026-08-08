@@ -1,11 +1,77 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-08 — V81 FLEW (route 67), fault-free. THE `gp-0x6b94` → MOTOR GAP IS CLOSED.
-V83a built, verified, unflashed.** This file is the single current-state record.
+**Last updated: 2026-08-08 (late) — V83a FLEW as route 68 and is the WORST build in the modern lineage for
+both of the operator's scored symptoms. Its own pre-registered falsifier fired: the damper-dose model of
+the 26–31 Hz ring is FALSIFIED. r24 IS THE ACTOR, not r26. V84 is built, verified, unflashed.**
+This file is the single current-state record.
 
 ---
 
-## ★★★★★ HEADLINE, 2026-08-08 — full narrative in `docs/HANDOFF-2026-08-08-v81-flew-and-the-aggregator-reaches-the-motor.md`
+## ★★★★★ HEADLINE, 2026-08-08 (late) — full narrative in `docs/HANDOFF-2026-08-08-v83a-flew-and-r24-is-the-actor.md`
+
+### 1. 🛑🛑 V83a FLEW AS ROUTE 68, AND IT IS THE WORST BUILD IN THE MODERN LINEAGE
+
+**Build identity [EVIDENCE — probe-thermometer prediction computed from each candidate image's own bytes,
+no free parameters]:** predicted-if-V81 bit6 **32.19%** / bit5 **14.60%**; predicted-if-V83a **0.515%** /
+**0.000%**; **observed 0.508% / 0.000%.** The same code identifies route 67 as V81 correctly.
+**43,606 frames, 437.8 s, `latActive` 69.9%.**
+**Fault-free**: `STEER_STATUS` {0: 43,604, 3: 2}, **0 sentinels, 0 DTC-active frames.** [EVIDENCE]
+
+Cell-stratified (speed × effort × angle-rate) **episode**-bootstrap ratios vs **V81**, split-half null
+computed FIRST:
+
+| band | V83a vs V81 | split-half null | verdict |
+|---|---|---|---|
+| **18–22 Hz grind #1** | **2.674 [1.956, 3.885]** | [0.63, 1.55] | 🛑 **WORSE** — 10/10 cells > 1, leave-one-out [2.376, 3.174] |
+| **6–9 Hz micro-ratchet** | **1.526 [1.174, 2.019]** | [0.69, 1.40] | 🛑 **WORSE** |
+| 26–31 Hz ring | 1.021 [0.817, 1.336] | [0.69, 1.42] | **FLAT** |
+| 40–49 Hz | 1.136 | [0.73, 1.36] | inside the null |
+
+🛑🛑 **V83a's OWN PRE-REGISTERED FALSIFIER FIRED.** It read: *"if the ring is not below V76's, the dose
+model is wrong and the damper is not what drives the ring."* Measured **1.123 vs V76 — indistinguishable.**
+⇒ **RECORD THE DAMPER-DOSE MODEL OF THE 26–31 Hz RING AS FALSIFIED.** [EVIDENCE]
+⊕ V83a also left **mode 27 carrying V81's entire damper package** — **mode 27 is a SECOND ENGAGED column**
+on this `TVCA4` car, so that package was live on the car for route 68 and went unnoticed. Detail in the
+V83a block below; **V84 reverts it.**
+
+### 2. ★★★★★ r24 IS THE ACTOR — the r26 puzzle is EXPLAINED, not carried
+
+With the mode-10 builds correctly excluded as **byte-stock** (RULE 7), the **delivered** dose table at
+grind #1's operating point (7 km/h, 128 °/s, engaged):
+
+| build | r26 × | r24 × | grind #1 median `e_18-22` |
+|---|---|---|---|
+| V61 | 0.000 | 0.000 | 2501 |
+| stock / V69 / V70 | 1.000 | 1.000 | 879 / 746 / 729 |
+| V72 | 0.177 | 1.000 | unmoved (0.953) |
+| V62 / V65 | 2.000 | 2.000 | 168 |
+| **V67 / V68** | 0.177 | **1.994** | **109** |
+
+**r24 is monotone across 0 → 1 → 2×. r26 swings 11.3× at fixed r24 and grind #1 barely moves.**
+⇒ the golden model's *"CARRY THIS UNEXPLAINED — r26 ×2 AND r26 ÷6 BOTH HELPED"* is **EXPLAINED: neither
+r26 move helped.** Both builds that fixed grind #1 raised **r24**. **V71B (r26 ×2 alone, delivered) scored
+545 — inside the stock band.**
+**[EVIDENCE]** for the byte facts and the arithmetic. **[BELIEF]** for the causal attribution — four
+cross-route medians, no covariate matching.
+🛑 ⇒ **§3 of the 2026-08-04 headline below ("THE DOSE AXIS … IS THE WRONG LANE" / "r24 is near-inert") is
+VOID.** Its entire evidence base is three builds that delivered byte-stock. Annotated in place there.
+
+### 3. ✅ V84 IS BUILT, VERIFIED, UNFLASHED — see the V84 block immediately below
+
+Base V83a. **7 control cells, 13 bytes, plus a probe repoint inside the proven 68-byte cave. CRC 50/50.**
+It **raises the DC-neutral damping** (the rate lane, engaged-only by construction) and **deletes the
+DC-opposing damping** (the mode-26/27 Coulomb damper, which is OURS, armed at V74).
+
+### 4. ⚠ NOT ADDRESSED BY V84 — state it plainly
+
+- **The highway grind.** V67 and V68 both carried Lever B and the highway grind was still present.
+- **The ~28 Hz lane-change transient.** It is **excitation, not gain** — dose-independent on record.
+
+---
+
+## ★★★★★ EARLIER ON 2026-08-08 — V81 FLEW (route 67), FAULT-FREE, AND THE `gp-0x6b94` → MOTOR GAP CLOSED
+Full narrative in `docs/HANDOFF-2026-08-08-v81-flew-and-the-aggregator-reaches-the-motor.md`.
+**Everything in this block still stands.**
 
 **V81 flew route 67 and was FAULT-FREE** (78,760 frames, 789 s, 85.23% engaged, 0–104.2 km/h;
 `STEER_STATUS` {0: 78,751, 3: 9}, 0 DTC transitions, 0 sentinels). `0xC407E` = 511 did its job.
@@ -43,7 +109,56 @@ an **engaged-only** energy source. Only two things switch at the disengage edge 
 of the harmonics and the loop gain. Nonlinearity is **cubic-like, not a relay** (5f/3f = 0.023 vs 0.600).
 Not a wheel order (`df/dv` +0.043 vs +0.96 over a 20 m/s span), not road input, not commanded.
 
-## ✅ BUILT, VERIFIED, **UNFLASHED** — **V83a** ← THE CURRENT CANDIDATE
+## ✅ BUILT, VERIFIED, **UNFLASHED** — **V84** ← THE CURRENT CANDIDATE
+
+**Base = V83a (`bb717ce8…`). 7 control cells, 13 bytes, plus a probe repoint inside the proven 68-byte
+cave. CRC 50/50.**
+
+| | value |
+|---|---|
+| builder | `analysis-2020accord/build_v84_tva.py` |
+| base | `_v83a_FACTORE.STOCK-GAINA.STOCK-C63A0.1024_plain_image.bin` sha256 `bb717ce8322d35c587e95084e697a5ad98ba6564ee9265bb09a88a2a241cd25a` — **the cut that FLEW route 68** |
+| image | `_v84_LEVERB.ARM5244-DAMPER.HONDA.M26.M27-PROBE.R24.6ADA-FD.67FE.6A10_plain_image.bin` sha256 **`344f22f7303f6b5b006b13d329192ce098d118c9ce149834cb3cc05899dc637a`** |
+| rwd | `39990-TVA,A160-V84-V83ABASE-LEVERB.ARM5244-DAMPER.HONDA.M26.M27-PROBE.R24.6ADA-FD.67FE.6A10-0x13000-0x100000.rwd` sha256 **`5e830b2588b22fd6238c4bd376e602d603b5d25871368d08df7986519cda1bca`** (986,042 B) |
+
+**THE SEVEN CELLS**
+| cell | from → to | what it is |
+|---|---|---|
+| `0x3AA96` | `C5` → `FB` | **Lever B** — the LKAS-gated r24 arm repoint (V67/V68's byte) |
+| `0xC6446` | 512 → **5244** | **Lever B's arm value** |
+| `0xD77DA` | 566 → **0** | FactorC **m26** `Y[0]` → Honda |
+| `0xD77EE` | 566 → **0** | FactorC **m27** `Y[0]` → Honda |
+| `0xD7822` / `0xD7824` / `0xD782C` | → **60 / 400 / 140** | FactorE **m27** → Honda's own values |
+
+**RATIONALE, in one line: raise the DC-neutral damping (the rate lane, engaged-only) and delete the
+DC-opposing damping (the mode-26/27 Coulomb damper, which is OURS, armed at V74).**
+★ **Lever B is engaged-only BY CONSTRUCTION — manual is byte-for-byte Honda.** That answers the operator's
+standing 2026-07-31 objection that rate-lane builds change manual feel for an engaged-only symptom.
+★ **After V84, all six factor families are identical engaged-vs-manual, exhaustively over speed counts
+0 … 14000, for BOTH pairs (24↔26 and 25↔27)** — orchestrator-verified. [EVIDENCE]
+★ **V84's damper surface is byte-identical to V67 and V68**, so the grind-#1 prediction is an
+**interpolation onto a measured point, not an extrapolation.** ⚠ Note V67/V68 ran `0x454FE` = `BA` — they
+did **NOT** carry V42's macro-ratchet fix. **V84 does.**
+
+**PROBE — 5 bits, frame `0x14A` byte4** (inside the proven 68-byte cave; no new extent):
+`b7` r24 ≥ **+1024** · `b6` r24 ≤ **−1025** · `b5` `gp-0x67fe ∈ {1,2}` · `b4` `gp-0x6a10 ≥ 8` ·
+`b3` fingerprint = 1 (positive control).
+
+⚠ 🛑 **V84 WAS RE-CUT.** An earlier **control-path-only** cut exists — `.rwd` sha256 `54985b45…`, image
+sha256 `bdd857c9…` — and is retained on disk renamed **`SUPERSEDED-DO-NOT-FLASH-…`**, bytes intact and
+verifiable. **Recorded explicitly** so a future reader is not surprised by two V84 artefacts; see the
+standing hazard in `memory/accord-recut-overwrites-the-previous-plain-image.md`.
+⇒ **Exactly one FLASHABLE V84 `.rwd` on disk.**
+
+🛑 **NOT ADDRESSED BY V84, stated plainly:** the **highway grind** (V67/V68 both carried Lever B and it
+persisted) and the **~28 Hz lane-change transient** (excitation, not gain — dose-independent on record).
+
+---
+
+## 🛑🛑 FLASHED AND FLOWN — **V83a** (route `68`, 2026-08-08). **THE WORST BUILD IN THE MODERN LINEAGE FOR BOTH SCORED SYMPTOMS.**
+
+🛑 **This block previously read "BUILT, VERIFIED, UNFLASHED ← THE CURRENT CANDIDATE". It was flashed and
+flown as route 68.** Results and the falsified pre-registration are in THE HEADLINE §1 above.
 
 **Cal-only, 12 cells, EVERY target value is Honda's own.** Base = the flown V81 (`4ddbd0e2…`).
 image `_v83a_FACTORE.STOCK-GAINA.STOCK-C63A0.1024_plain_image.bin` sha **`bb717ce8322d35c587e95084e697a5ad98ba6564ee9265bb09a88a2a241cd25a`** ·
@@ -53,11 +168,24 @@ FactorE m26 → Honda's ramp (`k` 1.5798 → **0.2265**) · `gain_A` rec0/rec1 �
 **`0xC63A0` 2048 → 1024** — the standing directive was **retired explicitly, by operator decision, on
 evidence**. Orchestrator's from-disk verification ALL PASS; value-anchored round trip reproduces V81
 bit-for-bit; CRC 50/50; **4× LKAS intact**; exactly one flashable V83 `.rwd`.
-🛑 **PRE-REGISTERED**: ring dose **96 = 0.42× V76** ⇒ *if V83a's 26–31 Hz ring is not below V76's, the dose
-model is wrong.* Also: in-ring `MOTOR_TORQUE` < 15; asymmetry gone above **~60 km/h**; ratchet slightly
-worse; 18–22 Hz unchanged. **Fly with ≥60 s of MANUAL driving above 50 km/h** (isolates `0xC63A0`).
+🛑 **THE PRE-REGISTRATION, AND HOW IT SCORED**: ring dose **96 = 0.42× V76** ⇒ *"if V83a's 26–31 Hz ring is
+not below V76's, the dose model is wrong and the damper is not what drives the ring."* **Measured 1.123 vs
+V76 — indistinguishable ⇒ THE FALSIFIER FIRED. The damper-dose model of the ring is FALSIFIED.**
+The rest of the pre-registration read: in-ring `MOTOR_TORQUE` < 15; asymmetry gone above **~60 km/h**;
+ratchet slightly worse; 18–22 Hz unchanged. **18–22 Hz was NOT unchanged — it was 2.674× worse**, and the
+ratchet was 1.526× worse.
+🛑 **AND V83a LEFT MODE 27 CARRYING V81's ENTIRE DAMPER PACKAGE** — FactorE m27 byte-identical to V81's
+m26, the **539 plateau**, relay index **1.45× vs Honda's 0.00×**. On this `TVCA4` car **mode 27 is a SECOND
+ENGAGED column** (variant row 11 → modes `[24,25,26,27]`, columns 2/3 engaged), so that package was **live
+on the car for route 68 and went unnoticed.** **V84 reverts it.** [EVIDENCE]
+⊕ **Honda's own pairing is 24↔26 and 25↔27**: stock `m24`/`m26` FactorC `Y = [0,234,429,908]` but
+`m25`/`m27` = `[0,233,426,875]`. Do not assume "engaged" means m26 alone.
 
-🛑 **INSTRUMENT CORRECTIONS**: `0x18F` is **one frame (~10 ms) stale** vs `0x14A` — corrects every
+---
+
+## 🛑 STANDING INSTRUMENT CORRECTIONS — they apply to every analysis in this file
+
+`0x18F` is **one frame (~10 ms) stale** vs `0x14A` — corrects every
 `cmd`→`bar` phase ever computed here · `band_envelope` is **peak-to-peak scale**, not amplitude ·
 **a ring-down through a bandpass MUST be quoted against a step control through the identical filter** ·
 `rate_f` scale ~25% low · for N ≥ 5 only a phase-lock test establishes a harmonic.
@@ -69,7 +197,10 @@ unreadable). The narrative of how each state was reached lives in `docs/HANDOFF-
 **Read alongside:** `docs/BUILD-LINEAGE.md` — 🛑 **start with `RULE 3` at the top of that file: a
 "CONFIRMED" result is about a LEVER, not about the car you are driving. Byte-check the current image
 before reasoning from any recorded result.** 🛑 **Then `RULE 6` — a lever is only in force if the car
-reads the TABLE you edited.** Then the latest handoff,
+reads the TABLE you edited.** 🛑 **Then `RULE 7` — a lever is mode-proof, or it is a bet; this car is
+`TVCA4`, modes 24/25 manual and 26/27 ENGAGED.** Then the latest handoff (the 2026-08-08 late one,
+V83a's flight and V84), then
+`docs/HANDOFF-2026-08-08-v81-flew-and-the-aggregator-reaches-the-motor.md`, then
 `docs/HANDOFF-2026-08-07-v80-flew-the-damper-is-a-relay.md` (V80's flight and V81),
 then `docs/HANDOFF-2026-08-07-v76-flew-and-the-relu-plan-inverts.md`, then
 `docs/HANDOFF-2026-08-07-v76-v38base-and-the-friction-ceiling.md`, then
@@ -330,20 +461,32 @@ then launched (0 → 7.6 km/h). Column rate reversed sign twice in the final 150
 on-car.** What is EVIDENCE: the mechanism exists, is single-frame, is mode-proof, and the build history
 lines up exactly. **V81 closes it whether or not it fired.**
 
-### 🛑 THE V38 REBASE SILENTLY REVERTED THREE LEVERS
+### 🛑 THE V38 REBASE SILENTLY REVERTED ~~THREE~~ **SEVEN** THINGS
+
+🛑 **CORRECTED 2026-08-08 (late): this heading read "THREE LEVERS" and the count has now been walked to
+SEVEN.** The record named `0xC63A0`, `0xC407E` and friction ×1.5 (the last two **declared**); `0xC62EA`,
+the V57 decouple triplet and `0x454FE` were added later; and a **SEVENTH has never been logged anywhere
+until now — `gain_A` rec0/rec1.**
 
 Orchestrator's own byte read across the lineage:
 
-| lever | V62 · V68 · **V74 · V75** | **V76 · V78 · V80** |
+| lever | V62 · V68 · **V74 · V75** | **V76 · V78 · V79 · V80** |
 |---|---|---|
 | `0x2A1F0` reader disp | `0x7CD0` → **decoupled** `0xC6CD0` = 3564 | `0x746C` → **shared** `0xC646C` = 3564 |
 | `0xC646C` shared sensor scale | stock **891** | **3564 (4×)** |
 | `0xC62EA` low-speed steer lockout | **0** (removed) | **320** (restored) |
 | `0xC63A0` Path-2 damper weight | **2048** | 1024 |
-| `0x454FE` V42 macro-ratchet fix | `0xB5` | `0xBA` (V80 restored it to `0xB5`) |
+| `0x454FE` V42 macro-ratchet fix | `0xB5` | `0xBA` — 🛑 **the SECOND silent loss of this byte** (V76/V78/V79); **V80 restored it to `0xB5`** |
+| 🆕 **`gain_A` rec0** `0xC6A72`–`0xC6A78` | **512** | **Honda's `3072 / 2434 / 2048`** |
+| 🆕 **`gain_A` rec1** `0xC6A86`–`0xC6A8C` | **512** | **Honda's `3072 / 2488 / 1536`** |
+| `0xC407E` friction-lane clamp *(declared)* | **850** — ⚠ **V73/V74/V75 only**; V62/V68 carry 511 | **511** |
+| friction row, 14 sites *(declared)* | **×1.5** — ⚠ **V73/V74/V75 only**; V62/V68 carry Honda's row | **stock** |
 
-🛑 **V80 vs V75 was NEVER a single-variable damper comparison.** V76 was cut from V38, which predates V57's
-decouple, and nothing in the V76→V78→V79→V80 chain re-applies it.
+🛑 **V80 vs V75 was NEVER a single-variable damper comparison — and the confound count is FIVE, not four.**
+The **silent** ones are `0xC63A0`, `0xC62EA`, the V57 decouple triplet, `0x454FE`, and now **`gain_A`
+rec0/rec1**; `0xC407E` and the friction row were declared. V76 was cut from V38, which predates V57's
+decouple, and nothing in the V76 → V78 → V79 → V80 chain re-applies it.
+⇒ **Any conclusion drawn from a V80-vs-V75 (or V76-vs-V75) contrast must name all five.** [EVIDENCE]
 
 **`0xC646C` — full reader map, and why it is NOT the 27 Hz driver.** Exactly **6 static readers, 0 stores,
 0 disp23 hits, 0 LE32-pointer hits** (three independent methods: Ghidra `search_instructions`, a fresh raw
@@ -388,9 +531,12 @@ NOT the 27 Hz driver.** **V81 removes the exposure for free by being cut from th
    `ACCORD_V75_LEVERS=CY0,EX1`. The default (`CY0` only) writes the never-flown `…CY0.566…` artefacts. No
    overwrite hazard (`lever_token()` is in both filenames), but the comment at line 269 is easy to misread.
    **The flown V75 is the `EX1.200` cut, dose 137, k = 1.5798.**
-4. **V74's first (clean, symptom-measurement) flight — route `5d` — has NO raw rlogs anywhere in the repo.**
-   Only the extracted `_cache_r5d/*.npz` + `.pkl` survive. **Every downstream V74 conclusion in this file
-   runs against that cache, not the raw log.**
+4. 🛑 **V74's first (clean, symptom-measurement) flight — route `5d`, 17 segments — is MISSING from
+   `analysis-2020accord/rlogs/`.** Only the extracted `_cache_r5d/*.npz` + `.pkl` survive, while
+   `analysis-2020accord/extract_r5d_cache.py` (977 lines) is its canonical extractor and
+   `docs/BUILD-LINEAGE.md` leans on that cache. **Every downstream V74 conclusion in this file runs
+   against the cache, not the raw log — and the cache cannot be re-cut or re-scored.** Re-confirmed
+   2026-08-08 (late). ⇒ **Recover or re-download it** (NEXT item 9).
 5. **V80's probe cannot distinguish V80 from V78/V79** — byte-identical cave, identical trip rates below
    80 km/h. Build identity rests on the `.rwd` filename plus the absolute exclusion of V76-V38BASE (13,183
    frames set bit6 with bit5 clear, structurally impossible on that cave). Route 66's `0x14A` byte4 took
@@ -401,25 +547,28 @@ NOT the 27 Hz driver.** **V81 removes the exposure for free by being cut from th
 
 ### ⇒ ★★★ NEXT
 
-1. **Fly V81.** A 126-byte revert from the only build that has ever eliminated the grinding, with both legs
-   of the recorded fault mechanism removed. 🛑 **Flash decision is the operator's; the file and the bus must
-   be named back.**
-2. **Bracket the switch-on point in `k` ∈ (1.58, 4.16]** — the HF floor is flat at/below baseline for
-   `k` ≤ 1.58 and 2.09× at 4.16, and nothing exists in between. 🛑 **With the RAMP PRESERVED** — the data's
-   own recommendation is *"restore the ramp, don't merely lower `k`"*.
-3. **The micro-ratchet's only significant improvement in the ladder is at V80's dose** (`k` = 4.16,
-   **0.418 [0.33, 0.61]** — the sole point outside the ≈[0.66, 1.45] null; 6–9 Hz is **flat from 0.58 to
-   1.58**). If the operator wants that back it is a **V82 question**, not a reason to keep V80's flat top.
-4. **Probe the friction lane at 320/352/416** if variant B is ever wanted — converts the bet into a
+1. **Fly V84.** 🛑 **Flash decision is the operator's; the file and the bus must be named back.** Its
+   damper surface is byte-identical to V67/V68, so grind #1 is an interpolation onto a measured point.
+   **Fly it with creep, mid-speed and highway engaged exposure** so the highway grind — which V84 does
+   **not** claim to fix — is scored rather than assumed.
+2. **Read the V84 probe first, then the spectra.** `b3` is the positive control; if `b3` is not ~100%,
+   nothing else in the readout is interpretable (the V64/V68 lesson).
+3. ~~Bracket the switch-on point in `k` ∈ (1.58, 4.16]~~ — **DEPRIORITISED.** The `k` dose axis is now
+   falsified for the 26–31 Hz ring (headline §1) and grind #1 was already inert to `k`. The `k` ladder's
+   one surviving claim is the **micro-ratchet gain at `k` = 4.16**, and it comes bundled with the HF floor.
+4. **Settle the 27 Hz command-vs-plant question** with a phase-resolved coherence on `sendcan` `0x0E4` vs
+   the torsion bar. This is now the *only* live route to the ring, the damper having been falsified.
+5. **Probe the friction lane at 320/352/416** if V81 variant B is ever wanted — converts the bet into a
    measurement for ~30 cave bytes.
-5. **Close `gp-0x6b94` → motor** with a raw Python LE scan for the 6-byte extended-disp encoding of
-   `gp-0x6ace`/`gp-0x6b94`/`gp-0x6afe`/`gp-0x6b08`, plus `analyze_dataflow`/`get_bulk_xrefs` as an
-   independent method, plus a **full decompile of `FUN_00042af8`** (its "no `gp-0x6b94` reference"
-   characterisation was inherited, never re-verified).
-6. **Settle the 27 Hz command-vs-plant question** with a phase-resolved coherence on `sendcan` `0x0E4` vs
-   the torsion bar.
-7. **Correct `build_v80_tva.assert_c63a0_block`'s now-known-wrong rationale comment.**
+6. **Correct `build_v80_tva.assert_c63a0_block`'s now-known-wrong rationale comment.**
+7. 🛑 **Correct the `0xC61B2`/`0xC61B4` label in the build scripts** — `build_v83a_tva.py:359-360` and
+   `build_v84_tva.py:544-545` call them *"pre-gain deadband arm"*. **They are not.** See the correction in
+   *Signal-identity corrections of record*. Comment-only; changes no byte.
 8. **Re-run reader #5's `±0x200` clamp screen** with a proven `gp-0x4f60` scale — the 22% margin is thin.
+9. 🛑 **Recover or re-download route `5d`'s raw rlogs** (V74's clean symptom-measurement flight, 17
+   segments) — they are **missing from `analysis-2020accord/rlogs/`** while `extract_r5d_cache.py`
+   (977 lines) is its canonical extractor and `BUILD-LINEAGE.md` leans on that cache. Every V74 conclusion
+   runs against the cache, not the log.
 
 ---
 
@@ -513,7 +662,12 @@ comparison; the only flash writer `FUN_0000d934` has zero static callers; the CR
 ⊕ **A free, never-touched lane: FactorD is n=5, flat `Y=1024` (inert) in modes 24 AND 26**, axis
 `gp-0x6a10` (angle-tracking error), gated `gp-0x67fe ∈ {1,2}`. UNTESTED, not falsified.
 
-## ✅ BUILT, VERIFIED, **UNFLASHED** — **V81** ← THE CURRENT CANDIDATE
+## ✅ FLASHED AND FLOWN — **V81** (route `67`, 2026-08-08). **FAULT-FREE.**
+
+🛑 **This block previously read "BUILT, VERIFIED, UNFLASHED ← THE CURRENT CANDIDATE". It was flashed and
+flown as route 67, fault-free** (78,760 frames, 789 s, 85.23% engaged; `STEER_STATUS` {0: 78,751, 3: 9},
+0 DTC transitions, 0 sentinels). `0xC407E` = 511 did its job. It is now **V83a's base**, and V83a flew as
+route 68. The build description below is retained as the record of what flew.
 
 **V81 = the FLOWN V75, with the friction lane returned to Honda's configuration. CAL-ONLY. NO CAVE CHANGE.**
 A **126-byte revert** from the only build that has ever eliminated the grinding, with **both legs of the
@@ -1825,25 +1979,39 @@ r24's — **untested.**
 
 ---
 
-## ★★★★ 3. THE DOSE AXIS THIS KIT HAS USED SINCE V62 IS THE WRONG LANE
+## 🛑🛑 ~~3. THE DOSE AXIS THIS KIT HAS USED SINCE V62 IS THE WRONG LANE~~ — **VOID, 2026-08-08 (late)**
 
-### 3.0 🛑 THERE **IS** A CLEAN SINGLE-VARIABLE r24 SERIES, AND IT SAYS r24 IS NEAR-INERT
+🛑🛑 **THIS ENTIRE SECTION IS VOID. Its evidence base is three builds that delivered BYTE-STOCK.**
+V69, V70 and V72 wrote the **mode-10** `gain_B` surface on a car that runs **modes 24/26** (`TVCA4`,
+RULE 7) ⇒ their "×2" and "×4" r24 doses were **never in force**; the table below is three replicates of
+**stock**, which is why its CIs overlap. The corrected **delivered**-dose table is in THE HEADLINE §2, and
+it says the opposite: **r24 is monotone across 0 → 1 → 2×, and r26 swings 11.3× at fixed r24 while grind
+#1 barely moves. r24 IS THE ACTOR.**
+**Left in place, struck through, so a future reader sees what changed and why.**
 
-**[EVIDENCE — medians recomputed from `_grind2_lib.wrecs`, not quoted from the record.]**
-**stock → V70 → V69 is a PURE r24 dose series with r26 held at ×1:**
+### ~~3.0 🛑 THERE **IS** A CLEAN SINGLE-VARIABLE r24 SERIES, AND IT SAYS r24 IS NEAR-INERT~~ — VOID
 
-| build | r24 | r26 | median `e_18-22` (engaged creep) |
-|---|---|---|---|
-| stock | **×1** | ×1 | **879** |
-| **V70** | **×2** | ×1 | **729** |
-| **V69** | **×4** | ×1 | **746** |
+~~**[EVIDENCE — medians recomputed from `_grind2_lib.wrecs`, not quoted from the record.]**~~
+~~**stock → V70 → V69 is a PURE r24 dose series with r26 held at ×1:**~~
+🛑 **It is not a dose series at all — all three rows deliver ×1.** The medians themselves are still good
+data (879 / 729 / 746) and are re-used, correctly labelled, in THE HEADLINE §2.
 
-**All three CIs mutually overlapping** ⇒ 🛑 **r24 is close to INERT for grind #1 across a 4:1 dose
-range.** And the converse holds across the whole corpus: **every build that FIXED grind #1 changed
-r26** (V62 ×2; V67/V68 ÷6.00), and **every build that changed only r24 did not.**
+| build | r24 *(as believed)* | r24 **DELIVERED** | r26 | median `e_18-22` (engaged creep) |
+|---|---|---|---|---|
+| stock | ×1 | **×1** | ×1 | **879** |
+| **V70** | ~~×2~~ | **×1 (byte-stock)** | ×1 | **729** |
+| **V69** | ~~×4~~ | **×1 (byte-stock)** | ×1 | **746** |
 
-⇒ **The headline is NOT "nothing is single-variable".** It is: **the dose axis this kit has used since
-V62 is the wrong lane.** Correct any text that says otherwise.
+~~**All three CIs mutually overlapping** ⇒ 🛑 **r24 is close to INERT for grind #1 across a 4:1 dose
+range.**~~ 🛑 **VOID — the CIs overlap because the doses were identical.**
+~~And the converse holds across the whole corpus: **every build that FIXED grind #1 changed
+r26** (V62 ×2; V67/V68 ÷6.00), and **every build that changed only r24 did not.**~~ 🛑 **VOID — both
+builds that fixed grind #1 also raised r24 (V62 ×2.000, V67/V68 ×1.994), and V71B, which moved r26 ×2
+ALONE and delivered it, scored 545 — inside the stock band.**
+
+⇒ ~~**The headline is NOT "nothing is single-variable".** It is: **the dose axis this kit has used since
+V62 is the wrong lane.** Correct any text that says otherwise.~~
+🛑 **RETRACTED. The dose axis was the right lane; the builds simply never delivered a dose on it.**
 
 ### 3.1 The structure — two selectors, one gate
 
@@ -1865,7 +2033,12 @@ Net vs stock = `(5244 + 512·a) / (3072 + 3072·a)`, with `a = gp-0x69a4/1024`:
 | > 0.848 | **BELOW stock** |
 
 **V69 and V70 edited gain_B only.** ⇒ 🛑 **every published multiplier in this kit is an r24-only number
-computed at `a = 0` — i.e. a number on the lane §3.0 shows to be near-inert.**
+computed at `a = 0`** — ~~i.e. a number on the lane §3.0 shows to be near-inert.~~
+🛑 **CORRECTED 2026-08-08 (late): the trailing clause is VOID.** §3.0's near-inertness finding was an
+artefact of three byte-stock builds (see the VOID banner above). Worse for V69/V70 specifically: they
+edited the **mode-10** `gain_B` surface, which this `TVCA4` car never reads, **so they delivered no r24
+dose at all.** The lane is not near-inert — **r24 is the actor** (THE HEADLINE §2). What survives here is
+only the narrower point that the published multipliers were computed at `a = 0`.
 
 ★ **Four supporting byte facts, all [EVIDENCE]:**
 1. **gain_A's four records `0xC6A68` / `0xC6A7C` / `0xC6A90` / `0xC6AA4` are BYTE-IDENTICAL across all
@@ -1887,38 +2060,55 @@ r26 < 0. **[BELIEF]** the natural reading is *"r26 is ZERO part of the time, sam
 consistent with the shared polarity load (`ld.b -0x6752[gp],r14` @`0x3AB78`, reused at `0x3AB7E` for
 r26 and `0x3AC3E` for r24).
 
-⚠⚠ **AND HERE IS THE PART TO CARRY UNEXPLAINED — do not smooth it.** **r26 ×2 (V62/V65) AND r26 ÷6.00
+⚠⚠ ~~**AND HERE IS THE PART TO CARRY UNEXPLAINED — do not smooth it.** **r26 ×2 (V62/V65) AND r26 ÷6.00
 (V67/V68) BOTH HELPED, and ÷6 helped MORE** (median 168 vs 109 against stock's 879). **A monotone
 "more r26 damping is better" story and a monotone "less is better" story are both refuted by the same
-two rows. The corpus cannot say why, and that is the leading open question of this session.**
-🛑 **Anyone proposing an r26 dose must state which direction they are betting on and why** — the record
-does not supply it.
+two rows. The corpus cannot say why, and that is the leading open question of this session.**~~
+🛑🛑 **EXPLAINED, 2026-08-08 (late) — NEITHER r26 MOVE HELPED.** Both builds that fixed grind #1 raised
+**r24** (V62/V65 ×2.000, V67/V68 ×1.994). The r26 moves rode along. The decisive controls:
+**V72 delivered r26 ×0.177 at r24 ×1.000 and grind #1 was unmoved (0.953)**, and **V71B delivered r26 ×2
+ALONE and scored 545 — inside the stock band.** ⇒ **r26 swings 11.3× at fixed r24 and grind #1 barely
+moves; r24 is monotone across 0 → 1 → 2×.** [EVIDENCE] for the bytes and arithmetic, **[BELIEF]** for the
+causal attribution (four cross-route medians, no covariate matching). See THE HEADLINE §2.
+🛑 The old instruction — *"anyone proposing an r26 dose must state which direction they are betting on"* —
+is **superseded by a better one: propose an r24 dose, and state its DELIVERED multiplier** (mode-proof, or
+it is a bet — RULE 7).
 
-★ **Independent bus-side support for the r26 attribution, arrived at WITHOUT the disassembly
-[EVIDENCE]:** median `e_18-22` by **bar-torque reversal count**, engaged creep — in the **rev ≥ 40**
-regime (where the ratchet lives), **V62 reads 396 against 1155–1403 for V59 / V64 / V69 / V70.**
-**V62 is the odd one out, and it is the only build with r26 ×2.**
+★ ~~**Independent bus-side support for the r26 attribution, arrived at WITHOUT the disassembly
+[EVIDENCE]:**~~ 🛑 **THIS IS NOT r26 SUPPORT — it is r24 support, re-read 2026-08-08 (late).** Median
+`e_18-22` by **bar-torque reversal count**, engaged creep: in the **rev ≥ 40** regime (where the ratchet
+lives), **V62 reads 396 against 1155–1403 for V59 / V64 / V69 / V70.** V62 is indeed the odd one out —
+but V62 is the only build in that set with **r24 ×2** as well, and V59/V64/V69/V70 all delivered **r24
+×1**. The comparison **cannot separate the lanes**; it separates V62 from four stock-dose builds.
 
 ✅ **V62's `sar` route is the ONLY encoding whose dose is exact independently of `a`** — it scales both
 lanes identically, **2.000× on the total for every value of `a`.** That is why V71 restores this route
 rather than re-deriving the dose through a cal arm.
 
-### The ladder, re-read against what each build actually carried
+### ~~The ladder, re-read against what each build actually carried~~ — 🛑 **SUPERSEDED 2026-08-08 (late)**
+
+🛑 **The `r24` column below was BELIEVED, not DELIVERED.** V69/V70/V72 wrote the **mode-10** `gain_B`
+surface, which this `TVCA4` car never reads (RULE 7) ⇒ they delivered **×1**. The corrected table is in
+THE HEADLINE §2; the medians are unchanged and correct.
 
 Median `e_18-22`, engaged creep:
 
-| build | r24 | r26 | median `e_18-22` |
-|---|---|---|---|
-| V61 | ×0 | ×0 | **2501** |
-| stock | ×1 | ×1 | **879** |
-| **V70** | ×2 | ×1 | **729** |
-| **V69** | ×4 | ×1 | **746** |
-| **V62 / V65** | **×2** | **×2** | **168** |
-| **V67 / V68** | gated arm | **÷6** | **109** |
+| build | r24 *(believed)* | r24 **DELIVERED** | r26 **DELIVERED** | median `e_18-22` |
+|---|---|---|---|---|
+| V61 | ×0 | **0.000** | **0.000** | **2501** |
+| stock | ×1 | **1.000** | **1.000** | **879** |
+| **V70** | ~~×2~~ | **1.000** | **1.000** | **729** |
+| **V69** | ~~×4~~ | **1.000** | **1.000** | **746** |
+| V72 | — | **1.000** | **0.177** | unmoved (0.953) |
+| **V62 / V65** | ×2 | **2.000** | **2.000** | **168** |
+| **V67 / V68** | gated arm | **1.994** | **0.177** | **109** |
 
-⇒ **r24's dose is FLAT from ×1 through ×4 (879 / 729 / 746 — §3.0), and both builds that fixed grind #1
-changed r26.** [EVIDENCE] is the **flatness of the r24 rung** and the **co-occurrence**; ⚠ the
-**direction** of the r26 effect is **not** established (see the unexplained ×2-and-÷6 result above).
+⇒ ~~**r24's dose is FLAT from ×1 through ×4 (879 / 729 / 746 — §3.0), and both builds that fixed grind #1
+changed r26.**~~ 🛑 **REVERSED.** On delivered dose, **r24 is monotone across 0 → 1 → 2×**; **r26 swings
+11.3× at fixed r24 (V72 vs stock) and grind #1 barely moves**; and **both builds that fixed grind #1 raised
+r24.** ⚠ The old line's "flat r24 rung" was three replicates of stock.
+[EVIDENCE] for the delivered-dose bytes and the arithmetic; **[BELIEF]** for the causal attribution — four
+cross-route medians, no covariate matching.
 
 ---
 
@@ -2206,7 +2396,12 @@ it is not a candidate at all on the builds this kit is flying.**
 ## 9. 🛑 RETRACTIONS THIS SESSION — recorded as retractions, with what replaced each
 
 1. **"r26 is INERT / r24 carries the entire lane" — REFUTED ON-CAR.** LEG 2 was the last leg holding it
-   up; V70's bit4 killed it (1,644/18,010 strictly negative). **Replaced by §3.**
+   up; V70's bit4 killed it (1,644/18,010 strictly negative). ~~**Replaced by §3.**~~
+   🛑 **REPOINTED 2026-08-08 (late): §3 is VOID — see THE HEADLINE §2.** Keep the two halves apart.
+   **r26 is LIVE** (a cell that goes strictly negative is not pinned) — *that* refutation stands. But on
+   **delivered** dose r26 swings **11.3× at fixed r24 and grind #1 barely moves**, so for **grind #1
+   specifically** the practical content of "r24 carries the lane" is **back**, now on much better
+   evidence: **r24 is the actor.**
 2. **The "peak-velocity / rateKey collapse" hypothesis — DEAD ON SCALE B, ALIVE ONLY AT THE ~90th
    PERCENTILE WORST INSTANT ON SCALE A. (A sharper retraction than "refuted", and the honest one.)**
    🛑 **Its founding number was never a burst measurement.** `A_rk = 1927` is
@@ -2221,8 +2416,13 @@ it is not a candidate at all on the builds this kit is flying.**
    adjudication:** the outcome data (V70 excluded from V62's class at P < 5 × 10⁻⁵) is **sound**, but
    the rateKey axis is the **bus angle rate converted by an assumed scale** while `gp-0x6ac0` is the
    **motor/resolver rate** — **a proxy that cannot settle it either way.**
-   **Replaced by:** §3 — r24 is near-inert and the lane was never the r24 lane, which accounts for the
-   same outcomes **with no rateKey claim at all.**
+   ~~**Replaced by:** §3 — r24 is near-inert and the lane was never the r24 lane, which accounts for the
+   same outcomes **with no rateKey claim at all.**~~
+   🛑 **THE REPLACEMENT IS VOID, 2026-08-08 (late)** — §3 is void (see its banner). **The retraction of
+   the rateKey hypothesis STANDS on its own evidence** (the `A_rk = 1927` provenance error, the 424
+   measured burst windows, the 19,378-sample flat-segment result); only the "replaced by" pointer fails.
+   **What now accounts for the same outcomes is THE HEADLINE §2: r24 is the actor**, and V69/V70 delivered
+   **no r24 dose at all** because they wrote the mode-10 surface.
 3. **The aggregator zero-gate / relay hypothesis — REFUTED** (§7, all 8 vacuous).
 4. **"V69 ran just under saturation, so V70 feels stiffer" — REFUTED** (§4.4; hard clamp, 0.0000% at
    the rail).
@@ -2231,7 +2431,9 @@ it is not a candidate at all on the builds this kit is flying.**
    measured** — not the value. ⚠ one episode; lower bound.
 6. **The "non-monotone dose–response with a minimum near 2×" is RETIRED.** It priced **every** build on
    r24 alone at `a = 0`; with r26 live, V62/V65's "2×" and V69/V70's "2×/4×" were never the same
-   quantity. **Replaced by §3.**
+   quantity. ~~**Replaced by §3.**~~ 🛑 **REPOINTED 2026-08-08 (late): §3 is VOID — replaced by THE
+   HEADLINE §2.** The retirement itself stands, and for a **second, stronger** reason: V69/V70's "2×/4×"
+   was not merely a different quantity, it was **byte-stock** (mode-10 surface, never read).
 7. 🛑 **"Grind #1 can be used to check whether an r24 dose is in force" — RETIRED as an INSTRUMENT**
    (§4.1). Log-log slope **−0.144 [−0.991, +0.347]**, pairwise P = 0.667 / 0.610 / 0.426. **Structural,
    not a power limit.** **Replaced by:** V71's `gp-0x671d` mask rung, which reads the gain in force.
@@ -4279,11 +4481,14 @@ re-reading the disassembly independently. Nothing below is a settled replacement
 
 ## Built and UNFLASHED
 
-🛑🛑 **2026-08-07 (night): THE ONLY CURRENT UNFLASHED CANDIDATE IS V81** — see its block at the top of this
-file (image `4ddbd0e2…`, rwd `fc4d4f74…`). Flash order since V70: **V71C → V72 → V73 → V74 → V75 (hard
+🛑🛑 **2026-08-08 (late): THE ONLY CURRENT UNFLASHED CANDIDATE IS V84** — see its block at the top of this
+file (image `344f22f7…`, rwd `5e830b25…`). Flash order since V70: **V71C → V72 → V73 → V74 → V75 (hard
 fault) → V74 (reflash, hard fault) → V76 (route `65`, clean) → V80 (route `66`, no fault, worst grinding
-ever).** **V78 and V79 were built and never flown; V79 is renamed `SUPERSEDED-…`.** Everything in the table
-below is historical.
+ever) → V81 (route `67`, fault-free) → V83a (route `68`, worst on both scored symptoms).**
+**V78 and V79 were built and never flown; V79 is renamed `SUPERSEDED-…`. V84 was RE-CUT — its earlier
+control-path-only cut (`.rwd` `54985b45…`, image `bdd857c9…`) is retained as `SUPERSEDED-DO-NOT-FLASH-…`.**
+~~2026-08-07 (night): the only current unflashed candidate is V81.~~ Everything in the table below is
+historical.
 
 🛑 **THE `status` COLUMN BELOW IS STALE FOR V67 AND EARLIER — READ IT AS A BUILD NOTE, NOT A FLASH
 STATUS.** Every row that says "BUILT, UNFLASHED" for V62/V67 was written before those builds flew.
@@ -4356,6 +4561,17 @@ contrast (34× grinding vs 6.1× ratchet) and the presence/absence are the defen
 ---
 
 ## Signal-identity corrections of record
+
+- 🛑 **`0xC61B2` / `0xC61B4` ARE NOT "the pre-gain deadband arm" — corrected 2026-08-08 (late).** They are
+  **output clamps on the forward path**: `0xC61B2` (= `±tp+0x71b2`) is the **arbitration output clamp**
+  in `FUN_0002b422`, and `0xC61B4` (= `±tp+0x71b4`) is the **LKAS-gain output clamp**. They were doubled
+  **alongside the LKAS gain**, in lockstep, at both steps: stock **512 → 1024 at V22 → 2048 at V38 = 4×
+  Honda**, and unchanged since. **The pre-gain deadband is a DIFFERENT cell — `0xC61B8` = 102 — and it
+  was never rescaled** (that is the whole point of the deadband box in `BUILD-LINEAGE.md`). [EVIDENCE]
+  ⚠ **The wrong label is still live in two build scripts**: `analysis-2020accord/build_v83a_tva.py:359-360`
+  and `analysis-2020accord/build_v84_tva.py:544-545` both read `"pre-gain deadband arm."` in their KEEP
+  lists. **Comment-only; no byte is affected** — but fix it before the label propagates into a third build
+  (NEXT item 7).
 
 - 🛑★★ **`gp-0x6c2c` — the oscillation detector's input — is a MOTOR-RATE DERIVATIVE, not torque and not
   a raw per-tick difference.** Produced in `FUN_00041464` @`0x4184E`; all cals byte-read LE:
@@ -4499,8 +4715,15 @@ set's 12.6–42.2°).
 🛑 **NO openpilot-side modifications.** Standing operator instruction. openpilot remains a *measurement
 instrument* only.
 
-00000. ★★★★★ **2026-08-07 (night) — THE CURRENT LIST IS IN THE HEADLINE (`⇒ ★★★ NEXT`). Everything below
-   this entry predates the V80 flight.** In short: **(1) fly V81** (126-byte revert from the flown V75,
+000000. ★★★★★ **2026-08-08 (late) — THE CURRENT LIST IS IN THE HEADLINE (`⇒ ★★★ NEXT`).** In short:
+   **(1) fly V84**; **(2)** read its probe's `b3` positive control before any spectrum; **(3)** the `k`
+   ladder is deprioritised — the damper-dose model of the ring is **FALSIFIED**; **(4)** settle 27 Hz with
+   a phase-resolved coherence; **(5)** probe the friction lane at 320/352/416 if V81 variant B is wanted;
+   **(6-7)** two comment corrections (`build_v80_tva.assert_c63a0_block`, and the `0xC61B2`/`0xC61B4` label
+   in `build_v83a_tva.py`/`build_v84_tva.py`); **(8)** re-run reader #5's clamp screen; **(9)** recover
+   route `5d`'s raw rlogs. **Both entries below predate the V81 and V83a flights.**
+
+00000. ⚠ **SUPERSEDED — 2026-08-07 (night).** In short: **(1) fly V81** (126-byte revert from the flown V75,
    both legs of the fault mechanism removed — the flash decision is the operator's and the file and bus
    must be named back); **(2) bracket the switch-on point in `k` ∈ (1.58, 4.16] WITH THE RAMP PRESERVED**,
    not by merely lowering `k`; **(3)** the micro-ratchet's only significant improvement is at V80's dose

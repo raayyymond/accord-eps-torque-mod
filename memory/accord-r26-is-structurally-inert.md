@@ -1,11 +1,22 @@
 ---
 name: accord-r26-is-structurally-inert
-description: "🛑🛑 REFUTED ON-CAR 2026-08-04. LEG 1 (the GATE) was already REVERSED; LEG 2 (the MAGNITUDE) is now REFUTED — V70's probe read gp-0x6adc strictly negative on 1,644/18,010 frames, and a pinned-zero cell cannot clear a >=0 test. r26 is LIVE and 'r24 carries the entire lane' is GONE. Read accord-r24-r26-two-selectors-one-gate."
+description: "🛑🛑 REFUTED ON-CAR 2026-08-04 — r26 IS LIVE (LEG 1 reversed, LEG 2 refuted; gp-0x6adc read strictly negative on 1,644/18,010 frames). 🛑 AMENDED 2026-08-08 — the follow-on 'r24 is near-inert' leg is VOID; it rested on the mode-10 ladder RULE 7 deleted. Grind #1 follows r24, not r26. Read accord-r24-is-the-grind1-actor-r26-nearly-blind and accord-r24-r26-two-selectors-one-gate."
 metadata:
   type: reference
 ---
 
-> 🛑 **AMENDED 2026-08-05 — READ THIS FIRST.** **Fully refuted.** r26 is the **LIVE** lane and the only one V72/V73 actually move (`gain_A`, which is not mode-indexed). V42's confirmed fix was an **r26 kill**. See [[reference-accord-v42-fix-was-the-r26-kill]].
+> 🛑🛑 **AMENDED AGAIN 2026-08-08 — THE "r24 IS NEAR-INERT" LEG IS *VOID*, NOT MERELY DOUBTFUL.**
+> The 2026-08-05 amendment below concluded that r26 carries the lane and r24 is the near-inert one. **That
+> conclusion rested on the mode-10 r24 dose ladder — which RULE 7 has since deleted as byte-stock**
+> ([[reference-accord-car-is-tvca4-mode-24-26]]). With the mode-10 builds excluded, the surviving ladder
+> runs the other way: **grind #1 is monotone in r24 across 0 → 1 → 2×, and moves ~5% when r26 swings
+> 11.3× at fixed r24.** ⇒ **r24 is the grind-#1 actor; r26 is nearly blind to it.** Read
+> [[accord-r24-is-the-grind1-actor-r26-nearly-blind]] before using anything on this page.
+> *(This does NOT restore the original "r26 is structurally inert" claim — LEG 1, the gate, stays
+> REVERSED on evidence, and r26 is still LIVE. What is void is the inference about **which lane the
+> symptom follows**.)*
+
+> 🛑 **AMENDED 2026-08-05 — SUPERSEDED IN PART BY THE BANNER ABOVE.** **Fully refuted.** r26 is the **LIVE** lane and the only one V72/V73 actually move (`gain_A`, which is not mode-indexed). V42's confirmed fix was an **r26 kill**. See [[reference-accord-v42-fix-was-the-r26-kill]].
 
 # 🛑🛑 REFUTED ON-CAR — r26 IS LIVE
 

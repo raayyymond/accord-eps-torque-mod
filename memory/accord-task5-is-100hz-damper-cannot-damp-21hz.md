@@ -1,4 +1,34 @@
+---
+name: accord-task5-is-100hz-damper-cannot-damp-21hz
+description: "RTOS task 5 is 100 Hz, so the table damper FUN_00034350 cannot damp the ~21 Hz mode. ✅ CONFIRMED AND SHARPENED 2026-08-08 — the '1 kHz damper' claim is a NAMING COLLISION: FUN_00034350 is 100 Hz, while FUN_0003aa2c and FUN_0003a382 run in task 1 at 1 kHz. Above 25 Hz the ZOH turns the table damper into an ANTI-damping force."
+metadata:
+  type: reference
+---
+
 # ★★ RTOS task 5 is 100 Hz — so the base-assist DAMPER structurally cannot damp the 20.9 Hz mode
+
+> ✅ **CONFIRMED AND SHARPENED 2026-08-08 — and the contradiction in the record is a NAMING COLLISION.**
+>
+> **The call graph, pinned:** `FUN_00034350`'s **sole caller is `FUN_00022ca0`** = task 5, reached
+> through the mod-10 divider ⇒ **100 Hz**. Meanwhile **`FUN_0003aa2c` (the aggregator) and
+> `FUN_0003a382` are called directly in task 1** ⇒ **1 kHz**.
+> ⇒ 🛑 **"the damper runs at 1 kHz" and "the damper runs at 100 Hz" are BOTH TRUE — of DIFFERENT
+> FUNCTIONS.** Whenever the record says "the damper", check which one is meant. The **table** damper
+> (`FUN_00034350`, FactorB/C/D/E, the ceiling clamp) is the slow one.
+>
+> **ZOH phase penalty, recomputed at 100 Hz** (`360 · f · T`, worst case):
+>
+> | mode | worst-case ZOH lag |
+> |---|---|
+> | 7.79 Hz (micro-ratchet) | **14.0°** |
+> | 20.9 Hz (grind #1) | **37.6°** |
+> | **27.7 Hz (the ring)** | **99.7° — past the 90° crossover** |
+>
+> ⇒ **The crossover is at 25 Hz.** Above it a 100 Hz table damper is **sampled into an ANTI-damping
+> force** — it adds energy at the frequency it is aimed at. That is a structural reason the 26–31 Hz ring
+> never responded to damper dose, independent of the empirical null in
+> [[accord-v83a-flew-worst-modern-build]].
+> 📋 **RULE: any task-5 lever aimed above 25 Hz is pushing the wrong way, whatever its dose.**
 
 **Resolved 2026-07-31. Closes `STATE.md`'s open gate #1, which had been "UNRESOLVED" since V59.**
 

@@ -8,6 +8,17 @@ metadata:
 🛑 **THERE ARE TWO RATCHETS. The operator settled this himself when asked directly** (2026-08-05):
 > *"I think 7 Hz and micro ratcheting could be the same thing. **Macro ratcheting was fixed.**"*
 
+## ✅ 2026-08-08 — THE TERMINOLOGY, RESTATED SO IT STOPS DRIFTING
+
+**This is the kit's naming of record. Use these two words and no others:**
+- **MICRO = the 7.79 Hz line.** The operator named it at V72: *"not audible, only felt in the column."*
+- **MACRO = the large hard-turn symptom.** It **has never been successfully instrumented** — two
+  purpose-built detectors returned **64 of 65 comparisons inside their own split-half nulls** and
+  **both failed their own positive control** (detail below, unchanged).
+
+⇒ A statement about "the ratchet" with no MICRO/MACRO qualifier is **not a verdict**. A stale snapshot of
+this memory drifts the terminology back; see [[feedback-read-the-repo-memory-not-the-stale-snapshot]].
+
 | | what it is | status after V72 |
 |---|---|---|
 | **MACRO** | the large-scale symptom he reports fixed | **fixed per operator — but UNMEASURED and UNATTRIBUTED** |
