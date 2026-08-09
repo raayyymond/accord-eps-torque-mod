@@ -12,6 +12,22 @@ If you're here, you probably already know what EPS firmware modification is for:
 
 This is real-vehicle work. Please read this section before doing anything beyond reading files.
 
+### Read this first — from the operator, who has actually done it
+
+**This may brick your car.** I have only ever tested this on my **2020 Accord 2.0T Touring**.
+
+**My first flash bricked my car.** The EPS would only accept a very specific memory region — and of course you have to erase the firmware *first*. I ended up writing a script that brute-forced through all the possible start and end memory addresses to get it to work. It was a nice, scary few hours of my life.
+
+**Modifying the EPS firmware can result in very dangerous on-road failure modes.** I'm at a point with the 2× mod where I'm not experiencing anything dangerous myself — but it wasn't always like this, and I can't say it never will be, especially on someone else's car. At various points in this work I have:
+
+- thought I might have to get the car towed and the EPS replaced or serviced
+- experienced **power steering failing completely during harsh turns** — driver-side power steering gone
+- experienced **power steering failing "gently" during harsh turns** — comma-side power steering assist gone
+
+Keep in mind that a failure during harsh turns is a pretty bad failure mode: **it means the car immediately starts heading outside of the lane, at speed.**
+
+**After flashing, run a fork that knows about the mod.** Use sunnypilot, StarPilot, or another fork that detects the modified EPS version string and auto-applies the 2× torque PID tuning settings. Running the modified firmware against stock tuning is not the configuration any of this was validated in.
+
 ### The non-negotiable rules
 
 1. **Never send a CAN message without explicit confirmation of the exact payload — including UDS reads.** This is the iron rule. `CLAUDE.md` codifies it for the agent; hold the line yourself too.
