@@ -1431,6 +1431,36 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #   ordinary-addressing access image-wide is a store-zero @0x38D22 -- a lead, not an answer; the block is
 #   ep-relative and invisible to a displacement scan.
 #
+# ★★★★★ gp-0x6b98 MEASURED ON-CAR, 2026-08-09 -- V87's 427 probe, route 71. [EVIDENCE]
+#   V87 repointed the 427 (0x1AB) TX packer's source load (0x55DF2 e893->6894), so MOTOR_TORQUE now
+#   carries Honda's own clamp(|gp-0x6b98| * 5 >> 3, 0, 0x3FF) at 49.81 Hz: 1.6 counts/LSB, rail 1637.
+#     engaged  median 208 counts, p90 966, railed (>=1637) 2.35%   [was ASSUMED ~120 counts p-p]
+#     6-9 Hz ripple engaged  rms 29.0 counts, p-p 162   ⇒ the assumption was LOW BY 1.35x, not 5x.
+#   THE FORK, on rectification-transparent unclipped engaged windows (white-noise p95 floor 10.5):
+#     column torque 0x18F  6-9 Hz prominence 12.86 [5.73, 16.68], above floor in 50.0% of windows
+#     DELIVERED gp-0x6b98                      4.03 [3.54,  6.22],                      7.1% = chance
+#     openpilot 0x0E4                          2.96 [2.36,  4.01],                      7.1%
+#   ⇒ the ~7.8 Hz mode is NOT a tone this chain commands. But the link is real and selective:
+#     coherence(|gp-0x6b98|, column) = 0.439 at 7.79 Hz vs a SHUFFLED-PAIRS control of 0.178
+#     (background 0.03-0.16, null 1/n = 0.071), and corr(column line, command line) = +0.62 per window.
+#   ⇒ A LIGHTLY-DAMPED PLANT MODE DRIVEN BY BROADBAND COMMAND CONTENT. The lever class is "less
+#     broadband HF in the delivered command", NOT a notch -- there is no tone in the command to notch.
+#   ★ Engagement's effect on the delivered command, SPEED-MATCHED at 2-4 m/s (the raw ratio is void:
+#     59% of manual frames are parked): 0.5-3 Hz 0.42x · 3-6 0.73x · 6-9 1.73x · 9-12 1.76x ·
+#     12-15 1.79x · 15-22 Hz 3.37x (the ONLY row with disjoint CIs). Engagement REMOVES LF command
+#     motion and ADDS HF, most of all in grind #1's band.
+#   🛑 TWO INSTRUMENT LIMITS. (1) abs() is transparent only while the sign holds: 0 of 42 windows at
+#     10.28 s, 14 of 37 at 5.14 s, so a 7.79 Hz oscillation about zero folds to 15.58 Hz. V88 adds
+#     b7 = sign(gp-0x6b98) at 100 Hz (cave 0xC4B38 -> 6894) to close this. (2) 49.81 Hz sampling ⇒
+#     NOTHING above ~15 Hz is claimable from 427; a 28 Hz object aliases to 21.8 Hz.
+#   🛑 TWO READINGS RETRACTED BY THEIR CONTROLS: a "differentiator" op-cmd->delivered transfer rising
+#     9x with f was exactly sqrt(Pyy/Pxx)/sqrt(n_avg), the ZERO-COHERENCE null, in all seven bands
+#     (coh 0.035-0.077 vs a 0.043 null); and a phase-randomised surrogate PRESERVES |X(f)|, so it is
+#     near-tautological as a "no line" control for a single-window periodogram.
+#
+# 🛑 0xC646E (INERTIA gain, 1428) is FROZEN across ALL 21 images from V38 to V88 -- the best remaining
+#   damping candidate has never been written, and its "1-6% of clamp" sizing is still an ESTIMATE.
+#
 # 🛑🛑 REFRAME 2026-08-09 -- FUN_0003b8f6's PATHOLOGY WAS *PARAMETRICALLY SWITCHED DAMPING*, NOT
 #   "HARMONIC INJECTION". At cal(0xC40BC) = 600 the damping switched FULLY OFF on 87% of 6-9 Hz and 96%
 #   of 18-22 Hz symptom frames. V85 (cal 6000) cut relay saturation 33.3% -> 4.6% engaged (7.21x) on

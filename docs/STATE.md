@@ -1,6 +1,131 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-09 late (V87 BUILD session) — ✅ V87 IS BUILT, VERIFIED, UNFLASHED. It is a
+**Last updated: 2026-08-09 latest (V88 session) — ✅ V87 FLEW AS ROUTE `71`, FAULT-FREE, AND ITS PROBE
+FIRED. ✅ V88 IS BUILT, VERIFIED, UNFLASHED. Full narrative in
+`docs/HANDOFF-2026-08-09-v88-the-probe-fired-and-lever-b-comes-back.md`.
+🛑 Everything under the "V87 BUILD session" headline below that says V87 is unflashed is SUPERSEDED.**
+
+---
+
+## ★★★★★ HEADLINE, 2026-08-09 latest — V87 FLEW, THE PROBE FIRED, V88 RESTORES LEVER B
+
+### 0. ✅ V87 FLEW — route `71` (`75604b0a432fdc89_00000071--ac50da2a6a`), cache `_cache_r71/`
+23,765 frames / 239.6 s, **52.4 % engaged, fault-free**, 0 sentinels, no EPS event in 1,262
+`onroadEvents`. **Operator: grinding, micro-ratcheting AND ratcheting all present.**
+🛑 **That is the PREDICTED result** — V87 is byte-stock at all four measured grind-#1 addresses
+(`0x3AB76`/`0x3AC20` = `aa`, `0x3AA96` = `c5`, `0xC6446` = 512), verified from its own image.
+⚠ Unlike V81's, this absence was **not silent**: V87's handoff says the V38 rebase dropped Lever B.
+🛑 **PARKING-LOT ONLY** — v_max 5.91 m/s, **0.0 s engaged ≥ 50 km/h, 2.1 engaged minutes** ⇒ no
+highway verdict, and the in-route split-half null on 6–9 Hz power is **[0.18, 5.51]**.
+
+### 1. ✅ THE 427 PROBE FIRED — and the blocking unknown is CLOSED
+Re-measured this session, with both predecessor routes as controls (not quoted from the record):
+
+| route | build | non-zero | distinct | range | railed |
+|---|---|---|---|---|---|
+| `6f` | V86 | 56.45 % | 297 | [0,345] | 0 % |
+| `70` | V86B | 66.98 % | 240 | [0,380] | 0 % |
+| **`71`** | **V87** | **99.02 %** | **946** | **[0,1023]** | **3.23 %** |
+
+**`|gp-0x6b98|` engaged: median 208 counts, p90 966, railed (≥1637) 2.35 %.**
+**Its 6–9 Hz ripple engaged: rms 29.0 counts, p-p 162 counts.**
+⇒ 🛑 **`STATE.md`'s "assumed 120 counts; the answer swings 5×" resolves to LOW BY 1.35×.** Any future
+filter's phase budget can now be sized on a measurement. ⚠ 1637 counts is the **probe's** ceiling
+(Honda's ×5/8 packer at 10 bits), not the command's; above it is still unmeasured.
+⊕ Supersedes item 11 of the old headline: this session's own count is 56.5 %/67.0 %, not 22.4 %/20.2 %.
+
+### 2. ★★★★★ THE FORK — a lightly-damped mode driven by BROADBAND command content
+On rectification-transparent, unclipped, engaged windows (white-noise p95 floor = 10.5 at nw = 256):
+
+| signal | 6–9 Hz prominence | above floor |
+|---|---|---|
+| column torque `0x18F` | **12.86 [5.73, 16.68]** | **50.0 %** |
+| **delivered command `\|gp-0x6b98\|`** | **4.03 [3.54, 6.22]** | **7.1 % = chance** |
+| openpilot's command `0x0E4` | 2.96 [2.36, 4.01] | 7.1 % |
+
+**But the link is real and frequency-selective:** pooled coherence cmd↔column **0.439 at 7.79 Hz**
+against a **shuffled-pairs control of 0.178** (background 0.03–0.16, null 1/n = 0.071); per-window
+**corr(column line, command line) = +0.62**, the command's prominence reaching **12.67** in the top
+ratchet quartile. ⚠ The `|column/command|` ratio exceeds its shuffled control by only **1.37–1.57×**,
+so the apparent "6× resonant peak" is mostly the two spectra — **that part is NOT claimed.**
+⇒ **The lever class is "less broadband HF in the delivered command", NOT a notch.**
+
+### 3. 🛑 THE PROBE'S ONE DEFECT — rectification, fixed in V88
+`abs()` is transparent only while the signal holds one sign. Transparent in **0 of 42** windows at
+10.28 s, **14 of 37** at 5.14 s: at creep the command crosses zero constantly and 7.79 Hz folds to
+15.58 Hz. The 12–18 Hz image is also at the floor (6.73 [5.18, 7.75]), which helps — but the null
+rests on a screened subset. ⚠ **Nyquist: 427 runs at 49.81 Hz ⇒ NOTHING above ~15 Hz is claimable
+from it**; 28 Hz aliases to 21.8 Hz. On the 100 Hz channels engaged `tq` reads 337 (6–9), 254 (15–22),
+**41 (24–32)** ⇒ the shelf is mostly real, but not separably so.
+
+### 4. ★ WHAT ENGAGEMENT DOES TO THE DELIVERED COMMAND — SPEED-MATCHED (2–4 m/s)
+🛑 The raw ratio is worthless here: **59 % of manual frames are PARKED and 0 % of engaged frames are**
+(instrument defect #4, live again). Matched, per-window, block-bootstrapped:
+`0.5–3 Hz` **0.42×** · `3–6` 0.73× · `6–9` 1.73× · `9–12` 1.76× · `12–15` 1.79× ·
+**`15–22 Hz` 3.37× — the only row with DISJOINT CIs [EVIDENCE]**; the rest overlap [BELIEF], n = 6
+manual windows. ⇒ **engagement REMOVES low-frequency command motion and ADDS high-frequency motion,
+most of all in grind #1's own band.**
+
+### 5. 🛑 TWO OF THIS SESSION'S OWN READINGS RETRACTED BY THEIR CONTROLS
+1. **A "differentiator" transfer** `op cmd → delivered` rising 9× with frequency — a very persuasive
+   r24/r26 story. Coherence 0.035–0.077 against a `1/n_avg = 0.043` null, and the zero-coherence
+   estimator `sqrt(Pyy/Pxx)/sqrt(n_avg)` **reproduces it in all seven bands (ratio 0.89–1.08)**.
+   **WITHDRAWN.**
+2. **The phase-randomised surrogate as a "no line" control.** Phase randomisation **preserves
+   `|X(f)|`** ⇒ for a single-window periodogram it preserves the line's power, so "real ≈ surrogate"
+   is near-tautological. The load-bearing controls are the **white-noise floor at the same `nw`** and
+   the **paired column comparison on the same windows**. Both survive.
+
+### 6. 🛑🛑 RECORD CORRECTION — `0xC6444` is FALSIFIED, not "untested"
+`accord-rate-lane-builds-were-never-single-variable` calls raising `0xC6444` (Lever B's r26 decoupler)
+*"UNTESTED: a candidate"*. **It has flown — as V71c** (`= V67 + 0xC6444 512→3072 + 0x454FE`, nothing
+else). `LEDGER-V38-TO-V84.md:236`: grind #1 `e_18-22` **223 vs V67/V68's 109, excluded HIGHER
+(P = 0.0215)**; **grind #2 came back** (7 bursts, 44.31 Hz, p99 = 12.2× any non-bursting build, vs
+zero); **ratchet 8,521 ct p-p = the corpus RECORD.**
+⇒ **the 6× r26 cut is LOAD-BEARING in Lever B, not a defect in it.** Not a V89 candidate.
+
+### 7. ✅ V88 BUILT, VERIFIED, UNFLASHED — `build_v88_tva.py`
+image sha256 **`96b1e018d2058984ada1ba4add7ce42516d5ed9cab65c7be7db294c3d0ca47b8`**
+rwd sha256 **`4955d80a763a364b30d82ba315e7f1a97873068399de1842f64864478130a2de`** (986,042 B)
+`39990-TVA,A160-V88-V87BASE-LEVERB.GATE6806.ARM5244-PROBE.427.6B98-CAVE.6B98.SIGN.MAG256-…rwd`
+Base **flown V87**. **6 runs / 15 bytes, ZERO unattributed; 5 bytes actually change.**
+
+| addr | from | to | what |
+|---|---|---|---|
+| `0x3AA96` | `c5` | `fb` | **LEVER B gate** → `ld.bu -0x6806[gp],r15` ("LKAS applying") |
+| `0xC6446` | 512 | **5244** | **LEVER B arm** — r24 gain flat 5244 while LKAS applies = **2.000×** |
+| `0xC4B38` | `9094` | `6894` | cave probe source → **`gp-0x6b98`** ⇒ **b7 = SIGN of the delivered command @100 Hz** |
+| `0xC4B46` | `a6` | `a8` | cave `sar 0x6`→`0x8`, magnitude rung 64 → **256 counts** |
+
+★ **The new load is NOT hand-encoded** — `24376894` is byte-identical to the 427 packer's own
+`ld.h -0x6b98[gp],r6` at `0x55DF0`, already flown reading that cell.
+★ **`TVCA4` hazard CLEARED**: mode 24 ≡ mode 26 byte-identical in all four `gain_B` arrays, mode 10
+differs by ≤2 counts, LERP = **2622 in all three** ⇒ `5244/2622 = 2.0000×` on the **car's** records.
+⚠ scalar-vs-curve: **1.77×–2.55×** across the LKAS-on regime.
+🛑 **HONEST LABEL: Lever B has flown SEVEN times and the record calls it "CONFIRMED-FIX, AT ITS
+CEILING … tops out at V67's level, which the operator still calls grinding."** V88 does not beat that
+ceiling. It (1) restores the best state the kit has measured, which V87's rebase gave up, and
+(2) makes Lever B's **mechanism** observable for the first time. **It is NOT a ratcheting lever.**
+
+### 8. ★ PRE-REGISTRATION for the V88 flight
+- **Identity (parameter-free, control measured):** on V88 both channels read the same cell, so
+  `b6 == (MOTOR_TORQUE ≥ 160)` per frame. On route `71` that predicate agrees **0.402**.
+  ⇒ **≈1.00 = V88 flew · ≈0.40 = V87 did.**
+- **H1, the mechanism test:** V88's engaged 15–22 Hz band rms of `|gp-0x6b98|` must FALL, CI excluding
+  1.00, from V87's **47.6 [40.7, 59.9]** at 2–4 m/s. 🛑 **A null there REFUTES the "broadband HF in
+  the command drives the mode" reading** — say so plainly; that is worth more than an attenuation point.
+- **H2:** with `b7` giving sign at 100 Hz, rebuild the **signed** command and re-run §2 with **no
+  transparency screen**.
+- **H3:** 🛑 the operator scores the symptoms, in his words.
+- 🛑 **EXPOSURE — route `71` failed all three:** ≥ 5 engaged minutes (it had 2.1) · a real MANUAL arm
+  above 0.5 m/s (59 % of its manual frames were parked) · **highway** for any 26–31 Hz or
+  grind-#1-at-speed claim (0.0 s engaged ≥ 50 km/h, the **fourth consecutive** route with none).
+
+---
+
+## ⚠ SUPERSEDED ON V87's FLIGHT STATUS ONLY — HEADLINE, 2026-08-09 late (V87 BUILD session)
+
+**V87 IS BUILT, VERIFIED, UNFLASHED. It is a
 MEASUREMENT build on a clean V38 base: the first SUBTRACTIVE build in the lineage, carrying no damping
 edit, no filter and no new authority. Every control lever examined this session is dead — `0xC63B8` is
 REFUTED five ways, a cave in the shaper is BLOCKED by an EPS-disabling float twin, and the `0xC646E`
