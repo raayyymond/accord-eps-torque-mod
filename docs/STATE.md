@@ -1,13 +1,188 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-09 (late) — V85 FLEW as route `6e`, FAULT-FREE and the cleanest flight in the
-modern lineage (`STEER_STATUS` = {0: 43,641} — not one non-zero frame). The `0xC40BC` lever DELIVERED:
-relay saturation 33.3% → 4.6% engaged, a 7.21× reduction, both pre-registered duty predictions hit.
-🛑 It is now SPENT — FREEZE it at 6000. 🛑 And V85 vs V84 is a CLEAN NULL in EVERY band, while the
-operator reports RATCHETING IS STILL UNFIXED. The session's real finding is elsewhere: the ~7.79 Hz
-ratcheting is a LINEAR LOOP OSCILLATION whose frequency is set by accumulated estimator lag — measured
-NOT a relay and NOT a plant resonance. V86 attacks its FREQUENCY with one cell (`0xC40D4` 573 → 286),
-which is a different lever CLASS from everything since V38: phase/lag, not nonlinearity.**
+**Last updated: 2026-08-09 (V87 session) — V86 FLEW as route `6f` and V86B as route `70`. BOTH
+parking-lot only. V86's pre-registered frequency test is FALSIFIED, well-powered. The ~8 Hz ratcheting
+is a LIGHTLY-DAMPED RESONANCE (Q ≈ 14–29, controlled ring-down), NOT a limit cycle, NOT a firmware loop,
+and NOT on the rim side. The firmware search on it is CLOSED by a shape argument. The 4× forward LKAS
+gain is the one variable frozen across the entire failed search — but it is structurally decoupled from
+the loop that hosts the mode, so authority-preserving damping is reachable and lowering authority is NOT
+indicated. NOTHING WAS BUILT THIS SESSION, deliberately.**
+
+---
+
+## ★★★★★ HEADLINE, 2026-08-09 — the V87 session. Full narrative in `docs/HANDOFF-2026-08-09-v87-the-ratchet-is-a-resonance.md`
+
+### 0. 🛑 RECORD DEFECT FIXED — V86 and V86B had FLOWN and this file said "BUILT, UNFLASHED"
+**Fourth consecutive instance** (after V83a, V84, nearly V85). Route `6f` = V86, route `70` = V86B,
+both identity-verified with **no free parameter** (each route emits thousands of frames the other build is
+structurally incapable of, and zero of its own; per-segment, no mixing). 📋 **The method rule exists and
+was violated again: write the flight result in the SAME pass that scores it.**
+
+### 1. 🛑 V86'S PRE-REGISTRATION IS FALSIFIED — and the falsifier could fire
+`f(V86)/f(V85)` = **1.001 [0.976, 1.060]**, CI **disjoint** from the pre-registered [0.797, 0.875] and
+including 1.00. Line stayed at **8.00 Hz**; nothing appeared in the predicted window.
+- **Powered:** a faithful shift surrogate (line removed, re-added shifted, amplitude/envelope/coherence
+  preserved) recovers ×0.797 / ×0.843 / ×0.875 with CIs excluding 1.00. Smallest resolvable shift **×0.94**
+  against a requested ×0.843 ⇒ **2.6× margin.**
+- **Lever in force, three ways:** `0xC40D4` = 286 byte-verified from the flown image; gate `b4` duty 1.0000;
+  residual non-zero 99.88%.
+- 🛑 **The bound that matters more than the null:** the **build-to-build floor at constant α is 14× the
+  entire effect** (V86B/V85, both α = 573, |ratio−1| = 0.017 vs the α-differing pair's 0.001).
+- ⊕ **`STATE.md`'s own absolute window was mis-derived.** [6.2, 6.9] = `7.79 × [0.797, 0.875]`, but V85's
+  measured centre is **8.207**, so it should have read **[6.54, 7.18]**. Verdict unaffected — all three
+  defensible denominators and both windows agree.
+
+### 2. ★★★★★ WHAT THE ~8 Hz RATCHETING IS — a lightly-damped RESONANCE, Q ≈ 14–29
+**Three independent methods agree**, each having survived its own control:
+| method | result |
+|---|---|
+| **ring-down** (the only estimator that PASSES its control; log-log r = +0.937 over ζ = 0.005–0.02) | **ζ ≈ 0.017–0.036 ⇒ Q ≈ 14–29** [EVIDENCE, n = 5 edges] |
+| peak-aligned pooled Welch + calibration ladder | car **20.9**; pure tone **53.8**, bursty AM tone **52.1–52.5** ⇒ **limit cycle EXCLUDED**, Q < 40 |
+| the phase-slope bound from V86's null | requires **Q ≥ 2.4** — satisfied |
+
+🛑 **NOT a limit cycle. NOT a relay. NOT amplitude-dependent** (`d log f/d log A` = −0.034 [−0.069, −0.013]
+over 4× amplitude ⇒ kills rate-limit (−1.0), backlash (positive) and classic stick-slip).
+🛑 **NOT a rim-side mechanical resonance** [EVIDENCE]: torque PSD peaks ~6× and rate PSD ~3×, but the
+**transfer function `|T/Ω|` rises smoothly straight through** (63 → 75 → 93 → 121, coherence 0.86–0.91).
+Positive control: injected Q=10 gives a **3.40×** admittance peak, Q=3 gives **1.52×**; **the car gives
+1.30×, and not at the line.**
+⇒ **Also refutes "it is the 12.8 Hz wheel-on-torsion-bar mode pulled down by engagement"** — that mode is
+by definition rim motion against the bar and would have to appear there.
+⇒ **The mode lives on the motor / rack / tyre side, which NO CHANNEL ON THIS BUS OBSERVES.**
+
+★ **Frequency tracks LOAD, not amplitude and not the command** [EVIDENCE]: **+0.467 Hz [+0.111, +0.927]**
+over a 17.8× column-torque range at fixed speed (= +5.8% in f ⇒ **+12% stiffness**), against
+**−0.145 [−0.564, +0.325]** vs openpilot's command. Load is separable from speed (r = +0.273; within-bin
+torque spread 4.7–26.8×).
+
+### 3. ★★★★★ THE FIRMWARE SEARCH ON THE RATCHET IS CLOSED — by a SHAPE argument, not an enumeration
+**Nothing in the firmware can produce a band-limited lift at 6–9 Hz.** Every gain-bearing element on the
+torque path is either **a flat Q10 scalar** (would lift the 26–31 and 32–38 Hz controls too — they went
+*down*, to 0.61–0.76) or **a differentiator** (favours HF — the wrong direction). A localised lift needs a
+**resonant/biquad structure and none exists anywhere in the chain** (the standing notch/biquad search is a
+negative result; the one FIR in `FUN_0003b8f6` is dead/identity).
+⊕ Corroborating: **no −180° crossing exists anywhere in 0.5–200 Hz** even with the real PID gains loaded
+(PID is in **LEAD** at 8.21 Hz, +10.08°; its lead/lag crossover is 6.155 Hz; P dominates I **4.3:1**), and
+**`|L|` never reaches unity anywhere in 18–27 Hz** in either config.
+⇒ **The ~4× engaged/manual lift at 6–9 Hz (3.91 [2.37, 5.70] on `6f`, 4.21 [2.16, 6.87] on `70`, both HF
+controls below 1) is the plant's own transfer function being driven harder — not a firmware filter gain.**
+
+### 4. ★★★★★ THE 4× IS THE ONE FROZEN VARIABLE — AND IT IS NOT THE CULPRIT
+```
+build          0xC646C   0xC6CD0    forward LKAS gain
+stock              891     blank    1.000x
+V38/V42/V80       3564     blank    4.000x   <- 4x in the SHARED cell
+V58 ... V86B       891      3564    4.000x   <- V57 decoupled it; magnitude NEVER changed
+```
+[EVIDENCE, orchestrator's own LE reads.] **Exactly 4.000× on every build in the modern lineage.**
+🛑 **A variable with zero variance cannot appear in any dose–response, cross-build matrix or A/B — it is
+invisible to every instrument this kit has built, by construction.** ⚠ **Worse: it MIGRATED cells at V57,
+so a careful reader diffing images sees `0xC646C` go 3564 → 891 and concludes it was reverted. It was not.**
+
+🛑🛑 **BUT IT IS NOT THE AMPLIFIER, on two independent grounds:**
+1. **Path 1 and Path 2 are STRUCTURALLY DECOUPLED** [EVIDENCE, verified twice by the orchestrator]:
+   `search_instructions(FUN_00028ea6, "6b98")` → **0 over 1,874 instructions**, and a raw Python LE scan of
+   the function extent for both the `disp16` and `disp|1` forms → **0 hits**, against a positive control
+   finding **33 image-wide**. The arbitration function hosting the 4× **never reads the delivered motor
+   command.** Path 2's poles — its Q and its frequency — are set entirely by cals inside Path 2.
+   ⇒ **The 4× scales EXCITATION into Path 2, not Path 2's loop gain.**
+2. **The "4× created it" keystone is RETRACTED.** `LEDGER:192`'s **63.66×** is at **20–30 Hz**; the cell for
+   the ratchet band reads **1.41×**, inside the [0.63, 1.50] null. The source document itself calls that
+   table's numbers *"uninterpretable"* for a speed confound. The underlying routes (`b9`/`77`/`79`) are on
+   **a different comma device** (`807a3c21c9f405e8`) and are **unrecoverable** — 0 files on disk.
+
+⇒ 🛑 **DO NOT RECOMMEND LOWERING THE LKAS GAIN.** Standing operator instruction, 2026-08-09:
+*"that is the whole point of this work, to increase max LKAS capability (ideally linearly)."* And the
+evidence now agrees with the instruction — the 4× is not implicated.
+
+### 5. ✅ AUTHORITY-PRESERVING DAMPING IS REACHABLE — the trade curve is FLAT
+Because Path 1 is not in Path 2's denominator, **raising authority does not move Path 2's Q.** The limit on
+going above 4× is **clamp headroom**, and 🛑 the failure mode on saturation is **a jump to relay behaviour
+(Q → ∞)**, per V80 — not graceful degradation.
+**Headroom ranking (proximity to binding):** `gp-0x6bfc` (±20000) — **UNMEASURED**, structurally closest
+(cmd-branch alone reaches ~61% at the governor's 4762 ceiling) · `gp-0x6b70` (±8192) — **least
+characterised in the chain** · FRICTION (±10) — needs `|model|` ≈ 100 against a typical 2–3 · **INERTIA
+(±10) — the one MEASURED cell, at 1–6%** · aggregator (±25600) — widest.
+🛑 **`gp-0x6bfc` and `gp-0x6b70` have NEVER been measured against real driving. Sizing a rung on either is
+blind exactly the way V84's `|r24| ≥ 1024` (input never exceeded 201) and V69's bit4 were blind.**
+
+**Best damping candidate: `0xC646E`** (INERTIA gain, 1428, single reader, 0 writers, never touched).
+Phase vs rate **+14.7° @ 7.79 Hz, −36.2° @ 21.09, −45.6/−46.8 @ 27.4/28.5** ⇒ **real part positive across
+the ENTIRE symptom band, never crossing ±90°** ⇒ dissipative by construction, not merely low-pass. Sits at
+**1–6% of its ±10 clamp**; a 4× raise (→5712) lands at 4–24%, far from V80's ~97%.
+⚠ **Open, and it applies to EVERY lever in this family, not just this one:** `gp-0x6b98` **GATES** the FOC
+current loop, it does not feed it — **the RAM cell carrying its magnitude into the Iq/Id reference has
+never been located.** [BELIEF, empirically well-supported by V74–V85 dose-responses] that the chain reaches
+real torque; **not [EVIDENCE, address-cited].**
+
+### 6. 🛑 LEVERS AND CLAIMS KILLED THIS SESSION
+| item | verdict |
+|---|---|
+| `0xC40D4` as a grinding lever | **frequency-only — amplitude CONSERVED, DiD 0.986 [0.687, 1.478].** Relocates the 21 Hz mode (20.97 → 23.66, ratio 1.106 [1.073, 1.144] against a same-α control at 1.020 [0.973, 1.074]) **without weakening it.** 🛑 A fixed 18–22 Hz window reads that as a 3.2× win; **18–26 Hz reads 0.919 and 12–30 Hz reads 0.959 — NULL.** Energy moved, not removed |
+| `0xC40D8` (sensor-branch pole) | 🛑 **clean NO, re-derived at 7.6 Hz**: stock corner 143 Hz/pole, so any cut large enough to matter at 7.8 Hz costs **20–45° at 1–4 Hz** |
+| `0xC6C42` | **wrong class** — a backward-difference differentiator window feeding the same r24/r26 lane, **entire range buys −4.43°** |
+| Kp / Ki / Kd (`0xC6B1E`/`0xC6B0A`/`0xC6ADE`) | PID is in **LEAD** at both 8 and 21 Hz; **never written by any build**; no integrator leak exists (adding one needs a cave) |
+| `0xC6450` / `0xC644A` | **already flown as V46 and V43, both NULL, both back at stock** |
+| **Lever A restoration** | 🛑 **DO NOT** — the `sar` is **structurally shared across all four priority-chain arms** (gate only selects the multiplicand), so it cannot be made LKAS-conditional without a cave. ★ **And its r24 half is ALREADY DELIVERED engaged-only**: `(A·C)>>9 ≡ (A·2C)>>10` exactly, and `0xC6446` = 5244 is 10.24× the stock arm. Restoring it adds only the **manual-arm** harm that produced *"makes the entire car vibrate regardless of LKAS engagement"* |
+| the probe cave as a grind-#2 cause | 🛑 **EXONERATED, both sides.** V85's cave is **longer** (64 vs 58 non-`0xFF` bytes) and flew clean; V86's is **25 instructions vs V85's 28**; hook encoding **bit-identical**; V85's own busiest read cell has **4 writers/16 readers** vs V86's **1/1**; whole-image sweep finds exactly **one** `jarl` into the cave region |
+| **the "V38 created it" claim** | 🛑 **UNVERIFIABLE.** First written description follows V38, but V31–V37 contain no ride-feel vocabulary **and were not asking**, with no instrumentation. Absence of a complaint, not a report of absence |
+
+### 7. 🛑 INSTRUMENT DEFECTS FOUND — these invalidate published numbers
+1. 🛑🛑 **`q_of` RETURNS Q = 79.00 ON PURE WHITE NOISE** at nfft=1024 — *above* its own 54.73 window limit,
+   i.e. physically impossible. **`C31.q_of`, `_grind2_lib.q_of` and `_r47_imu_lib.q_of` are identically
+   defective** (all three return 79.00); `_r37_ratchet_lib` delegates to C31. **25 files call one of them.**
+2. **Every spectral damping estimator fails its control.** Linewidth returns **38.7 for a Q = 1 mode**;
+   total dynamic range Q = 1 → ∞ is **1.37×** against a single-window spread of **1.79×**. Welch: 1.80× vs
+   1.87×. Phase: non-monotone below Q ≈ 25. ⇒ **No Q ratio between builds is reportable from spectra.**
+3. **The amplitude ladder is largely a SPEED-CENSUS ARTEFACT.** `a779` **falls** with speed inside every
+   route (−0.032 / −0.102 / −0.111 / −0.084 per m/s) and the routes' median speeds differ by up to 9.2 m/s
+   ⇒ the census alone predicts **×2.0–2.8** of the observed ×3.8–4.1. **V81's own drive moved 2.11× between
+   its halves; V84's segments span 20×.** ⇒ **The V81 = 145.2 vs V83a = 549.2 puzzle is a speed artefact,
+   not a Lever B failure.** 📋 **Re-cut the ladder per-band and speed-matched before quoting it again.**
+4. **The "ENG/MAN" column is largely MOVING-vs-PARKED.** Manual median speed: V58 **0.00** m/s, V85 **0.00**,
+   V59 0.22, V81 1.40. **Route `4c` is the only manual arm with real road speed** — and it shows **no
+   coherent line** (argmax wanders to 10.5 Hz, 17% of windows), agreeing with *"no grind felt."*
+5. **The 32–38 Hz negative control is MARGINAL, not quiet** (1.9–2.0 prominence), **and it is contaminated
+   for grind #2** — a 63.5 Hz object folds into it at fs = 100.2 Hz.
+6. **Exposure rules, corrected:** ~5 engaged min/arm resolves **~1.7×**, not 1.2× (1.2× needs ~40 min).
+   🛑 **And Q does not obey the amplitude rule at all** — it needs **unbroken** runs longer than the
+   coherence time (37 s for Q=100, 222 s for Q=600). **V86 had 2.3 engaged minutes and V86B 1.5** ⇒
+   **several recent "clean nulls" were underpowered by construction.**
+7. `_cache_r6e/r6e.npz`'s `probe_build` reads **V85** (an earlier note saying `V80` was itself wrong).
+8. **`0xC63AE`'s FROZEN_CELLS hazard text in `build_v86_tva.py` is BACKWARDS.** `Y[0] = 0` **definitively**
+   (`st.h r0` at `0x38D22`, loop starts at index 1, commit `0x39508`/`0x3950C`/`0x39522` — orchestrator
+   disassembled it; independently confirmed on flown data, `P(big | small resid)` = 0.132/0.247 against a
+   jump's required 1.000). ⇒ lowering it **SILENCES** the lane, it does not slam it to full authority.
+9. **`STATE.md`'s "V86 ↔ V86B are single-variable against each other" is FALSE.** They differ in **two**
+   control cells (`0xC40D4` **and** the FactorC pair). The single-variable pairs are **V86-vs-V85** and
+   **V86B-vs-V85**.
+10. **`FUN_0002214a`'s `andi 0x830/0xc30/0xd30` are STATE BITMASKS, not tick dividers** — the whole loop
+    runs at a uniform **1 kHz with one tick of transport delay**. Corrects the "phase mask 5/16 base ticks"
+    framing.
+11. **427 `MOTOR_TORQUE` is NOT "always ~0"** — 22.4%/20.2% non-zero, **255/51 distinct values**,
+    checksum-guarded. The memory recording it as dead is false.
+
+### 8. 📋 WHAT THE NEXT FLIGHT SHOULD BE — none of it is a cal build
+1. **Measure the reproducibility floor: drive ONE fixed loop TWICE on the current build, same day.**
+   **0 flashes, ~40 min.** Every ratio in `BUILD-LINEAGE.md` assumes a floor that has never been measured;
+   the first estimate of it is ~2×, the same size as the effects being chased.
+2. **Deliberate ring-downs — ~30 engage / hold-until-it-runs / disengage cycles per arm, ~10 min.**
+   The only controlled damping estimator, 30 independent ζ, against the **5 usable edges all three flown
+   routes contain between them.**
+3. **A manual-arm broadband protocol** (LKAS off, 2–4 m/s, both hands, *irregular* 5–15 shakes/s, ≥6 runs
+   of 25 s, then repeat engaged) — the only route to the 8 and 12.8 Hz structural question. **0 bytes.**
+4. **A telemetry channel that can see the motor side.** `0x1AB` offers **3 bits at ~50 Hz** (1 must be a
+   fingerprint — an information-theoretic wall, since Honda never writes those bits so `000` is identical
+   to "cave absent"). **`0x18F` offers 6 clean bits at 100 Hz** and is under a standing hold.
+   ⊕ Honda already sends motor torque on 427 — but as **`|gp-0x6c18|`, absolute value**, ×5/8, 10-bit,
+   50 Hz. **No sign ⇒ useless for a transfer function.**
+5. **Never a stock-baseline null:** no capture on stock or assist-chain-stock has ever existed. Oldest rlog
+   is route `0x13`, 2026-07-26, all on a V38 base. ✅ A **genuine** stock `.rwd` exists and is verified —
+   `39990-TVA-A160-RECONSTRUCTED-v9b-…`, sha256 `7ad6d49d…`, **0 differing bytes vs `code.bin` over
+   [0x13000, 0x100000)**. ⚠ *"v9b"* is the **cipher table name**, not a build. ⚠ Open gate: whether the ECU
+   bootloader validates the `/` part-number string (Honda's hyphen vs our comma).
+
+---
 
 🛑 **TERMINOLOGY DISCIPLINE, operator instruction 2026-08-09.** *"Not even sure what the ring is. We are
 working on grinding, vibrating, and ratcheting issues."* **"The ring", "grind #1/#2" and "S1…S4" are KIT
@@ -182,7 +357,16 @@ one, and it is a **different lever CLASS from everything since V38 — phase/lag
 
 ---
 
-## ✅ BUILT, VERIFIED, **UNFLASHED** — **V86** ← THE CURRENT CANDIDATE
+## 🛑 FLASHED AND FLOWN — **V86** (route `6f`, 2026-08-09). **PRE-REGISTRATION FALSIFIED.**
+🛑 **This block previously read "BUILT, VERIFIED, UNFLASHED ← THE CURRENT CANDIDATE". V86 FLEW.** Results
+in §1 of the current headline. The build description below is accurate as written.
+📋 **METHOD RULE, FOURTH consecutive violation** (V83a, V84, nearly V85, now V86/V86B): **write the flight
+result into `STATE.md` in the SAME pass that scores it.** A flown build recorded as unflashed WILL be
+re-proposed — and this session's own arc-mapping agent inherited the error straight out of this file.
+**Route `6f` exposure: 23,058 frames, 232.3 s, 61.4% engaged, v_max 5.38 m/s, `STEER_STATUS` {0: 23,048,
+3: 11}, 0 DTC-active, 0 sentinels. 🛑 0.0 s above 50 km/h — parking-lot only.**
+
+### (original candidate block follows)
 
 **Base = the flown V85. ONE control cell, TWO bytes, plus a probe repoint inside the proven cave.**
 | | value |
@@ -205,7 +389,24 @@ FINAL spec, not against what the builder was handed.**
 
 ---
 
-## ✅ ALSO BUILT, VERIFIED, **UNFLASHED** — **V86B**, the operator's alternative
+## 🛑 FLASHED AND FLOWN — **V86B** (route `70`, 2026-08-09). **DAMPER EFFECT NOT REPRODUCED.**
+🛑 **This block previously read "BUILT, VERIFIED, UNFLASHED". V86B FLEW.**
+**Route `70`: 21,428 frames, 216.0 s, 43.0% engaged, v_max 5.97 m/s, `STEER_STATUS` {0: 21,409, 3: 20},
+0 DTC-active, 0 sentinels. 🛑 0.0 s above 50 km/h.**
+**Operator: *"extra dampening on LKAS and in general at slow speed."* 🛑 NOT reproduced as an engaged-arm
+impedance change** — engaged 70-vs-6f **0.927 [0.641, 1.254] NULL**, while the **MANUAL** arm moved
+**1.871 [1.011, 3.180]** — and **m24/m25 are byte-stock, so his cells cannot touch the manual arm.** The
+mechanism is a driver/manoeuvre difference (manual median `|rate_lf|` **30.1 °/s on `70` vs 66.5 on `6f`**).
+⚠ **The null is WEAK twice over:** the estimator resolves ≥1.56× against a predicted dose of **0.11× at
+42 °/s / 0.42× at 85 °/s**, and it **moved the wrong way when V84 deleted the damper outright** (V81 1.471
+→ V84 2.052). **[BELIEF] nothing here supports or refutes V86B's cells acting.**
+⊕ His wording — *"and in general at slow speed"* — describes a change spanning **both** arms, which the
+construction forbids. Worth putting to him.
+★ **V86B incidentally UNBLOCKED FactorD**: FactorC's creep `Y` goes 0 → 908 (m26) / 0 → 875 (m27), and
+FactorC multiplies in **before** FactorD, so `C = 0` previously forced the product to zero at creep.
+🛑 **But FactorD is NOT yet a proposal** — see §5 note below and the handoff.
+
+### (original candidate block follows)
 
 **Same V85 base, same cave (b5/b6 weight-swapped for identity). TWO control cells, FOUR bytes.**
 | | value |
