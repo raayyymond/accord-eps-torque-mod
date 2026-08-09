@@ -1,5 +1,11 @@
 # Firmware Codepath Tracer - Memory Index
 
+## FactorD / gp-0x6a10 six-family map (V85 design, 2026-08-08/09, `fw-factord` task)
+- [🛑🛑★★★★★ gp-0x6a10 producer re-decompiled: collapses to |raw column angle| under ordinary hands-on driving (reconciles V84 flight); six-factor map (A seed/B/C/D/E/ceiling) w/ mode 24-27 byte census, STOCK==V84 for all six; FactorD PROVEN structurally unreachable below 35km/h (FactorC gates whole product to 0 first) ⇒ dead for grind#1/#2 as wired; NEW separate live 1kHz 13-pt gp-0x6a10 table found (0xC6B66/0xC6B80) inside FUN_0003b8f6, reconciled with sibling fw-plantmodel's deeper trace showing it reaches Path-2's real closed loop](reference_accord_factord_six_family_map_and_1khz_lane_v84.md); correction banner added to [prior FactorD identity memory](reference_accord_factord_domain_resolved_angle_error_magnitude.md).
+
+## FUN_0003b8f6 / "the biquad question" (V85 design, 2026-08-09)
+- [★★★★★ REFUTED as biquad: dead 3-tap FIR (0 poles, identity coeffs on every build); FRICTION relay + INERTIA lagged-damper terms found live inside it; gp-0x6c00/6ae0/6ae2/695c confirmed 0-reader free taps; closes the open item in Path-2 memory; extends the 2026-07-20 notch-search negative into the one region it flagged unchecked](reference_accord_fun3b8f6_fir_not_biquad_inertia_friction_and_free_taps.md).
+
 ## Engagement-conditional impedance (V81 "manual feels harder"), 2026-08-07
 - [★★★★★ V81's engaged-only FactorC/E dose is the ONLY asymmetric mechanism found: 0 (manual) vs 16-58% ceiling (engaged) at same rate; gp-0x67f4/gp-0x67fe/FUN_00036682 ruled out as engagement gates; 0xC63A0 real but symmetric](reference_accord_v81_engagement_impedance_factorce_dominant_mechanism.md).
 - [★★★★ FactorD's gp-0x6a10 = unsigned angle-error magnitude (0.1deg/count); corrects "gp-0x69ca=driver torque" mislabel; gp-0x67fe gate DISPUTED not settled; relay risk hinges on unmeasured gp-0x6a10 amplitude](reference_accord_factord_domain_resolved_angle_error_magnitude.md).

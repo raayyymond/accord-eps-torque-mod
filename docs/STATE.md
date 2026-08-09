@@ -1,9 +1,154 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-08 (late) — V83a FLEW as route 68 and is the WORST build in the modern lineage for
-both of the operator's scored symptoms. Its own pre-registered falsifier fired: the damper-dose model of
-the 26–31 Hz ring is FALSIFIED. r24 IS THE ACTOR, not r26. V84 is built, verified, unflashed.**
+**Last updated: 2026-08-09 — V84 FLEW as route `6d`, fault-free, and FIXED NOTHING. Operator verbatim:
+"None of these have been fully fixed in V84." One BAND moved (26–31 Hz burst duty 25.1% → 2.54%); a band
+moving is not a symptom fixed. The rate lane is at its ceiling — V84 is byte-identical to V67/V68 at every
+grind-relevant cell. The loop does NOT close through openpilot. A previously undocumented COULOMB RELAY
+PROPORTIONAL TO THE DELIVERED COMMAND was found at 1 kHz, relay index 7.87 against V80's 3.27, virgin on
+all 84 builds — V85 linearises it.**
+
+🛑 **TERMINOLOGY DISCIPLINE, operator instruction 2026-08-09.** *"Not even sure what the ring is. We are
+working on grinding, vibrating, and ratcheting issues."* **"The ring" and "grind #1/#2" are KIT JARGON for
+frequency bands. They are NOT symptoms the operator named. Score bands; let the operator score symptoms;
+never call anything FIXED that he has not called fixed.**
 This file is the single current-state record.
+
+---
+
+## ★★★★★ HEADLINE, 2026-08-09 — full narrative in `docs/HANDOFF-2026-08-09-v84-flew-and-the-command-scaled-relay.md`
+
+### 1. 🛑 V84 FLEW (route `6d`) AND FIXED NOTHING — one band moved
+68,235 frames, 682.4 s, **79.71% engaged**, 0–113 km/h, **fault-free** (`STEER_STATUS` {0: 68,219, 3: 17},
+0 DTC-active frames, 0 sentinels). Identity = V84 with **no free parameter**: the `0x14A` byte4 field
+alphabet is exactly **{0x2F, 0x3F}** — `b3` (V84's hard-coded fingerprint) reads **1.00000** and `b7`/`b6`
+read **0.00000** for all 68,236 frames, while routes 67/68 are perfect thermometers containing neither
+value. Orchestrator-verified independently from `_cache_r6d/`.
+
+| build | damper relay index | engaged >80 km/h | windows 26–31 Hz envelope >1000 | burst duty | longest ring |
+|---|---|---|---|---|---|
+| V80 | 3.27 | 30.7 s | 24/24 (100%) | 96.6% | 18.29 s |
+| V81 | 1.45 | 44.8 s | 8/35 (22.9%) | 25.1% | 11.25 s |
+| **V84** | **0.00 (Honda viscous)** | **151.0 s** | **1/118 (0.8%)** | **2.54%** | **1.34 s** |
+
+🛑 **The operator's verdict is "None of these have been fully fixed in V84", and it OVERRIDES this
+table.** The band result is real and **not an exposure artefact** —
+orchestrator measured 370.8 s engaged >50 km/h and 158.1 s >80 km/h. Both adversarial checks pass: the
+26–31 Hz *median* rise is a broadband floor shift (32–38 Hz control moves with it, ratio-of-ratios 1.13)
+but the **tail is down 0.32×**; IMU says V84's road was 1.2× rougher, moving *against* V84.
+
+🛑🛑 **THIS RETRACTS §1 OF THE 2026-08-08 HEADLINE BELOW.** *"RECORD THE DAMPER-DOSE MODEL OF THE 26–31 Hz
+RING AS FALSIFIED"* is **void**: V83a reverted mode 26 but **left mode 27 carrying V81's entire damper**
+(mode 27 is a second ENGAGED column on this `TVCA4` car) and had only **19.2 s** of >80 km/h exposure.
+It never removed the damper and could not have tested it. **The damper-relay model of the ring is now
+SUPPORTED by a four-point monotone dose–response.** ⇒ **FREEZE the damper cells in every future build.**
+
+### 2. 🛑 THE RATE LANE IS AT ITS CEILING — a byte fact
+**V84 is byte-identical to V67 and V68 at every grind-relevant cell** (`0x3AA96`=FB, `0xC6446`=5244,
+`0xC6444`=512, `0x3AB76`/`0x3AC20`=AA, `0xC6CD0`=3564, `0xC61B2`/`0xC61B4`=2048, FactorC/FactorE m26/m27
+identical) **except `0x454FE`** — and that byte **cannot execute** (`gp-0x67fa == 4` fires **0/123,277**
+driving frames). S1 read 0.509× V83a but **1.10× V81 after the negative-control correction**: Lever B
+undid V83a's regression and bought nothing beyond it. ⇒ **Lever B has now been delivered three times and
+tops out at V67's level, which the operator still calls grinding. Stop spending builds on the rate lane.**
+**S2 1.548× V67 (outside null) — FAIL · S3 FAIL (operator) · S4 2.052 [1.089, 3.936] — FAIL and REVERSED.**
+
+### 3. ★★★★★ THE LOOP DOES NOT CLOSE THROUGH OPENPILOT
+The bar **LEADS** the command by **18.5 ms** at 26–31 Hz (γ² 0.783, K 11); openpilot's own reaction lag
+`ang→cmd` measured separately is **+20.21 ms** (r² 0.972) — equal magnitude, opposite sign, the signature
+of a closed loop whose disturbance originates in the **plant**. Granger returns net `bar→cmd` in 9/9 cells
+with a positive control firing at 8×. **91–98% of bar band power is INCOHERENT with the command** ⇒
+**a filter on the LKAS command has nothing to remove.** openpilot's 123 ct/frame slew cap is refuted as a
+cycle source (predicts 0.75–5.1 Hz vs an observed 26–30 Hz).
+🛑 **INSTRUMENT CORRECTION:** the standing *"`0x18F` is one frame (~10 ms) stale"* rule is a
+**cache-extractor artefact, not a bus property** — every frame in a panda batch shares one `logMonoTime`
+(measured age 0.37 ms mean). It is real for cache-derived work and absent when indexing by batch.
+
+### 4. ★★★★★ THE FIRMWARE ADDS TORQUE TO THE BAR, ENGAGED, AT LOW SPEED
+At **matched column acceleration and matched speed**, engaged/manual bar torque = **2.77 [2.29, 3.32]**
+at 6–9 Hz, **1.66 [1.29, 2.06]** at 17–23 Hz, with the pre-declared 26–31 Hz control at **1.04**. Purely
+inertial coupling would give 1.00 in all three. ⚠ **The control FAILS above 8 m/s (0.62, 0.49), so only
+the 2–8 m/s row is clean**, and engaged/manual median speed inside it is still 5.40 vs 2.99 m/s.
+⊕ The wheel-on-torsion-bar mode is at **12.8 Hz [12.1, 13.6]** — **between** the two symptom bands ⇒
+**a single-gain `θ̈` feedforward tuned at 7.79 Hz arrives at 20 Hz INVERTED.** Cancellation needs a
+resonant biquad ⇒ a cave ⇒ the bricking class. **NO-GO survives**, but its *"17× more lightly damped than
+V48B"* margin is wrong by ~10× (measured r = 0.98823 vs V48B's 0.979 = **1.8×, same class**).
+
+### 5. ★★★★★ THE V85 MECHANISM — a Coulomb relay proportional to the delivered command
+`FUN_0003b8f6` @`0x3b8f6`, **1 kHz**, absent from the golden model until now:
+`ratio = clamp(polarity × gp-0x6abc × 12 / cal(0xC40BC=600), ±1)` saturates at **50 counts** against the
+function's **own enable gate of 13000** ⇒ pinned at ±1 across **99.62%** of its valid range. It is
+`sign(motor rate)`, and it multiplies `|model|` — which is dominated by **`gp-0x6b98`, the delivered motor
+command**. Describing-function relay index **7.87**, against Honda's viscous 1.00, V75's 1.45 and **V80's
+3.27 — the build that produced the worst grinding in this car's history.**
+**`0xC40BC` has exactly 1 reader / 0 writers image-wide** (two methods; note the encoding is `0x50BD`, the
+`disp|1` form) and the **entire plant-model cal block is virgin across all 84 builds.**
+🛑 **V56's full mute of this lane's terminus was a NULL on 18–22 Hz but "cost damping/feel" ⇒ do NOT
+expect V85 to move S1.** Its targets are S2/S3/S4.
+
+### 6. ⚠ STILL UNLOCATED — the 0.216 flat bar→command leg
+Boost (`FUN_00034a72`, speed-indexed, task 5), the Path-2 PID (`FUN_0003a382`, PID bode shape not flat),
+`FUN_00036682` (0.94 Hz corner) and the r24/r26 rate lanes (`|gp-0x4f62| < 201` all drive, and its
+differentiator makes gain *rise* 2.7× where the measurement is flat) are **all ruled out**. Nobody knows
+what closes the loop. The FEASIBILITY doc's §2.2 diagram box naming the boost curve is **mislabelled**.
+
+---
+
+## ✅ BUILT, VERIFIED, **UNFLASHED** — **V85** ← THE CURRENT CANDIDATE
+
+**Base = the flown V84 (`344f22f7…`). ONE control cell, TWO bytes, plus a probe repoint inside the proven
+68-byte cave. CRC 50/50. Orchestrator-verified from disk: 63 differing bytes total — 2 control + 64 cave
++ 4 CRC, ZERO unattributed — and all 14 frozen cells byte-identical to V84.**
+
+| | value |
+|---|---|
+| builder | `analysis-2020accord/build_v85_tva.py` · decoder `analysis-2020accord/decode_v85_probe.py` |
+| base | `_v84_LEVERB.ARM5244-DAMPER.HONDA.M26.M27-PROBE.R24.6ADA-FD.67FE.6A10_plain_image.bin` sha256 `344f22f7303f6b5b006b13d329192ce098d118c9ce149834cb3cc05899dc637a` — **the cut that FLEW route `6d`** |
+| image | `_v85_FRICTION.C40BC.6000-PROBE.RATE.6ABC-FRIC.6AE2_plain_image.bin` sha256 **`cc9cdd662ab92049e266d3fef862763bee24dc21e8efa1fe8314ec983ed06e8f`** |
+| rwd | `39990-TVA,A160-V85-V84BASE-FRICTION.C40BC.6000-PROBE.RATE.6ABC-FRIC.6AE2-0x13000-0x100000.rwd` sha256 **`ff0684c2763440c0df9b2ce369ab5b979f7721614e1dd0f95445435079c3c05d`** (986,042 B) |
+
+**THE ONE CELL:** `0xC40BC` (`tp+0x50bc`) **600 → 6000**, bytes `58 02` → `70 17`.
+**RATIONALE, in one line: turn `FUN_0003b8f6`'s Coulomb RELAY into a VISCOUS damper.** `ratio` saturates
+at `cal/12`; 600 → 50 counts against the function's own 13000 gate (relay over **99.62%** of its range,
+index **7.87**), 6000 → 500 counts (**index 1.00, Honda's own shape**).
+★ **Touches no command path, no gain, no rate limit, no filter, no pole** ⇒ satisfies the operator's
+standing constraint *"ratchet gone without limiting the max steering angle rate under strong LKAS
+command"* **by construction.** ★ Mode-independent flat `tp` scalar ⇒ **RULE 7 is moot.**
+★ **`0xC40BC` has 1 reader / 0 writers image-wide**, and the sole reader IS the arithmetic site ⇒
+**RULE 11 satisfied by construction: no monitor can read it.**
+
+**PROBE — `0x14A` byte 4, four TWO-SIDED rungs, symmetric within one count:**
+`b7` `|gp-0x6abc| ≥ 64` (> the OLD saturation ⇒ set means V84's relay was saturated) ·
+`b6` `|gp-0x6abc| ≥ 512` (> the NEW saturation ⇒ **high duty means the edit under-delivered**) ·
+`b5` `|gp-0x6ae2| ≥ 8` · `b4` `|gp-0x6ae2| ≥ 2` (FRICTION×1024, the free tap) · `b3` fingerprint = 1.
+**Predicted:** b4 **35–70%** and b5 **10–25%** on V85, against **85–95%** and **55–80%** on V84 ⇒ the pair
+should **fall 2–4× / 3–6×**. `[BELIEF]` on the duties, `[EVIDENCE]` on the thresholds and transfer law.
+⊕ The four rungs also **bracket `|model|`** — the one quantity in this lane with no measurement.
+**Identity, no free parameter:** V84's field alphabet on route `6d` was exactly `{0x2F, 0x3F}` with
+b7/b6 identically 0 across 68,236 frames; **V85's b7 fires at 13.6 °/s, so any frame with b7 set proves
+the log is not V84.** Nesting `b6⇒b7` and `b5⇒b4` is EXACT (same register, same pass).
+
+🛑 **THE HONEST RISK, STATED FIRST — this REMOVES DISSIPATION.** The reduction is a **flat 10× at and
+below 50 counts = 10.6 °/s, i.e. most ordinary steering**, tapering to 1.00× only above 500 counts
+(106 °/s). ⚠ **This corrects the orchestrator's own earlier "steady-slew friction unchanged" framing,
+which is true only above 106 °/s.** The term is dissipative and V56's lane mute is on record as having
+cost damping. The argument for doing it anyway is that a relay's harmonic injection is not clean damping
+and its gain *rises* as amplitude falls — **an argument, not a measurement. If S2 gets worse, this is
+why, and reverting is two bytes.**
+
+🛑 **PRE-REGISTERED, fixed before the flight:**
+- **S1 (18–22 Hz) should NOT move.** V56 muted this whole lane's terminus and got a NULL there. If S1
+  *does* improve, that is surprising and informative.
+- **S2 / S3 / S4 are the targets.** **If S2 does not improve, revert `0xC40BC` — `N` is already flat at
+  6000, there is no larger dose**, and the mechanism is falsified as an S2 driver.
+- **The damper stays frozen.** Any 26–31 Hz regression toward V81's 25.1% burst duty is an abort signal.
+- ⊕ Ship the **≥166 s engaged creep-cornering** grind-#2 protocol; four builds in a row have missed it.
+
+🛑 **`b5` AS ORIGINALLY SPECIFIED (`|gp-0x6b98| > 8192`) WAS STRUCTURALLY VACUOUS AND WAS NOT SHIPPED.**
+`gp-0x6b98`'s only two control-loop writers store `clamp(r14, ±0x2000)` (explicit at `0x43B0E`–`0x43B20`),
+so the gate tests `≤ 0x2000` on a value clamped to exactly `±0x2000` ⇒ **it can never fail.** V55's flown
+probe agrees: 99.2% of engaged frames inside ±512, `|x| ≥ 3584` at 0.00%. ⇒ **the orchestrator's claim
+that "the entire Path-2 lane drops out under strong command" is REFUTED.** The real intermittency is the
+**caller's state guard** (`andi 0x830` @`0x221D6` ⇒ `FUN_0003b8f6` runs only in states {4,5,11}); the
+decoder reports `frozen_fric_run` as its detector.
 
 ---
 
@@ -29,7 +174,15 @@ computed FIRST:
 
 🛑🛑 **V83a's OWN PRE-REGISTERED FALSIFIER FIRED.** It read: *"if the ring is not below V76's, the dose
 model is wrong and the damper is not what drives the ring."* Measured **1.123 vs V76 — indistinguishable.**
-⇒ **RECORD THE DAMPER-DOSE MODEL OF THE 26–31 Hz RING AS FALSIFIED.** [EVIDENCE]
+⇒ ~~**RECORD THE DAMPER-DOSE MODEL OF THE 26–31 Hz RING AS FALSIFIED.**~~
+🛑🛑 **RETRACTED 2026-08-09 BY V84'S FLIGHT — see §1 of the 2026-08-09 headline above.** The falsifier
+fired on a build that **never removed the damper**: V83a reverted mode 26 but left **mode 27 carrying
+V81's entire damper package** (mode 27 is a second ENGAGED column on this `TVCA4` car — V83a's own block
+below says so), and route 68 supplied only **19.2 s** above 80 km/h, which is uninterpretable. V84 removed
+it in **both** engaged columns on **151 s** of exposure and the ring collapsed to **2.54% burst duty**.
+**The damper-relay model of the ring is SUPPORTED, not falsified.** ⇒ 📋 **METHOD RULE: a pre-registered
+falsifier only fires if the lever was IN FORCE and the exposure was adequate. Check both before scoring
+it — this is RULE 5 applied to a falsifier rather than to a null.**
 ⊕ V83a also left **mode 27 carrying V81's entire damper package** — **mode 27 is a SECOND ENGAGED column**
 on this `TVCA4` car, so that package was live on the car for route 68 and went unnoticed. Detail in the
 V83a block below; **V84 reverts it.**
@@ -56,7 +209,11 @@ cross-route medians, no covariate matching.
 🛑 ⇒ **§3 of the 2026-08-04 headline below ("THE DOSE AXIS … IS THE WRONG LANE" / "r24 is near-inert") is
 VOID.** Its entire evidence base is three builds that delivered byte-stock. Annotated in place there.
 
-### 3. ✅ V84 IS BUILT, VERIFIED, UNFLASHED — see the V84 block immediately below
+### 3. ~~✅ V84 IS BUILT, VERIFIED, UNFLASHED~~ 🛑 **V84 FLEW AS ROUTE `6d` ON 2026-08-09**
+**This line was wrong and it is the SECOND consecutive build recorded as unflashed after it flew** (V83a's
+own handoff flagged the identical defect one build earlier). Results in §1 of the 2026-08-09 headline.
+📋 **METHOD RULE: the flight result is written into `STATE.md` in the SAME pass that scores it, never
+deferred — a flown build recorded as unflashed WILL be re-proposed.**
 
 Base V83a. **7 control cells, 13 bytes, plus a probe repoint inside the proven 68-byte cave. CRC 50/50.**
 It **raises the DC-neutral damping** (the rate lane, engaged-only by construction) and **deletes the
@@ -109,7 +266,9 @@ an **engaged-only** energy source. Only two things switch at the disengage edge 
 of the harmonics and the loop gain. Nonlinearity is **cubic-like, not a relay** (5f/3f = 0.023 vs 0.600).
 Not a wheel order (`df/dv` +0.043 vs +0.96 over a 20 m/s span), not road input, not commanded.
 
-## ✅ BUILT, VERIFIED, **UNFLASHED** — **V84** ← THE CURRENT CANDIDATE
+## 🛑 FLASHED AND FLOWN — **V84** (route `6d`, 2026-08-09). **FIXED NOTHING — one band moved.**
+🛑 **This block previously read "BUILT, VERIFIED, UNFLASHED ← THE CURRENT CANDIDATE".** Results are in §1–§2
+of the 2026-08-09 headline at the top of this file. The build description below is accurate as written.
 
 **Base = V83a (`bb717ce8…`). 7 control cells, 13 bytes, plus a probe repoint inside the proven 68-byte
 cave. CRC 50/50.**

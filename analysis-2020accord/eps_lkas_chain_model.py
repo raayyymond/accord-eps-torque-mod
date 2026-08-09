@@ -1200,8 +1200,68 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #   passthrough) -> gp-0x6bfe -> FUN_00038148 @0x38218 reads iVar5 = gp-0x6bfe - (iVar4 >> 4), where
 #   iVar4 is Path 2's OWN forward six-term sum. 0xC63A0 scales BOTH operands of that subtraction.
 #   gp-0x6bf6 / gp-0x6c00 / gp-0x6ae0 / gp-0x6ae2 have ZERO readers anywhere -- write-only telemetry.
-#   The "B" input branch (gp-0x4f60) is DEAD CODE in every build: its combine coefficients
-#   0xC4048 / 0xC404C / 0xC4050 are all 0x0000 in stock, V74, V77 and V77B.
+#   🛑🛑 CORRECTED 2026-08-09 -- this line used to read: "The 'B' input branch (gp-0x4f60) is DEAD
+#   CODE in every build: its combine coefficients 0xC4048 / 0xC404C / 0xC4050 are all 0x0000."
+#   THAT IS FALSE, AND THE ERROR IS A WIDTH TRAP. Those three cells are 32-bit FLOATS, not u16.
+#   Orchestrator byte-read, stock AND V84, identical: 0xC4048..0xC4053 = 00 00 80 3f | 00 00 00 00 |
+#   00 00 00 00  =>  c1 = 1.0f, c2 = 0.0f, c0 = 0.0f.  A u16 read of a float 1.0 returns 0x0000,
+#   which is where "all zero => dead" came from. [EVIDENCE]
+#   ⇒ THE STRUCTURE IS  y[n] = c1*x[n] + c2*x[n-1] + c0*x[n-2]  -- a 3-tap FIR (2 zeros, 0 poles;
+#   no feedback path exists, so it can never ring, whatever the coefficients) sitting at an IDENTITY
+#   PASS-THROUGH of the torque sensor. The branch is LIVE, not dead.
+#   ⇒ CONSEQUENCE: gp-0x6bfc IS SENSOR-DERIVED, so FUN_0003b8f6 is a genuine command-vs-measurement
+#   disturbance observer, not a command-vs-command residual. This RESOLVES OPEN #1 of
+#   docs/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md in the affirmative and makes that doc's §2.1
+#   ("no compensation, decoupling or cancellation term anywhere") INCOMPLETE -- one exists.
+#   ⚠ SIZE IT BEFORE BELIEVING IT: at DC the command branch outweighs the sensor branch ~27-32:1
+#   per equal-magnitude count (cmd x 1/1024 vs sens x (1159/32768) x (1/1024) x LERP 0.878-1.059),
+#   so the observer is command-dominated and the sensor content is a minority contributor.
+#   ⚠ The sibling FIR at 0xC4018 / 0xC401C / 0xC4020 is byte-identical (also c1 = 1.0f).
+#   build_v58_tva.py's phrase "dead AS A LEVER" was correct (0 poles => unusable as a notch) and is
+#   the likely source of the conflation with "outputs zero". Do not repeat it.
+#
+# ★★★★★ FUN_0003b8f6 @0x3b8f6 -- THE PLANT-MODEL OBSERVER. Added 2026-08-09; it was absent from this
+#   model and from every handoff, despite being called at 1 kHz (sole caller FUN_0002214a @0x2240e,
+#   immediately before FUN_0003bc20 @0x22416). Orchestrator-verified at the decompile level.
+#
+#   ENABLE GATE (all must hold, else the function writes the 0x7FFF INVALID SENTINEL and the whole
+#   lane drops out):
+#       |gp-0x6b98| <= 0x2000 (8192)   <-- the DELIVERED MOTOR COMMAND. 🛑 A COMMAND-CONDITIONAL
+#                                          DISCONTINUITY: under strong command Path 2 goes invalid.
+#       |gp-0x4f60| <= 0x6400 (25600)  ·  |gp-0x6abc| <= 13000  ·  gp-0x6752 in {-1,0,1}
+#
+#   model    = EMA2(gp-0x6b98 * polarity / 1024, a = 0xC40D4 = 573/4096)              # command branch
+#            + clamp(FIR(EMA2(gp-0x4f60/1024, a = 0xC40D8 = 3686/4096) * 0xC613A/32768), +-15)
+#              * LERP(gp-0x6a10, X 0xC6B66 / Y 0xC6B80) / 1024                        # sensor branch
+#   iVar20   = polarity * gp-0x6abc * 12                                       @0x3bab0
+#   ratio    = clamp(iVar20 / cal(0xC40BC), +-1.0)                             @0x3bab4  <-- RELAY
+#   FRICTION = clamp(EMA(|model| * ratio * 0xC40D2/1024 + 0xC4080/1024 * ratio,
+#                        a = 0xC40D0 = 408/4096), +-10)          -> gp-0x6ae2 = FRICTION * 1024
+#   INERTIA  = clamp(EMA2(d/dt(iVar20) * 0.5 * 17.453293, a = 0xC40D6 = 246/4096)
+#                    * 0xC646E * 2^-24, +-10)                    -> gp-0x6ae0 = INERTIA  * 1024
+#   gp-0x6bfc = clamp(0xC6468(=2639) * (model - FRICTION - INERTIA), +-20000)
+#               🛑 0xC6468 is a RAW FLOAT MULTIPLIER here but Q10 (>>10) in FUN_00038148's stage-1
+#               sum. SAME CAL CELL, TWO SCALING CONVENTIONS. Using the wrong one is a 1024x error.
+#
+#   🛑🛑 `ratio` IS A COULOMB RELAY, NOT A PROPORTIONAL GAIN. It saturates at |gp-0x6abc| = cal/12
+#   = 600/12 = 50 counts, against this function's own enable gate of 13000 => it is pinned at +-1
+#   across 99.62% of its valid input range, i.e. it is sign(motor rate). Describing-function relay
+#   index N(50)/N(500): 7.87 at the shipped 600. For scale: Honda's viscous damper 1.00, V75 1.45,
+#   and V80's bang-bang damper -- the build that produced the WORST GRINDING IN THIS KIT'S HISTORY --
+#   3.27. And FRICTION's magnitude is proportional to |model|, i.e. TO THE DELIVERED COMMAND, which
+#   makes it engagement-scaled with no engagement flag anywhere. [EVIDENCE]
+#   Reproduce: analysis-2020accord/fun3b8f6_friction_relay.py
+#   ⚠ INERTIA is NOT inertia compensation as delivered: its real part stays positive vs RATE across
+#   7.79-28.5 Hz (+14.7 deg at 7.79, -36.2 at 21.09, -45.6 at 27.4) => a LAGGED VELOCITY DAMPER. It
+#   runs at ~1-6% of its +-10 clamp, so it is not a relay.
+#   ⚠ 0xC40BC / 0xC40D0 / 0xC40D2 / 0xC4080 / 0xC40D4 / 0xC40D6 / 0xC40D8 / 0xC646E are byte-identical
+#   on STOCK / V38 / V67 / V81 / V84 and appear in ZERO of the 84 build scripts. 0xC40BC has EXACTLY
+#   1 reader (ld.hu 0x50BC[tp],r16 @0x3BAB4) and 0 writers image-wide -- confirmed two ways, GhidraMCP
+#   plus a raw LE byte scan of both encodings. 🛑 NOTE THE ENCODING: the halfword on the instruction
+#   is 0x50BD (the disp|1 form); a scan for 0x50BC finds NOTHING.
+#   ⊕ gp-0x6bf6 / gp-0x6c00 / gp-0x6ae0 / gp-0x6ae2 are 1-writer / 0-reader => FREE, BLAST-RADIUS-ZERO
+#   TELEMETRY TAPS (gp-0x6ae0/6ae2 are written on the success path only and hold STALE values when the
+#   gate fails, so they are only interpretable alongside a gate rung).
 #   The re-entry is NOT a bare z^-1 -- the 2-pole LPF (0xC40D4 = 573/4096) gives:
 #       7.79 Hz: -0.87 dB, -36.06 deg   |   21.09 Hz: -4.96 dB, -82.84 deg (incl. 1-tick transport)
 #   vs Path 2's own iVar4 IIR: -0.85 dB/-23.63 deg and -4.13 dB/-47.90 deg.

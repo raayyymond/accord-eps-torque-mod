@@ -1,0 +1,177 @@
+
+====================================================================================================
+D1/D2  IS THE POOLED COHERENCE A REAL AVERAGE, OR ONE LOUD EPISODE?
+====================================================================================================
+
+route      cond       K      f  g2 pooled        jackknife  top Syy share |    per-episode g2 (bias-corrected)
+V84/r6d    engaged   23   7.81      0.855 0.802..0.884               0.440 | med 0.840  IQR 0.690-0.903 (n=23)
+V84/r6d    engaged   23  20.51      0.767 0.663..0.805               0.399 | med 0.526  IQR 0.285-0.814 (n=23)
+V84/r6d    engaged   23  27.54      0.860 0.788..0.875               0.410 | med 0.661  IQR 0.477-0.858 (n=23)
+V84/r6d    eng+HO    18   7.81      0.819 0.795..0.834               0.423 | med 0.795  IQR 0.531-0.871 (n=18)
+V84/r6d    eng+HO    18  20.51      0.388 0.325..0.423               0.210 | med 0.392  IQR 0.074-0.630 (n=18)
+V84/r6d    eng+HO    18  27.54      0.904 0.854..0.913               0.446 | med 0.703  IQR 0.545-0.871 (n=18)
+V83a/r68   engaged   11   7.81      0.822 0.806..0.839               0.300 | med 0.871  IQR 0.758-0.919 (n=11)
+V83a/r68   engaged   11  20.51      0.979 0.977..0.982               0.195 | med 0.987  IQR 0.963-0.990 (n=11)
+V83a/r68   engaged   11  27.54      0.575 0.496..0.609               0.346 | med 0.501  IQR 0.321-0.738 (n=11)
+V81/r67    engaged   30   7.81      0.417 0.386..0.468               0.113 | med 0.568  IQR 0.297-0.751 (n=30)
+V81/r67    engaged   30  20.51      0.441 0.349..0.460               0.257 | med 0.382  IQR 0.088-0.694 (n=30)
+V81/r67    engaged   30  27.54      0.377 0.232..0.431               0.261 | med 0.229  IQR 0.000-0.630 (n=30)
+V81/r67    eng+HO    24   7.81      0.658 0.646..0.669               0.144 | med 0.713  IQR 0.545-0.789 (n=24)
+V81/r67    eng+HO    24  20.51      0.273 0.233..0.299               0.199 | med 0.219  IQR 0.000-0.446 (n=24)
+V81/r67    eng+HO    24  27.54      0.026 0.007..0.047               0.122 | med 0.082  IQR 0.000-0.351 (n=24)
+V80/r66    engaged   12   7.81      0.380 0.306..0.504               0.496 | med 0.435  IQR 0.000-0.790 (n=12)
+V80/r66    engaged   12  20.51      0.951 0.890..0.961               0.710 | med 0.604  IQR 0.288-0.841 (n=12)
+V80/r66    engaged   12  27.54      0.994 0.896..0.994               0.974 | med 0.794  IQR 0.638-0.951 (n=12)
+V80/r66    eng+HO     8   7.81      0.544 0.414..0.627               0.388 | med 0.403  IQR 0.123-0.803 (n=8)
+V80/r66    eng+HO     8  20.51      0.497 0.395..0.547               0.423 | med 0.398  IQR 0.192-0.585 (n=8)
+V80/r66    eng+HO     8  27.54      0.730 0.677..0.779               0.511 | med 0.714  IQR 0.603-0.761 (n=8)
+V80/r66    manual    16   7.81      0.090 0.064..0.130               0.135 | med 0.091  IQR 0.024-0.366 (n=16)
+V80/r66    manual    16  20.51      0.037 0.014..0.055               0.440 | med 0.027  IQR 0.000-0.197 (n=16)
+V80/r66    manual    16  27.54      0.476 0.352..0.520               0.236 | med 0.320  IQR 0.147-0.500 (n=16)
+
+  READ: a pooled gamma^2 whose `top Syy share` is > ~0.5 is NOT an average over K
+  episodes -- it is one episode with K-1 spectators, and the pre-registered K >= 10 is
+  not actually met however many episodes were nominally in the pool.  The per-episode
+  bias-corrected median is the estimator that does not reward concentration.
+
+====================================================================================================
+D3  TAU SENSITIVITY.  phase(Z) at each symptom frequency, for tau = 0 / 10 / 20 ms.
+====================================================================================================
+    (|Z| and gamma^2 are tau-invariant by construction and are not repeated.)
+
+route      cond          f    phase @ tau=0ms    phase @ tau=9ms   phase @ tau=19ms
+V84/r6d    engaged    7.79             -143.0             -114.9              -86.8
+V84/r6d    engaged   20.50               44.8              118.6             -167.7
+V84/r6d    engaged   27.50              -37.8               61.3              160.3
+V84/r6d    eng+HO     7.79             -149.8             -121.7              -93.6
+V84/r6d    eng+HO    20.50               55.1              128.9             -157.4
+V84/r6d    eng+HO    27.50              -36.3               62.8              161.8
+V83a/r68   engaged    7.79             -153.2             -125.1              -97.0
+V83a/r68   engaged   20.50               35.1              108.8             -177.4
+V83a/r68   engaged   27.50              -54.6               44.4              143.5
+V81/r67    engaged    7.79             -146.1             -118.0              -89.9
+V81/r67    engaged   20.50               70.4              144.1             -142.1
+V81/r67    engaged   27.50               -6.3               92.8             -168.2
+V81/r67    eng+HO     7.79             -142.7             -114.6              -86.5
+V81/r67    eng+HO    20.50               88.8              162.5             -123.7
+V81/r67    eng+HO    27.50              139.3             -121.6              -22.6
+V80/r66    engaged    7.79              142.4              170.5             -161.4
+V80/r66    engaged   20.50               38.5              112.3             -174.0
+V80/r66    engaged   27.50              -23.7               75.4              174.4
+V80/r66    eng+HO     7.79             -140.0             -111.9              -83.8
+V80/r66    eng+HO    20.50               66.5              140.2             -146.0
+V80/r66    eng+HO    27.50               29.4              128.4             -132.6
+V80/r66    manual     7.79              101.9              130.0              158.1
+V80/r66    manual    20.50              -40.0               33.7              107.5
+V80/r66    manual    27.50             -112.7              -13.7               85.3
+
+  Reference phases for Z = T/theta_dot:  -90 deg = pure INERTIA (T = -J*theta_ddot)
+  · 180 deg = pure DAMPING (T = -b*theta_dot) · +90 deg = pure STIFFNESS (T = -k*theta).
+  tau is pinned to 9.998-10.001 ms by S0.4 of the main report (direct, gamma^2 > 0.94,
+  four routes), so the middle column is the one to read -- but the spread across the
+  three columns is the price of ever getting tau wrong, and at 27.5 Hz it is 99 deg
+  per frame, i.e. enough to turn an inertial reading into a stiffness one.
+
+====================================================================================================
+D4  SPEED DEPENDENCE.  Is fn a fixed mechanical mode?
+====================================================================================================
+
+route      speed band     K    sec      fn    zeta        J          k    VAF
+V84/r6d    >14           25    256   13.21   0.150    16.42  1.132e+05  0.633
+V83a/r68   6-14           7     72   10.22   0.110    28.18  1.161e+05  0.763
+V81/r67    >14           20    205   13.41   0.156    27.14  1.928e+05  0.651
+V80/r66    >14            6     61   11.19   0.497    20.06  9.914e+04  0.883
+
+====================================================================================================
+D5  WHICH SIDE OF THE TORSION BAR IS THE CAN ANGLE ON?
+    The one structural question the whole analysis turns on, decided WITHOUT tau and
+    WITHOUT any torque calibration -- from the roll-off of |Z| = |T / theta_dot| alone.
+
+      sensor ABOVE the bar (wheel side):  T = -J*thddot - b*thdot exactly, so
+                                          Z = -(j*w*J + b)  =>  |Z| MUST RISE, ~ w
+      sensor BELOW the bar (pinion side): above the wheel-on-bar mode the wheel is
+                                          pinned, Z -> +j*k/w  =>  |Z| MUST FALL, ~ 1/w
+    13 -> 27.5 Hz is a factor 2.12 in w, so the two hypotheses predict 2.12 and 0.47.
+    H1 is biased LOW by input noise and H2 HIGH by output noise; the truth is bracketed,
+    so BOTH are shown and the conclusion must hold on both.
+====================================================================================================
+
+route/cond/est                      13Hz          17Hz        20.5Hz          24Hz        27.5Hz  ratio 27.5/13
+V84/r6d/engaged/H1                  3948          1279          1087           373           589          0.149
+V84/r6d/engaged/H2                  5239          2221          1417          1012           684          0.131
+V84/r6d/eng+HO/H1                   4185          1354           664           376           587          0.140
+V84/r6d/eng+HO/H2                   5229          2593          1710          1126           649          0.124
+V83a/r68/engaged/H1                 2417          1410          1149           611           668          0.277
+V83a/r68/engaged/H2                 4773          1800          1173          1213          1162          0.243
+V81/r67/engaged/H1                  4210          1787          1278           763           477          0.113
+V81/r67/engaged/H2                  9136          3607          2896          1769          1263          0.138
+V81/r67/eng+HO/H1                   5800          2019           906           777           115          0.020
+V81/r67/eng+HO/H2                   8440          4028          3315          1991          4481          0.531
+V80/r66/engaged/H1                  1673          1410          1248          1048           605          0.362
+V80/r66/engaged/H2                  2884          1482          1313          1096           609          0.211
+V80/r66/eng+HO/H1                   5360          3217          2197          2382          1522          0.284
+V80/r66/eng+HO/H2                  15094          6151          4421          3130          2085          0.138
+
+  Every cell FALLS.  ratio range 0.020-0.531, all far below the 2.12
+  a wheel-side sensor demands.  [EVIDENCE] The `0x14A` steering angle and its rate are
+  BELOW the torsion bar -- the motor/pinion side.  This corroborates the kit's separate
+  finding that STEER_ANGLE_RATE is a Q15 scale of the resolver electrical rate, and it
+  is the premise the S1 model rests on.
+
+====================================================================================================
+D6  WHAT A FEEDFORWARD theta_ddot CANCELLATION WOULD HAVE TO BE, and the correction it
+    forces on docs/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md section 3.4.
+====================================================================================================
+
+    The bar torque hands-off is EXACTLY the upper column's own free body:
+        T_bar = -J*thddot_w - b*thdot_w                      (identity, not a model)
+    but the firmware can only measure thddot_p, BELOW the bar (D5), and
+        thddot_w / thddot_p = 1 / (1 - (f/fn)^2 + j*2*zeta*(f/fn))
+    ⇒ a correct feedforward is NOT `gain * theta_ddot`.  It is `-J*theta_ddot` passed
+      through a 2-pole resonant LOW-PASS at fn with the measured zeta -- i.e. a BIQUAD,
+      i.e. a code cave, i.e. this kit's only bricking class.
+
+    arm             fn Hz    zeta          Q = 1/2zeta  pole radius @1 kHz
+    V84/r6d eng     12.82   0.156   3.21 [2.86, 3.62]             0.98751
+    V84/r6d HO      13.21   0.144   3.47 [2.86, 4.07]             0.98812
+    V83a/r68 eng     9.76   0.098   5.12 [3.76, 5.75]             0.99403
+    V81/r67 eng     12.82   0.144   3.47 [3.21, 3.76]             0.98847
+    V81/r67 HO      13.41   0.150   3.33 [3.21, 3.76]             0.98744
+    V80/r66 HO      14.69   0.182   2.75 [2.45, 3.33]             0.98334
+
+    MEASURED       fn = 12.82 Hz, Q = 3.40  =>  r = 0.98823   (1-r = 0.01177)
+    REPORT ASSUMED f0 = 7.79 Hz, Q = 20    =>  r = 0.99878   (1-r = 0.00122)
+    V48B, THE CAVE THAT BRICKED THE ECU    =>  r = 0.979     (1-r = 0.02100)
+
+    🛑 CORRECTION TO THE FEASIBILITY REPORT section 3.4.  It claimed the cancellation
+    filter must be '~17x more lightly damped than V48B'.  Measured, it is 1.8x --
+    the SAME CLASS as the cave that bricked the ECU, not an order of magnitude worse.
+    The NO-GO verdict SURVIVES (V48B bricked at r = 0.979 and this sits just inside
+    that), but the margin argument was overstated by ~10x and should not be re-quoted.
+    ⊕ section 2.2's OTHER assumption also fails: it put the wheel-on-bar mode at
+    6.8-11.4 Hz 'bracketing the measured 7.79 Hz ratchet'.  Measured across four
+    routes it is 9.8-14.7 Hz, median 12.8 ⇒ the 7.79 Hz ratchet is NOT that mode.
+
+====================================================================================================
+D7  IS fn AN ARTEFACT OF THE TAU CORRECTION?  Refit at tau = 0 / 10 / 20 ms.
+====================================================================================================
+
+route      cond         fn@0ms    fn@10ms    fn@20ms       zeta@0    zeta@10    zeta@20
+V84/r6d    engaged       10.37      12.82       4.12        0.168      0.156      0.790
+V84/r6d    eng+HO        11.19      13.21       3.34        0.150      0.144      0.558
+V83a/r68   engaged        8.92       9.76      28.15        0.098      0.098      0.312
+V81/r67    engaged       11.19      12.82       3.00        0.168      0.144      2.000
+V81/r67    eng+HO        11.89      13.41       3.00        0.196      0.150      2.000
+V80/r66    engaged       26.90      11.89      45.00        0.212      0.394      0.460
+V80/r66    eng+HO        12.07      14.69       3.00        0.182      0.182      2.000
+
+  At the MEASURED tau (10 ms) the model fits with fn = 9.8-14.7 Hz and zeta = 0.10-0.39
+  on every arm.  One frame LOW (tau = 0) it still fits but fn drops 1.5-2.5 Hz.  One
+  frame HIGH (tau = 20 ms) the fit COLLAPSES to the grid bounds (zeta pinned at 2.0,
+  fn at 3 or 45 Hz) -- the model cannot absorb that much extra lag at all.
+  ⇒ two things follow.  (1) tau being one frame too LARGE is independently excluded by
+  the fit, corroborating S0.4's direct measurement.  (2) fn carries a stated SYSTEMATIC
+  of about -2 Hz per frame of tau error, on top of its statistical CI.  Quote fn as
+  '12.8 Hz [12.1, 13.6] statistical, +/-2 Hz systematic per frame of timebase error'.
+
+wrote _cache_selfint/selfint_diag.json

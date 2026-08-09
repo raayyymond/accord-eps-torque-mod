@@ -107,11 +107,12 @@ that it finished, and **not** that it stopped. Agents keep editing after they re
 **Close-out does not begin until every spawned agent is confirmed stopped.** In order:
 1. **`TaskList` / roll-call every agent you spawned this session.** Name them. An agent you forgot is
    the one still writing.
-2. **`TaskStop` each one.** 🛑 **A `SendMessage` "stand down / you're done" does NOT stop an agent.**
+2. Before stopping each one, wait for them to send you a message that they are done. Use SendMessage to prompt them to respond. Be very patient.
+3. **`TaskStop` each one.** 🛑 **A `SendMessage` "stand down / you're done" does NOT stop an agent.**
    It will acknowledge and keep working.
-3. **Then** `git status` on **both** repos and re-hash every reported artifact. **Confirm from the
+4. **Then** `git status` on **both** repos and re-hash every reported artifact. **Confirm from the
    filesystem, never from an agent's reply.**
-4. Only then: collaterals → commit → push → report.
+5. Only then: collaterals → commit → push → report.
 If `git status` is dirty *after* you thought you were finished, **assume an agent is live** and go
 back to step 1.
 
@@ -130,21 +131,58 @@ memory file, or a spec another agent is building against.
   *"If you find a defect after I've accepted your work, report it — do not fix it."*
 
 ### What "close out the session" means
-A three-part deliverable, every time, without being re-asked:
+A four-part deliverable, every time, without being re-asked:
 1. **Update the collaterals** — `docs/STATE.md` (in place, not appended), `docs/BUILD-LINEAGE.md` if a
    lever moved, the golden model `analysis-2020accord/eps_lkas_chain_model.py`, and `memory/` +
    `memory/MEMORY.md`.
 2. **Commit and push `main` on BOTH repos** — analysis to the kit, firmware artifacts to `accord-firmwares`.
 3. **Write `docs/HANDOFF-<date>-<topic>.md`.**
+4. 🛑 **EXPLAIN THE NON-STOCK FIRMWARE MODIFICATIONS, IN THE CLOSE-OUT MESSAGE ITSELF.** Standing
+   operator instruction, 2026-08-09. Not a pointer to a file — **in the message.**
+   - Enumerate **every cell on the current candidate that differs from STOCK** — the *cumulative* delta,
+     not just what this session changed. **Read it from the built image, not from the build scripts.**
+   - For **each** changed variable: its address, stock value, current value, **what the variable
+     physically is**, **what the change does to the car**, and **which build introduced it**.
+   - **Use diagrams, graphs and pseudocode wherever they carry the meaning better than prose** — a
+     signal-flow diagram of where the cell sits in the chain, the decompiled arithmetic mirrored in
+     integer Python, a before/after table or curve of the delivered surface.
+   - State plainly which changes are **measured on-car**, which are **inert or unverified**, and which
+     are **carried by accident** (the V38 rebase silently reverted seven levers — see `STATE.md`).
+   - This exists because the operator drives the car and must be able to say, from one message, exactly
+     what is non-stock about the ECU in it and why.
+5. 🛑 **RECORD HOW THIS BUILD'S APPROACH DIFFERS FROM THE RECENT ONES — against the WHOLE arc since
+   V38.** Standing operator instruction, 2026-08-09. *"We have been at this for a long time, since V38."*
+   - A cell table is not enough. Say **what CLASS of intervention this build is**, and **how that class
+     differs from what the last several builds tried**. The arc so far: V38–V52 authority / filters /
+   poles / caves · V53–V61 telemetry probes and lane mutes · V62–V73 the rate lane (r24/r26) ·
+     V74–V83a the base-assist damper · V84 damper reverted to Honda.
+   - **Show it as a cross-build matrix read from the IMAGES** — the same handful of cells down every
+     build since V38 — so it is visible at a glance which cells have actually moved and which have been
+     frozen for dozens of builds. `analysis-2020accord/ledger_v38_to_v84_bytes.py` is the reader.
+   - **Name what is genuinely new versus what is a re-run of an earlier lever in a different direction.**
+     🛑 FALSIFIED ≠ INERT-BY-MODE ≠ never-tried, and *"the same lever pushed the other way"* is a
+     different claim from *"a new lever"*. If a cell has been frozen across N builds, **say N.**
+   - If the build is a re-run, say **what is different this time that makes a different result likely** —
+     otherwise it is a repeat, and the operator is entitled to be told that before he drives it.
 
 ### Calibration and trust
 - The operator's **lived experience overrides analyst recommendations** — if they report how the car
   feels, that beats theoretical dwell-time arguments.
+- 🛑🛑 **SCORE BANDS; LET THE OPERATOR SCORE SYMPTOMS. NEVER CALL ANYTHING "FIXED" THAT HE HAS NOT
+  CALLED FIXED.** Standing instruction, 2026-08-09, after the orchestrator headlined *"V84 fixed the
+  highway ring"* off a 26–31 Hz burst-duty drop and had to be corrected twice —
+  *"Not even sure what the ring is. We are working on grinding, vibrating, and ratcheting issues"*, then
+  *"None of these have been fully fixed in V84."*
+  - **"The ring", "grind #1", "grind #2", "S1…S4" are KIT JARGON for frequency bands.** They are not
+    symptoms the operator named. **Report in HIS words** — grinding, vibrating, micro-ratcheting,
+    ratcheting, excess friction — and cite the band only as the instrument behind it.
+  - **An ABSENCE of a complaint is not a report of improvement.** *"I didn't notice anything odd"* is
+    weak negative evidence, never a cure.
+  - **A band moving is not a symptom being fixed.** Say "band X moved by Y", and say separately what the
+    operator reported.
+  - **Never let a secondary instrument win over a primary symptom failure.** If the operator's own
+    symptoms failed, that is the headline — put it first, before any measured win.
 - Full byte diffs over spot diffs; re-disassemble from the built image before declaring victory.
-- **When in doubt, stop and ask.** A confident-wrong answer about a table address can brick an ECU.
-  "I'm not sure, here's what I'd need to verify" is always acceptable.
-- Overstating a risk is as much a miss as understating one — check the falsified-hypothesis record before
-  escalating an alarm.
 
 ---
 
@@ -153,6 +191,8 @@ A three-part deliverable, every time, without being re-asked:
 **All disassembly and decompilation goes through `mcp__ghidra__*`. Never radare2, rizin, r2pipe,
 objdump, or `disasm_v850.py` (retired).** This binds you *and every subagent* — prime each one explicitly,
 because the default instinct is to reach for r2.
+
+GET GHIDRA TO ANALYZE THE ENTIRE .BIN FILE FIRST! NO POINT IN DOING SPOT DISASSEMBLY OF SEARCHES BEFORE THIS.
 
 🛑 **WORK BACKWARDS: DECOMPILE FIRST, THEN READ THE ASSEMBLY.** Standing operator instruction,
 2026-08-04. Start from `decompile_function` / `analyze_function_complete` to get the **structure** —
@@ -215,9 +255,3 @@ are not sure.
 
 **Skills:** `firmware-decompile` (Ghidra/V850 traps) — load it whenever a session reads firmware bytes.
 
----
-
-## Who knows what
-
-**Joey** (operator) — the Accord reverse engineering, the constellation, the candidate builds.
-**Final call on all flash decisions.**

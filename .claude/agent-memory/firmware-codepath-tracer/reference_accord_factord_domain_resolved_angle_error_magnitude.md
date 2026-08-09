@@ -5,6 +5,44 @@ metadata:
   type: reference
 ---
 
+> 🛑 **AMENDED 2026-08-08 (fw-factord session) — READ THIS FIRST.**
+> **V84's on-car flight (route 6d, 68,236 frames) found `gp-0x6a10` behaving as `|raw column angle|`**
+> (symmetric flip at |angle|≈0.85-0.9°, engagement-independent, does NOT collapse during steady 45°+
+> manual cornering) — NOT as a converging tracking error. **The formula below is still correct** — this
+> session re-decompiled `FUN_0003fc16` fresh and got the identical structure — but the *practical*
+> behaviour is explained, not contradicted: **[BELIEF, mechanistically supported, not a live measurement]
+> the "predicted" reference term (`gp-0x69e0`+`gp+0x641c`) that gets subtracted is produced by
+> `FUN_0003f884`, and that function explicitly RESETS it to 0 on several independent paths — Gate A
+> requires `gp-0x67fe==2` (not merely ∈{1,2}) AND `gp-0x4e5f==1` AND `gp-0x67f4==1` (the speed-voter
+> validity flag) AND `gp-0x6abe` below a wide rate ceiling; even when Gate A passes, the deep
+> "confirmed hands-off + sustained speed + bounded rate + N-cycle dwell" branch is the ONLY path that
+> makes the reference nonzero, and a "predictor diverged too far" check resets it again. Under ordinary
+> HANDS-ON driving (virtually all recorded driving), the reference is 0 essentially every cycle** ⇒
+> `gp-0x6a10 = |gp-0x69ca − 0| = |raw column angle|` in practice, reconciling the code with the flight.
+> `tp+0x74a8` (`0xC64A8`) — the cal byte that could force the reference term to 0 outright — was checked
+> **byte-read, = 1 (enabled) on both stock and V84** — so it is NOT the simple explanation; the collapse
+> is behavioural (driving-condition-gated), not a disabled feature.
+> ⇒ **The 1/ω frequency-selectivity argument in the "Candidate shape" section below is VOID** for the
+> conditions this kit has ever measured. Do not build on it without a live capture of `gp-0x4e5f`/the
+> hands-off dwell counter showing the reference genuinely tracks something during a specific manoeuvre.
+>
+> ✅ **The `gp-0x67fe ∈ {1,2}` dispute flagged below IS NOW RESOLVED** — repo memory
+> `eps-gp67fe-trump-engaged-holding-substate.md` (2026-07-13, reconfirmed 2026-08-08) decompiled the
+> writer (`FUN_0003bd7c`): `gp-0x6772==5 → gp-0x67fe=2` (engaged/active substate), `==4 → 1`, else `0`,
+> and during an LKAS drive the EPS sits in substate 2 "essentially the whole time." V84's own probe
+> (`gp-0x67fe ∈ {1,2}` reads 1.00000 every frame, engaged AND manual) is consistent with this — FactorD's
+> gate is live, not the open question it was when this file was first written.
+>
+> ✅ **NEW THIS SESSION: `gp-0x6a10` is ALSO consumed by a SECOND, physically separate, LIVE (non-flat)
+> table** at `tp+0x7b66`(X)/`tp+0x7b80`(Y) = `0xC6B66`/`0xC6B80` absolute, 13 points, inside
+> `FUN_0003b8f6` — called directly from `FUN_0002214a`, the confirmed **1 kHz** control task (not
+> FactorD's 100 Hz table). `Y` ranges 899→1084 (Q10, a real ~18% shaping curve, byte-identical stock vs
+> V84, never touched by any build). See the new file
+> `reference_accord_factord_six_family_map_and_1khz_lane_v84.md` for the full map, the six-family byte
+> census, and why FactorD itself is structurally unreachable below 35 km/h (FactorC's `Y[0]=0` gates the
+> WHOLE multiply chain to 0 before FactorD's term is applied — confirmed on stock AND V84 for modes
+> 24/25/26/27 alike).
+
 [EVIDENCE, disassemble_function + search_instructions this session, 2026-08-07] Full formula for the
 damper's FactorD index, `gp-0x6a10` (see [[reference_accord_fun34350_five_factor_product_and_sign_relay_full_disasm]]
 for FactorD's own gate/LERP wiring):
