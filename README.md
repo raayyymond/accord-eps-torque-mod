@@ -12,21 +12,15 @@ If you're here, you probably already know what EPS firmware modification is for:
 
 This is real-vehicle work. Please read this section before doing anything beyond reading files.
 
-### Read this first — from the operator, who has actually done it
+### Read this first
 
-**This may brick your car.** I have only ever tested this on my **2020 Accord 2.0T Touring**.
+**This may brick your car.** Nothing here has been tested on any vehicle other than a single **2020 Accord 2.0T Touring**. Treat every result in this kit as specific to that one car until proven otherwise on yours.
 
-**My first flash bricked my car.** The EPS would only accept a very specific memory region — and of course you have to erase the firmware *first*. I ended up writing a script that brute-forced through all the possible start and end memory addresses to get it to work. It was a nice, scary few hours of my life.
+**Bricking the ECU is a real outcome, not a theoretical one.** The EPS will only accept a flash targeting a very specific memory region, and the erase happens before the write — so a wrong address range can leave the ECU with no valid firmware and no obvious way back.
 
-**Modifying the EPS firmware can result in very dangerous on-road failure modes.** I'm at a point with the 2× mod where I'm not experiencing anything dangerous myself — but it wasn't always like this, and I can't say it never will be, especially on someone else's car. At various points in this work I have:
+**Modifying EPS firmware can produce dangerous on-road failure modes.** The plausible failure set includes **loss of power steering assist during hard cornering** — either a complete loss of driver-side assist, or a "gentle" loss where only the comma-side assist drops out. **A loss of assist mid-corner at speed can take the car out of its lane**, which makes this one of the worst failure modes a steering modification can have. Assume it is possible on your car regardless of how stable a given build has been on someone else's.
 
-- thought I might have to get the car towed and the EPS replaced or serviced
-- experienced **power steering failing completely during harsh turns** — driver-side power steering gone
-- experienced **power steering failing "gently" during harsh turns** — comma-side power steering assist gone
-
-Keep in mind that a failure during harsh turns is a pretty bad failure mode: **it means the car immediately starts heading outside of the lane, at speed.**
-
-**After flashing, run a fork that knows about the mod.** Use sunnypilot, StarPilot, or another fork that detects the modified EPS version string and auto-applies the 2× torque PID tuning settings. Running the modified firmware against stock tuning is not the configuration any of this was validated in.
+**After flashing, run a fork that knows about the mod.** Use sunnypilot, StarPilot, or another fork that detects the modified EPS version string and auto-applies the 2× torque PID tuning settings. Running modified firmware against stock tuning is not a configuration any of this was validated in.
 
 ### The non-negotiable rules
 
