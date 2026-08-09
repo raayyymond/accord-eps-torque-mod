@@ -1,16 +1,102 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-09 (V87 session) — V86 FLEW as route `6f` and V86B as route `70`. BOTH
-parking-lot only. V86's pre-registered frequency test is FALSIFIED, well-powered. The ~8 Hz ratcheting
-is a LIGHTLY-DAMPED RESONANCE (Q ≈ 14–29, controlled ring-down), NOT a limit cycle, NOT a firmware loop,
-and NOT on the rim side. The firmware search on it is CLOSED by a shape argument. The 4× forward LKAS
-gain is the one variable frozen across the entire failed search — but it is structurally decoupled from
-the loop that hosts the mode, so authority-preserving damping is reachable and lowering authority is NOT
-indicated. NOTHING WAS BUILT THIS SESSION, deliberately.**
+**Last updated: 2026-08-09 late (V87 BUILD session) — ✅ V87 IS BUILT, VERIFIED, UNFLASHED. It is a
+MEASUREMENT build on a clean V38 base: the first SUBTRACTIVE build in the lineage, carrying no damping
+edit, no filter and no new authority. Every control lever examined this session is dead — `0xC63B8` is
+REFUTED five ways, a cave in the shaper is BLOCKED by an EPS-disabling float twin, and the `0xC646E`
+sizing figure `STATE.md` called MEASURED is, in its own source, "(prior-session estimate)". The one
+genuinely new thing is 2 bytes that repoint a CAN transmit packer so 427 `MOTOR_TORQUE` carries
+`|gp-0x6b98|`, the delivered motor command — the number four independent analyses named as blocking.
+⚠ Section 5 below (the `0xC646E` damping recommendation) is SUPERSEDED — see the V87-BUILD headline.**
 
 ---
 
-## ★★★★★ HEADLINE, 2026-08-09 — the V87 session. Full narrative in `docs/HANDOFF-2026-08-09-v87-the-ratchet-is-a-resonance.md`
+## ★★★★★ HEADLINE, 2026-08-09 late — the V87 BUILD session. Narrative in `docs/HANDOFF-2026-08-09-v87-built-measurement-on-a-v38-base.md`
+
+### 0. ✅ V87 BUILT, VERIFIED, UNFLASHED — `build_v87_tva.py`
+image sha256 **`27530836dfc121ecf9f62a4dd136abc79484ef2e12af54f55591ac71c334e034`**
+rwd sha256 **`997002f01aa7b5bfe0ac32b8f17396a593a3e298ea11919ea2331b718f6e85f6`** (986,042 B)
+`39990-TVA,A160-V87-V38BASE-V57GAIN-RATCHET454FE-STEER0-PROBE.427.6B98-0x13000-0x100000.rwd`
+Base **V38** (`a7391972a9db…`). **10 runs / 85 bytes vs the base, ZERO unattributed**; restoring the
+attributed set reproduces V38 bit-for-bit. CRC 50/50 on the built image, the readback and the shipped
+file re-read from disk. Probe instruction re-decoded from the BUILT image: `ld.h -0x6B98, gp, r6`.
+
+| addr | stock | V87 | what | from |
+|---|---|---|---|---|
+| `0x2A1F0` | `6c74` | `d07c` | forward LKAS reader → its own cal cell | V57 |
+| `0xC646C` | 891 | **891** | shared sensor scale at Honda's value ⇒ **4 feedback readers un-boosted** | V57 |
+| `0xC6CD0` | blank | **3564** | private forward LKAS gain = **4.000×** | V38 |
+| `0x454FE` | `ba` | `b5` | state-4 command-magnitude clamp unreachable | V42 |
+| `0xC62EA` | 320 | **0** | LKAS commandable to 0 km/h | V53 |
+| **`0x55DF2`** | `e893` | **`6894`** | **427 `MOTOR_TORQUE` ← `\|gp-0x6b98\|`** | **NEW** |
+| `0x55C0E` + `0xC4B34` | stock / FF | hook + 62 B | 330 byte-4 telemetry, V86B payload verbatim | V86B |
+
+🛑 **HONEST LABEL: it will read as a NULL on the ratcheting, by design.** No damping, no filter, no new
+authority. **Feel changes come from the REBASE, not from an 8 Hz lever** — V85's friction relay
+(`0xC40BC` 6000→600), Lever B and V86B's engaged creep damper are all GONE.
+
+### 1. 🛑 `0xC63B8` / the `FUN_0003b66a` 8 Hz band-pass — REFUTED, five independent ways
+The structure is REAL and its maths reproduces across four agents (**peak 8.13–8.14 Hz, Q 0.501, phase
++1.44°, −3 dB 3.38–19.64 Hz**, cals `0xC63B4`=51 / `0xC63B8`=41, **byte-identical to stock in all 88
+images**). **The orchestrator's reading of its CLASS was wrong.** Kills:
+1. **Full-wave rectified** — `gp-0x6ba6 = |gp-0x6b9a|` (`subr r0,r13` @`0x3b87a`). All 7 readers of the
+   signed cell are `|x| ≤ 25600` plausibility windows; the value dies in a register. **`abs()` destroys
+   the phase the damping argument rested on. There is no summing junction and no sign to get wrong.**
+2. **FactorB is flat `[1024,1024,1024,1024]` in ALL 34 records** ⇒ the damper arm is inert at any gain.
+3. **FactorC `Y[0]`=0 below 35 km/h** zeroes the whole damper product at creep regardless.
+4. **The boost arm is the V58/V59/V60 parametric pump — already FLASHED and NULL.** `BUILD-LINEAGE.md`
+   marks that arc CLOSED and says *"do not propose it as a grinding fix."*
+5. **No headroom and the wrong dose curve** — stock already sits at **37.8 % of clamp at max** (not the
+   1–6 % believed); 4× reaches 151 % and clips. Raising it costs up to **46.9 % of parking assist** for
+   a **0.01 %** change in the ratchet's decay rate — it is **185× below the Mathieu threshold**.
+⇒ 🛑 **Do not build `0xC63B8` in either direction.** ⊕ It IS a good *sensor*: `gp-0x6de8` / `gp-0x6de4` /
+`gp-0x6d04` / `gp-0x6d08` are **1 writer / 0 readers**, a free frequency-selective ratchet instrument.
+
+### 2. 🛑🛑 A CAVE IN THE SHAPER WOULD DISABLE THE POWER STEERING — orchestrator-verified
+`FUN_00043e44` is a **float twin of the shaper**: it reads `gp-0x6acc` at **`0x4467a`** using the SAME
+`0xC64C8` mode byte and `0xC61D4` cal, and compares against the delivered command with a tolerance of
+**`0.0048828125` = 5/1024**, escalating after **`0x3c23d70b` = 0.01 s** by adding 1024.0 against a
+128.0 threshold ⇒ `FUN_000462e6(0x3f1b)` ⇒ **DTC 0xF00049, the V74/V75 loss-of-assist class.** At 8 Hz a
+half-cycle is 62 ms — **six times the trip dwell.** ⇒ **The two "best" hook sites (`0x431C4`, `0x43206`)
+are INSIDE its coverage.** Measured phase budget in that region: **2.4°.** The only monitor-clean single
+instruction site is `0x453e0` (the `gp-0x6b94` read).
+
+### 3. 🛑 RECORD DEFECT — an estimate was promoted to a measurement
+`STATE.md:105` called `0xC646E` *"the one **MEASURED** cell, at 1–6 %"*. Its source
+(`reference_accord_path1_path2_structural_decoupling_and_damping_dose_tables.md:39-40`) says
+**"(prior-session estimate)"**. The 4× dose recommended earlier in this session rested on it and is
+**WITHDRAWN**. ⊕ The 1–6 % figure was also being transplanted onto `0xC63B8`, a cell with a **2⁻¹⁰**
+scale against `0xC646E`'s **2⁻²⁴** — a 16,384× mismatch.
+
+### 4. ★★★ THE CREEP ASYMMETRY — the mechanism-shaped finding of the session
+At creep **both velocity-opposing terms are architecturally OFF** — the table damper's FactorC `Y[0]`=0
+below 20/35 km/h (a five-factor PRODUCT ⇒ exactly zero), and the comp-add gate needs ~212 °/s — **while
+the r24/r26 derivative lane sits at 3.000×, its schedule MAXIMUM and 1.43× its highway value.**
+⚠ **SCOPE:** true for stock and for manual modes 24/25; **FALSE for engaged on V86B**, which lifted
+FactorC `Y[0]` to 0.887× at 0 km/h. **V87 removes that** ⇒ the asymmetry is restored in both arms.
+★ **The friction lane `gp-0x6b26` is 5.00× at 0 km/h vs 90 km/h** into a ±511 clamp **5× closer to
+binding at creep** — a structurally low-speed-only relay candidate. ⚠ Unmeasured; `gp-0x671a` could void it.
+
+### 5. ✅ METHOD WINS — both correct standing kit claims
+- 🛑 **`gp-0x1500` DOES NOT pass a correct static scan.** Its address is a literal in the image **twice**,
+  in a 13-entry 8-byte-stride registry. A **footprint-aware + both-encodings + image-wide LE32 literal**
+  scan reproduces **all four** known on-car RAM failures (`gp-0x1500`, `gp-0x14E0`, `gp-0x1700` disp23-only,
+  `gp-0x14FA` V48B high-byte aliasing) and correctly clears both known-good cells. Corrects
+  `BUILD-LINEAGE.md:929`. ⚠ Still not proof of ownership.
+- 🛑 **A live 1 kHz blind spot in every kit scan:** `movea disp,gp,rN` + register add — **2,961 sites,
+  796 bases, 224 provably indexed ⇒ statically unbounded extent**, invisible to disp16 AND disp23.
+- **The 6-byte Format XIV displacement is byte-enumerable after all:** `disp = (sext16(hw2) << 7) |
+  ((hw1 >> 4) & 0x7F)`, zero over-match. Corrects `accord-gp4f60-two-encodings-enumeration-trap`.
+  ⚠ **588 six-byte STORES exist image-wide** ⇒ any disp16-only writer census is short.
+- **`FUN_00041d56` is a genuine 3×3 state-space with complex poles** (15 f32 cals at `0xC60E8`) — but
+  ζ = 0.975, Q = 0.513, **0 torque-path readers** (angle observer → DTC 0x5e). **Nothing in the control
+  region has Q > 0.52** ⇒ the closure argument's premise was false, its conclusion survives.
+- 🛑 **`is_current` on the Ghidra bridge is a RACE between agents.** Pass `program="code.bin"` explicitly
+  on every call; never trust a snapshot, including one taken a call ago.
+
+---
+
+## ⚠ SUPERSEDED — HEADLINE, 2026-08-09 — the V87 ANALYSIS session. Full narrative in `docs/HANDOFF-2026-08-09-v87-the-ratchet-is-a-resonance.md`
 
 ### 0. 🛑 RECORD DEFECT FIXED — V86 and V86B had FLOWN and this file said "BUILT, UNFLASHED"
 **Fourth consecutive instance** (after V83a, V84, nearly V85). Route `6f` = V86, route `70` = V86B,
