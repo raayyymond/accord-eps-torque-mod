@@ -217,12 +217,47 @@ REFUTED.** The real intermittency is the caller's state guard (`andi 0x830` ⇒ 
 - **`gp-0x6abc`'s counts-per-°/s scale is unconfirmed.** V85's `b7`/`b6` pair measures it.
 - **`S_T` (counts→N·m) is unmeasured** — every N·m and kg·m² figure is conditional on it.
 - **The highway grind and the ~28 Hz lane-change transient remain unaddressed.**
+- 🛑 **THE GRIND-#2 DRIVE PROTOCOL IS RETIRED, not outstanding.** Operator decision, 2026-08-09, after
+  he asked what it meant. It prescribed: empty lot, **openpilot engaged throughout**, 4–11 km/h without
+  stopping, wheel **≥100° from centre** sweeping 100–360°, continuous figure-eights at 100–500 °/s
+  column rate, **6–9 minutes**, plus ~60 s of the same manoeuvre with LKAS off. Route `6d` accumulated
+  **5.1 s of a 166 s floor (3.1%)**, and four builds in a row missed it the same way.
+  **It is being retired rather than re-issued**: it asks for an artificial low-speed manoeuvre under
+  LKAS that is awkward at best, and the 40–49 Hz events the operator actually reports occur on ordinary
+  roads at **56–62 km/h** (both route-`6d` events), not in that regime. ⇒ **Any future claim about
+  40–49 Hz at engaged creep is UNMEASURED and must be labelled so — do not schedule the drive, and do
+  not quote a zero-count from it as evidence.**
 
 ## ⇒ NEXT
 1. **Fly V85** with §6's pre-registration. 🛑 The flash decision and the bus are the operator's.
 2. **Run the ≥166 s grind-#2 protocol** — four builds in a row have missed it.
 3. **Base hygiene**: revert the 121 inert bytes on the next build.
-4. **The `0xC6AE0–EC` D-GAIN table has never been touched** — only the D *pole* (V43) and P *pole* (V46).
-   *"The derivative term is falsified"* is **not** established. Leading V86 candidate.
+4. 🛑 **CORRECTED 2026-08-09 (operator challenge). An earlier draft of this handoff claimed the
+   `0xC6AE0–EC` D-GAIN table "has never been touched" and billed it the leading V86 candidate. That
+   framing was WRONG and is withdrawn.** The *value* has indeed never been written (`0xC6AE6` = 2048 in
+   stock and in every build through V85, byte-verified) — **but the D branch has already been attenuated
+   on-car and nulled.** `0xC644A`, the D-branch smoothing pole, is unity (1024 = no smoothing) on stock,
+   and **V43 FLEW it at 32**:
+
+   | `0xC644A` | corner | `\|H\|` @7.79 Hz | `\|H\|` @21 Hz |
+   |---|---|---|---|
+   | 1024 (stock) | none | 1.000 (0.0 dB) | 1.000 (0.0 dB) |
+   | 64 (V49, never flashed) | 10.27 Hz | 0.797 (−2.0 dB) | 0.440 (−7.1 dB) |
+   | **32 (V43, FLOWN)** | **5.05 Hz** | **0.544 (−5.3 dB)** | **0.234 (−12.6 dB)** |
+
+   ⇒ **V43 removed 12.6 dB of the derivative branch at 21 Hz and the vibration did not move.** Cutting
+   the *gain* is a **weaker** version of the same test at that frequency, so **"the D term is falsified
+   at ~21 Hz" is substantially ESTABLISHED, not open.**
+   ⚠ **The narrow gap that DOES survive:** at **7.79 Hz V43 bought only −5.3 dB**, and the 6–9 Hz
+   micro-ratchet was not a scored band when V43 flew. **The D branch is UNDER-tested at micro-ratchet
+   frequencies — it is not untested in general.** Any V86 proposal here must be sized for 6–9 Hz and must
+   say why −5.3 dB at that band was insufficient.
+   ⊕ **V49 built (never flashed) a Stage-C SIGN FLIP** (`subr`→`sub` @`0x3a836`) plus pole 64 — a
+   different class of intervention (sign, not magnitude) and still genuinely untested. It was gated on
+   `gp-0x6752 = +1`; **this session confirmed that cell is a boot-time constant, always +1 in the
+   field**, which removes the brick condition that gate was written for. GATE 2 still applies.
+   📋 **METHOD RULE: "the VALUE was never written" is NOT the same as "the TERM was never tested."
+   Attenuating a branch's pole tests the branch. Check what a lever's neighbours already did to the same
+   signal path before calling it untried.**
 5. **A firmware-side dither build** is the named highest-value experiment for identifying the forward
    path, which passive data cannot recover.

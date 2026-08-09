@@ -140,7 +140,7 @@ why, and reverting is two bytes.**
 - **S2 / S3 / S4 are the targets.** **If S2 does not improve, revert `0xC40BC` — `N` is already flat at
   6000, there is no larger dose**, and the mechanism is falsified as an S2 driver.
 - **The damper stays frozen.** Any 26–31 Hz regression toward V81's 25.1% burst duty is an abort signal.
-- ⊕ Ship the **≥166 s engaged creep-cornering** grind-#2 protocol; four builds in a row have missed it.
+- ⊕ 🛑 **The ≥166 s engaged creep-cornering grind-#2 protocol is RETIRED** (operator decision 2026-08-09; missed by four builds, and the 40–49 Hz events actually reported occur at 56–62 km/h on ordinary roads). **Do not schedule it; label engaged-creep 40–49 Hz claims UNMEASURED.**
 
 🛑 **`b5` AS ORIGINALLY SPECIFIED (`|gp-0x6b98| > 8192`) WAS STRUCTURALLY VACUOUS AND WAS NOT SHIPPED.**
 `gp-0x6b98`'s only two control-loop writers store `clamp(r14, ±0x2000)` (explicit at `0x43B0E`–`0x43B20`),

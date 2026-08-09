@@ -368,6 +368,16 @@ basis. **Both premises were false, and V75 latched the ECU.** The bracket is **V
 
 ## 🛑🛑🛑 RULE 9, added 2026-08-06 — **THE GRIND-#1 FIX AND GRIND #2 HAVE NEVER BEEN SEPARATED**
 
+🛑🛑 **RULE 9's DRIVE PROTOCOL IS RETIRED, 2026-08-09, by operator decision.** The prescribed manoeuvre
+(empty lot, openpilot engaged throughout, 4–11 km/h, wheel ≥100° from centre, continuous figure-eights at
+100–500 °/s, 6–9 minutes, plus a 60 s LKAS-off control) has been **missed by four consecutive builds** —
+route `6d` accumulated **5.1 s against its own 166 s floor (3.1%)**. It is retired rather than re-issued:
+it asks for an artificial low-speed manoeuvre under LKAS, and **the 40–49 Hz events the operator actually
+reports occur on ordinary roads at 56–62 km/h** (both route-`6d` events), not at engaged creep.
+⇒ **Any claim about 40–49 Hz at engaged creep is UNMEASURED and must be labelled so. Do not schedule the
+drive; do not quote a zero-count from it as evidence.** The rest of RULE 9 — that the grind-#1 fix and
+grind #2 have never been separated — still stands.
+
 **Before proposing any rate-lane lever for grind #1, read this row. It is the reason the trade looks
 solved in the record and is not.**
 
