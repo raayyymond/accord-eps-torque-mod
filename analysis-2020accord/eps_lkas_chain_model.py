@@ -222,6 +222,30 @@ EXECUTION MODEL
                  10x slower than the mode. It also invalidates V59's eps table, which bracketed 1 kHz
                  and 500 Hz for task 5. 🛑 Prefer task 1 for any dynamics fix.
                  See memory/accord-task5-is-100hz-damper-cannot-damp-21hz.md.
+
+                 ★★★ CORRECTION 2026-08-09 late (V87 session), TWO STRUCTURAL FACTS THIS MODEL LACKED:
+                 (1) FUN_0003b66a holds a REAL BAND-PASS at 8.13 Hz -- backward difference x 17.453293
+                     -> TWO cascaded first-order EMAs sharing alpha 0xC63B4 = 51 -> gain 0xC63B8 = 41
+                     -> clamp +-10 -> x1024. Peak 8.14 Hz, Q 0.501, phase +1.44 deg. Byte-identical to
+                     stock in ALL 88 build images. 🛑 BUT IT IS NOT A DAMPER: the output is FULL-WAVE
+                     RECTIFIED (gp-0x6ba6 = |gp-0x6b9a|, subr r0,r13 @0x3b87a) and consumed as a LERP
+                     INDEX into the boost gain tables (falling 16384 -> 8188). abs() destroys the
+                     phase, FactorB is flat unity in all 34 records, and the boost arm is the
+                     V58/V59/V60 parametric pump already flown NULL. ⇒ the closure argument's PREMISE
+                     ("every gain element is a flat scalar or a differentiator") is FALSE -- a
+                     differentiator into two poles IS a localised band structure -- but its CONCLUSION
+                     survives: nothing in the control region has Q > 0.52, so the firmware shapes and
+                     drives the band, the plant rings in it.
+                     See memory/accord-c63b8-8hz-bandpass-is-a-rectified-boost-index.md.
+                 (2) FUN_00043e44 is a FLOAT TWIN of the shaper and it BLOCKS filter insertion. It
+                     reads gp-0x6acc @0x4467a with the SAME 0xC64C8 mode byte and 0xC61D4 cal, compares
+                     against the delivered command at 5/1024 = 0.0048828125 counts, and after 0.01 s
+                     (0x3c23d70b) escalates by +1024.0 against a 128.0 threshold -> FUN_000462e6(0x3f1b)
+                     -> DTC 0xF00049, the V74/V75 LOSS-OF-ASSIST class. At 8 Hz a half-cycle is 62 ms,
+                     six times the trip dwell. ⇒ 0x431C4 and 0x43206 are INSIDE its coverage; the phase
+                     budget there is 2.4 deg; the only monitor-clean single-instruction site on the
+                     spine is 0x453e0 (the gp-0x6b94 read).
+                     See memory/accord-shaper-float-twin-blocks-filter-insertion.md.
                  ✅ CLOCK AUDIT RESOLVED 2026-07-31 -- the NUMBER survives, the REASON was wrong.
                    🛑 PCLK = 40 MHz, NOT 80. Likely original error: conflating HEAPCLK (80 MHz) with
                       PCLK; option-byte Table 6-7 makes PCLK = HEAPCLK/2 the ONLY legal setting at
