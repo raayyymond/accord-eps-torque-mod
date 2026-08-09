@@ -1009,3 +1009,94 @@ review. See [[accord-two-cave-encoding-traps-sar-floor-and-opcode-bit]].
   nulls, both failing their own positive control. Nothing this session changes that.
 - **V84 is UNFLASHED**, and lever B is known **not** to be the highway answer — V67/V68 flew it and the
   highway grind persisted.
+  🛑 **STALE — V84 FLEW as route `6d` on 2026-08-09, and V85 flew as route `6e` the same day.** See below.
+
+---
+
+## 2026-08-09 (late) — V85 FLEW, THE LEVER DELIVERED INTO A NULL, AND THE RATCHET CHANGED CLASS
+
+```
+V85 flies route 6e, fault-free, STEER_STATUS = {0: 43,641}
+  |    [[accord-v85-flew-lever-delivered-bands-are-null]]
+  |
+  +--> THE LEVER DELIVERED:  relay saturation 33.3% -> 4.6% engaged (7.21x)
+  |     both pre-registered duty predictions hit
+  |         |
+  |         v
+  |    ...INTO A CLEAN NULL IN EVERY BAND
+  |     6-9 Hz 1.088 [0.746, 1.451] · 18-22 Hz 1.347 [0.947, 1.758]
+  |     negative control 32-38 Hz 1.007 · IMU roughness 0.958 (V85's road SMOOTHER)
+  |     split-half null [0.63, 1.50] wide
+  |         |
+  |         v
+  |    OPERATOR: "ratcheting was still unfixed"     <- THE VERDICT THAT OVERRIDES
+  |
+  +--> so: is the mechanism a RELAY at all?
+        |
+        v  odd/even comb 0.858 [0.739, 1.000]  vs a positive control at 1.204 on 15% injection
+           PLV z <= 1.05 · time-locking -0.0375 · no 3rd harmonic (2nd method)
+        |
+        +--> NOT A RELAY  =>  refutes FUN_00038148 / gp-0x6b70 as the ~8 Hz generator
+        |
+        v  the wheel-on-torsion-bar mode is 12.8 Hz [12.1, 13.6] -- ABOVE the ratchet
+        |
+        +--> NOT A PLANT RESONANCE (7.79 Hz unreachable through the plant, 12.65 Hz floor)
+        |
+        v
+   *** A LINEAR LOOP OSCILLATION set by accumulated estimator lag ***
+        [[accord-ratchet-is-a-linear-loop-oscillation]]
+        |
+        v
+   THE LEVER CLASS IS PHASE / LAG -- and NOTHING since V38 has ever moved it
+        |
+        v
+   V86 = ONE cell 0xC40D4 573 -> 286, pre-registered as a FREQUENCY RATIO [0.797, 0.875]
+        [[accord-v86-built-the-frequency-lever]]
+```
+
+### The load-bearing edges this session created
+
+| edge | direction | rationale |
+|---|---|---|
+| `ratchet-is-a-linear-loop-oscillation` → `fun3b8f6-coulomb-relay-proportional-to-command` | **BOUNDS it** | the relay was real and worth fixing, but it is **not** the ~8 Hz generator; the lever delivered into a null |
+| `ratchet-is-a-linear-loop-oscillation` → **every magnitude lever in the kit** | **RE-AIMS the whole search** | a magnitude lever on a linear loop mode changes amplitude at best and raises loop gain at worst. **What moves a loop mode is phase.** |
+| `ratchet-is-a-linear-loop-oscillation` → `ratchet-characterised-on-route-4f` | **COMPLETES it** | that node had the frequency, the speed-invariance and the "not in the command" fact but no mechanism; this one supplies it |
+| `v85-flew-lever-delivered-bands-are-null` → `v84-flew-and-fixed-the-highway-ring` | **CANNOT test it** | route `6e` has **22.4 s** engaged ≥80 km/h ⇒ the ring result neither replicates nor regresses. **UNMEASURED, not confirmed** |
+| `plant-model-residual-aggregator-chain` → `aggregator-reaches-motor-via-gp6acc-bridge` | **EXTENDS it upstream** | the bridge closed the *output* half; this closes the *input* half — where `gp-0x6ad6` comes from |
+| `levers-killed-2026-08-09` → `factord-is-the-angle-error-lever` | 🛑 **REFUTES its headline** | `gp-0x6a10` is **absolute steering angle**; FactorC's zero dead zone precedes FactorD ⇒ **this firmware has NO frequency-selective lever**, which also removes the argument that FactorE cannot do what FactorD can |
+| `levers-killed-2026-08-09` → `c407e-is-the-fault-interlock-c63a0-exonerated` | **completes the `0xC63A0` story** | exonerated of the faults there; **shown INERT here** (`ch₀` = 0 on 98.8% of engaged frames) ⇒ V84's own revert of it was inert too |
+| `falsifier-only-fires-if-it-could-have-fired` → `size-probe-rungs-against-lane-reachable-output` | **GENERALISES it** | that node was about rungs; this one extends the same rule to **abort criteria and exposure**, including ones that come back **clear** |
+| `smoke-test-ghidra-tools-at-agent-spawn` → every tracer brief | **gates their nulls** | a blind tracer emits output shaped exactly like a genuine negative, and in this kit nulls are load-bearing |
+
+### Edges REDRAWN (retractions and corrections)
+
+- **`0xC40BC`: "revert if it does not help" → FREEZE.** The disposition flipped when the mechanism was
+  corrected: the single-input describing function does not apply because **the ring rides on a bias
+  5–10× its own amplitude**. **Spent ≠ wrong.** [[feedback-right-answer-wrong-reason-is-a-coincidence]]
+- **"Harmonic injection" → PARAMETRICALLY SWITCHED DAMPING.** At cal 600 the damping switched **fully
+  off** on 87% (6–9 Hz) / 96% (18–22 Hz) of symptom frames. Different mechanism, same cell.
+- **"V85 is 1.625× worse than V81 at 6–9 Hz" is a WHEEL-ORDER ARTEFACT** — order-cleaned it is
+  **1.273 [0.853, 2.507]**, inside the null. The 18–22 Hz result survives (1.957 → 1.928).
+  ⊕ Reinforces [[accord-averaged-spectrum-needs-matched-speed-distributions]].
+- **"V85's ~8 Hz line is 3.2× more prominent" is a FLOOR EFFECT**, not an amplitude increase.
+- **Lever A's int16-overflow ceiling is WITHDRAWN** — the intermediate is 32-bit
+  (`5120 × 5244 >> 9 = 52,440` fits). **Do not cite an r24 overflow ceiling.** The
+  do-not-restore verdict survives **on the manual-arm leg alone**.
+- **`0xC61F6` 3 → 0 flips from candidate to forbidden.** A deadband is the **dual** of a relay;
+  deleting it **adds** small-signal gain — the destabilising direction.
+- **`gp-0x67fa`'s reachable set is {11} alone** ⇒ **`0x454FE` is MEASURED INERT**, not merely
+  unexercised. Keep the byte; never justify a build on it.
+- **`0xC63A0` ledger:** reverted at **V83a** not V84; **V76g also carried 2048**; **V76/V80 are 1024**.
+
+### What is honestly unresolved after this session
+
+- **Ratcheting is unfixed** and still has no instrumented history beyond the frequency line itself.
+  V86's frequency test is the first probe aimed at it since V72.
+- **`Y[0]` of the `FUN_00038148` RAM LERP** is `ep`-relative and unresolved — anything that clamps or
+  scales that LERP is un-sizable until it is closed.
+- **3 of `0xC6200`'s 15 readers are unidentified** ⇒ **RULE 11 is not satisfied on it.**
+- **The ~20.90 Hz creep line** rests on **n = 6** windows on V84 — suggestive, not measured.
+- **Micro- vs macro-ratcheting are not separated**, and this session could not separate them.
+- **V86B's damper creep hypothesis** is `[BELIEF]`; what settles it is a **drive protocol, not a build**.
+- **The 26–31 Hz band and the highway regime have NO V85 measurement** — route `6e` lacked the exposure,
+  and no verdict on them may be carried forward from this flight in either direction.

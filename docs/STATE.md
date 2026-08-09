@@ -1,21 +1,285 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-09 — V84 FLEW as route `6d`, fault-free, and FIXED NOTHING. Operator verbatim:
-"None of these have been fully fixed in V84." One BAND moved (26–31 Hz burst duty 25.1% → 2.54%); a band
-moving is not a symptom fixed. The rate lane is at its ceiling — V84 is byte-identical to V67/V68 at every
-grind-relevant cell. The loop does NOT close through openpilot. A previously undocumented COULOMB RELAY
-PROPORTIONAL TO THE DELIVERED COMMAND was found at 1 kHz, relay index 7.87 against V80's 3.27, virgin on
-all 84 builds — V85 linearises it.**
+**Last updated: 2026-08-09 (late) — V85 FLEW as route `6e`, FAULT-FREE and the cleanest flight in the
+modern lineage (`STEER_STATUS` = {0: 43,641} — not one non-zero frame). The `0xC40BC` lever DELIVERED:
+relay saturation 33.3% → 4.6% engaged, a 7.21× reduction, both pre-registered duty predictions hit.
+🛑 It is now SPENT — FREEZE it at 6000. 🛑 And V85 vs V84 is a CLEAN NULL in EVERY band, while the
+operator reports RATCHETING IS STILL UNFIXED. The session's real finding is elsewhere: the ~7.79 Hz
+ratcheting is a LINEAR LOOP OSCILLATION whose frequency is set by accumulated estimator lag — measured
+NOT a relay and NOT a plant resonance. V86 attacks its FREQUENCY with one cell (`0xC40D4` 573 → 286),
+which is a different lever CLASS from everything since V38: phase/lag, not nonlinearity.**
 
 🛑 **TERMINOLOGY DISCIPLINE, operator instruction 2026-08-09.** *"Not even sure what the ring is. We are
-working on grinding, vibrating, and ratcheting issues."* **"The ring" and "grind #1/#2" are KIT JARGON for
-frequency bands. They are NOT symptoms the operator named. Score bands; let the operator score symptoms;
-never call anything FIXED that he has not called fixed.**
+working on grinding, vibrating, and ratcheting issues."* **"The ring", "grind #1/#2" and "S1…S4" are KIT
+JARGON for frequency bands. They are NOT symptoms the operator named. Score bands; let the operator score
+symptoms; never call anything FIXED that he has not called fixed.**
 This file is the single current-state record.
 
 ---
 
-## ★★★★★ HEADLINE, 2026-08-09 — full narrative in `docs/HANDOFF-2026-08-09-v84-flew-and-the-command-scaled-relay.md`
+## ★★★★★ HEADLINE, 2026-08-09 (late) — full narrative in `docs/HANDOFF-2026-08-09-v85-flew-and-the-ratchet-is-a-linear-loop.md`
+
+### 1. ✅ V85 FLEW (route `6e`), FAULT-FREE — the cleanest flight in the modern lineage
+`75604b0a432fdc89_0000006e--649c462a6e`, cache `_cache_r6e/`. **43,641 frames, 438.2 s, 82.02% engaged.**
+**`STEER_STATUS` = {0: 43,641} — not one non-zero frame**, 0 DTC-active, 0 sentinels. [EVIDENCE]
+**Identity confirmed with NO free parameter:** `b3` fingerprint **1.00000**, `b7` duty **0.39481** where
+V84 read **0 / 68,236**; nesting `b6⇒b7` and `b5⇒b4` both **0 violations**.
+
+🛑 **EXPOSURE-LIMITED AT SPEED — this bounds what may be scored.** Engaged **≥50 km/h: 35.6 s**;
+**≥80 km/h: 22.4 s** (V84 had 370.8 / 158.1). That is **V83a-class** ⇒ 🛑 **NO highway and NO 26–31 Hz
+verdict may be scored on route `6e`.** Creep exposure is the **best in the ladder** (68 windows /
+15 blocks), so creep claims are the ones this route can carry.
+
+🛑 **`_cache_r6e/r6e.npz` carries `probe_build = ['V80']`. That field is a STALE EXTRACTOR HEURISTIC and
+is WRONG — never quote it.** Found independently by two agents.
+⊕ **Kit naming trap:** "CAN 330 / 399 / 427" are **decimal** = hex **`0x14A` / `0x18F` / `0x1AB`**.
+⊕ Route `6e` segment `--7--` is **truncated mid-capnp-message**; stock `read_messages` raises and loses
+the whole route. A wrapper recovered 32,695 complete messages.
+
+### 2. ✅ THE `0xC40BC` LEVER DELIVERED — AND IS NOW SPENT. **FREEZE AT 6000.**
+Relay saturation **39.5% → 11.1% overall, 33.3% → 4.6% engaged (7.21×)**. Both pre-registered duty
+predictions hit. [EVIDENCE]
+
+🛑 **THE REASON TO FREEZE — and it REPLACES the pre-registration's own rationale.** That rationale read
+*"N is already flat at 6000, there is no larger dose"*; it reached the right answer by the **wrong route**.
+The **single-input** describing function cannot settle this at all, because **the ring rides on a bias
+5–10× its own amplitude** (measured `|B|` p50 **35** / p90 **228** counts against ring amplitudes `A`
+p50 **4–7** counts). The correct instrument is the **BIASED** describing function, and it says top-decile
+pinning at cal 6000 is **0.0000 for 18–22 Hz** and **0.043 for 6–9 Hz**, after an already-delivered
+**20.3×** reduction. ⇒ **There is nothing left to buy here. Do not raise it further; do not lower it.**
+
+🛑 **GOLDEN-MODEL REFRAME:** this lane's pathology was **NOT "harmonic injection"** — it was
+**PARAMETRICALLY SWITCHED DAMPING.** At cal 600 the damping switched **fully off** on **87% (6–9 Hz)**
+and **96% (18–22 Hz)** of symptom frames.
+⊕ Scale confirmed independently two ways: **4.923** and **4.697** ct/(°/s) bracket the inherited
+**4.7121**. Reachable envelope **±1,930 counts**.
+
+### 3. 🛑 V85 vs V84 IS A CLEAN NULL IN EVERY BAND
+| band | V85 / V84 | reading |
+|---|---|---|
+| 6–9 Hz | **1.088 [0.746, 1.451]** | null |
+| 18–22 Hz | **1.347 [0.947, 1.758]** | null |
+| 40–49 Hz | 1.002 | null |
+| **32–38 Hz (negative control)** | **1.007** | control holds |
+| 1–4 Hz (validity) | 1.005 | holds |
+| IMU roughness | 0.958 | V85's road was *smoother* |
+
+**Split-half nulls are [0.63, 1.50] wide — a ratio must clear ~1.5 to mean anything.**
+🛑 **The instrument does NOT corroborate the operator's two "a little better" reports, and does NOT
+refute them either.** Score bands; let the operator score symptoms.
+⚠ **Self-correction of record:** the 6–9 Hz *"V85 worse than V81"* figure of **1.625 was a WHEEL-ORDER
+ARTEFACT** — order-cleaned it falls to **1.273 [0.853, 2.507]**, inside the null. The 18–22 Hz result
+survives order-cleaning (1.957 → **1.928**).
+
+### 4. ★★★ THE ~7.79 Hz RATCHETING IS A **LINEAR LOOP OSCILLATION**, NOT A RELAY AND NOT A RESONANCE
+**This is the session's real finding, and it changes what class of lever can touch it.**
+
+- **NOT a relay [EVIDENCE].** Odd/even harmonic comb **0.858 [0.739, 1.000]** against a positive control
+  reading **1.204 [1.147, 1.566] at just 15% injection**; 3:1 phase-locking **PLV z ≤ 1.05**;
+  switching-surface time-locking **−0.0375**; a second method finds **no third harmonic**.
+  ⇒ **<15% of the ~8 Hz bar content can be relay-generated.**
+- **NOT a plant resonance [EVIDENCE].** The wheel-on-torsion-bar mode is **12.8 Hz [12.1, 13.6]** —
+  *above* the ratchet — and 7.79 Hz is **unreachable through the plant alone** (12.65 Hz floor).
+- ⇒ **[BELIEF, but the only surviving hypothesis] a LINEAR loop oscillation whose frequency is set by
+  ACCUMULATED ESTIMATOR LAG.** It fits every recorded property: sinusoidal; **speed-invariant**
+  (slope +0.074 / +0.049 / −0.004 Hz per m/s vs wheel-order-2's predicted **+0.961**); engaged-only;
+  present in the bar and in angle rate but **NOT in openpilot's command**.
+- ⊕ **The line grew ~3× at V84 and V85 kept it** (speed-matched V85/V81 = **2.742**, V85/V84 = **0.850**).
+  ⚠ The reading *"V85's line is 3.2× more prominent"* is a **FLOOR EFFECT**, not an amplitude increase.
+- ⊕ **NEW: a discrete engaged-only ~20.90 Hz line at creep on V85 and V84, absent on V81** (prominence
+  **8.08×**), within noise of the recorded **21.09 Hz** engaged-only closed-loop mode. **The 18–22 Hz
+  V85-vs-V81 elevation is THAT LINE, not a floor shift.** ⚠ V84's arm is **n = 6 windows** — suggestive,
+  not measured.
+- ⊕ **Micro- vs macro-ratcheting could NOT be separated**: the split is dominated by speed, and kurtosis
+  is consistent with **one population**.
+
+### 5. ★★★★ A PREVIOUSLY UNDOCUMENTED CHAIN, TRACED END TO END — now in the golden model
+```
+FUN_0003b8f6 @0x3b8f6   (1 kHz plant-model estimator; sole caller FUN_0002214a, guard andi 0x830 => states {4,5,11})
+  model  = EMA2(gp-0x6b98 x polarity/1024, a=0xC40D4=573/4096)
+         + clamp(FIR(EMA2(gp-0x4f60/1024, a=0xC40D8=3686/4096)) x 0xC613A/32768, +-15)
+           x LERP13(gp-0x6a10, X@0xC6B66, Y@0xC6B80)/1024
+  FRICTION = clamp(EMA(|model| x 102/1024 + 0/1024, a=0xC40D0=408/4096) x ratio, +-10)  -> gp-0x6ae2
+      ratio = clamp(polarity(gp-0x6752) x gp-0x6abc x 12 / cal(0xC40BC), +-1)   [saturates at cal/12]
+  INERTIA  = EMA^2[d/dt(polarity x gp-0x6abc x 12) x 17.453293] x 0xC646E       -> gp-0x6ae0
+  gp-0x6bfc = clamp(0xC6468(=2639) x (model - FRICTION - INERTIA), +-20000)     @st 0x3BC1A
+FUN_0003bc20 @0x3bc20 : plausibility |x|<20000 -> gp-0x6bfe, status gp-0x695c (0x400 ok / 0xFFFF bad)
+FUN_00038148 @0x38148 : resid = gp-0x6bfe - (EMA(SUM six channels x weights 0xC63A0..0xC63AA,
+                                                coeff 0xC63AC=102) >> 4) + gp-0x6bfa
+                        gp-0x6b70 = clamp(SIGN(resid) x LERP_RAM(|resid| x 0xC63AE >> 10),
+                                          +-0xC6200=8192)                       @st 0x382D2
+FUN_00037fe6 @0x37fe6 : ASSIST AGGREGATOR -- sum = -gp-0x6b4a + SUM(term x BYTE enable 0xC64AD..0xC64B3, all 0x01)
+                        gate: the six optional terms are summed whenever gp-0x67ab != 1
+                        gp-0x6ad6 = clamp(sum x speedLERP(gp-0x69aa)/1024, +-25600)   @st 0x38142
+-> FUN_0003a382 (PID, reads gp-0x6ad6 as bias) -> gp-0x6ad4 -> aggregator -> governor -> gp-0x6b98
+```
+**Censuses (dual-encoding scan) [EVIDENCE]:** `gp-0x6bfc` 2 hits · `gp-0x6bfe` 2 · `gp-0x6b70` 2 ·
+`gp-0x6ad6` 3 · `gp-0x67ab` 3 (the `0x37FE6` hit is a genuine `ld.bu`, the aggregator's entry read).
+**`0xC6200` has 15 readers**; the governor cals `0xC6202/04/06/08` cluster **disjointly** at
+`0x045410`–`0x0457de` ⇒ **`0xC6200` is NOT governor-shared** (confirmed twice — and V40 wrote `0xFFFF`
+to `0xC6206`/`0xC6208` while leaving `0xC6200` untouched). **3 of its 15 readers are unidentified.**
+- **`0xC64AD`..`0xC64B3` are 0/1 ENABLE FLAGS, not gains**; the aggregator's speed LERP is **flat 1024**.
+  **`0xC64B0` gates `gp-0x6b70`.**
+- 🛑 **`gp-0x67fa`'s reachable set is effectively {11} ALONE** — state 5 structurally dead, state 10
+  measured **0.0000%**, state 4 measured **0/123,277**. ⇒ **V42's `0x454FE` is present on V85 (`0xB5`)
+  and MEASURED INERT.**
+- **`gp-0x671a` RULED OUT** — stuck at 0 across **1,158 reversals** on V64.
+
+🛑 **THREE NEW SAFETY ITEMS IN THIS CHAIN — all "flatten a shaped curve into a relay" errors:**
+1. **`0xC4080` = 0 is a LATENT PURE COULOMB RELAY.** `FRICTION += cal/1024 × ratio`, with **no `|model|`
+   factor** ⇒ amplitude-independent and unbounded in index. 🛑 **NEVER RAISE IT.**
+2. **`0xC63AE` → 0** makes the LERP index ≡ 0 ⇒ output ≡ `±Y[0]`, a constant ⇒ **a pure relay at full
+   authority.** 🛑 Do not.
+3. **`0xC6200` < `Y[0]`** does the same thing by clamping. 🛑 Do not.
+   *(1–3 are the V72/V80 flatten-to-relay error, one address family over.)*
+⚠ **`Y[0]` of the RAM LERP is UNRESOLVED**: `Y[0] = *(u16*)(gp-0x3714)` via `movea -0x3714,gp,ep`
+@`0x39508` + `sld.hu 0x0,ep,r11` @`0x3950C` → `st.h r11,-0x641c,gp` @`0x39522`, inside `FUN_000389ec`.
+The only ordinary-addressing access image-wide is a **store-zero** at `0x38D22` — **a lead, not an
+answer**; the block is `ep`-relative and invisible to a displacement scan.
+
+### 6. 🛑 LEVERS KILLED ON EVIDENCE THIS SESSION — do not re-propose without new evidence
+| lever | verdict | reason |
+|---|---|---|
+| **`gain_A` rec0/rec1 lowered** | 🛑 **ENGAGED-INERT** | Lever B's gate repoint (`0x3AA96`=`FB`) makes `lp = latActive`, and the armed path at `0x3AB5E` **OVERWRITES** `gain_A` with `[0xC6444]`=512. **V84/V85 already deliver 512 engaged at EVERY speed** — deeper than V72/V73's 512/512/1050/2664/2560. This is an **already-run, twice-failed pre-registered** experiment (V84's own §7a prediction; FAIL on V84, FAIL on V85) |
+| **Lever A (`0x3AB76`/`0x3AC20`)** | 🛑 **DO NOT RESTORE** | its `sar` is **UNGATED** ⇒ reproduces V62/V65 **manual** behaviour verbatim (*"makes the entire car vibrate… regardless of LKAS engagement"*), and `r24 ≥ ~2` is necessary for grind #2 in every build that produced it. ⚠ Its **int16-overflow-ceiling argument is WITHDRAWN** — disassembled: `mul` writes a full 32-bit low word and `sar 0xa` operates on 32 bits, so `5120 × 5244 >> 9 = 52,440` fits with headroom. **The verdict stands on the manual-arm leg alone** |
+| **the 13-point LERP `0xC6B66`/`0xC6B80`** | 🛑 **DEAD** | `gp-0x6a10` is **ABSOLUTE STEERING ANGLE**, not a tracking error (`b4` ≡ `\|angle\| ≥ 0.85°` at **99.94%**, the step sits **exactly on the threshold's own numeric value**, and it holds in the **MANUAL** arm where a tracking error is undefined). **88.6% of engaged driving sits in its flat first segment** ⇒ a near-constant **0.878× broadband trim** |
+| **FactorD (mode-record family)** | 🛑 **STRUCTURALLY INERT where the symptoms live** | FactorC is multiplied in **BEFORE** it and has `X[0]` = 2240 ct = **34.97 km/h**, `Y[0] = 0`, in **all four** of this car's modes. Zero × anything = 0. A third `gp-0x6a10` consumer (the boost LERP2 in `FUN_00034a72`) is **also** flat-zero in band0 (0–8 km/h) in all four modes — **three independent confirmations** |
+| **`0xC63A0` 1024 → 2048** | 🛑 **INERT** | `ch₀ = gp-0x6bd0 = clamp((FactorC(speed) × FactorE(rate)) >> 10, ±ceiling)`; Honda's shape has **two zero dead zones** (FactorC below 34.97 km/h, FactorE below 12.73 °/s, both `Y[0]=0`) and the product truncates ⇒ **`ch₀` is exactly ZERO on 98.8% of engaged frames on route `6e`** (p50 and p90 both 0.00 counts against a ±25600 clamp) |
+| **`0xC61F6` = 3 → 0** | 🛑 **DO NOT** | a deadband is the **DUAL of a relay**: `N(A) → 0` as `A → 0` is precisely what *prevents* harmonic balance closing. **Deleting it ADDS small-signal gain — the destabilising direction.** It costs 0.4% at the lane's ~1029-count full scale and exactly nothing whenever the total sits >3 counts off zero |
+| **`0xC61D6` (shaper slew step, stock 0)** | 🛑 **ALREADY REJECTED** | an 11-round review labelled it *"highest-risk; last/never"*: it does **not** re-enable an anti-snap ramp, it **activates a dormant, uncalibrated speed×torque 2D map** onto the live command. `0xC6424` is separately confirmed **inert** (coupled to slew=0). ⇒ **There is NO usable cal-only rate-limiter lever on this path** |
+| **the friction-compensator relay `FUN_00038148`/`gp-0x6b70`** | 🛑 **REFUTED as the ~8 Hz generator** | §4's no-comb evidence |
+
+🛑 **`0xC63A0` LEDGER CORRECTIONS** (each from a byte read): it was **reverted at V83a, not V84**;
+**V76g ALSO carried 2048**; **V76 and V80 are 1024**. ⊕ Two consequences that matter:
+**V42 flew at 1024 and the operator called the ratchet fixed ⇒ 2048 is not necessary**; and
+**V72/V73 also carried Honda's damper**, so `ch₀` was zero on them too ⇒ **the V72/V73 correlation has
+no mechanism**, and **V84's own `0xC63A0` revert was itself INERT** and cannot be the cause of the
+V84 step.
+
+⊕ **NEW, VIRGIN, UNTESTED AND NOT PROPOSED — recorded so it is not "discovered" again:**
+`FUN_00036388`'s **relay-with-dwell** — dwell counter `gp-0x6a82`, +1/tick while `|gp-0x6b64| < 0xC618A`
+(=1024), ceiling `0xC627E` = 20; **past 20 ticks the output SNAPS to 1024**, writing `gp-0x6b62`.
+Cals `0xC618A` / `0xC627E` / `0xC63C0` were **never edited by any build** (grep-confirmed).
+**Disfavoured by the same no-comb evidence in §4.**
+
+### 7. ✅ V86 IS BUILT AND UNFLASHED — see the candidate block below
+**One cell: `0xC40D4` 573 → 286**, plus a probe cave. It is a **FREQUENCY** experiment, not an amplitude
+one, and it is a **different lever CLASS from everything since V38 — phase/lag, not nonlinearity.**
+
+### 8. 📋 METHOD RULES EARNED THIS SESSION
+- 🛑 **A RUNG MUST BE SIZED AGAINST ITS OWN LANE'S REACHABLE OUTPUT.** V84's `b7`/`b6` tested
+  `|r24| ≥ 1024` on a lane whose input never exceeded `|r1| = 201` ⇒ **0.0 across 68,235 frames in BOTH
+  arms**, and it was misread as *"the lever was out of force"*. **A falsifier only fires if it COULD
+  have fired.**
+- 🛑 **A COUNT-ONLY RECORD CENSUS IS BLIND TO A WRITE INTO AN ALREADY-NON-STOCK RECORD.** Assert **every**
+  record byte-identical to the BASE unless declared. It is **340 pointer-array slots (10 arrays ×
+  34 modes), not 58**; **34 non-stock records**, including modes **32/33**.
+- 🛑 **DYNAMIC GHIDRA TOOL REGISTRATION IS SCOPED TO THE AGENT SESSION AT SPAWN TIME.** Three tracers
+  were **silently blind all session** — `check_tools` reported "callable" while direct calls errored.
+  **Prime every future session to smoke-test `get_current_program_info` as its FIRST call.**
+- 🛑 **A prediction that comes true for a reason that is not yours is a COINCIDENCE until the real
+  reason is found.**
+
+---
+
+## ✅ BUILT, VERIFIED, **UNFLASHED** — **V86** ← THE CURRENT CANDIDATE
+
+**Base = the flown V85. ONE control cell, TWO bytes, plus a probe repoint inside the proven cave.**
+| | value |
+|---|---|
+| builder | `analysis-2020accord/build_v86_tva.py` · gate checker `analysis-2020accord/verify_v86_gates.py` |
+| base | `_v85_FRICTION.C40BC.6000-PROBE.RATE.6ABC-FRIC.6AE2_plain_image.bin` sha256 `cc9cdd662ab92049e266d3fef862763bee24dc21e8efa1fe8314ec983ed06e8f` — **the cut that FLEW route `6e`** |
+| image | `_v86_CMDEMA.C40D4.286-PROBE.6B70.SIGN-GATE.67AB_plain_image.bin` sha256 **`b8d81ebf9aae4ce27b489687a6d2dc1b222214accc0b128068b31ce41515d2f8`** |
+| rwd | `39990-TVA,A160-V86-V85BASE-CMDEMA.C40D4.286-PROBE.6B70.SIGN-GATE.67AB-0x13000-0x100000.rwd` sha256 **`9d237dfc5fbfde27c7843bfa47c6f0e7eb6925819efab94f2aefa4bd4798c370`** (986,042 B) |
+
+**Orchestrator-verified from disk, not from a report:** 5 differing runs / **68 bytes** vs the V85 base,
+**ZERO unattributed** — `0xC40D4` 2 B + cave 62 B (3 runs) + CRC `0xC4FFC` 4 B. Cave matches the spec hex
+byte-for-byte incl. `a632` at +18. All 14 frozen u16 cells and 4 frozen bytes correct; damper m26/m27
+`Y[0]` both still 0; `[0xC5000, 0xC5FFC)` byte-identical to **both** base and stock; 360 bytes vs stock ≥`0x13000`.
+
+⚠ **RE-CUT ONCE.** The first cut shipped `a932` (`sar 0x9`, b5 = 512) because the orchestrator sent a
+threshold reversal that crossed the builder mid-cut. Caught by reading the built image's bytes, **before any
+hash was reported**; both defective files were **deleted outright** (not `SUPERSEDED-`), and the re-cut adds a
+build-time assert on the full 68-byte cave naming `+18` by name. 📋 **METHOD RULE: verify a cave against the
+FINAL spec, not against what the builder was handed.**
+
+---
+
+## ✅ ALSO BUILT, VERIFIED, **UNFLASHED** — **V86B**, the operator's alternative
+
+**Same V85 base, same cave (b5/b6 weight-swapped for identity). TWO control cells, FOUR bytes.**
+| | value |
+|---|---|
+| builder | `analysis-2020accord/build_v86b_tva.py` |
+| image | `_v86b_FACTORC.M26.M27.Y0-PROBE.6B70.SIGN-GATE.67AB_plain_image.bin` sha256 **`b2dfe9ffc3fd2c5a786a7adb1d281e2841143756dccf766b84f292b3f9416d8d`** |
+| rwd | `39990-TVA,A160-V86B-V85BASE-FACTORC.M26.M27.Y0-PROBE.6B70.SIGN-GATE.67AB-0x13000-0x100000.rwd` sha256 **`350c7d2fe1460a06c4f9efa29e5bc03d50ad391a77d56a2ea2165ed4ba337de5`** (986,042 B) |
+
+**THE CELLS:** `0xD77DA` FactorC **m26** `Y[0]` **0 → 908** and `0xD77EE` FactorC **m27** `Y[0]` **0 → 875**
+(each := that record's own `Y[3]`), dereferenced through ptr array `0xC9E9C`. `0xC40D4` stays **573**, so
+**V86 ↔ V86B differ by 16 bytes and are single-variable against each other.**
+**Orchestrator-verified:** 7 runs / **74 bytes**, zero unattributed (4 control + 62 cave + 8 CRC in **two**
+blocks, `0xC4FFC` + `0xD7FFC`); m24/m25 byte-stock ⇒ **engaged-only by construction**; FactorE `X[0]` = **60**,
+untouched on every mode.
+
+🛑 **KNOWN, DELIBERATE, AND STRUCTURALLY FORCED: the row becomes NON-MONOTONE** —
+m26 `[0,234,429,908]` → **`[908,234,429,908]`**, a V-shaped speed surface (strong at creep, weakest at
+60 km/h, rising again to 140). Honda ships monotone in all 32 records and the kit's own
+`assert_factor_monotone` **fails** on it. **It cannot be avoided:** monotonicity requires `Y[0] ≤ 234`, which
+yields **2.2% of V81's flown dose — inert**; `Y[0] = Y[3]` yields **10.1%**, the intended test. Lifting the
+upper breakpoints instead would restore monotonicity but push straight into the ring regime.
+⇒ **the non-monotonicity is the PRICE of the ring-free property**, and it is bounded: memoryless gain, no
+pole/zero/delay change, clamped by the ceiling (`0xC6158` = 512 ct = **2.00% of the aggregator's ±25600**),
+and **EXACTLY 0.00 delta at 60 / 80 / 100 / 140 km/h** — the ring was measured above 80.
+
+⚠ **The FactorE `X[0]` 60 → 12 variant is WITHDRAWN and must not be built**: FactorC `Y[0]` = 0 below
+34.97 km/h zeroes the product, so it delivers **0.0 at creep** and lands its whole 3.02× effect at highway
+speed — the ring regime. Nothing where the symptom is, dissipation where the ring is.
+
+**THE ONE CELL:** `0xC40D4` (`tp+0x50D4`) **573 → 286**, bytes `3D 02` → `1E 01`. This is the
+**command-branch EMA** inside `FUN_0003b8f6`: **α = 0.1399 → 0.0698.**
+
+**WHY — it is a FREQUENCY lever, and the claim is pre-registered as a RATIO:**
+it moves the loop's **−180° crossing from 7.79 Hz to 6.2–6.9 Hz**. Pre-registered as
+**`f(V86)/f(V85) ∈ [0.797, 0.875]`** (median 0.843; min/max taken over Q ∈ [2, 40] × delay ∈ [0, 10] ms).
+That is **3.3 FFT bins at NFFT 256 / fs 100 Hz** — resolvable.
+- **CONFIRMED** if the peak lands in **[6.2, 6.9] Hz** with the ratio CI excluding 1.00.
+- 🛑 **FALSIFIED — the linear-loop hypothesis DIES — if it stays at 7.79 Hz.**
+- ⚠ **AMBIGUOUS (explicitly NOT a null)** if the ratcheting is too weak to locate a peak.
+
+**Why a frequency claim at all:** **amplitude ratios have failed four builds running**, and the split-half
+null is **[0.63, 1.50]** wide. A frequency shift is the one prediction this instrument can resolve.
+
+**Why 286 and not 1146** (the same swing in the other direction): 286 moves *away* from the 12.8 Hz plant
+mode (conservative on the **unpinned** Q), and it **LOWERS** estimator HF gain to **0.650× at 20 Hz /
+0.585× at 28 Hz**, where 1146 would **raise** it 1.216× / 1.355×.
+
+🛑 **IT CANNOT LIMIT MAX LKAS ANGLE RATE, AND THIS IS PROVED.** An EMA has
+`|H(0)| = α / (1 − (1 − α)) = 1` **exactly, for every α** — verified numerically at
+α ∈ {0.0349 … 0.9998} → **1.000000000000**. Only **transient tracking** changes. ⇒ the operator's
+standing hard constraint is satisfied **by construction**, not by argument.
+
+**MODE-PROOF (RULE 7):** 573 appears **exactly once** in `[0xC4000, 0xC4200)`, and **no stride
+S ∈ [2, 0x400) repeats it** (contrast FactorC's stride `0x14`). It is a bare `tp` scalar.
+
+**PROBE — `0x14A` byte 4:**
+`b7` = `gp-0x6b70 < 0` · `b6` = `gp-0x6b70 != 0` · `b5` = `|gp-0x6b70| ≥ 512` ·
+`b4` = `gp-0x67ab < 2` (**the aggregator gate**) · `b3` = 1 fingerprint.
+**`b7⇒b6` and `b5⇒b6` are EXACT — the DUALS of V85's `b6⇒b7`** ⇒ **one `b6 ∧ ¬b7` frame refutes V85 and
+one `b7 ∧ ¬b6` frame refutes V86.** Build identity is therefore free.
+⊕ **`b7` + `b6` is a free RELAY-vs-LINEAR discriminator**: a linear term must pass through zero at every
+sign change (`b6` clears near `b7` transitions); a relay jumps (`b6` stays set).
+
+⚠ **V86B — a damper creep re-open (FactorE `X[0]` 60 → 12) — WAS DESIGNED AND IS ON HOLD.** The
+cross-build dose-response is **3.2× with rho = −0.679** and the dose crosses build order twice, **but**
+the within-route engaged/manual test shows **NO separation**, **V83a is a counterexample**, and the test
+**cannot run on V84 at all**. `[BELIEF]`, not established. 📋 **What settles it costs ZERO BYTES: a creep
+protocol alternating engaged and manual over the same stretch at 2–9 m/s.**
+
+---
+
+## ★★★★★ EARLIER ON 2026-08-09 — V84 FLEW (route `6d`) AND FIXED NOTHING
+Full narrative in `docs/HANDOFF-2026-08-09-v84-flew-and-the-command-scaled-relay.md`.
+**Everything in this block still stands except where annotated in place.**
 
 ### 1. 🛑 V84 FLEW (route `6d`) AND FIXED NOTHING — one band moved
 68,235 frames, 682.4 s, **79.71% engaged**, 0–113 km/h, **fault-free** (`STEER_STATUS` {0: 68,219, 3: 17},
@@ -50,6 +314,9 @@ driving frames). S1 read 0.509× V83a but **1.10× V81 after the negative-contro
 undid V83a's regression and bought nothing beyond it. ⇒ **Lever B has now been delivered three times and
 tops out at V67's level, which the operator still calls grinding. Stop spending builds on the rate lane.**
 **S2 1.548× V67 (outside null) — FAIL · S3 FAIL (operator) · S4 2.052 [1.089, 3.936] — FAIL and REVERSED.**
+✅ **STRENGTHENED 2026-08-09 (late):** `gp-0x67fa`'s reachable set is effectively **{11} alone** —
+state 5 structurally dead, state 10 measured 0.0000%, state 4 measured 0/123,277 ⇒ `0x454FE` is not
+merely unexercised on one route, it is **MEASURED INERT**. See §5 of the current headline.
 
 ### 3. ★★★★★ THE LOOP DOES NOT CLOSE THROUGH OPENPILOT
 The bar **LEADS** the command by **18.5 ms** at 26–31 Hz (γ² 0.783, K 11); openpilot's own reaction lag
@@ -83,6 +350,12 @@ command**. Describing-function relay index **7.87**, against Honda's viscous 1.0
 `disp|1` form) and the **entire plant-model cal block is virgin across all 84 builds.**
 🛑 **V56's full mute of this lane's terminus was a NULL on 18–22 Hz but "cost damping/feel" ⇒ do NOT
 expect V85 to move S1.** Its targets are S2/S3/S4.
+✅ **SCORED 2026-08-09 (late) — see §2 of the current headline.** The lever DELIVERED (relay saturation
+33.3% → 4.6% engaged, 7.21×, both pre-registered duty predictions hit) and the **bands are a null**.
+🛑 **REFRAME:** this lane's pathology was **not "harmonic injection"** but **PARAMETRICALLY SWITCHED
+DAMPING** — at cal 600 the damping switched fully off on 87% (6–9 Hz) / 96% (18–22 Hz) of symptom
+frames. 🛑 **`0xC40BC` is now FROZEN at 6000** — the reason is the **biased** describing function,
+not the flatness of `N`; see §2.
 
 ### 6. ⚠ STILL UNLOCATED — the 0.216 flat bar→command leg
 Boost (`FUN_00034a72`, speed-indexed, task 5), the Path-2 PID (`FUN_0003a382`, PID bode shape not flat),
@@ -92,11 +365,19 @@ what closes the loop. The FEASIBILITY doc's §2.2 diagram box naming the boost c
 
 ---
 
-## ✅ BUILT, VERIFIED, **UNFLASHED** — **V85** ← THE CURRENT CANDIDATE
+## 🛑 FLASHED AND FLOWN — **V85** (route `6e`, 2026-08-09). **BANDS ARE A NULL; RATCHETING STILL UNFIXED.**
+🛑 **This block previously read "BUILT, VERIFIED, UNFLASHED ← THE CURRENT CANDIDATE".** Results are in
+§1–§3 of the current headline at the top of this file. **The build description below is accurate as
+written**, with the two corrections marked in place.
+📋 **METHOD RULE, third consecutive instance (V83a, V84, and nearly V85): write the flight result into
+`STATE.md` in the SAME pass that scores it. A flown build recorded as unflashed WILL be re-proposed.**
 
 **Base = the flown V84 (`344f22f7…`). ONE control cell, TWO bytes, plus a probe repoint inside the proven
 68-byte cave. CRC 50/50. Orchestrator-verified from disk: 63 differing bytes total — 2 control + 64 cave
-+ 4 CRC, ZERO unattributed — and all 14 frozen cells byte-identical to V84.**
++ 4 CRC, ZERO unattributed — and all ~~14~~ **12** frozen cells byte-identical to V84.**
+⚠ **CORRECTED 2026-08-09 (late): the frozen-cell count is 12, not 14.** `build_v85_tva.py` declares
+**10 `FROZEN_CELLS` + 2 `FROZEN_BYTES` = 12**, all verified from the image. No 14-item list exists in the
+kit; the "14" in `BUILD-LINEAGE.md` refers to the **14 friction sites**, a different set.
 
 | | value |
 |---|---|
@@ -137,9 +418,16 @@ why, and reverting is two bytes.**
 🛑 **PRE-REGISTERED, fixed before the flight:**
 - **S1 (18–22 Hz) should NOT move.** V56 muted this whole lane's terminus and got a NULL there. If S1
   *does* improve, that is surprising and informative.
-- **S2 / S3 / S4 are the targets.** **If S2 does not improve, revert `0xC40BC` — `N` is already flat at
-  6000, there is no larger dose**, and the mechanism is falsified as an S2 driver.
+- **S2 / S3 / S4 are the targets.** ~~**If S2 does not improve, revert `0xC40BC` — `N` is already flat at
+  6000, there is no larger dose**, and the mechanism is falsified as an S2 driver.~~
+  🛑 **SCORED AND SUPERSEDED 2026-08-09 (late). The DISPOSITION is FREEZE AT 6000, not revert — and the
+  RATIONALE quoted here was the wrong route to it.** The single-input `N` cannot settle this: **the ring
+  rides on a bias 5–10× its own amplitude**, so the correct instrument is the **BIASED** describing
+  function, which reads top-decile pinning at cal 6000 of **0.0000 (18–22 Hz)** and **0.043 (6–9 Hz)**
+  after a delivered **20.3×** reduction. **Do not revert; the lever is spent, not wrong.**
 - **The damper stays frozen.** Any 26–31 Hz regression toward V81's 25.1% burst duty is an abort signal.
+  🛑 **NOT TESTABLE ON ROUTE `6e`** — 22.4 s engaged ≥80 km/h. The abort criterion did not fire because
+  it **could not have fired**; that is not a pass. (Same class as the V84 `b7`/`b6` mis-sizing, §8.)
 - ⊕ 🛑 **The ≥166 s engaged creep-cornering grind-#2 protocol is RETIRED** (operator decision 2026-08-09; missed by four builds, and the 40–49 Hz events actually reported occur at 56–62 km/h on ordinary roads). **Do not schedule it; label engaged-creep 40–49 Hz claims UNMEASURED.**
 
 🛑 **`b5` AS ORIGINALLY SPECIFIED (`|gp-0x6b98| > 8192`) WAS STRUCTURALLY VACUOUS AND WAS NOT SHIPPED.**

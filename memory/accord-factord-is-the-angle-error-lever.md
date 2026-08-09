@@ -1,10 +1,53 @@
 ---
 name: accord-factord-is-the-angle-error-lever
-description: FactorD is the only damper factor indexed by angle-tracking error rather than raw rate — untouched by every build, and the only lever that could cut damping exactly when LKAS needs rate.
+description: "🛑 TITLE CLAIM REFUTED 2026-08-09 — gp-0x6a10 is ABSOLUTE STEERING ANGLE, not a tracking error, and FactorD is structurally inert where the symptoms live because FactorC's zero dead zone precedes it. Read the top banner before citing anything here."
 metadata:
   type: reference
 ---
 
+> 🛑🛑 **HEADLINE REFUTATION, 2026-08-09 (late) — READ THIS BEFORE THE BANNERS BELOW.**
+> **This file's own title claim and two of its load-bearing legs are REFUTED.** Kept in place rather
+> than deleted, because the disassembly, the layout rule and the blast-radius work below are still
+> correct and still useful. [EVIDENCE, route `6d` / `6e`]
+>
+> **(1) `gp-0x6a10` IS ABSOLUTE STEERING ANGLE, NOT AN ANGLE-TRACKING ERROR.** V84's `b4` rung is
+> reproduced by the pure predicate `|steering angle| ≥ 0.85°` at **99.94%**; the step sits **exactly on
+> the threshold's own numeric value**; and the relation holds in the **MANUAL** arm, where a *tracking*
+> error is not even defined. ⇒ FactorD is a **steering-POSITION-scheduled gain**, in the same family as
+> FactorC (speed) and FactorE (motor rate).
+>
+> **(2) ⇒ "THE ONLY FREQUENCY-SELECTIVE LEVER" IS REFUTED — THIS FIRMWARE HAS NONE.** The argument was
+> *angle amplitude ∝ 1/ω, so a FactorD rising with angle error preferentially damps the low-frequency
+> ratchet.* **That requires the axis to be the OSCILLATION amplitude. It is the WHEEL POSITION.**
+> ⊕ **This also removes the standing argument that FactorE cannot do what FactorD can.**
+>
+> **(3) FactorD IS STRUCTURALLY INERT WHERE THE SYMPTOMS LIVE.** **FactorC multiplies in BEFORE
+> FactorD** and has `X[0]` = 2240 counts = **34.97 km/h** with `Y[0] = 0`, in **all four** of this car's
+> modes ⇒ **zero × anything = 0** below ~35 km/h, whatever FactorD holds. A third `gp-0x6a10` consumer —
+> the boost LERP2 in `FUN_00034a72` — is **also** flat-zero in band0 (0–8 km/h) in all four modes.
+> **Three independent confirmations.** Downstream consequence: `ch₀ = gp-0x6bd0` is **exactly zero on
+> 98.8% of engaged frames on route `6e`**, which is why `0xC63A0` 1024→2048 is INERT.
+>
+> **(4) Table (b) — the 13-point `0xC6B66`/`0xC6B80` LERP — is DEAD as a shaped lever.** **88.6% of
+> engaged driving sits in its flat first segment** ⇒ it delivers a near-constant **0.878× broadband
+> trim**, the same class as V56's mute (null, cost damping) and the `0xC646C` work (null).
+>
+> ⇒ See [[accord-levers-killed-2026-08-09]] and
+> [[accord-plant-model-residual-aggregator-chain]]. **Do not propose FactorD, or table (b), as a
+> frequency-selective or shaped lever.**
+
+> 🛑 **DISAMBIGUATION BANNER, 2026-08-09 (ghidra-factord, V86-prep session) — READ BEFORE CITING.**
+> **Everything in this file is about ONE table: the mode-record FactorD family, `0xC9DB4[mode]`,
+> n=5, `X=[0,50,100,150,700]`, flat `Y=[1024]×5`.** This is table **(a)**.
+> There is a SECOND, physically separate `gp-0x6a10`-indexed table, table **(b)**: 13 points at
+> `0xC6B66`(X)/`0xC6B80`(Y), inline inside `FUN_0003b8f6` (the 1 kHz plant-model observer V85 edited
+> via `0xC40BC`), NOT mode-indexed, NOT flat (`Y` runs 899→1084, a real ~18% shaping curve). It shares
+> only the index variable `gp-0x6a10` and the same `<0x2711` overflow-gate literal with table (a) —
+> which is exactly what caused a same-day mix-up between two sessions reading this file. **Table (b) is
+> documented separately** in
+> `.claude/agent-memory/firmware-codepath-tracer/reference_accord_factord_six_family_map_and_1khz_lane_v84.md`.
+> Confirm which table a claim is about before citing either file.
+>
 > ✅ **REINFORCED 2026-08-08 — THIS MEMORY IS CORRECT, AND HERE IS WHAT MAKES IT CHECKABLE.**
 > FactorD is genuinely **flat unity**: `npt = 5`, `X = [0, 50, 100, 150, 700]`, `Y = [1024] × 5`,
 > verified across **2,924 records (86 images × 34 modes)**. No build has ever moved a byte of it.

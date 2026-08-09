@@ -1021,7 +1021,23 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #
 # ★ DOSE AXIS, for consistency with the build scripts: dose(v,r) = min((C(v)*E(r))>>10, ceiling), with
 # FactorB and FactorD byte-read flat 1024 (inert unity) in BOTH modes 24 and 26 on this car (confirmed
-# 2026-08-07), so it collapses to just C x E, ceiling-clamped. Reference rate R_OP = 99 counts =
+# 2026-08-07), so it collapses to just C x E, ceiling-clamped.
+# 🛑🛑 FactorD IS ALSO STRUCTURALLY INERT WHERE THE SYMPTOMS LIVE, not merely flat -- 2026-08-09.
+#   FactorC multiplies in BEFORE FactorD and has X[0] = 2240 counts = 34.97 km/h with Y[0] = 0, in ALL
+#   FOUR of this car's modes, so the product is exactly zero below ~35 km/h whatever FactorD holds.
+#   A third gp-0x6a10 consumer -- the boost LERP2 in FUN_00034a72 -- is ALSO flat-zero in band0
+#   (0-8 km/h) in all four modes. Three independent confirmations. [EVIDENCE]
+#   ⇒ ch0 = gp-0x6bd0 is exactly ZERO on 98.8% of engaged frames on route 6e (p50 AND p90 both 0.00
+#   counts against a +-25600 clamp) ⇒ 0xC63A0 1024 -> 2048 is INERT, V72/V73's correlation with it has
+#   NO mechanism (they carried Honda's damper too), and V84's own 0xC63A0 revert was itself inert.
+#   ⚠ Ledger: 0xC63A0 was reverted at V83a (not V84); V76g also carried 2048; V76 and V80 are 1024.
+# 🛑🛑 AND gp-0x6a10 IS ABSOLUTE STEERING ANGLE, NOT AN ANGLE-TRACKING ERROR -- 2026-08-09. V84's b4
+#   rung is reproduced by the pure predicate |steering angle| >= 0.85 deg at 99.94%, the step sits on the
+#   threshold's own numeric value, and the relation holds in the MANUAL arm where a tracking error is not
+#   even defined. ⇒ the 13-point LERP 0xC6B66/0xC6B80 in FUN_0003b8f6 is DEAD as a shaped lever: 88.6%
+#   of engaged driving sits in its flat first segment, so it delivers a near-constant 0.878x BROADBAND
+#   trim. 🛑 This REFUTES "FactorD is the only frequency-selective lever in this firmware" -- THIS
+#   FIRMWARE HAS NONE -- which also removes the argument that FactorE cannot do what FactorD can. Reference rate R_OP = 99 counts =
 # 21.0 deg/s (in-burst p50 for grind #1). SPEED_CTS_PER_KMH = 64.0625 (== COUNTS_PER_KMH above);
 # RATE_CTS_PER_DEGS = 4.7121 (== gp-0x6ac0's scale, cited above). On the ramp segment, incremental gain
 # k = ((C_Y0 * E_Y1) >> 10) / (E_X1 - E_X0), and dose(r) = k * (r - E_X0) exactly (r on [E_X0, E_X1]).
@@ -1360,6 +1376,78 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #   ⚠ Not reduced to a single scalar: the aggregator-leg gain from gp-0x6b08 to gp-0x6b98 (near
 #   0xC61DA/1024 = 1.066 x the integrator's settled ratio at nominal blend).
 #   See memory/accord-aggregator-reaches-motor-via-gp6acc-bridge.md.
+#
+# ★★★★ THE PLANT-MODEL -> RESIDUAL -> ASSIST-AGGREGATOR CHAIN, END TO END (traced 2026-08-09).
+#   Every hop below is instruction-anchored; the censuses are dual-encoding (disp16 + 6-byte extended).
+#
+#     FUN_0003b8f6 @0x3b8f6   1 kHz plant-model estimator (gate + arithmetic above)
+#       gp-0x6bfc = clamp(0xC6468(=2639) * (model - FRICTION - INERTIA), +-20000)      st @0x3BC1A
+#     FUN_0003bc20 @0x3bc20   plausibility |x| < 20000 -> gp-0x6bfe, status gp-0x695c (0x400 ok / 0xFFFF bad)
+#     FUN_00038148 @0x38148   resid = gp-0x6bfe
+#                                   - (EMA(SUM_6ch(x * w[0xC63A0..0xC63AA]), coeff 0xC63AC=102) >> 4)
+#                                   + gp-0x6bfa
+#                             gp-0x6b70 = clamp(SIGN(resid) * LERP_RAM(|resid| * 0xC63AE >> 10),
+#                                               +-0xC6200=8192)                        st @0x382D2
+#     FUN_00037fe6 @0x37fe6   ASSIST AGGREGATOR
+#                             sum = -gp-0x6b4a + SUM(term * BYTE enable 0xC64AD..0xC64B3, all 0x01)
+#                             gate: the six optional terms are summed whenever gp-0x67ab != 1
+#                             gp-0x6ad6 = clamp(sum * speedLERP(gp-0x69aa)/1024, +-25600)  st @0x38142
+#     -> FUN_0003a382 (PID; gp-0x6ad6 is its FEEDBACK/bias term) -> gp-0x6ad4 -> FUN_0003aa2c
+#        -> governor -> gp-0x6acc bridge -> gp-0x6b98 -> FOC -> PWM
+#
+#   Censuses [EVIDENCE]: gp-0x6bfc 2 hits, gp-0x6bfe 2, gp-0x6b70 2, gp-0x6ad6 3, gp-0x67ab 3 (the
+#   0x37FE6 hit is a genuine ld.bu -- the aggregator's entry read).
+#   0xC64AD..0xC64B3 are 0/1 ENABLE FLAGS, not gains, and 0xC64B0 is the one gating gp-0x6b70.
+#   The aggregator's speed LERP is flat 1024 across its domain.
+#   ⚠ 0xC6200 has 15 readers; the governor cals 0xC6202/04/06/08 cluster disjointly at 0x045410-0x0457de,
+#   so 0xC6200 is NOT governor-shared (confirmed twice; V40 wrote 0xFFFF to 0xC6206/0xC6208 and left
+#   0xC6200 untouched). 3 of the 15 readers are still unidentified => the RULE 11 census is incomplete.
+#   ⚠ Y[0] of the RAM LERP is UNRESOLVED: Y[0] = *(u16*)(gp-0x3714) via movea -0x3714,gp,ep @0x39508 +
+#   sld.hu 0x0,ep,r11 @0x3950C -> st.h r11,-0x641c,gp @0x39522, inside FUN_000389ec. The only
+#   ordinary-addressing access image-wide is a store-zero @0x38D22 -- a lead, not an answer; the block is
+#   ep-relative and invisible to a displacement scan.
+#
+# 🛑🛑 REFRAME 2026-08-09 -- FUN_0003b8f6's PATHOLOGY WAS *PARAMETRICALLY SWITCHED DAMPING*, NOT
+#   "HARMONIC INJECTION". At cal(0xC40BC) = 600 the damping switched FULLY OFF on 87% of 6-9 Hz and 96%
+#   of 18-22 Hz symptom frames. V85 (cal 6000) cut relay saturation 33.3% -> 4.6% engaged (7.21x) on
+#   route 6e, hitting both pre-registered duty predictions. [EVIDENCE]
+#   🛑 0xC40BC IS NOW FROZEN AT 6000, and the reason is NOT that N(A) is flat there: the single-input
+#   describing function cannot settle it because the ring rides on a BIAS 5-10x its own amplitude
+#   (|B| p50 35 / p90 228 counts vs ring amplitudes A p50 4-7). The BIASED DF reads top-decile pinning
+#   at cal 6000 of 0.0000 (18-22 Hz) and 0.043 (6-9 Hz), after a delivered 20.3x reduction.
+#   ⊕ The gp-0x6abc scale is confirmed independently two ways: 4.923 and 4.697 ct/(deg/s) bracket the
+#   inherited 4.7121; reachable envelope +-1,930 counts.
+#
+# 🛑🛑🛑 THREE FLATTEN-A-CURVE-INTO-A-RELAY HAZARDS IN THIS CHAIN -- the V72/V80 error, one family over.
+#   V80 is the recorded cost of making it once: the worst grinding in this car's history.
+#     0xC4080 = 0    NEVER RAISE. FRICTION += cal/1024 * ratio has NO |model| factor => raising it arms a
+#                    PURE COULOMB RELAY: amplitude-independent, unbounded in index.
+#     0xC63AE = 1024 NEVER -> 0. The LERP index becomes identically 0 => output == +-Y[0], a constant =>
+#                    a pure relay at full authority.
+#     0xC6200 = 8192 NEVER BELOW Y[0]. The clamp produces the same relay from the other side.
+#
+# 🛑 gp-0x67fa's REACHABLE SET IS EFFECTIVELY {11} ALONE (measured 2026-08-09): state 5 structurally dead,
+#   state 10 0.0000%, state 4 0/123,277 driving frames. => V42's 0x454FE is present on V85 (0xB5) and
+#   MEASURED INERT -- keep the byte (lost silently three times, costs nothing) but never justify a build
+#   on it. ⊕ gp-0x671a is RULED OUT as a lever axis: stuck at 0 across 1,158 reversals on V64.
+#
+# ★★★ THE ~7.79 Hz RATCHETING IS A LINEAR LOOP OSCILLATION, NOT A RELAY AND NOT A PLANT RESONANCE.
+#   NOT a relay [EVIDENCE]: odd/even harmonic comb 0.858 [0.739, 1.000] against a positive control
+#   reading 1.204 [1.147, 1.566] at just 15% injection; 3:1 phase-locking PLV z <= 1.05; switching-surface
+#   time-locking -0.0375; a second method finds no third harmonic => <15% of the ~8 Hz bar content can be
+#   relay-generated. NOT a plant resonance [EVIDENCE]: the wheel-on-torsion-bar mode is 12.8 Hz
+#   [12.1, 13.6], ABOVE the ratchet, and 7.79 Hz is unreachable through the plant alone (12.65 Hz floor).
+#   => [BELIEF, the only surviving hypothesis] a LINEAR loop oscillation whose frequency is set by
+#   ACCUMULATED ESTIMATOR LAG. It fits every recorded property: sinusoidal, speed-invariant (slope
+#   +0.074 / +0.049 / -0.004 Hz per m/s vs wheel-order-2's predicted +0.961), engaged-only, present in the
+#   bar and in angle rate but NOT in openpilot's command.
+#   ⇒ THE LEVER CLASS IS PHASE/LAG, NOT NONLINEARITY -- new since V38. V86 tests it with ONE cell:
+#   0xC40D4 573 -> 286 (the command-branch EMA, alpha 0.1399 -> 0.0698), predicted to move the -180deg
+#   crossing 7.79 -> 6.2-6.9 Hz, pre-registered as the RATIO f(V86)/f(V85) in [0.797, 0.875].
+#   🛑 AN EMA CANNOT LIMIT MAX LKAS ANGLE RATE: |H(0)| = alpha / (1 - (1 - alpha)) = 1 EXACTLY for every
+#   alpha (verified numerically at alpha in {0.0349 ... 0.9998} -> 1.000000000000). Only transient
+#   tracking changes. 0xC40D4 is mode-proof: 573 appears exactly once in [0xC4000, 0xC4200) and no stride
+#   S in [2, 0x400) repeats it.
 # -----------------------------------------------------------------------------------------------------
 
 # [VERIFIED, byte-dumped] mode-indexed assist tables, selector = byte at gp+0x63fd (0xFEDFE3FD, NOT the
