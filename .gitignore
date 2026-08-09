@@ -145,3 +145,22 @@ analysis-2020accord/rlogs/
 # (the V68 caches are _cache_v68/, not _cache_r*/ -- the rule below missed them once)
 _cache_r*/
 _cache_v68/
+# ...and every other _cache_* dir (_cache_selfint/, _cache_loop_op/, _cache_native/ ...)
+_cache_*/
+
+# regenerable analysis-output scratch JSON. These are the per-session score/census
+# dumps written next to the scripts that make them (_d4_*, _r59_*, _grind2_*, _hwy_*,
+# _nearcentre_*, _v77_* ...). They are outputs, not evidence of record -- the findings
+# they support live in docs/STATE.md, docs/BUILD-LINEAGE.md and the HANDOFF chain.
+# Regenerate by re-running the matching rlog-tools/ or analysis-2020accord/ script.
+# NOTE: the *_lib.py helpers and analysis-2020accord/_svd_parts/ are CODE and
+# REFERENCE data respectively -- they stay tracked, hence the negations below.
+_d[0-9]*.json
+_r[0-9a-f][0-9a-f]_*.json
+_nearcentre_*.json
+_grind2_*.json
+_hwy_*.json
+_v[0-9][0-9]*_*.json
+_gp6806_*.json
+!*_lib.py
+!analysis-2020accord/_svd_parts/**
