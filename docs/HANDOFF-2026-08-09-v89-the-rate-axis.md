@@ -298,3 +298,60 @@ damper**. Both are carried as interactions and come back inconclusive-to-null, b
 be fully separated from V86's `0xC40D4`. **Association = EVIDENCE; the specific cell = BELIEF.**
 ⚠ The instrument measures **6–9 Hz band energy, not "feels smooth"**. More Coulomb friction can damp
 the oscillation and make the wheel notchier. **The operator scores that.**
+
+
+---
+
+## 14. ✅✅ V89 BUILT — the first build in the lineage to touch the PLANT MODEL
+
+image `6eae6826881cb5fd737ab433919f64a556ed027126e3f056ed8f03c13206f159`
+rwd `cdce053e3a86bf2c8857d7f229c015c747e209fa1222b91e3df863f1f44cf7ef` (986,042 B)
+`39990-TVA,A160-V89-V88BASE-FRICTION.C40D2.204-CAVE.6AE2.SIGN.MAG64-0x13000-0x100000.rwd`
+Base **flown V88**. **4 runs / 8 bytes, ZERO unattributed.** 50/50 CRC three ways.
+
+| addr | from | to | what |
+|---|---|---|---|
+| **`0xC40D2`** | **102** | **204** | K1, the `|model|`-proportional **modelled Coulomb friction**, 2.000× |
+| `0xC4B38` | `6894` | `1e95` | cave probe → `gp-0x6ae2` = **the friction term × 1024** |
+| `0xC4B46` | `a8` | `a6` | cave rung `sar 0x8`→`0x6`, trips at ±64 |
+
+### The chain, read in Ghidra this session (decompile first, then assembly)
+```
+FUN_0003b8f6   friction = clamp( EMA_a( |model|*ratio*K1/1024 + ratio*K0/1024 ), ±10 )   0x3BAF6..
+               ratio    = clamp( polarity * gp-0x6abc * 12 / cal[0xC40BC] , ±1 )         0x3BAAE..
+               out      = clamp( (model − friction − damping) * cal[0xC6468], ±20000 )   0x3BBBE..
+   -> gp-0x6bfc -> FUN_0003bc20 (plausibility ±20000) -> gp-0x6bfe
+   -> FUN_00038148:  residual = MODEL − ACTUAL ;  gp-0x6b70 = sign(res) × LERP(|res|)
+                     ACTUAL = EMA of six aggregator lanes (one is gp-0x6bd0, the damper)
+```
+**It is a DISTURBANCE OBSERVER.** If the model under-states real Coulomb friction, the un-modelled
+friction lands in the residual and the observer chases it — which is what a stick-slip ratchet is.
+`0xC64B0` = 1 on stock and V88, so the path is **live**.
+
+### Why this cell and not another
+- **`0xC40D2`: ONE reader (`0x3BAFE`), ZERO writers, virgin on all 88 builds.** Censused twice
+  through the **`hw2 = disp|1`** trap — `ld.hu 0x50d2[tp]` encodes `0x50d3`, and a naive scan for
+  `0x50d2` returns a **false zero**, which it did on the first pass here.
+- **K1 scales the `|model|` arm ALONE**, leaving the ratio's shape untouched ⇒ it raises friction
+  magnitude **without flattening anything into a relay**. It is *not* the V80 class.
+- 🛑 **`0xC4080` (K0, the pure-Coulomb "NEVER RAISE" hazard) is untouched at 0.** That note stands.
+- **GATE 1** vacuous (no cave created; edits in place inside a four-times-flown payload).
+  **GATE 2**: friction enters with a **minus** sign and the ±10.0 clamp binds only at `|model| ≥ 50`
+  against a working point of ~0.2–1.0 ⇒ ~50× margin.
+- The new cave load is **not hand-encoded**: hw1 `2437` flies at `0x55DF0`, hw2 `1e95` at `0x3BC04`;
+  only the combination is new, and each half is asserted separately.
+
+### Pre-registration
+**IDENTITY** — on V88 `b6 == (MOTOR_TORQUE ≥ 160)` held at **0.9654** (chance 0.6028); V89's cave
+reads a different cell so it **must collapse toward chance**. ≈0.60 = V89 flew, ≈0.97 = V88 did.
+**H1** the probe must fire (rung duty strictly between 0 and 1) or the flight is uninterpretable.
+**H2** engaged 6–9 Hz must FALL vs V88, speed- and rate-matched, CI excluding 1.00, and the
+32–38 Hz control must not fall as much.
+**H3** 0.5–3 Hz LKAS command content unchanged — structural, since V89 never touches the command path.
+**H4** 🛑 the operator scores the symptoms, in his words.
+
+🛑 **HONEST LABEL.** The dose *direction* is measured (§13). That **K1 acts the same way as the gate
+is BELIEF** — the gate contrast confounds magnitude with relay-ness, and K1 moves magnitude alone.
+**A null on H2 falsifies the friction account cleanly, and that is worth the flight.**
+⚠ **COST:** more modelled Coulomb friction can feel notchier or heavier on-centre. The instrument
+cannot see that. **If it drives worse, that outranks every band.**

@@ -1,7 +1,8 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-09 (V89 analysis session).** On the car: **V88**, flown as route `73`,
-fault-free. Operator: **grinding FIXED**; **micro-ratcheting and ratcheting are what remain.**
+**Last updated: 2026-08-09 (V89 session).** On the car: **V88** (route `73`, fault-free). Operator:
+**grinding FIXED**; **micro-ratcheting and ratcheting are what remain.**
+**✅ V89 IS BUILT, VERIFIED, UNFLASHED** — the first build in the lineage to touch the PLANT MODEL.
 
 🛑🛑 **THIS FILE HAS A HARD SIZE CAP: 256 KB. Keep it under ~150 KB.** On 2026-08-09 it reached
 **506 KB / 6,114 lines / 53 sections** — past the `Read` limit, so no agent could load it in one
@@ -173,6 +174,50 @@ glob saw and the answer did not sharpen ⇒ **more of the same driving will not 
 ⊕ It also no longer matters much: §1 shows the amplification is **not rate-dependent**, which was the
 whole reason r24 (a rate derivative) was the lead candidate. **r24's engaged arm is demoted, and
 §1b's friction line replaces it.**
+
+### 6. ✅✅ V89 BUILT, VERIFIED, UNFLASHED — `build_v89_tva.py`
+image sha256 **`6eae6826881cb5fd737ab433919f64a556ed027126e3f056ed8f03c13206f159`**
+rwd sha256 **`cdce053e3a86bf2c8857d7f229c015c747e209fa1222b91e3df863f1f44cf7ef`** (986,042 B)
+`39990-TVA,A160-V89-V88BASE-FRICTION.C40D2.204-CAVE.6AE2.SIGN.MAG64-0x13000-0x100000.rwd`
+Base **flown V88**. **4 runs / 8 bytes, ZERO unattributed; 3 bytes change + 1 CRC trailer.**
+50/50 CRC on the built image, the readback **and** the shipped `.rwd` re-read from disk.
+
+| addr | from | to | what |
+|---|---|---|---|
+| **`0xC40D2`** | **102** | **204** | **K1, the `|model|`-proportional modelled Coulomb friction — 2.000×** |
+| `0xC4B38` | `6894` | `1e95` | cave probe source → **`gp-0x6ae2` = the FRICTION term × 1024** |
+| `0xC4B46` | `a8` | `a6` | cave rung `sar 0x8`→`0x6`, trips at **±64** (friction ≥ 0.0625) |
+
+★ **`0xC40D2` has ONE reader and ZERO writers** — `0x3BAFE`, inside `FUN_0003b8f6`. Censused twice
+through the recorded **`hw2 = disp|1`** trap (`ld.hu 0x50d2[tp]` encodes `0x50d3`; a naive scan
+returns a FALSE ZERO, and did on the first pass this session). **Virgin on all 88 builds.**
+★ **The new cave load is not hand-encoded:** hw1 `2437` is flying at `0x55DF0`, hw2 `1e95` at
+`0x3BC04`. Only the *combination* is new, and each half is asserted separately.
+★ **`gp-0x6ae2` is 1 writer / 0 readers** ⇒ blast-radius-zero probe.
+★ **GATE 2:** the ±10.0 friction clamp binds only at `|model| ≥ 50`; the model's bar arm is clamped
+at 15 and its command arm runs ~0.2–1.0 ⇒ ~50× margin. Friction enters with a **minus** sign.
+🛑 **`0xC4080` (K0, the pure-Coulomb "NEVER RAISE" relay hazard) is NOT touched** — it stays 0, and
+that note stands. K1 scales the `|model|` arm alone, so it raises magnitude **without** flattening
+anything into a relay. It is **not** the V80 class.
+
+### 7. ★ PRE-REGISTRATION for the V89 flight
+- **IDENTITY, parameter-free, control already measured:** on V88 the cave and the 427 packer read
+  the same cell and `b6 == (MOTOR_TORQUE ≥ 160)` held at **0.9654** (chance 0.6028). On V89 the cave
+  reads `gp-0x6ae2` instead ⇒ that agreement **must collapse toward chance**.
+  **≈0.60 = V89 flew · ≈0.97 = V88 did.** The exact dual of V88's own test.
+- **H1 the probe must FIRE** — `gp-0x6ae2` non-zero on most engaged frames and the `sar 0x6` rung's
+  duty strictly between 0 and 1. **A dead or railed rung makes the flight UNINTERPRETABLE** — say so
+  rather than scoring bands.
+- **H2 THE LEVER** — engaged 6–9 Hz column energy must FALL vs V88 on speed- **and rate**-matched
+  windows, CI excluding 1.00, and **the 32–38 Hz control must not fall as much.**
+- **H3 THE OPERATOR'S CONSTRAINT** — 0.5–3 Hz LKAS command content UNCHANGED. V89 does not touch the
+  command path, so this is **structural**; if it moves, the chain model is wrong and that is the headline.
+- **H4 🛑 the operator scores the symptoms, in his words.**
+🛑 **HONEST LABEL:** the dose DIRECTION is measured (§1b, 600 vs 6000). That **K1 acts the same way
+as the gate is BELIEF** — the gate contrast confounds magnitude with relay-ness, and K1 moves
+magnitude alone. **A null on H2 falsifies the friction account cleanly, which is worth the flight.**
+⚠ **COST:** more modelled Coulomb friction can feel notchier or heavier on-centre. The instrument
+cannot see that. **If it drives worse, that outranks every band.**
 
 ### 6. ✅ COLLATERAL — `STATE.md` cut from 494.7 KB to 75.3 KB
 See the cap note at the top of this file. `CLAUDE.md` carries the rule now.
@@ -1154,15 +1199,11 @@ instrument only.
 🛑 **No new drive is needed to diagnose micro-ratcheting or ratcheting** — operator-corrected. Route `73`
 segments 0/8/9 carry ~118 s engaged below ~15 km/h, where the ratchet is largest.
 
-1. ★★★★★ **BUILD V89 = restore nothing, ADD column friction.** §1/§1b give a target that is a
-   CONSTANT engagement-gated gain, not a rate term, so **no LKAS rate limiting is involved.** Two
-   independent lines say Coulomb friction at the column damps this mode. Before cutting:
-   (a) 🛑 **do NOT restore `0xC40BC` = 6000** — measured 2.3× WORSE on the ratchet band;
-   (b) decompile `FUN_0003b8f6`'s friction output path and find the AMPLITUDE cal (`0xC4080` is the
-       recorded "NEVER RAISE" pure-relay hazard — the measurement now argues the other way, so the
-       hazard note must be re-derived, not obeyed blindly OR ignored);
-   (c) GATE 2: more Coulomb friction is stabilising for the 6-9 Hz mode but costs on-centre feel —
-       **that trade is the operator's to score, and the instrument cannot see it.**
+1. ★★★★★ **FLY V89** (operator's call; flash only on explicit instruction naming the file and the
+   bus). `39990-TVA,A160-V89-V88BASE-FRICTION.C40D2.204-CAVE.6AE2.SIGN.MAG64-0x13000-0x100000.rwd`
+   sha256 `cdce053e3a86bf2c8857d7f229c015c747e209fa1222b91e3df863f1f44cf7ef`.
+   Score the pre-registration in §7 **in the same pass that scores the route** (the method rule
+   violated five builds running).
 2. ★★★★ **Separate micro from macro.** `v89_a2` T5 could not: `corr(log|rate|, log angle-ptp) = +0.857`
    on route 73, so the two axes are collinear and both CIs straddle 0. Needs either a route with slow
    large excursions, or a within-episode decomposition that breaks the collinearity.

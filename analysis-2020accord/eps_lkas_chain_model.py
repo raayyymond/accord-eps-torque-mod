@@ -3806,6 +3806,61 @@ def _demo():
     print("-" * 78)
 
 
+# ===================================================================================================
+#  THE PLANT-MODEL DISTURBANCE OBSERVER -- added 2026-08-09 (V89). Ghidra-verified this session,
+#  decompile first then assembly, on stock code.bin.
+#
+#  This branch had never been in the golden model. It is NOT the LKAS command path: nothing here
+#  sums into the command. It is a model of the steering plant whose disagreement with the assist
+#  actually produced drives a correction. Every build V38..V88 moved the command or a lane feeding
+#  it; V89 is the first to move THIS.
+#
+#      FUN_0003b8f6  -> gp-0x6bfc -> FUN_0003bc20 -> gp-0x6bfe -> FUN_00038148 -> gp-0x6b70
+#                                                                 -> FUN_00037fe6 -> gp-0x6ad6 -> PID
+#
+#  MEASURED, 30 routes / 284 min / 235 episode blocks (v89_c2, v89_c3):
+#    * engaging LKAS multiplies 6-9 Hz column energy 2.8x, band-specifically vs a 32-38 Hz control
+#      (+0.413 [+0.146, +0.667]) and NOT more at higher wheel rate (+0.022 [-0.070, +0.116]);
+#    * `0xC40BC` 600 (more friction) 2.89x vs 6000 (less) 6.58x  => LESS friction, MORE ratchet;
+#    * driver grip damps the same band (-0.655 vs control -0.266, CIs disjoint).
+# ===================================================================================================
+
+FRICTION_CLAMP = 10.0            # 0x3BB32 movhi 0x4120 (10.0f) / 0x3BB42 movhi -0x3ee0 (-10.0f)
+MODEL_OUT_CLAMP = 20000          # 0x3BBCE addi -0x4e20
+
+
+def plant_model_friction(model, g6abc, polarity, state, k1=102, k0=0, alpha=408, gate=600):
+    """`FUN_0003b8f6`'s Coulomb friction term. Mirrors the float ops, address by address.
+
+    k1 = cal[0xC40D2] (0x3BAFE)   k0 = cal[0xC4080] (0x3BAF6, the NEVER-RAISE pure-relay arm)
+    alpha = cal[0xC40D0] (0x3BB22)   gate = cal[0xC40BC] (0x3BAB4)
+    Returns (friction, new_state). V89 sets k1 = 204.
+    """
+    ratio = (polarity * g6abc * 12) / gate if gate else 0.0    # 0x3BAAE..0x3BAD0
+    ratio = max(-1.0, min(1.0, ratio))                         # 0x3BAD4..0x3BAE4
+    raw = abs(model) * ratio * k1 / 1024.0 + ratio * k0 / 1024.0   # 0x3BB02..0x3BB16
+    state = state + (raw - state) * alpha / 4096.0             # 0x3BB1E..0x3BB2E  (gp-0x362c)
+    return max(-FRICTION_CLAMP, min(FRICTION_CLAMP, state)), state
+
+
+def plant_model_output(model, friction, damping, gain=2639):
+    """0x3BBBE..0x3BBE0. `gain` = cal[0xC6468] -- SHARED, five readers, do not edit."""
+    out = int((model - (friction + damping)) * gain)
+    return max(-MODEL_OUT_CLAMP, min(MODEL_OUT_CLAMP, out))
+
+
+def observer_residual(model_out, actual_aggregate, extra=0):
+    """`FUN_00038148` @0x38218: residual = MODEL - ACTUAL. `gp-0x6b70 = sign(res)*LERP(|res|)`.
+
+    ACTUAL is an EMA of six aggregator lanes (gp-0x6b4e/6b4c/6b26/6b46/6bd0/6bbe), each with its own
+    cal gain at 0xC73a0..0xC73ac; gp-0x6bd0 is the base-assist damper, so the damper feeds the
+    ACTUAL side. `FUN_0003bc20` sentinels the model to 0x7fff outside +-20000 first.
+    """
+    if abs(model_out) > MODEL_OUT_CLAMP:
+        return None                                   # 0x7fff sentinel -> gp-0x6b70 = 0x7fff
+    return model_out - (actual_aggregate >> 4) + extra
+
+
 if __name__ == "__main__":
     _self_check()
     _demo()
