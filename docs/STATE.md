@@ -34,30 +34,74 @@ speed) = −0.640** engaged) — you spin the wheel in a car park, not at 116 km
 "the ratchet decays 4.8× from creep to highway" is partly a RATE effect read as a SPEED effect**:
 the creep stratum's median |rate| is **13 deg/s** against the highway stratum's **1 deg/s**.
 
-### 1. ★★★★ WHAT SURVIVED EVERY CONTROL — the engagement × rate interaction
-`analysis-2020accord/v89_a5_engagement_model.py`, 400 windows / 12 routes / 93 episode blocks (deduped),
-`log e_band ~ route + eng + eng×log|rate| + log|rate| + log v + log hands`:
+### 1. ★★★★★ THE FULL CORPUS — 30 routes, 284 min, 235 episode blocks
+🛑 **The 12-route version of this section was WRONG and is replaced.** The operator caught it: the
+loader globbed only `_cache_r*/r<NN>.npz` and **skipped every PER-SEGMENT cache**, seeing ~180 min
+of ~417 min on disk. `v89_c1_full_corpus.py` now loads 30 routes (10 Lever-B, 20 not) —
+**235 episode blocks against the earlier 93.** Route→build is documented; ambiguity is harmless
+because Lever B exists only from V67, so every pre-V67 route is unambiguously Lever-B = no.
 
-| term | 6–9 Hz (ratchet) | 32–38 Hz (control) | contrast |
-|---|---|---|---|
-| `eng` | +0.869 [+0.295, +1.369] | +0.523 [+0.246, +0.750] | +0.346 [−0.050, +0.695] — includes 0 |
-| **`eng × log rate`** | **+0.313 [+0.103, +0.490]** | +0.168 [+0.064, +0.260] | **+0.144 [−0.004, +0.267] — includes 0 by a hair** |
-| **`log hands`** | **−0.720 [−0.918, −0.500]** | −0.216 [−0.326, −0.104] | **DISJOINT CIs — band-specific [EVIDENCE]** |
+`v89_c2_powered_discriminator.py`, band contrast = 6–9 Hz minus the 32–38 Hz control, same windows:
 
-⇒ **[EVIDENCE] Engagement's amplification of the 6–9 Hz column mode GROWS with wheel rate.**
-Engaged/manual runs **1.16× at 2 deg/s → 1.92× at 10 → 3.94× [2.19, 6.70] at 100 deg/s**. **That is
-the operator's micro→ratcheting progression, measured — the first instrument in this kit that
-responds to his distinction at all.**
-🛑 **[BELIEF, NOT EVIDENCE] That it is RATCHET-SPECIFIC.** The control band does the same thing at
-about half the rate, and the contrast's lower bound is **−0.004** — it does **not** clear its control
-at 95 %. The point estimate is nearly 2× the control, so this is *suggestive*, not established.
-🛑 **THIS NUMBER CHANGED MID-SESSION.** With `_cache_r66` / `_cache_r66x` double-counting route `66`
-it read +0.172 [+0.038, +0.288] and **did** exclude 0. **Deduped, it does not.** Quote the deduped
-figure; the loader now globs by ROUTE, not by cache dir.
-⇒ ★ **[EVIDENCE — the session's most solid result] The mode is strongly damped by DRIVER GRIP** —
-`d(log e_6-9)/d(log sustained column torque)` = **−0.720 [−0.918, −0.500]** against the control
-band's **−0.216 [−0.326, −0.104]**, **CIs DISJOINT.** A firmware lever that adds damping at the
-column at 6–9 Hz is emulating what the operator's own hands already do.
+| term | 6–9 Hz | control | **band contrast** | verdict |
+|---|---|---|---|---|
+| **`eng`** | **+1.015 [+0.713, +1.302]** | +0.602 [+0.392, +0.810] | **+0.413 [+0.146, +0.667]** | **EXCLUDES 0** |
+| `eng × log rate` | +0.133 [−0.005, +0.261] | +0.112 [+0.014, +0.195] | **+0.022 [−0.070, +0.116]** | **NULL — and it REFUTES the 12-route +0.144** |
+| `eng × log rate × LeverB` | +0.124 | +0.049 | +0.075 [−0.099, +0.245] | inconclusive |
+| `eng × DAMPER` | −0.091 | −0.105 | +0.014 [−0.483, +0.386] | NULL, refutes ±0.413 |
+| **`log hands`** | **−0.655 [−0.750, −0.525]** | −0.266 [−0.323, −0.196] | **−0.389 [−0.471, −0.290]** | **EXCLUDES 0** |
+
+⇒ ★★★★★ **[EVIDENCE] ENGAGING LKAS MULTIPLIES THE 6–9 Hz COLUMN MODE BY 2.8×, AND BY 1.5× MORE THAN
+IT MULTIPLIES A CONTROL BAND.** A **constant, band-specific, engagement-gated amplification.**
+⇒ 🛑🛑 **[EVIDENCE] IT DOES NOT GROW WITH WHEEL RATE.** The rate term is the same in both bands
+(+0.133 vs +0.112). **The earlier "+0.144, the operator's axis is band-specific" claim is RETRACTED
+— refuted by 2.4× the data.** What *does* grow with rate is the EXCITATION (`log rate` main effect,
+present in every band): turn the wheel faster, feed the mode harder. Engagement then multiplies it
+by a constant 2.8×. **Both compound, which is exactly why he feels more of it when spinning fast —
+but the firmware term itself is NOT rate-dependent.**
+⇒ ★★★★★ **THEREFORE: NOTHING HERE ARGUES FOR LIMITING THE LKAS COMMAND'S ANGLE RATE.** The target is
+a constant gain, not a rate. **The operator's constraint and the measured target agree.**
+⇒ ★★ **[EVIDENCE] The mode is strongly damped by FRICTION AT THE COLUMN** — `log hands` −0.655 vs
+the control's −0.266, CIs disjoint. Confirmed independently in §1b.
+
+### 1b. ★★★★★ THE MECHANISM, AND IT INVERTS A STANDING RECOMMENDATION — `0xC40BC`
+On V87/V88 **stock modes 24 ≡ 26 are byte-identical in all six factor families**, so engaging
+changes **no calibration at all**. The only change is the LKAS command entering the aggregator ⇒ a
+constant 2.8× amplification must come from the command's ENTRY moving the loop through a
+**nonlinearity**. There is exactly one on record: **`FUN_0003b8f6`, a Coulomb relay PROPORTIONAL TO
+THE COMMAND**, whose `ratio` saturates against gate **`0xC40BC`** — pinned across 99.62 % of its
+range at the stock gate, i.e. a pure relay. Raising the gate widens the linear region and
+**de-relays** it.
+
+```
+0xC40BC =  600   stock, V87, V88  -- THE CAR RIGHT NOW
+0xC40BC = 6000   V85, V86, V86B only (routes 6e, 6f, 70)
+```
+`v89_c3_friction_relay.py`, identified **within-route** (the flag is constant per route, so only the
+engaged-vs-manual gap carries it — route fixed effects absorb everything else):
+
+| `0xC40BC` | engaged/manual 6–9 Hz amplification |
+|---|---|
+| **600 — stock, and on the car** | **2.89× [2.14, 3.92]** |
+| **6000 — V85/V86/V86B** | **6.58× [3.19, 13.14]** |
+
+**`eng × FRIC6000` band contrast = +0.682 [+0.213, +1.166] — EXCLUDES 0, and it is POSITIVE.**
+
+⇒ 🛑🛑 **DE-RELAYING THE COULOMB FRICTION TERM MADE THE RATCHET BAND 2.3× WORSE.**
+⇒ 🛑🛑 **`STATE.md`'s standing "FREEZE `0xC40BC` at 6000" is CONTRADICTED on the 6–9 Hz band.** It was
+set on relay-saturation duty and other bands. **The car is at 600 and that is the better value for
+ratcheting. Do not restore 6000.**
+⇒ ★★★★★ **TWO INDEPENDENT LINES NOW AGREE: COULOMB FRICTION AT THE COLUMN DAMPS THIS MODE** — the
+driver's own grip (−0.655) and the firmware's own friction relay (600 beats 6000 by 2.3×).
+**⇒ THE LEVER CLASS IS "MORE COLUMN FRICTION / DAMPING", NOT "LESS COMMAND".**
+
+⚠ **Scope, honestly:** the flag lives on **3 routes**, all from one era, and **V86 also moved
+`0xC40D4`** (573→286) while **V86B armed the damper**. The model carries damper and Lever-B
+interactions and both come back inconclusive-to-null, but `0xC40BC` **cannot be fully separated from
+V86's `0xC40D4`**. The *association* is EVIDENCE; **attributing it specifically to `0xC40BC` is
+BELIEF.** ⚠ And the instrument measures **6–9 Hz band energy, not "feels smooth"** — more Coulomb
+friction can reduce the oscillation while making the wheel feel notchier. **The operator scores that,
+not the instrument.**
 
 ### 2. 🛑🛑 TWO OF THIS SESSION'S OWN READINGS RETRACTED BY THEIR OWN CONTROLS
 1. **"The rate axis is band-specific to the ratchet"** — `v89_a1` found `e_6-9` slope **+0.490** and
@@ -120,34 +164,15 @@ candidates**, and it is new. Ruled out or already spent:
 | FactorD / `gp-0x6a10`, `0xC64C8` m2, `0xC61F6`, a pole on r24, `0xC63B8` | 🛑 all previously killed on structure |
 | **the r24 engaged arm ITSELF** | ⏳ **the one untested candidate that fits §1** — Lever B makes r24's gain switch on `gp-0x6806` from 2622 to **5244 when LKAS applies**, i.e. the firmware already contains an *engagement-gated, rate-derivative* gain. **Every build has pushed it UP. §1 says test it DOWN.** |
 
-### 5b. 🛑 THE LEVER-B DISCRIMINATOR WAS RUN, AND IT IS **UNDERPOWERED** — not a null
-`analysis-2020accord/v89_a6_leverb_discriminator.py`. Both build flags **byte-derived from each
-build's own image**, never quoted: Lever B = (`0x3AA96` == `FB` ∧ `0xC6446` == 5244); damper =
-(FactorC m26 `Y[0]` ≠ 0), carried as its own interaction because the two co-occur
-(**corr = −0.499**). 400 windows / 12 routes / 93 episode blocks, a clean 6-vs-6 route split.
-
-| build flag | Lever B | damper `Y[0]` |
-|---|---|---|
-| V75 · V74 · V80 · V81 · V83a | no | 566 / 429 / 566 / 566 / 566 — **armed** |
-| V87 | no | 0 — Honda |
-| V76 · V86B | **YES** | 429 / 908 — armed |
-| V84 · V85 · V86 · V88 | **YES** | 0 — Honda |
-
-`eng × log|rate| × LeverB`, band contrast vs the 32–38 Hz control: **−0.101 [−0.381, +0.298]**.
-
-🛑 **The CI half-width (0.340) is 2.4× the effect it is testing (§1's +0.144).** This test cannot
-distinguish *"Lever B does not modulate the interaction"* from *"it modulates it by as much as the
-entire effect"*. ⇒ **INCONCLUSIVE. r24's engaged arm is NOT exonerated, and V89 must not be
-justified on this either way.** Same trap as `feedback-a-falsifier-only-fires-if-it-could-have-fired`,
-caught this time *before* it was written up as a null.
-⊕ Closing it needs roughly **4× the episode blocks** (93 → ~370) — i.e. matched engaged *and*
-manual exposure at matched wheel rate on both build classes. That is an exposure problem, not an
-analysis one, and it is the **first thing a future drive should be designed around.**
-
-⚠ **Honest scope:** §1's effect is real but **modest** (3.94× at 100 deg/s, and 1.16× at 2 deg/s —
-the *micro* end is where the model is weakest). n = 400 windows after screening and deduping, and the engaged and
-manual arms overlap only partially in `hands` and `|rate|`. **The interaction is EVIDENCE; any
-mechanism attached to it is BELIEF.**
+### 5b. 🛑 THE LEVER-B DISCRIMINATOR, ON THE FULL CORPUS — still inconclusive, but no longer exposure-blocked
+`eng × log|rate| × LeverB` band contrast **+0.075 [−0.099, +0.245]** over 235 blocks; `eng × LeverB`
+**+0.274 [−0.094, +0.652]**. Both still fail to resolve the effects they are testing.
+🛑 **But the reason has changed and it matters:** the earlier "we need 4× the exposure, design a new
+drive" recommendation was **based on a loader bug, and is withdrawn.** The corpus is 2.4× what that
+glob saw and the answer did not sharpen ⇒ **more of the same driving will not settle Lever B.**
+⊕ It also no longer matters much: §1 shows the amplification is **not rate-dependent**, which was the
+whole reason r24 (a rate derivative) was the lead candidate. **r24's engaged arm is demoted, and
+§1b's friction line replaces it.**
 
 ### 6. ✅ COLLATERAL — `STATE.md` cut from 494.7 KB to 75.3 KB
 See the cap note at the top of this file. `CLAUDE.md` carries the rule now.
@@ -1129,12 +1154,15 @@ instrument only.
 🛑 **No new drive is needed to diagnose micro-ratcheting or ratcheting** — operator-corrected. Route `73`
 segments 0/8/9 carry ~118 s engaged below ~15 km/h, where the ratchet is largest.
 
-1. ★★★★★ **The Lever-B discriminator has been RUN and is UNDERPOWERED** (HEADLINE §5b): band contrast
-   -0.101 [-0.381, +0.298], half-width 2x the effect. **Closing it needs ~4x the episode blocks (93 ->
-   ~370): matched ENGAGED and MANUAL exposure at matched WHEEL RATE, on both a Lever-B and a
-   non-Lever-B build.** 🛑 This is now the binding constraint on V89 and it is an EXPOSURE problem.
-   Design the next drive around it: deliberate slow-and-fast wheel sweeps, engaged and manual, at
-   the SAME speed -- not a route flown for distance.
+1. ★★★★★ **BUILD V89 = restore nothing, ADD column friction.** §1/§1b give a target that is a
+   CONSTANT engagement-gated gain, not a rate term, so **no LKAS rate limiting is involved.** Two
+   independent lines say Coulomb friction at the column damps this mode. Before cutting:
+   (a) 🛑 **do NOT restore `0xC40BC` = 6000** — measured 2.3× WORSE on the ratchet band;
+   (b) decompile `FUN_0003b8f6`'s friction output path and find the AMPLITUDE cal (`0xC4080` is the
+       recorded "NEVER RAISE" pure-relay hazard — the measurement now argues the other way, so the
+       hazard note must be re-derived, not obeyed blindly OR ignored);
+   (c) GATE 2: more Coulomb friction is stabilising for the 6-9 Hz mode but costs on-centre feel —
+       **that trade is the operator's to score, and the instrument cannot see it.**
 2. ★★★★ **Separate micro from macro.** `v89_a2` T5 could not: `corr(log|rate|, log angle-ptp) = +0.857`
    on route 73, so the two axes are collinear and both CIs straddle 0. Needs either a route with slow
    large excursions, or a within-episode decomposition that breaks the collinearity.

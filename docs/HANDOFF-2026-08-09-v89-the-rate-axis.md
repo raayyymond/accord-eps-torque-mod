@@ -1,6 +1,7 @@
 # HANDOFF 2026-08-09 — V89 analysis session: the operator gave the symptoms an axis, and it is WHEEL RATE
 
 **Session shape:** orchestrator working hands-on (no subagents spawned this session).
+🛑 **§§3 and 7 were WRITTEN, THEN OVERTURNED WITHIN THE SESSION** by the operator catching a loader bug. **Read §12 FIRST** — it supersedes them.
 **Deliverables:** the operator's symptom axis tested on existing logs · two of this session's own
 readings retracted by their own controls · the base-assist damper closed as a micro-ratcheting lever
 on arithmetic · the Lever-B discriminator run and found underpowered · **no build cut, deliberately**
@@ -236,3 +237,64 @@ Cutting a `.rwd` on any of these today would be a bet dressed as a build, and th
 2. **`v89_a1`'s per-band order veto** built a different window set per band, manufacturing a
    band-specific result out of nothing (§4a). **Veto once, on a common band, then compare bands on
    identical windows.**
+
+
+---
+
+## 12. 🛑🛑 SUPERSEDES §3 AND §7 — the loader was skipping most of the corpus
+
+**The operator caught it:** *"We have plenty of routes in our work history. Look at all handoffs and
+rlogs since V38. Lever B is in multiple (stock and non-stock)."* He was right.
+
+`v89_a5`/`a6` globbed `_cache_r*/r<NN>.npz` and **silently skipped every PER-SEGMENT cache**
+(`r<NN>s<K>.npz`) — ~180 min of the ~417 min on disk. `v89_c1_full_corpus.py` loads **30 routes,
+284 min, 10 Lever-B against 20 not, 235 episode blocks** (vs 93). A second bug in the same family:
+image lookup used `_{tag}_*_plain_image.bin`, which **misses the `_v67_plain_image.bin` form** and
+dropped 18 of 32 routes on the first run.
+
+### What changed with 2.4× the data (`v89_c2_powered_discriminator.py`)
+
+| term | band contrast | verdict |
+|---|---|---|
+| **`eng`** | **+0.413 [+0.146, +0.667]** | **EXCLUDES 0** — engagement multiplies 6–9 Hz by **2.8×**, 1.5× more than the control band |
+| `eng × log rate` | **+0.022 [−0.070, +0.116]** | **NULL, and REFUTES §3's +0.144** |
+| `log hands` | **−0.389 [−0.471, −0.290]** | EXCLUDES 0, tighter than before |
+
+🛑 **§3's headline is RETRACTED.** The engagement effect is **band-specific but NOT rate-dependent**.
+The rate dependence the operator feels is in the **EXCITATION** (turning the wheel feeds every band),
+not in a rate-dependent firmware term. ⇒ **Nothing argues for limiting the LKAS command's angle
+rate — the target is a constant gain.**
+
+🛑 **§7's "needs ~4× the exposure, design a new drive" is WITHDRAWN.** It rested on the bug. The
+corpus already had 2.4× and the Lever-B answer did **not** sharpen (+0.075 [−0.099, +0.245]) ⇒ more
+of the same driving will not settle it, and §13 makes it less interesting anyway.
+
+## 13. ★★★★★ THE MECHANISM — and it inverts a standing recommendation
+
+On V87/V88 **stock modes 24 ≡ 26 are byte-identical in all six factor families**, so engaging changes
+**no calibration**. A constant 2.8× amplification must come from the command's ENTRY moving the loop
+through a **nonlinearity** — and there is exactly one on record: **`FUN_0003b8f6`, a Coulomb relay
+proportional to the COMMAND**, `ratio` saturating against gate **`0xC40BC`** (pinned across 99.62 %
+of its range at stock = a pure relay; raising the gate de-relays it).
+
+`v89_c3_friction_relay.py`, identified **within-route**:
+
+| `0xC40BC` | builds | engaged/manual 6–9 Hz amplification |
+|---|---|---|
+| **600** | stock, V87, **V88 — the car now** | **2.89× [2.14, 3.92]** |
+| **6000** | V85, V86, V86B | **6.58× [3.19, 13.14]** |
+
+**`eng × FRIC6000` band contrast +0.682 [+0.213, +1.166] — EXCLUDES 0, POSITIVE.**
+
+⇒ 🛑🛑 **De-relaying the Coulomb friction made the ratchet band 2.3× WORSE**, and
+**`STATE.md`'s standing "FREEZE `0xC40BC` at 6000" is contradicted on this band.** The car sits at
+600, which is the better value. **Do not restore 6000.**
+⇒ ★★★★★ **Two independent lines now agree that COLUMN FRICTION DAMPS THIS MODE:** the driver's grip
+(−0.655 vs control −0.266) and the firmware's own relay (600 beats 6000 by 2.3×).
+**The lever class is "more column friction/damping", not "less command".**
+
+⚠ **Scope:** 3 routes carry the flag, all one era; **V86 also moved `0xC40D4`** and **V86B armed the
+damper**. Both are carried as interactions and come back inconclusive-to-null, but `0xC40BC` cannot
+be fully separated from V86's `0xC40D4`. **Association = EVIDENCE; the specific cell = BELIEF.**
+⚠ The instrument measures **6–9 Hz band energy, not "feels smooth"**. More Coulomb friction can damp
+the oscillation and make the wheel notchier. **The operator scores that.**
