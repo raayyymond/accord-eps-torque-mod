@@ -223,7 +223,7 @@ obtained. They stay as written — records, not instructions.
 
 **Ghidra/V850 traps — the full list is the `firmware-decompile` skill; load it whenever a session reads
 firmware bytes.** Two are quoted here because they have each cost this kit a wrong answer more than once:
-- **Off-by-0x1000 on tp-relative cals has recurred four times.** `tp = 0xBF000`, so `tp+0x6000` is
+- **Off-by-0x1000 on tp-relative cals has recurred FIVE times** (latest 2026-08-09: `tp+0x74B0` read as `0xC74B0`, inventing lane “weights” for what are 0/1 enable flags). `tp = 0xBF000`, so `tp+0x6000` is
   `0xC5000` (the risky model-coeff block), *not* `0xC6000`. Anchor against a known value first.
 - **`search_instructions` silently undercounts** — it scans only already-analysed instructions and still
   reports `truncated:false`. Confirm every load-bearing count or null with a raw Python LE byte scan.

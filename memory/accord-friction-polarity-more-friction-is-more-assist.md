@@ -28,7 +28,7 @@ unverified sign that had already been built into V89.
 | 2 | `FUN_0003bc20` -> `gp-0x6bfe` | down |
 | 3 | `FUN_00038148` `residual = MODEL - ACTUAL` | down |
 | 4 | `gp-0x6b70 = sign(res) x LERP(|res|)` | more negative |
-| 5 | `FUN_00037fe6` `gp-0x6ad6 = (... + 32 x gp-0x6b70) x LERP >> 10` (`0xC74B0`=32, gate open 100 %) | down |
+| 5 | `FUN_00037fe6` `gp-0x6ad6 = (... + gp-0x6b70) x LERP >> 10` - ENABLE flag `0xC64B0` = 1 | down |
 | 6 | `FUN_0003a382` `error = gp-0x4f60 (measured driver torque) - clamp(gp-0x6ad6)` | up |
 | 7 | PID, P/I/D all positive-coefficient -> `gp-0x6ad4` | up |
 | 8 | `0x3ACA8` -> windowed -> **`mov`, `add` x8, NO negation** -> `0x3AD20 st.h r10,-0x6b94[gp]` | up |
@@ -48,6 +48,9 @@ the driver - do not re-propose"*. **That null was scored on `P[15-26 Hz]`, the 2
 cannot test it. => **the elimination is BAND-SCOPED and has been carried as general.** It is the main
 risk to V89's thesis and only a flight settles it.
 
+🛑 **CORRECTION:** an earlier draft said "lane weight `0xC74B0` = 32". **Off-by-0x1000** - `tp` =
+`0xBF000` so `tp+0x74B0` = **`0xC64B0`**, a 0/1 ENABLE FLAG = 1, not a weight. Sign chain unaffected.
+**Fifth recurrence of that trap.**
 `gp-0x6b70`'s magnitude response to the dose is unsized - its LERP lives in RAM
 (`gp-0x64b8`/`gp-0x641c`), not in the image.
 Method: a hand field-split of the `add` chain (Format-VII layout on a Format-I instruction) gave

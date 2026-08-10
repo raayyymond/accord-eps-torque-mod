@@ -225,7 +225,7 @@ Ghidra on stock `code.bin`.
 | 2 | `FUN_0003bc20` plausibility ±20000 → `gp-0x6bfe` | ↓ |
 | 3 | `FUN_00038148` `residual = MODEL − ACTUAL` | ↓ (already 67 % negative) |
 | 4 | `gp-0x6b70 = sign(res) × LERP(|res|)` | **more negative** |
-| 5 | `FUN_00037fe6`: `gp-0x6ad6 = (… + 32 × gp-0x6b70) × LERP >> 10`, `0xC74B0` = 32, gate open 100 % | **↓** |
+| 5 | `FUN_00037fe6`: `gp-0x6ad6 = (… + gp-0x6b70) × LERP >> 10` — lane ENABLE flag `0xC64B0` = 1, unit weight | **↓** |
 | 6 | `FUN_0003a382`: `error = gp-0x4f60 (measured driver torque) − clamp(gp-0x6ad6)` | **↑** |
 | 7 | PID (P, I, D all positive-coefficient) → `gp-0x6ad4` | **↑** |
 | 8 | `0x3ACA8` `ld.h -0x6ad4[gp],r6` → windowed → **`mov`, `add`×8, no negation** → `0x3AD20 st.h r10,-0x6b94[gp]` | **↑** |
@@ -249,9 +249,19 @@ scored against it. `0xC6AFC`/`0xC6AFE` = 32768 on **all 30 other builds**, so th
 it either. ⇒ **The elimination is BAND-SCOPED and is being carried as if it were general.** That is a
 real risk to V89's thesis and it is not resolvable from the data on hand — **it is what the flight tests.**
 
-⚠ Still unsized: `gp-0x6b70`'s magnitude response to the dose. Its lane weight is 32 against siblings
-176 / 161 / 14 / 14, but the LERP it passes through lives in **RAM** (`gp-0x64b8`/`gp-0x641c`), so the
-transfer cannot be read from the image.
+🛑 **CORRECTION — THE OFF-BY-0x1000 TRAP, FIFTH RECURRENCE.** An earlier draft of this section said
+*“lane weight `0xC74B0` = 32, siblings 176/161/14/14”*. **Wrong region.** `tp` = `0xBF000`, so
+`tp+0x74B0` is **`0xC64B0`**. The real cells are `0xC64AD..0xC64B3` and they are **0/1 ENABLE FLAGS,
+all = 1** — exactly as this file already recorded. Likewise the observer's ACTUAL-side gains are
+`0xC63A0..0xC63AE` (all 1024 = unity, EMA α `0xC63AC` = 102 — *the same “Path-2 IIR” the V88 handoff
+discusses*), and `gp-0x6b70`'s clamp is `0xC6200` = **8192**, not 41064.
+✅ **The sign chain is UNAFFECTED** — the lane still enters with a `+` at unit weight. Only the weight
+characterisation was wrong.
+🛑 `build_v83a_tva.py` carries an assertion naming this exact trap (*“tp+0x73A0 is 0xC63A0, NOT
+0xC73A0 — the off-by-0x1000 trap has recurred four times”*) **and it still happened.** A warning in one
+build script does not protect a session that never opens it. ⇒ **compute `tp+off` in code, never by eye.**
+⚠ Still unsized: `gp-0x6b70`'s magnitude response to the dose — the LERP it passes through lives in
+**RAM** (`gp-0x64b8`/`gp-0x641c`), so the transfer cannot be read from the image.
 ⊕ Method note: the orchestrator hand-decoded the `add` field split with a Format-VII layout on a
 Format-I instruction and got nonsense. **Ghidra's listing is the authority** — `mov`, eight `add`s,
 no `sub`/`subr`/`negf` in the accumulator. This is exactly the standing "assembly CONFIRMS, it does
