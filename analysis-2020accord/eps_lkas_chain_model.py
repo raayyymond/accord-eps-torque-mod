@@ -1492,6 +1492,24 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #   🛑 The cross-build 6-9 Hz comparison inherits route 71's [0.18, 5.51] split-half null ⇒ it CANNOT
 #     RESOLVE a ratchet change under ~3-5x. "Unchanged" is not supported; "cannot resolve" is.
 #
+# ★★★ THE r24 LANE'S CLAMPS ARE IMMEDIATES, AND THE BUDGET IS SHARED. [EVIDENCE, disassembled 2026-08-09]
+#   r24's own rail is FOUR 16-bit immediates, not a calibration -- contrast the deadband three
+#   instructions earlier, which Honda DID make a cal (`ld.hu 0x71f6,tp`):
+#       0x3ac42  addi  -0x2000,r6,r0     0x3ac46  movea  0x2000,r0,r24     0x3ac4a  bgt 0x3ac58
+#       0x3ac4c  addi   0x2000,r6,r0     0x3ac50  movea -0x2000,r0,r10     0x3ac54  cmovle r10,r6,r24
+#   ⇒ raising it is a 4-halfword IN-PLACE edit (the V42/V57/V87 safe class), NOT a cave.
+#   🛑 BUT THE TEN-LANE AGGREGATOR SUM IS CLIPPED TO +-10240 IN THE SAME FUNCTION:
+#       0x3acf6  movea  0x2800,r0,r12  -> 0x3acfa  st.h r12,-0x6b94,gp     (railed high)
+#       0x3ad0e  movea -0x2800,r0,r12  -> 0x3ad12  st.h r12,-0x6b94,gp     (railed low)
+#   ⇒ r24 ALONE is already allowed 8192 = 80% of the entire output budget. The +-8192 was never sized
+#     against r24's own dynamics; it stops ONE derivative lane running away with the whole aggregator.
+#   ⇒ the record lists the LKAS term gp-0x6b4c among the lanes in that same sum, so raising r24's rail
+#     lets a derivative lane eat the headroom the LKAS command needs -- the one change in this path that
+#     could REDUCE peak effective LKAS steering. ⚠ That last step is inherited, not freshly decompiled.
+#   ⊕ Measured: gp-0x6b94 never comes within 20% of its own +-10240 clip.
+#   ⊕ A clamp on a DERIVATIVE lane also bounds the response to an impulse (pothole, curb, sensor glitch);
+#     V65's 123-839 counts is normal driving, which is not where a differentiator spikes.
+#
 # 🛑 INSTRUMENT DEFECT, kit-wide, found 2026-08-09: z["t"] == z["raw14_t"][1:] and
 #   z["probe"] == z["raw14_b4"][1:] in ALL 13 caches (_cache_r5e.._cache_r73). extract() appends
 #   raw14_* on every 0x14A frame but a ROW only after the first 0x18F. Pairing t with raw14_b4 reads

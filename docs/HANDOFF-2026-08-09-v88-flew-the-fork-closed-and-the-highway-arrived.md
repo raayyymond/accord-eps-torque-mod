@@ -362,13 +362,56 @@ route.** The arithmetic is EVIDENCE; the margin is BELIEF.
 while the **negative control responded**, pointing at common cause. **Two independent lines therefore
 agree: a bigger `0xC6446` is neither permitted by the clamp nor predicted to work.**
 
-**So V89 should MEASURE, not dose.** Two things are worth measuring, in this order:
+**So V89 should MEASURE, not dose.**
 
-1. **`|dtorque|` on V88 itself**, so the clamp margin stops resting on V65's distribution. **`gp-0x6ada`
-   is r24's post-clamp RAM mirror — already catalogued as 1 writer / 0 readers, free, blast-radius-zero
-   telemetry** — and it settles both the rail question and the dose question in one flight.
+---
 
-2. **★ The ring-down protocol — the highest-value measurement in the whole problem.** Ring-down is the
+## 11b. 🛑 THE NEXT STEPS ARE ANALYSIS ON EXISTING LOGS — operator-corrected
+
+**The orchestrator's first recommendation was a dedicated ring-down driving session. The operator
+corrected it:** *"We're just diagnosing micro-ratcheting and ratcheting at this point, at parking lot
+speeds. This is done in a drive/log we already have on V88."* **He is right.** Route `73`'s segments
+0/8/9 give **~118 s engaged below ~15 km/h**, exactly where D5 measured the ratchet at its largest
+(402 ct vs 83.5 at highway). **A new drive buys nothing diagnostic.**
+
+★ **And the session under-used its own instrument.** Ring-down *was* the only ζ estimator that had ever
+passed its control here — linewidth returns Q = 8,000,000 on a Q = 2.4 mode, `q_of` returns 79 on white
+noise — so "we cannot measure Q" had collapsed into "we need more disengagement edges", and that was
+carried forward without re-checking. **V88 broke that assumption.** H2 already produced `|tq/cmd|` =
+**6.24 at 7.79 Hz**, phase **−30.9°**, with coherence² going **0.009 (rectified — *exactly* the shuffled
+control) → 0.343 (signed)**. **That is a transfer-function measurement, and a resonance's Q falls out of
+its peak shape and phase roll-through with no disengagement at all.** V87 could not do it because
+rectification destroyed the phase — which is exactly why that session fell back on ring-down.
+
+**⇒ THREE ANALYSES, all on data already on disk, none needing the car:**
+
+1. **Fit `cmd → column` across 4–15 Hz on route 73's creep segments (0, 8, 9).** Q from the resonance
+   peak and from the phase slope, coherence as the quality gate. **This is the measurement V88 was built
+   to make possible, and it was spent on a yes/no.**
+2. **Pool ring-down edges across all 13 caches**, not just `r71` / `r73` — those were the only two
+   screened, and only on `latActive` falling edges under strict criteria. ⚠ **Screen by damper state:**
+   V87/V88 are stock on FactorC and pool cleanly; **V74–V86B do not.**
+3. **Partial coherence against the IMU** (`imu_vert` / `imu_lat`, wheel speeds), run *alongside* 1 because
+   it can undercut it: **if the mode is excited mainly by ROAD input rather than by the command, then
+   `cmd→column` is the wrong transfer function and its Q is biased.** Which excitation path dominates is
+   itself the result — **it decides whether any command-side lever could ever work**, which is the
+   question the whole V89 argument turns on.
+
+🛑 **The only thing that genuinely needs new driving is a BUILD comparison — and that needs a new build,
+not a new drive.** Everything diagnostic about the two remaining symptoms at parking-lot speed is on tape.
+
+⊕ When a build *is* cut, tap **`|dtorque|` via `gp-0x6ada`** (r24's post-clamp RAM mirror, 1 writer /
+0 readers, blast-radius-zero) so the clamp margin stops resting on V65's distribution — but that rides
+along on a build, it does not justify a drive of its own.
+
+---
+
+## 11c. The ring-down sizing — retained as knowledge, NOT as a request
+
+Revisit only if 11b's items 1–3 return coherence too low to fit, and even then prefer a probe on a build
+being flashed anyway rather than a dedicated driving session.
+
+**★ Ring-down is the
    only ζ estimator in this kit that passes its own control, and the corpus has never fed it: route 73
    gave **2 usable edges from 5 disengagements, one with the wrong sign.** A Monte-Carlo control of the
    estimator was run this session and it settles how to collect them:

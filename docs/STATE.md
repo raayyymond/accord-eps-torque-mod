@@ -209,7 +209,38 @@ command at **0.22× of V87 — a further 2.5× cut on top of V88** — which rea
 ⊕ **The operator's sentence:** *"Cutting high-frequency content out of the delivered steering command is
 now a measured fix for the grinding and a measured NON-fix for the ratcheting."*
 
-### 11. ★ THE RING-DOWN PROTOCOL — sized from a control, and it is a real ask
+### 11. 🛑🛑 NEXT STEPS ARE ANALYSIS ON EXISTING LOGS — **NOT another drive.** Operator-corrected.
+**The orchestrator recommended a dedicated ring-down driving session and was corrected: the diagnosis of
+micro-ratcheting and ratcheting is a parking-lot-speed question, and route `73` already contains it** —
+segments 0/8/9 give ~118 s engaged below ~15 km/h, exactly where D5 measured the ratchet at its largest
+(402 ct). **A new drive buys nothing diagnostic.**
+
+★ **And ring-down is no longer the only route to Q. V88 changed that and the session under-used it.**
+Ring-down *was* the only ζ estimator that had passed its own control, so "we cannot measure Q" had
+collapsed into "we need more disengagement edges". **V88's sign bit broke that**: H2 already produced
+`|tq/cmd|` = **6.24 at 7.79 Hz, phase −30.9°**, with coherence² going **0.009 (rectified — exactly the
+shuffled control) → 0.343 (signed)**. **That is a transfer-function measurement, and a resonance's Q falls
+out of its peak shape and phase roll-through with no disengagement at all.** V87 could not do this because
+rectification destroyed the phase — which is precisely why that session fell back on ring-down.
+
+**⇒ THREE ANALYSES, all on data already on disk:**
+1. **Fit `cmd → column` across 4–15 Hz on route 73's creep segments (0, 8, 9).** Extract Q from the peak
+   and from the phase slope, coherence as the quality gate. **This is the measurement V88 was built to
+   make possible, and the session used it only for a yes/no.**
+2. **Pool ring-down edges across all 13 caches**, not just `r71`/`r73`. Only those two were screened, and
+   only on `latActive` falling edges under strict criteria. ⚠ Screen by damper state: V87/V88 are stock on
+   FactorC and pool cleanly; **V74–V86B do not.**
+3. **Partial coherence against the IMU** (`imu_vert`/`imu_lat`, wheel speeds), run alongside 1 because it
+   can undercut it: **if the mode is excited mainly by ROAD input rather than by the command, `cmd→column`
+   is the wrong transfer function and its Q is biased.** Which path dominates is itself the result — it
+   decides whether *any* command-side lever could ever work.
+
+🛑 **The only thing that genuinely needs new driving is a BUILD comparison — and that needs a new build,
+not a new drive.** Everything diagnostic about the two remaining symptoms at parking-lot speed is on tape.
+
+⊕ **The ring-down sizing below is retained as knowledge, not as a request.** Revisit only if 1–3 return
+coherence too low to fit — and even then, prefer a probe on a build being flashed anyway.
+
 Ring-down is the only ζ estimator that passes its own control; route 73 gave **2 usable edges from 5
 disengagements, one with the wrong sign.** Monte-Carlo of the actual fit through route 73's own beds:
 
