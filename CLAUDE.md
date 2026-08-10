@@ -15,6 +15,12 @@ an already-flashed, already-falsified lever because the result was buried in pro
 
 1. **`docs/STATE.md`** — the living current state: what is on the car, what is built and unflashed, the
    open workstreams, and the recommended next steps. **Always read this.**
+   🛑 **HARD CAP 256 KB — keep it under ~150 KB.** It hit 506 KB on 2026-08-09, past the `Read` limit,
+   so it could not be loaded in one call and **the tail was silently invisible**. **Update it IN PLACE;
+   never append a new dated block — supersede the old one.** Superseded sections go to
+   `docs/STATE-ARCHIVE-*.md` (a record, not an instruction), per-build history to `BUILD-LINEAGE.md`.
+   **Check its size at every close-out.** The same cap applies to any file an agent must read whole,
+   `memory/MEMORY.md` included.
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
    **Mandatory before proposing any calibration edit.**
 3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session, and the chain behind it.
