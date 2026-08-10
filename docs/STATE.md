@@ -200,43 +200,62 @@ at 15 and its command arm runs ~0.2–1.0 ⇒ ~50× margin. Friction enters with
 that note stands. K1 scales the `|model|` arm alone, so it raises magnitude **without** flattening
 anything into a relay. It is **not** the V80 class.
 
-### 6b. 🛑🛑 V89 IS ON HOLD — DO NOT FLASH YET. One sign is unverified, and it is the operator's own constraint
-Raised by the operator, 2026-08-09: *"I thought we didn't want friction to let the LKAS demand as much
-spin as possible. Also how do we know it's modelling friction?"* Both questions were right to ask.
+### 6b. ✅ THE POLARITY IS VERIFIED — V89's HOLD IS LIFTED. More modelled friction ⇒ MORE assist
+The operator asked *"I thought we didn't want friction… how do we know it's modelling friction?"* and
+the second half of that exposed an unverified sign. It is now traced end to end, every link read in
+Ghidra on stock `code.bin`.
 
-**WHAT IS NOW SETTLED — the term IS Coulomb friction, five ways:**
-1. **Form.** `friction = |model| × sign(polarity × gp-0x6abc) × K1/1024` — magnitude ∝ load, sign =
-   direction of motion. That is `F = μ·N·sign(v)`, the textbook Coulomb form.
-2. **The sign IS a velocity sign.** `FUN_00041464` @`0x4170C`: **`gp-0x6abc ← gp-0x4f50`**, which
-   `STATE.md`'s own signal table already calls the **resolver/motor ELECTRICAL RATE**.
-3. **Its companion term is INERTIA.** The same function subtracts a term ∝ `d(rate)/dt` scaled by
-   `0xC646E` — a cal the kit's own FROZEN lists already label **"INERTIA gain"**. Friction + inertia
-   against an applied torque **is a mechanical plant model**.
-4. **The record named it first.** V87's row in `BUILD-LINEAGE.md` already calls `gp-0x6b70`
-   *"the Coulomb friction compensator"*, and measured it on-car: **non-zero 99.80 %, `|v| ≥ 64` in
-   93.84 %, negative 67.19 %, and the aggregator's optional-term gate OPEN 100 %.**
-5. ⊕ **Coulomb friction is rate-INDEPENDENT by definition** — and §1's measurement found the
-   engagement effect is rate-independent (+0.022 [−0.070, +0.116]). **Those two agree**, which is
-   independent corroboration nobody designed for.
+**THE TERM IS COULOMB FRICTION — five ways, four of them independent of this session:**
+1. **Form.** `friction = |model| × sign(polarity × gp-0x6abc) × K1/1024` = `F = μ·N·sign(v)`.
+2. **The sign IS a velocity sign.** `FUN_00041464` @`0x4170C`: `gp-0x6abc ← gp-0x4f50`, which
+   `STATE.md`'s own signal table calls the **resolver/motor ELECTRICAL RATE**.
+3. **Its companion is INERTIA** — a term ∝ `d(rate)/dt` scaled by `0xC646E`, a cal the kit's own
+   FROZEN lists already label **"INERTIA gain"**. Applied torque − friction − inertia = a mechanical model.
+4. **The record named it first:** V87's `BUILD-LINEAGE.md` row already calls `gp-0x6b70`
+   *"the Coulomb friction compensator"* and measured it on-car — **non-zero 99.80 %, negative 67.19 %,
+   aggregator optional-term gate OPEN 100 %.**
+5. ⊕ **Coulomb friction is rate-INDEPENDENT by definition**, and §1 measured the engagement effect as
+   rate-independent (+0.022 [−0.070, +0.116]). **Independent corroboration nobody designed for.**
 
-**AND THE MECHANISM NOW HAS A NAME.** `gp-0x6ad6` is **not** a torque added to the motor — it is a
-**torque-tracking REFERENCE**. `FUN_0003a382` computes
-`error = gp-0x4f60 (measured driver column torque) − clamp(gp-0x6ad6, ±0xC7200)` and runs a PID on
-it into `gp-0x6ad4`. ⇒ **the friction estimate shapes what the controller AIMS AT, it does not add
-drag.** And because Coulomb friction **flips sign every time the wheel reverses**, an estimate that
-is wrong by a constant produces a **step error at every reversal** — which is what a ratchet is.
+**THE SIGN CHAIN, link by link:**
 
-🛑🛑 **THE UNVERIFIED SIGN, and why the build is held.** Raising K1 lowers the model output, lowers
-the residual, and makes `gp-0x6b70` more negative into a lane with weight `0xC74B0` = **32** (live,
-gate open 100 %). Whether that ends up **lighter or heavier at the wheel depends on the PID polarity
-in `FUN_0003a382`, which I have NOT verified.** The operator's constraint is exactly this axis, so
-the build does not fly until it is settled.
-⚠ Also unsized: `gp-0x6b70`'s magnitude response to the dose. Its lane is 32 against sibling weights
-176 / 161 / 14 / 14, but the LERP it passes through lives in **RAM** (`gp-0x64b8`/`gp-0x641c`), so
-the transfer cannot be read from the image alone.
-⇒ **NEXT: decompile the `FUN_0003a382` PID polarity and the `gp-0x6ad4` consumer.** If raising the
-friction estimate makes the wheel HEAVIER, V89 inverts to `0xC40D2` **below** 102 and the same
-measurement supports it — the dose direction is what is measured, not the sign into the wheel.
+| # | where | effect of raising K1 |
+|---|---|---|
+| 1 | `0x3BBC2` `subf.s r10,r8,r8` — friction is **subtracted** from the model | model out **↓** |
+| 2 | `FUN_0003bc20` plausibility ±20000 → `gp-0x6bfe` | ↓ |
+| 3 | `FUN_00038148` `residual = MODEL − ACTUAL` | ↓ (already 67 % negative) |
+| 4 | `gp-0x6b70 = sign(res) × LERP(|res|)` | **more negative** |
+| 5 | `FUN_00037fe6`: `gp-0x6ad6 = (… + 32 × gp-0x6b70) × LERP >> 10`, `0xC74B0` = 32, gate open 100 % | **↓** |
+| 6 | `FUN_0003a382`: `error = gp-0x4f60 (measured driver torque) − clamp(gp-0x6ad6)` | **↑** |
+| 7 | PID (P, I, D all positive-coefficient) → `gp-0x6ad4` | **↑** |
+| 8 | `0x3ACA8` `ld.h -0x6ad4[gp],r6` → windowed → **`mov`, `add`×8, no negation** → `0x3AD20 st.h r10,-0x6b94[gp]` | **↑** |
+| 9 | `gp-0x6b94` → governor → `gp-0x6ace` → comp-add → `gp-0x6acc` → shaper → `gp-0x6b98` → motor | **more assist** |
+
+⇒ ✅ **MORE MODELLED COULOMB FRICTION ⇒ MORE ASSIST ⇒ A LIGHTER WHEEL, NOT A HEAVIER ONE.**
+**V89 does not fight the LKAS demand — it assists it.** The operator's constraint is satisfied in the
+favourable direction, and the earlier "may feel notchier/heavier" caveat is **withdrawn as stated**.
+
+★ **And the physics is right.** `gp-0x6ad6` is a **torque-tracking REFERENCE**, not a torque added to
+the motor. The loop holds the driver's *felt* torque at that target. Telling it the plant has more dry
+friction **lowers the target driver effort**, so the PID delivers more motor torque to hold the felt
+torque down. And because Coulomb friction **flips sign at every wheel reversal**, an estimate that is
+wrong by a constant produces a **step error at every reversal — which is what a ratchet is.**
+
+🛑 **THE ONE HONEST CAVEAT — V56 muted this exact lane and got a null.** `0xC6AFC`/`0xC6AFE`
+32768 → 0 killed the whole `FUN_0003a382` → `gp-0x6ad4` output bound, and the memory says the lane is
+*"ELIMINATED as the driver… do not re-propose"*. **But that null was scored on `P[15–26 Hz]` — the
+20–25 Hz mode — NOT on 6–9 Hz**, and route `24` is **not on disk**, so the ratchet band was never
+scored against it. `0xC6AFC`/`0xC6AFE` = 32768 on **all 30 other builds**, so the corpus cannot test
+it either. ⇒ **The elimination is BAND-SCOPED and is being carried as if it were general.** That is a
+real risk to V89's thesis and it is not resolvable from the data on hand — **it is what the flight tests.**
+
+⚠ Still unsized: `gp-0x6b70`'s magnitude response to the dose. Its lane weight is 32 against siblings
+176 / 161 / 14 / 14, but the LERP it passes through lives in **RAM** (`gp-0x64b8`/`gp-0x641c`), so the
+transfer cannot be read from the image.
+⊕ Method note: the orchestrator hand-decoded the `add` field split with a Format-VII layout on a
+Format-I instruction and got nonsense. **Ghidra's listing is the authority** — `mov`, eight `add`s,
+no `sub`/`subr`/`negf` in the accumulator. This is exactly the standing "assembly CONFIRMS, it does
+not FORM" rule doing its job.
 
 ### 7. ★ PRE-REGISTRATION for the V89 flight
 - **IDENTITY, parameter-free, control already measured:** on V88 the cave and the 427 packer read
@@ -248,8 +267,10 @@ measurement supports it — the dose direction is what is measured, not the sign
   rather than scoring bands.
 - **H2 THE LEVER** — engaged 6–9 Hz column energy must FALL vs V88 on speed- **and rate**-matched
   windows, CI excluding 1.00, and **the 32–38 Hz control must not fall as much.**
-- **H3 THE OPERATOR'S CONSTRAINT** — 0.5–3 Hz LKAS command content UNCHANGED. V89 does not touch the
-  command path, so this is **structural**; if it moves, the chain model is wrong and that is the headline.
+- **H3 THE OPERATOR'S CONSTRAINT, CORRECTED by §6b** — 0.5–3 Hz LKAS command content **must not FALL**.
+  🛑 The earlier "must be UNCHANGED" was wrong: §6b's verified chain says V89 *adds* assist, so a small
+  RISE is the predicted direction. **A FALL would mean the sign chain is inverted somewhere and is the
+  headline.**
 - **H4 🛑 the operator scores the symptoms, in his words.**
 🛑 **HONEST LABEL:** the dose DIRECTION is measured (§1b, 600 vs 6000). That **K1 acts the same way
 as the gate is BELIEF** — the gate contrast confounds magnitude with relay-ness, and K1 moves
@@ -1237,10 +1258,10 @@ instrument only.
 🛑 **No new drive is needed to diagnose micro-ratcheting or ratcheting** — operator-corrected. Route `73`
 segments 0/8/9 carry ~118 s engaged below ~15 km/h, where the ratchet is largest.
 
-1. ★★★★★ **SETTLE THE SIGN, THEN decide V89** (§6b) — decompile `FUN_0003a382`'s PID polarity and
-   the `gp-0x6ad4` consumer. **V89 IS BUILT BUT ON HOLD**; it must not fly until we know whether more
-   modelled friction makes the wheel lighter or heavier. If heavier, the same measurement supports
-   the OPPOSITE edit (`0xC40D2` < 102). Artifact, when cleared: `39990-TVA,A160-V89-V88BASE-FRICTION.C40D2.204-CAVE.6AE2.SIGN.MAG64-0x13000-0x100000.rwd`
+1. ★★★★★ **FLY V89 — the sign is verified and the hold is LIFTED** (§6b: more modelled friction ⇒
+   more assist ⇒ lighter wheel, traced through all nine links). Operator's call; flash only on
+   explicit instruction naming the file and the bus. 🛑 Score §7 in the SAME pass that scores the
+   route, and read the V56 band-scope caveat in §6b first. Artifact: `39990-TVA,A160-V89-V88BASE-FRICTION.C40D2.204-CAVE.6AE2.SIGN.MAG64-0x13000-0x100000.rwd`
    sha256 `cdce053e3a86bf2c8857d7f229c015c747e209fa1222b91e3df863f1f44cf7ef`.
    Score the pre-registration in §7 **in the same pass that scores the route** (the method rule
    violated five builds running).
