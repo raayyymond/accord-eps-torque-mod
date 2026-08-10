@@ -200,6 +200,44 @@ at 15 and its command arm runs ~0.2–1.0 ⇒ ~50× margin. Friction enters with
 that note stands. K1 scales the `|model|` arm alone, so it raises magnitude **without** flattening
 anything into a relay. It is **not** the V80 class.
 
+### 6b. 🛑🛑 V89 IS ON HOLD — DO NOT FLASH YET. One sign is unverified, and it is the operator's own constraint
+Raised by the operator, 2026-08-09: *"I thought we didn't want friction to let the LKAS demand as much
+spin as possible. Also how do we know it's modelling friction?"* Both questions were right to ask.
+
+**WHAT IS NOW SETTLED — the term IS Coulomb friction, five ways:**
+1. **Form.** `friction = |model| × sign(polarity × gp-0x6abc) × K1/1024` — magnitude ∝ load, sign =
+   direction of motion. That is `F = μ·N·sign(v)`, the textbook Coulomb form.
+2. **The sign IS a velocity sign.** `FUN_00041464` @`0x4170C`: **`gp-0x6abc ← gp-0x4f50`**, which
+   `STATE.md`'s own signal table already calls the **resolver/motor ELECTRICAL RATE**.
+3. **Its companion term is INERTIA.** The same function subtracts a term ∝ `d(rate)/dt` scaled by
+   `0xC646E` — a cal the kit's own FROZEN lists already label **"INERTIA gain"**. Friction + inertia
+   against an applied torque **is a mechanical plant model**.
+4. **The record named it first.** V87's row in `BUILD-LINEAGE.md` already calls `gp-0x6b70`
+   *"the Coulomb friction compensator"*, and measured it on-car: **non-zero 99.80 %, `|v| ≥ 64` in
+   93.84 %, negative 67.19 %, and the aggregator's optional-term gate OPEN 100 %.**
+5. ⊕ **Coulomb friction is rate-INDEPENDENT by definition** — and §1's measurement found the
+   engagement effect is rate-independent (+0.022 [−0.070, +0.116]). **Those two agree**, which is
+   independent corroboration nobody designed for.
+
+**AND THE MECHANISM NOW HAS A NAME.** `gp-0x6ad6` is **not** a torque added to the motor — it is a
+**torque-tracking REFERENCE**. `FUN_0003a382` computes
+`error = gp-0x4f60 (measured driver column torque) − clamp(gp-0x6ad6, ±0xC7200)` and runs a PID on
+it into `gp-0x6ad4`. ⇒ **the friction estimate shapes what the controller AIMS AT, it does not add
+drag.** And because Coulomb friction **flips sign every time the wheel reverses**, an estimate that
+is wrong by a constant produces a **step error at every reversal** — which is what a ratchet is.
+
+🛑🛑 **THE UNVERIFIED SIGN, and why the build is held.** Raising K1 lowers the model output, lowers
+the residual, and makes `gp-0x6b70` more negative into a lane with weight `0xC74B0` = **32** (live,
+gate open 100 %). Whether that ends up **lighter or heavier at the wheel depends on the PID polarity
+in `FUN_0003a382`, which I have NOT verified.** The operator's constraint is exactly this axis, so
+the build does not fly until it is settled.
+⚠ Also unsized: `gp-0x6b70`'s magnitude response to the dose. Its lane is 32 against sibling weights
+176 / 161 / 14 / 14, but the LERP it passes through lives in **RAM** (`gp-0x64b8`/`gp-0x641c`), so
+the transfer cannot be read from the image alone.
+⇒ **NEXT: decompile the `FUN_0003a382` PID polarity and the `gp-0x6ad4` consumer.** If raising the
+friction estimate makes the wheel HEAVIER, V89 inverts to `0xC40D2` **below** 102 and the same
+measurement supports it — the dose direction is what is measured, not the sign into the wheel.
+
 ### 7. ★ PRE-REGISTRATION for the V89 flight
 - **IDENTITY, parameter-free, control already measured:** on V88 the cave and the 427 packer read
   the same cell and `b6 == (MOTOR_TORQUE ≥ 160)` held at **0.9654** (chance 0.6028). On V89 the cave
@@ -1199,8 +1237,10 @@ instrument only.
 🛑 **No new drive is needed to diagnose micro-ratcheting or ratcheting** — operator-corrected. Route `73`
 segments 0/8/9 carry ~118 s engaged below ~15 km/h, where the ratchet is largest.
 
-1. ★★★★★ **FLY V89** (operator's call; flash only on explicit instruction naming the file and the
-   bus). `39990-TVA,A160-V89-V88BASE-FRICTION.C40D2.204-CAVE.6AE2.SIGN.MAG64-0x13000-0x100000.rwd`
+1. ★★★★★ **SETTLE THE SIGN, THEN decide V89** (§6b) — decompile `FUN_0003a382`'s PID polarity and
+   the `gp-0x6ad4` consumer. **V89 IS BUILT BUT ON HOLD**; it must not fly until we know whether more
+   modelled friction makes the wheel lighter or heavier. If heavier, the same measurement supports
+   the OPPOSITE edit (`0xC40D2` < 102). Artifact, when cleared: `39990-TVA,A160-V89-V88BASE-FRICTION.C40D2.204-CAVE.6AE2.SIGN.MAG64-0x13000-0x100000.rwd`
    sha256 `cdce053e3a86bf2c8857d7f229c015c747e209fa1222b91e3df863f1f44cf7ef`.
    Score the pre-registration in §7 **in the same pass that scores the route** (the method rule
    violated five builds running).
