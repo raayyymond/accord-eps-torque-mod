@@ -1458,6 +1458,46 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #     (coh 0.035-0.077 vs a 0.043 null); and a phase-randomised surrogate PRESERVES |X(f)|, so it is
 #     near-tautological as a "no line" control for a single-window periodogram.
 #
+# ★★★★★ THE FORK CLOSED, 2026-08-09 -- V88's SIGN bit, route 73. [EVIDENCE]
+#   V88's cave b7 gives sign(gp-0x6b98) at 100 Hz, so the SIGNED delivered command was reconstructed and
+#   V87's rectification screen DROPPED: 75 unclipped engaged windows vs V87's 14 screened.
+#   Controls ran first: the sign bit flips at median |cmd| 36.8 counts = the 22.9th percentile (a noise
+#   bit sits at the 50th); corr(0.2-3 Hz signed cmd, column) = -0.671 where the RECTIFIED magnitude
+#   gives +0.030 -- rectification was destroying a real relationship.
+#     column torque 0x18F  6-9 Hz prominence 11.17 [7.85, 16.30], above the p95 floor in 52.0%
+#     SIGNED gp-0x6b98                        5.46 [5.12,  5.94],                          13.3%
+#     rectified |gp-0x6b98| (V87's view)      5.62 [5.10,  6.80],                          12.0%
+#   ⇒ SIGNED ~= RECTIFIED: rectification was NOT hiding a line, so V87's null was CORRECT. The worry
+#     that 7.79 Hz folds to 15.58 Hz is dead. THE RATCHETING IS NOT A TONE THE EPS COMMANDS --
+#     no notch, and no phase lever at 7.79 Hz. Reproduced at nw=256 and on the 100 Hz cave grid.
+#   ★ AND THE GATE-2 HAZARD MOVED. Signed-cmd<->column coherence^2 vs a shuffled-pairs control of
+#     0.009 [0.001, 0.061]:  2-4 Hz 0.038 · 6-9 0.123 · 9-12 0.090 · 12-18 0.133 · 18-24 Hz 0.310.
+#     The loop is TIGHTEST in grind #1's band, not the ratchet's ⇒ any future filter's phase cost
+#     lands at ~21 Hz. (At 7.79 Hz: coh^2 0.343, |tq/cmd| 6.24, phase -30.9 deg; the rectified channel
+#     returns 0.009 = EXACTLY the control, so V87's 0.439-vs-0.178 was measured through a rectifier.)
+#
+# ★★★★★ LEVER B's MECHANISM, MEASURED -- V88 vs V87, single-variable, 5 changed bytes. [EVIDENCE]
+#   Speed-matched 2-4 m/s, engaged, unclipped, episode-bootstrapped (orchestrator's independent crude
+#   estimator in brackets):
+#     0.5-3 Hz 1.192 [0.780, 1.812] NULL [1.121]  <- the peak effective LKAS command, UNTOUCHED
+#     3-6 1.165 · 6-9 0.859 [0.720] · 9-12 0.604 [0.465, 0.943] · 15-22 Hz 0.549 [0.407, 0.844] [0.625]
+#   Aliasing excluded on two 100 Hz channels: 15-22 Hz 0.33x/0.31x while 28-35 Hz is FLAT 1.13x/0.94x.
+#   ⇒ MORE r24 DERIVATIVE FEEDBACK = MORE LOOP DAMPING = LESS HF EVERYWHERE, at zero LF cost.
+#   🛑 The orchestrator predicted the OPPOSITE (a 15-22 Hz RISE) by treating r24 as feedforward. It is
+#     rate FEEDBACK inside the loop and gp-0x6b98 is the loop's OUTPUT. V87's engaged spectrum rising
+#     with frequency (29/29/52 ct rms) against a FLAT manual arm (~9) is the signature of an
+#     UNDER-DAMPED CLOSED LOOP at stock derivative gain, not of a feedforward differentiator.
+#   ⊕ CO-MOVEMENT, not trade-off: within V88, corr(log 15-22 Hz cmd rms, log 6-9 Hz column prominence)
+#     = +0.364 (+0.263 speed-partialled, block-permutation p = 0.016).
+#   🛑 The cross-build 6-9 Hz comparison inherits route 71's [0.18, 5.51] split-half null ⇒ it CANNOT
+#     RESOLVE a ratchet change under ~3-5x. "Unchanged" is not supported; "cannot resolve" is.
+#
+# 🛑 INSTRUMENT DEFECT, kit-wide, found 2026-08-09: z["t"] == z["raw14_t"][1:] and
+#   z["probe"] == z["raw14_b4"][1:] in ALL 13 caches (_cache_r5e.._cache_r73). extract() appends
+#   raw14_* on every 0x14A frame but a ROW only after the first 0x18F. Pairing t with raw14_b4 reads
+#   the cave byte ~10 ms early = 28 deg at 7.79 Hz. Safe pairs: (t, probe) or (raw14_t, raw14_b4).
+#   Audit: analysis-2020accord/audit_raw14_offbyone.py.
+#
 # 🛑 0xC646E (INERTIA gain, 1428) is FROZEN across ALL 21 images from V38 to V88 -- the best remaining
 #   damping candidate has never been written, and its "1-6% of clamp" sizing is still an ESTIMATE.
 #

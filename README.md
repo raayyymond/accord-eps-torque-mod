@@ -22,26 +22,6 @@ This is real-vehicle work. Please read this section before doing anything beyond
 
 **After flashing, run a fork that knows about the mod.** Use sunnypilot, StarPilot, or another fork that detects the modified EPS version string and auto-applies the 2× torque PID tuning settings. Running modified firmware against stock tuning is not a configuration any of this was validated in.
 
-### The non-negotiable rules
-
-1. **Never send a CAN message without explicit confirmation of the exact payload — including UDS reads.** This is the iron rule. `CLAUDE.md` codifies it for the agent; hold the line yourself too.
-2. **Never run `eps-update.py` or any flash operation unless the firmware file and the bus are explicitly named.** Repeat the filename back before proceeding.
-3. **Before any flash, openpilot/pandad MUST be killed** (`tmux kill-server` on a comma device). A failed flash with openpilot still running has been observed to light every error indicator on the dash — recoverable, but retry only after killing openpilot.
-4. **All `.rwd` files are reference/study artifacts by default.** They are data, not flash candidates.
-5. **Firmware is car/year/revision specific.** Every `.rwd` here is built for `39990-TVA-A160` on one specific 2020 Accord. Confirm the part number before building for a car, and **do not cross-flash onto a different part number.** A failed flash with the wrong firmware for the wrong car/year/revision has not been characterized and could plausibly require ECU replacement.
-6. **`tools/comma4_panda_test.py` is read-only and safe at any time after openpilot is killed.** It opens the panda, dumps CAN traffic, and exits. It does not transmit. Run it any time to verify your hardware path works. **Everything else that touches the ECU writes** — `flashing-2020accord/eps-update-tva.py` performs a UDS sequence that erases and reprograms the EPS ECU.
-
-### Code caves are the only bricking class
-
-Three builds have bricked this ECU — **V24, V27 and V48B** — and all three were code caves. Every success since V29 has been either cal-only or a single in-place branch/displacement edit.
-
-Any cave, filter, or dynamics change has two mandatory gates:
-
-- **GATE 1 — RAM ownership**, including writers and register-indirect access. Static clearance is **not** sufficient: `gp-0x1500` passed both static methods and still failed on-car.
-- **GATE 2 — closed-loop stability**, magnitude *and* phase, in every loop the signal is in.
-
-Detail in `docs/BUILD-LINEAGE.md` Part 2.
-
 ### Flash at your own risk
 
 No part of this kit is warranted for use on any vehicle. The operator flashes their own car after rigorous validation. You should do the same.

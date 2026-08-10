@@ -1,13 +1,247 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-09 latest (V88 session) — ✅ V87 FLEW AS ROUTE `71`, FAULT-FREE, AND ITS PROBE
-FIRED. ✅ V88 IS BUILT, VERIFIED, UNFLASHED. Full narrative in
-`docs/HANDOFF-2026-08-09-v88-the-probe-fired-and-lever-b-comes-back.md`.
-🛑 Everything under the "V87 BUILD session" headline below that says V87 is unflashed is SUPERSEDED.**
+**Last updated: 2026-08-09 latest (V89 session) — ✅ V88 FLEW AS ROUTE `73`, FAULT-FREE, WITH THE FIRST
+REAL HIGHWAY EXPOSURE IN THE CORPUS. The operator reports the audible GRINDING IS FIXED; micro-ratcheting
+and ratcheting are the remaining issues. Full narrative in
+`docs/HANDOFF-2026-08-09-v88-flew-the-fork-closed-and-the-highway-arrived.md`.
+🛑 Every block below that calls V88 "BUILT, VERIFIED, UNFLASHED" is SUPERSEDED on its flight status only.**
 
 ---
 
-## ★★★★★ HEADLINE, 2026-08-09 latest — V87 FLEW, THE PROBE FIRED, V88 RESTORES LEVER B
+## ★★★★★ HEADLINE, 2026-08-09 latest — V88 FLEW, THE FORK CLOSED, AND THE HIGHWAY ARRIVED
+
+### 0. ✅ V88 FLEW — route `73` (`75604b0a432fdc89_00000073--9380c74d52`), 11 segments, cache `_cache_r73/`
+61,161 frames / 613.4 s, **72.7 % engaged = 7.41 min**, **fault-free**: `STEER_STATUS` {0: 61,147, 3: 15},
+DTC-active duty **0.000000**, 0 sentinels, no EPS event in 1,786 `onroadEvents`.
+**Operator, in his words: the audible GRINDING IS FIXED · hints of grind #2 but he could not elicit it ·
+MICRO-RATCHETING and RATCHETING (stuttering) are now the main remaining issues.**
+
+★★ **THE ≥50 km/h DROUGHT IS OVER — 119.6 s engaged ≥50 km/h, 80.2 s ≥80, v_max 116.6 km/h**, against
+**0.0 s on each of the four prior routes.** Highway = segments 4–5, both 100 % engaged.
+
+**IDENTITY, parameter-free, triple-measured:** `b6 == (427 wire ≥ 160)` = **0.9654** vs the V87 control
+**0.4022**, with **chance = 0.6028** from the marginals ⇒ V87 sits essentially *at* chance. Duty match
+0.27330 vs 0.27334; edge-conditioned agreement 0.9901; lag sweep peaks at lag 0.
+
+### 1. ★★★★★ H1 CONFIRMED — THE FIX DID NOT COST STEERING AUTHORITY
+Speed-matched 2–4 m/s, engaged, unclipped, episode-bootstrapped (orchestrator's independent crude
+estimator in brackets):
+
+| band | V88/V87 | verdict |
+|---|---|---|
+| **0.5–3 Hz — the peak effective LKAS command** | **1.192 [0.780, 1.812]** [1.121] | **NULL — untouched** |
+| 3–6 Hz | 1.165 [0.959, 1.375] | null |
+| 6–9 Hz | 0.859 [0.503, 1.171] [0.720] | null |
+| 9–12 Hz | 0.604 [0.465, 0.943] | FALL |
+| **15–22 Hz** | **0.549 [0.407, 0.844]** [0.625] | **FALL** |
+
+**Aliasing excluded on two independent 100 Hz channels** (427's Nyquist is 24.9 Hz): `tq` 15–22 Hz
+**0.33×**, `rate_c` **0.31×**, while **28–35 Hz is FLAT (1.13× / 0.94×)**. Column `tq` 15–22 Hz rms
+**259.4 → 84.6**. ⇒ **Lever B halved the delivered command's HF content at zero low-frequency cost.**
+
+🛑 **THE ORCHESTRATOR'S PRE-FLIGHT HYPOTHESIS WAS REFUTED.** He predicted a 15–22 Hz **RISE**, reasoning
+that r24 is a differentiator whose gain Lever B doubles. **r24 is rate FEEDBACK inside the loop and
+`gp-0x6b98` is the loop's OUTPUT, not its input** ⇒ more derivative feedback = more damping = **less** HF
+everywhere. V87's engaged spectrum rising with frequency (29 / 29 / 52 ct rms) against a **flat** manual
+arm (~9) is the signature of an **under-damped closed loop at stock derivative gain.**
+
+### 2. ★★★★★ H2 — THE FORK CLOSED, AGAINST THE FIRMWARE
+V88's `b7` sign bit reconstructed the **SIGNED** delivered command and V87's rectification screen was
+**dropped entirely** — 75 unclipped engaged windows vs V87's 14 screened. Controls first: the sign bit
+flips at median `|cmd|` **36.8 ct = the 22.9th percentile** (a noise bit sits at the 50th); `b5`/`b6`
+agree with the 427 magnitude in 99.56 % / 96.02 %; corr(0.2–3 Hz signed cmd, column) = **−0.671** where
+the *rectified* magnitude gives **+0.030**.
+
+| channel | 6–9 Hz prominence | above the p95 floor (10.64) |
+|---|---|---|
+| column torque `0x18F` | **11.17 [7.85, 16.30]** | **52.0 %** |
+| **SIGNED `gp-0x6b98`** | **5.46 [5.12, 5.94]** | **13.3 %** |
+| rectified `\|cmd\|` (V87's view) | 5.62 [5.10, 6.80] | 12.0 % |
+| openpilot `0x0E4` | 4.43 [3.87, 4.93] | 1.3 % |
+
+**Signed ≈ rectified ⇒ rectification was NEVER hiding a line; V87's null was CORRECT** and is now
+established rather than assumed. ⇒ **THE RATCHETING IS NOT A TONE THE EPS COMMANDS. No notch, and no
+phase lever at 7.79 Hz.** Reproduced at nw=256 and on the independent 100 Hz cave grid.
+
+★ **AND THE GATE-2 HAZARD MOVED.** Signed-cmd↔column coherence² vs a shuffled-pairs control of
+**0.009 [0.001, 0.061]**: 2–4 Hz 0.038 · 6–9 **0.123** · 9–12 0.090 · 12–18 0.133 · **18–24 Hz 0.310 —
+the HIGHEST, above the ratchet's own band.** The loop is tightest in **grind #1's** band ⇒ **any future
+filter's phase cost lands at ~21 Hz, not at 7.8 Hz.** (At 7.79 Hz: coh² 0.343, `|tq/cmd|` 6.24, phase
+−30.9°; the rectified channel returns 0.009 = *exactly* the control.)
+
+### 3. ★★★★ THE THREE SYMPTOMS — the instrument agrees with the operator on all three
+**Grinding (he says FIXED).** `e_18-22`, engaged creep, on the ruler the ~109 target was measured on —
+and the ruler is calibrated: this session reads V67 at **110.7** against the record's ~109.
+
+| build | `e_18-22` |
+|---|---|
+| V67/r47 | 110.7 [75.2, 172.1] |
+| V81/r67 | 69.1 · V84/r6d 221.8 · V85/r6e 343.7 · V86B/r70 186.5 |
+| **V87/r71** | **400.2 [261.6, 917.4]** |
+| **V88/r73** | **150.5 [118.5, 183.8]** |
+
+**V88/V67 = 1.101 [0.424, 2.206] — a clean null ⇒ V88 is statistically indistinguishable from the kit's
+best-ever grind-#1 result.** On the tighter creep ruler the separation from V87 is disjoint (161.0
+[127.3, 420.0] vs 932.8 [442.6, 1532.5]). Negative control 32–38 Hz inside its null ⇒ band-specific.
+🛑 V88/V87 = 0.549 [0.277, 0.979] excludes 1.00 but does **NOT** clear V87's own split-half null of
+[0.30, 3.40] ⇒ **the load-bearing statement is the absolute level against V67, not the ratio.**
+
+**Grind #2 (he says hints, could not elicit).** **ZERO events** in the strict creep-cornering regime
+(0.3–4 m/s, |ang| ≥ 100°), max 367.3 against the 500 ct criterion — the same zero as V67/V68.
+🛑 **Exposure 47.4 s = 29 % of the 166 s interpretability floor ⇒ formally UNINTERPRETABLE**; the zero is
+real but weak, and is not upgraded. 5 marginal crossings elsewhere (1.02–1.31× threshold vs V86's 2796.5),
+**four of them at highway speed** — events no prior route could have detected, not creep grind #2.
+
+**Micro-ratcheting and ratcheting (he says these are the main remaining issues).** 🛑 **UNCHANGED, and
+unchanged all the way back to V67**: `e_6-9` V88/V67 = **1.040 [0.759, 1.260]** over 14 matched cells —
+the tightest null in the session. V88/V87 = 1.278 [0.801, 2.073], inside null. **That is exactly V88's
+pre-registration.** ⇒ **The ratcheting did not get worse; the grinding above it came down, so it is now
+the loudest thing left.**
+🛑 **The data do NOT separate "micro-ratcheting" from "ratcheting" as two objects** — the apparent 9–10.5
+and 10.5–12 Hz clusters are **wheel order 2** at higher speed. That is a statement about the instrument,
+**not** about the car: the operator names two symptoms and he is the one feeling them.
+
+### 4. ★★★★★ THE HIGHWAY — the ratchet is SPEED-INVARIANT, and it is now PROVEN
+Never testable before; the four prior routes had 0.0 s engaged above 50 km/h. Every row carries a
+per-window speed census and a wheel-order veto (orders 1–6, circumference swept 2.073–2.088 m).
+
+| stratum | n | v med (m/s) | **f0 [CI] Hz** | prominence | **e_6-9 ct** | order-vetoed |
+|---|---|---|---|---|---|---|
+| creep <10 km/h | 26 | 2.11 | 8.01 [7.87, 8.47] | 9.01 | 402 | 10/36 dropped |
+| 10–40 km/h | 60 | 7.40 | 8.08 [7.93, 8.18] | 5.18 | 286 | 114/174 dropped |
+| 40–80 km/h | 36 | 13.20 | 8.31 [8.24, 8.69] | 2.85 | 195 | 21/57 dropped |
+| **>80 km/h** | 58 | 30.23 | **8.36 [8.23, 8.49]** | 2.37 | **83.5** | **0/58 — intrinsically clean** |
+
+**The discriminating test is the SLOPE: `f0 = +0.0102·v + 7.998 Hz`, against wheel order 1's 0.4807 —
+47× flatter**, corr(f0, v) = +0.106. ⇒ **SPEED-INVARIANCE CONFIRMED [EVIDENCE].**
+★ **The >80 km/h stratum is intrinsically order-clean** — at 30 m/s order 1 has climbed to 14.5 Hz, above
+the band, so **no order 1–6 can reach 6–9 Hz at highway speed** ⇒ the cleanest ratchet measurement in the
+corpus, and it cannot be a road-input artefact.
+★ **Amplitude decays 4.8× from creep to highway (402 → 83.5 ct)** ⇒ **the ratchet is a LOW-SPEED
+phenomenon in AMPLITUDE while being FIXED in FREQUENCY** — consistent with eliciting it in the car park.
+
+### 5. ★★★★ THE 26–31 Hz RING IS REAL, AND IT IS 29.02 Hz
+Marked UNSCOREABLE on `6f`/`70`/`6e`/`71` for exposure. Free argmax 24–34 Hz over 115 engaged windows
+above 40 km/h: **f0 median 29.02 Hz**, prominence 10.25. Order 2 lands within 0.8 Hz in 41.7 % of windows
+⇒ contamination is real; **after the veto 49/115 survive: `e_26-31` = 121.4 [77.6, 176.5], prominence
+5.67 [4.82, 8.40]. The line SURVIVES the veto — it is not wheel order 2.** Same family as V81's 27.75 Hz
+and V80's 27.4 Hz. **Above 80 km/h it is the dominant non-order band on every channel** (`tq` 32.28 vs
+18–22 Hz 16.30; `rate_c` 3.46, the largest of six bands). **Grind #1 falls away at highway** —
+`e_18-22` 161.0 (creep) → 43.0 [32.6, 86.1] (>80 km/h).
+
+### 6. 🛑 WHAT ROUTE 73 COULD NOT ANSWER — recorded verbatim, unedited
+1. **Ring-down ζ / Q.** 2 usable edges, one with the wrong sign. Needs a deliberate engage/hold/disengage protocol.
+2. **The V88/V87 grind-#1 ratio against route 71's own noise floor** — V87's split-half null is [0.30, 3.40]; nothing under ~3× is resolvable on that arm.
+3. **Grind #2 at creep cornering** — 47.4 s = 29 % of the 166 s floor.
+4. **Any engaged-vs-manual contrast above 20 km/h** — zero manual seconds exist there.
+5. **Micro-ratcheting vs ratcheting as two objects** — no instrument here separates them.
+6. **Any 15–22 Hz claim from the 427 probe alone at highway** (the 28–35 Hz alias). The creep-band claim in §1 *was* separated, on the 100 Hz channels.
+⊕ And the ladder at speed is null across V67/V81/V84/V85/V88 — **74 s above 80 km/h would need ~10 min** to resolve a 1.15× effect.
+
+### 7. 🛑 INSTRUMENT DEFECT FOUND THIS SESSION — kit-wide, all 13 caches
+`z["t"] == z["raw14_t"][1:]` and `z["probe"] == z["raw14_b4"][1:]` in **every** cache `_cache_r5e` …
+`_cache_r73`. `extract()` appends `raw14_*` on every 0x14A frame but a **row** only after the first
+0x18F, so the row family is permanently one sample shorter. **Pairing `t` with `raw14_b4` reads the cave
+byte one frame (~10 ms) early = 28° of phase at 7.79 Hz.** It cost the orchestrator's own identity check
+0.9437 instead of 0.9654. **Safe pairings: `(t, probe)` and `(raw14_t, raw14_b4)` — never cross them.**
+Audit: `analysis-2020accord/audit_raw14_offbyone.py`. **H2's script was checked and uses the aligned pair
+⇒ H2 is unaffected.** ⚠ **NOT audited: whether any HISTORICAL result rests on the crossed pairing.**
+
+### 8. 🛑 FIRMWARE LEVERS EXAMINED AND KILLED THIS SESSION — structure, not nulls
+- **FactorD / `gp-0x6a10`** — the axis is **ABSOLUTE STEERING ANGLE, not a tracking error**, so the
+  1/ω selectivity argument is dead: **this firmware has NO frequency-selective lever.** Also inert below
+  ~35 km/h because FactorC's `Y[0]` = 0 multiplies in first. ⚠ **Scope: the inertness is speed-scoped and
+  does NOT apply above ~35 km/h**, where 210 of route 73's engaged seconds now sit.
+  🛑 The **auto-memory** copy of `accord-factord-is-the-angle-error-lever` was the stale pre-correction
+  version and **sent a subagent down a dead thread this session** — corrected. **When a `reference_*` fact
+  is corrected, correct BOTH copies.**
+- **`0xC64C8` mode 2** — byte-exact **no-op**: `0xC61D4` = 0 on stock and on V88 (orchestrator-verified),
+  so mode 2 = `clamp(gp-0x6acc[±8192] + 0, ±12288)` = mode 0. And even non-zero it is a flat scalar bias,
+  never a filter. **Structurally impossible, not merely untested.**
+- **`0xC61F6` (r24 deadzone, frozen at 3 in all 59 builds)** — **raising it cuts the WRONG way.** A
+  fixed-count deadband clips the *smaller* signal first, and LF-sourced `dtorque` is ~12× smaller than
+  HF-sourced for equal physical amplitude ⇒ it spends its budget on low-frequency content. Dead on
+  arithmetic. (The record's standing "DO NOT" is about *lowering* it — a different claim.)
+- **r24 has NO pole anywhere** between the difference and the aggregator sum (4 independent decompiles).
+  r26 has a 2-tap boxcar but on its **gain**, not its signal: `|H(7.79 Hz)| = 0.9997`. ⇒ **adding a pole
+  on this lane is a CODE edit, not a cal edit.**
+- **Both friction relays are speed-gated only** ⇒ neither can explain the engaged-vs-manual asymmetry.
+- ★ **The `<3 Hz` row is STRUCTURALLY protected from any r24-side edit**: the N=4 backward difference gives
+  `|H(18 Hz)|/|H(1 Hz)| = 17.85×`, so a derivative-lane change cannot reach the LKAS command band.
+
+### 9. 🛑🛑 THE OBVIOUS V89 — A BIGGER `0xC6446` DOSE — IS BLOCKED BY THE CLAMP
+Orchestrator-computed, `analysis-2020accord/orch_c6446_clamp_headroom.py`.
+`r24 = clamp( (clamp(dtorque, ±5120) * gain) >> 10, ±8192 )`, LERP 2622 (mode 24 ≡ 26), V88 = 5244.
+Against V65's `|dtorque|` = **123–839 ct over 120,049 frames**, folding in the **1.77×–2.55×**
+scalar-vs-curve spread (hot end = 1.275× nominal, and the hot end meets the rail first):
+
+| `0xC6446` | dose | `\|r1\|` to rail | hot-end margin | verdict |
+|---|---|---|---|---|
+| 2622 | 1.000× stock | 3199 | 2.99× | clear |
+| **5244** | **2.000× — V88, FLOWN** | **1600** | **1.50×** | **thin — inside V80's blind spot** |
+| 6555 | 2.500× | 1280 | **1.20×** | 🛑 at the rail at the hot end |
+| 7866 | 3.000× | 1066 | **1.00×** | 🛑🛑 pins — relay class |
+| 10488 | 4.000× | 800 | 0.75× | 🛑🛑 pins |
+
+⇒ **The usable dose window above V88 is narrow to non-existent.** ★ **This gives a MECHANISM for
+`accord-v62-fixed-the-grinding`'s "2× ≈ OPTIMUM, not a ramp" — the RAIL, not the tuning.**
+🛑 **But the margin rests on a `|dtorque|` distribution measured on V65, a different build and route.**
+The arithmetic is EVIDENCE; the margin is BELIEF.
+⇒ **V89 should MEASURE `|dtorque|` on V88, not bet on V65's distribution.** `gp-0x6ada` is r24's
+post-clamp RAM mirror — **1 writer / 0 readers, free, blast-radius-zero telemetry** — and settles it.
+### 10. 🛑🛑 THE CO-MOVEMENT FAILED ITS OWN DOSE TEST — a retraction, out-of-sample
+The +0.364 co-movement looked like a lever. **V88 is the experiment that settles it, against the slope.**
+- Speed-partialled elasticity `d(log ratchet)/d(log 15–22 Hz cmd)` = **+1.082 [+0.814, +1.329]**
+  (band rms, corr +0.646); prominence gives +0.682 [+0.256, +1.200].
+- **Predicted from V88's 0.549× cut: ratchet ratio 0.523 [0.451, 0.614]** — far below the resolvable
+  floor of 0.759, i.e. **plainly visible if real**.
+- **Measured: `e_6-9` V88/V67 = 1.040 [0.759, 1.260]. The intervals DO NOT OVERLAP.**
+- Inverting V88 into a causal elasticity: **b_causal = −0.065 [−0.385, +0.460]** — consistent with ZERO,
+  and its **upper bound sits BELOW the observational slope's lower bound.** Not the same quantity.
+- ⊕ **The 32–38 Hz NEGATIVE CONTROL also responds** (elasticity **+0.664 [+0.441, +0.827]**) — a band
+  that is neither symptom tracks the command at ~60 % of the ratchet's rate ⇒ **operating-point
+  covariation a firmware dose does not reproduce.**
+
+⇒ 🛑 **DO NOT spend V89 on further HF command reduction hoping the ratchet follows.** On the most
+optimistic elasticity still consistent with V88 (b = +0.46), halving the ratchet needs the 15–22 Hz
+command at **0.22× of V87 — a further 2.5× cut on top of V88** — which reaches into the range where
+0.5–3 Hz authority is at risk. **On the central estimate, no achievable cut moves it at all.**
+⊕ **The operator's sentence:** *"Cutting high-frequency content out of the delivered steering command is
+now a measured fix for the grinding and a measured NON-fix for the ratcheting."*
+
+### 11. ★ THE RING-DOWN PROTOCOL — sized from a control, and it is a real ask
+Ring-down is the only ζ estimator that passes its own control; route 73 gave **2 usable edges from 5
+disengagements, one with the wrong sign.** Monte-Carlo of the actual fit through route 73's own beds:
+
+| pre-edge amplitude | sd(log ζ) | N for ±50 % | N for ±30 % |
+|---|---|---|---|
+| 400 ct (creep) | 0.636 | 10 | 23 |
+| **250 ct (35–45 km/h)** | 0.783 | **15** | **35** |
+| 90 ct (highway) | 1.077 | 28 | 65 |
+
+🛑 **NOT the parking lot — 35–45 km/h, straight, empty road.** 7–14 km/h is where **wheel orders 4–7 land
+inside 6–9 Hz**, and an order does not decay when LKAS drops ⇒ it pins the floor and flattens the fit;
+below ~5 km/h the lockout means LKAS is barely applying (6.9 s engaged below 5 km/h all route).
+**Order-clean bands for 6–9 Hz: 1.8–3.6 · 33.8–44.6 · 67.7+ km/h.**
+🛑 **The orchestrator's counter-argument was TESTED AND REFUTED** — he argued a persistent order should
+land in the estimator's subtracted floor and cost dynamic range, not bias. Injecting a non-decaying tone:
+**bias 1.01× (none) → 3.53× (25 % at −0.93 Hz) → 5.69× (50 % at +0.27 Hz).** Head-to-head, creep-with-order
+needs **38** edges for ±50 % at sd_log 1.26; **road-no-order needs 16 at sd_log 0.80.** Road wins on both.
+**Route 73's 5 edges failed as:** 3.5 s / 3.4 s manual after (needs 4) · 0.1 s engaged before (needs 3) ·
+**envelope GREW after the edge** (re-excited by hands or road) · 1 USABLE. ⇒ **hold engaged ≥5 s, stay
+hands-off ≥5 s after, disengage with the cancel button — never by grabbing the wheel or braking.**
+✅ **The confound is ABSENT on V88, byte-checked**: FactorC is stock in all four modes and **mode 24 ≡
+mode 26** (`0xD77DA`/`0xD77EE` = 0 where V86B had 908/875), and the full-image delta has **no edit
+anywhere in `0xD6000–0xD8000`** ⇒ **disengaging removes the excitation and nothing else.**
+
+---
+
+## ⚠ SUPERSEDED ON V88's FLIGHT STATUS ONLY — HEADLINE, 2026-08-09 (V88 BUILD session): V87 FLEW, THE PROBE FIRED, V88 RESTORES LEVER B
+
+🛑 **V88 HAS SINCE FLOWN, as route `73`** — see the headline above. Item 7 below says "BUILT, VERIFIED,
+UNFLASHED"; that is superseded. **Item 8's pre-registration was scored and is recorded above: H1
+CONFIRMED (15–22 Hz 0.549, 0.5–3 Hz null), H2's fork CLOSED, the ratchet UNCHANGED as predicted.** The
+rest of this block stands as written.
 
 ### 0. ✅ V87 FLEW — route `71` (`75604b0a432fdc89_00000071--ac50da2a6a`), cache `_cache_r71/`
 23,765 frames / 239.6 s, **52.4 % engaged, fault-free**, 0 sentinels, no EPS event in 1,262
