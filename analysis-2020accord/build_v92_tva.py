@@ -279,7 +279,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_vfourframe_tva as FF          # noqa: E402
 import build_v53_tva as V53                # noqa: E402  -- owning_block, the REAL block map
 from encode_eps import encode_x31, invert_table, parse_x31, build_decode_table   # noqa: E402
-from firmware_paths import plain_image_path, RWD_DIR                             # noqa: E402
+from firmware_paths import plain_image_path, ANALYSIS_ROOT, RWD_DIR              # noqa: E402
 from verify_bootloader_crc import walk_all_blocks                                # noqa: E402
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -1512,6 +1512,31 @@ def build():
             on_disk = Path(BIN_OUT).read_bytes()
             check(hashlib.sha256(on_disk).hexdigest() == img_sha and on_disk == bytes(code),
                   f"the plain image re-read from disk hashes to {img_sha}")
+
+            # ------------------------------------------------------------------------------------
+            # 🛑 EXACTLY ONE V92 ARTEFACT OF EACH KIND ON DISK. The rule exists because a
+            # plausibly-named flashable .rwd for a superseded build is this kit's own recorded
+            # hazard -- and a SUPERSEDED-DO-NOT-FLASH-* rename is a HOLDING measure, not the end
+            # state, so this scan deliberately catches those too.
+            # ------------------------------------------------------------------------------------
+            print("\n  [22] 🛑 ARTEFACT UNIQUENESS -- every V92-matching file in both directories")
+            stray_rwd = sorted(p for p in Path(RWD_DIR).iterdir()
+                               if p.is_file() and "v92" in p.name.lower())
+            stray_img = sorted(p for p in Path(ANALYSIS_ROOT).iterdir()
+                               if p.is_file() and "v92" in p.name.lower())
+            for p in stray_rwd + stray_img:
+                mark = "  <-- THIS BUILD" if str(p) in (OUT, BIN_OUT) else "  🛑 STRAY"
+                print(f"       {p.name}{mark}")
+            check([str(p) for p in stray_rwd] == [OUT],
+                  f"exactly ONE V92 .rwd in {RWD_DIR}: {os.path.basename(OUT)} "
+                  f"(found {len(stray_rwd)})")
+            check([str(p) for p in stray_img] == [BIN_OUT],
+                  f"exactly ONE V92 image in {ANALYSIS_ROOT}: {os.path.basename(BIN_OUT)} "
+                  f"(found {len(stray_img)})")
+            v91_img = Path(V91_BIN)
+            if v91_img.exists():
+                check(hashlib.sha256(v91_img.read_bytes()).hexdigest() == V91_SHA,
+                      "🛑 V91's image is STILL byte-identical after the V92 cut -- untouched")
 
     print("\n" + "=" * 102)
     print(f"  V92 [{VARIANT_TOKEN}]     {_checks[1]}/{_checks[0]} assertions PASSED")

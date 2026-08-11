@@ -641,10 +641,48 @@ base   the flown V90.  FIVE edits: 12 cal (IDENTICAL to V91) + 116 cave + 2 repo
 artefact token   ...-CAVE.6BBE.6B62.6BDA.6A82-427.6BBE.SAR4
 ```
 
-🛑 **PENDING CUT — NO HASHES ARE RECORDED HERE ON PURPOSE.** The artefacts that existed on disk during
-this close-out are **dry-run and provisional**, and the payload changed after them: **`b4` swapped from
-`sign(gp-0x6abc)` to `gp-0x6bda`-in-window, the cave grew 110 → 116 B, and the fifth edit was added.**
+🛑 **PENDING CUT — NO HASHES ARE RECORDED HERE ON PURPOSE.** The payload changed after the artefacts
+that existed on disk during this close-out: **`b4` swapped from `sign(gp-0x6abc)` to
+`gp-0x6bda`-in-window, the cave grew 110 → 116 B, and the fifth edit was added.**
 **Re-hash from disk after the real cut. Do not flash on the strength of this section.**
+
+> ### 🛑🛑 SUPERSEDED V92 ARTEFACTS — NEVER FLOWN, DO NOT FLASH
+> An earlier V92 cut **this session** — image **`b092bf19db04f580…`**, rwd **`630248a53393fcc2…`**,
+> **182/182 assertions, from-disk verified** — carried the **OLD rung map: `b4 = sign(gp-0x6abc)`, a
+> 110 B cave, and no 427 `sar` fix.** It was superseded before flight by the `gp-0x6bda`-in-window swap
+> and the `0x55E10` `a332`→`a432` no-clip fix.
+> 🛑 **Those two hashes appear in this session's transcript with a complete PASSING assertion log
+> behind them. They are DEAD.** The files are renamed on disk to
+> `SUPERSEDED-DO-NOT-FLASH-_v92_OLDRUNGMAP-b4.6ABC-NEVER-FLOWN_plain_image.bin` and
+> `SUPERSEDED-DO-NOT-FLASH-39990-TVA,A160-V92-OLDRUNGMAP-b4.6ABC-NEVER-FLOWN-0x13000-0x100000.rwd`,
+> and will be deleted at the real cut.
+>
+> **DEAD hashes written out IN FULL, so that grepping the transcript's own string lands on this block:**
+> ```
+> DEAD - image  b092bf19db04f58047a58eeefeb784f63ff8655c573493e8d2c7f63bf4dfdce2
+> DEAD - rwd    630248a53393fcc2470b66b709604e0d43cffc87fdcbf3d7962061947467fb11
+> ```
+> ⚠ A truncated hash in the record is **not** a working DEAD marker: the search that will actually be
+> run is a paste of the **full** 64-char string out of the transcript, and a prefix-only entry returns
+> nothing. **Write superseded hashes out in full, next to the word DEAD.**
+
+🛑 **AND THE GENERAL LESSON, WHICH IS THE DURABLE PART:**
+
+> **A VERIFIED ARTEFACT FOR A SUPERSEDED DESIGN IS *MORE* DANGEROUS THAN AN UNVERIFIED ONE, NOT LESS —
+> everything about it looks correct, including its assertion log.** A hash reported in a transcript
+> **outlives the artefact it names.** ⇒ **When a build is re-cut, the superseded hashes must be
+> explicitly named DEAD in the record, not merely omitted from it.**
+
+Stripping the stale hashes from the docs — which is what the previous pass did — is **necessary and
+not sufficient.** The only tell left in the transcript was the `6ABC` token buried in the old filename,
+and that only reads as a warning to someone who already knows a swap happened. **Omission is invisible;
+a DEAD marker is not.**
+
+⊕ **Attribution, because it matters for how this class of catch gets made: the BUILDER caught this
+itself and pushed back on the orchestrator's own proposed filename, which had called the superseded
+artefacts a "dry run". They were not a dry run — they were a real, fully-verified cut, and the
+distinction is the entire hazard.** Another instance of §9's pattern: the correction came from the
+agent that owned the artefact, against the orchestrator's characterisation of it.
 
 🛑 **The V91 honest label applies to V92 in full and verbatim — the build script carries it word for
 word.** And the script adds the consequence itself: **the dose is 5–69× below the measurable floor**

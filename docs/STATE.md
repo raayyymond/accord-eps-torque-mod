@@ -7,7 +7,8 @@ micro-ratcheting still exists · grind #2 can be felt on the highway-speed curve
 **✅ V91 IS BUILT, VERIFIED, UNFLASHED** — `0xCBE74` ×1.5, cal-only, 12 bytes.
 **🛑 V92 IS PENDING CUT** — the same 12 bytes + a 116-byte cave + a 2-byte 427 repoint + a 427 scaling
 fix (**the first build ever to write CAN `0x14A` byte 7**). **No V92 hashes are recorded anywhere in
-the collaterals; the artefacts on disk during close-out are dry-run and provisional.**
+the collaterals.** 🛑 **An earlier V92 cut this session WAS real and fully verified (182/182
+assertions) but carried the OLD rung map — its hashes are DEAD and are named as such in §E.**
 🛑 **Both carry the same honest label: the SAME lever at the SAME ×1.5 dose that HARD-FAULTED on V74
 and V75, separated from those flights only STRUCTURALLY.** See §E.
 
@@ -170,11 +171,31 @@ recommendation. **Score it with `SCORING-2026-08-11-v90-flight.md` §10.1–10.6
 
 **V92 = V91's 12 calibration bytes (IDENTICAL) + a 116-byte cave (43 instructions) + a 2-byte 427
 repoint + a 1-halfword 427 scaling fix. FIVE edits.**
-🛑 **PENDING CUT — NO HASHES ARE RECORDED HERE ON PURPOSE.** Artefacts on disk during this close-out
-are **dry-run and provisional**, and the payload changed after them (`b4` swapped from
-`sign(gp-0x6abc)` to `gp-0x6bda`-in-window; cave 110 → **116 B**; the 5th edit added).
+🛑 **PENDING CUT — NO HASHES ARE RECORDED HERE ON PURPOSE.** The payload changed after the artefacts
+that were on disk during this close-out (`b4` swapped from `sign(gp-0x6abc)` to `gp-0x6bda`-in-window;
+cave 110 → **116 B**; the 5th edit added).
 **Re-hash from disk after the real cut. Do not flash on the strength of this section.**
 Artefact token: `...-CAVE.6BBE.6B62.6BDA.6A82-427.6BBE.SAR4`.
+
+> ### 🛑🛑 SUPERSEDED V92 ARTEFACTS — NEVER FLOWN, DO NOT FLASH
+> An earlier V92 cut **this session** — image **`b092bf19db04f580…`**, rwd **`630248a53393fcc2…`**,
+> **182/182 assertions, from-disk verified** — carried the **OLD rung map: `b4 = sign(gp-0x6abc)`, a
+> 110 B cave, and no 427 `sar` fix.** It was superseded before flight by the `gp-0x6bda`-in-window swap
+> and the `0x55E10` `a332`→`a432` no-clip fix.
+> 🛑 **Those two hashes appear in this session's transcript with a complete PASSING assertion log
+> behind them. They are DEAD.** Renamed on disk to
+> `SUPERSEDED-DO-NOT-FLASH-_v92_OLDRUNGMAP-b4.6ABC-NEVER-FLOWN_plain_image.bin` and
+> `SUPERSEDED-DO-NOT-FLASH-39990-TVA,A160-V92-OLDRUNGMAP-b4.6ABC-NEVER-FLOWN-0x13000-0x100000.rwd`;
+> both will be deleted at the real cut. **General lesson: standing corrections, NAMED TRAP 10.**
+>
+> **DEAD hashes written out IN FULL, so that grepping the transcript's own string lands here:**
+> ```
+> DEAD - image  b092bf19db04f58047a58eeefeb784f63ff8655c573493e8d2c7f63bf4dfdce2
+> DEAD - rwd    630248a53393fcc2470b66b709604e0d43cffc87fdcbf3d7962061947467fb11
+> ```
+> ⊕ **The BUILDER caught this and pushed back on the orchestrator's own proposed filename, which had
+> called them a "dry run". They were not — they were a real, fully-verified cut, and that distinction
+> is the entire hazard.**
 🛑 **V92 IS A MEASUREMENT BUILD WITH A SUB-FLOOR CAL EDIT RIDING ALONG — NOT A DOSE BUILD.** Its
 own header says so: the dose is **5–69× below the measurable floor**, so **the operator's report is
 the PRIMARY ENDPOINT and the telemetry is the point of flying it. Do not expect the 12 calibration
@@ -966,6 +987,30 @@ NEGATIVE CONTROL that order 3 contaminates.** Measured on the v ≥ 22.2 arm: **
 18–22 Hz but 76/205 on the 32–38 control.** ⇒ **use a SYMMETRIC veto** — drop a window if any order
 1–6 lands on **any** scored band's own measured line. **Per-band vetoes build different window sets
 per band and turn a contrast into a comparison of two different sets.**
+
+**🛑🛑 10. A VERIFIED ARTEFACT FOR A SUPERSEDED DESIGN IS *MORE* DANGEROUS THAN AN UNVERIFIED ONE.**
+Everything about it looks correct — **including its assertion log.** And **a hash reported in a
+transcript OUTLIVES the artefact it names**: a future session greps the transcript, finds a SHA256 with
+every assertion passing, and has no way to tell the artefact is dead.
+
+> ⇒ **WHEN A BUILD IS RE-CUT, THE SUPERSEDED HASHES MUST BE EXPLICITLY NAMED DEAD IN THE RECORD, NOT
+> MERELY OMITTED FROM IT.**
+
+**Stripping stale hashes from the docs is NECESSARY AND NOT SUFFICIENT** — omission is invisible, a
+DEAD marker is not. **The instance:** a real, fully-verified V92 cut (**182/182 assertions, from-disk
+verified**, image `b092bf19…`, rwd `630248a5…`) carried the **old rung map** and was superseded before
+flight; **the only tell left in the transcript was a `6ABC` token buried in the old filename**, which
+reads as a warning only to someone who already knows a swap happened. See §E for the full DEAD marker.
+🛑 **AND WRITE THE DEAD HASH OUT IN FULL.** The search that will actually be run is a **paste of the
+full 64-char string out of the transcript** — a truncated or prefix-only entry in the record returns
+**nothing**, so the marker fails at exactly the moment it is needed. **Full string, next to the word
+DEAD.**
+⊕ **The BUILDER caught this itself and pushed back on the orchestrator's own proposed filename, which
+had mischaracterised the superseded artefacts as a "dry run". They were a real cut — and that
+distinction IS the hazard.** Same pattern as this session's other catches: the correction came from the
+agent that owned the artefact, against the orchestrator's description of it.
+⊕ **Corollary for the `SUPERSEDED-DO-NOT-FLASH-…` rename this kit already does:** the rename fixes the
+**filesystem** and does nothing for the **transcript**. Both need doing.
 
 ### 🛑 THE `0x18F`-vs-`0x14A` SKEW — SETTLED AT SOURCE, 2026-08-10, AND THE MAGNITUDE IS NOT 10 ms
 
