@@ -124,6 +124,16 @@ is a strong **[BELIEF]** resting on the build history lining up exactly.
 confirmed on-car.** What is **[EVIDENCE]** is that the mechanism exists, is single-frame, is mode-proof,
 and the build history lines up exactly. V81 closes it whether or not it fired.
 
+🛑🛑 **DOWNGRADE, 2026-08-10 — THE CONTROL BEHIND THAT BELIEF HAS COLLAPSED.** [EVIDENCE, byte-verified
+by dereferencing `0xCBE74 + mode*4` on the images] **V73 carried `0xC407E` = 850 and flew clean**, and
+V73's friction edit hit **mode 10 — a DISENGAGED column on a car that runs 24/26** ⇒ V73 exonerates
+neither cell. ×1.5 on a **live** column has flown exactly twice (V74, V75) and **both hard-faulted: zero
+clean flights.** The mechanism above stands and `0xC407E` remains a **DO-NOT-RAISE** cell — but the
+friction row is now an **OPEN SUSPECT** alongside it, not an exonerated bystander, and V73→V74 is 64
+differing runs so neither can be pinned. ⚠ At mode level the association is 1-for-1, not 2-for-2 (V74
+faulted in MANUAL where m24 was byte-Honda). Full table:
+[[reference-accord-cbe74-friction-row-zero-clean-flights]] · [[reference-accord-an-address-is-not-a-mode]].
+
 Related: [[accord-v74-fault-damper-WAS-in-force-mode-lag]] · [[accord-both-faults-fired-at-max-angle-rate-slew]] ·
 [[accord-v77-cannot-reach-the-monitors]] · [[accord-check-build-lineage-before-proposing-lever]] ·
 [[accord-c63a0-exonerated-of-the-hard-faults]] · [[accord-v81-built-c407e511-friction-stock]]

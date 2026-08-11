@@ -67,3 +67,39 @@ them: it only walks function-owned instructions. **4th recorded occurrence of th
 `search_instructions` misses instructions outside function boundaries. The reliable recipe is: raw
 byte scan for encoding 1, `search_instructions`+Ghidra semantic decode for encoding 2, and
 cross-check the two. See [[accord-v52c-complete-broad-lowpass]].
+
+---
+
+## 🛑 2026-08-10 — THE INDEXING IS 0-BASED, AND APPLYING IT 1-BASED VOIDS THE SCAN
+
+`CLAUDE.md` carries the one-liner `disp = (sext16(hw2)<<7) | ((hw1>>4)&0x7F)`. **In that formula
+`hw1` and `hw2` are the SECOND and THIRD halfwords** — this file is 0-indexed (`hw0` is the first).
+An agent this session read them as the *first two*, got only garbage candidates, and wrote a
+confident **"no evidence the second encoding is used"** into a trace report. Every "no 6-byte form"
+null it produced was VOID.
+
+**Unambiguous, spelled out.** For a 6-byte access at address `A`:
+```python
+hw0 = u16le(buf, A+0)     # 0x0784 = ld.h  |  0x07a4 = ld.hu   (reg1 = 4 = gp)
+hw1 = u16le(buf, A+2)     # destination register = (hw1 >> 11) & 0x1F
+hw2 = u16le(buf, A+4)
+disp = (sext16(hw2) << 7) | ((hw1 >> 4) & 0x7F)
+```
+Worked example, byte-verified: `0x4C784 = 84 07 07 6a 61 ff` ⇒ `hw0=0x0784, hw1=0x6a07, hw2=0xff61`
+⇒ `sext16(0xff61) = -159`, `-159<<7 = -0x4F80`, `(0x6a07>>4)&0x7F = 0x20` ⇒ **`disp = -0x4F60`** ✅
+and `(0x6a07>>11)&0x1F = 13` ⇒ **`r13`** ✅. Validated: reproduces all 7 of Ghidra's 6-byte
+`gp-0x4f60` hits exactly, and finds **12 further 6-byte accesses to `gp-0x6b98`** at `0x59a44`–`0x5a0aa`.
+
+## 🛑🛑 AND NEITHER TOOL ALONE IS COMPLETE ON THIS PROGRAM — set-difference them
+
+Fresh reproduction, 2026-08-10, adjudicated site by site:
+- **`search_instructions -0x4f60` returned 73 with `truncated:false`.** A raw Python scan found
+  **3 more** — `0x2d9a2`, `0x2dae6`, `0x4f996` — all valid `ld.h -0x4f60[gp]`.
+  `get_function_by_address` says **"No function found"** for all three ⇒ they sit in **unanalysed
+  regions**, which is precisely what `search_instructions` cannot see.
+- Conversely, a naive Python scan misses the **6-byte form** that Ghidra decodes semantically.
+
+⇒ **Ghidra sees what Python misses (the 6-byte form); Python sees what Ghidra misses (unanalysed
+regions). A load-bearing enumeration needs BOTH, set-differenced, with every disagreement
+adjudicated individually.** Neither "Ghidra says N, `truncated:false`" nor "the byte scan is
+exhaustive" is sufficient on its own, and both have been quoted as if they were.

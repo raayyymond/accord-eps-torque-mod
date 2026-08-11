@@ -1,6 +1,6 @@
 ---
 name: reference-accord-state671a-is-oscillation-reversal-counter
-description: gp-0x671a (assist_state) is a hard-reversal COUNTER of gp-0x6c2c (a motor/resolver-rate-derived signal) that RISES during oscillation and saturates >=5 within ~125-150ms of sustained 18-21Hz reversal, not a smooth-steering persistence ramp that falls during oscillation.
+description: gp-0x671a (assist_state) is a hard-reversal COUNTER of gp-0x6c2c (a filtered MOTOR RATE; its source gp-0x4f50 is a wrap-corrected first difference, resolved 2026-08-10) that RISES during oscillation and saturates >=5 within ~125-150ms of sustained 18-21Hz reversal, not a smooth-steering persistence ramp that falls during oscillation.
 metadata:
   type: reference
 ---
@@ -21,9 +21,13 @@ hard clamp on gp-0x671a itself — see below).
 
 **gp-0x671a = a function of counter_B** (the reversal-run count), via LAB_000429a0 tail logic gated
 by gp-0x6a5e (SIG) vs SPD_THRESH1=tp+0x72de=0xC62DE=640, and a 5000-tick(tp+0x7270=0xC6270) decay
-timer on the slow path. **gp-0x6a5e is the rate-limited VOTED driver-torque signal (sole writer
-FUN_00041eec@0x42342, matches [[reference-accord-voter-ratelimit-and-vote-logic]]'s "gp-0x6a5e=r28
-two-sided adaptive-threshold limiter")** — NOT vehicle speed. Since uVar12(counter_B)!=0 forces the
+timer on the slow path. 🛑 **CORRECTED 2026-08-10: `gp-0x6a5e` is VOTED VEHICLE SPEED, not driver
+torque.** This paragraph previously ended "— NOT vehicle speed", which was WRONG; settled by
+`memory/reference-accord-gp6a5e-is-speed-reclassifies-v44-v47.md` (2026-07-29, two independent traces
++ byte-verified pointer chase), and that same error already cost the kit two flashed builds (V44, V47).
+⊕ **This entry contained its own refutation**: the threshold it names is `SPD_THRESH1` = `0xC62DE` =
+**640**, which at 64 ct/km/h is exactly **10 km/h** — a speed threshold, correctly named, while the
+prose denied it. The writer (`FUN_00041eec`@`0x42342`, rate-limited) is unchanged and correct. Since uVar12(counter_B)!=0 forces the
 fast "if" branch on ANY tick where a reversal just happened, this fast path dominates during a
 sustained oscillation almost regardless of driver-torque level. Under this path, gp-0x671a directly
 tracks counter_B once counter_B exceeds the previous stored assist_state (own byte-sim showed it is
@@ -67,13 +71,34 @@ FUN_00035b20, FUN_00036c12 — so touching gp-0x671a's PRODUCTION (T, HYST in FU
 ripple beyond r24/r26; touching the CONSUMER cal 0xC643E alone does not.
 
 **Open / not resolved this session:**
-- gp-0x6c2c's physical identity: producer is FUN_00041464, a filtered-rate (2-pole IIR, coeffs
-  tp+0x50da/0x50dc) of gp-0x4f50. gp-0x4f50 itself is used elsewhere (FUN_00070a98, a DTC-0x26/
-  "gentle EME"-style monitor) inside a sin/cos pair (0.017453292 = pi/180 conversion, 9.536743e-07 =
-  2^-20 scale) alongside gp-0x4ee8, consistent with a MOTOR/RESOLVER ELECTRICAL-OR-MECHANICAL ANGLE,
-  not torsion-bar torque or column angle. This is an INFERENCE from usage context, not a labeled
-  confirmation — needs a dedicated trace of gp-0x4f50's own producer (an ISR-fed gp-0x29c4, written
-  in FUN_00068f52, read atomically under __disable_irq/__enable_irq in FUN_00068fbe) to nail down.
+- ✅ **RESOLVED 2026-08-10 — `gp-0x4f50` IS A RATE, NOT AN ANGLE.** This bullet previously read
+  *"consistent with a MOTOR/RESOLVER ELECTRICAL-OR-MECHANICAL ANGLE"*, hedged as "an INFERENCE from
+  usage context, not a labeled confirmation". **The hedge was right and the inference was wrong.**
+  Raised by TorquePath, **decompile-verified by me** (`FUN_00068f52`, whole body):
+  ```c
+  uVar1 = u16(gp-0x29c2);                             // PREVIOUS raw angle
+  iVar2 = param_1 - (uVar1 == 0x8000 ? param_1 : uVar1);   // FIRST DIFFERENCE
+  if (iVar2 < 0x2001) { if (iVar2 < -0x2000) iVar2 += 0x4000; } else iVar2 -= 0x4000;  // WRAP, mod 0x4000
+  iVar3 = (iVar2 * 120000 + round) >> 0xe;            // x120000 >> 14 = x7.32421875
+  iVar2 = clamp((s16(gp-0x4f4e) + iVar3) / 2, ±13000);// 2-point boxcar
+  gp-0x29c2 = param_1;  gp-0x29c4 = iVar2;  gp-0x4f4e = iVar3;
+  ```
+  **You only wrap-correct the difference of a modular quantity** ⇒ the ANGLE is `param_1`/`gp-0x29c2`
+  (16384 counts/rev); **`gp-0x4f50` is its derivative.** The old reading conflated the function's INPUT
+  with its OUTPUT. ⊕ Two corroborations an angle fails: `FUN_00068fbe` plausibility-checks |value|
+  against `0xC491A`=5500 / `0xC491C`=5000 (a wrapping angle would trip that every revolution), and
+  `FUN_00041464` **EMAs** it (nonsense across a wrap discontinuity). ⊕ The sin/cos evidence was never
+  discriminating — π/180 converts deg **or** deg/s.
+  ⊕ **Detail TorquePath's paraphrase dropped:** the `uVar1 == 0x8000` special case makes the difference
+  identically 0, so **0x8000 is an INIT/INVALID sentinel on the stored angle** and the first tick after
+  it yields rate 0 rather than a bogus huge first difference.
+  ⊕ **Scale, closed form:** `gp-0x4f50` per °/s of the angle's own units = `333.333 / f_tick_Hz`. At
+  **1 kHz** the inherited **4.7121 ct/(°/s)** implies a wheel→angle ratio of **14.14**; the ±13000 clamp
+  is then 10.83 % of a revolution per tick. Both are physical at 1 kHz and not at 100 Hz ⇒ **independent
+  corroboration of 4.7121 AND of the 1 kHz tick.** ⚠ 14.14 is plausible only if the 16384 counts are per
+  **MECHANICAL** revolution; if they are **electrical**, the implied gear ratio would be 14.14/pole-pairs
+  ≈ 3, which is not physical for a column EPS. **Pole-pair count not extracted — flagged, does not
+  affect the rate identity.**
   **The amplitude of gp-0x6c2c during the real 18-21Hz steering vibration is UNKNOWN** — the crux
   simulation above is only valid if the real signal's rate excursion exceeds +-12800 in its native
   units each half-cycle; this is the single biggest unverified link in the chain.
@@ -85,4 +110,4 @@ ripple beyond r24/r26; touching the CONSUMER cal 0xC643E alone does not.
 - No gp-0x6806 (STEER_CONTROL_ACTIVE) or other LKAS-active read exists anywhere inside FUN_0003aa2c
   or FUN_000428d4 (program-wide search of both operands, clean negative, both functions absent from
   the 7-function reader set of gp-0x6806). The closest thing to a "driver state" gate inside this
-  path is gp-0x6a5e (voted driver torque, see above), not an LKAS/hands-off flag.
+  path is gp-0x6a5e (voted VEHICLE SPEED -- corrected 2026-08-10, see above), not an LKAS/hands-off flag.

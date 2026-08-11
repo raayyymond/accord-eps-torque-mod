@@ -28,6 +28,25 @@ which block covers your address. Results for the cells this kit edits most:
 `0xC4FFC`. A build touching both needs both. `walk_all_blocks()` (50 blocks) is the hygiene gate;
 `walk()` (49) predicts the UDS NRC 0x72.
 
+## 🛑🛑 CRC blocks are a LINKED LIST, **NOT** uniform 4 KB pages — this nearly caused a brick
+
+2026-08-10: an orchestrator "corrected" a V90 spec to emit a second trailer at `0x055FFC`, reasoning that
+`0x55DF2` must live in a `0x055000` page. **That model is wrong and acting on it bricks the ECU.**
+`[0x013000, 0x0C4FFC)` is ONE 0xB1FFC-byte block — the bootloader's own hard-coded main block
+(`0xB07A` = `0x13000`, `0xB080` = `0xB1FFC`) — and it covers **all app code**: hook `0x55C0E`, the 427
+packer `0x55DF2`, K1 `0xC40D2`, and the cave `0xC4B34`. **All four share the single trailer `0xC4FFC`.**
+Verified end to end on the V89 image: `zlib.crc32(img[0x13000:0x13000+0xB1FFC]) = df43b558` and
+`img[0xC4FFC:0xC5000] = 58b543df` ⇒ MATCH.
+
+Writing at `0x055FFC` fails twice: it is **inside** the covered range, so it invalidates the very CRC it
+is meant to fix; and it is **live code** — `img[0x55FFC:0x56000] = 6477b8f0` = `st.h r14,-0xf48,gp` in
+`FUN_00055f2e`.
+
+⊕ **Cheap test for whether an address is a trailer at all — a real one has sane link fields at −8/−6:**
+`0xC4FFC` → `start_page=0x0000, num_pages=0x00C6` ✓ · `0xD7FFC` → `0x0000/0x00D9` ✓ ·
+**`0x055FFC` → `start_page=0x5EC8` ⇒ block start `0x5EC8000` = 99 MB, past the end of a 1 MB image** ✗.
+**Never infer a trailer address by dividing by 0x1000. Replay `_blocks()` and read the answer.**
+
 🛑 The count of CRC words a build updates tracks how many 0x1000 pages it writes, and it is easy to
 under-estimate: **V86B updated 14** — `0xC4FFC, 0xC6FFC, 0xCEFFC, 0xCFFFC, 0xD0FFC, 0xD2FFC, 0xD3FFC,
 0xD4FFC, 0xD6FFC, 0xD7FFC, 0xD8FFC, 0xD9FFC, 0xE4FFC, 0xE5FFC` — because its damper/cal tables are

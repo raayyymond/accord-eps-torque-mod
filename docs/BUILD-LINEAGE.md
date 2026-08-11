@@ -215,7 +215,67 @@ Two methods; a null here is load-bearing.
 ⚠ Corollary: **do not "fix" this by raising `0xC4004` instead.** That loosens the monitor rather than
 the signal, and no other consumer of that ceiling has been surveyed.
 
-Full detail: `memory/accord-friction-lane-ceiling-is-the-hard-fault.md`.
+---
+
+### 🛑🛑 CORRECTION OF RECORD, 2026-08-10 — **THE `0xCBE74` FRICTION ROW HAS ZERO CLEAN FLIGHTS ON A LIVE COLUMN, AND IT IS NO LONGER EXONERATED**
+
+**[EVIDENCE — byte-verified by dereferencing `0xCBE74 + mode*4` on the images themselves and reading the
+Y array at `record + 8`, not by reading the build scripts.]** The 2026-08-07 correction above got the
+*attribution* right (V73 introduced ×1.5, not V74) but left the record implying that V73's clean flight
+tested the friction row. **It did not: V73 wrote mode 10 only, which is a DISENGAGED column on a car that
+runs modes 24/26.** [[reference-accord-car-is-tvca4-mode-24-26]] · `docs/STATE.md` "AN ADDRESS IS NOT A MODE".
+
+| build | ×1.5 on a **live** column (24/26)? | m24 (manual) | m26 (engaged) | on-car |
+|---|---|---|---|---|
+| stock / V70 / V71c / V72 | — | Honda | Honda | baseline |
+| V73 | **NO** — mode 10 only, **DISENGAGED**, inert on this car | Honda | Honda | flew clean — **says NOTHING about this lever** |
+| **V74** | **YES** — the 13 engaged modes | Honda | **×1.5** | 🛑 **HARD FAULT, latched loss of assist** |
+| **V75** | **YES** | Honda | **×1.5** | 🛑 **HARD FAULT, latched** |
+| **V76** — flown artefact `_v76_v38base_relu_damper` | **NO** — reverted by the V38 rebase | Honda | Honda | flew route 65 clean |
+| ⚠ V76 — *other* artefact `_v76_gate_fb_arm5244_gateprobe` | **YES** | Honda | **×1.5** | **never flew** |
+| V77 / V77B | **YES** | Honda | **×1.5** | **NEVER FLEW** |
+
+⇒ **×1.5 on a live column has flown exactly TWICE, and BOTH flights hard-faulted. ZERO clean flights.**
+
+🛑 **AND THIS INVERTS A STANDING ATTRIBUTION.** The record above blames `0xC407E` = 850 for the V74/V75
+faults. **That attribution is NOT deleted — the monitor mechanism is EVIDENCE and RULE 11 stands** — but
+its control has collapsed: **V73 carried `0xC407E` = 850 and flew clean** (byte-verified: V73/V74/V75/V77/
+V77B = 850; V70/V72/V76-flown = 511). The only build that was supposed to show "850 alone is survivable"
+is the same build that shows the friction row was never live. **V73→V74 is 64 differing runs (13 friction
+sites + 51 others), so the friction row CANNOT be pinned** — but the control meant to exonerate it is the
+thing that now implicates it.
+
+> ⇒ **STATUS CHANGE: the `0xCBE74` ×1.5 friction row moves from EXONERATED to 🛑 OPEN SUSPECT.**
+> **No dose of this row flies again until a probe measures the lane.** The previous "exonerated" status is
+> preserved here as a superseded reading, not erased.
+
+⚠ **REFINEMENT the correction does not cover, and it is RULE 10 applied to this row [EVIDENCE for the
+bytes, BELIEF for what it implies about cause]:** the two faults are **not** in the same mode.
+- **V74 faulted in MANUAL** (LKAS disengaged, over a bump — see RULE 10). Manual is **mode 24**, and
+  m24's friction Y array is **byte-identical to Honda on V74** ⇒ **the friction row was NOT in force in
+  the mode V74 faulted in.** By RULE 10 that fault cannot be laid at this row.
+- **V75 faulted ENGAGED** (operator verbatim: *"after stopping at a stoplight and then continuing like
+  normal, with openpilot engaged"*). Engaged is **mode 26**, where V75 carried **×1.5** ⇒ **the row WAS
+  live for that one.**
+⇒ **"2-for-2 fault association" is the flight-level fact; at the MODE level it is 1-for-1.** Both
+statements are true and both belong in a flight decision. Neither restores exoneration: **zero clean
+flights on a live column stands**, and V73 still fails to exonerate `0xC407E`.
+
+⚠ **TWO ARTEFACTS SHARE THE V76 BUILD NUMBER**, and they disagree on both cells in this rule
+(`_v76_v38base_relu_damper`: friction Honda, `0xC407E` = 511 · `_v76_gate_fb_arm5244_gateprobe`: friction
+×1.5, `0xC407E` = 850). 🛑 **The lineage row's BASE column is the discriminator — `_v76_v38base_*` is the
+flown one. A GLOB IS NOT A CHECK.** Any script, diff or ledger that resolves "V76" by wildcard will pick
+one of the two arbitrarily and silently answer the opposite question.
+
+🛑 **METHOD, and it is the whole reason this went unnoticed:** every row above was produced by
+**dereferencing the pointer table and printing the mode number beside the address.** Reading the build
+scripts, or matching addresses against a remembered list, is what produced three separate overstatements
+about this cell in one session — in both directions. **An address is not a mode.**
+
+---
+
+Full detail: `memory/accord-friction-lane-ceiling-is-the-hard-fault.md` and
+`memory/reference-accord-cbe74-friction-row-zero-clean-flights.md`.
 
 ---
 

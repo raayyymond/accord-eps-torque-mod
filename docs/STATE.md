@@ -554,8 +554,114 @@ anywhere in `0xD6000–0xD8000`** ⇒ **disengaging removes the excitation and n
 
 ## 🛑 STANDING INSTRUMENT CORRECTIONS — they apply to every analysis in this file
 
-`0x18F` is **one frame (~10 ms) stale** vs `0x14A` — corrects every
-`cmd`→`bar` phase ever computed here · `band_envelope` is **peak-to-peak scale**, not amplitude ·
+### 🛑 THE `0x18F`-vs-`0x14A` SKEW — SETTLED AT SOURCE, 2026-08-10, AND THE MAGNITUDE IS NOT 10 ms
+
+The long-standing *"`0x18F` is one frame (~10 ms) stale vs `0x14A`"* is **CONFIRMED**, but it was never
+measured until now, it survived one wrong withdrawal and two wrong discriminators, and **its size is
+~9.15 ms, not 10.0**.
+
+**Mechanism [EVIDENCE, from the extractor].** `extract66()` appends a row on a **`0x14A`** frame while
+holding `last18`, so **the order of messages inside `evt.can` decides everything**. `tm` is
+`evt.logMonoTime` — **per-event, not per-message** — so co-logged frames share it exactly.
+```python
+for m in evt.can:
+    if   addr == 0x18F: raw18_t.append(tm); last18 = (...)          # updates the hold
+    elif addr == 0x14A: raw14_t.append(tm); rows.append((tm, ..., last18[0], ...))
+```
+**Measured over 51,691 co-logged events across r73/r75/r76** (`rlog-tools/v89_i1_can_order.py`, one
+pass straight from the rlogs): **`0x14A` precedes `0x18F` on 91.28 %** (per route 91.61 / 90.52 /
+91.71 — no route is special). ⇒ the row usually carries the **previous** `0x18F`.
+
+🛑 **It is a MIXTURE, not a pure delay**, and nobody was accounting for the amplitude term:
+`H(f) = 0.9128·e^{−j2πf·0.01} + 0.0872`
+
+| f | pure 10 ms | **effective** | effective delay | \|H\| |
+|---|---|---|---|---|
+| 3.00 Hz | −10.80° | **−9.86°** | 9.13 ms | 0.999 |
+| **7.79 Hz** | −28.04° | **−25.67°** | **9.15 ms** | 0.991 |
+| 21.09 Hz | −75.92° | **−70.75°** | 9.32 ms | 0.938 |
+| 23.00 Hz | −82.80° | **−77.45°** | 9.35 ms | **0.928** |
+
+Applying a full 10 ms **over-corrects by +0.9° at 3 Hz, +2.4° at 7.79 Hz, +5.4° at 23 Hz.**
+
+**🛑 HOW TO CORRECT IT — and the honest answer is that the caches CANNOT be fully corrected.**
+Co-logged frames **share a `logMonoTime`**, so **no timestamp-based reconstruction can tell which was
+processed first.** A `searchsorted(..., side="left") - 1` reconstruction always picks the previous
+`0x18F` ⇒ it **reproduces the mixture rather than removing it** (predicted 8.72 % of rows at age ≈ 0;
+**measured 0.000 % on all three routes** — the check that falsified it). Ranked:
+- **flat 10 ms** — over-corrects by +2.4° at 7.79 Hz, +5.4° at 23 Hz;
+- **`H(f)⁻¹`** — correct *on average*, but gains noise **1.078× at 23 Hz**;
+- **`payload_time` via `searchsorted`** — exact for **which frame index the row holds** (correct to the
+  frame on 91.28 % of rows), no better on the processing-order mixture, but it **does** handle dropouts
+  (`payload_age > 20 ms` flags 0.7–0.9 % of rows, better than assuming them away).
+  ⚠ **It is NOT a no-op even on r73**: it differs from the naive `raw18_t[i]` on **10.45 % of rows**
+  (max 543 ms at a dropout), because r73's own shift census is a *mixture* — `0 ×54,771 · −1 ×6,367 ·
+  −2 ×10 · … · −7 ×1`. **"r73 is shift 0" was the modal case, not the route.** Applying it to
+  `v89_g1` tightened exposure 147 → 118 engaged windows (~20 % dropped, correctly) and **moved no
+  conclusion**: γ² still refuses (0.385/0.465), the engaged lag is still negative (−7.25
+  [−15.88, −1.00]), the manual arm still matches `H_A` (+8.50 [+6.00, +11.75]).
+  ⚠ Its flat 9.939 ms age is computed *under* the `0x14A`-first assumption, so **it is not independent
+  evidence of uniformity** — the flatness is partly built in;
+- **only RE-EXTRACTION recording the `0x18F` timestamp per row is complete.**
+
+⇒ **Residual on the existing caches is now BOUNDED rather than guessed: ≤2.4° and ≤1 % at 7.79 Hz;
+≤5.4° and ~7 % at 23 Hz.** Below anything load-bearing in the current record.
+
+🛑 **r76 STAYS IN.** Its row↔frame *index* shift really does drift (−1 → −4) and its frame counts
+differ by 2 — **but that is bookkeeping, not timing.** Its payload *age* is flat at 9.93 ms and its
+tails are the **cleanest of the three** (rows >12 ms: 4.88 / 4.64 / **4.61 %**). `payload_time` is
+computed from timestamps, not indices, so it is immune. Excluding r76 would cost **10.95 engaged
+minutes at the corpus's highest engaged fraction (86.6 %)** for a defect all three share.
+
+🛑 **THREE DISCRIMINATORS THAT DO NOT WORK** — each was cited as decisive during this dispute:
+`sstat` (>99.87 % constant; shifts −3…0 all match at 1.000000) · `raw18_b4 → sca` (only 7–16
+transitions, and the row's byte-4 reconstruction ties to 5 decimals at every shift) · **"payload age
+vs the most recent `0x18F`"**, which returns 0.000 ms by *assuming the row holds the newest frame* —
+the very question at issue. ⊕ `len(raw18_t) − len(raw14_t)` is a valid **tripwire**, never a shift.
+
+### 🛑 NAMED TRAP: **AN ADDRESS IS NOT A MODE.** Three instances, 2026-08-10.
+**Never let a raw address stand in for a mode in a spec. Dereference `0xCBE74 + mode*4` and print the
+mode number beside it.** Byte-verified map for the friction-comp LERP (`FUN_00036c12`, `gp-0x6b26`):
+
+| mode | record | X array | **Y ARRAY** | V74 dosed ×1.5? | |
+|---|---|---|---|---|---|
+| 10 | `0xD2A44` | `0xD2A46` | `0xD2A4C` | YES | **DISENGAGED — V73's only edit, inert on this car** |
+| 23 | `0xD6A54` | `0xD6A56` | `0xD6A5C` | YES | another variant's engaged column |
+| **24** | `0xD6A64` | `0xD6A66` | **`0xD6A6C`** | **no — never touched, ever** | ★ **THIS CAR, MANUAL** |
+| 25 | `0xD7A44` | `0xD7A46` | `0xD7A4C` | no | row-11 B branch |
+| **26** | `0xD7A54` | `0xD7A56` | **`0xD7A5C`** | YES | ★ **THIS CAR, ENGAGED** |
+| 27 | `0xD7A64` | `0xD7A66` | `0xD7A6C` | YES | row-11 B branch |
+
+🛑 **The Y array is at RECORD BASE + 8.** Writing Y values at `base+2` lands them in the **X breakpoint
+array**, which the LERP compares **unsigned** — e.g. `−29490` reads as `36046`, every speed falls below
+`X[0]`, and the table returns a flat `Y[0]` at all speeds. **A silent, plausible-looking 5× increase at
+highway.** Assert the X arrays unchanged in any builder that touches this row.
+
+### 🛑 `0xCBE74` LINEAGE — the friction row has ZERO clean flights on a live column
+Three separate overstatements were made about this cell in one session, in both directions. The
+byte-verified truth:
+
+| build | ×1.5 on a **live** column (24/26)? | on-car |
+|---|---|---|
+| V73 | **NO** — mode 10 only (disengaged) | flew clean — **says nothing about this lever** |
+| **V74** | **YES** (13 engaged modes) | 🛑 **HARD FAULT, latched loss of assist** |
+| **V75** | **YES** | 🛑 **HARD FAULT, latched** |
+| V76 *(flown = `_v76_v38base_relu_damper`)* | **NO** — reverted by the V38 rebase | clean |
+| V77 / V77B | YES | **never flew** |
+
+⇒ **×1.5 on this car's live columns has flown exactly TWICE and both flights hard-faulted.**
+🛑 **And it inverts the standing fault attribution:** the record blames `0xC407E` = 850, but **V73 carried
+850 and flew clean.** V73→V74 is 64 differing runs (13 friction sites + 51 others) so the friction row
+**cannot be pinned** — but the control meant to exonerate it is the thing that implicates it. ⇒ the row
+moves from *exonerated* to *open suspect*, and no dose should fly until a probe measures the lane.
+⚠ Two artefacts share the V76 number; **the lineage row's BASE column is the discriminator, and a glob
+is not a check.**
+
+⊕ **NAMED TRAP, four instances in one session: a COUNT or an INDEX RELATION is not a PHYSICAL FACT.**
+The r76 "drift", the `gp-0x6752` writer census (a 6-byte-encoding blind spot read as "3 stores"), the
+V86-vs-V89 rung map, and the payload-age metric. **Measure the physical quantity directly.**
+
+`band_envelope` is **peak-to-peak scale**, not amplitude ·
 **a ring-down through a bandpass MUST be quoted against a step control through the identical filter** ·
 `rate_f` scale ~25% low · for N ≥ 5 only a phase-lock test establishes a harmonic.
 

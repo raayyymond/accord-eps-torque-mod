@@ -62,6 +62,9 @@ On gate fail: `gp-0x6bf6=0x7fff`, `gp-0x6c00=0xffff`, `gp-0x6bfc=0x7fff` (sentin
 tail as the success path writes `gp-0x6c00`/`gp-0x6bfc` -- **but `gp-0x6ae0`/`gp-0x6ae2` have exactly ONE
 writer each, on the SUCCESS path only** -- they hold stale data across a gate failure, never reset).
 
+## 3. 🛑 SUPERSEDED — see the 2026-08-10 correction block at the end of this file. The claim below
+## ("always +1", "3 stores, all in one function") is WRONG on both counts.
+
 ## 3. `gp-0x6752` (polarity) is a BOOT-TIME CONSTANT, always +1 in the field `[EVIDENCE]`
 `FUN_000490ac` (decompiled): `if (gp-0x6752 == gp-0x4c2d [lockstep shadow]) { gp-0x6752=1; gp-0x4c2d=1; }
 else FUN_0006b9fa(...)` [fault handler]. Set ONCE at init via a lockstep self-check, never touched again
@@ -222,6 +225,62 @@ but it has NO feedback term (no y[n-1]/y[n-2] read anywhere), so it is an FIR, n
 that search was looking for, and its coefficients are identity on every build ⇒ **the negative result is
 EXTENDED, not overturned, but for a more precise reason than "no two-state structure exists" — one does,
 it just cannot resonate and is presently inert.**
+
+---
+
+# 🛑🛑 CORRECTION 2026-08-10 (`DampAxis`) — §3 above is WRONG TWICE. `gp-0x6752` is a ±1 SELECTOR, not a constant.
+
+Prompted by `ArcAudit` catching one error; my own re-verification found a second one they missed.
+[EVIDENCE — `search_instructions mnemonic=st.b operand=6752` + `disassemble_bytes(dry_run)` at each site.]
+
+**§3 said: "3 stores at `0x490c0`/`0x49838`/`0x49844`, all inside this same init function
+[`FUN_000490ac`]", "always +1", "never flip sign in the field". All three parts are false.**
+
+**Truth: FIVE stores across THREE functions, and −1 is a first-class outcome.**
+
+| addr | function | encoding | writes |
+|---|---|---|---|
+| `0x490c0` | `FUN_000490ac` | 4-byte | **+1** (the init self-check) |
+| `0x48e68` | `FUN_00048a40` | **6-byte ext-disp** | **+1** if selector byte == `0x2C` (44) |
+| `0x48e88` | `FUN_00048a40` | **6-byte ext-disp** | **−1** if selector byte == `0xFA` (250); no write otherwise |
+| `0x49838` | `FUN_000497e6` | 4-byte | **+1** if record byte `[ep+4]` (`ep` ← `gp-0x34b8`) == `0x2C` |
+| `0x49844` | `FUN_000497e6` | 4-byte | **−1** otherwise |
+
+Every store is lockstep-paired with `gp-0x4c2d`, compare-before-write, fault branch on mismatch.
+
+**Why §3 missed them — two distinct scan failures, both documented traps:**
+1. `0x48e68`/`0x48e88` use the **6-byte extended-displacement encoding** (`length:6`,
+   bytes `8407ed5231ff`). §3's "52 disp16 hits" was a **disp16-only scan** ⇒ blind to them. This is the
+   FIRST trap in the `firmware-decompile` skill.
+2. `0x49838`/`0x49844` were *found* but **misattributed** — they are in `FUN_000497e6`, not
+   `FUN_000490ac`. `FUN_00048a40` spans `0x48a40-0x490ab` and `FUN_000490ac` starts immediately after,
+   so adjacent-function conflation is easy here. **Always confirm the owning function from the tool's
+   own `function` field, never from address proximity.**
+
+**⇒ `gp-0x6752` is a ±1 variant/handedness selector driven by a configuration-record byte
+(`0x2C` → +1, `0xFA`/other → −1), evaluated in two separate functions — not a hardcoded boot constant.**
+🛑 Anyone reasoning about polarity must treat **−1 as reachable in the field**, and must NOT assume the
+two polarity multiplications in `FUN_0003b8f6` are pinned. Whether either function actually runs on this
+car's config record is **NOT established** — that is the open question, and it is what would decide
+whether −1 is merely reachable or actually taken. [OPEN]
+
+**★ What survives, and is now better-founded: `gp-0x6752` is NEVER 0 on any write path.** All five
+stores write literal `+1` or `−1`. Combined with the gate arithmetic (below), that is the correct reason
+polarity cannot explain a zero-duty observation — not the reason I originally gave.
+
+## 🛑 My own reasoning error, same exchange — `gp-0x6752 == 0` PASSES the gate, it does not fail it
+
+I told `ArcAudit` that "if `gp-0x6752` were 0 the gate would fail, so polarity-zero and gate-failure are
+the same branch." **Wrong.** `FUN_0003b8f6`'s guard is `((int)cVar5 + 1U) < 3`, an **unsigned** compare:
+`−1→0<3 ✓`, `0→1<3 ✓`, `1→2<3 ✓`, `2→3<3 ✗`. **0 is ADMITTED.** The guard excludes only values outside
+`{−1,0,1}`. My own message even quoted the admitted set `{−1,0,1}` and then contradicted it one clause
+later. ⇒ **polarity-zero and gate-failure are two DISTINCT branches**, and a polarity-0 success-path pass
+would write a genuine zero — a third state I had wrongly collapsed away, removing it from a teammate's
+search space. Caught by `ArcAudit`, independently by `ObserverMatch`.
+
+**How to apply:** when quoting an admitted-value SET, check every member against the branch you are
+claiming — the contradiction was visible inside my own sentence. And unsigned `(x + k) < n` idioms are
+range checks that *include* the interior; do not read them as sign tests.
 
 Related: [[reference_accord_path2_is_a_real_closed_loop_via_gp6b98_and_0xc63a0_sizing]],
 [[reference_accord_boost_index_input_is_resolver_rate_not_torque]],

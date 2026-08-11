@@ -1266,8 +1266,17 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #
 #   ENABLE GATE (all must hold, else the function writes the 0x7FFF INVALID SENTINEL and the whole
 #   lane drops out):
-#       |gp-0x6b98| <= 0x2000 (8192)   <-- the DELIVERED MOTOR COMMAND. 🛑 A COMMAND-CONDITIONAL
-#                                          DISCONTINUITY: under strong command Path 2 goes invalid.
+#       |gp-0x6b98| <= 0x2000 (8192)   <-- the DELIVERED MOTOR COMMAND.
+#         🛑🛑 CORRECTED 2026-08-10: THIS GATE IS A TAUTOLOGY AND CAN NEVER TRIP. The old note here
+#         ("A COMMAND-CONDITIONAL DISCONTINUITY: under strong command Path 2 goes invalid") is FALSE
+#         and was load-bearing for two dead hypotheses. The producer clamps gp-0x6b98 to EXACTLY
+#         +-0x2000 four instructions before the store (0x43b0e-0x43b20 `cmovle r6,r14,r21`, then
+#         `st.h r8,-0x6b98,gp` @0x43b52), and the test `x + 0x2000U < 0x4001` is inclusive at both
+#         rails (8192+8192 = 16384 < 16385) => AT THE RAIL THE GATE PASSES. Census agreed two ways:
+#         GhidraMCP 45 hits; raw LE scan of BOTH encodings 33+12 = 45. Only the two limp-mode writers
+#         (0x6e104/0x6e1dc) could ever exceed, inherited max 5325 < 8192 [BELIEF, not re-derived].
+#         ⊕ Same Honda idiom one hop down: FUN_00038148's sentinel |gp-0x6bfe| <= 20000 against a
+#         producer clamped to exactly +-20000. Sentinel bound == producer clamp, both unreachable.
 #       |gp-0x4f60| <= 0x6400 (25600)  ·  |gp-0x6abc| <= 13000  ·  gp-0x6752 in {-1,0,1}
 #
 #   model    = EMA2(gp-0x6b98 * polarity / 1024, a = 0xC40D4 = 573/4096)              # command branch
@@ -1536,7 +1545,13 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #                    PURE COULOMB RELAY: amplitude-independent, unbounded in index.
 #     0xC63AE = 1024 NEVER -> 0. The LERP index becomes identically 0 => output == +-Y[0], a constant =>
 #                    a pure relay at full authority.
-#     0xC6200 = 8192 NEVER BELOW Y[0]. The clamp produces the same relay from the other side.
+#     0xC6200 = 8192 NEVER LOWER. 🛑 CORRECTED 2026-08-10: the old wording "NEVER BELOW Y[0]" is
+#                    VACUOUS -- Y[0] is 0 (st.h r0,-0x3714,gp @0x38D22, and the build loop starts at
+#                    index 1, so index 0 is never rewritten). The real mechanism is the OTHER END:
+#                    0xC6200 is read as tp+0x7200 inside FUN_000389ec's table-build loop and CAPS the
+#                    Y entries as they are built (if (uVar51 < uVar57) Y[i] = 0xC6200). Lowering it
+#                    caps several upper Y entries to the SAME value => flattens the top of the LERP
+#                    into a plateau => a relay. Same V80 class, opposite end of the table.
 #
 # 🛑 gp-0x67fa's REACHABLE SET IS EFFECTIVELY {11} ALONE (measured 2026-08-09): state 5 structurally dead,
 #   state 10 0.0000%, state 4 0/123,277 driving frames. => V42's 0x454FE is present on V85 (0xB5) and
