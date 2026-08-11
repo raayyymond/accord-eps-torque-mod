@@ -200,6 +200,10 @@ because the default instinct is to reach for r2.
 
 GET GHIDRA TO ANALYZE THE ENTIRE .BIN FILE FIRST! NO POINT IN DOING SPOT DISASSEMBLY OF SEARCHES BEFORE THIS.
 
+🛑 **`save_program`/`save_all_programs` before closing or switching a Ghidra program** — analysis,
+labels and comments made this session live only in memory until saved; close without saving and they
+are gone.
+
 🛑 **WORK BACKWARDS: DECOMPILE FIRST, THEN READ THE ASSEMBLY.** Standing operator instruction,
 2026-08-04. Start from `decompile_function` / `analyze_function_complete` to get the **structure** —
 what the function computes, which branch is which, what feeds what — and only then drop to
