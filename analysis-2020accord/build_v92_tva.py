@@ -356,8 +356,14 @@ LERP_Y1_SCALE_ADDR, LERP_Y1_SCALE = 0xC63BE, 1024
 WINDOW_CLOSED = False
 WIN_LO = LERP_Y1_X[0] if WINDOW_CLOSED else LERP_Y1_X[0] + 1
 WIN_HI = LERP_Y1_X[-1] if WINDOW_CLOSED else LERP_Y1_X[-1] - 1
-WIN_BIAS = -WIN_LO                      # 397  -- `addi 0x18d,r6,r6`
-WIN_SPAN = WIN_HI - WIN_LO + 1          # 782  -- `addi -0x30e,r6,r0`, then bnh on CY
+WIN_BIAS = -WIN_LO                      # OPEN form (shipped): 396 -- `addi 0x18c,r6,r6`
+WIN_SPAN = WIN_HI - WIN_LO + 1          # OPEN form (shipped): 780 -- `addi -0x30c,r6,r0`, then bnh on CY
+#    🛑 COMMENT-ONLY CORRECTION, 2026-08-11: these two comments previously read 397 / `0x18d` and
+#    782 / `0x30e`, which are the CLOSED-window values. WINDOW_CLOSED is False, so the code has
+#    always computed 396 / 780 and the BUILT IMAGE carries `addi 0x18c` + `addi -0x30c` (verified by
+#    reading the cave back from the image and by Ghidra's own decode). The artefact was never wrong;
+#    only the comment was. Recorded rather than silently patched because those two numbers are
+#    exactly the kind that get quoted into a scorer spec and then cannot be reconciled with the bytes.
 #    (x + BIAS) <u SPAN   <=>   WIN_LO <= x <= WIN_HI, for every int16 x, signs included.
 WIN_BIAS_HW = struct.pack("<h", WIN_BIAS)      # DERIVED, not twinned -- see the header
 WIN_SPAN_HW = struct.pack("<h", -WIN_SPAN)     # DERIVED, not twinned -- see the header

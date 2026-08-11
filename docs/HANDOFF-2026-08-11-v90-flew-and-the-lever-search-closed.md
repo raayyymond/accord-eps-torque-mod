@@ -630,7 +630,7 @@ point**, not a larger `0xCBE74`.
 adjacent in time — the best-matched cross-build pair this kit can construct, and the only lever
 available for narrowing the ±20–33 % floor without new methodology.
 
-### 8b. V92 — V91's 12 bytes + a 116-byte cave + the 427 repoint + the 427 scaling fix. PENDING CUT.
+### 8b. V92 — V91's 12 bytes + a 116-byte cave + the 427 repoint + the 427 scaling fix. CUT AND VERIFIED.
 
 ```
 base   the flown V90.  FIVE edits: 12 cal (IDENTICAL to V91) + 116 cave + 2 repoint + 2 scaling + CRC.
@@ -641,7 +641,13 @@ base   the flown V90.  FIVE edits: 12 cal (IDENTICAL to V91) + 116 cave + 2 repo
 artefact token   ...-CAVE.6BBE.6B62.6BDA.6A82-427.6BBE.SAR4
 ```
 
-🛑 **PENDING CUT — NO HASHES ARE RECORDED HERE ON PURPOSE.** The payload changed after the artefacts
+✅ **CUT, VERIFIED, UNFLASHED 2026-08-11. 198/198 assertions** (178 dry-run + 20 that only run on a real write). Reproduces bit-for-bit on a second run.
+image sha256 **`c8e89fe35ebc445e4c4b19663ba9655dfeb8ba5cada2172aeb033eeb9f9eb939`**
+rwd   sha256 **`388a1974d5702e17fded074457632092189eb55d806aefd4600e17d58e974245`**
+`39990-TVA,A160-V92-V90BASE-CBE74.M26.M27.X1.5-CAVE.6BBE.6B62.6BDA.6A82-427.6BBE.SAR4-0x13000-0x100000.rwd` (986,042 B)
+Diff vs V90: **10 runs / 119 bytes, ZERO unattributed**; 140 attributed (12 cal + 2 repoint + 2 scale + 116 cave span + 8 CRC), 21 cave bytes coincide with V90's and the `sar` halfword moves only its high byte. CRC trailers **derived in code** = `{0xC4FFC, 0xD7FFC}`; chain 50/50 on the image, the readback and the shipped `.rwd`. `[0xD7000,0xD8000)` **byte-identical to V91's image**. V90 and V91 artefacts re-hashed after the cut and unchanged. Ghidra's own disassembler decoded the built cave end-to-end: **43 instructions, 116 bytes, all 7 branch targets on instruction starts, conditions only {bge, bnh}**.
+
+⊕ *(superseded note)*  The payload changed after the artefacts
 that existed on disk during this close-out: **`b4` swapped from `sign(gp-0x6abc)` to
 `gp-0x6bda`-in-window, the cave grew 110 → 116 B, and the fifth edit was added.**
 **Re-hash from disk after the real cut. Do not flash on the strength of this section.**

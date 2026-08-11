@@ -5,7 +5,7 @@ identity PASS). **V90 is PROBE-ONLY — byte-identical to V89 in every calibrati
 functionally the V89 car. Operator, on this drive, verbatim: ***grind #1 still exists ·
 micro-ratcheting still exists · grind #2 can be felt on the highway-speed curves or lane changes.***
 **✅ V91 IS BUILT, VERIFIED, UNFLASHED** — `0xCBE74` ×1.5, cal-only, 12 bytes.
-**🛑 V92 IS PENDING CUT** — the same 12 bytes + a 116-byte cave + a 2-byte 427 repoint + a 427 scaling
+**🛑 V92 IS CUT, VERIFIED AND UNFLASHED** — the same 12 bytes + a 116-byte cave + a 2-byte 427 repoint + a 427 scaling
 fix (**the first build ever to write CAN `0x14A` byte 7**). **No V92 hashes are recorded anywhere in
 the collaterals.** 🛑 **An earlier V92 cut this session WAS real and fully verified (182/182
 assertions) but carried the OLD rung map — its hashes are DEAD and are named as such in §E.**
@@ -131,7 +131,7 @@ results are not, and no conclusion rests on them.**
 ⚠ **This says nothing about whether `0xC6CD0` should move** — a standing ★★★★★ memory freezes the 4×
 gain.
 
-### E. V91 — BUILT, VERIFIED, UNFLASHED · V92 — PENDING CUT
+### E. V91 — BUILT, VERIFIED, UNFLASHED · V92 — CUT, VERIFIED, UNFLASHED
 **V91 = the flown V90 + 12 calibration bytes.** No cave change, no code change.
 ```
 0xD7A5C  mode 26 (ENGAGED) friction LERP Y row  (-9830,-5734,-1966) -> (-14745,-8601,-2949)
@@ -171,7 +171,13 @@ recommendation. **Score it with `SCORING-2026-08-11-v90-flight.md` §10.1–10.6
 
 **V92 = V91's 12 calibration bytes (IDENTICAL) + a 116-byte cave (43 instructions) + a 2-byte 427
 repoint + a 1-halfword 427 scaling fix. FIVE edits.**
-🛑 **PENDING CUT — NO HASHES ARE RECORDED HERE ON PURPOSE.** The payload changed after the artefacts
+✅ **CUT, VERIFIED, UNFLASHED 2026-08-11. 198/198 assertions** (178 dry-run + 20 that only run on a real write). Reproduces bit-for-bit on a second run.
+image sha256 **`c8e89fe35ebc445e4c4b19663ba9655dfeb8ba5cada2172aeb033eeb9f9eb939`**
+rwd   sha256 **`388a1974d5702e17fded074457632092189eb55d806aefd4600e17d58e974245`**
+`39990-TVA,A160-V92-V90BASE-CBE74.M26.M27.X1.5-CAVE.6BBE.6B62.6BDA.6A82-427.6BBE.SAR4-0x13000-0x100000.rwd` (986,042 B)
+Diff vs V90: **10 runs / 119 bytes, ZERO unattributed**; 140 attributed (12 cal + 2 repoint + 2 scale + 116 cave span + 8 CRC), 21 cave bytes coincide with V90's and the `sar` halfword moves only its high byte. CRC trailers **derived in code** = `{0xC4FFC, 0xD7FFC}`; chain 50/50 on the image, the readback and the shipped `.rwd`. `[0xD7000,0xD8000)` **byte-identical to V91's image**. V90 and V91 artefacts re-hashed after the cut and unchanged. Ghidra's own disassembler decoded the built cave end-to-end: **43 instructions, 116 bytes, all 7 branch targets on instruction starts, conditions only {bge, bnh}**.
+
+⊕ *(superseded note)*  The payload changed after the artefacts
 that were on disk during this close-out (`b4` swapped from `sign(gp-0x6abc)` to `gp-0x6bda`-in-window;
 cave 110 → **116 B**; the 5th edit added).
 **Re-hash from disk after the real cut. Do not flash on the strength of this section.**
