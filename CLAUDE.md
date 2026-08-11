@@ -222,6 +222,11 @@ Byte-level work — diffing builds, CRC checks, dumping a table, checking an ext
 unaffected. Prefer Python for anything that is just bytes; it is also the required second method whenever
 a count or a null result is load-bearing.
 
+🛑 **RUN PYTHON AND GHIDRA IN PARALLEL — NEITHER IS COMPLETE ALONE.** Ghidra misses unanalysed regions;
+a naive Python scan misses the 6-byte gp-relative form; **operand-text search cannot see register-indirect
+writes at all**. Set-difference the two and adjudicate every disagreement — do not take the union on
+trust or stop at the first tool that answers.
+
 Historical handoffs and `reference_accord_*` memories mention r2 because that is how those findings were
 obtained. They stay as written — records, not instructions.
 

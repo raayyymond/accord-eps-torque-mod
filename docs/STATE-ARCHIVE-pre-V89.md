@@ -5313,3 +5313,57 @@ command).
 
 ---
 
+
+---
+
+# ARCHIVED 2026-08-11 — the V89 BUILD and PRE-REGISTRATION blocks, removed from `docs/STATE.md`
+
+Superseded by V89's flight (routes `75`/`76`) and V90's flight (route `77`). Kept verbatim as a
+record, **not** as an instruction. Live successor: `docs/STATE.md` headline 2026-08-11 and
+`docs/HANDOFF-2026-08-11-v90-flew-and-the-lever-search-closed.md`.
+
+### 6. ✅✅ V89 BUILT, VERIFIED, UNFLASHED — `build_v89_tva.py`
+image sha256 **`6eae6826881cb5fd737ab433919f64a556ed027126e3f056ed8f03c13206f159`**
+rwd sha256 **`cdce053e3a86bf2c8857d7f229c015c747e209fa1222b91e3df863f1f44cf7ef`** (986,042 B)
+`39990-TVA,A160-V89-V88BASE-FRICTION.C40D2.204-CAVE.6AE2.SIGN.MAG64-0x13000-0x100000.rwd`
+Base **flown V88**. **4 runs / 8 bytes, ZERO unattributed; 3 bytes change + 1 CRC trailer.**
+50/50 CRC on the built image, the readback **and** the shipped `.rwd` re-read from disk.
+
+| addr | from | to | what |
+|---|---|---|---|
+| **`0xC40D2`** | **102** | **204** | **K1, the `|model|`-proportional modelled Coulomb friction — 2.000×** |
+| `0xC4B38` | `6894` | `1e95` | cave probe source → **`gp-0x6ae2` = the FRICTION term × 1024** |
+| `0xC4B46` | `a8` | `a6` | cave rung `sar 0x8`→`0x6`, trips at **±64** (friction ≥ 0.0625) |
+
+★ **`0xC40D2` has ONE reader and ZERO writers** — `0x3BAFE`, inside `FUN_0003b8f6`. Censused twice
+through the recorded **`hw2 = disp|1`** trap (`ld.hu 0x50d2[tp]` encodes `0x50d3`; a naive scan
+returns a FALSE ZERO, and did on the first pass this session). **Virgin on all 88 builds.**
+★ **The new cave load is not hand-encoded:** hw1 `2437` is flying at `0x55DF0`, hw2 `1e95` at
+`0x3BC04`. Only the *combination* is new, and each half is asserted separately.
+★ **`gp-0x6ae2` is 1 writer / 0 readers** ⇒ blast-radius-zero probe.
+★ **GATE 2:** the ±10.0 friction clamp binds only at `|model| ≥ 50`; the model's bar arm is clamped
+at 15 and its command arm runs ~0.2–1.0 ⇒ ~50× margin. Friction enters with a **minus** sign.
+🛑 **`0xC4080` (K0, the pure-Coulomb "NEVER RAISE" relay hazard) is NOT touched** — it stays 0, and
+that note stands. K1 scales the `|model|` arm alone, so it raises magnitude **without** flattening
+anything into a relay. It is **not** the V80 class.
+
+### 7. ★ PRE-REGISTRATION for the V89 flight
+- **IDENTITY, parameter-free, control already measured:** on V88 the cave and the 427 packer read
+  the same cell and `b6 == (MOTOR_TORQUE ≥ 160)` held at **0.9654** (chance 0.6028). On V89 the cave
+  reads `gp-0x6ae2` instead ⇒ that agreement **must collapse toward chance**.
+  **≈0.60 = V89 flew · ≈0.97 = V88 did.** The exact dual of V88's own test.
+- **H1 the probe must FIRE** — `gp-0x6ae2` non-zero on most engaged frames and the `sar 0x6` rung's
+  duty strictly between 0 and 1. **A dead or railed rung makes the flight UNINTERPRETABLE** — say so
+  rather than scoring bands.
+- **H2 THE LEVER** — engaged 6–9 Hz column energy must FALL vs V88 on speed- **and rate**-matched
+  windows, CI excluding 1.00, and **the 32–38 Hz control must not fall as much.**
+- **H3 THE OPERATOR'S CONSTRAINT, CORRECTED by §6b** — 0.5–3 Hz LKAS command content **must not FALL**.
+  🛑 The earlier "must be UNCHANGED" was wrong: §6b's verified chain says V89 *adds* assist, so a small
+  RISE is the predicted direction. **A FALL would mean the sign chain is inverted somewhere and is the
+  headline.**
+- **H4 🛑 the operator scores the symptoms, in his words.**
+🛑 **HONEST LABEL:** the dose DIRECTION is measured (§1b, 600 vs 6000). That **K1 acts the same way
+as the gate is BELIEF** — the gate contrast confounds magnitude with relay-ness, and K1 moves
+magnitude alone. **A null on H2 falsifies the friction account cleanly, which is worth the flight.**
+⚠ **COST:** more modelled Coulomb friction can feel notchier or heavier on-centre. The instrument
+cannot see that. **If it drives worse, that outranks every band.**

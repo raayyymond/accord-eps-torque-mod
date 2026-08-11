@@ -2290,6 +2290,14 @@ def steer_torque_arbitration(sensors: SensorInputs, st: EpsState, cal: Calibrati
     #    open.) Modelled as the flat mode-0 limit.
     limited = _clamp(st.lkas_setpoint, -cal.arb_setpoint_limit, cal.arb_setpoint_limit)
 
+    # 1b) NOT MODELLED NUMERICALLY HERE, but real: a 1-pole IIR sits between the curve-clamp and the
+    #     Q15 gain below (decompile ~0x28ea6+1216-1229, state gp-0x3d3c). s[n]=a*s[n-1]+b*x[n],
+    #     y[n]=(s[n-1]+s[n])>>5, a=cal(0xC63EC)/1024=992/1024=0.96875, b=cal(0xC63EE)/1024=507/1024=
+    #     0.49512, fs=1kHz. [VERIFIED, byte-read+disasm 2026-08-11] -0.17dB/-11.2deg @1Hz ->
+    #     -5.29dB/-57.0deg @7.79Hz -> -15.03dB/-79.8deg @28Hz. Believed to be, but NOT proven identical
+    #     to, the reader behind the "LKAS lane is a ~1-5Hz low-pass" finding elsewhere in this file --
+    #     not cross-checked.
+
     # 2) apply the LKAS output gain in Q15 (>>15), then a symmetric +/-arb_output_clamp. [VERIFIED] At
     #    full scale V850 `sar` yields +417/-418, both below 512, so stock never hits the clamp (an
     #    earlier >>10 reading was ~13370, 26x over the clamp, and was wrong).
