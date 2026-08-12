@@ -1,16 +1,31 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-11 (V90 flight session).** On the car: **V90** (route `77`, fault-free,
-identity PASS). **V90 is PROBE-ONLY — byte-identical to V89 in every calibration cell**, so the car is
-functionally the V89 car. Operator, on this drive, verbatim: ***grind #1 still exists ·
-micro-ratcheting still exists · grind #2 can be felt on the highway-speed curves or lane changes.***
-**✅ V91 IS BUILT, VERIFIED, UNFLASHED** — `0xCBE74` ×1.5, cal-only, 12 bytes.
-**🛑 V92 IS CUT, VERIFIED AND UNFLASHED** — the same 12 bytes + a 116-byte cave + a 2-byte 427 repoint + a 427 scaling
-fix (**the first build ever to write CAN `0x14A` byte 7**). **No V92 hashes are recorded anywhere in
-the collaterals.** 🛑 **An earlier V92 cut this session WAS real and fully verified (182/182
-assertions) but carried the OLD rung map — its hashes are DEAD and are named as such in §E.**
-🛑 **Both carry the same honest label: the SAME lever at the SAME ×1.5 dose that HARD-FAULTED on V74
-and V75, separated from those flights only STRUCTURALLY.** See §E.
+**Last updated: 2026-08-11 (routes 78/79 scored; V93 and V94 built).**
+**On the car: V92** (route `79`, fault-free, **identity PROVEN single-frame**). V91 flew — or may
+have flown — as route `78`; **the operator cannot confirm the flash, and V91 is telemetry-identical
+to V90, so route 78 cannot settle it.** Operator's report on these two drives, verbatim:
+***grind #1 attenuated (sufficient) · grind #2 rare / attenuated (sufficient, but could be better) ·
+large ratcheting mode seems generally fixed · micro-ratcheting / micro-stuttering has NOT been fixed,
+turning angle rate still limited by this it seems.***
+
+🛑🛑 **THE HEADLINE: the `0xCBE74` ×1.5 dose that V91 and V92 both carried appears to have done
+NOTHING to `gp-0x6b26`, its own single documented output — and NO MECHANISM EXPLAINS WHY.**
+Engaged cell-stratified ratio **0.99 [0.91, 1.26]** against a pre-registered 1.50, with the manual
+control holding at **1.009 [0.982, 1.047]**. ⚠ **This rests on ONE identity-proven leg (route 79's
+`byte7 b7` duty test), not two** — see §A2. All three of `FUN_00036c12`'s gates were traced this
+session and **all three should pass in normal driving**, so the null is **UNEXPLAINED**.
+
+🛑 **AND THE LEVER IS THE WRONG PHYSICS ANYWAY.** `gp-0x6c2c` is a FIRST DIFFERENCE of the filtered
+EPS-motor rate ⇒ **ACCELERATION**, so `gp-0x6b26 = −K·α` **ADDS APPARENT INERTIA and dissipates
+nothing.** `build_v91_tva.py`'s *"genuinely DISSIPATIVE, it opposes motor rate"* is **WRONG**.
+⇒ **V93/V94 REVERSE the direction of the last 13 builds and LOWER it.**
+
+**✅ V93 BUILT, VERIFIED, UNFLASHED** — image `779180f8aaf88f29…` rwd `9c93dca63e9e404e…`, 126/126.
+**✅ V94 BUILT, VERIFIED, UNFLASHED — PREFER THIS ONE** — image `cd971c05d483fe9c…`
+rwd `3feccc09d8cbdd05…`, 133/133. V94 = V93's 22 cal bytes **identical** + one code byte
+(`0x55E10` `sar 3`→`sar 1`) because **V93's own instrument cannot see V93's edit**: the ×0.25 dose
+would put **87.5 % of engaged frames on 427 wire ≤ 1**. 🛑 **V93 is NOT superseded and its hashes are
+NOT dead** — it is valid, it just measures itself poorly.
 
 🛑🛑 **THIS FILE HAS A HARD SIZE CAP: 256 KB. Keep it under ~150 KB.** On 2026-08-09 it reached
 **506 KB / 6,114 lines / 53 sections** — past the `Read` limit, so no agent could load it in one
@@ -26,7 +41,81 @@ record, **not** an instruction — do not reason from it.
 
 ---
 
-## ★★★★★ HEADLINE, 2026-08-11 — V90 FLEW, THE LEVER SEARCH CLOSED ON ARITHMETIC, V91/V92 ARE BUILT AND UNFLASHED
+## ★★★★★ HEADLINE, 2026-08-11 (LATEST) — ROUTES 78/79 SCORED; THE DOSE DID NOTHING AND THE LEVER IS THE WRONG PHYSICS
+
+Narrative: **`docs/HANDOFF-2026-08-11-routes-78-79-and-the-inertia-reversal.md`.**
+Mechanism, diagrams and the arithmetic mirror: `analysis-2020accord/v93_mirror_and_curves.py`.
+
+### A1. WHAT THE TWO DRIVES MEASURED [EVIDENCE]
+Both **fault-free**: `STEER_STATUS` 0 on 179,844/179,859 frames, DTC duty 0.00000, 0 sentinels,
+`CONFIG_VALID` 1.0000, no EPS onroad event. Route 78 = 927 s / 67.0 % engaged / **160 s ≥ 80 km/h
+(the kit's best highway ever)**; route 79 = 875 s / 86.2 % engaged / 28 s ≥ 80 km/h.
+
+- **The dose is not in force.** Engaged cell-stratified p50/p75/p90/mean = **0.988 / 1.230 / 0.941 /
+  0.964**, every CI containing 1.00, against a pre-registered **1.50**. Manual control **1.009
+  [0.982, 1.047]**. Three-way duty `P(|b26| ≥ 15)` = **0.167 / 0.161 / 0.165** (r77/r78/r79) against
+  a needed **0.204**.
+- **`Re(Z) < 0` REPLICATED ON THREE DRIVES** — 6–9 Hz **−3375 / −3176 / −3073**, coh² 0.71–0.77,
+  shuffled ≈ 0.000; sign flip to *damped* at ~24–26 Hz on all three. **Strongest in the MICRO
+  1–13 °/s regime: −3480 (coh² 0.804)** — the regime the operator says is unfixed.
+- **`gp-0x6bbe` identified** = the **base-assist output** (assist map × polarity, speed-clamped):
+  viscous ≈ 90 ct/(rad/s), phase through zero at 5–6 Hz, on a **~74 ct DC pedestal** with
+  `P(<0)` **0.887 engaged vs 0.499 manual**. 🛑 **REFUTES** the "same-signed as the torque sensor ⇒
+  REINFORCING" flag that justified the bit.
+- **The return-centre lane and the `gp-0x6bda` outer gate read 0.0000 over 75,227 engaged frames**
+  ⇒ **the detent/dwell lane is structurally dead on the road. Do not propose a detent lever.**
+  🛑 `byte7 b6` (dwell snap) is a **DEAD rung** — a **855 s sustained (0,0) run** = the
+  pre-registered indictment. Null on the gate, V64 class.
+- **Routes 77/78/79 are three drives of the SAME functional car** ⇒ the kit's largest same-firmware
+  **placebo floor**: micro-regime spread 6–9 Hz **1.37×**, 18–22 **1.31×**, **26–31 Hz 1.99×**,
+  32–38 control **1.54×**. **No grind-#2 claim below 2× is supportable in either direction.**
+
+### A2. 🛑 THE NULL IS UNEXPLAINED, AND IT RESTS ON ONE LEG
+`FUN_00036c12` has **three** gain sources; only one is the per-mode record:
+```
+gp-0x671a >= 0xFF  or  gp-0x67f4 != 1   ->  flat cal(0xC640C) = -3277   [FALLBACK-1]
+gp-0x671a >= cal(0xC64FD) = 5           ->  flat cal(0xC640A) = -8192   [FALLBACK-2]
+else                                    ->  LERP(0xCBE74[mode]) over gp-0x6a5e (voted VEHICLE SPEED)
+```
+All three gates were traced this session and **all three should pass in normal driving**:
+`gp-0x67f4` is the **vehicle-speed VALID/SETTLED flag** (`FUN_00041eec` — set once any wheel source
+is valid and the vote settles, cleared only when ALL go invalid) ⇒ **1 while driving**; `gp-0x671a`
+(oscillation detector) was measured **never non-zero** on V64/V68.
+🛑 **AND THE "WRONG MODE" EXPLANATION IS REFUTED**: V73 probed `gp+0x63fd` — the *same* byte
+`FUN_00036c12` indexes — over 104,061 frames and saw it change **8 manual → 10 engaged**, 18
+transitions, 99.09 % lag-matched. **The mode index tracks engagement.**
+⚠ **And V91 is telemetry-identical to V90, so route 78 cannot prove V91 was on the car; the operator
+cannot confirm the flash.** ⇒ the conclusion stands on **route 79's 1-bit duty test alone.**
+**Carry it as: the dose probably did not land, on one leg, with no mechanism.** Not as settled.
+
+### A3. THE PHYSICS CORRECTION [EVIDENCE, pinned in assembly]
+`FUN_00041464` @`0x41602 sub r7,r9` is a **first difference of the filtered EPS-motor rate**
+(`0x415FE mov r24,r7` is a reset path only — invalid state or first tick). ⇒ `gp-0x6c2c` is
+**ACCELERATION**, `gp-0x6b26 = −K·α`, and Path 1 adds it unweighted ⇒ `(J + K)·α = T_driver`:
+**apparent inertia RISES by K, and the term dissipates NOTHING.**
+⚠ The decompile alone could not settle this — Ghidra folds the reset path into `uVar8 = uVar16`,
+making the difference look identically zero. **Pinned in assembly, as CLAUDE.md mandates.**
+⊕ Rests on `gp-0x4f50` = EPS-motor RATE, corroborated three ways (the `gp-0x6abc` copy in the same
+function; the `<<10 … >>10` bracket producing `gp-0x6ac0` "resolver rate"; the ±13000 bipolar window).
+
+### A4. WHAT IS BUILT
+**V94 is the one to fly.** 22 cal bytes + 1 code byte on the flown-V90 base:
+`0xD6A6C` mode 24 (MANUAL) Y ×0.50 · `0xD7A5C`/`0xD7A6C` modes 26/27 (ENGAGED) Y ×0.25 ·
+`0xC640A` −8192→−6144 and `0xC640C` −3277→−2458 (**both fallbacks, first movement ever**) ·
+`0x55E10` `sar 3`→`sar 1` (the 427 packer). **Three distinct factors make the flight a branch
+discriminator** on the engaged `|gp-0x6b26|` ratio vs route 78: **0.25** ⇒ mode 26 live · **0.50** ⇒
+mode 24 live in both (**now a near-dead branch**, see A2) · **0.75** ⇒ a fallback is live · **1.00**
+⇒ stop. ⚠ The manual negative control is **deliberately spent**.
+⚠ **V94 adds NO damping and does not touch the 2–26 Hz anti-damping.**
+
+### A5. 🛑 STILL OWED, AND IT GATES EVERYTHING
+**The MANUAL HANDS-OFF COAST has never been run.** Routes 78/79 contained **1.8 s and 0.0 s**.
+It needs no firmware — ~15–20 min. **If the anti-damping lives in the PLANT, no firmware lever can
+remove it** and firmware can only add damping against it. Protocol in the superseded §C below.
+
+---
+
+## ⊕ SUPERSEDED HEADLINE, 2026-08-11 (V90 flight session) — retained for the reasoning, NOT for its status
 
 Narrative: **`docs/HANDOFF-2026-08-11-v90-flew-and-the-lever-search-closed.md`.**
 Flight scoring: `docs/SCORING-2026-08-11-v90-flight.md`.

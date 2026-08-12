@@ -1147,6 +1147,19 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #     FUN_00036c12 -> gp-0x6b26   speed-LERP x gp-0x6c2c motor ACCELERATION, LINEAR [friction comp]
 #         🛑 gp-0x6c2c is ACCELERATION (two cascaded IIRs on the one-cycle delta of the filtered rate,
 #         FUN_00041464), so this lane is ~0 under steady motion and fires only on oscillation.
+#         🛑 CONSEQUENCE, named 2026-08-11: an acceleration term is 90 deg out of phase with velocity
+#         -- it STORES energy and DISSIPATES NONE. Path 1 adds it to the aggregator unweighted and
+#         un-negated, so (J + K)*alpha = T_driver: raising K RAISES APPARENT INERTIA and pulls
+#         omega_n = sqrt(k/(J+K)) DOWN. It cannot damp anything. build_v91_tva.py's "genuinely
+#         DISSIPATIVE, it opposes motor rate" is WRONG and every "damping-comp" label inherits it.
+#         🛑 THE GAIN HAS THREE SOURCES, and only one is the per-mode record (0x36C1E..0x36CB4):
+#             gp-0x671a >= 0xFF or gp-0x67f4 != 1  -> flat cal(0xC640C) = -3277   [FALLBACK-1]
+#             gp-0x671a >= cal(0xC64FD) = 5        -> flat cal(0xC640A) = -8192   [FALLBACK-2]
+#             else                                 -> LERP(0xCBE74[mode]) over gp-0x6a5e
+#         Both fallbacks are MODE-INDEPENDENT, so a build that writes only the records can be bypassed
+#         entirely. Both were stock-virgin until V93/V94. gp-0x67f4 is the vehicle-speed VALID/SETTLED
+#         flag (FUN_00041eec: set once any wheel source is valid and the vote settles, cleared only
+#         when ALL sources go invalid) => it is 1 in normal driving, so neither fallback should fire.
 #     FUN_0003a382 -> gp-0x6ad4   UNFILTERED residual lane (2 passthroughs + a raw derivative)
 #     FUN_00036388 -> gp-0x6b62   slow +/-1/tick accumulator w/ hysteresis       [return-to-centre]
 #     FUN_000352b4 -> gp-0x6b86 + gp-0x69a4                                      [friction magnitude]
@@ -2138,7 +2151,8 @@ def assist_shaping_lanes(sensors: SensorInputs, st: EpsState) -> dict:
     raised only by V47), and its output clamp is a dynamic LERP keyed on gp-0x6ac2 (@0xD209C/D20A8)
     with a float-mirror lockstep at cal 0xC6554/58/5C/60 (DTC-0x1d no-debounce hard shutdown on
     divergence -- any edit to the int clamp table needs a bit-exact float twin). FUN_00036c12 ->
-    gp-0x6b26 (friction comp) is LERP(gp-0x6a5e voted VEHICLE SPEED, @0xCBE74, mode10@0xD2A44) x
+    gp-0x6b26 (friction comp) is LERP(gp-0x6a5e voted VEHICLE SPEED, @0xCBE74, mode26@0xD7A54 -- the
+    "mode10@0xD2A44" this line used to name is the PRE-V73 wrong-row error, see RULE 7) x
     gp-0x6c2c (motor-rate derivative), a plain signed multiply -- NO sign()/abs/hysteresis anywhere in
     the lane, so it is smooth and continuous through zero and cannot itself generate stick-slip; magnitude
     is LARGEST at 0 km/h (Y[0]=-9830) and falls ~5x by 90 km/h (Y[2]=-1966); self-clamps +/-511 (0xC407E)

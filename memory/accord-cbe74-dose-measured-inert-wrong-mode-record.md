@@ -34,18 +34,46 @@ off), and confirmed by r78 reading **0.0000 %** on that same bit as a positive c
 image on disk (`c8e89fe35ebc445e…`) was **re-read this session** and carries
 `0xD7A5C`/`0xD7A6C` = `(-14745, -8601, -2949)`. ⇒ **the dose was on the car and did nothing.**
 
-## THE LEADING EXPLANATION — the engaged mode record is not 26/27 [BELIEF]
+## 🛑🛑 THE "WRONG MODE RECORD" EXPLANATION IS **REFUTED**. Retracted 2026-08-11, same session.
 
-**The Y row is nonzero at all three knots**, so there is **no speed at which ×1.5 is a no-op**
-⇒ an inert result means **the record being read is not the record we wrote.** [EVIDENCE for the
-inference; BELIEF for which record it is.]
+An earlier version of this memory (and a V93 proposal built on it) named *"the car reads mode 24 in
+both states"* as the leading explanation. **That is refuted by evidence the kit already had, which
+was not checked before proposing it.**
 
-🛑 **And this was never testable against stock**: `[[accord-stock-mode24-equals-mode26-damper-is-ours]]`
-records that stock ships **mode 24 ≡ mode 26 byte-identical**, so no stock observation can
-distinguish "engaged reads 26" from "engaged reads 24". **V91/V92 are the first on-car test of the
-kit's mode-26 assumption, and it FAILED.** Both arms reading 1.00 is exactly what "the car reads
-mode 24 in both states" predicts. This is `BUILD-LINEAGE` **RULE 7** (*mode-proof or it is a bet*)
-collecting its debt. See `[[reference-accord-car-is-tvca4-mode-24-26]]`.
+`[[reference-accord-car-is-tvca4-mode-24-26]]`: **V73 probed `gp+0x63fd` — the SAME byte
+`FUN_00036c12` uses as its index** (`0x36C4A ld.bu 0x63fd[gp],r15`) — over **104,061 frames**. It
+read **8 manual / 10 engaged, 18 transitions, all on engagement edges, 99.09 % lag-matched.**
+The mode index **demonstrably changes with engagement**; it does not sit at 24.
+
+**The Y row is nonzero at all three knots**, so there is no speed at which ×1.5 is a no-op. That
+inference still stands — *something* bypassed the edit — but the mode is no longer the candidate.
+
+## 🛑 AND NEITHER BYPASS BRANCH EXPLAINS IT EITHER — so the null is UNEXPLAINED
+
+`FUN_00036c12` has exactly three gain sources. Both non-LERP branches were traced this session and
+**both should pass in normal driving**:
+- **`gp-0x67f4 != 1`** → flat `cal(0xC640C)`. Traced to `FUN_00041eec`: it is the **vehicle-speed
+  VALID/SETTLED flag** — set to 1 once any wheel-speed source is valid and the voted speed settles
+  (Δ < 0x41 ≈ 1 km/h), cleared **only** when *all* sources go invalid. **In normal driving it is 1.**
+- **`gp-0x671a >= cal(0xC64FD) = 5`** → flat `cal(0xC640A)`. `gp-0x671a` is the oscillation
+  detector's output, **measured never non-zero** on V64/V68 (inherited, not re-measured here).
+
+⇒ all three gates pass, the LERP branch should be taken, mode 26 should be live, **and the ×1.5
+should have appeared.** It did not. **The null has no surviving mechanism.**
+
+## 🛑 THE EVIDENCE IS ALSO WEAKER THAN FIRST REPORTED — one leg, not two
+
+The first write-up claimed *"two independent instruments agree."* **It does not follow.**
+**V91 is telemetry-identical to V90** — no cave bit separates them — so **route 78 cannot prove V91
+was ever on the car.** Asked directly, the operator could not confirm the flash. ⇒ route 78
+corroborates only *if* V91 was flashed, and the conclusion rests on **V92's `byte7 b7` duty test
+alone** (route 79, identity-proven single-frame): **0.1646 observed vs 0.1671 undosed against a
+needed 0.2036** — a 1-bit test, lower-powered than the continuous one.
+
+**Carry this as: the dose probably did not land, on ONE identity-proven leg, with no mechanism to
+explain why.** Not as a settled fact.
+⊕ **V94 fixes both halves**: a ×0.25 engaged dose is a **4× change** in `|gp-0x6b26|`, which is
+unmissable *and* doubles as the identity signature V91 lacked.
 
 ## CONSEQUENCES
 
