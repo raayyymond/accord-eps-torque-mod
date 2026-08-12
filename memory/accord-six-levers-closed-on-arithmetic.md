@@ -5,6 +5,17 @@ metadata:
   type: reference
 ---
 
+> ## 🛑🛑 CORRECTION, 2026-08-11 (routes 78/79) — THE `0xCBE74` ROW NEEDS A DIFFERENT REASON
+> V91 and V92 both flew the ×1.5 dose and it was **measured INERT at its own single output**
+> `gp-0x6b26` — engaged cell-stratified ratio **0.99 [0.91, 1.26]**, manual control holding at
+> **1.009**, three-way duty **flat**. See [[accord-cbe74-dose-measured-inert-wrong-mode-record]].
+> ⇒ **The arithmetic ceiling (1.6005×) and the sub-floor sizing are UNCHANGED as structure, but the
+> on-car evidence behind this row is VOID: the dose never reached the lane, so the lever was never
+> actually tested.** The leading explanation is that the **engaged mode record is not 26/27**, which
+> would apply to ANY lever written into that record — not just this one. **Do not cite this row as
+> "flown and falsified".**
+
+
 # Six levers closed, 2026-08-11 (the V90 flight session)
 
 🛑 **A lever killed by ARITHMETIC cannot be re-opened by more exposure or a bigger dose.** Five of these
