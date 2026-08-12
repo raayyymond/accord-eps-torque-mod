@@ -920,6 +920,13 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 # Assist is not one term: the demand aggregator (FUN_0003aa2c) sums the boost curve, five sibling lanes,
 # two inline Sensor-B torque-rate lanes, and one filtered Sensor-B term:
 #     FUN_00034a72 -> gp-0x6bbe   the boost curve proper (the "assist" everyone means)
+# 🛑 MEASURED CORRECTION 2026-08-12: gp-0x6bbe AS DELIVERED IS RATE-DERIVED, NOT "the base-assist
+#   output". bbe<-tq is 0.01 ct/ct at +144 deg -- fully explained by BOTH channels being driven by
+#   omega -- while bbe<-omega is FLAT 87-92 ct/(rad/s) across 2-12 Hz at +18 deg (6-9 Hz), i.e. it is
+#   source-side. This CONTRADICTS the earlier "viscous + DC pedestal / base-assist output" reading and
+#   the "same-signed as the torque sensor => REINFORCING" flag that once justified a telemetry bit.
+#   DEAD AS A LEVER: 9-15 % of Re(Z), and its rate part is 4-9 % of a 73-80 ct DC assist pedestal.
+#   => memory/reference-accord-gp6bbe-is-rate-derived-not-base-assist.md
 #     FUN_00034350 -> gp-0x6bd0   5 multiplied gain factors, sign forced opposite gp-0x6abe [damping]
 # 🛑🛑 ALL FIVE DAMPING FACTORS ARE MODE-TABLE SELECTED (2026-08-05). FUN_00034350 (sole caller
 # FUN_00022ca0) picks B/C/D/E AND the ceiling through pointer arrays indexed by mode*4,
@@ -1147,11 +1154,26 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #     FUN_00036c12 -> gp-0x6b26   speed-LERP x gp-0x6c2c motor ACCELERATION, LINEAR [friction comp]
 #         🛑 gp-0x6c2c is ACCELERATION (two cascaded IIRs on the one-cycle delta of the filtered rate,
 #         FUN_00041464), so this lane is ~0 under steady motion and fires only on oscillation.
-#         🛑 CONSEQUENCE, named 2026-08-11: an acceleration term is 90 deg out of phase with velocity
-#         -- it STORES energy and DISSIPATES NONE. Path 1 adds it to the aggregator unweighted and
-#         un-negated, so (J + K)*alpha = T_driver: raising K RAISES APPARENT INERTIA and pulls
-#         omega_n = sqrt(k/(J+K)) DOWN. It cannot damp anything. build_v91_tva.py's "genuinely
-#         DISSIPATIVE, it opposes motor rate" is WRONG and every "damping-comp" label inherits it.
+#         🛑🛑 THE 2026-08-11 "PURE INERTIA" CONSEQUENCE IS REFUTED BY THE V94 FLIGHT (2026-08-12).
+#         It read: "an acceleration term is 90 deg out of phase with velocity -- it STORES energy and
+#         DISSIPATES NONE ... raising K RAISES APPARENT INERTIA ... It cannot damp anything." V93/V94
+#         LOWERED the lane on that reasoning; on-car the operator judged V94 unsafe to drive and
+#         stopped (motor accel 3-7x up above 9 Hz; 18-31 Hz coherence the corpus maximum).
+#         MEASURED, two independent drives, omega-partialled vs a shuffled control: the DELIVERED lane
+#         is +137 deg / +139 deg vs WHEEL rate at 6-9 Hz => |cos| = 0.73 => +518 / +565 counts of
+#         POSITIVE Re(Z). IT IS A REAL 6-9 Hz DAMPER. The producer's identity (an acceleration) does
+#         NOT determine the delivered lane's phase at the wheel: two EMA poles (0xC643C = 37>>7,
+#         0xC40DC = 22>>6) plus the plant sit in between. A desk recomputation that got +75 deg /
+#         "26 % dissipative" was ALSO wrong -- it phased the PRODUCER against MOTOR rate.
+#         => RULE: measure the DELIVERED lane against WHEEL rate. Never price a lane from its
+#         producer's transfer function. See memory/accord-v94-flew-and-the-lane-is-a-damper.md and
+#         memory/accord-gp6b26-is-a-real-6to9hz-damper.md.
+#         ⊕ Direction is now MEASURED and it is UP, not down. But UP has been tried 13 times without
+#         fixing anything, AND the 427 instrument cannot see its own dose: gp-0x6b26 = K*alpha where
+#         alpha is what K damps, so in a stable closed loop the PRODUCT IS INVARIANT TO K (V91/V92's
+#         x1.5 measured 0.99). Measure the INPUT (gp-0x6c2c) or a symptom -- never the product.
+#         ⊕ x1.5 is already ~94 % of the lever's entire range (int32 wraparound at 1.6005x), so
+#         0xCBE74 is EXHAUSTED as a lever in the UP direction.
 #         🛑 THE GAIN HAS THREE SOURCES, and only one is the per-mode record (0x36C1E..0x36CB4):
 #             gp-0x671a >= 0xFF or gp-0x67f4 != 1  -> flat cal(0xC640C) = -3277   [FALLBACK-1]
 #             gp-0x671a >= cal(0xC64FD) = 5        -> flat cal(0xC640A) = -8192   [FALLBACK-2]
@@ -1208,6 +1230,55 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #   PATH 2 = FUN_00038148 stage 1: six gated terms, plain ADD, each (x * gate * w) >> 10, with weights
 #     tp+0x73a0/a2/a4/a6/a8/aa == 0xC63A0/A2/A4/A6/A8/AA.
 #   The gates are ZEROING, not clamping (out of window contributes 0); gp-0x6bd0's is |x| <= 2048.
+# ★★★★★ THE SIX WEIGHTS, AND WHY NONE OF THEM CAN BE MOVED YET (2026-08-12, GhidraMCP + Python).
+#   Gate widths from a fresh decompile -- with all six weights at 1024 a lane's contribution to sum6
+#   is (x*gate*1024)>>10 == x, so THE GATE WIDTH *IS* THE LANE'S REACHABLE CEILING:
+#       gp-0x6b4c (0xC63AA) +-10240 | gp-0x6b4e (0xC63A8) +-10240      <- 5x and 10x the others
+#       gp-0x6bd0 (0xC63A0) +-2048  | gp-0x6b46 (0xC63A4) +-1024
+#   ⊕ gp-0x6b4e and gp-0x6b4c are DISJOINT PARTITION SUMS of the same 11-slot request array
+#     gp-0x62f8[], split by the per-slot mode bytes at 0xC4124 (= 00 00 05 00 05 05 00 00 00 05 00):
+#         gp-0x6b4e = clamp(sum of slots {2,4,5,9},        +-10240)   the mode-5 slots
+#         gp-0x6b4c = clamp(sum of slots {0,1,3,6,7,8,10}, +-10240)   the mode-0 slots
+#     i.e. the two halves of the EPS's own internal torque-request bus. Neither ever observed.
+#   ⊕ gp-0x6b4c is ALSO a direct unity-weight aggregator summand (0x3AA3E, same +-10240 gate, in BOTH
+#     branches) => it reaches the motor by Path 1 AND Path 2. gp-0x6b4e reaches only Path 2.
+#   ⊕ Both producers are called from FUN_0002214a = the 1 kHz task, so the stage-1 IIR (a=102/1024,
+#     fc ~= 16 Hz) passes 6-9 Hz at |H| ~= 0.90. At 100 Hz it would have been 0.21. Task 5's rate is
+#     RETRACTED-OPEN, so this matters: these lanes CAN carry 6-9 Hz into gp-0x6b70.
+#   ⊕ Both gates are STRUCTURALLY ALWAYS OPEN -- the producer (FUN_00026c80) clamps each cell to
+#     exactly +-10240 and the FUN_00038148 gate passes -10240..+10240 INCLUSIVE => the V64-class
+#     "gate never armed" null is EXCLUDED BY ARITHMETIC, not by a duty measurement.
+# 🛑🛑 BUT NO WEIGHT MAY BE MOVED: gp-0x6b70 is a PID *REFERENCE* THAT GETS SUBTRACTED, not an
+#   aggregator addend, so a weight change's SIGN is not determined by the forward path alone.
+#   (a) The open-loop part IS determinate: gp-0x6b70 = sign(iVar6)*f(|iVar6|) is the odd continuation
+#       of f, so the two sign(iVar6) factors in the chain rule SQUARE TO +1 AND CANCEL -- the unknown
+#       sign of iVar6 does NOT matter open-loop. With 0xC64B0=1 and NO negation on this term in
+#       FUN_00037fe6 (unlike the sibling gp-0x6b4a term, which IS negated), the open-loop sign is
+#       +sign(gp-0x6b26) => it would REINFORCE Path 1, IF f' >= 0 (unconfirmed) and polarity is +1.
+#   (b) 🛑 Path 2 IS A REAL CLOSED LOOP: gp-0x6b98[n-1] -> FUN_0003b8f6 -> gp-0x6bfc -> FUN_0003bc20
+#       -> gp-0x6bfe, 1 kHz with one sample of delay. Its loop gain lives in EIGHT float coefficients
+#       at tp+0x50d4/0x50d8/0x504c/0x5050/0x50bc/0x50d0/0x50d2/0x50d6 -- NEVER BYTE-READ BY ANY
+#       SESSION -- crossed with the RAM LERP's local slope, which two attempts at FUN_000389ec have
+#       failed to extract. => GATE 2 CANNOT BE CERTIFIED. 0xC63A6 was struck on exactly this.
+#   ⊕ The +-1024 gate on gp-0x6b26 is evaluated on the RAW pre-weight value, so a weight change cannot
+#     interact with it -- no gate-based clip risk, only unmeasured downstream headroom to +-8192.
+#   ⊕ RULE 7 is satisfied for these weights: they are FLAT, non-mode-indexed scalars. And note
+#     FUN_00038148's caller gate (uVar2 & 0x830) is a gp-0x67fa STATE gate, NOT a gp+0x63fd MODE gate.
+#   => memory/accord-fun38148-weights-have-an-unresolved-sign.md
+# ★★★★★ THE LKAS AUTHORITY COLLAPSE CURVE -- VIRGIN, AND THE OPERATOR DRIVES ON ITS KNEE (2026-08-12).
+#   Mode index gp-0x674e = 7 (single writer st.b @0x4272A <- variant table 0xCD000, stride 0x24, col
+#   +0x08; car is row 11, forced by V73's on-car probe). Records at mode 7:
+#       0xE547C / 0xE5404  primary (sign>=0 / sign<0)  X = 70, 72, 78, 80   Y = 254, 234, 12, 0
+#       0xE52FC / 0xE5284  blend   (sign>=0 / sign<0)  X = 32, 42, 80, 112  Y = 255, 255, 255, 0
+#   Authority goes 254 -> 0 between RAW TORQUE 2240 and 2560. All four VIRGIN on all 90 images.
+#   🛑 The measured MEDIAN OVERRIDE TORQUE is 2235 = byte 69, ONE COUNT below X[0] = 70.
+#   ⊕ 0xC64B8 (V37, 112 -> 0xFF) gates a hard authority kill at byte >= 113, but at mode 7 BOTH arms
+#     deliver 0 there => stock and V37 are BIT-IDENTICAL on this car. The gate is DEAD; the CURVE is
+#     the live mechanism. (Modes 28-39 have Y[last]=51, so this is a property of mode 7, not the code.)
+#   🛑 NOT a 6-9 Hz lever -- refuted five ways; it drives the ~0.5-1 Hz SURGE.
+#   🛑🛑 Honda collapses authority BECAUSE the driver is pushing. Any change must be MONOTONE-
+#     NON-INCREASING: never more authority than stock at any torque.
+#   => memory/accord-authority-curve-is-virgin-and-the-override-sits-on-its-knee.md
 #   Stage 1's sum is then x polarity x tp+0x7468 (0xC6468 = 2639) >> 10, then a 1 kHz IIR with
 #   tp+0x73ac (0xC63AC = 102) => corner 16.70 Hz, then stage 2 -> gp-0x6b70 -> FUN_00037fe6 ->
 #   gp-0x6ad6 -> FUN_0003a382 -> gp-0x6ad4 -> the aggregator.

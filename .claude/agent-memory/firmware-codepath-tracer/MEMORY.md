@@ -1,5 +1,28 @@
 # Firmware Codepath Tracer - Memory Index
 
+## 2026-08-12 0xC63A6 GATE trace, NO-GO verdict (`c63a6-gate-trace`)
+- [★★★★★ NO-GO on 0xC63A6 — Q1/Q5 closed clean (sole reader, flat non-mode scalar); Q3 splits into a determinate open-loop sign (reinforcing, new derivation) vs an unmeasured closed-loop gain L that the sibling 0xC63A0 precedent shows can invert](reference_accord_c63a6_gate_trace_forward_vs_closed_loop_sign_split.md) — reusable across all six FUN_00038148 lane weights; both blockers (FUN_0003b8f6 cascade, FUN_000389ec LERP table) unread by two independent sessions now.
+- [tp-relative get_xrefs_to false-zero + ld.hu bit0/parity trap addressing the neighbour cell, both confirmed this session](reference_accord_tp_relative_xref_blindspot_and_parity_trap_2026-08-12.md) — corroborate with search_instructions + a both-parity raw byte scan before trusting any tp-relative reader/writer count.
+
+## 2026-08-11 PID phase @6-9Hz + GATE-1 movhi scan (`lane-weights-6bf`)
+- [★★★★★ PID recomputed at 6-9Hz from fresh decompile (not extrapolated) — P is 3-5x less dominant, net phase lag 3-5x larger than the existing 21Hz figure](reference_accord_fun3a382_pid_phase_6to9hz_and_gate1_movhi_scan.md) — the 32x P/D-vs-I asymmetry discovered; whole-image movhi/0xfedf scan clean (0 hits), GATE-1 closed.
+
+## 2026-08-12 driver-override sign-guard relay (`lane-weights-6bf`)
+- [★★★★★ gp-0x6806's gate traced to CAN-command domain, not the torque sensor — no firmware path from driver torque to the arb's deadband+sign-guard relay](reference_accord_gp6806_gate_is_can_domain_not_torque_sensor.md) — cal 0xC64A3=1 confirmed the single-byte arm for BOTH halves, never touched by any build; 0xC6AF0/gp-0x6966 struck (permanently wide open, per kit's own v54-flashed-authority-measured).
+
+## 2026-08-12 engagement-gate enumeration (`lane-weights-6bf`)
+- [🛑 CORRECTS reference_accord_gp69b0_authority_gate_and_fun42746_table_selector: FUN_0002a93a is DEAD CODE (0 callers/xrefs, 2 methods) — caught via citation-check before relaying, not after](reference_accord_fun2a93a_dead_code_correction_and_engagement_gate_catalog.md) — plus a full catalog of confirmed-live engagement gates (mode-table FUN_00042746, arb ramp gain, authority output-clamp collapse) for team-lead's Q2/Q3.
+
+## 2026-08-11 gp-0x6b70 probe spec (`lane-weights-6bf`)
+- [★★★★★ Probe spec closing Q5 empirically: gp-0x6b70 is EXCLUSIVELY Path-2 (GATE-1: 1W/1R), isolates 0xC63A2's marginal effect from Path-1's independent contribution](reference_accord_gp6b70_probe_spec_path_separation_and_gate1.md) — proposes time-sharing 427/0x1AB rather than a new hook; task5=100Hz has a free corroboration route via gp-0x6bbe's own step response.
+
+## 2026-08-11 task-5 rate + FUN_000389ec (`lane-weights-6bf`) — 🛑🛑 RETRACTED 2026-08-12
+- [🛑🛑 RETRACTED: Task 5 = 100Hz CONTRADICTED by gp-0x6bbe's own flown data (route 79 freq/step/phase) — task 1=1kHz unaffected, task 5's true rate OPEN](reference_accord_task5_rate_resolved_100hz_and_fun389ec_structure.md) — do NOT use the −5.8/−7.5/−8.6dB figures this produced; RAM-LERP structural facts (9-pt, Y[0]=0) still stand, the "10Hz effective" framing does not. Q5 sign STILL not closed regardless.
+
+## 2026-08-11 FUN_00038148 six-weight V95 census (`lane-weights-6bf`)
+- [🛑🛑★★★★★ Full Q1-Q5 census of the six Path-2 lane weights for the 6-9Hz micro-ratchet target — all frozen at stock, no overflow risk, SIGN UNRESOLVED (blocking gate)](reference_accord_fun38148_six_weight_v95_candidate_census.md) — `0xC63A2`(boost) best candidate structurally but inherits `0xC63A0`'s documented inversion-risk precedent.
+- [★★★★★ `gp-0x67ac` resolved zero — Path 1's full unweighted sum (gp-0x6bd0/6bbe/6b26/6ad4/6b86) always live](reference_accord_gp67ac_resolved_zero_and_path1_always_live.md) — parallels the established gp-0x67ab=0 finding.
+
 ## 2026-08-11 V92 final allocation (`fw-dampaxis`)
 - [★★★★★ Adjudicated a cross-agent claim myself: gp-0x6abc CONFIRMED raw/unfiltered motor rate (Term 1 structural form matches); gp-0x6bf0 CORRECTED — not inside the return-centre functions, lives in a separate function with 15+ readers incl. the shaper. Final 7-bit allocation fits entirely in 0x14A (boost mag+sign, return-centre 2-sign-bit test, dose-in-force |gp-0x6b26|≥15), ~106B cave estimate](reference_accord_v92_final_allocation_gp6abc_gp6bf0_adjudication.md)
 

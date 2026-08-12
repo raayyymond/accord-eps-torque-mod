@@ -1,11 +1,36 @@
 ---
 name: reference_accord_gp69b0_authority_gate_and_fun42746_table_selector
-description: "gp-0x69b0 (the LKAS engage-ramp AUTHORITY value, 0..0x8000 Q15) directly zero-gates FUN_0002a93a's entire arb-curve computation (the function immediately following the old 'dead code gap' 0x2a507-0x2a93a -- that gap conclusion was about FUN_0002a30e specifically, NOT this function, which is very much live and writes gp-0x6b2e/6b32/6b34/6b36, the curve-clamped LKAS demand chain). Separately, FUN_00042746 reads gp-0x6806 transitions paired with gp-0x69b0 settling at an endpoint (0 or full-scale) to select between coefficient-table sets (DAT_0000e012..e018, stride 0x24, indexed by gp-0x67e2) -- a genuine, NEW, unresolved (b)-class engagement-linked table-selection candidate, not previously in kit memory."
+description: "🛑 AMENDED 2026-08-12: this file's FUN_0002a93a 'live, not inert' claim is WRONG -- see the amendment at the top. The FUN_00042746 table-selector finding is UNAFFECTED and stands. gp-0x69b0 (the LKAS engage-ramp AUTHORITY value, 0..0x8000 Q15) was claimed to directly zero-gate FUN_0002a93a's arb-curve computation; FUN_0002a93a has zero callers/xrefs by two fresh methods and is DEAD per the build scripts' own long-standing annotation. Separately, FUN_00042746 reads gp-0x6806 transitions paired with gp-0x69b0 settling at an endpoint to select between coefficient-table sets (DAT_0000e012..e018, stride 0x24, indexed by gp-0x67e2) -- this part is a genuine, still-open (b)-class engagement-linked table-selection candidate."
 metadata:
   type: reference
 ---
 
-# gp-0x69b0 AUTHORITY gate + a new (b)-class lead (FUN_00042746) — 2026-08-04
+## 🛑🛑 AMENDED 2026-08-12 — READ THIS FIRST
+
+**The `FUN_0002a93a` "live, not inert" claim below is WRONG. Strike it as an engagement-gate candidate.**
+
+This file cited [[reference_accord_patha_arb_is_live_not_inert_correction]] as support for calling
+`FUN_0002a93a` "very much live." That correction is about a **different function**,
+`FUN_00028ea6` (the real PATH-A arbitration) and its cal gain `0xC646C` — it says nothing about
+`FUN_0002a93a` having a caller. The inferential leap from "PATH-A is live" to "therefore
+`FUN_0002a93a`, which allegedly feeds the same chain, must also be live" was never independently
+checked.
+
+**Fresh check, 2026-08-12**: `get_function_callers(0x2a93a)` and `get_xrefs_to(ram:2a93a)` on `code.bin`
+— **zero callers, zero xrefs, both methods.** This matches `build_v37_tva.py`/`build_v38_tva.py`'s own
+long-standing annotation, present since those builds: `"FUN_0002a93a (DEAD: 0 callers/xrefs/ptrs)"` — a
+fact that was already on record in the build scripts and simply never cross-checked against this file's
+claim before it was written.
+
+**What survives**: the `FUN_00042746` table-selector finding below (`gp-0x67f6`/`gp-0x67e2` selecting
+coefficient-table sets on settled engagement transitions) is untouched — it does not depend on
+`FUN_0002a93a` at all. Only the `FUN_0002a93a`/"binary gate on the arb-curve computation" claim is struck.
+
+Full writeup: [[reference_accord_fun2a93a_dead_code_correction_and_engagement_gate_catalog]].
+
+---
+
+# gp-0x69b0 AUTHORITY gate + a new (b)-class lead (FUN_00042746) — 2026-08-04 [FUN_0002a93a section RETRACTED, see amendment above]
 
 Dispatched while enumerating LKAS-engagement routes for team-lead. Builds on
 [[reference_accord_fun28ea6_ramp_statemachine_gp6806_gp69b0_decoded]] (the ramp SM itself, and its

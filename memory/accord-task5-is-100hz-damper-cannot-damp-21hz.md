@@ -1,9 +1,38 @@
 ---
 name: accord-task5-is-100hz-damper-cannot-damp-21hz
-description: "RTOS task 5 is 100 Hz, so the table damper FUN_00034350 cannot damp the ~21 Hz mode. ✅ CONFIRMED AND SHARPENED 2026-08-08 — the '1 kHz damper' claim is a NAMING COLLISION: FUN_00034350 is 100 Hz, while FUN_0003aa2c and FUN_0003a382 run in task 1 at 1 kHz. Above 25 Hz the ZOH turns the table damper into an ANTI-damping force."
+description: "🛑 DISPUTED 2026-08-12 — task 5's 100 Hz rate is CONTRADICTED BY FLOWN DATA and the derivation behind it was retracted. Do not size a build on this file. The task-1 = 1 kHz half is unaffected. Original claim: RTOS task 5 is 100 Hz so the table damper FUN_00034350 cannot damp the ~21 Hz mode."
 metadata:
   type: reference
 ---
+
+> # 🛑🛑 DISPUTED — 2026-08-12. DO NOT SIZE A BUILD ON THIS FILE.
+>
+> **The 100 Hz rate asserted below is contradicted by `gp-0x6bbe`'s own flown telemetry**, and the
+> `syscall8`/TCB derivation that supported it was **RETRACTED** the same day — see
+> [[reference-accord-task5-100hz-syscall8-rate-divider]]. The retraction found that
+> `FUN_000837c0` was identified as the RTOS eligibility handler on an **address coincidence**
+> (`tp-0x3814` pointing at TCB[0]) plus a self-consistency check against task 1, and that
+> `FUN_00083854`/`FUN_00083918` are **not** task-wake primitives at all.
+>
+> **The flown-data contradiction** (route 79, V92, `gp-0x6bbe` already on the wire, 220 windows /
+> 19 episodes): its outer EMA is `alpha = 205/1024 ⇒ pole 0.7998`, predicting **−6.6 / −8.4 / −9.5 dB**
+> at 6 / 7.79 / 9 Hz **if the lane runs at 100 Hz**, versus **−0.2 / −0.3 / −0.3 dB at 1 kHz**.
+> **Measured ≈ −1.2 dB** — ~7 dB from the 100 Hz prediction. A step readout agrees: 42 usable steps
+> move **138 % of final value in one 20 ms sample**, against a **36 % hard cap** for τ = 44.8 ms,
+> putting τ in **[0, 20] ms**. And the measured phase **RISES** monotonically (−77° → +43° over
+> 0.3–20 Hz), which excludes the differentiator-plus-pole alternative, since a pole makes phase fall.
+>
+> 🛑 **This does NOT establish 1 kHz either.** Task 5's true rate is **OPEN**. Closing it needs the
+> kernel-subsystem trace that was not finished, or continued reliance on the empirical transfer.
+>
+> **What survives untouched:** **task 1 = 1 kHz** ([[control-task-tick-confirmed-1khz]], two
+> independent methods — OSTM0CMP hardware math and the STEER_STATUS=4 dwell measurement — neither
+> depending on the retracted derivation), and therefore the placement of `FUN_0003aa2c` and
+> `FUN_0003a382` in task 1. The **naming-collision** point below is also unaffected: whatever task 5's
+> rate is, `FUN_00034350` is in it and the aggregator/PID are not.
+>
+> **What does NOT survive:** the 100 Hz figure itself, the ZOH-anti-damping-above-25 Hz argument built
+> on it, and any attenuation number derived from it.
 
 # ★★ RTOS task 5 is 100 Hz — so the base-assist DAMPER structurally cannot damp the 20.9 Hz mode
 

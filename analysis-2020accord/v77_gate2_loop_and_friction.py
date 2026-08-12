@@ -1,6 +1,25 @@
 """v77 GATE 2 -- the firmware-side loop gain/phase, and the drag budget.
 
-🛑 TOPOLOGY CORRECTION (this session, fresh decompile of FUN_0003aa2c + FUN_00038148):
+🛑🛑 TWO STANDING WARNINGS ADDED 2026-08-12 -- READ BEFORE CITING ANY NUMBER THIS SCRIPT PRINTS.
+
+  (1) THE `net` COLUMN IS A SWEEP, NOT AN ESTIMATE. `g4` is the one unmeasured factor (line 87 below
+      says so in its own words) and it is swept over (0.25, 0.5, 1.0, 2.0). A later session lifted
+      the `g4 = 1.0` row out of that bracket and reported 0.59/0.56 -> 1.18/1.12 as "the central
+      estimate" for an inversion boundary at W = 1024 -> 2048. THIS SCRIPT NEVER CLAIMED THAT.
+      Cite the whole sweep or cite nothing. The qualitative point -- that `net = 1 - L` CAN cross
+      zero -- survives; the specific numbers do not.
+
+  (2) THE TOPOLOGY BELOW IS INCOMPLETE. It models two parallel FEED-FORWARD paths closing only
+      through the physical plant. Path 2 is ALSO a real firmware-side CLOSED LOOP:
+      gp-0x6b98[n-1] -> FUN_0003b8f6 -> gp-0x6bfc -> FUN_0003bc20 -> gp-0x6bfe, one sample of delay
+      at 1 kHz, and gp-0x6bfe is one of the three terms forming iVar6. `net = 1 - L` does not
+      contain that path at all. Its loop gain lives in eight float coefficients at tp+0x50d4 /
+      0x50d8 / 0x504c / 0x5050 / 0x50bc / 0x50d0 / 0x50d2 / 0x50d6 -- NEVER BYTE-READ.
+
+  => memory/accord-fun38148-weights-have-an-unresolved-sign.md. This is why 0xC63A6 was struck
+     NO-GO and why V95 MEASURES gp-0x374c / gp-0x6b70 instead of simulating them.
+
+🛑 TOPOLOGY CORRECTION (the v77 session, fresh decompile of FUN_0003aa2c + FUN_00038148):
    the brief's chain `FUN_00038148 -> ... -> gp-0x6ad4 -> back into the aggregator` is NOT a closed
    firmware loop. `gp-0x6ad4` is added into **FUN_0003aa2c** (the 11-lane torque aggregator), and
    `gp-0x6ad4` does NOT appear anywhere in FUN_00038148. The damper reaches the motor by TWO
