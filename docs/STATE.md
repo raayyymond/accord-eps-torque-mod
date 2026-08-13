@@ -1,15 +1,25 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-12 late (V96 FLEW as routes `7e`/`7f`; the return-to-centre crux was named by
-the operator; **V97** cut — the arc's first LOOP-POLE lever).**
+**Last updated: 2026-08-12 (latest) — **V97 FLEW as route `0x80`**; the operator felt NO difference and
+stopped. `0xC63AC` is filed **UNINTERPRETABLE**. The lever is proven LIVE; the DRIVE could not score it.**
 
-🛑🛑 **ON THE CAR: V96.** Routes `7e` (806 s) and `7f` (838 s), 2026-08-12, **both fault-free** —
-DTC-active duty 0.000000, zero sentinels, `OUTPUT_DISABLED` duty 0.0001.
-**Identity PROVEN SINGLE-FRAME:** `0x14A` byte7 bit 6 reads **1 on 100.0000 % of 164,096 frames**
-across both routes. V94 carries the 74-byte V90 cave and **cannot write byte 7 at all**;
-`byte7[7:6] ∈ {1,3}` on every frame (the map validator); byte4 b3 constant.
-⇒ **V94's `0xCBE74` cut is ALREADY OFF THE CAR** — V96 carries V92's calibration byte for byte.
-**There is no revert pending.**
+🛑🛑 **ON THE CAR: V97.** Route `0x80` (`75604b0a432fdc89_00000080--6c8b103892`, 2 segments,
+cache `_cache_r80/`), 2026-08-12, **fault-free** — 0 sentinels on `0x14A`/`0x18F`, `CONFIG_VALID`
+1.0000, `OUTPUT_DISABLED` 0.0009, `STEER_STATUS` 0 on all 1,719 engaged frames.
+109.2 s total · **17.2 s engaged in ONE episode** · engaged p50 **5.13 km/h**, v_max **6.6 km/h** ·
+**19.5 % override / 80.5 % hands-off** — a deliberate parking-lot creep provoking the symptoms.
+
+🛑 **OPERATOR, VERBATIM:** *"I did not feel any difference in grinding or stuttering (micro-ratcheting)
+behavior at all on V97, so I stopped the drive."*
+
+⚠ **IDENTITY IS V96-OR-V97, NOT SINGLE-FRAME V97.** `0x14A` byte7[7:6] ≠ 0 on **10,750/10,750** frames
+⇒ **not V94, not V92, not anything ≤ V91** (all mask those bits off — structural). But **V96→V97 is
+5 bytes (one cal + its CRC)**: cave, 427 repoint and every bit map are **identical**, so *no* frame can
+separate them. We rely on the operator's statement that V97 was flashed.
+⇒ 🛑 **STANDING REQUIREMENT: every build must carry a BUILD-IDENTITY FIELD that changes on every cut,
+independent of the lever under test.** 2 bits (byte7[7:6]) gives only ONE clean generation and
+V96/V97 already burn {1,3}; a durable field needs ≥3 bits and its own `0x18F` hook — **as its own
+build**, never combined with a new measurement class (that is how V24/V27/V48B bricked ECUs).
 
 🛑🛑 **THIS FILE SAID "ON THE CAR: V94 … it is still flashed" FOR A FULL SESSION AFTER V96 FLEW, AND
 IT COST REAL WORK.** It sent the session's strongest analyst to close its verdict with *"fly V96, S2
@@ -20,9 +30,86 @@ VOID**. Seventh instance of the kit's "row says UNFLASHED after it flew" defect.
 against the identity bit from the most recent route. The old rule ("write the flight result in the
 same pass that scores the flight") only fires if someone remembers; this one fails loudly.
 
-**V97 is a FIX, and it is ONE BYTE:** `0xC63AC` 102 → 150, the Path-2 IIR pole in `FUN_00038148`.
-**Built, verified, 131/131 assertions, NOT FLASHED.** Spec, direction evidence and the honest cost in
-§A8. 🛑 **The number V95 is BURNED — see §A5.** ⚠ The `rlog-tools/v95_*.py` files are **analysis**
+## ⭐ BUILT AND UNFLASHED: **V98** — the first COMPARATOR probe in the kit
+
+```
+39990-TVA,A160-V98-V97BASE-CAVE.CMP.6BFE.6BFA.374C-POL.6752-ID.BYTE7.2-0x13000-0x100000.rwd
+  image c9babfed6acf24c0c5877754149a60fd5866dae8407029d7a3a5d74870d151d9
+  rwd   fcfa1baa82ea8fbca104eee5c8a398b7d5de8762629351128b05e0cb811e5e3c
+  builder analysis-2020accord/build_v98_tva.py   199/199   BASE = V97 (on the car)
+```
+🛑 **ZERO calibration bytes. ZERO 427 bytes. Cave only — AN INSTRUMENT, NOT A FIX.**
+It answers the one question this session could not: **which arm of the observer residual dominates.**
+
+| bit | signal | role |
+|---|---|---|
+| byte4 b7 | `gp-0x6b70 < 0` | V96's rung, byte-identical |
+| **b6** | ⭐ `\|gp-0x6bfe\| ≥ \|gp-0x374c>>4\|` | **MODEL vs ACTUAL** |
+| **b5** | ⭐ `\|gp-0x6bfa\| ≥ \|gp-0x374c>>4\|` | **REQUEST vs ACTUAL** — with b6, ranks all three arms per frame, **no scale assumption** |
+| b4 | `(gp-0x374c>>4) < 0` | V96's rung — **the converse positive control** (measured `arg(B′)−arg(rate)` = +78.6°/+78.0°) |
+| b3 | `gp-0x6752 ≥ 0` | closes a multi-session blocker; **a DEPENDENCY, not a rider** |
+| byte7[7:6] | hard-wired **2** | identity + liveness |
+
+**Orchestrator-verified from disk:** both hashes ✓ · V97→V98 diff **146 B**, all in `0xC4B34–0xC4BCD`
++ `0xC4FFC`, **zero unattributed** ✓ · **every cal cell identical to V97** ✓ · **GATE 2 re-derived
+independently — exactly 3 stores across exactly 2 cells (`gp-0x1514`, `gp-0x1511`)** ✓.
+**GATE 1 PASS** on all four cells; wider 32-bit span scan **67 accesses, ZERO span-only hits**.
+**Hook proven from the image to be the 100 Hz `0x14A` builder, NOT the 1 kHz task** (`0x55C14 =
+movea 0x14A,r0,r8`). Cave **112 → 154 B (+37.5 %)**, 12.7 % of the extent — stated, not claimed away.
+
+🛑 **SCORER WARNING — the ~50-build "byte4[7:3] is always ODD" convention DOES NOT HOLD on V98.**
+`b3` is a measurand, so **byte4 goes EVEN whenever `gp-0x6752 < 0` — that is the FINDING, not a fault.**
+Liveness moved to **byte7**. Without this a scorer pulls a working build.
+🛑 **`0x7FFF` sentinel pre-registered:** when the plausibility latch fires, `gp-0x6bfe` = `0x7FFF` and b6
+reads TRUE for an unrelated reason. The latch rails `gp-0x6b70` ⇒ **427 pins at exactly 1023.
+Score b6 only on frames with 427 ≠ 1023, and report the excluded count.**
+⚠ **One open gap before any flash:** `mov`'s flag-transparency is **BELIEF** — SLEIGH + Honda's own
+instruction scheduling, not a manual quotation.
+
+**DRIVE PROTOCOL: ONE parking-lot creep, LKAS engaged, hands on — stop the moment the symptom is felt.**
+~15–30 s of engaged frames. **No matched arms, no episode counts, no highway, no second drive.**
+Optional and free: a few seconds of the same creep LKAS-off; and 60 s turning the wheel by hand with the
+car OFF (a positive is strong, a negative is weak).
+
+---
+
+## 🛑 V97's VERDICT — UNINTERPRETABLE. Not falsified. **Do not re-dose `0xC63AC`.**
+
+`0xC63AC` 102 → 150, the Path-2 IIR pole in `FUN_00038148`. **FLEW route `0x80`.**
+
+✅ **THE LEVER IS LIVE — BOTH OF THE OPERATOR'S OWN HYPOTHESES ARE REFUTED.**
+- *"A mistaken cal address"* — **excluded 3 ways.** `0x38202` bytes `e5 6f ad 73` = `ld.hu 0x73ac[tp]`;
+  `tp+0x73AC = 0xC63AC` reads **102 / 102 / 150** (stock / V96 / V97); off-by-0x1000 excluded
+  (`0xC53AC` = 683, identical in all three) and the six neighbour cals `0xC63A0..0xC63AE` all 1024
+  unchanged. Census **1 reader / 0 writers**, five methods, Ghidra∖Python set-difference **EMPTY**.
+- *"The logic we touched isn't used"* — **REFUTED statically AND dynamically.** `FUN_00038148`'s sole
+  caller guards it with `andi 0x830,r25,r28` + `cmp r0,r28`/`be` @`0x22672`, **byte-identical to the
+  guard on the assist-channel mixer** @`0x225EE` ⇒ **a shut gate would mean NO POWER ASSIST AT ALL.**
+  And `sign(gp-0x374c)` **toggled 181× in 109 s** on this route. **No speed gate, no rate gate, no
+  engagement gate anywhere on the path**, and the accumulator update precedes the only in-function gate.
+
+🛑 **WHY IT COULD NOT BE SCORED — three independent reasons, none of them the lever:**
+1. **NO INSTRUMENT.** V96's cave is carried unchanged; its regressor is **34× over-range** — `M ≡ 0` on
+   **10,749/10,749** frames (third replication: 7e 99.90 %, 7f 99.97 %, r80 **100 %**), `Mlo` duty
+   **0.0000**. S1/S2 **VOID** — conceded in `build_v97_tva.py:99-100` **before the flash**.
+2. **EXPOSURE.** **1** engaged hands-off episode ≥2 s and **1** decaying-angle return, against **24/27**
+   and **14/11** on 7e/7f — and the `|Q| = 1.233` direction result rests on **25**.
+3. **THE OBSERVABLE.** **DC gain is 1.000000 at any `A` — a POLE, not a GAIN** ⇒ **no amplitude
+   statistic can see it, and none was pre-registered.** Measured anyway: phase contrast **+3.27°** in
+   one cell, **−4.08°** in the other (**opposite signs**); 6–9 Hz cross-build ratio **5.92× is SMALLER
+   than r7e's own split-half noise 6.98×**; the `sign(gp-0x374c)` crossing-rate test sits inside its own
+   split-half noise with the control bit moving too. **Four channels, four closing mechanisms.**
+
+⊕ **V97 NEVER CLAIMED a grinding or ratcheting fix.** Its header prices only a **21 Hz cost** and argues
+direction from **hands-off returns**. *"No difference in grinding"* **is consistent with the build
+working exactly as specified.**
+
+⚠ Correction: the build docstring's per-`A` phase row is **mis-tabulated** (correct: −23.63° / −15.81°);
+the **deltas the decision rested on are right**. Task rate is **1000 Hz, EVIDENCE** (`0xC64DF` = 100
+measured on-car at 100.00 ms + the `0x830 ⊆ 0x930` lockstep) — 🛑 **NOT from OSTM0**, which is 500 Hz
+because PCLK is 40 MHz; that inference is a recorded red herring an agent nearly shipped this session.
+
+🛑 **The number V95 is BURNED — see §A5.** ⚠ The `rlog-tools/v95_*.py` files are **analysis**
 scripts, not build scripts.
 
 🛑🛑 **THIS FILE HAS A HARD SIZE CAP: 256 KB. Keep it under ~150 KB.** On 2026-08-09 it reached
@@ -42,7 +129,68 @@ instructions — do not reason from them.
 
 ---
 
-## ★★★★★ HEADLINE, 2026-08-12 LATE (LATEST) — V96 FLEW, THE CRUX IS THE RETURN TRAJECTORY, AND V97 MOVES A LOOP POLE
+## ★★★★★ THE STRUCTURE, ESTABLISHED 2026-08-12 — V89 AND V97 PUSHED ON OPPOSITE ARMS OF ONE OBSERVER RESIDUAL
+
+`FUN_00038148` @`0x38236-0x3823A`, coefficients **exactly ±1**, verified from raw bytes
+(`0x38238 subr r15,r6` = opcode `0x0C`; `0x3823A add r9,r6` = opcode `0x0E`):
+
+```
+FUN_0003b8f6  — the 1 kHz PLANT MODEL / disturbance observer
+                K0 0xC4080=0 (NEVER RAISE) · K1 0xC40D2=204 (V89, ON THE CAR) · relay 0xC40BC=600
+                EMAs 0xC40D4=573 · 0xC40D6=246 · 0xC40D0=408 · 0xC40D8=3686   (all four VIRGIN)
+      │ gp-0x6bfc → FUN_0003bc20 (plausibility ±20000, else force 0x7FFF)
+      │ gp-0x6bfe ────── MODEL   ────────┐  UNFILTERED   ◄── V89's K1 acts HERE
+LKAS 11-slot aggregator FUN_00026c80     │
+      │ gp-0x6bfa ────── REQUEST ────────┤  UNFILTERED   (its ±20000 gate is DEAD — writer pre-clamps)
+six lanes → ×sign(gp-0x6752) → ×2639(0xC6468) → <<4
+      │ IIR pole 0xC63AC 102→150 = ALL OF V97
+      │ (gp-0x374c>>4) ─ ACTUAL  ────────┘  ◄── V97's pole acts HERE.  MEASURED < 2048, 100 % of r80
+                              iVar6
+          gp-0x6b70 = sign(iVar6) × LERP(|iVar6|), clamp ±8192 (0xC6200)  = the PID REFERENCE
+```
+
+🛑 **BOTH ARMS ARE ESTIMATES OF THE SAME QUANTITY, in the same units, scaled by the same `0xC6468`=2639,
+entering a DIFFERENCE.** ⇒ **V89's K1 measured FLAT and V97's pole felt like nothing, and one unmeasured
+quantity explains both: the arms may be wildly unequal, so whichever you move, the residual barely
+notices.** [BELIEF — but it is the first account explaining two nulls with one mechanism.]
+
+🛑🛑 **A "≤ 9 % share" bound was computed and is RETRACTED — DO NOT REUSE IT.** Bounding one arm against
+the other's *admitted range* is invalid for a difference of correlated estimates; the denominator is the
+**residual**, not the range. **Path-2's share is UNRESOLVED, not small.**
+
+### The Stage-2 transfer is FULLY READABLE — and the rescale is the IDENTITY
+🛑 **`STATE.md` §A6b's "the transfer cannot be read from the image" is FALSE**, and so is the standing
+*"`f′` swings ≥10× and cannot be pinned statically"*: **the swing is 1.000×.** `gp-0x6982`/`gp-0x6984`
+(the X-divisor and Y-multiplier) have **ZERO writers image-wide** — Ghidra + raw disp16 + raw disp23 +
+an exhaustive 32-bit-literal search, **with a working positive control** (the neighbours `gp-0x6980/86/
+88/8A` all DO have `st.h` writers and the scan found them) — and both boot to **1024** from `.data`
+(flash `0x8672E`/`0x8672C`). The `[204,2048]` cal rails guard a value that never moves.
+
+Knots (mode 26, creep; `0xC63AE`=1024 ⇒ the LERP index is `|iVar6|` **raw**):
+```
+0.0 km/h  X [0,200,400,800,1200,1800,3000,5000,12000,14490]  Y [0,471,880,1408,1689,1953,2376,2844,4114,8192]
+6.6 km/h  X [0,178,356,719,1200,1800,3000,5000,10681,14490]  Y [0,452,839,1382,1838,2131,2546,3043,4245,8192]
+```
+**Route 80 inverted:** `|gp-0x6b70|` p50 320 → `|iVar6|` **126–136** · p90 2,534 → **2,965–3,675** ·
+max 3,187 → **5,681–6,891**. ⇒ **`|iVar6|` ≤ ~6,900 at creep, ~130 half the time** — 2.9× tighter than
+the ±20,000 clamp. ⊕ **`|iVar6| ≈ 130` median against a six-lane term admitted to 2048 hints at strong
+CANCELLATION between the three terms** — exactly what an observer residual should do. [live hypothesis]
+⚠ **These numbers DO NOT TRAVEL above 50 km/h** — `0xC669A`/`0xC66A8` truncate the LERP's X axis to
+7,000 there. ⚠ **`mode 24 ≠ mode 26` in THIS family** (recs 0/3/4/5 + breakpoints differ) — the
+"stock ships 24 ≡ 26" memory is scoped to the **damper** families and does not generalise here.
+
+### Other results from route `0x80`
+- **427 lane (`gp-0x6b70`) is a GOOD instrument**: nonzero **98.29 %**, 250 codes, **0.000 % saturation**,
+  p99 3,059 of a ±8192 clamp. Not a V64/V68-class dead probe.
+- **The observer's plausibility latch has NEVER fired**: `427 == 1023` duty **0 on 87,423 frames** across
+  80/7e/7f — and `>640` (the true reachable ceiling through the clamp) is also **0**.
+- **`b3` constant ⇒ `gp-0x674e < 28` settles RULE 7 for the authority curve** — the `Y[last]=0` records
+  are live; modes 28–39 excluded. That rung is now **SPENT** and can be reallocated.
+- ⚠ **`0xC62EA` = 0 on V97 (stock 320 ≈ 5 km/h)** — the low-speed lockout has been disabled since ~V35,
+  so creep sits in a regime stock Honda would have locked out. Context for anything felt at 5 km/h.
+
+## ⚠ SUPERSEDED 2026-08-12 (latest) — the block below described V96 as on the car and V97 as unflashed
+## ★★★★★ HEADLINE, 2026-08-12 LATE (SUPERSEDED) — V96 FLEW, THE CRUX IS THE RETURN TRAJECTORY, AND V97 MOVES A LOOP POLE
 
 Narrative: **`docs/HANDOFF-2026-08-12-v97-the-loop-pole.md`.** Agent outputs: `analysis-2020accord/_v97/`.
 

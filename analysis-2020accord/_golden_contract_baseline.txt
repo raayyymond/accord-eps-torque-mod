@@ -1,0 +1,27 @@
+build |  scenario                         | STEER_STATUS | DTC0x49 | soft-cut | guard | merged_cmd
+------------------------------------------------------------------------------------------------------
+ V9   | hard sustained hands-off turn (soft EME) |     0        |   0     |    1     |   0   |      0
+ V9   | loaded curve + bump (gentle EME / DTC49) |     4        |   0     |    1     |   0   |      0
+------------------------------------------------------------------------------------------------------
+ V31  | hard sustained hands-off turn (soft EME) |     0        |   0     |    0     |   0   |    294
+ V31  | loaded curve + bump (gentle EME / DTC49) |     4        |   0     |    0     |   0   |    294
+------------------------------------------------------------------------------------------------------
+ V37  | hard sustained hands-off turn (soft EME) |     0        |   0     |    0     |   0   |    294
+ V37  | loaded curve + bump (gentle EME / DTC49) |     0        |   0     |    0     |   0   |    294
+------------------------------------------------------------------------------------------------------
+ V38  | hard sustained hands-off turn (soft EME) |     0        |   0     |    0     |   0   |     76
+ V38  | loaded curve + bump (gentle EME / DTC49) |     0        |   0     |    0     |   0   |     76
+------------------------------------------------------------------------------------------------------
+ V39  | hard sustained hands-off turn (soft EME) |     0        |   0     |    0     |   0   |     76
+ V39  | loaded curve + bump (gentle EME / DTC49) |     0        |   0     |    0     |   0   |     76
+------------------------------------------------------------------------------------------------------
+ V40  | hard sustained hands-off turn (soft EME) |     0        |   0     |    0     |   0   |     76
+ V40  | loaded curve + bump (gentle EME / DTC49) |     0        |   0     |    0     |   0   |     76
+------------------------------------------------------------------------------------------------------
+
+V38/V39 discriminating synthetic: saturated LKAS + direct Sensor-B torque-rate impulse
+build | LKAS lane | inline r24 | guard | pre-governor sum | final command
+------------------------------------------------------------------------------
+ V38  |     -1782 |       1493 |   0   |              223 |           223
+ V39  |     -1782 |          0 |   1   |            -1270 |         -1270
+------------------------------------------------------------------------------

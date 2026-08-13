@@ -10,6 +10,21 @@ needed.
 
 ---
 
+## 🛑 LATEST SESSION — 2026-08-12: V97 FLEW, THE LEVER WAS LIVE, THE NULL WAS OURS
+
+- **`HANDOFF-2026-08-12-v97-flew-and-the-lever-was-live.md`** — **start here.** V97 on route `0x80`;
+  the operator felt nothing and stopped. Both his hypotheses (wrong address, dead code) **refuted**;
+  `0xC63AC` filed **UNINTERPRETABLE, not falsified**.
+- `AUDIT-2026-08-12-dead-levers-and-liveness.md` — 29 dead levers, 11 classes, a 12-gate pre-flight
+  checklist, and the two symptom ledgers (**only V62 and V88 ever had both a measured change and an
+  operator report of improvement; NOTHING has moved ratcheting**).
+- `SPEC-2026-08-12-next-telemetry.md` — the next instrument. **§R is the shipped spec**; §3.2/§3.11/
+  §3.12 carry SUPERSEDED banners.
+- `SCORING-2026-08-12-v97-route80.md` · `TRACE-2026-08-12-v97-liveness.md` ·
+  `TRACE-2026-08-12-stage2-lerp-knots.md` · `VERIFY-2026-08-12-v97-image.md`
+- ⚠ **`SPEC-2026-08-11-telemetry-budget.md` is SUPERSEDED** — its addendum still allocates 427 to
+  `gp-0x6bbe`, a lever closed as dead. Do not allocate from it.
+
 ## Recommended reading order (cold start)
 
 1. **`../CLAUDE.md`** — the boot context; has the full current-state narrative baked in.

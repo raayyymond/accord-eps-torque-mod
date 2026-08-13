@@ -1,3 +1,17 @@
+> # 🛑🛑 SUPERSEDED — DO NOT ALLOCATE FROM THIS DOCUMENT
+> **Superseded 2026-08-12 by `docs/SPEC-2026-08-12-next-telemetry.md`.**
+>
+> **Why this matters and is not a formality:** this spec's **ADDENDUM still ranks `gp-0x6bbe` as the
+> top anti-damping candidate and allocates the 427 channel plus a sign bit to it.** `gp-0x6bbe` was
+> **closed as a lever on 2026-08-12** — it is rate-derived (`STATE.md` §A4). **Anyone told to "start
+> from the existing telemetry budget spec" will re-propose a dead lever.**
+>
+> Also superseded here: any endpoint sized against matched episodes or cross-build contrasts. Standing
+> operator instruction, 2026-08-12 — **builds must be interpretable from ONE short symptomatic drive
+> (~15–30 s engaged); "UNINTERPRETABLE" is a design failure, not a verdict.** See `CLAUDE.md`.
+>
+> The bit-inventory and gateway-whitelist sections remain factually useful. **The allocations do not.**
+
 # SPEC — telemetry budget audit, next-build allocation (`fw-dampaxis`, 2026-08-11)
 
 SPEC ONLY per instruction — no cave designed, no bytes written. Operator's request: *"Make sure we are

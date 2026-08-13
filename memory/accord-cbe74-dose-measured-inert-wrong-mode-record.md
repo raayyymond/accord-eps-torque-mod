@@ -1,11 +1,26 @@
 ---
 name: accord-cbe74-dose-measured-inert-wrong-mode-record
-description: "V91+V92 flew the 0xCBE74 x1.5 dose and it is MEASURED INERT at its own single output gp-0x6b26 — two builds, two independent instruments, a working negative control. Leading explanation: the ENGAGED mode record is not 26/27."
+description: "V91+V92 flew the x1.5 dose and it measured INERT at its own single output gp-0x6b26 — ONE identity-proven leg (V92/route 79), not two. 🛑 The 'wrong ENGAGED mode record' explanation is REFUTED (V73 probed the same index byte over 104,061 frames). 🛑 The null is UNEXPLAINED — and 2026-08-12 it is also a CANDIDATE T10 (instrument invariant to the lever): V94 cut the same cell 6x and the operator ABORTED, which proves the cell reaches the car. 🛑 ADDRESS CORRECTION: the dosed bytes are 0xD7A5C/0xD7A6C; 0xCBE74 is a POINTER PAIR, byte-identical stock through V97."
 metadata:
   type: project
 ---
 
-# ★★★★★ THE `0xCBE74` ×1.5 DOSE IS INERT — measured, not inferred
+# ★★★★★ THE ×1.5 DOSE IS INERT — measured, not inferred
+
+> 🛑 **ADDRESS CORRECTION, 2026-08-12 (orchestrator-verified from the images).** This lever is named
+> `0xCBE74` throughout the kit. **That address is a POINTER PAIR and is byte-identical in every image
+> from stock through V97** (`d8e60c00e8e60c00` in stock/V90/V91/V92/V93/V94/V96/V97). The **dosed
+> bytes are `0xD7A5C` / `0xD7A6C`** (+ trailer `0xD7FFC`):
+> `stock 9ad9… → V91/V92 67c6… (×1.5) → V93/V94 66f6… (the cut) → V96/V97 67c6…`
+> ⇒ **V96's "REVERT.CBE74" reverted to V91/V92's ×1.5 DOSE, not to stock — and V97 carries it.**
+> No conclusion below changes: the analyses keyed off the right *bytes* (see the V92 identity
+> paragraph, which already cites `0xD7A5C`/`0xD7A6C`), only the *label* was wrong.
+
+> 🛑 **CLASS UPDATE, 2026-08-12.** This null is now a **candidate T10 — "the instrument is invariant
+> to the lever"** (`[[accord-dead-lever-taxonomy-and-liveness-checklist]]`). `y = K·α` where α is
+> what K damps ⇒ in a stable closed loop the product is invariant to K. **V94 cut the same cell 6×
+> and the operator ABORTED the drive — which PROVES the cell reaches the car.** ⇒ this was never a
+> dead lever; it was an unmeasurable one. Do not file it FALSIFIED.
 
 **Routes 78 (V91) and 79 (V92), 2026-08-11.** Both fault-free. **The lever did nothing to the cell
 it is documented to scale.**

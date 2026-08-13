@@ -14,7 +14,11 @@ turns the wheel slowly."*
 🛑 **THERE IS NO LIVE HARD RATE LIMITER ON THE STEERING ANGLE ANYWHERE IN THIS FIRMWARE.**
 - The shaper's slew limiter `gp-0x356c` (step cal `0xC61D6`) is **0 = disabled in stock**. Re-enabling was
   already **rejected** (V16) — 0→14 activates an uncalibrated 2-D map, not a damper.
-- `0xC6194` is architecturally **dead** (output ×0).
+- `0xC6194` is architecturally **bypassed** — 🛑 **CORRECTED 2026-08-12: the long-standing reason
+  *"output ×0"* is WRONG; that is `0xC6196`.** `0xC6194` is **REAL and calibrated** — 3 ct/tick =
+  1.37 s full scale, which is *exactly* the shape the operator described — **but its input partition
+  `0xC4118` is all-1, so 100 % of the request bypasses it.** ⚠ **Arming it goes the WRONG way.**
+  The conclusion (no live rate limiter) is unchanged; the reason was wrong for ~2 weeks.
 - A 45-site sweep of every `gp-0x6b98` access (4 writers, 41 readers) finds only static **magnitude**
   clamps (±0x2000 / ±0x2800 / ±8192), **no rate limiter**.
 
