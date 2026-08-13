@@ -2440,6 +2440,51 @@ def limit_distribute_mixer_gate(st: EpsState, cal: Calibration) -> int:
 # -----------------------------------------------------------------------------------------------------
 # SECTION 6B -- MOTOR TORQUE DEMAND AGGREGATOR  (where LKAS and BASE ASSIST finally meet)
 # -----------------------------------------------------------------------------------------------------
+#
+# ═══ REGIME LIVENESS: {6-20 km/h, ENGAGED, HANDS-ON, RETURNING TO CENTRE} -- 2026-08-12 ═══════════════
+# The operator's crux regime. Cals byte-read from the image ON THE CAR (_v96_..._plain_image.bin); on-car
+# fractions over his own elicitation episodes n ENGAGED = 90.5 s / 9,145 fr (r7e 50.9 + r7f 39.6), both
+# drives fault-free. Full table: analysis-2020accord/_v97/chain_liveness.md.
+#   DEAD    gp-0x6bd0 damper  -- FactorC X[0]=2240 ct = 34.97 km/h, Y[0]=0, byte-STOCK m24 AND m26 on V96.
+#           ★ OPEN ON 0.00% OF 9,145 FRAMES. Strengthens "95.91% of engaged frames" to 100% of HIS time.
+#           ⚠ FactorE's gate (>60 ct = 12.73 deg/s) is open 67-84% here => FactorC is the SOLE binding
+#           gate, and opening FactorE alone buys nothing.
+#           🛑 Max monotone lift FactorC Y[0]:=Y[3]=908 still delivers EXACTLY 0 at <=13 deg/s (FactorE's
+#           own dead zone), 12 at 20 deg/s, 29 at 30 deg/s. No FactorC-only rung reaches the micro band.
+#   DEAD    gp-0x6b62 return-centre (0/75,227 engaged) · gp-0x6bda · gp-0x6a10/FactorD (FactorC is
+#           upstream) · gp-0x6ade (0 writers).
+#   PARTIAL FUN_00036682 filtered term -- IIR alpha 0xC63D2 = 6 => |H(7.8 Hz)| = 0.119 (-18.5 dB), -81.8 deg.
+#   LIVE    gp-0x6ad4 resonance PID -- ★ the most reachable authority of any gated lane HERE: its ceiling
+#           LERP 0xC67C2 (X=[128,1280,3200] Y=[0,1024,1024] on voted speed) reads p50 395-558 / p90 ~830,
+#           i.e. 2-3x the 164-341 quoted elsewhere, because 6-20 km/h is FASTER than the 4.9-8.0 km/h
+#           ratchet episodes that number came from. 🛑 V56's mute of this lane was scored at ~21 Hz -- the
+#           lane has NEVER been scored at 6-9 Hz, so it is OPEN, not eliminated.
+#   LIVE    gp-0x6b26 friction · r24/r26 @1 kHz (Lever B 0xC6446=5244) · gp-0x6bbe (rate-derived) ·
+#           gp-0x6b86 · gp-0x67fa state gate (state 5) · gp-0x674e < 28 (V96 b3, 100.00%).
+#   NO GATE 0xC62EA = 0 on V96 (V53's edit carried; stock 320 ct ~ 5 km/h) => sstat==3 fires 0.00%.
+#
+# ★ WHERE THE RETURN-TO-CENTRE AUTHORITY COMES FROM [EVIDENCE, on-car]: openpilot supplies it. During
+# the return the LKAS command acts TOWARD centre 88.7%/91.6% and is RAILED at +-4096 on 69.9%/52.1%,
+# while the driver has relaxed to |tq| p50 826/811 (vs 2463/2417 while winding) and is roughly neutral.
+# 🛑🛑 CONSEQUENCE: for 52-70% of the return the LKAS lane is a DC CONSTANT, yet the 6-9 Hz |tq| envelope
+# is unchanged (railed 121.6/378.5 vs unrailed 125.5/277.4). A constant cannot carry 7.8 Hz => THE
+# RINGING ENTERS THROUGH A SENSOR-FED LANE, NOT THE COMMAND LANE. Excludes every command-side lever and
+# leaves {r24/r26, gp-0x6ad4, gp-0x6b26, gp-0x6bbe, the V89 plant-model path}.
+# ⚠ AND THE OPERATOR IS RIGHT THAT THE ENGAGED RETURN IS NOT FASTER -- it is SLOWER, but state it
+# stratified: speed x angle matched, r7e 0.367 [0.247, 0.550] (excludes 1), r7f 0.624 [0.266, 1.176]
+# (does NOT clear). Unstratified 0.302/0.471 OVERSTATES it. The effect is ANGLE-DEPENDENT: 0.164-0.309
+# in 4 of 4 cells at |ang| 50-120 deg; every reversal is at |ang| 10-25 deg. [BELIEF, mechanism] under
+# LKAS the wheel converges to openpilot's TARGET with the loop's time constant rather than returning to
+# centre on caster -- slower than free return, and ringing in the loop's lightly-damped 6-9 Hz mode.
+# ⚠ RUN THE CONTROL: 6-9 Hz engaged/manual replicates at 9.1x/22.4x, but the 15-22 Hz NEGATIVE CONTROL
+# also moves (3.8x/5.5x). The contrast is band-PREFERENTIAL (2.4x/4.1x above control), NOT band-exclusive.
+# ⚠ HIS BAND IS NOT THE MICRO BAND: over elicitation time |wheel rate| is 1-13 deg/s 23/28%, 13-50 deg/s
+# 49/43%, >=50 deg/s 26/24%; in the RETURNING subset 13-50 deg/s is 60-61% and micro only 16%.
+#
+# 🛑 e4tq IS SIGN-INVERTED vs `ang` and `rate`, and it has been got wrong: corr(cmd[n], d(ang) over the
+# next 50-100 ms) = -0.82/-0.71 hands-off engaged (positive control: manual corr(tq,rate) = +0.67/+0.64).
+# Establish the polarity causally before any toward/away claim rests on it.
+# ═════════════════════════════════════════════════════════════════════════════════════════════════════
 
 def motor_torque_demand_aggregator(st: EpsState, lanes: dict, cal: Calibration) -> int:
     """

@@ -1,0 +1,220 @@
+[0] ADDR: address
+     BUILD: build | FLASHED: flashed?
+     RESULT: on-car result
+
+[1] ADDR: ---
+     BUILD: --- | FLASHED: ---
+     RESULT: ---
+
+[2] ADDR: ★★★★★ **`0xC9E9C`[m26] FactorC `Y[3]` 908 → 566** (⇒ `Y = [566,566,566,566]`, flat at every road speed) + **`0xC9F84`[m26] FactorE `X = [0,119,2500,4000] Y = [0,897,912,927]`** (carried from V79) + **`0x454FE` `0xBA` → `
+     BUILD: **V80** | FLASHED: ✅ **FLASHED AND FLOWN 2026-08-07, route `75604b0a432fdc89\
+     RESULT: 00000066--276b942769`** (15 segs, 901.71 s, 89,997 frames @ 100.0 Hz, engaged 33.62%, 0 → 112.8 km/h)
+
+[3] ADDR: ★★★★★ **`0xC407E` 850 → 511** (bytes `5203` → `ff01`) + **the ×1.5 friction table → STOCK at all 14 sites** (`0xCF6E0 0xCF6F0 0xD0A5C 0xD2A4C 0xD2A5C 0xD3A5C 0xD3A6C 0xD4A5C 0xD6A5C 0xD7A5C 0xD7A6C 0xD8A5C 0xD9A5C 0xD9A6
+     BUILD: **V81** | FLASHED: ⏳ **BUILT AND VERIFIED 2026-08-07, UNFLASHED. 🛑 The flash decision is the operator's and t
+     RESULT: **A 126-byte revert from the only build that has ever eliminated the grinding, with BOTH legs of the recorded fault mechanism removed.** **From-disk verification, all PASS:** 25 differing runs / **126 bytes** vs the flown V75 = 15 functional (86 B) + 10 CRC words (40 B), **0 unexpected functional runs, 14/14 friction sites**; **value-anchored** — restoring exactly those 126 bytes reproduces the flown V75 **bit-for-bi
+
+[4] ADDR: **`0xC9F84`[m26] FactorE `Y[1]` 449 → 897 and `Y[2]` 539 → 912** — TWO u16 cells, **4 bytes at `0xD7818`** (`c1011b02` → `81039003`); record dereferenced from the pointer array (`0xC9F84 + 26*4` → `0xD780C`), never hard-
+     BUILD: **V79** | FLASHED: ❌ **BUILT 2026-08-07, NEVER FLOWN — SUPERSEDED THE SAME DAY.** `.rwd` renamed `SUPERSEDED-
+     RESULT: **NO ON-CAR DATA.** Pulled for two reasons, both verified. **(a) IT RAILS.** V79 clips **38.9%** of the RULE-8 (speed, rate) envelope at ceiling floor 512 where stock and V78 clip **0.00%** — first clip at **85 km/h / 25 °/s**, at 140 km/h / 16 °/s; its own build header independently reports **79.96% of 305,808 sampled (speed, rate) points** clipping inside the corpus's observed 1,941-count rate envelope, against V78
+
+[5] ADDR: **`0xC9F84`[m26] FactorE `Y[1]` 300 → 449** — **exactly ONE u16 cell, and ONE byte on disk**: `0xD7818` `0x2C` → `0xC1` (300 = `0x012C`, 449 = `0x01C1` share their high byte — the "count CELLS, not bytes" trap)
+     BUILD: **V78** | FLASHED: ❌ **BUILT 2026-08-07, NEVER FLOWN.** It was overtaken the same day by V79 → V80
+     RESULT: **NO ON-CAR DATA.** **V76 → V78 = 7 strict runs / 51 bytes** (orchestrator's own diff from the two images): **42 B cave — INSIDE the proven 68-byte extent `[0xC4B34,0xC4B78)`, NOT grown** · **1 B table** @`0xD7818` · 8 B the two CRC trailers V76 already recomputes. **All guards PASS**: Y monotone · `E_Y[0] = 0` retained · FactorC m26 identical to V76 · all six factors' mode-24 records byte-stock · all six pointer arr
+
+[6] ADDR: **`0xC9E9C`[m26] FactorC `Y[0..2]` → 566** (`0xD77DA`, `0000ea00ad01` → `360236023602`, giving `Y = [566,566,566,908]`) + **`0xC9F84`[m26] FactorE `X[0]` 60 → 0, `X[1]` 400 → 119, `Y[1]` 140 → 300** (⇒ `X = [0,119,2500,4
+     BUILD: **V76** | FLASHED: ✅ **FLASHED AND FLOWN CLEAN 2026-08-07 — route `75604b0a432fdc89_00000065--ae43aa0f27`, se
+     RESULT: ✅ **NO FAULT** — zero DTC-active transitions, zero `STEER_SENSOR_STATUS` 7→4, zero `0x7FFF` angle sentinels, no frame-rate collapse: the exact five-leg fingerprint that caught V74 (route 61) and V75 (route 5e), all negative. **Build identity settled FOUR independent ways** [EVIDENCE] — bits 6/5 structurally unreachable (0/63,477) · 8-value legal payload set, 0 violations · V75's thermometer invariant violated on 70.0
+
+[7] ADDR: ★★★★ **`0xC63A0`** stock **1024** → **2048** (V72) → **1024** (V77)
+     BUILD: **V72** (→2048) · **V77 / V77B** (→1024) | FLASHED: ✅ carried at **2048 by V72, V73, V74, V75, V76**
+     RESULT: 🛑🛑 **THE GATE-2 SUSPECT, AND IT WAS INVISIBLE FOR FIVE BUILDS.** V72 doubled it, nothing reverted it, and the second-aggregator row below asserted *"all weights unity and stock"* the whole time (corrected 2026-08-06). ⚠ **It was only FUNCTIONALLY ARMED AT V74.** Path 2's damper term is `(gp-0x6bd0 · gate · w) >> 10`, and `gp-0x6bd0` was **0 at creep on every build through V73** (both FactorC/FactorE dead zones shut) 
+
+[8] ADDR: **V77** = V74 base + `0xC63A0` **2048 → 1024**
+     BUILD: **V77** | FLASHED: ⏳ **BUILT 2026-08-06, UNFLASHED**
+     RESULT: 🛑🛑 **NOT CLEARANCE TO FLY.** rwd `fd8db4e2ed140035782a55b2e6808bcf87a0ea85692cbe547960a13de1cfc8c5`; image `a0f7c09c038931cabc419ccf79d4bb9819e647e88c0fb817ebc23cd44d102782`. **No build in the current lineage has demonstrated safety** — V74's *"flew 1,011 s clean"* is **withdrawn** (it hard-faulted) and V75 latched the ECU. What the build has going for it: it removes **the one mode-proof residue that could act in MAN
+
+[9] ADDR: **V77B** = the SAME `0xC63A0` revert on the **V75** base
+     BUILD: **V77B** | FLASHED: ⏳ **BUILT 2026-08-06, UNFLASHED**
+     RESULT: 🛑🛑 **NOT RECOMMENDED, and not clearance to fly.** rwd `f2c2dc0ba4f5e01bbd95925b8e42c1323a1b6b99bf658b795aa25cb2fa539dd7`; image `acbc218751af827d5ddc696e24d6ae44f11ef06dc04e11a3b383d366b4d4fc10`. It stacks the revert on **the base that hard-faulted**, so a clean drive could not separate *"the weight was the problem"* from *"the V75 dose is survivable"* — **two variables, one drive.** It exists so the pair is on the r
+
+[10] ADDR: cave payload @`0xC4B34` → the **boost-index DEPTH probe**
+     BUILD: **V59** | FLASHED: ✅ **FLASHED 2026-07-30, route `2c`** (this column previously read UNFLASHED — stale, corre
+     RESULT: **NO calibration change** — 19 bytes off V58, cave + MAIN CRC only, **CAL CRC unchanged** (machine proof). Same base/hook/68-byte extent as V55/V57/V58, all flown clean. **No new encoder and no new condition code** (BGE + BNE only, both pinned to real instances). Answers the one thing V58 could not: **DEPTH.** `gp-0x6ba6 == \
+
+[11] ADDR: cave payload @`0xC4B34` → the **angle-rate/boost-lane probe**
+     BUILD: **V58** | FLASHED: ✅ **FLASHED 2026-07-30, route `2b`**
+     RESULT: ✅ **FLIGHT-CLEAN** — 14 segments, 83,959 frames, zero `steerUnavailable`/`steerTempUnavailable`/`canError`/`controlsMismatch`/`immediateDisable`; `STEER_STATUS == 0` in 83,959/83,959 and **`ST==4` = 0** (extends V57's 0/37,922). ★★ **bit5 = 0 in all 35,964 frames ⇒ the ceiling `0xD20C0` is ELIMINATED**; `K1` keeps its headroom. 🛑 **bit6 VOID BY CONSTRUCTION** — `gp-0x6bbe` crosses zero 0.00–1.10 /s where 22 Hz needs 
+
+[12] ADDR: 🛑 **`0xC61D6`** slew step `0` → 14
+     BUILD: **V16** (`old_tools/`) | FLASHED: ❌ **REJECTED ON REVIEW, NEVER FLASHED**
+     RESULT: 🛑🛑 **DO NOT PROPOSE. "Highest-risk lever; last/never."** An 11-round, 4-analyst, decode-verified Ghidra review found slew=0 **FREEZES** a dormant speed×torque 2D shaping lane (curves `0xC6770`×`0xC69E8`); 0→14 **ACTIVATES an uncalibrated map onto the live command** (mux `0xC64C9`=0). Byte-verified 2026-07-30: **`0xC61D6` = 0 in V31/V38/V42/V53/V55/V57** — stock throughout. ⚠ `.claude/agent-memory/…/reference_accord_s
+
+[13] ADDR: `0xC6424` shaper deadband 29491→20000
+     BUILD: **V17** (`old_tools/`) | FLASHED: ❌ rejected
+     RESULT: **INERT** — with slew=0 that state is pinned at 0, so the edit is behaviourally null. **Deadband and slew are COUPLED**; neither is independently useful
+
+[14] ADDR: `0xC64DE` re-engage ramp `0x11`→`0x1B` (17→27)
+     BUILD: **V18** | FLASHED: ✅
+     RESULT: ✅ **ROAD-VALIDATED — "drives well."** Byte-verified 2026-07-30: still **27** in V31/V38/V42/V53/V55/V57, carried forward correctly. ⚠ Targets the ~10 s recovery ratchet — **wrong timescale for the ~7.4 Hz ratchet**
+
+[15] ADDR: **`0xC4018`/`1C`/`20`** and **`0xC4048`/`4C`/`50`**
+     BUILD: — | FLASHED: ❌ never in any build
+     RESULT: 🛑 **NOT A NOTCH LEVER — closed on arithmetic 2026-07-30.** Both are stock **(1.0, 0.0, 0.0) = identity**, exactly one consumer each, no variant-coding. It is a genuine transversal FIR (`y = b0·x[n]+b1·x[n−1]+b2·x[n−2]`, states `gp-0x365c`/`gp-0x3658`), **not a 2-pole IIR**, so it is unconditionally stable — but at **1 kHz** a 21 Hz notch needs `b = [1, −1.9826, 1]`, which costs **−35.2 dB at DC** (21 Hz is 2.1% of Ny
+
+[16] ADDR: **`0xD2006`** 102→**43**
+     BUILD: **V60** | FLASHED: ✅ **FLASHED 2026-07-31 → NULL. Do not re-flash** (this column previously read UNFLASHED — 
+     RESULT: Attenuates the 42.19 Hz parametric pump **without moving the static gain map** (the blend converges to the same steady state ⇒ DC assist and manual feel untouched). Q10 0.0996→0.0420; 42 Hz transmission ~0.37→~0.17; τ 10.0→23.8 ms @1 kHz. Predicted **eps p99 0.169 → 0.099**. 🛑 **The effect SATURATES** — the falling edge is instant regardless of the coefficient, so it buys ~1.7× then flattens (cal 32 only reaches 0.08
+
+[17] ADDR: `0xC63A0`–`0xC63AC`, `0xC64AD`–`0xC64B3`, `0xC6200`
+     BUILD: 🛑 **`0xC63A0` HAS been in builds since V72 — see i | FLASHED: ⚠ the rest never in any build
+     RESULT: 🛑🛑 **CORRECTION 2026-08-06 — RULE 4 CLASS, AND IT RAN THE DANGEROUS WAY.** This cell used to read *"⚠ Genuinely untouched — and NOT recommended. All weights are **unity (1024 = 1.0) and stock**, byte-read ⇒ **no hidden loop gain in the aggregation.**"* **That is FALSE, and it has been false since V72.** The six sibling weights `0xC63A0`–`0xC63AA` are stock **1024**, but **`0xC63A0` — the weight on `gp-0x6bd0`, the DA
+
+[18] ADDR: `0xC6372` / `0xC636E`
+     BUILD: — | FLASHED: ❌
+     RESULT: 🛑 **DEAD BRANCH — do not analyse or edit.** `tp+0x7498 = tp+0x7499 = 1` (byte-verified, stock and every build) routes **both** boost and damping past the torque-EMA fallback to read `gp-0x6ba6` directly. The EMA still computes into its shadow pair but its result is never consumed. Any GATE-2 phase/dB table for these two cals is analysing a lever with **zero effect**
+
+[19] ADDR: `0x2A1F0` disp `0x746C`→`0x7CD0` + `0xC6CD0`←3564 + `0xC646C`→891
+     BUILD: **V57** | FLASHED: ✅ **FLASHED 2026-07-29, route `29`/`2b`** (this column previously read UNFLASHED — stale, 
+     RESULT: 🛑 **CORRECTNESS FIX — expected NULL for the grinding** (≤0.28 dB at 22 Hz; of the **11** aggregator summands only `FUN_00036682` reads the cal, at −46 to −58 dB). Reader set independently re-enumerated: exactly **6** (1 forward, 1 dead in the `>0x2a30d` dead-copy region, 4 feedback). ✅ **no float mirror** — fresh 32-bit scan of `[0x7440,0x74A0)` → 0 hits ⇒ no V27 desync class. ⚠ **manual feel WILL change** (readers #
+
+[20] ADDR: **`0xC6AFC` + `0xC6AFE`** 32768→0
+     BUILD: **V56** | FLASHED: ✅
+     RESULT: 🛑 **FALSIFIED FOR THE VIBRATION *AND* HARMFUL — 2026-07-29, route `24`.** 21 Hz unchanged (**786×** engaged/disengaged speed-matched, vs V55's 877×) and the command's 21 Hz did **not** drop ⇒ **the lane is ELIMINATED as the 21 Hz source, all three branches at once.** ★ It also **cost damping**: operator reports damping removed, and an intermittent **8.69 Hz** line appears (1.18e8, 6.7× its neighbours, 15-20 m/s, enga
+
+[21] ADDR: `0xC6450`
+     BUILD: **V46** | FLASHED: ✅
+     RESULT: ⚠ **RE-FRAMED twice.** 1024→32 = −12.6 dB at 21 Hz, one of three branches — *and* 2026-07-29: it was **re-introducing a defeated pole**, not filtering the lane. Moot now: V56 eliminated the lane
+
+[22] ADDR: `0xC644A`
+     BUILD: **V43** | FLASHED: ✅
+     RESULT: ⚠ **RE-FRAMED — same reason.** 1024→64 = −7.1 dB, one branch of three. Moot: lane eliminated by V56
+
+[23] ADDR: `0xC643E` / `0xC6445` + `0xC6A72/86/9A/AE`
+     BUILD: **V42** ch.2 | FLASHED: ✅
+     RESULT: ★★★★ **THIS IS V42's ACTUAL FIX — RE-ATTRIBUTED 2026-08-05. [EVIDENCE, V42-vs-V41 byte diff]** V42 zeroed **all four `gain_A` records** (`0xC6A68`/`0xC6A7C`/`0xC6A90`/`0xC6AA4` → `[0,0,0,0]`) plus `0xC643E`→0 and `0xC6444`→0 ⇒ **the r26 rate lane was KILLED**, and `gain_A` is **not** mode-indexed so it was **LIVE**. ch.1 (`0x454FE`) never executes ⇒ this is the only live candidate for V42's confirmed hard-turn-ratche
+
+[24] ADDR: `0xC6440/42/46`, `0xC61F6`
+     BUILD: **V39** | FLASHED: ✅
+     RESULT: 🛑 **FALSIFIED** — and near-inert by construction (±3 deadzone). See the r26 row's re-proposal warning. ⚠ **DIRECTION CORRECTION 2026-07-31 — see the V61/V62 rows below: this lane is the mode's DAMPER and V39 tested it DOWNWARD.**
+
+[25] ADDR: `0x3AB6C` `37E1`→`37E0` + `0x3AC16` `4001`→`4000`
+     BUILD: **V61** | FLASHED: ✅ **FLASHED 2026-07-31**
+     RESULT: ★★★ **WORSE — the kit's FIRST SIGNED on-car result, and it INVERTS the record.** Operator: grinding *significantly worse* with LKAS on (higher amplitude, louder), **and newly present in MANUAL driving** — unmistakably **in reverse**. ⇒ **r24/r26 are the mode's DAMPER, not its amplifier.** Sign verified from image bytes: polarity `gp-0x6752` is **one load @`0x3AB78` reused by both lanes and by `FUN_0003a382`'s P-term*
+
+[26] ADDR: `0xC4B34` cave payload → **the oscillation-detector probe** (V63's cals unchanged)
+     BUILD: gp-0x6c2c\ | FLASHED: ` crossed ±12800) · **bit3** `gp-0x671d != 0` (r24's override active)
+     RESULT: **V64**
+
+[27] ADDR: `0xC6440` 2048→**4096** + `0xC643E` 1536→**3072**
+     BUILD: gp-0x6c2c\ | FLASHED: > 12800`; a crossing of the *opposite* threshold increments it; 50 quiet ticks clear it). 
+     RESULT: **V63**
+
+[28] ADDR: 🛑🛑 **INERT — THIS BUILD CHANGED NOTHING. [EVIDENCE 2026-08-05]** `gain_B` is **mode-indexed** and these cells are **mode 10**; the car is **mode 24/26**. With `sar` stock, gate `c5` and arms 512/512, **V70's delivered be
+     BUILD: **V70** | FLASHED: ✅ **BUILT 2026-08-04, UNFLASHED**
+     RESULT: ★★★ **BUILT ON AN OPERATOR OVERRIDE, AND THE OVERRIDE WAS RIGHT.** A first V70 restored V67/V68's control path; the operator rejected it — *"V70 just reverts back to V68, which has the high-speed grind #2 issue"* — and that build is now `SUPERSEDED-DO-NOT-FLASH-…-V68CONTROLPATH-…rwd` (image `8bfcb1fa…`, RWD `d716b1a5…`). 🛑 **THE LESSON, and it generalises: an instrument null inside a band the instrument cannot resolv
+
+[29] ADDR: cave `0xC4B34`-`0xC4B77` → the **4-bit SIGN probe** (carried by every V70 cut; the build itself is the row above)
+     BUILD: **V70** | FLASHED: — probe design, unchanged across V70 re-cuts
+     RESULT: 🛑 **NO SHAs OR BUILD STATUS HERE ON PURPOSE — they change on every re-cut; the row above is the build.** ★★ **68 of the proven 68 cave bytes, ZERO spare**, base/hook/extent unchanged. ⭐ **Re-decoded from the image independently of the builder**: loads @`0xC4B38`/`0xC4B4C`/`0xC4B58` carry opcodes **`0x39` (`ld.h`) / `0x3C` (`ld.bu`) / `0x39` (`ld.h`)** on `gp-0x6ADA`/`gp-0x67FA`/`gp-0x6ADC`, `ld.bu` displacement parit
+
+[30] ADDR: 🛑🛑 **INERT — THIS BUILD CHANGED NOTHING. [EVIDENCE 2026-08-05]** Same as V70: the `gain_B` cells are **mode 10** and the car is **mode 24/26**, so the "×4 dose" was never delivered. **The recorded non-monotone dose–respo
+     BUILD: **V69** | FLASHED: ✅ **FLASHED 2026-08-04, driven route `4f--61171e660d`**
+     RESULT: ★★★★ **ON-CAR RESULT — GRIND #1 IS BACK AT CREEP AND THE DOSE–RESPONSE IS NON-MONOTONE.** 8 segs, 481.7 s, 47,990–47,996 frames. ✅ **FLIGHT-CLEAN two ways**: `ST==4` **0** and `ST==3` **0**, gridded *and* on the raw un-gridded `0x18F` stream; watchlist absent; `steerSaturated` 2 / `steerOverride` 667 ordinary. ✅ **Build identity from the probe**: byte4 = `0x87` on **100%** of frames, bit7 set, **bit3 = 0 ⇒ V68 exclud
+
+[31] ADDR: `0xC4B34` cave payload → the **4-LEVEL SYMMETRIC SATURATION LADDER** on `gp-0x6b94` (V62's two `sar` edits carried byte-identical)
+     BUILD: **V65** | FLASHED: ✅ **FLASHED, driven routes `3a--4e55c1e0f4` + `3b--a4a7f4dbf1` 2026-08-01**
+     RESULT: ★★★ **THE PROBE ANSWERED: THE AGGREGATOR NEVER RAILS.** 120,049 frames, orchestrator-verified from the caches: liveness **100%** (`field == 0` on 0), **zero** invariant violations (`bit6⇒bit5`, `bit3⇒bit4`, never-both-sides), **+RAIL 0 / −RAIL 0**. Only **54** frames pass ±4096 (48 negative, 6 positive). `bit6↔bit3` alternation **0.0000 flips/s in every arm** — engaged-creep, manual-creep, corner-engaged, corner-manu
+
+[32] ADDR: `0x3AA96` `c5`→`fb` (repoint the DEAD `gp-0x683c` gate to `gp-0x6806`) + `0xC6446` 512→**5244**
+     BUILD: **V67** | FLASHED: ✅ **FLASHED 2026-08-01, driven route `47--3e0b6134c0` 2026-08-02**
+     RESULT: ★★★★ **ON-CAR RESULT 2026-08-02 — THE BEST BUILD THIS KIT HAS MEASURED.** 26 segments / **150,327 frames** / 1,495 s, an ordinary street→highway→street→parking-lot commute. ✅ **PROBE LIVE AND LEGAL**: byte4 takes exactly two values `{0x87, 0xC7}`; **bit6 == `carControl.latActive` in 150,302/150,327 = 99.983%** (the 25 disagreements are single-frame transition edges) ⇒ the gate is confirmed on-car; **bit5 (`gp-0x671d`
+
+[33] ADDR: `0x3AC20` `42A9`→`42AA` + `0x3AB76` `32A9`→`32AA` (**revert V62**) + cave payload → the **GATE PROBE**
+     BUILD: **V66** | FLASHED: ✅ **BUILT 2026-08-01, UNFLASHED**
+     RESULT: ★★★★ **BUILT BECAUSE V62's OWN FIX IS THE ROOT CAUSE OF "GRIND #2".** Corner-conditioned tail maxima, Kd=1× vs Kd=2×, 219 blocks: 1–4 Hz **1.01** · 6–9 Hz 1.20 · 10–16 Hz **0.80** · **18–22 Hz 0.35** · 24–28 Hz **2.66** · 30–40 Hz **2.98** · **40–49 Hz 11.71 (p = 0.0003)** — a **monotone response with a crossover at 22–24 Hz**, driver band flat as a control ⇒ **not generic roughness**. **One knob cut grind #1 by 2.9×
+
+[34] ADDR: `0x3AC20` `42AA`→`42A9` + `0x3AB76` `32AA`→`32A9`
+     BUILD: **V62** | FLASHED: ✅ **FLASHED 2026-07-31, driven route `37--6231e33f3d` 2026-08-01**
+     RESULT: ★★★★ **THE GRINDING IS FIXED — the kit's FIRST MEASURED FIX.** Operator: *"Original grinding at 2–5 mph is gone!"* 86,278 frames. Engaged creep, speed-standardised, **episode-clustered** bootstrap: 18–22 Hz **0.124 [0.036, 0.387]** vs V59 (8×), **0.024 [0.016, 0.234] at \
+
+[35] ADDR: `0xD27C6` / `0xD27DA`
+     BUILD: **V44** | FLASHED: ✅
+     RESULT: 🛑 **FALSIFIED** (Factor E re-zeroes the product). ✅ **2026-07-28: confirmed it hit the LIVE table.** PN `39990-TVA-A160` → key `TVAA1` → config row 2 → INDEX **10** → `0xD27BC`, exactly what V44 edited. ⚠ one-bit residual: the coded row is in EEPROM, not the flash dump, and the TVA family splits ({TVAA0,2,4}→idx 4). **V55 carries a telemetry bit for it**. 🛑🛑 **RE-PROPOSED 2026-07-30 BY THE ORCHESTRATOR as "V61" (`Y[0
+
+[36] ADDR: `0xD2802/04/06`, `0xD2816/18/1A`
+     BUILD: **V47** | FLASHED: ✅
+     RESULT: 🛑 marginally quieter at 5 mph, **no effect in motion**. ~~✅ **2026-07-28: confirmed it hit the LIVE table** (same INDEX 10 chain as V44 → `0xD27F8`). ⇒ **the missing-damping hypothesis was genuinely tested and IS falsified** — do not resurrect it on a "wrong variant" theory~~ 🛑🛑 **CORRECTED 2026-08-08 (late): THAT IS FALSE, AND THE VERDICT IS WITHDRAWN.** The 2026-07-28 "confirmed LIVE" finding rested on the `TVAA1` 
+
+[37] ADDR: `0xC4120` + `FUN_0003a382` `uVar27`→256
+     BUILD: **V48A** | FLASHED: ✅
+     RESULT: ⚠ **RE-FRAMED — one branch of three, like V43/V46**
+
+[38] ADDR: `gp-0x4f60` broad EMA (19 carriers → `gp-0x1300`)
+     BUILD: **V52C** | FLASHED: ✅
+     RESULT: ⚠ **WEAKER THAN IT LOOKS.** `alpha = 74/1024` ⇒ fc ≈ 12 Hz ⇒ only **−6.1 dB at 21 Hz** while *adding* 61° of lag. It halved the mode's content, it did not remove it. **Did change manual feel** (so the cave fired)
+
+[39] ADDR: `0xC6206` (hands-off slew)
+     BUILD: **V45** | FLASHED: ✅
+     RESULT: 🛑 **FALSIFIED**
+
+[40] ADDR: `0xC6206`/`0xC6208` ← `0xFFFF`
+     BUILD: **V40** | FLASHED: ✅
+     RESULT: ☠ **EPS lamp + no power steering at ignition.** Magnitude, not direction: `0xFFFF` made the guard never fire → snap-to-target → DTC 0x1d → motor off
+
+[41] ADDR: `0xC5030`, `0xC521A`, `0xC5232`
+     BUILD: V40/**V41** | FLASHED: ✅
+     RESULT: 🛑 **FALSIFIED** (V41 = clean subtractive test)
+
+[42] ADDR: `0x454FE` `0x65BA`→`0x65B5`
+     BUILD: **V42** ch.1 | FLASHED: ✅
+     RESULT: 🛑🛑 **NOT THE FIX — RE-ATTRIBUTED 2026-08-05. [EVIDENCE]** This row read *"CONFIRMED ROOT CAUSE — fixed the hard-turn ratchet, carry forward"* for eleven months and it was **wrong**. `gp-0x67fa == 4` reads **0/123,277** and **8/92,826 (all in PARK)** ⇒ the substitution **never executes while driving, on stock either** ⇒ structurally eliminated. **V42's real live delta was ch.2 — the r26 kill** (see the ledger-correcti
+
+[43] ADDR: `0xC9E9C` (FactorC) / `0xC9F84` (FactorE), engaged column of all 16 rows
+     BUILD: **V74** (Lever E′) · **V75** (2.74× dose) | FLASHED: ✅ **BOTH FLASHED — BOTH HARD-FAULTED**
+     RESULT: 🛑🛑🛑 **V74 HARD-FAULTED 2026-08-06, AND THESE EDITS WERE NOT IN FORCE WHEN IT DID.** Latched **total loss of power steering, LKAS DISENGAGED, over a bump**; EPS lamp on continuously, still on after restart, off after ~30 s of driving. **[EVIDENCE, verified two ways] the FactorC/FactorE edits were not in force:** disengaged = **mode 24**, and all five mode-24 damper records are **byte-identical to stock** on V74 *and* 
+
+[44] ADDR: `0xC646C` 891→**1782**→**3564**
+     BUILD: **V22** (1782), **V38** (3564) | FLASHED: ✅
+     RESULT: 🛑 **CORRECTION 2026-07-29: this was TWO doublings, not one.** Byte-verified across the plain-image archive: stock/V9 = 891, V22-V37 = **1782**, V38+ = **3564**, with clamps `0xC61B2`/`0xC61B4` tracking each step (512→1024→2048). The old "891→3564 at V22" entry was wrong. ★ **The operator has driven all THREE values and reports NO change in manual steering feel** — and when disengaged the forward reader `0x2A1EE` is i
+
+[45] ADDR: `0xC61B2`/`0xC61B4` 512→**1024**→**2048**
+     BUILD: **V22**, **V38** | FLASHED: ✅
+     RESULT: correct and intentional. ⚠ `0xC61B8` (the pre-gain deadband, 102) was left behind at both steps — see the deadband box above. 🛑 **LABEL CORRECTION, 2026-08-08 (late): these two are NOT "the pre-gain deadband arm."** That wrong label is live in `analysis-2020accord/build_v83a_tva.py:359-360` and `build_v84_tva.py:544-545` (KEEP lists, **comment-only — no byte affected**) and must not propagate to a third build. **The 
+
+[46] ADDR: `0xC62EA` 320→**0**
+     BUILD: **V53** | FLASHED: ✅
+     RESULT: ✅ **CONFIRMED WORKING** on-car 2026-07-27. Route `1a`: `STEER_STATUS=0` in 5,995/5,995 frames (ST=3 never fires) and **226 frames of `STEER_CONTROL_ACTIVE=1` below 5 km/h** — a cell that is structurally EMPTY on V38. No fault, no dash light
+
+[47] ADDR: `0xC64B8` 112→0xFF
+     BUILD: **V37** | FLASHED: ✅
+     RESULT: ✅ **gentle EME RESOLVED**, no dash-light regression
+
+[48] ADDR: `0xC64B4-B7`, `0xC61C0-C5`, `0xC64E2`
+     BUILD: **V36** | FLASHED: ✅
+     RESULT: ⚠ fixed gentle EME but **unmasked DTC 0x49** → superseded by V37
+
+[49] ADDR: `0xC6312` 320→65535
+     BUILD: **V33** | FLASHED: ❌
+     RESULT: wrong gate (fires ~10 Hz benign)
+
+[50] ADDR: `0xC65C4/C8/CC` + `0xC6768/6A/6C`
+     BUILD: **V31** | FLASHED: ✅
+     RESULT: ✅ soft EME resolved. **Do not desync the mirror pair.** ⚠ **V31 set the floor to 4096; V38 RAISED it to 5120** (float 5.0) — byte-verified in `_v54_plain_image.bin` vs stock `0/1536/2048`, and the golden model carries both. The V31 memory's 4096 is correct *for V31*; the car runs V38+, so 5120 is the live value. ★ **On-car proof 2026-07-28:** V54's authority probe read `gp-0x6966` pinned at the bottom bucket for 5,98
+
+[51] ADDR: `0xC6202`
+     BUILD: — | FLASHED: ❌
+     RESULT: **investigated and REJECTED** — buys nothing (4762 > max command), and `gp-0x4f64` is shadowed → fault `0x17`, hard-fault-eligible
+
+[52] ADDR: `0xC6194`
+     BUILD: — | FLASHED: —
+     RESULT: **DEAD calibration** — its gain cal `0xC63CC` = 0
+
+[53] ADDR: **`gp-0x6bbe` angle-rate tributary** (`FUN_00034a72`, reads `gp-0x6a56` at `0x34AB8`/`0x34E8E`)
+     BUILD: ★★ **UNBUILT — and the lever INVERTS.** The mode i | FLASHED: gp-0x6bbe\
+     RESULT: ), which is V60 — and it only matters once V59 says whether the amplitude path is live.** ⚠ Do not move `K1` on a pooled-run coherence: pooling manufactures a splice artifact
+
+[54] ADDR: **`0xD28DC`** (LERP1, via ptr table `0xca4f4`) and **`0xD2888`** (LERP4, via `0xca23c`)
+     BUILD: ★★ **UNBUILT, and GATED ON V59.** `gp-0x6ba6 == \ | FLASHED: gp-0x6b9a\
+     RESULT: ` (byte-verified, `subr r0,r13` @`0x3b87a`), and V58 measured the signed sibling crossing zero at 20.93 Hz **only when LKAS applies** (13.69 vs 0.61 toggles/s at matched creep) ⇒ the index is that signal **rectified**, sweeping these curves at **~2× the mode frequency** across a 2:1 range. Flattening the Y rows removes the modulation. 🛑 **But DEPTH is unmeasured** — the delivered swing is set by how far up the curve 
+

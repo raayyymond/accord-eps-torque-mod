@@ -1,11 +1,11 @@
 ---
 name: accord-return-centre-and-detent-dead-engaged
-description: "V92 measured the return-centre lane gp-0x6b62 and the gp-0x6bda outer LERP gate at EXACTLY 0.0000 over 75,227 engaged frames — the detent/dwell hypothesis is structurally dead on the road. The paired dwell-snap rung is DEAD and its map is indicted."
+description: "V92 measured the return-centre lane gp-0x6b62 and the gp-0x6bda outer LERP gate at EXACTLY 0.0000 over 75,227 engaged frames — the detent/dwell hypothesis is structurally dead on the road. UPDATED 2026-08-12: the lane is RE-IDENTIFIED as a rack END-STOP CUSHION (stall-armed), the dwell polarity recorded here was INVERTED (it arms on |gp-0x6b64| > 1024, not <), and the byte7 b6 rung is therefore EXONERATED — its 0.0000 duty is the predicted value, not a null on the gate. Manual duty is 0.0074, so the lane is ~99.3% dead in manual too."
 metadata:
   type: reference
 ---
 
-# 🛑🛑 THE RETURN-CENTRE LANE AND THE DETENT ARE **DEAD ENGAGED** — and one rung is indicted
+# 🛑🛑 THE RETURN-CENTRE LANE AND THE DETENT ARE **DEAD ENGAGED** — and it is an END-STOP CUSHION
 
 Route 79 (V92), 2026-08-11, 87,317 `0x14A` frames / 75,227 engaged.
 Tool: `rlog-tools/extract_r78_r79.py health 79`.
@@ -34,21 +34,39 @@ suspicion that motivated the bit: a kit memory put `gp-0x6bda`'s hands-off value
 outside the window**. **It is not merely low-duty — it is structurally dead in the regime the
 operator drives in.** ⇒ **Do not propose a detent/dwell lever.**
 
-## 🛑 AND ONE RUNG IS INDICTED — read this before trusting `byte7 b6`
+## ✅ RESOLVED IN GHIDRA 2026-08-12 — the rung was RIGHT; the POLARITY in this file was backwards
 
-The **corrected** pre-registration (`STATE.md` §E) said a shut gate **ARMS** the dwell counter, so it
-should climb to its ceiling ⇒ **`snap = 1` should be the DEFAULT whenever the gate is shut**, and
-`(gate=0, snap=0)` should occur only as a **~21 ms transient** after each falling edge.
+This section previously indicted `byte7 b6` as a dead rung. **That indictment was wrong, and it was
+caused by an inverted comparison recorded above and in `STATE.md` §E.**
 
-**Observed: `(gate=0, snap=0)` on 99.898 % of frames — 87,228 frames in 3 runs, longest 85,521
-frames (855 s), 0.0 % adjacent to a gate falling edge.**
+🛑 **The dwell counter arms on `|gp-0x6b64| > cal(0xC618A)=1024`, NOT `<`.** Assembly in
+`FUN_00036388`:
+```
+0x36436: cmp r0,r8 / bge / subr r0,r7 / sxh r7   -> r7 = |gp-0x6b64|   (abs idiom; validates operand order)
+0x36440: ld.h  0x718a[tp],r16                    -> r16 = cal(0xC618A) = 1024
+0x36448: cmp r16,r7                              -> V850 computes r7 - r16
+0x3644a: setfgt r16                              -> r16 = 1  <=>  |gp-0x6b64| > 1024
+0x3645a: be 0x36464                              -> if NOT greater, take the DECREMENT path
+0x36460: add 0x1,r14                             -> else counter++
+```
+The decompile agrees (`iVar11 - iVar17 < 0 == OV && iVar11 != iVar17` is signed `>`).
 
-> 🛑 **That is the pre-registered SUSTAINED-RUN condition, and it INDICTS the `byte7 b6` rung map.**
-> `byte7 b6` is a **DEAD rung** (duty 0.0000 everywhere ⇒ `0 < duty < 1` fails). **Do not read
-> "the detent never snaps" as a physical result** — it is a null on the gate, the V64 class exactly.
-> Candidates: the arm-condition model is wrong, `cal(0xC627E) ≠ 20`, or `gp-0x6a82` is not the
-> counter. **Resolve in Ghidra before re-flying this bit.**
+**⇒ a shut gate DISARMS the counter, it does not arm it.** Gate shut ⇒ `Y1(gp-0x6bda)=0` ⇒
+`gp-0x6b64 ≡ 0` ⇒ `|0| > 1024` is false ⇒ the counter decays to 0 and holds ⇒ **no snap, and the lane
+contributes exactly ZERO** (not the "flat −1024 bias" the inverted reading predicted).
 
-⊕ **b4/b5/b6 (byte4) are NOT indicted** — they fire (89 and 54 frames), they are self-consistent, and
-they pass their own structural check. **The gate result stands on its own.**
+| | inverted polarity predicted | correct polarity predicts | MEASURED |
+|---|---|---|---|
+| `byte7 b6` snap duty | 1.0 (default-armed) | **0.0** | **0.0000** |
+| `byte4 b5` (`gp-0x6b62 ≠ 0`) | 1.0 | **0.0** | **0.0000** |
+
+> ✅ **The 855 s sustained `(gate=0, snap=0)` run is a CLEAN CONFIRMATION, not an indictment.**
+> `byte7 b6` reads the true value and does **not** need re-flying. All of `b4`/`b5`/`b6` and
+> `byte7 b6` are sound and mutually consistent.
+
+⊕ **The lane is also RE-IDENTIFIED**: it is a **rack end-stop cushion**, not a centring lane —
+`FUN_00035e00` arms it on `|gp-0x6b98|>4096` AND motor rate `<200` (a **stall**), and its gate needs
+`|gp-0x6bf0| > 8878` because the travel envelope is floored by cal `0xC6150` at `18780>>1 = 9390`.
+🛑 **Note the manual duty is 0.0074, not ~1** — the lane is ~99.3 % dead in MANUAL too, so its absence
+cannot explain any engaged-vs-manual difference. **Still: do not propose a detent/dwell lever.**
 See `[[accord-v64-null-is-on-the-gate]]`, `[[feedback-probe-the-gate-not-just-the-output]]`.

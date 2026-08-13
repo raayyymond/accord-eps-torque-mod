@@ -1,18 +1,29 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-12 (V94 flew and was ABORTED; the symptom regime was identified; **V96** cut as
-an instrument build — 🛑 the number **V95 is VACATED**, see §A5).**
+**Last updated: 2026-08-12 late (V96 FLEW as routes `7e`/`7f`; the return-to-centre crux was named by
+the operator; **V97** cut — the arc's first LOOP-POLE lever).**
 
-🛑🛑 **ON THE CAR: V94 — AND THE OPERATOR STOPPED DRIVING IT.** Route `7d`, 2026-08-12, **fault-free**.
-His words: ***"made the stuttering and grinding worse, by a lot. So much so that it vibrated the entire
-car, and I decided it was not safe to drive."*** **It is still flashed.** A revert candidate is on the
-shelf, built and verified but **not flashed** — see §A5.
+🛑🛑 **ON THE CAR: V96.** Routes `7e` (806 s) and `7f` (838 s), 2026-08-12, **both fault-free** —
+DTC-active duty 0.000000, zero sentinels, `OUTPUT_DISABLED` duty 0.0001.
+**Identity PROVEN SINGLE-FRAME:** `0x14A` byte7 bit 6 reads **1 on 100.0000 % of 164,096 frames**
+across both routes. V94 carries the 74-byte V90 cave and **cannot write byte 7 at all**;
+`byte7[7:6] ∈ {1,3}` on every frame (the map validator); byte4 b3 constant.
+⇒ **V94's `0xCBE74` cut is ALREADY OFF THE CAR** — V96 carries V92's calibration byte for byte.
+**There is no revert pending.**
 
-**V96 is an INSTRUMENT build, not a fix** — V92's calibration restored, plus a probe on `gp-0x374c` /
-`gp-0x6b70` and a rung on `gp-0x674e`. Spec and rationale in §A6. 🛑 **The number V95 is BURNED — see §A5.** **No candidate fix lever survived
-this session's controls**, and the last two builds cut on a mechanism story (V93, V94) were both
-refuted by measurement *after* the flash. ⚠ The `rlog-tools/v95_*.py` files are **analysis** scripts,
-not build scripts — do not mistake them for the build.
+🛑🛑 **THIS FILE SAID "ON THE CAR: V94 … it is still flashed" FOR A FULL SESSION AFTER V96 FLEW, AND
+IT COST REAL WORK.** It sent the session's strongest analyst to close its verdict with *"fly V96, S2
+answers it"* — V96 had already flown and its regressor was 34× over-range, so **S1 and S2 are BOTH
+VOID**. Seventh instance of the kit's "row says UNFLASHED after it flew" defect.
+⇒ **NEW CLOSE-OUT GATE, mechanical, run it every time:**
+`grep -n "ON THE CAR\|UNFLASHED\|never flashed" docs/STATE.md docs/BUILD-LINEAGE.md`, reconciled
+against the identity bit from the most recent route. The old rule ("write the flight result in the
+same pass that scores the flight") only fires if someone remembers; this one fails loudly.
+
+**V97 is a FIX, and it is ONE BYTE:** `0xC63AC` 102 → 150, the Path-2 IIR pole in `FUN_00038148`.
+**Built, verified, 131/131 assertions, NOT FLASHED.** Spec, direction evidence and the honest cost in
+§A8. 🛑 **The number V95 is BURNED — see §A5.** ⚠ The `rlog-tools/v95_*.py` files are **analysis**
+scripts, not build scripts.
 
 🛑🛑 **THIS FILE HAS A HARD SIZE CAP: 256 KB. Keep it under ~150 KB.** On 2026-08-09 it reached
 **506 KB / 6,114 lines / 53 sections** — past the `Read` limit, so no agent could load it in one call
@@ -31,7 +42,88 @@ instructions — do not reason from them.
 
 ---
 
-## ★★★★★ HEADLINE, 2026-08-12 (LATEST) — V94 REGRESSED THE CAR, AND IN DOING SO MEASURED THE LEVER'S SIGN FOR THE FIRST TIME
+## ★★★★★ HEADLINE, 2026-08-12 LATE (LATEST) — V96 FLEW, THE CRUX IS THE RETURN TRAJECTORY, AND V97 MOVES A LOOP POLE
+
+Narrative: **`docs/HANDOFF-2026-08-12-v97-the-loop-pole.md`.** Agent outputs: `analysis-2020accord/_v97/`.
+
+### A8. V97 — ONE BYTE. `0xC63AC` 102 → 150. THE ARC'S FIRST LOOP-POLE LEVER
+```
+39990-TVA,A160-V97-V96BASE-C63AC.102to150-0x13000-0x100000.rwd
+  .rwd  78c674a899971a6a9763c2d7c89bf4c9169f35dfba3fbe4ce62d9bc445a17372
+  image 7ac009044b46eeb2fd38d9ab6c7cb634e1be6ca44eb6f5083b9897c33829c2b3
+  builder analysis-2020accord/build_v97_tva.py   131/131 assertions   BASE = V96 (on the car)
+```
+**The whole delta is ONE BYTE** (102 = `0x0066`, 150 = `0x0096`; the high byte is `0x00` in both) plus
+its own CRC trailer at `0xC6FFC`. `gp-0x374c += ((target − gp-0x374c) × A) >> 10`, `@0x38202`,
+**1 reader / 0 writers established FIVE ways.** 🛑 **DC gain is 1.000000 at any A — it is a POLE, not
+a GAIN.** That is why it escapes the sign problem that disqualified all six lane weights.
+
+**THE DIRECTION IS MEASURED, NOT MODELLED — two independent instruments agreeing to <7°:**
+- `Q = −d(gp-0x6b70)/d(T)`, hands-off engaged returns, episode-bootstrapped
+  (`rlog-tools/v97_measure_Q.py`): **|Q| = 1.233 on BOTH routes**, arg Q −133.7°/−131.5°, coherence
+  **0.974/0.978**. The criterion is *inversion iff |Q| < 1 and cos(arg Q) < −|Q|* ⇒ **|Q| > 1 excludes
+  inversion at ANY phase**, so the ±28° CAN-join uncertainty is moot.
+- The V96 cave's own sign bits: `arg(V) − arg(B′) = −178.1°` on both routes (orchestrator reproduced
+  the separation independently at +179.8°/+178.6°). `arg(V)` sits just below −90° ⇒ **cos < 0 =
+  ANTI-DAMPING**, the corpus `Re(Z) < 0` seen on a firmware-internal signal for the first time.
+  Adding lead rotates it **toward** the damping axis. Better on both routes at every k.
+
+🛑 **COST, and it lands on a symptom he calls FIXED:** +2 %…+13 % at 21 Hz on the total command
+(Path-1 dilution — a MODEL, not a measurement). V62 bought grinding by taking 18–22 Hz down 8–42×;
+V88's Lever B is on the car. Worst case 1.13 × 0.549 = 0.620, inside V88's CI. **Exchange rate is FLAT
+at 0.33°/% — no sweet spot. A = 150 was the OPERATOR'S choice with the trade stated.** RULE 9.
+
+🛑 **V97 IS NOT A RETURN-SPEED FIX.** Clause 2 has **no mechanism** — see §A9. Do not score it as one.
+
+🛑🛑 **THE DIRECTION WAS INVERTED ONCE AND CAUGHT.** `scipy.signal.csd(x,y)` returns `arg(Y)−arg(X)`;
+an agent labelled every cross-spectrum backwards and recommended **lowering** this cell. The tell was a
+**replicated ~90°** disagreement with the independent `Q` measurement — a bug signature, not physics.
+⇒ **The build exists because two instruments were run and allowed to disagree.** Add `csd`'s convention
+to the trap list.
+
+### A9. WHAT DIED THIS SESSION — seven levers, each before a build was cut
+| lever | how it died |
+|---|---|
+| **pre-declared V97** (`gp-0x6b4c`/`gp-0x6b4e`) | `gp-0x6b4e` **provably ≡ 0**; §A5's "gates open ⇒ V64 excluded" priced gate WIDTH when the failure mode is the signal never being non-zero. The array is `gp-0x62c8[]`, not `gp-0x62f8[]`, and they are **two different arrays 0x18 apart**, not one split by mode |
+| return-to-centre lane | 🛑 **it is a RACK END-STOP CUSHION**, not a centring lane — arms on `\|gp-0x6b98\|>4096` AND motor rate `<200` (a STALL detector), splits by sign into left/right stop enums, **no angle term anywhere**. Gate needs `\|gp-0x6bf0\| > 8878`. **~99.3 % dead in MANUAL too** ⇒ its absence cannot explain the engaged/manual difference |
+| `0xC520C` governor ceiling | `gp-0x6ac0` scale reconstructed = **4.7121 ct per column °/s** ⇒ first knot **222.8 °/s**. Measured returns max **528 ct vs a 1050 knot — 0.00 %** reach it |
+| `0xC6194` LKAS slew limiter | **REAL and calibrated** (3 ct/tick = 1.37 s full scale) but its input partition `0xC4118` is **all-1** ⇒ 100 % bypasses it. 🛑 The record's "output ×0" reason is WRONG — that is `0xC6196` |
+| **AUTH / `0xC67C8`** | β(log AUTH) = **−0.013 [−0.344, +0.319]**, CI excludes the predicted +1 — **and** `gp-0x6b4c` is a second LKAS route that never sees AUTH (lane mode 0 at `0xC4124`, `REQ_B` written at runtime `@0x26496`). ⊕ `0xC6CD0`, our own 4× gain, sits on that lane. ⚠ **The table header is `0xC67BE`; `0xC67C8` is its `Y[0]`** |
+| PID Ki `0xC6B12` | **INERT** — at 6–10 km/h the P term alone (16,000 at e=2000) exceeds the anti-windup bound (7,264) ⇒ the integrator is pinned |
+| `0xC63A6` / `0xC63A4` | `0xC63A6` is **a cliff edge, not a lever** (V91/V92 ×1.5 null + V94 ×0.25 catastrophe fit closed-loop invariance, not a dose-response). `0xC63A4`'s lane carries **~1.1 ct of a 342 ct signal** |
+
+### A10. TWO BLOCKERS CLOSED, AND ONE `STATE.md` CLAIM RETRACTED
+🛑 **§A6b's "the transfer cannot be read from the image" is FALSE.** The LERP is **100 % flash-derived**:
+`FUN_000382d8` @`0x382d8` (sole writer) interpolates a 2-D flash table on speed selected by the mode
+byte, `FUN_000389ec` rescales into `gp-0x64b8[]`/`gp-0x641c[]`, which is what `FUN_00038148` reads.
+⇒ **`f′ ≥ 0` is ENFORCED IN CODE** at three ungated sites (`0x388c4` eight `max(Y[i],Y[i-1])` rungs;
+the float-path monotone guard; `0x38de2`/`0x38e48`) ⇒ **holds for any cal, any mode, any build.**
+Flash data agrees **14/14 records strictly increasing** (orchestrator-verified).
+⊕ **"The 8 float coefficients of `FUN_0003b8f6`" never existed** — 3 floats (two hard ZERO ⇒ the 3-tap
+FIR is an **identity**, unity gain, 0.000°) + 6 halfword Q-format cals. The handover also omitted
+`0xC4048`, the only nonzero tap.
+⊕ **`0xC64DE` identified**: a **BYTE** 17→27, not a halfword 25617→25627 — the half-period of a
+relaxation oscillator (`gp-0x6b2c` sign-flips every N ticks, counter re-arms at `(N>>1)+1`).
+⚠ 8 of its 16 read sites are in a region Ghidra never analysed ⇒ "dead" is a **tool zero**.
+
+### A11. 🛑 FOUR TOOL-ZEROS IN ONE SESSION — ONE IS A NEW CLASS
+1. `get_xrefs_to` tp-relative blind spot (known). 2. `search_instructions` undercounting (known).
+3. `movea` + **register-indirect** — `operand_pattern="-0x6350\[gp\]"` returned **0 / 183,570 /
+   `truncated:false`** on an array with nine real accesses.
+4. ⭐ **NEW — `ep`-relative short-format aliasing.** An array is based once via `movea <off>,gp,ep`,
+   then every access is `sld`/`sst` off `ep` with **no offset in the operand text**. `-0x62f8` →
+   **15 hits, 14 of them base setups, ZERO actual loads/stores.** 🛑 **Worse than a zero: a healthy
+   non-zero count that misses 100 % of accesses.** Recipe in `_v97/fw_return.md` §8h.
+   ⊕ Also: a *filtered* zero is not a fact — `operand_pattern="0x0[ep]"` returns 0 because Ghidra
+   renders operands as `r6, 0x0, ep` (commas, no brackets).
+🛑 **`0xC63AC`'s census was re-tested against trap 4 and is CLEAN** — 98 `movea imm,tp,ep` sites
+image-wide, **0** within the 254-byte `sld` reach; a gp-based `ep` cannot reach the cal block at all.
+
+---
+
+## ⊕ SUPERSEDED HEADLINE, 2026-08-12 — V94 REGRESSED THE CAR, AND IN DOING SO MEASURED THE LEVER'S SIGN FOR THE FIRST TIME
+
+**Superseded by §A8–A11.** 🛑 **V94 is NO LONGER ON THE CAR** — V96 flew as routes `7e`/`7f`.
 
 Narrative: **`docs/HANDOFF-2026-08-12-v94-aborted-and-the-override-regime.md`.**
 
@@ -157,11 +249,24 @@ he has complained about.
 
 | build | status | image / rwd |
 |---|---|---|
-| **V94** | 🛑 **ON THE CAR. ABORTED BY THE OPERATOR.** | image `cd971c05d483fe9c…` rwd `3feccc09d8cbdd05…` |
+| **V97** | ✅ **BUILT, VERIFIED, UNFLASHED — the live candidate.** 131/131. One byte on a V96 base | image `7ac009044b46eeb2…` rwd `78c674a899971a6a…` |
+| **V96** | 🛑 **ON THE CAR.** Flew as routes `7e`/`7f`, 2026-08-12, both fault-free. Identity proven single-frame (byte7 b6 duty **1.000000**, 164,096 frames) | image `876cf2be5800f0f8…` rwd `7e9a65f11cab4ffc…` |
+| **V94** | ☠ flown as `7d` and **ABORTED**; **superseded — no longer on the car** | image `cd971c05d483fe9c…` rwd `3feccc09d8cbdd05…` |
 | **V93** | built, verified, **never flashed**; carries V94's cal without the packer rescale | image `779180f8aaf88f29…` rwd `9c93dca63e9e404e…` |
-| **V92** | built, verified, **never flashed** — ⇐ **THE REVERT CANDIDATE** | rwd SHA256 `388a1974d5702e17…` |
-| **V96** | ✅ **BUILT, VERIFIED, UNFLASHED — the live candidate.** 166/166, reproduces bit-for-bit | image `876cf2be5800f0f8…` rwd `7e9a65f11cab4ffc…` |
+| **V92** | flown as route `79`; its calibration is carried byte-for-byte by V96 ⇒ **no revert is pending** | rwd SHA256 `388a1974d5702e17…` |
 | ~~V95~~ | 🛑🛑 **VACATED — A BURNED NUMBER. NEVER REUSE IT.** | see the DEAD hashes below |
+
+🛑 **V96's SEPARATION FROM V92 IS NOW EVIDENCE, NOT BELIEF.** §A6 logged at cut time that the separator
+was V92's measured b6 duty rather than an impossibility. **The flight discharges it:** V92's byte7 b6
+is the dwell-snap rung, measured **0.0000 engaged AND manual over 87,317 frames** (3 runs, longest
+855 s); V96's byte7 b6 is a **hard-wired constant 1**, and a **164,096-frame unbroken rail** is a
+reading V92's rung has never produced one frame of.
+
+🛑 **V96's INSTRUMENT FAILED AND MUST BE RE-SIZED BEFORE ANY RE-FLY.** `gp-0x374c`'s magnitude code M
+is **pinned at 0** on 99.90 % / 99.97 % of frames and **100 %** of route 7f's engaged elicitation time
+⇒ `|gp-0x374c>>4| < 2048` throughout, against a field sized for ~68,600 — a **34× over-range**.
+**S1 AND S2 ARE BOTH VOID; `f′` is NOT RESOLVED by this flight** (though it was later closed
+analytically — §A10). Next regressor LSB should be **128–256**, not 2048.
 
 **Revert candidate, full name:**
 `39990-TVA,A160-V92-V90BASE-CBE74.M26.M27.X1.5-CAVE.6BBE.6B62.6BDA.6A82-427.6BBE.SAR4-0x13000-0x100000.rwd`

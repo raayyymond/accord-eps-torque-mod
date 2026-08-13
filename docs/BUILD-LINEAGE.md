@@ -489,9 +489,23 @@ V80 is the recorded cost of doing exactly this once already: **the worst grindin
 
 ⊕ **RECORDED, VIRGIN, UNTESTED AND NOT PROPOSED** — so it is not "discovered" as new next session:
 `FUN_00036388` contains a **relay-with-dwell** — dwell counter `gp-0x6a82`, +1/tick while
-`|gp-0x6b64| < 0xC618A` (= 1024), ceiling `0xC627E` = 20; **past 20 ticks the output SNAPS to 1024**,
-writing `gp-0x6b62`. Cals `0xC618A` / `0xC627E` / `0xC63C0` were **never edited by any build**
-(grep-confirmed). **Disfavoured by the same no-comb evidence that refuted `gp-0x6b70`.**
+**`|gp-0x6b64| > 0xC618A` (= 1024)** 🛑 *(corrected 2026-08-12 — this note previously read `<`; it is
+`>`. Asm @`0x36448`: `cmp r16,r7` computes `r7−r16` with r7=`|gp-0x6b64|`, then `setfgt r16`; the
+`be` @`0x3645a` takes the **decrement** path when not-greater. Operand order validated in-block by the
+abs() idiom @`0x36436`. Decompile agrees.)*, ceiling `0xC627E` = 20; **past 20 ticks the output SNAPS
+to 1024** (the snap value is the **same cal `0xC618A`**, dual-purpose), writing `gp-0x6b62`. Cals
+`0xC618A` / `0xC627E` / `0xC63C0` were **never edited by any build** (grep-confirmed).
+**Disfavoured by the same no-comb evidence that refuted `gp-0x6b70`.**
+
+🛑 **RE-IDENTIFIED 2026-08-12 — this is a RACK END-STOP CUSHION, not a centring lane.**
+`FUN_00035e00` @`0x35e00` arms the whole cluster on **`|gp-0x6b98| > cal(0xC618E)=4096` AND motor rate
+`gp-0x6ac0 < cal(0xC620C)=200`** — high command with the motor not turning, i.e. a **STALL** — then
+splits by `sign(gp-0x6bf0)` into two "at the stop" enums `gp+0x6440`/`gp+0x6441`. Its gate needs
+`|gp-0x6bf0| > 8878` because the travel envelope's half-width is **floored by cal `0xC6150`** at
+`18780>>1 = 9390` (which reproduces the measured hands-off `gp-0x6bda ≈ 9262` exactly). ⇒ **dead
+engaged AND ~99.3 % dead in manual (V92 duty 0.0074)**, on stock and on every build. **Do not arm it:**
+its absence cannot explain any engaged-vs-manual difference, and the snap flattens the one shaped
+curve in the lane into a constant — the FLATTEN-A-CURVE-INTO-A-RELAY class in the table above.
 
 ### 🛑 `gp-0x67fa` — the reachable set is effectively **{11} ALONE**, and that KILLS `0x454FE`
 State 5 is **structurally dead**, state 10 measured **0.0000%**, state 4 measured **0/123,277**.
@@ -1075,7 +1089,38 @@ flashed.**
 
 ## Part 4 — Flash status at a glance
 
-🛑🛑 **CURRENT, 2026-08-07 (night) — THIS LINE IS THE ONE TO READ; EVERYTHING BELOW IT IS HISTORY.**
+🛑🛑🛑 **CURRENT, 2026-08-12 LATE — THIS IS THE LINE TO READ. EVERYTHING BELOW IT IS HISTORY.**
+**ON THE CAR: V96.** Flew as routes **`7e`** (806 s) and **`7f`** (838 s), 2026-08-12, **both
+fault-free** (DTC-active duty 0.000000, zero sentinels, `OUTPUT_DISABLED` duty 0.0001).
+**Identity proven SINGLE-FRAME:** `0x14A` byte7 bit 6 = **1 on 100.0000 % of 164,096 frames**; V94
+carries the 74-byte V90 cave and cannot write byte 7 at all.
+⇒ **V94 is NO LONGER ON THE CAR, and its `0xCBE74` cut is already off it** — V96 carries V92's
+calibration byte for byte. **No revert is pending.**
+⏳ **V97 IS BUILT, VERIFIED AND UNFLASHED** — `0xC63AC` **102 → 150** on a V96 base, **ONE BYTE** plus
+its CRC trailer at `0xC6FFC`; image `7ac00904…c2b3`, rwd `78c674a8…7372`; 131/131 assertions;
+builder `analysis-2020accord/build_v97_tva.py`. **The flash decision is the operator's.**
+
+🛑🛑 **THIS FILE AND `STATE.md` BOTH SAID "V94 IS ON THE CAR" FOR A FULL SESSION AFTER V96 FLEW.**
+Seventh instance of the "row says UNFLASHED after it flew" defect, and this time it **cost work** — it
+sent an analyst to close a verdict with *"fly V96, S2 answers it"* when V96 had already flown and its
+regressor was 34× over-range (S1 **and** S2 void).
+⇒ **NEW MANDATORY CLOSE-OUT GATE, mechanical:**
+`grep -n "ON THE CAR\|UNFLASHED\|never flashed" docs/STATE.md docs/BUILD-LINEAGE.md`, reconciled
+against the identity bit from the most recent route. The previous rule ("write the flight result in
+the same pass that scores the flight") only fires if someone remembers. This one fails loudly.
+
+🛑 **DEFECT, OPEN: `docs/BUILD-LINEAGE-PART1-LEVER-INDEX.md` stops at ~V81.** V83a→V97 — **fifteen
+builds, including every cell the last four sessions actually moved** (`0xCBE74`, `0xC40D2`, `0xC40BC`,
+`0xC40D4`, `0xC640A`/`0xC640C`, `0xC63A6`, `0xC63AC`) — return **NOTHING** to the by-address grep
+`CLAUDE.md` makes mandatory before proposing a calibration edit. That is precisely the failure the file
+exists to prevent, and it was already backfilled once (V76–V81, 2026-08-07) before falling ten further
+behind. **Fix = APPEND** (the rows are hand-written narrative; there is nothing to regenerate from)
+**AND make the row-write part of the four-part close-out deliverable**, or the next backfill is due at
+~V110.
+
+---
+
+🛑 **SUPERSEDED, 2026-08-07 (night).**
 Flash order since V70: **V71C → V72 → V73 → V74 → V75 (☠ hard fault, route `5e`) → V74 reflashed (☠ hard
 fault, manual, over a bump) → V76 (route `65`, clean) → V80 (route `66`, NO fault — and the worst grinding
 this car has ever produced).** **V78 and V79 were built and never flown**; V79 is renamed `SUPERSEDED-…`.
