@@ -88,10 +88,21 @@ THE PAYLOAD -- five bits on `0x14A` byte 4, plus the 427 magnitude channel
     RET       6 B
     TOTAL   132 B   vs V99's 154 B  =  **-22 B**  =  **10.9 % of the 1212 B extent**
 
-**THE SIGN BIT IS NOT OPTIONAL.**  `TRACE-2026-08-13-c63ae-lever` Part 2 section 3a measured the
-cost of omitting it on this exact lane: the rectified reconstruction understates the 6-9 Hz RMS by
-**4.86x** (112.73 vs 548.28 ct), because the sign toggles **5.06 times per second**.  A magnitude
-channel without its sign is not a magnitude channel.
+**THE SIGN BIT IS NOT OPTIONAL, AND IT NOW CARRIES A MEASURED PRICE TAG.**  A defect was found in
+the V98/V99 scorers: the 427 lane was fed **rectified** into a band statistic.  Measured cost of
+omitting the sign on this exact lane, **replicated on two routes and two builds**:
+
+    6-9 Hz RMS understated by            4.9x (r81)   /  5.5x (r82)
+    within-route ENG/MAN contrast    3.933 -> 18.509 (r81) ,  3.361 -> 19.431 (r82)
+    sign flips, ENGAGED                 11.68/s (r81)  /  13.09/s (r82)
+    on a STANDARDISED 6-9 Hz ratio       1.9x   (the conservative figure; 5.5x is the raw contrast)
+
+This converts the design law's *"every probe that DECIDED something was a SIGN BIT PAIRED WITH A
+MAGNITUDE CHANNEL"* from a maxim into a **1.9x-to-5.5x price tag on this lane.**
+**AND THE CAUTIONARY HALF:** V87's Stage 2 made rectification an explicit *"RECTIFICATION
+TRANSPARENCY"* measurement in July, and **the discipline was LOST by V98.**  The kit knew this and
+regressed.  **A magnitude channel shipped without its sign bit is not a smaller build, it is a
+wrong one.**
 
 **CAN 427 CANNOT SATURATE, STRUCTURALLY.**  The packer is unchanged --
 `clamp(abs(X) * 5 >> 6, 0, 0x3FF)` (`FUN_00049a5a` = abs, `0x55E06 mul 0x5`, `0x55E10 sar 0x6`,
@@ -103,7 +114,40 @@ clamp, read from the decompile -- not by a downstream gate (the V96 error).
 -------------------------------------------------------------------------------------------------
 THE PRE-REGISTERED ENDPOINTS -- written BEFORE the cut.  The sentence a null will license.
 -------------------------------------------------------------------------------------------------
+🛑 **THE POWER GATE, VERBATIM, AND IT BINDS EVERY ENDPOINT BELOW:**
+> **If any endpoint's sentence contains "compared to V99", IT FAILS THIS POWER GATE.**
+
+| endpoint form | verdict |
+|---|---|
+| `d(b5)` as a **WITHIN-ROUTE ABSOLUTE** | **PASSES -- 3.0-9.3 sigma** on a 0.20/0.80 call |
+| `d(b5)` as a **cross-build delta vs V99** | **FAILS** -- inherits V99 E1's exact failure mode |
+| the b4 / b7 sign controls | PASS; expected values pre-computable |
+| the error-clamp rung, read as a **single-drive absolute** | PASSES |
+| any **partial-correlation** endpoint | **FAILS -- UNBUILDABLE, not proposed** |
+
+**THE CORRECTION THAT MATTERS, and it is to the kit's own reasoning:** V99's E1 was *already* a duty
+endpoint and it died anyway -- **not because a duty is weak, but because it was a cross-build duty
+DIFFERENCE exposed to a route-wide offset** (in 3 of its 4 bins the effect sat at or below its own
+half-width).  **RUNG A differs in KIND: absolute, within-route, referencing no previous build, and
+its decision boundary is ~0.5 wide, not ~0.05.**  Every endpoint below is written as a
+**SINGLE-DRIVE ABSOLUTE.**
+
+**THE RESOLUTION ENVELOPE [EVIDENCE, `rlog-tools/v100_power_gate.py`]:**
+  * CI half-width on `d(b5)`: **+-0.032 to +-0.098** (worst case p = 0.50, over the measured tau range)
+  * **RESOLVABLE WINDOW `[0.030, 0.970]`** -- about **1.8 s of clamped time out of 59.8 s** is the
+    floor.  Below 0.030 it is not distinguishable from zero; above 0.970 not from one.
+  * **Near the rails the normal approximation FAILS** -- use the rule of three on effective samples
+    (`3/n_eff`).  **A duty needs >= 3 independent clamp EPISODES to beat zero.**
+  * **tau for a THRESHOLD rung is 0.065-0.603 s, vs 0.029-0.052 s for the flown SIGN rungs --
+    threshold bits are 2-20x stickier and cost that much effective sample.**  Recorded as a general
+    design fact: **sign bits are cheap, threshold bits are not.**  `b5` and `b6` are the irreducible
+    question so they stay, but they were **PRICED, not assumed.**
+  * **GENERAL LAW for this car:** any exposure calculation using the stationary `1/sqrt(2n)` is
+    **optimistic by 6-8x**, because the drives are fragmented and speed-varying and episode variance
+    dominates spectral variance.  Use a block bootstrap.
+
 **E1 -- `d(b5)`, the REFERENCE-CLAMP duty, engaged**, CI from the bit's own measured tau.
+**A SINGLE-DRIVE ABSOLUTE.  It references no previous build and needs no second drive.**
 
   A HIGH reading (materially > 0, say >= 0.30) LICENSES, VERBATIM:
     *"On d(b5) of engaged frames the PID's reference was pinned at +-8192 by cal 0xC6200, so on
@@ -120,43 +164,135 @@ THE PRE-REGISTERED ENDPOINTS -- written BEFORE the cut.  The sentence a null wil
     explanation for V89 and V97.  THE REFERENCE-CLAMP HYPOTHESIS IS DEAD AND MUST NOT BE
     RE-PROPOSED."*
 
-**E2 -- `d(b6 | b5 = 0)`, the ERROR CLAMP's TRUE duty**, exact by the separation identity.
+  **AND THE FINDING THAT MAKES E1 DECISIVE IN BOTH DIRECTIONS.**  `|gp-0x6b70|` over **14,289
+  ENGAGED frames on three routes** [EVIDENCE]:
 
-  **THE COMPOSITE NULL SENTENCE IS UNCONDITIONAL AND IS PRE-REGISTERED HERE:**
+      r82  p50 537.6  p90 2380.8  p99 2956.8  MAX 3008.0     MAX/8192 = 0.367
+      r81  p50 883.2  p90 2611.2  p99 2892.8  MAX 3161.6     MAX/8192 = 0.386
+      r80  p50 601.6  p90 2073.6  p99 2624.0  MAX 2675.2     MAX/8192 = 0.327
+      frac >= 8192 : 0.0000 %     (427 saturation 0.000 % ⇒ a REAL tail, not a ceiling)
+
+  🛑 **NO NUMERICAL PRIOR ON `d(b5)` IS DERIVABLE, AND NONE IS CLAIMED.**  The other terms into
+  `gp-0x6ad6` (`gp-0x6b4a` +-25600, `gp-0x6b60` +-15360, five more at +-10240) bound to ~12x the
+  threshold, are unobserved, and may add or cancel.  **`d(b5)` in [0,1] stands.**
+
+  ⭐ **BUT `gp-0x6b70` CAN SUPPLY AT MOST 38.6 % OF THE THRESHOLD ⇒ IT CANNOT RAIL `gp-0x6ad6` ON
+  ITS OWN.**  The other six terms must supply **>= 5,030 counts (61.4 %)** of any rail.  Therefore:
+    * **HIGH `d(b5)`** ⇒ the saturation is driven by terms the **entire V89->V99 arc never touched**,
+      and *"every lever was discarded by a saturation"* gains a mechanism **and a next target.**
+    * **LOW `d(b5)`** ⇒ that hypothesis **dies cleanly** and the levers were delivered, not discarded.
+  **Both sentences are pre-registered.  Either way the build decides something.**
+
+**E2 -- the ERROR CLAMP.  ⭐ THE REPORTABLE STATISTIC IS THE *MARGINAL* `d(b6)`; THE CONDITIONAL IS
+   A POST-HOC SLICE, NEVER A HARDWARE GATE.**
+
+  `n_eff = T * (1 - d(b5)) / tau`, so the conditional `d(b6 | b5=0)` stops resolving a 0.20/0.80
+  call above:
+
+      tau = 0.065 s (best)     -> dies above  d(b5) > 0.909
+      tau = 0.300 s (central)  -> dies above  d(b5) > 0.578
+      tau = 0.603 s (worst)    -> dies above  d(b5) > 0.153
+
+  🛑 **THE SCENARIO THAT MAKES E1's HEADLINE MOST INTERESTING -- `d(b5)` NEAR 1 -- IS EXACTLY THE
+  ONE THAT EMPTIES E2's CONDITIONING SET.**  At `d(b5)` = 0.9 there are 5.98 s of conditioning
+  exposure left.  **The build cannot confirm its own headline and characterise the error clamp on
+  the same drive.  THIS WAS KNOWN BEFORE THE CUT and is not discovered afterwards.**
+
+  ✅ **The mitigation is free, because `b6` already free-runs: PRE-REGISTER THE JOINT 2x2 `(b6,b5)`
+  TABLE**, exactly as V98 did for its comparator pair:
+
+      +----------+------------------+------------------+
+      |          |   b5 = 0         |   b5 = 1         |
+      +----------+------------------+------------------+
+      |  b6 = 0  |  n00  authority is NONZERO          |
+      |  b6 = 1  |  n10  error clamp  |  n11 both      |
+      +----------+------------------+------------------+
+      MARGINAL   d(b6) = (n10+n11)/N          <- REPORTABLE AT FULL n, ALWAYS
+      CONDITIONAL d(b6 | b5=0) = n10/(n00+n10) <- the BONUS; may be underpowered
+      COMPOSITE  d(b5 or b6) = 1 - n00/N       <- EXACT, full n
+
+  🛑 **AND THE WARNING STANDS, ADJACENT AND UNCHANGED: `d(b6)` UNCONDITIONED IS *NOT* THE ERROR
+  CLAMP'S DUTY** -- on `b5 = 1` frames `b6` is uninterpreted.  **These are not in tension; they
+  answer different questions.**  The MARGINAL answers *"how often is the pre-clamp error large"* at
+  full n and is the reportable statistic.  The CONDITIONAL answers *"how often does the error clamp
+  independently zero the authority"* and is exact but may be underpowered.  **Quote each for its
+  own question and never substitute one for the other.**
+
+  **THE COMPOSITE NULL SENTENCE, UNCONDITIONAL AND PRE-REGISTERED, LICENSED IFF `d(b5) = 0.0000`
+  AND `d(b6) = 0.0000` WITH THE POSITIVE CONTROLS HEALTHY:**
     *"Neither saturation was active -- Path-2's marginal authority was never zeroed by clipping."*
-  That sentence is licensed iff `d(b5) = 0.0000` AND `d(b6 | b5=0) = 0.0000` with the positive
-  controls healthy.  It closes the whole saturation family, not one clamp.
+  It closes the whole saturation family, not one clamp.  **Note it needs only the MARGINAL, so it
+  survives even when the conditional is underpowered.**
 
-**E3 -- `phi` = Path 2's share of the delivered command at 6-9 Hz.**
+**E3 -- `phi`, Path 2's share of the delivered command at 6-9 Hz.  ⭐ A DIMENSIONLESS SAME-DRIVE
+   RATIO.  THE ABSOLUTE-COUNT FRAMING WAS GATE-TESTED AND REJECTED -- SEE THE RETRACTION BELOW.**
 
-    phi(6-9 Hz) = 0.2565 * RMS_6-9(gp-0x6b70) / RMS_6-9(gp-0x6b94)
-                = 140.6 ct / R          R = engaged 6-9 Hz RMS of the SIGNED gp-0x6b94, this drive
+  **THE ANCHOR** [EVIDENCE for two routes / two builds; BELIEF that it generalises]:
 
-  **THERE IS NO NULL.**  R is measured from a signed, unsaturated, known-LSB channel; the
-  measurement returns a number on every drive that flies at all.  There is no gate that can fail
-  to arm.  **PRE-REGISTERED DECISION BOUNDARY:**
+      RMS_6-9(gp-0x6b70)  =  A * RMS_6-9(column torque, CAN 0x18F)
+      r82:  A = 1.1725  [1.0709, 1.2709]   rel s.e. 4.37 %
+      r81:  A = 1.0825  [0.9089, 1.2106]   rel s.e. 7.73 %
+      =>    **A = 1.13 +- 0.09   (about 8 %).  A LOOSE CROSS-CHECK, NOT A TIGHT ONE.**
 
-    | R (ct RMS) | phi   | delivered ratio for 0xC63AE's lane 1.242 | verdict on 0xC63AE       |
-    |------------|-------|------------------------------------------|--------------------------|
-    |     141    | 1.000 | 1.241                                    | ABOVE the floor          |
-    |     300    | 0.469 | 1.113                                    | ABOVE                    |
-    | **387**    | 0.373 | **1.088**  = V85's not-felt figure        | **THE CROSSOVER**        |
-    |     500    | 0.281 | 1.068                                    | BELOW -- NO-GO stands    |
-    |    1200    | 0.117 | 1.028                                    | BELOW -- NO-GO stands    |
+  ⚠ **RETRACTED: the earlier anchor "1.18, stable to 1.0 % across two routes" was computed on the
+  RECTIFIED 427 channel** -- the same defect fixed in the scorers.  With the sign applied the two
+  routes are **8 % apart, not 1 %; rectification inflated its apparent stability by ~8x.**
+  **1.18 / "1.0 %" must not appear anywhere.**
 
-    **`R < 387 ct` OVERTURNS the `0xC63AE` NO-GO.  `R > 387 ct` CONFIRMS it.**
+  **THE ENDPOINT.**  Column torque is free on `0x18F` on **every** drive and `gp-0x6b94` is on 427
+  on **this** drive, so define the measurand as a dimensionless same-route ratio:
 
-  **STATED PLAINLY: the numerator is CROSS-ROUTE.**  140.6 ct = 0.2565 x 548.28, and 548.28 is
-  route 81's engaged 6-9 Hz RMS of the SIGNED gp-0x6b70 -- which V100 no longer carries, because
-  427 now carries gp-0x6b94 instead.  Both drives are parking-lot creep, so they are comparable,
-  but this is a two-drive ratio and must be reported as one.
+      Q  ==  RMS_6-9(column torque, 0x18F)  /  RMS_6-9(SIGNED gp-0x6b94)      <- BOTH from route 83
+      phi(6-9 Hz)  =  0.2565 * A * Q                                          A = 1.13 +- 0.09
+
+  **WHY THE RATIO AND NOT THE COUNT:** block-bootstrapped, the true rel s.e. on an **absolute**
+  6-9 Hz RMS is **24-29 %** (r82 231.2 ct [141.6, 359.0]; r81 225.1 ct [122.6, 375.6]; window spread
+  p90/p10 = 23.7x and 46.0x), because **episode variance dominates spectral variance by 6-8x**.  In
+  the RATIO form most episode variance **cancels**: **4.4-7.7 % rel s.e., 3.8-5.5x more precise on
+  identical data, for free.**
+
+  **PRE-REGISTERED DECISION BOUNDARY, IN RATIO FORM.**  The retroactive `0xC63AE` call needs the
+  delivered ratio `1 + 0.242*phi` against V85's not-felt line 1.088, i.e. `phi_c = 0.3636`:
+
+      Q_c  =  phi_c / (0.2565 * A)  =  **1.254**        at A = 1.13
+      Q_c  =  1.162 .. 1.363                            as A ranges over 1.22 .. 1.04
+
+      **Q > Q_c  ⇒  phi > 0.364  ⇒  delivered > 1.088  ⇒  ABOVE the floor, the NO-GO is OVERTURNED**
+      **Q < Q_c  ⇒  BELOW the floor, the NO-GO STANDS**
+
+  🛑 **AND THE HONEST RESOLUTION, PRE-REGISTERED SO IT CANNOT BE ARGUED AFTERWARDS.**  The anchor
+  contributes ~8 % and the ratio measurement 4.4-7.7 %; in quadrature ~9-11 %.  So:
+
+      |Q - 1.254| within  +-11 %  (Q in [1.12, 1.39])  ->  **INDETERMINATE.  Report the number and
+                                                            its CI; make NO verdict on 0xC63AE.**
+      Q >= 1.39  or  Q <= 1.12                         ->  a 1-sigma call
+      Q >= 1.53  or  Q <= 0.98                         ->  a 2-sigma call
+
+  **THERE IS NO NULL** -- Q returns a number on any drive that flies.  What can fail is DECISIVENESS,
+  and the indeterminate band above is pre-registered rather than discovered.
+
+  ⚠ **THE ONE RESIDUAL IMPORT, STATED PLAINLY.**  Both *measurands* are same-route, so the endpoint
+  references no previous build's measurement.  But the **anchor `A` is an imported CONSTANT**, and
+  **V100 cannot re-check it in-drive, because 427 now carries `gp-0x6b94` and the drive therefore
+  does not carry `gp-0x6b70` at all.**  A is EVIDENCE on routes 81/82 and BELIEF that it generalises
+  to route 83.  Its 8 % is already folded into the boundary band above.  **If a future build wants A
+  verified in-drive it must carry BOTH cells, which this bit budget does not allow.**
+
+  📛 **RETRACTED HISTORICAL NOTE, kept so the record shows the gate working.**  An earlier draft of
+  E3 read: *"phi = 140.6 ct / R, with R the engaged 6-9 Hz RMS of gp-0x6b94; R < 387 ct overturns
+  the NO-GO, R > 387 ct confirms it."*  **PRE-REGISTERED, GATE-TESTED, AND REJECTED BEFORE THE CUT**,
+  for two independent reasons: (i) at 24 % s.e. excluding 387 needs `R <= 231` or `R >= 1180`, and
+  the measured values are **231.2 (r82) / 225.1 (r81)** -- clearing by 0.1 % on one route and
+  **failing by 6 % on the other, i.e. a coin flip**; (ii) its numerator 140.6 ct was route 81's, so
+  it referenced a previous build and failed the power gate a second time.  **It is recorded, not
+  used.**
 
 **POS-1 (IDENTITY)** byte7[7:6] == 2 **AND** b3 == 1, single-frame.  See the honest-strength note.
 **POS-2 (427 non-degenerate)** >= 20 distinct codes, p99 >= 8, saturation duty 0.0000 (structural).
 **POS-3 (b4)** `gp-0x6ad6 < 0` duty strictly inside (0.05, 0.95), and it must TRACK openpilot's
         commanded sign -- `gp-0x6ad6` is dominated by `-gp-0x6b4a`, the LKAS demand path.
-**POS-4 (b7)** `gp-0x6b94 < 0` duty strictly inside (0.05, 0.95), with of order 5 sign transitions
-        per second (route 81 measured 5.06/s on the sibling lane).
+**POS-4 (b7)** `gp-0x6b94 < 0` duty strictly inside (0.05, 0.95), with **11-13 sign transitions per
+        second engaged** (11.68/s on r81, 13.09/s on r82, measured on the sibling lane).
 
 **THE DEAD-INSTRUMENT TRAP, STATED EXPLICITLY:  IF b5, b4 AND b7 ALL READ 0.0000, THE INSTRUMENT
 IS DEAD, NOT THE CAR.**  b4 exists precisely to catch it: if `gp-0x6ad6 === 0` then RUNG A reads
@@ -406,6 +542,16 @@ R427_MUL_ADDR = 0x55E06                      # mul 0x5,r6,r0
 R427_CLAMP_ADDR = 0x55E0A                    # movea 0x3ff,r0,r8
 R427_ABS_CALL = 0x55DF4                      # jarl FUN_00049a5a (abs)
 AGG_CLAMP = 10240                            # gp-0x6b94's OWN writer clamp, 0x3acf6 / 0x3ad0e
+
+# ---- E3's constants.  The endpoint is a DIMENSIONLESS SAME-DRIVE RATIO; the absolute-count form
+#      was pre-registered, gate-tested and REJECTED before the cut.  See assert_phi_endpoint_is_a_ratio.
+PHI_K = 0.2565                 # d(gp-0x6b94)/d(gp-0x6b70), the UNSATURATED small-signal derivative
+PATH2_LANE_RATIO = 1.242       # 0xC63AE 1024->2048, in-band AC on Path 2's OWN output
+NOT_FELT_LINE = 1.088          # V85's delivered in-band ratio, which the operator did NOT feel
+ANCHOR_A, ANCHOR_SE = 1.13, 0.09      # RMS_6-9(gp-0x6b70) / RMS_6-9(column torque 0x18F)
+ANCHOR_REL_SE = ANCHOR_SE / ANCHOR_A  # r82 1.1725 [1.0709,1.2709] vs r81 1.0825 [0.9089,1.2106]
+RATIO_REL_SE_MIN, RATIO_REL_SE_MAX = 0.044, 0.077     # the RATIO form, block bootstrap
+ABS_RSE_MIN, ABS_RSE_MAX = 0.2412, 0.2936             # an ABSOLUTE 6-9 Hz RMS, block bootstrap
 
 # ---- the tp initialiser, certified in Ghidra this session ---------------------------------------
 TP_INIT = ((0x140C0, "800e0080", "ori   0x8000,r0,r1"),
@@ -1058,17 +1204,64 @@ def assert_427_sizing():
     check(abs(lsb - 12.8) < 1e-9,
           f"LSB = 64/5 = {lsb} counts; quantisation noise = LSB/sqrt(12) = {lsb / 12 ** 0.5:.2f} ct "
           f"against an expected 6-9 Hz RMS in the hundreds")
-    r_cross, phi_num = 387.0, 140.6
-    lane = 1.242
-    delivered = 1.0 + (lane - 1.0) * (phi_num / r_cross)
-    check(abs(delivered - 1.088) < 0.002,
-          f"THE PRE-REGISTERED CROSSOVER: R = {r_cross:.0f} ct gives phi = {phi_num / r_cross:.3f} "
-          f"and a delivered ratio of {delivered:.3f} == V85's not-felt 1.088. "
-          f"R < {r_cross:.0f} OVERTURNS the 0xC63AE NO-GO; R > {r_cross:.0f} CONFIRMS it")
-    for r, want in ((141.0, 1.241), (300.0, 1.113), (500.0, 1.068), (1200.0, 1.028)):
-        got = 1.0 + (lane - 1.0) * (phi_num / r)
-        check(abs(got - want) < 0.002, f"    R = {r:6.0f} ct -> phi {phi_num / r:.3f} -> "
-                                       f"delivered {got:.3f} ({'ABOVE' if r < r_cross else 'BELOW'})")
+
+
+def assert_phi_endpoint_is_a_ratio():
+    """E3, in the form that PASSES the power gate: a dimensionless SAME-DRIVE ratio.
+
+    The absolute-count form (`phi = 140.6 ct / R`, boundary R = 387 ct) was pre-registered,
+    gate-tested and REJECTED before the cut -- twice over: a 24-29 % block-bootstrapped s.e. makes
+    the 387 ct call a coin flip, and its 140.6 ct numerator was route 81's, so it referenced a
+    previous build.  Both facts are asserted here so the rejection is on the record with numbers.
+    """
+    lane, floor = PATH2_LANE_RATIO, NOT_FELT_LINE
+    phi_c = (floor - 1.0) / (lane - 1.0)
+    check(abs(phi_c - 0.3636) < 0.001,
+          f"phi crossover = ({floor} - 1) / ({lane} - 1) = {phi_c:.4f} -- the share at which "
+          f"0xC63AE's lane 1.242 delivers V85's not-felt {floor}")
+    q_c = phi_c / (PHI_K * ANCHOR_A)
+    q_hi = phi_c / (PHI_K * (ANCHOR_A - ANCHOR_SE))
+    q_lo = phi_c / (PHI_K * (ANCHOR_A + ANCHOR_SE))
+    check(abs(q_c - 1.254) < 0.002 and abs(q_lo - 1.162) < 0.003 and abs(q_hi - 1.363) < 0.003,
+          f"⭐ THE RATIO BOUNDARY: Q_c = phi_c / ({PHI_K} * A) = {q_c:.3f} at A = {ANCHOR_A}, and "
+          f"{q_lo:.3f}..{q_hi:.3f} as A ranges over {ANCHOR_A + ANCHOR_SE}..{ANCHOR_A - ANCHOR_SE}. "
+          f"Q = RMS_6-9(column torque 0x18F) / RMS_6-9(signed gp-0x6b94), BOTH from route 83. "
+          f"Q > Q_c OVERTURNS the 0xC63AE NO-GO; Q < Q_c CONFIRMS it")
+    comb = (ANCHOR_REL_SE ** 2 + RATIO_REL_SE_MAX ** 2) ** 0.5
+    check(0.09 <= comb <= 0.12,
+          f"combined rel s.e. = sqrt(anchor {ANCHOR_REL_SE:.3f}^2 + ratio {RATIO_REL_SE_MAX:.3f}^2) "
+          f"= {comb:.3f} => INDETERMINATE band Q in [{q_c * (1 - comb):.2f}, {q_c * (1 + comb):.2f}]"
+          f"; 1-sigma call outside it, 2-sigma call outside "
+          f"[{q_c * (1 - 2 * comb):.2f}, {q_c * (1 + 2 * comb):.2f}]. PRE-REGISTERED, not discovered")
+    gain_lo = ABS_RSE_MAX / RATIO_REL_SE_MAX
+    gain_hi = ABS_RSE_MIN / RATIO_REL_SE_MIN
+    check(abs(gain_lo - 3.81) < 0.05 and abs(gain_hi - 5.48) < 0.05,
+          f"WHY THE RATIO: absolute 6-9 Hz RMS carries {ABS_RSE_MIN:.0%}-{ABS_RSE_MAX:.0%} rel s.e. "
+          f"(block bootstrap) vs {RATIO_REL_SE_MIN:.1%}-{RATIO_REL_SE_MAX:.1%} for the ratio => "
+          f"{gain_lo:.2f}x-{gain_hi:.2f}x more precise ON IDENTICAL DATA, for free, because episode "
+          f"variance CANCELS in a ratio. Episode variance dominates spectral variance 6-8x here")
+    miss = []
+    for route, r_meas, rse in (("r82", 231.2, ABS_RSE_MIN), ("r81", 225.1, ABS_RSE_MAX)):
+        r_needed = 387.0 / (1.0 + 2.8 * rse)          # to exclude 387 from BELOW at 2.8 sigma
+        miss.append((route, r_meas, rse, r_needed, r_meas / r_needed - 1.0))
+    check(all(m[4] > 0 for m in miss)
+          and abs(miss[0][4] - 0.001) < 0.004 and abs(miss[1][4] - 0.060) < 0.006,
+          "📛 RETRACTED, WITH THE ARITHMETIC RE-DERIVED HERE: to exclude R = 387 ct from below at "
+          "2.8 sigma a route needs R <= 387/(1+2.8*rse). "
+          + " ; ".join(f"{r}: rse {s:.1%} => need R <= {n:.1f}, measured {m:.1f}, MISSES by "
+                       f"{d:+.1%}" for r, m, s, n, d in miss)
+          + ". NEITHER ROUTE CAN EXCLUDE 387 -- one by 0.1 %, one by 6.0 %. A COIN FLIP. The "
+            "absolute-count framing is RECORDED, NOT USED")
+    check(ANCHOR_A == 1.13 and ANCHOR_SE == 0.09,
+          f"⚠ THE ANCHOR IS {ANCHOR_A} +- {ANCHOR_SE} (~{ANCHOR_REL_SE:.0%}), a LOOSE cross-check: "
+          f"r82 1.1725 [1.0709,1.2709] vs r81 1.0825 [0.9089,1.2106] = 8 % apart. The earlier "
+          f"'1.18, stable to 1.0 %' was computed on the RECTIFIED 427 channel and is RETRACTED -- "
+          f"rectification inflated its apparent stability ~8x")
+    check(True,
+          f"⚠ RESIDUAL IMPORT: both MEASURANDS are same-route, but A is an imported CONSTANT and "
+          f"V100 CANNOT re-check it in-drive -- 427 now carries gp-0x6b94, so the drive does not "
+          f"carry gp-0x6b70 at all. EVIDENCE on r81/r82, BELIEF for r83; its 8 % is already folded "
+          f"into the boundary band")
 
 
 # =================================================================================================
@@ -1189,6 +1382,9 @@ def build():
 
     print("\n  [4b] GATE 3 -- CAN 427 sizing, from the LANE'S OWN output clamp")
     assert_427_sizing()
+
+    print("\n  [4c] E3 -- the phi endpoint AS A DIMENSIONLESS SAME-DRIVE RATIO")
+    assert_phi_endpoint_is_a_ratio()
 
     # ==============================================================================================
     print("\n  [5] THE CAVE REGION AND ITS HOOK -- unchanged from the build that is flying")
@@ -1681,9 +1877,15 @@ def build():
     print(f"  IDENTITY RULE: byte7[7:6] == 2 AND b3 == 1, SINGLE-FRAME. byte4[7:3] is ODD on every "
           f"V100 frame\n     and was EVEN on 100 % of V98/V99 frames. IF IT FAILS, NOTHING MAY BE "
           f"REPORTED.")
-    print(f"  READ-OUT: d(b5) = reference clamp - d(b6 | b5=0) = error clamp (EXACT) - "
-          f"NEVER quote d(b6) alone.\n     phi = 140.6 / R;  R < 387 ct overturns the 0xC63AE "
-          f"NO-GO, R > 387 ct confirms it.")
+    print(f"  READ-OUT, ALL SINGLE-DRIVE ABSOLUTES (no endpoint references V98/V99 or any prior "
+          f"route):\n     E1  d(b5) = the reference clamp, within-route, 3.0-9.3 sigma, "
+          f"resolvable window [0.030, 0.970].\n     E2  the JOINT 2x2 (b6,b5): the MARGINAL d(b6) "
+          f"is reportable at FULL n; d(b6|b5=0) is a POST-HOC\n         slice and may be "
+          f"underpowered exactly when d(b5) is high. d(b6) alone is NOT the error-clamp duty.\n"
+          f"     E3  phi = {PHI_K} x A x Q,  Q = RMS_6-9(column torque 0x18F) / "
+          f"RMS_6-9(signed gp-0x6b94),\n         BOTH from this drive.  Q > 1.254 overturns the "
+          f"0xC63AE NO-GO, Q < 1.254 confirms it;\n         INDETERMINATE inside [1.12, 1.39]. "
+          f"The absolute 'R vs 387 ct' framing is RETRACTED.")
     print(f"  THIS IS AN INSTRUMENT, NOT A FIX. No symptom claim may be made from it.")
     return img_sha, rwd_sha
 
