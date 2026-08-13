@@ -227,7 +227,75 @@ Dependency order strict and acyclic: `core → lanes → control → delivery`.
 
 ---
 
-## 10. OPEN
+## 10. V98 — BUILT AND UNFLASHED, the first COMPARATOR probe in the kit
+
+```
+39990-TVA,A160-V98-V97BASE-CAVE.CMP.6BFE.6BFA.374C-POL.6752-ID.BYTE7.2-0x13000-0x100000.rwd
+  image c9babfed6acf24c0c5877754149a60fd5866dae8407029d7a3a5d74870d151d9   1,048,576 B
+  rwd   fcfa1baa82ea8fbca104eee5c8a398b7d5de8762629351128b05e0cb811e5e3c     986,042 B
+  builder analysis-2020accord/build_v98_tva.py   199/199   BASE = V97 (on the car)
+```
+🛑 **ZERO calibration bytes. ZERO 427 bytes. Cave only — AN INSTRUMENT, NOT A FIX.**
+
+| bit | signal | role |
+|---|---|---|
+| byte4 b7 | `gp-0x6b70 < 0` | V96's rung, byte-identical |
+| **b6** | ⭐ `\|gp-0x6bfe\| ≥ \|gp-0x374c>>4\|` | **MODEL vs ACTUAL** |
+| **b5** | ⭐ `\|gp-0x6bfa\| ≥ \|gp-0x374c>>4\|` | **REQUEST vs ACTUAL** — with b6, ranks all three arms **per frame, no scale assumption** |
+| b4 | `(gp-0x374c>>4) < 0` | V96's rung — **the converse positive control**, previously measured `arg(B′)−arg(rate)` = **+78.6°/+78.0°** on two routes. A broken bit map cannot fake +78° |
+| b3 | `gp-0x6752 ≥ 0` | closes a multi-session blocker; **a DEPENDENCY, not a rider** — it multiplies the whole six-lane sum, so b4 is otherwise ambiguous by a global sign flip |
+| byte7[7:6] | hard-wired **2** | identity + liveness |
+
+**Why a comparator** — `[[accord-probe-design-law-compare-dont-quantise]]`: no LSB, no ceiling, no
+assumed distribution. **V96 lost a whole channel to a 34× over-range guess; this cannot fail that way.**
+
+**ORCHESTRATOR-VERIFIED FROM DISK** (not relayed): both hashes ✓ · V97→V98 diff **146 B**, all in
+`0xC4B34–0xC4BCD` + `0xC4FFC`, **zero unattributed** ✓ · **every cal cell identical to V97** ✓ ·
+**GATE 2 re-derived independently — gp-relative store scan of the built image vs stock returns exactly
+3 stores across exactly 2 cells (`gp-0x1514`, `gp-0x1511`), none removed** ✓.
+
+**GATE 1 PASS** — `gp-0x6bfe` 1R/1W · `gp-0x6bfa` 2R/3W (±20000 clamp, shadow `gp-0x4cfa`) ·
+`gp-0x6752` **51R/5W** (boot-parsed, shadow-validated static in {−1,0,1}; 🛑 **not** 49R/6W, **not** 55) ·
+`gp-0x374c` **already read twice by V96's flown cave**. Wider 32-bit span scan **67 accesses, ZERO
+span-only hits**; 0 `movhi`/literal synthesis with the detector validated on 7,647 candidates; loads
+side-effect-free (all 58 peripheral bases in `0x40000000–0x407EC000`).
+
+⭐ **PSW hazard checked MECHANICALLY from the built image's own decode** — 9 `cmp`→branch windows,
+7 adjacent, 2 containing exactly one `mov imm5`, **0 violations**; all three `sar 0x4,r6` immediately
+followed by the `cmp` that re-establishes flags.
+⭐ **Hook rate PROVEN FROM THE IMAGE**: `0x55C14 = movea 0x14A,r0,r8`, four instructions past the hook
+⇒ **the 100 Hz `0x14A` CAN-TX builder, NOT the 1 kHz control task.** DI window +~1–2 µs against 10 ms.
+`cmp rA,rB` = `rB − rA` verified four ways ⇒ **the comparators do not invert.**
+
+**Cave 112 → 154 B (+42 B, +37.5 %), 43 → 59 instructions, 12.7 % of the 1,212 B extent — stated, not
+claimed away.** ⚠ **`SPEC §R8` under-priced this**: a comparator needs **three live values in two
+registers**, so recomputation alone cannot fix it. Byte 4 is read-modify-written twice with two masks
+(`0xDF`/`0x27`) **proven to partition the byte**. **Path 2 was never available** — `r6`/`r7` are the only
+registers the record can defend.
+
+🛑 **SCORER WARNING — the ~50-build *"byte4[7:3] is always ODD"* convention DOES NOT HOLD on V98.**
+`b3` is a measurand, so **byte4 goes EVEN whenever `gp-0x6752 < 0` — and that is the FINDING, not a
+fault.** Liveness moved to **byte7**. Without this, a scorer pulls a working build.
+🛑 **`0x7FFF` sentinel, PRE-REGISTERED:** when the plausibility latch fires, `gp-0x6bfe` = `0x7FFF` and
+b6 reads TRUE for a reason unrelated to the share. The latch rails `gp-0x6b70` ⇒ **427 pins at exactly
+1023. Score b6 only on frames with 427 ≠ 1023, and report the excluded count.** Measured duty **0 on
+87,423 frames** — but *"measured never" is not "structurally impossible"*.
+⚠ **ONE OPEN GAP BEFORE ANY FLASH:** `mov`'s flag-transparency is **BELIEF** — Ghidra's SLEIGH model
+plus Honda's own instruction scheduling, **not a manual quotation**.
+
+**DRIVE PROTOCOL: ONE parking-lot creep, LKAS engaged, hands on — stop the moment the symptom is felt.**
+~15–30 s of engaged frames. **No matched arms, no episode counts, no highway, no second drive.**
+Optional and free: a few seconds of the same creep LKAS-off; and **60 s turning the wheel by hand with
+the car OFF** (a positive is strong, a negative is weak).
+
+**How V98 differs from the whole arc since V38** — V38–V52 authority/filters/poles · V53–V61 telemetry ·
+V62–V73 the rate lane · V74–V83a the damper · V84 damper reverted · V85–V94 the plant model and its dose ·
+V96 an instrument · V97 a loop pole. **Every instrument in that list measured ONE quantity against an
+ASSUMED SCALE, and six died to that assumption. V98 measures nothing — it COMPARES**, and asks which arm
+of the observer residual is biggest. **That question has never been asked, and the two most recent levers
+(V89, V97) both moved arms of that same residual blind.**
+
+## 11. OPEN
 
 1. **Which arm of the observer residual dominates.** The whole point of V98.
 2. **`sign(gp-0x6752)`** — no longer a blocker: **49 readers, a whole-instruction twin at `0x28F22`**, one
