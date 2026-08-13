@@ -210,6 +210,28 @@ def limit_distribute_mixer_gate(st: EpsState, cal: Calibration) -> int:
 #   DEAD    gp-0x6b62 return-centre (0/75,227 engaged) · gp-0x6bda · gp-0x6a10/FactorD (FactorC is
 #           upstream) · gp-0x6ade (0 writers).
 #   PARTIAL FUN_00036682 filtered term -- IIR alpha 0xC63D2 = 6 => |H(7.8 Hz)| = 0.119 (-18.5 dB), -81.8 deg.
+#
+# 🛑🛑 MODELLING GAP, OPENED 2026-08-13 -- THIS MODULE MODELS gp-0x6ad4 AS A LANE AND DOES NOT MODEL THE
+#     PID's INTERNALS AT ALL. The real structure, verified in Ghidra (orchestrator-reproduced, and
+#     read_memory(0xC6200) = 00 20 LE = 8192):
+#         0x3a798  ld.h  -0x6ad6,gp,r7   ; the PID REFERENCE
+#         0x3a7a2  ld.h  0x7200,tp,r6    ; cal 0xC6200 = 8192
+#         0x3a7b8 / 0x3a7c8              ; r7 := clamp(r7, +-8192)      <-- FIRST saturation
+#         0x3a7ca  ld.h  -0x4f60,gp,r8   ; measured driver torque
+#         0x3a7ce  sub   r7,r8           ; err = torque - clamp(ref, +-8192)
+#         0x3a7d0  addi  -0x2800,r8,r0   ; err := clamp(err, +-10240)   <-- SECOND saturation
+#         0x3a7e8  mul   lp,r8,r0        ; -> P;  I and D derive from the SAME err
+#     ⇒ |gp-0x6ad6| >= 8192 makes d(gp-0x6ad4)/d(gp-0x6b70) EXACTLY ZERO through P, I AND D at once.
+#     🛑 CONSEQUENCE FOR ANYONE USING THIS MODEL: d(gp-0x6b94)/d(gp-0x6b70) = 0.2565 @ 7.79 Hz is the
+#     UNSATURATED derivative and is valid ONLY while |gp-0x6ad6| < 8192. Neither clamp's duty has ever
+#     been measured; V100's b5/b6 measure them. 0xC6200 is FOUR things (friction lane, gp-0x6b70's output
+#     clamp, LERP Y[9], this PID reference clamp) + one unchased reader at 0x39ff6 -- DO NOT EDIT the cell.
+#     ⊕ Term 0 of gp-0x6ad6 (gp-0x6b4a) is IDENTICALLY ZERO (0xC616C = 0 => clamp(x,+-0) == 0), so the
+#     reference is entirely terms 1-7; term 7 IS gp-0x6b70, whose own clamp is the SAME cell => no headroom.
+#     Detail: memory/accord-c6200-clamps-the-pid-reference.md · docs/TRACE-2026-08-13-v100-6ad6-and-ivar6.md
+#     ⚠ NOT IMPLEMENTED HERE ON PURPOSE -- implementing it changes delivered numbers and must be done as
+#     its own verified pass with a re-derived _self_check/_demo contract, not folded into a close-out.
+#
 #   LIVE    gp-0x6ad4 resonance PID -- ★ the most reachable authority of any gated lane HERE: its ceiling
 #           LERP 0xC67C2 (X=[128,1280,3200] Y=[0,1024,1024] on voted speed) reads p50 395-558 / p90 ~830,
 #           i.e. 2-3x the 164-341 quoted elsewhere, because 6-20 km/h is FASTER than the 4.9-8.0 km/h

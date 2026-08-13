@@ -1,5 +1,56 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 LATEST BLOCK, 2026-08-13 (final) — THE PID REFERENCE IS CLAMPED, AND THE RACK QUESTION IS CLOSED
+
+**Read this before the V99 block below.** Four results landed after the V99 score, from the operator's
+own two questions. **V99 is ON THE CAR. V100 is BUILT AND NOT FLASHED.**
+
+1. 🛑🛑 **`0xC6200` (= 8192) HARD-CLAMPS THE PID's REFERENCE `gp-0x6ad6` BEFORE THE ERROR SUBTRACTION**
+   (`0x3a798` → `0x3a7a2` → clamp `0x3a7b8`/`0x3a7c8` → `sub` `0x3a7ce`; a SECOND clamp bounds the error
+   at ±10240 at `0x3a7d0`; P, I and D all derive from that one `err`). ⇒ **`|gp-0x6ad6| ≥ 8192` makes
+   `∂(gp-0x6ad4)/∂(gp-0x6b70)` EXACTLY ZERO through all three terms at once.** [EVIDENCE — Ghidra,
+   orchestrator-reproduced; `read_memory(0xC6200)` = `00 20` LE.]
+   🛑 **⇒ `d(gp-0x6b94)/d(gp-0x6b70) = 0.2565` IS THE *UNSATURATED* DERIVATIVE — valid only while
+   `|gp-0x6ad6| < 8192`. Never quote it unconditioned.** Both duties are UNMEASURED; **V100's `b5`/`b6`
+   measure them.** `0xC6200` is **four** things + one unchased reader (`0x39ff6`) ⇒ **DO NOT EDIT IT.**
+2. ✅ **THE 4× LKAS GAIN (`0xC6CD0`) IS EXONERATED, TWICE.** It does **not** reach term 0 — `FUN_0002b422`
+   writes a **literal zero** (`r0`) into field `+2` at `0x2b52a` while the 4× goes to field `+4` ⇒
+   `gp-0x6b4c`. And it is **not saturating**: its ceiling went **512 → 2048, exactly 4× with the gain**,
+   and the next fixed clamp sits **5×** above. *"Extra command buys no extra authority"* is **REFUTED**.
+3. 🛑 **TERM 0 (`gp-0x6b4a`) IS IDENTICALLY ZERO.** Its producer passes through
+   `clamp(driver_torque, ±cal 0xC616C)` and **`0xC616C` = 0** in stock and V99 ⇒ both writer branches
+   yield zero. ⇒ **The reference is entirely terms 1–7, block-gated by `gp-0x67ab`. Term 7 IS
+   `gp-0x6b70`, whose own clamp is the SAME cell `0xC6200` ⇒ ZERO HEADROOM.** That is where the rail
+   search now sits — and V100 already measures it. ⚠ `0xC616C` is a standing **NEVER-RAISE** cell.
+4. ✅ **THE RACK QUESTION IS CLOSED — AND `0xC6B64` IS ADEQUATE.** `FUN_0003b8f6` **does** read absolute
+   steering angle (`0x3ba12`) and indexes a compensation table at `0xC6B64` (**virgin on all 96 images**)
+   ⇒ **the "plant model is structurally blind to rack position" hypothesis is REFUTED.** Measured from
+   **47 routes / 427 min, four independent estimators**: **16.9:1 near centre → 11.1:1 at lock**, swing
+   0–120° = **1.176 [1.147, 1.201]** against the firmware's **1.206×** ⇒ **ADEQUATE, agreeing to 0.01–0.07
+   at every knot.** 🛑 **The 1.67–1.82× desk estimate off the service-manual schematic is REFUTED.**
+   Beyond 120° the rack keeps quickening while the model goes flat ⇒ **~20 % uncompensated, but ALL such
+   exposure is below 5 m/s.** Centre offset **−4.25°** (openpilot's learned −4.78°).
+   ⭐ **The rack is SYMMETRIC** — all 19 paired per-bin CIs cover equality, and an **injected 2 % asymmetry
+   WOULD have been detected ⇒ a real ≥2 % asymmetry is EXCLUDED.** θ₀ exonerated both ways (sweeping
+   −7…−1.5° moves the L/R difference by **0.9 %**, under its own CI half-width).
+   ⇒ **NO angle-dependent plant-model error exists in the band he drives. That line is dead as a symptom
+   explanation.** Traces: `docs/TRACE-2026-08-13-measured-steering-ratio.md` · `…-variable-ratio-rack.md`
+   · `…-4x-gain-to-term0.md` · `…-v100-6ad6-and-ivar6.md`.
+
+🛑 **TWO INSTRUMENT FACTS THAT INVALIDATE EXISTING ANALYSES:**
+- **`carState.yawRate` is IDENTICALLY ZERO on this car** — 0 nonzero of 512,895 samples. Anything reading
+  `cs_yaw` reads zeros. Use `livePose.angularVelocityDevice.z` (**z-DOWN ⇒ negative on a LEFT turn**).
+- **`vEgo` is INVALID as a speed reference for any rear-axle kinematic quantity at angle** — it averages
+  all four wheels and runs **+7.9 %** fast at 250–400°, **shaped exactly like a flat plateau.** It produced
+  a **FALSE PASS of the ratio study's own positive control** before being caught. Use `(ws_rl+ws_rr)/2`.
+
+⚠ **GOLDEN-MODEL GAP, OPENED AND MARKED:** `eps_chain_control.py` models `gp-0x6ad4` as a lane and **does
+not model the PID's internals at all**, so the clamps above are absent from it. A header note now sits at
+the exact site. **Implementing it changes delivered numbers and must be its own verified pass with a
+re-derived contract.** The 87-symbol / `740f4bcd…` contract **PASSES** as of this close-out.
+
+---
+
 **Last updated: 2026-08-13 (later still) — V99's FLIGHT SCORE IS IN. `0xC40BC` IS CLOSED AT ANY DOSE.**
 V99 flew despite an already-retracted rationale (`0xC40BC` delivers 0.5–1.2% against a ~9% floor;
 see §3b/§5 of the V98 handoff), and the flight itself now shows WHY the lever can never work: E1

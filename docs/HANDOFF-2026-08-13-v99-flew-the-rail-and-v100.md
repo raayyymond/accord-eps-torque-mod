@@ -500,3 +500,66 @@ intent.
 delta is 10 counts on a ~25,600 baseline — neither changes driving feel. The full byte-exact
 enumeration, all 140 control-law bytes, is in `docs/BUILD-LINEAGE.md`'s per-build rows and reproducible
 with `python analysis-2020accord/ledger_v38_to_v99_bytes.py delta`.)*
+
+---
+
+# 13. ⭐ AFTER THE CLOSE-OUT — THE OPERATOR'S TWO QUESTIONS, AND FOUR RESULTS
+
+Added 2026-08-13 (final). Prompted entirely by the operator, not by the session plan. Traces:
+`TRACE-2026-08-13-4x-gain-to-term0.md` · `…-variable-ratio-rack.md` · `…-measured-steering-ratio.md`.
+
+## 13a. "There's feedback on the LKAS command — shouldn't it be scaled 4× too?"
+**It WAS, and that was a bug V57 fixed.** `0xC646C` is a **shared sensor-scale with 6 readers** (1 forward,
+≥3 feedback, two of which read the raw torque sensor). Raising it for "4× authority" silently scaled two
+raw-sensor feedback paths. V57 split the forward reader onto `0xC6CD0` and returned `0xC646C` to Honda's
+891. **Leaving feedback at 1× is correct**: the forward path scaled coherently (clamps 512→2048, also 4×)
+while the feedback path's limit is a **hardcoded ±0x200 literal**, not a cal — scaling it drives into a
+ceiling that cannot move, i.e. a relay, the V80 class.
+
+## 13b. ✅ THE 4× IS EXONERATED, TWICE [EVIDENCE, orchestrator-verified at `0x2b52a`/`0x2b52c`]
+It does **not** reach term 0: `FUN_0002b422` writes a **literal zero (`r0`)** into struct field `+2` while
+the 4× command goes to field `+4` ⇒ `gp-0x6b4c`. Forward and backward walks agree. And it is **not
+saturating** — ceiling **512 → 2048, exactly 4× with the gain**, next fixed clamp **5×** above.
+⇒ ***"Extra command buys no extra authority" is REFUTED. The 4× delivers a genuine, unsaturated 4×.***
+
+## 13c. 🛑 TERM 0 IS IDENTICALLY ZERO — and the rail search lands on what V100 already measures
+`gp-0x6b76 = -clamp(driver_torque, ±cal 0xC616C)` and **`0xC616C` = 0** (stock and V99, orchestrator
+re-read `00 00` LE) ⇒ a clamp with limit zero annihilates its input; the other branch emits `0x7FFF`
+which fails its own 20480 gate. **Both branches zero ⇒ `gp-0x6b4a ≡ 0`.**
+⇒ **`gp-0x6ad6` is entirely terms 1–7, block-gated by `gp-0x67ab`. TERM 7 IS `gp-0x6b70`, whose own clamp
+is the SAME cell `0xC6200` as the reference threshold ⇒ ZERO HEADROOM.** V100's `b5` measures exactly this.
+⚠ `0xC616C` is a standing **NEVER-RAISE** cell — independently rediscovered from scratch this session.
+
+## 13d. ✅ THE RACK QUESTION IS CLOSED — AND THREE ORCHESTRATOR HYPOTHESES DIED
+The operator supplied Honda's variable-ratio rack curve and reported worst grinding in the centre band.
+1. **"The plant model is structurally blind to rack position" — REFUTED.** `FUN_0003b8f6` reads absolute
+   steering angle at `0x3ba12` and indexes `0xC6B64` (virgin on all 96 images).
+2. **"The firmware under-compensates ~3×" — REFUTED by measurement.** 47 routes / 427 min, four disjoint
+   estimators: **16.9:1 centre → 11.1:1 lock**, swing 0–120° **1.176 [1.147, 1.201]** vs the firmware's
+   **1.206×** ⇒ **adequate, agreeing 0.01–0.07 at every knot.** The **1.67–1.82×** figure came from an
+   orchestrator pixel-reading of a **schematic** graph whose depth is not recoverable. **Do not re-derive
+   a rack number from that image.**
+3. **"The left side is 3–5 % quicker" — REFUTED and retracted.** All 19 paired CIs cover equality; an
+   **injected 2 % asymmetry IS caught** ⇒ a real ≥2 % asymmetry is **EXCLUDED**. θ₀ exonerated both ways
+   (0.9 % leverage over a −7…−1.5° sweep); the per-side θ₀ split is **chord extrapolation** — midpoint
+   pinned at −4.21°.
+⊕ **What survives:** ~20 % uncompensated **beyond 120°**, where **all** exposure is **below 5 m/s**.
+**65 % of engaged time is inside 0–34°, where compensation is correct.** ⇒ **No angle-dependent
+plant-model error exists in the band he drives; this line is dead as a symptom explanation.**
+
+## 13e. 🛑🛑 TWO INSTRUMENT FACTS THAT INVALIDATE OTHER ANALYSES
+- **`carState.yawRate` is IDENTICALLY ZERO** — 0 nonzero of 512,895. Anything reading `cs_yaw` reads
+  zeros. Use `livePose.angularVelocityDevice.z` (**z-DOWN ⇒ negative on a LEFT turn**).
+- **`vEgo` is invalid as a speed reference at steering angle** — averages four wheels, **+7.9 %** fast at
+  250–400°, **shaped exactly like a flat plateau**. It produced a **FALSE PASS of the ratio study's own
+  positive control.** Use `(ws_rl+ws_rr)/2`.
+⭐ Method note worth reusing: **a shuffle control is uninformative by construction here** (it kills the
+sign relation, null [−1.43, +1.49]). **Injection nulls replaced it** — a genuinely flat rack reads back
+**0.979 [0.968, 0.988]** through the identical pipeline.
+
+## 13f. GOLDEN-MODEL GAP, OPENED AND MARKED
+`eps_chain_control.py` models `gp-0x6ad4` as a lane and **does not model the PID's internals at all**, so
+neither clamp is in it. A header note now sits at the exact site with the instruction addresses.
+**Implementing it changes delivered numbers and must be its own verified pass with a re-derived
+`_self_check`/`_demo` contract.** The **87-symbol / `740f4bcd…` contract PASSES** at this close-out
+(comment-only edit, 2,512 bytes unchanged).
