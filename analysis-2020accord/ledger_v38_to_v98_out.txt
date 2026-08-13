@@ -1,0 +1,1530 @@
+### BURNED: V95 -- deliberately BURNED build number -- never cut, no image, not a missing file
+
+ANCHORS OK: stock 0xC646C=891, code.bin[0x454FE]=0xBA, every image len=0x100000
+88 build images on disk (V22..V98); TARGET=V98, previous-on-car=V97
+
+====================================================================================================
+COVERAGE MASK AUDIT
+====================================================================================================
+stock non-FF where V98 is FF : 50296 bytes
+of which FF in EVERY build        : 50284  => packaging, excluded from diffs
+    0x00000-0x00D5F  (3424 bytes)
+    0x00FB0-0x014CF  (1312 bytes)
+    0x01FF0-0x05F31  (16194 bytes)
+    0x07000-0x07CC7  (3272 bytes)
+    0x07FD0-0x08E50  (3713 bytes)
+    0x08FD0-0x0EF71  (24482 bytes)
+    0x12FF0-0x12FFF  (16 bytes)
+
+FF on V98 but NOT on every build (12) -- REAL EDITS, kept in the diff:
+    0x55C0F first went FF at V31p
+    0xC61C0 first went FF at V36
+    0xC61C1 first went FF at V36
+    0xC61C2 first went FF at V36
+    0xC61C3 first went FF at V36
+    0xC61C4 first went FF at V36
+    0xC61C5 first went FF at V36
+    0xC64B4 first went FF at V36
+    0xC64B5 first went FF at V36
+    0xC64B6 first went FF at V36
+    0xC64B7 first went FF at V36
+    0xC64B8 first went FF at V37
+
+====================================================================================================
+A. CROSS-BUILD MATRIX -- every SITES cell, run-length along build order
+====================================================================================================
+
+0x13109  part-number ASCII byte (cosmetic build marker, '-'->',')   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=0x2D  V98=0x2C  [NON-STOCK]  frozen 88 builds (since V22)
+      STOCK              0x2D
+      V22..V98           0x2C
+
+0x14120  part-number ASCII byte, second copy (cosmetic)   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=0x2D  V98=0x2C  [NON-STOCK]  frozen 88 builds (since V22)
+      STOCK              0x2D
+      V22..V98           0x2C
+
+0x2A1F0  V57 decouple displacement (7CD0 => reads 0xC6CD0)   [name src: build_v87_tva.py]
+    stock=29804  V98=31952  [NON-STOCK]  frozen 17 builds (since V81)
+      STOCK..V56         29804
+      V57..V75           31952
+      V76                29804   <-- BACK TO STOCK
+      V76g..V77b         31952
+      V78..V80           29804   <-- BACK TO STOCK
+      V81..V98           31952
+
+0x3AA96  Lever B GATE byte (C5 = dead 0x683C / FB = latActive 0x6806)   [name src: build_v98_tva.py FROZEN]
+    stock=0xC5  V98=0xFB  [NON-STOCK]  frozen 10 builds (since V88)
+      STOCK..V66         0xC5
+      V67..V68           0xFB
+      V69..V71b          0xC5   <-- BACK TO STOCK
+      V71c               0xFB
+      V72..V76           0xC5   <-- BACK TO STOCK
+      V76g               0xFB
+      V77..V83a          0xC5   <-- BACK TO STOCK
+      V84..V86b          0xFB
+      V87                0xC5   <-- BACK TO STOCK
+      V88..V98           0xFB
+
+0x3AB76  Lever A: V62 sar on r26 (AA stock / A9 = x2)   [name src: build_v98_tva.py FROZEN]
+    stock=0xAA  V98=0xAA  [STOCK]  frozen 30 builds (since V71b)
+      STOCK..V61         0xAA
+      V62                0xA9
+      V63..V64           0xAA   <-- BACK TO STOCK
+      V65                0xA9
+      V66..V70           0xAA   <-- BACK TO STOCK
+      V71a               0xA9
+      V71b..V98          0xAA   <-- BACK TO STOCK
+
+0x3AC20  Lever A: V62 sar on r24 (AA stock / A9 = x2)   [name src: build_v98_tva.py FROZEN]
+    stock=0xAA  V98=0xAA  [STOCK]  frozen 30 builds (since V71b)
+      STOCK..V61         0xAA
+      V62                0xA9
+      V63..V64           0xAA   <-- BACK TO STOCK
+      V65                0xA9
+      V66..V70           0xAA   <-- BACK TO STOCK
+      V71a               0xA9
+      V71b..V98          0xAA   <-- BACK TO STOCK
+
+0x454FE  V42 macro-ratchet fix (BA = stock bne / B5 = br)   [name src: build_v98_tva.py FROZEN]
+    stock=0xBA  V98=0xB5  [NON-STOCK]  frozen 18 builds (since V80)
+      STOCK..V41         0xBA
+      V42..V49           0xB5
+      V49p               0xBA   <-- BACK TO STOCK
+      V50                0xB5
+      V50p..V51p         0xBA   <-- BACK TO STOCK
+      V52..V52c          0xB5
+      V53..V70           0xBA   <-- BACK TO STOCK
+      V71a..V75          0xB5
+      V76                0xBA   <-- BACK TO STOCK
+      V76g..V77b         0xB5
+      V78..V79           0xBA   <-- BACK TO STOCK
+      V80..V98           0xB5
+
+0x55C0E  CAN 0x14A cave HOOK -- the 4-byte jarl that calls the cave at 0xC4B34   [name src: build_v87_tva.py]
+    stock=2436e8ea  V98=86ff26ef  [NON-STOCK]  frozen 49 builds (since V53)
+      STOCK..V31         2436e8ea
+      V31p               86ff5aef
+      V31p2              86ff6eef
+      V31t..V49          2436e8ea   <-- BACK TO STOCK
+      V49p               86ff26ef
+      V50                2436e8ea   <-- BACK TO STOCK
+      V50p..V51p         86ff26ef
+      V52..V52c          2436e8ea   <-- BACK TO STOCK
+      V53..V98           86ff26ef
+
+0x55DF2  CAN-427 packer SOURCE displacement (which gp cell 0x1AB carries)   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=37864  V98=38032  [NON-STOCK]  frozen 3 builds (since V96)
+      STOCK..V86b        37864
+      V87..V89           37992
+      V90..V91           38106
+      V92                37954
+      V93..V94           38106
+      V96..V98           38032
+
+0x55E10  CAN-427 packer SHIFT byte (sar N on the 427 payload)   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=0xA3  V98=0xA6  [NON-STOCK]  frozen 3 builds (since V96)
+      STOCK..V91         0xA3
+      V92                0xA4
+      V93                0xA3   <-- BACK TO STOCK
+      V94                0xA1
+      V96..V98           0xA6
+
+0xC4048  friction-family cal (checked VIRGIN)   [name src: task brief]
+    stock=0  V98=0  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         0
+
+0xC407C  friction-comp clamp neighbour   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=461  V98=461  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         461
+
+0xC407E  HARD-FAULT INTERLOCK CLAMP (Honda 511, one under its 512 trip)   [name src: build_v98_tva.py FROZEN]
+    stock=511  V98=511  [STOCK]  frozen 20 builds (since V78)
+      STOCK..V72         511
+      V73..V75           850
+      V76                511   <-- BACK TO STOCK
+      V76g..V77b         850
+      V78..V98           511   <-- BACK TO STOCK
+
+0xC4080  K0 pure-Coulomb arm -- recorded NEVER-RAISE relay hazard   [name src: build_v98_tva.py FROZEN]
+    stock=0  V98=0  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         0
+
+0xC40BC  Coulomb relay breakpoint / friction relay gate   [name src: build_v98_tva.py FROZEN]
+    stock=600  V98=600  [STOCK]  frozen 11 builds (since V87)
+      STOCK..V84         600
+      V85..V86b          6000
+      V87..V98           600   <-- BACK TO STOCK
+
+0xC40D0  friction EMA alpha (16.7 Hz)   [name src: build_v98_tva.py FROZEN]
+    stock=408  V98=408  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         408
+
+0xC40D2  K1 modelled Coulomb friction gain (the MODEL arm)   [name src: build_v98_tva.py FROZEN]
+    stock=102  V98=204  [NON-STOCK]  frozen 9 builds (since V89)
+      STOCK..V88         102
+      V89..V98           204
+
+0xC40D4  observer torque IIR / command-branch EMA   [name src: build_v98_tva.py FROZEN]
+    stock=573  V98=573  [STOCK]  frozen 12 builds (since V86b)
+      STOCK..V85         573
+      V86                286
+      V86b..V98          573   <-- BACK TO STOCK
+
+0xC40D6  accel/inertia IIR   [name src: build_v98_tva.py FROZEN]
+    stock=246  V98=246  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         246
+
+0xC40D8  gp-0x4f60 IIR (a no-op)   [name src: build_v98_tva.py FROZEN]
+    stock=3686  V98=3686  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         3686
+
+0xC4120  V48a-era cal byte   [name src: empirical (this file)]
+    stock=0x01  V98=0x01  [STOCK]  frozen 57 builds (since V48b)
+      STOCK..V47         0x01
+      V48a               0x00
+      V48b..V98          0x01   <-- BACK TO STOCK
+
+0xC520C  governor rate ceiling / cap table (V40 bricked on a neighbour)   [name src: build_v98_tva.py FROZEN]
+    stock=5  V98=5  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         5
+
+0xC6158  ceiling tp+0x7158 fallback   [name src: ledger_v38_to_v84_bytes.py SITES]
+    stock=512  V98=512  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         512
+
+0xC616C  (checked VIRGIN)   [name src: task brief]
+    stock=0  V98=0  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         0
+
+0xC6194  the REAL LKAS slew limiter -- DEAD (0xC4118 all-1)   [name src: build_v98_tva.py FROZEN]
+    stock=3  V98=3  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         3
+
+0xC61B2  ARBITRATION output clamp   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=512  V98=2048  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK              512
+      V22..V37           1024
+      V38..V98           2048
+
+0xC61B4  LKAS-GAIN output clamp   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=512  V98=2048  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK              512
+      V22..V37           1024
+      V38..V98           2048
+
+0xC61B8  pre-gain deadband   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=102  V98=102  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         102
+
+0xC61C0  gentle-EME debounce RATE threshold [0]   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=1600  V98=65535  [NON-STOCK]  frozen 70 builds (since V36)
+      STOCK..V35         1600
+      V36..V98           65535
+
+0xC61C2  gentle-EME debounce RATE threshold [1]   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=896  V98=65535  [NON-STOCK]  frozen 70 builds (since V36)
+      STOCK..V35         896
+      V36..V98           65535
+
+0xC61C4  gentle-EME debounce RATE threshold [2]   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=1280  V98=65535  [NON-STOCK]  frozen 70 builds (since V36)
+      STOCK..V35         1280
+      V36..V98           65535
+
+0xC61D6  (checked VIRGIN)   [name src: task brief]
+    stock=0  V98=0  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         0
+
+0xC61DA  Q10 integrator scale   [name src: ledger_v38_to_v84_bytes.py SITES]
+    stock=1092  V98=1092  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         1092
+
+0xC61F6  r24 lane deadzone   [name src: build_v98_tva.py FROZEN]
+    stock=3  V98=3  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         3
+
+0xC6200  gp-0x6b70's OUTPUT CLAMP   [name src: build_v98_tva.py FROZEN]
+    stock=8192  V98=8192  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         8192
+
+0xC6206  speed-selector cal A (V40 brick)   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=512  V98=512  [STOCK]  frozen 60 builds (since V46)
+      STOCK..V39         512
+      V40                -1
+      V41..V44           512   <-- BACK TO STOCK
+      V45                205
+      V46..V98           512   <-- BACK TO STOCK
+
+0xC6208  speed-selector cal B (V40 brick)   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=205  V98=205  [STOCK]  frozen 65 builds (since V41)
+      STOCK..V39         205
+      V40                -1
+      V41..V98           205   <-- BACK TO STOCK
+
+0xC62EA  low-speed steer lockout window (320 ct ~ 5 km/h); 0 = steer-to-zero   [name src: build_v98_tva.py FROZEN]
+    stock=320  V98=0  [NON-STOCK]  frozen 17 builds (since V81)
+      STOCK..V52c        320
+      V53..V75           0
+      V76                320   <-- BACK TO STOCK
+      V76g..V77b         0
+      V78..V80           320   <-- BACK TO STOCK
+      V81..V98           0
+
+0xC6316  governor vehicle-speed cal ~10 km/h   [name src: ledger_v38_to_v84_bytes.py SITES]
+    stock=640  V98=640  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         640
+
+0xC636E  (checked VIRGIN)   [name src: task brief]
+    stock=205  V98=205  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         205
+
+0xC6372  (checked VIRGIN)   [name src: task brief]
+    stock=205  V98=205  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         205
+
+0xC63A0  Path-2 lane weight w[0], gp-0x6bd0 (the damper lane)   [name src: build_v98_tva.py FROZEN]
+    stock=1024  V98=1024  [STOCK]  frozen 16 builds (since V83a)
+      STOCK..V71c        1024
+      V72..V75           2048
+      V76                1024   <-- BACK TO STOCK
+      V76g               2048
+      V77..V80           1024   <-- BACK TO STOCK
+      V81                2048
+      V83a..V98          1024   <-- BACK TO STOCK
+
+0xC63A2  Path-2 lane weight w[1], gp-0x6bbe (VISCOUS)   [name src: build_v98_tva.py FROZEN]
+    stock=1024  V98=1024  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         1024
+
+0xC63A4  Path-2 lane weight w[2], gp-0x6b46   [name src: build_v98_tva.py FROZEN]
+    stock=1024  V98=1024  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         1024
+
+0xC63A6  Path-2 lane weight w[3], gp-0x6b26 (INERTIA -- the NO-GO lever)   [name src: build_v98_tva.py FROZEN]
+    stock=1024  V98=1024  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         1024
+
+0xC63A8  Path-2 lane weight w[4], gp-0x6b4e (lane provably == 0)   [name src: build_v98_tva.py FROZEN]
+    stock=1024  V98=1024  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         1024
+
+0xC63AA  Path-2 lane weight w[5], gp-0x6b4c (the LKAS lane)   [name src: build_v98_tva.py FROZEN]
+    stock=1024  V98=1024  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         1024
+
+0xC63AC  Stage-1 IIR alpha on the ACTUAL arm (gp-0x374c>>4); fc ~15.9 Hz @1 kHz   [name src: build_v98_tva.py FROZEN]
+    stock=102  V98=150  [NON-STOCK]  frozen 2 builds (since V97)
+      STOCK..V96         102
+      V97..V98           150
+
+0xC63AE  Stage-2 input scale   [name src: build_v98_tva.py FROZEN]
+    stock=1024  V98=1024  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         1024
+
+0xC63B8  (checked VIRGIN)   [name src: task brief]
+    stock=41  V98=41  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         41
+
+0xC63D2  FUN_00036682 pole, fc 0.93 Hz   [name src: build_v98_tva.py FROZEN]
+    stock=6  V98=6  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         6
+
+0xC63F8  authority ramp-rate UP   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=33  V98=33  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         33
+
+0xC63FC  authority ramp-rate, the 10x-asymmetric twin   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=328  V98=328  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         328
+
+0xC640A  FUN_00036c12 FALLBACK-2 flat gain (gp-0x671a >= 5)   [name src: build_v98_tva.py FROZEN]
+    stock=-8192  V98=-8192  [STOCK]  frozen 3 builds (since V96)
+      STOCK..V92         -8192
+      V93..V94           -6144
+      V96..V98           -8192   <-- BACK TO STOCK
+
+0xC640C  FUN_00036c12 FALLBACK-1 flat gain (outer gate fails)   [name src: build_v98_tva.py FROZEN]
+    stock=-3277  V98=-3277  [STOCK]  frozen 3 builds (since V96)
+      STOCK..V92         -3277
+      V93..V94           -2458
+      V96..V98           -3277   <-- BACK TO STOCK
+
+0xC643E  gain_A arm   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=1536  V98=1536  [STOCK]  frozen 37 builds (since V65)
+      STOCK..V41         1536
+      V42                0
+      V43..V62           1536   <-- BACK TO STOCK
+      V63..V64           3072
+      V65..V98           1536   <-- BACK TO STOCK
+
+0xC6440  third arm gp-0x671a   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=2048  V98=2048  [STOCK]  frozen 37 builds (since V65)
+      STOCK..V62         2048
+      V63..V64           4096
+      V65..V98           2048   <-- BACK TO STOCK
+
+0xC6442  gp-0x671d arm   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=1024  V98=1024  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         1024
+
+0xC6444  r26 engaged arm   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=512  V98=512  [STOCK]  frozen 28 builds (since V72)
+      STOCK..V41         512
+      V42                0
+      V43..V71b          512   <-- BACK TO STOCK
+      V71c               3072
+      V72..V98           512   <-- BACK TO STOCK
+
+0xC6446  r24 engaged arm -- LEVER B ARM   [name src: build_v98_tva.py FROZEN]
+    stock=512  V98=5244  [NON-STOCK]  frozen 10 builds (since V88)
+      STOCK..V66         512
+      V67..V68           5244
+      V69..V71b          512   <-- BACK TO STOCK
+      V71c               5244
+      V72..V76           512   <-- BACK TO STOCK
+      V76g               5244
+      V77..V83a          512   <-- BACK TO STOCK
+      V84..V86b          5244
+      V87                512   <-- BACK TO STOCK
+      V88..V98           5244
+
+0xC644A  PID D-path IIR / V43 dirty-derivative pole   [name src: build_v98_tva.py FROZEN]
+    stock=1024  V98=1024  [STOCK]  frozen 55 builds (since V49p)
+      STOCK..V42         1024
+      V43                32
+      V44..V48b          1024   <-- BACK TO STOCK
+      V49                64
+      V49p..V98          1024   <-- BACK TO STOCK
+
+0xC6450  V46 lever   [name src: ledger_v38_to_v84_bytes.py SITES]
+    stock=1024  V98=1024  [STOCK]  frozen 59 builds (since V47)
+      STOCK..V45         1024
+      V46                32
+      V47..V98           1024   <-- BACK TO STOCK
+
+0xC6468  model output gain -- SHARED, scales BOTH arms of the residual   [name src: build_v98_tva.py FROZEN]
+    stock=2639  V98=2639  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         2639
+
+0xC646C  SHARED sensor scale (Honda 891)   [name src: build_v98_tva.py FROZEN]
+    stock=891  V98=891  [STOCK]  frozen 17 builds (since V81)
+      STOCK              891
+      V22..V37           1782
+      V38..V56           3564
+      V57..V75           891   <-- BACK TO STOCK
+      V76                3564
+      V76g..V77b         891   <-- BACK TO STOCK
+      V78..V80           3564
+      V81..V98           891   <-- BACK TO STOCK
+
+0xC646E  INERTIA/damping gain   [name src: build_v98_tva.py FROZEN]
+    stock=1428  V98=1428  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         1428
+
+0xC64B4  gentle-EME debounce TORQUE threshold [0]   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=24688  V98=65535  [NON-STOCK]  frozen 70 builds (since V36)
+      STOCK..V35         24688
+      V36..V98           65535
+
+0xC64B6  gentle-EME debounce TORQUE threshold [1]   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=16438  V98=65535  [NON-STOCK]  frozen 70 builds (since V36)
+      STOCK..V35         16438
+      V36..V98           65535
+
+0xC64B8  DTC-0x49 fail-counter gate   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=0x70  V98=0xFF  [NON-STOCK]  frozen 69 builds (since V37)
+      STOCK..V36         0x70
+      V37..V98           0xFF
+
+0xC64C8  aggregator mode selector   [name src: ledger_v38_to_v84_bytes.py SITES]
+    stock=0x00  V98=0x00  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         0x00
+
+0xC64C9  blend mux   [name src: ledger_v38_to_v84_bytes.py SITES]
+    stock=0x00  V98=0x00  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         0x00
+
+0xC64DE  legacy re-engage ramp ('RAMPSTEP', label disputed)   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=25617  V98=25627  [NON-STOCK]  frozen 88 builds (since V22)
+      STOCK              25617
+      V22..V98           25627
+
+0xC64FA  CEIL byte cal   [name src: ledger_v38_to_v84_bytes.py SITES]
+    stock=0x05  V98=0x05  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         0x05
+
+0xC6598  corridor wall FLOAT +A   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=1f  V98=5f  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V28         1f
+      V29                2f
+      V30..V37           4f
+      V38..V98           5f
+
+0xC659C  corridor wall FLOAT +B   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=1f  V98=5f  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V28         1f
+      V29                2f
+      V30..V37           4f
+      V38..V98           5f
+
+0xC65AC  corridor wall FLOAT -A   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=-1f  V98=-5f  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V28         -1f
+      V29                -2f
+      V30..V37           -4f
+      V38..V98           -5f
+
+0xC65B0  corridor wall FLOAT -B   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=-1f  V98=-5f  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V28         -1f
+      V29                -2f
+      V30..V37           -4f
+      V38..V98           -5f
+
+0xC65C4  boost floor FLOAT [0]   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=0f  V98=5f  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V30         0f
+      V31..V37           4f
+      V38..V98           5f
+
+0xC65C8  boost floor FLOAT [1]   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=1.5f  V98=5f  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V30         1.5f
+      V31..V37           4f
+      V38..V98           5f
+
+0xC65CC  boost floor FLOAT [2]   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=2f  V98=5f  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V30         2f
+      V31..V37           4f
+      V38..V98           5f
+
+0xC674E  corridor wall INT +A   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=1024  V98=5120  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V24         1024
+      V25..V29           2048
+      V30..V37           4096
+      V38..V98           5120
+
+0xC6750  corridor wall INT +B   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=1024  V98=5120  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V24         1024
+      V25..V29           2048
+      V30..V37           4096
+      V38..V98           5120
+
+0xC675A  corridor wall INT -A   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=-1024  V98=-5120  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V24         -1024
+      V25..V29           -2048
+      V30..V37           -4096
+      V38..V98           -5120
+
+0xC675C  corridor wall INT -B   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=-1024  V98=-5120  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V24         -1024
+      V25..V29           -2048
+      V30..V37           -4096
+      V38..V98           -5120
+
+0xC6768  boost floor INT [0]   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=0  V98=5120  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V30         0
+      V31..V37           4096
+      V38..V98           5120
+
+0xC676A  boost floor INT [1]   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=1536  V98=5120  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V30         1536
+      V31..V37           4096
+      V38..V98           5120
+
+0xC676C  boost floor INT [2]   [name src: ledger_v94_cells.py MATRIX_SCALARS]
+    stock=2048  V98=5120  [NON-STOCK]  frozen 68 builds (since V38)
+      STOCK..V30         2048
+      V31..V37           4096
+      V38..V98           5120
+
+0xC6A72  gain_A rec0 [0]   [name src: ledger_v38_to_v84_bytes.py SITES]
+    stock=3072  V98=3072  [STOCK]  frozen 16 builds (since V83a)
+      STOCK..V41         3072
+      V42                0
+      V43..V71a          3072   <-- BACK TO STOCK
+      V71b               6144
+      V71c               3072   <-- BACK TO STOCK
+      V72..V75           512
+      V76                3072   <-- BACK TO STOCK
+      V76g..V77b         512
+      V78..V80           3072   <-- BACK TO STOCK
+      V81                512
+      V83a..V98          3072   <-- BACK TO STOCK
+
+0xC6A74  gain_A rec0 [1]   [name src: ledger_v38_to_v84_bytes.py SITES]
+    stock=3072  V98=3072  [STOCK]  frozen 16 builds (since V83a)
+      STOCK..V41         3072
+      V42                0
+      V43..V71a          3072   <-- BACK TO STOCK
+      V71b               6144
+      V71c               3072   <-- BACK TO STOCK
+      V72..V75           512
+      V76                3072   <-- BACK TO STOCK
+      V76g..V77b         512
+      V78..V80           3072   <-- BACK TO STOCK
+      V81                512
+      V83a..V98          3072   <-- BACK TO STOCK
+
+0xC6A9A  gain_A rec2 Y[0]   [name src: ledger_v38_to_v84_bytes.py SITES]
+    stock=2664  V98=2664  [STOCK]  frozen 63 builds (since V43)
+      STOCK..V41         2664
+      V42                0
+      V43..V98           2664   <-- BACK TO STOCK
+
+0xC6AAE  gain_A rec3 Y[0]   [name src: ledger_v38_to_v84_bytes.py SITES]
+    stock=2560  V98=2560  [STOCK]  frozen 63 builds (since V43)
+      STOCK..V41         2560
+      V42                0
+      V43..V98           2560   <-- BACK TO STOCK
+
+0xC6AE6  PID Kd   [name src: build_v98_tva.py FROZEN]
+    stock=2048  V98=2048  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         2048
+
+0xC6B12  PID Ki   [name src: build_v98_tva.py FROZEN]
+    stock=98  V98=98  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         98
+
+0xC6B26  PID Kp   [name src: build_v98_tva.py FROZEN]
+    stock=256  V98=256  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         256
+
+0xC6CD0  V57 private forward LKAS gain (3564 = 4.000x)   [name src: build_v98_tva.py FROZEN]
+    stock=-1  V98=3564  [NON-STOCK]  frozen 17 builds (since V81)
+      STOCK..V56         -1
+      V57..V75           3564
+      V76                -1   <-- BACK TO STOCK
+      V76g..V77b         3564
+      V78..V80           -1   <-- BACK TO STOCK
+      V81..V98           3564
+
+0xD6A6C  friction/inertia mode 24 (MANUAL) Y[0]   [name src: build_v98_tva.py FROZEN]
+    stock=-9830  V98=-9830  [STOCK]  frozen 3 builds (since V96)
+      STOCK..V92         -9830
+      V93..V94           -4915
+      V96..V98           -9830   <-- BACK TO STOCK
+
+0xD6A6E  friction/inertia mode 24 (MANUAL) Y[1]   [name src: build_v98_tva.py FROZEN]
+    stock=-5734  V98=-5734  [STOCK]  frozen 3 builds (since V96)
+      STOCK..V92         -5734
+      V93..V94           -2867
+      V96..V98           -5734   <-- BACK TO STOCK
+
+0xD6A70  friction/inertia mode 24 (MANUAL) Y[2]   [name src: build_v98_tva.py FROZEN]
+    stock=-1966  V98=-1966  [STOCK]  frozen 3 builds (since V96)
+      STOCK..V92         -1966
+      V93..V94           -983
+      V96..V98           -1966   <-- BACK TO STOCK
+
+0xD7A5C  friction/inertia mode 26 (ENGAGED) Y[0]   [name src: build_v98_tva.py FROZEN]
+    stock=-9830  V98=-14745  [NON-STOCK]  frozen 3 builds (since V96)
+      STOCK..V73         -9830
+      V74..V75           -14745
+      V76                -9830   <-- BACK TO STOCK
+      V76g..V77b         -14745
+      V78..V90           -9830   <-- BACK TO STOCK
+      V91..V92           -14745
+      V93..V94           -2458
+      V96..V98           -14745
+
+0xD7A5E  friction/inertia mode 26 (ENGAGED) Y[1]   [name src: build_v98_tva.py FROZEN]
+    stock=-5734  V98=-8601  [NON-STOCK]  frozen 3 builds (since V96)
+      STOCK..V73         -5734
+      V74..V75           -8601
+      V76                -5734   <-- BACK TO STOCK
+      V76g..V77b         -8601
+      V78..V90           -5734   <-- BACK TO STOCK
+      V91..V92           -8601
+      V93..V94           -1434
+      V96..V98           -8601
+
+0xD7A60  friction/inertia mode 26 (ENGAGED) Y[2]   [name src: build_v98_tva.py FROZEN]
+    stock=-1966  V98=-2949  [NON-STOCK]  frozen 3 builds (since V96)
+      STOCK..V73         -1966
+      V74..V75           -2949
+      V76                -1966   <-- BACK TO STOCK
+      V76g..V77b         -2949
+      V78..V90           -1966   <-- BACK TO STOCK
+      V91..V92           -2949
+      V93..V94           -492
+      V96..V98           -2949
+
+0xD7A6C  friction/inertia mode 27 (ENGAGED) Y[0]   [name src: build_v98_tva.py FROZEN]
+    stock=-9830  V98=-14745  [NON-STOCK]  frozen 3 builds (since V96)
+      STOCK..V73         -9830
+      V74..V75           -14745
+      V76                -9830   <-- BACK TO STOCK
+      V76g..V77b         -14745
+      V78..V90           -9830   <-- BACK TO STOCK
+      V91..V92           -14745
+      V93..V94           -2458
+      V96..V98           -14745
+
+0xD7A6E  friction/inertia mode 27 (ENGAGED) Y[1]   [name src: build_v98_tva.py FROZEN]
+    stock=-5734  V98=-8601  [NON-STOCK]  frozen 3 builds (since V96)
+      STOCK..V73         -5734
+      V74..V75           -8601
+      V76                -5734   <-- BACK TO STOCK
+      V76g..V77b         -8601
+      V78..V90           -5734   <-- BACK TO STOCK
+      V91..V92           -8601
+      V93..V94           -1434
+      V96..V98           -8601
+
+0xD7A70  friction/inertia mode 27 (ENGAGED) Y[2]   [name src: build_v98_tva.py FROZEN]
+    stock=-1966  V98=-2949  [NON-STOCK]  frozen 3 builds (since V96)
+      STOCK..V73         -1966
+      V74..V75           -2949
+      V76                -1966   <-- BACK TO STOCK
+      V76g..V77b         -2949
+      V78..V90           -1966   <-- BACK TO STOCK
+      V91..V92           -2949
+      V93..V94           -492
+      V96..V98           -2949
+
+0xE5284  AUTHORITY COLLAPSE curve record   [name src: build_v98_tva.py FROZEN]
+    stock=4  V98=4  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         4
+
+0xE52FC  AUTHORITY COLLAPSE curve record   [name src: build_v98_tva.py FROZEN]
+    stock=4  V98=4  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         4
+
+0xE5404  AUTHORITY COLLAPSE curve record   [name src: build_v98_tva.py FROZEN]
+    stock=4  V98=4  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         4
+
+0xE547C  AUTHORITY COLLAPSE curve record   [name src: build_v98_tva.py FROZEN]
+    stock=4  V98=4  [STOCK]  frozen 88 builds (since STOCK)
+      STOCK..V98         4
+
+====================================================================================================
+FACTOR / GAIN_B RECORDS (only entries that CHANGE)
+====================================================================================================
+
+FactorC m10:
+    STOCK..V43         @0xD27BC n=4 X=[2240, 3840, 5120, 8960] Y=[0, 235, 430, 877]
+    V44                @0xD27BC n=4 X=[2240, 3840, 5120, 8960] Y=[235, 235, 430, 877]
+    V45..V46           @0xD27BC n=4 X=[2240, 3840, 5120, 8960] Y=[0, 235, 430, 877]
+    V47                @0xD27BC n=4 X=[2240, 3840, 5120, 8960] Y=[235, 235, 430, 877]
+    V48a..V71c         @0xD27BC n=4 X=[2240, 3840, 5120, 8960] Y=[0, 235, 430, 877]
+    V72..V75           @0xD27BC n=4 X=[2240, 3840, 5120, 8960] Y=[430, 430, 430, 877]
+    V76                @0xD27BC n=4 X=[2240, 3840, 5120, 8960] Y=[0, 235, 430, 877]
+    V76g..V77b         @0xD27BC n=4 X=[2240, 3840, 5120, 8960] Y=[430, 430, 430, 877]
+    V78..V80           @0xD27BC n=4 X=[2240, 3840, 5120, 8960] Y=[0, 235, 430, 877]
+    V81..V86b          @0xD27BC n=4 X=[2240, 3840, 5120, 8960] Y=[430, 430, 430, 877]
+    V87..V98           @0xD27BC n=4 X=[2240, 3840, 5120, 8960] Y=[0, 235, 430, 877]
+
+FactorC m11:
+    STOCK..V43         @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 431, 877]
+    V44                @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[234, 234, 431, 877]
+    V45..V46           @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 431, 877]
+    V47                @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[234, 234, 431, 877]
+    V48a..V71c         @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 431, 877]
+    V72..V74           @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[431, 431, 431, 877]
+    V75                @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[566, 431, 431, 877]
+    V76                @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 431, 877]
+    V76g..V77          @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[431, 431, 431, 877]
+    V77b               @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[566, 431, 431, 877]
+    V78..V80           @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 431, 877]
+    V81..V86b          @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[566, 431, 431, 877]
+    V87..V98           @0xD27D0 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 431, 877]
+
+FactorC m12:
+    STOCK..V72         @0xD27E4 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 429, 908]
+    V73..V75           @0xD27E4 n=4 X=[2240, 3840, 5120, 8960] Y=[234, 234, 429, 908]
+    V76                @0xD27E4 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 429, 908]
+    V76g..V77b         @0xD27E4 n=4 X=[2240, 3840, 5120, 8960] Y=[234, 234, 429, 908]
+    V78..V80           @0xD27E4 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 429, 908]
+    V81..V86b          @0xD27E4 n=4 X=[2240, 3840, 5120, 8960] Y=[234, 234, 429, 908]
+    V87..V98           @0xD27E4 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 429, 908]
+
+FactorC m26:
+    STOCK..V73         @0xD77D0 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 429, 908]
+    V74                @0xD77D0 n=4 X=[2240, 3840, 5120, 8960] Y=[429, 234, 429, 908]
+    V75                @0xD77D0 n=4 X=[2240, 3840, 5120, 8960] Y=[566, 234, 429, 908]
+    V76                @0xD77D0 n=4 X=[2240, 3840, 5120, 8960] Y=[566, 566, 566, 908]
+    V76g..V77          @0xD77D0 n=4 X=[2240, 3840, 5120, 8960] Y=[429, 234, 429, 908]
+    V77b               @0xD77D0 n=4 X=[2240, 3840, 5120, 8960] Y=[566, 234, 429, 908]
+    V78..V79           @0xD77D0 n=4 X=[2240, 3840, 5120, 8960] Y=[566, 566, 566, 908]
+    V80                @0xD77D0 n=4 X=[2240, 3840, 5120, 8960] Y=[566, 566, 566, 566]
+    V81..V83a          @0xD77D0 n=4 X=[2240, 3840, 5120, 8960] Y=[566, 234, 429, 908]
+    V84..V86           @0xD77D0 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 429, 908]
+    V86b               @0xD77D0 n=4 X=[2240, 3840, 5120, 8960] Y=[908, 234, 429, 908]
+    V87..V98           @0xD77D0 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 234, 429, 908]
+
+FactorC m27:
+    STOCK..V73         @0xD77E4 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 233, 426, 875]
+    V74                @0xD77E4 n=4 X=[2240, 3840, 5120, 8960] Y=[426, 233, 426, 875]
+    V75                @0xD77E4 n=4 X=[2240, 3840, 5120, 8960] Y=[566, 233, 426, 875]
+    V76                @0xD77E4 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 233, 426, 875]
+    V76g..V77          @0xD77E4 n=4 X=[2240, 3840, 5120, 8960] Y=[426, 233, 426, 875]
+    V77b               @0xD77E4 n=4 X=[2240, 3840, 5120, 8960] Y=[566, 233, 426, 875]
+    V78..V80           @0xD77E4 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 233, 426, 875]
+    V81..V83a          @0xD77E4 n=4 X=[2240, 3840, 5120, 8960] Y=[566, 233, 426, 875]
+    V84..V86           @0xD77E4 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 233, 426, 875]
+    V86b               @0xD77E4 n=4 X=[2240, 3840, 5120, 8960] Y=[875, 233, 426, 875]
+    V87..V98           @0xD77E4 n=4 X=[2240, 3840, 5120, 8960] Y=[0, 233, 426, 875]
+
+FactorE m10:
+    STOCK..V46         @0xD27F8 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V47                @0xD27F8 n=4 X=[60, 400, 2500, 4000] Y=[700, 750, 800, 927]
+    V48a..V71c         @0xD27F8 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V72..V75           @0xD27F8 n=4 X=[60, 400, 2500, 4000] Y=[927, 927, 927, 927]
+    V76                @0xD27F8 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V76g..V77b         @0xD27F8 n=4 X=[60, 400, 2500, 4000] Y=[927, 927, 927, 927]
+    V78..V80           @0xD27F8 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V81..V86b          @0xD27F8 n=4 X=[60, 400, 2500, 4000] Y=[927, 927, 927, 927]
+    V87..V98           @0xD27F8 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+
+FactorE m11:
+    STOCK..V46         @0xD280C n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V47                @0xD280C n=4 X=[60, 400, 2500, 4000] Y=[700, 750, 800, 927]
+    V48a..V71c         @0xD280C n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V72..V73           @0xD280C n=4 X=[60, 400, 2500, 4000] Y=[927, 927, 927, 927]
+    V74                @0xD280C n=4 X=[12, 400, 2500, 4000] Y=[927, 927, 927, 927]
+    V75                @0xD280C n=4 X=[12, 200, 2500, 4000] Y=[927, 927, 927, 927]
+    V76                @0xD280C n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V76g..V77          @0xD280C n=4 X=[12, 400, 2500, 4000] Y=[927, 927, 927, 927]
+    V77b               @0xD280C n=4 X=[12, 200, 2500, 4000] Y=[927, 927, 927, 927]
+    V78..V80           @0xD280C n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V81..V86b          @0xD280C n=4 X=[12, 200, 2500, 4000] Y=[927, 927, 927, 927]
+    V87..V98           @0xD280C n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+
+FactorE m12:
+    STOCK..V72         @0xD2820 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V73..V75           @0xD2820 n=4 X=[60, 400, 2500, 4000] Y=[140, 140, 539, 927]
+    V76                @0xD2820 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V76g..V77b         @0xD2820 n=4 X=[60, 400, 2500, 4000] Y=[140, 140, 539, 927]
+    V78..V80           @0xD2820 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V81..V86b          @0xD2820 n=4 X=[60, 400, 2500, 4000] Y=[140, 140, 539, 927]
+    V87..V98           @0xD2820 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+
+FactorE m26:
+    STOCK..V73         @0xD780C n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V74                @0xD780C n=4 X=[12, 400, 2500, 4000] Y=[0, 539, 539, 927]
+    V75                @0xD780C n=4 X=[12, 200, 2500, 4000] Y=[0, 539, 539, 927]
+    V76                @0xD780C n=4 X=[0, 119, 2500, 4000] Y=[0, 300, 539, 927]
+    V76g..V77          @0xD780C n=4 X=[12, 400, 2500, 4000] Y=[0, 539, 539, 927]
+    V77b               @0xD780C n=4 X=[12, 200, 2500, 4000] Y=[0, 539, 539, 927]
+    V78                @0xD780C n=4 X=[0, 119, 2500, 4000] Y=[0, 449, 539, 927]
+    V79..V80           @0xD780C n=4 X=[0, 119, 2500, 4000] Y=[0, 897, 912, 927]
+    V81                @0xD780C n=4 X=[12, 200, 2500, 4000] Y=[0, 539, 539, 927]
+    V83a..V98          @0xD780C n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+
+FactorE m27:
+    STOCK..V73         @0xD7820 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V74                @0xD7820 n=4 X=[12, 400, 2500, 4000] Y=[0, 539, 539, 927]
+    V75                @0xD7820 n=4 X=[12, 200, 2500, 4000] Y=[0, 539, 539, 927]
+    V76                @0xD7820 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V76g..V77          @0xD7820 n=4 X=[12, 400, 2500, 4000] Y=[0, 539, 539, 927]
+    V77b               @0xD7820 n=4 X=[12, 200, 2500, 4000] Y=[0, 539, 539, 927]
+    V78..V80           @0xD7820 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+    V81..V83a          @0xD7820 n=4 X=[12, 200, 2500, 4000] Y=[0, 539, 539, 927]
+    V84..V98           @0xD7820 n=4 X=[60, 400, 2500, 4000] Y=[0, 140, 539, 927]
+
+friction m10:
+    STOCK..V72         @0xD2A44 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+    V73..V75           @0xD2A44 n=3 X=[0, 1280, 5760] Y=[-14745, -8601, -2949]
+    V76                @0xD2A44 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+    V76g..V77b         @0xD2A44 n=3 X=[0, 1280, 5760] Y=[-14745, -8601, -2949]
+    V78..V98           @0xD2A44 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+
+friction m11:
+    STOCK..V73         @0xD2A54 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+    V74..V75           @0xD2A54 n=3 X=[0, 1280, 5760] Y=[-14745, -8601, -2949]
+    V76                @0xD2A54 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+    V76g..V77b         @0xD2A54 n=3 X=[0, 1280, 5760] Y=[-14745, -8601, -2949]
+    V78..V98           @0xD2A54 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+
+friction m24:
+    STOCK..V92         @0xD6A64 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+    V93..V94           @0xD6A64 n=3 X=[0, 1280, 5760] Y=[-4915, -2867, -983]
+    V96..V98           @0xD6A64 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+
+friction m26:
+    STOCK..V73         @0xD7A54 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+    V74..V75           @0xD7A54 n=3 X=[0, 1280, 5760] Y=[-14745, -8601, -2949]
+    V76                @0xD7A54 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+    V76g..V77b         @0xD7A54 n=3 X=[0, 1280, 5760] Y=[-14745, -8601, -2949]
+    V78..V90           @0xD7A54 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+    V91..V92           @0xD7A54 n=3 X=[0, 1280, 5760] Y=[-14745, -8601, -2949]
+    V93..V94           @0xD7A54 n=3 X=[0, 1280, 5760] Y=[-2458, -1434, -492]
+    V96..V98           @0xD7A54 n=3 X=[0, 1280, 5760] Y=[-14745, -8601, -2949]
+
+friction m27:
+    STOCK..V73         @0xD7A64 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+    V74..V75           @0xD7A64 n=3 X=[0, 1280, 5760] Y=[-14745, -8601, -2949]
+    V76                @0xD7A64 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+    V76g..V77b         @0xD7A64 n=3 X=[0, 1280, 5760] Y=[-14745, -8601, -2949]
+    V78..V90           @0xD7A64 n=3 X=[0, 1280, 5760] Y=[-9830, -5734, -1966]
+    V91..V92           @0xD7A64 n=3 X=[0, 1280, 5760] Y=[-14745, -8601, -2949]
+    V93..V94           @0xD7A64 n=3 X=[0, 1280, 5760] Y=[-2458, -1434, -492]
+    V96..V98           @0xD7A64 n=3 X=[0, 1280, 5760] Y=[-14745, -8601, -2949]
+
+gain_B[0] m10:
+    STOCK..V68         @0xD2A74 n=4 X=[0, 400, 1400, 3000] Y=[3072, 3072, 2322, 1536]
+    V69                @0xD2A74 n=4 X=[0, 400, 1400, 3000] Y=[12288, 12288, 2322, 1536]
+    V70                @0xD2A74 n=4 X=[0, 400, 1400, 3000] Y=[6144, 6144, 2322, 1536]
+    V71a..V71c         @0xD2A74 n=4 X=[0, 400, 1400, 3000] Y=[3072, 3072, 2322, 1536]
+    V72..V75           @0xD2A74 n=4 X=[0, 400, 1400, 3000] Y=[5244, 5244, 5244, 5244]
+    V76                @0xD2A74 n=4 X=[0, 400, 1400, 3000] Y=[3072, 3072, 2322, 1536]
+    V76g..V77b         @0xD2A74 n=4 X=[0, 400, 1400, 3000] Y=[5244, 5244, 5244, 5244]
+    V78..V80           @0xD2A74 n=4 X=[0, 400, 1400, 3000] Y=[3072, 3072, 2322, 1536]
+    V81..V86b          @0xD2A74 n=4 X=[0, 400, 1400, 3000] Y=[5244, 5244, 5244, 5244]
+    V87..V98           @0xD2A74 n=4 X=[0, 400, 1400, 3000] Y=[3072, 3072, 2322, 1536]
+
+gain_B[1] m10:
+    STOCK..V68         @0xD2AB0 n=4 X=[0, 400, 1500, 3000] Y=[2561, 2561, 2247, 1947]
+    V69                @0xD2AB0 n=4 X=[0, 400, 1500, 3000] Y=[10244, 10244, 2247, 1947]
+    V70                @0xD2AB0 n=4 X=[0, 400, 1500, 3000] Y=[5122, 5122, 2247, 1947]
+    V71a..V71c         @0xD2AB0 n=4 X=[0, 400, 1500, 3000] Y=[2561, 2561, 2247, 1947]
+    V72..V75           @0xD2AB0 n=4 X=[0, 400, 1500, 3000] Y=[5244, 5244, 5244, 5244]
+    V76                @0xD2AB0 n=4 X=[0, 400, 1500, 3000] Y=[2561, 2561, 2247, 1947]
+    V76g..V77b         @0xD2AB0 n=4 X=[0, 400, 1500, 3000] Y=[5244, 5244, 5244, 5244]
+    V78..V80           @0xD2AB0 n=4 X=[0, 400, 1500, 3000] Y=[2561, 2561, 2247, 1947]
+    V81..V86b          @0xD2AB0 n=4 X=[0, 400, 1500, 3000] Y=[5244, 5244, 5244, 5244]
+    V87..V98           @0xD2AB0 n=4 X=[0, 400, 1500, 3000] Y=[2561, 2561, 2247, 1947]
+
+====================================================================================================
+B1. UNION OF EVERY ADDRESS THAT DIFFERS FROM STOCK ON ANY BUILD V38..V98
+    1290 non-mask bytes in 300 contiguous runs
+====================================================================================================
+
+--- REGION CODE: 71 runs, 174 bytes ---
+  0x13109-0x13109 len   1  first=V22                  STOCK=2d | V22..V98=2c
+  0x14120-0x14120 len   1  first=V22                  STOCK=2d | V22..V98=2c
+  0x29A92-0x29A93 len   2  first=V52c                 STOCK..V52=a0b0 | V52c=00ed | V53..V98=a0b0
+  0x2A1F0-0x2A1F1 len   2  first=V57                  STOCK..V56=6c74 | V57..V75=d07c | V76=6c74 | V76g..V77b=d07c | V78..V80=6c74 | V81..V98=d07c
+  0x2B6A0-0x2B6A1 len   2  first=V52c                 STOCK..V52=a0b0 | V52c=00ed | V53..V98=a0b0
+  0x2C482-0x2C483 len   2  first=V48b                 STOCK..V48a=a0b0 | V48b=00eb | V49..V49p=a0b0 | V50=00eb | V50p..V51p=a0b0 | V52..V52c=00ed | V53..V98=a0b0
+  0x2DF34-0x2DF35 len   2  first=V52c                 STOCK..V52=a0b0 | V52c=00ed | V53..V98=a0b0
+  0x2F31A-0x2F31B len   2  first=V52                  STOCK..V51p=a0b0 | V52..V52c=00ed | V53..V98=a0b0
+  0x2F332-0x2F333 len   2  first=V52                  STOCK..V51p=a0b0 | V52..V52c=00ed | V53..V98=a0b0
+  0x2F340-0x2F341 len   2  first=V52                  STOCK..V51p=a0b0 | V52..V52c=00ed | V53..V98=a0b0
+  0x33D2C-0x33D2D len   2  first=V52c                 STOCK..V52=a0b0 | V52c=00ed | V53..V98=a0b0
+  0x354D4-0x354D5 len   2  first=V48b                 STOCK..V48a=a0b0 | V48b=00eb | V49..V49p=a0b0 | V50=00eb | V50p..V51p=a0b0 | V52..V52c=00ed | V53..V98=a0b0
+  0x35AA6-0x35AA7 len   2  first=V48b                 STOCK..V48a=a0b0 | V48b=00eb | V49..V49p=a0b0 | V50=00eb | V50p..V51p=a0b0 | V52..V52c=00ed | V53..V98=a0b0
+  0x36684-0x36685 len   2  first=V52c                 STOCK..V52=a0b0 | V52c=00ed | V53..V98=a0b0
+  0x36848-0x36849 len   2  first=V52c                 STOCK..V52=a0b0 | V52c=00ed | V53..V98=a0b0
+  0x3A6CC-0x3A6CD len   2  first=V48b                 STOCK..V48a=a0b0 | V48b=00eb | V49..V49p=a0b0 | V50=00eb | V50p..V51p=a0b0 | V52..V52c=00ed | V53..V98=a0b0
+  0x3A7CC-0x3A7CD len   2  first=V48b                 STOCK..V48a=a0b0 | V48b=00eb | V49..V49p=a0b0 | V50=00eb | V50p..V51p=a0b0 | V52..V52c=00ed | V53..V98=a0b0
+  0x3A836-0x3A836 len   1  first=V49                  STOCK..V48b=8e | V49=ae | V49p..V98=8e
+  0x3AA96-0x3AA96 len   1  first=V67                  10 distinct values across builds
+  0x3AB6C-0x3AB6C len   1  first=V61                  STOCK..V60=e1 | V61=e0 | V62..V98=e1
+  0x3AB76-0x3AB76 len   1  first=V62                  STOCK..V61=aa | V62=a9 | V63..V64=aa | V65=a9 | V66..V70=aa | V71a=a9 | V71b..V98=aa
+  0x3AC16-0x3AC16 len   1  first=V61                  STOCK..V60=01 | V61=00 | V62..V98=01
+  0x3AC20-0x3AC20 len   1  first=V62                  STOCK..V61=aa | V62=a9 | V63..V64=aa | V65=a9 | V66..V70=aa | V71a=a9 | V71b..V98=aa
+  0x3AC78-0x3AC7B len   4  first=V39                  STOCK..V38=244f3094 | V39=8807bc9e | V40..V98=244f3094
+  0x3B4AA-0x3B4AB len   2  first=V48b                 STOCK..V48a=a0b0 | V48b=00eb | V49..V49p=a0b0 | V50=00eb | V50p..V51p=a0b0 | V52..V52c=00ed | V53..V98=a0b0
+  0x3B674-0x3B675 len   2  first=V48b                 STOCK..V48a=a0b0 | V48b=00eb | V49..V49p=a0b0 | V50=00eb | V50p..V51p=a0b0 | V52..V52c=00ed | V53..V98=a0b0
+  0x3B90A-0x3B90B len   2  first=V52c                 STOCK..V52=a0b0 | V52c=00ed | V53..V98=a0b0
+  0x3F8E4-0x3F8E5 len   2  first=V52c                 STOCK..V52=a0b0 | V52c=00ed | V53..V98=a0b0
+  0x3FCC8-0x3FCC9 len   2  first=V52c                 STOCK..V52=a0b0 | V52c=00ed | V53..V98=a0b0
+  0x454FE-0x454FE len   1  first=V42                  12 distinct values across builds
+  0x55C0E-0x55C11 len   4  first=V31p                 9 distinct values across builds
+  0x55DF2-0x55DF3 len   2  first=V87                  STOCK..V86b=e893 | V87..V89=6894 | V90..V91=da94 | V92=4294 | V93..V94=da94 | V96..V98=9094
+  0x55E10-0x55E10 len   1  first=V92                  STOCK..V91=a3 | V92=a4 | V93=a3 | V94=a1 | V96..V98=a6
+  0x7FEAC-0x7FEAF len   4  first=V48b                 STOCK..V48a=e0410870 | V48b=8407884c | V49..V49p=e0410870 | V50=8407884c | V50p..V51p=e0410870 | V52..V52c=8407884c | V53..V98=e0410870
+  0xD07C6-0xD07C6 len   1  first=V73                  STOCK..V72=00 | V73..V75=f2 | V76=00 | V76g..V77b=f2 | V78..V80=00 | V81..V86b=f2 | V87..V98=00
+  0xD07DA-0xD07DB len   2  first=V73/V74              10 distinct values across builds
+  0xD0802-0xD0802 len   1  first=V73                  STOCK..V72=00 | V73..V75=8e | V76=00 | V76g..V77b=8e | V78..V80=00 | V81..V86b=8e | V87..V98=00
+  0xD080E-0xD080E len   1  first=V74                  STOCK..V73=3c | V74..V75=0c | V76=3c | V76g..V77b=0c | V78..V80=3c | V81..V86b=0c | V87..V98=3c
+  0xD0810-0xD0811 len   2  first=V75                  STOCK..V74=9001 | V75=c800 | V76..V77=9001 | V77b=c800 | V78..V80=9001 | V81..V86b=c800 | V87..V98=9001
+  0xD0816-0xD0816 len   1  first=V73                  STOCK..V72=00 | V73..V75=8e | V76=00 | V76g..V77b=8e | V78..V80=00 | V81..V86b=8e | V87..V98=00
+  0xD0818-0xD0819 len   2  first=V74                  STOCK..V73=8e00 | V74..V75=1802 | V76=8e00 | V76g..V77b=1802 | V78..V80=8e00 | V81..V86b=1802 | V87..V98=8e00
+  0xD0A5C-0xD0A61 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V98=9ad99ae952f8
+  0xD2006-0xD2006 len   1  first=V60                  STOCK..V59=66 | V60=2b | V61..V98=66
+  0xD27C6-0xD27C9 len   4  first=V44/V72              11 distinct values across builds
+  0xD27DA-0xD27DD len   4  first=V44/V72              13 distinct values across builds
+  0xD27EE-0xD27EE len   1  first=V73                  STOCK..V72=00 | V73..V75=ea | V76=00 | V76g..V77b=ea | V78..V80=00 | V81..V86b=ea | V87..V98=00
+  0xD2802-0xD2807 len   6  first=V47                  9 distinct values across builds
+  0xD280E-0xD280E len   1  first=V74                  STOCK..V73=3c | V74..V75=0c | V76=3c | V76g..V77b=0c | V78..V80=3c | V81..V86b=0c | V87..V98=3c
+  0xD2810-0xD2811 len   2  first=V75                  STOCK..V74=9001 | V75=c800 | V76..V77=9001 | V77b=c800 | V78..V80=9001 | V81..V86b=c800 | V87..V98=9001
+  0xD2816-0xD281B len   6  first=V47                  9 distinct values across builds
+  0xD282A-0xD282A len   1  first=V73                  STOCK..V72=00 | V73..V75=8c | V76=00 | V76g..V77b=8c | V78..V80=00 | V81..V86b=8c | V87..V98=00
+  0xD2A4C-0xD2A51 len   6  first=V73                  STOCK..V72=9ad99ae952f8 | V73..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V98=9ad99ae952f8
+  0xD2A5C-0xD2A61 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V98=9ad99ae952f8
+  0xD2A7E-0xD2A85 len   8  first=V69/V72              10 distinct values across builds
+  0xD2ABA-0xD2AC1 len   8  first=V69/V72              10 distinct values across builds
+  0xD37DA-0xD37DB len   2  first=V73/V74              10 distinct values across builds
+  0xD37EE-0xD37EF len   2  first=V74                  9 distinct values across builds
+  0xD380E-0xD380E len   1  first=V74                  STOCK..V73=3c | V74..V75=0c | V76=3c | V76g..V77b=0c | V78..V80=3c | V81..V86b=0c | V87..V98=3c
+  0xD3810-0xD3811 len   2  first=V75                  STOCK..V74=9001 | V75=c800 | V76..V77=9001 | V77b=c800 | V78..V80=9001 | V81..V86b=c800 | V87..V98=9001
+  0xD3816-0xD3816 len   1  first=V73                  STOCK..V72=00 | V73..V75=8c | V76=00 | V76g..V77b=8c | V78..V80=00 | V81..V86b=8c | V87..V98=00
+  0xD3818-0xD3819 len   2  first=V74                  STOCK..V73=8c00 | V74..V75=1b02 | V76=8c00 | V76g..V77b=1b02 | V78..V80=8c00 | V81..V86b=1b02 | V87..V98=8c00
+  0xD3822-0xD3822 len   1  first=V74                  STOCK..V73=3c | V74..V75=0c | V76=3c | V76g..V77b=0c | V78..V80=3c | V81..V86b=0c | V87..V98=3c
+  0xD3824-0xD3825 len   2  first=V75                  STOCK..V74=9001 | V75=c800 | V76..V77=9001 | V77b=c800 | V78..V80=9001 | V81..V86b=c800 | V87..V98=9001
+  0xD382C-0xD382D len   2  first=V74                  STOCK..V73=8c00 | V74..V75=1b02 | V76=8c00 | V76g..V77b=1b02 | V78..V80=8c00 | V81..V86b=1b02 | V87..V98=8c00
+  0xD3A5C-0xD3A61 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V98=9ad99ae952f8
+  0xD3A6C-0xD3A71 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V98=9ad99ae952f8
+  0xD47DA-0xD47DB len   2  first=V74                  9 distinct values across builds
+  0xD480E-0xD480E len   1  first=V74                  STOCK..V73=3c | V74..V75=0c | V76=3c | V76g..V77b=0c | V78..V80=3c | V81..V86b=0c | V87..V98=3c
+  0xD4810-0xD4811 len   2  first=V75                  STOCK..V74=9001 | V75=c800 | V76..V77=9001 | V77b=c800 | V78..V80=9001 | V81..V86b=c800 | V87..V98=9001
+  0xD4818-0xD4819 len   2  first=V74                  STOCK..V73=8e00 | V74..V75=1802 | V76=8e00 | V76g..V77b=1802 | V78..V80=8e00 | V81..V86b=1802 | V87..V98=8e00
+  0xD4A5C-0xD4A61 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V98=9ad99ae952f8
+
+--- REGION CAVE: 42 runs, 733 bytes ---
+  0xC4B34-0xC4BCE len 155  first=V31p/V31p2/V48b/V53/V98 50 distinct values across builds
+  0xC4BD0-0xC4BDA len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606101448 | V54..V98=ffffffffffffffffffffff
+  0xC4BDC-0xC4BE8 len  13  first=V53                  3 distinct values across builds
+  0xC4BEA-0xC4BF4 len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606181448 | V54..V98=ffffffffffffffffffffff
+  0xC4BF6-0xC4C02 len  13  first=V53                  3 distinct values across builds
+  0xC4C04-0xC4C18 len  21  first=V53                  3 distinct values across builds
+  0xC4C1A-0xC4C26 len  13  first=V53                  3 distinct values across builds
+  0xC4C28-0xC4C32 len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=083a463f00002606681449 | V54..V98=ffffffffffffffffffffff
+  0xC4C34-0xC4C4A len  23  first=V53                  3 distinct values across builds
+  0xC4C4C-0xC4C56 len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606401448 | V54..V98=ffffffffffffffffffffff
+  0xC4C58-0xC4C64 len  13  first=V53                  3 distinct values across builds
+  0xC4C66-0xC4C70 len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606481448 | V54..V98=ffffffffffffffffffffff
+  0xC4C72-0xC4C7E len  13  first=V53                  3 distinct values across builds
+  0xC4C80-0xC4C8A len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606501448 | V54..V98=ffffffffffffffffffffff
+  0xC4C8C-0xC4C98 len  13  first=V53                  3 distinct values across builds
+  0xC4C9A-0xC4CA4 len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606581448 | V54..V98=ffffffffffffffffffffff
+  0xC4CA6-0xC4CB2 len  13  first=V53                  3 distinct values across builds
+  0xC4CB4-0xC4CC8 len  21  first=V53                  3 distinct values across builds
+  0xC4CCA-0xC4CD6 len  13  first=V53                  3 distinct values across builds
+  0xC4CD8-0xC4CE2 len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=083a463f00002606a81449 | V54..V98=ffffffffffffffffffffff
+  0xC4CE4-0xC4CFA len  23  first=V53                  3 distinct values across builds
+  0xC4CFC-0xC4D06 len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606801448 | V54..V98=ffffffffffffffffffffff
+  0xC4D08-0xC4D14 len  13  first=V53                  3 distinct values across builds
+  0xC4D16-0xC4D20 len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606881448 | V54..V98=ffffffffffffffffffffff
+  0xC4D22-0xC4D2E len  13  first=V53                  3 distinct values across builds
+  0xC4D30-0xC4D3A len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606901448 | V54..V98=ffffffffffffffffffffff
+  0xC4D3C-0xC4D48 len  13  first=V53                  3 distinct values across builds
+  0xC4D4A-0xC4D54 len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606981448 | V54..V98=ffffffffffffffffffffff
+  0xC4D56-0xC4D62 len  13  first=V53                  3 distinct values across builds
+  0xC4D64-0xC4D78 len  21  first=V53                  3 distinct values across builds
+  0xC4D7A-0xC4D86 len  13  first=V53                  3 distinct values across builds
+  0xC4D88-0xC4D92 len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=083a463f00002606e81449 | V54..V98=ffffffffffffffffffffff
+  0xC4D94-0xC4DAA len  23  first=V53                  3 distinct values across builds
+  0xC4DAC-0xC4DB6 len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606c01448 | V54..V98=ffffffffffffffffffffff
+  0xC4DB8-0xC4DC4 len  13  first=V53                  3 distinct values across builds
+  0xC4DC6-0xC4DD0 len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606c81448 | V54..V98=ffffffffffffffffffffff
+  0xC4DD2-0xC4DDE len  13  first=V53                  3 distinct values across builds
+  0xC4DE0-0xC4DEA len  11  first=V53                  STOCK..V52c=ffffffffffffffffffffff | V53=463f0000883a2606d01448 | V54..V98=ffffffffffffffffffffff
+  0xC4DEC-0xC4DF8 len  13  first=V53                  3 distinct values across builds
+  0xC4DFA-0xC4E04 len  11  first=V23/V31u/V53         9 distinct values across builds
+  0xC4E06-0xC4E12 len  13  first=V23                  9 distinct values across builds
+  0xC4E14-0xC4E39 len  38  first=V23/V31u/V53         8 distinct values across builds
+
+--- REGION CAL: 172 runs, 323 bytes ---
+  0xC407E-0xC407F len   2  first=V73                  STOCK..V72=ff01 | V73..V75=5203 | V76=ff01 | V76g..V77b=5203 | V78..V98=ff01
+  0xC40BC-0xC40BD len   2  first=V85                  STOCK..V84=5802 | V85..V86b=7017 | V87..V98=5802
+  0xC40D2-0xC40D2 len   1  first=V89                  STOCK..V88=66 | V89..V98=cc
+  0xC40D4-0xC40D5 len   2  first=V86                  STOCK..V85=3d02 | V86=1e01 | V86b..V98=3d02
+  0xC4120-0xC4120 len   1  first=V48a                 STOCK..V47=01 | V48a=00 | V48b..V98=01
+  0xC5030-0xC503F len  16  first=V40                  3 distinct values across builds
+  0xC521A-0xC5221 len   8  first=V40                  STOCK..V39=000e660933060002 | V40..V41=cd14cd14cd14cd14 | V42..V98=000e660933060002
+  0xC5232-0xC5239 len   8  first=V40                  STOCK..V39=000e660933060002 | V40..V41=cd14cd14cd14cd14 | V42..V98=000e660933060002
+  0xC61B3-0xC61B3 len   1  first=V22                  STOCK=02 | V22..V37=04 | V38..V98=08
+  0xC61B5-0xC61B5 len   1  first=V22                  STOCK=02 | V22..V37=04 | V38..V98=08
+  0xC61C0-0xC61C5 len   6  first=V36                  STOCK..V35=400680030005 | V36..V98=ffffffffffff
+  0xC6206-0xC6209 len   4  first=V40                  STOCK..V39=0002cd00 | V40=ffffffff | V41..V44=0002cd00 | V45=cd00cd00 | V46..V98=0002cd00
+  0xC62EA-0xC62EB len   2  first=V53                  STOCK..V52c=4001 | V53..V75=0000 | V76=4001 | V76g..V77b=0000 | V78..V80=4001 | V81..V98=0000
+  0xC63A1-0xC63A1 len   1  first=V72                  STOCK..V71c=04 | V72..V75=08 | V76=04 | V76g=08 | V77..V80=04 | V81=08 | V83a..V98=04
+  0xC63AC-0xC63AC len   1  first=V97                  STOCK..V96=66 | V97..V98=96
+  0xC640B-0xC640D len   3  first=V93                  STOCK..V92=e033f3 | V93..V94=e866f6 | V96..V98=e033f3
+  0xC643F-0xC643F len   1  first=V42                  STOCK..V41=06 | V42=00 | V43..V62=06 | V63..V64=0c | V65..V98=06
+  0xC6441-0xC6441 len   1  first=V63                  STOCK..V62=08 | V63..V64=10 | V65..V98=08
+  0xC6445-0xC6447 len   3  first=V42/V67              12 distinct values across builds
+  0xC644A-0xC644B len   2  first=V43                  STOCK..V42=0004 | V43=2000 | V44..V48b=0004 | V49=4000 | V49p..V98=0004
+  0xC6450-0xC6451 len   2  first=V46                  STOCK..V45=0004 | V46=2000 | V47..V98=0004
+  0xC646C-0xC646D len   2  first=V22                  STOCK=7b03 | V22..V37=f606 | V38..V56=ec0d | V57..V75=7b03 | V76=ec0d | V76g..V77b=7b03 | V78..V80=ec0d | V81..V98=7b03
+  0xC64B4-0xC64B8 len   5  first=V36/V37              STOCK..V35=7060364070 | V36=ffffffff70 | V37..V98=ffffffffff
+  0xC64DE-0xC64DE len   1  first=V22                  STOCK=11 | V22..V98=1b
+  0xC659A-0xC659B len   2  first=V29                  STOCK..V28=803f | V29=0040 | V30..V37=8040 | V38..V98=a040
+  0xC659E-0xC659F len   2  first=V29                  STOCK..V28=803f | V29=0040 | V30..V37=8040 | V38..V98=a040
+  0xC65AE-0xC65AF len   2  first=V29                  STOCK..V28=80bf | V29=00c0 | V30..V37=80c0 | V38..V98=a0c0
+  0xC65B2-0xC65B3 len   2  first=V29                  STOCK..V28=80bf | V29=00c0 | V30..V37=80c0 | V38..V98=a0c0
+  0xC65C6-0xC65C7 len   2  first=V31                  STOCK..V30=0000 | V31..V37=8040 | V38..V98=a040
+  0xC65CA-0xC65CB len   2  first=V31                  STOCK..V30=c03f | V31..V37=8040 | V38..V98=a040
+  0xC65CE-0xC65CE len   1  first=V31                  STOCK..V30=00 | V31..V37=80 | V38..V98=a0
+  0xC674F-0xC674F len   1  first=V25                  STOCK..V24=04 | V25..V29=08 | V30..V37=10 | V38..V98=14
+  0xC6751-0xC6751 len   1  first=V25                  STOCK..V24=04 | V25..V29=08 | V30..V37=10 | V38..V98=14
+  0xC675B-0xC675B len   1  first=V25                  STOCK..V24=fc | V25..V29=f8 | V30..V37=f0 | V38..V98=ec
+  0xC675D-0xC675D len   1  first=V25                  STOCK..V24=fc | V25..V29=f8 | V30..V37=f0 | V38..V98=ec
+  0xC6769-0xC6769 len   1  first=V31                  STOCK..V30=00 | V31..V37=10 | V38..V98=14
+  0xC676B-0xC676B len   1  first=V31                  STOCK..V30=06 | V31..V37=10 | V38..V98=14
+  0xC676D-0xC676D len   1  first=V31                  STOCK..V30=08 | V31..V37=10 | V38..V98=14
+  0xC67B9-0xC67B9 len   1  first=V48a                 STOCK..V47=04 | V48a=01 | V48b..V98=04
+  0xC67BB-0xC67BB len   1  first=V48a                 STOCK..V47=04 | V48a=01 | V48b..V98=04
+  0xC67BD-0xC67BD len   1  first=V48a                 STOCK..V47=04 | V48a=01 | V48b..V98=04
+  0xC6A73-0xC6A73 len   1  first=V42                  11 distinct values across builds
+  0xC6A75-0xC6A77 len   3  first=V42                  11 distinct values across builds
+  0xC6A79-0xC6A79 len   1  first=V42                  11 distinct values across builds
+  0xC6A87-0xC6A87 len   1  first=V42                  11 distinct values across builds
+  0xC6A89-0xC6A8B len   3  first=V42                  11 distinct values across builds
+  0xC6A8D-0xC6A8D len   1  first=V42                  11 distinct values across builds
+  0xC6A9A-0xC6AA1 len   8  first=V42                  STOCK..V41=680a680ac3089c05 | V42=0000000000000000 | V43..V98=680a680ac3089c05
+  0xC6AAF-0xC6AAF len   1  first=V42                  STOCK..V41=0a | V42=00 | V43..V98=0a
+  0xC6AB1-0xC6AB5 len   5  first=V42                  STOCK..V41=0a61083305 | V42=0000000000 | V43..V98=0a61083305
+  0xC6AFD-0xC6AFD len   1  first=V56                  STOCK..V55=80 | V56=00 | V57..V98=80
+  0xC6AFF-0xC6AFF len   1  first=V56                  STOCK..V55=80 | V56=00 | V57..V98=80
+  0xC6CD0-0xC6CD1 len   2  first=V57                  STOCK..V56=ffff | V57..V75=ec0d | V76=ffff | V76g..V77b=ec0d | V78..V80=ffff | V81..V98=ec0d
+  0xCE532-0xCE533 len   2  first=V73                  STOCK..V72=0000 | V73..V75=b603 | V76=0000 | V76g..V77b=b603 | V78..V80=0000 | V81..V86b=b603 | V87..V98=0000
+  0xCE546-0xCE547 len   2  first=V73                  STOCK..V72=0000 | V73..V75=b603 | V76=0000 | V76g..V77b=b603 | V78..V80=0000 | V81..V86b=b603 | V87..V98=0000
+  0xCE55A-0xCE55A len   1  first=V73                  STOCK..V72=00 | V73..V75=73 | V76=00 | V76g..V77b=73 | V78..V80=00 | V81..V86b=73 | V87..V98=00
+  0xCE56E-0xCE56E len   1  first=V73                  STOCK..V72=00 | V73..V75=73 | V76=00 | V76g..V77b=73 | V78..V80=00 | V81..V86b=73 | V87..V98=00
+  0xCF532-0xCF533 len   2  first=V73                  STOCK..V72=0000 | V73=b603 | V74..V75=4c05 | V76=0000 | V76g..V77b=4c05 | V78..V80=0000 | V81..V86b=4c05 | V87..V98=0000
+  0xCF546-0xCF547 len   2  first=V73                  STOCK..V72=0000 | V73=b603 | V74..V75=4c05 | V76=0000 | V76g..V77b=4c05 | V78..V80=0000 | V81..V86b=4c05 | V87..V98=0000
+  0xCF552-0xCF552 len   1  first=V74                  STOCK..V73=46 | V74..V75=0c | V76=46 | V76g..V77b=0c | V78..V80=46 | V81..V86b=0c | V87..V98=46
+  0xCF554-0xCF555 len   2  first=V75                  STOCK..V74=c201 | V75=c800 | V76..V77=c201 | V77b=c800 | V78..V80=c201 | V81..V86b=c800 | V87..V98=c201
+  0xCF55A-0xCF55A len   1  first=V73                  STOCK..V72=00 | V73..V75=73 | V76=00 | V76g..V77b=73 | V78..V80=00 | V81..V86b=73 | V87..V98=00
+  0xCF55C-0xCF55C len   1  first=V74                  STOCK..V73=73 | V74..V75=b1 | V76=73 | V76g..V77b=b1 | V78..V80=73 | V81..V86b=b1 | V87..V98=73
+  0xCF566-0xCF566 len   1  first=V74                  STOCK..V73=46 | V74..V75=0c | V76=46 | V76g..V77b=0c | V78..V80=46 | V81..V86b=0c | V87..V98=46
+  0xCF568-0xCF569 len   2  first=V75                  STOCK..V74=c201 | V75=c800 | V76..V77=c201 | V77b=c800 | V78..V80=c201 | V81..V86b=c800 | V87..V98=c201
+  0xCF56E-0xCF56E len   1  first=V73                  STOCK..V72=00 | V73..V75=73 | V76=00 | V76g..V77b=73 | V78..V80=00 | V81..V86b=73 | V87..V98=00
+  0xCF570-0xCF570 len   1  first=V74                  STOCK..V73=73 | V74..V75=b1 | V76=73 | V76g..V77b=b1 | V78..V80=73 | V81..V86b=b1 | V87..V98=73
+  0xCF6E0-0xCF6E5 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V98=9ad99ae952f8
+  0xCF6F0-0xCF6F5 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V98=9ad99ae952f8
+  0xD67DA-0xD67DB len   2  first=V74                  9 distinct values across builds
+  0xD680E-0xD680E len   1  first=V74                  STOCK..V73=3c | V74..V75=0c | V76=3c | V76g..V77b=0c | V78..V80=3c | V81..V86b=0c | V87..V98=3c
+  0xD6810-0xD6811 len   2  first=V75                  STOCK..V74=9001 | V75=c800 | V76..V77=9001 | V77b=c800 | V78..V80=9001 | V81..V86b=c800 | V87..V98=9001
+  0xD6818-0xD6819 len   2  first=V74                  STOCK..V73=8c00 | V74..V75=1b02 | V76=8c00 | V76g..V77b=1b02 | V78..V80=8c00 | V81..V86b=1b02 | V87..V98=8c00
+  0xD6A5C-0xD6A61 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V98=9ad99ae952f8
+  0xD6A6C-0xD6A71 len   6  first=V93                  STOCK..V92=9ad99ae952f8 | V93..V94=cdeccdf429fc | V96..V98=9ad99ae952f8
+  0xD77DA-0xD77E1 len   8  first=V74/V76/V80          12 distinct values across builds
+  0xD77EE-0xD77EF len   2  first=V74                  11 distinct values across builds
+  0xD780E-0xD780E len   1  first=V74                  STOCK..V73=3c | V74..V75=0c | V76=00 | V76g..V77b=0c | V78..V80=00 | V81=0c | V83a..V98=3c
+  0xD7810-0xD7811 len   2  first=V75                  STOCK..V74=9001 | V75=c800 | V76=7700 | V76g..V77=9001 | V77b=c800 | V78..V80=7700 | V81=c800 | V83a..V98=9001
+  0xD7818-0xD781B len   4  first=V74/V79              STOCK..V73=8c001b02 | V74..V75=1b021b02 | V76=2c011b02 | V76g..V77b=1b021b02 | V78=c1011b02 | V79..V80=81039003 | V81=1b021b02 | V83a..V98=8c001b02
+  0xD7822-0xD7822 len   1  first=V74                  STOCK..V73=3c | V74..V75=0c | V76=3c | V76g..V77b=0c | V78..V80=3c | V81..V83a=0c | V84..V98=3c
+  0xD7824-0xD7825 len   2  first=V75                  STOCK..V74=9001 | V75=c800 | V76..V77=9001 | V77b=c800 | V78..V80=9001 | V81..V83a=c800 | V84..V98=9001
+  0xD782C-0xD782D len   2  first=V74                  STOCK..V73=8c00 | V74..V75=1b02 | V76=8c00 | V76g..V77b=1b02 | V78..V80=8c00 | V81..V83a=1b02 | V84..V98=8c00
+  0xD7A5C-0xD7A61 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V90=9ad99ae952f8 | V91..V92=67c667de7bf4 | V93..V94=66f666fa14fe | V96..V98=67c667de7bf4
+  0xD7A6C-0xD7A71 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V90=9ad99ae952f8 | V91..V92=67c667de7bf4 | V93..V94=66f666fa14fe | V96..V98=67c667de7bf4
+  0xD87DA-0xD87DB len   2  first=V74                  9 distinct values across builds
+  0xD880E-0xD880E len   1  first=V74                  STOCK..V73=3c | V74..V75=0c | V76=3c | V76g..V77b=0c | V78..V80=3c | V81..V86b=0c | V87..V98=3c
+  0xD8810-0xD8811 len   2  first=V75                  STOCK..V74=9001 | V75=c800 | V76..V77=9001 | V77b=c800 | V78..V80=9001 | V81..V86b=c800 | V87..V98=9001
+  0xD8818-0xD8819 len   2  first=V74                  STOCK..V73=8e00 | V74..V75=1802 | V76=8e00 | V76g..V77b=1802 | V78..V80=8e00 | V81..V86b=1802 | V87..V98=8e00
+  0xD8A5C-0xD8A61 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V98=9ad99ae952f8
+  0xD97DA-0xD97DB len   2  first=V74                  9 distinct values across builds
+  0xD97EE-0xD97EF len   2  first=V74                  9 distinct values across builds
+  0xD980E-0xD980E len   1  first=V74                  STOCK..V73=3c | V74..V75=0c | V76=3c | V76g..V77b=0c | V78..V80=3c | V81..V86b=0c | V87..V98=3c
+  0xD9810-0xD9811 len   2  first=V75                  STOCK..V74=9001 | V75=c800 | V76..V77=9001 | V77b=c800 | V78..V80=9001 | V81..V86b=c800 | V87..V98=9001
+  0xD9818-0xD9819 len   2  first=V74                  STOCK..V73=8e00 | V74..V75=1802 | V76=8e00 | V76g..V77b=1802 | V78..V80=8e00 | V81..V86b=1802 | V87..V98=8e00
+  0xD9822-0xD9822 len   1  first=V74                  STOCK..V73=3c | V74..V75=0c | V76=3c | V76g..V77b=0c | V78..V80=3c | V81..V86b=0c | V87..V98=3c
+  0xD9824-0xD9825 len   2  first=V75                  STOCK..V74=9001 | V75=c800 | V76..V77=9001 | V77b=c800 | V78..V80=9001 | V81..V86b=c800 | V87..V98=9001
+  0xD982C-0xD982D len   2  first=V74                  STOCK..V73=8e00 | V74..V75=1802 | V76=8e00 | V76g..V77b=1802 | V78..V80=8e00 | V81..V86b=1802 | V87..V98=8e00
+  0xD9A5C-0xD9A61 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V98=9ad99ae952f8
+  0xD9A6C-0xD9A71 len   6  first=V74                  STOCK..V73=9ad99ae952f8 | V74..V75=67c667de7bf4 | V76=9ad99ae952f8 | V76g..V77b=67c667de7bf4 | V78..V98=9ad99ae952f8
+  0xE4195-0xE4195 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4197-0xE4197 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4199-0xE4199 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE419B-0xE419B len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE419D-0xE419D len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE419F-0xE419F len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE41A1-0xE41A1 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE41A3-0xE41A3 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE41A5-0xE41A5 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE41BD-0xE41BD len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE41BF-0xE41BF len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE41C1-0xE41C1 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE41C3-0xE41C3 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE41C5-0xE41C5 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE41C7-0xE41C7 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE41C9-0xE41C9 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE41CB-0xE41CB len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE41CD-0xE41CD len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE420D-0xE420D len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE420F-0xE420F len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4211-0xE4211 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4213-0xE4213 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4215-0xE4215 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4217-0xE4217 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4219-0xE4219 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE421B-0xE421B len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE421D-0xE421D len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4235-0xE4235 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4237-0xE4237 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4239-0xE4239 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE423B-0xE423B len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE423D-0xE423D len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE423F-0xE423F len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4241-0xE4241 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4243-0xE4243 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE4245-0xE4245 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE5195-0xE5195 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE5197-0xE5197 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE5199-0xE5199 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE519B-0xE519B len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE519D-0xE519D len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE519F-0xE519F len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51A1-0xE51A1 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51A3-0xE51A3 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51A5-0xE51A5 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51BD-0xE51BD len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51BF-0xE51BF len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51C1-0xE51C1 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51C3-0xE51C3 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51C5-0xE51C5 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51C7-0xE51C7 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51C9-0xE51C9 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51CB-0xE51CB len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51CD-0xE51CD len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51E5-0xE51E5 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51E7-0xE51E7 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51E9-0xE51E9 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51EB-0xE51EB len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51ED-0xE51ED len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51EF-0xE51EF len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51F1-0xE51F1 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51F3-0xE51F3 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE51F5-0xE51F5 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE520D-0xE520D len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE520F-0xE520F len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE5211-0xE5211 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE5213-0xE5213 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE5215-0xE5215 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE5217-0xE5217 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE5219-0xE5219 len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE521B-0xE521B len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+  0xE521D-0xE521D len   1  first=V38                  STOCK..V37=3c | V38..V98=40
+
+--- REGION CRC: 15 runs, 60 bytes ---
+  0xC4FFC-0xC4FFF len   4  first=V22                  70 distinct values across builds
+  0xC5FFC-0xC5FFF len   4  first=V41                  STOCK..V40=0b20c109 | V41=a47e2015 | V42..V98=0b20c109
+  0xC6FFC-0xC6FFF len   4  first=V22                  48 distinct values across builds
+  0xCEFFC-0xCEFFF len   4  first=V73                  STOCK..V72=ae37b62d | V73..V75=273eb005 | V76=ae37b62d | V76g..V77b=273eb005 | V78..V80=ae37b62d | V81..V86b=273eb005 | V87..V98=ae37b62d
+  0xCFFFC-0xCFFFF len   4  first=V73                  10 distinct values across builds
+  0xD0FFC-0xD0FFF len   4  first=V73                  10 distinct values across builds
+  0xD2FFC-0xD2FFF len   4  first=V44                  20 distinct values across builds
+  0xD3FFC-0xD3FFF len   4  first=V73                  10 distinct values across builds
+  0xD4FFC-0xD4FFF len   4  first=V74                  9 distinct values across builds
+  0xD6FFC-0xD6FFF len   4  first=V74                  11 distinct values across builds
+  0xD7FFC-0xD7FFF len   4  first=V74                  17 distinct values across builds
+  0xD8FFC-0xD8FFF len   4  first=V74                  9 distinct values across builds
+  0xD9FFC-0xD9FFF len   4  first=V74                  9 distinct values across builds
+  0xE4FFC-0xE4FFF len   4  first=V38                  STOCK..V37=b3e8dac1 | V38..V98=fed9b525
+  0xE5FFC-0xE5FFF len   4  first=V38                  STOCK..V37=1406ba24 | V38..V98=89340881
+
+====================================================================================================
+B2. FROZEN COUNTS -- 'unchanged for the last N builds' (N excludes the STOCK row)
+    N counts consecutive BUILD images, newest-last, holding the value they hold on V98.
+====================================================================================================
+    88 build images on disk.  N == 88 means NEVER MOVED ON ANY BUILD.
+
+addr       N frozen since   moves      stock        V98  state      what
+0xC63AC          2 V97         1        102        150  NON-STOCK  Stage-1 IIR alpha on the ACTUAL arm (gp-0x374c>>4); fc ~15.9 Hz @1 kHz
+0x55DF2          3 V96         5      37864      38032  NON-STOCK  CAN-427 packer SOURCE displacement (which gp cell 0x1AB carries)
+0x55E10          3 V96         4       0xA3       0xA6  NON-STOCK  CAN-427 packer SHIFT byte (sar N on the 427 payload)
+0xC640A          3 V96         2      -8192      -8192  STOCK      FUN_00036c12 FALLBACK-2 flat gain (gp-0x671a >= 5)
+0xC640C          3 V96         2      -3277      -3277  STOCK      FUN_00036c12 FALLBACK-1 flat gain (outer gate fails)
+0xD6A6C          3 V96         2      -9830      -9830  STOCK      friction/inertia mode 24 (MANUAL) Y[0]
+0xD6A6E          3 V96         2      -5734      -5734  STOCK      friction/inertia mode 24 (MANUAL) Y[1]
+0xD6A70          3 V96         2      -1966      -1966  STOCK      friction/inertia mode 24 (MANUAL) Y[2]
+0xD7A5C          3 V96         7      -9830     -14745  NON-STOCK  friction/inertia mode 26 (ENGAGED) Y[0]
+0xD7A5E          3 V96         7      -5734      -8601  NON-STOCK  friction/inertia mode 26 (ENGAGED) Y[1]
+0xD7A60          3 V96         7      -1966      -2949  NON-STOCK  friction/inertia mode 26 (ENGAGED) Y[2]
+0xD7A6C          3 V96         7      -9830     -14745  NON-STOCK  friction/inertia mode 27 (ENGAGED) Y[0]
+0xD7A6E          3 V96         7      -5734      -8601  NON-STOCK  friction/inertia mode 27 (ENGAGED) Y[1]
+0xD7A70          3 V96         7      -1966      -2949  NON-STOCK  friction/inertia mode 27 (ENGAGED) Y[2]
+0xC40D2          9 V89         1        102        204  NON-STOCK  K1 modelled Coulomb friction gain (the MODEL arm)
+0x3AA96         10 V88         9       0xC5       0xFB  NON-STOCK  Lever B GATE byte (C5 = dead 0x683C / FB = latActive 0x6806)
+0xC6446         10 V88         9        512       5244  NON-STOCK  r24 engaged arm -- LEVER B ARM
+0xC40BC         11 V87         2        600        600  STOCK      Coulomb relay breakpoint / friction relay gate
+0xC40D4         12 V86b        2        573        573  STOCK      observer torque IIR / command-branch EMA
+0xC63A0         16 V83a        6       1024       1024  STOCK      Path-2 lane weight w[0], gp-0x6bd0 (the damper lane)
+0xC6A72         16 V83a       10       3072       3072  STOCK      gain_A rec0 [0]
+0xC6A74         16 V83a       10       3072       3072  STOCK      gain_A rec0 [1]
+0x2A1F0         17 V81         5      29804      31952  NON-STOCK  V57 decouple displacement (7CD0 => reads 0xC6CD0)
+0xC62EA         17 V81         5        320          0  NON-STOCK  low-speed steer lockout window (320 ct ~ 5 km/h); 0 = steer-to-zero
+0xC646C         17 V81         7        891        891  STOCK      SHARED sensor scale (Honda 891)
+0xC6CD0         17 V81         5         -1       3564  NON-STOCK  V57 private forward LKAS gain (3564 = 4.000x)
+0x454FE         18 V80        11       0xBA       0xB5  NON-STOCK  V42 macro-ratchet fix (BA = stock bne / B5 = br)
+0xC407E         20 V78         4        511        511  STOCK      HARD-FAULT INTERLOCK CLAMP (Honda 511, one under its 512 trip)
+0xC6444         28 V72         4        512        512  STOCK      r26 engaged arm
+0x3AB76         30 V71b        6       0xAA       0xAA  STOCK      Lever A: V62 sar on r26 (AA stock / A9 = x2)
+0x3AC20         30 V71b        6       0xAA       0xAA  STOCK      Lever A: V62 sar on r24 (AA stock / A9 = x2)
+0xC643E         37 V65         4       1536       1536  STOCK      gain_A arm
+0xC6440         37 V65         2       2048       2048  STOCK      third arm gp-0x671a
+0x55C0E         49 V53         8   2436e8ea   86ff26ef  NON-STOCK  CAN 0x14A cave HOOK -- the 4-byte jarl that calls the cave at 0xC4B34
+0xC644A         55 V49p        4       1024       1024  STOCK      PID D-path IIR / V43 dirty-derivative pole
+0xC4120         57 V48b        2       0x01       0x01  STOCK      V48a-era cal byte
+0xC6450         59 V47         2       1024       1024  STOCK      V46 lever
+0xC6206         60 V46         4        512        512  STOCK      speed-selector cal A (V40 brick)
+0xC6A9A         63 V43         2       2664       2664  STOCK      gain_A rec2 Y[0]
+0xC6AAE         63 V43         2       2560       2560  STOCK      gain_A rec3 Y[0]
+0xC6208         65 V41         2        205        205  STOCK      speed-selector cal B (V40 brick)
+0xC61B2         68 V38         2        512       2048  NON-STOCK  ARBITRATION output clamp
+0xC61B4         68 V38         2        512       2048  NON-STOCK  LKAS-GAIN output clamp
+0xC6598         68 V38         3         1f         5f  NON-STOCK  corridor wall FLOAT +A
+0xC659C         68 V38         3         1f         5f  NON-STOCK  corridor wall FLOAT +B
+0xC65AC         68 V38         3        -1f        -5f  NON-STOCK  corridor wall FLOAT -A
+0xC65B0         68 V38         3        -1f        -5f  NON-STOCK  corridor wall FLOAT -B
+0xC65C4         68 V38         2         0f         5f  NON-STOCK  boost floor FLOAT [0]
+0xC65C8         68 V38         2       1.5f         5f  NON-STOCK  boost floor FLOAT [1]
+0xC65CC         68 V38         2         2f         5f  NON-STOCK  boost floor FLOAT [2]
+0xC674E         68 V38         3       1024       5120  NON-STOCK  corridor wall INT +A
+0xC6750         68 V38         3       1024       5120  NON-STOCK  corridor wall INT +B
+0xC675A         68 V38         3      -1024      -5120  NON-STOCK  corridor wall INT -A
+0xC675C         68 V38         3      -1024      -5120  NON-STOCK  corridor wall INT -B
+0xC6768         68 V38         2          0       5120  NON-STOCK  boost floor INT [0]
+0xC676A         68 V38         2       1536       5120  NON-STOCK  boost floor INT [1]
+0xC676C         68 V38         2       2048       5120  NON-STOCK  boost floor INT [2]
+0xC64B8         69 V37         1       0x70       0xFF  NON-STOCK  DTC-0x49 fail-counter gate
+0xC61C0         70 V36         1       1600      65535  NON-STOCK  gentle-EME debounce RATE threshold [0]
+0xC61C2         70 V36         1        896      65535  NON-STOCK  gentle-EME debounce RATE threshold [1]
+0xC61C4         70 V36         1       1280      65535  NON-STOCK  gentle-EME debounce RATE threshold [2]
+0xC64B4         70 V36         1      24688      65535  NON-STOCK  gentle-EME debounce TORQUE threshold [0]
+0xC64B6         70 V36         1      16438      65535  NON-STOCK  gentle-EME debounce TORQUE threshold [1]
+0x13109         88 V22         1       0x2D       0x2C  NON-STOCK  part-number ASCII byte (cosmetic build marker, '-'->',')
+0x14120         88 V22         1       0x2D       0x2C  NON-STOCK  part-number ASCII byte, second copy (cosmetic)
+0xC4048         88 STOCK       0          0          0  STOCK      friction-family cal (checked VIRGIN)
+0xC407C         88 STOCK       0        461        461  STOCK      friction-comp clamp neighbour
+0xC4080         88 STOCK       0          0          0  STOCK      K0 pure-Coulomb arm -- recorded NEVER-RAISE relay hazard
+0xC40D0         88 STOCK       0        408        408  STOCK      friction EMA alpha (16.7 Hz)
+0xC40D6         88 STOCK       0        246        246  STOCK      accel/inertia IIR
+0xC40D8         88 STOCK       0       3686       3686  STOCK      gp-0x4f60 IIR (a no-op)
+0xC520C         88 STOCK       0          5          5  STOCK      governor rate ceiling / cap table (V40 bricked on a neighbour)
+0xC6158         88 STOCK       0        512        512  STOCK      ceiling tp+0x7158 fallback
+0xC616C         88 STOCK       0          0          0  STOCK      (checked VIRGIN)
+0xC6194         88 STOCK       0          3          3  STOCK      the REAL LKAS slew limiter -- DEAD (0xC4118 all-1)
+0xC61B8         88 STOCK       0        102        102  STOCK      pre-gain deadband
+0xC61D6         88 STOCK       0          0          0  STOCK      (checked VIRGIN)
+0xC61DA         88 STOCK       0       1092       1092  STOCK      Q10 integrator scale
+0xC61F6         88 STOCK       0          3          3  STOCK      r24 lane deadzone
+0xC6200         88 STOCK       0       8192       8192  STOCK      gp-0x6b70's OUTPUT CLAMP
+0xC6316         88 STOCK       0        640        640  STOCK      governor vehicle-speed cal ~10 km/h
+0xC636E         88 STOCK       0        205        205  STOCK      (checked VIRGIN)
+0xC6372         88 STOCK       0        205        205  STOCK      (checked VIRGIN)
+0xC63A2         88 STOCK       0       1024       1024  STOCK      Path-2 lane weight w[1], gp-0x6bbe (VISCOUS)
+0xC63A4         88 STOCK       0       1024       1024  STOCK      Path-2 lane weight w[2], gp-0x6b46
+0xC63A6         88 STOCK       0       1024       1024  STOCK      Path-2 lane weight w[3], gp-0x6b26 (INERTIA -- the NO-GO lever)
+0xC63A8         88 STOCK       0       1024       1024  STOCK      Path-2 lane weight w[4], gp-0x6b4e (lane provably == 0)
+0xC63AA         88 STOCK       0       1024       1024  STOCK      Path-2 lane weight w[5], gp-0x6b4c (the LKAS lane)
+0xC63AE         88 STOCK       0       1024       1024  STOCK      Stage-2 input scale
+0xC63B8         88 STOCK       0         41         41  STOCK      (checked VIRGIN)
+0xC63D2         88 STOCK       0          6          6  STOCK      FUN_00036682 pole, fc 0.93 Hz
+0xC63F8         88 STOCK       0         33         33  STOCK      authority ramp-rate UP
+0xC63FC         88 STOCK       0        328        328  STOCK      authority ramp-rate, the 10x-asymmetric twin
+0xC6442         88 STOCK       0       1024       1024  STOCK      gp-0x671d arm
+0xC6468         88 STOCK       0       2639       2639  STOCK      model output gain -- SHARED, scales BOTH arms of the residual
+0xC646E         88 STOCK       0       1428       1428  STOCK      INERTIA/damping gain
+0xC64C8         88 STOCK       0       0x00       0x00  STOCK      aggregator mode selector
+0xC64C9         88 STOCK       0       0x00       0x00  STOCK      blend mux
+0xC64DE         88 V22         1      25617      25627  NON-STOCK  legacy re-engage ramp ('RAMPSTEP', label disputed)
+0xC64FA         88 STOCK       0       0x05       0x05  STOCK      CEIL byte cal
+0xC6AE6         88 STOCK       0       2048       2048  STOCK      PID Kd
+0xC6B12         88 STOCK       0         98         98  STOCK      PID Ki
+0xC6B26         88 STOCK       0        256        256  STOCK      PID Kp
+0xE5284         88 STOCK       0          4          4  STOCK      AUTHORITY COLLAPSE curve record
+0xE52FC         88 STOCK       0          4          4  STOCK      AUTHORITY COLLAPSE curve record
+0xE5404         88 STOCK       0          4          4  STOCK      AUTHORITY COLLAPSE curve record
+0xE547C         88 STOCK       0          4          4  STOCK      AUTHORITY COLLAPSE curve record
+
+====================================================================================================
+B3. VIRGIN VERDICTS -- byte-identical to STOCK on ALL 88 images?
+====================================================================================================
+0xC4080  VIRGIN                       stock=0
+0xC4048  VIRGIN                       stock=0
+0xC40D0  VIRGIN                       stock=408
+0xC40D6  VIRGIN                       stock=246
+0xC40D8  VIRGIN                       stock=3686
+0xC63A2  VIRGIN                       stock=1024
+0xC63A4  VIRGIN                       stock=1024
+0xC63A6  VIRGIN                       stock=1024
+0xC63A8  VIRGIN                       stock=1024
+0xC63AA  VIRGIN                       stock=1024
+0xC6372  VIRGIN                       stock=205
+0xC636E  VIRGIN                       stock=205
+0xC63B8  VIRGIN                       stock=41
+0xC61D6  VIRGIN                       stock=0
+0xC616C  VIRGIN                       stock=0
+0xC6158  VIRGIN                       stock=512
+0xC61DA  VIRGIN                       stock=1092
+0xC6206  MOVED-ON-BUILD-V40          stock=512  V98=512  moved on 2 builds ['V40', 'V45']  values seen [-1, 205]
+0xC6208  MOVED-ON-BUILD-V40          stock=205  V98=205  moved on 1 builds ['V40']  values seen [-1]
+0xC6316  VIRGIN                       stock=640
+0xC63F8  VIRGIN                       stock=33
+0xC63FC  VIRGIN                       stock=328
+0xC6B12  VIRGIN                       stock=98
+0xC520C  VIRGIN                       stock=5
+0xC6194  VIRGIN                       stock=3
+0xE547C  VIRGIN                       stock=4
+0xE5404  VIRGIN                       stock=4
+0xE52FC  VIRGIN                       stock=4
+0xE5284  VIRGIN                       stock=4
+
+====================================================================================================
+C. CUMULATIVE NON-STOCK DELTA -- V98 vs STOCK
+   image sha256 c9babfed6acf24c0c5877754149a60fd5866dae8407029d7a3a5d74870d151d9
+   312 differing non-mask bytes in 113 runs
+====================================================================================================
+
+--- LIST 1: CAVE / PROBE bytes (telemetry code; does NOT change the control law) ---
+  0xC4B34-0xC4BA2   111 bytes   first=V31p   0x14A byte4/byte7 telemetry CAVE (probe code; changes NO control signal)
+  0xC4BA4-0xC4BCD    42 bytes   first=V31p/V31p2/V48b/V53/V98   0x14A byte4/byte7 telemetry CAVE (probe code; changes NO control signal)
+  TOTAL CAVE: 153 bytes
+
+--- CRC/packaging consequences (block checksums; not levers) ---
+  0xC4FFC-0xC4FFF     4 bytes   per-4KiB block CRC for block 0xC4000  stock=7549f248 -> 363bdcae
+  0xC6FFC-0xC6FFF     4 bytes   per-4KiB block CRC for block 0xC6000  stock=0c9e3cef -> 143b000f
+  0xD7FFC-0xD7FFF     4 bytes   per-4KiB block CRC for block 0xD7000  stock=7042af1c -> 27a7482d
+  0xE4FFC-0xE4FFF     4 bytes   per-4KiB block CRC for block 0xE4000  stock=b3e8dac1 -> fed9b525
+  0xE5FFC-0xE5FFF     4 bytes   per-4KiB block CRC for block 0xE5000  stock=1406ba24 -> 89340881
+  TOTAL CRC: 20 bytes
+
+--- LIST 2: CONTROL-LAW cells (calibration + in-place code edits) ---
+addr        w        stock          V98  first   what
+0x13109     1         0x2D         0x2C  V22     part-number ASCII byte (cosmetic build marker, '-'->',')
+0x14120     1         0x2D         0x2C  V22     part-number ASCII byte, second copy (cosmetic)
+0x2A1F0     2        29804        31952  V57     V57 decouple displacement (7CD0 => reads 0xC6CD0)
+0x3AA96     1         0xC5         0xFB  V67     Lever B GATE byte (C5 = dead 0x683C / FB = latActive 0x6806)
+0x454FE     1         0xBA         0xB5  V42     V42 macro-ratchet fix (BA = stock bne / B5 = br)
+0x55C0E     4     2436e8ea     86ff26ef  V31p    CAN 0x14A cave HOOK -- the 4-byte jarl that calls the cave at 0xC4B34
+0x55DF2     2        37864        38032  V87     CAN-427 packer SOURCE displacement (which gp cell 0x1AB carries)
+0x55E10     1         0xA3         0xA6  V92     CAN-427 packer SHIFT byte (sar N on the 427 payload)
+0xC40D2     2          102          204  V89     K1 modelled Coulomb friction gain (the MODEL arm)
+0xC61B2     2          512         2048  V22     ARBITRATION output clamp
+0xC61B4     2          512         2048  V22     LKAS-GAIN output clamp
+0xC61C0     2         1600        65535  V36     gentle-EME debounce RATE threshold [0]
+0xC61C2     2          896        65535  V36     gentle-EME debounce RATE threshold [1]
+0xC61C4     2         1280        65535  V36     gentle-EME debounce RATE threshold [2]
+0xC62EA     2          320            0  V53     low-speed steer lockout window (320 ct ~ 5 km/h); 0 = steer-to-zero
+0xC63AC     2          102          150  V97     Stage-1 IIR alpha on the ACTUAL arm (gp-0x374c>>4); fc ~15.9 Hz @1 kHz
+0xC6446     2          512         5244  V67     r24 engaged arm -- LEVER B ARM
+0xC64B4     2        24688        65535  V36     gentle-EME debounce TORQUE threshold [0]
+0xC64B6     2        16438        65535  V36     gentle-EME debounce TORQUE threshold [1]
+0xC64B8     1         0x70         0xFF  V37     DTC-0x49 fail-counter gate
+0xC64DE     2        25617        25627  V22     legacy re-engage ramp ('RAMPSTEP', label disputed)
+0xC6598     4           1f           5f  V29     corridor wall FLOAT +A
+0xC659C     4           1f           5f  V29     corridor wall FLOAT +B
+0xC65AC     4          -1f          -5f  V29     corridor wall FLOAT -A
+0xC65B0     4          -1f          -5f  V29     corridor wall FLOAT -B
+0xC65C4     4           0f           5f  V31     boost floor FLOAT [0]
+0xC65C8     4         1.5f           5f  V31     boost floor FLOAT [1]
+0xC65CC     4           2f           5f  V31     boost floor FLOAT [2]
+0xC674E     2         1024         5120  V25     corridor wall INT +A
+0xC6750     2         1024         5120  V25     corridor wall INT +B
+0xC675A     2        -1024        -5120  V25     corridor wall INT -A
+0xC675C     2        -1024        -5120  V25     corridor wall INT -B
+0xC6768     2            0         5120  V31     boost floor INT [0]
+0xC676A     2         1536         5120  V31     boost floor INT [1]
+0xC676C     2         2048         5120  V31     boost floor INT [2]
+0xC6CD0     2           -1         3564  V57     V57 private forward LKAS gain (3564 = 4.000x)
+0xD7A5C     2        -9830       -14745  V74     friction/inertia mode 26 (ENGAGED) Y[0]
+0xD7A5E     2        -5734        -8601  V74     friction/inertia mode 26 (ENGAGED) Y[1]
+0xD7A60     2        -1966        -2949  V74     friction/inertia mode 26 (ENGAGED) Y[2]
+0xD7A6C     2        -9830       -14745  V74     friction/inertia mode 27 (ENGAGED) Y[0]
+0xD7A6E     2        -5734        -8601  V74     friction/inertia mode 27 (ENGAGED) Y[1]
+0xD7A70     2        -1966        -2949  V74     friction/inertia mode 27 (ENGAGED) Y[2]
+0xE4194..0xE521C          2        15360        16384  V38     ARB SETPOINT LIMIT sel0 Y[0]   [x72 cells, identical value]
+  TOTAL CONTROL-LAW: 139 bytes in 106 runs, 114 named cells, 0 unnamed bytes
+
+✅ ZERO UNATTRIBUTED BYTES -- every one of the 312 differing bytes on V98 is attributed to a build present in the on-disk chain.
+
+====================================================================================================
+C. CUMULATIVE NON-STOCK DELTA -- V97 vs STOCK
+   image sha256 7ac009044b46eeb2fd38d9ab6c7cb634e1be6ca44eb6f5083b9897c33829c2b3
+   270 differing non-mask bytes in 113 runs
+====================================================================================================
+
+--- LIST 1: CAVE / PROBE bytes (telemetry code; does NOT change the control law) ---
+  0xC4B34-0xC4B64    49 bytes   first=V31p   0x14A byte4/byte7 telemetry CAVE (probe code; changes NO control signal)
+  0xC4B66-0xC4BA3    62 bytes   first=V31p   0x14A byte4/byte7 telemetry CAVE (probe code; changes NO control signal)
+  TOTAL CAVE: 111 bytes
+
+--- CRC/packaging consequences (block checksums; not levers) ---
+  0xC4FFC-0xC4FFF     4 bytes   per-4KiB block CRC for block 0xC4000  stock=7549f248 -> c7b3741a
+  0xC6FFC-0xC6FFF     4 bytes   per-4KiB block CRC for block 0xC6000  stock=0c9e3cef -> 143b000f
+  0xD7FFC-0xD7FFF     4 bytes   per-4KiB block CRC for block 0xD7000  stock=7042af1c -> 27a7482d
+  0xE4FFC-0xE4FFF     4 bytes   per-4KiB block CRC for block 0xE4000  stock=b3e8dac1 -> fed9b525
+  0xE5FFC-0xE5FFF     4 bytes   per-4KiB block CRC for block 0xE5000  stock=1406ba24 -> 89340881
+  TOTAL CRC: 20 bytes
+
+--- LIST 2: CONTROL-LAW cells (calibration + in-place code edits) ---
+addr        w        stock          V97  first   what
+0x13109     1         0x2D         0x2C  V22     part-number ASCII byte (cosmetic build marker, '-'->',')
+0x14120     1         0x2D         0x2C  V22     part-number ASCII byte, second copy (cosmetic)
+0x2A1F0     2        29804        31952  V57     V57 decouple displacement (7CD0 => reads 0xC6CD0)
+0x3AA96     1         0xC5         0xFB  V67     Lever B GATE byte (C5 = dead 0x683C / FB = latActive 0x6806)
+0x454FE     1         0xBA         0xB5  V42     V42 macro-ratchet fix (BA = stock bne / B5 = br)
+0x55C0E     4     2436e8ea     86ff26ef  V31p    CAN 0x14A cave HOOK -- the 4-byte jarl that calls the cave at 0xC4B34
+0x55DF2     2        37864        38032  V87     CAN-427 packer SOURCE displacement (which gp cell 0x1AB carries)
+0x55E10     1         0xA3         0xA6  V92     CAN-427 packer SHIFT byte (sar N on the 427 payload)
+0xC40D2     2          102          204  V89     K1 modelled Coulomb friction gain (the MODEL arm)
+0xC61B2     2          512         2048  V22     ARBITRATION output clamp
+0xC61B4     2          512         2048  V22     LKAS-GAIN output clamp
+0xC61C0     2         1600        65535  V36     gentle-EME debounce RATE threshold [0]
+0xC61C2     2          896        65535  V36     gentle-EME debounce RATE threshold [1]
+0xC61C4     2         1280        65535  V36     gentle-EME debounce RATE threshold [2]
+0xC62EA     2          320            0  V53     low-speed steer lockout window (320 ct ~ 5 km/h); 0 = steer-to-zero
+0xC63AC     2          102          150  V97     Stage-1 IIR alpha on the ACTUAL arm (gp-0x374c>>4); fc ~15.9 Hz @1 kHz
+0xC6446     2          512         5244  V67     r24 engaged arm -- LEVER B ARM
+0xC64B4     2        24688        65535  V36     gentle-EME debounce TORQUE threshold [0]
+0xC64B6     2        16438        65535  V36     gentle-EME debounce TORQUE threshold [1]
+0xC64B8     1         0x70         0xFF  V37     DTC-0x49 fail-counter gate
+0xC64DE     2        25617        25627  V22     legacy re-engage ramp ('RAMPSTEP', label disputed)
+0xC6598     4           1f           5f  V29     corridor wall FLOAT +A
+0xC659C     4           1f           5f  V29     corridor wall FLOAT +B
+0xC65AC     4          -1f          -5f  V29     corridor wall FLOAT -A
+0xC65B0     4          -1f          -5f  V29     corridor wall FLOAT -B
+0xC65C4     4           0f           5f  V31     boost floor FLOAT [0]
+0xC65C8     4         1.5f           5f  V31     boost floor FLOAT [1]
+0xC65CC     4           2f           5f  V31     boost floor FLOAT [2]
+0xC674E     2         1024         5120  V25     corridor wall INT +A
+0xC6750     2         1024         5120  V25     corridor wall INT +B
+0xC675A     2        -1024        -5120  V25     corridor wall INT -A
+0xC675C     2        -1024        -5120  V25     corridor wall INT -B
+0xC6768     2            0         5120  V31     boost floor INT [0]
+0xC676A     2         1536         5120  V31     boost floor INT [1]
+0xC676C     2         2048         5120  V31     boost floor INT [2]
+0xC6CD0     2           -1         3564  V57     V57 private forward LKAS gain (3564 = 4.000x)
+0xD7A5C     2        -9830       -14745  V74     friction/inertia mode 26 (ENGAGED) Y[0]
+0xD7A5E     2        -5734        -8601  V74     friction/inertia mode 26 (ENGAGED) Y[1]
+0xD7A60     2        -1966        -2949  V74     friction/inertia mode 26 (ENGAGED) Y[2]
+0xD7A6C     2        -9830       -14745  V74     friction/inertia mode 27 (ENGAGED) Y[0]
+0xD7A6E     2        -5734        -8601  V74     friction/inertia mode 27 (ENGAGED) Y[1]
+0xD7A70     2        -1966        -2949  V74     friction/inertia mode 27 (ENGAGED) Y[2]
+0xE4194..0xE521C          2        15360        16384  V38     ARB SETPOINT LIMIT sel0 Y[0]   [x72 cells, identical value]
+  TOTAL CONTROL-LAW: 139 bytes in 106 runs, 114 named cells, 0 unnamed bytes
+
+✅ ZERO UNATTRIBUTED BYTES -- every one of the 270 differing bytes on V97 is attributed to a build present in the on-disk chain.
+
+====================================================================================================
+V97 -> V98: 146 differing bytes in 4 runs
+====================================================================================================
+  0xC4B34-0xC4B3F   12 [CAVE]
+      V97: 003a243790946032ae05483a
+      V98: 243706946032ae0580310638
+  0xC4B4A-0xC4B7F   54 [CAVE]
+      V97: 443a6032ae058031ac326332a30503320639c43a8437b3980606e4ffa305483a8437edeac636070007314437ecea2437b5c8a4326032
+      V98: 8031e639023aae05003ac43a8437edeac636df0007314437ecea243702946032ae05803106382437b5c8a4326032ae058031e639043a
+  0xC4B82-0xC4BCD   76 [CAVE]
+      V97: 8031aa32c6360200013a0639c63aa437efeac6363f0007314437efea2436e8ea7f00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+      V98: 003a243790946032ae05483a2437b5c8a4326032ae05413ac43a0437ae98060680ffa305483a8437edeac636270007314437ecea023ac63aa437efeac6363f0007314437efea2436e8ea7f00
+  0xC4FFC-0xC4FFF    4 [CRC]
+      V97: c7b3741a
+      V98: 363bdcae
+
+====================================================================================================
+PER-BUILD DELTA vs IMMEDIATE PREDECESSOR (V84..V98)
+====================================================================================================
+    V83a -> V84   :    85 bytes,  14 runs   {'CODE': 1, 'CAVE': 61, 'CRC': 12, 'CAL': 11}
+     V84 -> V85   :    63 bytes,  10 runs   {'CAL': 2, 'CAVE': 57, 'CRC': 4}
+     V85 -> V86   :    68 bytes,   5 runs   {'CAL': 2, 'CAVE': 62, 'CRC': 4}
+     V86 -> V86b  :    16 bytes,   7 runs   {'CAL': 6, 'CAVE': 2, 'CRC': 8}
+    V86b -> V87   :   179 bytes,  78 runs   {'CODE': 76, 'CAL': 56, 'CRC': 47}
+     V87 -> V88   :    13 bytes,   6 runs   {'CODE': 1, 'CAVE': 2, 'CRC': 8, 'CAL': 2}
+     V88 -> V89   :     8 bytes,   4 runs   {'CAL': 1, 'CAVE': 3, 'CRC': 4}
+     V89 -> V90   :    68 bytes,   9 runs   {'CODE': 1, 'CAVE': 63, 'CRC': 4}
+     V90 -> V91   :    16 bytes,   3 runs   {'CAL': 12, 'CRC': 4}
+     V91 -> V92   :   103 bytes,   7 runs   {'CODE': 2, 'CAVE': 97, 'CRC': 4}
+     V92 -> V93   :   136 bytes,  14 runs   {'CODE': 2, 'CAVE': 97, 'CRC': 16, 'CAL': 21}
+     V93 -> V94   :     5 bytes,   2 runs   {'CODE': 1, 'CRC': 4}
+     V94 -> V96   :   117 bytes,  16 runs   {'CODE': 2, 'CAVE': 78, 'CRC': 16, 'CAL': 21}
+     V96 -> V97   :     5 bytes,   2 runs   {'CAL': 1, 'CRC': 4}
+     V97 -> V98   :   146 bytes,   4 runs   {'CAVE': 142, 'CRC': 4}
+
+wrote C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\v98_vs_stock_delta.json

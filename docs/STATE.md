@@ -1,16 +1,27 @@
 # STATE — living current state of the kit
 
-**Last updated: 2026-08-12 (latest) — **V97 FLEW as route `0x80`**; the operator felt NO difference and
-stopped. `0xC63AC` is filed **UNINTERPRETABLE**. The lever is proven LIVE; the DRIVE could not score it.**
+**Last updated: 2026-08-13 (latest) — **V98 FLEW as route `0x81`**; the COMPARATOR ANSWERED, and it
+refuted the "arms are wildly unequal" belief. `0xC63AC` moves from UNINTERPRETABLE to **WRONG-DIRECTION**.**
 
-🛑🛑 **ON THE CAR: V97.** Route `0x80` (`75604b0a432fdc89_00000080--6c8b103892`, 2 segments,
-cache `_cache_r80/`), 2026-08-12, **fault-free** — 0 sentinels on `0x14A`/`0x18F`, `CONFIG_VALID`
-1.0000, `OUTPUT_DISABLED` 0.0009, `STEER_STATUS` 0 on all 1,719 engaged frames.
-109.2 s total · **17.2 s engaged in ONE episode** · engaged p50 **5.13 km/h**, v_max **6.6 km/h** ·
-**19.5 % override / 80.5 % hands-off** — a deliberate parking-lot creep provoking the symptoms.
+🛑🛑 **ON THE CAR: V98.** Route `0x81` (`75604b0a432fdc89_00000081--c7103d2cb4`, 3 segments,
+cache `_cache_r81/`), 2026-08-12, **fault-free** — 0 sentinels on `0x14A`/`0x18F`, `CONFIG_VALID`
+1.00000, `OUTPUT_DISABLED` 0.00178, DTC bit2 0.00000, `STEER_STATUS` `{0: 17981, 3: 2}`.
+**IDENTITY IS SINGLE-FRAME PROOF:** `0x14A` byte7[7:6] == **2** on **17,983 / 17,983 frames,
+duty 1.000000** (V96/V97 hard-wire 1; ≤ V91 give 0 ⇒ structurally excluded).
+181.5 s total · **65.9 s engaged in 3 episodes** (longest 29.8 s) · engaged p50 **5.58 km/h** ·
+⭐ **plus a BACK-TO-BACK LKAS-OFF ARM** — engaged ends 110.56 s, the operator's deliberate
+*"this is how smooth it should be"* demonstration begins 110.57 s. **Consecutive frames, same lot,
+same tyres.** This is the within-drive matched control the kit had never obtained.
+⇒ **MAKE THE LKAS-OFF ARM MANDATORY IN EVERY FUTURE DRIVE PROTOCOL.** V98's spec called it
+*"optional and free"*; it is neither.
 
-🛑 **OPERATOR, VERBATIM:** *"I did not feel any difference in grinding or stuttering (micro-ratcheting)
-behavior at all on V97, so I stopped the drive."*
+⊕ **V98 was a ZERO-CALIBRATION INSTRUMENT BUILD — no symptom verdict is expected or claimable from
+it.** The V97→V98 delta is **146 bytes, 142 cave + 4 CRC, ZERO calibration bytes** (verified from the
+images two ways).
+
+🛑 **PRIOR OPERATOR REPORT, on V97 (route `0x80`), VERBATIM:** *"I did not feel any difference in
+grinding or stuttering (micro-ratcheting) behavior at all on V97, so I stopped the drive."*
+⊕ **"Stuttering" ≡ micro-ratcheting — his own parenthetical.** It is not a fourth symptom.
 
 ⚠ **IDENTITY IS V96-OR-V97, NOT SINGLE-FRAME V97.** `0x14A` byte7[7:6] ≠ 0 on **10,750/10,750** frames
 ⇒ **not V94, not V92, not anything ≤ V91** (all mask those bits off — structural). But **V96→V97 is
@@ -30,7 +41,10 @@ VOID**. Seventh instance of the kit's "row says UNFLASHED after it flew" defect.
 against the identity bit from the most recent route. The old rule ("write the flight result in the
 same pass that scores the flight") only fires if someone remembers; this one fails loudly.
 
-## ⭐ BUILT AND UNFLASHED: **V98** — the first COMPARATOR probe in the kit
+## ⭐ FLOWN 2026-08-12 AS ROUTE `0x81` — **V98**, the first COMPARATOR probe in the kit
+🛑 **This heading read "BUILT AND UNFLASHED" for a full session after V98 flew — the EIGHTH instance
+of the "row says UNFLASHED after it flew" defect. Corrected 2026-08-13.** See the flight result and
+the comparator verdict at the head of this file.
 
 ```
 39990-TVA,A160-V98-V97BASE-CAVE.CMP.6BFE.6BFA.374C-POL.6752-ID.BYTE7.2-0x13000-0x100000.rwd
@@ -397,8 +411,8 @@ he has complained about.
 
 | build | status | image / rwd |
 |---|---|---|
-| **V97** | ✅ **BUILT, VERIFIED, UNFLASHED — the live candidate.** 131/131. One byte on a V96 base | image `7ac009044b46eeb2…` rwd `78c674a899971a6a…` |
-| **V96** | 🛑 **ON THE CAR.** Flew as routes `7e`/`7f`, 2026-08-12, both fault-free. Identity proven single-frame (byte7 b6 duty **1.000000**, 164,096 frames) | image `876cf2be5800f0f8…` rwd `7e9a65f11cab4ffc…` |
+| **V97** | ☠ **SUPERSEDED — FLEW as route `0x80`, then superseded by V98.** Its `0xC63AC` = 150 is carried on V98 and is now believed **WRONG-DIRECTION** (it broke Honda's exact 51/512 pole match) | image `7ac009044b46eeb2…` rwd `78c674a899971a6a…` |
+| **V96** | ☠ **SUPERSEDED — no longer on the car.** Flew as routes `7e`/`7f`, 2026-08-12, both fault-free | image `876cf2be5800f0f8…` rwd `7e9a65f11cab4ffc…` |
 | **V94** | ☠ flown as `7d` and **ABORTED**; **superseded — no longer on the car** | image `cd971c05d483fe9c…` rwd `3feccc09d8cbdd05…` |
 | **V93** | built, verified, **never flashed**; carries V94's cal without the packer rescale | image `779180f8aaf88f29…` rwd `9c93dca63e9e404e…` |
 | **V92** | flown as route `79`; its calibration is carried byte-for-byte by V96 ⇒ **no revert is pending** | rwd SHA256 `388a1974d5702e17…` |
@@ -2057,7 +2071,14 @@ set's 12.6–42.2°).
 
 ---
 
-## ON THE CAR RIGHT NOW, AND WHAT IS BUILT
+## ⚠⚠ SUPERSEDED 2026-08-13 — THE BLOCK BELOW IS A RECORD, NOT THE CURRENT STATE
+🛑 **It said "ON THE CAR: V94 … Still flashed" and that is FALSE.** V94 was aborted and superseded by
+V96 → V97 → **V98**, which is on the car as of route `0x81` (identity single-frame, `0x14A`
+byte7[7:6] == 2, duty 1.000000, 17,983 frames). **The head of this file is the authority.**
+⇒ This was one of SIX stale flight-status claims found and corrected in one sweep on 2026-08-13
+(`STATE.md` ×3, `BUILD-LINEAGE.md` ×3). **Run the gate at EVERY close-out — it fails loudly, memory does not.**
+
+## ON THE CAR RIGHT NOW, AND WHAT IS BUILT — ⚠ SUPERSEDED, SEE ABOVE
 
 🛑🛑 **ON THE CAR: V94 — AND THE OPERATOR STOPPED DRIVING IT.** Flown as route `7d`, 2026-08-12,
 **fault-free**. *"It vibrated the entire car, and I decided it was not safe to drive."* **Still flashed.**

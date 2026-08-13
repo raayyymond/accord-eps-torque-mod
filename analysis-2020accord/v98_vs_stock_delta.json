@@ -1,0 +1,3856 @@
+{
+ "target": "V98",
+ "previous_on_car": "V97",
+ "builds_on_disk": [
+  "STOCK",
+  "V22",
+  "V23",
+  "V24",
+  "V25",
+  "V26",
+  "V27",
+  "V28",
+  "V29",
+  "V30",
+  "V31",
+  "V31p",
+  "V31p2",
+  "V31t",
+  "V31u",
+  "V32",
+  "V33",
+  "V34",
+  "V35",
+  "V36",
+  "V37",
+  "V38",
+  "V39",
+  "V40",
+  "V41",
+  "V42",
+  "V43",
+  "V44",
+  "V45",
+  "V46",
+  "V47",
+  "V48a",
+  "V48b",
+  "V49",
+  "V49p",
+  "V50",
+  "V50p",
+  "V51p",
+  "V52",
+  "V52c",
+  "V53",
+  "V54",
+  "V55",
+  "V56",
+  "V57",
+  "V58",
+  "V59",
+  "V60",
+  "V61",
+  "V62",
+  "V63",
+  "V64",
+  "V65",
+  "V66",
+  "V67",
+  "V68",
+  "V69",
+  "V70",
+  "V71a",
+  "V71b",
+  "V71c",
+  "V72",
+  "V73",
+  "V74",
+  "V75",
+  "V76",
+  "V76g",
+  "V77",
+  "V77b",
+  "V78",
+  "V79",
+  "V80",
+  "V81",
+  "V83a",
+  "V84",
+  "V85",
+  "V86",
+  "V86b",
+  "V87",
+  "V88",
+  "V89",
+  "V90",
+  "V91",
+  "V92",
+  "V93",
+  "V94",
+  "V96",
+  "V97",
+  "V98"
+ ],
+ "missing_images": [],
+ "burned_build_numbers": {
+  "V95": "deliberately BURNED build number -- never cut, no image, not a missing file"
+ },
+ "anchors": {
+  "0xC646C": 891,
+  "code.bin[0x454FE]": "0xBA",
+  "len": "0x100000"
+ },
+ "packaging_mask_bytes": 50284,
+ "virgin": {
+  "0xC4080": {
+   "verdict": "VIRGIN",
+   "stock": 0
+  },
+  "0xC4048": {
+   "verdict": "VIRGIN",
+   "stock": 0
+  },
+  "0xC40D0": {
+   "verdict": "VIRGIN",
+   "stock": 408
+  },
+  "0xC40D6": {
+   "verdict": "VIRGIN",
+   "stock": 246
+  },
+  "0xC40D8": {
+   "verdict": "VIRGIN",
+   "stock": 3686
+  },
+  "0xC63A2": {
+   "verdict": "VIRGIN",
+   "stock": 1024
+  },
+  "0xC63A4": {
+   "verdict": "VIRGIN",
+   "stock": 1024
+  },
+  "0xC63A6": {
+   "verdict": "VIRGIN",
+   "stock": 1024
+  },
+  "0xC63A8": {
+   "verdict": "VIRGIN",
+   "stock": 1024
+  },
+  "0xC63AA": {
+   "verdict": "VIRGIN",
+   "stock": 1024
+  },
+  "0xC6372": {
+   "verdict": "VIRGIN",
+   "stock": 205
+  },
+  "0xC636E": {
+   "verdict": "VIRGIN",
+   "stock": 205
+  },
+  "0xC63B8": {
+   "verdict": "VIRGIN",
+   "stock": 41
+  },
+  "0xC61D6": {
+   "verdict": "VIRGIN",
+   "stock": 0
+  },
+  "0xC616C": {
+   "verdict": "VIRGIN",
+   "stock": 0
+  },
+  "0xC6158": {
+   "verdict": "VIRGIN",
+   "stock": 512
+  },
+  "0xC61DA": {
+   "verdict": "VIRGIN",
+   "stock": 1092
+  },
+  "0xC6206": {
+   "verdict": "MOVED-ON-BUILD-V40",
+   "stock": 512,
+   "V98": 512,
+   "movers": [
+    "V40",
+    "V45"
+   ],
+   "values": [
+    -1,
+    205
+   ]
+  },
+  "0xC6208": {
+   "verdict": "MOVED-ON-BUILD-V40",
+   "stock": 205,
+   "V98": 205,
+   "movers": [
+    "V40"
+   ],
+   "values": [
+    -1
+   ]
+  },
+  "0xC6316": {
+   "verdict": "VIRGIN",
+   "stock": 640
+  },
+  "0xC63F8": {
+   "verdict": "VIRGIN",
+   "stock": 33
+  },
+  "0xC63FC": {
+   "verdict": "VIRGIN",
+   "stock": 328
+  },
+  "0xC6B12": {
+   "verdict": "VIRGIN",
+   "stock": 98
+  },
+  "0xC520C": {
+   "verdict": "VIRGIN",
+   "stock": 5
+  },
+  "0xC6194": {
+   "verdict": "VIRGIN",
+   "stock": 3
+  },
+  "0xE547C": {
+   "verdict": "VIRGIN",
+   "stock": 4
+  },
+  "0xE5404": {
+   "verdict": "VIRGIN",
+   "stock": 4
+  },
+  "0xE52FC": {
+   "verdict": "VIRGIN",
+   "stock": 4
+  },
+  "0xE5284": {
+   "verdict": "VIRGIN",
+   "stock": 4
+  }
+ },
+ "frozen": [
+  {
+   "addr": "0xC63AC",
+   "what": "Stage-1 IIR alpha on the ACTUAL arm (gp-0x374c>>4); fc ~15.9 Hz @1 kHz",
+   "stock": "102",
+   "V98": "150",
+   "state": "NON-STOCK",
+   "frozen_builds": 2,
+   "since": "V97",
+   "moves": 1,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0x55DF2",
+   "what": "CAN-427 packer SOURCE displacement (which gp cell 0x1AB carries)",
+   "stock": "37864",
+   "V98": "38032",
+   "state": "NON-STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 5,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0x55E10",
+   "what": "CAN-427 packer SHIFT byte (sar N on the 427 payload)",
+   "stock": "0xA3",
+   "V98": "0xA6",
+   "state": "NON-STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 4,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC640A",
+   "what": "FUN_00036c12 FALLBACK-2 flat gain (gp-0x671a >= 5)",
+   "stock": "-8192",
+   "V98": "-8192",
+   "state": "STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 2,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC640C",
+   "what": "FUN_00036c12 FALLBACK-1 flat gain (outer gate fails)",
+   "stock": "-3277",
+   "V98": "-3277",
+   "state": "STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 2,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xD6A6C",
+   "what": "friction/inertia mode 24 (MANUAL) Y[0]",
+   "stock": "-9830",
+   "V98": "-9830",
+   "state": "STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 2,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xD6A6E",
+   "what": "friction/inertia mode 24 (MANUAL) Y[1]",
+   "stock": "-5734",
+   "V98": "-5734",
+   "state": "STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 2,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xD6A70",
+   "what": "friction/inertia mode 24 (MANUAL) Y[2]",
+   "stock": "-1966",
+   "V98": "-1966",
+   "state": "STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 2,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xD7A5C",
+   "what": "friction/inertia mode 26 (ENGAGED) Y[0]",
+   "stock": "-9830",
+   "V98": "-14745",
+   "state": "NON-STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 7,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xD7A5E",
+   "what": "friction/inertia mode 26 (ENGAGED) Y[1]",
+   "stock": "-5734",
+   "V98": "-8601",
+   "state": "NON-STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 7,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xD7A60",
+   "what": "friction/inertia mode 26 (ENGAGED) Y[2]",
+   "stock": "-1966",
+   "V98": "-2949",
+   "state": "NON-STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 7,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xD7A6C",
+   "what": "friction/inertia mode 27 (ENGAGED) Y[0]",
+   "stock": "-9830",
+   "V98": "-14745",
+   "state": "NON-STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 7,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xD7A6E",
+   "what": "friction/inertia mode 27 (ENGAGED) Y[1]",
+   "stock": "-5734",
+   "V98": "-8601",
+   "state": "NON-STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 7,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xD7A70",
+   "what": "friction/inertia mode 27 (ENGAGED) Y[2]",
+   "stock": "-1966",
+   "V98": "-2949",
+   "state": "NON-STOCK",
+   "frozen_builds": 3,
+   "since": "V96",
+   "moves": 7,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC40D2",
+   "what": "K1 modelled Coulomb friction gain (the MODEL arm)",
+   "stock": "102",
+   "V98": "204",
+   "state": "NON-STOCK",
+   "frozen_builds": 9,
+   "since": "V89",
+   "moves": 1,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0x3AA96",
+   "what": "Lever B GATE byte (C5 = dead 0x683C / FB = latActive 0x6806)",
+   "stock": "0xC5",
+   "V98": "0xFB",
+   "state": "NON-STOCK",
+   "frozen_builds": 10,
+   "since": "V88",
+   "moves": 9,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC6446",
+   "what": "r24 engaged arm -- LEVER B ARM",
+   "stock": "512",
+   "V98": "5244",
+   "state": "NON-STOCK",
+   "frozen_builds": 10,
+   "since": "V88",
+   "moves": 9,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC40BC",
+   "what": "Coulomb relay breakpoint / friction relay gate",
+   "stock": "600",
+   "V98": "600",
+   "state": "STOCK",
+   "frozen_builds": 11,
+   "since": "V87",
+   "moves": 2,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC40D4",
+   "what": "observer torque IIR / command-branch EMA",
+   "stock": "573",
+   "V98": "573",
+   "state": "STOCK",
+   "frozen_builds": 12,
+   "since": "V86b",
+   "moves": 2,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC63A0",
+   "what": "Path-2 lane weight w[0], gp-0x6bd0 (the damper lane)",
+   "stock": "1024",
+   "V98": "1024",
+   "state": "STOCK",
+   "frozen_builds": 16,
+   "since": "V83a",
+   "moves": 6,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC6A72",
+   "what": "gain_A rec0 [0]",
+   "stock": "3072",
+   "V98": "3072",
+   "state": "STOCK",
+   "frozen_builds": 16,
+   "since": "V83a",
+   "moves": 10,
+   "name_source": "ledger_v38_to_v84_bytes.py SITES"
+  },
+  {
+   "addr": "0xC6A74",
+   "what": "gain_A rec0 [1]",
+   "stock": "3072",
+   "V98": "3072",
+   "state": "STOCK",
+   "frozen_builds": 16,
+   "since": "V83a",
+   "moves": 10,
+   "name_source": "ledger_v38_to_v84_bytes.py SITES"
+  },
+  {
+   "addr": "0x2A1F0",
+   "what": "V57 decouple displacement (7CD0 => reads 0xC6CD0)",
+   "stock": "29804",
+   "V98": "31952",
+   "state": "NON-STOCK",
+   "frozen_builds": 17,
+   "since": "V81",
+   "moves": 5,
+   "name_source": "build_v87_tva.py"
+  },
+  {
+   "addr": "0xC62EA",
+   "what": "low-speed steer lockout window (320 ct ~ 5 km/h); 0 = steer-to-zero",
+   "stock": "320",
+   "V98": "0",
+   "state": "NON-STOCK",
+   "frozen_builds": 17,
+   "since": "V81",
+   "moves": 5,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC646C",
+   "what": "SHARED sensor scale (Honda 891)",
+   "stock": "891",
+   "V98": "891",
+   "state": "STOCK",
+   "frozen_builds": 17,
+   "since": "V81",
+   "moves": 7,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC6CD0",
+   "what": "V57 private forward LKAS gain (3564 = 4.000x)",
+   "stock": "-1",
+   "V98": "3564",
+   "state": "NON-STOCK",
+   "frozen_builds": 17,
+   "since": "V81",
+   "moves": 5,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0x454FE",
+   "what": "V42 macro-ratchet fix (BA = stock bne / B5 = br)",
+   "stock": "0xBA",
+   "V98": "0xB5",
+   "state": "NON-STOCK",
+   "frozen_builds": 18,
+   "since": "V80",
+   "moves": 11,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC407E",
+   "what": "HARD-FAULT INTERLOCK CLAMP (Honda 511, one under its 512 trip)",
+   "stock": "511",
+   "V98": "511",
+   "state": "STOCK",
+   "frozen_builds": 20,
+   "since": "V78",
+   "moves": 4,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC6444",
+   "what": "r26 engaged arm",
+   "stock": "512",
+   "V98": "512",
+   "state": "STOCK",
+   "frozen_builds": 28,
+   "since": "V72",
+   "moves": 4,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0x3AB76",
+   "what": "Lever A: V62 sar on r26 (AA stock / A9 = x2)",
+   "stock": "0xAA",
+   "V98": "0xAA",
+   "state": "STOCK",
+   "frozen_builds": 30,
+   "since": "V71b",
+   "moves": 6,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0x3AC20",
+   "what": "Lever A: V62 sar on r24 (AA stock / A9 = x2)",
+   "stock": "0xAA",
+   "V98": "0xAA",
+   "state": "STOCK",
+   "frozen_builds": 30,
+   "since": "V71b",
+   "moves": 6,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC643E",
+   "what": "gain_A arm",
+   "stock": "1536",
+   "V98": "1536",
+   "state": "STOCK",
+   "frozen_builds": 37,
+   "since": "V65",
+   "moves": 4,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC6440",
+   "what": "third arm gp-0x671a",
+   "stock": "2048",
+   "V98": "2048",
+   "state": "STOCK",
+   "frozen_builds": 37,
+   "since": "V65",
+   "moves": 2,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0x55C0E",
+   "what": "CAN 0x14A cave HOOK -- the 4-byte jarl that calls the cave at 0xC4B34",
+   "stock": "2436e8ea",
+   "V98": "86ff26ef",
+   "state": "NON-STOCK",
+   "frozen_builds": 49,
+   "since": "V53",
+   "moves": 8,
+   "name_source": "build_v87_tva.py"
+  },
+  {
+   "addr": "0xC644A",
+   "what": "PID D-path IIR / V43 dirty-derivative pole",
+   "stock": "1024",
+   "V98": "1024",
+   "state": "STOCK",
+   "frozen_builds": 55,
+   "since": "V49p",
+   "moves": 4,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC4120",
+   "what": "V48a-era cal byte",
+   "stock": "0x01",
+   "V98": "0x01",
+   "state": "STOCK",
+   "frozen_builds": 57,
+   "since": "V48b",
+   "moves": 2,
+   "name_source": "empirical (this file)"
+  },
+  {
+   "addr": "0xC6450",
+   "what": "V46 lever",
+   "stock": "1024",
+   "V98": "1024",
+   "state": "STOCK",
+   "frozen_builds": 59,
+   "since": "V47",
+   "moves": 2,
+   "name_source": "ledger_v38_to_v84_bytes.py SITES"
+  },
+  {
+   "addr": "0xC6206",
+   "what": "speed-selector cal A (V40 brick)",
+   "stock": "512",
+   "V98": "512",
+   "state": "STOCK",
+   "frozen_builds": 60,
+   "since": "V46",
+   "moves": 4,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC6A9A",
+   "what": "gain_A rec2 Y[0]",
+   "stock": "2664",
+   "V98": "2664",
+   "state": "STOCK",
+   "frozen_builds": 63,
+   "since": "V43",
+   "moves": 2,
+   "name_source": "ledger_v38_to_v84_bytes.py SITES"
+  },
+  {
+   "addr": "0xC6AAE",
+   "what": "gain_A rec3 Y[0]",
+   "stock": "2560",
+   "V98": "2560",
+   "state": "STOCK",
+   "frozen_builds": 63,
+   "since": "V43",
+   "moves": 2,
+   "name_source": "ledger_v38_to_v84_bytes.py SITES"
+  },
+  {
+   "addr": "0xC6208",
+   "what": "speed-selector cal B (V40 brick)",
+   "stock": "205",
+   "V98": "205",
+   "state": "STOCK",
+   "frozen_builds": 65,
+   "since": "V41",
+   "moves": 2,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC61B2",
+   "what": "ARBITRATION output clamp",
+   "stock": "512",
+   "V98": "2048",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 2,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC61B4",
+   "what": "LKAS-GAIN output clamp",
+   "stock": "512",
+   "V98": "2048",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 2,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC6598",
+   "what": "corridor wall FLOAT +A",
+   "stock": "1f",
+   "V98": "5f",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 3,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC659C",
+   "what": "corridor wall FLOAT +B",
+   "stock": "1f",
+   "V98": "5f",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 3,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC65AC",
+   "what": "corridor wall FLOAT -A",
+   "stock": "-1f",
+   "V98": "-5f",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 3,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC65B0",
+   "what": "corridor wall FLOAT -B",
+   "stock": "-1f",
+   "V98": "-5f",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 3,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC65C4",
+   "what": "boost floor FLOAT [0]",
+   "stock": "0f",
+   "V98": "5f",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 2,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC65C8",
+   "what": "boost floor FLOAT [1]",
+   "stock": "1.5f",
+   "V98": "5f",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 2,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC65CC",
+   "what": "boost floor FLOAT [2]",
+   "stock": "2f",
+   "V98": "5f",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 2,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC674E",
+   "what": "corridor wall INT +A",
+   "stock": "1024",
+   "V98": "5120",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 3,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC6750",
+   "what": "corridor wall INT +B",
+   "stock": "1024",
+   "V98": "5120",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 3,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC675A",
+   "what": "corridor wall INT -A",
+   "stock": "-1024",
+   "V98": "-5120",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 3,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC675C",
+   "what": "corridor wall INT -B",
+   "stock": "-1024",
+   "V98": "-5120",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 3,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC6768",
+   "what": "boost floor INT [0]",
+   "stock": "0",
+   "V98": "5120",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 2,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC676A",
+   "what": "boost floor INT [1]",
+   "stock": "1536",
+   "V98": "5120",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 2,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC676C",
+   "what": "boost floor INT [2]",
+   "stock": "2048",
+   "V98": "5120",
+   "state": "NON-STOCK",
+   "frozen_builds": 68,
+   "since": "V38",
+   "moves": 2,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC64B8",
+   "what": "DTC-0x49 fail-counter gate",
+   "stock": "0x70",
+   "V98": "0xFF",
+   "state": "NON-STOCK",
+   "frozen_builds": 69,
+   "since": "V37",
+   "moves": 1,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC61C0",
+   "what": "gentle-EME debounce RATE threshold [0]",
+   "stock": "1600",
+   "V98": "65535",
+   "state": "NON-STOCK",
+   "frozen_builds": 70,
+   "since": "V36",
+   "moves": 1,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC61C2",
+   "what": "gentle-EME debounce RATE threshold [1]",
+   "stock": "896",
+   "V98": "65535",
+   "state": "NON-STOCK",
+   "frozen_builds": 70,
+   "since": "V36",
+   "moves": 1,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC61C4",
+   "what": "gentle-EME debounce RATE threshold [2]",
+   "stock": "1280",
+   "V98": "65535",
+   "state": "NON-STOCK",
+   "frozen_builds": 70,
+   "since": "V36",
+   "moves": 1,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC64B4",
+   "what": "gentle-EME debounce TORQUE threshold [0]",
+   "stock": "24688",
+   "V98": "65535",
+   "state": "NON-STOCK",
+   "frozen_builds": 70,
+   "since": "V36",
+   "moves": 1,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC64B6",
+   "what": "gentle-EME debounce TORQUE threshold [1]",
+   "stock": "16438",
+   "V98": "65535",
+   "state": "NON-STOCK",
+   "frozen_builds": 70,
+   "since": "V36",
+   "moves": 1,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0x13109",
+   "what": "part-number ASCII byte (cosmetic build marker, '-'->',')",
+   "stock": "0x2D",
+   "V98": "0x2C",
+   "state": "NON-STOCK",
+   "frozen_builds": 88,
+   "since": "V22",
+   "moves": 1,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0x14120",
+   "what": "part-number ASCII byte, second copy (cosmetic)",
+   "stock": "0x2D",
+   "V98": "0x2C",
+   "state": "NON-STOCK",
+   "frozen_builds": 88,
+   "since": "V22",
+   "moves": 1,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC4048",
+   "what": "friction-family cal (checked VIRGIN)",
+   "stock": "0",
+   "V98": "0",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "task brief"
+  },
+  {
+   "addr": "0xC407C",
+   "what": "friction-comp clamp neighbour",
+   "stock": "461",
+   "V98": "461",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC4080",
+   "what": "K0 pure-Coulomb arm -- recorded NEVER-RAISE relay hazard",
+   "stock": "0",
+   "V98": "0",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC40D0",
+   "what": "friction EMA alpha (16.7 Hz)",
+   "stock": "408",
+   "V98": "408",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC40D6",
+   "what": "accel/inertia IIR",
+   "stock": "246",
+   "V98": "246",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC40D8",
+   "what": "gp-0x4f60 IIR (a no-op)",
+   "stock": "3686",
+   "V98": "3686",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC520C",
+   "what": "governor rate ceiling / cap table (V40 bricked on a neighbour)",
+   "stock": "5",
+   "V98": "5",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC6158",
+   "what": "ceiling tp+0x7158 fallback",
+   "stock": "512",
+   "V98": "512",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "ledger_v38_to_v84_bytes.py SITES"
+  },
+  {
+   "addr": "0xC616C",
+   "what": "(checked VIRGIN)",
+   "stock": "0",
+   "V98": "0",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "task brief"
+  },
+  {
+   "addr": "0xC6194",
+   "what": "the REAL LKAS slew limiter -- DEAD (0xC4118 all-1)",
+   "stock": "3",
+   "V98": "3",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC61B8",
+   "what": "pre-gain deadband",
+   "stock": "102",
+   "V98": "102",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC61D6",
+   "what": "(checked VIRGIN)",
+   "stock": "0",
+   "V98": "0",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "task brief"
+  },
+  {
+   "addr": "0xC61DA",
+   "what": "Q10 integrator scale",
+   "stock": "1092",
+   "V98": "1092",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "ledger_v38_to_v84_bytes.py SITES"
+  },
+  {
+   "addr": "0xC61F6",
+   "what": "r24 lane deadzone",
+   "stock": "3",
+   "V98": "3",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC6200",
+   "what": "gp-0x6b70's OUTPUT CLAMP",
+   "stock": "8192",
+   "V98": "8192",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC6316",
+   "what": "governor vehicle-speed cal ~10 km/h",
+   "stock": "640",
+   "V98": "640",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "ledger_v38_to_v84_bytes.py SITES"
+  },
+  {
+   "addr": "0xC636E",
+   "what": "(checked VIRGIN)",
+   "stock": "205",
+   "V98": "205",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "task brief"
+  },
+  {
+   "addr": "0xC6372",
+   "what": "(checked VIRGIN)",
+   "stock": "205",
+   "V98": "205",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "task brief"
+  },
+  {
+   "addr": "0xC63A2",
+   "what": "Path-2 lane weight w[1], gp-0x6bbe (VISCOUS)",
+   "stock": "1024",
+   "V98": "1024",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC63A4",
+   "what": "Path-2 lane weight w[2], gp-0x6b46",
+   "stock": "1024",
+   "V98": "1024",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC63A6",
+   "what": "Path-2 lane weight w[3], gp-0x6b26 (INERTIA -- the NO-GO lever)",
+   "stock": "1024",
+   "V98": "1024",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC63A8",
+   "what": "Path-2 lane weight w[4], gp-0x6b4e (lane provably == 0)",
+   "stock": "1024",
+   "V98": "1024",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC63AA",
+   "what": "Path-2 lane weight w[5], gp-0x6b4c (the LKAS lane)",
+   "stock": "1024",
+   "V98": "1024",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC63AE",
+   "what": "Stage-2 input scale",
+   "stock": "1024",
+   "V98": "1024",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC63B8",
+   "what": "(checked VIRGIN)",
+   "stock": "41",
+   "V98": "41",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "task brief"
+  },
+  {
+   "addr": "0xC63D2",
+   "what": "FUN_00036682 pole, fc 0.93 Hz",
+   "stock": "6",
+   "V98": "6",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC63F8",
+   "what": "authority ramp-rate UP",
+   "stock": "33",
+   "V98": "33",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC63FC",
+   "what": "authority ramp-rate, the 10x-asymmetric twin",
+   "stock": "328",
+   "V98": "328",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC6442",
+   "what": "gp-0x671d arm",
+   "stock": "1024",
+   "V98": "1024",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC6468",
+   "what": "model output gain -- SHARED, scales BOTH arms of the residual",
+   "stock": "2639",
+   "V98": "2639",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC646E",
+   "what": "INERTIA/damping gain",
+   "stock": "1428",
+   "V98": "1428",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC64C8",
+   "what": "aggregator mode selector",
+   "stock": "0x00",
+   "V98": "0x00",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "ledger_v38_to_v84_bytes.py SITES"
+  },
+  {
+   "addr": "0xC64C9",
+   "what": "blend mux",
+   "stock": "0x00",
+   "V98": "0x00",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "ledger_v38_to_v84_bytes.py SITES"
+  },
+  {
+   "addr": "0xC64DE",
+   "what": "legacy re-engage ramp ('RAMPSTEP', label disputed)",
+   "stock": "25617",
+   "V98": "25627",
+   "state": "NON-STOCK",
+   "frozen_builds": 88,
+   "since": "V22",
+   "moves": 1,
+   "name_source": "ledger_v94_cells.py MATRIX_SCALARS"
+  },
+  {
+   "addr": "0xC64FA",
+   "what": "CEIL byte cal",
+   "stock": "0x05",
+   "V98": "0x05",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "ledger_v38_to_v84_bytes.py SITES"
+  },
+  {
+   "addr": "0xC6AE6",
+   "what": "PID Kd",
+   "stock": "2048",
+   "V98": "2048",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC6B12",
+   "what": "PID Ki",
+   "stock": "98",
+   "V98": "98",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xC6B26",
+   "what": "PID Kp",
+   "stock": "256",
+   "V98": "256",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xE5284",
+   "what": "AUTHORITY COLLAPSE curve record",
+   "stock": "4",
+   "V98": "4",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xE52FC",
+   "what": "AUTHORITY COLLAPSE curve record",
+   "stock": "4",
+   "V98": "4",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xE5404",
+   "what": "AUTHORITY COLLAPSE curve record",
+   "stock": "4",
+   "V98": "4",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  },
+  {
+   "addr": "0xE547C",
+   "what": "AUTHORITY COLLAPSE curve record",
+   "stock": "4",
+   "V98": "4",
+   "state": "STOCK",
+   "frozen_builds": 88,
+   "since": "STOCK",
+   "moves": 0,
+   "name_source": "build_v98_tva.py FROZEN"
+  }
+ ],
+ "delta_vs_stock": {
+  "V98": {
+   "build": "V98",
+   "sha256": "c9babfed6acf24c0c5877754149a60fd5866dae8407029d7a3a5d74870d151d9",
+   "total_differing_bytes": 312,
+   "runs": 113,
+   "cave": [
+    {
+     "lo": 805684,
+     "hi": 805794,
+     "len": 111,
+     "first": "V31p",
+     "stock_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     "val_hex": "243706946032ae05803106382437b5c8a4326032ae058031e639023aae05003ac43a8437edeac636df0007314437ecea243702946032ae05803106382437b5c8a4326032ae058031e639043aae05003a243790946032ae05483a2437b5c8a4326032ae05413ac43a0437ae98060680",
+     "region": "CAVE"
+    },
+    {
+     "lo": 805796,
+     "hi": 805837,
+     "len": 42,
+     "first": "V31p/V31p2/V48b/V53/V98",
+     "stock_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     "val_hex": "a305483a8437edeac636270007314437ecea023ac63aa437efeac6363f0007314437efea2436e8ea7f00",
+     "region": "CAVE"
+    }
+   ],
+   "cave_total_bytes": 153,
+   "crc": [
+    {
+     "lo": 806908,
+     "hi": 806911,
+     "len": 4,
+     "first": "V22",
+     "stock_hex": "7549f248",
+     "val_hex": "363bdcae",
+     "region": "CRC"
+    },
+    {
+     "lo": 815100,
+     "hi": 815103,
+     "len": 4,
+     "first": "V22",
+     "stock_hex": "0c9e3cef",
+     "val_hex": "143b000f",
+     "region": "CRC"
+    },
+    {
+     "lo": 884732,
+     "hi": 884735,
+     "len": 4,
+     "first": "V74",
+     "stock_hex": "7042af1c",
+     "val_hex": "27a7482d",
+     "region": "CRC"
+    },
+    {
+     "lo": 937980,
+     "hi": 937983,
+     "len": 4,
+     "first": "V38",
+     "stock_hex": "b3e8dac1",
+     "val_hex": "fed9b525",
+     "region": "CRC"
+    },
+    {
+     "lo": 942076,
+     "hi": 942079,
+     "len": 4,
+     "first": "V38",
+     "stock_hex": "1406ba24",
+     "val_hex": "89340881",
+     "region": "CRC"
+    }
+   ],
+   "control_law": [
+    {
+     "addr": "0x13109",
+     "width": 1,
+     "stock": "0x2D",
+     "V98": "0x2C",
+     "first_build": "V22",
+     "what": "part-number ASCII byte (cosmetic build marker, '-'->',')",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0x14120",
+     "width": 1,
+     "stock": "0x2D",
+     "V98": "0x2C",
+     "first_build": "V22",
+     "what": "part-number ASCII byte, second copy (cosmetic)",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0x2A1F0",
+     "width": 2,
+     "stock": "29804",
+     "V98": "31952",
+     "first_build": "V57",
+     "what": "V57 decouple displacement (7CD0 => reads 0xC6CD0)",
+     "name_source": "build_v87_tva.py",
+     "family": null
+    },
+    {
+     "addr": "0x3AA96",
+     "width": 1,
+     "stock": "0xC5",
+     "V98": "0xFB",
+     "first_build": "V67",
+     "what": "Lever B GATE byte (C5 = dead 0x683C / FB = latActive 0x6806)",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0x454FE",
+     "width": 1,
+     "stock": "0xBA",
+     "V98": "0xB5",
+     "first_build": "V42",
+     "what": "V42 macro-ratchet fix (BA = stock bne / B5 = br)",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0x55C0E",
+     "width": 4,
+     "stock": "2436e8ea",
+     "V98": "86ff26ef",
+     "first_build": "V31p",
+     "what": "CAN 0x14A cave HOOK -- the 4-byte jarl that calls the cave at 0xC4B34",
+     "name_source": "build_v87_tva.py",
+     "family": null
+    },
+    {
+     "addr": "0x55DF2",
+     "width": 2,
+     "stock": "37864",
+     "V98": "38032",
+     "first_build": "V87",
+     "what": "CAN-427 packer SOURCE displacement (which gp cell 0x1AB carries)",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0x55E10",
+     "width": 1,
+     "stock": "0xA3",
+     "V98": "0xA6",
+     "first_build": "V92",
+     "what": "CAN-427 packer SHIFT byte (sar N on the 427 payload)",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC40D2",
+     "width": 2,
+     "stock": "102",
+     "V98": "204",
+     "first_build": "V89",
+     "what": "K1 modelled Coulomb friction gain (the MODEL arm)",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xC61B2",
+     "width": 2,
+     "stock": "512",
+     "V98": "2048",
+     "first_build": "V22",
+     "what": "ARBITRATION output clamp",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC61B4",
+     "width": 2,
+     "stock": "512",
+     "V98": "2048",
+     "first_build": "V22",
+     "what": "LKAS-GAIN output clamp",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC61C0",
+     "width": 2,
+     "stock": "1600",
+     "V98": "65535",
+     "first_build": "V36",
+     "what": "gentle-EME debounce RATE threshold [0]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC61C2",
+     "width": 2,
+     "stock": "896",
+     "V98": "65535",
+     "first_build": "V36",
+     "what": "gentle-EME debounce RATE threshold [1]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC61C4",
+     "width": 2,
+     "stock": "1280",
+     "V98": "65535",
+     "first_build": "V36",
+     "what": "gentle-EME debounce RATE threshold [2]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC62EA",
+     "width": 2,
+     "stock": "320",
+     "V98": "0",
+     "first_build": "V53",
+     "what": "low-speed steer lockout window (320 ct ~ 5 km/h); 0 = steer-to-zero",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xC63AC",
+     "width": 2,
+     "stock": "102",
+     "V98": "150",
+     "first_build": "V97",
+     "what": "Stage-1 IIR alpha on the ACTUAL arm (gp-0x374c>>4); fc ~15.9 Hz @1 kHz",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xC6446",
+     "width": 2,
+     "stock": "512",
+     "V98": "5244",
+     "first_build": "V67",
+     "what": "r24 engaged arm -- LEVER B ARM",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xC64B4",
+     "width": 2,
+     "stock": "24688",
+     "V98": "65535",
+     "first_build": "V36",
+     "what": "gentle-EME debounce TORQUE threshold [0]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC64B6",
+     "width": 2,
+     "stock": "16438",
+     "V98": "65535",
+     "first_build": "V36",
+     "what": "gentle-EME debounce TORQUE threshold [1]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC64B8",
+     "width": 1,
+     "stock": "0x70",
+     "V98": "0xFF",
+     "first_build": "V37",
+     "what": "DTC-0x49 fail-counter gate",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC64DE",
+     "width": 2,
+     "stock": "25617",
+     "V98": "25627",
+     "first_build": "V22",
+     "what": "legacy re-engage ramp ('RAMPSTEP', label disputed)",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC6598",
+     "width": 4,
+     "stock": "1f",
+     "V98": "5f",
+     "first_build": "V29",
+     "what": "corridor wall FLOAT +A",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC659C",
+     "width": 4,
+     "stock": "1f",
+     "V98": "5f",
+     "first_build": "V29",
+     "what": "corridor wall FLOAT +B",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC65AC",
+     "width": 4,
+     "stock": "-1f",
+     "V98": "-5f",
+     "first_build": "V29",
+     "what": "corridor wall FLOAT -A",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC65B0",
+     "width": 4,
+     "stock": "-1f",
+     "V98": "-5f",
+     "first_build": "V29",
+     "what": "corridor wall FLOAT -B",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC65C4",
+     "width": 4,
+     "stock": "0f",
+     "V98": "5f",
+     "first_build": "V31",
+     "what": "boost floor FLOAT [0]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC65C8",
+     "width": 4,
+     "stock": "1.5f",
+     "V98": "5f",
+     "first_build": "V31",
+     "what": "boost floor FLOAT [1]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC65CC",
+     "width": 4,
+     "stock": "2f",
+     "V98": "5f",
+     "first_build": "V31",
+     "what": "boost floor FLOAT [2]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC674E",
+     "width": 2,
+     "stock": "1024",
+     "V98": "5120",
+     "first_build": "V25",
+     "what": "corridor wall INT +A",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC6750",
+     "width": 2,
+     "stock": "1024",
+     "V98": "5120",
+     "first_build": "V25",
+     "what": "corridor wall INT +B",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC675A",
+     "width": 2,
+     "stock": "-1024",
+     "V98": "-5120",
+     "first_build": "V25",
+     "what": "corridor wall INT -A",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC675C",
+     "width": 2,
+     "stock": "-1024",
+     "V98": "-5120",
+     "first_build": "V25",
+     "what": "corridor wall INT -B",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC6768",
+     "width": 2,
+     "stock": "0",
+     "V98": "5120",
+     "first_build": "V31",
+     "what": "boost floor INT [0]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC676A",
+     "width": 2,
+     "stock": "1536",
+     "V98": "5120",
+     "first_build": "V31",
+     "what": "boost floor INT [1]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC676C",
+     "width": 2,
+     "stock": "2048",
+     "V98": "5120",
+     "first_build": "V31",
+     "what": "boost floor INT [2]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC6CD0",
+     "width": 2,
+     "stock": "-1",
+     "V98": "3564",
+     "first_build": "V57",
+     "what": "V57 private forward LKAS gain (3564 = 4.000x)",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xD7A5C",
+     "width": 2,
+     "stock": "-9830",
+     "V98": "-14745",
+     "first_build": "V74",
+     "what": "friction/inertia mode 26 (ENGAGED) Y[0]",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xD7A5E",
+     "width": 2,
+     "stock": "-5734",
+     "V98": "-8601",
+     "first_build": "V74",
+     "what": "friction/inertia mode 26 (ENGAGED) Y[1]",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xD7A60",
+     "width": 2,
+     "stock": "-1966",
+     "V98": "-2949",
+     "first_build": "V74",
+     "what": "friction/inertia mode 26 (ENGAGED) Y[2]",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xD7A6C",
+     "width": 2,
+     "stock": "-9830",
+     "V98": "-14745",
+     "first_build": "V74",
+     "what": "friction/inertia mode 27 (ENGAGED) Y[0]",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xD7A6E",
+     "width": 2,
+     "stock": "-5734",
+     "V98": "-8601",
+     "first_build": "V74",
+     "what": "friction/inertia mode 27 (ENGAGED) Y[1]",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xD7A70",
+     "width": 2,
+     "stock": "-1966",
+     "V98": "-2949",
+     "first_build": "V74",
+     "what": "friction/inertia mode 27 (ENGAGED) Y[2]",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xE4194",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4196",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4198",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE419A",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE419C",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE419E",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41A0",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41A2",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41A4",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41BC",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41BE",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41C0",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41C2",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41C4",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41C6",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41C8",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41CA",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41CC",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE420C",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE420E",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4210",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4212",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4214",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4216",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4218",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE421A",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE421C",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4234",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4236",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4238",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE423A",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE423C",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE423E",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4240",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4242",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4244",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5194",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5196",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5198",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE519A",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE519C",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE519E",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51A0",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51A2",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51A4",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51BC",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51BE",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51C0",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51C2",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51C4",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51C6",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51C8",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51CA",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51CC",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51E4",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51E6",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51E8",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51EA",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51EC",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51EE",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51F0",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51F2",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51F4",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE520C",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE520E",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5210",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5212",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5214",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5216",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5218",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE521A",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE521C",
+     "width": 2,
+     "stock": "15360",
+     "V98": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    }
+   ],
+   "control_law_total_bytes": 139,
+   "unattributed": []
+  },
+  "V97": {
+   "build": "V97",
+   "sha256": "7ac009044b46eeb2fd38d9ab6c7cb634e1be6ca44eb6f5083b9897c33829c2b3",
+   "total_differing_bytes": 270,
+   "runs": 113,
+   "cave": [
+    {
+     "lo": 805684,
+     "hi": 805732,
+     "len": 49,
+     "first": "V31p",
+     "stock_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     "val_hex": "003a243790946032ae05483a2437b5c8a4326032ae05443a6032ae058031ac326332a30503320639c43a8437b3980606e4",
+     "region": "CAVE"
+    },
+    {
+     "lo": 805734,
+     "hi": 805795,
+     "len": 62,
+     "first": "V31p",
+     "stock_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     "val_hex": "a305483a8437edeac636070007314437ecea2437b5c8a4326032ae058031aa32c6360200013a0639c63aa437efeac6363f0007314437efea2436e8ea7f00",
+     "region": "CAVE"
+    }
+   ],
+   "cave_total_bytes": 111,
+   "crc": [
+    {
+     "lo": 806908,
+     "hi": 806911,
+     "len": 4,
+     "first": "V22",
+     "stock_hex": "7549f248",
+     "val_hex": "c7b3741a",
+     "region": "CRC"
+    },
+    {
+     "lo": 815100,
+     "hi": 815103,
+     "len": 4,
+     "first": "V22",
+     "stock_hex": "0c9e3cef",
+     "val_hex": "143b000f",
+     "region": "CRC"
+    },
+    {
+     "lo": 884732,
+     "hi": 884735,
+     "len": 4,
+     "first": "V74",
+     "stock_hex": "7042af1c",
+     "val_hex": "27a7482d",
+     "region": "CRC"
+    },
+    {
+     "lo": 937980,
+     "hi": 937983,
+     "len": 4,
+     "first": "V38",
+     "stock_hex": "b3e8dac1",
+     "val_hex": "fed9b525",
+     "region": "CRC"
+    },
+    {
+     "lo": 942076,
+     "hi": 942079,
+     "len": 4,
+     "first": "V38",
+     "stock_hex": "1406ba24",
+     "val_hex": "89340881",
+     "region": "CRC"
+    }
+   ],
+   "control_law": [
+    {
+     "addr": "0x13109",
+     "width": 1,
+     "stock": "0x2D",
+     "V97": "0x2C",
+     "first_build": "V22",
+     "what": "part-number ASCII byte (cosmetic build marker, '-'->',')",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0x14120",
+     "width": 1,
+     "stock": "0x2D",
+     "V97": "0x2C",
+     "first_build": "V22",
+     "what": "part-number ASCII byte, second copy (cosmetic)",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0x2A1F0",
+     "width": 2,
+     "stock": "29804",
+     "V97": "31952",
+     "first_build": "V57",
+     "what": "V57 decouple displacement (7CD0 => reads 0xC6CD0)",
+     "name_source": "build_v87_tva.py",
+     "family": null
+    },
+    {
+     "addr": "0x3AA96",
+     "width": 1,
+     "stock": "0xC5",
+     "V97": "0xFB",
+     "first_build": "V67",
+     "what": "Lever B GATE byte (C5 = dead 0x683C / FB = latActive 0x6806)",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0x454FE",
+     "width": 1,
+     "stock": "0xBA",
+     "V97": "0xB5",
+     "first_build": "V42",
+     "what": "V42 macro-ratchet fix (BA = stock bne / B5 = br)",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0x55C0E",
+     "width": 4,
+     "stock": "2436e8ea",
+     "V97": "86ff26ef",
+     "first_build": "V31p",
+     "what": "CAN 0x14A cave HOOK -- the 4-byte jarl that calls the cave at 0xC4B34",
+     "name_source": "build_v87_tva.py",
+     "family": null
+    },
+    {
+     "addr": "0x55DF2",
+     "width": 2,
+     "stock": "37864",
+     "V97": "38032",
+     "first_build": "V87",
+     "what": "CAN-427 packer SOURCE displacement (which gp cell 0x1AB carries)",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0x55E10",
+     "width": 1,
+     "stock": "0xA3",
+     "V97": "0xA6",
+     "first_build": "V92",
+     "what": "CAN-427 packer SHIFT byte (sar N on the 427 payload)",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC40D2",
+     "width": 2,
+     "stock": "102",
+     "V97": "204",
+     "first_build": "V89",
+     "what": "K1 modelled Coulomb friction gain (the MODEL arm)",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xC61B2",
+     "width": 2,
+     "stock": "512",
+     "V97": "2048",
+     "first_build": "V22",
+     "what": "ARBITRATION output clamp",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC61B4",
+     "width": 2,
+     "stock": "512",
+     "V97": "2048",
+     "first_build": "V22",
+     "what": "LKAS-GAIN output clamp",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC61C0",
+     "width": 2,
+     "stock": "1600",
+     "V97": "65535",
+     "first_build": "V36",
+     "what": "gentle-EME debounce RATE threshold [0]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC61C2",
+     "width": 2,
+     "stock": "896",
+     "V97": "65535",
+     "first_build": "V36",
+     "what": "gentle-EME debounce RATE threshold [1]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC61C4",
+     "width": 2,
+     "stock": "1280",
+     "V97": "65535",
+     "first_build": "V36",
+     "what": "gentle-EME debounce RATE threshold [2]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC62EA",
+     "width": 2,
+     "stock": "320",
+     "V97": "0",
+     "first_build": "V53",
+     "what": "low-speed steer lockout window (320 ct ~ 5 km/h); 0 = steer-to-zero",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xC63AC",
+     "width": 2,
+     "stock": "102",
+     "V97": "150",
+     "first_build": "V97",
+     "what": "Stage-1 IIR alpha on the ACTUAL arm (gp-0x374c>>4); fc ~15.9 Hz @1 kHz",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xC6446",
+     "width": 2,
+     "stock": "512",
+     "V97": "5244",
+     "first_build": "V67",
+     "what": "r24 engaged arm -- LEVER B ARM",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xC64B4",
+     "width": 2,
+     "stock": "24688",
+     "V97": "65535",
+     "first_build": "V36",
+     "what": "gentle-EME debounce TORQUE threshold [0]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC64B6",
+     "width": 2,
+     "stock": "16438",
+     "V97": "65535",
+     "first_build": "V36",
+     "what": "gentle-EME debounce TORQUE threshold [1]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC64B8",
+     "width": 1,
+     "stock": "0x70",
+     "V97": "0xFF",
+     "first_build": "V37",
+     "what": "DTC-0x49 fail-counter gate",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC64DE",
+     "width": 2,
+     "stock": "25617",
+     "V97": "25627",
+     "first_build": "V22",
+     "what": "legacy re-engage ramp ('RAMPSTEP', label disputed)",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC6598",
+     "width": 4,
+     "stock": "1f",
+     "V97": "5f",
+     "first_build": "V29",
+     "what": "corridor wall FLOAT +A",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC659C",
+     "width": 4,
+     "stock": "1f",
+     "V97": "5f",
+     "first_build": "V29",
+     "what": "corridor wall FLOAT +B",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC65AC",
+     "width": 4,
+     "stock": "-1f",
+     "V97": "-5f",
+     "first_build": "V29",
+     "what": "corridor wall FLOAT -A",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC65B0",
+     "width": 4,
+     "stock": "-1f",
+     "V97": "-5f",
+     "first_build": "V29",
+     "what": "corridor wall FLOAT -B",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC65C4",
+     "width": 4,
+     "stock": "0f",
+     "V97": "5f",
+     "first_build": "V31",
+     "what": "boost floor FLOAT [0]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC65C8",
+     "width": 4,
+     "stock": "1.5f",
+     "V97": "5f",
+     "first_build": "V31",
+     "what": "boost floor FLOAT [1]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC65CC",
+     "width": 4,
+     "stock": "2f",
+     "V97": "5f",
+     "first_build": "V31",
+     "what": "boost floor FLOAT [2]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC674E",
+     "width": 2,
+     "stock": "1024",
+     "V97": "5120",
+     "first_build": "V25",
+     "what": "corridor wall INT +A",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC6750",
+     "width": 2,
+     "stock": "1024",
+     "V97": "5120",
+     "first_build": "V25",
+     "what": "corridor wall INT +B",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC675A",
+     "width": 2,
+     "stock": "-1024",
+     "V97": "-5120",
+     "first_build": "V25",
+     "what": "corridor wall INT -A",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC675C",
+     "width": 2,
+     "stock": "-1024",
+     "V97": "-5120",
+     "first_build": "V25",
+     "what": "corridor wall INT -B",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC6768",
+     "width": 2,
+     "stock": "0",
+     "V97": "5120",
+     "first_build": "V31",
+     "what": "boost floor INT [0]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC676A",
+     "width": 2,
+     "stock": "1536",
+     "V97": "5120",
+     "first_build": "V31",
+     "what": "boost floor INT [1]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC676C",
+     "width": 2,
+     "stock": "2048",
+     "V97": "5120",
+     "first_build": "V31",
+     "what": "boost floor INT [2]",
+     "name_source": "ledger_v94_cells.py MATRIX_SCALARS",
+     "family": null
+    },
+    {
+     "addr": "0xC6CD0",
+     "width": 2,
+     "stock": "-1",
+     "V97": "3564",
+     "first_build": "V57",
+     "what": "V57 private forward LKAS gain (3564 = 4.000x)",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xD7A5C",
+     "width": 2,
+     "stock": "-9830",
+     "V97": "-14745",
+     "first_build": "V74",
+     "what": "friction/inertia mode 26 (ENGAGED) Y[0]",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xD7A5E",
+     "width": 2,
+     "stock": "-5734",
+     "V97": "-8601",
+     "first_build": "V74",
+     "what": "friction/inertia mode 26 (ENGAGED) Y[1]",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xD7A60",
+     "width": 2,
+     "stock": "-1966",
+     "V97": "-2949",
+     "first_build": "V74",
+     "what": "friction/inertia mode 26 (ENGAGED) Y[2]",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xD7A6C",
+     "width": 2,
+     "stock": "-9830",
+     "V97": "-14745",
+     "first_build": "V74",
+     "what": "friction/inertia mode 27 (ENGAGED) Y[0]",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xD7A6E",
+     "width": 2,
+     "stock": "-5734",
+     "V97": "-8601",
+     "first_build": "V74",
+     "what": "friction/inertia mode 27 (ENGAGED) Y[1]",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xD7A70",
+     "width": 2,
+     "stock": "-1966",
+     "V97": "-2949",
+     "first_build": "V74",
+     "what": "friction/inertia mode 27 (ENGAGED) Y[2]",
+     "name_source": "build_v98_tva.py FROZEN",
+     "family": null
+    },
+    {
+     "addr": "0xE4194",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4196",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4198",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE419A",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE419C",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE419E",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41A0",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41A2",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41A4",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel0 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41BC",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41BE",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41C0",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41C2",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41C4",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41C6",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41C8",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41CA",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE41CC",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel1 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae  [LIVE selector for A160]",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE420C",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE420E",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4210",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4212",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4214",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4216",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4218",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE421A",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE421C",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel3 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4234",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4236",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4238",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE423A",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE423C",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE423E",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4240",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4242",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE4244",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel4 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5194",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5196",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5198",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE519A",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE519C",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE519E",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51A0",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51A2",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51A4",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel6 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51BC",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51BE",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51C0",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51C2",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51C4",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51C6",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51C8",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51CA",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51CC",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel7 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51E4",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51E6",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51E8",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51EA",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51EC",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51EE",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51F0",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51F2",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE51F4",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel8 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE520C",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[0] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE520E",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[1] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5210",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[2] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5212",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[3] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5214",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[4] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5216",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[5] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE5218",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[6] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE521A",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[7] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    },
+    {
+     "addr": "0xE521C",
+     "width": 2,
+     "stock": "15360",
+     "V97": "16384",
+     "first_build": "V38",
+     "what": "ARB SETPOINT LIMIT sel9 Y[8] -- the +/-clamp on the LKAS setpoint gp-0x69ae",
+     "name_source": "build_v38_tva.py",
+     "family": "ARB_SETPOINT_LIMIT"
+    }
+   ],
+   "control_law_total_bytes": 139,
+   "unattributed": []
+  }
+ }
+}
