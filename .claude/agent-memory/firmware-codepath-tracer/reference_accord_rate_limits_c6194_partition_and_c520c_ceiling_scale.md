@@ -36,8 +36,17 @@ gp-0x6b4a = clamp(gp-0x3d80 + iVar11 + residual, ±25600)
 
 ⇒ **Honda built, wired and calibrated an LKAS rate limiter and switched it off with eleven bytes.**
 Arming it makes the car SLOWER — the wrong direction for the operator. Diagnostic value only.
-⊕ Same read: **`0xC63CC` = 0** ⇒ `gp-0x6b4c = clamp(gp-0x3d88, ±10240)` — it does **not** carry the
-LKAS command. Relevant to any lane census that assumes it does.
+⊕ Same read: **`0xC63CC` = 0** ⇒ `gp-0x6b4c = clamp(gp-0x3d88, ±10240)`.
+
+🛑 **CORRECTED 2026-08-13 (`tracer-4x-to-term0`) — the second half of that sentence was WRONG.** The
+original read on ⊕ said this means `gp-0x6b4c` "does **not** carry the LKAS command." **It does.**
+`0xC63CC` = 0 kills only the `iVar13 → gp-0x6b4c` **cross-term**; it says nothing about `gp-0x3d88`,
+which is `Σ_ON gp-0x62b0[]` — and `gp-0x62b0[1] = gp-0x62f8[1]` **is** the 4×-gained LKAS command,
+registered by `FUN_0002b422` @`0x2b52c` (`sst.h r12,0x4[ep]`) into slot 1, which is **mode 0**.
+⇒ **`gp-0x6b4c` is the 4× LKAS command's sole route**, read at `0x3816c` in `FUN_00038148`.
+Conversely `gp-0x6b4a` ≡ 0 (all ten registrants write zero to field +2). See
+[[accord-4x-gain-feeds-6b4c-not-term0-and-the-struct-offset-map]]. **Any lane census that assumed
+`gp-0x6b4c` is LKAS-free is void.**
 
 ## 2. `gp-0x6ac0`'s SCALE, and the `0xC520C` ceiling [EVIDENCE]
 

@@ -84,6 +84,57 @@ coincidence that it is the easiest term to saturate the PID with.
 [[reference-accord-fun45a20-monitor-and-shadow-lockstep-pairs]]. Any future cave probe near this cell
 must write both halves atomically, the same discipline as the four pairs already on record there.
 
+## 🛑🛑 SUPERSEDING CORRECTION, 2026-08-13 (`tracer-4x-to-term0`) — **TERM 0 IS ≡ 0**
+
+The A4 open question below ("what actually drives `gp-0x6b4a` off zero") is now **CLOSED: nothing does.**
+**`gp-0x6b4a ≡ 0` on stock and on V99.** [EVIDENCE — enumerated at the caller level, two methods]
+
+`gp-0x62e0[]` (→ `gp-0x6298[]` → term 0) is written **only** by `FUN_00025c32` @`0x25c32`, the
+request-registration API. Confirmed two independent ways: the `movea gp-0x62e0` census (the six write
+sites are all inside it; `0x27832`/`0x27b98`/`0x27bc0`/`0x27bda`/`0x27c62`/`0x27c82`/`0x27c9c`/`0x28d38`
+are all `sld.h` **loads**), and the **lockstep-shadow invariant** — `movea gp-0x4b70` (the mandatory
+shadow) appears at exactly the same six sites + the read-only checker, and a writer that skipped its
+shadow would trip `FUN_00028d22` → `FUN_0006b9fa`.
+
+**The struct offset map is the crux, and it is the opposite of the natural guess:**
+
+| field | clamp | array | terminates in |
+|---|---|---|---|
+| **`param_1+2`** | ±16384 | `gp-0x62e0[]` | → `gp-0x6298[]` → **`gp-0x6b4a` = TERM 0** |
+| **`param_1+4`** | ±10240 | `gp-0x62f8[]` | → `gp-0x62b0[]`/`gp-0x62c8[]` → `gp-0x6b4c`/`gp-0x6b4e` |
+
+All **10** `jarl → FUN_00025c32` sites decoded at field `+2`: **NINE write hard `r0`**
+(`0x23bc2 0x24162 0x2b52a 0x2c360 0x2cbd2 0x2e62e 0x33b48 0x3a95e 0x3b248`). Every lane puts its
+payload at **+4**, not +2. The tenth, `0x341fe` (`FUN_0003405a`, **slot 2**), writes `r7` =
+`gate ? gp-0x6b76 : 0` — and `gp-0x6b76 ∈ {0, 0x7FFF}` only, because its clamp cal `0xC616C` = **0**
+(see [[accord-c616c-never-raise-driver-torque-relay]], independently re-derived). `0x7FFF` = 32767
+exceeds that gate's own 20480 limit ⇒ forced to 0. **Both branches yield zero.**
+
+⇒ `gp-0x6298[] ≡ 0` ⇒ `iVar13 ≡ 0` ⇒ **`gp-0x6b4a ≡ 0`.** Cal `0xC4118` = `[1]×11` ⇒ the OFF-partition
+is empty, so the rate-limiter and residual terms are driven by zero too.
+
+**Consequences:**
+- **"Term 0 can drive the reference to its full rail alone" is TRUE STRUCTURALLY but VACUOUS in
+  practice** — the lane carries no signal. `gp-0x6ad6` is entirely the *other seven* terms.
+- **Term 0 is NOT the thing railing the PID's ±8192 clamp (`0xC6200`).** That suspect is dead.
+- 🛑 **The 4× forward LKAS gain does NOT reach term 0.** `FUN_0002b422` @`0x2b52a` writes a literal
+  `r0` to +2 and puts the 4×-gained command at +4 → `gp-0x62f8[1]` → (slot 1 is **mode 0**) →
+  `gp-0x62b0[1]` → **`gp-0x6b4c`**. See
+  [[accord-4x-gain-feeds-6b4c-not-term0-and-the-struct-offset-map]].
+
+🛑 **Array-map correction.** `gp-0x6b4c`/`gp-0x6b4e` are **not** two partition sums of `gp-0x62c8[]`:
+```
+gp-0x6b4e = clamp( SUM   gp-0x62c8[i], +-10240 )          # ungated
+gp-0x6b4c = clamp( SUM_ON gp-0x62b0[i], +-10240 ) + polarity*((iVar13*cal_0xC63CC)>>10)   # 0xC63CC=0
+gp-0x6b4a = clamp( SUM_ON gp-0x6298[i] + rateLimited + residual, +-25600 )
+```
+The array actually partitioned by `tp+0x5118[]` is **`gp-0x6298[]`**, and **both halves feed
+`gp-0x6b4a`**. Sources: `gp-0x6298[]←gp-0x62e0[]`, and `gp-0x62b0[]`/`gp-0x62c8[]`←`gp-0x62f8[]`
+(mode-dependent; `tp+0x5124` = `[0,0,5,0,5,5,0,0,0,5,0]`).
+
+Minor: `gp-0x6b4a`'s writers are `0x27784`/`0x2779c`/`0x277aa` (`0x277be` is the join label).
+`FUN_00028d22` is a **read-only** lockstep checker. `gp-0x6b30` is the **pre-gain** accumulator.
+
 ## Open / caveats
 
 - ⚠ **`gp-0x67ab`'s exact trigger is still unresolved** (one writer, `0x2775c`, inside the same mixer).

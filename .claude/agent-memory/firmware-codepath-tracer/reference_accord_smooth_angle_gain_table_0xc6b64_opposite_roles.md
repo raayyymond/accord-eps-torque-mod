@@ -1,15 +1,34 @@
 ---
 name: reference_accord_smooth_angle_gain_table_0xc6b64_opposite_roles
-description: 🛑 KILLED BY TEAM-LEAD CROSS-CHECK 2026-08-05 -- do not re-propose. Byte-dumped a smooth, gp-0x6a10-indexed 13-point LERP table (0xC6B64-0xC6B9A, never referenced by any build script) read by TWO live consumers in opposite roles (divisor->r26 weight; multiplier->gp-0x6ad4). Table itself and both consumer roles independently VERIFIED correct by team-lead's own byte read. But REJECTED as the near-centre mechanism on two counts: (1) magnitude is ~2 orders of magnitude too small -- only 3.8% gain change over the measured 0-45deg region (most of the table's 20.6% swing sits at 34-100deg, outside the measured band) against a measured ~3.2x amplitude swing; (2) WRONG VARIABLE -- gp-0x6a10 is an angle-TRACKING-ERROR (target-actual), not absolute steering position, and the data's conditioning variable (D1's "mid") is explicitly absolute position with movement (span) held separate. Standing bar for a replacement candidate: >2x gain change over 0-45deg of ABSOLUTE angle, reaching the aggregator. The team-lead is now recording the near-centre angle gradient as most likely a PLANT property (self-aligning torque / rack friction), not a firmware lever -- keep as a diagnostic fact, not a lever, unless a new candidate clears that bar.
+description: 🛑🛑 THE 2026-08-05 REJECTION IS ITSELF REFUTED, 2026-08-13 -- BOTH pillars are dead. "Problem 2, wrong variable" is FALSE (gp-0x6a10 IS absolute angle; the subtracted offset is HARD-CLAMPED to +/-13.0deg by cal 0xC633A=130, assembly-proven at 0x3fc36-0x3fc5a). "Problem 1, reach" is FALSE (engaged |angle| reaches 346-380deg over n=14,289 cc_lat frames; the FULL 1.2058x swing is exercised -- the 0-45deg band it was priced over was wrong). The table is now understood as a PARTIAL VARIABLE-RATIO-RACK COMPENSATION on the driver-torque term of the plant model, under-scaled ~3x in log terms. See [[reference_accord_rack_ratio_c6b64_is_absolute_angle_and_no_notch_exists]] -- READ THAT FIRST; everything below is kept only as the historical record of a rejection that did not hold.
+  ORIGINAL (SUPERSEDED) description: KILLED BY TEAM-LEAD CROSS-CHECK 2026-08-05 -- do not re-propose. Byte-dumped a smooth, gp-0x6a10-indexed 13-point LERP table (0xC6B64-0xC6B9A, never referenced by any build script) read by TWO live consumers in opposite roles (divisor->r26 weight; multiplier->gp-0x6ad4). Table itself and both consumer roles independently VERIFIED correct by team-lead's own byte read. But REJECTED as the near-centre mechanism on two counts: (1) magnitude is ~2 orders of magnitude too small -- only 3.8% gain change over the measured 0-45deg region (most of the table's 20.6% swing sits at 34-100deg, outside the measured band) against a measured ~3.2x amplitude swing; (2) WRONG VARIABLE -- gp-0x6a10 is an angle-TRACKING-ERROR (target-actual), not absolute steering position, and the data's conditioning variable (D1's "mid") is explicitly absolute position with movement (span) held separate. Standing bar for a replacement candidate: >2x gain change over 0-45deg of ABSOLUTE angle, reaching the aggregator. The team-lead is now recording the near-centre angle gradient as most likely a PLANT property (self-aligning torque / rack friction), not a firmware lever -- keep as a diagnostic fact, not a lever, unless a new candidate clears that bar.
 metadata:
   type: reference
 ---
 
 # `0xC6B64` table: one angle curve, two aggregator paths, opposite polarity (2026-08-05) -- REJECTED as mechanism, kept as structural fact
 
+> # 🛑🛑 CORRECTION, 2026-08-13 -- THE REJECTION BELOW DID NOT HOLD. BOTH PILLARS ARE DEAD.
+> - **"Problem 2 -- wrong variable, judged fatal" is FALSE.** `gp-0x6a10` is **absolute steering angle**:
+>   `FUN_0003fc16` computes `|gp-0x69ca - clamp(gp-0x69e0+gp+0x641c, ±cal(0xC633A))|` and
+>   **`0xC633A` = 130 counts = ±13.0°**, a HARD clamp (`0x3fc44`-`0x3fc5a`, `subr r0,r14`/`subr r0,r15`
+>   are the negates). A correction bounded to ±13° cannot make the signal a tracking error.
+>   `build_v86_tva.py:141` reached the same conclusion independently from DATA (99.94 % match to
+>   `|angle| ≥ 0.85°`).
+> - **"Problem 1 -- reach" is FALSE.** It priced the table over an assumed 0-45° band. Actual engaged
+>   `|angle|` reaches **346-380°** (n = 14,289 frames, `cc_lat` ≥ 0.5, routes r80/r81/r82) and the
+>   **full 1.2058× swing is exercised**. ⚠ The 0-45° figure came from the WRONG ENGAGEMENT KEY --
+>   `cs_eng` is all-zero on r80/r81; **use `cc_lat`**.
+> - **The magnitude point survives only against the near-centre hypothesis it was aimed at**, not against
+>   the rack-ratio reading: the table is a **partial variable-ratio-rack compensation** on the
+>   driver-torque term of the plant model, under-scaled ~3× in log terms.
+> - 🛑 **Consumer 2's role here is stated correctly but its SIGNIFICANCE was missed** -- see
+>   [[reference_accord_rack_ratio_c6b64_is_absolute_angle_and_no_notch_exists]]. **Read that first.**
+> Everything below is retained as the historical record of a rejection that did not hold.
+
 **🛑 Verdict, team-lead 2026-08-05, after independently re-byte-reading the whole table and re-deriving
 the magnitude: NOT the mechanism. Do not re-propose without clearing the bar stated in the description
-above.** The table's existence, byte values, virginity (0 of 65 build images write it), and both
+above.** [SUPERSEDED -- see the correction block above.] The table's existence, byte values, virginity (0 of 65 build images write it), and both
 consumer roles are all CONFIRMED correct -- this is a real structural fact, just not a large enough or
 correctly-keyed one. Read the two problems below before citing this table in any future near-centre work.
 

@@ -1,5 +1,11 @@
 # Firmware Codepath Tracer - Memory Index
 
+## 2026-08-13 the variable-ratio rack question (`tracer-rack-ratio`)
+- [🛑🛑★★★★★ NO symmetric notch table exists (2 methods) — but `0xC6B64`-`0xC6B98` IS a partial rack-ratio compensation, and `gp-0x6a10` IS ABSOLUTE ANGLE (offset HARD-CLAMPED to ±13.0° by `0xC633A`=130 @`0x3fc36`)](reference_accord_rack_ratio_c6b64_is_absolute_angle_and_no_notch_exists.md) — CORRECTS the 2026-08-05 rejection on BOTH pillars; the angle gain multiplies **ONLY the driver-torque term** of the plant model; full 1.2058× swing exercised (n=14,289) but **FLAT 1.010× across 0-34°**, the operator's centre band. 🛑 `cs_eng` is the WRONG engagement key (all-zero r80/r81) — use `cc_lat`. Blocker = SIGN.
+
+## 2026-08-13 the 4× gain vs term 0 — EXONERATED, and **TERM 0 IS ≡ 0** (`tracer-4x-to-term0`)
+- [🛑🛑★★★★★ The 4× reaches **`gp-0x6b4c` ONLY** — term 0 gets a **hard `r0`** at `0x2b52a`; and the 4× is **UNSATURATED end to end** (clamps tracked it; next fixed clamp is 5.0× above)](reference_accord_4x_gain_feeds_6b4c_not_term0_and_the_struct_offset_map.md) — crux is the `FUN_00025c32` struct map: **+2→`gp-0x62e0`→term 0, +4→`gp-0x62f8`** (command is at +4, not +2). 9 of 10 registrants write `r0` into +2; sole term-0 producer = slot 2 / `gp-0x6b76`, which carries **{0, 0x7FFF} ONLY** (clamp cal `0xC616C`=0 annihilates it; 0x7FFF fails its own gate) ⇒ 🛑🛑 **`gp-0x6b4a` ≡ 0, so term 0 is NOT what rails the ±8192 `0xC6200` clamp — `gp-0x6ad6` is entirely the OTHER SEVEN terms.** Reproduces `accord-c616c-never-raise-driver-torque-relay` independently (⚠ NOT virgin: v93/v94). 🛑 CORRECTS the `6b4c`/`6b4e` partition map; `0xC63CC`=0 kills only the cross-term.
+
 ## 2026-08-13 V100 build certification (`builder-v100`)
 - [⭐★★★★★ `tp`=0xBF000 and `gp`=0xFEDF8000 are set by ONE idiom at `0x140C4`–`0x140D6`, 4 instructions apart from the same `r1` ⇒ **tp is as live as gp, with EVIDENCE**](reference_accord_tp_init_and_gp6b94_shadow.md) — 🛑 Ghidra never analysed `0x140CE` ⇒ `search_instructions` MISSES the tp init; 5 Format-V aliases adjudicated out. ⊕ `gp-0x6b94` has a THIRD shadow-lockstep twin at `gp-0x4ce0`. ⊕ `FUN_00049a5a`=`abs()` ⇒ 427 is rectified. ⊕ 7 certified cave twins; `0x3A7A2` is `ld.h`, not `ld.hu`.
 
@@ -29,7 +35,7 @@
 ## 2026-08-12 the 6-9 Hz loop, end to end (`fw-loop`)
 - [🛑🛑★★★★★ THE PATH-2 BRACKET — Path 2 enters as `B = 1 + Q`, NOT in series; **inversion iff `|Q|<1` AND `cos(arg Q) < −|Q|`**](reference_accord_path2_bracket_criterion_closes_openloop_not_closedloop.md) — applies to all six weights AND the pole. ⊕ α exchange rate FLAT 0.33°/% @21 Hz. ⊕ `gp-0x6b46` = backlash-gated RESIDUAL servo.
 - [🛑🛑★★★★★ The 6-9 Hz loop is the PID DRIVER-TORQUE-TRACKING servo; total firmware phase only −3..+10° ⇒ 7.8 Hz CANNOT be a firmware pole](reference_accord_6to9hz_loop_is_pid_torque_tracker_phase_budget.md) — Path 2 is ONE TICK STALE vs Path 1; 32× P/D-vs-I asymmetry; PID authority clamp makes the lane a RELAY; six VIRGIN phase cells.
-- [🛑🛑★★★★★ EVERY rate limit on the LKAS→motor path — `0xC6194` IS a real slew limiter, dead only because its partition `0xC4118` is all-1](reference_accord_rate_limits_c6194_partition_and_c520c_ceiling_scale.md) — "output ×0" reason is WRONG (that is `0xC6196`); `0xC520C` knots 222.8–870.1 °/s; `0xC63CC`=0 ⇒ `gp-0x6b4c` does NOT carry the LKAS command.
+- [🛑🛑★★★★★ EVERY rate limit on the LKAS→motor path — `0xC6194` IS a real slew limiter, dead only because its partition `0xC4118` is all-1](reference_accord_rate_limits_c6194_partition_and_c520c_ceiling_scale.md) — "output ×0" reason is WRONG (that is `0xC6196`); `0xC520C` knots 222.8–870.1 °/s. 🛑 its "`0xC63CC`=0 ⇒ `gp-0x6b4c` carries no LKAS command" is **CORRECTED 2026-08-13 — it DOES**; that cal kills only the cross-term.
 
 ## 2026-08-12 V97 cell ledger (`fw-levers`)
 - [★★★★★ `0xC63AC` = the only PURE-LEAD lever: DC gain 1.000000 at every value ⇒ a POLE not a GAIN](reference_accord_c63ac_is_the_pure_lead_pole_lever.md) — 102→205 = +12.6° @7.79Hz + 2.13× faster return; VIRGIN, 1R/0W. 🛑 1.38× @21Hz may undo V62. `0xC644A` has no headroom.
