@@ -1,6 +1,6 @@
 ---
 name: accord-v850-scan-traps-formatv-and-storezero
-description: "Seven byte-scan/method traps on the V850E2 A160 that each produced a confident wrong answer — Format-V jr/jarl aliasing ld.bu (44% false positives), store-zero filtering, ld.bu/ld.hu disp|1, compare-then-store shape, LERP-vs-(lo,hi), external-readers sweeps, and Ghidra false-dead."
+description: "Eight byte-scan/method traps on the V850E2 A160 that each produced a confident wrong answer — Format-V jr/jarl aliasing ld.bu (44% false positives), store-zero filtering, ld.bu/ld.hu disp|1, compare-then-store shape, LERP-vs-(lo,hi), external-readers sweeps, Ghidra false-dead, and search_instructions returning a tool zero for an unanalysed region (the tp initialiser)."
 metadata: 
   node_type: memory
   type: reference
@@ -8,10 +8,10 @@ metadata:
   modified: 2026-07-25T07:32:28.847Z
 ---
 
-# Seven scan traps, each of which produced a confident wrong answer (2026-07-24/25)
+# Eight scan traps, each of which produced a confident wrong answer (2026-07-24/25, +1 2026-08-13)
 
-Every one of these was hit **this session**, by the lead or a subagent, and each produced a well-evidenced
-conclusion that was flatly wrong. Check a scan against all seven before trusting a count or an "absent".
+Every one of these was hit **in session**, by the lead or a subagent, and each produced a well-evidenced
+conclusion that was flatly wrong. Check a scan against all eight before trusting a count or an "absent".
 
 **1. ★ Format-V `jr`/`jarl` ALIASES `ld.bu`.** Both use opcode field `0x3C` (`hw1` bits 10..6 = `0b11110`).
 They are distinguished **only by `hw2` bit 0**: `hw2 & 1` ⇒ `ld.bu`, else branch. Omitting that test gave
@@ -54,6 +54,15 @@ load-bearing consumer is the intra-function `cmp 0x2` at `0x29382`. **Always che
 RTOS task**. Use the **task-control-block array at `0xBB928`, stride `0x30`, entry at `+0x08`** as a
 liveness oracle — it self-validates against the two independently-known tasks `0x2214A` (1 kHz control) and
 `0x22CA0` (assist shaping).
+
+**8. `search_instructions` returned a TOOL ZERO for the `tp` initialiser — Ghidra never analysed that
+region at all.** Added 2026-08-13, `builder-v100`. The boot code at `0x140C0-0x140D6` sets **both `gp`
+and `tp` by the SAME idiom, four instructions apart, from the same `r1`** (`gp = 0xFEDF8000`,
+`tp = 0x000BF000`) — so `tp` is exactly as constant and live as `gp`, and every tp-relative cal read
+in this kit rests on that. A tool-reported zero for a region Ghidra never analysed is a **silence**,
+not a **negative** — a raw Python byte scan found it immediately. Every other raw candidate near it had
+to be adjudicated out individually (the hw2 half of a `jarl` disp22, or an `andi` imm16 — Format-V
+aliasing, trap 1 above) before this one could be trusted as real.
 
 **Validation harness for any new scanner:** it must reproduce (a) the **64** known `ld.h gp-0x4f60` disp16
 sites, (b) the `0x2170e`/`0x21712` `ld.bu` pair, (c) the `0x28EB6`/`0x28EBC` `ld.hu` pair, and (d) 0 callers

@@ -1,6 +1,6 @@
 ---
 name: reference-accord-fun45a20-monitor-and-shadow-lockstep-pairs
-description: "FUN_00045a20 is a previously-undocumented hard-shutdown monitor feeding DTC 0x1d; FUN_000462e6's first arg is DATA not a DTC index; and four write-both-or-fault shadow pairs on the torque chain are ruled out as V40 fault candidates."
+description: "FUN_00045a20 is a previously-undocumented hard-shutdown monitor feeding DTC 0x1d; FUN_000462e6's first arg is DATA not a DTC index; and FIVE write-both-or-fault shadow pairs on the torque chain are enumerated (four ruled out as V40 fault candidates; gp-0x6b4a/gp-0x4cd2 added 2026-08-13). gp-0x6b94/gp-0x4ce0 is a binding constraint on any build writing the aggregator output."
 metadata: 
   node_type: memory
   type: reference
@@ -39,13 +39,25 @@ Same write-both-or-fault family as the known `gp-0x4f64`/`gp-0x448a`:
 | variable | shadow | guarded in | on mismatch |
 |---|---|---|---|
 | `gp-0x6ace` | `gp-0x4cca` | `FUN_0004503c` | `FUN_0006b9fa` → `FUN_0006ce7c(4)` |
-| `gp-0x6b94` | `gp-0x4ce0` | `FUN_0003aa2c` (aggregator) | same |
+| `gp-0x6b94` | `gp-0x4ce0` | `FUN_0003aa2c` (aggregator) — sites `0x3acfa/0x3acfe`, `0x3ad12/0x3ad16`, `0x3ad20/0x3ad26` (instruction-level detail added 2026-08-13, `builder-v100`) | mismatch → `jarl 0x6b9fa`, this monitor |
 | `gp-0x6acc` | `gp-0x4cc8` | `FUN_000456a4` | same |
 | `gp-0x4f64` | `gp-0x448a` | `FUN_0007b022` (3 branches) | `FUN_0006b9ee` → `FUN_0006ce7c(0x17)` |
+| `gp-0x6b4a` | `gp-0x4cd2` | `0x27784/88`, `0x2779c/a0` | trap at `0x2777c` |
 
 In every case **both halves are written in the same branch, same instruction sequence** — atomic w.r.t.
 the check. A flat cap table or an unslewed governor changes the *value* written but cannot desync the
 pair. `gp-0x448a` has zero writers outside `FUN_0007b022`. Do not re-walk these.
+
+🛑 **ADDED 2026-08-13 (later), `tracer-6ad6`, crux verified by the team lead**: `gp-0x6b4a` — term 0 of
+the PID reference-model aggregator, [[accord-gp6b4a-is-a-second-direct-lkas-term]] — is ALSO
+shadow-lockstep protected, at `gp-0x4cd2`. Any cave probe or future edit reading/writing near this
+cell must account for the pair the same way the four above are handled.
+
+🛑 **`gp-0x6b94`/`gp-0x4ce0` (row 2 above, on record since the original 2026-07-19 sweep — NOT new,
+but newly load-bearing) is a BINDING CONSTRAINT on V100**, whose cave reads `gp-0x6b94` for its 427
+repoint: **reading is free; WRITING either half of this pair trips the hard-shutdown monitor.** Any
+future build that writes to the aggregator output, not just reads it, must account for this pair —
+V100 itself is a read-only cave and is unaffected, but the next build that touches this cell is not.
 
 `gp-0x138a` (the governor accumulator) has **6 refs, all inside `FUN_0004503c`** — private state, not
 externally monitored.

@@ -12,7 +12,9 @@ a claim already framed from the decompile. Every count/null confirmed with a raw
 1. ⭐ **PATH 2 HAS SUBSTANTIAL AUTHORITY. The low-authority hypothesis is REFUTED on the static
    side.** `d(gp-0x6b94)/d(gp-0x6b70)` = **0.253 / 0.257 / 0.262 at 6 / 7.79 / 9 Hz**, with
    essentially **zero net phase** (−0.9° / +8.2° / +13.3°). Every link is unity or a read cal;
-   nothing in the chain is small.
+   nothing in the chain is small. 🛑 **CONDITIONED 2026-08-13 (later), record-repair pass — this is
+   the UNSATURATED derivative. See item 4 below: it is no longer a hypothetical risk, it is
+   CONFIRMED — the condition is `|gp-0x6ad6| < 8192`, and clamp duty is unmeasured.**
 2. ⭐ **TWO GATES COULD HAVE ZEROED PATH 2 ENTIRELY. BOTH ARE PROVEN OPEN — and one of them
    closes a multi-session OPEN item.** `gp-0x67ab` (which drops `gp-0x6b70` out of `gp-0x6ad6`)
    is a **sticky-OR that can only be set by role ∈ {2,3,4}**, and the static role table
@@ -23,7 +25,12 @@ a claim already framed from the decompile. Every count/null confirmed with a raw
 4. 🛑 **ONE RESIDUAL COULD STILL KILL IT, AND IT HAS NEVER BEEN MEASURED**: the PID's
    `clamp(gp-0x6ad6, ±8192)`. If `gp-0x6ad6` rides outside that clamp, Path 2's *marginal*
    authority is **exactly zero** while every gain above stays as computed. **This is the single
-   best comparator rung available.**
+   best comparator rung available.** ✅ **CONFIRMED 2026-08-13 (later) — `tracer-6ad6` traced this
+   exact clamp** (`0xC6200` = 8192, read at `0x3a7a2` inside `FUN_0003a382`, all three of P/I/D
+   driven from the clamped difference); crux verified by the team lead directly in Ghidra
+   (`read_memory(0xC6200)` = 8192, `disassemble_bytes` reproduces the listing
+   instruction-for-instruction). **The prediction in this item was exactly right — only the duty
+   remains unmeasured; V100's RUNG A targets it.**
 5. ⭐ **METHOD FINDING — the 427 lane's "35–45 Hz negative control" is STRUCTURALLY INVALID.**
    427 is transmitted at **49.8 Hz**; a ZOH onto the 101 Hz row grid images the 5–15 Hz baseband
    into 35–45 Hz. Demonstrated with a synthetic positive control. **`scorer-v98`'s "4.14× even in
@@ -554,14 +561,26 @@ lively 427 lane, V89's flat stratum contrast, and V97's felt-null. It requires n
 
 ## 7. ⇒ WHAT TO BUILD INSTEAD — the lever is `f′`, not the pole
 
+🛑🛑 **CANDIDATE 1 BELOW IS NOW NO-GO — CORRECTED 2026-08-13 (later), record-repair pass. This
+section used to recommend `0xC63AE` as the lead V100 candidate; do not build it.** `tracer-c63ae`
+(crux verified by the team lead) found that **the AC gain through this cell is NON-MONOTONE in scale
+and REVERSES SIGN across the operator's own amplitude distribution**: at scale 1536 the ratio is
+0.773 at p10, 1.078 at p50, 1.277 at p90 — a gain that RISES with amplitude, the hardening
+nonlinearity that sets up a limit cycle (V80 class). **1280 is arithmetically WORSE than stock.**
+RULE 7 does pass (no mode-index failure mode here), but that is not sufficient. **This section's own
+"+41% dose for one byte" framing at scale 512 is a LEVEL-shift argument only — it did not check the
+AC-gain reversal, which is the actual gate.** See `docs/BUILD-LINEAGE.md`'s `0xC63AE` row for the
+full correction. Candidate 2 is unaffected by this.
+
 The 12× compression **is** the lever. Two candidates, in order:
 
-1. ⭐ **`0xC63AE` = 1024, the LERP index scale** (`idx = (|iVar6|·scale)>>10`; **1 reader,
-   0 writers**; `tracer-arms` §4.1 already named it *"the one arm-agnostic lever"*). It moves
-   **where on the curve the car sits.** Halving it to 512 maps `|iVar6|` p50 2,829 → index 1,415,
-   i.e. `f′` 0.346 → 0.488 — **+41 % dose for one byte** — and unlike the pole it acts on **both**
-   arms' contributions equally. 🛑 **`0xC63AE` must never go to 0** (recorded flatten-into-a-relay
-   hazard) and the LERP knots are **mode-indexed ⇒ RULE 7 applies.**
+1. ⭐ ~~`0xC63AE` = 1024, the LERP index scale~~ **NO-GO, see the correction above.** (`idx =
+   (|iVar6|·scale)>>10`; **1 reader, 0 writers**; `tracer-arms` §4.1 already named it *"the one
+   arm-agnostic lever"*). It moves **where on the curve the car sits.** Halving it to 512 maps
+   `|iVar6|` p50 2,829 → index 1,415, i.e. `f′` 0.346 → 0.488 — **+41 % dose for one byte** — and
+   unlike the pole it acts on **both** arms' contributions equally. 🛑 **`0xC63AE` must never go to
+   0** (recorded flatten-into-a-relay hazard) and the LERP knots are **mode-indexed ⇒ RULE 7
+   applies** (RULE 7 itself passes; the AC-gain reversal is the reason this is still NO-GO).
 2. **The knots themselves** — raising `Y` in the 1800–3000 interval steepens `f′` exactly in the
    override regime. Bigger blast radius; mode-indexed; needs its own trace.
 
@@ -729,6 +748,16 @@ real lever with a real dose.** It is also therefore a real risk.
   `gp-0x6b70` pushes `gp-0x6ad6` *toward* that clamp. **If the clamp is already saturating, raising
   `0xC63AE` buys nothing and may buy less than nothing.** ⇒ **The comparator rung should precede
   this lever, not follow it.**
+- 🛑🛑 **NEW, DECISIVE HAZARD — added 2026-08-13 (later), record-repair pass, from `tracer-c63ae`
+  (crux verified by the team lead): RULE 7 actually PASSES here** (unconditional bare-`tp` scalar
+  read at `0x38242`, no mode index — the concern above was misplaced) **but the AC gain through this
+  cell is NON-MONOTONE IN SCALE and REVERSES SIGN across the operator's own amplitude distribution.**
+  At scale 1536 (a milder dose than 2048): ratio 0.773 at p10, 1.078 at p50, 1.277 at p90 — the gain
+  RISES with amplitude, the hardening nonlinearity that sets up a limit cycle, V80 class. **1280 is
+  arithmetically WORSE than stock.** The table below's "median LERP′" analysis priced only the
+  MEDIAN operating point and missed that the same scale's effect on the tails is not proportional and
+  not even same-signed. **This supersedes the "real dose, above the floor" verdict — see the updated
+  table below.**
 
 ## 6. WHERE THIS LEAVES THE SESSION
 
@@ -736,5 +765,5 @@ real lever with a real dose.** It is also therefore a real risk.
 |---|---|---|---|
 | `0xC63AC` 150→102 (V99 hygiene) | 0.8–2.5 % | **below** | not a fix |
 | `0xC40BC` 600→300 (V99 lever) | **0.5–1.2 %** | **below** | not a fix; and its direction conflicts with V85's flight |
-| `0xC63AE` 1024→2048 | ≈ +28 % on the lane | **above** | ⭐ real dose — **but RULE 7 unproven and gated by the `gp-0x6ad6` clamp** |
+| ~~`0xC63AE` 1024→2048~~ | ≈ +28 % on the lane (median only) | **above at median** | 🛑🛑 **NO-GO — CORRECTED 2026-08-13 (later): AC gain is non-monotone and reverses sign across the amplitude distribution (see the hazard above). Do not build. `docs/BUILD-LINEAGE.md`'s `0xC63AE` row carries the full correction.** |
 | `\|gp-0x6ad6\| ≥ 8192` rung | n/a (instrument) | n/a | ⭐ decides all three |

@@ -1100,3 +1100,39 @@ V85 flies route 6e, fault-free, STEER_STATUS = {0: 43,641}
 - **V86B's damper creep hypothesis** is `[BELIEF]`; what settles it is a **drive protocol, not a build**.
 - **The 26–31 Hz band and the highway regime have NO V85 measurement** — route `6e` lacked the exposure,
   and no verdict on them may be carried forward from this flight in either direction.
+
+---
+
+## 2026-08-13 (later still) — record-repair edge: the `0xC6200` collision, defused
+
+### Edge added
+
+| edge | direction | rationale |
+|---|---|---|
+| `accord-c6200-clamps-the-pid-reference` ↔ `accord-aggregator-never-rails-loop-is-linear` | **same number, different cell, both nulls stand** | both measure whether a signal reaches ±8192, at two DIFFERENT points in the chain (`gp-0x6ad6`, the PID's reference, upstream · `gp-0x6b94`, the aggregator output, downstream). Read together carelessly, V65's confirmed null ("never rails") reads as having already answered V100's open question ("does the PID-reference clamp bind?") in the negative — **it has not.** A fully railed `gp-0x6ad6` contributes only ≈2,101 counts at `gp-0x6b94`, well inside V65's own NEUTRAL band, so the two nulls are **compatible, not redundant**. [BELIEF, safe direction only — uses the unsaturated 0.2565 as a linearisation to show non-preclusion, not to predict a duty.] |
+
+Full reconciliation written into both memory files directly (`accord-c6200-clamps-the-pid-reference.md`
+carried it from the start; `accord-aggregator-never-rails-loop-is-linear.md` got it added this pass so
+a reader landing at either file first sees the same defusal).
+
+### RESOLVED from "What is honestly unresolved after this session" (2026-08-09 entry, above)
+> *"3 of `0xC6200`'s 15 readers are unidentified ⇒ RULE 11 is not satisfied on it."*
+
+**RULE 11 on `0xC6200` is now COMPLETE** — `tracer-6ad6` identified the three as `0x3a7a2`/`0x3a7b2`/
+`0x3a7c4`, the PID's own clamp on `gp-0x6ad6` (crux verified by the team lead in Ghidra). The cell
+is now known to be **FOUR distinct things** (friction lane, `gp-0x6b70`'s output clamp, Stage-2 LERP
+`Y[9]`, and the PID reference clamp) plus one still-unchased reader at `0x39ff6`.
+
+### 🛑 THE GENERALISABLE ROOT CAUSE — not about this cell
+Every build script since V90 labels `0xC6200` as *"gp-0x6b70's clamp"* (`build_v96_tva.py:701`,
+`v97:164`, `v98:677`, `v99:438`) — **one of its four roles, presented as if it were the only one.**
+That single mislabel is what kept the PID-reference role invisible for **ten builds**, even though the
+cell was read/discussed in every one of them.
+
+⇒ **A cal cell with multiple roles, labelled by only one of them, is a latent wrong answer.** The
+label reads as complete because it IS accurate for the role the labeller was thinking about — the
+failure is silent, not a visible gap. **Before naming any multi-reader cell in a build script or a
+lever proposal, check ALL of its readers, not just the one the current task cares about**, and if the
+label only covers one role, say so in the label itself (`"gp-0x6b70's clamp (1 of ≥4 roles)"` rather
+than `"gp-0x6b70's clamp"`). See [[accord-check-build-lineage-before-proposing-lever]] for the sibling
+discipline (grep the lineage before naming any cal address) this one completes.

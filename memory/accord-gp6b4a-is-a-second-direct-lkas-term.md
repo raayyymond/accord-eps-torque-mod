@@ -58,6 +58,32 @@ subtraction) cancel exactly.**
 - 🛑 **`build_v41_tva.py` / `BUILD-LINEAGE.md`'s "`0xC6194` architecturally inert" claim** is true only
   for the **sibling** `gp-0x6b4c`, not for `gp-0x6b4a`.
 
+## 🛑 CONFIRMED 2026-08-13 (later), and the bar is 3.125× LOWER than this file framed it
+
+`tracer-6ad6` found a hard clamp `0xC6200` = 8192 inside the PID that consumes `gp-0x6ad6`
+(`FUN_0003a382` @ `0x3a7a2`, all three of P/I/D driven from the clamped difference) — crux verified by
+the team lead directly in Ghidra. **"Term 0 alone can rail it" is CONFIRMED, but the practically
+relevant threshold is the PID's ±8192 clamp, not `gp-0x6b4a`'s own ±25600 write clamp**: reaching
+`|gp-0x6b4a| > 8192` already zeroes `∂(gp-0x6ad4)/∂(gp-0x6b70)` — that is **32% of term 0's own
+clamp, i.e. 3.125× less signal than "rail it" (100% of ±25600) implied.**
+
+Every other term's own gate window, expressed against the same 8192 threshold:
+
+| term | signal | own gate window | headroom vs 8192 |
+|---|---|---|---|
+| 0 | `gp-0x6b4a` | ±25600 | needs only 32% |
+| — | `gp-0x6b60` | ±15360 | needs 53% |
+| — | `gp-0x6bc2`/`6b2a`/`6bce`/`6b6e`/`6bbc` | ±10240 each | needs 80% |
+| 7 | `gp-0x6b70` (observer residual) | ±8192 (`0xC6200`, same cell) | **1.000× — already AT the threshold, no headroom needed at all** |
+
+⇒ Term 7's own clamp and the PID's downstream clamp are the SAME cell, `0xC6200` — it is not a
+coincidence that it is the easiest term to saturate the PID with.
+
+🛑 **NEW: `gp-0x6b4a` is shadow-lockstep protected**, at `gp-0x4cd2`
+(`0x27784/88`, `0x2779c/a0`, trap `0x2777c`) — see
+[[reference-accord-fun45a20-monitor-and-shadow-lockstep-pairs]]. Any future cave probe near this cell
+must write both halves atomically, the same discipline as the four pairs already on record there.
+
 ## Open / caveats
 
 - ⚠ **`gp-0x67ab`'s exact trigger is still unresolved** (one writer, `0x2775c`, inside the same mixer).

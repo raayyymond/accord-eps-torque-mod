@@ -166,11 +166,23 @@ ENG |rate| 25-60               1781  0.3268  ...
 ENG |rate| 60+                 1447  0.6164  ...
 ```
 
-**`b6` has a large ENGAGEMENT CONTRAST: 0.4235 engaged vs 0.8041 manual.** It survives speed
-matching (0.4246 vs 0.7273 in the 5–10 km/h band) so it is not a speed artefact.
+🛑 **CORRECTED 2026-08-13 (later), from `scorer-v99`'s completed flight score — this line used to
+read only "It survives speed matching... so it is not a speed artefact" and stop there. That
+robustness check was insufficient: the confound is on WHEEL RATE, not speed, and speed-matching alone
+does not catch it.** **`b6` has a large ENGAGEMENT CONTRAST: raw 0.4235 engaged vs 0.8041 manual —
+but this OVERSTATES the true effect by ~22%.** Manual exposure on this route is **1.84× more
+60+ °/s weighted than engaged** (b6 is itself strongly rate-dependent — 0.49→0.36→0.33→0.62 across
+the four rate bins below), which biases the raw contrast in exactly the direction that manufactures
+it. Matched on a 4|rate|×6 speed grid (`v99_r82_matched.py` §C, 5.12 s block bootstrap, 15 cells,
+96.0% engaged / 83.4% manual exposure surviving): **matched contrast engaged 0.4543 vs manual
+0.7493, diff −0.2950 [−0.4099, −0.1727].** **Quote the matched figures, not 0.4235-vs-0.8041.**
+🛑 **This is a correction to the MAGNITUDE, not the finding — the CI still excludes zero by a wide
+margin, so the conclusion below stands, just smaller than stated.**
 The sharpest cell is **MANUAL + hands-on: b6 = 0.9756** — with LKAS off and the driver pushing,
-the MODEL arm dominates almost totally — against **ENGAGED + hands-on 0.4727**.
-⇒ **Engaging LKAS makes the ACTUAL (Path-2 / six-lane) arm relatively LARGER.** [EVIDENCE]
+the MODEL arm dominates almost totally — against **ENGAGED + hands-on 0.4727**. (This specific cell
+pair is not itself rate-matched; read it as illustrative, not as the headline number.)
+⇒ **Engaging LKAS makes the ACTUAL (Path-2 / six-lane) arm relatively LARGER.** [EVIDENCE, magnitude
+corrected — see `docs/TRACE-2026-08-13-v99-flight-score.md` §7b for the full derivation]
 
 `b6` is also **non-monotonic in wheel rate**: 0.49 → 0.36 → 0.33 → 0.62 across the four rate bins.
 The ACTUAL arm is largest relative to MODEL in the **5–60 °/s** band — which is where the operator's

@@ -78,5 +78,28 @@ and every `ST == 3` sits in a park/reverse segment. Zero `steerUnavailable` / `s
 `canError` / `immediateDisable`; one `controlsMismatch` per route; three `steerSaturated` on 3b seg 5.
 `latActive` 88.2% / 75.4%. CAN 99.94–100.04 Hz. Reverse: 1,248 / 2,694 frames.
 
+## 🛑🛑 A COLLISION WITH `accord-c6200-clamps-the-pid-reference` — SAME ±8192, DIFFERENT CELL, NO CONTRADICTION
+
+Added 2026-08-13 (later still), record-repair pass, because a careless read of both memories together
+draws the wrong inference. `[[accord-c6200-clamps-the-pid-reference]]` reports that `gp-0x6ad6` (the
+**PID's reference**, upstream of the PID) can saturate at the same magnitude, ±8192, that this memory
+proves `gp-0x6b94` (the **aggregator output**, downstream of the PID) never reaches. **Read fast,
+V65's null looks like it has already answered whether that OTHER clamp binds — it has not.**
+
+**The reconciliation is arithmetic, not assertion:**
+- `gp-0x6b94` and `gp-0x6ad6` are different cells at different points in the chain — one is upstream
+  of the PID, the other is its output, summed with nine other terms.
+- A **fully railed** `gp-0x6ad6` contributes only `8192 × 0.2565 ≈ 2,101` counts at `gp-0x6b94` —
+  comfortably inside THIS memory's own NEUTRAL band (`|·| < 4096`). ⇒ **V65's null is silent about
+  whether the PID-reference clamp binds; the two nulls are COMPATIBLE, not redundant, and this memory
+  does NOT close that question.**
+- [BELIEF, stated in the safe direction only — the step uses `0.2565`, the *unsaturated* small-signal
+  derivative, so it is a linearisation. It is enough to show this memory does not preclude a high duty
+  on the other clamp; it is not enough to predict one.]
+
+⇒ **Do not cite this memory as having closed the `gp-0x6ad6` question.** That clamp's duty remains
+unmeasured and is V100's content — see the linked memory for the instrument.
+
 See also [[accord-grind2-is-a-45hz-mode-under-driver-load]],
-[[accord-gp683c-dead-gate-is-a-free-lkas-arm]], [[accord-r24-gain-b-four-pointer-arrays]].
+[[accord-gp683c-dead-gate-is-a-free-lkas-arm]], [[accord-r24-gain-b-four-pointer-arrays]],
+[[accord-c6200-clamps-the-pid-reference]].

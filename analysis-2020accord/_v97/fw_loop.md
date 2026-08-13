@@ -69,9 +69,12 @@ FUN_0003aa2c @0x3aa2c  aggregator, ALL UNITY:
 LIVE: PID lane `gp-0x6ad4`; `gp-0x6b26` (both paths); `gp-0x6bbe`, `gp-0x6bd0`, `gp-0x6b46`;
 r24/r26 (`gp-0x67ac` resolves 0 ⇒ full-sum branch); `FUN_00036682` hysteresis.
 
-DEAD: base-assist damper FactorC×FactorE (0 on 100 % of the micro regime); `gp-0x6b62`
-return-centre (measured 0.0000 / 75,227 engaged frames); `gp-0x6966` soft-EME collapse (held 0);
-governor slew (cannot bind below ≈10,400 ct of amplitude at 7.8 Hz).
+DEAD: base-assist damper FactorC×FactorE (0 on 100 % of the micro regime) — 🛑 **CORRECTED
+2026-08-13 (later), record-repair pass: this is TRUE for V88/Honda's stock FactorC/FactorE only.**
+Five other builds (V74/75/76/78/79) plus V80 opened both dead zones simultaneously and reached the
+micro regime; three flew (V75/V76/V80). See `memory/accord-base-assist-damper-cannot-reach-the-micro-regime.md`.
+`gp-0x6b62` return-centre (measured 0.0000 / 75,227 engaged frames); `gp-0x6966` soft-EME collapse
+(held 0); governor slew (cannot bind below ≈10,400 ct of amplitude at 7.8 Hz).
 
 ---
 
@@ -91,6 +94,13 @@ governor slew (cannot bind below ≈10,400 ct of amplitude at 7.8 Hz).
 PID corners: `fi = 1.904 Hz`, `fd = 19.894 Hz` ⇒ **6–9 Hz sits inside the flat window**.
 
 🛑 **Corrects STATE.md §A6b**: the PID **leads** by +8.2° at 7.79 Hz; it does not lag −11…−27°.
+
+🛑 **CONDITIONED 2026-08-13 (later), record-repair pass — the whole table above is the UNSATURATED
+gain/phase.** `tracer-6ad6` confirmed the `clamp(gp-0x6ad6, ±8192)` already drawn at line 36 of this
+document's own loop diagram is a REAL, load-bearing clamp inside `FUN_0003a382` (all three of P/I/D
+driven from the clamped difference; crux verified by the team lead directly in Ghidra). **When
+`|gp-0x6ad6| ≥ 8192`, every gain in this table is 0, not the tabulated value.** Clamp duty is
+UNMEASURED. Do not quote this table's gains without that condition.
 
 ---
 

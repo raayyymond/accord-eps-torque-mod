@@ -113,13 +113,20 @@ the operator provokes the symptom. Two independent masks agree to **2 %**. **Eve
 consistent with V98's comparable arms and the lively 427 lane, **requiring nothing unmeasured.**
 [BELIEF — fits all the data; the test is the `gp-0x6ad6` rung in §8.]
 
-✅ **PATH 2 IS AUTHORITATIVE — "maybe it barely matters" is REFUTED.**
-`d(gp-0x6b94)/d(gp-0x6b70)` = **0.2529 / 0.2565 / 0.2617** at 6 / 7.79 / 9 Hz, **no dilution anywhere**
-(every link unity, an enable byte = 1, a flat LERP = 1.000 at every speed, or the PID). Positive
-control **run first and passed**: reproduces the recorded *"+41.8° lead at 21 Hz, |D|≈|P|"* at
-**|D|/|P| = 1.055, arg H = +41.81°.** Both gates OPEN, incl. **`gp-0x67ab` ≡ 0 STRUCTURALLY**
-(sticky-OR over roles {2,3,4}; `0xC4124` contains no 2/3/4 anywhere; byte-identical across 65 images)
-— **closes an OPEN item from `HANDOFF-2026-07-27:287`.**
+🛑 **CONDITIONED 2026-08-13 (later), record-repair pass — this section used to read "PATH 2 IS
+AUTHORITATIVE... no dilution anywhere" unconditionally.** `tracer-6ad6` found the PID's own reference
+clamp `0xC6200` = 8192 sits inside this very chain (`FUN_0003a382` @ `0x3a7a2`, all three of P/I/D
+driven from the clamped difference); crux verified by the team lead directly in Ghidra
+(`read_memory(0xC6200)` = 8192, `disassemble_bytes` reproduces the listing instruction-for-instruction).
+`d(gp-0x6b94)/d(gp-0x6b70)` = **0.2529 / 0.2565 / 0.2617** at 6 / 7.79 / 9 Hz **is the UNSATURATED
+derivative, valid ONLY under the condition `|gp-0x6ad6| < 8192`.** "No dilution anywhere" (every link
+unity, an enable byte = 1, a flat LERP = 1.000 at every speed, or the PID) is still correct as a
+statement about the unsaturated chain — the numbers are not deleted, they are conditioned. When the
+clamp binds, the true derivative is **0**, and its duty is UNMEASURED (V100's RUNG A targets it).
+Positive control **run first and passed** (unaffected — it ran unsaturated): reproduces the recorded
+*"+41.8° lead at 21 Hz, |D|≈|P|"* at **|D|/|P| = 1.055, arg H = +41.81°.** Both gates OPEN, incl.
+**`gp-0x67ab` ≡ 0 STRUCTURALLY** (sticky-OR over roles {2,3,4}; `0xC4124` contains no 2/3/4 anywhere;
+byte-identical across 65 images) — **closes an OPEN item from `HANDOFF-2026-07-27:287`.**
 
 ### ⭐ THE PERCEPTUAL BRACKET — the "underivable" step is now an interpolation
 | build | measured in-band delivered change | operator | felt |
@@ -261,8 +268,10 @@ car; §33 said V98 UNFLASHED; §2074 still said **V94 on the car and "still flas
 `reference_accord_c40bc_is_a_rate_knee_not_a_relay_hardness`
 
 ## 8. ⇒ THE V100 SHAPE, AND WHAT IS STILL OPEN
-✅ **CLOSED this session:** Path-2's authority in counts (**0.2565, authoritative**); the perceptual
-calibration against felt builds (**~0.55× felt, ~1.09× not**); `gp-0x67ab` (**≡ 0 structurally**).
+✅ **CLOSED this session:** Path-2's authority in counts (**0.2565, authoritative — 🛑 CONDITIONED
+2026-08-13 later: valid only while `|gp-0x6ad6| < 8192`, see item 1 immediately below, which this
+session's own item-1 rung already anticipated**); the perceptual calibration against felt builds
+(**~0.55× felt, ~1.09× not**); `gp-0x67ab` (**≡ 0 structurally**).
 
 **V100, in order:**
 1. ⭐⭐ **`|gp-0x6ad6| ≥ 8192` — ONE COMPARATOR RUNG, and it decides everything above.** The PID clamps
