@@ -19,6 +19,60 @@ same tyres.** This is the within-drive matched control the kit had never obtaine
 it.** The V97→V98 delta is **146 bytes, 142 cave + 4 CRC, ZERO calibration bytes** (verified from the
 images two ways).
 
+---
+
+## 🛑🛑 THE SESSION'S REAL RESULT — `f′` COMPRESSION. READ THIS BEFORE PROPOSING ANY OBSERVER LEVER.
+
+**`f′`, the Stage-2 LERP's local slope, is a deterministic function of `|iVar6|`:**
+```
+|iVar6| ct : 0-178  178-356  356-719  719-1200  1200-1800  1800-3000  3000-5000
+f'         : 2.539   2.174    1.496    0.948      0.488      0.346      0.248
+```
+| route 81, engaged | steeringPressed | D3 mask |
+|---|---|---|
+| `\|iVar6\|` p50 **hands-ON** | **2,829 ct** | **2,818 ct** |
+| `\|iVar6\|` p50 hands-OFF | 188 ct | 337 ct |
+| **f′ p50 hands-ON / hands-OFF** | **0.346 / 2.174** | **0.346 / 2.137** |
+
+🛑 **THE FIRMWARE DESENSITISES THIS LANE 6.3× EXACTLY WHEN THE DRIVER PUSHES — and pushing is how the
+operator provokes the symptom.** Two independent masks agree to 2 %. **Every perturbation of `iVar6`
+reaches the car through `f′`, and V89 and V97 BOTH argued their direction on hands-off data (the steep
+part) while the symptom lives on the flat part.** ⇒ **ONE mechanism for both nulls, consistent with
+V98's comparable arms and the lively 427 lane, requiring nothing unmeasured.** [BELIEF, fits all data]
+
+✅ **PATH 2 IS AUTHORITATIVE — "maybe it barely matters" is REFUTED.** `d(gp-0x6b94)/d(gp-0x6b70)` =
+**0.2565** at 7.79 Hz, **no dilution anywhere**; positive control reproduces the recorded PID lead to
+3 s.f. Both gates OPEN, incl. **`gp-0x67ab` ≡ 0 STRUCTURALLY** (closes `HANDOFF-2026-07-27:287`).
+
+### ⭐ THE PERCEPTUAL BRACKET — and every candidate scored against it
+**~0.55× (−45 %) IS felt (V88, V62). ~1.09× (+9 %) IS NOT (V85, V89).**
+| lever | dose in his regime | verdict |
+|---|---|---|
+| `0xC63AC` 150→102 | 0.8–2.5 % of Path-2's 140.6 ct | **below floor ~20×** |
+| **`0xC40BC` 600→300** | **0.5–1.2 %** | **below floor 8–18×** |
+| `0xC63AE` 1024→**2048** | ≈ **+28 %** on the lane | ⭐ **the only one ABOVE** |
+
+🛑 **`0xC40BC` is structurally dead in his regime: 93.1 % of hands-on engaged frames sit ABOVE the
+10.61 °/s knee, where 300 and 600 are ARITHMETICALLY IDENTICAL** (orchestrator-verified; mean ramp
+ratio **1.050**, a ×1.05 not a ×2). And `friction = |fVar18|·ramp·K1/1024` ⇒ **`0xC40BC` and `0xC40D2`
+are two factors of the SAME PRODUCT — V99's perturbation is 0.096× V89's, which measured FLAT.**
+
+### 🛑 FOUR RETRACTIONS FROM THIS SESSION — do not re-cite any of them
+1. **"Stock encodes an exact pole match and V97 broke it"** — the cell identity is real and probably
+   deliberate (`round(0.1·4096)=410`, Honda shipped **408 = 4×102**), **but it is a match between two
+   STAGES, not the ARMS**, which do not share an input and are already **84° and 0.557-vs-0.906 apart
+   at stock.** 🛑 **NEVER quote the 0.111/0.136/0.151 "phantom".** Survives: V97 moved the arms
+   **further apart** (+7.82°, +5.4 %).
+2. **"REQUEST is minor"** — `b5` tests REQUEST vs **ACTUAL**; the denominator is the **RESIDUAL**
+   (`|iVar6|` p50 389 ct). The kit's own retracted "≤ 9 %" error, repeated. **REQUEST is now the most
+   important unmeasured term in the chain.**
+3. **427 "broadband ⇒ no band-specific claim"** — an **artefact**: 427 is transmitted at 49.835 Hz and
+   a ZOH images 5–15 Hz onto 35–45 Hz. With a valid **20–24 Hz** control, 6–9 Hz excess is **2.30× on
+   427 and 1.97× on column — they agree.**
+4. **V86's `gp-0x67ab < 2` rung could NEVER have fired** (`< 2` is true of both states), yet
+   `BUILD-LINEAGE.md` cites it as *"lever in force three ways."*
+⚠ Also: `0xC63A0` weights **`gp-0x6bd0`**, not `gp-0x6b26` (that is `0xC63A6`).
+
 🛑 **PRIOR OPERATOR REPORT, on V97 (route `0x80`), VERBATIM:** *"I did not feel any difference in
 grinding or stuttering (micro-ratcheting) behavior at all on V97, so I stopped the drive."*
 ⊕ **"Stuttering" ≡ micro-ratcheting — his own parenthetical.** It is not a fourth symptom.
