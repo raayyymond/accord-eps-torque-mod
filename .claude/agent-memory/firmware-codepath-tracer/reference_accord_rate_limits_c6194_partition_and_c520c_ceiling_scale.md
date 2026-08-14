@@ -35,7 +35,30 @@ gp-0x6b4a = clamp(gp-0x3d80 + iVar11 + residual, ±25600)
 `gp-0x3d84` ≡ 0 ⇒ slew state parks at 0, residual 0, `gp-0x6b4a = gp-0x3d80`. **100 % bypasses.**
 
 ⇒ **Honda built, wired and calibrated an LKAS rate limiter and switched it off with eleven bytes.**
-Arming it makes the car SLOWER — the wrong direction for the operator. Diagnostic value only.
+
+## 🛑🛑🛑 SAFETY — ADDED 2026-08-13 (`tracer-fprime`): **ARMING `0xC4118` DELETES THE LKAS COMMAND**
+The earlier line *"arming it makes the car SLOWER — wrong direction"* **understated this badly.** Full
+`decompile_function(0x26c80)` shows **the partition byte does DOUBLE DUTY**: it routes `gp-0x6298[]`
+*and* **gates `gp-0x62b0[]`**, which is the live 4× LKAS command.
+```c
+if (*(char*)(tp+0x5118+i) != 0) iVar11 += gp-0x62b0[i];   // -> gp-0x3d88  ** LIVE COMMAND **
+if (*(char*)(tp+0x5118+i) != 0) iVar47 += gp-0x6298[i];   // -> gp-0x3d80  (bypass)
+if (*(char*)(tp+0x5118+i) == 0) iVar13 += gp-0x6298[i];   // -> gp-0x3d84  (through limiter)
+```
+**Zeroing the partition to "arm" the limiter makes `gp-0x3d88` = 0 ⇒ `gp-0x6b4c` = 0 ⇒ LKAS steering is
+silently dead while openpilot believes it is steering.** ⇒ **ARMING THE LIMITER AND DELETING THE
+COMMAND ARE THE SAME EDIT. NEVER PROPOSE IT.** [EVIDENCE]
+
+**And it is dead a SECOND, independent way.** `gp-0x6b4c = clamp(gp-0x3d88 + pol*((iVar13*cal(0xC63CC))>>10), ±10240)`
+with **`0xC63CC` = 0** ⇒ the rate-limited `iVar13` never reaches `gp-0x6b4c`; it reaches only
+`gp-0x6b4a`, which is **≡ 0**. ⇒ **input zero AND output nowhere.**
+
+⭐ **The useful residue: `d(LKAS demand)/dt` is UNLIMITED on the live path.** `gp-0x62b0 → gp-0x3d88 →
+gp-0x6b4c → FUN_00038148` has **no slew limiter, no partition gate**, only the ±10240 clamp. Honda
+rate-limited the *other* arm. Attacking the operator's `dx/dt` axis in firmware would require
+**creating** a limiter = a cave = the only bricking class.
+⚠ Tooling trap: the partition is reached by `movea 0x5118,tp,rX` at **ten** sites then indexed at
+runtime ⇒ a per-slot displacement scan (`tp+0x5119`, `tp+0x511A`…) returns **zero hits and is false**.
 ⊕ Same read: **`0xC63CC` = 0** ⇒ `gp-0x6b4c = clamp(gp-0x3d88, ±10240)`.
 
 🛑 **CORRECTED 2026-08-13 (`tracer-4x-to-term0`) — the second half of that sentence was WRONG.** The

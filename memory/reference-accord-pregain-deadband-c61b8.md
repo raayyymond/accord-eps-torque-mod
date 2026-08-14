@@ -33,3 +33,47 @@ st.h iVar34 -> gp-0x6b30                             # @0x2a206, feeds next cycl
 - **The long-running "is there an integrator before the gain?" disagreement is SETTLED — there are TWO different real variables.** `gp-0x3d3c` is a one-pole IIR filter (cals `0xC63EC`=992, `0xC63EE`=507, Q10; `iVar34 = gp-0x3d3c >> 5`); `gp-0x69b0` is a separate 0..0x8000 Q15 fade-in ramp gain driven by its own 8-state SM `gp-0x3d38`. **Neither is a torque-error integrator that winds up.** Both prior descriptions were half right.
 
 **How to apply:** candidate mitigation is `0xC64A3` → `0x00` — single unsigned byte, sole reader, and it does **not** invent a code path: it forces the `bne 0x2a1e6` branch that already executes routinely whenever `gp-0x6806 != 0` (every re-engage ramp). Narrower alternative: `0xC61B8` → 0, removing the flat band but keeping the sign rule. **Do not build either until (A)/(B)/(C) is settled** — under (A) both are no-ops. Also still [OPEN]: the CAN-setpoint-domain equivalent of `L`=102 has not been back-propagated through the LERP cascade + IIR + `>>5`.
+
+## 🛑🛑 CORRECTED 2026-08-14 — `gp-0x6806` IS **NOT** THE LOW-SPEED LOCKOUT. IT IS THE ENGAGEMENT FLAG.
+
+This file's *"~100 % below 3 mph, 8.9 % at 3–4 mph, **0 % above 4 mph**"* reading is a **SPEED
+CORRELATION MEASURED ON A CREEP-DOMINATED CORPUS**, not a property of the flag. On such a corpus
+"engaged" and "below 4 mph" are nearly the same set, so `latActive` **reads as a lockout**.
+
+**What `gp-0x6806` actually is [EVIDENCE, traced from the producer 2026-08-14]:**
+> **The LKAS-engagement / steer-control-active flag, written ONLY by `FUN_00028ea6`'s engage-ramp state
+> machine — `!= 0` when LKAS is active, `0` when it is not.**
+
+- **16 stores image-wide: 8 live (all in `FUN_00028ea6`), 8 in the dead `[0x2a508, 0x2a939]` region.**
+  Four live sites write non-zero (gate **disabled**), four write `r0` (gate **enabled**).
+- At `0x293A6` the store is `mov 0x1,r6` → `st.b r6,-0x6806,gp` **in the same breath as `st.b r15,-0x3d38`
+  with `r15 = 3`** — a state of the 8-state engage-ramp SM that drives the `gp-0x69b0` fade-in ramp.
+  **An engage-ramp SM emits an ENGAGEMENT flag, not a speed flag.**
+- **V67 measured it == `latActive` on 150,302 / 150,327 frames = 99.983 %**, all 25 disagreements
+  single-frame edges. **An identity test on 150k frames beats a correlation inferred on 98k.**
+- **Route `0x85` breaks the confound outright** — engaged p50 **39.6 km/h**, **45.5 s above 80 km/h**.
+  No "0 % above 4 mph" flag survives that.
+- ⭐ Third, independent: the symptom is **speed-INDEPENDENT** (+0.111 / +0.077 / +0.131 across
+  10–30 / 30–60 / 60+ km/h). **A creep-only enable cannot host a speed-independent symptom.**
+- ✅ Internal consistency: **Lever B arms on `!= 0`; this block arms on `== 0`** — exact complements.
+
+## ⇒ THE BLOCK IS **STRUCTURALLY DEAD** FOR THIS SYMPTOM
+The enable is `gp-0x6806 == 0` ⇒ **the deadband and the sign-latch run in MANUAL ONLY.** The symptom is
+**engagement-required**: **73/88 = 83.0 % engaged vs 0/118 = 0.0 % MANUAL, Fisher p = 3.8×10⁻⁴¹**, zero
+hits in 118 manual windows / 302 s, plus his own *"literally every bad symptom is LKAS engaged only."*
+**A term that only runs in manual cannot produce a symptom that never occurs in manual.**
+⇒ Both disarms (`0xC61B8` → 0, `0xC64A3` → 0) are **dead proposals**.
+
+## ⚠ AND IT IS A **LATCHING KILLSWITCH**, NOT A HYSTERESIS — do not import backlash's describing function
+The block never outputs a **lagged** input. It outputs the ramp-scaled input **or exactly zero**, and
+once zero it stays zero until the enable drops. **Backlash's "phase lag that grows as amplitude falls"
+does NOT transfer.** ⊕ The self-latch reading is **correct** (`0x2a1da mul r13,r6,r0` / `bgt`: `prev == 0`
+⇒ product 0 ⇒ `0 > 0` false ⇒ re-zeroed and stored), **and the heal path is `0x2a1e6`** — when the enable
+fails, control branches *past* the gate but *before* the state store, so `prev` refreshes. **The latch
+heals whenever `gp-0x6806 != 0`.**
+
+⚠ `0xC62EA` = 320 → 0 since ~V35 is a **byte fact that stands**; the *"we may have disarmed this block
+ourselves"* inference built on it is **WITHDRAWN** — it was only ever reachable via the lockout reading.
+
+See [[accord-verify-a-lerp-axis-before-designing-to-it]] — **verify a GATE'S ENABLE from its producer,
+not from a label.**

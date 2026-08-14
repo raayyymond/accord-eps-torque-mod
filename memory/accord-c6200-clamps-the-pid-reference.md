@@ -69,7 +69,54 @@ gp_0x6ad6 = clamp((iVar4 * 1024) >> 10, ±25600)                     # 0x38124..
 ```
 All seven weights `0xC64AD..0xC64B3` byte-read **= 1** on stock, V98 and V99.
 
-## ⭐ TERM 0 RAILS IT AT **32 %** OF ITS OWN CLAMP — not 100 % [EVIDENCE]
+## 🛑🛑 ANSWERED 2026-08-14 — V100 FLEW AND **BOTH CLAMPS READ EXACTLY ZERO**
+
+`d(b5)` (`|gp-0x6ad6| ≥ 8192`) = **0.000000** over **24,925 engaged frames / 249.2 s in 6 episodes**,
+**in all 8 wheel-rate bins**, 95 % CI **[0, 0.0186]**. `d(b6)` (the ±10240 error clamp) = **0.000000**;
+because `d(b5)` = 0 the conditioning set is the **entire** engaged sample ⇒ MARGINAL ≡ CONDITIONAL and
+all three E2 statistics resolve. Positive controls healthy: **`b4` = sign(`gp-0x6ad6`) 0.6057 engaged —
+the SAME CELL as b5** — and `b7` 0.5222.
+⇒ **THE PRE-REGISTERED ZERO SENTENCE IS LICENSED: the reference-clamp hypothesis is DEAD and must not
+be re-proposed.** `d(gp-0x6b94)/d(gp-0x6b70) = 0.2565` stands **UNCONDITIONED** in the flown regime.
+✅ **The null is on the HYPOTHESIS, not the gate — proven, not assumed.** Both rungs were disassembled
+from the **built image**: all four branches `0x05AE` = **cond 0xE = signed GE** (not the `ba05`/`b205`
+inversion class), `tp+0x7200` resolves to `0xC6200` reading 8192, `shl 0x4` places the bits correctly,
+**no guard on either rung**, and the rungs **share accumulator and store** with the controls ⇒ the
+detector provably ran 29,999 times. ⭐ **And `mov`'s flag-transparency — carried as BELIEF since V98 —
+is now EVIDENCE: V98's cave carries the byte-identical idiom (`e639` / `023a`|`043a` / `ae05`) at the
+same bit positions and its bit-6 comparator measured duty 0.4235 ON-CAR.**
+
+🛑 **`0xC6200` IS ALSO SELF-CANCELLING AS A GLOBAL EDIT** — it clamps **term 3** (`FUN_00038148`) and
+**the reference threshold** (`FUN_0003a382`) with the *same* cell, so raising it scales numerator and
+denominator together and **the term-3-to-threshold ratio is exactly invariant.** You would pay the full
+blast radius and buy zero margin. ✅ **And the unchased reader `0x39ff6` is now CHASED: it is a float
+threshold (8192/1024 = 8.0) inside `FUN_00039702`, the MOTOR-PHASE PLAUSIBILITY MONITOR** ⇒ raising
+`0xC6200` **raises a fault-detection threshold**. **DO NOT EDIT stands, now with a reason.**
+
+## 🛑 THE REACHABILITY BUDGET BELOW WAS A **GATE-3 ERROR** — 2.09×, NOT ~12×
+
+The old figure summed each term's **ADMISSION WINDOW** (the zero-reject gate) instead of each lane's
+**OWN WRITER CLAMP** — sizing against a gate rather than a lane, the exact error GATE 3 forbids.
+Corrected, read from the image: **term 0 `gp-0x6b4a` ≡ 0** (`0xC616C` = 0) · term 1 ±1024 (`0xC617E`) ·
+**term 2 `gp-0x6bbc` ≡ 0 — NO WRITER** · term 3 `gp-0x6b70` ±8192 · **term 4 `gp-0x6bce` ≡ 0 — NO
+WRITER** · term 5 ±1024 (`0xC61C6`) · term 6 ±6144 **but riding the `gp-0x6bda` detent gate measured
+0.0000 over 75,227 engaged frames** · term 7 ±512, **zero below ~30 km/h**.
+⇒ **Total reachable 17,152 = 2.09× the threshold.** At creep, worst case ≈ **3,167 + 1,024 + 1,024 =
+5,215 < 8,192** ⇒ **the clamp cannot bind — predicted from structure alone, independently of the flight.
+Two independent lines agreeing.**
+⚠ **A speed LERP multiplies the whole sum before the ±25600 clamp** (`0x38124 mul` / `0x38128 sar 0xa`),
+**identity at stock** (Y `0xC6ACA..0xC6AD8` all 1024, fallback `0xC6448` = 1024). 🛑 **It is NOT a lever
+— its index `gp-0x69aa` is a Q15 governor derate pinned at unity, not vehicle speed.** See
+[[accord-verify-a-lerp-axis-before-designing-to-it]].
+⚠ `gp-0x67ab` is **structurally BOOLEAN** (only producers `setfne`, `mov 0x1`, `mov 0x0`) ⇒ V86's
+`< 2` rung was a **tautology**, not a coding slip. Whether it is ever 1 is **OPEN**.
+
+## ⚠ SUPERSEDED — "TERM 0 RAILS IT AT 32 % OF ITS OWN CLAMP"
+🛑 **WRONG. TERM 0 IS IDENTICALLY ZERO and rails nothing** — its producer passes through
+`clamp(driver_torque, ±cal 0xC616C)` and **`0xC616C` = 0** on stock and every build, so both writer
+branches yield zero. Agreed by three independent sources. **The reference is entirely terms 1–7.**
+The table below is retained only for its per-term window figures, which are **windows, not reachable
+outputs** — see the corrected budget above.
 
 `gp-0x6b4a ∈ ±25600` (writer clamp `0x27772..0x277aa`; 🛑 it also has a **shadow-lockstep twin at
 `gp-0x4cd2`**, same class as `gp-0x6bfa`/`gp-0x4cfa` — write-side only, **reading is free**).

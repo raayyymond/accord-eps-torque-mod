@@ -1,13 +1,55 @@
 ---
 name: reference_accord_fun3a382_pid_phase_6to9hz_and_gate1_movhi_scan
-description: FUN_0003a382's PID phase RECOMPUTED at 6-9Hz from a fresh full decompile (not extrapolated from the existing 21Hz figure) -- P is 3-5x less dominant and net phase lag is 3-5x larger than at 21Hz, because P/D carry an implicit x32 the plain accumulator I never gets. Also: whole-image movhi/0xfedf scan is CLEAN (0 hits) -- GATE-1 for gp-0x6b70 (and generally, absolute-address register-indirect RAM access) closed.
+description: "🛑 RETRACTED 2026-08-14 — the PID-phase half of this file is an ARITHMETIC BUG (P and I quoted in x32 units, D in x1, understating D by exactly 32x). The PID is in LEAD at 6-9Hz (-0.9 / +8.2 / +13.3 deg), NOT a -11..-27 deg lag. Use reference-accord-fun3a382-is-a-real-pid instead. The movhi/0xfedf GATE-1 scan half is UNAFFECTED and still valid."
 metadata:
   type: reference
 ---
 
-# PID phase at 6-9Hz [EVIDENCE, fresh decompile] + GATE-1 movhi/fedf scan [EVIDENCE, clean]
+# 🛑🛑 RETRACTED — THE PID-PHASE HALF OF THIS FILE IS WRONG. READ THIS BEFORE ANYTHING BELOW.
 
-## 🛑🛑 STANDING-RECORD CORRECTION, not a refinement (team-lead's framing, 2026-08-11)
+**Retracted 2026-08-14 by `gate2-pid`, verified by the orchestrator from the image.**
+
+> **THE BUG: this file quotes P and I in ×32 units and D in ×1 units, understating D by EXACTLY 32×.**
+
+```
+at 21 Hz     |H_P| x1 = 0.2500   x32 = 8.0000        |H_D| x1 = 0.2637   x32 = 8.4385
+this file's own row:   P_eff = 8.0   I = 0.726   D = 0.264
+   P 8.0   == Kp x32   -> the x32 form
+   D 0.264 == |H_D| x1 -> the x1 form          => D understated by exactly 32x
+```
+**Proof it is the bug and not a different convention: feeding the mixed units back in reproduces this
+file's own output table to 0.1° at ALL FOUR frequencies** (−17.0 / −13.0 / −11.1 / −3.3).
+
+**THE CORRECT VALUES — the PID is in LEAD at 6–9 Hz, not in lag:**
+```
+              6.0 Hz   7.79 Hz   9.0 Hz    21 Hz
+this file      -17.0     -13.0     -11.1     -3.3     <- WRONG
+CORRECT         -0.9      +8.2     +13.3    +41.8     <- a LEAD
+```
+And **P does NOT dominate I+D by 2–5:1** — by 21 Hz **|D| ≈ |P|**. The PID's lead/lag crossover is
+**5.5 Hz**; there is **no −180° crossing** in this band to have a phase margin against.
+
+**Authoritative figures: `reference-accord-fun3a382-is-a-real-pid`** (cross-validated two ways there,
+and a third time by an independent integer time-domain sim of `pid_step` agreeing to 4 dp at
+3/5/8/21 Hz). The **V87 handoff is also right** (*"PID is in LEAD at 8.21 Hz, +10.08°"*); this file was
+the outlier.
+
+✅ **Provenance chased: NO BUILD was sized on the bad figure.** Every `build_v*.py` was grepped for the
+four lag values; the three hits (v43, v44, v99) are coincidental numeric matches — v43's is a frequency
+band, not a phase. **No image carries a decision made on it.**
+
+⚠ **A sibling file, `reference_accord_fun3a382_engagement_gated_residual_loop.md:162`, carries the
+superseded −3.3°/−5.4° figure — that is the *21 Hz* value quoted WITHOUT ITS BAND**, the same
+band-scoping defect that made the Kd pair look contradictory.
+
+✅ **THE SECOND HALF OF THIS FILE — the whole-image `movhi`/`0xfedf` GATE-1 scan — IS UNAFFECTED AND
+STILL VALID.** Only the PID-phase argument is retracted.
+
+---
+
+## ⚠ EVERYTHING BELOW IS THE RETRACTED ARGUMENT — retained for provenance only. DO NOT QUOTE IT.
+
+## ~~🛑🛑 STANDING-RECORD CORRECTION, not a refinement (team-lead's framing, 2026-08-11)~~
 
 **Every closed-loop argument this kit has made about the ratchet/micro-ratcheting band (6-9Hz) that reused
 the existing 21Hz PID phase figure (`-3.3° to -5.4°`, `~8-10:1` P-dominance) was using the WRONG number.**

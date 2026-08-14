@@ -43,9 +43,38 @@ is 0.33×/0.31× while **28–35 Hz is flat at 1.13×/0.94×** ⇒ the fall is r
 ## 🛑 A HYPOTHESIS OF MINE THAT WAS REFUTED, AND WHY
 I predicted 15–22 Hz would **RISE**, reasoning that r24 is a differentiator and Lever B doubles its gain.
 **Wrong: r24 is rate FEEDBACK inside the loop, and `gp-0x6b98` is the loop's OUTPUT, not its input.**
-More derivative feedback = more damping = **less** HF motion everywhere inside the loop. V87's
+~~More derivative feedback = more damping = **less** HF motion everywhere inside the loop.~~ V87's
 engaged-spectrum rise with frequency (29 / 29 / 52 counts rms) against a flat manual arm (~9) is the
 signature of an **under-damped closed loop at stock derivative gain**, not of a feedforward differentiator.
+
+### 🛑🛑 THE MECHANISM SENTENCE ABOVE IS **REFUTED**, 2026-08-14 — KEEP THE COUPLING, FIX THE DIRECTION
+*"More derivative feedback ⇒ more damping ⇒ less HF"* is **WRONG**. It predicts that a **HIGHER** net
+rate-lane dose is **BETTER**. The images say otherwise. Read from `0x3AA96` (gate) · `0xC6444` ·
+`0xC6446`, orchestrator-verified:
+```
+stock/V62/V65  gate 0xC5 DEAD   512 /  512     net = (5244 + 512a)/(3072 + 3072a),  a = gp-0x69a4/1024
+V67/V68/V88    gate 0xFB ARMED  512 / 5244     1.707 @a=0  ->  0.937 @a=1
+V71c           gate 0xFB ARMED 3072 / 5244     1.707 @a=0  ->  1.354 @a=1
+V100 (on car)  gate 0xFB ARMED  512 / 5244     = V88
+```
+🛑 **At `a = 0` V88 and V71c are ARITHMETICALLY IDENTICAL (both 1.707)** — same gate, same r24 arm, and
+`0xC6444` enters only as `arm26·a`. **On-car they are the corpus EXTREMES**: V88 *"grinding fixed"*;
+**V71c the worst build ever recorded on all three symptoms** (ratchet at the corpus record 8,521 ct
+p-p). ⇒ ⭐ **`a` is materially NON-ZERO and the r26 arm is LOAD-BEARING — proved from images, no drive
+required.** And ⇒ **the higher net dose was dramatically WORSE, so the damping account is refuted.**
+
+⭐ **WHAT SURVIVES: the COUPLING is right (the rate lanes sum into the same aggregator `gp-0x6b94`,
+four hops upstream of `gp-0x6b98`, so there is no undrawn coupling to find) — only the causal
+DIRECTION was wrong.**
+
+⇒ 🛑🛑 **THE LANE IS AN OPTIMUM AND V88 IS SITTING ON IT. BOTH FLANKS ARE NOW MEASURED:**
+**V61** (net **below** V88) *"made it WORSE… the rate lane is the mode's damper"*; **V71c** (net
+**above**) worst in the corpus. The standing *"2× ≈ OPTIMUM, not a point on a ramp"* warning now has
+**both sides**, not one. ⇒ **LEVER B IS OFF EVERY FUTURE SHORTLIST, IN BOTH DIRECTIONS**, and knowing
+`a` would only locate us on a curve whose peak we already occupy. **This retires the kit's
+self-declared "leading open question."**
+✅ Checked in the safe direction: `0xC6444`'s falsification **STANDS** — V71c had the gate **ARMED**
+(`0xFB`), so the *"null by construction on gateless builds"* note does not reach it.
 
 ## 🛑 WHAT THIS ROUTE CAN AND CANNOT RESOLVE
 - **7.41 engaged minutes; 120 s engaged ≥50 km/h, 80 s ≥80 km/h, v_max 116.6 km/h** — the first route in

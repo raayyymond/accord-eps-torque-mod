@@ -1,0 +1,156 @@
+{
+ "provenance": "direction is the operator's; bin edges are post-hoc. Hypothesis-generating, not an endpoint.",
+ "control_band": "32-38 Hz (the clean one); 20-24 also printed",
+ "routes": {
+  "r85": {
+   "n_creep": 32,
+   "skipped": true
+  },
+  "r77": {
+   "n_creep": 222,
+   "n_episodes": 17,
+   "press_p50": 0.10546875,
+   "rho_press_R": -0.0639598650878658,
+   "rho_press_y": -0.3752585812995002,
+   "A_no_grip": -0.11445294318018723,
+   "A_ci": [
+    -0.246851523405088,
+    0.4044653928800193
+   ],
+   "B_grip_conditioned": -0.057300209307695145,
+   "B_ci": [
+    -0.19530338235490052,
+    0.3984313126084324
+   ]
+  },
+  "r78": {
+   "n_creep": 65,
+   "n_episodes": 11,
+   "press_p50": 0.0,
+   "rho_press_R": 0.35387050342572246,
+   "rho_press_y": 0.011621737261606207,
+   "A_no_grip": -0.03286810866196383,
+   "A_ci": [
+    -0.40105249613649163,
+    0.29775125628522864
+   ],
+   "B_grip_conditioned": -0.05448384071465213,
+   "B_ci": [
+    -0.47134437491791714,
+    0.2945172875881054
+   ]
+  },
+  "r79": {
+   "n_creep": 45,
+   "skipped": true
+  },
+  "r7e": {
+   "n_creep": 76,
+   "n_episodes": 11,
+   "press_p50": 0.01171875,
+   "rho_press_R": 0.21280886780170402,
+   "rho_press_y": -0.2570520225936178,
+   "A_no_grip": -0.2489863760158482,
+   "A_ci": [
+    -0.5445357221712243,
+    0.5063639183236882
+   ],
+   "B_grip_conditioned": -0.13942760326673262,
+   "B_ci": [
+    -0.38597483370967184,
+    0.4863012072192883
+   ]
+  },
+  "r7f": {
+   "n_creep": 46,
+   "skipped": true
+  }
+ },
+ "pooled_A": -0.12801086784086413,
+ "pooled_B": -0.07399061697254102,
+ "shift_from_adding_grip": 0.054020250868323114,
+ "hard_split": {
+  "r77": {
+   "off": {
+    "n": 100,
+    "partial": -0.07076529935103258,
+    "ci": [
+     -0.273151912243808,
+     0.20208529934871278
+    ],
+    "n_eps": 13,
+    "resolvable": true
+   },
+   "on": {
+    "n": 34,
+    "resolvable": false
+   }
+  },
+  "r78": {
+   "off": {
+    "n": 49,
+    "partial": -0.01748396743858969,
+    "ci": [
+     -0.5586884024866138,
+     0.28267614737247937
+    ],
+    "n_eps": 10,
+    "resolvable": true
+   },
+   "on": {
+    "n": 3,
+    "resolvable": false
+   }
+  },
+  "r7e": {
+   "off": {
+    "n": 40,
+    "partial": -0.28853454166680226,
+    "ci": [
+     -0.5380233997517876,
+     0.40326431409036445
+    ],
+    "n_eps": 10,
+    "resolvable": true
+   },
+   "on": {
+    "n": 3,
+    "resolvable": false
+   }
+  }
+ },
+ "strata_clean_band": {
+  "creep 0-10": {
+   "pooled": -0.12801086784086413,
+   "n_routes": 3,
+   "n_windows": 363,
+   "lo": -0.2489863760158482,
+   "hi": -0.03286810866196383,
+   "n_ci_excluding_zero": 0
+  },
+  "mid 10-30": {
+   "pooled": 0.11090543399262189,
+   "n_routes": 6,
+   "n_windows": 1323,
+   "lo": -0.33876542219874023,
+   "hi": 0.20205705189115067,
+   "n_ci_excluding_zero": 2
+  },
+  "30-60": {
+   "pooled": 0.07711430984281066,
+   "n_routes": 6,
+   "n_windows": 2367,
+   "lo": -0.0037639482089933834,
+   "hi": 0.1250588194729813,
+   "n_ci_excluding_zero": 2
+  },
+  "60+": {
+   "pooled": 0.13064700249522163,
+   "n_routes": 6,
+   "n_windows": 1903,
+   "lo": -0.03998634913319802,
+   "hi": 0.22820046352037934,
+   "n_ci_excluding_zero": 2
+  }
+ }
+}

@@ -1,0 +1,123 @@
+{
+ "per_route": {
+  "r77": {
+   "engaged_s": 1074.62,
+   "hands_on_s": 177.52,
+   "n_windows": 1634,
+   "n_on": 260,
+   "n_off": 1374,
+   "n_eps_on": 21
+  },
+  "r78": {
+   "engaged_s": 619.87,
+   "hands_on_s": 28.39,
+   "n_windows": 937,
+   "n_on": 41,
+   "n_off": 896,
+   "n_eps_on": 7
+  },
+  "r79": {
+   "engaged_s": 752.27,
+   "hands_on_s": 65.01,
+   "n_windows": 1147,
+   "n_on": 97,
+   "n_off": 1050,
+   "n_eps_on": 10
+  },
+  "r7d": {
+   "engaged_s": 10.84,
+   "hands_on_s": 2.67,
+   "n_windows": 12,
+   "n_on": 0,
+   "n_off": 12,
+   "n_eps_on": 0
+  },
+  "r7e": {
+   "engaged_s": 615.06,
+   "hands_on_s": 39.25,
+   "n_windows": 933,
+   "n_on": 44,
+   "n_off": 889,
+   "n_eps_on": 6
+  },
+  "r7f": {
+   "engaged_s": 689.54,
+   "hands_on_s": 39.2,
+   "n_windows": 1048,
+   "n_on": 54,
+   "n_off": 994,
+   "n_eps_on": 6
+  },
+  "r80": {
+   "engaged_s": 17.19,
+   "hands_on_s": 3.38,
+   "n_windows": 24,
+   "n_on": 0,
+   "n_off": 24,
+   "n_eps_on": 0
+  },
+  "r81": {
+   "engaged_s": 65.91,
+   "hands_on_s": 21.98,
+   "n_windows": 95,
+   "n_on": 22,
+   "n_off": 73,
+   "n_eps_on": 3
+  },
+  "r82": {
+   "engaged_s": 59.79,
+   "hands_on_s": 13.03,
+   "n_windows": 84,
+   "n_on": 10,
+   "n_off": 74,
+   "n_eps_on": 3
+  },
+  "r85": {
+   "engaged_s": 249.25,
+   "hands_on_s": 31.02,
+   "n_windows": 380,
+   "n_on": 38,
+   "n_off": 342,
+   "n_eps_on": 5
+  }
+ },
+ "pooled_hands_on_s": 421.45000000000005,
+ "target_s": 994.9,
+ "frac_of_target": 0.42361041310684494,
+ "routes_loaded": [
+  "r77",
+  "r78",
+  "r79",
+  "r7d",
+  "r7e",
+  "r7f",
+  "r80",
+  "r81",
+  "r82",
+  "r85"
+ ],
+ "pooled_on": {
+  "rho": 0.012440400410509764,
+  "ci": [
+   -0.09650259500502832,
+   0.113871683128553
+  ],
+  "n_windows": 556,
+  "n_episodes": 58,
+  "half_width": 0.10518713906679067,
+  "excludes_zero": false
+ },
+ "pooled_off": {
+  "rho": 0.08146888313560291,
+  "ci": [
+   0.04041816554496135,
+   0.1244067296293508
+  ],
+  "n_windows": 5716,
+  "n_episodes": 118,
+  "half_width": 0.04199428204219473,
+  "excludes_zero": true
+ },
+ "extra_exposure_factor_needed": 1.3659671882785631,
+ "on_vs_off_overlap": true
+}

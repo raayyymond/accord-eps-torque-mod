@@ -56,3 +56,35 @@ re-tests the damper at creep, V76's config (`[566,566,566,908]` / `[0,119,2500,4
 flown one that already reaches the micro regime, and it flew clean.
 
 Related: [[accord-v80-damper-relay-and-grind1-inert]], [[reference-accord-cbe74-friction-row-zero-clean-flights]].
+
+## ⚠ SCOPE, ADDED 2026-08-14 (route `0x85`, V100) — THE KILL IS **NARROWED**, NOT OVERTURNED
+
+The two dead zones are **not both shut at every operating point**. **Above 35 km/h FactorC OPENS**, and
+route `0x85` spent **88.4 s** there (engaged p50 39.6 km/h, 45.5 s above 80 km/h). What still holds —
+and it is the load-bearing half — is that **FactorE's `X[0]` = 12.7 °/s zeroes the ENTIRE micro regime
+at every speed up to 104 km/h**, so the micro-regime claim survives **verbatim**.
+
+Computed `ch₀` on this drive's own operating points, from the byte-stock V100 surface:
+```
+ch0 ct    |rate|->   2     5    13    20    30    50   100   200 deg/s
+ 5/20/35 km/h      0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+ 50 km/h           0.0   0.0   0.1   1.9   4.6   9.9  21.1  33.3
+ 80 km/h           0.0   0.0   0.2   5.9  14.0  30.3  64.3 101.8
+104.5 km/h         0.0   0.0   0.3   8.6  20.4  44.1  93.6 148.3
+                         ^^^^^^^^^ the MICRO bin (1-13 deg/s, 102.7 s, the LARGEST) is STILL
+                                   EXACTLY ZERO AT EVERY SPEED, including 104 km/h
+```
+**Median engaged frame (39.6 km/h × ~10 °/s) delivers 0.0 ct = 0.00 % of ceiling.** Where both zones
+are open the dose is only **1.5–8 % of the 512 ceiling** (18 % at a 104 km/h × 100 °/s corner the drive
+barely visits).
+
+🛑 **⇒ "zero on 100 % of the micro regime" STILL HOLDS on this drive. "Zero on 95.91 % of engaged
+frames" is CREEP-ROUTE-SPECIFIC and must NOT be quoted for a mid-range or highway drive.**
+⇒ **And the operator's own framing demotes it a second time, independently:** `ch₀ = FactorC(SPEED) ×
+FactorE(WHEEL rate)` is gated on **the axis he says is irrelevant** (*"I think it is speed
+independent"*) and on **a rate that is not the rate he named** (`d(LKAS demand)/dt`). A term identically
+zero below 35 km/h cannot address the creep half of a phenomenon he describes as one thing spanning
+creep and mid-range.
+
+⚠ **This file's *sizing* argument and its *"raising `Y[0]` is required"* claim were already REFUTED at
+the V99 close-out — do not re-derive them.** Computed surface: `docs/_v101_arc_map.md` §5.2c.

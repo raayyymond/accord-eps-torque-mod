@@ -10,6 +10,64 @@ result was buried in prose.
 
 ---
 
+## 🛑🛑 V100 — FLEW AS ROUTE `0x85`, ON THE CAR. **AND SIX LEVERS CLOSED, 2026-08-14. NO V101 EXISTS.**
+
+| build | base | delta | on-car result |
+|---|---|---|---|
+| **V100** | V99 | **ZERO CALIBRATION BYTES. Cave only — AN INSTRUMENT, NOT A FIX.** `0x55DF2` 427 repoint `gp-0x6b70`→`gp-0x6b94` + cave `0xC4B36..0xC4BCD` + `0xC4FFC` CRC = **128 B**. Cave **132 B / 49 instructions / 10.9 % of extent**. Rungs: `b5` = `\|gp-0x6ad6\| ≥ cal 0xC6200`, `b6` = `\|gp-0x4f60 − gp-0x6ad6\| ≥ 10240`, `b7`/`b4` signs, `b3` identity ≡ 1. | ✅ **FLEW, ON THE CAR.** Fault-free, identity duty **1.000000**, 427 unsaturated. **29,999 frames / 249.2 s engaged in 6 episodes — ~4× the best exposure ever.** Engaged p50 **39.6 km/h**, ≥50 km/h **88.4 s**, ≥80 km/h **45.5 s** — the first substantially non-creep engaged drive. 🛑🛑 **`d(b5)` AND `d(b6)` BOTH 0.000000** (all 8 rate bins; CI [0, 0.0186]) with `b4` = 0.6057 **on the same cell** ⇒ **THE REFERENCE-CLAMP HYPOTHESIS IS DEAD AND MUST NOT BE RE-PROPOSED.** `0.2565` stands unconditioned. 🛑 Zero cal bytes ⇒ **the control law he drove is V99's, bit for bit.** |
+
+**🛑 NO V101 WAS BUILT. Nothing is pending flash. Do not look for a V101 artifact.**
+
+### SIX LEVERS CLOSED THIS SESSION — grep here before re-proposing any of them
+| lever | status | why |
+|---|---|---|
+| `0xC6200` (PID reference clamp) | **MEASURED DEAD** | `d(b5)`=0.000000 over 249.2 s. Also **self-cancelling** as a global edit (clamps term 3 *and* the threshold with one cell). Unchased reader `0x39ff6` now chased = **a motor-phase fault threshold** ⇒ DO-NOT-EDIT stands with a reason. |
+| **`0xC4118`** | 🛑🛑 **HARD NEVER-ARM** | The partition byte does **DOUBLE DUTY**: zeroing it to "arm" `0xC6194`'s limiter drives `gp-0x3d88`→0 ⇒ `gp-0x6b4c`→0 ⇒ **LKAS STEERING SILENTLY DEAD while openpilot believes it is steering.** Cal-only, 11 bytes, looks safe. **It is not.** |
+| `0xC6194` | **DEAD TWICE** | Input ≡ 0 (partition all-1s); output reaches only `gp-0x6b4a` ≡ 0 (`0xC63CC`=0). ⚠ The recorded kill reason *"output ×0"* was **MISATTRIBUTED — it belongs to `0xC6196`** (`0xC6194`=3, `0xC6196`=0). |
+| `0xC63AE` 1024→2048 | **NO-GO** | AC gain **non-monotone, REVERSES** across his amplitude range (0.70× @500 ct → 2.00× @6000). The old *"only candidate above the floor"* row is **WITHDRAWN**. |
+| `0xC61B8` / `0xC64A3` | **STRUCTURALLY DEAD** | Enable is `gp-0x6806 == 0`, and **`gp-0x6806` IS THE ENGAGEMENT FLAG** ⇒ **MANUAL ONLY**, vs an engagement-required symptom (83.0 % vs 0.0 %, p = 3.8×10⁻⁴¹). ⚠ It is a **LATCHING KILLSWITCH, not a hysteresis.** |
+| `0xC63EC` / `0xC63EE` | **DEAD ON ARITHMETIC** | Command 6–9 Hz = 8.08 % of its own RMS ⇒ a 0.564× band cut moves the whole command **0.223 %** — **39× below V85's not-felt 1.088.** Also **91.1 % of bar 6–9 Hz power is INCOHERENT with the command**, and **the bar LEADS the command by −18.5 ms.** ⭐ Its phase cost was **FREE** (exogenous input, outside the loop). |
+| PID **Kp/Ki/Kd** (`0xC6B26`/`0xC6B12`/`0xC6AE6`) | **REFUSED — the SQUEEZE** | Virgin on 95/95 images, RULE-7 clean, but **Kp ×2 = 1.130× (ON the 1.088 not-felt bound); ×4 = 1.720× but 92 % rail duty hands-on.** Kd's sign flips on only **53.4°** of φ_G and −90° is *expected* for a motor/rack-side mode ⇒ **V94 verbatim.** **Ki ≡ Kp's question** (same inequality, same unmeasured AUTH). |
+| **speed LERP `0xC6ABA`/`0xC6ACA`** | ⛔ **NOT A LEVER** | **`gp-0x69aa` is NOT vehicle speed** — a Q15 governor derate, MIN-only, **pinned at the top knot** ⇒ `Y[0..6]` inert by operating point. **Third axis misidentification in this record.** |
+
+### ⭐⭐ THE RATE LANE IS CLOSED AT AN OPTIMUM — LEVER B OFF EVERY SHORTLIST, BOTH DIRECTIONS
+Read from the images (`0x3AA96` gate · `0xC6444` · `0xC6446`), orchestrator-verified:
+```
+stock/V62/V65  gate 0xC5 DEAD   512 /  512      net = (5244 + 512a)/(3072 + 3072a)
+V67/V68/V88    gate 0xFB ARMED  512 / 5244      1.707 @a=0  ->  0.937 @a=1
+V71c           gate 0xFB ARMED 3072 / 5244      1.707 @a=0  ->  1.354 @a=1
+V100 (on car)  gate 0xFB ARMED  512 / 5244      = V88
+```
+🛑 **At `a = 0`, V88 and V71c are ARITHMETICALLY IDENTICAL (both 1.707)** — yet on-car they are the
+corpus **extremes** (V88 *"grinding fixed"*; **V71c the worst build ever recorded on all three
+symptoms**, ratchet at the corpus record 8,521 ct p-p). ⇒ **`a` is materially non-zero; the r26 arm is
+LOAD-BEARING. Proved from images, no drive.**
+⇒ 🛑 **ACCOUNT A REFUTED** — *"more derivative feedback ⇒ more damping ⇒ less HF"* predicts the
+**higher** dose (V71c) should be **better**; it was dramatically worse. ⚠ Correct
+`memory/accord-v88-flew-grinding-fixed-command-intact.md`'s mechanism paragraph: **keep the coupling,
+fix the direction.**
+⇒ ⭐ **BOTH FLANKS MEASURED**: V61 (below V88) *"made it WORSE"*; V71c (above) worst in corpus.
+**"2× ≈ OPTIMUM" now has both sides. V88 is sitting on the optimum.** ✅ `0xC6444`'s falsification
+**verified in the safe direction** — V71c had the gate **ARMED**, so *"null by construction"* does not
+reach it.
+
+### 🛑 RULE 14 — **GATE 3 MUST ASK WHETHER A LANE HAS A *DROPOUT*, NOT ONLY A CLAMP**
+This firmware uses **latching zero-output dropouts** as a design idiom in ≥2 places: the `gp-0x6b30`
+sign-latch, and the aggregator's `0x3acc4 cmovc 0x0,r6,r13`, which **DROPS** a lane past ±10240 rather
+than clamping it. **A dropout is invisible to every no-clip rule the kit runs.** This is the V80 lesson
+(*"'does not clip' and 'is not a relay' are different statements"*) in a new form.
+
+### 🛑 RULE 15 — **AN IMPLAUSIBLE NULL IS A BUG REPORT. SO IS AN IMPLAUSIBLE NON-NULL.**
+**Five scan-blindness classes surfaced in one session, every one caught by a DECOMPILE disagreeing
+with a scan, never by the scan itself:** ① `jarl` Format-V mask ⇒ zero callers for a function Ghidra
+found instantly · ② `movea` base + runtime index ⇒ a live array reads as *"nothing reads slot 1"* ·
+③ a byte written by a **WIDER** store (`0x27328 st.w` over `gp-0x3d94`) ⇒ false *"0 writers"* ·
+④ wrong `st.b` opcode ⇒ **20 writers reported as ZERO** · ⑤ `hw2 = disp|1` applied to `st.b` ⇒
+`gp-0x6805`'s stores conflated into `gp-0x6806` (`0x97FA|1 == 0x97FB`).
+**Corrected width rule: `st.b`/`ld.b` → `hw2 == enc` EXACTLY; `ld.bu` → `enc|1`; halfword/word → either.**
+
+---
+
 ## 🛑🛑 RULE 13 — **TRACE A FUNCTION'S OUTPUTS FORWARD. DO NOT ENUMERATE ONE CELL'S READERS AND STOP.**
 
 **Added 2026-08-08, after eleven independent methods returned the same wrong answer.**

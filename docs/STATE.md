@@ -1,9 +1,187 @@
 # STATE — living current state of the kit
 
-## 🛑🛑 LATEST BLOCK, 2026-08-13 (final) — THE PID REFERENCE IS CLAMPED, AND THE RACK QUESTION IS CLOSED
+## 🛑🛑 LATEST BLOCK, 2026-08-14 — V100 FLEW (route `0x85`). SIX LEVERS CLOSED. **NO V101 WAS CUT.**
+
+🛑🛑 **ON THE CAR: V100.** Flown as route `0x85`, 2026-08-13, 5 segments (15/16/18/19/20 — **segment
+17 is ABSENT from disk**), **29,999 frames · 249.2 s engaged in 6 episodes — ~4× the best engaged
+exposure ever recorded on this kit.** Fault-free: 0 sentinels on `0x14A`/`0x18F`, `CONFIG_VALID`
+1.00000, `OUTPUT_DISABLED` 0.00000, DTC bit2 0.00000, `STEER_STATUS` {0: 30,000}. Identity duty
+**1.000000** (`byte7[7:6]==2` AND `b3==1`). 427 lane unsaturated at both 1023 and the structural 800.
+Engaged p50 **39.6 km/h**, p90 99.6, max 104.5; **≥50 km/h 88.4 s, ≥80 km/h 45.5 s** — the kit's
+first substantially non-creep engaged drive. 🛑 **V100 is a ZERO-CALIBRATION instrument ⇒ the
+control law he drove is V99's, bit for bit.**
+
+🛑🛑 **NO V101 EXISTS. NOTHING WAS BUILT, NOTHING WAS CUT, NOTHING IS PENDING FLASH.** The session
+closed on the record. **Do not look for a V101 artifact; there is none.**
+
+### 1. 🛑🛑 E1 AND E2 BOTH READ EXACTLY ZERO — THE REFERENCE-CLAMP HYPOTHESIS IS DEAD
+`d(b5)` (`|gp-0x6ad6| ≥ cal 0xC6200` = 8192) = **0.000000** over 24,925 engaged frames, **in all 8
+wheel-rate bins**, 95 % CI **[0, 0.0186]** (rule of three on measured τ 0.350–1.547 s, block
+bootstrap over 6 episodes). `d(b6)` (the ±10240 error clamp) = **0.000000**; because `d(b5)`=0 the
+conditioning set is the **entire** engaged sample, so MARGINAL ≡ CONDITIONAL and all three E2
+statistics resolve. Positive controls healthy: **`b4` = sign(`gp-0x6ad6`) 0.6057 engaged — the SAME
+CELL as b5**, 16.84 flips/s; `b7` 0.5222, 12.42 flips/s.
+⇒ **The pre-registered ZERO sentence is licensed: *"`gp-0x6ad6` never reached the PID's ±8192 clamp
+in any engaged frame… THE REFERENCE-CLAMP HYPOTHESIS IS DEAD AND MUST NOT BE RE-PROPOSED."*** The
+composite sentence closes the **whole saturation family**. `d(gp-0x6b94)/d(gp-0x6b70) = 0.2565`
+stands **UNCONDITIONED** in the flown regime.
+✅ **THE NULL IS ON THE HYPOTHESIS, NOT THE GATE — proven three ways, not assumed.** (a) Both cave
+rungs disassembled from the **built image** and proven correctly coded: all four branches `0x05AE` =
+**cond 0xE = signed GE**, not the `ba05`/`b205` inversion class; `tp+0x7200` resolves to `0xC6200`
+which reads 8192; `shl 0x4` places the bits at byte4 b5/b6; **no guard on either rung**; and the
+rungs **share their accumulator and store** with the controls that measured 0.5222/0.6057/1.000000
+⇒ the detector provably ran 29,999 times. (b) **The last open gap — `mov`'s flag-transparency
+between `cmp` and `bge`, carried as BELIEF since V98 — is CLOSED EMPIRICALLY**: V98's cave carries
+the **byte-identical idiom** (`e639` / `023a`|`043a` / `ae05`) at the same bit positions, and **V98's
+bit-6 comparator measured duty 0.4235 on-car.** (c) **Structure predicts the null independently** —
+see §2.
+
+### 2. ⭐ `gp-0x6ad6`'s REACHABILITY BUDGET WAS A GATE-3 ERROR — 2.09×, NOT ~12×
+The old figure summed each term's **admission window**; the correct figure uses each lane's **own
+writer clamp**. Read from the image: **term 0 `gp-0x6b4a` ≡ 0** (`0xC616C`=0) · term 1 ±1024
+(`0xC617E`) · **term 2 `gp-0x6bbc` ≡ 0 — NO WRITER** · term 3 `gp-0x6b70` ±8192 · **term 4
+`gp-0x6bce` ≡ 0 — NO WRITER** · term 5 ±1024 (`0xC61C6`) · term 6 ±6144 **but riding the `gp-0x6bda`
+detent gate measured 0.0000 over 75,227 engaged frames** · term 7 ±512 (**zero below ~30 km/h**).
+**Total reachable 17,152 = 2.09× the 8192 threshold.** At creep, worst case ≈ **3,167+1,024+1,024 =
+5,215 < 8,192** ⇒ **the clamp cannot bind, predicted from structure alone.**
+⚠ **A speed-LERP multiplies the whole sum before the ±25600 clamp** (`0x38124`), **identity at stock**
+(Y `0xC6ACA..0xC6AD8` all 1024) — see §4 for why it is not a lever.
+⚠ `gp-0x67ab` is **structurally BOOLEAN** (only producers: `setfne`, `mov 0x1`, `mov 0x0`) ⇒ V86's
+`< 2` rung was **a tautology**, not a coding slip. Whether it is ever 1 is **OPEN** (`gp-0x61a0[]`'s
+value set unresolved; `0xC4124` = `[0,0,5,0,5,5,0,0,0,5,0]` contains no 2/3/4, so **BELIEF: never**).
+
+### 3. 🛑🛑 SIX LEVERS CLOSED THIS SESSION — enumerate before proposing anything
+| lever | verdict |
+|---|---|
+| PID reference clamp `0xC6200` | **MEASURED DEAD** (§1). Also **self-cancelling** as a global edit — it clamps term 3 *and* the threshold with the same cell ⇒ the ratio is invariant. Its unchased reader `0x39ff6` is now chased: a **motor-phase fault threshold** ⇒ **DO NOT EDIT stands, with a reason.** |
+| `0xC6194` slew limiter | **DEAD TWICE** — input ≡ 0 (partition all-1s) and output reaches only `gp-0x6b4a` ≡ 0 (`0xC63CC`=0). 🛑🛑 **AND `0xC4118` IS A HARD NEVER-ARM: the partition byte does DOUBLE DUTY — zeroing it to "arm" the limiter sets `gp-0x3d88`→0 ⇒ `gp-0x6b4c`→0 ⇒ LKAS STEERING SILENTLY DEAD while openpilot believes it is steering.** ⚠ The record's kill reason (*"output ×0"*) was **MISATTRIBUTED — it belongs to `0xC6196`** (`0xC6194`=3, `0xC6196`=0, verified). |
+| `0xC63AE` 1024→2048 | **NO-GO** — AC gain is **non-monotone and REVERSES** across his amplitude distribution (0.70× at 500 ct → 2.00× at 6000). ⇒ **STATE's old "the only candidate above the floor" row is WITHDRAWN.** |
+| deadband + sign-latch (`0xC61B8`/`0xC64A3`) | **STRUCTURALLY DEAD** — the enable is `gp-0x6806 == 0`, and **`gp-0x6806` IS THE ENGAGEMENT FLAG** ⇒ the block runs **MANUAL ONLY**, while the symptom is engagement-required (**83.0 % vs 0.0 %, Fisher p = 3.8×10⁻⁴¹**). ⚠ It is a **LATCHING KILLSWITCH, not a hysteresis** — it outputs the input or exactly zero; backlash's growing-lag describing function **does not transfer**. |
+| `0xC63EC`/`0xC63EE` command low-pass | **DEAD ON ARITHMETIC.** Command 6–9 Hz = **8.08 %** of its own total RMS ⇒ a 0.564× band attenuation moves the whole command **0.223 %** — **39× below V85's already-not-felt 1.088.** Independently: **91.1 % of bar 6–9 Hz power is INCOHERENT with the command**, and **the bar LEADS the command by −18.5 ms** (bar = source, command = echo). ⭐ **The phase cost was FREE** — it filters an **exogenous input**, outside the loop ⇒ cannot move a closed-loop pole at any dose. |
+| PID Kp / Ki / Kd | **REFUSED — the SQUEEZE.** Kp ×2 delivers **1.130× [0.999, 1.711]** at 6–9 Hz, **ON the 1.088 not-felt bound**; ×4 delivers 1.720× (felt) but **92 % rail duty hands-on**. *"The dose that is safe is not felt, and the dose that is felt is not safe."* **Kd's sign is untrustworthy** (only **53.4°** of φ_G flips it, and −90° is *expected* for a motor/rack-side mode ⇒ **V94 verbatim**). **Ki ≡ Kp's question** — *"the integrator is pinned" IS "the P term has railed"*, the same inequality on the same unmeasured **AUTH**. |
+
+### 4. ⛔ THE SPEED LERP IS NOT A LEVER — THIRD AXIS MISIDENTIFICATION IN THE RECORD
+**`gp-0x69aa` IS NOT VEHICLE SPEED.** It is a **Q15-normalised governor DERATE, unity `0x8000`,
+MIN-only, seeded at unity, sole writer `0x45342`** (`mulu`/`shr 0xf`/`st.h`); X knots are exactly
+`[0,.2,.4,.6,.7,.8,.9,1.0]×32768`. **MIN-only seeded at unity ⇒ pinned at the top knot in normal
+driving ⇒ `Y[0..6]` inert by operating point** (the FactorC/FactorE dead-zone class). ⚠ `X[7]` reads
+`0x8000` = **−32768 signed**. 🛑 **This was ALREADY corrected at `TRACE-2026-08-10:257` and a later
+session repeated it.** ⇒ new memory `accord-verify-a-lerp-axis-before-designing-to-it`.
+
+### 5. ⭐⭐ THE RATE LANE IS CLOSED AT AN OPTIMUM — V88 IS SITTING ON IT
+Read from the images (`0x3AA96` gate · `0xC6444` · `0xC6446`), orchestrator-verified:
+```
+stock/V62/V65   gate 0xC5 DEAD    512 /  512     net = (5244 + 512a)/(3072 + 3072a)
+V67/V68/V88     gate 0xFB ARMED   512 / 5244     1.707 @a=0  ->  0.937 @a=1
+V71c            gate 0xFB ARMED  3072 / 5244     1.707 @a=0  ->  1.354 @a=1
+V100 (on car)   gate 0xFB ARMED   512 / 5244     = V88
+```
+🛑 **At `a = 0`, V88 and V71c are ARITHMETICALLY IDENTICAL (both 1.707).** On-car they are the
+corpus **extremes** — V88 *"grinding fixed"*, **V71c the worst build ever recorded on all three
+symptoms** (ratchet at the corpus record 8,521 ct p-p). ⇒ **`a` is materially non-zero and the r26
+arm is LOAD-BEARING — proved from images, no drive.**
+⇒ 🛑 **ACCOUNT A IS REFUTED.** *"More derivative feedback ⇒ more damping ⇒ less HF"* predicts the
+**higher** net dose (V71c) should be **better**. It was dramatically worse. ⚠ **Correct
+`memory/accord-v88-flew-grinding-fixed-command-intact.md`'s mechanism paragraph — keep the coupling,
+fix the direction.**
+⇒ ⭐ **BOTH FLANKS ARE NOW MEASURED**: V61 (below V88) *"made it WORSE"*; V71c (above) worst in
+corpus. **The standing "2× ≈ OPTIMUM, not a point on a ramp" now has both sides.**
+⇒ 🛑🛑 **LEVER B IS REMOVED FROM EVERY FUTURE SHORTLIST, IN BOTH DIRECTIONS.** This retires the
+kit's self-declared *"leading open question"*. ✅ And `0xC6444`'s falsification was **verified in the
+safe direction** — V71c had the gate **ARMED**, so the *"null by construction"* note does not reach it.
+
+### 6. ⭐ THE OPERATOR'S OWN AXIS — HE IS RIGHT ON TWO OF THREE CLAIMS
+His words: *"speed independent… the stuttering is worst when **d(LKAS demand)/dt** is high."*
+🛑 **The corpus null that looks like it covers this was on WHEEL rate — a different quantity. It does not.**
+- ✅ **HARSHNESS MATTERS**: hands-OFF pooled partial **+0.0815 [+0.0404, +0.1244]**, 5,716 windows /
+  **118 episodes**, 8 routes, conditioned on log|rate| and log v, residualised **within route**.
+- ✅ **APPROXIMATELY SPEED-INDEPENDENT**: +0.111 / +0.077 / +0.131 across 10–30 / 30–60 / 60+ km/h.
+- 🛑 **NOT SELECTIVE FOR THE STUTTER BAND**: control-band-free sweep 2–44 Hz is **positive in EVERY
+  band**, floor ≈ +0.09, **6–9 Hz +0.124 on the declining shoulder of a +0.224 peak at 2–5 Hz** (the
+  LKAS lane's own passband). Excess over the 25–42 Hz floor is **+0.03**. ⇒ **BROADBAND EXCITATION,
+  not resonance selectivity** — converging with the on-record *"~28 Hz lane-change transient is
+  DOSE-INDEPENDENT ⇒ excitation, not gain."*
+- 🛑 **HANDS-ON IS UNRESOLVED, NOT NULL**: +0.012 [−0.097, +0.114], and **the hands-off point
+  estimate lies INSIDE that CI** ⇒ **the arms are not distinguishable.** Closing it needs ~155 s more
+  hands-on exposure. ⚠ **Only 10 of 49 routes are cached in the current schema**; the 994.9 s corpus
+  needs ~40–60 min of re-extraction.
+🛑 **Every number here is a BAND. THE OPERATOR SCORES THE SYMPTOM. Nothing was fixed and he has
+called nothing fixed.**
+
+### 7. 🛑 FIVE SCAN-BLINDNESS CLASSES IN ONE SESSION — all caught by a DECOMPILE, never by a scan
+1. **`jarl` Format-V mask** → zero callers for a function Ghidra found instantly.
+2. **`movea` base + runtime index** → a live array reads as *"nothing reads slot 1"*.
+3. **A byte written by a WIDER store** (`0x27328 st.w` covering `gp-0x3d94`) → false *"0 writers"*.
+4. **Wrong `st.b` opcode** → **20 writers reported as ZERO**.
+5. **`hw2 = disp|1` applied to `st.b`** → conflated `gp-0x6805`'s stores into `gp-0x6806`
+   (`0x97FA|1 == 0x97FB`, verified). **Corrected rule: `st.b`/`ld.b` → `hw2 == enc` EXACTLY;
+   `ld.bu` → `enc|1`; halfword/word → either.**
+⇒ ⭐ **THE LESSON: an implausible null is a bug report — and so is an implausible non-null. The
+decompile is the arbiter either way.**
+
+### 8. ⚠ THREE RECORD DEFECTS CORRECTED — do not re-cite the old forms
+1. **`reference-accord-fun3a382-pid-phase-6to9hz-standing-correction` is RETRACTED — arithmetic bug.**
+   It mixes normalisations (P and I in ×32, D in ×1, **understating D by exactly 32×**); replaying
+   the bug reproduces its own table to 0.1° at all four frequencies. **The PID is in LEAD at 6–9 Hz
+   (−0.9° / +8.2° / +13.3°), not a −11°…−27° lag.** ✅ No build was sized on it. 🛑 **But it also
+   lives in `.claude/agent-memory/firmware-codepath-tracer/reference_accord_fun3a382_pid_phase_6to9hz_and_gate1_movhi_scan.md`,
+   which every future tracer loads as its own prior — corrected there too.**
+2. **The Kd "contradiction" was never one** — **D pumps 2–12 Hz and damps 16–35 Hz**; both memories
+   quote a true half of one curve. The kill stands as a **cost/benefit** judgement (a cut buys
+   −0.076 at the ratchet, pays +0.225 and +0.323 in his two grinding bands). **Fix: make each entry
+   state its BAND.**
+3. **`memory/reference-accord-pregain-deadband-c61b8.md`'s "low-speed lockout" reading is WRONG** —
+   it is a **speed correlation on a creep-dominated corpus**, beaten by V67's direct identity test
+   (`gp-0x6806` == `latActive` on **150,302/150,327 = 99.983 %**) and broken outright by route `0x85`
+   (engaged p50 39.6 km/h). ⚠ Also: `reference_accord_gp67ac_*` **conflates three arrays** —
+   `0xC4124` @`0x26d1a`, `0xC4118` @`0x272c2`, and the real mode test on **RAM `gp-0x61a0[]`** @`0x27288`.
+
+### 9. ⚠ SCOPE CORRECTIONS THAT NARROW EXISTING KILLS
+- **The base-assist damper kill is a CREEP kill.** On route `0x85` FactorC's 35 km/h zone **IS open**
+  (88.4 s ≥50 km/h) — but **FactorE's 12.7 °/s zone is NOT**, so `ch₀` stays **exactly zero across
+  the whole micro bin (1–13 °/s, 102.7 s) at every speed to 104 km/h**, reaching only **1.5–8 % of
+  ceiling** where both are open. ⇒ *"zero on 100 % of the micro regime"* **STILL HOLDS**; *"zero on
+  95.91 % of engaged frames"* **does NOT transfer.** **Narrowed, not overturned.** ⚠ That file's
+  *sizing* argument and its *"raising `Y[0]` is required"* claim were **already refuted** at the V99
+  close-out — do not re-derive them.
+- **The exposure claim is retired**: *"E2-class endpoints are unbuildable because he stops within
+  15–30 s"* — route `0x85` gave **249.2 s in 6 episodes**. ⚠ **Scope it honestly: one good drive is
+  not a new protocol.** He still stops when he feels the symptom, and **that remains correct
+  behaviour.** Design for one short symptomatic episode; treat longer exposure as a **windfall**.
+- **`gp-0x6ac0`'s three inherited figures RECONCILED** — **330 = highway, 528 = hands-off RETURNS,
+  1,941 = MANUAL cranking. None was the engaged operating point.** Measured engaged on route `0x85`
+  (4 differentiators, all upper bounds): **crosses 300 ct (4.91 %), NEVER reaches 2000 (0.00 %)**.
+- 🛑 **My own "steeringPressed under-counts hands-on" hypothesis is REFUTED** — the kit's own corpus
+  figure is **87.7 / 12.3**, and the 67 %-vs-84–95 % gap is **route composition** (r81 is genuinely
+  33.4 % hands-on). ⚠ **Keep distinct from the V94 regime-exclusion finding, which STANDS.**
+
+### 10. ⭐ A FIRMWARE DESIGN IDIOM, NEWLY NAMED — and a GATE-3 consequence
+**This firmware uses LATCHING ZERO-OUTPUT DROPOUTS in at least two places** — the `gp-0x6b30`
+sign-latch and the aggregator's `0x3acc4 cmovc 0x0,r6,r13`, which **DROPS** a lane past ±10240 rather
+than clamping it. ⇒ 🛑 **GATE 3 must ask whether a lane has a DROPOUT, not only a clamp — a dropout
+is invisible to every no-clip rule the kit runs.** That is the V80 lesson (*"'does not clip' and 'is
+not a relay' are different statements"*) in a new form.
+
+### 11. 🛑 WHY NO V101 WAS CUT — stated so it is not re-litigated
+Every candidate bit was **vacuous, self-answered, a bare confirmation, or unable to change a build
+decision**: the 427 SHARE endpoint is **moot** (the low-pass died on arithmetic); the dropout rung is
+**structurally unreachable** (`AUTH ≤ 5120 < 10240` always) — the **V69 `bit4` failure class**; `b5`
+**answered itself from the images** (§5); `b4` is a confirmation of a well-supported claim; and the
+AUTH comparator, even fully cleared, licenses only **1.13×**. **A build that measures dead levers is
+worse than no build**, and it would have been his **third consecutive** zero-calibration build.
+⇒ **The search space is materially smaller than it was, and nothing was spent to shrink it.**
+
+---
+
+## 🛑🛑 SUPERSEDED BLOCK, 2026-08-13 (final) — THE PID REFERENCE IS CLAMPED, AND THE RACK QUESTION IS CLOSED
+⚠ **Item 1 below is now MEASURED DEAD — see §1 above. Items 2–4 stand.**
 
 **Read this before the V99 block below.** Four results landed after the V99 score, from the operator's
-own two questions. **V99 is ON THE CAR. V100 is BUILT AND NOT FLASHED.**
+own two questions. ~~**V99 is ON THE CAR. V100 is BUILT AND NOT FLASHED.**~~
+🛑🛑 **STALE AS OF 2026-08-14 — V100 HAS FLOWN (route `0x85`) AND IS ON THE CAR. V99 IS NOT.** Caught by
+the mandatory close-out gate (`grep -n "ON THE CAR\|UNFLASHED\|never flashed"`), which is exactly what
+that gate exists for — this would otherwise have been the **eleventh** instance of the kit's
+"row says UNFLASHED after it flew" defect. **See the LATEST BLOCK at the head of this file.**
 
 1. 🛑🛑 **`0xC6200` (= 8192) HARD-CLAMPS THE PID's REFERENCE `gp-0x6ad6` BEFORE THE ERROR SUBTRACTION**
    (`0x3a798` → `0x3a7a2` → clamp `0x3a7b8`/`0x3a7c8` → `sub` `0x3a7ce`; a SECOND clamp bounds the error
@@ -59,7 +237,8 @@ rate, so no dose of this cell — not 300, not 6000, not anything — can be the
 verbatim: *"I think it helped with the audible aspect of the grinding, though I'm not sure."***
 🛑 Nothing is called fixed. He has not called anything fixed.
 
-🛑🛑 **ON THE CAR: V99.** Route `0x82`, 2026-08-13, **2 segments, 121.7 s**, base = V98. **12 bytes vs
+⚠ **SUPERSEDED HEADING — V99 IS NO LONGER ON THE CAR; V100 FLEW AS ROUTE `0x85` ON 2026-08-13.**
+The V99 flight record below stands as history. **~~ON THE CAR:~~ FLOWN: V99.** Route `0x82`, 2026-08-13, **2 segments, 121.7 s**, base = V98. **12 bytes vs
 V98** (orchestrator re-verified from the images, `analysis-2020accord/ledger_v38_to_v99_bytes.py`):
 `0xC40BC` 600→**300** (2 B) + `0xC63AC` 150→**102** = back to STOCK's own value (1 B) + `0xC4B52`
 identity byte `00`→**02** (1 B, cave) + two 4-byte CRC trailers (`0xC4FFC`, `0xC6FFC`). image sha256
