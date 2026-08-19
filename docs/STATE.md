@@ -1,8 +1,17 @@
 # STATE — living current state of the kit
 
-## 🛑🛑 LATEST BLOCK, 2026-08-14 — V100 FLEW (route `0x85`). SIX LEVERS CLOSED. **NO V101 WAS CUT.**
+## 🛑🛑 LATEST BLOCK, 2026-08-18 — V101 BUILT (8× LKAS gain, Lever B removed). **NOT FLASHED.**
 
-🛑🛑 **ON THE CAR: V100.** Flown as route `0x85`, 2026-08-13, 5 segments (15/16/18/19/20 — **segment
+🛑🛑 **ON THE CAR: V100.** V101 is **BUILT AND NOT FLASHED.** The flash decision is the operator's.
+
+🛑🛑 **V101 EXISTS.** `build_v101_tva.py` + `.rwd` + `_plain_image.bin` committed. Five calibration
+edits on a V99 base: **8× LKAS gain** (`0xC6CD0` 3564→7128), **fwd-path clamps tracking** (`0xC61B2`
+2048→4096, `0xC61B4` 2048→4096), **Lever B REVERTED to Honda stock** (`0x3AA96` 0xFB→0xC5,
+`0xC6446` 5244→512) + cave 114 B + 427 repoint. **EME AUDIT 2026-08-18: all V25–V37 EME-prevention
+fixes confirmed carried, `0xC407E`=511, soft-EME floor 5120>4096 (the new clamp).**
+image SHA256 `c8cb5c3a2d0ce1853660414159723b314f194e6cae4a197b71814f1fcf50a6c7`.
+
+V100 flew as route `0x85`, 2026-08-13, 5 segments (15/16/18/19/20 — **segment
 17 is ABSENT from disk**), **29,999 frames · 249.2 s engaged in 6 episodes — ~4× the best engaged
 exposure ever recorded on this kit.** Fault-free: 0 sentinels on `0x14A`/`0x18F`, `CONFIG_VALID`
 1.00000, `OUTPUT_DISABLED` 0.00000, DTC bit2 0.00000, `STEER_STATUS` {0: 30,000}. Identity duty
@@ -11,8 +20,7 @@ Engaged p50 **39.6 km/h**, p90 99.6, max 104.5; **≥50 km/h 88.4 s, ≥80 km/h 
 first substantially non-creep engaged drive. 🛑 **V100 is a ZERO-CALIBRATION instrument ⇒ the
 control law he drove is V99's, bit for bit.**
 
-🛑🛑 **NO V101 EXISTS. NOTHING WAS BUILT, NOTHING WAS CUT, NOTHING IS PENDING FLASH.** The session
-closed on the record. **Do not look for a V101 artifact; there is none.**
+🛑🛑 **V101 IS BUILT AND NOT FLASHED.** See the heading above for the full delta. EME audit passed.
 
 ### 1. 🛑🛑 E1 AND E2 BOTH READ EXACTLY ZERO — THE REFERENCE-CLAMP HYPOTHESIS IS DEAD
 `d(b5)` (`|gp-0x6ad6| ≥ cal 0xC6200` = 8192) = **0.000000** over 24,925 engaged frames, **in all 8

@@ -10,13 +10,12 @@ result was buried in prose.
 
 ---
 
-## 🛑🛑 V100 — FLEW AS ROUTE `0x85`, ON THE CAR. **AND SIX LEVERS CLOSED, 2026-08-14. NO V101 EXISTS.**
+## 🛑🛑 V101 — BUILT, NOT FLASHED. V100 IS ON THE CAR (route `0x85`).
 
 | build | base | delta | on-car result |
 |---|---|---|---|
+| **V101** | V99 | **8× LKAS GAIN + LEVER B REMOVED.** Five cal edits: `0xC6CD0` 3564→7128 (8× gain), `0xC61B2` 2048→4096 + `0xC61B4` 2048→4096 (fwd-path clamps tracking), `0x3AA96` 0xFB→0xC5 + `0xC6446` 5244→512 (Lever B reverted to Honda stock). Cave 114 B (−40 B vs V99). 427 repoint carried. `byte7[7:6]=3`. **EME audit PASSED** — all V25–V37 fixes carried, `0xC407E`=511, soft-EME floor 5120>4096. image sha256 `c8cb5c3a…1fcf50a6c7`. | **NOT FLASHED.** |
 | **V100** | V99 | **ZERO CALIBRATION BYTES. Cave only — AN INSTRUMENT, NOT A FIX.** `0x55DF2` 427 repoint `gp-0x6b70`→`gp-0x6b94` + cave `0xC4B36..0xC4BCD` + `0xC4FFC` CRC = **128 B**. Cave **132 B / 49 instructions / 10.9 % of extent**. Rungs: `b5` = `\|gp-0x6ad6\| ≥ cal 0xC6200`, `b6` = `\|gp-0x4f60 − gp-0x6ad6\| ≥ 10240`, `b7`/`b4` signs, `b3` identity ≡ 1. | ✅ **FLEW, ON THE CAR.** Fault-free, identity duty **1.000000**, 427 unsaturated. **29,999 frames / 249.2 s engaged in 6 episodes — ~4× the best exposure ever.** Engaged p50 **39.6 km/h**, ≥50 km/h **88.4 s**, ≥80 km/h **45.5 s** — the first substantially non-creep engaged drive. 🛑🛑 **`d(b5)` AND `d(b6)` BOTH 0.000000** (all 8 rate bins; CI [0, 0.0186]) with `b4` = 0.6057 **on the same cell** ⇒ **THE REFERENCE-CLAMP HYPOTHESIS IS DEAD AND MUST NOT BE RE-PROPOSED.** `0.2565` stands unconditioned. 🛑 Zero cal bytes ⇒ **the control law he drove is V99's, bit for bit.** |
-
-**🛑 NO V101 WAS BUILT. Nothing is pending flash. Do not look for a V101 artifact.**
 
 ### SIX LEVERS CLOSED THIS SESSION — grep here before re-proposing any of them
 | lever | status | why |
