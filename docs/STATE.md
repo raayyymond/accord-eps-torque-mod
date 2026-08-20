@@ -1,15 +1,81 @@
 # STATE — living current state of the kit
 
-## 🛑🛑 LATEST BLOCK, 2026-08-18 — V101 BUILT (8× LKAS gain, Lever B removed). **NOT FLASHED.**
+## 🛑🛑 LATEST BLOCK, 2026-08-20 — **THE 8× GAIN IS THE CARRIER.** V102 BUILT AT 6×. **NOT FLASHED.**
 
-🛑🛑 **ON THE CAR: V100.** V101 is **BUILT AND NOT FLASHED.** The flash decision is the operator's.
+🛑🛑 **ON THE CAR: V101** (flown as route `0x95`, 2026-08-19). **V102 is BUILT AND NOT FLASHED.**
 
-🛑🛑 **V101 EXISTS.** `build_v101_tva.py` + `.rwd` + `_plain_image.bin` committed. Five calibration
-edits on a V99 base: **8× LKAS gain** (`0xC6CD0` 3564→7128), **fwd-path clamps tracking** (`0xC61B2`
-2048→4096, `0xC61B4` 2048→4096), **Lever B REVERTED to Honda stock** (`0x3AA96` 0xFB→0xC5,
-`0xC6446` 5244→512) + cave 114 B + 427 repoint. **EME AUDIT 2026-08-18: all V25–V37 EME-prevention
-fixes confirmed carried, `0xC407E`=511, soft-EME floor 5120>4096 (the new clamp).**
-image SHA256 `c8cb5c3a2d0ce1853660414159723b314f194e6cae4a197b71814f1fcf50a6c7`.
+**Full narrative: `docs/HANDOFF-2026-08-20-v102-the-gain-is-the-carrier.md`.** Read it before
+proposing anything — it kills nine levers and corrects twelve things in this kit's own record.
+
+### THE RESULT
+**V101's 8× LKAS gain (`0xC6CD0` = 7128) is the SOLE MEASURED CAUSE of the ~23 Hz vibration the
+operator reported at all speeds.** De-confounded 2×2 against route `71` (V87 = 4×, Lever B already
+dead), in **shape units against a measured placebo floor of 1.45×**:
+**gain G = 2.7–3.9× · Lever B = 0.84–1.30× (INSIDE the floor) · `0xCBE74` k = 0.86–0.90 (inert).**
+The peak **MOVED**: 20.3 Hz on three separate 4× routes → **23.0 Hz** on V101 ⇒ a **pole moved**.
+The line is **in the firmware's own demand** (`gp-0x6b94` 21–24 Hz shape 1.71× [1.33,2.29]) with the
+**aggregator's sign reversing 25–37 /s at amplitudes where V100 reverses 0.7–3.2** (re-weighted
+excess 3.06× ⇒ **not** quantisation; internal control b4 flat at 1.24×).
+🛑 **NO firmware clamp binds anywhere** — `b6` duty **0.000000** over 17,614 engaged frames with all
+four positive controls passing; the setpoint is LERP-clipped to 15360 **upstream** of the gain so
+`0xC61B2`/`0xC61B4` sit at **81.5 % of rail on every build since V14**. The only saturating element
+is **openpilot's own ±4096 rail, ~12 % duty on BOTH builds**.
+🛑 **NOT a limit cycle** — growth σ inside a phase-randomised surrogate null (1.13/0.91), kurtosis
+3.85/3.38. A **very lightly damped resonance**, consistent with there being no amplitude-setting
+saturation inside the ECU.
+
+### V102 — BUILT, NOT FLASHED
+`build_v102_tva.py`, **three cells on a V101 base**, dose chosen by the operator from a measured
+dose-response curve: **`0xC6CD0` 7128→5346 (8×→6×)**, `0xC61B2`/`0xC61B4` **4096→3072** (tracking,
+`5346×512//891 = 3072` exact) + a **154 B two-comparator cave** + **427 repointed to `gp-0x6b4c`**.
+**Lever B stays REMOVED** (`0x3AA96`=0xC5, `0xC6446`=512) and **`0xC40D2` stays at 204**, instrumented
+by the new b5 comparator but **not dosed** (its endpoint failed a power test at every exposure).
+image SHA256 `61197f8ceffc401f9396e9023d07995820e17bb957007a6cd48d227dbfe32455` ·
+.rwd `b49e7efa8c47bfe1fcdb639885c90ce840143fece8a7d87fdf62b66f2308b5cb`.
+**Orchestrator-verified from the shipped files on disk.** EME audit ALL PASS, `0xC674E`=5120 > 3072,
+`0xC407E`=511, CRC 50/50, `[0xC5000,0xC5FFC)` identical to base, zero unattributed bytes,
+bit-for-bit reproducible.
+⭐ **STRUCTURAL CEILING: the build ABORTS at 10×** — the soft-EME floor `0xC674E`=5120 must stay
+**>** the tracking clamp. **This firmware caps the LKAS gain below 10×.**
+
+### 🛑 THE DOSE-RESPONSE (two points, no third rung — `p` is EMPIRICAL, not a law)
+Vibration **m^1.74 [1.43,1.96]** · authority **m^0.88 [0.75,1.04]**. At 6×: 22–26 Hz **0.61×
+[0.57–0.66] of V101**, wheel rate under hard command **0.78× of V101 but still 1.43× of V100**.
+🛑 **The naive mechanism is REFUTED**: within either route the 22–26 Hz band does **not** scale with
+command amplitude (slope **+0.01 [−0.36,+0.31]** across a >10× range) ⇒ **the gain acts on the LOOP,
+not the drive.**
+
+### PRE-REGISTERED READOUT — score with `rlog-tools/score_v102.py`
+Primary: within-route `tq` band-RMS(21.5–25.5) ÷ band-RMS(2.5–4.5), median over 1 s engaged windows.
+**V101 = 5.07 · V100 = 0.62 · V102 predicted 0.61× of V101.** Power **94.2 % at 20 s**, 97.1 % at 25 s.
+**≈1.0× of V101 ⇒ the gain is NOT the carrier and this session's attribution is REFUTED.**
+🛑 **Q / −3 dB width is NOT an endpoint** — two analysts disagree on its *sign* (31.4→47.4 vs
+34.5→23.6) at a resolution where 3 bins decide it. **UNRESOLVED.**
+
+### 🛑 NINE LEVERS KILLED ON EVIDENCE, NONE ON THE ROAD — do not re-propose
+`0xC61B2`/`0xC61B4` (inert, 81.5 % of rail since V14) · **Lever B** (null at 22–26 Hz; its *removal*
+is a ~3× win at 6–9 Hz **at creep only**, neutral at road speed) · **`0xCBE74`** (inert both bands) ·
+**`0xC40D2`** (null both bands, real exposure) · **`0xC63AC`** (full Bode sum: |L| 0.875×1.38 =
+**1.208** at cal 205 ⇒ predicted WORSE) · **`0xC63AA`** (sign is frequency-dependent, not fixed) ·
+**dead biquad `0xC649B`** (forcing input gated on `gp-0x6b62≠0`, measured duty **0.0000 over 75,227
+engaged frames**) · **PID `Kd`** (sign unresolvable at 23 Hz — it is the measured Re(Z) crossover —
+**and it changes MANUAL steering**) · **`0xC6194`** (dead-dead).
+
+### 🛑 CORRECTIONS TO THIS KIT'S OWN RECORD — see the handoff §9 for all twelve
+1. **`gp-0x6b4c` IS NOT THE LKAS COMMAND.** It is `Σ_{i=0..10}(0xC4118[i]≠0 ? gp-0x62b0[i] : 0)` — an
+   **11-slot assist sum**, LKAS being one slot, algebraically flat. Explains why its sign agreed with
+   openpilot's command **at chance** (52.80 % vs 54.36 %) while flipping 8.2/s vs 0.31/s.
+2. **V101's GATE 2 premise is MEASURED FALSE** — *"doubling the gain… does NOT change any closed-loop
+   pole."* The pole moved and the demand oscillates.
+3. **`band_envelope` is BROKEN in `_r31_common.py` AND `_r2b_common.py`** — one-sided `H=2X` then
+   `irfft` ⇒ a **rectified** signal, not an analytic envelope. Ratios survive; **every envelope-SHAPE
+   result (growth rate, decay τ, ring-down ζ/Q, p50 "amplitude") is wrong.** ~20 callers. NOT FIXED.
+4. **`0xC6446` is NOT "10×"** — Honda's 512 is **inert**; **5244 = 2.00 × 2622**, the LERP's value at
+   grind #1's point, and the ratio drifts elsewhere.
+5. **PID gains**: `0xC6ADC`/`0xC6B08`/`0xC6B1C` are **headers**; `0xC6AE6`/`0xC6B12`/`0xC6B26` are
+   **Y[0]** at header+0xA. Kd/Ki flat at all four knots. **All N = 0/102, virgin.**
+6. **V102's identity asserts a CLEARED bit** (`b3==0`) — forgeable in a way a SET bit is not.
+   **V103 RULE: go back to a SET bit.** Generation-3 space is EXHAUSTED.
 
 V100 flew as route `0x85`, 2026-08-13, 5 segments (15/16/18/19/20 — **segment
 17 is ABSENT from disk**), **29,999 frames · 249.2 s engaged in 6 episodes — ~4× the best engaged

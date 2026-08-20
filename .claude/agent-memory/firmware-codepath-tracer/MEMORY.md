@@ -1,5 +1,14 @@
 # Firmware Codepath Tracer - Memory Index
 
+## 2026-08-19 Kd priced; PID table header-vs-Y[0] settled (`pidtrace`)
+- [🛑★★★★★ Header-vs-Y[0] SETTLED (both docs right); full D-branch instruction trace + dual-method freq response; Re(Z) contradicts "D damps 16-35Hz"; Kd likely affects MANUAL steering too (same gate as aggregator)](reference_accord_kd_pid_dterm_priced_and_manual_gate.md)
+
+## 2026-08-19 V101 self-oscillation damping-lever hunt (`damphunt`)
+- [🛑🛑★★★★★ FULL-LOOP Bode sum on 0xC63AC: raising it predicts Q/|L| moving WORSE not better, robust across attribution/anchor -- REVERSES this agent's own earlier same-day #1-bet ranking](reference_accord_c63ac_full_loop_bode_sum_net_negative.md)
+- [🛑🛑★★★★★ A dead biquad in FUN_000352b4, pole/response computed: ζ≈0.65, ~42.3Hz @1kHz, virgin (grep-confirmed), armed by the SAME reversal-counter threshold (gp-0x671a≥5) that detects 18-21Hz ringing](reference_accord_dead_biquad_fun352b4_pole_characterized_and_reversal_counter_arm.md)
+- [★★★★ CLOSES the gp-0x6abe live/pinned 3-way contradiction (3rd independent trace, all agree LIVE); flags gp-0x6a5e="driver torque" in the damping/friction/torque-gates file as SUPERSEDED (it's voted SPEED)](reference_accord_gp6abe_live_triple_confirmed_and_gp6a5e_mislabel_flag.md)
+- [🛑🛑★★★★★ gp-0x6b26/0xCBE74 is CLOSED BOTH DIRECTIONS — V93/V94 tried DOWN, operator ABORTED the drive ("vibrated the entire car"); measured +518/+565ct REAL 6-9Hz damping removed. Current V101 runs V92's x1.5-engaged config, not stock](reference_accord_gp6b26_closed_both_directions_v94_aborted.md)
+
 ## 2026-08-13 V100 rungs PROVEN + the PID gain tables (`tracer-6ad6-terms`)
 - [🛑🛑★★★★★ V100's RUNG A/D′ are correctly coded (nibble **0xE=GE**, 32-bit abs, no guard) ⇒ `d(b5)=d(b6)=0` is a null on the **HYPOTHESIS**, NOT the V64/V68 gate signature — controls share the same accumulator AND store](reference_accord_v100_rungs_proven_and_pid_gain_tables.md)
 
