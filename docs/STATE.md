@@ -1,8 +1,41 @@
 # STATE — living current state of the kit
 
-## 🛑🛑 LATEST BLOCK, 2026-08-20 — **THE 8× GAIN IS THE CARRIER.** V102 BUILT AT 6×. **NOT FLASHED.**
+## 🛑🛑 LATEST BLOCK, 2026-08-20 (late) — **`f0` IS THE ENDPOINT. V103 BUILT. `gp-0x6752` = −1.**
 
-🛑🛑 **ON THE CAR: V101** (flown as route `0x95`, 2026-08-19). **V102 is BUILT AND NOT FLASHED.**
+🛑🛑 **ON THE CAR: STOCK (V9b).** He flashed V102, drove route `0x96`, then flashed stock and drove
+route `0x97`. **V103 is BUILT AND NOT FLASHED — and the operator has deferred the decision on it.**
+**Full narrative: `docs/HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md`** — it carries **every** finding
+(including the negative ones) and **36 open items**, per standing instruction. Read it before proposing
+anything.
+
+### THE FOUR THINGS THAT CHANGED
+1. 🛑 **`gp-0x6752` = −1, NOT +1.** A second writer (`FUN_00048a40`) overwrites the pre-seed from a boot
+   config record at flash `0x14C0`, below every `.rwd`'s `0x13000` floor. **Verified three ways**
+   (orchestrator, an independent agent, and V98's own on-car comparator at duty 0.0000 / 5 routes).
+   ⇒ **D pumps, P and I damp, net PID damps at 6–9 Hz** — GATE2's original headline, on a verified
+   footing. ⇒ **r24/r26 PUMPS at 6–9 Hz (−431…−1294 ct).** ⚠ **V49 was gated on this with "brick if −1"
+   and was never flashed — that caution was correct.**
+2. ⭐ **THE ENDPOINT IS NOW `f0`**, the `Re(Z)` zero-crossing: **21.90 / 23.61 / 24.90 Hz at 1× / 4× / 6×,
+   CIs disjoint, `f0 ≈ 21.3 + 0.60 × m`.** Anti-damping is a **REGION** from ≤16 Hz to `f0` on **every**
+   arm including stock. **It needs NO symptomatic driving** — the negative margin is **standing**, not
+   burst-conditional. **~100 s hands-off at 30–85 km/h; above 85 km/h contributes nothing.**
+3. ⭐ **THE ANTI-DAMPING AT 6–9 Hz IS HONDA'S** (stock −1297/−1709/−1507); we multiply it 2.4–3.0× below
+   86 km/h. **But at 22–26 Hz we REVERSE THE SIGN** (stock +247/+496 → V102 −134/−99, disjoint) — the only
+   band where our firmware flips sign rather than size, and it is the vibration band.
+4. 🛑🛑 **AND THE GAIN ATTRIBUTION IS NOW IN DOUBT.** `f0` moves **−0.99 Hz with COMMAND AMPLITUDE at
+   FIXED gain**, and openpilot commands **4.7× harder on stock** (465 / 253 / 98). Pooled, **the gain term
+   goes non-significant (+30 [−99,+159], ΔR² = 0.0009).** ⇒ **[BELIEF] most of the march this kit
+   attributed to `0xC6CD0` may be openpilot winding up on a weaker car.** **MANDATORY from V103 onward:
+   report median `|0x0E4|` alongside `f0`.**
+
+⭐ **RECOMMENDED NEXT ACTION — one drive, no build, no flash** (three agents converged on it): 3–5 min
+MANUAL at 50–110 km/h (decides whether the engagement relay is Honda's or ours) **plus** ~100 s
+high-command vs ~100 s low-command, hands-off, 30–85 km/h (decides whether `f0` tracks gain or command).
+**One ~15-minute outing retires two open items with zero flash risk.**
+
+⚠ **SUPERSEDED BELOW:** the *"8× gain is the carrier"* block is retained for its measurements, but its
+**attribution is now contested by item 4**, and its band-RMS ratios are **~2× inflated** — hands-on is a
+mandatory third matching axis (arms range 4.7 %–40.3 %). See handoff §4.5.
 
 **Full narrative: `docs/HANDOFF-2026-08-20-v102-the-gain-is-the-carrier.md`.** Read it before
 proposing anything — it kills nine levers and corrects twelve things in this kit's own record.
@@ -57,9 +90,14 @@ Primary: within-route `tq` band-RMS(21.5–25.5) ÷ band-RMS(2.5–4.5), median 
 is a ~3× win at 6–9 Hz **at creep only**, neutral at road speed) · **`0xCBE74`** (inert both bands) ·
 **`0xC40D2`** (null both bands, real exposure) · **`0xC63AC`** (full Bode sum: |L| 0.875×1.38 =
 **1.208** at cal 205 ⇒ predicted WORSE) · **`0xC63AA`** (sign is frequency-dependent, not fixed) ·
-**dead biquad `0xC649B`** (forcing input gated on `gp-0x6b62≠0`, measured duty **0.0000 over 75,227
-engaged frames**) · **PID `Kd`** (sign unresolvable at 23 Hz — it is the measured Re(Z) crossover —
-**and it changes MANUAL steering**) · **`0xC6194`** (dead-dead).
+**dead biquad `0xC649B`** — 🛑 **KILL REASON CORRECTED 2026-08-20. The `gp-0x6b62` attribution is WRONG**
+(a decompiler variable-name collision — `gp-0x6b62` selects the IIR *coefficient*, cal `0xC6382`=41, not
+the biquad's input). **The real arm is `cal(0xC649B)==1 AND cal(0xC64FA) ≤ gp-0x671a`, and `gp-0x671a ≥ 5`
+has NEVER been observed true — 0 across 255,292 engaged frames on three builds (V64/V67/V68).** ⇒ the
+verdict *"inert"* stands but **for a different reason**, and **V103 arms it anyway via a private in-place
+`cmp` patch at `0x35A12`** (NOT `0xC64FA`, which is the SHARED detector CEIL with 18 in-code readers).
+See `HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md` §5.2. · **PID `Kd`** (sign unresolvable at 23 Hz — it
+is the measured Re(Z) crossover — **and it changes MANUAL steering**) · **`0xC6194`** (dead-dead).
 
 ### 🛑 CORRECTIONS TO THIS KIT'S OWN RECORD — see the handoff §9 for all twelve
 1. **`gp-0x6b4c` IS NOT THE LKAS COMMAND.** It is `Σ_{i=0..10}(0xC4118[i]≠0 ? gp-0x62b0[i] : 0)` — an
@@ -68,8 +106,14 @@ engaged frames**) · **PID `Kd`** (sign unresolvable at 23 Hz — it is the meas
 2. **V101's GATE 2 premise is MEASURED FALSE** — *"doubling the gain… does NOT change any closed-loop
    pole."* The pole moved and the demand oscillates.
 3. **`band_envelope` is BROKEN in `_r31_common.py` AND `_r2b_common.py`** — one-sided `H=2X` then
-   `irfft` ⇒ a **rectified** signal, not an analytic envelope. Ratios survive; **every envelope-SHAPE
-   result (growth rate, decay τ, ring-down ζ/Q, p50 "amplitude") is wrong.** ~20 callers. NOT FIXED.
+   `irfft` ⇒ a **rectified** signal, not an analytic envelope. Ratios survive. ~20 callers. NOT FIXED.
+   🛑 **SCOPE NARROWED 2026-08-20 — THIS RETRACTION WAS OVER-BROAD.** Measured on a clean 8 Hz
+   `exp(−1.0 t)` decay, the broken envelope recovers **λ = 1.036 vs 1.000 — a 3.6 % error** (rectification
+   noise averages out of a log-linear fit); envelope **CV** is inflated 1.127 vs 0.923 (**+22 %**).
+   ⇒ **CV / duty / p50-amplitude results ARE corrupted and stay retracted.** ✅ **BUT `qd_final.py` /
+   `qd_lib.envelope_stats` — the code that actually produced ζ = 0.017–0.036 and Q = 14–29 — call
+   `scipy.signal.hilbert`, NOT `band_envelope`.** ⇒ **the ring-down ζ/Q result was NEVER at risk and is
+   UN-RETRACTED.** Drop it from this list; keep growth-rate, decay-τ, p50 and CV/duty.
 4. **`0xC6446` is NOT "10×"** — Honda's 512 is **inert**; **5244 = 2.00 × 2622**, the LERP's value at
    grind #1's point, and the ratio drifts elsewhere.
 5. **PID gains**: `0xC6ADC`/`0xC6B08`/`0xC6B1C` are **headers**; `0xC6AE6`/`0xC6B12`/`0xC6B26` are
