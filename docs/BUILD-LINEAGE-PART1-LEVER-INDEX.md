@@ -24,6 +24,12 @@ INERT-BY-MODE ≠ never-tried.**
 The RULES, the struck-lever lists, Part 2 (code caves / GATE 1 / GATE 2), Part 3 and Part 4 all
 remain in `docs/BUILD-LINEAGE.md`.
 
+🛑 **A THIRD file now exists:** the per-build **CATCH-UP ledger (V76 → V100)** was split out of
+`docs/BUILD-LINEAGE.md` on 2026-08-21 into
+[`docs/BUILD-LINEAGE-CATCHUP-V76-V100.md`](BUILD-LINEAGE-CATCHUP-V76-V100.md) — 24 build rows plus the
+per-build artifact / route / hash notes. ⚠ It is **not** `PART2`; `Part 2` is still the code-cave
+section inside `docs/BUILD-LINEAGE.md`.
+
 ---
 
 ## Part 1 — Lever index, by address

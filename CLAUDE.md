@@ -29,11 +29,15 @@ repoint this index at all of them** — do not leave a pointer to a file that ca
    **Check its size at every close-out.** The same cap applies to any file an agent must read whole,
    `memory/MEMORY.md` included.
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
-   **Mandatory before proposing any calibration edit.**
+   **Mandatory before proposing any calibration edit.** 🛑 **THREE FILES:** this entry file (RULES,
+   struck levers, Parts 2–4) · `docs/BUILD-LINEAGE-PART1-LEVER-INDEX.md` (the lever index — **grep it
+   by address**) · `docs/BUILD-LINEAGE-CATCHUP-V76-V100.md` (the per-build ledger, V76→V100).
+   ⚠ *"Part 2"* still means the **code-cave section inside the entry file** — it did not move.
 3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session, and the chain behind it.
    `docs/INDEX.md` lists the full reading order. 🛑 **Results, CIs and retractions live in `STATE.md`
    and the handoffs — NOT here.** This file is an index; keep it that way.
-4. **`memory/MEMORY.md`** and **`memory/MEMORY_CONSTELLATION.md`** — the flat fact index and the
+4. **`memory/MEMORY.md`** — 🛑 **PAGINATED IN THREE: read `MEMORY-PART2.md` and `MEMORY-PART3.md` too**
+   — and **`memory/MEMORY_CONSTELLATION.md`**: the flat fact index and the
    relational layer. The constellation carries the *chains* between facts, which the flat list does not.
 
 Default to study/analysis mode unless told otherwise.
@@ -60,6 +64,10 @@ proposing or evaluating any lever, and before briefing any subagent that will:
   ⚠ **Line-number citations of the old single file are now WRONG** (`v77_dose_math.py:20,26,193`,
   `_r5d_lib.py:191`, `build_v62_tva.py:17`, `rlog-tools/decode_v70_probe.py:67`). **Grep the symbol
   name, never a line number.**
+  🛑 **THE SAME NOW APPLIES TO `docs/BUILD-LINEAGE.md` AND `memory/MEMORY.md`** — both were split on
+  2026-08-21, so every line-number citation into them predating that date is off. Known casualties in
+  `.claude/agent-memory/firmware-codepath-tracer/`: `BUILD-LINEAGE.md:929`→`:831`, `:705`→`:607`,
+  `:1170-1198`→`:1072-1100`. **Cite by heading or grep string, never by line number.**
 - **The entire post-V38 record — V38 → present — as one arc**, via `docs/BUILD-LINEAGE.md` and the
   `HANDOFF-*.md` chain. Not just the latest handoff. A dose-response that only makes sense across four
   builds is the kit's most-used form of evidence, and reading one session's slice has repeatedly

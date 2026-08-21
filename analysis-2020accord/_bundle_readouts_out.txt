@@ -1,0 +1,74 @@
+====================================================================================================
+0. IS c4 INERT AT 21.0-22.5 Hz?  -- the premise the whole clean readout rests on
+====================================================================================================
+   21.0-22.5 Hz : c4 k=1.85 amplification ratio 0.9726  95 % CI [0.9642, 1.0348]  P(|ratio-1| > 0.10) = 0.000
+   18.0-22.0 Hz : c4 k=1.85 amplification ratio 1.0067  95 % CI [0.9618, 1.0084]  P(|ratio-1| > 0.10) = 0.000
+   22.0-26.0 Hz : c4 k=1.85 amplification ratio 0.8930  95 % CI [0.8441, 1.0271]  P(|ratio-1| > 0.10) = 0.613
+  => 21.0-22.5 Hz is the band where c4 does least. Lever B is attributable THERE.
+
+====================================================================================================
+1. ENDPOINT 1 (CLEAN) -- 21.0-22.5 Hz band RMS of rate_f, engaged.  ATTRIBUTABLE TO LEVER B
+====================================================================================================
+  15 s blocks: n=23   p5 0.1169  p25 0.9712  p50 1.4954  p75 4.1242  p95 6.9311  (deg/s RMS)
+  20 s blocks: n=18   p5 0.5217  p25 0.9185  p50 2.0987  p75 3.7580  p95 6.3716  (deg/s RMS)
+  30 s blocks: n=10   p5 0.7227  p25 1.1939  p50 2.4963  p75 4.4975  p95 5.4840  (deg/s RMS)
+
+  speed of each 15 s block (km/h): p5 15  p50 59  p95 90 ; blocks under 20 km/h: 2
+  grind #1 is 9.88x stronger at 5-10 km/h than the drive average (STATE.md), so a
+  low-speed block is worth several high-speed ones.  Route 0x9e has 2 blocks under
+  20 km/h out of 23 -- the operator should aim the symptomatic block THERE.
+
+  BASE RATE (V103, route 0x9e, 23 independent 15 s engaged blocks):
+     median 1.4954 deg/s RMS ; the 5th percentile is 0.1169 (= 0.078 x median)
+  LEVER B ROAD PRIOR: 0.40 [0.27, 0.58] on this band  => predicted new median 0.5982
+
+  log-scale block SD = 1.255 (from the 5-95 spread of V103's own blocks)
+  THRESHOLD 'p5 of V103's blocks' = 0.1169 : P(one block below | NO effect) = 0.087 ; P(below | Lever B works at 0.40) = 0.097  => LR 1.1:1
+       weak end   effect 0.58 : P(below) = 0.055
+       strong end effect 0.27 : P(below) = 0.162
+  THRESHOLD 'p25 of V103's blocks' = 0.9712 : P(one block below | NO effect) = 0.261 ; P(below | Lever B works at 0.40) = 0.650  => LR 2.5:1
+       weak end   effect 0.58 : P(below) = 0.536
+       strong end effect 0.27 : P(below) = 0.758
+
+====================================================================================================
+2. ENDPOINT 2 (MUDDY) -- 6-9 Hz Re(Z), engaged.  What each outcome licenses
+====================================================================================================
+  BASE RATE (V103, 23 blocks): p5 -5800  p25 -4902  p50 -3784  p75 -2821  p95 -1489
+  block-to-block SD = 1310 counts (5-95 spread / 3.29)
+
+  MODEL PREDICTIONS at 6-9 Hz (exact Mobius, a_filt):
+  pre-registered threshold = V103's own p95 = -1489  (P = 0.05 under the null BY CONSTRUCTION)
+     no effect (null)   predicted   -3784  =>  P(one block exceeds threshold) = 0.040  LR   0.8:1
+     Lever B alone      predicted   -1313  =>  P(one block exceeds threshold) = 0.553  LR  11.1:1
+     c4 alone           predicted    +296  =>  P(one block exceeds threshold) = 0.913  LR  18.3:1
+     BUNDLE             predicted   -1034  =>  P(one block exceeds threshold) = 0.636  LR  12.7:1
+
+  *** ALL THREE hypotheses predict IMPROVEMENT. So the DIAGNOSTIC outcome is the one
+      none of them predicts: a block at or below V103's own MEDIAN (-3784).
+      P(that | any lever works) <= 0.030. It falsifies the identification without needing
+      attribution -- which is exactly what a muddy score can still deliver.
+
+====================================================================================================
+3. FIXING ENDPOINT 1 -- the raw band RMS is exposure-dominated. Try a BAND RATIO.
+====================================================================================================
+  V103's own 15 s blocks span 59x in 21.0-22.5 Hz RMS (p5 0.117, p95 6.93). That spread is
+  EXPOSURE (grind #1 is 9.88x stronger at 5-10 km/h than at 20-40), not build.  A ratio to a
+  control band cancels the common exposure factor -- the kit's own grind-#1 statistic form.
+
+             statistic        n        p5       p50       p95    log SD  LR @0.40
+     raw 21.0-22.5 RMS       23    0.1169    1.4954    6.9311     1.255       2.6:1
+     ratio to 26-31 Hz       23    0.3904    1.2143    4.8096     0.764       2.3:1
+     ratio to 31-35 Hz       23    0.8395    3.4482   12.1956     0.812       3.1:1
+      ratio to 9-13 Hz       23    0.6118    2.4802    9.5255     0.837       2.8:1
+
+  and the same for the 6-9 Hz endpoint's own signal, for comparison:
+        6-9 / 26-31 Hz       23    0.2756    0.7106    2.4198     0.662
+        6-9 / 31-35 Hz       23    0.8135    2.8599    5.2732     0.572
+         6-9 / 9-13 Hz       23    0.5325    1.7862    4.1683     0.627
+
+[3.1] speed conditioning -- does restricting the block's speed shrink the spread?
+                    subset      n       p50    log SD  LR @0.40
+                all blocks     23    1.4954     1.255       2.6:1
+          speed 40-70 km/h      7    1.2437     0.585       3.4:1
+          speed 50-80 km/h      8    1.1457     0.435       3.7:1
+           speed < 40 km/h     10    4.4854     0.480       3.5:1

@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-r"""DELIVERED-BYTES LEDGER, STOCK -> V100.  Reads the PLAIN IMAGES ON DISK, never the build scripts.
+r"""DELIVERED-BYTES LEDGER, STOCK -> V103.  Reads the PLAIN IMAGES ON DISK, never the build scripts.
 
 Successor to `ledger_v38_to_v84_bytes.py`, `ledger_v94_cells.py` and `ledger_v38_to_v98_bytes.py`
 (all kept, not overwritten). Extends the V85..V98 reader by ONE build, V99, and otherwise carries
 its logic unchanged: a FULL byte diff (not just named sites), FROZEN counts, and VIRGIN verdicts.
+
+🛑 EDITED IN PLACE 2026-08-21 (records subagent, orchestrator authorisation) to add V101/V102/V103
+and the six V103 biquad-arm cells to SITES -- see the "V101-V103" BUILDS entries and the "biquad"
+SITES block below. This deviates from the file's own "kept, not overwritten" convention stated two
+lines up (every prior version got a new filename); flagged for the orchestrator to rename before
+commit if they want the convention held. Not committed by this edit.
 
 Plain images are flat 1 MiB code images: file offset == firmware address.  Anchored on every run
 against stock `0xC646C == 891` and `code.bin[0x454FE] == 0xBA` -- the two guards against the
@@ -39,8 +45,8 @@ ROOT = Path(os.environ.get("ACCORD_FIRMWARE_ROOT",
 STOCK = ROOT / "stock_fw_dump" / "code.bin"
 HERE = Path(__file__).parent
 
-TARGET = os.environ.get("LEDGER_TARGET", "V100")
-PREV_ON_CAR = "V99"          # what was on the car before TARGET
+TARGET = os.environ.get("LEDGER_TARGET", "V103")
+PREV_ON_CAR = "V102"          # what was on the car before TARGET
 
 # Build order.  Pre-V38 entries are kept so cells introduced in the V22-V37 era attribute to a real
 # tag instead of collapsing onto V38.  V22 is the earliest image on disk.
@@ -110,6 +116,10 @@ BUILDS = [
     ("V99", "_v99_V98BASE-C40BC.600to300-C63AC.150to102-ID.B5CONST1_plain_image.bin"),
     # ---- V100, added by ledger_v38_to_v100_bytes.py (V101 arc-map pass, 2026-08-13)
     ("V100", "_v100_V99BASE-CAVE.SAT.6AD6.C6200.4F60-SIGN.6B94-ID.B3CONST1-427.6B94_plain_image.bin"),
+    # ---- V101-V103, added 2026-08-21 (records subagent, orchestrator authorisation)
+    ("V101", "_v101_V99BASE-GAIN8X.C6CD0.7128-NOLEVERB-CAVE.LKASSAT.SIGNS-427.6B94_plain_image.bin"),
+    ("V102", "_v102_V101BASE-GAIN6X.C6CD0.5346-CAVE.CMP.6ADA.6AE2-SIGNS-427.6B4C-ID.ID3.6_plain_image.bin"),
+    ("V103", "_v103_V102BASE-BIQUAD.ENGAGED-CAVE.CMP.6ADA.6ADC.6AE2.6B26-SIGN.3680.6B4C.6ADA-ID.B3VARIES_plain_image.bin"),
 ]
 
 BURNED = {"V95": "deliberately BURNED build number -- never cut, no image, not a missing file"}
@@ -135,6 +145,9 @@ SITES = [
     (0x3AB76, 1, False, "Lever A: V62 sar on r26 (AA stock / A9 = x2)", _V98),
     (0x3AC20, 1, False, "Lever A: V62 sar on r24 (AA stock / A9 = x2)", _V98),
     (0x454FE, 1, False, "V42 macro-ratchet fix (BA = stock bne / B5 = br)", _V98),
+    (0x35A06, 4, "raw", "V103 biquad ARM-SOURCE (ld.bu -0x671a[gp],r9 -> -0x6806[gp],r9)", "build_v103_tva.py"),
+    (0x35A12, 2, "raw", "V103 biquad ARM cmp (cmp r12,r9 -> cmp r0,r9)", "build_v103_tva.py"),
+    (0x35A18, 4, "raw", "V103 biquad ARM setfnc/setfne", "build_v103_tva.py"),
     (0x55C0E, 4, "raw", "CAN 0x14A cave HOOK -- the 4-byte jarl that calls the cave at 0xC4B34", _V87B),
     (0x55DF2, 2, False, "CAN-427 packer SOURCE displacement (which gp cell 0x1AB carries)", _V94L),
     (0x55E10, 1, False, "CAN-427 packer SHIFT byte (sar N on the 427 payload)", _V94L),
@@ -201,6 +214,11 @@ SITES = [
     (0xC64C9, 1, False, "blend mux", "ledger_v38_to_v84_bytes.py SITES"),
     (0xC64DE, 2, False, "legacy re-engage ramp ('RAMPSTEP', label disputed)", _V94L),
     (0xC64FA, 1, False, "CEIL byte cal", "ledger_v38_to_v84_bytes.py SITES"),
+    (0xC649B, 1, False, "biquad ARM byte (Honda dormant FUN_000352b4 notch, 00=disarmed/01=armed)", "build_v103_tva.py"),
+    (0xC60A8, 4, "f", "biquad c1 -- pole coeff a1", "build_v103_tva.py + reference_accord_biquad_is_a_notch..."),
+    (0xC60AC, 4, "f", "biquad c2 -- pole coeff a2", "build_v103_tva.py + reference_accord_biquad_is_a_notch..."),
+    (0xC60B0, 4, "f", "biquad c3 -- zero coeff b1", "build_v103_tva.py + reference_accord_biquad_is_a_notch..."),
+    (0xC60B4, 4, "f", "biquad c4 -- overall gain g (proposed lever, records-sweep 2026-08-21)", "build_v103_tva.py + reference_accord_biquad_is_a_notch..."),
     (0xC6598, 4, "f", "corridor wall FLOAT +A", _V94L),
     (0xC659C, 4, "f", "corridor wall FLOAT +B", _V94L),
     (0xC65AC, 4, "f", "corridor wall FLOAT -A", _V94L),
@@ -672,7 +690,7 @@ def cmd_mask(imgs, order, mask, cand):
 def main():
     imgs, order, missing = load_all()
     print(f"\nANCHORS OK: stock 0xC646C=891, code.bin[0x454FE]=0xBA, every image len=0x100000")
-    print(f"{len(order) - 1} build images on disk (V22..V99); TARGET={TARGET}, "
+    print(f"{len(order) - 1} build images on disk (V22..V103); TARGET={TARGET}, "
           f"previous-on-car={PREV_ON_CAR}")
     mask, cand = packaging_mask(imgs, order)
     cmd = sys.argv[1] if len(sys.argv) > 1 else "all"
@@ -721,7 +739,7 @@ def main():
                       "name_source": src}
                      for a, lab, sv, cv, stt, fr, since, nmov, src in rows],
           "delta_vs_stock": {TARGET: d98, PREV_ON_CAR: d97}}
-    outp = HERE / "v99_vs_stock_delta.json"
+    outp = HERE / f"{TARGET.lower()}_vs_stock_delta.json"
     outp.write_text(json.dumps(js, indent=1, default=str))
     print(f"\nwrote {outp}")
 

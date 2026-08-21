@@ -1,0 +1,4 @@
+  File "C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\price_flat_6b86_boost.py", line 672
+    print("
+          ^
+SyntaxError: unterminated string literal (detected at line 672)

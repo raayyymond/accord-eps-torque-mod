@@ -9,6 +9,10 @@ two files rejoin **byte-for-byte identical** to the original, and all **312** di
 
 **Read this file together with `MEMORY.md` — neither half is complete on its own.**
 
+🛑 **A THIRD part now exists — [`MEMORY-PART3.md`](MEMORY-PART3.md)**, split 2026-08-21: the DATED
+SESSION SECTIONS, `## 2026-05-30` → `## 2026-07-31`. Same rules — verbatim, every pointer LIVE, not an
+archive. **Read all three parts.**
+
 ---
 
 - ★★★ [The highway 40–49 Hz null survives an EVENT-RATE re-test — and here is the power](accord-highway-event-rate-null-with-power.md) — the pooled-median null was challenged as blind to rare bursts, so the machinery that found creep grind #2 was pointed at highway. **Same null**: event-rate ratios **0.855 [0.432, 1.702]** and **1.152 [0.496, 2.690]** vs a split-half null of **[0.36, 2.50]**, **min detectable 1.61×** at 80 % power; monotone-rising in **no** band, and at 40–49 Hz the max-dose build has the *lowest* rate. ✅ Positive control: grind #1's own event rate falls monotonically with dose (**0.565 [0.329, 0.984]** → **0.319 [0.130, 0.661]**). ⇒ two independent statistics, one answer — the earlier null was **not** a statistic-choice artefact. 🛑 **0.0 s of LKAS-off driving above 12 m/s exists** (verified via `cc_lat` **and** `0x18F` b4 bit3) ⇒ "only when engaged" is **untestable by construction**; `cruiseState` would fake a 123–187 s arm. Bound: a fixed-pitch mode **above ~50 Hz is invisible to both channels**.

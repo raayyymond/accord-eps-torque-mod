@@ -1,6 +1,42 @@
 """
 eps_lkas_chain_model.py
 =======================================================================================================
+🛑🛑 KNOWN MODELLING GAPS AND LABEL CORRECTIONS — added 2026-08-21, V104 close-out.
+    Read these before trusting a lane label in this model. NONE of them is fixed in the code below;
+    they are recorded here because this facade is what an agent reads first.
+
+    1. THE `FUN_000352b4` BIQUAD LANE IS NOT MODELLED AT ALL. Zero references to `gp-0x6b82`,
+       `gp-0x6b86`'s filter, or the coefficient cells `0xC60A8/AC/B0/B4` anywhere in the four modules.
+       That lane is now LOAD-BEARING: V103 armed the section engaged-only, and V104 raises its overall
+       gain `c4` (`0xC60B4`) x1.85. The real chain is
+         gp-0x4f60 -> clamp +-cal(0xC6200)=8192 -> 10-pt LERP (assist map) -> x sign x pol
+                   -> gp-0x6b7a -> friction-hold limiter (pure attenuator) -> gp-0x6b82
+                   -> biquad H(z) = c4*(1 + b1 z^-1 + z^-2)/(1 + a1 z^-1 + a2 z^-2), fs = 1000 Hz
+                   -> float clamp +-12.0 -> x1024 -> + gp-0x6b7e (UNFILTERED pedestal, NOT scaled by c4)
+                   -> clamp +-0x3000 -> gp-0x6b86 -> FUN_0003aa2c aggregator
+       `c4` is a PURE FLAT SCALAR (one reader image-wide, zero added phase at any frequency).
+       Truth lives in `docs/HANDOFF-2026-08-21-v104-built-c4-boost-and-lever-b.md` sections 2-4.
+
+    2. THE ASSIST MAP'S AXES ARE THE OPPOSITE OF THE OBVIOUS READING. `0xC7B40` is a pointer array
+       indexed by the MODE NUMBER; `gp-0x373c`/`gp-0x3714` are the map's INPUTS, not the map -- a
+       second transform swaps the roles before `FUN_000352b4` consumes them. Validated 200/200 against
+       V72's flown probe; the swapped reading is out by 51.5x. Mirror: `analysis-2020accord/
+       assist_map_mirror.py`. Runtime slope `a` = 0.069 pooled engaged, SPEED-SCHEDULED
+       0.123 (parking) -> 0.046 (120 km/h). The budget's 0.098/0.117 is high by 1.4x/1.7x.
+
+    3. LABEL CORRECTIONS in `eps_chain_control.py` -- the code is right, the comments are not:
+       * `gp-0x6bbe` is called "boost assist" / "rate-derived". It is a `-K1 * (column rate)` DAMPER
+         (two `pol` loads cancel under pol = -1), and `K1` at `0xD6010`/`0xD700E` is a SIGNED cell.
+         It is DEAD as a lever anyway: flat +-512 bound, already at 76% of rail.
+       * `gp-0x6bd0` is called "damping". True for PATH 1 only. `FUN_00038148` (Path 2) applies its
+         OWN extra `pol` multiply, so with pol = -1 the SAME cell arrives PUMPING-signed there.
+         The sign does not transfer between the two aggregators.
+
+    VERIFICATION CONTRACT IS UNAFFECTED by this docstring: still exactly 87 symbols, and
+    `_self_check()` + `_demo()` stdout still hashes to
+    740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d (2,512 bytes). Re-run it after
+    ANY edit below this docstring.
+=======================================================================================================
 🛑 THIS FILE IS NOW A THIN FACADE. The model itself lives in four modules beside it.
     It was ~302 KB / ~4000 LINES — larger than a single `Read` can return (256 KB cap), so a plain
     `Read` SILENTLY TRUNCATED THE TAIL with no warning. Split on 2026-08-12; code moved VERBATIM.
