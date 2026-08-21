@@ -21,7 +21,18 @@ Script: `…/scratchpad/fprime_flatten.py` (flash-level knot edits + route-81 sc
 - **m24 records `0xD6158 + 0x78*j`; m26 records `0xD7130 + 0x78*j`** (j = speed slot 0..6)
 - layout `+0x00` count(9) · `+0x02` X[0..8] 9×s16 · `+0x14` Y[0..8] 9×s16
 - **Y[6]/Y[7]/Y[8] target cells** — m26 rec0 `0xD7150/52/54`, rec1 `0xD71C8/CA/CC`; m24 rec0 `0xD6178/7A/7C`, rec1 `0xD61F0/F2/F4`
-- 🛑 **Blast radius = the Stage-2 LERP ALONE.** Each record address occurs as exactly ONE 32-bit
+- 🛑🛑 **CORRECTED 2026-08-21 — THIS CLAIM IS WRONG. Blast radius is NOT the Stage-2 LERP alone.**
+  A fresh trace (`docs/TRACE-2026-08-21-assist-map-rom-source.md`) found the shared ROM record family
+  (`0xC7B40` pointer array -> m24 `0xD6158` / m26 `0xD7130`, via `FUN_000382d8`) **FORKS inside
+  `FUN_000389ec` off one intermediate array `gp-0x373c[]`/`gp-0x3714[]`**:
+  **Branch A** -> `gp-0x64b8[]`/`gp-0x641c[]` -> `FUN_00038148` Stage-2 LERP -> `gp-0x6b70` (Path-2,
+  the PID-reference-clamp lane) -- what this memory priced; and **Branch B** -> `gp-0x6442`/`gp-0x642e`
+  family -> `FUN_000352b4`'s builder -> `gp-0x37fc[]`/`gp-0x37e8[]` -> **`gp-0x6b86`, the
+  torque-sensor-driven assist lane.** ⇒ **A mode-26 ROM-record edit moves BOTH lanes.** Any KNOT F / H2
+  dose needs its own GATE-2 phase story for Path-1 as well, and must be sized against the aggregator
+  SUM (0.053), never a lane -- see [[accord-the-8hz-mode-is-the-loop-not-the-plant]].
+  The original claim below was made without knowledge of Branch B; it is retained for its method.
+- ~~**Blast radius = the Stage-2 LERP ALONE.**~~ (SUPERSEDED, see above.) Each record address occurs as exactly ONE 32-bit
   literal image-wide (its own pointer cell; Ghidra xref on `0xD7130` = 1 DATA ref from `0xC7BA8`), and
   all five pointer-array literal sites (`0x38356,0x38530,0x3875a,0x38764,0x382ea`) are **inside
   `FUN_000382d8` (body `0x382d8–0x38979`)**.

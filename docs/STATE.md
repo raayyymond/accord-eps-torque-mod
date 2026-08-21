@@ -1,9 +1,112 @@
 # STATE — living current state of the kit
 
-## 🛑🛑 LATEST BLOCK, 2026-08-20 (late) — **`f0` IS THE ENDPOINT. V103 BUILT. `gp-0x6752` = −1.**
+## 🛑🛑 LATEST BLOCK, 2026-08-21 — **V103 FLEW (route `0x9e`). THE 8 Hz MODE IS THE *LOOP*, NOT THE PLANT.**
 
-🛑🛑 **ON THE CAR: STOCK (V9b).** He flashed V102, drove route `0x96`, then flashed stock and drove
-route `0x97`. **V103 is BUILT AND NOT FLASHED — and the operator has deferred the decision on it.**
+🛑 **ON THE CAR: V103.** It was flashed and driven as route `0x9e` — **the record below that says
+"built, not flashed, decision deferred" was STALE and is corrected here.** Both symptoms failed: the
+operator reports **grind #1 present** and **high-steer-rate ratcheting present**.
+**NOTHING WAS BUILT OR FLASHED on 2026-08-21. No V104 artifact exists.**
+**Full narrative: `docs/HANDOFF-2026-08-21-route9e-and-the-loop-is-the-cause.md`** — every finding
+including the negative ones, and **17 open items with what closes each.** Read it before proposing
+anything.
+
+### ⭐⭐ THE RESULT — the loop is identified, and it IS the cause
+From the 4×/8× gain steps (routes `0x85`/`0x95`, both packing the aggregator **SUM**):
+`|κG| = 0.630 [0.512, 1.001]` · `A = 1+P = 0.440 ∠ +25.0°` · closed-loop amplification
+**2.28× [1.51, 9.4]** · gain margin **1.2–1.6** · identified passive plant `Z₀ = 2792 ∠ −92.45°`,
+`Re(Z₀)/|Z₀| = −0.043` — **a near-lossless spring.**
+⇒ 🛑 **100 % of the measured `Re(Z) = −3761` at 6–9 Hz is LOOP-GENERATED.** The ratchet is the assist
+loop's own near-instability, **not** a mechanical resonance being excited.
+⚠ **PROVISIONAL — the pair is CONFOUNDED:** route `0x85` (V100) has `0x3AA96 = fb` ARMED /
+`0xC6446 = 5244`; route `0x95` (V101) has `c5` DEAD / 512. **The rate lane is one of the two things
+that changed. This kit has NEVER flown two builds differing only in `0xC6CD0`.**
+
+### 🛑 THE LAW — supersedes every 6–9 Hz sizing argument in this file
+> **At 6–9 Hz the aggregator is a 4:1 near-CANCELLATION — individual lanes are LARGER than their sum
+> (`coh²(T,sum)` = 0.279 vs `coh²(T,lane)` = 0.80–0.89). ANY single-lane perturbation is amplified
+> ~4× at the output. SIZE EVERY 6–9 Hz LEVER AGAINST THE SUM (0.053), NEVER AGAINST A LANE.**
+
+Band-specific (only 1.68 at 21.0–22.5 Hz). **This retroactively explains why sixty builds of
+lane-sized doses produced nothing or the opposite of what was predicted.**
+Sizing: `ΔP = c·ΔG`, `|c| = 13.09`. **`ΔG = 0.047` takes `|A|` 0.44 → 0.87.** A lane-sized dose is
+**~4× over**; a **wrong sign** drives `|A|` to 0.15 — a **6.7× amplification.**
+
+### 🛑 THREE LEVERS PRICED, ALL THREE REFUSED — do not re-propose without new evidence
+| lever | verdict |
+|---|---|
+| **Honda's biquad re-centred as a NOTCH** (`0xC60A8`–`B4`) | **DEAD.** `Re(u/T)` rises monotonically 6.0–9.5 Hz (2.08–2.37×); `ΔRe(Z)` = **−461…−3028** ⇒ MORE anti-damping. Flips only if `arg(Z) > −79.4°`; measured **[−117.6°, −126.3°]**. ⚠ The killer was a baseline error — `0.2075∠+39.7°` is the **LANE**; the SUM is `0.0485∠+17.0°`, so the correction was added to a baseline **4× too large**. |
+| **Same cells as a resonant BOOST** | **DEAD, 3 ways.** (1) 21.7 Hz is a **cost** — `ΔG` is 67–77° from `u/T`, near quadrature, ratio 1.08–1.20. (2) A 2-pole section has **exactly −90° at its own pole** ⇒ `\|ΔH\| = 1.378` **larger than `\|H\|`**, `\|u\|` → **3.34×**, Nyquist encirclement at every `r`. (3) States freeze while disarmed ⇒ **1.2 cycles of 8 Hz ring at EVERY engagement.** Knife edge is **×1.98, not ×3.** |
+| **RAISING r24/r26** | **REFUTED (c).** V71c's dose sits in (1.000, 1.707] for every `a` ⇒ **cannot have overshot**; for `a < 5.57` the model says **V88 is the worse build** — it is not. Identification swings **3.1×** on dropping 1 of 2 episodes. **ESCAPE HATCH OPEN: `a > 5.57` inverts it, and `a` has NEVER been measured.** |
+
+🛑 **AND A CORRECTION THE KIT OWES ITSELF:** *"V71c was the worst build ever on all three symptoms"* is
+a **BAND statement, not the operator's.** **His words: "attenuated but still present", and he ranked
+V71c ABOVE V71b.** `BUILD-LINEAGE.md:646` lists V71c among builds that **measurably moved grind #1**.
+
+### ⭐ ROUTE `0x9e` — the largest clean capture the kit has (647.8 s, 406.4 s engaged, 7 episodes)
+Fault-free, identity PASS (`b3` duty 0.4599, 32,494 transitions). **`f0` = 25.23 [24.88, 25.91]** vs
+V102's 24.90 — **+0.33 Hz against a ±1.05 Hz split-half floor: a correctly-anticipated null**, and
+V103's filter is **−0.149 dB at 7.79 Hz**, inert where the ratchet lives.
+🛑 **Command-adjusted, the ENTIRE stock→V102 `f0` march disappears (24.896 vs 24.904).**
+⇒ **`f0 ≈ 21.3 + 0.60·m` IS NOT A GAIN LAW. Retire it.**
+- **Ratchet:** engaged/manual **24.29× [10.77, 48.37]** matched on speed AND rate; engaged 6–9 Hz RMS
+  16→60→369→**490** with wheel rate while **manual is flat (33→29)**; coherence vs driver torque —
+  assist sum **0.892**, openpilot command **0.237**, **IMU 0.000–0.002**.
+- 🛑 **GRIND #1 IS THE 21.0–22.5 Hz SLICE, NOT 15–22 Hz.** At <10 km/h **77.3 %** of 15–22 power sits
+  there. Line **21.73 Hz, prominence 39.18 vs null p95 3.07**, split-half stable, **absent in manual**;
+  wheel order excluded (same 0.395 Hz bin at 5.6 and 12.8 km/h). Band ratio by speed: **5–10 km/h 9.88**
+  · 10–20 4.37 · 20–40 2.23 · 40–70 3.52 · >70 2.91.
+- ⭐ **THE OPERATOR'S OWN CLAIM, MEASURED:** *"applying torque kills the buzz"* — engaged, <20 km/h,
+  rate ≥6 °/s: **425.1 hands-off vs 26.4 hands-on = 16.12× [5.29, 41.29]**, band-specific.
+- **His 3-part grind hypothesis:** command scaling **SUPPORTED but narrowed** (slew limit 123 LSB/tick
+  = **80.3 assist ct at 6×**, on the limit **39.5 %** of frames at 5–10 km/h — but grind tracks **wheel
+  rate**, not the step) · return-to-centre **REFUTED in his regime** (0.0000/2,622 frames; lane live in
+  89 of 87,316, **all MANUAL at |angle| 383–398°**) · road passthrough **REFUTED** (ratio-of-ratios
+  **23.1× [7.9, 42.5]**; wheel-speed coherence 0.012, **below its own shuffle floor**).
+
+### 🛑 THE GAIN CEILING IS A **STABILITY** PROBLEM, NOT A CLAMP PROBLEM
+- **The 9× ceiling was OURS.** `0xC674E` has **exactly one reader** image-wide and **no instruction
+  compares it to the clamp** — the assert is a kit convention. ⭐ **Keep it: it binds at 10×, the
+  governor at 10.69×, so everything it forbids is authority the governor flattens anyway.**
+- ⭐ **THE ARITHMETIC CEILING IS ≈10.7×.** Full-scale LKAS-alone = **`gain ÷ 2`, exact**; the
+  governor's **independent** flat ceiling `0xC6202` = **4762** saturates it at gain 9524. At 16× the
+  **top 33.2 % of openpilot's command range delivers the IDENTICAL output a 10.7× build already does.**
+  Gain past ~11× buys **ZERO** peak torque. Raising `0xC6202` is REJECTED (fault 0x17).
+- 🛑 **BUT STABILITY BINDS FIRST, AND IT WAS HIT AT 8×.** V101 had **13.0 % clamp and +25.2 % governor
+  margin** and gave the worst report, with the **peak MOVING 20.3 → 23.0 Hz** — *a pole moving, not
+  excitation.* `|κG|` 0.63@4× → 0.75@8×, extrapolating to **0.97–2.0 at 16×**.
+  ⇒ **DAMPING IS THE PREREQUISITE FOR MORE GAIN, NOT A DETOUR.**
+
+### V104 — SPECIFIED, NOT BUILT (`docs/SPEC-2026-08-20-v104.md`, rev 3)
+**Gain FROZEN at 6×** per the operator's ruling (*"fix at 6x first, then raise to 8x"*; long-term target
+is **16×**). An **instrument build, by conclusion not fallback** — no lever survived GATE 2.
+**427 source → `gp-0x6b94`** (`0x55DF2`, 2 B, flown at V100) · **`|gp-0x6adc| ≥ |gp-0x6ada|` rung**
+(measures `a`, closes the escape hatch) · **identity `0xC4BC0` `033a`→`013a`** (`byte7[7:6]==1 AND
+b3==0` has **zero matches in 714,055 frames**) · telemetry cave.
+🛑 **`0x55E10` STAYS `a6` (`sar 6`).** `sar 4` was sized for the LANE (1498); the repoint moves the
+source to the SUM (10240) and **`sar 4` OVERFLOWS ×3.13.**
+**Then V105 = V104 with ONLY the gain cell changed — the first de-confounded gain pair ever flown.**
+
+### 🛑🛑 METHOD FINDING THAT OUTRANKS THE PHYSICS
+**The `ld.bu` displacement's LOW BIT lives in `hw1` bit 5, not `hw2`.** `85 67 fb 74` →
+`ld.bu 0x74fa,tp,r12` but `a5 7f fb 74` → `ld.bu 0x74fb,tp,r15` — **identical `hw2`**. The kit's rule
+(*"`ld.bu` → `hw2 == enc|1`"*) is **WRONG** and has been **conflating ADJACENT CELLS**. `0xC64FA` has
+**8** readers, not the recorded 18; the other **10 read `0xC64FB`**, uncharacterised. **Suspect every
+prior byte-cell reader/writer count. Adjudicate with `disassemble_bytes`, never displacement bytes.**
+⚠ Also: **`steeringPressed` IS `|cs_tq| > 1200`** (98.97 % agreement) ⇒ **every hands-on/off AMPLITUDE
+contrast on `tq` is CIRCULAR.** And **a "zero writers" claim can be TRUE FOR STOCK AND FALSE FOR A
+BUILD** (`gp-0x683c`: 0 writers stock, but V67+ repoint it to `gp-0x6806`, 15 writers).
+
+---
+
+## ⚠ SUPERSEDED BLOCK, 2026-08-20 (late) — **`f0` IS THE ENDPOINT. V103 BUILT. `gp-0x6752` = −1.**
+🛑 **Its "V103 BUILT AND NOT FLASHED / STOCK on the car" status is STALE — V103 FLEW as route `0x9e`.**
+Its measurements stand; its flight-status rows and its `f0`-as-a-gain-law framing do not.
+
+⚠⚠ **STALE AS OF 2026-08-21 — THIS PARAGRAPH IS SUPERSEDED. V103 WAS FLASHED AND FLEW AS ROUTE `0x9e`.
+ON THE CAR: V103.** See the LATEST BLOCK at the head of this file. The two sentences below describe the
+state as of 2026-08-20 only, and are retained as history.
+~~**ON THE CAR: STOCK (V9b).** He flashed V102, drove route `0x96`, then flashed stock and drove
+route `0x97`. **V103 is BUILT AND NOT FLASHED — and the operator has deferred the decision on it.**~~
 **Full narrative: `docs/HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md`** — it carries **every** finding
 (including the negative ones) and **36 open items**, per standing instruction. Read it before proposing
 anything.
