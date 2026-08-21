@@ -207,12 +207,34 @@ V71c among builds that **measurably moved grind #1** (beat stock, P = 0.0006; lo
   assert is a convention this kit invented. ⭐ **Keep it anyway** — our convention binds at 10×, the
   governor's arithmetic at 10.69×, so **everything it forbids is authority the governor flattens
   anyway.** It costs nothing in reachable torque.
-- ⭐ **THE REAL ARITHMETIC CEILING IS ≈10.7×.** Full-scale LKAS-alone output = **`gain ÷ 2`, exact**.
-  The governor's flat ceiling **`0xC6202` = 4762** is a **completely independent cell** (different
-  function, own cal). It saturates full scale at gain 9524 = **10.689×**. At 16× (gain 14256) full
-  scale is 7128 — **49.7 % over** ⇒ **the top 33.2 % of openpilot's command range delivers the
-  IDENTICAL output a 10.7× build already delivers.** Gain past ~11× buys **zero** additional peak
-  torque. 🛑 Raising `0xC6202` is already REJECTED (fault 0x17, hard-fault-eligible).
+- 🛑🛑 **RETRACTED 2026-08-21 (same day) — THERE IS NO FLAT 10.7× CEILING.** The claim misread its
+  own cited instruction: `ld.hu -0x4f64,gp,r8` reads **RAM**, not `cal(0xC6202)`. The real bound is
+  **`(gp-0x4f64 × channel5) >> 15`, then `clamp(sum, ±bound)`** — **proportional, recomputed at
+  runtime.** `0xC6202` has **exactly ONE reader image-wide** (`0x7b06a`, in the `gp-0x4f64` **writer**,
+  not the governor) and is a **Q10 scale factor** (4.650390625); **its effect if raised is genuinely
+  UNKNOWN.** ⚠ The orchestrator relayed the 10.7× figure without verifying the crux — the tracer had
+  flagged *"the reader is relayed, not confirmed by me"* and was right to.
+- ⭐⭐ **WHAT ACTUALLY LIMITS TORQUE — AND IT COLLAPSES WHERE IT IS WANTED MOST.** `gp-0x4f64` is RAM,
+  recomputed from a **motor-electrical-rate-scheduled ROM table** (bank A, `0xC520C` + mirror
+  `0xC5224`; re-read this session: X = 1050/1700/2500/3700/4100,
+  **Y = 5325 / 3584 / 2406 / 1587 / 512**). ⇒ **the ceiling swings 10.4× — 5325 at rest, 512 at high
+  motor rate — tightening exactly in the fast-correction regime more torque is for.** At 16× the clip
+  fraction is **~34 % at low motor rate but ~93 % at high.**
+  🛑 **[BELIEF, TESTABLE, HIGH VALUE] real driving may ALREADY saturate this at 6×** ⇒ part of the
+  felt grinding could be the assist hitting a ceiling and dropping out, not only a resonance.
+  **Closes with a raw tap on `gp-0x6ac0` + `gp-0x4f64`. PUT IT IN V104'S TELEMETRY.**
+- ⭐ **THERE IS A RAISABLE LIMIT, ALREADY FLOWN SAFE.** Flatten bank A (`0xC520C` + `0xC5224` → Y = 5325
+  flat, slopes → 0): removes the motor-rate throttling, ceiling uniform. **This is V41's CHANGE 2 —
+  cal-only, V41 booted and drove cleanly.** Does not reach 16×'s 7128 full scale but removes the
+  collapse to 512. **Lowest-risk headroom lever found.** ⚠ **Fault 0x17 does NOT reach it** — it trips
+  on the two RAM mirrors disagreeing **between cycles**, never on a cal value
+  (`FUN_0006b9ee` → `FUN_0006ce7c(0x17)`, decompiled). The old rejection was attached to the wrong cell.
+  🛑 **STAY AWAY FROM `0xC6206`/`0xC6208`** — V40 raised both to `0xFFFF`: EPS lamp, no power steering.
+- ✅ **`gain ÷ 2` full scale is UNCHANGED and correct** — a different, earlier stage
+  (`FUN_00028ea6`, 16384/32768 = 0.5 exactly). The withdrawn trace erred in what it compared it against.
+- ⚠ **METHOD:** 6 of 17 candidate `gp-0x4f64` accesses were **FALSE POSITIVES (35 %)** — base-register
+  aliasing (`st.b r7,-0x4f64,r18`) and coincidental byte patterns. **Scans find candidates; only the
+  decoder settles them.**
 - 🛑 **BUT THE BINDING WALL IS STABILITY.** V101 (8×) had **13.0 % clamp margin and +25.2 % governor
   margin** — inside every limit — and produced the operator's worst vibration report, with the
   **resonance peak MOVING 20.3 → 23.0 Hz**. *Excitation does not move a peak; a POLE moving does.*

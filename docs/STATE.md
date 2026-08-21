@@ -67,10 +67,44 @@ V103's filter is **−0.149 dB at 7.79 Hz**, inert where the ratchet lives.
 - **The 9× ceiling was OURS.** `0xC674E` has **exactly one reader** image-wide and **no instruction
   compares it to the clamp** — the assert is a kit convention. ⭐ **Keep it: it binds at 10×, the
   governor at 10.69×, so everything it forbids is authority the governor flattens anyway.**
-- ⭐ **THE ARITHMETIC CEILING IS ≈10.7×.** Full-scale LKAS-alone = **`gain ÷ 2`, exact**; the
-  governor's **independent** flat ceiling `0xC6202` = **4762** saturates it at gain 9524. At 16× the
-  **top 33.2 % of openpilot's command range delivers the IDENTICAL output a 10.7× build already does.**
-  Gain past ~11× buys **ZERO** peak torque. Raising `0xC6202` is REJECTED (fault 0x17).
+- 🛑🛑 **RETRACTED 2026-08-21 — THERE IS NO FLAT 10.7× CEILING. The claim misread its own cited
+  instruction.** It quoted `ld.hu -0x4f64,gp,r8` as evidence for `cal(0xC6202)` = 4762 — but that
+  instruction reads **RAM**, not the cal. **The real governor bound is
+  `bound = (gp-0x4f64 × channel5) >> 15`, then `clamp(aggregator_sum, ±bound)`** (`0x453f0`-`0x453fe`,
+  `FUN_0004503c`) — **PROPORTIONAL and recomputed at runtime, not fixed.**
+  ⚠ **`0xC6202`'s REAL role:** exactly **ONE reader in the whole image** (`0x7b06a`, inside
+  `FUN_0007b022`, the `gp-0x4f64` **writer** — *not* the governor). It is a **Q10 scale factor**
+  (÷1024 → 4.650390625) feeding the float computation that produces `gp-0x4f64`. **Its arithmetic
+  effect if raised is GENUINELY UNKNOWN, not merely risky.** Same failure mode as `0xC6200`, which sat
+  mislabelled by one of its four roles for ten builds. **Ledger correction:** the recorded
+  *"`0xC6202/04/06/08` cluster at `0x045410`-`0x0457de`"* is **wrong for `0xC6202`** (that range holds
+  `0xC6206`/`0xC6208` in `FUN_0004503c` and `0xC6204` in `FUN_000456a4`).
+- ⭐⭐ **WHAT ACTUALLY LIMITS TORQUE — AND IT COLLAPSES WHERE WE WANT IT MOST.** `gp-0x4f64` is RAM,
+  continuously recomputed from a **motor-electrical-rate-scheduled ROM table** (bank A, `0xC520C` +
+  mirror `0xC5224`; bytes re-read this session: count 5, X = 1050/1700/2500/3700/4100,
+  **Y = 5325 / 3584 / 2406 / 1587 / 512**, slopes at `0xC5030`).
+  ⇒ **the ceiling swings 10.4× — 5325 at rest, 512 at high motor rate — i.e. it TIGHTENS exactly in the
+  fast-correction regime more torque is wanted for.** At 16× (full scale 7128) the clip fraction is
+  **~34 % at low motor rate but ~93 % at high motor rate.**
+  🛑 **[BELIEF, TESTABLE, HIGH VALUE] real driving may ALREADY be saturating this at 6×** during fast
+  corrections — which would mean part of the felt grinding is the assist hitting a ceiling and dropping
+  out, not only a resonance. **Closes with a raw tap on `gp-0x6ac0` (motor electrical rate) +
+  `gp-0x4f64` (the live ceiling). Put it in V104's telemetry.**
+- ⭐ **THERE IS A RAISABLE LIMIT, AND IT HAS ALREADY FLOWN SAFELY.** Flattening bank A (`0xC520C` +
+  mirror `0xC5224` → Y = 5325 flat, slopes → 0) removes the motor-rate throttling and holds the ceiling
+  uniform. **This is V41's CHANGE 2 — cal-only, and V41 booted and drove cleanly.** It does not reach
+  16×'s 7128 full scale, but it removes the collapse to 512. **Lowest-risk headroom lever found.**
+  ⚠ **The fault-0x17 rejection does NOT reach it:** 0x17 trips on the two RAM mirrors **disagreeing
+  between cycles**, never on the calibration value (`FUN_0006b9ee` → `FUN_0006ce7c(0x17)`, decompiled) —
+  a bank-A edit keeping both mirror copies identical **cannot** trip it. The old rejection was attached
+  to the wrong cell.
+  🛑 **STAY AWAY FROM `0xC6206`/`0xC6208`** — V40 raised both to `0xFFFF`: EPS lamp, no power steering.
+- ✅ **`gain ÷ 2` full-scale is UNCHANGED and still correct** — it is a different, earlier stage
+  (`FUN_00028ea6`'s Q15 multiply, setpoint full scale 16384, 16384/32768 = 0.5 exactly). The withdrawn
+  trace's error was **what it compared that against**, not the arithmetic itself.
+- ⚠ **METHOD:** of 17 candidate accesses to `gp-0x4f64`, **6 (35 %) were FALSE POSITIVES** —
+  base-register aliasing (`st.b r7,-0x4f64,r18`, base `r18` not `gp`) and coincidental byte patterns.
+  **Scans find candidates; only the decoder settles them.**
 - 🛑 **BUT STABILITY BINDS FIRST, AND IT WAS HIT AT 8×.** V101 had **13.0 % clamp and +25.2 % governor
   margin** and gave the worst report, with the **peak MOVING 20.3 → 23.0 Hz** — *a pole moving, not
   excitation.* `|κG|` 0.63@4× → 0.75@8×, extrapolating to **0.97–2.0 at 16×**.
