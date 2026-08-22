@@ -34,6 +34,14 @@ import numpy as np
 # Routes where 427 is KNOWN to pack the aggregator sum gp-0x6b94. Everything else is the lane.
 SUM_ROUTES = {"r85", "r95"}
 
+# 🛑 Routes where 427 packs NEITHER the sum NOR gp-0x6b4c. These carry a THIRD cell and must not
+# be read through either key -- the key they DO carry is named here.
+# ra4 = V104: 427 = |gp-0x6b86| * 5 >> 4 (the biquad OUTPUT, the dosed lane), 3.20 counts/LSB.
+#   ⚠ RECTIFIED AND UNSIGNED: V104 left the cave byte-identical to V103, so byte4 b7 is still
+#     gp-0x6b4c's sign, NOT this cell's. The cache therefore stores `x6b86_mag` (unsigned) and
+#     `sgn_6b4c`, and deliberately has NO x6b94 / x6b4c / sgn427 key.
+OTHER_CELL_ROUTES = {"ra4": "x6b86_mag"}
+
 
 def _load(tag):
     hits = sorted(glob.glob("_cache_%s/%s.npz" % (tag, tag))) or sorted(
@@ -58,6 +66,12 @@ def is_aliased(tag):
 
 def assert_is_sum(tag):
     """Raise unless `x6b94` on this route really is the aggregator sum."""
+    if tag in OTHER_CELL_ROUTES:
+        raise AssertionError(
+            "route %s packed a THIRD cell on 427, not the sum and not gp-0x6b4c. Use the `%s` "
+            "key. It is RECTIFIED and UNSIGNED -- band statistics only, no directed "
+            "cross-spectrum." % (tag, OTHER_CELL_ROUTES[tag])
+        )
     if tag not in SUM_ROUTES:
         raise AssertionError(
             "route %s did NOT pack gp-0x6b94 on 427 -- its `x6b94` key is an alias of the "
@@ -82,7 +96,23 @@ def main():
         al = is_aliased(tag)
         if al is None:
             continue
-        expected = "SUM" if tag in SUM_ROUTES else "lane"
+        expected = ("SUM" if tag in SUM_ROUTES
+                    else OTHER_CELL_ROUTES.get(tag, "lane"))
+        if tag in OTHER_CELL_ROUTES:
+            key = OTHER_CELL_ROUTES[tag]
+            _p, _d = _load(tag)
+            ks = set(_d.files) if _d is not None else set()
+            stale = sorted(k for k in ("x6b94", "x6b4c", "sgn427") if k in ks)
+            if stale:
+                verdict, ok = "*** STALE KEYS PRESENT: %s ***" % ",".join(stale), False
+            elif key not in ks:
+                verdict, ok = "*** MISSING %s ***" % key, False
+            else:
+                verdict, ok = "ok -- third cell, use %s (UNSIGNED)" % key, True
+            if not ok:
+                bad.append(tag)
+            print("%-6s %-10s %-8s %s" % (tag, expected, "n/a", verdict))
+            continue
         if al and tag in SUM_ROUTES:
             verdict, ok = "*** CONTRADICTION ***", False
         elif al:

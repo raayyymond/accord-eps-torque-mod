@@ -23,7 +23,82 @@ deliberately not numbered `PART2` so the two can never be confused.
 
 ---
 
-## 🛑🛑 V104 — BUILT, NOT FLASHED. **V103 IS ON THE CAR.**
+## 🛑🛑 V105 — BUILT, VERIFIED, NOT FLASHED. **V104 IS ON THE CAR.**
+
+| artifact | SHA256 |
+|---|---|
+| `_v105_…NOTCH25.5HZ…_plain_image.bin` | `2666a000415a29fef98ac9cd6c183536269c3e61a61fc822c17586f2adde7e00` |
+| `39990-TVA,A160-V105-…NOTCH25.5HZ…-0x13000-0x100000.rwd` | `5592f7ca52d07247152e5930c579b6ba35e2f5fa5a3adcafcb08b95fff6c89a8` |
+
+**24 bytes / 8 runs vs V104** (16 payload + 8 CRC), **zero unattributed**. 165/165 assertions, 3 runs to
+identical SHA256, both SHAs hard-asserted in `analysis-2020accord/build_v105_tva.py`.
+⚠ A superseded 26.0 Hz cut exists as `SUPERSEDED-DO-NOT-FLASH-NOTCH26HZ-…_plain_image.bin`
+(`98f94e7e…44de52db`); **its `.rwd` was DELETED** (`4ee8ea11…d5a6a6fb`). **Exactly one flashable V105
+`.rwd` on disk.**
+
+| addr | V104 → V105 | lever | prior on-car result |
+|---|---|---|---|
+| `0xC60A8` | `f8c2c4bf` → `56e1f0bf` (`a1` −1.5372 → −1.881877) | **biquad pole angle 42.35 → 22.00 Hz** | **VIRGIN — byte-stock in all 74 built images V38→V104** |
+| `0xC60AC` | `7576223f` → `3d0a673f` (`a2` 0.63462 → 0.9025) | **biquad pole radius 0.79663 → 0.95000** | **VIRGIN, same** |
+| `0xC60B0` | `0ebef0bf` → `9eb8fcbf` (`b1` −1.8808 → −1.974384) | 🛑 **THE NOTCH CENTRE, 55.23 → 25.50 Hz** | **VIRGIN, same** |
+| `0xC60B4` | `fc89c13f` → `b51a4e3f` (`c4` 1.512023 → 0.805095) | overall gain — **FORCED by the unity-DC constraint**, lands 1.5 % from stock 0.817310 | flew as V104 (×1.85). **NULL — dose 1.824× delivered, operator felt nothing** |
+| `0xC4B36` · `0xC4B42` | `2695`→`6c94` · `2495`→`9cb0` | **cave `b6` repointed to `\|gp-0x6b94\| ≥ \|gp-0x4f64\|`** — aggregator sum vs governor ceiling, **clip duty on the wire for the first time** | `b6` previously `\|r24\| ≥ \|r26\|`, duty **1.0000 engaged** ⇒ carried no information |
+
+**CARRIED UNCHANGED from V104:** Lever B (`0x3AA96`=`fb`, `0xC6446`=5244) · the 427 dose tap
+(`0x55DF2`=`0x7a` → `gp-0x6b86`, `0x55E10`=`0xa4` → `sar 4`) · `0xC6CD0`=5346 (6× LKAS gain) ·
+`0xC649B`=1 and the 4-byte arm repoint at `0x35A08/09/12/18` · `b5` at `0xC4B64`/`0xC4B70` **UNTOUCHED**.
+
+### THE FILTER, AS BUILT
+```
+notch 25.499979 Hz  |z| = 1.000000000 (a TRUE null)    pole 21.999984 Hz  r = 0.949999986  STABLE
+H(0) = 0.999999581        max|H| over 0-500 Hz = 0.999999564   <- NEVER reaches unity anywhere
+|H|  7.79 0.9863 · 20.0 0.5893 · 21.73 0.4150 · 24.0 0.1601 · 24.9 0.0621
+     25.5 2.09e-06 · 26.8 0.1229 · 42.3 0.6801          tau 19.496 ms · 99% ring 89.7 ms
+```
+**BLAST RADIUS ZERO** — each coefficient cell has **1 reader, 0 writers**, all four inside a 40-byte
+window (`0x035A30`–`0x035A58`), and **0 `movea`/`movhi` hits on the imm16s** ⇒ nothing can reach them by
+absolute addressing either. **PURE CAL — no cave, no code edit, nothing in this kit's only bricking class.**
+
+### WHY IT IS NOT THE REFUSED NOTCH
+`docs/GATE2-2026-08-20-notch-sign.md` refused re-centring **at 6–9 Hz**, killed on `Re(u/T)` phase.
+**V105 targets 26 Hz — a different band and a different argument.** The 6–9 Hz cost here is
+**+2.7–5.1° of lag with magnitude essentially unchanged** (0.9863 vs 0.9829).
+
+### 🛑 TWO TRAPS THAT WOULD HAVE SHIPPED
+1. **DC COLLAPSE 4.48×** — moving `b1` to the notch frequency drops the numerator's DC term from 0.11920
+   to 0.026628. **`c4` and the poles must be re-solved together or the steering weight changes.**
+2. 🛑 **THE HIDDEN ONE:** fixing DC with **poles at the notch angle** (the textbook narrow notch) forces
+   `max|H|` to **1.098–1.608** and `|H(42.3)|` to **0.975 vs stock 0.385 = 2.53× WORSE** — because
+   `(2−b1)/(2+b1)` = **149.2**. ⚠ **Exactly where V59 measured a MARGINAL parametric pump** (42.19 Hz,
+   eps 0.013–0.169 vs threshold 0.147). **Fix: Honda's own poles-BELOW-zeros layout** (stock is poles
+   42.3 / zeros 55.2). **Check `max|H|` over 0–500 Hz against stock's 1.0000 before shipping any biquad edit.**
+
+### VERIFICATION — independent, three controls
+An independent harness returned **PASS, 0 failures**, with **five transfer-function deltas EXACTLY
+`0.00e+00`** (the built floats reproduce the formula bit-for-bit). Control-tested against **V104
+(16 correct FAILs)**, the **superseded 26 Hz cut (11 correct FAILs, 0 false positives)** and a
+**synthetic-correct build (0 FAILs)**. Ghidra's own decoder independently confirmed both repointed loads
+after **anchoring** the cave extract with `image.find(blob)` → `0xC4B34`.
+
+### 🛑 THE FLOAT-CAL SPECIFICATION RULE, LEARNED HERE
+**A 6-decimal-place decimal does NOT round-trip a float32.** `a1` needs **8** significant digits and
+`b1` needs **9**; `a2`/`c4` survived their rounding **by luck**, which made the failure look selective
+and therefore look like an encoding bug. **THE FORMULA IS THE SPECIFICATION**; hex in a message is an
+**assertion target, never the source**. `build_v105_tva.py` embeds the formula and **asserts AGAINST**
+the lossy encodings.
+
+### DRIVE CARD
+**PRIMARY:** 21–28 Hz **IN-BURST LEVEL** (🛑 **not duty — duty saturates at 4×**), engaged, **<16 km/h**,
+stratified by steering rate with **15–40 °/s the headline cell**. Reference: V104 on `a4`, same window.
+**SECONDARY:** `b6` duty = governor clip fraction. 🛑 **Discard the first ~1 s of each engaged episode** —
+the ceiling is scaled by an authority ramp (`cal(0xC6492)`=33 ct/tick ⇒ **993 ms**) active above
+`cal(0xC6316)`=640 ct ≈ **10 km/h**. **An early-episode `b6`=0 is uninformative, not headroom.**
+**WATCH FOR:** a soft settle at engagement (ring 20 → 90 ms) and anything new at ~42 Hz (1.75×).
+
+---
+
+
+## 🛑🛑 V104 — ⚠ **FLEW AS ROUTE `a4`; V104 IS ON THE CAR.** (This header previously read "BUILT, NOT FLASHED, V103 IS ON THE CAR" — STALE, corrected 2026-08-22 from telemetry.) **FIXED NOTHING — operator: both symptoms still present.**
 
 | artifact | SHA256 |
 |---|---|

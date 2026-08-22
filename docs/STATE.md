@@ -1,6 +1,126 @@
 # STATE — living current state of the kit
 
-## 🛑🛑 LATEST BLOCK, 2026-08-22 — **MEASUREMENT-ONLY SESSION. NO BUILD. FIVE INSTRUMENTS RETIRED OR RESCALED.**
+## 🛑🛑 LATEST BLOCK, 2026-08-22 (late) — **V104 FLEW AND FAILED · THE 26 Hz MODE IS THE TARGET · V105 IS A 25.5 Hz NOTCH**
+
+🛑 **ON THE CAR: V104** (route `a4`). **V105 BUILT, VERIFIED, UNFLASHED. Nothing flashed, no CAN, no UDS.**
+Narrative: **`docs/HANDOFF-2026-08-22-v105-the-26hz-mode-and-the-notch.md`** — every finding including
+the negatives, **18 retractions**, 12 open items with what closes each, and the V105 drive card.
+
+### 🛑 BOTH DOCS WERE WRONG ABOUT WHAT IS ON THE CAR — SECOND BUILD RUNNING
+`STATE.md` and `BUILD-LINEAGE.md:26` both said *"V104 BUILT, NOT FLASHED. V103 IS ON THE CAR."* **V104
+was flashed and driven as route `a4`.** ⭐ **Settled from the TELEMETRY, not the record:** `a4` carries
+**57 frames with a CAN-427 wire code > 800, max 850**; V103's packer has a **structural ceiling of 800**
+and observed max 117. **850 is arithmetically impossible on V103.** ⇒ **verify the flown build from the
+wire, never from a doc.**
+
+### ⭐⭐ THE FINDING — ONE MODE AT 21–28 Hz, AND IT IS A **STEERING-RATE** PHENOMENON
+Engaged, **<16 km/h** (the operator's own window — he supplied the correction), pre-declared Schmitt
+detector on a **true analytic envelope**:
+
+| | burst duty [95% CI] | in-burst A | longest burst |
+|---|---|---|---|
+| STOCK 1× | 0.056 [0.000, 0.149] | 1.23 | 0.69 s |
+| V102 6× | 0.945 [0.836, 1.000] | 9.43 | 7.43 s |
+| V103 6× | 0.948 [0.892, 1.000] | 15.71 | 11.23 s |
+| V104 6× | 0.933 [0.874, 0.970] | 4.32 | 13.91 s |
+
+🛑 **CONTINUOUS at 6×, ABSENT on stock, disjoint CIs. No V104-vs-V103 comparison resolves. No lever on
+V104 touched it.** Wheel order EXCLUDED (peak-vs-speed R² = 0.039 vs the 0.962/1.442 a tyre order needs).
+
+**Median 21–28 Hz level by STEERING RATE, engaged, <16 km/h (true deg/s):**
+
+| | 0–5 | 5–15 | **15–40** | 40–100 | 100+ |
+|---|---|---|---|---|---|
+| STOCK 1× | 0.12 | 0.30 | **0.24** | 0.48 | 0.57 |
+| V104 6× | 1.17 | 4.78 | **20.79** | 14.47 | 0.76 |
+
+🛑 **~90× stock at 15–40 °/s · 8–14× at 0–5 °/s · COLLAPSES TO STOCK above 100 °/s.**
+⭐ Independently corroborates the operator's own *"applying torque kills the buzz"* (16.12× [5.29, 41.29]).
+
+🛑 **AND A SCORING CORRECTION: DUTY SATURATES AT 4×** (0.82 → 0.89 to 8×) while **in-burst LEVEL climbs
+21×** (0.88 → 18.63). **Above 4× the gain sets AMPLITUDE, not INCIDENCE. SCORE V105 ON LEVEL, NOT DUTY.**
+
+### V104 SCORED — the dose arrived and the lever is dead
+**Dose 1.824×** (predicted 1.66–1.85), speed-matched. **No clipping** (max `|gp-0x6b86|` 2720 vs ±12288,
+4.5× clear) ⇒ **candidate (d) DEAD.** 🛑 **But the 6–9 Hz result does NOT survive the operator's window:**
+0.445 [0.24, 0.66] at 0–40 → **1.07 [0.30, 1.64] at <10 km/h**; placebo-corrected **0.63 → 1.29**. And
+`a4`'s own split-half is **2.14 at 0–40 but 0.71 at <16** — **the reported window was the worst-controlled
+one.** ⇒ **"the lane was not rejected" is WITHDRAWN; candidate (c) is OPEN.**
+
+### 🛑 THE STRUCTURAL RESULT — A NOTCH IS THE ONLY SHAPE THAT SURVIVES
+Every **in-loop low-pass fails GATE 2 on phase**: even −6 dB at 26 Hz costs **−60°** against a margin of
+**1.6–4.1 dB**. A **notch**'s phase returns to zero at its own centre ⇒ **−23 dB at the mode for −0.1 dB
+and −8.6° at 3 Hz.** And **command-path filtering cannot work** — the mode is **self-excited** (`f0` =
+21.90 / 23.61 / 24.90 Hz at 1× / 4× / 6×; a driven response does not move its frequency with loop gain).
+⊕ **Route B:** `gp-0x6b4c` reaches the aggregator **DIRECT at `0x3AA3E`**, bypassing the 5.05 Hz
+arbitration IIR — this resolves the long-unexplained 0.71–1.06 attenuation discrepancy.
+
+### V105 — 4 floats + a 4-byte probe, PURE CAL, zero blast radius
+| artifact | SHA256 |
+|---|---|
+| `_v105_…NOTCH25.5HZ…_plain_image.bin` | `2666a000415a29fef98ac9cd6c183536269c3e61a61fc822c17586f2adde7e00` |
+| `39990-TVA,A160-V105-…NOTCH25.5HZ….rwd` | `5592f7ca52d07247152e5930c579b6ba35e2f5fa5a3adcafcb08b95fff6c89a8` |
+
+```python
+R_POLE, F_POLE, F_ZERO, FS = 0.950, 22.0, 25.5, 1000.0   # THE FORMULA IS THE SPEC
+a1 = -2*R_POLE*cos(2*pi*F_POLE/FS)   # 0xC60A8  56e1f0bf
+a2 = R_POLE*R_POLE                   # 0xC60AC  3d0a673f
+b1 = -2*cos(2*pi*F_ZERO/FS)          # 0xC60B0  9eb8fcbf
+c4 = (1+a1+a2)/(2+b1)                # 0xC60B4  b51a4e3f   <- FORCED by unity DC
+```
+```
+notch 25.499979 Hz  |z| = 1.000000000      pole 21.999984 Hz  r = 0.950
+H(0) = 0.999999581     max|H| over 0-500 Hz = 0.999999564  (NEVER reaches unity)
+|H|  7.79 0.9863 · 21.73 0.4150 · 24.9 0.0621 · 25.5 2.09e-6 · 26.8 0.1229 · 42.3 0.6801
+tau 19.496 ms · 99% ring 89.7 ms
+```
+**+ `b6` repointed** (`0xC4B36` `2695`→`6c94`, `0xC4B42` `2495`→`9cb0`) ⇒ **`|gp-0x6b94| ≥ |gp-0x4f64|`,
+the governor clip duty, on the wire for the first time.** `b5` untouched. **24 bytes in 8 runs vs V104,
+ZERO unattributed.** **Blast radius: each coefficient cell has 1 reader, 0 writers, and 0 `movea`/`movhi`
+hits on its imm16.** Verified by an independent **three-control** harness: **PASS, 0 failures, five
+transfer-function deltas EXACTLY zero.**
+**COSTS:** 42 Hz **1.75× worse** · engagement ring **20 → 90 ms** · 6–9 Hz **+2.7–5.1° lag**.
+🛑 **WHY 25.5 NOT 26.0:** the mode spans `f/Q` = **0.90–1.86 Hz**, so **band coverage beats a point-null**;
+25.5 wins at **every** rung of the ladder and straddles the two disagreeing centre estimates.
+
+### 🛑 DRIVE CARD — `b6` UNDER-REPORTS FOR UP TO ~1 s
+The true clip test is `|sum| ≥ (G × chanA)>>15`; `b6` tests `|sum| ≥ G`. **`cal(0xC6492)` = 33 ct/tick ⇒
+993 ms full traverse, and the ramp is ACTIVE above `cal(0xC6316)` = 640 ct ≈ 10 km/h** (both verified
+from the image). ⇒ **discard the first ~1 s of each engaged episode; an early `b6` = 0 is uninformative,
+not headroom.** ⚠ 993 ms is a **worst-case bound** — that `chanA` starts near zero is unverified.
+
+### 🛑 THE OPERATOR'S OWN HYPOTHESIS — REFUTED CLEANLY
+*"LKAS feeding into the driver torque signal."* **Partial coherence `γ²(e4, bar | angle)` — never run
+before — is 0.0006–0.0165 across the whole gain ladder, FLAT, at or below its own shuffled null on all
+five routes**, while ordinary coherence rises 0.08 → 0.51 with gain. **It does not scale with `0xC6CD0`,
+which the hypothesis requires.** ⚠ Limit: contamination collinear with angle would also be removed.
+⭐ **The architectural answer is independent and stronger: a torsion bar measures DIFFERENTIAL TWIST, so
+motor torque in the signal is the sensor's operating principle, not an oversight. There is no decoupler
+because there cannot be one.** Three candidates traced and all refuted — `gp-0x6b4a` (speed-derived, its
+gate a NO-OP, and it acts INSIDE `gp-0x6b86` which V104 proved is rejected), `cal(0xC616C)` = 0 (a
+self-closing diagnostic loop), `cal(0xC63CC)` = 0 (kills the shared-source theory).
+
+### ⭐ A NEW INSTRUMENT — and its honest limits
+**Every drive carries CONTINUOUS 16 kHz PCM** (`rawAudioData`), all six routes, coverage 0.83–1.00,
+**Nyquist 8000 Hz** against the CAN channels' 25–50 Hz. 🛑 **But the mic is BLIND to the 21–28 Hz mode**
+(separation 0.4× vs wheel rate's 11.6×; in-burst level FLAT across a ladder where wheel rate climbs 21×)
+— **an instrument failure, not a negative**, and close to predicted physics (21 Hz ≈ 16 m wavelength).
+**It IS alive above 100 Hz** (speed 0.14–0.28 dB/km/h; a turn-signal control at z ≈ 3.8–4.4) ⇒ **the
+"no audible band separates stock from 6×" result IS real.** 🛑 **And absolute acoustic level is NOT
+comparable across drives: parked, engine on, LKAS off, the cabin differs 3–12× between drives.**
+
+### 🛑 FOUR TOOLING TRAPS, ALL THE SAME FAMILY — they return a WRONG answer, not an error
+`get_xrefs_to` false "No references found" on tp-relative cells · `decompile_function` silently returning
+the **wrong function** in undefined regions · **Ghidra answering against whatever program is `is_current`**
+(a 92-byte blob, live this session) · **a headerless blob's file offsets read as image addresses.**
+⭐ **Defence for the last: anchor with `image.find(blob)` before trusting any address in it.**
+⊕ **Two SILENT ZEROS in one extraction tool**, both found independently by two agents: `segments()`
+stopping at the first absent index (**route `85` silently skipped**) and the 5–15 / 21–28 Hz third-octave
+columns being **identically zero** (1024-pt FFT ⇒ 15.625 Hz bins, no bin centre).
+
+---
+
+## ⚠ SUPERSEDED BLOCK, 2026-08-22 (early) — **MEASUREMENT-ONLY SESSION. NO BUILD. FIVE INSTRUMENTS RETIRED OR RESCALED.**
 
 🛑 **ON THE CAR: V103, unchanged. NOTHING BUILT, FLASHED, OR SENT. No openpilot file was modified.**
 **V104 remains the current unflashed candidate — its block below is NOT superseded.**
@@ -78,7 +198,7 @@ torque as a co-primary against an 0xE4-derived quantity.
 ⚠ **WITHDRAWN by their own author, kept for the audit trail:** `plant_fit_final.py` (R² 0.01–0.32,
 negative J² on several arms) and `plant_hs.py` (superseded).
 
-## 🛑🛑 PREVIOUS BLOCK, 2026-08-21 (late) — **V104 BUILT, UNFLASHED. `c4` IS A FLAT LANE GAIN AND IT IS VIRGIN.**
+## ⚠ SUPERSEDED BLOCK, 2026-08-21 (late) — 🛑 **ITS “UNFLASHED” LINE IS STALE — V104 FLEW AS ROUTE `a4`.** **V104 BUILT. `c4` IS A FLAT LANE GAIN AND IT IS VIRGIN.**
 
 🛑 **ON THE CAR: V103, unchanged. NOTHING WAS FLASHED; NO CAN OR UDS WAS SENT.**
 **V104 exists as an unflashed artifact.** Full narrative — every finding including the negative ones,

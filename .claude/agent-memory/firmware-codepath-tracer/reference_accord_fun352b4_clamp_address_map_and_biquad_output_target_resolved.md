@@ -1,6 +1,6 @@
 ---
 name: reference_accord_fun352b4_clamp_address_map_and_biquad_output_target_resolved
-description: Instruction-address map for every clamp in FUN_000352b4's Path-1 chain (gp-0x4f60 through gp-0x6b86), produced for a safety-gate audit of a proposed 0xC60A8/AC/B0/B4 biquad-coefficient boost. Resolves which value the +-12.0 float clamp targets (the FULL notch output y[n], symmetric BOTH bounds -- refutes an independent trace's "half-clamp" misread) and quantifies exactly when a c4-only boost starts clipping it (linearly, starting immediately above k=1.0, since stock's own margin is already ~0%). Proves gp-0x6b82's magnitude is bounded by a min() against gp-0x6b7a. CORRECTS an own first-pass lowball: the gp-0x6b7e pedestal (added AFTER the biquad, before the SECOND +-0x3000 clamp) is NOT negligible -- worst-case bound ~+-12288, same order as the whole second clamp. Also maps the DTC escalation chain (FUN_00045a20/FUN_0004613e/FUN_000462e6/FUN_00043e44) and proves FUN_00045a20's checked delta is ALGEBRAICALLY blind to gp-0x6b86/gp-0x6b94 by construction. Confirms the shadow-lockstep fault class (FUN_0006b9fa -> FUN_0006ce7c(4)) is structurally unreachable by any cal-only coefficient edit, and that gp-0x4cde (gp-0x6b86's shadow) is fully self-contained like its sibling pairs.
+description: Instruction-address map for every clamp in FUN_000352b4's Path-1 chain (gp-0x4f60 through gp-0x6b86), produced for a safety-gate audit of a proposed 0xC60A8/AC/B0/B4 biquad-coefficient boost. Resolves which value the +-12.0 float clamp targets (the FULL notch output y[n], symmetric BOTH bounds -- refutes an independent trace's "half-clamp" misread) and quantifies exactly when a c4-only boost starts clipping it (linearly, starting immediately above k=1.0, since stock's own margin is already ~0%). Proves gp-0x6b82's magnitude is bounded by a min() against gp-0x6b7a. CORRECTS an own first-pass lowball: the gp-0x6b7e pedestal (added AFTER the biquad, before the SECOND +-0x3000 clamp) is NOT negligible -- worst-case bound ~+-12288, same order as the whole second clamp. Also maps the DTC escalation chain (FUN_00045a20/FUN_0004613e/FUN_000462e6/FUN_00043e44) and proves FUN_00045a20's checked delta is ALGEBRAICALLY blind to gp-0x6b86/gp-0x6b94 by construction. Confirms the shadow-lockstep fault class (FUN_0006b9fa -> FUN_0006ce7c(4)) is structurally unreachable by any cal-only coefficient edit, and that gp-0x4cde (gp-0x6b86's shadow) is fully self-contained like its sibling pairs. ROUND 3 (2026-08-22): confirms address-pinned that c4 is read/used EXACTLY ONCE (0x35a30/0x35a3c) and gp-0x6b7e has ZERO dependency on it anywhere; gp-0x6b7e's EMA target is gated to exactly zero unless the friction-hold clamp is biting; corrects an own same-session "several seconds" residual-decay guess to the real figure (alpha=20/2048 fixed, 469ms to 1%, 960ms worst-case full clearance), cross-checked against the flat-LERP byte-read in reference_accord_biquad_is_a_notch_v103_armed_and_recentering_priced_short.md.
 metadata:
   type: reference
 ---
@@ -188,6 +188,52 @@ test, but NOT traced back far enough to state its sensitivity to a boosted Path-
 text collisions elsewhere). Zero external readers/writers — same self-contained pattern as the sibling
 pairs (`gp-0x4cc8`, `gp-0x4ce0`). Combined with the atomic write-both proof already in this file: a
 cal-only coefficient edit cannot desynchronize it.
+
+## 🛑🛑🛑 ROUND 3 (2026-08-22, `feel-impact` task, V104 steering-feel quantification): c4 CONFIRMED to touch gp-0x6b7e NOWHERE, and its EMA rate is FIXED not adaptive
+
+Fresh `decompile_function`+`disassemble_function(0x352b4)` again this session (3rd independent pass on
+this exact function), specifically to settle whether `gp-0x6b7e` dilutes a `c4` boost. **Confirmed,
+address-pinned, both branches:**
+
+```
+0x359e0-0x35a1e   gp-0x6b7e computed + STORED (st.h r15,-0x6b7e[gp] @0x35a1e) — BEFORE the arm-gate
+                  check even runs. Zero dependency on tp+0x70b4 (c4) or any of the 4 biquad coeffs.
+0x35a0c-0x35a26   ARM GATE (cal 0xC649B==1 && cal 0xC64FA<=gp-0x671a).
+0x35a30           c4 LOADED (ld.w 0x70b4[tp],r9) — the ONLY place c4 is read in the whole function.
+0x35a3c           mulf.s r9,r14,r12 — c4 multiplies ONLY u[n] (gp-0x6b82/1024). SOLE use of c4.
+0x35a86           DISARMED fallback: r6 = raw iVar34 (=gp-0x6b82), c4 never read on this branch either.
+0x35a88           add r15,r6 — gp-0x6b7e(c4-independent) + biquad-or-passthrough(c4-scaled-or-raw).
+```
+So boosting `c4` (V104's ONLY edit, confirmed via `build_v104_tva.py`: 0xC60B4 alone,
+0.81730998f->1.51202345f, pure coefficient swap, no cave/control-flow change — this stock-image trace
+transfers to V104 unmodified) rescales ONLY the biquad term; `gp-0x6b7e` is invariant to it.
+
+**NEW: `gp-0x6b7e`'s EMA target is gated to EXACTLY ZERO unless a separate "friction-hold" min-clamp is
+actively limiting the signal upstream.** `bVar3` (@0x35892-98) fires when a friction-hold ceiling table
+(indexed by raw input-torque magnitude, cal/RAM block `gp-0x644x`/`gp-0x647x`) is LESS than
+`|gp-0x6b7a|` (the assist-map's own output before friction-hold). When that clamp is slack — i.e. the
+assist-map output isn't exceeding the friction-hold ceiling — the EMA target is 0 and `gp-0x6b7e` decays
+toward 0 (settles to EXACTLY 0 once the accumulator `gp-0x381c` is within +-128 of zero, its own
+x128-prescaled domain). **In that regime essentially 100% of `gp-0x6b86` is the c4-scaled biquad term.**
+Physical meaning of the friction-hold table itself (what axis, what real torque threshold) NOT
+re-derived this session — same open item as `fun352b4_full_chain_gp6b82_tap`'s note.
+
+🛑 **CORRECTS my own "worst case ~several seconds" residual-decay guess from earlier the SAME session**
+(before finding the table below) — the real number is much faster. `gp-0x6b7e`'s EMA rate is driven by a
+breakpoint search (0x3595e-0x359ba, over `tp+0x78fe..0x790c` = `0xC68FE..0xC690C`) that
+`reference_accord_biquad_is_a_notch_v103_armed_and_recentering_priced_short.md` §6 already byte-read as
+**FLAT**: `read_memory(0xC68FC,32)` → count=4, X=[0,9830,26214,32768], Y=[20,20,20,20]. So the EMA rate is
+**FIXED at alpha=20/2048=0.009766** (not the adaptive [2,204]/2048 the raw disassembly's clamp bounds
+alone would suggest — those bounds are just the static ceiling on an always-flat table). Computed this
+session (Python, exact): **time to decay to 1% of any starting excursion = 469 ms; worst-case full
+clearance from the theoretical max excursion (+-12288 pre-shift, +-1,572,864 in the x128 domain) into
+the +-128 deadband = 960 ms.** So a residual pedestal from a friction-hold-limited maneuver clears in
+under a second, not "several seconds" as I first guessed.
+
+**Practical read for any future `c4`-family lever**: in ordinary driving away from the friction-hold
+ceiling, `gp-0x6b7e` does NOT dilute a `c4` boost — it is a genuine but narrow-duty bypass, active only
+during/shortly after friction-hold-limited maneuvers (hard turns, parking, curb contact), decaying out
+within ~0.5-1s.
 
 ## Related
 [[reference_accord_fun352b4_full_chain_gp6b82_tap_and_c6200_shared_clamp]] — the structural chain this
