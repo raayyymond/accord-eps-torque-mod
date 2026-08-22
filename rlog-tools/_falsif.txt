@@ -1,0 +1,126 @@
+
+==========================================================================================================
+1.  FALSIFIER F2 -- CV of the per-bin J/b, ALL bins vs ONLY bins meeting coh >= 0.50
+==========================================================================================================
+    Pre-registered kill condition: CV > 0.50 on a route with coh >= 0.50.
+    🛑 What I reported last time used ALL bins in 4-10 Hz, ignoring the qualifier.
+
+    route                           ALL bins              coh >= 0.50 bins ONLY    verdict
+    V9b STOCK     CV 0.147 (n=7)            CV 0.146 (n=5)                 survives
+    V103          CV 0.510 (n=6)            CV 0.454 (n=4)                 survives
+    V102          CV 0.671 (n=7)            CV 0.721 (n=4)                  🛑 TRIPS
+    V88           CV 0.234 (n=7)            CV 0.181 (n=6)                 survives
+    V100 4x       CV 0.535 (n=7)            CV 0.376 (n=5)                 survives
+
+    PER-BIN DETAIL (J/b ms, coherence) -- bins BELOW the qualifier are marked *
+    route                  4 Hz           5 Hz           6 Hz           7 Hz           8 Hz           9 Hz          10 Hz
+    V9b STOCK      *40.1 (0.35)   *43.4 (0.38)    37.6 (0.54)    39.0 (0.57)    38.4 (0.74)    33.1 (0.75)    25.5 (0.77)
+    V103            *8.2 (0.30)   *29.9 (0.18)             --    48.7 (0.56)    21.9 (0.84)    18.5 (0.83)    20.3 (0.70)
+    V102           *24.5 (0.27)    40.7 (0.62)    26.4 (0.55)   *29.7 (0.35)    11.4 (0.76)     2.4 (0.71)    *3.6 (0.19)
+    V88            *13.7 (0.41)    23.3 (0.51)    26.5 (0.53)    29.9 (0.52)    22.6 (0.71)    19.1 (0.81)    17.5 (0.79)
+    V100 4x         *2.8 (0.36)   *23.8 (0.44)    40.1 (0.61)    41.6 (0.82)    38.7 (0.89)    21.4 (0.84)    12.9 (0.89)
+
+==========================================================================================================
+1b.  POST-HOC DIAGNOSTIC -- is a tripped CV a RESONANCE, or a smooth model error?
+==========================================================================================================
+    Fit ln(J/b) linear in ln(f) over the qualifying bins; report the 7.5-9 Hz residual
+    in units of the fit's own residual SD.  A resonance is a LOCAL excursion there.
+
+    route         n bins      slope     resid SD     8 Hz resid
+    V9b STOCK          5      -0.70        0.109       +0.83 sd
+    V103               4      -2.44        0.242       -0.85 sd
+    V102               4      -4.32        0.448       +0.07 sd
+    V88                6      -0.51        0.149       -0.10 sd
+    V100 4x            5      -2.21        0.258       +0.72 sd
+
+    ⇒ |8 Hz resid| < ~1 sd means the departure is NOT localised at 8 Hz: the model is
+      wrong smoothly across the band, which is not a resonance AT 8 Hz.
+
+==========================================================================================================
+2.  FALSIFIER F1 -- the MANUAL (LKAS-off) HANDS-OFF cell.  Extraction gap or data gap?
+==========================================================================================================
+    Step 1: does the data EXIST?  Count manual hands-off windows, before any coherence
+    gate.  Step 2: if it exists, run the arm and report its coherence honestly.
+
+    route          man eps man/off win  eng/off win  man/off sec
+    V9b STOCK            9         47           63        240.6
+    V103                 6         10           18         51.2
+    V102                 9         27           21        138.2
+    V88                  6         12           12         61.4
+    V100 4x              1          0           14          0.0
+    V101 8x              4          2            0         10.2
+
+    ⇒ manual hands-off windows corpus-wide: 98  (502 s of exposure)
+    ⇒ **THE DATA EXISTS.  It was NOT an extraction gap.**  Running the arm now.
+
+==========================================================================================================
+2b.  THE MANUAL HANDS-OFF ARM, POOLED CORPUS-WIDE -- coherence is the whole question
+==========================================================================================================
+    f Hz            coh^2       J/b ms
+    4              0.0071         10.1
+    5              0.0060           --
+    6              0.0060          6.6
+    7              0.0090          8.0
+    8              0.0161         19.1
+    9              0.0122         41.2
+    10             0.0050          3.4
+
+    bins meeting the falsifier's own coh >= 0.30 gate: 0 of 7
+    🛑 **F1 IS UNTESTABLE ON THIS CORPUS -- and for a PHYSICAL reason, not a
+       missing-data reason.**  501 s of manual hands-off exposure exists, but with
+       LKAS off AND hands off there is almost no 4-14 Hz excitation of the column,
+       so coh^2 sits at 0.005-0.016 -- the cross-spectrum is measuring noise.
+       This is the kit's own recorded fact from the other direction:
+       `accord-vibration-requires-lkas-engaged` (9,200x less power LKAS-off) and
+       `accord-ratchet-is-a-saturated-resonance` (0 of 97 fully-manual windows
+       carry a line).  **The excitation the estimator needs is the very thing that
+       only exists when engaged.**
+    ⇒ CONSEQUENCE: the engaged-arm result CANNOT be checked against a passive arm
+       on this corpus.  The conclusion rests on the engaged arms plus the
+       anti-damping direction argument, and must be stated that way.
+
+==========================================================================================================
+3.  THE 3-5x ARM SPREAD -- what it is, and the WORST-CASE bound on Q at 8.16 Hz
+==========================================================================================================
+    🛑 Hands-ON is NOT the same mechanical system.  The identity T_bar/th = -(J s^2+b s)
+       assumes ZERO driver torque; hands-on it is false.  What a hands-on fit returns is
+       a LUMPED driver-arm + column impedance, so it MUST differ -- that is control C4
+       PASSING, not an inconsistency.  Arm+hand inertia at the rim raises J more than
+       hand damping raises b, so J/b rises, which is the direction observed.
+
+    Every arm, every route.  Q(8.16 Hz) = 2 pi * 8.16 * (J/b).
+
+    route       arm      hold    nep           J/b ms   Q @8.16 [95% CI]
+    V9b STOCK   engaged  off      13 35.6 [30.5, 43.8]  1.82 [1.57, 2.24]
+    V103        engaged  off       6 25.7 [12.4, 39.6]  1.32 [0.63, 2.03]
+    V102        engaged  off       8 20.2 [13.3, 36.5]  1.04 [0.68, 1.87]
+    V88         engaged  off       4 21.6 [19.8, 24.1]  1.11 [1.01, 1.24]
+    V100 4x     engaged  off       3 27.6 [16.4, 34.8]  1.42 [0.84, 1.79]
+    V101 8x     engaged  on        4 56.9 [31.2, 102.2]  2.92 [1.60, 5.24]
+    V101 8x     manual   on        3 27.0 [11.6, 86.1]  1.38 [0.59, 4.41]
+
+    🛑 THE HARD BOUND, taken over EVERY arm including the inadmissible hands-on ones:
+       the most permissive is V101 8x / engaged / on, upper 95% CI Q = 5.24 at 8.16 Hz.
+       ⇒ **no arm in the corpus, admissible or not, reaches Q = 10.**
+       Restricting to the ADMISSIBLE arms (hands-off only), the max upper CI is 2.24.
+
+==========================================================================================================
+4.  THE SINGLE-BIN FORM -- Q at 8 Hz is just tan(180deg - |arg Z|), no band, no model
+==========================================================================================================
+    For Q = 10 the 8 Hz bin would have to read |arg Z| = 95.7 deg (Z within 5.7 deg of
+    pure inertia).  For Q = 1 it reads 135 deg.  Engaged hands-off, 7.5-8.5 Hz bin.
+
+    route          nep      coh^2  |arg Z| deg Q = tan(180-a)         Q [95% CI]
+    V9b STOCK       13      0.742        117.4           1.93       [1.51, 2.77]
+    V103             6      0.842        132.2           1.10       [0.30, 1.33]
+    V102             8      0.759        150.2           0.57       [0.41, 0.64]
+    V88              4      0.711        131.4           1.13       [0.96, 1.27]
+    V100 4x          3      0.888        117.2           1.94       [0.85, 2.08]
+
+    ⇒ Q at 8 Hz = 0.57 - 1.94 across 5 routes; the largest upper 95% CI is 2.77.
+      Every bin here has coh^2 0.71-0.89, comfortably above the 0.50 qualifier, so
+      **F2 cannot touch this form of the argument** -- there is no band to be
+      inconsistent across.
+      For Q = 10, |arg Z| at 8 Hz would have to be 95.7 deg.  Measured: 117-150 deg.
+
+wrote C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\_plant_falsifiers.json

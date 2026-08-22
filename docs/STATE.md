@@ -1,6 +1,84 @@
 # STATE — living current state of the kit
 
-## 🛑🛑 LATEST BLOCK, 2026-08-21 (late) — **V104 BUILT, UNFLASHED. `c4` IS A FLAT LANE GAIN AND IT IS VIRGIN.**
+## 🛑🛑 LATEST BLOCK, 2026-08-22 — **MEASUREMENT-ONLY SESSION. NO BUILD. FIVE INSTRUMENTS RETIRED OR RESCALED.**
+
+🛑 **ON THE CAR: V103, unchanged. NOTHING BUILT, FLASHED, OR SENT. No openpilot file was modified.**
+**V104 remains the current unflashed candidate — its block below is NOT superseded.**
+Narrative: **`docs/HANDOFF-2026-08-22-hs-identification-and-five-instrument-defects.md`.**
+
+### What this session was
+An `H(s)` identification study — the transfer from LKAS/motor torque to torsion-bar torque — asked so a
+**decoupler** could be designed. It produced **no lever**. Its value is that it **retired or rescaled five
+instruments the kit has been quoting**, and it **falsified the orchestrator's own framing** before any
+build was cut on it.
+
+### ⭐ THE HEADLINE — the passive column cannot host the 8.16 Hz line
+Single-bin, scale-free, band-free, model-free: **`Q(at the mode) = tan(180° − |arg Z|)`** for
+`Z = T_bar/Ω_w`. Engaged hands-off, 7.5–8.5 Hz, coh² 0.71–0.89 on all five routes:
+**|arg Z| = 117–150°, so Q ≤ 2.8** — where **Q = 10 requires 95.7°**. Absolute fit gives
+**J_w = 0.033–0.078 kg·m²**, landing on the handbook 0.03–0.06 that `ANALYSIS-2026-08-20` §2 itself
+assumed. The column's own corner is **4.6 Hz** and the damper still carries **45–60 % of |Z|** at 6–9 Hz.
+🛑 **ONE NAMED UNTESTED ASSUMPTION:** the manual + hands-off falsifier is **physically untestable** —
+502 s of such frames exist but coherence is 20–60× below its own gate, because LKAS-off + hands-off means
+*no excitation*. ⇒ **A STRONG CONSTRAINT WITH A LOAD-BEARING BELIEF, NOT A RETRACTION.** Corroborates
+`accord-the-8hz-mode-is-the-loop-not-the-plant` from an independent instrument.
+⇒ **The orchestrator's premise — an ~8 Hz wheel-inertia peak in `H(s)` with a 180° phase rotation
+through it — is WRONG**, by ~2× in magnitude and ~55° in phase. Recorded because an architecture
+argument was built on it before the measurement existed.
+
+### 🛑 FIVE INSTRUMENT DEFECTS — all found by running controls BEFORE measurements
+| # | defect | consequence |
+|---|---|---|
+| 1 | **Both ring-down estimators saturate at ζ≈0.05 and REVERSE** (`demod` reads ζ=0.20 as 0.0084); fit-window alone swings them **3.5–6.3×** | `_stock_r97_ringdown.json` **UNQUOTABLE**; recorded **`ζ 0.017–0.036`'s Q is an UPPER BOUND** |
+| 2 | **`rate_f` = 0.7996× true deg/s**; `rate_c = 1.2506 × rate_f`, identical phase | every past `\|Z\|`/inertia on `rate_f` is **1.25× high**; "rate_c agrees with rate_f" is **vacuous** |
+| 3 | **427's source cell changes build to build** — 8 sources, 4 shifts | any cross-route 427 analysis assuming one meaning is wrong; **only route 73 can carry a directed cross-spectrum** (427 is rectified) |
+| 4 | **427 aliasing is band-dependent** — fold ratio 0.003–0.02 at 6–9 Hz but **0.23–2.57 at 20–24 Hz** | 20–24 Hz on 427 is a valid **NULL** but **never a magnitude** |
+| 5 | **0x18F staleness is 12.5 ms, not 10**; `ang` is quantisation-limited above ~6 Hz | phase work must use 12.5; **never differentiate `ang` as an in-band denominator** |
+
+✅ **NOT a defect — vindicated:** the 2026-08-20 `8.162 Hz / Q 10.21` PSD fit is essentially unbiased in
+its own configuration. Measured contamination floor/peak = 0.033 ⇒ **de-biased Q ≈ 12.1 [10.7, 13.3]**.
+**Q was UNDERSTATED, not overstated.**
+
+### ⭐ THE openpilot EXCITATION CEILING WAS WRONG BY 41×
+`STEER_DELTA_UP = 3` is **3 normalised units/s applied before the ×`STEER_MAX`**, not 3 counts/frame
+⇒ **12,288 ct/s, not 300.** Verified two ways by the orchestrator: code (`carcontroller.py:291`/`:305`,
+`DT_CTRL = 0.01`, `STEER_MAX = 4096`) and bus (**p99 |Δe4| = 123 ct/frame vs `0.03×4096 = 122.88`**,
+bit-exact on two routes; 67–73 % of engaged frames already exceed the wrong ceiling).
+⇒ Clean-sine ceiling **244.5 ct at 8 Hz**, not 5.97. An 8 Hz tone at **A = 100 ct (41 % of budget)**
+would give **γ² ≈ 0.88** on `gp-0x6b98` in one 15 s dwell. Panda does not constrain 0xE4 while engaged.
+⊕ Measured **6–9 Hz command→motor attenuation 0.71–1.06 — essentially none**, corroborated by the
+arbitration IIR (5.05 Hz corner at 1 kHz). **Scopes** `reference-accord-lkas-lane-is-a-lowpass` to ≥~10 Hz.
+🛑 **NOT BUILT — operator scoped this session to analysis only.** It is an openpilot-side change against
+a standing instruction, and it injects into the band he calls grinding.
+
+### 🛑 A RESULT FOUND, THEN KILLED BY ITS OWN AUTHOR
+`γ²(e4, torsion bar)` at 6–9 Hz reached **0.280**, 67–538× the null, control band clean. It is
+**REVERSE CAUSALITY** — `γ²(e4, ANGLE)` is higher still (0.40–0.71) and the bar gain rises 6–11× with
+**near-zero phase**. ⇒ **openpilot's command is NOT EXOGENOUS at 6–9 Hz.** Never pre-register column
+torque as a co-primary against an 0xE4-derived quantity.
+
+### OPEN ITEMS THIS SESSION CREATED (none chased)
+1. 🛑 **`|Z|` rolls off un-modelled above ~13 Hz.** If `tq` is internally low-passed near there,
+   **every kit `|Z|` above ~10 Hz inherits it — including the 21–24 Hz work.** Highest-value item.
+2. The 2-parameter column model has a **systematic smooth error on every route** (log-log slope −0.5
+   to −4.3 where 0 is required). V102 trips falsifier F2 at 0.721; 4 of 5 routes survive.
+3. `|gp-0x6b98|` engaged p50 measures **664 ct** vs the record's **208** — mask unreconciled.
+4. `|ang|` at 6–9 Hz measures **0.0155–0.032 deg** vs `ANALYSIS-2026-08-20`'s **0.089** — factor 3–6.
+5. Under an explicit hands-off mask the 2-pole fit lands at **10.5 Hz, not 8.162**.
+6. C2 Coulomb test **underpowered**: `d log b_w/d log V = −0.11 [−1.12, +0.72]` spans both hypotheses.
+7. 🛑 **The lateral-maneuver extractor captures neither `lateralManeuverPlan` nor `alertDebug`** ⇒ any
+   such drive is **unanalysable** until that changes. ⭐ And the maneuver is **NOT a bigger shove than
+   ordinary driving** — its step onset sits at ordinary driving's 99.99th percentile, its reversal at
+   the maximum. Its whole value is the known trigger instant and ~36 replicates.
+
+### Artefacts (all new files, nothing tracked was modified)
+`analysis-2020accord/e4_excitation/` (11 scripts) · `analysis-2020accord/e4_to_6b98_coherence.py` ·
+`rlog-tools/plant_{scale_resolve,Jb_absolute,phase_corner,falsifiers,zcurve,recon,impedance}.py` ·
+`rlog-tools/{ringdown_validate,ringdown_real,e3_sensitivity_and_qbracket,prereg_maneuver_hs}.py`
+⚠ **WITHDRAWN by their own author, kept for the audit trail:** `plant_fit_final.py` (R² 0.01–0.32,
+negative J² on several arms) and `plant_hs.py` (superseded).
+
+## 🛑🛑 PREVIOUS BLOCK, 2026-08-21 (late) — **V104 BUILT, UNFLASHED. `c4` IS A FLAT LANE GAIN AND IT IS VIRGIN.**
 
 🛑 **ON THE CAR: V103, unchanged. NOTHING WAS FLASHED; NO CAN OR UDS WAS SENT.**
 **V104 exists as an unflashed artifact.** Full narrative — every finding including the negative ones,

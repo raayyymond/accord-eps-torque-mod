@@ -1,0 +1,143 @@
+real disengage edges available for the sensitivity sweep: 7
+
+==========================================================================================================
+A1.  RECOVERY vs the two free choices -- truth zeta, 30 reps, 1.5 s post-edge, SNR 20 dB
+==========================================================================================================
+    select    gate         z=0.005      z=0.010      z=0.020      z=0.049      z=0.100      z=0.200
+    residue   0.15      0.0050(30)   0.0100(30)   0.0199(30)   0.0484(30)   0.1011(30)   0.1973(30)
+    residue   0.25      0.0050(30)   0.0100(30)   0.0199(30)   0.0484(30)   0.1011(30)   0.1973(30)
+    residue   0.35      0.0050(30)   0.0100(30)   0.0199(30)   0.0484(30)   0.1011(30)   0.1973(30)
+    residue   0.50      0.0050(30)   0.0100(30)   0.0199(30)   0.0484(30)   0.1011(30)   0.1948(27)
+    residue   0.65      0.0050(30)   0.0100(30)   0.0199(30)   0.0484(30)   0.1011(29)   0.1789( 4)
+    minzeta   0.15      0.0050(30)   0.0100(30)   0.0199(29)   0.0486(28)   0.1011(27)   0.1947(27)
+    minzeta   0.25      0.0050(30)   0.0100(30)   0.0199(29)   0.0486(28)   0.1011(27)   0.1947(27)
+    minzeta   0.35      0.0050(30)   0.0100(30)   0.0199(29)   0.0486(28)   0.1011(27)   0.1947(27)
+    minzeta   0.50      0.0050(30)   0.0100(30)   0.0199(29)   0.0486(28)   0.1011(27)   0.1972(24)
+    minzeta   0.65      0.0050(30)   0.0100(30)   0.0199(29)   0.0486(28)   0.1011(27)   0.1789( 4)
+
+==========================================================================================================
+A2.  THE THREE NULLS vs the two free choices -- fits returned out of 40 (want 0)
+==========================================================================================================
+    select    gate    white noise perfect step   phase-rand
+    residue   0.15              0            0            0
+    residue   0.25              0            0            0
+    residue   0.35              0            0            0
+    residue   0.50              0            0            0
+    residue   0.65              0            0            0
+    minzeta   0.15              0            0            0
+    minzeta   0.25              0            0            0
+    minzeta   0.35              0            0            0
+    minzeta   0.50              0            0            0
+    minzeta   0.65              0            0            0
+
+==========================================================================================================
+A3.  THE POWER TABLE vs the free choices -- injected zeta=0.05 at A x pre-edge band RMS
+==========================================================================================================
+    🛑 A THIRD FREE CHOICE, found while running this sweep and NOT flagged earlier:
+       the ANALYSIS WINDOW LENGTH.  The variance-explained gate is a RATIO over the
+       window, and a zeta=0.05 ring at 8 Hz is gone in ~0.4 s -- so lengthening the
+       window dilutes the mode's share and the gate rejects it.  This is the SAME class
+       of defect that killed E1/E2 (their answer moved with the fit-window length), so
+       it is swept here rather than fixed by choosing a favourable value.
+    detections out of 7 real post-edge segments, and the recovered median
+
+    (a) WINDOW SWEEP at select=residue, gate=0.35
+    window s              A=1.0           A=2.0           A=4.0
+    0.75                   0/ 7     2/ 7  0.036     3/ 7  0.046
+    1.00                   0/ 7            0/ 7     2/ 7  0.042
+    1.50                   0/ 7            0/ 7     1/ 7  0.037
+    2.00                   0/ 7            0/ 7     1/ 7  0.035
+    3.00                   0/ 7            0/ 7            0/ 7
+
+    (b) SELECT x GATE at the window that maximises power (1.0 s)
+    select    gate              A=1.0           A=2.0           A=4.0
+    residue   0.15               0/ 7     2/ 7  0.034     3/ 7  0.046
+    residue   0.25               0/ 7     1/ 7  0.043     2/ 7  0.042
+    residue   0.35               0/ 7            0/ 7     2/ 7  0.042
+    residue   0.50               0/ 7            0/ 7     2/ 7  0.042
+    residue   0.65               0/ 7            0/ 7            0/ 7
+    minzeta   0.15               0/ 7     2/ 7  0.034     3/ 7  0.046
+    minzeta   0.25               0/ 7     1/ 7  0.043     2/ 7  0.042
+    minzeta   0.35               0/ 7            0/ 7     2/ 7  0.042
+    minzeta   0.50               0/ 7            0/ 7     2/ 7  0.042
+    minzeta   0.65               0/ 7            0/ 7            0/ 7
+
+==========================================================================================================
+A4.  THE REAL EDGES vs ALL THREE free choices -- fits returned (the 0/7 result)
+==========================================================================================================
+    select    gate         0.75 s      1.00 s      1.50 s      2.00 s      3.00 s
+    residue   0.15          1 / 7       0 / 7       0 / 7       0 / 7       0 / 7
+    residue   0.25          1 / 7       0 / 7       0 / 7       0 / 7       0 / 7
+    residue   0.35          0 / 7       0 / 7       0 / 7       0 / 7       0 / 7
+    residue   0.50          0 / 7       0 / 7       0 / 7       0 / 7       0 / 7
+    residue   0.65          0 / 7       0 / 7       0 / 7       0 / 7       0 / 7
+    minzeta   0.15          1 / 7       0 / 7       0 / 7       0 / 7       0 / 7
+    minzeta   0.25          1 / 7       0 / 7       0 / 7       0 / 7       0 / 7
+    minzeta   0.35          0 / 7       0 / 7       0 / 7       0 / 7       0 / 7
+    minzeta   0.50          0 / 7       0 / 7       0 / 7       0 / 7       0 / 7
+    minzeta   0.65          0 / 7       0 / 7       0 / 7       0 / 7       0 / 7
+
+    🛑 If this is 0 at EVERY setting, the null is robust to the analyst's choices.
+       Read it beside A3(a): the null is only INTERPRETABLE where A3 shows real power.
+
+==========================================================================================================
+B.  ROUTE 0x97 (STOCK) RING-DOWN, E3, at `stock_r97_ringdown.py`'s own two criteria
+==========================================================================================================
+    🛑 `rlog-tools/_stock_r97_ringdown.json` is NOT touched.  This is the replacement
+       NUMBER; folding it into the record is the orchestrator's call.
+
+    --- FROZEN (4.0/4.0) : 1 qualifying edges on route 0x97 ---
+        edge0  pre-edge 6-9 Hz RMS    52.9 ct   E3: REFUSED        E1(fit_s=2.0): 0.0030
+        ⇒ E3 accepted 0 of 1.
+
+    --- RELAXED (2.5/3.0) : 1 qualifying edges on route 0x97 ---
+        edge0  pre-edge 6-9 Hz RMS    52.9 ct   E3: REFUSED        E1(fit_s=2.0): 0.0032
+        ⇒ E3 accepted 0 of 1.
+
+==========================================================================================================
+C1.  THE REAL BROADBAND BACKGROUND FRACTION in the T_s auto-spectrum, engaged hands-off
+==========================================================================================================
+    Model: 2-pole peak + a FLAT floor.  `frac` = floor / peak height -- the quantity
+    `ringdown_validate.py` section 5 had to GUESS (it assumed equal band power).
+    🛑 RUN OVER TWO BANDS.  A free 4-16 Hz fit does NOT lock onto 8.16 Hz -- it lands on
+       a ~12.4 Hz feature on four of five routes.  The bias that matters for the
+       2026-08-20 number is the one AT 8.16 Hz, so a 6-11 Hz fit is carried alongside
+       and it is the 6-11 Hz `frac` that is used in C2.
+
+    --- FREE 4-16 Hz ---
+    route          nwin      f_n     zeta peak/floor       frac
+    V9b STOCK        77    12.72   0.1231     48.422      0.021
+    V103             20    12.39   0.1608    293.164      0.003
+    V102             36     8.83   0.0772      7.129      0.140
+    V88              19    13.83   0.0119      4.192      0.239
+    V100 4x          18    12.06   0.1837     39.659      0.025
+    median background fraction (floor / peak) = 0.025
+
+    --- TARGETED 6-11 Hz ---
+    route          nwin      f_n     zeta peak/floor       frac
+    V9b STOCK        77    10.50   0.0722      5.364      0.186
+    V103             20    10.42   0.1608    116.132      0.009
+    V102             36     8.88   0.0943     30.740      0.033
+    V88              19    10.18   0.1719     65.726      0.015
+    V100 4x          18     9.61   0.1837     29.257      0.034
+    median background fraction (floor / peak) = 0.033
+
+==========================================================================================================
+C2.  THE 2-POLE PSD FIT'S BIAS AT THAT MEASURED CONTAMINATION -- the Q = 10.21 bracket
+==========================================================================================================
+    White-noise-driven 2-pole of KNOWN zeta + a flat background at the MEASURED
+    floor/peak = 0.033, 400 s at 100 Hz, Welch NFFT 512 -- the 2026-08-20 configuration.
+
+    truth zeta      recovered       bias
+        0.0200         0.0295       1.48x
+        0.0350         0.0434       1.24x
+        0.0490         0.0560       1.14x
+        0.0700         0.0772       1.10x
+        0.1000         0.1063       1.06x
+        0.1500         0.1562       1.04x
+
+    🛑 INVERT THIS FOR THE REPORTED 0.0490:
+       recovered 0.0490  =>  TRUE zeta ~ 0.0412  =>  TRUE Q ~ 12.1
+       (the reported figure was zeta 0.0490 / Q 10.21)
+    Direction of the bias, as established: a background INFLATES the fitted zeta, so
+    the true mode is LESS damped than reported and Q is UNDERSTATED, not overstated.
