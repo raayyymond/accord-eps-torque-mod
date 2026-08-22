@@ -1,0 +1,144 @@
+====================================================================================================================
+0. THE PRE-DECLARED THRESHOLD, computed once from the STOCK arm
+====================================================================================================================
+  STOCK (r97) engaged < 16 km/h, 21-28 Hz analytic envelope:
+     p50 0.1722  p75 0.3399  p90 0.7739  **p95 = THR_ON = 1.0412**  p99 2.6288 deg/s
+     THR_OFF = 0.70 x THR_ON = 0.7289   MIN_BURST 0.25 s   MERGE_GAP 0.15 s
+
+====================================================================================================================
+1-4. BURST DUTY · IN-BURST AMPLITUDE · IN-BURST RATCHET RATE, engaged < 16 km/h
+====================================================================================================================
+     build   runs     sec BURST DUTY  in-burst A out-burst A   longest s  ratchet /s     NULL /s
+  STOCK 1x     13    68.1     0.0561      1.2331      0.1625        0.69        1.05        1.59
+   V102 6x     16    66.3     0.9446      9.4288      0.4116        7.43        2.09        1.83
+   V103 6x     11    68.0     0.9477     15.7072      0.6266       11.23        2.11        1.93
+   V104 6x     19   112.6     0.9330      4.3207      0.6271       13.91        2.03        1.77
+V105 NOTCH     17    86.8     0.8608      4.3511      0.4922       15.96        2.02        1.75
+
+  BURST DUTY = fraction of engaged <16 km/h time above what STOCK exceeds 5 %% of the time.
+  in-burst / out-burst A = median 21-28 Hz analytic envelope, deg/s.
+  ratchet /s = 4-15 Hz envelope events inside bursts.  NULL /s = same detector on the
+  phase-shuffled surrogate (same spectrum, no AM).  🛑 the event rate is only meaningful
+  if it CLEARLY exceeds its own null.
+
+  N2 CONTROL BAND (32-45 Hz carrier), same detector, threshold re-anchored on STOCK:
+     build       duty  in-burst A  ratchet /s
+  STOCK 1x     0.0706      0.8095        2.29
+   V102 6x     0.5495      2.3759        2.80
+   V103 6x     0.7202      2.4761        2.45
+   V104 6x     0.6101      1.4339        3.19
+V105 NOTCH     0.6941      1.2602        3.17
+
+  N3 MANUAL arm, same window, same 21-28 Hz threshold:
+     build   runs     sec       duty  in-burst A
+  STOCK 1x      7   376.1     0.0203      1.2625
+   V102 6x      9   284.8     0.0487      1.2843
+   V103 6x      7   131.1     0.0901      1.2792
+   V104 6x     11   250.4     0.0462      1.1872
+V105 NOTCH      9   165.7     0.0234      1.1634
+
+====================================================================================================================
+5. THE THRESHOLD TEST -- does in-burst ratchet rate rise once carrier amplitude crosses
+   a level?  A threshold = a stick-slip / relay engaging above a critical amplitude.
+====================================================================================================================
+     build        A<1.00        A<2.00        A<3.00        A<5.00     A>=5x thr
+  STOCK 1x             -          0.91             -             -             -
+   V102 6x             -          2.10          1.27          2.21          2.11
+   V103 6x             -          1.92          2.15             -          2.11
+   V104 6x             -          2.07          2.17          1.72          2.13
+V105 NOTCH          1.77          1.89          2.00          2.13          2.05
+  cells are ratchet events/s inside bursts, binned by the burst's own median envelope in
+  units of THR_ON.  A RISING row = amplitude-triggered.  A FLAT row = no threshold.
+
+====================================================================================================================
+6. THE STOCK->6x TABLE, BURST-CONDITIONED -- how much did pooling cost?
+====================================================================================================================
+        band   STOCK 1x P    V102 6x P    V103 6x P    V104 6x P V105 NOTCH PV104/STOCK pooled V104/STOCK IN-BURST
+     windows r97: pooled(out-burst) 13, in-burst 0
+     windows r96: pooled(out-burst) 0, in-burst 7
+     windows r9e: pooled(out-burst) 0, in-burst 10
+     windows ra4: pooled(out-burst) 0, in-burst 16
+     windows ra5: pooled(out-burst) 0, in-burst 12
+
+      6-9             nan       1.7908       2.3791       2.3605       4.4476             nan              nan
+     13-18            nan       0.7730       2.0390       1.0399       2.3372             nan              nan
+     18-22            nan      11.0795      14.1113       5.1284       6.0245             nan              nan
+     21-28            nan      12.1054      13.2913       8.7903       4.5836             nan              nan
+     32-45            nan       1.3753       1.4848       1.1905       1.2765             nan              nan
+  'P' columns are IN-BURST band RMS (deg/s).  Last two columns: the same V104/STOCK ratio
+  computed OUT of bursts vs IN bursts.  If in-burst is larger, pooling diluted it.
+
+====================================================================================================================
+7. 🛑 HIS 'COMES IN AND OUT' WAS ABOUT THE HIGHWAY, NOT THIS WINDOW.
+====================================================================================================================
+  "It's like vibration comes in and out WHILE HIGHWAY DRIVING and the ratchet-like
+   oscillation shows up on top of it when it's happening, sometimes."
+  Sections 1-6 used < 16 km/h because that is where he places GRINDING.  The BURST
+  structure he describes is a HIGHWAY observation, so it must be tested there.
+  Threshold re-anchored on STOCK's own highway arm, same detector otherwise.
+
+  40-80 km/h   THR_ON = 2.0775 deg/s (STOCK p95 in this window)
+     build   runs     sec       duty  in-burst A   longest s  ratchet /s     NULL /s
+  STOCK 1x     14   311.2     0.0450      2.6074        1.36        1.07        1.27
+   V102 6x      9   159.3     0.3612      7.1516        6.84        1.65        1.93
+   V103 6x      6   164.7     0.4682      9.1664        8.40        1.62        1.91
+   V104 6x     15   265.8     0.5277      7.7038       15.34        1.76        1.85
+V105 NOTCH     11   201.3     0.6434      7.6525       16.47        1.88        1.81
+
+  80-95 km/h (matched)   THR_ON = 1.9950 deg/s (STOCK p95 in this window)
+     build   runs     sec       duty  in-burst A   longest s  ratchet /s     NULL /s
+  STOCK 1x      9    72.7     0.0539      2.6250        1.33        1.79        1.23
+   V102 6x      4    30.4     0.4589     29.0281        7.09        1.72        1.98
+   V103 6x      1    54.5     0.1880     16.1007        4.64        1.27        1.90
+   V104 6x      7    54.2     0.7361     36.7100        8.69        1.86        1.66
+V105 NOTCH      4    52.8     0.9699     33.5736       18.99        1.93        1.86
+
+====================================================================================================================
+8. 🛑 WHY SECTION 6 IS NOT COMPUTABLE, AND WHAT THAT ITSELF SHOWS
+====================================================================================================================
+  A burst-conditioned band RMS needs 4 s windows lying wholly inside (or wholly outside)
+  a burst.  At < 16 km/h:
+     STOCK burst duty 0.056, LONGEST BURST 0.69 s  =>  ZERO windows fit inside a burst,
+       at 4 s, at 2 s, or even at 1 s.  ⇒ STOCK'S MODE NEVER SUSTAINS FOR ONE SECOND.
+     6x builds duty 0.93-0.95            =>  ZERO windows fit wholly OUTSIDE a burst.
+  ⇒ THE TWO ARMS HAVE NO OVERLAPPING CONDITION.  The contrast cannot be conditioned.
+
+  ⭐ AND THE DIRECTION OF THE POOLING ARTIFACT IS THE OPPOSITE OF WHAT WAS FEARED:
+     V102 6x   in-burst A   9.429 vs STOCK in-burst   1.233  =>  CONDITIONED ratio   7.65
+     V103 6x   in-burst A  15.707 vs STOCK in-burst   1.233  =>  CONDITIONED ratio  12.74
+     V104 6x   in-burst A   4.321 vs STOCK in-burst   1.233  =>  CONDITIONED ratio   3.50
+     ...against POOLED 21-28 Hz ratios of 57x / 55x / 41x vs stock at this window.
+  ⇒ pooling INFLATES the low-speed contrast ~12x, because it compares a 6x arm that is on
+    95 %% of the time against a stock arm that is on 5.6 %% of the time.  BOTH numbers are
+    real and they answer DIFFERENT questions:
+      POOLED     'how different is the car overall'      -> 41-64x  (duty + amplitude)
+      CONDITIONED'when it is happening, how much louder' -> 3.5-13x (amplitude only)
+    🛑 The duty difference is the larger part of the effect and had never been measured.
+
+====================================================================================================================
+9. RUN-BOOTSTRAP CIs ON THE TWO HEADLINE NUMBERS (duty and in-burst amplitude)
+====================================================================================================================
+  < 16 km/h
+       build    runs         burst duty 95 % CI         in-burst A 95 % CI
+    STOCK 1x      13      [  0.0000,   0.1485]      [   1.155,    1.515]
+     V102 6x      16      [  0.8363,   1.0000]      [   5.023,   18.031]
+     V103 6x      11      [  0.8921,   1.0000]      [   4.634,   27.937]
+     V104 6x      19      [  0.8741,   0.9695]      [   3.174,    8.988]
+  V105 NOTCH      17      [  0.7418,   0.9297]      [   2.864,    6.266]
+
+  40-80 km/h
+       build    runs         burst duty 95 % CI         in-burst A 95 % CI
+    STOCK 1x      14      [  0.0183,   0.0806]      [   2.354,    2.919]
+     V102 6x       9      [  0.2103,   0.5572]      [   5.325,   11.005]
+     V103 6x       6      [  0.3088,   0.6487]      [   6.641,   10.249]
+     V104 6x      15      [  0.3960,   0.6795]      [   5.257,   12.570]
+  V105 NOTCH      11      [  0.4271,   0.8029]      [   4.655,   10.572]
+
+  80-95 km/h
+       build    runs         burst duty 95 % CI         in-burst A 95 % CI
+    STOCK 1x       9      [  0.0101,   0.1432]      [   2.476,    3.924]
+     V102 6x       4      [  0.1543,   0.7700]      [   6.125,   34.100]
+     V103 6x       1   *** < 3 runs -- NOT COMPARABLE ***
+     V104 6x       7      [  0.5558,   0.8555]      [  34.149,   40.024]
+  V105 NOTCH       4      [  0.8759,   1.0000]      [  31.616,   34.817]
+

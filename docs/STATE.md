@@ -1,6 +1,130 @@
 # STATE — living current state of the kit
 
-## 🛑🛑 LATEST BLOCK, 2026-08-22 (late) — **V104 FLEW AND FAILED · THE 26 Hz MODE IS THE TARGET · V105 IS A 25.5 Hz NOTCH**
+## 🛑🛑 LATEST BLOCK, 2026-08-22 (latest) — **V105 FLEW AND RELOCATED THE MODE · THE THREE GRINDS ARE ONE FREQUENCY · V106 IS A DAMPER**
+
+🛑 **ON THE CAR: V105** (route `a5`, verified from the wire — three legs, strongest being the biquad's own
+427 output matching the image floats). **V106 BUILT, VERIFIED, UNFLASHED. Nothing flashed, no CAN, no UDS.**
+Narrative: **`docs/HANDOFF-2026-08-22-v106-the-damper-and-the-one-mode.md`** — the full drive card with
+**nine numbered open questions**, 21 retractions, 20 open items with what closes each.
+```
+V106 image  78528aa35b9ea2fa1ea990b2c8d41c7adc784fc17f0b481d66ddcfd3667cb65a
+V106 .rwd   e5ac6927a112a0cdf944971aebf7aa14efe6ad8597e17835bbc62d1589bfecbc
+builder     analysis-2020accord/build_v106_tva.py   50/50 assertions
+```
+
+### 🛑 THE OPERATOR CORRECTED THE KIT TWICE AND WAS RIGHT TWICE
+1. **"All 3 grinds are the same frequencies, under different scenarios."** CONFIRMED. Peak-searched
+   **15–48 Hz**, stratified by HIS scenarios: S1 (<10 km/h) / S2 (hard manual turns under LKAS) / S3
+   (highway) **all peak at 21–27 Hz**, and **38–48 Hz prominence is 0.3–4.9 (≈ baseline) in all 21
+   build×scenario cells.** 🛑 **The kit's "grind #2 = 44.9 Hz Q≈37, NOT a harmonic" and "grind #3 ≈ 46 Hz"
+   are NOT REPRODUCED.** Restate as three CONDITIONS of one mode. ⚠ Ceiling: `0x18F` Nyquist is 50.57 Hz,
+   so nothing above ~50 Hz is observable at all; the harmonic test is **not runnable at highway**
+   (2 × 25–27 = 50–54 Hz).
+2. **"Why don't we put telemetry on the mode?"** — he found a four-build hole. **The mode record has NEVER
+   been directly telemetered.** V93 was built as a discriminator (via dose-ratio inference) and never
+   flew; `accord-cbe74-dose-measured-inert-wrong-mode-record` names it as the suspect for V91/V92.
+   **V106 closes RULE 7 at zero cost — see below.**
+⊕ **And a corpus claim is re-attributed: "applying torque kills the buzz" is really "applying RATE kills
+the buzz."** At `|tq| ≥ 1000` with no rate condition the mode is fully present (PSD 51.7); adding
+`rate ≥ 40 °/s` extinguishes it. Same drive, same channel, only the mask differs.
+
+### ⭐⭐ V105 SCORED — THE NOTCH WAS AIMED AT EMPTY SPECTRUM, AND THE MODE RELOCATED
+**On V104 only 1.2 % of the engaged <16 km/h 18–30 Hz POWER sat inside V105's own stopband.** A perfect
+25.5 Hz notch could have removed at most that. **The mode is at 21.7–22.9 Hz**; the two estimates that
+named 25.5 are discredited (`a4`'s peak regression had **R² = 0.039**; `f0` is a `Re(Z)` zero-crossing,
+never the spectral peak).
+```
+                 peak Hz     shift            |H_V105| at its OWN peak    18-30 band power
+<16 km/h  V104    22.73                              0.3039
+          V105    20.48    -2.25 [-2.50,-0.50]       0.5442  <- 1.79x     0.769 [0.548,1.135]
+55-70 km/h V104   25.97                              0.0467              (CI SPANS 1)
+          V105    27.47    +1.50 [+0.50,+2.50]       0.1795  <- 3.84x
+```
+🛑 **The mode moved to where the notch costs it LESS, with band power CONSERVED.** That is a
+describing-function intersection sliding, not attenuation. ⇒ **filtering is structurally the wrong tool.**
+
+### 🛑🛑 ROUTE `a5` CANNOT RESOLVE V105 FROM V104 ON ANY BAND — the standing limit
+Within-drive split-half null spans **0.26–3.8**. 18–30 Hz reads 0.410 [0.240, 0.688] — **inside it.**
+Two pipelines independently reported narrow-band "cuts" (0.348 and 0.343) and **both authors withdrew
+them** as band placement: 18–22 goes UP 30 % while 20.5–23 goes DOWN 65 %, because the mode moved.
+⇒ **No V105-vs-V104 band-power ratio is resolved.** What survives is everything that is not a cross-drive
+ratio: peak location and shift, `|H|`-at-own-peak, the 427-lane shape, the grind-#1 centre, cave duties.
+⭐ **THE TRANSFERABLE LESSON: on this corpus, design the statistic to live INSIDE a drive.**
+
+### ⭐ THE RATCHET IS A SEPARATE, GAIN-DRIVEN ~8 Hz LINE THAT DOES NOT EXIST ON STOCK
+Pre-registered split of 6–12 Hz into a **LINE (7.4–8.6 Hz)** and a **FLOOR**, replicated on two statistics:
+```
+                      median E (6x vs stock)   4-dose ladder beta (1x/4x/6x/8x)
+LINE                       +1.559                   +1.525  => E_line  +1.136
+FLOOR                      +0.256                   +0.693  => E_floor +0.300
+CARRIER 21-28                  -                    +1.390
+CTRL 32-38 (placebo)           -                    +0.395
+```
+🛑 **On STOCK the line power is EXACTLY ZERO in 3 of 4 highway cells.** `E_line` centred **above 1** — a
+by-product cannot outgrow its source ⇒ the line is a **SIBLING** of the carrier, not a demodulation
+(AM bounded at **m < 0.05**; measured 6–12 Hz RMS is **~75×** the entire demodulation budget).
+⇒ **`E = 0.406` "partial coupling" was a MIXING ARTEFACT, and every 6–9 Hz band-RMS number in this kit's
+history dilutes the real effect by 2–3× by pooling line and floor.**
+⊕ **H3 (governor-ceiling dropout) RETIRED** by two independent channels: `v105_b6` = **0.000000 across
+65,959 frames**, and the reconstructed peak-follower never reaches the 223 °/s knee on five routes.
+
+### V106 — 12 BYTES, PURE CAL, AND IT PROVES ITS OWN PREMISE
+```
+0xD7A5C  mode 26 (ENGAGED) Y  (-14745,-8601,-2949) -> (-29490,-17202,-5898)
+0xD7A6C  mode 27 (ENGAGED) Y  (-14745,-8601,-2949) -> (-29490,-17202,-5898)   = x3.0 stock
+```
+`gp-0x6b26 = -K·angular_acceleration`. **The only lever with a signed on-car precedent pointing this way**
+(V93/V94 lowered it and the operator aborted the drive as unsafe). **Damping removes a DF intersection;
+a notch relocates it.** Reaches **both** bands — gain **1.478 @ 7.79 Hz**, **3.706 @ 21.73 Hz**.
+🛑 **`H(f=0) = 0` EXACTLY** — the differencer `32·(1−z⁻¹)` is identically zero at DC for any `a1/a2/K`, so
+**it cannot rate-limit a held 6× command at any multiplier.** A proof, not a measurement.
+⭐ **MODE PROOF AT ZERO COST:** the carried cave rung **`b5` = ( |gp-0x6ae2| ≥ |gp-0x6b26| )** — operand B
+at `0xC4B70` = `da94` = `-0x6b26`, **the exact cell dosed**. Engaged duty must collapse from its **0.4019**
+baseline if the car reads 26/27 engaged; unchanged confirms the V91/V92 suspicion. **MANUAL is the
+built-in control.** **RULE 7 closed either way.**
+🛑 **26/27 ONLY.** The family has **FOUR** members (`build_v100_tva.py`'s `DOSE_FAMILY_Y` lists three;
+`build_v105_tva.py` already had four): mode 24 = **MANUAL** (dosing it is inert for an engaged symptom and
+changes manual feel), mode 25 = **role unconfirmed** (V69/V70 trap class). Both left at stock.
+**`0xC407E` untouched at 511** — one count under its own 512 trip, so the RULE-11 interlock is intact **by
+construction, not by care** (V73 raised a different clamp past its trip; V74/V75 both faulted mid-drive).
+
+### 🛑 WHAT V106's LOGS MUST ANSWER — the drive card, in the handoff §5
+**Q1 `b5` duty (the mode proof — outranks the symptom score) · Q2 clamp duty by rate bin (predicted ~1 %
+in S1, ~0.06 % in S2 — clipping, if any, appears in grind #1's scenario, 26× more than in #2) · Q3 peak
+LOCATION + the WIDEST band (damping predicts frequency unchanged, PSD down; if it MOVES again that is a
+new result) · Q4 the ~8 Hz LINE scored separately from the FLOOR · Q5 the operator's report per scenario,
+the PRIMARY readout · Q6 does the wheel feel heavier in fast turns · Q7 was the ×1.5 ever in force ·
+Q8 housekeeping rungs · Q9 exposure.**
+
+### ⚠ CORRECTIONS TO CARRY (the orchestrator's own, all four)
+1. **"The high-rate cost is zero"** — RETRACTED. On the wire `|gp-0x6b26|` **peaks at 40–100 °/s and
+   collapses above 100**; MAX at 200–400 °/s is **104 counts**, not the 543 predicted (5.2× over). ⇒ the
+   raise **arrives in full at high rate — a real added opposition, not free** — but by the same token it
+   **arrives in scenario 2 too**, so V106 can reach grind #2.
+2. **"Dose all three modes symmetrically"** — WRONG; mode 24 is manual.
+3. **"The 21–28 Hz ↔ grinding tie is inherited"** — the operator corrected it and the ladder confirms him.
+4. **"V105 delivered −24.1 dB and he felt nothing"** — that was `|H|` at 24.9 Hz. At the mode it is
+   **−7.6 dB**. The honest statement is *"~8 dB and he felt nothing."*
+
+### ⭐ THE ARCHITECTURAL RESULT — the operator's own framing is reachable, and step 1 is telemetry
+`FUN_0003a382` forms **`iVar30 = gp-0x4f60 − reference`** — raw torsion bar. **MODEL feeds the REFERENCE
+side, never the MEASUREMENT side** ⇒ *"already doing this, and doing it badly"*. ⭐ **And it self-cancels
+at DC by construction:** Stage-1 gives `d(iVar6)/d(gp-0x6b4c) = +2.578`, MODEL gives **−2.578** (identical
+`polarity` and `0xC6468`, Stage-1's ×16/>>4 a designed no-op), and REQUEST is a **hard-coded zero**.
+🛑 **The DC/mean-shift mechanism is CLOSED AT NULL; the AC/DF question at 18–28 Hz is OPEN.**
+🛑 **`0xC6CD0` is EXOGENOUS by Mason's gain formula** — a source node never enters `Δ(z) = 1 − ΣL(z)`.
+**There is no "move the gain outside the loop" to perform.**
+🛑 **THE CAVE RISK MODEL WAS WRONG:** `0x3AC78` is a **task-1, 1 kHz trampoline inside the aggregator that
+FLEW CLEAN on V39**, and V48B's own postmortem **exonerates the clock rate**. Corrected: *a task-1
+trampoline is proven; a STATEFUL filter allocating NEW RAM into a live path is not.*
+⊕ **Telemetry ceiling fully mapped: only 3 IDs cross the gateway — `0x14A` 0 free bits, `0x18F` 10,
+`0x1AB` 5. Fifteen, permanently.** A byte-exact `|gp-0x6b26|`+sign spec exists for `0x18F` (hook `0x55D50`,
+byte-stock on every build; 1048 free cave bytes at `0xC4BD8`) — `[0,511]` is **exactly 9 bits + sign**.
+**Not shipped on V106**: the stub is an instruction-level spec, not assembled bytes.
+
+---
+
+## ⚠ SUPERSEDED BLOCK, 2026-08-22 (late) — **V104 FLEW AND FAILED · THE 26 Hz MODE IS THE TARGET · V105 IS A 25.5 Hz NOTCH**
 
 🛑 **ON THE CAR: V104** (route `a4`). **V105 BUILT, VERIFIED, UNFLASHED. Nothing flashed, no CAN, no UDS.**
 Narrative: **`docs/HANDOFF-2026-08-22-v105-the-26hz-mode-and-the-notch.md`** — every finding including

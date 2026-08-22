@@ -1,0 +1,109 @@
+==========================================================================================================================
+1.  🛑 THE GRIND-#1 LINE CENTRE.  Engaged, < 16 km/h (the operator's grinding window).
+    resolution: 4 s Hann, bin 0.2497 Hz, ENBW 0.375 Hz.  A WIDTH at or below 0.37 Hz is the
+    WINDOW, not the line.  Centres can go sub-bin; widths cannot go sub-ENBW.
+==========================================================================================================================
+
+  search band TAXONOMY 18-22 Hz
+         build   eps  E1 argmx           E1 95 % CI   E2 quad           E2 95 % CI  E3 instf   peak PSD
+      STOCK 1x     7    18.232       [18.23, 18.23]    18.067       [17.99, 18.21]    19.841      0.018
+       V100 4x     3    19.980       [19.98, 20.98]    19.877       [19.87, 21.01]    20.010      6.014
+       V102 6x     6    21.978       [21.48, 21.98]    21.973       [21.55, 22.01]    21.368    151.847
+       V103 6x     3    21.728       [20.73, 21.73]    21.644       [20.69, 21.74]    21.217    165.156
+       V104 6x     9    21.978       [21.48, 21.98]    21.728       [21.60, 22.23]    20.969     14.507
+       V101 8x     3    21.728       [21.73, 21.98]    21.654       [21.65, 22.23]    20.417     21.082
+ V105 6x+NOTCH     6    20.479       [20.23, 21.98]    20.460       [20.32, 22.07]    20.353     17.478
+
+  search band WIDE 17.5-24 Hz
+         build   eps  E1 argmx           E1 95 % CI   E2 quad           E2 95 % CI  E3 instf   peak PSD
+      STOCK 1x     7    17.982       [17.98, 18.23]    18.067       [18.01, 18.17]    20.454      0.020
+       V100 4x     3    19.980       [19.98, 20.98]    19.877       [19.87, 21.01]    20.467      6.014
+       V102 6x     6    21.978       [21.48, 21.98]    21.973       [21.55, 22.01]    21.726    151.847
+       V103 6x     3    21.728       [20.73, 21.73]    21.644       [20.69, 21.74]    21.260    165.156
+       V104 6x     9    22.727       [22.48, 22.98]    22.732       [22.42, 22.95]    22.378     51.356
+       V101 8x     3    22.977       [21.73, 22.98]    22.993       [21.65, 22.99]    22.098     68.549
+ V105 6x+NOTCH     6    20.479       [20.23, 21.98]    20.460       [20.32, 22.07]    20.902     17.478
+
+==========================================================================================================================
+2.  🛑 CONTROLS -- these decide whether section 1 is a measurement or an artifact.
+==========================================================================================================================
+  C1  STOCK `r97` in the same window has NO mode (peak PSD 0.018 vs V105's ~17).
+      Its CI above is the estimators' behaviour ON NOISE.  Compare widths.
+      CI WIDTH (E1):  STOCK 0.25 Hz   V104 0.50 Hz   V105 1.75 Hz   => 🛑 FAIL -- stock is as tight as the builds
+
+  C2  32-45 Hz CONTROL BAND on `a5` (no line there):
+      E1 32.967  CI [32.22, 40.21]  (width 7.99 Hz)   E2 32.933   E3 37.792
+
+  C3  WHITE-NOISE surrogate, same episode lengths, same estimators:
+      E1 23.476  CI [20.73, 23.48] (width 2.75 Hz)   measured -3 dB BW 0.749 Hz  ->  Q 36.2
+      🛑 THIS IS THE NUMBER A WIDTH ESTIMATOR RETURNS ON PURE NOISE.  Any Q on real
+         data must clearly exceed it to mean anything.
+
+==========================================================================================================================
+3.  THE LINE'S WIDTH AND EFFECTIVE Q -- this sets how WIDE the V106 notch must be.
+==========================================================================================================================
+         build    centre Hz  -3 dB BW meas      BW deconv      Q = f0/BW            Q 95 % CI
+      STOCK 1x       17.982          0.749          0.649           27.7          [6.7, 28.1]
+       V100 4x       19.980          0.999          0.926           21.6         [21.6, 63.5]
+       V102 6x       21.978          0.999          0.926           23.7         [15.0, 33.9]
+       V103 6x       21.728          0.749          0.649           33.5         [17.4, 65.8]
+       V104 6x       22.727          1.249          1.191           19.1         [15.5, 35.4]
+       V101 8x       22.977          0.999          0.926           24.8         [15.1, 33.5]
+ V105 6x+NOTCH       20.479          0.999          0.926           22.1         [12.9, 31.6]
+  BW meas = -3 dB width above a shoulder-fitted baseline.  BW deconv = sqrt(BW^2 - ENBW^2),
+  an APPROXIMATION that removes the 4 s Hann window's own 0.375 Hz.  🛑 Compare every Q
+  against the WHITE-NOISE control in section 2 C3 before believing it.
+
+==========================================================================================================================
+4.  THE 18-22 Hz BAND SCORED EXPLICITLY, `a5` vs `a4` -- separately from 21-28 Hz.
+==========================================================================================================================
+
+  engaged < 16 km/h
+         build   eps    18-22 RMS                95 % CI      x STOCK    21-28 RMS    18-30 RMS
+      STOCK 1x     7       0.1802         [0.138, 0.214]        1.00x       0.1930       0.2638
+       V100 4x     3       2.7622         [0.650, 3.324]       15.33x       1.7367       3.2016
+       V102 6x     6       9.9990        [5.589, 13.274]       55.50x      11.0824      11.6900
+       V103 6x     3      11.2954        [4.605, 16.179]       62.69x      10.5674      11.6887
+       V104 6x     9       4.0587         [3.012, 4.967]       22.53x       7.7565       8.2173
+       V101 8x     3       5.4136         [0.868, 7.080]       30.05x      10.4402      11.2393
+ V105 6x+NOTCH     6       5.2809         [4.047, 7.793]       29.31x       4.6328       6.3107
+     ⇒ V105/V104 **18-22 Hz = 1.328  [0.924, 2.160]**  (episode boot)
+       within-drive random-split null V104 6x       [0.580, 1.568] => measured is INSIDE (unchanged)
+       within-drive random-split null V105 6x+NOTCH [0.566, 1.768] => measured is INSIDE (unchanged)
+
+  engaged 40-95 km/h
+         build   eps    18-22 RMS                95 % CI      x STOCK    21-28 RMS    18-30 RMS
+      STOCK 1x    13       0.4103         [0.330, 0.483]        1.00x       0.5232       0.6794
+       V100 4x     3       1.9640         [0.605, 2.198]        4.79x       2.8062       3.3042
+       V102 6x    10       1.7916         [1.144, 2.432]        4.37x       5.4010       5.6058
+       V103 6x     6       1.6815         [1.171, 2.899]        4.10x       5.9353       6.1108
+       V104 6x    13       2.1048         [1.186, 2.747]        5.13x       8.5695       8.8631
+ V105 6x+NOTCH    10       2.2609         [1.228, 2.906]        5.51x       9.1466       9.5674
+     ⇒ V105/V104 **18-22 Hz = 1.062  [0.525, 1.960]**  (episode boot)
+       within-drive random-split null V104 6x       [0.408, 2.342] => measured is INSIDE (unchanged)
+       within-drive random-split null V105 6x+NOTCH [0.395, 2.533] => measured is INSIDE (unchanged)
+
+==========================================================================================================================
+5.  THE V105 sec-7.3 ARITHMETIC, REDONE FOR GRIND #1.  Same parameterisation as the
+    flown build: zero pair at F_ZERO, pole pair at F_POLE, r = R_POLE, DC held at unity.
+==========================================================================================================================
+  measured line centres: V105 20.46 Hz · V104 22.73 Hz · V102 21.97 · V103 21.64
+  ⇒ the SUPPORT a V106 notch must cover, if the pole keeps relocating: 19.46-23.73 Hz
+
+    F_ZERO     F_POLE        r |   19.00   20.00   20.50   21.00   21.70   22.00   22.70   23.50   25.50    7.79
+                               |      Hz      Hz      Hz      Hz      Hz      Hz      Hz      Hz      Hz      Hz
+      21.7       18.2     0.95 |  0.2972  0.1834  0.1276  0.0731  0.0000  0.0300  0.0965  0.1662  0.3113  0.9618   worst over support 0.2446
+      21.0       17.5     0.95 |  0.2179  0.1058  0.0519  0.0000  0.0688  0.0967  0.1582  0.2221  0.3537  0.9539   worst over support 0.2393
+      20.5       17.0     0.95 |  0.1616  0.0520  0.0000  0.0497  0.1150  0.1414  0.1993  0.2591  0.3816  0.9473   worst over support 0.2751
+      21.7       18.2     0.90 |  0.2086  0.1310  0.0923  0.0536  0.0000  0.0228  0.0752  0.1339  0.2725  0.8739   worst over support 0.1729
+      21.7       18.2     0.80 |  0.2034  0.1293  0.0916  0.0536  0.0000  0.0231  0.0774  0.1399  0.2971  0.8518   worst over support 0.1694
+      21.7       18.2     0.70 |  0.2152  0.1377  0.0979  0.0575  0.0000  0.0250  0.0841  0.1529  0.3301  0.8591   worst over support 0.1798
+      21.0       17.5     0.80 |  0.1571  0.0793  0.0398  0.0000  0.0562  0.0804  0.1372  0.2024  0.3663  0.8421   worst over support 0.2213
+      25.5       22.0     0.95 |  0.6737  0.5893  0.5422  0.4922  0.4182  0.3854  0.3070  0.2163  0.0000  0.9863   worst over support 0.6365  <- V105 AS FLOWN
+
+  🛑 'worst over support' = max |H| over %.2f-%.2f Hz -- the quantity V105 sec 7.3
+     minimised (it chose 25.5 over 26.0 on worst 0.160 vs 0.216).  Lowering `r`
+     WIDENS the stopband at the cost of phase; that trade is GATE 2's, not mine.
+  ⚠ The 7.79 Hz column is the S2 micro-ratchet blast-radius check for each candidate.
+
+wrote _ra5_grind1.json

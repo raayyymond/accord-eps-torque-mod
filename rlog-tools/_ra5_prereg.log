@@ -1,0 +1,201 @@
+======================================================================================================================
+C1.  MATCHED-EXPOSURE CENSUS -- engaged, < 16 km/h.  SPEED **AND** STEERING RATE.
+     The mode is RATE-driven (drive card 5.3), so an unmatched rate mix is a confound
+     that can manufacture or destroy a build effect on its own.
+======================================================================================================================
+       build  runs     sec |  v p10  v p50  v p90 | |r| p50 |r| p90 |r| p99 |    0-5    5-15   15-40  40-100    100+
+    STOCK 1x    13    68.1 |   0.00   7.30  12.94 |     1.0    62.0   179.0 |  0.721   0.071   0.064   0.089   0.055
+     V102 6x    16    66.3 |   2.45   8.10  14.06 |     8.0    46.0   158.9 |  0.417   0.210   0.230   0.111   0.032
+     V103 6x    11    68.0 |   3.41   7.91  13.71 |    21.0    98.1   266.0 |  0.225   0.190   0.326   0.159   0.100
+     V104 6x    19   112.6 |   3.65   9.43  15.00 |     9.0    63.0   214.0 |  0.372   0.230   0.227   0.100   0.071
+  V105 NOTCH    17    86.8 |   2.96   7.50  13.37 |    15.0   148.0   307.0 |  0.292   0.194   0.246   0.130   0.138
+  last five columns = fraction of the window's frames in each TRUE-deg/s rate stratum.
+  🛑 READ THIS BEFORE ANY BUILD COMPARISON: if two builds' rate mixes differ, the pooled
+     21-28 Hz number is comparing different physics, not different firmware.
+
+  PRE-REGISTERED THRESHOLD (STOCK p95, unchanged): THR_ON = 1.0412  THR_OFF = 0.7289
+  PLACEBO-BAND THRESHOLD (32-45 Hz, STOCK p95):    THR_P  = 0.7278
+
+======================================================================================================================
+C2.  SPLIT-HALF NULL, WITHIN EACH DRIVE -- run BEFORE any cross-build ratio is quoted.
+     Runs are ordered in time and split ODD / EVEN, so the two halves share the drive,
+     the build and the road, and differ only by sampling.  A cross-build ratio the null
+     spans is NOT QUOTABLE.
+======================================================================================================================
+       build  split-half in-burst A ratio  split-half burst-duty ratio
+    STOCK 1x                          nan                        0.000
+     V102 6x                        1.146                        1.107
+     V103 6x                        0.384                        0.935
+     V104 6x                        0.478                        0.949
+  V105 NOTCH                        1.654                        0.924
+  🛑 a 1.00 here is a perfect null; the distance from 1.00 is the noise floor of any
+     cross-build ratio computed the same way on the same amount of data.
+
+======================================================================================================================
+1.  🛑 THE PRE-REGISTERED PRIMARY, AS WRITTEN: 21-28 Hz **IN-BURST LEVEL**, ENGAGED,
+    < 16 km/h, STRATIFIED BY STEERING RATE.  HEADLINE CELL = 15-40 deg/s.
+    Drive card: 'Predicted: substantially reduced.  The notch is -24.1 dB at 24.9 Hz.'
+======================================================================================================================
+       build |            0-5 deg/s |           5-15 deg/s |          15-40 deg/s |         40-100 deg/s |           100+ deg/s
+    STOCK 1x |   1.319  (49.1s,13r) |                    - |     0.916  (4.0s,4r) |     1.228  (5.9s,4r) |     1.180  (3.6s,2r)
+     V102 6x |   3.028  (27.7s,16r) |  10.598  (13.9s,16r) |  26.767  (15.2s,14r) |   27.725  (7.1s,12r) |     2.268  (2.0s,2r)
+     V103 6x |   4.265  (15.3s,11r) |  15.466  (13.0s,11r) |  27.201  (22.1s,10r) |   26.377  (10.6s,9r) |     1.825  (6.8s,1r)
+     V104 6x |   2.079  (41.7s,18r) |   5.185  (25.7s,18r) |  21.074  (25.5s,17r) |  14.274  (10.4s,11r) |     2.522  (8.0s,5r)
+  V105 NOTCH |   2.902  (24.9s,15r) |   6.163  (16.6s,15r) |   7.239  (21.1s,13r) |    4.464  (10.7s,8r) |    2.197  (11.9s,5r)
+  cell = median 21-28 Hz analytic envelope INSIDE bursts (deg/s on `rate_f`), with
+  (exposure seconds, contributing runs).  Threshold is STOCK's, identical in every cell.
+
+  V105 / V104 in each stratum, with a 4000x EPISODE bootstrap CI:
+  rate stratum    V105 / V104     95 % CI (episode boot)        verdict
+           0-5          1.396             [0.886, 2.078]           NULL
+          5-15          1.189             [0.450, 1.785]           NULL
+         15-40          0.343             [0.166, 0.483]        REDUCED
+        40-100          0.313             [0.079, 1.199]           NULL
+          100+          0.871             [0.478, 1.466]           NULL
+
+======================================================================================================================
+2.  DRIVE-CARD sec 5.3 REPLICATED AND EXTENDED -- POOLED (not burst-conditioned) median
+    21-28 Hz envelope, engaged < 16 km/h, by TRUE steering rate.
+======================================================================================================================
+       build |          0-5 |         5-15 |        15-40 |       40-100 |         100+
+    STOCK 1x |        0.136 |            - |        0.300 |        0.647 |        0.753
+     V102 6x |        2.370 |       10.402 |       26.767 |       27.725 |        2.268
+     V103 6x |        3.787 |       15.068 |       26.756 |       24.212 |        1.506
+     V104 6x |        1.789 |        5.067 |       20.934 |       11.171 |        2.393
+  V105 NOTCH |        1.591 |        6.008 |        7.161 |        3.395 |        1.579
+  ⚠ sec 5.3's own table was band RMS on a 1/0.7996-corrected axis; this is the median
+     analytic envelope on `rate_f`.  The SHAPE across strata is the comparable part.
+
+======================================================================================================================
+3.  C3 PLACEBO BAND 32-45 Hz, same detector, same strata -- drive card 4.4 makes this
+    correction MANDATORY on any cross-drive ratio in this corpus.
+    ⊕ It is ALSO a directed prediction: V105 costs 42 Hz a factor 1.75 (0.385 -> 0.680).
+======================================================================================================================
+       build |          0-5 |         5-15 |        15-40 |       40-100 |         100+
+    STOCK 1x |        0.900 |            - |        0.764 |        0.740 |        0.858
+     V102 6x |        1.176 |        1.468 |        2.745 |        3.407 |        0.808
+     V103 6x |        1.689 |        2.478 |        2.739 |        3.021 |        0.815
+     V104 6x |        0.972 |        1.266 |        1.970 |        2.107 |        1.004
+  V105 NOTCH |        1.206 |        1.171 |        1.447 |        1.744 |        1.011
+
+  rate stratum    V105 / V104     95 % CI (episode boot)
+           0-5          1.241             [0.867, 1.543]
+          5-15          0.925             [0.745, 1.040]
+         15-40          0.734             [0.498, 0.946]
+        40-100          0.828             [0.455, 1.470]
+          100+          1.006             [0.846, 1.200]
+
+  PLACEBO-CORRECTED PRIMARY = (21-28 ratio) / (32-45 ratio):
+     0-5       1.396 / 1.241 = **1.125**
+     5-15      1.189 / 0.925 = **1.285**
+     15-40     0.343 / 0.734 = **0.468**
+     40-100    0.313 / 0.828 = **0.378**
+     100+      0.871 / 1.006 = **0.866**
+
+======================================================================================================================
+4.  🛑 THE NOTCH-SHAPE TEST -- did 25.5 Hz move MORE than its own neighbours?
+    CORE 24.5-26.5 Hz  vs  SHOULDERS 20-23 + 29-33.  A working notch dents its own centre.
+======================================================================================================================
+
+  engaged <16 km/h
+       build episodes       CORE P   SHOULDER P   core/shldr          vs V104
+    STOCK 1x        7      0.00748      0.03545       0.7387                -
+     V102 6x        6      0.45404    132.40059       0.0120                -
+     V103 6x        3      0.71431    127.50348       0.0196                -
+     V104 6x        9      0.83023     56.66535       0.0513                -
+  V105 NOTCH        6      1.12300     29.68202       0.1324            2.582
+    ⇒ V105/V104 CORE:SHOULDER contrast = 2.582  [0.879, 5.655]  (episode boot)
+      < 1 means 25.5 Hz fell MORE than its neighbours (a notch-shaped dent).
+      ~ 1 means the band moved as a WHOLE, with no dent at the notch centre.
+
+  engaged 40-95 km/h
+       build episodes       CORE P   SHOULDER P   core/shldr          vs V104
+    STOCK 1x       13      0.07705      0.18207       1.4811                -
+     V102 6x       10     13.39493      5.21443       8.9909                -
+     V103 6x        6     14.04686      4.96575       9.9006                -
+     V104 6x       13     32.98800      7.00100      16.4916                -
+  V105 NOTCH       10      9.99482      5.85040       5.9794            0.363
+    ⇒ V105/V104 CORE:SHOULDER contrast = 0.363  [0.204, 1.330]  (episode boot)
+      < 1 means 25.5 Hz fell MORE than its neighbours (a notch-shaped dent).
+      ~ 1 means the band moved as a WHOLE, with no dent at the notch centre.
+
+  FINE-GRAIN V105/V104 POWER RATIO, engaged < 16 km/h, 0.25 Hz bins, 15-45 Hz:
+    15.23: 3.147  15.48: 4.510  15.73: 7.141  15.98:14.352  16.23:16.497  16.48: 7.532
+    16.73: 5.673  16.98:10.181  17.23: 6.933  17.48: 5.771  17.73: 2.983  17.98: 3.480
+    18.23: 3.840  18.48: 5.408  18.73: 4.965  18.98: 4.603  19.23: 5.122  19.48: 3.815
+    19.73: 2.731  19.98: 1.815  20.23: 2.869  20.48: 3.398  20.73: 2.062  20.98: 1.512
+    21.23: 1.271  21.48: 0.845  21.73: 1.132  21.98: 1.014  22.23: 0.426  22.48: 0.168
+    22.73: 0.093  22.98: 0.044  23.23: 0.101  23.48: 0.765  23.73: 0.753  23.98: 0.795
+    24.23: 0.628  24.48: 0.769  24.73: 1.629  24.97: 0.858  25.22: 1.382  25.47: 2.228
+    25.72: 1.933  25.97: 1.346  26.22: 1.151  26.47: 0.842  26.72: 0.936  26.97: 1.172
+    27.22: 1.147  27.47: 0.882  27.72: 0.817  27.97: 1.387  28.22: 2.176  28.47: 0.907
+    28.72: 1.563  28.97: 0.997  29.22: 1.166  29.47: 1.431  29.72: 0.831  29.97: 0.897
+    30.22: 0.687  30.47: 0.536  30.72: 0.832  30.97: 1.248  31.22: 1.576  31.47: 1.379
+    31.72: 2.173  31.97: 1.826  32.22: 1.388  32.47: 0.809  32.72: 0.733  32.97: 1.598
+    33.22: 1.223  33.47: 0.767  33.72: 0.757  33.97: 0.809  34.22: 1.308  34.47: 1.278
+    34.71: 1.330  34.96: 1.631  35.21: 1.362  35.46: 1.818  35.71: 2.537  35.96: 3.492
+    36.21: 1.443  36.46: 1.243  36.71: 1.331  36.96: 2.606  37.21: 2.378  37.46: 1.152
+    37.71: 0.818  37.96: 1.393  38.21: 1.370  38.46: 3.450  38.71: 2.440  38.96: 1.874
+    39.21: 2.028  39.46: 1.851  39.71: 4.415  39.96: 4.737  40.21: 3.726  40.46: 1.401
+    40.71: 2.545  40.96: 3.418  41.21: 3.686  41.46: 2.512  41.71: 1.247  41.96: 0.647
+    42.21: 0.874  42.46: 0.609  42.71: 0.827  42.96: 0.788  43.21: 1.468  43.46: 1.009
+    43.71: 0.818  43.96: 1.262  44.21: 1.175  44.46: 0.939  44.70: 0.545  44.95: 0.455
+  🛑 V105's biquad |H| for reference: 20.0 0.589 · 21.7 0.415 · 24.0 0.160 ·
+     24.9 0.062 · 25.5 2e-6 · 26.8 0.123 · 42.3 0.680, against V104's ~1.85 FLAT.
+
+======================================================================================================================
+5.  THE NOTCH IN ITS OWN LANE -- CAN 427 carries |gp-0x6b86|, the biquad OUTPUT, on BOTH
+    routes with the SAME packer (`sar 4`, 3.2 counts/LSB).  This is the only channel that
+    sees the filter directly rather than through the closed loop.
+======================================================================================================================
+  ⚠ TWO HARD LIMITS, stated before the numbers:
+     * the 0x1AB frame rate is ~50 Hz  =>  NYQUIST ~25 Hz.  **25.5 Hz IS ABOVE NYQUIST**
+       and cannot be observed directly; it aliases onto ~24.5 Hz.  Only the notch's
+       SKIRT (20-24 Hz, |H| 0.59 -> 0.16) is inside the observable band.
+     * the channel is RECTIFIED (|.|), a nonlinearity, so a true null gets partly filled.
+     ⇒ this leg can CONFIRM the filter is in force; it cannot refute it.
+
+       band Hz       V104 RMS       V105 RMS      V105/V104 predicted |H| ratio
+           3-8        18.8221        13.6084         0.7230             0.5331
+          8-13         9.6187         7.0166         0.7295             0.4865
+         13-18        13.3399         9.6700         0.7249             0.4216
+         18-21         8.6387         3.4476         0.3991             0.3184
+         21-24         8.2379         2.6023         0.3159             0.1622
+       24-24.9         2.5973         1.0378         0.3996             0.0595
+
+  |gp-0x6b86| counts:  V104 p50 19.2 p99 2128.0 max 2720.0   V105 p50 9.6 p99 2003.2 max 3027.2
+  windows: V104 270   V105 223
+
+======================================================================================================================
+6.  THE CAVE / PROBE TELEMETRY V105 CARRIED -- what the bits actually said.
+======================================================================================================================
+  V105 budgeted ONE new rung: b6 = |gp-0x6b94| >= |gp-0x4f64|  (aggregator sum vs the
+  GOVERNOR BOUND).  Drive card: 'a live duty readout of the governor clamp, on the wire
+  for the first time'.  Secondary endpoint.  b7/b5/b4/b3 are V104's, carried.
+
+  V104 6x
+    b7  all 0.2883  eng 0.4026  manual 0.0003  eng>1s 0.4031  eng<16 0.3455  eng>=40 0.4133
+        sign gp-0x6b4c (LKAS cmd) -- NOT the 427 cell
+    b6  all 0.9918  eng 1.0000  manual 0.9711  eng>1s 1.0000  eng<16 1.0000  eng>=40 1.0000
+        🆕 |gp-0x6b94| >= |gp-0x4f64|  GOVERNOR CLIP
+    b5  all 0.2421  eng 0.2305  manual 0.2712  eng>1s 0.2278  eng<16 0.2918  eng>=40 0.1845
+        |gp-0x6ae2| >= |gp-0x6b26|  friction vs inertia
+    b4  all 0.3615  eng 0.4414  manual 0.1601  eng>1s 0.4428  eng<16 0.4272  eng>=40 0.4476
+        sign r24 (gp-0x6ada)
+    b3  all 0.4656  eng 0.4834  manual 0.4208  eng>1s 0.4844  eng<16 0.4701  eng>=40 0.4861
+        sign D_state (gp-0x3680)
+
+  V105 NOTCH
+    b7  all 0.2855  eng 0.3835  manual 0.0018  eng>1s 0.3812  eng<16 0.3276  eng>=40 0.4202
+        sign gp-0x6b4c (LKAS cmd) -- NOT the 427 cell
+    b6  all 0.0000  eng 0.0000  manual 0.0000  eng>1s 0.0000  eng<16 0.0000  eng>=40 0.0000  🛑 NEVER FIRED
+        🆕 |gp-0x6b94| >= |gp-0x4f64|  GOVERNOR CLIP
+    b5  all 0.2533  eng 0.2798  manual 0.1766  eng>1s 0.2762  eng<16 0.4019  eng>=40 0.2094
+        |gp-0x6ae2| >= |gp-0x6b26|  friction vs inertia
+    b4  all 0.3571  eng 0.4338  manual 0.1350  eng>1s 0.4356  eng<16 0.4168  eng>=40 0.4422
+        sign r24 (gp-0x6ada)
+    b3  all 0.4799  eng 0.4874  manual 0.4579  eng>1s 0.4885  eng<16 0.4839  eng>=40 0.4865
+        sign D_state (gp-0x3680)
+
+======================================================================================================================
+wrote _ra5_prereg.json

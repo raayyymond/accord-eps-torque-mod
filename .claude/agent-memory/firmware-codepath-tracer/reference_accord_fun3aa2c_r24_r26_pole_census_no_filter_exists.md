@@ -108,6 +108,19 @@ amplitude), not HF-sourced content** — raising `0xC61F6` is backward for the r
 arithmetically. Moot for the operator's <3Hz-preservation constraint specifically, since r24 itself barely
 carries 0.5-3Hz content by the same |H(f)|~f scaling (|H(18Hz)|/|H(1Hz)| = 17.85x, computed exact).
 
+🛑 **CORRECTION, 2026-08-22 (`deadband` session, team-lead-approved edit)** — the "0.4-2.4%" figure above
+compares `D` against the PRE-GAIN `dtorque` ([123,839]) directly. That is the WRONG reference frame: the
+deadband is applied to `scaled = (dtorque * gain_q10) >> 10` (confirmed by a fresh `decompile_function
+(0x3aa2c)` this session, matching the golden model's `_inline_torque_rate_b` exactly), i.e. the POST-GAIN
+quantity, not `dtorque` itself. At the CURRENT engaged gain (`0xC6446` = 5244, carried unchanged into
+V104/V105): `scaled` ranges **629-4296** over the same V65-measured input range, so the correct fraction is
+**D is 0.070%-0.48% of typical excursion** — about **5x smaller** than this file originally stated (the
+5.12x gap being exactly `gain_q10/1024`). The qualitative verdict ("confirmed inert", "raising 0xC61F6 is
+backward") is UNCHANGED and if anything strengthened; only the magnitude of the fraction moves. See
+[[reference_accord_c61f6_deadband_is_coulomb_friction_not_percentage]] for the full re-derivation, the
+first-hand decompile confirmation, and the follow-on finding (any dose large enough to matter is a
+Coulomb-friction tax disqualified by the operator's rate-authority constraint) that closed this candidate.
+
 ## Related
 [[reference_accord_gp4f62_torque_rate_producer_and_c6c42_window]] — the N=4 window's own transfer function,
 this file's phase numbers reproduce it exactly.

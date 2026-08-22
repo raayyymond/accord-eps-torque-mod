@@ -1,0 +1,381 @@
+
+================================================================================================================
+T0  CONTROLS FIRST -- run on route a5 (V105 6x+NOTCH) ENGAGED hwy, fc=26.76 Hz, f_m=8.0 Hz
+================================================================================================================
+  depth kind   | WIDE  fc+-14 (predicted PASS on AM) | NARROW fc+-2 (predicted FAIL on AM) | sideband
+  0.15  AM     | prom   1.71 @  6.64 Hz null95  2.15 miss | prom   1.20 @  8.59 Hz null95  2.41 miss | 0.76
+  0.15  INDEP  | prom   1.85 @ 11.91 Hz null95  2.15 miss | prom   1.67 @  8.59 Hz null95  2.14 miss | 0.66
+  0.35  AM     | prom   4.84 @  8.01 Hz null95  5.13 miss | prom   1.32 @ 10.74 Hz null95  2.14 miss | 2.88
+  0.35  INDEP  | prom   2.05 @ 12.30 Hz null95  2.13 miss | prom   1.60 @ 10.94 Hz null95  2.25 miss | 0.66
+
+================================================================================================================
+ROUTE a5 (V105 6x+NOTCH)  ENGAGED hwy  2 ep, 82.9 s, v=87.5 km/h [p10 76, p90 95] wheel orders 11.7/23.4/35.0 Hz
+================================================================================================================
+  carrier peak 26.76 Hz | ratchet peak 8.01 Hz | band RMS  car 275  rat 288  ctrl 25.2
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [ 12.8, 40.8] prom   1.87 @ 12.30 Hz  null med  1.73 p95  2.13  p=0.219 
+     NARROW(fc+-2)      [ 24.8, 28.8] prom   3.43 @  8.01 Hz  null med  1.40 p95  1.86  p=0.005 <== LINE
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.60 @ 11.52 Hz  null med  1.53 p95  1.84  p=0.378 
+  T2 SIDEBANDS (CLAIM B) at fc=26.76 +- fm=8.01 -> 18.75 / 34.77 Hz : both 0.66 (lo 0.66 hi 1.12) null95 0.82 p=0.738 NULL
+  T3 DISCRIMINATOR  62 windows / 2 episodes
+     carrier terciles  bot/top:  CARRIER 164/333 (0.492)   RATCHET 231/277 (0.835 [0.60,1.43])   CTRL 22.6/31.1 (0.726)
+     census  speed bot/top 78.7/91.6 km/h   |rate_c| bot/top 7.0/23.2
+     RATE-MATCHED (terciles within rate bin, n=19/19): CARRIER 0.809  RATCHET 1.172  CTRL 0.903   |rate| 18.3/23.2
+     SLOPES  d log(rat)/d log(car) = +0.505   vs CTRL +0.600   DELTA -0.095 [-0.372,-0.076]   
+
+================================================================================================================
+ROUTE a5 (V105 6x+NOTCH)  ENGAGED mid  8 ep, 165.2 s, v=54.2 km/h [p10 43, p90 65] wheel orders 7.2/14.5/21.7 Hz
+================================================================================================================
+  carrier peak 27.15 Hz | ratchet peak 8.40 Hz | band RMS  car 40  rat 130  ctrl 12.4
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [ 13.1, 41.1] prom   1.74 @  8.40 Hz  null med  1.43 p95  1.65  p=0.020 <== LINE
+     NARROW(fc+-2)      [ 25.1, 29.1] prom   1.64 @  6.84 Hz  null med  1.37 p95  1.70  p=0.070 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.64 @ 10.94 Hz  null med  1.37 p95  1.58  p=0.020 <== LINE
+  T2 SIDEBANDS (CLAIM B) at fc=27.15 +- fm=8.40 -> 18.75 / 35.55 Hz : both 0.66 (lo 0.66 hi 1.19) null95 0.73 p=0.361 NULL
+  T3 DISCRIMINATOR  118 windows / 8 episodes
+     carrier terciles  bot/top:  CARRIER 13.9/135 (0.103)   RATCHET 41.1/152 (0.271 [0.07,0.47])   CTRL 6.16/19.9 (0.309)
+     census  speed bot/top 56.7/56.8 km/h   |rate_c| bot/top 1.0/8.1
+     RATE-MATCHED (terciles within rate bin, n=39/39): CARRIER 0.142  RATCHET 0.392  CTRL 0.355   |rate| 1.0/4.3
+     SLOPES  d log(rat)/d log(car) = +0.659   vs CTRL +0.937   DELTA -0.278 [-0.722,-0.060]   | split-half null on ratio [0.44,2.19]
+
+================================================================================================================
+ROUTE a5 (V105 6x+NOTCH)  ENGAGED low  11 ep, 109.3 s, v=29.5 km/h [p10 20, p90 38] wheel orders 3.9/7.9/11.8 Hz
+================================================================================================================
+  carrier peak 21.29 Hz | ratchet peak 8.40 Hz | band RMS  car 105  rat 210  ctrl 15.3
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  7.3, 35.3] prom   2.99 @ 12.70 Hz  null med  1.95 p95  2.67  p=0.010 <== LINE
+     NARROW(fc+-2)      [ 19.3, 23.3] prom   2.64 @  6.64 Hz  null med  1.71 p95  2.40  p=0.030 <== LINE
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.38 @  9.77 Hz  null med  1.57 p95  1.86  p=0.900 
+  T2 SIDEBANDS (CLAIM B) at fc=21.29 +- fm=8.40 -> 12.89 / 29.69 Hz : both 0.88 (lo 1.12 hi 0.88) null95 1.18 p=0.656 NULL
+  T3 DISCRIMINATOR  70 windows / 11 episodes
+     carrier terciles  bot/top:  CARRIER 11.2/184 (0.061)   RATCHET 41.5/366 (0.113 [0.07,0.32])   CTRL 5.57/28 (0.199)
+     census  speed bot/top 32.1/29.3 km/h   |rate_c| bot/top 1.0/14.3
+     RATE-MATCHED (terciles within rate bin, n=22/22): CARRIER 0.080  RATCHET 0.209  CTRL 0.392   |rate| 1.3/4.1
+     SLOPES  d log(rat)/d log(car) = +0.810   vs CTRL +0.961   DELTA -0.150 [-0.324,+0.024]   | split-half null on ratio [0.30,3.12]
+
+================================================================================================================
+ROUTE a5 (V105 6x+NOTCH)  ENGAGED micro  4 ep, 42.6 s, v=8.0 km/h [p10 4, p90 12] wheel orders 1.1/2.1/3.2 Hz
+================================================================================================================
+  carrier peak 20.12 Hz | ratchet peak 7.62 Hz | band RMS  car 84.5  rat 511  ctrl 17.4
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  6.1, 34.1] prom   1.97 @  5.66 Hz  null med  2.29 p95  3.36  p=0.816 
+     NARROW(fc+-2)      [ 18.1, 22.1] prom   2.37 @ 11.52 Hz  null med  1.94 p95  3.00  p=0.204 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.93 @  6.64 Hz  null med  1.96 p95  2.64  p=0.542 
+  T2 SIDEBANDS (CLAIM B) at fc=20.12 +- fm=7.62 -> 12.50 / 27.73 Hz : both 0.30 (lo 0.30 hi 1.12) null95 0.60 p=1.000 NULL
+  T3 DISCRIMINATOR  28 windows / 4 episodes
+     carrier terciles  bot/top:  CARRIER 72.1/143 (0.505)   RATCHET 201/630 (0.320 [0.19,1.66])   CTRL 25.8/35.6 (0.724)
+     census  speed bot/top 8.6/5.9 km/h   |rate_c| bot/top 36.7/17.8
+     SLOPES  d log(rat)/d log(car) = +0.905   vs CTRL +0.471   DELTA +0.434 [+0.097,+1.068]   | split-half null on ratio [0.29,3.42]
+
+================================================================================================================
+ROUTE a4 (V104 6x)  ENGAGED hwy  5 ep, 189.1 s, v=81.7 km/h [p10 72, p90 106] wheel orders 10.9/21.8/32.7 Hz
+================================================================================================================
+  carrier peak 26.37 Hz | ratchet peak 7.62 Hz | band RMS  car 314  rat 388  ctrl 26.4
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [ 12.4, 40.4] prom   1.59 @  7.62 Hz  null med  1.42 p95  1.66  p=0.119 
+     NARROW(fc+-2)      [ 24.4, 28.4] prom   1.93 @ 12.89 Hz  null med  1.32 p95  1.66  p=0.015 <== LINE
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.92 @  8.01 Hz  null med  1.34 p95  1.50  p=0.005 <== LINE
+  T2 SIDEBANDS (CLAIM B) at fc=26.37 +- fm=7.62 -> 18.75 / 33.98 Hz : both 0.90 (lo 0.90 hi 1.41) null95 0.95 p=0.098 NULL
+  T3 DISCRIMINATOR  139 windows / 5 episodes
+     carrier terciles  bot/top:  CARRIER 169/409 (0.414)   RATCHET 197/461 (0.428 [0.19,0.83])   CTRL 19.3/35.5 (0.544)
+     census  speed bot/top 81.2/98.8 km/h   |rate_c| bot/top 1.9/27.7
+     RATE-MATCHED (terciles within rate bin, n=46/46): CARRIER 0.797  RATCHET 0.744  CTRL 0.896   |rate| 19.4/27.1
+     SLOPES  d log(rat)/d log(car) = +0.716   vs CTRL +1.148   DELTA -0.433 [-0.607,-0.243]   | split-half null on ratio [0.49,1.57]
+
+================================================================================================================
+ROUTE a4 (V104 6x)  ENGAGED mid  12 ep, 183.5 s, v=54.1 km/h [p10 45, p90 62] wheel orders 7.2/14.4/21.7 Hz
+================================================================================================================
+  carrier peak 21.48 Hz | ratchet peak 8.01 Hz | band RMS  car 85.2  rat 154  ctrl 11.4
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  7.5, 35.5] prom   1.91 @ 12.70 Hz  null med  1.41 p95  1.68  p=0.005 <== LINE
+     NARROW(fc+-2)      [ 19.5, 23.5] prom   2.03 @ 11.33 Hz  null med  1.43 p95  1.75  p=0.005 <== LINE
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.43 @  9.96 Hz  null med  1.38 p95  1.55  p=0.338 
+  T2 SIDEBANDS (CLAIM B) at fc=21.48 +- fm=8.01 -> 13.48 / 29.49 Hz : both 0.88 (lo 0.97 hi 0.88) null95 1.14 p=0.885 NULL
+  T3 DISCRIMINATOR  124 windows / 12 episodes
+     carrier terciles  bot/top:  CARRIER 10.3/140 (0.074)   RATCHET 31.4/254 (0.124 [0.09,0.41])   CTRL 4.68/16.3 (0.288)
+     census  speed bot/top 54.4/51.0 km/h   |rate_c| bot/top 0.9/4.8
+     RATE-MATCHED (terciles within rate bin, n=40/40): CARRIER 0.136  RATCHET 0.186  CTRL 0.342   |rate| 0.9/2.6
+     SLOPES  d log(rat)/d log(car) = +0.646   vs CTRL +0.837   DELTA -0.191 [-0.394,+0.045]   | split-half null on ratio [0.39,2.60]
+
+================================================================================================================
+ROUTE a4 (V104 6x)  ENGAGED low  9 ep, 84.0 s, v=27.9 km/h [p10 20, p90 38] wheel orders 3.7/7.4/11.2 Hz
+================================================================================================================
+  carrier peak 23.24 Hz | ratchet peak 8.20 Hz | band RMS  car 88.6  rat 186  ctrl 12
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  9.2, 37.2] prom   2.21 @ 12.30 Hz  null med  1.90 p95  2.65  p=0.214 
+     NARROW(fc+-2)      [ 21.2, 25.2] prom   1.93 @ 10.74 Hz  null med  2.03 p95  2.87  p=0.607 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.63 @  8.40 Hz  null med  1.63 p95  2.03  p=0.512 
+  T2 SIDEBANDS (CLAIM B) at fc=23.24 +- fm=8.20 -> 15.04 / 31.45 Hz : both 0.87 (lo 0.87 hi 1.38) null95 0.99 p=0.230 NULL
+  T3 DISCRIMINATOR  52 windows / 9 episodes
+     carrier terciles  bot/top:  CARRIER 15.1/236 (0.064)   RATCHET 47.1/364 (0.130 [0.10,0.33])   CTRL 6.19/22.9 (0.270)
+     census  speed bot/top 32.4/25.3 km/h   |rate_c| bot/top 1.0/14.3
+     RATE-MATCHED (terciles within rate bin, n=13/13): CARRIER 0.207  RATCHET 0.303  CTRL 0.432   |rate| 1.0/3.8
+     SLOPES  d log(rat)/d log(car) = +0.692   vs CTRL +0.908   DELTA -0.216 [-0.677,+0.127]   | split-half null on ratio [0.29,3.24]
+
+================================================================================================================
+ROUTE a4 (V104 6x)  ENGAGED micro  7 ep, 78.0 s, v=8.8 km/h [p10 5, p90 15] wheel orders 1.2/2.4/3.5 Hz
+================================================================================================================
+  carrier peak 22.27 Hz | ratchet peak 7.62 Hz | band RMS  car 146  rat 222  ctrl 17.2
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  8.3, 36.3] prom   2.30 @  7.42 Hz  null med  1.69 p95  2.10  p=0.020 <== LINE
+     NARROW(fc+-2)      [ 20.3, 24.3] prom   2.70 @  8.40 Hz  null med  1.65 p95  2.27  p=0.010 <== LINE
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.79 @ 12.30 Hz  null med  1.67 p95  2.04  p=0.269 
+  T2 SIDEBANDS (CLAIM B) at fc=22.27 +- fm=7.62 -> 14.65 / 29.88 Hz : both 0.53 (lo 0.53 hi 1.01) null95 0.79 p=0.902 NULL
+  T3 DISCRIMINATOR  50 windows / 7 episodes
+     carrier terciles  bot/top:  CARRIER 24.8/254 (0.098)   RATCHET 66.9/303 (0.221 [0.10,0.62])   CTRL 4.88/28.3 (0.172)
+     census  speed bot/top 10.1/7.9 km/h   |rate_c| bot/top 1.7/15.9
+     RATE-MATCHED (terciles within rate bin, n=14/14): CARRIER 0.194  RATCHET 0.646  CTRL 0.670   |rate| 9.2/9.8
+     SLOPES  d log(rat)/d log(car) = +0.586   vs CTRL +0.673   DELTA -0.088 [-0.192,+0.036]   | split-half null on ratio [0.39,2.67]
+
+================================================================================================================
+ROUTE 9e (V103 6x)  ENGAGED hwy  2 ep, 89.8 s, v=81.7 km/h [p10 73, p90 91] wheel orders 10.9/21.8/32.7 Hz
+================================================================================================================
+  carrier peak 23.83 Hz | ratchet peak 8.01 Hz | band RMS  car 137  rat 205  ctrl 14.3
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  9.8, 37.8] prom   2.97 @ 12.50 Hz  null med  1.54 p95  1.88  p=0.005 <== LINE
+     NARROW(fc+-2)      [ 21.8, 25.8] prom   4.10 @  8.01 Hz  null med  1.49 p95  1.79  p=0.005 <== LINE
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.95 @  5.27 Hz  null med  1.49 p95  1.81  p=0.005 <== LINE
+  T2 SIDEBANDS (CLAIM B) at fc=23.83 +- fm=8.01 -> 15.82 / 31.84 Hz : both 1.04 (lo 1.19 hi 1.04) null95 1.16 p=0.262 NULL
+  T3 DISCRIMINATOR  67 windows / 2 episodes
+     carrier terciles  bot/top:  CARRIER 6.92/209 (0.033)   RATCHET 25/327 (0.077 [0.07,0.16])   CTRL 3.35/23.8 (0.141)
+     census  speed bot/top 90.0/81.9 km/h   |rate_c| bot/top 0.7/1.6
+     RATE-MATCHED (terciles within rate bin, n=20/20): CARRIER 0.045  RATCHET 0.160  CTRL 0.179   |rate| 0.7/1.1
+     SLOPES  d log(rat)/d log(car) = +0.706   vs CTRL +1.168   DELTA -0.462 [-0.622,-0.462]   
+
+================================================================================================================
+ROUTE 9e (V103 6x)  ENGAGED mid  8 ep, 114.5 s, v=60.9 km/h [p10 41, p90 68] wheel orders 8.1/16.2/24.4 Hz
+================================================================================================================
+  carrier peak 24.80 Hz | ratchet peak 7.81 Hz | band RMS  car 104  rat 171  ctrl 17.7
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [ 10.8, 38.8] prom   1.72 @  8.20 Hz  null med  1.55 p95  1.90  p=0.199 
+     NARROW(fc+-2)      [ 22.8, 26.8] prom   1.47 @ 12.30 Hz  null med  1.56 p95  2.00  p=0.667 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.57 @  8.59 Hz  null med  1.49 p95  1.78  p=0.294 
+  T2 SIDEBANDS (CLAIM B) at fc=24.80 +- fm=7.81 -> 16.99 / 32.62 Hz : both 0.96 (lo 1.05 hi 0.96) null95 1.32 p=0.672 NULL
+  T3 DISCRIMINATOR  78 windows / 8 episodes
+     carrier terciles  bot/top:  CARRIER 13.4/216 (0.062)   RATCHET 48/288 (0.166 [0.07,0.41])   CTRL 7.09/22.8 (0.311)
+     census  speed bot/top 60.6/65.5 km/h   |rate_c| bot/top 0.9/5.4
+     RATE-MATCHED (terciles within rate bin, n=26/26): CARRIER 0.075  RATCHET 0.398  CTRL 0.348   |rate| 1.0/2.1
+     SLOPES  d log(rat)/d log(car) = +0.674   vs CTRL +1.157   DELTA -0.483 [-0.631,-0.210]   | split-half null on ratio [0.26,3.92]
+
+================================================================================================================
+ROUTE 9e (V103 6x)  ENGAGED low  8 ep, 82.7 s, v=33.6 km/h [p10 23, p90 39] wheel orders 4.5/9.0/13.5 Hz
+================================================================================================================
+  carrier peak 21.48 Hz | ratchet peak 8.20 Hz | band RMS  car 173  rat 437  ctrl 21.4
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  7.5, 35.5] prom   3.21 @  8.01 Hz  null med  1.77 p95  2.28  p=0.005 <== LINE
+     NARROW(fc+-2)      [ 19.5, 23.5] prom   2.01 @  9.77 Hz  null med  1.74 p95  2.17  p=0.174 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   2.12 @ 12.89 Hz  null med  1.63 p95  1.96  p=0.015 <== LINE
+  T2 SIDEBANDS (CLAIM B) at fc=21.48 +- fm=8.20 -> 13.28 / 29.69 Hz : both 1.30 (lo 1.30 hi 1.51) null95 1.25 p=0.066 NULL
+  T3 DISCRIMINATOR  55 windows / 8 episodes
+     carrier terciles  bot/top:  CARRIER 54.8/238 (0.231)   RATCHET 90.1/417 (0.216 [0.07,0.68])   CTRL 9.78/30.7 (0.318)
+     census  speed bot/top 36.6/35.5 km/h   |rate_c| bot/top 1.9/11.4
+     RATE-MATCHED (terciles within rate bin, n=18/18): CARRIER 0.514  RATCHET 0.834  CTRL 0.649   |rate| 5.9/7.3
+     SLOPES  d log(rat)/d log(car) = +0.873   vs CTRL +1.042   DELTA -0.169 [-0.445,+0.336]   | split-half null on ratio [0.25,4.04]
+
+================================================================================================================
+ROUTE 9e (V103 6x)  ENGAGED micro  3 ep, 37.7 s, v=7.7 km/h [p10 5, p90 13] wheel orders 1.0/2.1/3.1 Hz
+================================================================================================================
+  carrier peak 21.48 Hz | ratchet peak 7.81 Hz | band RMS  car 333  rat 325  ctrl 24.7
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  7.5, 35.5] prom   3.11 @  9.18 Hz  null med  2.40 p95  3.42  p=0.134 
+     NARROW(fc+-2)      [ 19.5, 23.5] prom   2.96 @  9.38 Hz  null med  2.10 p95  3.02  p=0.065 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.94 @ 12.11 Hz  null med  1.92 p95  2.54  p=0.498 
+  T2 SIDEBANDS (CLAIM B) at fc=21.48 +- fm=7.81 -> 13.67 / 29.30 Hz : both 0.34 (lo 0.34 hi 0.43) null95 0.53 p=0.852 NULL
+  T3 DISCRIMINATOR  26 windows / 3 episodes
+     carrier terciles  bot/top:  CARRIER 66.7/370 (0.180)   RATCHET 335/182 (1.845 [0.64,3.75])   CTRL 35.4/30.7 (1.153)
+     census  speed bot/top 10.6/7.3 km/h   |rate_c| bot/top 49.5/22.5
+     RATE-MATCHED (terciles within rate bin, n=7/7): CARRIER 0.233  RATCHET 2.675  CTRL 0.990   |rate| 28.1/25.3
+     SLOPES  d log(rat)/d log(car) = +0.145   vs CTRL +0.657   DELTA -0.512 [-2.998,+0.109]   
+
+================================================================================================================
+ROUTE 9e (V103 6x)  manual hwy  1 ep, 28.6 s, v=86.0 km/h [p10 79, p90 88] wheel orders 11.5/23.0/34.5 Hz
+================================================================================================================
+  carrier peak 15.04 Hz | ratchet peak 11.52 Hz | band RMS  car 19.7  rat 71.3  ctrl 13
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  1.0, 29.0] prom   4.43 @ 10.35 Hz  null med  2.62 p95  4.26  p=0.040 <== LINE
+     NARROW(fc+-2)      [ 13.0, 17.0] prom   1.89 @  6.84 Hz  null med  1.99 p95  3.05  p=0.597 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   2.31 @ 10.94 Hz  null med  2.03 p95  2.75  p=0.199 
+  T2 SIDEBANDS (CLAIM B) at fc=15.04 +- fm=11.52 -> 3.52 / 26.56 Hz : both 0.64 (lo 0.64 hi 3.61) null95 0.86 p=0.787 NULL
+  T3 DISCRIMINATOR  21 windows / 1 episodes
+     carrier terciles  bot/top:  CARRIER 11.1/43.3 (0.256)   RATCHET 53.4/113 (0.471)   CTRL 8.15/27.8 (0.293)
+     census  speed bot/top 86.0/86.4 km/h   |rate_c| bot/top 1.0/1.6
+     RATE-MATCHED (terciles within rate bin, n=7/7): CARRIER 0.256  RATCHET 0.471  CTRL 0.293   |rate| 1.0/1.6
+     SLOPES  d log(rat)/d log(car) = +0.665   vs CTRL +0.690   DELTA -0.024   
+
+================================================================================================================
+ROUTE 96 (V102 6x)  ENGAGED hwy  5 ep, 232.6 s, v=98.8 km/h [p10 91, p90 107] wheel orders 13.2/26.4/39.6 Hz
+================================================================================================================
+  carrier peak 24.61 Hz | ratchet peak 8.20 Hz | band RMS  car 236  rat 290  ctrl 16.4
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [ 10.6, 38.6] prom   1.90 @ 11.33 Hz  null med  1.65 p95  1.89  p=0.050 <== LINE
+     NARROW(fc+-2)      [ 22.6, 26.6] prom   1.64 @ 12.11 Hz  null med  1.25 p95  1.44  p=0.005 <== LINE
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.65 @  5.86 Hz  null med  1.29 p95  1.47  p=0.010 <== LINE
+  T2 SIDEBANDS (CLAIM B) at fc=24.61 +- fm=8.20 -> 16.41 / 32.81 Hz : both 0.73 (lo 0.81 hi 0.73) null95 0.81 p=0.836 NULL
+  T3 DISCRIMINATOR  174 windows / 5 episodes
+     carrier terciles  bot/top:  CARRIER 7.54/378 (0.020)   RATCHET 16.1/396 (0.041 [0.04,0.14])   CTRL 3.49/27.5 (0.127)
+     census  speed bot/top 100.7/99.2 km/h   |rate_c| bot/top 0.8/13.4
+     RATE-MATCHED (terciles within rate bin, n=58/58): CARRIER 0.027  RATCHET 0.058  CTRL 0.181   |rate| 0.8/3.3
+     SLOPES  d log(rat)/d log(car) = +0.774   vs CTRL +1.357   DELTA -0.583 [-0.634,-0.519]   | split-half null on ratio [0.10,2.29]
+
+================================================================================================================
+ROUTE 96 (V102 6x)  ENGAGED mid  8 ep, 141.2 s, v=53.9 km/h [p10 44, p90 63] wheel orders 7.2/14.4/21.6 Hz
+================================================================================================================
+  carrier peak 24.22 Hz | ratchet peak 8.40 Hz | band RMS  car 103  rat 173  ctrl 13.2
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [ 10.2, 38.2] prom   1.80 @ 12.89 Hz  null med  1.54 p95  1.88  p=0.119 
+     NARROW(fc+-2)      [ 22.2, 26.2] prom   2.42 @  8.01 Hz  null med  1.45 p95  1.85  p=0.010 <== LINE
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.73 @  6.84 Hz  null med  1.41 p95  1.68  p=0.025 <== LINE
+  T2 SIDEBANDS (CLAIM B) at fc=24.22 +- fm=8.40 -> 15.82 / 32.62 Hz : both 0.47 (lo 1.61 hi 0.47) null95 0.64 p=0.574 NULL
+  T3 DISCRIMINATOR  98 windows / 8 episodes
+     carrier terciles  bot/top:  CARRIER 6.78/177 (0.038)   RATCHET 21.7/196 (0.111 [0.05,0.28])   CTRL 3.53/18.3 (0.193)
+     census  speed bot/top 60.0/53.2 km/h   |rate_c| bot/top 0.8/4.4
+     RATE-MATCHED (terciles within rate bin, n=33/33): CARRIER 0.063  RATCHET 0.204  CTRL 0.244   |rate| 0.8/2.5
+     SLOPES  d log(rat)/d log(car) = +0.654   vs CTRL +1.121   DELTA -0.468 [-0.577,-0.374]   | split-half null on ratio [0.24,4.10]
+
+================================================================================================================
+ROUTE 96 (V102 6x)  ENGAGED low  9 ep, 79.5 s, v=28.3 km/h [p10 19, p90 35] wheel orders 3.8/7.6/11.3 Hz
+================================================================================================================
+  carrier peak 21.88 Hz | ratchet peak 7.81 Hz | band RMS  car 140  rat 378  ctrl 20.4
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  7.9, 35.9] prom   2.51 @ 12.89 Hz  null med  2.02 p95  3.14  p=0.159 
+     NARROW(fc+-2)      [ 19.9, 23.9] prom   1.45 @ 11.72 Hz  null med  1.99 p95  2.96  p=0.960 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   2.15 @ 12.30 Hz  null med  1.70 p95  2.11  p=0.055 
+  T2 SIDEBANDS (CLAIM B) at fc=21.88 +- fm=7.81 -> 14.06 / 29.69 Hz : both 1.31 (lo 1.31 hi 1.39) null95 1.28 p=0.049 <== SIDEBANDS
+  T3 DISCRIMINATOR  50 windows / 9 episodes
+     carrier terciles  bot/top:  CARRIER 12.3/230 (0.053)   RATCHET 38.5/436 (0.088 [0.06,0.63])   CTRL 5.82/23.6 (0.246)
+     census  speed bot/top 28.6/27.0 km/h   |rate_c| bot/top 1.0/14.5
+     RATE-MATCHED (terciles within rate bin, n=15/15): CARRIER 0.133  RATCHET 0.323  CTRL 0.332   |rate| 5.3/5.5
+     SLOPES  d log(rat)/d log(car) = +0.780   vs CTRL +1.351   DELTA -0.571 [-0.707,-0.322]   | split-half null on ratio [0.14,9.06]
+
+================================================================================================================
+ROUTE 96 (V102 6x)  ENGAGED micro  4 ep, 28.6 s, v=7.7 km/h [p10 3, p90 14] wheel orders 1.0/2.1/3.1 Hz
+================================================================================================================
+  carrier peak 21.68 Hz | ratchet peak 8.01 Hz | band RMS  car 128  rat 143  ctrl 12.1
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  7.7, 35.7] prom   8.66 @ 12.89 Hz  null med  3.65 p95  6.04  p=0.005 <== LINE
+     NARROW(fc+-2)      [ 19.7, 23.7] prom   8.77 @  6.25 Hz  null med  3.09 p95  5.96  p=0.010 <== LINE
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   2.48 @ 12.70 Hz  null med  2.58 p95  3.65  p=0.582 
+  T2 SIDEBANDS (CLAIM B) at fc=21.68 +- fm=8.01 -> 13.67 / 29.69 Hz : both 0.42 (lo 1.25 hi 0.42) null95 0.92 p=0.689 NULL
+  T3 DISCRIMINATOR  16 windows / 4 episodes
+     carrier terciles  bot/top:  CARRIER 20.2/374 (0.054)   RATCHET 21.7/112 (0.193 [0.05,0.88])   CTRL 4.15/24.9 (0.166)
+     census  speed bot/top 4.8/8.4 km/h   |rate_c| bot/top 1.1/22.3
+     SLOPES  d log(rat)/d log(car) = +0.615   vs CTRL +0.880   DELTA -0.265 [-0.542,+0.187]   | split-half null on ratio [0.30,3.34]
+
+================================================================================================================
+ROUTE 85 (V100 4x)  ENGAGED hwy  1 ep, 47.9 s, v=99.7 km/h [p10 87, p90 102] wheel orders 13.3/26.6/39.9 Hz
+================================================================================================================
+  carrier peak 15.04 Hz | ratchet peak 11.91 Hz | band RMS  car 13.2  rat 79.8  ctrl 4.95
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  1.0, 29.0] prom   2.56 @ 12.11 Hz  null med  2.54 p95  3.67  p=0.488 
+     NARROW(fc+-2)      [ 13.0, 17.0] prom   1.34 @  6.64 Hz  null med  1.68 p95  2.36  p=0.920 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   2.02 @  6.45 Hz  null med  1.73 p95  2.18  p=0.144 
+  T2 SIDEBANDS (CLAIM B) at fc=15.04 +- fm=11.91 -> 3.12 / 26.95 Hz : both 1.03 (lo 1.03 hi 1.92) null95 1.20 p=0.656 NULL
+  T3 DISCRIMINATOR  36 windows / 1 episodes
+     carrier terciles  bot/top:  CARRIER 7.57/12.3 (0.615)   RATCHET 25.9/37.3 (0.695)   CTRL 3.98/6.51 (0.611)
+     census  speed bot/top 95.6/100.5 km/h   |rate_c| bot/top 0.9/1.0
+     RATE-MATCHED (terciles within rate bin, n=12/12): CARRIER 0.615  RATCHET 0.695  CTRL 0.611   |rate| 0.9/1.0
+     SLOPES  d log(rat)/d log(car) = +1.081   vs CTRL +1.063   DELTA +0.018   
+
+================================================================================================================
+ROUTE 85 (V100 4x)  ENGAGED mid  4 ep, 73.7 s, v=49.9 km/h [p10 43, p90 64] wheel orders 6.7/13.3/20.0 Hz
+================================================================================================================
+  carrier peak 21.48 Hz | ratchet peak 8.40 Hz | band RMS  car 51.4  rat 281  ctrl 13.8
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  7.5, 35.5] prom   2.36 @  6.05 Hz  null med  1.68 p95  2.17  p=0.005 <== LINE
+     NARROW(fc+-2)      [ 19.5, 23.5] prom   1.93 @  8.40 Hz  null med  1.79 p95  2.43  p=0.313 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.79 @  8.20 Hz  null med  1.59 p95  1.96  p=0.164 
+  T2 SIDEBANDS (CLAIM B) at fc=21.48 +- fm=8.40 -> 13.09 / 29.88 Hz : both 0.94 (lo 0.94 hi 1.74) null95 1.09 p=0.328 NULL
+  T3 DISCRIMINATOR  52 windows / 4 episodes
+     carrier terciles  bot/top:  CARRIER 16.1/111 (0.144)   RATCHET 58.7/374 (0.157 [0.14,0.71])   CTRL 7.74/23.8 (0.325)
+     census  speed bot/top 46.3/54.6 km/h   |rate_c| bot/top 1.0/9.4
+     RATE-MATCHED (terciles within rate bin, n=17/17): CARRIER 0.212  RATCHET 0.353  CTRL 0.350   |rate| 1.0/3.4
+     SLOPES  d log(rat)/d log(car) = +0.826   vs CTRL +1.034   DELTA -0.208 [-1.639,+0.203]   | split-half null on ratio [0.41,2.42]
+
+================================================================================================================
+ROUTE 85 (V100 4x)  ENGAGED low  4 ep, 88.6 s, v=28.7 km/h [p10 19, p90 37] wheel orders 3.8/7.7/11.5 Hz
+================================================================================================================
+  carrier peak 21.29 Hz | ratchet peak 8.40 Hz | band RMS  car 36.6  rat 258  ctrl 13.4
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  7.3, 35.3] prom   2.31 @  8.59 Hz  null med  1.77 p95  2.30  p=0.055 
+     NARROW(fc+-2)      [ 19.3, 23.3] prom   1.85 @ 10.55 Hz  null med  1.59 p95  2.06  p=0.184 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.55 @  5.66 Hz  null med  1.55 p95  1.87  p=0.498 
+  T2 SIDEBANDS (CLAIM B) at fc=21.29 +- fm=8.40 -> 12.89 / 29.69 Hz : both 1.07 (lo 1.07 hi 1.52) null95 1.18 p=0.279 NULL
+  T3 DISCRIMINATOR  63 windows / 4 episodes
+     carrier terciles  bot/top:  CARRIER 15.7/57.2 (0.274)   RATCHET 67.4/318 (0.212 [0.17,0.49])   CTRL 7.41/18.1 (0.409)
+     census  speed bot/top 31.7/30.6 km/h   |rate_c| bot/top 1.7/14.3
+     RATE-MATCHED (terciles within rate bin, n=20/20): CARRIER 0.407  RATCHET 0.611  CTRL 0.465   |rate| 6.4/8.5
+     SLOPES  d log(rat)/d log(car) = +0.766   vs CTRL +0.739   DELTA +0.026 [-0.020,+0.257]   | split-half null on ratio [0.67,1.48]
+
+================================================================================================================
+ROUTE 85 (V100 4x)  ENGAGED micro  2 ep, 22.5 s, v=6.8 km/h [p10 4, p90 7] wheel orders 0.9/1.8/2.7 Hz
+================================================================================================================
+  carrier peak 19.53 Hz | ratchet peak 7.62 Hz | band RMS  car 30.5  rat 325  ctrl 8.47
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  5.5, 33.5] prom   8.36 @ 11.91 Hz  null med  4.18 p95  6.45  p=0.010 <== LINE
+     NARROW(fc+-2)      [ 17.5, 21.5] prom   2.42 @  6.45 Hz  null med  2.32 p95  4.59  p=0.448 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.91 @  8.01 Hz  null med  2.45 p95  3.44  p=0.920 
+  T2 SIDEBANDS (CLAIM B) at fc=19.53 +- fm=7.62 -> 11.91 / 27.15 Hz : both 0.59 (lo 0.59 hi 5.07) null95 1.14 p=0.705 NULL
+  T3 DISCRIMINATOR  15 windows / 2 episodes
+     carrier terciles  bot/top:  CARRIER 13.7/68.5 (0.200)   RATCHET 81.9/685 (0.120 [0.12,0.94])   CTRL 4.9/23.9 (0.205)
+     census  speed bot/top 6.0/7.1 km/h   |rate_c| bot/top 2.1/23.5
+     SLOPES  d log(rat)/d log(car) = +1.246   vs CTRL +1.088   DELTA +0.158 [+0.158,+0.338]   
+
+================================================================================================================
+ROUTE 97 (STOCK 1x)  ENGAGED hwy  10 ep, 319.6 s, v=81.6 km/h [p10 72, p90 112] wheel orders 10.9/21.8/32.7 Hz
+================================================================================================================
+  carrier peak 15.04 Hz | ratchet peak 12.30 Hz | band RMS  car 9.05  rat 58  ctrl 5.02
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  1.0, 29.0] prom   1.85 @  8.40 Hz  null med  1.52 p95  1.83  p=0.055 
+     NARROW(fc+-2)      [ 13.0, 17.0] prom   1.25 @  7.81 Hz  null med  1.29 p95  1.46  p=0.687 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.58 @  9.57 Hz  null med  1.26 p95  1.39  p=0.005 <== LINE
+  T2 SIDEBANDS (CLAIM B) at fc=15.04 +- fm=12.30 -> 2.73 / 27.34 Hz : both 1.15 (lo 1.15 hi 1.23) null95 1.26 p=0.262 NULL
+  T3 DISCRIMINATOR  234 windows / 10 episodes
+     carrier terciles  bot/top:  CARRIER 5.06/13.9 (0.364)   RATCHET 22.4/52.5 (0.427 [0.17,0.74])   CTRL 3.33/6.95 (0.480)
+     census  speed bot/top 97.1/96.9 km/h   |rate_c| bot/top 0.8/1.0
+     RATE-MATCHED (terciles within rate bin, n=78/78): CARRIER 0.364  RATCHET 0.427  CTRL 0.480   |rate| 0.8/1.0
+     SLOPES  d log(rat)/d log(car) = +0.844   vs CTRL +1.008   DELTA -0.164 [-0.374,+0.030]   | split-half null on ratio [0.50,2.06]
+
+================================================================================================================
+ROUTE 97 (STOCK 1x)  ENGAGED mid  15 ep, 206.0 s, v=52.7 km/h [p10 42, p90 64] wheel orders 7.0/14.1/21.1 Hz
+================================================================================================================
+  carrier peak 15.43 Hz | ratchet peak 12.30 Hz | band RMS  car 14.8  rat 59.3  ctrl 8.92
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  1.4, 29.4] prom   1.62 @  6.25 Hz  null med  1.41 p95  1.62  p=0.055 
+     NARROW(fc+-2)      [ 13.4, 17.4] prom   1.38 @ 12.11 Hz  null med  1.34 p95  1.58  p=0.328 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.61 @ 12.11 Hz  null med  1.36 p95  1.54  p=0.030 <== LINE
+  T2 SIDEBANDS (CLAIM B) at fc=15.43 +- fm=12.30 -> 3.12 / 27.73 Hz : both 1.00 (lo 1.29 hi 1.00) null95 1.29 p=0.738 NULL
+  T3 DISCRIMINATOR  137 windows / 15 episodes
+     carrier terciles  bot/top:  CARRIER 6.42/37 (0.173)   RATCHET 27.3/105 (0.259 [0.13,0.48])   CTRL 3.68/18.1 (0.203)
+     census  speed bot/top 57.0/51.5 km/h   |rate_c| bot/top 0.7/2.5
+     RATE-MATCHED (terciles within rate bin, n=45/45): CARRIER 0.187  RATCHET 0.289  CTRL 0.213   |rate| 1.0/2.3
+     SLOPES  d log(rat)/d log(car) = +0.795   vs CTRL +0.709   DELTA +0.086 [-0.016,+0.170]   | split-half null on ratio [0.69,1.49]
+
+================================================================================================================
+ROUTE 97 (STOCK 1x)  ENGAGED low  5 ep, 36.2 s, v=29.1 km/h [p10 18, p90 39] wheel orders 3.9/7.8/11.6 Hz
+================================================================================================================
+  carrier peak 15.04 Hz | ratchet peak 8.40 Hz | band RMS  car 15.6  rat 77  ctrl 9.1
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  1.0, 29.0] prom   2.61 @  5.86 Hz  null med  2.62 p95  3.74  p=0.522 
+     NARROW(fc+-2)      [ 13.0, 17.0] prom   2.37 @ 11.91 Hz  null med  2.56 p95  4.31  p=0.637 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   3.37 @  9.77 Hz  null med  2.24 p95  2.98  p=0.015 <== LINE
+  T2 SIDEBANDS (CLAIM B) at fc=15.04 +- fm=8.40 -> 6.64 / 23.44 Hz : both 1.18 (lo 1.18 hi 1.30) null95 1.44 p=0.131 NULL
+  T3 DISCRIMINATOR  21 windows / 5 episodes
+     carrier terciles  bot/top:  CARRIER 5.34/51.7 (0.103)   RATCHET 17.2/122 (0.141 [0.09,0.77])   CTRL 2.41/37 (0.065)
+     census  speed bot/top 27.3/35.6 km/h   |rate_c| bot/top 0.8/26.6
+     SLOPES  d log(rat)/d log(car) = +0.833   vs CTRL +0.727   DELTA +0.106 [+0.039,+0.171]   | split-half null on ratio [0.19,4.90]
+
+================================================================================================================
+ROUTE 97 (STOCK 1x)  ENGAGED micro  5 ep, 38.0 s, v=7.5 km/h [p10 2, p90 13] wheel orders 1.0/2.0/3.0 Hz
+================================================================================================================
+  carrier peak 15.62 Hz | ratchet peak 5.86 Hz | band RMS  car 5.91  rat 44.6  ctrl 4.02
+  T1 ENVELOPE LINE in 5-13 Hz (CLAIM A)
+     WIDE(fc+-14)       [  1.6, 29.6] prom   2.02 @  9.38 Hz  null med  2.53 p95  3.61  p=0.881 
+     NARROW(fc+-2)      [ 13.6, 17.6] prom   2.81 @  7.42 Hz  null med  2.41 p95  3.96  p=0.299 
+     CTRL_WIDE(45+-14)  [ 31.0, 59.0] prom   1.83 @  9.57 Hz  null med  2.16 p95  2.84  p=0.896 
+  T2 SIDEBANDS (CLAIM B) at fc=15.62 +- fm=5.86 -> 9.77 / 21.48 Hz : both 0.38 (lo 1.18 hi 0.38) null95 1.33 p=0.770 NULL
+  T3 DISCRIMINATOR  22 windows / 5 episodes
+     carrier terciles  bot/top:  CARRIER 2.78/17.8 (0.156)   RATCHET 12.9/51.3 (0.252 [0.11,0.50])   CTRL 1.78/11.3 (0.157)
+     census  speed bot/top 4.3/7.8 km/h   |rate_c| bot/top 0.9/20.5
+     SLOPES  d log(rat)/d log(car) = +0.840   vs CTRL +0.860   DELTA -0.019 [-0.189,+0.145]   | split-half null on ratio [0.32,2.69]
+
+wrote C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\_hf_lf_discriminator.json

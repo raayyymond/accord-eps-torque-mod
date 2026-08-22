@@ -1,0 +1,137 @@
+
+============================================================================================================
+ROUTE 9e (V103)  ARM ENGAGED hwy  2 ep, 89.8 s, v=81.7 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    1.00  p99    40.24  max    73.91
+  ECU peak-follower   p50    1.58  p99    46.60  max    62.21   | knee 223 deg/s is 4.8x the p99   frac>=knee 0.00000  frac>=floor(870) 0.00000
+  DEMAND: 427 carried the LANE on this route -- no sum available (check_427_alias)
+  tq shape by |rate_c|: 0-5 n=7657 kurt=+33.60 flat=0.0012  5-20 n=809 kurt=+0.87 flat=0.0025  20-60 n=505 kurt=-0.46 flat=0.0040
+  status: sstat vals=[0] changes=0  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0, 1] changes=2795
+
+============================================================================================================
+ROUTE 9e (V103)  ARM manual hwy  1 ep, 28.6 s, v=86.0 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    1.00  p99    16.97  max    24.93
+  ECU peak-follower   p50    2.86  p99    15.23  max    23.06   | knee 223 deg/s is 14.6x the p99   frac>=knee 0.00000  frac>=floor(870) 0.00000
+  DEMAND: 427 carried the LANE on this route -- no sum available (check_427_alias)
+  tq shape by |rate_c|: 0-5 n=2266 kurt=-1.00 flat=0.0044  5-20 n=588 kurt=-1.12 flat=0.0034
+  status: sstat vals=[0] changes=0  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0, 1] changes=210
+
+============================================================================================================
+ROUTE 9e (V103)  ARM ENGAGED mid  8 ep, 114.5 s, v=60.9 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    1.54  p99    45.83  max   109.99
+  ECU peak-follower   p50    3.35  p99    55.49  max    81.74   | knee 223 deg/s is 4.0x the p99   frac>=knee 0.00000  frac>=floor(870) 0.00000
+  DEMAND: 427 carried the LANE on this route -- no sum available (check_427_alias)
+  tq shape by |rate_c|: 0-5 n=8140 kurt=+29.56 flat=0.0015  5-20 n=2149 kurt=+4.19 flat=0.0019  20-60 n=1121 kurt=+1.15 flat=0.0080
+  status: sstat vals=[0] changes=0  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0, 1] changes=3302
+
+============================================================================================================
+ROUTE 9e (V103)  ARM ENGAGED low  14 ep, 177.5 s, v=17.6 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    8.43  p99   217.73  max   376.00
+  ECU peak-follower   p50   21.33  p99   221.39  max   371.61   | knee 223 deg/s is 1.0x the p99   frac>=knee 0.00947  frac>=floor(870) 0.00000
+  DEMAND: 427 carried the LANE on this route -- no sum available (check_427_alias)
+  tq shape by |rate_c|: 0-5 n=7116 kurt=+12.56 flat=0.0030  5-20 n=5193 kurt=+1.69 flat=0.0044  20-60 n=4301 kurt=+1.10 flat=0.0028  60-1e+09 n=1137 kurt=-1.69 flat=0.0079
+  status: sstat vals=[0] changes=0  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0, 1] changes=4575
+
+============================================================================================================
+ROUTE 97 (STOCK (V9b))  ARM ENGAGED hwy  10 ep, 319.6 s, v=81.6 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    0.91  p99    10.00  max    72.20
+  ECU peak-follower   p50    1.23  p99     9.88  max    81.56   | knee 223 deg/s is 22.6x the p99   frac>=knee 0.00000  frac>=floor(870) 0.00000
+  DEMAND: 427 carried the LANE on this route -- no sum available (check_427_alias)
+  tq shape by |rate_c|: 0-5 n=30650 kurt=+121.97 flat=0.0013  5-20 n=1259 kurt=+7.74 flat=0.0064
+  status: sstat vals=[0, 1, 2, 3, 4] changes=16  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0] changes=0
+
+============================================================================================================
+ROUTE 97 (STOCK (V9b))  ARM ENGAGED mid  15 ep, 206.0 s, v=52.7 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    1.00  p99    30.65  max    78.42
+  ECU peak-follower   p50    2.16  p99    32.39  max    64.81   | knee 223 deg/s is 6.9x the p99   frac>=knee 0.00000  frac>=floor(870) 0.00000
+  DEMAND: 427 carried the LANE on this route -- no sum available (check_427_alias)
+  tq shape by |rate_c|: 0-5 n=15651 kurt=+2.48 flat=0.0020  5-20 n=4170 kurt=-0.88 flat=0.0053  20-60 n=761 kurt=+0.81 flat=0.0079
+  status: sstat vals=[0, 1, 2, 3, 4] changes=27  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0] changes=0
+
+============================================================================================================
+ROUTE 97 (STOCK (V9b))  ARM ENGAGED low  13 ep, 132.1 s, v=20.7 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    1.00  p99   156.08  max   218.00
+  ECU peak-follower   p50    2.02  p99   162.39  max   214.73   | knee 223 deg/s is 1.4x the p99   frac>=knee 0.00000  frac>=floor(870) 0.00000
+  DEMAND: 427 carried the LANE on this route -- no sum available (check_427_alias)
+  tq shape by |rate_c|: 0-5 n=8855 kurt=+10.93 flat=0.0024  5-20 n=1508 kurt=+0.60 flat=0.0080  20-60 n=1493 kurt=-1.02 flat=0.0107  60-1e+09 n=1355 kurt=-0.70 flat=0.0229
+  status: sstat vals=[0, 1, 2, 3, 4] changes=27  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0] changes=0
+
+============================================================================================================
+ROUTE 96 (V102 6x)  ARM ENGAGED hwy  5 ep, 232.6 s, v=98.8 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    1.35  p99    52.48  max    81.04
+  ECU peak-follower   p50    2.60  p99    56.31  max    71.85   | knee 223 deg/s is 4.0x the p99   frac>=knee 0.00000  frac>=floor(870) 0.00000
+  DEMAND: 427 carried the LANE on this route -- no sum available (check_427_alias)
+  tq shape by |rate_c|: 0-5 n=15694 kurt=+22.93 flat=0.0013  5-20 n=3778 kurt=+1.02 flat=0.0016  20-60 n=3725 kurt=-0.51 flat=0.0013
+  status: sstat vals=[0] changes=0  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0, 1] changes=6832
+
+============================================================================================================
+ROUTE 96 (V102 6x)  ARM ENGAGED mid  8 ep, 141.2 s, v=53.9 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    1.00  p99    36.82  max    87.14
+  ECU peak-follower   p50    2.04  p99    48.58  max    71.01   | knee 223 deg/s is 4.6x the p99   frac>=knee 0.00000  frac>=floor(870) 0.00000
+  DEMAND: 427 carried the LANE on this route -- no sum available (check_427_alias)
+  tq shape by |rate_c|: 0-5 n=11452 kurt=+66.73 flat=0.0011  5-20 n=1995 kurt=+9.04 flat=0.0045  20-60 n=671 kurt=+4.10 flat=0.0060
+  status: sstat vals=[0] changes=0  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0, 1] changes=3666
+
+============================================================================================================
+ROUTE 96 (V102 6x)  ARM ENGAGED low  13 ep, 172.6 s, v=22.5 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    4.44  p99   179.23  max   352.24
+  ECU peak-follower   p50    9.78  p99   179.78  max   348.86   | knee 223 deg/s is 1.2x the p99   frac>=knee 0.00469  frac>=floor(870) 0.00000
+  DEMAND: 427 carried the LANE on this route -- no sum available (check_427_alias)
+  tq shape by |rate_c|: 0-5 n=8961 kurt=+28.99 flat=0.0013  5-20 n=4335 kurt=+4.58 flat=0.0028  20-60 n=3025 kurt=+2.24 flat=0.0056  60-1e+09 n=938 kurt=-1.77 flat=0.0128
+  status: sstat vals=[0] changes=0  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0, 1] changes=3778
+
+============================================================================================================
+ROUTE 85 (V100 4x)  ARM ENGAGED hwy  1 ep, 47.9 s, v=99.7 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    1.00  p99     8.77  max    40.78
+  ECU peak-follower   p50    1.74  p99     9.88  max    32.30   | knee 223 deg/s is 22.6x the p99   frac>=knee 0.00000  frac>=floor(870) 0.00000
+  DEMAND |gp-0x6b94|  p50    39.6  p99    230.4  p99.9    302.8  max    435.2 | frac >= 4762 (top bound) 0.00000   frac >= 512 (bottom bound) 0.00000
+  tq shape by |rate_c|: 0-5 n=4514 kurt=+2.53 flat=0.0016
+  status: sstat vals=[0] changes=0  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0, 1] changes=1041
+
+============================================================================================================
+ROUTE 85 (V100 4x)  ARM ENGAGED mid  4 ep, 73.7 s, v=49.9 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    2.67  p99    42.29  max   132.79
+  ECU peak-follower   p50    5.42  p99    48.49  max   106.03   | knee 223 deg/s is 4.6x the p99   frac>=knee 0.00000  frac>=floor(870) 0.00000
+  DEMAND |gp-0x6b94|  p50    89.6  p99    828.0  p99.9   1072.6  max   1382.4 | frac >= 4762 (top bound) 0.00000   frac >= 512 (bottom bound) 0.08037
+  tq shape by |rate_c|: 0-5 n=4607 kurt=+9.31 flat=0.0033  5-20 n=2137 kurt=+2.46 flat=0.0051  20-60 n=600 kurt=+0.20 flat=0.0050
+  status: sstat vals=[0] changes=0  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0, 1] changes=1172
+
+============================================================================================================
+ROUTE 85 (V100 4x)  ARM ENGAGED low  4 ep, 116.9 s, v=21.0 km/h
+============================================================================================================
+  |rate_c| deg/s      p50    7.15  p99   200.92  max   294.58
+  ECU peak-follower   p50   12.55  p99   200.47  max   294.27   | knee 223 deg/s is 1.1x the p99   frac>=knee 0.00453  frac>=floor(870) 0.00000
+  DEMAND |gp-0x6b94|  p50   153.6  p99   1241.6  p99.9   1461.4  max   1547.7 | frac >= 4762 (top bound) 0.00000   frac >= 512 (bottom bound) 0.15231
+  tq shape by |rate_c|: 0-5 n=4886 kurt=+20.58 flat=0.0014  5-20 n=4035 kurt=+4.75 flat=0.0042  20-60 n=1701 kurt=+0.80 flat=0.0112  60-1e+09 n=1071 kurt=-1.73 flat=0.0187
+  status: sstat vals=[0] changes=0  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0, 1] changes=1801
+
+============================================================================================================
+ROUTE 95 (95)  ARM ENGAGED mid  3 ep, 67.0 s, v=55.2 km/h
+============================================================================================================
+  |rate_c| deg/s      p50   15.59  p99    67.80  max   100.64
+  ECU peak-follower   p50   36.92  p99    68.13  max    88.64   | knee 223 deg/s is 3.3x the p99   frac>=knee 0.00000  frac>=floor(870) 0.00000
+  DEMAND |gp-0x6b94|  p50   117.1  p99    563.2  p99.9    719.1  max    832.0 | frac >= 4762 (top bound) 0.00000   frac >= 512 (bottom bound) 0.02268
+  tq shape by |rate_c|: 0-5 n=1820 kurt=-0.61 flat=0.0016  5-20 n=2026 kurt=-0.66 flat=0.0044  20-60 n=2681 kurt=-0.23 flat=0.0030
+  status: sstat vals=[0] changes=0  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0, 1] changes=1321
+
+============================================================================================================
+ROUTE 95 (95)  ARM ENGAGED low  4 ep, 102.2 s, v=16.1 km/h
+============================================================================================================
+  |rate_c| deg/s      p50   25.71  p99   286.06  max   332.00
+  ECU peak-follower   p50   44.47  p99   287.49  max   322.26   | knee 223 deg/s is 0.8x the p99   frac>=knee 0.04277  frac>=floor(870) 0.00000
+  DEMAND |gp-0x6b94|  p50   217.6  p99   1648.3  p99.9   1996.8  max   2188.8 | frac >= 4762 (top bound) 0.00000   frac >= 512 (bottom bound) 0.22519
+  tq shape by |rate_c|: 0-5 n=1431 kurt=+0.52 flat=0.0035  5-20 n=2791 kurt=+0.17 flat=0.0018  20-60 n=3869 kurt=+0.15 flat=0.0034  60-1e+09 n=2127 kurt=-1.67 flat=0.0024
+  status: sstat vals=[0] changes=0  status vals=[7] changes=0  dtc_active vals=[0] changes=0  illegal vals=[0, 1] changes=1550
+
+wrote C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\_hf_lf_ceiling.json

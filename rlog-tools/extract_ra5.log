@@ -1,0 +1,126 @@
+  seg 0 done, rows so far 5959
+  seg 1 done, rows so far 11957
+  seg 2 done, rows so far 17958
+  seg 3 done, rows so far 23960
+  seg 4 done, rows so far 29959
+  seg 5 done, rows so far 35958
+  seg 6 done, rows so far 41958
+  seg 7 done, rows so far 47959
+  seg 8 done, rows so far 53958
+  seg 9 done, rows so far 59958
+  seg 10 done, rows so far 65959
+  segment file ABSENT, skipped: 75604b0a432fdc89_000000a5--1419044ddf--11--rlog.zst
+  seg 11 done, rows so far 65959
+  IMU gravity means [9.67903655 0.41852741 0.18613409] -> vertical = x, lateral = y
+
+route a5: 65959 samples  0.00..661.46 s  vEgo -0.10..26.80
+  RAW 0x14A byte4: 0x07:14896 0x0F:10485 0x17:5451 0x1F:5274 0x27:3463 0x2F:2773 0x37:2438 0x3F:2352 0x87:3562 0x8F:3659 0x97:1588 0x9F:4338 0xA7:1935 0xAF:1634 0xB7:975 0xBF:1137
+  0x7FFF sentinels: 0x14A 0  0x18F 0
+  latActive 74.3% of 661 s
+
+  0x1AB FULL TAP, route a5 (V105)
+  ra5: 32,980 frames  src={1: 32980}  49.78 Hz  dlc={3: 32980}
+      427 source = gp-0x6b86 (BIQUAD OUTPUT -- now the 25.5 Hz NOTCH), sar 4  [V104 repoint, CARRIED unchanged by V105],  counts = wire * 3.20
+      MOTOR_TORQUE  nonzero 85.29%  distinct 760  range [0,946]  p50/p95/p99 3/269/626  saturated 0.000%
+      COUNTER +1 99.99%  CHECKSUM distinct 16/16  CONFIG_VALID duty 1.0000  OUTPUT_DISABLED duty 0.0000
+  0x14A byte7 tap: 65,960 frames  DLC(all 0x14A)={8: 65960}  byte4 columns identical to the extractor's: True
+      byte7 histogram: 0xC0:1,076  0xC1:847  0xC2:1,990  0xC3:845  0xC4:972  0xC5:834  0xC6:1,700  0xC7:720  0xC8:1,015  0xC9:797  0xCA:1,384  0xCB:756  0xCC:1,015  0xCD:757  0xCE:1,012  0xCF:769  0xD0:824  0xD1:2,040  0xD2:756  0xD3:926  0xD4:924  0xD5:1,745  0xD6:758  0xD7:920  0xD8:795  0xD9:1,353  0xDA:792  0xDB:991  0xDC:787  0xDD:1,046  0xDE:746  0xDF:1,087  0xE0:1,891  0xE1:778  0xE2:994  0xE3:861  0xE4:1,752  0x
+  raw14 index map: rows 65,959  raw14 65,960  lead 1  constant_lead_holds=True  dup 0x14A timestamps 1,473  a searchsorted map would mispair 1,130 rows
+  seg0: n=  5959   61.4s  v_mean  0.00 (max  0.00)  engaged   0.0% (  0.0s)
+  seg1: n=  5998   60.0s  v_mean  0.38 (max  2.00)  engaged  11.4% (  6.8s)
+  seg2: n=  6001   60.0s  v_mean  4.33 (max 11.14)  engaged  79.3% ( 47.6s)
+  seg3: n=  6002   60.0s  v_mean  9.22 (max 19.98)  engaged  90.6% ( 54.4s)
+  seg4: n=  5999   60.0s  v_mean 24.16 (max 26.80)  engaged 100.0% ( 60.0s)
+  seg5: n=  5999   60.0s  v_mean 17.25 (max 24.29)  engaged 100.0% ( 60.0s)
+  seg6: n=  6000   60.0s  v_mean  5.35 (max 13.06)  engaged  81.7% ( 49.0s)
+  seg7: n=  6001   60.0s  v_mean 13.68 (max 17.54)  engaged 100.0% ( 60.0s)
+  seg8: n=  5999   60.0s  v_mean 12.60 (max 18.22)  engaged  88.4% ( 53.1s)
+  seg9: n=  6000   60.0s  v_mean 12.08 (max 19.01)  engaged  88.7% ( 53.2s)
+  seg10: n=  6001   60.0s  v_mean  4.01 (max 11.20)  engaged  76.8% ( 46.1s)
+
+  segments absent from disk: 1   livePose samples: 13035
+  removed stale/mislabelled key: damp_nz
+  removed stale/mislabelled key: g6ac2
+  seg0: n=  5959   61.4s  v_mean  0.00 (max  0.00)  engaged   0.0% (  0.0s)
+  seg1: n=  5998   60.0s  v_mean  0.38 (max  2.00)  engaged  11.4% (  6.8s)
+  seg2: n=  6001   60.0s  v_mean  4.33 (max 11.14)  engaged  79.3% ( 47.6s)
+  seg3: n=  6002   60.0s  v_mean  9.22 (max 19.98)  engaged  90.6% ( 54.4s)
+  seg4: n=  5999   60.0s  v_mean 24.16 (max 26.80)  engaged 100.0% ( 60.0s)
+  seg5: n=  5999   60.0s  v_mean 17.25 (max 24.29)  engaged 100.0% ( 60.0s)
+  seg6: n=  6000   60.0s  v_mean  5.35 (max 13.06)  engaged  81.7% ( 49.0s)
+  seg7: n=  6001   60.0s  v_mean 13.68 (max 17.54)  engaged 100.0% ( 60.0s)
+  seg8: n=  5999   60.0s  v_mean 12.60 (max 18.22)  engaged  88.4% ( 53.1s)
+  seg9: n=  6000   60.0s  v_mean 12.08 (max 19.01)  engaged  88.7% ( 53.2s)
+  seg10: n=  6001   60.0s  v_mean  4.01 (max 11.20)  engaged  76.8% ( 46.1s)
+
+  === DERIVED COLUMNS, route a5 (V105) ===
+    v105_b7..b3 decoded from `probe` (65959 rows, SAFE pairing with `t`)
+    mag427  nonzero 85.28 %  distinct 760  max 946   sat@1023 0.0000 %  ABOVE V103 CEILING (>=801) 0.0758 %
+    x6b86_mag (UNSIGNED counts)  p50 9.6  p95 860.8  p99 2003.2  max 3027.2
+    v_rear  median 8.61 km/h   lp_yaw finite 100.0 %
+
+  === IDENTITY, route a5 (expected V105): 65960 0x14A frames ===
+    byte7[7:6] code histogram: 3:65960
+    byte7[7:6]==3 duty 1.000000   b3 duty 0.479867  VARIES=True
+    byte4 field hist: 0:14896  1:10485  2:5451  3:5274  4:3463  5:2773  6:2438  7:2352  16:3562  17:3659  18:1588  19:4338  20:1935  21:1634  22:975  23:1137
+    bit duties: b7=0.2854  b6=0.0000  b5=0.2533  b4=0.3571  b3=0.4799
+    LEG 1 (V103/V104/V105 vs V101/V102): PASS
+    LEG 2 (V104-or-later, 427 wire > 800): 25 of 32980 frames (0.0758 %)  =>  PASS -- structurally impossible on V103
+    LEG 3 (b6 repointed): a5 duty 0.0000  vs  a4 duty 0.9918  =>  MOVED
+    427 wire: p50 3  p99 626  max 946
+
+  === CAN 427 LANE, route a5 (V105) ===
+    source: gp-0x6b86 (BIQUAD OUTPUT -- now the 25.5 Hz NOTCH), sar 4  [V104 repoint, CARRIED unchanged by V105]
+    🛑 RECTIFIED AND UNSIGNED on this route -- byte4 b7 is gp-0x6b4c's sign, not this
+       cell's.  Band statistics only; NO directed cross-spectrum is available.
+    32980 frames  nonzero 85.29 %  distinct 760  p50 3  p90 77  p99 626  max 946
+    sat@1023 0.0000 %   (field saturates at |gp-0x6b86| >= 3273.6 counts)
+
+  === RUNG HEALTH, route a5 (V105, 65,960 0x14A frames, 74.32 % engaged) ===
+    b7_sign_6b4c_neg__NOT_THE_427_CELL all 0.2854  engaged 0.3835  manual 0.0018  eng&moving 0.3820
+        by |wheel rate| (engaged): 0.0-0.35:0.285(n=12,653)  0.35-1.0:0.423(n=355)  1.0-3.0:0.394(n=5,240)  3.0-6.0:0.386(n=7,557)  6.0-13.0:0.435(n=8,049)  13.0-25.0:0.433(n=7,182)  25.0-50.0:0.424(n=4,758)  50.0-+:0.442(n=3,227)
+    b6_CMP_abs6b94_ge_abs4f64__GOVERNOR_CLIP all 0.0000  engaged 0.0000  manual 0.0000  eng&moving 0.0000   🛑 DEAD/RAILED -- NOT INTERPRETABLE
+        by |wheel rate| (engaged): 0.0-0.35:0.000(n=12,653)  0.35-1.0:0.000(n=355)  1.0-3.0:0.000(n=5,240)  3.0-6.0:0.000(n=7,557)  6.0-13.0:0.000(n=8,049)  13.0-25.0:0.000(n=7,182)  25.0-50.0:0.000(n=4,758)  50.0-+:0.000(n=3,227)
+    b5_CMP_absfriction_ge_absinertia all 0.2533  engaged 0.2798  manual 0.1766  eng&moving 0.2802
+        by |wheel rate| (engaged): 0.0-0.35:0.194(n=12,653)  0.35-1.0:0.090(n=355)  1.0-3.0:0.171(n=5,240)  3.0-6.0:0.302(n=7,557)  6.0-13.0:0.249(n=8,049)  13.0-25.0:0.281(n=7,182)  25.0-50.0:0.303(n=4,758)  50.0-+:0.802(n=3,227)
+    b4_sign_r24_neg            all 0.3571  engaged 0.4338  manual 0.1350  eng&moving 0.4350
+        by |wheel rate| (engaged): 0.0-0.35:0.349(n=12,653)  0.35-1.0:0.507(n=355)  1.0-3.0:0.447(n=5,240)  3.0-6.0:0.436(n=7,557)  6.0-13.0:0.472(n=8,049)  13.0-25.0:0.483(n=7,182)  25.0-50.0:0.502(n=4,758)  50.0-+:0.428(n=3,227)
+    b3_sign_Dstate_neg         all 0.4799  engaged 0.4874  manual 0.4579  eng&moving 0.4871
+        by |wheel rate| (engaged): 0.0-0.35:0.473(n=12,653)  0.35-1.0:0.445(n=355)  1.0-3.0:0.489(n=5,240)  3.0-6.0:0.491(n=7,557)  6.0-13.0:0.492(n=8,049)  13.0-25.0:0.490(n=7,182)  25.0-50.0:0.510(n=4,758)  50.0-+:0.487(n=3,227)
+    (b6,b5) 2x2, ENGAGED: b6=0,b5=0 0.7202  b6=0,b5=1 0.2798  b6=1,b5=0 0.0000  b6=1,b5=1 0.0000
+    ⊕ NEGATIVE CONTROL: 0x14A byte7[7:6] != 0 on 100.0000 % of frames -- MUST be 0.0000 % (V94 does not write byte 7; only V92 ever did)
+
+  === EXPOSURE CENSUS, route a5 (V105) ===
+    65,959 frames   661.5 s (11.02 min)   row grid 99.72 Hz
+    ENGAGED 74.32%  =  490.2 s (8.17 min)      MANUAL 169.4 s
+    all      v median  31.03  p90  78.53  p99  95.51  max  96.50 km/h
+             0-5 km/h:   183.7s  5-20 km/h:    87.8s  20-50 km/h:   169.3s  50-80 km/h:   156.2s  80-+ km/h:    62.6s
+    engaged  v median  41.70  p90  85.20  p99  95.88  max  96.50 km/h
+             0-5 km/h:    20.4s  5-20 km/h:    81.7s  20-50 km/h:   169.3s  50-80 km/h:   156.2s  80-+ km/h:    62.6s
+    manual   v median   0.00  p90   1.09  p99   6.95  max   7.20 km/h
+             0-5 km/h:   163.2s  5-20 km/h:     6.1s  20-50 km/h:     0.0s  50-80 km/h:     0.0s  80-+ km/h:     0.0s
+    🛑 ENGAGED >= 50 km/h : 218.8 s   >= 80 km/h : 62.6 s
+    RATE REGIMES engaged: micro (1-13 °/s) 208.1 s   ratchet (13-50) 119.8 s   macro (>50) 32.5 s
+    RATE REGIMES manual : micro 3.4 s   ratchet 2.7 s   macro 11.9 s
+    🛑 GRIND-#2 REGIME (engaged, v>=22.2 m/s = 80 km/h, |rate|>=5 °/s): 51.0 s
+    manual frames PARKED: v<0.1 89.2%   v<0.2 89.5%   v<0.5 90.5%
+    engagement episodes: 9 total, 9 >=2 s, 9 >=10 s, longest 154.6 s
+    ★ MANUAL HANDS-OFF COAST (manual, !pressed, !brake, v>8 m/s, |rate|<3 °/s): 0.0 s in 0 runs (0 >=5 s, 0 >=15 s, longest 0.0 s)
+
+     seg   frames     sec   v med   v p90   v max   eng%   eng s  eng>=50  park%
+       0    5,959    59.6    0.00    0.00    0.00   0.0%     0.0      0.0 100.0%
+       1    5,998    60.0    0.00    5.86    7.20  11.4%     6.8      0.0  74.6%
+       2    6,001    60.0   15.35   28.80   40.11  79.3%    47.6      0.0  20.4%
+       3    6,002    60.0   39.14   47.26   71.94  90.6%    54.4      5.5   9.2%
+       4    5,999    60.0   91.58   95.70   96.50 100.0%    60.0     60.0   0.0%
+       5    5,999    60.0   59.20   86.59   87.45 100.0%    60.0     40.6   0.0%
+       6    6,000    60.0   19.07   39.50   47.03  81.7%    49.0      0.0  17.8%
+       7    6,001    60.0   57.40   62.25   63.14 100.0%    60.0     39.9   0.0%
+       8    5,999    60.0   55.50   65.22   65.61  88.4%    53.1     39.0  11.3%
+       9    6,000    60.0   55.17   65.91   68.45  88.7%    53.2     33.8  11.2%
+      10    6,001    60.0    8.15   36.83   40.33  76.8%    46.1      0.0   8.7%
+
+    onroadEvents (2987 total): steerOverride:938, gasPressedOverride:820, pedalPressed:601, cruiseMismatch:293, wrongGear:120, laneChange:99, preEnableStandstill:44, brakeHold:25, reverseGear:19, selfdriveInitializing:7, buttonEnable:6, selfdrivedLagging:3, preLaneChangeRight:3, preLaneChangeLeft:3, commIssue:2, locationdTemporaryError:2, commIssueAvgFreq:1, userBookmark:1
+    sentinels 0x14A 0  0x18F 0   DTC bit2 duty 0.00000 (0 transitions)
+    STEER_STATUS hist {0: 65960}
+    OUTPUT_DISABLED duty 0.00000   CONFIG_VALID duty 1.00000

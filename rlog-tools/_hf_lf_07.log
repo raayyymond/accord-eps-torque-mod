@@ -1,0 +1,140 @@
+
+================================================================================================================
+a5 ENGAGED hwy (V105 6x+NOTCH)  2 ep, 82.9 s, v=87.5 km/h   fc=26.76 Hz   injected f_m=8.0 Hz
+================================================================================================================
+  band RMS  carrier(21-28) 275.1   ratchet(6-12) 288   ratio rat/car 1.05   ctrl(32-38) 25.19
+  S4 top spectral peaks 4-45 Hz: 26.76(24.0)  8.01(8.4)  10.35(2.8)  12.30(3.2)  9.18(0.7)  19.92(2.2)  11.52(0.9)  20.70(1.8)
+     peak SEPARATIONS falling in 6-12 Hz (a beat would make a real envelope): [6.05, 6.84, 7.62, 8.4, 9.18, 9.57, 10.35, 10.74, 11.52, 11.91]
+  BASELINE (no injection): envelope line 1.87 @ 12.30 Hz vs false-alarm p95 1.88 no   |   sideband 0.66
+  depth  | CLEAN  (injected onto phase-rand record) | REALISTIC (injected onto real record) 
+  m      | env line         sideband             | env line         sideband            
+  0.05   |  1.85@ 7.23 HIT    0.71 vs  0.89 miss |  1.93@12.30 HIT    0.80 vs  1.06 miss
+  0.10   |  1.88@ 6.45 HIT    1.09 vs  1.22 miss |  1.95@ 6.64 HIT    0.83 vs  1.04 miss
+  0.20   |  1.82@12.30 miss   1.32 vs  1.47 miss |  1.78@ 5.66 HIT    1.30 vs  1.50 miss
+  0.35   |  5.88@ 8.01 HIT    3.20 vs  3.34 miss |  4.89@ 8.01 HIT    2.68 vs  3.18 miss
+  0.50   | 12.23@ 8.01 HIT    5.91 vs  6.02 miss |  9.28@ 8.01 HIT    5.58 vs  6.92 miss
+  0.75   | 16.75@ 8.01 HIT   11.58 vs 12.05 miss | 14.26@ 8.01 HIT   10.23 vs 13.23 miss
+  1.00   | 27.55@ 8.01 HIT   21.68 vs 20.69 HIT  | 26.53@ 8.01 HIT   16.84 vs 22.18 miss
+  ⇒ DETECTION FLOOR (smallest m detected): clean env 0.05 · clean sideband 1.0 · real env 0.05 · real sideband None
+  S3 T3 CALIBRATION -- the same discriminator on synthetic records built from THIS arm's own data
+     record           CARRIER r    RATCHET r    CTRL r       DELTA (b_car - b_ctrl)
+     ONE-mechanism    0.4994       0.9486       0.7391       -0.137 [-0.165,-0.137]
+     TWO-mechanism    0.4955       1.0053       0.6722       -0.007 [-0.007,+0.050]
+     REAL DATA        0.4919       0.8353       0.7256       -0.095 [-0.372,-0.076]
+
+================================================================================================================
+a5 ENGAGED mid (V105 6x+NOTCH)  8 ep, 165.2 s, v=54.2 km/h   fc=27.15 Hz   injected f_m=8.0 Hz
+================================================================================================================
+  band RMS  carrier(21-28) 39.99   ratchet(6-12) 129.9   ratio rat/car 3.25   ctrl(32-38) 12.4
+  S4 top spectral peaks 4-45 Hz: 8.40(19.9)  9.38(1.7)  7.42(1.8)  10.74(1.3)  27.15(2.9)  11.52(1.0)  21.48(2.1)  11.91(1.1)
+     peak SEPARATIONS falling in 6-12 Hz (a beat would make a real envelope): [9.57, 9.96, 10.74]
+  BASELINE (no injection): envelope line 1.74 @ 8.40 Hz vs false-alarm p95 1.80 no   |   sideband 0.34
+  depth  | CLEAN  (injected onto phase-rand record) | REALISTIC (injected onto real record) 
+  m      | env line         sideband             | env line         sideband            
+  0.05   |  1.45@12.50 miss   0.47 vs  0.52 miss |  1.94@ 8.40 HIT    0.35 vs  0.51 miss
+  0.10   |  1.64@ 6.25 HIT    0.50 vs  0.55 miss |  1.68@ 8.40 miss   0.35 vs  0.54 miss
+  0.20   |  1.57@ 8.01 HIT    0.57 vs  0.60 miss |  1.75@ 8.01 miss   0.44 vs  0.59 miss
+  0.35   |  1.42@10.94 miss   0.80 vs  0.81 miss |  2.57@ 8.01 HIT    0.54 vs  0.69 miss
+  0.50   |  1.70@ 8.01 HIT    0.99 vs  1.00 miss |  4.43@ 8.01 HIT    0.84 vs  1.04 miss
+  0.75   |  2.33@ 8.01 HIT    1.66 vs  1.83 miss | 10.49@ 8.01 HIT    1.71 vs  2.08 miss
+  1.00   |  3.52@ 8.01 HIT    2.59 vs  2.81 miss | 12.71@ 8.01 HIT    2.59 vs  3.02 miss
+  ⇒ DETECTION FLOOR (smallest m detected): clean env 0.1 · clean sideband None · real env 0.05 · real sideband None
+  S3 T3 CALIBRATION -- the same discriminator on synthetic records built from THIS arm's own data
+     record           CARRIER r    RATCHET r    CTRL r       DELTA (b_car - b_ctrl)
+     ONE-mechanism    0.1064       0.2600       0.3595       -0.186 [-0.386,+0.036]
+     TWO-mechanism    0.0894       0.6730       0.3168       -0.028 [-0.247,+0.093]
+     REAL DATA        0.1029       0.2710       0.3090       -0.278 [-0.726,-0.063]
+
+================================================================================================================
+a4 ENGAGED hwy (V104 6x)  5 ep, 189.1 s, v=81.7 km/h   fc=26.37 Hz   injected f_m=8.0 Hz
+================================================================================================================
+  band RMS  carrier(21-28) 314.2   ratchet(6-12) 388.2   ratio rat/car 1.24   ctrl(32-38) 26.44
+  S4 top spectral peaks 4-45 Hz: 7.62(15.2)  26.37(18.7)  9.38(1.3)  10.35(1.3)  13.09(2.2)  6.05(0.9)  21.48(1.7)  20.90(1.5)
+     peak SEPARATIONS falling in 6-12 Hz (a beat would make a real envelope): [7.03, 7.81, 8.4, 10.55, 11.13, 11.52]
+  BASELINE (no injection): envelope line 1.59 @ 7.62 Hz vs false-alarm p95 1.53 HIT   |   sideband 0.69
+  depth  | CLEAN  (injected onto phase-rand record) | REALISTIC (injected onto real record) 
+  m      | env line         sideband             | env line         sideband            
+  0.05   |  1.31@ 5.08 miss   0.87 vs  0.95 miss |  1.35@ 7.62 miss   0.81 vs  0.87 miss
+  0.10   |  2.03@ 8.01 HIT    1.25 vs  1.32 miss |  2.02@ 8.01 HIT    1.12 vs  1.18 miss
+  0.20   |  4.60@ 8.01 HIT    2.64 vs  2.58 HIT  |  5.44@ 8.01 HIT    2.73 vs  2.91 miss
+  0.35   | 13.71@ 8.01 HIT    7.00 vs  6.95 HIT  | 13.77@ 8.01 HIT    6.64 vs  6.78 miss
+  0.50   | 21.76@ 8.01 HIT   13.30 vs 14.03 miss | 23.88@ 8.01 HIT   13.24 vs 12.97 HIT 
+  0.75   | 32.03@ 8.01 HIT   27.79 vs 28.61 miss | 36.89@ 8.01 HIT   30.00 vs 29.74 HIT 
+  1.00   | 53.86@ 8.01 HIT   53.05 vs 50.32 HIT  | 63.02@ 8.01 HIT   51.09 vs 49.85 HIT 
+  ⇒ DETECTION FLOOR (smallest m detected): clean env 0.1 · clean sideband 0.2 · real env 0.1 · real sideband 0.5
+  S3 T3 CALIBRATION -- the same discriminator on synthetic records built from THIS arm's own data
+     record           CARRIER r    RATCHET r    CTRL r       DELTA (b_car - b_ctrl)
+     ONE-mechanism    0.4119       0.7015       0.5449       -0.123 [-0.375,-0.004]
+     TWO-mechanism    0.4111       0.7919       0.5239       -0.035 [-0.140,+0.039]
+     REAL DATA        0.4139       0.4276       0.5438       -0.433 [-0.572,-0.268]
+
+================================================================================================================
+9e ENGAGED hwy (V103 6x)  2 ep, 89.8 s, v=81.7 km/h   fc=23.83 Hz   injected f_m=8.0 Hz
+================================================================================================================
+  band RMS  carrier(21-28) 136.6   ratchet(6-12) 205   ratio rat/car 1.50   ctrl(32-38) 14.28
+  S4 top spectral peaks 4-45 Hz: 8.01(6.4)  9.77(1.9)  23.83(4.6)  8.98(1.2)  24.80(2.2)  12.11(2.5)  11.33(0.8)  25.78(1.8)
+     peak SEPARATIONS falling in 6-12 Hz (a beat would make a real envelope): [11.72]
+  BASELINE (no injection): envelope line 2.97 @ 12.50 Hz vs false-alarm p95 2.11 HIT   |   sideband 1.04
+  depth  | CLEAN  (injected onto phase-rand record) | REALISTIC (injected onto real record) 
+  m      | env line         sideband             | env line         sideband            
+  0.05   |  2.28@11.72 HIT    0.94 vs  1.24 miss |  2.21@11.72 HIT    1.30 vs  1.36 miss
+  0.10   |  2.42@11.72 HIT    0.92 vs  1.26 miss |  2.33@11.72 HIT    1.50 vs  1.52 miss
+  0.20   |  2.60@ 8.01 HIT    1.81 vs  2.07 miss |  5.28@ 8.01 HIT    2.47 vs  2.58 miss
+  0.35   |  9.13@ 8.01 HIT    5.27 vs  5.99 miss | 12.85@ 8.01 HIT    5.39 vs  5.49 miss
+  0.50   | 15.78@ 8.01 HIT   11.07 vs 12.23 miss | 23.78@ 8.01 HIT   10.57 vs 10.13 HIT 
+  0.75   | 23.12@ 8.01 HIT   16.83 vs 17.31 miss | 53.76@ 8.01 HIT   20.13 vs 18.00 HIT 
+  1.00   | 36.34@ 8.01 HIT   36.36 vs 34.91 HIT  | 101.18@ 8.01 HIT   35.25 vs 32.54 HIT 
+  ⇒ DETECTION FLOOR (smallest m detected): clean env 0.05 · clean sideband 1.0 · real env 0.05 · real sideband 0.5
+  S3 T3 CALIBRATION -- the same discriminator on synthetic records built from THIS arm's own data
+     record           CARRIER r    RATCHET r    CTRL r       DELTA (b_car - b_ctrl)
+     ONE-mechanism    0.0355       0.1582       0.1820       -0.398 [-0.632,-0.374]
+     TWO-mechanism    0.0427       1.0476       0.2216       -0.000 [-0.014,-0.000]
+     REAL DATA        0.0331       0.0766       0.1407       -0.462 [-0.622,-0.462]
+
+================================================================================================================
+96 ENGAGED hwy (V102 6x)  5 ep, 232.6 s, v=98.8 km/h   fc=24.61 Hz   injected f_m=8.0 Hz
+================================================================================================================
+  band RMS  carrier(21-28) 235.7   ratchet(6-12) 290.2   ratio rat/car 1.23   ctrl(32-38) 16.4
+  S4 top spectral peaks 4-45 Hz: 8.20(10.3)  24.61(4.7)  25.78(1.5)  13.09(3.6)  22.46(1.1)  12.11(0.8)  21.68(1.0)  20.90(1.0)
+     peak SEPARATIONS falling in 6-12 Hz (a beat would make a real envelope): [7.81, 8.59, 8.79, 9.38, 9.57, 10.35, 11.52]
+  BASELINE (no injection): envelope line 1.90 @ 11.33 Hz vs false-alarm p95 1.60 HIT   |   sideband 0.63
+  depth  | CLEAN  (injected onto phase-rand record) | REALISTIC (injected onto real record) 
+  m      | env line         sideband             | env line         sideband            
+  0.05   |  2.65@11.13 HIT    1.06 vs  1.06 miss |  2.49@11.52 HIT    0.78 vs  0.95 miss
+  0.10   |  2.39@11.52 HIT    1.41 vs  1.60 miss |  3.15@ 8.01 HIT    1.28 vs  1.47 miss
+  0.20   |  5.52@ 8.01 HIT    3.33 vs  3.45 miss |  8.44@ 8.01 HIT    3.16 vs  3.30 miss
+  0.35   | 13.05@ 8.01 HIT    8.86 vs  9.07 miss | 20.76@ 8.01 HIT    8.46 vs  8.59 miss
+  0.50   | 18.74@ 8.01 HIT   17.69 vs 17.09 HIT  | 36.13@ 8.01 HIT   16.47 vs 17.07 miss
+  0.75   | 31.44@ 8.01 HIT   37.22 vs 36.86 HIT  | 56.99@ 8.01 HIT   36.77 vs 38.49 miss
+  1.00   | 39.08@ 8.01 HIT   64.84 vs 62.88 HIT  | 59.83@ 8.01 HIT   64.68 vs 66.58 miss
+  ⇒ DETECTION FLOOR (smallest m detected): clean env 0.05 · clean sideband 0.5 · real env 0.05 · real sideband None
+  S3 T3 CALIBRATION -- the same discriminator on synthetic records built from THIS arm's own data
+     record           CARRIER r    RATCHET r    CTRL r       DELTA (b_car - b_ctrl)
+     ONE-mechanism    0.0227       0.3833       0.1545       -0.243 [-0.340,-0.157]
+     TWO-mechanism    0.0259       0.8059       0.1938       -0.051 [-0.088,-0.014]
+     REAL DATA        0.0200       0.0407       0.1269       -0.583 [-0.641,-0.524]
+
+================================================================================================================
+97 ENGAGED mid (STOCK 1x)  15 ep, 206.0 s, v=52.7 km/h   fc=15.43 Hz   injected f_m=8.0 Hz
+================================================================================================================
+  band RMS  carrier(21-28) 14.83   ratchet(6-12) 59.29   ratio rat/car 4.00   ctrl(32-38) 8.922
+  S4 top spectral peaks 4-45 Hz: 12.30(1.4)  8.59(1.6)  8.20(1.7)  11.72(1.2)  10.74(1.0)  4.69(1.0)  9.77(0.9)  5.27(1.1)
+     peak SEPARATIONS falling in 6-12 Hz (a beat would make a real envelope): [6.05, 6.45, 7.03, 7.62]
+  BASELINE (no injection): envelope line 1.62 @ 6.25 Hz vs false-alarm p95 1.65 no   |   sideband 0.71
+  depth  | CLEAN  (injected onto phase-rand record) | REALISTIC (injected onto real record) 
+  m      | env line         sideband             | env line         sideband            
+  0.05   |  1.48@11.52 miss   0.81 vs  1.05 miss |  1.49@ 6.25 miss   0.71 vs  1.12 miss
+  0.10   |  1.53@10.16 miss   0.80 vs  0.91 miss |  1.59@ 6.25 miss   0.72 vs  1.05 miss
+  0.20   |  1.34@ 5.08 miss   0.87 vs  0.99 miss |  1.49@ 6.25 miss   0.70 vs  1.00 miss
+  0.35   |  1.45@10.94 miss   0.90 vs  1.18 miss |  1.57@ 6.25 miss   0.71 vs  1.04 miss
+  0.50   |  1.43@ 6.05 miss   0.84 vs  1.16 miss |  1.58@ 6.25 miss   0.78 vs  1.33 miss
+  0.75   |  1.36@ 6.45 miss   0.83 vs  1.02 miss |  1.84@ 8.01 miss   0.93 vs  1.24 miss
+  1.00   |  1.30@ 9.77 miss   1.04 vs  1.25 miss |  1.92@ 8.01 miss   0.90 vs  1.22 miss
+  ⇒ DETECTION FLOOR (smallest m detected): clean env None · clean sideband None · real env None · real sideband None
+  S3 T3 CALIBRATION -- the same discriminator on synthetic records built from THIS arm's own data
+     record           CARRIER r    RATCHET r    CTRL r       DELTA (b_car - b_ctrl)
+     ONE-mechanism    0.1800       0.2823       0.1924       +0.111 [+0.020,+0.185]
+     TWO-mechanism    0.1723       0.5837       0.2025       +0.066 [+0.004,+0.116]
+     REAL DATA        0.1733       0.2590       0.2033       +0.086 [-0.014,+0.166]
+
+wrote C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\_hf_lf_sensitivity.json

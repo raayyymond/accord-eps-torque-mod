@@ -23,7 +23,56 @@ deliberately not numbered `PART2` so the two can never be confused.
 
 ---
 
-## 🛑🛑 V105 — BUILT, VERIFIED, NOT FLASHED. **V104 IS ON THE CAR.**
+## 🛑🛑 V106 — BUILT, VERIFIED, NOT FLASHED. **V105 IS ON THE CAR** (route `a5`, wire-verified).
+
+| artifact | SHA256 |
+|---|---|
+| `_v106_V105BASE-GP6B26.X3.0.D7A5C-D7A6C_plain_image.bin` | `78528aa35b9ea2fa1ea990b2c8d41c7adc784fc17f0b481d66ddcfd3667cb65a` |
+| `39990-TVA,A160-V106-V105BASE-GP6B26.X3.0.D7A5C-D7A6C-0x13000-0x100000.rwd` | `e5ac6927a112a0cdf944971aebf7aa14efe6ad8597e17835bbc62d1589bfecbc` |
+
+**Builder** `analysis-2020accord/build_v106_tva.py`, **50/50 assertions**, reproduces bit-for-bit.
+**16 bytes / 3 runs vs V105** (12 payload + 4 CRC), **zero unattributed**. **ONE CRC trailer, `0xD7FFC`.**
+
+```
+0xD7A5C  mode 26 (ENGAGED) Y[0..2]   (-14745,-8601,-2949) -> (-29490,-17202,-5898)
+0xD7A6C  mode 27 (ENGAGED) Y[0..2]   (-14745,-8601,-2949) -> (-29490,-17202,-5898)
+```
+= **×3.0 of Honda's stock `(-9830,-5734,-1966)`**, computed from it by an integer multiple, never typed
+as hex. `gp-0x6b26 = −K(speed)·angular_acceleration`, summed **unweighted** into `FUN_0003aa2c`.
+
+**CLASS: DAMPING.** The first build since V38 to attack the mode by adding dissipation rather than by
+reducing a level or reshaping a filter. The arc: V38–V52 authority/filters/poles/caves · V53–V61 probes
+and lane mutes · V62–V73 the rate lane · V74–V83a the base-assist damper (**structurally ZERO in the
+operator's window** — `FactorC` dead below 35 km/h, `FactorE` below 12.7 °/s) · V84 damper reverted ·
+V85–V99 observer/plant probes · V100–V103 the gain ladder + arming the biquad · V104 `c4` flat gain
+(FLOWN, NULL) · V105 filter SHAPE (FLOWN — **relocated the mode, band power conserved**) · **V106 the
+first delivered damping into 18–28 Hz at low speed.**
+
+**WHY:** the only lever with a **signed on-car precedent pointing this way** — V93/V94 LOWERED it and the
+operator aborted the drive as unsafe. The RAISE direction was never tested at 18–28 Hz; the "closed both
+directions" verdict rested on a **dose-VERIFICATION** check at 6–9 Hz. **FALSIFIED ≠ INERT ≠ UNTESTED.**
+Reaches **both** bands (gain **1.478 @ 7.79 Hz**, **3.706 @ 21.73 Hz**), and 🛑 **`H(f=0) = 0` EXACTLY**
+⇒ **cannot rate-limit a held 6× command at any multiplier.**
+
+⭐ **IT PROVES ITS OWN PREMISE — RULE 7 closed at zero cost.** The carried cave rung
+**`b5` = ( |gp-0x6ae2| ≥ |gp-0x6b26| )** — operand B at `0xC4B70` = `da94` = `-0x6b26`, **the exact cell
+dosed**. Engaged duty must collapse from its **0.4019** baseline if the car reads modes 26/27 engaged;
+unchanged confirms the V91/V92 mode-record suspicion. **MANUAL is the built-in control.**
+
+🛑 **26/27 ONLY — the family has FOUR members.** `build_v100_tva.py`'s `DOSE_FAMILY_Y` lists **three**
+(`build_v105_tva.py` already had four). Mode 24 (`0xD6A6C`) is **MANUAL** ⇒ dosing it is inert for an
+engagement-conditional symptom and changes manual feel instead. Mode 25 (`0xD7A4C`) has an **unconfirmed
+role** ⇒ the V69/V70 trap class. **Both left at Honda's stock.**
+
+🛑 **`0xC407E` NOT TOUCHED, still 511** — one count under its own 512 monitor trip, so the RULE-11
+interlock is **untrippable at any multiplier, by construction, not by care.** (V73 raised a *different*
+cell's clamp past its trip; **V74 and V75 both hard-faulted mid-drive.**)
+
+**Drive card — nine numbered questions:** `docs/HANDOFF-2026-08-22-v106-the-damper-and-the-one-mode.md` §5.
+
+---
+
+## V105 — **FLOWN as route `a5`** (wire-verified, 3 legs). Grinding and ratcheting both still present.
 
 | artifact | SHA256 |
 |---|---|

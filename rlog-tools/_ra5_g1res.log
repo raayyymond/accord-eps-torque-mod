@@ -1,0 +1,51 @@
+========================================================================================================================
+P1/P2.  THE REPLACEMENT FOR THE FAILED 'STOCK CI' CONTROL:
+        PROMINENCE over the line's own shoulders, and EDGE-PINNING.
+        Engaged < 16 km/h, search band 17.5-24.0 Hz, 4 s Hann.
+========================================================================================================================
+         build   eps    peak Hz     peak PSD     baseline   PROMINENCE edge-pinned?
+      STOCK 1x     7     17.982       0.0197       0.0088          2.2           no
+       V102 6x     6     21.978     151.8469       0.1646        922.4           no
+       V103 6x     3     21.728     165.1561       1.0814        152.7           no
+       V104 6x     9     22.727      51.3561       0.2330        220.5           no
+ V105 6x+NOTCH     6     20.479      17.4785       0.9693         18.0           no
+   WHITE NOISE     6     20.479       0.0120       0.0098          1.2           no
+  🛑 STOCK's argmax is EDGE-PINNED -- it has no interior line, which is why its CI was
+     trivially tight.  Prominence is the diagnostic that separates a line from a slope.
+
+========================================================================================================================
+W.  🛑 THE WINDOW-LENGTH LADDER -- the honest way to bound the line's width.
+    Each row: measured -3 dB BW at that window length, against a MATCHED white-noise
+    control at the SAME length.  ENBW = 1.5 / T.
+========================================================================================================================
+   win s     ENBW      arm |          V104 6x     V105 6x+NOTCH     WHITE NOISE
+     4.0    0.375    BW Hz |      1.249 (30w)      0.999 (19w)            0.749
+                   peak Hz |           22.727           20.479                 
+     6.0    0.250    BW Hz |      1.000 (15w)       1.000 (9w)            0.667
+                   peak Hz |           22.496           21.996                 
+     8.0    0.188    BW Hz |       0.625 (9w)       0.750 (5w)            0.375
+                   peak Hz |           22.380           22.130                 
+    12.0    0.125    BW Hz |       0.167 (3w)       0.333 (2w)            0.167
+                   peak Hz |           22.829           20.580                 
+    16.0    0.094    BW Hz |       0.188 (1w)       0.188 (1w)            0.125
+                   peak Hz |           22.068           20.505                 
+
+  READ IT LIKE THIS:  BW tracking ENBW down  => the line is NARROWER than we can see,
+  and every Q here is a LOWER bound.  BW plateauing => that plateau IS the line's width.
+
+========================================================================================================================
+E3-C.  THE BAND-CENTRE BIAS CONTROL.  E3 returns the BAND CENTRE on stock, and `a5`'s
+       line sits almost exactly at the centre of both bands used -- so E3 could not
+       confirm it.  Re-run on DELIBERATELY ASYMMETRIC bands.
+========================================================================================================================
+         build       17.5-24         18-22         18-30         14-24         16-21       19.5-32
+   band centre         20.75         20.00         24.00         19.00         18.50         25.75
+      STOCK 1x        20.454        19.841        23.125        18.214        18.151        24.941
+       V102 6x        21.726        21.368        21.791        21.704        20.299        21.865
+       V103 6x        21.260        21.217        21.442        21.109        19.645        21.603
+       V104 6x        22.378        20.969        22.680        22.324        19.938        22.797
+ V105 6x+NOTCH        20.902        20.353        21.487        20.333        19.377        22.110
+  🛑 STOCK's row should TRACK THE BAND CENTRE row (it has no line).  A build's row that
+     stays PUT while the band centre swings 17.75 -> 25.75 Hz is tracking a real line.
+
+wrote _ra5_grind1_resolve.json
