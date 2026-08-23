@@ -22,24 +22,42 @@ unverified sign that had already been built into V89.
    engagement effect as rate-independent (+0.022 [-0.070, +0.116]) - corroboration nobody designed for.
 
 ## THE SIGN CHAIN - raising K1 makes the wheel LIGHTER
-| # | where | effect |
+🛑 **CORRECTED 2026-08-23. The earlier table was RIGHT FOR THE WRONG REASON - two errors that
+cancelled.** `gp-0x6752` = -1 is the **DRIVER-FRAME <-> AGGREGATOR-FRAME CONVERTER**, not a stray
+negation, and it is applied at exactly the 7 places a signal crosses between the two frames
+(`0x3B92E`, `0x3B91C`, `0x381EE`, `0x3668E`, `0x358C2`, `0x3AB78`, `0x3A71A`).
+**Do NOT answer this by counting negations - count FRAME CROSSINGS.** See
+[[accord-gp6752-is-a-frame-converter-count-crossings]].
+
+| # | where | effect (all signs relative to the driver's push direction) |
 |---|---|---|
-| 1 | `0x3BBC2 subf.s r10,r8,r8` - friction SUBTRACTED from the model | model out down |
-| 2 | `FUN_0003bc20` -> `gp-0x6bfe` | down |
-| 3 | `FUN_00038148` `residual = MODEL - ACTUAL` | down |
-| 4 | `gp-0x6b70 = sign(res) x LERP(|res|)` | more negative |
-| 5 | `FUN_00037fe6` `gp-0x6ad6 = (... + gp-0x6b70) x LERP >> 10` - ENABLE flag `0xC64B0` = 1 | down |
-| 6 | `FUN_0003a382` `error = gp-0x4f60 (measured driver torque) - clamp(gp-0x6ad6)` | up |
-| 7 | PID, P/I/D all positive-coefficient -> `gp-0x6ad4` | up |
-| 8 | `0x3ACA8` -> windowed -> **`mov`, `add` x8, NO negation** -> `0x3AD20 st.h r10,-0x6b94[gp]` | up |
-| 9 | `gp-0x6b94` -> governor -> `gp-0x6acc` -> shaper -> `gp-0x6b98` -> motor | **more assist** |
+| 1 | `0x3BBC2 subf.s` - friction SUBTRACTED from the model | \|model out\| down |
+| 2 | `FUN_0003bc20` -> `gp-0x6bfe` | pass-through, gain +1 |
+| 3 | `FUN_00038148` `res = MODEL - ACTUAL` | shifts against the push |
+| 4 | `gp-0x6b70 = clamp(sgn(res)*LERP(\|res\|), +-8192)`, `f' >= 0` => **d/d(MODEL) >= 0 EVERYWHERE** | against the push |
+| 5 | `FUN_00037fe6` `gp-0x6ad6 += gp-0x6b70 * w(0xC64B0)=1`; output LERP flat [1024]x8 => **gain 1.000** | target effort DOWN |
+| 6 | `0x3A7CA` `e = gp-0x4f60 - clamp(gp-0x6ad6, +-0xC6200=8192)` | \|e\| UP |
+| 7 | PID, P/I/D all positive-coefficient, **then `0x3A71A`/`0x3A874` x `gp-0x6752` = -1** -> `gp-0x6ad4` | moves AWAY from zero in the AGGREGATOR frame |
+| 8 | `0x3A8A0` sole writer -> `0x3ACA8` sole reader (**2 touches program-wide**) -> `gp-0x6b94` at +1 | no negation possible between |
+| 9 | `delivered = gp-0x6752 x gp-0x6b94` => **torque in the DRIVER'S OWN direction** | **more assist** |
 
-=> **MORE modelled Coulomb friction => MORE assist => LIGHTER wheel. It does not fight LKAS.**
+=> **MORE modelled Coulomb friction => LOWER target felt effort => MORE assist => LIGHTER.**
 
-**`gp-0x6ad6` is a torque-tracking REFERENCE, not a torque added to the motor.** The loop holds the
-driver's FELT torque at that target; telling it the plant has more dry friction LOWERS the target
-effort, so the PID delivers more motor torque. And Coulomb friction **flips sign at every reversal**,
-so a constant error in the estimate is a **step error at every reversal - which is a ratchet.**
+**The closed-loop statement, self-checking, needs no parity count:**
+`u = POL*K*(Ts - Tref)`, `Ts = P*u + Text` => `Ts = (L*Tref + Text)/(1+L)`, `L = -P*POL*K`.
+**`L > 0` is forced PHYSICALLY** - at `L < 0` the loop amplifies `Text`; at `L < -1` it runs away.
+=> `dTs/dTref = L/(1+L) > 0`: **`gp-0x6ad6` IS a target felt effort.**
++ Cross-check: this predicts `d(gp-0x6b94)/d(gp-0x6b70) > 0`; the kit MEASURED **+0.2529 / +0.2565 /
++0.2617** with a passing positive control. One extra or one missing negation would predict negative.
+
+🛑 **`0xC40D2` (K1, a tp-block scalar in the plant model, `FUN_0003b8f6`) is NOT the x1.5
+friction TABLE** (14 mode-record sites `0xCF6E0...0xD9A6C` behind `0xCBE74`, feeding the `gp-0x6b26`
+lane) that V73 introduced and V81 reverted. **Two different mechanisms sharing one word.** V81's
+*"removes drag the operator is used to"* is about the TABLE and is **NOT evidence about `0xC40D2`.**
+
+⚠ **The one honest route by which K1=204 could still feel bad:** Coulomb friction flips sign at
+every reversal, so larger K1 = a larger **STEP at each reversal** - notchiness on turn-in, not steady
+drag. Transient, unmeasured, pre-registered in V89's own docstring. [BELIEF, structural]
 
 ## The honest caveat
 **V56 muted this exact lane** (`0xC6AFC`/`0xC6AFE` 32768->0) and the memory says it is *"ELIMINATED as

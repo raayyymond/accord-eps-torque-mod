@@ -1,0 +1,17 @@
+{
+ "route": "a6",
+ "build": "V106",
+ "frames": 77674,
+ "source": "gp-0x6b86 (BIQUAD OUTPUT -- V105's 25.5 Hz notch), sar 4  [V104 repoint, CARRIED unchanged by V105 and V106]",
+ "counts_per_lsb": 3.2,
+ "rectified": true,
+ "sign_bit_available": false,
+ "nonzero_frac": 0.7206916085176507,
+ "distinct": 914,
+ "p50": 2.0,
+ "p90": 53.0,
+ "p99": 616.0,
+ "max": 1023,
+ "sat_field_1023_frac": 0.001686536035224142,
+ "cell_counts_at_saturation": 3273.6000000000004
+}

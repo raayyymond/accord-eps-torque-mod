@@ -1,0 +1,73 @@
+============================================================================================================================
+C1.  🛑 THE ESTIMATOR CONTROL, RUN FIRST.  A **STATIONARY 22.0 Hz** mode injected at a
+     ladder of amplitudes into route a6's own MANUAL-driving noise, through the IDENTICAL
+     binning + argmax pipeline.  TRUE SLOPE = 0 BY CONSTRUCTION.
+============================================================================================================================
+  noise pool: 144 manual windows from route a6
+  injected 22.0 Hz (stationary)  ->  slope vs log(BAND RMS)  -0.000 Hz/e-fold   vs log(TRUE amp)  -1.138
+       recovered peaks by amplitude bin: 21.98(n=24)  21.98(n=24)  21.98(n=24)  21.98(n=24)  21.98(n=24)  21.98(n=24)
+  injected 20.0 Hz (stationary)  ->  slope vs log(BAND RMS)  -0.000 Hz/e-fold   vs log(TRUE amp)  -0.759
+       recovered peaks by amplitude bin: 19.98(n=24)  19.98(n=24)  19.98(n=24)  19.98(n=24)  19.98(n=24)  19.98(n=24)
+  injected 26.0 Hz (stationary)  ->  slope vs log(BAND RMS)  +0.000 Hz/e-fold   vs log(TRUE amp)  +1.731
+       recovered peaks by amplitude bin: 25.97(n=24)  25.97(n=24)  25.97(n=24)  25.97(n=24)  25.97(n=24)  25.97(n=24)
+  🛑 ARTEFACT FLOOR = the largest |slope| above.  A measured slope inside it is NOT a
+     result.  Note the SIGN tracks (band centre 24 Hz - injected f), exactly as predicted.
+
+============================================================================================================================
+1.  (I) PEAK FREQUENCY vs log(MODE AMPLITUDE) -- WITHIN each drive, SPEED-STRATIFIED.
+============================================================================================================================
+         build          speed    n win  slope Hz/e-fold [95 % CI]   peak by amplitude sextile
+       V104 6x     16-40 km/h       74    -0.653 [-1.658, +0.890]   24.7 24.2 25.5 27.0 23.2 23.0
+       V104 6x     40-95 km/h      159    +0.130 [-0.543, +1.031]   25.5 27.2 26.0 25.7 26.5 26.7
+       V104 6x      >=70 km/h       97    -0.016 [-0.500, +0.305]   26.7 26.7 26.5 26.7 26.7 26.7
+    V105 NOTCH     16-40 km/h       70    -1.495 [-2.355, +0.224]   24.0 27.0 24.5 23.5 21.7 22.0
+    V105 NOTCH     40-95 km/h      127    +0.067 [-0.254, +1.000]   27.0 27.5 27.5 27.5 27.7 27.0
+   V106 6b26x3     40-95 km/h      172    +1.838 [-0.603, +3.504]   20.5 20.2 26.0 20.2 20.2 27.2
+   V106 6b26x3      >=70 km/h      405    +0.391 [-0.386, +0.607]   26.5 28.2 27.5 28.5 28.0 28.2
+
+============================================================================================================================
+2.  (II) PEAK FREQUENCY vs log(COMMAND AMPLITUDE |e4tq|) -- the -1.93 Hz/e-fold law's OWN
+    independent variable.  🛑 MANDATORY per `accord-f0-crossover-is-the-endpoint`: the
+    median |0x0E4| is reported beside every row.
+============================================================================================================================
+         build          speed    n win  med |0E4|  slope Hz/e-fold [95 % CI]   peak by sextile
+       V104 6x     16-40 km/h       74        334    -1.027 [-1.567, -0.358]   25.0 27.0 27.0 23.0 23.2 23.0
+       V104 6x     40-95 km/h      159        137    +0.365 [-2.449, +1.055]   26.7 26.2 26.5 27.2 26.7 27.2
+       V104 6x      >=70 km/h       97        133    +0.396 [-0.191, +1.238]   26.7 26.5 26.7 26.7 26.7 27.0
+    V105 NOTCH     16-40 km/h       70        336    -1.684 [-1.897, -0.471]   27.0 27.2 24.5 23.7 21.7 22.0
+    V105 NOTCH     40-95 km/h      127        160    +0.484 [-0.234, +0.786]   26.7 27.0 27.2 27.7 27.7 27.5
+   V106 6b26x3     40-95 km/h      172        128    -0.257 [-5.483, +2.203]   27.7 27.2 27.2 27.7 23.0 28.2
+   V106 6b26x3      >=70 km/h      405        105    +0.580 [-0.174, +1.262]   27.7 27.2 27.2 27.0 27.7 28.2
+
+============================================================================================================================
+C2.  BAND-CENTRE SWEEP on the real data.  If the slope tracks the band centre, it is C1.
+============================================================================================================================
+         build          speed         18-30         16-28         20-32         15-35         19-26
+       V104 6x     40-95 km/h         0.130         0.132         0.129         0.129         0.281
+    V105 NOTCH     40-95 km/h         0.067         0.058         0.068         0.067         0.000
+   V106 6b26x3     40-95 km/h         1.838         3.156         2.713         1.681        -1.215
+
+============================================================================================================================
+C3.  PROMINENCE-GATED -- only windows that actually contain a line (prom >= 3 against a
+     +-3 Hz median background).  Removes the lineless windows whose argmax is noise.
+============================================================================================================================
+         build          speed      n win    n gated  slope Hz/e-fold [95 % CI]
+       V104 6x       <16 km/h         46         44      +nan [-0.507, +1.199]
+       V104 6x     40-95 km/h        159        148    -0.053 [-0.738, +1.129]
+    V105 NOTCH       <16 km/h         30         27   -- too few gated windows --
+    V105 NOTCH     40-95 km/h        127        115    -0.013 [-0.256, +0.692]
+   V106 6b26x3       <16 km/h         46         37   -- too few gated windows --
+   V106 6b26x3     40-95 km/h        172        152    +3.203 [-0.904, +3.644]
+
+============================================================================================================================
+3.  ⭐ THE CHECK THE MEMORY MAKES MANDATORY: does the a6-vs-a5 shift sit ON the amplitude
+    law's own slope?  If it does, it is NOT evidence a lever touched the loop.
+============================================================================================================================
+  V104 6x        engaged median |0x0E4| =    168   (all engaged windows)
+  V105 NOTCH     engaged median |0x0E4| =    258   (all engaged windows)
+  V106 6b26x3    engaged median |0x0E4| =    121   (all engaged windows)
+  a6 / a5 command ratio 0.470  =>  0.755 e-folds LOWER command on a6
+     under the memory's f0 law (-1.93 Hz/e-fold)      a6 should read +1.46 Hz vs a5 from COMMAND ALONE
+     under the memory's within-V102 f0 law (-0.99)    a6 should read +0.75 Hz vs a5 from COMMAND ALONE
+
+wrote analysis-2020accord/_ra6_pitch_amp.json

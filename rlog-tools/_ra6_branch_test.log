@@ -1,0 +1,80 @@
+EXPECTED FALLBACK/LERP RATIO OF |Y_eff| BY SPEED (stock dose), i.e. the gap T3 must resolve:
+   <8      v~  4.0 km/h   |Y_LERP|    9011   FB2/LERP  0.91x   FB1/LERP  0.36x
+   8-16    v~ 12.0 km/h   |Y_LERP|    7372   FB2/LERP  1.11x   FB1/LERP  0.44x
+   16-30   v~ 23.0 km/h   |Y_LERP|    5573   FB2/LERP  1.47x   FB1/LERP  0.59x
+   30-50   v~ 40.0 km/h   |Y_LERP|    4657   FB2/LERP  1.76x   FB1/LERP  0.70x
+   50-70   v~ 60.0 km/h   |Y_LERP|    3581   FB2/LERP  2.29x   FB1/LERP  0.92x
+   70-90   v~ 80.0 km/h   |Y_LERP|    2504   FB2/LERP  3.27x   FB1/LERP  1.31x
+   >=90    v~100.0 km/h   |Y_LERP|    1966   FB2/LERP  4.17x   FB1/LERP  1.67x
+
+============================================================================================================================
+C1.  🛑 SYNTHETIC CALIBRATION, FIRST.  |b26| built from the MEASURED alpha with a KNOWN
+     fallback fraction and the MEASURED residual spread.  If a test cannot see f = 0.25,
+     a null from that test is worthless.
+============================================================================================================================
+  fitted on r77 under the PURE-LERP model:  log(|b26|/Y) = 0.6985*log(alpha) -9.9982   residual sd 0.794 (x2.21)
+
+  T1 (dose ratio, expected 1.50 at f=0 and 1.00 at f=1) on SYNTHETIC data:
+         f          <8        8-16       16-30       30-50       50-70       70-90        >=90
+      0.00       1.456       1.372       1.465       1.439       1.491       1.322       1.365
+      0.10       1.394       1.361       1.446       1.390       1.461       1.323       1.504
+      0.25       1.343       1.277       1.381       1.327       1.398       1.275       1.758
+      0.50       1.110       1.185       1.251       1.231       1.238       1.153       1.404
+      1.00       0.936       0.970       1.031       1.011       1.005       0.971       1.329
+
+  T3 (bimodality of log(|b26|/alpha) at >=90 km/h on r78) on SYNTHETIC data:
+         f          n   dip (bimod?) sd of log ratio
+      0.00      10094          0.989          0.862
+      0.25      10094          0.000          0.978
+      0.50      10094          1.000          1.011
+      1.00      10094          0.000          0.871
+  🛑 READ THIS BEFORE READING T3's REAL RESULT.
+
+============================================================================================================================
+T1.  ⭐⭐ THE DOSE RATIO ON REAL DATA -- r78/r77 |b26| at matched speed AND matched alpha.
+     **1.50 => the mode-record LERP is LIVE.  1.00 => the fallback is.**
+============================================================================================================================
+  speed band      n r77      n r78        ratio        implied f [95 % CI]
+          <8      10149       3846        1.280       0.464 [0.053, 0.857]
+        8-16      11930       3572        1.377       0.227 [0.093, 0.618]
+       16-30      24080       5337        1.460       0.056 [0.000, 0.268]
+       30-50      29664      11952        1.469       0.037 [0.000, 0.335]
+       50-70      16842      16329        1.378       0.124 [0.000, 0.270]
+       70-90      14688      10856        1.322       0.145 [0.028, 0.881]
+
+============================================================================================================================
+T2.  THE SHAPE TEST -- median |b26| / (alpha * Y_LERP(v)), normalised to the <8 km/h cell.
+     Pure LERP => FLAT across speed.  Pure fallback => rises ~5x by 90 km/h.
+     ⚠ Descriptive: confounded by any speed-dependence of the alpha proxy.  T1 is the control.
+============================================================================================================================
+ route          <8        8-16       16-30       30-50       50-70       70-90        >=90  pure-FB2 shape
+   r77       1.000       1.065       1.239       1.482       1.512       1.402     --         4.48 at >=90
+   r78       1.000       0.950       1.057       1.287       1.515       1.784       1.419    4.48 at >=90
+  (a pure-fallback world would show this row rising to 4.58 by >=90 km/h)
+
+============================================================================================================================
+T3.  THE BIMODALITY TEST AS COMMISSIONED -- inside >=90 km/h on r78, where Y_LERP is FLAT
+     (2949), so a second cluster cannot be a speed effect.  Expected gap 2.78x.
+============================================================================================================================
+  n = 5622 frames;  log-ratio sd 0.796;  expected cluster separation 1.022 log units
+  percentiles of log(|b26|/alpha): -4.50  -3.73  -3.22  -2.74  -1.94
+  histogram (30 bins over -6.78..0.46):
+    1 3 5 6 2 10 28 45 108 181 321 415 499 651 690 755 609 421 324 239 133 78 46 15 23 9 3 1 0 1
+
+============================================================================================================================
+T4.  CROSS-VALIDATION AGAINST THE MEASURED 1.68x DELIVERED MULTIPLIER (a6 vs a5).
+     A fallback fraction f dilutes an intended x2.0 step to:
+       [(1-f)*3.0*Y0 + f*8192] / [(1-f)*1.5*Y0 + f*8192]
+============================================================================================================================
+       f      5 km/h     20 km/h     50 km/h     90 km/h
+    0.00       2.000       2.000       2.000       2.000
+    0.05       1.968       1.952       1.935       1.872
+    0.10       1.936       1.904       1.872       1.764
+    0.15       1.901       1.856       1.810       1.671
+    0.25       1.829       1.759       1.694       1.519
+    0.40       1.707       1.612       1.531       1.351
+  measured delivered multiplier a6 vs a5 = 1.68 [1.16, 1.88]
+  ⇒ read off which f reproduces it AT THE SPEEDS a6 ACTUALLY DROVE (top-heavy: 809 s of
+    1224 s engaged above 70 km/h).
+
+wrote analysis-2020accord/_ra6_branch_test.json

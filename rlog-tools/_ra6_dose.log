@@ -1,0 +1,84 @@
+============================================================================================================================
+0.  🛑 CONTROL FIRST -- VALIDATE THE ALPHA PROXY ON r77, WHERE |gp-0x6b26| IS ON THE WIRE.
+    An alpha proxy that does not predict the real cell is not allowed to calibrate a dose.
+============================================================================================================================
+   route     dose  engaged s       corr(log|b26|, log p1)       corr(log|b26|, log p2)
+     r77     1.00     1062.4                       0.7410                       0.7064
+     r78     1.50      612.8                       0.6502                       0.6222
+  ⇒ using proxy **p1** (the one that predicts the real cell better on BOTH control routes)
+  r77 calibration  log|b26| = 0.7311 * log(alpha) + -1.6436   resid sd 0.826 (log units, = x2.28)
+
+============================================================================================================================
+1.  Q1 -- `b5` DUTY.  ⭐ THE WITHIN-DRIVE CONTRAST IS ENGAGED vs MANUAL: V106 dosed ONLY
+    the ENGAGED records (26/27); mode 24 (MANUAL) is Honda-stock on every build.
+    A widening of the engaged-minus-manual gap from a5 to a6 IS the dose arriving.
+============================================================================================================================
+           build      eng s      man s  b5 pooled   b5 ENGAGED    b5 MANUAL    eng - man
+     V104 (x1.5)      662.8      262.8     0.2421       0.2305       0.2712      -0.0407
+     V105 (x1.5)      484.6      167.5     0.2533       0.2798       0.1766       0.1031
+     V106 (x3.0)     1224.0      311.9     0.2436       0.1907       0.4509      -0.2602
+
+  SPEED-MATCHED engaged-vs-manual (duty inside each speed bin; the pooled numbers above
+  are confounded because manual and engaged driving occupy different speeds):
+           build      arm       0-5      5-10     10-16     16-25     25-40     40-60     60-80       80+
+     V104 (x1.5)  engaged    0.2056    0.1872    0.4036    0.3728    0.2751    0.2547    0.1712    0.1003
+     V104 (x1.5)   manual    0.1857    0.7070    0.5989    0.5670     --        --        --        --   
+     V105 (x1.5)  engaged    0.3236    0.3699    0.5347    0.4306    0.3069    0.2488    0.2362    0.0970
+     V105 (x1.5)   manual    0.1487    0.9351     --        --        --        --        --        --   
+     V106 (x3.0)  engaged    0.4110    0.3661    0.1984    0.2807    0.2251    0.1740    0.1853    0.1721
+     V106 (x3.0)   manual    0.3250    0.8692    0.7480    0.5660     --        --       0.5371    0.5369
+
+============================================================================================================================
+2.  ⭐⭐ THE DOSE CALIBRATION -- `b5` DUTY vs MEASURED ALPHA, ENGAGED.
+    At fixed alpha the comparator's operand B is proportional to k, so the curve shifts
+    HORIZONTALLY by the delivered multiplier.  This is immune to the closed-loop
+    K*alpha invariance that makes a pooled duty uninterpretable.
+============================================================================================================================
+           build    n eng       <30     30-60    60-120   120-250   250-500    500-1k     1k-2k     2k-4k       4k+
+     V104 (x1.5)    67039    0.1578    0.2449    0.3662    0.4400    0.3397    0.2143    0.1270    0.0518    0.0039
+     V105 (x1.5)    49021    0.1686    0.2851    0.4390    0.5045    0.4112    0.2460    0.1278    0.0442     --   
+     V106 (x3.0)   123802    0.1245    0.1724    0.2291    0.2686    0.2357    0.1548    0.0890    0.0275     --   
+  (alpha in deg/s^2, proxy p1, ENGAGED frames only)
+
+  ⭐ THE DELIVERED MULTIPLIER, read off the horizontal shift (episode bootstrap):
+   level p     V104 (x1.5)     V105 (x1.5)     V106 (x3.0)           a6/a5 shift            a6/a4 shift
+      0.10          1864.4          2020.7          1149.2   1.76 [0.01, 226.35]    1.62 [0.76, 267.04]
+      0.15            11.7             8.1            31.6    0.26 [0.23, 38.33]      0.37 [0.23, 1.19]
+      0.20            31.4            27.2            57.9     0.47 [0.19, 0.75]      0.54 [0.46, 0.91]
+      0.25            44.8            36.1           112.6     0.32 [0.23, 0.59]      0.40 [0.26, 0.81]
+  🛑 EXPECTED 2.00 if V105 really ran x1.5 and V106 really runs x3.0.
+     A value near 3.00 instead would mean the x1.5 was NEVER IN FORCE (open item #6 / Q7).
+
+============================================================================================================================
+3.  Q2' -- THE CLAMP.  (A) the RECONSTRUCTION, (B) the assumption-free RELAY TEST.
+============================================================================================================================
+
+  (A) RECONSTRUCTED |gp-0x6b26| on a6 = r77's alpha->b26 law x 3.0 (r77 ran x1.00 stock).
+      🛑 THIS IS A RECONSTRUCTION, NOT A MEASUREMENT -- resid sd x2.28 on its own
+      calibration route.  Read the DUTIES as an order of magnitude, not to 3 decimals.
+  |rate| bin      n eng        p50        p90        p99    duty>=511    duty>=256
+         0-5      93674       10.7       27.0       73.5      0.00000      0.00000
+        5-15      17670       35.7       84.8      129.9      0.00000      0.00000
+       15-40       7929       81.0      139.8      181.0      0.00000      0.00000
+      40-100       2757       36.6      117.1      213.7      0.00000      0.00000
+     100-200       1525       29.2       68.2      101.9      0.00000      0.00000
+     200-400        247       28.0       56.2       92.4      0.00000      0.00000
+        400+          0   -- too few frames --
+speed regime      n eng        p50        p90        p99    duty>=511    duty>=256
+<8 km/h (S1)       3173       16.6       50.2      107.4      0.00000      0.00000
+    <16 km/h      10186       29.0       90.7      137.7      0.00000      0.00000
+       16-40      12215       20.2       72.5      112.7      0.00000      0.00000
+  40-95 (S3)      34593       12.6       42.5      113.8      0.00000      0.00000
+hard turn S2c       1913       54.4      100.5      143.2      0.00000      0.00000
+
+  (B) ⭐ THE ASSUMPTION-FREE RELAY TEST.  If |gp-0x6b26| were railing at 511 above some
+      alpha, `b5` would collapse to ( |gp-0x6ae2| >= 511 ) -- NO alpha dependence -- and the
+      duty-vs-alpha curve would go FLAT.  A curve still MOVING at the top of the observed
+      alpha range is direct evidence the term is not saturating there.  No transfer needed.
+           build   top deciled(duty)/d(log a) mid         top       flat?
+     V105 (x1.5)       3517.0                  -0.1346      -0.1246 still moving
+        duty by alpha decile: 118:0.464  470:0.336  1156:0.157  1901:0.100  2502:0.041  3068:0.004  3517:0.000
+     V106 (x3.0)       2295.5                   0.0051      -0.0969 still moving
+        duty by alpha decile: 47:0.183  109:0.248  233:0.265  526:0.190  994:0.118  1544:0.081  2296:0.036
+
+wrote analysis-2020accord/_ra6_dose.json

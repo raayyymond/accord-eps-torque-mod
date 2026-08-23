@@ -1,0 +1,64 @@
+============================================================================================================================
+1.  Q4 -- THE LINE (7.4-8.6 Hz, BACKGROUND-SUBTRACTED) AND THE FLOOR, SCORED SEPARATELY.
+    Pre-registered decomposition; 512-sample windows; engaged only.
+============================================================================================================================
+
+  engaged <16 km/h
+         build    eps     nwin         LINE           LINE 95 % CI        FLOOR      CARRIER      PLACEBO
+      STOCK 1x      6        8       0.0000       [0.0000, 0.0043]       0.4811       0.0514       0.0157
+       V104 6x      7       20       2.1348       [0.6631, 3.7831]       1.6906      55.4900       0.5392
+    V105 NOTCH      4       12       9.1402      [4.6303, 10.6516]      12.7847      24.2442       0.8185
+   V106 6b26x3      7       11       1.6446       [0.2608, 5.9396]       3.5548       2.3980       0.2967
+
+  engaged 40-95 km/h
+         build    eps     nwin         LINE           LINE 95 % CI        FLOOR      CARRIER      PLACEBO
+      STOCK 1x     13      132       0.0000       [0.0000, 0.0071]       0.3718       0.2638       0.0409
+       V104 6x     12      104       0.9286       [0.1414, 1.9673]       2.0159      75.3302       0.3813
+    V105 NOTCH      8       84       0.7789       [0.1018, 1.5672]       1.0963      81.6051       0.5091
+   V106 6b26x3     11      112       0.0448       [0.0003, 0.1414]       0.3373       3.8927       0.0831
+
+  a6 vs a5 and a6 vs a4, each quantity, WITH route a6's own split-half-by-episode null:
+              regime   quantity        a6/a5 [95 % CI]     a6 split-half null    clears?
+    engaged <16 km/h       LINE   0.181 [0.029, 0.762]        [0.058, 25.769]         no
+    engaged <16 km/h      FLOOR   0.243 [0.073, 1.610]         [0.195, 5.818]         no
+    engaged <16 km/h    CARRIER   0.102 [0.040, 0.250]         [0.263, 3.760]        YES
+    engaged <16 km/h    PLACEBO   0.359 [0.162, 0.786]         [0.185, 4.190]         no
+  engaged 40-95 km/h       LINE   0.057 [0.000, 0.570]        [0.000, 48.625]         no
+  engaged 40-95 km/h      FLOOR   0.320 [0.098, 1.291]         [0.235, 3.986]         no
+  engaged 40-95 km/h    CARRIER   0.048 [0.008, 0.238]        [0.082, 11.695]        YES
+  engaged 40-95 km/h    PLACEBO   0.168 [0.073, 0.468]         [0.402, 2.654]        YES
+
+============================================================================================================================
+2.  ⭐ Q-RATCHET -- IS THE ~8 Hz LINE DRIVEN BY LKAS DEMAND?  **WITHIN ROUTE a6 ONLY.**
+    (a) LINE by |e4tq| tertile;  (b) the same INSIDE motor-rate strata, because the line
+    is known to be RATE-GATED and rate correlates with demand.
+============================================================================================================================
+  route a6: 7 episodes, 473 windows, 1224.0 s engaged
+
+  (a) BY LKAS DEMAND TERTILE (cuts at |e4tq| = 114, 178):
+  demand tertile      nwin         LINE           LINE 95 % CI        FLOOR      CARRIER      PLACEBO
+             low       158       0.0000       [0.0000, 0.0339]       0.0654       0.8569       0.0565
+             mid       157       0.0054       [0.0008, 0.0409]       0.1518       4.0981       0.0823
+            HIGH       158       0.6748       [0.0724, 1.9986]       1.5387       8.4320       0.2324
+  HIGH/low ratio:  LINE nan   FLOOR 23.512   CARRIER 9.840   PLACEBO 4.114
+  🛑 The PLACEBO column is what says whether a LINE ratio is band-specific or a broadband
+     lift.  A LINE ratio that matches the PLACEBO ratio is NOT a ratchet result.
+
+  (b) INSIDE MOTOR-RATE STRATA -- the confound control.
+  rate stratum   demand tertile      nwin         LINE      CARRIER      PLACEBO
+           0-5              low       116       0.0000       0.3464       0.0458
+           0-5             HIGH       116       0.0190       1.6524       0.0748
+          5-15              low        26       0.0210      31.2457       0.2240
+          5-15             HIGH        26       0.7045       6.1470       0.1960
+  ⇒ if LINE(HIGH) > LINE(low) INSIDE every rate stratum, the demand association survives
+     the rate confound.  If it survives in none, the association was the rate all along.
+
+============================================================================================================================
+3.  THE SAME QUESTION AS A PARTIAL CORRELATION, over WINDOWS but with an EPISODE bootstrap.
+============================================================================================================================
+  corr(log LINE, log |e4tq|)                 = +0.2986  [-0.1006, +0.3875]
+  PARTIAL, given log |motor rate|            = +0.0250  [-0.2971, +0.0625]
+  corr(log LINE, log |motor rate|)           = +0.3241
+  PLACEBO control: corr(log PLACEBO, log |e4tq|) partial given rate = -0.2659
+
+wrote analysis-2020accord/_ra6_line.json

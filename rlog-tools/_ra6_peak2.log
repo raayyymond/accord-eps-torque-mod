@@ -1,0 +1,79 @@
+============================================================================================================================
+1.  ⭐⭐ PEAK LOCATION 15-35 Hz, ENGAGED **AND |e4tq| >= 1600** (his 'max LKAS demand' arm).
+    Block bootstrap over contiguous 30 s blocks (route a6 has only 7 engaged runs, so an
+    episode bootstrap has 7 units; blocks are contiguous and >> the 4 s window).
+============================================================================================================================
+
+  <16 km/h  (grind #1)
+         build   n win  blocks    peak Hz           peak 95 % CI   PROMINENCE    18-30 RMS
+      STOCK 1x      18       7      18.23         [15.48, 18.23]         1.46       0.3121
+       V104 6x      23       8      22.23         [22.23, 22.98]         6.89       7.6624
+    V105 NOTCH      25       8      20.48         [20.23, 22.23]         3.42       5.6967
+   V106 6b26x3      38       9      18.23         [16.48, 18.98]         1.51       3.7255
+     peak SHIFT a6 - V105 NOTCH     -3.50 Hz  [-5.49, -1.50]
+     peak SHIFT a6 - V104 6x        -4.25 Hz  [-5.99, -3.25]
+
+  16-40 km/h
+         build   n win  blocks    peak Hz           peak 95 % CI   PROMINENCE    18-30 RMS
+      STOCK 1x      27      10      16.48         [15.48, 16.98]         1.44       0.7425
+       V104 6x      31       9      23.23         [22.48, 23.48]         6.75       7.4678
+    V105 NOTCH      34      10      21.98         [21.48, 22.23]         6.45       6.3634
+   V106 6b26x3      28      11      20.48         [18.98, 20.73]         3.03       3.9273
+     peak SHIFT a6 - V105 NOTCH     -1.50 Hz  [-3.00, -0.75]
+     peak SHIFT a6 - V104 6x        -2.75 Hz  [-4.25, -1.75]
+
+  40-95 km/h (grind #3)
+         build   n win  blocks    peak Hz           peak 95 % CI   PROMINENCE    18-30 RMS
+      STOCK 1x      63      12      15.48         [15.23, 27.47]         1.51       0.9965
+       V104 6x      22       6      27.47         [21.73, 27.47]         3.34       8.2742
+    V105 NOTCH      14       7      27.47         [21.73, 27.47]         4.12       7.0740
+   V106 6b26x3       9       5      20.23         [16.73, 21.48]        14.87       3.4812
+     peak SHIFT a6 - V105 NOTCH     -5.99 Hz  [-10.74, -0.25]
+     peak SHIFT a6 - V104 6x        -5.99 Hz  [-7.26, -0.25]
+
+============================================================================================================================
+2.  🛑 CONTROL A -- THE BAND-EDGE SWEEP.  If the argmax follows the search band, there is
+    no line and the number is an artefact.  A real mode does not move.
+============================================================================================================================
+
+  <16 km/h  (grind #1)   (engaged, |e4tq| >= 1600)
+         build       15-35       18-30       15-45       20-34       12-40
+      STOCK 1x       18.23       18.23       18.23       21.98       18.23
+       V104 6x       22.23       22.23       22.23       22.23       22.23
+    V105 NOTCH       20.48       20.48       20.48       20.48       20.48
+   V106 6b26x3       18.23       18.23       18.23       21.48       18.23
+
+  16-40 km/h   (engaged, |e4tq| >= 1600)
+         build       15-35       18-30       15-45       20-34       12-40
+      STOCK 1x       16.48       18.23       16.48       20.73       14.24
+       V104 6x       23.23       23.23       23.23       23.23       23.23
+    V105 NOTCH       21.98       21.98       21.98       21.98       21.98
+   V106 6b26x3       20.48       20.48       20.48       20.48       20.48
+
+  40-95 km/h (grind #3)   (engaged, |e4tq| >= 1600)
+         build       15-35       18-30       15-45       20-34       12-40
+      STOCK 1x       15.48       27.47       15.48       27.47       12.74
+       V104 6x       27.47       27.47       27.47       27.47       27.47
+    V105 NOTCH       27.47       27.47       27.47       27.47       27.47
+   V106 6b26x3       20.23       20.23       20.23       20.23       20.23
+
+============================================================================================================================
+3.  🛑 CONTROL B -- THE PER-WINDOW PRESENCE CENSUS.  A route-wide line is carried by MANY
+    windows.  Share of windows whose own 15-35 Hz argmax lands within +-1.5 Hz of the
+    pooled peak, and the MEDIAN per-window argmax (robust to one loud episode).
+============================================================================================================================
+                regime          build      n win    pooled pk  median win pk share +-1.5 Hz
+  <16 km/h  (grind #1)       STOCK 1x         18        18.23          17.11          0.444
+  <16 km/h  (grind #1)        V104 6x         23        22.23          22.48          0.913
+  <16 km/h  (grind #1)     V105 NOTCH         25        20.48          21.23          0.640
+  <16 km/h  (grind #1)    V106 6b26x3         38        18.23          18.23          0.737
+            16-40 km/h       STOCK 1x         27        16.48          17.98          0.519
+            16-40 km/h        V104 6x         31        23.23          22.73          0.839
+            16-40 km/h     V105 NOTCH         34        21.98          21.98          0.735
+            16-40 km/h    V106 6b26x3         28        20.48          20.23          0.786
+ 40-95 km/h (grind #3)       STOCK 1x         63        15.48          20.73          0.222
+ 40-95 km/h (grind #3)        V104 6x         22        27.47          23.98          0.182
+ 40-95 km/h (grind #3)     V105 NOTCH         14        27.47          22.48          0.214
+ 40-95 km/h (grind #3)    V106 6b26x3          9        20.23          20.23          0.556
+
+wrote analysis-2020accord/_ra6_peak2.json

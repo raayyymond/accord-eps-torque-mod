@@ -1,0 +1,96 @@
+============================================================================================================================
+MATCHED-COMMAND CELLS.  Each cell is (speed band) x (ABSOLUTE window-p90 |e4tq| band),
+so a cell means THE SAME COMMAND on every route.  n = windows in the cell.
+============================================================================================================================
+
+  speed <16       demand 200-700   
+         build   n win    18-30 RMS    line Hz   PROMINENCE
+      STOCK 1x       0   -- too few windows --
+       V104 6x      10       2.7364      23.23        21.58
+    V105 NOTCH       3   -- too few windows --
+   V106 6b26x3       3   -- too few windows --
+
+  speed <16       demand 700-1.6k  
+         build   n win    18-30 RMS    line Hz   PROMINENCE
+      STOCK 1x       6       0.2208      23.73         3.33
+       V104 6x      13       8.9995      22.73        31.29
+    V105 NOTCH       2   -- too few windows --
+   V106 6b26x3       5       2.3832      23.23         3.26
+      a6/a4  RMS 0.265   PROMINENCE 0.104
+
+  speed <16       demand 1.6k-4.2k 
+         build   n win    18-30 RMS    line Hz   PROMINENCE
+      STOCK 1x      18       0.3121      21.98         1.81
+       V104 6x      23       7.6624      22.23         6.89
+    V105 NOTCH      25       5.6967      20.48         3.42
+   V106 6b26x3      38       3.7255      28.22         2.08
+      a6/a5  RMS 0.654   PROMINENCE 0.607
+      a6/a4  RMS 0.486   PROMINENCE 0.301
+
+  speed 16-40     demand 200-700   
+         build   n win    18-30 RMS    line Hz   PROMINENCE
+      STOCK 1x       3   -- too few windows --
+       V104 6x      34       2.1750      26.97         1.63
+    V105 NOTCH      29       1.2113      20.23         2.18
+   V106 6b26x3      16       0.7332      20.23         2.27
+      a6/a5  RMS 0.605   PROMINENCE 1.041
+      a6/a4  RMS 0.337   PROMINENCE 1.399
+
+  speed 16-40     demand 700-1.6k  
+         build   n win    18-30 RMS    line Hz   PROMINENCE
+      STOCK 1x       8       0.3100      34.96         2.00
+       V104 6x       8       5.5575      22.98        10.63
+    V105 NOTCH       7       5.5944      22.98         4.94
+   V106 6b26x3       9       1.7291      19.23         2.28
+      a6/a5  RMS 0.309   PROMINENCE 0.461
+      a6/a4  RMS 0.311   PROMINENCE 0.214
+
+  speed 16-40     demand 1.6k-4.2k 
+         build   n win    18-30 RMS    line Hz   PROMINENCE
+      STOCK 1x      27       0.7425      20.73         1.52
+       V104 6x      31       7.4678      23.23         6.75
+    V105 NOTCH      34       6.3634      21.98         6.45
+   V106 6b26x3      28       3.9273      20.48         3.03
+      a6/a5  RMS 0.617   PROMINENCE 0.470
+      a6/a4  RMS 0.526   PROMINENCE 0.450
+
+  speed 40-95     demand 200-700   
+         build   n win    18-30 RMS    line Hz   PROMINENCE
+      STOCK 1x      50       0.3660      28.47         2.02
+       V104 6x     102      10.4126      26.72        17.03
+    V105 NOTCH      98      10.0828      26.97        27.96
+   V106 6b26x3     117       2.1904      27.22         6.64
+      a6/a5  RMS 0.217   PROMINENCE 0.238
+      a6/a4  RMS 0.210   PROMINENCE 0.390
+
+  speed 40-95     demand 700-1.6k  
+         build   n win    18-30 RMS    line Hz   PROMINENCE
+      STOCK 1x      80       0.9470      23.73         1.38
+       V104 6x      13       8.9535      26.47         7.35
+    V105 NOTCH       9       6.1757      27.72         2.97
+   V106 6b26x3      18       2.8474      23.48         4.23
+      a6/a5  RMS 0.461   PROMINENCE 1.428
+      a6/a4  RMS 0.318   PROMINENCE 0.576
+
+  speed 40-95     demand 1.6k-4.2k 
+         build   n win    18-30 RMS    line Hz   PROMINENCE
+      STOCK 1x      63       0.9965      27.47         1.59
+       V104 6x      22       8.2742      27.47         3.34
+    V105 NOTCH      14       7.0740      27.47         4.12
+   V106 6b26x3       9       3.4812      20.23        14.87
+      a6/a5  RMS 0.492   PROMINENCE 3.608
+      a6/a4  RMS 0.421   PROMINENCE 4.457
+
+============================================================================================================================
+POOLED BUT DEMAND-STANDARDISED: the a6/a5 ratio computed per cell and then combined as a
+weighted GEOMETRIC MEAN (weights = the smaller of the two cells' window counts), with a
+30 s contiguous-BLOCK bootstrap.  ⚠ Blocks, not episodes -- a6 has only 7 engaged runs.
+============================================================================================================================
+  18-30 RMS     a6 / V105 NOTCH   = 0.347  (7 matched cells)   a6 split-half null [0.482, 1.982]  =>  CLEARS
+  18-30 RMS     a6 / V104 6x      = 0.294  (8 matched cells)   a6 split-half null [0.482, 1.982]  =>  CLEARS
+  18-30 RMS     a6 / STOCK 1x     = 5.735  (7 matched cells)   a6 split-half null [0.482, 1.982]  =>  CLEARS
+  PROMINENCE    a6 / V105 NOTCH   = 0.425  (7 matched cells)   a6 split-half null [0.452, 2.280]  =>  CLEARS
+  PROMINENCE    a6 / V104 6x      = 0.461  (8 matched cells)   a6 split-half null [0.452, 2.280]  =>  inside
+  PROMINENCE    a6 / STOCK 1x     = 2.468  (7 matched cells)   a6 split-half null [0.452, 2.280]  =>  CLEARS
+
+wrote analysis-2020accord/_ra6_confound.json

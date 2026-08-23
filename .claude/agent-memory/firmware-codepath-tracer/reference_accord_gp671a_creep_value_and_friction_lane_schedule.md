@@ -126,3 +126,50 @@ Related: [[reference_accord_c63b4_8hz_bandpass_in_fun3b66a]],
 [[reference_accord_gp671a_blast_radius_not_a_free_lever]],
 [[reference_accord_friction_lane_fun36c12_smooth_no_stickslip]],
 [[reference_accord_friction_lane_c407e_census_and_mode26_record_identity]].
+
+---
+
+## 🛑 EXTENDED 2026-08-22 (`mechanism` task) — the HIGHWAY case, and the bypass is BACKWARDS
+
+Team-lead reopened this asking whether `gp-0x671a >= 5` bypasses the mode-record LERP **at highway**,
+which would make V106's dose and any V107 reshape inert there. **It does not, and the asymmetry runs the
+other way.**
+
+**`gp-0x671a` is the detector's half-cycle COUNTER**, not a speed/load/temperature index: the FSM
+(`gp-0x67df`, states 0/1/2) increments byte counter `gp-0x357c` on each crossing of
+`|gp-0x6c2c| > T = cal 0xC620A = 12,800`, and `gp-0x671a` is that counter one-way-latched at
+**CEIL = cal `0xC64FA` = 5**. ⇒ **five crossings of 12,800 are required.** The measured corpus max
+`|gp-0x6c2c|` is **5,141–5,320 — 2.4× below ONE crossing**
+([[reference_accord_gp6c2c_real_distribution_overflow_wall_not_binding]]).
+
+⭐ **The decay path is gated on speed being HIGH, so highway is the SAFEST case:**
+```
+speed <  cal 0xC62DE = 640 (10 km/h)  OR counter != 0  -> hold timer gp-0x6a88 RELOADED to 5000
+speed >= 10 km/h AND counter == 0                      -> timer DECREMENTS; at 0 the latch RELEASES
+```
+⇒ no decay below 10 km/h, decay above it — any latch clears within ~5 s of motorway driving.
+**A bypass could only ever be a CREEP phenomenon; it cannot explain a high-speed residual.**
+Also: no Y edit can arm it — the detector reads `gp-0x6c2c` **upstream** of the Y multiply.
+
+**A free proof the LERP branch is live:** `0xC640A`/`0xC640C` are **byte-identical between V105 and
+V106**, so any fallback frame gives a V106/V105 ratio of exactly **1.00**. `a6-score` measured
+**1.68 [1.16, 1.88]** ⇒ the LERP branch is being taken. And the shortfall from 2.00 needs no bypass:
+simulating the measured distribution through the ±511 clamp gives a mean delivered ratio of
+**1.591** pooled (1.476 in-burst), inside that CI.
+
+**Census, Ghidra ≡ raw Python LE scan (`ld.bu` hw2=disp|1, `st.b` hw2=disp), exact agreement on 8:**
+`0x35A06 · 0x35BEA · 0x36C1E · 0x3A4A6 · 0x3AA70 · 0x429C4 · 0x429D2 · 0x42A12 (SOLE WRITER)`.
+Ghidra's `0x26758/0x66714/0x671A4/0x671A8/0xE16xx` are branch- and call-target TEXT collisions.
+**`0xC640A` and `0xC640C` each have EXACTLY ONE site** (`0x36CB4`, `0x36CBA`, both in `FUN_00036c12`).
+
+🛑 **`0xC640A`/`0xC640C` are NOT virgin.** V93 and V94 cut both ×0.75 (−8192→−6144,
+−3277→−2458); image census **100/102 stock, 2 carry the cut**. **V94 FLEW route `7d` and the operator
+stopped driving it.** CONFOUNDED — V93/V94 also cut the mode records ×0.25/×0.50, so the fallback edit
+is not independently attributable. ⚠ `build_v93_tva.py:79` designed that flight as an explicit **branch
+discriminator** (*"ratio 0.75 ⇒ a FALLBACK constant is live"*) — **the drive was aborted and the ratio
+was never harvested.** A purpose-built on-car test of this exact question whose readout was never taken.
+
+⇒ **`0xC640A` is NOT a better lever than a reshape** — it is a two-byte edit into a branch the car does
+not execute. **Probe advice:** a bare `(gp-0x671a >= 5)` rung will read 0 and is the
+[[accord-v68-detector-still-zero-no-positive-control]] trap verbatim; spend **3 bits on
+`min(gp-0x671a,7)`** or nothing.

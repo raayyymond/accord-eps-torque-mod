@@ -1,0 +1,1055 @@
+{
+ "route": "a6",
+ "build": "V106",
+ "frames": 155348,
+ "duration_s": 1555.190590139,
+ "row_rate_hz": 99.8893646765927,
+ "engaged_frames": 123802,
+ "engaged_frac": 0.7969333367664856,
+ "engaged_sec": 1238.02,
+ "engaged_min": 20.633666666666667,
+ "manual_frames": 31546,
+ "manual_sec": 315.46,
+ "speed_all": {
+  "n": 155348,
+  "median_kmh": 87.08602526078684,
+  "p90_kmh": 119.72145849258156,
+  "p99_kmh": 127.39830655929585,
+  "max_kmh": 128.3630087492009
+ },
+ "bands_all": {
+  "0-5 km/h": {
+   "frames": 23497,
+   "sec": 234.97
+  },
+  "5-20 km/h": {
+   "frames": 18841,
+   "sec": 188.41
+  },
+  "20-50 km/h": {
+   "frames": 13420,
+   "sec": 134.2
+  },
+  "50-80 km/h": {
+   "frames": 19078,
+   "sec": 190.78
+  },
+  "80-+ km/h": {
+   "frames": 80512,
+   "sec": 805.12
+  }
+ },
+ "speed_engaged": {
+  "n": 123802,
+  "median_kmh": 97.25930172014942,
+  "p90_kmh": 119.9674333783104,
+  "p99_kmh": 127.62985891841502,
+  "max_kmh": 128.3630087492009
+ },
+ "bands_engaged": {
+  "0-5 km/h": {
+   "frames": 1714,
+   "sec": 17.14
+  },
+  "5-20 km/h": {
+   "frames": 11859,
+   "sec": 118.59
+  },
+  "20-50 km/h": {
+   "frames": 13019,
+   "sec": 130.19
+  },
+  "50-80 km/h": {
+   "frames": 18502,
+   "sec": 185.02
+  },
+  "80-+ km/h": {
+   "frames": 78708,
+   "sec": 787.08
+  }
+ },
+ "speed_manual": {
+  "n": 31546,
+  "median_kmh": 0.019208048192844777,
+  "p90_kmh": 16.692162101154672,
+  "p99_kmh": 104.99405787393889,
+  "max_kmh": 106.32460786738466
+ },
+ "bands_manual": {
+  "0-5 km/h": {
+   "frames": 21783,
+   "sec": 217.83
+  },
+  "5-20 km/h": {
+   "frames": 6982,
+   "sec": 69.82000000000001
+  },
+  "20-50 km/h": {
+   "frames": 401,
+   "sec": 4.01
+  },
+  "50-80 km/h": {
+   "frames": 576,
+   "sec": 5.76
+  },
+  "80-+ km/h": {
+   "frames": 1804,
+   "sec": 18.04
+  }
+ },
+ "engaged_sec_ge_50kmh": 972.1,
+ "engaged_sec_ge_80kmh": 787.08,
+ "rate_micro_ratchet_1_13dps_sec": 508.15000000000003,
+ "rate_micro_ratchet_1_13dps_sec_manual": 32.94,
+ "rate_ratchet_13_50dps_sec": 89.29,
+ "rate_ratchet_13_50dps_sec_manual": 29.54,
+ "rate_macro_gt50dps_sec": 37.27,
+ "rate_macro_gt50dps_sec_manual": 66.47,
+ "grind2_regime_sec": 122.09,
+ "manual_parked_frac_lt_0.1": 0.5197489380587079,
+ "manual_parked_frac_lt_0.2": 0.5227604133646104,
+ "manual_parked_frac_lt_0.5": 0.5448234324478539,
+ "episodes": {
+  "n": 7,
+  "n_ge_2s": 7,
+  "n_ge_10s": 7,
+  "longest_s": 952.4200000000001,
+  "median_s": 53.64
+ },
+ "manual_handsoff_coast": {
+  "total_sec": 11.08,
+  "n_runs": 162,
+  "n_runs_ge_5s": 0,
+  "n_runs_ge_15s": 0,
+  "longest_s": 1.5
+ },
+ "per_segment": {
+  "0": {
+   "frames": 5993,
+   "sec": 59.93,
+   "v_median_kmh": 0.0,
+   "v_p90_kmh": 0.0,
+   "v_max_kmh": 0.0,
+   "engaged_frac": 0.0,
+   "engaged_sec": 0.0,
+   "engaged_sec_ge_50": 0.0,
+   "engaged_sec_ge_80": 0.0,
+   "parked_frac": 1.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 0,
+     "sec": 0.0
+    }
+   }
+  },
+  "1": {
+   "frames": 5999,
+   "sec": 59.99,
+   "v_median_kmh": 4.282097086382649,
+   "v_p90_kmh": 29.14948314081174,
+   "v_max_kmh": 33.46872034111446,
+   "engaged_frac": 0.220536756126021,
+   "engaged_sec": 13.23,
+   "engaged_sec_ge_50": 0.0,
+   "engaged_sec_ge_80": 0.0,
+   "parked_frac": 0.1503583930655109,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 82,
+     "sec": 0.8200000000000001
+    },
+    "20-50 km/h": {
+     "frames": 1241,
+     "sec": 12.41
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 0,
+     "sec": 0.0
+    }
+   }
+  },
+  "2": {
+   "frames": 6000,
+   "sec": 60.0,
+   "v_median_kmh": 39.990868258829835,
+   "v_p90_kmh": 64.45151038180832,
+   "v_max_kmh": 65.16484564488044,
+   "engaged_frac": 0.8121666666666667,
+   "engaged_sec": 48.730000000000004,
+   "engaged_sec_ge_50": 24.0,
+   "engaged_sec_ge_80": 0.0,
+   "parked_frac": 0.18683333333333332,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 258,
+     "sec": 2.58
+    },
+    "5-20 km/h": {
+     "frames": 740,
+     "sec": 7.4
+    },
+    "20-50 km/h": {
+     "frames": 1475,
+     "sec": 14.75
+    },
+    "50-80 km/h": {
+     "frames": 2400,
+     "sec": 24.0
+    },
+    "80-+ km/h": {
+     "frames": 0,
+     "sec": 0.0
+    }
+   }
+  },
+  "3": {
+   "frames": 5999,
+   "sec": 59.99,
+   "v_median_kmh": 35.36468645220097,
+   "v_p90_kmh": 65.54075366946032,
+   "v_max_kmh": 65.95662269398132,
+   "engaged_frac": 0.7564594099016503,
+   "engaged_sec": 45.38,
+   "engaged_sec_ge_50": 24.490000000000002,
+   "engaged_sec_ge_80": 0.0,
+   "parked_frac": 0.2427071178529755,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 139,
+     "sec": 1.3900000000000001
+    },
+    "5-20 km/h": {
+     "frames": 576,
+     "sec": 5.76
+    },
+    "20-50 km/h": {
+     "frames": 1374,
+     "sec": 13.74
+    },
+    "50-80 km/h": {
+     "frames": 2449,
+     "sec": 24.490000000000002
+    },
+    "80-+ km/h": {
+     "frames": 0,
+     "sec": 0.0
+    }
+   }
+  },
+  "4": {
+   "frames": 6000,
+   "sec": 60.0,
+   "v_median_kmh": 55.784251747053005,
+   "v_p90_kmh": 64.03418237893541,
+   "v_max_kmh": 64.5315603496218,
+   "engaged_frac": 0.8481666666666666,
+   "engaged_sec": 50.89,
+   "engaged_sec_ge_50": 32.27,
+   "engaged_sec_ge_80": 0.0,
+   "parked_frac": 0.15083333333333335,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 188,
+     "sec": 1.8800000000000001
+    },
+    "5-20 km/h": {
+     "frames": 494,
+     "sec": 4.94
+    },
+    "20-50 km/h": {
+     "frames": 1180,
+     "sec": 11.8
+    },
+    "50-80 km/h": {
+     "frames": 3227,
+     "sec": 32.27
+    },
+    "80-+ km/h": {
+     "frames": 0,
+     "sec": 0.0
+    }
+   }
+  },
+  "5": {
+   "frames": 6001,
+   "sec": 60.01,
+   "v_median_kmh": 51.23943393912854,
+   "v_p90_kmh": 97.54745498712066,
+   "v_max_kmh": 106.32460786738466,
+   "engaged_frac": 0.5995667388768539,
+   "engaged_sec": 35.980000000000004,
+   "engaged_sec_ge_50": 10.16,
+   "engaged_sec_ge_80": 0.0,
+   "parked_frac": 0.06032327945342443,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 172,
+     "sec": 1.72
+    },
+    "5-20 km/h": {
+     "frames": 431,
+     "sec": 4.3100000000000005
+    },
+    "20-50 km/h": {
+     "frames": 1979,
+     "sec": 19.79
+    },
+    "50-80 km/h": {
+     "frames": 1016,
+     "sec": 10.16
+    },
+    "80-+ km/h": {
+     "frames": 0,
+     "sec": 0.0
+    }
+   }
+  },
+  "6": {
+   "frames": 6002,
+   "sec": 60.02,
+   "v_median_kmh": 104.2157980226095,
+   "v_p90_kmh": 112.02380427753413,
+   "v_max_kmh": 112.60119644373935,
+   "engaged_frac": 0.9421859380206598,
+   "engaged_sec": 56.550000000000004,
+   "engaged_sec_ge_50": 56.550000000000004,
+   "engaged_sec_ge_80": 56.550000000000004,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 5655,
+     "sec": 56.550000000000004
+    }
+   }
+  },
+  "7": {
+   "frames": 5997,
+   "sec": 59.97,
+   "v_median_kmh": 106.99925809872128,
+   "v_p90_kmh": 112.80109156839237,
+   "v_max_kmh": 113.02350229812264,
+   "engaged_frac": 1.0,
+   "engaged_sec": 59.97,
+   "engaged_sec_ge_50": 59.97,
+   "engaged_sec_ge_80": 59.97,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 5997,
+     "sec": 59.97
+    }
+   }
+  },
+  "8": {
+   "frames": 6001,
+   "sec": 60.01,
+   "v_median_kmh": 112.3640686692455,
+   "v_p90_kmh": 119.87188964124833,
+   "v_max_kmh": 120.35620001292797,
+   "engaged_frac": 1.0,
+   "engaged_sec": 60.01,
+   "engaged_sec_ge_50": 60.01,
+   "engaged_sec_ge_80": 60.01,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 6001,
+     "sec": 60.01
+    }
+   }
+  },
+  "9": {
+   "frames": 5999,
+   "sec": 59.99,
+   "v_median_kmh": 119.97569427175928,
+   "v_p90_kmh": 120.35265223819263,
+   "v_max_kmh": 120.62651155737288,
+   "engaged_frac": 1.0,
+   "engaged_sec": 59.99,
+   "engaged_sec_ge_50": 59.99,
+   "engaged_sec_ge_80": 59.99,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 5999,
+     "sec": 59.99
+    }
+   }
+  },
+  "10": {
+   "frames": 6001,
+   "sec": 60.01,
+   "v_median_kmh": 116.95914476148232,
+   "v_p90_kmh": 119.88247948140953,
+   "v_max_kmh": 120.4231449531847,
+   "engaged_frac": 1.0,
+   "engaged_sec": 60.01,
+   "engaged_sec_ge_50": 60.01,
+   "engaged_sec_ge_80": 60.01,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 6001,
+     "sec": 60.01
+    }
+   }
+  },
+  "11": {
+   "frames": 5999,
+   "sec": 59.99,
+   "v_median_kmh": 120.07641390571811,
+   "v_p90_kmh": 125.6968797523403,
+   "v_max_kmh": 126.08752819400844,
+   "engaged_frac": 1.0,
+   "engaged_sec": 59.99,
+   "engaged_sec_ge_50": 59.99,
+   "engaged_sec_ge_80": 59.99,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 5999,
+     "sec": 59.99
+    }
+   }
+  },
+  "12": {
+   "frames": 6000,
+   "sec": 60.0,
+   "v_median_kmh": 124.92291708865898,
+   "v_p90_kmh": 127.8231404843513,
+   "v_max_kmh": 128.3630087492009,
+   "engaged_frac": 1.0,
+   "engaged_sec": 60.0,
+   "engaged_sec_ge_50": 60.0,
+   "engaged_sec_ge_80": 60.0,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 6000,
+     "sec": 60.0
+    }
+   }
+  },
+  "13": {
+   "frames": 6001,
+   "sec": 60.01,
+   "v_median_kmh": 105.45635056816128,
+   "v_p90_kmh": 110.1058897003916,
+   "v_max_kmh": 110.87398551730351,
+   "engaged_frac": 1.0,
+   "engaged_sec": 60.01,
+   "engaged_sec_ge_50": 60.01,
+   "engaged_sec_ge_80": 60.01,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 6001,
+     "sec": 60.01
+    }
+   }
+  },
+  "14": {
+   "frames": 6000,
+   "sec": 60.0,
+   "v_median_kmh": 114.58383650507423,
+   "v_p90_kmh": 119.99389784250924,
+   "v_max_kmh": 123.23458588455829,
+   "engaged_frac": 1.0,
+   "engaged_sec": 60.0,
+   "engaged_sec_ge_50": 60.0,
+   "engaged_sec_ge_80": 60.0,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 6000,
+     "sec": 60.0
+    }
+   }
+  },
+  "15": {
+   "frames": 6000,
+   "sec": 60.0,
+   "v_median_kmh": 96.43219078291273,
+   "v_p90_kmh": 114.99337006540839,
+   "v_max_kmh": 117.45637054533078,
+   "engaged_frac": 1.0,
+   "engaged_sec": 60.0,
+   "engaged_sec_ge_50": 60.0,
+   "engaged_sec_ge_80": 60.0,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 6000,
+     "sec": 60.0
+    }
+   }
+  },
+  "16": {
+   "frames": 5999,
+   "sec": 59.99,
+   "v_median_kmh": 92.64489795905249,
+   "v_p90_kmh": 97.97710512567537,
+   "v_max_kmh": 98.61682658153372,
+   "engaged_frac": 1.0,
+   "engaged_sec": 59.99,
+   "engaged_sec_ge_50": 59.99,
+   "engaged_sec_ge_80": 52.46,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 753,
+     "sec": 7.53
+    },
+    "80-+ km/h": {
+     "frames": 5246,
+     "sec": 52.46
+    }
+   }
+  },
+  "17": {
+   "frames": 6001,
+   "sec": 60.01,
+   "v_median_kmh": 90.14072750113186,
+   "v_p90_kmh": 101.50306710117607,
+   "v_max_kmh": 103.391927392364,
+   "engaged_frac": 1.0,
+   "engaged_sec": 60.01,
+   "engaged_sec_ge_50": 60.01,
+   "engaged_sec_ge_80": 60.01,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 6001,
+     "sec": 60.01
+    }
+   }
+  },
+  "18": {
+   "frames": 5999,
+   "sec": 59.99,
+   "v_median_kmh": 97.71168113436187,
+   "v_p90_kmh": 99.65771086222892,
+   "v_max_kmh": 100.74173795589866,
+   "engaged_frac": 1.0,
+   "engaged_sec": 59.99,
+   "engaged_sec_ge_50": 59.99,
+   "engaged_sec_ge_80": 59.99,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 5999,
+     "sec": 59.99
+    }
+   }
+  },
+  "19": {
+   "frames": 6000,
+   "sec": 60.0,
+   "v_median_kmh": 57.302485737634406,
+   "v_p90_kmh": 94.18950999375431,
+   "v_max_kmh": 98.25582039806073,
+   "engaged_frac": 1.0,
+   "engaged_sec": 60.0,
+   "engaged_sec_ge_50": 37.31,
+   "engaged_sec_ge_80": 18.09,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 2269,
+     "sec": 22.69
+    },
+    "50-80 km/h": {
+     "frames": 1922,
+     "sec": 19.22
+    },
+    "80-+ km/h": {
+     "frames": 1809,
+     "sec": 18.09
+    }
+   }
+  },
+  "20": {
+   "frames": 5999,
+   "sec": 59.99,
+   "v_median_kmh": 64.88298522991235,
+   "v_p90_kmh": 74.48742690443298,
+   "v_max_kmh": 76.20286818157213,
+   "engaged_frac": 1.0,
+   "engaged_sec": 59.99,
+   "engaged_sec_ge_50": 53.22,
+   "engaged_sec_ge_80": 0.0,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 56,
+     "sec": 0.56
+    },
+    "20-50 km/h": {
+     "frames": 621,
+     "sec": 6.21
+    },
+    "50-80 km/h": {
+     "frames": 5322,
+     "sec": 53.22
+    },
+    "80-+ km/h": {
+     "frames": 0,
+     "sec": 0.0
+    }
+   }
+  },
+  "21": {
+   "frames": 6000,
+   "sec": 60.0,
+   "v_median_kmh": 31.02880187659764,
+   "v_p90_kmh": 61.35942644321053,
+   "v_max_kmh": 62.43677926423544,
+   "engaged_frac": 0.9318333333333333,
+   "engaged_sec": 55.910000000000004,
+   "engaged_sec_ge_50": 14.13,
+   "engaged_sec_ge_80": 0.0,
+   "parked_frac": 0.06616666666666667,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 776,
+     "sec": 7.76
+    },
+    "5-20 km/h": {
+     "frames": 1133,
+     "sec": 11.33
+    },
+    "20-50 km/h": {
+     "frames": 2269,
+     "sec": 22.69
+    },
+    "50-80 km/h": {
+     "frames": 1413,
+     "sec": 14.13
+    },
+    "80-+ km/h": {
+     "frames": 0,
+     "sec": 0.0
+    }
+   }
+  },
+  "22": {
+   "frames": 6001,
+   "sec": 60.01,
+   "v_median_kmh": 14.281579625111885,
+   "v_p90_kmh": 20.124916679588083,
+   "v_max_kmh": 21.82489865310144,
+   "engaged_frac": 0.9961673054490918,
+   "engaged_sec": 59.78,
+   "engaged_sec_ge_50": 0.0,
+   "engaged_sec_ge_80": 0.0,
+   "parked_frac": 0.003166138976837194,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 181,
+     "sec": 1.81
+    },
+    "5-20 km/h": {
+     "frames": 5186,
+     "sec": 51.86
+    },
+    "20-50 km/h": {
+     "frames": 611,
+     "sec": 6.11
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 0,
+     "sec": 0.0
+    }
+   }
+  },
+  "23": {
+   "frames": 5999,
+   "sec": 59.99,
+   "v_median_kmh": 11.642334170031214,
+   "v_p90_kmh": 17.470993028641654,
+   "v_max_kmh": 18.958943933498123,
+   "engaged_frac": 0.5269211535255875,
+   "engaged_sec": 31.61,
+   "engaged_sec_ge_50": 0.0,
+   "engaged_sec_ge_80": 0.0,
+   "parked_frac": 0.0,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 3161,
+     "sec": 31.61
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 0,
+     "sec": 0.0
+    }
+   }
+  },
+  "24": {
+   "frames": 6001,
+   "sec": 60.01,
+   "v_median_kmh": 1.7378601917927723,
+   "v_p90_kmh": 17.540360758288603,
+   "v_max_kmh": 21.7271989978139,
+   "engaged_frac": 0.0,
+   "engaged_sec": 0.0,
+   "engaged_sec_ge_50": 0.0,
+   "engaged_sec_ge_80": 0.0,
+   "parked_frac": 0.4910848191968005,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 0,
+     "sec": 0.0
+    }
+   }
+  },
+  "25": {
+   "frames": 5357,
+   "sec": 53.57,
+   "v_median_kmh": 1.5754812377493599,
+   "v_p90_kmh": 5.229846986907945,
+   "v_max_kmh": 6.303825693839906,
+   "engaged_frac": 0.0,
+   "engaged_sec": 0.0,
+   "engaged_sec_ge_50": 0.0,
+   "engaged_sec_ge_80": 0.0,
+   "parked_frac": 0.4459585588949039,
+   "bands_engaged": {
+    "0-5 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "5-20 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "20-50 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "50-80 km/h": {
+     "frames": 0,
+     "sec": 0.0
+    },
+    "80-+ km/h": {
+     "frames": 0,
+     "sec": 0.0
+    }
+   }
+  }
+ },
+ "events": {
+  "selfdriveInitializing": 6,
+  "wrongGear": 147,
+  "commIssue": 4,
+  "locationdTemporaryError": 1,
+  "selfdrivedLagging": 3,
+  "commIssueAvgFreq": 1,
+  "pedalPressed": 544,
+  "preEnableStandstill": 124,
+  "steerOverride": 800,
+  "reverseGear": 78,
+  "gasPressedOverride": 739,
+  "buttonEnable": 20,
+  "cruiseMismatch": 1078,
+  "preLaneChangeRight": 12,
+  "laneChange": 104,
+  "preLaneChangeLeft": 7,
+  "buttonCancel": 4,
+  "seatbeltNotLatched": 7,
+  "parkBrake": 4,
+  "wrongCarMode": 1
+ },
+ "events_immediate": {},
+ "events_soft": {
+  "wrongGear": 147,
+  "commIssue": 4,
+  "locationdTemporaryError": 1,
+  "selfdrivedLagging": 3,
+  "commIssueAvgFreq": 1,
+  "seatbeltNotLatched": 7
+ },
+ "sentinels": {
+  "a14": 0,
+  "a18": 0
+ },
+ "dtc_bit2_duty": 0.0,
+ "dtc_bit2_transitions": 0,
+ "output_disabled_duty": 5.149728351829441e-05,
+ "config_valid_duty": 1.0,
+ "steer_status_hist": {
+  "0": 155340,
+  "3": 9
+ }
+}

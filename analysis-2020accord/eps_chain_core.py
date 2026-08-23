@@ -384,7 +384,20 @@ class EpsState:
     assist_ramp_state: int = 0    # gp-0x682e 4-state assist engage ramp {0,1,2,3}
     assist_ramp_timer: int = 0    # gp-0x68c8 ramp timer vs (tp+0x74d1 * 10)
     assist_rate_state: int = 0    # gp-0x6bb2/4/6/8 cross-tick integrity WATCHDOG (NOT a rate limiter)
-    assist_polarity: int = 1      # gp-0x6752 assist polarity (-1/0/+1)
+    # 🛑🛑 KNOWN DEFECT, 2026-08-23 -- THIS DEFAULT IS WRONG AND IS DELIBERATELY LEFT WRONG.
+    #   The real cell is gp-0x6752 = **-1** (accord-gp6752-is-negative-one, verified 3 ways incl.
+    #   on-car).  NOTHING in the kit overrides this field, so every _demo()/_self_check() run uses
+    #   the PRE-RETRACTION sign, and the 3 call sites in eps_chain_lanes.py inherit it.
+    #   ⚠ It is NOT fixed here because _self_check()'s expected values were themselves computed at
+    #   +1 (e.g. `_inline_torque_rate_b(st) == 1533` @eps_chain_delivery.py) and flipping the
+    #   default breaks them.  Re-deriving those expectations FROM THE FIRMWARE is the fix; editing
+    #   them to match the model's new output would make the test agree with the code by
+    #   construction and destroy its value.  That is a scoped task, not a one-line change.
+    #   ⇒ Until then: READ THE SIGN FROM THE MEMORY, NOT FROM THIS MODEL.
+    #   gp-0x6752 is the DRIVER-FRAME <-> AGGREGATOR-FRAME CONVERTER, applied at exactly the 7
+    #   sites a signal crosses between frames: 0x3B92E, 0x3B91C, 0x381EE, 0x3668E, 0x358C2,
+    #   0x3AB78, 0x3A71A.  🛑 Reason about it by counting FRAME CROSSINGS, never negations.
+    assist_polarity: int = 1      # gp-0x6752 assist polarity (-1/0/+1) -- SEE THE DEFECT NOTE ABOVE
     assist_lane: int = 0          # gp-0x6bbe (0xFEDF1442) the base-assist aggregator lane
     boost_fir_out: int = 0        # gp-0x6b9a, signed FUN_0003b66a output; gp-0x6ba6 is its magnitude
     # ★★★ RESOLVED 2026-07-31: gp-0x671a is an OSCILLATION DETECTOR -- a hard-REVERSAL COUNTER, latched.

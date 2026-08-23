@@ -1,0 +1,51 @@
+{
+ "route": "a6",
+ "build": "V106",
+ "frames": 155349,
+ "byte7_code_hist": {
+  "3": 155349
+ },
+ "byte7_code3_duty": 1.0,
+ "b3_duty": 0.46466343523292714,
+ "b3_varies": true,
+ "byte4_field_hist": {
+  "0": 33322,
+  "1": 20949,
+  "2": 14935,
+  "3": 17132,
+  "4": 9254,
+  "5": 7356,
+  "6": 5722,
+  "7": 5518,
+  "16": 10336,
+  "17": 8385,
+  "18": 4538,
+  "19": 7914,
+  "20": 3371,
+  "21": 2658,
+  "22": 1686,
+  "23": 2273
+ },
+ "bit_duties": {
+  "b7": 0.26495825528326544,
+  "b6": 0.0,
+  "b5": 0.24356770883623324,
+  "b4": 0.38441187262228915,
+  "b3": 0.46466343523292714
+ },
+ "n_nonconstant_of_b6b5b4": 2,
+ "wire_n_frames": 77674,
+ "wire_max": 1023,
+ "wire_p50": 2.0,
+ "wire_p99": 616.0,
+ "n_above_v103_ceiling": 363,
+ "frac_above_v103_ceiling": 0.004673378479285218,
+ "ra5_b5_pooled": 0.2533,
+ "ra5_b5_engaged_low": 0.4019,
+ "b5_duty_pooled": 0.24356770883623324,
+ "leg3_b5_moved": false,
+ "leg1_pass": true,
+ "leg2_pass": true,
+ "rule": "LEG1 byte7[7:6]==3 AND b3 varies (V103..V106 vs V101/V102);  LEG2 any 427 wire code > 800 is impossible on V103/V102 (V104-or-later);  LEG3 b5 pooled duty vs a5's 0.2533 -- the DOSE proof, V106-specific.  \ud83d\uded1 V106 changes ZERO instrumented bytes; no structural separator from V105 exists.  The operator's symptom report is itself a leg.",
+ "identity_pass": true
+}

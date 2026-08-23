@@ -23,7 +23,65 @@ deliberately not numbered `PART2` so the two can never be confused.
 
 ---
 
-## 🛑🛑 V106 — BUILT, VERIFIED, NOT FLASHED. **V105 IS ON THE CAR** (route `a5`, wire-verified).
+## 🛑🛑 V107 — BUILT, VERIFIED, NOT FLASHED. **V106 IS ON THE CAR** (route `a6`, 1,224.0 s engaged, fault-free)
+
+**CLASS: the SPEED SCHEDULE of `gp-0x6b26` — the second axis of the cell V106 doses, because the
+uniform axis is arithmetically EXHAUSTED.** Plus a telemetry re-aim. Cal + one instruction
+displacement + one shift immediate. **No cave change.**
+
+| artifact | sha256 |
+|---|---|
+| `_v107_V106BASE-GP6B26.RESHAPE_B-TAP.6C2C.SAR3_plain_image.bin` | `c32c3ba5da859335fa7637cca59e9ac3e40f8f6cdcb817dd582884be080a0c45` |
+| `39990-TVA,A160-V107-V106BASE-GP6B26.RESHAPE_B-TAP.6C2C.SAR3-0x13000-0x100000.rwd` | `78eae7da20a87f1a95295eca11da0d08f4cf2b3b823785594cde4be93a7b24ff` |
+
+builder `analysis-2020accord/build_v107_tva.py`, **55/55 assertions**, BASE = V106.
+**10 payload + 8 CRC = 18 bytes vs V106. ZERO unattributed vs stock. Two CRC trailers
+(`0x0C4FFC`, `0x0D7FFC`).** Exactly ONE V107 `.rwd` on disk.
+
+```
+E1  0xD7A5C / 0xD7A6C  modes 26/27 Y   (-29490,-17202,-5898) -> (-29490,-24000,-16000)
+                       X untouched at (0,1280,5760) counts = (0,20,90) km/h
+E2  0x55DF2  7a 94 -> d4 93    427 tap source: gp-0x6b86 -> gp-0x6c2c
+    0x55E10  a4 -> a3          427 tap scaler: sar 4,r6 -> sar 3,r6
+```
+
+### WHY — the uniform axis is int16-EXHAUSTED
+Y is signed int16; **Y[0] stock = −9830 ⇒ k_max = 32768/9830 = 3.3335**, and V106 at ×3.0 sits at
+**90.00 %** of the floor. ×4/×5/×6 stock are **OVERFLOW**, not merely risky. Room to the floor:
+Y[0] ×1.11 · Y[1] ×1.90 · **Y[2] ×5.56** — and Y[2] is the ≥90 km/h knot, which is exactly where
+V106's residual line survives (55–70 km/h is measured **at stock**: prominence 1.4 vs 1.6).
+Honda's taper delivers **−24,546 at creep but −5,898 at ≥90 km/h — 4.2× weaker where the line is.**
+
+### WHY B AND NOT A — a flat schedule is V80 relay territory
+Constant-free duty (measured wire × a ratio of two flash tables), r77 **undamped** = conservative:
+`RESHAPE A` → **6.2 %** at 70–90 km/h · `RESHAPE C` → 3.4 % · **`RESHAPE B` → ≤1.05 % everywhere**
+(≤0.09 % on a6's own damped α). **B's clamp knee (1963) sits ABOVE r77's undamped 70–90 p99 of
+1836.** And **route a6 spent 809 of its 1,224 engaged seconds above 70 km/h** — the band the reshape
+hits hardest is the majority of the operator's engaged driving.
+🛑 **Highway α is 1.5–1.9× CREEP, not smaller** — "creep is the worst case" is FALSE, and it is why
+A's ≥70 cell is worst in every table. **Y[0] is byte-identical**, so creep duty and the relay index
+are unchanged BY CONSTRUCTION; only 4 bytes per row change.
+
+### WHY THE TAP MOVED
+It watched `gp-0x6b86`, the biquad lane — a filter this session decided not to build on. **No route
+has ever measured `gp-0x6c2c` above 90 km/h near this dose** (r77: 1.1 s; r78: 99.8 s at ×1.5), and
+every duty number above rests on it. ⭐ `|gp-0x6b26|` is bounded at ±511 **by construction**, so it
+censors exactly the information needed — it can say *that* you clamped, never *how far past*.
+`sar 3` = LSB 8, full scale 8184 vs a measured max of 5,286, **zero clipping** (`sar 2` clips 1.18 %
+of the p99.9 tail, and the tail is the point).
+
+### UNTOUCHED
+`0xC407E` = 511 · `0xC6CD0` = 5346 (the 6× gain) · both MANUAL mode records · the X breakpoints ·
+the biquad · **the whole cave, so `b5` still means what route a6 measured it against** · Lever B ·
+`0xC640A`/`0xC640C` — the `gp-0x671a` fallback branch, **proven dead** (it needs five crossings of
+`|gp-0x6c2c| > 12,800` against a corpus max of 5,320) and **NOT virgin: V93/V94 cut it ×0.75 and V94
+flew as route `7d`, the drive the operator aborted as "not safe to drive."**
+
+Narrative: `docs/HANDOFF-2026-08-23-v107-the-schedule-is-the-lever.md`.
+
+---
+
+## ⚠ V106 — **FLOWN as route `a6`. SUPERSEDED as the candidate by V107.** (route `a5`, wire-verified).
 
 | artifact | SHA256 |
 |---|---|

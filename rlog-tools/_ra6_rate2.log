@@ -1,0 +1,79 @@
+============================================================================================================================
+1.  ⭐⭐ THE ONSET TRANSIENT -- QUANTILE-RELATIVE DEFINITION (the fixed detector).
+    Onset = |e4tq| crosses that route's OWN engaged p75 after 0.4 s whose MEAN is below
+    its OWN engaged p40.  Engaged throughout.  Profiles are the MEDIAN |rate_c| across
+    events, so one big event cannot carry the row.
+============================================================================================================================
+             build   p40 eng   p75 eng    events   0.00s   0.12s   0.24s   0.36s   0.47s   0.59s   0.71s   0.83s   0.95s   1.07s   1.19s   1.31s   1.42s
+   V88  (route 73)       385      2360         0   -- too few onset events --
+   V104 (route a4)       146       488        36   11.50    8.00   17.00   21.50   21.50   13.50   10.50    7.50   12.50    5.00   13.50   17.50   20.50
+   V105 (route a5)       199       739         5   -- too few onset events --
+   V106 (route a6)       102       262       202    3.00    2.00    2.00    2.00    2.00    2.00    2.00    2.00    2.00    2.00    2.00    2.00    1.00
+
+             build  rise 0-0.30 s plateau 1.0-1.5 s   rise/plateau
+   V104 (route a4)          16.12            14.55          1.108
+   V106 (route a6)           2.40             1.53          1.569
+  ⇒ H-ACC (acceleration penalty): rise/plateau FALLS, plateau roughly held.
+    H-RATE (slew ceiling):        the PLATEAU itself falls.
+
+============================================================================================================================
+2.  ⭐ THE SUSTAINED-DEMAND RATE, **SPEED-STRATIFIED** -- `ra6_rate.py` section 5 pooled
+    over speed, and route a6 is far more highway-heavy than a5, so the pooled row was
+    confounded.  Frames where |e4tq| >= that route's own engaged p75 for >= 0.4 s.
+============================================================================================================================
+             build    speed         n       p50       p90       p99       MAX
+   V88  (route 73)      <16      4070      37.0     305.2     481.0     544.0
+   V88  (route 73)    16-40      3142      19.0     109.0     217.0     258.0
+   V88  (route 73)    40-70       876      10.0      27.0      47.8      86.0
+   V104 (route a4)      <16      3134      24.0     136.0     248.0     281.0
+   V104 (route a4)    16-40      4492      23.0     107.0     225.0     308.0
+   V104 (route a4)    40-70      2679      16.0      42.0      74.4     100.0
+   V104 (route a4)      70+       207      16.0      43.4      57.8      64.0
+   V105 (route a5)      <16      3571      33.0     225.0     332.2     372.0
+   V105 (route a5)    16-40      3554      27.0      91.0     243.0     273.0
+   V105 (route a5)    40-70      1442      14.0      37.0      57.0      76.0
+   V106 (route a6)      <16      5601      26.0     142.0     243.0     311.0
+   V106 (route a6)    16-40      4979      18.0      91.0     175.0     204.0
+   V106 (route a6)    40-70      1426       8.0      26.5      48.8      82.0
+   V106 (route a6)      70+      2477       6.0      19.0      38.2      70.0
+
+============================================================================================================================
+3.  THE STEERING-WHEEL ACCELERATION UNDER DEMAND -- the quantity `gp-0x6b26` actually
+    opposes.  |d(rate_c)/dt| in deg/s^2, engaged, at HIGH demand (>= own p75).
+    H-ACC predicts THIS is what fell, while the rate itself is roughly held.
+============================================================================================================================
+             build    speed         n       p50       p90       p99
+   V88  (route 73)      <16      5678     404.6    1466.6    2832.1
+   V88  (route 73)    16-40      4232     354.0    1062.1    1921.8
+   V88  (route 73)    40-70      1163     354.0    1314.9    2213.1
+   V104 (route a4)      <16      5820     556.3    2983.9    4551.7
+   V104 (route a4)    16-40      6507     505.7    2629.8    3894.2
+   V104 (route a4)    40-70      3559     657.5    2731.0    4197.6
+   V104 (route a4)      70+       880    2275.8    4152.1    5422.0
+   V105 (route a5)      <16      5128     505.7    2326.4    4045.9
+   V105 (route a5)    16-40      4861     556.3    2478.1    3793.0
+   V105 (route a5)    40-70      2059     708.0    2528.7    4045.9
+   V105 (route a5)      70+       210     151.7     708.0    5508.0
+   V106 (route a6)      <16      8076     303.4    1517.2    3186.2
+   V106 (route a6)    16-40      7763     252.9    1203.7    2377.0
+   V106 (route a6)    40-70      3950     202.3     657.5    2478.1
+   V106 (route a6)      70+     11284     303.4    1618.4    3590.8
+
+============================================================================================================================
+4.  ⭐ Q-RATCHET, THE FIX -- SPEARMAN RANK partial correlation (invariant to the zero
+    floor that broke `ra6_line.py` section 3), plus a 30 s contiguous-BLOCK bootstrap
+    because route a6 has only 7 engaged episodes.
+============================================================================================================================
+  473 windows, 44 contiguous 30 s blocks, LINE == 0 in 35.5 % of windows
+  LINE              rho(demand) +0.3957   PARTIAL|rate +0.1139 [+0.0374, +0.2548]   PARTIAL|speed +0.3342
+  CARRIER           rho(demand) +0.5877   PARTIAL|rate -0.2154 [-0.3191, -0.0747]   PARTIAL|speed +0.6277
+  PLACEBO (32-38)   rho(demand) +0.5129   PARTIAL|rate -0.1772 [-0.2995, -0.0155]   PARTIAL|speed +0.5855
+  rho(LINE, |motor rate|) = +0.4175   rho(demand, |motor rate|) = +0.7984
+
+  LINE by demand tertile INSIDE each motor-rate stratum (the stratified version, with
+  a block bootstrap on the HIGH/low LINE ratio):
+   rate band    n low   n HIGH   LINE low  LINE HIGH  PLACEBO r       LINE HIGH/low CI
+         0-5      116      116     0.0024     0.0357       1.63          [4.64, 30.04]
+        5-15       26       26     0.0405     0.9125       0.88          [4.83, 65.54]
+
+wrote analysis-2020accord/_ra6_rate2.json

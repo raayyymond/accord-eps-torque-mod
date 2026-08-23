@@ -1,0 +1,58 @@
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\lib\_nanfunctions_impl.py:1593: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a,
+============================================================================================================================
+1.  ⭐⭐ THE DELIVERED MULTIPLIER -- horizontal shift of the `b5` duty-vs-alpha curve on
+    its FALLING branch, with `np.interp` used correctly this time.
+    Expected 2.00 if V105 really ran x1.5 and V106 runs x3.0.
+    A value near 3.00 would mean the x1.5 was NEVER IN FORCE (Q7 / open item #6).
+============================================================================================================================
+  V104 (x1.5)      224:0.440  282:0.378  355:0.322  446:0.310  561:0.254  706:0.224  887:0.169  1116:0.169  1403:0.136  1765:0.102  2219:0.099  2791:0.040  3510:0.008
+  V105 (x1.5)      223:0.516  277:0.468  345:0.423  429:0.363  533:0.310  663:0.259  824:0.209  1025:0.171  1274:0.143  1584:0.120  1970:0.099  2449:0.048  3045:0.005
+  V106 (x3.0)      220:0.268  265:0.267  320:0.240  386:0.236  466:0.193  563:0.172  679:0.167  819:0.135  989:0.123  1193:0.092  1440:0.081  1738:0.076  2098:0.041
+  ⭐ delivered multiplier, a6 vs V105 (x1.5)    = **1.68x**  [1.16, 1.88]   (n boot 499)
+  ⭐ delivered multiplier, a6 vs V104 (x1.5)    = **1.70x**  [0.96, 1.95]   (n boot 499)
+  ⚠ CAVEAT that travels with this number: the comparator's OTHER operand `gp-0x6ae2` is
+    |model|-proportional, so it is not literally constant across two different drives.
+    The 8/8 matched-alpha ratio in `ra6_dose2.py` section 1 is the ROBUST result; this
+    multiplier is the QUANTITATIVE one and carries that extra assumption.  [BELIEF]
+
+============================================================================================================================
+2.  ⭐ THE MOTOR ACCELERATION ITSELF -- **AND THE WITHIN-DRIVE NULL THAT `ra6_dose2.py`
+    OWED IT.**  `gp-0x6b26 = -K*alpha`, so alpha is exactly what this term removes.
+    The null is a split-half-by-episode ratio of the SAME statistic inside route a6.
+============================================================================================================================
+           build        <8      8-16     16-25     25-40     40-60     60-80       80+
+     V104 (x1.5)    2075.6    1668.9    1547.6    1208.8     899.2    2548.9    3614.4
+     V105 (x1.5)    1639.6    1368.7    1456.1    1105.5    1098.9    1634.8    3178.7
+     V106 (x3.0)     446.9    1116.5     839.8     619.0     256.9     270.1     529.0
+
+  a6/a5 and a6/a4 ratios, and route a6's OWN split-half null for the same statistic:
+           a6/a5     0.273     0.816     0.577     0.560     0.234     0.165     0.166
+           a6/a4     0.215     0.669     0.543     0.512     0.286     0.106     0.146
+      a6 null lo     0.365     0.379     0.602     0.284     0.230     0.440    --    
+      a6 null hi     2.473     1.722     1.434     3.523     5.577     2.273    --    
+   a6/a5 clears?       YES        no       YES        no        no       YES        no
+   a6/a4 clears?       YES        no       YES        no        no       YES        no
+
+============================================================================================================================
+3.  THE CLAMP LAW, CHECKED PROPERLY -- fitted on r77 (x1.00 stock), then asked to
+    reproduce r77's OWN percentiles, then applied HELD-OUT to r78 (V91, x1.50).
+============================================================================================================================
+                             p50       p90       p99     p99.9    duty>=256    duty>=511
+   r77 MEASURED (x1.0)       4.8      38.4     113.6     184.0      0.00013      0.00000
+         r77 predicted       6.8      32.8      94.7     179.7      0.00023      0.00002
+   r78 MEASURED (x1.5)       1.6      17.6      62.4     145.6      0.00000      0.00000
+r78 predicted HELD-OUT       5.4      24.1      73.8     156.0      0.00015      0.00001
+  🛑 READ THE ROWS AS A PAIR.  If the predicted row over- or under-states the measured
+     tail, the a6 clamp duties in `ra6_dose2.py` section 3 inherit that bias in the same
+     direction, and the HEADROOM statement must be adjusted accordingly.
+
+  ⭐ HEADROOM: what dose multiple k (relative to STOCK) first puts route a6's own engaged
+     distribution at a given clamp duty?  V106 = k 3.0.  This is the V107 sizing table.
+           stratum      k=2      k=3      k=4      k=5      k=6      k=8     k=12
+       engaged all  0.00023  0.00120  0.00344  0.00702  0.01156  0.02259  0.04793
+          <16 km/h  0.00042  0.00195  0.00608  0.01319  0.02324  0.04914  0.10821
+        40-95 km/h  0.00009  0.00056  0.00160  0.00327  0.00567  0.01214  0.02872
+  alpha top decile  0.00237  0.01190  0.03341  0.06667  0.10902  0.20320  0.38385
+
+wrote analysis-2020accord/_ra6_dose3.json

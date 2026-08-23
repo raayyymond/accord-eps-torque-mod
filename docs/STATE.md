@@ -1,6 +1,94 @@
 # STATE — living current state of the kit
 
-## 🛑🛑 LATEST BLOCK, 2026-08-22 (latest) — **V105 FLEW AND RELOCATED THE MODE · THE THREE GRINDS ARE ONE FREQUENCY · V106 IS A DAMPER**
+## 🛑🛑 LATEST BLOCK, 2026-08-23 (latest) — **V106 FLEW AND EXTINGUISHED THE MODE AT LOW SPEED · RULE 7 CLOSED · THE UNIFORM DOSE AXIS IS EXHAUSTED · V107 RESHAPES THE SCHEDULE**
+
+🛑 **ON THE CAR: V106** (route `a6`, 1,224.0 s engaged, fault-free).
+**V107 BUILT, VERIFIED, UNFLASHED. Nothing flashed, no CAN, no UDS.**
+Narrative: **`docs/HANDOFF-2026-08-23-v107-the-schedule-is-the-lever.md`** — drive card, 13 retractions,
+6 record defects, 14 open items with what closes each.
+```
+V107 image  c32c3ba5da859335fa7637cca59e9ac3e40f8f6cdcb817dd582884be080a0c45
+V107 .rwd   78eae7da20a87f1a95295eca11da0d08f4cf2b3b823785594cde4be93a7b24ff
+builder     analysis-2020accord/build_v107_tva.py   55/55 assertions   BASE = V106
+E1  0xD7A5C / 0xD7A6C   (-29490,-17202,-5898) -> (-29490,-24000,-16000)   modes 26/27, X untouched
+E2  0x55DF2  7a 94 -> d4 93   427 tap: gp-0x6b86 -> gp-0x6c2c
+    0x55E10  a4 -> a3         sar 4 -> sar 3
+```
+
+### ⭐ THE HEADLINE — V106 EXTINGUISHED THE 21–27 Hz MODE AT LOW SPEED
+Engaged, <16 km/h, max-demand arm: prominence **1.51 against STOCK's 1.46**, and V106's argmax
+**follows the search-band edge exactly as stock's does** while V104's and V105's stay pinned. Two
+independent within-spectrum signatures of no line present.
+**`18-30 a6/V105 = 0.347` CLEARS route a6's own within-drive split-half null [0.482, 1.982] — the
+FIRST band-power result in this kit's history to do so.** Positive control `a6/STOCK = 5.735`.
+🛑 The confound was cut: a6's engaged command is ~4× SMALLER than a5's, so the result was re-run in
+matched (speed × **absolute** demand) cells and survives.
+
+**Operator's report:** grinding attenuated in all three scenarios; ratcheting still present at high
+LKAS demand; max LKAS-driven steering rate limited; LKAS-off feel normal.
+
+### ⭐ RULE 7 IS CLOSED — the car reads modes 26/27 engaged
+`b5` at **matched α** (a pooled duty is the WRONG estimator — the K·α product is invariant to K):
+a6/a5 ratio **8/8 bins below 1, sign p = 0.0039**; within-drive engaged 0.1907 vs MANUAL 0.4509.
+The ×1.5 WAS in force: delivered multiplier **1.68× [1.16, 1.88]**, excluding both 1.00 and 3.00.
+
+### 🛑 WHAT SURVIVES, AND WHY V107 IS A RESHAPE
+Residual is a ~27 Hz line **above ~70 km/h** (55–70 is measured AT STOCK: 1.4 vs 1.6). That is exactly
+where Honda's taper makes V106 **4.2× weaker** (−24,546 at creep vs −5,898 at ≥90 km/h).
+**The uniform axis is int16-EXHAUSTED:** Y[0] stock −9830 ⇒ k_max **3.3335**, V106 at ×3.0 = **90 %**
+of the floor. ×4/×5/×6 are OVERFLOW. **Y[2] has ×5.56 of room and that is where the line is.**
+RESHAPE B holds Y[0] byte-identical ⇒ creep clamp duty and relay index unchanged BY CONSTRUCTION.
+A flat schedule was REJECTED: **6.2 % clamp duty at 70–90 km/h = V80 relay territory**, against B's
+≤1.05 %. And **route a6 spent 809 of its 1,224 engaged seconds above 70 km/h.**
+
+### THE RATE COST IS AN ACCELERATION PENALTY, NOT A SLEW CEILING
+No rail · steady state restored to V104's level (`H(0)=0` predicts it) · wheel acceleration down
+2–4×. At matched ABSOLUTE max demand, achieved rate p90: V88 326 · V104 166 · V105 229 · **V106 157**
+⇒ **~30 % of peak rate given up vs V105.**
+
+### THE RATCHET IS LKAS-DEMAND-DRIVEN — the next target, and a NEW discriminator
+The 7.4–8.6 Hz LINE is the **only** band with a positive residual demand association after
+partialling out motor rate (+0.1139 [+0.0374,+0.2548]); carrier and placebo go negative. 2/2 rate
+strata, both CIs excluding 1, placebo flat.
+
+### ⭐ THE ARCHITECTURAL ANSWER — the feedforward lane EXISTS
+`0xC4124[1]` 0→5 moves LKAS to Honda's own post-governor lane; four channels already use it. Both
+cal tables **0 writers**; the ASIL monitor dispatches on the same byte ⇒ follows by construction; the
+authority gate is UPSTREAM of the router. **Topology change, NOT authority — it does NOT buy back
+steering rate** (the damper subtracts at the FINAL add, downstream of both lanes). **V108 candidate.**
+
+### 🛑 RECORD DEFECTS FOUND — reported, deliberately NOT silently patched
+1. **Golden model `assist_polarity = 1`** where `gp-0x6752` is **−1**; nothing overrides it, so every
+   `_demo()`/`_self_check()` run uses the pre-retraction sign. **NOT fixed** — `_self_check()`'s
+   expectations were computed at +1, and editing them to match the model's new output would make the
+   test agree with the code by construction. Defect note in place; **contract re-verified intact
+   (2,512 B, `740f4bcd…`)**.
+2. **V100 FLEW as route `0x85`** (2026-08-13); `BUILD-LINEAGE-CATCHUP-V76-V100.md` still says "BUILT
+   AND NOT FLASHED" — the eleventh stale flight-status row, by that row's own warning. ⭐ **And V100
+   carried the `|gp-0x6ad6| ≥ 8192` rail comparator whose duty was never harvested** — it decides
+   whether `0xC40D2`'s dose is small or structurally ZERO.
+3. `accord-gp6b4c-is-an-11-slot-assist-sum` — modes 5/7 **re-route**, they do not zero.
+4. `accord-friction-polarity-*` — conclusion stands, sign chain **replaced** (frame crossings).
+5. `MEMORY.md` pointed at a file renamed after the operator retracted its claim (**"v84 fixed the
+   highway ring"** → `accord-v84-flew-and-fixed-nothing.md`). **Fixed.**
+
+### 🛑 THE INSTRUMENT LESSON — a STATIONARY mode returns a FAKE frequency slope
+Injected at an amplitude ladder through the same argmax pipeline, a mode that does **not** move
+returns **−1.14 / −0.759 / +1.731 Hz per e-fold** when the amplitude axis is INDEPENDENT of the band
+power, with the sign tracking (band centre − mode frequency). Against band RMS the floor is **zero**.
+⇒ **`accord-f0-crossover-is-the-endpoint`'s −1.93 Hz/e-fold was measured against COMMAND amplitude and
+sits inside that artefact's range.** NOT retracted (`f0` is a `Re(Z)` crossing, not an argmax) — but
+**push a stationary synthetic through the actual `Re(Z)` code before it sizes anything.** OPEN.
+
+### 🛑 THE TOP NON-BUILD ITEM — THE ALTERNATING DRIVE, open since the V105 handoff
+~30 s engaged / 30 s manual at 5–15 km/h, same road, same session, command swept hard and soft. It
+closes the ~8 Hz LINE null (a6 had only **7** engaged episodes, one of them 941.6 s), the <16 km/h
+pitch-vs-amplitude cell (30 and 46 windows), and the engaged/manual contrast above 25 km/h (a6 has
+**0.0 s** of manual driving in 25–60 km/h).
+
+---
+
+## ⚠ SUPERSEDED BLOCK, 2026-08-22 — V105 flew and relocated the mode · the three grinds are one frequency · V106 is a damper
 
 🛑 **ON THE CAR: V105** (route `a5`, verified from the wire — three legs, strongest being the biquad's own
 427 output matching the image floats). **V106 BUILT, VERIFIED, UNFLASHED. Nothing flashed, no CAN, no UDS.**
