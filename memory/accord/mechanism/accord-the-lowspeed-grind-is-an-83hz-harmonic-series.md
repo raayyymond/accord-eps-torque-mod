@@ -1,16 +1,70 @@
 ---
 name: accord-the-lowspeed-grind-is-an-83hz-harmonic-series
-description: On V107 the operator's low-speed grinding has a measured, controlled spectral signature - an ~83.5 Hz HARMONIC SERIES five harmonics deep (82/172/254/328/414 Hz), engagement-gated, p=0.000 against a null that includes the grid search. Even AND odd harmonics present, so it is an asymmetric periodic process, not a symmetric relay. Gives V109 a pre-registered quantitative endpoint.
+description: A harmonic comb IS detectable above its own null on V107 (f0 ~83.5 Hz, five harmonics, p=0.000) - but the SAME test run across the gain ladder finds a significant comb on STOCK too, the scores do not order by gain, and the f0 estimate suffers a SUB-HARMONIC AMBIGUITY (40-50 vs 83-85 Hz families). So the comb is real but NOT ours and NOT shown to be the grinding. The V109 endpoint survives only as a within-build before/after.
 metadata:
   node_type: memory
   type: reference
 ---
 
-# THE LOW-SPEED GRIND IS AN **~83.5 Hz HARMONIC SERIES** — MEASURED, CONTROLLED
+# ⚠⚠ QUALIFIED — A COMB IS REAL ON V107, BUT **STOCK HAS ONE TOO** AND `f0` IS AMBIGUOUS
 
 ★★★★★ **EVIDENCE**, 2026-08-27. Route `1e` = **V107**, the build immediately before V108/V109.
 The operator on V108: *"low speed below ten miles an hour, grinding is still there… two modes.
 One… maybe around a hundred hertz. And another… around a hundred or two hundred hertz."*
+
+## 🛑🛑 THE LADDER RESULT — RUN THE SAME TEST ON STOCK AND IT FIRES TOO
+Recorded within the hour of the original claim, 2026-08-27. The spectrogram extractor was
+generalised (`rlog-tools/decode/extract_route_audio.py`) and spectrograms built for the whole
+available ladder. Scored identically by `rlog-tools/score/comb_score.py`:
+```
+  route  build        gain    f0 Hz   score dB   null p95      p
+  97     V9b-STOCK      1x    49.50     +1.457      0.665  0.000   <- STOCK FIRES
+  85     V100           4x    43.50     +2.494      0.821  0.000
+  95     V101           8x    40.25     +3.513      0.729  0.000
+  a6     V106           6x    85.00     +2.675      0.520  0.000
+  1e     V107           6x    83.50     +1.682      0.486  0.000
+```
+🛑 **STOCK carries a significant comb.** ⇒ **the series is NOT ours**, which directly contradicts
+the reading this note originally carried and which
+[[accord-the-100hz-mode-is-ours-and-engagement-gated]] reached from the coarse third-octave bands.
+🛑 **And the scores do not order by gain**: 1× **1.457** < 6× **1.682** < 4× **2.494** <
+6× **2.675** < 8× **3.513**. Stock is lowest, but V107 — the build the operator complained about — is
+**second lowest**, and the two 6× builds straddle the 4×. **No dose-response.**
+
+## 🛑 A SUB-HARMONIC AMBIGUITY IN THE ESTIMATOR — `f0` IS NOT RELIABLE
+The fits split into two families, **40–50 Hz** (stock, V100, V101) and **83–85 Hz** (V106, V107),
+and `83.5 ≈ 2 × 41.75`. **That is not two mechanisms — it is one estimator failing.** A comb at `f0`
+ALWAYS also scores at `f0/2`, because every harmonic of `f0` is an even harmonic of `f0/2`; which of
+the two the grid picks depends on whether the intervening odd multiples of `f0/2` happen to be
+elevated by noise. ⇒ **the reported `f0` may be the true fundamental or any integer sub-multiple of
+it, and the two "families" above are probably the same comb read two ways.**
+⇒ 🛑 **Do not quote `f0 = 83.5 Hz` as a frequency identification**, and the earlier remark that
+`1000/12 = 83.33` is now doubly worthless — it was already inside the ±2 Hz bin resolution, and the
+fundamental itself is not identified.
+
+## ✅ WHAT SURVIVES
+1. **A harmonic comb exists and clears its own null on every route tested**, p = 0.000, with the
+   grid search inside the null. **That much is solid.**
+2. ⚠ **It is not established as OURS** (stock fires), **not established as the grinding** (no
+   operator-symptom correlation was ever computed), and **not dose-ordered**.
+3. **The V109 endpoint survives, but only in its within-build form**: V109 vs V108 on the SAME
+   route pair, same road, same driver. A cross-build ladder comparison is not supported by this
+   statistic, because stock already scores as high as V107.
+⊕ The instrument itself is sound and is the kit's only view above 50 Hz. **Keep building
+spectrograms; the fault was the interpretation, not the extractor.**
+
+## ⭐ THE PROCESS FAILURE, RECORDED
+The original claim was published **one tick before** the ladder was run, on a single route, with no
+stock arm — and the very first thing the ladder did was contradict it. **The stock comparison was
+available the whole time** (r97's rlogs have been on disk all along) and cost one background job.
+🛑 **RULE: when a result's whole force is "this is OURS", build the STOCK arm BEFORE publishing,
+not after.** The kit already had this rule for band-power work
+([[feedback-run-the-control-before-the-measurement]]); it was not applied here.
+⊕ A second, narrower bug was caught in the same pass: the null originally required
+`len(engaged) >= 2 x len(manual)` and **silently produced ZERO draws on four of the five routes**,
+reporting `nan`. A grid-searched score with no null is guaranteed positive. Fixed to use disjoint
+halves capped at `len(manual)`, which makes the null noisier than the real comparison and therefore
+errs conservative; and the scorer now **refuses to report a score when it cannot build a null.**
 
 ## THE INSTRUMENT — and it already existed, unrecognised
 `analysis-2020accord/_scratch/cache/r1e/r1e_spec.npz`: **26,638 frames × 513 bins, 3.91 Hz
