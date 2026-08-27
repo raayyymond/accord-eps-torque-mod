@@ -51,6 +51,50 @@ report; BELIEF that the mapping is causal** — one build, no rlogs, and no matc
 
 ⇒ **V109 IS THE NEXT BUILD, and now for a measured reason rather than a structural one.**
 
+### 🛑🛑 GOAL #5 IS ANSWERED, AND THE ANSWER IS NOT IN THE FIRMWARE
+**The low-speed steering-rate limit is COMMAND SATURATION at openpilot's `STEER_MAX` = 4096.**
+Measured 2026-08-27 from caches already on disk; reproducible via
+`rlog-tools/studies/authority/steer_max_saturation.py`. Full note:
+`memory/accord/mechanism/accord-low-speed-rate-limit-is-openpilot-steer-max.md`.
+
+**The clamp is real** — `|e4tq|` histogram approaching its edge on r77 engaged decays smoothly
+`832 / 903 / 394 / 183 / 112 / 34 / 25 / 3` and then **spikes to 13,783 at exactly 4096**, with
+**zero frames above 4096 in ~200 cache files across the whole corpus.**
+
+**It binds exactly where he feels it** — duty of `|e4tq| ≥ 4096` while engaged:
+```
+  band     r77      ra6      r1e          <-- "below ten mph the max angular velocity
+  <6 mph  0.4036   0.3099   0.0745            is still limited"  ... and ...
+  6-10    0.3697   0.2100   0.0684        <-- "twenty and above is the best it has ever been"
+  10-15   0.2146   0.0889   0.0615
+  15-20   0.0965   0.1458   0.0521
+  20-30   0.0323   0.0274   0.0503
+  30-45   0.0028   0.0000   0.0087
+  45+     0.0000   0.0000   0.0021
+```
+
+**And the car is NOT the limit.** Achieved rate in the commanded direction keeps **climbing** through
+the rail (r77 p90 `66.8 → 78.9 → 93.9 → 143.6`), and the **driver slews the same rack 3–4× faster**
+(p90 103–162, max 402–459 °/s). ⇒ **plant headroom exists; openpilot ran out of command.**
+
+⇒ 🛑 **NO FIRMWARE CALIBRATION CAN RAISE IT.** The 6× gain multiplies what arrives; pinned at 4096,
+the firmware is already delivering 6× of the most openpilot can ask. The only two routes to more
+low-speed rate are **(1) raise `STEER_MAX` openpilot-side — the operator's call, and
+`feedback-no-openpilot-side-modifications` says we do not touch it**, or **(2) push the firmware gain
+above 6×, which is the measured carrier of the grinding.**
+⇒ **Goal #5 and goals #1–3 are in DIRECT TENSION and the binding constraint sits OUTSIDE the
+firmware.** This is why the symptom survived every build — **none of them could have moved it.**
+
+✅ **Retired in the same pass:** the `gp-0x69b0` authority ramp. All five rate cals mapped
+(`0xC63F4/F6/F8/FA/FC` = 328/16/33/66/328, two up + three down, all stock and virgin), and the
+pre-registered test returned its null — **STEER_STATUS is identically 0 across 3,312 s engaged on four
+routes, every speed band, zero transitions**, with the control passing (status 3 exists, only at
+0.0 mph and only disengaged). The ramp reaches full scale ~1 s after engagement and holds.
+🛑 **And a correction:** the record files `0xC63F8`=33 vs `0xC63FC`=328 as a *"10× LEFT/RIGHT
+asymmetry"* and deprioritised it on a left/right null. **`gp-0x6803` is a MODE fork, not a direction
+flag** — three values, two parallel SM chains (1→3→2 vs 1→6→7). Right answer, wrong reason; do not let
+a future session revive the cals on "left/right was never the issue".
+
 ### 🛑 V110 IS DEAD — TWO INDEPENDENT KILLS, and the second one closes the whole Kd lever
 `Re(Z)` **is** already measured to 35 Hz **with phase** on route 77 (`rlog-tools/studies/impedance/v92_rez_extend.py`,
 89,471 frames / 884.5 s engaged hands-off, 221 windows, all ten bands passing a pre-declared
