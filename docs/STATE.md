@@ -1,6 +1,129 @@
 # STATE — living current state of the kit
 
-## 🛑🛑 LATEST BLOCK, 2026-08-23 (latest) — **V106 FLEW AND EXTINGUISHED THE MODE AT LOW SPEED · RULE 7 CLOSED · THE UNIFORM DOSE AXIS IS EXHAUSTED · V107 RESHAPES THE SCHEDULE**
+## 🛑🛑 LATEST BLOCK, 2026-08-27 (latest) — **V107 FLEW AND THE DAMPER IS A COULOMB RELAY · V108 IS THE FIRST SUBTRACTIVE BUILD IN THIS ARC**
+
+🛑 **ON THE CAR: V107** (routes `1b` 35.8 s and `1e` 988.6 s engaged, both fault-free).
+**V108 BUILT, VERIFIED, UNFLASHED. Nothing flashed, no CAN, no UDS, no SSH.**
+Narrative: **`docs/handoffs/2026-08/HANDOFF-2026-08-27-v107-flew-the-damper-is-a-relay.md`** — 16 retractions,
+14 open items with what closes each, the V108 drive card, and the V109 lever already priced and gated.
+```
+V108 image  7a9577dd181a235845e87e592fbd1a191957674aef7b0f17caac6907c114a9e4
+V108 .rwd   4fbfda0d76af2f1b592bd9e510cd926dbfabb6a02b7a25730e7018f07cf4c4d1
+builder     analysis-2020accord/builds/v108_plus/build_v108_tva.py   54/54 assertions   BASE = V107
+E1  0xC60A8..B7  V105's 25.5 Hz notch -> HONDA'S OWN 16 BYTES (copied, never typed).  Arm KEPT.
+E2  0xD7A5C/6C   Y (-29490,-24000,-16000) -> (-29490,-17202,-16000)   V106's Y0+Y1, V107's Y2
+E4  0xC40BC      300 -> 600 (Honda)
+E5  0x55E10      sar 3 -> sar 5    (the tap was sized against a 5x arithmetic error)
+E3  0xC61BE      BUILT AT 16384, THEN **PULLED** ON ITS OWN PRE-REGISTERED NULL.  Byte-stock.
+31 bytes vs V107 in 11 runs, ZERO unattributed.  CAL-ONLY.  THE CAVE IS BYTE-IDENTICAL TO V107.
+```
+
+### ⭐⭐ THE HEADLINE — `gp-0x6b26` IS NOT A DAMPER ABOVE ~30 Hz, AND V107 MADE IT A RELAY
+The lane is `64·H1·(1−z⁻¹)·H2` (EMAs α0 = 37/128 = `cal(0xC643C)`, α2 = 22/64 = `cal(0xC40DC)`) —
+**a BANDPASS peaking at 61.1 Hz, −3 dB span 25.1→153.0 Hz, never below 4.49× to Nyquist.** At 100 Hz it
+runs at **10.86×, 40 % MORE than at the 21.7 Hz mode it was meant to damp.** Two independent derivations.
+V107's own re-aimed 427 tap then measured the consequence — `P(|gp-0x6b26| = 511)`, engaged, route `1e`,
+episode-bootstrapped over 10 episodes:
+```
+   bin      V107 rail duty          V106 same samples      <10   1.68% vs 1.47% EXACT
+   10-25   32.32% [29.93,35.68]     <= 15.46%            40-64   4.27% vs <= 3.43%
+   24-40   21.27% [19.93,22.51]     <= 10.45%             >=65   <= 0.23% / <= 0.03% BOTH
+```
+**V107's own builder predicted ≤1.05 % everywhere and REJECTED its alternative at 6.2 % as "V80 relay
+territory".** A railed acceleration term is `sign(α)·511` — a bang-bang Coulomb relay, V80's exact
+mechanism. 🛑 **The safety case could not see it: CAN 427 arrives at 49.8 Hz (Nyquist 24.9), and the
+lane's entire −3 dB band is above that.** The rail threshold shrank **1.42–2.71×** across 24–90 km/h
+while **Y[0] stayed byte-identical below 20 km/h** — and the operator reports grinding at 15–40 mph and
+none below 5–6 mph. **The symptom map and the rail-duty map are the same map.**
+
+### ⭐ "IT PERSISTS AFTER DISENGAGE" — MEASURED AT ~2.05 s, AND IT IS OURS
+Mode records 26/27 are held until `gp-0x69b0` ramps to exactly 0 (`FUN_00028ea6`, 1 kHz, five rates =
+100/497/993/**2048** ms + a ~40 ms commit hold). Wire-saturation duty is **zero from +2.0 s onward**;
+last railed sample 1.81 / 0.85 / 0.40 s. **Pre-registered: 0.10/0.50/0.99 EXCLUDED, 2.05 CONSISTENT.**
+Both controls passed — two of three transitions SPEED UP and still go to zero, and at matched steering
+rate post-disengage `|c2c|` p50 = 72 with **0.00 %** rail duty against engaged p50 = 1080 and **20.43 %**.
+
+### ⭐ THE 2×2 — THE RELAY IS MOSTLY PLANT, AND A 32× MISS IS EXPLAINED
+Holding Y fixed, **engaged `|c2c|` alone gives 27× the rail duty of manual `|c2c|` at 10–25 km/h.**
+`gp-0x6b26` feeds aggregator → motor → motor rate → `gp-0x6c2c`: **it is a closed loop**, so V107's
+open-loop push-through (which assumes the input distribution is invariant to K) was **32× wrong**.
+Reached independently from the code and from the data. 🛑 **No open-loop duty prediction on this lane
+can be trusted again.**
+
+### 🛑 E3 WAS BUILT AND PULLED — the pre-registration was honoured
+`0xC61BE` = 15360 is UPSTREAM of the 6× gain, so the lane's reach is `(clip × gain) >> 15` and has been
+**81.5 % of its own output clamp on EVERY build since V14** — which is also why `0xC61B2`/`0xC61B4`
+measured "0 % of the effect": **they are inert BECAUSE this clip caps the lane 18.5 % below them.**
+Anchored two ways (`(15360×891)>>15 = 417` = the recorded stock V9 maximum). But the knee test on route
+`1e` (93,356 frames / 924 s, `|e4tq|` p99 = max = 4096) shows **achieved rate still rising 2.1–3.9× at
+the top of the command range at all five speeds, every CI excluding 1.0** ⇒ **the clip is IDLE and the
+raise buys zero. PULLED.** ⚠ Not proof it can never bind — the clipped quantity carries int32 recursive
+state (`gp-0x6cf8`, `gp-0x6dd0`), so it is also **not reconstructible from logs.**
+⭐ Zero-firmware confirmation exists if ever wanted: **stock UDS DID `0x48AC` bytes 7–8 = `gp-0x6b38`**
+(RDBI entry `0xB7864`, no security access); a bound clip pins it at ~2481, and **anything above 2505
+falsifies the model.** Blocker on record: EPS UDS is bus-1 + OBD-mux only. **Nothing was transmitted.**
+
+### 🛑 V109's LEVER IS ALREADY PRICED AND GATED — `0xC40DC` (α2), VIRGIN ON ALL 102 IMAGES
+At K2 = 14 the delivered response is **FLAT across 18–30 Hz (1.024→0.966) and cuts 20–35 % over
+61–300 Hz** — it de-rails **without giving back one count of mode-band damping**, which lowering Y cannot
+do (Y is a flat multiplier). GATE 1 on the cell is the cleanest possible (exactly ONE gp/tp access
+image-wide, zero writers, `disp|1` trap handled); GATE 2 at the mode is clean to K2 = 3.
+**HELD OUT of V108 for three reasons:** the sector entry moves **DOWN** (74.1 → 54.0 Hz), `gp-0x6c2c`
+fans out to **three** consumers of which two are unverified against a *reshaped* signal, and the only
+available duty-prediction method was just measured 32× wrong.
+🛑🛑 **AND IT MUST SHIP WITH THE NOTCH REVERT OR NOT AT ALL**: across 54–74.5 Hz V105's coefficients
+leave the base-assist lane a geometric-mean **5.15× (+14.2 dB)** louder than Honda's, 21.8× at the
+sector's new entry point. V108 ships E1, so the prerequisite will be on the car.
+⊕ Take it **uncompensated** — the int16 boundary is exact: `29490 × 1/0.90 = 32,767` against a floor of
+32,768, so a **−10 % α2 cut is the LAST one Y[0] can compensate.**
+
+### 🛑 THE INSTRUMENT LESSONS
+**CAN 427 is 49.8 Hz, not 100** (Nyquist 24.9) — no spectral claim can come off it. **The between-drive
+audio contrast is PERMANENTLY unavailable** — the parked, engine-on cabin differs **3–12×** between
+drives and no openpilot-version finding touches that; route `1e` has 35.4 s of matched manual inside the
+grinding window, so within-drive is available and strictly better. **The device was reflashed** — the
+route counter reset (`a6` → `1b`/`1e`) and **`0000001b` exists TWICE on disk with different hashes**;
+key every cache on `counter--hash`, and never assume low route number = old build.
+✅ **The a6-vs-1e confound is CLOSED for the CAN channels** (one openpilot commit `7c6741a9`→`36d0c074`,
+AGNOS unchanged at 19.6.2, every lateral CarParams field identical).
+🛑 **The whole extractor family was DEAD** (`ModuleNotFoundError: _grind2_lib`) because the 2026-08-26
+reorg moved a module into `lib/` while the `PATH BOOTSTRAP` block stops at the FIRST `.pkgroot`.
+**FIXED in 729 files** — it now walks every `.pkgroot` root in the repo, nearest first.
+
+### 🛑 SIXTEEN RETRACTIONS THIS SESSION — the four that change what anyone should do
+1. **`0xC520C` STRUCK as a lever** (retracted by its own author). Peak `gp-0x6ac0` = 1462 ct against a
+   first knot at 1050, reached **0.11 % of engaged time, never past the second**; `gp-0x4f64` sits at its
+   max 4762 for **99.9 %+** of engaged time. Reconciles `b6` = 0.000000 and explains V41's null.
+   **Stands as a documented mechanism, not a lever.**
+2. **`0xC64DE` is NOT a "re-engage ramp"** — it is the **half-period of a sign-flipping square wave**;
+   V18 moved it **29.41 → 18.52 Hz, into grind #1's band**; burst ~381 ms; **amplitude LERP is all zeros
+   ⇒ structurally INERT.** ⚠ A latent 18.5 Hz injector into the 6× path, four halfwords from live.
+3. **`accord-4x-lkas-gain-is-the-frozen-variable` is STALE** — 4× only through V100, **8× on V101, 6×
+   since V102** (`0xC6CD0` = 5346 = exactly 6.000×; 891 = 1×).
+4. **`gp-0x4f62` "peaks at 125 Hz" DOES NOT FOLLOW FROM THE CODE** — ring buffer + variable tick weights
+   + a conditional call; the effective delay is unresolved. **Do not reuse 125 Hz.**
+⊕ Also: the `0xE4`/`0xE5` "skip" is **the selector-reachability complement, not a bug** (our car is
+TVCA4 → slot 11 → selector 7 → `0xE51A8`, **raised**; V74's slot naming is right and V38's is wrong);
+*"`H(0)=0` ⇒ cannot rate-limit"* is **VOID once the term rails** (a railed term is 10.7 % of governor
+authority as constant DC drag through the whole acceleration phase); *"gp-0x6b26 can never raise a
+resonance"* was only ever checked **to 40 Hz** — above **74.5 Hz** the phasor sits in the
+resonance-raising sector continuously to Nyquist; and the *"16384 makes the two ceilings agree"* framing
+is **VOID** (the E4/E5 taper clamps `gp-0x69ae`, bounded at ±16384 by STEER_MAX = 4096 **by
+construction**, so V38's edit was correct and complete and there was no miss).
+
+### THE DRIVE CARD FOR V108 — in the handoff §3
+**Primary: the operator's report per scenario.** Then rail duty by speed bin off the uncensored `sar 5`
+tap · `|gp-0x6c2c|` at ≥70 km/h (V107's item #2, still unanswered) · 18–30 Hz prominence against a6 as
+**E1's risk readout** (V105's flight run backwards predicts ×1.30 [0.88, 1.82], a CI spanning 1) · a
+**within-drive** third-octave audio split at 45–130 Hz, which **falsifies E1's HF case if it comes back
+flat and broadband above 200 Hz** · `b5` at matched α · fault-free confirmation.
+🛑 **AND THE TOP NON-BUILD ITEM, now with a new requirement: the alternating drive PLUS deliberate
+disengagements at CONSTANT speed, throttle held ~15 s.** The operator disengaged three times on `1e` and
+changed speed every time (−13.6, −6.1, **+10.7** km/h) — natural driving, fatal to the measurement.
+
+---
+
+## ⚠ SUPERSEDED BLOCK, 2026-08-23 — **V106 FLEW AND EXTINGUISHED THE MODE AT LOW SPEED · RULE 7 CLOSED · THE UNIFORM DOSE AXIS IS EXHAUSTED · V107 RESHAPES THE SCHEDULE**
 
 🛑 **ON THE CAR: V106** (route `a6`, 1,224.0 s engaged, fault-free).
 **V107 BUILT, VERIFIED, UNFLASHED. Nothing flashed, no CAN, no UDS.**

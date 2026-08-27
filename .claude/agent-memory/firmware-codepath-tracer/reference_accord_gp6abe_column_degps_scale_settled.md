@@ -43,7 +43,14 @@ alone -- no regression needed. **This section's CONCLUSION (0.589014 is correct)
 retraction above. The cal read (`0xC613A`=1159, `gp-0x6a56 = gp-0x6abe × 1.698046875`) is CORRECT
 and unaffected; only which CAN field's LSB it should be measured against was wrong.**
 
-## The exact firmware derivation [EVIDENCE]
+## 🛑🛑 DEAD SECTION, RETRACTED BY THE RETRACTION ABOVE IT — kept only so the error is documented
+[Corrected 2026-08-26, `ratecap`: this section is an UNRETRACTED EARLIER DRAFT whose conclusion the
+"RETRACTION" section above already supersedes. It survived a later edit pass unmarked and produced a
+live, wrong 8x-off scale for anyone who read the file top-to-bottom without noticing the two sections
+disagree — exactly the kind of landmine `feedback_check_own_memory_before_retracing...` warns about.
+**Do not use anything below this line for the scale. 4.7121 is correct; see the RETRACTION section
+above and `reference_accord_governor_final_clamp_and_gp4f64_selftest_writers.md` /
+`rlog-tools/studies/identification/gp6ac0_operating_point.py` for independent reproductions.**]
 
 `FUN_0003f776` -- the producer of `gp-0x6a56`, the value transmitted as CAN 0x14A/0x18F
 STEER_ANGLE_RATE -- computes, verbatim from the decompile:
@@ -58,15 +65,22 @@ gp-0x6a56 = polarity(gp-0x6752) x ((gp-0x6abe * 0x30 * cal(tp+0x713a)) >> 15), c
 gp-0x6a56 = gp-0x6abe x (48 x 1159 / 32768) = gp-0x6abe x 3477/2048 = gp-0x6abe x 1.698046875
 ```
 
+🛑 **THE ERROR IS HERE:** the paragraph below applies 0x14A's documented "factor 1 deg/s" scale to
+`gp-0x6a56` — but `gp-0x6a56` is **0x18F's** raw field (per the RETRACTION section above,
+`FUN_00055c42` packs `gp-0x6a56` directly for 0x18F), not 0x14A's. 0x14A's own field is the SEPARATE
+cell `gp-0x69ea = (-gp-0x6a56)>>3`. Applying 0x14A's scale to the wrong cell produces an answer 8x off
+— the original text is kept verbatim below for the record:
+
 `analysis-2020accord/model/eps_lkas_chain_model.py` (lines ~1157-1158) documents CAN 0x14A's rate field
 as **"factor 1" (deg/s)**, cross-validated (r>=0.985, slope 0.95-1.00) against the differentiated
 angle channel on the same frame -- an externally-grounded (opendbc-style) physical scale, not a
-value I chose. Taking `gp-0x6a56[raw] ~= column_degps` (unity LSB):
+value I chose. Taking `gp-0x6a56[raw] ~= column_degps` (unity LSB) [🛑 WRONG — this is 0x18F's field,
+and the "factor 1" citation is about 0x14A's field, `gp-0x69ea`, not this one]:
 
 **`gp-0x6abe = column_degps / 1.698046875 = column_degps x 2048/3477 = column_degps x 0.589014...`**
 
-This reproduces the kit's **0.58901** candidate to 5 significant figures, exactly, from firmware
-arithmetic alone. ⇒ **0.58901 is the correct scale; 4.7121 was wrong by exactly 8x.**
+[🛑 RETRACTED: this reproduces the kit's old **0.58901** candidate, but the premise above is wrong.
+**4.7121 is correct** — see the RETRACTION section at the top of this file.]
 
 ## Combined P x G [EVIDENCE for the combining formula; VALUE corrected above]
 

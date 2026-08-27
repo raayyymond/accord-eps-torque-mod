@@ -23,7 +23,108 @@ deliberately not numbered `PART2` so the two can never be confused.
 
 ---
 
-## 🛑🛑 V107 — BUILT, VERIFIED, NOT FLASHED. **V106 IS ON THE CAR** (route `a6`, 1,224.0 s engaged, fault-free)
+## 🛑🛑 V108 — BUILT, VERIFIED, NOT FLASHED. **V107 IS ON THE CAR** (routes `1b` / `1e`, 988.6 s engaged on `1e`, fault-free)
+
+**CLASS: SUBTRACTIVE. The first build in this arc to REMOVE kit-added loop gain rather than add more,
+and the first ever designed against the 50–500 Hz band.** Four cal edits plus one telemetry shift
+immediate. **No cave change — the cave is byte-identical to V107.**
+
+| artifact | sha256 |
+|---|---|
+| `_v108_V108-V107BASE-NOTCH.HONDA-GP6B26.Y1REVERT-C40BC.600-TAP.SAR5_plain_image.bin` | `7a9577dd181a235845e87e592fbd1a191957674aef7b0f17caac6907c114a9e4` |
+| `39990-TVA,A160-V108-V107BASE-NOTCH.HONDA-GP6B26.Y1REVERT-C40BC.600-TAP.SAR5-0x13000-0x100000.rwd` | `4fbfda0d76af2f1b592bd9e510cd926dbfabb6a02b7a25730e7018f07cf4c4d1` |
+
+builder `analysis-2020accord/builds/v108_plus/build_v108_tva.py`, **54/54 assertions**, BASE = V107.
+**20 payload + 11 CRC = 31 bytes vs V107 in 11 runs. ZERO unattributed. Three CRC trailers
+(`0x0C4FFC`, `0x0C6FFC`, `0x0D7FFC`). Reproduced bit-for-bit on four separate runs.**
+Exactly ONE V108 `.rwd` on disk.
+
+| edit | address | V107 → V108 | what it does |
+|---|---|---|---|
+| **E1** | `0xC60A8`–`B7` | V105's 25.5 Hz notch → **Honda's own 16 bytes** | removes **+14.0 dB at 61.1 Hz** and restores Honda's 55.2 Hz null. **Arm KEPT** — unarmed is a BYPASS (`H ≡ 1`), worse than Honda at every frequency |
+| **E2** | `0xD7A5C`/`0xD7A6C` | `(−29490,−24000,−16000)` → `(−29490,−17202,−16000)` | V106's Y0+Y1 exactly, V107's Y2 kept. De-rails at the Y1 knot; ≥65 km/h costs nothing measurable |
+| **E4** | `0xC40BC` | 300 → **600 (Honda)** | the V99 Coulomb ramp normaliser — retracted as a fix by its own session **before it flew** |
+| **E5** | `0x55E10` | `sar 3` → `sar 5` | the 427 tap was sized against a **5× arithmetic error** and censored its own answer |
+| ~~E3~~ | `0xC61BE` | **PULLED** — byte-stock | built at 16384, killed by its own pre-registered null. See below |
+
+**Spec discipline on E1:** the four float32 coefficients are **copied byte-for-byte from
+`stock_fw_dump/code.bin` and asserted equal**. No float is ever typed — `feedback-float-spec-must-be-the-formula`
+applied in its strongest available form.
+
+### WHY — `gp-0x6b26` IS A 61 Hz BANDPASS AND V107 RAILED IT
+`H(f) = 64·H1·(1−z⁻¹)·H2`, EMAs α0 = 37/128 = `cal(0xC643C)`, α2 = 22/64 = `cal(0xC40DC)`, fs = 1000.
+**Peak 61.1 Hz, −3 dB span 25.1→153.0 Hz, never below 4.49× to Nyquist; 10.86× at 100 Hz — 40 % MORE
+than at the 21.7 Hz mode it was meant to damp.** Measured rail duty `P(|gp-0x6b26| = 511)` on route `1e`:
+**32.32 % at 10–25 km/h, 21.27 % at 24–40, 9.69 % engaged overall**, against V107's own predicted
+**≤1.05 %** and its rejection of RESHAPE_A at 6.2 % as *"V80 relay territory"*.
+🛑 **The safety case could not see it — CAN 427 arrives at 49.8 Hz (Nyquist 24.9) and the lane's entire
+−3 dB band is above that.** And the prediction method itself is void: `gp-0x6b26` feeds aggregator →
+motor → motor rate → `gp-0x6c2c`, so the **open-loop push-through assumption that the input distribution
+is invariant to K is false** — a **32× miss**, reached independently from the code and from the data.
+
+### E3 — BUILT AND PULLED. The pre-registration was written first and honoured.
+`0xC61BE` = 15360 is a symmetric saturation at `0x2A13E`..`0x2A15E`, **UPSTREAM of the 6× gain**, so the
+LKAS lane's reach is `(clip × cal(0xC6CD0)) >> 15` and has been **81.5 % of its own output clamp on
+EVERY build since V14** — which is the long-unexplained mechanism behind *"`0xC61B2`/`0xC61B4` are 0 %
+of the effect"*: **they are inert BECAUSE this clip caps the lane 18.5 % below them.** Anchored two
+ways: `(15360 × 891) >> 15 = 417` = the separately recorded stock-V9 maximum.
+**GATE 1 clean** — 8 accesses image-wide, all loads, zero writers, no lockstep twin, no ASIL monitor, no
+`0xC5000` mirror (`0xC51BE` = 220). **NOT in series** with `0xC61BC` (15360), `0xC61B6` (10240) or
+`0xC61BA` (10240): those clamp **three parallel branches** whose sum reaches 35,559 = **2.32× the clip**.
+**THE NULL:** route `1e`, authority-ramp-complete, 93,356 frames / 924 s, `|e4tq|` p99 = max = 4096 so
+the saturation region *is* exercised — p90 achieved `|rate_c|`, low half vs top, episode-bootstrapped:
+**10–25 3.89× [2.42,5.48] · 25–40 3.12× [2.22,4.45] · 40–64 2.91× [2.38,3.13] · 64–90 2.62× [2.10,2.62]
+· 90–200 2.14× [1.67,2.14].** Still rising where a bound clip would pin it flat, at all five speeds,
+every CI excluding 1.0 ⇒ **the clip is IDLE. PULLED.**
+⚠ Not proof it can never bind: the clipped quantity carries int32 recursive state (`gp-0x6cf8`,
+`gp-0x6dd0`, 4 accesses each, all inside `FUN_00028ea6` or its dead copy, zero external access), so it
+is also **not reconstructible from logs.** ⭐ Zero-firmware confirmation exists — **stock UDS DID
+`0x48AC` bytes 7–8 = `gp-0x6b38`** (RDBI entry `0xB7864`, handler `0x4E82E`, default session, **no
+security access**): a bound clip pins it at **~2481**, and **anything above 2505 falsifies the model.**
+
+### 🛑 RECORD CORRECTIONS MADE THIS SESSION — read these before reusing the cells
+- **`0xC64DE` is NOT a "re-engage authority ramp".** It is the **hold count of a sign-flipping square
+  wave** (`if counter < cal: counter++ else { counter = 1+(cal>>1); gp-0x6b2c = −gp-0x6b2c }`, 8 live
+  read sites in `FUN_00028ea6`, 0 writers, tick = 1 ms settled two ways). V18's 17→27 moved it from
+  **29.41 Hz to 18.52 Hz — into grind #1's band.** Burst ≈ 381 ms (`cal(0xC6288)` = 300 pre-delay, ends
+  at `cal(0xC628A)` = 408). 🛑 **Its amplitude LERP at `0xC6736` is Y = (0,0,0,0) in stock AND V107, and
+  every other writer of `gp-0x6b2c` is a store-zero ⇒ STRUCTURALLY INERT.** ⚠ **It is a latent,
+  engagement-triggered 18.5 Hz square-wave torque injector wired into the 6× gain path, four halfwords
+  from being live, eight bytes from `0xC674E` which this kit edits.** `BUILD-LINEAGE-PART1-LEVER-INDEX.md:76`
+  carries the wrong label.
+- **`0xC520C`/`0xC5224` STRUCK as a lever.** Index formula fully reconstructed (`gp-0x6ac0` = |filtered
+  motor rate|, scale **4.7121 ct per column °/s** externally anchored via Honda's own 0x14A rate field at
+  r ≥ 0.985; X = [1050,1700,2500,3700,4100] = [223,361,530,785,870] col °/s; Y = [5325,3584,2406,1587,512]
+  then `min(·, cal(0xC6202) = 4762)`). **Measured on route `a6`: peak 1462 ct, 0.11 % of engaged time
+  above X[0], NEVER above X[1]; `gp-0x4f64` sits at its max 4762 for 99.9 %+ of engaged time.** That
+  reconciles `b6` = 0.000000 and explains V41's null. **A documented mechanism, not a lever.**
+- **`0xC61BC` = 15360, `0xC61B6` = 10240, `0xC61BA` = 10240** — three parallel branch clamps in
+  `FUN_00028ea6`, 0 writers, byte-stock V99→V107, **never named anywhere in this lineage until now.**
+- **The `0xE4`/`0xE5` taper "skip" is NOT a bug** — `gp-0x674e` is a boot-time variant selector whose
+  reachable set is {0,1,3,4,6,7,8,9}, and the skipped records are **exactly its complement.** Our car is
+  **TVCA4 → slot 11 → selector 7 → `0xE51A8`, and it IS raised.** ⊕ The V38 handoff names the wrong slot
+  for our car; **V74's naming is correct** (`LEDGER-V38-TO-V84.md:509` records the dispute unresolved —
+  it is resolved).
+- **V102 is marked "NOT FLASHED" at line 248 of this file, but `0xC6CD0` = 5346 is demonstrably on the
+  car.** The twelfth stale flight-status row.
+- **`gp-0x4f62`'s "peaks at 125 Hz"** does not follow from the code — `FUN_0007e74a` uses an 8-slot ring
+  buffer with a **variable, table-looked-up elapsed-tick counter** and is called **conditionally**.
+  `D = cal(0xC6C42) = 4` is byte-confirmed; the **effective delay is unresolved. Do not reuse 125 Hz.**
+
+### V109's LEVER, ALREADY PRICED — `0xC40DC` (α2), VIRGIN ON ALL 102 IMAGES
+At K2 = 14 the delivered response is **flat across 18–30 Hz (1.024→0.966) and cuts 20–35 % over
+61–300 Hz** — it de-rails **without giving back mode-band damping**, which lowering Y cannot do. GATE 1
+is the cleanest possible (**exactly ONE gp/tp access image-wide**, zero writers). **HELD OUT of V108**:
+the phase sector-entry moves DOWN (74.1 → 54.0 Hz), `gp-0x6c2c` fans out to **three** consumers of which
+two are unverified against a *reshaped* signal, and the only duty-prediction method available was just
+measured 32× wrong. 🛑🛑 **It must ship WITH the notch revert or not at all** — across 54–74.5 Hz V105's
+coefficients leave the base-assist lane a geometric-mean **5.15× (+14.2 dB)** louder than Honda's.
+⊕ Take it **uncompensated**: `29490 × 1/0.90 = 32,767` against an int16 floor of 32,768, so a **−10 % α2
+cut is the LAST one Y[0] can compensate.**
+
+---
+
+## ⚠ V107 — FLEW as routes `1b` / `1e` (2026-08-26), fault-free. **SUPERSEDED BY V108 BELOW** (route `a6`, 1,224.0 s engaged, fault-free)
 
 **CLASS: the SPEED SCHEDULE of `gp-0x6b26` — the second axis of the cell V106 doses, because the
 uniform axis is arithmetically EXHAUSTED.** Plus a telemetry re-aim. Cal + one instruction

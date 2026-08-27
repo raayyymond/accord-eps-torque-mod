@@ -7,6 +7,21 @@ metadata:
   originSessionId: e91b71d0-25c8-4a14-9b74-24c186211918
   modified: 2026-08-09T07:33:35.453Z
 ---
+> 🛑🛑 **STALE AS A TITLE, 2026-08-27. THE GAIN HAS NOT BEEN 4x SINCE V100.**
+> Read from the images: `0xC6CD0` = **3564 (4.000x) V57..V100 · 7128 (8.000x) on V101 · 5346
+> (6.000x) V102..V108**, where `0xC646C` = 891 is 1x. **It has been 6x on the car for six builds.**
+> The *"exactly 4.000x on every build"* claim below is true only of the V38-V100 window in which it
+> was written.
+> ⚠ **AND THE "NOT THE CULPRIT" CLAIM IS CONTRADICTED BY A LATER, BETTER-POWERED RESULT:**
+> `accord-the-8x-gain-is-the-carrier` measures `0xC6CD0` as the **de-confounded cause of the ~23 Hz
+> line** (G = 2.7-3.9x for a 2x step against a 1.45x placebo floor). V101 at 8x produced the worst
+> operator report in the arc **with the mode's peak MOVING 20.3 -> 23.0 Hz** -- a pole moving, not
+> excitation. ⇒ *"it scales EXCITATION, not loop gain"* does not survive.
+> ✅ **WHAT STILL STANDS:** do not lower it. The 6x is the operator's own dose decision off a measured
+> curve, and it is the feature the whole programme exists to deliver. Fix the grinding **around** it.
+> ⊕ Structural note that also stands: `0xC61BE` = 15360 caps the lane at `(15360 x gain) >> 15`
+> **upstream** of this cell, so the lane has reached **81.5 % of its own output clamp on every build
+> since V14** regardless of what the gain is -- and that clip was measured IDLE on route `1e`.
 
 **[EVIDENCE, direct LE reads of the plain images]**
 ```
