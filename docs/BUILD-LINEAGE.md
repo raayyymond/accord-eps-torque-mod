@@ -23,7 +23,29 @@ deliberately not numbered `PART2` so the two can never be confused.
 
 ---
 
-## 🛑🛑 V108 — BUILT, VERIFIED, NOT FLASHED. **V107 IS ON THE CAR** (routes `1b` / `1e`, 988.6 s engaged on `1e`, fault-free)
+## ✅ V108 — **FLEW 2026-08-27. HIGH SPEED FIXED; LOW SPEED UNCHANGED. THE PREDICTION LANDED.** (routes `1b` / `1e`, 988.6 s engaged on `1e`, fault-free)
+
+🛑 **OPERATOR REPORT (no rlogs — his words are the ENTIRE readout, and the PRIMARY one):**
+*"High speed behavior is good overall... no oscillations even on hard turns at speed. **So that has been
+fixed.**"* · *"Twenty miles an hour and above, generally, **this is the best that it has ever been in
+that regime at six x**."* · *"Low speed below ten miles an hour, **grinding is still there**... it seems
+like it is made up of **TWO MODES**, one maybe around a hundred hertz, and another **significantly
+higher in pitch**."* · *"At low speed, the **maximum steering angular velocity is still limited**."* ·
+*"Around ten to fifteen, maybe ten to twenty, there is **oscillation and grinding**."* · *"Around sixty
+to sixty five... a whole vehicle vibration... **I am not really completely sure this is our firmware's
+fault. It might have just been the road because it is not consistent.**"*
+
+⭐⭐ **THE RAIL-DUTY PREDICTION HELD, ACROSS A BUILD CHANGE:**
+
+**Where the duty fell he reports it fixed; where it stayed highest he still hears it; where the
+calibration was deliberately left byte-identical, nothing changed.** ⚠ EVIDENCE for the duties and the
+report; **BELIEF that the mapping is causal** -- one build, no rlogs, no matched control.
+⇒ **The residual is the SAME defect UNDER-DOSED, not a new one**, and his "two modes, ~100 Hz and
+higher" is exactly what **V109's alpha2** cuts (-34 % at 100 Hz, -39 % at 200 Hz, 0 % at manoeuvre
+frequencies). ⇒ **V109 IS THE NEXT BUILD.**
+⚠ **The 60-65 mph vibration is probably NOT ours**: rail duty there is **<=0.03 %** and that regime is
+**byte-identical between V107 and V108**, so a firmware change cannot explain a change there. **His own
+instinct was right.**
 
 **CLASS: SUBTRACTIVE. The first build in this arc to REMOVE kit-added loop gain rather than add more,
 and the first ever designed against the 50–500 Hz band.** Four cal edits plus one telemetry shift

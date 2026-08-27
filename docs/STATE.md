@@ -1,6 +1,84 @@
 # STATE — living current state of the kit
 
-## 🛑🛑 LATEST BLOCK, 2026-08-27 (latest) — **V107 FLEW AND THE DAMPER IS A COULOMB RELAY · V108 IS THE FIRST SUBTRACTIVE BUILD IN THIS ARC**
+## 🛑🛑 V108 FLEW — OPERATOR REPORT, 2026-08-27. **HIGH SPEED FIXED; LOW SPEED UNCHANGED; AND THE PREDICTION LANDED.**
+
+🛑 **ON THE CAR: V108.** No rlogs available for this flight — **the operator's own words are the entire
+readout**, and by the standing rule they are the PRIMARY one. Verbatim, in his terms:
+
+- **"High speed behavior is good overall. I don't experience any oscillations or... any oscillations
+  even on hard turns at speed at this point. So that has been fixed."**
+- **"Twenty miles an hour and above, generally, this is the best that it's ever been in that regime at
+  six x."**
+- **"Around sixty to sixty five miles an hour, I think sometimes I do hear a grinding, or it's like a
+  whole vehicle vibration... I'm not really completely sure that this is our firmware's fault. It might
+  have just been the road because it's not consistent."**
+- **"Low speed below ten miles an hour, grinding is still there. The audible grinding is still there. It
+  seems like it's made up of TWO MODES. One mode that is slightly higher pitch, maybe around a hundred
+  hertz. And there's another mode which seems like it's around a hundred or two hundred hertz...
+  significantly higher in pitch."**
+- **"At low speed, the maximum steering angular velocity is still limited."**
+- **"Around ten to fifteen miles an hour, maybe ten to twenty, there is oscillation and grinding."**
+
+### ⭐⭐ THE PREDICTION LANDED — the symptom map and the rail-duty map agree ACROSS A BUILD CHANGE
+```
+  speed        V107 measured   V108 predicted            operator's report on V108
+  <6 mph          1.68 %       1.47 %  (Y[0] BYTE-IDENTICAL -- nothing changed here BY DESIGN)
+                                                          grinding still there, TWO modes
+  6-15 mph       32.32 %       <=15.46 % (halved, still the worst bin)
+                                                          oscillation AND grinding
+  15-25 mph      21.27 %       <=10.45 % (halved)         --
+  25-40 mph       4.27 %       <= 3.43 %                  "best it's ever been at 6x"
+  40+ mph        <=0.23 %      <=0.23 %  (identical to V107)
+                                                          "that has been fixed"
+```
+🛑 **Where the duty fell, he reports it fixed. Where it stayed highest, he still hears it. Where the
+calibration was deliberately left byte-identical, nothing changed.** That is the first quantified
+on-car prediction in this kit's history and it held. ⚠ **EVIDENCE for the duty numbers and for his
+report; BELIEF that the mapping is causal** — one build, no rlogs, and no matched control.
+
+### WHAT THIS SAYS ABOUT THE REMAINING SYMPTOMS
+- **The residual grinding sits exactly where V108's rail duty is still highest** (the 10–25 km/h bin, up
+  to 15.46 %). **It is the same defect, under-dosed, not a different one.**
+- ⭐ **His "two modes, ~100 Hz and something significantly higher" is precisely what V109's α2 targets:**
+  −34 % at 100 Hz, −39 % at 200 Hz, for 8 % at the 21 Hz mode and **0 % at manoeuvre frequencies.**
+- **The low-speed steering-rate limit is the same railed-damper DC drag** (`sign(α)·511` = 10.7 % of the
+  governor ceiling), and it is worst exactly where duty is highest. V109 attacks it without costing
+  manoeuvre-band authority.
+- ⚠ **The 60–65 mph vibration is probably NOT ours.** At 96–105 km/h the rail duty is **≤0.03 %**, and
+  that regime is **byte-identical between V107 and V108** — so a firmware change cannot explain a change
+  there. Inconsistent, whole-vehicle and speed-specific fits road surface or a wheel order. **His own
+  instinct was right and is recorded as such.**
+
+⇒ **V109 IS THE NEXT BUILD, and now for a measured reason rather than a structural one.**
+
+### 🛑 V110 IS DEAD — killed by its own arithmetic, and the operator's report seals it
+`Re(Z)` **is** already measured to 35 Hz **with phase** on route 77 (`rlog-tools/studies/impedance/v92_rez_extend.py`,
+89,471 frames / 884.5 s engaged hands-off, 221 windows, all ten bands passing a pre-declared
+coh² ≥ 0.10 AND ≥ 5× shuffled gate). **There is no separate `G_bar(f)` unknown — the measured `arg Z(f)`
+already contains the whole rotation, plant included.** The disputed memory's numbers reproduce from it
+**to within 4 %** via `Re(Z)_branch = |Z|·|H|·cos(argZ + argH)`.
+**And the sign reverses, convention-free:** `cos(argZ + argH_D)` = **−0.802 at 7.79 Hz** but **+0.894 at
+20 Hz** ⇒ **D PUMPS at 7.8 Hz and DAMPS at 18–22 Hz.** Halving Kd would remove damping in **20–40 mph —
+the exact regime the operator just called the best it has ever been.**
+⭐ **And 18–22 Hz is the BEST-CONDITIONED band in the whole sweep** — episode-parity split-half agrees to
+**2 % (r77), 1 % (r78), 15 % (r79)**. The conclusion rests on the most reliable band available.
+⇒ **V110 stays parked permanently unless something new appears.** My rejection of the "no computation
+behind it" refutation was correct, and it is now proven rather than merely plausible.
+
+### 🛑 A MEASUREMENT-DISCIPLINE FINDING ONE LEVEL UP FROM THE STANDING RULE
+Crossover frequency (`Re(Z)` = 0), episode-bootstrapped per drive:
+**r77 25.40 [24.93, 25.72] · r78 24.07 [23.67, 24.30] · r79 23.97 [23.81, 24.17].**
+🛑 **The three per-drive CIs DO NOT OVERLAP**, and the between-drive spread is **~4× the within-drive
+CI.** ⇒ **the episode bootstrap UNDERSTATES the real uncertainty.** Quote the between-drive spread
+wherever it is larger. This is `feedback-episodes-not-windows` one level up: **episodes are not
+independent across drives either.**
+⊕ **And the manual hands-off arm still does not exist**: pooled over r77/r78/r79 it is **2 windows /
+21.4 s**, unchanged since 2026-08-11 — r78's 27.6 s and r79's 13.3 s are too fragmented to yield a
+single 5.12 s window. **The manual hands-off coast experiment is still owed.**
+
+---
+
+## ⚠ SUPERSEDED BLOCK, 2026-08-27 (build session) — **V107 FLEW AND THE DAMPER IS A COULOMB RELAY · V108 IS THE FIRST SUBTRACTIVE BUILD IN THIS ARC**
 
 🛑 **ON THE CAR: V107** (routes `1b` 35.8 s and `1e` 988.6 s engaged, both fault-free).
 **V108 BUILT, VERIFIED, UNFLASHED. Nothing flashed, no CAN, no UDS, no SSH.**
