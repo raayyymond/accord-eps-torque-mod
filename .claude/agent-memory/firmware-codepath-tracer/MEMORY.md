@@ -1,5 +1,20 @@
 # Firmware Codepath Tracer — Memory Index
 
+## 2026-08-27 — `ratchlever` task, for `main` (grep pattern → file)
+🛑🛑★★★★★ **Kd (0xC6AE6) IS a loop-gain term (moves Q), byte-virgin stock/V108/V109, GATE1 1 reader/0
+writers reconfirmed; SHIP low-dose (2048→1024), ~3.5-5.2% of `\|L\|`, DC-free, directionally correct.**
+CORRECTS a stale "closed" verdict (`accord-six-levers-closed-on-arithmetic.md`'s "D damps 16-35Hz, costs
+3-4x" has NO computation anywhere and is contradicted by the real 3-drive Re(Z), crossover 22-26Hz not
+16Hz): `*kd_ratchet_gate2_verdict_and_dispatcher_gating*` · Dispatcher gating resolved fresh from
+`FUN_0002214a`: PID+aggregator on mask 0xc30 (states 4,5,10,11), assist-map+gp-0x6b26 on 0x830 (4,5,11)
+— NEITHER is LKAS-only. gainD_raw (L4) byte-confirmed flat 1024, closing a 2026-07-28 BELIEF.
+🛑🛑★★★★★ **0xC6384 (assist-map slope cap) role CONFIRMED 3rd time fresh; GATE1 closed (2 readers
+0x353ac/0x353c2, 16 raw-scan false positives adjudicated, known sst.b EP-short-form class); byte-virgin;
+NOT LKAS-gated. DO NOT SHIP — whether it's CURRENTLY BINDING is UNRESOLVED (needs live gp-0x37e8[]
+telemetry, not code-derivable), and IF live it is MEMORYLESS (flat magnitude/0° phase at every freq DC-
+Nyquist) — structurally the least frequency-selective lever in the loop, unlike Kd's DC-free high-pass
+shape.** `*c6384_slopecap_role_confirmed_binding_unresolved*`
+
 ## 2026-08-27 — grep only (4 tasks; topic → pattern)
 - **a2gate** (GATE-1, `0xC40DC`): 🛑🛑★★★★★ **CLOSED, SAFE.** 4 consumers not 3; gp-0x4b0→dead record array; FUN_0007b022 4/5 outputs dead, 5th (gp-0x4f64) unfed by gp-0x6c2c all 3 branches; gp-0x6c2e producer-independent: `*gp6c2c_fanout_four_consumers_fun71272_fun7b022*`
 - **ratchet** (hands-off/engagement): 🛑⭐★★★★★ LKAS lane has a smooth DRIVER-TORQUE TAPER (2 cascaded Q8 curves @`0x2a0b4`, virgin all 103 images, transparent hands-off). CORRECTS own `gp69b0` claim: **IS** a Q15 multiplier gating the WHOLE LKAS block: `*lkas_driver_torque_taper_cascade_and_gp69b0_q15*`
