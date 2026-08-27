@@ -6,7 +6,7 @@ metadata:
   type: reference
 ---
 
-# ⚠⚠ QUALIFIED — A COMB IS REAL ON V107, BUT **STOCK HAS ONE TOO** AND `f0` IS AMBIGUOUS
+# ⚠ QUALIFIED — A COMB IS REAL, **STOCK HAS ONE TOO** (at a different `f0`), AND `f0` IS AMBIGUOUS
 
 ★★★★★ **EVIDENCE**, 2026-08-27. Route `1e` = **V107**, the build immediately before V108/V109.
 The operator on V108: *"low speed below ten miles an hour, grinding is still there… two modes.
@@ -24,9 +24,22 @@ available ladder. Scored identically by `rlog-tools/score/comb_score.py`:
   a6     V106           6x    85.00     +2.675      0.520  0.000
   1e     V107           6x    83.50     +1.682      0.486  0.000
 ```
-🛑 **STOCK carries a significant comb.** ⇒ **the series is NOT ours**, which directly contradicts
-the reading this note originally carried and which
-[[accord-the-100hz-mode-is-ours-and-engagement-gated]] reached from the coarse third-octave bands.
+🛑 **STOCK carries a significant comb.** ⇒ **"an engaged harmonic comb" is NOT by itself ours.**
+⚠⚠ **BUT "the series is NOT ours" OVERSTATES IT — corrected in the same pass, before publishing.**
+Stock's fitted comb is at **49.50 Hz and its 2× harmonic is NULL**:
+```
+  r97 STOCK  f0 49.50:  1x 49.5 +5.62 dB | 2x 99.0 -0.14 dB | 3x 148.5 +1.88 | 4x 198.0 -0.06
+  r1e V107   f0 83.50:  1x 83.5 +2.80    | 2x 167  +1.37    | 3x 250.5 +1.53 | 4x 334  +1.48
+  ra6 V106   f0 85.00:  1x 85   +4.18    | 2x 170  +2.05    | 3x 255   +1.35 | 4x 340  +4.06
+```
+⭐ **Stock has essentially NOTHING at ~99 Hz (-0.14 dB), which agrees exactly with the third-octave
+result** ([[accord-the-100hz-mode-is-ours-and-engagement-gated]]: stock **-0.03 dB** at the 100 Hz
+third-octave). **The two findings are CONSISTENT, not contradictory** — they are different statistics
+and both say stock is quiet at 100 Hz.
+⇒ **The honest statement: a significant comb exists on stock too, but at a DIFFERENT fitted `f0`
+and with a NULL where the modified builds carry energy.** Whether stock's ~50 Hz comb and the
+builds' ~85 Hz comb are the same object read two ways (see the sub-harmonic ambiguity below) or two
+different lines **is NOT resolved.**
 🛑 **And the scores do not order by gain**: 1× **1.457** < 6× **1.682** < 4× **2.494** <
 6× **2.675** < 8× **3.513**. Stock is lowest, but V107 — the build the operator complained about — is
 **second lowest**, and the two 6× builds straddle the 4×. **No dose-response.**
@@ -45,8 +58,11 @@ fundamental itself is not identified.
 ## ✅ WHAT SURVIVES
 1. **A harmonic comb exists and clears its own null on every route tested**, p = 0.000, with the
    grid search inside the null. **That much is solid.**
-2. ⚠ **It is not established as OURS** (stock fires), **not established as the grinding** (no
-   operator-symptom correlation was ever computed), and **not dose-ordered**.
+2. ⚠ **"An engaged comb" is not by itself ours** (stock fires), it is **not established as the
+   grinding** (no operator-symptom correlation was ever computed), and it is **not dose-ordered**.
+   ⊕ **But stock is quiet at ~100 Hz on BOTH statistics**, so the narrower claim — *the ~100 Hz
+   content specifically is ours* — **still stands.** It is the "83.5 Hz comb is ours" framing that
+   does not.
 3. **The V109 endpoint survives, but only in its within-build form**: V109 vs V108 on the SAME
    route pair, same road, same driver. A cross-build ladder comparison is not supported by this
    statistic, because stock already scores as high as V107.
