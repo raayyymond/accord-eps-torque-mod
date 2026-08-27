@@ -1,4 +1,4 @@
-# HANDOFF 2026-08-27 — V107 FLEW AND THE DAMPER IS A COULOMB RELAY; V108 IS SUBTRACTIVE
+# HANDOFF 2026-08-27 — V107 FLEW AND THE DAMPER IS A RELAY; V108/V109/V110 BUILT; THE VISIBLE OSCILLATION IS OPENPILOT'S
 
 **Session:** score V107's two drives → V108 built. Six subagents: `rlogs`, `arc-delta`, `modehold`,
 `ratecap`, `hfmech`, `inherit-audit`. All confirmed stopped from the harness before any collateral was
@@ -498,3 +498,284 @@ something the corpus currently cannot tell us either way.
 it), `0xC407E` = 511 (the interlock, one under its own 512 trip), the X breakpoints, both MANUAL mode
 records, Lever B (`0x3AA96` + `0xC6446` = 5244 — the kit's only measured fix), `0x454FE`, and the 164-byte
 cave.
+
+---
+---
+
+# PART 2 — THE SESSION CONTINUED. V109 AND V110 BUILT; THE VISIBLE OSCILLATION IS NOT OURS.
+
+**Six more subagents: `a2gate`, `ratchet`, `freegates`, `closedloop`, `lowfreq`, `ratchlever`.** All
+confirmed stopped from the harness. Two further agents (`rezband`, `blanked`) were open at the time of
+writing — their results are NOT in this handoff.
+
+---
+
+## 11. ⭐⭐ THE VISIBLE OSCILLATION IS OPENPILOT'S WEAVE — CLOSED, AND IT IS NOT A FIRMWARE PROBLEM
+
+This is the largest single result of the session and it removes one of the operator's five goals from
+the firmware's reach entirely. Full note:
+`memory/accord/mechanism/accord-visible-oscillation-is-openpilots-weave.md`.
+
+**It took two operator questions to find, and both were decisive.** Asked how far the rim travels he said
+**"a centimetre or more"**; asked whether it TURNS or SHAKES he said **"turning — the spoke swings."**
+The first killed the ~8 Hz line as a candidate (it is 0.7 mm); the second said it must be in the
+steering-angle channel.
+
+**46 events, 17.3 % of engaged time, up to 24.02° p2p = 77.6 mm at the rim, at 0.44–2.93 Hz** [EVIDENCE].
+🛑 **His "under or around 10 Hz" is really 0.4–1.6 Hz.** Ceiling by band, max p2p over all engaged
+windows: 0.4–0.6 Hz **24.02°** · 1.0–1.6 **9.54°** · **4.0–6.3 1.33° (4.3 mm)** · **6.3–10 1.12°
+(3.6 mm)**. ⇒ **Above 4 Hz the angle NEVER reaches a centimetre.** Every prior search scanned 4–10 Hz
+and was structurally incapable of finding it.
+
+**Three independent lines say openpilot drives it:**
+```
+  angle vs COMMAND        +46.8 deg [+29.4,+71.3] R=0.581, angle LAGS in 72 %
+                          near-straight +63.3 deg  R=0.740, angle LAGS in 85 %
+                          1.0-1.6 Hz median lag +0.088 s  <- on steerActuatorDelay = 0.100 s
+  angle vs DRIVER TORQUE  -63.2 deg [-88.1,-24.8]  => the HANDS REACT to the wheel
+  yaw follow ratio        p50 1.17, range 0.73-1.61 in EVERY event
+```
+⭐ **The command-leads signature is STRONGER near-straight than cornering** (R 0.740 vs 0.538) — the
+opposite of what a road-driven artefact would do. And **engaged is 5–45× QUIETER than the driver at
+matched speed** across 0.4–3.5 Hz: this is a controller weaving *less* than a human, but **periodically**,
+and periodicity is what the eye catches.
+🛑 **IT IS NOT THE GRINDING.** Rail duty inside events vs speed-matched baseline **1.01 [0.88, 1.22]**;
+audio 100 Hz–2 kHz **+0.50 dB [−1.18, +2.54]** against a control spread of [−6.2, +7.9]. **Two
+independent defects.**
+⇒ **[BELIEF, strongly supported] a limit cycle in openpilot's lateral loop.** ⭐ **It explains why sixty
+firmware builds never moved it: there was never a firmware lever on it.** 🛑 The operator was told; it is
+his call under `feedback-no-openpilot-side-modifications`.
+⚠ **Manual exposure above 24 km/h is 35.8 s total**, so the >24 km/h rate ratios rest on 0–2 manual
+events while 5 of 13 near-straight events are at 39–76 km/h. **Closes with matched manual at 50–80 km/h.**
+
+⭐ **METHOD LESSON:** a single wideband 0.4–3 Hz detector finds **NOTHING** — at these amplitudes a
+0.45 Hz cornering input **destroys the zero-crossings** of a small 1.2 Hz limit cycle riding on it.
+**Five sub-bands found it.** Controls ran first, including a **ringing control** (impulse/step/ramp
+through every band filter, **zero spurious chains in 15 combinations**).
+
+---
+
+## 12. THE RATCHET'S CENSUS WAS THE WRONG TOPOLOGY — and that is why sixty builds failed
+
+```
+   T_bar = Z0*Om_w + P*(agg),   agg = F*Om_w + L*T_bar
+     =>   Z = T_bar/Om_w = (Z0 + P*F) / (1 - P*L)
+```
+**Every aggregator lane fed by column torque or motor rate is a term in `L` — a DENOMINATOR term, not an
+additive torque.** The kit had been summing denominator terms into a numerator. The numerator actually
+required is **146–408 ct·s/rad — an order of magnitude BELOW what was already priced**, and
+**`Q_eff/Q_passive` = 14.3 means the loop cancels ~93 % of the mode's own damping**, which no additive
+term can produce.
+⇒ **A cal lever CAN touch the ratchet, but ONLY through Q, and ONLY if sized as a loop gain.** Every
+flown-null attempt (V39/V41/V43/V56/V97/V103/V105) was an additive lever. **That is the retro-explanation
+this kit has been missing.**
+🛑 **AND A UNITS DEFECT THAT INVALIDATES EVERY PUBLISHED LANE NUMBER:** `Re(Z_i)` computed as
+`|lane counts|/|Om_w| · cos(phase)` is in **aggregator counts per rad/s**; the measured −3073…−4890 is in
+**torsion-bar counts per rad/s**. Every published lane figure is missing `M(jω) = d(T_bar)/d(agg count)`
+— firmware half ~1.00–1.07 ∠0°, **mechanical half NOT IN THE IMAGE**, bounded |M| ~ 0.35–0.53, which
+makes every priced term *smaller* and the additive gap *worse*.
+
+---
+
+## 13. ⭐ THE HANDS-OFF MECHANISM, FOUND — a virgin four-table taper
+
+**The LKAS controller output is multiplied by two cascaded driver-torque-indexed Q8 curves**, at
+`0x2A0B4` (`mulu r9,r23,r0` → `(A*B & 0xFFFF) >> 8` → `* controller` → `>> 8`), applied **before** the
+`0xC61BE` clip and before the `0xC646C` forward scale. `gp-0x682f = min(|gp-0x4f60| >> 5, 255)`, so
+**X · 32 = raw torque counts**. Pointer arrays `0xCBB54` / `0xCBC34` / `0xCBAE4` / `0xCBBC4`, all
+**mode-indexed** and **VIRGIN on all 103 built images** — known to the record only as *"further LERP
+curves (gain/limit; exact roles medium-confidence)"*.
+```
+  raw |t|      0-512    928    1768   2048   >=3072
+  m26 B(!=2)   1.000   0.884  0.398  0.239  0.200
+  m26 B(==2)   1.000   1.000  0.764  0.682  0.400->0.200
+```
+**Measured on route `1e`:** hands-OFF `|t|` p50/p75/p90 = 190/453/794 ⇒ B = **1.000/1.000/0.956**;
+hands-ON = 1768/2577/3079 ⇒ B = **0.398/0.220/0.200**. ⇒ **a 2.5× command cut at the median hand-on
+while hands-off sits at full transparency out to p90.**
+The ratchet's dose-response against the taper's **own knots** (pre-registered, not chosen from the data):
+`R_LINE` 2.51 → 4.21 → **9.55** → 6.60 → **0.63**, contrast **4.22× [1.17, 5.70]**, placebo flat.
+🛑 **THE CONFOUND CANNOT BE REMOVED FROM LOGS**: a hand physically damping the wheel predicts the same
+collapse. One argument favours the firmware — the suppression is **band-selective** (6–7.4 Hz falls 2.8×,
+7.4–8.6 Hz falls 5.0×, **8.6–12 Hz unchanged**) where broadband mechanical loading would take all three.
+⚠ **BELIEF, on 5 windows.**
+🛑 **DO NOT propose the taper as a FIX.** The only edit direction that tests it (knots outward) gives
+**more** command with hands on — which makes the ratchet *worse*. **It is a diagnostic, not a cure.**
+
+---
+
+## 14. V109 — `0xC40DC` (α2) 22 → 14. GATE 1 AND GATE 2 BOTH CLOSED.
+```
+image  e9eb51fcad9ffc8768cd3e8eb601619d0f2acc0f702f01c4732243c70cc7f4d6
+.rwd   83047f0fd3b5b656720487d5f70755c3b2506c4293097b403abf003e972087c1
+builder analysis-2020accord/builds/v108_plus/build_v109_tva.py, 30/30, BASE = V108
+5 bytes vs V108 (1 payload + 4 CRC).  Cal-only.  Cave byte-identical.  UNCOMPENSATED.
+```
+α2 is the only axis of this lane **nobody has ever touched** — V106 moved its MAGNITUDE, V107 its SPEED
+SCHEDULE, and both pay for HF reduction **one-for-one at 21.7 Hz** because Y is a flat multiplier.
+**Shape does not.** Uncompensated ratios, verified against the integer cascade:
+```
+   f Hz     1      3    7.79  21.73    27     40    61.1   100    200    300
+  ratio   1.000  0.998 0.988  0.920  0.888  0.816  0.732  0.657  0.607  0.596
+```
+⇒ **~0 % at manoeuvre frequencies (no steering-rate cost), 1.2 % at the ratchet, 8.0 % at the mode
+(below the ~9 % perceptual floor) — and 27–40 % across 61–300 Hz.** Phasor at 21.73 Hz **222.77°**, safe.
+
+**GATE 1 closed — and the fan-out is FOUR consumers, not three.** Cell: one access image-wide, zero
+writers. Signal: friction lane = the target · **oscillation detector SAFE and margin IMPROVES** (arms at
+`cal(0xC620A)` = 12800 vs a corpus max ~5,300; **V64 flew 1,158 reversals with ZERO arms**) ·
+`FUN_00071272` writes byte 0x10 of a **36-byte-stride diagnostic log record at `gp-0x26e8`**, not the
+torque path · `FUN_0007b022` has **four outputs with zero readers** and its fifth (`gp-0x4f64`) is
+cleared by tracing **its own three producers**. `gp-0x6c2e`/`cal(0xC40DA)` = 3 are **independent AT THE
+PRODUCER** with disjoint reader sets as a second reason.
+🛑 **GATE 2's real cost: the 90–180° sector ENTRY slides DOWN 74.1 → 54.0 Hz.** ⇒ **V109 MUST sit on a
+V108 base** — across 54–74.5 Hz V105's notch left the parallel lane **5.15× (+14.2 dB)** louder than
+Honda's. **`build_v109_tva.py` ASSERTS the base and refuses to build on any other.**
+🛑 **Rail duty under this dose is NOT predictable** — the only method available was measured **32× wrong**
+on this lane, the loop term is 14–16×, and α2 sits upstream of the distribution any solve would need.
+**V109 is a deliberate single-variable experiment against V108.** ⇒ **Fly V108 first if you want the
+contrast; fly V109 if you want one drive instead of two.**
+
+---
+
+## 15. V110 — Kd `0xC6AE6` 2048 → 1024. BUILT, BUT PARKED, AND THE REASON IS A DISAGREEMENT I RESOLVED AGAINST MY OWN AGENT.
+```
+image  3de48a09735db35b74af88dfbe8a4d6a998bfb13d86ffc65a894e4e14db8f080
+.rwd   becaab6d7ecce18df1bcba0112189d994fc048dad3720ea6e96bbf934a33410c
+builder analysis-2020accord/builds/v108_plus/build_v110_tva.py, 29/29, BASE = V109
+```
+**D is the ONLY PID branch that PUMPS at 7.8 Hz** — `Re(Z)` **−458** against P **+844** and I **+296**
+(net +682, so the PID as a whole damps and the pump cannot be removed without attacking D specifically).
+`H_D = (Kd/1024)(1 − z⁻¹)`, so **Kd scales MAGNITUDE ONLY and D's phase never reverses 2–500 Hz**, and it
+is **exactly zero at DC** — no steady-state assist cost, no steering-rate cost. **Virgin, 1 reader, 0
+writers, no lockstep twin, no int/float mirror of the `0xC674E` class.**
+⭐ **Leveraged**: |D| = 0.0979 against |L| 1.876–2.825 ⇒ D is **3.5–5.2 % of loop gain**; halving removes
+1.7–2.6 %, which near a marginal loop (`Q ~ 1/(1−|PL|)`) is a **Q cut of 18–26 %** at the measured
+`Q_eff/Q_pass` = 14.3, or **5–7 %** on a deliberately conservative 4.0.
+
+🛑🛑 **WHY IT IS PARKED.** `ratchlever` gated it SHIP on the grounds that the standing memory
+`accord-six-levers-closed-on-arithmetic`'s verdict — *"D damps 16–35 Hz, cost 3–4× the benefit"* — has
+**"no computation behind it anywhere in the kit."** **I checked the crux myself and rejected that.** The
+numbers **−0.217** (18–22 Hz) and **−0.336** (26–31 Hz) appear in **five** files including an archived
+session state. And the refutation does not survive `ratchlever`'s own admission that the translation away
+from 7.79 Hz needs `G_bar(f)`, **which is not in the image and is anchored only at 7.79 Hz.**
+**My own arithmetic makes the risk concrete: D's phase in its own frame moves only −2.2° between 7.79
+and 20 Hz** (+88.60 → +86.4). Carrying that alone from the one anchored rotation (7.79 Hz → −91.40°,
+pumping) puts 20 Hz at −93.60°, cos = −0.063 — **still pumping**. For D to DAMP at 18–35 Hz the **plant**
+must supply ~+90° across that span — **and a resonance at 7.8 Hz rotates ~180° through it, so that is
+entirely possible.** ⇒ **The memory's claim is PLAUSIBLE and CANNOT BE REFUTED FROM THE IMAGE.**
+⇒ **The risk is that halving Kd removes damping at 18–22 and 26–31 Hz — the exact bands V108/V109 exist
+to fix. DO NOT FLY V110 until V108 or V109 has established a grinding baseline.**
+🛑 **The memory is NOT marked stale.** `ratchlever` flagged it in good faith and its instinct is
+reasonable — but *unverifiable cuts both ways*, and the safe reading is that **nobody knows D's sign
+above 16 Hz.** ⚠ Kd also touches **MANUAL** steering (`FUN_0002214a` gates `FUN_0003a382` on states
+{4, 5, 10, 11}), though its DC cost is exactly zero.
+
+⭐ **REJECTED, and recorded so it is not re-proposed**: `0xC6384`, the assist-map per-segment slope cap
+(2048 = Q10 2.000, also virgin, reported as 7.8× the entire PID). It is **memoryless — flat magnitude,
+0° phase, identical DC to Nyquist** — so a dose moves loop gain by the same fraction at every frequency
+simultaneously, re-litigating 18–35 Hz plus DC feel plus manual steering. **And whether it BINDS AT ALL
+is unresolved**: the natural slope depends on a history-dependent slew mechanism that cannot be evaluated
+statically. **DO NOT SHIP.**
+
+---
+
+## 16. THE CLOSED-LOOP SIMULATOR — built, validated, and it refuses to answer the question
+`analysis-2020accord/model/eps_closed_loop_sim.py` + `studies/closed_loop/`.
+⭐ **ACCEPTANCE TEST PASSED with nothing fitted** — an exact-integer reimplementation of the cascade run
+per-sample over route `1e` reproduces the measured rail duty on all five bins (1.60 vs 1.68 · 33.52 vs
+32.32 · 21.15 vs 21.27 · 5.19 vs 4.27 · [0.00,0.16] vs ≤0.23 %), and **held out on route `1b`** — a
+different drive, same build — **33.76 % vs `1e`'s 33.52 %.**
+⇒ **V108's Y-row change alone is predicted to take 10–25 km/h rail duty from 33.52 % to 7.0–15.4 %.**
+⚠ Duty is **strongly driving-dependent above 25 km/h** (`1b` gives 31.88 % at 24–40 vs `1e`'s 21.15 %).
+🛑 **BUT A CLOSED-LOOP PREDICTION IS STRUCTURALLY UNAVAILABLE**: the identified column model's validity
+band is **5–13 Hz** while the lane's −3 dB span is **25–153 Hz** ⇒ **100 % of it is extrapolation**, and
+above 13 Hz `|Z|/ω` collapses 1.33 → 0.45 for reasons the record itself calls unresolved.
+**`ClosedLoopSim` refuses to run without `allow_extrapolation=True` and no number came from it.**
+🛑 **"Fit on a6, predict 1e" is NOT CONSTRUCTIBLE** — `x6c2c_mag` exists only on V107 routes; a6's tap
+was aimed at `gp-0x6b86`. **The c2c instrument has only ever existed on one build.**
+
+---
+
+## 17. THE GHIDRA EMULATOR — three doors, three distinct reasons, and one of them nearly produced a lie
+1. **`emulate_function` is hardcoded x86** — `"Undefined register: ESP"` on every V850 call regardless of
+   arguments; `V850:LE:32:default` has no ESP. Server-side fix: `getDefaultCompilerSpec().getStackPointer()`.
+2. **`run_script_inline` was gated** behind `GHIDRA_MCP_ALLOW_SCRIPTS=1`. **The operator enabled it**
+   (the var had to be set at **User scope** — it was absent from User AND Machine — and Ghidra relaunched).
+   The gate then opened, and a **second** blocker appeared: Ghidra's OSGi layer holds `$USER_HOME/ghidra_scripts`
+   as a **placeholder** bundle. **Root cause found in the tool config: `BundleHost_ENABLE` entry [9] is the
+   ONLY one of 23 set `false`.** ⇒ tick it in Script Manager → Manage Script Directories. **UNRESOLVED at
+   time of writing.**
+3. 🛑 **`get_function_pcode` is structurally insufficient to emulate from — and it WOULD HAVE PRODUCED A
+   CONFIDENT WRONG ANSWER.** An agent built a p-code interpreter and ran it before finding the defects:
+   **no block out-edges**, and the decompiler's condition-normalisation flips conditions while swapping
+   edges (at `0x36C38`/`0x36CCE`/`0x36CEE` the inverted sense is right, at `0x36C48` the non-inverted one
+   is) ⇒ **polarity unrecoverable**; and **SSA varnodes collapse onto one `(space,offset)` key**.
+⇒ **The arithmetic is validated instead by three NON-EXECUTION methods that agree** — decompile,
+assembly, p-code IR — and **the kit's mirrors are CORRECT.**
+⊕ **Exact rail thresholds are 1063 / 1306 / 1959 ct** (`sar` FLOORS, ~0.2 % earlier than the closed form).
+⊕ **The LERP divide is `INT_SDIV`** (truncates toward zero) — **a non-monotone Y row would make a
+floor-division mirror off by one.**
+⊕ 🛑 **An unpriced nonlinearity: the `d32` clamp (±0xFA0000)** saturates the lane above ~1,961 ct of input
+at 61 Hz. **The whole α2 sweep table is a linear-`|H|` calculation** — safe for railing, **not** for
+broadband claims.
+
+---
+
+## 18. RECORD CORRECTIONS MADE THIS SESSION — including two of my own
+
+| # | claim | status |
+|---|---|---|
+| 1 | **"V100's rail duty was never harvested"** (mine, in §7 of Part 1 and in `STATE.md`) | 🛑 **FALSE.** Harvested **2026-08-14**; `score_r85_v100.py` and the `r85` cache exist. Re-run: **d(b5) = 0.000000 over 24,925 engaged frames**, gate proven live by `b4` on the SAME cell at duty 0.6057. ⇒ **the dose is MERELY SMALL, not structurally zero — `0xC40D2` = 204 IS delivered**, which vindicates V108 keeping it. ⊕ Total reachable is **17,152 = 2.09× the 8192 threshold**, not the ~12× the record claimed. |
+| 2 | **"the instrument was structurally blind to the passband"** (mine) | **Right about SPECTRA, WRONG about DUTY.** Duty is a functional of the **marginal**, which an instantaneous tap samples unbiased. **The measured duties are sound.** V107's error was a **MODELLING** error — an open-loop push-through on a closed loop — not an instrument error. |
+| 3 | **`gp-0x69b0` is a GATE, not a multiplier** | 🛑 **REFUTED with an address.** `0x2A1E6 mul r14,r9,r0` / `0x2A1EA sar 0xf` / `0x2A1EC sxh`. The census found no `mul` because **the operand is a register loaded ~2,700 bytes earlier** — an operand-text search cannot see that. `r14` is never written across the 1015 instructions between the SM exit and the multiply, with zero `jarl`/`callt`/`trap`. Stored `st.h`, read **exclusively** `ld.hu`, saturated at `0x8000` ⇒ **unsigned Q15 0…32768.** ⇒ **the mode release is a CROSSFADE, not a step** — during the ~2 s tail there IS a decaying command while the engaged damper is in force. |
+| 4 | **`0xC61B2`/`0xC61B4` gated by `0xC674E` ("5120 > 3072")** | 🛑 **UNFOUNDED and already falsified on-car.** Three disjoint reader sets; the corridor's LKAS arm is annihilated by `cal(0xC64CB)` = 0; and `0xC674E` has been frozen at 5120 since V38 while the clamps went 2048 → **4096 (V101)** → 3072 — **V101 flew at ratio 1.25 without faulting.** ⭐ **The REAL interlock is an INT quad vs a FLOAT quad at `float == int/1024` ±5 LSB**, and the **V28→V29 diff is literally those four float cells**. It PREDICTS V27's symptom: the walls are × `pol = clamp(gp-0x6752,−1..+1)`, so **at pol = 0 a desynced pair still agrees** and the fault fires the instant the wheel leaves centre. |
+| 5 | **`0xC520C` is "the first/tightest bind"** (`ratecap`, self-retracted) | **STRUCK as a lever.** Route `a6`: peak `gp-0x6ac0` **1462 ct**, **0.11 % of engaged time** above X[0], **never** past X[1]; `gp-0x4f64` at its max **4762 for 99.9 %+** of engaged time. Reconciles `b6` = 0.000000 and explains V41's null. ⊕ The disputed "528" was **hands-off spring-return only** — a regime mismatch, not a scale error. |
+| 6 | **`accord-4x-lkas-gain-is-the-frozen-variable`** | **STALE** — 4× only through V100; **8× on V101, 6× since V102.** Correction banner added to both copies. |
+| 7 | **`gp-0x4f62` "peaks at 125 Hz"** | **DOES NOT FOLLOW FROM THE CODE** — ring buffer + variable tick weights + a conditional call. `D = cal(0xC6C42) = 4` is byte-confirmed; the effective delay is **unresolved. Do not reuse 125 Hz.** |
+| 8 | **memory index links** | **5 of 428 broken** by the reorg, repaired. ⊕ And I then **misreported a 6th as a dead file** — it was an **off-by-one in the relative path** (`../../.claude/` from `memory/` lands above the repo root). My checker only resolves paths and cannot distinguish "target absent" from "path malformed". |
+| 9 | **`0xC64DE` "re-engage authority ramp"** | **WRONG LABEL** — the half-period of a **sign-flipping square wave**; V18 moved it **29.41 → 18.52 Hz, into grind #1's band**; **amplitude LERP all zeros ⇒ INERT.** ⚠ A latent 18.5 Hz injector into the 6× path, four halfwords from live. |
+| 10 | **the `0xE4`/`0xE5` taper "skip"** | **NOT A BUG** — the skipped records are exactly the complement of the reachable selector set {0,1,3,4,6,7,8,9}. Our car is **TVCA4 → slot 11 → selector 7 → `0xE51A8`, RAISED.** V74's slot naming is right; V38's is wrong. |
+| 11 | **`accord-aggregator-lane-mirrors-6ada-6adc`** | `gp-0x6ada`/`gp-0x6adc` are **SWAPPED** relative to the stores at `0x3AD4E`/`0x3AD5A`. Flagged 2026-08-10, still unfixed. |
+| 12 | **the r26 gate polarity** | **INVERTED in the record** — lane A is zero-forced whenever `gp-0x6b5e != 0`, not only under the rare `gp-0x671a >= 5`. Live today only because `gp-0x6bda` sat outside ±384 on **0.0000/75,227** engaged frames. |
+| 13 | **tp off-by-0x1000, SIXTH recurrence** | `TRACE-2026-08-10-lkas-command-visibility.md` §5's rate-lane cals are `0xC6xxx`, not `0xC7xxx`. Anchored via `0xC6446` = 512 = Lever B's own cell. |
+
+---
+
+## 19. REPO AND TOOLING FIXES
+- 🛑 **The whole extractor family was DEAD** — `ModuleNotFoundError: _grind2_lib`, because the
+  2026-08-26 reorg moved a module into `lib/` while the `PATH BOOTSTRAP` block stops at the **first**
+  `.pkgroot`. **Fixed in 729 files**: it now walks every `.pkgroot` root in the repo, nearest first.
+- **`BUILD-LINEAGE-PART1-LEVER-INDEX.md` was 10 builds stale** ("current through V97"). **V101–V108 rows
+  added**, 168,811 → 192,780 B, all 30 addresses grep-tested, 76 rows checked for table integrity.
+- **`cs_v` / `v_rear` / `ws_*` are m/s, not km/h**, and `extract_ra6.py:derive()` mislabels them.
+- ⚠ **`0000001b` exists TWICE on disk with different hashes.** Key every cache on `counter--hash`.
+- **`docs/DRIVE-CARD-NEXT.md`** written — the manoeuvres that close six stalled analyses.
+
+---
+
+## 20. OPEN ITEMS ADDED OR CHANGED IN PART 2
+
+| # | item | what closes it |
+|---|---|---|
+| A | 🛑 **D's sign above 16 Hz** — gates V110 | On-car `Re(Z)` at 18–22 and 26–31 Hz. **`rezband` was testing whether existing three-drive `Re(Z)` data can anchor the plant phase across the band; result not in this handoff.** |
+| B | **`0xC61C0`/`C2`/`C4` blanked to `0xFFFF` at V36** — 12 readers, 0 writers, **undocumented for 72 builds** | **`blanked` was tracing it; result not in this handoff.** |
+| C | **`0xC6384` binding state** | Live telemetry of `gp-0x37e8[]`/`gp-0x6444` at 25–40 km/h, or the full ROM→Branch-B→table-build simulation. |
+| D | **The mechanical half of `M(jω)`** — until it exists, **no lane `Re(Z)` in this kit is in bar-torque units** | A bench measurement, or motor Kt + gear ratio + bar stiffness from spec. |
+| E | **`a` = `gp-0x69a4` live value** — r26's gain spans **−431…−5177** on it | A rung on `gp-0x69a4`, or on `gp-0x6adc` (free mirror, 0 readers). |
+| F | **Which taper arm is live** (`gp-0x6803`) — the arms differ 2× at raw 2048 | One cave rung on `gp-0x6803`. |
+| G | **Ghidra script bundle** — `BundleHost_ENABLE[9]` is the only `false` of 23 | Tick `$USER_HOME/ghidra_scripts` in Script Manager → Manage Script Directories. |
+| H | **`gp-0x6ac2` at `\|rate\| >= 1100`** — never probed, in the operator's own hard-turn regime | One cave rung, whenever the cave next opens. |
+| I | **openpilot's lateral tuning** — the ONLY route to the visible oscillation | **Operator's decision.** `feedback-no-openpilot-side-modifications` is standing. |
+
+---
+
+## 21. THE THREE CANDIDATES, IN FLIGHT ORDER
+
+| build | `.rwd` sha256 | adds | fly |
+|---|---|---|---|
+| **V108** | `4fbfda0d76af2f1b592bd9e510cd926dbfabb6a02b7a25730e7018f07cf4c4d1` | notch → Honda · damper de-railed at the Y1 knot · `0xC40BC` → 600 · `sar 5` | **first** |
+| **V109** | `83047f0fd3b5b656720487d5f70755c3b2506c4293097b403abf003e972087c1` | **+ α2 band-limit** — 61–300 Hz cut 27–40 %, 0 % at manoeuvre frequencies | first, if one drive not two |
+| **V110** | `becaab6d7ecce18df1bcba0112189d994fc048dad3720ea6e96bbf934a33410c` | **+ Kd halved** — 5–26 % Q cut on the ratchet | **only after a grinding baseline** — see §15 |
+
+🛑 **NOTHING HAS BEEN FLASHED. NO CAN, NO UDS, NO SSH AT ANY POINT.**
