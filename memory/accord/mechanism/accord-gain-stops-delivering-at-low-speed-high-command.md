@@ -1,18 +1,69 @@
 ---
 name: accord-gain-stops-delivering-at-low-speed-high-command
-description: Hands-off, the 4x->6x LKAS gain step delivers 1.43x [1.13,1.74] overall (ideal 1.500) - but only 1.03x [0.69,1.50] below 15 mph at high command, against 1.81x [1.28,2.52] at 15-45 mph. Ratio-of-ratios 0.557 [0.359,0.909]. The operator was right: there IS a structural limit that does not scale with the gain, and it is speed- and command-gated.
+description: RETRACTED as a positive claim. Once speed is matched inside the bin, the 4x->6x gain step delivers 1.292 [0.925,1.673] below 15 mph against an ideal 1.500 - the CI CONTAINS 1.500, and the low/high contrast 0.711 [0.451,1.032] contains 1. The earlier "the gain stops delivering at low speed" was an artifact of unmatched speed distributions inside a wide bin. UNDERPOWERED, not refuted; closing it needs matched low-speed exposure.
 metadata:
   node_type: memory
   type: reference
 ---
 
-# THE GAIN STOPS DELIVERING AT **LOW SPEED + HIGH COMMAND** — the operator was right
+# 🛑🛑 RETRACTED AS A POSITIVE CLAIM — SPEED-MATCHING KILLS IT
 
-★★★★★ **EVIDENCE**, 2026-08-27. The operator, unprompted: *"I'm looking for a more structural
-limitation on the steering angular velocity, one that does not scale with the 6x LKAS gain… it feels
-like the max angular velocity has not scaled 6x."* **He was right, and the effect is specific.**
+★★★★★ **EVIDENCE for the retraction**, 2026-08-27, same day it was first written. The operator
+asked: *"it feels like the max angular velocity has not scaled 6x."* **I told him twice that the data
+agreed. Properly controlled, it does not — and it does not disagree either.**
 
-## THE INSTRUMENT
+## THE FINAL, PROPERLY-CONTROLLED NUMBERS
+**2 mph speed cells** × `|cmd| >= 3072`, hands-off (D3), pooled only over cells where BOTH arms carry
+≥ 1 s, route bootstrap resampling **both** arms. **Ideal = 1.500.**
+```
+  <=15 mph   1.292  [0.925, 1.673]   P(<1.500) = 0.860   P(<1.0) = 0.061
+  >=15 mph   1.858  [1.387, 2.485]   P(<1.500) = 0.085
+  CONTRAST   0.711  [0.451, 1.032]   P(<1)     = 0.963
+```
+⇒ **1.500 is INSIDE the low-speed interval. The contrast interval CONTAINS 1.** There is a
+*suggestion* of a low-speed shortfall (point estimates 1.29 vs 1.86) but **nothing survives at 95 %.**
+
+## 🛑 WHAT WENT WRONG — THREE ROUNDS OF CONTROLS, EACH ONE SHRINKING THE EFFECT
+| round | design | low-speed ratio | verdict |
+|---|---|---|---|
+| 1 | no hands-off mask | 0.948 | **WRONG** — measured the DRIVER, not LKAS |
+| 2 | hands-off, wide `<15 mph` bin | 1.030 [0.694, 1.499] | inflated by speed mismatch |
+| 3 | + within-route ratio | (ratio 0.514) | same mismatch, hidden in a denominator |
+| 4 | **+ 2 mph speed cells** | **1.292 [0.925, 1.673]** | **n.s.** |
+⭐ **THE MECHANISM OF THE ERROR:** the two arms are not matched inside a wide bin — median speed
+within `<15 mph` was **6.2 mph (4×) vs 8.3 mph (6×)**, and acceleration varies strongly across that
+range. A bin wide enough to hold a speed gradient will manufacture a between-arm difference from a
+pure exposure difference.
+🛑 **RULE: for any cross-build contrast on this corpus, match speed in cells no wider than ~2 mph.
+A `<15 mph` bin is NOT a speed control.** The routes differ enormously in low-speed exposure (r77 40 %
+rail duty below 6 mph against r1e's 7.5 %).
+
+## WHY IT IS **UNDERPOWERED**, NOT REFUTED
+The 6× arm carries only **5–15 s per 2 mph cell** at `|cmd| >= 3072`. The interval
+[0.925, 1.673] is 1.8× wide — it cannot distinguish "full delivery" from "a 30 % shortfall".
+⇒ **Closing it needs matched low-speed exposure**: deliberate hands-off engaged segments at 2–15 mph
+with large command, on both a 4× and a 6× build, on the same road. `docs/DRIVE-CARD-NEXT.md`
+manoeuvre 2 is the right shape; it needs a large-command variant.
+
+## ✅ WHAT SURVIVES FROM THAT SESSION, UNAFFECTED
+1. **The ratchet/grind COMMAND GATE** — [[accord-ratchet-and-grind-are-command-gated-saturation]].
+   That result is a **within-window band contrast with its own internal controls** (two control bands
+   FALL while 6–9 Hz rises 3–4.7×). It never used a cross-arm comparison and **speed-matching does not
+   touch it.**
+2. **The hands-off lesson** — any cross-build torque or rate comparison at low speed is meaningless
+   without a hands-off mask. Round 1 above is the proof.
+3. **The E3 reconciliation** — a rate-vs-command test is structurally blind to a torque ceiling,
+   because rate is an integral. E3's null on `0xC61BE` replicates on all six high-exposure routes and
+   its decision was correct.
+4. ❌ **NOT stick-slip** — stuck duty FALLS with command (0.609 → 0.009 below 15 mph).
+
+---
+
+# ⚠⚠ EVERYTHING BELOW IS THE **SUPERSEDED** ROUND-2/3 ANALYSIS — AUDIT TRAIL ONLY
+Its numbers reproduce, but **its speed control is inadequate** and every cross-arm ratio in it is
+inflated by the 6.2-vs-8.3 mph mismatch. **Read the retraction above; do not quote these figures.**
+
+## THE INSTRUMENT (superseded)
 **Angular acceleration in the commanded direction** — proportional to NET TORQUE at the instant,
 before friction and damping have set a steady state. If the gain reaches the motor, it MUST scale.
 Route-level p90 (the correct unit, per [[feedback-episodes-not-windows]]), **engaged AND hands-off**
@@ -21,7 +72,7 @@ Route-level p90 (the correct unit, per [[feedback-episodes-not-windows]]), **eng
 `0xC6CD0` = 891 stock (1×) · 3564 (4×, V77–V100) · 5346 (6×, V102+) · 7128 (8×, V101).
 Well-powered arm = **4× (8 routes) vs 6× (6 routes)**; stock and 8× are one route each.
 
-## THE RESULT — ideal is 1.500
+## THE RESULT (SUPERSEDED — speed-mismatched) — ideal is 1.500
 ```
   window                       4x->6x delivered      routes
   ALL speeds, |cmd| >= 3000    1.429 [1.134, 1.737]   8/6     <- the gain DOES reach the motor
@@ -33,7 +84,7 @@ By command bin, `<15 mph`: 512–1k **1.494 [1.333,1.655]** · 1k–2k **1.533 [
 2k–3k **0.798** · 3k–4095 1.462 · RAIL **1.089 [0.749,1.593]**.
 ⇒ **At low command the gain delivers exactly as designed. It fails at low speed AND high command.**
 
-## ⭐⭐ CONFIRMED **WITHIN-ROUTE** — the road/driving confound cancelled
+## ⚠ SUPERSEDED — "CONFIRMED WITHIN-ROUTE": the within-route ratio carries the SAME speed mismatch
 The result above is a BETWEEN-route comparison (different drives, different roads), which is its
 weakest feature. The within-route version removes that: for **each route**, take the ratio of p90
 acceleration at (<15 mph, `|cmd|≥2048`) to (15–45 mph, same command), then compare that ratio
@@ -85,7 +136,7 @@ hands-off mask.** The uncorrected version would have supported a much stronger a
 ("the 6× gain never reaches the motor"), which contradicts the measured fact that the gain
 demonstrably causes the vibration ([[accord-the-8x-gain-is-the-carrier]]).
 
-## SPEED OR RATE? — speed, on the only interval that excludes 1
+## ⚠ SUPERSEDED — SPEED OR RATE? (the interval that "excluded 1" no longer does)
 Both gradients exist and they are confounded (low speed ⇒ more and faster steering):
 ```
   by VEHICLE SPEED   <10 mph 1.114 · 10-20 1.062 · 20-45 2.000 [1.316,2.764]

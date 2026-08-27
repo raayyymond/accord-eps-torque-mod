@@ -51,7 +51,28 @@ report; BELIEF that the mapping is causal** — one build, no rlogs, and no matc
 
 ⇒ **V109 IS THE NEXT BUILD, and now for a measured reason rather than a structural one.**
 
-### 🛑🛑 THE OPERATOR WAS RIGHT — THE GAIN STOPS DELIVERING AT LOW SPEED + HIGH COMMAND
+### 🛑🛑 RETRACTED — "THE GAIN STOPS DELIVERING AT LOW SPEED" DOES NOT SURVIVE SPEED-MATCHING
+⚠ **I told the operator twice that the data backed his perception. Properly controlled it does not —
+and it does not contradict him either.** With **2 mph speed cells** (not a wide `<15 mph` bin) ×
+`|cmd| >= 3072`, hands-off, route bootstrap on both arms, ideal 1.500:
+```
+  <=15 mph   1.292  [0.925, 1.673]   P(<1.500)=0.860   <- 1.500 is INSIDE
+  >=15 mph   1.858  [1.387, 2.485]
+  CONTRAST   0.711  [0.451, 1.032]   P(<1)=0.963       <- CONTAINS 1
+```
+**Nothing survives at 95 %.** The earlier 1.030 came from a speed mismatch inside the bin — median
+speed within `<15 mph` was **6.2 mph (4×) vs 8.3 mph (6×)**, and acceleration varies strongly across
+that range. 🛑 **RULE: match speed in cells <= 2 mph for any cross-build contrast on this corpus;
+a `<15 mph` bin is NOT a speed control.**
+⇒ **UNDERPOWERED, NOT REFUTED** — the 6× arm carries only 5–15 s per cell and the interval is 1.8×
+wide. Closing it needs deliberate matched hands-off low-speed segments at large command, on both a
+4× and a 6× build, on the same road.
+✅ **UNAFFECTED and still standing:** the ratchet/grind **command gate** (a within-window band contrast
+with its own internal controls — two control bands FALL while 6–9 Hz rises 3–4.7×); the hands-off
+lesson; the E3 reconciliation (rate is an integral, so a rate test is blind to a torque ceiling, and
+pulling `0xC61BE` was correct); and the refutation of stick-slip.
+
+#### ⚠ SUPERSEDED, kept for the audit trail — the original claim
 He pushed back on the `STEER_MAX` answer: *"I'm looking for a more structural limitation… one that does
 not scale with the 6x LKAS gain… it feels like the max angular velocity has not scaled 6x."* **Tested
 and confirmed.** `rlog-tools/studies/authority/gain_delivery_and_command_gate.py`; notes
