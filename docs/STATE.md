@@ -51,6 +51,44 @@ report; BELIEF that the mapping is causal** — one build, no rlogs, and no matc
 
 ⇒ **V109 IS THE NEXT BUILD, and now for a measured reason rather than a structural one.**
 
+### ⭐⭐ THE COMMAND GATE SURVIVED ITS 2-D CONTROL — AND THE RELAY IS NOW **LOCATED IN THE CODE**
+**Control first** (the one that killed three other findings today): command and steering rate are
+correlated engaged, and the ratchet's rate-dependence is already known, so the command gate had to be
+separated from it. 2-D cells, <20 mph, engaged, hands-off, 1058 windows, 6-9/1-3 band shape:
+```
+                rms<8      8-20 deg/s    20-45
+  cmd <1k     0.50(493)    0.93(302)   1.39(83)
+  cmd 1-2k        -        1.13( 50)   3.87(32)
+  cmd 2-3k        -        4.72( 23)   1.70(22)
+  cmd 3k+         -       44.71( 36)   4.33(17)
+```
+⭐ **At MATCHED rate (8–20 °/s) command drives a 48× fold; at matched command, rate drives only 2.8×.**
+⇒ **genuinely command-gated, NOT the known rate effect.** The `3k+ / 8–20 °/s` cell — maximum command,
+wheel barely moving, 45× the 7.8 Hz content — is the ratcheting isolated.
+
+**And the mechanism is now located**, `FUN_0003b8f6` @`0x3B8F6` (full arithmetic in
+`memory/accord/mechanism/accord-the-coulomb-relay-is-located-c40bc-is-its-knee.md`):
+```
+fVar13   = clamp( POL * gp-0x6abc * 12 / cal(0xC40BC), -1.0, +1.0 )   <-- THE RELAY
+friction = EMA( |model| * cal(0xC40D2)/1024 * fVar13 + cal(0xC4080)/1024 * fVar13 )
+gp-0x6ae2 = friction * 1024 ;  iVar20 = (model - friction - inertia) * gain
+```
+⇒ **magnitude ← `|model|` (tracks COMMAND); shape ← rate against the KNEE.** The two factors of the
+product map onto the two axes of the measurement. Saturates at `|gp-0x6abc| >= knee/12`:
+stock 300 → 25, **V108's 600 → 50**. **V108 already doubled this knee** and the operator called
+≥20 mph *"the best it's ever been"* — ⚠ unattributed (V108 moved four cells), but it is the only one
+that touches the relay.
+
+🛑 **THE COST, BEFORE ANY DOSE:** `clamp(x/knee, ±1)` is **monotonically decreasing in the knee**, and
+`accord-friction-polarity-more-assist` is verified nine ways — **more modelled friction = MORE assist**
+⇒ **raising the knee REDUCES ASSIST**, trading directly against the 6× goal, in the same direction that
+made V93/V94 unsafe. **Do not propose a knee dose until the assist cost is priced in counts.**
+🛑 **CRUX, NOT YET VERIFIED: the scale of `gp-0x6abc`.** If it shares the 4.7121 ct/(°/s) column-rate
+scale, V108's knee saturates at **~10.6 °/s — inside the 8–20 °/s band where the ratchet was isolated.**
+`gp-0x6abc` is a DIFFERENT cell from `gp-0x6ac0`; the scale must be measured, not assumed.
+⊕ **An instrument already exists**: `gp-0x6ae2` is the friction output and V106's `b5` rung compares
+`|gp-0x6ae2|` against `|gp-0x6b26|`. A knee dose would fly with telemetry on it from day one.
+
 ### 🛑🛑 RETRACTED — "THE GAIN STOPS DELIVERING AT LOW SPEED" DOES NOT SURVIVE SPEED-MATCHING
 ⚠ **I told the operator twice that the data backed his perception. Properly controlled it does not —
 and it does not contradict him either.** With **2 mph speed cells** (not a wide `<15 mph` bin) ×
