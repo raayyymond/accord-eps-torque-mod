@@ -26,7 +26,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).resolve().parents[2].parent
-CACHE = {r: ROOT / "analysis-2020accord" / f"_cache_r{r}" / f"r{r}.npz" for r in ("7e", "7f")}
+CACHE = {r: ROOT / "analysis-2020accord" / f"r{r}" / f"r{r}.npz" for r in ("7e", "7f")}
 
 FS = 100.0
 V_LOW_KMH = 20.0

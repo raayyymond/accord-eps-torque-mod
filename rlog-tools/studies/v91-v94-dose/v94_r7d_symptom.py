@@ -115,7 +115,7 @@ COH_ABS, COH_REL = 0.10, 5.0          # the pre-declared trust gate from studies
 
 # ======================================================================================
 def load(route, stem):
-    z = np.load(CACHE / f"_cache_r{route}" / f"{stem}.npz", allow_pickle=True)
+    z = np.load(CACHE / f"r{route}" / f"{stem}.npz", allow_pickle=True)
     t = np.asarray(z["t"], float)
     d = dict(t=t, tq=np.asarray(z["tq"], float),
              rate_f=np.asarray(z["rate_f"], float),

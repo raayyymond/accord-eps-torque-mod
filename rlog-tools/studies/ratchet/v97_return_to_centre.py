@@ -153,9 +153,9 @@ def bandpass(x, lo, hi):
 
 def load(route):
     """Cache loader.  Same field names as every cache since `_scratch/cache/r6d`."""
-    p = ROOT / "analysis-2020accord" / f"_cache_r{route}" / f"r{route}.npz"
+    p = ROOT / "analysis-2020accord" / f"r{route}" / f"r{route}.npz"
     if not p.exists():
-        p = ROOT / f"_cache_r{route}" / f"r{route}.npz"
+        p = ROOT / f"r{route}" / f"r{route}.npz"
     z = np.load(p, allow_pickle=True)
     t = np.asarray(z["t"], float)
     D = dict(route=route, t=t,

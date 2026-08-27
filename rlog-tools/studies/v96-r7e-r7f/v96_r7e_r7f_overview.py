@@ -65,7 +65,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 
 ROUTE_PREFIX = {"7e": "75604b0a432fdc89_0000007e--e5f2d1465f",
                 "7f": "75604b0a432fdc89_0000007f--2bb30756e7"}
-CACHE = {r: ROOT / "analysis-2020accord" / f"_cache_r{r}" / f"r{r}.npz" for r in ROUTE_PREFIX}
+CACHE = {r: ROOT / "analysis-2020accord" / f"r{r}" / f"r{r}.npz" for r in ROUTE_PREFIX}
 
 # dataviz reference palette, categorical slots 1/2/3 (light mode)
 C_TQ, C_CMD, C_ANG = "#2a78d6", "#eb6834", "#1baf7a"

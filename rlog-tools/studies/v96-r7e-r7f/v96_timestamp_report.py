@@ -63,7 +63,7 @@ ROOT = HERE.parent
 from v96_elicitation_finder import load, band_env, FS  # noqa: E402
 from v96_ratchet_character import brms, episodes  # noqa: E402
 
-CACHE = {r: ROOT / "analysis-2020accord" / f"_cache_r{r}" / f"r{r}.npz" for r in ("7e", "7f")}
+CACHE = {r: ROOT / "analysis-2020accord" / f"r{r}" / f"r{r}.npz" for r in ("7e", "7f")}
 
 
 def ms(x):

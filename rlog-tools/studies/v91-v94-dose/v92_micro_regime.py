@@ -137,7 +137,7 @@ def main():
     print("=" * 100)
     allW, fs100 = [], None
     for route, stem, lab in (("77", "r77", "V90"), ("78", "r78", "V91"), ("79", "r79", "V92")):
-        z = np.load(CACHE / f"_cache_r{route}" / f"{stem}.npz", allow_pickle=True)
+        z = np.load(CACHE / f"r{route}" / f"{stem}.npz", allow_pickle=True)
         t = np.asarray(z["t"], float)
         tq = np.asarray(z["tq"], float)
         rate = np.asarray(z["rate_f"], float) * DEG2RAD

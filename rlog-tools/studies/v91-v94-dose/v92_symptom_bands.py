@@ -93,7 +93,7 @@ REGIMES = [("static  <1 °/s", 0.0, 1.0), ("MICRO   1-13 °/s", 1.0, 13.0)]
 
 
 def route_windows(route, stem):
-    z = np.load(CACHE / f"_cache_r{route}" / f"{stem}.npz", allow_pickle=True)
+    z = np.load(CACHE / f"r{route}" / f"{stem}.npz", allow_pickle=True)
     t = np.asarray(z["t"], float)
     tq = np.asarray(z["tq"], float)
     rate = np.asarray(z["rate_f"], float) * DEG2RAD

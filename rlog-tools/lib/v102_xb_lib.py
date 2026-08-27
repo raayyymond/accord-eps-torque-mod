@@ -33,10 +33,10 @@ def _cache_dir(route):
     for the older ones (r71, r75, r76).  `_scratch/cache/r71` DOES exist, at the repo root, in the modern
     per-segment ~100 Hz schema; only `_scratch/cache/ratio/00000071.npz` (14.6 Hz) is the useless one."""
     for base in (AN, ROOT):
-        p = base / ("_cache_r" + route)
+        p = base / ("r" + route)
         if p.exists():
             return p
-    return AN / ("_cache_r" + route)
+    return AN / ("r" + route)
 
 
 def _segs(route):

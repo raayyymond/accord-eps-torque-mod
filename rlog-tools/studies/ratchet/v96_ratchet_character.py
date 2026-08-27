@@ -69,7 +69,7 @@ from v96_elicitation_finder import load, band_env, mmss, FS  # noqa: E402
 from v96_probe_vs_ratchet import signed_lane  # noqa: E402
 from v96_transitions_and_stats import boot_ratio  # noqa: E402
 
-CACHE = {r: ROOT / "analysis-2020accord" / f"_cache_r{r}" / f"r{r}.npz" for r in ("7e", "7f")}
+CACHE = {r: ROOT / "analysis-2020accord" / f"r{r}" / f"r{r}.npz" for r in ("7e", "7f")}
 BANDS = {"6-9 Hz (ratchet)": (6.0, 9.0), "15-22 Hz (control)": (15.0, 22.0),
          "1-3 Hz (control)": (1.0, 3.0)}
 

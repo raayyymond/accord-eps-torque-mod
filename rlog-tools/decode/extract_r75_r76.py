@@ -592,7 +592,7 @@ if __name__ == "__main__":
         for r in ("75", "76"):
             res[r] = {"b4_alphabet": identity(r), "h1": h1_rungs(r),
                       "b6_vs_427": identity_verdict(r, "73"), "census": census(r)}
-            json.dump(res[r], open(ROOT / f"_cache_r{r}" / f"r{r}_identity.json", "w"),
+            json.dump(res[r], open(ROOT / f"r{r}" / f"r{r}_identity.json", "w"),
                       indent=1, default=float)
     elif args[0] == "extract":
         for r in args[1:]:

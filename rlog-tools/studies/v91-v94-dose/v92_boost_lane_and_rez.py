@@ -131,7 +131,7 @@ def trust(coh, shuf):
 
 
 def load(route, stem):
-    return np.load(CACHE / f"_cache_r{route}" / f"{stem}.npz", allow_pickle=True)
+    return np.load(CACHE / f"r{route}" / f"{stem}.npz", allow_pickle=True)
 
 
 # ======================================================================================

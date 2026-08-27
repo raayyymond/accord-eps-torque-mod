@@ -58,7 +58,7 @@ C=Path(r"C:/Users/dudei/Desktop/Projects/accord-eps-torque-mod/analysis-2020acco
 DEG2RAD=np.pi/180.0; RNG=np.random.default_rng(97_2026)
 BANDS=[("6-9",6.,9.),("18-22",18.,22.),("22-26",22.,26.),("26-31",26.,31.)]
 for rt,nm in (("97","STOCK 1x"),("96","V102 6x"),("85","V100 4x")):
-    z=np.load(C/("_cache_r"+rt)/("r"+rt+".npz"),allow_pickle=True)
+    z=np.load(C/("r"+rt)/("r"+rt+".npz"),allow_pickle=True)
     t=np.asarray(z["t"],float); tq=np.asarray(z["tq"],float)
     rf=np.asarray(z["rate_f"],float)*DEG2RAD
     rc=np.asarray(z["rate_c"],float)

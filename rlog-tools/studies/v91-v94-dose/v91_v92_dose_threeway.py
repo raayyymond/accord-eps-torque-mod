@@ -69,7 +69,7 @@ T = 15.0
 
 
 def load(route, stem):
-    z = np.load(CACHE / f"_cache_r{route}" / f"{stem}.npz", allow_pickle=True)
+    z = np.load(CACHE / f"r{route}" / f"{stem}.npz", allow_pickle=True)
     rt = np.asarray(z["t"], float)
     v = np.abs(np.asarray(z["cs_v"], float))
     lat = np.asarray(z["cc_lat"], float) > 0.5

@@ -65,7 +65,7 @@ from v96_elicitation_finder import load, band_env, mmss, FS  # noqa: E402
 from v96_probe_vs_ratchet import signed_lane  # noqa: E402
 
 OUT = ROOT / "analysis-2020accord" / "figures/r7e_r7f"
-CACHE = {r: ROOT / "analysis-2020accord" / f"_cache_r{r}" / f"r{r}.npz" for r in ("7e", "7f")}
+CACHE = {r: ROOT / "analysis-2020accord" / f"r{r}" / f"r{r}.npz" for r in ("7e", "7f")}
 C_TQ, C_CMD, C_ANG, C_LANE = "#2a78d6", "#eb6834", "#1baf7a", "#4a3aa7"
 C_INK, C_MUTED, SURF, GRID = "#0b0b0b", "#52514e", "#fcfcfb", "#e6e5e2"
 

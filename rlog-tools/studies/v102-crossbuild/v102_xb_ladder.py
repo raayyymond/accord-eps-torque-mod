@@ -71,7 +71,7 @@ def hdr(s):
 
 
 def segs_of(route):
-    p = L.AN / ("_cache_r" + route)
+    p = L.AN / ("r" + route)
     out = []
     for f in sorted(p.glob("r" + route + "s*.npz")):
         out.append(int(f.stem[len("r" + route + "s"):]))
@@ -82,7 +82,7 @@ hdr("THE 20-28 Hz MODE ACROSS THE LADDER -- engaged, 5-65 km/h, median spectrum 
 print("   %-6s %-6s %7s %7s   %-24s %-24s" % ("route", "build", "segs", "win", "tq peak 20-28 Hz",
                                               "rate_c peak 20-28 Hz"))
 for route, build in LADDER:
-    p = L.AN / ("_cache_r" + route)
+    p = L.AN / ("r" + route)
     if not p.exists():
         print("   r%-5s %-6s  (no cache)" % (route, build))
         continue

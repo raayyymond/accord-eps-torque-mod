@@ -113,7 +113,7 @@ def xspec(x, y, fs, f0, bw=1.5):
 
 
 def run(route, rng):
-    z = np.load(ROOT / "analysis-2020accord" / f"_cache_r{route}" / f"r{route}.npz",
+    z = np.load(ROOT / "analysis-2020accord" / f"r{route}" / f"r{route}.npz",
                 allow_pickle=True)
     D = load(route)
     dt = float(np.median(np.diff(D["t"])))
