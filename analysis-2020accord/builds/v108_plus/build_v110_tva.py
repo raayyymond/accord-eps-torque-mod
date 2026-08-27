@@ -1,6 +1,56 @@
 #!/usr/bin/env python3
 r"""
-V110 -- V109 PLUS THE FIRST RATCHET LEVER THAT PASSES BOTH GATES.  Kd, 2048 -> 1024.
+V110 -- PARKED PERMANENTLY.  DO NOT FLASH.  The docstring below is KEPT AS THE AUDIT TRAIL,
+but its central claim -- that this build halves Kd -- is WRONG.  Read this header first.
+
+🛑🛑 TWO INDEPENDENT KILLS, EITHER ONE SUFFICIENT.  Recorded 2026-08-27.
+------------------------------------------------------------------------------------------------
+KILL 1 -- THE SIGN.  `Re(Z)` is measured to 35 Hz WITH PHASE on three drives (628 windows / 74
+episodes / 2145 s).  Rotating the firmware `H_D(f)` through the MEASURED `arg Z(f)` bin by bin:
+`cos(argZ + argH_D)` = **-0.802 at 7.79 Hz but +0.894 at 20 Hz**.  ⇒ D pumps at the ratchet and
+**DAMPS at 18-22 and 26-31 Hz -- the operator's own grinding bands.**  Pooled d = -0.2303
+[-0.2411,-0.2125] at 18-22, on all three drives independently, P(damping)=1.000.  Cutting Kd in half
+buys **+0.039 of ratchet benefit and pays +0.115 (2.96x) at 18-22 and +0.153 (3.92x) at 26-31.**
+⭐ Convention-free: whatever D does at the ratchet, it does the OPPOSITE in both grinding bands.
+⭐ Robust: 18-22 needs a channel skew of >= +8.6 ms to flip and 26-31 needs <= -5.9 ms --
+**OPPOSITE DIRECTIONS.  No single skew, and no low-pass at any corner, makes D pump in both.**
+
+KILL 2 -- 🛑 **THIS BUILD IS NOT "Kd 2048 -> 1024".  IT IS ONE KNOT OF A FOUR-KNOT LERP.**
+Byte-verified V109 vs V110 image: 5 bytes, `0xC6AE7 08->04` plus the CRC trailer.  `0xC6AE8`,
+`0xC6AEA` and `0xC6AEC` **remain 2048.**  Decompile of `0x3A382` (orchestrator-confirmed):
+
+    axis = gp-0x6ac0                             # motor / resolver rate
+    X = (50, 400, 1500, 3000)  @ 0xC6ADE/E0/E2/E4   <-- 0xC6ADE is X[0], NOT a separate gate cal
+    Y = (Y0, Y1,  Y2,   Y3  )  @ 0xC6AE6/E8/EA/EC
+      axis <=   50  ->  Y0 alone            <-- the ONLY place V110's edit acts alone
+      50 .. 400     ->  LERP(Y0, Y1)        <-- edit ramps out against a still-stock Y1 = 2048
+      400 .. 1500   ->  LERP(Y1, Y2)        <-- edit is NEVER READ at or above axis 400
+      1500 .. 3000  ->  LERP(Y2, Y3)
+      axis >= 3000  ->  Y3
+    enable: axis < 0x32C9 (12,993)           # so the edit touches the bottom ~0.4 % of the axis
+    Kd is then used as:  D = ((ERR[n] - ERR[n-1]) * Y_lerp) >> 10
+
+⭐ **AND THAT IS WORSE THAN INERT, NOT MERELY INERT.**  Stock Y is **FLAT 2048 at all four knots**,
+so the LERP is currently a CONSTANT.  A one-knot edit does not reduce a gain -- it **converts a
+constant into a rate-dependent function**, i.e. it INTRODUCES A NONLINEARITY THAT DOES NOT CURRENTLY
+EXIST, at 2x the oscillation frequency, inside a loop already known to be marginally stable.  That is
+a describing-function problem, not the clean linear gain cut this docstring analyses.
+⇒ On a flat table, a one-knot edit is NEVER a gain change.
+
+🛑 **AND THE KD LEVER AS A WHOLE IS CLOSED, NOT JUST THIS BUILD.**  The correct four-knot form
+(`0xC6AE6/E8/EA/EC` together, as `docs/review/GATE2-2026-08-11-cbe74-independent.md:150` already
+recommended) is exactly what makes KILL 1's cost real.  **Do not rebuild this properly.**
+
+🛑 **THE GATE-1 LESSON, and it generalises.**  The census below says "One reader (`0x3A460`),
+zero writers" and that is TRUE OF THE BYTES.  It is FALSE OF THE LEVER: Y0 is also reached through a
+**walked pointer** (`puVar11++`), which operand-text search structurally cannot see.
+⇒ **A GATE-1 census that counts ACCESSES to a cal cell cannot tell you whether the cell is a scalar
+or one knot of a table.  That requires reading the READER'S STRUCTURE.  Add it to GATE 1.**
+
+------------------------------------------------------------------------------------------------
+EVERYTHING BELOW THIS LINE IS THE ORIGINAL BUILD RATIONALE, PRESERVED UNCHANGED FOR THE AUDIT TRAIL.
+It is wrong where it says "Kd" without qualification.  Read it as history, not as a recommendation.
+------------------------------------------------------------------------------------------------
 
 WHAT THIS IS
 ------------

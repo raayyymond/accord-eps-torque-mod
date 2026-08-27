@@ -51,7 +51,7 @@ report; BELIEF that the mapping is causal** — one build, no rlogs, and no matc
 
 ⇒ **V109 IS THE NEXT BUILD, and now for a measured reason rather than a structural one.**
 
-### 🛑 V110 IS DEAD — killed by its own arithmetic, and the operator's report seals it
+### 🛑 V110 IS DEAD — TWO INDEPENDENT KILLS, and the second one closes the whole Kd lever
 `Re(Z)` **is** already measured to 35 Hz **with phase** on route 77 (`rlog-tools/studies/impedance/v92_rez_extend.py`,
 89,471 frames / 884.5 s engaged hands-off, 221 windows, all ten bands passing a pre-declared
 coh² ≥ 0.10 AND ≥ 5× shuffled gate). **There is no separate `G_bar(f)` unknown — the measured `arg Z(f)`
@@ -62,8 +62,96 @@ already contains the whole rotation, plant included.** The disputed memory's num
 the exact regime the operator just called the best it has ever been.**
 ⭐ **And 18–22 Hz is the BEST-CONDITIONED band in the whole sweep** — episode-parity split-half agrees to
 **2 % (r77), 1 % (r78), 15 % (r79)**. The conclusion rests on the most reliable band available.
-⇒ **V110 stays parked permanently unless something new appears.** My rejection of the "no computation
-behind it" refutation was correct, and it is now proven rather than merely plausible.
+⭐ **Now replicated on THREE drives** (628 windows / 74 episodes / 2145 s engaged hands-off): pooled
+`d = −0.2303 [−0.2411, −0.2125]` at 18–22 Hz, **−0.236 / −0.208 / −0.224 per drive**, P(damping) = 1.000.
+Halving Kd would remove **Δd = +0.1151**. At 26–31 Hz `d = −0.3049`, Δd = **+0.1525** — ⚠ heterogeneous
+(r79 is neutral at −0.0072), so the honest claim there is *"never helps"*, not a magnitude.
+⭐ **And it is robust in a way a single skew cannot defeat:** 18–22 Hz needs a channel skew ≥ **+8.6 ms**
+to flip, 26–31 Hz needs ≤ **−5.9 ms** — **OPPOSITE DIRECTIONS.** No single skew, and no torque-channel
+low-pass at any corner from 6 Hz to ∞, makes D pump in both grinding bands. The normalised `d` depends
+**only on `arg Z(f)`**, so every magnitude error — plant, the `rate_f` 0.7996 scale — cancels exactly.
+⚠ The one honest residual: pooled `arg Z` falls at **−7.80 deg/Hz** over 16–35 Hz, which *if it were all
+instrument delay* would be 21.7 ms and would flip 18–22. It is probably not delay — the phase **rises**
++30° from 3 → 7.79 Hz first, and a delay can only make phase fall — but it cannot be decomposed from the
+bus. Closing it needs an on-car gain-step system ID at 18–31 Hz.
+⊕ Crossover, pooled: **24.97 Hz [24.48, 25.35]**; per drive 25.40 / 24.07 / 23.97 ⇒ quote the
+between-drive spread **24.0–25.4 Hz**, since the per-drive bootstrap CIs do not overlap.
+
+#### 🛑🛑 KILL 2 — V110 IS NOT "Kd 2048→1024". IT IS **ONE KNOT OF A FOUR-KNOT LERP.**
+Independent of the sign, and **orchestrator-confirmed from the images and the decompile, not relayed.**
+Byte diff V109→V110 is 5 bytes: `0xC6AE7 08→04` plus the CRC trailer. **`0xC6AE8`/`EA`/`EC` all remain
+2048.** Decompile of `0x3A382`:
+```
+axis = gp-0x6ac0                                  # motor / resolver rate
+X = (50, 400, 1500, 3000) @ 0xC6ADE/E0/E2/E4      # 0xC6ADE is X[0], NOT a separate gate cal
+Y = (Y0, Y1,  Y2,   Y3 )  @ 0xC6AE6/E8/EA/EC
+  axis <=   50 -> Y0 alone          <-- the ONLY place V110's edit acts alone
+  50 ..   400  -> LERP(Y0, Y1)      <-- ramps out against a still-stock Y1 = 2048
+  400 ..  1500 -> LERP(Y1, Y2)      <-- the edit is NEVER READ at or above axis 400
+  1500 .. 3000 -> LERP(Y2, Y3);  axis >= 3000 -> Y3
+enable: axis < 0x32C9 (12,993)     =>  the edit touches the bottom ~0.4 % of the axis
+```
+⭐ **AND THAT IS WORSE THAN INERT.** Stock Y is **flat 2048 at all four knots**, so the LERP is
+currently a **constant**. A one-knot edit does not reduce a gain — it **converts a constant into a
+rate-dependent function**, introducing a nonlinearity that does not currently exist, at 2× the
+oscillation frequency, inside a loop already known to be marginally stable. Describing-function
+territory, not a linear gain cut. ⇒ **On a flat table, a one-knot edit is never a gain change.**
+
+⇒ **THE KD LEVER IS CLOSED, NOT JUST V110.** The correct four-knot form — which
+`docs/review/GATE2-2026-08-11-cbe74-independent.md:150` already recommended — is precisely what makes
+KILL 1's cost real. **Do not rebuild it properly.** V110's builder docstring has been corrected in
+place and the artifact stays on disk, parked, as the audit trail.
+
+#### 🛑 THE GATE-1 LESSON — add it to the gate
+V110's census said *"one reader (`0x3A460`), zero writers"*. **That is TRUE OF THE BYTES and FALSE OF
+THE LEVER**: Y0 is also reached through a **walked pointer** (`puVar11++`), the register-indirect form
+that operand-text search structurally cannot see. ⇒ **A GATE-1 census that counts ACCESSES to a cal
+cell cannot tell you whether the cell is a scalar or one knot of a table — that requires reading the
+READER'S STRUCTURE.** This is the same blind spot as `accord-gp4f60-two-encodings-enumeration-trap`,
+in a new costume.
+
+⇒ **V110 stays parked permanently.** My rejection of the "no computation behind it" refutation was
+correct, and it is now proven rather than merely plausible — but the build it was defending is dead
+anyway, for a reason that had nothing to do with the sign.
+⊕ **A method note worth keeping:** the 500-draw phase-randomised surrogate gives |z| ≈ 1 on `d`, and
+that is **NOT a failed control** — a random-phase null is the *wrong null* for `d`, which is a bounded
+arcsine quantity whose null is "phase is uniform". The correct uncertainty is the **episode bootstrap
+on the phase: ±5–6° against a 62° flip threshold.** Do not later read that z≈1 row as a refutation.
+
+#### THE FULL D-ROTATION COST LADDER, and where the argument is weakest
+```
+   band     d pooled   Δd on halving Kd   cost vs the +0.0389 ratchet benefit   flips at
+   6-9      +0.0779      -0.0389 (help)          --                        tau -18.7 ms
+   16-18    -0.1129      +0.0565                1.45x        ⚠ tau +5.2 ms, LP fc 27.3 Hz
+   18-22    -0.2303      +0.1151                2.96x           tau +8.6 ms, LP fc 10.8 Hz
+   22-26    -0.2898      +0.1449                3.72x           tau +9.3 ms, LP fc  4.1 Hz
+   26-31    -0.3049      +0.1525                3.92x           tau -5.9 ms, NO LP possible
+   31-35    -0.1124      +0.0562                1.44x           tau -1.3 ms
+```
+⚠ **16–18 Hz is the weakest link in the sweep** — it flips on only **+5.2 ms** of skew or a 27 Hz
+low-pass. **If the channel-defect argument is ever reopened, that is the band it will be won in, not
+18–22.** ⊕ **22–26 Hz is the most consistent band measured** (−0.2879 / −0.2993 / −0.2892 across three
+drives) and is where the crossover sits. 31–35 Hz is heterogeneous — do not lean on it.
+
+### 🛑 NAMING CORRECTION — the `Re(Z)` instrument is **bar torque ÷ MOTOR rate**
+The kit calls it a *"driving-point impedance"* throughout. It is not one. `0x18F[2:4]` STEER_ANGLE_RATE
+is **not independently sensed** — per `accord-gp6a56-is-motor-rate-not-an-angle-sensor` it is a fixed
+Q15 scale of `gp-0x6abe`, the **motor resolver electrical rate**. So `Z = tq / rate_f` is
+**torsion-bar torque ÷ motor rate.** ⚠ This is true of the **whole instrument — the 7.79 Hz anchor and
+the `mean(T·ω)` sign anchor included** — not just the 16–35 Hz extension, so **it changes no comparison
+and no verdict.** But the name is doing work it has not earned, and a future agent reading
+"driving-point impedance" will assume a column-side measurement that was never made.
+
+### 🛑 OPEN — one cave bit would settle "V110 inert" vs "V110 injects a nonlinearity"
+`gp-0x6ac0`, the Kd/Ki/Kp LERP axis, is the resolver/FOC electrical rate. Its **duty below 50 and below
+400** is exactly what separates the two readings, and **it is not on disk**: no cache carries
+`gp-0x6ac0`, and the adjacent `g6ac2` field is a **single BACKDRIVE bit** (`extract_r67_v81.py:266`),
+constant 1.0 on r77 and a **stale decode on V100+ routes**. The `rate_f → gp-0x6ac0` scale is also
+unknown, so even the shape would not give an absolute.
+⇒ **Two comparator rungs — `axis < 50` and `axis < 400` — give the duty directly.** Cheap, and it is
+the difference between *"V110 does nothing"* and *"V110 modulates Kd at 2× the oscillation frequency"*.
+⚠ **It does not reopen V110** — KILL 1 stands either way. Worth one bit the next time a cave is cut,
+because the same axis gates Ki and Kp.
 
 ### ✅ THE THREE V36-BLANKED CELLS ARE CLOSED — benign, correctly in force, and NOT a lever
 `0xC61C0` = **1600**, `0xC61C2` = **896**, `0xC61C4` = **1280** in stock; all three **`0xFFFF` since V36**
