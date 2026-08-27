@@ -109,6 +109,71 @@ a residual clamped at **±20,000** ⇒ **the term can reach 51 % of the residual
 Per [[accord-friction-polarity-more-assist]] (verified nine ways) it is a **direct assist reduction**,
 in the same direction that made V93/V94 unsafe to drive.
 
+## ✅ GATE 2 — DONE. NO PHASE RISK, BUT THE **SAME SIGN REVERSAL** THAT KILLED Kd.
+⭐ **THE KNEE ADDS ZERO PHASE, STRUCTURALLY.** `clamp(POL·gp-0x6abc·12 / knee, ±1)` is an **odd,
+memoryless** nonlinearity, so its describing function `N(A)` is **REAL for every input amplitude**:
+```
+   A <= k :  N = 1/k                                          k = knee/12
+   A >  k :  N = (1/k)(2/pi)[ asin(k/A) + (k/A)sqrt(1-(k/A)^2) ]
+```
+⇒ **raising the knee changes MAGNITUDE ONLY and cannot rotate anything into a new sector.**
+**GATE 2 does not block this lever** — the same structural argument V110's docstring made for Kd,
+and here it is exact rather than approximate.
+```
+  describing-function gain vs |gp-0x6abc| amplitude A
+     A      N(knee=600)  N(knee=2400)   ratio
+     25       0.02000      0.00500       0.250
+     50       0.02000      0.00500       0.250
+    100       0.01218      0.00500       0.411
+    200       0.00630      0.00500       0.794
+    400       0.00317      0.00304       0.959
+    800       0.00159      0.00157       0.990
+```
+⇒ a 600→2400 raise cuts this term **up to 4× at low rate and ≈1× above ~400 counts (85 °/s)**.
+
+🛑 **BUT THE LANE REVERSES SIGN BETWEEN THE RATCHET AND THE GRINDING BANDS.** The lane's own
+dynamics are one EMA, `cal(0xC40D0) = 408`, `α = 408/4096 = 0.0996` at 1 kHz ⇒ corner **15.9 Hz**.
+Rotating it through the **measured** `arg Z(f)` (three drives, 628 windows —
+[[accord-rez-antidamping-replicated-three-drives]]), exactly as the Kd verdict was computed:
+```
+  band     f Hz    |H_f|   argH_f   cos(argZ+argH)     |H|*cos
+  6-9      7.79   0.9063   -23.6      -/+ 0.865         0.784   <- the RATCHET
+  9-12    10.50   0.8467   -30.3      -/+ 0.994         0.842
+  12-16   14.00   0.7666   -37.5      -/+ 0.821         0.629
+  16-18   17.00   0.7011   -42.5      -/+ 0.321         0.225
+  18-22   20.00   0.6414   -46.6      +/- 0.254         0.163   <- the GRIND
+  22-26   24.00   0.5717   -50.9      +/- 0.602         0.344   <- the GRIND
+  26-31   28.50   0.5062   -54.6      +/- 0.983         0.497   <- the GRIND
+  31-35   33.00   0.4523   -57.3      +/- 0.815         0.369
+```
+⇒ **the sign flips between 16–18 and 18–22 Hz** — the same reversal, at almost the same place, that
+killed the Kd lever. And because the knee is a **magnitude-only** change it shrinks `|H|` in **every
+band simultaneously**: it necessarily helps one family and hurts the other.
+
+## 🛑 THE TRADE, PRICED — AND IT IS ~1.28:1, NOT Kd's 3–4:1
+Summing the three grinding bands equally against the ratchet band:
+```
+  benefit  6-9 Hz            0.784
+  cost     18-22+22-26+26-31 0.163 + 0.344 + 0.497 = 1.004
+  ratio    cost / benefit    1.28 : 1  AGAINST
+```
+⭐ **That is far better than Kd** (2.96× at 18–22 and 3.92× at 26–31 —
+[[accord-kd-is-one-knot-of-a-flat-lerp]]), **which is precisely why Kd is dead and this one is not.**
+⇒ **[EVIDENCE for the arithmetic; BELIEF for the weighting] the knee is a genuine TRADE, not a fix
+and not an obvious loss.** Whether 1.28:1 is worth taking depends on how the operator weights
+ratcheting against 18–31 Hz grinding — **that is his call, not a number this kit can settle.**
+⚠ The ratio assumes equal weight on three grinding bands and one ratchet band, and it assumes the
+kit's sign convention. **Under the inverted branch the trade simply runs the other way** — helping
+the grind at the ratchet's expense — and either way it is a trade.
+⚠ It also assumes the operating amplitude is **at or below ~200 counts** of `|gp-0x6abc|`; above
+~400 the knee raise does almost nothing (ratio 0.96–0.99). **V111 measures exactly that amplitude.**
+
+## ⭐ A SECOND FINDING FROM THE SAME READ: `0xC4080` = **0**
+The relay's constant offset term is **ZERO** in the flown image, so
+`friction = EMA(|model| · K1/1024 · fVar13)` with **no Coulomb floor**. ⇒ **the term vanishes when
+there is no command**, which confirms *"command-proportional Coulomb relay"*
+([[accord-engagement-amplifies-6-9hz]]) **at the instruction level** rather than by inference.
+
 ## ⭐⭐ THEREFORE THE NEXT BUILD IS A **PROBE**, NOT A DOSE — and it is zero-risk
 The design law says **compare, don't measure**, and **never spend a rung on a bare threshold against a
 distribution you have not seen.** Here the distribution IS known, through the sibling: `gp-0x6ac0`
