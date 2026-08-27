@@ -51,6 +51,50 @@ report; BELIEF that the mapping is causal** — one build, no rlogs, and no matc
 
 ⇒ **V109 IS THE NEXT BUILD, and now for a measured reason rather than a structural one.**
 
+### 🛑🛑 THE OPERATOR WAS RIGHT — THE GAIN STOPS DELIVERING AT LOW SPEED + HIGH COMMAND
+He pushed back on the `STEER_MAX` answer: *"I'm looking for a more structural limitation… one that does
+not scale with the 6x LKAS gain… it feels like the max angular velocity has not scaled 6x."* **Tested
+and confirmed.** `rlog-tools/studies/authority/gain_delivery_and_command_gate.py`; notes
+`accord-gain-stops-delivering-at-low-speed-high-command` + `accord-ratchet-and-grind-are-command-gated-saturation`.
+
+**Instrument:** angular acceleration in the commanded direction ∝ NET TORQUE at the instant. Ladder read
+from the images (`0xC6CD0` 891/3564/5346/7128 = 1×/4×/6×/8×), build per route from `probe_build`.
+Route-level p90, route bootstrap. **Ideal = 1.500.**
+```
+  ALL speeds, cmd>=3000    1.429 [1.134, 1.737]   <- the gain DOES reach the motor
+  <15 mph,    cmd>=2048    1.030 [0.694, 1.499]   <- it does NOT, here
+  15-45 mph,  cmd>=2048    1.814 [1.276, 2.522]   <- full delivery
+  RATIO-OF-RATIOS          0.557 [0.359, 0.909]   P(low<high) = 0.992
+```
+🛑 **AND A CORRECTION MADE MID-ANALYSIS:** the first pass omitted the hands-off mask and returned
+*"the gain scales NOWHERE"* (0.948 [0.748,1.182], no knee in any command bin). **That was the DRIVER** —
+at low speed his hands move the wheel and his torque swamps LKAS. D3 flipped the low-command bins to
+~1.50. ⭐ **Any cross-build torque or rate comparison at low speed is meaningless without a hands-off mask.**
+
+⭐⭐ **AND THE RATCHET RIDES THE SAME GATE — this is the ratcheting answer.** Band SHAPE (power
+normalised by 1–3 Hz in the same window), <20 mph, engaged, hands-off:
+```
+  fold-rise vs <1k cmd    3-5 ctl   6-9 RATCHET   10-13 ctl   14-18 ctl   20-26 grind
+  1k-2k                      0.7x         3.0x        0.7x        1.1x          4.0x
+  2k-3k                      0.6x         4.7x        0.7x        1.1x          5.7x
+  3k+                        1.9x        52.0x        3.3x       12.7x         11.8x
+```
+**Two control bands FALL while 6–9 Hz rises 3–4.7×.** A cornering confound lifts every band; this does
+the opposite. ⇒ **the ratcheting is SWITCHED ON by command magnitude — not a passively-excited
+resonance** — and the 20–26 Hz grind rides the same axis.
+⇒ 🛑 **[BELIEF, strongly supported] ONE saturating nonlinearity produces both symptoms**, in the same
+regime where extra gain stops buying torque. **Sixty builds hunted a LINEAR lever (a pole, a damper, a
+gain) for a COMMAND-TRIGGERED nonlinearity. A linear lever cannot fix a relay.** The target is the
+saturating element: raise its ceiling or soften its corner.
+
+**EXCLUDED already:** `0xC520C` (rate-indexed, first knot 222.8 °/s, struck by its own author) and the
+forward clamps `0xC61B2`/`B4` (**they scale exactly with the gain** — 512/2048/3072/4096 for 1×/4×/6×/8×,
+byte-verified V96→V110). **Still open:** the governor's vehicle-speed read (`0xC6316` ≈10 km/h); a shared
+base-assist+LKAS sum Honda's own curve already fills at low speed; or — not a lever — the **motor current
+limit**, since tyre scrub is highest at low speed. ⇒ **The discriminator is a delivered-torque or
+motor-current channel, which the corpus does not carry cleanly across the 4×/6× builds** (CAN 427 was
+repointed for probe use from V88 on). **That is the next telemetry to buy.**
+
 ### 🛑🛑 GOAL #5 IS ANSWERED, AND THE ANSWER IS NOT IN THE FIRMWARE
 **The low-speed steering-rate limit is COMMAND SATURATION at openpilot's `STEER_MAX` = 4096.**
 Measured 2026-08-27 from caches already on disk; reproducible via
