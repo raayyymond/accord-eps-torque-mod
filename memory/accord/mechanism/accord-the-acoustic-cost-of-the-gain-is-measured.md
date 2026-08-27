@@ -58,6 +58,42 @@ steering-rate band. **Two unrelated instruments, same conclusion: the gain carri
 [[accord-4x-lkas-gain-is-the-frozen-variable]] warns against recommending a gain cut. **The finding
 is a PRICE, not a prescription.**
 
+## ✅ AND IT IS **NOT COMMAND-MODULATED** — which closes a whole search direction
+The obvious follow-up: if the excess were switched on by command magnitude, the relay/knee story
+would reach it and V111 would measure the acoustic symptom too. **Tested. It does not.**
+**WITHIN-ENGAGED** contrast — high command (`|e4tq| >= 2048`) vs low command (`< 512`), **both arms
+engaged**, hands-off, <10 mph. ⭐ **This design has no engaged-vs-manual confound at all**, which is
+what made the earlier passes fragile.
+```
+  route  build       gain   MECH-FAR   n lo  n hi   vs own null
+  97     V9b-STOCK    1x       +0.81    283   189   OUTSIDE
+  77     V90          4x       +0.21    802  1305   OUTSIDE
+  79     V92          4x       +2.40    833   164   OUTSIDE
+  85     V100         4x       -0.72    150   190   OUTSIDE
+  a4     V104         6x       -0.13   1176   239   inside
+  a5     V105         6x       -0.41    556   371   OUTSIDE
+  a6     V106         6x       +1.31    672   336   OUTSIDE
+  1e     V107         6x       -2.42   1177   175   OUTSIDE
+  96 / 9e / 95        thin -- <150 high-command frames below 10 mph
+
+  BY GAIN:   1x +0.81 (n=1)   4x +0.63 (n=3)   6x -0.41 (n=4)
+```
+🛑 **Signs go BOTH WAYS, stock sits in the same range as the modified builds, and the gain means
+do not order.** Seven of eight routes are outside their own null, so the scatter is **real
+between-drive variation, not noise** — there is simply no command effect to find.
+⇒ **The acoustic excess is a LEVEL SHIFT TIED TO THE GAIN, not something command modulates.**
+
+## ⭐⭐ THE TWO SYMPTOM FAMILIES ARE NOW CLEANLY SEPARATED
+| family | instrument | command-gated? | lever |
+|---|---|---|---|
+| **6–9 Hz ratchet + 20–26 Hz grind** | steering RATE | **YES — 48× at matched rate**, two control bands falling ([[accord-ratchet-and-grind-are-command-gated-saturation]]) | the Coulomb relay knee; **V111 measures whether it is reachable** |
+| **60–400 Hz cabin noise** | AUDIO | **NO** — scatters both ways, stock in range | **none but the gain itself** |
+⇒ 🛑 **A command-domain lever cannot reach the acoustic symptom.** V111's probe is aimed at the
+ratchet family and **should not be expected to inform the acoustic one.**
+⇒ 🛑 **And the acoustic cost of 6× is therefore not reducible by any lever this kit has found** —
+only by moving the gain, which the operator does not want and
+[[accord-4x-lkas-gain-is-the-frozen-variable]] warns against recommending.
+
 ## ❌ THREE FRAMINGS THAT DIED ON THE WAY HERE — all the same error
 | framing | what killed it |
 |---|---|
