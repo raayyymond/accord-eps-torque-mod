@@ -61,7 +61,70 @@ nine ways: **more modelled friction = MORE assist.** ⇒ **raising the knee REDU
 unsafe when the *damper* was lowered (*"made the stuttering and grinding worse, by a lot"*).
 🛑 **DO NOT PROPOSE A KNEE DOSE UNTIL THE ASSIST COST IS PRICED IN COUNTS AT THE RATES THAT MATTER.**
 
-## WHAT IS STILL NEEDED BEFORE A BUILD
+## ✅ THE CRUX IS RESOLVED — `gp-0x6abc` IS ON THE SAME SCALE AS `gp-0x6ac0`
+**Decompile of `FUN_00041464`** (the writer), normal non-fault path:
+```
+sVar15 = gp-0x4f50                      # the source
+uVar18 = sVar15 * 0x400 ; uVar16 = EMA(uVar18, cal(0xC743C))
+gp-0x6abc <- sVar15                     # RAW, signed, unfiltered
+gp-0x6abe <- (short)(uVar16 >> 10)      # filtered, signed
+gp-0x6ac0 <- |uVar16| >> 10             # filtered, ABSOLUTE   <- the 0xC520C index
+gp-0x6ac2 <- |uVar16| >> 10, sign-gated against gp-0x6b98
+```
+⇒ **`gp-0x6abc`, `gp-0x6abe` and `gp-0x6ac0` are the SAME underlying quantity**, differing only in
+filtering and sign — `uVar16` is just `gp-0x4f50 × 1024` filtered, and the `>>10` undoes the `×1024`.
+**So `gp-0x6ac0`'s 4.7121 ct/(column °/s) scale transfers to `gp-0x6abc`.**
+⊕ Sanity: peak `gp-0x6ac0` on record is **1462 ct = 310 °/s**, consistent with the 400–500 °/s max
+steering rates measured directly from `ang`. **The scale is not assumed — it is derived and checked.**
+
+```
+   knee   saturates above        fVar13 at 10.6 deg/s
+    300      5.3 deg/s   STOCK          1.000
+    600     10.6 deg/s   V108           1.000     <- ON THE CAR
+    900     15.9                        0.666
+   1200     21.2                        0.499
+   1800     31.8                        0.333
+   2400     42.4                        0.250
+```
+⭐⭐ **V108's relay corner is 10.6 °/s — the bottom edge of the 8–20 °/s band in which the ratchet was
+isolated.** Stock's was 5.3 °/s, i.e. saturated essentially always.
+
+## ✅ GATE 1 — CLOSED, TWO METHODS AGREEING
+**Exactly ONE tp-relative access image-wide, at file `0x3BAB4`, inside `FUN_0003b8f6`.** Zero writers
+(ROM cal). Method 1: raw Python LE scan for `disp16 ∈ {0x50BC, 0x50BD}` filtered to `tp`/`gp` base.
+Method 2: the decompile itself shows exactly one use of `tp + 0x50bc` in the whole function, at the
+relay. **The two independently agree on both the count and the location.**
+⊕ Same for the other two factors: `0xC40D2` (K1) one hit at `0x3BAFE`; `0xC4080` (offset) one hit at
+`0x3BAF6`. Both inside the same function.
+⚠ **Residual, stated:** neither method can see register-indirect access to a cal. For a tp-relative
+ROM constant this is the same standard accepted for `0xC40DC`, but it is not zero.
+
+## 🛑 THE ASSIST COST, PRICED — AND IT IS **LARGE**
+`fVar13 = clamp(x/knee, ±1)` leaves `|fVar13|` **unchanged above `knee_new/12`** and scales it by
+`knee_old/knee_new` at the OLD corner. So a 600→2400 raise is a **4× cut at 10.6 °/s**, tapering to
+no change at 42.4 °/s — **the cut lands squarely in the ratchet band.**
+**Magnitude bound:** friction is clamped to ±10.0 float ⇒ `gp-0x6ae2` spans **±10,240 counts**, against
+a residual clamped at **±20,000** ⇒ **the term can reach 51 % of the residual range.**
+⇒ 🛑 **A 4× cut in a term that large is NOT a small edit, and modelling it is not good enough.**
+Per [[accord-friction-polarity-more-assist]] (verified nine ways) it is a **direct assist reduction**,
+in the same direction that made V93/V94 unsafe to drive.
+
+## ⭐⭐ THEREFORE THE NEXT BUILD IS A **PROBE**, NOT A DOSE — and it is zero-risk
+The design law says **compare, don't measure**, and **never spend a rung on a bare threshold against a
+distribution you have not seen.** Here the distribution IS known, through the sibling: `gp-0x6ac0`
+peaks at 1462 ct, so thresholds at 50 and 200 sit well inside it.
+```
+  rung A :  |gp-0x6abc| >= 50    "is the relay SATURATED at V108's knee?"      (10.6 deg/s)
+  rung B :  |gp-0x6abc| >= 200   "would a knee of 2400 STILL saturate?"        (42.4 deg/s)
+```
+⭐ **`(A=1, B=0)` is EXACTLY the population a 600→2400 knee raise would affect.** Its duty, stratified
+by speed and command post-hoc from the wire, **sizes the dose before a single byte of the relay moves.**
+⊕ Both are **single-operand** rungs against an immediate — they keep V96's proven cave discipline and
+need no second scratch register.
+⊕ If `(A=1, B=0)` duty is near zero in the symptomatic regime, **the knee lever is dead and no dose
+was ever spent** — the null is interpretable, which is the whole point.
+
+## WHAT IS STILL NEEDED BEFORE A BUILD (updated — items 1 and 2 now CLOSED)
 1. **The scale of `gp-0x6abc`.** If it shares the 4.7121 ct/(°/s) column-rate scale
    ([[reference-accord-rate-scale-4p7121-stands]]) then V108's knee saturates at **~10.6 °/s** —
    **inside the 8–20 °/s band where the ratchet was isolated.** ⚠ **NOT VERIFIED**; `gp-0x6abc` is a
