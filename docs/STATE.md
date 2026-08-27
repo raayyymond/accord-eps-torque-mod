@@ -51,6 +51,44 @@ report; BELIEF that the mapping is causal** — one build, no rlogs, and no matc
 
 ⇒ **V109 IS THE NEXT BUILD, and now for a measured reason rather than a structural one.**
 
+### ✅ V111 BUILT — THE RELAY PROBE.  3 PAYLOAD BYTES, NO CAVE EDIT, NO DOSE.
+```
+builder  analysis-2020accord/builds/v108_plus/build_v111_tva.py   36/36   BASE = V109
+image    9c4865cffd337cfb5d27f66843edbff928a8ffbf6f365e4fdeb7e98f7ddfb546
+.rwd     221d99c605d2d9d9f86b0788ba6f46621d9738b5b2f5d866ac2b31a81e63f42e
+0x55DF2  d4 93 -> 44 95    CAN-427 tap source  gp-0x6c2c -> gp-0x6abc  (THE RELAY INPUT)
+0x55E10  a5    -> a3       sar 5 -> sar 3
+3 payload bytes + 1 CRC trailer.  ZERO unattributed vs V109.
+```
+🛑 **IT CHANGES NO DYNAMICS CELL.** The relay knee, K1, the relay offset, alpha2, the 6× gain, the
+biquad and all four `gp-0x6b26` mode rows are asserted **byte-identical to V109**. The 164-byte cave
+is asserted byte-identical too, so every carried rung still means what routes `a5`/`a6`/`1e` measured.
+**No cave edit ⇒ outside this kit's only bricking class.**
+
+**WHAT IT MEASURES.** The full distribution of `|gp-0x6abc|` — the Coulomb relay's input — on the wire
+at 49.8 Hz, from which the relay's saturation duty at **any** candidate knee is computed post-hoc.
+```
+  (wire >= 31) AND NOT (wire >= 125)  ==  EXACTLY the population a knee 600 -> 2400 raise affects
+```
+Sizing at sar 3: peak 913/1023 (no ceiling), 1 count = 0.340 °/s, knee-600 lands at 31 counts and
+knee-2400 at 125. sar 2 would saturate. **Sized against a measured distribution** (the sibling
+`gp-0x6ac0` peaks at 1462 ct), not a guess.
+⭐ **If that duty is near zero where the operator feels the symptom, the knee lever is dead and no
+assist was ever spent.** The null is interpretable — which is why this is a probe and not a dose.
+
+🛑 **FLIGHT ORDER: V109 FIRST, THEN V111.** V109's tap still watches `gp-0x6c2c`, which V108's E5
+added specifically so the next drive could solve the `gp-0x6b26` Y row — open since V107.
+**Re-pointing the tap costs that solve.** V111 is the build AFTER V109, not instead of it.
+⊕ The tap re-point is a **proven** mechanism: V107 made exactly this edit at exactly these two
+addresses and flew fault-free as routes `1b`/`1e`; V108 then moved only the shift. Third use.
+
+⚠ **A guard caught a real defect during the build.** The inherited `V106B.assert_frozen` asserts
+V106's expected values, and V107 (tap), V108 (knee, sar) and V109 (alpha2) have legitimately moved
+four of them since — so it failed on correct edits. **Rebased to the V109-RELATIVE form**: every
+kit-frozen cell must equal THE BASE, with only the two deliberately-edited addresses exempt. That is
+both correct and stronger. 🛑 **Any future builder inheriting `V106B.FROZEN` has the same latent
+bug** — the table is three builds stale.
+
 ### ⭐⭐ THE COMMAND GATE SURVIVED ITS 2-D CONTROL — AND THE RELAY IS NOW **LOCATED IN THE CODE**
 **Control first** (the one that killed three other findings today): command and steering rate are
 correlated engaged, and the ratchet's rate-dependence is already known, so the command gate had to be
