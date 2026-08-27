@@ -32,7 +32,14 @@ episode-bootstrapped over 10 episodes:
 **V107's own builder predicted ≤1.05 % everywhere and REJECTED its alternative at 6.2 % as "V80 relay
 territory".** A railed acceleration term is `sign(α)·511` — a bang-bang Coulomb relay, V80's exact
 mechanism. 🛑 **The safety case could not see it: CAN 427 arrives at 49.8 Hz (Nyquist 24.9), and the
-lane's entire −3 dB band is above that.** The rail threshold shrank **1.42–2.71×** across 24–90 km/h
+lane's entire −3 dB band is above that.**
+🛑 **REFINED 2026-08-27 — that framing is right about SPECTRA and WRONG about DUTY.** Rail duty is
+`P(|c2c| ≥ thr(v))`, a functional of the **MARGINAL** distribution; the 427 tap samples instantaneous
+values, so its marginal is **UNBIASED** and only its SPECTRUM is aliased. **The measured duties are
+sound.** What the 49.8 Hz tap genuinely cannot do is see the **25–153 Hz band the lever ACTS ON** —
+which is why an α2 dose cannot be sized from it, and why **V107's error was a MODELLING error (an
+open-loop push-through applied to a closed loop), not an instrument error.**
+The rail threshold shrank **1.42–2.71×** across 24–90 km/h
 while **Y[0] stayed byte-identical below 20 km/h** — and the operator reports grinding at 15–40 mph and
 none below 5–6 mph. **The symptom map and the rail-duty map are the same map.**
 
@@ -49,6 +56,58 @@ Holding Y fixed, **engaged `|c2c|` alone gives 27× the rail duty of manual `|c2
 open-loop push-through (which assumes the input distribution is invariant to K) was **32× wrong**.
 Reached independently from the code and from the data. 🛑 **No open-loop duty prediction on this lane
 can be trusted again.**
+
+### ⭐⭐ THE CLOSED-LOOP TERM IS NOW MEASURED — 14-16x, AND IT IS THE SAME MAP AS THE SYMPTOM
+Median `|gp-0x6c2c|` engaged vs manual, matched speed, within route `1e`:
+```
+   <10 km/h    62.4 vs 22.4  =  2.79x     (n = 6248 / 20044)
+   10-25      974.4 vs 60.8  = 16.03x     (n = 14950 / 3921)
+   24-40      860.8 vs 52.8  = 16.30x     (n = 15483 / 2679)
+   40-64      560.0 vs 40.0  = 14.00x     (n = 30250 /  896)
+```
+⇒ **~94 % of the engaged acceleration signal is LOOP-GENERATED.** [EVIDENCE for the ratio; BELIEF that
+it is all loop — engagement also adds LKAS excitation, so 14-16x bounds the loop term ABOVE.]
+⭐ **2.79x below 10 km/h against 14-16x above it is the SAME MAP as the operator's "grinding at 15-40 mph,
+none below 5-6 mph" and the SAME MAP as the rail duty.** Three independent quantities, one shape.
+
+### ⭐ V108's OWN PREDICTION — the first quantified one this kit has made, and its method is held out
+An exact-integer reimplementation of the cascade, run per-sample over route `1e`, **reproduces the
+MEASURED rail duty on all five speed bins with nothing fitted**: 1.60 vs 1.68 · 33.52 vs 32.32 ·
+21.15 vs 21.27 · 5.19 vs 4.27 · [0.00,0.16] vs <=0.23 %. **HELD OUT on route `1b` — a different drive,
+same build — 33.76 % at 10-25 km/h against `1e`'s 33.52 %.**
+⇒ **V108's Y-row change alone is predicted to take 10-25 km/h rail duty from V107's measured 33.52 % to
+7.0-15.4 %** — roughly halving the relay duty. ⚠ Route `1b` also gives 31.88 % at 24-40 against `1e`'s
+21.15 % and 21.72 % at 40-64 against 5.19 %: **duty is strongly driving-dependent above 25 km/h.**
+🛑 **A CLOSED-LOOP SIMULATOR IS NOT AVAILABLE AND THE REASON IS STRUCTURAL.** The identified column model
+(`J_w` = 1.248, `b_w` = 35.8, corner 4.57 Hz) has a **measured validity band of 5-13 Hz**, while the lane
+peaks at 61.1 Hz with a -3 dB span of 25.1-153.0 Hz ⇒ **100 % of the lane's band, and its peak, lie above
+the plant's ceiling**, and above 13 Hz `|Z|/w` collapses 1.33 -> 0.45 for reasons the record itself
+records as unresolved (real plant, or an internal low-pass in the torque channel). `ClosedLoopSim` is
+implemented in `analysis-2020accord/model/eps_closed_loop_sim.py` and **refuses to run without
+`allow_extrapolation=True`; no number in this block came from it.**
+
+### 🛑 THE GHIDRA EMULATOR CANNOT VALIDATE THIS ARITHMETIC — three doors, three distinct reasons
+1. `emulate_function` is **hardcoded x86** — fails `"Undefined register: ESP"` on every V850 call
+   regardless of arguments; `V850:LE:32:default` has no ESP and nothing aliased to it. Server-side fix:
+   take the SP from `getDefaultCompilerSpec().getStackPointer()`. `emulate_hash_batch` shares the defect.
+2. `run_script_inline` is gated behind **`GHIDRA_MCP_ALLOW_SCRIPTS=1`**. Ghidra's own `EmulatorHelper`
+   IS language-agnostic and would work; that env var is the whole blocker.
+3. 🛑 **NEW — `get_function_pcode` is structurally insufficient to emulate from, and would have produced
+   a confident WRONG answer.** No block out-edges, and the decompiler's condition-normalisation flips
+   conditions while swapping edges (at `0x36C38`/`0x36CCE`/`0x36CEE` the inverted sense is right, at
+   `0x36C48` the non-inverted sense is right) ⇒ **polarity is unrecoverable**; and **SSA varnodes collapse
+   onto one `(space,offset)` key** (`u30300` is reused by the loads at `0x36C94`/`98`/`9C`).
+⇒ **The arithmetic is validated instead by THREE NON-EXECUTION METHODS THAT AGREE** — decompile,
+assembly, and the p-code IR — and the kit's mirrors are CORRECT. Confirmed at IR level: `INT_SEXT`x2 ->
+`INT_MULT` -> `INT_SRIGHT #6` (arithmetic) -> `INT_MULT #111` -> `INT_SRIGHT #12` (arithmetic).
+⊕ **Exact rail thresholds are 1063 / 1306 / 1959 ct** at 0/20/90 km/h — `sar` FLOORS, so the clamp is
+reached ~0.2 % earlier than the closed form's 1064.9/1308.5/1962.7.
+⊕ **The LERP divide is `INT_SDIV` (truncates toward zero), not floor** — identical for today's monotone
+Y rows, but **a non-monotone Y row would make a floor-division mirror off by one.**
+⊕ 🛑 **An unpriced nonlinearity: the `d32` clamp (±0xFA0000) saturates the lane** above an input of
+~10,320 ct @7.79 Hz, 3,944 @21.7, 1,961 @61.1, 1,668 @100. Above it the lane delivers 8-32 % of `|H|`.
+**The kit's whole alpha2 sweep table is a linear-`|H|` calculation.** Safe for the railing question
+(railing needs only ~88 ct of input at 61 Hz) but **NOT safe for broadband claims.**
 
 ### 🛑 E3 WAS BUILT AND PULLED — the pre-registration was honoured
 `0xC61BE` = 15360 is UPSTREAM of the 6× gain, so the lane's reach is `(clip × gain) >> 15` and has been

@@ -78,7 +78,7 @@ the peak to 3 dp. **Two derivations, one answer.**
 
 🛑 **WHY THE SAFETY CASE COULD NOT SEE IT.** Every duty number behind V107 came off CAN 427, which
 arrives at **49.8 Hz — Nyquist 24.9 Hz.** *The lane's entire −3 dB band is above that Nyquist.* The
-instrument was structurally blind to the passband of the thing it was sizing.
+instrument was structurally blind to the passband of the thing it was sizing. 🛑 **REFINED 2026-08-27 — that sentence is right about SPECTRA and WRONG about DUTY.** Rail duty is `P(|c2c| >= thr(v))`, a functional of the **MARGINAL** distribution; the 427 tap samples instantaneous values, so its marginal is UNBIASED and only its SPECTRUM is aliased. **The measured duties are sound.** What the 49.8 Hz tap genuinely cannot do is see the 25-153 Hz band the lever ACTS ON — which is why an alpha2 dose cannot be sized from it, and why V107's error was a **MODELLING** error (an open-loop push-through on a closed loop) rather than an instrument error.
 
 ### 1.3 TWO MORE MECHANISMS IN THE SAME BAND
 **[a] A PHASE SECTOR CROSSING AT 74.5 Hz [EVIDENCE].** The standing conclusion *"`gp-0x6b26` can never
