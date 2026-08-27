@@ -1,6 +1,6 @@
 ---
 name: reference_accord_gp6c2c_fanout_four_consumers_fun71272_fun7b022_traced
-description: "gp-0x6c2c fans out to FOUR reader functions (FUN_00036c12 friction lane, FUN_000428d4 oscillation detector x3, FUN_00071272, FUN_0007b022), not three -- confirms this agent's own 2026-08-22 count. FUN_00071272 and FUN_0007b022 (both previously 'unexamined') now traced: both use gp-0x6c2c as a pure per-tick MAGNITUDE (scaled float -> clamp/comparator/LERP-search), never differentiated/accumulated/phase-processed. FUN_0007b022's gp-0x6c2c sub-chain does NOT feed the gp-0x4f64 governor ceiling (positively ruled out, not just unconfirmed). Both functions' ultimate destinations (gp-0x4b0 flag byte; FUN_0007b022's chain past line ~977) remain untraced -- concrete open items. ADDENDUM: gp-0x6c2e (the sibling EMA2, cal 0xC40DA>>7, separate state gp-0x35a4) is PRODUCER-LEVEL INDEPENDENT of cal(0xC40DC) -- proven from a fresh FUN_00041464 decompile, not inferred -- and its own 3 consumers (FUN_00034350/34a72/36f30) are completely disjoint from gp-0x6c2c's 4. gp-0x6c2e feeds Honda's stock damper output gp-0x6bd0 and the K1 rate-lane gp-0x6bbe."
+description: "GATE 1 CLOSED, verdict SAFE. gp-0x6c2c fans out to FOUR reader functions (FUN_00036c12 friction lane -- the lever's target, FUN_000428d4 oscillation detector -- SAFE margin improves, FUN_00071272, FUN_0007b022), not three. FUN_00071272's flag byte gp-0x4b0 traced to a fixed record/log array (gp-0x26e8, 36B stride) -- not a command path. FUN_0007b022's chain traced to its true end: 4 of 5 possible output cells are DEAD (0 readers, triple-method), the 5th (gp-0x4f64 governor ceiling) is confirmed NOT fed by gp-0x6c2c in any of its 3 write branches. gp-0x6c2e (sibling EMA2, cal 0xC40DA>>7, separate state gp-0x35a4) is PRODUCER-LEVEL INDEPENDENT of cal(0xC40DC), proven from a fresh FUN_00041464 decompile; its 3 consumers (FUN_00034350/34a72/36f30, feeding Honda's stock damper gp-0x6bd0 and the K1 rate-lane gp-0x6bbe) are disjoint from gp-0x6c2c's 4. Two of this agent's own SSA-name-reuse misreads caught and corrected mid-trace, both documented."
 metadata:
   type: reference
 ---
@@ -170,6 +170,42 @@ signals (a 4-deep history buffer at `gp-0x6bc4..ca`; float reference channels at
 Closed, not open. Does not merge into or change the two real open items above (`gp-0x4b0`'s consumers;
 `FUN_0007b022`'s tail past line ~977) — it rules out one more way GATE 1 could have failed, on a strand a
 parallel agent raised, not one this agent had missed on its own pass.
+
+## ADDENDUM 2 2026-08-27 — BOTH OPEN ITEMS CLOSED. VERDICT: SAFE / SAFE / GATE 1 CLOSEABLE for
+`cal(0xC40DC)` 22->14. Two of my own SSA-name-reuse near-misses caught and corrected in this pass.
+
+### (a) `gp-0x4b0` (FUN_00071272's flag byte) -> a fixed record array, NOT a command path [EVIDENCE]
+Census: 11 hits, all inside `FUN_00071272` (3 `st.b` writes, one per phase-block; 6 `movea` address-only;
+1 `ld.bu` value read @`0x7532a`). Raw disasm at the read site: `FUN_0008253c(&ep_slot)` computes
+`ep_slot = gp-0x26e8 + gp-0x2786*0x24` (a 36-byte-stride record array indexed by `gp-0x2786`, a state
+selector `FUN_00082550` normalizes to 0/1 right after -- a 2-slot rotating log). gp-0x4b0's byte lands at
+record-offset `0x10` (`sst.b r12,0x10,ep`) alongside 8 other real signals. No `FUN_000462e6` (DTC
+dispatch) anywhere near it. **SAFE — record/log write, not torque command or fault raise.**
+🛑 Self-correction: first read of the DECOMPILE (not disasm) made me think this byte was overwritten 10
+lines later by a same-offset word write (`puStack_e8[1]=gp-0x3cc`, both looked like "+4"). Wrong — that
+"+4" is POINTER ARITHMETIC scaled by the inferred 4-byte element type (`puStack_e8+4` = +0x10 bytes),
+not raw bytes; the raw disasm resolves it cleanly (byte at ep+0x10, the word write at ep+0x4, no overlap).
+Caught via `disassemble_bytes(dry_run=true)` before reporting, not left in the record.
+Open, low-stakes: who reads the `gp-0x26e8` record array — not chased, doesn't gate the verdict.
+
+### (b) `FUN_0007b022`'s chain past line ~977 -> 4 of 5 possible exits are DEAD, the 5th is CLEARED [EVIDENCE]
+The tail (lines 1080-1259) is a 3-way branch on `uVar26`, each computing 5 outputs: `gp-0x4f52`,
+`gp-0x4e98`, `gp-0x4f64`/`gp-0x448a` (shadow-protected governor ceiling), `gp-0x4f66`, `gp-0x4ea2`.
+Triple-method output census (disp16 + 6-byte-extended + register-indirect, all agree): **`gp-0x4f52`,
+`gp-0x4e98`, `gp-0x4f66`, `gp-0x4ea2` each have 0 readers anywhere in the image** — dead writes, one
+per branch, all confirmed by all 3 methods. `gp-0x4f64` is the one live cell (8 readers, already on
+record); traced all 3 of its write-branch sources precisely: branch 0/2 fed by `gp+0x184` (traced to an
+unrelated chain at line ~590, per ADDENDUM 1); branch else fed by `gp+0x130`-derived `fVar45` (line
+1217) — **NOT gp-0x6c2c in any of the 3 branches.** Verdict does not depend on resolving every internal
+SSA hop of gp-0x6c2c's own sub-chain, because every possible EXIT is accounted for (4 dead, 1 cleared).
+🛑 Self-correction, second one this session on this function: believed `fVar45` at decompile line 1072
+was still the gp-0x6c2c-derived value from line 922. A precise line-ordered grep of every `fVar45`
+mention between 1064-1230 shows it is REASSIGNED at line 1068 (`fVar45=fVar47`, sourced from `gp+0x130`,
+unrelated) before that store. Caught by exhaustive grep-in-program-order, not by re-reading prose —
+worth repeating as method: **when SSA-reuse is suspected, grep every mention of the variable in file-line
+order and check each one for reassignment vs read; do not trust a remembered impression of the chain.**
+Not fully resolved (explicitly not claimed): where the TRUE gp-0x6c2c value goes after the line 1064-1065
+comparison (`if(fVar45<=fVar34) fVar34=max(0,fVar45)`) — irrelevant to the verdict per the output census.
 
 Related: [[accord-c40dc-is-the-band-limit-lever]] (the lever this gate is for),
 [[reference_accord_gp6c2c_gp6b26_fun36c12_chain_and_v106_gate1]] (the 2026-08-22 census this confirms and
