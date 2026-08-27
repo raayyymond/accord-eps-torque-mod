@@ -1,6 +1,6 @@
 ---
 name: accord-ratchet-and-grind-are-command-gated-saturation
-description: The 6-9 Hz ratchet and the 20-26 Hz grind are both SWITCHED ON by LKAS command magnitude (3.0x and 4.0x by 1k-2k counts, 52x and 11.8x by 3k+), band-specific with two control bands FALLING - and they switch on in the same regime where the 4x-to-6x gain step stops delivering torque. One saturating nonlinearity, two spectral signatures.
+description: The 6-9 Hz ratchet and the 20-26 Hz grind are both SWITCHED ON by LKAS command magnitude (3.0x and 4.0x by 1k-2k counts, 52x and 11.8x by 3k+), band-specific with two control bands FALLING. The COMMAND GATE is solid and controlled. The further claim that they are ONE nonlinearity is DOWNGRADED - its gain-delivery half was retracted and its odd-harmonic half is untestable through a Q=14-29 plant.
 metadata:
   node_type: memory
   type: reference
@@ -38,14 +38,14 @@ At **3k+** everything broadens, but 6–9 Hz rises **52×** against the next-lar
 ⇒ **The ratcheting is SWITCHED ON by command magnitude. It is not a constant background resonance
 being passively excited.**
 
-## 3. 🛑 AND THE GRIND RIDES THE SAME GATE
+## 3. AND THE GRIND RIDES THE SAME GATE (the gate is solid; "ONE nonlinearity" is not)
 20–26 Hz rises **4.0× / 5.7× / 11.8×** on the same axis. ⇒ **ratchet and grind are two spectral
 signatures of ONE command-gated nonlinearity**, not two independent defects. This is consistent with
 [[accord-engagement-amplifies-6-9hz]] measuring the mechanism as a **command-proportional Coulomb
 relay** — a relay is exactly what clipping under a large command produces, and stick-slip is exactly
 what the operator means by *"jerky instead of smooth"*.
 
-## 4. ⭐⭐ IT COINCIDES WITH WHERE THE GAIN STOPS DELIVERING
+## 4. ⚠ SUPERSEDED -- "IT COINCIDES WITH WHERE THE GAIN STOPS DELIVERING"
 Same corpus, same hands-off mask: the **4× → 6× gain step delivers 1.03× [0.69, 1.50] below 15 mph at
 `|cmd| ≥ 2048`, against 1.81× [1.28, 2.52] at 15–45 mph** (ideal 1.500); ratio-of-ratios
 **0.557 [0.359, 0.909]**, P(low < high) = **0.992**. See
