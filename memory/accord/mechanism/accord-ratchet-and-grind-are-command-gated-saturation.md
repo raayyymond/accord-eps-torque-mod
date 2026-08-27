@@ -39,8 +39,10 @@ At **3k+** everything broadens, but 6–9 Hz rises **52×** against the next-lar
 being passively excited.**
 
 ## 3. AND THE GRIND RIDES THE SAME GATE (the gate is solid; "ONE nonlinearity" is not)
-20–26 Hz rises **4.0× / 5.7× / 11.8×** on the same axis. ⇒ **ratchet and grind are two spectral
-signatures of ONE command-gated nonlinearity**, not two independent defects. This is consistent with
+20–26 Hz rises **4.0× / 5.7× / 11.8×** on the same axis. ⇒ **both bands share a COMMAND GATE.**
+⚠ **That is ALL this shows.** The stronger reading — two signatures of ONE nonlinearity — is a
+BELIEF whose two supporting arguments have both since failed: the gain-delivery half was RETRACTED
+and the odd-harmonic half is UNTESTABLE through a Q=14–29 plant (see §4 and the block below). This is consistent with
 [[accord-engagement-amplifies-6-9hz]] measuring the mechanism as a **command-proportional Coulomb
 relay** — a relay is exactly what clipping under a large command produces, and stick-slip is exactly
 what the operator means by *"jerky instead of smooth"*.
