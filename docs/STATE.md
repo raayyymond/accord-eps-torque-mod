@@ -65,6 +65,48 @@ the exact regime the operator just called the best it has ever been.**
 ⇒ **V110 stays parked permanently unless something new appears.** My rejection of the "no computation
 behind it" refutation was correct, and it is now proven rather than merely plausible.
 
+### ✅ THE THREE V36-BLANKED CELLS ARE CLOSED — benign, correctly in force, and NOT a lever
+`0xC61C0` = **1600**, `0xC61C2` = **896**, `0xC61C4` = **1280** in stock; all three **`0xFFFF` since V36**
+and byte-identical through V110. **12 reads, 0 writers**, exactly as flagged — four each in
+`FUN_00028ea6` and `FUN_0002a30e`, all `ld.hu`, implementing one **4-tier OR-envelope**:
+```
+   torque > cal(0xC64B4)=112 (rise) / 0xC64B5=96 (hold)          [torque alone]
+     OR  rate > cal(0xC61C0)=1600                                 [rate alone]
+     OR (torque > 0xC64B7=64  AND rate > 0xC61C2=896)             [combined A]
+     OR (torque > 0xC64B6=54  AND rate > 0xC61C4=1280)            [combined B]
+   -> 5 consecutive qualifying cycles (cal(0xC64E2)=5) -> STEER_STATUS = 4
+```
+⇒ **`0xFFFF` disables the three RATE arms, leaving the torque-alone arm.** This is exactly the
+gentle-EME fix the record describes, **validated on-car by V37 (2026-07-14) and correctly still in
+force.** ⚠ **NOT a lever for anything currently being chased**: it is a level-threshold + 5-cycle
+debounce, so **it cannot produce an in-band oscillation by construction**; it watches different signals
+from the ratchet's `gp-0x6b26`/`gp-0x6c2c` path; and when it fires it writes **three status bytes and
+nothing in the torque chain.** Max steering rate is `0xC61BE`, a different cell (byte-stock through
+V110). **Do not touch these.**
+
+⭐ **AND IT CLOSED A MUCH OLDER QUESTION.** The record's long-standing *"the actual assist-reduction
+instruction during the felt cut is still unlocated"* (2026-07-14) is at least partly answered:
+`STEER_STATUS` outside {0,1,2} **blocks an increment of `gp-0x69b0` and a state advance** — a real
+gating effect, not a report:
+```
+   0x2a55a  ld.bu -0x6807,gp,r14        ; STEER_STATUS
+   0x2a56a  jr 0x2a890                  ; 3,4,5,6,7 -> BAIL
+   0x2a572  ld.hu 0x73f8,tp,r14         ; else cal(0xC63F8) = 33
+   0x2a588  st.h  r11,-0x69b0,gp        ; gp-0x69b0 += 33
+```
+Since `gp-0x69b0` is the **Q15 multiplier gating the whole LKAS block** (established separately this
+session, `0x2A1E6 mul r14,r9,r0`), **the felt cut is not a hard zero — it is a STALLED RAMP**, which
+fits "gentle" far better than a hard cut and is consistent with V37 having fixed it on-car.
+⚠ **BELIEF** — the `gp-0x69b0`→motor chain was not re-traced in that pass.
+
+🛑 **AND THE UNDERCOUNTING TRAP REPRODUCED CONCRETELY, WITH A NEW CAUSE.** `FUN_0002a30e`'s Ghidra body
+**stops at `0x2A507`** (a `dispose` epilogue on one exit path mis-detected as the function end), but the
+code continues contiguously to at least **`0x2A8A6`**. `get_function_by_address` returns *"No function
+found"* for that whole region ⇒ **`search_instructions` found 32 reads of `gp-0x6807` where a raw byte
+scan found 40. Eight real reads were invisible.** ⭐ **Code that is disassemblable but NOT
+function-bound is invisible to `search_instructions`** — that is the mechanism behind this trap, stated
+concretely for the first time. ⊕ `get_bulk_xrefs` gave its false *"no references"* a **fifth** time.
+
 ### 🛑 A MEASUREMENT-DISCIPLINE FINDING ONE LEVEL UP FROM THE STANDING RULE
 Crossover frequency (`Re(Z)` = 0), episode-bootstrapped per drive:
 **r77 25.40 [24.93, 25.72] · r78 24.07 [23.67, 24.30] · r79 23.97 [23.81, 24.17].**
