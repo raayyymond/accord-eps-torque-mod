@@ -33,6 +33,47 @@ By command bin, `<15 mph`: 512–1k **1.494 [1.333,1.655]** · 1k–2k **1.533 [
 2k–3k **0.798** · 3k–4095 1.462 · RAIL **1.089 [0.749,1.593]**.
 ⇒ **At low command the gain delivers exactly as designed. It fails at low speed AND high command.**
 
+## ⭐⭐ CONFIRMED **WITHIN-ROUTE** — the road/driving confound cancelled
+The result above is a BETWEEN-route comparison (different drives, different roads), which is its
+weakest feature. The within-route version removes that: for **each route**, take the ratio of p90
+acceleration at (<15 mph, `|cmd|≥2048`) to (15–45 mph, same command), then compare that ratio
+between arms. Road, driving style and drive-to-drive variation cancel inside each route.
+```
+  4x  r77 2.333 | r78 1.000 | r79 5.000 | r7e 0.833 | r7f 2.500 | r85 1.500   mean 2.194
+  6x  r96 1.000 | r9e 0.800 | ra4 1.200 | ra5 1.333 | ra6 1.667 | r1e 0.769   mean 1.128
+  6x/4x of the WITHIN-ROUTE ratio = 0.514  [0.310, 0.944]   P(<1) = 0.985
+```
+⭐ **AND THE VARIANCE COLLAPSES.** The 4× arm spans **0.83–5.00**; the 6× arm spans **0.77–1.67**,
+every route pinned near 1.0. **Being pinned to a common value across six independent drives is a
+CEILING SIGNATURE** — it is what saturation looks like and what a road confound does not.
+⇒ At 4×, low speed delivered **2.19×** the high-speed acceleration; at 6× only **1.13×**. The
+low-speed advantage is absorbed when the gain goes to 6×.
+
+## 🛑🛑 WHY V108's E3 NULL MISSED THIS — AND WHY E3 WAS STILL RIGHT
+`build_v108_tva.py` E3 pre-registered: *"if achieved rate keeps rising to the top of the command
+range, nothing in this lane saturates, the clip is idle"*, measured p90 **rate** top-vs-low-half and
+got 3.89 / 3.12 / 2.91 / 2.62 / 2.14, every CI excluding 1.0 ⇒ **PULLED `0xC61BE`.**
+⊕ **That null REPLICATES.** Re-run on the six routes with real low-speed exposure (E3 used `r1e`
+alone, the least symptomatic low-speed route in the corpus — 7.5 % rail duty below 6 mph against
+r77's 40 %), the bin-to-bin step ratios stay at 0.85–2.27 with **no collapse toward 1.0 at the top**
+on any route. **There is no clamp being hit. E3's decision was correct.**
+⇒ ⭐ **BUT RATE IS AN INTEGRAL.** A torque ceiling flattens **acceleration** while **rate keeps
+rising**, because the capped torque is simply held for longer. **A rate-vs-command test is
+structurally blind to a torque ceiling.** E3 was right about `0xC61BE` and could not have seen this.
+🛑 **METHOD RULE: to test for a torque/authority ceiling, measure ACCELERATION, not rate.**
+
+## ❌ REFUTED IN THE SAME PASS — IT IS NOT STICK-SLIP
+Hypothesis: at low speed under a large command the rack sticks and breaks away, so "acceleration"
+is set by the static→kinetic friction step rather than by applied torque. **Tested and refuted by
+its own test.** Fraction of hands-off engaged time with `|rate| < 2.5 deg/s`, pooled over 14 routes:
+```
+  <15 mph   cmd <512  0.6090 | 0.5-1k 0.2094 | 1-2k 0.0791 | 2-3k 0.0272 | 3k+ 0.0089
+  15-40     cmd <512  0.7446 | 0.5-1k 0.3426 | 1-2k 0.0937 | 2-3k 0.0290 | 3k+ 0.0171
+```
+**Stuck duty FALLS monotonically with command — 0.9 % at high command.** The wheel moves
+essentially continuously. ⇒ **not stick-slip at the "wheel stops" level.** Recorded because it was
+a plausible, attractive hypothesis that fit the operator's wording, and it is wrong.
+
 ## 🛑 THE CORRECTION THAT MADE THIS REAL — hands-on contamination
 The **first** pass omitted the hands-off mask and returned "the gain scales NOWHERE" — ratio
 0.948 [0.748, 1.182] at `|cmd| ≥ 3000`, `<15 mph`, and ~1.0 in **every** command bin with no knee.
