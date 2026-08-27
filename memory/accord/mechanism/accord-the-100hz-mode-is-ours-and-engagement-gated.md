@@ -57,6 +57,44 @@ FALL ([[accord-ratchet-and-grind-are-command-gated-saturation]]).
 ⇒ 🛑 **[BELIEF] the ~100 Hz mode is a DIFFERENT mechanism from the 7.8 Hz ratchet and the 20–26 Hz
 grind.** It is engagement-gated; they are command-gated. **Do not assume one fix covers both.**
 
+## ✅ IT IS **FIXED IN FREQUENCY** — NOT AN ELECTRICAL ORDER, NOT A MOVING LINE
+The obvious mechanical suspect for a ~100/200 Hz pair under high motor current is **PMSM 6th/12th
+electrical-order torque ripple**, whose amplitude scales with current (hence with gain) and which is
+absent when the motor is unloaded (hence engagement-gated). **It fits every qualitative fact.**
+**Tested and EXCLUDED.** Spectral centroid over the 80–250 Hz third-octaves, engaged, hands-off,
+<15 mph, binned by `|steering rate|`:
+```
+  route   0-5 deg/s   5-15   15-40    40+     span
+  r85        119.1    118.3  115.2   114.4   -4.6 Hz
+  r95        120.1    118.3  119.2   121.6   +1.5
+  r96        120.0    119.9  119.8   121.1   +1.1
+  r97        125.6    127.9  135.7   130.7   +5.1   (STOCK)
+  r9e        118.5    119.2  121.1   118.9   +0.4
+  ra4        118.7    120.9  120.5   117.0   -1.7
+```
+⭐ **An electrical order would move ~40× across that rate span. It moves ~1.04×.** The excluded
+effect size is enormous relative to the resolution, so **this is a DECISIVE null**, not an
+underpowered one — unlike the odd-harmonic test in
+[[accord-ratchet-and-grind-are-command-gated-saturation]], which had no dynamic range at all.
+
+⇒ **[BELIEF, well supported] the ~100–120 Hz mode is a FIXED STRUCTURAL RESONANCE being EXCITED by
+engagement, with amplitude proportional to gain.** Same structure as the 7.79 Hz ratchet — a
+resonance sets the FREQUENCY, the loop sets the AMPLITUDE — but an octave and a half higher.
+⚠ The centroid sits at **~119 Hz**, between the 100 and 125 Hz third-octaves, so *"around a hundred
+hertz"* is closer to **100–125 Hz**. The operator's second, higher mode is not separately resolved by
+these five bands.
+
+🛑 **CONSEQUENCE: the frequency cannot be moved, only the excitation reduced.** Do not look for a
+lever that shifts this line — look for one that feeds it less.
+
+⊕ **A staircase artefact was considered and dropped**: 100 Hz is a real firmware rate (the CAN-TX
+base tick, [[accord-can-tx-100hz-base-tick-and-gateway]]), so a 100 Hz command zero-order-held into
+the 1 kHz control task would step 100×/s with step size proportional to gain. **But the LKAS lane is
+a ~1–5 Hz low-pass** ([[reference-accord-lkas-lane-is-a-lowpass]]) — a 100 Hz staircase is attenuated
+to nothing before the motor. ⚠ **And the wire test for it is impossible**: the caches are sampled at
+**101.1 Hz**, exactly the rate in question, so they cannot distinguish a 100 Hz command update from
+the cache's own resampling. **Do not attempt that measurement on this corpus.**
+
 ## WHAT THIS MEANS FOR THE HUNT
 - The operator's low-speed complaint is **at least two separate things**: a command-gated pair at
   7.8 / 20–26 Hz, and an engagement-gated mode near 100 Hz that no CAN channel can see.
