@@ -19,6 +19,39 @@ E3  0xC61BE      BUILT AT 16384, THEN **PULLED** ON ITS OWN PRE-REGISTERED NULL.
 ```
 
 
+
+### 🛑🛑 THE VISIBLE OSCILLATION IS **OPENPILOT'S WEAVE**, NOT THE EPS — AND IT IS A SEPARATE DEFECT
+Route `1e`, 998.9 s engaged / 338.6 s manual, 10 episodes. Full note:
+`memory/accord/mechanism/accord-visible-oscillation-is-openpilots-weave.md`.
+**46 events covering 17.3 % of engaged time, up to 24.02° p2p = 77.6 mm at the rim, at 0.44–2.93 Hz.**
+🛑 **His "under or around 10 Hz" is really 0.4–1.6 Hz — above 4 Hz the angle NEVER reaches a centimetre
+on any engaged window (4–6.3 Hz max 4.3 mm; 6.3–10 Hz max 3.6 mm).** Every earlier search scanned
+4–10 Hz and was structurally incapable of finding it.
+```
+  angle phase vs COMMAND   all 46: +46.8 deg [+29.4,+71.3] R=0.581, angle LAGS in 72 %
+                     near-straight: +63.3 deg              R=0.740, angle LAGS in 85 %
+                     1.0-1.6 Hz median lag +0.088 s  <- sits on steerActuatorDelay = 0.100 s
+  angle phase vs DRIVER TORQUE   -63.2 deg [-88.1,-24.8]  => the HANDS REACT to the wheel
+  car follows the wheel kinematically in EVERY event (yaw/prediction p50 1.17, range 0.73-1.61)
+  engaged/manual angle PSD, speed-stratified, 0.4-3.5 Hz:  0.022-0.21  => engaged is 5-45x QUIETER
+```
+⇒ **[BELIEF, strongly supported] a limit cycle in openpilot's own lateral loop.** The EPS-originated
+signature (angle leading command) is a **28 % minority** with the pooled CI excluding zero on the wrong
+side, the car yaws with the wheel every time (excluding a column/rack torsional mode), and the driver's
+hands lag. ⭐ **It explains why sixty firmware builds never moved it: there was never a firmware lever
+on it.** 🛑 `feedback-no-openpilot-side-modifications` is standing — **the operator's call, not ours.**
+🛑 **AND IT IS NOT THE GRINDING.** Inside events vs speed-matched engaged baseline: rail duty **1.01
+[0.88, 1.22]**, audio 100 Hz–2 kHz **+0.50 dB [−1.18, +2.54]** against a control spread of [−6.2, +7.9].
+**Two independent defects; V109 and any successor must target them separately.**
+⚠ **The one thing that could change it:** manual exposure above 24 km/h on `1e` is **35.8 s total**, so
+the >24 km/h rate ratios rest on 0–2 manual events and the stratified PSD only has cells at 6–36 km/h —
+while **5 of the 13 near-straight events are at 39–76 km/h.** Closes with deliberate matched manual
+segments at 50–80 km/h on the same road.
+⭐ **METHOD LESSON:** a single wideband 0.4–3 Hz detector would have found **nothing** — at these
+amplitudes a 0.45 Hz cornering input destroys the zero-crossings of a small 1.2 Hz limit cycle riding on
+it. Five sub-bands found it. Controls passed first, including a **ringing control** (impulse/step/ramp
+through every band filter, **zero spurious chains in 15 combinations**).
+
 ### ⭐⭐ V109 BUILT — `0xC40DC` (α2) 22 → 14. **GATE 1 AND GATE 2 BOTH CLOSED.**
 ```
 V109 image  e9eb51fcad9ffc8768cd3e8eb601619d0f2acc0f702f01c4732243c70cc7f4d6
