@@ -89,6 +89,41 @@ kit-frozen cell must equal THE BASE, with only the two deliberately-edited addre
 both correct and stronger. 🛑 **Any future builder inheriting `V106B.FROZEN` has the same latent
 bug** — the table is three builds stale.
 
+### 🛑⭐ THE ACOUSTIC COST OF THE GAIN IS MEASURED — **+1.16 dB from 4× to 6×**
+Full note: `memory/accord/mechanism/accord-the-acoustic-cost-of-the-gain-is-measured.md`.
+Eleven-route audio spectrogram ladder built this session (`rlog-tools/decode/extract_route_audio.py`),
+**with a STOCK arm**. Statistic = **MECH (60–400 Hz) − FAR (1200–2000 Hz)**, engaged-minus-manual,
+matched speed <10 mph, hands-off, within drive.
+```
+  gain   n     MECH     FAR   MECH-FAR        6x - 4x = +1.158 dB
+   1x    1    +0.01   +0.74     -0.73                   [+0.475, +1.817]
+   4x    3    +0.36   +1.16     -0.80                   P(>0) = 1.000
+   6x    6    +0.95   +0.58     +0.36         8 of 9 routes outside their own null
+   8x    1    +2.01   +0.39     +1.62         n=1 for stock and 8x -- not tested levels
+```
+🛑 **FAR IS NOT OPTIONAL** — it rises too (+0.74 on stock, +1.16 at 4×), which proves the engaged
+and manual segments differ in ways that lift the WHOLE spectrum. **Every single-band
+engaged-minus-manual claim on this corpus is confounded by that**, and that is exactly how three
+earlier framings died today.
+⇒ **The 6× costs ~1.2 dB of steering-band cabin noise over 4×. Goals #1 and #4 are in tension
+THROUGH THE GAIN ITSELF, and the tension is now numeric.** ⊕ Independently consistent with
+`accord-the-8x-gain-is-the-carrier`, reached from the 20–26 Hz steering-rate band — two unrelated
+instruments, same conclusion. 🛑 **It is a PRICE, not a prescription**: the operator wants 6×, and
+`accord-4x-lkas-gain-is-the-frozen-variable` warns against recommending a gain cut.
+
+❌ **THREE FRAMINGS DIED GETTING HERE, ALL THE SAME ERROR** — a narrow-band acoustic claim with no
+adjacent-band control: *"the ≈100 Hz mode is ours"* (controls rise equally; residual ≤ 0 on 6 of 10),
+*"an 83.5 Hz comb is the grinding"* (**stock fires too**; the comb estimator has a sub-harmonic
+ambiguity), and *"PMSM 6th/12th torque ripple"* (decisively excluded — an order moves 40× across the
+rate span, the centroid moves 1.04×).
+⭐ **RULE, and the steering-rate work already followed it:** a narrow-band acoustic claim needs
+**adjacent control bands**, and an *"it is ours"* claim needs the **STOCK arm BEFORE publishing.**
+
+🛑 **V109's ENDPOINT, RESTATED:** score V109 against V108 on **MECH − FAR**, same road, same driver.
+Not a comb, not a single band. ⚠ And V109's α2 cut is band-limited to 61–300 Hz while the excess is
+broadband over 60–400 Hz — **it is NOT "aimed squarely" at this**, and the note claiming so was
+corrected. **The V109 drive MUST capture audio** or the endpoint is unmeasurable.
+
 ### ⭐⭐ THE COMMAND GATE SURVIVED ITS 2-D CONTROL — AND THE RELAY IS NOW **LOCATED IN THE CODE**
 **Control first** (the one that killed three other findings today): command and steering rate are
 correlated engaged, and the ratchet's rate-dependence is already known, so the command gate had to be
