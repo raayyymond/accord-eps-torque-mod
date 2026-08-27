@@ -42,7 +42,7 @@ Sign chain confirmed clean: `gp-0x6752` boot-static +1, ADDED into aggregator, n
 
 ## 🛑🛑 V43 lineage correction — the image value is 32, a "64" in some record is stale print text
 
-`build_v43_tva.py` sets `POLE_NEW = 32` in code (asserted against RWD readback) but its OWN closing
+`builds/v18_v49/build_v43_tva.py` sets `POLE_NEW = 32` in code (asserted against RWD readback) but its OWN closing
 print statement says "1024 -> 64" — leftover from an earlier draft before the target band was corrected
 from an assumed 30-50Hz to the measured 21.02Hz. **The actual flashed/reverted value was 32, not 64.**
 
@@ -89,5 +89,5 @@ a derivative is already zero at steady state). Zero hits in any `build_v*_tva.py
 ## Related
 [[reference_accord_gp6b4a_direct_lkas_term_and_v41_lineage_correction]] — same PID's other input path,
 term 0, from the immediately-prior task this session.
-`docs/GATE2-2026-08-11-cbe74-independent.md` — full writeup, plus the completed (unrelated, positive
+`docs/review/GATE2-2026-08-11-cbe74-independent.md` — full writeup, plus the completed (unrelated, positive
 clearance) `0xCBE74`/`gp-0x6b26` GATE-2 review kept as an appendix.

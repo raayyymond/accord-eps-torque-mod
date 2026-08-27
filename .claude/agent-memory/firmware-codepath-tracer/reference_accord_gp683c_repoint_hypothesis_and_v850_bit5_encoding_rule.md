@@ -78,7 +78,7 @@ branch-target-address text collisions (`0x74454`/`0x77406`/`0x77416`, all `br` m
 183,429-instruction analyzed corpus -- no monitor/shadow function independently re-derives either value.
 Current values (fresh `read_memory`, `0xC6440..0xC6446`): `0xC6440=2048`(r24 state>=5), `0xC6442=1024`(r24
 671d unity), `0xC6444=512`(r26 683c-arm), `0xC6446=512`(r24 683c-arm) -- all Q10, all match the existing
-record exactly. **CRC block**: `CAL_BLOCK=(0xC6000,0xC6FFC)` per `build_v53_tva.py` line 147 -- same single
+record exactly. **CRC block**: `CAL_BLOCK=(0xC6000,0xC6FFC)` per `builds/v50_v79/build_v53_tva.py` line 147 -- same single
 CRC-covered block as the rest of this cal cluster and as V57's edit, no cross-block complication.
 
 ## 5. LKAS-active-byte candidate evaluation [EVIDENCE + one semantic correction]

@@ -1,6 +1,6 @@
 ---
 name: reference_accord_gp6752_resolved_negative_one_and_pid_polarity_reversal
-description: "🛑🛑 RESOLVES the kit's long-open 'gp-0x6752 sign unknown' question -- it is -1, not +1, on this car (A160), confirmed at the instruction level from the boot-time config-record table at flash 0x1000. gp-0x6752 is a literal +/-1 multiply on FUN_0003a382's ENTIRE (P+I+D) PID combine (not per-term). 🛑 CORRECTED 2026-08-20 (later, same day): the FIRST version of this file's 'consequence' section misapplied this fact to GATE2's own PUMP/DAMP LABELS and got the net classification backwards. GATE2 uses a DIFFERENT, internally-consistent sign convention (in-phase-with-velocity = pumping, i.e. the opposite of the kit's canonical Re(Z) tool, which defines in-phase = damping -- verified numerically against rlog-tools/decode_v90_probe.py's actual _band_transfer code). Once BOTH the convention mismatch AND the true gp-0x6752 value are applied to GATE2's RAW NUMBERS (not its labels), the answer is: D PUMPS, P and I DAMP at 6-9Hz -- i.e. GATE2's ORIGINAL headline ('D is the sole pumping term') is RECOVERED, now on verified footing instead of an assumed +1 polarity. r24/r26's pumping conclusion (ratchet-inertia's estimate, which used the correct convention from the start) is UNAFFECTED and stands."
+description: "🛑🛑 RESOLVES the kit's long-open 'gp-0x6752 sign unknown' question -- it is -1, not +1, on this car (A160), confirmed at the instruction level from the boot-time config-record table at flash 0x1000. gp-0x6752 is a literal +/-1 multiply on FUN_0003a382's ENTIRE (P+I+D) PID combine (not per-term). 🛑 CORRECTED 2026-08-20 (later, same day): the FIRST version of this file's 'consequence' section misapplied this fact to GATE2's own PUMP/DAMP LABELS and got the net classification backwards. GATE2 uses a DIFFERENT, internally-consistent sign convention (in-phase-with-velocity = pumping, i.e. the opposite of the kit's canonical Re(Z) tool, which defines in-phase = damping -- verified numerically against rlog-tools/probe/decode_v90_probe.py's actual _band_transfer code). Once BOTH the convention mismatch AND the true gp-0x6752 value are applied to GATE2's RAW NUMBERS (not its labels), the answer is: D PUMPS, P and I DAMP at 6-9Hz -- i.e. GATE2's ORIGINAL headline ('D is the sole pumping term') is RECOVERED, now on verified footing instead of an assumed +1 polarity. r24/r26's pumping conclusion (ratchet-inertia's estimate, which used the correct convention from the start) is UNAFFECTED and stands."
 metadata:
   type: reference
 ---
@@ -12,7 +12,7 @@ said gp-0x6752=-1 makes **P the pumper and D the damper**. That is backwards. Th
 `×(-1)` correction to GATE2's own LABELS, but GATE2's labels use a DIFFERENT sign convention than the
 kit's canonical Re(Z) tool (GATE2 explicitly states its own convention: *"'In phase with +velocity'
 genuinely means energy-adding"* — i.e. GATE2 calls in-phase = pumping, the standard textbook power=F·v
-reading). The canonical tool (`rlog-tools/decode_v90_probe.py::_band_transfer`, behind the master
+reading). The canonical tool (`rlog-tools/probe/decode_v90_probe.py::_band_transfer`, behind the master
 3-drive `-3375ct` measurement) defines the OPPOSITE: verified numerically this session (synthetic
 `T=+rate` → `Re(Z)=+1.0`, matching its own docstring's `"damper 0°"`) — **in-phase = DAMPING** in the
 kit-standard sense. GATE2's raw NUMBERS (not labels) are directly convention-independent
@@ -33,7 +33,7 @@ first time.
 
 Traced 2026-08-20, task `damphunt round 3`, while chasing `ratchet-inertia`'s flagged open question
 (their [[reference_accord_r24r26_driver_torque_lane_reZ_estimate]]: *"the highest-leverage single fact
-anyone could resolve next"*). Corrects `reference-accord-fun3a382-is-a-real-pid.md` and
+anyone could resolve next"*). Corrects `reference/firmware/reference-accord-fun3a382-is-a-real-pid.md` and
 [[reference_accord_pid_dterm_anti_damper_and_v43_lineage_correction]], both of which state "polarity
 gp-0x6752 = +1, boot-static" citing only the FIRST of its three writer sites.
 
@@ -97,7 +97,7 @@ that the multiplied value is +1).
 
 ## Consequence — reverses the P/I/D pump/damp classification kit-wide
 
-`docs/GATE2-2026-08-11-cbe74-independent.md` §N1's `|H|·cos(err/v phase)` table (and my own same-day
+`docs/review/GATE2-2026-08-11-cbe74-independent.md` §N1's `|H|·cos(err/v phase)` table (and my own same-day
 synthesis in [[reference_accord_dterm_grindband_unresolved_and_pid_net_damping]]) computed these
 numbers on the UNSIGNED `(D+I+P)` — i.e. relative to the filter states' own arithmetic sign, upstream of
 this multiply. Apply the corrected `×(−1)`:
@@ -142,7 +142,7 @@ delivered signal against wheel rate** — neither depends on any code-domain sig
 2. A second independent read of `0x48e56-0x48e94` and the `0x1000` table walk, given how much rides on
    this one bit — asked `main` to have this checked before it's load-bearing for any build. This part
    of the finding (the VALUE of gp-0x6752) is unaffected by the convention-mismatch correction above.
-3. **NEW, from the convention-mismatch discovery**: GATE2-2026-08-11-cbe74-independent.md's own labels
+3. **NEW, from the convention-mismatch discovery**: review/GATE2-2026-08-11-cbe74-independent.md's own labels
    should be corrected for future readers — its raw numbers are right, its PUMP/DAMP words are backwards
    relative to the kit's canonical Re(Z) convention. Flagged to `main`; not edited directly (it's a
    `docs/` file, not agent memory).

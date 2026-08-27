@@ -22,7 +22,7 @@ Script: `…/scratchpad/fprime_flatten.py` (flash-level knot edits + route-81 sc
 - layout `+0x00` count(9) · `+0x02` X[0..8] 9×s16 · `+0x14` Y[0..8] 9×s16
 - **Y[6]/Y[7]/Y[8] target cells** — m26 rec0 `0xD7150/52/54`, rec1 `0xD71C8/CA/CC`; m24 rec0 `0xD6178/7A/7C`, rec1 `0xD61F0/F2/F4`
 - 🛑🛑 **CORRECTED 2026-08-21 — THIS CLAIM IS WRONG. Blast radius is NOT the Stage-2 LERP alone.**
-  A fresh trace (`docs/TRACE-2026-08-21-assist-map-rom-source.md`) found the shared ROM record family
+  A fresh trace (`docs/traces/TRACE-2026-08-21-assist-map-rom-source.md`) found the shared ROM record family
   (`0xC7B40` pointer array -> m24 `0xD6158` / m26 `0xD7130`, via `FUN_000382d8`) **FORKS inside
   `FUN_000389ec` off one intermediate array `gp-0x373c[]`/`gp-0x3714[]`**:
   **Branch A** -> `gp-0x64b8[]`/`gp-0x641c[]` -> `FUN_00038148` Stage-2 LERP -> `gp-0x6b70` (Path-2,

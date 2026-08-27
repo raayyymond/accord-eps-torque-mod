@@ -12,7 +12,7 @@ FactorC/E Lever B).** Full report sent via SendMessage; this captures what shoul
 
 [EVIDENCE, grep of build_v66/68/69/70/71a_tva.py] Every prior build editing `0xD2A74`/`0xD2AB0` (r24/
 gain_B mode-10 rec0/rec1, 0 and 10 km/h) touched **ONLY Y[0] and Y[1]** (rate breakpoints 0/400) —
-`build_v69_tva.py:126-137` states this explicitly ("rec0 and rec1, Y[0] and Y[1], each EXACTLY
+`builds/v50_v79/build_v69_tva.py:126-137` states this explicitly ("rec0 and rec1, Y[0] and Y[1], each EXACTLY
 QUADRUPLED"), and V70/V71A reuse `V69.REC0`/`V69.REC1` with the same Y[0]/Y[1]-only pattern. **Y[2]/Y[3]
 (rate 1400/1500-3000) are STOCK in every one of these builds.** V72's proposed edit (flatten ALL FOUR Y
 points to 5244) is the FIRST proposal in this kit's history to raise `gain_B`'s HIGH-RATE response on the
@@ -53,10 +53,10 @@ friction, resonance AND Lane D (`FUN_00036682`) all drop out.** Corroborates FW-
 concern precisely; whether `gp-0x67ac` actually reads 1 in the field is FW-engagement's open item, not
 resolved here.
 
-## Saturation-onset shape change [EVIDENCE, arithmetic + cross-checked against build_v67_tva.py's own note]
+## Saturation-onset shape change [EVIDENCE, arithmetic + cross-checked against builds/v50_v79/build_v67_tva.py's own note]
 
 r24's output clamp is ±8192. At `gainB=5244` (V72's flat target, = V67/V68's arm value), r24 saturates
-at `|dtorque| >= 1024*8192/5244 = 1599.4` — **reproduces `build_v67_tva.py`'s own quoted figure
+at `|dtorque| >= 1024*8192/5244 = 1599.4` — **reproduces `builds/v50_v79/build_v67_tva.py`'s own quoted figure
 ("lane saturates at |dtorque| >= 1599") exactly, independent derivation.** Stock's own high-rate gain
 (1536-1947) needs `|dtorque| >= 4308-5461` to saturate — essentially unreachable (clamp ceiling on
 dtorque itself is 5120). **V72 makes r24 saturate at the SAME low threshold uniformly across every

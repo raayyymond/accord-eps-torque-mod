@@ -19,7 +19,7 @@ repository root, Python tools use `../accord-firmware` unless
 > flashed successfully on the operator's car via this script (bus 1, `0x18DA30F1`,
 > `--danger`). That validates the whole chain — SA handshake, multi-block x31
 > transfer, and the V9b payload cipher — against real hardware. The build recipe
-> behind that file is `analysis-2020accord/HOW_TO_BUILD_ACCORD_TVA_RWD.md`.
+> behind that file is `analysis-2020accord/notes/HOW_TO_BUILD_ACCORD_TVA_RWD.md`.
 
 ---
 
@@ -132,7 +132,7 @@ No flash risk in any of those — the dry run never reaches
 
 ## Hardware safety preamble
 
-Per `CLAUDE.md` and `docs/EPS-FLASH-RUNBOOK.md`:
+Per `CLAUDE.md` and `docs/guides/EPS-FLASH-RUNBOOK.md`:
 
 - **Car ignition ON** (engine off is fine; CAN bus must be active).
 - **Panda is the only device on OBD-II.** If a comma device's harness
@@ -157,12 +157,12 @@ Per `CLAUDE.md` and `docs/EPS-FLASH-RUNBOOK.md`:
 ## Reference
 
 - `tva_sa_key.py` — verified V850 SA implementation (2026-05-23)
-- `analysis-2020accord/HOW_TO_BUILD_ACCORD_TVA_RWD.md` — **the single build recipe**:
+- `analysis-2020accord/notes/HOW_TO_BUILD_ACCORD_TVA_RWD.md` — **the single build recipe**:
   x31 container spec, V9b cipher (confirmed), flash window, CRC scheme, SA algorithm,
   and the patched-firmware pipeline. (Distilled from the former `V850_ALGORITHM_VERIFIED.md`,
   `ACCORD_TVA_ARCHITECTURE_MAP.md`, `ENCODER_REPORT.md`, `STOCK_RECONSTRUCTION_REPORT.md`.)
-- `analysis-2020accord/TORQUE_PATH_AND_TABLE.md` — torque input→output code path + tables
-- `docs/EPS-FLASH-RUNBOOK.md` — red panda + laptop flash workflow
+- `analysis-2020accord/notes/TORQUE_PATH_AND_TABLE.md` — torque input→output code path + tables
+- `docs/guides/EPS-FLASH-RUNBOOK.md` — red panda + laptop flash workflow
 
 ---
 

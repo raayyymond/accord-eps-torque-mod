@@ -52,7 +52,7 @@ unusable reasoning.
 ## THE K1 ANSWER — LIGHTER, and it does not depend on the operating point
 
 `0xC40D2` (K1, the `|model|`-proportional modelled Coulomb friction in `FUN_0003b8f6`) **102 -> 204
-makes the wheel LIGHTER.** Mirror script: `analysis-2020accord/friction_k1_sign_chain.py`.
+makes the wheel LIGHTER.** Mirror script: `analysis-2020accord/studies/models/friction_k1_sign_chain.py`.
 
 ```
 d(friction)/dK1 = |model|*ratio/1024        sign = sign(ratio) = sign(v in MODEL frame)
@@ -96,7 +96,7 @@ V89/V98/V100/V104/V105/V106, 102 on stock.
    `FUN_000352b4`. I nearly anchored the whole argument on the wrong lane before checking.
 
 ## DEFECT REPORTED, NOT FIXED
-`analysis-2020accord/eps_chain_core.py` seeds `assist_polarity: int = 1`, contradicting the
+`analysis-2020accord/model/eps_chain_core.py` seeds `assist_polarity: int = 1`, contradicting the
 ★★★★★ on-car-verified −1. The golden model is the live reference and its default is the
 pre-correction value. Changing it moves the `_self_check()`/`_demo()` hash `740f4bcd...`, so it
 needs a deliberate contract update.

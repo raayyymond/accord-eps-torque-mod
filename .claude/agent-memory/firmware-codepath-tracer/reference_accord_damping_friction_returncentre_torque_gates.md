@@ -8,7 +8,7 @@ metadata:
 Found 2026-07-20/21 tracing hands-on/off discriminators in the torque command path for team-lead's V38
 21Hz hands-off-only vibration investigation. Scope: `FUN_00034350` (damping, `gp-0x6bd0`),
 `FUN_00036c12` (friction, `gp-0x6b26`), `FUN_00036388` (return-centre, `gp-0x6b62`) — all mode-10
-(this car's confirmed assist-mode index, per existing `eps_lkas_chain_model.py` notes).
+(this car's confirmed assist-mode index, per existing `model/eps_lkas_chain_model.py` notes).
 
 ## Damping table `0xC9E9C` (mode 10, resolved via pointer array to `0xD27BC`) [VERIFIED byte dump]
 
@@ -24,7 +24,7 @@ contribution when hands are on, none when hands are off. **See the open contradi
 treating this as reachable.**
 
 Sibling table `0xC9CCC` (mode 10, resolved to `0xD2738`) is keyed on `gp-0x698a` (NOT `gp-0x6a5e` —
-corrects the `eps_lkas_chain_model.py` `FUN_00034350` docstring, which mislabeled this table "AVG
+corrects the `model/eps_lkas_chain_model.py` `FUN_00034350` docstring, which mislabeled this table "AVG
 torque, plausibility-gated"). Its Y values are **flat 1024 at all 4 breakpoints (205,1331,2355,3072)** —
 a structural no-op regardless of what `gp-0x698a` represents. `gp-0x698a`'s identity was not traced.
 
@@ -36,7 +36,7 @@ on whether `gp-0x6abe` carries a live signed value or is pinned to a sentinel:
 
 1. `reference_accord_fun34350_damping_term_live_and_gated.md` (this same memory dir): claims `gp-0x6abe`
    is **LIVE in normal driving**, pinned to `32767` only in abnormal (rate-saturating) conditions.
-2. `eps_lkas_chain_model.py`'s `FUN_00034350` docstring (`analysis-2020accord/eps_lkas_chain_model.py`,
+2. `model/eps_lkas_chain_model.py`'s `FUN_00034350` docstring (`analysis-2020accord/model/eps_lkas_chain_model.py`,
    `assist_shaping_lanes()`): claims the **OPPOSITE** — pinned in normal driving, live only in abnormal.
 3. My own quick re-trace this session of `FUN_00041464` (`gp-0x6abe`'s sole producer,
    `0x415a0-0x41a30`ish) found the real gating structure is more complex than either summary: an OUTER

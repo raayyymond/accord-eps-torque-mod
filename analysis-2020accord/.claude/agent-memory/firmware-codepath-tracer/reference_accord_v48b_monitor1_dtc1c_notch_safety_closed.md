@@ -119,7 +119,7 @@ hide a third, unmatched path.
   pipeline (no raw-vs-filtered split found), so even unverified in full instruction detail it does not fit
   the asymmetry pattern.
 - The notch's frequency-response claim ("unity at DC, ≤8 dB attenuation at 21 Hz, no peaking") is taken as
-  design input from the V48B handoff/design doc (`eps_v48b_notch_design.py`), not re-derived in this
+  design input from the V48B handoff/design doc (`studies/models/eps_v48b_notch_design.py`), not re-derived in this
   session — this tracer verified the CODE PATH, not the DSP coefficients.
 - FUN_0004613e's call site address inside `FUN_00042af8` (~line 1376 of the decompile, "if (0x80 <
   uStack_ec)") was read from the decompiler and not independently disassembled to a raw address in this

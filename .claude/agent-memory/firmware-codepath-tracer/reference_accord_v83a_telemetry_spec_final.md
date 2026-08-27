@@ -55,7 +55,7 @@ exact displacements (`-0x141c`/`-0x141b`/`-0x141a`, confirmed via this session's
 stock builder, matching [[reference_accord_can_tx_399_427_bitmap]]).
 
 ## Byte-encoding provenance (for the build step)
-- PROVEN, exact hex reused verbatim: the 330 splice's tail from `build_v49p_tva.py`'s `pack_polarity`
+- PROVEN, exact hex reused verbatim: the 330 splice's tail from `builds/v18_v49/build_v49p_tva.py`'s `pack_polarity`
   cave (`ld.bu -0x1511`, `andi 0x3f`, `or`, `st.b -0x1511`, `movea -0x1518`, `jmp[lp]`); the 399 restore
   `movea -0x1420,gp,r6` = `2436e0eb`, the exact stock hook bytes.
 - Same displacement as a real, already-disassembled stock instruction (register field differs, which

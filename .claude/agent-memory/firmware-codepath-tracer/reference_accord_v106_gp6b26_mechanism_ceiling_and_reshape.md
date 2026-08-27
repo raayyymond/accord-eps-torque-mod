@@ -5,7 +5,7 @@ metadata:
   type: reference
 ---
 
-# V106 / `gp-0x6b26` — mechanism, ceiling, reshape. Integer mirror: `analysis-2020accord/v106_gp6b26_mechanism.py`
+# V106 / `gp-0x6b26` — mechanism, ceiling, reshape. Integer mirror: `analysis-2020accord/studies/sessions/v104/v106_gp6b26_mechanism.py`
 
 2026-08-22, `mechanism` task. Everything below is re-derived fresh this session (GhidraMCP decompile-first,
 then assembly, then a raw Python LE byte scan as the second method). Runs clean; re-run it.

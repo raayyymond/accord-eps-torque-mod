@@ -9,7 +9,7 @@ metadata:
 incidents) and specifically whether cal `0xC63A0` (raised 1024->2048 in V74/V75, the Path-2 damper weight
 into `FUN_00038148`) can influence the friction lane `gp-0x6b26`/`FUN_00036d74`. Program: `code.bin`
 (confirmed current via `list_open_programs`). Method: decompile-first, disasm to pin exact bytes, Python
-raw LE byte scan (`analysis-2020accord/scan_gp_accesses.py`, self-check passed) as the required second
+raw LE byte scan (`analysis-2020accord/studies/firmware_scan/scan_gp_accesses.py`, self-check passed) as the required second
 method for every writer/reader count.
 
 ## THE CLOSURE — 0xC63A0 cannot reach gp-0x6b26 by any code path [EVIDENCE, fresh this session]
@@ -17,7 +17,7 @@ method for every writer/reader count.
 1. **`gp-0x6b26` has exactly ONE writer, image-wide** — `0x36cf0: st.h r6,-0x6b26[gp]`, inside
    `FUN_00036c12`. Confirmed by 2 independent methods: `search_instructions(operand_pattern="6b26")` (7
    raw hits, 2 adjudicated false positives — `FUN_0006b162`'s `bge`/`ble` branch-target text collisions
-   to `0x6b26c`/`0x6b266`, not real accesses) and a fresh Python LE byte scan (`scan_gp_accesses.py`,
+   to `0x6b26c`/`0x6b266`, not real accesses) and a fresh Python LE byte scan (`studies/firmware_scan/scan_gp_accesses.py`,
    decoder self-check passed) — **5 real hits, byte-identical addresses, 1 STORE + 4 loads.** The store
    is unconditionally fed by the clamp result (`r6 = clamp(raw, -cal(0xC407E), +cal(0xC407E))`, disasm
    `0x36ccc-0x36ce2`) — confirms `|gp-0x6b26| <= cal(0xC407E)` on every write, no bypass path exists

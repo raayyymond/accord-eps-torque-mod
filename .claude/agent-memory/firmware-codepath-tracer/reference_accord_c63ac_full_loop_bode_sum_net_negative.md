@@ -1,6 +1,6 @@
 ---
 name: reference_accord_c63ac_full_loop_bode_sum_net_negative
-description: Full-loop (not isolated-stage) Bode-sum analysis of raising 0xC63AC, extending the kit's own eps_loop_gain_model.py anchor. FINDING, ROBUST across every attribution-fraction and both calibration anchors tried -- raising 0xC63AC's HF-gain cost (already on record, 1.38x at 21Hz for cal=205) dominates its own phase-lag credit once the loop is closed; predicted |L| and Q move UP (worse), not down, at every dose 150-300 tested. REVERSES a same-day earlier recommendation (this agent's own) to rank 0xC63AC as the #1 bet -- that recommendation was made on isolated-stage DC-gain/phase evidence only, before the loop-closure computation existed.
+description: Full-loop (not isolated-stage) Bode-sum analysis of raising 0xC63AC, extending the kit's own studies/models/eps_loop_gain_model.py anchor. FINDING, ROBUST across every attribution-fraction and both calibration anchors tried -- raising 0xC63AC's HF-gain cost (already on record, 1.38x at 21Hz for cal=205) dominates its own phase-lag credit once the loop is closed; predicted |L| and Q move UP (worse), not down, at every dose 150-300 tested. REVERSES a same-day earlier recommendation (this agent's own) to rank 0xC63AC as the #1 bet -- that recommendation was made on isolated-stage DC-gain/phase evidence only, before the loop-closure computation existed.
 metadata:
   type: reference
 ---
@@ -14,7 +14,7 @@ Isolated stage (`gp-0x374c += ((target-gp-0x374c)*0xC63AC)>>10`, single-pole dis
 numpy-verified, cross-checked against `reference_accord_c63ac_is_the_pure_lead_pole_lever.md`'s prior
 table (matches to rounding: 1.38x @21Hz for cal=205 reproduced exactly).
 
-Loop closure: extended `analysis-2020accord/eps_loop_gain_model.py`'s own anchor
+Loop closure: extended `analysis-2020accord/studies/models/eps_loop_gain_model.py`'s own anchor
 (`|L(21.4Hz)|=0.875`, `Q=13.6` at V38/4x, giving `zeta_bare=0.294`) by letting the carrier phase vary
 with frequency through 0xC63AC's OWN stage delta specifically (everything else in the carrier held at
 the script's original "≈+90° rate-feedback, frequency-flat" simplification), generalized via the
@@ -24,7 +24,7 @@ frequency, then re-evaluating `|L|` there via `Lmag_new = Lmag*|stage_delta|^p*p
 stage specifically, vs. Path 2's many OTHER stages) is an UNMEASURED free parameter, swept 0.25/0.5/1.0.
 Second anchor: route 0x95's relayed (23.38Hz, Q=47.4) point, `|L|` inferred by carrying `zeta_bare`
 from anchor A (an assumption -- the bare plant did not change between eras, only loop gain m did).
-[BELIEF: I did not independently inspect route 0x95's raw data or `r95_qshift.py`'s output this
+[BELIEF: I did not independently inspect route 0x95's raw data or `studies/v101-8x-gain/r95_qshift.py`'s output this
 session -- this number and which of its two states is "today's" configuration are RELAYED, not
 verified by me directly.]
 
@@ -67,4 +67,4 @@ the point of a future experiment.
 [[reference_accord_c63ac_is_the_pure_lead_pole_lever]] -- the isolated-stage facts this file does not
 change. [[reference_accord_gp6b26_closed_both_directions_v94_aborted]] -- the sibling case (a
 different lever) where a clean isolated-signal theory also failed once measured in the closed loop;
-same caution class. `analysis-2020accord/eps_loop_gain_model.py` -- the anchor script this extends.
+same caution class. `analysis-2020accord/studies/models/eps_loop_gain_model.py` -- the anchor script this extends.

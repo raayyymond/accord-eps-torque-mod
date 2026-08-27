@@ -7,8 +7,8 @@ metadata:
 
 # The r24 rate lane, V62 -> V69: what each build actually does. Traced 2026-08-04.
 
-Reproduce with `analysis-2020accord/v70_rate_lane_gain_model.py` and
-`analysis-2020accord/v70_gp683c_writer_census.py` (both mirror the decompiled integer arithmetic and
+Reproduce with `analysis-2020accord/studies/sessions/v70/v70_rate_lane_gain_model.py` and
+`analysis-2020accord/studies/sessions/v70/v70_gp683c_writer_census.py` (both mirror the decompiled integer arithmetic and
 byte-read every constant LE).
 
 ## 1. THE `sar` HISTORY -- V69 does NOT carry V62's doubling [EVIDENCE: Python LE read, all images]
@@ -21,8 +21,8 @@ byte-read every constant LE).
 | **V62, V65** | **32A9** | **42A9** | C5 | 512 |
 | V66, V67*, V68*, **V69** | 32AA | 42AA | C5 / **FB on V67,V68** | 512 / **5244 on V67,V68** |
 
-**V66 reverted it** (`build_v66_tva.py:9-10`); V67 kept the revert; V68/V69 assert it
-(`build_v68_tva.py:477 SAR_SITES_STOCK`). ⇒ **V62's mechanism and V69's are different in kind**:
+**V66 reverted it** (`builds/v50_v79/build_v66_tva.py:9-10`); V67 kept the revert; V68/V69 assert it
+(`builds/v50_v79/build_v68_tva.py:477 SAR_SITES_STOCK`). ⇒ **V62's mechanism and V69's are different in kind**:
 V62 was a constant factor immune to speed, rate and arm selection; V69 moves only the LERP *default*
 arm's Y[0]/Y[1] at the 0 and 10 km/h records.
 

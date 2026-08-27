@@ -4,12 +4,12 @@
 
 🛑 **ON THE CAR: V106** (route `a6`, 1,224.0 s engaged, fault-free).
 **V107 BUILT, VERIFIED, UNFLASHED. Nothing flashed, no CAN, no UDS.**
-Narrative: **`docs/HANDOFF-2026-08-23-v107-the-schedule-is-the-lever.md`** — drive card, 13 retractions,
+Narrative: **`docs/handoffs/2026-08/HANDOFF-2026-08-23-v107-the-schedule-is-the-lever.md`** — drive card, 13 retractions,
 6 record defects, 14 open items with what closes each.
 ```
 V107 image  c32c3ba5da859335fa7637cca59e9ac3e40f8f6cdcb817dd582884be080a0c45
 V107 .rwd   78eae7da20a87f1a95295eca11da0d08f4cf2b3b823785594cde4be93a7b24ff
-builder     analysis-2020accord/build_v107_tva.py   55/55 assertions   BASE = V106
+builder     analysis-2020accord/builds/v80_v107/build_v107_tva.py   55/55 assertions   BASE = V106
 E1  0xD7A5C / 0xD7A6C   (-29490,-17202,-5898) -> (-29490,-24000,-16000)   modes 26/27, X untouched
 E2  0x55DF2  7a 94 -> d4 93   427 tap: gp-0x6b86 -> gp-0x6c2c
     0x55E10  a4 -> a3         sar 4 -> sar 3
@@ -70,7 +70,7 @@ steering rate** (the damper subtracts at the FINAL add, downstream of both lanes
 3. `accord-gp6b4c-is-an-11-slot-assist-sum` — modes 5/7 **re-route**, they do not zero.
 4. `accord-friction-polarity-*` — conclusion stands, sign chain **replaced** (frame crossings).
 5. `MEMORY.md` pointed at a file renamed after the operator retracted its claim (**"v84 fixed the
-   highway ring"** → `accord-v84-flew-and-fixed-nothing.md`). **Fixed.**
+   highway ring"** → `accord/builds/accord-v84-flew-and-fixed-nothing.md`). **Fixed.**
 
 ### 🛑 THE INSTRUMENT LESSON — a STATIONARY mode returns a FAKE frequency slope
 Injected at an amplitude ladder through the same argmax pipeline, a mode that does **not** move
@@ -92,12 +92,12 @@ pitch-vs-amplitude cell (30 and 46 windows), and the engaged/manual contrast abo
 
 🛑 **ON THE CAR: V105** (route `a5`, verified from the wire — three legs, strongest being the biquad's own
 427 output matching the image floats). **V106 BUILT, VERIFIED, UNFLASHED. Nothing flashed, no CAN, no UDS.**
-Narrative: **`docs/HANDOFF-2026-08-22-v106-the-damper-and-the-one-mode.md`** — the full drive card with
+Narrative: **`docs/handoffs/2026-08/HANDOFF-2026-08-22-v106-the-damper-and-the-one-mode.md`** — the full drive card with
 **nine numbered open questions**, 21 retractions, 20 open items with what closes each.
 ```
 V106 image  78528aa35b9ea2fa1ea990b2c8d41c7adc784fc17f0b481d66ddcfd3667cb65a
 V106 .rwd   e5ac6927a112a0cdf944971aebf7aa14efe6ad8597e17835bbc62d1589bfecbc
-builder     analysis-2020accord/build_v106_tva.py   50/50 assertions
+builder     analysis-2020accord/builds/v80_v107/build_v106_tva.py   50/50 assertions
 ```
 
 ### 🛑 THE OPERATOR CORRECTED THE KIT TWICE AND WAS RIGHT TWICE
@@ -170,8 +170,8 @@ a notch relocates it.** Reaches **both** bands — gain **1.478 @ 7.79 Hz**, **3
 at `0xC4B70` = `da94` = `-0x6b26`, **the exact cell dosed**. Engaged duty must collapse from its **0.4019**
 baseline if the car reads 26/27 engaged; unchanged confirms the V91/V92 suspicion. **MANUAL is the
 built-in control.** **RULE 7 closed either way.**
-🛑 **26/27 ONLY.** The family has **FOUR** members (`build_v100_tva.py`'s `DOSE_FAMILY_Y` lists three;
-`build_v105_tva.py` already had four): mode 24 = **MANUAL** (dosing it is inert for an engaged symptom and
+🛑 **26/27 ONLY.** The family has **FOUR** members (`builds/v80_v107/build_v100_tva.py`'s `DOSE_FAMILY_Y` lists three;
+`builds/v80_v107/build_v105_tva.py` already had four): mode 24 = **MANUAL** (dosing it is inert for an engaged symptom and
 changes manual feel), mode 25 = **role unconfirmed** (V69/V70 trap class). Both left at stock.
 **`0xC407E` untouched at 511** — one count under its own 512 trip, so the RULE-11 interlock is intact **by
 construction, not by care** (V73 raised a different clamp past its trip; V74/V75 both faulted mid-drive).
@@ -215,7 +215,7 @@ byte-stock on every build; 1048 free cave bytes at `0xC4BD8`) — `[0,511]` is *
 ## ⚠ SUPERSEDED BLOCK, 2026-08-22 (late) — **V104 FLEW AND FAILED · THE 26 Hz MODE IS THE TARGET · V105 IS A 25.5 Hz NOTCH**
 
 🛑 **ON THE CAR: V104** (route `a4`). **V105 BUILT, VERIFIED, UNFLASHED. Nothing flashed, no CAN, no UDS.**
-Narrative: **`docs/HANDOFF-2026-08-22-v105-the-26hz-mode-and-the-notch.md`** — every finding including
+Narrative: **`docs/handoffs/2026-08/HANDOFF-2026-08-22-v105-the-26hz-mode-and-the-notch.md`** — every finding including
 the negatives, **18 retractions**, 12 open items with what closes each, and the V105 drive card.
 
 ### 🛑 BOTH DOCS WERE WRONG ABOUT WHAT IS ON THE CAR — SECOND BUILD RUNNING
@@ -336,7 +336,7 @@ columns being **identically zero** (1024-pt FFT ⇒ 15.625 Hz bins, no bin centr
 
 🛑 **ON THE CAR: V103, unchanged. NOTHING BUILT, FLASHED, OR SENT. No openpilot file was modified.**
 **V104 remains the current unflashed candidate — its block below is NOT superseded.**
-Narrative: **`docs/HANDOFF-2026-08-22-hs-identification-and-five-instrument-defects.md`.**
+Narrative: **`docs/handoffs/2026-08/HANDOFF-2026-08-22-hs-identification-and-five-instrument-defects.md`.**
 
 ### What this session was
 An `H(s)` identification study — the transfer from LKAS/motor torque to torsion-bar torque — asked so a
@@ -361,7 +361,7 @@ argument was built on it before the measurement existed.
 ### 🛑 FIVE INSTRUMENT DEFECTS — all found by running controls BEFORE measurements
 | # | defect | consequence |
 |---|---|---|
-| 1 | **Both ring-down estimators saturate at ζ≈0.05 and REVERSE** (`demod` reads ζ=0.20 as 0.0084); fit-window alone swings them **3.5–6.3×** | `_stock_r97_ringdown.json` **UNQUOTABLE**; recorded **`ζ 0.017–0.036`'s Q is an UPPER BOUND** |
+| 1 | **Both ring-down estimators saturate at ζ≈0.05 and REVERSE** (`demod` reads ζ=0.20 as 0.0084); fit-window alone swings them **3.5–6.3×** | `_scratch/out/_stock_r97_ringdown.json` **UNQUOTABLE**; recorded **`ζ 0.017–0.036`'s Q is an UPPER BOUND** |
 | 2 | **`rate_f` = 0.7996× true deg/s**; `rate_c = 1.2506 × rate_f`, identical phase | every past `\|Z\|`/inertia on `rate_f` is **1.25× high**; "rate_c agrees with rate_f" is **vacuous** |
 | 3 | **427's source cell changes build to build** — 8 sources, 4 shifts | any cross-route 427 analysis assuming one meaning is wrong; **only route 73 can carry a directed cross-spectrum** (427 is rectified) |
 | 4 | **427 aliasing is band-dependent** — fold ratio 0.003–0.02 at 6–9 Hz but **0.23–2.57 at 20–24 Hz** | 20–24 Hz on 427 is a valid **NULL** but **never a magnitude** |
@@ -404,18 +404,18 @@ torque as a co-primary against an 0xE4-derived quantity.
    the maximum. Its whole value is the known trigger instant and ~36 replicates.
 
 ### Artefacts (all new files, nothing tracked was modified)
-`analysis-2020accord/e4_excitation/` (11 scripts) · `analysis-2020accord/e4_to_6b98_coherence.py` ·
+`analysis-2020accord/reference/e4_excitation/` (11 scripts) · `analysis-2020accord/studies/spectra/e4_to_6b98_coherence.py` ·
 `rlog-tools/plant_{scale_resolve,Jb_absolute,phase_corner,falsifiers,zcurve,recon,impedance}.py` ·
 `rlog-tools/{ringdown_validate,ringdown_real,e3_sensitivity_and_qbracket,prereg_maneuver_hs}.py`
-⚠ **WITHDRAWN by their own author, kept for the audit trail:** `plant_fit_final.py` (R² 0.01–0.32,
-negative J² on several arms) and `plant_hs.py` (superseded).
+⚠ **WITHDRAWN by their own author, kept for the audit trail:** `studies/identification/plant_fit_final.py` (R² 0.01–0.32,
+negative J² on several arms) and `studies/identification/plant_hs.py` (superseded).
 
 ## ⚠ SUPERSEDED BLOCK, 2026-08-21 (late) — 🛑 **ITS “UNFLASHED” LINE IS STALE — V104 FLEW AS ROUTE `a4`.** **V104 BUILT. `c4` IS A FLAT LANE GAIN AND IT IS VIRGIN.**
 
 🛑 **ON THE CAR: V103, unchanged. NOTHING WAS FLASHED; NO CAN OR UDS WAS SENT.**
 **V104 exists as an unflashed artifact.** Full narrative — every finding including the negative ones,
 **17 retractions**, 15 open items with what closes each:
-**`docs/HANDOFF-2026-08-21-v104-built-c4-boost-and-lever-b.md`.** Read it before proposing anything.
+**`docs/handoffs/2026-08/HANDOFF-2026-08-21-v104-built-c4-boost-and-lever-b.md`.** Read it before proposing anything.
 
 ### V104 — three levers, 16 bytes, no cave change
 | artifact | SHA256 |
@@ -499,10 +499,10 @@ Choosing it would have manufactured a guaranteed null (the V97 failure).
   identification WITHOUT needing attribution.**
 
 ### 🛑 A LATENT DATA DEFECT — AUDITED AND GUARDED
-**`x6b94` is a byte-identical ALIAS of `x6b4c` (the LANE) in `_cache_r96`, `_cache_r97`, `_cache_r9e`.**
+**`x6b94` is a byte-identical ALIAS of `x6b4c` (the LANE) in `_scratch/cache/r96`, `_scratch/cache/r97`, `_scratch/cache/r9e`.**
 Only `r85`/`r95` carry the real sum. ⚠ **`r97` is the STOCK baseline and was not in the original
 report.** **Same error class that made GATE2's notch dose 4× too large.** Guard shipped:
-`analysis-2020accord/check_427_alias.py`. ⊕ `damp_nz`/`g6ac2` are **stale decodes on V100+ routes**.
+`analysis-2020accord/verify/check_427_alias.py`. ⊕ `damp_nz`/`g6ac2` are **stale decodes on V100+ routes**.
 
 ### 🛑 THE FACT THAT OUTRANKS THE PHYSICS
 Operator on **stock** (688.8 s engaged): ***"No vibration or grinding. Maybe ever so slightly, barely
@@ -537,7 +537,7 @@ at **0.069**, not the **0.098** solved here. See the LATEST BLOCK above.
 "built, not flashed, decision deferred" was STALE and is corrected here.** Both symptoms failed: the
 operator reports **grind #1 present** and **high-steer-rate ratcheting present**.
 **NOTHING WAS BUILT OR FLASHED on 2026-08-21. No V104 artifact exists.**
-**Full narrative: `docs/HANDOFF-2026-08-21-route9e-and-the-loop-is-the-cause.md`** — every finding
+**Full narrative: `docs/handoffs/2026-08/HANDOFF-2026-08-21-route9e-and-the-loop-is-the-cause.md`** — every finding
 including the negative ones, and **17 open items with what closes each.** Read it before proposing
 anything.
 
@@ -641,7 +641,7 @@ V103's filter is **−0.149 dB at 7.79 Hz**, inert where the ratchet lives.
   excitation.* `|κG|` 0.63@4× → 0.75@8×, extrapolating to **0.97–2.0 at 16×**.
   ⇒ **DAMPING IS THE PREREQUISITE FOR MORE GAIN, NOT A DETOUR.**
 
-### V104 — SPECIFIED, NOT BUILT (`docs/SPEC-2026-08-20-v104.md`, rev 3)
+### V104 — SPECIFIED, NOT BUILT (`docs/specs/SPEC-2026-08-20-v104.md`, rev 3)
 **Gain FROZEN at 6×** per the operator's ruling (*"fix at 6x first, then raise to 8x"*; long-term target
 is **16×**). An **instrument build, by conclusion not fallback** — no lever survived GATE 2.
 **427 source → `gp-0x6b94`** (`0x55DF2`, 2 B, flown at V100) · **`|gp-0x6adc| ≥ |gp-0x6ada|` rung**
@@ -672,7 +672,7 @@ ON THE CAR: V103.** See the LATEST BLOCK at the head of this file. The two sente
 state as of 2026-08-20 only, and are retained as history.
 ~~**ON THE CAR: STOCK (V9b).** He flashed V102, drove route `0x96`, then flashed stock and drove
 route `0x97`. **V103 is BUILT AND NOT FLASHED — and the operator has deferred the decision on it.**~~
-**Full narrative: `docs/HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md`** — it carries **every** finding
+**Full narrative: `docs/handoffs/2026-08/HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md`** — it carries **every** finding
 (including the negative ones) and **36 open items**, per standing instruction. Read it before proposing
 anything.
 
@@ -705,7 +705,7 @@ high-command vs ~100 s low-command, hands-off, 30–85 km/h (decides whether `f0
 **attribution is now contested by item 4**, and its band-RMS ratios are **~2× inflated** — hands-on is a
 mandatory third matching axis (arms range 4.7 %–40.3 %). See handoff §4.5.
 
-**Full narrative: `docs/HANDOFF-2026-08-20-v102-the-gain-is-the-carrier.md`.** Read it before
+**Full narrative: `docs/handoffs/2026-08/HANDOFF-2026-08-20-v102-the-gain-is-the-carrier.md`.** Read it before
 proposing anything — it kills nine levers and corrects twelve things in this kit's own record.
 
 ### THE RESULT
@@ -726,7 +726,7 @@ is **openpilot's own ±4096 rail, ~12 % duty on BOTH builds**.
 saturation inside the ECU.
 
 ### V102 — BUILT, NOT FLASHED
-`build_v102_tva.py`, **three cells on a V101 base**, dose chosen by the operator from a measured
+`builds/v80_v107/build_v102_tva.py`, **three cells on a V101 base**, dose chosen by the operator from a measured
 dose-response curve: **`0xC6CD0` 7128→5346 (8×→6×)**, `0xC61B2`/`0xC61B4` **4096→3072** (tracking,
 `5346×512//891 = 3072` exact) + a **154 B two-comparator cave** + **427 repointed to `gp-0x6b4c`**.
 **Lever B stays REMOVED** (`0x3AA96`=0xC5, `0xC6446`=512) and **`0xC40D2` stays at 204**, instrumented
@@ -746,7 +746,7 @@ Vibration **m^1.74 [1.43,1.96]** · authority **m^0.88 [0.75,1.04]**. At 6×: 22
 command amplitude (slope **+0.01 [−0.36,+0.31]** across a >10× range) ⇒ **the gain acts on the LOOP,
 not the drive.**
 
-### PRE-REGISTERED READOUT — score with `rlog-tools/score_v102.py`
+### PRE-REGISTERED READOUT — score with `rlog-tools/score/score_v102.py`
 Primary: within-route `tq` band-RMS(21.5–25.5) ÷ band-RMS(2.5–4.5), median over 1 s engaged windows.
 **V101 = 5.07 · V100 = 0.62 · V102 predicted 0.61× of V101.** Power **94.2 % at 20 s**, 97.1 % at 25 s.
 **≈1.0× of V101 ⇒ the gain is NOT the carrier and this session's attribution is REFUTED.**
@@ -764,7 +764,7 @@ the biquad's input). **The real arm is `cal(0xC649B)==1 AND cal(0xC64FA) ≤ gp-
 has NEVER been observed true — 0 across 255,292 engaged frames on three builds (V64/V67/V68).** ⇒ the
 verdict *"inert"* stands but **for a different reason**, and **V103 arms it anyway via a private in-place
 `cmp` patch at `0x35A12`** (NOT `0xC64FA`, which is the SHARED detector CEIL with 18 in-code readers).
-See `HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md` §5.2. · **PID `Kd`** (sign unresolvable at 23 Hz — it
+See `handoffs/2026-08/HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md` §5.2. · **PID `Kd`** (sign unresolvable at 23 Hz — it
 is the measured Re(Z) crossover — **and it changes MANUAL steering**) · **`0xC6194`** (dead-dead).
 
 ### 🛑 CORRECTIONS TO THIS KIT'S OWN RECORD — see the handoff §9 for all twelve
@@ -773,12 +773,12 @@ is the measured Re(Z) crossover — **and it changes MANUAL steering**) · **`0x
    openpilot's command **at chance** (52.80 % vs 54.36 %) while flipping 8.2/s vs 0.31/s.
 2. **V101's GATE 2 premise is MEASURED FALSE** — *"doubling the gain… does NOT change any closed-loop
    pole."* The pole moved and the demand oscillates.
-3. **`band_envelope` is BROKEN in `_r31_common.py` AND `_r2b_common.py`** — one-sided `H=2X` then
+3. **`band_envelope` is BROKEN in `lib/_r31_common.py` AND `lib/_r2b_common.py`** — one-sided `H=2X` then
    `irfft` ⇒ a **rectified** signal, not an analytic envelope. Ratios survive. ~20 callers. NOT FIXED.
    🛑 **SCOPE NARROWED 2026-08-20 — THIS RETRACTION WAS OVER-BROAD.** Measured on a clean 8 Hz
    `exp(−1.0 t)` decay, the broken envelope recovers **λ = 1.036 vs 1.000 — a 3.6 % error** (rectification
    noise averages out of a log-linear fit); envelope **CV** is inflated 1.127 vs 0.923 (**+22 %**).
-   ⇒ **CV / duty / p50-amplitude results ARE corrupted and stay retracted.** ✅ **BUT `qd_final.py` /
+   ⇒ **CV / duty / p50-amplitude results ARE corrupted and stay retracted.** ✅ **BUT `studies/damping-q/qd_final.py` /
    `qd_lib.envelope_stats` — the code that actually produced ζ = 0.017–0.036 and Q = 14–29 — call
    `scipy.signal.hilbert`, NOT `band_envelope`.** ⇒ **the ring-down ζ/Q result was NEVER at risk and is
    UN-RETRACTED.** Drop it from this list; keep growth-rate, decay-τ, p50 and CV/duty.
@@ -868,7 +868,7 @@ symptoms** (ratchet at the corpus record 8,521 ct p-p). ⇒ **`a` is materially 
 arm is LOAD-BEARING — proved from images, no drive.**
 ⇒ 🛑 **ACCOUNT A IS REFUTED.** *"More derivative feedback ⇒ more damping ⇒ less HF"* predicts the
 **higher** net dose (V71c) should be **better**. It was dramatically worse. ⚠ **Correct
-`memory/accord-v88-flew-grinding-fixed-command-intact.md`'s mechanism paragraph — keep the coupling,
+`memory/accord/builds/accord-v88-flew-grinding-fixed-command-intact.md`'s mechanism paragraph — keep the coupling,
 fix the direction.**
 ⇒ ⭐ **BOTH FLANKS ARE NOW MEASURED**: V61 (below V88) *"made it WORSE"*; V71c (above) worst in
 corpus. **The standing "2× ≈ OPTIMUM, not a point on a ramp" now has both sides.**
@@ -916,7 +916,7 @@ decompile is the arbiter either way.**
    quote a true half of one curve. The kill stands as a **cost/benefit** judgement (a cut buys
    −0.076 at the ratchet, pays +0.225 and +0.323 in his two grinding bands). **Fix: make each entry
    state its BAND.**
-3. **`memory/reference-accord-pregain-deadband-c61b8.md`'s "low-speed lockout" reading is WRONG** —
+3. **`memory/reference/firmware/reference-accord-pregain-deadband-c61b8.md`'s "low-speed lockout" reading is WRONG** —
    it is a **speed correlation on a creep-dominated corpus**, beaten by V67's direct identity test
    (`gp-0x6806` == `latActive` on **150,302/150,327 = 99.983 %**) and broken outright by route `0x85`
    (engaged p50 39.6 km/h). ⚠ Also: `reference_accord_gp67ac_*` **conflates three arrays** —
@@ -998,7 +998,7 @@ that gate exists for — this would otherwise have been the **eleventh** instanc
    WOULD have been detected ⇒ a real ≥2 % asymmetry is EXCLUDED.** θ₀ exonerated both ways (sweeping
    −7…−1.5° moves the L/R difference by **0.9 %**, under its own CI half-width).
    ⇒ **NO angle-dependent plant-model error exists in the band he drives. That line is dead as a symptom
-   explanation.** Traces: `docs/TRACE-2026-08-13-measured-steering-ratio.md` · `…-variable-ratio-rack.md`
+   explanation.** Traces: `docs/traces/TRACE-2026-08-13-measured-steering-ratio.md` · `…-variable-ratio-rack.md`
    · `…-4x-gain-to-term0.md` · `…-v100-6ad6-and-ivar6.md`.
 
 🛑 **TWO INSTRUMENT FACTS THAT INVALIDATE EXISTING ANALYSES:**
@@ -1008,7 +1008,7 @@ that gate exists for — this would otherwise have been the **eleventh** instanc
   all four wheels and runs **+7.9 %** fast at 250–400°, **shaped exactly like a flat plateau.** It produced
   a **FALSE PASS of the ratio study's own positive control** before being caught. Use `(ws_rl+ws_rr)/2`.
 
-⚠ **GOLDEN-MODEL GAP, OPENED AND MARKED:** `eps_chain_control.py` models `gp-0x6ad4` as a lane and **does
+⚠ **GOLDEN-MODEL GAP, OPENED AND MARKED:** `model/eps_chain_control.py` models `gp-0x6ad4` as a lane and **does
 not model the PID's internals at all**, so the clamps above are absent from it. A header note now sits at
 the exact site. **Implementing it changes delivered numbers and must be its own verified pass with a
 re-derived contract.** The 87-symbol / `740f4bcd…` contract **PASSES** as of this close-out.
@@ -1025,19 +1025,19 @@ verbatim: *"I think it helped with the audible aspect of the grinding, though I'
 
 ⚠ **SUPERSEDED HEADING — V99 IS NO LONGER ON THE CAR; V100 FLEW AS ROUTE `0x85` ON 2026-08-13.**
 The V99 flight record below stands as history. **~~ON THE CAR:~~ FLOWN: V99.** Route `0x82`, 2026-08-13, **2 segments, 121.7 s**, base = V98. **12 bytes vs
-V98** (orchestrator re-verified from the images, `analysis-2020accord/ledger_v38_to_v99_bytes.py`):
+V98** (orchestrator re-verified from the images, `analysis-2020accord/studies/ledger/ledger_v38_to_v99_bytes.py`):
 `0xC40BC` 600→**300** (2 B) + `0xC63AC` 150→**102** = back to STOCK's own value (1 B) + `0xC4B52`
 identity byte `00`→**02** (1 B, cave) + two 4-byte CRC trailers (`0xC4FFC`, `0xC6FFC`). image sha256
 `a2d512a6007ff7eef6b11d3cb0771d262384f2f1647178cdd811bd60b3a66726` — **matches the handoff's stated
-hash, independently reproduced.** builder `analysis-2020accord/build_v99_tva.py`, 134/134 assertions.
+hash, independently reproduced.** builder `analysis-2020accord/builds/v80_v107/build_v99_tva.py`, 134/134 assertions.
 
 🛑 **V100 IS BUILT AND NOT FLASHED — V99 REMAINS ON THE CAR.** Stating both explicitly; this kit has
 shipped ten instances of a stale flight-status row and this is not the eleventh. V100 is a
 ZERO-CALIBRATION instrument build (128 B vs V99, 12 runs, independently re-verified — see
-`docs/BUILD-LINEAGE.md`'s V100 row and `docs/HANDOFF-2026-08-13-v99-flew-the-rail-and-v100.md` §12
+`docs/BUILD-LINEAGE.md`'s V100 row and `docs/handoffs/2026-08/HANDOFF-2026-08-13-v99-flew-the-rail-and-v100.md` §12
 for the full build record). **The flash decision is the operator's.**
 
-**FLIGHT [EVIDENCE, `scorer-v99`, `docs/TRACE-2026-08-13-v99-flight-score.md`]:** fault-free — 0
+**FLIGHT [EVIDENCE, `scorer-v99`, `docs/traces/TRACE-2026-08-13-v99-flight-score.md`]:** fault-free — 0
 sentinels on `0x14A`/`0x18F`, `CONFIG_VALID` 1.00000, `OUTPUT_DISABLED` **0.00000**, DTC bit2 0.00000
 / 0 transitions, `STEER_STATUS` **{0: 12004}**. **IDENTITY PASS with ZERO margin consumed:** `b5`
 duty **1.000000** (0 of 12,005 frames; V98 measured 0.0022 on the byte-identical rung) **and**
@@ -1049,7 +1049,7 @@ FIFTH route).
 
 ### 🛑🛑 E1 READS NULL — `0xC40BC` IS CLOSED AT ANY DOSE, NOT JUST 300
 All four rate bins moved, **all four DOWN** (lever bins 0.7335 / 0.8749; control bins 0.9374 /
-0.9119). `build_v99_tva.py` pre-registered verbatim: *"A change in ALL FOUR bins is an
+0.9119). `builds/v80_v107/build_v99_tva.py` pre-registered verbatim: *"A change in ALL FOUR bins is an
 operating-point / route artefact, NOT the lever."* **The pre-registered null sentence is licensed
 verbatim:**
 > *"Doubling the modelled-Coulomb small-signal gain in the 1-13 deg/s micro regime does not move the
@@ -1068,7 +1068,7 @@ finding — it is not evidence for anything and must not be cited as such.**
 
 ### 🛑 V98's ENGAGED/MANUAL HEADLINE WAS OVERSTATED BY ~22% — CORRECTED
 The `b6` MODEL-vs-ACTUAL duty contrast (raw **0.4235 engaged vs 0.8041 manual**, as scored in
-`docs/SCORING-2026-08-13-v98-route81.md`) is **rate-confounded**: manual exposure is 1.84× more
+`docs/scoring/SCORING-2026-08-13-v98-route81.md`) is **rate-confounded**: manual exposure is 1.84× more
 60+ °/s weighted than engaged on route 81 (3.72× on route 82), and `b6` is itself strongly
 rate-dependent. Matched on a 4|rate|×6 speed grid (5.12 s block bootstrap): **route 81 (V98) matched
 engaged 0.4543 vs manual 0.7493, diff −0.2950 [−0.4099, −0.1727]** (15 cells, 96.0% engaged / 83.4%
@@ -1083,7 +1083,7 @@ does not.** 🛑🛑 **V98 FLEW as route `0x81`**; the COMPARATOR ANSWERED, and 
 refuted the "arms are wildly unequal" belief. `0xC63AC` moves from UNINTERPRETABLE to **WRONG-DIRECTION**.
 
 Route `0x81` (`75604b0a432fdc89_00000081--c7103d2cb4`, 3 segments,
-cache `_cache_r81/`), 2026-08-12, **fault-free** — 0 sentinels on `0x14A`/`0x18F`, `CONFIG_VALID`
+cache `_scratch/cache/r81/`), 2026-08-12, **fault-free** — 0 sentinels on `0x14A`/`0x18F`, `CONFIG_VALID`
 1.00000, `OUTPUT_DISABLED` 0.00178, DTC bit2 0.00000, `STEER_STATUS` `{0: 17981, 3: 2}`.
 **IDENTITY IS SINGLE-FRAME PROOF:** `0x14A` byte7[7:6] == **2** on **17,983 / 17,983 frames,
 duty 1.000000** (V96/V97 hard-wire 1; ≤ V91 give 0 ⇒ structurally excluded).
@@ -1190,7 +1190,7 @@ the comparator verdict at the head of this file.
 39990-TVA,A160-V98-V97BASE-CAVE.CMP.6BFE.6BFA.374C-POL.6752-ID.BYTE7.2-0x13000-0x100000.rwd
   image c9babfed6acf24c0c5877754149a60fd5866dae8407029d7a3a5d74870d151d9
   rwd   fcfa1baa82ea8fbca104eee5c8a398b7d5de8762629351128b05e0cb811e5e3c
-  builder analysis-2020accord/build_v98_tva.py   199/199   BASE = V97 (on the car)
+  builder analysis-2020accord/builds/v80_v107/build_v98_tva.py   199/199   BASE = V97 (on the car)
 ```
 🛑 **ZERO calibration bytes. ZERO 427 bytes. Cave only — AN INSTRUMENT, NOT A FIX.**
 It answers the one question this session could not: **which arm of the observer residual dominates.**
@@ -1245,7 +1245,7 @@ car OFF (a positive is strong, a negative is weak).
 🛑 **WHY IT COULD NOT BE SCORED — three independent reasons, none of them the lever:**
 1. **NO INSTRUMENT.** V96's cave is carried unchanged; its regressor is **34× over-range** — `M ≡ 0` on
    **10,749/10,749** frames (third replication: 7e 99.90 %, 7f 99.97 %, r80 **100 %**), `Mlo` duty
-   **0.0000**. S1/S2 **VOID** — conceded in `build_v97_tva.py:99-100` **before the flash**.
+   **0.0000**. S1/S2 **VOID** — conceded in `builds/v80_v107/build_v97_tva.py:99-100` **before the flash**.
 2. **EXPOSURE.** **1** engaged hands-off episode ≥2 s and **1** decaying-angle return, against **24/27**
    and **14/11** on 7e/7f — and the `|Q| = 1.233` direction result rests on **25**.
 3. **THE OBSERVABLE.** **DC gain is 1.000000 at any `A` — a POLE, not a GAIN** ⇒ **no amplitude
@@ -1269,10 +1269,10 @@ scripts, not build scripts.
 🛑🛑 **THIS FILE HAS A HARD SIZE CAP: 256 KB. Keep it under ~150 KB.** On 2026-08-09 it reached
 **506 KB / 6,114 lines / 53 sections** — past the `Read` limit, so no agent could load it in one call
 and **the tail was silently invisible**. 47 superseded sections were split out verbatim to
-**`docs/STATE-ARCHIVE-pre-V89.md`** (432 KB) by `analysis-2020accord/shrink_state_md.py`; the
-2026-08-11 V90-flight headline went to **`docs/STATE-ARCHIVE-2026-08-11-v90-flight-session.md`**
+**`docs/archive/STATE-ARCHIVE-pre-V89.md`** (432 KB) by `analysis-2020accord/archive/shrink_state_md.py`; the
+2026-08-11 V90-flight headline went to **`docs/archive/STATE-ARCHIVE-2026-08-11-v90-flight-session.md`**
 (30 KB) at the 2026-08-12 close-out; **the V96/V94/routes-78-79/V88 flight headlines went to
-`docs/STATE-ARCHIVE-2026-08-13-v96-to-v99.md`** (54 KB) by `analysis-2020accord/shrink_state_md_2026_08_13.py`
+`docs/archive/STATE-ARCHIVE-2026-08-13-v96-to-v99.md`** (54 KB) by `analysis-2020accord/archive/shrink_state_md_2026_08_13.py`
 at the 2026-08-13 (later still) close-out — **177 KB → 126 KB**, each archived section's durable
 facts confirmed to survive in `memory/` or `docs/BUILD-LINEAGE.md` before it moved. Nothing was
 deleted. **Update this file IN PLACE at every close-out. Never append a new dated block — supersede
@@ -1353,7 +1353,7 @@ X-axis knots.
 
 ## → ARCHIVED SECTIONS — moved out 2026-08-21
 Everything from *"ARCHIVED 2026-08-13 — V96's flight headline"* onward now lives in
-**`docs/STATE-ARCHIVE-2026-08-21-pre-v104.md`** — verbatim, nothing edited. That file holds the
+**`docs/archive/STATE-ARCHIVE-2026-08-21-pre-v104.md`** — verbatim, nothing edited. That file holds the
 archived flight headlines, the **STANDING CORPUS RESULTS**, the **STANDING INSTRUMENT CORRECTIONS**,
 the methodology + signal-identity corrections, the tyre line, and the superseded on-the-car block.
 🛑 **The instrument corrections and corpus results are still LOAD-BEARING — read that file before

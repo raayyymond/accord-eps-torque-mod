@@ -122,7 +122,7 @@ decompiled and turns out to cancel it.~~
 
 ## Independent circumstantial support that AMPLITUDE (not the gain cal specifically) is the right frame
 
-[Relayed, `accord-f0-crossover-is-the-endpoint.md`] Pooled across gain AND command-amplitude, "the gain
+[Relayed, `accord/mechanism/accord-f0-crossover-is-the-endpoint.md`] Pooled across gain AND command-amplitude, "the gain
 term goes non-significant (ΔR²=0.0009)" once amplitude is in the model — the existing on-car record
 cannot cleanly separate "0xC6CD0 the cal value" from "how hard the signal is driven." Consistent with
 (not proof of) an amplitude-sensitive-nonlinearity mechanism fed by multiple sources, of which 0xC6CD0

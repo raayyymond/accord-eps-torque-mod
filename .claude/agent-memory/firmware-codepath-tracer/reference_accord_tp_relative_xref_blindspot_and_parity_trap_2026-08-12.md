@@ -34,7 +34,7 @@ you must scan for `disp | 1` as well (`0x73a7`), or decode the field properly.
 me directly): a scan on `0xC64B8` with hw2 = `0x74B9` actually addressed **`0xC64B9`, the neighbour
 byte**, because the opcode field selects between `0x3C` (even displacement, bit0=0 in the field) and
 `0x3D` (odd displacement, bit0=1 in the field) -- the SAME underlying trap the shared kit memory
-`accord-v850-scan-traps-formatv-and-storezero.md` documents for `ld.bu`, now confirmed to also bite
+`accord/firmware/accord-v850-scan-traps-formatv-and-storezero.md` documents for `ld.bu`, now confirmed to also bite
 `ld.hu` in at least one instance, and worth treating as general to the halfword-load family, not just
 byte loads, until proven otherwise.
 
@@ -54,5 +54,5 @@ data points for why that policy exists, not two new exceptions to work around.
 ## Related
 [[reference_accord_c63a6_gate_trace_forward_vs_closed_loop_sign_split]] -- the trace this session's traps
 were caught during.
-`docs/FIRMWARE-DECOMPILE-GUIDE.md`, `.claude/skills/firmware-decompile.md` -- the standing trap list this
+`docs/guides/FIRMWARE-DECOMPILE-GUIDE.md`, `.claude/skills/firmware-decompile.md` -- the standing trap list this
 extends (shared, not owned by this agent-memory).

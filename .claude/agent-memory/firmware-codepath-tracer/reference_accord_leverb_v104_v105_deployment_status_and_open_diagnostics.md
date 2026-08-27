@@ -74,7 +74,7 @@ actually helping, and if not, why not.
    24.9Hz, outside Lever B's own scoring band. If the lane's mechanism is itself frequency-selective
    (plausible, it's a rate/derivative-type term), it may be tuned to where the mode WAS, not where it
    IS. Not checked this session whether Lever B's own pre-registered endpoint (PASS/FAIL vs V103, LR
-   14.1:1, right there in `build_v104_tva.py`) was ever actually scored on route `a4`/`a5`.
+   14.1:1, right there in `builds/v80_v107/build_v104_tva.py`) was ever actually scored on route `a4`/`a5`.
 
 ## Recommendation
 Before designing any new V106 lever: (a) confirm Lever B's gate is live in the operator's actual

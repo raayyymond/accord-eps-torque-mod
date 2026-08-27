@@ -11,7 +11,7 @@ This file's headline ("P is the dominant pump candidate") is WRONG. The error wa
 `gp-0x6752=-1` correction to GATE2's own PUMP/DAMP LABELS rather than to its raw numbers read against
 the kit's CANONICAL Re(Z) convention (GATE2 uses a different, non-matching convention — see
 [[reference_accord_gp6752_resolved_negative_one_and_pid_polarity_reversal]]'s second correction for the
-full re-derivation, numerically verified against `rlog-tools/decode_v90_probe.py`'s actual code).
+full re-derivation, numerically verified against `rlog-tools/probe/decode_v90_probe.py`'s actual code).
 **Correctly combined: D pumps, P (and I) DAMP at 6-9Hz** — GATE2's original finding, recovered.
 
 **What still holds from the analysis below**: P's own transfer function IS a pure static gain, exactly
@@ -59,7 +59,7 @@ magnitude `0.250 × 0.577 = +0.144` at 6-9Hz — matches the corrected table alr
 ## A P-probe needs no new RAM state — reuse the existing signal
 
 Unlike D (which needed `gp-0x3680`), P has no persistent state to tap — it's recomputed from `ERR` fresh
-every cycle. But per `reference-accord-fun3a382-is-a-real-pid.md`'s own established finding, **for AC
+every cycle. But per `reference/firmware/reference-accord-fun3a382-is-a-real-pid.md`'s own established finding, **for AC
 content faster than `gp-0x6ad6`'s own bias crosses its 2-state boundary, `ERR`'s AC content IS
 `gp-0x4f60`'s AC content (unity gain, zero phase)** — so a comparator can skip `ERR` entirely and compare
 `sign(gp-0x4f60)` (the raw torque sensor — an existing, already-probed signal, not a new cave read)

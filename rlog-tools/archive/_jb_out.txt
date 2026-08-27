@@ -1,0 +1,130 @@
+
+==========================================================================================================
+1.  VALIDITY BAND, MEASURED -- coherence and the shape test, per 1 Hz bin, engaged hands-off
+==========================================================================================================
+    |Z|/w (= apparent J_w) must be MONOTONE NON-INCREASING for a J s + b column.
+    Cells: |Z|/w in counts.s^2/deg, with (coherence).  Bins failing coh >= 0.30 are the
+    band's edges.
+
+    route                 3 Hz          4 Hz          5 Hz          6 Hz          7 Hz          8 Hz          9 Hz         10 Hz         12 Hz         14 Hz         16 Hz
+    V9b STOCK      3.52 (0.22)   2.65 (0.32)   1.86 (0.38)   1.54 (0.51)   1.50 (0.52)   1.41 (0.69)   1.39 (0.74)   1.33 (0.75)   1.93 (0.52)   1.15 (0.57)   0.45 (0.50)
+    V103           4.80 (0.06)   3.95 (0.11)   2.69 (0.19)   1.59 (0.57)   1.64 (0.74)   1.99 (0.81)   2.25 (0.78)   1.69 (0.71)   1.83 (0.42)   1.28 (0.35)   0.70 (0.37)
+    V102           4.28 (0.21)   2.82 (0.36)   1.61 (0.50)   1.97 (0.30)   2.10 (0.37)   1.93 (0.78)   2.78 (0.74)   3.79 (0.19)   2.58 (0.22)   0.94 (0.42)   0.66 (0.48)
+    V88            4.67 (0.12)   4.54 (0.11)   2.58 (0.30)   2.43 (0.46)   2.26 (0.43)   2.34 (0.50)   1.90 (0.67)   1.61 (0.76)   1.21 (0.68)   1.05 (0.80)   0.58 (0.51)
+    V100 4x        2.60 (0.35)   2.15 (0.32)   2.69 (0.31)   1.65 (0.59)   1.48 (0.81)   1.74 (0.88)   1.72 (0.86)   1.45 (0.87)   1.15 (0.82)   0.61 (0.84)   0.65 (0.43)
+
+==========================================================================================================
+2.  ABSOLUTE J_w AND b_w -- episode bootstrap, 3000 resamples, fit band 4-12 Hz
+==========================================================================================================
+    J_w counts.s^2/deg · b_w counts.s/deg · rel = median relative fit residual
+
+    route       arm      hold   nep   coh    rel         J_w [95% CI]         b_w [95% CI]   b/J rad/s [CI]
+    V9b STOCK   engaged  off     13  0.59  0.128 1.248 [1.110, 1.358]    35.8 [19.9, 42.5] 28.7 [15.1, 38.0]
+    V9b STOCK   engaged  on       4  0.43  0.258 0.245 [0.209, 0.826]    56.3 [22.1, 56.3] 230.0 [35.2, 230.0]
+    V103        manual   on       4  0.40  0.343 0.552 [0.191, 0.579]     20.3 [8.4, 36.1] 36.7 [18.9, 105.3]
+    V102        manual   on       3  0.43  0.199 0.331 [0.157, 0.427]     21.0 [9.0, 21.0] 63.4 [21.2, 112.8]
+    V88         engaged  off      4  0.62  0.275 0.867 [0.140, 1.382]    71.1 [14.9, 85.3] 81.9 [10.8, 610.0]
+    V100 4x     engaged  off      3  0.83  0.294 1.202 [0.814, 1.449]    35.0 [14.4, 45.9] 29.1 [9.9, 55.0]
+    V101 8x     engaged  on       4  0.61  0.442 0.947 [0.135, 0.970]    31.7 [11.8, 42.5] 33.4 [14.1, 273.6]
+
+==========================================================================================================
+3.  C2 COULOMB TEST -- does apparent b_w fall as rate amplitude rises?
+==========================================================================================================
+    A Coulomb term gives equivalent viscous damping N = 4 F_c/(pi V): b_w would fall
+    like 1/V while J_w stays constant.  Strata are window std(rate_c), deg/s.
+    Strata gated at coherence >= 0.55; below that J_w itself moves 2x and the test's
+    own precondition (J_w independent of amplitude) fails.
+
+    route       rate stratum     nep   coh   V med        J_w        b_w      b/J
+    V9b STOCK   0.7-1.1 deg/s      8  0.56    0.99      0.834       46.0     55.1
+    V9b STOCK   1.1-1.6 deg/s     10  0.56    1.36      1.210       39.5     32.6
+    V9b STOCK   1.6-2.4 deg/s      8  0.68    2.00      1.406        8.6      6.1
+    V9b STOCK   2.4-4.0 deg/s      5  0.77    2.92      1.048       21.0     20.0
+    V103        2.4-4.0 deg/s      3  0.78    3.90      0.930       49.5     53.2
+    V102        1.1-1.6 deg/s      3  0.82    1.37      1.283       56.4     44.0
+    V102        1.6-2.4 deg/s      3  0.61    1.90      1.463       35.2     24.1
+    V88         2.4-4.0 deg/s      2  0.67    2.55      0.666       56.7     85.2
+    V88         4.0-99.0 deg/s     3  0.70    5.29      1.025       50.8     49.6
+    V100 4x     2.4-4.0 deg/s      3  0.84    3.28      1.559       13.5      8.7
+
+    POOLED REGRESSION -- the Coulomb signature is a SLOPE, so fit one.
+    (per-route strata counts are too small for a per-route verdict; pooling is the
+     only way this test has any power at all, and it is stated as such.)
+      n = 10 strata across 5 routes, rate range 0.99-5.29 deg/s
+      d log b_w / d log V = -0.11 [-1.12, +0.72]
+      d log J_w / d log V = -0.03    <- must be ~0; inertia cannot depend on amplitude
+      PREDICTIONS:  pure COULOMB -> -1.00   ·   pure VISCOUS -> 0.00
+      => AMBIGUOUS -- the CI spans both predictions
+
+    VERDICT per route (needs >= 3 strata):
+      V9b STOCK   b_w 46 -> 39 -> 9 -> 21   (0.46x over the range)  |  J_w 0.83 -> 1.21 -> 1.41 -> 1.05  (1.26x)
+      V103        only 1 strata -- UNDERPOWERED, no verdict
+      V102        only 2 strata -- UNDERPOWERED, no verdict
+      V88         only 2 strata -- UNDERPOWERED, no verdict
+      V100 4x     only 1 strata -- UNDERPOWERED, no verdict
+
+    🛑 b_w FALLING strongly with amplitude while J_w holds => Coulomb friction is in
+       the fit and b_w is NOT purely viscous.  b_w flat or RISING => it is not.
+
+==========================================================================================================
+4.  C3 BAND SENSITIVITY -- a real J_w cannot depend on the band chosen
+==========================================================================================================
+    Route 0x97 STOCK, engaged, hands-off.
+    band                    J_w          b_w        b/J      rel
+    4-10 Hz               1.102         42.9       39.0    0.120
+    4-12 Hz               1.248         35.8       28.7    0.128
+    5-12 Hz               1.323         26.6       20.1    0.124
+    6-12 Hz               1.382         13.9       10.1    0.128
+    4-14 Hz               1.276         34.1       26.7    0.149
+    6-14 Hz               1.367         17.6       12.9    0.163
+
+==========================================================================================================
+5.  🛑 IS J_w s^2 DOMINANT AT 6-9 Hz?  |J_w w| / b_w, the direct answer
+==========================================================================================================
+    ratio > 1 => inertia dominates; = 1 at w = b/J; >> 1 needed to call it 'inertial'.
+
+    route        b/J rad/s      6 Hz    7.5 Hz      9 Hz     12 Hz  corner f (Hz)
+    V9b STOCK         28.7      1.32      1.64      1.97      2.63           4.56
+    V88               81.9      0.46      0.58      0.69      0.92          13.04
+    V100 4x           29.1      1.30      1.62      1.94      2.59           4.63
+
+    ⇒ at 7.5 Hz the inertia term is 0.58 - 1.64 x the damping term across routes.
+      The damper therefore contributes 52-87 % of |Z| at 7.5 Hz
+      ⇒ **J_w s^2 is the LARGER term at 6-9 Hz but it is NOT dominant** -- this is a
+        mass-with-substantial-damping, not a clean inertia.
+
+==========================================================================================================
+6.  SANITY CHECK IN SI, AND WHAT J_w AND b_w IMPLY FOR THE 8.16 Hz LINE
+==========================================================================================================
+    The counts->N.m scale is not known directly, but it is BRACKETED: the kit's own
+    k = 2296 counts/deg is the same torsion bar as the handbook 1.5-2.5 N.m/deg used in
+    `ANALYSIS-2026-08-20` section 2, so 1 count = 1.5/2296 .. 2.5/2296 N.m.
+      => 1 count = 6.533e-04 .. 1.089e-03 N.m
+
+J_w = 0.87 - 1.25 counts.s^2/deg  =>  0.0325 - 0.0779 kg.m^2
+      ⭐ handbook steering wheel + upper column: 0.03-0.06 kg.m^2
+         (the range `ANALYSIS-2026-08-20` section 2 assumed).  **The measured J_w
+         lands on it.**  That is an independent physical check the fit could have
+         failed and did not.
+
+b_w = 35 - 71 counts.s/deg  =>  1.31 - 4.43 N.m.s/rad
+      ⚠ a bare steering column is ~0.1-0.5 N.m.s/rad.  Measured b_w is well above
+        that, which is expected: engaged, it contains the loop's contribution AND
+        any Coulomb friction linearised by the estimator (section 3).
+
+IMPLIED WHEEL MODE, f_n = sqrt(k/J_w)/2pi  (needs k, which is PROVISIONAL):
+      97|engaged|off         J 1.248 -> f_n 6.83 Hz   zeta 0.334   Q 1.50
+      73|engaged|off         J 0.867 -> f_n 8.19 Hz   zeta 0.796   Q 0.63
+      85|engaged|off         J 1.202 -> f_n 6.95 Hz   zeta 0.333   Q 1.50
+
+🛑 AND THE k-FREE STATEMENT, which is the one that decides it:
+       Q at ANY assumed f_n is  Q = 2 pi f_n / (b_w/J_w)  -- no k, no counts scale.
+       b/J rad/s      Q @8.16 Hz b/J needed for Q=10
+       28.7                 1.79       5.13
+       81.9                 0.63       5.13
+       29.1                 1.76       5.13
+       ⇒ Q = 10 at 8.16 Hz requires b/J = 5.13 rad/s (a 0.82 Hz corner).
+         Every measurement here, by either method and over every band tried, is
+         10.1 - 81.9 rad/s -- **2x to 16x too damped.**
+
+wrote C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\_scratch/out/_plant_Jb_absolute.json

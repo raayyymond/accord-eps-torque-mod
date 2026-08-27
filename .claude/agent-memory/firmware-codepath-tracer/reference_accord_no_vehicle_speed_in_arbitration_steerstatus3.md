@@ -47,7 +47,7 @@ setpoint-limit memory, not re-proven here.]
 
 **Inference (not proven this session)**: the kit's own rlog analysis found STEER_STATUS=3 empirically
 correlates with vehicle speed (100% at 0-2mph, 0% by 5mph, release ~3-4mph — see
-`eps_lkas_chain_model.py` lines ~2868-2887, `_ss_vs_speed.py`). Given Finding 1+2, the most likely
+`model/eps_lkas_chain_model.py` lines ~2868-2887, `studies/gates/_ss_vs_speed.py`). Given Finding 1+2, the most likely
 explanation is that this is a DOWNSTREAM ARTIFACT of openpilot's own `minSteerSpeed`=3mph cutoff: below
 that speed openpilot stops requesting steer entirely (`latActive=False`), so `gp-0x67fe` never reaches
 its "engaged" substate (or the setpoint/torque windows never populate) and the function falls through

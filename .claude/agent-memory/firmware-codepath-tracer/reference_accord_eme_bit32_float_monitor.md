@@ -15,7 +15,7 @@ metadata:
 > diverge under V18. The DTC 0xF00049 is the **V19–V24 hard fault** (consistency-monitor desync caused by
 > the `shl` envelope doubling), not V18. Treat the analysis below as accurate **float-monitor structure**
 > (the bit32 comparison sites, thresholds, dwell SM), but NOT as the V18 cause. Corrected model:
-> `memory/reference_accord_corridor_vs_envelope.md`.
+> `memory/reference/firmware/reference_accord_corridor_vs_envelope.md`.
 
 # Accord EME Bit32 — Float Monitor Divergence Under V18 (Verified 2026-06-02)
 

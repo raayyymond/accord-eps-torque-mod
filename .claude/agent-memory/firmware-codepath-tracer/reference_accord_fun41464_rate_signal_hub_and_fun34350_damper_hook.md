@@ -58,7 +58,7 @@ r6 = separate_ceiling_LERP(gp-0x6ac2)                 # table 0xC77A0, fallback 
 gp_0x6bd0 = clamp(r8, -r6, +r6)                       # 0x34720-0x3475c, shadow-paired gp-0x4cf2
 ```
 **Sign rule, confirmed directly from the disassembly** (matches
-`docs/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md` §6.3's citation exactly):
+`docs/research/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md` §6.3's citation exactly):
 `sign(gp-0x6bd0_unclamped) = -sign(gp-0x6abe)` -- i.e. Honda's damper OPPOSES the signed slew-limited
 motor rate. `gp-0x6bd0` enters `FUN_0003aa2c` (the aggregator) as a **plain "+" addend**, zero-reject
 window **±0x800 = ±2048** (byte-exact from `FUN_0003aa2c`'s own decompile, confirming RULE 14).
@@ -98,5 +98,5 @@ runs byte-for-byte unmodified on whatever `r8` holds when it gets there.
 
 Related: [[reference_accord_gp6c2c_gp6b26_fun36c12_chain_and_v106_gate1]] (sibling trace, same day, adjacent
 signal family) · [[reference_accord_v39_v48b_1khz_hook_precedent_correction]] (the hook-class precedent
-this hook point relies on) · `docs/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md` §6 (the original
+this hook point relies on) · `docs/research/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md` §6 (the original
 `gp-0x6abe`-sign citation this independently re-confirms).

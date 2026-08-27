@@ -7,10 +7,10 @@ metadata:
 
 # Path 2 closes through gp-0x6b98 itself, not just the plant -- and 0xC63A0 is now fully quantified
 
-2026-08-06 session, tasked with the V75 GATE-2 design brief (`v77_gate2_loop_and_friction.py`'s open item
+2026-08-06 session, tasked with the V75 GATE-2 design brief (`studies/sessions/v77/v77_gate2_loop_and_friction.py`'s open item
 "g4 = FUN_00038148's stage-2, decides whether reverting 0xC63A0 increases net damping -- do not ship
 blind"). Builds on [[reference_accord_gp6bd0_full_reader_enumeration_and_dual_path]] and the V77 handoff
-`docs/HANDOFF-2026-08-06-v75-faulted-and-the-gate2-gain.md`.
+`docs/handoffs/2026-08/HANDOFF-2026-08-06-v75-faulted-and-the-gate2-gain.md`.
 
 ## [EVIDENCE, fresh decompile+disasm, `FUN_00038148` @0x38148-0x382d6, code.bin] Stage 1 confirmed exactly
 
@@ -52,7 +52,7 @@ gp-0x6b98[n]`. **Call-site ordering inside `FUN_0002214a` confirmed via `get_xre
 BEFORE the governor writes `gp-0x6b98` in the SAME tick, so the loop has exactly one clean unit delay
 (z^-1 at the `gp-0x6b98` sample), not a same-cycle algebraic loop.
 
-**This CORRECTS `v77_gate2_loop_and_friction.py`'s topology comment** ("the damper reaches the motor by
+**This CORRECTS `studies/sessions/v77/v77_gate2_loop_and_friction.py`'s topology comment** ("the damper reaches the motor by
 TWO parallel FEED-FORWARD paths and closes only through the PHYSICAL plant") -- that is FALSE for Path 2:
 it closes through the FIRMWARE, via `gp-0x6b98` itself, not only through the mechanical plant. `gp-0x6bd0`
 is only ONE of several inputs to this loop's error term (one of 6 composite terms, PLUS whatever
@@ -105,7 +105,7 @@ that no cal in this kit has ever adjusted and that this session did not characte
 [[reference_accord_gp6bd0_full_reader_enumeration_and_dual_path]] -- the prior 2-path census this extends.
 [[reference-accord-fun3a382-resonance-lane-unfiltered-correction]], the PID/frequency-response memories --
 `FUN_0003a382`'s structure, reused unchanged here.
-`docs/HANDOFF-2026-08-06-v75-faulted-and-the-gate2-gain.md`, `analysis-2020accord/v77_gate2_*.py` -- the
+`docs/handoffs/2026-08/HANDOFF-2026-08-06-v75-faulted-and-the-gate2-gain.md`, `analysis-2020accord/v77_gate2_*.py` -- the
 session this extends; its g4 sweep numbers reproduced exactly (cross-validated) in this session's own
 Python re-derivation.
 

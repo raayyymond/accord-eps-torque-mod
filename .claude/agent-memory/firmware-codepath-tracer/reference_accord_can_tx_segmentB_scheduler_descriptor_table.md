@@ -90,7 +90,7 @@ same table cluster from the HW-mailbox-writer side and did the deeper, more prec
 | +0x0C | u8 | "retry-enabled" flag: `1` for 17/19 entries, `0` for entries **16 and 18** | `ld.bu 12[r26],r11` @ `0x5214e`; gates whether the `FUN_00051fbc`/`FUN_0005413a` retry pair runs |
 | +0x0E | u16 | per-entry value (228–1934 range; entry7=**0x00E4=228, exactly matches CAN ID 0xE4**) — used as a simple **nonzero-gate**, NOT literally passed as an argument to the TX-driver call | `ld.hu 14[r26],r8` @ `0x5213a`; `cmp r0,r8;be skip` |
 | +0x10 | u32 | `=1` for 18/19 entries, `=0` only for **entry 18** | raw table dump (row2 word0) |
-| +0x14 | u32 | RAM buffer pointer (`0xFEDF6Axx-0xFEDF6Cxx` family — the SAME address family as the CAN-RX routed-buffer table `0xB739C` documented in `TORQUE_PATH_AND_TABLE.md` §0.5) | `ld.w 20[r26],r7` @ `0x52142`, passed as arg2 to `FUN_000541d8` |
+| +0x14 | u32 | RAM buffer pointer (`0xFEDF6Axx-0xFEDF6Cxx` family — the SAME address family as the CAN-RX routed-buffer table `0xB739C` documented in `notes/TORQUE_PATH_AND_TABLE.md` §0.5) | `ld.w 20[r26],r7` @ `0x52142`, passed as arg2 to `FUN_000541d8` |
 | +0x18 | u8/u32 | bitmask value: `0xF`(15, 12 entries) or `0x8`(8, 7 entries) — **CONFIRMED this is a tick-phase selector**, ANDed against a live phase-mask `r24` built from bitfield extractions of STATUS_WORD-adjacent word `gp+0x6400`-ish region (see iteration loop below), NOT a DLC | `ld.bu 24[ep],r14` @ `0x522b8`; `and r24,r14;be skip-call` in the OUTER iteration loop |
 | +0x1C | u32 | callback/handler function pointer, tail-jumped via `jmp [r20]` at merge point `0x5216a`-`0x52176` with `r6`=accumulated small-int result | confirmed entry7 = `0x00052676` = the CAN-0xE4 RX processor `FUN_00052676` (byte-identical to Segment A's `reference_accord_can_e4_intake_gates.md` finding that `0x52676` appears as a raw pointer at file offset `0xbb640` = entry7's `+0x1C` = `0xBB624+0x1C`= `0xBB640` ✓ EXACT MATCH) |
 
@@ -122,7 +122,7 @@ Questions).
 ### What Table A's entries actually DO — proven NOT a TX-frame-build table [V]
 - **Entry 7** (`0xBB624-0xBB643`): `+0x14`(buf)=`0xFEDF6BD8`, `+0x1C`(callback)=`FUN_00052676`. This is
   **EXACTLY the confirmed CAN-0xE4 (STEERING_CONTROL) RX destination buffer and its RX-side processor**
-  (`s_lkas_process_steer_cmd`, per `TORQUE_PATH_AND_TABLE.md` §0.5 and Segment A's memory). This is an
+  (`s_lkas_process_steer_cmd`, per `notes/TORQUE_PATH_AND_TABLE.md` §0.5 and Segment A's memory). This is an
   **inbound** message slot, not outbound.
 - **Entries 0 and 16** (callbacks `0x522fe` and `0x534da`, disassembled in full): both are **dual-value
   lockstep/consistency comparators** — they load a PAIR of gp-relative int16 shadow values, compare them,
@@ -137,7 +137,7 @@ Questions).
   majority of which are unambiguous **fault/DTC logging calls** (`FUN_00016de6(fault_idx, code, 1, 1)`
   pattern, e.g. `FUN_0004613e`'s `FUN_00016de6(0x1c,...)`, `FUN_000462e6`'s `FUN_00016de6(0x1d,...)`, per
   `reference_accord_consistency_monitor_hardshutdown.md`). It is a low-level, multi-purpose IPC/mailbox
-  primitive shared by DTC logging, CSIG0 inter-chip serial messaging (`TORQUE_PATH_GUIDE.md` Hop 10), AND
+  primitive shared by DTC logging, CSIG0 inter-chip serial messaging (`notes/TORQUE_PATH_GUIDE.md` Hop 10), AND
   (per the shared swarm context) actual HW CAN mailbox commits. Its role inside `FUN_000541d8`'s specific
   call is NOT independently disambiguated this session — see Open Questions.
 
@@ -294,7 +294,7 @@ exhaustive xref sweep for the 3 table bases).
    `0x19F`, `0x32E`, `0x64D`). Next step: disassemble each fully (not just the prologue) looking for the
    `sxh`/`shl`/`subr r0` scale-and-negate idiom (matches `FUN_00055c42`'s body at `0x55c50`) or a checksum
    call to `FUN_00057b24`, and correlate against the DLC/rate table at `0xB7120-0xB7139` (already documented
-   in `TORQUE_PATH_AND_TABLE.md`, "copy length 0xB7124").
+   in `notes/TORQUE_PATH_AND_TABLE.md`, "copy length 0xB7124").
 2. **Resolve Table B's exact index-to-slot mapping and the `param2` computation** at each of the 3
    `FUN_0001d68e` call sites, to determine which slot(s) correspond to the confirmed car-facing IDs (399,
    427, `0x14A`) vs internal-only (`0x660`, `0x19F`, `0x32E`, `0x64D`) — this is REQUIRED before claiming any
@@ -302,7 +302,7 @@ exhaustive xref sweep for the 3 table bases).
 3. **Resolve whether `FUN_0001d68e` runs once at init or is re-entered periodically/on interrupt.** Walk its
    enclosing caller (`0x1d904`'s enclosing function; find via its `dispose` at `0x1d90e` and its own callers)
    up to the true root (ideally reaching the "1ms scheduler `FUN_0002214a`" already documented in
-   `TORQUE_PATH_AND_TABLE.md` §0.3, or an interrupt vector).
+   `notes/TORQUE_PATH_AND_TABLE.md` §0.3, or an interrupt vector).
 4. **Get the V850E2/UPD70F3508 CAN-controller register manual** for the `0xFF481000`/`0xFF489000` blocks
    (64 bytes/channel stride) to understand what `FUN_0001d68e` is actually configuring — this is required to
    know what register writes a new Table-B registration needs beyond just the pointer+mask.

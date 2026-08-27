@@ -7,7 +7,7 @@ metadata:
 
 Never propose a calibration-only test address without first grepping `analysis-2020accord/build_v*_tva.py`
 for it. On 2026-07-26 I recommended `0xC6450` (tp+0x7450, `FUN_0003a382` Stage A pole) `1024→32` as a
-"never flashed" cal-only test — team-lead corrected me: it is `build_v46_tva.py` verbatim (same address,
+"never flashed" cal-only test — team-lead corrected me: it is `builds/v18_v49/build_v46_tva.py` verbatim (same address,
 same values, same predicted effect, `_v46_plain_image.bin` confirms `0xC6450=32`), **flashed and
 falsified** ("V46 FLASHED... vibration UNCHANGED... LEVER A FALSIFIED", already recorded in CLAUDE.md).
 This was the **second time** an agent in this kit independently re-proposed `0xC6450` as a "new" lever —
@@ -50,7 +50,7 @@ happened on the car?" Those are three different questions and only the last one 
 **How to apply — the check has FOUR steps, not one:**
 1. `grep` the address across `build_v*_tva.py`. **A non-empty result is the START of the check.**
 2. **Open each hit** and classify it: *written* vs *asserted-stock* vs *mentioned in a docstring*.
-   (`build_v74_tva.py:79` said "LEVER D' — THE FRICTION LANE ×1.5" in plain text.)
+   (`builds/v50_v79/build_v74_tva.py:79` said "LEVER D' — THE FRICTION LANE ×1.5" in plain text.)
 3. 🛑 **Dereference the cell across the IMAGES**, not the scripts — mode-indexed cells hide behind a
    pointer array, so the literal address never appears where the value lives. One Python loop over
    `_v*_plain_image.bin` reading `ptr = u32(img, ARRAY + mode*4)` settles it beyond argument.

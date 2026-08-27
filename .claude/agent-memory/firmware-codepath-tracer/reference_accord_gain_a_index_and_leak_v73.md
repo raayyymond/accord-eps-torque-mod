@@ -1,6 +1,6 @@
 ---
 name: reference_accord_gain_a_index_and_leak_v73
-description: r26's weight `a` (gp-0x69a4) LERP index resolved to abs(driver column torque gp-0x4f60 + mixer torque gp-0x6b4a); the "a ~ ZERO via cal 0xC6564" belief in eps_lkas_chain_model.py:689 has a BROKEN causal link (0xC6564 feeds a different RAM block, not a's table); gain_A/gain_B per-record rate breakpoints are NOT uniform across speed; V73 plateau-raise interpolation leak quantified and shown structurally incapable of reaching the two-lane-rule danger threshold.
+description: r26's weight `a` (gp-0x69a4) LERP index resolved to abs(driver column torque gp-0x4f60 + mixer torque gp-0x6b4a); the "a ~ ZERO via cal 0xC6564" belief in model/eps_lkas_chain_model.py:689 has a BROKEN causal link (0xC6564 feeds a different RAM block, not a's table); gain_A/gain_B per-record rate breakpoints are NOT uniform across speed; V73 plateau-raise interpolation leak quantified and shown structurally incapable of reaching the two-lane-rule danger threshold.
 metadata:
   type: reference
 ---
@@ -14,7 +14,7 @@ on stock/`_v67_plain_image.bin`/`_v72_plain_image.bin`.
 
 ## 1. Per-record rate-axis breakpoints are NOT uniform [EVIDENCE: byte-read]
 
-`v72_lane_model.py`'s docstring assumes a single shared rate axis per surface (X=[0,400,1400,3000]
+`studies/models/v72_lane_model.py`'s docstring assumes a single shared rate axis per surface (X=[0,400,1400,3000]
 gain_B / X=[0,400,1600,3000] gain_A). That's an approximation. The REAL per-record X arrays:
 ```
 gain_A (r26):  0km/h [0,400,1600,3000]   10km/h [0,250,1200,3000]   50/100km/h [0,400,1250,3000]
@@ -34,7 +34,7 @@ index = abs( clamp(gp-0x4f60, +/-cal@tp+0x7200=0xC6200)  +  gp-0x6b4a )
         result clamped +/-0x6400
 ```
 - `gp-0x4f60` = **driver column torque, Sensor B, raw physical torque.** Address cross-check:
-  `gp-0x4f60` = `0xFEDF8000-0x4F60` = `0xFEDF30A0`, matches `eps_lkas_chain_model.py:608`'s
+  `gp-0x4f60` = `0xFEDF8000-0x4F60` = `0xFEDF30A0`, matches `model/eps_lkas_chain_model.py:608`'s
   `col_torque_sensor_b` exactly. Established independently across ~10 prior memory files.
 - `gp-0x6b4a` = **the type-8 MIXER output torque**, written by `FUN_00026c80` (3 `st.h` stores; see
   [[reference_accord_gp6b4c_lane_chain]] and the v61-taps memory). Adjacent slot to `gp-0x6b4c`
@@ -45,7 +45,7 @@ dtorque.** Near a centred wheel with light hands, both terms are small -> index 
 of the 10-segment table. The table's own X/Y shape at that low end was NOT resolved this session
 (would need `FUN_0003897a` + the two boost-curve LERPs below decompiled).
 
-## 3. 🛑 The golden-model "a ~ ZERO" note (eps_lkas_chain_model.py:689) has a BROKEN causal link
+## 3. 🛑 The golden-model "a ~ ZERO" note (model/eps_lkas_chain_model.py:689) has a BROKEN causal link
 
 That note cites cal `0xC6564` (=`tp+0x7564`) reading as 40 bytes of exact zero and concludes the
 Y-base feeding `a`'s table is ~zero. **`0xC6564` is re-confirmed exact zero in stock AND V72
@@ -72,7 +72,7 @@ single static table, and it is NOT identically zero** -- contra the stale note. 
 in live calibration data, so `a` is real and non-trivial, but there is **no single ROM cal an
 engineer could edit to cleanly raise/lower it** -- the "measure it with the probe, don't argue it"
 approach the kit already committed to (V72 bits 6/5) is correct and is the only practical path to a
-number. RECOMMEND: soften `eps_lkas_chain_model.py:689` from "~ZERO ON THIS CALIBRATION" to
+number. RECOMMEND: soften `model/eps_lkas_chain_model.py:689` from "~ZERO ON THIS CALIBRATION" to
 "BELIEF, broken causal link -- see this file" pending operator confirmation to edit the golden model.
 
 ## 4. V73 interpolation-leak sizing -- structurally capped, cannot reach the two-lane-rule threshold

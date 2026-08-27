@@ -9,7 +9,7 @@ metadata:
 
 Dispatched to adjudicate a stated conflict between the V85 flight measurement and desk
 cancellation-reasoning. **The conflict dissolves — it was a mis-framing, not a contradiction.**
-Write-up: `docs/TRACE-2026-08-13-v99-arm-levers.md` §8.
+Write-up: `docs/traces/TRACE-2026-08-13-v99-arm-levers.md` §8.
 
 ## The arithmetic, assembly-exact [EVIDENCE — `get_assembly_context` @ `0x3bab4`]
 ```

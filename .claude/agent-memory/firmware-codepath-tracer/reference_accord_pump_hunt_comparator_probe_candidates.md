@@ -50,7 +50,7 @@ exists to check) is false, verified structurally, not just unmeasured.
 
 **This closes r24/r26 as something you can cheaply RE-TUNE for phase. It does NOT close r24/r26 as the
 PHYSICAL SOURCE of the anti-damping** — the lane is structurally exactly the carrier class
-`analysis-2020accord/eps_loop_gain_model.py`'s own docstring names as the textbook destabilizing shape
+`analysis-2020accord/studies/models/eps_loop_gain_model.py`'s own docstring names as the textbook destabilizing shape
 ("dominant carriers are RATE (command/torque-derivative) feedbacks... through a resonance at its -90°
 peak => L ~ real positive => direct anti-damping"), unfiltered, entering the same aggregator
 (`gp-0x6b98`) the D-term does. Nobody has measured its real closed-loop phase relative to velocity.

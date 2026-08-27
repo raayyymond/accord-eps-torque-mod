@@ -8,7 +8,7 @@ metadata:
 # `FUN_00038148` lane↔weight map — 2026-08-12, `fw-levers` task for team-lead
 
 Fresh `decompile_function(0x38148)` on `code.bin`. **EVIDENCE.** The kit had the six weights indexed
-(`ledger_v94_cells.py`: "lane weight [0]".."[5]") but **no document said which lane each one multiplies.**
+(`studies/ledger/ledger_v94_cells.py`: "lane weight [0]".."[5]") but **no document said which lane each one multiplies.**
 That gap was silently load-bearing — it is what let a dead-lane result be imported as a live precedent.
 
 | weight cal | multiplies lane | zero-reject gate | lane identity |
@@ -64,7 +64,7 @@ coeffs at `tp+0x50d4/0x50d8/0x504c/0x5050/0x50bc/0x50d0/0x50d2/0x50d6` — ⚠ `
 - 🛑🛑 REFUTED AND INVERTED: "the V64-class null is excluded by arithmetic". For `gp-0x6b4e` it is
   **CERTAIN** — `0 × 0xC63A8 = 0` for any weight. **`0xC63A8` is unfliable.**
 
-## Virginity (89 non-stock images, `_v97/ledger_v97_virginity.py`)
+## Virginity (89 non-stock images, `sessions/v97/ledger_v97_virginity.py`)
 `0xC63A2`/`A4`/`A6`/`A8`/`AA` are **VIRGIN across the entire corpus**. Only `0xC63A0` ever moved (8
 images: v72, v72_SUPERSEDED, v73, v74, v75 ×2, **v76_gate_fb**, v81), and it is back at stock 1024 frozen
 since V83a. ⚠ `docs/STATE.md` lists the flights as "V72, V73, V76g, V81" — **V74 and V75 are omitted**,

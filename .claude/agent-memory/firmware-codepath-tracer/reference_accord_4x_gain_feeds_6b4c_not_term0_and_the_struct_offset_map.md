@@ -9,7 +9,7 @@ metadata:
 
 Traced 2026-08-13 (`tracer-4x-to-term0`), GhidraMCP + raw Python LE scan, harness-validated
 (`gp-0x4f60` → 64 `ld.h` / 5 `st.h` / 7 six-byte = exact). Full trace:
-`docs/TRACE-2026-08-13-4x-gain-to-term0.md`.
+`docs/traces/TRACE-2026-08-13-4x-gain-to-term0.md`.
 
 ## ⭐ THE STRUCT OFFSET MAP — the crux, and it inverts the natural guess
 
@@ -96,10 +96,10 @@ census (all six write sites inside `FUN_00025c32`; `0x27832`, `0x27b98/bc0/bda/c
 are all `sld.h` **loads**) **and the lockstep-shadow invariant** — `movea gp-0x4b70` appears at exactly
 those six sites + the read-only checker; a writer skipping its shadow trips `FUN_00028d22`→`FUN_0006b9fa`.
 
-🛑 **This INDEPENDENTLY REPRODUCES `memory/accord-c616c-never-raise-driver-torque-relay.md` (2026-08-11).**
+🛑 **This INDEPENDENTLY REPRODUCES `memory/accord/calibration/accord-c616c-never-raise-driver-torque-relay.md` (2026-08-11).**
 `0xC616C` is a **NEVER-RAISE** cell — raising it injects a Coulomb relay on **driver-torque sign**
 (`gp-0x4f60`, confirmed as the clamped input at `FUN_00033d10`) into the assist reference: the V80
-class. ⚠ **It is NOT virgin** — `build_v93_tva.py`/`build_v94_tva.py` reference it. **Grep the lineage
+class. ⚠ **It is NOT virgin** — `builds/v80_v107/build_v93_tva.py`/`builds/v80_v107/build_v94_tva.py` reference it. **Grep the lineage
 before ever naming this cell.** Refinement only: the idiom is `clamp(driver_torque, ±cal)`, which
 *saturates to* `sign×cal` — same hazard verdict, and identical at cal=0.
 

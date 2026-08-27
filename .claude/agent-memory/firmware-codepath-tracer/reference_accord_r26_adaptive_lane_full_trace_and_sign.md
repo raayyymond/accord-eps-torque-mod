@@ -7,7 +7,7 @@ metadata:
 
 Traced 2026-07-19 on stock `code.bin` (Ghidra, gp=0xFEDF8000, tp=0xBF000), tasked by team-lead to settle
 whether V39's r24-only suppression left r26 as an unexamined, possibly-opposite-signed lane. Builds on
-[[reference-accord-demand-aggregator-pipeline]] and the `eps_lkas_chain_model.py` Section 6B/FUN_0003aa2c
+[[reference-accord-demand-aggregator-pipeline]] and the `model/eps_lkas_chain_model.py` Section 6B/FUN_0003aa2c
 documentation (which already had the arithmetic skeleton "VERIFIED 2026-07-19" but left gp-0x69a4's sign
 and the r24-vs-r26 polarity relationship explicitly OPEN).
 
@@ -58,7 +58,7 @@ dtorque~0, r24 is suppressed by its deadzone but r26 is not.
 `FUN_0003aa2c`) builds r26's default-path gain table from 4 FIXED (non-mode-indexed) records at
 tp-relative 0x7a68/7a7c/7a90/7aa4 = absolute **0xC6A68 / 0xC6A7C / 0xC6A90 / 0xC6AA4**, stride 0x14 (20B):
 u16 count(=4) @+0, s16 X[4] @+2/4/6/8, s16 Y[4] @+0xA/C/E/0x10, u16 pad @+0x12. Byte-read and confirmed
-EXACT against `ASSIST_RATE_A_RECORDS` in `eps_lkas_chain_model.py`:
+EXACT against `ASSIST_RATE_A_RECORDS` in `model/eps_lkas_chain_model.py`:
 ```
 0xC6A68: X=(0,400,1600,3000)  Y=(3072,3072,2434,2048)   Y0@C6A72 Y1@C6A74 Y2@C6A76 Y3@C6A78
 0xC6A7C: X=(0,250,1200,3000)  Y=(3072,3072,2488,1536)   Y0@C6A86 Y1@C6A88 Y2@C6A8A Y3@C6A8C

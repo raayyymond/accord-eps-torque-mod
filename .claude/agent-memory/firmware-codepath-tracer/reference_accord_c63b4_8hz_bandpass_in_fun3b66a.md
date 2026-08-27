@@ -22,7 +22,7 @@ anywhere in the chain; every gain element is a flat Q10 scalar or a differentiat
 | **EMA-D, 2-stage, on the DERIVATIVE** | `gp-0x3654`, `gp-0x3650` | **`0xC63B4`** | **51 ⇒ α=0.049805** | **2 real poles** |
 
 Output gain `0xC63B8` = 41, final `K` = `0xC63B6` = 1. Ratio-term enable `0xC64BE` = **0 ⇒ that branch
-dead by CAL** (already noted in `build_v61_tva.py:41`).
+dead by CAL** (already noted in `builds/v50_v79/build_v61_tva.py:41`).
 
 Key instructions:
 ```
@@ -72,7 +72,7 @@ shows `sst.b r14,0x34,ep` / `ld.bu 0x59,gp,r14`). `0xC63B8` → 1 reader. `0xC63
 the older census, cross-validating the scanner).
 
 **`0xC63B4` appears in ZERO of 83 `build_v*_tva.py`.** Its sibling `0xC63BA` appears in six and was
-retired — and `build_v60_tva.py:29` says why: *"...or than `0xC63BA` (which filters only the torque lane,
+retired — and `builds/v50_v79/build_v60_tva.py:29` says why: *"...or than `0xC63BA` (which filters only the torque lane,
 while **the index also carries a resolver-rate-derivative lane**)."* **The kit knew the lane existed,
 dismissed the wrong filter, and never located this one.** FALSIFIED ≠ never-tried.
 

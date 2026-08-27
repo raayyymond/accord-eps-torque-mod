@@ -123,7 +123,7 @@ starting with '_' overlap smaller symbols at the same address", and hand-verific
 disassembly found at least one label swapped (`_DAT_ffffcc00` shown for a store that raw bytes prove
 targets `0xFF82E200`, not `0xFFFFCC00`). **All figures below are from the raw disassembly
 (`disassemble_function`), cross-checked address-by-address against
-`analysis-2020accord/svd_for_ghidra/UPD70F3508_V850E2Px4.svd`**, not from the decompiled C.
+`analysis-2020accord/reference/svd_for_ghidra/UPD70F3508_V850E2Px4.svd`**, not from the decompiled C.
 
 TSG20 peripheral (SVD `<peripheral><name>TSG20</name>`) has TWO address blocks: base
 `0xFF82E200` (offsets 0x0-0x12: TS0IOC0/TS0IOC1/TS0CTL0/TS0CTL1/TS0DTPR) and a second block at

@@ -88,7 +88,7 @@ full stop" — the shape is the same at every frequency in this band.
 ## Correction to the record: `FUN_00036682` is NOT part of r24/r26's chain
 
 [EVIDENCE, fresh `decompile_function(0x36682)`] `FUN_00036682` — the golden model's own architecture
-comment tags it "filtered Sensor-B term, final slow IIR (6/1024) [role OPEN]" (`eps_chain_lanes.py`
+comment tags it "filtered Sensor-B term, final slow IIR (6/1024) [role OPEN]" (`model/eps_chain_lanes.py`
 line ~411) — is CALLED FROM `FUN_0003aa2c` (`get_function_callers` confirms sole caller), so it is a
 sibling lane inside the SAME aggregator-building function, but it is structurally SEPARATE from r24/r26:
 its input is `gp-0x4f60` (raw torque) directly, NOT `gp-0x4f62` (the derivative r24/r26 consume); it

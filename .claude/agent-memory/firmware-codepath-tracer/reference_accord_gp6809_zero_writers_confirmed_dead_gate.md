@@ -17,7 +17,7 @@ Verified via `mcp__ghidra__search_instructions` (program="code.bin", 185116 inst
   Ghidra's data-xref DB, per prior sessions' own caveat -- not independent evidence, just consistent).
 
 This is the SAME zero-writer result an earlier session found (see `reference_accord_fun3d04c_case4_and_arb_gp6809_forwarding.md`
-and auto-memory `eps-deliver-cut-gp6809-broken.md`), now independently re-derived this session with 2 additional
+and auto-memory `misc/eps-deliver-cut-gp6809-broken.md`), now independently re-derived this session with 2 additional
 search forms (decimal) that close the "maybe it's rendered differently" gap those sessions flagged as unclosed.
 
 ## Consequence for the gentle-EME gating map
@@ -31,7 +31,7 @@ ALWAYS zero regardless of any upstream state -- this is not a toggling "deliver 
 no evidence for that hypothesis was found either).
 
 **Practical takeaway:** gp-0x6809 must NOT be used as a gentle-EME telemetry anchor (V31P-V2 already dropped it,
-correctly, replacing it with HARD_CUT/gp-0x676e). The `docs/GENTLE-EME-CAN-TO-MOTOR-GATING-MAP-2026-07-06.md` §1/§4
+correctly, replacing it with HARD_CUT/gp-0x676e). The `docs/guides/GENTLE-EME-CAN-TO-MOTOR-GATING-MAP-2026-07-06.md` §1/§4
 "E1 gate = the physical LKAS cut" framing should be read as REFUTED, not merely unconfirmed -- this session provides
 positive evidence (not just absence of a writer) that the gate is structurally inert.
 

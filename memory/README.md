@@ -1,5 +1,12 @@
 # Memory Constellation — Honda EPS Firmware Project
 
+> **Layout note (reorg 2026-08-26).** The four index files stay at `memory/` top level; the
+> notes themselves are nested: `accord/{builds,mechanism,firmware,instruments,calibration,signals}/`,
+> `reference/{firmware,builds,measurement,tooling,can}/`,
+> `feedback/{process,measurement,tooling,builds}/`, plus `project/`, `builds/`, `dream/`, `misc/`.
+> Every link in the indexes carries the full relative path — follow it rather than guessing.
+
+
 This directory is the **auto-memory system** for Claude Code on this project. It's Joey's actual working memory from the reverse engineering effort, preserved as-is so an agent picking up this work has the same context Joey's agents had.
 
 ## What this is

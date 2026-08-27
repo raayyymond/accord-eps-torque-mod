@@ -11,10 +11,10 @@ you can drop into other openpilot-adjacent projects.
 
 | File | Purpose |
 |---|---|
-| `rlog_parse.py` | Core rlog reader. Handles `.bz2` / `.zst` / raw rlog files. Yields cereal log events as parsed objects. |
-| `extract_signals.py` | Extracts time-series signals (CAN messages, model outputs, controlsd state) from rlogs into pandas DataFrames. Configurable signal list. |
-| `dcam_clip.py` | Extracts driving camera (`dcam`) frames from rlog segments for visual context around events. |
-| `cereal/` | The openpilot `cereal` schema (capnproto definitions for all log message types). Needed for `rlog_parse.py` to deserialize. Includes `car.capnp`, `log.capnp`, `custom.capnp`, `deprecated.capnp`. |
+| `lib/rlog_parse.py` | Core rlog reader. Handles `.bz2` / `.zst` / raw rlog files. Yields cereal log events as parsed objects. |
+| `decode/extract_signals.py` | Extracts time-series signals (CAN messages, model outputs, controlsd state) from rlogs into pandas DataFrames. Configurable signal list. |
+| `studies/misc/dcam_clip.py` | Extracts driving camera (`dcam`) frames from rlog segments for visual context around events. |
+| `cereal/` | The openpilot `cereal` schema (capnproto definitions for all log message types). Needed for `lib/rlog_parse.py` to deserialize. Includes `car.capnp`, `log.capnp`, `custom.capnp`, `deprecated.capnp`. |
 
 ## Quick install
 
@@ -85,11 +85,11 @@ extract_clip(
 
 ## Relationship to other parts of the kit
 
-- **`analysis-2020accord/`** telemetry analysis scripts (e.g. `analyze_gentle_eme.py`,
-  `analyze_telem_0x660.py`, `analyze_torque_thresholds.py`) use rlog-tools
+- **`analysis-2020accord/`** telemetry analysis scripts (e.g. `studies/gates/analyze_gentle_eme.py`,
+  `studies/telemetry/analyze_telem_0x660.py`, `studies/gates/analyze_torque_thresholds.py`) use rlog-tools
   (or equivalent code paths) to pull CAN/UDS telemetry signals out of route
   logs for the gentle-EME and telemetry investigations.
-- **`docs/HONDA-EPS-PID-KNOWLEDGE.md`** — references rlog upload as the
+- **`docs/research/HONDA-EPS-PID-KNOWLEDGE.md`** — references rlog upload as the
   group's standard for sharing driving data (`wiki.firestar.link/faq`).
 
 ## Caveats

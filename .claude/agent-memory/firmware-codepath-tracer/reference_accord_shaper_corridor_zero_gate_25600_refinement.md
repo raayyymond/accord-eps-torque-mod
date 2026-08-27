@@ -1,6 +1,6 @@
 ---
 name: reference-accord-shaper-corridor-zero-gate-25600-refinement
-description: FUN_00042af8 soft-EME corridor arm's zero-out condition is a |gp-0x6bf0|>25600 implausibility test gated on gp-0x67fe state, not simply "off when |gp-0x6bf0|<=9216" — refines reference_accord_soft_eme_bound_arm_gating.md
+description: FUN_00042af8 soft-EME corridor arm's zero-out condition is a |gp-0x6bf0|>25600 implausibility test gated on gp-0x67fe state, not simply "off when |gp-0x6bf0|<=9216" — refines reference/firmware/reference_accord_soft_eme_bound_arm_gating.md
 metadata:
   type: reference
 ---

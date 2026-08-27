@@ -47,7 +47,7 @@ Gating: this whole live-compute path only runs when `gp-0x4f50 <= 12936` (asymme
 — see the corrected read of `bVar2` below); outside that, both outputs pin to `0x7fff`/`0xffff`. This
 independently **resolves a standing contradiction in this kit's own memory** between
 `reference_accord_fun34350_damping_term_live_and_gated.md` (claimed gp-0x6abe is LIVE in normal driving)
-and the `eps_lkas_chain_model.py` docstring (claimed the opposite) — **the agent-memory file was right.**
+and the `model/eps_lkas_chain_model.py` docstring (claimed the opposite) — **the agent-memory file was right.**
 `gp-0x4f50 > 12936` is a narrow, positive-only, near-the-clamp-ceiling condition; `gp-0x6abe` is live
 across virtually the entire normal operating range. Flagging this resolution for whoever next edits the
 model docstring.

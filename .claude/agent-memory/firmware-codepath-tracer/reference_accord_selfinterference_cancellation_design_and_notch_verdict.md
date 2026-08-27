@@ -6,7 +6,7 @@ metadata:
 ---
 
 Delivered 2026-08-20 as a subagent design task (full doc:
-`docs/DESIGN-2026-08-20-self-interference-cancellation.md`). Full chain verification underlying this
+`docs/specs/design/DESIGN-2026-08-20-self-interference-cancellation.md`). Full chain verification underlying this
 design is in [[reference_accord_fun352b4_full_chain_gp6b82_tap_and_c6200_shared_clamp]] -- this file
 records the design decisions and the comparison verdict specifically, so a future session does not
 re-derive or re-litigate them from scratch.

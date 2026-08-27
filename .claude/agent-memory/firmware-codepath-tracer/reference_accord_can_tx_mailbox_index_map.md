@@ -71,7 +71,7 @@ instruction into a spurious 2-byte `invalid`+`unaligned` pair followed by a 2-by
 misread (r2 mis-tags the mnemonic as `sld.h`/halfword when the real opcode is a BYTE load `ld.bu`, and
 the "138" displacement it prints is coincidentally close to but not the same field as the real 16-bit
 signed displacement). **This is a NEW, distinct V850E2 decode gap from the ones in
-`memory/reference_rizin_ghidra_v850_quirks.md`** (that doc covers `sld.hu`/`sld.bu`/`sld.w` compact-form
+`memory/reference/tooling/reference_rizin_ghidra_v850_quirks.md`** (that doc covers `sld.hu`/`sld.bu`/`sld.w` compact-form
 scaling bugs and `divq` semantics; this is r2 failing on the *general* `ld.bu`/`ld.b` D16_16/D23 formats
 specifically when `reg1==ep`, a combination the compiler apparently uses but which trips up `v850.gnu`'s
 table).
@@ -337,6 +337,6 @@ index is not a per-message-identity property in this firmware's design at all.
 - `reference_accord_can_tx_segmentC_driver_hw_mailbox.md`, `reference_accord_can_tx_segmentD_known_frame_provenance.md`,
   `reference_accord_can_tx_fcn0_forward_verify.md`, `reference_accord_can_tx_segmentA_channel_topology.md`,
   `reference_accord_can_tx_synthesis_2026-07-07.md` — the prior swarm passes this segment builds on.
-- `memory/reference_rizin_ghidra_v850_quirks.md` — the SIBLING (but distinct) V850E2 decode-gap document;
+- `memory/reference/tooling/reference_rizin_ghidra_v850_quirks.md` — the SIBLING (but distinct) V850E2 decode-gap document;
   this file's "r2 mis-decodes `ld.bu`-with-`ep`-as-`R1`" finding should probably be appended there in a
   future pass, flagged for the operator to confirm before merging.

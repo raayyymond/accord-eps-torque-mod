@@ -8,7 +8,7 @@ metadata:
 Traced 2026-07-19/20 on stock `code.bin` (Ghidra decompile) + byte-verified against `_v38_plain_image.bin`,
 `_v42_plain_image.bin`, and stock `code.bin` (all three agree), tasked by team-lead for a "fast signal
 coupling" audit into the demand aggregator `FUN_0003aa2c`. Builds on [[reference-accord-post-governor-comp-add]]
-and the `eps_lkas_chain_model.py` `assist_shaping_lanes()` docstring, which had labeled this lane
+and the `model/eps_lkas_chain_model.py` `assist_shaping_lanes()` docstring, which had labeled this lane
 "*** PARTIALLY PINNED -- and it ARGUES AGAINST this lane resonating ... VERY heavily damped ***"
 citing "gp-0x367c stage, gain = cal tp+0x7450 (0xC6450) = 4" and "gp-0x3680 stage, gain = cal tp+0x744a
 (0xC644A) = 4" (tau ~ 256 cycles). **That gain reading was WRONG.**
@@ -82,7 +82,7 @@ exactly 0 (a hard cliff), in-window passes unclipped.
 stages are unity-gain identity operations; the two multiplicative gain tables that are NOT flat-constant
 (L1) or ARE flat-constant (L2, L3) never introduce smoothing across cycles -- there is no state variable
 in this function whose update coefficient is < 1024. This directly contradicts the prior memory's
-"heavily overdamped" conclusion, which was the basis for `eps_lkas_chain_model.py` ruling this lane out
+"heavily overdamped" conclusion, which was the basis for `model/eps_lkas_chain_model.py` ruling this lane out
 as "arguing against this lane resonating." **The corrected reading argues the OPPOSITE: this is a
 genuinely fast, largely unfiltered lane carrying (real Sensor-B torque) minus (an idealized feedforward
 model of commanded torque) directly into the demand aggregator**, independent of and untouched by V39
@@ -136,7 +136,7 @@ NOT primary-vibration-relevant fact.
 - `FUN_00034350` (gp-0x6bd0, damping): product of 5 LERP gain factors, 2 keyed on `gp-0x6a5e` AVG driver
   torque. Whether it is dormant hands-off depends on the AVG-torque tables' Y-value AT X=0
   (`0xC9CCC`/`0xC9E9C`), which were NOT dumped this session -- **[OPEN]**, not confirmed either way.
-  Already independently downgraded in `eps_lkas_chain_model.py` for a different reason (the sign-flip
+  Already independently downgraded in `model/eps_lkas_chain_model.py` for a different reason (the sign-flip
   hypothesis, pinned positive in normal driving).
 - `FUN_00036c12` (gp-0x6b26, friction): primary key is `gp-0x6a5e` AVG DRIVER torque (not command-
   derived, not motor-reaction-derived) -- structurally this predicts MORE contribution with MORE driver
@@ -157,7 +157,7 @@ carrier of Sensor-B content that neither of those builds touches.
 [[reference-accord-gp4f64-three-consumers]], [[reference-accord-shaper-fun42af8]] -- downstream of the
 aggregator, unaffected by this finding.
 
-**ACTION FOR OPERATOR/TEAM-LEAD**: the `eps_lkas_chain_model.py` docstring for `FUN_0003a382` (and the
+**ACTION FOR OPERATOR/TEAM-LEAD**: the `model/eps_lkas_chain_model.py` docstring for `FUN_0003a382` (and the
 CLAUDE.md-adjacent characterization deriving from it) should be corrected -- the "VERY heavily damped"
 verdict is wrong at these cal values. I have not edited the golden model or CLAUDE.md myself; flagging
 per this kit's "ask before updating a memory you didn't just verify fresh" norm, though in this case I

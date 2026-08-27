@@ -84,7 +84,7 @@ are the compares).
 Next step: trace `gp-0x3d94`'s writers.
 
 ## Golden-model gap
-`eps_chain_lanes.py:477–545, 642–738` carries `6ad6`/`6b70`/`6ad4`/`0xC64AD`/`0xC6ABA`/`37fe6` **in
+`model/eps_chain_lanes.py:477–545, 642–738` carries `6ad6`/`6b70`/`6ad4`/`0xC64AD`/`0xC6ABA`/`37fe6` **in
 comments only**, as a "7-lane sum". **Six of the eight terms are absent entirely**, as are their
 writers, clamps, the speed-LERP multiply, and the PID internals.
 

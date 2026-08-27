@@ -58,7 +58,7 @@ gp-0x6a56 = polarity(gp-0x6752) x ((gp-0x6abe * 0x30 * cal(tp+0x713a)) >> 15), c
 gp-0x6a56 = gp-0x6abe x (48 x 1159 / 32768) = gp-0x6abe x 3477/2048 = gp-0x6abe x 1.698046875
 ```
 
-`analysis-2020accord/eps_lkas_chain_model.py` (lines ~1157-1158) documents CAN 0x14A's rate field
+`analysis-2020accord/model/eps_lkas_chain_model.py` (lines ~1157-1158) documents CAN 0x14A's rate field
 as **"factor 1" (deg/s)**, cross-validated (r>=0.985, slope 0.95-1.00) against the differentiated
 angle channel on the same frame -- an externally-grounded (opendbc-style) physical scale, not a
 value I chose. Taking `gp-0x6a56[raw] ~= column_degps` (unity LSB):

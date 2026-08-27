@@ -1,6 +1,6 @@
 ---
 name: reference_accord_v75_ceiling_c77a0_noclip_asymmetry_and_aggregator_inclusive_bound
-description: V75 headroom analysis for the FUN_00034350 damper (FactorC/E) and friction lane -- the ceiling table 0xC77A0 quantified, the E_Y1-vs-E_Y3 no-clip asymmetry that gives free headroom at the operating point, and the aggregator's zero-reject window confirmed INCLUSIVE at the exact limit (not "never the boundary" as build_v74_tva.py's comment implies).
+description: V75 headroom analysis for the FUN_00034350 damper (FactorC/E) and friction lane -- the ceiling table 0xC77A0 quantified, the E_Y1-vs-E_Y3 no-clip asymmetry that gives free headroom at the operating point, and the aggregator's zero-reject window confirmed INCLUSIVE at the exact limit (not "never the boundary" as builds/v50_v79/build_v74_tva.py's comment implies).
 metadata:
   type: reference
 ---
@@ -41,9 +41,9 @@ friction term: gp-0x6b26 * ((gp-0x6b26 + 0x400) < 0x801)   -- accepts v in [-102
 damping term:  gp-0x6bd0 * ((gp-0x6bd0 + 0x800) < 0x1001)  -- accepts v in [-2048,+2048] INCLUSIVE
 ```
 Solved exactly: v=1024 (resp. 2048) is ACCEPTED; v=1025 (resp 2049) is the first REJECTED value.
-`build_v74_tva.py`'s comment "`CLAMP_HARD_CAP=1000, never 1024`" is therefore a **safety margin**, not
+`builds/v50_v79/build_v74_tva.py`'s comment "`CLAMP_HARD_CAP=1000, never 1024`" is therefore a **safety margin**, not
 an architectural cliff sitting exactly at 1024 -- the true edge is 1024 inclusive. Matches
-`eps_lkas_chain_model.py`'s `_range_gate()` (`-limit <= value <= limit`), confirming the golden model's
+`model/eps_lkas_chain_model.py`'s `_range_gate()` (`-limit <= value <= limit`), confirming the golden model's
 Python approximation was already correct; this decompile pins the exact V850 boundary instruction that
 model was abstracting.
 

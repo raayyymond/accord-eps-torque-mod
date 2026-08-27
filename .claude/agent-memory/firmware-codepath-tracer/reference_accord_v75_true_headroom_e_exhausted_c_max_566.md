@@ -1,6 +1,6 @@
 ---
 name: reference_accord_v75_true_headroom_e_exhausted_c_max_566
-description: CORRECTS reference_accord_v75_ceiling_c77a0_noclip_asymmetry_and_aggregator_inclusive_bound.md's rung recommendations -- a full-grid binary search (not hand-picked corners) against build_v74_tva.py's own damper_authority()/assert_no_clip() shows FactorE has ZERO remaining headroom on mode 26 (V74 already spent it -- 5 grid cells sit exactly at the 512 ceiling floor today) and FactorC's C_Y0 safe max is 566, not 908 or higher -- both my original Rung A/B and team-lead's C_Y0->908 candidate introduce real new clipping when checked against the FULL (speed,rate) grid instead of a single hand-picked corner.
+description: CORRECTS reference_accord_v75_ceiling_c77a0_noclip_asymmetry_and_aggregator_inclusive_bound.md's rung recommendations -- a full-grid binary search (not hand-picked corners) against builds/v50_v79/build_v74_tva.py's own damper_authority()/assert_no_clip() shows FactorE has ZERO remaining headroom on mode 26 (V74 already spent it -- 5 grid cells sit exactly at the 512 ceiling floor today) and FactorC's C_Y0 safe max is 566, not 908 or higher -- both my original Rung A/B and team-lead's C_Y0->908 candidate introduce real new clipping when checked against the FULL (speed,rate) grid instead of a single hand-picked corner.
 metadata:
   type: reference
 ---
@@ -8,7 +8,7 @@ metadata:
 Task: team-lead adversarially challenged my first V75 headroom report (rightly) -- caught that I'd used
 `C_Y0` (429, the creep value) instead of `C_Y3` (908, the true grid max, reached at speed>=8960/140km/h)
 in the no-clip check, and proposed `C_Y0->908` as a fix delivering 2.12x dose at "zero clipping." I
-adversarially checked THEIR fix too, using `build_v74_tva.py`'s own exact functions over the full
+adversarially checked THEIR fix too, using `builds/v50_v79/build_v74_tva.py`'s own exact functions over the full
 99k-point grid it uses (`v in range(0,14001,32), r in range(0,4501,20)`), and **neither candidate
 survives the full sweep.**
 
@@ -17,7 +17,7 @@ survives the full sweep.**
 (`dose=(C(speed)*E(rate))>>10`) is insufficient** -- both my original "creep corner only" check and
 team-lead's "global peak/ceiling ratio" check independently missed real violations. **The only trustworthy
 method is a full grid sweep (or binary search driven by one) reproducing the actual firmware LERP+clamp,
-exactly as `build_v74_tva.py`'s own `assert_no_clip()` already does.** Do not shortcut this for any future
+exactly as `builds/v50_v79/build_v74_tva.py`'s own `assert_no_clip()` already does.** Do not shortcut this for any future
 lever on this table family.
 
 ## The actual numbers, mode 26, V74 baseline [EVIDENCE, binary search over the exact grid, two rules agree]

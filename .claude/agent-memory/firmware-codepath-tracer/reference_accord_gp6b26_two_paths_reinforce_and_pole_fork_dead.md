@@ -9,7 +9,7 @@ metadata:
 
 2026-08-22, `mechanism` task, follow-up to
 [[reference_accord_v106_gp6b26_mechanism_ceiling_and_reshape]]. Script:
-`analysis-2020accord/v107_pole_fork_and_reshape.py`.
+`analysis-2020accord/studies/sessions/v104/v107_pole_fork_and_reshape.py`.
 
 ## 🛑🛑 PATH 1 AND PATH 2 REINFORCE — and the answer is IMMUNE to `gp-0x6752`
 
@@ -43,7 +43,7 @@ edit. The only second-order caveats are the `sgn×LERP(|·|)` compressor at step
 lives in **RAM**, `gp-0x64b8`/`gp-0x641c`, so it is not readable from the image) and the ±511 clamp.
 
 ## 🛑 CORRECTION OF RECORD — the off-by-0x1000 trap, SIXTH recurrence
-`memory/accord-friction-polarity-more-friction-is-more-assist.md` step 5 cites **"`0xC74B0`=32"**.
+`memory/accord/mechanism/accord-friction-polarity-more-friction-is-more-assist.md` step 5 cites **"`0xC74B0`=32"**.
 The instruction is `ld.bu 0x74b0[tp]` and `tp = 0xBF000`, so the cell is **`0xC64B0`, whose byte is 1**
 — an ENABLE FLAG, exactly the failure mode CLAUDE.md already records for this displacement.
 `0xC74B0` does contain 32, which is why the wrong answer looks plausible. **The SIGN in that memory is

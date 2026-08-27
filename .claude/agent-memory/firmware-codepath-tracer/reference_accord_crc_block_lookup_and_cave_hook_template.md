@@ -14,7 +14,7 @@ empty-cave figure — this file adds the per-build occupancy, the block lookup, 
 
 ## Address → CRC block lookup (the thing you actually need before any edit)
 
-Replay `analysis-2020accord/verify_bootloader_crc.py::_blocks(img, 0x13000, 0xED000, bridge)` and ask
+Replay `analysis-2020accord/lib/verify_bootloader_crc.py::_blocks(img, 0x13000, 0xED000, bridge)` and ask
 which block covers your address. Results for the cells this kit edits most:
 
 | edit address | covering block | CRC word | in bootloader's 49-block walk? |

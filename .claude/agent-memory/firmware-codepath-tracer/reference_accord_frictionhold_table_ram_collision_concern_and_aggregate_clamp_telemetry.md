@@ -36,7 +36,7 @@ its flash source and mode-proof it.
 ⇒ **The "friction-hold table" may not be a coherent static calibration table at all.** At least one
 constituent cell (`gp-0x6468`) may be shared with, or entirely belong to, an unrelated live subsystem —
 the same RAM-collision pattern already on record for the `gp-0x1500` family
-(`reference-accord-b7260-io-mailbox-array.md`). **NOT resolved either way this session** — could be a
+(`reference/can/reference-accord-b7260-io-mailbox-array.md`). **NOT resolved either way this session** — could be a
 genuine collision, a deliberate multi-tick reuse, or a mis-attribution of exactly which bytes the
 decompiler's `local_58`/`auStack_64` locals map to (Ghidra variable-name reuse is a known trap in this
 kit). Needs `FUN_0003d04c`'s cluster traced (what subsystem is it — likely a gear/mode/diagnostic state
@@ -62,8 +62,8 @@ coverage concern about that figure.
 
 ## 3. Real aggregate-clamp (gp-0x6b94, ±10240) telemetry — the only 2 routes where it's unaliased
 
-Per `check_427_alias.py::SUM_ROUTES = {"r85","r95"}` (V100/V101 — pre-V103, biquad NOT armed on
-either, no `c4` contribution at all). Wire decode found in `rlog-tools/extract_r85.py`:
+Per `verify/check_427_alias.py::SUM_ROUTES = {"r85","r95"}` (V100/V101 — pre-V103, biquad NOT armed on
+either, no `c4` contribution at all). Wire decode found in `rlog-tools/decode/extract_r85.py`:
 `427 = clamp(|gp-0x6b94|*5>>6, 0, 0x3FF)`, inverse `gp-0x6b94 = sign*mag*12.8`; the packer's own
 comment gives the STRUCTURAL saturation point as wire-code 800 (`=10240*5>>6` exactly) — the decode is
 directly comparable to the ±10240 clamp, not an approximation.

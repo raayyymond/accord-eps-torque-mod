@@ -4,11 +4,11 @@ r"""sniff_fourframe.py - capture the FOURFRAME telemetry frames (0x6A0-0x6A3), S
 WHY THIS EXISTS
     The FOURFRAME firmware cave transmits four NEW broadcast CAN IDs (0x6A0..0x6A3) at 62.5 Hz,
     each carrying four live 16-bit EPS RAM cells. Per
-    memory/reference-accord-can-tx-architecture-new-id.md the car's downstream gateway forwards
+    memory/reference/can/reference-accord-can-tx-architecture-new-id.md the car's downstream gateway forwards
     only a per-ID WHITELIST to the comma's built-in panda -- EPS ID 0x19F is actively fired at
     62.5 Hz from the same mailbox as the visible 0x18F and still never reaches the comma. So these
     new IDs are expected to be INVISIBLE in a comma rlog and visible ONLY on a panda tapped
-    directly on the EPS bus (see docs/RED-PANDA-EPS-SETUP.md).
+    directly on the EPS bus (see docs/guides/RED-PANDA-EPS-SETUP.md).
 
     This tool is that capture. It TRANSMITS NOTHING (SAFETY_SILENT), same class as
     tools/comma4_panda_test.py and tools/sniff_can_id.py -- safe to run any time after openpilot
@@ -22,7 +22,7 @@ USAGE
 
     Then FFT the CSV offline with analysis-2020accord/decode_fourframe.py.
 
-PAYLOAD LAYOUT (from build_vfourframe_tva.py's cave emitter, signal index i = 0..3)
+PAYLOAD LAYOUT (from builds/telemetry/build_vfourframe_tva.py's cave emitter, signal index i = 0..3)
     byte[2*i]   = HIGH byte of signal i        -> big-endian
     byte[2*i+1] = LOW  byte of signal i
     Each cell is read with `ld.hu` but the firmware cells are signed 16-bit; decode as s16.
@@ -44,7 +44,7 @@ except Exception as e:  # pragma: no cover - runs on the car, not in CI
     sys.exit(2)
 
 # ---------------------------------------------------------------------------------------------
-# Signal map -- mirrors MAILBOXES in analysis-2020accord/build_vfourframe_tva.py exactly.
+# Signal map -- mirrors MAILBOXES in analysis-2020accord/builds/telemetry/build_vfourframe_tva.py exactly.
 # Two channels carry a documented data-quality caveat and are expected NOT to vary; they are
 # kept so the frame layout matches the firmware one-for-one.
 # ---------------------------------------------------------------------------------------------

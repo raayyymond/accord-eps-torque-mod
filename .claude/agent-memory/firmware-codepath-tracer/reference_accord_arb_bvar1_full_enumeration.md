@@ -42,7 +42,7 @@ regardless of bVar1's value:
 | gp-0x6752 (assist polarity) | gp-0x6752 | 0x28f22–0x28f48 | byte not in `{-1,0,1}` (`(polarity+1) ≥ 3` unsigned) — NOT "polarity==0" |
 | gp-0x6a56 (angle-rate-derived) | gp-0x6a56 | 0x28f4c–0x28f5a | `\|gp-0x6a56\| ≥ 12001` (idiom: `+12000` vs `24001`) |
 
-Per `docs/HANDOFF-2026-06-29-gentle-eme-v32.md` §5, the CAN-packer formula makes `gp-0x4f60` ≈ the reported
+Per `docs/handoffs/2026-06/HANDOFF-2026-06-29-gentle-eme-v32.md` §5, the CAN-packer formula makes `gp-0x4f60` ≈ the reported
 `STEER_TORQUE_SENSOR` (×1.024) — real EME-event peaks were 1239–3475, far under 25601. `gp-0x6a56` maps
 1:1 to `STEER_ANGLE_RATE` at CAN scale ×(-0.1) deg/s [inferred from the packer formula in the v32 handoff,
 NOT independently re-derived this session] — a threshold of 12000 raw units would require ~1200 deg/s,

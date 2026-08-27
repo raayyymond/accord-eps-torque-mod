@@ -55,7 +55,7 @@ a STATE mask — re-confirms [[reference_accord_fun2214a_is_state_mask_not_phase
 `0xC40D4` 573→286 gives **gain x0.759, Δphase −32.1° @7.79 Hz** on `fVar18`, the dominant term of
 `iVar6` (`0x3bc1a` → `0x3bc3e` → `0x38218`). Measured **1.001 [0.976, 1.060]** vs pre-registered
 [0.797, 0.875]. **So the phase model predicts V86 should have worked and it did not.**
-`_v86` carried `PROBE.6B70.SIGN-GATE.67AB`. Decoded with the kit's own `decode_v86_probe.py`
+`_v86` carried `PROBE.6B70.SIGN-GATE.67AB`. Decoded with the kit's own `studies/probes/decode_v86_probe.py`
 (self-test PASS), route 6f, 23,058 frames / 232 s:
 ```
 FINGERPRINT b3 = 1.0000   GATE b4 = 1.0000  <- gp-0x67ab < 2, ZERO frames with the gate clear
@@ -71,7 +71,7 @@ self-cancels ⇒ **any lane-weight build needs a LARGE dose scored on the ring a
 lane's own value.** ⊕ `gp-0x67ab` is a fault latch (1 writer `0x2775c` in `FUN_00026c80`).
 
 🛑 Route 70 (V86B) carries the same probe with **different bit wiring** (cave bytes `443a` vs
-`423a`) — `decode_v86_probe.py` must NOT be pointed at it. A V86B-correct decoder makes r6f-vs-r70
+`423a`) — `studies/probes/decode_v86_probe.py` must NOT be pointed at it. A V86B-correct decoder makes r6f-vs-r70
 a matched single-variable pair on `0xC40D4` with the sign probe live on both.
 
 ⊕ `gp-0x6bfe`/`gp-0x6bfa` are REAL, distinct, live cells, **not** an off-by-2 on `6bfc`/`6bf6`:
@@ -79,5 +79,5 @@ a matched single-variable pair on `0xC40D4` with the sign probe live on both.
 `gp-0x6bfa` written 3x in `FUN_00026c80` (`0x273b0`/`0x273c8`/`0x273d6`). Both producers run
 *earlier* in the same task pass than `FUN_00038148` ⇒ **no extra tick on either.**
 
-Scripts: `analysis-2020accord/_v97/read_L_coeffs.py`, `_v97/price_the_iirs.py`,
-write-up `_v97/close_the_sign.md`. See also [[accord-ram-lerp-is-flash-derived-and-fprime-nonneg]].
+Scripts: `analysis-2020accord/sessions/v97/read_L_coeffs.py`, `sessions/v97/price_the_iirs.py`,
+write-up `sessions/v97/close_the_sign.md`. See also [[accord-ram-lerp-is-flash-derived-and-fprime-nonneg]].

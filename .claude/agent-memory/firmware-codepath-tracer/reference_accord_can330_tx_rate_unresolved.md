@@ -26,7 +26,7 @@ work or in prior memory).
 
 ## Why this matters
 V31P-V2's gate flags are OR-latched (set-on-fire, never simple-overwritten) and read-then-cleared inside the 330
-builder each time it runs (confirmed from `analysis-2020accord/build_v31p_v2_tva.py`'s `pack_telemetry` stub:
+builder each time it runs (confirmed from `analysis-2020accord/builds/v18_v49/build_v31p_v2_tva.py`'s `pack_telemetry` stub:
 `ld.bu -0x1500[gp],r7` then `st.b r0,-0x1500[gp]` at the end -- a genuine read-and-clear, not a plain overwrite).
 This design is ROBUST against missing a transient fire **within one 330-TX period** -- but if the true 330 period
 is longer than believed (e.g. genuinely ~100 ms rather than ~10 ms), the OR-latch would accumulate ANY qualifying

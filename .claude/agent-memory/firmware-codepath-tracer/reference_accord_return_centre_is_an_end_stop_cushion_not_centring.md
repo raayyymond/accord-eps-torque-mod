@@ -7,7 +7,7 @@ metadata:
 
 # The "return-to-centre" lane is a RACK END-STOP CUSHION — 2026-08-12 (`fw-return`, team-lead's V97 crux pass)
 
-Full writeup: `analysis-2020accord/_v97/fw_return.md`. Dispatched to test the hypothesis
+Full writeup: `analysis-2020accord/sessions/v97/fw_return.md`. Dispatched to test the hypothesis
 *"the return-centre lane is muted while engaged, so the clean manual return is that lane doing its
 job."* **Refuted.** All Ghidra on `code.bin` explicitly — the session's *current* program was the V96
 image with **0 functions**.
@@ -73,7 +73,7 @@ Re-confirms from a second direction that no `if (LKAS != 0) suppress return` bra
 [[reference_accord_return_centre_no_lkas_gate_rate_adaptive_governor_is_the_mechanism]].
 
 ## Lineage — Honda's, not ours [EVIDENCE]
-`grep -lE "C6150|C614A|C614C|C618A|C627E|..." build_v*_tva.py` → only `build_v92_tva.py`, all hits
+`grep -lE "C6150|C614A|C614C|C618A|C627E|..." build_v*_tva.py` → only `builds/v80_v107/build_v92_tva.py`, all hits
 read-only assertions. Byte-verified frozen at stock across **stock/v90/v91/v92/v93/v94/v96**:
 `0xC6150`=18780, `0xC614A`=10048, `0xC614C`=128, `0xC618A`=1024, `0xC627E`=20.
 

@@ -7,7 +7,7 @@ metadata:
 
 # The closed-loop lag map for V104's f0 problem — 2026-08-20
 
-Full trace: `docs/TRACE-2026-08-20-loop-lag-map.md`. Program: stock `code.bin`, GhidraMCP only.
+Full trace: `docs/traces/TRACE-2026-08-20-loop-lag-map.md`. Program: stock `code.bin`, GhidraMCP only.
 Briefed to find/quantify every phase-lag element in the EPS loop and rank levers to push `f0` (the
 `Re(Z)` zero-crossing) below the ~20-23Hz mechanical mode while V104 runs 8x LKAS gain.
 

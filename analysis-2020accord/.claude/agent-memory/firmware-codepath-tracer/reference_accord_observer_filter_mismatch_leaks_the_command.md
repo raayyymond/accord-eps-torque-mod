@@ -20,7 +20,7 @@ metadata:
 ⇒ **team-lead has taken `0xC40D4` AND `0xC63AC` off the table.** 🛑 **DO NOT propose "`0xC63AC` 102 -> 65"
 or any `0xC40D4` retune from this file** — the arithmetic below is correct and the lever is still dead.
 The V86 retrodiction is separately a NULL and underpowered 3.07x
-(`docs/ANALYSIS-2026-08-10-v86-leak-retrodiction.md`); an earlier line in this file called it "weak
+(`docs/research/ANALYSIS-2026-08-10-v86-leak-retrodiction.md`); an earlier line in this file called it "weak
 counter-evidence", which **understated it**.
 
 **What in this file still STANDS as reference:** the full `FUN_0003b8f6` / `FUN_00038148` structure, every
@@ -71,7 +71,7 @@ is used.
 Superseded by the on-car `gp-0x6b70` probe above. Kept so a future session recognises it as *tried and
 dead* rather than *never considered*:
 - `0xC63AC` 102 -> 65 was the arithmetic optimum (peak |dH| 0.293 -> 0.182). **Never flown. Lever dead.**
-  It was independently **blocked** anyway: `0xC63AC` is on `build_v83a_tva.py`'s explicit must-not-move
+  It was independently **blocked** anyway: `0xC63AC` is on `builds/v80_v107/build_v83a_tva.py`'s explicit must-not-move
   list (lines 337, 369), a "<=1.32x bound" depends on it.
 - `0xC40D4`->4096 with `0xC63AC`->1024 would zero |dH| exactly, at the cost of the actuator-lag model.
   **Dead.** ⚠ Note `0xC40D4` **has flown once** — V86, 573 -> **286**, the *wrong* direction (2.26x worse

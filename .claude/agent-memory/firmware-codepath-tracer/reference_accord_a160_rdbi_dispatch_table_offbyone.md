@@ -1,6 +1,6 @@
 ---
 name: reference-accord-a160-rdbi-dispatch-table-offbyone
-description: "2026-07-10 Ghidra byte-verified (code.bin/master.bin, program 'code.bin' in accord2020_ghidra): the RDBI (SID 0x22) per-DID dispatch table used by the app-UDS stack is NOT handler-pointer-indexed at +0x0C as docs/SPEC-uds-can-ram-telemetry-a160.md and build_uds_telem_tva.py assumed. True table base is 4 bytes earlier (0xB77FC, not 0xB7800), the 'handler pointer' field is dead/unread data program-wide, and the real dispatch is a DID-index -> 1-byte groupID -> 7-slot function-pointer jump table (0xB7568). This explains the empirical 'DID 0x4801 telemetry always returns constant bytes' result: the built cave handler at 0xC4E00 is never invoked."
+description: "2026-07-10 Ghidra byte-verified (code.bin/master.bin, program 'code.bin' in accord2020_ghidra): the RDBI (SID 0x22) per-DID dispatch table used by the app-UDS stack is NOT handler-pointer-indexed at +0x0C as docs/guides/SPEC-uds-can-ram-telemetry-a160.md and builds/telemetry/build_uds_telem_tva.py assumed. True table base is 4 bytes earlier (0xB77FC, not 0xB7800), the 'handler pointer' field is dead/unread data program-wide, and the real dispatch is a DID-index -> 1-byte groupID -> 7-slot function-pointer jump table (0xB7568). This explains the empirical 'DID 0x4801 telemetry always returns constant bytes' result: the built cave handler at 0xC4E00 is never invoked."
 metadata:
   type: reference
 ---
@@ -17,7 +17,7 @@ metadata:
 
 Investigated an empirical result: the `39990-TVA,A160-UDStelem-DID4801-RAMread-...rwd` build (repurposing DID
 `0x4801` to read `gp-0x6a62/gp-0x6a5e/gp-0x4f68/gp-0x6cc4` via a cave handler at `0xC4E00`, per
-`docs/SPEC-uds-can-ram-telemetry-a160.md` and `analysis-2020accord/build_uds_telem_tva.py`) returns
+`docs/guides/SPEC-uds-can-ram-telemetry-a160.md` and `analysis-2020accord/builds/telemetry/build_uds_telem_tva.py`) returns
 **bit-exact-identical bytes on every request**, across sessions, even under full-range steering-torque input.
 Traced the REAL dispatch path in Ghidra (`code.bin`, gp=0xFEDF8000, tp=0xBF000) to find out why.
 
@@ -57,7 +57,7 @@ Read 560 bytes (28 entries × 20B) from `0xB77FC`. True struct layout (20 bytes)
 | 26 | `0xF181` | 0x10 | 0x00 | `0x0004F6FA` |
 | 27 | `0xF186` | 0x02 | 0x00 | `0x0004F72C` |
 
-**This retracts/corrects `docs/SPEC-uds-can-ram-telemetry-a160.md`'s table (which listed `0:0x4801/4D5C2`,
+**This retracts/corrects `docs/guides/SPEC-uds-can-ram-telemetry-a160.md`'s table (which listed `0:0x4801/4D5C2`,
 `25:0xF181/4F6D6`) and the prior memory `reference_accord_a160_app_uds_session_gate_and_egress.md` §2's
 claim that `FUN_0004D5C2` is "DID 0x4801 handler" — `FUN_0004D5C2` is DID `0x4800`'s handler-ptr-field value;
 DID `0x4801`'s true index is 1, not 0.** (Both docs' off-by-one has the SAME root cause: reading the raw

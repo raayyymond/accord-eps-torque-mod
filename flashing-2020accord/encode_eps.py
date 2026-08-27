@@ -1,4 +1,4 @@
-"""encode_eps.py — Honda EPS .rwd encoder (round-trip companion to decode_eps.py).
+"""lib/encode_eps.py — Honda EPS .rwd encoder (round-trip companion to decode_eps.py).
 
 Builds an x5a or x31 .rwd file from a payload, header set, and 3-key/3-op cipher.
 
@@ -11,7 +11,7 @@ Status (2026-05-23):
 
 Usage:
     # Round-trip an existing .rwd (decode-then-encode, assert byte-equal):
-    python encode_eps.py --roundtrip <path.rwd[.gz]>
+    python lib/encode_eps.py --roundtrip <path.rwd[.gz]>
 
     # Build a new .rwd from a payload (advanced; see build_rwd_from_template):
     # see build_rwd_from_template() and the __main__ examples.

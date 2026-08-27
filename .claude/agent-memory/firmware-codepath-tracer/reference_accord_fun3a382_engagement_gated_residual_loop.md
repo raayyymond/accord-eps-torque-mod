@@ -132,7 +132,7 @@ disabling its engagement-coupling. Not built or flashed this session.
 
 ## [CORRECTION 2026-07-26, later same day] Team-lead found the sharper lever inside this same lane — authority, not the Stage-A pole
 
-**The `0xC6450` cal-only test proposed above is ALREADY FLASHED AND FALSIFIED — it is `build_v46_tva.py`
+**The `0xC6450` cal-only test proposed above is ALREADY FLASHED AND FALSIFIED — it is `builds/v18_v49/build_v46_tva.py`
 verbatim** (`STAGEA_ADDR=0xC6450`, `1024→32`, same predicted effect, `_v46_plain_image.bin` confirms
 `0xC6450=32`). CLAUDE.md already recorded this once ("V46 FLASHED... LEVER A FALSIFIED") and this is the
 **second time** an agent re-proposed it — see [[feedback-check-build-scripts-before-proposing-cal-edit]].
@@ -170,7 +170,7 @@ and its sign, is genuinely open. Flagged to team-lead as moderate-high confidenc
 confidence on its SIGN — closing that needs either FOURFRAME telemetry on `gp-0x6ad4` directly or an
 on-car system-ID measurement.
 
-**Authority's runtime range** — resolved via `build_v19_tva.py`/`build_v31_tva.py` (the ORIGINAL soft-EME
+**Authority's runtime range** — resolved via `builds/v18_v49/build_v19_tva.py`/`builds/v18_v49/build_v31_tva.py` (the ORIGINAL soft-EME
 docs, not re-derived from scratch): `gp-0x3570` (the integrator AUTHORITY is computed from,
 `gp-0x6966=(|gp-0x3570>>15|×1092)>>10`) has exactly 3 accesses, ALL inside `FUN_00042af8` (`0x43214`,
 `0x4327c`, `0x432de`) — entirely self-contained in the shaper/M1 function alongside AUTHORITY's own
@@ -192,7 +192,7 @@ main cal block (safe location); single reader confirmed (`search_instructions` o
 three branch-target-text false positives excluded); `gp-0x6966` IS one of M2's (`FUN_00043e44`, fully
 decompiled this session) 7 weighted fault-score flags — checked for self-consistency against a
 `gp-0x6b0a`-derived, `tp+0x71da`-scaled expected value at the SAME instruction (`0x44230`) that
-`build_v22_tva.py` previously hijacked as a code-cave insertion point (V22's flash status not found in
+`builds/v18_v49/build_v22_tva.py` previously hijacked as a code-cave insertion point (V22's flash status not found in
 CLAUDE.md/docs — flagging as prior art, not a resolved precedent) — but this check is independent of
 `FUN_0003a382` and unaffected by the proposed edit. `gp-0x6ad4`/`gp-0x6ad6` do NOT appear anywhere in
 M2's decompiled body — no independent float model of this lane exists in the monitor. **NOT fully
@@ -256,7 +256,7 @@ if (mode == 2) uVar25 = clamp(cal(0x71d4) + uVar39, ±0x3000)   ; mode 2: fixed 
 gp-0x6b08 = uVar25                                             ; = "command" for the windup
 ...
 (upper_bound, lower_bound) = polarity-adjusted corridor/IIR/boost 3-way MAX/MIN (matches
-  build_v31_tva.py's documented structure exactly)
+  builds/v18_v49/build_v31_tva.py's documented structure exactly)
 gp-0x3570 += (command − bound), clamped ±cal(0x71dc)=SM3 trip  [classic anti-windup integrator]
 gp-0x6966 = |gp-0x3570>>15| × cal(0x71da)=1092 >>10            [shadow-protected write]
 ```

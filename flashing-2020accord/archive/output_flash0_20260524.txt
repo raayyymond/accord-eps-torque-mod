@@ -20,7 +20,7 @@
   CAN bus       : 1
   CAN address   : 0x18DA30F1
 
-  Required prerequisites (per docs/EPS-FLASH-RUNBOOK.md):
+  Required prerequisites (per docs/guides/EPS-FLASH-RUNBOOK.md):
     - Car ignition ON (engine off is fine)
     - Panda is the only device on OBD-II
     - openpilot/pandad killed on any comma device (tmux kill-server)

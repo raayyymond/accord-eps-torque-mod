@@ -62,7 +62,7 @@ So the arm-cal read fires exactly when **`gp-0x671d == 0` AND `gp-0x683c != 0`**
 
 ⚠ **`gp-0x683c` is read at `0x3AA94`** (`ld.bu -0x683c[gp],r15`, confirmed the ONLY xref in
 `code.bin` via `search_instructions operand_pattern="-0x683c"`, 1 hit) — **this is the exact instruction
-V67's build script repoints** (`build_v67_tva.py`: "REPOINT_BYTE = 0x3AA96 ... Repoints `ld.bu
+V67's build script repoints** (`builds/v50_v79/build_v67_tva.py`: "REPOINT_BYTE = 0x3AA96 ... Repoints `ld.bu
 -0x683c[gp],r15` @0x3AA94"). If a future build (e.g. V83) carries that repoint, reading `gp-0x683c`
 directly from an INDEPENDENT telemetry cave will NOT reflect what this branch actually tests post-repoint
 — the repoint changes the displacement inside this one instruction, not the value at address gp-0x683c

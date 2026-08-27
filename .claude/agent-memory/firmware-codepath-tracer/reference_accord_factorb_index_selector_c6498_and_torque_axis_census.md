@@ -29,9 +29,9 @@ Program: stock `code.bin` only. `gp=0xFEDF8000`, `tp=0xBF000`. Decompile-first, 
 The earlier trace read the decompile and never read the selector byte. **Operator informed 2026-08-10;
 the old memory file was NOT edited** (standing rule: ask before updating another session's memory).
 
-**`build_v48b_tva.py:42` already recorded this mechanism in July 2026** — *"the 2 mode-gated DORMANT reads
+**`builds/v18_v49/build_v48b_tva.py:42` already recorded this mechanism in July 2026** — *"the 2 mode-gated DORMANT reads
 (`FUN_00034350` @0x34392, `FUN_00034a72` @0x34ace) — bypassed in stock cal (0xC6498/0xC6499=1)"*.
-`build_v59_tva.py:382` asserts both bytes are 1 as a precondition. **`0xC6498` has NEVER been written.**
+`builds/v50_v79/build_v59_tva.py:382` asserts both bytes are 1 as a precondition. **`0xC6498` has NEVER been written.**
 
 ## The one-BYTE repoint, and why it is inert
 

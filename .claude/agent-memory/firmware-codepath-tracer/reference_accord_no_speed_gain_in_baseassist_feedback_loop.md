@@ -27,7 +27,7 @@ mode index (`gp+0x63fd`, this car always mode 10) — never on a decoded vehicle
 | LKAS command (`gp-0x6b4c`) | mixer | LKAS setpoint, not base-assist |
 | Small unidentified lane (`gp-0x6ade`) | UNLOCATED | **[OPEN]** one read in the aggregator (`0x3aa48`), zero writers found by `search_instructions` — could be a real gate with a movhi/movea write this tool misses, or a genuinely dead/near-zero lane like the confirmed-dead `gp-0x6809`. Narrowest gate of all 9 (±1024), lowest priority to chase further. |
 
-**Correction to `eps_lkas_chain_model.py`'s `FUN_00034a72` docstring**: the four previously-undumped
+**Correction to `model/eps_lkas_chain_model.py`'s `FUN_00034a72` docstring**: the four previously-undumped
 tables (`0xCA324` gain-scalar, `0xCA4F4` "rate-keyed" LERP, `0xC7A58` per-mode clamp, `0xCA23C`
 `gp-0x69ba`-keyed LERP) are now identified by full decompile:
 - `0xCA324`, `0xC7A58`: flat per-mode SCALAR constants (one value per mode, not a curve) — gain-scalar

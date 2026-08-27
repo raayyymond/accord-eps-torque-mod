@@ -7,7 +7,7 @@ metadata:
 
 Traced 2026-08-10 on stock `code.bin`, testing the "observer phase-mismatch leaks the EPS's own LKAS
 command into the residual" hypothesis. Verdict: **hypothesis exonerated.** Reproducer:
-`analysis-2020accord/observer_leak_model.py` (self-checking, asserts every cal against stock).
+`analysis-2020accord/studies/models/observer_leak_model.py` (self-checking, asserts every cal against stock).
 
 ## 🛑 CORRECTION TO THE GOLDEN MODEL (line ~1269)
 

@@ -1,6 +1,6 @@
 ---
 name: reference_accord_ram_lerp_y0_zero_corrects_v86_relay_claim
-description: FUN_000389ec's RAM LERP Y[0]=0 definitively resolved (address-cited) — corrects build_v86_tva.py's "0xC63AE->0 = pure relay at full authority" claim; also closes 0xC6200's 15-reader census and prices 0xC646E/0xC613A/0xC6468's blast radius
+description: FUN_000389ec's RAM LERP Y[0]=0 definitively resolved (address-cited) — corrects builds/v80_v107/build_v86_tva.py's "0xC63AE->0 = pure relay at full authority" claim; also closes 0xC6200's 15-reader census and prices 0xC646E/0xC613A/0xC6468's blast radius
 metadata:
   type: reference
 ---
@@ -13,7 +13,7 @@ Populator `FUN_000389ec`:
 
 Writer-exclusivity confirmed both ways: `search_instructions operand_pattern=641c` returns 15 hits, but 11 are `gp+0x641c` (POSITIVE — an unrelated cell in FUN_0003f884/FUN_0003fc16/FUN_0003fd8e/FUN_000558a6, a substring collision, discarded). The 4 real `gp-0x641c` hits are exactly: read @0x38266 (FUN_00038148) + the 3 FUN_000389ec sites above. Zero other writers image-wide. Same check on `64b8` confirms X[0].
 
-**Consequence**: `build_v86_tva.py`'s FROZEN_CELLS text for `0xC63AE` ("lowering toward 0 drives the LERP index to 0 ⇒ output becomes constant ±Y[0] ⇒ A PURE RELAY AT FULL AUTHORITY") has the mechanism right and the magnitude wrong. Y[0]=0 ⇒ lowering 0xC63AE toward 0 SILENCES `gp-0x6b70` (Path-2's residual correction term goes to exactly 0), it does not slam to full authority. The paired `0xC6200` claim ("if it drops below Y[0], same relay failure") is moot for the same reason — 0xC6200 remains a legitimate independent output-authority clamp on gp-0x6b70, just not via a "Y[0] relay" mechanism. The FREEZE decisions on both cells are still reasonable, but for a different (smaller) reason: silent deletion of a lane, not runaway authority. Reported to team-lead 2026-08-08/09 (fw-lever-census task); comment text in build_v86_tva.py was NOT edited (report-only per standing instruction).
+**Consequence**: `builds/v80_v107/build_v86_tva.py`'s FROZEN_CELLS text for `0xC63AE` ("lowering toward 0 drives the LERP index to 0 ⇒ output becomes constant ±Y[0] ⇒ A PURE RELAY AT FULL AUTHORITY") has the mechanism right and the magnitude wrong. Y[0]=0 ⇒ lowering 0xC63AE toward 0 SILENCES `gp-0x6b70` (Path-2's residual correction term goes to exactly 0), it does not slam to full authority. The paired `0xC6200` claim ("if it drops below Y[0], same relay failure") is moot for the same reason — 0xC6200 remains a legitimate independent output-authority clamp on gp-0x6b70, just not via a "Y[0] relay" mechanism. The FREEZE decisions on both cells are still reasonable, but for a different (smaller) reason: silent deletion of a lane, not runaway authority. Reported to team-lead 2026-08-08/09 (fw-lever-census task); comment text in builds/v80_v107/build_v86_tva.py was NOT edited (report-only per standing instruction).
 
 **0xC6200's "15 readers, 3 unidentified" census — now closed at function level**: FUN_000352b4 (6 hits, peak-hold per [[reference_accord_fun352b4_peakhold_correction_and_fun3a382_stageA_pole]]), FUN_00038148 (4, gp-0x6b70 clamp), FUN_0003a382 (3, PID feedback clamp `±tp+0x7200`), FUN_000389ec (1, a ceiling clamp inside the table-builder loop), **FUN_00039702 (1, NEW, not decompiled this session)**.
 

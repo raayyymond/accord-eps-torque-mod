@@ -58,7 +58,7 @@ The operator judged the gentle-EME trigger scenario always-unsafe for hands-off 
 `0xC6312` is `ld.hu` (unsigned 16-bit) compared unsigned (`bnl`), so its datatype max is **0xFFFF = 65535**;
 `gp-0x6a62` is voter-clamped to 32000, so at 65535 `gp-0x6a62 < threshold` is unconditionally true → the
 torque-magnitude disengage **never fires**. The separate `gp-0x6a62 == 0xffff` invalid-sensor sentinel
-(0x40dca/0x40dce) is a SENSOR-FAULT path and is **left intact**. **V33 = `build_v33_tva.py`** = V31 + this one
+(0x40dca/0x40dce) is a SENSOR-FAULT path and is **left intact**. **V33 = `builds/v18_v49/build_v33_tva.py`** = V31 + this one
 cal edit; cal-only (decider code byte-identical to stock), 49/49 CRC, V33-vs-V32 delta = only the 2-byte
-threshold + its block CRC, **UNFLASHED**. Handoff `docs/HANDOFF-2026-07-02-v33.md`. Trade: driver can no longer
+threshold + its block CRC, **UNFLASHED**. Handoff `docs/handoffs/2026-07/HANDOFF-2026-07-02-v33.md`. Trade: driver can no longer
 wrest LKAS authority via column torque through this gate (openpilot brake/cancel/override still works upstream).

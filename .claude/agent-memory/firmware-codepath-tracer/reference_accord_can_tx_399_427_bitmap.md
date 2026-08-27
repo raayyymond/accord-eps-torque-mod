@@ -84,4 +84,4 @@ that nibble deliberately for a reason (reserved/future field) rather than it bei
 ## Cross-reference
 - `reference_accord_can_tx_segmentD_known_frame_provenance.md` — builder/table-index provenance this document assumes.
 - `reference_accord_telemetry_ram_hook_a160.md` — bss-clear range `0xFEDEC000-0xFEDFFFFF` (both buffers fall inside it, explaining why "never touched" bits are boot-zeroed not garbage) and the `0x4141E` per-cycle hook site (reusable pattern for adding a store to the "never written" spare bits).
-- `reference_rizin_ghidra_v850_quirks.md` — V850E2 tooling gotchas; NOT hit this session (Ghidra MCP decoded both builders and all callees cleanly, no invalid/unaligned markers observed).
+- `reference/tooling/reference_rizin_ghidra_v850_quirks.md` — V850E2 tooling gotchas; NOT hit this session (Ghidra MCP decoded both builders and all callees cleanly, no invalid/unaligned markers observed).

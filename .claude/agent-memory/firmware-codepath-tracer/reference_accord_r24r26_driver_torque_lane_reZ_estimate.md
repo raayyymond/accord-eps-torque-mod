@@ -43,7 +43,7 @@ OK for this nonlinearity specifically.
 ## Re(Z) estimate at 6-9Hz [BELIEF -- new methodology this session, not an on-car measurement]
 
 Because r24/r26's input **is** the same physical torque signal `T_driver` that the whole-car
-`Z_measured(f) = S_Tw/S_ww` already characterizes (`rlog-tools/v92_rez.log`, route 77), a linear filter
+`Z_measured(f) = S_Tw/S_ww` already characterizes (`rlog-tools/_scratch/logs/v92_rez.log`, route 77), a linear filter
 of that SAME signal has a computable cross-spectral relationship to wheel rate `w` without needing to
 re-derive the plant: `Z_r24(f) = G * H_diff(f) * Z_measured(f)`, where `H_diff` is the 4-tap
 differencer's own transfer function and `G` is the real, positive small-signal gain (`gain_cal/1024`,
@@ -53,7 +53,7 @@ sourced from the census's "3.000x at creep" ceiling, ranged 1-3 to also cover th
 
 ```
 f=7.79Hz (6-9Hz band): |H_diff|=0.0977 @ +84.39 deg (verified: phase=90-180*N*f/fs, N=4)
-Z_measured(6-9Hz) = 5840.8 @ -125.3 deg  (v92_rez.log, route 77, coh2=0.769, TRUST=YES)
+Z_measured(6-9Hz) = 5840.8 @ -125.3 deg  (_scratch/logs/v92_rez.log, route 77, coh2=0.769, TRUST=YES)
 total phase = 84.39 + (-125.3) = -40.9 deg  =>  cos = +0.756  =>  POSITIVE (damped, kit-standard convention)
 Re(Z_r24) at G=1/2/3: +431 / +863 / +1294 ct
 ```
@@ -106,7 +106,7 @@ half of this investigation, which this file extends to the driver-side candidate
 disassembly this file's `G` range is anchored to.
 [[reference_accord_fun3b8f6_fir_not_biquad_inertia_friction_and_free_taps]] -- source of the `gp-0x6752`
 open question and its Path-2 blast radius.
-`rlog-tools/v92_rez.log` -- the measured `Z` this file's estimate is built on.
+`rlog-tools/_scratch/logs/v92_rez.log` -- the measured `Z` this file's estimate is built on.
 
 ---
 

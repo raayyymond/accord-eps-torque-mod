@@ -131,7 +131,7 @@ STEER_REQUEST, stable at 1 through a whole engagement). SM behavior:
 
 **Tie-in to existing history: `gp-0x6807==4` is the SAME "no_torque_alert_2" debounce as the V36/V37 gentle-EME
 root cause** (`torque gp-0x682f > cal 0xC64B4=112` sustained 5cyc, OR `rate > cal 0xC61C0=1600` — see
-`v36-debounce-sm-root-cause-and-build.md`) — i.e. triggered by sustained MODERATE-HARD steering, not
+`builds/v36-debounce-sm-root-cause-and-build.md`) — i.e. triggered by sustained MODERATE-HARD steering, not
 near-zero dithering. Better structural fit for the boot card's separate "several-Hz hard-turn ratchet" than
 for the near-zero vibration this file was originally dispatched to explain. `gp-0x6807==3`'s trigger is a
 sibling branch in the same debounce cascade (same function, ~line 175-296 of the decompile, keys partly off
@@ -148,7 +148,7 @@ driving (STEER_STATUS never near 3/4/7), the gate is already inert and this cal 
 
 Re-traced `gp-0x6807`'s producer cascade (decompiled ~lines 175-296 of `FUN_00028ea6`, the SAME inline debounce
 this file already covers) specifically against V37/V38's calibration (V36/V37 raised `0xC64B4/B5/B6/B7`=0xFF,
-`0xC61C0/C2/C4`=0xFFFF, `0xC64B8`=0xFF — see `v36-debounce-sm-root-cause-and-build.md`).
+`0xC61C0/C2/C4`=0xFFFF, `0xC64B8`=0xFF — see `builds/v36-debounce-sm-root-cause-and-build.md`).
 
 **STEER_STATUS=4 confirmed UNREACHABLE**: trip condition is an OR-chain of `cal < operand` tests; the torque
 operand (`gp-0x682f`) is hard-saturated to max 254 (line 140: `(0xfe>=x)*x - (0xfe<x)`), the rate-ish operand
@@ -174,7 +174,7 @@ Two inputs are LIVE, not cal-gated, and I could not resolve their typical value:
 touches `gp-0x6b94` — aggregator-adjacent); the gate needs it pinned almost exactly at 0x8000 (both blend
 terms simultaneously at ceiling) — structurally reads as edge-case but not proven. **`gp-0x67fe`** — only 5
 writer sites total, all in `FUN_0003bd7c`/`FUN_0003e760` (FOC-mode EPS assist substate, matches existing
-`eps-gp67fe-trump-engaged-holding-substate.md`) — that memory's "stuck at 1" observation is of a DERIVED CAN
+`misc/eps-gp67fe-trump-engaged-holding-substate.md`) — that memory's "stuck at 1" observation is of a DERIVED CAN
 bit from a different consumer phase, NOT re-verified here as this raw byte's value, so NOT reused as fact.
 **If `gp-0x67fe` is not routinely 2, `==3` fires routinely (SM never settles into state-2 hold), which would
 mean the deadband gate is live far more of the time than the "periodic reset" framing above suggests — open,

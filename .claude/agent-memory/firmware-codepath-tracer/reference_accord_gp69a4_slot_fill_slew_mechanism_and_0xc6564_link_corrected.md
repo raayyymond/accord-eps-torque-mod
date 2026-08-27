@@ -58,7 +58,7 @@ above reads. **The causal chain from `0xC6564` to the array IS intact — F4's "
 framing is WRONG on the mechanism.**
 
 However, **`0xC6564`, 40 bytes, re-read fresh this session: still all zero** — matching F4's own byte
-claim and every `build_v67_tva.py`-through-`build_v70_tva.py` assertion on record (`R26_AVG_CAL = 0xC6564`,
+claim and every `builds/v50_v79/build_v67_tva.py`-through-`builds/v50_v79/build_v70_tva.py` assertion on record (`R26_AVG_CAL = 0xC6564`,
 "40 bytes of exact zero == the r26-inert record"). So `0xC6564`'s specific CONTRIBUTION genuinely is 0 —
 the mechanism works, the seed is just empty. **Net effect on the standing memory chain**
 ([[reference-accord-r26-is-structurally-inert]], LEG 2 "downgraded to belief... link to gp-0x69a4 never

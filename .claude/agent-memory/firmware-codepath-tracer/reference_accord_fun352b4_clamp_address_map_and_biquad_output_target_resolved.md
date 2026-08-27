@@ -204,7 +204,7 @@ address-pinned, both branches:**
 0x35a86           DISARMED fallback: r6 = raw iVar34 (=gp-0x6b82), c4 never read on this branch either.
 0x35a88           add r15,r6 — gp-0x6b7e(c4-independent) + biquad-or-passthrough(c4-scaled-or-raw).
 ```
-So boosting `c4` (V104's ONLY edit, confirmed via `build_v104_tva.py`: 0xC60B4 alone,
+So boosting `c4` (V104's ONLY edit, confirmed via `builds/v80_v107/build_v104_tva.py`: 0xC60B4 alone,
 0.81730998f->1.51202345f, pure coefficient swap, no cave/control-flow change — this stock-image trace
 transfers to V104 unmodified) rescales ONLY the biquad term; `gp-0x6b7e` is invariant to it.
 

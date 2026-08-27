@@ -76,7 +76,7 @@ HF-gain increase dominated the phase-lead credit and made `|L|`/Q worse at every
 ADDS a real 2nd-order low-pass (ζ=0.65, corner ~42.3Hz) into the `gp-0x6b86` branch that currently has
 NO such attenuation -- i.e. it **REDUCES that branch's own gain at high frequency** (-1.25dB@21Hz,
 -3.0dB@30Hz, more above), at the cost of added phase lag (-30°@21Hz, -45°@30Hz). `gp-0x6b86` sums into
-`gp-0x6b94` at UNITY weight, same as every other aggregator lane (confirmed, `eps_chain_control.py`'s
+`gp-0x6b94` at UNITY weight, same as every other aggregator lane (confirmed, `model/eps_chain_control.py`'s
 `motor_torque_demand_aggregator`, "ALL EIGHT ARE STRUCTURALLY VACUOUS... unweighted"), and it is fed by
 `gp-0x4f60` -- so it sits inside the SAME mechanical feedback loop as Path 2, but its edit REDUCES
 branch gain at the resonant band instead of increasing it. **Reducing one feedback branch's gain at the
@@ -128,7 +128,7 @@ question just closed.
 
 ## 5. 🛑🛑 THE BIQUAD SHARES V48B'S EXPOSURE CLASS — confirmed from disassembly, not assumed
 
-`docs/HANDOFF-2026-07-21-v48b-flashed-catastrophic.md`: V48B (a 21.4Hz notch on `gp-0x4f60`/errorterm,
+`docs/handoffs/2026-07/HANDOFF-2026-07-21-v48b-flashed-catastrophic.md`: V48B (a 21.4Hz notch on `gp-0x4f60`/errorterm,
 "before fan-out") **bricked the car on startup, parked, no LKAS command** — full-authority oscillation.
 Two causes: (1) GATE 1 — a state cell's HIGH BYTE aliased a live monitor/DTC status bitfield; (2) GATE 2
 — the notch (its own resonator, r=0.979, ζ≈0.157, Q≈3.2) sat in the **ALWAYS-ON base-assist loop**
@@ -194,7 +194,7 @@ pole. DC gain = 1.0000344 (near-exact unity).
    fresh and, if it fires, discards `r15` for a hard literal 0 — **the filter's own recursion state
    (`gp-0x3814`/`-0x3818`) is never touched by the dropout, in either direction.** Benign.
 4. **GATE 2 (closed-loop Bode sum, all 3 requested bands, q swept 0.10-1.00)** — extended
-   `eps_loop_gain_model.py`'s own anchor (`|L(21.4Hz)|=0.875`, cited unchanged) via its bare-plant
+   `studies/models/eps_loop_gain_model.py`'s own anchor (`|L(21.4Hz)|=0.875`, cited unchanged) via its bare-plant
    shape; modeled arming as `L_new(f) = L_total(f)·[(1-q) + q·H_biquad(f)]`. Sanity-checked my
    `H_biquad` reconstruction against team-lead's own reported table first (matched to <0.1dB/<0.1° at
    all 7 quoted points) before trusting the rest. **Result: `|L_new| < |L_total|`, margin IMPROVES, at
@@ -260,7 +260,7 @@ the gain increase FLIPS the sign, not just the magnitude, and it's the ONE band 
 (6-9Hz is anti-damped in stock too).
 
 **Fixed a real bug in my own earlier GATE-2 pass first**: that model used the bare plant's phase
-directly for `L_total(f)`, giving `arg(L_total(21.4Hz))≈-90°` — but `eps_loop_gain_model.py`'s OWN
+directly for `L_total(f)`, giving `arg(L_total(21.4Hz))≈-90°` — but `studies/models/eps_loop_gain_model.py`'s OWN
 stated assumption is a +90° rate-carrier rotation cancelling the plant's -90° so `L` is real-positive
 AT the resonance (its own "aligned/destabilizing" convention for the peaking formula). Corrected by
 including that SAME +90° rotation (cited, not invented) — now `arg(L_total(21.4Hz))≈+3.7°`, consistent.
@@ -370,7 +370,7 @@ BOTH lanes' complex transfer directly: `gp-0x6b26` = `0.2657∠+84.2°`, `gp-0x6
 **131.9° apart, so the correct combination is a VECTOR sum = `0.2275∠+72.0°`, SMALLER than `gp-0x6b26`
 alone (0.856×), not larger.** The third lane (`gp-0x6b46`) is confirmed structurally negligible at
 this band (`FUN_00036682`'s own 0.94Hz EMA gives -27dB at 21.5Hz, corroborated by
-`build_v97_tva.py:168`'s independent "~1.1 of 342 counts" figure) — so **the 2-lane vector sum IS the
+`builds/v80_v107/build_v97_tva.py:168`'s independent "~1.1 of 342 counts" figure) — so **the 2-lane vector sum IS the
 combined L**, not a placeholder.
 
 **Recomputed: `|Q|` hands-off-ish = 0.73-0.79 (not 0.85-0.92) — back under 1, comfortably.** Growth
@@ -393,7 +393,7 @@ cancels out of that ratio regardless of its absolute value.
 
 Original framing (superseded by the analysis below): "V101 continuous / V102 intermittent, wrong
 direction for a naive torque-suppression reading" was flagged as an open tension. `route-v102` then
-**ran the actual within-build test** (`rlog-tools/v102_torque_intermittency.py`) and found it **is not
+**ran the actual within-build test** (`rlog-tools/studies/v102-crossbuild/v102_torque_intermittency.py`) and found it **is not
 runnable, and the reason retracts the tension too, not just leaves it open**:
 
 - **Grip is collinear with steering activity** (Spearman `corr(|tq|, wheel rate)` = +0.35 to +0.78

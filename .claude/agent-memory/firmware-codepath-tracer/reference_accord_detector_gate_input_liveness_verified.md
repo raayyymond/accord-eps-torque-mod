@@ -5,8 +5,8 @@ metadata:
   type: reference
 ---
 
-Re-verifies (independently, not by re-quoting) the prior session's `eps_lkas_chain_model.py:546-607` /
-`docs/HANDOFF-2026-08-03-the-detector-was-always-there.md` claims, which had become **verdict-affecting**
+Re-verifies (independently, not by re-quoting) the prior session's `model/eps_lkas_chain_model.py:546-607` /
+`docs/handoffs/2026-08/HANDOFF-2026-08-03-the-detector-was-always-there.md` claims, which had become **verdict-affecting**
 after V68 read `gp-0x67df`/`gp-0x671a` zero on 53,991 frames including the captured 28 Hz lane-change burst.
 Method: GhidraMCP decompile/disasm on `code.bin` (stock) + independent Python raw LE byte scans (disp16,
 disp23-extended, LE32-literal) per `firmware-decompile` skill / `reference_v850e2_extended_disp23_encoding_solved`.

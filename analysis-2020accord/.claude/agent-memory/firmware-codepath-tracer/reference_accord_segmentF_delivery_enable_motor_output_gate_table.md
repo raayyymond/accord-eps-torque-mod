@@ -17,7 +17,7 @@ positives, discarded after direct disasm; see method note at bottom).
 `reference_accord_segmentE_arbitration_shaper_dtc_gate_table.md` states **gp-0x67a4 (ENABLE byte, abs
 `0xFEDF195C`)**. This is an arithmetic slip. Verified independently via r2 calculator AND python:
 `0xFEDF8000 - 0x67A4 = 0xFEDF185C`, NOT `0xFEDF195C` (`0xFEDF195C` = `gp-0x66A4`, a different byte, one
-that also happens to be the address named in the older `reference_accord_driver_override_plausibility_eme.md`
+that also happens to be the address named in the older `reference/firmware/reference_accord_driver_override_plausibility_eme.md`
 — these are two DIFFERENT gp-offsets, 0x100 apart, and should not be conflated). The **instruction
 reference** in segmentE's note (`st.b r14,-26532[gp]`@`0x2b51e`) is itself correct and matches this
 session's finding exactly — only the hex conversion to an absolute address was wrong. **gp-0x67a4 =
@@ -52,7 +52,7 @@ persistent state `gp-0x3D28` (`0xFEDF42D8`, read once @`0x2b450`) with a `switch
 **ENABLE takes values {0,1,2,3,4,5} — only 2 and 3 pass LKAS torque.** This is a richer picture than
 segmentE's "r14 fed from 0x2b506/0x2b512/0x2b51c → 3/4/0" summary (that captured 3 of the ~7 branch
 targets); the full dispatch has 8 state-entry points. Matches the framing in
-`SESSION-2026-05-30-EME-RESOLUTION.md`: "gp-0x67a4=torque-blind handshake" — this IS a handshake/sequencing
+`notes/SESSION-2026-05-30-EME-RESOLUTION.md`: "gp-0x67a4=torque-blind handshake" — this IS a handshake/sequencing
 FSM, not a simple boolean.
 
 **gp-0x185D is forced to 1 unconditionally every cycle by the arb function** (`FUN_00028ea6`@`0x2a2f4`,
@@ -88,7 +88,7 @@ two, corrected here) does:
    else `r15 := gp-0x6b38` (the UNGATED clamped command).
 
 **This is a genuine second writer of `gp-0x6b3c`, contradicting the "1 writer (arb)" claim in
-`reference_accord_arbitration_limit_family.md` / segmentE's boundary-variable note.** Whether it is a
+`reference/firmware/reference_accord_arbitration_limit_family.md` / segmentE's boundary-variable note.** Whether it is a
 harmless idempotent re-assertion of the SAME gated result (r16 derived from the identical ENABLE check, so
 it would agree with arb's own write every cycle) or represents a genuinely independent bypass path is
 **NOT fully resolved** — r16's exact derivation across both of step-1's branches needs a full re-walk, and
@@ -106,7 +106,7 @@ Struct fields (built by `limit_and_pack` @`0x2b522-0x2b538`: `[0]`=1 source idx=
 - `+4` → clamp **±0x2800 (10240)** — **this is the LKAS lane** (`0x25ca0/a6/b0`)
 - `+6` → clamp **±0x384 (900)** (`0x25cbc/c2/cc`)
 - `+8` → clamp **±0x4e20 (20000)** (`0x25cd8/de/e8`)
-All four exactly match `reference_accord_arbitration_limit_family.md`'s prior-session claims — independently
+All four exactly match `reference/firmware/reference_accord_arbitration_limit_family.md`'s prior-session claims — independently
 re-derived this session, byte-identical.
 
 ## gp-0x4f68 (0xFEDF3098) uses in the "0x2bc00 region" [V — 7 confirmed reads in-region, ~37 total image-wide]
@@ -138,7 +138,7 @@ segmentD = HIGH bump-trippability).
 Downstream of the shaper (`gp-0x6b98`), the documented FOC chain (`FUN_000370b6`/`FUN_0003b8f6`/
 `FUN_00056420`/`FUN_0007c4f2`) drives the on-chip current regulator ending in the carrier-valley ISR
 (`FUN_0001492a`→`FUN_00061614`→`FUN_0006c5ce`) which writes the **TSG20 hardware PWM compare registers
-`CMPU/CMPV/CMPW` = `0xFFFFCCB0/B4/B8`** (per prior-session `TORQUE_PATH_AND_TABLE.md` §1⑤, re-cited not
+`CMPU/CMPV/CMPW` = `0xFFFFCCB0/B4/B8`** (per prior-session `notes/TORQUE_PATH_AND_TABLE.md` §1⑤, re-cited not
 re-walked this session).
 
 **New this session:** `FUN_00059912` (a generic multi-message CAN/serial frame packer, `switch r7` dispatch
@@ -164,7 +164,7 @@ a motor-telemetry CAN frame (plausibly the Accord's `0x427`-class MOTOR_TORQUE-e
 
 **Best candidate: the arb OUTPUT gain (`tp+0x746c`=`0xC646C`, stock 891) + immediately-following clamp
 (`tp+0x71b4`=`0xC61B4`, stock 512)**, both read in `FUN_00028ea6` right before the ENABLE gate (`0x2a1ee-
-0x2a204`, re-observed this session, matches `reference_accord_lkas_delivery_and_governor.md` exactly). This
+0x2a204`, re-observed this session, matches `reference/firmware/reference_accord_lkas_delivery_and_governor.md` exactly). This
 is the closest structural analog to Civic's `0x137F2`: a single early calibration-driven attenuation that
 silently discards the overwhelming majority of the theoretical full-scale range (891/32768 Q15 ≈ 2.7%, and
 the immediately-following ±512 clamp is far tighter than every downstream wall — ±2800 distribute, ±2800

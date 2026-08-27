@@ -12,7 +12,7 @@ by raw Python LE byte scans over all 102 `*_plain_image.bin` in `ACCORD_FIRMWARE
 
 ## Table header vs Y[0] — SETTLED [EVIDENCE, 3 independent confirmations]
 
-`docs/_v101_arc_map.md` §5.2g's addresses (`0xC6ADC`/`0xC6B08`/`0xC6B1C`) are the table **headers**
+`docs/archive/arc-maps/_v101_arc_map.md` §5.2g's addresses (`0xC6ADC`/`0xC6B08`/`0xC6B1C`) are the table **headers**
 (`movea 0x7adc,tp,r6` etc. at `0x3a44a`/`0x3a3ea`/`0x3a38a`). `docs/BUILD-LINEAGE.md`'s addresses
 (`0xC6AE6`/`0xC6B12`/`0xC6B26`) are **Y[0] = header+0xA** exactly (`addi 0xa,r6,r13` builds the Y base;
 `addi 0x2,r6,ep` builds X base = header+2). Both documents are correct; same trap class as the kit's own
@@ -83,7 +83,7 @@ Two same-day (2026-08-11) files disagree on D's pump/damp split:
 claims "D pumps ONLY 2-12Hz and DAMPS 16-35Hz" citing an unlocatable "parallel PID trace" — **I could not
 find that source file this session.**
 
-Anchored instead against `memory/accord-rez-antidamping-replicated-three-drives.md` (on-car measured
+Anchored instead against `memory/accord/mechanism/accord-rez-antidamping-replicated-three-drives.md` (on-car measured
 Re(Z), 3 drives, 5Hz resolution — the actual closed-loop damping sign, not a code-side guess):
 2-4Hz anti-damped, **6-9Hz AND 9-12Hz anti-damped (9-12 is the WORST band, -4130 to -4593)**, **12-16Hz
 still strongly anti-damped (-3858 to -4020)**, 18-22Hz weakly anti-damped, **crossover is actually

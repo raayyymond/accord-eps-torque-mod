@@ -67,7 +67,7 @@ total = gp-0x6ade(rangegated +-0x400) + gp-0x6b4c[LKAS](+-0x2800) + gp-0x6ad4(+-
 clamp to +-0x2800 (10240) -> gp-0x6b94 / shadow gp-0x4ce0 (FUN_0006b9fa on mismatch)
 ```
 `gp-0x6adc`/`gp-0x6ada` at the end are the known dead telemetry mirrors (0 readers, matches
-`accord-aggregator-lane-mirrors-6ada-6adc.md`).
+`accord/firmware/accord-aggregator-lane-mirrors-6ada-6adc.md`).
 
 ## SIX shadow-lockstep pairs directly downstream of the damper [EVIDENCE, fresh this session]
 
@@ -87,7 +87,7 @@ primary and shadow copy:
 | post-governor comp | `FUN_000456a4` | `gp-0x6acc` | `gp-0x4cc8` |
 
 ⚠ The user's cross-session memory index refers to "4 shadow lockstep pairs ruled out as V40 candidates"
-in a file I could not locate this session (`reference-accord-fun45a20-monitor-and-shadow-lockstep-pairs.md`
+in a file I could not locate this session (`reference/firmware/reference-accord-fun45a20-monitor-and-shadow-lockstep-pairs.md`
 is absent from both `.claude/agent-memory/firmware-codepath-tracer/` and the user auto-memory dir as of
 2026-08-06) — I cannot confirm whether those four overlap with the six above. Treat the six above as a
 **fresh, independently-derived census**, not a re-verification of the missing memory.
@@ -160,5 +160,5 @@ of the aggregator's inputs)
 4. `gp-0x6762` mode byte and `DAT_fedf1008` hardware write in `FUN_00018f4a` — candidates for a harder
    (non-gain-collapse) motor disable, not chased.
 5. Whether `0xC64B8` (DTC 0x49 gate) is still `0xFF` in the actual V75 built image (only grepped
-   `build_v75_tva.py` for a re-touch — found none — did not byte-read the built image itself this
+   `builds/v50_v79/build_v75_tva.py` for a re-touch — found none — did not byte-read the built image itself this
    session).

@@ -10,7 +10,7 @@ metadata:
 Platform: 2020 Accord `39990-TVA-A160`, V850E2. Verified via GhidraMCP `program="master.bin"` (== program
 name `code.bin`, stock, path `/master.bin`) — NOT the currently-active `_uds_telem_plain_image.bin`. Read-only:
 `disassemble_function`, `disassemble_bytes`, `read_memory` only, no writes. Confirms and extends
-`docs/GENTLE-EME-CAN-TO-MOTOR-GATING-MAP-2026-07-06.md` (D5/D7 rows) and `docs/HANDOFF-2026-07-05-v35.md`.
+`docs/guides/GENTLE-EME-CAN-TO-MOTOR-GATING-MAP-2026-07-06.md` (D5/D7 rows) and `docs/handoffs/2026-07/HANDOFF-2026-07-05-v35.md`.
 
 ## Function: `FUN_0003d04c` (0x3d04c–0x3d1f4), called `(4,0)` from `FUN_00041222`@`0x412ae`
 
@@ -118,7 +118,7 @@ Ranked recommendation:
   epilogue must not disturb that frame's stack slots — push/pop its own scratch strictly above them.
 
 ## Cross-reference
-- `docs/GENTLE-EME-CAN-TO-MOTOR-GATING-MAP-2026-07-06.md` — D4/D5/D6/D7 rows (Stage D table).
-- `docs/HANDOFF-2026-07-05-v35.md` — Gate 7 identity/history (`0xC62FE` V35 target), Gate 5 residual note.
+- `docs/guides/GENTLE-EME-CAN-TO-MOTOR-GATING-MAP-2026-07-06.md` — D4/D5/D6/D7 rows (Stage D table).
+- `docs/handoffs/2026-07/HANDOFF-2026-07-05-v35.md` — Gate 7 identity/history (`0xC62FE` V35 target), Gate 5 residual note.
 - `reference_accord_telemetry_ram_hook_a160.md` — the existing `0x4141E` per-cycle hook + jarl disp22
   re-encoding formula, reused here for the `br` re-encoding recommendation.

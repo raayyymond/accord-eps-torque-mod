@@ -30,7 +30,7 @@ if (gp-0x67f6 == 0) {           // branch A
 `FUN_00057f8e` is a static 5-byte HW-ID match against a ROM table at `0xCD000` (stride `0x24`), fixed
 per ECU, not driving-state-dependent. For this car (record 2, "TVAA1"), byte-read fresh:
 `e012[2]=10, e013[2]=10, e014[2]=11, e015[2]=11` — **every reachable branch writes 10 or 11, never
-anything else.** This matches `build_v44_tva.py`'s own pre-existing documentation (written months
+anything else.** This matches `builds/v18_v49/build_v44_tva.py`'s own pre-existing documentation (written months
 before this session) exactly — three independent sources agree (this session's decompile, this
 session's byte read, that build script).
 
@@ -85,7 +85,7 @@ promptly during real driving. **V73 spends one probe field reading `gp+0x63fd` d
   records the car never read, and the fix is to additionally write the proven values into the LIVE
   mode's own records — an addition, not a re-tune of V72.
 
-**Durable fact worth keeping regardless of the probe result**: `build_v44_tva.py` documented the 10/11
+**Durable fact worth keeping regardless of the probe result**: `builds/v18_v49/build_v44_tva.py` documented the 10/11
 failover pair and patched both tables months ago — the kit *knew* about the failover mechanism and
 still nobody had checked the pre-confirm-sequence boot window until this round.
 

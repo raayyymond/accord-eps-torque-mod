@@ -17,12 +17,12 @@ That memory's bottom line ("this EPS does NOT transmit/own steering-wheel angle.
 `0x156`... no angle message ID") is **factually wrong**, not stale. It assumed Honda's `STEERING_SENSORS`
 message lives at CAN ID `0x156` (true on some Honda DBCs) and searched for that ID specifically. On
 **this** platform's DBC (`honda_accord_2018_can_generated.dbc`, ground-truthed in this kit at
-`rlog-tools/decode_two_angles.py`), `STEERING_SENSORS` is **`0x14A` (330)** — a message this kit has
+`rlog-tools/decode/decode_two_angles.py`), `STEERING_SENSORS` is **`0x14A` (330)** — a message this kit has
 hooked for telemetry piggybacking since V31P and already knew was "car-facing (LKAS-related)" without
 ever decoding its payload semantics by name. The EPS transmits it, confirmed both by DBC ground truth and
 by disassembly of the builder below.
 
-**opendbc ground truth (`rlog-tools/decode_two_angles.py` header, itself sourced from the DBC):**
+**opendbc ground truth (`rlog-tools/decode/decode_two_angles.py` header, itself sourced from the DBC):**
 ```
 BO_ 330 (0x14A) STEERING_SENSORS   (TX'd BY THE EPS)
   STEER_ANGLE        bytes 0-1 BE signed, scale -0.1 deg
@@ -80,7 +80,7 @@ in the image). Disassembly of all three branches shows the **same register** sto
 
 ⇒ **`STEER_ANGLE` and `STEER_WHEEL_ANGLE` are the SAME internal quantity, redundantly stored/shadow-checked
 (via `gp-0x4c80`/`gp-0x4c82`), not two independent sensors either side of the torsion bar.** This is a
-material correction to the working hypothesis in `rlog-tools/decode_two_angles.py` (which frames them as
+material correction to the working hypothesis in `rlog-tools/decode/decode_two_angles.py` (which frames them as
 "opposite sides of the torsion bar" and proposes `twist = WHEEL_ANGLE - ANGLE` as a topology check) — at
 the firmware source, that twist is identically zero by construction; any measured difference on the wire
 would be transport/rounding noise, not a physical torsion-bar signal. **The topology-check item in that

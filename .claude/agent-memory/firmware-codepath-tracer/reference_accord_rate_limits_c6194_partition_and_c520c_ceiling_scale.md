@@ -8,11 +8,11 @@ metadata:
 # Rate limits on the LKAS→motor path — 2026-08-12 (`fw-loop`)
 
 Triggered by the operator's own words: *"It feels like effectively a steer angle rate limit for
-LKAS engaged."* Model: `analysis-2020accord/_v97/loop_phase_model.py`.
+LKAS engaged."* Model: `analysis-2020accord/sessions/v97/loop_phase_model.py`.
 
 ## 1. 🛑🛑 `0xC6194` — A REAL SLEW LIMITER, DEAD FOR A DIFFERENT REASON THAN RECORDED
 
-`memory/reference-accord-lkas-only-rate-limiter-c6194.md` says *"0xC6194 is DEAD calibration;
+`memory/reference/firmware/reference-accord-lkas-only-rate-limiter-c6194.md` says *"0xC6194 is DEAD calibration;
 output ×0; no live LKAS-specific slew limit exists."* **The verdict "dead" is right. The reason is
 wrong** — "output ×0" is `0xC6196` = 0, a **different cell**, on the residual path.
 

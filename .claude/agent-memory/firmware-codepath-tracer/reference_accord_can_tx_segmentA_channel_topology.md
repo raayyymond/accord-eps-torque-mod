@@ -8,13 +8,13 @@ metadata:
 # Accord TVA-A160 CAN TX — Segment A: channel topology (2026-07-07 swarm)
 
 Session scope: read-only study, `code.bin` (39990-TVA-A160), gp=0xFEDF8000, tp(r5)=0xBF000, radare2 5.5.0
-`v850.gnu` plugin (default `v850` mis-decodes this silicon — see `memory/reference_rizin_ghidra_v850_quirks.md`).
+`v850.gnu` plugin (default `v850` mis-decodes this silicon — see `memory/reference/tooling/reference_rizin_ghidra_v850_quirks.md`).
 Mission: locate a free TX mailbox/scheduler slot on the **car-facing** CAN channel for a new ~100Hz telemetry
-frame (`docs/HANDOFF-2026-07-07-gating-map-and-telemetry-plan.md` §5 step 1).
+frame (`docs/handoffs/2026-07/HANDOFF-2026-07-07-gating-map-and-telemetry-plan.md` §5 step 1).
 
 ## 0. Key resource found this session: the device SVD
 
-`analysis-2020accord/svd_for_ghidra/UPD70F3508_V850E2Px4.svd` is a CMSIS-SVD register description for the
+`analysis-2020accord/reference/svd_for_ghidra/UPD70F3508_V850E2Px4.svd` is a CMSIS-SVD register description for the
 **exact MCU** (µPD70F3508, V850E2/Px4 core — confirmed by `PRDNAME` reset value `0x0DB40100` decoding to
 product ID `0DB40h = uPD70F3508`, register at peripheral `SYSTEM`/`PRDNAME` offset 0x28). It documents:
 - **`FCN0`** = "CAN Controller (FCN) instance 0", **`baseAddress = 0xFF480000`** (SVD line ~2513).

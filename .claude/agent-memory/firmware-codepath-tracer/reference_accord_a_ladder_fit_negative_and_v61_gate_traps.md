@@ -33,7 +33,7 @@ more likely amplitude-dependent (closed-loop describing-function) or shape-depen
 segment/rate-range carries the dose) than magnitude-dependent per se.
 
 ⚠ Power caveat: 8 points = 28 pairs, several involving CI-wide arms (V70/V69/V71B) per
-`docs/V72-DESIGN.md` §2.1.4's own admission (V71C vs V70 P=0.35, vs V69 P=0.15). The SIGN/ordering
+`docs/specs/design/V72-DESIGN.md` §2.1.4's own admission (V71C vs V70 P=0.35, vs V69 P=0.15). The SIGN/ordering
 negative is solid; the exact 20/28 count should not be treated as 28 independently-powered tests.
 
 ## 2. TRAP 1 -- V61's edit is NOT in the gain surface [EVIDENCE: byte-read + build-script cross-check]
@@ -44,7 +44,7 @@ records at 0/10km/h. A naive fit that reads "V61's gain" from any of these sourc
 equate V61 with stock.
 
 **The real edit, confirmed present**: two REGISTER-FIELD zeros, no cave, no RAM, matching
-`build_v61_tva.py`'s own documentation exactly --
+`builds/v50_v79/build_v61_tva.py`'s own documentation exactly --
 ```
 0x3AB6C  mul r1,r6,r0 -> mul r0,r6,r0   bytes e137 -> e037   (r26 tap: r6 = r6*0 = 0)
 0x3AC16  mov r1,r8    -> mov r0,r8      bytes 0140 -> 0040   (r24 tap: r8 = 0)

@@ -32,7 +32,7 @@ A follow-up activation trace + independent byte-verification overturned the "ena
 **Corrected conclusion:** there is NO software discriminator. The split is almost certainly an **external gateway
 ECU** (outside `code.bin`) forwarding only {399,427,0x14A} to the comma-tapped bus — the ORIGINAL swarm's
 "physical config outside code.bin" hypothesis (`reference_accord_why_car_facing_vs_internal_2026-07-07.md`), which
-was right to leave open. **Decisive test is empirical:** flash `build_tier1_telem_tva.py`'s 0x660 telemetry RWD →
+was right to leave open. **Decisive test is empirical:** flash `builds/telemetry/build_tier1_telem_tva.py`'s 0x660 telemetry RWD →
 `comma4_can_inventory.py` → is 0x660 on bus1 @100Hz? Consequence: repurposing 0x660 / any new EPS TX ID is
 probably invisible to the comma; only 399/427/0x14A are known-visible.
 

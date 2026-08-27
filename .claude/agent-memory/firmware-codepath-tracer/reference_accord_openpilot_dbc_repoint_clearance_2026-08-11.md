@@ -59,7 +59,7 @@ ssh comma "grep -n '<SIGNAL_NAME>' /data/openpilot/opendbc_repo/opendbc/car/hond
 ssh comma "grep -rn '<SIGNAL_NAME>' /data/openpilot/opendbc_repo/opendbc/car/honda/ /data/openpilot/opendbc_repo/opendbc/safety/"
 ```
 
-Related: `docs/SPEC-2026-08-11-telemetry-budget.md` (T1/T2/T3, this finding folded in), the CAN-TX
+Related: `docs/specs/SPEC-2026-08-11-telemetry-budget.md` (T1/T2/T3, this finding folded in), the CAN-TX
 free-bit census memories (`reference_accord_can_tx_399_427_bitmap.md`,
 `reference-accord-can-tx-frame-0x14a-bytemap.md`, `reference_accord_can_tx_399_427_hook_sites_and_widened_telemetry_budget.md`)
 which this extends to the openpilot side rather than just the firmware side.

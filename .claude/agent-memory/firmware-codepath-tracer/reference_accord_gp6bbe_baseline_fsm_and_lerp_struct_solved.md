@@ -7,7 +7,7 @@ metadata:
 
 # `gp-0x6bbe` baseline/FSM fully solved + LERP struct format decoded (2026-07-30, team-lead request)
 
-Answers team-lead's 4-part ask on the angle-rate tributary gap in `eps_lkas_chain_model.py`. Full
+Answers team-lead's 4-part ask on the angle-rate tributary gap in `model/eps_lkas_chain_model.py`. Full
 disasm of `FUN_00034a72` (`code.bin`, gp=0xFEDF8000, tp=0xBF000), byte-verified tables, mode=10 (A160).
 
 ## 1. Baseline (r28) — [MEASURED] torque/motor-rate ONLY, no angle content anywhere

@@ -9,7 +9,7 @@ metadata:
 
 2020 Accord `39990-TVA-A160`, Renesas uPD70F3508/V850E2. STOCK `../accord-firmware/analysis-2020accord/stock_fw_dump/code.bin`
 (flat, file offset == address). `r2 -a v850.gnu -b 32 -m 0`. gp=`0xFEDF8000`, tp=`0xBF000`. SVD:
-`analysis-2020accord/svd_for_ghidra/UPD70F3508_V850E2Px4.svd`. Self-check `0x410c0` re-verified this session
+`analysis-2020accord/reference/svd_for_ghidra/UPD70F3508_V850E2Px4.svd`. Self-check `0x410c0` re-verified this session
 (`ld.bu -26622[gp],r12 ; cmp 2,r12`).
 
 **Read first**: `reference_accord_can_tx_synthesis_2026-07-07.md` (rollup),

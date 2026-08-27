@@ -21,8 +21,8 @@ having a caller — the two functions were conflated because `FUN_0002a93a`'s al
 (`gp-0x6b2e/32/34/36`) were assumed to feed the same downstream chain PATH-A does.
 
 **Fresh check this session**: `get_function_callers(0x2a93a)` and `get_xrefs_to(ram:2a93a)`, both on
-`code.bin` — **zero callers, zero xrefs, both methods.** This matches `build_v37_tva.py`/
-`build_v38_tva.py`'s own long-standing annotation, present since those builds: `"0x2a97a FUN_0002a93a
+`code.bin` — **zero callers, zero xrefs, both methods.** This matches `builds/v18_v49/build_v37_tva.py`/
+`builds/v18_v49/build_v38_tva.py`'s own long-standing annotation, present since those builds: `"0x2a97a FUN_0002a93a
 (DEAD: 0 callers/xrefs/ptrs)"` and `"NOTE: FUN_0002a30e / FUN_0002a93a are DEAD out-of-line copies; the
 LIVE logic..."` — a fact that was already on record in the build scripts and simply never cross-checked
 against the newer memory's claim.
@@ -50,7 +50,7 @@ against the newer memory's claim.
 3. 🛑🛑 **STRUCK 2026-08-12 — Authority output-clamp collapse, `gp-0x6966`/`0xC6AF0` in `FUN_0003a382`.**
    Q15 LERP (X=[0,3277,3604,19661,32768], Y=[32768,32768,0,0,0]) scales the PID's own output bound;
    originally read as a genuine dead-zone/relay that could be muting the PID during sustained engaged
-   holding. **Refuted by `memory/v54-flashed-authority-measured.md` (kit `memory/`), from V54's own
+   holding. **Refuted by `memory/builds/v54-flashed-authority-measured.md` (kit `memory/`), from V54's own
    on-car probe (route `1b`, fault-free): `gp-0x6966` (the soft-EME windup magnitude) is identically 0
    on every V31+ build — V31's boost floor makes the windup that would raise it unreachable.** With
    authority pinned at 0 the LERP sits on its `X=0` knot (`Y=32768`) — **the clamp is permanently wide

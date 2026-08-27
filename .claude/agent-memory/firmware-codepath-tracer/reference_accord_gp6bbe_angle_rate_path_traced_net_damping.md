@@ -84,10 +84,10 @@ step if GATE 2 needs certification.
 
 ## Candidate levers -- 4 pure static-gain/clamp options, checked against build lineage
 
-All four sit INSIDE the already-edited `DAMP_BLOCK` (`0xD2000-0xD2FFC`, per `build_v47_tva.py:153`, shared
+All four sit INSIDE the already-edited `DAMP_BLOCK` (`0xD2000-0xD2FFC`, per `builds/v18_v49/build_v47_tva.py:153`, shared
 CRC at `0xD2FFC`, touched by both V44 and V47) -- but at byte addresses that do NOT overlap either build's
 specific edits (`0xD27C6/DA` Factor-C Y0, `0xD2802/04/06`+`0xD2816/18/1A` Factor-E Y0-2, `0xD209C/A8` clamp
-header -- checked by direct grep of `build_v44_tva.py`/`build_v47_tva.py`, not just "same 4KB region"):
+header -- checked by direct grep of `builds/v18_v49/build_v44_tva.py`/`builds/v18_v49/build_v47_tva.py`, not just "same 4KB region"):
 - **`K1` @ `0xD200C` = 43** -- Q7 gain on rate_error, applied first. Blast radius: `search_instructions` on
   the pointer-array base `0xca324` (whole image) = **1 hit, this function only.** Cleanest single-point lever.
 - **`clampBound` @ `0xD2000` = 666** -- mid-chain ceiling; first byte of the shared block, handle CRC with care.

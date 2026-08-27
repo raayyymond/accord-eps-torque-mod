@@ -23,7 +23,7 @@ hard clamp on gp-0x671a itself — see below).
 by gp-0x6a5e (SIG) vs SPD_THRESH1=tp+0x72de=0xC62DE=640, and a 5000-tick(tp+0x7270=0xC6270) decay
 timer on the slow path. 🛑 **CORRECTED 2026-08-10: `gp-0x6a5e` is VOTED VEHICLE SPEED, not driver
 torque.** This paragraph previously ended "— NOT vehicle speed", which was WRONG; settled by
-`memory/reference-accord-gp6a5e-is-speed-reclassifies-v44-v47.md` (2026-07-29, two independent traces
+`memory/reference/firmware/reference-accord-gp6a5e-is-speed-reclassifies-v44-v47.md` (2026-07-29, two independent traces
 + byte-verified pointer chase), and that same error already cost the kit two flashed builds (V44, V47).
 ⊕ **This entry contained its own refutation**: the threshold it names is `SPD_THRESH1` = `0xC62DE` =
 **640**, which at 64 ct/km/h is exactly **10 km/h** — a speed threshold, correctly named, while the

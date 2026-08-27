@@ -109,7 +109,7 @@ corroboration, not independent proof. If re-verification is ever needed, decompi
 | pointer arrays (0xCBF5C..0xCC2FC) | #47 | `[0xC7000,0xCCFFC)` | `0xCCFFC` |
 | fixed gain cals (0xC6440/42/44/46, 0xC643E, 0xC61F6, 0xC613A, 0xC64FA) | #48 | `[0xC6000,0xC6FFC)` | `0xC6FFC` |
 
-Block 48 = the documented bootloader-bridge block (`verify_bootloader_crc.py`) -- confirmed still
+Block 48 = the documented bootloader-bridge block (`lib/verify_bootloader_crc.py`) -- confirmed still
 individually CRC-checked before the bridge kicks in for lower blocks. A pure Y-value edit to the mode-10
 records only touches block #41; a fixed-cal-only edit only touches #48.
 

@@ -31,7 +31,7 @@ No part of this kit is warranted for use on any vehicle. The operator flashes th
 ## Credits
 
 - **Joey** — the original curator of the agent firmware analysis kit.
-- Community PID-tuning knowledge distilled into `docs/HONDA-EPS-PID-KNOWLEDGE.md` came out of a private Honda EPS tuning Discord working group (26 days, 4,989 messages); see `discord-export/` for the raw scrollback.
+- Community PID-tuning knowledge distilled into `docs/research/HONDA-EPS-PID-KNOWLEDGE.md` came out of a private Honda EPS tuning Discord working group (26 days, 4,989 messages); see `discord-export/` for the raw scrollback.
 
 Use of this work in your own builds is welcomed. Attribution where it makes sense.
 

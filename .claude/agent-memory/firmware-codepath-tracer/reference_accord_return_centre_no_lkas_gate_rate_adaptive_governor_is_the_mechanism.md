@@ -7,7 +7,7 @@ metadata:
 
 # Return-to-centre gate hunt — verdict: no LKAS-magnitude gate; the real shared limiter is a rate-adaptive governor ceiling
 
-Full session: `docs/TRACE-2026-08-11-return-to-centre-gate.md`. Task from team-lead, driven by the
+Full session: `docs/traces/TRACE-2026-08-11-return-to-centre-gate.md`. Task from team-lead, driven by the
 operator's on-car report: *"it's almost like the return to zero assist is not running unless LKAS command
 is near zero. It restricts return to zero even if it's aligned with return to zero degrees."*
 
@@ -46,7 +46,7 @@ V37-V74). At rate >= 4100 the ceiling falls to 512, a ~90% cut from the 4762 nom
 push the same way) — which RAISES `gp-0x6ac0` — which SHRINKS the governed ceiling — which caps the
 combined delivered command HARDER, for both terms together, precisely when the push is largest. A
 rate-adaptive, symmetric (both directions) self-throttle, not a magnitude relay, but it produces the
-described symptom without needing an LKAS-specific gate. **Per `docs/FEASIBILITY-8X-LKAS.md` (2026-08-06,
+described symptom without needing an LKAS-specific gate. **Per `docs/research/FEASIBILITY-8X-LKAS.md` (2026-08-06,
 independent prior session), this table is ALREADY the dominant real-world binder on the current (4x) car
 even outside a return-to-centre scenario** ("even at TODAY's 4x, moderately fast steering already clips
 here, before the flat 4762 ceiling matters") — so the mechanism's existence and its current-build
@@ -61,7 +61,7 @@ described.
 
 ## Item 6 (our own cells) — checked
 
-`0xC6CD0`=3564 (4x LKAS forward-path gain, live on the current build per `build_v90_tva.py`) sits
+`0xC6CD0`=3564 (4x LKAS forward-path gain, live on the current build per `builds/v80_v107/build_v90_tva.py`) sits
 upstream of `gp-0x6b4c`, the exact term sharing the rate-adaptive ceiling with return-centre. It does
 NOT touch return-centre's own producer cals directly (`0xC618A`/`0xC627E`/`0xC63C0`/`0xC6132`/
 `0xC695C-0xC6970`/`0xC63BE`, all confirmed untouched by any `build_v*_tva.py`). **If the rate-adaptive

@@ -1,6 +1,6 @@
 ---
 name: reference_accord_gp671a_shared_starved_gate_biquad_and_r24r26
-description: gp-0x671a (the oscillation-reversal counter) has EXACTLY ONE writer image-wide (FUN_000428d4 @0x42a12, independently re-confirmed this session via fresh xref/disasm) and is read by AT LEAST the dead biquad's arm condition (FUN_000352b4@0x35a06) AND the r24/r26 rate-lane's "third arm" (FUN_0003aa2c@0x3aa70/0x3ac12) using the IDENTICAL threshold cal 0xC64FA=5. Per this kit's OWN prior on-car telemetry (V67: gp-0x671a>=5 measured 0.000% over 186,321 frames; V68: its precursor gp-0x67df measured 0.000% over 53,991 frames), this shared gate essentially NEVER opens in practice. CONSEQUENCE: (1) the r24/r26 cells 0xC6440/0xC643E are NOT virgin (extensively fought over V42-V88) and are independently re-confirmed UNREACHABLE, matching build_v84_tva.py's own conclusion; (2) V103's dead-biquad arm may ALSO be gate-starved, meaning "f0 didn't move, confirming the small predicted effect" could be a null-on-the-gate, not a magnitude confirmation -- UNRESOLVED without checking gp-0x671a's actual value during route 0x9e specifically (V67/V68's zero-evidence predates the 6-8x gain era and is not itself proof for V103's drive).
+description: gp-0x671a (the oscillation-reversal counter) has EXACTLY ONE writer image-wide (FUN_000428d4 @0x42a12, independently re-confirmed this session via fresh xref/disasm) and is read by AT LEAST the dead biquad's arm condition (FUN_000352b4@0x35a06) AND the r24/r26 rate-lane's "third arm" (FUN_0003aa2c@0x3aa70/0x3ac12) using the IDENTICAL threshold cal 0xC64FA=5. Per this kit's OWN prior on-car telemetry (V67: gp-0x671a>=5 measured 0.000% over 186,321 frames; V68: its precursor gp-0x67df measured 0.000% over 53,991 frames), this shared gate essentially NEVER opens in practice. CONSEQUENCE: (1) the r24/r26 cells 0xC6440/0xC643E are NOT virgin (extensively fought over V42-V88) and are independently re-confirmed UNREACHABLE, matching builds/v80_v107/build_v84_tva.py's own conclusion; (2) V103's dead-biquad arm may ALSO be gate-starved, meaning "f0 didn't move, confirming the small predicted effect" could be a null-on-the-gate, not a magnitude confirmation -- UNRESOLVED without checking gp-0x671a's actual value during route 0x9e specifically (V67/V68's zero-evidence predates the 6-8x gain era and is not itself proof for V103's drive).
 metadata:
   type: reference
 ---
@@ -16,7 +16,7 @@ much bigger finding.
 `search_instructions(operand_pattern="671a")` — 15 hits, adjudicated: exactly **one write**
 (`0x42a12 st.b r7,-0x671a,gp`, inside `FUN_000428d4`) and reads inside `FUN_000352b4` (biquad,
 `0x35a06`), `FUN_00035b20` (`0x35bea`), `FUN_00036c12` (`0x36c1e`), `FUN_0003a382` (PID, `0x3a4a6`),
-`FUN_0003aa2c` (aggregator, `0x3aa70` — matches `build_v63_tva.py`'s own cited r24-gate address
+`FUN_0003aa2c` (aggregator, `0x3aa70` — matches `builds/v50_v79/build_v63_tva.py`'s own cited r24-gate address
 exactly), plus `FUN_000428d4`'s own two self-reads (`0x429c4`/`0x429d2`, computing its next value from
 its prior one). `search_instructions(operand_pattern="67df")` — exactly 2 hits, both inside
 `FUN_000428d4`: one read (`0x428e6`), one write (`0x4299c`) — confirms `gp-0x67df` (the FSM's
@@ -25,7 +25,7 @@ its prior one). `search_instructions(operand_pattern="67df")` — exactly 2 hits
 **Two consumers' gate conditions independently confirmed identical**, both `cal(0xC64FA)=5`:
 - Dead biquad (`FUN_000352b4`, this session's own earlier trace, `0x359fe-0x35a26`):
   `cal(0xC649B)==1 AND gp-0x671a >= cal(0xC64FA)=5`.
-- r24/r26 "third arm" (`FUN_0003aa2c`, matches `build_v63_tva.py`'s trace at `0x3AA70-0x3AA88` and
+- r24/r26 "third arm" (`FUN_0003aa2c`, matches `builds/v50_v79/build_v63_tva.py`'s trace at `0x3AA70-0x3AA88` and
   `0x3AB64-0x3AC12` exactly): `gp-0x671a >= cal(0xC64FA)=5` selects `0xC6440` (r24) / `0xC643E` (r26)
   over the mode-indexed LERP default.
 
@@ -37,10 +37,10 @@ path exists (`jr 0x42a76`) if that call's result is nonzero; NOT resolved what c
 
 ## The starvation evidence — ON-CAR, not just structural [EVIDENCE, relayed from build_v67/v68/v84_tva.py, not independently re-measured by me]
 
-`build_v67_tva.py`: `gp-0x671a >= 5` measured **0.000% over 186,321 frames** (routes 47 + 4a).
-`build_v68_tva.py`: re-aimed the SAME probe slot at the precursor `gp-0x67df != 0` specifically
-because the `>=5` rung was frozen at 0; per `build_v84_tva.py`'s later citation this ALSO measured
-**0/53,991** on V68's own flown data. `build_v84_tva.py` concludes explicitly: *"the state >= 5 arms
+`builds/v50_v79/build_v67_tva.py`: `gp-0x671a >= 5` measured **0.000% over 186,321 frames** (routes 47 + 4a).
+`builds/v50_v79/build_v68_tva.py`: re-aimed the SAME probe slot at the precursor `gp-0x67df != 0` specifically
+because the `>=5` rung was frozen at 0; per `builds/v80_v107/build_v84_tva.py`'s later citation this ALSO measured
+**0/53,991** on V68's own flown data. `builds/v80_v107/build_v84_tva.py` concludes explicitly: *"the state >= 5 arms
 are dead in practice and a cell spent on them would buy nothing"* — and separately asserts
 `0xC643E`/`0xC6440` at Honda-stock on that build, "NOT spent as a lever."
 
@@ -63,7 +63,7 @@ If the SAME starved gate also governs the dead biquad (structurally confirmed �
 identical threshold cal), then **V103's biquad may never have actually run**, in which case "f0
 didn't move (25.23 vs V102's 24.90, within the ±1.05Hz noise floor), confirming the small predicted
 effect" is **potentially a null-on-the-gate, not a magnitude confirmation** — the same failure class
-as `accord-v64-null-is-on-the-gate.md` and the CLAUDE.md standing design law about single-threshold
+as `accord/builds/accord-v64-null-is-on-the-gate.md` and the CLAUDE.md standing design law about single-threshold
 rungs with no positive control.
 
 🛑 **NOT SETTLED, flagged not asserted**: the V67/V68 zero-evidence is from LOWER-GAIN builds (pre-4x
@@ -115,5 +115,5 @@ this bears on; its own GATE-3 ringdown analysis is UNAFFECTED (structural, not d
 its implicit assumption that the arm condition fires during ordinary driving is now flagged, not
 assumed. [[reference_accord_dead_biquad_fun352b4_pole_characterized_and_reversal_counter_arm]] — the
 original biquad characterization; its own gate description is confirmed correct, just not confirmed
-LIVE. `docs/BUILD-LINEAGE.md`, `build_v63_tva.py`, `build_v67_tva.py`, `build_v68_tva.py`,
-`build_v84_tva.py` — the r24/r26 lineage this corrects a sibling's "virgin" claim against.
+LIVE. `docs/BUILD-LINEAGE.md`, `builds/v50_v79/build_v63_tva.py`, `builds/v50_v79/build_v67_tva.py`, `builds/v50_v79/build_v68_tva.py`,
+`builds/v80_v107/build_v84_tva.py` — the r24/r26 lineage this corrects a sibling's "virgin" claim against.

@@ -46,6 +46,6 @@ this kit at least once; several have recurred.
 
 ## Further reading
 
-- `memory/reference_rizin_ghidra_v850_quirks.md`
-- `memory/accord-v850-scan-traps-formatv-and-storezero.md` — includes a validation harness
-- `docs/FIRMWARE-DECOMPILE-GUIDE.md`, `docs/GHIDRA-CHECKLIST.md`
+- `memory/reference/tooling/reference_rizin_ghidra_v850_quirks.md`
+- `memory/accord/firmware/accord-v850-scan-traps-formatv-and-storezero.md` — includes a validation harness
+- `docs/guides/FIRMWARE-DECOMPILE-GUIDE.md`, `docs/guides/GHIDRA-CHECKLIST.md`

@@ -67,9 +67,9 @@ just historically.
 scale `S1`), and CAN `0x14A` bytes[2:3] `STEER_ANGLE_RATE` is a fixed linear function of `gp-0x6a56`
 [RELAYED chain, established elsewhere]. **Therefore `sign(gp-0x6abe)` is recoverable from the STANDARD
 CAN `STEER_ANGLE_RATE` signal in any log — stock or built, no cave/piggyback required.** The kit's own
-`rlog-tools`/`extract_r5d_cache.py` already extracts this as field `rate_c` ("CAN 0x14A x -1.0, column
-STEER_ANGLE_RATE, deg/s") into `.npz` caches at `analysis-2020accord/_cache_r97/r97.npz` (stock baseline)
-and `_cache_r9e/r9e.npz` (V103/6x) — **a working Python env exists at
+`rlog-tools`/`extract/extract_r5d_cache.py` already extracts this as field `rate_c` ("CAN 0x14A x -1.0, column
+STEER_ANGLE_RATE, deg/s") into `.npz` caches at `analysis-2020accord/_scratch/cache/r97/r97.npz` (stock baseline)
+and `_scratch/cache/r9e/r9e.npz` (V103/6x) — **a working Python env exists at
 `/c/Users/dudei/anaconda3/envs/bin_decompile/python` with numpy/pandas available**, confirmed working
 this session (`which python`/`python3` alone fail on this machine — use the anaconda env path directly).
 

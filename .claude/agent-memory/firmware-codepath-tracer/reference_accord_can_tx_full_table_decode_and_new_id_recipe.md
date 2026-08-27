@@ -61,7 +61,7 @@ serviced; on match + global-TX-enabled (`gp-0x1712` bit0) → arms via two write
 the TX-complete handler `FUN_0001d96e`/`FUN_0001db74`, which explicitly clear `gp-0x1744[mbx]=0xFFFF`); on
 mismatch → clears the entry and returns 0 or the special code 5.
 
-Registers cited from `svd_for_ghidra/UPD70F3508_V850E2Px4.svd`: `FCN0M0DAT0..7B`(+0x01000),
+Registers cited from `reference/svd_for_ghidra/UPD70F3508_V850E2Px4.svd`: `FCN0M0DAT0..7B`(+0x01000),
 `FCN0M0DTLGB`(+0x01020, DLC), `FCN0M0STRB`(+0x01024, `SSOW` bit7=dir 0RX/1TX), `FCN0M0CTL`(+0x09038,
 bit-set/clear, strobes `SERY`(0)/`TCPF`(1,RO)/`CSETR`(2)/`SEIE`(3)/`SENH`(6)/`RDYF`(8,RO)/`TRQF`(9,RO)),
 `FCN0M0MID0W`(+0x11028, ID[28:0]+IDE[29]), `FCN0M0DAT0W`(+0x11000). All step 0x40/mailbox.

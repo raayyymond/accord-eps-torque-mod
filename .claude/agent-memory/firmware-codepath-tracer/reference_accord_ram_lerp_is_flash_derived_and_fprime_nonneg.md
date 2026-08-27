@@ -84,4 +84,4 @@ NOT give the sign for any single weight.
   [[accord-stock-mode24-equals-mode26-damper-is-ours]] is scoped to the *damper* families.
   ⊕ rec[1]/rec[2] ARE identical ⇒ in the 6-20 km/h regime mode choice barely moves this curve.
 
-Scripts: `analysis-2020accord/_v97/read_ram_lerp_provenance.py`, write-up `_v97/close_the_sign.md`.
+Scripts: `analysis-2020accord/sessions/v97/read_ram_lerp_provenance.py`, write-up `sessions/v97/close_the_sign.md`.

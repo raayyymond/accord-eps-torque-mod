@@ -16,15 +16,15 @@ high byte `0x64`=100 never moved and is a **separate cal**.
 - Raw LE scan: **16** `ld.bu` sites → `0xC64DE`; **2** → `0xC64DF`. This is the documented **`ld.bu`
   parity trap**: `hw2 = 0x74df` in *both* cases, and the real displacement bit 0 lives in **hw1 bit 5**
   (opfield `0x3C` → `0xC64DE`, `0x3D` → `0xC64DF`). A scan keying on hw2 alone **merges the two cells**.
-- `build_v18_tva.py` already annotated "(byte)". The halfword framing entered later via
-  `ledger_v94_cells.py`'s `MATRIX_SCALARS` entry `(0xC64DE, 2, False, …)` — wrong width.
+- `builds/v18_v49/build_v18_tva.py` already annotated "(byte)". The halfword framing entered later via
+  `studies/ledger/ledger_v94_cells.py`'s `MATRIX_SCALARS` entry `(0xC64DE, 2, False, …)` — wrong width.
 
 ⇒ **Any doc, ledger row or handoff quoting `0xC64DE = 25617/25627` is reading two unrelated byte cals as
-one halfword.** `docs/STATE.md`, `docs/HANDOFF-2026-08-12-*` and `ledger_v94_cells.py` all carry this.
+one halfword.** `docs/STATE.md`, `docs/HANDOFF-2026-08-12-*` and `studies/ledger/ledger_v94_cells.py` all carry this.
 
 ## What it actually is: a relaxation oscillator's HALF-PERIOD [EVIDENCE, decompile]
 
-`memory/reference_accord_eme_lever_semantics.md` calls it "the count ceiling of the re-engage/debounce SM
+`memory/reference/firmware/reference_accord_eme_lever_semantics.md` calls it "the count ceiling of the re-engage/debounce SM
 … increments by 1/cycle until it hits the ceiling". The increment half is right. **The record misses what
 happens AT the ceiling** — `FUN_00028ea6` (`m_steer_torque_arbitration`), decompile lines 676-693:
 
@@ -60,7 +60,7 @@ which corrects the constellation's "4-of-16 phase gate"):
 ## Liveness: BELIEF dead, but the null is a TOOL ZERO
 
 The branch sits under `if (*(char *)(gp - 0x6809) == 1)`, and
-`memory/eps-deliver-cut-gp6809-broken.md` establishes `gp-0x6809` has **zero writers — dead code** —
+`memory/misc/eps-deliver-cut-gp6809-broken.md` establishes `gp-0x6809` has **zero writers — dead code** —
 explicitly calling it "a dead gate protecting a permanently-zero term (`gp-0x6b2c`)". If so the oscillator
 never runs, which would *explain* 89 images of no measurable effect.
 

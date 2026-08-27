@@ -8,7 +8,7 @@ metadata:
 # V34 (state-4 suppression) downstream trace -- 2020 Accord TVA-A160
 
 Byte-level walk, radare2 `v850.gnu`, stock `code.bin`, gp=0xFEDF8000, tp=0xBF000. Session 2026-07-03,
-verifying `build_v34_tva.py`'s patch (`0x40DE2 be->nop`, `0x40E12 bh->nop`, both targeting `0x40e1a: mov 4,r12`).
+verifying `builds/v18_v49/build_v34_tva.py`'s patch (`0x40DE2 be->nop`, `0x40E12 bh->nop`, both targeting `0x40e1a: mov 4,r12`).
 Builds on [[reference-accord-engage-sm-second-gate-gp6cc4]] and [[reference-accord-gp6cc4-tracking-pipeline]].
 
 ## 1. FUN_00040d58 full return-value map [V]

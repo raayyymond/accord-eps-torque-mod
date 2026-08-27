@@ -9,7 +9,7 @@ metadata:
 
 Platform: 2020 Honda Accord 39990-TVA-A160, Renesas uPD70F3508/V850E2. `code.bin` (flat, file offset==address).
 `r2 -a v850.gnu -b 32 -m 0 -s <addr> -c 'pd N' code.bin`. gp=0xFEDF8000, tp=0xBF000.
-SVD: `analysis-2020accord/svd_for_ghidra/UPD70F3508_V850E2Px4.svd`.
+SVD: `analysis-2020accord/reference/svd_for_ghidra/UPD70F3508_V850E2Px4.svd`.
 Read-only study. No CAN sent, no flashing.
 
 Mission: re-trace the boot per-buffer MID init loop (0x9ba-0xa46) that a prior session mis-attributed to an

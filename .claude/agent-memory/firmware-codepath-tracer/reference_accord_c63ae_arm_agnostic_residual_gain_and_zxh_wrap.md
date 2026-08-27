@@ -9,7 +9,7 @@ metadata:
 
 Found while pre-positioning the V99 lever set on the three arms of
 `iVar6 = gp-0x6bfe + gp-0x6bfa − (gp-0x374c >> 4)`. Write-up:
-`docs/TRACE-2026-08-13-v99-arm-levers.md`.
+`docs/traces/TRACE-2026-08-13-v99-arm-levers.md`.
 
 ## Why it is different from every other candidate
 It multiplies **`|iVar6|` — the residual itself — after the difference is formed**, so it does not

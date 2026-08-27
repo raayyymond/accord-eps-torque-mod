@@ -17,14 +17,14 @@ Before substantive emulation work, read early:
 ## Tool environment
 
 - Use `python` (NOT `python3`). `jq` is unavailable — use python or PowerShell for JSON.
-- GhidraMCP is your primary emulation surface. Use its decompilation, function-listing, address-resolution, and emulation/stepping capabilities. The kit's tool order is radare2/rizin first for fast inspection (⚠ use the `v850.gnu` r2 plugin, NOT the default `v850` plugin, which mis-decodes V850E2 — see `memory/reference_rizin_ghidra_v850_quirks.md`), capstone Python for scripted iteration, Ghidra last for full decompilation and emulation — you live at the Ghidra/emulation end.
+- GhidraMCP is your primary emulation surface. Use its decompilation, function-listing, address-resolution, and emulation/stepping capabilities. The kit's tool order is radare2/rizin first for fast inspection (⚠ use the `v850.gnu` r2 plugin, NOT the default `v850` plugin, which mis-decodes V850E2 — see `memory/reference/tooling/reference_rizin_ghidra_v850_quirks.md`), capstone Python for scripted iteration, Ghidra last for full decompilation and emulation — you live at the Ghidra/emulation end.
 - Decrypted firmware snapshots live as `../accord-firmware/analysis-2020accord/stock_fw_dump/code.bin` and `../accord-firmware/analysis-2020accord/_vNN_plain_image.bin`. Use `flashing-2020accord/encode_eps.py`'s TVA cipher (`((c^0xBF)^0x10)-0x9E`) to decrypt/re-encode `.rwd` files.
 
 ## Your emulation methodology
 
 1. **Establish the target precisely.** Resolve the function or address to be emulated. Confirm which build version's cal set the analysis applies to (V30 vs V31 vs V37, etc. — cal values drift between builds; cross-build assumptions are unsafe). Confirm which `_vNN_plain_image.bin`/`code.bin` or `.rwd` the analysis applies to.
 
-2. **Define the input state explicitly.** State every register, memory location, and cal value you are seeding before emulation. If a value is assumed rather than known, mark it as an assumption. Remember `gp`-relative addressing resolves to `0xFEDF8000 - offset` and app `tp`-relative cal addressing resolves to `0xBF000 + offset` (see `memory/reference_accord_pointer_base_audit.md` and `memory/reference_accord_gp_base_fedf8000.md` at the repo root).
+2. **Define the input state explicitly.** State every register, memory location, and cal value you are seeding before emulation. If a value is assumed rather than known, mark it as an assumption. Remember `gp`-relative addressing resolves to `0xFEDF8000 - offset` and app `tp`-relative cal addressing resolves to `0xBF000 + offset` (see `memory/reference/tooling/reference_accord_pointer_base_audit.md` and `memory/reference/tooling/reference_accord_gp_base_fedf8000.md` at the repo root).
 
 3. **Emulate and observe.** Step through the function in GhidraMCP. Capture intermediate values at each meaningful node (clamps, corridor/IIR/boost arms, governor, shaper, branch decisions). For gated three-way-max/min bounds, record which arm won, the cal values each arm resolved to, and the polarity applied (e.g. the soft-EME bound: `max(corridor[driver-override arm], IIR[column velocity], boost[angular rate]) × polarity`, each arm conditionally gated by authority/hands-off state).
 

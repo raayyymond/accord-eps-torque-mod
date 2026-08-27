@@ -7,8 +7,8 @@ metadata:
 
 # The 6–9 Hz loop, from `code.bin` (2026-08-12, agent `fw-loop`)
 
-Model that reproduces all of this: `analysis-2020accord/_v97/loop_phase_model.py`.
-Write-up: `analysis-2020accord/_v97/fw_loop.md`.
+Model that reproduces all of this: `analysis-2020accord/sessions/v97/loop_phase_model.py`.
+Write-up: `analysis-2020accord/sessions/v97/fw_loop.md`.
 
 ## 1. THE LOOP IS A TORQUE-TRACKING SERVO [EVIDENCE]
 
@@ -37,7 +37,7 @@ arithmetic; no separate gate is needed.**
 
 ⊕ FUN_00038148's sole caller is FUN_0002214a (1 kHz, two independent methods). Independently
 corroborated: `0xC63AC` = 102 gives |H| 0.94/0.91/0.88 and −18.7/−23.6/−26.8° **only at
-fs = 1000**, matching both STATE.md §A6b and `build_v96_tva.py:42`.
+fs = 1000**, matching both STATE.md §A6b and `builds/v80_v107/build_v96_tva.py:42`.
 
 ## 3. 🛑 CORRECTS STATE.md §A6b — THE PID **LEADS** IN BAND [EVIDENCE]
 

@@ -31,7 +31,7 @@ written by `FUN_0004503c` the state-4 governor, read by `FUN_00025c32` the final
 stage) → clamped ±25600 → **`gp-0x6ad6`**.
 
 `gp-0x6ad6`'s SOLE consumer (3 total accesses, search + byte scan agree): **`FUN_0003a382`** — already
-fully documented in `memory/reference-accord-fun3a382-is-a-real-pid.md`. There, `gp-0x6ad6` is used
+fully documented in `memory/reference/firmware/reference-accord-fun3a382-is-a-real-pid.md`. There, `gp-0x6ad6` is used
 ONLY as a 2-state ±8192 bias selector (cal `0xC6200`) for `ERR = gp-0x4f60 - bias`, NOT a continuous
 input — a genuine discrete PID (P motor-rate-scheduled `0xC6B26`, I flat=98 `0xC6B12`, **D flat=2048 and
 UNATTENUATED `0xC6AE6`**, raw backward-difference reaches output). That memory's cross-validated
@@ -43,15 +43,15 @@ the already-documented governor/corridor chain → `gp-0x6b98`.
 ## ★★ The terminus is already flashed and falsified
 
 `gp-0x6ad4`'s only output-shaping cal is its own authority ceiling, **`0xC6AF0`** (`FUN_0003a382`'s
-clamp, `0x3a88c-0x3a8a0`). `build_v56_tva.py` muted it (`Y[0]`/`Y[1]` both zeroed, forcing `gp-0x6ad4`
-to 0 unconditionally) — flashed, tested, NULL on the grinding, cost damping elsewhere. **`build_v57_tva.py:411`
-and `build_v58_tva.py:369` both assert `0xC6AF0` is stock, literal message "0xC6AF0 must stay STOCK --
+clamp, `0x3a88c-0x3a8a0`). `builds/v50_v79/build_v56_tva.py` muted it (`Y[0]`/`Y[1]` both zeroed, forcing `gp-0x6ad4`
+to 0 unconditionally) — flashed, tested, NULL on the grinding, cost damping elsewhere. **`builds/v50_v79/build_v57_tva.py:411`
+and `builds/v50_v79/build_v58_tva.py:369` both assert `0xC6AF0` is stock, literal message "0xC6AF0 must stay STOCK --
 V56's mute is falsified."** Since `gp-0x6ad4` has only 2 total accesses image-wide, zeroing it via this
 ceiling is equivalent to fully removing the entire `gp-0x6b70` chain's contribution to the aggregate —
 already done on-car, already reverted as net-negative. Grepped all newly-found chain addresses
 (`0xC63A0-0xC63AC`, `0xC64AD-0xC64B3`, `0xC6200`) against `build_v*_tva.py`: **none appear anywhere,
-genuinely untouched.** `0xC6B26`/`0xC6B12`/`0xC6AE6` (the PID's own gains) appear in `build_v43_tva.py`/
-`build_v49_tva.py` as stock-value assertions only, not edits.
+genuinely untouched.** `0xC6B26`/`0xC6B12`/`0xC6AE6` (the PID's own gains) appear in `builds/v18_v49/build_v43_tva.py`/
+`builds/v18_v49/build_v49_tva.py` as stock-value assertions only, not edits.
 
 ## Engagement gating
 Per the existing PID memory, `gp-0x6ad4` is explicitly NOT gated on openpilot engagement. All three

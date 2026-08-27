@@ -8,7 +8,7 @@ metadata:
 # tq's full producer chain is traced, timed, and contains NO filter — the 13-16 Hz |Z| roll-off is not here
 
 2026-08-22, `tq-lowpass` subagent task. Ghidra `code.bin` (stock), decompile+disasm, cross-checked
-against `rlog-tools/v86_probe_consolidate.py`'s PROV dict and `extract_ra4.py`/`r95_c_oscillation.py`.
+against `rlog-tools/probe/v86_probe_consolidate.py`'s PROV dict and `decode/extract_ra4.py`/`studies/v101-8x-gain/r95_c_oscillation.py`.
 
 ## The chain, address by address [EVIDENCE — Ghidra decompile + disasm, code.bin stock]
 
@@ -23,7 +23,7 @@ CAN 0x18F(399) packer `FUN_00055c42`:
 0x55c6a  jarl  0x218de,lp
 0x55d5a  jarl  0x57b24,lp          ; checksum/counter helper, args (buf, 7, msgid=0x18F/399)
 ```
-⇒ `tq` (as read by every rlog-tools extractor — `v86_probe_consolidate.py`'s PROV dict: *"raw CAN
+⇒ `tq` (as read by every rlog-tools extractor — `probe/v86_probe_consolidate.py`'s PROV dict: *"raw CAN
 0x18F(399) bytes0:1 x -1 == STEER_TORQUE_SENSOR negated... FUN_00055c42 @0x55c50"*) is this value,
 unmodified between `gp-0x4f60` and the wire except the static Q7 scale and sign flip. **Not rectified**
 — contrast CAN 427's `|cell|>>shift` (`accord-band-envelope-is-rectified-not-analytic`). STEER_ANGLE_RATE
@@ -62,15 +62,15 @@ name "phase correction," it is a static per-sample additive nudge from an extern
 `FUN_0002214a` (task 1) → `FUN_0006bb08(3,uVar2)` **UNCONDITIONAL call, no enclosing `if`** →
 `FUN_0007f3f8(0xd)` gated on `(uVar2 & 0xd30) != 0` where `uVar2 = 1 << (gp-0x67fa & 0xf)` — the
 STATE-MASK idiom (a set-membership test on the assist SM's state nibble), **not a rate divider**.
-`0xd30` = states `{4,5,8,10,11}`. `accord-state4-cadence-refuted-state-is-sticky.md` independently
+`0xd30` = states `{4,5,8,10,11}`. `accord/firmware/accord-state4-cadence-refuted-state-is-sticky.md` independently
 establishes the ONLY states reachable on a normal drive are `{4, 11}` — **both inside `0xd30`.**
 ⇒ fires every task-1 tick, gaplessly, for the entire duration of any normal engaged drive.
 
 Task 1 = **1000 Hz** is an ON-CAR MEASUREMENT (`STEER_STATUS=4` dwell, cal `0xC64DF`=100 counts measured
 at 100.00 ms) — independent of the retracted PCLK/OSTM0 derivation chain
-(`accord-task5-is-100hz-damper-cannot-damp-21hz.md`'s clock audit). See
+(`accord/firmware/accord-task5-is-100hz-damper-cannot-damp-21hz.md`'s clock audit). See
 [[control-task-tick-confirmed-1khz]]. CAN 399 itself wire-fitted at exactly **100.000 Hz** (3 independent
-methods, `accord-can-tx-100hz-base-tick-and-gateway.md`) = 1000/10, self-consistent.
+methods, `accord/signals/accord-can-tx-100hz-base-tick-and-gateway.md`) = 1000/10, self-consistent.
 🛑 The brief that spawned this trace worried about task 5's unresolved rate — **moot for this signal**:
 `gp-0x4f60`'s producer runs in task 1, not task 5, whose own rate is independently pinned.
 
@@ -78,7 +78,7 @@ methods, `accord-can-tx-100hz-base-tick-and-gateway.md`) = 1000/10, self-consist
 
 Sole frequency-dependent element found anywhere in the chain = the 100 Hz broadcast's sample/hold
 envelope: `|H(f)| = |sinc(f/100)|`. At 12/14/16 Hz: **0.9765 / 0.9681 / 0.9584** — a **1.9% drop**
-12→16 Hz, and only ~11% down at 26 Hz. Measured (`accord-column-cannot-host-q10-at-8hz.md`'s STOCK
+12→16 Hz, and only ~11% down at 26 Hz. Measured (`accord/mechanism/accord-column-cannot-host-q10-at-8hz.md`'s STOCK
 `|Z|/w`): **1.33 / 1.15 / 0.45** — a **66% drop** 12→16 Hz, **~35× steeper** than predicted.
 **`tq`'s firmware path (production + packing + broadcast) cannot produce this roll-off.** 26 Hz sits at
 52% of the channel's 50 Hz Nyquist — no aliasing risk for the kit's 21–26 Hz band from this channel.
@@ -98,7 +98,7 @@ traced this session), the spectral estimator itself, or genuinely mechanical.
   constant scan, not a gp/tp-relative one. BELIEF: DNF blocks on encoder/timer captures are
   conventionally sized for microsecond-scale deglitch, architecturally implausible as a 13–16 Hz source,
   but this is inference, not an instruction-level read.
-- Whether the kit's estimator (`rlog-tools/plant_phase_corner.py` et al.) analyzes tq/rate on a shared
+- Whether the kit's estimator (`rlog-tools/studies/identification/plant_phase_corner.py` et al.) analyzes tq/rate on a shared
   100 Hz grid (no roll-off predicted within Nyquist at all) or against a faster/differently-sampled
   partner (the ZOH model above) was not checked this session — read the estimator before trusting either
   envelope as the counterfactual.

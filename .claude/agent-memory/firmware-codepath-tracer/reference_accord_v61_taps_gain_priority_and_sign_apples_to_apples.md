@@ -151,7 +151,7 @@ the 21 Hz mode itself?); FUN_0003bcb2's reset trigger for gp-0x671d.
 
 Team-lead independently resolved gp-0x6752=1 (byte-verified at boot in `FUN_000490ac` 0x490b6-c0, behind
 its own lockstep check against gp-0x4c2d) -- CONFIRMED, closing the one [OPEN] item above. Four more
-findings this round, all now folded into `analysis-2020accord/build_v62_tva.py` (which doubles BOTH lanes
+findings this round, all now folded into `analysis-2020accord/builds/v50_v79/build_v62_tva.py` (which doubles BOTH lanes
 via `sar 0xa`->`sar 0x9` immediate edits at `0x3AC20`(r24)/`0x3AB76`(r26) instead of a cal edit, precisely
 BECAUSE finding 1 below made the cal-table approach unsafe):
 

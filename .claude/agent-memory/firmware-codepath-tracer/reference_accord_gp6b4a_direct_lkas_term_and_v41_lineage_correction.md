@@ -1,6 +1,6 @@
 ---
 name: reference_accord_gp6b4a_direct_lkas_term_and_v41_lineage_correction
-description: gp-0x6b4a is a SECOND, direct, unconditional, ungated LKAS-descended term feeding gp-0x6ad6 (the driver-torque reference), independent of the plant-model observer path via gp-0x6b70. No cal gain exists anywhere on its path. CORRECTS build_v41_tva.py/BUILD-LINEAGE.md:705's "0xC6194 architecturally inert" claim, which is true only for the SIBLING gp-0x6b4c, not for gp-0x6b4a.
+description: gp-0x6b4a is a SECOND, direct, unconditional, ungated LKAS-descended term feeding gp-0x6ad6 (the driver-torque reference), independent of the plant-model observer path via gp-0x6b70. No cal gain exists anywhere on its path. CORRECTS builds/v18_v49/build_v41_tva.py/BUILD-LINEAGE.md:705's "0xC6194 architecturally inert" claim, which is true only for the SIBLING gp-0x6b4c, not for gp-0x6b4a.
 metadata:
   type: reference
 ---
@@ -36,7 +36,7 @@ through this multiply — it is architecturally distinct from gp-0x6b4c despite 
 
 **The 11-lane enable array** `tp+0x5118..0x5122` = `0xC4118..0xC4122`, fresh byte-read = all 1 (11/11).
 **The mode array** `tp+0x5124..0x512E` = `0xC4124..0xC412E`, fresh byte-read = `[0,0,5,0,5,5,0,0,0,5,0]`
-(lanes 0-10) — independently cross-validated: `build_v41_tva.py` quotes this SAME array verbatim for a
+(lanes 0-10) — independently cross-validated: `builds/v18_v49/build_v41_tva.py` quotes this SAME array verbatim for a
 different purpose ("The A160 array is (0,0,5,0,5,5,0,0,0,5,0)"). Modes 0 and 5 BOTH route
 `gp-0x62e0[lane]` (raw distribute_clamp torque-channel input) into `gp-0x6298[lane]` identically, so
 every lane contributes to gp-0x6b4a at unity, mode-independent. Lane 9 (driver-torque CORDIC,
@@ -47,9 +47,9 @@ per [[reference_accord_fun2eda8_lane9_raw_torque_command_path]]).
 all 11 distribute_clamp torque-channel inputs, dominated by lane 1 (LKAS, per the existing wiring
 memory's "LKAS itself is source index 1").**
 
-## 🛑🛑 LINEAGE CORRECTION — `0xC6194`/`build_v41_tva.py`/`docs/BUILD-LINEAGE.md:705` is WRONG AS STATED
+## 🛑🛑 LINEAGE CORRECTION — `0xC6194`/`builds/v18_v49/build_v41_tva.py`/`docs/BUILD-LINEAGE.md:705` is WRONG AS STATED
 
-`build_v41_tva.py` (2026-07-20) examined `0xC6194` (the rate-limiter step for the SAME accumulator,
+`builds/v18_v49/build_v41_tva.py` (2026-07-20) examined `0xC6194` (the rate-limiter step for the SAME accumulator,
 `gp-0x3d6c`, that feeds `iVar13`) and concluded: *"0xC6194 is ARCHITECTURALLY INERT... it multiplies
 the entire term carrying the rate-limited state gp-0x3d6c, so (state*0)>>10==0 and **gp-0x6b4c** reduces
 to gp-0x3d88 alone."* **That reasoning is CORRECT for gp-0x6b4c** (which does pass through the

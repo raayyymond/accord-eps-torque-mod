@@ -24,7 +24,7 @@ The clamp is at `0x3fc44`–`0x3fc5a` (`subr r0,r14` / `subr r0,r15` are the neg
 
 🛑 **This kills "Problem 2 — wrong variable, judged fatal" in
 [[reference_accord_smooth_angle_gain_table_0xc6b64_opposite_roles]].** A correction bounded to
-±13° cannot make the signal a tracking error. `build_v86_tva.py:141` reached the same conclusion
+±13° cannot make the signal a tracking error. `builds/v80_v107/build_v86_tva.py:141` reached the same conclusion
 independently from DATA (99.94 % match to `|angle| ≥ 0.85°`); this is the instruction-stream proof.
 **Both cal cells byte-identical across all 96 images.**
 
@@ -50,7 +50,7 @@ Y (Q10):    899  908  981 1060 1083 1084 1084 1084 1084 1084 1084 1084 1084
 ```
 Total swing **1.2058×**. **94.6 % of it sits in 34–100°; only 4.9 % (1.0100×, 0.029 %/°) in 0–34°.**
 Above `gp-0x6a10 ≥ 0x2711` (1000.1°) the gain is forced to 1024. Virgin: byte-identical in all 96
-images; `build_v86_tva.py` names it only to reject it.
+images; `builds/v80_v107/build_v86_tva.py` names it only to reject it.
 
 vs the supplied rack curve (~1.67–1.82× flat/notch, BELIEF — not digitised): the firmware
 compensates **31–37 % of the mechanical ratio variation in log terms.**

@@ -36,9 +36,9 @@ Full response, V103-as-flown: 7.8Hz -0.15dB/-10.6deg . 15Hz -0.59dB/-20.9deg . 2
 ## 2. V103 status: strong corroborating evidence found, NOT independently confirmed by me
 
 `git status` at the moment the orchestrator's message arrived showed **untracked** (i.e. genuinely
-new this session, not something I had at session start) files: `docs/SCORING-2026-08-20-v103-route9e.md`
+new this session, not something I had at session start) files: `docs/scoring/SCORING-2026-08-20-v103-route9e.md`
 (38.5K, detailed per-segment telemetry, real route hash `75604b0a432fdc89/0000009e--54bb0788af`,
-11 segments, 647.8s, operator's own verbatim quote reporting BOTH symptoms failed), `docs/DRIVE-CARD-V103.md`,
+11 segments, 647.8s, operator's own verbatim quote reporting BOTH symptoms failed), `docs/scoring/DRIVE-CARD-V103.md`,
 and six `rlog-tools/v103_r9e_*.py` scripts. Content is internally consistent, detailed, matches this
 kit's established conventions (verbatim operator quotes, honest "both symptoms failed" framing, no
 inflated claims) — this is strong circumstantial corroboration. **I did NOT pull a raw rlog or

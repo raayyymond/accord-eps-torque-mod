@@ -49,7 +49,7 @@ feedback/measurement chain. **Reported honestly as a negative result**, not an u
 
 Two DIFFERENT cells get called "damping" in different places:
 - **`gp-0x6bbe`** = the golden model's `base_driver_assist_lane()` output (`FUN_00034a72`, already fully
-  modelled in `eps_lkas_chain_model.py`) — this is literally what V58's bit6 probed (0.00-1.10 sign
+  modelled in `model/eps_lkas_chain_model.py`) — this is literally what V58's bit6 probed (0.00-1.10 sign
   transitions/s, DC-dominated). Its own architecture comment calls it "the boost curve proper," but the
   team is using "damping" for it in the sense of "does this dominant lane's response help or hurt the
   21Hz closed loop" — a physics framing, not a DSP one.

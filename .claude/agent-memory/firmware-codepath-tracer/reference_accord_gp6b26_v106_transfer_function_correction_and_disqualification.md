@@ -122,7 +122,7 @@ state) but not proven zero-risk. x2+ needs a headroom check or a pre-clamp on th
 not avoidance outright.
 
 ### In-burst clamp-crossing fraction — REAL TELEMETRY, `ra4`/`r97` caches, this session
-Reused `ra4_burst_conditional.py`'s Schmitt-triggered 21-28Hz analytic-envelope burst detector
+Reused `studies/sessions/ra4/ra4_burst_conditional.py`'s Schmitt-triggered 21-28Hz analytic-envelope burst detector
 (engaged `cc_lat>0.5`, <16km/h) but on `rate_c` (true deg/s) throughout for axis consistency. Duty
 reproduces the pre-registered result closely (0.918 here vs 0.933 reported — methodology check passes).
 ```

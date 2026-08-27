@@ -17,9 +17,9 @@ existing "kill" study never ran the actual discriminator and never varied gain.
 Built a 3-channel partial-coherence pipeline (standard Bendat-Piersol formula,
 `gamma^2_xy|z = |Sxy - Sxz*conj(Syz)/Szz|^2 / [(Sxx-|Sxz|^2/Szz)(Syy-|Syz|^2/Szz)]`) reusing the
 `Sab=conj(A)*B` spectral convention and statistical machinery (episode bootstrap, `g2_crit`,
-episode-shuffle null) already established in `rlog-tools/loop_op_lib.py` — but that library's own
+episode-shuffle null) already established in `rlog-tools/lib/loop_op_lib.py` — but that library's own
 `ROUTES`/cache format targets an OLDER, different route set (V80-V84), so I wrote a new pipeline
-against the ACTUAL cache schema for `_cache_r97/r96/r9e/ra4/r95` (single concatenated array +
+against the ACTUAL cache schema for `_scratch/cache/r97/r96/r9e/ra4/r95` (single concatenated array +
 `seg`/`seg_bounds`, not per-segment native-lattice files). Script:
 `analysis-2020accord`-adjacent scratchpad `partial_coherence.py` (not committed, self-contained).
 
@@ -72,7 +72,7 @@ effect, closing a gap the original "kill" study left open (it only compared `gam
   small and consistent with the other four routes; don't lean on its null specifically.
 - **12.5ms 0x18F staleness**: used the cache's own `tq`/`ang`/`e4tq` columns on their shared ~100Hz
   grid as given — did NOT independently re-verify their relative timing via native-lattice
-  reconstruction (the method `loop_op_lib.py` uses for its own, different route set is not available
+  reconstruction (the method `lib/loop_op_lib.py` uses for its own, different route set is not available
   here). Coherence magnitude is far less sensitive to a small fixed lag than phase/delay, so this
   likely doesn't threaten the collapse-to-null result, but it is unverified, not verified-clean.
 - Did not attempt a full 0.4-49Hz band table write-up beyond what was sent to team-lead; the 6-9Hz
@@ -81,5 +81,5 @@ effect, closing a gap the original "kill" study left open (it only compared `gam
 
 ## Related
 Sent to team-lead via SendMessage, 2026-08-22, "Partial coherence collapses to noise at ALL gains".
-`rlog-tools/loop_op_lib.py` — the spectral convention and statistical machinery this pipeline reused
+`rlog-tools/lib/loop_op_lib.py` — the spectral convention and statistical machinery this pipeline reused
 without reusing its (incompatible) cache loader.

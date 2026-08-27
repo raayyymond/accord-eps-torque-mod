@@ -19,7 +19,7 @@ gp-relative loads (0 hits), absolute literal word `0xFEDF16FA` (0 occurrences),
 `movea -0x6906,gp,rX` address materialization (0 sites).
 Residual gap: a struct/table base+offset walk could still reach it — not excluded.
 
-Confirms the REPORT-ONLY framing in `analysis-2020accord/FUN_00043e44_FLOAT_MONITOR.md`
+Confirms the REPORT-ONLY framing in `analysis-2020accord/notes/FUN_00043e44_FLOAT_MONITOR.md`
 with much stronger evidence than that doc carried.
 
 ## The tolerance is a float-vs-integer redundancy check, not a predictor
@@ -109,7 +109,7 @@ of ~5120 counts (5.0 normalized) that is 5.0 x 6e-8 = 3e-7 against a 4.88e-3 win
 **Why V27 bricked, and why a gain change is not the same failure.** V21/V27-style
 patches changed `shl 0x8 -> shl 0x9` at `0x42dae`/`0x42dca` (stock bytes verified
 `c84a` / `c85a`) — **inside the integer twin**, while `FUN_00043e44` kept computing the
-stock envelope. `FUN_00043e44_FLOAT_MONITOR.md` states this directly: "The float path
+stock envelope. `notes/FUN_00043e44_FLOAT_MONITOR.md` states this directly: "The float path
 has no analogous shift instruction to patch." That is not residual *scaling* — it is a
 **structural divergence** where the residual becomes the full size of the modification
 (thousands of LSB), instantly blowing a 5-LSB window.
@@ -140,7 +140,7 @@ interpolate the same runtime data, which holds whatever values that array contai
 
 [UNVERIFIED] whether max(`gp-0x6444`) can exceed 5120 and win the three-way MAX —
 the array is runtime-populated and I did not trace its source.
-[UNVERIFIED] the LERP1 asymmetry flagged in `FUN_00043e44_FLOAT_MONITOR.md`: the int
+[UNVERIFIED] the LERP1 asymmetry flagged in `notes/FUN_00043e44_FLOAT_MONITOR.md`: the int
 path applies an additive Y-shift to `gp-0x6444` before building its array, the float
 path adds `lerp_a x lerp_b` in-loop. Algebraically equivalent for linear tables, but
 the doc names a real saturation risk if the int LERP1 shift pushes past the u16

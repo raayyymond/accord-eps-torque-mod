@@ -185,7 +185,7 @@ v75_CY0.566_magprobe          [-9830,-5734,-1966]    [-14745,-8601,-2949] x1.5  
 v77                           [-9830,-5734,-1966]    [-14745,-8601,-2949] x1.5    850
 v81 .. v89                    [-9830,-5734,-1966]    [-9830,-5734,-1966]          511
 ```
-`build_v74_tva.py:79` = **"LEVER D' — THE FRICTION LANE ×1.5"**. `BUILD-LINEAGE.md` carries a 2026-08-07
+`builds/v50_v79/build_v74_tva.py:79` = **"LEVER D' — THE FRICTION LANE ×1.5"**. `BUILD-LINEAGE.md` carries a 2026-08-07
 correction of record (*"introduced by V73, NOT V74"*) and **"the friction row is 14 sites, not one"**
 (`0xCF6E0 0xCF6F0 0xD0A5C 0xD2A4C 0xD2A5C 0xD3A5C 0xD3A6C 0xD4A5C 0xD6A5C 0xD7A5C 0xD7A6C 0xD8A5C
 0xD9A5C 0xD9A6C`; Honda `9ad99ae952f8` → ×1.5 `67c667de7bf4`).

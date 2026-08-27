@@ -27,7 +27,7 @@ metadata:
 > hands-off dwell counter showing the reference genuinely tracks something during a specific manoeuvre.
 >
 > ✅ **The `gp-0x67fe ∈ {1,2}` dispute flagged below IS NOW RESOLVED** — repo memory
-> `eps-gp67fe-trump-engaged-holding-substate.md` (2026-07-13, reconfirmed 2026-08-08) decompiled the
+> `misc/eps-gp67fe-trump-engaged-holding-substate.md` (2026-07-13, reconfirmed 2026-08-08) decompiled the
 > writer (`FUN_0003bd7c`): `gp-0x6772==5 → gp-0x67fe=2` (engaged/active substate), `==4 → 1`, else `0`,
 > and during an LKAS drive the EPS sits in substate 2 "essentially the whole time." V84's own probe
 > (`gp-0x67fe ∈ {1,2}` reads 1.00000 every frame, engaged AND manual) is consistent with this — FactorD's
@@ -57,7 +57,7 @@ the confirmed 0.1°/count scale ([[reference_accord_angle_position_scale_0p1_deg
 
 ## Corrects a stale mislabel: `gp-0x69ca` is angle, NOT "driver torque"
 
-`build_v30_tva.py`'s docstring calls `gp-0x69ca` "driver torque" in the context of a DIFFERENT function
+`builds/v18_v49/build_v30_tva.py`'s docstring calls `gp-0x69ca` "driver torque" in the context of a DIFFERENT function
 (`FUN_000456a4`'s comp-term gate). That label is wrong. [EVIDENCE] `gp-0x69ca`'s only writers, full-image
 `search_instructions`, are `FUN_0003bd7c`@0x3c09a (`= gp-0x6CC4 + wrap-corrected delta`, the established
 angle accumulator) and a zero-reset. Neither reads `gp-0x4f60` (torque) to produce `gp-0x69ca`'s OWN
@@ -70,9 +70,9 @@ and not untouched pure angle error either.
 
 ## `gp-0x67fe ∈ {1,2}` gate reliability: DISPUTED, not settled — don't cite it as closed
 
-`docs/HANDOFF-2026-07-28-v55-drive-oscillation-is-internal-and-v56-mute.md` §6.3 cites **V31P's on-car
+`docs/handoffs/2026-07/HANDOFF-2026-07-28-v55-drive-oscillation-is-internal-and-v56-mute.md` §6.3 cites **V31P's on-car
 measurement: `gp-0x67fe`==1 in 100% of frames including disengaged.** But
-`docs/HANDOFF-2026-08-01-grind2-is-v62s-own-fix-at-high-frequency.md` (4 days later) explicitly re-opens
+`docs/handoffs/2026-08/HANDOFF-2026-08-01-grind2-is-v62s-own-fix-at-high-frequency.md` (4 days later) explicitly re-opens
 it: *"`gp-0x67fe`'s semantics are DISPUTED... Unresolved, and unmeasured by V66... Close it with a probe,
 not an argument."* V66's own 3-bit gate probe dropped `gp-0x67fe` for cave-byte budget and it was never
 re-measured. [EVIDENCE, this session, `FUN_0003bd7c` decompile] substate ∈{1,2} requires the underlying

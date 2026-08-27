@@ -19,7 +19,7 @@ metadata:
 > plateaus at `Y1=Y2=539` across that whole span, so raising `C_Y0` alone (429→566, V74→V75) is what
 > drives the visible 2.74x at low rate, but it does NOT push the creep-band peak anywhere near the
 > 512-count ceiling FLOOR. **512 is reached ONLY at rate=4000 (849°/s) — `(566*927)>>10=512` EXACTLY,
-> by construction (`build_v75_tva.py`'s own binary search: "the largest C_Y0 for which that corner
+> by construction (`builds/v50_v79/build_v75_tva.py`'s own binary search: "the largest C_Y0 for which that corner
 > lands at or below 512") — a rate never observed on this car.**
 >
 > **Two follow-up checks, both against the original §4 hypothesis:**
@@ -66,7 +66,7 @@ open; all analysis below is against STOCK unless noted).
 Address `gp-0x6bd0` = `0xFEDF1430`. **`get_xrefs_to(0xFEDF1430)` on `code.bin` returns "No references
 found"** — the documented misleading-zero trap (Ghidra does not resolve gp-relative displacements).
 Two independent corroborating methods agree exactly:
-- **Python raw LE byte scan** (`analysis-2020accord/scan_gp_accesses.py`, both the 4-byte Format-VII
+- **Python raw LE byte scan** (`analysis-2020accord/studies/firmware_scan/scan_gp_accesses.py`, both the 4-byte Format-VII
   disp16 encoding AND a 48-bit extended-disp23 brute force): 8 Format-VII hits, 0 *genuine* disp23 hits
   (the scanner's 3 "extended" candidates at `0x34730`/`0x34744`/`0x3047bc` are byte-overlap artifacts of
   the SAME already-counted 4-byte instructions, confirmed by identical addresses and a nonsensical
@@ -167,7 +167,7 @@ int/float consistency checks generally, not something specific to this site.
 Y=[512,1024]`** (per [[reference_accord_v75_ceiling_c77a0_noclip_asymmetry_and_aggregator_inclusive_bound]]),
 but this cell is read via a PLAIN `tp+0x7554` displacement — **NOT mode-indexed** (no
 `(byte)(gp+0x63fd)*4` multiply anywhere in `FUN_000347b8`), unlike `FUN_00034350`'s own ceiling lookup.
-`build_v74_tva.py`/`build_v75_tva.py`: **zero matches for `6554`/`C655`/`c655`** — this table has never
+`builds/v50_v79/build_v74_tva.py`/`builds/v50_v79/build_v75_tva.py`: **zero matches for `6554`/`C655`/`c655`** — this table has never
 been examined or touched by any build in this kit.
 
 **Fault routing, traced to the DTC**: `FUN_000462e6` ALWAYS calls `FUN_00016de6(0x1d, param_1, 1, 1)`
@@ -219,12 +219,12 @@ enough of the `[300,800]` ramp (slope 512/500=1.024 counts per unit) in between 
 `X0=300` breakpoint from the flat-512 floor into the ramp shifts the ceiling by >5 counts for a ~5-unit
 move in `gp-0x6ac2`.
 
-**V74 vs V75, using each build's OWN stated numbers** (`build_v75_tva.py` header, not re-derived):
+**V74 vs V75, using each build's OWN stated numbers** (`builds/v50_v79/build_v75_tva.py` header, not re-derived):
 - V74 delivered dose at the measured in-burst rate (99 counts): **50 counts** — 9.8% of the 512 floor.
   V74's separately-measured on-car PEAK envelope (given in task context): **354 counts** — 69% of 512,
   still a wide margin.
 - V75 delivered dose at the same rate: **137 counts** (2.74×); at the 6-9 Hz arm's rate (127): **181
-  counts**. **`build_v75_tva.py` states explicitly, as a designed structural fact**: "ALL ELEVEN modes
+  counts**. **`builds/v50_v79/build_v75_tva.py` states explicitly, as a designed structural fact**: "ALL ELEVEN modes
   written to 566 TOUCH the floor — exactly 512, at the grid corner (speed 0, rate 4000)... 566 is the
   LARGEST `C_Y0` for which that corner lands at or below 512" — **V75's calibration is binary-searched
   to reach the 512 ceiling floor EXACTLY at some (speed,rate) cells, by construction.**
@@ -242,7 +242,7 @@ precondition for this monitor's ±5-count window to matter at all.
   Hz tick whenever `gp-0x67fa` ∈ {4,5,11} (ordinary engaged/manual driving, confirmed constant-5 on
   V74's own flight).
 - The EXPOSURE mechanism is not a firmware ARM condition but a **design coincidence**: V74/V75's
-  entire purpose is to open FactorC's dead zone AT CREEP (`build_v75_tva.py`: "raises the CREEP end of
+  entire purpose is to open FactorC's dead zone AT CREEP (`builds/v50_v79/build_v75_tva.py`: "raises the CREEP end of
   the speed axis") — i.e., these builds specifically activate the damper in the exact low-speed regime
   a stoplight launch sits in. Combined with `gp-0x6ac2` (the ceiling's OWN index) being a back-drive /
   torque-vs-rate SIGN-DISAGREEMENT detector — [BELIEF, not independently measured this session, but
@@ -276,7 +276,7 @@ the same 100 Hz tick.
    next step.
 2. `gp-0x6ac2`'s actual statistical behavior during a real standstill→launch transition was NOT measured
    this session (no telemetry pulled) — V75's OWN probe already added `bit3 = (gp-0x6ac2 != 0)`
-   ("never measured in this kit" per `build_v75_tva.py`) — flying that probe (on a build that does NOT
+   ("never measured in this kit" per `builds/v50_v79/build_v75_tva.py`) — flying that probe (on a build that does NOT
    also carry the fault risk, e.g. a rung with `LEVERS={"CY0":False,"EX1":False}` or similar) would give
    the missing piece.
 3. Whether `FUN_00046ea6(0)`'s underlying inhibit flags (`gp-0x18d0`/`gp-0x18d4` bit 0) are ever SET

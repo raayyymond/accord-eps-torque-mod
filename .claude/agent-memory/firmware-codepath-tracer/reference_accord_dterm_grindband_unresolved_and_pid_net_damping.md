@@ -1,6 +1,6 @@
 ---
 name: reference_accord_dterm_grindband_unresolved_and_pid_net_damping
-description: "The SIGN TABLE BELOW (P/I damp, D pumps, net -0.122 damping) IS CORRECT AS WRITTEN -- an intermediate same-day correction claimed it was reversed; that intermediate correction was itself wrong and has been retracted (see reference_accord_gp6752_resolved_negative_one_and_pid_polarity_reversal's SECOND correction for the full re-derivation: GATE2 uses a non-canonical sign convention, and correctly combining that with the true gp-0x6752=-1 value recovers this file's original conclusion). The PROVENANCE-CHASE finding (the 'D damps 16-35Hz' claim traces to docs/GATE2-2026-08-11-cbe74-independent.md sec.N1, which explicitly declines to call the grinding bands 18-22/26-31Hz) stands throughout, unaffected by any of this."
+description: "The SIGN TABLE BELOW (P/I damp, D pumps, net -0.122 damping) IS CORRECT AS WRITTEN -- an intermediate same-day correction claimed it was reversed; that intermediate correction was itself wrong and has been retracted (see reference_accord_gp6752_resolved_negative_one_and_pid_polarity_reversal's SECOND correction for the full re-derivation: GATE2 uses a non-canonical sign convention, and correctly combining that with the true gp-0x6752=-1 value recovers this file's original conclusion). The PROVENANCE-CHASE finding (the 'D damps 16-35Hz' claim traces to docs/review/GATE2-2026-08-11-cbe74-independent.md sec.N1, which explicitly declines to call the grinding bands 18-22/26-31Hz) stands throughout, unaffected by any of this."
 metadata:
   type: reference
 ---
@@ -11,7 +11,7 @@ An intermediate same-day edit claimed the sign table below was reversed (citing
 [[reference_accord_gp6752_resolved_negative_one_and_pid_polarity_reversal]]'s first pass). **That
 intermediate correction was itself wrong** and has been retracted — see that file's SECOND correction
 for the full re-derivation. Short version: GATE2 uses a sign convention OPPOSITE to the kit's canonical
-Re(Z) tool (verified numerically against `rlog-tools/decode_v90_probe.py`'s actual code); correctly
+Re(Z) tool (verified numerically against `rlog-tools/probe/decode_v90_probe.py`'s actual code); correctly
 combining GATE2's non-canonical convention with the true `gp-0x6752=-1` value requires TWO sign flips,
 which cancel — landing back on **this file's original numbers: P/I damp, D pumps, net P+I+D ≈ −0.122
 (damping) at 6-9Hz.** No further edit needed to the table below; it was right all along, for reasons
@@ -31,12 +31,12 @@ curve is real"). Extends and closes an item my own [[reference_accord_kd_pid_dte
 `reference_accord_vehicle_bus_clearance_and_aggregator_probe_reaim_2026-08-11.md` asserts "D pumps
 ONLY 2-12Hz and DAMPS 16-35Hz" citing an unnamed "parallel PID trace," no [[link]]. `docs/STATE.md`
 §8.2 (2026-08-13) and `docs/BUILD-LINEAGE.md`'s Kp/Ki/Kd row both repeat this as settled. **The kit's
-own most recent handoff, `docs/HANDOFF-2026-08-20-v102-the-gain-is-the-carrier.md` §9 item 3, already
+own most recent handoff, `docs/handoffs/2026-08/HANDOFF-2026-08-20-v102-the-gain-is-the-carrier.md` §9 item 3, already
 retracted the "16-35Hz" crossover number** the same day this task started: *"The D-term damping
 crossover is 22-26Hz, not ~14-16Hz... Supersedes the 'D damps 16-35Hz' line... whose cited 'parallel
 PID trace' could not be located."*
 
-**I located the closest real candidate for that trace: `docs/GATE2-2026-08-11-cbe74-independent.md`
+**I located the closest real candidate for that trace: `docs/review/GATE2-2026-08-11-cbe74-independent.md`
 §N1** (same day, same session family, does the actual `|H|·cos(err/v phase)` computation for P/I/D).
 Its own table [EVIDENCE, cited exactly]:
 

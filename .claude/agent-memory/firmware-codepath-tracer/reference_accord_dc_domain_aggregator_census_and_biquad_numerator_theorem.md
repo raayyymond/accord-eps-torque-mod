@@ -9,7 +9,7 @@ metadata:
 
 `feel-impact` task (team-lead orchestrated), quantifying V104's (`0xC60B4` c4 boost, 0.81731->1.51202,
 x1.85) steering-feel impact. Program: stock `code.bin` (V104's only edit is this one coefficient, no
-cave/control-flow change, confirmed via `build_v104_tva.py` grep — this trace transfers to V104
+cave/control-flow change, confirmed via `builds/v80_v107/build_v104_tva.py` grep — this trace transfers to V104
 unmodified). Fresh `decompile_function` on `FUN_0003aa2c` (0x3aa2c) and `FUN_00036682` (0x36682) this
 session, cross-checked against `reference_accord_gp67ac_reduced_branch_unreachable.md` /
 `reference_accord_gp67ac_resolved_zero_and_path1_always_live.md` (both already proved, two independent
@@ -47,7 +47,7 @@ past it).
 
 **What this does NOT close**: a validated "% of the DC total" number for `gp-0x6b86`. No simultaneous
 multi-lane telemetry exists in the corpus as far as searched this session. Best empirical anchor:
-`docs/HANDOFF-2026-08-21-v104-built-c4-boost-and-lever-b.md` §4.3's flown clip-duty study (V102/V103,
+`docs/handoffs/2026-08/HANDOFF-2026-08-21-v104-built-c4-boost-and-lever-b.md` §4.3's flown clip-duty study (V102/V103,
 1704s across 5 builds) measured `gp-0x6b86`'s own worst observed excursion at k=1.85 as **6799/12288
 (~55% of its own ceiling)**, clip duty 0.000000. **Closing this needs a comparator cave rung
 (`|gp-0x6b86|` vs `|gp-0x6b94|`) or simultaneous multi-lane telemetry** — cheap, matches the kit's own
@@ -57,7 +57,7 @@ comparator-over-threshold design law.
 
 Complex rate-limited/hysteresis tracker, uses `gp-0x4f60` (same raw torque sensor as `gp-0x6b86`'s own
 input) scaled by cal `0xC646C` (`tp+0x746c`) — **the SAME shared sensor-scale cell already on record**
-(`reference-accord-c646c-shared-gain-not-lkas-only.md`, "6 readers across 3 subsystems", now a 7th
+(`reference/firmware/reference-accord-c646c-shared-gain-not-lkas-only.md`, "6 readers across 3 subsystems", now a 7th
 confirmed use). Internally: builds an intermediate `iVar8` self-clamped to +-0x200(512) before a final
 first-order IIR (`iVar14 += (iVar8*0x400-iVar14)*cal(tp+0x73d2)>>10`, output `sVar10=iVar14>>10`). At
 steady state the EMA just tracks its input 1:1, so **the function's own output ceiling is bounded to

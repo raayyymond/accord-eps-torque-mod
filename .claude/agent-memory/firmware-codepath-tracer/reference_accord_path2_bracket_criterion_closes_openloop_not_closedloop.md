@@ -7,7 +7,7 @@ metadata:
 
 # The Path-2 BRACKET — why DC-gain invariance does NOT close a Path-2 lever's sign
 
-2026-08-12 (`fw-loop`). Model: `analysis-2020accord/_v97/loop_phase_model.py`.
+2026-08-12 (`fw-loop`). Model: `analysis-2020accord/sessions/v97/loop_phase_model.py`.
 Applies to **every** `FUN_00038148` lever — the six lane weights `0xC63A0..AA` **and** the pole
 `0xC63AC`.
 

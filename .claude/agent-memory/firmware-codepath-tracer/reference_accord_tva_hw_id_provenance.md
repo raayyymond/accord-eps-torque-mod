@@ -48,7 +48,7 @@ Verified via GhidraMCP disasm/decompile, 2026-05-26.
 
 ## Addendum 2026-08-05 — cross-referenced against the compiled part-number ID string, re-confirms this file, closes team-lead's V72/V73 mode-selector sub-question
 
-Dispatched to check whether the ID-string build marker (`0x13109`/`0x14120`, the "-" edited by every modified build to distinguish itself from stock) could break `FUN_00057f8e`'s 5-byte HW-ID match — which selects `gp+0x63fd`'s mode (10/11 for this car, per `build_v44_tva.py`'s pre-existing documentation, see
+Dispatched to check whether the ID-string build marker (`0x13109`/`0x14120`, the "-" edited by every modified build to distinguish itself from stock) could break `FUN_00057f8e`'s 5-byte HW-ID match — which selects `gp+0x63fd`'s mode (10/11 for this car, per `builds/v18_v49/build_v44_tva.py`'s pre-existing documentation, see
 [[reference_accord_mode_selector_gp63fd_hwid_failover_not_engagement_flag]]).
 
 **Re-confirmed this file's core finding fresh** [EVIDENCE, `search_instructions` on `0x6408`/`0x640c`]: every positive-offset access is inside `FUN_000508e8` (the writer, unchanged) or `FUN_00057f8e` (the reader). No third function touches these bytes.

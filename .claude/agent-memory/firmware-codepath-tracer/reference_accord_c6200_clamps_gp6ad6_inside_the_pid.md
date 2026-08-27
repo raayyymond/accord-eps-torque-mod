@@ -9,7 +9,7 @@ metadata:
 
 Traced 2026-08-13, task `tracer-6ad6`. Program `code.bin`; byte-identical on the V98 (on-car) and
 V99 images (`code[0x37FE6:0x38146]`, `code[0x38148:0x382D8]`, `code[0x3A798:0x3A7F0]` all stock).
-Full trace: `docs/TRACE-2026-08-13-v100-6ad6-and-ivar6.md`.
+Full trace: `docs/traces/TRACE-2026-08-13-v100-6ad6-and-ivar6.md`.
 
 ## The mechanism [EVIDENCE — `disassemble_bytes` dry_run + `decompile_function(0x3a382)`]
 

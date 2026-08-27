@@ -9,7 +9,7 @@ metadata:
 
 `dynamics-designer` task, final verification pass before cutting a `gp-0x6b26` build. Team-lead's own
 byte read (modes 24/26/27) was correct as far as it went; this extends it by NOT inheriting the
-`DOSE_FAMILY_Y = {24: 0xD6A6C, 26: 0xD7A5C, 27: 0xD7A6C}` map from `build_v100_tva.py` and instead
+`DOSE_FAMILY_Y = {24: 0xD6A6C, 26: 0xD7A5C, 27: 0xD7A6C}` map from `builds/v80_v107/build_v100_tva.py` and instead
 re-deriving the complete mode set from the selector mechanism itself.
 
 ## Method — read the selector's own row table, don't trust the inherited list [EVIDENCE]

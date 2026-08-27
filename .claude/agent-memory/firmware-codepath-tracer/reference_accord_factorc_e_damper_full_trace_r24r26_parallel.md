@@ -13,7 +13,7 @@ open). Full findings sent via SendMessage; durable facts below. Extends
 
 ## Axis correction: FactorC's key is VOTED VEHICLE SPEED, not "voted driver torque"
 
-`memory/reference-accord-damper-two-deadzones-factorC-factorE.md` (2026-07-21, top-level kit memory)
+`memory/reference/firmware/reference-accord-damper-two-deadzones-factorC-factorE.md` (2026-07-21, top-level kit memory)
 labels FactorC's key `gp-0x6a5e` as "voted driver torque." **That is superseded/wrong — it is voted
 vehicle speed**, per the kit's own later ★★★★★★-settled finding (gp-0x6a5e = 64 cts/km/h) and
 re-confirmed this session three ways: (1) same plausibility gate `gp-0x67f4==1` and bound `<=0x7d00`
@@ -104,8 +104,8 @@ of ideal damping authority surviving. **The phase argument that sank V44/V47 for
 does not transfer cleanly to the ratchet.** Firmware ZOH only; plant/motor-side phase not modeled
 [OPEN].
 
-## V47's exact byte diff (from build_v47_tva.py, confirmed still the current CRC block layout via
-build_v71b_tva.py:488 which still asserts 0xD2FFC as a trailer)
+## V47's exact byte diff (from builds/v18_v49/build_v47_tva.py, confirmed still the current CRC block layout via
+builds/v50_v79/build_v71b_tva.py:488 which still asserts 0xD2FFC as a trailer)
 
 0xD27C6:0→235, 0xD27DA:0→234 (FactorC m10/m11 Y0), 0xD2802/04/06:0,140,539→700,750,800 and
 0xD2816/18/1A: same for m11 (FactorE Y0/Y1/Y2). 23 bytes total vs V38, 2 CRC blocks (MAIN 0xC4FFC,

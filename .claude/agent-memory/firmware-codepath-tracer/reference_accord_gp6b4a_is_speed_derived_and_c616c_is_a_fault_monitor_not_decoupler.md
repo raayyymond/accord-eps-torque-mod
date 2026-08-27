@@ -127,7 +127,7 @@ gating (the relay's own magnitude IS the cal cell; disabled branch stores a `0x7
 **Both `gp-0x6b4a` and the `cal(0xC616C)`/`FUN_00033d10` chain are refuted as delivery-path decouplers.**
 Neither reaches the assist output. No third candidate found this session.
 
-## 🛑🛑 ADDENDUM — adjudicating `docs/HANDOFF-2026-08-22-hs-identification-and-five-instrument-defects.md`;
+## 🛑🛑 ADDENDUM — adjudicating `docs/handoffs/2026-08/HANDOFF-2026-08-22-hs-identification-and-five-instrument-defects.md`;
 WHY no decoupler exists, and how contamination (if real) nests inside the already-measured loop gain
 
 [BELIEF, architectural reasoning] A torsion bar measures the DIFFERENTIAL twist between the driver-input
@@ -217,11 +217,11 @@ regardless of the sign question's eventual resolution.
 between command and bar torque after removing what's linearly predictable from angle. Residual well above
 null ⇒ a direct e4→bar channel exists (contamination-consistent); collapses to null ⇒ confirms the
 angle-mediated-common-cause explanation. **Not run in the handoff, and not run by me** (needs
-`rlog-tools/plant_*.py`/`loop_op_t1_coherence.py` applied to existing captures — telemetry DSP, outside
+`rlog-tools/plant_*.py`/`studies/loop-causality/loop_op_t1_coherence.py` applied to existing captures — telemetry DSP, outside
 this session's firmware-decompile scope).
 
 ## [EVIDENCE, checked from build scripts myself] The existing reverse-causality dataset has ZERO gain variation — cannot test the gain-scaling prediction
-`grep 0xC6CD0 build_v88_tva.py build_v89_tva.py`: **r73(V88)=3564, r75/r76(V89)=3564 — all three routes
+`grep 0xC6CD0 builds/v80_v107/build_v88_tva.py builds/v80_v107/build_v89_tva.py`: **r73(V88)=3564, r75/r76(V89)=3564 — all three routes
 behind the handoff's `γ²(e4,bar)`=0.085/0.138/0.280 are at the IDENTICAL 4.000x gain.** The observed
 spread is exposure/condition variation, not a gain effect. A genuine test of "does contamination scale
 with `0xC6CD0`" needs the same computation on `r97`(stock,1x) vs 6x/8x routes — blocked by two hazards

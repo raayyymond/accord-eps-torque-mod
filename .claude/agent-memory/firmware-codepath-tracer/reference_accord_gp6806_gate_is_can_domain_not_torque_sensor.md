@@ -39,7 +39,7 @@ not through anything inside this EPS firmware — a claim about openpilot, not v
 
 ## [EVIDENCE, fresh `read_memory` + grep] `0xC64A3`=1, single-byte arm for BOTH halves
 
-`read_memory(0xC64A3)` on `code.bin` = **1**. `build_v42_tva.py` through `build_v47_tva.py`: "pre-gain
+`read_memory(0xC64A3)` on `code.bin` = **1**. `builds/v18_v49/build_v42_tva.py` through `builds/v18_v49/build_v47_tva.py`: "pre-gain
 deadband enable — deliberately LEFT ON," never edited on any build found. Confirmed from the decompiled
 structure (`reference-accord-deadband-signgate-eliminated-on-car`): both the ±102 deadband AND the
 sign-guard relay sit inside the SAME `if (cal_0xC64A3==1 && gp-0x6806==0)` — one byte arms both halves

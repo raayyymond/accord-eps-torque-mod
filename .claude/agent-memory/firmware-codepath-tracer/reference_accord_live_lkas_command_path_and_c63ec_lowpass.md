@@ -87,7 +87,7 @@ MANUAL ONLY and cannot cause an engagement-required symptom (83.0 % engaged vs 0
 ⇒ **Lever B (gated `!= 0`) is UNAFFECTED — V88's attribution stands; no retraction.** Complementary halves
 of one flag: Lever B on `!= 0`, this block on `== 0` (`0x2a1ba cmp r0,r12` / `0x2a1bc bne 0x2a1e6`).
 
-🛑 **`memory/reference-accord-pregain-deadband-c61b8.md`'s *"LOW-SPEED LOCKOUT, 0 % above 4 mph"* is a
+🛑 **`memory/reference/firmware/reference-accord-pregain-deadband-c61b8.md`'s *"LOW-SPEED LOCKOUT, 0 % above 4 mph"* is a
 CORRELATION ON A CREEP-DOMINATED CORPUS, not the flag's identity.** V67's **direct identity test —
 `== latActive` on 150,302/150,327 = 99.983 %, all 25 disagreements single-frame edges** — beats it, and
 route 0x85 (engaged p50 39.6 km/h, 45.5 s > 80 km/h) breaks the confound. ⊕ The symptom is

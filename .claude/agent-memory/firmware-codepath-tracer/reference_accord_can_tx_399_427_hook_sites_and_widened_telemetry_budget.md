@@ -10,7 +10,7 @@ metadata:
 Session task: CAN-TX telemetry channel widening for V83 (team-lead brief). Verified fresh via
 `disassemble_function`/`read_memory` on `code.bin` (program="code.bin"), cross-checked against the
 existing CAN-TX memory corpus (`reference_accord_can_tx_399_427_bitmap.md`,
-`reference-accord-can-tx-frame-0x14a-bytemap.md`, `reference-accord-piggyback-channel-audit-dbc-panda.md`)
+`reference-accord-can-tx-frame-0x14a-bytemap.md`, `reference/can/reference-accord-piggyback-channel-audit-dbc-panda.md`)
 which this entry reconfirms byte-for-byte and extends. gp=0xFEDF8000.
 
 ## NEW: 399 and 427 have the IDENTICAL pre-checksum hook shape as 330's proven V31P/V49P site
@@ -19,7 +19,7 @@ All three builders end with the same compiler idiom — a critical-section-enter
 `lp` anyway) immediately followed by the buffer-base `movea`, then DLC/ID setup, then the checksum call.
 Because `lp` is about to be re-clobbered by the checksum `jarl` regardless, the `movea` is safe to replace
 with a `jarl <cave>,lp` (cave re-executes the displaced `movea` before returning) — this is exactly
-`build_v49p_tva.py`'s proven `pack_polarity` mechanism, now confirmed to generalize:
+`builds/v18_v49/build_v49p_tva.py`'s proven `pack_polarity` mechanism, now confirmed to generalize:
 
 | frame | builder | hook addr | stock bytes (LE) | decode | checksum call |
 |---|---|---|---|---|---|
@@ -50,13 +50,13 @@ mask-constant edit, a different/riskier edit class):
 **Combined clean-tier total: 5+2+6+3 = 16 bits** (or 14 if byte7 of 330 turns out already claimed by a
 live V49P-lineage cave — unconfirmed which cave is currently flashed, see Open below), **20 with the
 mask-edit tier**, all inside frames independently proven to cross the gateway to the comma tap
-(`reference-accord-v53-flashed-steer-to-zero-confirmed-telemetry-null.md`: 0x14A/0x18F/0x1AB present at
+(`reference/builds/reference-accord-v53-flashed-steer-to-zero-confirmed-telemetry-null.md`: 0x14A/0x18F/0x1AB present at
 97.3/97.4/48.7 Hz on route 1a). This is 3-4x the previously-recorded 5-7 bit budget, purely because
 399/427 had never been bit-mapped for hook-site purposes before (only 330 had a build against it).
 
 ## CORRECTION to a claim on file
 
-`reference-accord-can-tx-100hz-base-tick-and-gateway-evidence.md` states "0x18F byte5 = CONSTANT ZERO in
+`reference/can/reference-accord-can-tx-100hz-base-tick-and-gateway-evidence.md` states "0x18F byte5 = CONSTANT ZERO in
 100% of 22,409 frames — a fully free byte". **This overstates the safe budget by 2 bits.** Byte5 bits[5:4]
 are a REAL live write (`gp-0x6880 & 3`, packer instructions 0x55CAE-0x55CC2) that merely read 0 throughout
 the captured route — not a structurally-unwritten field. Only byte5 bits[7:6]+[3:0] (6 of 8) are

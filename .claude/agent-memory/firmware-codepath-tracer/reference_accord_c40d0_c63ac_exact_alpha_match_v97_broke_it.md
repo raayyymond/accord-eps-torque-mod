@@ -9,7 +9,7 @@ metadata:
 
 Found while retargeting onto the MODEL↔ACTUAL **mismatch** after the V98 comparator showed
 `iVar6 ≈ MODEL − ACTUAL` with the two arms comparable (`b6` = 0.4235, `b5` = 0.0000 engaged).
-Write-up: `docs/TRACE-2026-08-13-v99-arm-levers.md` §9–§11.
+Write-up: `docs/traces/TRACE-2026-08-13-v99-arm-levers.md` §9–§11.
 
 ## 1. 🛑🛑 "THE MODEL ARM IS UNFILTERED" IS FALSE [EVIDENCE — `decompile_function(0x3b8f6)`]
 

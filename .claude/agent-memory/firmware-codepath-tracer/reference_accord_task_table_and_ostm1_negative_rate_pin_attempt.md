@@ -86,7 +86,7 @@ Recomputed `|H(21Hz)|` with the single-subtraction form `H(z)=a/(1-(1-a)z⁻¹)`
 independently reproduces team-lead's pre-stated figures exactly: fs=1000Hz -> pole=0.7998,
 |H|=0.8618 -> **-1.29dB**; fs=100Hz -> |H|=0.1796 -> **-14.91dB**.
 
-`0xC6372`/`0xC636E` reconfirmed never edited in any `build_v*_tva.py` through `build_v57_tva.py`
+`0xC6372`/`0xC636E` reconfirmed never edited in any `build_v*_tva.py` through `builds/v50_v79/build_v57_tva.py`
 (STOCK_CALS lists only) -- matches record, no lever proposed here.
 
 ## Related

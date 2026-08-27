@@ -1,6 +1,6 @@
 ---
 name: reference_accord_gp6afe_gp6b4e_provably_zero_correction
-description: gp-0x6afe/gp-0x6b4e (the "LKAS overlay" final-summation term into the shaper, produced by FUN_00042ac6 <- FUN_00026c80's per-lane accumulator gp-0x3d8c <- array gp-0x62c8[0..10]) is PROVABLY, STRUCTURALLY ALWAYS ZERO on every build. CORRECTS memory/accord-aggregator-reaches-motor-via-gp6acc-bridge.md's "CAN/arbitration term" label and reference-accord-shaper-fun42af8.md's "feed-forward / error correction addend" label.
+description: gp-0x6afe/gp-0x6b4e (the "LKAS overlay" final-summation term into the shaper, produced by FUN_00042ac6 <- FUN_00026c80's per-lane accumulator gp-0x3d8c <- array gp-0x62c8[0..10]) is PROVABLY, STRUCTURALLY ALWAYS ZERO on every build. CORRECTS memory/accord/firmware/accord-aggregator-reaches-motor-via-gp6acc-bridge.md's "CAN/arbitration term" label and reference-accord-shaper-fun42af8.md's "feed-forward / error correction addend" label.
 metadata:
   type: reference
 ---
@@ -54,7 +54,7 @@ every lane).
 
 ## Consequence — corrects two prior memories
 
-1. `memory/accord-aggregator-reaches-motor-via-gp6acc-bridge.md` calls `gp-0x6afe` "CAN/arbitration term,
+1. `memory/accord/firmware/accord-aggregator-reaches-motor-via-gp6acc-bridge.md` calls `gp-0x6afe` "CAN/arbitration term,
    validity-gated" in its final-summation formula `iVar45 = gp-0x6afe(...) + uVar34`. That formula is
    structurally correct but **`gp-0x6afe` contributes nothing** — the equation reduces to `iVar45 = uVar34`
    at every cycle, on every build. The "CAN/arbitration term" label was inherited from an earlier,

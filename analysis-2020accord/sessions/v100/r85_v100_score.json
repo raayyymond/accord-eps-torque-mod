@@ -1,0 +1,494 @@
+{
+ "exposure": {
+  "per_segment": {
+   "15": {
+    "frames": 6000,
+    "sec": 60.0,
+    "engaged_sec": 50.08,
+    "v_median_kmh": 49.065707499343716,
+    "v_rear_median_kmh": 13.632290685133402
+   },
+   "16": {
+    "frames": 6000,
+    "sec": 60.0,
+    "engaged_sec": 60.0,
+    "v_median_kmh": 95.07976550587912,
+    "v_rear_median_kmh": 26.388837512162723
+   },
+   "18": {
+    "frames": 5999,
+    "sec": 59.99,
+    "engaged_sec": 59.99,
+    "v_median_kmh": 30.703583296134433,
+    "v_rear_median_kmh": 8.518055555555556
+   },
+   "19": {
+    "frames": 6001,
+    "sec": 60.01,
+    "engaged_sec": 60.01,
+    "v_median_kmh": 33.1244937538647,
+    "v_rear_median_kmh": 9.205555555555556
+   },
+   "20": {
+    "frames": 5998,
+    "sec": 59.98,
+    "engaged_sec": 19.17,
+    "v_median_kmh": 5.508234481414624,
+    "v_rear_median_kmh": 1.5444444444444445
+   }
+  },
+  "n_episodes": 6,
+  "episode_s": [
+   50.07027706399822,
+   59.990074976998585,
+   59.985607373000676,
+   59.99854601899642,
+   3.5472766130005766,
+   15.611136504001479
+  ],
+  "T_engaged_s": 249.20291854999596,
+  "n_engaged_frames": 24925,
+  "pressed_duty_engaged": 0.12445336008024072
+ },
+ "tau_measured": {
+  "b7 sign(gp-0x6b94)": 1.054826845791805,
+  "b6 RUNG D'": null,
+  "b5 RUNG A": null,
+  "b4 sign(gp-0x6ad6)": 0.22409088836024427,
+  "b3 IDENTITY": null
+ },
+ "tau_surrogate_threshold": {
+  "per_threshold": {
+   "256": 1.546783496077213,
+   "512": 1.272323278354948,
+   "768": 0.7750208417215712,
+   "1024": 0.513456443645285,
+   "1280": 0.350104011036734
+  },
+  "range": [
+   0.350104011036734,
+   1.546783496077213
+  ],
+  "prior_range": [
+   0.065,
+   0.603
+  ],
+  "tau_used_worst_case": 1.546783496077213
+ },
+ "E1": {
+  "duty_engaged": 0.0,
+  "duty_all": 0.0,
+  "duty_manual": 0.0,
+  "n_engaged_frames": 24925,
+  "T_engaged_s": 249.20291854999596,
+  "clamp_episodes": 0,
+  "upper95_best case (on-route min)": 0.004214685924312258,
+  "upper95_worst case (pre-flight max)": 0.018620771037642064,
+  "n_eff_worst": 161.1104069716271,
+  "upper95_worst": 0.018620771037642064,
+  "dead_instrument_trap_cleared": true,
+  "licensed_sentence": "gp-0x6ad6 never reached the PID's +-8192 clamp in any engaged frame.  Path 2's marginal authority was NOT zeroed by this saturation, d(gp-0x6b94)/d(gp-0x6b70) = 0.2565 stands in the flown regime, and the f'-compression account in STATE.md remains the only surviving explanation for V89 and V97.  THE REFERENCE-CLAMP HYPOTHESIS IS DEAD AND MUST NOT BE RE-PROPOSED."
+ },
+ "E2": {
+  "table": {
+   "b6=0,b5=0": 24925,
+   "b6=0,b5=1": 0,
+   "b6=1,b5=0": 0,
+   "b6=1,b5=1": 0
+  },
+  "N": 24925,
+  "marginal": 0.0,
+  "conditional": 0.0,
+  "composite": 0.0,
+  "conditioning_n": 24925,
+  "error_clamp_episodes": 0,
+  "upper95_conditional": 0.018620771037642064,
+  "resolvable": "ALL THREE -- the conditioning set is the entire engaged sample",
+  "composite_null_sentence": "Neither saturation was active -- Path-2's marginal authority was never zeroed by clipping."
+ },
+ "controls": {
+  "b4 = gp-0x6ad6 < 0": {
+   "duty": 0.6057372116349047,
+   "T_s": 249.25,
+   "tau": 0.22409088836024427,
+   "n_eff": 1112.2719081701814,
+   "lo": 0.5770171340644455,
+   "hi": 0.6344572892053638,
+   "flips_per_s": 16.837684022381076,
+   "n_flips": 4196,
+   "inside_005_095": true
+  },
+  "b7 = gp-0x6b94 < 0": {
+   "duty": 0.5222066198595787,
+   "T_s": 249.25,
+   "tau": 1.054826845791805,
+   "n_eff": 236.29470656191032,
+   "lo": 0.4585167552613958,
+   "hi": 0.5858964844577617,
+   "flips_per_s": 12.423610517943713,
+   "n_flips": 3096,
+   "inside_005_095": true
+  },
+  "POS3_command_tracking": {
+   "0x0E4 wire command (e4tq)": {
+    "n": 24872,
+    "agree_same_sign": 0.5763509166934706,
+    "agree_opposite_sign": 0.4236490833065294,
+    "agree_shuffled_control": 0.45155194596333226
+   },
+   "openpilot co_req": {
+    "n": 24923,
+    "agree_same_sign": 0.4226216747582554,
+    "agree_opposite_sign": 0.5773783252417446,
+    "agree_shuffled_control": 0.48501384263531677
+   },
+   "lag_scan_e4tq": {
+    "-0.5": 0.5328883885493728,
+    "-0.45": 0.5355821807655194,
+    "-0.4": 0.5403264715342554,
+    "-0.35": 0.5468800257317465,
+    "-0.3": 0.5503377291733677,
+    "-0.25": 0.558941781923448,
+    "-0.2": 0.5609922804760373,
+    "-0.15": 0.5631633965905436,
+    "-0.1": 0.5729736249597941,
+    "-0.05": 0.5718478610485687,
+    "0.0": 0.5763509166934706,
+    "0.05": 0.5721695078803474,
+    "0.1": 0.5661386297844966,
+    "0.15": 0.5660984239305242,
+    "0.2": 0.562037632679318,
+    "0.25": 0.5538356384689611,
+    "0.3": 0.5499356706336442,
+    "0.35": 0.5445078803473786,
+    "0.4": 0.5397233837246703,
+    "0.45": 0.5336522997748472,
+    "0.5": 0.5321244773238983
+   },
+   "best_lag_s": 0.0,
+   "excess_over_chance": {
+    "mean": 0.08952684916692769,
+    "lo": 0.05447567478420384,
+    "hi": 0.14114691384678713,
+    "resolves": true
+   }
+  }
+ },
+ "E3": {
+  "Q": 3.3321044482720104,
+  "Q_ci": [
+   1.8579071416334172,
+   5.782410199489371
+  ],
+  "Q_rectified_for_reference": 3.8316482285959688,
+  "n_blocks": 50,
+  "n_episodes": 6,
+  "n_windows": 380,
+  "rms69_tq": 55.17193603655434,
+  "rms69_x6b94_signed": 13.600998117130358,
+  "rms69_x6b94_rectified": 12.284870341836074,
+  "rectification_understatement": 1.107134038754338,
+  "split_half_null_tq": {
+   "n_blocks": 50,
+   "floor_p50": 1.4070648492998725,
+   "floor_p95": 2.5235685808449224
+  },
+  "split_half_null_x": {
+   "n_blocks": 50,
+   "floor_p50": 1.1924728154917552,
+   "floor_p95": 1.5210117725980212
+  },
+  "phi": 0.9657938138094008,
+  "phi_ci_measurement_only": [
+   0.5385050954667377,
+   1.6760026842709965
+  ],
+  "anchor_A": 1.13,
+  "anchor_se": 0.09,
+  "Q_c": 1.254,
+  "indeterminate_band": [
+   1.12,
+   1.39
+  ],
+  "cross_route_control": {
+   "r82": {
+    "n_windows": 84,
+    "rms69_signed": 339.772469975658,
+    "rms69_rect": 78.46606030976761,
+    "rms69_tq": 279.29688229411494,
+    "rect_understatement": 4.330183886310938,
+    "Q_like": 0.8220115135111574,
+    "implied_A": 1.216527972617535
+   },
+   "r81": {
+    "n_windows": 95,
+    "rms69_signed": 402.36957002265297,
+    "rms69_rect": 97.23980591260995,
+    "rms69_tq": 327.9775255842716,
+    "rect_understatement": 4.137910048733182,
+    "Q_like": 0.8151151330002584,
+    "implied_A": 1.2268205551763236
+   },
+   "r80": {
+    "n_windows": 24,
+    "rms69_signed": 556.5695998990957,
+    "rms69_rect": 106.20881622274919,
+    "rms69_tq": 484.2574616744651,
+    "rect_understatement": 5.240333332892212,
+    "Q_like": 0.870075300128249,
+    "implied_A": 1.1493258110563536
+   }
+  },
+  "per_segment": {
+   "15": {
+    "n": 77,
+    "tq69": 73.44429666313208,
+    "x69": 15.157787939018231,
+    "Q": 4.845317599019601,
+    "v": 14.490189140192939
+   },
+   "16": {
+    "n": 92,
+    "tq69": 11.113743194673203,
+    "x69": 7.494989456870914,
+    "Q": 1.482823059141845,
+    "v": 26.32710422648555
+   },
+   "18": {
+    "n": 92,
+    "tq69": 79.45567398462221,
+    "x69": 16.868352002137943,
+    "Q": 4.710340048307729,
+    "v": 8.520817106889682
+   },
+   "19": {
+    "n": 92,
+    "tq69": 58.317867741403695,
+    "x69": 15.674164700960155,
+    "Q": 3.720636400983544,
+    "v": 9.295522994255244
+   },
+   "20": {
+    "n": 27,
+    "tq69": 525.0752024825696,
+    "x69": 29.12563570461684,
+    "Q": 18.027939640793402,
+    "v": 1.9555555555555557
+   }
+  },
+  "segment_spread": 12.15784953548451,
+  "verdict": "VOID -- NOT DECISIVE, AND THE 0xC63AE NO-GO IS **NOT** OVERTURNED.  Q = 3.332 formally clears Q_c = 1.254, but it does so by returning phi = 0.966, at or above the definitional ceiling of 1.0.  A share cannot exceed 1, so the construction has broken down on this route.  The broken element is IDENTIFIED: the imported anchor A.  build_v100_tva pre-flagged this exact residual -- 'the anchor A is an imported CONSTANT, and V100 cannot re-check it in-drive, because 427 now carries gp-0x6b94 and the drive therefore does not carry gp-0x6b70 at all.'  Route 85's 6-9 Hz column torque is 5.1x QUIETER than route 82's, far outside the operating range A was measured in, and Q swings 12.2x across segments.  NO VERDICT ON 0xC63AE MAY BE DRAWN FROM THIS DRIVE."
+ },
+ "seg20_matched_arm": {
+  "ENGAGED": {
+   "n_windows": 23,
+   "v_rear_p50": 1.952777777777778,
+   "rate_p50": 19.931220415069976,
+   "tq69": 584.8698683891429,
+   "ang69": 0.11806137024831301,
+   "x69": 29.12563570461684,
+   "split_half_null_tq": {
+    "n_blocks": 3,
+    "floor_p50": null,
+    "note": "only 3 blocks -- no usable split-half null"
+   }
+  },
+  "MANUAL": {
+   "n_windows": 57,
+   "v_rear_p50": 1.1958333333333333,
+   "rate_p50": 54.848555183670264,
+   "tq69": 20.75620349613327,
+   "ang69": 0.04895516767079656,
+   "x69": 10.283295458210668,
+   "split_half_null_tq": {
+    "n_blocks": 8,
+    "floor_p50": 1.1701712605526908,
+    "floor_p95": 1.4772953133643212
+   }
+  },
+  "fold_eng_over_man_tq69": 28.178075460577357,
+  "fold_eng_over_man_ang69": 2.4116222222386683,
+  "caveat": "NOT speed-matched, NOT a symptom score, below the 4-block minimum for a split-half null. Descriptive only."
+ },
+ "seg20": {
+  "n_frames": 5998,
+  "dur_s": 59.976424872998905,
+  "engaged_frac": 0.31960653551183726,
+  "engaged_s": 19.17,
+  "route_time_offset_s": 300.00353551100125,
+  "transitions": [
+   {
+    "kind": "DISENGAGE",
+    "t_seg": 3.5574030200004927,
+    "t_route": 303.56093853100174,
+    "v_rear": 2.8206613445928532,
+    "ang": 126.35036107193383
+   },
+   {
+    "kind": "ENGAGE",
+    "t_seg": 6.723145726999064,
+    "t_route": 306.7266812380003,
+    "v_rear": 1.9314055870877151,
+    "ang": 1.0
+   },
+   {
+    "kind": "DISENGAGE",
+    "t_seg": 22.343807335000747,
+    "t_route": 322.347342846002,
+    "v_rear": 0.0,
+    "ang": 2.9742777850739817
+   }
+  ],
+  "runs": [
+   {
+    "engaged": true,
+    "t0": 0.0,
+    "t1": 3.5472766130005766,
+    "frames": 355
+   },
+   {
+    "engaged": false,
+    "t0": 3.5574030200004927,
+    "t1": 6.713185257998703,
+    "frames": 317
+   },
+   {
+    "engaged": true,
+    "t0": 6.723145726999064,
+    "t1": 22.334282231000543,
+    "frames": 1562
+   },
+   {
+    "engaged": false,
+    "t0": 22.343807335000747,
+    "t1": 59.976424872998905,
+    "frames": 3764
+   }
+  ],
+  "return_to_centre": [
+   {
+    "t_start": 4.366335362999962,
+    "t_end": 4.435951821000344,
+    "dur_s": 0.06961645800038241,
+    "ang_from": 21.803297800686913,
+    "ang_to": 4.129587321201989,
+    "peak_rate": 268.52022621491756
+   },
+   {
+    "t_start": 5.609575831000257,
+    "t_end": 5.749982757999533,
+    "dur_s": 0.14040692699927604,
+    "ang_from": -20.434143663227076,
+    "ang_to": -4.397395058793024,
+    "peak_rate": 220.57148341578684
+   },
+   {
+    "t_start": 27.018635874999745,
+    "t_end": 27.167861499998253,
+    "dur_s": 0.14922562499850756,
+    "ang_from": 20.19761930634676,
+    "ang_to": 4.9000544968330715,
+    "peak_rate": 156.6943410833959
+   },
+   {
+    "t_start": 27.839596187001007,
+    "t_end": 28.143176551999204,
+    "dur_s": 0.3035803649981972,
+    "ang_from": -20.360536116896547,
+    "ang_to": -4.87988152892682,
+    "peak_rate": 107.67726105559383
+   },
+   {
+    "t_start": 29.938177644999087,
+    "t_end": 30.553521550998994,
+    "dur_s": 0.6153439059999073,
+    "ang_from": 20.026334171181844,
+    "ang_to": 4.237196640750122,
+    "peak_rate": 155.35372475663402
+   },
+   {
+    "t_start": 31.235910039999,
+    "t_end": 34.13984847699976,
+    "dur_s": 2.903938437000761,
+    "ang_from": -20.233499568472006,
+    "ang_to": -4.297486896197597,
+    "peak_rate": 149.09588482934905
+   },
+   {
+    "t_start": 36.63134050699955,
+    "t_end": 36.711016653000115,
+    "dur_s": 0.0796761460005655,
+    "ang_from": 21.702963796392535,
+    "ang_to": 1.8676841290081523,
+    "peak_rate": 448.8811779015018
+   },
+   {
+    "t_start": 37.52659910000148,
+    "t_end": 37.60751305899976,
+    "dur_s": 0.08091395899828058,
+    "ang_from": -21.095231553848457,
+    "ang_to": -4.2815097139314044,
+    "peak_rate": 221.93748227674598
+   },
+   {
+    "t_start": 39.4727787869997,
+    "t_end": 39.54524316199968,
+    "dur_s": 0.07246437499998137,
+    "ang_from": 21.677536609880217,
+    "ang_to": 2.6921986053390734,
+    "peak_rate": 295.6007611651865
+   },
+   {
+    "t_start": 42.99058081700059,
+    "t_end": 43.06242701500014,
+    "dur_s": 0.07184619799954817,
+    "ang_from": -20.369282871072535,
+    "ang_to": -4.022688650205186,
+    "peak_rate": 405.45418777552874
+   },
+   {
+    "t_start": 43.76746107700092,
+    "t_end": 44.922070346998225,
+    "dur_s": 1.1546092699973087,
+    "ang_from": 20.745578931166314,
+    "ang_to": 4.969850677488951,
+    "peak_rate": 117.2603829321556
+   },
+   {
+    "t_start": 54.13376352100022,
+    "t_end": 54.26286773999891,
+    "dur_s": 0.12910421899869107,
+    "ang_from": -20.87340361099826,
+    "ang_to": -4.630184610992777,
+    "peak_rate": 146.21075231083154
+   },
+   {
+    "t_start": 56.49095898900123,
+    "t_end": 58.09109445699869,
+    "dur_s": 1.600135467997461,
+    "ang_from": -20.863250624555718,
+    "ang_to": -4.446698386213088,
+    "peak_rate": 287.1546079376813
+   }
+  ],
+  "array_file": "C:\\Users\\dudei\\Desktop\\Projects\\accord-eps-torque-mod\\analysis-2020accord\\sessions/v100\\r85_seg20_control.npz"
+ },
+ "checks": [
+  {
+   "pass_": true,
+   "msg": "b4 engaged duty 0.6057 strictly inside (0.05, 0.95)"
+  },
+  {
+   "pass_": true,
+   "msg": "b7 engaged duty 0.5222 strictly inside (0.05, 0.95)"
+  },
+  {
+   "pass_": true,
+   "msg": "pipeline reproduces the published 4.9-5.5x rectification cost on r80/81/82 (r82 4.33x, r81 4.14x, r80 5.24x)"
+  },
+  {
+   "pass_": true,
+   "msg": "pipeline reproduces the published anchor A = 1.13 +- 0.09 on r80/81/82 (r82 1.217, r81 1.227, r80 1.149)"
+  }
+ ]
+}

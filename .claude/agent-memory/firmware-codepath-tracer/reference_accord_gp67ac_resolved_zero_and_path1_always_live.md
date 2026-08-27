@@ -20,7 +20,7 @@ parallel accumulator paths (r22 for `67ac`, r11 for `67ab`) that both test `mode
 the per-channel mode array `tp+0x5124..0x512E = 0xC4124..0xC412E`. That array is **already established
 in this kit's record as `[0,0,5,0,5,5,0,0,0,5,0]` — never 2, 3, or 4, for any of the 11 lanes**
 (`reference_accord_gp6b4a_direct_lkas_term_and_v41_lineage_correction.md`, cross-validated independently
-against `build_v41_tva.py`'s own quote of the same array).
+against `builds/v18_v49/build_v41_tva.py`'s own quote of the same array).
 
 Both accumulator paths (r22 @`0x27284`, r11 @`0x272ce`) share the identical branch shape: when
 `mode[lane]` is never in `{2,3,4}`, the `cmp r0,r12(mode==4); be <label>` branch is ALWAYS taken and

@@ -5,7 +5,7 @@ metadata:
   type: reference
 ---
 
-## 🛑🛑 RETRACTED 2026-08-12 — see `reference-accord-task5-100hz-syscall8-rate-divider.md` in the kit's `memory/` for the full writeup (mirrored there, team-lead adjudication)
+## 🛑🛑 RETRACTED 2026-08-12 — see `reference/firmware/reference-accord-task5-100hz-syscall8-rate-divider.md` in the kit's `memory/` for the full writeup (mirrored there, team-lead adjudication)
 
 Three independent measurements on `gp-0x6bbe`'s own flown telemetry (route 79) contradict 100Hz and point
 close to 1kHz instead: frequency response ≈−1.2dB at 6-9Hz (100Hz predicts −6.6/−8.4/−9.5dB, 1kHz predicts
@@ -105,7 +105,7 @@ on Q5, not previously connected:
   `rate_error = baseline − raw_angle_rate(gp-0x6a56)`, scaled by K1/Y3, feeding the FINAL clamp — a
   genuine rate-domain term the "no velocity sign flip" claim missed. Its own conclusion: "**net damping is
   the structurally-favored read... but not provable from static analysis alone.**"
-- The operator's own on-car measurement (`accord-gp6bbe-is-viscous-plus-dc-pedestal.md`, global memory):
+- The operator's own on-car measurement (`accord/signals/accord-gp6bbe-is-viscous-plus-dc-pedestal.md`, global memory):
   flat ≈90 ct/(rad/s), phase~0° — explicitly stated to **REFUTE** "same-signed as torque sensor ⇒
   reinforcing."
 

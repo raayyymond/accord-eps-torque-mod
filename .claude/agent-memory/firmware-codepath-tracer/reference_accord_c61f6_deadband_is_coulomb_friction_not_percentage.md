@@ -9,7 +9,7 @@ metadata:
 
 ## What it is, confirmed first-hand [EVIDENCE, fresh `decompile_function(0x3aa2c)` this session on `code.bin` stock,
 cross-checked against 3 independent prior sessions in this memory dir + the golden model
-`eps_chain_lanes.py:_inline_torque_rate_b`, all agreeing byte-for-byte]
+`model/eps_chain_lanes.py:_inline_torque_rate_b`, all agreeing byte-for-byte]
 
 `read_memory(0xC61F6)` = `03 00` LE = **3**. Reader: exactly ONE site, inside `FUN_0003aa2c` (the
 aggregator), **on r24 only** -- r26 has NO deadband (confirmed: zero occurrence of `0x71f6` anywhere in
@@ -77,7 +77,7 @@ EVIDENCE regardless of whether this exact downstream-cap mechanism is what the o
 No build has ever tapped `gp-0x6ada` -- there is no direct measurement of `x` (=`scaled`, what the
 deadband gates). From the analytic chain: only on-record pre-gain input measurement is V65's
 `|dtorque| in [123,839]` over 120,049 frames (general driving, different build/route, not burst-specific,
-see `orch_c6446_clamp_headroom.py`). At the CURRENT gain (5244), `x` ranges **629-4296** even during
+see `studies/models/orch_c6446_clamp_headroom.py`). At the CURRENT gain (5244), `x` ranges **629-4296** even during
 ordinary (non-oscillating) driving -- **D=3 is 0.07%-0.48% of that**, i.e. structurally invisible by
 2-3+ orders of magnitude. (Corrects this dir's own `[[reference_accord_fun3aa2c_r24_r26_pole_census_no_filter_exists]]`,
 which computed "D is 0.4-2.4% of typical excursion" against the PRE-gain `dtorque` directly rather than

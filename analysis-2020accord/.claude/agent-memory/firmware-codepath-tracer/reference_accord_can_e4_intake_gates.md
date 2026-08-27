@@ -15,7 +15,7 @@ Distinct from the driver COLUMN-TORQUE sensors (`gp-0x6a62`/`gp-0x4f60`, see
 [[reference-accord-dual-torque-sensor-architecture]]) — this file is about the INBOUND
 openpilot LKAS command, a separate signal.
 
-## RX chain (re-verified this session, matches `TORQUE_PATH_AND_TABLE.md` §0.5)
+## RX chain (re-verified this session, matches `notes/TORQUE_PATH_AND_TABLE.md` §0.5)
 ```
 CAN 0xE4 STEERING_CONTROL (DLC 5, STEER_TORQUE = s16 BE bytes[0:1], opendbc _bosch_2018.dbc)
   mailbox-ID table 0xB733C[22] = 0x03900000 -> stdID = 0x0390>>2 = 0xE4          [V, byte-read 2026-07-06]
@@ -126,7 +126,7 @@ glitch coincident with mechanical event), different physical channel. Not measur
    checksum/counter mechanism.
 2. **Producer of `gp-0x3330`=1** (GATE 5's rx-timeout latch) — not located. Likely a periodic
    watchdog task; would need the same table/caller resolution, or a targeted search of the 1ms
-   scheduler `FUN_0002214a`'s task list (mentioned in `TORQUE_PATH_AND_TABLE.md` §0.3) for a
+   scheduler `FUN_0002214a`'s task list (mentioned in `notes/TORQUE_PATH_AND_TABLE.md` §0.3) for a
    "CAN message freshness" task.
 3. **`FUN_0001cf30`** (HW mailbox/acceptance-filter programming, the very first hop) hits undecoded
    opcodes in r2 — not re-verified this session, carried over from prior memory only.

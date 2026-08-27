@@ -34,7 +34,7 @@ into the 4.7121 figure -- confirmed two independent firmware-derivation paths in
 (a) direct disassembly of the real CAN 0x14A/0x18F packers (`FUN_0003f776`, cal `0xC613A`=1159) tracing
 to the externally-grounded STEER_ANGLE_RATE field, and (b) `30*f_elec` combined with `P*G=56.5`
 reproduces 4.7121 to 4 sig figs. **Independent on-car cross-check**
-(`memory/reference-accord-rate-scale-4p7121-stands.md`): a fitted scale against V74's flown probe peaks
+(`memory/reference/measurement/reference-accord-rate-scale-4p7121-stands.md`): a fitted scale against V74's flown probe peaks
 at 5.80 [5.12, 8.27] -- same order of magnitude, not two orders off (which is what a real P*G-domain
 confusion would look like -- the fit would land near 265 or near 0.08, not 5.8). **Verdict: 4.7121
 stands, and reachability bounds computed with it are not a domain error.**
@@ -57,7 +57,7 @@ A_deg = rate_prefilter_needed / (2*math.pi*f)
 
 **~1 degree of column angular amplitude at 40-50Hz is enough to enter the taper; ~3.7-4.3 degrees
 reaches the full collapse.** Cross-check against the kit's own measured ORDINARY steering operating
-point: `gp-0x6ac0` in-burst p50 = 99 counts [94,113] (`analysis-2020accord/eps_chain_lanes.py`) -- under
+point: `gp-0x6ac0` in-burst p50 = 99 counts [94,113] (`analysis-2020accord/model/eps_chain_lanes.py`) -- under
 10% of the way to X[0]. **Ordinary deliberate steering never gets close; the frequency-multiplication
 effect (2*pi*f term) is what makes a small-amplitude high-frequency buzz reach what would otherwise
 require ~230 deg/s of quasi-static wheel motion -- roughly 60-70x leverage vs quasi-static steering at

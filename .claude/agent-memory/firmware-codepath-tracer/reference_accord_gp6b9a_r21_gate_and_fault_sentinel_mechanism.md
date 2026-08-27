@@ -1,6 +1,6 @@
 ---
 name: reference_accord_gp6b9a_r21_gate_and_fault_sentinel_mechanism
-description: gp-0x6b9a in FUN_00034a72 is a GATE INPUT only (one of 5 signals in a composite plausibility check producing flag r21), never a value/index -- corrects build_v58_tva.py's "FIR chain output indexing 0xD28DC" claim on two counts. Also discovers FUN_0003b66a's fault-sentinel protocol (+32767/-1 on implausible inputs) that r21's gate exists to catch. WARNING - this file's "float biquad / IIR" claim is WRONG and was retracted by the team lead; see the correction header below.
+description: gp-0x6b9a in FUN_00034a72 is a GATE INPUT only (one of 5 signals in a composite plausibility check producing flag r21), never a value/index -- corrects builds/v50_v79/build_v58_tva.py's "FIR chain output indexing 0xD28DC" claim on two counts. Also discovers FUN_0003b66a's fault-sentinel protocol (+32767/-1 on implausible inputs) that r21's gate exists to catch. WARNING - this file's "float biquad / IIR" claim is WRONG and was retracted by the team lead; see the correction header below.
 metadata:
   type: reference
 ---
@@ -25,7 +25,7 @@ metadata:
 > Also missed: `tp+0x74be = 0` (`0xC64BE`) makes `0x3b736–0x3b758` (the `divf.s` block) **dead code**.
 > And the consequence this file did not draw: `gp-0x6ba6 == |gp-0x6b9a|`, so it is the **rectification**
 > of the signal V58 watched oscillate — that is the mechanism, and it is why V59 exists.
-> See `memory/accord-gp6ba6-is-the-boost-amplitude-index.md`.
+> See `memory/accord/signals/accord-gp6ba6-is-the-boost-amplitude-index.md`.
 
 Answers team-lead's 6-part ask, verifying/extending [[reference_accord_gp6bbe_baseline_fsm_and_lerp_struct_solved]]
 and [[reference_accord_gp6bbe_angle_rate_path_traced_net_damping]] (same function, prior session) against
@@ -35,7 +35,7 @@ agree bit-for-bit across all 204 entries checked (6 tables x 34 modes).
 
 ## Headline verdict for team-lead
 
-**`build_v58_tva.py`'s description of `gp-0x6b9a` ("the FIR chain's output, indexing boost's NON-flat table
+**`builds/v50_v79/build_v58_tva.py`'s description of `gp-0x6b9a` ("the FIR chain's output, indexing boost's NON-flat table
 0xD28DC") is WRONG on both counts it makes:**
 1. `gp-0x6b9a` does not index anything in `FUN_00034a72` -- it is consumed ONLY as one of five inputs to a
    composite plausibility/validity gate (flag `r21`); the register that indexes both LERP1 and LERP4 is `r9`,
@@ -140,7 +140,7 @@ now re-verified with the full instruction listing:
 fault-sentinel protocol and prevent it corrupting the `gp-0x69ba` EMA state (Q6). The two functions were
 evidently designed together around this contract.
 
-**"FIR chain" is filter-theory-incorrect** for what `build_v58_tva.py` describes -- both branches are
+**"FIR chain" is filter-theory-incorrect** for what `builds/v50_v79/build_v58_tva.py` describes -- both branches are
 explicitly recursive/stateful (feedback via `gp-0x365c` family and `gp-0x364c`/`gp-0x3648`), which is the
 definition of IIR, not FIR (feedforward-only, no state). This matters for any phase/group-delay reasoning
 about this signal.

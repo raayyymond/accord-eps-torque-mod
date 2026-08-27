@@ -41,7 +41,7 @@ which predates this ordering observation.
 Fresh `decompile_function(0x55d80)`. DLC=**3** (24 bits total). Magnitude chain
 `FUN_00049a5a`->`FUN_00049a78`->`FUN_00049a90(v,0,0x3ff)` clamps to **[0,1023], a 10-bit UNSIGNED range**
 -- confirms it is genuinely RECTIFIED (floor-clamped to 0, sign destroyed regardless of source) and
-already carries `gp-0x6b86` (V104's dose instrument, per `build_v104_tva.py`'s 427 repoint, 2-byte
+already carries `gp-0x6b86` (V104's dose instrument, per `builds/v80_v107/build_v104_tva.py`'s 427 repoint, 2-byte
 displacement edit at the packer's source read, NOT the same mechanism as the `0x55EFA` hook). Rate
 **50Hz confirmed** (cadence-2 gate visible: `FUN_00046ea6(3)`/`(4)`/`(10)` triple in the decompile).
 
@@ -108,7 +108,7 @@ own terms, but **unnecessary given 399 offers 6-10 clean bits at 2x the rate wit
 
 ## GATE-1 census, full 4-method standard, fresh this session
 
-Wrote a scan reusing `analysis-2020accord/v70_gp683c_writer_census.py`'s exact encoding logic (disp16
+Wrote a scan reusing `analysis-2020accord/studies/sessions/v70/v70_gp683c_writer_census.py`'s exact encoding logic (disp16
 per-opcode rules, disp23 6-byte extended form, LE32 absolute-literal, movhi/movea pair) against
 `stock_fw_dump/code.bin` (1,048,576 bytes), via `C:/Users/dudei/anaconda3/envs/bin_decompile/python`:
 ```

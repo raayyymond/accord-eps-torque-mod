@@ -130,5 +130,5 @@ expected to generalize with high confidence.
 
 ## Cross-reference
 See [[reference-accord-lkas-only-rate-limiter-c6194]] and the V48B notch design context in
-`docs/HANDOFF-2026-07-21-v48-vibration-loopgain-notch.md` / `eps_v48b_notch_design.py` for why this cave
+`docs/handoffs/2026-07/HANDOFF-2026-07-21-v48-vibration-loopgain-notch.md` / `studies/models/eps_v48b_notch_design.py` for why this cave
 exists (filtered copy of `gp-0x4f60`, DF-I biquad, 21.4 Hz notch).

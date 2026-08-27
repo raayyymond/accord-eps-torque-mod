@@ -8,7 +8,7 @@ metadata:
 # Can Lever A be LKAS-gated? Definitive structural answer (2026-08-08, team-lead brief via LEVERA)
 
 Fresh `decompile_function`/`disassemble_function` on `FUN_0003aa2c` (0x3aa2c-0x3ad73), stock `code.bin`,
-cross-checked against `build_v62_tva.py`, `build_v67_tva.py`, `build_v84/86_tva.py` (which independently
+cross-checked against `builds/v50_v79/build_v62_tva.py`, `builds/v50_v79/build_v67_tva.py`, `build_v84/86_tva.py` (which independently
 derive the same structure — three-way agreement, not just my own read).
 
 ## The gate never wraps the shift — proved from the disasm, not inferred
@@ -56,7 +56,7 @@ feeds — never universally like the raw shift edit.
   arm — confirmed independently from the decompile, matches V86's own comment "gain_A rec0/rec1 DEAD...
   armed path OVERWRITES gain_A with [0xC6444]")**: stock 512 on every repoint-carrying build to date
   (V67→V86B) — this is the cell V86's own comments call "the untried S3 lever." 512→1024 is the exact,
-  untested, cal-only route. Caveat: `build_v67_tva.py` records r26's own averaged input's cal base
+  untested, cal-only route. Caveat: `builds/v50_v79/build_v67_tva.py` records r26's own averaged input's cal base
   (`0xC6564`) as 40 bytes of exact zero — if that holds, r26 is near-input-starved regardless of what
   multiplier sits on 0xC6444, capping this route's real-world payoff independent of the arithmetic.
 
@@ -64,7 +64,7 @@ feeds — never universally like the raw shift edit.
 
 Both `0xC6444`/`0xC6446` are single-reader (`FUN_0003aa2c`-exclusive, confirmed 2-method in
 [[reference_accord_gp683c_repoint_hypothesis_and_v850_bit5_encoding_rule]]), inside the existing
-CRC-covered `CAL_BLOCK=(0xC6000,0xC6FFC)` (`build_v53_tva.py:147`). GATE 1 is vacuous — pure ROM cal
+CRC-covered `CAL_BLOCK=(0xC6000,0xC6FFC)` (`builds/v50_v79/build_v53_tva.py:147`). GATE 1 is vacuous — pure ROM cal
 read, no RAM cell, no register-indirect access. GATE 2 passes on the same sign/phase argument as the
 already-flown Lever A/Lever B (lead/damping term, same mechanism) — for r24 this is moot since a bigger
 dose is already flying; for r26 it's a real but likely low-yield open item.
@@ -80,7 +80,7 @@ field edit. This is correctly the blocked route. The cal-doubling routes are the
 
 Computed `tp+0x74FA` as `0xC63FA` first (dropped the leading 7 vs 6 sloppily) — WRONG. Correct:
 `tp=0xBF000`, `0xBF000+0x74FA=0xC64FA`. Verified by `read_memory(0xC64FA)`=byte `05`, which matches the
-"state>=5" persistence-ramp threshold framing in `build_v62_tva.py`'s docstring exactly, confirming the
+"state>=5" persistence-ramp threshold framing in `builds/v50_v79/build_v62_tva.py`'s docstring exactly, confirming the
 fix. `0xC61F6` (tp+0x71F6, the rate-lane deadband) = byte `03`, independently matches
 `build_v66/67_tva.py`'s "0xC61F6 3 -> 0 MUST NOT BE MADE" record. Both corroborations came from a fresh
 `read_memory`, not from re-trusting the earlier wrong arithmetic.

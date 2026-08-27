@@ -93,7 +93,7 @@ telemetry is CAN-only, it can test hypotheses that key on `gp-0x4f60` (e.g. the 
 
 ## Physical units (N·m) — NOT FOUND, don't invent one
 
-Checked `docs/HONDA-EPS-PID-KNOWLEDGE.md` (the kit's canonical community-PID reference) for any DBC scale
+Checked `docs/research/HONDA-EPS-PID-KNOWLEDGE.md` (the kit's canonical community-PID reference) for any DBC scale
 factor or N·m grounding for `STEER_TORQUE_SENSOR` or Sensor A/B counts — found none; that document covers
 openpilot PID/torque-controller tuning gains (`kf=0.5` torque-scale vs `kf=0.00006` PID-scale), not
 firmware sensor-to-physical-unit scaling. No UDS/RDBI service or embedded calibration constant grounding

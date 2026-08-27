@@ -110,7 +110,7 @@ at `0x345fa-0x34610` (`gp-0x6ac0>=13001` OR `|gp-0x6abe|>13000`) unreachable —
 computes. [Open, unconfirmed: absolute physical units of `gp-0x4f50` — the `×120000/16384` scaling is
 dimensionally consistent with degrees/sec IF the producing tick is exactly 3 ms (333⅓ Hz) and the encoder
 is 14-bit/360° per rev, but no 3 ms tick period was independently confirmed in the binary — this is
-`[INFERRED]`, not established, and the kit's task-rate question (100 Hz vs 1 kHz, `eps_lkas_chain_model.py`
+`[INFERRED]`, not established, and the kit's task-rate question (100 Hz vs 1 kHz, `model/eps_lkas_chain_model.py`
 line 179) remains open regardless.]
 
 **★★★ 2026-07-20 — phase lag from the `α=37/128` filter recomputed via exact discrete-time formula (not
@@ -143,7 +143,7 @@ at both candidate task rates:
 (lag<90°) holds at BOTH candidate rates (see above, ~18°/~40°); the gain-cut's safety margin (sparing
 3Hz assist authority) holds ONLY at the 1kHz candidate and would be a serious drivability regression at
 the 100Hz candidate. Given the kit's task rate is still unresolved
-(`analysis-2020accord/eps_lkas_chain_model.py` line 179, multiple prior sessions), **the damper restore is
+(`analysis-2020accord/model/eps_lkas_chain_model.py` line 179, multiple prior sessions), **the damper restore is
 the more robust near-term choice specifically because its safety case does not depend on that open
 question — the gain-cut's does.** Not mutually exclusive; gain-cut is a reasonable follow-up once task
 rate is independently confirmed. Downstream consumers of `gp-0x6df4` beyond the boost lane itself were

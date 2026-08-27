@@ -10,7 +10,7 @@ metadata:
 Platform: 2020 Honda Accord 39990-TVA-A160, Renesas uPD70F3508/V850E2. All addresses verified on
 `../accord-firmware/analysis-2020accord/stock_fw_dump/code.bin` (flat, file offset == address) with
 `r2 -a v850.gnu -b 32 -m 0 -s <addr> -c 'pd N' code.bin`. gp(r4)=0xFEDF8000, tp(r5)=0xBF000.
-SVD: `analysis-2020accord/svd_for_ghidra/UPD70F3508_V850E2Px4.svd`.
+SVD: `analysis-2020accord/reference/svd_for_ghidra/UPD70F3508_V850E2Px4.svd`.
 
 **Mission:** find every write to `FCN0M{N}CTL` (SVD addressOffset `0x09038+N*0x40`, absolute
 `0xFF489038+N*0x40`, "bit-set/clear mechanism" register) — especially writes that set `CSETR`
@@ -44,7 +44,7 @@ Empirical cross-check that r2's *displacement* fields (not the garbled base-setu
 trustworthy here: `sst.h rX,16[ep]` where `ep=0xFF489028` (MID0H) resolves to `0xFF489038` = CTL —
 an EXACT match to the SVD's stated register layout (`MID0H@0x09028`, `CTL@0x09038`, delta
 `0x10`=16 decimal). This rules out the rizin-0.8.2 "×2 halfword-scaling" bug documented in
-`analysis-2020accord/fw_inventory/decompilation/disasm_v850.py` (a DIFFERENT tool/version) for
+`analysis-2020accord/reference/fw_inventory/decompilation/disasm_v850.py` (a DIFFERENT tool/version) for
 THIS session's r2 v850.gnu build — displacements are trustworthy, only certain base-setup opcodes
 are unrecognized.
 

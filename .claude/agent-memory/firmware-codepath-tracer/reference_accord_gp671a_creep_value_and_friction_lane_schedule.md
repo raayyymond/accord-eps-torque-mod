@@ -113,8 +113,8 @@ against a known value before using it.
 
 ## 6. Not answerable from disk: what index/amplitude values actually OCCUR
 
-The six caches on disk (`_cache_r47/r4a/r4e/r4f_ratchet.npz`, `_cache_r4f_v69.npz`,
-`_cache_r65_records.pkl`) carry only CAN-derived channels (`tq`, `rate`, `ang`, `v`, `csrate`, `b4`,
+The six caches on disk (`_scratch/cache/r47/r4a/r4e/r4f_ratchet.npz`, `_scratch/data/_cache_r4f_v69.npz`,
+`_scratch/data/_cache_r65_records.pkl`) carry only CAN-derived channels (`tq`, `rate`, `ang`, `v`, `csrate`, `b4`,
 `st18`, `lat`, `e4`, `seg`, `press`). **`b4` takes only 2-3 distinct values per route** (135/199, 207, 135)
 — build-specific probe bits, **not a thermometer**. **No cache contains `gp-0x6abc` or `gp-0x6ba6`.**
 The only `gp-0x6ba6` thermometer ever flown was V59 on route `2c`
@@ -165,7 +165,7 @@ Ghidra's `0x26758/0x66714/0x671A4/0x671A8/0xE16xx` are branch- and call-target T
 🛑 **`0xC640A`/`0xC640C` are NOT virgin.** V93 and V94 cut both ×0.75 (−8192→−6144,
 −3277→−2458); image census **100/102 stock, 2 carry the cut**. **V94 FLEW route `7d` and the operator
 stopped driving it.** CONFOUNDED — V93/V94 also cut the mode records ×0.25/×0.50, so the fallback edit
-is not independently attributable. ⚠ `build_v93_tva.py:79` designed that flight as an explicit **branch
+is not independently attributable. ⚠ `builds/v80_v107/build_v93_tva.py:79` designed that flight as an explicit **branch
 discriminator** (*"ratio 0.75 ⇒ a FALLBACK constant is live"*) — **the drive was aborted and the ratio
 was never harvested.** A purpose-built on-car test of this exact question whose readout was never taken.
 

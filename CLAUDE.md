@@ -48,7 +48,7 @@ repoint this index at all of them** — do not leave a pointer to a file that ca
    🛑 **HARD CAP 256 KB — keep it under ~150 KB.** It hit 506 KB on 2026-08-09, past the `Read` limit,
    so it could not be loaded in one call and **the tail was silently invisible**. **Update it IN PLACE;
    never append a new dated block — supersede the old one.** Superseded sections go to
-   `docs/STATE-ARCHIVE-*.md` (a record, not an instruction), per-build history to `BUILD-LINEAGE.md`.
+   `docs/archive/STATE-ARCHIVE-*.md` (a record, not an instruction), per-build history to `BUILD-LINEAGE.md`.
    **Check its size at every close-out.** The same cap applies to any file an agent must read whole,
    `memory/MEMORY.md` included.
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
@@ -56,10 +56,12 @@ repoint this index at all of them** — do not leave a pointer to a file that ca
    struck levers, Parts 2–4) · `docs/BUILD-LINEAGE-PART1-LEVER-INDEX.md` (the lever index — **grep it
    by address**) · `docs/BUILD-LINEAGE-CATCHUP-V76-V100.md` (the per-build ledger, V76→V100).
    ⚠ *"Part 2"* still means the **code-cave section inside the entry file** — it did not move.
-3. **The latest `docs/HANDOFF-*.md`** — narrative of the most recent session, and the chain behind it.
+3. **The latest `docs/handoffs/<YYYY-MM>/HANDOFF-*.md`** — narrative of the most recent session, and the chain behind it.
    `docs/INDEX.md` lists the full reading order. 🛑 **Results, CIs and retractions live in `STATE.md`
    and the handoffs — NOT here.** This file is an index; keep it that way.
 4. **`memory/MEMORY.md`** — 🛑 **PAGINATED IN THREE: read `MEMORY-PART2.md` and `MEMORY-PART3.md` too**
+   — the notes themselves are nested one level below (`memory/accord/`, `memory/reference/`, `memory/feedback/` …);
+   the indexes carry the full relative path, so follow the link rather than guessing the folder
    — and **`memory/MEMORY_CONSTELLATION.md`**: the flat fact index and the
    relational layer. The constellation carries the *chains* between facts, which the flat list does not.
 
@@ -154,9 +156,35 @@ firmware bytes.** Two are quoted here because they have each cost this kit a wro
 
 ---
 
-## Repo layout — the parts `ls` won't tell you
+## Repo layout — reorganised 2026-08-26
 
-`ls` covers the tree. Only these need saying:
+Every folder was flat and untruncatable before; the tree below is the shape now. `ls` any one level
+and it fits on a screen.
+
+```
+docs/     STATE.md · BUILD-LINEAGE*.md · INDEX.md · AGENTS.md   (the entry docs stay at the top)
+          handoffs/<YYYY-MM>/ · traces/ · specs/{,design/} · scoring/ · review/ · research/
+          guides/ · archive/{,arc-maps/}
+memory/   MEMORY*.md · MEMORY_CONSTELLATION.md   (indexes stay at the top)
+          accord/{builds,mechanism,firmware,instruments,calibration,signals}/
+          reference/{firmware,builds,measurement,tooling,can}/ · feedback/{process,measurement,tooling,builds}/
+          project/ · builds/ · dream/ · misc/
+analysis-2020accord/   model/ · lib/ · builds/ · extract/ · verify/ · studies/<topic|sessions/<tag>>/
+          notes/ · reference/ · figures/ · sessions/ · archive/ · ghidra_project/ · _scratch/
+rlog-tools/            lib/ · decode/ · score/ · probe/ · studies/<topic>/ · archive/ · cereal/ · _scratch/
+tools/ · flashing-2020accord/   unchanged
+_scratch/ (repo root and one per kit dir)   cache/<route>/ · out/ · data/ · logs/   — gitignored, regenerable
+```
+
+🛑 **The kit dirs are import roots, marked by a `.pkgroot` file.** Scripts that import a sibling by
+bare name carry a short `PATH BOOTSTRAP` block at the top that walks up to `.pkgroot` and puts the kit
+root and every code subfolder on `sys.path`, so they run from any CWD and from any nesting depth.
+**Do not delete `.pkgroot`, and keep the block when you move a script.**
+
+🛑 **`__file__`-relative anchors were re-based when the files moved** (`Path(__file__).resolve().parent`
+→ `.parents[N]`, one extra `dirname()` per level). If you move a script again, re-base its anchor too.
+
+Only these other things need saying:
 
 - **The GOLDEN MODEL — the full driver-assist chain end to end — is FOUR modules behind a facade.**
   🛑 **SPLIT 2026-08-12 — it was 310 KB, over the `Read` cap, so every agent told to "read the golden
@@ -164,11 +192,11 @@ firmware bytes.** Two are quoted here because they have each cost this kit a wro
 
   | file | KB | contents |
   |---|---|---|
-  | `analysis-2020accord/eps_lkas_chain_model.py` | 31 | **FACADE** — re-exports all 87 symbols; `import eps_lkas_chain_model` still works unchanged |
-  | `analysis-2020accord/eps_chain_core.py` | 37 | SECTIONS 0–1 — `Calibration`, containers, helpers |
-  | `analysis-2020accord/eps_chain_lanes.py` | 119 | SECTIONS 2–3 — CAN intake, torque voter, base assist, boost index, the rate lanes |
-  | `analysis-2020accord/eps_chain_control.py` | 90 | SECTIONS 4–6 — engage SM, arbitration, mixer/gate, aggregator, governor, analyses |
-  | `analysis-2020accord/eps_chain_delivery.py` | 33 | SECTIONS 7–9 — EME shaper, lockstep monitor, FOC/PWM, `control_task`, `_self_check`, `_demo` |
+  | `analysis-2020accord/model/eps_lkas_chain_model.py` | 31 | **FACADE** — re-exports all 87 symbols; `import eps_lkas_chain_model` still works unchanged |
+  | `analysis-2020accord/model/eps_chain_core.py` | 37 | SECTIONS 0–1 — `Calibration`, containers, helpers |
+  | `analysis-2020accord/model/eps_chain_lanes.py` | 119 | SECTIONS 2–3 — CAN intake, torque voter, base assist, boost index, the rate lanes |
+  | `analysis-2020accord/model/eps_chain_control.py` | 90 | SECTIONS 4–6 — engage SM, arbitration, mixer/gate, aggregator, governor, analyses |
+  | `analysis-2020accord/model/eps_chain_delivery.py` | 33 | SECTIONS 7–9 — EME shaper, lockstep monitor, FOC/PWM, `control_task`, `_self_check`, `_demo` |
 
   Dependency order is strict and acyclic: `core` → `lanes` → `control` → `delivery`. **Keep it updated.**
   🛑 **VERIFICATION CONTRACT — re-run it after ANY edit to these files:** `import eps_lkas_chain_model`
@@ -177,13 +205,13 @@ firmware bytes.** Two are quoted here because they have each cost this kit a wro
 
 - 🛑 **CITE BY HEADING OR GREP STRING, NEVER BY LINE NUMBER.** The golden model split on 2026-08-12 and
   `docs/BUILD-LINEAGE.md` + `memory/MEMORY.md` split on 2026-08-21, so every line-number citation
-  predating those dates is off. Known casualties — old golden-model cites in `v77_dose_math.py:20,26,193`,
-  `_r5d_lib.py:191`, `build_v62_tva.py:17`, `rlog-tools/decode_v70_probe.py:67`; and in
+  predating those dates is off. Known casualties — old golden-model cites in `studies/sessions/v77/v77_dose_math.py:20,26,193`,
+  `lib/_r5d_lib.py:191`, `builds/v50_v79/build_v62_tva.py:17`, `rlog-tools/probe/decode_v70_probe.py:67`; and in
   `.claude/agent-memory/firmware-codepath-tracer/`: `BUILD-LINEAGE.md:929`→`:831`, `:705`→`:607`,
   `:1170-1198`→`:1072-1100`.
 
 - **External artifact root: `../accord-firmwares`** (note the plural). Python tools honour
-  **`ACCORD_FIRMWARE_ROOT`** — the default path in `firmware_paths.py` is stale, so set it:
+  **`ACCORD_FIRMWARE_ROOT`** — the default path in `lib/firmware_paths.py` is stale, so set it:
   `ACCORD_FIRMWARE_ROOT=C:/Users/dudei/Desktop/Projects/accord-firmwares`.
   Holds `analysis-2020accord/` (stock dumps, `_*_plain_image.bin`) and `flashing-2020accord/rwd/`.
 

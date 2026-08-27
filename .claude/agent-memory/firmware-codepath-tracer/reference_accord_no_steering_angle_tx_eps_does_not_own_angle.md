@@ -107,7 +107,7 @@ Follow-up mission: "trace the CAN angle TX packer back to source + any stored of
 packer exists (above), so nothing to trace forward. For "stored offset read at init," two things found:
 
 **1. There IS a genuine, separate hardware "Data Flash" region: `0x02000000-0x02008000` (32KB),
-per `docs/FIRMWARE-DECOMPILE-GUIDE.md`'s own memory-map table, documented there as "calibration —
+per `docs/guides/FIRMWARE-DECOMPILE-GUIDE.md`'s own memory-map table, documented there as "calibration —
 doubled-with-tag-word storage"** (a redundant/wear-leveled non-volatile scheme — this is the closest
 analog to "EEPROM" on this MCU, distinct from the static `0xC5xxx/0xC6xxx` tp-relative CODE-FLASH cal
 block that all V14-V50 builds have edited). **This region is NOT included in `code.bin`** (`list_segments`

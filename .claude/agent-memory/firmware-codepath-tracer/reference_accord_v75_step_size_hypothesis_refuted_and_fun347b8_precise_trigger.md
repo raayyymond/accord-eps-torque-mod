@@ -8,7 +8,7 @@ metadata:
 Built 2026-08-06, testing the V75 stoplight-launch incident's step-size hypothesis (H). Program:
 `code.bin` (stock, confirmed via `list_open_programs` before starting). Method: decompile-first, then
 disasm to pin exact conditions; every cal cross-checked with fresh `read_memory`; the Q10 damper chain
-independently re-implemented in Python and validated against `build_v75_tva.py`'s own asserted
+independently re-implemented in Python and validated against `builds/v50_v79/build_v75_tva.py`'s own asserted
 `LIVE_EXPECT` constants (`dose_old=50, dose=137, dose_69hz=181` at `BURST_RATE=99/127`) -- exact match,
 confirming the model.
 
@@ -42,7 +42,7 @@ cycle jump in its TARGET (`gp-0x6b94`, since the aggregator sums `gp-0x6bd0` wit
 range-gated ±2048 inclusive, per [[reference_accord_v75_ceiling_c77a0_noclip_asymmetry_and_aggregator_inclusive_bound]]).
 
 **The numbers** (Python mirror of `FUN_00034350`'s exact Q10 chain, B=D=1024 asserted flat on engaged
-modes, validated against `build_v75_tva.py`'s own `LIVE_EXPECT`):
+modes, validated against `builds/v50_v79/build_v75_tva.py`'s own `LIVE_EXPECT`):
 ```
 mode 26, SPEED=0 (stoplight/creep -- FactorC is flat at Y[0] for ALL speed<2240ct=35km/h, so the WHOLE
 launch sits on FactorC's floor value; speed contributes ZERO per-cycle variation during a launch):
@@ -54,7 +54,7 @@ launch sits on FactorC's floor value; speed contributes ZERO per-cycle variation
       400     225   297  1.32x | BOTH saturated
      1555     225   297  1.32x | BOTH saturated (route-5d's own measured max column rate, 330 deg/s)
      4000     388   512  1.32x | BOTH saturated at FactorE's OWN X3 -- V75 lands EXACTLY on the 512
-                                 ceiling floor (566*927>>10=512.4->512, matches build_v75_tva.py's own
+                                 ceiling floor (566*927>>10=512.4->512, matches builds/v50_v79/build_v75_tva.py's own
                                  "touches the floor by construction" statement)
 ```
 **Max single-100Hz-cycle `|Δgp-0x6bd0|` achievable by EITHER build, at ANY rate swing up to and including
@@ -139,5 +139,5 @@ account, REFINED (not contradicted) by this session's fresh disasm of the exact 
 [[reference-accord-governor-energy-budget-and-step-selector]] — STEP selector and FUN_0004595a's
 lag-tolerant behavior, both re-confirmed fresh and applied quantitatively here.
 [[reference_accord_v75_true_headroom_e_exhausted_c_max_566]], [[reference_accord_v75_ceiling_c77a0_noclip_asymmetry_and_aggregator_inclusive_bound]] — source tables (FactorC/E, ceiling) this session's Python
-mirror reproduces exactly against `build_v75_tva.py`'s own `LIVE_EXPECT` assertions.
+mirror reproduces exactly against `builds/v50_v79/build_v75_tva.py`'s own `LIVE_EXPECT` assertions.
 [[reference_accord_gp6ac2_is_backdrive_rate_not_gp6ac0_twin]] — gp-0x6ac2's identity, used throughout.

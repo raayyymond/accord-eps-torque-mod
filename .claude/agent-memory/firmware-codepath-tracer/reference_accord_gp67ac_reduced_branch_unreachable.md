@@ -127,7 +127,7 @@ restore are NOT at risk from this gate.
    but **a probe on it would read 0 on every frame, forever, by construction.** It buys ZERO information;
    do not spend a V72 rung here. If insurance against a FUTURE accidental repoint of `tp+0x5124`/`0xC4124`
    is wanted, that is a **static byte-check in the build script** (already the kit's practice via
-   `diff_build_vs_stock.py`), not a runtime probe.
+   `verify/diff_build_vs_stock.py`), not a runtime probe.
 
 ## Related
 [[reference_accord_app_ram_layout_and_boot_init_loops]] — source of the `.data` boot-value formula used

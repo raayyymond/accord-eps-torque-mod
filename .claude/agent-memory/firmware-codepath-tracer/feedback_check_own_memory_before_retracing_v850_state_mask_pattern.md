@@ -26,7 +26,7 @@ before this session."* **That's at least two prior corrections of the identical 
 sites, before mine.**
 
 I caught my own version only because I went looking for corroboration on the specific NEW mask (`0xD30`)
-I'd found — cross-referencing `docs/LEDGER-V38-TO-V84.md` and the memories above revealed `0xD30 = 0xC30
+I'd found — cross-referencing `docs/archive/LEDGER-V38-TO-V84.md` and the memories above revealed `0xD30 = 0xC30
 | 0x930`, a UNION of two ALREADY-DOCUMENTED per-STATE masks (`0xC30`=aggregator, `0x930`=arbitration),
 not a novel phase divider at all.
 

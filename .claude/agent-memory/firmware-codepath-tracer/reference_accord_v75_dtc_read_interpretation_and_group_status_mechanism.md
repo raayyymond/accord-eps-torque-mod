@@ -99,7 +99,7 @@ pre-V21 and a same-fault_id-4 repeat trip would not add a NEW bit under that sam
    voltage transient, but this is [BELIEF, unconfirmed].
 3. **`0xD48394` (fault_id 73, group 20)** — **CHANGED (`0x40→0x48`, confirmedDTC newly set) but BEST
    EXPLAINED AS STALE, from a documented ~3.5-week-old event, not V75.** This is DTC 0x49 = "torque-arb
-   Counter B" — `build_v37_tva.py`'s own text documents an **on-car trigger of exactly this DTC during
+   Counter B" — `builds/v18_v49/build_v37_tva.py`'s own text documents an **on-car trigger of exactly this DTC during
    V36 testing (2026-07-14)**: "under sustained torque>112 the DTC counter free-runs to 100 ... and fires
    STEER_STATUS=7 + `FUN_00016de6(0x49,1,1,1)` = DTC 0x49. That set a burst of dashboard warning lights
    and dropped LKAS." V37 (built same session) permanently disabled the mechanism by raising cal

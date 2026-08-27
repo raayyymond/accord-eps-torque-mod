@@ -9,7 +9,7 @@ metadata:
 "V75 tripped an int/float lockstep because the damping cal was edited in int only, float twin left at
 stock." Programs: `code.bin` (stock), byte-read directly against the two built plain images
 `_v74_engagedcols_x0_12_addonly_plain_image.bin` and `_v75_CY0.566-EX1.200_magprobe_plain_image.bin`
-(both confirmed on-disk, matching `docs/STATE.md`/`build_v75_tva.py`'s own SHA). Method: decompile-first
+(both confirmed on-disk, matching `docs/STATE.md`/`builds/v50_v79/build_v75_tva.py`'s own SHA). Method: decompile-first
 (fresh `FUN_00034350`/`FUN_000347b8` decompiles), then an exhaustive Python byte-exact scan, then a
 firmware-exact grid replay of `damper_authority()` using the REAL byte tables from all three images (not
 hand-copied numbers).

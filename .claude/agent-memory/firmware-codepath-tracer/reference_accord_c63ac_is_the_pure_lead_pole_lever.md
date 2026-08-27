@@ -13,7 +13,7 @@ dissipation** lever buys 1 and costs 2. Only a **pure lag-removal** lever buys b
 axis to use on this crux; damping-only levers are likely to fail on the operator's own scale even when
 the 6–9 Hz instrument improves.
 
-## The arithmetic (EVIDENCE — `FUN_00038148`, `_v97/ledger_v97_poles.py`)
+## The arithmetic (EVIDENCE — `FUN_00038148`, `sessions/v97/ledger_v97_poles.py`)
 
 ```
 gp-0x374c += ((target - gp-0x374c) * A) >> 10        # A = 0xC63AC = 102 stock
@@ -60,7 +60,7 @@ Raising α widens the passband, so Path 2 transmits more HF. A=205 vs stock:
 1.38× back at 21 Hz. **Raising `0xC63AC` may partially undo V62.** Price this before flying.
 
 ## "Must-not-move list" is weaker than it sounds
-`build_v83a_tva.py:159` freezes `0xC63AC`, but the bound it protects is V83a's ≤1.32× max-effect estimate
+`builds/v80_v107/build_v83a_tva.py:159` freezes `0xC63AC`, but the bound it protects is V83a's ≤1.32× max-effect estimate
 for a **different cell (`0xC63A0`)**. It is an **analysis-comparability** freeze, **not a stability
 veto**. Do not read it as a safety finding.
 
@@ -70,7 +70,7 @@ veto**. Do not read it as a safety finding.
   revert (2 of 89). ⚠ Corrects the common "V43 was 1024→64" — that was V49. Both *lowered* it, adding
   **55.6°** and **35.8°** of lag at 7.79 Hz — the wrong way. V43's null therefore says something about
   the D-path's **authority**, not only its band.
-- **`0xC6AE6` (Kd) — VIRGIN, conflicted, and NOT a scalar**: `build_v43_tva.py:240` documents it as a
+- **`0xC6AE6` (Kd) — VIRGIN, conflicted, and NOT a scalar**: `builds/v18_v49/build_v43_tva.py:240` documents it as a
   4-entry Y row `(2048,2048,2048,2048)` — flat, so it acts scalar, but a change is four cells. D pumps at
   7.79 Hz yet damps 16–35 Hz ⇒ the same trade as `0xC63AC` in the opposite direction. Price both against
   ONE shared phase budget.

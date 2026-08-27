@@ -30,7 +30,7 @@ Decompiled `FUN_00036c12` in full, then pinned the crux gate with `disassemble_f
 
 ## Corrections to golden-model / prior memory
 
-1. **Input is `gp-0x6c2c`, not `gp-0x6c2e`.** `eps_lkas_chain_model.py` said `gp-0x6c2e`
+1. **Input is `gp-0x6c2c`, not `gp-0x6c2e`.** `model/eps_lkas_chain_model.py` said `gp-0x6c2e`
    (fixed this session, both the summary table and the `assist_shaping_lanes` docstring). Disasm shows
    exactly one `ld.h -0x6c2c[gp]` in the whole function (`0x36c1a`); `gp-0x6c2e` never appears.
 2. **LERP axis is `gp-0x6a5e` = voted VEHICLE SPEED, not "AVG torque."** Same correction already applied

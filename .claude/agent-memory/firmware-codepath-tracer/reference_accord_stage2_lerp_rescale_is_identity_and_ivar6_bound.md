@@ -68,7 +68,7 @@ drops to **7,000 above 50 km/h** ⇒ **a highway inversion MUST include it; the 
 Conditional Y floors are no-ops on stock: gates `0xC613E` = `0xC6140` = 15000, floors `0xC617A` = `0xC617C` = 0.
 `X[9] = max(0xC613C=14490, X[8])`, `Y[9] = 0xC6200 = 8192`.
 
-Doc: `docs/TRACE-2026-08-12-stage2-lerp-knots.md`. Script: `analysis-2020accord/_v97/stage2_lerp_invert.py`.
+Doc: `docs/traces/TRACE-2026-08-12-stage2-lerp-knots.md`. Script: `analysis-2020accord/sessions/v97/stage2_lerp_invert.py`.
 Related: [[reference_accord_fun38148_lane_weight_map_and_c63a0_reconciliation]],
 [[reference_accord_task5_rate_resolved_100hz_and_fun389ec_structure]],
 [[reference_accord_6to9hz_loop_is_pid_torque_tracker_phase_budget]].

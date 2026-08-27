@@ -17,7 +17,7 @@ This file cited [[reference_accord_patha_arb_is_live_not_inert_correction]] as s
 checked.
 
 **Fresh check, 2026-08-12**: `get_function_callers(0x2a93a)` and `get_xrefs_to(ram:2a93a)` on `code.bin`
-— **zero callers, zero xrefs, both methods.** This matches `build_v37_tva.py`/`build_v38_tva.py`'s own
+— **zero callers, zero xrefs, both methods.** This matches `builds/v18_v49/build_v37_tva.py`/`builds/v18_v49/build_v38_tva.py`'s own
 long-standing annotation, present since those builds: `"FUN_0002a93a (DEAD: 0 callers/xrefs/ptrs)"` — a
 fact that was already on record in the build scripts and simply never cross-checked against this file's
 claim before it was written.

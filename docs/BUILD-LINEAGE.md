@@ -34,7 +34,7 @@ displacement + one shift immediate. **No cave change.**
 | `_v107_V106BASE-GP6B26.RESHAPE_B-TAP.6C2C.SAR3_plain_image.bin` | `c32c3ba5da859335fa7637cca59e9ac3e40f8f6cdcb817dd582884be080a0c45` |
 | `39990-TVA,A160-V107-V106BASE-GP6B26.RESHAPE_B-TAP.6C2C.SAR3-0x13000-0x100000.rwd` | `78eae7da20a87f1a95295eca11da0d08f4cf2b3b823785594cde4be93a7b24ff` |
 
-builder `analysis-2020accord/build_v107_tva.py`, **55/55 assertions**, BASE = V106.
+builder `analysis-2020accord/builds/v80_v107/build_v107_tva.py`, **55/55 assertions**, BASE = V106.
 **10 payload + 8 CRC = 18 bytes vs V106. ZERO unattributed vs stock. Two CRC trailers
 (`0x0C4FFC`, `0x0D7FFC`).** Exactly ONE V107 `.rwd` on disk.
 
@@ -77,7 +77,7 @@ the biquad · **the whole cave, so `b5` still means what route a6 measured it ag
 `|gp-0x6c2c| > 12,800` against a corpus max of 5,320) and **NOT virgin: V93/V94 cut it ×0.75 and V94
 flew as route `7d`, the drive the operator aborted as "not safe to drive."**
 
-Narrative: `docs/HANDOFF-2026-08-23-v107-the-schedule-is-the-lever.md`.
+Narrative: `docs/handoffs/2026-08/HANDOFF-2026-08-23-v107-the-schedule-is-the-lever.md`.
 
 ---
 
@@ -88,7 +88,7 @@ Narrative: `docs/HANDOFF-2026-08-23-v107-the-schedule-is-the-lever.md`.
 | `_v106_V105BASE-GP6B26.X3.0.D7A5C-D7A6C_plain_image.bin` | `78528aa35b9ea2fa1ea990b2c8d41c7adc784fc17f0b481d66ddcfd3667cb65a` |
 | `39990-TVA,A160-V106-V105BASE-GP6B26.X3.0.D7A5C-D7A6C-0x13000-0x100000.rwd` | `e5ac6927a112a0cdf944971aebf7aa14efe6ad8597e17835bbc62d1589bfecbc` |
 
-**Builder** `analysis-2020accord/build_v106_tva.py`, **50/50 assertions**, reproduces bit-for-bit.
+**Builder** `analysis-2020accord/builds/v80_v107/build_v106_tva.py`, **50/50 assertions**, reproduces bit-for-bit.
 **16 bytes / 3 runs vs V105** (12 payload + 4 CRC), **zero unattributed**. **ONE CRC trailer, `0xD7FFC`.**
 
 ```
@@ -117,8 +117,8 @@ Reaches **both** bands (gain **1.478 @ 7.79 Hz**, **3.706 @ 21.73 Hz**), and �
 dosed**. Engaged duty must collapse from its **0.4019** baseline if the car reads modes 26/27 engaged;
 unchanged confirms the V91/V92 mode-record suspicion. **MANUAL is the built-in control.**
 
-🛑 **26/27 ONLY — the family has FOUR members.** `build_v100_tva.py`'s `DOSE_FAMILY_Y` lists **three**
-(`build_v105_tva.py` already had four). Mode 24 (`0xD6A6C`) is **MANUAL** ⇒ dosing it is inert for an
+🛑 **26/27 ONLY — the family has FOUR members.** `builds/v80_v107/build_v100_tva.py`'s `DOSE_FAMILY_Y` lists **three**
+(`builds/v80_v107/build_v105_tva.py` already had four). Mode 24 (`0xD6A6C`) is **MANUAL** ⇒ dosing it is inert for an
 engagement-conditional symptom and changes manual feel instead. Mode 25 (`0xD7A4C`) has an **unconfirmed
 role** ⇒ the V69/V70 trap class. **Both left at Honda's stock.**
 
@@ -126,7 +126,7 @@ role** ⇒ the V69/V70 trap class. **Both left at Honda's stock.**
 interlock is **untrippable at any multiplier, by construction, not by care.** (V73 raised a *different*
 cell's clamp past its trip; **V74 and V75 both hard-faulted mid-drive.**)
 
-**Drive card — nine numbered questions:** `docs/HANDOFF-2026-08-22-v106-the-damper-and-the-one-mode.md` §5.
+**Drive card — nine numbered questions:** `docs/handoffs/2026-08/HANDOFF-2026-08-22-v106-the-damper-and-the-one-mode.md` §5.
 
 ---
 
@@ -138,7 +138,7 @@ cell's clamp past its trip; **V74 and V75 both hard-faulted mid-drive.**)
 | `39990-TVA,A160-V105-…NOTCH25.5HZ…-0x13000-0x100000.rwd` | `5592f7ca52d07247152e5930c579b6ba35e2f5fa5a3adcafcb08b95fff6c89a8` |
 
 **24 bytes / 8 runs vs V104** (16 payload + 8 CRC), **zero unattributed**. 165/165 assertions, 3 runs to
-identical SHA256, both SHAs hard-asserted in `analysis-2020accord/build_v105_tva.py`.
+identical SHA256, both SHAs hard-asserted in `analysis-2020accord/builds/v80_v107/build_v105_tva.py`.
 ⚠ A superseded 26.0 Hz cut exists as `SUPERSEDED-DO-NOT-FLASH-NOTCH26HZ-…_plain_image.bin`
 (`98f94e7e…44de52db`); **its `.rwd` was DELETED** (`4ee8ea11…d5a6a6fb`). **Exactly one flashable V105
 `.rwd` on disk.**
@@ -167,7 +167,7 @@ window (`0x035A30`–`0x035A58`), and **0 `movea`/`movhi` hits on the imm16s** �
 absolute addressing either. **PURE CAL — no cave, no code edit, nothing in this kit's only bricking class.**
 
 ### WHY IT IS NOT THE REFUSED NOTCH
-`docs/GATE2-2026-08-20-notch-sign.md` refused re-centring **at 6–9 Hz**, killed on `Re(u/T)` phase.
+`docs/review/GATE2-2026-08-20-notch-sign.md` refused re-centring **at 6–9 Hz**, killed on `Re(u/T)` phase.
 **V105 targets 26 Hz — a different band and a different argument.** The 6–9 Hz cost here is
 **+2.7–5.1° of lag with magnitude essentially unchanged** (0.9863 vs 0.9829).
 
@@ -191,7 +191,7 @@ after **anchoring** the cave extract with `image.find(blob)` → `0xC4B34`.
 **A 6-decimal-place decimal does NOT round-trip a float32.** `a1` needs **8** significant digits and
 `b1` needs **9**; `a2`/`c4` survived their rounding **by luck**, which made the failure look selective
 and therefore look like an encoding bug. **THE FORMULA IS THE SPECIFICATION**; hex in a message is an
-**assertion target, never the source**. `build_v105_tva.py` embeds the formula and **asserts AGAINST**
+**assertion target, never the source**. `builds/v80_v107/build_v105_tva.py` embeds the formula and **asserts AGAINST**
 the lossy encodings.
 
 ### DRIVE CARD
@@ -214,7 +214,7 @@ the ceiling is scaled by an authority ramp (`cal(0xC6492)`=33 ct/tick ⇒ **993 
 
 **16 bytes / 7 runs vs V103** (8 payload + 8 CRC), zero unattributed. **Cave byte-identical to V103
 (164 B). No new code cave, no hot-path insertion.** 119/119 assertions, 3 runs identical, SHAs
-hard-asserted in `build_v104_tva.py`. Hashes and diff re-verified from disk by the orchestrator.
+hard-asserted in `builds/v80_v107/build_v104_tva.py`. Hashes and diff re-verified from disk by the orchestrator.
 
 | addr | V103 → V104 | lever | prior on-car result |
 |---|---|---|---|
@@ -235,7 +235,7 @@ REVERTED.** It clobbered `0x14A` byte4 bit 0 = Honda's `gp-0x679a`. **`0x14A` ha
 The superseded image (`e5f02fec…`) is retained with a `SUPERSEDED-DO-NOT-FLASH-` prefix.
 
 **Pre-registered readouts, retractions and open items:**
-`docs/HANDOFF-2026-08-21-v104-built-c4-boost-and-lever-b.md`.
+`docs/handoffs/2026-08/HANDOFF-2026-08-21-v104-built-c4-boost-and-lever-b.md`.
 
 ---
 
@@ -244,7 +244,7 @@ The superseded image (`e5f02fec…`) is retained with a `SUPERSEDED-DO-NOT-FLASH
 
 | build | base | delta | on-car result |
 |---|---|---|---|
-| **V103** | V102 | 🛑 **THE FIRST BUILD TO ARM A DORMANT HONDA FILTER, AND THE FIRST SINCE V85 WITHOUT A SINGLE-FRAME IDENTITY.** **4 in-place bytes + 1 cave rung. Gain UNCHANGED at 6× (`0xC6CD0` = 5346) — deliberately NOT a gain step.** **PART A — arms Honda's dormant biquad, ENGAGED-ONLY**: `0xC649B` `00`→`01` · `0x35A06` `84 4F E7 98`→`84 4F FB 97` (`ld.bu -0x671a[gp],r9` → `ld.bu -0x6806[gp],r9`, arm source → LKAS engagement flag) · `0x35A12` `EC 49`→`E0 49` (`cmp r12,r9`→`cmp r0,r9`) · `0x35A18` `E9 37 00 00`→`EA 37 00 00` (`setfnc`→`setfne`). The filter is **a NOTCH at 55.23 Hz** (zeros exactly on the unit circle), ζ=0.6497, **DC gain 1.0000** ⇒ −1.25 dB/−30° @21 Hz, −3.01 dB/−45° @30 Hz, **−0.02 dB @3 Hz** ⇒ **structurally cannot limit dθ/dt and adds no LF drag; response monotone ⇒ no new resonance.** **PART B — cave 154→164 B, exactly ONE rung changes**: `b3` forced-0 → **`sign(gp-0x3680) < 0`** (D_state's delivered sign, `ld.w -0x3680[gp],r6` = `24 37 81 c9`); **`b7`/`b6`/`b5`/`b4` all byte-identical to V102.** 🛑 **ALL FOUR GATES PASS**: GATE 1 — `gp-0x3814`/`gp-0x3818` boot to **exactly 0.0f** from the `.data` initialiser at flash `0x89898` (read in stock *and* V102), footprint clean on 5 methods, **and this is NOT claiming RAM from Honda — we change WHEN the path runs, not WHERE its state lives** ⇒ V62/V67 risk class, **no canary needed**; GATE 2 — **\|H\| ≤ 1.000032 everywhere 0.1–500 Hz ⇒ the filter can only REMOVE loop gain, never add it**; margin improves at every frequency and every q ∈ [0.10, 1.00] (21 Hz: 1.01→2.26 dB at q=1); GATE 3 — the dropout is computed downstream and never feeds the filter state. 🛑🛑 **HONEST MAGNITUDE: ~+50 ct·s/rad at the extreme q=1 against a −488 gap ⇒ ~10 % of the way back; +2 to +13 at realistic q. In `f0` terms 0.06–0.3 Hz against a ~1.0 Hz detection floor. PREDICTED IN ADVANCE TO READ "NO CHANGE" ON ITS OWN PRIMARY ENDPOINT.** Four PASSes mean **safe**, not **sufficient**. ⚠ **`0xC649B` 0→1 ALONE WOULD BE INERT** — the real arm is `gp-0x671a ≥ 5`, **never observed true across 255,292 engaged frames on three builds** (V64/V67/V68). ⚠ **And `0xC64FA` 5→0 is the trap** — it is the SHARED detector CEIL with **18 in-code readers**; the private `cmp` patch at `0x35A12` avoids it, and `0xC64FA` is **asserted FROZEN at 5** to document that. 🛑 **IDENTITY: `b3` must VARY.** Both axes are exhausted (`byte7[7:6]` 4/4 codes; `b3`'s two states spent by V101=1 and V102=0). **A constant `b3` means the build is not V103 or the rung is dead — RUN-INVALIDATING, not a finding.** Expected duties: b7 ≈0.27 (rising 0.148→0.417 with rate) · b6 0.8991 (0.836→0.992) · b5 0.2481 · b4 0.4091. | 🛑 **BUILT, VERIFIED, NOT FLASHED. Operator has DEFERRED the decision.** image `df6104bdf8e4fcb69f3379f5b85fb591e4c64e4c33c16f6f9bf29cc88f48f71d` · rwd `a8e68185ba2b5bb5d1bf7b0f903a397b9c3961594b5e1054cd9bf5bf098e41ed` · builder `analysis-2020accord/build_v103_tva.py`. **ORCHESTRATOR-VERIFIED FROM DISK**: both hashes re-computed · all four Part A edits re-read · nine frozen cells re-read (gain still 5346) · cave contents decoded independently (b5's two comparator operands at `0xC4B62`/`0xC4B6E`, b3's `ld.w` at `0xC4BA8`) · **85/85 assertions · 55 bytes in 13 runs, every one attributed · `[0xC5000,0xC5FFC)` identical · both CRC trailers (`0xC4FFC`, `0xC6FFC`) · bit-for-bit reproducible across two runs · exactly one `.rwd` on disk.** Drive card written and **HELD**: `docs/DRIVE-CARD-V103.md`. |
+| **V103** | V102 | 🛑 **THE FIRST BUILD TO ARM A DORMANT HONDA FILTER, AND THE FIRST SINCE V85 WITHOUT A SINGLE-FRAME IDENTITY.** **4 in-place bytes + 1 cave rung. Gain UNCHANGED at 6× (`0xC6CD0` = 5346) — deliberately NOT a gain step.** **PART A — arms Honda's dormant biquad, ENGAGED-ONLY**: `0xC649B` `00`→`01` · `0x35A06` `84 4F E7 98`→`84 4F FB 97` (`ld.bu -0x671a[gp],r9` → `ld.bu -0x6806[gp],r9`, arm source → LKAS engagement flag) · `0x35A12` `EC 49`→`E0 49` (`cmp r12,r9`→`cmp r0,r9`) · `0x35A18` `E9 37 00 00`→`EA 37 00 00` (`setfnc`→`setfne`). The filter is **a NOTCH at 55.23 Hz** (zeros exactly on the unit circle), ζ=0.6497, **DC gain 1.0000** ⇒ −1.25 dB/−30° @21 Hz, −3.01 dB/−45° @30 Hz, **−0.02 dB @3 Hz** ⇒ **structurally cannot limit dθ/dt and adds no LF drag; response monotone ⇒ no new resonance.** **PART B — cave 154→164 B, exactly ONE rung changes**: `b3` forced-0 → **`sign(gp-0x3680) < 0`** (D_state's delivered sign, `ld.w -0x3680[gp],r6` = `24 37 81 c9`); **`b7`/`b6`/`b5`/`b4` all byte-identical to V102.** 🛑 **ALL FOUR GATES PASS**: GATE 1 — `gp-0x3814`/`gp-0x3818` boot to **exactly 0.0f** from the `.data` initialiser at flash `0x89898` (read in stock *and* V102), footprint clean on 5 methods, **and this is NOT claiming RAM from Honda — we change WHEN the path runs, not WHERE its state lives** ⇒ V62/V67 risk class, **no canary needed**; GATE 2 — **\|H\| ≤ 1.000032 everywhere 0.1–500 Hz ⇒ the filter can only REMOVE loop gain, never add it**; margin improves at every frequency and every q ∈ [0.10, 1.00] (21 Hz: 1.01→2.26 dB at q=1); GATE 3 — the dropout is computed downstream and never feeds the filter state. 🛑🛑 **HONEST MAGNITUDE: ~+50 ct·s/rad at the extreme q=1 against a −488 gap ⇒ ~10 % of the way back; +2 to +13 at realistic q. In `f0` terms 0.06–0.3 Hz against a ~1.0 Hz detection floor. PREDICTED IN ADVANCE TO READ "NO CHANGE" ON ITS OWN PRIMARY ENDPOINT.** Four PASSes mean **safe**, not **sufficient**. ⚠ **`0xC649B` 0→1 ALONE WOULD BE INERT** — the real arm is `gp-0x671a ≥ 5`, **never observed true across 255,292 engaged frames on three builds** (V64/V67/V68). ⚠ **And `0xC64FA` 5→0 is the trap** — it is the SHARED detector CEIL with **18 in-code readers**; the private `cmp` patch at `0x35A12` avoids it, and `0xC64FA` is **asserted FROZEN at 5** to document that. 🛑 **IDENTITY: `b3` must VARY.** Both axes are exhausted (`byte7[7:6]` 4/4 codes; `b3`'s two states spent by V101=1 and V102=0). **A constant `b3` means the build is not V103 or the rung is dead — RUN-INVALIDATING, not a finding.** Expected duties: b7 ≈0.27 (rising 0.148→0.417 with rate) · b6 0.8991 (0.836→0.992) · b5 0.2481 · b4 0.4091. | 🛑 **BUILT, VERIFIED, NOT FLASHED. Operator has DEFERRED the decision.** image `df6104bdf8e4fcb69f3379f5b85fb591e4c64e4c33c16f6f9bf29cc88f48f71d` · rwd `a8e68185ba2b5bb5d1bf7b0f903a397b9c3961594b5e1054cd9bf5bf098e41ed` · builder `analysis-2020accord/builds/v80_v107/build_v103_tva.py`. **ORCHESTRATOR-VERIFIED FROM DISK**: both hashes re-computed · all four Part A edits re-read · nine frozen cells re-read (gain still 5346) · cave contents decoded independently (b5's two comparator operands at `0xC4B62`/`0xC4B6E`, b3's `ld.w` at `0xC4BA8`) · **85/85 assertions · 55 bytes in 13 runs, every one attributed · `[0xC5000,0xC5FFC)` identical · both CRC trailers (`0xC4FFC`, `0xC6FFC`) · bit-for-bit reproducible across two runs · exactly one `.rwd` on disk.** Drive card written and **HELD**: `docs/scoring/DRIVE-CARD-V103.md`. |
 | **V102** | V101 | 🛑 **THE FIRST DOWNWARD GAIN STEP IN THE WHOLE POST-V38 ARC.** Three cal edits: **`0xC6CD0` 7128→5346 (8×→6×)**, `0xC61B2` 4096→3072 + `0xC61B4` 4096→3072 (tracking; `5346×512//891 = 3072` **exact**). Cave **154 B / 58 instructions** — **two COMPARATORS**: `b6` = `\|gp-0x6ada\| ≥ \|gp-0x6adc\|` (r24 vs r26 arm), `b5` = `\|gp-0x6ae2\| ≥ \|gp-0x6b26\|` (modelled friction vs inertia); `b4`/`b7` signs; **identity ID3 = 6** (`byte7[7:6]==3 AND b3==0`). 427 repointed `gp-0x6b94`→**`gp-0x6b4c`**, `sar 6` carried. **Lever B stays REMOVED**, **`0xC40D2` HELD at 204** (instrumented, not dosed). **EME audit ALL PASS**, `0xC674E`=5120 > 3072, `0xC407E`=511, CRC 50/50, zero unattributed bytes. image sha256 `61197f8c…dbfe32455`, .rwd `b49e7efa…2308b5cb`. **Dose chosen by the OPERATOR from a measured dose-response curve — do not "improve" it.** | **NOT FLASHED.** |
 | **V101** | V99 | **8× LKAS GAIN + LEVER B REMOVED.** Five cal edits: `0xC6CD0` 3564→7128 (8× gain), `0xC61B2` 2048→4096 + `0xC61B4` 2048→4096 (fwd-path clamps tracking), `0x3AA96` 0xFB→0xC5 + `0xC6446` 5244→512 (Lever B reverted to Honda stock). Cave 114 B (−40 B vs V99). 427 repoint carried. `byte7[7:6]=3`. **EME audit PASSED** — all V25–V37 fixes carried, `0xC407E`=511, soft-EME floor 5120>4096. image sha256 `c8cb5c3a…1fcf50a6c7`. | ✅ **FLEW as route `0x95`, 2026-08-19.** Identity duty **1.000000** / 25,551 frames, fault-free, 176.1 s engaged in 3 episodes. 🛑🛑 **THE OPERATOR REPORTED GRINDING/VIBRATION AT ALL SPEEDS, ONLY WHILE LKAS COMMANDS, KILLED BY APPLYING DRIVER TORQUE, RETURNING AND GROWING WHEN HE LETS GO.** The peak **MOVED 20.3 → 23.0 Hz** (three separate 4× routes vs this one) ⇒ **a POLE MOVED**; de-confounded 2×2 vs route `71` gives **gain G = 2.7–3.9× at 22–26 Hz** against a 1.45× placebo floor. `b6` (`\|gp-0x6b4c\| ≥ 4096`) duty **0.000000** ⇒ **no clamp binds.** Aggregator sign reverses **25–37 /s** where V100 reverses 0.7–3.2. |
 
@@ -288,7 +288,7 @@ symptoms**, ratchet at the corpus record 8,521 ct p-p). ⇒ **`a` is materially 
 LOAD-BEARING. Proved from images, no drive.**
 ⇒ 🛑 **ACCOUNT A REFUTED** — *"more derivative feedback ⇒ more damping ⇒ less HF"* predicts the
 **higher** dose (V71c) should be **better**; it was dramatically worse. ⚠ Correct
-`memory/accord-v88-flew-grinding-fixed-command-intact.md`'s mechanism paragraph: **keep the coupling,
+`memory/accord/builds/accord-v88-flew-grinding-fixed-command-intact.md`'s mechanism paragraph: **keep the coupling,
 fix the direction.**
 ⇒ ⭐ **BOTH FLANKS MEASURED**: V61 (below V88) *"made it WORSE"*; V71c (above) worst in corpus.
 **"2× ≈ OPTIMUM" now has both sides. V88 is sitting on the optimum.** ✅ `0xC6444`'s falsification
@@ -334,15 +334,15 @@ whether anything *outside* the function reads it and stopped, never asking wheth
 next instructions** consume it. They do.
 
 ⊕ The chain was **already documented** in `reference_accord_post_governor_comp_add.md` (May 2026) with
-the exact address `0x431c4`, and in `build_v30_tva.py`'s own header. Neither was cross-checked against the
+the exact address `0x431c4`, and in `builds/v18_v49/build_v30_tva.py`'s own header. Neither was cross-checked against the
 newer "cannot reach" conclusion. **When a new negative contradicts an old positive, diff them explicitly.**
 
 ★ **A "monitor-only" output two hops from the motor is a red flag, not a conclusion.** And a governor
 whose cals bricked the car (V40) is not on a dead path — **a coherent account of V40 is the acceptance
 test for any claim about this chain.**
 
-Full detail: `memory/accord-aggregator-reaches-motor-via-gp6acc-bridge.md` and
-`docs/HANDOFF-2026-08-08-v81-flew-and-the-aggregator-reaches-the-motor.md`.
+Full detail: `memory/accord/firmware/accord-aggregator-reaches-motor-via-gp6acc-bridge.md` and
+`docs/handoffs/2026-08/HANDOFF-2026-08-08-v81-flew-and-the-aggregator-reaches-the-motor.md`.
 
 ---
 
@@ -384,7 +384,7 @@ the rail in counts, and a probe rung sized to the saturated regime).
 
 **(c) Check how the operator used the shape word LAST time.** "Which factor isn't a ReLU" had two
 readings indicting **opposite tables**: literal `max(0,k(x−x0))` indicts FactorC (nonzero 566 floor);
-the operator's own recorded gloss in `v76_surface.py` — *"FLAT — no taper down, like a rectified linear
+the operator's own recorded gloss in `studies/sessions/v76/v76_surface.py` — *"FLAT — no taper down, like a rectified linear
 unit"*, read there as a **floor clamp** — indicts FactorE. **When a shape word is load-bearing for a
 flash decision, grep the kit for how it was recorded before designing to it.**
 
@@ -503,8 +503,8 @@ about this cell in one session — in both directions. **An address is not a mod
 
 ---
 
-Full detail: `memory/accord-friction-lane-ceiling-is-the-hard-fault.md` and
-`memory/reference-accord-cbe74-friction-row-zero-clean-flights.md`.
+Full detail: `memory/accord/calibration/accord-friction-lane-ceiling-is-the-hard-fault.md` and
+`memory/reference/firmware/reference-accord-cbe74-friction-row-zero-clean-flights.md`.
 
 ---
 
@@ -723,7 +723,7 @@ justified on it. ⊕ **`gp-0x671a` is RULED OUT** as a lever axis: stuck at 0 ac
 | 1 | **`0xC63A0` was reverted at V83a, NOT at V84.** The lineage row previously implied V84. |
 | 2 | **`V76g` ALSO carried `0xC63A0` = 2048.** It was missing from the "who ever moved it" list. |
 | 3 | **`V76` and `V80` are `0xC63A0` = 1024**, not 2048. |
-| 4 | **The V85 frozen-cell count is 12, not 14** — `build_v85_tva.py` declares 10 `FROZEN_CELLS` + 2 `FROZEN_BYTES`. No 14-item list exists; the "14" in this file refers to the **14 friction sites**, a different set. |
+| 4 | **The V85 frozen-cell count is 12, not 14** — `builds/v80_v107/build_v85_tva.py` declares 10 `FROZEN_CELLS` + 2 `FROZEN_BYTES`. No 14-item list exists; the "14" in this file refers to the **14 friction sites**, a different set. |
 | 5 | **The mode-record pointer space is 340 slots (10 arrays × 34 modes), not 58**, and there are **34 non-stock records**, including modes **32/33**. A count-only census is blind to a write into an **already-non-stock** record ⇒ **assert every record byte-identical to the BASE unless declared.** |
 
 ---
@@ -734,7 +734,7 @@ justified on it. ⊕ **`gp-0x671a` is RULED OUT** as a lever axis: stuck at 0 ac
 |---|---|
 | 1 | 🛑 **V69 AND V70 DID NOTHING.** `sar` stock (`aa32`/`aa42`), gate `c5`, arms 512/512, and the only edit is `gain_B` **mode 10** ⇒ **byte-stock behaviour**. The recorded *"clean single-variable r24 series ×1→×2→×4 = 879/729/746, CIs overlap ⇒ r24 is near-inert"* was **three replications of ONE condition.** ⇒ **r24's dose is UNTESTED, not near-inert** |
 | 2 | **V72's two-lane row is `r24 ×1.000 / r26 ×0.250`**, not `3.414 / 0.250` — its r24 half was mode-10 `gain_B`. Its grind-#2 result is therefore **confounded with stock**. 🛑🛑 **THE SECOND HALF OF THIS ROW IS RETRACTED 2026-08-06:** it read *"what governs grind #2 is V62's `sar`, which V72 does not carry"* — **that is hypothesis (A) and it is REFUTED.** `V71C` carries **neither** `sar` byte (`0x3AB76` = `aa32`, `0x3AC20` = `aa42`, byte-read) and produced a spectrally identical grind-#2 event: **44.31 Hz**, p99 **1741.9** = **12.2×** the max of any non-bursting build, against a same-segment non-burst floor of **25.5**. V71C holds **3 of the corpus's 13 merged events in 5.28% of the exposure, P(≥3) = 0.028.** ⇒ **a `sar`-stock build is NOT safe by construction** |
-| 2b | **V62/V65's delivered r24 is `×2.000`, not `×3.414`** — `sar 0xa → 0x9` is a **flat doubling of BOTH lanes at every speed and rate** (mode-proof, one instruction each), not the `0xC6446` arm. The 3.414 figure was the *arm* value copied across the whole column. ⇒ **the two-lane rule's "r24 ≳ 3.4×" threshold is WRONG — V62/V65 burst at 2.000×.** The rule's *shape* ("both lanes elevated") survives; its *numbers* do not. Rebuilt table: `docs/STATE.md`; model: `analysis-2020accord/_grind2_delivered_lib.py` |
+| 2b | **V62/V65's delivered r24 is `×2.000`, not `×3.414`** — `sar 0xa → 0x9` is a **flat doubling of BOTH lanes at every speed and rate** (mode-proof, one instruction each), not the `0xC6446` arm. The 3.414 figure was the *arm* value copied across the whole column. ⇒ **the two-lane rule's "r24 ≳ 3.4×" threshold is WRONG — V62/V65 burst at 2.000×.** The rule's *shape* ("both lanes elevated") survives; its *numbers* do not. Rebuilt table: `docs/STATE.md`; model: `analysis-2020accord/lib/_grind2_delivered_lib.py` |
 | 3 | ★★★★ **V42's fix was the r26 KILL, not `0x454FE`.** V42 vs V41: `gain_A` **all four records → `[0,0,0,0]`**, `0xC643E` 1536→0, `0xC6444` 512→0, plus a revert of V41's motor-rate cap. `0x454FE` never executes. **This closes a two-session [OPEN]** — and V42 ch.2 sat in this table marked *FALSIFIED* the whole time (see RULE 7's last paragraph) |
 | 4 | **V72/V73's r26 cut is PARTIAL** — `gain_A` `rec0`/`rec1` → flat 512, but **`rec2` `0xC6A90` and `rec3` `0xC6AA4` are byte-stock** ⇒ the cut is **creep-only by record selection**; at and above ~50 km/h r26 is untouched |
 | 5 | **`tp+0x71b2` IS load-bearing** — LKAS reaches the motor via the second accumulator `gp-0x62b0[ch]` → `gp-0x3d88` → `gp-0x6b4c`. **No V14 correction is needed** (one was proposed and withdrawn). Lineage byte-verified over 66 images: stock **512** → **1024 by V22** → **2048 at V38**, `0xC61B2`/`0xC61B4` always in lockstep. ⚠ The V14/V15 first step is build-script prose only — no image exists before V22 |
@@ -776,8 +776,8 @@ operator's own V67 report hedged precisely there (*"might still be there somewha
 at low-speed … might just be dampened"*) and the hedge was recorded as "none".
 ✅ **The fix costs no bytes: ~90 s of deliberate ENGAGED hard cornering at creep on the next rate-lane
 build** takes P(0) from ~0.61 to < 0.05 in one drive. **Ship that instruction with every such build.**
-Scripts: `analysis-2020accord/grind2_collinearity.py`, `grind2_delivered_verdict.py`,
-`grind2_delivered_census.py`.
+Scripts: `analysis-2020accord/studies/grind2/grind2_collinearity.py`, `studies/grind2/grind2_delivered_verdict.py`,
+`studies/grind2/grind2_delivered_census.py`.
 
 ---
 
@@ -792,7 +792,7 @@ edited **modes 10 and 11 only**, because `39990-TVA-A160` *reads as* row 2 `'TVA
 at `0xCD000` ⇒ modes 10/11.
 
 🛑 **That part-number → key mapping is an ASSUMPTION recorded in this file. It was never a measurement.**
-`build_v44_tva.py` has patched modes 10 **and** 11 since V44 *because of it*, and every damping build
+`builds/v18_v49/build_v44_tva.py` has patched modes 10 **and** 11 since V44 *because of it*, and every damping build
 since inherited it.
 
 **The probe settled it arithmetically.** On V72, modes 10/11 give `|gp-0x6bd0| = 389` **unconditionally**
@@ -950,8 +950,8 @@ one sufficient condition for it.**
 **The hazard, stated as it actually happened.** Two V70 cuts were built 19 minutes apart. **Both wrote
 `_v70_plain_image.bin`**, so the second silently **overwrote** the first's snapshot. The first cut's
 `.rwd` survived and was flashable. ⇒ **a flashable artefact existed that NO gate in this kit could
-check**: `verify_v70_image.py` asserts the *current* topology (`0x3AA96 == 0xC5`, `0xC6446 == 512`), so
-it **fails on the superseded build by construction**, and `diff_build_vs_stock.py` has no image to read.
+check**: `verify/verify_v70_image.py` asserts the *current* topology (`0x3AA96 == 0xC5`, `0xC6446 == 512`), so
+it **fails on the superseded build by construction**, and `verify/diff_build_vs_stock.py` has no image to read.
 
 ⚠ **The only reason the superseded cut's bytes are documented at all is that they were read inside the
 19-minute window before the overwrite.** That is luck, not process.
@@ -1087,7 +1087,7 @@ car during a single one of those four measurements (V59/V62/V69/V70 are all post
 #### ★★★★ THE TRANSITION TRACE — the mechanism, second by second, at constant speed
 
 **[EVIDENCE — 4th-order Butterworth 6–9 Hz, `sosfiltfilt`, 2.56 s windows, hop 64; mono = seg1 `t` +
-100.6; orchestrator-verified from `_cache_r50/r50s1.npz`.]**
+100.6; orchestrator-verified from `_scratch/cache/r50/r50s1.npz`.]**
 
 | seg1 `t` | mono | `lat` | effort | **RAW p-p** | **6–9 Hz p-p** |
 |---|---|---|---|---|---|
@@ -1309,7 +1309,7 @@ carries the 74-byte V90 cave and cannot write byte 7 at all.
 calibration byte for byte. **No revert is pending.**
 ⏳ **V97 IS BUILT, VERIFIED AND UNFLASHED** — `0xC63AC` **102 → 150** on a V96 base, **ONE BYTE** plus
 its CRC trailer at `0xC6FFC`; image `7ac00904…c2b3`, rwd `78c674a8…7372`; 131/131 assertions;
-builder `analysis-2020accord/build_v97_tva.py`. **The flash decision is the operator's.**
+builder `analysis-2020accord/builds/v80_v107/build_v97_tva.py`. **The flash decision is the operator's.**
 
 🛑🛑 **THIS FILE AND `STATE.md` BOTH SAID "V94 IS ON THE CAR" FOR A FULL SESSION AFTER V96 FLEW.**
 Seventh instance of the "row says UNFLASHED after it flew" defect, and this time it **cost work** — it

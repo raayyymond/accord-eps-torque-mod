@@ -8,7 +8,7 @@ metadata:
 # Nothing in this firmware dissipates energy in the micro regime — 2026-08-12 (`fw-return`, Q4)
 
 Answering team-lead's *"what, if anything, still provides centring/damping while LKAS is engaged at
-parking speed?"* Full writeup `analysis-2020accord/_v97/fw_return.md` §7.
+parking speed?"* Full writeup `analysis-2020accord/sessions/v97/fw_return.md` §7.
 
 ## The census [EVIDENCE except where noted]
 

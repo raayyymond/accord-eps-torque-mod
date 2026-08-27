@@ -6,7 +6,7 @@ metadata:
 ---
 
 Found 2026-08-21, `safety-gates` audit follow-up (round 3), pricing a clip-detect cave rung for the
-biquad-boost candidate. Program: stock `code.bin`, fresh read of `analysis-2020accord/build_v103_tva.py`
+biquad-boost candidate. Program: stock `code.bin`, fresh read of `analysis-2020accord/builds/v80_v107/build_v103_tva.py`
 (the actual as-flown build script, authoritative for what's on the car), cross-checked against the
 flashed `_v103_V102BASE-BIQUAD.ENGAGED-CAVE...plain_image.bin` via direct Python byte reads (not Ghidra).
 
@@ -34,7 +34,7 @@ them.** It DID perform exactly that check for `byte7` — correctly finding bits
 simply did not do it for `byte4`. **Enumerating our own writers is not the same as enumerating all
 writers.**
 
-**What was right all along:** `memory/accord-can-tx-100hz-base-tick-and-gateway.md` — *"usable free
+**What was right all along:** `memory/accord/signals/accord-can-tx-100hz-base-tick-and-gateway.md` — *"usable free
 channel is `0x14A` byte4 bits 7:3"*. That figure is **not stale**. V103 has **spent all five**, which is
 a different statement from "the others became free."
 ⇒ **CORRECT BUDGET: `0x14A` has ZERO free bits.** byte4 7:3 = V103's five passes; byte4 2:0 = Honda;
@@ -51,7 +51,7 @@ and the manual-arm control supplies the in-force witness at zero bit cost. **Do 
 ⭐ **The one part of the design work below that is worth keeping** is the dead-code trap found while
 placing it: the cave's `RET` is its **only** exit, so any appended pass must be **spliced before it** —
 appending after leaves the code unreachable and the rung silently reads a permanent 0, which would
-report "arm didn't take" on a perfectly good build. `build_v104_tva.py` now asserts this.
+report "arm didn't take" on a perfectly good build. `builds/v80_v107/build_v104_tva.py` now asserts this.
 
 **Everything below this line is the ORIGINAL text, retained as a record. Its bit-budget table is WRONG.**
 
@@ -60,7 +60,7 @@ report "arm didn't take" on a perfectly good build. `build_v104_tva.py` now asse
 ## 🛑🛑 CAN `0x14A` byte4 free-bit budget CORRECTED — only 3 bits, not 5  ⚠ **[RETRACTED — SEE ABOVE]**
 
 A standing figure repeated to me this task ("usable free bits are `0x14A` byte4 bits 7:3") is **stale
-post-V103**. Read `build_v103_tva.py`'s cave section directly:
+post-V103**. Read `builds/v80_v107/build_v103_tva.py`'s cave section directly:
 
 | bit | claimed by | what it carries |
 |---|---|---|
@@ -75,7 +75,7 @@ post-V103**. Read `build_v103_tva.py`'s cave section directly:
 bits 7:6 are V103's own build-identity marker (`mov 0x3,r7; shl 0x6,r7`). **Total free budget for new
 telemetry on the currently-flashed build is 3 bits, not 5.** A wider channel needs either giving up one
 of V103's existing 5 bits, or a NEW hook into whatever assembles CAN `0x18F` or `0x1AB` (both confirmed
-gateway-whitelisted per `accord-can-tx-gateway-whitelist-and-20-free-bits.md`, on record but NOT
+gateway-whitelisted per `accord/signals/accord-can-tx-gateway-whitelist-and-20-free-bits.md`, on record but NOT
 re-located or vetted by me this session — that file lives in the shared `memory/` tree, not found in my
 own agent-memory search this session, so its exact free-bit map for those two frames is unconfirmed
 by me).

@@ -30,7 +30,7 @@ hand-decoded or taken from `search_instructions` alone.
 | `0x43f20` | `FUN_00043e44` | `ld.h -0x6b4a,gp,r6` |
 
 **Producer: `FUN_00026c80` (3 writers, sole writer function).** This is the SAME function already on
-this kit's record as the LKAS-lane rate limiter writing `gp-0x6b4c` (`build_v41_tva.py` CHANGE 1: *"the
+this kit's record as the LKAS-lane rate limiter writing `gp-0x6b4c` (`builds/v18_v49/build_v41_tva.py` CHANGE 1: *"the
 LKAS-LANE-ONLY per-cycle rate limiter, in FUN_00026c80, which writes gp-0x6b4c -- the LKAS lane the
 aggregator reads at 0x3AA3E"*). **`gp-0x6b4a` is written by the identical function that shapes the LKAS
 lane** -- structural support (from the producer side, not yet the value/formula) for an LKAS-domain

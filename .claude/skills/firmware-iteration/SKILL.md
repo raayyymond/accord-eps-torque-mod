@@ -202,7 +202,7 @@ memory file, or a spec another agent is building against.
 ## What "close out the session" means
 A four-part deliverable, every time, without being re-asked:
 1. **Update the collaterals** — `docs/STATE.md` (in place, not appended), `docs/BUILD-LINEAGE.md` if a
-   lever moved, the golden model `analysis-2020accord/eps_lkas_chain_model.py`, and `memory/` +
+   lever moved, the golden model `analysis-2020accord/model/eps_lkas_chain_model.py`, and `memory/` +
    `memory/MEMORY.md`.
 2. **Commit and push `main` on BOTH repos** — analysis to the kit, firmware artifacts to `accord-firmwares`.
 3. **Write `docs/HANDOFF-<date>-<topic>.md`.**
@@ -227,7 +227,7 @@ A four-part deliverable, every time, without being re-asked:
      V74–V83a the base-assist damper · V84 damper reverted to Honda.
    - **Show it as a cross-build matrix read from the IMAGES** — the same handful of cells down every
      build since V38 — so it is visible at a glance which cells have actually moved and which have been
-     frozen for dozens of builds. `analysis-2020accord/ledger_v38_to_v84_bytes.py` is the reader.
+     frozen for dozens of builds. `analysis-2020accord/studies/ledger/ledger_v38_to_v84_bytes.py` is the reader.
    - **Name what is genuinely new versus what is a re-run of an earlier lever in a different direction.**
      🛑 FALSIFIED ≠ INERT-BY-MODE ≠ never-tried, and *"the same lever pushed the other way"* is a
      different claim from *"a new lever"*. If a cell has been frozen across N builds, **say N.**

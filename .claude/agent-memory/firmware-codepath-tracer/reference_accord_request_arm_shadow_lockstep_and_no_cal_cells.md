@@ -8,7 +8,7 @@ metadata:
 # The REQUEST arm: no cal levers, and a lockstep monitor — 2026-08-13, `tracer-arms`
 
 Task: pre-position the V99 lever set on all three arms of `iVar6 = MODEL + REQUEST − ACTUAL`
-(`FUN_00038148` @ `0x38236-0x3823a`). Full write-up `docs/TRACE-2026-08-13-v99-arm-levers.md`.
+(`FUN_00038148` @ `0x38236-0x3823a`). Full write-up `docs/traces/TRACE-2026-08-13-v99-arm-levers.md`.
 
 ## 1. `gp-0x6bfa` has ZERO calibration cells [EVIDENCE — full disasm walk of `FUN_00026c80` 0x27396–0x273e6]
 

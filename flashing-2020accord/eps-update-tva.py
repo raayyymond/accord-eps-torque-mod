@@ -39,7 +39,7 @@ Verified references:
   - tva_sa_key.py             - V850 SA algorithm (Wave-3 verified)
   - V850_ALGORITHM_VERIFIED.md - bit-level audit trail
   - ACCORD_TVA_ARCHITECTURE_MAP.md sec 6.1 / 7.4
-  - encode_eps.py             - x31/x5a container parsers (round-trip verified)
+  - lib/encode_eps.py             - x31/x5a container parsers (round-trip verified)
 """
 
 import argparse
@@ -297,7 +297,7 @@ def confirm_danger(rwd_path: str, bus: int, fmt: str, can_addr: int,
     print(f"  CAN bus       : {bus}")
     print(f"  CAN address   : 0x{can_addr:08X}")
     print()
-    print("  Required prerequisites (per docs/EPS-FLASH-RUNBOOK.md):")
+    print("  Required prerequisites (per docs/guides/EPS-FLASH-RUNBOOK.md):")
     print("    - Car ignition ON (engine off is fine)")
     print("    - Panda is the only device on OBD-II")
     print("    - openpilot/pandad killed on any comma device (tmux kill-server)")

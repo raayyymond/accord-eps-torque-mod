@@ -10,7 +10,7 @@ metadata:
 2026-08-21, task from `V104-design` orchestrator: "find the ROM source of `gp-0x37fc[]`/`gp-0x37e8[]`
 (the 10-point breakpoint table `FUN_000352b4` builds each tick and searches to produce `gp-0x6b7a`
 → biquad → `gp-0x6b86`, i.e. `magnitude_6b86`/Path-1), and say whether it's cal-editable and
-mode-indexed." Full trace: `docs/TRACE-2026-08-21-assist-map-rom-source.md`. Program `code.bin`,
+mode-indexed." Full trace: `docs/traces/TRACE-2026-08-21-assist-map-rom-source.md`. Program `code.bin`,
 GhidraMCP only, fresh `decompile_function` on `FUN_000352b4`(`0x352b4`), `FUN_000352a0`(`0x352a0`),
 `FUN_000389ec`(`0x389ec`), `FUN_00039702`(`0x39702`), `FUN_000382d8`(`0x382d8`) this session, plus
 `read_memory`/`get_function_callers`/build-script grep.

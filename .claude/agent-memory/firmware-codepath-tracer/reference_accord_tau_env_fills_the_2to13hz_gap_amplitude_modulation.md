@@ -63,7 +63,7 @@ fast-collapse/slow-regrow asymmetry. **This is why no firmware element was ever 
 does not need to be one.**
 
 ## 🛑 The objection I pre-empted, and the test that settles it
-`accord-ratchet-is-a-lightly-damped-resonance.md` reports a calibrated peak-aligned Welch ladder reading
+`accord/mechanism/accord-ratchet-is-a-lightly-damped-resonance.md` reports a calibrated peak-aligned Welch ladder reading
 the car at **20.9** vs a pure tone at **53.8** and a bursty **AM** tone at **52.1-52.5** => *"limit cycle
 EXCLUDED"*. **That control was aimed at the 8 Hz LINE (is *it* AM?), not at the 21-26 Hz CARRIER being
 AM'd.** Different object; the ladder was not pointed at it.

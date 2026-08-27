@@ -60,7 +60,7 @@ which needs zero new bits (raw-decodable from any rlog per the standing scoring 
 `0x14A`'s 7 bits are fully saturated by V92's return-centre/dwell-relay payload (see
 [[reference_accord_v92_final_allocation_gp6abc_gp6bf0_adjudication]]) — no free capacity there without a
 cross-investigation trade. `0x1AB`/427 currently carries only `\|gp-0x6bbe\|` at 50Hz but has **3 already-
-free bits** (`byte0[6:5]`+`byte2[7]`, per `docs/SPEC-2026-08-11-telemetry-budget.md` T1 census).
+free bits** (`byte0[6:5]`+`byte2[7]`, per `docs/specs/SPEC-2026-08-11-telemetry-budget.md` T1 census).
 **Recommended**: alternate 427's payload between `gp-0x6bbe` and `gp-0x6b70` on alternating frames (parity
 bit from one of the 3 free `0x1AB` bits) — full analogue resolution for BOTH signals at 25Hz each (still
 >2.7x the 6-9Hz Nyquist margin), zero new hook, zero touch to `0x14A`. Fallback if judged too much packer

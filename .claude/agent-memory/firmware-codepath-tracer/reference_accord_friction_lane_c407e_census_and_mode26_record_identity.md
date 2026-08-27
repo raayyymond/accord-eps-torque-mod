@@ -26,7 +26,7 @@ exclusively this session). Extends
 **⇒ Exactly 3 accesses to `0xC407E` exist in the whole 1MB image, all reads, all inside `FUN_00036c12`,
 zero writers anywhere** -- expected for a flash/ROM calibration constant (tp-relative addressing off
 `tp=0xBF000` reaches the cal block, not RAM; runtime code never writes it, only the `.rwd` build
-pipeline does). Independently matches `build_v73_tva.py`'s own header comment ("THREE readers, ZERO
+pipeline does). Independently matches `builds/v50_v79/build_v73_tva.py`'s own header comment ("THREE readers, ZERO
 writers, all `ld.h`") byte-for-byte -- cross-validated against the build-script record, not just Ghidra.
 
 Reads, in `FUN_00036c12`:

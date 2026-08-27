@@ -14,7 +14,7 @@ orchestrator. Program: stock `code.bin`.
 | claim | source | grade |
 |---|---|---|
 | reachable set = **{11} alone** | `memory/MEMORY_CONSTELLATION.md:1087` | steady-state simplification |
-| reachable set = **{4, 11}**; **state 5 is DEAD CODE on the road** | `memory/accord-state4-cadence-refuted-state-is-sticky.md` | **instruction-level EVIDENCE + a flown 0.0000%** |
+| reachable set = **{4, 11}**; **state 5 is DEAD CODE on the road** | `memory/accord/firmware/accord-state4-cadence-refuted-state-is-sticky.md` | **instruction-level EVIDENCE + a flown 0.0000%** |
 | **"state is a constant 5 while driving"** | `reference_accord_gp67fa_vs_gp63fd_mode_domain_and_v75_cave_reverse_engineered.md:28` | ⚠ **relayed, UNSOURCED** |
 
 **The third is the odd one out and it does not survive.** Read in context, that line does not report a
@@ -23,7 +23,7 @@ measurement its author made — it says *"Team-lead's independent on-car evidenc
 No probe, no cache, no address, no build. It is a **repetition**, and it contradicts a mechanism.
 
 ## The mechanism — RE-VERIFIED INDEPENDENTLY (raw Python LE byte scan, both gp encodings)
-`accord-state4-cadence-refuted-state-is-sticky.md` claims 4->5 can never fire because `gp-0x68ad` can
+`accord/firmware/accord-state4-cadence-refuted-state-is-sticky.md` claims 4->5 can never fire because `gp-0x68ad` can
 never be set. I re-derived the supporting cells from scratch rather than trusting it:
 
 | cell | 4-byte hits | gp WRITERS | gp readers | 6-byte form | other-base |
@@ -61,7 +61,7 @@ safe to act on.**
 ## ⭐ Likely origin of the "5" — a DOMAIN CONFUSION, and it is a repeat offender
 The kit separately measures the **CAN bus `STEER_STATUS` field** (cal `0xC64DF` = 100 is the
 "`STEER_STATUS=4` dwell", measured at 100.00 ms). `memory/MEMORY.md` already carries the warning
-**"🛑 Bus STEER_STATUS is NOT `gp-0x67fa`"** (`accord-gp67fa-state-gate-on-assist-chain.md`). A bus
+**"🛑 Bus STEER_STATUS is NOT `gp-0x67fa`"** (`accord/firmware/accord-gp67fa-state-gate-on-assist-chain.md`). A bus
 `STEER_STATUS` of 5 read as a `gp-0x67fa` of 5 explains the claim exactly. **BELIEF** — plausible and
 consistent, not proven. When you see a bare state number in this kit, **ask which domain it is in.**
 

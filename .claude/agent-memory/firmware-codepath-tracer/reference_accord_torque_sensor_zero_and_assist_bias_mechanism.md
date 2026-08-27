@@ -68,7 +68,7 @@ not EPS firmware. **NOT proven — the actual byte-source peripheral/ISR driving
 located this session.**
 
 **The additive bias `gp-0x6b66`** (+ the assist-DIRECTION POLARITY flag `gp-0x6752` — the SAME gate flagged
-gated/unresolved in the V49 build lineage per CLAUDE.md/`reference-accord-v50-lowpass-ema-cave.md`) is
+gated/unresolved in the V49 build lineage per CLAUDE.md/`reference/builds/reference-accord-v50-lowpass-ema-cave.md`) is
 loaded by a DIFFERENT function, **`FUN_00048a40`** (driven by `FUN_000490ac`): a **TLV record walker** over
 a buffer at **absolute address `0x1000+`** (not gp/tp-relative — `iVar9 = *(int*)(gp-0x350c); if(iVar9==0)
 iVar9=0x1000`, then `iVar9` used directly as an absolute pointer, walked by `next = current + record's own

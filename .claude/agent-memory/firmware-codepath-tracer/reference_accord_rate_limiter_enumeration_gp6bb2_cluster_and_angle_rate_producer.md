@@ -1,6 +1,6 @@
 ---
 name: reference_accord_rate_limiter_enumeration_gp6bb2_cluster_and_angle_rate_producer
-description: Full enumeration of rate/slew limiters on the boost-lane + angle-rate path for team-lead's ratchet-vs-grinding investigation. FUN_0004613e/13880 is NOT a rate limiter (it's a diagnostic-tag param to a fault logger) -- corrects the operator's framing. FUN_0003f776 is the SOLE producer of gp-0x6a56 (angle rate), deriving it ENTIRELY from gp-0x6abe (motor/resolver rate) via a fixed scale, not an independent sensor. The one REAL rate limiter on the assist path is FUN_00042af8's shaper slew (tp+0x71d6=0xC61D6=0, disabled in stock) -- already proposed in an OLD, pre-current-lineage build (old_tools/build_v16_tva.py) whose on-car result is NOT in current BUILD-LINEAGE.md.
+description: Full enumeration of rate/slew limiters on the boost-lane + angle-rate path for team-lead's ratchet-vs-grinding investigation. FUN_0004613e/13880 is NOT a rate limiter (it's a diagnostic-tag param to a fault logger) -- corrects the operator's framing. FUN_0003f776 is the SOLE producer of gp-0x6a56 (angle rate), deriving it ENTIRELY from gp-0x6abe (motor/resolver rate) via a fixed scale, not an independent sensor. The one REAL rate limiter on the assist path is FUN_00042af8's shaper slew (tp+0x71d6=0xC61D6=0, disabled in stock) -- already proposed in an OLD, pre-current-lineage build (archive/old_tools/build_v16_tva.py) whose on-car result is NOT in current BUILD-LINEAGE.md.
 metadata:
   type: reference
 ---
@@ -24,7 +24,7 @@ gp-0x6bb2 = gp-0x6bb8   // "corrected" -- restore from the shadow/tolerance-lo c
 [MEASURED] Decompiled `FUN_0004613e` in full: it ONLY snapshots its 5 params into fixed log cells
 (`gp-0x6920/18/1a/16/1c`) then calls `FUN_00016de6(0x1c, param_1, 1, 1)`. **No arithmetic, no clamping,
 no write to any control-path signal.** 13880 is a DIAGNOSTIC TAG passed straight through to the fault
-logger, not a step/rate constant — confirmed by `old_tools/build_v13_tva.py`'s own comment referencing
+logger, not a step/rate constant — confirmed by `archive/old_tools/build_v13_tva.py`'s own comment referencing
 the SAME function with a DIFFERENT tag (`FUN_0004613e(0x38c7,..)`), i.e. this function is a
 general-purpose "log+fault" callee, tag varies per call site.
 
@@ -99,7 +99,7 @@ rate limiting).
 dead safety-net. **`gp-0x6a60` = `abs(gp-0x6a56)`, full stop; the "±12000 clamp" belongs entirely to
 `gp-0x6a56`.** Not a rate limiter under any reading. `gp-0x6a60` is a genuine, LIVE consumer signal
 though — used by the decider (`FUN_00040d58`) as `RATE_GATE` bit4 at threshold `0xC6310=1600` (per
-`build_v31p_tva.py`/`build_v31p_v2_tva.py`, existing V31P telemetry read, NOT a proposed lever). 1600
+`builds/v18_v49/build_v31p_tva.py`/`builds/v18_v49/build_v31p_v2_tva.py`, existing V31P telemetry read, NOT a proposed lever). 1600
 is only 13.3% of the 12000 clamp ceiling — supports that `gp-0x6a56`/`gp-0x6a60` rarely approach
 saturation in ordinary driving; whether they approach it during the team-lead's specific rail/ratchet
 event is unmeasured.
@@ -122,7 +122,7 @@ shape: hard cut + hold + jump-back on recovery) — structurally the textbook ra
 limit-cycle shape the team-lead's measurement points at.
 
 **🛑 Already proposed once, status UNCLEAR — do not treat as untested.** `analysis-2020accord/
-old_tools/build_v16_tva.py` (an OLD, pre-current-numbering build script, NOT in the current
+archive/old_tools/build_v16_tva.py` (an OLD, pre-current-numbering build script, NOT in the current
 `build_v9..v57` lineage) sets `0xC61D6: 0 -> 14` bundled into a multi-fix tag ("LKAS-2x-EMEfix-slew-
 deadband-ramp-PNfix"). **This address does not appear anywhere in current `docs/BUILD-LINEAGE.md`** —
 I cannot find an on-car verdict for this specific lever in the current lineage record. This needs the

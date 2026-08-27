@@ -29,7 +29,7 @@ gp-0x6b9a  = out (signed, st.h @0x3b8b0)      gp-0x6ba6 = |out| (st.h @0x3b892)
 Derivative × two 8.13 Hz poles ⇒ a band-pass peaking right on the 7.79 Hz ratchet. That shape is real.
 
 ## Why it is still not a damper [EVIDENCE]
-`scan_gp_accesses.py` on stock `code.bin`, both encodings, every ext-disp candidate adjudicated as an
+`studies/firmware_scan/scan_gp_accesses.py` on stock `code.bin`, both encodings, every ext-disp candidate adjudicated as an
 alias of an already-identified Format-VII instruction (no extra sites):
 
 | cell | writers | readers | disposition |

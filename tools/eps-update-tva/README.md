@@ -40,7 +40,7 @@ sequencing. The script routes by detected format.
 
 - `tva_sa_key.py` — V850 SA key algorithm (Wave-3 verified, bit-level audit
   trail in `V850_ALGORITHM_VERIFIED.md`).
-- `encode_eps.py` — x31 container parser.
+- `lib/encode_eps.py` — x31 container parser.
 - `panda` Python library — comma's panda library. The `from panda.python.uds`
   imports require a version that still bundles `panda/python/uds.py` (modern
   `commaai/panda` removed this module — use the sunnypilot_eps bundled panda
@@ -145,7 +145,7 @@ settle all three.
 - SH-2A SA algorithm: identical math to upstream `calculate_session_key`
 - V850 SA algorithm: per the project's `V850_ALGORITHM_VERIFIED.md`
   (Wave-3 verified, bit-level audit trail)
-- x31/x5a parsers: round-trip verified in `encode_eps.py` (companion module)
+- x31/x5a parsers: round-trip verified in `lib/encode_eps.py` (companion module)
 
 ## Risk acknowledgement
 

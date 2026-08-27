@@ -6,7 +6,7 @@ metadata:
 ---
 
 Settled 2026-08-10 on stock `code.bin` — this closes OPEN #3 of
-`docs/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md`, **and reverses its premise.**
+`docs/research/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md`, **and reverses its premise.**
 
 ## The arithmetic [EVIDENCE, `decompile_function 0x36c12` + LE byte reads]
 
@@ -35,7 +35,7 @@ compensation" reading is **wrong**.
 **This section previously read "THE INDEX IS DRIVER TORQUE, NOT SPEED" and concluded the term is
 "strongest on-centre and hands-light". THAT WAS WRONG.** Caught by agent DampAxis, verified by the
 orchestrator, and **already settled three weeks earlier** by
-`memory/reference-accord-gp6a5e-is-speed-reclassifies-v44-v47.md` (2026-07-29, two independent traces
+`memory/reference/firmware/reference-accord-gp6a5e-is-speed-reclassifies-v44-v47.md` (2026-07-29, two independent traces
 plus a byte-verified pointer chase) — which I failed to consult.
 
 **`gp-0x6a5e` is VOTED VEHICLE SPEED.** Sole writer `FUN_00041eec` @`0x42342`, the 5-channel speed

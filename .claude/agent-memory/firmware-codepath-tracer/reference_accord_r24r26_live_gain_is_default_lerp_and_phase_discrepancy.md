@@ -9,10 +9,10 @@ metadata:
 
 Traced for the orchestrator's "is r24/r26 Honda's active-damping term, and is its live gain a cal
 cell" question (V104-design-phase session, siblings `v104-biquad-io`/`v104-can-bits`). Full trace:
-`docs/TRACE-2026-08-21-r24-r26-as-active-damping.md`. GhidraMCP + independent Python LE32/byte scans
+`docs/traces/TRACE-2026-08-21-r24-r26-as-active-damping.md`. GhidraMCP + independent Python LE32/byte scans
 of `stock_fw_dump/code.bin`, all this session unless marked [RELAYED].
 
-## 1. The live gain arm -- closes O27 (`HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md` §8.1)
+## 1. The live gain arm -- closes O27 (`handoffs/2026-08/HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md` §8.1)
 
 Fresh full `decompile_function`+`disassemble_function(0x3aa2c)` (`FUN_0003aa2c`, 168 instrs,
 0x3aa2c-0x3ad74). r24's 4-way / r26's 3-way priority mux, all cal cells byte-read this session:
@@ -110,7 +110,7 @@ Because r24's default table is mode-indexed and mode 24/26 are physically separa
 **editing ONLY mode 26's 4 records leaves mode 24 (manual) byte-stock** -- a cal-only,
 engagement-conditional lever, despite `FUN_0003aa2c` itself never reading `gp-0x6806` (§2). **r26's
 table is mode-flat -- no such option exists for r26.** r24 dominates r26 on 89.9% of engaged frames,
-rising to 99.2% at 25-50 deg/s [RELAYED, `HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md` §6.3, `b6`
+rising to 99.2% at 25-50 deg/s [RELAYED, `handoffs/2026-08/HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md` §6.3, `b6`
 comparator], so an r24-only/mode-26-only edit captures most of the lane while respecting the
 operator's "don't touch manual/base steering" constraint as far as this firmware's structure allows.
 GATE 1 (RAM) is trivial for either option -- pure cal data, zero cave, zero new state.
@@ -163,5 +163,5 @@ session's structural trace corroborates independently.
 finding depends on (relayed, not re-verified this session -- see open item C in the trace doc).
 [[reference_accord_r24r26_driver_torque_lane_reZ_estimate]] -- source of the 139.1° pumping figure
 this session's phase discrepancy is checked against.
-`docs/HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md` O27/O28/O31 -- the open items this session
+`docs/handoffs/2026-08/HANDOFF-2026-08-20-v103-f0-is-the-endpoint.md` O27/O28/O31 -- the open items this session
 closes (O27), partially advances (O31: GATE 1 done, GATE 2 still open), or leaves untouched (O28).

@@ -6,7 +6,7 @@ metadata:
 ---
 
 Sized 2026-08-10 from the V89 image (`_v89_V88BASE-FRICTION.C40D2.204-…_plain_image.bin`).
-Reproducer: `analysis-2020accord/friction_k1_dose_model.py` (self-checking — it reproduces the kit's own
+Reproducer: `analysis-2020accord/studies/models/friction_k1_dose_model.py` (self-checking — it reproduces the kit's own
 recorded relay index 7.87 before computing anything else).
 
 ## The arithmetic (`FUN_0003b8f6`)
@@ -128,7 +128,7 @@ UNINFORMATIVE, not negative.** The problem is instrument resolution, not a 50× 
 ## 🛑🛑 FINAL (2026-08-10): K1 IS STRUCTURALLY THE WRONG LEVER — ceiling and effect bind in DIFFERENT RATE REGIMES
 
 **`gp-0x6abc`'s scale IS settled** and is NOT an open item, contrary to two agents' reports:
-`memory/accord-v85-flew-lever-delivered-bands-are-null.md` line 35 — **4.923 and 4.697 ct/(°/s) bracket
+`memory/accord/builds/accord-v85-flew-lever-delivered-bands-are-null.md` line 35 — **4.923 and 4.697 ct/(°/s) bracket
 the inherited 4.7121; envelope ±1,930 ct = ±409.6 °/s** (wheel/column-referred, not motor-shaft).
 ⇒ **δ = `0xC40BC`/12 = 50 ct = 10.61 °/s.**
 ★ **Confirmed by flown data**: FlightV89's b6 duty steps 0.104 → 0.312 (r76) and 0.042 → 0.148 (r75)

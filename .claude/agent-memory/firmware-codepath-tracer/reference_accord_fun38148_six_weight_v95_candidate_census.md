@@ -9,7 +9,7 @@ metadata:
 
 Dispatched to enumerate and classify the six Path-2 lane weights `0xC63A0..0xC63AA` after V94's
 `0xCBE74` cut (an ACCELERATION-domain lever, per [[reference_accord_v92_final_allocation_gp6abc_gp6bf0_adjudication]]
-and `memory/accord-gp6b26-is-inertia-not-damping.md`) made the car shake and was judged unsafe. Full
+and `memory/accord/signals/accord-gp6b26-is-inertia-not-damping.md`) made the car shake and was judged unsafe. Full
 fresh decompile of `FUN_00038148` (0x38148), `FUN_0003aa2c` (0x3aa2c, Path 1), `FUN_00034350` (0x34350,
 damper), `FUN_00034a72` (0x34a72, boost), plus raw disasm of `FUN_00026c80` (0x26c80, mixer). All on
 `code.bin` stock (confirmed identical to the current build's frozen values, see below).
@@ -37,12 +37,12 @@ through `gp-0x6b98`**, confirmed structure per [[reference_accord_path2_is_a_rea
 | gp-0x6bd0 | 0x73a0/**0xC63A0** | 1024 | 2048 | FUN_00034350 | DAMPER, 5-factor product — dead below 12.7°/s wheel rate / 35km/h (own memory: 95.91% of engaged frames zero, 100% of micro regime) |
 | gp-0x6bbe | 0x73a2/**0xC63A2** | 1024 | 2048 | FUN_00034a72 | BOOST — the ONE lane independently confirmed on-car viscous/rate-derived, ~90ct/(rad/s), phase~0 @5-6Hz |
 
-## Q3 lineage [EVIDENCE, grep + `build_v92_tva.py` FROZEN dict lines 506-514]
+## Q3 lineage [EVIDENCE, grep + `builds/v80_v107/build_v92_tva.py` FROZEN dict lines 506-514]
 **All six are at stock 1024 right now** (re-asserted every build V90→V94). `0xC63A2/A4/A6/A8/AA` are
 **completely virgin** — never appear in any build script except as a stock-value verification entry.
 `0xC63A0` is the one exception: V72 doubled it 1024→2048 (1 reader `0x381AC`, 0 writers); flew on V74/V75
 CONFOUNDED with the friction ×1.5 table and `0xC407E` 511→850 — the hard faults were `0xC407E`'s, NOT
-`0xC63A0`'s (`memory/accord-c407e-is-the-fault-interlock-c63a0-exonerated.md`, orchestrator-verified
+`0xC63A0`'s (`memory/accord/calibration/accord-c407e-is-the-fault-interlock-c63a0-exonerated.md`, orchestrator-verified
 2026-08-07). V81 (V75-base, flew route 5e clean) kept it at 2048. V83a reverted it to 1024 for a
 **loop-gain reason, not a safety one**. Stayed 1024 V84→V94. **⇒ no weight has EVER been isolated /
 single-variable on-car tested** — `0xC63A0`'s only flight was always confounded with other edits.

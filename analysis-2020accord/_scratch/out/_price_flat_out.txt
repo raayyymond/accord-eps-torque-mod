@@ -1,0 +1,516 @@
+# stock biquad  c1=-1.537200 c2=0.634620 c3=-1.880800 c4=0.817310  (0xC60A8..B4, LE float32)
+# c4 LE bytes stock = 3a3b513f   DC gain = 1.000034
+
+========================================================================================================
+SECTION B -- band-wise loop identification (routes 0x85 4x / 0x95 8x, aggregator SUM on 427)
+========================================================================================================
+     band     |G4|   argG4     |c|   arg c    |kG|     |A|           |A| CI   1/|A|    |Z4|   argZ4
+   2-4      0.0908  -165.1   17.34    +7.3   1.574   0.750 [ 0.435, 2.668]    1.33     529   -26.9
+   4-6      0.0508   -28.8   17.85  +131.3   0.907   1.196 [ 0.810, 7.396]    0.84    1192   -82.9
+   6-9      0.0481   +17.5   13.09  +145.3   0.630   0.440 [ 0.106, 0.662]    2.28    6352  -117.4
+   9-13     0.0549   -93.8   13.94   +25.3   0.766   1.465 [ 1.284, 1.473]    0.68    3451  -156.7
+  15-22     0.2397  -105.3    2.97   +49.6   0.713   1.520 [ 0.766, 2.208]    0.66    1306  +116.8
+  22-26     0.2538   -97.3    2.13  -106.4   0.541   0.549 [ 0.402, 1.516]    1.82     664   +80.5
+
+========================================================================================================
+PART 1 -- DOSE RESPONSE of the FLAT boost  k = c4_new/c4_stock,  a = 0.098 (4-build pool)
+========================================================================================================
+
+[1.1] |G(k)| / |G(1)|   (criterion 1: aggregator-sum magnitude; <1 = smaller loop gain)
+    k           2-4           4-6           6-9          9-13         15-22         22-26
+ 1.00         1.000         1.000         1.000         1.000         1.000         1.000
+ 1.10         1.102         0.826         0.838         0.981         0.994         0.986
+ 1.20         1.206         0.661         0.688         0.992         0.989         0.972
+ 1.30         1.310         0.515         0.556         1.032         0.985         0.960
+ 1.40         1.414         0.408         0.461         1.098         0.983         0.948
+ 1.50         1.519         0.376         0.428         1.185         0.982         0.937
+ 1.60         1.625         0.436         0.469         1.290         0.983         0.928
+ 1.75         1.783         0.632         0.632         1.471         0.986         0.915
+ 2.00         2.049         1.056         1.017         1.815         0.999         0.899
+ 2.25         2.315         1.513         1.444         2.189         1.019         0.889
+ 2.50         2.582         1.980         1.885         2.582         1.047         0.887
+ 3.00         3.117         2.926         2.783         3.394         1.124         0.903
+
+[1.2] Re(dG . Z)  (GATE2 3.2 first-order damping proxy; >0 = LESS anti-damping = BETTER)
+    k           2-4           4-6           6-9          9-13         15-22         22-26
+ 1.00          +0.0          +0.0          +0.0          +0.0          +0.0          +0.0
+ 1.10         -12.1          -6.1         +45.6         +46.3          -1.6          -4.4
+ 1.20         -24.3         -12.3         +91.1         +92.6          -3.2          -8.8
+ 1.30         -36.4         -18.4        +136.7        +138.8          -4.8         -13.2
+ 1.40         -48.5         -24.5        +182.2        +185.1          -6.4         -17.7
+ 1.50         -60.7         -30.6        +227.8        +231.4          -7.9         -22.1
+ 1.60         -72.8         -36.8        +273.3        +277.7          -9.5         -26.5
+ 1.75         -91.0         -46.0        +341.6        +347.1         -11.9         -33.1
+ 2.00        -121.3         -61.3        +455.5        +462.8         -15.9         -44.2
+ 2.25        -151.7         -76.6        +569.4        +578.5         -19.9         -55.2
+ 2.50        -182.0         -91.9        +683.3        +694.2         -23.8         -66.2
+ 3.00        -242.6        -122.6        +911.1        +925.6         -31.8         -88.3
+
+[1.3] |A(k)| = |1 + c.G(k)|  EXACT.  >1 = closed loop ATTENUATES.
+      [6-9 Hz is the only band where A has a usable CI; other bands are BELIEF-grade]
+    k           2-4           4-6           6-9          9-13         15-22         22-26
+ 1.00         0.750         1.196         0.419         1.465         1.520         0.549
+ 1.10         0.870         1.169         0.461         1.366         1.502         0.565
+ 1.20         1.005         1.167         0.531         1.272         1.484         0.582
+ 1.30         1.148         1.190         0.618         1.186         1.467         0.599
+ 1.40         1.298         1.238         0.718         1.109         1.450         0.615
+ 1.50         1.453         1.307         0.824         1.043         1.433         0.632
+ 1.60         1.610         1.394         0.936         0.989         1.416         0.649
+ 1.75         1.850         1.553         1.109         0.940         1.392         0.674
+ 2.00         2.257         1.869         1.407         0.947         1.353         0.716
+ 2.25         2.669         2.225         1.711         1.062         1.316         0.758
+ 2.50         3.085         2.605         2.019         1.255         1.281         0.800
+ 3.00         3.921         3.404         2.640         1.768         1.219         0.884
+
+[1.4] amplification ratio |A(1)|/|A(k)|  (<1 = less closed-loop amplification = BETTER)
+    k           2-4           4-6           6-9          9-13         15-22         22-26
+ 1.00         1.000         1.000         1.000         1.000         1.000         1.000
+ 1.10         0.862         1.024         0.909         1.073         1.012         0.971
+ 1.20         0.746         1.025         0.790         1.152         1.024         0.943
+ 1.30         0.653         1.005         0.678         1.236         1.036         0.917
+ 1.40         0.577         0.966         0.584         1.322         1.048         0.892
+ 1.50         0.516         0.915         0.508         1.406         1.061         0.869
+ 1.60         0.466         0.858         0.448         1.481         1.073         0.846
+ 1.75         0.405         0.770         0.378         1.560         1.092         0.815
+ 2.00         0.332         0.640         0.298         1.548         1.124         0.767
+ 2.25         0.281         0.538         0.245         1.380         1.155         0.724
+ 2.50         0.243         0.459         0.207         1.168         1.187         0.686
+ 3.00         0.191         0.351         0.159         0.829         1.247         0.621
+
+[1.5] Re(Z(k))  EXACT Mobius Z(k)=Z(1).A(1)/A(k)  (negative = anti-damped = the ratchet)
+    k           2-4           4-6           6-9          9-13         15-22         22-26
+ 1.00         +1285          +900         -3763         -4885          -440          -138
+ 1.10         +1167         +1243         -1892         -5188          -462          -125
+ 1.20         +1036         +1549          -512         -5477          -484          -113
+ 1.30          +915         +1777          +299         -5725          -508          -102
+ 1.40          +811         +1911          +723         -5890          -532           -92
+ 1.50          +725         +1953          +928         -5915          -557           -83
+ 1.60          +652         +1927         +1015         -5736          -583           -75
+ 1.75          +565         +1808         +1037         -4981          -623           -64
+ 2.00          +459         +1542          +971         -2639          -695           -49
+ 2.25          +384         +1295          +877          -296          -771           -36
+ 2.50          +330         +1095          +788         +1078          -852           -26
+ 3.00          +257          +818          +646         +1844         -1027           -11
+
+[1.6] 6-9 Hz HEADLINE  (a = 0.098 pooled)
+    k        c4  |G|/|G0|   Re(dG.Z)     |A|   1/|A|  amp ratio   Re Z(k)  ReZ/ReZ0
+ 1.00   0.81731     1.000       +0.0   0.419    2.39      1.000     -3763     1.000
+ 1.05   0.85818     0.918      +22.8   0.436    2.29      0.961     -2796     0.743
+ 1.10   0.89904     0.838      +45.6   0.461    2.17      0.909     -1892     0.503
+ 1.15   0.93991     0.761      +68.3   0.493    2.03      0.850     -1124     0.299
+ 1.20   0.98077     0.688      +91.1   0.531    1.88      0.790      -512     0.136
+ 1.25   1.02164     0.619     +113.9   0.573    1.75      0.732       -45     0.012
+ 1.30   1.06250     0.556     +136.7   0.618    1.62      0.678      +299    -0.079
+ 1.35   1.10337     0.503     +159.4   0.667    1.50      0.628      +547    -0.145
+ 1.40   1.14423     0.461     +182.2   0.718    1.39      0.584      +723    -0.192
+ 1.45   1.18510     0.435     +205.0   0.770    1.30      0.544      +845    -0.225
+ 1.50   1.22596     0.428     +227.8   0.824    1.21      0.508      +928    -0.247
+ 1.55   1.26683     0.439     +250.5   0.880    1.14      0.476      +982    -0.261
+ 1.60   1.30770     0.469     +273.3   0.936    1.07      0.448     +1015    -0.270
+ 1.65   1.34856     0.513     +296.1   0.993    1.01      0.422     +1032    -0.274
+ 1.70   1.38943     0.568     +318.9   1.051    0.95      0.399     +1039    -0.276
+ 1.75   1.43029     0.632     +341.6   1.109    0.90      0.378     +1037    -0.276
+ 1.80   1.47116     0.702     +364.4   1.168    0.86      0.359     +1030    -0.274
+ 1.85   1.51202     0.777     +387.2   1.227    0.81      0.341     +1019    -0.271
+ 1.90   1.55289     0.855     +410.0   1.287    0.78      0.326     +1004    -0.267
+ 1.95   1.59375     0.935     +432.8   1.347    0.74      0.311      +988    -0.263
+ 2.00   1.63462     1.017     +455.5   1.407    0.71      0.298      +971    -0.258
+ 2.05   1.67549     1.100     +478.3   1.468    0.68      0.285      +952    -0.253
+ 2.10   1.71635     1.185     +501.1   1.528    0.65      0.274      +933    -0.248
+ 2.15   1.75722     1.271     +523.9   1.589    0.63      0.264      +914    -0.243
+ 2.20   1.79808     1.357     +546.6   1.650    0.61      0.254      +895    -0.238
+ 2.25   1.83895     1.444     +569.4   1.711    0.58      0.245      +877    -0.233
+ 2.30   1.87981     1.532     +592.2   1.773    0.56      0.236      +858    -0.228
+ 2.35   1.92068     1.620     +615.0   1.834    0.55      0.228      +840    -0.223
+ 2.40   1.96154     1.708     +637.7   1.896    0.53      0.221      +822    -0.218
+ 2.45   2.00241     1.796     +660.5   1.957    0.51      0.214      +805    -0.214
+ 2.50   2.04327     1.885     +683.3   2.019    0.50      0.207      +788    -0.209
+ 2.55   2.08414     1.974     +706.1   2.081    0.48      0.201      +772    -0.205
+ 2.60   2.12501     2.064     +728.8   2.143    0.47      0.195      +756    -0.201
+ 2.65   2.16587     2.153     +751.6   2.205    0.45      0.190      +741    -0.197
+ 2.70   2.20674     2.243     +774.4   2.267    0.44      0.185      +726    -0.193
+ 2.75   2.24760     2.332     +797.2   2.329    0.43      0.180      +711    -0.189
+ 2.80   2.28847     2.422     +820.0   2.391    0.42      0.175      +697    -0.185
+ 2.85   2.32933     2.512     +842.7   2.453    0.41      0.171      +684    -0.182
+ 2.90   2.37020     2.602     +865.5   2.516    0.40      0.167      +671    -0.178
+ 2.95   2.41106     2.692     +888.3   2.578    0.39      0.163      +658    -0.175
+ 3.00   2.45193     2.783     +911.1   2.640    0.38      0.159      +646    -0.172
+
+[1.7] KNIFE EDGES at 6-9 Hz (where each criterion's benefit reverses)
+  |G| minimum                      k = 1.494   (|G|/|G0| = 0.427)
+  |G| back to baseline (ratio=1)   k = 1.0
+  |A| = 1 (loop neutral)           k = 1.656
+  amp ratio back to 1              k = 1.0
+  Re Z(k) crosses 0 at 6-9 Hz      k = 1.256
+  Re(dG.Z) sign: positive for every k>1 (it is linear in (k-1) with a positive coefficient)
+
+========================================================================================================
+PART 1.8 -- WORST CASE over the JOINT uncertainty space
+  axes: (i) episode bootstrap of (G4,G8,Z4,Z8) -> joint (c, G0, A0, Z);  4000 draws
+        (ii) a in [0.07, 0.15] (17 values);  (iii) arg Z over its CI [-126.3, -117.6] deg
+  4000 x 17 x 3 = 204,000 corners.  'WORSE' = amp ratio > 1  OR  Re Z(k) < Re Z(1).
+========================================================================================================
+    k    amp p50    amp p95    amp MAX     dReZ p50      dReZ p5  P(ReZ wo)   P(WORSE)
+ 1.00      1.000      1.000      1.000           +0           -0     0.2159     0.2159
+ 1.05      0.946      1.017      4.257        +1019         +496     0.0000     0.0931
+ 1.10      0.876      0.999      1.485        +1910        +1003     0.0000     0.0481
+ 1.15      0.805      0.980      1.082        +2582        +1490     0.0000     0.0253
+ 1.20      0.735      0.959      1.088        +3006        +1958     0.0000     0.0154
+ 1.25      0.675      0.934      1.088        +3293        +2364     0.0000     0.0105
+ 1.30      0.620      0.906      1.088        +3513        +2693     0.0000     0.0105
+ 1.35      0.570      0.870      1.088        +3689        +2807     0.0000     0.0105
+ 1.40      0.527      0.839      1.088        +3799        +2895     0.0000     0.0099
+ 1.45      0.490      0.807      1.088        +3899        +2904     0.0000     0.0080
+ 1.50      0.458      0.777      1.085        +3980        +2891     0.0000     0.0062
+ 1.55      0.427      0.743      1.079        +4037        +2869     0.0000     0.0049
+ 1.60      0.399      0.713      1.071        +4075        +2840     0.0000     0.0037
+ 1.65      0.375      0.685      1.060        +4091        +2821     0.0000     0.0031
+ 1.70      0.353      0.657      1.047        +4117        +2796     0.0000     0.0019
+ 1.75      0.333      0.631      1.032        +4124        +2781     0.0000     0.0012
+ 1.80      0.316      0.605      1.016        +4125        +2764     0.0000     0.0006
+ 1.85      0.300      0.582      0.998        +4123        +2750     0.0000     0.0000
+ 1.90      0.285      0.560      0.979        +4125        +2737     0.0000     0.0000
+ 1.95      0.273      0.539      0.959        +4123        +2726     0.0000     0.0000
+ 2.00      0.261      0.521      0.939        +4122        +2714     0.0000     0.0000
+ 2.05      0.250      0.502      0.918        +4117        +2703     0.0000     0.0000
+ 2.10      0.240      0.485      0.897        +4103        +2692     0.0000     0.0000
+ 2.15      0.231      0.469      0.875        +4092        +2682     0.0000     0.0000
+ 2.20      0.223      0.453      0.854        +4080        +2673     0.0000     0.0000
+ 2.25      0.215      0.439      0.833        +4069        +2664     0.0000     0.0000
+ 2.30      0.208      0.425      0.813        +4055        +2657     0.0000     0.0000
+ 2.35      0.201      0.412      0.792        +4050        +2651     0.0000     0.0000
+ 2.40      0.194      0.399      0.773        +4043        +2643     0.0000     0.0000
+ 2.45      0.188      0.388      0.753        +4038        +2635     0.0000     0.0000
+ 2.50      0.182      0.375      0.735        +4029        +2629     0.0000     0.0000
+
+[1.9] LEAVE-ONE-OUT / self-consistency variants at 6-9 Hz, k = 1.25 / 1.35 / 1.50
+                                                   variant  amp1.25  ReZ1.25  amp1.35  ReZ1.35  amp1.50  ReZ1.50
+   primary: G0 pooled 0.0528<15.1, c from ident, Z route9e    0.732      -45    0.628     +547    0.508     +928
+           self-consistent: G0 = G4 route85, c, Z4 route85    0.705      +75    0.608     +511    0.497     +797
+                                a = 0.117 (route 9e alone)    0.679     +290    0.569     +772    0.449    +1013
+                                       a = 0.070 (low end)    0.815     -755    0.732      -45    0.622     +576
+                                      a = 0.150 (high end)    0.599     +669    0.485     +969    0.372    +1036
+
+[1.10] EXPLICIT LEAVE-ONE-OUT (drop 1 episode from r85 and/or r95), 6-9 Hz
+       dropped     |kG|     |A0|   ReZ(1)  amp@1.25  amp@1.35  amp@1.50
+          none    0.630    0.440    -2928     0.705     0.608     0.497
+       r85 ep0    0.855    0.183    -2013     0.367     0.282     0.208
+       r85 ep1    0.591    0.570    -3503     0.882     0.801     0.683
+       r95 ep0    0.644    0.413    -2928     0.669     0.571     0.462
+       r95 ep1    0.563    0.505    -2928     0.763     0.677     0.572
+       r95 ep2    0.734    0.371    -2928     0.662     0.547     0.425
+
+========================================================================================================
+PART 2 -- THE COST AT 15-26 Hz (grind #1 = 21.0-22.5 Hz; the 6x carrier = 22-26 Hz)
+========================================================================================================
+Honda's biquad is NOT transparent up there -- this is the crux GATE2 4.2.1 missed:
+   H_Honda(  7.50 Hz) = 0.9842 (-0.138 dB) at -10.21 deg
+   H_Honda( 18.50 Hz) = 0.8978 (-0.936 dB) at -26.13 deg
+   H_Honda( 21.73 Hz) = 0.8557 (-1.354 dB) at -31.17 deg
+   H_Honda( 24.00 Hz) = 0.8208 (-1.715 dB) at -34.84 deg
+=> the boost vector dG = (k-1)(-a H) sits at 180+argH, i.e. +169.8 deg at 7.5 Hz but
+   +148.8 deg at 21.73 Hz.  A 21-deg rotation, and it FLIPS Re(dG.Z) at 15-26 Hz.
+
+[2.1] identification in the HIGH bands
+      band     |G4|   argG4     |c|   arg c    |kG|     |A|           |A| CI
+ 15.0-22.0   0.2397  -105.3    2.97   +49.6   0.713   1.520 [ 0.766, 2.208]
+ 18.0-22.0   0.2659  -104.1    1.64  +109.1   0.435   1.434 [ 0.653, 1.611]
+ 21.0-22.5   0.2703  -109.8    0.87  -151.0   0.235   0.990 [ 0.907, 1.038]
+ 20.0-28.0   0.2452   -99.1    1.54  -111.1   0.379   0.699 [ 0.555, 4.149]
+ 22.0-26.0   0.2538   -97.3    2.13  -106.4   0.541   0.549 [ 0.402, 1.516]
+ 26.0-31.0   0.1853   -14.9    2.62   -83.3   0.485   1.047 [ 0.412, 1.065]
+
+[2.2] both criteria in the high bands, k = 1.25 / 1.35 / 1.50   (a = 0.098)
+      band    G1.25    G1.35    G1.50 |  ReGZ1.25  ReGZ1.35  ReGZ1.50 |  ReZ 1.00  ReZ 1.35  ReZ 1.50
+ 15.0-22.0    0.987    0.984    0.982 |      +0.3      +0.5      +0.7 |      -589      -668      -705
+ 18.0-22.0    0.983    0.978    0.973 |      -3.5      -4.9      -7.0 |      -479      -523      -542
+ 21.0-22.5    0.988    0.984    0.981 |      -6.2      -8.7     -12.4 |      -353      -353      -352
+ 20.0-28.0    0.967    0.956    0.940 |      -9.4     -13.1     -18.8 |       -37       -19       -13
+ 22.0-26.0    0.966    0.954    0.937 |      -9.3     -13.1     -18.7 |      +110      +115      +116
+ 26.0-31.0    0.914    0.881    0.832 |     -14.2     -19.8     -28.3 |      +586      +610      +619
+
+[2.3] f0 PREDICTION -- Re(Z) sign crossover, route 0x9e instrument (1 Hz bins)
+      model: ReZ_new(f) = Re( Z_9e(f) * A(f)/A_k(f) ),  A(f) from the 4x/8x solve on
+      1 Hz-centred 2 Hz bands.  [BELIEF: A identified at 4x is transported to V103's 6x.]
+
+  f Hz   ReZ V103      |A|    arg A   ReZ@1.25   ReZ@1.35   ReZ@1.50   ReZ@1.70
+    18      -1164    1.758    -52.7      -1330      -1402      -1517      -1680
+    19       -745    1.235    -26.5       -799       -823       -860       -913
+    20       -607    1.131    -11.3       -625       -633       -644       -660
+    21       -488    1.064     +8.4       -494       -497       -501       -505
+    22       -237    0.925    +11.7       -233       -231       -229       -225
+    23       -103    0.646    +33.0       -100        -98        -97        -94
+    24         -8    0.572    +35.6         -7         -7         -7         -7
+    25        117    0.549     +8.7        116        115        114        112
+    26        203    0.812    -16.8        206        206        207        206
+    27        358    1.082    -27.6        366        368        372        375
+    28        532    1.060    -24.5        544        547        552        557
+    29        625    1.013    -19.6        642        648        657        668
+    30        851    1.077    -22.3        886        899        919        944
+
+  f0 baseline from this instrument  = 24.06 Hz   (recorded V103 route 0x9e f0 = 25.23 Hz)
+  f0 at k = 1.25 : 24.06 Hz   (shift -0.00 Hz vs the ±1.05 Hz split-half floor)
+  f0 at k = 1.35 : 24.06 Hz   (shift -0.00 Hz vs the ±1.05 Hz split-half floor)
+  f0 at k = 1.50 : 24.06 Hz   (shift -0.01 Hz vs the ±1.05 Hz split-half floor)
+  f0 at k = 1.70 : 24.06 Hz   (shift -0.01 Hz vs the ±1.05 Hz split-half floor)
+
+[2.4] WHY THE TWO CRITERIA DISAGREE -- the proxy drops a rotation that is NOT small
+  exact:  dZ = -(c/A) . Z . dG      =>   favourable cone is arg(dG)+arg(Z)+arg(-c/A) in +-90
+  GATE2 3.2 proxy assumes arg(-c/A) = 0 (i.e. c real-negative AND A = 1).  Measured:
+     6.0-9.0   arg(-c/A) =   -59.7 deg  =>  favourable arg(dG) in (  +87.1,  +267.1);  boost sits at  +169.8  => INSIDE
+    15.0-22.0  arg(-c/A) =  -107.6 deg  =>  favourable arg(dG) in (  -99.2,   +80.8);  boost sits at  +153.9  => OUTSIDE
+    21.0-22.5  arg(-c/A) =   +15.4 deg  =>  favourable arg(dG) in ( -212.4,   -32.4);  boost sits at  +148.8  => INSIDE
+    22.0-26.0  arg(-c/A) =   +50.4 deg  =>  favourable arg(dG) in ( -220.8,   -40.8);  boost sits at  +145.2  => INSIDE
+  GATE2 3.2 quoted the 6-9 Hz cone as (+33, +213) deg by setting that rotation to zero.
+
+[2.5] RETRODICTION -- score both criteria against the ONE on-car dose-direction the kit has
+  Record: ARMING the r24 rate lane moved grind #1 on the road.  V67/V68 (Lever B, LKAS-gated
+  r24 arm) is the best grind-#1 build in the kit; V71c beat stock (P=0.0006) but lost to V67
+  (P=0.0215); V88 restored Lever B and the operator reported grinding FIXED, 15-22 Hz command
+  ratio 0.549 [0.407,0.844].  [BUILD-LINEAGE.md:646; accord-v88-flew-grinding-fixed-command-intact]
+  Perturbation: dG_rate = +eps * (rate lane), structural phase pol*jw = angle -90 deg.
+        band  |G| ratio     Re(dG.Z)    exact ReZ         ROAD
+  6.0-9.0        0.955        -67.8         +150          n/a
+ 15.0-22.0       1.243        +69.9          +26       BETTER
+ 18.0-22.0       1.244        +81.3          +57       BETTER
+ 21.0-22.5       1.238        +78.0          +64       BETTER
+ 22.0-26.0       1.248        +41.5         +172          n/a
+  ('exact ReZ' column is the CHANGE in Re Z; positive = less anti-damped = better.)
+
+========================================================================================================
+PART 3 -- IS THERE A BETTER CAL-ONLY LEVER? -- the frontier
+========================================================================================================
+
+[3.1] FRONTIER -- flat c4 boost, k swept.  constraint: no high band worse by >20 %
+     k    amp p50    amp p95    amp MAX     hi worst feasible
+  1.00      1.000      1.000      1.000        1.000      yes
+  1.05      0.946      1.018      3.586        1.018      yes
+  1.10      0.884      0.999      1.046        1.037      yes
+  1.15      0.822      0.989      1.064        1.056      yes
+  1.20      0.761      0.973      1.077        1.075      yes
+  1.25      0.705      0.949      1.085        1.095      yes
+  1.30      0.654      0.906      1.088        1.115      yes
+  1.35      0.608      0.866      1.085        1.135      yes
+  1.40      0.567      0.836      1.078        1.155      yes
+  1.45      0.530      0.806      1.065        1.176      yes
+  1.50      0.497      0.775      1.047        1.197      yes
+  1.55      0.467      0.745      1.026        1.218       NO
+  1.60      0.440      0.716      1.002        1.240       NO
+  1.65      0.416      0.689      0.975        1.262       NO
+  1.70      0.395      0.662      0.947        1.284       NO
+  1.75      0.375      0.636      0.918        1.307       NO
+  1.80      0.357      0.612      0.888        1.329       NO
+  1.85      0.340      0.589      0.859        1.353       NO
+  1.90      0.325      0.568      0.829        1.376       NO
+  1.95      0.311      0.547      0.801        1.400       NO
+  2.00      0.299      0.528      0.773        1.424       NO
+  2.05      0.287      0.509      0.746        1.448       NO
+  2.10      0.276      0.492      0.720        1.472       NO
+  2.15      0.266      0.476      0.695        1.497       NO
+  2.20      0.256      0.461      0.671        1.522       NO
+  2.25      0.247      0.446      0.649        1.547       NO
+  2.30      0.239      0.432      0.627        1.573       NO
+  FRONTIER POINT (max guaranteed benefit = min amp p95, s.t. hi<=1.20):
+    k = 1.50   amp p50 0.497   amp p95 0.775   amp MAX 1.047   hi 1.197
+
+[3.2] r24/r26 RATE-LANE scaling m (V88 = 1.0 by construction; GATE2 5 gives eps* = -0.116)
+     m    amp p50    amp p95    amp MAX     hi worst
+  0.50      0.983      4.796      9.748        2.458
+  0.75      1.759      3.603      7.875        2.063
+  0.90      1.388      2.206      5.004        1.553
+  1.00      1.000      1.000      1.000        1.000
+  1.10      0.759      0.835      0.866        1.000
+  1.25      0.553      0.670      0.720        1.000
+  1.50      0.376      0.503      0.561        1.000
+  2.00      0.228      0.336      0.389        1.000
+
+[3.3] 2-POLE LOW-PASS realisation:  c3 = +2.0 (double zero at Nyquist), poles at fp/zeta,
+      c4 solved for DC gain.  H_lp replaces H_Honda entirely => dG = -a (H_lp - H_Honda).
+    fp   zeta    DC   |H|@7.5   arg@7.5  |H|@21.7    |H|@24  argdG7.5   amp p50   amp MAX  hi worst
+    10  1.000  1.00     0.640     -73.8     0.174     0.147     +29.1     0.516     0.900     2.248
+    10  1.000  1.35     0.864     -73.8     0.235     0.199     +42.0     0.519     1.021     2.463
+    10  1.000  1.50     0.960     -73.8     0.261     0.221     +46.8     0.494     1.041     2.553
+    10  0.707  1.50     1.307     -67.6     0.310     0.256     +65.5     0.431     1.124     2.756
+    12  1.000  1.00     0.719     -64.0     0.233     0.199     +35.8     0.619     1.129     2.414
+    10  0.500  1.50     1.727     -59.8     0.347     0.280     +85.7     0.335     1.176     2.906
+    10  0.707  1.00     0.871     -67.6     0.207     0.170     +44.8     0.599     1.203     2.379
+    10  0.707  1.35     1.176     -67.6     0.279     0.230     +60.3     0.484     1.233     2.644
+    10  0.500  1.35     1.554     -59.8     0.312     0.252     +81.0     0.393     1.346     2.775
+    25  0.500  1.50     1.565     -18.3     1.656     1.551    +148.5     0.496     1.386     2.852
+    12  1.000  1.35     0.970     -64.0     0.315     0.269     +52.1     0.626     1.436     2.667
+    12  1.000  1.50     1.078     -64.0     0.349     0.299     +58.0     0.576     1.478     2.770
+    25  0.500  1.35     1.408     -18.3     1.490     1.396    +144.0     0.632     1.484     2.827
+    15  1.000  1.00     0.800     -53.2     0.322     0.280     +43.6     0.821     1.668     2.575
+    20  0.500  1.50     1.599     -23.6     1.358     1.169    +136.8     0.496     1.780     3.751
+    12  0.707  1.50     1.397     -55.4     0.436     0.362     +79.8     0.504     1.789     3.116
+  (sorted: feasible first, then by worst-case amp ratio.  'hi worst' <=1.20 required.)
+  *** NOT ONE of the 45 low-pass designs is feasible: the BEST makes a high band 2.25x worse
+     (best on 6-9 Hz alone: fp=10 zeta=1.0000 DC=1.00, amp p50 0.516, but hi 2.248)
+     Reason: a low-pass CUTS the gp-0x6b86 lane at 15-26 Hz (|H| 0.15-0.44 vs Honda's
+     0.82-0.90).  On the damping criterion that REMOVES damping there -- the brief's
+     premise that attenuating 21.7/23 Hz is a co-benefit is inverted by the same
+     criterion that adjudicates the rate lane in [2.5].
+
+[3.4] FRONTIER re-cut on the SYMPTOM-BEARING high bands only
+  Grind #1 is the 21.0-22.5 Hz slice (STATE.md: 77.3 % of 15-22 power at <10 km/h sits
+  there); 22-26 Hz is the 6x carrier.  16-19 Hz carries NO recorded symptom.
+     k    amp p50    amp p95    amp MAX   symptom hi     15-26 hi
+  1.00      1.000      1.000      1.000        1.000        1.000
+  1.10      0.884      0.999      1.046        1.000        1.037
+  1.20      0.761      0.973      1.077        1.000        1.075
+  1.30      0.654      0.906      1.088        1.000        1.115
+  1.40      0.567      0.836      1.078        1.000        1.155
+  1.50      0.497      0.775      1.047        1.000        1.197
+  1.60      0.440      0.716      1.002        1.000        1.240
+  1.70      0.395      0.662      0.947        1.000        1.284
+  1.80      0.357      0.612      0.888        1.000        1.329
+  1.90      0.325      0.568      0.829        1.000        1.376
+  2.00      0.299      0.528      0.773        1.000        1.424
+  => on the SYMPTOM bands the flat boost has NO cost at any k. The 15-26 cost is entirely
+     16-19 Hz, where no symptom has ever been recorded.
+
+[3.5] fine-grained Re(Z) cost/benefit per 1 Hz bin, k = 1.35 (route 0x9e instrument)
+  f Hz   ReZ base   ReZ@1.35     ratio
+    16      -2463      -2848     1.157
+    17      -1654      -1877     1.135
+    18      -1164      -1402     1.205
+    19       -745       -823     1.104
+    20       -607       -633     1.042
+    21       -488       -497     1.019
+    22       -237       -231     0.975
+    23       -103        -98     0.958
+    24         -8         -7     0.911
+    25        117        115     0.985
+    26        203        206     1.015
+    27        358        368     1.031
+
+========================================================================================================
+PART 4 -- THE FALSIFIER, pre-registered
+========================================================================================================
+
+[4.1] P(Re Z > 0) at 6-9 Hz engaged, over the 204,000-corner joint uncertainty space
+     k       P(ReZ>0)   P(ReZ>-1000)   P(ReZ<-2000)       ReZ p5
+  1.00         0.0000         0.0000         1.0000        -4193
+  1.05         0.1350         0.2655         0.5056        -3434
+  1.10         0.3752         0.6176         0.1368        -2593
+  1.15         0.6508         0.8687         0.0294        -1682
+  1.20         0.8504         0.9639         0.0068         -817
+  1.25         0.9466         0.9900         0.0019          -55
+  1.30         0.9832         0.9979         0.0006          434
+  1.35         0.9956         0.9992         0.0000          506
+  1.40         0.9990         0.9998         0.0000          491
+  1.45         0.9998         1.0000         0.0000          451
+  1.50         1.0000         1.0000         0.0000          412
+  1.55         1.0000         1.0000         0.0000          379
+  1.60         1.0000         1.0000         0.0000          348
+  1.65         1.0000         1.0000         0.0000          325
+  1.70         1.0000         1.0000         0.0000          303
+  1.75         1.0000         1.0000         0.0000          283
+  1.80         1.0000         1.0000         0.0000          267
+  1.85         1.0000         1.0000         0.0000          252
+  1.90         1.0000         1.0000         0.0000          239
+  1.95         1.0000         1.0000         0.0000          227
+  2.00         1.0000         1.0000         0.0000          217
+
+[4.2] EXPOSURE CONTROL -- can ONE 15-30 s engaged episode read Re(Z) at 6-9 Hz?
+  Method: cut route 0x9e's engaged frames into contiguous blocks of T seconds, compute the
+  frozen Re(Z) estimator on each block independently, report the distribution.  This is the
+  CONTROL, run BEFORE the measurement.
+  route 0x9e: 6 episodes >=2.5 s, 399.5 s engaged
+ block s       n     ReZ p5    ReZ p25    ReZ p50    ReZ p95   P(ReZ>0)
+      15      23      -5800      -4902      -3784      -1489     0.0000
+      20      18      -5943      -4889      -4189      -2164     0.0000
+      30      10      -5259      -4298      -4089      -2904     0.0000
+      45       5      -4716      -4356      -4052      -3678     0.0000
+      60       4      -5066      -4438      -4056      -3687     0.0000
+  MANUAL frames, same drive, 6-9 Hz: Re(Z) = -273  (coh2 0.016, 8 runs >=2.5 s, 238.6 s)
+
+[4.3] IN-FORCE WITNESS -- the V104 spec's b6 rung already does this job, free
+  Rung: b6 = (|gp-0x6b86| >= |gp-0x6b82|).  gp-0x6b86 = clamp(H.gp-0x6b82 + gp-0x6b7e).
+  |H_Honda| by band:
+       0.50 Hz  stock |H| = 1.0000   at k=1.25 1.2500   k=1.35 1.3500   k=1.50 1.4999
+       2.00 Hz  stock |H| = 0.9989   at k=1.25 1.2487   k=1.35 1.3485   k=1.50 1.4984
+       5.00 Hz  stock |H| = 0.9931   at k=1.25 1.2413   k=1.35 1.3406   k=1.50 1.4896
+       7.50 Hz  stock |H| = 0.9842   at k=1.25 1.2303   k=1.35 1.3287   k=1.50 1.4763
+      12.00 Hz  stock |H| = 0.9587   at k=1.25 1.1984   k=1.35 1.2943   k=1.50 1.4381
+      21.73 Hz  stock |H| = 0.8557   at k=1.25 1.0696   k=1.35 1.1551   k=1.50 1.2835
+  => stock: |H| <= 1.000034, so b6 is decided by the sign of the gp-0x6b7e pedestal
+     (duty ~0.5, and V103 measured nothing here).  At k >= 1.25 the FILTERED term alone
+     exceeds the input at every frequency below ~40 Hz, so b6 duty -> ~1.0 ENGAGED while
+     MANUAL frames (bypass, filter disarmed) keep the stock duty.  A single-frame,
+     zero-exposure, within-drive witness that (a) the arm gate is closed and (b) the c4
+     edit is in force -- which is exactly the V64 failure mode (the null was ON THE GATE).
+
+[4.4] PRE-REGISTERED FALSIFIER
+
+  PRIMARY ENDPOINT       Re(Z) at 6-9 Hz, ENGAGED frames only.
+  STATISTIC              Z = sum_band S_wT / sum_band S_ww ; w = rate_f (rad/s), T = tq (counts);
+                         4 s Hann windows, 50 % overlap, linear detrend, Welch-summed inside the
+                         engaged run.  Frozen method, GATE2 sec 2 / _gate2_boost_lib.band_H.
+  EXPOSURE               ONE contiguous engaged block of >= 15 s.  No matched episodes, no
+                         cross-build contrast, no minutes of exposure.
+  BASE RATE (measured)   V103 route 0x9e, 23 independent 15 s engaged blocks: Re(Z) < 0 in 23/23,
+                         p95 = -1489, median -3784.  Across every drive ever scored: 6/6 negative
+                         (stock manual -3375/-3176/-3073; engaged -3639/-3762/-3761).
+  PASS (lever worked)    Re(Z) > 0 in the block.   Model P(pass | k=1.35) = 0.996 over the
+                         204,000-corner joint uncertainty; 5th percentile of the predicted value
+                         is +506.
+  FAIL (lever did not)   Re(Z) <= -1489 (V103's own worst 15 s block).
+  AMBIGUOUS              -1489 < Re(Z) <= 0 : report as partial, do not call it either way.
+  IN-FORCE WITNESS       b6 duty (see 4.3) engaged >> manual.  If b6 duty does NOT rise, the
+                         endpoint is VOID -- the gate, not the hypothesis, and no physics may be
+                         read from the drive.
+
+  *** THE SENTENCE A NULL LICENSES, written before the cut:
+    "The flat c4 boost injected dG = 0.034 at 7.5 Hz -- 65 % of the whole measured aggregator sum
+     (0.0528) and 93 % of it at k = 1.5.  The identified loop says a perturbation that size MUST
+     move Re(Z) at 6-9 Hz from -3763 to +547, with P = 0.996 over the full joint uncertainty.
+     If b6 confirms the filter was in force and Re(Z) is still <= -1489, then the |kG| = 0.630 /
+     A = 0.440 identification from the 4x/8x pair is FALSIFIED -- not merely imprecise -- and every
+     lever priced against it since 2026-08-20, including the three GATE2 refusals, must be re-opened."
+
+  ⚠ The manual arm is NOT a usable Re(Z) control on this route: route 0x9e's manual frames give
+    Re(Z) = -273 at coh2 = 0.016 -- indistinguishable from noise.  Use b6 duty as the witness,
+    not the manual Re(Z).
+
+
+========================================================================================================
+SECTION C -- POSITIVE CONTROLS, and the DIRECTION COMPASS at 6-9 Hz
+========================================================================================================
+[C.1] reproduce GATE2 sec 3.2's published BOOST x1.44 row from this script's own model:
+      dG = 0.0424 at +169.8 deg  (GATE2: 0.042 at +169 deg)
+      Re(dG.Z) = +200            (GATE2: +203)
+      k=1.50: Re(dG.Z) = +228     (GATE2: +230)
+[C.2] reproduce studies/grind2/_g2b_kappa.py's 6-9 Hz solve: |kG| 0.630 (rec 0.630), |A| 0.440 (rec 0.440),
+      |c| 13.09 (rec 13.087), arg c +145.3 (rec +145.3)
+
+[C.3] DIRECTION COMPASS -- which realisations of a gp-0x6b86 change are FAVOURABLE?
+      corrected favourable cone for arg(dG) at 6-9 Hz: (+101.5, +281.5) deg
+      [GATE2 3.2 published (+33, +213) by setting arg(-c/A) = 0; the measured value is -68.3 deg]
+                             realisation    arg(dG)    inside?     margin
+            FLAT GAIN BOOST  k>1 (c4 up)     +169.8        YES     +68.3 deg
+          flat gain CUT    k<1 (c4 down)      -10.2         no    -111.7 deg
+                   full NULL of the lane      -10.2         no    -111.7 deg
+              pure LAG  30 deg at 7.5 Hz      +64.8         no     -36.7 deg
+                        pure LAG  60 deg      +49.8         no     -51.7 deg
+                        pure LAG  90 deg      +34.8         no     -66.7 deg
+                        pure LEAD 60 deg      -70.2         no    -171.7 deg
+              gain x1.35 WITH 60 deg lag      +64.3         no     -37.2 deg
+      => the ONLY favourable direction is a pure FLAT GAIN INCREASE. Every phase-based
+         realisation (lead OR lag) leaves the cone. GATE2 sec 5 item 5's 'a lag would be
+         favourable' is REVERSED by the arg(-c/A) correction.
+
+========================================================================================================
+SECTION D -- CROSS-BUILD LEDGER, read from the plain images (not from build scripts)
+========================================================================================================
+ build   0x3AA96   0xC6446   0x3AB76   0x3AC20   0xC6CD0   0xC649B   0xC60B4
+ STOCK        c5       512        aa        aa         -        00  3a3b513f
+  V100        fb      5244        aa        aa      3564        00  3a3b513f
+  V101        c5       512        aa        aa      7128        00  3a3b513f
+  V102        c5       512        aa        aa      5346        00  3a3b513f
+  V103        c5       512        aa        aa      5346        01  3a3b513f
+  Lever B = (0x3AA96 fb, 0xC6446 5244) = r24 x2.000 while LKAS applies -- grind-#1 effect
+           0.40 [0.27,0.58] on-car; Lever A = (0x3AB76/0x3AC20 non-aa) = V62's r24 half.
+  *** V101, V102 and V103 -- THREE CONSECUTIVE FLOWN BUILDS -- carry NEITHER grind-#1 fix.
+  *** The A0 = 0.440 baseline came from V100, which DID carry Lever B. The car today does
+      not.  Every Part-1 number is anchored to V100's operating point, not V103's.

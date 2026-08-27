@@ -33,7 +33,7 @@ functions.**
    [[reference_accord_gp69b0_authority_gate_and_fun42746_table_selector]] already named this function)
    crossing sentinels `-0x8000`/`0`. [EVIDENCE, fresh decompile 0x42746-0x347b4] This is the mechanism
    behind V73's {8,10} engagement-linked measurement — prior label "sensor-fault failover reselector"
-   (in `eps_lkas_chain_model.py`, now corrected) undersold it: it fires on engagement edges, with
+   (in `model/eps_lkas_chain_model.py`, now corrected) undersold it: it fires on engagement edges, with
    `gp-0x67e2`'s branch additionally gated on a consistency check vs cal `tp+0x7182`.
 3. **`FUN_0004a798`** (1 write, disp23 6-byte form, `0x4a7fc`) — UDS WDBI dispatcher, request-ID case 1
    (`r8==1`). Same dispatcher also writes `gp+0x63e8/0x6426/0x6427/0x63ec/0x63f0/0x63f4/0x6400/0x6404` —

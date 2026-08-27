@@ -76,14 +76,14 @@ The LERP (`FUN_00038148` Stage 2's gain-scheduled nonlinearity) is a genuine 2-D
 speed indexed, 9-point X/Y records at `0xC7B40/C7C28/C7D10/C7DF8/C7EE0/C7FC8/C80B0`, populated via
 `FUN_000382d8`→`FUN_000389ec` into RAM `gp-0x64b8[]`/`gp-0x641c[]`, read by the Stage-2 code I decompiled
 this session. Honda enforces `f′≥0`/monotonicity at 3 independent ungated sites — editing the Y-values
-directly to flatten the curve stays inside that envelope. **But per `accord-plant-model-residual-aggregator-chain.md`'s own explicit table
+directly to flatten the curve stays inside that envelope. **But per `accord/firmware/accord-plant-model-residual-aggregator-chain.md`'s own explicit table
 ("THREE NEW 'FLATTEN A CURVE INTO A RELAY' HAZARDS... V80 is the recorded cost of making this error
 once: the worst grinding in this car's history")**:
 - `0xC63AE` (the LERP's INDEX SCALE, stock 1024) — never → 0: index becomes ≡0 ⇒ output ≡ ±Y[0], a
   CONSTANT ⇒ a pure relay at full authority.
 - `0xC6200` (the ±8192 clamp) — never < Y[0]: produces the same relay from the other side.
 
-`0xC6200` is doubly disqualified regardless: [EVIDENCE, `accord-c6200-clamps-the-pid-reference.md`,
+`0xC6200` is doubly disqualified regardless: [EVIDENCE, `accord/calibration/accord-c6200-clamps-the-pid-reference.md`,
 cross-confirmed by my own fresh decompiles of BOTH `FUN_00038148` (clamps `gp-0x6b70`) and
 `FUN_0003a382` (clamps `gp-0x6ad6`) this session] it has FOUR roles on the SAME cell (also
 `FUN_000352b4`'s biquad-friction clamp and `FUN_000389ec`'s `Y[9]` ceiling), is **self-cancelling as a

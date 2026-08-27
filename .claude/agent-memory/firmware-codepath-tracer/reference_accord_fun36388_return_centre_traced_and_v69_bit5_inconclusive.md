@@ -92,7 +92,7 @@ independently verified) and does not keep setting new peaks (which would re-free
 value each time rather than genuinely reset gp-0x6bda's SIGN structure — a second-order effect not
 chased further).
 
-**★★★ THE FREE TELEMETRY TEST, RUN [EVIDENCE, `rlog-tools/decode_v69_ratchet.py` against
+**★★★ THE FREE TELEMETRY TEST, RUN [EVIDENCE, `rlog-tools/probe/decode_v69_ratchet.py` against
 `analysis-2020accord/rlogs/75604b0a432fdc89_0000004f--61171e660d--{0..7}--rlog.zst`, all 8 route-4f
 segments, 47,996 frames, 481.7 s]:**
 - Build identity CONFIRMED: byte4 = `0x87` on 100% of frames (bit7 set, bit3 clear), matching
@@ -269,13 +269,13 @@ and would directly test whether the snap already fires during real driving befor
 
 ## 🛑🛑 2026-08-05 round 2 — DONE: decoded route 4f, and the SIGN is NOT clean (major correction to a team-lead claim), plus an identification caveat on the data itself
 
-**bit5 decoded from `analysis-2020accord/_cache_r4f_v69.npz`** (47,990 frames, 480s, `fs_lattice`=99.989Hz):
+**bit5 decoded from `analysis-2020accord/_scratch/data/_cache_r4f_v69.npz`** (47,990 frames, 480s, `fs_lattice`=99.989Hz):
 **duty is EXACTLY 0.00000 in every cell** (whole route, engaged, engaged+creep, the ratchet cell,
 manual, engaged-not-creep). 95% upper bound on true duty: 0.042% at the tightest (ratchet) cell,
 0.006-0.022% elsewhere (Rule-of-Three-style bound from n exposures / 0 hits).
 
 🛑 **BUT this route's byte4 field emits ONLY `0x87` — no rung bit (5, 6, or 4) EVER fires, and per
-`decode_v69_ratchet.py`'s OWN embedded logic this payload space is NOT structurally distinguishable
+`probe/decode_v69_ratchet.py`'s OWN embedded logic this payload space is NOT structurally distinguishable
 from V66/V67** (both of which independently recorded the identical `{0x87,0xc7}` null over 186,321
 frames). **bit6 (r24's lane, the script's own designated "positive control" expected to fire under
 V69's 4x dose) is ALSO constant 0 here** — the script's own docstring names this exact combination
@@ -412,16 +412,16 @@ describing-function argument implicates) rather than create it from nothing. **O
 
 ## V69's bit5 ALREADY probed gp-0x6b62 on-car -- inconclusive, not falsified [EVIDENCE, build script + flight handoff]
 
-`analysis-2020accord/build_v69_tva.py` (~line 198-411) built a CAN 0x14A telemetry cave with
+`analysis-2020accord/builds/v50_v79/build_v69_tva.py` (~line 198-411) built a CAN 0x14A telemetry cave with
 `bit5 = gp-0x6b62 >= +4096`, explicitly labelled *"the operator's own hypothesis, never probed in 69
-builds."* Flown on route `4f` (`docs/HANDOFF-2026-08-04-v69-flew-grind1-back-at-creep.md` section 5.2).
+builds."* Flown on route `4f` (`docs/handoffs/2026-08/HANDOFF-2026-08-04-v69-flew-grind1-back-at-creep.md` section 5.2).
 Result: **"bit5 was insensitive, not vacuous"** -- `gp-0x6b62`'s reachable max is 5786
 (`|gp-0x6b5e| <= 4762` from trapezoid `0xC66CC`, plus a latched `|sVar8| <= 1024`), so the 4096 threshold
 sat at 71% of full range, seeing only the top 29%. **The record does NOT report an explicit observed
 hit-rate/count for bit5** (unlike bit6, which got an explicit "observed 0, p=0.37"). The section header
 is "ALL THREE RUNGS FAILED", implying bit5 also produced no usable signal, but this is inferred, not
 quoted verbatim -- **the actual bit5 time series from route 4f's decoded probe has not been surfaced in
-the written record I found.** Re-decoding `rlog-tools/decode_v69_ratchet.py`'s route-4f output for
+the written record I found.** Re-decoding `rlog-tools/probe/decode_v69_ratchet.py`'s route-4f output for
 bit5's raw 0/1 series (not just a summary stat) would settle whether `gp-0x6b62` ever fired at all, which
 is the single fastest way to move this candidate from OPEN to CONFIRMED or KILLED.
 

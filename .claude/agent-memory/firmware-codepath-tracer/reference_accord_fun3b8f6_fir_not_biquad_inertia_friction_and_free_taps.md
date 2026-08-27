@@ -28,17 +28,17 @@ the single most important structural fact: even a hand-edited version of this bl
 broad FIR null (a zero), never a Q-having notch.
 
 **Byte-read stock AND V84 (`_v84_LEVERB...` image), identical**: `(c1,c2,c0) = (1.0, 0.0, 0.0)` ⇒ `y=x`
-exactly -- **a literal identity pass-through on every build ever made.** `build_v58_tva.py:20` already
+exactly -- **a literal identity pass-through on every build ever made.** `builds/v50_v79/build_v58_tva.py:20` already
 called this "the two 3-tap FIR slots (0xC4018/1C/20 and 0xC4048/4C/50)... dead as a lever" -- CORROBORATED.
 
-**Reconciles an apparent conflict, not a real one.** `build_v52c_tva.py`'s comment on `0x3B908`
+**Reconciles an apparent conflict, not a real one.** `builds/v50_v79/build_v52c_tva.py`'s comment on `0x3B908`
 ("its float biquad stage is degenerate in stock cal (coeffs 0.0f), leaving two poles at ~366 Hz each")
 is talking about the SAME chain but a different stage: `tp+0x50d8` = 3686/4096 = 0.8999 is the alpha of
 the 2-stage EMA that FEEDS the FIR (its input, `x[n]`), and `-fs/(2π)ln(1-alpha)` = **366.3 Hz per pole**
 -- exactly their number. Their "coeffs 0.0f" remark is accurate too (2 of the 3 FIR coefficients ARE
 0.0f). So the two write-ups describe the same object at different resolution; neither is wrong once
 reconciled. `x[n]` = 2-stage EMA(gp-0x4f60/1024, α=3686/4096) × `tp+0x713a`(=0xC613A=1159)/32768 -- and
-`0xC613A`=1159 is the SAME cal `build_v68_tva.py` independently confirmed for the `gp-0x6ac0`→bus scale
+`0xC613A`=1159 is the SAME cal `builds/v50_v79/build_v68_tva.py` independently confirmed for the `gp-0x6ac0`→bus scale
 chain, so it may be a SHARED cal, not private to this function -- **not checked this session, flag for
 whoever touches 0xC613A next.**
 
@@ -46,7 +46,7 @@ whoever touches 0xC613A next.**
 lightly-smoothed copy of the RAW TORQUE SENSOR (`gp-0x4f60`) and is reachable by a **pure 12-byte cal
 edit (3 raw floats), no cave**. It CANNOT become a resonant notch (no poles), but it CAN become an
 arbitrary FIR-3 null/lead/lag on the torque-sensor branch of Path 2 with zero code risk. Distinct from,
-and much cheaper than, the Q≈20 biquad-cave NO-GO in `docs/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md`
+and much cheaper than, the Q≈20 biquad-cave NO-GO in `docs/research/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md`
 §3.4 -- but also much weaker (FIR-3 has no sharp selectivity). [BELIEF: usefulness for the operator's
 actual self-interference goal is NOT evaluated here -- this session only confirms the structure and its
 cal-reachability.]
@@ -171,7 +171,7 @@ approaches saturation.** FRICTION's *ratio* nonlinearity, by contrast, IS effect
 sized this session.
 
 ## 9. Consumer census -- `gp-0x6c00`/`gp-0x6ae0`/`gp-0x6ae2`/`gp-0x695c` are CONFIRMED free taps
-`[EVIDENCE, scan_gp_accesses.py (validated disp16+ext23 scanner) + independent LE32-literal pointer-table
+`[EVIDENCE, studies/firmware_scan/scan_gp_accesses.py (validated disp16+ext23 scanner) + independent LE32-literal pointer-table
 check, all three methods agree, stock code.bin; FUN_0003b8f6/FUN_0003bc20 code region byte-identical
 stock vs V84]`:
 
@@ -204,7 +204,7 @@ prior memory's Stage-2 description is trusted, not re-derived]. **Any edit to `t
 (magnitude AND phase across the WHOLE loop) before flying, exactly like any other Path-2 change.**
 
 ## Open items
-1. `0xC613A`=1159 may be a SHARED cal with the `gp-0x6ac0`→bus-scale chain (`build_v68_tva.py`) -- not
+1. `0xC613A`=1159 may be a SHARED cal with the `gp-0x6ac0`→bus-scale chain (`builds/v50_v79/build_v68_tva.py`) -- not
    confirmed this session; check before editing it for either purpose.
 2. Angle-error LERP table (§5) vs "FactorD" reconciliation -- not resolved, needs the FactorD memory
    file read verbatim.

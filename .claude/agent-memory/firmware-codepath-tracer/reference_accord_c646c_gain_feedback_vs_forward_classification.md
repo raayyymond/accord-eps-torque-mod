@@ -38,7 +38,7 @@ among the 6 sites). Matches the prior "GAIN monitor-INDEPENDENT" note, now indep
 **#1 `0x2a1ee` -- FORWARD, VERIFIED.** Full disasm read: `(Q10-IIR-blended, deadband-gated
 LKAS-setpoint-descended term) * GAIN * POLARITY(gp-0x6752) >>15`, clamp `+/-0xC61B4`, feeds `gp-0x6b3c`
 (arb command) -> `limit_and_pack` -> mixer -> `gp-0x6b4c` -> aggregator. This is the intended use.
-Matches `eps_lkas_chain_model.py`'s already-VERIFIED `steer_torque_arbitration()`.
+Matches `model/eps_lkas_chain_model.py`'s already-VERIFIED `steer_torque_arbitration()`.
 
 **#2 `0x2a904` -- DEAD CODE, high confidence.** Structurally a near-twin of #1 (same GAIN/POLARITY/CLAMP
 idiom, same `gp-0x3d3c` IIR carrier, same `gp-0x6806` STEER_CONTROL_ACTIVE gate) but writes a DIFFERENT
@@ -332,7 +332,7 @@ clamp(gp-0x6a02)` -- this is EXACTLY the "tracking error" signal a parallel team
 flagged as "NOT closed... a real, not-ruled-out candidate for an angle/angle-rate tracking signal." I
 pushed one level further: `gp-0x69ca`'s own producer is `FUN_0003bd7c` -- **the already-established EPS
 assist-state-machine function that derives `gp-0x67fe` from `gp-0x6772`**
-(`eps-gp67fe-trump-engaged-holding-substate.md`) -- via a call to `FUN_0003bd40` gated on a
+(`misc/eps-gp67fe-trump-engaged-holding-substate.md`) -- via a call to `FUN_0003bd40` gated on a
 sentinel-checked (`0x7FFF`) read at **`gp+0x6470`** (positive gp offset, same pattern as the known
 variant-config byte at `gp+0x6409` in the CAN-427 bitmap). Did NOT decompile `FUN_0003bd40` or resolve what
 `gp+0x6470` configures -- real gap, not closed. **Reading (not proven): this looks at least as plausibly
@@ -443,20 +443,20 @@ byte reads (this session, 5 images):
 | `_v78_v76base_ey1_449_dose206_plain_image.bin` | `0x746c` | 3564 | 0xFFFF |
 | `_v80_v79base_flatC566_ratchet454FE_dose412_plain_image.bin` | `0x746c` | 3564 | 0xFFFF |
 
-`_v76_gate_fb_arm5244_gateprobe_...` (built by `build_v76_tva.py`, base = `_v74_engagedcols_x0_12_addonly_
+`_v76_gate_fb_arm5244_gateprobe_...` (built by `builds/v50_v79/build_v76_tva.py`, base = `_v74_engagedcols_x0_12_addonly_
 plain_image.bin`, a V57-and-later-descended lineage) is a DIFFERENT, EARLIER V76 candidate that still
 carries the V57 decouple -- it is NOT the ancestor of V78/V80. `_v76_v38base_relu_damper_...` (built by
-`build_v76_v38base_tva.py`, base = `_v38_plain_image.bin` directly, SHA pinned) is the one V78 and V80
+`builds/v50_v79/build_v76_v38base_tva.py`, base = `_v38_plain_image.bin` directly, SHA pinned) is the one V78 and V80
 actually descend from (`_v78_v76base_...`/`_v80_v79base_...` filenames name it), and its own header says
 so explicitly: **"V76 RE-CUT ON A V38 BASE. Supersedes V76/V77/V77B"**, and separately notes the old
 `.rwd` was renamed `SUPERSEDED-2026-08-07-BY-V76-V38BASE-...` -- i.e. the kit's own re-cut safety practice
-(`accord-recut-overwrites-the-previous-plain-image.md`) was correctly followed for the `.rwd`, but the
+(`accord/instruments/accord-recut-overwrites-the-previous-plain-image.md`) was correctly followed for the `.rwd`, but the
 STALE plain_image snapshot for the abandoned gateprobe V76 is still on disk under a filename that reads as
 current. A careless glob for `_v76*plain_image.bin` returns both and does NOT sort the right one first --
 confirmed this session as a near-miss (the first file this scan read WAS the stale one). **Anyone tracing
 this lineage must anchor on `_v76_v38base_relu_damper_plain_image.bin` by exact name, not a `v76*` glob.**
 This also makes the mechanism concrete: rebasing onto V38 (pre-dates V57, `SRC_SHA256` pinned in
-`build_v76_v38base_tva.py`) is EXACTLY why V76-v38base/V78/V80 read `0xC646C` at reader #1 instead of the
+`builds/v50_v79/build_v76_v38base_tva.py`) is EXACTLY why V76-v38base/V78/V80 read `0xC646C` at reader #1 instead of the
 decoupled `0xC6CD0` -- V38 predates the retarget, so its own `0xC646C` was already 3564 (carried from the
 pre-V57 4x-gain lineage), and nothing in the V76-v38base/V78/V80 chain re-applies V57's 2-byte fix.
 

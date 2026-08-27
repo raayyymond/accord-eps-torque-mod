@@ -59,7 +59,7 @@ routes, doesn't bind by 8.3×, taken as given from the source trace, not re-deri
 corrected and scoped — `0x14A`'s `rate_c` for absolute-magnitude questions, `0x18F`'s `rate_f` only for
 phase/impedance work (the two channels read ~24% apart in magnitude, confirmed by the source trace).
 
-Full write-up: `docs/SPEC-2026-08-11-telemetry-budget.md`, ADDENDUM 2.
+Full write-up: `docs/specs/SPEC-2026-08-11-telemetry-budget.md`, ADDENDUM 2.
 
 Related: [[reference_accord_vehicle_bus_clearance_and_aggregator_probe_reaim_2026-08-11]] (the prior
 round this supersedes for the winner-set specifics, though the vehicle-bus clearance verdict stands).
@@ -83,7 +83,7 @@ that adjudication, not used to override the hold).
 this build — no prior build in the lineage has ever written there, a fresh capacity claim disjoint by
 construction, not dependent on any prior build's measured duty.
 
-Full final spec: `docs/SPEC-2026-08-11-telemetry-budget.md`, ADDENDUM 3. Session's telemetry-budget work
+Full final spec: `docs/specs/SPEC-2026-08-11-telemetry-budget.md`, ADDENDUM 3. Session's telemetry-budget work
 complete per team-lead's close-out instruction.
 
 ## TWO VARIANTS spec'd, contingent on the pending dwell-relay polarity adjudication
@@ -97,7 +97,7 @@ lane" model — my own earlier correction this session found `gp-0x6bf0` is NOT 
 still holds on its own separate, sufficient merits (a relay/detent test is a different hypothesis class
 than 4 linear sign-correlation bits) — flagged the imprecise wording, not the conclusion.
 
-Both variants fully spec'd in `docs/SPEC-2026-08-11-telemetry-budget.md`; only slot 4 differs. Duty
+Both variants fully spec'd in `docs/specs/SPEC-2026-08-11-telemetry-budget.md`; only slot 4 differs. Duty
 bracket for the snap-state bit stated as genuinely wide/unpredictable, with both rails (always-on,
 never-on) argued as independently informative, not assumed favorable.
 
@@ -145,5 +145,5 @@ class this kit's three bricks (V24/V27/V48B) came from.
 `FUN_000360fe` (this LERP) and `FUN_0003a382` (the PID's own authority-ramp index) — same zero-blast-
 radius class as everything else.
 
-Full write-up: `docs/SPEC-2026-08-11-telemetry-budget.md`. Awaiting team-lead's call on the hook
+Full write-up: `docs/specs/SPEC-2026-08-11-telemetry-budget.md`. Awaiting team-lead's call on the hook
 question before this is truly final.

@@ -7,7 +7,7 @@ metadata:
 
 # `gp-0x6b26` (`DampAxis`/friction-comp lane) — Q3 safety verdict CLOSED, 2026-08-10 (`DampAxis` task)
 
-Full trace in `docs/TRACE-2026-08-10-dampaxis-sizing-and-safety.md`. Extends
+Full trace in `docs/traces/TRACE-2026-08-10-dampaxis-sizing-and-safety.md`. Extends
 [[reference_accord_fun36c12_sign_settled_dissipative]] and RULE 11 in `docs/BUILD-LINEAGE.md`.
 Stock `code.bin` only (confirmed via `list_open_programs`). All addresses fresh-decompiled this
 session; V73-V77 lineage table independently re-derived from the actual image files (Python byte
@@ -62,7 +62,7 @@ binds first). Two more raw hits (`0x6b25a`/`0x6b25e` in `FUN_0006b162`) are fals
 target-text collisions (`bge 0x6b26c`/`ble 0x6b266`), unrelated function.
 
 This is structurally IDENTICAL to `gp-0x6bd0`'s already-documented two-path structure (golden model
-`eps_lkas_chain_model.py` ~line 1193). **Path 1 has zero extra phase and is very likely the dominant
+`model/eps_lkas_chain_model.py` ~line 1193). **Path 1 has zero extra phase and is very likely the dominant
 delivery route for any dose** — Path 2 stacks an EMA + LERP + full gain-scheduled PID on top. Sign is
 dissipative on both paths (Path 1 by plain unweighted addition of the already-dissipative producer;
 Path 2 by the same Stage-2-subtraction/PID-err/polarity² cancellation the golden model already proved
@@ -185,7 +185,7 @@ evaluated at the single observed max is already down to 0.42 — a route's obser
 statistic, not a proven ceiling; recommend sizing off p99 with a margin (e.g. M≤3) rather than trusting
 one route's max as a hard bound.
 
-Full write-up: `docs/TRACE-2026-08-10-dampaxis-sizing-and-safety.md`, ADDENDUM 1 section.
+Full write-up: `docs/traces/TRACE-2026-08-10-dampaxis-sizing-and-safety.md`, ADDENDUM 1 section.
 
 ## ADDENDUM 3 — session CLOSED with a "do not fly" verdict [EVIDENCE]
 

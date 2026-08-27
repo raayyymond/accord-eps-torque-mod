@@ -12,7 +12,7 @@ parallel tracer working the same question via a different route.
 
 ## Route taken: OSTM0 (OS Timer 0) reload register
 
-Per the SVD (`analysis-2020accord/svd_for_ghidra/UPD70F3508_V850E2Px4.svd`): `OSTM0` base
+Per the SVD (`analysis-2020accord/reference/svd_for_ghidra/UPD70F3508_V850E2Px4.svd`): `OSTM0` base
 `0xFF800020` (`OSTM0CTL` at offset 0), register cluster at `0xFF800020+0x7FBFE0 = 0xFFFFC000`
 (`OSTM0CMP`, the down-counter start/compare value, 32-bit).
 

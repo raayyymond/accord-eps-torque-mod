@@ -67,7 +67,7 @@ cave).
 ## Worst-case cycle count [assumption stated: 1 cycle/ALU-ld-st instruction, taken branch = 3 cycles,
 not-taken = 1 cycle, unconditional jmp[reg] = 3 cycles (standard V850-family pipeline-flush figures, NOT
 independently confirmed against the UPD70F3508 datasheet this session), CPU clock = 80 MHz (HEAPCLK, per
-`memory/accord-task5-is-100hz-damper-cannot-damp-21hz.md`'s CLMA1-register-derived figure — the load-
+`memory/accord/firmware/accord-task5-is-100hz-damper-cannot-damp-21hz.md`'s CLMA1-register-derived figure — the load-
 bearing chain per that memory; PCLK=40MHz is the peripheral clock and does not apply to instruction
 timing)]
 
@@ -92,7 +92,7 @@ not the path with the most instructions executed.
 independent methods in `reference_accord_probe_cave_c4b34_trampoline_and_jarl_encoding.md`) has **zero
 static callers** (`get_function_callers` returns none — indirect Table-B dispatch, reconfirmed this
 session). `0x14A` is measured on the actual CAN bus at **exactly 100.000 Hz** (period 10.0000 ms, linear
-fit across 4 segments — `memory/reference-accord-can-tx-100hz-base-tick-and-gateway-evidence.md`), cross-
+fit across 4 segments — `memory/reference/can/reference-accord-can-tx-100hz-base-tick-and-gateway-evidence.md`), cross-
 confirmed by cadence-table arithmetic across 3 independently-cadenced slots (0x18F cadence=1 -> 100Hz,
 0x1AB cadence=2 -> 50Hz, 0x14A cadence=1 -> 100Hz — internally consistent). **[EVIDENCE, wire-measured]
 the cave's effective invocation rate is 100 Hz regardless of which RTOS mechanism drives it.**
@@ -121,6 +121,6 @@ grounds.**
 
 ## Related
 [[reference_accord_dtc18_requires_prior_reset_not_live_trippable]] · [[reference_accord_probe_cave_c4b34_trampoline_and_jarl_encoding]]
-(host function identity) · `memory/reference-accord-can-tx-100hz-base-tick-and-gateway-evidence.md`
-(wire-measured cadence) · `memory/accord-task5-is-100hz-damper-cannot-damp-21hz.md` (80 MHz CPU clock
+(host function identity) · `memory/reference/can/reference-accord-can-tx-100hz-base-tick-and-gateway-evidence.md`
+(wire-measured cadence) · `memory/accord/firmware/accord-task5-is-100hz-damper-cannot-damp-21hz.md` (80 MHz CPU clock
 figure, cited not re-derived).

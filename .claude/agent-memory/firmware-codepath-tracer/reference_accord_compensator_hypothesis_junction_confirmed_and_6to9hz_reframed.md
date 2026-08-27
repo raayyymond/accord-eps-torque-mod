@@ -73,7 +73,7 @@ to their PHYSICAL effect via the torque sensor `gp-0x4f60`.
    SAME tick — both `gp-0x6ad4` and `gp-0x6b86` are fresh, same-tick values when they meet at the junction.
    No cross-lane skew.
 
-1kHz rate of `FUN_0002214a` itself is carried from project memory (`control-task-tick-confirmed-1khz.md`:
+1kHz rate of `FUN_0002214a` itself is carried from project memory (`misc/control-task-tick-confirmed-1khz.md`:
 OSTM0 timer + STEER_STATUS=4 dwell) — NOT independently re-timed by me this session, only the call
 STRUCTURE inside it.
 
@@ -90,7 +90,7 @@ becomes a bang-bang relay, not a linear rejector.
 
 ## [RELAYED, high-confidence, NOT run by me] The on-car reframe — 6-9Hz is AMPLIFICATION, not rejection
 
-`docs/HANDOFF-2026-08-21-route9e-and-the-loop-is-the-cause.md`, routes `0x85`/`0x95` (4x/8x gain step):
+`docs/handoffs/2026-08/HANDOFF-2026-08-21-route9e-and-the-loop-is-the-cause.md`, routes `0x85`/`0x95` (4x/8x gain step):
 ```
 |kG| = 0.630 [0.512,1.001]     gain margin ~1.2-1.6x from instability
 A = 1+P = 0.440 @ +25.0deg     closed-loop 1/|A| = 2.28x AMPLIFICATION [1.51, 9.4]
@@ -180,7 +180,7 @@ to a 6-9Hz question about the gains themselves.
 
 ### [RELAYED — method NOT recoverable] The "SQUEEZE" (Kp x2=1.130x on the not-felt bound; x4=1.720x but
 92% rail duty hands-on; Kd sign flips on only 53.4° of an unmeasured plant phase) traces to a cited
-sub-analysis `gate2-pid`, referenced in `docs/BUILD-LINEAGE.md` and `docs/_v101_arc_map.md` §5.2g-§5.2k
+sub-analysis `gate2-pid`, referenced in `docs/BUILD-LINEAGE.md` and `docs/archive/arc-maps/_v101_arc_map.md` §5.2g-§5.2k
 (2026-08-14, V100 session). **Searched `docs/GATE2-*.md` and every HANDOFF — the full derivation is NOT
 on disk, only its conclusions survive, quoted verbatim in the arc_map.** Predates the 2026-08-21 route
 0x85/0x95 loop identification by a week.

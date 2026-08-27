@@ -1,0 +1,2 @@
+Marker: kit package root. The sys.path bootstrap at the top of the
+nested scripts walks up to this file to find the import root.

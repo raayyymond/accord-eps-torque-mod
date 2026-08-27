@@ -1,6 +1,6 @@
 ---
 name: reference_accord_cs_v_units_are_meters_per_second_not_kph
-description: The `cs_v` field in the rlog-tools/analysis-2020accord telemetry caches (_cache_r9e, _cache_ra4, _cache_r85, etc.) is in METERS PER SECOND, not km/h, despite reading like a plausible km/h value at a glance (e.g. p50~8.3 looks like a plausible low urban km/h, but is actually 8.3 m/s = 29.9 km/h). Treating it as km/h silently produces speed thresholds/bins that are 3.6x too permissive -- caught this session after reporting a "low-speed <15kph = 61-65% of samples" figure that was actually "<15 m/s = <54 km/h". Verification method and the field to use instead documented below.
+description: The `cs_v` field in the rlog-tools/analysis-2020accord telemetry caches (_scratch/cache/r9e, _scratch/cache/ra4, _scratch/cache/r85, etc.) is in METERS PER SECOND, not km/h, despite reading like a plausible km/h value at a glance (e.g. p50~8.3 looks like a plausible low urban km/h, but is actually 8.3 m/s = 29.9 km/h). Treating it as km/h silently produces speed thresholds/bins that are 3.6x too permissive -- caught this session after reporting a "low-speed <15kph = 61-65% of samples" figure that was actually "<15 m/s = <54 km/h". Verification method and the field to use instead documented below.
 metadata:
   type: reference
 ---

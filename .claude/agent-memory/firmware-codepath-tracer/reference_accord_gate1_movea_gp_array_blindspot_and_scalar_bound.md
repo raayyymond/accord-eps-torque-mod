@@ -48,7 +48,7 @@ indexed). ⇒ if a cave reuses a V51P cell, use gp-0x1100, not gp-0x1300.
 
 ## 3. 🛑 CORRECTION OF RECORD — gp-0x1500 IS statically catchable
 
-`docs/BUILD-LINEAGE.md:929` and `docs/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md:324` both state
+`docs/BUILD-LINEAGE.md:929` and `docs/research/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md:324` both state
 gp-0x1500 "passed BOTH static methods". **It does not pass a correct literal scan.** `0xFEDF6B00` is an
 LE32 literal in the image **twice** — at `0xb73ac` and `0xbb658` — inside a 13-entry 8-byte-stride
 cluster (`0xFEDF6AE0`…`0xFEDF6B40`). Method: plain Python, 4-aligned LE32 over the whole 1 MB, **no range

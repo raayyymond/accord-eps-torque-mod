@@ -1,6 +1,7 @@
 Script started on 2026-05-24 20:04:51-07:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="211" LINES="49"]
 [?2004h]0;dudei@RAY-LAPTOP: ~/firmware-analysis-kit/flashing-2020accord[01;32mdudei@RAY-LAPTOP[00m:[01;34m~/firmware-analysis-kit/flashing-2020accord[00m$ python3 evs-up[K[K[K[Kps[K[K[Kps-update-tva.py 39990-TVA-A160-RECONSTRUCTED-v7h-0x10000-0xC4000.rwd 0[K--bus 1 --debug --danger
-[?2004l[boot] eps-update-tva.py
+[?2004l
+[boot] eps-update-tva.py
 [boot] firmware file : 39990-TVA-A160-RECONSTRUCTED-v7h-0x10000-0xC4000.rwd
 [boot] CAN bus       : 1
 [boot] mode          : DANGER (will mutate ECU flash)
@@ -22,7 +23,7 @@ Script started on 2026-05-24 20:04:51-07:00 [TERM="xterm-256color" TTY="/dev/pts
   CAN bus       : 1
   CAN address   : 0x18DA30F1
 
-  Required prerequisites (per docs/EPS-FLASH-RUNBOOK.md):
+  Required prerequisites (per docs/guides/EPS-FLASH-RUNBOOK.md):
     - Car ignition ON (engine off is fine)
     - Panda is the only device on OBD-II
     - openpilot/pandad killed on any comma device (tmux kill-server)
@@ -125,7 +126,8 @@ CAN-RX: 0x18daf130 - 0x036ef10155555555
 ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
 ISO-TP: RESPONSE - 0x18daf130 0x6ef101
 [flash] x31 multi-block transfer: 1 block(s), total 0xB4000 bytes
-  0%|                                                                                                                                                                                   | 0.00/737k [00:00<?, ?B/s][flash] block 0: request_download start=0x00010000 length=0xB4000
+
+  0%|                                                                                                                                                                                   | 0.00/737k [00:00<?, ?B/s][flash] block 0: request_download start=0x00010000 length=0xB4000
 ISO-TP: REQUEST - 0x18da30f1 0x34004400010000000b4000
 ISO-TP: TX - first frame - 0x18da30f1
 CAN-TX: 0x18da30f1 - 0x100b340044000100
@@ -136,7 +138,8 @@ ISO-TP: TX - consecutive frame - 0x18da30f1 idx=1 done=True
 CAN-RX: 0x18daf130 - 0x037f343155555555
 ISO-TP: RX - single frame - 0x18daf130 idx=0 done=True
 ISO-TP: RESPONSE - 0x18daf130 0x7f3431
-  0%|                                                                                                                                                                                   | 0.00/737k [00:00<?, ?B/s]
+
+  0%|                                                                                                                                                                                   | 0.00/737k [00:00<?, ?B/s]
 [error] exception during flash flow:
 Traceback (most recent call last):
   File "/home/dudei/firmware-analysis-kit/flashing-2020accord/eps-update-tva.py", line 521, in flash
@@ -160,6 +163,7 @@ panda.python.uds.NegativeResponseError: REQUEST_DOWNLOAD - request out of range
   b''
   None
 [?2004h]0;dudei@RAY-LAPTOP: ~/firmware-analysis-kit/flashing-2020accord[01;32mdudei@RAY-LAPTOP[00m:[01;34m~/firmware-analysis-kit/flashing-2020accord[00m$ exit
-[?2004lexit
+[?2004l
+exit
 
 Script done on 2026-05-24 20:05:37-07:00 [COMMAND_EXIT_CODE="3"]

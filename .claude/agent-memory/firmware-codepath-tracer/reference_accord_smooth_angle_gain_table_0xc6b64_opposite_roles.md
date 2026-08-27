@@ -13,7 +13,7 @@ metadata:
 >   `FUN_0003fc16` computes `|gp-0x69ca - clamp(gp-0x69e0+gp+0x641c, ±cal(0xC633A))|` and
 >   **`0xC633A` = 130 counts = ±13.0°**, a HARD clamp (`0x3fc44`-`0x3fc5a`, `subr r0,r14`/`subr r0,r15`
 >   are the negates). A correction bounded to ±13° cannot make the signal a tracking error.
->   `build_v86_tva.py:141` reached the same conclusion independently from DATA (99.94 % match to
+>   `builds/v80_v107/build_v86_tva.py:141` reached the same conclusion independently from DATA (99.94 % match to
 >   `|angle| ≥ 0.85°`).
 > - **"Problem 1 -- reach" is FALSE.** It priced the table over an assumed 0-45° band. Actual engaged
 >   `|angle|` reaches **346-380°** (n = 14,289 frames, `cc_lat` ≥ 0.5, routes r80/r81/r82) and the

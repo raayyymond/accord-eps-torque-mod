@@ -30,13 +30,13 @@ own poles unevaluated. This session ran the exact discrete z-domain formula
 `get_xrefs_to` confirming its sole caller is the aggregator `FUN_0003aa2c` (task 1, 1 kHz)] its closure
 is a genuine single-real-pole EMA `y[n]=y[n-1]*(1-2a)+a*x[n]`, a=6/1024, DC gain exactly 0.5, confirmed at
 the instruction level (the accumulator recurrence `iVar14 += ((iVar8*1024-iVar14)*6)>>10` on a 32-bit
-Q10 state at `gp-0x37ac`, output `gp-0x6b46`). This reproduces `build_v56_tva.py`'s own independently-
+Q10 state at `gp-0x37ac`, output `gp-0x6b46`). This reproduces `builds/v50_v79/build_v56_tva.py`'s own independently-
 computed corner (0.933 Hz, from a DIFFERENT investigation ruling this lane out as a flat-21Hz carrier) —
 good cross-validation, but nobody had evaluated it at 7.8 Hz before this session.
 
 ## `0xC63D2` (Lane D's coefficient) confirmed NEVER edited by any build [EVIDENCE, grep of all build_v*_tva.py]
 
-Appears only inside stock-value ASSERTIONS in `build_v56_tva.py:186`, `build_v62_tva.py:333`, and 6
+Appears only inside stock-value ASSERTIONS in `builds/v50_v79/build_v56_tva.py:186`, `builds/v50_v79/build_v62_tva.py:333`, and 6
 other build scripts — every one asserts it is UNCHANGED from V55/stock. Genuinely untested as a lever,
 not merely unflashed. Candidate: raise it to push the corner above 0.93 Hz and cut the -82 deg/-18.5 dB
 lag it contributes at 7.8 Hz. NOT recommended over the FactorC/E lever below — its role is [OPEN]/

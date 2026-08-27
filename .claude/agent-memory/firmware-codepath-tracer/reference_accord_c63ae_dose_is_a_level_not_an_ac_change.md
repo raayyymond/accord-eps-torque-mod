@@ -7,7 +7,7 @@ metadata:
 
 # `0xC63AE` priced end to end — 2026-08-13, `tracer-c63ae`
 
-Full trace: `docs/TRACE-2026-08-13-c63ae-lever.md`. Verdict delivered: **NO-GO at 2048 as V100's lever.**
+Full trace: `docs/traces/TRACE-2026-08-13-c63ae-lever.md`. Verdict delivered: **NO-GO at 2048 as V100's lever.**
 Supersedes the "only lever above the perceptual floor" framing in
 `HANDOFF-2026-08-13-v98…` §8 item 2 and `TRACE-2026-08-13-path2-authority` Addendum 2 §5.
 
@@ -21,7 +21,7 @@ shift** of `gp-0x6b70`. The perceptual bracket (V88 15–22 Hz command **0.549**
 > level change is felt as **steering weight** (V86B class), an AC change is felt as the **symptom**.
 
 In-band figure for this lever, hands-on engaged, route 81 (n = 2,198): **AC 1.242 on the lane**;
-applying V97's own Path-1 dilution φ ∈ [0.085, 0.556] (`build_v97_tva.py:65-67`, 1.234× lane → "+2 %..
+applying V97's own Path-1 dilution φ ∈ [0.085, 0.556] (`builds/v80_v107/build_v97_tva.py:65-67`, 1.234× lane → "+2 %..
 +13 % of the TOTAL") ⇒ **delivered 1.021–1.135 — straddles the not-felt line, midpoint below it.**
 ⊕ This trace applies the dilution **symmetrically to cost and benefit** — the asymmetry V97 committed.
 

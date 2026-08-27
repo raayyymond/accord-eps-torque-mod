@@ -10,7 +10,7 @@ metadata:
 Platform: 2020 Honda Accord 39990-TVA-A160, Renesas uPD70F3508/V850E2. All addresses verified on
 `../accord-firmware/analysis-2020accord/stock_fw_dump/code.bin` (flat, file offset == address) with
 `r2 -a v850.gnu -b 32 -m 0 -s <addr> -c 'pd N' code.bin`. gp=0xFEDF8000, tp=0xBF000.
-SVD: `analysis-2020accord/svd_for_ghidra/UPD70F3508_V850E2Px4.svd` (chip 0DB40h).
+SVD: `analysis-2020accord/reference/svd_for_ghidra/UPD70F3508_V850E2Px4.svd` (chip 0DB40h).
 
 **Mission:** the 2026-07-07 CAN-TX swarm (see `reference_accord_can_tx_synthesis_2026-07-07.md`) proved the
 dispatch *structure* (Table B: fn-ptr `0xB72AC` / CAN-ID `0xB721C` / DLC `0xB71B8`, 17 entries → HW writer

@@ -9,7 +9,7 @@ metadata:
 
 **Do NOT propose `0xC61D6` 0→14.** This file's closing advice ("FIX = set 0xC61D6 to 14 (V16)") was
 **dismantled by an 11-round, 4-analyst, decode-verified Ghidra review** and V16 was never flashed. From
-`memory/project_accord_torque_mod_v0.md` (the V18 block, 2026-05-27):
+`memory/project/project_accord_torque_mod_v0.md` (the V18 block, 2026-05-27):
 
 > **V16 REJECTED:** slew `0xC61D6` 0→14 does not "re-enable a damper" — slew=0 **FREEZES** a dormant
 > speed×torque 2D shaping lane (`gp-0x356c`, fed by curves `0xC6770`×`0xC69E8`); 0→14 **ACTIVATES an

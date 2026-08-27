@@ -1,6 +1,6 @@
 ---
 name: reference_accord_dwell_relay_polarity_is_arm_on_LARGE_correcting_the_kit_record
-description: "CORRECTION: FUN_00036388's dwell counter arms when |gp-0x6b64| > cal(0xC618A)=1024, NOT when it is less. Pinned in assembly at 0x36448 (cmp r16,r7 + setfgt) with the operand order validated in-block by an abs() idiom, and confirmed by the decompile AND by V92's on-car duties. This inverts my own prior memory and three earlier sessions, and it EXONERATES the byte7 b6 rung that accord-return-centre-and-detent-dead-engaged.md indicted -- the 855s sustained (gate=0,snap=0) run is the PREDICTED steady state, not a null on the gate."
+description: "CORRECTION: FUN_00036388's dwell counter arms when |gp-0x6b64| > cal(0xC618A)=1024, NOT when it is less. Pinned in assembly at 0x36448 (cmp r16,r7 + setfgt) with the operand order validated in-block by an abs() idiom, and confirmed by the decompile AND by V92's on-car duties. This inverts my own prior memory and three earlier sessions, and it EXONERATES the byte7 b6 rung that accord/firmware/accord-return-centre-and-detent-dead-engaged.md indicted -- the 855s sustained (gate=0,snap=0) run is the PREDICTED steady state, not a null on the gate."
 metadata:
   type: reference
 ---
@@ -10,7 +10,7 @@ metadata:
 ## The correction [EVIDENCE, assembly + decompile + on-car, three independent lines]
 
 The kit records `window_open = |gp-0x6b64| < cal(0xC618A)=1024` (arm on **SMALL**) in both
-`memory/accord-return-centre-and-detent-dead-engaged.md` and
+`memory/accord/firmware/accord-return-centre-and-detent-dead-engaged.md` and
 [[reference_accord_dwell_relay_polarity_settled_and_detent_likely_dead_at_handsoff]] — the latter
 claiming it "settled" a cross-agent dispute with three prior independent re-derivations. **It is
 backwards.**
@@ -52,7 +52,7 @@ holds ⇒ no snap ⇒ `sVar8 = |gp-0x6b64| = 0` ⇒ **the lane contributes exact
 | `byte7 b6` snap duty | 1.0 (default-armed) | **0.0** | **0.0000** |
 | `byte4 b5` (`gp-0x6b62 ≠ 0`) | 1.0 (flat −1024 bias) | **0.0** | **0.0000** |
 
-`memory/accord-return-centre-and-detent-dead-engaged.md` indicts `byte7 b6` as a dead rung because an
+`memory/accord/firmware/accord-return-centre-and-detent-dead-engaged.md` indicts `byte7 b6` as a dead rung because an
 855 s sustained `(gate=0, snap=0)` run contradicted `STATE.md` §E's pre-registration. **That
 pre-registration was built on the inverted polarity.** Under the correct polarity the sustained run is
 the *predicted steady state* — a **clean confirmation, not a null on the gate**. The rung is sound and
@@ -65,7 +65,7 @@ exactly what `b5 = 0.0000` measured.
 
 ## The inverted polarity is in THREE places, not two
 
-1. `memory/accord-return-centre-and-detent-dead-engaged.md`
+1. `memory/accord/firmware/accord-return-centre-and-detent-dead-engaged.md`
 2. `docs/STATE.md` §E (the V92 pre-registration built on it)
 3. **`docs/BUILD-LINEAGE.md`** — the "RECORDED, VIRGIN, UNTESTED AND NOT PROPOSED" note just after the
    "Struck LEVERS, 2026-08-09 (late)" table, which states *"+1/tick while `|gp-0x6b64| < 0xC618A`"*.
@@ -78,14 +78,14 @@ exactly what `b5 = 0.0000` measured.
 the snap trails by one tick.
 
 ✅ **RESOLVED 2026-08-12 — team-lead authorised and I applied the fix to (1) and (3):**
-- `memory/accord-return-centre-and-detent-dead-engaged.md` — polarity corrected, the "byte7 b6 is a
+- `memory/accord/firmware/accord-return-centre-and-detent-dead-engaged.md` — polarity corrected, the "byte7 b6 is a
   DEAD rung / null on the gate" section **replaced** with the exoneration + predicted-vs-measured
   table. Its MEASUREMENT section (duty table, `b4≡b5` on 87,317 frames) was left untouched — only the
   *interpretation* changed.
 - `docs/BUILD-LINEAGE.md` — the quoted note corrected in place (`<` → `>`, plus the end-stop
   re-identification), preserving its "never edited by any build" and "no-comb" sentences verbatim.
 - 🛑 `docs/STATE.md` §E was **deliberately NOT edited** — team-lead owns that file at close-out.
-  Verbatim replacement text lives in `analysis-2020accord/_v97/fw_return.md` §8c.
+  Verbatim replacement text lives in `analysis-2020accord/sessions/v97/fw_return.md` §8c.
 
 **Lesson for next time:** when a correction touches the kit's record, grep for the claim across
 `docs/` AND `memory/` before reporting "two places" — this one was in three, and the third

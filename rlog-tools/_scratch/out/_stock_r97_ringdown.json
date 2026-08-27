@@ -1,0 +1,132 @@
+{
+ "FROZEN (studies/damping-q/qd_final.py's own criterion)": {
+  "97": {
+   "build": "V9b STOCK 1x",
+   "census": {
+    "raw falling edges": 8,
+    "  re-engaged inside the post window": 3,
+    "  stationary (v < 1 m/s) -- nothing to ring": 4,
+    "USABLE": 1
+   },
+   "edges": [
+    {
+     "seg": 16,
+     "t": 21.13,
+     "v": 13.326393937318713,
+     "f0": 7.421875,
+     "pre_env": 29.75592495702964,
+     "floor": 8.800713226017816,
+     "lam": 1.2836248928090948,
+     "zeta": 0.0275260964064164,
+     "q": 18.16458071706269
+    }
+   ]
+  },
+  "85": {
+   "build": "V100 4x",
+   "census": {
+    "raw falling edges": 2,
+    "  too near a block edge": 1,
+    "  stationary (v < 1 m/s) -- nothing to ring": 1
+   },
+   "edges": []
+  },
+  "95": {
+   "build": "V101 8x",
+   "census": {
+    "raw falling edges": 3,
+    "  too near a block edge": 2,
+    "  stationary (v < 1 m/s) -- nothing to ring": 1
+   },
+   "edges": []
+  },
+  "96": {
+   "build": "V102 6x",
+   "census": {
+    "raw falling edges": 8,
+    "  re-engaged inside the post window": 2,
+    "  stationary (v < 1 m/s) -- nothing to ring": 4,
+    "  too near a block edge": 1,
+    "USABLE": 1
+   },
+   "edges": [
+    {
+     "seg": 13,
+     "t": 25.63,
+     "v": 6.100591678133128,
+     "f0": 7.8125,
+     "pre_env": 905.0790260384241,
+     "floor": 18.24259052230134,
+     "lam": 3.5085211963615204,
+     "zeta": 0.07147500689198417,
+     "q": 6.995452281041673
+    }
+   ]
+  }
+ },
+ "RELAXED": {
+  "97": {
+   "build": "V9b STOCK 1x",
+   "census": {
+    "raw falling edges": 8,
+    "  re-engaged inside the post window": 3,
+    "  stationary (v < 1 m/s) -- nothing to ring": 4,
+    "USABLE": 1
+   },
+   "edges": [
+    {
+     "seg": 16,
+     "t": 21.13,
+     "v": 13.326393937318713,
+     "f0": 7.421875,
+     "pre_env": 62.015000988134666,
+     "floor": 19.678784158944215,
+     "lam": 1.4971409119394692,
+     "zeta": 0.03210474127363699,
+     "q": 15.574023653963478
+    }
+   ]
+  },
+  "85": {
+   "build": "V100 4x",
+   "census": {
+    "raw falling edges": 2,
+    "  envelope GREW after disengagement": 1,
+    "  stationary (v < 1 m/s) -- nothing to ring": 1
+   },
+   "edges": []
+  },
+  "95": {
+   "build": "V101 8x",
+   "census": {
+    "raw falling edges": 3,
+    "  too near a block edge": 1,
+    "  stationary (v < 1 m/s) -- nothing to ring": 2
+   },
+   "edges": []
+  },
+  "96": {
+   "build": "V102 6x",
+   "census": {
+    "raw falling edges": 8,
+    "  re-engaged inside the post window": 2,
+    "  stationary (v < 1 m/s) -- nothing to ring": 4,
+    "  too near a block edge": 1,
+    "USABLE": 1
+   },
+   "edges": [
+    {
+     "seg": 13,
+     "t": 25.63,
+     "v": 6.100591678133128,
+     "f0": 7.8125,
+     "pre_env": 995.8335351957669,
+     "floor": 14.766497540410763,
+     "lam": 2.900182706597837,
+     "zeta": 0.05908203694395876,
+     "q": 8.462809101762458
+    }
+   ]
+  }
+ }
+}

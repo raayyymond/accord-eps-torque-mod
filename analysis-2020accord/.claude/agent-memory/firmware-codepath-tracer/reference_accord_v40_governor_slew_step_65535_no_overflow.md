@@ -40,7 +40,7 @@ byte-identical):**
 every cycle) rather than causing any wraparound/overflow. This is a real behavioral change
 (no slew limiting at all) but not a computational-fault mechanism. See
 [[reference-accord-v40-adaptive-cap-flatten-shadow-and-limp-path]] for the paired Part-B
-finding on the same V40 diff. Relevant to `docs/HANDOFF-2026-07-19-v40-governor-slew-and-rate-cap.md`
+finding on the same V40 diff. Relevant to `docs/handoffs/2026-07/HANDOFF-2026-07-19-v40-governor-slew-and-rate-cap.md`
 and the V42-audit request.
 
 **Caveat:** I did not verify with a cycle-accurate emulator — this is disassembly-plus-manual-
@@ -87,5 +87,5 @@ no simulation script this time):**
   collapses to one-cycle snapping. **A moderate raise (e.g. 512/205 → 1500-2500ish) is safe from
   this mechanism**; there is no cal value in range that can crash or invert this function.
 - Confirms V40's ignition-fault root cause is NOT this governor slew mechanism, consistent with
-  the existing STILL-UNRESOLVED status in `docs/HANDOFF-2026-07-20-v41-ratecap-flat.md` /
+  the existing STILL-UNRESOLVED status in `docs/handoffs/2026-07/HANDOFF-2026-07-20-v41-ratecap-flat.md` /
   CLAUDE.md (limp-path cap-flatten remains the leading suspect).

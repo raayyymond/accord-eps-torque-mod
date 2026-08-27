@@ -107,7 +107,7 @@ because I went looking for corroboration — I did not initially know the retrac
 `feedback_check_own_memory_before_retracing_v850_state_mask_pattern.md` for the actionable lesson.**
 
 **Resolved: the whole chain (`gp-0x6ac0` filter, `gp-0x4f64` writer, governor clamp) is LIVE during
-ordinary driving, not frozen.** `docs/LEDGER-V38-TO-V84.md` (line ~315) + two independent prior-tracer
+ordinary driving, not frozen.** `docs/archive/LEDGER-V38-TO-V84.md` (line ~315) + two independent prior-tracer
 memories converge: state 4 fires ~0% while driving (0/123,277 and 8/92,826-all-in-PARK, two routes),
 state 10 = 0.0000% (V70 flown probe), but **"the standing measurement is state is a constant 5 while
 driving"** — and state 5 is a member of EVERY mask on this chain. States 4/10 are rare, brief
@@ -152,8 +152,8 @@ changes what this term contributes but the term's own reachable range (0-5325 bo
 flatten) is unchanged — flattening only removes the low end.
 
 ## V41 (the flatten this cap table has already been tested with) — force independently proven
-`analysis-2020accord/build_v41_tva.py` + `docs/HANDOFF-2026-07-20-v41-ratecap-flat.md` +
-`docs/HANDOFF-2026-07-20-v42-state4-ratchet.md`: V41 = exactly this flatten (Y row -> flat 5325, slopes
+`analysis-2020accord/builds/v18_v49/build_v41_tva.py` + `docs/handoffs/2026-07/HANDOFF-2026-07-20-v41-ratecap-flat.md` +
+`docs/handoffs/2026-07/HANDOFF-2026-07-20-v42-state4-ratchet.md`: V41 = exactly this flatten (Y row -> flat 5325, slopes
 -> 0, both mirrors) plus an unrelated LKAS-lane slew removal (`0xC6194`). Flown, verbatim: *"boots and
 drives cleanly, fixed neither symptom"* — for the OLD several-Hz hard-turn ratchet (later root-caused
 elsewhere, the state-4 governor substitution, V42) and a ~20Hz vibration, **NOT** the operator's later
@@ -166,7 +166,7 @@ printed claims:**
 2. **Fresh, independent Python re-read of the plain image's cap table** (not the build script's
    printout): `Y=[5325]*5` both copies, slopes `[0,0,0,0]` both copies — confirmed flattened.
 3. **Attempted a from-scratch cipher decode of the raw RWD** (the documented TVA cipher
-   `((c^0xBF)^0x10)-0x9E`, applied with no dependency on `encode_eps.py`): calibrated a 124-byte header
+   `((c^0xBF)^0x10)-0x9E`, applied with no dependency on `lib/encode_eps.py`): calibrated a 124-byte header
    (unique match against a known version-string byte out of 4096 candidates tried) and it decodes
    correctly for ~65KB of the payload, but the RWD format has additional internal block structure past
    that point a flat header+contiguous model doesn't capture (692,463/970,752 bytes mismatch beyond

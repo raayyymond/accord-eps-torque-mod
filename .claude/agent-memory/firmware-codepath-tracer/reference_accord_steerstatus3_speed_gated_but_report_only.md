@@ -17,7 +17,7 @@ metadata:
 > `STEER_CONTROL_ACTIVE=1` alongside `STEER_STATUS=3`.
 > **Standing methodology rule: an "external readers" sweep CANNOT establish that a variable is
 > report-only — always check intra-function reads.**
-> See `docs/HANDOFF-2026-07-24-low-speed-steer-lockout.md` §6 and
+> See `docs/handoffs/2026-07/HANDOFF-2026-07-24-low-speed-steer-lockout.md` §6 and
 > [[accord-v850-scan-traps-formatv-and-storezero]].
 
 **FALSIFIES the prior kit claim "STEER_STATUS=3 is NOT speed-gated — it is a fallback when substate

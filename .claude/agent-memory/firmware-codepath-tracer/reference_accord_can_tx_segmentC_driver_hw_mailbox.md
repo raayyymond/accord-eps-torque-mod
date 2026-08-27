@@ -13,7 +13,7 @@ Platform: 2020 Honda Accord 39990-TVA-A160, V850E2. All addresses verified on
 
 ## ⚠ CORRECTION to the swarm task brief — read first
 
-The task brief (inherited from `docs/HANDOFF-2026-06-30-v31t-telemetry.md` line 31) asserted
+The task brief (inherited from `docs/handoffs/2026-06/HANDOFF-2026-06-30-v31t-telemetry.md` line 31) asserted
 **`FUN_00016de6` = "HW mailbox write... pokes V850E2 CAN controller mailbox regs (TX request/abort)"**.
 **This is WRONG.** Direct disassembly of `FUN_00016de6` at `0x16de6` shows:
 - Args masked `andi 0xFFFF,r6,r26` / `andi 0xFFFF,r7,r21` / `andi 0xFF,r8,r20` / `andi 0xFF,r9,r23`
@@ -119,7 +119,7 @@ Byte-dumped and decoded directly from ROM. All three tables share the same index
 | CAN ID | `0xB721C` | 4 bytes | `(ID << 18) & (0x7FF<<18)` in top bits of a 32-bit word | exact match to all 7 known IDs |
 | TX content-builder ptr | `0xB72AC` | 4 bytes | function pointer, `0` = no TX builder (RX-only slot) | exact match to all 7 known builder addrs |
 
-Decoded (id_raw>>18 & 0x7FF = CAN ID; verified against `docs/HANDOFF-2026-06-30-v31t-telemetry.md`'s
+Decoded (id_raw>>18 & 0x7FF = CAN ID; verified against `docs/handoffs/2026-06/HANDOFF-2026-06-30-v31t-telemetry.md`'s
 known-builder list for idx4-10):
 
 ```
@@ -199,7 +199,7 @@ are wired today out of up to 64 physical mailboxes per channel. The scarce resou
   Adding a new CAN-TX frame requires **extending** the 3 parallel tables (`0xB71B8` DLC,
   `0xB721C` ID, `0xB72AC` builder-ptr) by one entry each — a genuine relocate+resize patch, not a
   drop-into-an-existing-NULL-entry patch. The known code cave `0xC4E00-0xC4FEF` (~528 bytes, per
-  `docs/HANDOFF-2026-07-07-gating-map-and-telemetry-plan.md` §4) is comfortably large enough to host an
+  `docs/handoffs/2026-07/HANDOFF-2026-07-07-gating-map-and-telemetry-plan.md` §4) is comfortably large enough to host an
   18-entry version of all three tables (18×4 + 18×4 + 18×1 = 162 bytes) plus a small new content-builder
   function, if every code reference to the 3 table bases is found and repointed (multiple xrefs exist —
   not yet fully enumerated this session, see Open Questions).
@@ -252,7 +252,7 @@ are wired today out of up to 64 physical mailboxes per channel. The scarce resou
 - [[reference-accord-consistency-monitor-hardshutdown]] — the independent trace that first mapped
   `FUN_00016de6`'s real role (DTC/fault latch chain), confirming this session's finding from a different
   angle.
-- `docs/HANDOFF-2026-07-07-gating-map-and-telemetry-plan.md` §5 — the mission context (find a free TX
+- `docs/handoffs/2026-07/HANDOFF-2026-07-07-gating-map-and-telemetry-plan.md` §5 — the mission context (find a free TX
   mailbox on the car-facing channel for a new telemetry frame); this memory materially revises that
   mission's premise (no free *logical* slot exists; the real feasibility path is table extension into the
   known code cave, with abundant *hardware* mailbox headroom once extended).

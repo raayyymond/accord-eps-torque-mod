@@ -5,9 +5,9 @@ metadata:
   type: reference
 ---
 
-# `gp-0x671a`'s skip-gate, the PID's dead table, and `0xC64FA`'s true blast radius — 2026-08-20, `docs/TRACE-2026-08-20-oscillation-detector.md`
+# `gp-0x671a`'s skip-gate, the PID's dead table, and `0xC64FA`'s true blast radius — 2026-08-20, `docs/traces/TRACE-2026-08-20-oscillation-detector.md`
 
-Full write-up: `docs/TRACE-2026-08-20-oscillation-detector.md`. This file is the durable-fact summary.
+Full write-up: `docs/traces/TRACE-2026-08-20-oscillation-detector.md`. This file is the durable-fact summary.
 
 ## `FUN_00046ea6(5)` — bit 5 of a DTC-confirmed-status accumulator, NOT a permanent block
 
@@ -82,7 +82,7 @@ Two independent methods, cross-validated:
   to `gp-0x671a` anywhere in that loop**. 3 raw hits excluded with stated reason: `0x7B2B6` disasm-proven
   to be mid-bytes of an unrelated `sst.w`; `0xBDB7B`/`0xBEEBB` have no defined function (data region).
 
-**Total 18 real touches / 5 functions — reconciles exactly with `build_v103_tva.py`'s "~18 in-code
+**Total 18 real touches / 5 functions — reconciles exactly with `builds/v80_v107/build_v103_tva.py`'s "~18 in-code
 readers" claim**, which this session's first (Ghidra-only, wrong-substring) pass could not confirm.
 **Verdict: LANDMINE, confirmed independently and found WIDER than recorded** — `0xC64FA` gates 4
 oscillation-response consumers AND is separately reused inside an apparently-unrelated subsystem

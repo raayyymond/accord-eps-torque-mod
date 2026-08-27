@@ -1,6 +1,6 @@
 ---
 name: reference-accord-a160-app-uds-session-gate-and-egress
-description: "2026-07-09 Ghidra-verified (code.bin/master.bin, program 'code.bin' in accord2020_ghidra): full byte-level trace of the 2020 Accord EPS (39990-TVA-A160) app ISO-TP UDS session-gate semantics AND confirmed CAN TX egress path for RDBI responses (req 0x18DA80F1/resp 0x18DAF180). Extends reference_accord_uds_did_read_surface_a160.md (that doc's table layout was correct; this fills in the actual comparison logic + the RX/TX call chains it didn't trace)."
+description: "2026-07-09 Ghidra-verified (code.bin/master.bin, program 'code.bin' in accord2020_ghidra): full byte-level trace of the 2020 Accord EPS (39990-TVA-A160) app ISO-TP UDS session-gate semantics AND confirmed CAN TX egress path for RDBI responses (req 0x18DA80F1/resp 0x18DAF180). Extends reference/can/reference_accord_uds_did_read_surface_a160.md (that doc's table layout was correct; this fills in the actual comparison logic + the RX/TX call chains it didn't trace)."
 metadata:
   node_type: memory
   type: reference
@@ -75,7 +75,7 @@ part of the SAME boot-init sequence as §1) → **`FUN_0001d82e(0x11)`** — lit
 at `0x1f6a2`/`0x1f6f8` (disasm-confirmed, not decompiler artifact).
 
 `FUN_0001d82e` is the **exact same routing function** documented in
-`reference_accord_can_single_fcn0_external_gateway.md` as the broadcast-slot router (table `0xB7208`
+`reference/can/reference_accord_can_single_fcn0_external_gateway.md` as the broadcast-slot router (table `0xB7208`
 channel-byte, `0xB721C` CAN-ID, emitter `FUN_0001d68e`). **Diagnostic responses use logical slot `0x11`
 (17) in that SAME table** — raw-byte-read confirms `0xB7208[0x11] = 0x06` (same shared/"overflow" channel
 as all 11 broadcast slots, which are also uniformly `6`). This UPGRADES that memory's "diagnostic

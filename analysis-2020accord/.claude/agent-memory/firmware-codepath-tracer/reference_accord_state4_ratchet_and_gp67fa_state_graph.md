@@ -201,7 +201,7 @@ same `0xd30` state-gate as the governor).
   `bias + (gp-0x6ace_THIS_CYCLE + LERP_offset) × cal_0xC6134/1000` — mechanically downstream of whatever
   `gp-0x6ace` currently holds, substituted or not. Cannot diverge from the state-4 edit.
 - **`FUN_0004595a` is the real one.** Compares `gp-0x6ace` against `gp-0x6b94` (sole writer `FUN_0003aa2c`,
-  the aggregator — matches `reference_accord_lkas_delivery_and_governor.md` exactly). Decoded the
+  the aggregator — matches `reference/firmware/reference_accord_lkas_delivery_and_governor.md` exactly). Decoded the
   float-bitpattern trick (`(uint)x < 0xbc23d70b`, `0xbc23d70b`≈`-0.01`): net effect is **fault if
   `|gp-0x6ace|` exceeds `|gp-0x6b94|` by >~0.01, OR if the two have opposite sign** — an overshoot +
   polarity check on the governor, NOT an equality check. **No visible debounce** (unlike `FUN_00043e44`'s

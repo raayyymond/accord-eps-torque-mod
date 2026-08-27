@@ -7,9 +7,9 @@ metadata:
 
 # V50 gp-0x4f60 repoint asymmetry review + completeness gap (2026-07-23)
 
-Adversarial pre-flash review requested by team-lead for V50 (`build_v50_tva.py` — EMA low-pass on
+Adversarial pre-flash review requested by team-lead for V50 (`builds/v50_v79/build_v50_tva.py` — EMA low-pass on
 `gp-0x4f60`, code cave). V50 uses the **identical hook point (`0x7FEAC`) and identical 7-site/2-dormant
-repoint set** as V48B (the notch) — confirmed by re-reading `memory/reference-accord-v50-lowpass-ema-cave.md`
+repoint set** as V48B (the notch) — confirmed by re-reading `memory/reference/builds/reference-accord-v50-lowpass-ema-cave.md`
 ("Gate-1 reconfirmed sites" = the same 7 addresses byte-for-byte) — so the prior V48B adversarial review
 ([[reference-accord-v48b-repoint-asymmetry-review]] + [[reference-accord-v48b-monitor1-dtc1c-notch-safety-closed]],
 previously misfiled at `analysis-2020accord/.claude/agent-memory/...`, relocated here this session) is

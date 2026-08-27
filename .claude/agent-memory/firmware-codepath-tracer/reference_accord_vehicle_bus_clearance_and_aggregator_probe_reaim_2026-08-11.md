@@ -19,7 +19,7 @@ just EPS messages) for every VSA-transmitted message (`VSA_STATUS`/420, `WHEEL_S
 signal of their own** (`VEHICLE_DYNAMICS` gives lat/long accel, no angle, no yaw rate). A stability
 controller with no angle sensor of its own, on a bus where `0x14A` conspicuously carries TWO
 distinctly-named angle fields (one openpilot-used, one not), is the classic shape of a signal fed to a
-second consumer. **Mitigating, not exculpating**: ran `rlog-tools/_can_inventory.py` against an existing
+second consumer. **Mitigating, not exculpating**: ran `rlog-tools/studies/radar/_can_inventory.py` against an existing
 local rlog (`analysis-2020accord/rlogs/...`) — **all of VSA's own messages are on bus 0; the EPS's
 (`0x14A`/`0x18F`/`0x1AB`) are on bus 1.** Cross-bus consumption would need a gateway relay, unconfirmed
 either way.
@@ -29,7 +29,7 @@ consumer found (VSA already has its own accel data). If this line is ever revisi
 promising of the two to de-risk further.
 
 **Method, reproducible**: `ssh comma "grep -n 'BO_' <dbc>"` for the full message list, then `sed -n` to
-pull each candidate consumer's full `SG_` list; `python rlog-tools/_can_inventory.py <existing rlog.zst>`
+pull each candidate consumer's full `SG_` list; `python rlog-tools/studies/radar/_can_inventory.py <existing rlog.zst>`
 for bus assignment (no live capture, no flashing — genuinely read-only on data already on disk).
 
 ## The Kd cut died; the probe was re-aimed at the aggregator's other 10 lanes
@@ -53,7 +53,7 @@ opposing).** These three, not the D-term, are now the live suspects for the 6-9H
 
 **Allocation designed** (SPEC only): 427 = `\|gp-0x6bbe\|`, reclaimed b4 = `sign(gp-0x6bbe)`, two newly-
 freed `0x14A` byte7 bits = `sign(r24)`/`sign(r26)`. Full detail:
-`docs/SPEC-2026-08-11-telemetry-budget.md`.
+`docs/specs/SPEC-2026-08-11-telemetry-budget.md`.
 
 Related: [[reference_accord_openpilot_dbc_repoint_clearance_2026-08-11]] (the openpilot-side half of the
 clearance question this extends to the vehicle side).

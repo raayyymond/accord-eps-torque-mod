@@ -9,8 +9,8 @@ Found/consolidated 2026-08-19 while re-scoping a damping-lever hunt under an ope
 "no DC/slew cost." The orchestrator's brief stated "gp-0x6b26 ... DOWN has never been tried" —
 **this is wrong, and the on-car result is the single most decision-relevant fact in this domain.**
 
-## The lineage [EVIDENCE — build_v93_tva.py, build_v94_tva.py, build_v96_tva.py, docs/STATE.md:589,
-## docs/BUILD-LINEAGE.md:1170-1198, docs/HANDOFF-2026-08-12-v94-aborted-and-the-override-regime.md]
+## The lineage [EVIDENCE — builds/v80_v107/build_v93_tva.py, builds/v80_v107/build_v94_tva.py, builds/v80_v107/build_v96_tva.py, docs/STATE.md:589,
+## docs/BUILD-LINEAGE.md:1170-1198, docs/handoffs/2026-08/HANDOFF-2026-08-12-v94-aborted-and-the-override-regime.md]
 
 `0xCBE74` is a 34-entry pointer array of per-mode LERP records (X in km/h, Y in Q-ish counts) that
 `FUN_00036c12` uses to scale `gp-0x6b26 = -K(speed)·gp-0x6c2c` (gp-0x6c2c = filtered motor-rate first

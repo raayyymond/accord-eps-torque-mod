@@ -76,7 +76,7 @@ lockstep compare), multiplied by `cal 0xC5638 = 30544` (≈0.4661 in the /65536 
 fVar54)`). **No SET/CLEAR latch structure — this is a plain moving-average low-pass**, consistent with
 the already-documented `gp-0x3d3c` arbitration IIR
 ([[reference-accord-lkas-lane-is-a-lowpass]]): a 32-sample MA at either contested loop rate (100 Hz or
-1 kHz — task rate is UNRESOLVED per `eps_lkas_chain_model.py`) is a low-pass, not a source of tens-of-Hz
+1 kHz — task rate is UNRESOLVED per `model/eps_lkas_chain_model.py`) is a low-pass, not a source of tens-of-Hz
 content. Not a relaxation-oscillator candidate.
 
 ## 4. Governor slew-STEP selector `gp-0x67f5` IS driver-torque-dependent — [VERIFIED]

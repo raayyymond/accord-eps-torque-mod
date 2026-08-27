@@ -97,7 +97,7 @@ the outer rate check above.
 ## Reconciles gp-0x6ba6/gp-0x6b9a with existing record (nothing new, confirms and connects forward)
 
 Independently re-traced `FUN_0003b66a` (fresh decompile) before finding `memory/accord-gp6ba6-is-the-
-boost-amplitude-index.md` and `accord-c63b8-8hz-bandpass-is-a-rectified-boost-index.md` already fully
+boost-amplitude-index.md` and `accord/calibration/accord-c63b8-8hz-bandpass-is-a-rectified-boost-index.md` already fully
 solved this: input = raw motor rate `gp-0x6abc`, FIR stage confirmed identity (`0xC4018/1C/20` =
 1.0/0.0/0.0, re-verified this session — byte read matches exactly), torque-derivative correction
 confirmed DISABLED stock (`cal(0xC64BE)=0`, **new byte-read confirmation this session**), cascaded 2-stage

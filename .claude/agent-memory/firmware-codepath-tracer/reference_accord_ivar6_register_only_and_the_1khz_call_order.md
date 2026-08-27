@@ -7,7 +7,7 @@ metadata:
 
 # `iVar6` is register-only — and the 1 kHz call order is what makes a cave recomputation legitimate
 
-Traced 2026-08-13, task `tracer-6ad6`. Full trace: `docs/TRACE-2026-08-13-v100-6ad6-and-ivar6.md`.
+Traced 2026-08-13, task `tracer-6ad6`. Full trace: `docs/traces/TRACE-2026-08-13-v100-6ad6-and-ivar6.md`.
 
 ## `FUN_00038148` stores EXACTLY TWO cells [EVIDENCE — `disassemble_function(0x38148)`, whole stream]
 ```

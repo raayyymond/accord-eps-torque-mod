@@ -59,12 +59,12 @@ if (gp-0x67fe == 1 || gp-0x67fe == 2) {         // assist substate, reads 1 duri
 **[EVIDENCE, this decompile]** The function's only inputs are `gp-0x69ca` (a base value, NOT independently
 identified this session — producer not traced) and a small bounded correction. **No setpoint, target, or
 LKAS-commanded quantity appears anywhere.** Structurally consistent ONLY with "raw/corrected sensor angle,"
-not "tracking error" — corroborates `docs/_session_v86_arc_map.md` §D2(b)'s telemetry finding
+not "tracking error" — corroborates `docs/archive/arc-maps/_session_v86_arc_map.md` §D2(b)'s telemetry finding
 (`b4 ≡ |angle| ≥ 0.85°` at 99.93-99.94%, route `6d`) via an INDEPENDENT method (structure vs. correlation).
 Also computes a second output `gp-0x6a0a` via a different branch involving `gp-0x4f60` (torque) when
 `gp-0x67fe`'s substate and `gp-0x4ebc` gate is open — not chased this session, flagged for whoever needs it.
 
-## Route `73` (V88's flight) own angle distribution — read directly from `_cache_r73/r73.npz`
+## Route `73` (V88's flight) own angle distribution — read directly from `_scratch/cache/r73/r73.npz`
 
 Fields `cs_ang` (steering angle, deg), `cs_v` (speed), `cs_eng` (engagement proxy, fractional — treated
 `>0.5` as engaged; NOT independently confirmed to be `latActive` specifically, flag before reusing):
@@ -93,4 +93,4 @@ that established r24/r26 have no analogous pole, prompting the same fresh-decomp
 `reference-accord-fun3a382-engagement-gated-residual-loop.md` (repo memory) — established the six-lane
 sum's unity weights and overall structure prior to this session; this file names the two previously-open
 lane identities and adds the `gp-0x6a10` producer confirmation.
-`docs/_session_v86_arc_map.md` §D2(b) — the telemetry-side correlation this decompile corroborates.
+`docs/archive/arc-maps/_session_v86_arc_map.md` §D2(b) — the telemetry-side correlation this decompile corroborates.

@@ -88,7 +88,7 @@ Y = [899,908,981,1060,1083,1084,1084,1084,1084,1084,1084,1084,1084]   (Q10; 0.87
 blending `gp-0x6b98` (the final FOC motor command, per repo memory) and `gp-0x4f60` (torque sensor) —
 structurally resembling a plant-model / motor-command-vs-torque-sensor correction, i.e. adjacent to the
 operator's own "self-interference cancellation" hypothesis
-([[docs/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md]] repo doc, not re-read in full this session).
+([[docs/research/FEASIBILITY-SELF-INTERFERENCE-CANCELLATION.md]] repo doc, not re-read in full this session).
 Its outer gate has **NO speed term** (`gp-0x6b98` range check, `gp-0x4f60` range check, `gp-0x6abc` rate
 check, a 2-channel index check) ⇒ **unlike FactorD, this lane is NOT zeroed at creep speed.**
 
@@ -132,7 +132,7 @@ should be read in full before anyone prices an edit to `0xC6B66`/`0xC6B80`, `0xC
 `search_instructions operand_pattern="6a10"` returned 18 raw hits, 183,641 instructions scanned,
 `truncated:false`. One is a false positive (`br 0x00066a10` in `FUN_000669d6` — a branch target that
 numerically matches, not a gp-relative access). Adjudicated 17 real hits = **3 writers + 14 readers**,
-independently reproducing `build_v84_tva.py`'s own recorded census (`0xC9DB4`/`gp-0x6a10` "3 writers /
+independently reproducing `builds/v80_v107/build_v84_tva.py`'s own recorded census (`0xC9DB4`/`gp-0x6a10` "3 writers /
 14 readers, every reader `ld.hu`").
 
 **Writers (3), all lockstep-shadow-paired with `gp-0x4c90` per [[accord-lockstep-shadows-67fe-4c3a-and-6a10-4c90]]:**

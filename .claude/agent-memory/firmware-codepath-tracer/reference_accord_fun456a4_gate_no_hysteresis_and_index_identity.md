@@ -251,7 +251,7 @@ unmodified.** This is a real, verified polarity mismatch between the two functio
 
 **What this is NOT, based on what I traced:** this is not confirmed to be the same class of risk as
 the V24-V27 corridor/boost lockstep brick mechanism. That mechanism is an explicit same-cycle
-int-vs-float REDUNDANCY CHECK with a fault path on divergence (`reference_accord_watchdog_fault_sm_fun43e44.md`
+int-vs-float REDUNDANCY CHECK with a fault path on divergence (`reference/firmware/reference_accord_watchdog_fault_sm_fun43e44.md`
 in the project-level `memory/` dir documents this precisely for the `±5/1024` wall compare at
 `0x4463a`, which is a genuine matched pair with a debounced fault trip). **The ±8192/±8.0 sanitize
 pair traced here is structurally different**: the int side's zero-gate result (`gp-0x6b08`) is a LOCAL

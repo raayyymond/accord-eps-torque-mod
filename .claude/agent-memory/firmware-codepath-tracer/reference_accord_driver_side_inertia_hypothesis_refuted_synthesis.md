@@ -62,7 +62,7 @@ is stock's -9830 or V101/V102's x1.5 -14745** — the dose never flips this sign
 (`Re<0 ⇒ dissipative`, phase measured vs the term's OWN driving signal, motor rate) is the OPPOSITE
 polarity of `[[accord-rez-antidamping-replicated-three-drives]]`'s whole-car convention
 (`Re<0 ⇒ anti-damped/pumping`, phase measured as driver-torque/wheel-rate cross-spectrum, confirmed this
-session by reading `rlog-tools/v92_rez.log` directly: 6-9Hz row reads `phase -125.3° coh² 0.769 Re(Z)
+session by reading `rlog-tools/_scratch/logs/v92_rez.log` directly: 6-9Hz row reads `phase -125.3° coh² 0.769 Re(Z)
 -3375.2`, i.e. `Re(Z)=|Z|cos(phase)` with NEGATIVE meaning anti-damped). **Do not compare the two `Re<0`
 labels directly without translating.** The two are NOT the same physical quantity (one is a small-signal
 lane transfer function in isolation; the other is a closed-loop driver-torque/wheel-rate impedance) —
@@ -92,7 +92,7 @@ micro-ratcheting complaint lives; it is just wrong-signed and too small to be th
 
 | direction | build | result |
 |---|---|---|
-| RAISE x1.5 (engaged only) | V91/V92 | measured INERT, TWICE independently: route 78/79 stratified ratio 0.99 [0.91,1.26] (`[[accord-cbe74-dose-measured-inert-wrong-mode-record]]`); **and again this session's V102 predecessor** via a de-confounded shape-floor 2×2 (V90 r77 vs V91 r78), `k`=0.86-0.90 at BOTH 22-26Hz and 6-9Hz against a 1.45x floor (`docs/HANDOFF-2026-08-20-v102-the-gain-is-the-carrier.md` §3.2, `docs/BUILD-LINEAGE.md`'s nine-killed table) |
+| RAISE x1.5 (engaged only) | V91/V92 | measured INERT, TWICE independently: route 78/79 stratified ratio 0.99 [0.91,1.26] (`[[accord-cbe74-dose-measured-inert-wrong-mode-record]]`); **and again this session's V102 predecessor** via a de-confounded shape-floor 2×2 (V90 r77 vs V91 r78), `k`=0.86-0.90 at BOTH 22-26Hz and 6-9Hz against a 1.45x floor (`docs/handoffs/2026-08/HANDOFF-2026-08-20-v102-the-gain-is-the-carrier.md` §3.2, `docs/BUILD-LINEAGE.md`'s nine-killed table) |
 | LOWER to 0.167-0.75x | V93/V94 | flown (route `7d`), fault-free, **operator ABORTED the drive**, verbatim: *"made the stuttering and grinding worse, by a lot... vibrated the entire car... not safe to drive"* |
 
 Two independent RAISE measurements agree (inert); one LOWER measurement exists and it is the single

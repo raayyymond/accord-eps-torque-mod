@@ -88,7 +88,7 @@ into, confirmed by reading the builder's body).
 
 # Segment D — known-frame CAN TX provenance (2020 Accord TVA-A160, V850E2, `code.bin`)
 
-Produced as part of the 2026-07-07 4-agent CAN-TX swarm (`docs/HANDOFF-2026-07-07-gating-map-and-telemetry-plan.md`
+Produced as part of the 2026-07-07 4-agent CAN-TX swarm (`docs/handoffs/2026-07/HANDOFF-2026-07-07-gating-map-and-telemetry-plan.md`
 §5 step 1). Goal: establish ground truth for the car-facing channel selector by tracing KNOWN frames (399/427/0x14A
 comma-visible; 0x660/0x19F/0x32E/0x64D internal-only) from builder to hardware. Tool: raw byte-level JARL/pointer
 scanning in Python cross-checked with `r2 -a v850.gnu` disasm (the `af`/`aa` auto-analysis DOES NOT WORK on this

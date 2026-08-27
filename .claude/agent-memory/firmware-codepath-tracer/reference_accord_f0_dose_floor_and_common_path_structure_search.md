@@ -29,7 +29,7 @@ priced as "rides free, predicted below detection," not dropped (see
 
 Model: `L(f,gain) = gain * L_unit(f)`, `L_unit(f) = bare_plant(f) * e^(j*90deg)` (the anchor script's
 own fixed-shape-carrier assumption, `ZETA_BARE=0.2944`, `F_ANCHOR=21.4Hz`, cited unchanged from
-`eps_loop_gain_model.py`). `Re(Z)(f0,gain)=0` reduces to `Re(L_unit(f0)) = R/gain` for one free
+`studies/models/eps_loop_gain_model.py`). `Re(Z)(f0,gain)=0` reduces to `Re(L_unit(f0)) = R/gain` for one free
 constant R. **`Re(L_unit(f))` is genuinely DECREASING with f in this range (0.89 at 21Hz falling to
 0.50 at 26Hz) — so the model correctly predicts f0 rises with gain, structurally.** But calibrating on
 ONE point (stock, gain=1) and predicting the other two: **predicted f0 at 4x = 31.5Hz (measured
@@ -154,7 +154,7 @@ Script: `scratchpad/phase_insertion_q1.py`.
 ## 3d. 🛑🛑 A SERIOUS, UNRESOLVED-ROOT-CAUSE HAZARD in the exact proposed insertion region — V40's brick
 
 Checked before recommending any site (team-lead's explicit ask). **V40 (2026-07-19,
-`docs/HANDOFF-2026-07-20-session-v40-fault-investigation.md`) bricked the car with a cal-only edit
+`docs/handoffs/2026-07/HANDOFF-2026-07-20-session-v40-fault-investigation.md`) bricked the car with a cal-only edit
 INSIDE `FUN_0004503c` — the same governor function decompiled this session.** It set the slew steps
 `0xC6206`/`0xC6208` (512/205 → 65535, defeating the rate limiter) and flattened the motor-rate cap
 taper. **Result: power steering fully disabled at every start, stationary, untouched.**
