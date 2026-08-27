@@ -50,6 +50,25 @@ last railed sample 1.81 / 0.85 / 0.40 s. **Pre-registered: 0.10/0.50/0.99 EXCLUD
 Both controls passed — two of three transitions SPEED UP and still go to zero, and at matched steering
 rate post-disengage `|c2c|` p50 = 72 with **0.00 %** rail duty against engaged p50 = 1080 and **20.43 %**.
 
+🛑 **CORRECTED 2026-08-27 — `gp-0x69b0` IS A Q15 MULTIPLIER, NOT A GATE, SO THE RELEASE IS A CROSSFADE.**
+An earlier census over its 45 accesses found **zero `mul` instructions** and concluded "gate". That does
+not follow: **the multiply's operand is a REGISTER loaded ~2,700 bytes earlier**, and an operand-text
+search over accesses to a symbol finds loads and stores but cannot see what is done with the value —
+the same blind spot `CLAUDE.md` already records for register-indirect writes.
+**The multiply is `0x2A1E6  mul r14,r9,r0`, then `0x2A1EA sar 0xf,r9`, `0x2A1EC sxh r9`** ⇒
+`LKAS_lane = sxh((lane × gp-0x69b0) >> 15)`. Register liveness proved mechanically: all 41 accesses to
+`gp-0x69b0` sit in `0x2936A`–`0x2972A`, every read is `ld.hu …,r14`, and **`r14` is never written across
+the 1015 instructions between the state machine's exit at `0x29734` and the multiply** (the only
+instruction with `r14` last is `0x29A48 cmp r0,r14`, PSW-only), with **zero `jarl`/`callt`/`trap`** in
+that span so no callee can clobber it.
+⊕ **The sign objection dissolves too**: the cell is *stored* with `st.h` but *read exclusively* with
+`ld.hu`, and the SM saturates it at `0x8000` (`0x29490 ori 0x8000,r0,r14`). 32768 does not fit a signed
+int16, so it stores as −32768 and reads back as **+32768 unsigned** — "signed, resting at 0/−32768" is
+exactly what an unsigned Q15 0…32768 looks like in a raw halfword dump. **Range 0.000–1.000.**
+⇒ **During the ~2.05 s tail there IS a decaying LKAS command while the engaged-only damper is still in
+force** — a crossfade, not a hold-then-snap. The measured 2.05 s release stands unchanged; what changes
+is what the car is doing during it.
+
 ### ⭐ THE 2×2 — THE RELAY IS MOSTLY PLANT, AND A 32× MISS IS EXPLAINED
 Holding Y fixed, **engaged `|c2c|` alone gives 27× the rail duty of manual `|c2c|` at 10–25 km/h.**
 `gp-0x6b26` feeds aggregator → motor → motor rate → `gp-0x6c2c`: **it is a closed loop**, so V107's
