@@ -188,7 +188,7 @@ steering rate** (the damper subtracts at the FINAL add, downstream of both lanes
    (2,512 B, `740f4bcd…`)**.
 2. **V100 FLEW as route `0x85`** (2026-08-13); `BUILD-LINEAGE-CATCHUP-V76-V100.md` still says "BUILT
    AND NOT FLASHED" — the eleventh stale flight-status row, by that row's own warning. ⭐ **And V100
-   carried the `|gp-0x6ad6| ≥ 8192` rail comparator whose duty was never harvested** — it decides
+   carried the `|gp-0x6ad6| ≥ 8192` rail comparator — 🛑 **and this file's claim that its duty was NEVER HARVESTED is FALSE. It was harvested 2026-08-14 and re-run 2026-08-27: d(b5) = 0.000000 over 24,925 engaged frames, gate proven live by `b4` on the same cell at duty 0.6057. The dose is MERELY SMALL, not structurally zero — K1 = 204 IS delivered.** — it decides
    whether `0xC40D2`'s dose is small or structurally ZERO.
 3. `accord-gp6b4c-is-an-11-slot-assist-sum` — modes 5/7 **re-route**, they do not zero.
 4. `accord-friction-polarity-*` — conclusion stands, sign chain **replaced** (frame crossings).
