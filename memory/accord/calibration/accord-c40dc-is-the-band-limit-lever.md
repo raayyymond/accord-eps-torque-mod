@@ -1,15 +1,22 @@
 ---
 name: accord-c40dc-is-the-band-limit-lever
-description: 0xC40DC (alpha2, the accel cascade's second EMA pole) is virgin on all 102 images and at 14/64 holds 21.7 Hz exactly while cutting 20-35% over 61-300 Hz — but it must ship with the notch revert, and two of its three consumers are ungated.
+description: 0xC40DC (alpha2, the accel cascade's second EMA pole) was virgin on all 103 images; at 14/64 uncompensated it costs 8% at the mode and ~0% at manoeuvre frequencies while cutting 27-40% over 61-300 Hz. GATE 1 and GATE 2 both CLOSED; built as V109 on a V108 base, which is a hard prerequisite.
 metadata:
   node_type: memory
   type: reference
 ---
 
-# `0xC40DC` (α2) — THE BAND-LIMIT LEVER. PRICED, PARTLY GATED, **V109 CANDIDATE**
+# `0xC40DC` (α2) — THE BAND-LIMIT LEVER. **GATE 1 CLOSED. BUILT AS V109.**
 
-★★★★ **EVIDENCE for the sweep and GATE 1; BELIEF for the sector argument.** Priced 2026-08-27,
-**deliberately held out of V108.**
+★★★★★ **EVIDENCE for the sweep and BOTH gates; BELIEF for the sector argument.** Priced 2026-08-27,
+held out of V108 pending the fan-out, then **GATE 1 CLOSED the same day and BUILT AS V109**:
+```
+V109 image  e9eb51fcad9ffc8768cd3e8eb601619d0f2acc0f702f01c4732243c70cc7f4d6
+V109 .rwd   83047f0fd3b5b656720487d5f70755c3b2506c4293097b403abf003e972087c1
+builder     analysis-2020accord/builds/v108_plus/build_v109_tva.py   30/30   BASE = V108
+5 bytes vs V108 (1 payload + 4 CRC).  UNCOMPENSATED — the Y row is V108's, untouched.
+```
+⭐ **The builder ASSERTS the V108 prerequisite in code** — it refuses to build on any other base.
 
 ## WHAT IT IS
 `0xC40DC` = **22** = α2, the SECOND one-pole EMA in the `gp-0x6c2c` cascade
@@ -28,20 +35,44 @@ moves the peak down onto the mode and rolls off the skirt. Sweep with Y auto-sca
  14   46.5   19.0-115.5Hz   1.021  1.074  1.000  0.796  0.714  0.660  0.648    54.0 Hz  <- pick
  11   38.5   15.3- 98.4Hz   1.062  1.181  1.000  0.668  0.572  0.515  0.503
 ```
+⚠ **THE TABLE ABOVE IS Y-COMPENSATED. V109 SHIPS UNCOMPENSATED, AND THAT IS THE BETTER TRADE** —
+compensating raises 3–8 Hz by 2–7 %, uncompensated leaves it alone. Verified against the integer
+cascade in `build_v109_tva.py`:
+```
+   f Hz     1      3    7.79  21.73    27     40    61.1   100    200    300    499
+  a2=22   0.402  1.203 3.080  7.723  9.029 11.150 12.136 10.860  7.151  5.445  4.488
+  a2=14   0.402  1.201 3.042  7.105  8.022  9.099  8.881  7.133  4.339  3.245  2.656
+  ratio   1.000  0.998 0.988  0.920  0.888  0.816  0.732  0.657  0.607  0.596  0.592
+```
+⇒ **~0 % at manoeuvre frequencies (so it costs NO steering rate), 1.2 % at the 7.8 Hz ratchet, 8.0 % at
+the mode — and 27–40 % across 61–300 Hz.** Phasor at 21.73 Hz = **222.77°**, inside the safe sector.
+
 ⭐ **At K2 = 14 the DELIVERED response is FLAT across 18–30 Hz (1.024 → 0.966) and cuts 20–35 % over
 61–300 Hz.** It de-rails **without giving back one count of mode-band damping** — which lowering the Y
 row cannot do, because Y is a flat multiplier and any de-railing it buys is paid for one-for-one at
 21.7 Hz.
 
-## GATE 1 — CLEANEST POSSIBLE ON THE CELL, OPEN ON THE SIGNAL
+## GATE 1 — CLOSED. CLEANEST POSSIBLE ON THE CELL, AND THE SIGNAL'S FAN-OUT NOW CLEARED
 - **The cal: exactly ONE gp/tp access image-wide, zero writers.** Ghidra + an independent Python LE scan
   agree after handling the `disp|1` trap (`hw2 = 0x50DD`, one hit at file offset `0x41628`); the 6-byte
   extended-displacement form finds zero additional candidates.
-- 🛑 **THE SIGNAL IS NOT GATED.** `gp-0x6c2c` fans out to **THREE** consumers: the FOC motor-model float
-  term, this friction lane, and the oscillation-detector FSM (`FUN_000428d4`, threshold
-  `cal(0xC620A)` = 12800). **Two of the three were never verified against a RESHAPED rather than merely
-  rescaled signal.** A cal with clean ownership feeding a signal with unverified fan-out is **not a
-  cleared gate.**
+- ✅ **THE SIGNAL'S FAN-OUT IS NOW CLOSED TOO — and it is FOUR consumers, not three.** Both census
+  methods agree on 8 hits (2 writers in `FUN_00041464`, 6 reader instructions in 4 distinct functions).
+  ⚠ `get_xrefs_to` returned "No references found" on the raw RAM address — the documented gp-relative
+  blind spot, hit three times in one session.
+
+  | consumer | verdict |
+  |---|---|
+  | `FUN_00036c12` — the friction/inertia lane | **the lever's intended target.** Not a safety question. |
+  | `FUN_000428d4` — the oscillation-detector FSM | **SAFE, and the direction IMPROVES margin.** Arms on `\|gp-0x6c2c\| > cal(0xC620A) = 12800` against a corpus max of ~5,300 — already 2.4–2.5× below — and **V64 flew with 1,158 steering-rate reversals and ZERO arms.** Cutting the 61–300 Hz content that dominates this signal's peaks makes it structurally LESS reachable. |
+  | `FUN_00071272` — FOC-adjacent float staging | **SAFE.** Enters as an instantaneous magnitude (`× 2⁻¹⁶`) into a sequential bound-tightening MIN comparator; its flag bit reaches `gp-0x4b0`, whose ONE genuine value read (`ld.bu -0x4b0,gp,r12` @`0x7532A`) stores it into **byte 0x10 of a 36-byte-stride record array at `gp-0x26e8`** — a 2-slot rotating diagnostic log, alongside 8 other signals. **No `FUN_000462e6` DTC dispatch anywhere near it.** |
+  | `FUN_0007b022` — the cap-table / governor-ceiling function | **SAFE.** `× 2⁻⁶` → clamp to ±`cal(0xC55A4)` = 500.0 (corpus scales to ~80–83, **6× below**, non-binding) → abs → LERP. Its tail has FIVE possible outputs; **four (`gp-0x4f52`, `gp-0x4e98`, `gp-0x4f66`, `gp-0x4ea2`) have ZERO readers by every census method**, and the fifth — `gp-0x4f64`, the governor ceiling — is cleared by tracing **its own three producers** in all three branches (`gp+0x184` from line ~590, and `gp+0x130`-derived `fVar45`), **neither `gp-0x6c2c`**. |
+
+  ⭐ **The clearance is worth trusting because of how it was reached**: the agent caught and reported
+  **two of its own SSA name-reuse near-misses** on `FUN_0007b022` rather than silently fixing them —
+  Ghidra reuses `fVar43`/`fVar45` for unrelated values, and `puStack_e8 + 4` is pointer arithmetic
+  scaled by element size (0x10), not a byte offset. Same failure class another agent hit independently
+  on the same function.
 - ⊕ Contrast with **α0 = `cal(0xC643C)` = 37, which IS shared**: the same `y0` EMA state feeds
   `gp-0x6abe`, `gp-0x6ac0` (the `0xC520C` cap-table index) AND the whole `gp-0x6c2c` cascade. **Never
   move α0 as part of this lever.**
@@ -61,7 +92,8 @@ parallel base-assist lane a geometric-mean **5.15× (+14.2 dB)** louder than Hon
 sector's new entry point**, because Honda's own zero sits at **55.225 Hz** and V105 moved it to 25.5 Hz.
 **Taking the band-limit while leaving V105's notch on the car moves the dangerous sector into the one
 band where we deleted Honda's attenuation.** V108 reverts the notch (`0xC60A8`–`B7` → Honda's 16 bytes),
-so the prerequisite will be on the car.
+so the prerequisite IS on the car in V109's base — and **`build_v109_tva.py` ASSERTS it**, refusing
+to build on any other base.
 
 ## DOSE — TAKE IT UNCOMPENSATED
 Uncompensated at K2 = 14 the delivered dose is **×0.920 at creep** (below the ~9 % perceptual floor on

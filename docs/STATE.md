@@ -18,6 +18,40 @@ E3  0xC61BE      BUILT AT 16384, THEN **PULLED** ON ITS OWN PRE-REGISTERED NULL.
 31 bytes vs V107 in 11 runs, ZERO unattributed.  CAL-ONLY.  THE CAVE IS BYTE-IDENTICAL TO V107.
 ```
 
+
+### ⭐⭐ V109 BUILT — `0xC40DC` (α2) 22 → 14. **GATE 1 AND GATE 2 BOTH CLOSED.**
+```
+V109 image  e9eb51fcad9ffc8768cd3e8eb601619d0f2acc0f702f01c4732243c70cc7f4d6
+V109 .rwd   83047f0fd3b5b656720487d5f70755c3b2506c4293097b403abf003e972087c1
+builder     analysis-2020accord/builds/v108_plus/build_v109_tva.py   30/30   BASE = V108
+5 bytes vs V108 (1 payload + 4 CRC).  Cal-only.  Cave byte-identical.  UNCOMPENSATED.
+```
+**V109 = V108 + one cell.** α2 is the only axis of this lane nobody has ever touched — V106 changed its
+MAGNITUDE, V107 its SPEED SCHEDULE, and both pay for any HF reduction **one-for-one at 21.7 Hz** because
+Y is a flat multiplier. **Shape does not.** Uncompensated:
+```
+   f Hz     1      3    7.79  21.73    27     40    61.1   100    200    300
+  ratio   1.000  0.998 0.988  0.920  0.888  0.816  0.732  0.657  0.607  0.596
+```
+⇒ **~0 % cost at manoeuvre frequencies, 1.2 % at the ratchet, 8.0 % at the mode (below the ~9 %
+perceptual floor) — and 27–40 % cut across 61–300 Hz.** Phasor at 21.73 Hz = **222.77°**, safe sector.
+
+**GATE 1 CLOSED — and the fan-out is FOUR consumers, not three.** Cell: one access image-wide, zero
+writers (`disp|1`, 6-byte and register-indirect forms all checked). Signal: friction lane = the target ·
+oscillation detector **SAFE and margin IMPROVES** (arms at 12800 vs a corpus max ~5,300; V64 flew 1,158
+reversals with **zero arms**) · `FUN_00071272` writes a **36-byte-stride diagnostic log record** at
+`gp-0x26e8`, not the torque path · `FUN_0007b022` has **four outputs with zero readers** and its fifth
+(`gp-0x4f64`) is cleared by tracing **its own three producers**. `gp-0x6c2e`/`cal(0xC40DA)` = 3 are
+**independent AT THE PRODUCER** — separate state, separate cal, separate shift — with disjoint reader
+sets as a second reason.
+🛑 **GATE 2's real cost: the 90–180° sector ENTRY slides DOWN 74.1 → 54.0 Hz.** That is why **V109 MUST
+sit on a V108 base** — across 54–74.5 Hz V105's notch left the parallel lane a geometric-mean **5.15×
+(+14.2 dB)** louder than Honda's, and V108 reverts it. **`build_v109_tva.py` ASSERTS the base.**
+🛑 **Rail duty under this dose is NOT predictable** — the only method available was measured **32× wrong**
+on this lane, the loop term is 14–16×, and α2 sits upstream of the distribution any solve would need.
+**V109 is a deliberate single-variable experiment against V108**, and that two-point contrast is the only
+thing that can size this cell. **Recommendation: fly V108 first**, so the contrast exists.
+
 ### ⭐⭐ THE HEADLINE — `gp-0x6b26` IS NOT A DAMPER ABOVE ~30 Hz, AND V107 MADE IT A RELAY
 The lane is `64·H1·(1−z⁻¹)·H2` (EMAs α0 = 37/128 = `cal(0xC643C)`, α2 = 22/64 = `cal(0xC40DC)`) —
 **a BANDPASS peaking at 61.1 Hz, −3 dB span 25.1→153.0 Hz, never below 4.49× to Nyquist.** At 100 Hz it
