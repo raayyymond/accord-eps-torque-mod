@@ -52,7 +52,11 @@ Same corpus, same hands-off mask: the **4× → 6× gain step delivers 1.03× [0
 [[accord-gain-stops-delivering-at-low-speed-high-command]].
 ⇒ **The regime where extra gain buys no extra torque is the regime where the ratchet switches on.**
 That is what a saturating element does: past the knee it stops passing gain AND starts generating
-harmonics. **[BELIEF, strongly supported]** — one mechanism, both symptoms.
+harmonics. **[BELIEF]** — one mechanism, both symptoms.
+⚠ **DOWNGRADED from "strongly supported" 2026-08-27.** The harmonic half of that argument was tested
+and the test is UNINFORMATIVE BY CONSTRUCTION (see below), and the gain-delivery half was RETRACTED
+([[accord-gain-stops-delivering-at-low-speed-high-command]]). **What remains is the shared command
+gate alone** — real and controlled, but it does not by itself make the two bands one oscillator.
 
 ## 5. WHAT THIS CHANGES ABOUT THE RATCHET HUNT
 The record's characterisation stands and is not contradicted: ~7.79 Hz, **Q 14–29**, ζ 0.017–0.036,
@@ -65,6 +69,51 @@ soften its corner.
 ⊕ This also explains the kit's oldest frustration — *"nothing has moved micro-ratcheting or
 ratcheting in sixty builds"* — and why [[accord-ratchet-axis-is-wheel-rate]] found the amplitude
 scaling with wheel rate: wheel rate and command magnitude are strongly correlated engaged.
+
+## ⚠⚠ THE ODD-HARMONIC TEST — RUN, NULL, AND **UNINFORMATIVE BY CONSTRUCTION**
+2026-08-27. If §4's *"one saturating nonlinearity, two spectral signatures"* were literally one
+relay, a **sign function emits ODD harmonics only** — so `3f0 = 23.4 Hz` would land inside the
+20–26 Hz grinding band while `2f0` stayed absent. **No other mechanism gives that signature.**
+Tested: 2951 windows, <25 mph, engaged, hands-off, 2.56 s at 75 % overlap; per window the 6–9 Hz
+peak `f0` (median **7.81 Hz**), then local prominence at `2f0`, `2.5f0`, `3f0`, `3.5f0`, each against
+its own ±2.2 Hz shoulders.
+```
+  |cmd|      n    2f0 CTL  2.5f0 CTL   3f0 ODD  3.5f0 CTL   3f0/mean(ctl)
+  <1k     2534       1.83       2.02      1.92       2.07            0.97
+  1-2k     229       1.62       2.56      1.92       1.98            0.93
+  2-3k      96       2.37       3.32      2.16       1.94            0.85
+  3k+       92       5.22       2.69      3.29       1.78            1.02
+```
+**No odd preference at any command level, and no growth with command.**
+
+🛑 **BUT THIS IS NOT A REFUTATION — THE INSTRUMENT COULD NOT HAVE SEEN IT.** The measurement is on
+the steering ANGLE, i.e. the relay seen *through the plant*, and the plant is the very resonance the
+ratchet rides: **Q = 14–29** ([[accord-ratchet-is-a-lightly-damped-resonance]]). For a 2nd-order
+response `|H(f)| = 1/sqrt((1-(f/f0)^2)^2 + (f/(Q f0))^2)`:
+```
+   Q    |H(f0)|   |H(3f0)|   amp ratio   POWER ratio
+   14     14.00     0.1250       112.0         12553
+   20     20.00     0.1250       160.0         25609
+   29     29.00     0.1250       232.0         53833
+```
+⇒ **the third harmonic arrives at the angle 12,500–54,000× weaker in power than the fundamental.**
+A prominence test on the angle is **structurally blind** to it. ⇒ **UNINFORMATIVE NULL.**
+
+⚠ **CONSEQUENCE FOR §4:** *"one mechanism, both symptoms"* is neither supported nor refuted by this.
+It still rests **solely on the shared command gate** — which is real and controlled — and the
+harmonic link that would have made it one *oscillator* remains untested. **Do not upgrade §4 on the
+strength of the command gate alone, and do not cite this test as evidence either way.**
+
+🛑 **AND IT IS NOT FIXABLE WITH THE CHANNELS THIS CAR HAS.** Seeing the harmonics needs the relay
+OUTPUT (`gp-0x6ae2`), not the angle — but CAN-427 runs at **49.8 Hz (Nyquist 24.9)**, so `3f0` =
+23.4 Hz sits at the very edge and any `5f0` = 39.0 Hz **folds back onto 10.8 Hz** and contaminates it.
+⇒ **The relay's harmonic structure is not observable through any channel on this vehicle.**
+
+⭐ **METHOD LESSON, and I failed it before catching it:** *compute the plant's transfer to the
+harmonic BEFORE running a harmonic test.* The kit already has the rule — **write the sentence a null
+will license** — and the sentence here was never writable, because a null was guaranteed whether or
+not a relay exists. **A harmonic test through a high-Q resonance needs a dynamic range the
+measurement does not have. Check that first, every time.**
 
 ## ⚠ LIMITS
 - **n is small in the high-command cells** — 82 / 45 / 53 windows against 878 at baseline. The
