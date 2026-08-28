@@ -1,5 +1,52 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **THE NOTCH GATE ALMOST CERTAINLY NEVER OPENS — V144/V145/V146 ARE INERT.  FLY V147.**
+Before spending a drive on the notch, I back-solved the one quantity its gate depends on. **It does
+not reach the threshold.**
+
+### THE BACK-SOLVE, FROM A DIRECT MEASUREMENT ALREADY IN THE CACHE
+**V90 tapped `gp-0x6B26` DIRECTLY** (tap `0x94DA`, sar 3) and route **r77 measured a 427 wire max of
+199** — far from the 1023 saturation, so **318 is a TRUE maximum**, not a clipped one.
+```
+   b26 = ((|c2c| * |Y|) >> 6) * 0x111 >> 0x12      =>      |c2c| = b26 * 61440 / |Y|
+   mode records (all four modes):  X = (0, 1280, 5760)   Y = (-9830, -5734, -1966)
+
+      |Y| = 9830  (creep, index near X[0])   ->   |gp-0x6c2c| max  ~  1,990
+      |Y| = 5734                             ->   |gp-0x6c2c| max  ~  3,412
+      |Y| = 1966  (the smallest Y anywhere)  ->   |gp-0x6c2c| max  ~  9,950
+      detector threshold cal(0xC620A)        =         12,800
+```
+⇒ **under EVERY attribution `|gp-0x6c2c|` stays BELOW 12800** ⇒ the reversal counter never
+increments ⇒ **`gp-0x671a` never reaches 5** ⇒ **THE NOTCH GATE NEVER OPENS.**
+⊕ And **V122 runs α2 = 8 against V90's 22** — *more* smoothing on the same signal ⇒ its
+`gp-0x6c2c` peaks are **LOWER still**. **The conclusion STRENGTHENS on the newer base.**
+⇒ **[BELIEF, well-founded] V144, V145 and V146 are INERT** — not harmful, inert. The notch is
+real, correctly retuned and validated against the firmware's own recursion; it simply never runs.
+
+### ✅ V147 IS THE BUILD TO FLY — A LIVE LEVER *AND* THE DEFINITIVE TEST
+```
+   0xC61F6   r24 pump-lane DEADBAND   3 -> 96     THE LIVE LEVER (V140/V141's, unchanged)
+   0x55DF2   427 tap -> gp-0x6C24                 the gate-state mirror
+   0x55E10   packer sar 3 -> 1                    or BOTH gate values map to wire 0 -- BLIND
+   4 payload bytes: 1 FUNCTIONAL + 3 telemetry.   67/67.
+   image d4a02872aecea638afe4f9741938c7c396d1f1b02468e7570b1ac6a3be7656d6
+   rwd   f7446a67b30c80e7216b7d915f97aabc09089e936066f2ff7ade3338eda3355f
+```
+⭐ **The deadband does NOT depend on the gate** — it acts on the r24 lane every tick. So the drive
+carries a real fix attempt **and** settles a whole build family:
+```
+   gate OPEN duty > 0    ->  the back-solve is WRONG, the notch CAN run  ->  fly V146 next
+   gate OPEN duty = 0    ->  back-solve CONFIRMED  ->  RETIRE V144/V145/V146; the notch family is
+                             closed unless 0xC64FA can be moved, which is its own open question
+```
+
+### ⭐ THE METHOD POINT
+**The answer was already in the cache.** V90 flew the exact probe needed, on the exact cell, with a
+known scale — four builds were designed around a gate whose input had already been measured.
+🛑 **Before designing around a threshold, back-solve whether the quantity ever REACHES it from
+data already flown.** That is the same lesson as *"the answer to the session's central question was
+already in the cache"* (r77/V90, recorded earlier) — **and it has now paid twice.**
+
 ## ✅✅ **V146 VALIDATED END-TO-END BY SIMULATING THE FIRMWARE RECURSION ITSELF**
 Three checks against the recursion **transcribed from `FUN_000352b4`**, not against the frequency
 response alone — because "the recursion I read IS the designed filter" had been an ASSUMPTION.
