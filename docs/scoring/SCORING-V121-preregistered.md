@@ -68,8 +68,14 @@ means **nothing**, and I will say so rather than reading a trend into it.
 2. **Assist check:** engaged p99 |rate| should be **≥ V112's** (77.1 °/s). A drop below ~70 °/s means
    the knee cost authority and V116 (the smaller step) is the fallback.
 3. **Fault-free:** `STEER_STATUS == 4` count must be **0**. Any fault ⇒ revert immediately.
-4. **Grind #1 is NOT an endpoint.** V121 does not target it, and it is unmeasurable on routes with no
-   creep exposure.
+4. 🛑 **GRIND #1 IS NOW AN ENDPOINT — CORRECTED 2026-08-28 on the operator's report that it moved
+   to a higher frequency.** Band is **21-26 Hz**, not 18-22: the engaged excess peaks at ~23 Hz on
+   recent builds (15.0 Hz on stock), and the kit's two old bands straddle it. On 21-26 Hz the knee
+   shows a monotone dose-response — knee 300 / 600 / 1800 → 0.631 / 0.246 / 0.213, ratio 300/1800 =
+   **2.956 [1.164, 4.079]** and 300/600 = **2.565 [1.010, 4.664]**, both excluding 1.0.
+   ✅ **V121 continues that axis (1800 → 3000), so grind #1 SHOULD improve.** Report the 21-26 Hz
+   engaged share, p90, as a share of 1-45 Hz. V112 baseline: **0.21341**.
+   ⚠ knee is confounded with K1, so a change attributes to the axis, not to either cell.
 
 ---
 

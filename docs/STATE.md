@@ -1,5 +1,46 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 OPERATOR CORRECTION: **GRIND #1 MOVED UP** — the kit's bands miss it, and the KNEE **IS** its lever
+> *"grind #1 has moved to a new, higher frequency since a few firmware versions ago."*
+
+**Every grind-#1 measurement in this session used 18-22 Hz** — its band in the V62 era. **He is
+right, and that invalidated all of them.**
+```
+   ENGAGED-minus-MANUAL excess, peak location (within-route, so road/exposure cancel):
+     STOCK        15.0 Hz (+4.4 dB)
+     V90..V96     28.1 / 20.3 / 32.8 / 28.3 / 20.5 Hz
+     V100..V107   22.9 / 22.7 / 23.4 / 24.6 / 27.0 / 21.1 Hz
+     V111, V112   20.9 / 23.2 / 23.4 Hz        <- recent builds cluster 21-23.4
+```
+🛑🛑 **Stock peaks at 15.0 Hz, every mod at 20.3-32.8 ⇒ the kit's TWO bands (18-22 and 26-31)
+STRADDLE the real peak near 23 Hz and BOTH MISS IT.**
+
+### ✅ RE-RUN ON 21-26 Hz — THE KNEE IS A MEASURED GRIND-#1 LEVER
+```
+   band                      knee300  knee600  knee1800   300/1800        300/600 (n=8 vs 7)
+   18-22 Hz (what I used)    0.26082  0.23104   0.33799   0.772 [0.575,1.169]      --
+   21-26 Hz (the real peak)  0.63080  0.24591   0.21341   2.956 [1.164,4.079] <==  2.565 [1.010,4.664] <==
+   26-31 Hz (kit's other)    0.19954  0.17920   0.10255   1.946 [0.986,7.375]      --
+```
+✅ **Monotone across all three knee levels; BOTH contrasts exclude 1.0, including the well-powered
+n=8-vs-7 arm.** Raising the knee cuts the band ~2.6-3×. On the old band the same data gives **0.772,
+pointing the WRONG WAY** — exactly what I reported.
+🛑 **`c91a1ba5` — "the knee has NO measured dose-response on grind #1" — is WITHDRAWN.** It was a
+**band error, not a null.** ⊕ And the operator's own report — grind #1 going constant → *"rare… a few
+moments"* exactly when the knee went 600 → 1800 — which I could not reproduce and treated as
+unsupported, **was right; my instrument was mis-aimed.** ⊕ The earlier "four predictors at p<0.10 that
+contradict the operator" result used the same wrong band.
+
+### ✅ CONSEQUENCES
+1. **V121 (knee 1800 → 3000) now has a MEASURED dose-response behind it on grind #1** — more than its
+   oscillation rationale ever had.
+2. **`docs/scoring/SCORING-V121-preregistered.md` is CORRECTED**: grind #1 is **no longer excluded as
+   an endpoint**, and its band is **21-26 Hz**.
+3. ⚠ `n = 2` at knee 1800, and knee is **perfectly confounded with K1** ⇒ what is established is
+   *"the knee-or-K1 axis cuts grind #1"*, **not which cell.**
+4. ⚠ **Re-examine every other grind-#1 null in this session on 21-26 Hz** before trusting it.
+memory: [[accord-grind1-moved-up-and-the-knee-IS-its-lever]]
+
 ## 🛑 THE IMU LEVER HUNT RETURNS NOTHING — and it was PRE-REGISTERED as uninformative if so
 Ran the natural-experiment design with the new IMU outcome on all Lever-B-ON routes:
 ```
