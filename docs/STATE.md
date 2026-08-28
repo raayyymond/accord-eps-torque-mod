@@ -1,5 +1,52 @@
 # STATE — living current state of the kit
 
+## 🛑 …AND ITS CRUX TEST FAILED — the rate axis does NOT separate the symptom
+Pre-registered above: *if `gp-0x6ac0` during the 7-9 Hz event overlaps a normal hard curve, the lever
+fails.* **It ran. They overlap.** Proxy `|cs_rate|` p95, 8,200 engaged windows, 17 routes:
+```
+   OSCILLATING (6-9 Hz top 5 %)     n = 410   median 47.06 deg/s
+   NORMAL HARD CURVE (ang>=20)      n = 106   median 24.49 deg/s
+   knot T:   20 -> 83.4 % osc / 61.3 % normal    40 -> 60.2 % / 36.8 %
+             60 -> 22.4 % / 27.4 %  (INVERTS)   200 -> 5.6 % / 2.8 %
+   AUC = 0.630  (0.5 = none)   p = 1.9e-05
+```
+🛑 Every useful threshold also catches **a third to a half of normal hard curves** ⇒ **a
+rate-scheduled `Kd` knot cannot spare normal steering**, the exact cost the operator forbade.
+⚠ **Weak, not zero**: a LERP is smooth, medians separate **1.9×** highly significantly ⇒ a gradual
+rolloff gives ~1.9× more reduction during oscillation. Modest, not clean.
+⚠ The proxy may **understate** separation — the real axis is the **motor** rate and the motor sees
+the oscillation more strongly than the wheel. **Resolving that needs a cave probe = the only
+bricking class**, so it is not cheap.
+⇒ **PARKED, not struck.** The **structure** (Honda rate-schedules the PID; `Kd` flat and virgin,
+byte-identical stock vs V112) **stands as EVIDENCE**; the **discriminability** claim does not.
+**Do not build it on the structure alone.**
+
+## ⭐⭐ A FREQUENCY-SELECTIVE LEVER **DOES** EXIST — Honda rate-schedules the PID, and `Kd` is FLAT
+Decompiled `FUN_0003a382`, then byte-verified: all three PID gains are four-knot LERPs on the **same
+axis**, `gp-0x6ac0` (resolver/FOC electrical rate [BELIEF, kit record]):
+```
+  Kp 0xC6B26  X = [0, 300, 2000, 4000]   Y = [256, 256, 225, 153]   <-- NOT FLAT: Honda rolls off 40 %
+  Ki 0xC6B12  X = [0, 400, 1500, 3000]   Y = [ 98,  98,  98,  98]       flat
+  Kd 0xC6AE6  X = [50, 400, 1500, 3000]  Y = [2048,2048,2048,2048]      flat
+  lane gate: disabled when gp-0x6ac0 >= 0x32C9 = 13001
+```
+✅ All three Y rows **byte-identical stock vs V112** — virgin across the entire build history.
+✅ **Honda's own Kp row proves the machinery is live, wired and calibrated** — nothing to arm.
+🛑 ⇒ **[[accord-factord-is-the-angle-error-lever]]'s "this firmware has NO frequency-selective
+lever" is TOO STRONG and should be read as scoped to FactorD.**
+⊕ `STATE-ARCHIVE-2026-08-11`: **D PUMPS ONLY 2-12 Hz and DAMPS 16-35 Hz** ⇒ Kd is an anti-damping
+contributor **at exactly the symptom band**. A **rate-scheduled** rolloff — Kd unchanged at low rate,
+reduced at the top knots, shaped the way Honda shapes Kp — costs no steering velocity or acceleration
+where the LKAS command lives. That is the operator's constraint, satisfied by construction.
+🛑 **NOT YET A BUILD. The crux is knot placement**, and it is unmeasured: nothing shows what
+`gp-0x6ac0` reads during the 7-9 Hz event vs during a normal hard curve. **If those overlap, the
+lever cannot separate them and the idea fails.** ✅ Measurable from existing telemetry — do that next.
+⚠ Also: it changes **manual** steering (`gp-0x67fa & 0xc30`, not an LKAS flag); GATE 2 applies; and
+the kit's earlier **refusal** of Kp/Ki/Kd was about *flat* scaling, which does not transfer.
+✅ Cal-only, one Y row, no cave ⇒ outside the only bricking class.
+Tool: `analysis-2020accord/verify/read_pid_rate_schedule.py` ·
+memory: [[accord-pid-gains-are-rate-scheduled-and-kd-is-flat]]
+
 ## ✅ THE DELETION-SET HYPOTHESIS IS NOW PROVEN — and `0xC64DE` is struck
 **16-route natural experiment**, 15 builds, using the route-offset-immune within-drive statistic.
 Outcome = log(large-angle 6-9 Hz p90) with log(small-angle p90) regressed out (r = 0.645).
