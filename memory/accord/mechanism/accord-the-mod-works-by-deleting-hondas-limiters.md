@@ -47,3 +47,30 @@ not a tuning accident. Sizing the cheapest restoration first:
    not a build to make unilaterally.
 🛑 **Do not keep hunting for a single culprit cell.** Eight candidates have now been eliminated with
 their own controls; the non-ordering across builds is itself evidence against one existing.
+
+## ✅ WHAT THE ARBITRATION CASCADE ACTUALLY DOES — and a probe-invalidating trap that did NOT fire
+Traced the limit-exceeded path at `0x29276` (the target of all three `bh` branches):
+```
+  0x29276  add 0x1, r12 / sxb r12        ; a DEBOUNCE COUNTER
+  0x2927C  bge 0x29288                   ; not yet expired -> save and leave
+  0x29288  ld.bu 0x74df,tp,r10           ; cal(0xC64DF) = the debounce reload
+  0x2928C  mov 0x4, r8
+  0x2928E  st.b r8, -0x6807, gp          ; ** ON EXPIRY, WRITE 4 TO gp-0x6807 **
+  0x29296  st.b r10, -0x6757, gp         ; reload the counter
+```
+⇒ the cascade is a **debounced fault/mode latch**: exceed a mode-selected threshold for long
+enough and the code **latches the value 4** into `gp-0x6807`. Setting the thresholds to 65535 means
+**that latch can never arm.**
+
+### 🛑 THE TRAP THAT DID NOT FIRE — checked before trusting V118/V119's probe
+It looked as though we might have disabled **both ends of one protection**: the cascade never
+latching *4*, and `0x454FE` never calling `FUN_00049A5A` when `gp-0x67fa == 4`. If `gp-0x6807` and
+`gp-0x67fa` were the same state, **the probe would read zero because we made state 4 UNREACHABLE**,
+not because it is rare — and the pre-registered "<1 % ⇒ eliminated" rule would have been **exactly
+backwards**.
+✅ **They are different cells, and `gp-0x67fa` has MANY writers** — `st.b` at `0x19816`, `0x19862`,
+`0x198AC`, `0x198D8`, `0x19908`… in `FUN_000197ea` / `FUN_00019888`, a state machine in the 0x19xxx
+region **that none of our builds touch**. ⇒ **state 4 remains reachable and the probe is valid.**
+⚠ That `search_instructions` returned `truncated: true` after 19,615 of 183,671 instructions, so the
+writer list is **partial** — but partial is enough here: finding writers we do not touch is what the
+check needed.
