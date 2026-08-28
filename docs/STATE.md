@@ -1,5 +1,28 @@
 # STATE — living current state of the kit
 
+## ✅ DELIVERY IS **NOT** SATURATED — V123's gain rise should bite, but with diminishing returns
+Before trusting V123's 8× I checked whether the car is already delivering its maximum at the rail.
+**It is not.**
+```
+   30-60 deg (where the rail lives):
+     cmd    0-2000   |rate| p50 18.9   p90  66.7    rate per 1000 cmd 18.93
+     cmd 2000-3500              24.0        77.6                       8.72
+     cmd 3500-4095              19.3        34.9                       5.09
+     cmd      4096              26.5       112.1                       6.47
+   manual overall:  p50 51.4   p90 123.3   p99 174.5
+```
+✅ **Rate still RISES with command** (p50 18.9 → 26.5, p90 66.7 → 112.1) ⇒ **nothing hard-clips the
+delivery**; the efficiency fall is a **load** effect, not a rail. **This supports V123's gain rise.**
+🛑 **But efficiency falls 2.9× from low command to the rail (18.93 → 6.47 per 1000 cmd)** ⇒ **8× will
+NOT buy 1.33× more rate. Expect roughly 1.1-1.2×.** Do not promise the clamp ratio.
+⭐ **THE AUTHORITY GAP, QUANTIFIED FOR THE FIRST TIME:** at **maximum** command in a 30-60° turn the
+car manages **p50 26.5 deg/s**, against **51.4 deg/s** the driver achieves manually. ⇒ **LKAS at full
+command delivers about HALF the driver's ordinary steering rate.** That is the operator's complaint,
+in one number, and it is why the command winds up to the rail.
+⊕ Combined with the windup finding (tracking error **101×** larger at the rail) the picture is
+coherent: **the car under-delivers, openpilot winds up, the loop rings at 7.81 Hz, and the command
+carries that same 7.81 Hz peak.**
+
 ## ✅ THE "r24 IS THE CORPUS MAXIMUM" ALARM IS AN **ARTEFACT OF THE RATIO** — withdrawn
 I flagged V122's angle-gated 6-9 Hz ratio (**12.05**) as the corpus maximum. **The absolute levels
 say otherwise:**
