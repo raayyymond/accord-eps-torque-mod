@@ -185,3 +185,27 @@ anti-damping, no added inertia or phase) whose effect on the symptom is **unknow
 between V111 and V112** and shows up even where their friction is identical. The only other
 differences are the knee's effect on relay *character* at low rate and route-to-route variation.
 **Open.**
+
+## 🛑🛑 SECOND-ORDER CORRECTION — **THE REFUTATION ABOVE IS ITSELF WITHDRAWN**
+The section immediately above refuted the K1 mechanism on a V111-vs-V112 contrast. **That contrast
+cannot support any conclusion.** `r22` and `r23` are **both V112** — identical firmware, different
+drives — and they differ by:
+```
+   |ang|     SAME-FIRMWARE r23/r22    95% CI          cross-build V112/V111
+    0-  5           1.07x           [0.81, 1.25]            1.27x
+    5- 20           0.77x           [0.55, 0.97]            0.90x
+   20- 60           2.74x           [0.79, 8.87]            0.75x
+```
+🛑 **At 20–60° the same firmware varies 2.74× between drives**, so a predicted 2–3× effect is
+**below the noise floor** and the cross-build ratio sits inside the same-firmware spread. My CIs were
+bootstrapped over **windows**, which ignores route-level variance and badly understated the
+uncertainty.
+⇒ **THE K1 MECHANISM IS UNTESTED, NOT REFUTED.** And the "0–5° residue" is **also withdrawn** —
+same-firmware gives 1.07× [0.81, 1.25], so 1.27× needs no new mechanism.
+✅ Rule recorded as [[feedback-one-route-per-build-cannot-resolve-band-ratios]].
+
+### ⇒ THE HONEST STATUS OF V120 AND V113
+Both are **valid, well-reasoned builds** — V120 lands low-rate feel exactly on stock's while cutting
+the anti-damping term 0.500× at every frequency with no added inertia and no added phase.
+**Their effect on the symptom is UNKNOWN** — neither confirmed nor refuted. **V120 is the recommended
+flight on reasoning, not on demonstrated mechanism**, and it should be presented that way.

@@ -1,5 +1,24 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 ONE ROUTE PER BUILD CANNOT RESOLVE A BAND RATIO — the K1 refutation is WITHDRAWN
+`r22` and `r23` are **both V112**: identical firmware, different drives.
+```
+   |ang|     SAME-FIRMWARE r23/r22    95% CI          cross-build V112/V111
+    0-  5           1.07x           [0.81, 1.25]            1.27x
+    5- 20           0.77x           [0.55, 0.97]            0.90x
+   20- 60           2.74x           [0.79, 8.87]            0.75x
+```
+🛑 **At 20–60° the SAME firmware varies 2.74× between drives.** A predicted 2–3× effect is below
+that floor, and every cross-build ratio sits inside the same-firmware spread. My CIs were
+bootstrapped over **windows**, ignoring route-level variance.
+⇒ **The K1 mechanism is UNTESTED, not refuted.** The "0–5° residue" is withdrawn too.
+✅ **RULE**: resample **ROUTES**, or quote the same-firmware spread beside every cross-build ratio;
+a cross-build band ratio needs **≥ 2 routes per arm**, and at large angle an effect **> ~2.7×**.
+⚠ [[accord-the-oscillation-excess-is-ANGLE-GATED]] **survives** — its tail effects (4.4× overall,
+7.9× at 20–60°) clear the floor and it is exposure-controlled — **but it rests on ONE stock route**,
+and its smaller per-band ratios (1.06–1.74×) are **not** resolved.
+⇒ **V120 remains the recommended flight on REASONING, not on demonstrated mechanism.**
+
 ## 🛑🛑 THE K1 MECHANISM IS **REFUTED** — V120/V113 ARE NOT MECHANISM-BACKED FIXES
 Tested on data already in hand. **V111 and V112 share a small-signal gain**, so their friction term is
 identical at low rate and V112's is **1.9× at 20 °/s, 3.0× above 31.8 °/s**. If that term drove the
