@@ -1,5 +1,56 @@
 # STATE — living current state of the kit
 
+## ✅✅ **LEVER A × LEVER B: A RISK RAISED, CHECKED, AND RESOLVED IN V131's FAVOUR**
+I flagged that V131 might stack two levers that had never flown together. **It does stack them —
+they multiply — but V62 ITSELF already flew the stacked configuration.** Both halves recorded.
+
+### ✅ THEY DO MULTIPLY — same expression, 24 bytes apart
+```
+   0x3ac08  ld.hu 0x7446, tp, r10     <- 0xC6446 = Lever B arm (5244; stock 512)
+   0x3ac18  mul   r10, r8, r0         <- r8 = r1 * arm          <- Lever B multiplies HERE
+   0x3ac20  sar   0xa, r8             <- >> 10                  <- Lever A shifts HERE
+```
+`out = (r1 × arm) >> sar` ⇒ **arm and sar compound directly.** ⊕ And **r26 has its OWN arm**,
+`0xC643E` @`0x3AB68`, a **different cell** from Lever B's `0xC6446` ⇒ the r26 `sar` edit is clean
+and cannot compound with Lever B at all.
+```
+   r26 lane:  out = ((r1*r6)>>10 * arm 0xC643E) >> sar 0x3AB76
+   r24 lane:  out = (r1 * arm 0xC6446|0xC6440) >> sar 0x3AC20
+```
+
+### 🛑 MY CONCERN WAS WRONG — AND THE CORRECTION IS THE INTERESTING PART
+I asserted V62 flew at `0xC6446` = **512** (stock) and therefore that V131's 5244 + sar 9 =
+**20.48×** was unflown and 10× past V62's *"2× ≈ OPTIMUM"*. **Reading the V62 image instead of the
+narrative: `0xC6446` was ALREADY 5244 on V62.**
+```
+   THE WHOLE r24/r26 RATE LANE, V62 (measured 8-42x) vs V131
+     r26 arm 0xC643E    1536  ==  1536
+     r24 arm A 0xC6440  2048  ==  2048
+     r24 arm B 0xC6446  5244  ==  5244
+     r26 sar 0x3AB70    0xaa  ==  0xaa
+     r26 sar 0x3AB76    0xa9  ==  0xa9
+     r24 sar 0x3AC20    0xa9  ==  0xa9
+   => V131 reproduces V62's rate lane EXACTLY
+```
+⇒ **the 20.48× r24 total IS the configuration that measured 8–42× better, fault-free** (`ST==4`
+on 0 of 86,278 frames). **V131 is not a new dose; it is V62's lane, byte-for-byte.**
+⊕ The *"2× ≈ optimum"* note refers to **the `sar` step alone**, not to the lane total — conflating
+them is what produced the false alarm. ⊕ `0xC6446`'s history is **non-monotone**: 5244 at V62,
+**512 at V87**, 5244 again from V88 — consistent with its own frozen note, *"Reverted 3× at
+rebases."*
+
+### ⭐ THE METHOD LESSON, WHICH IS THE REAL TAKEAWAY
+**The narrative said 512; the image said 5244.** Two sessions of build notes attributed Lever B to
+V67/V68, so I reasoned from that attribution instead of reading V62's bytes — and nearly revised a
+correct build on the strength of it. ⇒ **when a risk depends on what a PRIOR BUILD contained, read
+that build's IMAGE, not the record of it.** The images are the ground truth and they are all in
+`accord-firmwares`.
+⊕ This is the third time this session that going to the bytes overturned a narrative claim
+(the `ld.bu` disp¦1 scan, V106's extinction result, and now this) — **twice the bytes corrected me
+toward MORE caution, once toward LESS.**
+
+⇒ **V131 stands unchanged, now with its riskiest interaction explicitly checked.**
+
 ## ✅✅ **EVERY MEASURED-GOOD EDIT IS NOW ON THE BUILD — THE LOST-FIX AUDIT CLOSES CLEAN**
 Prompted by V131: if V62's fix could sit lost for ~50 builds behind a guard that *asserted* the
 loss, **what else is missing?** Two audits.
