@@ -72,3 +72,44 @@ does not exclude a plant×firmware interaction.
 Measure `|model|` (or its proxy `gp-0x6ae2`) against steering angle on an existing route — the cave
 already telemeters `gp-0x6ae2`. If `|model|` rises steeply with |ang|, the K1 link is established
 without a new drive.
+
+## ✅ CONFOUND REMOVED — matched on the denominator, it is **9 of 9**. And **ONE stock route caps p at 0.100.**
+2026-08-28. Re-tested with a **within-drive** design (each route its own control, immune to the
+route-offset problem in [[feedback-one-route-per-build-cannot-resolve-band-ratios]]).
+
+**First pass, raw ratio** p90(6-9 Hz | ang>=20) / p90(| ang<20): STOCK **1.46x**, 16 mod routes median
+**2.99x**, 13/16 above stock — but three mod routes fell *below* stock and stock ranked only 4th of 17
+(rank p ≈ 0.24). 🛑 **That test was confounded.** The ratio's **denominator varies 10x across builds**
+(1.007 → 9.388); a build already oscillating at small angle has no headroom, which compresses its
+ratio. **All three mod routes below stock had small-angle p90 > 6.**
+
+**Matched pass** — keep only mod routes whose **small-angle p90 brackets stock's** (window [0.63, 1.81]):
+```
+   route build   small-ang p90   LARGE-ang p90   ratio
+   r97   STOCK       1.064          1.551       1.46x   <-- STOCK
+   r22   V112        1.240          2.909       2.35x
+   r21   V111        1.007          3.137       3.12x
+   r78   V91         1.067          3.719       3.49x
+   r79   V92         1.116          4.044       3.62x
+   r7f   V96         1.163          4.527       3.89x
+   r7e   V96         1.383          4.827       3.49x
+   ra6   V106        1.155          6.227       5.39x
+   r77   V90         1.703          7.353       4.32x
+   r23   V112        1.060          8.320       7.85x
+```
+Stock's small-angle p90 ranks **3rd of 10** — exposure at small angle is **matched**, so only the
+large-angle response differs. ✅ **Stock's large-angle p90 (1.551) is BELOW ALL NINE** (2.909-8.320).
+⊕ The **same-firmware** V112 pair spans 2.909-8.320 and **both sit above stock by ≥ 1.88x**, so
+drive-to-drive spread does not explain stock's position.
+
+### 🛑 THE BINDING CONSTRAINT IS THE STOCK ARM, AND IT IS ARITHMETIC
+Exact one-sided permutation p (stock the minimum of 10) = **1/10 = 0.100**.
+🛑 **With ONE stock route the p-value FLOOR is 1/(n_mod+1) = 0.100 — no amount of analysis can
+reach 0.05.** The limit is the design, not the statistics.
+✅ **With TWO stock routes below all nine mods: p = 2!·9!/11! = 0.0182 — clears 0.05.**
+
+⇒ **Status: [EVIDENCE for the direction and size, 9/9 with exposure matched; NOT significant at 0.05,
+and cannot be, on n=1 stock drive].**
+✅ **`docs/scoring/DRIVE-CARD-manual-at-speed.md` is the GATING ITEM for the programme** — and the ask
+is now exact: **ONE more stock-configuration drive** converts the strongest surviving finding from
+p=0.100 to p=0.018. **No firmware change, no flash, no build required.**

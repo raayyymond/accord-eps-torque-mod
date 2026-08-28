@@ -1,3 +1,20 @@
+# 🛑 THIS IS NOW THE GATING ITEM FOR THE WHOLE PROGRAMME — and the ask is exact
+
+**ONE more stock-configuration drive** takes the kit's strongest surviving finding from **p = 0.100**
+to **p = 0.018**. Nothing else in the corpus can do that, because the limit is arithmetic:
+
+> With **one** stock route, the exact one-sided permutation p-value floor is **1/(n_mod+1) = 0.100**.
+> **No amount of further analysis of existing data can reach 0.05.** The limit is the DESIGN.
+
+Matched on small-angle exposure, **stock's large-angle 6-9 Hz p90 (1.551) is below all nine mod
+routes (2.909-8.320)** — including **both** V112 drives, by ≥ 1.88x. One more stock drive that lands
+anywhere below the mod range settles it.
+
+✅ **No build, no flash, no firmware change.** This is a measurement, not an experiment on the car.
+✅ Everything stock-vs-mod in this corpus currently rests on **route 97 alone**.
+
+---
+
 # DRIVE CARD — the one measurement the corpus cannot make
 
 **No firmware change. No flash. Keep V112 on the car.** This is a data-collection drive only.

@@ -1,5 +1,27 @@
 # STATE — living current state of the kit
 
+## ✅ ANGLE GATING — CONFOUND REMOVED, **9 of 9**; and ONE stock route caps p at **0.100**
+Within-drive design (each route its own control ⇒ immune to route offset). Raw ratio gave STOCK
+**1.46x** vs 16 mods median **2.99x**, but 3 mods fell below stock — **because the ratio's denominator
+varies 10x across builds** and those 3 all had small-angle p90 > 6.
+**Matched on small-angle p90** (stock ranks 3rd of 10 ⇒ exposure matched):
+```
+   route build   small-ang p90   LARGE-ang p90   ratio
+   r97   STOCK       1.064          1.551       1.46x   <-- BELOW ALL NINE
+   r22   V112        1.240          2.909       2.35x
+   r23   V112        1.060          8.320       7.85x     (same firmware as r22)
+   ... 7 more, large-angle 3.137 - 7.353
+```
+✅ **Stock's large-angle p90 is below all 9 matched mods.** The same-firmware V112 pair both sit
+above stock by ≥ **1.88x**, so drive-to-drive spread does not explain it.
+🛑 **Exact one-sided permutation p = 1/10 = 0.100. With ONE stock route the FLOOR is
+1/(n_mod+1) — it cannot reach 0.05. The limit is the DESIGN, not the analysis.**
+✅ **TWO stock routes below all nine ⇒ p = 0.0182.**
+⇒ **[EVIDENCE for direction and size; NOT significant at 0.05 and cannot be, on n=1 stock drive.]**
+✅ **THE GATING ITEM IS `docs/scoring/DRIVE-CARD-manual-at-speed.md` — ONE more stock-configuration
+drive takes the strongest surviving finding from p=0.100 to p=0.018. No build, no flash.**
+Tool: `rlog-tools/studies/peakturn/matched_denominator_angle_test.py`
+
 ## 🛑🛑 ONE ROUTE PER BUILD CANNOT RESOLVE A BAND RATIO — the K1 refutation is WITHDRAWN
 `r22` and `r23` are **both V112**: identical firmware, different drives.
 ```
