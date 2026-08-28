@@ -1,5 +1,49 @@
 # STATE — living current state of the kit
 
+## ✅✅ **THE CREEP ENDPOINT IS PRECISE — AND IT PUTS A CHECK ON V135 BEFORE IT FLIES**
+Scored **every cached route** on the within-drive engaged/manual creep endpoint (NW = 128 to
+recover routes the 256-window threshold had dropped), ordered by relay knee:
+```
+   knee   build  route   18-22 eng/man   30-40 control   guard
+    600   V111   r21          4.40           0.54        PASS
+    600   V91    r78         10.59           1.00        PASS
+   1800   V112   r22          4.66           1.43        PASS
+   1800   V112   r23          4.82           0.85        PASS
+   3000   V122   r24          3.38           1.01        PASS
+   (6 of 13 routes FAIL the control guard and are VOID: r77 3.23, r96 6.84, r97 0.50,
+    r1e 8.06, ra6 7.06, ra4 8.32)
+```
+
+### ✅ 1. THE ENDPOINT IS FAR MORE PRECISE THAN ITS BOOTSTRAP CI SUGGESTS
+**V112's two independent routes give 4.66 and 4.82 — agreeing to 3 %**, against bootstrap CIs of
+[2.19, 11.08] and [1.99, 29.44]. ⇒ **the CIs are conservative; the real within-build repeatability
+is ~3 %.** That makes **V133 vs V122's 3.38 genuinely discriminable**, and it is the first
+same-build repeatability check this endpoint has had. ⚠ n = 2, so this is suggestive, not a
+measured null — a third same-build route would settle it.
+
+### 🛑 2. THE KNEE LADDER IS **NOT MONOTONE** ON THIS ENDPOINT — a check on V135
+```
+   knee  600 (V111)  ->  4.40
+   knee 1800 (V112)  ->  4.74   (mean of 4.66, 4.82)   -- WORSE than 600
+   knee 3000 (V122)  ->  3.38
+```
+⇒ **V111 → V112 raised the knee and the endpoint got slightly WORSE.** **V135's premise — that
+more knee is better — is NOT supported here.** ⚠ V122 changed **three** cells (knee, K1, α2), so its
+3.38 is not attributable to the knee alone, and V111/V112 differ in α2 as well (22 vs 14).
+⇒ **V135 is DOWNGRADED from "well-founded" to "a measured-duty-ladder step whose SYMPTOM effect is
+unconfirmed, and mildly contradicted, on the only symptom-adjacent endpoint that survives."**
+It remains harmless and reduces friction 17 %, which the operator wants — but **it should not be
+sold as a grind fix.**
+
+### ✅ 3. THE CONTROL GUARD IS DOING REAL WORK
+It **voids 6 of 13 routes**, including **every V104–V107 route** (controls 7.06–8.32), where engaged
+driving was simply more active than manual. ⇒ without the guard those would have read as enormous
+"engaged excess" results. **This is the same failure that killed the b26 relay hypothesis**, and
+the guard now catches it automatically.
+
+⭐ **Net**: the endpoint is **precise enough to score V133**, and it has already **demoted V135**
+before a drive was spent on it — which is exactly what an endpoint is for.
+
 ## ✅✅✅ **AN ENDPOINT THAT SURVIVES THE NOISE FLOOR — V133 IS SCOREABLE AFTER ALL**
 Every BETWEEN-ROUTE endpoint died on route variance (band amplitude 8×, f₀ 10 Hz). **But the
 operator's symptom is ENGAGED-ONLY, so both arms can come from ONE drive.** An **ENGAGED-vs-MANUAL
