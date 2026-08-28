@@ -1,5 +1,51 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ V114 BUILT — **ONE BYTE THAT RAISES DAMPING AND LOWERS MASS AT THE SAME TIME**
+```
+builder  analysis-2020accord/builds/v108_plus/build_v114_tva.py   42/42   BASE = V111
+image    8c4f53ccf8be61f8d3ceee5dcd4ca2c4ef46abe36af7e8e51b59ade104491820
+.rwd     26d2a6c10e7f2816338a698440ea454dffd2d15aadd6c3e76b7ebb906ef0f5c1
+0xC40DC   14 -> 8   alpha2, the gp-0x6c2c EMA pole
+1 payload byte (0e -> 08) + 1 CRC trailer.  NO CAVE EDIT.  Knee and K1 both HELD.
+```
+⭐⭐ **THE FIRST LEVER TO SATISFY THE BOTH-AT-ONCE DIRECTIVE FROM A SINGLE CELL.** The lane is a
+**bandpass** `64·H_lp·(1−z⁻¹)·H_ema`; **α2 sets its upper corner**, so lowering it walks the peak
+DOWN toward the anti-damped band. Split against the **velocity** phasor
+(`DAMPING ~ |H|·sin φ`, `MASS ~ |H|·cos φ`):
+```
+   α2   peak Hz   6-16Hz DAMPING   6-16Hz MASS   20-30Hz damping   broadband rms
+   22     61.1        0.794            1.085          0.921            1.488   (V108)
+   14     46.5        1.000            1.000          1.000            1.000   (V111)
+    8     34.2        1.252            0.796          0.899            0.604   <- V114
+    6     29.3        1.318            0.647          0.769            0.463
+    4     23.7        1.274            0.422          0.564            0.316
+```
+🛑 **DAMPING UP, MASS DOWN.** Only possible because α2 **rotates** the vector — more of a *smaller*
+term lands on the damping axis. Every scaling lever moved both together; that is why the directive
+looked like a contradiction. **It is not.**
+
+### WHY THE DOSE IS 8
+6–16 Hz damping peaks near α2 = 5–6, but the 20–30 Hz give-back grows fast and **21–27 Hz is where
+V106's win was measured.** α2 = 8 takes **+25 % in the deep band for −10 % at 20–30 Hz**, and it is the
+same step SIZE the operator already read clearly (V111's 22→14 was ×1.27 damping ⇒ *"oscillations
+gone, ratcheting reduced"*). **6 and 5 stay available on a monotone axis.**
+
+### ✅ IT CANNOT REPEAT V107
+V107 railed by multiplying the **Y row** (magnitude). α2 does the opposite: **peak |H| 9.20→6.15
+(×0.669), broadband rms ×0.604, 100 Hz 7.13→4.05.** Every magnitude falls ⇒ rail duty must fall.
+⊕ The 100 Hz drop attacks V107's own *"higher-pitched, several hundred Hz"* complaint directly.
+✅ **GATE 1 is the cleanest in the kit**: exactly ONE access image-wide, `0x41626 ld.hu 0x50dc,tp,r11`,
+zero writers. Both lineage conditions met — ships WITH the notch revert, taken UNCOMPENSATED.
+
+### ⚠ RESIDUAL RISK
+`gp-0x6c2c` has **three** consumers; only the damper is verified against a reshaped signal. The
+detector (`FUN_000428d4` vs `cal(0xC620A)`) is the second and **fires LESS** as α2 falls (safe
+direction); the third is unenumerated. ⊕ V109/V111 already flew this axis (22→14) fault-free.
+
+### 🛑 TWO INDEPENDENT SINGLE-VARIABLE CANDIDATES NOW SIT ON THE SHELF
+**V113** (relay knee 600→1800, K1 held) and **V114** (α2 14→8) are **orthogonal** — different lanes,
+different mechanisms. Fly either alone; **do not stack them** or the next report is uninterpretable.
+
 ## 🛑🛑 THE ANTI-DAMPING IS CENTRED AT **9–12 Hz** — NOT AT 20–30 Hz WHERE THE POWER IS
 2026-08-27. `Re(Z) = Re(H1[rate → column torque])`, 17 route-arms. **Estimator validated**: per-°/s
 here vs per-rad/s in the record — −43 × 57.3 = −2464 against the published −3375/−3176/−3073.
