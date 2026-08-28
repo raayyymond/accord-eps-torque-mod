@@ -1,5 +1,48 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **THE BASE-ASSIST DAMPER IS *ALREADY* A RELAY — THE LANE CLOSES, AND V80 IS EXPLAINED**
+I promised to read `FUN_00034350`'s ceiling before choosing any FactorC dose. **Read — and it
+blocks the dose.**
+```c
+   uVar7  = ((((FactorB clamped to 1024) * FactorC >>10) * FactorD >>10) * FactorE >>10) * FactorF >>10;
+   uVar10 = LERP(gp-0x6ac2)[mode]   or   cal(tp+0x7158) = 45496       // <- THE CEILING
+   gp-0x6bd0 = clamp(uVar7, +- uVar10)                                // saturate -> CONSTANT magnitude
+```
+```
+   ceiling LERP (&PTR_DAT_000c77a0)[mode]:  modes 24/25/26/27 ALL  X=[300,800]  Y=[512,1024]
+   stock product at FactorC's top knot:      ~2216   =>  over 2x the ceiling
+```
+🛑 **The damper output is clamped to 512–1024, and the product already exceeds it** ⇒ **the
+base-assist damper is ALREADY SATURATING at high speed ON STOCK** — already a relay there.
+⇒ **raising FactorC does not add damping; it WIDENS THE RELAY REGION.**
+
+⭐ **THIS IS THE MECHANISM BEHIND V80's RESULT.** V80 flattened FactorC to a constant 566, pushed
+the product further past this ceiling, and measured **the worst grinding in the kit's record**
+([[accord-v80-damper-relay-and-grind1-inert]]). Its own note — *"the no-clip gate is blind to
+`= ceiling − 17`"* — is exactly this clamp. **The lane behaves identically to `gp-0x6b26`: the
+term's authority is capped, and pushing past the cap converts damping into ratcheting.**
+⚠ **HONESTY**: my FactorE read came back `X=[140,539,927,0]`, and the trailing `0` says the field
+offsets are off by one ⇒ **2216 is APPROXIMATE**. The ordering conclusion is robust anyway: the
+ceiling is **512–1024** while single factors alone reach **908–2500**.
+
+### ✅ SO THE LANE CLOSES — unless the CEILING is raised, which is a separate build
+To make this a *linear* damper at 21–26 Hz the **ceiling** must rise, not FactorC — the same move
+as the `gp-0x6b26` clamp, and it needs its own admission/monitor analysis (`gp-0x6bd0` has an
+int shadow `gp-0x4cf2` and a ±2048 admission gate in `FUN_00038148`). **Not attempted here.**
+⊕ What the task-5 result still buys: **the rate objection is dead** (≥ 250 Hz, Nyquist ≥ 125 Hz),
+so if that ceiling is ever raised, the damper **can** act in the grind band. **The blocker moved
+from "wrong physics" to "capped authority" — a better-understood problem.**
+
+### 🛑 EVERY DAMPING LANE IN THIS FIRMWARE IS NOW CAPPED THE SAME WAY
+| term | cap | state |
+|---|---|---|
+| `gp-0x6b26` | clamp `0xC407E` + ±1024 admission gate | **at max** (V133: 1023/1.0) |
+| `gp-0x6bd0` (base assist) | per-mode LERP ceiling **512–1024** | **already saturating on stock** |
+⇒ **Honda caps both damping terms, and both are at or past their caps.** That is the structural
+reason grinding has resisted twelve builds: **the firmware has no headroom left to damp with**,
+and every attempt to force more converts a damper into a relay — measured three times now
+(V74/V75, V80, V107).
+
 ## 🛑🛑🛑 **TASK 5 IS ≥ 250 Hz — THE BASE-ASSIST DAMPER *CAN* ACT AT 21–26 Hz. THE LANE RE-OPENS.**
 The one avenue recorded as *neither closed nor sized*. **Now bounded, from flown data.**
 
