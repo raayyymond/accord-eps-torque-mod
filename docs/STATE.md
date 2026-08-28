@@ -1,5 +1,72 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **V133 REGRESSED ON-CAR — IT WAS A SIX-VARIABLE BUILD.  V137 IS THE CORRECTION.**
+**Operator report, 2026-08-28:** *"V133 has a massive, violent grinding after enabling LKAS which
+continues after disengaging. I also got some grind #2 while disengaged and doing a hard turn."*
+
+V133 was presented to him as *"every measured-good edit ever flown"* and as a **clean test of V62's
+Lever A**. **IT WAS NOT.** Against **V122** — the last **FLOWN** build, the one he called *"better,
+still ever so slight … in rare moments"* — V133 moved **SIX** cells:
+```
+   cell                                       V122      V133     direction
+   0xC407E  b26 clamp = APPARENT MASS ceiling   511      1023     2.00x MORE headroom
+   0xC4004    its float twin                    0.5       1.0     (matched, correct per se)
+   0x3AB76  Lever A r26 arm                    0xAA      0xA9     restored
+   0x3AC20  Lever A r24 arm                    0xAA      0xA9     restored
+   0xC40DC  alpha2                                8         5     the one GOOD direction
+   0xC640A  oscillation branch Y              -8192     -1966     de-fanged
+   0xC6CD0  LKAS gain                          5346      7128     6x -> 8x, +33 % EXCITATION
+```
+
+### 🛑 EACH SYMPTOM MAPS TO A DIFFERENT EDIT — AND BOTH WERE ALREADY ON RECORD
+**1. "grind #2 while DISENGAGED doing a hard turn" → LEVER A's r24 ARM (`0x3AC20`).**
+The LKAS gain is **engaged-only** and cannot produce a **disengaged** symptom; the r24 arm is in the
+**aggregator** and is **not LKAS-gated**. And the kit's own memory says it outright —
+`accord-v81-carries-neither-grind1-fix`: ***"Lever A = V62's sar×2 (r24 half CAUSED grind #2)"***.
+⇒ **the half with a RECORDED history of causing this exact symptom was restored anyway. The record
+existed and was not checked before the build was recommended.**
+
+**2. "massive violent grinding … CONTINUES AFTER DISENGAGING" → THE CLAMP (`0xC407E`), with the 8×
+gain as a likely amplifier of its onset.**
+`gp-0x6b26 = −K·acceleration` is **APPARENT MASS**. Raising its clamp **511 → 1023 doubles the peak
+apparent mass** the lane can deliver — and **less** apparent mass raises ζ and de-resonates, so this
+moved it the **WRONG WAY**. **`0xC407E` is NOT mode-gated**, which is exactly why disengaging does
+not stop it. The V133 builder sold the edit as *"de-rails without changing linear damping"* — true
+only of the **linear region**, and it ignored that **peaks may now reach twice as far**.
+⊕ The **6× → 8× gain** adds **33 % more excitation** into a ζ 0.017–0.036 / Q 14–29 resonance,
+against the operator's explicit instruction: *"If youre going to increase gain make sure we dont get
+even more oscillation and grinding."*
+
+### ✅ THE α2 MECHANISM IS **REINFORCED**, NOT DAMAGED
+V133 was, accidentally, **a large experiment in the OPPOSITE direction on the same physical
+quantity** — it doubled the ceiling on apparent mass — and it produced a **large worsening**. That
+is exactly what *"apparent mass drives this resonance"* predicts. **α2 lowers the same quantity's
+HF content and is untouched by this result.**
+
+### ✅ V137 — ONE CELL, ON THE BASE HE LIKED
+```
+   BASE = V122 (flown, known-good).   0xC40DC alpha2 8 -> 5.   Nothing else.
+   1 payload byte, 48/48 assertions.
+   image a481ce56e048489617feb5158b4ba3ea78e46dbf26659b604fc51063a9b9bc89
+   rwd   749d7e9c3abec45f7c45efcb642720d286f22b9e926ac1b6fba03fb7170188d8
+```
+Every implicated cell is **asserted BY NAME at its V122 value with the reason attached**: clamp
+**511**, float twin **0.5**, **both** Lever A arms stock **0xAA**, oscillation branch at Honda's
+**−8192**, LKAS gain **5346 (6×)**. Sizing gate: **8→5 = 1.60×**, no larger than the biggest α2 step
+ever flown (**1.75×**, V112→V122).
+
+### 🛑 V133 / V135 / V136 ARE ALL OFF THE FLYABLE LIST
+V135 and V136 are **V133-based** and inherit **the clamp raise, the 8× gain and both Lever A arms**.
+⇒ **neither is flyable as built**; both need **rebasing onto V122** if their levers are still
+wanted. Artifacts renamed `SUPERSEDED-DO-NOT-FLASH-*`.
+
+### ⭐ THE PROCESS FAILURE, RECORDED SO IT IS NOT REPEATED
+**A build presented as a test of one lever must differ from the last FLOWN build by that lever
+alone.** V133 differed by **six cells, two of them large**, and was recommended for flight with a
+scoring plan that **assumed a single-variable comparison**. ⇒ **Diff every candidate against the
+last FLOWN image — not against its own build parent — and enumerate the result before
+recommending a flight.** The build-parent chain hides accumulated drift; the flown image does not.
+
 ## 🛑🛑🛑 **V134 RETRACTED — IT IS INERT AT CREEP, AND THE WHOLE BASE-ASSIST DAMPER FAMILY IS CLOSED**
 V134 was recommended in this session as *"the only lever that adds damping where there is
 currently NONE at creep"*. **Reading the actual tables refutes it.** The records decode cleanly as

@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# ============================================================================
+# SUPERSEDED 2026-08-28 -- V133-BASED, AND V133 REGRESSED ON-CAR.  DO NOT FLY.
+#   V133 vs the last FLOWN build (V122) moved SIX cells, including the b26
+#   clamp 511->1023 (APPARENT MASS ceiling, not mode-gated), the LKAS gain
+#   5346->7128 (6x->8x), and BOTH Lever A arms (the r24 half is recorded as
+#   having CAUSED grind #2).  Operator reported violent grinding persisting
+#   after disengage, plus grind #2 disengaged on a hard turn.
+#   This build inherits ALL of those.  Rebase onto V122 before flying.
+#   See docs/STATE.md "V133 REGRESSED ON-CAR".
+# ============================================================================
 r"""
 V135 -- THE LAST MEASURED RUNG ON THE RELAY.  knee 0xC40BC 3000 -> 3600, K1 HELD.  Base = V133.
 
