@@ -1,5 +1,36 @@
 # STATE — living current state of the kit
 
+## 🛑 THE IMU LEVER HUNT RETURNS NOTHING — and it was PRE-REGISTERED as uninformative if so
+Ran the natural-experiment design with the new IMU outcome on all Lever-B-ON routes:
+```
+   route IMU eng/man:  r77 0.795 · r22 0.801 · r7e 0.961 · r1e 1.015 · r7f 1.113
+                       r78 1.138 · r21 1.176 · ra6 1.451 · ra4 2.550
+   gain_C6CD0  1.134 [0.77, 2.46] not resolved      biq_C649B  1.134 [0.77, 2.46] not resolved
+   knee / K1 / alpha2 / friction row : too few routes per arm (3/1, 8/1, 2/7, 4/1)
+```
+🛑 **Nothing resolves, and per the instrument's own pre-registration that means NOTHING.** The IMU
+is **~10× diluted** ([[accord-the-imu-is-a-valid-but-weak-grind-instrument]]) and only **9 routes**
+carry usable IMU with Lever B held constant, with arms of **1-4 routes**. **Only a positive IMU result
+is informative; these nulls are not evidence of absence** and must not be cited as such.
+⚠ One unexplained observation, recorded not acted on: **`ra4` (V104) sits at 2.550, 2.2× the next
+highest.** No cal in the set explains it. It is a single route.
+
+### ⇒ THE HONEST STATE OF THE SEARCH, AFTER CLOSING MOST OF IT
+| avenue | status |
+|---|---|
+| move the 7.8 Hz mode | **REFUTED** — `f0` invariant to a 2× forward-gain change |
+| damp it more | **MEASURED-CLOSED** — the ±511 rail; `0xC407E` faults if raised |
+| excite it less — relay knee | **V121 built**, mechanism failed two independent checks |
+| excite it less — model bandwidth `0xC50D8` | **GATE 2 BLOCKED** — +63.4° phase, sign undetermined |
+| frequency-selective filters | **arithmetically closed** — 3-tap FIR cannot notch without killing DC |
+| Coulomb floor `0xC4080` | **NEVER-RAISE**, corroborated by this session's own measurement |
+| angle handle, table (b) | orthogonal, **untested**, modest (~17 %) |
+| grind #1 | **unmeasurable** without creep exposure; the IMU is too diluted to substitute |
+🛑 **The binding constraint on BOTH symptoms is DATA, not analysis.** Further analysis passes on this
+corpus are producing underpowered results, and saying so is more useful than producing more of them.
+✅ **The three asks in `docs/scoring/SCORING-V121-preregistered.md` remain the highest-value actions**,
+and none needs a build or a flash.
+
 ## ✅⚠ THE IMU IS A **VALID BUT WEAK** GRIND-#1 INSTRUMENT — and it needs no creep exposure
 Every grind-#1 measure so far uses **steering rate**, which needs creep exposure **no post-V107 route
 has**. Grind #1 is **audible and felt** (*"it vibrated the entire car"*), so a chassis accelerometer
