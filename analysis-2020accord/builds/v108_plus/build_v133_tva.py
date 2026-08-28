@@ -393,6 +393,18 @@ def build():
           f" {CEIL_I_NEW+1}) -- V73 raised the int to 850 and left the float at 512, which is"
           f" why V74/V75 HARD-FAULTED")
     check(CEIL_I_NEW < 32767 and _fn > 0, "  int stays in range and the float stays positive")
+    # FUN_00038148 admits gp-0x6b26 into its sum ONLY while (x + 0x400) < 0x801, i.e. |x| <= 1024.
+    # Outside that the multiplier is literally 0 and the damper VANISHES from that sum, while the
+    # aggregator path at 0x3AC98 still sees it -- a partial, very confusing failure.  This is
+    # almost certainly why Honda ships 511.
+    ADMIT_HALF = 0x400
+    _adm = lambda x: ((x + ADMIT_HALF) & 0xFFFFFFFF) < (2 * ADMIT_HALF + 1)
+    check(_adm(CEIL_I_NEW) and _adm(-CEIL_I_NEW),
+          f"  🛑 THE ADMISSION GATE: |{CEIL_I_NEW}| is inside FUN_00038148's +-{2*ADMIT_HALF//2}"
+          f" plausibility window, so the damper is still ADMITTED to the gp-0x6b70 sum")
+    check(not _adm(ADMIT_HALF + 1),
+          f"  and {ADMIT_HALF+1} would be ZEROED there -- {ADMIT_HALF} is a HARD CEILING on this"
+          f" cal, not a soft one.  NEVER raise 0xC407E above {ADMIT_HALF}.")
     _r = lambda Y, c: next(m for m in range(1, 900000)
                            if ((((m * abs(Y)) >> 6) * 0x111) >> 0x12) >= c)
     print(f"      rail threshold |gp-0x6c2c| at the 90 km/h knot:"

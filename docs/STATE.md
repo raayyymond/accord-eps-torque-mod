@@ -1,5 +1,37 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **1024 IS A HARD CEILING ON `0xC407E` — V133's 1023 IS THE MAXIMUM, BY ONE COUNT**
+Applying V133's own rule (*"when a build changes a RANGE, re-derive everything that consumes it"*)
+to `gp-0x6b26` itself. **6 read sites**; `0x36CE4`/`0x36CF0` are the writer, `0x36D78` the monitor
+(handled by the float twin), `0x614A2` is a **`jarl` false positive**. Two real consumers:
+`0x3AC98` (the aggregator, governed at 4762 ⇒ 1023 is fine) and **`0x3815C`, in `FUN_00038148`**:
+```c
+   (int)(gp-0x6b26) * (uint)((int)(gp-0x6b26) + 0x400U < 0x801) * cal(tp+0x73a6) >> 10
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             (x + 1024) < 2049   <=>   -1024 <= x <= +1024
+                             OUTSIDE it the multiplier is literally 0
+```
+🛑 **This is an ADMISSION GATE, not a clamp: outside ±1024 the damper does not saturate — it
+VANISHES from the `gp-0x6b70` sum entirely**, while the aggregator path at `0x3AC98` still sees
+it. A partial, asymmetric failure that would be extremely hard to diagnose from a drive.
+```
+   |x| = 511    ADMITTED        |x| = 1024   ADMITTED
+   |x| = 1023   ADMITTED        |x| = 1025   ZEROED -- the damper VANISHES
+```
+✅ **V133 sits at 1023 — inside by ONE COUNT, and it is the maximum available.** ⊕ The other
+summands' windows, for contrast: `gp-0x6b4e`/`gp-0x6b4c` **±10240**, `gp-0x6bd0`/`gp-0x6bbe`
+**±2048**, `gp-0x6b26`/`gp-0x6b46` **±1024** — the tightest in the sum.
+⭐ **This is almost certainly why Honda ships 511**: comfortably inside a ±1024 gate, with the
+monitor twin at 512 just above it. The design is coherent once both are seen together.
+🛑 **A future build trying 2047 “ because 1023 helped ” would silently zero the damper.** The
+builder now asserts BOTH directions: that 1023 is admitted, and that **1025 would be zeroed**,
+with the message *"NEVER raise 0xC407E above 1024."* **77/77**, image SHA unchanged.
+
+⇒ **The gp-0x6b26 lane is now fully bounded and fully exploited**: α2 sets the shape, `Y` sets the
+gain, the **ceiling is at its structural maximum**, and the oscillation branch is sized linear at
+its arming threshold. **There is no remaining headroom in this lane** — anything further must come
+from the fork (which the probe decides) or from outside the lane.
+
 ## 🛑🛑 **V132 WOULD HAVE BROKEN ITS OWN MEASUREMENT — CAUGHT PRE-FLIGHT. V133 IS THE BUILD.**
 V132 raised the `gp-0x6b26` clamp **511 → 1023** but left the 427 packer at **sar 2**, which had
 been sized for the 511 clamp:
