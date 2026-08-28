@@ -54,3 +54,36 @@ on-car effect is **untested in either direction**.
 
 Related: [[accord-two-symptoms-two-mechanisms-rez-spectrum]] ·
 [[accord-the-742hz-mode-is-stocks-and-our-q-is-lower]]
+
+## 🛑🛑 THE BIQUAD CANDIDATE IS **REFUTED** — by a natural experiment in the existing corpus
+The biquad is armed from **V103** onward (`0xC649B` 0→1 **plus** two code edits, both verified from the
+images: `0x35A08` `e798`→`fb97`, which **repoints the gate's input from `gp-0x671a` to `gp-0x6806`**,
+and `0x35A12` `ec`→`e0`, `cmp r12,r9`→`cmp r0,r9`). **V88 and everything before it has `0xC649B` = 0
+and stock code there.** That splits the corpus into a clean before/after.
+```
+   7-9 Hz Re(Z)     biquad OFF (9 routes)              biquad ON (8 routes)
+   values           -13 -36 -38 -50 -74 -64 -38 -42 -32   -63 -57 -54 -50 -34 -57 -50 -75
+   median                    -37.7                              -55.4
+   P(ON more anti-damped than OFF) = 0.722   (chance = 0.5)
+```
+🛑 **The feature is already at −32 to −50 on V90/V91/V92/V96 — builds with NO biquad.** 0.722 with
+n = 9/8 and heavily overlapping ranges is not separable. **The biquad does not create it.**
+
+## 🛑 AND THE "LINEAR IN GAIN" LAW I NEARLY RECORDED IS **NOT SUPPORTED**
+The medians looked beautifully linear — stock 1× −13.1, 4× −37.7, 6× −56.8, 8× −73.9, i.e.
+`Re(Z) ≈ −13 − 8.7·(gain−1)` — and `Re(Z)` being a **ratio** (torque÷rate, in which excitation
+cancels) would have made that a **loop-gain** signature, overturning the kit's standing *"the gain
+scales EXCITATION, not loop gain"*. **It does not hold:**
+```
+   gain 4x  n=6  median -37.7  spread 18.2
+   gain 6x  n=9  median -56.8  spread 41.2
+   between-gain step (4x -> 6x) = 19.1   |   within-gain spread at 6x = 41.2  (2.2x larger)
+```
+⇒ **route-to-route variation swamps the gain step. Do not claim a gain law**, and the kit's
+excitation-not-loop-gain position is **not** overturned by this data.
+
+## ✅ WHAT SURVIVES, AND IT IS ROBUST
+**STOCK −13.1 lies OUTSIDE the entire modified range (−31.9 … −74.8), across 16 modified routes
+spanning V90→V112 and 4×/6×/8×.** Every single build we have made is more anti-damped at 7–9 Hz
+than Honda. **That the excess is OURS is solid; WHICH edit causes it is still unknown**, and the two
+best-shaped candidates (the biquad; the gain) are now both eliminated.
