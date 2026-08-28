@@ -302,8 +302,9 @@ def build():
           f"  0x{GATE_EN_CAL:05X} enable = {GATE_EN_VAL} in the base (it is 0 in STOCK) => the"
           f" section is ARMED as far as this cal is concerned")
     check(base[GATE_CEIL_CAL] == GATE_CEIL_VAL and code[GATE_CEIL_CAL] == GATE_CEIL_VAL,
-          f"  0x{GATE_CEIL_CAL:05X} = {GATE_CEIL_VAL} UNTOUCHED -- it also selects the"
-          f" FUN_00036c12 Y branch and two aggregator branches; gp-0x671a has four consumers")
+          f"  0x{GATE_CEIL_CAL:05X} = {GATE_CEIL_VAL} UNTOUCHED -- it has 18 READERS,"
+          f" ten an unexamined cluster at 0x260BC.  The FUN_00036c12 Y branch reads 0xC64FD,"
+          f" a DIFFERENT cal -- the earlier 'it rails b26' claim was WRONG")
     print("      \U0001f6d1 [BELIEF] that gp-0x671a reaches 5 during a grind.  A ratchet IS")
     print("         repeated reversals, so it should -- but it has never been measured.  If the")
     print("         gate stays shut this build is INERT, not harmful, and the probe will say so.")

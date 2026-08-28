@@ -1,5 +1,23 @@
 # STATE — living current state of the kit
 
+## 🛑 **CORRECTION: `0xC64FA` and `0xC64FD` ARE DIFFERENT CALS — THE "WIDENING THE GATE RAILS b26" CLAIM IS WRONG**
+Twice this session I wrote that widening the notch's gate would *"also force the b26 oscillation
+branch to −8192, which V127 found rails the inertia term"*. **That conflated two cells.**
+```
+   0xC64FA  the NOTCH gate + the aggregator branch   18 readers  incl. 0x35A02, 0x35BE6
+                                                                 (both inside FUN_000352b4)
+   0xC64FD  the b26 Y-branch in FUN_00036c12          2 readers  0x36A1E, 0x36C42
+```
+⇒ **disjoint reader sets. Lowering `0xC64FA` would NOT touch the b26 Y branch.**
+✅ **The conclusion survives, for a different reason**: `0xC64FA` has **EIGHTEEN readers**,
+including a **ten-reader cluster at `0x260BC`–`0x261A2` that has never been examined**. It is still
+**not a free lever** — but the specific harm named was wrong, and a future session acting on the
+old note would have avoided the right cell for the wrong reason, or trusted the wrong one.
+⊕ Both bytes read **5**. The u16 views are 517 (`0x0205`) and 1285 (`0x0505`); the **byte** is what
+the code loads (`*(byte *)(tp+0x74fa)`).
+⭐ **RULE: two cals three bytes apart, both equal to 5, in the same subsystem, are still TWO CALS.
+Run the reader census before asserting a shared consumer** — that census is what caught this.
+
 ## 🛑🛑🛑 **A TRUE NOTCH FILTER EXISTS — THE KIT BELIEVED IT DID NOT.  V143 RESOLVES THE ONE THING GATING IT.**
 `FUN_000352b4`, the **only** writer of the aggregator lane `gp-0x6B86`, contains a **gated
 second-order FLOAT section**:

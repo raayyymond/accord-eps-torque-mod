@@ -70,9 +70,9 @@ def run(tag):
         print('  \U0001f6d1 VERDICT: the gate is effectively SHUT (%.3f %% of engaged frames).'
               % (100 * duty))
         print('     => the retuned notch NEVER RUNS.  V144/V145 are INERT, not harmful.')
-        print('     \U0001f6d1 Do NOT widen it: gp-0x671a >= 5 ALSO forces the b26 oscillation branch')
-        print('        to -8192, which V127 found rails the inertia term, and gp-0x671a has four')
-        print('        external consumers.  FALL BACK to V141 (the pump deadband).')
+        print('     \U0001f6d1 Do NOT widen it: 0xC64FA has 18 READERS,')
+        print('        ten of them an unexamined cluster at 0x260BC-0x261A2.  The b26 Y-branch')
+        print('        reads 0xC64FD, a DIFFERENT cal -- that earlier claim was wrong.')
 
 
 if __name__ == '__main__':

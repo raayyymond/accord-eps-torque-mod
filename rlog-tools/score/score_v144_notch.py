@@ -25,9 +25,8 @@ repeated reversals, so it should arm -- but this kit has never measured it.
 
   * a DEEP NULL near 20 Hz            -> the gate OPENS and the retuned notch is RUNNING.
   * lane ACTIVE but NO null           -> the gate stays SHUT.  V144 is inert (not harmful).
-                                         Do NOT widen the gate: gp-0x671a >= 5 ALSO forces the
-                                         b26 oscillation branch to -8192, which V127 found rails
-                                         the inertia term.  Fall back to V141.
+                                         Do NOT widen the gate: 0xC64FA has EIGHTEEN readers, ten of them an
+                                         unexamined cluster at 0x260BC-0x261A2.  Fall back to V141.
   * lane DEAD                         -> gp-0x6B86 carries nothing; the notch is irrelevant
                                          however it is tuned.  Fall back to V141.
 
@@ -125,8 +124,8 @@ def run(tag, baseline=False):
         print('  \U0001f6d1 VERDICT: the lane is ACTIVE but there is NO null (best %.1f dB at'
               ' %.2f Hz).' % (10 * np.log10(max(depth[i], 1e-30)), fb[i]))
         print('     => the gate (gp-0x671a >= 5) stays SHUT.  V144 is INERT, not harmful.')
-        print('     \U0001f6d1 Do NOT widen the gate: gp-0x671a >= 5 ALSO forces the b26 oscillation')
-        print('        branch to -8192, which V127 found rails the inertia term.  FALL BACK to V141.')
+        print('     \U0001f6d1 Do NOT widen the gate: 0xC64FA has 18 READERS')
+        print('        including an unexamined 10-reader cluster at 0x260BC.  FALL BACK to V141.')
 
 
 if __name__ == '__main__':
