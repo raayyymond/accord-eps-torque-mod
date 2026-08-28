@@ -1,5 +1,71 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **A TRUE NOTCH FILTER EXISTS — THE KIT BELIEVED IT DID NOT.  V143 RESOLVES THE ONE THING GATING IT.**
+`FUN_000352b4`, the **only** writer of the aggregator lane `gp-0x6B86`, contains a **gated
+second-order FLOAT section**:
+```c
+   if ((cal(0xC649B) == 1) && (gp-0x671a >= cal(0xC64FA))) {        // = 1  and  >= 5
+       w[n] = D*x[n] - A*w[n-1] - B*w[n-2]
+       y[n] = w[n]   + C*w[n-1] +   w[n-2]
+   }
+   A = -1.53720  0xC60A8        C = -1.88080  0xC60B0
+   B =  0.63462  0xC60AC        D =  0.81731  0xC60B4
+   H(z) = D * (1 + C z^-1 + z^-2) / (1 + A z^-1 + B z^-2)
+```
+✅ **The numerator zeros sit EXACTLY on the unit circle** (`z² + Cz + 1`, |z| = 1) at **±19.88°**
+⇒ **a TRUE NOTCH, min |H| = 0.0002 ≈ −74 dB.** Poles |z| = 0.7966 at 15.24° ⇒ **stable.**
+⭐ **|H| = 1.0000 at DC and 1.000 at Nyquist — transparent everywhere except the notch.**
+⇒ **it costs NO authority, NO added mass, NO added friction.** That is precisely the shape the
+operator has demanded all along, and **no other lever in this kit has it.**
+✅ **All four coefficients are CALS ⇒ fully retunable with NO code cave.**
+🛑 **This falsifies the kit memory *"no notch filter exists anywhere"* (V44).** ⊕ The block at
+`0xC60A8` is **already `BQ_ADDR` in every builder, asserted byte-identical** — **the kit had the
+ADDRESS but never the FUNCTION**, and asserted it frozen for ~90 builds.
+
+### 🛑 IT CANNOT BE RETUNED YET — THE TASK RATE IS THE BLOCKER, AND THE TWO CASES DEMAND OPPOSITE EDITS
+The notch ANGLE is fixed at 19.88°; its **FREQUENCY is 19.88/360 × fs**:
+```
+   fs  250 -> 13.8 Hz      fs  333 -> 18.4 Hz      fs  500 -> 27.6 Hz      fs 1000 -> 55.2 Hz
+```
+The kit's own record bounds the assist task (**task 5**) at **≥ 250 Hz and has NEVER pinned it**
+(*"task 1 CONFIRMED 1 kHz, task 5 rate was OPEN"*).
+```
+   at ~333 Hz  Honda's notch ALREADY sits on the 18-22 Hz grind  =>  the lever is the GATE
+   at 1000 Hz  it sits at 55 Hz, useless for the grind           =>  the lever is C:
+               C_new = -2*cos(2*pi*f/fs);  f = 20 Hz, fs = 1000  =>  C = -1.984229
+```
+⇒ **THE TWO CASES CALL FOR OPPOSITE EDITS. Guessing is a coin flip on the best lever found.**
+
+### ✅ V143 RESOLVES IT, AND CARRIES THE FIX WHILE IT DOES
+```
+   V143 = V122 + deadband 0xC61F6 3 -> 96  +  427 tap -> gp-0x6B86
+          3 payload bytes: 1 FUNCTIONAL (the deadband) + 2 TELEMETRY (the tap).  64/64.
+          image f8d62d242b913f48e2f87b77cbf0bf450faa2b6c94529862c1c0a7e2016a1488
+          rwd   2a98f89d5dfca3777615f534bba0b62a75a4287bf319c6556c3c80acec3829c8
+```
+427 samples at **49.9 Hz** (Nyquist 24.95). A **−74 dB null is unmistakable**, and where it lands
+pins fs to a small discrete set:
+```
+   fs  250 -> null at 13.8 Hz  direct        fs  500 -> 27.6 Hz aliases to 22.3 Hz
+   fs  333 -> null at 18.4 Hz  direct        fs 1000 -> 55.2 Hz aliases to  5.3 Hz
+```
+⊕ The probe also answers **two prerequisites the retune depends on**: is the lane active at all,
+and does the gate ever open in normal driving. **If the lane reads dead the notch is irrelevant
+however it is tuned** — worth knowing before spending a build on its coefficients.
+
+### ⚠ THE GATE IS NOT ITSELF A FREE LEVER
+`cal(0xC649B)` is **0 in STOCK and 1 in V122** (history: V22=0 → V103=1 → V117=0 → V120=1), so the
+**ENABLE is already on**. The second half needs `gp-0x671a ≥ cal(0xC64FA) = 5`, the reversal counter
+at its ceiling. Lowering `0xC64FA` would arm the notch more readily — **but that same cal selects
+the Y branch in `FUN_00036c12` and gates two aggregator branches, and `gp-0x671a` has four external
+consumers.** 🛑 **Not a clean lever; do not move it casually.**
+
+### ⚠ AND A TRAP CAUGHT IN FLIGHT
+The first read of these coefficients used `0xC70A8` and returned **denormals (1.35e-39)** — the
+**off-by-0x1000 tp error the index warns about, now SIX occurrences.** `tp = 0xBF000`, so
+`tp+0x70A8` is **`0xC60A8`**. The denormal values were the tell. **Anchor every tp-relative read
+against a plausible value before building on it.**
+
 ## ✅✅✅ **AUTHORITY AND "PEAK COMMAND OSCILLATION" MEASURED — TWO OF THE THREE TARGETS COLLAPSE INTO ONE**
 The session had spent itself on grinding. Measuring the operator's other two targets on **r24
 (V122, the best build on the car)** changes the plan.
