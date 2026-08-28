@@ -1,5 +1,38 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **V122 COULD NOT HAVE IMPROVED AUTHORITY — IT CARRIES V112'S GAIN, UNCHANGED**
+The operator flew V122 and reported *"on the improved LKAS authority, it does not feel like it has
+improved at all."* **That is the correct result for that build.** Byte-verified from the images:
+```
+   build   gain 0xC6CD0   full-command forward   clamp 0xC61B2      governor 0xC6202
+   STOCK      65535             30719            512  CLIPS 98.3%     4762  9.30x free
+   V112        5346              2505           3072  (82 % used)     4762  1.90x free
+   V122        5346              2505           3072  (82 % used)     4762  1.90x free   <- SAME AS V112
+   V124        7128              3341           4096  (82 % used)     4762  1.43x free
+```
+🛑 **V112 and V122 have the IDENTICAL forward gain.** V122's edits were knee 1800→3000, K1 612→1020
+and α2 14→8 — **all three are friction/shape, none is authority.** ⇒ his null is **expected, not
+disappointing**, and **V124 is the first build since V112 to raise authority at all** (×1.333).
+
+### ✅ THE 8× FORWARD CHAIN IS CLEAN END TO END — NOTHING DOWNSTREAM CLIPS IT
+At full LKAS command the forward value is **3341**, which sits **under the 4096 clamp (82 % used)**
+and **under the 4762 governor with 1.43× headroom**. ⇒ **the whole ×1.333 reaches the motor.**
+⊕ **The V123 clamp defect is now quantified, not merely asserted**: 8× against the old 3072 clamp
+gives 3341 > 3072 ⇒ **8.1 % clipped**, an effective 7.34×. Raising the clamps with the gain was
+necessary; the builder's `clamp/gain == 1.000` assertion is the right invariant.
+⊕ **Headroom to the governor allows ~11.4× before `0xC6202` binds** — so 8× is nowhere near it, and
+**`0xC6202` must NOT be raised** (it is lockstep-shadowed → fault `0x17`).
+⚠ [BELIEF] the "full command = 15360 internal units" figure is from the standing record, not
+re-measured here. The clamp/governor comparison is in those same units, so the ORDERING is robust
+even if the scale is off; an absolute claim about clip margin is not.
+
+### ✅ AND THE "OUR GAIN NEVER REACHES LKAS" SCARE IS REFUTED
+`0xC646C` = 891 = stock on every build, and reader #3 (`FUN_0002b62c`) multiplies by it — but a
+fresh decompile shows that function is the **BASE-ASSIST** path: two LERP lanes × a ramped enable,
+`× polarity × 0xC646C >> 15`, clamped by a per-mode table at `0xC7090`, written to **`gp-0x6AF0`**.
+It is **not** the delivered-LKAS formula. The LKAS forward reader is the one V57 moved onto
+`0xC6CD0`, which every build since has scaled. ⇒ **the gain edits do reach LKAS.**
+
 ## ✅✅ THE 427 PROBE INSTRUMENT IS NOW VALIDATED — and it was BROKEN in three ways first
 **Run the control before the measurement, again.** `score_v125_probe.py` was written, then run
 against r24 as a dry-run *before* any V125 flight. It reported a clean-looking answer — phase
