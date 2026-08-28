@@ -1,5 +1,73 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **V136 BUILT — α2 IS A NEW LEVER WITH REAL HEADROOM, AND IT IS SELECTIVE**
+The single-variable ladder identified **α2** as the creep lever. This build takes the next rung.
+```
+   0xC40DC   alpha2   5 -> 2      ONE payload byte.  Base = V133.   65/65 assertions.
+   image 8cfdeeeb8f16d2ec0956b60b7db51ce55e33f53d4f1623183170d2c472d65b69
+   rwd   818f351cb1ed01aa4b1be389e5a2be8442da0fe3dbc0ebc429896e539085f9c9
+```
+
+### ✅ THE MECHANISM PREDICTS THE MEASUREMENT
+`H(f) = 64·H1(α0=37/128)·(1−z⁻¹)·H2(α2/64)`, fs = 1000 Hz:
+```
+   alpha2  |H| 18-22 Hz   build            alpha2  |H| 18-22 Hz  build
+       22      7.2300     V91 (= HONDA)         5      4.0982    V133
+       14      6.7211     V111 / V112           2      1.8490    V136  <- THIS BUILD
+        8      5.4903     V122                  0      LANE DEAD  never ship
+   predicted alpha2 14->8 : 1.22x        MEASURED endpoint 14->8 : 1.35x
+   predicted V111 vs V112 (same alpha2)  : 1.00x   MEASURED : 1.08x  = the noise floor
+```
+⊕ **The single-path prediction UNDER-shoots** — exactly what a **second path** would do, and there
+is one (below). ⊕ **The physics closes it**: `gp-0x6b26 = −K·acceleration` is **APPARENT MASS**;
+less apparent mass raises ζ = c/(2√(km)) ⇒ **less resonant**. ⭐ **Ladder, transfer function and
+physics all point the same way — and lowering apparent steering mass is what the operator
+explicitly asked for**, so this lever moves **both** his goals the same direction instead of
+trading them.
+
+### 🛑 THE BLAST RADIUS — α2 IS A **SHARED** LEVER, NOT A FILTER COEFFICIENT
+`gp-0x6c2c` **is this EMA's output** (`FUN_00041464`, `gp-0x6c2c = (short)(state >> 9)`), and a
+base-register-filtered scan finds **EIGHT** gp-based accesses:
+```
+   0x36C1A  FUN_00036c12   the gp-0x6b26 inertia lane            <- the intended target
+   0x428FA  0x4292C  0x42968   the hard-reversal DETECTOR cluster (vs cal 0xC620A = 12800),
+                               which drives gp-0x671a -- itself a FOUR-consumer variable
+   0x4184E  0x41AC2   the writers, in FUN_00041464 itself
+   0x71378  FUN_00071272  ld.h -> cvtf.ws -> mulf.s (0x39C90FDB ~ pi/8192)   FLOAT MODEL
+   0x7B1A2  FUN_0007B022  ld.h -> mulf.s, alongside tp+0x623c (0xC523C model-coeff block)
+```
+⇒ the last two are **float plant-model/observer consumers**, not diagnostics.
+✅ **But every one was in force across V91/V111/V112/V122**, which flew α2 at **22/14/14/8** — a
+**2.75× swing** — **fault-free, with monotone symptom improvement.** This rung is **2.50×**, no
+larger, on a path already walked. The builder asserts that bound.
+
+### ✅ TWO GATES THAT HAD TO BE CHECKED, AND BOTH PASS
+**QUANTIZATION** — a truncating EMA has a deadband `|x−y| < 64/α2`, and a stair-stepping inertia
+term is itself a plausible grind mechanism. **The state is 32-BIT and the output is `>>9`**, so at
+α2=2 the deadband is **32 state units = 0.0625 OUTPUT LSB — SUB-LSB.** ⇒ **it cannot stair-step.**
+That was the one way a low α2 could *cause* the symptom; it is closed.
+**SELECTIVITY** — an EMA has **unity DC gain for any α**, so only fast transients are attenuated:
+```
+   pulse ms      a2=5     a2=2    detector loss        vs 18-22 Hz lane attenuation 2.22x
+         10     0.366    0.174       2.10x   SEVERE
+         30     0.686    0.409       1.68x   moderate
+        100     0.935    0.759       1.23x   negligible
+        400     0.995    0.971       1.03x   negligible
+```
+⇒ a **DRIVER** hard reversal is a 100–400 ms event (human bandwidth 2–5 Hz), where the detector
+loses only **1.03–1.23×** while the grind band drops **2.22×**. ⭐ **α2 is SELECTIVE.**
+⊕ The loss that *is* real sits in fast transients, and it is acceptable **only because V133 has
+already de-fanged the branch that detector selects** — `0xC640A` −8192 → −1966 (4.17×).
+
+### 🛑 THIS REVERSES V135's RATIONALE, WHICH IS NOW STALE IN ITS OWN DOCSTRING
+V135 argues *"α2 is nearly INERT at 20 Hz ⇒ V122's improvement came from the KNEE/K1"*. That was
+a delivered-component calculation whose **sign convention was never reconciled**; the
+single-variable on-car comparison says the opposite. **V135's docstring is left as written** (a
+record of what was believed when it was built) — **but its claim is superseded here.**
+
+⭐ **FLIGHT ORDER UNCHANGED: V133 FIRST.** V134/V135/V136 are all V133-based follow-ups; flying
+any of them first confounds the Lever A test that V133 exists to run.
+
 ## ✅✅ **THE CREEP ENDPOINT IS PRECISE — AND IT PUTS A CHECK ON V135 BEFORE IT FLIES**
 Scored **every cached route** on the within-drive engaged/manual creep endpoint (NW = 128 to
 recover routes the 256-window threshold had dropped), ordered by relay knee:
