@@ -57,6 +57,39 @@ construction.  New ratios: creep 0.37x, 24 km/h 0.59x, 44 km/h 0.74x, 64 km/h 0.
 1.67x.  At the operator's event, detecting an oscillation now REDUCES Y to 0.74x instead of
 RAISING it to 1.84x -- a 2.5x reduction in the term during the symptom.
 
+THE FULL OSCILLATION-RESPONSE CENSUS -- 0xC640A IS THE ONLY MAGNITUDE
+---------------------------------------------------------------------
+gp-0x671a has 8 instruction sites: 5 consumers plus the writer.  What each does on saturation:
+
+    0x36C1E  FUN_00036c12  Y = fixed -8192 instead of the speed LERP   <- THE ONLY MAGNITUDE
+    0x3AA70  FUN_0003aa2c  enable flag 0xC6138=1 -> 0xC6136=0, DISABLES a lane
+    0x3A4A6  FUN_0003a382  LERP 0xC67B0 X=[5,10,15] Y=[1024,1024,1024] FLAT UNITY, and X[0]=5
+                           is the counter's own CEIL => DOUBLY INERT
+    0x35A06  FUN_000352b4  boolean gate (setfnc) on a 2nd-order IIR update
+    0x35BEA  FUN_00035b20  boolean selector (setfnc) between two LERP curves at 0xC7934
+
+=> 0xC640A is the ONLY cell in the whole response that changes a feedback MAGNITUDE, so this
+build targets the right cell and there is no second hidden gain jump to chase.
+
+HONDA'S INTENT IS COHERENT -- THE DEFECT IS THE RAIL, NOT THE DESIGN
+---------------------------------------------------------------------
+The census shows a deliberate anti-oscillation design: DISABLE a destabilising lane (0x3AA70)
+AND apply a strong FIXED acceleration feedback (0xC640A).  That works -- if the fixed term stays
+LINEAR.  It does not, because |gp-0x6b26| clamps at 511 and our elevated forward gain makes
+|gp-0x6c2c| far larger than stock.  This build's job is therefore to keep the term inside its
+linear range, NOT to remove Honda's response.  -1966 is consequently a FLOOR, not a target:
+cutting further eventually removes the anti-oscillation response itself.
+
+SCAN TRAP, RECORDED BECAUSE IT NEARLY RETRACTED A CORRECT RECORD
+-----------------------------------------------------------------
+Scanning the whole image for gp-0x671a at displacement 0x98E6 returns ONE hit -- the st.b writer
+-- which looks like the kit's "8 hits, 6 reader functions" record had gone stale.  It has not:
+every reader is ld.bu, which stores the displacement as (disp & 0xFFFE) | 1 = 0x98E7.  Scanning
+both forms returns exactly 8.  A LOW count is as much a symptom of the hw2=(disp|1) trap as a
+wrong one.  Ghidra cannot substitute here: get_xrefs_to on the absolute RAM address 0xFEDF18E6
+returns "No references found", because gp-relative accesses are never resolved to absolute
+addresses in this program.
+
 BLAST RADIUS -- THE SMALLEST IN THE KIT'S RECENT HISTORY
 ---------------------------------------------------------
 0xC640A has ONE reader (ld.h 0x740a,tp,r12 @0x36CB4, inside FUN_00036c12) and zero writers,

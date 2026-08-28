@@ -1,5 +1,48 @@
 # STATE — living current state of the kit
 
+## ✅✅ THE FULL OSCILLATION-RESPONSE CENSUS — `0xC640A` IS THE ONLY MAGNITUDE, AND TWO CORRECTIONS
+The saturated reversal counter `gp-0x671a` has **8 instruction sites, 5 consumers + the writer**
+— enumerated correctly this time (see the trap below). What each does when the counter saturates:
+
+| site | function | what saturation does |
+|---|---|---|
+| `0x36C1E` | `FUN_00036c12` | **`Y` = fixed −8192 instead of the speed LERP — the ONLY MAGNITUDE change, and it RAISES the term 1.21–4.17× above 15 km/h** ← **V126's target** |
+| `0x3AA70` | `FUN_0003aa2c` | enable flag `0xC6138`=**1** → `0xC6136`=**0** ⇒ **DISABLES** a lane |
+| `0x3A4A6` | `FUN_0003a382` | LERP `0xC67B0`: X=[5,10,15] **Y=[1024,1024,1024] — FLAT UNITY** |
+| `0x35A06` | `FUN_000352b4` | boolean gate (`setfnc`) on a 2nd-order IIR update |
+| `0x35BEA` | `FUN_00035b20` | boolean selector (`setfnc`) between two LERP curves at `0xC7934` |
+
+✅ **`0xC640A` IS THE ONLY CELL IN THE WHOLE OSCILLATION RESPONSE THAT CHANGES A FEEDBACK
+MAGNITUDE.** Everything else is a boolean gate or inert ⇒ **V126 targets the right cell, and there
+is no second hidden gain jump to chase.**
+
+### 🛑 CORRECTION 1 — `FUN_0003a382`'s use is INERT, not *"the worrying one"*
+[[accord-gp671a-blast-radius-not-a-free-lever]] calls the PID's use *"the worrying one — it makes
+`T` a shape parameter on a lane already known to be load-bearing."* **The table is FLAT UNITY at
+all three points, and its first breakpoint X[0]=5 is at the counter's own CEIL**, so the LERP can
+only ever return `Y[0]` = 1024. **Doubly inert.** ⇒ lowering `T` does **not** reshape the PID.
+That memory's "five things at once" count should read **two live + three inert/boolean**.
+
+### 🛑 CORRECTION 2 — HONDA'S OSCILLATION RESPONSE IS COHERENT; OUR GAIN IS WHAT BREAKS IT
+My first V126 write-up framed the −8192 branch as simply *"the firmware raises a gain"*. The
+census shows the design is **deliberate and sensible**: on detecting an oscillation it **disables
+a destabilising lane** (`0x3AA70`) **and applies a strong FIXED acceleration feedback**
+(`0xC640A`). **That would work — if the fixed term stayed LINEAR.** It does not, because
+`|gp-0x6b26|` clamps at 511 and our elevated forward gain makes `|gp-0x6c2c|` far larger than
+stock. ⇒ **the defect is the RAIL, not Honda's intent**, and V126's job is to keep the term
+inside its linear range rather than to remove Honda's response. ⊕ This also means **−1966 is the
+floor, not a target**: cutting further eventually removes the anti-oscillation response itself.
+
+### 🛑🛑 THE SCAN TRAP THAT BIT ME — `ld.bu` ENCODES disp16 AS `(disp & 0xFFFE) | 1`
+A whole-image scan for `gp-0x671a` at displacement **`0x98E6` returned ONE hit** — the `st.b`
+writer — and I nearly concluded the record's *"8 hits, 6 reader functions"* was stale. **Every
+reader is `ld.bu`, which stores the displacement as `0x98E7`.** Scanning both forms returns
+**exactly 8**, matching the record. ⇒ [[accord-v850-scan-traps-formatv-and-storezero]]'s
+`hw2 = (disp|1)` trap applies to **`ld.bu`/`ld.hu` reads, not just the forms already listed** —
+and a *low* count is as much a symptom of it as a wrong one. **Always scan `disp` AND `disp|1`.**
+⊕ Ghidra could not help here: `get_xrefs_to 0xFEDF18E6` returns **"No references found"**,
+because gp-relative accesses are never resolved to absolute RAM addresses in this program.
+
 ## 🛑🛑🛑 **THE OSCILLATION BRANCH — THE FIRMWARE RAISES Y WHEN IT DETECTS AN OSCILLATION. V126 BUILT.**
 **A NEW LEVER, and the best-targeted one in the kit's record.** `FUN_00036c12` picks the
 `gp-0x6b26` acceleration-feedback scale `Y` three ways — decompiled AND disassembled this session:
