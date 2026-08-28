@@ -1,5 +1,64 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **V122 FLEW (route 24)** — grinding better, authority NOT, and the CAUSE OF THE AUTHORITY CEILING IS FOUND
+Operator: *"Grinding: better, still ever so slight grinding in even more rare moments. On the improved
+LKAS authority, it does not feel like it has improved at all. I can feel that the manual driving
+authority has been loosened, less mass and friction. That is fine but it is only worth it if it means
+LKAS authority is improved, which it has not."* Route 24: **832 s, 70.6 % engaged, 14 segments,
+fault-free.**
+
+### 🛑🛑 THE HEADLINE: **THE LKAS COMMAND RAILS IN HARD TURNS**
+```
+   |ang|  30- 60 deg   command RAILED at 99 % of max  51.2 % of the time,  MEDIAN = 1.000
+   |ang|  60-120 deg   railed 42.7 %,  median 0.863
+   |ang| 120-400 deg   railed 28.0 %,  median 0.737
+   |ang|   0- 10 deg   railed  0.0 %,  median 0.032
+```
+⇒ **In hard turns openpilot is already commanding 100 % and cannot ask for more.** ✅ **This is the
+answer to the operator's standing complaint** (*"max steering wheel acceleration and velocity still
+seem low for what I would expect for 6×"*): **the ceiling is the COMMAND, not the firmware.**
+⇒ **No firmware edit acting DOWNSTREAM of the command can add authority there** — which is exactly
+why V122's friction change showed up in MANUAL (where the driver supplies the torque) and not in LKAS.
+
+### ✅ THE DATA CONFIRMS HIS REPORT PRECISELY
+```
+                    ENGAGED p99 rate   MANUAL p99 rate   ENGAGED p99 accel
+   V112 (r23)            60.5              82.2              1831
+   V122 (r24)           106.9             174.5              1564
+                        +76.6 %          +112.2 %           -14.6 %
+   engaged/manual ratio  0.74  ->  0.61
+```
+✅ **Manual gained 112 % against engaged's 77 %, and engaged ACCELERATION fell 14.6 %.** He said manual
+loosened and LKAS did not improve; **the measurement says exactly that.**
+
+### 🛑 THE PRE-REGISTERED GRIND ENDPOINT SAYS "NOT RESOLVED" — AND THE OPERATOR SAYS "BETTER"
+```
+   21-26 Hz engaged share p90:   r22 V112 0.22264 | r23 V112 0.20845 | r24 V122 0.21898
+   bands: <=0.180 CONFIRMED | 0.180-0.230 NOT RESOLVED | >0.230 refuted
+```
+🛑 **V122 lands at 0.21898, inside the V112 two-drive spread ⇒ NOT RESOLVED**, while the operator
+reports a real improvement. ⇒ **the endpoint is not measuring what he hears**, confirming
+[[accord-the-21to26hz-excess-is-not-the-audible-grind]]. **Trust the operator's report over this
+instrument**, and stop treating 21-26 Hz as the grind-#1 endpoint.
+
+### ✅ HIS OSCILLATION EVENT (seg 11) IS **NOT** A SATURATION ARTEFACT
+Worst 6-9 Hz window in segment 11: **t = 673.4 s, rms 13.16 deg/s, peak 7.81 Hz, 44 km/h**, 99.6th
+percentile route-wide. **Command during the event: p50 0.277, max 0.372 — nowhere near the rail.**
+⇒ **the oscillation happens well BELOW saturation**, so it is a different problem from the authority
+ceiling. ⊕ **7.81 Hz — identical to the V112 event.** The mode is unchanged.
+
+### ⭐ A SURPRISE WORTH TESTING: the angle-gated oscillation may FALL with gain
+```
+   gain 3564 (4x)  n=6    median angle-gated 6-9 Hz ratio  3.56
+   gain 5346 (6x)  n=10                                    2.15
+   gain 7128 (8x)  n=1                                     1.23
+```
+⇒ **monotone DOWN with gain — opposite to the ~23 Hz vibration** (which rises as `m^1.74`).
+🛑 **NOT established**: n = 1 at 8×, and the 6× group spans **0.66 to 12.05, a factor of 18**.
+⚠ **And r24 (V122) itself is 12.05, the HIGHEST ratio in the corpus** — which cuts against the trend.
+✅ But if it holds, **8× would improve BOTH complaints** (authority ×1.29 at the rail, oscillation
+down) at the cost of ×1.65 on the 23 Hz vibration. **That is the trade to put to the operator.**
+
 ## 🛑 RETRACTED IMMEDIATELY: the "1.5 kHz signature" of the labelled event was MULTIPLE-COMPARISONS NOISE
 The operator's labelled event (r23, t = 445.6-448.2) appeared to show a tone cluster at
 **1457-1561 Hz, +11 to +14 dB over the p95 of 19 matched engaged controls**, and I called it *"the
