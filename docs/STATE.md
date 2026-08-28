@@ -1,5 +1,40 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **THE α2 LADDER IS NEARLY INERT AT 20 Hz — MAGNITUDE FALLS, PHASE ROTATES, PRODUCT FLAT**
+GATE 2 for `gp-0x6b26` **at the creep band**, which had never been asked. Lane phase vs motor rate:
+```
+   alpha2      18 Hz          20 Hz          22 Hz          26 Hz
+     22    59.5 deg -0.51  56.3 deg -0.55  53.2 deg -0.60  47.3 deg -0.68
+     14    50.0 deg -0.64  46.0 deg -0.69  42.3 deg -0.74  35.1 deg -0.82
+      8    34.4 deg -0.83  29.8 deg -0.87  25.6 deg -0.90  18.0 deg -0.95
+      5    20.4 deg -0.94  16.0 deg -0.96  12.1 deg -0.98   5.2 deg -1.00
+
+   alpha2 22 at 20 Hz: |H| = 7.24, arg 56.3 deg, delivered component = -4.01
+   alpha2  5 at 20 Hz: |H| = 4.10, arg 16.0 deg, delivered component = -3.94
+```
+✅ **[EVIDENCE, convention-independent] the MAGNITUDE falls 1.77× across the ladder while the PHASE
+rotates by exactly enough to cancel it — the delivered component at 20 Hz is FLAT (−4.01 → −3.94).**
+⇒ **the α2 ladder 22→14→8→5 has been very nearly INERT at 20 Hz in delivered terms.**
+
+### ⭐ WHICH REATTRIBUTES THE ONE IMPROVEMENT THE OPERATOR REPORTED
+V122 changed **three** things vs V112: knee 1800→3000, K1 612→1020, **and α2 14→8**. The operator
+reported grinding *"better, rare moments"*. **If α2 is inert at 20 Hz, that improvement came from
+the KNEE/K1 (the Coulomb relay), not from α2.**
+⇒ **testable reattribution**, and it matters: the α2 ladder is treated across this kit as *the*
+selective grind lever. ⊕ It also explains why pushing α2 further (V124's 5) bought so little.
+⚠ The earlier "α2 selectivity 5.07× toward grind #1" figure was a **|H| magnitude** ratio — it did
+**not** account for the phase rotation, which cancels it at 20 Hz.
+
+### ⚠ WHAT I WILL **NOT** CLAIM — the SIGN
+My phase reference gives **5–76°** across the band, but the kit **measured** `gp-0x6b26` at
+**+137/+139°** (V94) and calls it a real damper. That is a **60–130° disagreement**, so my reference
+frame is **unverified** — I did not track the signs of `Y` (negative), `polarity(gp-0x6752)` (−1)
+or the aggregator's summation convention. ⇒ **I do NOT conclude "anti-damping"**, which is what the
+raw numbers would suggest; that would be the exact overreach this session keeps catching.
+🛑 **What would settle it**: reconcile this transfer function against V94's measured +137/+139°
+on the SAME signal, then re-read the sign. Until then only the **flatness across α2** stands — and
+that result is a RATIO between α2 settings, so it survives any constant sign/phase offset.
+
 ## ✅✅✅ **THE CREEP MECHANISM IS CLOSED — AND V134 IS BUILT AS THE FOLLOW-UP**
 Screening predictors of **18–22 Hz AT CREEP** (the actual remaining symptom) first showed every
 channel moving **both** bands 3–9× — a pure **activity** confound. Dividing activity out by taking
