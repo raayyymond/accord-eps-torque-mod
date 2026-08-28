@@ -60,7 +60,7 @@ gp-0x6ae2 = friction * 1024
 iVar20   = (model - friction - inertia) * gain
 ```
 Below the knee it is **linear in rate (viscous)**; above it a pure **±1 sign (Coulomb)**.
-**Saturation at `|gp-0x6abc| ≥ knee/12`:** stock 300 → 5.3 °/s; **V108's 600 → 10.6 °/s**.
+**Saturation at `|gp-0x6abc| ≥ knee/12`:** 300 → 5.3 °/s; 600 → 10.6 °/s. 🛑 **600 is STOCK** — see the correction below.
 ⭐ **V108's corner sits at the bottom edge of the 8–20 °/s band where the ratchet isolates.**
 ⭐ **`0xC4080` = 0** ⇒ no Coulomb floor; the term **vanishes with no command**, confirming
 *"command-proportional"* at the instruction level rather than by inference.
