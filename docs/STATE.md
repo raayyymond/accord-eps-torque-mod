@@ -1,5 +1,51 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **GRIND #1 IS EXCITATION-DRIVEN — THE COMMAND PREDICTS IT, BAND-SPECIFICALLY, ON TWO DRIVES**
+With the relay hypothesis dead, I screened **every channel in the cache** against 21–26 Hz power —
+engaged, restricted to **25–64 km/h (the operator's own grinding band)**, high-30 % vs low-30 % of
+each predictor, **with the 30–40 Hz negative control beside every single one.**
+```
+   drive        predictor        21-26 Hz hi/lo         30-40 Hz CONTROL       verdict
+   r1e (V107)   e4 torque cmd   1.346 [1.027,2.047]   1.008 [0.694,1.387]   BAND-SPECIFIC
+   r24 (V122)   e4 torque cmd   1.469 [1.132,1.905]   0.895 [0.556,1.161]   BAND-SPECIFIC
+   r22 (V112)   e4 torque cmd   1.153 [0.863,1.815]   0.757 [0.583,0.958]   control moves -> uninformative
+   r1e (V107)   driver torque   0.628 [0.422,0.742]   0.870 [0.644,1.306]   BAND-SPECIFIC (INVERSE)
+```
+✅ **The LKAS torque command predicts grind-band power on 2 of 3 drives, and the third is
+uninformative rather than contradictory** (its control moved, so nothing can be read from it).
+⊕ **Driver torque runs the other way** — more driver torque, **less** grind — matching
+[[accord-fprime-compression-explains-v89-and-v97]] and the recorded grip-damping result. Two
+independent, oppositely-signed, band-specific effects is a much stronger pattern than one.
+
+### ⭐ THIS EXPLAINS WHY TWELVE BUILDS OF DAMPING WORK DID NOT CLOSE IT
+- the **damping lanes are structurally capped** (`gp-0x6b26` at its ±1024 gate bound; `gp-0x6bd0`
+  already saturating on stock);
+- the **relay story fails its own negative control** (previous section);
+- and the thing that **actually predicts the symptom is the COMMAND.**
+⇒ **grind #1 is EXCITATION-limited, not damping-limited.** This is exactly V87's flight
+conclusion (*"a lightly-damped mode driven by broadband command content"*) and
+[[accord-the-8x-gain-is-the-carrier]] — **now reproduced independently, band-specifically, on two
+further drives.**
+
+### 🛑 AND IT PUTS THE THREE COMPLAINTS IN A MEASURED CONFLICT
+The **8× forward gain** that V124+ carries **for LKAS authority** is the same knob that scales
+grind excitation. The record puts the vibration at **`m^1.74`**, so **6× → 8× ≈ 1.65× more
+grinding**. ⇒ **the authority fix and the grinding fix pull in opposite directions, and that is
+now measured rather than argued.**
+⚠ The operator's standing instructions are explicit — *"just go to 8× IF you decide to increase
+LKAS gain"* and *"If you're going to increase gain make sure we don't get even more oscillation and
+grinding."* **Those two cannot both be fully satisfied by a gain change**; the honest framing is a
+trade, and the trade is his to make.
+⊕ **What does NOT conflict**: V62's Lever A (restored in V133) reduces grind **without touching
+the command**, which is precisely why it is the most defensible content of the build.
+
+### 🛑 WHAT REMAINS, GIVEN THE MECHANISM
+Reducing **delivered HF excitation without cutting DC authority** is the only non-conflicting
+lever class — and this session already established **no calibration implements it** (no notch, no
+biquad, and the shaper/integrator region reads no filter cal). The two HF-reduction cals that DO
+exist are **already used**: α2 `0xC40DC` at 5 and the trim IIR `0xC63D2` at 3.
+⇒ **There is no further calibration lever for grinding that does not cost authority.**
+
 ## 🛑🛑🛑 **THE RELAY HYPOTHESIS FAILS ITS OWN NEGATIVE CONTROL — THE BIGGEST NEGATIVE OF THIS SESSION**
 `r1e` carries **both** `gp-0x6c2c` (so per-window b26 rail duty computes exactly) **and** `cs_rate`
 (so 21–26 Hz power measures directly). That is a **within-drive test of the whole relay story**,
