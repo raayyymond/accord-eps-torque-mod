@@ -1,5 +1,50 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **THE OSCILLATION DETECTOR'S THRESHOLD IS ~11× THE OBSERVED p90 — `0xC640A` MAY BE INERT**
+Applying the r77 lesson — *check what the kit already flew* — to the rest of the 427 tap history:
+```
+   v100/101  0x946C = gp-0x6B94 (aggregator out)   v102/103  0x94B4 = gp-0x6B4C
+   v104-106  0x947A = gp-0x6B86 (biquad lane)      v107-110  0x93D4 = gp-0x6C2C
+   v118/119  0x9806 = gp-0x67FA (state gate)
+```
+**V107–V110 put `gp-0x6c2c` on the wire** — the damper's input **and the oscillation detector's
+input** — and **`r1e` is V107**. That directly tests whether V127/V133's `0xC640A` edit can fire.
+
+### 🛑 THE MEASUREMENT, AND ITS HONEST LIMIT
+```
+   route 1e = V107, 427 <- gp-0x6c2c, sar 3 (LSB 1.6), 48,047 engaged frames
+   |gp-0x6c2c| ENGAGED   p50 125   p90 1170   >= 1637 (the WIRE rail) in 3.15 % of frames
+   the DETECTOR arms at cal(0xC620A) = 12800  --  7.8x ABOVE what the wire can represent
+       0-10 km/h 2.52 %   10-25 4.06 %   25-40 4.34 %   40-64 1.47 %   64-200 3.67 %
+```
+🛑 **The arming threshold sits ~11× above p90.** Because 3.15 % of frames **clip at 1637**, I
+cannot see how far those go ⇒ **P(arming) is NOT measurable from r1e; it is BOUNDED at ≤ 3.15 %**,
+and the steep unclipped distribution (p50 125 → p90 1170) makes 12800 look unlikely — **but that
+is an inference, not a measurement.**
+
+### ⚠ THE CONSEQUENCE, AGAINST MY OWN BUILDS AGAIN
+⇒ **The `0xC640A` oscillation branch may be taken almost never**, which would make **V126/V127's
+central premise — and that part of V133 — close to INERT.** ⊕ This is exactly what
+`SCORING-V131-preregistered.md` already warned about in its confounds section (*"if the drive
+contains no oscillation episode the counter never saturates and `0xC640A` is inert by
+construction"*) — **but I had treated that as a drive-planning caveat, not as the likely
+steady state.** It is now the likely steady state.
+⚠ V107 ran a **6×** forward gain; V133 runs **8×**, so its `|c2c|` is larger — by how much is the
+same closed-loop question the record forbids extrapolating.
+
+### ✅ WHAT WOULD SETTLE IT — and it is cheap
+A `gp-0x6c2c` probe at **sar 6** instead of sar 3: `wire = (|c2c|·5)>>6` puts **12800 → wire 1000**
+of 1023, so the arming threshold becomes **directly visible** instead of 7.8× off-scale. That is a
+**one-byte** change to the packer (`0x55E10`) plus the tap displacement — the same 2-byte edit
+class as V127's probe, no cave, no new instructions.
+🛑 **But it costs the `gp-0x6b26` rail measurement**, which decides the V129/V130 fork. One wire,
+one signal. ⇒ **Not built: the fork is the higher-value question**, and r77 already showed the b26
+term linear at 0.0000 % under a different configuration.
+
+⊕ **Running score of the "check the cache first" lesson: two sessions-worth of open questions
+answered from data already on disk** — the b26 rail duty (r77) and now the detector-threshold
+bound (r1e). **Neither needed a new drive.**
+
 ## 🛑🛑🛑 **THE DAMPER NEVER RAILED — A DIRECT MEASUREMENT THAT WAS SITTING IN THE CACHE**
 Route **77 = V90**, which put **`gp-0x6b26` on 427 at sar 3** — the same tap V133 carries. The data
 has been on disk the whole time. **52,258 engaged frames, wire unclipped** (it saturates at 1637,
