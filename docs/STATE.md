@@ -1,5 +1,24 @@
 # STATE — living current state of the kit
 
+## ✅⚠ THE IMU IS A **VALID BUT WEAK** GRIND-#1 INSTRUMENT — and it needs no creep exposure
+Every grind-#1 measure so far uses **steering rate**, which needs creep exposure **no post-V107 route
+has**. Grind #1 is **audible and felt** (*"it vibrated the entire car"*), so a chassis accelerometer
+measures it directly. ✅ **`imu_vert`/`imu_lat` log at 100 Hz on all 17 routes** (ratio 1.00 vs
+`cs_rate`, checked first) ⇒ **Nyquist 50 Hz, 18-22 Hz genuinely visible, not aliased.**
+Validated on the Lever B natural experiment, engaged-vs-manual within each drive:
+```
+   OFF (2 routes) 1.2020    ON (9 routes) 1.0552    OFF/ON = 1.139   CI [1.005, 1.338]
+```
+✅ **It discriminates** — CI excludes 1.0. 🛑 **But only just** (lower bound 1.005), and it recovers
+**1.139×** where the steering-rate instrument recovers **2.32×** for the same known effect ⇒
+**dilution about 10×**; a true effect `X` shows as about `1 + (X-1)/10.8`, so **it needs a true effect
+above ~3× to clear its own floor.**
+⇒ **USE IT** as the only grind-#1 instrument that works on routes with **no creep exposure**.
+🛑 **DO NOT use it to declare a null** — at 10× dilution *"the IMU shows nothing"* is consistent with a
+real 2× change. **Only a POSITIVE IMU result is informative.** ⚠ Validated at 18-22 Hz only;
+re-validate before using it at 6-9 Hz.
+memory: [[accord-the-imu-is-a-valid-but-weak-grind-instrument]]
+
 ## ⭐ A NEW, VIRGIN CANDIDATE: the model's own bandwidth `0xC50D8` — blocked on GATE 2, not on hazard
 **The mechanism, quantified for the first time.** `FUN_0003b8f6` is the **1 kHz** plant-model
 observer; its input passes **two cascaded EMA stages** at `pole2 = 0xC50D8 = 122` (`alpha/4096`):
