@@ -1,5 +1,46 @@
 # STATE — living current state of the kit
 
+## ✅✅ **THE `gp-0x6b26` DAMPER IS STRUCTURALLY EXHAUSTED — A DEFINITIVE CLOSE, NOT A PARTIAL ONE**
+The record says *"Path 1 = `FUN_0003aa2c`, the aggregator, **unity weight, zero phase** — this is
+what delivers the damping."* Path 2 fails GATE 2 on phase, so a **zero-phase** weight in Path 1
+would have been the ideal lever. **It does not exist.** Disassembling the aggregator's own use:
+```
+   0x3acb0  addi   0x400, r11, r14      <- gp-0x6b26 + 1024
+   0x3acb4  addi  -0x801, r14, r0       <- the SAME +-1024 ADMISSION GATE
+   0x3acb8  cmovc  0x0, r11, r15        <- gated
+   0x3acc8..0x3acda   add r24,r6 / add r6,r8 / add r8,r12 / add r12,r10 / add r10,r15
+                      / add r15,r16 / add r16,r13 / add r13,r7 / add r7,r28
+```
+⇒ **a chain of BARE `add` instructions — there is NO weight cell on `gp-0x6b26` in Path 1.**
+Two consequences, both load-bearing:
+1. **No zero-phase weight lever exists.** Path 1 is literally unity, so there is nothing to raise.
+   The **only** weight on this term is `0xC63A6`, in Path 2 — the closed firmware loop whose
+   16.70 Hz corner puts grind #1's 21–26 Hz **past the corner**, where added gain destabilises.
+2. 🛑 **The ±1024 admission gate binds in BOTH consumers**, `0x3ACB0` (aggregator) and `0x3815C`
+   (`FUN_00038148`) — **not just the one found last section.** The hard ceiling is doubly binding,
+   and V133's 1023 keeps the term ADMITTED in both. **This also makes 1024 unambiguously final.**
+
+### 🛑 THE COMPLETE BOUND ON THIS LANE — every knob, and where it now sits
+| knob | cell | state on V133 | headroom left |
+|---|---|---|---|
+| shape | α2 `0xC40DC` | 5 (of 22 stock) | trades in-band damping for broadband rail-drive |
+| gain | `Y` `0xD7A5C/5E/60` | ×3 stock | **the fork** — V129 down / V130 up, probe decides |
+| **ceiling** | `0xC407E` + float twin `0xC4004` | **1023 / 1.0** | ❌ **NONE — 1024 is the gate bound** |
+| Path 1 weight | — | **does not exist** | ❌ **NONE — bare `add`** |
+| Path 2 weight | `0xC63A6` | 1024 virgin | ⚠ exists, **fails GATE 2 on phase** |
+| oscillation branch | `0xC640A` | −1966, linear at arm | ❌ none — sized to the threshold |
+
+⇒ **THE DAMPER IS FULLY EXPLOITED.** No further damping is available from `gp-0x6b26` by any
+calibration, at any dose, in either path — **except** the fork (a measurement, not a choice) and
+`0xC63A6` (blocked on phase). **A future session should not re-open this lane looking for more.**
+
+### ⭐ WHAT THIS MEANS FOR THE THREE COMPLAINTS
+It is a **real result, not a dead end**: it converts *"keep trying damper doses"* into a bounded
+question. **If V133 still grinds and its probe shows the term LINEAR, the deficit is authority and
+the answer is `0xC63A6` with the phase measured** — the single named next step, with a stated
+gate. **If the probe shows it RAILING, the answer is V129 rebuilt on V133.** Either way the next
+build is determined by one number from one drive, and both branches are already specified.
+
 ## ⭐ **A NEW LEVER OUTSIDE THE EXHAUSTED LANE — `0xC63A6`, AND WHY IT IS *NOT* BUILT**
 `FUN_00038148`'s six-term sum applies a **per-term CAL WEIGHT** to each summand, **after** the
 clamp and after the admission gate:
