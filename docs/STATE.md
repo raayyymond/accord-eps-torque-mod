@@ -1,5 +1,52 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **THE CALIBRATION SEARCH FOR GRINDING IS NOW BOUNDED — AND V133 IS ITS ENDPOINT**
+V87's flight fixed the lever class: *"a lightly-damped mode driven by **broadband command
+content**, not a commanded tone ⇒ the lever class is **less broadband HF in the delivered
+command**, NOT a notch."* Enumerating the delivered path with the now-reliable census closes it.
+
+### ✅ THE DELIVERED SHAPER/INTEGRATOR PATH HAS **NO FILTER CAL AT ALL**
+Every genuine tp-relative cal read in `[0x43100, 0x43280)` — the region carrying
+`gp-0x6acc → shaper → gp-0x6b08 → integrator → gp-0x6b98`:
+```
+   0xC41E0  257      0xC47F0  0       0xC61DC  30720   SM3 arm threshold -- known, DO NOT TOUCH
+   0xC64C8  0        the MODE SWITCH: mode 1 DISCARDS the aggregator for a static cal -> WORSE
+   0xC61D4  0        adjacent to 0xC61D6, the slew cell V16 was REJECTED for: 0 -> nonzero
+                     ACTIVATES AN UNCALIBRATED MAP  [[reference-accord-eme-lever-semantics]]
+```
+⇒ **not one of them is a filter.** This agrees with two independent standing results —
+*"no notch filter exists anywhere"* (V44) and *"no biquad"* (the resonance memory).
+⇒ **The lever class V87 identified has NO CALIBRATION IMPLEMENTING IT.**
+
+### 🛑 THE COMPLETE, BOUNDED PICTURE FOR GRINDING
+| avenue | status | why |
+|---|---|---|
+| **b26 damper lane** | ❌ **EXHAUSTED, provably** | ceiling at the ±1024 gate bound; **no weight cell in Path 1** (bare `add`); α2 is a trade |
+| **rate lane (Lever A/B)** | ✅ **at V62's measured-good config** | V133 reproduces V62's six cells byte-for-byte |
+| **HF filtering of the command** | ❌ **no cal exists** | this section |
+| **`0xC642A/C`** | ❌ **closed** | base-assist input EMAs; changes MANUAL feel |
+| **`0xC63A6`** | ⚠ **blocked on GATE 2** | loop gain past a 16.70 Hz corner; needs measured phase |
+| **the `Y` fork** | ⏳ **needs one number** | V129 (down) vs V130 (up) — the probe decides |
+| **base-assist damper** | ⚠ **neither closed nor sized** | task-5 rate is OPEN (the 100 Hz claim was retracted) |
+
+⇒ **Every calibration avenue is either exhausted, closed, or gated on a measurement.** That is
+not the same as "out of ideas" — it is a search space with its boundary drawn, and **V133 sits at
+the best point reachable inside it with current knowledge.**
+
+### ⭐ WHAT WOULD ACTUALLY CLOSE THE THREE COMPLAINTS
+**One drive on V133**, containing creep (2–10 mph with real steering), 15–40 mph, and at least one
+slow hard hands-off turn. It yields:
+- the **operator's report** on all three symptoms — the primary endpoint, and the only one that has
+  ever tracked what he actually hears;
+- `score_v131_grind.py` band ratios vs V122, with a 30–40 Hz negative control and a validated null;
+- `score_v127_rail.py` (`ACCORD_RAIL_V133=1`) **rail duty**, which selects V129 vs V130 **and**
+  decides whether `0xC63A6` is even the right question.
+
+🛑 **No further build should be cut before that drive.** Three of this session's builds were
+superseded pre-flight for defects found by re-deriving them (V126 mis-sized, V128 contradicted a
+measured result, V132 broke its own probe). **The next defect of that class will not be found by
+more analysis — it will be found by the car.**
+
 ## ✅✅ **THE DISPLACEMENT SCAN IS FIXED — AND IT CLOSES THE LAST GRIND CANDIDATE**
 Turning to the **excitation** side (V87 established the lever class: *"a lightly-damped mode driven
 by **broadband command content**, not a commanded tone ⇒ the lever class is **less broadband HF in
