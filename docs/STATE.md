@@ -1,5 +1,32 @@
 # STATE — living current state of the kit
 
+## ⭐ A NEW, VIRGIN CANDIDATE: the model's own bandwidth `0xC50D8` — blocked on GATE 2, not on hazard
+**The mechanism, quantified for the first time.** `FUN_0003b8f6` is the **1 kHz** plant-model
+observer; its input passes **two cascaded EMA stages** at `pole2 = 0xC50D8 = 122` (`alpha/4096`):
+```
+     1.0 Hz  two stages 0.9586      7.8 Hz  0.2758  <- THE MODE      20 Hz  0.0548
+   => at the mode the MODEL sees only 27.6 % of the real content, so ~72 % of the 7.8 Hz motion is
+      classified as DISTURBANCE and the friction signum CHASES it.  That IS stick-slip, quantified.
+   to pass 50 %: pole2 = 196 (1.6x)    80 %: 382 (3.1x)    90 %: 560 (4.6x)
+```
+✅ **The hazard that would have blocked it is CLOSED.** `0xC50D8` sits in `[0xC5000, 0xC5FFC)`, and
+[[reference-crc-chain-is-50-blocks-c5000-not-a-gap]] closed that block **on three independent
+traces**: boot does a **blank/presence check only**, the app range contains **no CRC32 polynomial**,
+and there are **zero xrefs to `0xC5FFC`** in the whole 1 MiB image ⇒ the stale CRC is a **RED HERRING
+for V40's ignition fault**, which has its own explanation
+([[accord-aggregator-reaches-motor-via-gp6acc-bridge]]). **It is an ordinary editable cal.**
+✅ **VIRGIN on all 115 images** — `pole1 = 832`, `pole2 = 122` in stock and in every build ever cut.
+✅ **Orthogonal to the K1/knee confound** — it is on neither axis.
+🛑 **NOT A BUILD PROPOSAL. It is blocked on GATE 2, and squarely.** The model's input `gp-0x6b98` is
+**BROADBAND** ([[accord-v87-flew-the-probe-fired-and-6b98-is-broadband]]) **and downstream of the
+assist**, so feeding it into the model is a **feedback path** — widening its bandwidth widens that
+feedback, in a loop containing a **lightly damped Q 14-29 mode at 7.8 Hz**. That is exactly the class
+where **phase, not just magnitude, decides stability**.
+⇒ **What it needs before any build: a GATE 2 magnitude-AND-phase analysis of the `gp-0x6b98` → model
+→ residual → assist path at 6-9 Hz.** Until then it stays a candidate. ⊕ Both arguments are on the
+record: *widening lets the model explain the oscillation so the signum stops chasing it* vs *widening
+increases feedback bandwidth around a lightly damped mode*. **Neither is settled.**
+
 ## 🛑 THE MODEL PATH'S 3-TAP FIR **CANNOT** BE MADE A NOTCH — the last hidden-filter hope, closed
 `FUN_0003b8f6` contains `y[n] = a·x[n] + b·x[n-1] + c·x[n-2]` with **float** coefficients at
 `0xC5048/504C/5050`, feeding the same `|model|` that multiplies the Coulomb signum. Floats in the
