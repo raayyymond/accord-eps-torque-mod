@@ -1,5 +1,32 @@
 # STATE — living current state of the kit
 
+## ✅⭐ THE 7-9 Hz ENERGY IS **MANUFACTURED**, NOT COMMANDED — the hopeful result
+16 routes, oscillating windows, band power relative to each signal's **own** 0.5-3 Hz power:
+```
+   median COMMAND  6-9 / 0.5-3 = 0.00528      median RESPONSE 6-9 / 0.5-3 = 0.13962
+   => the response carries 26.5x more RELATIVE 6-9 Hz content than the command
+   coherence(cmd, rate) @6-9 Hz = 0.488  vs shuffled 0.356   diff 0.132  CI [0.082, 0.250]
+```
+✅ **The energy at the resonance is GENERATED INSIDE THE LOOP, not delivered by openpilot** — the
+first direct measurement of what [[reference-accord-lkas-lane-is-a-lowpass]] implied.
+⭐ Coherence above chance but only 0.488 with 26.5× less relative content ⇒ the command **modulates**
+the oscillation without **containing** it: **the signature of a NONLINEARITY** converting a
+low-frequency drive into energy at the resonance — matching
+[[accord-the-7to9hz-mode-is-nonlinearly-excited-harmonics]] independently.
+⭐⭐ **WHY IT MATTERS.** The mode is a **fixed mechanical resonance** that cannot be moved
+([[accord-the-78hz-mode-does-not-move-with-firmware-gain]]) or damped further
+([[accord-the-damping-route-is-closed-by-the-rail]]), leaving only *"excite it less"* — and the
+obvious worry was that excitation is simply **proportional to 6× torque**, making the operator's two
+goals irreconcilable. ✅ **It is not in the command, so it is NOT an inherent price of 6× torque.**
+⇒ **the generator can be attacked without giving up torque — the first structural reason to think
+both goals are compatible.**
+⇒ **V121 status change:** its **PREMISE** (energy generated downstream, attackable without spending
+torque) is now **[EVIDENCE]**. 🛑 **Still [BELIEF]: that the Coulomb relay SPECIFICALLY is the
+generator** — no measurement isolates it from other nonlinearities. **Effect still UNKNOWN; the
+pre-registered card stands as written.**
+⚠ `ra4`/`r1e` show command ratios 200-400× the rest with the highest coherences — outliers of a
+different kind; medians are used and are robust, but do not pool them naively.
+
 ## 🛑🛑 THE 7.8 Hz MODE **DOES NOT MOVE** WITH FIRMWARE GAIN — it is MECHANICAL
 A closed-loop pole moves with loop gain; a mechanical resonance does not. The kit classified the
 ~23 Hz line exactly this way (it **moved 20.3 → 23.0 Hz**). Across 17 routes spanning forward gain
