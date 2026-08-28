@@ -1,5 +1,38 @@
 # STATE — living current state of the kit
 
+## 🛑 "SAFE BY CONSTRUCTION" WAS AN OVER-CLAIM — and a better-shaped lever that I am NOT proposing
+### The over-claim, corrected
+For V124's trim edit (`0xC63D2` 6→3) I argued *"reducing the magnitude of a feedback term cannot
+destabilise a stable loop, whatever its phase."* 🛑 **That is only true for DESTABILISING feedback.
+If the term is dissipative, cutting it is the V94 direction** — and V94 is exactly the case where a
+term that looked structurally like **inertia** measured as a **damper** (+137° delivered vs wheel
+rate), and removing it made the operator abort. **Structure ≠ delivered sign**, and I do not have the
+delivered phase for these feedback paths.
+✅ **But the RISK IS BOUNDED, and V124 stands:**
+```
+   reader #5 is clamped to +-512 = 5.00 % of the aggregator's +-10240
+   7.8 Hz transmission:  cal 6 -> 0.1191   cal 3 -> 0.0598
+   => the edit moves at most 0.0593 x 5.00 % = 0.297 % of aggregator authority
+   V94 removed up to 5.00 % and the drive was aborted  =>  V124's edit is 17x smaller
+```
+⇒ **[LOW RISK, bounded at 0.297 % of aggregator authority] — not [SAFE BY CONSTRUCTION].** The build
+is unchanged; the claim is downgraded.
+
+### A better-shaped candidate, deliberately NOT proposed
+```
+   0xC642A / 0xC642C = 194   fc 30.15 Hz   |H(7.8 Hz)| 0.9739   VIRGIN on all 117 builds
+```
+These are reader #3's two input IIRs, and at **fc 30 Hz they pass 97 % of the 7.8 Hz content** — the
+path is nearly unfiltered at the oscillation. Lowering 194 → ~29 (fc 4.5 Hz) would **halve** its
+7.8 Hz contribution while leaving ≤2 Hz essentially untouched (|H(1 Hz)| 1.000 → 0.976) —
+**better selectivity than `alpha2` achieves.**
+🛑 **NOT PROPOSED.** Reader #3's output authority is **not bounded** the way reader #5's ±512 clamp
+bounds it, so **the downside cannot be capped without knowing its delivered sign.** Proposing it would
+repeat exactly the reasoning that this section just retracted.
+✅ **What would unlock it:** the delivered phase of reader #3's output (`gp-0x6af0`) against wheel
+rate at 6-9 Hz — the same measurement that settled `gp-0x6b26` after V94. **That needs the cell on the
+wire, i.e. a 427 repoint** (a 2-byte displacement edit, the proven class — NOT a cave).
+
 ## 🛑 CORRECTION: THE "LKAS GAIN" HAS **NEVER** TOUCHED THE FEEDBACK PATHS
 ```
    build     0xC646C (readers #3/#5/#6)   0xC6CD0 (forward reader #1)
