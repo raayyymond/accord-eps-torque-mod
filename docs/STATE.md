@@ -1,5 +1,35 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ V115 BUILT — **V112 (FLOWN, BEST YET) + ONE BYTE**.  THE RECOMMENDED NEXT FLIGHT.
+```
+builder  analysis-2020accord/builds/v108_plus/build_v115_tva.py   42/42   BASE = V112
+image    5f804a8a2aee5e18da226cfebe4b2bec564713a4183613e3aed846460a191a97
+.rwd     f1a47bb7d6b3d53a2c5a919338bfc80bd8dd4c84042cd08a0bb03ac1a74ecd22
+0xC40DC   14 -> 8   alpha2.  knee 1800 and K1 612 (V112's) both HELD.
+1 payload byte (0e -> 08) + 1 CRC trailer.  NO CAVE EDIT.
+```
+🛑 **V112 IS ON THE CAR AND IS THE BEST BUILD YET** — and it is not only comfort: it improved
+**command authority**, the operator's own standing ask.
+```
+   achieved / demanded steering rate, engaged, low-torque, moving
+     demand band    5-15    15-30   30-60  deg/s
+     r21  V111      0.487   0.475   0.367
+     r22  V112      0.669   0.590   0.432
+     r23  V112      0.791   0.544   0.390
+```
+⇒ **V112 tracks 1.37–1.62× better than V111 at 5–15 °/s and better in every band.**
+🛑 **V114 IS SUPERSEDED** — it was built on a V111 base before this was known. Same edit, wrong base.
+🛑 **V113 IS DEPRIORITISED** — it was built to be "strictly safer" than V112 on an anti-damping
+argument the car has now refuted.
+
+### WHAT V115 ADDS
+`α2` **14→8** ⇒ **6–16 Hz DAMPING ×1.252 while 6–16 Hz apparent MASS ×0.796** (the lane is a
+bandpass; α2 moves its corner, so it **rotates** the vector instead of scaling it). It targets the
+located peak-turn oscillation at **7.42 Hz** — route 23 seg 7, t = 445.6–448.2 s, **6–9 Hz RATE
+16.86 °/s against a corpus p99 of 3.98.** ✅ Every magnitude falls (peak ×0.669, broadband ×0.604,
+100 Hz 7.13→4.05) ⇒ **cannot repeat V107**, and the 100 Hz drop may also help grind #1.
+✅ GATE 1 the cleanest in the kit (ONE access image-wide, zero writers).
+
 ## ⭐⭐ V114 BUILT — **ONE BYTE THAT RAISES DAMPING AND LOWERS MASS AT THE SAME TIME**
 ```
 builder  analysis-2020accord/builds/v108_plus/build_v114_tva.py   42/42   BASE = V111
