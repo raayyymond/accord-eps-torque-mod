@@ -1,5 +1,69 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **THE 511 CEILING IS NOT A HARD LIMIT — IT HAS A FLOAT TWIN. V132 LIFTS BOTH.**
+`gp-0x6b26 = clamp(…, ±cal(0xC407E) = 511)`, and because **damping and railing are one knob**, that
+clamp was the **hard ceiling on how much damping this lane can ever deliver.** Every other move is
+a trade: **V129 (Y↓) de-rails but LOSES damping; V130 (Y↑) adds damping but RAILS EARLIER.**
+✅ **Raising the ceiling is the only move that is not a trade** — linear damping `|H|×Y` is
+**unchanged**, and only the point at which the term becomes a bang-bang relay moves out:
+```
+   speed knot     rails @511   rails @1023   change          (detector arms at 12800)
+    0 km/h            1065         2132      2.00x later
+   20 km/h            1826         3655      2.00x later
+   90 km/h            1963         3930      2.00x later
+```
+
+### 🛑 AND IT EXPLAINS THE V74/V75 HARD FAULTS EXACTLY
+`FUN_00036d74` is a **range monitor with a FLOAT twin**:
+```c
+   fVar3 = gp-0x6b26 * 0.0009765625;          // /1024
+   lim   = *(float*)(tp + 0x5004);            // = cal 0xC4004
+   if (fVar3 > lim || fVar3 < -lim) FUN_000462e6(0x39bc, ...);   // the FAULT report
+```
+Honda ships them **matched**: int **511**, float **0.5** ⇒ `0.5×1024 = 512 = 511+1`.
+```
+   build         0xC407E   0xC4004   float x1024   matched?
+   STOCK             511   0.500000       512.0    YES
+   V73/V74/V75       850   0.500000       512.0    NO -- MISMATCHED
+   V131              511   0.500000       512.0    YES
+```
+⇒ **V73 raised the INT clamp to 850 and left the FLOAT monitor at 512.** Every time `|gp-0x6b26|`
+passed 512 the monitor fired → hard fault. **That is the whole story of V74/V75**, and it is the
+**same int-vs-float desync that produced DTC `0xF00049` in the V21–V24 era**, repeated on a new
+pair. ⇒ the standing *"`0xC407E` is the fault interlock, never raise it"* is **HALF RIGHT: never
+raise it ALONE.** [[accord-c407e-is-the-fault-interlock-c63a0-exonerated]] needs this qualifier.
+
+### ✅ V132 BUILT — 2 payload bytes on a V131 base
+```
+   0xC407F   01 -> 03     int clamp   511 -> 1023   (ff01 -> ff03)
+   0xC4006   00 -> 80     float twin  0.5 -> 1.0    (…003F -> …803F)
+```
+image `b47f231cfd3ae3a62605da3fd8230d69e2e03dcd00d7389397aa084b33351c80` ·
+rwd `439bf613c47675e56991b1d2a48ef19ce7208ee3806eef525fda3e09c1d22cd3` · **73/73, CRC 50/50.**
+✅ **The invariant `float×1024 == int+1` is asserted as a HARD GATE** — the exact check that would
+have stopped V73. ✅ The float is asserted **against its ENCODING** (`0x3F800000`), not a decimal
+([[feedback-float-spec-must-be-the-formula]]). ✅ **The monitor is NOT disabled** — it still trips
+on anything beyond the new limit, just at 2× the threshold; the safety property is preserved.
+
+### ✅ BLAST RADIUS — BOTH CELLS PRIVATE, and 5 of 11 raw scan hits were FALSE POSITIVES
+```
+   0xC407E   3 readers: 0x36C34, 0x36CD0, 0x36CDC   -- ALL inside FUN_00036c12
+   0xC4004   3 readers: 0x36D80, 0x36D8C, 0x36DBC   -- ALL inside FUN_00036d74
+```
+🛑 The raw byte scan also reported `0x07028` and `0x09288`/`0x0B8DE`/`0x0B914`/`0x0B928`.
+**All five are FALSE POSITIVES at the instruction boundary**: `0x07028` is
+`dispose 0x0, {r25,r27,r29,lp}, lp`, and `0x0B8DE` is `mov 0xfedf5004, r8` — a **32-bit RAM
+address** whose low half is `0x5004`, not a tp-relative displacement. ⇒
+[[accord-v850-scan-traps-formatv-and-storezero]]'s *"validate every byte-scan hit on an instruction
+boundary"* fired on **5 of 11** hits here. **I nearly abandoned this lever on the false positives.**
+⊕ Downstream headroom: the aggregator is governed at **4762** and clamped **±8192**, so 1023 is far
+inside both.
+
+⚠ [BELIEF] that a 2× ceiling improves the symptom. It **strictly** reduces relay behaviour and
+**strictly** preserves linear damping, so it cannot make the term more of a relay — but whether the
+residual grinding is dominated by this term is what **V131's probe measures**. **V132 is the right
+move if the probe shows railing, and inert if the term is already linear.**
+
 ## ✅ **THE BUILD SET, STATED EXACTLY — AND TWO THINGS THE NEXT SESSION MUST NOT GET WRONG**
 ```
    build   gain  α2   0xC640A   Y[1]/Y[2]        LeverA sar   427 tap   rwd
