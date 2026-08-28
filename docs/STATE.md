@@ -1,5 +1,59 @@
 # STATE — living current state of the kit
 
+## ✅ **THE BUILD SET, STATED EXACTLY — AND TWO THINGS THE NEXT SESSION MUST NOT GET WRONG**
+```
+   build   gain  α2   0xC640A   Y[1]/Y[2]        LeverA sar   427 tap   rwd
+   V124    7128   5     -8192   -17202/-16000      aa/aa        6ABC      yes
+   V127    7128   5     -1966   -17202/-16000      aa/aa        6B26      yes
+   V129    7128   5     -1966   -17202/ -5898      aa/aa        6B26      yes
+   V130    7128   5     -1966   -31923/-29692      aa/aa        6B26      yes
+   V131    7128   5     -1966   -17202/-16000      a9/a9        6B26      yes   <- THE FLIGHT
+```
+
+### 🛑 GAP 1 — **V129 AND V130 DO NOT CARRY LEVER A.** They are built on **V127**, before
+V131 restored `0x3AB76`/`0x3AC20`. ⇒ **after V131 flies, the winning fork branch must be REBUILT
+ON V131**, not flown as-is. Flying V129 or V130 as they stand would silently drop V62's 8–42× fix
+again — **the exact failure this session just spent a build undoing.**
+
+### 🛑 GAP 2 — THE BASE-ASSIST DAMPER IS **NEITHER CLOSED NOR USABLE**, and I nearly got this wrong
+Looking for a damping path that is **not** capped by `gp-0x6b26`'s 511 clamp, the obvious candidate
+is the base-assist damper `ch0 = (FactorC(speed) × FactorE(rate)) >> 10` in `FUN_00034350`. The
+record appears to close it: *"task 5 is 100 Hz ⇒ the damper structurally cannot damp the 20.9 Hz
+mode."*
+🛑 **That claim was RETRACTED on 2026-08-12 and the file says so in its own header.** The
+`syscall8`/TCB derivation rested on an **address coincidence** (`tp-0x3814` pointing at TCB[0]),
+and `FUN_00083854`/`FUN_00083918` are **not task-wake primitives at all**. Flown telemetry
+contradicts it directly: `gp-0x6bbe`'s outer EMA (α = 205/1024) predicts **−6.6/−8.4/−9.5 dB** at
+6/7.79/9 Hz **if the lane ran at 100 Hz**, versus **−0.2/−0.3/−0.3 dB at 1 kHz** — **measured
+≈ −1.2 dB**, about **7 dB** from the 100 Hz prediction.
+⇒ **Task 5's true rate is OPEN.** The damper is **not** ruled out on rate grounds — but it is also
+**not sized**, so no build may rest on it until the rate is closed. ✅ **What survives untouched:**
+**task 1 = 1 kHz** (two independent methods), so `FUN_0003aa2c` and `FUN_0003a382` — the aggregator
+and the PID, which V131's Lever A edits — **are confirmed 1 kHz.**
+⊕ **I was one step from dismissing a live lever on a retracted claim.** Recorded so the next
+session does neither: **do not close it, and do not build on the 100 Hz figure.**
+
+### ⭐ WHERE THE THREE COMPLAINTS ACTUALLY STAND
+- **grinding** — every measured anti-grind edit is on **V131** for the first time. 🛑 The one
+  structural fact that bounds it: **`gp-0x6b26`'s damping is capped at 511 counts by `0xC407E`,
+  which CANNOT be raised** (Honda ships it one count under its own 512 monitor trip; V73 raised it
+  and V74/V75 hard-faulted). **Damping and railing are one knob**, so within this lane there is a
+  hard ceiling on how much damping is available — and at 8× excitation the build sits at **0.54×**
+  of V106's measured-good in-band product, with `Y[0]` unable to reach 1.00× because **int16
+  forbids it**. ⇒ **if V131 does not eliminate grinding, the remaining moves are the fork (V129/
+  V130 rebuilt on V131), α2, or a damping path outside this lane** — and the only known candidate
+  outside it is the base-assist damper above, whose task rate is OPEN.
+- **LKAS authority** — 8× with matched 4096 clamps; chain verified unclipped end to end
+  (3341 < 4096 clamp < 4762 governor, 1.43× headroom, room to ~11.4×). ✅ Nothing further is
+  available without exceeding the operator's own 8× instruction.
+- **peak-turn oscillation** — `0xC640A` −8192 → −1966, sized to stay **LINEAR at the detector's own
+  arming threshold** (409 of 511). This is the first build ever to touch that branch.
+
+🛑 **The analysis is now bounded by measurement, not by ideas.** Every remaining lever's
+direction depends on a number only a drive produces — the rail duty — and the record is explicit
+that it **cannot be predicted open-loop** (V107: predicted ≤1.05 %, measured 33.49 %, a **32×**
+miss, because the lane is a closed loop).
+
 ## ✅ **V131's FLIGHT CARD IS WRITTEN — AND THE DRIVE MUST CONTAIN CREEP, OR THE TEST CANNOT WORK**
 `docs/scoring/SCORING-V131-preregistered.md`, committed before any V131 flight exists.
 
