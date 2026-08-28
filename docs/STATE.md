@@ -1,5 +1,27 @@
 # STATE — living current state of the kit
 
+## ✅ THE "r24 IS THE CORPUS MAXIMUM" ALARM IS AN **ARTEFACT OF THE RATIO** — withdrawn
+I flagged V122's angle-gated 6-9 Hz ratio (**12.05**) as the corpus maximum. **The absolute levels
+say otherwise:**
+```
+   a2   n     hi-ang p90    hi-ang p50    lo-ang p90     ratio
+   22  13       6.510         2.221         ~1.7          2.86
+   14   3       3.137         1.151          1.060        3.12     (r22 2.909, r23 8.320)
+    8   1       9.871         2.991          0.819       12.05     (r24 = V122)
+```
+✅ **r24's high-angle p90 of 9.871 sits just above r23's 8.320 — INSIDE the same-firmware spread**
+(the two V112 drives differ 2.909 vs 8.320, a factor of 2.9), not outside it.
+✅ **The ratio blew up because the LOW-ANGLE DENOMINATOR fell to 0.819, the lowest in the corpus.**
+⇒ **`alpha2 = 8` improved LOW-angle behaviour and left HIGH-angle roughly unchanged** — which is
+exactly what the operator reported: *grinding better, oscillation still there.* **No evidence it hurt
+anything; the implication that it did is withdrawn.**
+🛑 **METHOD NOTE, worth keeping:** the angle-gated **ratio** was chosen because it cancels
+route-level exposure, and that is still right for cross-build comparison — **but a ratio moves when
+either end moves.** A build that improves the denominator looks worse on the ratio while being
+better on the car. ✅ **Always report the absolute numerator and denominator beside the ratio.**
+⊕ It also explains why the ratio-based alpha2 result earlier looked so strong: part of that signal
+was the denominator, not the symptom.
+
 ## 🛑🛑 **V122 FLEW (route 24)** — grinding better, authority NOT, and the CAUSE OF THE AUTHORITY CEILING IS FOUND
 Operator: *"Grinding: better, still ever so slight grinding in even more rare moments. On the improved
 LKAS authority, it does not feel like it has improved at all. I can feel that the manual driving
