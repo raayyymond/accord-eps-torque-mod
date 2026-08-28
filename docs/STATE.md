@@ -1,5 +1,34 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 THE 21-26 Hz EXCESS AND THE **AUDIBLE** GRIND ARE NOT SHOWN TO BE THE SAME THING
+Two acoustic contrasts on r22 (V112), 710 s of 16 kHz PCM:
+```
+   1) ENGAGED vs MANUAL  -- USELESS, hopelessly speed-confounded
+      engaged median 52.8 km/h vs manual 11.5 km/h, and the excess is a UNIFORM
+      +9.5 to +12.6 dB across EVERY band 20-2000 Hz = road/wind noise, not LKAS.
+      The speed-matched control could not even run: the arms barely overlap in speed.
+
+   2) ENGAGED-ONLY case-control, speed-matched 30-61 km/h, 224 high-grind vs 189 low-grind
+      windows, split on the 21-26 Hz STEERING-RATE content:
+        20-50 Hz  +0.78 | 50-60 -0.92 | 60-80 +0.21 | 80-120 +0.57 | 120-200 +0.50
+        200-300 -0.03 | 300-800 -0.08 | 800-2000 -0.54 | 2000-5000 +0.03 dB
+        strongest lines only +2-3 dB (45, 51, 86, 152, 176 Hz)
+```
+🛑 **Windows with high 21-26 Hz steering-rate content have NO distinct acoustic signature** —
+everything within ±1 dB, with the speed confound properly controlled this time.
+⇒ **THE KIT HAS BEEN CALLING TWO DIFFERENT THINGS "GRIND #1":** a **21-26 Hz steering-rate excess**
+(measurable, knee- and `alpha2`-responsive) and an **audible grind** the operator actually hears.
+**Nothing demonstrates they are the same phenomenon**, and this is the first test that could have.
+⚠ **Do not over-read the null either.** The recording carries only **0.01 %** of its power above
+2 kHz, so it is heavily band-limited by codec or cabin; a null above ~2 kHz is uninformative. And a
+±1 dB resolution on 224 vs 189 windows is not sensitive to a small effect.
+⇒ **CONSEQUENCE FOR V122:** its grind endpoint measures the **steering-rate** phenomenon. That is the
+only measured axis available and the build stands — **but whether it moves what the operator HEARS is
+now explicitly open.** ✅ **The operator's own report remains the primary evidence for the audible
+grind**, which is exactly why the pitch question matters: **high whine / mid buzz / low growl** would
+tell us in one sentence whether the audible grind is even inside the recording's usable band.
+Tools: `rlog-tools/decode/extract_audio_v112.py`, `rlog-tools/decode/audio_engaged_vs_manual.py`.
+
 ## ✅ AUDIO IS EXTRACTABLE FOR THE CURRENT BUILD — the 50 Hz ceiling does NOT apply to it
 The corpus's blindness above ~49 Hz is a property of the **CAN/IMU** channels (all 100 Hz). The rlogs
 also carry **`rawAudioData`** PCM, and it is **not** subject to that limit. Extracted for **r22
