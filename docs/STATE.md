@@ -1,5 +1,39 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 V113 BUILT — AND IT **WITHDRAWS V112**. Knee ×3 with K1 HELD.
+```
+builder  analysis-2020accord/builds/v108_plus/build_v113_tva.py   39/39   BASE = V111
+image    d2e86f8272dff71d402680399649dc35b7e39f6e7b200ae9c5a7ee9812ba823b
+.rwd     07d64f509e6d92a538a26b99778888568b2ac8fc88ca731556cfa025e4dc3e5a
+0xC40BC   600 -> 1800   relay KNEE   |   0xC40D2  204 -> 204  K1 HELD, NOT WRITTEN
+2 payload bytes + 1 CRC trailer.  NO CAVE EDIT.  ZERO unattributed.
+```
+🛑 **V112 IS WITHDRAWN.** It scaled knee AND K1 together to hold the small-signal gain — which
+delivers **up to 2.93× MORE anti-damping above 10.6 °/s** (describing function of the odd
+saturation; the EMA `0xC40D0`=408 adds only −1.1° at 2 Hz to −11.1° at 21 Hz, so the term is
+**in phase with RATE**, and it is a friction COMPENSATION). **That is V94's failure mode** — the
+drive the operator aborted as unsafe, whose lane measured **+518/+565 counts of POSITIVE Re(Z)**.
+⊕ **Real Coulomb friction IS constant-magnitude** (`μN·sign(v)`) ⇒ **the saturation was the model,
+not the bug.**
+
+⭐ **V113 raises the knee and HOLDS K1**, so `sat()` can only shrink ⇒ the term is **≤ V111's at
+every rate**, proved by exhaustive sweep (`worst excess +0.000000`), not by argument:
+```
+   rate      V111 term   V113 term   ratio          relay saturation duty (route 21, measured)
+    3 d/s     0.05632     0.01877    0.333             knee  600 (V111)  0.7439 [0.669,0.815]
+   10 d/s     0.18775     0.06258    0.333             knee 1800 (V113)  0.2353   <- a 3.2x cut
+   30 d/s     0.19922     0.18775    0.942          small-signal slope x0.333
+   60 d/s     0.19922     0.19922    1.000          (both railed -- equal, never greater)
+```
+⚠ **COST:** less friction compensation ⇒ the wheel feels **HEAVIER than V111 below ~30 °/s**, and
+`FUN_0003b8f6` is not LKAS-gated so manual feel changes too. That is the price of not repeating V94.
+
+### ✅ THREE-WAY DISCRIMINATOR ON THE NEXT DRIVE
+*"heavier but smoother"* ⇒ right axis, walk the dose back toward 1200 · *"smoother and no heavier"*
+⇒ V112's premise was wrong in the safe direction · *"no change"* ⇒ **the relay is not the ratchet
+mechanism, abandon this axis.**
+🛑 `0xC40DC` α2 stays at V111's 14 ⇒ still a single-variable read.
+
 ## 🛑🛑 THE RATE DEFICIT IS **UPSTREAM OF THE FIRMWARE** — AND THE SAME DATA LOCATES THE OSCILLATION
 2026-08-27, 15 routes, Welch H1 1024-pt @100 Hz, engaged & hands-off & moving, normalised to each
 path's own 0.1–0.3 Hz value. **This splits the standing goal in two and closes one half.**
