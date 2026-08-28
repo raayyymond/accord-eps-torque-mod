@@ -1,5 +1,33 @@
 # STATE — living current state of the kit
 
+## 🛑 THE DECELERATION TRIGGER **DOES NOT SURVIVE STRATIFICATION** where the symptom lives
+Unstratified, the threshold test looked decisive — case rate for `dv/dt` below T vs at/above T,
+**all 17 routes**, paired within route:
+```
+   T = -1.0  8.33 % vs 4.86 %  = 1.72x  CI [1.26, 2.21]      T = -0.4  1.67x  CI [1.23, 2.21]
+   T = -0.8  7.83 % vs 4.79 %  = 1.63x  CI [1.16, 2.20]      T = -0.2  1.73x  CI [1.29, 2.26]
+   bins: < -1.0 -> 8.33 %   -0.2..+0.2 -> 4.85 %   > +0.2 -> 4.03 %
+```
+**Every CI excluded 1.0.** 🛑 **Then I stratified on speed × angle, and it largely dissolves:**
+```
+   stratum                        decel    accel    ratio    CI              routes
+   0-25 km/h   ang > 10 deg      30.22 %  21.69 %   1.39x   [0.94, 2.33]      10
+   25-50 km/h  ang > 10 deg      18.20 %  14.43 %   1.26x   [0.71, 1.92]      12
+   50-80 km/h  ang < 10 deg       2.13 %   0.52 %   4.12x   [1.44, 19.00]     15   <-- only cell that resolves
+   80-200 km/h ang < 10 deg       2.12 %   3.29 %   0.64x   [0.00, 12.27]      9   <-- reverses
+```
+🛑 **The only cell whose CI excludes 1.0 is LOW-ANGLE at 50-80 km/h — which is NOT the peak-turn
+regime.** Both high-angle cells, where the operator's symptom lives, **span 1.0**.
+⚠ And decelerating windows are **slower**, not faster (median 40.0 vs 48.3 km/h), so the
+unstratified 1.7× was partly **composition**, not effect.
+⇒ **DOWNGRADED before it was ever claimed: [BELIEF, direction consistent in 5 of 6 strata, NOT
+established in the regime that matters].** ⊕ Not refuted either — the direction holds nearly
+everywhere and the high-angle cells are simply underpowered (10-12 routes, wide CIs).
+✅ **What would settle it: more high-angle exposure**, which is the same gap the drive card already
+names. 🛑 **Do not build against this.** ⚠ Two cells report absurd upper CIs (36,631,016) — a
+degenerate bootstrap where the denominator approaches zero; **read those cells as uninformative, not
+as huge effects.**
+
 ## ⚠ A CANDIDATE TRIGGER — **DECELERATING INTO THE TURN.** Suggestive (12/17), NOT established
 First use of the operator's **labelled** event as a CASE rather than a description. r23,
 t = 445.6-448.2 (his *"exact instance"*), against controls from the **same drive** matched on speed
