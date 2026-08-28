@@ -53,3 +53,26 @@ half is **collinear with build era**; the selectivity arithmetic assumes the **1
 helpful, **not verified**.
 ⇒ **Sequence: V115 first** (more selective, better gated, precedent flown), **then V121**.
 Tool: `analysis-2020accord/verify/alpha2_frequency_selectivity.py`.
+
+## ✅ THE `alpha2` DOSE LADDER, AND ITS FLOOR — so the next step is chosen, not improvised
+```
+   a2   EMA corner   3 Hz cmd   7.8 Hz damper   23.4 Hz grind#1   selectivity   note
+   14     34.8 Hz     1.000x       1.000x           1.000x           --        CURRENT (V111/V112, flown)
+   12     29.8 Hz     0.999x       -0.8 %           -5.0 %          6.47x
+   10     24.9 Hz     0.997x       -2.0 %          -12.0 %          5.87x
+    8     19.9 Hz     0.993x       -4.3 %          -21.7 %          5.07x      <- V115, BUILT
+    6     14.9 Hz     0.985x       -8.7 %          -35.2 %          4.04x      the practical knee
+    5     12.4 Hz     0.977x      -12.7 %          -43.7 %          3.44x      caution
+    4      9.9 Hz     0.963x      -18.8 %          -53.2 %          2.83x      caution
+    3      7.5 Hz     0.934x      -28.7 %          -63.9 %          2.23x      toward the V94 direction
+```
+✅ **A PRINCIPLED FLOOR:** the EMA corner falls with `alpha2`, and **at `a2 = 4` it reaches 9.9 Hz —
+BELOW the 23.4 Hz target and close to the 7.8 Hz mode.** Past that the filter **eats the damper faster
+than it eats the grind**, which is why selectivity collapses from 5.07× to 2.83× and then 1.27×.
+⇒ **`alpha2 >= 6` is the usable range; `alpha2 <= 4` is the V94 direction.**
+⇒ **FLY V115 (`a2 = 8`) FIRST, NOT a bigger dose.** It is already built (42/42), it is the smaller
+step from the flown 14, and the empirical half of the `alpha2` case rests on **3 routes**. **`a2 = 6`
+is the identified next step** — it nearly doubles the grind cut (−35.2 % vs −21.7 %) for a damper cost
+of **−8.7 %**, still ~10× smaller than V94's −83 % — **but only after V115 shows the axis works on the
+road.** 🛑 **Do not build `a2 = 6` yet**: seven unflown artifacts already exist, and a bigger dose
+flown first would confound a larger effect with a larger cost.
