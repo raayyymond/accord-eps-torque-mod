@@ -1,5 +1,29 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 THE DAMPING ROUTE IS **CLOSED** — by the ±511 rail, not by int16
+I was about to propose raising `Y[1]`/`Y[2]` of the engaged friction row: it is the one lever whose
+direction is **measured on the road**, `Y[0]` has only 1.11× int16 headroom but `Y[1]` has **1.90×**,
+and the oscillation's median speed (**35 km/h**) sits between the 20 and 90 km/h knots. `Y[1] =
+-24000` is even **flight-proven** — V107 flew it.
+🛑 **`build_v108_tva.py` E2 already measured it harmful** (route `1e`, episode-bootstrapped, 10 episodes):
+```
+   bin (km/h)    V107 rail duty (Y1=-24000)      V106/V108 (Y1=-17202)
+    10-25        32.32 % [29.93, 35.68]           <= 15.46 %
+    24-40        21.27 % [19.93, 22.51]           <= 10.45 %
+      65+        <= 0.23 %                        <=  0.23 %
+```
+**A damper that hits its clamp 32 % of the time IS A RELAY** — the class that made V80 *"the worst
+grinding ever recorded."* ⚠ And at **24-40 km/h, where the oscillation lives, V108 ALREADY rails
+≤ 10.45 %** ⇒ **no safe headroom at the symptom's own speed.**
+✅ **The binding constraint is `gp-0x6b26`'s ±511 clamp (`0xC407E`), not int16 — and it is
+HARD-BLOCKED**: Honda ships 511, one count under its own 512 trip, and **V73 raised it ⇒ V74/V75
+hard-faulted.** More damping needs more rail; more rail needs `0xC407E`; that faults the ECU.
+⇒ **ONLY EXCITATION REDUCTION REMAINS**, which is exactly what **V121** does (knee 1800→3000,
+softening the signum indicted as the excitation path). **V121's case is strengthened BY ELIMINATION**
+— its mechanism is still [BELIEF] and its effect still UNKNOWN, but it is the only direction on this
+symptom not measured-closed. ⊕ `Y[2]` alone has rail headroom (≥0.03 % duty at 90+) but moves the
+35 km/h coefficient only **1.10×** — not worth a flight.
+
 ## 🛑 THE DECELERATION TRIGGER **DOES NOT SURVIVE STRATIFICATION** where the symptom lives
 Unstratified, the threshold test looked decisive — case rate for `dv/dt` below T vs at/above T,
 **all 17 routes**, paired within route:
