@@ -1,5 +1,32 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 THE 7.8 Hz MODE **DOES NOT MOVE** WITH FIRMWARE GAIN — it is MECHANICAL
+A closed-loop pole moves with loop gain; a mechanical resonance does not. The kit classified the
+~23 Hz line exactly this way (it **moved 20.3 → 23.0 Hz**). Across 17 routes spanning forward gain
+**3564 / 5346 / 7128** and knee **300 / 600 / 1800**:
+```
+   Spearman(gain 0xC6CD0, f0) = -0.015  p = 0.954     Spearman(knee, f0) = +0.332  p = 0.193
+   f0 by gain: 3564 (n=6) 7.764 Hz | 5346 (n=9) 8.008 | 7128 (n=1) 7.617 | stock (n=1) 6.836
+```
+✅ **`f0` is invariant to a 2× forward-gain change and the group medians are non-monotone** ⇒ a
+**FIXED MECHANICAL RESONANCE**, not a relocatable pole. ⊕ Consistent with the ring-down result
+(ζ 0.017-0.036, Q 14-29, motor/rack-side).
+⚠ **Self-correction:** my script's verdict line said *"f0 MOVES"* on a **max/min spread of 22.9 %** —
+dominated by the **single stock route** (6.836 Hz, IQR [6.20, 7.86], overlapping the mods). Spread
+across heterogeneous routes is not the test; **the correlation with gain is**, and it is flat.
+🛑🛑 **⇒ THE THREE THINGS FIRMWARE COULD DO, AND TWO ARE NOW CLOSED:**
+```
+   MOVE IT         REFUTED here -- f0 invariant to 2x gain
+   DAMP IT         measured-CLOSED by the +-511 rail (0xC407E cannot be raised: V73 -> V74/V75 faulted)
+   EXCITE IT LESS  the ONLY route left  ==  V121
+```
+⇒ **The 7.8 Hz peak-turn oscillation may not be fully eliminable in firmware.** A fixed, lightly
+damped mechanical mode that cannot be relocated or damped further can only be **driven less hard**.
+✅ That is the correct target definition, not a counsel of despair — and it is exactly what V121 aims
+at. 🛑 **Do not promise elimination of this oscillation by any firmware build**; the honest claim is
+*reduce how hard it is driven*, which is what
+`docs/scoring/SCORING-V121-preregistered.md` measures.
+
 ## ✅ **V121's SCORING IS PRE-REGISTERED** — `docs/scoring/SCORING-V121-preregistered.md`
 Written **before** the drive so the result cannot be reinterpreted after it. **Primary endpoint: the
 harmonic ratio**, one number, with the decision bands fixed now:
