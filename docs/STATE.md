@@ -1,5 +1,50 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **α2 AND Y MULTIPLY — THE α2 LADDER SILENTLY HALVED THE DAMPER. V129 HELD; V127 FLIES.**
+`gp-0x6b26`'s effective damping is `|H_lane(α2)| × |Y|`. **Both levers have been moved, in opposite
+directions, and NO build has ever held the product constant.** At the grind band (21.73 Hz):
+```
+   build     α2   |H|@21.7   Y = [lo, mid, hi]           product vs V106 (lo / mid / HI)
+   STOCK     22     7.72     [ -9830, -5734,  -1966]      0.33x / 0.33x / 0.33x
+   V106      22     7.72     [-29490,-17202,  -5898]      1.00x / 1.00x / 1.00x   <- MEASURED: NO LINE
+   V107      22     7.72     [-29490,-24000, -16000]      1.00x / 1.40x / 2.71x
+   V112      14     7.10     [-29490,-17202, -16000]      0.92x / 0.92x / 2.50x
+   V122       8     5.68     [-29490,-17202, -16000]      0.74x / 0.74x / 1.99x
+   V124/127   5     4.16     [-29490,-17202, -16000]      0.54x / 0.54x / 1.46x   <- ON THE CAR
+   V129       5     4.16     [-29490,-17202,  -5898]      0.54x / 0.54x / 0.54x
+```
+
+### 🛑 TWO CONSEQUENCES, BOTH CORRECTIONS TO WHAT THIS SESSION ASSUMED
+1. **The α2 ladder is NOT only a de-rail — it is also a DAMPING CUT.** I read 22→14→8→5 purely as
+   shrinking the term's input to stop it railing. It does that, **and** it cuts the damper to
+   **0.54×** of the configuration that measured the mode extinguished. Both effects are real and
+   they oppose each other. **No prior session separated them, because the product was never held.**
+2. **V129 is the WRONG DIRECTION and is NOT recommended.** It takes high-speed damping
+   **1.46× → 0.54×**, while the build already sits at 0.54× low/mid **and carries more excitation
+   than V104** (8× vs 6×) — and **V104 is the build that showed a pinned line at prominence 6.89.**
+   More excitation with less damping is the one combination the record says produces a line.
+
+### 🛑 AND THE PRODUCT CANNOT BE RESTORED AT α2 = 5 — int16 FORBIDS IT
+To reach V106's 1.00× at α2 = 5, `Y` must scale by `7.72/4.16` = **1.856×**:
+`Y[0]` = 29490 × 1.856 = **54,733 — past the int16 range (32767)**, giving at most 1.11× ⇒ 0.60×.
+⇒ **only α2 can recover the low-speed damping.** The two levers are not interchangeable.
+
+### ✅ THEREFORE: FLY **V127**, NOT V129 — THE DIRECTION IS A MEASUREMENT, NOT A GUESS
+Whether `Y` should go **up** (restore damping) or **down** (de-rail) depends entirely on **whether
+the term is actually railing on the current build**, and the record is explicit that
+**rail duty cannot be predicted open-loop** — V107 predicted ≤1.05 % and measured 33.49 %, a
+**32× miss**, because the lane is a closed loop. ⇒ **shipping a Y change blind is guessing.**
+- **V127** changes only the **oscillation branch** (`0xC640A`, well-founded and sized against the
+  detector's own arming threshold) and **carries the rail-duty probe**. It changes NO `Y` knot.
+- **V129 is HELD, not deleted** — unlike V126/V128 it is not wrong-by-construction, it is
+  *unsized*. It becomes the right build **iff** the probe shows the term railing at high speed.
+
+**Decision rule, pre-registered:** run `score_v127_rail.py`; if the worst engaged bin
+- **rails > 10 %** → fly **V129** (`Y[2]` down de-rails where it matters);
+- **rails ≤ 2 %** → the term is LINEAR and the deficit is DAMPING → raise `Y[2]` toward
+  **−32767** (1.11×, the int16 ceiling) and/or step α2 back up 5 → 8;
+- **2–10 %** → mixed; size `Y[2]` to the measured duty rather than to either endpoint.
+
 ## 🛑🛑🛑 **V128 RETRACTED — IT WOULD HAVE UNDONE THE KIT'S BEST MEASURED FIX. V129 IS THE BUILD.**
 V128 restored the whole engaged-mode `Y` row to stock, arguing our ×3 raise railed the term into a
 Coulomb relay. **The rail arithmetic was right; the CONCLUSION was wrong.**
