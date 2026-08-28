@@ -125,6 +125,10 @@ POLE_CAL, POLE_VAL = 0xC40D0, 408       # the friction EMA pole -- adds phase; M
 ALPHA2_CAL, ALPHA2_V111, ALPHA2_NEW = 0xC40DC, 8, 5   # THE SECOND EDIT -- the selective lever
 RESID_CAL, RESID_VAL = 0xC7468, 41232   # |model| -> residual scale; bounds the clamp argument
 GAIN_CAL, GAIN_6X, GAIN_NEW = 0xC6CD0, 5346, 7128
+# THE FORWARD CLAMPS MUST SCALE WITH THE GAIN.  Every build has done this:
+#   gain 3564 (4x) -> clamps 2048 | 5346 (6x) -> 3072 | 7128 (8x) -> 4096 (V101)
+# Leaving them at 3072 with an 8x gain clamps away 25 % of the rise.
+CLAMP_A, CLAMP_B, CLAMP_OLD, CLAMP_NEW = 0xC61B2, 0xC61B4, 3072, 4096
 BQ_ADDR, BQ_LEN = 0xC60A8, 16
 TAP_DISP_ADDR, TAP_DISP = 0x55DF2, (-0x6ABC) & 0xFFFF   # V111's tap -- carried unchanged
 SAR_ADDR, SAR_VAL = 0x55E10, 0xA3
@@ -195,6 +199,9 @@ def build():
     attributed |= {ALPHA2_CAL, ALPHA2_CAL + 1}
     struct.pack_into("<H", code, GAIN_CAL, GAIN_NEW)
     attributed |= {GAIN_CAL, GAIN_CAL + 1}
+    for _c in (CLAMP_A, CLAMP_B):
+        struct.pack_into("<H", code, _c, CLAMP_NEW)
+        attributed |= {_c, _c + 1}
     attributed |= {K1_CAL, K1_CAL + 1}
     # K1 is deliberately NOT written -- V113 rests on it staying at 204
     print(f"      0x{KNEE_CAL:05X}  {KNEE_OLD} -> {KNEE_NEW}   knee   (x4 on stock)")
@@ -269,7 +276,8 @@ def build():
     check(all(b == 0xFF for b in code[CAVE_BASE + CAVE_LEN:CAVE_FREE_END]),
           "  the cave's free region is still all 0xFF")
     # V123 moves the GAIN and ALPHA2; knee/K1 are held at V122 values.
-    exempt = {GAIN_CAL, GAIN_CAL + 1, ALPHA2_CAL, ALPHA2_CAL + 1}
+    exempt = {GAIN_CAL, GAIN_CAL + 1, ALPHA2_CAL, ALPHA2_CAL + 1,
+              CLAMP_A, CLAMP_A + 1, CLAMP_B, CLAMP_B + 1}
     moved = [a for a, (w, _v, _d) in sorted(V106B.FROZEN.items())
              if a not in exempt and rd(code, a, w) != rd(base, a, w)]
     check(not moved, f"  all {len(V106B.FROZEN)} kit-frozen cells equal the V122 BASE (gain + alpha2 exempted)")
@@ -304,7 +312,13 @@ def build():
           f"every one of {len(diff)} differing bytes in {len(runs)} runs is attributed")
     payload = sum(hi - lo for lo, hi in runs
                   if not any(lo <= x < hi for x in (b[1] for b in blocks)))
-    check(payload == 3, f"exactly 3 payload bytes ({payload} found)")
+    check(payload == 5, f"exactly 5 payload bytes ({payload} found)")
+    check(u16(code, CLAMP_A) == CLAMP_NEW and u16(code, CLAMP_B) == CLAMP_NEW,
+          f"  forward clamps 0x{CLAMP_A:05X}/0x{CLAMP_B:05X} = {CLAMP_NEW}, scaled WITH the 8x gain")
+    check(u16(base, CLAMP_A) == CLAMP_OLD and u16(base, CLAMP_B) == CLAMP_OLD,
+          f"  base clamps were {CLAMP_OLD} (sized for 6x)")
+    check(abs(CLAMP_NEW / (GAIN_NEW / 891) / 512 - 1.0) < 1e-9,
+          "  clamp/gain ratio is EXACTLY 1.000 -- the forward path can carry the gain")
 
     print("\n  [8] .rwd ENCODE + READBACK")
     src = Path(FF.V38_RWD).read_bytes()
@@ -322,7 +336,7 @@ def build():
 
     img_sha = hashlib.sha256(bytes(code)).hexdigest()
     rwd_sha = hashlib.sha256(rwd).hexdigest()
-    tag = "V123-V122BASE-GAIN8X.C6CD0.7128-ALPHA2.5"
+    tag = "V123-V122BASE-GAIN8X.C6CD0.7128-CLAMPS4096-ALPHA2.5"
     img_out = plain_image_path(f"_v123_{tag}_plain_image.bin")
     rwd_out = Path(RWD_DIR, f"39990-TVA,A160-{tag}-0x{START:X}-0x{END:X}.rwd")
 
