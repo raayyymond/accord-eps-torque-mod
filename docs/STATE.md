@@ -1,5 +1,56 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **THE CREEP MECHANISM IS CLOSED — AND V134 IS BUILT AS THE FOLLOW-UP**
+Screening predictors of **18–22 Hz AT CREEP** (the actual remaining symptom) first showed every
+channel moving **both** bands 3–9× — a pure **activity** confound. Dividing activity out by taking
+the **within-window ratio (18–22)/(30–40)**, with the adjacent 13–18 band as a second control:
+```
+   predictor        (18-22)/(30-40) hi/lo   (13-18)/(30-40) ADJ CTRL   verdict
+   driver torque    0.611 [0.461,0.879]     1.011 [0.786,1.295]        SHAPE CHANGE
+   |steer angle|    0.813 [0.574,1.046]     0.984 [0.768,1.256]        null
+   LKAS cmd         1.252 [0.949,1.760]     0.974 [0.709,1.269]        null
+   |steer rate|     1.084 [0.789,1.413]     1.324 [1.021,1.600]        null
+```
+983 engaged creep windows, 9 routes. ✅ **DRIVER TORQUE DAMPS 18–22 Hz band-specifically (0.611×)**
+while the adjacent band does not move. ✅ **The LKAS command is NULL at creep** — the opposite of
+mid-speed ⇒ **the creep mode is DAMPING-limited, not excitation-driven.**
+
+### ⭐ THE CHAIN, END TO END
+1. At creep the dominant band is **18–22 Hz** (absolute 3.849, largest of any band at any speed),
+   and its peak is a **FIXED ~19.9 Hz resonance** (`corr(speed,peak) = -0.028`, slope **-0.006** vs
+   **0.13–0.53** for any wheel order) ⇒ **not a road/tyre line.**
+2. **Driver torque damps it** — measured, band-specific, activity-controlled.
+3. **Hands-off, that damping is absent.**
+4. The firmware's own base-assist damper is **structurally ZERO below 35 km/h**
+   (modes 26/27 `FactorC X=[35,60,80,140] km/h, Y=[0,234,429,908]`).
+⇒ **HANDS-OFF AT CREEP THE MODE HAS NO DAMPING FROM EITHER SOURCE** — exactly the condition under
+which the operator reports it.
+
+### ✅ V134 BUILT — 2 payload bytes, and it is NOT V80
+```
+   0xD77DA  FactorC Y[0] mode 26  0 -> 60    Y becomes [60, 234, 429, 908]
+   0xD77EE  FactorC Y[0] mode 27  0 -> 60    Y becomes [60, 233, 426, 875]
+```
+image `5451646d0d4c81b68c934ff522d9cc4a3f953fc36369c5c7e8848e8bcb815ac1` ·
+rwd `5eafbdf54d989391d2a4075d24650d53b0a76612d5f9f72beafdb11c63730bee` · **91/91, CRC 50/50**,
+twin verifier **PASS**. **ENGAGED modes only** — manual 24/25 byte-untouched.
+🛑 **V80 set FactorC to a FLAT 566 and produced the worst grinding on record** — a **plateau**
+that pushed the product past the ceiling into a **relay**. V134 differs on both counts, and the
+builder **asserts** both:
+- **MONOTONE GATE** — `Y` is strictly increasing (a **ramp**, not a plateau); **`X` untouched**;
+- **CEILING GATE** — creep product **≤ 60** (≤ 180 with FactorE headroom) vs the **512** ceiling
+  ⇒ **no saturation**; and 60 is **9.4× smaller** than V80's 566.
+✅ The rate objection is dead: task 5 is bounded **≥ 250 Hz** ⇒ this lane **can** act at 18–22 Hz.
+
+### 🛑 FLIGHT ORDER — V133 FIRST
+**V133 restores V62's Lever A, which MEASURED 42× on this exact symptom** and has been off the car
+since ~V80. **Flying V134 first would confound that test.** ⇒ **V133, then V134 only if the rare
+creep grind survives it.**
+⚠ [BELIEF] the dose. **60** is chosen to sit ~9× under V80's and far under the ceiling; it is
+**not** derived from a measured creep FactorE, which the cache does not contain. If it is too
+weak the ramp has room; if too strong, the failure mode is V80's and shows as saturation on the
+first drive.
+
 ## ⭐ **NEXT CANDIDATE, SIZED BUT NOT BUILT: `FactorC Y[0]` — the damper is DEAD at creep**
 With the target corrected to **rare LOW-SPEED grind #1**, one structural fact stands out: the
 base-assist damper is **structurally zero** exactly where the symptom is.
