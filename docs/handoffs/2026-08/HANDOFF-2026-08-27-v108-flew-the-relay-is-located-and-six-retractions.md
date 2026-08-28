@@ -65,6 +65,15 @@ Below the knee it is **linear in rate (viscous)**; above it a pure **±1 sign (C
 ⭐ **`0xC4080` = 0** ⇒ no Coulomb floor; the term **vanishes with no command**, confirming
 *"command-proportional"* at the instruction level rather than by inference.
 
+### 🛑🛑 KNEE CORRECTION — **`0xC40BC` STOCK IS 600, NOT 300**
+⚠ Stated wrong repeatedly this session. From the images: **STOCK 600** → V85 6000 → V87 600 →
+**V99 300** → nine builds at 300 (V99–V107) → **V108 600**. ⇒ **V108’s edit was a REVERT to
+Honda’s own value**, and for nine builds the relay saturated at **half** Honda’s threshold
+(5.3 °/s instead of 10.6). ⭐ **That gives V108’s “best it’s ever been at ≥20 mph” a candidate
+cause that is a revert, not an invention** — still unattributed (V108 moved four cells), but the
+only one of the four that restores a Honda value the kit had overridden for nine builds.
+🛑 **And it reframes the lever: raising above 600 EXCEEDS Honda’s setting.**
+
 ### ✅ GATE 1 — CLOSED, two methods agreeing
 Exactly **one** tp-relative access image-wide at file `0x3BAB4`, zero writers. Python LE scan
 (`disp16 ∈ {0x50BC, 0x50BD}`, base-filtered) and the decompile agree on count and location.

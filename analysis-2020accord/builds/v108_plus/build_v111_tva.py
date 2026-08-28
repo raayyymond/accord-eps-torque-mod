@@ -32,13 +32,15 @@ the kit has named since V80 without ever pointing at the instruction:
 Below the knee the term is LINEAR in rate (viscous).  Above it, a pure +-1 sign (Coulomb).
 **Saturation point: `|gp-0x6abc| >= knee/12`.**
 
-    knee 300 (STOCK)  ->  |gp-0x6abc| >= 25   =  5.3 deg/s
-    knee 600 (V108)   ->  |gp-0x6abc| >= 50   = 10.6 deg/s      <- ON THE CAR
+    knee 300 (V99..V107) -> |gp-0x6abc| >= 25  =  5.3 deg/s   *** NOT stock ***
+    knee 600 (STOCK, and V108 onward) -> >= 50 = 10.6 deg/s   <- HONDA'S OWN VALUE
     knee 1200         ->  100                 = 21.2 deg/s
     knee 2400         ->  200                 = 42.4 deg/s
 
 ⭐ V108's relay corner is **10.6 deg/s -- the bottom edge of the 8-20 deg/s band in which the
-ratchet was isolated** (see below).  Stock's was 5.3 deg/s, i.e. saturated essentially always.
+ratchet was isolated**.  🛑 CORRECTED: **600 is STOCK.**  V99 halved it to 300 and it stayed
+there for NINE builds (V99..V107); V108's edit RESTORED Honda's value.  Raising ABOVE 600
+means exceeding Honda's own setting, not undoing one of ours.
 
 THE MEASUREMENT THIS BUILD EXISTS TO MAKE
 -----------------------------------------

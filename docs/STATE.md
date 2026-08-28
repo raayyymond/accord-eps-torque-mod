@@ -78,6 +78,15 @@ than that now. ⊕ **Both builds deliver the identical α2 test** on the low-spe
 about the fix is given up by choosing V111.
 ⚠ What IS given up: the `gp-0x6c2c` channel goes dark, so the Y-row solve waits for another drive.
 
+### 🛑🛑 KNEE CORRECTION — **`0xC40BC` STOCK IS 600, NOT 300**
+⚠ Stated wrong repeatedly this session. From the images: **STOCK 600** → V85 6000 → V87 600 →
+**V99 300** → nine builds at 300 (V99–V107) → **V108 600**. ⇒ **V108’s edit was a REVERT to
+Honda’s own value**, and for nine builds the relay saturated at **half** Honda’s threshold
+(5.3 °/s instead of 10.6). ⭐ **That gives V108’s “best it’s ever been at ≥20 mph” a candidate
+cause that is a revert, not an invention** — still unattributed (V108 moved four cells), but the
+only one of the four that restores a Honda value the kit had overridden for nine builds.
+🛑 **And it reframes the lever: raising above 600 EXCEEDS Honda’s setting.**
+
 ### ✅ V111 BUILT — THE RELAY PROBE.  3 PAYLOAD BYTES, NO CAVE EDIT, NO DOSE.
 ```
 builder  analysis-2020accord/builds/v108_plus/build_v111_tva.py   36/36   BASE = V109

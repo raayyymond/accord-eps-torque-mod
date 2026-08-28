@@ -31,11 +31,34 @@ LINEAR in rate (= viscous damping); above it, a pure **±1 sign** (= Coulomb fri
 **Saturation point: `|gp-0x6abc| >= knee/12`.**
 ```
    knee   |gp-0x6abc| at saturation
-    300   (STOCK)      25
-    600   (V108)       50
+    300   (V99..V107)  25      <- NOT stock; see the correction above
+    600   (STOCK/V108) 50
    1200               100
    2400               200
 ```
+
+## 🛑🛑 CORRECTION 2026-08-27 — **STOCK IS 600, NOT 300.** V108 RESTORED HONDA'S OWN VALUE.
+⚠ **Every "stock 300" statement in this note and elsewhere was WRONG.** Read from the images:
+```
+  STOCK 600  ->  V85 6000  ->  V87 600  ->  V99 300  ->  (V99..V107, NINE BUILDS at 300)  ->  V108 600
+```
+⇒ **`0xC40BC` = 600 is HONDA'S value.** V99 halved it to 300 and it stayed there for nine builds;
+**V108's edit was a REVERT to stock, not a raise above stock.**
+```
+   knee   |gp-0x6abc| at saturation   column rate
+    300   (V99..V107)      25            5.3 deg/s
+    600   (STOCK, and V108 onward)      50           10.6 deg/s
+   1200                   100           21.2 deg/s   <- ABOVE HONDA
+   2400                   200           42.4 deg/s   <- ABOVE HONDA
+```
+⭐⭐ **THIS GIVES V108's RESULT A CANDIDATE CAUSE THAT IS A REVERT.** For nine builds the relay
+saturated at **half Honda's threshold**, i.e. it went hard-Coulomb at 5.3 °/s instead of 10.6. V108
+restored Honda's corner and the operator reported ≥20 mph as *"the best it's ever been at 6×"*.
+⚠ **Still unattributed** — V108 moved four cells — but this is the only one of the four that
+restores a Honda value the kit had been overriding for nine builds.
+🛑 **AND IT REFRAMES THE LEVER.** Raising above 600 means **EXCEEDING Honda's own setting**, not
+undoing one of ours. That is a materially more consequential step than "restore the corner", and any
+dose proposal must be argued on that basis.
 
 ## ⭐ WHY THIS IS THE RIGHT TARGET
 [[accord-ratchet-and-grind-are-command-gated-saturation]] measured, and its 2-D control confirmed,
@@ -47,7 +70,7 @@ relay's amplitude is `|model|`-proportional and `|model|` tracks command, while 
 rate against the knee. **The two axes of the measurement map onto the two factors of the product.**
 
 ## ⭐⭐ THE DOSE-RESPONSE SIGNAL ALREADY EXISTS
-**V108 raised `0xC40BC` 300 → 600** (one of its four cal edits) and the operator reported
+**V108 RESTORED `0xC40BC` 300 → 600, which is HONDA'S OWN VALUE** (V99 had halved it) (one of its four cal edits) and the operator reported
 *"twenty miles an hour and above, generally, this is the best that it's ever been in that regime at
 six x"*. ⚠ **V108 changed four cells, so this is NOT attributed** — the notch revert and the
 `gp-0x6b26` Y-row revert are equally credited. But it is a positive signal on a cell that moves the
