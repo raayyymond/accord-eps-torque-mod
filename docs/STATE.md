@@ -1,5 +1,34 @@
 # STATE — living current state of the kit
 
+## 🛑 A BROAD VIRGINITY SWEEP IS THE WRONG TOOL — and V125's scorer is pre-written
+**The sweep, and why it failed.** I scanned `[0xC6000, 0xC7000)` for cells that are virgin across all
+117 builds and hold a plausible IIR-alpha value (1-512), then kept those whose implied corner lands
+in 1-40 Hz. **It returned 266 "candidates" — which is noise.** The filter cannot tell an alpha from a
+LERP table entry, a threshold or a deadband: `0xC61B8` = 102 is in the list, and the kit already knows
+it is the **pre-gain deadband**, not a filter coefficient
+([[reference-accord-pregain-deadband-c61b8]]).
+⇒ **The targeted method works, the shotgun does not.** Every lever found this session — the forward
+clamps `0xC61B2/B4`, the trim IIR `0xC63D2`, the candidate `0xC642A/C` — came from **enumerating the
+readers of a specific cell and tracing what each one does**, not from scanning for value patterns.
+✅ **Recorded so the next session does not repeat the sweep.** A cell is only a lever once its
+CONSUMER is traced; virginity and a plausible value are necessary, nowhere near sufficient.
+
+### ✅ `rlog-tools/score/score_v125_probe.py` — written BEFORE the drive
+V125 puts `gp-0x6AF0` (reader #3's output) on CAN 427 at sar 4. The scorer asks **one** question:
+```
+   delivered phase of |gp-0x6af0| vs |wheel rate| at 6-9 Hz, coherence-weighted,
+   with a MANDATORY shuffled control
+
+     near +90 deg  -> reader #3 DAMPS      -> cutting 0xC642A/C is the V94 direction, lever CLOSED
+     near -90 deg  -> reader #3 ANTI-DAMPS -> cutting it HELPS, build 194 -> ~29
+     low coherence -> NOT RESOLVED, build neither way
+```
+⊕ Same method that settled `gp-0x6b26` after V94 (+137/+139° ⇒ a real damper). ⚠ The wire carries a
+**magnitude**, so the sign is lost and only the ENVELOPE phase is recoverable — the scorer says so and
+refuses to interpret a phase whose coherence does not clear the shuffled control.
+⇒ **One drive on V125 now decides the best-shaped remaining lever**, instead of leaving it an
+unbounded guess.
+
 ## 🛑 "SAFE BY CONSTRUCTION" WAS AN OVER-CLAIM — and a better-shaped lever that I am NOT proposing
 ### The over-claim, corrected
 For V124's trim edit (`0xC63D2` 6→3) I argued *"reducing the magnitude of a feedback term cannot
