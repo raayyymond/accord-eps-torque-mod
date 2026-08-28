@@ -1,5 +1,41 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **OPERATOR CORRECTION 2026-08-28: MID-SPEED GRINDING IS FIXED — ONLY RARE LOW-SPEED REMAINS**
+Verbatim: *"Why are we talking about mid speed grinding in V133? This has been fixed, its just a
+rare low speed grinding #1 since my last drive."*
+🛑 **Two sections of band-hunting (21–26 Hz, then 26–31 Hz) were aimed at 15–40 mph — a symptom
+he no longer has.** Both are superseded as a TARGET; their METHOD findings stand (share is
+confounded; the ~19.9 Hz peak is speed-invariant, not a wheel order).
+
+### ✅ THE CREEP REGIME — where the remaining symptom actually is
+```
+   10-24 km/h, ABSOLUTE band power     6-9    13-18   18-22   21-26   26-31   30-40 CTRL
+   r22 (V112)  grinding present      1.817   1.448   3.226   2.900   0.655   0.315
+   r24 (V122)  better, rare          1.227   1.080   1.913   2.194   0.469   0.308
+   V122/V112                         0.675   0.746   0.593   0.757   0.715   0.977
+```
+✅ **18–22 Hz is the DOMINANT band at low speed (3.226, the largest of any)** and **improved the
+most** V112→V122 (**0.593**) while the **30–40 Hz control stayed FLAT at 0.977** ⇒ a **band-specific**
+improvement that tracks his own *"better"* verdict.
+⚠ **Low n** — creep windows are scarce (26–31 per route). The direction is consistent across all
+bands; only 18–22's margin over the control is clear.
+
+### ⭐ THIS PUTS V133's LEVER A EXACTLY ON TARGET
+**V62 was measured at 18–22 Hz, ENGAGED CREEP**: ×0.124 [0.036, 0.387], **42×** at |rate|
+16–32 °/s, **30–40 Hz control ~1.0**, operator: *"Original grinding at 2–5 mph is GONE!"*
+🛑 **`0x3AB76` / `0x3AC20` have been byte-STOCK since ~V80**, behind a `FROZEN` entry that
+asserted their own absence ⇒ **that is very likely why the rare low-speed grinding returned**, and
+**V133 restores them.**
+⇒ **RETRACTS this session's earlier caveat** *"V62 fixed the creep symptom, not the current one"*
+— **the current one IS the creep symptom.** V133's Lever A restore is the **direct** fix for the
+symptom that actually remains, not an incidental inclusion.
+
+### ✅ WHAT THE DRIVE MUST NOW CONTAIN — priority inverted
+`SCORING-V131-preregistered.md` listed **engaged creep 2–10 mph with real steering** as item (1) of
+four. **It is now the PRIMARY content of the drive**, because that is where both the remaining
+symptom and V62's 42× live. Mid-speed and highway drop to context. ⊕ `score_v131_grind.py` should
+be run on the **creep** stratum, and its 18–22 Hz row is the endpoint — **not** 21–26 Hz.
+
 ## 🛑🛑 **CORRECTION: BAND *SHARE* WAS CONFOUNDED — IN ABSOLUTE POWER ONLY 26–31 Hz MATCHES**
 Last section I selected 21–26 Hz using band **SHARE**. **Share is normalised**, so it moves when
 *either* end moves — the exact trap already recorded in this session (*"a ratio moves when either
