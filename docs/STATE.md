@@ -1,5 +1,50 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **RETRACTION: THE r26/NOTCH-GATE COUPLING IS *UNRESOLVED* — I MARKED IT [EVIDENCE] AND IT IS NOT**
+The section above closes *"notch always on"* by asserting that opening the gate **enables the r26
+pump**, and marks it **[EVIDENCE]**. **That mark is withdrawn.** The suppression runs through
+`gp-0x6b5e`, and I never established its value.
+```c
+   uVar11 = (gp-0x6b5e != 0);
+   if ((uVar11 == 0) || (iVar17 = uVar11 * (uVar13 == 0), uVar13 == 0)) { ...compute r26... }
+       uVar11 == 0  ->  the r26 block ALWAYS runs, the GATE IS IRRELEVANT
+       uVar11 != 0  ->  r26 is forced to ZERO whenever the gate is shut
+```
+⇒ **the whole coupling hinges on whether `gp-0x6b5e` is non-zero, and that was ASSUMED.**
+
+### THE PRODUCER, READ PROPERLY (`FUN_000361c8`, the only writer)
+```c
+   sVar6 = LERP(gp-0x6bda, X @ tp+0x76CE, Y @ tp+0x76D8)
+   sVar6 = gp-0x6752 * ((sVar6 * cal(0xC63C2)) >> 10)      // x(-1) x 1024
+   gp-0x6b5e = +-sVar6                                      // sign from gp-0x6bf0
+   X = [-384, -128, 128, 294, 384]      Y = [0, 4762, 4762, 717, 0]      cal(0xC63C2) = 1024
+```
+🛑 **TWO errors of my own in one pass, both the same class — assuming a value instead of
+reading it:**
+1. I first wrote the closure without checking `gp-0x6b5e` at all.
+2. Then "refuted" it with a script that put `gp-0x6bda = 0` in the **below-X[0]** branch returning
+   `Y[0] = 0`. **Wrong** — 0 lies **mid-table between Y[1] and Y[2] = 4762**, so if the index really
+   were 0 the output would be **4762**, i.e. **non-zero**, i.e. the coupling WOULD bite.
+3. And the index itself is unknown: the memory `accord-return-centre-and-detent-dead-engaged` says
+   the ***"`gp-0x6bda` gate"*** reads 0.0000 — that is a **derived boolean**, NOT the raw cell.
+
+### ✅ THE HONEST STATE
+```
+   does opening the notch gate enable the r26 pump?      UNRESOLVED
+   what would settle it                                  the DISTRIBUTION of gp-0x6bda (or of
+                                                         gp-0x6b5e directly) on an engaged drive
+   does it change the recommendation?                    NO
+```
+⭐ **V145 is unaffected**: it deliberately does **not** move `0xC64FA` — it MEASURES the gate. If
+the gate already opens with useful duty, the widening question never arises and the coupling is
+moot. Only if the gate reads shut does this become load-bearing, and then `gp-0x6b5e` must be
+**probed, not reasoned about**.
+⭐ **THE LESSON, WHICH THIS SESSION HAS NOW PAID FOR FOUR TIMES:** *the clamp blamed for V133;
+`0xC64FA` vs `0xC64FD`; the 18-vs-8 reader count; and now this.* **Every one was a value or an
+identity ASSUMED rather than read.** 🛑 **Mark a claim [EVIDENCE] only when the number behind it
+was actually read from the image or the logs — a decompile showing WHERE a value comes from is not
+the same as knowing WHAT it is.**
+
 ## 🛑🛑 **`0xC64FA` FULLY CHARACTERISED — AND "NOTCH ALWAYS ON" IS CLOSED BY A REAL MECHANISM**
 Two corrections and one closure, from a reader census plus the disassembly.
 
