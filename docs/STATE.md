@@ -1,5 +1,28 @@
 # STATE — living current state of the kit
 
+## 🛑 THE KNEE HAS **NO MEASURED** DOSE-RESPONSE ON GRIND #1 — an upgrade withdrawn before it was made
+I was about to strengthen V121's claim on grind #1 using the operator's own dose-response (constant
+→ *"rare… a few moments"* exactly when knee went 600→1800). **Tested it first; it does not
+reproduce.** 17 routes, band power as a SHARE of each window's own 1-40 Hz power:
+```
+   knee   n_routes   18-22 Hz    26-31 Hz    6-9 Hz
+    300       8        0.0718      0.0658     0.0427
+    600       7        0.0930      0.0616     0.0659
+   1800       2        0.0924      0.0532     0.0663
+     18-22  rho +0.356 p 0.161   |   26-31  rho -0.158 p 0.546
+```
+🛑 **18-22 Hz goes the WRONG WAY**; 26-31 Hz is flat. ⇒ **V121's claim on grind #1 stays as
+written — it does NOT address it.**
+⚠ Not a refutation of the operator's report, for two reasons: **n = 2 routes at knee 1800**; and
+🛑 **band SHARE is not severity** — it is normalised by broadband power, so a change that lowers
+broadband more than the band **raises the share while the absolute level falls**. The 6-9 Hz
+reference row shows the hazard: it *rises* with knee on share (rho +0.477), opposite to the harmonic
+and on-road results. **The right statistic is absolute band level with exposure controlled, and this
+corpus cannot deliver it at n=2. OPEN.**
+⇒ V121 stands on the **harmonic** result alone (itself BELIEF). The operator's grind-#1
+dose-response is also **confounded** — V112 moved `knee` **and** `K1` together — but remains the best
+on-car signal the kit has for grind #1.
+
 ## 🛑 A FABRICATED "MEASURED" VALUE IN V121'S PROVENANCE — caught, removed, asserted against
 Deriving `build_v121_tva.py` I wrote `MEASURED_DUTY = {..., 2400: 0.0484, 3000: 0.0370, 3600: 0.0000}`.
 **`0.0370` was invented** by eye from the neighbouring rungs, inside a dict printed as
