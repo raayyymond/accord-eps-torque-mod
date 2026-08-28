@@ -62,3 +62,34 @@ and be engagement-conditional but command-independent
 ([[accord-antidamping-is-a-state-effect-of-engaging]]).
 
 Related: [[accord-the-742hz-mode-is-stocks-and-our-q-is-lower]]
+
+## 🛑🛑 CORRECTION, SAME DAY — THE "81 RUNS" DIFF USED THE WRONG BASELINE
+The file I diffed against was **`SUPERSEDED-DO-NOT-FLASH-_v83a_FACTORE.STOCK-GAINA.STOCK_plain_image.bin`**
+— that is **V83a**, whose filename contains "STOCK" only because *FactorE was reverted to stock*.
+**The real stock dump is `accord-firmwares/analysis-2020accord/stock_fw_dump/code.bin`.**
+⇒ the "81 calibration runs" figure and every stock-value in it are **V112-vs-V83a**, not vs stock.
+
+### THE TRUE V112-vs-STOCK PICTURE — **29 runs** in the main cal block
+```
+  0xC40BC   600 -> 1800   relay knee          0xC6446    512 -> 5244   Lever B
+  0xC40D2   102 ->  612   K1  (x6 on STOCK)   0xC649B     00 -> 01
+  0xC40DC    22 ->   14   alpha2              0xC64B4  5 B -> 0xFF
+  0xC4B34  164 B cave (stock is all 0xFF)     0xC64DE     11 -> 1b
+  0xC61B3/B5  512 -> 3072  arb clamps         0xC659A..0xC65CE  corridor floats 1.0f -> 5.0f
+  0xC61C0   6 B -> 0xFF                       0xC674F..0xC676D  boost floor
+  0xC62EA   320 ->    0   🛑 LOW-SPEED STEER LOCKOUT REMOVED
+  0xC6CD0  65535 -> 5346  the forward gain    (+ 0xD7A5C/6C friction Y x3, V106)
+```
+⭐ **`0xC6CD0`'s stock value is 65535, NOT 3564** — confirming the caution above: V57 repointed the
+forward reader onto an unset cell, so there is no meaningful "stock gain" on it.
+⭐⭐ **ALL FOUR base-assist factor tables (B/C/D/E) are BYTE-IDENTICAL TO STOCK on this car's live
+indices 24/26/27**, resolved through their own pointer arrays (`0xC9CCC/0xC9E9C/0xC9DB4/0xC9F84`).
+⇒ **the V74–V86 damper work is either on dead records or has been fully reverted. The base-assist
+damper on this car is Honda's.** The `0xCE5xx/0xCF5xx/0xD0xxx/0xD2xxx` zeroings I flagged are V83a
+edits on records this car does not select.
+⭐ **`0xC62EA` 320 → 0 removes Honda's low-speed steer lockout** (~5 km/h; failing it sets
+STEER_STATUS = 3 and kills the authority ramp). ⇒ **at 0–5 km/h stock has essentially NO LKAS
+authority and we have full authority**, so the 6.2–6.6× figure in the 0–15 km/h bin is **partly a
+not-like-for-like comparison** and must not be quoted as a pure gain multiplication.
+⚠ Grind #1 lives at 5–10 mph = 8–16 km/h, **above** the lockout, so the lockout is unlikely to be
+grind #1's mechanism — but it does contaminate the lowest Re(Z) bin.
