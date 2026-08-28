@@ -51,3 +51,31 @@ the int16 ceiling k_max = 3.3335** — is a large part of why V112 is his best b
 ✅ **The honest statement to the operator: the low LKAS acceleration is the PRICE of the fix that is
 working, it is measured rather than assumed, and buying it back on this cell costs the oscillation.**
 Any acceleration gain must come from a **different** lever — not this one.
+
+## ⚠ HOW MUCH DOES THE DAMPER ACTUALLY COST? — measured, NOT resolved, and the shape is informative
+2026-08-28. The row went **×1.5 (V91..V104) → ×3.0 (V107..V121)**, so the corpus contains a natural
+experiment on the operator's exact complaint. Outcome: **p99 |d(rate)/dt| engaged vs manual within
+the same drive**, so route exposure cancels. Only **4 routes** have ≥3,000 frames in *both* arms.
+```
+   route build   dose   eng acc    man acc   eng/man   eng rate p99
+   r9e   V103    1.5x   4816.9     1120.2    4.300        56.4
+   r7f   V96     1.5x   1308.8      726.0    1.803        76.0
+   r1e   V107    3.0x   2426.6     1612.2    1.505        69.7
+   r21   V111    3.0x   1135.5      606.2    1.873        84.5
+
+   dose    n   median eng/man acc    median engaged rate p99
+   1.5x    2        3.051                  66.2 deg/s
+   3.0x    2        1.689                  77.1 deg/s
+   x3.0 / x1.5 = 0.554   route-bootstrap CI [0.350, 1.039]
+```
+🛑 **NOT RESOLVED** — the CI spans 1.0, and **n = 2 per arm is below the ≥2-routes-per-arm minimum
+this kit set for itself**, let alone enough to separate a 1.8× effect.
+⭐ **But the SHAPE is informative and cuts against the simple story:** engaged **rate** p99 went **UP**
+with the bigger damper (66.2 → 77.1 deg/s). ⇒ if the damper costs anything it is **acceleration
+headroom, not top steering velocity** — which is a narrower and more tolerable cost than
+*"the LKAS feels heavy"* implies, and it matches the operator's own wording: he reports
+**acceleration AND velocity** low, but the velocity half is not visible here.
+⇒ **[BELIEF, point estimate ~0.55× on acceleration ratio, unresolved.]** Do not quote it as a
+measured cost. ✅ It would resolve with **one more drive in each dose arm** — but the 1.5× arm is
+historical, so in practice this is answered by **instrumenting the NEXT build**, not by re-flying an
+old one.

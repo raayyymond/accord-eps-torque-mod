@@ -1,5 +1,35 @@
 # STATE — living current state of the kit
 
+## ⚠ THE DAMPER'S COST IN ACCELERATION — measured, NOT resolved, but the SHAPE is informative
+The engaged friction row went **×1.5 (V91..V104) → ×3.0 (V107..V121)**, a natural experiment on the
+operator's own complaint. Outcome = **p99 |d(rate)/dt| engaged vs manual within the same drive**
+(exposure cancels). Only 4 routes carry ≥3,000 frames in *both* arms:
+```
+   dose    n   median eng/man acc ratio   median engaged rate p99
+   1.5x    2          3.051                     66.2 deg/s
+   3.0x    2          1.689                     77.1 deg/s
+   x3.0 / x1.5 = 0.554   route-bootstrap CI [0.350, 1.039]
+```
+🛑 **NOT RESOLVED** — CI spans 1.0 and **n = 2 per arm is below this kit's own stated minimum.**
+⭐ **But the shape cuts against the simple story: engaged RATE p99 went UP (66.2 → 77.1 deg/s).**
+⇒ if the damper costs anything it is **acceleration headroom, not top steering velocity.** The
+operator reports both as low; **the velocity half is not visible in the data.**
+⇒ **[BELIEF, ~0.55× point estimate, unresolved]** — do not quote as a measured cost. It resolves by
+**instrumenting the next build**, not by re-flying a historical dose.
+
+### ⇒ WHERE THE OSCILLATION WORK STANDS, CONSOLIDATED
+| lever | status |
+|---|---|
+| **relay knee** (V121 `0xC40BC` 3000 / `0xC40D2` 1020) | **BUILT, 40/40.** Gain held exactly at V112's ⇒ bit-identical ≤31.8 deg/s, more assist above. Harmonic rationale **weakened**; effect **UNKNOWN**. **The recommended flight.** |
+| **engaged friction row** (the 6-9 Hz damper) | **DO NOT CUT** — V94 cut it 6× and the drive was aborted; delivered +137° vs wheel rate ⇒ real damper. Only **1.11× headroom** at `Y[0]` before int16 overflow. |
+| **Lever B** | **already on the car** (V104..V121) — best measured grind-#1 fix. |
+| **Lever A** (V62 `sar`×2) | absent from all 25 builds, **correctly** — its r24 half caused grind #2. |
+| rate-scheduled `Kd` · FactorD · table (b) · `0xC64DE` · arbitration restore · base-assist damper | **closed** — each on its own control or arithmetic. |
+| **grind #1** | **unmeasurable on the current corpus** — no creep exposure since V107. |
+🛑 **Two gating measurements, neither needing a build:** (1) **one stock-configuration drive** takes
+the angle-gating result from p = 0.100 to p = 0.018; (2) **a creep-inclusive drive OR operator
+timestamps** makes grind #1 measurable at all.
+
 ## 🛑🛑 THE ADDED LKAS "MASS" **IS** THE DAMPER THAT WORKS — a build proposal stopped one step short
 I had assembled: the engaged friction row is the only engaged asymmetry · it scales `gp-0x6b26` ·
 `gp-0x6c2c` is **acceleration**, pinned in assembly ⇒ `−K·α` is **apparent inertia** ⇒ *"we add 3×
