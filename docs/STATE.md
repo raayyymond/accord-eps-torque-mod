@@ -1,5 +1,36 @@
 # STATE — living current state of the kit
 
+## ⭐ TABLE (b) IS THE **ANGLE HANDLE INSIDE THE OBSERVER** — orthogonal to the K1/knee confound
+Decompiled `FUN_0003b8f6`:
+```
+   uVar17 = gp-0x6a10                                 <- ABSOLUTE STEERING ANGLE
+   if (uVar17 < 0x2711) { LERP tp+0x7b66 (X) / tp+0x7b80 (Y) }   = 0xC6B66 / 0xC6B80 = table (b)
+   fVar18 = fVar13 * uVar17 * 0.0009765625 + fVar18;  <- scales a model component INTO the model
+```
+⇒ **table (b) is ANGLE-SCHEDULED and feeds `|model|` — the exact amplitude that multiplies the
+Coulomb signum** (`friction_in = |model|*K1/1024*fVar13 + K0/1024*fVar13`). **It sets part of the
+angle-dependence that makes the symptom angle-gated.**
+```
+   X (deg)  0.00 0.85 1.60 2.12 2.50 3.00 ... 11.94       Y  899 908 981 1060 1083 1084 (flat)
+   rise 899 -> 1084 = 1.21x, saturating at 2.5 deg
+```
+⚠ `|model|` rises **7-9×** with angle and table (b) supplies only **1.21×** ⇒ **most of the rise is
+the model itself, not this table.** Do not oversell it.
+✅ **Why it still matters: it is ORTHOGONAL.** Every flown mod sits on `K1/knee = 0.34`
+([[accord-k1-and-knee-are-perfectly-confounded]]); table (b) is on **neither** axis — it changes
+neither the small-signal gain nor the relay shape ⇒ **an independent lever that adds no new point to
+the confounded line**, and **angle-targeted by construction**: flattening `Y` to **899** cuts the
+high-angle contribution ~**17 %** and **touches nothing below 2.5°**.
+🛑 **Modest**, and [[accord-factord-is-the-angle-error-lever]] calls table (b) *"DEAD as a shaped
+lever"* because **88.6 % of engaged driving is in its flat first segment** — true for broadband
+driving, but the **angle-gated** symptom lives in the other 11.4 %. **A different question, not a
+contradiction.** [BELIEF; NOT proposed as a build yet.]
+✅ **CLOSED, so it is not re-asked:** the relay's `12` is a **hardcoded `0xc` immediate, not a cal**
+⇒ **no third handle** exists to hold the gain while varying `K1` independently of `knee`. **The
+confound is structural; separating them requires a gain change (V113).** ⊕ Instruction-level address
+confirmations: `knee` `tp+0x50bc`=`0xC40BC` · `K1` `tp+0x50d2`=`0xC40D2` · `K0` `tp+0x5080`=`0xC4080`
+· friction EMA pole `tp+0x50d0`=`0xC40D0` — all match the kit's documented addresses.
+
 ## 🛑🛑 `K1` AND `knee` ARE **PERFECTLY CONFOUNDED** — a design critique of V121
 ```
    K1=204 knee= 300 -> V100..V107        K1=204 knee= 600 -> V90,V91,V92,V96,V111
