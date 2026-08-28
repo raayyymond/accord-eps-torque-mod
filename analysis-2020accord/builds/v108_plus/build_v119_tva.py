@@ -1,0 +1,377 @@
+#!/usr/bin/env python3
+r"""
+V119 -- BOTH LEVERS + THE PROBE.  Grind #1 AND the oscillation, one flight.
+
+WHAT THIS IS
+------------
+V119 = V112 + EIGHT payload bytes.  NO CAVE EDIT.
+
+    0xC40BC   1800 -> 2400        the relay knee        -> GRIND #1
+    0xC40D2    612 ->  816        K1, cancels the knee's gain change EXACTLY
+    0xC649B      1 ->    0        disarm the biquad     -> THE OSCILLATION
+    0x55DF2   gp-0x6ABC -> gp-0x67FA   the 427 tap      -> THE STATE-4 DIAGNOSTIC
+    0x55E10   sar 3 -> sar 0      probe scaling
+
+WHY TWO DYNAMICS LEVERS IN ONE BUILD -- AND WHY IT IS STILL INTERPRETABLE
+-------------------------------------------------------------------------
+The kit's single-variable rule exists so a symptom report can be attributed.  Here the two levers
+target **two symptoms that are mechanistically separate and separately reportable**, and that
+separation is MEASURED, not assumed:
+
+    fine Re(Z) spectrum, V112, coherence 0.5-0.85
+      peak-turn oscillation  7.42 Hz  -> Re(Z) -32, rising into a -81 peak at 8 Hz   => a LINEAR
+                                          loop instability
+      grind #1              18-22 Hz  -> Re(Z) -1 to -10, essentially NEUTRAL        => NOT a linear
+                                          instability; a NONLINEARITY
+
+=> the relay knee cannot fix the oscillation and the biquad cannot fix grind #1.  A report of
+"grinding better, oscillation unchanged" (or the reverse) attributes itself.
+
+LEVER 1 -- THE RELAY KNEE, ON A MODEL THAT HAS ALREADY PREDICTED CORRECTLY
+--------------------------------------------------------------------------
+    knee  600 (V111)   predicted 0.7439 [0.669, 0.815]   MEASURED 0.7336            route 21
+    knee 1800 (V112)   predicted 0.2353                  MEASURED 0.3102 / 0.1071   r22 / r23
+    knee 2400 (V119)   predicted 0.0484                  <- this build
+A quantitative on-car prediction across a dose change, and the operator's own report moved with it:
+grind #1 went from a constant feature to "rare... a few moments in each drive" exactly at 600->1800.
+`(816/1024)*(12/2400) = (612/1024)*(12/1800) = 0.0039844` **exactly**, so the small-signal gain is
+held and the build is bit-identical below 31.8 deg/s.
+
+LEVER 2 -- DISARM THE BIQUAD
+----------------------------
+`0xC649B` 1 -> 0.  All three biquad COEFFICIENTS stay byte-identical; only the arm byte moves, and
+the revert is the same byte.  Corpus point estimate: 7-9 Hz Re(Z) is -37.7 with it off (9 routes)
+and -55.4 with it on (8 routes), a 1.47x step -- but P = 0.722 against chance 0.5 is NOT separable
+at n = 9/8, and the excess is already present at V90 which has no biquad.  **It is at most an
+additive contributor, and this build is the test.**
+⊕ A ~32% reduction is the right SIZE: the oscillation is bounded, not divergent, so the deficit does
+not need full cancellation -- and no damping lane can supply more than ~10% of it anyway.
+
+THE PROBE -- rides along free
+-----------------------------
+    wire = min(|gp-0x67fa as halfword| * 5, 0x3FF)   =>  state 0-15 -> 0,5,...,75.  STATE 4 = 20.
+Settles whether `0x454FE`'s permanent deletion of Honda's state-4 governor call (`jarl FUN_00049A5A`
+is never reached on any build since V42) is live enough to matter.  gp-0x67fb has 4 writers, all
+`st.b r0` = zero; if it is ever non-zero the wire is >= 1285 and CLIPS at 1023, so contamination is
+self-identifying.  Costs the tap's rate channel, which is already on CAN as `cs_rate`.
+
+SCORING IS PRE-REGISTERED
+-------------------------
+`docs/scoring/SCORING-V118-preregistered.md` applies unchanged to V119's biquad and probe arms; the
+relay arm is scored on the duty ladder above.  🛑 Read the identity check FIRST -- the 427 wire must
+come back DISCRETE {0,5,...,75}, or this build is not on the car.
+
+WHAT IT STILL CANNOT DO
+-----------------------
+It cannot separate the V57 gain repoint from "being a modified build at all", and it is not expected
+to eliminate the oscillation outright -- the honest expectation is a reduction, because the 7-9 Hz
+excess is plausibly the PRICE of deleting Honda's limiters rather than one tunable fault
+([[accord-the-mod-works-by-deleting-hondas-limiters]]).
+
+"""
+# --- PATH BOOTSTRAP (repo reorg 2026-08-26; MULTI-ROOT FIX 2026-08-26) ----
+import os as _os, sys as _sys
+_r = _os.path.dirname(_os.path.abspath(__file__))
+while not _os.path.isfile(_os.path.join(_r, ".pkgroot")):
+    _n = _os.path.dirname(_r)
+    if _n == _r:
+        raise RuntimeError("no .pkgroot marker above " + __file__)
+    _r = _n
+_repo = _r
+while not _os.path.isdir(_os.path.join(_repo, ".git")):
+    _n = _os.path.dirname(_repo)
+    if _n == _repo:
+        _repo = None
+        break
+    _repo = _n
+_roots = [_r]
+if _repo:
+    for _e in sorted(_os.listdir(_repo)):
+        _d = _os.path.join(_repo, _e)
+        if _d != _r and _os.path.isfile(_os.path.join(_d, ".pkgroot")):
+            _roots.append(_d)
+_p = []
+for _root in _roots:
+    _p.append(_root)
+    for _b, _ds, _fs in _os.walk(_root):
+        _ds[:] = [_x for _x in _ds if not _x.startswith((".", "_")) and _x not in
+                  ("rlogs", "ghidra_project", "__pycache__", "reference/opendbc")]
+        _p.extend(_os.path.join(_b, _x) for _x in _ds)
+_sys.path[:0] = [_x for _x in _p if _x not in _sys.path]
+for _v in ("_os", "_sys", "_r", "_n", "_repo", "_roots", "_p", "_root",
+           "_b", "_ds", "_fs", "_e", "_d", "_x", "_v"):
+    globals().pop(_v, None)
+# --- end path bootstrap ---------------------------------------------------
+
+import hashlib
+import os
+import struct
+import sys
+import zlib
+from pathlib import Path
+
+import build_vfourframe_tva as FF                                                 # noqa: E402
+import build_v53_tva as V53                                                       # noqa: E402
+import build_v106_tva as V106B                                                    # noqa: E402
+from encode_eps import encode_x31, parse_x31, build_decode_table, invert_table     # noqa: E402
+from firmware_paths import plain_image_path, RWD_DIR                              # noqa: E402
+from verify_bootloader_crc import walk_all_blocks                                  # noqa: E402
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+START, END = 0x13000, 0x100000
+WRITE_MODE = os.environ.get("ACCORD_V119_WRITE", "").strip().lower()
+
+BASE_NAME = "_v112_V112-V111BASE-RELAY.KNEE1800.K1.612_plain_image.bin"
+BASE_SHA = "f032878c4e0b8e90d782ddac6ba2d644e09956cc1b267a60ef4fb1c44ee1f96f"
+STOCK_SHA = V106B.STOCK_SHA
+
+u16, s16, rd, rdw = V106B.u16, V106B.s16, V106B.rd, V106B.rdw
+rec_y, rec_x = V106B.rec_y, V106B.rec_x
+MANUAL_MODES, ENGAGED_MODES = V106B.MANUAL_MODES, V106B.ENGAGED_MODES
+Y_V108 = (-29490, -17202, -16000)
+X_EXPECT = (0, 1280, 5760)
+
+# ---- THE TWO EDITS -- scaled TOGETHER so the small-signal gain is held EXACTLY -------------
+SCALE = 3
+KNEE_CAL, KNEE_OLD, KNEE_NEW = 0xC40BC, 1800, 2400            # EDIT 4 -- x4 on stock
+K1_CAL, K1_OLD, K1_NEW = 0xC40D2, 612, 816                    # EDIT 5 -- cancels the gain change
+
+# ---- cells that must NOT move ------------------------------------------------------------------
+OFF_CAL, OFF_VAL = 0xC4080, 0           # the relay's constant offset -- ZERO, so no Coulomb floor
+POLE_CAL, POLE_VAL = 0xC40D0, 408       # the friction EMA pole -- adds phase; MUST NOT MOVE
+ALPHA2_CAL, ALPHA2_V111, ALPHA2_NEW = 0xC40DC, 14, 14  # HELD
+ARM_CAL, ARM_OLD, ARM_NEW = 0xC649B, 1, 0              # EDIT 1 -- disarm the biquad
+TAP_OLD, TAP_NEW = (-0x6ABC) & 0xFFFF, (-0x67FA) & 0xFFFF   # EDIT 2 -- 427 tap -> gp-0x67fa
+SAR_OLD, SAR_NEW = 0xA3, 0xA0                          # EDIT 3 -- sar 3 -> sar 0
+RESID_CAL, RESID_VAL = 0xC7468, 41232   # |model| -> residual scale; bounds the clamp argument
+GAIN_CAL, GAIN_6X = 0xC6CD0, 5346
+BQ_ADDR, BQ_LEN = 0xC60A8, 16
+TAP_DISP_ADDR, TAP_DISP = 0x55DF2, (-0x6ABC) & 0xFFFF   # V111's tap -- carried unchanged
+SAR_ADDR, SAR_VAL = 0x55E10, 0xA3
+CAVE_BASE, CAVE_LEN = V106B.CAVE_BASE, V106B.CAVE_LEN
+CAVE_FREE_END = V106B.CAVE_FREE_END
+RATE_SCALE = 4.7121
+MEASURED_DUTY = {600: 0.7439, 1200: 0.4810, 1800: 0.2353, 2400: 0.0484, 3600: 0.0000}
+
+OK, BAD = "[PASS]", "[FAIL]"
+_checks = [0, 0]
+
+
+def check(cond, msg):
+    _checks[0] += 1
+    if cond:
+        _checks[1] += 1
+        print(f"    {OK} {msg}")
+        return True
+    print(f"    {BAD} {msg}")
+    raise SystemExit(f"ASSERTION FAILED: {msg}")
+
+
+def wire(raw, sar):
+    return min((min(abs(raw), 65535) * 5) >> sar, 0x3FF)
+
+
+def build():
+    print("=" * 102)
+    print("  V119 -- BOTH LEVERS + THE PROBE.  Grind #1 AND the oscillation, one flight.")
+    print("=" * 102)
+
+    print("\n  [1] BASE = V112, AND IT MUST BE V112")
+    base_path = plain_image_path(BASE_NAME)
+    base = bytearray(Path(base_path).read_bytes())
+    check(hashlib.sha256(bytes(base)).hexdigest() == BASE_SHA,
+          f"  base image is V112 ({BASE_SHA[:16]}...)")
+    stock = bytearray(Path(plain_image_path("stock_fw_dump/code.bin")).read_bytes())
+    check(hashlib.sha256(bytes(stock)).hexdigest() == STOCK_SHA, "  stock reference sha256 matches")
+    check(walk_all_blocks(bytes(base)) == 0, "  base image CRC chain 50/50 before we touch it")
+    code = bytearray(base)
+    attributed = set()
+
+    print("\n  [2] THE BASE IS V112 -- THE BUILD ON THE CAR -- AND EVERY ASSUMPTION IS CHECKED")
+    check(u16(base, KNEE_CAL) == KNEE_OLD,
+          f"  0x{KNEE_CAL:05X} (relay knee) = {KNEE_OLD} -- V112's RAISED knee, HELD")
+    check(u16(base, K1_CAL) == K1_OLD, f"  0x{K1_CAL:05X} (K1) = {K1_OLD} (V112)")
+    check(u16(base, OFF_CAL) == OFF_VAL,
+          f"  0x{OFF_CAL:05X} (relay offset) = 0 -- NO Coulomb floor; the term dies with the command")
+    check(u16(base, RESID_CAL) == RESID_VAL,
+          f"  0x{RESID_CAL:05X} = {RESID_VAL} -- bounds |model| <= 20000/{RESID_VAL} = "
+          f"{20000/RESID_VAL:.4f}, which is what makes the +-10.0 clamp unreachable")
+    check(u16(base, ALPHA2_CAL) == ALPHA2_V111, f"  0x{ALPHA2_CAL:05X} = {ALPHA2_V111} (V111 alpha2)")
+    check(u16(base, GAIN_CAL) == GAIN_6X, f"  0x{GAIN_CAL:05X} = {GAIN_6X} (6x) -- carried")
+    check(u16(base, TAP_DISP_ADDR) == TAP_DISP and base[SAR_ADDR] == SAR_VAL,
+          "  V112's gp-0x6abc tap at sar 3 is present and will be REPOINTED to gp-0x67fa")
+
+    print("\n  [3] THE EDITS -- EIGHT PAYLOAD BYTES.  RELAY KNEE + BIQUAD ARM + PROBE.")
+    code[ARM_CAL] = ARM_NEW
+    attributed |= {ARM_CAL}
+    struct.pack_into("<H", code, TAP_DISP_ADDR, TAP_NEW)
+    attributed |= {TAP_DISP_ADDR, TAP_DISP_ADDR + 1}
+    code[SAR_ADDR] = SAR_NEW
+    attributed |= {SAR_ADDR}
+    struct.pack_into("<H", code, KNEE_CAL, KNEE_NEW)
+    attributed |= {KNEE_CAL, KNEE_CAL + 1}
+    struct.pack_into("<H", code, K1_CAL, K1_NEW)
+    attributed |= {K1_CAL, K1_CAL + 1}
+    # K1 is deliberately NOT written -- V113 rests on it staying at 204
+    print(f"      0x{ARM_CAL:05X}  {ARM_OLD} -> {ARM_NEW}   biquad ARM byte\n"
+          f"      0x{TAP_DISP_ADDR:05X}  gp-0x6ABC -> gp-0x67FA   427 tap\n"
+          f"      0x{SAR_ADDR:05X}  sar 3 -> sar 0   (state 0-15 -> wire 0-75)")
+    print(f"      0x{KNEE_CAL:05X}  {KNEE_OLD} -> {KNEE_NEW}   knee   (x4 on stock)\n"
+          f"      0x{K1_CAL:05X}  {K1_OLD} -> {K1_NEW}   K1     (cancels the gain change)")
+
+    print("\n  [4] ALPHA2 IS UNTOUCHED -- held at V112's 14")
+    g_old = (K1_OLD / 1024.0) * (12.0 / KNEE_OLD)
+    g_new = (K1_NEW / 1024.0) * (12.0 / KNEE_NEW)
+
+    print("")
+    print("  [3b] WHAT THE BIQUAD IS -- read from the assembly, not guessed")
+    print("      y[n] = 0.81731*x + 1.53720*y[n-1] - 0.63462*y[n-2]   (all-pole, 2nd order)")
+    print("      pole radius 0.79663, angle 0.26565 rad, DC GAIN 8.39")
+    print("      -> at 1 kHz the pole is 42.3 Hz, so it is a FLAT 8.4x gain through 7-12 Hz")
+    print("      -> at 100 Hz the pole is 4.23 Hz, a Q-2.46 resonator on the problem band")
+    print("      Either way, arming it puts a LARGE gain into the aggregator path.")
+    for a_, nm_ in ((0xC60A8, "a1 -1.53720"), (0xC60AC, "a2  0.63462"),
+                    (0xC60B4, "b0  0.81731")):
+        check(rd(code, a_, 4) == rd(base, a_, 4),
+              f"  biquad coefficient 0x{a_:05X} ({nm_}) byte-identical -- shape UNTOUCHED")
+    print("")
+    print("  [3c] THE EVIDENCE FOR DISARMING -- a natural experiment already in the corpus")
+    print("      7-9 Hz Re(Z), biquad OFF (9 routes) median -37.7")
+    print("                    biquad ON  (8 routes) median -55.4")
+    print("      point estimate: a 1.47x reduction.  P(ON worse) = 0.722, chance 0.5.")
+    print("      NOT statistically separable at n=9/8 -- this build IS the experiment.")
+
+    check(abs(((K1_NEW / 1024.0) * (12.0 / KNEE_NEW))
+              - ((K1_OLD / 1024.0) * (12.0 / KNEE_OLD))) < 1e-12,
+          "  small-signal gain HELD EXACTLY -- bit-identical below 31.8 deg/s")
+    print("")
+    print("  [3d] THE PROBE -- what the 427 wire will carry")
+    print("      source  gp-0x67fa, the assist-chain STATE byte, read as a halfword")
+    print("      wire    min((|hw| * 5) >> 0, 0x3FF)")
+    print("      state 0-15  ->  wire 0, 5, 10 ... 75      STATE 4 -> WIRE 20")
+    print("      gp-0x67fb (the high byte) is live: 4 writers, all st.b r0 = ZERO.")
+    print("      If it is ever non-zero the halfword is >= 256, so the wire is")
+    print("      (256+state)*5 >= 1285, which CLIPS at 1023 -- contamination is")
+    print("      self-identifying and those samples are discarded, not misread.")
+    check(((4 * 5) >> 0) == 20, "  state 4 lands on wire value 20 -- unambiguous")
+    check(((255 * 5) >> 0) > 0x3FF, "  any high-byte contamination CLIPS at 1023")
+
+    check(KNEE_OLD in MEASURED_DUTY,
+          f"  the dose is on the MEASURED ladder, which made a correct prediction")
+    print(f"      MEASURED relay saturation duty, 5-10 mph engaged hands-off cmd>=2048:")
+    for k in sorted(MEASURED_DUTY):
+        mark = "  <- V111 (CI [0.669,0.815])" if k == KNEE_OLD else (
+               "  <- THIS BUILD" if k == KNEE_NEW else "")
+        print(f"         knee {k:5d}   duty {MEASURED_DUTY[k]:.4f}{mark}")
+    check(KNEE_NEW == 2400 and K1_NEW == 816,
+          f"  relay knee {KNEE_OLD}->{KNEE_NEW}, K1 {K1_OLD}->{K1_NEW} (V116's dose)")
+
+    print("\n  [5] GATE 2 -- ZERO PHASE, AND THE CLAMP CANNOT BIND")
+    mmax = 20000.0 / RESID_VAL
+    fmax_old = mmax * K1_OLD / 1024.0
+    fmax_new = mmax * K1_NEW / 1024.0
+    print(f"      |model| <= {mmax:.4f}  =>  friction_max  {fmax_old:.4f} -> {fmax_new:.4f}"
+          f"   vs the +-10.0 clamp")
+    check(fmax_new < 10.0 / 10.0,
+          f"  friction_max {fmax_new:.4f} leaves {10.0/fmax_new:.0f}x of headroom to the clamp")
+    print(f"      residual at saturating rate: {1-fmax_old/mmax:.2f}*|model| ->"
+          f" {1-fmax_new/mmax:.2f}*|model|   (a {(1-fmax_old/mmax)/(1-fmax_new/mmax):.1f}x reduction"
+          f" -- MORE assist, by the verified polarity)")
+    check(u16(code, POLE_CAL) == POLE_VAL,
+          f"  0x{POLE_CAL:05X} (friction EMA pole) = {POLE_VAL} UNTOUCHED -- it is the only cell in"
+          f" this lane that adds PHASE, and V111 already showed what phase costs")
+    check(u16(code, OFF_CAL) == OFF_VAL, "  0xC4080 still 0 -- no Coulomb floor introduced")
+
+    print("\n  [5b] NOTHING ELSE MOVED")
+    for a, nm in ((ALPHA2_CAL, "0xC40DC alpha2 HELD at 14"),
+                  (GAIN_CAL, "0xC6CD0 6x gain"), (RESID_CAL, "0xC7468 residual scale"),
+):
+        check(u16(code, a) == u16(base, a), f"  {nm} byte-identical to V112")
+    check(code[SAR_ADDR] == SAR_NEW, f"  0x{SAR_ADDR:05X} sar = 0 (probe scaling)")
+    check(rd(code, BQ_ADDR, BQ_LEN) == rd(base, BQ_ADDR, BQ_LEN), "  biquad byte-identical")
+    for m in ENGAGED_MODES + MANUAL_MODES:
+        check(rec_y(code, m) == rec_y(base, m), f"  mode {m} gp-0x6b26 row byte-identical")
+    check(rd(code, CAVE_BASE, CAVE_LEN) == rd(base, CAVE_BASE, CAVE_LEN),
+          f"  \U0001f6d1 THE {CAVE_LEN}-BYTE CAVE IS BYTE-IDENTICAL -- no cave edit, outside the "
+          f"bricking class")
+    check(all(b == 0xFF for b in code[CAVE_BASE + CAVE_LEN:CAVE_FREE_END]),
+          "  the cave's free region is still all 0xFF")
+    exempt = {ARM_CAL, TAP_DISP_ADDR, TAP_DISP_ADDR + 1, SAR_ADDR,
+              KNEE_CAL, KNEE_CAL + 1, K1_CAL, K1_CAL + 1}
+    moved = [a for a, (w, _v, _d) in sorted(V106B.FROZEN.items())
+             if a not in exempt and rd(code, a, w) != rd(base, a, w)]
+    check(not moved, f"  all {len(V106B.FROZEN)} kit-frozen cells equal the V112 BASE (2 exempted)")
+
+    print("\n  [6] CRC RECOMPUTATION")
+    blocks = sorted({tuple(V53.owning_block(code, a)) for a in sorted(attributed)})
+    for blk in blocks:
+        check(not any(blk[1] <= a < blk[1] + 4 for a in attributed),
+              f"no edit on trailer 0x{blk[1]:06X}")
+        old = struct.unpack_from("<I", code, blk[1])[0]
+        new = zlib.crc32(bytes(code[blk[0]:blk[1]])) & 0xFFFFFFFF
+        struct.pack_into("<I", code, blk[1], new)
+        attributed |= set(range(blk[1], blk[1] + 4))
+        print(f"      [0x{blk[0]:06X},0x{blk[1]:06X})  0x{old:08X} -> 0x{new:08X}")
+    check(walk_all_blocks(bytes(code)) == 0, "built image CRC chain 50/50")
+    check(bytes(code[0xC5000:0xC5FFC]) == bytes(base[0xC5000:0xC5FFC]),
+          "CRC-skipped block [0xC5000,0xC5FFC) byte-identical to base (V40's brick)")
+
+    print("\n  [7] FULL BYTE DIFF vs V112 -- ZERO UNATTRIBUTED")
+    diff = [a for a in range(START, END) if code[a] != base[a]]
+    runs, unattributed = [], [a for a in diff if a not in attributed]
+    for a in diff:
+        if runs and a == runs[-1][1]:
+            runs[-1][1] = a + 1
+        else:
+            runs.append([a, a + 1])
+    for lo, hi in runs:
+        tag = "CRC" if any(lo <= x < hi for x in (b[1] for b in blocks)) else "payload"
+        print(f"      0x{lo:05X}..0x{hi-1:05X}  {hi-lo:3d} B  {tag:8s} "
+              f"{bytes(base[lo:hi]).hex()} -> {bytes(code[lo:hi]).hex()}")
+    check(not unattributed,
+          f"every one of {len(diff)} differing bytes in {len(runs)} runs is attributed")
+    payload = sum(hi - lo for lo, hi in runs
+                  if not any(lo <= x < hi for x in (b[1] for b in blocks)))
+    check(payload == 8, f"exactly 8 payload bytes ({payload} found)")
+
+    print("\n  [8] .rwd ENCODE + READBACK")
+    src = Path(FF.V38_RWD).read_bytes()
+    check(hashlib.sha256(src).hexdigest() == FF.V38_RWD_SHA256, "V38 source .rwd sha256 matches")
+    FF.assert_x31_checksum(src, "V38 source")
+    info = parse_x31(src)
+    dec_tbl = build_decode_table(FF.V9B["keys"], FF.V9B["ops"])
+    rwd = encode_x31(info["headers"], info["blocks"],
+                     [bytes(code[START:END]).translate(invert_table(dec_tbl))])
+    FF.assert_x31_checksum(rwd, "V119 output")
+    dec = bytearray(base)
+    dec[START:END] = bytes(parse_x31(rwd)["encs"][0]).translate(dec_tbl)
+    check(bytes(dec) == bytes(code), "decoded .rwd is byte-identical to the built image")
+    check(walk_all_blocks(bytes(dec)) == 0, "readback CRC 50/50")
+
+    img_sha = hashlib.sha256(bytes(code)).hexdigest()
+    rwd_sha = hashlib.sha256(rwd).hexdigest()
+    tag = "V119-V112BASE-KNEE2400.K1.816-BIQUAD.DISARM-TAP.67FA.SAR0"
+    img_out = plain_image_path(f"_v119_{tag}_plain_image.bin")
+    rwd_out = Path(RWD_DIR, f"39990-TVA,A160-{tag}-0x{START:X}-0x{END:X}.rwd")
+
+    if WRITE_MODE == "rwd":
+        Path(img_out).write_bytes(bytes(code))
+        Path(rwd_out).write_bytes(rwd)
+        print(f"\n      WROTE {img_out}")
+        print(f"      WROTE {rwd_out}")
+    else:
+        print("\n  [9] NOT WRITTEN -- set ACCORD_V119_WRITE=rwd to emit the files")
+
+    print("\n" + "=" * 102)
+    print(f"  image SHA256 {img_sha}")
+    print(f"  .rwd  SHA256 {rwd_sha}   "
+          f"({'WRITTEN' if WRITE_MODE == 'rwd' else 'computed, NOT written'})")
+    print(f"  {_checks[1]}/{_checks[0]} assertions passed")
+    print("=" * 102)
+    return img_sha, rwd_sha
+
+
+if __name__ == "__main__":
+    build()

@@ -1,5 +1,47 @@
 # STATE — living current state of the kit
 
+## ⭐⭐⭐ V119 BUILT — **BOTH LEVERS + THE PROBE.** Grind #1 AND the oscillation, one flight.
+```
+builder  analysis-2020accord/builds/v108_plus/build_v119_tva.py   42/42   BASE = V112
+image    a39801bc621de7d6c7dd5cbb207866e70e56b43027bde3851f65d5dd717328bc
+.rwd     18e3216fb6f01809bc542b82f7ffc8ec9098ade5f9037a1d4ab0c9ec05feaeba
+0xC40BC  1800 -> 2400   relay knee              -> GRIND #1
+0xC40D2   612 ->  816   K1, cancels the gain change EXACTLY
+0xC649B     1 ->    0   disarm the biquad       -> THE OSCILLATION
+0x55DF2  gp-0x6ABC -> gp-0x67FA   the 427 tap   -> THE STATE-4 DIAGNOSTIC
+0x55E10  sar 3 -> sar 0
+8 payload bytes.  🛑 NO CAVE EDIT.  ZERO unattributed.
+```
+### ⭐ WHY TWO DYNAMICS LEVERS IS STILL INTERPRETABLE HERE
+The single-variable rule exists so a symptom report can be attributed. These two levers target
+**two symptoms whose separation is MEASURED, not assumed** — the fine `Re(Z)` spectrum
+(coherence 0.5–0.85) puts the **peak-turn oscillation at 7.42 Hz on a −81 peak** (a linear loop
+instability) and **grind #1 at 18–22 Hz where `Re(Z)` is −1…−10** (neutral ⇒ a nonlinearity).
+⇒ **the knee cannot fix the oscillation and the biquad cannot fix grind #1**, so *"grinding better,
+oscillation unchanged"* — or the reverse — **attributes itself.**
+
+### LEVER 1 — the relay knee, on a model that has already predicted correctly
+```
+   knee  600 (V111)  predicted 0.7439 [0.669,0.815]   MEASURED 0.7336            route 21
+   knee 1800 (V112)  predicted 0.2353                 MEASURED 0.3102 / 0.1071   r22 / r23
+   knee 2400 (V119)  predicted 0.0484                 <- this build
+```
+`(816/1024)(12/2400) = (612/1024)(12/1800) = 0.0039844` **exactly** ⇒ **bit-identical below 31.8 °/s.**
+
+### LEVER 2 — disarm the biquad
+One byte, coefficients untouched, revert is the same byte. Corpus point estimate **1.47×**
+(OFF −37.7 / ON −55.4) but **P = 0.722, not separable** — **this build is the test.**
+⊕ ~32 % is the right SIZE: the oscillation is bounded, not divergent, and no damping lane can supply
+more than ~10 % of the deficit anyway.
+
+### 🛑 SCORING IS PRE-REGISTERED — `docs/scoring/SCORING-V118-preregistered.md` applies unchanged.
+**Read the identity check FIRST**: the 427 wire must come back **DISCRETE {0,5,…75}** or V119 is not
+on the car. `state = wire/5`; **STATE 4 = WIRE 20**; wire ≥1023 = contamination, discard.
+
+⚠ **Honest expectation: a REDUCTION, not elimination.** The 7–9 Hz excess is plausibly the price of
+deleting Honda's four limiters, not one tunable fault
+([[accord-the-mod-works-by-deleting-hondas-limiters]]).
+
 ## ⭐⭐ V118 BUILT — **BIQUAD DISARM + THE STATE-4 PROBE. One flight, two answers.**
 ```
 builder  analysis-2020accord/builds/v108_plus/build_v118_tva.py   43/43   BASE = V112
