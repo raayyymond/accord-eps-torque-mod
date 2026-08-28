@@ -93,3 +93,32 @@ authority and we have full authority**, so the 6.2–6.6× figure in the 0–15 
 not-like-for-like comparison** and must not be quoted as a pure gain multiplication.
 ⚠ Grind #1 lives at 5–10 mph = 8–16 km/h, **above** the lockout, so the lockout is unlikely to be
 grind #1's mechanism — but it does contaminate the lowest Re(Z) bin.
+
+## 🛑🛑 SECOND CORRECTION — **THE LOW-SPEED PEAK IS RETRACTED.** The stock arm is too thin there.
+The headline of this note ("~6× at low speed") **does not survive its own control.**
+
+**Stock n by speed bin (route 97):** 20–32 km/h **25 s** · 32–50 62 s · 50–70 121 s · 70–90 136 s ·
+90–115 182 s. **The multiplication is largest exactly where stock's data is thinnest** — a warning
+sign, so I subsampled the RICH stock bins down to 25 s and re-estimated:
+```
+   bin           FULL      25 s subsamples: p5      p50      p95     spread
+   32- 50 km/h   -13.7                    -22.3    -17.2    -11.4     1.9x
+   50- 70 km/h   -26.3                    -34.2    -24.8    -21.0     1.6x
+   70- 90 km/h   -17.3                    -36.2    -18.3    -11.8     3.1x
+   90-115 km/h   -22.0                    -28.3    -15.2     -7.5     3.8x
+```
+🛑 **A 25-second window swings the estimate 1.6–3.8×.** The 20–32 km/h stock value (−6.6) *is* a
+25-second estimate, so a **6.36–7.78× ratio built on it is not supportable** — the denominator alone
+could be off by 2–4×.
+
+### WHAT SURVIVES
+- **Our builds' absolute `Re(Z)`** (n = 35–273 s per bin) is adequately estimated.
+- **The mid/high-speed multiplication, ~1.8–2.5× at 50–90 km/h**, rests on stock bins of 121–136 s and
+  **agrees with the kit's published 2.39–2.60×**. That is the supportable figure.
+- **The low-speed peak, and the "monotone fall with speed" shape, are RETRACTED.**
+
+### ✅ WHAT WOULD ACTUALLY CLOSE IT
+**More STOCK data below ~35 km/h** — the route-97 stock arm is highway-weighted (p50 72 km/h) and
+carries only 25 s in the band where grind #1 and the ratchet live. No amount of re-analysis fixes a
+25-second denominator. Either a stock low-speed drive, or abandon the stock comparison and design a
+**within-build** experiment instead.
