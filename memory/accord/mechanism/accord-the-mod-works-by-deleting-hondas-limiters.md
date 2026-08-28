@@ -94,3 +94,24 @@ address the 7–9 Hz symptom** — it would only re-arm a latch against long, on
 *safety* grounds is a separate question and not one the oscillation data speaks to.)
 ⚠ **`0xC64DE` 17 → 27 is UNEXPLAINED** — a changed byte adjacent to the debounce cal, inside our diff,
 whose function has not been traced. **Open.**
+
+## 🛑 THE ARB OUTPUT CLAMP IS **NOT** THE AMPLITUDE MECHANISM — it was scaled correctly all along
+`0xC61B2`/`0xC61B4` went **512 → 3072 (×6)**, and a clamp *bounds oscillation amplitude* without
+touching `Re(Z)` in the linear regime — which made it look like a clean explanation for the 16–30×
+line. **It is not.** Headroom above the steady full-command output, every build:
+```
+  build   GAIN   clamp   steady out   HEADROOM   headroom/steady
+  stock    891     512        417          95       0.228
+  v96     3564    2048       1670         378       0.226
+  v100    3564    2048       1670         378       0.226
+  v101    7128    4096       3341         755       0.226
+  v102    5346    3072       2505         567       0.226
+  v112    5346    3072       2505         567       0.226
+```
+🛑 **The headroom/steady ratio is 0.226–0.228 on EVERY build INCLUDING STOCK.** The clamp has been
+scaled proportionally with the gain at every step. With 6× gain the same physical wheel excursion
+costs 6× more counts, so **567 counts of room is the same PHYSICAL room as stock's 95.**
+⇒ the oscillation has **no more room to grow than on stock**, and the "restore stock's proportional
+headroom" build computes to clamp **3076** against the present **3072** — **no lever exists.**
+⊕ A useful negative: **the kit's clamp scaling has been correct throughout**, including V14's
+original 512→1024 and every raise since. Nothing to fix here.
