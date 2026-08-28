@@ -1,5 +1,41 @@
 # STATE — living current state of the kit
 
+## ✅✅ THE 427 PROBE INSTRUMENT IS NOW VALIDATED — and it was BROKEN in three ways first
+**Run the control before the measurement, again.** `score_v125_probe.py` was written, then run
+against r24 as a dry-run *before* any V125 flight. It reported a clean-looking answer — phase
++73.9°, coherence 1.000 — that was **entirely artefact**. Three defects, each found by a control:
+
+| # | defect | symptom | fix |
+|---|---|---|---|
+| 1 | `nperseg == NW` ⇒ Welch has ONE segment | coherence identically **1.000**, so the shuffled control could never fail | `NP = NW//4`, then `NW = 512` |
+| 2 | **427 is a 50 Hz channel; `cs_rate` is 100 Hz** — truncated to a common INDEX, not TIME | 2× misalignment; coherence **0.512 → 0.049** | regrid both on the 427 frames' own timestamps |
+| 3 | coherence **bias ≈ 1/n_segments** | at NW=128 the shuffled null read **0.347** vs a real 0.510 — almost all "coherence" was bias | permutation null (20 shuffles), bar is the **EXCESS** |
+
+✅ **THE POSITIVE CONTROL NOW PASSES DECISIVELY.** r24 (V122) taps `gp-0x6ABC` = wheel rate
+× 4.7121, so the wire *is* a scaled |rate| and the answer is known in advance:
+```
+   corr(|rate|, wire)                  +0.9832
+   corr(packer model, wire)            +0.9832    (p50 2 vs 3, p99 319 vs 321 -- BYTE-ACCURATE)
+   coherence 6-9 Hz  0.335  vs  permutation null 0.069 +- 0.004
+   EXCESS 0.266   z = +60.7            => INSTRUMENT OK
+```
+⊕ The packer model `min((|rate|·4.7121·5)>>3, 0x3FF)` reproduces the real wire byte-accurately
+⇒ **the cave, the tap and the decode are all confirmed on-car.**
+
+### 🛑 TWO FACTS THIS TURNED UP THAT CHANGE HOW CACHES MUST BE READ
+1. **`raw14_b4` / `probe` IS NOT CAVE TELEMETRY ON POST-V106 ROUTES.** It is CAN **0x14A byte 4**,
+   the *legacy* 5-bit field (bits 7:3) that the V70–V88 caves wrote. V106+ caves write **427
+   (0x1AB)** instead. On r24 its low 3 bits are **constant** and its 5-bit field does not track
+   anything of ours (corr with |rate| **+0.06**) — yet the extractor still calls it `probe`.
+   ⇒ **Any post-V106 analysis that read `probe` as cave output was reading Honda's bits.**
+   The real wire is `((b0 & 3) << 8) | b1` on 0x1AB, and it is `ab_mt` in the caches.
+2. **🛑 THE 427 WIRE CANNOT MEASURE GRIND #1.** It arrives at **49.9 Hz ⇒ Nyquist 24.95 Hz**,
+   and grind #1's band is **21–26 Hz**, which straddles it. Cave telemetry is a **6–9 Hz
+   instrument only**. (The 21–26 Hz endpoint itself is safe — it comes from `cs_rate` at 99.8 Hz.)
+
+✅ `--control r24` is now a permanent self-test: change the scorer, re-run it, and if the EXCESS
+moves the script broke rather than the car.
+
 ## 🛑 A BROAD VIRGINITY SWEEP IS THE WRONG TOOL — and V125's scorer is pre-written
 **The sweep, and why it failed.** I scanned `[0xC6000, 0xC7000)` for cells that are virgin across all
 117 builds and hold a plausible IIR-alpha value (1-512), then kept those whose implied corner lands
