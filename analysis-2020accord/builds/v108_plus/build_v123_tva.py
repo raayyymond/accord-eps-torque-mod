@@ -122,9 +122,9 @@ K1_CAL, K1_OLD, K1_NEW = 0xC40D2, 1020, 1020                    # cancels the ga
 # ---- cells that must NOT move ------------------------------------------------------------------
 OFF_CAL, OFF_VAL = 0xC4080, 0           # the relay's constant offset -- ZERO, so no Coulomb floor
 POLE_CAL, POLE_VAL = 0xC40D0, 408       # the friction EMA pole -- adds phase; MUST NOT MOVE
-ALPHA2_CAL, ALPHA2_V111, ALPHA2_NEW = 0xC40DC, 8, 8   # THE SECOND EDIT -- the selective lever
+ALPHA2_CAL, ALPHA2_V111, ALPHA2_NEW = 0xC40DC, 8, 5   # THE SECOND EDIT -- the selective lever
 RESID_CAL, RESID_VAL = 0xC7468, 41232   # |model| -> residual scale; bounds the clamp argument
-GAIN_CAL, GAIN_6X, GAIN_NEW = 0xC6CD0, 5346, 6237
+GAIN_CAL, GAIN_6X, GAIN_NEW = 0xC6CD0, 5346, 7128
 BQ_ADDR, BQ_LEN = 0xC60A8, 16
 TAP_DISP_ADDR, TAP_DISP = 0x55DF2, (-0x6ABC) & 0xFFFF   # V111's tap -- carried unchanged
 SAR_ADDR, SAR_VAL = 0x55E10, 0xA3
@@ -158,7 +158,7 @@ def wire(raw, sar):
 
 def build():
     print("=" * 102)
-    print("  V123 -- V122 + FORWARD GAIN 6x -> 7x.  0xC6CD0 5346 -> 6237.")
+    print("  V123 -- V122 + GAIN 6x -> 8x (0xC6CD0 7128) + ALPHA2 8 -> 5.")
     print("=" * 102)
 
     print("\n  [1] BASE = V112, AND IT MUST BE V112")
@@ -226,15 +226,15 @@ def build():
     check(MEASURED_DUTY[lo_k] < 0.10,
           f"  the rung BELOW this build already measures {MEASURED_DUTY[lo_k]:.4f} < 0.10")
 
-    check(KNEE_NEW == KNEE_OLD == 3000 and K1_NEW == K1_OLD == 1020 and ALPHA2_NEW == 8,
-          "  knee/K1/alpha2 are all HELD at V122's values -- the gain is the ONLY variable")
+    check(KNEE_NEW == KNEE_OLD == 3000 and K1_NEW == K1_OLD == 1020 and ALPHA2_NEW == 5,
+          "  knee/K1 HELD at V122's values -- the gain is the ONLY variable")
     print(f"      MEASURED relay saturation duty, 5-10 mph engaged hands-off cmd>=2048:")
     for k in sorted(MEASURED_DUTY):
         mark = "  <- V112, MEASURED 0.3102 / 0.1071" if k == KNEE_OLD else (
                "  <- rung BELOW this build" if k == 2400 else
                "  <- rung ABOVE this build" if k == 3600 else "")
         print(f"         knee {k:5d}   duty {MEASURED_DUTY[k]:.4f}{mark}")
-    check(ALPHA2_NEW == 8 and u16(base, ALPHA2_CAL) == 8,
+    check(ALPHA2_NEW == 5 and u16(base, ALPHA2_CAL) == 8,
           f"  alpha2 {ALPHA2_V111} -> {ALPHA2_NEW}: the frequency-selective lever (V115's edit)")
     check(u16(code, ALPHA2_CAL) == ALPHA2_NEW,
           f"  0x{ALPHA2_CAL:05X} reads back {ALPHA2_NEW}")
@@ -268,10 +268,11 @@ def build():
           f"bricking class")
     check(all(b == 0xFF for b in code[CAVE_BASE + CAVE_LEN:CAVE_FREE_END]),
           "  the cave's free region is still all 0xFF")
-    exempt = {KNEE_CAL, KNEE_CAL + 1, K1_CAL, K1_CAL + 1}
+    # V123 moves the GAIN and ALPHA2; knee/K1 are held at V122 values.
+    exempt = {GAIN_CAL, GAIN_CAL + 1, ALPHA2_CAL, ALPHA2_CAL + 1}
     moved = [a for a, (w, _v, _d) in sorted(V106B.FROZEN.items())
              if a not in exempt and rd(code, a, w) != rd(base, a, w)]
-    check(not moved, f"  all {len(V106B.FROZEN)} kit-frozen cells equal the V112 BASE (2 exempted)")
+    check(not moved, f"  all {len(V106B.FROZEN)} kit-frozen cells equal the V122 BASE (gain + alpha2 exempted)")
 
     print("\n  [6] CRC RECOMPUTATION")
     blocks = sorted({tuple(V53.owning_block(code, a)) for a in sorted(attributed)})
@@ -303,7 +304,7 @@ def build():
           f"every one of {len(diff)} differing bytes in {len(runs)} runs is attributed")
     payload = sum(hi - lo for lo, hi in runs
                   if not any(lo <= x < hi for x in (b[1] for b in blocks)))
-    check(payload == 2, f"exactly 2 payload bytes ({payload} found)")
+    check(payload == 3, f"exactly 3 payload bytes ({payload} found)")
 
     print("\n  [8] .rwd ENCODE + READBACK")
     src = Path(FF.V38_RWD).read_bytes()
@@ -321,7 +322,7 @@ def build():
 
     img_sha = hashlib.sha256(bytes(code)).hexdigest()
     rwd_sha = hashlib.sha256(rwd).hexdigest()
-    tag = "V123-V122BASE-GAIN7X.C6CD0.6237"
+    tag = "V123-V122BASE-GAIN8X.C6CD0.7128-ALPHA2.5"
     img_out = plain_image_path(f"_v123_{tag}_plain_image.bin")
     rwd_out = Path(RWD_DIR, f"39990-TVA,A160-{tag}-0x{START:X}-0x{END:X}.rwd")
 
