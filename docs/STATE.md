@@ -1,5 +1,38 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 THE ANTI-DAMPING IS CENTRED AT **9–12 Hz** — NOT AT 20–30 Hz WHERE THE POWER IS
+2026-08-27. `Re(Z) = Re(H1[rate → column torque])`, 17 route-arms. **Estimator validated**: per-°/s
+here vs per-rad/s in the record — −43 × 57.3 = −2464 against the published −3375/−3176/−3073.
+```
+   Hz band      2-4   4-6   6-9  9-12 12-16 16-20 20-24 24-28 28-34 34-42
+   r21  ENG       1    -7   -43   -67   -47   -15    -4     3     8     4
+   r21  MAN       3     6     7     7     7     8    11    13    15    14
+   r78  ENG      -4    -1   -33   -48   -39   -12    -3     5     8     8
+   ra4  MAN       8    11    13    14    16    18    17    17    18    18
+```
+🛑 **The MANUAL arm is DAMPED at EVERY band on EVERY route that has one (+3 to +19, no exceptions).
+Engaging drives 6–16 Hz deeply negative.** The anti-damping is a consequence of engaging.
+
+### 🛑 THIS CORRECTS THE PREVIOUS BLOCK
+20–30 Hz carries **36 % of the rate power**, and I concluded the damping lever should target it.
+**Wrong.** `Re(Z)` at 20–24 Hz is only **−3 to −5** and crosses positive at **f0 ≈ 23.3 Hz** (corpus
+p50, n=17; range 22.4–24.9 excluding two low-n outliers). The minimum is **−67 at 9–12 Hz.**
+⇒ **20–30 Hz is where a lightly-damped resonance RINGS; 6–16 Hz is where the energy is PUT IN.**
+**Size any damping lever on 6–16 Hz.**
+
+### ⭐⭐ AND THE LANE IS ALREADY IDENTIFIED
+`gp-0x6b26` measures **+137°/+139° vs wheel rate at 6–9 Hz ⇒ +518/+565 counts of POSITIVE Re(Z)** —
+**inside the deepest anti-damped band.** That one fact explains both ends of the record: **V94 removed
+6/6ths of it** ⇒ *"vibrated the entire car… not safe to drive"*; **V106 tripled it** ⇒ extinguished the
+21–27 Hz mode, the kit's only band-power result to clear its own split-half null.
+⇒ **If the operator re-opens the damping class, this is the lane and 6–16 Hz is the target.**
+⚠ The **uniform** axis was declared exhausted after V106 and V107's reshape railed — a new dose needs
+a **shape** argument, not a bigger number.
+
+⚠ Engaged Re(Z) is hands-off, so the ENG/MAN contrast is directional evidence about the loop, not a
+matched experiment; and route 21's −67 is confounded by its own speed/excitation mix — **not a build
+ranking.**
+
 ## 🛑🛑 THE OSCILLATION IS **NOT COMMAND-DRIVEN** — WHICH KILLS A WHOLE LEVER CLASS AND RE-OPENS ANOTHER
 2026-08-27, 15 routes pooled, engaged & hands-off & moving, Welch 1024-pt @100 Hz.
 ```
