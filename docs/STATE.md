@@ -27,6 +27,30 @@ where **phase, not just magnitude, decides stability**.
 record: *widening lets the model explain the oscillation so the signum stops chasing it* vs *widening
 increases feedback bandwidth around a lightly damped mode*. **Neither is settled.**
 
+## 🛑 CORRECTION — WHICH POLE FILTERS WHICH BRANCH. It was backwards, and the fix STRENGTHENS it.
+Re-read of `FUN_0003b8f6`, instruction by instruction:
+```
+   gp-0x6b98  (command / assist path)  -> TWO EMA stages at tp+0x50d4 = 0xC50D4 = pole1 = 832
+   gp-0x4f60  (TORQUE SENSOR)          -> TWO EMA stages at tp+0x50d8 = 0xC50D8 = pole2 = 122
+```
+I recorded pole2 as filtering the model's input generally. **It filters the TORQUE-SENSOR branch
+specifically**, and pole1 — much faster — filters the command branch. At 7.8 Hz, 1 kHz task:
+```
+   command branch   pole1 = 832  corner 36.3 Hz   two stages |H| = 0.956   <- passes fine
+   torque branch    pole2 = 122  corner  4.81 Hz  two stages |H| = 0.276   <- attenuated 3.6x
+```
+✅ **This makes the mechanism STRONGER.** The torque sensor measures **across the torsion bar** —
+**exactly the element whose resonance this is** — and it is the one branch the model attenuates
+3.6×. ⇒ **the model systematically under-represents the resonance at the very sensor that sees it,
+so `residual = model - actual` carries it, and the friction signum chases it.**
+⊕ It also **weakens my own GATE 2 objection**: `gp-0x4f60` is a **measurement**, not a feedback of
+our own assist, and the loop through it is Honda's ordinary assist loop, present in stock. The
+objection is not void — assist still moves the bar which moves the sensor — but it is **a normal
+sensing loop, not a novel feedback path we would be creating.**
+🛑 **Still not a build.** GATE 2 needs the magnitude *and phase* of
+`gp-0x4f60 → model → residual → assist` at 6-9 Hz, and raising `pole2` **advances phase** in a branch
+that is subtracted — sign and phase both have to be worked through, not assumed.
+
 ## 🛑 THE MODEL PATH'S 3-TAP FIR **CANNOT** BE MADE A NOTCH — the last hidden-filter hope, closed
 `FUN_0003b8f6` contains `y[n] = a·x[n] + b·x[n-1] + c·x[n-2]` with **float** coefficients at
 `0xC5048/504C/5050`, feeding the same `|model|` that multiplies the Coulomb signum. Floats in the
