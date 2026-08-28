@@ -1,5 +1,61 @@
 # STATE — living current state of the kit
 
+## ✅✅ **EVERY MEASURED-GOOD EDIT IS NOW ON THE BUILD — THE LOST-FIX AUDIT CLOSES CLEAN**
+Prompted by V131: if V62's fix could sit lost for ~50 builds behind a guard that *asserted* the
+loss, **what else is missing?** Two audits.
+
+### ✅ AUDIT 1 — every edit with a MEASURED on-car result, checked byte-by-byte against V131
+```
+   fix                          addr       stock   wanted    V131   status
+   V42  governor state-4        0x454FE      186      181     181   OK
+   V62  Lever A r26 sar         0x3AB76      170      169     169   OK   <- restored by V131
+   V62  Lever A r24 sar         0x3AC20      170      169     169   OK   <- restored by V131
+   V88  sign fix                0x3AA96      197      251     251   OK
+   V67/V68/V88 Lever B arm      0xC6446      512     5244    5244   OK
+   V106 engaged Y[0] x3         0xD7A5C    -9830   -29490  -29490   OK
+   V106 engaged Y[1] x3         0xD7A5E    -5734   -17202  -17202   OK
+   V112 relay knee              0xC40BC      600     3000    3000   OK
+   V112 relay K1                0xC40D2      102     1020    1020   OK
+   V14  forward clamp A/B       0xC61B2/B4   512     4096    4096   OK
+```
+⇒ **11 of 11 present. Nothing else is lost.**
+🛑 **One FALSE POSITIVE, corrected here rather than left standing.** My list also carried
+**V33's `0xC6312` 320→65535** as a measured fix. **It is not one — V33 was never flashed**
+(`project_accord_torque_mod_v0`: *"49/49 CRC, 0 code edits, UNFLASHED"*), and the gentle-EME was
+resolved on-car by **V37 via the debounce SM**, a different mechanism entirely. ⇒ `0xC6312` at
+**stock 320 is CORRECT**, and raising it would be an untested change, not a restoration.
+
+### ✅ AUDIT 2 — every builder's frozen/tracked table, read for descriptions that record a LOSS
+74 distinct cells across all builders; **6 descriptions record a loss or a null rather than a
+decision**:
+```
+   0x454FE  0xB5    "V42 byte -- MEASURED INERT. Carried because free"
+   0xC6446  5244    "Lever B ARM -- the ONLY measured fix on the car. Reverted 3x at rebases"
+   0xC40D2  204     "V89's K1 -- CARRIED"                     (superseded: the car runs 1020)
+   0xC40D8  3686    "gp-0x4f60 EMA -- a NO-OP. Kill any proposal to move it"
+   0x55DF2  0x7A    "CAN 427 SOURCE (V104) -- CARRIED"        (V127 deliberately repoints it)
+   0x55E10  0xA4    "CAN 427 SCALER (V104) -- sar 0x4. CARRIED"
+```
+⭐ **`0xC6446`'s own note says it was REVERTED THREE TIMES at rebases** — the same failure that
+took V62's Lever A. **It is present at 5244 on V131**, but that entry is the kit telling itself,
+in writing, that this class of loss is recurrent. ⇒ **the V131 rule generalises: a frozen entry
+must state WHY, and "carried"/"absent" is not a why.**
+⚠ `0x454FE` is described as **"MEASURED INERT"** while [[accord-v42-flashed-ratchet-fixed-r26-falsified]]
+calls it *"the confirmed root cause"* of the state-4 ratchet. **The builder comment and the memory
+disagree.** The byte is present either way, so nothing is at risk today — recorded as an open
+discrepancy, not resolved here.
+
+### ✅ WHERE THIS LEAVES THE THREE COMPLAINTS
+- **grinding** — V131 restores the kit's strongest measured fix (8–42×) **and** carries V106's
+  ×3 Y row, V88's Lever B, V112's relay ladder. **All measured anti-grind work is now on one image
+  for the first time.**
+- **LKAS authority** — 8× forward gain + matched 4096 clamps, chain verified unclipped end to end
+  (3341 < 4096 clamp < 4762 governor, 1.43× headroom).
+- **peak-turn oscillation** — `0xC640A` −8192→−1966, sized to be LINEAR at the detector's own
+  arming threshold.
+⇒ **V131 is the flight.** One drive scores the grind symptom, the authority, the oscillation,
+**and** the rail-duty probe that decides V129-vs-V130.
+
 ## 🛑🛑🛑 **V62's GRIND FIX HAS BEEN OFF THE CAR SINCE ~V80 — AND A GUARD KEPT IT OFF. V131 RESTORES IT.**
 ```
    build         0x3AB76 (r26 sar)   0x3AC20 (r24 sar)
