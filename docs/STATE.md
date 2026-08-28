@@ -1,5 +1,30 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 GRIND #1 IS **UNMEASURABLE** ON THE RECENT ROUTES — there is no creep exposure
+I validated a grind-#1 pipeline against a known effect — V101/V102/V103 accidentally dropped Lever B,
+and the pipeline recovered it at **OFF/ON = 2.32× [1.62, 2.94]** against the on-car **0.40
+[0.27,0.58]** (≈2.5×). **The control PASSED.** Then the hunt gave four predictors at p < 0.10 and an
+ordering the operator flatly contradicts:
+```
+   r1e V107 2.92 (best on my stat) · r21 V111 5.10 · r22 V112 7.33 · r23 V112 7.93 (worst)
+   operator: V112 is "the best firmware ever... Grind #1 is now rare."
+```
+✅ **Cause found.** Grind #1 was characterised at **creep** — operator on V62: *"Original grinding at
+**2-5 mph** is gone!"* Engaged windows in that band:
+```
+   r77 (V90) 39 · r85 11 · r9e 11 · ra5 11 · r1e 11 ·  r21 (V111) 0 · r22 (V112) 0 · r23 (V112) 0
+```
+⇒ **the all-speed statistic measured road-speed 18-22 Hz on V111/V112, NOT creep grind #1.** The four
+"hits" are one collinear old-vs-new contrast — **do not act on them.**
+🛑 **This weakens [[accord-knee-has-no-measured-dose-response-on-grind1]]**: it pooled all speeds
+too, so that null is about **road-speed 18-22 Hz, not creep grind #1**. Its conclusion (V121 does not
+fix grind #1) stands, but because **grind #1 was never measured**, not because a dose-response failed.
+✅ **WHAT UNBLOCKS IT — no firmware change:** (1) **a drive with real engaged 2-5 mph creep**, which no
+post-V107 route has; or (2) **operator timestamps** — he said *"I no longer have an understanding of
+the kinds of scenarios that elicit grind #1"*, so **a mark at the moment it happens** converts an
+unmeasurable symptom into a locatable one, exactly as the route-23 timestamp did for the oscillation.
+⇒ **SECOND GATING MEASUREMENT ITEM**, alongside `docs/scoring/DRIVE-CARD-manual-at-speed.md`.
+
 ## ✅ LEVER B **IS** ON THE CAR — an alarm of mine, corrected; grind #1 needs something NEW
 Byte scan, 25 built images + stock:
 ```
