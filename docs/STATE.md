@@ -1,5 +1,39 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ V118 BUILT — **BIQUAD DISARM + THE STATE-4 PROBE. One flight, two answers.**
+```
+builder  analysis-2020accord/builds/v108_plus/build_v118_tva.py   43/43   BASE = V112
+image    8a0f0080631208dfa524e5eae54a4bcc9a9fac26759bac777e29daa1c7f7c4ce
+.rwd     92b798a14abed24286e9b53a0c03bb6c97b107b5c3c8c26b9701645ea8db99e8
+0xC649B   1 -> 0                    disarm the biquad        (candidate FIX)
+0x55DF2   gp-0x6ABC -> gp-0x67FA    the CAN 427 tap          (candidate DIAGNOSTIC)
+0x55E10   sar 3 -> sar 0            probe scaling
+4 payload bytes.  🛑 NO CAVE EDIT — the 164-byte cave is byte-identical.
+```
+The tap repoint is a pure **displacement edit**, the class that has never failed on this ECU.
+
+### WHY BOTH IN ONE FLIGHT
+The two surviving candidates for the 7–9 Hz excess are the **armed biquad** (testable by flying the
+disarm) and **`0x454FE`'s deletion of Honda's state-4 governor call** (**not** safely testable by
+reverting — V42's change is a validated fix for the V38 macro ratchet). What `0x454FE` needs first is
+its **duty**, which is unmeasured: `gp-0x67fa` is not on the bus and no cached build telemeters it.
+⇒ **fly the disarm and measure the state simultaneously.**
+
+### THE PROBE
+`wire = min(|gp-0x67fa as halfword| × 5, 0x3FF)` ⇒ **state 0–15 maps to wire 0,5,…75; STATE 4 = WIRE
+20.** `gp-0x67fb` (the high byte) has 4 writers, every one `st.b r0` = **zero**. If it is ever
+non-zero the wire becomes ≥ 1285 and **CLIPS at 1023** ⇒ contamination is **self-identifying** and
+those samples are discarded, not misread — the guard against a hidden 6-byte-form writer.
+⊕ **What is given up:** the tap's `|gp-0x6abc|` rate, which is also on CAN as `cs_rate` — the channel
+every Re(Z) measurement here already uses. **No existing analysis depends on the tap.**
+
+### READ THE DRIVE FOUR WAYS
+*oscillation weaker* ⇒ the biquad contributes; reshape its coefficients next · *no change* ⇒ biquad
+eliminated · *worse* ⇒ revert the one byte. **And independently:** *state-4 duty HIGH* ⇒ `0x454FE`
+becomes the prime suspect, and the fix is to restore `FUN_00049A5A` **modified**, never a blind
+revert · *duty ≈ ZERO* ⇒ `0x454FE` eliminated, leaving the V57 gain repoint, the ceiling raise and
+~20 cal cells.
+
 ## ⭐ V117 BUILT — **DISARM THE BIQUAD.** One byte, fully reversible.
 ```
 builder  analysis-2020accord/builds/v108_plus/build_v117_tva.py   41/41   BASE = V112
