@@ -1,5 +1,34 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ `KNEE` IS THE RELAY'S SHAPE, `K1` IS ONLY GAIN ⇒ **THE RECOMMENDATION CHANGES TO V116**
+🛑 My first dose-response test was **mis-constructed**: it used `fric_gain = (K1/1024)(12/knee)`,
+but `K1` multiplies **after** the relay (pure gain) while `knee` sets where the clamp bites (the
+**shape**) — and **a signum's harmonic ratio is scale-invariant**, so `K1` cannot move it by
+construction. Re-tested on `knee` alone:
+```
+   knee   n_routes   median harmonic ratio     relay character
+    300       8           1.743                hardest signum
+    600       7           1.412                stock
+   1800       2           1.213                softest        <- V112, the best build on-road
+   Spearman = -0.291  p = 0.257   knee300/knee1800 = 1.437 CI [0.925, 2.258]
+```
+✅ Monotone across all three levels, direction as predicted. 🛑 **NOT significant** — CIs include
+1.0. **[BELIEF, suggestive; a monotone ordering of 3 groups is ~1/6 by chance.]**
+```
+              knee    K1     small-signal gain   saturates at   assist change
+   V112 (car) 1800   612        0.0039844        knee/12 = 150       --
+   V116       2400   816        0.0039844        knee/12 = 200      NONE
+   V120       1800   306        0.0019922        knee/12 = 150      LESS
+```
+✅ **V116 raises `knee` and `K1` together by 1.333× ⇒ small-signal gain EXACTLY V112's, relay
+saturates 1.333× later** = *make the relay more linear without changing the assist.*
+🛑 **V120 does the opposite of the operator's ask**: halving `K1` halves modelled friction, and
+[[accord-friction-polarity-more-assist]] gives **more friction = MORE assist** ⇒ V120 **reduces
+assist**; and being pure gain it cannot touch the harmonics on this mechanism.
+⇒ **V116 SUPERSEDES V120 as the recommended flight** — already built, 38/38, cal-only.
+⊕ Clean falsifier: V116 should drop the harmonic ratio below V112's 1.213 **and** be no worse on
+assist. memory: [[accord-knee-is-the-relay-shape-variable-k1-is-only-gain]]
+
 ## ⭐⭐ THE 7-9 Hz MODE IS NONLINEARLY EXCITED — and that RESOLVES BOTH open contradictions
 17 routes, 3,986 windows, NW=512. Peak prominence at `2f0`/`3f0` vs off-multiple controls, then
 against the control that matters — **non-oscillating windows**:
