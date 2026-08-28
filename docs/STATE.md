@@ -1,5 +1,52 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **THE RELAY HYPOTHESIS FAILS ITS OWN NEGATIVE CONTROL — THE BIGGEST NEGATIVE OF THIS SESSION**
+`r1e` carries **both** `gp-0x6c2c` (so per-window b26 rail duty computes exactly) **and** `cs_rate`
+(so 21–26 Hz power measures directly). That is a **within-drive test of the whole relay story**,
+and it had never been run.
+```
+   stratum      band               ratio [95 % CI]        verdict
+   0-25 km/h    21-26 Hz GRIND     1.283 [0.868, 2.680]   NULL
+                30-40 Hz control   1.361 [1.051, 2.063]   DIFFERENT   <- CONTROL MOVED MORE
+                6-9 Hz ratchet     1.839 [0.712, 4.164]   NULL
+
+   25-64 km/h   21-26 Hz GRIND     1.205 [1.003, 1.650]   DIFFERENT
+                30-40 Hz control   1.260 [0.976, 1.512]   NULL        <- LARGER POINT ESTIMATE
+                6-9 Hz ratchet     1.080 [0.821, 1.258]   NULL
+```
+🛑 **In BOTH strata the control band moves as much as or MORE than the grind band.** The 1.205
+at 25–64 km/h reads as significant in isolation — until you see the control's point estimate is
+**1.260**, larger. ⇒ **railed windows are BROADBAND rougher, not grind-band specific.**
+⊕ The pooled comparison was worse still: railed windows median **25 km/h** vs non-railed **68**,
+and the pooled control ran **0.610 [0.495, 0.735]** — a huge speed confound.
+
+### ⚠ WHAT THIS COSTS — stated against my own work
+⇒ **[EVIDENCE] `gp-0x6b26` railing does NOT specifically explain grind #1.** That premise drove
+**V126, V127, V129, V130, V132 and V133's ceiling raise.** The builds are not *wrong* — they are
+bounded, verified, and harmless — but **the reason I gave for them is not supported.**
+⊕ This is the kit's own rule firing on me: [[feedback-run-the-control-before-the-measurement]]
+— *"four claims died to controls in one session."* **Five, now.** And note the direction: every
+single-band number I quoted this session about railing (32.32 %, the 9.31 %, the 1.205×) looked
+compelling until a control ran beside it.
+
+### ✅ WHAT SURVIVES — and it is the thing V133 actually restores
+**V62's Lever A is the ONLY grind lever in this kit's record with band-specific evidence that
+passed its control**: 18–22 Hz **0.124 [0.036, 0.387]** (8×) and **0.024 [0.016, 0.234]** at
+|rate| 16–32 °/s (42×), **with a 30–40 Hz negative control at ~1.0** — i.e. the effect was
+demonstrably confined to the band, which is exactly what the relay hypothesis just failed to do.
+⇒ **V133's most defensible content is not the ceiling raise — it is the restored Lever A**, which
+had been off the car since ~V80 behind a guard that asserted its own absence.
+
+### 🛑 WHERE GRINDING'S MECHANISM NOW STANDS
+- **b26 relay** — ❌ **fails its negative control** (this section)
+- **damping headroom** — ❌ exhausted; both lanes capped, `gp-0x6bd0` already saturating on stock
+- **HF filtering of the command** — ❌ no calibration implements it
+- **rate lane (Lever A)** — ✅ **the one mechanism with a passing control; restored in V133**
+- **excitation (the 8× gain)** — ⚠ known carrier, fixed by operator instruction
+⇒ **The honest position: grinding's mechanism is not established, one lever has real band-specific
+evidence, and V133 carries it.** Further calibration search is not the bottleneck — a drive that
+scores V133 against V122 with a negative control is.
+
 ## ✅✅✅ **THE FORK IS SETTLED — FROM CACHED DATA, WITHOUT A DRIVE. V130 IS REFUTED AND DELETED.**
 `r1e` (V107) carries **`gp-0x6c2c` measured on the wire**, and `b26 = clamp((c2c·Y>>6)·273>>18,
 ±511)` is exact arithmetic. So the rail duty of **any `Y` record** can be computed on **real
