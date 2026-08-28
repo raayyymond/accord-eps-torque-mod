@@ -1,5 +1,48 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **THE FORK IS SETTLED — FROM CACHED DATA, WITHOUT A DRIVE. V130 IS REFUTED AND DELETED.**
+`r1e` (V107) carries **`gp-0x6c2c` measured on the wire**, and `b26 = clamp((c2c·Y>>6)·273>>18,
+±511)` is exact arithmetic. So the rail duty of **any `Y` record** can be computed on **real
+measured input** — not extrapolated. **V106 and V107 share α2 = 22 AND the 6× gain**, so the V106
+row is near-exact, and V106 is the build that **EXTINGUISHED the mode**.
+```
+   build                     0-10    10-25    25-40    40-64
+   STOCK   (V90 era)        0.00%    0.00%    0.00%    0.00%
+   V106    EXTINGUISHED     6.52%    0.97%    0.00%    0.00%
+   V107    WORST build      7.27%    9.31%    7.72%    1.90%
+   V133    on the car       6.52%    0.97%    0.00%    0.00%   <- ALREADY V106's profile
+   V129    Y[2] -> -5898    6.52%    0.97%    0.00%    0.00%   <- IDENTICAL in this range
+   V130    Y[1]/Y[2] x1.856 8.37%   14.87%   13.51%    7.76%   <- WORSE THAN V107
+```
+
+### ✅ RAIL DUTY *DOES* DISCRIMINATE — and it points the opposite way to the pre-registered rule
+**V107 rails ~10× V106 across 10–40 km/h**, exactly the operator's grinding band (15–40 mph =
+24–64 km/h). **V107 was the worst build in the modern lineage; V106 extinguished the mode.**
+⇒ **more railing = worse**, and since railing rises with `Y`, **more `Y` = worse.**
+🛑 **V130 would rail 14.87 % / 13.51 % — worse than V107.** The pre-registered rule said
+*"≤ 2 % ⇒ the term is LINEAR ⇒ the deficit is DAMPING ⇒ fly V130 (`Y` up)"*. That rule rested on a
+**structural** argument; the **measured ladder refutes it.** ✅ **V130's artifacts are DELETED.**
+⊕ **Better evidence beats a pre-registration.** The pre-registration was right to fix the endpoint
+in advance; it was wrong about which direction a low duty implies, and the ladder settles it.
+
+### ✅ AND V133 IS **ALREADY AT THE MEASURED-GOOD CONFIGURATION**
+`V112/V133`'s `Y` = `[-29490, -17202, -16000]` differs from V106's only at **`Y[2]`, the 90 km/h
+knot** ⇒ **through the entire grinding band the two are IDENTICAL**, and the computed duties agree
+to the digit. ⇒ **V129 buys nothing measurable**: its only change is above ~64 km/h.
+⚠ **The 64–200 km/h column is UNINFORMATIVE for both** — at `Y[2]` = 16000 the rail threshold is
+**1963**, and at 5898 it is **5325**, both **above the wire's 1637 clip** ⇒ the 0.00 % there is a
+**measurement limit, not a result.** V129 remains a *reasonable* high-speed hypothesis; it is
+simply **not supported or refuted by this data.**
+
+### ⭐ WHAT THIS CHANGES
+- **V130: REFUTED and deleted.** It would have been flown on a rule that better data overturns.
+- **V129: demoted to a high-speed-only hypothesis**, unmeasurable from the current cache.
+- **V133: confirmed to sit at V106's rail profile through the whole symptom band** — i.e. at the
+  only configuration this kit has ever measured extinguishing the mode.
+- 🛑 **The fork no longer needs a drive to choose a branch.** What a V133 drive is still for:
+  **the operator's symptom report**, and confirming the duty under V133's own α2 = 5 (all rows
+  above use V107's α2 = 22 `c2c`, which is the one thing that does not transfer).
+
 ## 🛑🛑 **THE OSCILLATION DETECTOR'S THRESHOLD IS ~11× THE OBSERVED p90 — `0xC640A` MAY BE INERT**
 Applying the r77 lesson — *check what the kit already flew* — to the rest of the 427 tap history:
 ```
