@@ -184,7 +184,8 @@ gp-0x6ae2 = friction * 1024 ;  iVar20 = (model - friction - inertia) * gain
 ```
 ⇒ **magnitude ← `|model|` (tracks COMMAND); shape ← rate against the KNEE.** The two factors of the
 product map onto the two axes of the measurement. Saturates at `|gp-0x6abc| >= knee/12`:
-stock 300 → 25, **V108's 600 → 50**. **V108 already doubled this knee** and the operator called
+300 → 25, 600 → 50. 🛑 **600 is STOCK** — V99 halved it to 300 and it stayed there for NINE
+builds (V99–V107); **V108 RESTORED Honda's value.** The operator called
 ≥20 mph *"the best it's ever been"* — ⚠ unattributed (V108 moved four cells), but it is the only one
 that touches the relay.
 
