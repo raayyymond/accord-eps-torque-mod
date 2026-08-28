@@ -1,5 +1,45 @@
 # STATE — living current state of the kit
 
+## ⭐ **A NEW LEVER OUTSIDE THE EXHAUSTED LANE — `0xC63A6`, AND WHY IT IS *NOT* BUILT**
+`FUN_00038148`'s six-term sum applies a **per-term CAL WEIGHT** to each summand, **after** the
+clamp and after the admission gate:
+```
+   0xC63A0  gp-0x6bd0 weight     0xC63A2  gp-0x6bbe weight     0xC63A4  gp-0x6b46 weight
+   0xC63A6  gp-0x6b26 weight  <- THE DAMPER
+   0xC63A8  gp-0x6b4e weight     0xC63AA  gp-0x6b4c weight
+   all 1024 (unity) on STOCK and on EVERY build; only 0xC63A0 was ever moved (V72 2048, V77 back)
+```
+⇒ **`0xC63A6` is a virgin unity weight that multiplies the damper PAST both ceilings** — the 1023
+clamp and the ±1024 admission gate both bind *upstream* of it. On paper it is the escape from the
+lane bound established one section above.
+
+### 🛑 IT FAILS **GATE 2**, AND THE ONE ON-CAR DATUM IS CONFOUNDED — SO IT IS NOT BUILT
+1. **These weights are LOOP GAIN, not a feed-forward scale.**
+   [[accord-path2-is-a-closed-firmware-loop-and-c63a0-weights-it]]: the sum → `gp-0x6b70` →
+   `FUN_00037fe6` → `gp-0x6ad6` → the PID `FUN_0003a382` → aggregator → `gp-0x6b98`, **which
+   re-enters via `FUN_0003b8f6` one sample later** ⇒ **a closed feedback loop inside the firmware.**
+2. **The loop's own IIR corner is 16.70 Hz** (`0xC63AC` = 102) ⇒ grind #1's **21–26 Hz is PAST the
+   corner**, where the added phase lag is exactly what turns extra gain into instability.
+3. **The one on-car datum points the other way but does not attribute.** V83a **lowered** the
+   sibling `0xC63A0` 2048→1024 and flew **the worst build in the modern lineage for both scored
+   symptoms** — grind #1 **2.674× V81 [1.956, 3.885]**, null [0.63, 1.55], **10/10 cells > 1**;
+   micro-ratchet 1.526× [1.174, 2.019]. ⚠ **But V83a moved THREE things** (FactorE m26 → Honda's
+   ramp, `gain_A` rec0/rec1 → stock, **and** the weight) ⇒ **the 2.674× is not attributable to the
+   weight**, and the kit's own note adds that V83a *"left mode 27 carrying V81's whole damper."*
+
+⇒ **[EVIDENCE] the weight exists, is virgin, is unity, and sits downstream of both ceilings.
+[BELIEF] that raising it damps rather than destabilises** — and the kit's standing law is
+**magnitude AND phase, in every loop the signal is in.** Building it now would repeat exactly the
+mistake this session caught three times: acting on a structural argument without the measurement.
+
+### ✅ WHAT WOULD OPEN IT
+The V133 probe already carries `|gp-0x6b26|`. If its rail duty comes back **low** (the term is
+linear) **and** grinding persists, then the damper is **under-delivering rather than relay-ing**,
+and `0xC63A6` is the only remaining way to give it more authority — at which point the phase
+question must be answered on **`FUN_00038148`'s measured transfer**, not on its structure.
+⊕ A ×2 step is **+6.02 dB** by the kit's own figure for the sibling cell, with **zero cost to
+Path 1** (the aggregator's unity-weight, zero-phase route, which is what actually delivers damping).
+
 ## 🛑🛑 **1024 IS A HARD CEILING ON `0xC407E` — V133's 1023 IS THE MAXIMUM, BY ONE COUNT**
 Applying V133's own rule (*"when a build changes a RANGE, re-derive everything that consumes it"*)
 to `gp-0x6b26` itself. **6 read sites**; `0x36CE4`/`0x36CF0` are the writer, `0x36D78` the monitor
