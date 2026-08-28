@@ -1,5 +1,40 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **V132 WOULD HAVE BROKEN ITS OWN MEASUREMENT — CAUGHT PRE-FLIGHT. V133 IS THE BUILD.**
+V132 raised the `gp-0x6b26` clamp **511 → 1023** but left the 427 packer at **sar 2**, which had
+been sized for the 511 clamp:
+```
+   wire = min((|gp-0x6b26| * 5) >> sar, 0x3FF)
+
+   sar   wire @511   wire @1023   wire saturates at |x|
+    2         638         1023                     819   <- V132: CLIPS BELOW ITS OWN CLAMP
+    3         319          639                    1637   <- V133
+    4         159          319                    3274
+```
+🛑 **At sar 2 the WIRE saturates at |x| = 819, BELOW the new 1023 clamp.** The rail-duty scorer
+would have counted `wire == 1023` as *"railed"* while the term was only at **819**, and could never
+have observed the term between 819 and 1023 at all. ⇒ **V132 would have destroyed the one number
+the entire V129-vs-V130 fork depends on** — while *looking* like it worked. **Artifacts DELETED.**
+
+⭐ **The general lesson, and it is not the same as V126's.** V126 was mis-*sized* against a
+threshold. **V132 was internally inconsistent: the EDIT and the INSTRUMENT were sized against
+different assumptions.** Raising a clamp silently changes what the probe watching that clamp can
+see. ⇒ **RULE: when a build changes a quantity's RANGE, re-derive every probe that measures it in
+the same build.** The builder now enforces it — `THE PROBE GATE` asserts the clamp maps below
+1023, and a second assertion records that **sar 2 would clip at 819**, so the mistake cannot recur.
+
+### ✅ V133 BUILT — 3 payload bytes on a V131 base
+```
+   0xC407F   01 -> 03     int clamp   511 -> 1023
+   0xC4006   00 -> 80     float twin  0.5 -> 1.0     (float*1024 == int+1, HARD GATE)
+   0x55E10   a2 -> a3     packer sar  2 -> 3         (1023 -> wire 639 of 1023, LSB 1.6)
+```
+image `f26ddb4364198293f5fd91c99cccd103ebc951b4f1bb9cc56d40b67a7388822b` ·
+rwd `4647801d492c75c5a90e60e9f7505dd8ee663b87a60de562bf1c533066973e01` · **75/75, CRC 50/50.**
+✅ `verify_int_float_twins.py` PASSES it. ✅ `score_v127_rail.py` now takes
+**`ACCORD_RAIL_V133=1`** to switch to clamp 1023 / sar 3 (rail wire **639**); its wrong-build guard
+still correctly REFUSES an r24 cache in both modes.
+
 ## ✅✅ **A TWIN VERIFIER THAT REDISCOVERS BOTH HISTORICAL FAULT CLASSES FROM SCRATCH**
 `analysis-2020accord/verify/verify_int_float_twins.py` — checks Honda's own invariant
 **`float × 1024 == int`** across every documented mirror family on any built image.

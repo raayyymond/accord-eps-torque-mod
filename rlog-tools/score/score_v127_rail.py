@@ -45,8 +45,16 @@ RLOGS = os.path.join(ROOT, 'analysis-2020accord', 'rlogs')
 CACHE = os.path.join(ROOT, 'analysis-2020accord', '_scratch', 'cache')
 
 FS = 50.0                    # the 427 channel's own rate -- NOT 100
-CLAMP = 511                  # cal(0xC407E)
-SAR = 2
+# 🛑 THESE MUST MATCH THE IMAGE THAT FLEW.
+#   V127 / V129 / V130 / V131 : clamp 511, sar 2  -> rail wire 638
+#   V133                      : clamp 1023, sar 3 -> rail wire 639
+# V132 shipped clamp 1023 with sar 2, which CLIPS at |x| = 819 BELOW its own clamp; it was
+# superseded before flight and its artifacts deleted.  If a cache ever comes from it, the
+# wrong-build guard below fires because the wire reaches 1023.
+import os as _os
+_V133 = _os.environ.get('ACCORD_RAIL_V133', '').strip() not in ('', '0', 'no')
+CLAMP = 1023 if _V133 else 511      # cal(0xC407E)
+SAR = 3 if _V133 else 2
 RAIL_WIRE = min((CLAMP * 5) >> SAR, 0x3FF)          # 638
 LSB = (1 << SAR) / 5.0                              # 0.8 counts per wire step
 BINS = [(0, 10), (10, 25), (25, 40), (40, 64), (64, 200)]
