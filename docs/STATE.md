@@ -1,5 +1,54 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **GRIND TRACKS COMMAND *MAGNITUDE*, NOT ITS RATE — SO THERE IS NO NON-CONFLICTING LEVER**
+Excitation-driven splits into two very different prescriptions:
+- if grind tracks the command's **MAGNITUDE** ⇒ only cutting **GAIN** helps — **conflicts with
+  authority**;
+- if it tracks the command's **RATE or HF content** ⇒ **smoothing** helps — **does not conflict**.
+Tested on three drives, 25–64 km/h engaged, each with its 30–40 Hz control:
+```
+   drive        command MAGNITUDE      30-40 Hz control      reading
+   r24 (V122)   1.630 [1.356,2.040]   0.817 [0.580,0.949]   signal UP, control DOWN
+   r1e (V107)   1.738 [1.311,2.201]   1.155 [0.969,1.372]   signal UP, control flat
+   r22 (V112)   1.434 [1.071,2.080]   0.525 [0.345,0.648]   signal UP, control DOWN
+```
+✅ **Command MAGNITUDE predicts grind on ALL THREE drives** (1.63 / 1.74 / 1.43), with the control
+flat or moving the **opposite** way. **Command RATE is inconsistent** (up on r24/r22, **down** on
+r1e, 0.543), and **HF fraction is inverse** — which is just magnitude seen through a normalisation
+(high HF fraction ⇔ low DC).
+⇒ **[EVIDENCE] grind #1 scales with the DELIVERED COMMAND MAGNITUDE.**
+⇒ **Smoothing the command would NOT help.** The only lever that reduces grind is the one that
+reduces delivered magnitude: **the forward gain.**
+
+### 🛑 A CORRECTION TO MY OWN VERDICT LOGIC, MADE HERE RATHER THAN LEFT STANDING
+The first pass marked a cell *"confounded"* whenever the control's CI merely excluded 1 — including
+cases where the control moved **opposite** to the signal. That is backwards: **a control moving the
+other way is STRONGER band-specificity, not a confound.** Under the corrected reading, magnitude is
+band-specific on **3 of 3** drives rather than 1 of 3. ⊕ The rule that still holds is the one that
+killed the relay story: **a confound is when signal and control move the SAME way** (the relay's
+control was 1.260 against a 1.205 signal — same direction, larger).
+
+### 🛑 THE TRADE IS NOW FULLY SPECIFIED, AND IT IS THE OPERATOR'S TO MAKE
+```
+   grind ~ (delivered command magnitude)             measured, 3/3 drives, band-specific
+   vibration ~ m^1.74                                 standing record
+   =>  6x -> 8x  =  1.65x MORE grinding
+   =>  8x -> 6x  =  0.61x grinding, at 0.75x command authority at the rail
+```
+⚠ His two standing instructions — *"just go to 8× IF you decide to increase LKAS gain"* and
+*"If you're going to increase gain make sure we don't get even more oscillation and grinding"* —
+**cannot both be satisfied by a gain change.** That is not a failure to find a lever; it is the
+lever's measured cost. **V124–V133 all carry 8× by his instruction.**
+✅ **A 6× variant is a TWO-CELL edit** (`0xC6CD0` 7128→5346 + clamps `0xC61B2/B4` 4096→3072, ratio
+held at exactly 1.000) and can be cut in minutes **if he chooses grinding over authority.**
+
+### ✅ WHAT STILL REDUCES GRIND WITHOUT TOUCHING THE COMMAND
+**Only V62's Lever A** — the rate-lane `sar`, restored in V133, the one grind lever in this kit's
+record with band-specific evidence that **passed its own control** (18–22 Hz 0.124 [0.036, 0.387];
+30–40 Hz control ~1.0). ⇒ **that is why V133's Lever A restore, not its ceiling raise, is the
+build's real content** — and it is the only thing on the table that improves grinding at **zero
+authority cost.**
+
 ## ✅✅✅ **GRIND #1 IS EXCITATION-DRIVEN — THE COMMAND PREDICTS IT, BAND-SPECIFICALLY, ON TWO DRIVES**
 With the relay hypothesis dead, I screened **every channel in the cache** against 21–26 Hz power —
 engaged, restricted to **25–64 km/h (the operator's own grinding band)**, high-30 % vs low-30 % of
