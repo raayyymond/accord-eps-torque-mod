@@ -1,5 +1,32 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ THE 18-22 Hz GRIND IS RATE-COLOCATED WITH THE OSCILLATION — a constraint on the whole search
+🛑 **Correction to my own framing first.** I reported *"rate AUC 0.630 ⇒ weak, parked."* The number
+is right, the framing was incomplete: 0.630 was against **hard curves** (n=106). Against **ordinary
+driving** (n=4,920) rate gives **AUC 0.978** (median 47.06 vs 4.33 deg/s, **10.86×**), beating angle's
+0.713. ⇒ rate separates the oscillation from ordinary driving almost perfectly; what it cannot do is
+separate it from a **hard curve** — and the operator's words are *"a fixed oscillation during the peak
+of a hard curve."* **The symptom IS that regime**, so the tension is structural, not a measurement
+failure.
+**Band power above a rate knot T, 8,200 engaged windows / 17 routes:**
+```
+   band                     T=20     T=40     T=60    T=100    T=140
+   6-9 Hz   (oscillation)   82.7 %   59.3 %   26.2 %   15.8 %   12.2 %
+   18-22 Hz (grind)         94.1 %   59.5 %   23.9 %   14.6 %   11.0 %
+   26-31 Hz (grind)         92.7 %   64.4 %    2.6 %    1.1 %    0.7 %
+   selectivity vs 18-22:  1.10x @T=60      vs 26-31:  10.15x @T=60
+```
+Archive: **D PUMPS 2-12 Hz, DAMPS 16-35 Hz** ⇒ a flat `Kd` cut needs selectivity **>2.82×** (18-22)
+and **>4.36×** (26-31) to beat its own trade.
+✅ **26-31 Hz cost SOLVED by scheduling** (10-17× ≫ 4.36×). 🛑 **18-22 Hz cost NOT** (1.10× vs
+2.82× needed) — it sits in the **same rate regime** as the oscillation, 59.5 % vs 59.3 %.
+⇒ **`Kd` stays REFUSED**, now ~2.6× against instead of 3-4×. **Not a build.**
+⇒ ⭐ **GENERAL CONSTRAINT: no rate-scheduled lever can touch the 7-9 Hz oscillation without equally
+touching the 18-22 Hz grind** — helping one and hurting the other in the same windows.
+⊕ Raises, but does **not** establish, that the two are one mechanism; co-location is necessary, not
+sufficient, and [[accord-two-symptoms-two-mechanisms-rez-spectrum]] separates them on `Re(Z)`.
+**Those two records are NOT yet reconciled.**
+
 ## 🛑 …AND ITS CRUX TEST FAILED — the rate axis does NOT separate the symptom
 Pre-registered above: *if `gp-0x6ac0` during the 7-9 Hz event overlaps a normal hard curve, the lever
 fails.* **It ran. They overlap.** Proxy `|cs_rate|` p95, 8,200 engaged windows, 17 routes:
