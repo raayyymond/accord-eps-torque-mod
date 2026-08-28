@@ -417,13 +417,17 @@ def build():
         else:
             runs.append([a, a + 1])
     for lo, hi in runs:
-        tag = "CRC" if any(lo <= x < hi for x in (b[1] for b in blocks)) else "payload"
+        # a run is CRC if it OVERLAPS any 4-byte trailer [t, t+4), not merely if it
+        # CONTAINS the trailer start -- the old test mislabelled a partial trailer change
+        _tr = [b[1] for b in blocks]
+        tag = "CRC" if any(lo < t + 4 and t < hi for t in _tr) else "payload"
         print(f"      0x{lo:05X}..0x{hi-1:05X}  {hi-lo:3d} B  {tag:8s} "
               f"{bytes(base[lo:hi]).hex()} -> {bytes(code[lo:hi]).hex()}")
     check(not unattributed,
           f"every one of {len(diff)} differing bytes in {len(runs)} runs is attributed")
+    _tr = [b[1] for b in blocks]
     payload = sum(hi - lo for lo, hi in runs
-                  if not any(lo <= x < hi for x in (b[1] for b in blocks)))
+                  if not any(lo < t + 4 and t < hi for t in _tr))
     check(payload == 5, f"exactly 5 payload bytes ({payload} found)")
     check(u16(base, TAP_DISP_ADDR) == TAP_OLD and u16(code, TAP_DISP_ADDR) == TAP_NEW,
           "  427 tap repointed gp-0x6ABC -> gp-0x6AF0 (reader #3 output)")

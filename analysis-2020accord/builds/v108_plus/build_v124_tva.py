@@ -306,13 +306,17 @@ def build():
         else:
             runs.append([a, a + 1])
     for lo, hi in runs:
-        tag = "CRC" if any(lo <= x < hi for x in (b[1] for b in blocks)) else "payload"
+        # a run is CRC if it OVERLAPS any 4-byte trailer [t, t+4), not merely if it
+        # CONTAINS the trailer start -- the old test mislabelled a partial trailer change
+        _tr = [b[1] for b in blocks]
+        tag = "CRC" if any(lo < t + 4 and t < hi for t in _tr) else "payload"
         print(f"      0x{lo:05X}..0x{hi-1:05X}  {hi-lo:3d} B  {tag:8s} "
               f"{bytes(base[lo:hi]).hex()} -> {bytes(code[lo:hi]).hex()}")
     check(not unattributed,
           f"every one of {len(diff)} differing bytes in {len(runs)} runs is attributed")
+    _tr = [b[1] for b in blocks]
     payload = sum(hi - lo for lo, hi in runs
-                  if not any(lo <= x < hi for x in (b[1] for b in blocks)))
+                  if not any(lo < t + 4 and t < hi for t in _tr))
     check(payload == 6, f"exactly 6 payload bytes ({payload} found)")
     check(u16(base, TRIM_CAL) == TRIM_OLD and u16(code, TRIM_CAL) == TRIM_NEW,
           f"  0x{TRIM_CAL:05X} trim IIR {TRIM_OLD} -> {TRIM_NEW}: VIRGIN on all 117 builds")

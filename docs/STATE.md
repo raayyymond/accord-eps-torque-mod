@@ -1,5 +1,54 @@
 # STATE — living current state of the kit
 
+## ✅ **BOTH BRANCHES OF THE FORK ARE NOW BUILT — V129 (Y down) AND V130 (Y up). NEITHER FLIES YET.**
+`gp-0x6b26`'s damping and its railing are **the same knob** — both scale as `|H_lane(α2)| × Y × raw`
+⇒ **the 511 clamp is a HARD CEILING on the damping this term can ever deliver.** What α2 changes
+is the **SHAPE**:
+```
+   α2   |H|@21.7   broadband RMS   18-30 Hz fraction   RMS per unit in-band
+   22     7.72         7.32              3.06 %              0.948
+   14     7.10         4.92              5.51 %              0.693
+    8     5.68         2.97              9.05 %              0.524
+    5     4.16         1.92             11.15 %              0.463
+```
+α2 22→5 costs **0.538×** in-band but cuts broadband RMS to **0.263×** ⇒ **2.05× more in-band
+damping per unit of rail-driving content.** ⊕ So at α2 = 5, restoring V106's in-band damping
+**costs LESS rail duty than V106 itself paid** — an argument for raising `Y`, the OPPOSITE of V129.
+🛑 **But V107 raised `Y` and its own rail-duty map matched the symptom map** — at α2 = 22, where
+broadband was **3.8×** higher. **The two arguments genuinely conflict and only the probe separates
+them.** Rail duty is closed-loop; V107's open-loop prediction missed by **32×**.
+
+### ✅ V130 BUILT — the "≤ 2 % rails" branch
+```
+   0xD7A5E / 0xD7A6E   Y[1] modes 26/27  -17202 -> -31923    x1.856 = |H|(22)/|H|(5)
+   0xD7A60 / 0xD7A70   Y[2] modes 26/27  -16000 -> -29692
+```
+Base V127, 8 payload bytes. image `de64f6079d45b4c7af9c7def77622479edc621ab7a96961739b9b182239c349b`
+· rwd `b71a4862bb412438e533b44699427a8822ca1d505f61edd93fb4b81597ad78e6` · **83/83, CRC 50/50.**
+`Y[0]` is **held** — int16 blocks it (29490×1.856 = 54727 > 32767) and **there is no low-speed
+symptom**. `Y[1]` (20 km/h) and `Y[2]` (90 km/h) bracket the whole 24–64 km/h symptom band, and
+both are restored to V106's **1.00×**. ⊕ The builder **asserts the scale equals `|H|(22)/|H|(5)`**
+and **states plainly that the build rails EARLIER by design** (`Y[2]` threshold 1963 → 1058) —
+because damping and railing are one knob. ⚠ It flattens Honda's speed taper, the largest single
+`Y` departure this kit has made, which is why it is **gated, not recommended**.
+
+### 🛑 THE FORK, PRE-REGISTERED — ONE DRIVE ON **V127** DECIDES
+| `score_v127_rail.py` worst engaged bin | fly | why |
+|---|---|---|
+| **> 10 % rails** | **V129** (`Y[2]` ↓ to −5898) | the term is a relay; de-rail it |
+| **≤ 2 % rails** | **V130** (`Y[1]/Y[2]` ×1.856) | the term is LINEAR ⇒ the deficit is DAMPING |
+| **2–10 %** | neither as built | size `Y` to the measured duty |
+⇒ **V127 is the flight.** It touches **no `Y` knot**, changes only the oscillation branch, and
+carries the probe. **V129 and V130 embody OPPOSITE beliefs and exactly one is right** — flying
+either blind is a guess, and this kit has paid for that guess before.
+
+### ✅ A BUILDER DEFECT FOUND AND FIXED IN 11 BUILDERS
+The byte-diff classifier asked whether a run **CONTAINS** a CRC trailer's start address; it must
+ask whether the run **OVERLAPS** the 4-byte trailer `[t, t+4)`. It only bites when **fewer than
+all four trailer bytes change** — V130 changed 3 of 4, so `0xD7FFF` was reported as **payload**
+and the payload-count assertion failed on a correct build. Fixed in `build_v120..v130`. ✅ **The
+already-emitted artifacts are unaffected** — V124/V127/V129 re-run to their recorded SHAs exactly.
+
 ## 🛑🛑🛑 **α2 AND Y MULTIPLY — THE α2 LADDER SILENTLY HALVED THE DAMPER. V129 HELD; V127 FLIES.**
 `gp-0x6b26`'s effective damping is `|H_lane(α2)| × |Y|`. **Both levers have been moved, in opposite
 directions, and NO build has ever held the product constant.** At the grind band (21.73 Hz):
