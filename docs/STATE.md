@@ -1,5 +1,40 @@
 # STATE — living current state of the kit
 
+## ✅ **V131's FLIGHT CARD IS WRITTEN — AND THE DRIVE MUST CONTAIN CREEP, OR THE TEST CANNOT WORK**
+`docs/scoring/SCORING-V131-preregistered.md`, committed before any V131 flight exists.
+
+### 🛑 THE FINDING THAT CHANGES WHAT THE DRIVE HAS TO BE
+V62's headline result — **42× at 18–22 Hz** — was measured at **engaged creep**, in the
+`|rate| 16–32 °/s` cell. Scoring **r22 vs r23 (both V112)** shows that cell is **EMPTY on highway
+routes: n = 2 and n = 0**, because they speed-match at **36–69 km/h**.
+⇒ **a highway-only drive CANNOT reproduce V62's endpoint**, and V131's whole grind case rests on
+V62's lane. The card therefore requires: **(1) engaged creep 2–10 mph with real steering**,
+(2) engaged 15–40 mph, **(3) at least one slow hard turn hands-off engaged**, (4) some highway.
+⊕ Without (3) the counter never saturates ⇒ **`0xC640A` is inert BY CONSTRUCTION** and the rail
+bins read near zero **for the wrong reason**.
+
+### ✅ THE NULL CONTROL PASSES — the estimator does not manufacture significance
+`score_v131_grind.py --null` scores **r22 vs r23, the SAME firmware**; every band must span 1.0:
+```
+   18-22 Hz  0.860 [0.592, 1.344]        21-26 Hz  0.957 [0.802, 1.203]
+   6-9 Hz    1.162 [0.535, 1.852]        30-40 Hz  1.189 [0.822, 1.538]
+```
+✅ All four span 1. ⊕ Episode-clustered, speed-matched, with a **30–40 Hz negative control** — a
+ratio that moves in the signal band **and** the control band is a **global** change, not a grind
+result.
+
+### 🛑 THE DETECTION FLOOR, QUANTIFIED AND STATED IN ADVANCE
+Those same-firmware CIs **are** the resolution limit: **±20 % at 21–26 Hz, ±40 % at 18–22 Hz.**
+⇒ **do not read a ratio of 0.9 as an improvement.** This is the route-variance floor
+([[accord-averaged-spectrum-needs-matched-speed-distributions]]) made numeric, and it means a
+small真 effect simply cannot be resolved on one drive — the operator's own report stays PRIMARY.
+
+### ⚠ A CONFOUND STATED BEFORE THE DRIVE, NOT AFTER
+**V131 changes the rate lane AND, versus V122, the forward gain (6×→8×).** They are not separable
+on one drive: the rate-lane restore should REDUCE grinding, while
+[[accord-the-8x-gain-is-the-carrier]] says the gain INCREASES the ~23 Hz excitation.
+⇒ **if grinding comes back unchanged, cancellation is a live explanation and NOT a null.**
+
 ## ✅✅ **LEVER A × LEVER B: A RISK RAISED, CHECKED, AND RESOLVED IN V131's FAVOUR**
 I flagged that V131 might stack two levers that had never flown together. **It does stack them —
 they multiply — but V62 ITSELF already flew the stacked configuration.** Both halves recorded.
