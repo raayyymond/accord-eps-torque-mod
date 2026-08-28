@@ -1,5 +1,31 @@
 # STATE — living current state of the kit
 
+## ✅ V115 IS BYTE-VERIFIED AND **PRE-REGISTERED** — `docs/scoring/SCORING-V115-preregistered.md`
+Full diff against V112: **1 payload byte + 1 CRC trailer.** The cleanest single-variable build in the
+kit.
+```
+   0xC40DC   0e -> 08     alpha2 14 -> 8
+   0xC4FFC   CRC trailer
+   IDENTICAL: knee 1800 · K1 612 · K0 0 · pole 408 · clamp 511 · gain 5346 · Lever B FB / 5244
+   sha256 5f804a8a2aee5e18da226cfebe4b2bec564713a4183613e3aed846460a191a97
+```
+**PRIMARY ENDPOINT: the 21-26 Hz engaged share**, p90, as a fraction of each window's own 1-45 Hz
+power. **V112 baseline 0.21341**; lane arithmetic predicts **about 0.167**.
+```
+   <= 0.180        alpha2 CONFIRMED -- next step is a2 = 6 (-35.2 % grind, -8.7 % damper)
+   0.180 - 0.230   NOT RESOLVED -- inside the V112 two-drive spread; call it neither way
+   >  0.230        alpha2 REFUTED for grind #1 -- stop this axis, fly V121
+```
+🛑 **The band is 21-26 Hz, NOT 18-22** — the old bands straddle the real peak and both miss it,
+which produced every grind-#1 null this session.
+Secondary, reported but never overturning the primary: **peak frequency** (V112 21.09/21.29 Hz,
+expect ≤ 21.1; a RISE contradicts the mechanism) · **the damper must survive** (6-9 Hz p90 at
+|ang| ≥ 20°; a large rise is the **V94 signature ⇒ revert**) · **assist** (engaged p99 |rate| ≥ 77.1
+deg/s) · **`STEER_STATUS == 4` must be 0**.
+✅ **Honest split recorded in the card: the STRUCTURAL half is strong** (selectivity is arithmetic
+from the traced lane; 20× safety margin vs V94), **the EMPIRICAL half is weak** (`alpha2 = 14` on only
+3 routes ⇒ collinear with build era; arithmetic assumes the 1 kHz rate).
+
 ## ✅✅ `alpha2` **IS** THE FREQUENCY-SELECTIVE LEVER — V115 is the recommended flight for GRIND #1
 `alpha2` = `cal(0xC40DC)` is the EMA-A coefficient in `FUN_00041464` (`state += (diff*alpha2)>>6`
 ⇒ alpha = alpha2/64), and its input is a **first difference**, so the lane is `|1-z^-1|*|H_ema|` —
