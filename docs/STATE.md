@@ -1,5 +1,31 @@
 # STATE — living current state of the kit
 
+## ✅ THE FRICTION-ROW FLAG IS **RETRACTED** — no defect on the car; the kit had already shown why
+I flagged that V107..V121's engaged friction row at **3.00×** sits past a stated *"int32 wraparound at
+1.6005×"*. **Verified. Wrong on three counts:**
+1. 🛑 **Wrong clamp cited.** `FUN_00034350` reads FactorB/C/D/E + ceiling and clamps *their*
+   product to `|gp-0x6bd0| <= 1024`; **it never reads `0xCBE74`.** The friction row's consumer is
+   **`FUN_00036c12`** → `gp-0x6b26`, clamped at ±`0xC407E` = **±511**.
+2. 🛑 **I scaled a MAX, not a distribution** (319.1 × 3.0 = 957). `build_v107_tva.py` has a
+   section **"THE TERM IS NOT SATURATING"** with reconstructed duty on r a6's engaged distribution,
+   **held-out validated on r78**:
+```
+      engaged all   n=123802   p50 15.1   p99 268.5   duty>=511 = 0.00121
+```
+   ⇒ **p99 268.5 vs a 511 clamp, duty 0.12 % — NOT a relay.**
+3. ✅ **The governing bound is the int16 floor**: `Y` is signed int16, `Y[0]` stock -9830 ⇒
+   **k_max = 32768/9830 = 3.3335**, and 3.00× = **90.00 % of it, chosen deliberately** (×4/×5/×6 are
+   overflow). The "90.0 %" column is **percent of the int16 floor**, not clamp duty.
+⇒ The **1.6005×** figure in [[accord-six-levers-closed-on-arithmetic]] does **not** describe this
+row's headroom; those two records need reconciling, but **V107..V121 are inside the real bound.**
+✅ **The V107 step is deliberate design**: a reshape at constant `Y[0]` (so *"creep-speed clamp duty
+and the relay index are UNCHANGED BY CONSTRUCTION"*), raising only high-speed knots because Honda's
+taper made the dose **4.2× weaker at highway**; V108 then reverted `Y[1]` (`GP6B26.Y1REVERT`).
+🛑 **My "the shape change was never analysed" claim is withdrawn too** — V107's builder analyses
+exactly that, with a four-speed delivered-coefficient table and an int16-headroom column.
+⇒ **NET: the only engaged-vs-manual asymmetry is still this row (that stands), but it is not
+saturating, not wrapping, and not a hidden relay. No defect in the flight build.**
+
 ## ⭐⭐ THE **ONLY** ENGAGED ASYMMETRY LEFT IS THE FRICTION ROW — and 3.0× sits past a stated wrap point
 Dereferenced all fourteen mode-indexed families at `arr + mode*4`. On V112 and V121 exactly **one**
 differs between mode 24 (manual) and mode 26 (engaged): **`0xCBE74` friction**. FactorB/C/D/E,
