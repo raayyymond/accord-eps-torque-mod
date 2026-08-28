@@ -1,5 +1,52 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **AN ENDPOINT THAT SURVIVES THE NOISE FLOOR — V133 IS SCOREABLE AFTER ALL**
+Every BETWEEN-ROUTE endpoint died on route variance (band amplitude 8×, f₀ 10 Hz). **But the
+operator's symptom is ENGAGED-ONLY, so both arms can come from ONE drive.** An **ENGAGED-vs-MANUAL
+contrast at matched speed inside a single route** cancels road, tyres, weather, alignment and the
+speed profile — everything that makes routes incomparable.
+```
+   route  build   speed band      18-22 Hz eng/man        30-40 Hz CONTROL
+   r22    V112    5-15 km/h    7.10 [ 2.52, 16.60]      1.12 [0.67, 2.32]   control FLAT
+   r24    V122    6-17 km/h    3.88 [ 1.63, 10.47]      0.61 [0.33, 2.84]   control FLAT
+   r1e    V107    7-19 km/h   57.93 [34.93,102.10]      7.87 [4.99,13.92]   control MOVES -> void
+   ra6    V106    9-12 km/h   87.17 [36.26,346.2 ]     16.81 [7.43,27.03]   control MOVES -> void
+```
+✅ **BAND-SPECIFIC on r22 and r24** (signal moves, control flat) — and it **TRACKS THE OPERATOR**:
+V112 → V122 nearly **halved** the engaged excess (7.10 → 3.88) exactly when he reported grinding
+*"better, still ever so slight … in rare moments"*. **A statistic that moved with his verdict,
+within-drive, is the best endpoint this kit has for the remaining low-speed symptom.**
+⚠ **HONEST LIMIT: those CIs OVERLAP.** The halving is **suggestive, not significant** on its own —
+it is the agreement with his verdict that gives it weight. The endpoint resolves a drop to
+**≤ 1.6** (outside V122's lower bound of 1.63), which is exactly the "gone" band. **More creep
+exposure tightens it.**
+
+### 🛑 A DRIVE-DESIGN REQUIREMENT, NOT A WISH
+Both arms must exist **at the same low speed**:
+- **ENGAGED creep, 2–10 mph, hands off, with real steering activity**;
+- **MANUAL creep over the SAME stretch at the SAME speed.**
+⇒ **drive the same low-speed loop twice, once engaged and once manual.** Without both arms the
+script has nothing to contrast and **says so rather than guessing**.
+
+### ✅ PRE-REGISTERED, BEFORE ANY V133 FLIGHT
+```
+   ENGAGED/MANUAL 18-22 Hz at creep, speed-matched, vs V122's 3.88 [1.63, 10.08]
+      <= 1.6      the engaged excess is GONE      => Lever A reproduced
+      1.6 - 3.0   reduced but present             => partial
+      > 3.0       unchanged vs V122               => Lever A did NOT reproduce
+   MANDATORY GUARD: the 30-40 Hz control must stay in [0.5, 2.0].
+```
+🛑 **The guard is not decoration.** On **r1e and ra6 the control moves WITH the signal** (7.87,
+16.81) ⇒ those contrasts are **global activity differences and carry nothing** — the identical
+failure that killed the b26 relay hypothesis earlier this session. **The script refuses to
+interpret them.**
+✅ Shipped as `rlog-tools/score/score_v133_creep.py`, with **`--validate`** reproducing both
+reference rows so a future edit to the script is caught immediately.
+
+⭐ **Net: the session's measurement wall is breached for the one build that matters.** V133 was
+"unscoreable" only under BETWEEN-route endpoints; **within-drive it is scoreable, band-specific,
+and calibrated against two existing flights.**
+
 ## 🛑🛑 **BOTH `gp-0x6b26` ENDPOINTS ARE DEAD AT ROUTE-LEVEL POWER — THAT FAMILY IS UNFALSIFIABLE**
 The retraction pointed at **f₀** as the right endpoint for an inertia term, noting the kit's
 record *"f₀ = 21.90 / 23.61 / 24.90 Hz at 1× / 4× / 6× … needs no symptomatic drive"*. **Tested it.**
