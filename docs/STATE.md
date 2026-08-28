@@ -1,5 +1,57 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **`0xC64FA` FULLY CHARACTERISED — AND "NOTCH ALWAYS ON" IS CLOSED BY A REAL MECHANISM**
+Two corrections and one closure, from a reader census plus the disassembly.
+
+### 🛑 1. THE "18 READERS" FIGURE WAS THE `ld.bu` disp|1 TRAP
+Every one of the 18 hits encodes **`hw2 = 0x74FB`**, but they split into **two opcode families**:
+```
+   hw1 & 0xFF = 0x85   ->  Ghidra decodes tp+0x74FA     0x35A02 0x35BE6 0x3AA78
+                                                        0x429DA 0x429E2 0x429EA 0x429FC 0x42A08
+   hw1 & 0xFF = 0xA5   ->  Ghidra decodes tp+0x74FB     0x260BC .. 0x261A2   (the 10-reader cluster)
+   0x3AA78  ld.bu 0x74fa, tp, r14    8577fb74
+   0x260BC  ld.bu 0x74fb, tp, r15    a57ffb74      <- SAME hw2, DIFFERENT hw1, DIFFERENT BYTE
+```
+⇒ **`0xC64FA` has EIGHT readers, not 18**, and the *"unexamined 10-reader cluster"* I cited as the
+reason not to touch it **reads `0xC64FB`, a different cal.** ⊕ This is the kit's own documented
+trap (`accord-v850-scan-traps-formatv-and-storezero`: *"hw2 = (disp | 1)"*) — my scan matched on
+the `D|1` alternative and I reported the union as one cal.
+
+### ✅ 2. ALL EIGHT READERS ARE IN KNOWN FUNCTIONS
+```
+   0x35A02, 0x35BE6    the NOTCH gate            FUN_000352b4
+   0x3AA78             the aggregator branch     FUN_0003aa2c
+   0x429DA .. 0x42A08  the reversal counter's own CEIL clamp   (min(revcount, CEIL))
+```
+⇒ `0xC64FA` is the **CEIL that clamps `gp-0x671a`** *and* the threshold both consumers compare
+against. Nothing unexamined remains.
+
+### 🛑 3. AND THAT IS WHAT CLOSES THE LEVER — THE GATE IS COUPLED TO A PUMP
+Setting `0xC64FA = 0` would make the notch's condition `0 <= gp-0x671a` **always true** ⇒ the notch
+would run continuously, which is exactly what V144/V145 want. **But the aggregator reads the same
+cal:**
+```c
+   uVar13 = (sVar7 == 1);                       // 1 when the gate is SHUT
+   uVar11 = (gp-0x6b5e != 0);
+   if ((uVar11 == 0) || (iVar17 = uVar11 * (uVar13 == 0), uVar13 == 0)) { ...compute r26... }
+```
+```
+   gate SHUT + gp-0x6b5e != 0   ->  iVar17 = 1*0 = 0   =>  the r26 lane is FORCED TO ZERO
+   gate OPEN                    ->  the block always runs  =>  r26 is COMPUTED
+```
+⇒ **opening the notch's gate ENABLES the r26 PUMP lane, which is currently suppressed.**
+`gp-0x6752 = −1` makes r26 a **confirmed pump** — the same family whose **doubling** produced
+V133's *"massive, violent grinding"*. ⇒ **[EVIDENCE] the notch's arming is STRUCTURALLY COUPLED
+to un-suppressing a pump. `0xC64FA` must not be lowered, and now for a mechanism that is read off
+the code rather than asserted.**
+⊕ `0xC64FA = 1` is the middle option — it arms the notch on the FIRST reversal instead of the
+fifth — but it enables r26 whenever the counter is ≥ 1 instead of ≥ 5, so it buys the notch by
+paying the pump. **Same trade, smaller dose.** Not recommended without measuring the gate first.
+
+⭐ **V145's design is therefore correct as built**: leave `0xC64FA` alone and MEASURE the gate.
+🛑 **And the fallback if the gate reads shut is NOT to widen it** — it is V141 (the pump
+deadband), which moves the r26/r24 family the *other* way.
+
 ## 🛑 **CORRECTION: `0xC64FA` and `0xC64FD` ARE DIFFERENT CALS — THE "WIDENING THE GATE RAILS b26" CLAIM IS WRONG**
 Twice this session I wrote that widening the notch's gate would *"also force the b26 oscillation
 branch to −8192, which V127 found rails the inertia term"*. **That conflated two cells.**
