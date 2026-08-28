@@ -1,5 +1,61 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **V128 RETRACTED — IT WOULD HAVE UNDONE THE KIT'S BEST MEASURED FIX. V129 IS THE BUILD.**
+V128 restored the whole engaged-mode `Y` row to stock, arguing our ×3 raise railed the term into a
+Coulomb relay. **The rail arithmetic was right; the CONCLUSION was wrong.**
+
+🛑 [[accord-v106-extinguished-the-mode-at-low-speed]] — **V106's ×3 raise is the kit's STRONGEST
+measured anti-grind result**, and the **only band-power result ever to clear its own within-drive
+split-half null** (18–30 `a6/V105` = **0.347** vs null **[0.482, 1.982]**; positive control
+`a6/STOCK` = **5.735**, so the instrument was alive):
+```
+             peak Hz  PROMINENCE  18-30 RMS   argmax vs search-band edge
+   STOCK 1x   18.23      1.46       0.3121    follows the edge   <- no line
+   V104 6x    22.23      6.89       7.6624    pinned             <- a real line
+   V106       18.23      1.51       3.7255    follows the edge   <- NO LINE
+```
+⊕ **A Coulomb relay is a STRONG nonlinear damper**, so *"railed"* and *"extinguished the mode"*
+are **both true** — bang-bang kills a resonant line while adding broadband roughness. ⇒ my
+inference *"railed ⇒ must restore to stock"* skipped the measurement. **V128's artifacts DELETED.**
+
+### ✅ WHAT IS ACTUALLY WRONG WITH THE BUILD ON THE CAR — V107's HIGH-SPEED ESCALATION
+```
+   build          mode-26 Y                   rails from |c2c| (0/20/90 km/h)
+   V106          [-29490, -17202,  -5898]      1065 / 1826 /  5325   <- MEASURED GOOD
+   V107          [-29490, -24000, -16000]      1065 / 1309 /  1963
+   V112 .. V127  [-29490, -17202, -16000]      1065 / 1826 /  1963   <- ON THE CAR
+```
+🛑 **V112 kept V106's `Y[1]` but inherited V107's `Y[2]` = −16000 — 2.7× V106's −5898.** So the
+car has **never actually run the configuration that measured the extinction**: it carries V107's
+high-speed escalation, and **V107 is precisely the build whose own session matched its rail-duty
+map to the symptom map.** ⊕ V106's residual was explicitly a **HIGH-SPEED** phenomenon (hwy 40–95
+prominence 6.5 vs stock 1.3, carried by the >70 km/h portion); V107 answered it by raising `Y[2]`
+2.7×. **That is the single change V129 undoes.**
+
+### ✅ V129 BUILT — 4 payload bytes, a return to a MEASURED-GOOD state
+```
+   0xD7A60  Y[2] mode 26  -16000 -> -5898     (Y[0], Y[1] HELD)
+   0xD7A70  Y[2] mode 27  -16000 -> -5898
+```
+Base **V127**. image `dd643b6e7df85f7b598956d708f1ad1aa55da19dd4b2cb8512930c7a11d3c3dd` ·
+rwd `e1c339f7ae0f9ecc12267d0f1820f08f00bcc3ec5c91b646ec22c7b3d05db8e6` · **75/75, CRC 50/50.**
+- rail threshold at 90 km/h **1963 → 5325**, a **2.7× de-rail exactly where V106's residual lived**;
+- `Y[0]`/`Y[1]` **asserted UNTOUCHED** ⇒ the low/mid-speed behaviour that measured the extinction
+  is bit-identical to the current build;
+- manual modes 24/25 asserted **byte-stock**;
+- **no confound with V127**: `0xC640A` fires only when the counter is SATURATED, this record only
+  when it is NOT — mutually exclusive by construction.
+
+### 🛑 THE LESSON, RECORDED
+**"The arithmetic says a term is railed" does NOT license "restore it".** A relay is a strong
+damper; whether that is good or bad is an EMPIRICAL question, and this kit had already answered it
+on-car. ⇒ **before acting on a structural argument, search the flight record for a build that
+already tested it** — which is exactly what
+[[feedback-search-the-kit-before-naming-a-cause]] says, and I did it one build late.
+⚠ [BELIEF] that −5898 beats −16000 **on the current build**: V106 flew at α2 = 22 and 6×, the car
+now runs α2 = 5 and 8×, so `|gp-0x6c2c|` and the command both differ. V129 returns the one cell
+that was escalated past the measured configuration; it does **not** re-verify V106's whole result.
+
 ## ✅ THE FULL V128-vs-STOCK AUDIT — ONE NEW RISK FOUND, AND ONE FRAMING CORRECTED
 Motivated by the V128 finding: **a raise on a term that CLAMPS is not a dose, it is a relay
 conversion.** So every cell our builds have moved was re-read against stock. **302 payload bytes
