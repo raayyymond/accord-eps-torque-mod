@@ -1,5 +1,54 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **RETRACTION: THE "8× vs GRINDING" TRADE IS NOT SUPPORTED — I OVERSTATED IT**
+Last section I told the operator his two standing instructions *"cannot both be satisfied"*, on
+the strength of `grind ~ command magnitude` (within-drive) plus the standing `m^1.74`. **I then
+tested the gain effect directly and it does not hold up.**
+
+### THE DIRECT TEST — a clean natural experiment in the cache, and it is NULL
+The cache contains **12 routes at two gains with α2 HELD at 22**, which de-confounds gain from α2:
+`4× = r77 r78 r79 r85 r96 r97` · `6× = r1e ra4 ra5 ra6`.
+```
+   6x / 4x, engaged, 25-64 km/h, bootstrapped over ROUTES
+      21-26 Hz GRIND    1.252 [0.297, 2.304]   NULL
+      30-40 Hz CONTROL  0.874 [0.320, 1.545]   NULL
+      m^1.74 predicts 2.02x -- ALSO inside the CI
+```
+🛑 **Per-route 21–26 Hz share spans 0.047–0.389 WITHIN the same gain group — an 8× spread.**
+Route variance swamps the comparison; the test can neither confirm nor refute `m^1.74`, and its
+**point estimate 1.252 sits well below it.**
+
+### ✅ AND THE MECHANISM I MISSED: OPENPILOT IS A CLOSED LOOP
+Within a drive, more command ⇒ more grind **at fixed gain**. That does **not** transfer to
+"more gain ⇒ more grind" **because openpilot compensates** — with more EPS gain it needs **less
+command** for the same steering:
+```
+   6x / 4x, over routes
+      |e4tq| p50  (command)    0.733 [0.320, 1.210]   NULL   <- full compensation predicts 0.667
+      |e4tq| p90  (command)    0.903 [0.334, 2.763]   NULL
+      |rate| p50  (achieved)   1.867 [0.711, 5.111]   NULL
+```
+**Point estimates are directionally consistent with compensation** (command falls 0.733× against a
+predicted 0.667× while achieved rate rises) — **but every CI spans 1.** Underpowered, again.
+
+### 🛑 WHAT I GOT WRONG, PRECISELY
+✘ *"6× → 8× = 1.65× more grinding"* — **NOT MEASURED.** It was `m^1.74` applied to a gain ratio;
+the only direct test of that exponent is **null with a CI from 0.30 to 2.30.**
+✘ *"His two instructions cannot both hold"* — **RETRACTED.** There is **no measured evidence that
+8× increases grinding.**
+✔ What survives: **within a drive, at fixed gain, grind tracks command magnitude** (3/3 drives,
+band-specific, controls flat or opposite). That is a statement about *when* grind appears, not
+about *what a gain change does.*
+⇒ **→ NO 6× VARIANT IS WARRANTED. 8× STANDS**, as the operator instructed, and the authority work
+in V124–V133 carries no demonstrated grinding cost.
+
+### ⭐ THE DEEPER LESSON, WHICH IS THE SESSION'S MOST REUSABLE ONE
+**A within-unit association does not license a between-unit causal claim** — especially across a
+**feedback loop**, where the controller absorbs the very change being tested. I made exactly that
+leap, and the loop was openpilot. ⊕ It is also why **every** between-build ratio in this kit needs
+its route-variance null first: **8× within-group spread** makes n≈4 routes powerless to see a 2×
+effect.
+
 ## 🛑🛑🛑 **GRIND TRACKS COMMAND *MAGNITUDE*, NOT ITS RATE — SO THERE IS NO NON-CONFLICTING LEVER**
 Excitation-driven splits into two very different prescriptions:
 - if grind tracks the command's **MAGNITUDE** ⇒ only cutting **GAIN** helps — **conflicts with
