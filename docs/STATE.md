@@ -1,5 +1,25 @@
 # STATE — living current state of the kit
 
+## ✅ `0xC4080`'s NEVER-RAISE FLAG IS **INDEPENDENTLY CORROBORATED** — and a natural idea is killed
+Reasoning that led there: if the generator is **physical** friction, the firmware's counter-lever is
+its **friction compensator** — and ours has the **wrong shape**. Real Coulomb friction is
+constant-magnitude; ours is `|model|`-proportional:
+```
+   friction = EMA( |model| * cal(0xC40D2)/1024 * fVar13  +  cal(0xC4080)/1024 * fVar13 )
+                    \____ K1, |model|-proportional ____/     \__ K0 = 0, a PURE SIGNUM __/
+```
+⇒ *"raise `0xC4080` to add a proper constant Coulomb floor."*
+🛑 **The kit already flags `0xC4080` NEVER RAISE** — one of three named *flatten-into-a-relay*
+hazards ([[accord-plant-model-residual-aggregator-chain]]), and V89 explicitly left it untouched.
+✅ **And this session's own discriminator says WHY, independently:** the K0 term has **no amplitude
+dependence, so it does not vanish at zero command** ⇒ raising it installs a nonlinearity **active
+uniformly across the whole operating range** — **exactly the profile
+[[accord-the-harmonics-track-neither-firmware-saturation]] just measured as the generator.**
+⇒ **The idea would ADD the thing it was meant to remove.** Correctly flagged; the flag now has a
+measured rationale rather than only a structural one.
+⚠ A compensator that is constant-magnitude **but gated to vanish near zero** would need a **code**
+change ⇒ the cave class that bricked V24/V27/V48B. **Not available.**
+
 ## 🛑 THE HARMONICS TRACK **NEITHER** FIRMWARE SATURATION — V121's mechanism weakens again
 Two hard nonlinearities sit in the loop and **saturate on different axes**, so they separate: the
 **Coulomb relay** on |RATE| (≥ 31.8 deg/s on V112) and the **damper's ±511 clamp** on SPEED (rail duty
