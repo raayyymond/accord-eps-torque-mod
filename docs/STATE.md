@@ -1,5 +1,35 @@
 # STATE — living current state of the kit
 
+## 🛑 CAVEAT ON V122's ENDPOINT — GRIND #1 MAY BE **ABOVE THE CORPUS'S NYQUIST**
+The operator reports grind #1 moved to a **higher** frequency. My within-corpus measures do **not**
+reproduce an upward drift on recent builds:
+```
+   cs_rate engaged band shares (p90 of 1-49 Hz)     21-26   26-34   34-42   42-49   argmax
+     V104                                           0.729   0.705   0.027   0.017   21-26
+     V105                                           0.528   0.812   0.029   0.026   26-34
+     V106                                           0.243   0.689   0.044   0.027   26-34
+     V107                                           0.139   0.087   0.022   0.016   21-26   <- collapses
+     V111                                           0.168   0.121   0.052   0.038   21-26
+     V112                                           0.218   0.140   0.047   0.044   21-26
+     V112                                           0.205   0.122   0.041   0.034   21-26
+   imu_vert argmax is 42-49 Hz on nearly EVERY build INCLUDING stock (road/tyre background),
+     but V111 0.157 and V112 0.134/0.110 sit above V102-V107 (0.073-0.106).
+   Mode-frequency drift across builds: 7-9 Hz rho +0.391 p 0.134 | grind rho -0.327 p 0.216
+     -- NEITHER resolved, and the grind trend points DOWN, not up.
+```
+🛑🛑 **BOTH CHANNELS SAMPLE AT 100 Hz ⇒ NYQUIST 50 Hz. Anything above ~49 Hz is INVISIBLE in
+this entire corpus**, and the 42-49 Hz figures sit at the aliasing edge and cannot be trusted.
+⇒ **The engaged-specific excess I CAN measure on current builds is at 21-23 Hz. Whether that is what
+the operator now hears as grind #1 — or something above 50 Hz that no route can show — is
+UNRESOLVED.** ⇒ **V122's 21-26 Hz primary endpoint may be aimed at a band the symptom has left**, the
+same error class the operator already caught once.
+✅ **CHEAPEST FIX, and it is not a drive:** a **phone voice memo during a grind event**, or simply the
+**pitch** — high whine (>1 kHz) / mid buzz (200-800 Hz) / low growl (<100 Hz). **A hum or a recording
+pins the frequency immediately** and would tell us whether the kit's instruments can see it at all.
+⚠ **This does not change the decision to flash V122**: its grind lever is the only measured one, its
+authority gain is independent of the band question, and it is bit-identical below 31.8 deg/s. **But
+the endpoint may be unmeasurable, so the operator's own report will be the primary evidence.**
+
 ## 🛑🛑 THE PEAK-TURN OSCILLATION IS **PROBABLY MECHANICAL** — three independent lines converge
 The last untested generator hypothesis was the **`|model|`-scaled signum**: `|model|` rises **7-9×**
 with angle, so if it set the generator's amplitude the harmonics would be **angle-gated**. Tested:
