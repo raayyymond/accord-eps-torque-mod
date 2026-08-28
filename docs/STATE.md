@@ -1,5 +1,29 @@
 # STATE — living current state of the kit
 
+## ✅ LEVER B **IS** ON THE CAR — an alarm of mine, corrected; grind #1 needs something NEW
+Byte scan, 25 built images + stock:
+```
+   build           0x3AA96      0xC6446     LEVER B?  |  0x3AB76 0x3AC20  LEVER A?
+   STOCK           C5 stock     512 stock     no      |    AA      AA       no
+   V90..V100       FB LKAS gate 5244 ARMED    YES     |    AA      AA       no
+   V101,V102,V103  C5 stock     512 stock     NO   <-- a real gap, closed at V104
+   V104..V121      FB LKAS gate 5244 ARMED    YES     |    AA      AA       no
+   LEVER B: 22 of 25        LEVER A: 0 of 25
+```
+✅ **V112 (ON THE CAR) and V121 both carry Lever B** — grind #1 **0.40 [0.27, 0.58]**, *best in the
+kit*, **and** creep grind #2 → **0 bursts**, mode-proof.
+🛑 I raised an alarm from [[accord-v81-carries-neither-grind1-fix]] that the fix had been silently
+lost. **Wrong — that memory is specific to V81.** Lever B was restored at V88 and is continuous since.
+✅ **Lever A is absent, and correctly so**: its r24 half raised 40-49 Hz **×11.7 and CAUSED grind #2**,
+while Lever B is equal-or-better on grind #1 *and* fixes grind #2. **Do not restore Lever A whole.**
+⚠ Its **r26 half alone** (`0x3AB76` `AA`→`A9`, ONE byte) has never flown in isolation and did not
+cause grind #2 — but [[accord-r26-is-structurally-inert]] leans inert (leg 2 BELIEF) ⇒ **likely a
+no-op; NOT proposed on this evidence.**
+🛑 ⇒ **THE REMAINING GRIND #1 IS NOT A LOST FIX.** The best measured fix is deployed and the symptom
+persists ⇒ **it needs a NEW lever.** ⊕ Not the relay knee
+([[accord-knee-has-no-measured-dose-response-on-grind1]]), ⊕ not the base-assist damper
+([[accord-v80-damper-relay-and-grind1-inert]], inert across k = 0.58 → 4.16).
+
 ## 🛑 THE KNEE HAS **NO MEASURED** DOSE-RESPONSE ON GRIND #1 — an upgrade withdrawn before it was made
 I was about to strengthen V121's claim on grind #1 using the operator's own dose-response (constant
 → *"rare… a few moments"* exactly when knee went 600→1800). **Tested it first; it does not
