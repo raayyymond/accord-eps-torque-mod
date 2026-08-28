@@ -1,5 +1,69 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **THE OSCILLATION BRANCH — THE FIRMWARE RAISES Y WHEN IT DETECTS AN OSCILLATION. V126 BUILT.**
+**A NEW LEVER, and the best-targeted one in the kit's record.** `FUN_00036c12` picks the
+`gp-0x6b26` acceleration-feedback scale `Y` three ways — decompiled AND disassembled this session:
+```
+   if (gp-0x671a < 0xff) and (gp-0x67f4 == 1):
+       if gp-0x671a < cal(0xC64FD)=5:  Y = LERP(mode record, index = VOTED VEHICLE SPEED)
+       else:                           Y = cal(0xC640A) = -8192   <- ld.h 0x740a,tp,r12 @0x36CB4
+   else:                               Y = cal(0xC640C) = -3277   <- ld.h 0x740c,tp,r12 @0x36CBA
+   gp-0x6b26 = clamp(((c2c_gated * Y) >> 6) * 273 >> 18, +-cal(0xC407E)=511)
+```
+🛑 **`gp-0x671a` is the hard-reversal counter and it is CLAMPED to CEIL = 5**
+(`min(revcount, CEIL)` @`0x42A12`, the only `st.b` writer image-wide) ⇒ **`>= 5` is reachable ONLY
+when the counter has SATURATED** = 5+ hard reversals, held 5.0 s. **The fallback IS the oscillation
+branch.** And Honda's schedule tapers `Y` with speed while the fallback is a **flat −8192**:
+```
+   speed     LERP Y    fallback/LERP          speed     LERP Y    fallback/LERP
+    5 km/h    -8806        0.93x              44 km/h    -4442        1.84x  <- HIS EVENT
+   15 km/h    -6758        1.21x              64 km/h    -3366        2.43x
+   24 km/h    -5519        1.48x              90 km/h    -1966        4.17x
+```
+⇒ **on detecting an oscillation the firmware MULTIPLIES the term by up to 4×, at exactly the
+speeds where the symptoms live**, driving `|gp-0x6b26|` into its 511 rail — where it is
+`sign(α)·511`, a **bang-bang Coulomb relay**, V80's measured mechanism. **A relay ratchets; it does
+not damp.** A positive-feedback trap: oscillate → detector arms → bigger Y → rail → relay.
+
+### ✅ IT EXPLAINS THREE THINGS AT ONCE, INCLUDING A NULL THE KIT COULD NOT EXPLAIN
+1. the **peak-turn oscillation at 44 km/h**, hands-off, engaged — a **1.84×** jump;
+2. **grinding at 15–40 mph and NEVER below 5–6 mph** — the ratio is 0.93× at creep and rises
+   monotonically with speed. V107 noted *"the symptom map and the rail-duty map are the same
+   map"*; **this supplies the mechanism**;
+3. ⭐ **why the `0xCBE74` ×1.5 dose MEASURED INERT** — if the counter saturates during the
+   manoeuvre the **mode record is BYPASSED entirely**, so no dose on it can act.
+   ⇒ [[accord-cbe74-dose-measured-inert-wrong-mode-record]] is **RESOLVED**.
+
+### ✅ V126 BUILT — 5 payload bytes on a V124 base, cal-only, no code or cave edit
+```
+   0xC640A   -8192 -> -3277    THE EDIT -- the oscillation-branch Y
+   0x55DF2    9544 -> 94DA     427 probe source, gp-0x6ABC -> gp-0x6B26
+   0x55E10      a3 -> a2       packer sar 3 -> 2, sized to the +-511 clamp
+```
+image `d6aacb4d563cc7726db8bcf94b659b30341a510dab64a086c93b23c0402707d0` ·
+rwd `190231aa4021fe663a7490c1a966a6ef4777241044c3af2bf54caa7306d30d83` · **56/56, CRC 50/50.**
+⊕ **−3277 is not invented** — it is Honda's own value at `0xC640C` for **this same variable in
+this same function**, so it is inside the calibrated range by construction. New ratios: creep
+0.37×, 24 km/h 0.59×, **44 km/h 0.74×**, 64 km/h 0.97×, 90 km/h 1.67× ⇒ at his event, detecting
+an oscillation now **REDUCES** Y instead of raising it, a **2.5×** change in the term.
+✅ **BLAST RADIUS IS THE SMALLEST IN RECENT MEMORY**: `0xC640A` has **1 reader, 0 writers**
+(whole-image byte scan for the tp-displacement **and** instruction-boundary disassembly — the
+scan hit `0x36CB6`, the SECOND halfword of a 4-byte `ld.h` starting at `0x36CB4`), and the branch
+fires **only while the reversal counter is saturated** ⇒ **every other moment of driving is
+behaviourally identical to V124.**
+
+### ✅ THE PROBE MEASURES THE ONE QUANTITY THE KIT HAS GOT WRONG
+`wire = min((|gp-0x6b26|·5) >> 2, 0x3FF)` ⇒ the 511 rail maps to **638 of 1023: no clipping**,
+LSB 0.8 counts, **rail duty directly countable**. ⚠ 427 is 49.9 Hz and the lane's −3 dB band
+(25–153 Hz) is above Nyquist, so this wire **cannot** measure the lane's SPECTRUM — that blindness
+is exactly what voided V107's safety case. **Rail duty is a LEVEL statistic**, and undersampling
+an ergodic signal leaves it unbiased. This probe measures duty, and nothing else.
+🛑 [BELIEF] that lowering `0xC640A` de-rails the term on-car. **Duty CANNOT be predicted
+open-loop here** — V107 predicted ≤1.05 % and measured 33.49 %, a **32× miss**, because
+`gp-0x6b26 → aggregator → motor → motor rate → gp-0x6c2c` is a **CLOSED LOOP**. Hence the probe
+rather than an asserted number. ⊕ Next rung if V126 under-delivers: **−1966**, which never exceeds
+the schedule at any speed.
+
 ## 🛑🛑 **THE KNEE/K1 LADDER IS EXHAUSTED — V122/V124 IS ITS LAST RUNG**
 Every build since V111 has raised the Coulomb knee with K1 scaled to hold the small-signal gain
 **exactly**: `(K1/1024)·(12/knee) = 0.0039844`. That invariant has a hard end, because **K1 ≥ 1024
