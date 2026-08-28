@@ -1,5 +1,31 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 THE ADDED LKAS "MASS" **IS** THE DAMPER THAT WORKS — a build proposal stopped one step short
+I had assembled: the engaged friction row is the only engaged asymmetry · it scales `gp-0x6b26` ·
+`gp-0x6c2c` is **acceleration**, pinned in assembly ⇒ `−K·α` is **apparent inertia** ⇒ *"we add 3×
+engaged-only steering mass, exactly what the operator forbade, and it explains his low-acceleration
+complaint."* **Every link individually correct.**
+🛑 **V94 flew that argument verbatim** (*"it is apparent inertia, nothing is dissipated, lowering is
+strictly safe"*), cut the cell **6×**, and on route `7d` **the operator ABORTED**:
+> *"Made the stuttering and grinding worse, by a lot. So much so that it vibrated the entire car,
+> and I decided it was not safe to drive."*
+Measured after: motor acceleration **3-7× up above 9 Hz**; column-torque↔wheel-rate coherence at
+18-31 Hz **the highest of any drive in the corpus**. Then, two drives, ω-partialled, shuffled control:
+```
+   delivered phase vs WHEEL rate, 6-9 Hz:  +137 deg / +139 deg   =>  +518 / +565 counts POSITIVE Re(Z)
+   => a REAL 6-9 Hz DAMPER.  V94 removed 6/6ths of it.  First measured d(symptom)/dK: sign UP.
+```
+✅ **Reconciliation, both notes stand:** [[accord-gp6b26-is-inertia-not-damping]] is right
+**structurally** (built from an acceleration), but **structure is not delivered effect in a loop with
+filters** — delivered, it is +137° against wheel rate, i.e. dissipative.
+🛑🛑 **⇒ THE OPERATOR'S TWO GOALS ARE IN MEASURED OPPOSITION ON THIS LEVER.** The apparent mass he
+feels under LKAS **is** the damper holding the oscillation down; V107's 3.0× (**90 % of the int16
+ceiling 3.3335**) is a large part of why V112 is his best build. **Cutting it to buy acceleration is
+REFUTED ON THE ROAD**, and "more damper" has only **1.11× headroom at Y[0]** before overflow.
+✅ **Any acceleration gain must come from a DIFFERENT lever.** ⊕ This is the value of the standing
+rule *check the build lineage before proposing a cal lever* — it stopped a rebuild of the worst drive
+in the record.
+
 ## ✅ THE FRICTION-ROW FLAG IS **RETRACTED** — no defect on the car; the kit had already shown why
 I flagged that V107..V121's engaged friction row at **3.00×** sits past a stated *"int32 wraparound at
 1.6005×"*. **Verified. Wrong on three counts:**
