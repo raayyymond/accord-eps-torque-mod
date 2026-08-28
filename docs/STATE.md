@@ -1,5 +1,62 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **TASK 5 IS ≥ 250 Hz — THE BASE-ASSIST DAMPER *CAN* ACT AT 21–26 Hz. THE LANE RE-OPENS.**
+The one avenue recorded as *neither closed nor sized*. **Now bounded, from flown data.**
+
+### ✅ THE STRUCTURE — the TCB table, both entries located
+`FUN_00034350` (the base-assist damper) has exactly one caller, `FUN_00022ca0`, which itself has
+**no callers** ⇒ it is a **task entry**, dispatched from a table. Both it and the **confirmed
+1 kHz** task appear in one TCB array, stride **0x60**:
+```
+   task 1 (CONFIRMED 1 kHz)          task 5 (rate was OPEN)
+   0xBB924  0x00010607               0xBB9E4  0x00050207     id | a | b
+   0xBB928  0x0002214A  entry        0xBB9E8  0x00022CA0  entry
+   0xBB934  0x00000000               0xBB9F4  0x00000004    <- differs
+```
+🛑 **That is STRUCTURE, NOT A RATE.** Inferring a period from field positions is *exactly* the
+error the 2026-08-12 retraction documents (the RTOS handler was identified on an **address
+coincidence**). **I did not do it.**
+
+### ✅ THE RATE, BOUNDED EMPIRICALLY — TWO STATISTICS, BOTH FROM FLOWN DATA
+`gp-0x6bbe`'s outer EMA has a **known** coefficient, α = 205/1024, and route 79 (V92, 220 windows /
+19 episodes) measured its transfer at **≈ −1.2 dB** across 6–9 Hz with a step τ in **[0, 20] ms**:
+```
+   task rate    6 Hz   7.79 Hz    9 Hz    vs -1.2 dB              tau      vs <= 20 ms
+    100 Hz     -5.80    -7.55    -8.58    EXCLUDED, off 6.1 dB   50.0 ms   EXCLUDED
+    200 Hz     -2.32    -3.40    -4.12    EXCLUDED, off 2.1 dB   25.0 ms   EXCLUDED
+    250 Hz     -1.62    -2.46    -3.05    close                  20.0 ms   OK
+    500 Hz     -0.47    -0.76    -0.99    CONSISTENT             10.0 ms   OK
+   1000 Hz     -0.12    -0.20    -0.27    close                   5.0 ms   OK
+```
+⇒ **TASK 5 ≥ 250 Hz, best fit 500 Hz** ⇒ **Nyquist ≥ 125 Hz** ⇒ **the base-assist damper CAN act
+at 21–26 Hz.** The *"structurally cannot damp the 20.9 Hz mode"* claim is no longer merely
+retracted — it is **empirically EXCLUDED**, by a frequency-domain and a time-domain statistic.
+⚠ **Load-bearing assumption**: that `gp-0x6bbe`'s outer EMA lives in task 5. That link was made by
+the prior session's retraction, not re-derived here. The two statistics share one route, so they
+are **different estimators on common data**, not independent samples.
+
+### ✅ AND THE DAMPER IS AT HONDA'S STOCK CALIBRATION, WITH A DEAD ZONE OVER HALF THE SYMPTOM BAND
+```
+   FactorC m26   X = [2240, 3840, 5120, 8960] counts = [35.0, 60.0, 80.0, 140.0] km/h
+                 Y = [   0,  234,   429,  908]
+   V80 modified it (Y flat 566); V84 REVERTED to Honda's; stock ever since, V133 included.
+```
+🛑 **Below 35 km/h FactorC = 0 ⇒ the damper is DEAD across 24–35 km/h**, the lower half of the
+operator's 15–40 mph grinding band, and merely ramping up through the rest.
+
+### ⭐ THE CANDIDATE — and the gate it must pass first
+**Raise `FactorC` `Y[1..3]` while KEEPING `Y[0] = 0` and the monotone ramp.**
+🛑 **V80 already proved the wrong version of this**: it flattened `FactorC` to a constant **566**
+— a **PLATEAU, i.e. a RELAY** — and produced **the worst grinding in the kit's record**
+([[accord-v80-damper-relay-and-grind1-inert]]). Its own prescription is the design rule:
+***"Restore the RAMP, don't merely lower k."*** Likewise V74/V75 made `FactorE` a relay via
+`Y[1] := Y[2]`. ⇒ **any edit here must preserve strict monotonicity and create no plateau.**
+🛑 **THE GATE, NOT YET RUN**: `FUN_00034350` carries a **ceiling clamp**
+([[accord-damper-evaluator-fun34350-ceiling-clamp]]). Raising `Y` without checking that the
+product `ch0 = (FactorC × FactorE) >> 10` stays **below** it would recreate a relay by saturation
+— **the identical failure mode as `gp-0x6b26`, on a different term.** ⇒ **the ceiling must be read
+and the product bounded BEFORE any dose is chosen.** Not done here; named as the next step.
+
 ## 🛑🛑 **THE CALIBRATION SEARCH FOR GRINDING IS NOW BOUNDED — AND V133 IS ITS ENDPOINT**
 V87's flight fixed the lever class: *"a lightly-damped mode driven by **broadband command
 content**, not a commanded tone ⇒ the lever class is **less broadband HF in the delivered
