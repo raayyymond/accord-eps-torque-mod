@@ -27,6 +27,35 @@ where **phase, not just magnitude, decides stability**.
 record: *widening lets the model explain the oscillation so the signum stops chasing it* vs *widening
 increases feedback bandwidth around a lightly damped mode*. **Neither is settled.**
 
+## 🛑🛑 GATE 2 **FAILS IT** — the sign is undetermined, and determining it costs the bricking class
+```
+   pole2   |H(7.8Hz)|   phase        vs stock gain   phase ADVANCE
+     122     0.2758    -113.86 deg      1.000x          +0.00 deg
+     196     0.5004     -87.19 deg      1.814x         +26.67 deg
+     382     0.7998     -50.42 deg      2.900x         +63.44 deg   <- the 80 %-pass dose
+     560     0.9002     -34.13 deg      3.264x         +79.72 deg
+```
+🛑 **A 63° phase advance**, in a branch that is **added** to the model and then **subtracted**
+downstream. With `|residual|² = |M|² + |A|² − 2|M||A|·cos(φ_M − φ_A)`, a 63° move swings the cosine
+by up to **0.7** ⇒ **it can make the symptom better OR worse, and magnitude reasoning cannot pick
+which.** ⇒ **the lever fails GATE 2 on the phase leg, which is precisely what GATE 2 exists to catch.**
+⚠ (My printed rationale said *"~46 deg"* from a stale literal; the computed value is **+63.4°**.)
+
+### 🛑 AND THE MEASUREMENT THAT WOULD SETTLE IT IS NOT CHEAPLY AVAILABLE
+Needed: **`arg(ACTUAL) − arg(MODEL)` at 6-9 Hz** — the real torque-sensor response against the
+model's reconstruction of it.
+⊕ The kit's **+137°/+139°** result is **delivered assist vs WHEEL rate** — a *different pair* — so it
+**does not transfer**, however tempting the number is.
+🛑 **None of `gp-0x4f60`, the model output `gp-0x6bf6`, or the residual `gp-0x6bfc` has ever been on
+the wire** ⇒ the phase cannot be obtained from existing telemetry, and obtaining it requires a
+**CAVE PROBE — the only class that has ever bricked this ECU (V24, V27, V48B).**
+⇒ **STATUS: BLOCKED, not deferred.** The candidate is real, virgin, hazard-free on CRC, and
+orthogonal to the K1/knee confound — **and it still cannot be built**, because its sign is unknown and
+the price of learning it is the one risk class this kit refuses on cal-only grounds.
+✅ **Recorded so the next session does not re-derive the lever and skip the gate.** The magnitude
+argument is seductive (3.6× attenuation at exactly the mode, on exactly the right sensor); **the phase
+argument is what kills it.**
+
 ## 🛑 CORRECTION — WHICH POLE FILTERS WHICH BRANCH. It was backwards, and the fix STRENGTHENS it.
 Re-read of `FUN_0003b8f6`, instruction by instruction:
 ```
