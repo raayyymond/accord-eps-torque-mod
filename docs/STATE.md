@@ -1,5 +1,67 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **V62's GRIND FIX HAS BEEN OFF THE CAR SINCE ~V80 — AND A GUARD KEPT IT OFF. V131 RESTORES IT.**
+```
+   build         0x3AB76 (r26 sar)   0x3AC20 (r24 sar)
+   STOCK              0xaa                0xaa
+   V62                0xa9                0xa9      <- THE FIX (sar 0xa -> 0x9)
+   V80 .. V130        0xaa                0xaa      <- STOCK.  IT IS GONE.
+```
+🛑 **V62 is the kit's FIRST AND BEST-MEASURED grind fix** ([[accord-v62-fixed-the-grinding]]),
+route 37, 86,278 frames, operator: *"Original grinding at 2–5 mph is gone!"* — engaged creep,
+speed-standardised, **episode-clustered** bootstrap:
+```
+   18-22 Hz  V62/V59 = 0.124 [0.036, 0.387]                   =  8x better
+   at |rate| 16-32 deg/s = 0.024 [0.016, 0.234]               = 42x better
+   30-40 Hz NEGATIVE CONTROL ~ 1.0                            => band-specific, not global
+   FLIGHT-CLEAN: ST==4 on 0 of 86,278 frames
+```
+**Lowest p90/p99/>1000-count transient rate of any build in the kit.** ⇒ the strongest measured
+anti-grind result this project has, and **it has not been on the car for ~50 builds.**
+
+### 🛑🛑 A GUARD ENSHRINED THE REGRESSION — THIS IS THE REAL LESSON
+`V106B.FROZEN` records both cells as **"Lever A r24/r26 sar — V62's edit is ABSENT (stock).
+Carried"**, and every later builder asserts the frozen set is unchanged. ⇒ **the LOSS was written
+down as an INVARIANT**, so ~50 builds actively verified that the fix stayed OFF. The guard did
+exactly what it was told; what it was told was wrong.
+⇒ **Same failure family as [[accord-v42-ratchet-fix-lost-since-v53]]** (V42's ratchet fix
+byte-stock V53–V70) — but worse, because here a check was *asserting* the regression every build.
+⭐ **RULE: a FROZEN entry must record WHY a cell is at its value. "Absent (stock). Carried" is a
+description of a loss, not a decision** — and it read as a decision for fifty builds.
+
+### ✅ WHY THE REASON IT WAS DROPPED DOES NOT HOLD
+The record carries *"Lever A = V62's sar ×2 (r24 half CAUSED grind #2)"*. **V62's own memory says
+that regression is NOT ESTABLISHED**: the 43 excursions >2000 are **ONE 0.92 s burst ⇒ n = 1**;
+burst rate **V62 0.00142 [0.00004, 0.00793] vs V59 0 [0, 0.00986] — V62's CI is INSIDE V59's**;
+**V61 is 72× V62**; exposure-matched, **p = 0.51**; and *"instant #1 is a 38–46 Hz singleton at
+5.4 mph, not the reported 10–20."*
+⇒ **an n = 1, p = 0.51 observation was allowed to retire an 8–42× measured fix that passed its own
+negative control.** That is the wrong trade, and it is why V131 exists.
+
+### ✅ V131 BUILT — 2 payload bytes on a V127 base
+```
+   0x3AB76   0xaa -> 0xa9    sar 0xa -> sar 0x9   (r26 arm, FUN_0003aa2c)
+   0x3AC20   0xaa -> 0xa9    sar 0xa -> sar 0x9   (r24 arm, FUN_0003aa2c)
+```
+image `4bb43e7f15c3df61fa44cfdfda75f25b2cadf6a34ae28d4f4d535f3038315e28` ·
+rwd `77444293082ddfdd3fc5cee40f80ba15a32d41378eb0a48533e1c23c6c76d450` · **68/68, CRC 50/50.**
+✅ **Instruction-verified**: `0x3AC20` disassembles as `sar 0xa, r8`, bytes **`aa42`** — V850 is LE
+so the immediate is the **FIRST** byte; the builder asserts the register byte is **untouched**,
+because this kit has slipped on exactly that before. In-place immediate edit, **same class as V62
+itself, which flew fault-free** — **not** a cave edit, so no V24/V27/V48B bricking risk.
+✅ **INDEPENDENT OF THE gp-0x6b26 FORK.** Lever A is the **rate lane** (`FUN_0003aa2c`); V129/V130
+move the **acceleration lane**'s `Y` (`FUN_00036c12`). V131 touches neither `Y` nor `0xC640A`, so
+it **composes with whichever branch the probe selects.**
+⚠ [BELIEF] that V62's fix reproduces on the current build: V62 flew at **4×** gain, α2 = 22 and a
+**stock** `Y` row; the car now runs **8×**, α2 = 5 and a **×3** row. Same lane, different excitation
+and different parallel damping. **This restores a measured-good edit; it does not re-measure it.**
+
+### ⭐ THE FLIGHT ORDER IS NOW CLEAR
+**V131** is the strongest single grind candidate available and is **fork-independent** — it is the
+build to fly if the goal is grinding. It carries everything V127 does (8× + clamps, α2 5, trim 3,
+`0xC640A` −1966, the rail-duty probe) **plus** the restored Lever A, so **one drive scores both**
+the grind symptom **and** the probe that decides V129-vs-V130.
+
 ## ✅ **BOTH BRANCHES OF THE FORK ARE NOW BUILT — V129 (Y down) AND V130 (Y up). NEITHER FLIES YET.**
 `gp-0x6b26`'s damping and its railing are **the same knob** — both scale as `|H_lane(α2)| × Y × raw`
 ⇒ **the 511 clamp is a HARD CEILING on the damping this term can ever deliver.** What α2 changes
