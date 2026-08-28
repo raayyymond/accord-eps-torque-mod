@@ -40,6 +40,7 @@ Verified from the images: `0xC40DC` (α2) = **14 on both**, `0xC40BC` knee 600, 
 | **V111** | 427 tap `gp-0x6c2c` → **`gp-0x6abc`** (the relay input), sar 5 → 3 | `9c4865cf…` / `221d99c6…` | ⭐ **RECOMMENDED NEXT.** 36/36. **No cave edit** ⇒ outside the bricking class |
 | **V109** | `0xC40DC` α2 22 → 14 (band-limit) | `e9eb51fc…` / `83047f0f…` | 30/30. Same dynamics as V111; keeps the `gp-0x6c2c` tap for the Y-row solve |
 | **V110** | `0xC6AE6` 2048 → 1024 | `3de48a49…` / `becaab6d…` | 🛑 **PARKED — DO NOT FLASH.** Killed twice |
+| **V121** | `0xC40BC` 1800→3000 + `0xC40D2` 612→1020 | `ce565da7…` / `8c154edb…` | ✅ **BUILT, UNFLASHED.** The **maximal gain-matched knee**: small-signal gain held EXACTLY at V112's 0.0039844 while the relay saturates 31.8→53.1 deg/s. 🛑 **Dose set by a hard ceiling** — `K1/1024` is the friction's max as a fraction of `|model|`, so `K1 >= 1024` inverts the residual's sign; V121 sits at **0.996**, and knee 4000 (K1 1360 = 1.328) is **REFUSED**. **V116 is a half-step** — its 42.4 deg/s is still below the oscillation's own median p95 rate of 47.06, so its relay is still a signum where the symptom lives. Feel is **bit-identical to V112 ≤ 31.8 deg/s**, then 1.571×/1.667× more friction ⇒ **more assist** at high rate. 4 payload bytes, cal-only, alpha2 held. ⚠ manual feel changes >31.8 deg/s; does NOT address grind #1. **Falsifier:** harmonic ratio should drop below V112's 1.213. |
 
 ### WHY V111 IS RECOMMENDED OVER V109 FOR A SINGLE DRIVE
 **GATE 2 on the relay knee** shows a knee raise only bites **below ~200–400 counts** of

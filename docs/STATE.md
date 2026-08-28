@@ -1,5 +1,45 @@
 # STATE — living current state of the kit
 
+## ✅ **V121 BUILT — THE MAXIMAL GAIN-MATCHED KNEE.** `0xC40BC` 1800→3000, `0xC40D2` 612→1020
+```
+image  ce565da74ad93f77c81a3e2572758d5c2df505f6d32889b65c5536904ea7596c
+.rwd   8c154edb69ae4649ba55ac4760ae55aec56bd5be2b336e0d8f1e4a46b33512c9
+38/38 assertions · 50/50 CRC blocks · 4 payload bytes · cal-only, NO cave · alpha2 HELD at 14
+```
+**A HARD SAFETY CEILING SETS THE DOSE.** `friction = |model|·(K1/1024)·clamp(·1)`, so `K1/1024` is the
+friction's maximum as a **fraction of |model|**; at `K1 >= 1024` friction can exceed `|model|` and the
+**residual INVERTS SIGN**. No build in the kit's history has run `K1 >= 1024`.
+```
+   build   knee    K1    gain        saturates   K1/1024   frames saturated
+   stock    600   204   0.0039844    10.6 deg/s   0.199        19.165 %
+   V112     1800   612   0.0039844    31.8         0.598         6.748 %   <- ON THE CAR
+   V116     2400   816   0.0039844    42.4         0.797         4.713 %   <- still clipped at 47.06
+   V121     3000  1020   0.0039844    53.1         0.996         3.697 %   <- CLEARS it
+   (knee 4000 needs K1 1360 = 1.328 of |model| ⇒ REFUSED, residual inverts)
+```
+🛑 **V116 is a HALF-STEP**: oscillating windows have median p95 |rate| = **47.06 deg/s**, so
+V116's relay is **still a signum exactly where the symptom lives.** V121 is the first gain-matched
+step that clears it while staying same-signed.
+✅ **Feel: bit-identical to V112 at and below 31.8 deg/s** (ratio 1.000 at 10 and 30 deg/s), then
+**1.571× the friction at 50 and 1.667× at 100+** — and **more modelled friction = MORE assist**
+([[accord-friction-polarity-more-assist]]) ⇒ it adds **no** drag where the LKAS command lives and
+**increases** authority at high steering rate. That is the operator's constraint moved the right way.
+⊕ Second, independent rationale for the knee: the 7-9 Hz mode radiates **real harmonics**
+([[accord-the-7to9hz-mode-is-nonlinearly-excited-harmonics]]) ⇒ a hard nonlinearity in its
+excitation path; **knee is the relay's SHAPE** and the harmonic ratio is monotone in it
+([[accord-knee-is-the-relay-shape-variable-k1-is-only-gain]]). V116's header said the knee *"does
+NOT fix the peak-turn oscillation"* — written before that result, and **now too strong.**
+🛑 **The mechanism is BELIEF, not EVIDENCE** (ρ −0.291, p 0.257). V121 is the **best-motivated
+flight, not a guaranteed fix.** ⚠ `FUN_0003b8f6` is not LKAS-gated ⇒ **manual feel changes above
+31.8 deg/s**, the same trade V112 made. ⚠ It does **not** address grind #1 — a separate mechanism.
+✅ **FALSIFIER:** V121 should push the harmonic ratio below V112's **1.213** and be no worse on
+assist. If the ratio does not move, the relay is not the excitation path.
+⇒ **RECOMMENDED FLIGHT ORDER: V121 → (V116 only if V121's dose proves too large).** V120 is
+withdrawn — it cuts assist and, being pure gain, cannot touch the harmonics.
+⚠ Builder bug caught and fixed: the image first emitted under a `_v116_` prefix. Corrected to
+`_v121_`; V116's own image was never overwritten. Builder:
+`analysis-2020accord/builds/v108_plus/build_v121_tva.py`.
+
 ## ⭐⭐ `KNEE` IS THE RELAY'S SHAPE, `K1` IS ONLY GAIN ⇒ **THE RECOMMENDATION CHANGES TO V116**
 🛑 My first dose-response test was **mis-constructed**: it used `fric_gain = (K1/1024)(12/knee)`,
 but `K1` multiplies **after** the relay (pure gain) while `knee` sets where the clamp bites (the
