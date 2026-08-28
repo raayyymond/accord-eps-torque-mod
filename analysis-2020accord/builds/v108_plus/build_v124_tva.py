@@ -1,54 +1,40 @@
 #!/usr/bin/env python3
 r"""
-V116 -- V112 + THE NEXT KNEE STEP.  0xC40BC 1800->2400 AND 0xC40D2 612->816.
+V124 -- THE FIX BUILD.  8x forward gain, matched clamps, alpha2 5, trim IIR 3.  Base = V122.
 
-WHAT THIS IS
-------------
-V116 = V112 with the relay knee and K1 scaled TOGETHER by 4/3, holding the small-signal gain
-EXACTLY, exactly as V112 did to V111.  alpha2 stays at V112's 14, so this is single-variable
-against the build on the car.  4 payload bytes.  No cave edit.
+6 payload bytes, no cave edit, no code edit:
 
-    0xC40BC   1800 -> 2400     saturation 31.8 -> 42.4 deg/s   (x4 on stock's 600)
-    0xC40D2    612 ->  816     cancels the knee's gain change
+    0xC6CD0   5346 -> 7128   forward LKAS gain, 6x -> 8x      (the operator authorised 8x)
+    0xC61B2   3072 -> 4096   forward clamp, scaled WITH the gain
+    0xC61B4   3072 -> 4096   forward clamp, scaled WITH the gain
+    0xC40DC      8 ->    5   alpha2, the selective grind lever
+    0xC63D2      6 ->    3   trim IIR
 
-    (816/1024)*(12/2400) = (612/1024)*(12/1800) = (204/1024)*(12/600) = 0.0039844
-
-=> bit-identical below 31.8 deg/s; above it the compensation keeps climbing instead of clipping.
-
-WHY THIS DOSE IS TRUSTED -- A CORRECT PROSPECTIVE PREDICTION
+WHY THE CLAMPS MOVE WITH THE GAIN -- QUANTIFIED, NOT ASSUMED
 ------------------------------------------------------------
-The relay-saturation model was fitted on route 21 (V111) and used to predict what raising the knee
-would do.  V112 flew, and the prediction held:
+At full LKAS command (15360 internal units) the forward value is  15360*gain>>15:
 
-    knee  600 (V111)   predicted 0.7439 [0.669, 0.815]   MEASURED 0.7336            route 21
-    knee 1800 (V112)   predicted 0.2353                  MEASURED 0.3102 / 0.1071   r22 / r23
-    knee 2400 (V116)   predicted 0.0484                  <- this build
+    gain 5346 (6x) -> 2505   vs clamp 3072   82 % used, free
+    gain 7128 (8x) -> 3341   vs clamp 3072   WOULD CLIP 8.1 %, effective 7.34x
+    gain 7128 (8x) -> 3341   vs clamp 4096   82 % used, free   <- THIS BUILD
 
-A quantitative on-car prediction across a dose change is rare in this kit's record.  And the
-operator's own report moved with it: grind #1 went from a constant feature to "rare... a few moments
-in each drive" exactly when the knee went 600 -> 1800.
+V123 raised the gain and left the clamps at 3072; that build was DELETED, not superseded.
+The builder now asserts clamp/gain == exactly 1.000 so the defect cannot recur.
+Downstream, the governor 0xC6202 = 4762 leaves 1.43x headroom at 8x (room to ~11.4x), so
+nothing clips this build.  DO NOT raise 0xC6202 -- it is lockstep-shadowed -> fault 0x17.
 
 WHAT THIS BUILD IS *NOT*
 ------------------------
-🛑 It does NOT fix the peak-turn oscillation.  That is at 7.42 Hz, inside the band Re(Z) measures at
--43..-67, and the relay knee does not touch it.  **V115 (alpha2 14->8) is the lever for that, and
-V115 should fly FIRST** -- the oscillation is the operator's standing complaint while grind #1 is
-already rare.  V116 exists so the grind lever is ready if grind #1 survives V115.
+It does NOT raise 0xC646C (891 = stock on every build).  Readers #3/#5/#6 multiply by that
+cell, not by 0xC6CD0, and reader #3 (FUN_0002b62c) is the BASE-ASSIST path, not delivered
+LKAS.  Only the FORWARD reader was decoupled onto 0xC6CD0 at V57, and that is the one this
+build scales.
 
-🛑 The link from relay saturation to the AUDIBLE grind is NOT established.  A circular-shift null on
-the acoustic band during saturation returned p = 0.30 (r22) and p = 0.22 (r23): an apparent
-coincidence of three timestamps did not survive its own control.  A 12-band sweep with a family-wise
-null found 120-160 Hz at +2.268 dB on r23 (threshold +2.165) but r22 did not replicate it.
-This build rests on the saturation-duty prediction and the operator's dose-response report, NOT on
-the acoustic link.
-
-COST, THE SAME SHAPE V112 ALREADY PAID
---------------------------------------
-Above 42.4 deg/s the residual falls further -- more assist by the verified polarity -- and
-FUN_0003b8f6 is not LKAS-gated, so manual feel changes above 31.8 deg/s.  V112 made exactly this
-trade one step smaller and the operator called the result the best yet, including a measured
-1.37-1.62x improvement in command-authority tracking at 5-15 deg/s.
-
+WHY THIS IS THE FIRST AUTHORITY CHANGE SINCE V112
+--------------------------------------------------
+V122 carries V112's gain UNCHANGED (both 5346); its edits were knee, K1 and alpha2, all
+friction/shape.  The operator flew V122 and reported authority "does not feel like it has
+improved at all" -- the expected result.  This build is the first since V112 to raise it.
 """
 # --- PATH BOOTSTRAP (repo reorg 2026-08-26; MULTI-ROOT FIX 2026-08-26) ----
 import os as _os, sys as _sys

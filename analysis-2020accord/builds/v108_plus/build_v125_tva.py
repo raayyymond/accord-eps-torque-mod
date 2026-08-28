@@ -1,54 +1,33 @@
 #!/usr/bin/env python3
 r"""
-V116 -- V112 + THE NEXT KNEE STEP.  0xC40BC 1800->2400 AND 0xC40D2 612->816.
+V125 -- V124 PLUS A TELEMETRY PROBE.  Behaviourally IDENTICAL to V124, strictly more informative.
 
-WHAT THIS IS
-------------
-V116 = V112 with the relay knee and K1 scaled TOGETHER by 4/3, holding the small-signal gain
-EXACTLY, exactly as V112 did to V111.  alpha2 stays at V112's 14, so this is single-variable
-against the build on the car.  4 payload bytes.  No cave edit.
+Base = V124.  2 payload bytes, both in the EXISTING CAN 427 packer -- no new cave instructions,
+so this carries none of the cave bricking risk (V24 / V27 / V48B):
 
-    0xC40BC   1800 -> 2400     saturation 31.8 -> 42.4 deg/s   (x4 on stock's 600)
-    0xC40D2    612 ->  816     cancels the knee's gain change
+    0x55DF2   44 -> 10    CAN 427 source displacement, gp-0x6ABC -> gp-0x6AF0
+    0x55E10   a3 -> a4    packer sar 3 -> 4, sized to the +-3072 engaged clamp
 
-    (816/1024)*(12/2400) = (612/1024)*(12/1800) = (204/1024)*(12/600) = 0.0039844
+THE ONE QUESTION IT ANSWERS
+---------------------------
+gp-0x6AF0 is reader #3's output (FUN_0002b62c).  Scoring the delivered phase of that wire
+against wheel rate at 6-9 Hz decides whether 0xC642A/0xC642C (=194, virgin, fc 30.15 Hz,
+passing 97 % of 7.8 Hz) is a usable lever:
 
-=> bit-identical below 31.8 deg/s; above it the compensation keeps climbing instead of clipping.
+    phase near +90 deg -> reader #3 DAMPS      -> cutting it is the V94 direction, CLOSED
+    phase near -90 deg -> reader #3 ANTI-DAMPS -> cutting it HELPS, build 194 -> ~29
 
-WHY THIS DOSE IS TRUSTED -- A CORRECT PROSPECTIVE PREDICTION
-------------------------------------------------------------
-The relay-saturation model was fitted on route 21 (V111) and used to predict what raising the knee
-would do.  V112 flew, and the prediction held:
+Scored by rlog-tools/score/score_v125_probe.py, whose positive control on r24 (whose tap is
+gp-0x6ABC = wheel rate x 4.7121) passes: corr +0.9832, coherence 6-9 Hz 0.335 vs a permutation
+null of 0.069 +- 0.004, excess 0.266 at z = +60.7.  Run "--control r24" before trusting a run.
 
-    knee  600 (V111)   predicted 0.7439 [0.669, 0.815]   MEASURED 0.7336            route 21
-    knee 1800 (V112)   predicted 0.2353                  MEASURED 0.3102 / 0.1071   r22 / r23
-    knee 2400 (V116)   predicted 0.0484                  <- this build
+LIMITS OF THE WIRE, STATED UP FRONT
+------------------------------------
+427 arrives at 49.9 Hz, so Nyquist is 24.95 Hz and grind #1's 21-26 Hz band STRADDLES it.
+This probe is a 6-9 Hz instrument only; it cannot measure grind #1.
 
-A quantitative on-car prediction across a dose change is rare in this kit's record.  And the
-operator's own report moved with it: grind #1 went from a constant feature to "rare... a few moments
-in each drive" exactly when the knee went 600 -> 1800.
-
-WHAT THIS BUILD IS *NOT*
-------------------------
-🛑 It does NOT fix the peak-turn oscillation.  That is at 7.42 Hz, inside the band Re(Z) measures at
--43..-67, and the relay knee does not touch it.  **V115 (alpha2 14->8) is the lever for that, and
-V115 should fly FIRST** -- the oscillation is the operator's standing complaint while grind #1 is
-already rare.  V116 exists so the grind lever is ready if grind #1 survives V115.
-
-🛑 The link from relay saturation to the AUDIBLE grind is NOT established.  A circular-shift null on
-the acoustic band during saturation returned p = 0.30 (r22) and p = 0.22 (r23): an apparent
-coincidence of three timestamps did not survive its own control.  A 12-band sweep with a family-wise
-null found 120-160 Hz at +2.268 dB on r23 (threshold +2.165) but r22 did not replicate it.
-This build rests on the saturation-duty prediction and the operator's dose-response report, NOT on
-the acoustic link.
-
-COST, THE SAME SHAPE V112 ALREADY PAID
---------------------------------------
-Above 42.4 deg/s the residual falls further -- more assist by the verified polarity -- and
-FUN_0003b8f6 is not LKAS-gated, so manual feel changes above 31.8 deg/s.  V112 made exactly this
-trade one step smaller and the operator called the result the best yet, including a measured
-1.37-1.62x improvement in command-authority tracking at 5-15 deg/s.
-
+Every V124 cal value below is asserted OLD == NEW: they are inherited from the V124 base
+image, not re-applied.  See build_v124_tva.py for what they are and why.
 """
 # --- PATH BOOTSTRAP (repo reorg 2026-08-26; MULTI-ROOT FIX 2026-08-26) ----
 import os as _os, sys as _sys
