@@ -1,5 +1,54 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ V112 BUILT — THE FIRST LEVER THAT SATISFIES THE BOTH-AT-ONCE DIRECTIVE
+```
+builder  analysis-2020accord/builds/v108_plus/build_v112_tva.py   37/37   BASE = V111
+image    f032878c4e0b8e90d782ddac6ba2d644e09956cc1b267a60ef4fb1c44ee1f96f
+.rwd     64f2ee9eb23442673edd43251e1b27db90ba596ebea93016875379fbe0495692
+0xC40BC   600 -> 1800   the relay KNEE     (saturation 10.6 -> 31.8 deg/s)
+0xC40D2   204 ->  612   K1                 (cancels the knee's gain change EXACTLY)
+4 payload bytes + 1 CRC trailer.  ZERO unattributed.  NO CAVE EDIT.
+```
+⭐ **Scaling BOTH cells is the whole trick.** `gain = (K1/1024)(12/knee)`, `saturation = knee/12` —
+the knee is in both, K1 in only one, so K1 cancels the gain change and leaves the saturation change
+standing. `(204/1024)(12/600) = (612/1024)(12/1800) = 0.0039844` **exactly** ⇒ **below 10.6 °/s V112
+is BIT-IDENTICAL to V111**; above it the term keeps climbing instead of clipping.
+⇒ **It adds NO impedance** — it reshapes a feed-forward friction COMPENSATION, so it cannot cap max
+angular velocity the way `gp-0x6b26`, the damper and α2 all do. **That is what makes it the first
+lever compatible with the operator's directive.**
+
+### ⭐⭐ ROUTE 21 IS THE V111 DRIVE — AND IT MEASURED THE RELAY
+Identified by **physics, not assumption**: the 427 tap's quantiles numerically EQUAL the steering rate
+from `ang` — p95 39.4 vs 40.4, p99 167.4 vs 171.8, **p99.9 313.4 vs 313.3 °/s**. Only true if the tap
+is `gp-0x6abc` at sar 3. ⊕ **Independently confirms the 4.7121 ct/(°/s) scale.**
+```
+  RELAY SATURATION DUTY  --  5-10 mph, engaged, hands-off, |cmd|>=2048, n=289
+     knee  600 (V111)  0.7439   95% CI [0.6691, 0.8146]   <- ON THE CAR
+     knee 1200         0.4810
+     knee 1800 (V112)  0.2353                             <- BUILT, a 3.2x cut
+     knee 2400         0.0484
+```
+🛑 **THE RELAY IS IN HARD COULOMB MODE 74 % OF THE TIME IN EXACTLY THE REGIME HE NAMED.** First
+direct measurement of the mechanism the kit has asserted since V80. ⊕ Unconditioned the same regime
+is 18.5 % ⇒ **command drives saturation 4×**, matching the command gate from a different instrument.
+
+### GATES
+✅ **GATE 1** — one reader each, two methods agreeing: `0xC40BC` at `0x3BAB4`, `0xC40D2` at `0x3BAFE`.
+✅ **GATE 2** — the knee is an **odd, memoryless saturation** ⇒ DF real ⇒ **ZERO phase added.** The
+magnitude rises ≤2.97× **but can never exceed the small-signal gain, which is unchanged and already
+exercised at low rate every drive.** No new gain regime.
+✅ **THE CLAMP OBJECTION IS DEAD** — `cal(0xC7468)=41232` and the residual clamps at ±20000, so
+`|model| ≤ 0.4851` and `friction_max = 0.290` against a ±10.0 clamp: **34× headroom** (103× at V111).
+⚠ **THE COST, PLAINLY:** above 31.8 °/s the residual falls `0.80·|model|` → `0.40·|model|` — a 2×
+reduction in the torque-tracking reference. More assist by the verified polarity, but not small.
+And `FUN_0003b8f6` is **not LKAS-gated**, so manual feel changes above 10.6 °/s too.
+
+### 🛑 α2 IS DELIBERATELY LEFT ALONE
+`0xC40DC` stays at V111's 14. The α2 cut is the suspected source of the friction he objects to, but
+that magnitude is **unverified**, and reverting it would give back three measured improvements for
+one regression. **V112 changes the RELAY ONLY**, so his next report is a single-variable read on the
+relay hypothesis.
+
 ## 🛑🛑 V111 FLEW — OPERATOR REPORT, 2026-08-27. **THREE SYMPTOMS BETTER, STEERING RATE WORSE.**
 **AND A STANDING DIRECTIVE THAT RULES OUT A WHOLE CLASS OF LEVER.**
 
