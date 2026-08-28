@@ -1,5 +1,48 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **V62 FIXED THE *CREEP* SYMPTOM — THE CURRENT ONE IS A DIFFERENT BAND AT A DIFFERENT SPEED**
+The operator gave a constraint I had never tested: **grinding at 15–40 mph (24–64 km/h), NONE below
+5–6 mph.** That is a **within-drive** speed profile — immune to the route-variance floor that has
+blocked every between-build comparison this session. Pooled over **8 routes / 4,750 engaged
+windows**, which band reproduces it?
+```
+   band          creep<10    24-64     >=64    24-64 / creep
+    1-4  Hz       0.51515   0.17776  0.09867      0.35x
+    6-9  Hz       0.03547   0.07985  0.04803      2.25x   <- matches shape (the RATCHET band)
+   13-18 Hz       0.03130   0.11571  0.11147      3.70x   (flat above 64)
+   18-22 Hz       0.10338   0.10237  0.07187      0.99x   <- FLAT: does NOT match
+   21-26 Hz       0.05963   0.13557  0.11837      2.27x   <- MATCHES: up from creep, down at highway
+   26-31 Hz       0.00622   0.05167  0.09114      8.31x   (keeps RISING above 64)
+   30-40 Hz       0.00585   0.03185  0.04424      5.44x   (keeps RISING)
+```
+✅ **At creep, 18–22 Hz DOMINATES (0.103 vs 21–26's 0.060). At 24–64 km/h, 21–26 Hz DOMINATES
+(0.136 vs 18–22's 0.102).** Only **21–26 Hz** and the **6–9 Hz ratchet** reproduce his full shape —
+up from creep **and down again at highway**. The bigger risers (26–31, 9–13, 30–40, 40–49) all keep
+climbing above 64 km/h, contradicting *"15–40 mph"*.
+⇒ **[EVIDENCE] 21–26 Hz is the right band for the CURRENT complaint**, validated against the
+operator's own speed report rather than assumed.
+
+### 🛑 AND THAT UNDERCUTS WHAT I CALLED V133's "MOST DEFENSIBLE CONTENT"
+**V62's 8–42× result was measured at 18–22 Hz** — the band that is **FLAT with speed (0.99×)** and
+**dominant AT CREEP**. And V62's operator report was *"Original grinding at **2–5 mph** is gone!"*
+⇒ **V62 fixed the CREEP symptom, in the CREEP band.** The current complaint is **15–40 mph in
+21–26 Hz** — a **different symptom, at a different speed, in a different band.**
+⇒ **Restoring Lever A (V133) should NOT be expected to fix the current grinding.** It restores a
+real, measured, control-passing fix — **for the symptom the operator already reported as fixed.**
+⊕ This is precisely what his correction *"grind #1 has moved to a new, higher frequency"* means,
+and it is now **quantified** rather than taken on report.
+
+### ⭐ WHAT THIS CHANGES — the target was mis-specified, not the levers
+Every grind lever this kit has evidence for was scored at **18–22 Hz** (V62) or at **<16 km/h**
+(V106's extinction, measured *"engaged, <16 km/h"*). **Both are the CREEP regime.**
+🛑 **NO lever in this kit's record has ever been scored against 21–26 Hz at 24–64 km/h — the
+operator's actual current symptom.** That is why twelve builds have not closed it: **they were
+optimised against the wrong endpoint.**
+⇒ **The next build should be chosen by, and scored against, 21–26 Hz at 24–64 km/h** — and
+`SCORING-V131-preregistered.md` already requires a drive containing that band. ✅ `score_v131_grind.py`
+already reports 21–26 Hz with a 30–40 Hz control and a validated null; **it is pointed at the right
+band, which is now confirmed rather than assumed.**
+
 ## 🛑🛑 **RETRACTION: THE "8× vs GRINDING" TRADE IS NOT SUPPORTED — I OVERSTATED IT**
 Last section I told the operator his two standing instructions *"cannot both be satisfied"*, on
 the strength of `grind ~ command magnitude` (within-drive) plus the standing `m^1.74`. **I then
