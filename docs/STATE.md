@@ -1,5 +1,33 @@
 # STATE — living current state of the kit
 
+## ✅ AUDIO IS EXTRACTABLE FOR THE CURRENT BUILD — the 50 Hz ceiling does NOT apply to it
+The corpus's blindness above ~49 Hz is a property of the **CAN/IMU** channels (all 100 Hz). The rlogs
+also carry **`rawAudioData`** PCM, and it is **not** subject to that limit. Extracted for **r22
+(V112)**: **11,364,800 samples = 710.3 s at 16 kHz.**
+`rlog-tools/decode/extract_audio_v112.py` (the pre-existing `extract_audio_grind.py` has a stale
+`_cache_<tag>` path from the 2026-08-26 reorg and no longer runs).
+```
+   A) SPECTRUM, share of 50-7800 Hz        B) AM ENVELOPE peak modulation rate
+      100- 300 Hz   34.50 %                   100-300 Hz    5.86 Hz    21-26 Hz share 11.6 %
+      300- 800 Hz    3.17 %                   300-800 Hz    5.37 Hz                    3.9 %
+      800-2000 Hz    5.88 %                   800-2000 Hz   5.86 Hz                    2.0 %
+     2000-5000 Hz    0.01 %                   2000-5000 Hz  5.37 Hz                    5.7 %
+     5000-7800 Hz    0.00 %                   5000-7800 Hz  5.86 Hz                    9.8 %
+      strongest lines: 51, 52, 53, 54, 55, 56 Hz
+```
+⭐ **THE LEAD: the strongest audio lines are at 51-56 Hz — ABOVE the 50 Hz ceiling of every other
+channel.** That is exactly the region where the operator's *"moved to a higher frequency"* would be
+invisible to all previous analysis, and it is a candidate for the current grind #1.
+🛑 **IT PROVES NOTHING YET.** This is the **whole drive**, not an engaged-vs-manual contrast, so
+51-56 Hz could equally be engine or road. ⊕ And the AM peak is **5.4-5.9 Hz in EVERY carrier band**,
+which looks like a **common source or an artifact**, not a steering signature — a real grind
+modulation would not be identical across five decades of carrier.
+⚠ Also note **0.01 % above 2 kHz**: the audio is heavily band-limited, by the codec or the cabin.
+Any claim above ~2 kHz is unsupported by this recording.
+✅ **NEXT STEP, and it needs no new drive:** align the PCM to the CAN timebase and split
+**engaged vs manual**. That isolates the LKAS-specific acoustic component and would settle whether
+51-56 Hz is the moved grind #1 or ordinary vehicle noise.
+
 ## 🛑 CAVEAT ON V122's ENDPOINT — GRIND #1 MAY BE **ABOVE THE CORPUS'S NYQUIST**
 The operator reports grind #1 moved to a **higher** frequency. My within-corpus measures do **not**
 reproduce an upward drift on recent builds:
