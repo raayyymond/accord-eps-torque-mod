@@ -1,5 +1,36 @@
 # STATE — living current state of the kit
 
+## ⭐ V117 BUILT — **DISARM THE BIQUAD.** One byte, fully reversible.
+```
+builder  analysis-2020accord/builds/v108_plus/build_v117_tva.py   41/41   BASE = V112
+image    ea5ad8d319cf75eca90da21cc37c337192a1ebedf77a21749ceeb1e2b3d91131
+.rwd     754f15a0125f58450a3af69f8b3d218009c6da782cbedba761212621098630b7
+0xC649B   1 -> 0   the biquad ARM cal.  knee 1800, K1 612, alpha2 14 all HELD.
+1 payload byte (01 -> 00) + 1 CRC trailer.  All three biquad COEFFICIENTS byte-identical.
+```
+**The filter, read from assembly @`0x35A28`–`0x35A50`:**
+`y[n] = 0.81731·x + 1.53720·y[n−1] − 0.63462·y[n−2]` — all-pole, pole radius 0.79663, angle
+0.26565 rad, **DC gain 8.39**. At 1 kHz its pole is 42.3 Hz (a **flat 8.4×** through 7–12 Hz); at
+100 Hz it is 4.23 Hz (a **Q-2.46 resonator** on the problem band). The task rate could not be pinned
+(`FUN_000352b4` is entered from an RTOS TCB at `0xBB928`), **but either way arming it puts a large
+gain into the aggregator path, and stock leaves it OFF.**
+🛑 Arming needs THREE edits: `0xC649B` 0→1, `0x35A08` `e798`→`fb97` (gate input `gp-0x671a` →
+`gp-0x6806`), `0x35A12` `ec`→`e0` (`cmp r12,r9` → `cmp r0,r9`). **V117 clears only the CAL byte.**
+
+### WHY THIS, AND WHY IT IS HONEST ABOUT ITS OWN EVIDENCE
+Seven candidates for the 7–9 Hz excess are eliminated, each with its own control. The biquad's
+natural experiment is the **strongest surviving signal**: OFF (9 routes) median **−37.7** vs ON
+(8 routes) **−55.4**, a **1.47×** point estimate — far larger than V115's ~1.05×.
+🛑 **But P(ON worse) = 0.722 against chance 0.5 is NOT separable at n = 9/8, and the excess is
+already present at V90, which has no biquad. The biquad is NOT the origin** — at most an additive
+contributor. **This build converts an unseparable observational comparison into a single-variable
+on-car test.**
+
+### READ THE DRIVE THREE WAYS
+*oscillation weaker* ⇒ real contributor, next step is reshaping its coefficients · *no change* ⇒
+eliminated too, move to the remaining common edits · *worse* ⇒ arming was doing useful work, revert
+the byte. ⊕ **V88 — which the operator reported as "grinding FIXED" — ran with this filter OFF.**
+
 ## ⭐⭐ V115 BUILT — **V112 (FLOWN, BEST YET) + ONE BYTE**.  THE RECOMMENDED NEXT FLIGHT.
 ```
 builder  analysis-2020accord/builds/v108_plus/build_v115_tva.py   42/42   BASE = V112
