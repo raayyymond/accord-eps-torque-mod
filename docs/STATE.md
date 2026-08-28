@@ -1,5 +1,58 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **CORRECTION TO THE V133 ATTRIBUTION — IT IS **LEVER A**, NOT THE CLAMP**
+The section above blamed the **clamp** (`0xC407E` 511→1023) as the primary cause of V133's
+regression. **The probe data says the clamp was almost certainly INERT.**
+```
+   route  build   427 wire |x|:  p50    p99     max    frac saturated
+   r77    V90                    3.0   67.0   199.0      0.000000
+   r78    V91                    1.0   36.0   139.0      0.000000
+   r24    V122                   4.0  529.7  1023.0      0.000747   (different tap, not b26)
+```
+On **V90 the b26 probe never approached its rail** — peak wire 199 back-solves to **|b26| ≈
+159–318** against a **511** clamp ⇒ **the clamp was never binding**, reproducing the kit's own
+0.0000 % rail-duty measurement. ⇒ **raising it to 1023 changes nothing the term ever reaches.**
+⚠ **Not PROVEN inert on V133**, which ran 8× gain and could drive b26 further than V90 did — but
+it is now the *least* likely of the three suspects, not the most.
+
+### 🛑 THE PRIME SUSPECT IS **LEVER A**, AND IT IS BIGGER THAN THIS SESSION TREATED IT
+`0x3AB76` / `0x3AC20`: **`0xAA` → `0xA9`** is **`sar 10` → `sar 9`** (low 5 bits of the byte) —
+**one shift less = ×2 on the arm** — applied to **BOTH** the r24 and r26 **aggregator** arms.
+⇒ **+6 dB of loop gain in a lane that is NOT LKAS-gated.**
+⭐ **That single edit explains BOTH symptoms**, which neither of the others does:
+```
+   "violent grinding ... CONTINUES AFTER DISENGAGING"   -> aggregator lane, not LKAS-gated  [OK]
+   "grind #2 while DISENGAGED doing a hard turn"        -> its RECORDED signature           [OK]
+   the 8x LKAS gain                                     -> engaged-only, CANNOT do either   [NO]
+   the clamp                                            -> never reached on V90             [NO]
+```
+The **8× gain** then added **33 % more excitation while engaged**, which is why it was worst
+**right after enabling LKAS** — an amplifier of symptom 1, not its cause.
+
+### 🛑 AND THE SUBTLETY THAT MADE THIS LOOK SAFE
+The memory `accord-v62-fixed-the-grinding` says ***"2× ≈ OPTIMUM, not a point on a ramp"*** — and
+V62's fix was real (18–22 Hz down **8–42×**). **But that optimum was measured on V62's OWN base,
+a 4×-gain build.** Transplanting the same ×2 onto a **6×/8×-gain** modern base is **not the same
+edit**: the arm doubles a signal that is itself larger. ⇒ **[EVIDENCE] a lever's measured optimum
+does not travel across a base that changed the magnitude of what the lever multiplies.**
+
+### ✅ WHAT THIS CHANGES, AND WHAT IT DOES NOT
+**Does not change the recommendation.** **V137 = V122 + α2 8→5** holds both Lever A arms at stock,
+the gain at 6× and the clamp at 511 ⇒ **it avoids all three suspects regardless of which is
+guilty.**
+**Does change what to avoid, and what is cheap to try later:**
+```
+   Lever A (BOTH arms)   PRIME SUSPECT.  Do not restore onto a 6x/8x base without re-deriving
+                         the dose.  A future r26-ONLY test is the way back in, NOT both arms.
+   8x LKAS gain          amplifier.  Stays at 6x until grinding is settled.
+   0xC407E clamp         probably INERT -- do NOT spend a build lowering it, and do not record
+                         it as the cause.  Lowering it would likely be a NULL for the same
+                         reason raising it was.
+```
+⭐ **The reusable rule, sharpened:** *before attributing a regression to a cell, check whether the
+quantity that cell bounds ever REACHES it.* One probe-distribution read moved this from the wrong
+suspect to the right one, and would have prevented a wasted clamp-lowering build.
+
 ## 🛑🛑🛑 **V133 REGRESSED ON-CAR — IT WAS A SIX-VARIABLE BUILD.  V137 IS THE CORRECTION.**
 **Operator report, 2026-08-28:** *"V133 has a massive, violent grinding after enabling LKAS which
 continues after disengaging. I also got some grind #2 while disengaged and doing a hard turn."*
