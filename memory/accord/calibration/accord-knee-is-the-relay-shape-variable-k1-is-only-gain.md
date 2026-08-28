@@ -58,3 +58,42 @@ fix. ⊕ Its own falsifier is clean: if the relay drives the harmonics, V116 sho
 ratio below V112's 1.213 **and** be no worse on assist.
 Tools: `rlog-tools/studies/peakturn/harmonic_dose_vs_knee.py`,
 `rlog-tools/studies/peakturn/harmonic_dose_vs_fricgain.py` (the mis-constructed one, kept as a record).
+
+## 🛑 THE ONE QUANTITATIVE CHECK ON THIS MECHANISM **DOES NOT SUPPORT IT** — 2026-08-28
+I tried to turn V121 into a prospective prediction, the way the saturation-duty model correctly
+called V112 (predicted 0.2353, measured 0.3102 / 0.1071). The relay is **memoryless**, so I fed the
+measured rate from the V112 drives through `clamp(rate·4.7121·12/knee, ±1)` at each knee and measured
+the harmonic content of the output:
+```
+   knee     600     1800     2400     3000     4000     8000
+   ratio   0.951   1.365    1.248    1.493    1.832    1.278
+   vs 1800   --      --     0.914x   1.094x   1.342x   0.936x
+   predicted factor for knee 3000: 1.094x   window-bootstrap CI [0.755, 1.335]
+```
+🛑 **Non-monotone, and knee 3000 comes out slightly WORSE, not better.** It also **contradicts the
+cross-build trend** this note rests on (knee 600 → 1.412, knee 1800 → 1.213 on the wire; the
+simulation puts 600 BELOW 1800).
+
+### ⚠ THE SIMULATION IS INVALID AS A PREDICTION — and that is the methodological point
+I fed the **measured** rate through a *different* relay, but that signal **already contains the
+effect of the relay that was actually running** (knee 1800). **A memoryless nonlinearity inside a
+CLOSED LOOP cannot be simulated by post-processing the loop's own output** — the loop would settle
+somewhere else entirely. ⇒ the numbers above **cannot confirm** the mechanism.
+🛑 **But they cannot be waved away either**: an invalid simulation that nevertheless *reproduced*
+the trend would have been weak support, and this one **fails to reproduce it.** ⇒ net, **confidence
+in the harmonic mechanism goes DOWN.**
+
+### ⇒ WHERE THIS LEAVES V121 — the headline rationale is WEAKENED, the build is not withdrawn
+**V121's case no longer rests on the harmonic mechanism.** What survives is independent of it:
+1. ✅ **Small-signal gain held EXACTLY at V112's** ⇒ bit-identical feel at and below 31.8 deg/s, so
+   the regression risk in normal driving is structurally near zero.
+2. ✅ **More friction above 31.8 deg/s ⇒ MORE assist** ([[accord-friction-polarity-more-assist]]) ⇒ it
+   serves the operator's stated constraint directly, whatever it does to the oscillation.
+3. ✅ **`knee` is the one variable whose previous step (600→1800) coincided with the operator's
+   best-ever build** — confounded, but it is the best on-car track record any lever here has.
+4. ✅ Cal-only, 4 payload bytes, no cave, 40/40 assertions.
+⚠ **V116 is the conservative version of the same move** (K1 at 0.797 of |model| vs V121's 0.996,
+which sits just under the sign-inversion ceiling). **If the weakened mechanism argues for a smaller
+step, V116 is it.**
+🛑 **Stated plainly: V121 is a well-constructed build whose effect on the oscillation is UNKNOWN.**
+Tool: `analysis-2020accord/verify/predict_v121_harmonic_effect.py`.

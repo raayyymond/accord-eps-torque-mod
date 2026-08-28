@@ -1,5 +1,29 @@
 # STATE — living current state of the kit
 
+## 🛑 V121's HARMONIC RATIONALE IS **WEAKENED** — the one quantitative check does not support it
+I tried to make V121 prospective, as the saturation-duty model was for V112. The relay is memoryless,
+so I fed the measured V112 rate through `clamp(rate·4.7121·12/knee, ±1)` at each knee:
+```
+   knee     600     1800     2400     3000     4000     8000
+   ratio   0.951   1.365    1.248    1.493    1.832    1.278
+   knee 3000 predicted factor 1.094x  CI [0.755, 1.335]   <- slightly WORSE, not better
+```
+🛑 Non-monotone, and it **contradicts the cross-build trend** the mechanism rests on (wire: 600 →
+1.412, 1800 → 1.213; simulation puts 600 BELOW 1800).
+⚠ **The simulation is INVALID as a prediction** — the measured rate **already contains the effect of
+the relay that was running**, and **a memoryless nonlinearity in a CLOSED LOOP cannot be simulated by
+post-processing the loop's own output.** ⇒ it cannot confirm the mechanism. 🛑 **But it cannot be
+waved away**: reproducing the trend would have been weak support, and it **fails to**. Net,
+**confidence in the harmonic mechanism goes DOWN.**
+⇒ **V121 is NOT withdrawn, but its case now rests on grounds independent of harmonics:** gain held
+EXACTLY at V112's (bit-identical ≤ 31.8 deg/s ⇒ near-zero regression risk); **more assist above
+31.8 deg/s**, serving the operator's constraint directly; `knee` has the best on-car track record of
+any lever here (600→1800 coincided with the best-ever build, though confounded); cal-only, 4 bytes,
+40/40.
+⚠ **V116 is the conservative version of the same move** (K1 0.797 of |model| vs V121's 0.996, just
+under the sign-inversion ceiling). **If the weakened mechanism argues for a smaller step, fly V116.**
+🛑 **Plainly: V121 is a well-constructed build whose effect on the oscillation is UNKNOWN.**
+
 ## 🛑🛑 GRIND #1 IS **UNMEASURABLE** ON THE RECENT ROUTES — there is no creep exposure
 I validated a grind-#1 pipeline against a known effect — V101/V102/V103 accidentally dropped Lever B,
 and the pipeline recovered it at **OFF/ON = 2.32× [1.62, 2.94]** against the on-car **0.40
