@@ -97,3 +97,25 @@ where the symptom lives, with least effect where the car already matches stock.
 statistically separable, and its knee arm targets grind #1 only.
 ⚠ V113 carries **no state-4 probe**; that diagnostic can wait, since `0x454FE` is now a lower
 priority than a mechanism with a closed chain.
+
+## 🛑 THE OBVIOUS ALTERNATIVE — "make it FREQUENCY-SELECTIVE" — TESTED AND **REJECTED**
+K1 cuts the term at *all* frequencies, so it trades the oscillation against steering feel. The
+tempting fix is the friction **EMA pole `0xC40D0` = 408**: its DC gain is 1 for any α, so lowering α
+should keep the low-frequency term (feel) while attenuating 7.42 Hz (oscillation). **It does — and it
+pays for it in INERTIA:**
+```
+   alpha | anti-damping vs V112 | INERTIA vs V112 | DC feel kept
+    408  |        1.000         |      1.00x      |   1.0000
+    100  |        0.843         |      5.12x      |   0.9995
+     56  |        0.608         |      6.84x      |   0.9984
+     28  |        0.273         |      6.21x      |   0.9936
+     14  |        0.087         |      3.86x      |   0.9749
+```
+Lag rotates the term off the rate axis: the damping component falls as `cos φ` but the **quadrature
+(inertia) component rises as `sin φ`**. Every useful setting multiplies apparent inertia **5–7×**.
+🛑 **That is precisely what [[feedback-do-not-buy-ratchet-with-mass-and-friction]] forbids**, and it
+is the same failure mode as V111's α2 change, which the operator felt as lost rate and acceleration.
+⊕ `0xC40D0` is separately flagged in V113's own header as **"the only cell in this lane that adds
+PHASE — MUST NOT MOVE."**
+⇒ **REJECTED.** **V113's K1 cut is strictly cleaner: 0.333× anti-damping at EVERY frequency, with NO
+added inertia and NO added phase.** Recorded so the frequency-selective idea is not re-proposed.
