@@ -1,5 +1,58 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 THE STEERING-RATE DEFICIT IS **MEASURED, REAL AND UNIVERSAL** — AND V111 DID NOT CAUSE IT
+2026-08-27. Answers the operator's standing question (*"it feels like the max angular velocity has not
+scaled 6x"*). **He is right, and it is not a V111 regression.**
+
+```
+  CORPUS POOLED — 18 cached routes, engaged & hands-off (D3) & moving, weighted by n
+  demanded deg/s      n        RAIL DUTY (|cmd| >= 4090)      achieved / demanded
+      5 - 15       103158             5.9 %                        0.73
+     15 - 30        36595            16.9 %                        0.63
+     30 - 60        18137            32.0 %                        0.47
+     60 +           13407            49.8 %                        0.30
+```
+🛑 **Rail duty rises monotonically with demand.** Above 60 °/s openpilot emits its absolute maximum
+(`STEER_MAX = 4096`) **half the time** and still gets **30 %** of the motion. ⇒ **AUTHORITY-STARVED.**
+⊕ **Not the plant** — the **driver reaches 335.2 °/s** at the same speeds; LKAS at a railed command
+reaches **84.6**. ⊕ **Not a hard clip** — no pile-up at 84.6 (2 samples within 5 %, vs 13 for manual),
+and the engaged max moves with speed. A **soft roll-off.**
+
+### ⭐ NOT A V111 REGRESSION — THIS RETIRES THE α2 REVERT
+`ach/dem` at 60+ °/s is **0.09–0.49 across all 18 routes, median ~0.26**; **route 21 (V111) = 0.24.**
+The deficit predates V111 on every build. 🛑 **Reverting `0xC40DC` α2 14→22 will NOT restore the
+rate**, and the "α2 rotates inertia into friction ⇒ that caps velocity" story cannot explain a deficit
+that predates it. ⊕ `gp-0x6b26` is clamped by `cal(0xC407E) = 511` (**decompile-confirmed**, operand
+`tp+0x507E`) ⇒ ≤ 2.6 % of the ±20 000 residual, and α2 moves only its friction component
+(Δ ≈ 0.078 at 8 Hz) ⇒ **≤ ~40 counts = 0.2 % of range.** Far too small.
+
+### 🛑 FOUR CLAMPS EXCLUDED BY ARITHMETIC — DO NOT RE-PROPOSE
+| candidate | why dead |
+|---|---|
+| `0xC520C` cap table | already struck; measured dead on route `a6` |
+| `0xC6202` governor 4762 | full-command LKAS = `15360*5346>>15` = **2506** < 4762; also lockstep-shadowed → fault 0x17 |
+| `0xC61B2/B4` arb clamp 3072 | **2506 < 3072** ⇒ never bites at 6x (would at ≥7.35x) |
+| a hard 84.6 °/s rate clip | no pile-up |
+⊕ `0xC646C` is **891 on every build**; the 6x lives on `0xC6CD0` = **5346** (= **6.000x** exactly).
+
+### ⭐ CONSEQUENCE — IT INDEPENDENTLY CONFIRMS V112
+`STEER_MAX` is openpilot-side and off-limits, so the useful lever is **more wheel motion per unit of
+command with no added impedance.** **V112's corner move 10.6 → 31.8 °/s covers exactly the band where
+`ach/dem` falls 0.63 → 0.47**, and more friction compensation = more assist (verified polarity).
+Arrived at from a completely different direction than the ratchet argument that motivated V112.
+
+### 🛑 TWO RETRACTIONS FROM THIS SESSION — both caught by their own controls
+1. ~~"rate compresses against command"~~ — matched on speed and angle but **not on demand**; a high
+   command also means *holding* a turn. Conditioning on demand dissolves it.
+2. ~~"the car delivers 89–107 % of demand"~~ — used **`ct_curv` = `controlsState.curvature` = CURRENT**,
+   so it was **circular** (tell: `r = -0.9995` vs measured angle). 🛑 **In this cache
+   `ct_curv`/`cc_ccurv` are CURRENT; `ct_dcurv`/`cc_curv` are DEMAND.**
+
+### ⚠ NOT ESTABLISHED
+**Where** the roll-off lives. Four clamps excluded; loop bandwidth, the LKAS lane low-pass and plant
+load remain. ⚠ The 60+ band is partly **planner steps** — the **15–30 °/s band (0.63, rail 16.9 %)
+carries the argument**, being ordinary and physically reachable.
+
 ## ⭐⭐ V112 BUILT — THE FIRST LEVER THAT SATISFIES THE BOTH-AT-ONCE DIRECTIVE
 ```
 builder  analysis-2020accord/builds/v108_plus/build_v112_tva.py   37/37   BASE = V111

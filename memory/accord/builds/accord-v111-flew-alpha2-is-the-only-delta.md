@@ -77,3 +77,15 @@ one regression.** A single EMA pole **couples** the magnitude cut (which helps) 
 (which hurts), so the revert is a trade, not a fix. **Do not propose it as an obvious win.**
 
 Related: [[accord-c40dc-is-the-band-limit-lever]] · [[accord-kd-is-one-knot-of-a-flat-lerp]]
+
+## 🛑🛑 CORRECTION 2026-08-27 (later) — THE α2 STORY DOES **NOT** EXPLAIN THE LOST STEERING RATE
+The mechanism above (*"EMA lag rotates the inertia term into friction, and friction is what caps
+angular velocity"*) is **arithmetically right about the rotation and WRONG about the consequence.**
+**The rate deficit was then measured across 18 routes and it PREDATES V111 on every build:**
+`achieved/demanded` at 60+ °/s is **0.09–0.49, median ~0.26**, and **route 21 (V111) = 0.24 — dead
+typical.** A deficit present on every build cannot have been caused by a byte that changed on one.
+⊕ And the term is far too small: `gp-0x6b26` is clamped by `cal(0xC407E) = 511` (decompile-confirmed
+in `FUN_00036c12`, operand `tp+0x507E`) ⇒ ≤ 2.6 % of the ±20 000 residual, and α2 moves only its
+**friction component** (Δ(|H|·sinφ) ≈ 0.078 at 8 Hz) ⇒ **≤ ~40 counts ≈ 0.2 % of range.**
+🛑 **⇒ THE α2 REVERT IS RETIRED AS A RATE FIX.** It may still explain a change in *feel*; it does not
+explain the rate ceiling. Full working: [[accord-the-rate-deficit-is-real-universal-and-not-v111]].
