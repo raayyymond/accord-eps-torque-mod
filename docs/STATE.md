@@ -1,5 +1,51 @@
 # STATE — living current state of the kit
 
+## ✅✅ **V135 BUILT — THE LAST *MEASURED* RUNG ON THE RELAY, AND I CLOSED IT TOO EARLY**
+This session recorded *"the knee/K1 ladder is EXHAUSTED at V122/V124"*. **That closure was too
+broad.** It is true only of **GAIN-HOLDING** steps, which need `K1 = 1122` at knee 3300 — above the
+1023 ceiling. **Raising the knee with K1 HELD is a different move**, and the note did not cover it.
+
+### ⭐ WHY THE KNEE AND NOT α2 — the reattribution that motivates it
+GATE 2 at the creep band showed the **α2 ladder is nearly INERT at 20 Hz**: |H| falls 7.24→4.10
+(1.77×) while the phase rotates 56.3°→16.0°, leaving the delivered component **flat**
+(−4.01 → −3.94) — a **ratio**, so it survives any constant sign/phase offset.
+⇒ **V122's *"better, rare moments"* came from the KNEE/K1, not α2** ⇒ **the Coulomb relay is the
+live creep lever**, and this is its last measured rung.
+
+### ✅ THE EDIT IS **ON** THE MEASURED LADDER, IN THE SYMPTOM'S OWN REGIME
+```
+   0xC40BC   3000 -> 3600      K1 (0xC40D2) HELD at 1020
+
+   MEASURED saturation duty, engaged HANDS-OFF, 5-10 mph, cmd >= 2048:
+     knee  600 -> 0.7439    1800 -> 0.2353    3600 -> 0.0000   <- THIS BUILD
+     knee 1200 -> 0.4810    2400 -> 0.0484
+```
+🛑 **3600 is a MEASURED point reading 0.0000 — not an interpolation** — and the ladder was
+measured in **ENGAGED HANDS-OFF CREEP**, precisely the regime of the remaining symptom.
+✅ **And the cost goes the way he asked**: slope **0.003984 → 0.003320 = ×0.83, 17 % LESS
+friction**, saturation **53.1 → 63.7 °/s**. His standing instruction was *"low apparent steering
+mass and friction to LKAS **AND** no ratcheting"* ⇒ **this is the only lever in the kit's record
+that moves BOTH the right way.**
+✅ **K1 untouched at 1020** (ceiling 1023, above which friction exceeds `|model|` and the residual
+inverts). The builder asserts K1 held, the ladder membership, and that friction decreases.
+
+image `777dba0c87ada17b7d66995a9c7a98472bb358816020c8a55f65a91e2821aa89` ·
+rwd `6516aa2a565433b8fbe7fbaeb31ff5cc7f1791ebf546799785e2f7e4f88bbd1e` · **80/80, CRC 50/50**,
+twin verifier **PASS**. 2 payload bytes on a V133 base.
+
+### 🛑 THE FLIGHT SET IS NOW THREE SINGLE-VARIABLE FOLLOW-UPS FROM ONE BASE
+```
+   V133  (FLY FIRST)  V62's Lever A restored     -- MEASURED 42x on this exact symptom
+   V134               + FactorC Y[0] 0 -> 60     -- damping where there is currently NONE
+   V135               + knee 3000 -> 3600        -- relay saturation to a MEASURED 0.0000
+```
+**All three are single-variable against V133**, so whichever is flown second is interpretable.
+🛑 **Fly V133 first regardless** — it restores the one lever with a measured 42× on this symptom,
+off the car since ~V80; flying V134 or V135 first would confound that test.
+⚠ [BELIEF] for V135: the duty ladder is a **MECHANISM** measurement. The link from saturation duty
+to what the operator *hears* rests on his own dose-response across V111/V112/V122, not on an
+instrumented symptom endpoint.
+
 ## 🛑🛑 **THE α2 LADDER IS NEARLY INERT AT 20 Hz — MAGNITUDE FALLS, PHASE ROTATES, PRODUCT FLAT**
 GATE 2 for `gp-0x6b26` **at the creep band**, which had never been asked. Lane phase vs motor rate:
 ```
