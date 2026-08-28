@@ -1,5 +1,23 @@
 # STATE — living current state of the kit
 
+## ✅ **V121's SCORING IS PRE-REGISTERED** — `docs/scoring/SCORING-V121-preregistered.md`
+Written **before** the drive so the result cannot be reinterpreted after it. **Primary endpoint: the
+harmonic ratio**, one number, with the decision bands fixed now:
+```
+   < 1.05        relay CONFIRMED as the excitation path
+   1.05 - 1.35   NOT RESOLVED -- inside V112's own two-drive spread (0.970-1.455)
+   > 1.45        mechanism REFUTED; stop pursuing the relay for this symptom
+```
+🛑 **V112's own two drives span 0.970-1.455**, so a single V121 drive landing in that band means
+**nothing** — recorded now so it is not read as a trend later.
+Secondary, reported but never used to overturn the primary: 6-9 Hz p90 at |ang| ≥ 20° matched on
+small-angle p90 · **assist check** (engaged p99 |rate| must be ≥ V112's **77.1 deg/s**; below ~70 ⇒
+the knee cost authority and **V116 is the fallback**) · `STEER_STATUS == 4` must be **0**.
+⚠ **Grind #1 is explicitly NOT an endpoint** — V121 does not target it and it is unmeasurable on
+routes with no creep exposure.
+✅ **Three operator asks are in the card**, each worth more than another analysis pass: creep
+exposure · a mark when grind #1 happens · one stock-configuration drive (p 0.100 → 0.018).
+
 ## 🛑🛑 THE DAMPING ROUTE IS **CLOSED** — by the ±511 rail, not by int16
 I was about to propose raising `Y[1]`/`Y[2]` of the engaged friction row: it is the one lever whose
 direction is **measured on the road**, `Y[0]` has only 1.11× int16 headroom but `Y[1]` has **1.90×**,
