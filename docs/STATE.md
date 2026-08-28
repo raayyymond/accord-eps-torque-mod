@@ -25,6 +25,12 @@ cost of rate) and V112's knee restored the authority (tracking **1.37–1.62×**
 🛑 **I deprioritised V113 and that was wrong** — V112's flight refuted the *magnitude* of the
 anti-damping risk at V112's operating point, not the mechanism.
 ⚠ **Cost: heavier below ~30 °/s**, manual feel included (`FUN_0003b8f6` is not LKAS-gated).
+⭐⭐ **V113 CUTS THE TERM 0.333× AT EVERY RATE** — linear region and saturated plateau alike ⇒ it hits
+**the anti-damping (the oscillation) AND the relay kick magnitude (grind #1)** in one 2-byte change,
+while the relay **corner stays at 31.8 °/s** so V112's authority win is kept. ⭐ **Self-targeting**: the
+term is linear in `|model|`, which rises **7–9×** with angle, so the absolute cut is 7–9× larger exactly
+where the symptom lives. 🛑 **V113 SUPERSEDES V119 as the recommended flight** — 2 bytes vs 8, one
+dynamics lever vs two, and the only one with a closed evidence chain.
 🛑 **Falsifier**: if V113 flies and the large-angle oscillation is unchanged, K1 is not the
 mechanism and the angle gating is plant-side. A clean single-variable read.
 

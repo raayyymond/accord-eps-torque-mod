@@ -68,3 +68,32 @@ genuinely different operating point. Stock staying calm there argues against a *
 does not exclude a plant×firmware interaction.
 🛑 **Falsifier**: if V113 flies and the large-angle oscillation is unchanged, K1 is not the mechanism
 and the angle gating is plant-side. That is a clean, single-variable read.
+
+## ⭐⭐ V113 ADDRESSES **BOTH** SYMPTOMS — and it SELF-TARGETS
+```
+   rate        V112 (K1 612)   V113 (K1 204)   ratio    saturated?
+     3.0 d/s      0.05632         0.01877      0.333
+    31.8 d/s      0.59704         0.19901      0.333     <- the corner
+   100.0 d/s      0.59766         0.19922      0.333     SATURATED
+```
+**0.333× at EVERY rate** — the linear region *and* the saturated plateau both scale with K1. So one
+two-byte change cuts:
+- the **ANTI-DAMPING** (the component in phase with rate) ⇒ **the 7.42 Hz peak-turn oscillation**;
+- the **RELAY KICK magnitude** at saturation ⇒ **grind #1**;
+while the relay **CORNER stays at 31.8 °/s**, so **V112's authority win is preserved** (the corner,
+not K1, is what bought the 1.37–1.62× tracking improvement).
+⭐ **And it self-targets.** The term is **linear in `|model|`**, and `|model|` rises **7–9×** from
+<5° to >60° (measured), so the **absolute** cut is 7–9× larger at large angle — concentrated exactly
+where the symptom lives, with least effect where the car already matches stock.
+
+## 🛑 V113 SUPERSEDES V119 AS THE RECOMMENDED FLIGHT
+| | V113 | V119 |
+|---|---|---|
+| payload | **2 bytes** | 8 bytes |
+| dynamics levers | **1** | 2 |
+| mechanism | **evidence-backed end to end** | knee on a validated prediction; biquad weak (P = 0.722) |
+| symptoms addressed | **both** | grind #1 (knee) + a weak oscillation candidate |
+⇒ **fly V113.** V119 remains built and valid, but its biquad arm rests on a comparison that is not
+statistically separable, and its knee arm targets grind #1 only.
+⚠ V113 carries **no state-4 probe**; that diagnostic can wait, since `0x454FE` is now a lower
+priority than a mechanism with a closed chain.
