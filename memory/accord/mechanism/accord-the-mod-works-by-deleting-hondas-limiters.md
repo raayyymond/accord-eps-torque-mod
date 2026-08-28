@@ -115,3 +115,65 @@ costs 6× more counts, so **567 counts of room is the same PHYSICAL room as stoc
 headroom" build computes to clamp **3076** against the present **3072** — **no lever exists.**
 ⊕ A useful negative: **the kit's clamp scaling has been correct throughout**, including V14's
 original 512→1024 and every raise since. Nothing to fix here.
+
+## ✅ UPGRADED FROM "A REFRAME" TO **QUANTITATIVE EVIDENCE** — 2026-08-28
+This note previously ended "🛑 A reframe, not a proof." **It now has its proof**, from a
+**16-route natural experiment** across 15 builds using the route-offset-immune within-drive statistic
+([[accord-the-oscillation-excess-is-ANGLE-GATED]]).
+
+**Method.** Outcome = log(large-angle 6-9 Hz p90), regressed on log(small-angle p90) to remove each
+drive's own baseline (fit r = 0.645). The residual is the angle-gated excess. Spearman that residual
+against every cal that has actually **varied** across flown builds:
+```
+   predictor      levels   rho      p     builds spanned
+   knee  0xC40BC     3    -0.158  0.546   300 / 600 / 1800
+   K1    0xC40D2     3    +0.280  0.276   102 / 204 / 612
+   a2    0xC40DC     2    +0.094  0.718   14 / 22
+   gain  0xC6CD0     4    -0.206  0.429   3564 / 5346 / 7128 / 65535
+   biq   0xC649B     2    -0.072  0.783   off / on
+   fric_gain (K1/1024)(12/knee)  +0.297  0.247
+   clamp 0xC407E     1     CONSTANT across every flown build — untestable
+   kd    0xC6AE6     1     CONSTANT across every flown build — untestable
+```
+🛑 **NOTHING that has ever varied explains it.** |rho| < 0.30 and p > 0.24 for every one, across
+enormous cal ranges. That is precisely the signature this note predicted: **the cause is the shared
+SET of deletions, not any tunable cell.**
+
+### ✅ THE INVARIANT SET IS NOW BYTE-EXACT AND COMPLETE
+Bytes differing from stock **and identical across all 14 flown mod builds** (V90/91/92/96/100/101/
+102/103/104/105/106/107/111/112), valid dump extent 0x10000-0x100000, excluding CRC words:
+```
+   0x454FE  CODE 1B  ba -> b5        bne -> br: state-4 governor jarl NEVER CALLED
+   0xC61C0  CAL  6B  1600/896/1280 -> 65535/65535/65535   arbitration cascade REMOVED
+   0xC64B4  CAL  5B  7060364070 -> ffffffffff             torque-tier thresholds REMOVED
+   0xC62EA  CAL  2B  320 -> 0                             low-speed lockout REMOVED
+   0xC674F/51/5B/5D  +-1024 -> +-5120                     direction corridor x5
+   0xC659A/9E/AE/B2/C6/CA/CE  f32 1.0/-1.0/0.0/1.5 -> 5.0/-5.0/5.0/5.0   corridor table x5
+   0xC64DE  CAL  1B  17 -> 27                             square-wave half-period (see below)
+   0x2A1F0  CODE 2B  29804 -> 31952 | 0x12FF0 0x13109 0x14120 0x55C0E 0xC4B41  (cave/CRC/ID)
+```
+Tool: `analysis-2020accord/verify/invariant_mod_edits_vs_stock.py`,
+regression: `rlog-tools/studies/peakturn/cal_vs_angle_excess_regression.py`.
+
+### 🛑 `0xC64DE` IS A **DEAD LEVER** — struck from the candidate list
+It was the one invariant edit that is **not** an authority limit, so it looked like the free move.
+It is not. [[accord-c64de-extends-an-arbitration-table-9-to-14-knots]] and the lineage label
+correction settle it: `0xC64DE` is the **hold count of a sign-flipping square-wave injector** whose
+**amplitude LERP at `0xC6736` is Y = (0,0,0,0) in stock AND in every build**, with every other writer
+of `gp-0x6b2c` a store-zero. ⇒ **structurally inert; restoring 27→17 moves an injector that emits
+nothing.** Do not build it.
+
+### ⇒ WHAT THIS LEAVES
+Every remaining member of the invariant set is a **magnitude/authority limit**. Restoring any of them
+trades oscillation against exactly the authority the operator has forbidden spending
+(*"scaling of the LKAS command over the steering wheel ... must outpace any damping, friction, or
+programmed additional inertia"*).
+✅ **⇒ The next lever must be FREQUENCY-SELECTIVE** — damping added at 7-9 Hz only, leaving the DC
+and low-frequency LKAS response (hence steering velocity and acceleration) untouched.
+⊕ [[accord-factord-is-the-angle-error-lever]] refuted the *cal* route to that ("this firmware has no
+frequency-selective lever"), **but the dormant biquad at `0x35A28`-`0x35A50` is a real second-order
+section with editable coefficients**, already armed on V103-V112, currently tuned to pole angle
+0.26565 rad ≈ **42.3 Hz at 1 kHz** — which is why `biq` scores rho = -0.072 here. **Retuning its pole
+to the 7-9 Hz band is the open question.** ⚠ It is all-pole with **DC gain 8.39**, so as-is it would
+AMPLIFY its centre frequency, not damp it; and it sits in a loop ⇒ **GATE 2 (magnitude AND phase)
+applies.** NOT yet a build proposal.

@@ -1,5 +1,31 @@
 # STATE — living current state of the kit
 
+## ✅ THE DELETION-SET HYPOTHESIS IS NOW PROVEN — and `0xC64DE` is struck
+**16-route natural experiment**, 15 builds, using the route-offset-immune within-drive statistic.
+Outcome = log(large-angle 6-9 Hz p90) with log(small-angle p90) regressed out (r = 0.645).
+```
+   predictor      levels   rho      p        predictor      levels   rho      p
+   knee 0xC40BC      3    -0.158  0.546      biq  0xC649B      2    -0.072  0.783
+   K1   0xC40D2      3    +0.280  0.276      fric_gain        3    +0.297  0.247
+   a2   0xC40DC      2    +0.094  0.718      clamp 0xC407E    1   CONSTANT - untestable
+   gain 0xC6CD0      4    -0.206  0.429      kd    0xC6AE6    1   CONSTANT - untestable
+```
+🛑 **NOTHING that has ever varied explains the excess** (|rho| < 0.30, p > 0.24) across knee
+300-1800, K1 102-612, gain 3564-65535, biquad off/on. ⇒ **the cause is the shared SET of deleted
+Honda limiters**, exactly as [[accord-the-mod-works-by-deleting-hondas-limiters]] predicted — that
+note's "a reframe, not a proof" is now **proven**.
+✅ The invariant set is byte-exact: `0x454FE` (governor call deleted) · `0xC61C0` (1600/896/1280 →
+65535×3) · `0xC64B4` · `0xC62EA` (320→0) · `0xC674F/51/5B/5D` + the `0xC659A` f32 table (corridor
+×5) · `0xC64DE`. Tool: `analysis-2020accord/verify/invariant_mod_edits_vs_stock.py`.
+🛑 **`0xC64DE` IS A DEAD LEVER — do not build it.** It looked like the one non-authority member of
+the set, but it is a **square-wave injector half-period whose amplitude LERP `0xC6736` is (0,0,0,0)
+in stock and in every build** ⇒ structurally inert.
+⇒ Every remaining member is an **authority limit**, so restoring any of them spends exactly what the
+operator forbade. **The next lever must be FREQUENCY-SELECTIVE.** The dormant biquad `0x35A28`-
+`0x35A50` is the only real candidate (editable 2nd-order section, armed since V103) but is tuned to
+**42.3 Hz** — hence its rho = -0.072 above. ⚠ All-pole, **DC gain 8.39** ⇒ as-is it AMPLIFIES; in a
+loop ⇒ GATE 2 applies. **Open question, NOT a build proposal.**
+
 ## ✅ ANGLE GATING — CONFOUND REMOVED, **9 of 9**; and ONE stock route caps p at **0.100**
 Within-drive design (each route its own control ⇒ immune to route offset). Raw ratio gave STOCK
 **1.46x** vs 16 mods median **2.99x**, but 3 mods fell below stock — **because the ratio's denominator
