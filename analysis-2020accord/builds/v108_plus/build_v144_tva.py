@@ -63,9 +63,14 @@ kit has never measured it.  If the gate stays shut, this build is INERT rather t
 [BELIEF] that the grind rides this lane at all.  gp-0x6B86 is one of ten aggregator lanes.
 => if the probe shows the lane dead or the null absent, the notch is not the answer and the queue
    falls back to V141 (the pump deadband).
-NOT TOUCHED: cal(0xC64FA), the gate's threshold.  Lowering it would arm the notch more readily but
-it ALSO selects the Y branch in FUN_00036c12 and gates two aggregator branches, and gp-0x671a has
-four external consumers.  That is a separate, much riskier decision.
+NOT TOUCHED: cal(0xC64FA), the gate's threshold.  Lowering it would arm the notch more readily,
+and it is TEMPTING because that would make the notch always-on.  But a reader census gives it
+EIGHTEEN readers, including a ten-reader cluster at 0x260BC-0x261A2 that has never been examined.
+CORRECTION (2026-08-28): an earlier note in this kit -- including in this file -- said 0xC64FA
+also selects the FUN_00036c12 Y branch and would therefore rail b26.  THAT IS WRONG.  That branch
+reads 0xC64FD, a DIFFERENT cal with only two readers (0x36A1E, 0x36C42).  The reader sets are
+DISJOINT.  The conclusion (do not move it) survives, but for the 18 unexamined readers, not for
+the b26 mechanism that was named.
 
 BASE = V122.  alpha2 stays 8, gain stays 6x, b26 clamp stays 511, both Lever A arms stay stock,
 and the pump deadband stays at Honda's 3 -- this build is the NOTCH ALONE.
