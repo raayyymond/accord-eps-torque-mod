@@ -1,5 +1,31 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ THE 7-9 Hz MODE IS NONLINEARLY EXCITED — and that RESOLVES BOTH open contradictions
+17 routes, 3,986 windows, NW=512. Peak prominence at `2f0`/`3f0` vs off-multiple controls, then
+against the control that matters — **non-oscillating windows**:
+```
+   OSCILLATING      1.308        NON-OSCILLATING  1.061
+   OSC / NON-OSC =  1.233    ROUTE-level bootstrap 95 % CI [1.060, 1.503]
+   f0 = 7.81 Hz  ->  2f0 = 15.62 Hz   3f0 = 23.44 Hz
+```
+✅ **Harmonics are REAL** — CI excludes 1.0 with the DRIVE as the unit ⇒ the excitation path
+contains a hard nonlinearity.
+✅ **CONTRADICTION 1 RESOLVED — the symptoms stay TWO.** 2f0 and 3f0 land at 15.62 / 23.44 Hz;
+**neither is in 18-22 or 26-31.** The 0.2-pp rate co-location is **shared exposure, not shared
+mechanism** ⇒ [[accord-two-symptoms-two-mechanisms-rez-spectrum]] **wins**.
+🛑 **⇒ Fixing the 7-9 Hz oscillation will NOT fix grind #1. Budget for two fixes.**
+✅ **CONTRADICTION 2 RESOLVED — resonance AND nonlinearity are both true.**
+[[accord-ratchet-is-a-lightly-damped-resonance]] excluded a limit cycle on a ring-down; harmonics
+normally imply one. No conflict: **a linear resonance driven THROUGH a nonlinear element** gives a
+clean ring-down when the drive stops *and* harmonics while driven. Both records stand as written.
+⭐ **Points at the Coulomb relay** — `fVar13 = clamp(POL·gp-0x6abc·12/knee, ±1)` is a **signum**, the
+textbook harmonic generator, and [[accord-engagement-amplifies-6-9hz]] already measured engagement
+multiplying this band **2.8×** through it.
+✅ **⇒ V120 (`0xC40D2` 612→306) now has a measured mechanism, not just reasoning.**
+🛑 [BELIEF, one converging line] — nothing shows the relay is *the* path rather than *a*
+nonlinearity, and [[accord-cbe74-dose-measured-inert-wrong-mode-record]] warns a relay dose can
+measure inert.
+
 ## ⭐⭐ THE 18-22 Hz GRIND IS RATE-COLOCATED WITH THE OSCILLATION — a constraint on the whole search
 🛑 **Correction to my own framing first.** I reported *"rate AUC 0.630 ⇒ weak, parked."* The number
 is right, the framing was incomplete: 0.630 was against **hard curves** (n=106). Against **ordinary
