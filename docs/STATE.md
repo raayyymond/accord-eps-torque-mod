@@ -1,5 +1,58 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **THE GRINDING IS OURS — WE TRIPLED THE ENGAGED-MODE DAMPER AT V96/V106. V128 RESTORES IT.**
+`gp-0x6b26`'s speed schedule `Y` is a **per-mode** LERP reached through the pointer array at
+`0xCBE74`. **`MANUAL_MODES = (24,25)`, `ENGAGED_MODES = (26,27)`.** Read straight out of the images:
+```
+   mode-26 record (0xD7A54, Y@0xD7A5C)     Y[0]     Y[1]     Y[2]    rails from |c2c| (0/20/90 km/h)
+   STOCK  (byte-identical to mode 24)     -9830    -5734    -1966     3195 / 5477 / 15974
+   V106 onward, carried to V127          -29490   -17202   -16000     1065 / 1826 /  1963
+```
+🛑 **The rail threshold fell 3.0× / 3.0× / 8.1×.** The detector arms at `cal(0xC620A)` = 12800,
+so **on STOCK the term was still LINEAR at the arming threshold at 90 km/h** (15974 > 12800);
+**on our builds it rails from 1963 — essentially always.** A railed acceleration term is
+`sign(α)·511`: a **bang-bang Coulomb relay**. A relay ratchets; it does not damp.
+
+### ✅ IT UNIFIES THE WHOLE RECORD — FOUR THINGS AT ONCE
+1. **The symptom is ENGAGED-ONLY and so is the dose.** Modes 26/27 only; **manual modes 24/25 are
+   byte-stock on every build**. [[accord-stock-mode24-equals-mode26-damper-is-ours]] already said
+   *"the engaged-only damper is OURS"* — **this is the cell.**
+2. **α2 WORKS BY DE-RAILING.** The lane is
+   `gp-0x4f50 → EMA1(α0=0xC643C) → (1−z⁻¹) → EMA2(α2=0xC40DC) → gp-0x6c2c`, so lowering α2
+   shrinks the term's **INPUT** ⇒ that is why 22→14→8 tracked his reports monotonically: each
+   step cut rail duty. **Not a mysterious "selectivity" — a de-rail.**
+3. 🛑 **V91/V92's ×1.5 dose on `0xCBE74` measured INERT (ratio 0.99) because the term was
+   ALREADY RAILED** — a raise is absorbed by the clamp. **This SUPERSEDES the "saturated counter
+   bypasses the record" explanation I gave earlier this session**: that one needs an oscillation
+   episode, whereas clamp absorption explains a whole-drive null directly. ✅ Correction recorded.
+4. **V107 measured 32.32 % rail duty at 10–25 km/h** and noted *"the symptom map and the rail-duty
+   map are the same map"*. **This is the cell that set that map.**
+
+### ✅ V128 BUILT — A RESTORATION, NOT AN EXPERIMENT
+```
+   0xD7A5C  Y mode 26  [-29490,-17202,-16000] -> [-9830,-5734,-1966]   STOCK
+   0xD7A6C  Y mode 27  [-29490,-17202,-16000] -> [-9830,-5734,-1966]   STOCK
+```
+Base **V127**. 12 payload bytes. image
+`2e42e916a118e42a5adabe3156a6b6c33992d8ce90760d3eb144331f271474a7` · rwd
+`6d5fa1377bff005f32d2d42b9c531bea303558c7939d7187b056022eeaf36828` · **71/71, CRC 50/50.**
+⊕ These are **Honda's own shipped values, byte-identical to the manual-mode records this firmware
+already runs** ⇒ calibrated-safe by construction. Largest available de-rail.
+✅ **IT DOES NOT CONFOUND V127's EDIT.** `0xC640A` applies **only when the reversal counter is
+SATURATED**; the mode record applies **only when it is NOT**. The branches are **mutually exclusive
+by construction**, so V128 stays single-variable *per state* and one drive interprets both. The
+427 probe measures `|gp-0x6b26|` duty in **both** states.
+✅ The builder asserts **manual modes 24/25 byte-identical** (manual feel untouched) and **engaged
+modes 26/27 now byte-identical to STOCK**.
+
+### 🛑 RESIDUAL RISK, STATED PLAINLY
+[EVIDENCE] the values, the rail arithmetic, the mode assignment, the stock comparison.
+[BELIEF] that restoring improves the symptom. **Below the old rail point this removes 3–8× of
+acceleration feedback, which is real damping in the LINEAR regime.** Stock shipped exactly these
+values so the risk is bounded to *"the car behaves as Honda calibrated it"* — but V96/V106 raised
+them for a reason and **that reason is not re-tested here**. ⇒ **if grinding WORSENS, the next
+step is a PARTIAL restore sized to the measured duty, NOT a return to −29490.**
+
 ## 🛑🛑 **V126 WAS SIZED WRONG — CAUGHT BEFORE FLIGHT. V127 IS THE BUILD.**
 **The detector's input is `gp-0x6c2c`, the MOTOR-RATE DERIVATIVE — not driver torque.**
 `ld.h -0x6c2c,gp,r10` @`0x428FA`, compared against `cal(0xC620A)=12800` loaded @`0x42910`.
