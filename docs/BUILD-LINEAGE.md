@@ -23,6 +23,48 @@ deliberately not numbered `PART2` so the two can never be confused.
 
 ---
 
+## 🛑 V111 / V109 / V110 — BUILT, **NONE FLASHED**. 2026-08-27.
+
+### ⚠⚠ V109 AND V111 **DRIVE IDENTICALLY** — THE CHOICE IS THE INSTRUMENT, NOT THE FIX
+Verified from the images: `0xC40DC` (α2) = **14 on both**, `0xC40BC` knee 600, `0xC6CD0` gain 5346,
+`0xD7A5C` `gp-0x6b26` row, `0xC60A8` biquad — **every dynamics cell byte-identical.**
+**V111 = V109 + 3 telemetry bytes.** ⚠ An earlier recommendation of *"V109 first, then V111"* was
+**WRONG** and is corrected here.
+```
+  V108 -> V109 :  0xC40DC  16 -> 0e                          1 payload byte  + CRC
+  V109 -> V111 :  0x55DF2  d493 -> 4495 ; 0x55E10  a5 -> a3   3 payload bytes + CRC
+```
+
+| build | edit | image / .rwd | verdict |
+|---|---|---|---|
+| **V111** | 427 tap `gp-0x6c2c` → **`gp-0x6abc`** (the relay input), sar 5 → 3 | `9c4865cf…` / `221d99c6…` | ⭐ **RECOMMENDED NEXT.** 36/36. **No cave edit** ⇒ outside the bricking class |
+| **V109** | `0xC40DC` α2 22 → 14 (band-limit) | `e9eb51fc…` / `83047f0f…` | 30/30. Same dynamics as V111; keeps the `gp-0x6c2c` tap for the Y-row solve |
+| **V110** | `0xC6AE6` 2048 → 1024 | `3de48a49…` / `becaab6d…` | 🛑 **PARKED — DO NOT FLASH.** Killed twice |
+
+### WHY V111 IS RECOMMENDED OVER V109 FOR A SINGLE DRIVE
+**GATE 2 on the relay knee** shows a knee raise only bites **below ~200–400 counts** of
+`|gp-0x6abc|` — describing-function ratio **0.96–0.99 above ~400**, i.e. it does essentially nothing
+there. **That amplitude decides whether the ratchet lever exists at all**, and whether the priced
+**~1.28:1 trade** is even on the table. ⊕ Both builds deliver the identical α2 test on the low-speed
+grinding, so **nothing about the fix is given up.** ⚠ What is given up: the `gp-0x6c2c` channel goes
+dark, so the `gp-0x6b26` Y-row solve waits for another drive.
+
+### 🛑 WHY V110 IS PARKED — TWO INDEPENDENT KILLS
+1. **THE SIGN.** `cos(argZ + argH_D)` = **−0.802 at 7.79 Hz but +0.894 at 20 Hz** ⇒ D pumps at the
+   ratchet and **DAMPS at 18–31 Hz**, the operator's own grinding bands. Replicated on three drives
+   (628 windows / 74 episodes / 2145 s); 18–22 needs a channel skew ≥ **+8.6 ms** to flip and 26–31
+   needs ≤ **−5.9 ms** — **opposite directions, so no single skew saves it.** Cost ≈ **2.96×** at
+   18–22 and **3.92×** at 26–31 against a +0.039 ratchet benefit.
+2. **IT IS NOT "Kd 2048→1024".** `0xC6AE6` is **one knot of a FLAT four-knot LERP** —
+   X = (50, 400, 1500, 3000) @ `0xC6ADE/E0/E2/E4`, Y = (Y0..Y3) @ `0xC6AE6/E8/EA/EC`, **all 2048 in
+   stock**. Y0 acts alone only below axis 50 and is **never read at or above 400**. ⭐ **On a flat
+   table a one-knot edit is never a gain change** — it converts a constant into a rate-dependent
+   nonlinearity. 🛑 **The Kd lever is CLOSED entirely, not just this build** — the correct
+   four-knot form is exactly what makes kill #1's cost real. **Do not rebuild it properly.**
+⚠ **`Ki` (`0xC6B12/14/16/18`, flat 98) is the SAME SHAPE, and line 397 of this file floats Ki as a
+candidate.** Read all four knots before proposing it. **`Kp` (`0xC6B26/28/2A/2C`) is SHAPED**
+(256/256/225/153) — the flat-table argument does **not** carry to it.
+
 ## ✅ V108 — **FLEW 2026-08-27. HIGH SPEED FIXED; LOW SPEED UNCHANGED. THE PREDICTION LANDED.** (routes `1b` / `1e`, 988.6 s engaged on `1e`, fault-free)
 
 🛑 **OPERATOR REPORT (no rlogs — his words are the ENTIRE readout, and the PRIMARY one):**
