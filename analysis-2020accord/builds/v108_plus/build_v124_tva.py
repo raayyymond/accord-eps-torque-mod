@@ -129,9 +129,15 @@ GAIN_CAL, GAIN_6X, GAIN_NEW = 0xC6CD0, 5346, 7128
 #   gain 3564 (4x) -> clamps 2048 | 5346 (6x) -> 3072 | 7128 (8x) -> 4096 (V101)
 # Leaving them at 3072 with an 8x gain clamps away 25 % of the rise.
 CLAMP_A, CLAMP_B, CLAMP_OLD, CLAMP_NEW = 0xC61B2, 0xC61B4, 3072, 4096
-# READER #5 (0x36686, FUN_00036682) is (gp-0x4f60 RAW SENSOR x gain) >> 15 summed into
+# CORRECTED 2026-08-28: readers #3/#5/#6 multiply by 0xC646C, NOT 0xC6CD0.  V57 decoupled
+# only the FORWARD reader (#1) onto 0xC6CD0.  0xC646C is 891 = STOCK on EVERY build ever
+# made, so the 4x/6x/8x 'LKAS gain' has never touched the feedback paths at all.
+#   => the 8x rise does NOT multiply this path.  An earlier rationale claiming it did is WRONG.
+#   => and the 8x rise is SAFER than stated: the feedback loops stay at stock gain.
+# The trim lever below still stands on its own merits, just not as 'paying for the gain'.
+# READER #5 (0x36686, FUN_00036682) is (gp-0x4f60 RAW SENSOR x 0xC646C) >> 15 summed into
 # the aggregator -- a POSITIVE-feedback torque trim, output clamped to +-512 = 5 % of the
-# aggregator's +-10240.  It uses THE SAME GAIN, so the 8x rise multiplies it by 1.333.
+# aggregator's +-10240.  It uses 0xC646C (stock 891), which the gain rise does NOT touch.
 # 0xC63D2 is its IIR: alpha/1024, stock 6 => fc 0.93 Hz, |H| 0.1191 at 7.8 Hz.
 # LOWERING is safe BY CONSTRUCTION -- reducing a feedback magnitude cannot destabilise
 # a stable loop whatever its phase.  RAISING is the classic destabiliser.

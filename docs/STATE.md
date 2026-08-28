@@ -1,5 +1,34 @@
 # STATE — living current state of the kit
 
+## 🛑 CORRECTION: THE "LKAS GAIN" HAS **NEVER** TOUCHED THE FEEDBACK PATHS
+```
+   build     0xC646C (readers #3/#5/#6)   0xC6CD0 (forward reader #1)
+   STOCK          891                        65535
+   V90            891                         3564   (4x)
+   V101           891                         7128   (8x)
+   V112/V122      891                         5346   (6x)
+   V124           891                         7128   (8x)
+```
+✅ **`0xC646C` is 891 = STOCK on EVERY build ever made.** V57 decoupled only the **forward** reader
+(#1, `0x2a1ee`) onto `0xC6CD0`; readers **#3 (`0x2b656`), #5 (`0x36686`), #6 (`0x3684a`)** still
+multiply by `0xC646C`. Confirmed from the `FUN_0002b62c` decompile: its gain operand is
+`tp+0x746c` = **`0xC646C`**, not `0xC6CD0`.
+🛑 **⇒ MY V124 RATIONALE WAS WRONG ON ONE LEG.** I claimed the 8× rise multiplies the
+positive-feedback trim path by 1.333× and that `0xC63D2` 6→3 pays for it. **The gain rise does not
+reach that path at all.**
+✅ **TWO CONSEQUENCES, BOTH GOOD:**
+1. **The 8× rise is SAFER than I stated.** It touches only the forward path; **the feedback loops
+   stay at stock gain**, so it cannot destabilise them. The `m^1.74` vibration law was measured with
+   the feedback paths already at stock, so it still applies as measured.
+2. **The `0xC63D2` trim lever still stands on its own merits** — it halves a positive-feedback
+   contribution at 7.8 Hz (0.1191 → 0.0598) and lowering a feedback magnitude is safe by
+   construction. **What is withdrawn is the "it pays for the gain" framing, not the lever.**
+⊕ It also re-frames [[reference-accord-c646c-shared-gain-not-lkas-only]]'s warning: that note said
+raising `0xC646C` for "4x authority" silently raised two raw-sensor feedback paths. **V57's decoupling
+already fixed that, permanently — and no build since has re-coupled them.**
+✅ The V124 builder's comments are corrected in place; the image is unchanged (the error was in the
+rationale, not the bytes).
+
 ## ✅ DELIVERY IS **NOT** SATURATED — V123's gain rise should bite, but with diminishing returns
 Before trusting V123's 8× I checked whether the car is already delivering its maximum at the rail.
 **It is not.**
