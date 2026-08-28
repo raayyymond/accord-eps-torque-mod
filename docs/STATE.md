@@ -1,5 +1,53 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **BOTH `gp-0x6b26` ENDPOINTS ARE DEAD AT ROUTE-LEVEL POWER — THAT FAMILY IS UNFALSIFIABLE**
+The retraction pointed at **f₀** as the right endpoint for an inertia term, noting the kit's
+record *"f₀ = 21.90 / 23.61 / 24.90 Hz at 1× / 4× / 6× … needs no symptomatic drive"*. **Tested it.**
+```
+   per-route f0 (median peak, 14-34 Hz, prominence >= 4, engaged)
+     4x ->  21.88  20.31  20.31  21.48  24.22  15.23
+     6x ->  16.02  25.78  25.78  21.48  19.92  19.92  19.92  21.29
+
+   6x - 4x  f0 shift = -0.29 Hz  [-2.93, +4.69]      the record predicts +1.29 Hz
+```
+🛑 **Route-to-route f₀ varies by 10 Hz WITHIN one gain group.** The dose effect the record claims
+is **1.29 Hz** — an order of magnitude smaller than the noise. ⊕ **And the memory says so itself**:
+*"it may track COMMAND, not gain"* and ***"pooled, the gain term goes n.s."*** ⇒ **my null
+independently reproduces the kit's own caveat**, and the 21.90/23.61/24.90 ladder is very likely
+confounded.
+
+### 🛑 SO BOTH ENDPOINTS FOR THIS FAMILY ARE GONE
+```
+   endpoint            status at route-level power
+   band AMPLITUDE      DEAD -- same-firmware route variance is 8x (0.047-0.389 within one group)
+   mode FREQUENCY f0   DEAD -- 10 Hz spread within one gain group vs a 1.29 Hz predicted effect
+```
+⇒ **Any `gp-0x6b26` build is effectively UNFALSIFIABLE with current instrumentation.** That covers
+**V129/V130's `Y` changes and V132/V133's ceiling raise** — they are bounded, verified and
+harmless, but **no drive this kit can currently run would score them.**
+⊕ This is the same wall that produced the session's other nulls (the 8× gain-vs-grind test, the
+openpilot-compensation test). **The binding constraint is not lever supply — it is measurement
+power per route.**
+
+### ✅ WHICH SHARPENS THE FLIGHT PLAN RATHER THAN BLOCKING IT
+Two builds have endpoints that **do** survive this bound, because neither is scored on a
+`gp-0x6b26` band statistic:
+```
+   V133  Lever A restored   -> scored by the OPERATOR's symptom + V62's measured 42x at 18-22 Hz
+                               engaged creep, which had adequate power when it was taken
+   V135  knee 3000 -> 3600  -> scored by the MEASURED saturation-duty ladder (3600 reads 0.0000),
+                               a mechanism endpoint with real doses behind it
+```
+⇒ **Fly V133, then V135.** ⚠ **V134 (FactorC Y[0]) sits between**: its mechanism is well-founded
+and its ceiling is checked, but its endpoint is a **band amplitude at creep** — the statistic this
+section just showed is 8×-noisy. **It should be flown only on the operator's report**, not on an
+instrumented endpoint, and that limitation should be stated when it is.
+
+⭐ **THE REUSABLE POINT**: before designing a build, ask **"what endpoint would score it, and does
+that endpoint have the power to see the predicted effect?"** Three build families in this session
+(the `Y` fork, the ceiling raise, the f₀ ladder) fail that question **after** the fact. Asking it
+first would have retired them in minutes.
+
 ## 🛑🛑🛑 **RETRACTION: I CITED V94's +137° AS "MEASURED" — THE KIT LABELS IT MIXED/UNRESOLVED**
 Last section I wrote *"the sign, for once, is measured"* and concluded α2 = 5 helps the
 oscillation. **That rested on a number the kit explicitly says cannot be used:**
