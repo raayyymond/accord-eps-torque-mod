@@ -1,5 +1,37 @@
 # STATE — living current state of the kit
 
+## ⚠ A CANDIDATE TRIGGER — **DECELERATING INTO THE TURN.** Suggestive (12/17), NOT established
+First use of the operator's **labelled** event as a CASE rather than a description. r23,
+t = 445.6-448.2 (his *"exact instance"*), against controls from the **same drive** matched on speed
+and |angle| ⇒ route variance cannot apply.
+```
+   in the 2 s BEFORE      event      control median (n=6)   percentile
+   speed                  43.6 km/h        25.4               100th
+   d(speed)/dt           -1.159 m/s^2     +0.619                0th
+   18-22 Hz rms          14.162            9.739               83rd
+   |driver torque| mean 645.1           1113.7                 33rd
+```
+⭐ Two channels at opposite extremes, and they are **one physical fact: BRAKING INTO A CORNER AT
+SPEED** — which matches the operator's own words, *"a fixed oscillation during the peak of a hard
+curve."* 🛑 At n=6 that is p ≈ 0.14 — a hypothesis, not a finding.
+**Tested corpus-wide** (cases = top 5 % by 6-9 Hz per route, controls matched on speed and |angle|
+**within the same route**, bootstrap unit = ROUTE):
+```
+   12 of 17 routes have cases decelerating MORE than their matched controls
+   median difference -0.1720 m/s^2   route-bootstrap CI [-0.2486, +0.0354]
+   Wilcoxon signed-rank p = 0.1889    (sign test alone: p ~ 0.07)
+```
+🛑 **NOT ESTABLISHED** — the CI spans 0. ⭐ **But the direction is consistent (12/17) and this is the
+first candidate TRIGGER the kit has had**, as opposed to a gain or a lane.
+⚠ **The operator's own event is 6.7× more extreme than the corpus effect** (-1.159 vs -0.172) ⇒
+**either his labelled instance is atypical, or deceleration matters only past a threshold** — a
+threshold model would not show up in a linear mean comparison. **That is the next test, and it needs
+no new data.**
+✅ If it holds, it is actionable in a way no previous finding has been: a trigger can be **avoided or
+anticipated**, and it points at longitudinal load transfer rather than at a firmware gain.
+Tools: `rlog-tools/studies/peakturn/labelled_event_case_control.py`,
+`rlog-tools/studies/peakturn/deceleration_precursor_test.py`.
+
 ## ⚠ THE DAMPER'S COST IN ACCELERATION — measured, NOT resolved, but the SHAPE is informative
 The engaged friction row went **×1.5 (V91..V104) → ×3.0 (V107..V121)**, a natural experiment on the
 operator's own complaint. Outcome = **p99 |d(rate)/dt| engaged vs manual within the same drive**
