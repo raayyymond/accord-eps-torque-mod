@@ -1,5 +1,29 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 GRIND #1 IS A **MOVABLE POLE** — and `alpha2` (`0xC40DC`) is its handle
+Same test that classified the 7.8 Hz mode as **mechanical** (`f0` invariant to a 2× gain change),
+applied to grind #1 on the **corrected 21-26 Hz band**, 13 Lever-B-ON routes:
+```
+   B) FREQUENCY   a2_C40DC (14 vs 22)  rho +0.587  p 0.035  hi/lo 1.113  CI [1.06, 1.17]  <== HIT
+   A) AMPLITUDE   a2_C40DC             rho +0.537  p 0.059  hi/lo 1.340  CI [1.12, 2.29]  <== HIT
+                  knee_C40BC           rho -0.406  p 0.168  0.622 [0.29, 1.52]
+```
+✅ **`alpha2 = 22` → ~23.5 Hz; `alpha2 = 14` → ~21.1 Hz**, both CIs excluding 1.0 ⇒ **grind #1 is a
+CLOSED-LOOP POLE, relocatable in firmware, not merely dampable.** **A categorically better position
+than the oscillation**, where *move it* is refuted, *damp it* is measured-closed, and only *excite it
+less* remains.
+✅ **`alpha2` moves BOTH endpoints the same way**, and **V109 already went 22 → 14** — correct on both,
+which the kit could not have known while measuring the wrong band.
+✅ **`V115` (`alpha2` 14 → 8 on a V112 base) IS ALREADY BUILT AND UNFLOWN** — `5f804a8a…` /
+`f1a47bb7…`, 42/42. **The direct next step on this axis, no new build needed.**
+🛑 **CONFOUND:** `alpha2 = 14` exists only on V111/V112 (3 routes) ⇒ **collinear with build era**.
+⇒ **[EVIDENCE the frequency is firmware-movable; BELIEF that `alpha2` specifically moves it.]**
+⚠ `K1` also hits both but is perfectly confounded with `knee`. ⚠ The friction-row `rho = +0.729,
+p = 0.005` has arms of **5 vs 1** — **not a result.**
+🛑 Before flying V115, check `alpha2`'s **other** role: it sets the `gp-0x6b26` bandpass upper corner,
+and lowering it **rotates** that vector (damping up, mass down). **Not analysed here.**
+memory: [[accord-grind1-is-a-movable-pole-and-alpha2-is-its-handle]]
+
 ## 🛑🛑 OPERATOR CORRECTION: **GRIND #1 MOVED UP** — the kit's bands miss it, and the KNEE **IS** its lever
 > *"grind #1 has moved to a new, higher frequency since a few firmware versions ago."*
 
