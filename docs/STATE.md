@@ -1,5 +1,51 @@
 # STATE — living current state of the kit
 
+## ✅ THE FULL V128-vs-STOCK AUDIT — ONE NEW RISK FOUND, AND ONE FRAMING CORRECTED
+Motivated by the V128 finding: **a raise on a term that CLAMPS is not a dose, it is a relay
+conversion.** So every cell our builds have moved was re-read against stock. **302 payload bytes
+in 112 runs.** ✅ The mode-26 record is **correctly ABSENT** — V128 restored it, so it is now
+byte-identical to stock.
+
+### 🛑 NEW: THE LKAS SETPOINT CLAMP NOW SITS **EXACTLY** ON THE SM2 ARMING THRESHOLD
+```
+   build   arb_setpoint_limit 0xE4194   SM2 arm 0xC6422   margin
+   STOCK              15360                  16384        +1024  (6.2 %)
+   V31                15360                  16384        +1024  (6.2 %)
+   V42 .. V128        16384                  16384           +0  (0.0 %)   <- since V38
+```
+**Honda ships the setpoint clamp one step under its own SM2 trip**, exactly as it ships the
+`gp-0x6b26` clamp at 511 one count under the 512 monitor trip
+([[accord-c407e-is-the-fault-interlock-c63a0-exonerated]]). **The same design idiom, and we
+removed the margin in one of the two places.** SM2 arms on `demand > 16384`, so a clamp *at*
+16384 does not by itself cross it — but there is **zero headroom** for anything that adds to
+`demand` (`blend × min >> 15`), and the record already says **V19's raised SM2 still saw the
+soft EME trigger**, so the SM does arm in practice on 2× builds.
+⚠ **NOT BUILT, deliberately.** Restoring 15360 costs **6.7 % of top-end setpoint at every tier**,
+which is directly against the operator's standing priority, and **no EME is currently being
+reported** (V122 was fault-free). ⇒ recorded as a **known, quantified risk with zero current
+symptom**, not a pending fix. **The test that would settle it**: log raw CAN 399 `STEER_STATUS`
+for an SM cut during a hard engaged turn; if cuts appear, restore 15360 before anything else.
+
+### 🛑 CORRECTION — the 15360→16384 block is NOT an unexamined change
+I first read it as an unexamined block the audit had turned up. **The kit documents it well**: it
+is **`arb_setpoint_limit`, the ± clamp on the LKAS setpoint `gp-0x69ae`, raised +6.7 % at V38**,
+described in `docs/archive/arc-maps/` and `LEDGER-V38-TO-V84.md` G6 as *"the kit's oldest still-
+active lever family"* — **8 of 12 records raised; `0xE41D0`, `0xE4248`, `0xE5220`, `0xE5248` were
+left stock and still are.** ⇒ the lever is known; **only the SM2-margin observation above is new.**
+
+### ✅ WHAT ELSE THE AUDIT CONFIRMED, ALL DELIBERATE AND ALREADY ON THE RECORD
+- `0xC40BC` 600→3000 (×5) and `0xC40D2` 102→1020 (×10) — the Coulomb ladder, **exhausted rung**.
+- `0xC6CD0` **stock 65535** → 7128 — stock leaves the forward-gain cell unprogrammed and binds on
+  the 512 clamp instead; V57 onward drives it. Consistent with the earlier chain audit.
+- `0xC62EA` 320→0 — the low-speed steer lockout window **eliminated**
+  ([[accord-low-speed-lockout-window-c62ea]]).
+- `0xC6446` 512→5244, `0x3AA96` c5→fb — V88's Lever B + sign fix.
+- `0x454FE` ba→b5 — V42's state-4 governor fix, **restored and still present**.
+- `0xC4B34` 164 B — the cave. `0x55C0E`/`0x55DF2`/`0x55E10` — the 427 packer and V127's probe.
+
+⇒ **No second instance of the V128 pathology was found.** The engaged-mode `Y` record was the
+only raise that pushed a term past a clamp into relay behaviour.
+
 ## 🛑🛑🛑 **THE GRINDING IS OURS — WE TRIPLED THE ENGAGED-MODE DAMPER AT V96/V106. V128 RESTORES IT.**
 `gp-0x6b26`'s speed schedule `Y` is a **per-mode** LERP reached through the pointer array at
 `0xCBE74`. **`MANUAL_MODES = (24,25)`, `ENGAGED_MODES = (26,27)`.** Read straight out of the images:
