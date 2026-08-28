@@ -1,5 +1,45 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **THE DAMPER NEVER RAILED — A DIRECT MEASUREMENT THAT WAS SITTING IN THE CACHE**
+Route **77 = V90**, which put **`gp-0x6b26` on 427 at sar 3** — the same tap V133 carries. The data
+has been on disk the whole time. **52,258 engaged frames, wire unclipped** (it saturates at 1637,
+the clamp is 511):
+```
+   ENGAGED   p50 5   p90 35   p99 109   max 296        RAIL DUTY 0.0000 %
+    0- 10 km/h  p99 147  max 275  0.0000 %      25- 40 km/h  p99  80  max 296  0.0000 %
+   10- 25 km/h  p99  95  max 293  0.0000 %      40- 64 km/h  p99  76  max 250  0.0000 %
+   64-200 km/h  p99  59  max 146  0.0000 %
+```
+🛑 **The term NEVER reached its clamp — not one frame, in any speed bin.** p99 is **21 %** of it.
+
+### 🛑 AND IT CONTRADICTS THE 32.32 % THAT MOTIVATED THE WHOLE RELAY STORY
+V107's *"32.32 % rail duty at 10–25 km/h"* — cited repeatedly this session, including by me — was
+**RECONSTRUCTED**, not measured (`accord-gp6b26-is-a-61hz-bandpass-and-v107-railed-it`:
+*"Reconstructed `P(|gp-0x6b26| = 511)`"*). **The direct wire reads 0.0000 % in that exact bin.**
+⇒ **[EVIDENCE] the kit's first DIRECT measurement of this term's rail duty is ZERO.**
+
+### ⚠ TWO CONSEQUENCES I HAVE TO STATE AGAINST MY OWN BUILDS
+1. **The "railed → Coulomb relay → grinding" premise for `gp-0x6b26` is WEAKENED**, and with it part
+   of the reasoning behind V126–V133.
+2. **V133's headline edit — the 511→1023 ceiling raise — may be INERT.** If the term never
+   approaches 511, doubling the clamp changes nothing. ⊕ It is still **harmless** (strictly more
+   headroom, monitor twin matched, admission gate cleared), but it may buy nothing.
+
+🛑 **WHAT THIS DOES *NOT* ESTABLISH.** V90 ran **stock `Y`** (pre-V106 ×3) and **α2 = 22**;
+V133 runs **×3 `Y`** and **α2 = 5**. Scaling V90's distribution to V133 is **exactly the open-loop
+move the record forbids** — V107 predicted ≤1.05 % and measured 33.49 %, a **32× miss**, doing
+precisely that. ⇒ **this SHIFTS THE PRIOR, it does not settle it.**
+
+### ⭐ IT DOES, HOWEVER, POINT THE FORK
+The pre-registered rule reads: **rails ≤ 2 % ⇒ the term is LINEAR ⇒ the deficit is DAMPING ⇒ fly
+V130 (`Y` up)**. The only direct evidence now available reads **0.0000 %**. ⇒ **V130 becomes the
+favoured branch**, and `0xC63A6` — the weight that adds authority past the ceiling — becomes the
+*likely* next lever rather than the unlikely one. **Both remain gated on V133's own probe**, which
+measures the term under V133's actual `Y` and α2.
+⊕ And a method lesson: **the answer to the session's central question was already in the cache.**
+Before designing a probe, check whether a past build already flew the signal — `r77` carried it
+with the identical tap and scale.
+
 ## 🛑🛑 **THE BASE-ASSIST DAMPER IS *ALREADY* A RELAY — THE LANE CLOSES, AND V80 IS EXPLAINED**
 I promised to read `FUN_00034350`'s ceiling before choosing any FactorC dose. **Read — and it
 blocks the dose.**
