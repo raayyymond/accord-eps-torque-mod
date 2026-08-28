@@ -149,3 +149,39 @@ image    a588f936e4cdfe58ece41ff4943bff532444daabc4b99a53f00c1d718950a1bb
 - **self-targeting**: the term is linear in `|model|`, which rises 7–9× with angle.
 ⇒ **V120 is the recommended flight. V113 remains valid but is a heavier-than-stock variant** — keep
 it as the second step if V120's cut proves insufficient.
+
+## 🛑🛑 **THE K1 MECHANISM IS REFUTED.** V120/V113 ARE NOT MECHANISM-BACKED.
+2026-08-28, tested on data already in hand. **V111 (knee 600, K1 204) and V112 (knee 1800, K1 612)
+have the SAME small-signal gain**, so their friction term is identical at low rate and V112's is
+**1.9× at 20 °/s and 3.0× above 31.8 °/s.** If that term drives the anti-damping, **V112 must be
+2–3× WORSE than V111 at large angle.** It is not:
+```
+   |ang|     n111  n112   p90 ratio (V112/V111)   95% CI        verdict
+    0-  5     488   424        1.27x            [1.05, 1.49]   excludes 2x
+    5- 20      82   167        0.90x            [0.73, 1.22]   excludes 2x
+   20- 60      25    48        0.75x            [0.48, 1.64]   excludes 2x -- V112 is BETTER
+   60-400      38    19        1.53x            [0.96, 4.15]   underpowered
+```
+🛑 **Three of four bands EXCLUDE the predicted 2–3×, and at 20–60° — where the prediction is
+strongest — V112 is BETTER.** ⊕ And at **0–5°, where the term is IDENTICAL by construction, V112 is
+1.27× worse [1.05, 1.49]** — a real difference **the friction term cannot explain at all.**
+⇒ **the friction term is NOT what makes the oscillation angle-gated.**
+
+### WHAT THIS DOES AND DOES NOT KILL
+**STILL SOLID:**
+- the excess **is** angle-gated against **stock**, exposure-controlled and with the confound inverted
+  ([[accord-the-oscillation-excess-is-ANGLE-GATED]]);
+- **`|model|` rises 7–9× with angle** (measured on the cave's b5 rung, monotone, two routes);
+- K1 **is** ×6 on stock, and the term **is** in phase with rate.
+**REFUTED:** the causal link from that term to the angle-gated oscillation.
+
+### ⇒ STATUS OF V120 AND V113
+Both remain **valid builds** — they move the friction compensation toward Honda's level, V120 landing
+exactly on it — but **they are NOT mechanism-backed fixes for the oscillation.** Anything above
+claiming V113/V120 is "the targeted fix" or "evidence-backed end to end" is **withdrawn**.
+🛑 **Do not present V120 as a fix.** It is a principled dose (stock-equivalent feel, half the
+anti-damping, no added inertia or phase) whose effect on the symptom is **unknown**.
+⚠ A residue worth keeping: the 0–5° result says **something other than the friction term differs
+between V111 and V112** and shows up even where their friction is identical. The only other
+differences are the knee's effect on relay *character* at low rate and route-to-route variation.
+**Open.**

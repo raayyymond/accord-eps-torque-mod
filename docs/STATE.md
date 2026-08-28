@@ -1,5 +1,26 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 THE K1 MECHANISM IS **REFUTED** — V120/V113 ARE NOT MECHANISM-BACKED FIXES
+Tested on data already in hand. **V111 and V112 share a small-signal gain**, so their friction term is
+identical at low rate and V112's is **1.9× at 20 °/s, 3.0× above 31.8 °/s**. If that term drove the
+anti-damping, V112 must be 2–3× worse at large angle. **It is not:**
+```
+   |ang|     n111  n112   p90 ratio V112/V111    95% CI        verdict
+    0-  5     488   424        1.27x           [1.05, 1.49]   excludes 2x
+    5- 20      82   167        0.90x           [0.73, 1.22]   excludes 2x
+   20- 60      25    48        0.75x           [0.48, 1.64]   excludes 2x -- V112 BETTER
+   60-400      38    19        1.53x           [0.96, 4.15]   underpowered
+```
+⊕ At **0–5° the term is IDENTICAL and V112 is still 1.27× worse [1.05, 1.49]** — the friction term
+cannot explain that at all.
+✅ **STILL SOLID**: the excess IS angle-gated vs stock (exposure-controlled, confound inverted);
+`|model|` rises 7–9× with angle; K1 IS ×6 on stock; the term IS in phase with rate.
+🛑 **REFUTED**: the causal link from that term to the oscillation.
+⇒ **V120 and V113 remain valid builds but are NOT fixes with a known mechanism.** Every earlier claim
+that V113/V120 is "the targeted fix" or "evidence-backed end to end" is **WITHDRAWN**.
+⚠ **Open residue**: something other than the friction term differs between V111 and V112 and shows up
+even at 0–5° where their friction is identical.
+
 ## ⭐⭐⭐ V120 BUILT — **K1 612 → 306. HONDA-EQUIVALENT FEEL, HALF THE ANTI-DAMPING.**
 ```
 builder  analysis-2020accord/builds/v108_plus/build_v120_tva.py   40/40   BASE = V112
