@@ -1,5 +1,32 @@
 # STATE — living current state of the kit
 
+## 🛑 RETRACTED IMMEDIATELY: the "1.5 kHz signature" of the labelled event was MULTIPLE-COMPARISONS NOISE
+The operator's labelled event (r23, t = 445.6-448.2) appeared to show a tone cluster at
+**1457-1561 Hz, +11 to +14 dB over the p95 of 19 matched engaged controls**, and I called it *"the
+signature to hunt"*. **The follow-up refutes it.**
+```
+   1539 engaged audio windows, r23
+   Spearman(6-9 Hz steering share, 1.4-1.6 kHz audio share) = -0.167   p = 4.2e-11
+   top-20 % oscillation vs bottom-40 %:            ratio 0.79x  CI [0.75, 0.85]
+   SPEED-MATCHED 38-68 km/h (n = 184/166):         ratio 0.70x  CI [0.65, 0.77]
+```
+🛑 **High-oscillation windows carry LESS 1.4-1.6 kHz tone, not more** — the opposite sign, and
+significant.
+✅ **The error was structural and I should have caught it before claiming**: **one** labelled window
+against **19** controls, scanned across **~4000 frequency bins**. The p95 of 19 samples is
+essentially their maximum, so **a large number of bins clear it by chance**. A family-wise
+correction was required and was not applied. ⇒ **any single-window acoustic "signature" found this
+way is noise unless it replicates across windows.**
+⚠ The negative correlation is probably **normalisation**, not physics: the tone share is divided by
+300-3000 Hz power, and if the oscillation adds broadband energy there the share falls. **Do not read
+it as "the oscillation suppresses a 1.5 kHz tone".**
+⇒ **STATUS: the acoustic instrument has NOT been shown to see the peak-turn oscillation.** Combined
+with the earlier engaged-only case-control finding nothing for the 21-26 Hz grind band, **no acoustic
+result in this corpus is currently load-bearing.**
+✅ **What would make it load-bearing:** the operator naming the **pitch** (high whine / mid buzz / low
+growl), which converts an unbounded 4000-bin search into a **pre-registered band** where a null or a
+hit both mean something.
+
 ## 🛑🛑 THE 21-26 Hz EXCESS AND THE **AUDIBLE** GRIND ARE NOT SHOWN TO BE THE SAME THING
 Two acoustic contrasts on r22 (V112), 710 s of 16 kHz PCM:
 ```
