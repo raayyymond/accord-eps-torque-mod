@@ -1,5 +1,33 @@
 # STATE — living current state of the kit
 
+## 🛑🛑⭐ K1 IS THE ANGLE-GATED ANTI-DAMPING — **V113 IS THE FIX, AND IT IS ALREADY BUILT**
+Every link measured, 2026-08-28:
+1. **The excess is ANGLE-GATED** — |ang| < 20° we ARE stock (1.06–1.08×); 20–60° p90 **1.74×**, max
+   **16.568 vs stock's 2.111**; 60–400° p90 **3.16×**. ✅ Exposure-controlled and the confound
+   **inverts**: stock drove that regime MORE (13.2 % vs 4.9 %), at higher angle and command, calmly.
+2. **`|model|` RISES 7–9× WITH ANGLE** — the cave's `0x14A` byte4 **b5** is the `gp-0x6AE2` rung:
+   duty **0.118→0.837** (r22) and **0.104→0.934** (r23), **monotone over four bins, two routes.**
+3. `friction = EMA(|model| · K1/1024 · sat(rate·12/knee))`, **in phase with rate** (EMA adds only
+   −1.1°…−11.1°) and a *compensation* ⇒ **ANTI-DAMPING**.
+4. **K1 `0xC40D2` = 102 → 612 = ×6 ON STOCK** — the largest single multiplication in the live diff.
+⇒ **at large angle our anti-damping is 6× stock's coefficient times a 7–9× larger `|model|`.**
+
+```
+   build    knee   K1    small-signal gain   K1 vs stock
+   v112     1800   612      0.0039844          6.0x     <- ON THE CAR
+   v113     1800   204      0.0013281          2.0x     <- THE FIX (already built)
+   V113 vs V112 = 6 bytes / 2 runs: 0xC40D2 612->204 + the CRC trailer.  Nothing else moves.
+```
+⭐ **V113 = V111's K1 with V112's knee** — V111 gave *"oscillations gone, ratcheting reduced"* (at the
+cost of rate) and V112's knee restored the authority (tracking **1.37–1.62×** better).
+**It is the combination of the two things that each worked**, and it cuts the anti-damping term to
+**0.333×** exactly where `|model|` is largest.
+🛑 **I deprioritised V113 and that was wrong** — V112's flight refuted the *magnitude* of the
+anti-damping risk at V112's operating point, not the mechanism.
+⚠ **Cost: heavier below ~30 °/s**, manual feel included (`FUN_0003b8f6` is not LKAS-gated).
+🛑 **Falsifier**: if V113 flies and the large-angle oscillation is unchanged, K1 is not the
+mechanism and the angle gating is plant-side. A clean single-variable read.
+
 ## ⭐⭐⭐ V119 BUILT — **BOTH LEVERS + THE PROBE.** Grind #1 AND the oscillation, one flight.
 ```
 builder  analysis-2020accord/builds/v108_plus/build_v119_tva.py   42/42   BASE = V112
