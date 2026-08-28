@@ -51,6 +51,33 @@ report; BELIEF that the mapping is causal** — one build, no rlogs, and no matc
 
 ⇒ **V109 IS THE NEXT BUILD, and now for a measured reason rather than a structural one.**
 
+### 🛑🛑 CORRECTED — **V109 AND V111 DRIVE IDENTICALLY.** THE CHOICE IS THE INSTRUMENT, NOT THE FIX.
+⚠ **Earlier in this session I repeatedly recommended "V109 first, then V111". That framing was
+WRONG** and is corrected here. They are not a sequence of fixes.
+```
+  V108 -> V109 :  0xC40DC  16 -> 0e                        1 payload byte  + CRC
+  V109 -> V111 :  0x55DF2  d493 -> 4495 ; 0x55E10 a5 -> a3  3 payload bytes + CRC
+  V108 -> V111 :  all three of the above                    3 payload bytes + CRC
+```
+**Every dynamics cell is byte-identical on V109 and V111** — verified from the images:
+`0xC40DC` (α2) **14 on both**, `0xC40BC` knee 600, `0xC6CD0` gain 5346, `0xD7A5C` `gp-0x6b26` row,
+`0xC60A8` biquad. **V111 IS V109 plus three telemetry bytes.**
+
+⇒ **The decision is which MEASUREMENT the drive buys, not which fix is on the car:**
+
+| build | 427 tap watches | what it answers |
+|---|---|---|
+| **V109** | `gp-0x6c2c`, sar 5 | sizes the `gp-0x6b26` Y row — open since V107 |
+| **V111** | `gp-0x6abc`, sar 3 | **the relay's input amplitude** |
+
+⭐⭐ **RECOMMEND V111 OVER V109 FOR A SINGLE DRIVE**, and GATE 2 is the reason: the knee lever only
+bites **below ~200–400 counts** of `|gp-0x6abc|` (describing-function ratio **0.96–0.99** above ~400,
+i.e. a knee raise does essentially nothing there). **That amplitude decides whether the ratchet lever
+exists at all, and whether the ~1.28:1 trade is even on the table.** The Y-row question is worth less
+than that now. ⊕ **Both builds deliver the identical α2 test** on the low-speed grinding, so nothing
+about the fix is given up by choosing V111.
+⚠ What IS given up: the `gp-0x6c2c` channel goes dark, so the Y-row solve waits for another drive.
+
 ### ✅ V111 BUILT — THE RELAY PROBE.  3 PAYLOAD BYTES, NO CAVE EDIT, NO DOSE.
 ```
 builder  analysis-2020accord/builds/v108_plus/build_v111_tva.py   36/36   BASE = V109
