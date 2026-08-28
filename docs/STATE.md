@@ -1,5 +1,31 @@
 # STATE — living current state of the kit
 
+## 🛑 V121 WILL PROBABLY FIX **NEITHER** SYMPTOM — the knee axis is SATURATING
+Operator asked directly whether V121 fixes both. **Measured answer: no.**
+```
+   knee   21-26 Hz share   step ratio   relay saturation duty   duty removed
+    300      0.63080                        29.08 %
+    600      0.24591        2.57x           19.17 %             -9.9 pp
+   1800      0.21341        1.15x            6.75 %            -12.4 pp
+   3000        --                            3.70 %             -3.1 pp   <- V121's step
+```
+🛑 **The 1800→3000 step removes only 0.25× as much relay saturation as 600→1800 did — and that
+step bought only 1.15× on the band.** ⇒ **V121's expected grind-#1 gain is about 4 %.**
+🛑 **On the oscillation its effect is UNKNOWN** — the mechanism failed two independent checks (the
+closed-loop simulation, and the harmonics not tracking the relay's saturation axis).
+```
+                 grind #1                              oscillation
+   V121    ~4 %, the axis is exhausted        UNKNOWN, mechanism twice unsupported
+   V115    -21.7 % predicted, measured axis   -4.3 % on the damper (a COST, not a benefit)
+```
+⇒ **This DOWNGRADES V121 as a symptom fix**, and it is a self-correction: V121 was the standing
+recommendation for many ticks, and **the corrected 21-26 Hz band is what changed it.**
+✅ **V121's honest remaining value is AUTHORITY, not symptom relief**: 1.571× / 1.667× more friction
+above 31.8 deg/s ⇒ by the verified polarity, **MORE ASSIST** exactly where the operator reports
+acceleration feeling low — and **bit-identical below 31.8 deg/s**, so the risk is near zero.
+⇒ **REVISED SEQUENCE: V115 first (grind #1, 5× the expected effect, 1 payload byte). V121 second, and
+framed as an AUTHORITY build, not a fix.**
+
 ## ✅ V115 IS BYTE-VERIFIED AND **PRE-REGISTERED** — `docs/scoring/SCORING-V115-preregistered.md`
 Full diff against V112: **1 payload byte + 1 CRC trailer.** The cleanest single-variable build in the
 kit.
