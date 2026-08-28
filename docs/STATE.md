@@ -1,5 +1,33 @@
 # STATE — living current state of the kit
 
+## ✅✅ `alpha2` **IS** THE FREQUENCY-SELECTIVE LEVER — V115 is the recommended flight for GRIND #1
+`alpha2` = `cal(0xC40DC)` is the EMA-A coefficient in `FUN_00041464` (`state += (diff*alpha2)>>6`
+⇒ alpha = alpha2/64), and its input is a **first difference**, so the lane is `|1-z^-1|*|H_ema|` —
+**a differentiator whose response RISES with frequency.** ⇒ lowering `alpha2` cuts **high**
+frequencies far more than low ones. **Selectivity by construction.**
+```
+   freq       a2=22      a2=14      a2=8      8/14     what lives there
+    3.0 Hz   0.018831   0.018795   0.018665  0.993x   LKAS command band -- UNTOUCHED
+    7.8 Hz   0.048680   0.048071   0.046008  0.957x   the oscillation / damper   -4.3 %
+   23.4 Hz   0.138812   0.126319   0.098848  0.783x   GRIND #1 PEAK             -21.7 %
+   50.0 Hz   0.251820   0.194102   0.122891  0.633x
+```
+✅ **5.07× more cut at grind #1 than at the damper; 0.993× at 3 Hz** ⇒ the band where **steering
+velocity and acceleration live is untouched.** **It removes loop gain at 21-26 Hz without adding
+mass, friction or inertia** — the operator's constraint, satisfied by construction.
+✅ **SAFETY GATE PASSES against the kit's worst precedent:** this is the lane **V94 cut 6×**, after
+which the operator **aborted** — and `alpha2` 14→8 costs only **4.3 %** of that damper, **1/20th** of
+V94's change. ⊕ **The precedent is already flown**: V109's 22→14 was selective the same way
+(damper −1.3 %, grind #1 −9.0 %, **7.19×**) and flew **fault-free on V111 and V112**, the operator's
+best builds.
+⇒ **V115 (V112 + `0xC40DC` 14→8) is BUILT AND UNFLOWN** — `5f804a8a…` / `f1a47bb7…`, **42/42**,
+cal-only. Now backed by **four independent things**: measured amplitude (1.340 [1.12,2.29]), measured
+frequency shift (1.113 [1.06,1.17], p 0.035), structural selectivity (5.07×), and a flown precedent.
+🛑 Caveats: `alpha2=14` is only on V111/V112 (**3 routes**) ⇒ the empirical half is **collinear with
+build era**; the arithmetic assumes the **1 kHz** rate; `alpha2` also cuts **35-50 Hz by 30-37 %**
+(grind #2 territory — likely helpful, **unverified**).
+⇒ **SEQUENCE: V115 first, then V121.** memory: [[accord-alpha2-is-the-frequency-selective-lever]]
+
 ## 🛑🛑 GRIND #1 IS A **MOVABLE POLE** — and `alpha2` (`0xC40DC`) is its handle
 Same test that classified the 7.8 Hz mode as **mechanical** (`f0` invariant to a 2× gain change),
 applied to grind #1 on the **corrected 21-26 Hz band**, 13 Lever-B-ON routes:
