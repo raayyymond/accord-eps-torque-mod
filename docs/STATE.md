@@ -1,5 +1,21 @@
 # STATE — living current state of the kit
 
+## 🛑 A FABRICATED "MEASURED" VALUE IN V121'S PROVENANCE — caught, removed, asserted against
+Deriving `build_v121_tva.py` I wrote `MEASURED_DUTY = {..., 2400: 0.0484, 3000: 0.0370, 3600: 0.0000}`.
+**`0.0370` was invented** by eye from the neighbouring rungs, inside a dict printed as
+*"MEASURED relay saturation duty"* and asserted against. **The payload never depended on it — the
+image SHA `ce565da7…` is unchanged** — but the provenance is what a future session trusts.
+🛑 **Recomputing the ladder properly ALSO failed.** On the published gate (route 21, 5-10 mph,
+engaged, hands-off, `|cmd| >= 2048`) my reconstruction gave **n = 572 vs the published 289**, and the
+duties missed badly (`cs_rate` 0.9178/0.4493/0.1171/0.0087 vs 0.7439/0.4810/0.2353/0.0484).
+⇒ **The ladder's exact gate is NOT recoverable from the r21 cache alone. OPEN.** Anyone extending it
+must first reproduce the five published rungs; if they cannot, they must not add a sixth.
+✅ **Fixed structurally**, not by resolving to be careful — the builder now asserts
+`KNEE_NEW not in MEASURED_DUTY` and `2400 < KNEE_NEW < 3600`, so it **fails** if anyone adds an
+unmeasured rung, and states its position as **bracketed by 0.0484 and 0.0000** rather than claiming a
+value. **40/40 assertions; image unchanged.**
+⇒ [[feedback-never-extend-a-measured-ladder-by-eye]]
+
 ## ✅ **V121 BUILT — THE MAXIMAL GAIN-MATCHED KNEE.** `0xC40BC` 1800→3000, `0xC40D2` 612→1020
 ```
 image  ce565da74ad93f77c81a3e2572758d5c2df505f6d32889b65c5536904ea7596c

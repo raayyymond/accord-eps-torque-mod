@@ -131,7 +131,12 @@ SAR_ADDR, SAR_VAL = 0x55E10, 0xA3
 CAVE_BASE, CAVE_LEN = V106B.CAVE_BASE, V106B.CAVE_LEN
 CAVE_FREE_END = V106B.CAVE_FREE_END
 RATE_SCALE = 4.7121
-MEASURED_DUTY = {600: 0.7439, 1200: 0.4810, 1800: 0.2353, 2400: 0.0484, 3000: 0.0370, 3600: 0.0000}
+MEASURED_DUTY = {600: 0.7439, 1200: 0.4810, 1800: 0.2353, 2400: 0.0484, 3600: 0.0000}
+# knee 3000 is NOT on this ladder: its duty was never measured.  It is BRACKETED by two
+# measured rungs -- 2400 -> 0.0484 and 3600 -> 0.0000 -- and no interpolated value is
+# asserted here.  An attempt to recompute the ladder from r21's cache did not reproduce
+# the published gate (n = 572 vs the published 289), so the exact gate is not recoverable
+# from the cache alone.  See docs/STATE.md.
 
 OK, BAD = "[PASS]", "[FAIL]"
 _checks = [0, 0]
@@ -206,17 +211,23 @@ def build():
     print("  [3c] THE MODEL MADE A CORRECT PROSPECTIVE PREDICTION -- why this dose is trusted")
     print("      knee  600 (V111)  predicted 0.7439 [0.669,0.815]   MEASURED 0.7336  route 21")
     print("      knee 1800 (V112)  predicted 0.2353                 MEASURED 0.3102 / 0.1071")
-    print(f"      knee {KNEE_NEW} (V121)  predicted {MEASURED_DUTY[KNEE_NEW]:.4f}                 <- THIS BUILD")
-    check(MEASURED_DUTY[KNEE_NEW] < 0.10,
-          f"  predicted saturation duty {MEASURED_DUTY[KNEE_NEW]:.4f} -- a further "
-          f"{0.2353 / MEASURED_DUTY[KNEE_NEW]:.1f}x cut on V112's own predicted value")
+    lo_k, hi_k = 2400, 3600
+    print(f"      knee {KNEE_NEW} (V121)  NOT separately measured -- BRACKETED by the ladder:")
+    print(f"        knee {lo_k} -> {MEASURED_DUTY[lo_k]:.4f}   and   knee {hi_k} -> {MEASURED_DUTY[hi_k]:.4f}")
+    check(KNEE_NEW not in MEASURED_DUTY,
+          "  no interpolated duty is asserted for this knee -- the ladder carries MEASURED values only")
+    check(lo_k < KNEE_NEW < hi_k,
+          f"  knee {KNEE_NEW} lies strictly between two MEASURED rungs of the ladder")
+    check(MEASURED_DUTY[lo_k] < 0.10,
+          f"  the rung BELOW this build already measures {MEASURED_DUTY[lo_k]:.4f} < 0.10")
 
     check(KNEE_OLD in MEASURED_DUTY,
-          f"  the dose is on the MEASURED ladder, and the ladder made a correct prediction")
+          f"  the BASE knee is on the MEASURED ladder, and the ladder made a correct prediction")
     print(f"      MEASURED relay saturation duty, 5-10 mph engaged hands-off cmd>=2048:")
     for k in sorted(MEASURED_DUTY):
         mark = "  <- V112, MEASURED 0.3102 / 0.1071" if k == KNEE_OLD else (
-               "  <- THIS BUILD" if k == KNEE_NEW else "")
+               "  <- rung BELOW this build" if k == 2400 else
+               "  <- rung ABOVE this build" if k == 3600 else "")
         print(f"         knee {k:5d}   duty {MEASURED_DUTY[k]:.4f}{mark}")
     check(ALPHA2_NEW == ALPHA2_V111,
           f"  alpha2 is HELD at {ALPHA2_V111} -- V121 does not touch the damper lane")
