@@ -1,5 +1,37 @@
 # STATE — living current state of the kit
 
+## ⭐ **NEXT CANDIDATE, SIZED BUT NOT BUILT: `FactorC Y[0]` — the damper is DEAD at creep**
+With the target corrected to **rare LOW-SPEED grind #1**, one structural fact stands out: the
+base-assist damper is **structurally zero** exactly where the symptom is.
+```
+   mode 26/27 FactorC   X = [2240, 3840, 5120, 8960] = [35.0, 60.0, 80.0, 140.0] km/h
+                        Y = [   0,  234,   429,  908]        (mode 27: [0, 233, 426, 875])
+   below X[0] the LERP returns Y[0] = 0  =>  NO base-assist damping below 35 km/h, at all.
+```
+✅ **The ceiling check PASSES** — the failure mode that destroyed V80. Ceiling LERP is
+**Y = [512, 1024]**; an earlier/raised ramp keeps the product at **≤ 70** through creep
+(**≤ ~168** even allowing FactorE's 2.4×) ⇒ **far under 512, no saturation, no relay.**
+🛑 **But the obvious version is mis-targeted**: moving `X[0]` 2240→640 gives **ZERO below
+10 km/h**, and the operator's remaining grinding is at **2–5 mph (3–8 km/h)**. The edit that
+actually reaches it is **`Y[0]` 0 → ~60**, which:
+- puts a small damping term at **every** speed below 35 km/h, including 3–8 km/h;
+- is **9.4× smaller than V80's 566**, and V80's failure was a **flat 566 everywhere** that pushed
+  the product past the ceiling into a relay — not the non-zero `Y[0]` as such;
+- keeps `Y` **strictly monotone** (60, 234, 429, 908) ⇒ no plateau in the ramp;
+- touches **ENGAGED modes 26/27 only** ⇒ manual feel byte-untouched;
+- acts in a lane whose task rate is now bounded **≥ 250 Hz** ⇒ it **can** damp 18–22 Hz.
+
+### 🛑 WHY IT IS **NOT** BUILT — it would confound the one clean test available
+**V133 already restores the lever that specifically and measurably fixed this exact symptom**:
+V62's Lever A, **18–22 Hz at ENGAGED CREEP, ×0.124 [0.036, 0.387], 42× at |rate| 16–32 °/s,
+30–40 Hz control ~1.0**, operator: *"Original grinding at 2–5 mph is GONE!"* — **off the car since
+~V80.** Adding an untested damper edit on top would make the drive uninterpretable and violates the
+standing law that **every build be interpretable from ONE short symptomatic drive.**
+⇒ **Fly V133 first.** If the rare low-speed grind survives it, `FactorC Y[0]` → 60 on modes 26/27
+is the next build, **already sized and ceiling-checked**, 4 payload bytes.
+⚠ [BELIEF] the dose. `Y[0]` = 60 is chosen to sit ~9× under V80's and far under the ceiling; it is
+**not** derived from a measured creep FactorE, which the cache does not contain.
+
 ## 🛑🛑🛑 **OPERATOR CORRECTION 2026-08-28: MID-SPEED GRINDING IS FIXED — ONLY RARE LOW-SPEED REMAINS**
 Verbatim: *"Why are we talking about mid speed grinding in V133? This has been fixed, its just a
 rare low speed grinding #1 since my last drive."*
