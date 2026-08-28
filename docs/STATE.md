@@ -1,5 +1,45 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **TWO DIRECT MEASUREMENTS FROM CACHE — ONE CORRECTS THE SECTION ABOVE, ONE KILLS THE NOTCH FAMILY ON ITS OWN**
+A tap census across all build images showed the two cells that matter had **already been flown**:
+`gp-0x6C2C` by V107–V110 (routes **r1b, r1e**) and `gp-0x6B86` by V104–V106 (routes **ra4, ra5,
+ra6**). ⊕ I had just written *"the answer was already in the cache"* as a lesson and **still had to
+run the census to find these** — the lesson needs a TOOL, not a note.
+
+### 🛑 1. THE DETECTOR-INPUT MEASUREMENT IS **CENSORED** — IT DOES NOT CONFIRM THE BACK-SOLVE
+```
+   r1e (V107, sar 3)  engaged  n=49,089   p50  123   p99 1637   MAX 1637
+   r1b (V107, sar 3)  manual   n= 5,999   p50   38   p99 1637   MAX 1637
+   427 wire SATURATED (>=1023) on 3.2 % of engaged / 4.7-5.4 % of manual frames
+```
+🛑 **The probe clips at wire 1023 = |c2c| 1637**, and **3.2 % of engaged frames sit ABOVE it,
+unmeasured.** The detector threshold is **12800 — 7.8× above the clip point.**
+⇒ **this measurement CANNOT settle whether the gate opens, and the section above must not be read
+as confirming it.** The V90 back-solve remains the better evidence **precisely because it was
+UNCLIPPED** (wire max 199 against a 1023 saturation) — but it is an inference, not a direct read.
+⊕ **Corrected status: [BELIEF, well-founded] the gate never opens. NOT [EVIDENCE].**
+⊕ **And this is why V147 carries the gate probe**: `gp-0x6c24` is a **binary** mirror, so it
+**cannot clip**. It settles in one drive what a censored analogue probe could not.
+
+### 🛑 2. THE NOTCH LANE IS LIVE BUT **TINY** — AN INDEPENDENT REASON THE FAMILY IS LOW-VALUE
+```
+   ra4 (V104, sar 4)  engaged  p50 19   p90 141   max 2602   frac ZERO 0.114
+   ra5 (V105, sar 4)  engaged  p50 10   p90  70   max 2557   frac ZERO 0.173
+   ra6 (V106, sar 4)  engaged  p50  6   p90  16   max  125   frac ZERO 0.314
+```
+✅ `gp-0x6B86` **is active** (only 11–31 % of frames read zero) — so the *"lane is dead"* branch of
+the V143/V144 scorers is refuted in advance.
+🛑 **But it carries p50 ≈ 6–19 counts of a ±12288 range — about 0.1 % of its own gate.**
+⇒ **even if the notch DID run, it would be filtering a lane with almost nothing on it.**
+⇒ **the notch family is weak on TWO INDEPENDENT counts**: the gate probably never opens, and the
+lane it filters is small. **V144/V145/V146 stay built and recorded, but they are not the answer.**
+
+### ⭐ WHAT THIS DOES TO THE PLAN — NOTHING CHANGES, WHICH IS THE POINT
+**V147 remains the build to fly.** Its live lever (the r24 pump deadband) does not depend on the
+gate, and its binary probe settles the gate question without clipping. ⊕ The two measurements above
+did not change the recommendation — **they changed the CONFIDENCE behind it, and retired an
+[EVIDENCE] mark that had not been earned.**
+
 ## 🛑🛑🛑 **THE NOTCH GATE ALMOST CERTAINLY NEVER OPENS — V144/V145/V146 ARE INERT.  FLY V147.**
 Before spending a drive on the notch, I back-solved the one quantity its gate depends on. **It does
 not reach the threshold.**
