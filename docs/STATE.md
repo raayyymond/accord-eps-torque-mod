@@ -1,5 +1,40 @@
 # STATE — living current state of the kit
 
+## ✅ V122 IS THE BUILD TO FLASH — and the dose check came back UNINFORMATIVE, which is itself useful
+Before recommending the `alpha2 = 8` dose I checked empirically whether cutting the damper worsens
+the oscillation, using V109's already-flown `alpha2` 22 → 14 step (a **−1.3 %** damper cut):
+```
+   large-angle 6-9 Hz p90 / small-angle p90, per route
+   a2=22 (n=13) median 2.667      a2=14 (n=3) median 3.269
+   a2=14 / a2=22 = 1.225   route-bootstrap CI [0.618, 5.048]
+```
+🛑 **NOT RESOLVED** — the CI spans a factor of **8**. ⊕ And the reason is stark: **r22 = 2.10 vs
+r23 = 10.67 on the SAME FIRMWARE**, a 5× same-firmware spread that swamps any group difference.
+⊕ A **1.3 %** damper cut producing a 22.5 % oscillation rise would need **17× amplification** —
+implausible ⇒ **the 1.225 is route noise, not a damper penalty.**
+⇒ **The empirical check cannot guide the dose in either direction.** The dose therefore rests on the
+**arithmetic margin**: `alpha2 = 8` costs **4.3 %** of the damper, **1/20th** of the V94 cut that
+caused an abort. **That is sound, and `alpha2 = 8` stands.**
+⚠ **Recorded for reading the next drive: the r22/r23 pair spans 2.10-10.67 on identical firmware.**
+Any single-drive oscillation comparison must clear that, and almost nothing will.
+
+### ✅ V122 — THE BUILD TO FLASH
+```
+   39990-TVA,A160-V122-V112BASE-KNEE3000.K1.1020-ALPHA2.8-BEST-0x13000-0x100000.rwd
+   image  b1f65f0aaaf9e6fabeb3a20605efcf7cb1f1ad6c75cb89573f0b02970d79b5e0
+   .rwd   cf40e9a4af4172fe2a627517cf6657a11bf52ac50d59bb2ca01e2f8c55fcbc6b
+   41/41 assertions · 50/50 CRC · 5 payload bytes · cal-only, NO CAVE · zero unattributed vs V112
+
+              knee 0xC40BC   K1 0xC40D2   alpha2 0xC40DC
+   V112 (car)     1800           612           14
+   V122           3000          1020            8
+```
+✅ **grind #1 −21.7 %** (the only measured axis) · ✅ **more assist above 31.8 deg/s**, bit-identical
+below · 🛑 **the peak-turn oscillation will probably NOT improve** — that mode is mechanical, cannot
+be moved or damped further, and `alpha2` costs it 4.3 %.
+⚠ Two variables move at once, at the operator's explicit request ⇒ a better or worse drive will not
+say which half did it.
+
 ## 🛑 V121 WILL PROBABLY FIX **NEITHER** SYMPTOM — the knee axis is SATURATING
 Operator asked directly whether V121 fixes both. **Measured answer: no.**
 ```
