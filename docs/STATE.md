@@ -1,5 +1,47 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **RETRACTION: I CITED V94's +137° AS "MEASURED" — THE KIT LABELS IT MIXED/UNRESOLVED**
+Last section I wrote *"the sign, for once, is measured"* and concluded α2 = 5 helps the
+oscillation. **That rested on a number the kit explicitly says cannot be used:**
+> returned **MIXED/UNRESOLVED**: gain rise 2.29× (viscous 1.0, inertial 4.7), mean phase **+137°**
+> (viscous 0°, inertial +90°), and the ±2-sample **skew sweep swings 5×** (6–9 Hz: 21 / 31 / 100 /
+> 76 / 68). **`gp-0x6b26` is too small (p50 4.8 ct) and sign-flips too fast for a two-message
+> reconstruction** … **Ghidra settled it; the telemetry could not.**
+🛑 **A ±2-sample skew moves that phase from 21° to 100°.** It is not a usable measurement, and
+**both** of my α2 conclusions rested on it:
+✘ *"+137° is damping-ish ⇒ α2 = 5 helps the oscillation"* — **RETRACTED.**
+✘ and the reversal I was about to write this section (*"+137° is past inertial ⇒ anti-damping ⇒
+revert α2"*) — **also unfounded, and NOT acted on.**
+⊕ Note the failure mode: I read a phase figure out of a memory **without reading the sentence
+after it**, which said the measurement failed. The convention footnote (*viscous 0°, inertial +90°*)
+was in the same line and I initially mis-mapped it too.
+
+### ✅ WHAT GHIDRA *DID* SETTLE — and it changes the ENDPOINT, not the dose
+[[accord-gp6b26-is-inertia-not-damping]], traced in `FUN_00041464` and **pinned in assembly**:
+**`gp-0x6c2c` is a FIRST DIFFERENCE of the filtered motor rate = ACCELERATION**, so
+**`gp-0x6b26` = −K × acceleration is an APPARENT-INERTIA term, NOT a damper.**
+⇒ **an inertia term at a resonance SHIFTS f₀; to first order it adds no damping at all.**
+⇒ **"more" and "less" do not map onto better or worse AMPLITUDE** — which is why four builds of
+α2 dosing produced no clean amplitude result, and why my whole "delivered damping component"
+table was answering the wrong question.
+
+### ⭐ THE RIGHT ENDPOINT IS ALREADY IN THE KIT
+[[accord-f0-crossover-is-the-endpoint]]: **f₀ = 21.90 / 23.61 / 24.90 Hz at 1× / 4× / 6×** — the mode
+**frequency moves with dose**, exactly as an inertia term predicts, and that memory notes it
+**needs no symptomatic drive**. ⇒ **any future `gp-0x6b26` edit should be scored on the MODE
+FREQUENCY, not on band amplitude.** ⊕ This also explains the fixed **~19.9 Hz** peak measured
+earlier this session: it is the *current* f₀ under the current dose, not an immovable object.
+
+### ✅ WHAT SURVIVES THIS RETRACTION
+- **α2's frequency-dependence is untouched** — inert at 20 Hz, 2.26× at 7.79 Hz. That is a
+  **magnitude ratio** and needs no sign. What is retracted is the claim about *which way it helps*.
+- **The knee (V135) and Lever A (V133) are unaffected** — neither rests on `gp-0x6b26`'s phase.
+  V135 is a **measured duty ladder**; V133 is a **measured 42× symptom result**.
+- ⇒ **the flight set does not change: V133 first, then V134 or V135.**
+🛑 **STANDING RULE, recorded**: when quoting a number out of a memory, **read the sentence after
+it.** This kit's memories carry their own retractions inline, and I have now been caught by that
+twice in one session (V107's reconstructed 32.32 %, and V94's +137°).
+
 ## ✅✅ **α2 IS AN OSCILLATION LEVER, NOT A GRIND LEVER — AND α2 = 5 IS ALREADY RIGHT**
 The α2 ladder's delivered effect is **strongly frequency-dependent**, which no session had checked:
 ```
