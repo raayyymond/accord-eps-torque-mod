@@ -1,5 +1,43 @@
 # STATE — living current state of the kit
 
+## ✅✅ **α2 IS AN OSCILLATION LEVER, NOT A GRIND LEVER — AND α2 = 5 IS ALREADY RIGHT**
+The α2 ladder's delivered effect is **strongly frequency-dependent**, which no session had checked:
+```
+   delivered component of the gp-0x6b26 lane, RATIO vs alpha2 = 22 (stock)
+   alpha2     7.79 Hz    6 Hz     9 Hz    20 Hz    26 Hz
+      14        1.31     1.32     1.30     1.16     1.08
+       8        1.83     1.91     1.77     1.19     0.95
+       5        2.26     2.52     2.08     0.98     0.70
+       3        2.38     2.99     2.04     0.67     0.44
+```
+⇒ **INERT at the grind band (0.98× at 20 Hz) but MORE THAN DOUBLED across the entire 6–9 Hz
+ratchet/oscillation band (2.26× at 7.79 Hz).** The ladder was driven 22→14→8→5 **for grinding**,
+and its real effect landed in a band nobody examined. ⊕ Ratios between α2 settings are
+**convention-independent** — this does not depend on my unresolved phase sign.
+
+### ✅ THE SIGN, FOR ONCE, IS MEASURED — AND IT SAYS α2 = 5 IS ALREADY CORRECT
+V94 measured `gp-0x6b26` at **+137/+139°**, between inertia (90°) and damping (180°) ⇒
+**damping-ish at 6–9 Hz**. So **more** of the term there means **more damping**.
+⇒ **α2 = 5 delivers 2.26× the damping at 7.79 Hz that stock did** ⇒ it is **helping the
+peak-turn oscillation**, the operator's third complaint.
+🛑 **I was one step from building an α2 revert** (5 → 22) on the reasoning that the ladder was
+inert and therefore wasted. **V94's measured phase says that revert would HALVE the damping at
+7.79 Hz and make the oscillation worse. NOT BUILT.**
+
+### ⭐ THE REATTRIBUTION, WHICH IS THE POINT
+```
+   lever            grinding (20 Hz)      oscillation (7.79 Hz)
+   alpha2 22 -> 5   INERT (0.98x)         2.26x MORE damping     <- an OSCILLATION lever
+   knee 3000->3600  saturation -> 0.0000  --                     <- the GRIND lever (V135)
+   Lever A (V62)    42x MEASURED at creep --                     <- the GRIND lever (V133)
+```
+⇒ **Each of the three complaints now has a distinct, non-overlapping lever**, and the kit had
+been attributing α2 to the wrong one for four builds. ⊕ It also explains why V124's α2 = 5 *"bought
+so little"* on grinding — **it was never a grind lever.**
+⚠ [BELIEF] the sign rests on **V94's measurement**, not on my transfer function, whose reference
+frame remains unreconciled (5–76° vs V94's +137/+139°). If V94's phase is ever overturned, this
+conclusion inverts — and the α2 revert becomes the right build instead.
+
 ## ✅✅ **V135 BUILT — THE LAST *MEASURED* RUNG ON THE RELAY, AND I CLOSED IT TOO EARLY**
 This session recorded *"the knee/K1 ladder is EXHAUSTED at V122/V124"*. **That closure was too
 broad.** It is true only of **GAIN-HOLDING** steps, which need `K1 = 1122` at knee 3300 — above the
