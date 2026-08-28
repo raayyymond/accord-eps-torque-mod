@@ -1,5 +1,45 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 THE OSCILLATION IS **NOT COMMAND-DRIVEN** — WHICH KILLS A WHOLE LEVER CLASS AND RE-OPENS ANOTHER
+2026-08-27, 15 routes pooled, engaged & hands-off & moving, Welch 1024-pt @100 Hz.
+```
+  band          % cmd pwr   % rate pwr   coh2    coherent rate pwr (of ALL rate power)
+   0.1- 1.0 Hz   58.0971      27.9021    0.649        18.4569 %
+   2.0- 5.0 Hz    2.3508       3.2236    0.309         0.9923 %
+   5.0- 8.0 Hz    0.5996       3.8160    0.237         0.8771 %
+  12.0-20.0 Hz    0.3442       6.3918    0.078         0.4334 %
+  20.0-30.0 Hz    0.1912      36.0137    0.100         5.0124 %   <- DOMINANT
+```
+🛑 **Rate power above 5 Hz = 50.95 % of the total; the COHERENT part is 6.90 %** ⇒ **~86 % of the
+high-frequency motion is not linearly explained by the command.** Command energy above 5 Hz is only
+**1.65 %** of the command's own total.
+
+### 🛑 KILLED: THE ENTIRE COMMAND-SIDE FILTER CLASS
+A command-side low-pass can remove **at most 6.9 %** of total rate power. This independently
+reproduces the struck verdict on the arbitration IIR `0xC63EC`/`0xC63EE` from a different instrument.
+⊕ `Kd` (`0xC6AE6`) separately closed — one knot of a **flat** 4-knot LERP ⇒ a one-knot edit creates a
+nonlinearity where a constant stands: **worse than inert** (it killed V110).
+🛑 **Do not propose lowering the arbitration corner. Do not propose Kd.**
+
+### ⭐⭐ RE-OPENED: LOOP DAMPING — THE ONLY CLASS WITH A MEASURED SUCCESS
+**20–30 Hz dominates the energy while being nearly uncorrelated with the forward input.** That is a
+**self-sustained loop oscillation**, matching *"9,200× less power with LKAS off"*: engaging closes a
+loop whose gain is too high, it does not inject the tone. ⇒ **raise loop damping / cut loop gain.**
+⊕ **V106's ×3.0 `gp-0x6b26` dose extinguished the 21–27 Hz mode at low speed** — still the kit's only
+band-power result to clear its own split-half null.
+
+### 🛑🛑 AND THE DIRECTIVE'S PREMISE DOES NOT SURVIVE MEASUREMENT — PUT THIS TO THE OPERATOR
+His no-mass-no-friction rule rests on *"it costs max steering angular velocity."* Measured:
+1. the firmware **over-delivers** vs its command (`CMD→rate` **+1.2 dB**, coh 0.51);
+2. the deficit is **upstream in openpilot** (`demandRate→CMD` **−16.0 dB**);
+3. damping is **cheap**: `gp-0x6bbe` ≈ 90 ct/(rad/s) vs a 2505-ct full command ⇒ **doubling it costs
+   0.63 % at 5 °/s, 1.38 % at his p90 demand of 11 °/s, 5.01 % at the p99 of 40 °/s.**
+⇒ **The damping class should be back on the table.** 🛑 **Ask him — do not act on this unilaterally.**
+
+⚠ NOT established: **which** loop. Coherence at 12–30 Hz is 0.078–0.100, so the incoherent
+remainder's origin (plant, road, or a loop the command cannot see) is unresolved. An on-car
+gain-step system ID at 18–31 Hz stays the open item.
+
 ## 🛑🛑 V113 BUILT — AND IT **WITHDRAWS V112**. Knee ×3 with K1 HELD.
 ```
 builder  analysis-2020accord/builds/v108_plus/build_v113_tva.py   39/39   BASE = V111
