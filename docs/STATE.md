@@ -1,5 +1,65 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **AUTHORITY AND "PEAK COMMAND OSCILLATION" MEASURED — TWO OF THE THREE TARGETS COLLAPSE INTO ONE**
+The session had spent itself on grinding. Measuring the operator's other two targets on **r24
+(V122, the best build on the car)** changes the plan.
+
+### ✅ 1. "PEAK COMMAND OSCILLATION" IS **NOT IN THE COMMAND**
+Spectral split of `sc_tq` (openpilot's LKAS request), engaged windows, fs = 100 Hz:
+```
+                             0.5-3 Hz    3-8 Hz   8-15 Hz  15-22 Hz  22-30 Hz
+   PEAK  (|cmd| p50 > 2048)    90.84%     0.93%     0.07%     0.13%     0.01%
+   LOW   (|cmd| p50 <= 2048)   82.59%     5.10%     1.38%     0.71%     0.21%
+```
+🛑 **At peak the command is CLEANER, not dirtier** — HF content **falls** (15–22 Hz: 0.13 % vs
+0.71 %; 3–8 Hz: 0.93 % vs 5.10 %). ⇒ **openpilot's command does not oscillate at peak.**
+⊕ This independently reproduces the kit's own `reference-accord-lkas-lane-is-a-lowpass`: the LKAS
+lane is a ~1–5 Hz low-pass, so **a fast vibration cannot be COMMANDED**.
+⇒ **[EVIDENCE] what the operator feels as "peak command oscillation" is generated DOWNSTREAM,
+inside the EPS. It is the SAME problem as the grinding, not a second one.**
+⇒ **Two of his three targets are one target.** Do not build a separate lever for it.
+⚠ n = 25 high-command windows on one route — indicative, not tight. More peak exposure would
+firm it, but the direction (HF *falls* at peak) is the opposite of the hypothesis, which is the
+robust part.
+
+### 🛑 2. AUTHORITY IS CAPPED ON **openpilot's** SIDE, AND EPS GAIN HAS NOT RELIEVED IT
+```
+   route  build   engaged frames   rail duty at |cmd| >= 4095   |cmd| p50   p90
+   r78    V91          61,987            2.58 %                    230      901
+   ra6    V106        123,802            3.02 %                    133      789
+   r1e    V107         99,910            2.77 %                    247     1168
+   r21    V111         83,782            3.24 %                    187     1390
+   r22    V112         48,957            3.79 %                    232     1459
+   r23    V112         40,103            1.81 %                    198     1048
+   r24    V122         58,652            2.70 %                    149      734
+```
+openpilot sits at its **own ±4096 request limit on ~2–4 % of engaged frames on EVERY build**, and
+**that duty does NOT fall as EPS gain rises** (V91 through V122 span 4×→6× with no trend).
+⇒ The request ceiling is openpilot's, and `feedback-no-openpilot-side-modifications` forbids
+touching it. **The ONLY authority lever available is the EPS gain `0xC6CD0`.**
+⚠ Rail duty is confounded by road/curvature across routes; the *absence* of a trend is weak
+evidence, not proof that gain does nothing for authority.
+
+### ⭐ 3. WHICH PUTS AUTHORITY AND GRINDING IN TENSION THROUGH **ONE CELL** — AND FIXES THE ORDER
+```
+   0xC6CD0   5346 (6x)  ->  7128 (8x)     +33 % authority
+                                          ... and it flew in V133, which the operator described as
+                                          "massive, violent grinding after enabling LKAS"
+```
+His two instructions are *"just go to 8x IF you decide to increase LKAS gain"* and *"If youre going
+to increase gain make sure we dont get even more oscillation and grinding."* ⇒ **the gain rise is
+CONDITIONAL on the grinding being fixed first.**
+⭐ **THE SEQUENCING THIS DICTATES:**
+```
+   1. FIX THE GRINDING on a 6x base      -> V141 (pump deadband + the probe that sizes it)
+   2. ONLY THEN raise 0xC6CD0 to 8x      -> with clamps 0xC61B2/4 3072 -> 4096 to match
+                                            (unmatched clamps throw away 25 % of the rise)
+   3. re-check grinding at 8x            -> if it returns, the grind fix was insufficient, not the gain
+```
+⇒ **8× is not abandoned — it is DEFERRED behind the fix, which is exactly what the operator's
+own conditional says.** A build that raises the gain before the grind is fixed cannot satisfy him
+whatever it measures.
+
 ## ✅✅✅ **V140 — A DEADBAND ON A CONFIRMED PUMP: THE ONE LEVER THAT SERVES BOTH OPERATOR GOALS**
 Decompiling the aggregator `FUN_0003aa2c` to find a finer control than V139's power-of-two shift
 turned up something better — **the r24 pump lane already HAS a deadband, and Honda ships it at
