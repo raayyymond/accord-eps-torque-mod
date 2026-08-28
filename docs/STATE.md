@@ -1,5 +1,33 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ THE **ONLY** ENGAGED ASYMMETRY LEFT IS THE FRICTION ROW — and 3.0× sits past a stated wrap point
+Dereferenced all fourteen mode-indexed families at `arr + mode*4`. On V112 and V121 exactly **one**
+differs between mode 24 (manual) and mode 26 (engaged): **`0xCBE74` friction**. FactorB/C/D/E,
+ceiling, the four r24 `gain_B` arrays, boost curve/amp/ceiling — **all byte-stock and symmetric**.
+✅ **The V74-V81 engaged-only FactorC/E damper is GONE** (V90+ byte-stock, `Y[0]=0`, Honda's ramp) ⇒
+[[accord-v80-damper-relay-and-grind1-inert]]'s *"restore the RAMP"* **is already satisfied — no build
+needed.**
+```
+   build         m24 (MANUAL)           m26 (ENGAGED)              ratio
+   STOCK, V90    [-9830,-5734,-1966]    [-9830,-5734,-1966]         1.00
+   V91..V104     same                   [-14745,-8601,-2949]        1.50  uniform
+   V107..V121    same                   [-29490,-17202,-16000]      3.00  NOT uniform
+                                         Y[0] 3.00x Y[1] 3.00x Y[2] 8.14x
+```
+🛑 Stock's |Y| **decays 5.0×** across the axis; ours decays only **1.84×** — we tripled it **and
+flattened it**. **All prior analysis of this cell was of UNIFORM scaling**; a shape change alters the
+slope d|f|/dx, a different quantity, and nothing in the record addresses it.
+🛑 **FLAG ON THE BUILD ON THE CAR:** [[accord-six-levers-closed-on-arithmetic]] closed this lever
+partly on **"int32 wraparound at 1.6005×"** — **V107..V121 carry 3.00×.** ⚠ I have **not verified**
+that claim, and two things argue against catastrophe: -29490 fits `i16`, and the evaluator's output is
+**hard-clamped** to `|gp-0x6bd0| <= 1024` ([[accord-damper-evaluator-fun34350-ceiling-clamp]]) so an
+oversized input should **saturate, not wrap**; V107-V112 flew fault-free. 🛑 **"Should saturate" is a
+belief, not a check.** ⇒ **OPEN, highest-value verification available: does the 3.0× row overflow
+anywhere between the LERP and the clamp? Pure arithmetic on a decompile — no drive, no flash.**
+⚠ **NOT a build proposal**: the ×1.5 dose **measured INERT** over two flights (a candidate **T10**,
+not falsified — V94's 6× cut made the operator abort, so the cell reaches the car), and delivered
+damping was judged **5-69× below the resolvability floor**.
+
 ## 🛑 V121's HARMONIC RATIONALE IS **WEAKENED** — the one quantitative check does not support it
 I tried to make V121 prospective, as the saturation-duty model was for V112. The relay is memoryless,
 so I fed the measured V112 rate through `clamp(rate·4.7121·12/knee, ±1)` at each knee:
