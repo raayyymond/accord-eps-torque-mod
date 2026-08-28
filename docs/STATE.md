@@ -1,5 +1,32 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 THE PEAK-TURN OSCILLATION IS **PROBABLY MECHANICAL** — three independent lines converge
+The last untested generator hypothesis was the **`|model|`-scaled signum**: `|model|` rises **7-9×**
+with angle, so if it set the generator's amplitude the harmonics would be **angle-gated**. Tested:
+```
+   by |ANGLE|  0-5 1.102 | 5-10 1.168 | 10-20 1.058 | 20-40 1.377 | 40-400 1.107
+               high/low = 1.004   CI [0.843, 1.586]        <- FLAT
+   (by SPEED and by |RATE| were already flat)
+```
+✅ The harmonics are **REAL** (1.233× vs a non-oscillating control, CI [1.060, 1.503]) but track
+**NOTHING** — not speed, not rate, not angle. ⇒ **the harmonic signature is INTRINSIC to the mode,
+unmodulated by how the car is driven.** That is what a **mechanical** nonlinearity looks like.
+**THREE CONVERGENT LINES:** `f0` invariant to a 2× gain change · harmonics track neither firmware
+saturation axis · harmonics track no operating variable. ⊕ Plus the ring-down (ζ 0.017-0.036,
+**Q 14-29**, motor/rack-side) and the 6-9 Hz anti-damping being **present in stock**.
+⚠ **Firmware is not irrelevant** — the oscillation is **engagement-amplified 2.8×**, **angle-gated**,
+and its energy is **manufactured downstream of the command** ⇒ **firmware supplies the EXCITATION,
+the mechanics supply the MODE.** 🛑 But every firmware excitation path is now closed: move it
+(refuted) · damp it (rail-closed) · relay knee (**saturating**) · model bandwidth (GATE 2) · FIR notch
+(arithmetically impossible) · `0xC4080` (never-raise) · `alpha2` (**costs** the damper).
+✅ **⇒ A MECHANICAL INSPECTION IS NOW WORTH MORE THAN ANOTHER CAL EDIT.** A lightly damped Q 14-29
+mode at 7.8 Hz with an intrinsic nonlinearity, motor/rack-side, is the signature of **lash or a worn
+compliant element** — intermediate-shaft U-joints, rack bushings, tie-rod ends, the EPS
+motor-to-rack coupling. ⚠ **[BELIEF, three convergent measurements] — a direction to check, not a
+diagnosis**; the kit has no mechanical instrumentation.
+⊕ V122 is unaffected: its grind-#1 lever and authority gain stand either way.
+memory: [[accord-the-oscillation-is-probably-mechanical-not-firmware]]
+
 ## ✅ V122 IS THE BUILD TO FLASH — and the dose check came back UNINFORMATIVE, which is itself useful
 Before recommending the `alpha2 = 8` dose I checked empirically whether cutting the damper worsens
 the oscillation, using V109's already-flown `alpha2` 22 → 14 step (a **−1.3 %** damper cut):
