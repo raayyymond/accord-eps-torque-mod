@@ -27,7 +27,7 @@ result.
 Those same-firmware CIs **are** the resolution limit: **±20 % at 21–26 Hz, ±40 % at 18–22 Hz.**
 ⇒ **do not read a ratio of 0.9 as an improvement.** This is the route-variance floor
 ([[accord-averaged-spectrum-needs-matched-speed-distributions]]) made numeric, and it means a
-small真 effect simply cannot be resolved on one drive — the operator's own report stays PRIMARY.
+small effect simply cannot be resolved on one drive — the operator's own report stays PRIMARY.
 
 ### ⚠ A CONFOUND STATED BEFORE THE DRIVE, NOT AFTER
 **V131 changes the rate lane AND, versus V122, the forward gain (6×→8×).** They are not separable
