@@ -1,5 +1,57 @@
 # STATE — living current state of the kit
 
+## ✅✅ **THE DISPLACEMENT SCAN IS FIXED — AND IT CLOSES THE LAST GRIND CANDIDATE**
+Turning to the **excitation** side (V87 established the lever class: *"a lightly-damped mode driven
+by **broadband command content**, not a commanded tone ⇒ the lever class is **less broadband HF in
+the delivered command**, NOT a notch"*, with engagement adding **3.37× at 15–22 Hz**), the standing
+candidate was `0xC642A/C` — virgin, 194, a plausible IIR. Censusing it exposed a much bigger
+problem first.
+
+### 🛑 THE KIT'S STANDARD CENSUS METHOD IS 98 % NOISE AT ITS WORST
+```
+   cell        raw hits   real   the worst false positive
+   0xC407E         4        3    0x07028 = `dispose 0x0, {r25,r27,r29,lp}, lp`
+   0xC4004         7        3    0x0B8DE = `mov 0xfedf5004, r8`  -- a RAM ADDRESS
+   0xC642A        52        1    0x3A118 = `cmpf.s le, r28, r15, 0x5`  -- an FP compare
+   0xC642C        43        1
+```
+The displacement bytes occur inside **other instructions' encodings** — FP opcodes, `dispose`,
+32-bit immediates. **A census decides blast radius before an edit**, so this is not a cosmetic
+problem: I have hit it **three times this session** and nearly abandoned a good lever on it once.
+
+### ✅ THE FIX — a STRUCTURAL filter, validated against every hand-verified census
+V850 Format-VII loads encode the **base register in the low 5 bits of the first halfword**:
+```
+   ld.h  0x740a, tp, r12  ->  25 67 0a 74   hw1 = 0x6725,  & 0x1F = 5 = tp
+   ld.hu 0x7936, tp, r14  ->  e5 77 37 79   hw1 = 0x7725,  & 0x1F = 5
+   ld.w  0x5004, tp, r14  ->  25 77 05 50   hw1 = 0x7725,  & 0x1F = 5
+```
+⇒ require **`(hw1 & 0x1F) == 5`**. It reproduces **every** hand-verified census exactly
+(`0xC407E` 3, `0xC4004` 3, `0xC640A` 1, `0xC63A6` 1) while cutting `0xC642A` from **52 to 1**.
+Shipped as `analysis-2020accord/verify/tp_cal_readers.py`.
+⚠ **It is a FILTER, not a proof** — it cannot catch the 6-byte gp/tp form, nor an access through a
+register loaded with the absolute address (**exactly what `0x0B8DE` was**). **Still confirm the
+survivors in Ghidra.**
+
+### 🛑 AND `0xC642A/C` IS **NOT** A GRIND LEVER — the candidate is CLOSED
+With the noise gone, each has **exactly one reader**, both inside `FUN_0002b62c` — the **BASE
+ASSIST** function — and both are **EMA alphas on its INPUTS**:
+```
+   0xC642C @0x2B73C   state += ((gp-0x6a52 << 9)/25 - state) * alpha >> 10
+   0xC642A @0x2B76E   state += (gp-0x4f60 * 32     - state) * alpha >> 10   <- DRIVER COLUMN TORQUE
+```
+⇒ they smooth **base-assist inputs**, not the LKAS delivered path. Cutting them changes **manual
+feel** — the opposite of the operator's standing instruction to keep manual light — and does
+**nothing** to broadband HF in the delivered command.
+✅ **This also retires V125's original probe question.** V125 was built to measure *"reader #3's
+delivered sign"* to decide `0xC642A/C`; reader #3 is `FUN_0002b62c`, so **the question was about a
+base-assist cell all along.** Replacing that probe with the rail-duty probe (V127 onward) was the
+right call for a reason better than the one I had at the time.
+
+⇒ **The last standing grind candidate outside the b26 lane is closed.** What remains is exactly
+what the previous section named: **the fork (one number from one drive)** and **`0xC63A6` (blocked
+on phase)**.
+
 ## ✅✅ **THE `gp-0x6b26` DAMPER IS STRUCTURALLY EXHAUSTED — A DEFINITIVE CLOSE, NOT A PARTIAL ONE**
 The record says *"Path 1 = `FUN_0003aa2c`, the aggregator, **unity weight, zero phase** — this is
 what delivers the damping."* Path 2 fails GATE 2 on phase, so a **zero-phase** weight in Path 1
