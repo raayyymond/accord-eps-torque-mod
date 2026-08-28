@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""SCORE V126 -- the RAIL DUTY of gp-0x6b26, the one quantity this kit has measured wrong.
+"""SCORE V127 -- the RAIL DUTY of gp-0x6b26, the one quantity this kit has measured wrong.
 
-V126 puts gp-0x6B26 on CAN 427 (0x1AB) with the packer at sar 2:
+V127 puts gp-0x6B26 on CAN 427 (0x1AB) with the packer at sar 2:
     wire = min((|gp-0x6b26| * 5) >> 2, 0x3FF)
 so the +-511 clamp maps to wire 638 of 1023 -- no clipping, LSB 0.8 counts, and the rail is
 directly countable.  Inverse: |gp-0x6b26| = wire * 4/5.
@@ -10,7 +10,7 @@ WHY THIS ENDPOINT
 -----------------
 V107 predicted a rail duty of <=1.05 % and MEASURED 33.49 % -- a 32x miss -- because
 gp-0x6b26 -> aggregator -> motor -> motor rate -> gp-0x6c2c is a CLOSED LOOP and the prediction
-was open-loop.  No open-loop duty prediction on this lane can be trusted, so V126 measures it.
+was open-loop.  No open-loop duty prediction on this lane can be trusted, so V127 measures it.
 
 A railed acceleration term is sign(alpha)*511: a bang-bang Coulomb relay, which is
 accord-v80-damper-relay-and-grind1-inert's measured mechanism.  A relay ratchets; it does not
@@ -23,11 +23,11 @@ wire CANNOT measure the lane's SPECTRUM -- exactly the blindness that voided V10
 RAIL DUTY is a LEVEL statistic, and undersampling an ergodic signal leaves the duty estimate
 unbiased.  This script reports duty and distribution ONLY, and refuses to report a spectrum.
 
-PRE-REGISTERED, BEFORE THE DRIVE (see docs/scoring/SCORING-V126-preregistered.md)
+PRE-REGISTERED, BEFORE THE DRIVE (see docs/scoring/SCORING-V127-preregistered.md)
 ---------------------------------------------------------------------------------
 Primary endpoint: engaged rail duty, stratified by speed on V107's own bins.
     <= 2 %  in every bin        -> DE-RAILED.  The term is linear; the fix is in force.
-    2-10 %  in any bin          -> PARTIAL.  Consider the next rung, 0xC640A -> -1966.
+    2-10 %  in any bin          -> PARTIAL.  Consider the next rung, the mode record 0xCBE74 (the NORMAL LERP rails at mid speed too).
     > 10 %  in any bin          -> STILL RAILING.  Go to -1966.
 Interpretable from ONE drive with no matched control, which is the kit's build-design law.
 
@@ -149,7 +149,7 @@ def run(tag):
     w, v, lat = d['wire'], d['v'] * 3.6, d['lat']
     eng = (lat > 0.99) & (v > 1.0)
     b26 = w * LSB
-    print('\n=== %s : V126, 427 <- gp-0x6B26, sar %d ===' % (tag, SAR))
+    print('\n=== %s : V127, 427 <- gp-0x6B26, sar %d ===' % (tag, SAR))
     print('  engaged n=%d   |gp-0x6b26| p50 %.0f  p90 %.0f  p99 %.0f  max %.0f   (clamp %d)'
           % (eng.sum(), *np.percentile(b26[eng], [50, 90, 99]), b26[eng].max(), CLAMP))
     if w[eng].max() > RAIL_WIRE + 1:
@@ -161,7 +161,7 @@ def run(tag):
     print('  %d engaged episodes >= 3 s' % len(eps))
 
     print('\n  RAIL DUTY (|gp-0x6b26| == 511), engaged, episode-bootstrapped 95 %% CI:')
-    print('     %-12s %8s %-22s %10s' % ('speed km/h', 'n', 'V126 duty [CI]', 'V107 meas'))
+    print('     %-12s %8s %-22s %10s' % ('speed km/h', 'n', 'V127 duty [CI]', 'V107 meas'))
     worst = 0.0
     for lo, hi in BINS:
         m = eng & (v >= lo) & (v < hi)
@@ -184,9 +184,9 @@ def run(tag):
     if worst <= 0.02:
         print('     DE-RAILED -- the term is linear; the fix is in force.')
     elif worst <= 0.10:
-        print('     PARTIAL -- consider the next rung, 0xC640A -> -1966.')
+        print('     PARTIAL -- consider the next rung, the mode record 0xCBE74 (the NORMAL LERP rails at mid speed too).')
     else:
-        print('     STILL RAILING -- go to 0xC640A -> -1966.')
+        print('     STILL RAILING -- go to the mode record 0xCBE74 (the NORMAL LERP rails at mid speed too).')
     print('\n  NOT REPORTED, DELIBERATELY: any spectrum of this wire.  427 is 49.9 Hz (Nyquist')
     print('  24.95 Hz) and the lane lives at 25-153 Hz.  Duty is a level statistic and survives')
     print('  undersampling; a spectrum does not.  That confusion is what voided V107.')

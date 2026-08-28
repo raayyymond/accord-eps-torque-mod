@@ -1,5 +1,56 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **V126 WAS SIZED WRONG — CAUGHT BEFORE FLIGHT. V127 IS THE BUILD.**
+**The detector's input is `gp-0x6c2c`, the MOTOR-RATE DERIVATIVE — not driver torque.**
+`ld.h -0x6c2c,gp,r10` @`0x428FA`, compared against `cal(0xC620A)=12800` loaded @`0x42910`.
+⇒ **the branch fires HANDS-OFF**, on exactly the signal grinding and oscillation excite — and it
+is the **same signal `FUN_00036c12` multiplies by `Y`**, so the detector's input and the term's
+input are one signal. That is the positive feedback, stated exactly.
+
+### 🛑 AND IT LETS THE VALUE BE SIZED — WHICH V126 WAS NOT
+The branch is only ever taken **once the detector has armed**, so `Y` must be sized against the
+**arming threshold**, not against "what Honda ships somewhere". Mirroring the decompiled integer
+arithmetic exactly (`iVar4 = ((c2c*Y)>>6)*0x111` · `iVar5 = iVar4>>0x12` · clamp ±511):
+```
+   Y                       b26 at arm    rails from    state when the detector arms
+   -8192  stock fallback        1706          3834     RAILED (3.34x over the clamp)
+   -3277  V126 as built          682          9584     RAILED (1.33x over the clamp)
+   -2453  exact break-even       510         12803     LINEAR (100 % of clamp)
+   -1966  Honda Y[2], 90 km/h    409         15974     LINEAR (80 % of clamp)
+```
+🛑 **−3277 STILL RAILS the instant the detector arms** ⇒ **V126 would have left the term a
+bang-bang Coulomb relay in exactly the state it was built to fix.** I chose −3277 for being
+Honda-shipped without checking it against the detector's own threshold. ✅ **−1966 is the LARGEST
+Honda-shipped value in this family that stays LINEAR at the arming threshold**, still a **strong**
+term at **80 % of clamp**, with headroom to `|c2c| = 15974`. It is Honda's own **Y[2]** — the
+90 km/h end of the very mode record this branch replaces.
+
+### ✅ V127 BUILT — identical to V126 but for the one halfword
+```
+   0xC640A   -8192 -> -1966    the oscillation-branch Y   (V126 had -3277)
+   0x55DF2    9544 -> 94DA     427 probe source, gp-0x6ABC -> gp-0x6B26
+   0x55E10      a3 -> a2       packer sar 3 -> 2, sized to the +-511 clamp
+```
+image `706363366c017817e34f6f66ece5ea192ca98787f45e45a21e9c33d9b927ed62` ·
+rwd `38181d0991ab0d5267dbc67488c5bf27cd6406b0e5eb4a86f33d0da33d2e503c` · **60/60, CRC 50/50.**
+⊕ The fallback now **NEVER exceeds** the speed schedule at any speed: creep 0.22×, 24 km/h 0.36×,
+44 km/h 0.44×, 64 km/h 0.58×, 90 km/h 1.00×.
+✅ **THE SIZING GATE IS NOW A HARD ASSERTION** in the builder — it computes `b26` at the arming
+threshold and fails the build if the value is not linear there. **It fails −3277 explicitly.**
+A rule someone had to remember is now a check that cannot be forgotten.
+🛑 **V126's artifacts are DELETED, not superseded** — it never flew and it does not achieve its
+own stated goal, so leaving it flashable is a hazard. Same policy as V123.
+
+### ⭐ A LARGER FINDING THAT THIS BUILD DELIBERATELY DOES **NOT** ACT ON
+**The NORMAL speed LERP also rails at mid speeds**: `Y = -4442` at 44 km/h rails from
+`|c2c| = 7070`; `Y = -5519` at 24 km/h rails from `5691` — **both far below the 12800 arming
+threshold.** ⇒ **the term rails in ORDINARY driving at 15–40 mph, not only in the oscillation
+branch**, which is precisely the speed band where the operator reports grinding. Honda's schedule
+is only linear at its high-speed end (90 km/h → −1966, rails from 15974).
+⇒ **the mode record `0xCBE74` is the bigger lever**, and V91/V92's INERT dose there is now
+explained (a saturated counter bypasses the record). **Not taken in V127**: it would confound the
+`0xC640A` change on one drive, and V127's probe measures the duty that would size it.
+
 ## ✅✅ THE FULL OSCILLATION-RESPONSE CENSUS — `0xC640A` IS THE ONLY MAGNITUDE, AND TWO CORRECTIONS
 The saturated reversal counter `gp-0x671a` has **8 instruction sites, 5 consumers + the writer**
 — enumerated correctly this time (see the trap below). What each does when the counter saturates:
