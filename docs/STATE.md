@@ -1,5 +1,72 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 V111 FLEW — OPERATOR REPORT, 2026-08-27. **THREE SYMPTOMS BETTER, STEERING RATE WORSE.**
+**AND A STANDING DIRECTIVE THAT RULES OUT A WHOLE CLASS OF LEVER.**
+
+⭐ **V111 is the cleanest single-variable experiment this kit has ever run.** V111 − V108 = three
+payload bytes, two of them telemetry; **the only dynamics change is `0xC40DC` α2 22→14.** Every other
+cell — relay knee 600, gain 5346, the `gp-0x6b26` Y row, the biquad, the whole 164-byte cave — is
+byte-identical. ⇒ **whatever he felt, α2 caused it.**
+
+### HIS WORDS — the primary readout
+> *"Regarding the grinding issue, **most of it has been resolved.** However, **grind number one still
+> occurs at low speeds between 5 and 10 mph, particularly under strong openpilot commands.** The
+> frequency is **higher-pitched than before**, but it is a **muted or attenuated version.**"*
+>
+> *"**I no longer observe general oscillations** when driving straight or during slight turns. **The
+> ratcheting effect also seems reduced**, but this appears to have come at **the cost of maximum
+> steering angular velocity and acceleration.**"*
+
+### 🛑🛑 THE DIRECTIVE — binding on every future lever
+> *"**Increasing mass and friction should not be our primary approach to resolving the ratcheting if
+> it comes at the cost of max steering angular velocity and acceleration. We want both: low apparent
+> steering mass and friction to LKAS AND no ratcheting (feedback from driver torque sensor).**"*
+
+⇒ **This is well-posed, because the two requirements live on DIFFERENT PATHS.** MOTION-fed lanes
+(`gp-0x6b26` inertia, `gp-0x6bbe` viscous, the base-assist damper) oppose **all** motion and therefore
+**cap max angular velocity by construction** — the LKAS command has to push through them. TORQUE-fed
+lanes (the PID in `FUN_0003a382` on `gp-0x4f60`, the observer/friction lane) close the loop he calls
+*"feedback from driver torque sensor"* and **do not load the LKAS path.**
+🛑 **⇒ THE RATCHET LEVER MUST BE TORQUE-PATH. A motion-fed lever cannot satisfy him.**
+Full note: `memory/feedback/builds/feedback-do-not-buy-ratchet-with-mass-and-friction.md`.
+
+### ⭐ THE MECHANISM — lowering α2 rotates INERTIA into FRICTION
+`gp-0x6b26 = −K·gp-0x6c2c` and `gp-0x6c2c` is filtered **acceleration**, so the term is pure apparent
+**mass while in phase**. EMA lag `φ` rotates it; the component in phase with **velocity** — friction —
+scales as `sin φ`, and α₂ 22→14 roughly **doubles φ**:
+```
+    f Hz   FRICTION component 22 -> 14   ratio      MASS ratio
+    1.00        0.0120 -> 0.0224         1.87x        1.000x
+    5.00        0.0596 -> 0.1104         1.85x        0.990x
+    8.00        0.0946 -> 0.1723         1.82x        0.976x
+```
+⇒ his *"increased mass and friction"* is, by this account, **almost entirely FRICTION**, and friction
+acts against velocity — exactly what caps angular velocity. It also explains the ratchet reduction
+(more damping at ~8 Hz) and the grinding reduction (−27–−40 % over 61–300 Hz) **from the same byte.**
+
+### 🛑 THE HOLE, STATED RATHER THAN PAPERED OVER
+**Magnitude NOT verified.** `gp-0x6b26` clamps at ±511 against a ±20,000 residual (≤ **2.6 %** of
+range; engaged p50 recorded at **4.8 counts**) — **doubling 11 % of a 2.6 % term is small to explain a
+felt loss of steering rate.** ⚠ **And the counter-argument:** lower α2 also shrinks `|gp-0x6c2c|`, so
+`gp-0x6b26` should **rail LESS**, which points the other way. **[BELIEF: right sign, right band,
+magnitude unverified.]**
+
+### ✅ WHAT WOULD SETTLE IT — AND THE DATA MAY ALREADY BE ON DISK
+**Route `21`: 18 segments, uncached, newer than `1e` (V107).** If it is the V111 drive it carries
+**V111's own `gp-0x6abc` tap** ⇒ (1) the **relay input amplitude** V111 exists to measure (GATE 2 says
+the knee only bites below ~200–400 counts), and (2) `gp-0x6b26`'s real magnitude and rail duty, which
+closes the hole above. 🛑 **It must be registered in the `ROUTES` table that
+`extract_r7d.extract_route()` reads. That is the single highest-value action available.**
+
+### ⚠ THE UNCOMFORTABLE COROLLARY — a straight α2 revert is NOT an obvious win
+It would recover the steering rate but give back **three measured improvements for one regression.**
+One EMA pole **couples** the magnitude cut (helps) to the phase lag (hurts). **Do not propose the
+revert as a free fix.** ⊕ The real target is a lever that **decouples** them: cut the torque-path
+feedback at the ratchet frequency (candidate: **`Kd`, all four knots `0xC6AE6/E8/EA/EC`**, which
+reduces a feedback GAIN and therefore **cannot add apparent mass**) while leaving α2 where it is.
+⚠ Kd's priced cost is **2.9–4.4:1 against, paid in 18–31 Hz grinding damping** — computed when
+grinding was the top complaint. **It no longer is. Re-weigh, do not re-quote.**
+
 ## 🛑🛑 V108 FLEW — OPERATOR REPORT, 2026-08-27. **HIGH SPEED FIXED; LOW SPEED UNCHANGED; AND THE PREDICTION LANDED.**
 
 🛑 **ON THE CAR: V108.** No rlogs available for this flight — **the operator's own words are the entire
