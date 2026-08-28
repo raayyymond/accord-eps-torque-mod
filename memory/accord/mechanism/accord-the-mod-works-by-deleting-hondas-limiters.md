@@ -74,3 +74,23 @@ region **that none of our builds touch**. ⇒ **state 4 remains reachable and th
 ⚠ That `search_instructions` returned `truncated: true` after 19,615 of 183,671 instructions, so the
 writer list is **partial** — but partial is enough here: finding writers we do not touch is what the
 check needed.
+
+## 🛑 RESTORING THE ARBITRATION CASCADE IS **ELIMINATED AS A FIX** — the debounce settles it
+```
+   0xC61C0 limit A   stock  1600 -> V112 65535   CHANGED
+   0xC61C2 limit B   stock   896 -> V112 65535   CHANGED
+   0xC61C4 limit C   stock  1280 -> V112 65535   CHANGED
+   0xC64DF debounce  stock   100 -> V112   100   UNCHANGED
+   tp+0x74B4/B6/B7 mode thresholds  34 / 14 / 0  UNCHANGED
+```
+⭐ I first judged this restore **expensive** (thresholds 896–1600 against a 15360 full scale ⇒ it
+would fire constantly). **The debounce reverses that reasoning — and then kills the lever anyway.**
+The latch needs the limit exceeded for **~100 consecutive calls**. A **7.42 Hz** oscillation has a
+**135 ms period**, so it crosses the threshold *intermittently* and would essentially never
+accumulate 100 consecutive exceedances.
+🛑 **This cascade is a SUSTAINED-FAULT detector, not an oscillation damper. Restoring it cannot
+address the 7–9 Hz symptom** — it would only re-arm a latch against long, one-directional excursions.
+⇒ **Do not propose `0xC61C0/C2/C4` as a fix for the oscillation.** (Whether it should be restored on
+*safety* grounds is a separate question and not one the oscillation data speaks to.)
+⚠ **`0xC64DE` 17 → 27 is UNEXPLAINED** — a changed byte adjacent to the debounce cal, inside our diff,
+whose function has not been traced. **Open.**
