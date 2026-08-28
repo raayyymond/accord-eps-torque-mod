@@ -1,5 +1,34 @@
 # STATE — living current state of the kit
 
+## ✅✅ **A TWIN VERIFIER THAT REDISCOVERS BOTH HISTORICAL FAULT CLASSES FROM SCRATCH**
+`analysis-2020accord/verify/verify_int_float_twins.py` — checks Honda's own invariant
+**`float × 1024 == int`** across every documented mirror family on any built image.
+```
+   FAIL  _v73, _v74 (x3), _v75 (x2), _v76, _v77, _v77b   int 850 / float 512  MISMATCHED
+   FAIL  _v25, _v26, _v27, _v28                          (the DTC 0xF00049 era)
+   PASS  V124 V125 V127 V129 V130 V131 V132              all 8 twin pairs matched
+   PASS  stock code.bin
+```
+⭐ **EVERY image it flags is one that ACTUALLY HARD-FAULTED ON THE CAR** — V74/V75 through the b26
+twin, V25–V28 through the corridor/envelope twin. **It was not tuned to find them; it derives them
+from the invariant alone.** That is the positive control this class of check has never had.
+⇒ **Run it on every built image before flashing.** A desync does not fail at build time and does
+not fail on the bench — **it faults on the road.**
+
+### ✅ AND IT CONFIRMS V132 IS CLEAN
+All three documented families are matched on V132 — the b26 ceiling **511/0.5 → 1023/1.0**, the
+direction corridor (int 5120 ↔ float 5.0) and the boost floor (int 5120 ↔ float 5.0). The corridor
+and boost pairs were **already** moved in lockstep by earlier builds; **only the b26 ceiling had
+never been lifted**, and V132 lifts it correctly. ⇒ **V73's failure mode exists nowhere else on
+the current build.**
+
+### 🛑 A NOTE ON THE FIRST ATTEMPT, BECAUSE THE METHOD MATTERS
+My first audit paired ints to floats **by value** (`|int| ≈ float×1024`) across the whole cal
+region. It returned **353 KB of output** dominated by nonsense — cave bytes reading `0xFF` = −1
+"pairing" with an unrelated `0.0011`. ⇒ **a value-similarity heuristic is not a structural claim.**
+The families in the verifier are the ones the kit has **traced to a monitor that actually compares
+them**; that is what makes a pair real.
+
 ## 🛑🛑🛑 **THE 511 CEILING IS NOT A HARD LIMIT — IT HAS A FLOAT TWIN. V132 LIFTS BOTH.**
 `gp-0x6b26 = clamp(…, ±cal(0xC407E) = 511)`, and because **damping and railing are one knob**, that
 clamp was the **hard ceiling on how much damping this lane can ever deliver.** Every other move is
