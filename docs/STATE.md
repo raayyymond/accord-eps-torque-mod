@@ -1,5 +1,65 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **V140 — A DEADBAND ON A CONFIRMED PUMP: THE ONE LEVER THAT SERVES BOTH OPERATOR GOALS**
+Decompiling the aggregator `FUN_0003aa2c` to find a finer control than V139's power-of-two shift
+turned up something better — **the r24 pump lane already HAS a deadband, and Honda ships it at
+essentially zero.**
+```c
+   uVar13 = (pcVar10 * uVar11) >> 10;              // 0x3AC20  sar 0xa, r8
+   uVar12 = *(ushort *)(tp + 0x71f6);              // cal 0xC61F6  = THE DEADBAND  = 3
+   if      (uVar13 >  uVar12) iVar17 = uVar13 - uVar12;   // SUBTRACT, not clip
+   else if (uVar13 < -uVar12) iVar17 = uVar13 + uVar12;
+   else                       iVar17 = 0;                 // the DEAD ZONE
+   iVar17 = iVar17 * *(char *)(gp - 0x6752);       // x (-1)   <- THE PUMP
+   iVar16 = clamp(iVar17, +-0x2000);               // +-8192 of a +-10240 aggregator total
+```
+🛑 **Honda's value is 3 counts — 0.037 % of the lane clamp.** That is a quantization floor,
+**not a functional dead zone**: any micro-oscillation passes straight into the pump.
+
+### ⭐ WHY THIS SHAPE OF LEVER IS THE ONE THE OPERATOR ASKED FOR
+His standing instruction: *"We want both: low apparent steering mass and friction to LKAS AND no
+ratcheting."* Every other lever in this kit trades one against the other. **A deadband on a pump
+lane does not**: it removes the pump where the signal is **SMALL** — which is what grinding,
+ratcheting and stuttering **ARE** — and leaves **LARGE** steering commands essentially untouched,
+so **LKAS authority does not pay for it.**
+
+### ✅ THREE FACTS THAT MAKE IT SAFE
+1. **IT IS CONTINUOUS.** The deadband **SUBTRACTS rather than clips**, so the transfer curve steps
+   `0 → 0 → 1 → 2` across the boundary with **no discontinuity**. ⇒ **there is no notchiness
+   mechanism**, which is the usual objection to widening a dead zone on a steering path.
+2. **IT REDUCES A CONFIRMED PUMP.** `gp-0x6752 = −1`, verified three ways **including on-car**
+   (V98's b3 rung, duty 0.0000 over 17,983 frames / 5 routes), and the config table that sets it
+   sits at `0x1000–0x15xx`, **below the `0x13000` floor every `.rwd` writes from** ⇒ no build
+   could ever have changed it. Reducing a positive-feedback term cannot destabilise a stable loop.
+3. **THE LARGE-SIGNAL COST IS A 96-COUNT OFFSET on a lane that clamps at 8192 = 1.17 %.**
+
+### ✅ AND THE LANE IS WORTH ATTACKING
+**Each pump lane clamps to ±8192 against a ±10240 aggregator total ⇒ EITHER lane alone can drive
+80 % of the aggregator output.** And **V133 is a fresh, large, on-car demonstration of their
+potency**: it doubled both arms and produced *"massive, violent grinding … continues after
+disengaging."*
+
+### ⚠ THE DOSE IS THE BELIEF, AND THE FAILURE MODE IS NAMED
+```
+   x2 -> 6     x8  -> 24     x32 -> 96   <- V140      x64 -> 192
+   x4 -> 12    x16 -> 48
+```
+The lane input is `gp-0x4f62` clamped to ±5120; with `uVar11 ≈ 1024–2048` the lane runs to
+5120–8192 full scale. **If** the grind is a 1–3 % of full-scale oscillation it lands near
+**50–150 lane counts**, which is what 96 is centred on. ⇒ **[BELIEF] — this kit has NOT measured
+the lane amplitude during a grind episode.**
+⊕ **If V140 is NULL the next rung is 192, not a different lever** — too-small is the expected
+failure mode and it is cheap to step. ⊕ **If the steering feels vague near centre, step back to 48.**
+
+### 🛑 WHAT IT IS NOT
+It does **not** touch the **r26** lane, which has **NO deadband** in this function — it runs
+straight from its multiply to the polarity and the clamp. Adding one there needs an **instruction**
+edit, not a cal, and is a separate decision.
+
+⭐ **RECOMMENDED FIRST** over V137: same one-cal risk profile, but it targets the symptom's
+regime directly instead of shaving 1.34× off one lane's HF content, and it is the only build in the
+queue that cannot cost authority.
+
 ## 🛑🛑 **CORRECTION TO THE V133 ATTRIBUTION — IT IS **LEVER A**, NOT THE CLAMP**
 The section above blamed the **clamp** (`0xC407E` 511→1023) as the primary cause of V133's
 regression. **The probe data says the clamp was almost certainly INERT.**
