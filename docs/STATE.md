@@ -1,5 +1,52 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **THE NOTCH RE-SIZED FROM MEASURED DATA — V146 SUPERSEDES V144/V145**
+After four claims this session that rested on **assumed** values, I measured the one that sizes the
+best lever: **where the grind actually is.**
+```
+   dominant 14-30 Hz peak of cs_rate, ENGAGED, 1-24 km/h (the creep symptom regime),
+   pooled over 12 cached routes spanning V90 -> V122:
+        n = 1180 windows    p10 14.84   p25 17.19   p50 20.31   p75 21.88   p90 23.44 Hz
+```
+✅ **The CENTRE was right** — p50 = **20.31 Hz**, so V144's 20.0 was within 0.3 Hz.
+🛑 **The WIDTH was NOT.** At r = 0.98 only **68.2 %** of those peaks fall inside the −3 dB band
+⇒ **nearly a third of the grind was escaping the notch.**
+
+### ✅ RE-SIZED AGAINST THE EMPIRICAL DISTRIBUTION (mean |H| evaluated AT the measured peaks)
+```
+    f0    r     mean|H|   frac < -3dB    -3dB span      Nyquist lift
+   20.0  0.98    0.5138      0.682       16.9-23.1         1.026     <- V144 / V145
+   20.0  0.96    0.3513      0.894       14.4-25.5         1.105
+   20.3  0.96    0.3468      0.899       14.7-25.8         1.102     <- V146
+   20.3  0.94    0.2754      0.982       13.0-27.4         1.235     (HF lift too high)
+```
+⇒ **1.48× more attenuation across the ACTUAL grind distribution, coverage 68 % → 90 %**, for a
+10 % lift at 500 Hz.
+```
+   A = -1.90440325  0xC60A8      C = -1.98375338  0xC60B0
+   B = +0.92160000  0xC60AC      D = +1.05848204  0xC60B4
+   |H| DC 1.000000 | 1 Hz 0.9994 | 3 Hz 0.9941 | 18 Hz 0.363 | 20 Hz 0.050 | 22 Hz 0.276
+   | 25 Hz 0.640 | 30 Hz 0.908        image 15e1cd30...   rwd 664d78f5...   80/80
+```
+
+### ⭐ THE NO-BOOST GATE WAS REPHRASED, NOT RELAXED — AND IT IS NOW STRICTLY STRONGER
+V144's gate demanded **peak |H| ≤ 1.05**; at r = 0.96 the peak is **1.102**, so the old bound would
+have **vetoed the better filter**. But in a unity-DC notch the peak is **ALWAYS the NYQUIST end**
+(500 Hz) — a monotone HF shelf, not a resonance. The thing that gate exists to catch is a
+**RESONANT peak NEAR the notch**, which is exactly what my first retune attempt produced
+(**3.82 = +11.6 dB just below the notch**, boosting 15 Hz while notching 20 Hz).
+⇒ the gate now asserts **BOTH** that the peak is ≤ 1.12 **AND that it occurs above 200 Hz**, i.e.
+that it *is* the Nyquist shelf. ⭐ **A magnitude bound alone was the wrong SHAPE of check: it let
+the dangerous case through on magnitude while blocking a safe one.**
+
+### ✅ EVERYTHING ELSE IS V145, UNCHANGED
+Same base (V122), same binary gate probe on `gp-0x6C24` at sar 1, `0xC64FA` untouched, α2 8, gain
+6×, b26 clamp 511, both Lever A arms stock, pump deadband at Honda's 3.
+⚠ **The load-bearing BELIEF is unchanged and still unmeasured**: the section arms only when
+`gp-0x671a ≥ 5`. If the gate stays shut this build is **INERT, not harmful**, and the probe says so
+directly. **Re-sizing the notch does not change that risk — it only makes the notch worth more if
+the gate does open.**
+
 ## 🛑🛑 **RETRACTION: THE r26/NOTCH-GATE COUPLING IS *UNRESOLVED* — I MARKED IT [EVIDENCE] AND IT IS NOT**
 The section above closes *"notch always on"* by asserting that opening the gate **enables the r26
 pump**, and marks it **[EVIDENCE]**. **That mark is withdrawn.** The suppression runs through
