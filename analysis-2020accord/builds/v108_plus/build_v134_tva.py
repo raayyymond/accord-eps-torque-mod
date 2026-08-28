@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+# ============================================================================
+# RETRACTED 2026-08-28 -- THIS BUILD IS INERT AT CREEP.  DO NOT FLY.
+#   ch0 = (FactorC(speed) x FactorE(rate)) >> 10, and FactorE Y[0] = 0 below
+#   X[0] = 60 counts = 12.73 deg/s.  The operator symptom is 1-13 deg/s, so
+#   this build raises FactorC Y[0] into a product that is still zero there.
+#   It bites ONLY at rate > 12.73 deg/s AND speed < 35 km/h (parking).
+#   Opening FactorE Y[0] would add MORE damping at highway than at creep.
+#   See docs/STATE.md "V134 RETRACTED".  Kept as a record, not a candidate.
+# ============================================================================
 r"""
 V134 -- RESTORE DAMPING AT CREEP.  FactorC Y[0] 0 -> 60, engaged modes 26/27.  Base = V133.
 

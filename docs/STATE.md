@@ -1,5 +1,59 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **V134 RETRACTED — IT IS INERT AT CREEP, AND THE WHOLE BASE-ASSIST DAMPER FAMILY IS CLOSED**
+V134 was recommended in this session as *"the only lever that adds damping where there is
+currently NONE at creep"*. **Reading the actual tables refutes it.** The records decode cleanly as
+`n, X[0..3], Y[0..3]`:
+```
+   mode 26   FactorC  X = [2240, 3840, 5120, 8960]   Y = [0, 234, 429, 908]
+                      X[0] = 2240 / 64        =  35.00 km/h
+             FactorE  X = [  60,  400, 2500, 4000]   Y = [0, 140, 539, 927]
+                      X[0] =   60 / 4.7121    =  12.73 deg/s
+   V134's edit: 0xD77DA 0 -> 60 and 0xD77EE 0 -> 60  =  FactorC Y[0], the SPEED dead zone
+```
+⇒ `ch0 = (FactorC(speed) × FactorE(rate)) >> 10`, and **FactorE Y[0] = 0 below 12.73 °/s**, with
+the table clamped to Y[0] beneath X[0]. The operator's symptom is the **micro regime, 1–13 °/s**.
+⇒ **the product is `FactorC × 0 = 0`. V134 does NOTHING where the symptom is.**
+```
+   configuration                        CREEP 8km/h 6d/s   HIGHWAY 105km/h 3d/s
+   STOCK / V133                                        0                      0
+   V134  FactorC Y0=60 only                            0                      0     <- INERT
+   V134 + FactorE Y0=40                                2                     24
+   FactorC Y0=400 + FactorE Y0=100                    39                     61
+   FactorC Y0=300 + FactorE Y0=300                    87                    183
+```
+⊕ **V134's edit bites ONLY at rate > 12.73 °/s AND speed < 35 km/h** — fast low-speed steering,
+i.e. **parking manoeuvres**, not creep micro-steering. It was mis-targeted, not mis-sized.
+
+### 🛑 AND THE FAMILY IS STRUCTURALLY THE WRONG LEVER — IT IS BACKWARDS
+Opening `FactorE Y[0]` is the **only** way into the micro regime. But **FactorE is keyed on RATE
+ALONE**, so every raise also acts at highway low-rate cruise — and because FactorC is far larger up
+there, **every configuration adds MORE damping at HIGHWAY than at CREEP** (24 vs 2 · 61 vs 39 ·
+183 vs 87). ⇒ the lever **preferentially adds apparent friction exactly where it is not wanted**,
+against the operator's standing instruction: *"Increasing mass and friction should not be our
+primary approach … We want both: low apparent steering mass and friction to LKAS AND no
+ratcheting."*
+⇒ **[EVIDENCE] the base-assist damper cannot be aimed at the micro regime without a larger
+highway friction cost. The family is CLOSED for this symptom.** ⊕ This independently re-derives
+the kit's own memory *"the base-assist damper CANNOT reach the micro regime"* — which named the
+two dead zones but was not applied when V134 was designed. **That memory existed and was missed.**
+
+### ✅ WHICH LEAVES α2 (V136) AS THE FOLLOW-UP OF CHOICE
+```
+   V136   alpha2 5 -> 2    REDUCES apparent mass, raises zeta, costs NO friction, works at
+                           18-22 Hz independent of speed.  Both operator goals, same direction.
+   V135   knee 3600        the knee is NULL on the single-variable comparison; fly for the
+                           17 % friction cut only, NOT as a grind fix.
+   V134   RETRACTED        inert at creep; artifacts renamed SUPERSEDED-DO-NOT-FLASH.
+```
+⭐ **V133 STILL FLIES FIRST** — it carries Lever A, the only measured fix on this exact symptom.
+
+### ⭐ THE REUSABLE RULE
+**A lever gated by a PRODUCT of two tables is only as open as its NARROWEST gate.** V134 opened one
+of two and was scored, recommended and nearly flown as though it had opened both. **Before
+proposing a table edit, evaluate the FULL product at the operator's actual operating point** —
+here, 8 km/h and 6 °/s — rather than reasoning about the single table being edited.
+
 ## ✅✅✅ **V136 BUILT — α2 IS A NEW LEVER WITH REAL HEADROOM, AND IT IS SELECTIVE**
 The single-variable ladder identified **α2** as the creep lever. This build takes the next rung.
 ```
