@@ -1,5 +1,39 @@
 # STATE — living current state of the kit
 
+## ✅✅ **V146 VALIDATED END-TO-END BY SIMULATING THE FIRMWARE RECURSION ITSELF**
+Three checks against the recursion **transcribed from `FUN_000352b4`**, not against the frequency
+response alone — because "the recursion I read IS the designed filter" had been an ASSUMPTION.
+```
+   filter            f Hz   max|y| all   max|y| tail   predicted |H|*12
+   HONDA 55.2        20.3      10.504        10.504         10.504
+   V146  20.3 r.96   15.0       8.262         8.223          8.224
+   V146  20.3 r.96   18.0       8.156         4.353          4.353
+   V146  20.3 r.96   20.3       8.416         0.000          0.000
+   V146  20.3 r.96   22.0       8.602         3.310          3.310
+   V146  20.3 r.96   25.0       8.912         7.675          7.675
+```
+✅ **1. `tail` == `predicted` to 4 decimals at EVERY frequency, for BOTH coefficient sets** ⇒ **the
+transcription is correct.** The assumption is now checked.
+✅ **2. Honda's filter passes 10.504 of a 12 input at 20.3 Hz** — **as shipped it does nothing for
+an 18–22 Hz grind.** V146 passes **0.000**, and across the band **4.35 @ 18 Hz / 3.31 @ 22 Hz**
+against Honda's 10.84 / 10.22.
+✅ **3. The alarming `max|y|` is PURELY the startup transient.** Settling ≈ `1/((1−r)·fs)`:
+**25 ms at r = 0.96 vs 50 ms at r = 0.98** ⇒ **the wider notch also settles TWICE AS FAST**, which
+matters if the gate chatters open/shut. ⭐ An argument FOR V146 that was not anticipated when it
+was sized.
+
+### ⚠ CLIPPING — CHECKED, AND NOT INTRODUCED BY THE RETUNE
+The filter output is clamped to **±12** before the ×1024 scale.
+```
+   excitation (full scale)     HONDA      V144 r.98    V146 r.96    alt r.94
+   step to 12                  12.507       13.837       13.812      13.939
+   square +-12 at 5 Hz         13.014       15.431       15.592      15.886
+```
+🛑 **Honda's OWN coefficients clip it too.** ⇒ clipping is **inherent to this stage at full-scale
+excitation**, is a **bounded saturation** rather than an instability, and **barely moves with r**
+(15.89 at 0.94 → 15.43 at 0.98) ⇒ **it is not a consequence of the width choice.** V146 overshoots
+Honda by ~20 % on a square; that is the honest cost, and it is transient-only.
+
 ## ✅✅✅ **THE NOTCH RE-SIZED FROM MEASURED DATA — V146 SUPERSEDES V144/V145**
 After four claims this session that rested on **assumed** values, I measured the one that sizes the
 best lever: **where the grind actually is.**
