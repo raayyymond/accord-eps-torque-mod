@@ -1,5 +1,30 @@
 # STATE — living current state of the kit
 
+## 🛑 THE HARMONICS TRACK **NEITHER** FIRMWARE SATURATION — V121's mechanism weakens again
+Two hard nonlinearities sit in the loop and **saturate on different axes**, so they separate: the
+**Coulomb relay** on |RATE| (≥ 31.8 deg/s on V112) and the **damper's ±511 clamp** on SPEED (rail duty
+15.46 % at 10-25 km/h → 0.23 % above 65, `build_v108` E2).
+```
+   by SPEED  (16-17 routes, tight CIs)     10-25 1.110 | 25-40 1.159 | 40-65 1.162 | 65-200 1.117
+   by |RATE| (7-11 routes, wide CIs)       0-15 1.133 | 15-32 1.096 | 32-60 1.317 | 120+ 1.283
+```
+✅ **CLAMP hypothesis REFUTED** — well powered, and the ratio is **flat at 1.11-1.16** while the
+clamp's own duty falls **67×** across that range. 🛑 **RELAY hypothesis NOT SUPPORTED** — no rise past
+31.8 deg/s — ⚠ but that arm is **underpowered**, so **not supported ≠ refuted**.
+⊕ Harmonics are **real and pervasive**: every bin > 1.0, most CIs exclude it.
+⇒ **A nonlinearity uniformly active across the whole range is not a saturation.** That fits an
+always-on mechanism — **physical friction / stick-slip in the column and rack** — better than any
+firmware clip, and coheres with the mode being **mechanical** and with the 6-9 Hz anti-damping being
+**present in stock**.
+🛑 This does **not** overturn [[accord-the-7to9hz-energy-is-manufactured-not-commanded]] — the energy
+is still generated downstream of the command. **What changes is WHERE: possibly the PLANT, not the
+firmware — in which case no cal edit reaches it.**
+🛑🛑 **V121's mechanism has now failed TWO independent checks** (the closed-loop simulation, and
+this). ⇒ **It is a build with good engineering properties and a weak mechanism case**: gain held
+**exactly** at V112's, more assist above 31.8 deg/s, cal-only, 4 bytes, 40/40, and `knee`'s on-car
+track record. **Effect UNKNOWN. Fly it as a TEST, not as a fix** — the pre-registered card's
+**> 1.45 = refuted** band is exactly the outcome this makes more likely.
+
 ## ✅⭐ THE 7-9 Hz ENERGY IS **MANUFACTURED**, NOT COMMANDED — the hopeful result
 16 routes, oscillating windows, band power relative to each signal's **own** 0.5-3 Hz power:
 ```
