@@ -1,5 +1,26 @@
 # STATE — living current state of the kit
 
+## 🛑 THE MODEL PATH'S 3-TAP FIR **CANNOT** BE MADE A NOTCH — the last hidden-filter hope, closed
+`FUN_0003b8f6` contains `y[n] = a·x[n] + b·x[n-1] + c·x[n-2]` with **float** coefficients at
+`0xC5048/504C/5050`, feeding the same `|model|` that multiplies the Coulomb signum. Floats in the
+CRC-skipped `0xC5000` block — it looked like the frequency-selective lever the kit says does not exist.
+```
+   a = 10.000000   b = 0.800000   c = 0.400000     sum = 11.2   IDENTICAL stock -> V121
+   |H| at 7.8 Hz:  11.1974 @1 kHz (0.02 % below DC)   |   10.9515 @100 Hz (2.2 % below DC)
+```
+✅ **As shipped it is a near-flat GAIN of 11.2, not a filter** — `b` and `c` are tiny against `a`.
+🛑 **And it cannot be retuned into one.** A 3-tap FIR notch at `f0` needs `b = -2cos(w0)`, giving DC
+gain `a+b+c` ≈ **0.0024 at 1 kHz** and **0.2375 at 100 Hz** ⇒ **the notch swallows DC**, which is the
+model's whole purpose. With only 3 taps the notch Q is ~1 and **7.8 Hz is far too close to DC at
+either candidate task rate.** ⇒ **arithmetically closed, not merely risky.**
+⊕ It also sits in the block the bootloader skips, `[0xC5000, 0xC5FFC)`
+([[reference-crc-chain-is-50-blocks-c5000-not-a-gap]]) — moot now, but recorded.
+✅ **What DOES shape this path: the two EMA poles** `0xC50D4` = **832** and `0xC50D8` = **122**
+(`alpha/4096`), each applied **twice**. These are 16-bit cals and are genuine frequency handles —
+**but they set the MODEL's own bandwidth**, and the chain is a disturbance observer
+(`residual = MODEL - ACTUAL`), so detuning them **manufactures residual by mis-modelling** rather
+than filtering the symptom. **Not proposed; recorded as the only remaining shaping cells here.**
+
 ## ⭐ TABLE (b) IS THE **ANGLE HANDLE INSIDE THE OBSERVER** — orthogonal to the K1/knee confound
 Decompiled `FUN_0003b8f6`:
 ```
