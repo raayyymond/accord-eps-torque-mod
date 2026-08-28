@@ -1,5 +1,42 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 THE RATE DEFICIT IS **UPSTREAM OF THE FIRMWARE** — AND THE SAME DATA LOCATES THE OSCILLATION
+2026-08-27, 15 routes, Welch H1 1024-pt @100 Hz, engaged & hands-off & moving, normalised to each
+path's own 0.1–0.3 Hz value. **This splits the standing goal in two and closes one half.**
+
+```
+  band        demandRate->CMD     demandRate->rate      CMD->rate        drvTorque->rate
+  0.1-0.3 Hz   1.000 coh 0.317     1.000 coh 0.428    1.000 coh 0.704    1.000 coh 0.682
+  1.0-2.0 Hz   0.158 (-16.0 dB)    0.248 (-12.1 dB)   1.152 (+1.2 dB)    0.765 (-2.3 dB)
+  5.0-8.0 Hz   0.075 (-22.5 dB)    0.201 (-13.9 dB)   2.019 (+6.1 dB)    0.208 (-13.6 dB)
+ 12.0-20.0 Hz     --               0.478  (-6.4 dB)   2.376 (+7.5 dB)    0.302 (-10.4 dB)
+```
+
+### 🛑 HALF ONE — "HIGHER MAX ANGULAR VELOCITY" IS **NOT FIRMWARE-TRACTABLE**
+**`demandRate->CMD` is attenuated MORE than `demandRate->rate`** (−16.0 vs −12.1 dB). Both share the
+same input, so the ordering is robust to the low coherence. ⇒ **openpilot does not turn its own fast
+rate demand into a fast command, and the firmware then delivers MORE motion than it is asked for.**
+⊕ Demand excursions above 15 °/s last **p50 0.030 s** against the arbitration IIR tau **0.0315 s**
+⇒ a 30 ms pulse reaches **61 %**, and the measured `ach/dem` at 15–30 °/s is **0.63**.
+⊕ openpilot's slew limiter = `STEER_DELTA 3.0/s × 0.01 × 4096` = **122.88 ct/frame** (full scale in
+0.33 s) ⇒ in a 30 ms episode the command can move **9.0 % of scale**. Duty ≥90 % of the limiter **5.0 %**.
+🛑 `STEER_MAX`/`STEER_DELTA` are openpilot-side and off-limits ⇒ **no cal can recover motion that was
+never commanded. Stop hunting for a rate lever.**
+
+### ⭐⭐ HALF TWO — THE OSCILLATION **IS** OURS, AND IT IS THE TRACTABLE HALF
+`CMD->rate` **RISES** (+1.2 / +6.1 / +7.5 dB) while the driver's path through the **same plant FALLS**
+(−2.3 / −13.6 / −10.4 dB). **Same plant, two inputs, opposite slopes ⇒ the high-frequency emphasis
+is in the LKAS path, not the mechanics** — consistent with the Q 14–29 resonance being *excited* by it.
+⇒ **The next lever is HF de-emphasis in the LKAS path with no added impedance.**
+
+| the operator asked for | verdict |
+|---|---|
+| eliminate grinding / oscillation / ratcheting | ✅ **firmware-tractable** — `CMD->rate` is +6 to +7.5 dB above 5 Hz, and that is ours |
+| higher max steering angular velocity under 6× | 🛑 **NOT firmware-tractable** — the firmware already over-delivers vs the command |
+
+⚠ [EVIDENCE] for `CMD->rate` (coh 0.70 / **0.51** / 0.28) and the driver contrast; [BELIEF, direction
+only] for the `demandRate->CMD` absolute dB (coh 0.06–0.32, noise-biased down — the **ordering** carries it).
+
 ## 🛑🛑 THE STEERING-RATE DEFICIT IS **MEASURED, REAL AND UNIVERSAL** — AND V111 DID NOT CAUSE IT
 2026-08-27. Answers the operator's standing question (*"it feels like the max angular velocity has not
 scaled 6x"*). **He is right, and it is not a V111 regression.**
