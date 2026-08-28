@@ -119,3 +119,33 @@ is the same failure mode as V111's α2 change, which the operator felt as lost r
 PHASE — MUST NOT MOVE."**
 ⇒ **REJECTED.** **V113's K1 cut is strictly cleaner: 0.333× anti-damping at EVERY frequency, with NO
 added inertia and NO added phase.** Recorded so the frequency-selective idea is not re-proposed.
+
+## 🛑🛑 DOSE CORRECTION — **V113's K1 = 204 IS LIGHTER-COMPENSATED THAN STOCK. V120 SUPERSEDES IT.**
+I wrote above that *"V113 = V111's K1 with V112's knee — the combination of the two things that each
+worked."* **That framing is wrong.** Because V112 raised the knee ×3 *and* K1 ×3, **V111 and V112
+deliver the SAME low-rate friction compensation** — that was the gain-hold, by design. So there is
+only ONE number for "what he is used to", and V113 is a third of it:
+```
+   build      knee    K1    comp @ 3 deg/s    vs V112
+   stock       600   102       0.02816         0.500     <- HONDA'S OWN LEVEL
+   V111        600   204       0.05632         1.000
+   V112       1800   612       0.05632         1.000     <- ON THE CAR
+   V120       1800   306       0.02816         0.500     <- == STOCK
+   V113       1800   204       0.01877         0.333     <- BELOW STOCK
+```
+🛑 **V113 puts the low-rate compensation BELOW Honda's own**, so the wheel would feel heavier than
+**stock** at low rate. That was never intended and was not computed when V113 was built.
+
+### ⭐ V120 = V112 + K1 612 → 306 — the dose is CHOSEN, not guessed
+```
+builder  analysis-2020accord/builds/v108_plus/build_v120_tva.py   40/40   BASE = V112
+image    a588f936e4cdfe58ece41ff4943bff532444daabc4b99a53f00c1d718950a1bb
+.rwd     9d6469277a6bba995cd9d2137332d791460cc2c15f845fe00c228f13c80a67e1
+0xC40D2  612 -> 306.  2 payload bytes.  knee 1800, alpha2 14, cave, biquad ALL HELD.
+```
+- **low-rate feel = EXACTLY stock's** (0.02816 at 3 °/s, asserted in the builder);
+- **anti-damping cut to 0.500× at EVERY frequency**, no added inertia, no added phase;
+- **relay corner stays at 31.8 °/s** ⇒ V112's authority win (tracking 1.37–1.62×) is kept;
+- **self-targeting**: the term is linear in `|model|`, which rises 7–9× with angle.
+⇒ **V120 is the recommended flight. V113 remains valid but is a heavier-than-stock variant** — keep
+it as the second step if V120's cut proves insufficient.

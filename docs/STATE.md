@@ -1,5 +1,27 @@
 # STATE — living current state of the kit
 
+## ⭐⭐⭐ V120 BUILT — **K1 612 → 306. HONDA-EQUIVALENT FEEL, HALF THE ANTI-DAMPING.**
+```
+builder  analysis-2020accord/builds/v108_plus/build_v120_tva.py   40/40   BASE = V112
+image    a588f936e4cdfe58ece41ff4943bff532444daabc4b99a53f00c1d718950a1bb
+.rwd     9d6469277a6bba995cd9d2137332d791460cc2c15f845fe00c228f13c80a67e1
+0xC40D2  612 -> 306   2 payload bytes.  knee 1800, alpha2 14, cave, biquad ALL HELD.
+```
+🛑 **DOSE CORRECTION.** V112 raised knee ×3 AND K1 ×3, so **V111 and V112 deliver the SAME low-rate
+compensation** — one number for "what he is used to". **V113's K1 = 204 is 0.333× of it, i.e. BELOW
+Honda's own 0.500×** ⇒ heavier than STOCK at low rate. Not intended, not computed at the time.
+```
+   build      knee    K1    comp @ 3 deg/s    vs V112
+   stock       600   102       0.02816         0.500   <- Honda's level
+   V112       1800   612       0.05632         1.000   <- on the car
+   V120       1800   306       0.02816         0.500   <- == STOCK
+   V113       1800   204       0.01877         0.333   <- below stock
+```
+⭐ **V120 buys**: anti-damping **0.500× at every frequency** (no added inertia, no added phase);
+low-rate feel **exactly Honda's**; relay **corner untouched at 31.8 °/s** so V112's 1.37–1.62×
+authority win is kept; and it **self-targets** — linear in `|model|`, which rises **7–9×** with angle.
+⇒ **V120 is the recommended flight; V113 is the fallback second step if 0.500× is not enough.**
+
 ## 🛑🛑⭐ K1 IS THE ANGLE-GATED ANTI-DAMPING — **V113 IS THE FIX, AND IT IS ALREADY BUILT**
 Every link measured, 2026-08-28:
 1. **The excess is ANGLE-GATED** — |ang| < 20° we ARE stock (1.06–1.08×); 20–60° p90 **1.74×**, max
