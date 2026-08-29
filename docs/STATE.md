@@ -1,5 +1,51 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **MATCHED, ENGAGEMENT ADDS ~12 % AT 6–9 Hz — NOT 2.8×. THE BUS CANNOT SEE THE SYMPTOM.**
+Pooled the matched analysis over **every cached route with both arms** — 27 qualify, 24 yield matched
+strata. 5.1 s pure-arm windows, stratified on (speed bin × |rate| RMS bin), per-route median over
+strata, then **bootstrap over ROUTES** (4,000 draws), per `feedback-episodes-not-windows`.
+```
+   channel   routes    6-9 Hz  [95% CI]        26-31 Hz (control)   32-38 Hz (control)
+   tq          24     1.12 [1.01, 1.27]        0.98 [0.87, 1.26]    0.97 [0.87, 1.07]
+   cs_tq       24     1.13 [1.00, 1.28]        0.96 [0.84, 1.26]    0.94 [0.80, 1.12]
+   rate_f      24     1.09 [0.95, 1.21]        1.06 [0.93, 1.24]    1.02 [0.97, 1.13]
+   probe       19     1.04 [0.99, 1.18]        1.04 [0.98, 1.10]    0.98 [0.94, 1.11]
+```
+✅ **THE CONTROLS ARE NULL** (0.94–1.06, every CI spanning 1). **That validates the matching** — a
+broken stratification would have leaked a spurious effect into the control bands too. This is the
+positive control the estimate needed, run before the estimate was believed.
+
+### 🛑 WHAT IT OVERTURNS
+**[EVIDENCE] the matched engagement contrast at 6–9 Hz is ~1.12× — a 12 % effect.**
+⇒ the kit's **2.8×** (`accord-engagement-amplifies-6-9hz`, 235 blocks) and the **11.7–13.4×**
+(`accord-ratchet-is-a-lightly-damped-resonance`) **do NOT survive matching on speed and steering
+activity.** Both were computed across arms that differ in operating point, and the artefact is large:
+**unmatched, the same channels read 0.10–0.13×** (engagement appearing to *suppress* the band 8–10×).
+⇒ **an unmatched engaged/manual ratio on this bus is uninterpretable in EITHER direction.**
+
+### ⭐⭐ WHY THIS RECONCILES WITH THE PHYSICS — AND WHAT IT MEANS FOR EVERY FUTURE BUILD
+`accord-ratchet-is-a-lightly-damped-resonance` already states the mode is **"on the motor / rack /
+tyre side, which no channel on this bus observes."**
+⇒ **A ~12 % residue is exactly what an UNOBSERVABLE mode leaks onto observable channels.** The two
+results agree; they were never in conflict once the contrast was matched.
+🛑🛑 **THEREFORE: CAN-derived band statistics CANNOT ARBITRATE BUILDS FOR THIS SYMPTOM.** If the
+whole engagement-conditional effect visible on the bus is 12 %, then a build that removes *half* of
+the engaged contribution moves a bus statistic by ~6 % — against a between-route noise floor the kit
+measured at **19.9× and 36.2×** for identical cals.
+⇒ **This is the quantitative reason every between-build ratio in this kit has been uninformative**,
+and why `docs/STATE.md` already records that *every durable thing this kit knows about grinding came
+from the operator's ear.* **That was an observation; this is its mechanism and its bound.**
+
+### ✅ WHAT SURVIVES, AND WHAT TO DO WITH IT
+✅ **Untouched**: the ring-down **Q 14–29 / ζ 0.017–0.036**, the Welch-ladder **limit-cycle exclusion**,
+and the **not-rim-side** transfer function — each passed its own control and none is a contrast ratio.
+✅ **Untouched**: the **loop-pole** justification for V152/V153, which never rested on a contrast.
+🛑 **Retired as an instrument**: engaged/manual band ratios, matched or not, as a way to **score a
+build**. Matched they are honest but ~12 % wide; unmatched they are artefacts.
+⭐ **THE OPERATOR'S EAR IS THE INSTRUMENT, and that is now a measured conclusion rather than a
+resignation.** Fly one build, judge by ear, report. **Do not ask for a scoring number that the bus
+cannot carry.**
+
 ## 🛑🛑 **UNMATCHED ENGAGEMENT CONTRASTS ARE OPERATING-POINT ARTEFACTS — INCLUDING MINE**
 I searched every cached channel for the symptom's carrier: the signature is **high 6–9 Hz engagement
 contrast WITH flat control bands.** The search found nothing — and then showed why the question was
