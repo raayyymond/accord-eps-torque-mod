@@ -4,6 +4,59 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑 **`gp-0x6b70` DOES NOT SATURATE — V205's question answered from cache, V206's best argument REFUTED**
+
+V205 was built to ask whether `gp-0x6b70` clips, because the saturation census had eliminated every
+other clamp in the command→motor path. **The answer was already on disk.**
+`BUILD-LINEAGE-CATCHUP` records V96/V97's probe verbatim:
+> *"**PROBE:** CAN 427 ← `gp-0x6b70` (LSB **12.8 ct**, no-clip `8192×5>>6 = 640 ≤ 1023`)"* ·
+> *"`b7` = `gp-0x6b70 < 0` … V96's own rungs"*
+
+⇒ 427 carries the **magnitude** at `raw = (|x|×5)>>6` and rung `b7` carries the **sign** — the design
+law's own sign-bit-plus-magnitude pattern. The ±8192 writer clamp lands at **raw 640**. V100's
+changelog repoints 427 away from `gp-0x6b70`, which bounds the window at **V96–V99: routes 7d / 7e /
+7f / 80 / 81 / 82, all cached.** (427 arrives at half the base rate, so engagement is *interpolated
+onto the 427 timebase* rather than assumed.)
+```
+   route  build          n_eng    p50     p95     max    AT CLAMP
+   r7d    V96 (aborted)    542   1370    4990    8320    0.001845
+   r7e    V97            30753    154    1856    3238    0.000000
+   r7f    V97            34476    141    1677    3405    0.000000
+   r80    V97              860    602    2483    2675    0.000000
+   r81    V98             3296    883    2726    3162    0.000000
+   r82    V99             2989    538    2624    3008    0.000000
+   POOLED  72,916 engaged 427 frames, ONE at the clamp  ->  duty 0.000014
+```
+
+### 🛑 **CONSEQUENCE 1 — V206's STRONGER JUSTIFICATION IS DEAD**
+Two ticks ago I re-justified V206 as *"raises the effective ceiling by exactly 2×"*, matching the
+record's instruction to *"find what clips, and either raise its ceiling or soften its corner"* — and
+argued it **survived the speed-invariance objection because it was about clip duty, not loop gain.**
+**That argument is refuted: the ceiling is reached on 1 frame in 72,916.** ⇒ **V206 raises a ceiling
+that is never reached.** What survives is only its **gain** effect (describing function, GATE 2
+verified) — **which is the justification that IS in tension with the ratchet being speed-invariant.**
+**V206 is demoted, not withdrawn**, and its case is now the weaker of the two.
+
+### 🛑🛑 **CONSEQUENCE 2 — THE SATURATION MODEL HAS NO SURVIVING CLAMP IN THIS PATH**
+The census eliminated every other clamp by structure or by measurement, and the sole survivor is now
+measured non-saturating. ⇒ **If the ratchet is a command-gated saturation, the saturating element is
+NOT a clamp in the command→motor path.** The remaining candidates are of a different kind: the
+aggregator's **zero-REJECT gates**, which drop a lane to 0 rather than clipping it — a harder
+nonlinearity than any clamp.
+
+### ⭐ **CONSEQUENCE 3 — THIS RE-RANKS THE SHELF. V204 IS NOW THE PROBE TO FLY.**
+`gp-0x6b4e` **SATURATES at ±10240 and its zero-reject window is exactly ±10240** — it is the one
+element that both saturates and sits in a reject gate, and **its magnitude has never been measured.**
+**V204 reads exactly that cell.** ⇒ **V204 → the probe worth a drive. V205 → demoted, its question
+answered here.**
+⊕ And V205's secondary value is answered too: `gp-0x6b70`'s operating range is now known —
+**p50 141–1370, p95 1677–4990, against the 8192 clamp.**
+
+### ✅ **THAT RANGE ALSO SIZES V206 HONESTLY**
+The describing-function table was computed over A = 25–12800. The **real** operating range is
+p50 ≈ 500, p95 ≈ 2500, where the measured N ratio is **0.47–0.72** ⇒ **V206 delivers a 1.4–2.1× gain
+reduction where the signal actually lives**, not the 2× a flat reading would suggest.
+
 ## ✅⭐⭐ **AN UNREAD ON-CAR DOSE-RESPONSE FOR THE RATCHET LEVER — and the shelf gets a FREE endpoint**
 
 Decoding the rung specs for the V102–V106 routes turned the sweep's numbers into measurements. The
@@ -2173,64 +2226,4 @@ the output so it cannot be re-withdrawn by accident. It was withdrawn once for s
 right handling of tilt is to **report the slope** (which the scorer already does), not to delete the
 level. **Compare ABSOLUTE across builds; the ratio is valid only WITHIN a build, where the divisor
 is common.**
-
-## ✅ **V187 BUILT — A NEW LEVER CLASS: THE NOTCH, MOVED ONTO THE RATCHET**
-Every filter build in the arc (V43, V173/V174/V184) moved the **denominator** — the poles — which
-makes a low-pass. **V187 moves the NUMERATOR, which has never been done.**
-```
-   H(z) = B4*(z^2 + B0*z + 1) / (z^2 + A8*z + AC)
-   the numerator's roots have product 1 => they are ALWAYS on the unit circle
-   => the numerator is a PERFECT NOTCH and B0 alone sets its frequency
-   Honda placed it at 55.226 Hz.  V187 moves it to 8.80 Hz, onto the ratchet.
-```
-➕ **WHY A NOTCH AND NOT ANOTHER LOW-PASS — and it is a FORCED tradeoff, not a search failure:**
-```
-   lever                            ratchet atten   phase @3 Hz   dB per degree
-   V184 (poles 0.980, low-pass)         -8.8 dB       -40.5 deg       0.22
-   best low-pass at a <=10 deg budget   -0.8 dB       -10.0 deg       0.08
-   V187 (notch)                         -7.8 dB        -9.95 deg      0.78   <- 3.5x better
-```
-Unity DC gain pins `B4 = (1+A8+AC)/(2+B0)`; with the notch near 8 Hz that **forces the poles within
-~0.05 of the unit circle**, so REAL poles (a low-pass) land their corner at 8 Hz too — reproducing
-V184's phase problem exactly. **One biquad cannot serve LKAS phase, ratchet attenuation and 55 Hz
-protection at once.** A notch escapes because its phase returns to ~0 away from itself.
-✅ **FITTED MINIMAX OVER 67 ROUTES, not the pooled average** — per-route peaks run p10 7.34 / median
-7.81 / p90 8.59 Hz, so tuning to the mean leaves a shoulder (V186 did: on r24 its residual peak
-moved to 9.96 Hz). Minimax wins on **both** criteria, so it is not an artifact of the robust one:
-```
-   design                     p90 remaining     median remaining
-   V186  8.30 Hz / r 0.9885   0.3983 -4.0 dB    0.2515  4.0x
-   V187  8.80 Hz / r 0.9795   0.2584 -5.9 dB    0.1661  6.0x   <- BETTER ON BOTH
-```
-✅ **GATES: DC gain 0.999972 · max|H| 1.1403 · added lag −2.97° @1 Hz, −9.95° @3 Hz · cal-only,
-no cave. 30/30 assertions.** `105238993346f0e7e792e418c808d6ddf3f42504fb8bf2705c1eb7e0cad045ab`
-⚠ **THE COST — Honda's 55.226 Hz null is given up** (|H| 0.000016 → 1.136). Our logging is 100 Hz
-so 55 Hz is invisible — tested by **ALIASING** (55.226 folds to 44.774 Hz): across **295 routes**
-median ratio 0.99, max 2.69, **zero above 3**, while control frequencies reach 3.6–6.5. Evidence
-against a road-excited plant mode. 🛑 **HONEST LIMIT: the notch is active in every drive we have,
-so this cannot exclude a COMMAND-excited loop mode it is currently suppressing.** BELIEF, not
-EVIDENCE. Mitigation: cal-only ⇒ reflash V185 recovers.
-
-## ✅ **THE PRE-REGISTRATION IS COMPLETE — ONE BINARY THRESHOLD, AND MANUAL PROVES IT IS REACHABLE**
-Measured on `r24` (the FLYING build) with the scorer's own estimator:
-```
-   band              ENGAGED    MANUAL    null
-   GRIND  15-25 Hz     11.1x     2.3x     ~3.9      manual is BELOW the null
-   RATCHET 5-12 Hz     26.7x     2.8x     ~3.9      manual is BELOW the null
-   (9 engaged / 26 manual creep windows on this route)
-```
-✅ **Both manual arms sit below the null**, so "excess below 3.9" is a **demonstrated, reachable
-state**, not an aspiration — the car already reaches it whenever LKAS is off.
-⊕ This also gives a **single-route answer to the question my hands-on test was too underpowered to
-settle**: on `r24` the RATCHET is engaged-only too (manual 2.8 < null 3.9, 26 windows). Not
-hands-matched, so it does not replace Stage 1b, but it is real evidence in the same direction as the
-7/7 grind result.
-⇒ **the drive reduces to ONE binary question: does the engaged excess fall below ~3.9x?**
-```
-   below ~3.9      -> the symptom is GONE by the instrument; engaged now looks like manual
-   falls, above    -> the inertia lane contributes but is not the whole story
-   unchanged       -> the inertia-dose account FAILS
-```
-⊕ And the poles are tested separately by the **spectral slope** (2.671 → 4.531 for V184, outside the
-entire 0.80–2.37 history), because they cannot move the excess numbers at all.
 

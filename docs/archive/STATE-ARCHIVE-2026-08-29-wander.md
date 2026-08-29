@@ -3443,3 +3443,63 @@ to the actual fork:
 ⊕ **Testing the instrument before the drive is worth as much as another lever** — a scorer that
 runs but says the wrong thing wastes the drive just as completely as one that crashes.
 
+## ✅ **V187 BUILT — A NEW LEVER CLASS: THE NOTCH, MOVED ONTO THE RATCHET**
+Every filter build in the arc (V43, V173/V174/V184) moved the **denominator** — the poles — which
+makes a low-pass. **V187 moves the NUMERATOR, which has never been done.**
+```
+   H(z) = B4*(z^2 + B0*z + 1) / (z^2 + A8*z + AC)
+   the numerator's roots have product 1 => they are ALWAYS on the unit circle
+   => the numerator is a PERFECT NOTCH and B0 alone sets its frequency
+   Honda placed it at 55.226 Hz.  V187 moves it to 8.80 Hz, onto the ratchet.
+```
+➕ **WHY A NOTCH AND NOT ANOTHER LOW-PASS — and it is a FORCED tradeoff, not a search failure:**
+```
+   lever                            ratchet atten   phase @3 Hz   dB per degree
+   V184 (poles 0.980, low-pass)         -8.8 dB       -40.5 deg       0.22
+   best low-pass at a <=10 deg budget   -0.8 dB       -10.0 deg       0.08
+   V187 (notch)                         -7.8 dB        -9.95 deg      0.78   <- 3.5x better
+```
+Unity DC gain pins `B4 = (1+A8+AC)/(2+B0)`; with the notch near 8 Hz that **forces the poles within
+~0.05 of the unit circle**, so REAL poles (a low-pass) land their corner at 8 Hz too — reproducing
+V184's phase problem exactly. **One biquad cannot serve LKAS phase, ratchet attenuation and 55 Hz
+protection at once.** A notch escapes because its phase returns to ~0 away from itself.
+✅ **FITTED MINIMAX OVER 67 ROUTES, not the pooled average** — per-route peaks run p10 7.34 / median
+7.81 / p90 8.59 Hz, so tuning to the mean leaves a shoulder (V186 did: on r24 its residual peak
+moved to 9.96 Hz). Minimax wins on **both** criteria, so it is not an artifact of the robust one:
+```
+   design                     p90 remaining     median remaining
+   V186  8.30 Hz / r 0.9885   0.3983 -4.0 dB    0.2515  4.0x
+   V187  8.80 Hz / r 0.9795   0.2584 -5.9 dB    0.1661  6.0x   <- BETTER ON BOTH
+```
+✅ **GATES: DC gain 0.999972 · max|H| 1.1403 · added lag −2.97° @1 Hz, −9.95° @3 Hz · cal-only,
+no cave. 30/30 assertions.** `105238993346f0e7e792e418c808d6ddf3f42504fb8bf2705c1eb7e0cad045ab`
+⚠ **THE COST — Honda's 55.226 Hz null is given up** (|H| 0.000016 → 1.136). Our logging is 100 Hz
+so 55 Hz is invisible — tested by **ALIASING** (55.226 folds to 44.774 Hz): across **295 routes**
+median ratio 0.99, max 2.69, **zero above 3**, while control frequencies reach 3.6–6.5. Evidence
+against a road-excited plant mode. 🛑 **HONEST LIMIT: the notch is active in every drive we have,
+so this cannot exclude a COMMAND-excited loop mode it is currently suppressing.** BELIEF, not
+EVIDENCE. Mitigation: cal-only ⇒ reflash V185 recovers.
+
+## ✅ **THE PRE-REGISTRATION IS COMPLETE — ONE BINARY THRESHOLD, AND MANUAL PROVES IT IS REACHABLE**
+Measured on `r24` (the FLYING build) with the scorer's own estimator:
+```
+   band              ENGAGED    MANUAL    null
+   GRIND  15-25 Hz     11.1x     2.3x     ~3.9      manual is BELOW the null
+   RATCHET 5-12 Hz     26.7x     2.8x     ~3.9      manual is BELOW the null
+   (9 engaged / 26 manual creep windows on this route)
+```
+✅ **Both manual arms sit below the null**, so "excess below 3.9" is a **demonstrated, reachable
+state**, not an aspiration — the car already reaches it whenever LKAS is off.
+⊕ This also gives a **single-route answer to the question my hands-on test was too underpowered to
+settle**: on `r24` the RATCHET is engaged-only too (manual 2.8 < null 3.9, 26 windows). Not
+hands-matched, so it does not replace Stage 1b, but it is real evidence in the same direction as the
+7/7 grind result.
+⇒ **the drive reduces to ONE binary question: does the engaged excess fall below ~3.9x?**
+```
+   below ~3.9      -> the symptom is GONE by the instrument; engaged now looks like manual
+   falls, above    -> the inertia lane contributes but is not the whole story
+   unchanged       -> the inertia-dose account FAILS
+```
+⊕ And the poles are tested separately by the **spectral slope** (2.671 → 4.531 for V184, outside the
+entire 0.80–2.37 history), because they cannot move the excess numbers at all.
+

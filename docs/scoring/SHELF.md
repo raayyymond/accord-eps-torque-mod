@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Five flashable builds: V205 (fly this) · V202 (fix) · V204 · V206 (ratchet lever, priced) · V199 (fallback). Everything else from this arc is renamed
+**Updated 2026-08-29.** Five flashable builds: **V204 (fly this)** · V202 (fix) · V206 (ratchet lever, demoted) · V205 (demoted) · V199 (fallback). Everything else from this arc is renamed
 `SUPERSEDED-DO-NOT-FLASH-GATE2-…` and must not be sent.
 
 🛑 **Nothing here has been flashed and no CAN or UDS message has been sent.** Flashing requires you to
@@ -8,7 +8,26 @@ name the file and the bus, and they will be read back to you first.
 
 ---
 
-## ⭐ V205 — FLASH THIS ONE. The fix, plus the ratchet’s named mechanism on the wire.
+## ⭐ V204 — FLASH THIS ONE. The last unmeasured saturating element.
+
+```
+39990-TVA,A160-V204-V202BASE-PROBE-GP6B4E-0x13000-0x100000.rwd
+  image 30e7da9f6d20ff1335d01abe86ba03df7245c802217a4e6df54c5b93208873e6
+```
+
+V202 control cells byte-identical, +3 payload bytes putting `gp-0x6b4e` on CAN 427. Preflight 8/8.
+
+`0xC63AA` has sat parked since 2026-08-20 as *“the best structural lever, but it needs the dilution
+ratio first.”* Mirroring `FUN_00038148` closed two of its three unknowns and showed the **recorded
+sensitivity is 41× understated** (2.577× `gp-0x6b4c`, not 0.0625× — the record kept a `>>4` but
+dropped the `*0x10` that cancels it). The last unknown is how big `gp-0x6b4e` runs, and this measures
+it. Small ⇒ the lever is dominant and worth sizing; comparable ⇒ it is genuinely diluted and should
+be struck rather than left parked.
+
+⚠ 41× more potent also means 41× more able to destabilise — `gp-0x6b70` is clamped at ±8192 and
+2.577 × a `gp-0x6b4c` of 4000 already exceeds it. This is a lever to size, not a free one.
+
+## V205 — DEMOTED. Its question was answered from cache on 2026-08-29.
 
 ```
 39990-TVA,A160-V205-V202BASE-PROBE-GP6B70-0x13000-0x100000.rwd
@@ -32,6 +51,11 @@ magnitude channel for this cell exists anywhere in the corpus, so it has never b
 🛑 **Score this one STRATIFIED BY SPEED, never pooled.** (An earlier note here said steering angle — that was wrong and is corrected.) The LERP behind `gp-0x6b70` is the power-assist curve, and computing it from the image shows **one curve across 8 steering angles at every speed** but **six distinct curves across six speeds**.
 
 ⭐ **Its purpose has changed.** Whether the stage is a relay is now answered from the image: it is a **soft** one, gain 2.67–3.77× near zero against 0.256–0.516× mid-range. V205’s job is now to measure `gp-0x6b70`’s operating range and sign, so the dose on `0xC63AE` — its private, virgin, single-reader gain cal — can be sized and signed.
+
+🛑 **Superseded.** V96–V99 already carried `gp-0x6b70` on CAN 427 at LSB 12.8 ct, and six cached
+routes give **1 frame at the clamp out of 72,916 engaged — duty 0.000014.** It does not saturate,
+and its range is now known (p50 141–1370, p95 1677–4990 against the 8192 clamp). Flying this would
+re-measure a settled quantity.
 
 ## V202 — the same fix without the instrument
 
@@ -117,25 +141,6 @@ The b5 prediction comes from a measured single-cell pair: V105→V106 doubled th
 fell **−0.0891 [−0.1328, −0.0200]** on an episode bootstrap, with both sign rungs as null controls.
 So this lever is known to reach the car with the right sign — what is unknown is whether the halving
 does, and one drive of any shelf build answers it.
-
-## V204 — the same fix, probing the parked lever instead
-
-```
-39990-TVA,A160-V204-V202BASE-PROBE-GP6B4E-0x13000-0x100000.rwd
-  image 30e7da9f6d20ff1335d01abe86ba03df7245c802217a4e6df54c5b93208873e6
-```
-
-V202 control cells byte-identical, +3 payload bytes putting `gp-0x6b4e` on CAN 427. Preflight 8/8.
-
-`0xC63AA` has sat parked since 2026-08-20 as *“the best structural lever, but it needs the dilution
-ratio first.”* Mirroring `FUN_00038148` closed two of its three unknowns and showed the **recorded
-sensitivity is 41× understated** (2.577× `gp-0x6b4c`, not 0.0625× — the record kept a `>>4` but
-dropped the `*0x10` that cancels it). The last unknown is how big `gp-0x6b4e` runs, and this measures
-it. Small ⇒ the lever is dominant and worth sizing; comparable ⇒ it is genuinely diluted and should
-be struck rather than left parked.
-
-⚠ 41× more potent also means 41× more able to destabilise — `gp-0x6b70` is clamped at ±8192 and
-2.577 × a `gp-0x6b4c` of 4000 already exceeds it. This is a lever to size, not a free one.
 
 ## V199 — the low-phase fallback
 
