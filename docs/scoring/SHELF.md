@@ -66,15 +66,15 @@ comparable prediction, so that one the drive simply measures.
 🛑 If the grind stays above ~15×, the notch is not reaching the signal — check the biquad
 arm `0xC649B` and the engagement gate before touching the design.
 
-## ⭐ V197 — V196 plus one measurement, same car
+## ⭐ V198 — V196 plus one measurement, same car
 ```
-39990-TVA,A160-V197-V196BASE-PROBE-THE-VISCOUS-TERM-0x13000-0x100000.rwd
-image b70483e02b110b740aa93635f9ddeebe1ddc19b38958b824598eba712a4d392b
+39990-TVA,A160-V198-V196BASE-PROBE-THE-R24-RATE-LANE-0x13000-0x100000.rwd
+image 9fbbf90b0bed9cb32eb7c3a44a30c2108f361a736ff3f1ebc205f47e5cf3190d
 ```
-Identical to V196 except **three telemetry bytes**: the 427 probe reads `gp-0x6bbe`, the
-viscous exciter. It answers whether V196’s ratchet lever is aimed at the dominant source of
+Identical to V196 except **three telemetry bytes**: the 427 probe reads `gp-0x6ada`, the
+r24 rate lane — the **biggest** 8 Hz exciter (8192 clamp, 8× the term V196 halves). It answers whether V196’s ratchet lever is aimed at the dominant source of
 8 Hz energy or a minor one. **No control cell differs from V196.**
-After the drive: `python rlog-tools/probe/decode_v197_viscous_term.py <tag> --v197`
+After the drive: `python rlog-tools/probe/decode_v198_r24_lane.py <tag> --v198`
 
 ## 🛑 RUN THIS FIRST, ON THE FILE YOU ARE ABOUT TO SEND
 ```

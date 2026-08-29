@@ -4,6 +4,31 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅⭐ **V198 SUPERSEDES V197 — probe the BIGGEST 8 Hz exciter, not the second-biggest**
+The completed exciter map reordered the probe choice, and following it beats defending yesterday's
+build:
+```
+   gp-0x6ada   8192 clamp   r24 RATE LANE, omega^1     <-- V198 probes this
+   gp-0x6bbe   2048 clamp   viscous, omega^1           <-- V197 probed this  (SUPERSEDED)
+   gp-0x6b26    511 eff.    inertia, omega^2           <-- what V196 halves
+```
+⇒ the rate lane carries **4× the viscous term's clamp and 8× the inertia term's**, so it is the
+**biggest competitor to the term V196 halves.** Measuring the largest candidate is worth more than
+measuring the second-largest.
+⊕ The record already designates this exact cell as a telemetry target: *"both inline lanes are
+mirrored to RAM and nothing reads them — `gp-0x6ada` (r24) / `gp-0x6adc` (r26), post-clamp ⇒ free
+zero-blast-radius telemetry."* Reading it costs nothing and disturbs nothing.
+⊕ And unlike every other candidate, the rate lanes have a **MEASURED on-car dose-response history**
+(V62's `sar`×2: *"18–22 Hz down 8–42×"*; V88's Lever B: *"grinding FIXED on-car"*) — so if the
+measurement says a bigger lever is needed, it lands somewhere already characterised.
+✅ **V198 = V196 + 3 telemetry bytes.** `0x55DF2` 0x9540→0x9526, `0x55E10` sar 4→sar 5. 40/40.
+`9fbbf90b0bed9cb32eb7c3a44a30c2108f361a736ff3f1ebc205f47e5cf3190d`
+⊕ **sar 5** because the aggregator clamps `gp-0x6ada` to ±8192: positives raw 0–256, negatives
+768–1023, resolution 32, unambiguous to |x| ≤ 16352. **Three probes, three different shifts — 6, 3,
+5 — because the shift is a property of the SOURCE, never of the channel.**
+⊕ V197's `.rwd` is renamed `SUPERSEDED-DO-NOT-FLASH-…` and its decoder deleted. **The shelf is four:
+V194 · V195 · V196 · V198.**
+
 ## ✅⭐ **THE EXCITER MAP IS COMPLETE — zero unknowns, and my "4 LIVE" count was WRONG**
 The three terms I could not label are identified. Two of them were hiding in plain sight: the
 aggregator's own tail stores them.
@@ -2249,25 +2274,4 @@ globally** — a **broadband** gain change, the same class as V173's poles and s
 ➕ **What survives of the lead**: only the small-signal **floors** `0xC617A`/`0xC617C` and their
 thresholds `0xC613E`/`0xC6140`. That is now the sole amplitude-selective candidate in the kit, and it
 still needs its knot-index gating traced before it is a lever rather than a guess.
-
-## ❌ **COVARIATE ADJUSTMENT DOES NOT RESCUE THE ONE-PASS RATCHET ENDPOINT — THE 2-PASS ASK STANDS**
-I tried to buy statistical power **for free** rather than ask for more driving, since the record says
-the ratchet’s axis is WHEEL RATE (1.16x at 2 °/s → 3.94x at 100 °/s) so much of the window-to-window
-spread should be operating point, not noise. **It does not work.**
-```
-   adjustment (LEAVE-ONE-OUT residual, not in-sample)   log10 sd   detect@1 pass
-   none                                                  0.3317        4.47x
-   log|wheel rate|                                       0.3106        4.06x   <- controlled
-   log|command|                                          0.2990        3.85x   <- NOT controlled
-   log|wheel rate| + log speed + log|command|            0.3324        4.48x   <- WORSE
-```
-🛑 **V175 predicts a 3.85x cut — so even the best adjustment puts the effect EXACTLY ON the
-detection threshold (~50 % power). Not good enough. Keep the 2-pass ask.**
-✅ **Permutation control passes for wheel rate** (real 0.3106 vs shuffled p5 0.3320) ⇒ the gain is
-real, just small. ⚠ **The `log|command|` figure is UNCONTROLLED** — its permutation null was not run,
-so it is not usable and the honest best is the wheel-rate number, 4.06x.
-⊕ **Adding all three covariates made it WORSE** (0.3324 vs 0.3317 raw) — overfitting at n=27, caught
-by leave-one-out. **In-sample R² would have flattered this badly**; do not use it here.
-⇒ **The instrument is near its limit and more covariates will not help.** Buying power on this
-endpoint means EXPOSURE, not cleverness — which is exactly why the card stages it behind a win.
 

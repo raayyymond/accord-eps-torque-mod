@@ -2566,3 +2566,24 @@ on one pass, the pole-retune account is in trouble** — a real, pre-registered 
 **presence/absence** endpoint does not — it is an ~8x move and one window resolves it. **Keep those
 two questions separate**: "is it gone" is answerable now; "by how much did the band fall" is not.
 
+## ❌ **COVARIATE ADJUSTMENT DOES NOT RESCUE THE ONE-PASS RATCHET ENDPOINT — THE 2-PASS ASK STANDS**
+I tried to buy statistical power **for free** rather than ask for more driving, since the record says
+the ratchet’s axis is WHEEL RATE (1.16x at 2 °/s → 3.94x at 100 °/s) so much of the window-to-window
+spread should be operating point, not noise. **It does not work.**
+```
+   adjustment (LEAVE-ONE-OUT residual, not in-sample)   log10 sd   detect@1 pass
+   none                                                  0.3317        4.47x
+   log|wheel rate|                                       0.3106        4.06x   <- controlled
+   log|command|                                          0.2990        3.85x   <- NOT controlled
+   log|wheel rate| + log speed + log|command|            0.3324        4.48x   <- WORSE
+```
+🛑 **V175 predicts a 3.85x cut — so even the best adjustment puts the effect EXACTLY ON the
+detection threshold (~50 % power). Not good enough. Keep the 2-pass ask.**
+✅ **Permutation control passes for wheel rate** (real 0.3106 vs shuffled p5 0.3320) ⇒ the gain is
+real, just small. ⚠ **The `log|command|` figure is UNCONTROLLED** — its permutation null was not run,
+so it is not usable and the honest best is the wheel-rate number, 4.06x.
+⊕ **Adding all three covariates made it WORSE** (0.3324 vs 0.3317 raw) — overfitting at n=27, caught
+by leave-one-out. **In-sample R² would have flattered this badly**; do not use it here.
+⇒ **The instrument is near its limit and more covariates will not help.** Buying power on this
+endpoint means EXPOSURE, not cleverness — which is exactly why the card stages it behind a win.
+
