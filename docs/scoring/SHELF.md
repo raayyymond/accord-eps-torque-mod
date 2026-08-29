@@ -48,6 +48,15 @@ question is worth a drive on its own. Card: `DRIVE-CARD-V194.md`.
 | CAN probe | — | — | `gp-0x6c2c` |
 | can change **manual** driving | no | no | **yes** |
 
+## 🛑 RUN THIS FIRST, ON THE FILE YOU ARE ABOUT TO SEND
+```
+python flashing-2020accord/preflight.py V196
+```
+It refuses superseded artefacts, verifies the x31 checksum, confirms the payload decodes to a known
+build image, **walks the bootloader CRC chain 50/50** (a broken chain is a brick), checks the
+part-number marker and the 164-byte cave, then prints **exactly which cells differ from the build on
+the car** and the stop conditions. It never touches the bus.
+
 ## The drive, for any of them
 1. **1a** — 15 s engaged creep, 1–24 km/h, driven **how you normally do**. Scoreable today.
    **1b** — the same again **hands on**. Baseline-building; thresholds unknown.
