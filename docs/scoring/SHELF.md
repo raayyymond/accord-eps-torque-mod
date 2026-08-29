@@ -48,10 +48,18 @@ question is worth a drive on its own. Card: `DRIVE-CARD-V194.md`.
 | CAN probe | — | — | `gp-0x6c2c` |
 | can change **manual** driving | no | no | **yes** |
 
-⚠ **The grind figures above are OPEN-LOOP scores, used to RANK designs.** The honest
-closed-loop prediction is **~7.7× band-integrated, with 11.3× (the engaged/manual
-ratio) as the hard ceiling** — a notch in the assist path cannot remove the road and
-plant disturbance floor. See `docs/STATE.md`.
+⚠ **The grind figures above are OPEN-LOOP scores, used only to RANK designs.**
+⭐ **What to actually expect — it depends on how bad the drive is**, because loop gain is
+highest where the grind is worst:
+
+| your drive | engaged/manual grind | the notch should give |
+|---|---|---|
+| **a bad one** (worst quartile) | 87.8× | **~52× less grind power** |
+| a typical one (median) | 24.6× | in between |
+| an already-mild one | 2.7× | ~2.4× |
+
+A notch in the assist path cannot remove the road/plant disturbance floor, so the
+engaged/manual ratio is the ceiling on any fix in this band. See `docs/STATE.md`.
 
 ## 🛑 RUN THIS FIRST, ON THE FILE YOU ARE ABOUT TO SEND
 ```

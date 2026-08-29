@@ -4,6 +4,38 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ⭐⭐ **THE NOTCH DELIVERS MOST EXACTLY WHERE THE GRIND IS WORST — and this supersedes the 7.7×**
+Last section's "honest 7.7×" was computed on the **POOLED** spectrum. Per route, the engaged/manual
+grind ratio varies enormously, so pooling was misleading **in both directions**:
+```
+   engaged/manual GRIND power ratio, 15-25 Hz on cs_rate, per route (30 routes)
+     p10   2.3x     p25  7.7x     p50  24.6x     p75  57.9x     p90 102.9x     max 397.1x  (r9e)
+```
+✅ **That reconciles the discrepancy.** The recorded *"9,200× less power with LKAS off"* and my
+pooled *11.3×* are not in conflict — they are different points on a very wide distribution. **Neither
+is "the" number.**
+
+✅ **AND THE NOTCH'S BENEFIT TRACKS SEVERITY**, because loop gain is highest where the grind is worst:
+```
+   worst quartile (eng/man >= 57.9x)   median ratio 87.8x  ->  notch gives 51.9x
+   best  quartile (eng/man <=  7.7x)   median ratio  2.7x  ->  notch gives  2.4x
+
+   worst individual routes:  r9e 397.1x -> 224.3x  ·  r96 168.4x -> 102.4x  ·  r95 157.9x -> 89.5x
+```
+⇒ **THE OPERATOR-FACING STATEMENT: on the drives where grinding is worst, expect roughly 50× less
+grind power; on drives where it is already mild, roughly 2×.** That is the right shape for a fix — it
+does the most when it is needed most — and it is far more useful than any single averaged figure.
+
+🛑 **THE NUMBER HAS NOW BEEN CORRECTED TWICE. The progression is the point:**
+```
+   21.5x   open-loop score            -- valid only for RANKING designs; attenuates the
+                                         disturbance floor, which a notch cannot remove
+    7.7x   closed-loop, POOLED        -- right method, wrong aggregation: pooling a median
+                                         spectrum underweights the bad routes
+   2.4x .. 51.9x   closed-loop, PER ROUTE   <- the honest answer, and it is a RANGE
+```
+**A single number was the wrong output all along.** Record the range, not a point estimate.
+
 ## 🛑⭐ **THE CLOSED-LOOP PREDICTION IS *WEAKER* THAN THE OPEN-LOOP ONE — MY NOTCH FIGURES WERE OVERSTATED**
 Every notch estimate so far multiplied the measured spectrum by `|H|²`. That treats the filter as a
 feedforward attenuator. The grind is a **closed-loop** effect, so the measured engaged/manual ratio
