@@ -7,6 +7,7 @@
 ## ❌❌ **THE ENTIRE AMPLITUDE-SELECTIVITY LEAD IS CLOSED — ALL THREE BRANCHES, DOUBLY**
 The last surviving branch was the small-signal Y floors. **They are dead twice over**, read from the
 image with the tp off-by-0x1000 guarded (tp = 0xBF000 ⇒ tp+0x713e is **0xC613E**, not 0xC713E):
+```
    addr      what                            stock/V122/V158/V173/V175
    0xC613E   X threshold A (arms floor A)    15000  (VIRGIN)
    0xC6140   X threshold B (arms floor B)    15000  (VIRGIN)
@@ -14,6 +15,7 @@ image with the tp off-by-0x1000 guarded (tp = 0xBF000 ⇒ tp+0x713e is **0xC613E
    0xC617C   Y FLOOR B                           0  (VIRGIN)
    0xC62D8   arm gate on gp-0x6a64            3840  (VIRGIN)
    0xC6178   per-knot output clamp            5274  (VIRGIN)
+```
 1. **Both floors are ZERO** ⇒ max(Y, 0) is a **no-op** for non-negative Y.
 2. **Both thresholds are 15000 = 183 % of the ±8192 residual clamp** (0xC6200) ⇒ the residual is
    **hard-clamped below them and X can NEVER reach them** ⇒ the floors **cannot arm**.
