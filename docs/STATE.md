@@ -1,5 +1,60 @@
 # STATE — living current state of the kit
 
+## ⭐⭐⭐ **THE LKAS AUTHORITY LIMITER IS LOCATED — AND IT IS VIRGIN ON ALL 157 BUILDS**
+The operator names **LKAS authority** in every single instruction, and this session had not served
+it. It is now located, and the result is uncomfortable: **the kit has been moving the wrong clamps.**
+
+### ✅ WHERE THE LIMIT ACTUALLY IS
+`FUN_00028ea6`, upstream of the 6x gain multiply — a **symmetric ±clamp on the setpoint product**:
+```c
+   uVar13 = LERP(...);                                  // the setpoint LERP
+   iVar26 = iVar31 * (uVar13 & 0xffff);
+   uVar33 = iVar26 >> 8;
+   uVar35 = *(ushort *)(unaff_tp + 0x71bc);             // 0xC61BC = 15360
+   ...  clamp uVar33 to  +uVar35 / -uVar35  ...         // a SYMMETRIC +-15360 clamp
+```
+`0xC61BE` is its twin (the same shape, lines 1190–1203). **7 and 8 readers respectively.**
+
+### 🛑🛑 THE KIT HAS BEEN ADJUSTING THE CLAMPS ITS OWN RECORD CALLS INERT
+```
+   cell        role                          values across 157 build images
+   0xC61BC     THE setpoint clamp            {15360: 157}   <-- VIRGIN, never touched
+   0xC61BE     its twin                      {15360: 157}   <-- VIRGIN, never touched
+   0xC61B2     "fwd-path clamp"              {3072:43, 4096:11, 2048:81, 1024:21, 512:1}
+   0xC61B4     its twin                      {3072:43, 4096:11, 2048:81, 1024:21, 512:1}
+```
+And the record already says of the pair that HAS been moved:
+> **`0xC61B2` / `0xC61B4` — INERT, 0 % of the effect.** *Setpoint LERP-clipped to 15360 upstream of
+> the gain ⇒ 81.5 % of rail on every build since V14.*
+
+⇒ **[EVIDENCE] the cells the kit has moved across 5 distinct values on 157 builds are the ones it
+knows are inert, and the cell the record names as the actual upstream limit has NEVER been touched.**
+⇒ **`0xC61BC` / `0xC61BE` are the authority lever, and they are virgin.**
+
+### 🛑 WHAT IS **NOT** ESTABLISHED — AND WHY I AM NOT BUILDING IT
+⚠ **[UNRESOLVED] whether ±15360 actually BINDS.** The clamp sits on `(iVar31 × LERP) >> 8`, so it
+binds only when that product reaches 15360. **The record's *"81.5 % of rail"* is consistent with
+either reading** — a setpoint that saturates there, or a LERP whose own maximum is 15360 making the
+clamp redundant. **No probe has ever measured its duty.** Raising an inert clamp does nothing.
+🛑🛑 **AND THIS IS A SAFETY DECISION, NOT AN ENGINEERING ONE.** Raising a steering authority
+clamp **increases the maximum torque LKAS can apply against the driver.** That is categorically
+different from every other lever in this queue, all of which only ever *reduce* something.
+⇒ **[DECISION] NOT BUILT. This needs the operator's explicit direction**, and it should be preceded
+by a probe, because raising a clamp that does not bind is pure risk for zero benefit.
+
+### ✅ THE SAFE NEXT ARTIFACT — a duty probe, not a dose
+A cave rung reading **`|uVar33| ≥ cal(0xC61BC)`** converts the question into one number from one
+drive, at **zero authority change**:
+```
+   duty 0.0000  =>  the clamp NEVER binds  =>  it is NOT the authority limit; look upstream at the
+                    LERP itself, and 0xC61BC is closed the way 0xC61B2/B4 were
+   duty > 0     =>  the clamp IS the binding limit, its dose is meaningful, and the operator can
+                    then decide knowingly whether to raise it
+```
+⊕ Same class as V148, V98, V100 — **zero calibration bytes, cave only, an instrument not a fix.**
+⊕ **This is the first genuinely NEW question in several turns**, and unlike the rest of the queue it
+addresses the operator's **second** stated complaint rather than the first.
+
 ## ✅✅ **V157 BUILT — THE 4× DOSE OF V156, AND `MEMORY-PART4` SPLIT**
 V156 puts the damper's creep product at **31 = 6.1 %% of the bang-bang ceiling**, which may simply be
 too small to feel. V157 is the **same lever, same four cells, 4× the dose** — built so the choice
