@@ -4139,3 +4139,63 @@ and this kit's rule is that an unclosed GATE 2 is not a build.
 
 🛑 **1 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
 
+## ✅✅✅ **V152 / V153 BUILT — THE OBSERVER CORNER, MOVED ON BOTH ARMS AT ONCE**
+The GATE-2 objection to `0xC40D0` was that moving it alone **breaks Honda's byte-exact arm-match**.
+**Moving BOTH cells together removes the objection entirely**, and that is these two builds.
+```
+   V152   0xC40D0 408 -> 204   AND   0xC63AC 102 -> 51    204 = 4 x 51  EXACT
+          shared corner 16.70 -> 8.13 Hz   |H(7.8 Hz)| 0.906 -> 0.722 = 1.26x less
+          3 payload bytes, 54/54, CRC 50/50
+          image 9d154a876392f1a881a332daec08c89cf28ee382de36992d3b724907d4eff148
+          rwd   2a5ceef7ba80809593c4b7f6aca4747235dcf30e9c2e442cf7ba3d0b1386e140
+
+   V153   0xC40D0 408 -> 104   AND   0xC63AC 102 -> 26    104 = 4 x 26  EXACT
+          shared corner 16.70 -> 4.09 Hz   |H(7.8 Hz)| 0.906 -> 0.465 = 1.95x less
+          3 payload bytes, 54/54, CRC 50/50
+          image 5b2c43b98e16331d46bb80fa40fdd5c4bd98b4d9d7c2247a4cffaf690777fac7
+          rwd   c25fc1d64a3f0d8c291b37722db29a8847f037f127d11c304d0e956ef4bc50cb
+```
+### ⭐ WHY THIS IS THE STRONGEST CANDIDATE IN THE SET
+1. **GATE 2 IS CLOSED, NOT ARGUED AROUND.** α stays **identical on both arms** (V152 0.049804688,
+   V153 0.025390625) ⇒ **no RELATIVE phase is introduced anywhere in the observer residual.** Only
+   the **shared** corner moves ⇒ a **pure added low-pass on the residual** ⇒ **HF loop gain DOWN**,
+   the stabilising direction for a **Q 14–29** resonance.
+2. **IT COSTS NO AUTHORITY.** An EMA has **DC gain EXACTLY 1** at any α ⇒ **steady-state friction
+   and steady-state assist are UNCHANGED.** This is the operator's *"low friction AND no
+   ratcheting"* with **no trade at all** — unlike V151, which scales the term at DC too.
+3. **IT IS CERTAIN TO ACT.** The EMA runs every 1 kHz tick unconditionally. Contrast **V149**, which
+   is **INERT if `gp-0x671d` never increments** (it is a fault counter, `|x| ≥ 5530`) — unknown.
+4. **IT IS AIMED AT THE RATCHET FREQUENCY**, where the path was measured **91 % open**.
+5. **The direction is the one the kit's OWN Bode sum favours**: `0xC63AC` was filed *"Predicted
+   WORSE"* for being **RAISED** (cal 205 ⇒ 1.38× HF gain, `|L|` = 1.208). **Lowering moves HF gain
+   DOWN** ⇒ `|L|` falls **below** 0.875, inside the edge.
+
+### 🛑 WHAT TO KNOW BEFORE FLYING THEM
+⚠ `diff_vs_flown` reports **"MULTI-VARIABLE"** for both — **expected and correct as a mechanical
+check.** They are **two cells but ONE logical lever**: the cells *must* move together, because
+holding one still is exactly the phase-error case being avoided. **Do not "simplify" either build to
+a single cell.**
+⚠ **`0xC63AC` = 102 is HONDA STOCK**, restored deliberately by V99 after V97 flew it at 150 and came
+back **UNINTERPRETABLE**. Below stock is **new territory** for that cell.
+⚠ **[BELIEF]** that 1.26× (V152) or 1.95× (V153) less transmission at 7.8 Hz is **audible**. The
+mechanism is EVIDENCE; the audibility is not.
+⊕ **V152 and V153 are the SAME lever at two doses — fly ONE, not both.** V153 is the larger step and
+matches the operator's *"just want the best possible results"*; V152 is the conservative half-step
+if a 4.09 Hz observer corner feels too slow.
+
+### ✅ THE FLIGHT ORDER
+```
+   1. V153   observer corner /4, both arms matched   1.95x less at 7.8 Hz, NO authority cost  3 B
+   2. V152   the same lever at /2                    1.26x less, conservative                 3 B
+   3. V149   removes the 5.12x r24 switch            bigger IF it fires; may be INERT         2 B
+   4. V139   both pump arms halved                   demonstrated on-car potency              2 B
+   5. V150   r26 suppression switch removed          can only suppress the pump               1 B
+   6. V148   deadband + probe                        MEASURES whether gp-0x671d toggles       3 B
+   7. V151   knee 3000 -> 3600                       MARGINAL, and costs 17 % of the term     2 B
+```
+
+
+---
+
+🛑 **1 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
+

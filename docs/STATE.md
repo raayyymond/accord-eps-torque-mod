@@ -1,5 +1,58 @@
 # STATE — living current state of the kit
 
+## ⭐⭐⭐ **THE PARAMETRIC PUMP IS LOCATED — LANE GAIN A's KNEE STRADDLES THE OPERATING POINT**
+Mining the golden model for levers (the V158 lesson) surfaced a warning I had not acted on, and
+acting on it located a mechanism the kit has hypothesised since V59.
+
+### ⚠ FIRST, A CORRECTION: V158's GATE 2 IS NOT FULLY CLOSED
+The model says, of any FactorE edit:
+> 🛑🛑 *"**ALL THREE LANE GAINS ARE LERPs INDEXED ON `gp-0x6ac0`** (tp+0x7b1e / tp+0x7b0a /
+> tp+0x7ade) — **the SAME rectified motor rate that indexes FactorE.** So a FactorE slope change and
+> this PID's own gain schedule move on ONE axis; **they are NOT independent** … **[GATE 2 — size any
+> FactorE edit against this, not just dose.]**"*
+
+⇒ **V158 changes FactorE's slope and I priced it by DOSE ALONE.** I have been describing its gate as
+*"closed by the model"* — **that was overstated.** The dose is the model's own priced figure; the
+**shared-axis requirement was not met.** Meeting it now.
+
+### ⭐ SIZING IT — AND THE RESULT IS A FINDING IN ITS OWN RIGHT
+```
+   lane gain A  tp+0x7b1e (0xC671E)  X=[96, 104, 608, 704]  Y=[704, 832, 832, 832]
+      at gp-0x6ac0 = 94 / 99 / 113  ->  704 / 752 / 832     local slope 6.74 per count
+   lane gain B  tp+0x7b0a (0xC670A)  FLAT at the operating point (slope 0.000)
+   lane gain C  tp+0x7ade (0xC66DE)  FLAT at the operating point (slope 0.000)
+```
+🛑🛑 **Lane gain A's FIRST SEGMENT spans X 96 -> 104, and the model's MEASURED operating point is
+`gp-0x6ac0` = 99 [94, 113] — DEAD CENTRE.** An **18 % gain swing across 8 counts.**
+⇒ and `gp-0x6ac0` is a **RECTIFIED** rate, so during a 7.8 Hz oscillation it **sweeps at 2f =
+15.6 Hz** back and forth across that exact window.
+⇒ **[EVIDENCE] the PID's lane gain A is PARAMETRICALLY MODULATED at 2f, by ~18 %, at the symptom's
+own operating point — and this is STRUCTURAL, present on STOCK.**
+⊕ This is precisely what the model predicted qualitatively: *"a rate-scheduled gain on a RECTIFIED
+index (which sweeps at 2f) interacts with the parametric pump"* — **now located and quantified.**
+⊕ It is also a candidate mechanism for [[accord-v59-parametric-pump-marginal]] (*"the pump is real
+but MARGINAL"*), which has never had a named source.
+
+### ✅ THE LEVER THIS IMPLIES — FLATTEN THE KNEE, DOWNWARD
+```
+   stock   0xC671E  Y = [704, 832, 832, 832]  over X = [96, 104, 608, 704]
+   lever            Y = [704, 704, 832, 832]  -- Y[1] := Y[0]
+```
+⇒ the 96–104 segment becomes **FLAT at 704**, so the 2f sweep sees **no gain change** ⇒ **the
+parametric modulation at the operating point is REMOVED.**
+⇒ **DOWNWARD is the safe direction**: it **lowers** PID gain between 96 and 104 rather than raising
+it, and the ramp simply moves to 104–608, a **far gentler slope over a 6x wider span.**
+⇒ **MONOTONE preserved** ([704, 704, 832, 832] is non-decreasing) — the shape rule that V157 broke.
+⚠ **[BELIEF] that removing an 18 % parametric modulation is audible.** The mechanism is EVIDENCE;
+the magnitude of its contribution is not measured.
+⚠ **[UNVERIFIED] `0xC671E`'s reader count, mode-indexing and blast radius** — **RULE 7 is NOT yet
+satisfied**, and the three tables' record layout was inferred from a 4-knot pattern that fits lane A
+cleanly but produces implausible values for B and C (X=[256,256,0,8] and X=[717,0,0,5]), **so the
+layout is probably NOT uniform across the three.** **Verify before building.**
+
+⇒ **NEXT: verify `0xC671E`'s layout, readers and mode-indexing, then build it.** This is the first
+new lever since V158 and the first with a named parametric mechanism behind it.
+
 ## ✅ **THE AUDIT IS COMPLETE — V150 IS INERT HANDS-OFF, AND THE QUEUE IS FINAL**
 V150 was the last unaudited build. Its structure checks out against the golden model, **but its
 effect lands outside the symptom's regime.**
@@ -2125,61 +2178,6 @@ saturation, continuous, ~1 % duty) and this signum multiply (continuous, <1 % ju
 strengthened by this: with no relay in the path, the ratchet is a **lightly-damped resonance being
 excited through a loop that is 91 % transparent at 7.8 Hz**, which is precisely what those builds
 attack.
-
-## ✅✅✅ **V152 / V153 BUILT — THE OBSERVER CORNER, MOVED ON BOTH ARMS AT ONCE**
-The GATE-2 objection to `0xC40D0` was that moving it alone **breaks Honda's byte-exact arm-match**.
-**Moving BOTH cells together removes the objection entirely**, and that is these two builds.
-```
-   V152   0xC40D0 408 -> 204   AND   0xC63AC 102 -> 51    204 = 4 x 51  EXACT
-          shared corner 16.70 -> 8.13 Hz   |H(7.8 Hz)| 0.906 -> 0.722 = 1.26x less
-          3 payload bytes, 54/54, CRC 50/50
-          image 9d154a876392f1a881a332daec08c89cf28ee382de36992d3b724907d4eff148
-          rwd   2a5ceef7ba80809593c4b7f6aca4747235dcf30e9c2e442cf7ba3d0b1386e140
-
-   V153   0xC40D0 408 -> 104   AND   0xC63AC 102 -> 26    104 = 4 x 26  EXACT
-          shared corner 16.70 -> 4.09 Hz   |H(7.8 Hz)| 0.906 -> 0.465 = 1.95x less
-          3 payload bytes, 54/54, CRC 50/50
-          image 5b2c43b98e16331d46bb80fa40fdd5c4bd98b4d9d7c2247a4cffaf690777fac7
-          rwd   c25fc1d64a3f0d8c291b37722db29a8847f037f127d11c304d0e956ef4bc50cb
-```
-### ⭐ WHY THIS IS THE STRONGEST CANDIDATE IN THE SET
-1. **GATE 2 IS CLOSED, NOT ARGUED AROUND.** α stays **identical on both arms** (V152 0.049804688,
-   V153 0.025390625) ⇒ **no RELATIVE phase is introduced anywhere in the observer residual.** Only
-   the **shared** corner moves ⇒ a **pure added low-pass on the residual** ⇒ **HF loop gain DOWN**,
-   the stabilising direction for a **Q 14–29** resonance.
-2. **IT COSTS NO AUTHORITY.** An EMA has **DC gain EXACTLY 1** at any α ⇒ **steady-state friction
-   and steady-state assist are UNCHANGED.** This is the operator's *"low friction AND no
-   ratcheting"* with **no trade at all** — unlike V151, which scales the term at DC too.
-3. **IT IS CERTAIN TO ACT.** The EMA runs every 1 kHz tick unconditionally. Contrast **V149**, which
-   is **INERT if `gp-0x671d` never increments** (it is a fault counter, `|x| ≥ 5530`) — unknown.
-4. **IT IS AIMED AT THE RATCHET FREQUENCY**, where the path was measured **91 % open**.
-5. **The direction is the one the kit's OWN Bode sum favours**: `0xC63AC` was filed *"Predicted
-   WORSE"* for being **RAISED** (cal 205 ⇒ 1.38× HF gain, `|L|` = 1.208). **Lowering moves HF gain
-   DOWN** ⇒ `|L|` falls **below** 0.875, inside the edge.
-
-### 🛑 WHAT TO KNOW BEFORE FLYING THEM
-⚠ `diff_vs_flown` reports **"MULTI-VARIABLE"** for both — **expected and correct as a mechanical
-check.** They are **two cells but ONE logical lever**: the cells *must* move together, because
-holding one still is exactly the phase-error case being avoided. **Do not "simplify" either build to
-a single cell.**
-⚠ **`0xC63AC` = 102 is HONDA STOCK**, restored deliberately by V99 after V97 flew it at 150 and came
-back **UNINTERPRETABLE**. Below stock is **new territory** for that cell.
-⚠ **[BELIEF]** that 1.26× (V152) or 1.95× (V153) less transmission at 7.8 Hz is **audible**. The
-mechanism is EVIDENCE; the audibility is not.
-⊕ **V152 and V153 are the SAME lever at two doses — fly ONE, not both.** V153 is the larger step and
-matches the operator's *"just want the best possible results"*; V152 is the conservative half-step
-if a 4.09 Hz observer corner feels too slow.
-
-### ✅ THE FLIGHT ORDER
-```
-   1. V153   observer corner /4, both arms matched   1.95x less at 7.8 Hz, NO authority cost  3 B
-   2. V152   the same lever at /2                    1.26x less, conservative                 3 B
-   3. V149   removes the 5.12x r24 switch            bigger IF it fires; may be INERT         2 B
-   4. V139   both pump arms halved                   demonstrated on-car potency              2 B
-   5. V150   r26 suppression switch removed          can only suppress the pump               1 B
-   6. V148   deadband + probe                        MEASURES whether gp-0x671d toggles       3 B
-   7. V151   knee 3000 -> 3600                       MARGINAL, and costs 17 % of the term     2 B
-```
 
 
 ---
