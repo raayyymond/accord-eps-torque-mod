@@ -1,5 +1,52 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **ALL THREE COMPLAINTS ARE CREEP PHENOMENA — AND SPEED-SCHEDULING THE GAIN IS DEAD**
+Tried to **make** a new lever rather than find one: **schedule the gain by speed** — high where
+authority saturates, low where grinding lives — which would break the authority/grinding tension
+outright. **It only works if the two live at different speeds. They do not.**
+```
+   WHERE THE COMMAND RAILS  (engaged frames, all routes pooled, 1.6 M frames)
+   speed band       engaged frames     railed    rail duty
+   0-2   km/h            140,277          546      0.389 %
+   2-8   km/h            156,381        9,956      6.367 %   <-- THE PEAK
+   8-16  km/h            438,274        3,836      0.875 %
+   16-25 km/h            498,164          842      0.169 %
+   25-40 km/h            372,168           34      0.009 %
+
+   CREEP (0-8 km/h)  3.540 %      HIGHWAY (>=16 km/h)  0.101 %      ratio 35x
+```
+⇒ **[EVIDENCE] authority saturation is a CREEP phenomenon** — **6.4 % of engaged frames at
+2–8 km/h**, falling **35x** by highway speeds.
+⇒ **🛑 SPEED-SCHEDULING THE GAIN IS DEAD AS A LEVER.** There is no band where authority is needed
+and grinding is absent — they are **the same band**. A gain that is high where the command rails is
+high exactly where the grinding is. **Lever class closed before any build was spent on it.**
+
+### ⭐ BUT IT UNIFIES THE THREE COMPLAINTS
+```
+   peak command oscillation   the command rails at its 13-bit max, 6.4 % of frames at 2-8 km/h
+   LKAS authority             saturated in that same 2-8 km/h band
+   grinding / ratcheting      symptom A's micro regime (1-13 deg/s) and symptom B's <10 mph
+                              acoustic excess are BOTH in that same band
+```
+⇒ **[EVIDENCE] all three of the operator's complaints are the SAME OPERATING POINT: engaged creep,
+roughly 2–8 km/h.** They have been treated as three problems for the whole arc; they are three
+observations of one regime.
+⇒ **any real fix must act AT CREEP**, and a fix that only works above 16 km/h addresses none of them.
+
+### ✅ WHICH SHARPENS THE FLIGHT ORDER — V157 IS THE ONLY BUILD TARGETED AT THE RIGHT PLACE
+```
+   V157 / V156   act ONLY at creep      FactorC opens below 35 km/h AND FactorE below 12.73 deg/s
+                                        => the damper is non-zero EXACTLY in the 2-8 km/h band
+   V153 / V152   act at ALL speeds      observer poles are not speed-gated
+   V149 / V150   act at all speeds      switch removal, not speed-gated
+   V139          acts at all speeds     pump arms, not speed-gated
+   V155 / V154   act at all speeds      inertia-lane weight, not speed-gated
+```
+⇒ **V157 is the ONLY queued build whose effect is confined to the band where all three symptoms
+live.** Every other lever spends its effect mostly outside it.
+⇒ **This is now the strongest argument for V157 first**, and it is an argument from measurement
+rather than from mechanism.
+
 ## ⚠ **THE RAILED-COMMAND NATURAL EXPERIMENT IS UNDERPOWERED — RECORDED SO IT IS NOT RE-RUN**
 A rail episode freezes the command at ±4096, so it is a **natural experiment**: if the ratchet
 persists while the command is constant, the command is not driving it. Ran it. **The cached data
