@@ -1,5 +1,71 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **V168 BUILT — THE BASE-ASSIST SLOPE CAP, A LEVER CLASS THE KIT HAS NEVER TRIED**
+```
+   V168 = V158 + 0xC6384  2048 -> 1536   (2.000x -> 1.500x)
+   image  058dd64ac442ef43c790965c9a5fc011f147f7ff0a5e7cd0c0d1bb8889c7b0ff
+   .rwd   0f0ace3b5bc0a8541227e06c831c555797566374b298ba606614f5a09a1356f1
+   ONE payload byte (0xC6385: 08 -> 06) + one CRC trailer.  35/35 assertions.
+   CRC chain 50/50 - readback byte-identical - all six curve records untouched.
+```
+✅ **`0xC6384` is byte-identical on ALL 161 IMAGES** — the first time this kit has moved it.
+⚠ **The payload is ONE byte, not two**: `0x0800 -> 0x0600` differs in the high byte only. The build
+asserts the **VALUE**, not a hardcoded byte count — the hardcoded-2 assertion has bitten this kit
+before and it fired here too, on the first run.
+
+### ⭐ HOW THIS BUILD'S CLASS DIFFERS FROM THE WHOLE ARC SINCE V38
+```
+   V38-V52    authority / filters / poles / caves
+   V53-V61    telemetry probes and lane mutes
+   V62-V73    the rate lane (r24 / r26)
+   V74-V83a   the base-assist DAMPER          V84 damper reverted to Honda
+   V85-V122   friction / knee / alpha2, the Coulomb relay
+   V133-V167  the damper's SHAPE and the Path-2 weight
+   ---------------------------------------------------------------------------------
+   V168       the BASE-ASSIST MAP's own slope cap  <- the DOMINANT torque-fed loop term
+```
+Every earlier lever acts on a term that is **not** the dominant one. `gp-0x6b86` is **5.8–7.8x the
+entire PID** and has the widest window of all eleven aggregator slots. **This is a new lever, not the
+same lever pushed the other way.**
+
+### ✅ WHY IT IS AIMED AT THE RATCHET SPECIFICALLY
+The grind and the ratchet **dissociate**: post-V102 the grind falls ρ = −0.94 (p 0.005) in three
+channels while the ratchet does not move (ρ = −0.14, p 0.787) against a floor that would have shown
+1.9x. Every lever the kit has found is the grind's. V168 is the first aimed at the other one.
+⊕ **V168 is built on V158**, so it carries the grind lever too and **both symptoms score from the
+SAME single episode in different bands** — the two are separated by the **INSTRUMENT**, not the build.
+
+### 🛑 THE NON-STOCK DELTA, READ FROM THE BUILT IMAGE
+```
+   V168 vs STOCK: 341 differing bytes, 321 payload + 5 CRC trailers, in 12 blocks
+     0xC4000  169 B   friction / knee / alpha2 / clamp family (V85-V122)
+     0xC6000   42 B   main cal -- incl. the 6x LKAS gain, Lever B, and THIS BUILD'S 1 byte
+     0xE4000   36 B   } arbitration setpoint limits raised at V38 (0x3c -> 0x40 pattern)
+     0xE5000   36 B   }
+     0xD7000   22 B   the damper records (V158's FactorC/FactorE shape)
+     0x55000    6 B   CAN tap
+     0x35000    4 B   · 0x2A000 2 B · 0x13000/0x14000/0x3A000/0x45000 1 B each
+```
+
+### ✅ WHAT A NULL WILL LICENSE — WRITTEN BEFORE THE CUT
+One continuous **15 s** engaged creep pass, scored by `rlog-tools/score/score_band_excess.py`:
+- **ratchet 5–12 Hz excess falls BELOW its slope-matched null** ⇒ the ratchet is gone in that regime
+  and the loop-gain account is confirmed;
+- **excess unchanged** (V122 reference ≈33, null ≈4) ⇒ a predicted 3.4x damping increase produced
+  nothing ⇒ **falsifies the real-positive `P·L` assumption**, so this loop does not produce the 14.3x
+  cancellation and the assist map is exonerated the way the Coulomb relay now is;
+- **excess RISES** ⇒ lowering `|L|` sharpened the mode, possible only if `P·L` is not real-positive
+  ⇒ revert and re-derive the phase.
+✅ A single 15 s episode detected the ratchet **11/11 at 5–65x margin**, so **all three outcomes are
+readable from one pass. There is no uninterpretable branch.**
+
+### 🛑 THE FEEL COST — THE OPERATOR'S CALL
+Lowering the cap means **less assist per unit driver torque near centre ⇒ heavier steering there**,
+against a standing constraint. Narrower than it sounds: the curve is **uncapped above X≈450 so peak
+authority and max rates are untouched**, and the map is **driver-torque fed, not the LKAS lane**
+(`0xC616C`=0 ⇒ `gp-0x6b4a`≡0, asserted in the build). 1536 is the **smallest** dose clearing the
+one-episode margin; 1280 and 1024 remain if it reads clean but incomplete.
+
 ## ⭐⭐ **THE ASSIST CURVE IS IN THE IMAGE, THE 2.000 SLOPE CAP **BINDS**, AND GATE 2 PASSES**
 The curve was never unreachable — it is **initialised-data copied ROM→RAM at boot**, which is why
 only 3 `st.h` target the 20-knot block and 2 of those are clears. Found by searching the whole image
@@ -2178,102 +2244,4 @@ like a creep lever and **is not one — nothing reads it.**
 `movea 0xC914, r4, r30` with **r1 = r4 = gp**, i.e. `gp - 0x36EC` (a RAM cell that appears throughout
 `FUN_000389ec`), not a table base. A raw byte scan for an immediate cannot tell a **base register** from
 a **`movhi` partner**; the decompile settled it in one call. **Decompile first — again.**
-
-## ✅✅ **V158 ADDRESS-VERIFIED INDEPENDENTLY — AND WHY IT WAS IMMUNE TO V159's ERROR**
-After the off-by-0x400 that killed V159, the lead build's addresses were re-derived **independently
-and explicitly**, walking the pointer tables rather than trusting the builder.
-```
-   FactorC (L2 speed), pointer table 0xC9E9C -> records 0xD77BC / 0xD77D0 / 0xD77E4   (m25/26/27)
-       m26 base 0xD77D0  X[0]@0xD77D2  Y[0]@0xD77DA  Y[1]@0xD77DC
-       m27 base 0xD77E4  X[0]@0xD77E6  Y[0]@0xD77EE  Y[1]@0xD77F0
-   FactorE (L4 rate),  pointer table 0xC9F84 -> records 0xD77F8 / 0xD780C / 0xD7820
-       m26 base 0xD780C  X[0]@0xD780E  Y[0]@0xD7816  Y[1]@0xD7818
-       m27 base 0xD7820  X[0]@0xD7822  Y[0]@0xD782A  Y[1]@0xD782C
-
-   V158's six edits, each against its RE-DERIVED role:
-       0xD77DA  FactorC m26 Y[0]    0 -> 429      0xD780E  FactorE m26 X[0]   60 -> 12
-       0xD77EE  FactorC m27 Y[0]    0 -> 426      0xD7822  FactorE m27 X[0]   60 -> 12
-                                                  0xD7818  FactorE m26 Y[1]  140 -> 539
-                                                  0xD782C  FactorE m27 Y[1]  140 -> 539
-   image diff V122 -> V158: 14 bytes = 10 payload + 4 CRC (0xD7FFC..0xD7FFF).  ZERO unattributed.
-```
-✅ **[EVIDENCE] all six cells match their independently re-derived roles exactly.**
-
-### ⭐ THE STRUCTURAL REASON V158 COULD NOT SUFFER V159's BUG
-```
-   V159's addresses   computed as  tp + offset      -> one wrong digit = a wrong cell, silently
-   V158's addresses   READ as ABSOLUTE POINTERS out of the image, then walked by a known layout
-```
-=> **no offset was ever added for V158**, so the **off-by-0x400 / off-by-0x1000 class cannot occur**
-there. The pointer table *is* the ground truth, and a wrong pointer would land outside the image and
-be caught by the `0x10000 < p < 0x100000` filter.
-⭐ **RULE, generalised: PREFER POINTER-DERIVED ADDRESSES OVER OFFSET-DERIVED ONES.** When a table is
-reachable through an in-image pointer array, walk the array — it is self-validating. Reserve
-`tp + offset` arithmetic for scalars that have no pointer, and when you must use it, **add the offset
-to `tp` explicitly and print BOTH** (the check that finally caught V159).
-⊕ This also explains, retrospectively, why the **damper** work survived the audit while the
-**lane-gain** work did not: the damper's records are pointer-reachable; the PID's lane gains are not.
-
-### ✅ V158's STANDING
-```
-   addresses      VERIFIED independently, zero unattributed bytes
-   dose           50 at the model's MEASURED operating point, inside its own [30,60] requirement
-   shape          MONOTONE; dead zone opened by the AXIS, not by flattening Y[0]
-   ceiling        9.8 % of the 512 creep ceiling -- a 10.2x margin to V80's bang-bang
-   RULE 7         engaged modes 26/27, read from V106B, not assumed
-   shared-axis    the PID schedule is FLAT at the operating point => the coupling does not bite
-```
-=> **every gate the golden model raised for this lever is now addressed.** V158 is the recommended
-build.
-
-## 🛑🛑🛑 **V159 SUPERSEDED — AN OFF-BY-0x400 ADDRESS ERROR, AND THE LANE GAINS ARE FLAT**
-**V159 edits an unrelated cal on a false premise. It is superseded and must never be flown.**
-```
-   tp = 0xBF000
-   tp + 0x7B1E  =  0xC6B1E     <- the REAL K_p X table
-   V159 edited     0xC6728  =  tp + 0x7728   <- AN UNRELATED CAL
-```
-🛑 **I confused `0x7B1E` with `0x771E`** — an **off-by-0x400** address error, the same family as
-the off-by-0x1000 trap `CLAUDE.md` records **six** times.
-
-### 🛑 THE REAL TABLES KILL THE FINDING OUTRIGHT
-```
-   K_p  tp+0x7b1e = 0xC6B1E   X=[  0, 300, 2000, 4000]   Y=[ 256,  256,  225,  153]
-   K_i  tp+0x7b0a = 0xC6B0A   X=[  0, 400, 1500, 3000]   Y=[  98,   98,   98,   98]
-   K_d  tp+0x7ade = 0xC6ADE   X=[ 50, 400, 1500, 3000]   Y=[2048, 2048, 2048, 2048]
-```
-⇒ the operating point **`gp-0x6ac0` = 99 [94, 113]** lies in **segment 0 of every one of them**:
-K_p is **256 -> 256 (FLAT)** from 0 to 300; **K_i and K_d are FLAT at every knot.**
-⇒ **[EVIDENCE] ALL THREE PID LANE GAINS ARE FLAT AT THE OPERATING POINT. There is NO parametric
-gain modulation there — not 18 %, not any.**
-⇒ **the whole "parametric pump at lane gain A" line is VOID**, and so is V159.
-✅ **The hypothesis is now CLOSED properly**, on the correct tables: the lane gains cannot be the
-source of a 2f parametric pump, because they do not vary at the rate the symptom lives at.
-
-### 🛑🛑 THE PROCESS FAILURE IS WORSE THAN THE ARITHMETIC
-```
-   1. computed tp+0x7b1e wrong (0xC671E)                  -- a digit error
-   2. the garbage there happened to LOOK like a 4-knot table for lane A
-   3. lanes B/C read NON-ASCENDING X                      -- the CORRECT symptom of a wrong base
-   4. I RETRACTED -- right instinct, WRONG reason (blamed the LAYOUT, not the ADDRESS)
-   5. I "verified" against the decompile -- and RE-DERIVED THE SAME WRONG ADDRESS
-   6. UN-retracted, and built V159 on an unrelated cell
-```
-🛑 **The non-ascending X was the signal, and I read it twice and misdiagnosed it twice.**
-⭐ **RULE: when a neighbouring record of the same family decodes as nonsense, suspect the BASE
-ADDRESS before the LAYOUT.** A wrong base makes *every* record in the family garbage; a wrong layout
-usually breaks them all *the same way*. **Lane A "working" while B and C were garbage was itself the
-tell** — a correct base makes all three work.
-⭐ **RULE: re-deriving an address the same way is not verification.** Step 5 felt like a check and
-was not one. **Verify a tp offset by ADDING IT TO tp EXPLICITLY and printing both**, which is what
-finally caught this.
-
-### ✅ WHAT THIS COSTS AND WHAT IT LEAVES
-⊕ **Nothing reached the car.** V159 was built and pushed but never flown.
-⊕ **The lane-gain hypothesis is now closed on correct data** — a real result, not just a retraction.
-🛑 **V158's shared-axis GATE 2 is now CLOSER to closable**: the model demanded FactorE edits be
-sized against the PID's schedule on the same axis, and **that schedule is FLAT at the operating
-point**, so **the coupling the model worried about does not bite at 99 counts.** That is the sizing
-it asked for — done, on the right tables.
-⇒ **V158 becomes the lead build again**, with its shared-axis gate substantially addressed.
 

@@ -402,3 +402,17 @@ know the ID" is excluded. **Any future firmware telemetry must ride the `0x14A` 
 
 ---
 
+### `0xC6384` — base-assist per-segment SLOPE CAP (Q10)  — **FIRST MOVED AT V168**
+- **stock 2048 = 2.000x**, byte-identical on **all 161 images** before V168.
+- Caps every segment slope of the 10-knot base power-assist curve in `FUN_000352b4` → `gp-0x6b86`,
+  the **largest torque-fed term in the aggregator** (±0x3000 window; **5.8–7.8x the entire PID**).
+- **The cap BINDS**: curve records `0xCE47A` (max slope 6.16, 3/9 segments, X 0–100), `0xCF372`
+  (16.37, 4/9, X 0–450), `0xCF3CA` (11.97, 3/9, X 0–150) — all six records byte-identical across
+  161 images. It pins the map's **small-signal gain at exactly 2.000**, the census CEILING for `s`.
+- **GATE 2 passes** anchored on the measured `Q_eff/Q_passive = 14.3`: cap 1536 → **3.4x more
+  damped**, 1024 → 5.7x. Phase passes because the term is a **real gain** — scales `|L|` without
+  rotating it, so it is monotone with no reversal.
+- **Does NOT touch LKAS**: map input is `clamp(gp-0x4f60) + gp-0x6b4a`, and `0xC616C`=0 (all 161
+  images) forces `gp-0x6b4a ≡ 0`. Feel cost falls on **driver-torque assist near centre** only;
+  the curve is uncapped above X≈450 so peak authority and max rates are untouched.
+- **V168** = V158 + `0xC6384` 2048→1536. BUILT, UNFLASHED. image `058dd64a…` .rwd `0f0ace3b…`
