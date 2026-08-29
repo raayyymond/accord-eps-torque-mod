@@ -105,3 +105,37 @@ added, but you will feel more damping in engaged creep. Headroom remains: Y[0] c
 | **adds damping** | no | no | **yes, 1.63x at creep** |
 | added lag @1 Hz | +29 ms | +43 ms | +43 ms |
 | manual feel changed | no | no | **no (asserted)** |
+
+---
+
+## V183 — the strongest fix, PLUS the probe that unblocks the damper family
+
+`9f9326170e8adab1…` · 24/24 · **3 bytes on top of V181, no cave change**
+
+Carries V181's complete fix unchanged, and repoints CAN 427 to `gp-0x6ac0` — the signal that **hard
+switches the entire base-assist damper off** (`gp-0x6ac0 >= 0x32C9` = 13001 zeroes the whole
+five-factor product).
+
+```
+0x55DF2  9544 -> 9540    427 source gp-0x6abc -> gp-0x6ac0
+0x55E10  a3   -> a4      packer sar 3 -> sar 4
+```
+
+**The shift had to move.** The 427 field is 10 bits at >>3, so its largest representable source is
+1023x8 = 8184 — *below* the 13001 gate. It would have saturated before reaching the threshold and the
+probe would have been worthless. At >>4 the max is 16368, resolution 16/LSB, and the gate lands at
+field value 812.
+
+**What a null licenses, written before the drive:**
+
+| observation | conclusion |
+|---|---|
+| field stays >= 812 through engaged creep | damper is **hard OFF** whenever the ratchet happens — **the entire damper family is closed**, V182's direction included |
+| field < 812 for a meaningful fraction | the gate is not the blocker; FactorC/FactorE knots become worth sizing |
+| field pinned at 1023 | still saturating — the shift needs to go further, said unambiguously rather than silently |
+
+So the drive tests the strongest available fix **and** answers a question that no amount of further
+desk work can, because neither `gp-0x6ac0` nor `gp-0x6a5e` is in the corpus.
+
+⚠ Cost: 427 stops carrying `gp-0x6abc` for this drive, and the channel is rescaled 2x, so historical
+427 comparisons must account for the shift.
