@@ -101,16 +101,42 @@ def _windows(tag):
 
 
 def _report(f, hiP, loP, label):
+    """Report the excess AND test whether it is band-specific or a global level shift."""
     D = 10 * np.log10(np.median(hiP, 0) / np.maximum(np.median(loP, 0), 1e-30))
     print('\n  %s -- audio excess (dB):' % label)
+    vals = []
     for lo, hi in BANDS:
         w = (f >= lo) & (f <= hi)
-        print('     %5d-%5d Hz   %+6.2f dB' % (lo, hi, np.median(D[w])))
+        b = np.median(D[w])
+        vals.append(b)
+        print('     %5d-%5d Hz   %+6.2f dB' % (lo, hi, b))
     w = (f >= 20) & (f <= 3000)
     ff, dd = f[w], D[w]
     top = np.argsort(dd)[::-1][:8]
     print('  strongest lines: %s'
           % ', '.join('%.0f Hz %+.1f' % (ff[k], dd[k]) for k in sorted(top, key=lambda k: ff[k])))
+
+    # 🛑 THE UNIFORMITY GUARD -- the acoustic analogue of the 30-40 Hz negative control.
+    # A speed match is NOT sufficient: ra6 passed the 2 km/h gap check and still produced
+    # +3.00 dB at 20-50 Hz AND +3.21 dB at 2000-5000 Hz -- the whole spectrum lifted together.
+    # A band-specific result must show SPREAD across bands; a uniform lift is a level difference
+    # (mic gain, window, engine load, surface), not a steering-related one.
+    vals = np.array(vals)
+    lo_b, hi_b = np.percentile(vals, 10), np.percentile(vals, 90)
+    spread = hi_b - lo_b
+    level = np.median(vals)
+    print('  band spread %.2f dB (p10 %+.2f .. p90 %+.2f), median level %+.2f dB'
+          % (spread, lo_b, hi_b, level))
+    if abs(level) > 1.0 and spread < 2.0:
+        print('  🛑 UNIFORMITY GUARD FAILED -- every band moved together (%+.2f dB median, only'
+              ' %.2f dB of spread).' % (level, spread))
+        print('     That is a GLOBAL LEVEL difference, not a steering-band result.  NOTHING may be')
+        print('     read from it.  Speed-matching alone does not exclude this -- ra6 passed the')
+        print('     speed gap check and failed here.')
+        return False
+    print('  ✅ the excess is BAND-SPECIFIC (%.2f dB of spread) -- not a global level shift'
+          % spread)
+    return True
 
 
 def run(tag):
@@ -145,9 +171,10 @@ def run(tag):
                       % (gap, MAX_SPEED_GAP))
                 print('     produced a spurious uniform +10 dB on r24.  Falling back.')
             else:
-                _report(f, P[me], P[mm], 'ENGAGED minus MANUAL at creep (PRIMARY)')
-                print('  ✅ primary contrast ran speed-matched -- engine and road noise are common'
-                      ' to both arms and cancel.')
+                ok = _report(f, P[me], P[mm], 'ENGAGED minus MANUAL at creep (PRIMARY)')
+                if ok:
+                    print('  ✅ primary contrast ran speed-matched AND band-specific -- engine and'
+                          ' road noise are common to both arms and cancel.')
                 return
         else:
             print('  primary needs >=25 windows per arm after speed-matching (%d/%d) -- falling back.'

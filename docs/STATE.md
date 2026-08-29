@@ -1,5 +1,42 @@
 # STATE — living current state of the kit
 
+## ⛔✅ **NO STABLE ACOUSTIC MARKER ACROSS ROUTES — AND SPEED-MATCHING ALONE IS NOT ENOUGH**
+Two results from running the creep acoustic contrast across four existing routes.
+
+### ⛔ THE HF CLUSTERS DO NOT REPLICATE — THE ENDPOINT MUST STAY WITHIN-DRIVE
+r24's fallback threw up a coherent **2389–2688 Hz cluster at +4–5.5 dB**, which looked like it might be
+an acoustic signature of the ratchet. It is not:
+```
+   r24  (fallback)  2389-2688 Hz  +4.2 .. +5.5
+   r23  (primary)    408- 416 Hz  +5.2 .. +7.3
+   ra6  (primary)    908- 920 Hz  +9.7 .. +10.5
+   r22  (primary)    193/385/387/443/488/1885/2705 Hz  +3.0 .. +4.8
+```
+**Every route has a different cluster.** ⇒ there is **no stored acoustic signature to compare a V158
+drive against**; the acoustic endpoint must be **within-drive** (V158's engaged arm vs its own manual
+arm), exactly like the band scorer. Recorded so nobody builds a cross-route acoustic reference.
+
+### ⛔ AND ra6 EXPOSED A HOLE IN MY OWN GUARD
+```
+   ra6   speed gap 1.18 km/h   -> PASSED the speed check
+         20-50 Hz +3.00 dB  AND  2000-5000 Hz +3.21 dB  -- the WHOLE spectrum lifted together
+```
+A speed match does **not** exclude a global level difference (mic gain, window position, engine load,
+surface). My tool checked the speed gap and then reported the spectrum as a result. **That is the same
+class of error the 30–40 Hz negative control exists to catch in the band scorer** — I had built the
+acoustic tool without its analogue.
+
+✅ **THE UNIFORMITY GUARD**, now added and validated on real data:
+```
+   ra6   band spread 1.55 dB, median level +3.21 dB  ->  🛑 FAILED (global level shift)
+   r22   band spread 1.23 dB, median level +0.34 dB  ->  ✅ PASSED (band-specific)
+```
+The test is **large level AND small spread**, not spread alone — which is why r22's similar spread
+passes on a near-zero level while ra6's fails on +3.21 dB.
+⭐ **EVERY CONTRAST NEEDS A NEGATIVE CONTROL, INCLUDING THE ONES YOU JUST BUILT.** I added the null
+gate to the band scorer after it over-claimed, then built an acoustic tool with no equivalent and it
+over-claimed the same way on the first route that could expose it.
+
 ## ✅✅ **THE AUDIO CHANNEL IS VALIDATED — AND IT WAS POINTED AT THE WRONG BAND AND SPEED**
 Audio is the channel that has tracked the operator's report where the bus has not, so it was the last
 drive-side dependency to audit. It runs: **16,364 blocks aligned to the CAN timebase on r24**, with
@@ -2172,161 +2209,4 @@ independent confirmation of [[reference-accord-state4-governor-ratchet]] and of
 
 ⇒ **The probe on `0xC61BC` is now the last standing question about creep authority**, and it is the
 only one whose answer could break the authority/grinding tension.
-
-## 🛑🛑 **THE CREEP-AUTHORITY CHAIN IS CLOSED — LOCKOUT ALREADY PULLED, NEXT CONJUNCT NOT A CAL**
-All three complaints live at **2–8 km/h**, and the kit's most on-target lever for that band is the
-**low-speed steer lockout**. Followed it to the end. **Both links are closed, and the record needed
-two corrections.**
-
-### 🛑 LINK 1 — THE LOCKOUT IS **ALREADY REMOVED** ON THE FLYING BUILD
-```
-   0xC62EA  low-speed lockout threshold   stock 320 (4.995 km/h)   V122 = 0   => NO LOCKOUT
-   across 157 images: {0: 108, 320: 49}
-```
-⇒ **[EVIDENCE] `0xC62EA` = 0 on V122 — the lockout has been off for most of the arc.**
-⇒ **the 6.4 % command railing at 2–8 km/h is NOT caused by the low-speed lockout.** That lever is
-**spent, not available**, and must not be re-proposed.
-
-### ✅ LINK 2 — THE MEMORY'S OWN PRE-REGISTERED NEXT SUSPECT, AND IT IS **NOT CAL-REACHABLE**
-`accord-low-speed-lockout-window-c62ea` pre-registered the follow-up: *"If a lowered `0xC62EA`
-doesn't work, `gp-0x69aa` is the next suspect."* **It doesn't work — it is already 0 — so the suspect
-is activated.** Read at its site (`0x29000–0x29200` **byte-identical stock vs V122**):
-```asm
-   0x290fc  ld.hu -0x69aa, gp, r14      ; the governor Q15 derate
-   0x2910c  ori   0x8000, r0, r9        ; 0x8000 built as an IMMEDIATE
-   0x29110  cmp   r9, r14
-   0x29112  bh    0x29138               ; UNSIGNED HIGHER -> the FAILURE path (STEER_STATUS = 3)
-```
-🛑 **The 0x8000 threshold is a HARD-CODED IMMEDIATE (`ori 0x8000, r0, r9`), NOT `cal(0xC63F2)`.**
-`0xC63F2` = 32768 is read at `0x28ECE`, a **different site** with a different role.
-⇒ **[EVIDENCE] the governor-derate conjunct is NOT reachable by any calibration.** Changing it would
-need an in-place instruction edit. **The pre-registered next suspect is closed as a cal lever.**
-
-### ⚠ CORRECTION 1 — THE COMPARISON IS `<=`, NOT `==`
-The memory records the conjunct as **`gp-0x69aa == 0x8000`**. The instruction is `cmp r9,r14` then
-**`bh`** (branch if unsigned HIGHER) to the failure path.
-⇒ **the passing condition is `gp-0x69aa <= 0x8000`, not `== 0x8000`.** Any derate BELOW unity still
-passes; only values ABOVE 0x8000 fail. **[CORRECTED in the record.]**
-
-### ⚠ CORRECTION 2 — I HIT THE OFF-BY-0x1000 TRAP, AND CAUGHT IT
-I first wrote `tp+0x73F2` as **`0xC73F2`**. `tp = 0xBF000`, so it is **`0xC63F2`**.
-⇒ **that is the SIXTH recorded recurrence** of the trap `CLAUDE.md` calls out (it lists five).
-⇒ caught by anchoring against the memory's own stated value (32768) — the wrong address read **14**,
-the right one reads **32768**. **The anchor-against-a-known-value discipline is what caught it, and
-it is worth keeping in front of every session.**
-
-### ✅ WHAT REMAINS OF THE CREEP-AUTHORITY QUESTION
-```
-   0xC62EA  lockout threshold        ALREADY 0 -- spent
-   gp-0x69aa governor derate         threshold is a HARD-CODED IMMEDIATE -- not a cal
-   gp-0x67fe substate == 2           a state, not a cal
-   gp-0x69ae within +-0x4000         not yet examined
-   5-channel validity test           not yet examined
-   0xC61BC  setpoint clamp +-15360   VIRGIN, binding UNKNOWN  <-- the only cal candidate left
-```
-⇒ **of the AND-chain that gates control-active at creep, the only remaining CAL-reachable candidate
-is `0xC61BC`** — which is exactly the cell the `iVar31 ≥ 5482` probe would settle.
-⇒ **the probe is now the last cal-reachable question in the entire creep-authority chain.**
-
-## 🛑🛑🛑 **ALL THREE COMPLAINTS ARE CREEP PHENOMENA — AND SPEED-SCHEDULING THE GAIN IS DEAD**
-Tried to **make** a new lever rather than find one: **schedule the gain by speed** — high where
-authority saturates, low where grinding lives — which would break the authority/grinding tension
-outright. **It only works if the two live at different speeds. They do not.**
-```
-   WHERE THE COMMAND RAILS  (engaged frames, all routes pooled, 1.6 M frames)
-   speed band       engaged frames     railed    rail duty
-   0-2   km/h            140,277          546      0.389 %
-   2-8   km/h            156,381        9,956      6.367 %   <-- THE PEAK
-   8-16  km/h            438,274        3,836      0.875 %
-   16-25 km/h            498,164          842      0.169 %
-   25-40 km/h            372,168           34      0.009 %
-
-   CREEP (0-8 km/h)  3.540 %      HIGHWAY (>=16 km/h)  0.101 %      ratio 35x
-```
-⇒ **[EVIDENCE] authority saturation is a CREEP phenomenon** — **6.4 % of engaged frames at
-2–8 km/h**, falling **35x** by highway speeds.
-⇒ **🛑 SPEED-SCHEDULING THE GAIN IS DEAD AS A LEVER.** There is no band where authority is needed
-and grinding is absent — they are **the same band**. A gain that is high where the command rails is
-high exactly where the grinding is. **Lever class closed before any build was spent on it.**
-
-### ⭐ BUT IT UNIFIES THE THREE COMPLAINTS
-```
-   peak command oscillation   the command rails at its 13-bit max, 6.4 % of frames at 2-8 km/h
-   LKAS authority             saturated in that same 2-8 km/h band
-   grinding / ratcheting      symptom A's micro regime (1-13 deg/s) and symptom B's <10 mph
-                              acoustic excess are BOTH in that same band
-```
-⇒ **[EVIDENCE] all three of the operator's complaints are the SAME OPERATING POINT: engaged creep,
-roughly 2–8 km/h.** They have been treated as three problems for the whole arc; they are three
-observations of one regime.
-⇒ **any real fix must act AT CREEP**, and a fix that only works above 16 km/h addresses none of them.
-
-### ✅ WHICH SHARPENS THE FLIGHT ORDER — V157 IS THE ONLY BUILD TARGETED AT THE RIGHT PLACE
-```
-   V157 / V156   act ONLY at creep      FactorC opens below 35 km/h AND FactorE below 12.73 deg/s
-                                        => the damper is non-zero EXACTLY in the 2-8 km/h band
-   V153 / V152   act at ALL speeds      observer poles are not speed-gated
-   V149 / V150   act at all speeds      switch removal, not speed-gated
-   V139          acts at all speeds     pump arms, not speed-gated
-   V155 / V154   act at all speeds      inertia-lane weight, not speed-gated
-```
-⇒ **V157 is the ONLY queued build whose effect is confined to the band where all three symptoms
-live.** Every other lever spends its effect mostly outside it.
-⇒ **This is now the strongest argument for V157 first**, and it is an argument from measurement
-rather than from mechanism.
-
-## ⚠ **THE RAILED-COMMAND NATURAL EXPERIMENT IS UNDERPOWERED — RECORDED SO IT IS NOT RE-RUN**
-A rail episode freezes the command at ±4096, so it is a **natural experiment**: if the ratchet
-persists while the command is constant, the command is not driving it. Ran it. **The cached data
-cannot support it.**
-```
-   tq 6-9 Hz share, RAILED / FREE windows, matched on speed bin, 1.3 s windows
-   route   n_rail  n_free   6-9 Hz ratio   26-31 Hz "control"
-   r75          4     316        1.73            0.31
-   r77          9     465        2.21            0.32
-   r9e          3     180       19.05            0.04
-```
-🛑 **ONLY 3 ROUTES QUALIFY, with 3–9 railed windows each**, and the ratios span **1.73 to 19.05**.
-🛑 **AND THE STATISTIC IS COMPOSITIONAL** — band *share* is normalised to 1–45 Hz, so 6–9 Hz rising
-**forces** the control band down arithmetically. **The control here is NOT independent evidence**,
-which is precisely the failure mode `feedback-run-the-control-before-the-measurement` warns about.
-⇒ **[NOT CLAIMED] anything from these numbers.**
-⊕ **Directionally** all three exceed 1 while the command is frozen, which is consistent with the
-ratchet not being command-driven — and that is **already established independently** by V87 (the
-7.8 Hz line has prominence **12.9 in the COLUMN but 4.0 = chance in the COMMAND**). **The experiment
-adds nothing V87 did not already give.**
-⇒ **What would close it: rail episodes are ~0.78 % of engaged frames and only 28 % of routes have
-any. This needs a drive that DELIBERATELY sustains saturation** (a long steady curve at creep) — and
-even then it only re-confirms a settled point. **Low value; recorded so it is not attempted again.**
-
-## ⚠ **THE RAILED COMMAND IS SUSTAINED ONE-SIDED SATURATION, NOT A RAIL-TO-RAIL LIMIT CYCLE**
-Follow-up to the ±4096 rail finding: **is the railing a limit cycle?** Tested, and the answer is
-**no — and the test that would have said yes is underpowered, which I am recording rather than
-dressing up.**
-```
-   route     n_eng    neg%   pos%   rail-to-rail alternations   median gap   implied freq
-   r78       56230   0.70%  0.32%              6                  1.25 s       0.401 Hz
-   r85       12000   1.23%  4.00%              4                  5.82 s       0.086 Hz
-   r96       35048   0.37%  0.70%              4                  1.84 s       0.272 Hz
-   r96s11     6000   2.18%  4.10%              4                  1.84 s       0.272 Hz
-   pooled: 12 intervals, median 1.84 s, quartiles 1.37 / 1.84 / 2.23
-```
-🛑 **ONLY 4 OF 114 ROUTES EVER SWING RAIL-TO-RAIL, and they yield 12 intervals total with a 4.7×
-spread in implied frequency (0.086–0.401 Hz).**
-⇒ **[NOT CLAIMED] a limit-cycle frequency.** Twelve intervals across four routes that disagree by
-4.7× is not a measurement; quoting "0.27 Hz" from it would be exactly the kind of number this kit
-has had to retract before.
-
-### ✅ WHAT IT DOES ESTABLISH — AND IT SHARPENS THE EARLIER RESULT
-**The command overwhelmingly rails on ONE side and STAYS there** — up to **399 frames ≈ 4 s**
-continuous — rather than alternating between rails.
-⇒ **the operator's "peak command oscillation" is, in the data, SUSTAINED ONE-SIDED AUTHORITY
-SATURATION**, not a controller limit cycle between limits.
-⇒ **that is consistent with, and strengthens, the authority diagnosis**: openpilot asks for the
-maximum the field can carry and holds it, because the plant is not delivering enough per count.
-⇒ **it also means no "oscillation-damping" lever applies** — there is no cycle to damp. **The fix
-is torque-per-count, which is the gain (frozen) or `0xC61BC` (binding unknown).**
-
-⊕ **This turn produced a refinement, not a breakthrough**, and the analysis remains where it was:
-**eleven verified builds unflown, and the binding constraint is a drive.**
 
