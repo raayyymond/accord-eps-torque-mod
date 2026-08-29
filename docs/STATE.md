@@ -1,5 +1,61 @@
 # STATE — living current state of the kit
 
+## ✅✅ **THE 11 SLOTS ARE IDENTIFIABLE AFTER ALL — `FUN_00025c32` IS A REGISTRATION FUNCTION**
+The previous section recorded the slots as unidentifiable because they are written through a
+computed pointer (`ep = gp-0x62F8 + r12`) and all 14 writer sites use a **loop register**
+(`add r1/r6/r8/r12/r14, r30`), so no static offset exists to read. **That is true of the WRITES —
+and it was the wrong place to look.**
+
+### ✅ THE STRUCTURE
+```c
+   undefined1 FUN_00025c32(byte *param_1)
+   {
+     iVar9 = min(*param_1, 10);                                   // THE SLOT INDEX -- FROM THE CALLER
+     ...
+     *(short *)(gp-0x62e0 + iVar9*2) = clamp(param_1[2], +-0x4000);
+     *(short *)(gp-0x62f8 + iVar9*2) = clamp(param_1[4], +-0x2800);   // <- THE SLOT ARRAY
+     *(short *)(gp-0x6274 + iVar9*2) = clamp(param_1[6], +-900);
+     *(short *)(gp-0x633c + iVar9*2) = clamp(param_1[8], +-20000);
+     *(short *)(gp-0x6230 + iVar9*2) = clamp(param_1[10], 0x400);
+     *(char  *)(gp-0x61a0 + iVar9)   = <state 0..5>;               // per-slot LIVE STATE
+   }
+```
+⇒ **it is a REGISTRATION / UPDATE call: each caller registers into the slot named by the FIRST
+BYTE of the struct it passes**, and `param_1[1]` is a mode/command (0–5) selecting the update path.
+⊕ **`gp-0x61a0` is the per-slot LIVE STATE array** (0–5), distinct from the `0xC4124` cal of the
+same shape — the cal is the configured type, the RAM array the runtime state.
+
+### ✅ AND THERE ARE EXACTLY TEN CALLERS, FOR ELEVEN SLOTS
+```
+   FUN_00023ad2   FUN_00023fe2   FUN_0002b422   FUN_0002c246   FUN_0002caa2
+   FUN_0002e52e   FUN_000339cc   FUN_0003405a   FUN_0003a8a8   FUN_0003aff4
+```
+⭐ **This converts an intractable dataflow problem into a BOUNDED ENUMERATION**: decompile each
+caller, read the `param_1[0]` it passes, and the slot map is complete. ⊕ Two of them
+(`FUN_0003a8a8`, `FUN_0003aff4`) sit beside the aggregator `FUN_0003aa2c`, and `FUN_0003405a` sits
+beside the base-assist damper `FUN_00034350` and the `gp-0x6bbe` producer `FUN_00034a72` — so the
+map will name real subsystems, not opaque indices.
+
+### ⭐ WHY THIS MATTERS FOR THE FIX
+`gp-0x6B4C` is the **highest-ranked grind carrier** (22.84 % / 22.50 % of its own variance in
+18–22 Hz, both routes), and `0xC4124[i] : 0 → 5` disables **one slot** on a **byte cal with no
+cave**. **Once the map exists, the lever becomes a single named subsystem removed from the grind
+carrier** — the most precise lever this kit has ever had.
+🛑 **Still NOT built, and deliberately so.** Disabling an unidentified slot removes an unknown
+assist component; that is the pattern that produced V133's regression. ⊕ And a "disable ALL seven
+contributors" experiment was considered and **rejected**: `r28` accumulates the weights, four
+divide-class instructions exist in `FUN_00027b0a` (0x28168, 0x2820C, 0x2847C, 0x285A0), and while
+none of their divisors is `r28` in a direct read, **that scan is not exhaustive and a
+divide-by-zero in an EPS control path is not a risk worth taking on an incomplete check.**
+
+### ⭐ STATUS
+```
+   lane = top grind carrier                     MEASURED, both its routes agree
+   lever, cal-only, no cave                     IDENTIFIED   0xC4124[i] 0 -> 5
+   slot map                                     BOUNDED -- 10 callers, read param_1[0] from each
+```
+**V147 remains the build to fly.**
+
 ## ✅ **THE `gp-0x6B4C` LEVER IS IDENTIFIED — AND ONE THING BLOCKS IT: WHICH SLOT**
 `gp-0x6B4C` is the highest-ranked grind carrier (22.84 % / 22.50 % of its own variance in
 18–22 Hz, on both its routes). Its producer `FUN_00027b0a` walks an **11-slot TYPE DISPATCH**:
