@@ -1,5 +1,13 @@
 # DRIVE CARD — V173  ·  **FLY THIS**
 
+> 🛑 **FLIGHT ORDER CHANGED 2026-08-29: FLY **V175** FIRST, NOT V173.**
+> V175 *contains* V173 (same poles, same notch) plus a 12-byte revert of the engaged
+> apparent-inertia dose to Honda's own row. The revert is a **lower risk class** than V173's own
+> edit, it removes a **relay hazard that is unmeasured on V173**, and it carries its own
+> **engaged-vs-manual** discriminator, so flying V173 alone buys attribution V175 already provides.
+> Card: `docs/scoring/DRIVE-CARD-V175.md`. V173 and V174 remain on the shelf as frontier points.
+
+
 **Flash target:** `39990-TVA,A160-V173-V158BASE-ASSIST.SECTION.POLES.NOTCH.KEPT-0x13000-0x100000.rwd`
 **.rwd SHA256** `5d213cf8604df90f2df2eaa2a8e40ccedde89f1d66055cb2a22c81edb7245396`
 **image SHA256** `a9877aeecfbbbf2436c63fbc81041e1dfbfde787f5a1bf8ea58404b8f86ab1f7`
