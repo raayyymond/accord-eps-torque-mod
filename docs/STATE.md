@@ -4,6 +4,32 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **V197 — V196 PLUS THE ONE MEASUREMENT THAT SAYS WHETHER ITS RATCHET LEVER IS WELL AIMED**
+V196 halves the **smallest live exciter** (`gp-0x6b26`, clamp 1024, further clamped to 511) while
+`gp-0x6bbe` is live, **ω¹**, carries **twice the clamp**, and is **byte-stock across the whole arc**.
+Constants cannot say which dominates the 8 Hz sum. **So measure it rather than guess again.**
+```
+   0x55DF2  hw2   0x9540 (gp-0x6AC0)  ->  0x9442 (gp-0x6BBE)
+   0x55E10  shift sar 4               ->  sar 3
+   V197 vs V196 = 3 payload bytes, ALL TELEMETRY. Not one control cell changes.
+```
+✅ **40/40 assertions.** `b70483e02b110b740aa93635f9ddeebe1ddc19b38958b824598eba712a4d392b`
+⊕ **The shift is sized to the SOURCE again:** `gp-0x6bbe` is clamped to ±2048 by its writer, so
+**sar 3** keeps 8-count resolution with the sign intact (positives raw 0–256, negatives 768–1023,
+unambiguous to |x| ≤ 4088). V194 used sar 6 because `gp-0x6c2c` spans the full int16 — **using sar 6
+here would throw away three bits of a ±2048 signal.**
+⊕ Decoder: `rlog-tools/probe/decode_v197_viscous_term.py <tag> --v197`, which refuses on any other
+build's capture.
+
+⊕ **A correction to my own earlier summaries while verifying this:** V196 does **NOT** carry V190's
+`0xC64AE` disable, V191's `0xC640A`, V192's slew curve or V193's dwell — it descends
+V195 ← V189 ← V188 ← V185, which never included them. **V196's complete lever set is: the notch,
+K1 → Honda, accel alpha → Honda, w[3] halved, FactorC m27 → stock, and the engaged inertia half
+dose.** The builder now asserts m26 = half dose and m27 = Honda separately, which is what caught it.
+
+⇒ **THE FORK IS NOW CLEAN:** fly **V196** to fix, or **V197** to fix *and* learn where the ratchet's
+energy actually comes from. They are the same car; V197 costs three telemetry bytes.
+
 ## ⭐ **THE EXCITER LIST: ONLY FOUR AGGREGATOR TERMS ARE LIVE, AND V196 TOUCHES THE SMALLEST**
 The ratchet is a **plant** resonance, so firmware can only reduce what **excites** it. The exciters
 are the terms summed in `FUN_0003aa2c` into `gp-0x6b94`. Each carries a hard clamp — an upper bound
@@ -2221,27 +2247,4 @@ on one pass, the pole-retune account is in trouble** — a real, pre-registered 
 ⚠ The ratchet's *amplitude-change* endpoint needs **2** passes (margin 0.86x). The ratchet's
 **presence/absence** endpoint does not — it is an ~8x move and one window resolves it. **Keep those
 two questions separate**: "is it gone" is answerable now; "by how much did the band fall" is not.
-
-## ⚠ **POWER CHECK BEFORE THE DRIVE: THE V175 CARD WAS UNDERPOWERED FOR ATTRIBUTION — NOW STAGED**
-**Caught before the drive rather than after, which is the whole point of the design law.** The card
-asked for one 15 s engaged pass and one 15 s LKAS-off pass and attributed the result via the
-engaged/manual ratio. Resampling real 15 s creep windows out of the corpus and scoring them exactly as
-the card says:
-```
-   engaged 15 s window   n=27   p50 214.3   log10 sd 0.332
-   manual  15 s window   n=22   p50  17.2   log10 sd 0.270
-   single-pair RATIO            p50  10.5   95 % band [1.33, 56.49]   log10 sd 0.418
-   => ONE pair resolves only a change LARGER THAN 6.6x
-      2 pairs 3.80x  ·  3 pairs 2.97x  ·  4 pairs 2.57x  ·  6 pairs 2.16x
-```
-🛑 **V175's predicted ratio move is well under 6.6x** (a 3.0x dose on one of six terms in the
-sum) ⇒ **a single pair could not have attributed the result.**
-✅ **The PRIMARY question is unaffected and stays a single pass**: the ratchet endpoint is
-**presence/absence**, an ~8x move, and one 15 s engaged window resolves it 11/11 on the corpus.
-✅ **The card is now STAGED**: Stage 1 is one engaged pass and stop — which is exactly the operator's
-own rule (*"if I observe micro-ratcheting or grinding, I am generally going to stop instantly"*).
-**Stage 2 (three alternating engaged / LKAS-off passes, ~90 s total) is driven ONLY if Stage 1 shows a
-win**, because attribution only matters when there is something to attribute.
-⊕ **Generalises**: any endpoint that is a RATIO of two separately-driven conditions costs roughly
-**4x the exposure** of a presence/absence endpoint. Stage ratio endpoints behind the presence check.
 

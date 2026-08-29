@@ -66,6 +66,16 @@ comparable prediction, so that one the drive simply measures.
 🛑 If the grind stays above ~15×, the notch is not reaching the signal — check the biquad
 arm `0xC649B` and the engagement gate before touching the design.
 
+## ⭐ V197 — V196 plus one measurement, same car
+```
+39990-TVA,A160-V197-V196BASE-PROBE-THE-VISCOUS-TERM-0x13000-0x100000.rwd
+image b70483e02b110b740aa93635f9ddeebe1ddc19b38958b824598eba712a4d392b
+```
+Identical to V196 except **three telemetry bytes**: the 427 probe reads `gp-0x6bbe`, the
+viscous exciter. It answers whether V196’s ratchet lever is aimed at the dominant source of
+8 Hz energy or a minor one. **No control cell differs from V196.**
+After the drive: `python rlog-tools/probe/decode_v197_viscous_term.py <tag> --v197`
+
 ## 🛑 RUN THIS FIRST, ON THE FILE YOU ARE ABOUT TO SEND
 ```
 python flashing-2020accord/preflight.py V196
