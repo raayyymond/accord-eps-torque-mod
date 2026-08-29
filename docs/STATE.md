@@ -4,6 +4,49 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅✅✅ **V191 — THE FIRMWARE BOOSTS ITS ANTI-DAMPING *AFTER* ITS OWN DETECTOR SEES OSCILLATION**
+`gp-0x671a` is Honda's **HARD-REVERSAL COUNTER** — a built-in oscillation detector, clamped at
+CEIL = 5 (`0xC64FA`). `FUN_00036c12` branches on it:
+```c
+   if (gp-0x671a < 0xFF && gp-0x67f4 == 1) {
+       if (gp-0x671a < cal(0xC64FD)=5)   L = LERP(0xCBE74[mode], gp-0x6a5e);   // normal
+       else                              L = cal(0xC640A) = -8192;             // OSCILLATING
+   } else                                L = cal(0xC640C) = -3277;
+   gp-0x6b26 = clamp( ((accel * L) >> 6) * 273 >> 18, +-cal(0xC407E) )
+```
+```
+   LERP Y (Honda, mode 26) = [-9830, -5734, -1966]     on X = [0, 1280, 5760]
+   fallback when OSCILLATING = -8192   ** 4.2x STRONGER than the LERP's weak end **
+```
+⇒ **once sustained oscillation is DETECTED, the anti-damping acceleration gain can jump 4.2×
+STRONGER.** That is positive feedback on the thing the detector just found, and it is a plausible
+reason the ratchet **sustains instead of decaying** — which is exactly the character the ring-down
+work established (ζ 0.017–0.036, Q 14–29).
+
+### ✅ WHY THIS LEVER IS BETTER-SHAPED THAN ANYTHING ELSE IN THE ARC
+```
+   PROVABLY INERT OUTSIDE THE SYMPTOM   0xC640A is read ONLY on the counter>=5 branch, so below
+                                        saturation the cell is never loaded.  No steering-feel and
+                                        no LKAS-authority change on a calm road -- BY CONSTRUCTION,
+                                        not by measurement.
+   ACTS EXACTLY DURING THE SYMPTOM      the one moment we want the term gone.
+   ONE HALFWORD, cal-only, no cave.     never touched in the whole post-V38 arc.
+```
+✅ **V191 = V190 + `0xC640A` −8192 → 0.** 30/30 assertions.
+`82ce1db4e73099377c61a78c1b5033b5ca3ba3368062761e8836c709b0c29f4b`
+⊕ It also **does not depend on `gp-0x6a5e`'s value during the ratchet** — zeroing removes the term
+outright, so the edit is unambiguous whether or not −8192 was a "boost" at the live operating point.
+
+### ✅ AND IT SETTLED A REAL WORRY ABOUT V189
+The same branch decides whether the **inertia LERP is used at all.** Had `gp-0x671a` normally sat at
+or above 5, the LERP would be bypassed and **V184/V189's inertia revert would have been INERT** — the
+same failure class as mode 27. ✅ **It is not: the counter is a reversal count clamped at 5, so
+normal driving sits BELOW the threshold and the LERP path IS live.** The revert is real.
+
+⚠ **Sign basis is shared with V190** — `gp-0x6b26` anti-damping per the ★★★★★ result plus the
+3×-dose / 3.58×-ratchet observation. **If inverted, this term was DAMPING and zeroing it during an
+oscillation makes the ratchet worse.** Same pre-registered revert.
+
 ## ✅ **V190 UN-RETRACTED — THE DECIDING TEST IS THE SIGN *RELATIVE TO* `gp-0x6b26`, AND IT MATCHES**
 The retraction one section below was **wrong, and here is the specific error**: I judged
 `gp-0x6bc2` in isolation, asking *"does opposing acceleration mean damping?"* — a question that
@@ -2107,75 +2150,4 @@ decision, and it is the operator's — the builds are one coefficient triple awa
 Design work on the assist lane is **finished**. Both lever classes are cut and verified, both gates
 are closed, every artifact re-hashes from disk, and the remaining assumption is testable only by
 driving. **Seven builds, one decision table, one 15-second pass.**
-
-## 🚩✅ **V173 BUILT AND SUPERSEDES V172 — THE SAME LEVER WITHOUT GIVING UP HONDA'S NOTCH**
-```
-   V173 = V158 + THREE float32 cells (C_A8, C_AC, C_B4).  C_B0 left BYTE-IDENTICAL to stock.
-   image  a9877aeecfbbbf2436c63fbc81041e1dfbfde787f5a1bf8ea58404b8f86ab1f7
-   .rwd   5d213cf8604df90f2df2eaa2a8e40ccedde89f1d66055cb2a22c81edb7245396
-   11 payload bytes + one CRC trailer - 25/25 assertions - chain 50/50 - readback identical
-```
-
-### ⭐ THE STRUCTURE, COLLAPSED — AND IT SEPARATES
-```
-   H(z) = C_B4 * ( z^2 + C_B0*z + 1 ) / ( z^2 + C_A8*z + C_AC )
-```
-✅ the numerator's roots have **product 1** ⇒ the zeros are **always exactly on the unit circle**, so
-this is **always a true notch**, at `2 cosθ = −C_B0` ⇒ **`C_B0` ALONE sets the notch frequency.**
-✅ the poles are set by `C_A8`/`C_AC` **alone** ⇒ **notch frequency and damping are INDEPENDENT.**
-✅ `DC gain = C_B4 (2 + C_B0) / (1 + C_A8 + C_AC)`.
-
-### 🛑 WHICH EXPOSED A DEFECT IN V172
-Stock `C_B0` puts Honda's notch at **55.23 Hz, −43.9 dB**. **V172 moved it to 27.17 Hz** as a side
-effect of letting an optimiser choose all four coefficients ⇒ **V172 gives up Honda's 55 Hz notch
-entirely** (0.000128 → 0.251316 there). **We do not know what that notch is FOR**, and Honda placed a
-deep null at a specific frequency in the dominant assist lane deliberately.
-✅ **V173 keeps `C_B0` bit-for-bit and moves ONLY the poles:**
-```
-   freq        FLYING      V172        V173
-   0.5 Hz      0.999965    1.006656    0.994633     DC preserved
-   3   Hz      0.997530    0.850073    0.847560     driver band -- same as V172
-   8.64 Hz     0.978950    0.444078    0.476076     THE RATCHET -- same as V172
-   21  Hz      0.865930    0.090235    0.189446     grind 4.6x (V172 got 9.6x)
-   40  Hz      0.452204    0.134765    0.054184     better than V172
-   55.23 Hz    0.000128    0.251316    0.000013     ** HONDA'S NOTCH KEPT, and deeper **
-   group delay added at 0.5 Hz: V172 +30.1 ms, V173 +30.1 ms -- IDENTICAL (same poles)
-   loop effect: V173 5.8x vs V172 6.1x - max |H| to Nyquist 0.9946 => NEVER amplifies
-```
-⇒ **same lag, same ratchet effect, Honda's notch preserved, and THREE cells instead of four.**
-The trade is **half the grind attenuation**, which is the right side to err on: the ratchet is the
-**unsolved** symptom and both builds are equal there, while the grind **already has V158's damper on
-this same base.**
-
-### ❌ WHY THE NOTCH CANNOT BE PUT ON THE RATCHET — STRUCTURAL, NOT AN OPTIMISER FAILURE
-`C_B4 = DC(1+C_A8+C_AC)/(2+C_B0)` and `2+C_B0 = 2−2cosθ → 0` as the notch approaches DC, so **`C_B4`
-scales as ~1/f²**:
-```
-   notch  8.64 Hz => C_B4 13.576 => amplifies out-of-band 1503x
-   notch 27    Hz => C_B4  1.393 => amplifies 120x
-   notch 55.2  Hz => C_B4  0.336 => amplifies 1.0x   <- Honda's placement, the ONLY free one
-```
-⇒ **Honda put the notch at 55 Hz because that is where it costs nothing.** A notch at the ratchet
-needs 13.6x input gain and amplifies everything else. **The POLES, not the notch, are the lever in
-the ratchet band.**
-🛑 **I withdraw my remark that the optimiser “was fighting a structure it did not understand”** — it
-found the right shape for the right reason; the defect was only the notch it displaced.
-
-### 🛑 AND A CORRECTION TO MY OWN NOVELTY CLAIM
-I wrote that this session **“RETRACTS two recorded claims — ‘no frequency-selective lever’ and ‘no
-notch filter exists’”**. **`MEMORY-PART5` already carries that retraction**, in detail, with the same
-four coefficients, the ±19.88° zeros and the “transparent except at the notch” observation.
-**The kit found this first; I re-derived it without checking.** That is exactly the failure the
-`feedback-search-the-kit-before-naming-a-cause` memory exists to prevent.
-⊕ What IS new here: the **collapsed transfer function** and its separability, the **1/f² bound on
-notch placement**, the **task-rate resolution** below, and the **built lever**.
-
-### ✅ AND IT UNBLOCKS WHAT THAT MEMORY WAS PARKED ON
-`MEMORY-PART5` records this lever as **“BLOCKED ON THE TASK RATE — task 5 is bounded ≥250 Hz but
-NEVER pinned”**, with the notch landing anywhere from 13.8 to 55.2 Hz depending on the rate.
-✅ **[EVIDENCE] `get_function_callers(0x352b4)` returns exactly `FUN_0002214a`**, which the kit's own
-record identifies as **TASK 1, the CONFIRMED 1 kHz task**. The rate uncertainty belongs to **task 5**
-(`FUN_00022ca0`), a **different** task that drives the damper. ⇒ **the assist section runs at 1 kHz,
-the notch is at 55.23 Hz, and the block is lifted.** Confirmed independently: a full-band scan finds
-the flying section's null at **55.0 Hz, −43.9 dB**, matching the ±19.881° zeros exactly.
 
