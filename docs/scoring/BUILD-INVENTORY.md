@@ -1,6 +1,6 @@
 # BUILD INVENTORY — what is cut, and how to choose
 
-**Six builds are cut and unflashed. You can only fly one at a time, so this is the decision table
+**Seven builds are cut and unflashed. You can only fly one at a time, so this is the decision table
 rather than a list.** All are on the same V158 base, so all carry V158's damper shape (the grind
 lever) and all are scored from the same single 15-second engaged creep pass.
 
@@ -26,7 +26,8 @@ lever) and all are scored from the same single 15-second engaged creep pass.
 
 | | edit | ratchet | grind | what it costs | when to fly it |
 |---|---|---|---|---|---|
-| **V172** | `0xC60A8..B4` section retune | **6.1×** | **9.6×** | +30 ms group delay; 3–5 Hz down 15–32 % | **FIRST** |
+| **V173** | `0xC60A8/AC/B4` poles, notch KEPT | **5.8×** | 4.6× | +30 ms group delay; 3–5 Hz down 15–31 % | **FIRST** |
+| V172 | `0xC60A8..B4` all four | 6.1× | **9.6×** | as V173, **but loses Honda's 55 Hz notch** | if the grind is the priority |
 | V168 | `0xC6384` 2048→1536 | 3.4× | — | heavier near centre, always | if V172's lag is the problem |
 | V169 | `0xC6384` 2048→1792 | 2.2× | — | as V168, less of it | if V168 is close but too heavy |
 | V170 | `0xC6384` 2048→1280 | 4.5× | — | as V168, more of it | if V168 helps but not enough |
