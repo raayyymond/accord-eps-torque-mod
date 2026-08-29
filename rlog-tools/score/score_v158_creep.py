@@ -175,7 +175,17 @@ def peak_q(P, f):
         if Mw[j] < half:
             hi = fw[j]
             break
-    return (pk / (hi - lo)) if hi > lo else np.nan, pk, prom
+    q = (pk / (hi - lo)) if hi > lo else np.nan
+    # 🛑 RESOLUTION GUARD.  Welch with nperseg = NW//2 = 128 at 100 Hz gives df = 0.78 Hz, so the
+    # largest Q resolvable at frequency pk is pk / (2*df).  A measured Q near that ceiling is the
+    # WINDOW's width, not the resonance's.  This is why every 6-9 Hz endpoint has performed badly:
+    # the ratchet's ring-down Q is 14-29, and at 7.8 Hz the ceiling here is 5.0 -- unmeasurable.
+    # At 21 Hz the ceiling is 13.4 and measured Q is 4.5-9.0, so the grind band IS resolvable.
+    df = FS / (NW // 2)
+    qmax = pk / (2 * df)
+    if np.isfinite(q) and q > 0.6 * qmax:
+        return np.nan, pk, prom
+    return q, pk, prom
 
 
 def report_q(EP, f):
