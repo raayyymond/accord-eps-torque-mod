@@ -2545,3 +2545,24 @@ win**, because attribution only matters when there is something to attribute.
 ⊕ **Generalises**: any endpoint that is a RATIO of two separately-driven conditions costs roughly
 **4x the exposure** of a presence/absence endpoint. Stage ratio endpoints behind the presence check.
 
+## ✅ **EVERY DRIVE-CARD ENDPOINT IS NOW POWER-CHECKED — AND THE LKAS CLAIM WAS UNSUPPORTABLE**
+Against 27 real 15 s engaged creep windows, comparing ONE new window to the historical distribution:
+```
+   endpoint                 log10 sd   detect@1 pass   V175 predicts    margin   verdict
+   GRIND 15-25 Hz             0.396        5.96x         0.058x          2.91x   ANSWERABLE
+   lane-change 26-31 Hz       0.158        2.04x         0.029x         16.97x   ANSWERABLE
+   RATCHET 6.5-11 Hz          0.332        4.47x         0.260x          0.86x   needs 2 passes
+   LKAS band 0.5-3 Hz         0.654       19.16x         0.846x          0.06x   needs 54 passes
+```
+🛑 **RETRACTION on the card: I claimed the drive would show LKAS authority unchanged. IT CANNOT.**
+One pass bounds an LKAS-band change only to **19.2x**, so a measured null there is worthless and must
+never be reported as evidence of no change. **That authority is intact is an ANALYTIC claim** from the
+section transfer function (−0.05 to −1.42 dB over 0.5–3 Hz); **the operator's own impression is the
+better instrument** and is now what the card asks for.
+✅ **The good news is structural**: the build's LARGEST predicted effect (grind, a 17x cut) is also
+the **best-powered endpoint on the card**, margin 2.9x. ⇒ **if the grinding does not measurably fall
+on one pass, the pole-retune account is in trouble** — a real, pre-registered failure mode.
+⚠ The ratchet's *amplitude-change* endpoint needs **2** passes (margin 0.86x). The ratchet's
+**presence/absence** endpoint does not — it is an ~8x move and one window resolves it. **Keep those
+two questions separate**: "is it gone" is answerable now; "by how much did the band fall" is not.
+

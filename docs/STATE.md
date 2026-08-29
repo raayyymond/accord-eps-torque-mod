@@ -4,6 +4,50 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅⭐ **THE EXCITER MAP IS COMPLETE — zero unknowns, and my "4 LIVE" count was WRONG**
+The three terms I could not label are identified. Two of them were hiding in plain sight: the
+aggregator's own tail stores them.
+```c
+   *(short *)(gp - 0x6adc) = iVar21;      *(short *)(gp - 0x6ada) = iVar16;
+```
+⇒ **`iVar21` and `iVar16` ARE THE r26 AND r24 RATE LANES** — the lanes V62–V88 spent a dozen builds
+on. They are **LIVE, summed into the aggregator, with 8192 clamps.**
+⇒ **`gp-0x6ade` has exactly ONE site in the whole image — a READ at `0x3AA48` — and NO WRITER.**
+Both methods agree (Ghidra: 1 match; raw byte scan: 1 site). It holds its BSS-zeroed value forever,
+so it contributes **nothing**. **DEAD.**
+```
+   cell        clamp   status
+   gp-0x6b86   12288   LIVE    the biquad output -- LKAS command, 1-5 Hz
+   gp-0x6b4c   10240   LIVE    the 11-slot assist sum
+   gp-0x6ad4   10240   eliminated as a cause by V56
+   gp-0x6b62    8192   DEAD ENGAGED (0.0000 / 75,227 frames)
+   gp-0x6adc    8192   LIVE    <-- the r26 RATE LANE
+   gp-0x6ada    8192   LIVE    <-- the r24 RATE LANE
+   gp-0x6bbe    2048   LIVE    viscous, omega^1 -- BYTE-STOCK across the whole arc
+   gp-0x6bd0    2048   DEAD in 100 % of the micro regime
+   gp-0x6ade    1024   DEAD    read once, never written
+   gp-0x6b26    1024   LIVE    the inertia term, omega^2, clamped to 511   <-- V196 halves this
+```
+⇒ **6 LIVE · 4 dead or eliminated · 0 unidentified.** My earlier "4 LIVE" was wrong — it missed the
+two rate lanes because the decompiler had named them `iVar21`/`iVar16`.
+
+### ⭐ **WHAT THIS CHANGES: r24/r26 CARRY 8× THE INERTIA TERM'S AUTHORITY**
+```
+   gp-0x6ada / gp-0x6adc   clamp 8192      rate-derived => omega^1, so live at 8 Hz
+   gp-0x6b26               clamp 1024      further clamped to 511 by 0xC407E
+```
+✅ **And they are already-PROVEN grind levers**, both carried on V196:
+- **V62's `sar`×2 on the r24 lane — *"18–22 Hz down 8–42×, the kit's first measured fix"***
+- **V88's Lever B, `0xC6446` = 5244 — *"grinding FIXED on-car"*, operator-confirmed**
+
+⇒ **IF THE RATCHET NEEDS A BIGGER LEVER THAN THE INERTIA TERM, THE RATE LANES ARE WHERE TO LOOK.**
+They have 8× the authority, they are ω¹ so they carry 8 Hz content, and unlike the viscous path they
+are **already partly characterised on-car**. That is a far better-founded direction than any new
+mechanism — and it needs **no new hypothesis**, only a dose choice on a lane with a measured
+dose-response history.
+⚠ **But not before V197's measurement.** The same discipline applies: the rate lanes' 8 Hz content
+has not been measured either, and three of my hypotheses died this session for exactly that reason.
+
 ## ✅ **V197 — V196 PLUS THE ONE MEASUREMENT THAT SAYS WHETHER ITS RATCHET LEVER IS WELL AIMED**
 V196 halves the **smallest live exciter** (`gp-0x6b26`, clamp 1024, further clamped to 511) while
 `gp-0x6bbe` is live, **ω¹**, carries **twice the clamp**, and is **byte-stock across the whole arc**.
@@ -2226,25 +2270,4 @@ so it is not usable and the honest best is the wheel-rate number, 4.06x.
 by leave-one-out. **In-sample R² would have flattered this badly**; do not use it here.
 ⇒ **The instrument is near its limit and more covariates will not help.** Buying power on this
 endpoint means EXPOSURE, not cleverness — which is exactly why the card stages it behind a win.
-
-## ✅ **EVERY DRIVE-CARD ENDPOINT IS NOW POWER-CHECKED — AND THE LKAS CLAIM WAS UNSUPPORTABLE**
-Against 27 real 15 s engaged creep windows, comparing ONE new window to the historical distribution:
-```
-   endpoint                 log10 sd   detect@1 pass   V175 predicts    margin   verdict
-   GRIND 15-25 Hz             0.396        5.96x         0.058x          2.91x   ANSWERABLE
-   lane-change 26-31 Hz       0.158        2.04x         0.029x         16.97x   ANSWERABLE
-   RATCHET 6.5-11 Hz          0.332        4.47x         0.260x          0.86x   needs 2 passes
-   LKAS band 0.5-3 Hz         0.654       19.16x         0.846x          0.06x   needs 54 passes
-```
-🛑 **RETRACTION on the card: I claimed the drive would show LKAS authority unchanged. IT CANNOT.**
-One pass bounds an LKAS-band change only to **19.2x**, so a measured null there is worthless and must
-never be reported as evidence of no change. **That authority is intact is an ANALYTIC claim** from the
-section transfer function (−0.05 to −1.42 dB over 0.5–3 Hz); **the operator's own impression is the
-better instrument** and is now what the card asks for.
-✅ **The good news is structural**: the build's LARGEST predicted effect (grind, a 17x cut) is also
-the **best-powered endpoint on the card**, margin 2.9x. ⇒ **if the grinding does not measurably fall
-on one pass, the pole-retune account is in trouble** — a real, pre-registered failure mode.
-⚠ The ratchet's *amplitude-change* endpoint needs **2** passes (margin 0.86x). The ratchet's
-**presence/absence** endpoint does not — it is an ~8x move and one window resolves it. **Keep those
-two questions separate**: "is it gone" is answerable now; "by how much did the band fall" is not.
 
