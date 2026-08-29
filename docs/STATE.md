@@ -2,6 +2,21 @@
 
 
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
+## ✅ **THE SLOPE-CAP DOSE LADDER IS CUT — ALL FOUR DIRECTIONS READY, NO REBUILD NEEDED**
+```
+   build  cap    gain     Q ratio   vs stock   image SHA256 (first 16)
+   V169   1792   1.750x    6.57     2.2x       ed9e5fec84378f20   <- SMALLER, if V168 is too heavy
+   V168   1536   1.500x    4.26     3.4x       058dd64ac442ef43   <- FLY FIRST
+   V170   1280   1.250x    3.16     4.5x       0c923c363a920459   <- next step up
+   V171   1024   1.000x    2.50     5.7x       e3cbc92de7a07bf2   <- largest sane dose
+```
+✅ All four are **V158 + one cal cell**, built through **V168's own verified builder** (one builder,
+four build numbers) so the assertions and the CRC/readback path cannot drift apart. **35/35 on each.**
+⊕ The feel cost rises monotonically with the dose; **peak authority and max rates are untouched at
+every dose** (the curve is uncapped above X≈450) and **no dose touches the LKAS lane**.
+⇒ whichever way the V168 drive reads — clean but incomplete, or effective but too heavy — **the next
+build already exists.**
+
 ## ✅✅✅ **V168 BUILT — THE BASE-ASSIST SLOPE CAP, A LEVER CLASS THE KIT HAS NEVER TRIED**
 ```
    V168 = V158 + 0xC6384  2048 -> 1536   (2.000x -> 1.500x)

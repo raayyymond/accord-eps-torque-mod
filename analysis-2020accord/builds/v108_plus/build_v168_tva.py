@@ -191,9 +191,13 @@ def slopes(img, off):
     return X, Y, [(Y[j + 1] - Y[j]) / float(X[j + 1] - X[j]) for j in range(9)]
 
 
-def build():
+def build(cap_new=CAP_NEW, vnum=168, write_env="ACCORD_V168_WRITE"):
+    """Build the slope-cap lever at `cap_new`.  V169/V170/V171 are the same edit at other
+    doses and call straight into here -- one verified builder, four build numbers."""
+    write_mode = os.environ.get(write_env, "").strip().lower()
     print("=" * 102)
-    print("  V168 -- BASE-ASSIST SLOPE CAP 0xC6384  2048 -> 1536   (base V158)")
+    print(f"  V{vnum} -- BASE-ASSIST SLOPE CAP 0xC6384  {CAP_OLD} -> {cap_new}"
+          f"  ({CAP_OLD/1024.0:.3f}x -> {cap_new/1024.0:.3f}x)   (base V158)")
     print("=" * 102)
 
     print("\n  [1] BASE")
@@ -222,18 +226,18 @@ def build():
         check(u16(base, addr) == val, f"0x{addr:05X} = {val:<6d} {why}")
 
     print("\n  [4] THE EDIT")
-    struct.pack_into("<H", code, CAP_CAL, CAP_NEW)
+    struct.pack_into("<H", code, CAP_CAL, cap_new)
     attributed = set(range(CAP_CAL, CAP_CAL + 2))
-    check(u16(code, CAP_CAL) == CAP_NEW,
-          f"0x{CAP_CAL:05X} {CAP_OLD} -> {CAP_NEW}  ({CAP_OLD/1024.0:.3f}x -> {CAP_NEW/1024.0:.3f}x)")
+    check(u16(code, CAP_CAL) == cap_new,
+          f"0x{CAP_CAL:05X} {CAP_OLD} -> {cap_new}  ({CAP_OLD/1024.0:.3f}x -> {cap_new/1024.0:.3f}x)")
 
     print("\n  [5] WHAT THE NEW CAP DOES TO EACH RECORD")
     for off in CURVE_RECORDS:
         X, Y, sl = slopes(code, off)
-        nb = sum(1 for s in sl if s >= CAP_NEW / 1024.0)
+        nb = sum(1 for s in sl if s >= cap_new / 1024.0)
         ob = sum(1 for s in sl if s >= CAP_OLD / 1024.0)
         print(f"      0x{off:05X}  binds {ob}/9 -> {nb}/9   small-signal gain "
-              f"{CAP_OLD/1024.0:.3f} -> {CAP_NEW/1024.0:.3f}")
+              f"{CAP_OLD/1024.0:.3f} -> {cap_new/1024.0:.3f}")
         check(nb >= ob, f"0x{off:05X} the lower cap binds on at least as many segments")
 
     print("\n  [6] CRC RECOMPUTATION")
@@ -271,12 +275,12 @@ def build():
     # byte, not two.  Asserting a hardcoded 2 here has bitten this kit before; assert the
     # VALUE instead, which cannot be fooled by how many bytes happened to change.
     n_expected = sum(1 for k in range(2)
-                     if ((CAP_OLD >> (8 * k)) & 0xFF) != ((CAP_NEW >> (8 * k)) & 0xFF))
+                     if ((CAP_OLD >> (8 * k)) & 0xFF) != ((cap_new >> (8 * k)) & 0xFF))
     check(payload == n_expected,
           f"exactly {n_expected} payload byte(s) ({payload} found) -- the u16 slope cap, "
-          f"0x{CAP_OLD:04X} -> 0x{CAP_NEW:04X} (high byte only)")
-    check(u16(code, CAP_CAL) == CAP_NEW and u16(base, CAP_CAL) == CAP_OLD,
-          f"value check: 0x{CAP_CAL:05X} reads {CAP_OLD} on base and {CAP_NEW} on the build")
+          f"0x{CAP_OLD:04X} -> 0x{cap_new:04X} (high byte only)")
+    check(u16(code, CAP_CAL) == cap_new and u16(base, CAP_CAL) == CAP_OLD,
+          f"value check: 0x{CAP_CAL:05X} reads {CAP_OLD} on base and {cap_new} on the build")
 
     print("\n  [8] THE CURVE RECORDS THEMSELVES ARE UNTOUCHED")
     for off in CURVE_RECORDS:
@@ -291,7 +295,7 @@ def build():
     dec_tbl = build_decode_table(FF.V9B["keys"], FF.V9B["ops"])
     rwd = encode_x31(info["headers"], info["blocks"],
                      [bytes(code[START:END]).translate(invert_table(dec_tbl))])
-    FF.assert_x31_checksum(rwd, "V168 output")
+    FF.assert_x31_checksum(rwd, f"V{vnum} output")
     dec = bytearray(base)
     dec[START:END] = bytes(parse_x31(rwd)["encs"][0]).translate(dec_tbl)
     check(bytes(dec) == bytes(code), "decoded .rwd is byte-identical to the built image")
@@ -299,22 +303,22 @@ def build():
 
     img_sha = hashlib.sha256(bytes(code)).hexdigest()
     rwd_sha = hashlib.sha256(rwd).hexdigest()
-    tag = "V168-V158BASE-ASSIST.SLOPECAP.2048.TO.1536"
-    img_out = plain_image_path(f"_v168_{tag}_plain_image.bin")
+    tag = f"V{vnum}-V158BASE-ASSIST.SLOPECAP.{CAP_OLD}.TO.{cap_new}"
+    img_out = plain_image_path(f"_v{vnum}_{tag}_plain_image.bin")
     rwd_out = Path(RWD_DIR, f"39990-TVA,A160-{tag}-0x{START:X}-0x{END:X}.rwd")
 
-    if WRITE_MODE == "rwd":
+    if write_mode == "rwd":
         Path(img_out).write_bytes(bytes(code))
         Path(rwd_out).write_bytes(rwd)
         print(f"\n      WROTE {img_out}")
         print(f"      WROTE {rwd_out}")
     else:
-        print("\n  [10] NOT WRITTEN -- set ACCORD_V168_WRITE=rwd to emit the files")
+        print("\n  [10] NOT WRITTEN -- set {write_env}=rwd to emit the files")
 
     print("\n" + "=" * 102)
     print(f"  image SHA256 {img_sha}")
     print(f"  .rwd  SHA256 {rwd_sha}   "
-          f"({'WRITTEN' if WRITE_MODE == 'rwd' else 'computed, NOT written'})")
+          f"({'WRITTEN' if write_mode == 'rwd' else 'computed, NOT written'})")
     print(f"  {_checks[1]}/{_checks[0]} assertions passed")
     print("=" * 102)
     return img_sha, rwd_sha

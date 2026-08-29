@@ -1512,7 +1512,18 @@ def assist_shaping_lanes(sensors: SensorInputs, st: EpsState) -> dict:
     eliminating this lane as the sole source (it enters gp-0x6b98 through one of the other eight
     aggregator lanes). FUN_00036388 -> gp-0x6b62 (return-to-centre) is a slow +/-1/tick accumulator
     with hysteresis. FUN_000352b4 -> gp-0x6b86 + gp-0x69a4 (friction magnitude) zeroes only OUTSIDE the
-    +/-25600 Sensor-B plausibility window; its adaptive 10-segment magnitude is [OPEN]. inline r24/r26
+    +/-25600 Sensor-B plausibility window; its 10-segment magnitude is the BASE POWER-ASSIST MAP and is
+    no longer [OPEN] (2026-08-29): a 10-knot LERP on |clamp(gp-0x4f60, +/-cal(0xC6200)=8192)| whose knots
+    are initialised data copied ROM->RAM at boot, with the ROM records at 0xCE47A/0xCF372/0xCF3CA (+3
+    mode duplicates, all byte-identical across 161 images), each per-segment slope hard-capped at
+    cal(0xC6384)=2048 Q10=2.000x -- a cap that BINDS on 3-4 of 9 segments (record max slopes 6.16/16.37/
+    11.97), pinning the map's small-signal gain at exactly 2.000 over the low-torque region. It is the
+    LARGEST torque-fed term in the aggregator (5.8-7.8x the entire PID) and the map is driver-torque fed
+    alone, since cal(0xC616C)=0 forces gp-0x6b4a identically zero. NOT memoryless: a parallel branch
+    lags a comparator-gated difference (iVar24 += (diff*0x80 - iVar24)*k >> 11, state gp-0x381c, 1 kHz)
+    and adds it back, with k engagement-selected -- cal(0xC6382)=41 when return-centre is non-zero
+    (manual), else the flat LERP at 0xC6906=20 (engaged, where return-centre is dead) -- worth only ~5%
+    on the loop denominator at 8.64 Hz, so real but not the ratchet's mechanism. inline r24/r26
     are the Sensor-B torque-rate lanes modelled by _inline_torque_rate_b/_a above.
     """
     supplied = sensors.assist_lane_overrides
