@@ -62,7 +62,7 @@ mode-26/27 **only**. The poles act in both. So:
 
 | what you see | which lever did it |
 |---|---|
-| ratchet falls in **both** engaged and manual, ratio ~unchanged | **K1's relay** — the new one |
+| ratchet falls in **both** engaged and manual, ratio ~unchanged | **K1** — the oversized Coulomb term |
 | ratchet falls in **engaged only**, ratio falls | the **inertia** revert |
 | ratchet falls, ratio unchanged, manual unchanged | the **assist-section poles** |
 | nothing moves | all three accounts fail together |
@@ -73,8 +73,8 @@ mode-26/27 **only**. The poles act in both. So:
 
 - ⚠ **Steady effort will feel slightly HEAVIER.** The verified chain is *more modelled friction → more
   assist → lighter*, so undoing 10× removes some of the lightness V89 was chasing. **This is the
-  trade** — a little steady weight against removing a 2×|model| step at every reversal. If it is too
-  heavy, say so; that is a real result.
+  trade** — a little steady weight against removing a term whose saturated amplitude was 10×
+  Honda’s. If it is too heavy, say so; that is a real result.
 - Creep will still feel lighter than the flying build overall (V175's inertia revert is carried).
 - Slightly laggier at low frequency (+29 ms at 1 Hz, from V173's poles).
 - 🛑 **LKAS authority is NOT measurable on this drive** (one pass bounds it only to 19×). Your
