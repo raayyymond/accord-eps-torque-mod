@@ -1,10 +1,14 @@
-# HANDOFF 2026-08-29 — the notch, Honda's oscillation detector, and six refutations
+# HANDOFF 2026-08-29 — the notch, Honda's oscillation detector, and what the controls killed
 
 **Nothing was flashed. No CAN or UDS message was sent.** Everything below is analysis and unflown
 builds. The operator drove nothing this session, so **every on-car claim in here is a prediction**.
 
-**Shelf:** `docs/scoring/SHELF.md` — three flashable builds (V194/V195/V196); V185–V193 renamed
+**Shelf:** `docs/scoring/SHELF.md`. **Fly V196** (the fix) or **V197** (the same car + one
+telemetry probe). V194 is a separate branch. V185–V193 are renamed
 `SUPERSEDED-DO-NOT-FLASH-…`.
+
+🛑 **Run `python flashing-2020accord/preflight.py V196` before sending anything** — it refuses
+superseded files, walks the CRC chain, and prints exactly which cells differ from the car.
 
 ---
 
@@ -251,3 +255,138 @@ Generator: `analysis-2020accord/verify/gen_lineage_address_index.py`.
 image** (gaps 122→124, 125→127, 127→129, 129→131, 131→137, 142→147, 161→164, 165→167, 177→179,
 181→183), so a change across a gap means *"at or before this build"*; and anything load-bearing
 should still be diffed **against the stock image**.
+
+---
+
+# PART II — everything after the first draft
+
+The sections above were written mid-session. What follows supersedes them where they conflict.
+
+## 11. THE BUILDS THAT MATTER NOW
+
+| build | what it is | sha256 |
+|---|---|---|
+| **V196** | the recommendation: notch + K1→Honda + alpha→Honda + w[3] halved + FactorC m27→stock + **engaged inertia half dose** | `f904e43a1f4ccb94…` |
+| **V197** | **identical control cells**, + the 427 probe on `gp-0x6bbe` (3 telemetry bytes) | `b70483e02b110b74…` |
+| V195 | V196 without the inertia half dose — no sign bets at all | `a3ea8683df48c6b3…` |
+| V194 | the detector branch (dwell widened) + probe on `gp-0x6c2c`. **Only build that can change manual driving.** | `2adde4ec37be9150…` |
+
+🛑 **V196 does NOT carry V190/V191/V192/V193's levers** — it descends V195←V189←V188←V185.
+Earlier prose implied otherwise; the builder now asserts m26 = half dose and m27 = Honda separately,
+which is what caught it.
+
+**V195/V196 differ from the flying build by 30 payload bytes; V197 by 33.**
+
+## 12. THE NOTCH, RE-FITTED — and the number corrected THREE times
+
+V188 fitted the notch on `cs_tq`. The cross-channel work showed the grind is a **motion** oscillation,
+strongest in **`cs_rate`** (7.3× vs 5.1×). Re-fitting there gave **V195: 19.75 Hz, r 0.9000** —
+wider, because the rate-channel peak spread is wider. It **dominates V188 on both axes**: more grind
+removed *and* less shoulder lag (−37.1° vs −44.3° at 18.95 Hz).
+
+**The predicted reduction was wrong twice before it was right:**
+```
+   21.5x   OPEN-LOOP score        -- multiplies the WHOLE spectrum by |H|^2, attenuating a
+                                     broadband floor the assist path cannot touch.  Valid only
+                                     for RANKING designs.
+    7.7x   closed-loop, POOLED    -- right method, wrong aggregation, and it rested on an
+                                     engaged/manual ratio later shown to be contaminated.
+   THE SOUND ONE: attenuate only the EXCESS above each route's local background, never B:
+     cs_rate 15-25 Hz, 67 routes, null ~3.9x
+       measured  p25 22.5  p50 31.6  p75 64.8
+       after V195 p25  1.5  p50  2.2  p75  4.1        reduction median 12.7x
+       ** 49 of 67 routes (73 %) fall BELOW the null **
+```
+✅ **PRE-REGISTERED: the grind excess should fall from ~32× to ~2×. Above ~15× means the notch is
+not reaching the signal at all — check the arm `0xC649B` and the engagement gate before touching the
+design.**
+
+## 13. THE RATCHET — what it is, and the honest ceiling
+
+**It is a PLANT resonance.** Firmware cannot remove it; it can only reduce what **excites** it.
+Ranking the `FUN_0003aa2c` exciters by clamp leaves **four live**:
+```
+   gp-0x6b86 12288  biquad output -- LKAS command, 1-5 Hz
+   gp-0x6b4c 10240  11-slot assist sum -- low frequency
+   gp-0x6bbe  2048  VISCOUS, rate-derived (omega^1)     ** BYTE-STOCK across the whole arc **
+   gp-0x6b26  1024  INERTIA, acceleration-derived (omega^2), clamped further to 511   <-- V196
+```
+🛑 **V196 halves the SMALLEST live exciter.** Not necessarily wrong — it is the only ω² term, so
+it is concentrated exactly at 8 Hz while the big terms carry 1–5 Hz content — but **constants cannot
+settle which dominates the 8 Hz sum. V197 measures it.**
+
+**Saturation is the real story of the dose ladder:**
+```
+   FLYING L=-29490  saturates at |accel| > 1065     <-- pinned almost always
+   Honda  L= -9830  saturates at        > 3195
+   V196   L= -4915  saturates at        > 6389      <-- 6x more proportional headroom
+```
+✅ **The reverts un-saturate the term rather than reducing a gain, and that argument does NOT depend
+on the anti-damping sign flagged as BELIEF** — less injected energy is less excitation either way.
+
+## 14. WHAT THE CONTROLS KILLED — six more, three of them mine
+
+1. **Coulomb sign-flip: REFUTED.** Ratchet cross/dwell 3.73 [2.97,4.35] but the **grind control 4.96
+   [3.84,5.92] — higher.** Crossings excite everything; no friction-specific preference.
+2. **"The ratchet is not in the motion": OVER-CLAIMED.** Proper coherence (the first run returned
+   **1.000 including the shuffled surrogate** — degenerate) gives `cs_tq×cs_rate` **0.888 @8 Hz vs
+   floor 0.049**. The motion is **small, not absent** — a stiff rack.
+3. **The relay-as-oscillator claim: WITHDRAWN.** No odd-harmonic excess (3f0/control 1.21) and a
+   **521× amplitude spread** ⇒ **driven resonance, not a limit cycle.** The record's ring-down
+   finding is corroborated.
+4. **Per-route engaged/manual severity: RETRACTED as contaminated.** Both symptom bands correlate
+   **~0.9 with a 30–45 Hz control band containing neither**; the ratio measures LKAS-on-vs-off
+   exposure, not band severity. The "notch gives 52×" claim and the closed-loop `L ≈ 0.78–0.81` went
+   with it.
+5. **The common-cause hypothesis: REFUTED.** With the proper statistic the symptom correlation is
+   **+0.304, not +0.748** ⇒ largely independent ⇒ **separate levers are right**, which is what V196
+   does.
+6. **Low 1 Hz command↔motion coherence (0.115): an EXPOSURE artefact.** Hands-off it is **0.338,
+   ~7× floor.** Raised as a question, resolved by stratifying; never reported as lost authority.
+
+➕ **The lesson under all of them: use the SLOPE-CORRECTED EXCESS** — a band against its own local
+background on the same windows. Every error above came from drifting onto a ratio and inheriting an
+exposure confound.
+
+## 15. THE LINEAGE GAP — closed, and it found 8× failed THREE times
+
+`docs/BUILD-LINEAGE-PART5-V122-ONWARD-MEASURED.md`, **generated from image diffs**: 43 cells across
+57 builds. `grep <address>` works again for V122–V196 — it had silently returned nothing, which is
+how the 10× K1 and the 72 dead bytes stayed invisible.
+
+🛑 **It immediately surfaced: `0xC6CD0` went 6×→8× at V124, back at V137, 6×→8× again at V142,
+back at V147 — all undocumented.** With V101 that is **three abandoned attempts at 8×**. The
+sequenced authority plan (*confirm the grind fix, then 6×→8×*) is entering territory that has
+failed repeatedly. The *sequence* is still right — the notch is what breaks the coupling — but the
+prior is far worse than V101 alone suggests.
+
+## 16. OPEN ITEMS — superseding §8
+
+| open item | what would close it |
+|---|---|
+| **Nothing has been flown.** Every on-car claim is a prediction. | One 15 s engaged creep pass on V196/V197 + `score_band_excess.py`. |
+| Is V196's ratchet lever aimed at the dominant exciter? | Fly **V197**, then `decode_v197_viscous_term.py <tag> --v197`. |
+| Does `\|gp-0x6c2c\|` reach T = 12800? Decides the whole detector branch. | Fly **V194**, then `decode_v194_detector_input.py <tag> --v194`. |
+| Is the inertia sign right? | V196 vs V195 on-car. Ratchet **worse** ⇒ inverted ⇒ revert. |
+| Is the 55 Hz null load-bearing? Unobservable at 100 Hz. | Any notch build. A new high note **while engaged** ⇒ yes. |
+| **Hands-on remains the corpus blind spot** — 1 hands-on vs 31 hands-off 20.5 s episodes. | Pass 1b on any drive. |
+| The viscous path (`0xC6370`/`0xC6372`/`0xC615A`) is byte-stock and unexplored. | V197's measurement first — **no lever until then.** |
+| `0xC40BC` knee 3000 vs Honda 600, unreverted since ~V122, unattributed. | Operator's call; shallower ramp suits his stated preference. |
+| 72 dead bytes (`0xE4194..0xE521C`) from a half-applied V108 edit. | Revert to stock, or complete it by raising `0xC61BE` — but that adds **base** assist, not LKAS. |
+| openpilot's phase margin. | Not estimable from this corpus; needs deliberate excitation. |
+
+## 17. TOOLS ADDED IN PART II
+
+| tool | what it answers |
+|---|---|
+| `flashing-2020accord/preflight.py` | is this .rwd safe to send, and what does it change |
+| `rlog-tools/score/notch_prediction_excess_only.py` | the sound notch prediction |
+| `rlog-tools/score/per_route_excess_severity.py` | per-route severity, done correctly |
+| `rlog-tools/score/symptom_partial_correlation.py` | common cause vs common exposure |
+| `rlog-tools/score/relay_vs_resonance_test.py` | limit cycle vs driven resonance |
+| `rlog-tools/score/notch_shoulder_check.py` | does a notch threaten its own low shoulder |
+| `rlog-tools/probe/decode_v197_viscous_term.py` | `gp-0x6bbe`'s 8 Hz content |
+| `analysis-2020accord/verify/aggregator_exciter_ranking.py` | which exciters are live |
+| `analysis-2020accord/verify/inertia_saturation_bound.py` | where the inertia term saturates |
+| `analysis-2020accord/verify/closeout_verify_published.py` | re-verify everything published |
+| `analysis-2020accord/verify/gen_lineage_address_index.py` | regenerate the lineage index |
