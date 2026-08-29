@@ -4257,3 +4257,37 @@ attack.
 
 🛑 **1 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
 
+## ✅ **V152/V153's PREMISE CHECKED — THE OBSERVER LOOP DOES CARRY 6–9 Hz, MODESTLY**
+Before betting a drive on the matched-pole move, I asked whether the loop it attacks actually
+carries the symptom band. **Control run FIRST** (the kit's own rule), same signal, same route,
+LKAS-off arm:
+```
+   route  arm        n       6-9 Hz    18-22 Hz   share(6-9 Hz in 1-45 Hz)
+   r7e    ENGAGED    17,689     183        281        8.7 %
+   r7e    lkas-off   22,544     503        439        6.6 %
+   r7f    ENGAGED    15,779     197        295       10.2 %
+   r7f    lkas-off   26,036     447        383        7.4 %
+   flat-spectrum baseline for a 3 Hz window in 1-45 Hz = 6.8 %
+```
+⇒ **engaging shifts `gp-0x6b70`'s spectrum toward 6–9 Hz by 1.32× (r7e) and 1.38× (r7f)** against
+the manual arm, and to 1.28×/1.50× of the flat baseline. **Replicated on two routes.**
+✅ **[EVIDENCE] the observer loop carries an engagement-elevated 6–9 Hz component** ⇒ V152/V153 are
+aimed at a loop that demonstrably passes the symptom band.
+⚠ **[NOT PROVEN] that reducing its transmission fixes the symptom.** The effect is **modest**
+(1.3–1.4×) and **confounded by operating point** — the engaged arm is creep, the manual arm is not
+speed-matched. Per [[accord-averaged-spectrum-needs-matched-speed-distributions]] this is
+**supporting, not decisive**. Note also the ABSOLUTE 6–9 Hz power is **higher** in the manual arm
+(503 vs 183) — manual steering simply moves more; **only the SHARE comparison is meaningful here.**
+
+### 🛑 A SAMPLING FACT WORTH RECORDING FOR THE WHOLE KIT
+**`0x1AB` (427) is transmitted at 49.8 Hz, NOT 100 Hz** — measured from `ab_t1ab` on both routes.
+⇒ **Nyquist is 24.9 Hz.** 6–9 Hz is safely resolved, but **any 18–22 or 18–28 Hz claim derived from
+`0x1AB` sits close to the fold** and can take aliased content from above 24.9 Hz.
+⇒ **Check the source ID's rate before quoting a high-band number.** `0x14A` is the 100 Hz builder;
+`0x1AB` is not.
+
+
+---
+
+🛑 **1 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
+
