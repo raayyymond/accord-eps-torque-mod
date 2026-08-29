@@ -1,4 +1,25 @@
 # -*- coding: utf-8 -*-
+"""SUPERSEDED 2026-08-29 -- DO NOT USE.  Use rlog-tools/score/score_band_excess.py instead.
+
+Three of this tool's endpoints were withdrawn on evidence:
+  * half-power Q of the 15-25 Hz peak -- NON-MONOTONE (its null sits ABOVE the data, so a
+    rise cannot distinguish "damping failed" from "damping worked");
+  * Q at the ratchet's own 5-12 Hz -- a WINDOW artefact (the 2.56 s window caps Q at 5.0
+    at 7.8 Hz, and white noise alone returns Q 21.7-29.1 at nperseg=1024);
+  * fixed-floor prominence -- large by construction on a red spectrum, and the routes run
+    1/f^0.80 to 1/f^2.37.
+It also scores non-continuous windows, where the validated estimator requires continuous
+engaged-creep runs, and it predates the finding that the ratchet lives in cs_tq rather than
+cs_rate (margin 7.42 vs 1.03).
+
+Kept as a record of what was run at the time.  It raises on import so it cannot be used by
+accident.
+"""
+raise SystemExit(
+    "score_v158_creep.py is SUPERSEDED -- use rlog-tools/score/score_band_excess.py"
+)
+
+# -*- coding: utf-8 -*-
 """SCORE V158 -- the damper build -- WITH AN EPISODE BOOTSTRAP.
 
 WHY THIS EXISTS RATHER THAN REUSING score_v133_creep.py

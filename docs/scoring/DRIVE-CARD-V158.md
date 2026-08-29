@@ -112,7 +112,7 @@ Full pre-registration: `docs/scoring/SCORING-V158-preregistered.md`.
 ```
 python rlog-tools/decode/extract_route.py --route <N> --prefix <rlog prefix> \
        --segments <n> --build V158
-python rlog-tools/score/score_v158_creep.py r<N>
+python rlog-tools/score/score_band_excess.py r<N>
 python rlog-tools/decode/audio_creep_v158.py r<N>
 ```
 

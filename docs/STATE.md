@@ -2,6 +2,28 @@
 
 
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
+## ✅ **TOOL AUDIT: ONE MORE LIVE HAZARD FOUND AND CLOSED**
+Having found the primary scorer reading the wrong channel, I audited **all 43 scoring tools** for the
+same defect — a ratchet or grind endpoint computed on `cs_rate`, where the ratchet scores at chance.
+✅ **No other tool has that defect.** Every remaining ratchet/grind endpoint either reads `cs_tq`,
+sweeps channels deliberately, or is a probe-specific scorer with its own anchor.
+
+🛑 **But the audit found a different live hazard**: `docs/scoring/DRIVE-CARD-V158.md` and
+`SCORING-V158-preregistered.md` still pointed at **`score_v158_creep.py`**, the scorer this session
+**superseded**. Had V158 been flown from its own card, the drive would have been scored with:
+- **half-power Q of the 15–25 Hz peak** — withdrawn, NON-MONOTONE (its null sits *above* the data);
+- **Q at 5–12 Hz** — withdrawn, a WINDOW artefact (white noise alone returns Q 21.7–29.1);
+- **fixed-floor prominence** — withdrawn, large by construction on a red spectrum;
+- **non-continuous windows**, where the validated estimator requires continuous runs;
+- and **`cs_rate`**, before the channel finding.
+✅ **Closed three ways**: the tool now carries a superseded banner **and raises on import** so it
+cannot be used by accident; both documents are redirected to `score_band_excess.py`; and no document
+outside STATE's own retraction text mentions it any more.
+
+⊕ **The pattern worth keeping**: the defect was not in the analysis, it was in the *plumbing between
+the analysis and the drive*. Both instances were found by **running the drive card's own command
+verbatim** rather than by reading the code. That check is cheap and it belongs in every close-out.
+
 ## 🛑✅ **THE SCORER WAS READING THE WRONG CHANNEL — CAUGHT BY RUNNING THE DRIVE CARD'S OWN COMMAND**
 With the design closed, I ran the pipeline end-to-end exactly as it would run on a fresh route. It
 found a defect that would have produced a **wrong verdict on the drive**.
