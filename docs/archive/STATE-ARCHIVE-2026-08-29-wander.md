@@ -1787,3 +1787,45 @@ Design work on the assist lane is **finished**. Both lever classes are cut and v
 are closed, every artifact re-hashes from disk, and the remaining assumption is testable only by
 driving. **Seven builds, one decision table, one 15-second pass.**
 
+## ✅✅✅ **EVERY REMAINING LEVER IS BELOW THE MEASUREMENT FLOOR — V173 IS THE WHOLE AVAILABLE FIX**
+Pricing what is left after V173, with the corrected `L_other` (r26 gated off ⇒ 0.31–0.55, not 0.825).
+Anchor unchanged in kind: the measured `Q_eff/Q_passive = 14.3` fixes `P·L = 0.93`, so `P = 0.93/|L|`.
+
+### ✅ FIRST, THE PREDICTION SURVIVES MY OWN CORRECTION
+```
+   L_other   P        stock Q   V173 Q   V173 gain
+   0.825     0.3292   14.29     2.45     5.8x     <- census value, now known WRONG
+   0.550     0.3647   14.29     2.25     6.4x
+   0.430     0.3827   14.29     2.16     6.6x     <- corrected, mid
+   0.310     0.4026   14.29     2.07     6.9x
+```
+✅ **[EVIDENCE] V173's predicted effect is INSENSITIVE to the r26 error**: 5.8x at the wrong value,
+6.9x at the low end of the right one. **The correction moves the prediction the RIGHT way and by
+less than its own uncertainty.** That is the robustness check the earlier numbers lacked.
+
+### 🛑 AND EVERY REMAINING LEVER IS UNMEASURABLE
+```
+   marginal gain ON TOP of V173 (L_other = 0.43)     new |L|   Q ratio   vs V173
+     nothing (V173 alone)                             1.403     2.16      1.00x
+     kill the PID entirely                            1.146     1.78      1.21x
+     kill r24 entirely                                1.232     1.89      1.14x
+     kill PID AND r24 together                        0.975     1.60      1.35x
+     add the slope cap 1536 (V168's lever)            1.159     1.80      1.20x
+     add the slope cap 1024 (V171's dose)             0.916     1.54      1.40x
+```
+🛑 **[EVIDENCE] the single-episode split-half floor is 1.63x.** Every entry above is **at or below
+it** — so none of these could be distinguished from noise on a drive **even if built and even if the
+model is exactly right.**
+⇒ **V173 captures essentially all the available loop-gain reduction.** The assist map is the loop, and
+V173 is the assist map's lever.
+
+### ✅ WHAT THIS CLOSES, AND WHY NO EIGHTH BUILD
+**The analysis is complete.** Not “out of ideas” — *priced*, and every remaining idea is worth less
+than the noise on the only measurement available. Building another would be adding a variable that
+cannot be read.
+⊕ The three named symptoms now stand as: **ratcheting** → V173 (6.6x predicted) · **grinding** →
+V158's damper + V173's filter, on the same build · **command oscillation** → shares the grind's band
+and lever · **LKAS authority** → measured, not limiting, no lever needed.
+⊕ **The next information can only come from the car.** Seven builds, one decision table
+(`docs/scoring/BUILD-INVENTORY.md`), one continuous 15-second engaged creep pass with real curvature.
+

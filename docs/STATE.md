@@ -4,6 +4,61 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑⭐ **HONDA'S OSCILLATION DETECTOR HAS A FREQUENCY WINDOW, AND THE RATCHET FALLS OUTSIDE IT**
+`FUN_000428d4` is a reversal counter on **`gp-0x6c2c` (the acceleration EMA)**:
+```c
+   T    = cal(0xC620A) = 12800        amplitude threshold
+   HYST = cal(0xC64DD) = 50           DWELL LIMIT, in task ticks
+   state +latched:  if (dwell >= HYST) -> neutral          // TIMES OUT
+                    else if (x < -T)   -> -latched, count++
+                    else dwell++
+```
+A reversal only COUNTS if the opposite peak arrives **within HYST ticks**. `FUN_000428d4`,
+`FUN_00041464` and `FUN_000352b4` **all share the single caller `FUN_0002214a`** ⇒ same task, the
+**1 kHz** control task (corroborated: the biquad response was verified at fs = 1000 Hz against three
+stock points). So HYST = 50 ticks = **50 ms**:
+```
+   countable  <=>  half-period < 50 ms  <=>  f > 10.0 Hz
+     ratchet  7.34 - 8.59 Hz    half-period 58 - 68 ms   ** OUTSIDE the window **
+     grind   15   - 25   Hz     half-period 20 - 33 ms      inside
+```
+🛑 **THE DETECTOR CANNOT COUNT AN 8 Hz OSCILLATION.** The dwell expires before the opposite peak
+arrives, so `gp-0x671a` never leaves 0 for the ratchet ⇒ **V191 and V192, which both act only on the
+counter≥5 branch, are INERT FOR THE RATCHET.** They may still act on the **grind**, which is inside
+the window, if its amplitude reaches T. **This is the "nothing changes" outcome, now predictable
+BEFORE the drive rather than after it.**
+
+➕ **AND IT CORRECTS A RECORDED ASSUMPTION.** The lineage treats **T** as the detector knob
+(*"lowering T changes five things at once"*). **T is the WRONG knob for the ratchet: no amount of
+lowering an AMPLITUDE threshold makes an 8 Hz oscillation countable when the DWELL is what expires.**
+**HYST is the binding constraint**, and it has never been touched.
+
+### ✅ **V193 — OPEN THE WINDOW SO THE RATCHET IS VISIBLE**
+```
+   0xC64DD  50 -> 100      dwell 50 ms -> 100 ms
+     HYST  50  =>  f > 10.0 Hz    ratchet EXCLUDED
+     HYST 100  =>  f >  5.0 Hz    the whole 5-12 Hz band INSIDE, with margin
+```
+With the ratchet finally visible to the detector, **V191's and V192's damping responses — which are
+gated on exactly that counter — can act on it.** One byte, 31/31 assertions.
+`0f1a7bb6849f17824cbc9fa7e8a6aeeb40e8fe4bb548fc7310fa4e17052b7992`
+
+⚠ **THE RISK IS DIFFERENT IN KIND FROM V191/V192 — SAY IT PLAINLY.** V191 and V192 are conditional
+on a state that never occurs during the ratchet, so they **cannot** affect normal driving. **V193
+makes that state REACHABLE**, so for the first time in this chain the detector-conditional damping
+can engage while driving. A spurious detection tightens the slew limit for a hold period and could
+read as brief heaviness. The counter still needs **|gp-0x6c2c| > 12800 on BOTH sides** — a large
+acceleration excursion — so it is bounded, not free-running. But it is a real change to normal
+driving, unlike everything else in the V189–V192 chain.
+
+⇒ **TWO OPTIONS, and the choice is the operator's:**
+```
+   V192  the conservative build: five levers, ALL provably inert in normal driving.
+         But per the finding above, its detector-gated pair cannot reach the ratchet.
+   V193  V192 + one byte that makes the detector see the ratchet, unlocking that pair.
+         The only build in the chain that can change how the car feels when nothing is wrong.
+```
+
 ## ✅✅✅ **V192 — HONDA'S OSCILLATION RESPONSE DOES NOTHING AT LOW INDEX. V192 CLOSES THAT GAP.**
 `FUN_00035b20` switches the slew limit `gp-0x69a0` between two curves on the reversal counter:
 ```
@@ -2125,46 +2180,4 @@ One command gives the whole verdict instead of three hand-run analyses:
 report”* rather than the 198x / 1270x the unguarded version emitted — those came from a background
 fit on four windows and were **not credible**. Catching that in the tool is the point of running it
 before the drive rather than after.
-
-## ✅✅✅ **EVERY REMAINING LEVER IS BELOW THE MEASUREMENT FLOOR — V173 IS THE WHOLE AVAILABLE FIX**
-Pricing what is left after V173, with the corrected `L_other` (r26 gated off ⇒ 0.31–0.55, not 0.825).
-Anchor unchanged in kind: the measured `Q_eff/Q_passive = 14.3` fixes `P·L = 0.93`, so `P = 0.93/|L|`.
-
-### ✅ FIRST, THE PREDICTION SURVIVES MY OWN CORRECTION
-```
-   L_other   P        stock Q   V173 Q   V173 gain
-   0.825     0.3292   14.29     2.45     5.8x     <- census value, now known WRONG
-   0.550     0.3647   14.29     2.25     6.4x
-   0.430     0.3827   14.29     2.16     6.6x     <- corrected, mid
-   0.310     0.4026   14.29     2.07     6.9x
-```
-✅ **[EVIDENCE] V173's predicted effect is INSENSITIVE to the r26 error**: 5.8x at the wrong value,
-6.9x at the low end of the right one. **The correction moves the prediction the RIGHT way and by
-less than its own uncertainty.** That is the robustness check the earlier numbers lacked.
-
-### 🛑 AND EVERY REMAINING LEVER IS UNMEASURABLE
-```
-   marginal gain ON TOP of V173 (L_other = 0.43)     new |L|   Q ratio   vs V173
-     nothing (V173 alone)                             1.403     2.16      1.00x
-     kill the PID entirely                            1.146     1.78      1.21x
-     kill r24 entirely                                1.232     1.89      1.14x
-     kill PID AND r24 together                        0.975     1.60      1.35x
-     add the slope cap 1536 (V168's lever)            1.159     1.80      1.20x
-     add the slope cap 1024 (V171's dose)             0.916     1.54      1.40x
-```
-🛑 **[EVIDENCE] the single-episode split-half floor is 1.63x.** Every entry above is **at or below
-it** — so none of these could be distinguished from noise on a drive **even if built and even if the
-model is exactly right.**
-⇒ **V173 captures essentially all the available loop-gain reduction.** The assist map is the loop, and
-V173 is the assist map's lever.
-
-### ✅ WHAT THIS CLOSES, AND WHY NO EIGHTH BUILD
-**The analysis is complete.** Not “out of ideas” — *priced*, and every remaining idea is worth less
-than the noise on the only measurement available. Building another would be adding a variable that
-cannot be read.
-⊕ The three named symptoms now stand as: **ratcheting** → V173 (6.6x predicted) · **grinding** →
-V158's damper + V173's filter, on the same build · **command oscillation** → shares the grind's band
-and lever · **LKAS authority** → measured, not limiting, no lever needed.
-⊕ **The next information can only come from the car.** Seven builds, one decision table
-(`docs/scoring/BUILD-INVENTORY.md`), one continuous 15-second engaged creep pass with real curvature.
 
