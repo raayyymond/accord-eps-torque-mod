@@ -1,5 +1,52 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **`gp-0x6B4C` IS A FAULT-ARBITRATION SUM — THE LAST CAL CANDIDATE IS CLOSED, AND THE LEVER WAS UNSAFE**
+`FUN_0002caa2` (slot 8) decompiles to a **LATCHING PLAUSIBILITY MONITOR**:
+```c
+   if (gp-0x3cba == 1) {
+       sStack_1c = gp-0x6b12;
+       if (|gp-0x6b12| exceeds cal(0xC61D2)) {
+           gp-0x6788 = 1;        // FAULT FLAG
+           gp-0x3cba = 2;
+           sStack_1c = 0;        // this contribution LATCHES OFF, permanently
+       }
+   } else if (gp-0x3cba == 2) { sStack_1c = 0; }      // stays off
+   ...
+   local_20 = 8;  cStack_1f = <state 0..5>;  uStack_1c = sStack_1c;   // <- THE PAYLOAD
+   FUN_00025c32(&local_20);
+```
+⇒ **`gp-0x6B4C` is NOT an assist sum. It is a sum of MONITORED contributions, each behind a
+latching fault gate**, and the `0xC4124` "type" vector is that monitor's per-slot **configuration**.
+
+### ✅ THIS EXPLAINS EVERY MEASUREMENT AT ONCE
+```
+   p50 0-26                     contributions LATCH OFF and stay off
+   max 1459-1664                spikes BEFORE latching
+   broadband, spiky spectrum    latching transitions are IMPULSIVE
+   "1.4x flat" band share       an IMPULSIVENESS ARTIFACT, not 18-22 Hz content
+```
+⇒ **the one lane that looked consistently elevated was elevated because it is SPIKY, not because
+it oscillates at 20 Hz.** ⊕ The flat-baseline control caught the inflation; **this decompile
+explains its CAUSE.**
+⇒ **[EVIDENCE] `gp-0x6B4C` is not the grind carrier. The last cal-path candidate is CLOSED.**
+
+### 🛑 AND THE LEVER WAS NOT MERELY WEAK — IT WAS UNSAFE
+`0xC4124[i] : 0 → 5` would have **disabled a plausibility monitor** — a fault-detection function —
+on an EPS. ⊕ The kit came within one decompile of proposing that, on **1.4×-flat evidence**.
+⭐ **RULE: before disabling ANY per-slot/per-term configuration cell, read what the slot COMPUTES.
+A "weight vector" and a "monitor configuration table" look identical from the cal side.**
+
+### ⭐ THE CAL SPACE IS NOW EXHAUSTED
+```
+   CLOSED by measurement    b26 (clamp/a2/knee/K1) | the notch family | base-assist damper
+                            gp-0x6BBE | EVERY flown cal | and now gp-0x6B4C
+   REJECTED before building 0xC6372 (lane below flat) | 0xC4124 (a fault monitor)
+   NEVER FLOWN, still open  0xC61F6 -- the r24 pump deadband.  V147 tests it.
+```
+⇒ **V147's deadband is the only cal lever left with a live rationale**: virgin cell, on a lane
+that feeds the aggregator **directly**, with a confirmed pump polarity behind it.
+⇒ **The analysis has converged. The remaining information is on the car.**
+
 ## ✅✅ **THE `gp-0x6B4C` CONTRIBUTORS NARROWED TO FOUR — AND THE METHOD IS VALIDATED**
 `FUN_0003a8a8`'s full decompile fixes the struct layout passed to `FUN_00025c32`:
 ```c
