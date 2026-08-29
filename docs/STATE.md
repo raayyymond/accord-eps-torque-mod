@@ -4,6 +4,43 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **THE NON-STOCK DELTA IS NOW FULLY AUDITED — 139 IMAGES, EVERY CELL CLASSIFIED**
+Applying the rule the V178 error earned: print every non-stock cal across **all 139 images in build
+order**, then classify. **LADDER** (3+ changes / monotone) = a deliberate tuning axis, do not revert.
+**CHURN** = already explored. **SINGLE JUMP** (changed once, never revisited) = the candidate class,
+and the shape of both real findings today.
+```
+   SINGLE JUMP           resolution
+   0x14120, 0xC64DE      V2, ancient, 1-count            -- noise
+   0x35A08/12/18         V103 biquad arm                 -- documented, deliberate
+   0xC61C0, 0xC64B4      V36/V37 -- read together at the SAME four sites; memory records these
+                         as the gentle-EME debounce disable that FIXED the problem on-car.
+                         ** Reverting them would bring the gentle EME back. **
+   0xC40DC               V122, 22 -> 8   ** THE ONLY ONE UNEXPLAINED **
+```
+=> **the delta is fully accounted for.** No further unexplored cells exist.
+
+## ✅ **V179 BUILT — HONDA'S ACCELERATION FILTER, THE LAST UNEXPLORED CELL**
+`FUN_00041464`: `gp-0x6c2c = EMA(accel, alpha = cal[0xC40DC] >> 6) >> 9`, the input to the
+apparent-inertia term.
+```
+   build            cal    a        fc        phase lag at 8.17 Hz
+   Honda / V108      22   0.3438   67.0 Hz        6.95 deg
+   V122+ (flying)     8   0.1250   21.3 Hz       21.03 deg
+```
+=> **V122 slowed the acceleration filter 67 -> 21 Hz and added 14.1 deg of phase lag at the ratchet.**
+Extra lag rotates a positive-acceleration-feedback term toward a velocity term, changing its
+character in the loop.
+⚠ **HONEST LIMIT: the magnitude is exact; the SIGN of its effect on damping is NOT established.**
+So V179 is justified exactly as V175 and V177 are — **a revert to Honda's own value that makes the
+inertia lane self-consistent** (V175 gave it Honda's GAIN; this gives it Honda's FILTER, removing a
+hybrid nobody designed) — and **NOT as an understood lever.**
+✅ **ONE byte · 19/19 assertions · CRC 50/50 · readback byte-identical.** image
+`c1e07f2d6e86bc31…` · rwd `c19f3b36bcdf8daf…`. ➕ The builder **asserts the V31/V38 authority
+ladder is INTACT at 5.0**, so V178's error cannot recur silently.
+🛑 **V177 STAYS FLY-FIRST.** V177's case is quantitative (a term 10x oversized); V179's rests on
+design coherence with an unestablished sign. **V179 is the follow-up if V177 helps but does not cure.**
+
 ## 🛑🛑 **V178 IS RETRACTED AND QUARANTINED — THOSE CELLS ARE THE AUTHORITY LADDER, NOT V122'S DOING**
 **I built a firmware image on a wrong premise and nearly handed it over as flashable. Caught by the
 audit I had scheduled, one turn later.**
@@ -2160,57 +2197,4 @@ code with the set of cells no build has touched.
 ⚠ **[BELIEF, not EVIDENCE]** that the responsible path is reachable by calibration at all; it may
 need a structural edit. **What would close it**: the intersection above, then a phase test at
 8.6 Hz on each candidate.
-
-## 🛑🛑 **THE SPECTRAL TILT CONFOUNDED EVERY 6–9 Hz ENDPOINT — THREE MEASURES WITHDRAWN, ONE SURVIVES**
-Chasing why the ratchet Q showed no build trend produced a chain of retractions and one
-durable positive result. **The wheel-rate signal is RED**, slope **1/f^0.80 to 1/f^2.37**
-across routes — and that tilt alone reproduces everything the old measures reported.
-```
-   CONTROL: coloured noise, NO resonance whatsoever, nperseg=512, 8 segments
-     1/f^1.5  ->  prominence 27.4   fitted Q 1.00   fit r2 0.585
-     1/f^2.0  ->  prominence 64.9   fitted Q 1.00   fit r2 0.710
-   REAL ROUTES:   prominence 12.2-173.3   fitted Q 1.0-17.6   r2 0.28-0.87
-```
-❌ **WITHDRAWN — fixed-floor prominence**: comparing 5–12 Hz against a 28–40 Hz floor is large
-by construction on any red spectrum. ❌ **WITHDRAWN — fitted Lorentzian Q**: returns Q≈1 with
-r² 0.6–0.7 on pure coloured noise, which is exactly what the real routes gave. ❌ **WITHDRAWN
-— long-window half-power Q**: white noise alone returns **Q 21.7–29.1** at nperseg=1024, the
-same range as the "real" 15.8–21.4, and it **cannot separate true Q=5 from true Q=20**.
-⇒ the 0.6×ceiling guard I added earlier is **insufficient** — it rejects white noise but not
-coloured, and the routes are coloured.
-
-### ✅ WHAT SURVIVES — SLOPE-CORRECTED EXCESS WITH A SLOPE-MATCHED NULL
-Fit the route's **own** power law over 3–40 Hz using only bins **outside** the bands under
-test, measure the peak's excess over it, and null it at **that route's measured slope**:
-```
-   band              excess        slope-matched null p95    verdict
-   GRIND 15-25 Hz    9.9 - 421.9   2.6 - 4.1                 REAL on 9/9 routes  (3-100x margin)
-   RATCHET 5-12 Hz   2.0 - 8.9     2.7 - 4.1                 real on only 6/9    (1.1-2.3x)
-```
-✅ **[EVIDENCE] the grind resonance is unambiguous; the ratchet is marginal IN THIS CHANNEL.**
-That is the real reason every 6–9 Hz endpoint has underperformed — **the feature is 10–50x
-weaker in wheel rate**, a signal-strength problem, not a noise problem. More episodes cannot
-fix it; a different channel might.
-✅ **[EVIDENCE] and the excess orders by build**: **V91 9.9 → V102 421.9 → V122 23.2**. The 42x
-jump lands on the 4x→6x gain step, and the kit has clawed it back to **2.3x above V91's
-4x-gain level** — independently matching the earlier Q ordering (9.00 at V102 → 4.50 at V122).
-
-### 🛑 AND IT RETRACTS AN INFERENCE RULE I HAD ALREADY COMMITTED
-The pre-registration said *“Q RISING above 4.50 falsifies the damping account → fly V167”*.
-**Half-power Q is NON-MONOTONE**: its null sits **ABOVE** the data (real 13.7–34.7 vs null p95
-**58–78**), because on a noisy median periodogram the half-power crossing lands on an adjacent
-bin. Adding damping lowers Q, but once the peak weakens toward the floor **Q rises again
-toward the noise value** ⇒ **a rise cannot distinguish “damping failed” from “damping
-worked”**, which is precisely the discrimination the drive was for. **Corrected**: excess is
-monotone in peak strength and carries the one-sided logic without the defect.
-
-### ✅ THE DRIVE REQUIREMENT, NOW A MEASURED NUMBER
-```
-   split-half floor vs windows per half:  3 -> 2.23x    6 -> 1.57x   (extrapolates ~1.2-1.3x at 12-16)
-   a continuous pass of T s yields floor((T-5.12)/2.56)+1 windows:  15 s -> 4,  10 s -> 2
-   V158's predicted effect is 1.68-2.74x  =>  needs ~24-32 windows
-   => 8 passes of 15 s = 32 windows (ADEQUATE);  8 of 10 s = 16 (marginal)
-```
-⊕ New tool `rlog-tools/score/score_band_excess.py` — the validated estimator, its
-slope-matched null, and the split-half floor, with the window warning built in.
 

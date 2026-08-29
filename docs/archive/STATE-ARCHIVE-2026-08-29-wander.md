@@ -745,3 +745,56 @@ resolution problem, and only a longer window fixes it.**
 ⊕ A resolution guard is now in `peak_q`: it returns **NaN when the measured Q exceeds 0.6x the
 window's ceiling**, so the scorer can never again report a window artefact as a damping measurement.
 
+## 🛑🛑 **THE SPECTRAL TILT CONFOUNDED EVERY 6–9 Hz ENDPOINT — THREE MEASURES WITHDRAWN, ONE SURVIVES**
+Chasing why the ratchet Q showed no build trend produced a chain of retractions and one
+durable positive result. **The wheel-rate signal is RED**, slope **1/f^0.80 to 1/f^2.37**
+across routes — and that tilt alone reproduces everything the old measures reported.
+```
+   CONTROL: coloured noise, NO resonance whatsoever, nperseg=512, 8 segments
+     1/f^1.5  ->  prominence 27.4   fitted Q 1.00   fit r2 0.585
+     1/f^2.0  ->  prominence 64.9   fitted Q 1.00   fit r2 0.710
+   REAL ROUTES:   prominence 12.2-173.3   fitted Q 1.0-17.6   r2 0.28-0.87
+```
+❌ **WITHDRAWN — fixed-floor prominence**: comparing 5–12 Hz against a 28–40 Hz floor is large
+by construction on any red spectrum. ❌ **WITHDRAWN — fitted Lorentzian Q**: returns Q≈1 with
+r² 0.6–0.7 on pure coloured noise, which is exactly what the real routes gave. ❌ **WITHDRAWN
+— long-window half-power Q**: white noise alone returns **Q 21.7–29.1** at nperseg=1024, the
+same range as the "real" 15.8–21.4, and it **cannot separate true Q=5 from true Q=20**.
+⇒ the 0.6×ceiling guard I added earlier is **insufficient** — it rejects white noise but not
+coloured, and the routes are coloured.
+
+### ✅ WHAT SURVIVES — SLOPE-CORRECTED EXCESS WITH A SLOPE-MATCHED NULL
+Fit the route's **own** power law over 3–40 Hz using only bins **outside** the bands under
+test, measure the peak's excess over it, and null it at **that route's measured slope**:
+```
+   band              excess        slope-matched null p95    verdict
+   GRIND 15-25 Hz    9.9 - 421.9   2.6 - 4.1                 REAL on 9/9 routes  (3-100x margin)
+   RATCHET 5-12 Hz   2.0 - 8.9     2.7 - 4.1                 real on only 6/9    (1.1-2.3x)
+```
+✅ **[EVIDENCE] the grind resonance is unambiguous; the ratchet is marginal IN THIS CHANNEL.**
+That is the real reason every 6–9 Hz endpoint has underperformed — **the feature is 10–50x
+weaker in wheel rate**, a signal-strength problem, not a noise problem. More episodes cannot
+fix it; a different channel might.
+✅ **[EVIDENCE] and the excess orders by build**: **V91 9.9 → V102 421.9 → V122 23.2**. The 42x
+jump lands on the 4x→6x gain step, and the kit has clawed it back to **2.3x above V91's
+4x-gain level** — independently matching the earlier Q ordering (9.00 at V102 → 4.50 at V122).
+
+### 🛑 AND IT RETRACTS AN INFERENCE RULE I HAD ALREADY COMMITTED
+The pre-registration said *“Q RISING above 4.50 falsifies the damping account → fly V167”*.
+**Half-power Q is NON-MONOTONE**: its null sits **ABOVE** the data (real 13.7–34.7 vs null p95
+**58–78**), because on a noisy median periodogram the half-power crossing lands on an adjacent
+bin. Adding damping lowers Q, but once the peak weakens toward the floor **Q rises again
+toward the noise value** ⇒ **a rise cannot distinguish “damping failed” from “damping
+worked”**, which is precisely the discrimination the drive was for. **Corrected**: excess is
+monotone in peak strength and carries the one-sided logic without the defect.
+
+### ✅ THE DRIVE REQUIREMENT, NOW A MEASURED NUMBER
+```
+   split-half floor vs windows per half:  3 -> 2.23x    6 -> 1.57x   (extrapolates ~1.2-1.3x at 12-16)
+   a continuous pass of T s yields floor((T-5.12)/2.56)+1 windows:  15 s -> 4,  10 s -> 2
+   V158's predicted effect is 1.68-2.74x  =>  needs ~24-32 windows
+   => 8 passes of 15 s = 32 windows (ADEQUATE);  8 of 10 s = 16 (marginal)
+```
+⊕ New tool `rlog-tools/score/score_band_excess.py` — the validated estimator, its
+slope-matched null, and the split-half floor, with the window warning built in.
+
