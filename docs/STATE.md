@@ -4,6 +4,51 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑 **V178 IS RETRACTED AND QUARANTINED — THOSE CELLS ARE THE AUTHORITY LADDER, NOT V122'S DOING**
+**I built a firmware image on a wrong premise and nearly handed it over as flashable. Caught by the
+audit I had scheduled, one turn later.**
+❌ **The claim**: V122 flattened three LERPs to ±5.0 and deleted a deadband, so V178 reverts them.
+✅ **The full V108-vs-V122 diff is TWELVE BYTES in five payload runs, and that block is NOT among
+them:**
+```
+   0x55DF2  37844 -> 38212   CAN 427 telemetry source
+   0x55E10  12965 -> 12963   427 packer sar
+   0xC40BC    600 -> 3000    Coulomb ramp width      <- V177 keeps this (protective)
+   0xC40D2    204 -> 1020    K1 Coulomb              <- V177 REVERTS this; still valid
+   0xC40DC     22 -> 8       accel EMA alpha         <- still OPEN
+```
+🛑 **The real history of `0xC6598`/`AC`/`C4`/`C8`/`CC`, read across EVERY image in the repo:**
+```
+   stock  1.0  -1.0   0.0  1.5  2.0
+   V29    2.0  -2.0   (stock ramp)
+   V30    4.0  -4.0   (stock ramp)
+   V31    4.0  -4.0   4.0  4.0  4.0
+   V38    5.0  -5.0   5.0  5.0  5.0     <- and unchanged on EVERY build since
+```
+⇒ **that is a deliberate GAIN / AUTHORITY LADDER, raised at V31/V38** — almost certainly how this
+kit obtains its LKAS authority at all. **Reverting it to Honda's 1.0 would cut authority ~5x, the
+exact opposite of the operator's second stated goal.** V178's artifacts are renamed
+**`SUPERSEDED-DO-NOT-FLASH-AUTHORITY-*`** and `build_v178_tva.py` now raises on entry.
+
+### 🛑 THE METHOD ERROR, WHICH IS THE REAL LESSON
+**I asked "did V122 change this cell?" when the question that mattered was "WHEN did this cell
+change?"** Having just found the lineage gap at V122, I attributed everything unfamiliar to V122
+without checking. **One `for build in images: print(value)` loop — four lines — settled it and would
+have prevented the build entirely.**
+➕ **STANDING RULE, earned:** before reverting ANY cell, print its value across **every image in the
+repo, in build order**. A cell that steps through a **ladder** (1 → 2 → 4 → 5) is a **deliberate
+tuning axis**, not an accident, and reverting it undoes deliberate work. A cell that jumps **once** is
+the candidate.
+
+### ✅ WHAT SURVIVES, UNCHANGED
+- **V177 stands.** `0xC40D2` 204 → 1020 **is** genuinely V122's, confirmed by this very diff. Its
+  rationale, its single-cell attribution and its fly-first status are unaffected.
+- **The lineage gap stands** — `grep V122` still returns zero rows — but its consequence is smaller
+  than I said: V122's cal delta is **three** cells, not four, plus two telemetry cells.
+- **`0xC40DC` (22 → 8) remains genuinely V122's and genuinely OPEN.**
+❌ **Retracted with V178**: the "V122 deleted a deadband / flattened a ramp" story, and the V80-relay
+framing attached to it.
+
 ## 🛑🛑 **THE BUILD LINEAGE STOPS AT V121 — AND V122, THE FLYING BUILD, MADE FOUR UNDOCUMENTED CHANGES**
 **`docs/BUILD-LINEAGE*.md` contains ZERO occurrences of "V122".** The highest documented build is
 **V121**. Nothing from V122 to V178 has a lineage row. 🛑 **Every lever proposed this session was
@@ -2168,39 +2213,4 @@ monotone in peak strength and carries the one-sided logic without the defect.
 ```
 ⊕ New tool `rlog-tools/score/score_band_excess.py` — the validated estimator, its
 slope-matched null, and the split-half floor, with the window warning built in.
-
-## 🛑🛑 **MY RATCHET Q WAS AN ARTEFACT OF THE WINDOW — AND IT EXPLAINS EVERY 6–9 Hz FAILURE**
-Having found Q works at 21 Hz, I measured it at the ratchet's own 5–12 Hz. **There IS a resonance
-there** — peak 5.5–8.6 Hz, prominence **17–68x** on all nine routes — but its Q showed no build trend,
-which was suspicious given how cleanly the 21 Hz Q tracked. It is a **resolution artefact**.
-```
-   Welch nperseg = NW//2 = 128 at 100 Hz  =>  df = 0.781 Hz
-   largest resolvable Q at frequency f  =  f / (2 * df)
-
-   at  7.8 Hz  ceiling = 5.0    measured 1.17-5.50   <- PINNED AT THE CEILING
-   at 21.0 Hz  ceiling = 13.4   measured 4.50-9.00   <- comfortably below, VALID
-```
-✅ **[EVIDENCE] memory's ring-down puts the ratchet at ζ 0.017–0.036, i.e. Q = 14–29.** At df = 0.78 Hz
-that is **unmeasurable** — the half-power width would be 0.27–0.56 Hz, narrower than one bin.
-⇒ **the 5–12 Hz Q values I reported are the WINDOW's width, not the resonance's. Withdrawn.**
-✅ **The 15–25 Hz Q measurement STANDS** — 4.50–9.00 against a ceiling of 13.4, so it is measuring the
-resonance and not the window. Everything built on it is unaffected.
-
-### ⭐ AND THIS EXPLAINS A LONG-STANDING PUZZLE
-Every 6–9 Hz endpoint this kit has tried has performed badly — the band ratio resolves **1 route in
-9**, and the CIs are enormous. **The reason is structural: the ratchet is too NARROW to resolve in a
-2.56 s window.** Its energy is smeared across bins, so band sums mix it with neighbouring content and
-Q pins at the ceiling. **This is not a noise problem to be beaten with more episodes; it is a
-resolution problem, and only a longer window fixes it.**
-
-### ✅ THE DRIVE REQUIREMENT THAT FOLLOWS
-```
-   to resolve Q = 29 at 7.8 Hz needs df <= 0.134 Hz  =>  nperseg >= 744  =>  >= 7.4 s of
-   CONTINUOUS engaged creep per analysis window
-```
-⇒ **the drive needs engaged creep passes of >= 10-15 s CONTINUOUS each**, not merely many short ones.
-⊕ This sits alongside, not against, the existing *“8+ separate passes”* requirement — both are met by
-**8+ passes of 10-15 s each**, which is also just a natural slow lap of a car park.
-⊕ A resolution guard is now in `peak_q`: it returns **NaN when the measured Q exceeds 0.6x the
-window's ceiling**, so the scorer can never again report a window artefact as a damping measurement.
 

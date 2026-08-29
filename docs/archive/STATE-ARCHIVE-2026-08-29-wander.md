@@ -710,3 +710,38 @@ operator has already ruled out on other grounds.
 ⊕ It does **not** change the recommendation: the gain stays frozen at 6x, and **nothing here suggests
 raising it.** If anything it strengthens the existing rule against 8x by supplying the missing why.
 
+## 🛑🛑 **MY RATCHET Q WAS AN ARTEFACT OF THE WINDOW — AND IT EXPLAINS EVERY 6–9 Hz FAILURE**
+Having found Q works at 21 Hz, I measured it at the ratchet's own 5–12 Hz. **There IS a resonance
+there** — peak 5.5–8.6 Hz, prominence **17–68x** on all nine routes — but its Q showed no build trend,
+which was suspicious given how cleanly the 21 Hz Q tracked. It is a **resolution artefact**.
+```
+   Welch nperseg = NW//2 = 128 at 100 Hz  =>  df = 0.781 Hz
+   largest resolvable Q at frequency f  =  f / (2 * df)
+
+   at  7.8 Hz  ceiling = 5.0    measured 1.17-5.50   <- PINNED AT THE CEILING
+   at 21.0 Hz  ceiling = 13.4   measured 4.50-9.00   <- comfortably below, VALID
+```
+✅ **[EVIDENCE] memory's ring-down puts the ratchet at ζ 0.017–0.036, i.e. Q = 14–29.** At df = 0.78 Hz
+that is **unmeasurable** — the half-power width would be 0.27–0.56 Hz, narrower than one bin.
+⇒ **the 5–12 Hz Q values I reported are the WINDOW's width, not the resonance's. Withdrawn.**
+✅ **The 15–25 Hz Q measurement STANDS** — 4.50–9.00 against a ceiling of 13.4, so it is measuring the
+resonance and not the window. Everything built on it is unaffected.
+
+### ⭐ AND THIS EXPLAINS A LONG-STANDING PUZZLE
+Every 6–9 Hz endpoint this kit has tried has performed badly — the band ratio resolves **1 route in
+9**, and the CIs are enormous. **The reason is structural: the ratchet is too NARROW to resolve in a
+2.56 s window.** Its energy is smeared across bins, so band sums mix it with neighbouring content and
+Q pins at the ceiling. **This is not a noise problem to be beaten with more episodes; it is a
+resolution problem, and only a longer window fixes it.**
+
+### ✅ THE DRIVE REQUIREMENT THAT FOLLOWS
+```
+   to resolve Q = 29 at 7.8 Hz needs df <= 0.134 Hz  =>  nperseg >= 744  =>  >= 7.4 s of
+   CONTINUOUS engaged creep per analysis window
+```
+⇒ **the drive needs engaged creep passes of >= 10-15 s CONTINUOUS each**, not merely many short ones.
+⊕ This sits alongside, not against, the existing *“8+ separate passes”* requirement — both are met by
+**8+ passes of 10-15 s each**, which is also just a natural slow lap of a car park.
+⊕ A resolution guard is now in `peak_q`: it returns **NaN when the measured Q exceeds 0.6x the
+window's ceiling**, so the scorer can never again report a window artefact as a damping measurement.
+

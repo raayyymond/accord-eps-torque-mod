@@ -4,7 +4,9 @@
 > Discovered 2026-08-29. **`grep V122` in these files returns nothing**, so the standing rule
 > *"grep the lineage before naming any address"* **silently passes** for every cell V122
 > moved. V122's undocumented delta: `0xC40D2` 204→1020 · `0xC40BC` 600→3000 · `0xC40DC`
-> 22→8 · `0xC6598`/`9C`/`AC`/`B0`/`C4`/`C8`/`CC` three LERPs flattened to ±5.0.
+> 22→8. **THAT IS ALL** — twelve bytes, five payload runs. 🛑 The `0xC6598`… float block is
+> **NOT V122's**: it is a V31/V38 **authority ladder** (1.0→2.0→4.0→5.0) and must NOT be
+> reverted — doing so would cut LKAS authority ~5x. V178 tried and is RETRACTED.
 > **Until these are backfilled, diff against the STOCK IMAGE, not against this file.**
 > Details and the builds that revert them: `docs/STATE.md`.
 

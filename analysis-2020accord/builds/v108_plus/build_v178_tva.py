@@ -1,4 +1,20 @@
 #!/usr/bin/env python3
+# ############################################################################################
+# 🛑🛑 RETRACTED 2026-08-29 -- DO NOT BUILD, DO NOT FLASH. THE PREMISE IS WRONG.
+#
+# This build reverts 0xC6598/9C/AC/B0/C4/C8/CC to stock on the belief that V122 flattened a
+# graduated ramp. ** V122 DID NOT TOUCH THESE CELLS. **  A full V108-vs-V122 diff is only 12
+# bytes (0x55DF2, 0x55E10, 0xC40BC, 0xC40D2, 0xC40DC) and this block is not among them.
+#
+# The real history, read across every image:
+#     stock 1.0/-1.0/0.0/1.5/2.0 | V29 2.0 | V30 4.0 | V31 4.0 flat | V38 5.0 flat -> ever since
+# That is a deliberate GAIN / AUTHORITY LADDER raised at V31/V38, i.e. almost certainly how this
+# kit obtains its LKAS authority at all.  ** Reverting it to Honda's 1.0 would cut authority ~5x,
+# the exact opposite of the operator's stated goal. **
+#
+# Artifacts renamed SUPERSEDED-DO-NOT-FLASH-AUTHORITY-*.  Kept only as a record of the error.
+# LESSON: ask WHEN a cell changed, not WHETHER a particular build changed it.
+# ############################################################################################
 r"""
 V178 -- RESTORE HONDA'S RAMP IN THE 0xC6590 FLOAT BLOCK.  Base = V177.  7 float32 cells, 28 bytes.
         Undoes V122's flattening of three LERPs to a constant +-5.0, including a 0 -> 5.0
@@ -115,6 +131,8 @@ def f32(buf, off):
 
 
 def build():
+    raise SystemExit("V178 IS RETRACTED -- see the banner at the top of this file.")
+
     print("=" * 102)
     print("  V178 -- HONDA'S RAMP RESTORED IN THE 0xC6590 FLOAT BLOCK   (base V177)")
     print("=" * 102)
