@@ -1203,3 +1203,58 @@ authority and max rates are untouched**, and the map is **driver-torque fed, not
 (`0xC616C`=0 ⇒ `gp-0x6b4a`≡0, asserted in the build). 1536 is the **smallest** dose clearing the
 one-episode margin; 1280 and 1024 remain if it reads clean but incomplete.
 
+## ⭐ **PEAK COMMAND OSCILLATION IS IN THE GRIND'S BAND — IT SHARES THE GRIND'S LEVER**
+The third symptom, measured for the first time with the validated estimator. Sweeping the whole
+usable spectrum of all three COMMAND channels, excess over each channel's **own** fitted power law,
+nulled at that channel's **own** measured slope:
+```
+   median excess / slope-matched null p95, 7 routes
+                 0.5-3   3-5    5-12   12-15   15-25   25-35   35-49
+   cc_req        0.68    0.85   0.54   0.64    1.97    0.48    1.06
+   co_tqcan      0.93    0.84   0.48   0.50    1.65    0.39    0.82
+   sc_tq         0.61    0.88   0.50   0.65    1.55    0.52    0.64
+   cs_tq (car)   0.03    0.17   9.15   1.84    5.40    0.35    0.38
+```
+✅ **[EVIDENCE] the command clears its own null in EXACTLY ONE band — 15–25 Hz, the GRIND's band —
+and is below its null everywhere else, including the ratchet's.**
+⭐ **The decisive asymmetry**: at 5–12 Hz the car's peak is **LARGER** (9.15) than its 15–25 Hz peak
+(5.40), yet the command is **below null** at 5–12 (0.48–0.50) and **above** it at 15–25. So the command
+does **not** simply inherit whatever the car does ⇒ **"openpilot re-emits everything" is refuted**,
+and the selectivity needs an explanation.
+⊕ **It has one**: openpilot steers on **angle/curvature**, and the ratchet is a **TORQUE-only mode
+with no angle signature** (angle channels 0.79–0.83, i.e. chance). **A torque-only mode is invisible
+to openpilot; a mode that moves the wheel is not.** That predicts exactly the observed pattern.
+
+### ⚠ WHAT IS *NOT* ESTABLISHED — AND MY OWN CONTROL FAILED
+⚠ **The correlation is NOT significant**: command 15–25 vs car 15–25 gives ρ **+0.54 / +0.61**,
+p **0.215 / 0.148** at n = 7. Positive and the right sign, but it does not stand on its own.
+🛑 **My 5–12 Hz negative control DID NOT DISCRIMINATE** — it returned ρ **+0.54 / +0.68**, as high as
+the band it was meant to contrast with. It was correlating sub-null noise against the car's peak, so
+**it carries no information and the causal direction is NOT established by it.** Recorded rather than
+quietly dropped.
+⚠ The build trend agrees in direction but is weaker: post-V102 command ρ **−0.70 / −0.80**
+(p 0.188 / 0.104) against the car's **−0.90 (p 0.037)**.
+
+### ✅ THE ACTIONABLE CONCLUSION
+**Peak command oscillation is not a separate mechanism needing its own lever.** It sits in the
+grind's band, moves in the grind's direction across builds, and openpilot must not be modified
+(standing instruction). ⇒ **damping the 15–25 Hz resonance is the only permitted route, and V158's
+damper shape — already on the fly-first build — is that lever.** No new build is required for it.
+⊕ **The V168 drive scores it for free**: the same episode already yields the 15–25 Hz band, so the
+command peak can be read alongside the grind with no extra exposure.
+
+## ✅ **THE SLOPE-CAP DOSE LADDER IS CUT — ALL FOUR DIRECTIONS READY, NO REBUILD NEEDED**
+```
+   build  cap    gain     Q ratio   vs stock   image SHA256 (first 16)
+   V169   1792   1.750x    6.57     2.2x       ed9e5fec84378f20   <- SMALLER, if V168 is too heavy
+   V168   1536   1.500x    4.26     3.4x       058dd64ac442ef43   <- FLY FIRST
+   V170   1280   1.250x    3.16     4.5x       0c923c363a920459   <- next step up
+   V171   1024   1.000x    2.50     5.7x       e3cbc92de7a07bf2   <- largest sane dose
+```
+✅ All four are **V158 + one cal cell**, built through **V168's own verified builder** (one builder,
+four build numbers) so the assertions and the CRC/readback path cannot drift apart. **35/35 on each.**
+⊕ The feel cost rises monotonically with the dose; **peak authority and max rates are untouched at
+every dose** (the curve is uncapped above X≈450) and **no dose touches the LKAS lane**.
+⇒ whichever way the V168 drive reads — clean but incomplete, or effective but too heavy — **the next
+build already exists.**
+

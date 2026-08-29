@@ -4,6 +4,51 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑 **THE SCORER'S EXCESS ENDPOINT CANNOT SEE THE POLES AT ALL — MY CARD DISCRIMINATOR WAS BACKWARDS**
+Applying each build's `|H|²` to the REAL flying spectrum (route `r24`, V122) and re-running the
+scorer's own estimator:
+```
+   build                    GRIND 15-25 Hz     RATCHET 5-12 Hz
+   FLYING (V122)                11.1x              26.7x
+   V185 (poles at Honda)        11.1x              26.7x
+   V184 (poles 0.980)           11.3x              30.0x      <- -16 dB of attenuation, and the
+                                                                 endpoint does not move
+```
+🛑 **V184's −16 dB grind attenuation is INVISIBLE to the endpoint the card scores.** The reason
+is structural, not a bug: the **slope-corrected excess** divides band power by a power law fitted
+**outside** the band (3–6 and 12–40 Hz). A low-pass attenuates the fit region too and **steepens the
+fit**, so the RATIO barely moves.
+➕ **THE GENERAL FACT, worth more than this build: the scorer measures PEAKINESS, not LEVEL.** A
+smooth broadband filter changes level without changing peakiness and is therefore invisible to it.
+A **damping** change alters peakiness and IS visible.
+❌ So the card's rule *"grind moved ⇒ the poles did it"* is **WRONG and withdrawn.** The poles will
+not move that number.
+
+### ✅ THE ENDPOINT THAT DOES SEE THEM — AND THE SCORER ALREADY PRINTS IT
+```
+   spectral slope over 3-40 Hz
+     FLYING (V122)        1/f^2.671
+     V185 (poles Honda)   1/f^2.671    delta +0.000
+     V184 (poles 0.980)   1/f^4.531    delta +1.860
+```
+✅ **1/f^4.53 is far outside the entire historical range (0.80–2.37)** — no route has ever produced
+anything like it, so a single pass is unmistakable. **This is a binary, pre-registered check.**
+
+### ✅ THE CORRECTED DISCRIMINATOR
+```
+   spectral slope jumps to ~4.5   => the POLES are live => you flew V184, and they work
+   slope unchanged (~2.7)         => you flew V185, or the poles are not reaching the signal
+   GRIND / RATCHET excess falls   => the INERTIA DOSE REVERT did it (both builds carry it;
+                                     the poles cannot move these numbers)
+   nothing moves anywhere         => both accounts fail together
+```
+⊕ **And note what this means for the fork**: since the excess endpoints respond only to the inertia
+revert, **V184 and V185 are indistinguishable on the ratchet/grind excess.** The ONLY thing V184 buys
+that V185 does not is the slope change — bought with **+16.4° of engaged-only phase lag**. Stated that
+way, **V185 is the better first drive**: same measurable ratchet effect, none of the phase risk.
+⚠ The inertia revert's effect is NOT in these numbers (it acts in a different lane), so the excess
+columns above are a **lower bound** on what both builds do to the ratchet.
+
 ## ✅ **THE GRIND IS ENGAGED-ONLY — 7 ROUTES OUT OF 7, INCLUDING THE FLYING BUILD**
 Dry-running the second scorer answered, for the GRIND, the question my underpowered hands-on test
 could not answer for the ratchet. Per-route slope-matched nulls, adequate exposure:
@@ -2143,59 +2188,4 @@ ships it at 511, one count under its own 512 trip, and V73 raised it ⇒ V74/V75
 lived experience of weak lane-keeping persists, the thing to capture is **which manoeuvre** it happens
 in — the 3 % rail duty means there IS a small population of railed frames, and those are the only
 frames where a ceiling could matter.
-
-## ⭐ **PEAK COMMAND OSCILLATION IS IN THE GRIND'S BAND — IT SHARES THE GRIND'S LEVER**
-The third symptom, measured for the first time with the validated estimator. Sweeping the whole
-usable spectrum of all three COMMAND channels, excess over each channel's **own** fitted power law,
-nulled at that channel's **own** measured slope:
-```
-   median excess / slope-matched null p95, 7 routes
-                 0.5-3   3-5    5-12   12-15   15-25   25-35   35-49
-   cc_req        0.68    0.85   0.54   0.64    1.97    0.48    1.06
-   co_tqcan      0.93    0.84   0.48   0.50    1.65    0.39    0.82
-   sc_tq         0.61    0.88   0.50   0.65    1.55    0.52    0.64
-   cs_tq (car)   0.03    0.17   9.15   1.84    5.40    0.35    0.38
-```
-✅ **[EVIDENCE] the command clears its own null in EXACTLY ONE band — 15–25 Hz, the GRIND's band —
-and is below its null everywhere else, including the ratchet's.**
-⭐ **The decisive asymmetry**: at 5–12 Hz the car's peak is **LARGER** (9.15) than its 15–25 Hz peak
-(5.40), yet the command is **below null** at 5–12 (0.48–0.50) and **above** it at 15–25. So the command
-does **not** simply inherit whatever the car does ⇒ **"openpilot re-emits everything" is refuted**,
-and the selectivity needs an explanation.
-⊕ **It has one**: openpilot steers on **angle/curvature**, and the ratchet is a **TORQUE-only mode
-with no angle signature** (angle channels 0.79–0.83, i.e. chance). **A torque-only mode is invisible
-to openpilot; a mode that moves the wheel is not.** That predicts exactly the observed pattern.
-
-### ⚠ WHAT IS *NOT* ESTABLISHED — AND MY OWN CONTROL FAILED
-⚠ **The correlation is NOT significant**: command 15–25 vs car 15–25 gives ρ **+0.54 / +0.61**,
-p **0.215 / 0.148** at n = 7. Positive and the right sign, but it does not stand on its own.
-🛑 **My 5–12 Hz negative control DID NOT DISCRIMINATE** — it returned ρ **+0.54 / +0.68**, as high as
-the band it was meant to contrast with. It was correlating sub-null noise against the car's peak, so
-**it carries no information and the causal direction is NOT established by it.** Recorded rather than
-quietly dropped.
-⚠ The build trend agrees in direction but is weaker: post-V102 command ρ **−0.70 / −0.80**
-(p 0.188 / 0.104) against the car's **−0.90 (p 0.037)**.
-
-### ✅ THE ACTIONABLE CONCLUSION
-**Peak command oscillation is not a separate mechanism needing its own lever.** It sits in the
-grind's band, moves in the grind's direction across builds, and openpilot must not be modified
-(standing instruction). ⇒ **damping the 15–25 Hz resonance is the only permitted route, and V158's
-damper shape — already on the fly-first build — is that lever.** No new build is required for it.
-⊕ **The V168 drive scores it for free**: the same episode already yields the 15–25 Hz band, so the
-command peak can be read alongside the grind with no extra exposure.
-
-## ✅ **THE SLOPE-CAP DOSE LADDER IS CUT — ALL FOUR DIRECTIONS READY, NO REBUILD NEEDED**
-```
-   build  cap    gain     Q ratio   vs stock   image SHA256 (first 16)
-   V169   1792   1.750x    6.57     2.2x       ed9e5fec84378f20   <- SMALLER, if V168 is too heavy
-   V168   1536   1.500x    4.26     3.4x       058dd64ac442ef43   <- FLY FIRST
-   V170   1280   1.250x    3.16     4.5x       0c923c363a920459   <- next step up
-   V171   1024   1.000x    2.50     5.7x       e3cbc92de7a07bf2   <- largest sane dose
-```
-✅ All four are **V158 + one cal cell**, built through **V168's own verified builder** (one builder,
-four build numbers) so the assertions and the CRC/readback path cannot drift apart. **35/35 on each.**
-⊕ The feel cost rises monotonically with the dose; **peak authority and max rates are untouched at
-every dose** (the curve is uncapped above X≈450) and **no dose touches the LKAS lane**.
-⇒ whichever way the V168 drive reads — clean but incomplete, or effective but too heavy — **the next
-build already exists.**
 

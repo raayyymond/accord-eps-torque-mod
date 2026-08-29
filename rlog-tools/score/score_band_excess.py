@@ -159,16 +159,15 @@ def attribute_grind(segs):
     print('  GRIND SUB-BANDS   15-20 Hz excess %.1fx   20-25 Hz excess %.1fx   ratio %.2f'
           % (lo, hi, (hi / lo) if lo > 0 else float('nan')))
     print('       reference V122 (r24, cs_tq): 15-20 = 5.8x, 20-25 = 14.0x, ratio 2.39')
-    print('       -- ATTRIBUTION, updated 2026-08-29 for the V184 / V185 fork --')
-    print('       ONLY V184 changes the assist-section poles; V185 leaves them at Honda.')
-    print('       GRIND moved at all       => the POLES did it => you flew V184 and they work')
-    print('       GRIND essentially flat   => expected on V185; read the RATCHET row instead')
-    print('       RATCHET down, grind flat => the INERTIA dose revert (both builds carry it)')
-    print('       neither moved            => both accounts fail together')
-    print('       NOTE: 427 now carries gp-0x6ac0 >> 4 (V183+), NOT motor torque.')
-    print('       field >= 812 throughout  => the damper hard-OFF gate never opens =>')
-    print('                                   that whole lever family is closed')
-    print('       field <  812 sometimes   => the damper CAN act; its knots become live')
+    print('       -- ATTRIBUTION, CORRECTED 2026-08-29 --')
+    print('       THE POLES CANNOT MOVE THESE EXCESS NUMBERS. A slope-corrected excess')
+    print('       measures PEAKINESS; a broadband low-pass steepens the OUT-OF-BAND fit')
+    print('       too, so V184 predicts grind 11.1x -> 11.3x. Read the SLOPE instead:')
+    print('         slope jumps to ~4.5 (history is 0.80-2.37) => the POLES are live (V184)')
+    print('         slope unchanged ~2.7                       => V185, or poles not reaching')
+    print('       THESE EXCESS NUMBERS RESPOND TO THE INERTIA DOSE REVERT, which both')
+    print('       builds carry -- so a fall here implicates the inertia lane, not the poles.')
+    print('       427 carries gp-0x6ac0 >> 4 (V183+): >=812 => damper gate never opens.')
 
 
 def grind_by_command(tag):
