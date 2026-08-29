@@ -7,6 +7,13 @@
 > 🛑 Nothing here authorises a flash. Name the file and the bus yourself; kill openpilot/pandad
 > (`tmux kill-server`) before any flash operation.
 
+
+> 🚩 **SUPERSEDED AS FLY-FIRST BY V172** (`docs/scoring/DRIVE-CARD-V172.md`). V172 predicts
+> **6.2x** on the ratchet plus **9.6x** on the grind, against V168's 3.4x ratchet-only, and — decisively
+> — it leaves **apparent mass and friction untouched** (DC gain 1.0067) where V168 raises them
+> uniformly, which is the operator's own stated constraint. **V168 remains cut and ready** as the
+> alternative if V172's +30 ms of group delay turns out to be the problem.
+
 ---
 
 ## V168 SUPERSEDES V158 AS THE FLY-FIRST BUILD

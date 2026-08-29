@@ -30,7 +30,7 @@ every pole radius.  That figure is MEANINGLESS FOR REAL POLES, and the rows that
 had real ones.  Constraining the search to REAL poles at r <= 0.97 gives:
 
     poles [0.97, 0.47509]  -- both REAL, so no ringing at all
-    step response: 0.0 % overshoot, 130 ms settle
+    step response: 0.0 % overshoot, 130 ms settle (settling, NOT the felt lag -- see below)
     pulse response: ZERO oscillation cycles
 
   It is an overdamped low-pass, not a resonator.  I nearly discarded a viable design by
@@ -57,12 +57,20 @@ HOW ITS COST DIFFERS FROM V168's -- THIS IS THE POINT
     V168 slope cap    reduces assist per unit torque at EVERY input speed INCLUDING DC
                       => heavier steering NEAR CENTRE, all the time.
     V172 this build   leaves DC alone (gain 1.007) and reduces assist for FAST inputs
-                      => steering weight unchanged at rest; assist arrives ~130 ms slower
-                         on quick inputs, and 3-5 Hz driver content loses 15-32 %.
+                      => steering weight unchanged at rest; 3-5 Hz driver content loses
+                         15-32 %; and the added GROUP DELAY is +30 ms at 0.5-1 Hz, falling
+                         to +21 ms at 3 Hz and +5 ms at the ratchet.
 
-  Neither is free.  They are different trades and the operator should pick on feel:
-  V168 costs static weight, V172 costs response speed.
-  ** V172 also attenuates the GRIND 9.6x, which V168 does not. **
+  CORRECTION to an earlier framing of mine: I first quoted "~130 ms slower", which was the
+  STEP SETTLING TIME.  That is the wrong metric for feel -- settling is dominated by the
+  slowest pole's tail regardless of whether any signal energy is there.  What a driver feels
+  is GROUP DELAY in the band they steer in, and that is +30 ms, not +130 ms.  The correction
+  materially lowers this build's risk, and it is why the recommendation below changed.
+
+  Neither is free.  But the operator's standing constraint is explicitly about apparent MASS AND
+  FRICTION -- "low apparent steering mass and friction to LKAS" -- and V168 raises exactly that,
+  uniformly, while V172 leaves it untouched.  ** V172 also attenuates the GRIND 9.6x, which V168
+  does not. **  On both counts V172 is the better match to what was actually asked for.
 
 WHAT A NULL WILL LICENSE  (written BEFORE the cut)
 ---------------------------------------------------
@@ -80,8 +88,10 @@ RISK
 ----
 4 float32 cells the kit has already changed on-car without fault (V106/V107 moved exactly
 these four).  Enable already 1 on the base.  No cave, no code edit.  Poles real and inside
-the unit circle with margin.  The one genuine unknown is whether 130 ms of added lag in the
-dominant assist lane feels like a "catch" -- that is a FEEL question the drive answers.
+the unit circle with margin.  The one genuine unknown is whether +30 ms of added group delay in
+the dominant assist lane feels like a "catch".  That is a FEEL question only the drive answers,
+but 30 ms is at the low end of what is usually reported as noticeable in steering, which is why
+this build is now recommended FIRST rather than second.
 
 BASE = V158, so this build also carries V158's damper shape.
 """
