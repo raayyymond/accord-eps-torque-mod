@@ -4,6 +4,57 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑 **WE HAVE BEEN DRIVING A RELAY AT 10x HONDA: `0xC40D2` K1 — V177 REVERTS IT, AND IS THE NEW FLY-FIRST**
+**Found by re-reading the kit's own non-stock delta, not by new tracing.** `0xC40D2` is K1, the gain on
+the modelled Coulomb friction in the plant model (`FUN_0003b8f6`):
+```
+   friction = |model| * sign(polarity * gp-0x6abc) * K1 / 1024        gp-0x6abc = MOTOR RATE
+   => it is a SIGN FUNCTION of velocity, so every reversal steps it by  2*|model|*K1/1024
+
+     Honda   K1 =  102  ->  step = 0.199 x |model|
+     V89     K1 =  204  ->  step = 0.398 x |model|     (flew; measured "delivered, but small")
+     V122+   K1 = 1020  ->  step = 1.992 x |model|     <== ON EVERY BUILD SINCE V122
+
+   read from the images:  stock/V81/V87/V88 = 102 | V89..V108 = 204 | V122..V176 = 1020
+```
+🛑 **V89 raised it to 204 and its own docstring PRE-REGISTERED the risk**, which the polarity memory
+records verbatim: *"Coulomb friction flips sign at every reversal, so larger K1 = a larger **STEP at
+each reversal** — **notchiness on turn-in**, not steady drag. Transient, **unmeasured**."*
+**V122 then took it to 1020 — 5x the value that warning was written about — and it has still never
+been tested.** At an 8 Hz oscillation the motor rate reverses **~16 times a second**, so a step of
+**~2x|model|** is injected 16 times a second, **synchronised to the mode**.
+⊕ **This is V80's failure mode in a different lane.** V80 turned the base-assist damper into a relay
+and produced *"the worst grinding ever"*. A relay's describing function **does not shrink with
+amplitude**, which is exactly how it sustains a mode that linear analysis says should be damped — and
+why none of my linear transfer-function work would ever have found it.
+
+### ✅ V177 BUILT — ONE CELL, 2 BYTES, AND IT IS THE MOST ATTRIBUTABLE BUILD OF THE SESSION
+Base **V175**. `0xC40D2` **1020 -> 102**, Honda's own value **read from the stock image, not typed**.
+**21/21 assertions · 2 payload bytes · CRC 50/50 · readback byte-identical · hard-fault interlock
+`0xC407E` frozen at 511 · `0xC63A6` frozen · both prior reverts and all four section coefficients
+asserted CARRIED.** image `fc93255645014a0f…` · rwd `86cd9394c0f426fe…` · builder
+`analysis-2020accord/builds/v108_plus/build_v177_tva.py`.
+
+### ✅ IT MAKES THE DRIVE **MORE** INTERPRETABLE, NOT LESS — TWO INDEPENDENT SIGNATURES
+`0xC40D2` is a **bare `tp` scalar** ⇒ by RULE 7 it is **live in MANUAL and ENGAGED alike**. The
+inertia revert is mode-26/27 only. So one drive separates them:
+```
+   ratchet falls in BOTH engaged and manual, ratio ~unchanged  -> K1's RELAY was carrying it   (V177)
+   ratchet falls in ENGAGED only, ratio falls                  -> the inertia dose             (V175)
+   ratchet falls, ratio unchanged, manual unchanged            -> the assist-section poles     (V173)
+   nothing moves                                               -> all three accounts fail together
+```
+⚠ **THE FEEL COST, stated plainly: steady effort gets slightly HEAVIER.** The verified chain is
+*more modelled friction -> more assist -> lighter*, so undoing 10x removes some of the lightness V89
+was chasing. **That is the trade: a little steady weight, against removing a 1.99x|model| step that
+fires at every velocity reversal.** The operator has named eliminating the ratcheting/stuttering as
+the priority five times, so that is the right side to err on — but he should be told before driving.
+🛑 **FLIGHT ORDER: V177 supersedes V175 as fly-first.** It *contains* V175 and adds a one-cell
+revert to a Honda value with the strongest mechanism-to-symptom match in the session.
+➕ **OPEN, deliberately not folded in**: `0xC40DC` (the acceleration EMA alpha) which V122 also moved
+**22 -> 8**. That changes the inertia term's **phase** rather than its size, its direction is not
+established, and including it would have cost V177's single-cell attribution.
+
 ## ❌ **THE FOC IS CLOSED TOO — THE WHOLE CHAIN IS NOW ENUMERATED END TO END**
 The last untouched territory was the FOC / current loop. **It cannot hold an 8 Hz damping lever**, and
 the kit's own golden model already says so in its **[VERIFIED]** notes
@@ -2142,76 +2193,4 @@ stays valid because **both sides use the same procedure**, but it means the spli
 **understate** the pooled estimate's true uncertainty. Recorded rather than smoothed over.
 ⊕ The one-sided logic is unchanged and now sharper: **Q RISING above 4.50 falsifies the damping
 account** and points at the Path-2 pumping branch, whose build (V167) already exists.
-
-## ✅✅ **V158 DOES HAVE A FALSIFIABLE PREDICTION — IT IS JUST ONE-SIDED**
-V158 had no instrumented prediction at all, which left the drive unfalsifiable on that axis. The
-damping arithmetic supplies one, and its **asymmetry** is what makes it useful.
-```
-   Path-2 case          net added      total viscous     vs baseline 1.571
-   worst  (39 % nom)      1.066           2.637              x1.68
-   best   (72 % nom)      1.968           3.539              x2.25
-   ignored (100 %)        2.733           4.304              x2.74
-
-   IF firmware damping dominates AND the band is resonance-limited (amplitude ~ 1/damping):
-       predicted 18-22 Hz   3.88  ->  1.42 .. 2.32
-   IF mechanical damping dominates, the effect shrinks toward x1.00 (no change).
-   => honest range: 3.88 -> 1.42 .. 3.88, i.e. a x1.00 to x2.74 REDUCTION
-   => against a floor of 1.72x median / 2.93x p90 / 3.60x on r24 itself,
-      A REDUCTION IS LIKELY UNRESOLVABLE.
-```
-
-### ⭐ BUT THE OTHER DIRECTION IS SHARP
-**Nothing in the damping account predicts an INCREASE.** Every mechanism in V158 — FactorC lifted,
-FactorE's dead zone opened — adds a term that opposes motion in Path 1. So:
-```
-   V158 reads clearly ABOVE 3.88  (outside [1.60, 10.87] high, or above r24's own half-split 7.56)
-       => the damping account is FALSIFIED
-       => and it is evidence for the ONE named risk: the Path-2 PUMPING copy dominating
-       => which has a BUILT answer, V167 (0xC63A0 1024 -> 512), that halves exactly that term
-```
-✅ **So the drive is falsifiable even though the positive direction is underpowered.** An underpowered
-two-sided test becomes a usable **one-sided discriminator**, and the branch it discriminates into
-already has its build cut.
-⚠ **[ASSUMPTIONS, stated because the range depends entirely on them]** (1) firmware viscous damping is
-a non-trivial share of the plant's total damping — unmeasured; (2) the 18–22 Hz band is
-resonance-limited so amplitude scales as 1/damping — plausible but unverified at that band;
-(3) the Path-2 net is inside the stability-bounded 39–100 % window. **Any of these failing collapses
-the predicted reduction toward x1.00; none of them can produce an increase.** That asymmetry is the
-part worth trusting.
-
-## ✅ **ALL 24 UNFLOWN BUILDS TRIAGED AGAINST THE DETECTION FLOOR — ONLY V138 CLEARS IT**
-Swept every built-but-unflown image through `eps_closed_loop_sim.ratio_filter`.
-```
-   V137   alpha2 8->5    lane ratio @20Hz 0.7462   x1.34 reduction   BELOW the 1.72x floor
-   V138   alpha2 8->2    lane ratio @20Hz 0.3364   x2.97 reduction   CLEARS
-   the other 22 builds -- V139..V167, including V158/V160/V164/V165/V167 --
-       no change on the gp-0x6b26 lane, so this simulator cannot price them
-```
-✅ That is a **limit of the tool, not a defect in those builds**: `ratio_filter` covers the b26 lane
-only. V158's damper is `gp-0x6bd0`, Lever B is r24, the deadband builds are elsewhere. And the golden
-model does not simulate the damper cascade either — it takes `gp-0x6bd0` as an *input* to the
-aggregator. **So V158's prediction rests on the physical-units argument (0.000 → 1.05–1.96 ct/(deg/s)
-net), and no tool in the kit can convert that into a predicted band ratio.**
-
-### ⚠ WHICH EXPOSES A REAL TENSION, WORTH STATING RATHER THAN HIDING
-```
-                  mechanism                     instrumented outcome
-   V158   STRONGEST -- broadband viscous        UNPREDICTABLE, and likely below the floor
-          damping, quantified, targets the      (the 6-9 Hz band resolves 1/9 routes;
-          actual symptom at the actual band)     18-22 Hz needs a ~3.6x move at V122)
-   V138   WEAKER -- an EMA corner moved from    PREDICTED x2.97, tool-backed, CLEARS the floor
-          19.9 Hz to 5.0 Hz
-```
-⇒ **For a drive meant to FIX the car, V158 is the better bet.** Its mechanism is the strongest in the
-kit and it is the first build ever to deliver damping where the symptom lives.
-⇒ **For a drive meant to LEARN something instrumented, V138 is more informative** — it is the only
-unflown build whose predicted effect clears the measured floor.
-✅ **This does not reopen the V137 question**: V137 is below the floor on the same arithmetic and stays
-withdrawn. **V158 remains the recommendation**, because the pre-registration's PRIMARY endpoint is the
-operator's report, not the instrument — and what he feels can move even when the band ratio cannot
-resolve it. **V138 is the follow-up if he wants a number rather than a verdict.**
-
-⭐ **THE GENERAL POINT**: *“which build should fly”* and *“which build will produce a readable
-measurement”* are **different questions with different answers**, and this kit has been conflating
-them. Naming both, per build, is more useful than ranking builds on one axis.
 

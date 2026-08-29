@@ -559,3 +559,75 @@ calibration.
 handing the operator an “either/or”, check whether an existing tool can price both options** — here it
 took one call to a simulator that was written for exactly this question.
 
+## ✅✅ **V158 DOES HAVE A FALSIFIABLE PREDICTION — IT IS JUST ONE-SIDED**
+V158 had no instrumented prediction at all, which left the drive unfalsifiable on that axis. The
+damping arithmetic supplies one, and its **asymmetry** is what makes it useful.
+```
+   Path-2 case          net added      total viscous     vs baseline 1.571
+   worst  (39 % nom)      1.066           2.637              x1.68
+   best   (72 % nom)      1.968           3.539              x2.25
+   ignored (100 %)        2.733           4.304              x2.74
+
+   IF firmware damping dominates AND the band is resonance-limited (amplitude ~ 1/damping):
+       predicted 18-22 Hz   3.88  ->  1.42 .. 2.32
+   IF mechanical damping dominates, the effect shrinks toward x1.00 (no change).
+   => honest range: 3.88 -> 1.42 .. 3.88, i.e. a x1.00 to x2.74 REDUCTION
+   => against a floor of 1.72x median / 2.93x p90 / 3.60x on r24 itself,
+      A REDUCTION IS LIKELY UNRESOLVABLE.
+```
+
+### ⭐ BUT THE OTHER DIRECTION IS SHARP
+**Nothing in the damping account predicts an INCREASE.** Every mechanism in V158 — FactorC lifted,
+FactorE's dead zone opened — adds a term that opposes motion in Path 1. So:
+```
+   V158 reads clearly ABOVE 3.88  (outside [1.60, 10.87] high, or above r24's own half-split 7.56)
+       => the damping account is FALSIFIED
+       => and it is evidence for the ONE named risk: the Path-2 PUMPING copy dominating
+       => which has a BUILT answer, V167 (0xC63A0 1024 -> 512), that halves exactly that term
+```
+✅ **So the drive is falsifiable even though the positive direction is underpowered.** An underpowered
+two-sided test becomes a usable **one-sided discriminator**, and the branch it discriminates into
+already has its build cut.
+⚠ **[ASSUMPTIONS, stated because the range depends entirely on them]** (1) firmware viscous damping is
+a non-trivial share of the plant's total damping — unmeasured; (2) the 18–22 Hz band is
+resonance-limited so amplitude scales as 1/damping — plausible but unverified at that band;
+(3) the Path-2 net is inside the stability-bounded 39–100 % window. **Any of these failing collapses
+the predicted reduction toward x1.00; none of them can produce an increase.** That asymmetry is the
+part worth trusting.
+
+## ✅ **ALL 24 UNFLOWN BUILDS TRIAGED AGAINST THE DETECTION FLOOR — ONLY V138 CLEARS IT**
+Swept every built-but-unflown image through `eps_closed_loop_sim.ratio_filter`.
+```
+   V137   alpha2 8->5    lane ratio @20Hz 0.7462   x1.34 reduction   BELOW the 1.72x floor
+   V138   alpha2 8->2    lane ratio @20Hz 0.3364   x2.97 reduction   CLEARS
+   the other 22 builds -- V139..V167, including V158/V160/V164/V165/V167 --
+       no change on the gp-0x6b26 lane, so this simulator cannot price them
+```
+✅ That is a **limit of the tool, not a defect in those builds**: `ratio_filter` covers the b26 lane
+only. V158's damper is `gp-0x6bd0`, Lever B is r24, the deadband builds are elsewhere. And the golden
+model does not simulate the damper cascade either — it takes `gp-0x6bd0` as an *input* to the
+aggregator. **So V158's prediction rests on the physical-units argument (0.000 → 1.05–1.96 ct/(deg/s)
+net), and no tool in the kit can convert that into a predicted band ratio.**
+
+### ⚠ WHICH EXPOSES A REAL TENSION, WORTH STATING RATHER THAN HIDING
+```
+                  mechanism                     instrumented outcome
+   V158   STRONGEST -- broadband viscous        UNPREDICTABLE, and likely below the floor
+          damping, quantified, targets the      (the 6-9 Hz band resolves 1/9 routes;
+          actual symptom at the actual band)     18-22 Hz needs a ~3.6x move at V122)
+   V138   WEAKER -- an EMA corner moved from    PREDICTED x2.97, tool-backed, CLEARS the floor
+          19.9 Hz to 5.0 Hz
+```
+⇒ **For a drive meant to FIX the car, V158 is the better bet.** Its mechanism is the strongest in the
+kit and it is the first build ever to deliver damping where the symptom lives.
+⇒ **For a drive meant to LEARN something instrumented, V138 is more informative** — it is the only
+unflown build whose predicted effect clears the measured floor.
+✅ **This does not reopen the V137 question**: V137 is below the floor on the same arithmetic and stays
+withdrawn. **V158 remains the recommendation**, because the pre-registration's PRIMARY endpoint is the
+operator's report, not the instrument — and what he feels can move even when the band ratio cannot
+resolve it. **V138 is the follow-up if he wants a number rather than a verdict.**
+
+⭐ **THE GENERAL POINT**: *“which build should fly”* and *“which build will produce a readable
+measurement”* are **different questions with different answers**, and this kit has been conflating
+them. Naming both, per build, is more useful than ranking builds on one axis.
+

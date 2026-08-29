@@ -1,5 +1,14 @@
 # BUILD INVENTORY — what is cut, and how to choose
 
+> 🛑 **FLIGHT ORDER CHANGED AGAIN 2026-08-29: FLY **V177** FIRST.**
+> V177 = this build + **one** more cell: `0xC40D2` K1 **1020 -> 102** (Honda's). K1 is a **sign
+> function of motor velocity**, so at 10x Honda it injects a **1.99x|model| STEP at every reversal**
+> — ~16 times a second at 8 Hz. That is a **relay**, V80's failure mode in another lane, and it is
+> the strongest mechanism-to-symptom match found this session. It also acts in **manual AND engaged**
+> (a bare `tp` scalar, RULE 7), which gives the drive a second independent signature.
+> Card: `docs/scoring/DRIVE-CARD-V177.md`.
+
+
 > 🛑 **FLIGHT ORDER CHANGED 2026-08-29: FLY **V175** FIRST, NOT V173.**
 > V175 *contains* V173 (same poles, same notch) plus a 12-byte revert of the engaged
 > apparent-inertia dose to Honda's own row. The revert is a **lower risk class** than V173's own

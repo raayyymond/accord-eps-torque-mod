@@ -1,5 +1,14 @@
 # DRIVE CARD — V175  ·  **FLY THIS ONE FIRST**
 
+> 🛑 **FLIGHT ORDER CHANGED AGAIN 2026-08-29: FLY **V177** FIRST.**
+> V177 = this build + **one** more cell: `0xC40D2` K1 **1020 -> 102** (Honda's). K1 is a **sign
+> function of motor velocity**, so at 10x Honda it injects a **1.99x|model| STEP at every reversal**
+> — ~16 times a second at 8 Hz. That is a **relay**, V80's failure mode in another lane, and it is
+> the strongest mechanism-to-symptom match found this session. It also acts in **manual AND engaged**
+> (a bare `tp` scalar, RULE 7), which gives the drive a second independent signature.
+> Card: `docs/scoring/DRIVE-CARD-V177.md`.
+
+
 **Supersedes `DRIVE-CARD-V173.md` as fly-first.** V175 *contains* V173 — same poles, same notch, plus
 a 12-byte revert. There is no reason to fly V173 by itself.
 
