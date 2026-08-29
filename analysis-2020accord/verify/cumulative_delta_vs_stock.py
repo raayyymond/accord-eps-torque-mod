@@ -99,6 +99,30 @@ K = {
            'written back down to Honda 891 so only the forward path is boosted', 'V57', 'FLOWN'),
  0xD7A5C: ('friction table (m26)', 'x1.5 friction row', 'returned to Honda', 'V81', 'UNFLOWN'),
  0xD7A6C: ('friction table (m27)', 'x1.5 friction row', 'returned to Honda', 'V81', 'UNFLOWN'),
+ 0x13109: ('part-number MARKER', 'the ASCII part number string',
+           '39990-TVA-A160 -> 39990-TVA,A160: a UDS-visible marker that the ECU is running '
+           'modified firmware', 'inherited, pre-V122', 'FLOWN, cosmetic'),
+ 0x14120: ('part-number MARKER (2nd copy)', 'the ASCII part number string',
+           'same hyphen -> comma marker', 'inherited, pre-V122', 'FLOWN, cosmetic'),
+ 0xC62EA: ('low-speed steer lockout', 'the speed floor below which steering assist is cut',
+           '320 -> 0: the lockout is DISABLED, so the authority ramp is not killed at low speed',
+           'V57', 'FLOWN'),
+ 0xC659A: ('limit family x5 (float)', 'float32 limits, +-1.0 -> +-5.0',
+           'raises a family of saturation limits five-fold', 'V57', 'FLOWN, not individually traced'),
+ 0xC674E: ('limit family x5 (int)', 'integer limits, +-1024 -> +-5120',
+           'the same 5x family in integer form', 'V57', 'FLOWN, not individually traced'),
+ 0xC61C0: ('three limits -> -1', '1600 / 896 / 1280 -> 0xFFFF',
+           'saturated, i.e. effectively removed as constraints', 'V57', 'FLOWN'),
+ 0xC64B4: ('two limits -> -1, one -> 255', '24688 / 16438 / 112',
+           'saturated', 'V57', 'FLOWN'),
+ 0xC6446: ('Lever B', 'the LKAS-gated r24 arm', '512 -> 5244', 'V88',
+           'FLOWN, grinding FIXED on-car'),
+ 0xC649B: ('biquad ARM', 'the cal that enables the assist biquad',
+           '0 -> 1, engagement-gated via the V103 code edits', 'V103', 'FLOWN'),
+ 0xC4B34: ('the 164-byte telemetry CAVE', 'code cave', 'packs probe bits into CAN',
+           'V92 onward', 'FLOWN, instrument'),
+ 0x55C0E: ('cave HOOK', 'the jarl into the cave', 'installs the cave', 'V92 onward',
+           'FLOWN, instrument'),
  0xE4194: ('assist-map ceiling x72', '8 runs x 9 LERP Y entries, 15360 -> 16384',
            'INERT: 0xC61BE still clamps this path at 15360, so every raised entry is cut back. '
            'Half of a two-part edit -- V108 raised the tables and PULLED the clamp raise',
@@ -123,6 +147,16 @@ unattributed = []
 for lo, hi in pay:
     n = hi - lo
     key = next((k for k in K if lo <= k < hi or k <= lo < k + 4), None)
+    if key is None:
+        for base, span in ((0xC659A, 0x40), (0xC674E, 0x30), (0xC61C0, 8), (0xC64B4, 8),
+                           (0xC4B34, 164), (0x55C0E, 4)):
+            if base <= lo < base + span:
+                key = base
+                if lo != base:
+                    key = -1
+                break
+    if key == -1:
+        continue
     if key is None and 0xE4000 <= lo < 0xE6000:
         key = 0xE4194   # the 72-entry assist-map ceiling block
         if lo != 0xE4194:

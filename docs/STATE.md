@@ -4,6 +4,36 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅✅ **THE V194 DELTA IS NOW 100 % ATTRIBUTED — and V57 turns out to be the authority build**
+Every payload byte of V194 vs stock is explained. The two stragglers were the **part-number marker**
+(`39990-TVA-A160` → `39990-TVA,A160`, two copies) — a UDS-visible flag that the ECU is modified.
+
+**What was NOT in the record: V57 is a large LKAS-AUTHORITY build.** Beyond the `0xC646C`
+decoupling it is credited with, it also carries:
+```
+   0xC62EA          320 -> 0        ** the LOW-SPEED STEER LOCKOUT, DISABLED **
+   0xC659A..0xC65CE float32 +-1.0 -> +-5.0   a family of saturation limits raised FIVE-FOLD
+   0xC674E..0xC676C int     +-1024 -> +-5120  the same family, integer form
+   0xC61C0/C2/C4    1600 / 896 / 1280 -> -1   saturated, i.e. removed as constraints
+   0xC64B4/B6/B8    24688 / 16438 / 112 -> -1 / 255   saturated
+```
+⇒ **substantial authority work is ALREADY ON THE CAR and has been since V57**, and the lineage
+describes that build only as *"the `0xC646C` decoupling"*. Worth knowing before adding more.
+
+### ✅ THE HEADLINE FOR THE OPERATOR
+```
+   V122 (what he drives) vs stock   310 payload bytes
+   V194                  vs stock   319 payload bytes
+   ** V194 changes NINE cells relative to the car as it is today **
+     4  the grind notch          0xC60A8 / AC / B0 / B4        V188
+     3  detector-conditional     0xC64AE - 0xC691A - 0xC64DD   V190/V192/V193
+     2  pure instrument          0x55DF2 - 0x55E10             V194
+```
+Everything else on V194 is already flying. **The proposal is nine bytes of change, of which two are
+telemetry and three do nothing unless Honda's own oscillation detector fires.**
+✅ Tool: `analysis-2020accord/verify/cumulative_delta_vs_stock.py` — now attributes 100 % and still
+refuses to stay silent about anything new.
+
 ## 🛑✅ **THE CUMULATIVE DELTA — AND IT FOUND 72 DEAD BYTES ON THE BUILD HE IS DRIVING**
 The close-out contract requires enumerating **every** cell that differs from stock, read from the
 **built image**. Doing it for V194 turned up a block nothing in the record explains:
@@ -2175,35 +2205,4 @@ would still be measuring the weakest usable channel with a floor it barely clear
 was a small-n overstatement, exactly like the other two.
 ⊕ **Three for three**: every claim of mine that has needed correcting was a **categorical statement at
 n≤9** (*“never moved”*, *“absent in manual”*, *“at chance”*). **Every effect SIZE has held or grown.**
-
-## 🛑 **CORRECTION 2: “ENGAGEMENT *CREATES* THE RATCHET” IS TOO STRONG — IT AMPLIFIES IT ~15×**
-The same corpus enlargement that corrected the build-trend claim also softens the engaged/manual one.
-```
-                          n=7 (earlier)          n=15 (full corpus)
-   engaged clears null     7/7                    15/15
-   manual  clears null     0/7                    6/15        <- NOT zero
-   speed-matched ratio     19.9x [4.82, 35.64]    15.1x [6.0, 38.9]   (n=12 matched)
-```
-🛑 **[EVIDENCE] the manual arm clears its slope-matched null on 6 of 15 routes**, where the
-9-route subset gave 0 of 7. ✅ **But it clears MARGINALLY in 5 of those 6** — 3.3 vs 2.8, 2.7 vs 2.5,
-2.3 vs 2.2, 3.8 vs 2.7, 2.9 vs 2.4 — with only `r21` clearly above (8.2 vs 4.7). Meanwhile the
-**engaged arm clears 15/15, usually by 10–100×** (up to 339.3 vs 2.7 on `r82`).
-⇒ **the right statement is that engagement AMPLIFIES the ratchet by ~15×, not that it CREATES it.**
-The mode is faintly present in manual driving and enormously larger when engaged.
-
-### ✅ WHAT THIS CHANGES
-⊕ **The ratio TIGHTENS**: 15.1× **[6.0, 38.9]** on 12 matched pairs, against 19.9× [4.82, 35.64] on 4.
-Same magnitude, better bounded.
-⊕ **The drive endpoint is unaffected.** Engaged sits at 12–339 against a null near 2–5, so the
-presence/absence reading holds with an enormous margin; the manual arm was only ever a control.
-🛑 **But the MECHANISTIC claim changes.** *“Firmware-created”* implied the mode does not exist without
-the loop. It does — faintly. The loop **amplifies an existing mode**, which is exactly the `1−P·L`
-picture and is if anything **more** consistent with the account than outright creation would be.
-⊕ **No build changes.** V173 reduces `|L|`, which is the amplification.
-
-### ⚠ THE PATTERN IN BOTH CORRECTIONS
-Both claims that fell were **presence/absence statements made at n≤9, and both fell in the direction
-of my own hypothesis** — *“never moved”* and *“absent in manual”* were the strong readings, and the
-full corpus made each one weaker. **Small-n presence/absence claims are the failure mode to watch for
-here**, not the effect sizes, which have held.
 

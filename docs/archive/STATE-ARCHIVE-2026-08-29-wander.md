@@ -1964,3 +1964,34 @@ pass carries command by construction. **It sharpens the pre-registered outcomes 
 them.**
 ⊕ And it retires an open item that was recorded as *“closes with more continuous windows”*. **It did.**
 
+## 🛑 **CORRECTION 2: “ENGAGEMENT *CREATES* THE RATCHET” IS TOO STRONG — IT AMPLIFIES IT ~15×**
+The same corpus enlargement that corrected the build-trend claim also softens the engaged/manual one.
+```
+                          n=7 (earlier)          n=15 (full corpus)
+   engaged clears null     7/7                    15/15
+   manual  clears null     0/7                    6/15        <- NOT zero
+   speed-matched ratio     19.9x [4.82, 35.64]    15.1x [6.0, 38.9]   (n=12 matched)
+```
+🛑 **[EVIDENCE] the manual arm clears its slope-matched null on 6 of 15 routes**, where the
+9-route subset gave 0 of 7. ✅ **But it clears MARGINALLY in 5 of those 6** — 3.3 vs 2.8, 2.7 vs 2.5,
+2.3 vs 2.2, 3.8 vs 2.7, 2.9 vs 2.4 — with only `r21` clearly above (8.2 vs 4.7). Meanwhile the
+**engaged arm clears 15/15, usually by 10–100×** (up to 339.3 vs 2.7 on `r82`).
+⇒ **the right statement is that engagement AMPLIFIES the ratchet by ~15×, not that it CREATES it.**
+The mode is faintly present in manual driving and enormously larger when engaged.
+
+### ✅ WHAT THIS CHANGES
+⊕ **The ratio TIGHTENS**: 15.1× **[6.0, 38.9]** on 12 matched pairs, against 19.9× [4.82, 35.64] on 4.
+Same magnitude, better bounded.
+⊕ **The drive endpoint is unaffected.** Engaged sits at 12–339 against a null near 2–5, so the
+presence/absence reading holds with an enormous margin; the manual arm was only ever a control.
+🛑 **But the MECHANISTIC claim changes.** *“Firmware-created”* implied the mode does not exist without
+the loop. It does — faintly. The loop **amplifies an existing mode**, which is exactly the `1−P·L`
+picture and is if anything **more** consistent with the account than outright creation would be.
+⊕ **No build changes.** V173 reduces `|L|`, which is the amplification.
+
+### ⚠ THE PATTERN IN BOTH CORRECTIONS
+Both claims that fell were **presence/absence statements made at n≤9, and both fell in the direction
+of my own hypothesis** — *“never moved”* and *“absent in manual”* were the strong readings, and the
+full corpus made each one weaker. **Small-n presence/absence claims are the failure mode to watch for
+here**, not the effect sizes, which have held.
+
