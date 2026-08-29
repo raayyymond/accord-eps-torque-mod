@@ -1,5 +1,38 @@
 # STATE — living current state of the kit
 
+## ✅ **V139's DESIGN VERIFIED OPTIMAL — AND A FLAG ON V88's "LEVER B"**
+A `sar` edit is locked to exactly ÷2, so a **finer, cal-only** version of V139 would be preferable
+if one existed. **It does not.** Every cal multiplier on these lanes is **BRANCH-GATED**:
+```
+   0xC643E  r26 = 1536   only when gp-0x683c==0 AND gp-0x671a >= CEIL
+   0xC6444  r26 =  512   only when gp-0x683c != 0
+   0xC6440  r24 = 2048   only when gp-0x671d==0 AND gp-0x683c==0 AND gp-0x671a >= CEIL
+   0xC6446  r24 = 5244   only when gp-0x671d==0 AND gp-0x683c != 0     <- V88's "Lever B"
+   0xC6442  r24 = 1024   only when gp-0x671d != 0
+```
+⊕ the **MAIN path is neither of these** — `FUN_0003aa2c` LERPs from a **RAM table**
+(`gp-0x6e30`/`gp-0x6e28` for r26, `gp-0x6e40`/`gp-0x6e38` for r24) whose **flash source is not
+identified**.
+⊕ and **two of those gates require `gp-0x671a ≥ CEIL`** — the very gate measured as **effectively
+never open** (≥ 99.9 % of engaged frames below half the detector threshold).
+⇒ **the `sar` at `0x3AB76`/`0x3AC20` is applied AFTER the multiply on EVERY path**, so it is the
+**only lever that scales these lanes universally.** ✅ **V139 is correct as built; no finer cal-only
+variant exists without the unidentified flash LERP source.**
+
+### 🛑 AND A FLAG ON V88's "LEVER B" — IT MAY BE LARGELY INERT
+`0xC6446` (V88 set it **512 → 5244**, recorded as *"Lever B … best in kit"*) applies **only when
+`gp-0x671d == 0` AND `gp-0x683c != 0`.** ⊕ **That gate's duty has NEVER been measured.**
+⇒ **[UNKNOWN] how often Lever B is in force at all** — the same failure mode that made the notch
+family inert, and the same one that `probe_census.py` exists to catch. ⊕ It is **cheap to settle**:
+`gp-0x671d` and `gp-0x683c` are byte cells, and a 427 tap on either would give a binary duty exactly
+as V147's gate probe does.
+🛑 **This does not retract V88** — its fix was reported by the operator, which survives the
+noise-floor audit. It flags that **the MECHANISM credited for it is unverified.**
+
+⭐ **RULE, now general across this kit: before crediting a cal with an effect, check the DUTY of the
+branch that reads it.** Three separate levers this session (the notch, `0xC643E`/`0xC6440`, and now
+possibly Lever B) turned out to sit behind gates whose duty nobody had measured.
+
 ## 🛑🛑🛑 **CAPSTONE AUDIT: ESSENTIALLY EVERY HISTORICAL BETWEEN-BUILD GRIND RATIO IS BELOW THE NOISE FLOOR**
 The measured between-route floor is **20–36×**. Sweeping the memory index for historical
 between-build grind claims and testing each against it:
