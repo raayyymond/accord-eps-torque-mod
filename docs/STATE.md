@@ -1,5 +1,57 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **CORRECTION: THE BAND-SHARE RANKING WAS INFLATED BY THE FLAT BASELINE**
+The section that named `gp-0x6B4C` *"the highest-ranked grind carrier"* at **22.84 % / 22.50 %**
+quoted a raw band share with **no flat-spectrum control**. **For a flat spectrum, ANY 4 Hz window
+inside 1–24 Hz holds 17.4 % by construction.** Re-ranked against that baseline:
+```
+   lane                 route   18-22 Hz   sig/flat   ctl/flat
+   11-slot assist sum   r96      25.08%      1.44x      0.47x
+   default tap          r23      24.78%      1.42x      0.42x
+   11-slot assist sum   r9e      23.95%      1.38x      1.03x   <- its CONTROL is FLAT
+   detector input       r1e      20.14%      1.16x      0.54x
+   AGGREGATOR OUT       r95      10.94%      0.63x      0.53x
+   b26 inertia          r78       9.72%      0.56x      1.10x
+   ... every other lane/route     < 1.00x
+```
+🛑 **NO probed lane shows a strong 18–22 Hz peak.** The best is **1.44× flat** — modestly
+elevated, **not** the sharp resonance the 22.8 % headline implied. ⊕ On **r9e the CONTROL band reads
+1.03× flat**, i.e. that route's spectrum is **essentially featureless**, so its 1.38× carries almost
+nothing.
+
+### ✅ WHAT SURVIVES
+`gp-0x6B4C` is still the **most CONSISTENT** candidate — top on **both** its routes and the only
+lane above 1.3× twice. The *"default tap"* reaches 1.42× on r23 but **0.53× on r22 and 0.08× on
+r24** ⇒ wildly route-dependent and unreliable. ⚠ **But the case is MUCH thinner than stated**, and
+the b26 and notch closures **still stand** — they are at **0.43–0.56×** and **0.06–0.27× flat**, far
+BELOW baseline, which is a stronger statement than before.
+
+### 🛑 AND THE SLOT DISCRIMINATOR FAILED TOO
+The plan was *"pick the slot whose payload is rate/acceleration-derived"*. **None of the five
+candidate callers reads a rate or acceleration cell** — only speed (`gp-0x6A62` in slot 8's caller,
+`gp-0x6A5E` in slot 6's). Combined with `FUN_0003a8a8` (slot 7) passing an **all-zero payload**,
+these read as **thin STATE REGISTRANTS, not assist computers** — which matches `gp-0x6B4C`'s
+measured **p50 of 0–26** (r9e's p50 is literally **0**).
+⇒ **a mostly-zero, occasionally-spiking signal is BROADBAND**, which is exactly why its raw band
+share sat near the flat baseline. **The two findings explain each other.**
+
+### ⭐ THE PROCESS FAILURE, AND IT WAS ALREADY WRITTEN DOWN
+`feedback-run-the-control-before-the-measurement`: ***"Run the control BEFORE the measurement —
+four claims died to controls in one session."*** **I ran the flat-spectrum baseline AFTER publishing
+the ranking, and the ranking did not survive it.** ⊕ That is the **sixth** self-correction today.
+🛑 **A band share is meaningless without its flat-spectrum expectation. Compute the baseline in
+the same function that computes the share, so the two cannot be reported apart.**
+
+### ⭐ STATUS OF THE `gp-0x6B4C` THREAD
+```
+   slot map                 COMPLETE and self-validated (10 callers -> 10 distinct slots)
+   lever                    IDENTIFIED, cal-only, no cave   (0xC4124[i] 0 -> 5)
+   lane is the grind source WEAK -- 1.38-1.44x flat, consistent but modest
+   which slot               UNRESOLVED -- the rate-vs-torque discriminator does not separate them
+```
+⇒ **Not a build candidate at this confidence.** **V147 remains the build to fly**, and its lever
+(the r24 pump deadband) does not depend on any of this.
+
 ## ✅✅✅ **THE SLOT MAP IS COMPLETE — THE `gp-0x6B4C` LEVER IS NOW AIMABLE**
 Ten call sites of `FUN_00025c32` were located by xref, and the slot index each passes was read from
 the instruction stream. **`FUN_0003a8a8` was decompiled in full to VALIDATE the method** — it shows
