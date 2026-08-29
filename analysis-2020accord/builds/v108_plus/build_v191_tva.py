@@ -181,10 +181,15 @@ def build():
     n = s16(base, p)
     Y = [s16(base, p + 2 + 2 * n + 2 * i) for i in range(n)]
     print(f"      LERP Y (mode 26) = {Y}")
-    check(abs(s16(base, OSC_FALLBACK)) > abs(Y[-1]),
-          f"the fallback |{s16(base, OSC_FALLBACK)}| EXCEEDS the LERP weak end |{Y[-1]}|"
-          f" by {abs(s16(base, OSC_FALLBACK)) / abs(Y[-1]):.1f}x -- detecting oscillation can"
-          " STRENGTHEN the anti-damping term")
+    lo, hi = min(abs(v) for v in Y), max(abs(v) for v in Y)
+    fb = abs(s16(base, OSC_FALLBACK))
+    print(f"      the fallback |{fb}| vs the LERP range |{lo}|..|{hi}|")
+    print("      !! AT CREEP gp-0x6a5e < 2240 (FactorC evidence: 100% of the micro regime), so the")
+    print("         LERP returns the STRONG end and the fallback sits INSIDE its range -- it is")
+    print("         NOT reliably a 'boost' here.  The 4.2x figure holds only at high index.")
+    check(lo <= fb <= hi,
+          f"the fallback |{fb}| lies INSIDE the LERP range |{lo}|..|{hi}| -- so this edit is"
+          " 'remove the term when oscillating', NOT 'undo a boost'")
 
     print("\n  [3] THE EDIT -- one halfword")
     attributed = set()

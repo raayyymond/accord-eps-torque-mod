@@ -6,9 +6,14 @@
 
 ## What it is
 **V190 plus one halfword.** Honda's firmware has its own oscillation detector (a hard-reversal
-counter). When that counter saturates, the anti-damping acceleration gain switches to a fixed
-−8192 — **4.2× stronger than the weak end of the curve it replaces.** V191 sets that fallback to 0,
-so detecting an oscillation removes the term instead of boosting it.
+counter). When that counter saturates, the anti-damping acceleration gain switches to a fixed −8192
+instead of the normal curve. **V191 sets that fallback to 0, so detecting an oscillation removes
+the term.**
+
+🛑 *An earlier version of this card said −8192 was “4.2× stronger” than what it replaces. That
+compares against the curve's high-index end; at creep the index sits low, where the curve
+returns −9830…−5734 and −8192 sits inside that range. The honest description is “remove the
+term when oscillating”, not “undo a boost”.*
 
 | | |
 |---|---|

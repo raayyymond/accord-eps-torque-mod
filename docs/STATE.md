@@ -4,6 +4,48 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **CORRECTION TO V191's RATIONALE — THE "4.2× BOOST" DOES NOT HOLD AT CREEP**
+I justified V191 by saying the oscillation fallback `0xC640A` = −8192 is **4.2× stronger** than the
+LERP it replaces. **That compares against the LERP's HIGH-INDEX end, which is not the creep operating
+point.**
+```
+   inertia LERP (mode 26)   X = [0, 1280, 5760]   Y = [-9830, -5734, -1966]   index gp-0x6a5e
+   fallback when oscillating                        -8192
+     index 0      LERP -9830  ->  fallback is 17% WEAKER
+     index 1280   LERP -5734  ->  fallback is 43% stronger
+     index 5760+  LERP -1966  ->  fallback is 4.2x stronger   <- the figure I quoted
+```
+✅ **But `gp-0x6a5e` is the SAME index FactorC uses, and the recorded evidence is that it sits below
+FactorC's first breakpoint 2240 across 100% of the micro regime.** ⇒ **at creep the LERP returns its
+STRONG end and −8192 sits INSIDE the range — it is not reliably a boost at all.**
+⇒ **V191 is still a valid lever, but its honest description is *"when the detector saturates, remove
+the anti-damping term"*, NOT *"undo a 4.2× boost."*** The builder assertion and the card now say so.
+
+## ✅ **THE DETECTOR MAP IS COMPLETE — AND HONDA USES IT TO DAMP**
+All three `gp-0x671a` consumers are now read:
+```
+   FUN_00036c12   counter >= 5  ->  L = cal(0xC640A) = -8192 instead of the LERP
+                  the ONE place the assist gain itself changes.  V191 zeroes it.
+   FUN_0003a382   two counter-indexed LERPs, X = [5,10,15] and [5,8,10], Y FLAT at 1024 / 5120.
+                  ** The counter is CLAMPED AT 5 and the first breakpoint IS 5, so `5 < counter`
+                  is never true => both return Y[0] permanently. INERT over the reachable range. **
+                  (the recorded worry that T is "a shape parameter on a load-bearing lane" is only
+                  true if T or CEIL are moved -- at stock CEIL=5 these tables are constants)
+   FUN_00035b20   SWITCHES CURVES on the counter, for the slew limit gp-0x69a0:
+                     normal  X = [320, 1600, 3200, 4480]   Y = [358, 358, 461, 512]
+                     osc     X = [640, 3200, 6400, 12800]  Y = [358, 307, 307, 307]
+                  ** the oscillating curve is SMALLER (307 vs up to 512) with breakpoints stretched
+                  2x => Honda TIGHTENS the slew limit when it detects oscillation. It DAMPS. **
+```
+➕ **So Honda's detector is a damping mechanism**, and V191 is *consistent with that design intent*
+rather than opposed to it — it takes the same "when oscillating, back off" idea further.
+
+### ⭐ **THE NEXT LEVER, AND IT HAS V191's IDEAL SHAPE**
+`0xC691A..0xC6920` is the **oscillating** slew curve, `Y = [358, 307, 307, 307]`. Lowering it tightens
+the slew limit **further** during a detected oscillation — **and it is read ONLY on the counter≥5
+branch, so it is provably inert in normal driving**, exactly like V191. It also pushes in the
+direction Honda already chose, which makes it far safer than a sign bet.
+
 ## ✅✅✅ **V191 — THE FIRMWARE BOOSTS ITS ANTI-DAMPING *AFTER* ITS OWN DETECTOR SEES OSCILLATION**
 `gp-0x671a` is Honda's **HARD-REVERSAL COUNTER** — a built-in oscillation detector, clamped at
 CEIL = 5 (`0xC64FA`). `FUN_00036c12` branches on it:
