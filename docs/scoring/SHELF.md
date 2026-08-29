@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Three flashable builds. Everything else from this arc is renamed
+**Updated 2026-08-29.** Three flashable builds: V199, V202, V203. Everything else from this arc is renamed
 `SUPERSEDED-DO-NOT-FLASH-GATE2-…` and must not be sent.
 
 🛑 **Nothing here has been flashed and no CAN or UDS message has been sent.** Flashing requires you to
@@ -8,30 +8,45 @@ name the file and the bus, and they will be read back to you first.
 
 ---
 
-## ⭐ V201 — FLASH THIS ONE. The fix, plus the one measurement that makes a null readable.
+## ⭐ V203 — FLASH THIS ONE. The best fix, plus the measurement that makes a null readable.
 
 ```
-39990-TVA,A160-V201-V199BASE-PROBE-THE-PEDESTAL-0x13000-0x100000.rwd
-  image 354f9dfb93cf6fcd309c791ff962a792db668c6faef1de5a563d9f389f3bdfd6
-  rwd   7594688272b5869b5fb01230bbd94034d0e2ed75d0225765b96ee39b73a7364a
+39990-TVA,A160-V203-V202BASE-PROBE-THE-PEDESTAL-0x13000-0x100000.rwd
+  image 0da3b7b9a4bfa9068960ed1c5afd07ff4f816376da9488df4d31946cf55b5965
+  rwd   e9513d179e9336b7aa448dae03980b3a033557743a3f63a5de162553e5c20abf
 ```
 
-Byte-identical control cells to V199. It adds **3 payload bytes** so CAN 427 carries `gp-0x6b7e` —
-**the unfiltered path that bypasses the notch.**
+V202 control cells byte-identical, +3 payload bytes putting `gp-0x6b7e` (the unfiltered pedestal) on
+CAN 427. Preflight 8/8, 40/40 assertions.
 
-🛑 **Why this matters.** Decompiling `FUN_000352b4` showed `gp-0x6b7e` is not a constant: it is an
-EMA of the friction-hold limiter's cut, `iVar24 += (iVar33*0x80 − iVar24)*K >> 11` with `K ∈ [2,204]`,
-so its corner reaches **16.7 Hz** and it passes **64.6 % of a 19.75 Hz input straight past the notch**.
-**V199's 10.1× is therefore an upper bound.** Without this probe, a null on V199 cannot be told apart
-from the notch simply being bypassed — and an uninterpretable drive is a design failure on our side.
+## V202 — the same fix without the instrument
 
-| what the probe shows | what it means | the lever |
+```
+39990-TVA,A160-V202-V199BASE-POLES.15.25.WIDER.SHOULDER-0x13000-0x100000.rwd
+  image 2c5bc569c2c5e4c66f7eaa350ddbfe87d50af9875fa75a10d927eed3a7255160
+```
+
+Same null as V199 (19.75 Hz, depth 0.00099), poles dropped 17.45 → 15.25 Hz and radius eased to
+0.9600. `max|H|` = 0.999998, so it still can only remove loop gain.
+
+| f Hz | V199 | **V202** |
 |---|---|---|
-| pedestal carries 19.75 Hz | **the notch is bypassed** | the EMA rate `K` (LERP at `tp+0x7900`/`0x7906`) or the ±0x80 deadband — existing code, never touched |
-| pedestal quiet at 19.75 Hz | V199's 10.1× is real | none needed |
-| pedestal zero throughout | the limiter never cuts engaged | drop the path from the model |
+| 16.33 | 1.6× | **2.3×** |
+| 18.00 | 3.0× | **4.6×** |
+| **20.12 (median grind peak)** | 15.6× | **24.7×** |
+| 22.15 | 2.8× | **4.3×** |
+| 23.00 (the gain line) | 2.2× | **3.4×** |
+| 30.00 | 1.1× | **1.5×** |
 
-## V199 — the same car without the instrument
+Cost: **~3 ms** more group delay in the driver-assist path (+3.80→+5.52 ms vs V199’s +1.30→+2.37).
+Human steering-feel thresholds are tens of ms.
+
+🛑 **The notch is a POINT fix, not a band fix.** A joint minimax over the whole 16.3–23 Hz band
+improves worst-case leakage by only 1.1× and makes the median *worse* — one biquad cannot cover
+6.7 Hz. **So score the drive stratified by its own peak frequency, never pooled:** a drive peaking at
+16 Hz gets 2.3×, one peaking at 20 Hz gets 24.7×.
+
+## V199 — the low-phase fallback
 
 ```
 39990-TVA,A160-V199-V196BASE-NOTCH.POLES.BELOW.ZEROS-0x13000-0x100000.rwd
@@ -41,19 +56,6 @@ from the notch simply being bypassed — and an uninterpretable drive is a desig
 
 A notch on the grind at **19.75 Hz**, plus the engaged inertia half-dose, built so the filter **cannot
 add loop gain at any frequency**.
-
-## V200 — the same car, plus one measurement
-
-```
-39990-TVA,A160-V200-V199BASE-PROBE-THE-R24-RATE-LANE-0x13000-0x100000.rwd
-  image db0b613aad11e67822528251b66790386635a59e9584e87d352bf294d5bf460e
-  rwd   95cf26bd43cb7352a24133536c509468f5f8247aa859de1cfb31529c1c26cfc9
-```
-
-Byte-identical control cells to V199. It adds **2 payload bytes** so CAN 427 carries `gp-0x6ada`, the
-**r24 rate lane** — the biggest 8 Hz exciter (8192 clamp, 8× the inertia term V199 halves). Flash this
-instead of V199 if you are willing to trade nothing at all for an answer to *"is the ratchet lever even
-aimed at the dominant term?"*
 
 ---
 
@@ -84,14 +86,14 @@ number in it was wrong. V199's is `<= 1.0000001`, with a control assertion that 
 
 ---
 
-## WHAT V199 CHANGES vs V122 — 11 cells, 30 payload bytes
+## WHAT V202/V203 CHANGE vs V122 — 11 cells, 30 payload bytes
 
 | addr | V122 → V199 | what it physically is | introduced |
 |---|---|---|---|
-| `0xC60A8` | `−1.5372` → `−1.9233811` | biquad pole angle → **17.45 Hz** | V199 |
-| `0xC60AC` | `0.63462` → `0.9360563` | biquad pole radius → **0.9675** | V199 |
+| `0xC60A8` | `−1.5372` → `−1.9289435` | biquad pole angle → **15.25 Hz** | V202 |
+| `0xC60AC` | `0.63462` → `0.9216000` | biquad pole radius → **0.9600** | V202 |
 | `0xC60B0` | `−1.8808` → `−1.9846207` | **the notch centre, 55.23 → 19.75 Hz** | V195, kept |
-| `0xC60B4` | `0.81731` → `0.8241721` | overall gain — forced by unity DC | V199 |
+| `0xC60B4` | `0.81731` → (forced) | overall gain — forced by unity DC | V202 |
 | `0xC40D2` | 1020 → **102** | K1, modelled Coulomb friction → **Honda** | V177 |
 | `0xC40DC` | 8 → **22** | acceleration EMA alpha → **Honda** | V179 |
 | `0xC63A6` | 1024 → **512** | w[3], the inertia term's weight, halved | V181 |
@@ -129,8 +131,7 @@ Then:
 ```
 python rlog-tools/score/score_band_excess.py <tag>
 python rlog-tools/score/cross_channel_band_excess.py <tag>
-python rlog-tools/probe/decode_v201_pedestal.py <tag> --v201     # V201 only
-python rlog-tools/probe/decode_v198_r24_lane.py <tag> --v198     # V200 only
+python rlog-tools/probe/decode_v201_pedestal.py <tag> --v203     # V203 only
 ```
 
 ## STOP CONDITIONS
@@ -146,12 +147,11 @@ python rlog-tools/probe/decode_v198_r24_lane.py <tag> --v198     # V200 only
 
 | endpoint | prediction | what a null means |
 |---|---|---|
-| 15–25 Hz excess on `cs_rate` | **31.6× → ~3.1×** (10.1× attenuation) | the grind is not in the assist section's path |
-| 6–9 Hz excess on `cs_tq` | unchanged | the notch was never aimed there |
-| LKAS command 0.5–3 Hz | unchanged, ±10 % | if it moves, the notch is eating command authority |
-| `gp-0x6ada` 8 Hz content (V200) | if ≫ the inertia term, V199's ratchet lever is aimed at a minor exciter | the rate lanes are where a bigger lever belongs |
-
----
+| **15–25 Hz excess on `cs_rate`, STRATIFIED BY THE DRIVE’S OWN PEAK** | peak near 20 Hz → **24.7×**; peak near 18 Hz → 4.6×; peak near 16.3 Hz → **2.3×** | pooling these hides the result — a low-peak drive can look like a null when the filter did exactly what it was designed to |
+| 6–9 Hz excess on `cs_tq` | unchanged | the notch was never aimed there; that band is the ratchet |
+| LKAS command 0.5–3 Hz | unchanged | the biquad is not in the command path at all, so any movement here is something else |
+| `gp-0x6b7e` content at the drive’s peak (V203) | small vs the notch output | if it dominates, the pedestal is the bypass and the lever is `0xC6906–090C` (K = 20 at all four knots) |
+| `gp-0x6b7e` duty | if identically zero, the friction-hold limiter never cuts engaged | the whole parallel path leaves the model |
 
 ## 🛑 WHAT THE NOTCH CAN AND CANNOT FIX — corrected 2026-08-29
 

@@ -67,7 +67,7 @@ def main(tag, confirmed=False):
         print('')
         print('  Decoding another build here yields a PLAUSIBLE, SPECIFIC, WRONG number.')
         print(f'  Re-run with --v201 once the route is genuinely a V201 capture:')
-        print(f'    python {Path(__file__).name} <route-tag> --v201')
+        print(f'    python {Path(__file__).name} <route-tag> --v203')
         print('=' * 78)
         return 2
     p = Path('analysis-2020accord/_scratch/cache') / tag / f'{tag}.npz'
@@ -110,4 +110,4 @@ def main(tag, confirmed=False):
 if __name__ == '__main__':
     os.chdir(str(_d))
     _a = [x for x in sys.argv[1:] if not x.startswith('--')]
-    sys.exit(main(_a[0] if _a else 'r24', '--v201' in sys.argv))
+    sys.exit(main(_a[0] if _a else 'r24', any(f in sys.argv for f in ('--v201','--v202','--v203'))))

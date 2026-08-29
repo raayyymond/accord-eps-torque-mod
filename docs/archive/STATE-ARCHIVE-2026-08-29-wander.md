@@ -2734,3 +2734,39 @@ different ground, but it is also the one place where a mistake is a **motor stab
 than a feel problem, and the kit has never edited there. **I will not cut anything in the FOC without
 saying first exactly what it could break.**
 
+## ❌ **THE FOC IS CLOSED TOO — THE WHOLE CHAIN IS NOW ENUMERATED END TO END**
+The last untouched territory was the FOC / current loop. **It cannot hold an 8 Hz damping lever**, and
+the kit's own golden model already says so in its **[VERIFIED]** notes
+(`analysis-2020accord/model/eps_chain_delivery.py`, SECTION 9):
+- *"the FOC/PWM ISRs (EIIC 0x600 / 0x970) run asynchronously and **far faster** than this
+  steering-task tick"*
+- *"q-current reference **tracks** the merged command (torque ~ Iq), gated by FOC enable/fault"* — a
+  **PI current regulator + SVPWM**, not a shaper.
+⇒ the FOC **delivers** whatever `gp-0x6b98` asks for; it contains **no torque-command shaping**, and
+its bandwidth is orders of magnitude above the ~8 Hz mechanical mode. **A resonance at 8 Hz is damped
+by the torque COMMAND, not by the current controller.** ✅ Physics argument and the model's own
+verified description agree ⇒ **closed, and NOT worth the motor-stability risk of editing.**
+
+### 🛑 THE COMPLETE MAP — EVERY STAGE, CAN INTAKE TO MOTOR PWM
+```
+   stage                                    status
+   CAN intake / torque voter                prior sessions
+   base assist, boost index                 prior sessions
+   rate lanes r24 / r26                     FALSIFIED (V62-V73 arc)
+   engage SM / arbitration                  prior sessions
+   assist section biquad 0xC60A8..B4        *** THE LEVER *** -> V173 / V174 / V176
+   six-term Path-2 sum (w[0]..w[5])         CLOSED -- only w[3] is omega-weighted; w[3] HELD
+   gp-0x6b26 inertia lane, 0xCBE74 Y rows   *** THE LEVER *** -> V175 / V176 (revert to Honda)
+   residual LERP + its scales + its floors  CLOSED (not a cal / unity / inert+unreachable)
+   Honda's 55.23 Hz notch (C_B0)            CLOSED -- spent at V105, refused at 6-9 Hz on phase
+   governor -> comp-add -> gp-0x6acc        prior sessions
+   shaper gp-0x6acc -> gp-0x6b08            CLOSED -- mode 0, a PURE PASS-THROUGH
+   integrator gp-0x6b08 -> gp-0x6b98        CLOSED -- hardcoded shifts; limit only; V41 falsified
+   FOC current loop / SVPWM / motor PWM     CLOSED -- tracks the command, far faster than 8 Hz
+```
+⇒ **The firmware search is COMPLETE.** Two lever families were found, and **both are already built**:
+the **assist-section poles** and the **engaged apparent-inertia revert**. Everything else in the chain
+is enumerated and closed. **The only unspent cell is `0xC63A6` (w[3]), deliberately held as the fine
+adjustment after a drive result.**
+🛑 **What remains is not analysis. It is one 15-second engaged creep pass.**
+

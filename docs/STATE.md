@@ -4,6 +4,71 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅⭐ **V202 — THE NOTCH IS A POINT FIX; WIDENING THE SHOULDER IS WHERE THE ATTENUATION IS**
+
+### 🛑 **FIRST, A RETRACTION OF MY OWN NUMBER FROM LAST TICK**
+I said the pedestal `gp-0x6b7e` passes **64.6 %** of a 19.75 Hz input past the notch. **That is the
+value at the CLAMP CEILING `K = 204`.** I quoted the ceiling without reading the table. The table:
+```
+   0xC68FE/0900/0902/0904   X = 0, 9830, 26214, 32768      a FLAT schedule
+   0xC6906/0908/090A/090C   Y = 20, 20, 20, 20             K = 20 at EVERY knot
+   K = 20 -> alpha 0.009766 -> fc 1.56 Hz -> ** 7.9 % at 19.75 Hz **
+```
+`0xC6382` = 41 is the alternate rate, selected only when the `gp-0x6b62` gate is true — and that gate
+is measured at **duty 0.0000 over 75,227 engaged frames**, so it never fires engaged.
+⇒ **The bypass is real but SMALL: 7.9 %, not 64.6 %. It is not a threat to the fix.** The probe keeps
+its 3 bytes because 7.9 % of a large limiter cut can still dominate what survives a 25× notch, and
+nobody has measured whether the friction-hold limiter cuts at all engaged.
+
+### 🛑 **RE-CENTRING THE NOTCH BUYS NOTHING — a single biquad cannot cover the band**
+A joint minimax over (zero, pole, radius) across **16.3–23.0 Hz** (the grind's p10–p90 on `cs_rate`
+plus the ~23 Hz gain-driven line), under the same two constraints, improves worst-case leakage by
+**1.1×** and makes the **median worse (15.6× → 5.0×)**. **V199's centre stays put.**
+⇒ **The honest characterisation: the notch is a POINT fix.** V199 gives 15.6× at the median grind
+frequency but **1.6× at the p10 edge and 2.2× at 23 Hz.** A drive whose peak lands low gets far less
+than the design headline. **Score the drive stratified by its own peak frequency, never pooled.**
+
+### ⭐ **WHAT ACTUALLY BUYS ATTENUATION IS PHASE — and V199 sits on the frontier at its budget**
+```
+   phase budget @5Hz   best 16.3-23 Hz attenuation
+        2 deg                 4.3x
+        3 deg                 4.8x     <- V199 is 4.7x at -2.95 deg: ON the frontier
+        5 deg                 5.8x
+        8 deg                 7.3x     <- V202
+       12 deg                 9.7x
+       20 deg                14.8x
+```
+Attenuation roughly **doubles per 8–10°**. ➕ **That phase is spent in the DRIVER-ASSIST loop, not the
+LKAS command path** (last tick's decompile), so its cost is steering FEEL — and feel is judged in ms:
+```
+   added group delay 0.5-5 Hz     V199  +1.30 -> +2.37 ms
+                                  V202  +3.80 -> +5.52 ms      ~3 ms more
+```
+**Human steering-feel thresholds are tens of ms.** ~3 ms is not perceptible, and it buys:
+```
+   f Hz     Honda    V199     V202      V199      V202
+   16.33   0.9216  0.5717   0.4093      1.6x      2.3x
+   18.00   0.9036  0.2969   0.1947      3.0x      4.6x
+   20.12   0.8777  0.0561   0.0356     15.6x    ** 24.7x **
+   21.00   0.8659  0.1762   0.1123      4.9x      7.7x
+   22.15   0.8495  0.3039   0.1969      2.8x      4.3x
+   23.00   0.8367  0.3794   0.2494      2.2x      3.4x
+   26.00   0.7865  0.5542   0.3840      1.4x      2.0x
+   30.00   0.7071  0.6684   0.4875      1.1x      1.5x
+```
+✅ **Strictly better at EVERY frequency in and above the band.** The **23 Hz** row is the one that
+bears on **LKAS authority**: the record says that line is what the 8× gain excites, and the notch sits
+in the loop that sustains it — 2.2× → 3.4×. ⚠ Still not enough to re-open a lever abandoned three
+times; **the notch does NOT make 8× affordable on its own.**
+
+### ✅ **V202 = V199 with the poles dropped 17.45 → 15.25 Hz, radius 0.9675 → 0.9600.**
+**Zeros UNMOVED at 19.75 Hz**, still a true null (depth 0.00099). `max|H|` = **0.999998** ≤ 1.0, so it
+still can only remove loop gain. 31/31, 9 payload bytes, cave byte-identical.
+`2c5bc569c2c5e4c6…`
+### ✅ **V203 = V202 + the 427 probe on `gp-0x6b7e`.** 40/40, 3 payload bytes. `0da3b7b9a4bfa906…`
+⭐ **FLY V203.** 🛑 **V200/V201 renamed `SUPERSEDED-DO-NOT-FLASH-DOMINATED-…`** — probes on a base
+V202 strictly dominates. **V199 stays flashable as the low-phase fallback; the shelf is V199 · V202 · V203.**
+
 ## 🛑🛑⭐ **CORRECTION + A THREAT TO V199: `gp-0x6b86` IS THE BASE POWER-ASSIST, AND THE NOTCH HAS A BYPASS**
 
 **Decompiled `FUN_000352b4` [EVIDENCE].** The tp anchors check out exactly — `tp+0x749b` = `0xC649B`
@@ -2207,40 +2272,4 @@ revert to a Honda value with the strongest mechanism-to-symptom match in the ses
 ➕ **OPEN, deliberately not folded in**: `0xC40DC` (the acceleration EMA alpha) which V122 also moved
 **22 -> 8**. That changes the inertia term's **phase** rather than its size, its direction is not
 established, and including it would have cost V177's single-cell attribution.
-
-## ❌ **THE FOC IS CLOSED TOO — THE WHOLE CHAIN IS NOW ENUMERATED END TO END**
-The last untouched territory was the FOC / current loop. **It cannot hold an 8 Hz damping lever**, and
-the kit's own golden model already says so in its **[VERIFIED]** notes
-(`analysis-2020accord/model/eps_chain_delivery.py`, SECTION 9):
-- *"the FOC/PWM ISRs (EIIC 0x600 / 0x970) run asynchronously and **far faster** than this
-  steering-task tick"*
-- *"q-current reference **tracks** the merged command (torque ~ Iq), gated by FOC enable/fault"* — a
-  **PI current regulator + SVPWM**, not a shaper.
-⇒ the FOC **delivers** whatever `gp-0x6b98` asks for; it contains **no torque-command shaping**, and
-its bandwidth is orders of magnitude above the ~8 Hz mechanical mode. **A resonance at 8 Hz is damped
-by the torque COMMAND, not by the current controller.** ✅ Physics argument and the model's own
-verified description agree ⇒ **closed, and NOT worth the motor-stability risk of editing.**
-
-### 🛑 THE COMPLETE MAP — EVERY STAGE, CAN INTAKE TO MOTOR PWM
-```
-   stage                                    status
-   CAN intake / torque voter                prior sessions
-   base assist, boost index                 prior sessions
-   rate lanes r24 / r26                     FALSIFIED (V62-V73 arc)
-   engage SM / arbitration                  prior sessions
-   assist section biquad 0xC60A8..B4        *** THE LEVER *** -> V173 / V174 / V176
-   six-term Path-2 sum (w[0]..w[5])         CLOSED -- only w[3] is omega-weighted; w[3] HELD
-   gp-0x6b26 inertia lane, 0xCBE74 Y rows   *** THE LEVER *** -> V175 / V176 (revert to Honda)
-   residual LERP + its scales + its floors  CLOSED (not a cal / unity / inert+unreachable)
-   Honda's 55.23 Hz notch (C_B0)            CLOSED -- spent at V105, refused at 6-9 Hz on phase
-   governor -> comp-add -> gp-0x6acc        prior sessions
-   shaper gp-0x6acc -> gp-0x6b08            CLOSED -- mode 0, a PURE PASS-THROUGH
-   integrator gp-0x6b08 -> gp-0x6b98        CLOSED -- hardcoded shifts; limit only; V41 falsified
-   FOC current loop / SVPWM / motor PWM     CLOSED -- tracks the command, far faster than 8 Hz
-```
-⇒ **The firmware search is COMPLETE.** Two lever families were found, and **both are already built**:
-the **assist-section poles** and the **engaged apparent-inertia revert**. Everything else in the chain
-is enumerated and closed. **The only unspent cell is `0xC63A6` (w[3]), deliberately held as the fine
-adjustment after a drive result.**
-🛑 **What remains is not analysis. It is one 15-second engaged creep pass.**
 
