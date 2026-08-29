@@ -1,5 +1,29 @@
 # STATE — living current state of the kit
 
+## ⚠ **THE RAILED-COMMAND NATURAL EXPERIMENT IS UNDERPOWERED — RECORDED SO IT IS NOT RE-RUN**
+A rail episode freezes the command at ±4096, so it is a **natural experiment**: if the ratchet
+persists while the command is constant, the command is not driving it. Ran it. **The cached data
+cannot support it.**
+```
+   tq 6-9 Hz share, RAILED / FREE windows, matched on speed bin, 1.3 s windows
+   route   n_rail  n_free   6-9 Hz ratio   26-31 Hz "control"
+   r75          4     316        1.73            0.31
+   r77          9     465        2.21            0.32
+   r9e          3     180       19.05            0.04
+```
+🛑 **ONLY 3 ROUTES QUALIFY, with 3–9 railed windows each**, and the ratios span **1.73 to 19.05**.
+🛑 **AND THE STATISTIC IS COMPOSITIONAL** — band *share* is normalised to 1–45 Hz, so 6–9 Hz rising
+**forces** the control band down arithmetically. **The control here is NOT independent evidence**,
+which is precisely the failure mode `feedback-run-the-control-before-the-measurement` warns about.
+⇒ **[NOT CLAIMED] anything from these numbers.**
+⊕ **Directionally** all three exceed 1 while the command is frozen, which is consistent with the
+ratchet not being command-driven — and that is **already established independently** by V87 (the
+7.8 Hz line has prominence **12.9 in the COLUMN but 4.0 = chance in the COMMAND**). **The experiment
+adds nothing V87 did not already give.**
+⇒ **What would close it: rail episodes are ~0.78 % of engaged frames and only 28 % of routes have
+any. This needs a drive that DELIBERATELY sustains saturation** (a long steady curve at creep) — and
+even then it only re-confirms a settled point. **Low value; recorded so it is not attempted again.**
+
 ## ⚠ **THE RAILED COMMAND IS SUSTAINED ONE-SIDED SATURATION, NOT A RAIL-TO-RAIL LIMIT CYCLE**
 Follow-up to the ±4096 rail finding: **is the railing a limit cycle?** Tested, and the answer is
 **no — and the test that would have said yes is underpowered, which I am recording rather than
