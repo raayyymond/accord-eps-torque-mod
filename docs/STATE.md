@@ -1,5 +1,63 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **THE COULOMB RELAY IS A *GRIND* LEVER, NOT A RATCHET LEVER — AND THE TWO SYMPTOMS DISSOCIATE**
+The kit has blamed the command-proportional Coulomb relay (`FUN_0003b8f6`, knee `0xC40BC`)
+for the engaged 6–9 Hz amplification since V80. **The nine scored routes span that knee over
+10x, and the ratchet does not respond.**
+```
+   route build  knee  gain  friction | RATCHET  GRIND      (cs_tq excess, validated estimator)
+   r78   V91     600  3564   204     |   9.8      6.1
+   r7e   V96     600  3564   204     |  16.5     28.9
+   r7f   V96     600  3564   204     |  32.9     14.3
+   r96   V102    300  5346   204     |  49.4    248.2
+   ra4   V104    300  5346   204     |  15.8     54.7
+   ra6   V106    300  5346   204     |  67.8     25.3
+   r1e   V107    300  5346   204     |  28.8     27.7
+   r22   V112   1800  5346   612     |  35.8     15.0
+   r24   V122   3000  5346  1020     |  33.2     14.0
+
+   knee vs RATCHET   rho -0.06  p 0.874      <- NOTHING
+   knee vs GRIND     rho -0.69  p 0.039      <- a real lever
+```
+✅ **[EVIDENCE] the clean GAIN-MATCHED comparison** (all four rows at gain 5346, so the
+4x→6x step cannot explain it): knee 300 → 1800/3000 cuts the **grind 41.2 → 14.5 = 2.8x**
+while the **ratchet moves 39.1 → 33.2 = 1.18x, inside its own 1.63x split-half floor.**
+⚠ **[CONFOUND, stated]** knee and friction `0xC40D2` move together in that comparison
+(204 → 612/1020), so the *grind* effect is knee-or-friction, not knee alone. **The ratchet
+null is unaffected by that confound** — neither predictor moves it (friction ρ +0.30, p 0.44).
+⇒ **the relay attribution for the RATCHET is withdrawn.** It remains a good grind lever.
+
+### ⭐ EVERY LEVER THE KIT HAS PULLED IS A GRIND LEVER
+Across **31 images V91→V122 only 278 bytes ever changed** — 0.027 % of the image:
+```
+   0x35A08-0x35A18 · 0x3AA96 · 0x55DF2-0x55E10 · 0xC40BC-0xC40DC · 0xC4B34-0xC4C03
+   0xC4FFC-0xC4FFF · 0xC60A8-0xC60B6 · 0xC61B3-0xC61B5 · 0xC63AC · 0xC640B-0xC6447
+   0xC649B · 0xC6AE7 · 0xC6CD0 · 0xC6FFC-0xC6FFF · 0xD6A6C-0xD6A71 · 0xD7A5C-0xD7A71
+   untouched ENTIRELY: 0xC5000 model coeff · 0xC7000 · 0xC9000 damper tables · 0xCC000 gain arrays
+```
+Those 278 bytes include the **4x→6x LKAS gain**, **Lever B**, the **relay knee** and the
+**friction** cells. They moved the **grind by 42x** and the **ratchet by nothing**.
+✅ **[EVIDENCE] grind and ratchet are DISSOCIATED mechanisms** — same builds, same routes, same
+estimator, opposite responses. They need separate levers, and every lever found so far is the
+grind's.
+
+### ⭐ THE SHARPEST REMAINING CLUE: TORQUE WITHOUT ANGLE
+```
+   ratchet margin over each channel's own slope-matched null
+     tq 7.62 · cs_tq 7.42   <- the torsion bar
+     ws_fr 4.41 · ws_fl 3.95
+     cs_rate 1.03 · cs_ang 0.79 · ang 0.83 · wang 0.83   <- ANGLE: nothing
+     sc_tq 0.56 · co_tqcan 0.59 · cc_req 0.67            <- COMMAND: nothing
+```
+✅ **[EVIDENCE] the ratchet is a TORQUE oscillation with no matching ANGLE oscillation.** It
+twists the torsion bar without measurably moving the wheel — which is exactly how a driver
+feels *ratcheting* rather than *shaking*, and it rules out anything that would have to move
+the road wheels to be seen.
+⇒ **[BELIEF] it is a motor-torque disturbance injected downstream of the command and upstream
+of the bar, active only when engaged.** **What would close it**: a phase test at 8.64 Hz on
+each engaged-gated contributor to the motor-torque sum, restricted to cells in the untouched
+set above.
+
 ## 🛑🛑⭐ **THE RATCHET IS 100 % FIRMWARE-CAUSED — AND UNTOUCHED BY EVERY LEVER THE KIT HAS PULLED**
 Three results that only make sense together, all from the validated slope-corrected excess
 estimator with slope-matched nulls.
@@ -2216,57 +2274,4 @@ DEMOTED and must not be described as a ratchet lever.**
 the GOLDEN MODEL**, which `CLAUDE.md` names as required reading and which already held the
 structure, the prescriptions, the strikes, the measured fixes and their gain-dependence.
 ⭐ **The audit was worth more than the builds it deleted.** **Read `eps_chain_*.py` FIRST.**
-
-## 🛑🛑 **V139 SUPERSEDED — AND THE sar PAIR IS CLOSED AT 6x GAIN, BOTH DIRECTIONS**
-The audit reaches V139 (both pump arms `sar 10 -> 11`). It is wrong, **and its own builder already
-said so.**
-
-### ✅ THE STATE ON THE CAR
-```
-   0x3AB76 (r26 arm)  stock imm5 = 10   V122 imm5 = 10    Lever A is NOT carried
-   0x3AC20 (r24 arm)  stock imm5 = 10   V122 imm5 = 10
-```
-⇒ **V62's sar pair — which `eps_lkas_chain_model.py` calls "the kit's ONLY measured grind-#1 fix"
-(18-22 Hz down 8-42x) — is ABSENT from the flying build.** The obvious move is to restore it.
-**It is not the right move.**
-
-### 🛑 BOTH DIRECTIONS ARE WRONG ON A 6x BASE
-```
-   sar 9   = DOUBLE the arm   V62's measured fix -- BUT MEASURED ON A 4x-GAIN BASE
-                              V133 flew sar 9 on a 6x base => "massive, violent grinding"
-   sar 10  = stock, on the car
-   sar 11  = HALVE the arm    V139 -- and memory records "r24 HALF CAUSED grind #2"
-```
-⊕ **V139's own builder contains the decisive argument**, which I should have followed rather than
-promoted the build:
-> *"scaling V62's 4x optimum to V122's **6x base lands BETWEEN sar 9 and sar 10**, which argues
-> Honda sar 10 is already about right for a 6x base and **sar 11 OVERSHOOTS**."*
-
-⇒ **[EVIDENCE, on-car] sar 9 at 6x produced the worst grinding the operator has reported (V133).**
-⇒ **[REASONED, in the builder itself] sar 11 overshoots the other way.**
-⇒ **=> stock sar 10 is approximately optimal for the 6x base, and the sar pair is CLOSED as a lever
-at the current gain.** **V139 SUPERSEDED; do not restore Lever A either.**
-
-### ⭐ THE GENERAL LESSON — THE sar OPTIMUM IS COUPLED TO THE GAIN
-V62's result was obtained at **4x LKAS gain**; the car now runs **6x**. **A measured optimum does not
-transfer across a gain change**, because the arm's contribution scales with the command that feeds
-it.
-⇒ **this is why “restore the kit's only measured fix” is the wrong instinct here** — the fix was
-measured in a configuration the car no longer has.
-⇒ **[RULE] before restoring ANY historical fix, check the gain base it was measured on.** The same
-caution applies to every pre-V101 result, since `0xC6CD0` moved 3564 -> 5346 at V101.
-
-### ✅ THE QUEUE AFTER A COMPLETE AUDIT
-```
-   1. V158   damper, the golden model's own prescription, GATE 2 closed        <-- FLY THIS
-   2. V150   r26 suppression switch      premise still unverified after V149's collapse
-   3. V148   deadband + probe            an instrument, not a fix
-   4. V151   knee 3000 -> 3600           marginal: the relay is ~99 % unsaturated
-   -  V152 / V153                        GATE-2-OPEN on 0xC40D0, demoted
-   X  V139 / V149 / V154 / V155 / V156 / V157                        SUPERSEDED
-```
-🛑 **SIX of the builds this session recommended are now superseded.** Every one traces to the same
-cause: **designed from `BUILD-LINEAGE` and fresh decompiles instead of the GOLDEN MODEL**, which held
-the structure, the prescriptions, the strikes, the measured fix and its gain-dependence all along.
-**V158 is the one built from the model, and it is the one that survives.**
 
