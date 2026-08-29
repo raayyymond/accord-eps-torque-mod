@@ -52,17 +52,32 @@ aimed at the wrong physics."*
 is amplified ~15x, and left alone in manual, where it barely appears.** [BELIEF — a structural match,
 not yet a measured cause.]
 
-### ⚠ THE RELAY HAZARD IS **UNEXCLUDED** ON THE CURRENT BUILD
-Saturating ±511 turns `−K·α` into `sign(α)·511` — a **RELAY**, V80's exact failure
-([[accord-v80-damper-relay-and-grind1-inert]]).
+### 🛑 **RETRACTION — I OVERSTATED THE RELAY HAZARD. IT IS MEASURED AT 0.49 % DUTY.**
+I wrote that saturating the ±511 clamp makes this lane V80's relay and that the hazard was
+"unexcluded". **Now measured, and that framing was wrong.** Route `77` (`probe_build` = **V90**) carries
+`gp-0x6b26` itself on CAN 427 at **Honda's K**, 52,926 engaged frames. `gp-0x6b26` is hard-clamped to
+±511, which pins the packer shift to s ∈ {0,1} (s ≥ 3 would imply a max of 1592 — impossible).
+At the **tightest** admissible s = 1:
 ```
-   K            alpha to saturate      stock-referred threshold
-   Honda 1.0x       ~3195                     511
-   FLOWN 3.0x       ~1065                     170     <== the CURRENT build
+   K              saturation duty      p99      (clamp 511)
+   Honda 1.0x         0.0000 %         136
+   V91   1.5x         0.0094 %         204
+   FLOWN 3.0x         0.4875 %         408      <== the current build
 ```
-✅ The only on-car measurement is **V76's: `|gp-0x6b26| > 448` fired 0 / 63,477 frames**, route 65,
-positive control 99.926%. 🛑 **That null is at 448. The threshold that matters at 3.0x is 170 —
-2.6x lower, and NEVER MEASURED.** Bounded at Honda's K; **unknown at the flown K.**
+⇒ **0.49 % is rare tail clipping, NOT a relay.** V80's relay ran at near-unity duty. **The relay
+argument is withdrawn and is NOT part of the case for V175.**
+⚠ Two further caveats on this measurement: **r78/r79 are NOT comparable to r77** — the 427 packer
+scaling changed across V91/V92, so those columns are **not** a dose-response and must not be read as
+one. And the extrapolation is a **model**, exact only because `gp-0x6b26 = K·α` is linear *before* the
+clamp.
+
+### ✅ WHAT SURVIVES — AND IT IS STILL THE CASE FOR V175
+The **linear** amplification is untouched and is the real argument: at the flown dose the term runs
+**p99 = 408 against a 511 clamp**, a genuine **3x amplification of a DESTABILISING ω²-weighted term,
+engaged-only**. ⊕ And it is **highly intermittent** — p50 ≈ 18 counts, p99 = 408 — i.e. negligible in
+steady driving and large **exactly during the fast transients where the ratchet lives**. That is the
+signature an acceleration term should have, and it is why the lane is worth reverting even though it
+almost never clips.
 
 ### ✅ `0xC63A6` IS **UN-STRUCK** — ITS BLOCKING GATE IS CLEARED
 It was struck 2026-08-11/12 because Path 2's sign depended on an **unknown LERP slope**, with the

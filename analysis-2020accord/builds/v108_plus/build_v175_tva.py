@@ -50,21 +50,31 @@ the wrong direction, and the record already says so -- [[accord-gp6b26-is-inerti
 an UNKNOWN LERP slope.  That slope is now known (f' >= 0, measured p50 2.174 hands-off / 0.346
 hands-on).  The gate is cleared -- but this build does NOT spend it.  See "WHY NOT w[3]" below. **
 
-THE RELAY HAZARD, WHICH IS UNEXCLUDED ON THE CURRENT BUILD
------------------------------------------------------------
-Saturation of the +-511 clamp turns -K*alpha into sign(alpha)*511 -- a RELAY.  V80's lesson was
-exactly this ("the damper became a RELAY ... worst grinding ever"), and a relay inside a lightly
-damped loop is a textbook ratchet source.
+THE RELAY HAZARD -- MEASURED, AND SMALLER THAN I FIRST WROTE
+-------------------------------------------------------------
+Saturating the +-511 clamp turns -K*alpha into sign(alpha)*511 -- a RELAY, V80's failure mode.  An
+earlier draft of this docstring called that hazard "unexcluded" at the flown 3.0x.  ** It has now
+been measured, and that framing was overstated. **  Route 77 (probe_build = V90) carries gp-0x6b26
+itself on CAN 427 at HONDA's K, 52,926 engaged frames.  gp-0x6b26 is hard-clamped to +-511, which
+pins the packer shift to s in {0,1}; at the tightest admissible s = 1:
 
-    K            alpha to saturate     equivalent STOCK-referred gp-0x6b26
-    Honda 1.0x       ~3195                       511
-    flown 3.0x       ~1065                       170          <== the CURRENT build
+    K              saturation duty     p99   (clamp 511)
+    Honda 1.0x         0.0000 %        136
+    V91   1.5x         0.0094 %        204
+    FLOWN 3.0x         0.4875 %        408
 
-The only on-car measurement is V76's: at Honda's K, `|gp-0x6b26| > 448` fired **0 / 63,477 frames**
-on route 65 with a 99.926% positive control [EVIDENCE].  ** That null is at 448.  The threshold that
-matters at 3.0x is 170 -- 2.6x lower, and NEVER MEASURED. ** So the relay hazard is bounded at
-Honda's K and simply unknown at the flown K.  Reverting restores the configuration in which it is
-measured to be unexercised.
+=> 0.49 % is RARE TAIL CLIPPING, not a relay (V80's ran at near-unity duty).  ** The relay argument
+is withdrawn and is NOT part of the case for this build. **  Caveats: r78/r79 are NOT comparable to
+r77 -- the 427 packer scaling changed across V91/V92 -- so they are not a dose-response; and the
+extrapolation is a model, exact only because gp-0x6b26 = K*alpha is linear before the clamp.
+
+WHAT SURVIVES, AND IS THE ACTUAL CASE FOR V175
+-----------------------------------------------
+The LINEAR amplification, which the clipping measurement does not touch: at the flown dose the term
+runs p99 = 408 against a 511 clamp -- a genuine 3x amplification of a DESTABILISING, omega^2-weighted
+term, on the ENGAGED modes only.  It is also highly intermittent (p50 ~ 18 counts, p99 = 408), i.e.
+negligible in steady driving and large exactly during the fast transients where the ratchet lives --
+the signature an acceleration term should have.
 
 WHY NOT SPEND w[3] (`0xC63A6`) INSTEAD
 ---------------------------------------

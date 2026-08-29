@@ -23,8 +23,11 @@ file   39990-TVA,A160-V175-V173BASE-GP6B26.ENGAGED.Y.REVERT.HONDA-0x13000-0x1000
    exactly where the ratchet is amplified ~15×.
 3. That term is `K × acceleration`, so it is **66.7× stronger at 8.17 Hz than at 1 Hz** with **no
    filter and no added phase** — the first genuinely frequency-selective handle the kit has found.
-4. It also restores the configuration in which the ±511 **relay** hazard is *measured* unexercised
-   (V76: 0/63,477 frames). At the flown 3.0× that hazard has **never been measured**.
+4. That term is **highly intermittent** — measured on route `77` at Honda's K, p50 ≈ 18 counts but
+   **p99 = 408 against its 511 clamp** at the flown 3× — so it is negligible in steady driving and
+   large **exactly in the fast transients where the ratchet lives**.
+   ⚠ *An earlier draft of this card claimed a ±511 "relay hazard". Measured, it clips only **0.49 %**
+   of engaged frames at 3× — rare tail clipping, not V80's relay. That argument is withdrawn.*
 
 ---
 
