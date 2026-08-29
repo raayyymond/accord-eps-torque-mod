@@ -2182,3 +2182,34 @@ term, its cap binds, its section was never retuned, and both gates pass.
 knot-count header, by a decompiled read site, or by sensible ordered values — rather than every
 aligned pair. `analysis-2020accord/verify/check_lever.py --record` already does that validation.
 
+## ⚠ **PRECISION: “COMMAND-DRIVEN” DOES NOT MEAN THE COMMAND CARRIES 8.2 Hz — AND THE DIFFERENCE
+MATTERS**
+I wrote *“THE RATCHET IS DRIVEN BY THE COMMAND”*. Read carelessly that says the command **contains**
+8.2 Hz energy and injects it, which would make *“filter the command at 8 Hz”* an obvious lever.
+**It would do nothing, because the command has no 8.2 Hz content.**
+```
+   command channels in the RATCHET band, 19 routes, excess / own slope-matched null
+     sc_tq 0.92 · co_tqcan 0.91 · cc_req 0.88      — all BELOW 1.0, i.e. no peak at all
+   and the kit's own record: the LKAS lane is a ~1-5 Hz LOW-PASS, so the command CANNOT
+   carry 8.2 Hz even in principle.
+```
+✅ **What the coupling result actually shows**: band-specific coherence between command and `cs_tq`
+at 7–10.5 Hz, above a 30–40 Hz control band and above phase-shuffled surrogates (median **+0.115**,
+CI **[+0.027, +0.168]**, n=17). **Coherence at a frequency does not require the input to have a peak
+there** — broadband command activity moves the wheel, the motion excites a **plant resonance**, and the
+response appears at the plant's frequency, not the command's.
+⇒ **the correct statement is: the ratchet is a PLANT resonance EXCITED by command activity, and
+amplified ~15× by the engaged loop.** “Command-driven” is shorthand for the excitation source, not a
+claim about the command's spectrum.
+
+### ✅ WHY THIS PREVENTS A WRONG LEVER
+❌ **Do not propose filtering or notching the LKAS command near 8 Hz.** There is nothing there to
+remove — all three command channels sit below their nulls in that band, and the LKAS lane already
+low-passes at 1–5 Hz. Such a build would be **inert by construction**, and its null would be
+uninterpretable rather than informative.
+✅ **The lever remains where V173 puts it**: the **response** path, not the excitation. Reducing `|L|`
+attenuates the resonance regardless of how broadband the excitation is — which is exactly why V173
+works whether the mode is command-excited or self-excited.
+⊕ It also explains the **monotone command scaling** (excess 14.0 → 47.8): more command activity means
+more broadband excitation reaching a fixed-frequency mode, **not** more energy at 8.2 Hz specifically.
+

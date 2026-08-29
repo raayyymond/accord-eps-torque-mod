@@ -4,6 +4,41 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **THE THIRD SYMPTOM RESOLVED: "PEAK COMMAND OSCILLATION" NEEDS NO SEPARATE LEVER**
+🛑 **A lead/lag test is NOT usable here, and that was established BEFORE running it:** at 20 Hz one
+period is 50 ms = **5 samples** at 100 Hz, so lag resolves only modulo half a period, while
+openpilot's latency is 1–3 periods. Coherence is usable; lag is not.
+```
+   sc_tq x cs_rate       @ 1 Hz    @ 8 Hz    @ 20 Hz
+   pooled                 0.115     0.119      0.180
+   hands OFF (31 win)     0.338        -       0.181
+   SHUFFLED floor         0.049     0.050      0.048
+```
+✅ **The low pooled 1 Hz figure was a MIXED-EXPOSURE ARTEFACT.** Hands-off it rises to **0.338, ~7×
+the floor** — the command *does* move the wheel at 1 Hz. **This was flagged as a question, not
+reported as an authority finding, and the stratification is why.**
+✅ **20 Hz coupling is weak but real (0.181, 3.8× floor) and UNCHANGED by hands** ⇒ not driver-related.
+➕ **The decisive fact is a prior, not this test: the LKAS lane is a ~1–5 Hz low-pass, so openpilot
+CANNOT COMMAND a 20 Hz oscillation.** Whatever the 3.3× excess in `sc_tq` is, it is not commanded.
+⇒ **the command's 20 Hz content is the command REACTING to the grind (or an artefact), not driving
+it ⇒ no separate firmware lever is indicated for the third symptom, and the notch in V195/V196 is
+already the intervention that addresses it.**
+⚠ Only **31 hands-off and 1 hands-on** 20.5 s episodes exist in the whole corpus — consistent with
+the earlier finding of zero continuous 15 s hands-on engaged-creep windows. **Hands-on remains the
+corpus's blind spot.**
+⊕ Tool: `rlog-tools/score/command_coupling_at_grind.py`.
+
+### ⇒ ALL THREE STATED SYMPTOMS NOW HAVE AN ANSWER
+```
+   GRINDING            a real MOTION oscillation, strongest in cs_rate  -> the notch (V195: 21.5x)
+   RATCHETING          torque-dominant, omega^2 lane                    -> inertia half-dose (V196)
+                                                                           + the K1 revert
+   COMMAND OSCILLATION cannot be commanded (1-5 Hz low-pass); it tracks -> fixed BY fixing the grind
+                       the grind                                           no separate lever
+   LKAS AUTHORITY      the knob is 0xC6CD0 and it is the grind's carrier -> sequenced: confirm the
+                                                                           grind fix, THEN 6x -> 8x
+```
+
 ## ✅ **V196 — THE ONE FREQUENCY-SELECTIVE RATCHET LEVER LEFT, AND IT COSTS NOTHING AT DC**
 The biquad is spent on the grind. The only other **frequency-selective** lever aimed at the ratchet
 is `gp-0x6b26`: built from the acceleration EMA, so its loop contribution scales as **ω²** —
@@ -2174,35 +2209,4 @@ mechanical-resonance reading stands and V173's case is unchanged.
 🛑 **This changes nothing about the build or the flight order.** V173 attenuates the response
 whatever the mode's origin. It is recorded because **the test is nearly free and the answer would
 matter a great deal.**
-
-## ⚠ **PRECISION: “COMMAND-DRIVEN” DOES NOT MEAN THE COMMAND CARRIES 8.2 Hz — AND THE DIFFERENCE
-MATTERS**
-I wrote *“THE RATCHET IS DRIVEN BY THE COMMAND”*. Read carelessly that says the command **contains**
-8.2 Hz energy and injects it, which would make *“filter the command at 8 Hz”* an obvious lever.
-**It would do nothing, because the command has no 8.2 Hz content.**
-```
-   command channels in the RATCHET band, 19 routes, excess / own slope-matched null
-     sc_tq 0.92 · co_tqcan 0.91 · cc_req 0.88      — all BELOW 1.0, i.e. no peak at all
-   and the kit's own record: the LKAS lane is a ~1-5 Hz LOW-PASS, so the command CANNOT
-   carry 8.2 Hz even in principle.
-```
-✅ **What the coupling result actually shows**: band-specific coherence between command and `cs_tq`
-at 7–10.5 Hz, above a 30–40 Hz control band and above phase-shuffled surrogates (median **+0.115**,
-CI **[+0.027, +0.168]**, n=17). **Coherence at a frequency does not require the input to have a peak
-there** — broadband command activity moves the wheel, the motion excites a **plant resonance**, and the
-response appears at the plant's frequency, not the command's.
-⇒ **the correct statement is: the ratchet is a PLANT resonance EXCITED by command activity, and
-amplified ~15× by the engaged loop.** “Command-driven” is shorthand for the excitation source, not a
-claim about the command's spectrum.
-
-### ✅ WHY THIS PREVENTS A WRONG LEVER
-❌ **Do not propose filtering or notching the LKAS command near 8 Hz.** There is nothing there to
-remove — all three command channels sit below their nulls in that band, and the LKAS lane already
-low-passes at 1–5 Hz. Such a build would be **inert by construction**, and its null would be
-uninterpretable rather than informative.
-✅ **The lever remains where V173 puts it**: the **response** path, not the excitation. Reducing `|L|`
-attenuates the resonance regardless of how broadband the excitation is — which is exactly why V173
-works whether the mode is command-excited or self-excited.
-⊕ It also explains the **monotone command scaling** (excess 14.0 → 47.8): more command activity means
-more broadband excitation reaching a fixed-frequency mode, **not** more energy at 8.2 Hz specifically.
 
