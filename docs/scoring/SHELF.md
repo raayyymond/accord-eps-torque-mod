@@ -8,6 +8,27 @@ name the file and the bus, and they will be read back to you first.
 
 ---
 
+## ⭐ V205 — FLASH THIS ONE. The fix, plus the ratchet’s named mechanism on the wire.
+
+```
+39990-TVA,A160-V205-V202BASE-PROBE-GP6B70-0x13000-0x100000.rwd
+  image 8cf100864be1d6030eed36acac1d514066b157a59de8ca829ae154ce7032882e
+```
+
+V202 control cells byte-identical, +3 payload bytes putting `gp-0x6b70` on CAN 427 at **sar 6**.
+Preflight 8/8, 40/40 assertions.
+
+`FUN_00038148` ends with `gp-0x6b70 = sgn(resid) × LERP(|resid|)`, clamped ±8192. **If that LERP
+saturates early the stage is a signed constant — a relay** — which is precisely what the record blames
+the ratchet on (*“engagement amplifies 6–9 Hz 2.8× via a command-proportional Coulomb relay”*). No
+magnitude channel for this cell exists anywhere in the corpus, so it has never been looked at.
+
+| what it shows | what it means |
+|---|---|
+| few levels, mass at the rails | the stage **is** a relay — the ratchet’s mechanism localised to one LERP |
+| smooth and spread | the relay lives elsewhere — worth as much |
+| railed at ±8192 | the observer is saturated, and `0xC63AA` cannot be used safely at all |
+
 ## V202 — the same fix without the instrument
 
 ```
@@ -34,27 +55,6 @@ Human steering-feel thresholds are tens of ms.
 improves worst-case leakage by only 1.1× and makes the median *worse* — one biquad cannot cover
 6.7 Hz. **So score the drive stratified by its own peak frequency, never pooled:** a drive peaking at
 16 Hz gets 2.3×, one peaking at 20 Hz gets 24.7×.
-
-## ⭐ V205 — FLASH THIS ONE. The fix, plus the ratchet’s named mechanism on the wire.
-
-```
-39990-TVA,A160-V205-V202BASE-PROBE-GP6B70-0x13000-0x100000.rwd
-  image 8cf100864be1d6030eed36acac1d514066b157a59de8ca829ae154ce7032882e
-```
-
-V202 control cells byte-identical, +3 payload bytes putting `gp-0x6b70` on CAN 427 at **sar 6**.
-Preflight 8/8, 40/40 assertions.
-
-`FUN_00038148` ends with `gp-0x6b70 = sgn(resid) × LERP(|resid|)`, clamped ±8192. **If that LERP
-saturates early the stage is a signed constant — a relay** — which is precisely what the record blames
-the ratchet on (*“engagement amplifies 6–9 Hz 2.8× via a command-proportional Coulomb relay”*). No
-magnitude channel for this cell exists anywhere in the corpus, so it has never been looked at.
-
-| what it shows | what it means |
-|---|---|
-| few levels, mass at the rails | the stage **is** a relay — the ratchet’s mechanism localised to one LERP |
-| smooth and spread | the relay lives elsewhere — worth as much |
-| railed at ±8192 | the observer is saturated, and `0xC63AA` cannot be used safely at all |
 
 ## V204 — the same fix, probing the parked lever instead
 
@@ -115,7 +115,7 @@ number in it was wrong. V199's is `<= 1.0000001`, with a control assertion that 
 
 ---
 
-## WHAT V202/V203 CHANGE vs V122 — 11 cells, 30 payload bytes
+## WHAT EVERY BUILD ON THIS SHELF CHANGES vs V122 — 11 cells, 30 payload bytes
 
 | addr | V122 → V199 | what it physically is | introduced |
 |---|---|---|---|
