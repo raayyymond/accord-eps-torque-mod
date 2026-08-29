@@ -1,5 +1,40 @@
 # STATE — living current state of the kit
 
+## 🛑 **FLATTENING THE LERP TO REMOVE THE REMAINING SWITCHES — CONSIDERED AND REJECTED**
+The three `gp-0x671a` switches were called unremovable because one side is a **speed-varying LERP**.
+That is only true while the LERP is a table. **If the table were flattened to the constant the
+other branch uses, those switches would vanish too.** Checked whether that is reachable:
+```
+   gp-0x6E28  r26 LERP values   2 accesses   0x3AADE 0x3AAE4    ALL LOADS (24xx)
+   gp-0x6E30  r26 LERP axis     3 accesses   0x3AAD0 0x3AAD8 0x3AF64
+   gp-0x6E38  r24 LERP values   2 accesses   0x3ABAE 0x3ABB4
+   gp-0x6E40  r24 LERP axis     3 accesses   0x3AB9C 0x3ABA4 0x3AE42
+```
+⇒ **NOT ONE gp-relative STORE.** These tables are a **`.data` section bulk-copied from flash at
+startup**, so the flash source would have to be found through the startup copy table — doable, but
+a real trace.
+
+### 🛑 REJECTED ON MERIT, NOT ON DIFFICULTY
+**Flattening a speed-scheduled multiplier to a constant does not merely remove the switch — it
+removes SPEED SCHEDULING ENTIRELY.** The r24/r26 lanes would carry the same gain at 2 km/h and
+120 km/h.
+⇒ **the cure is far more invasive than the disease.** A build that changes assist at every speed to
+eliminate a switch is not a targeted lever, and this kit's record (V133) is that broad changes to
+these lanes produce large, hard-to-attribute regressions.
+⇒ **[DECISION] not pursued. The `gp-0x671a` LERP-vs-const switches stay out of reach**, and the
+switching class is closed at the two cal-removable members (V149, V150).
+⭐ **Recorded so a future session does not re-derive the idea and mistake "reachable" for
+"advisable".**
+
+### ✅ HANDOFF INTEGRITY — VERIFIED
+```
+   V139  6cd7799d63cbd5feb424913761a8f7f387b9f65dc8bfd30e08013bfd9b57121f   49/49
+   V148  815aec7e04a655ed13ec2f7e0fcd6ed906191b7f6f2a0345faf5079215879071   69/69
+   V149  6c39034055503e6e2e61576f40096d31102e04493ec248e53f5d0930390f2a9f   52/52
+   V150  d6aae5ee8b79f68bb52c040c82aa0f674e537818f23c1ba5081a9d56bc690ab3   51/51
+   all four rebuild BIT-IDENTICALLY; both repos clean; every capped file under 256 KB
+```
+
 ## ✅✅✅ **THE SWITCHING CENSUS IS COMPLETE — EXACTLY TWO ARE CAL-REMOVABLE, AND BOTH ARE BUILT**
 Every counter-gated selection in the assist chain has now been read at its site:
 ```
