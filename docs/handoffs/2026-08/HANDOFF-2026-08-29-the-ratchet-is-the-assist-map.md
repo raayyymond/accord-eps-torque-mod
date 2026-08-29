@@ -1,5 +1,10 @@
 # HANDOFF — 2026-08-29 · THE RATCHET IS FIRMWARE-CREATED, AND IT IS THE ASSIST MAP · **V168 BUILT**
 
+> 🚩 **PARTIAL — covers only the first third of 2026-08-29.** The complete session handoff is
+> `HANDOFF-2026-08-29-the-assist-map-session.md`: seven builds, the notch structure, the
+> scorer defect, the r26 gate, the ring-down negative and the full open-items list.
+
+
 > **Read `docs/STATE.md` first.** This is the narrative; STATE is the live state. Everything here is
 > committed and pushed on `main` in both repos.
 

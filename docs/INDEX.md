@@ -172,3 +172,4 @@ them only alongside `BUILD-LINEAGE.md`'s ledger-corrections table.
 - `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-ratchet-is-the-assist-map.md` — three instruments withdrawn; the ratchet is firmware-created, engaged-only and in TORQUE; it dissociates from the grind; **V168 built** (base-assist slope cap).
 - `docs/scoring/DRIVE-CARD-V172.md` — **FLY FIRST**: the assist-section retune (ratchet 6.2x + grind 9.6x, no static weight cost). `DRIVE-CARD-V168.md` is the alternative.
 - `docs/scoring/DRIVE-CARD-V173.md` — **FLY THIS**: the assist-section poles with Honda's 55 Hz notch kept. One 15 s continuous engaged creep pass with real curvature.
+- `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` — **the complete 2026-08-29 session**: three instruments withdrawn, the ratchet localised to the base assist map, seven builds cut, every remaining lever priced below the measurement floor.
