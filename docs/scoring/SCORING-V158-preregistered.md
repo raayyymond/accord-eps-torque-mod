@@ -165,3 +165,15 @@ the worst at 3.60x**. Reproducibility is worst where the excess is smallest, and
 A ratio of 1.0 means engaged == manual. **So V158 is instrumentally detectable only if it very nearly
 eliminates the engaged excess.** Anything between roughly 1.1 and 3.9 is NOT RESOLVED, and that is the
 most likely outcome. **The operator report remains the primary endpoint.**
+
+### The 18-22 Hz prediction is ONE-SIDED, and that is what makes the drive falsifiable
+
+| V158 reads | means |
+|---|---|
+| **1.42 - 2.32** | consistent with the damping account, but **inside the noise floor** -- NOT RESOLVED |
+| **~3.9** | no measurable effect; damping is a small share of the plant, or the band is not resonance-limited |
+| **clearly > 3.88**, outside [1.60, 10.87] high or above 7.56 | **the damping account is FALSIFIED**, and it is evidence the **Path-2 pumping copy dominates** -> fly **V167** |
+
+Nothing in V158 predicts an increase: FactorC lifted and FactorE's dead zone opened both add a term
+that OPPOSES motion in Path 1. So a rise is the one outcome that carries unambiguous information, and
+its follow-up build already exists.
