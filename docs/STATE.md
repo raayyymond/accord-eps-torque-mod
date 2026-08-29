@@ -1,5 +1,25 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **V158 IS THE FLIGHT, NOT V160 — A POWER CALCULATION DEMOTED THE LEAD BUILD**
+Pre-registered before the drive: `docs/scoring/SCORING-V158-preregistered.md`.
+
+V88 measured Lever B single-variable across a **10.24x** step. V160 adds **1.2496x**. Extrapolating
+log-linearly from V88's own measured ratios, against this kit's own same-firmware detection floor:
+```
+   band       V88 10.24x step    V160 1.25x predicts    floor (same-firmware null)
+   6-9 Hz         0.859              0.986  (-1.4 %)     [0.18, 5.51]  ~3-5x
+   9-12 Hz        0.604              0.953  (-4.7 %)
+   15-22 Hz       0.549              0.944  (-5.6 %)     [0.59, 1.34]  ~40 %
+```
+=> **the Lever B increment is 4-30x BELOW the floor — unmeasurable on one drive.** It adds an untested
+dose (V62: *“2x ≈ the OPTIMUM, not a point on a ramp”*) and **destroys attribution if the drive comes
+back worse.** ✅ **FLY V158**: single-variable vs V122, and its change — creep damping **0 → 2.733
+ct/(deg/s)** — is the only one large enough to resolve. V160 becomes the follow-up if V158 is good.
+
+⭐ **THE GENERAL RULE**: *a build is only worth a drive if its predicted effect exceeds the instrument
+floor.* Stacking a sub-floor increment onto a resolvable one buys nothing and costs attribution. This
+is the first time this kit has run that calculation BEFORE flying rather than after.
+
 ## ⛔ **THE BACKLASH BAND IS CAL-REACHABLE — AND CLOSED BY THE LIMIT-CYCLE EXCLUSION**
 `gp-0x6b44` has **exactly 1 reader (`0x36760`) and 1 writer (`0x36BB0`, in `FUN_00036828`)**, and the
 writer is pure calibration arithmetic — so the band width IS cal-reachable, contrary to the previous
