@@ -4,6 +4,88 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑 **THE ENGAGED RATCHET MAY BE OURS: WE AMPLIFY A DESTABILISING INERTIA TERM 3-8x, ENGAGED-ONLY — V175 REVERTS IT**
+**A new mechanism, traced end to end this session, decompile-first.** It is the first account that
+explains **why the ratchet is ENGAGED-amplified ~15x** in terms of a cell we ourselves moved.
+
+### ✅ THE TRACE [EVIDENCE — both ends confirmed in Ghidra + a raw LE byte scan]
+`FUN_00036c12` is the **sole writer** of `gp-0x6b26` (one `st.h -0x6b26[gp]` at `0x36CF0`; the other
+five disp16 sites decode as `ld.h`, opcode 0x39 vs 0x3B):
+```
+   gp-0x6b26 = clamp( ((gp-0x6c2c * validgate) * LERP_0xCBE74[mode](gp-0x6a5e) >> 6) * 0x111 >> 0x12,
+                      +- cal[0xC407E] )
+```
+- `gp-0x6c2c` is the **ACCELERATION** — `FUN_00041464` @`0x41602` `sub r7,r9` is a FIRST DIFFERENCE of
+  the EMA-filtered resolver rate, then ×32, clamped, EMA'd, `>>9`.
+- **the acceleration enters LINEARLY**; the LERP is indexed by `gp-0x6a5e`, a **scheduling** variable,
+  not by α ⇒ `gp-0x6b26 = K(mode, sched) · α`, a pure apparent-inertia term.
+- ⇒ **its loop contribution scales as ω²: 66.7x more at 8.17 Hz than at 1 Hz.**
+  🛑 **This is the frequency selectivity the kit concluded it did not have** — and it is
+  **STRUCTURAL, from differentiation order, not from a filter.** It costs NO phase lag anywhere.
+  (It does not contradict [[accord-factord-is-the-angle-error-lever]], which refuted a *filter*-based
+  1/ω selectivity. This is a different thing.)
+
+### ✅ THE GATE CANNOT CLOSE
+`FUN_00038148` admits it into the six-term Path-2 sum with `w[3]` = `tp+0x73a6` = **`0xC63A6`**, gated
+on `(gp-0x6b26 + 0x400) < 0x801` i.e. `|x| <= 1024` (a **store-zero**, not a clamp). But the writer
+clamps to **±`0xC407E` = 511** on stock, V173 and V174 alike ⇒ **511 < 1024, the gate is open EVERY
+frame** and `w[3]` is an unconditional multiplier. [EVIDENCE, read from all three images.]
+
+### 🛑 THE SIGN — IT IS POSITIVE ACCELERATION FEEDBACK, I.E. **NEGATIVE APPARENT INERTIA**
+The Y rows are NEGATIVE, so `gp-0x6b26 = −|K|·α`. Through the verified polarity chain
+([[accord-friction-polarity-more-friction-is-more-assist]], whose step 4 gives `f' >= 0` EVERYWHERE):
+```
+   alpha UP -> MODEL DOWN -> res UP -> gp-0x6b70 UP (f'>=0) -> target effort DOWN -> MORE ASSIST
+```
+⇒ **assist RISES with acceleration** ⇒ lowers effective mass **and lowers the damping ratio of the
+resonance**. Amplifying it is the wrong direction — exactly what
+[[accord-gp6b26-is-inertia-not-damping]] already said: *"the whole V74/V75/V91/V92 dose direction was
+aimed at the wrong physics."*
+
+### 🛑🛑 AND THE FLIGHT BUILD AMPLIFIES IT 3.0x / 3.0x / **8.14x**, ON THE ENGAGED MODES ONLY
+```
+   0xD7A5C m26 ENGAGED   Honda (-9830,-5734,-1966)  ->  FLOWN (-29490,-17202,-16000)
+   0xD7A6C m27 ENGAGED   Honda (-9830,-5734,-1966)  ->  FLOWN (-29490,-17202,-16000)
+   0xD6A6C m24 MANUAL    Honda (-9830,-5734,-1966)  ->  UNCHANGED
+```
+⊕ **The one destabilising ω²-weighted term is amplified 3-8x on exactly the modes where the ratchet
+is amplified ~15x, and left alone in manual, where it barely appears.** [BELIEF — a structural match,
+not yet a measured cause.]
+
+### ⚠ THE RELAY HAZARD IS **UNEXCLUDED** ON THE CURRENT BUILD
+Saturating ±511 turns `−K·α` into `sign(α)·511` — a **RELAY**, V80's exact failure
+([[accord-v80-damper-relay-and-grind1-inert]]).
+```
+   K            alpha to saturate      stock-referred threshold
+   Honda 1.0x       ~3195                     511
+   FLOWN 3.0x       ~1065                     170     <== the CURRENT build
+```
+✅ The only on-car measurement is **V76's: `|gp-0x6b26| > 448` fired 0 / 63,477 frames**, route 65,
+positive control 99.926%. 🛑 **That null is at 448. The threshold that matters at 3.0x is 170 —
+2.6x lower, and NEVER MEASURED.** Bounded at Honda's K; **unknown at the flown K.**
+
+### ✅ `0xC63A6` IS **UN-STRUCK** — ITS BLOCKING GATE IS CLEARED
+It was struck 2026-08-11/12 because Path 2's sign depended on an **unknown LERP slope**, with the
+release condition *"re-derive the slope from V96/V97's own instruments."* **That slope is now known:
+`f' >= 0` everywhere (structural) and measured p50 2.174 hands-off / 0.346 hands-on**, with the
+cross-check `d(gp-0x6b94)/d(gp-0x6b70)` = +0.2529/+0.2565/+0.2617 and a passing positive control.
+⇒ **the cell is available.** V175 deliberately does **not** spend it (asserted FROZEN at 1024): a
+revert to Honda's own numbers is a lower risk class and carries an on-car saturation measurement.
+
+### ✅ V175 BUILT — 12 BYTES, SUBTRACTIVE, ENGAGED-ONLY
+Base **V173**. `0xD7A5C`/`0xD7A6C` → Honda's row, **read from the stock image, never typed**.
+**26/26 assertions · 12 payload bytes in 3 runs · CRC 50/50 · readback byte-identical · mode 24
+untouched · `0xC407E` and `0xC63A6` asserted frozen · V173's four section coefficients asserted
+carried.** image `a4e0dc4254ad8559…` · rwd `5bf63d0ea539fd18…` · builder
+`analysis-2020accord/builds/v108_plus/build_v175_tva.py`.
+✅ **THE DISCRIMINATOR vs V173's poles is ENGAGED vs MANUAL.** They stack and both attenuate the
+ratchet, so amplitude alone cannot attribute — but V173's poles act in **both** modes and this revert
+**cannot act in manual**. Ratchet falls *and* the engaged/manual ratio falls ⇒ the inertia dose was
+carrying it. Ratio unchanged ⇒ V173's poles did it. Neither moves ⇒ both accounts fail together.
+Score with `rlog-tools/score/grind_engaged_vs_manual.py` beside `score_band_excess.py`.
+⚠ **It removes drag — creep effort will be lighter than the operator is used to.** Intended, and he
+should be told.
+
 ## ✅ **V174 BUILT — THE PRE-REGISTERED SECOND POINT ON THE FRONTIER. V173 STILL FLIES FIRST.**
 Cut so that the verdict *"better, but the ratcheting is still there"* costs **no build delay**.
 🛑 **V174 IS NOT AN ALTERNATIVE TO V173 AND MUST NOT BE FLOWN FIRST.** It is the *expensive* point
@@ -2182,80 +2264,4 @@ arms sat 2.43 km/h apart. ✅ **So it is not enough to drive “some creep engag
 manual”** — the two arms must be **the same stretch at the same speed**. That is now in the drive card.
 ⊕ The guard is what makes a null trustworthy: without it this route would have produced a confident
 acoustic number built on a speed difference.
-
-## ✅✅ **THE DRIVE-SIDE TOOLCHAIN IS COMPLETE AND DE-HARDCODED — THREE COMMANDS**
-Every stage between the rlog and an answer has now been audited, fixed and run.
-```
-   1  python rlog-tools/decode/extract_route.py --route <N> --prefix <rlog prefix> \
-                                                --segments <n> --build V158
-      -> writes the cache AND verifies it is scoreable (fields present, creep windows in
-         BOTH arms) -- it FAILS LOUDLY at extract time instead of after the drive is over
-
-   2  python rlog-tools/score/score_v158_creep.py r<N>
-      -> episode bootstrap, 6-9 Hz primary / 18-22 Hz secondary / 30-40 Hz control,
-         speed census, and a SPLIT-HALF NULL that GATES every verdict
-
-   3  python rlog-tools/decode/audio_engaged_vs_manual.py r<N>
-      -> the acoustic channel: PCM aligned to the CAN timebase by logMonoTime, split on
-         cc_lat, 20-2000 Hz so no band is pre-committed, speed-matched control
-```
-✅ **Dependencies verified present on this machine**: `zstandard`, `cereal`, numpy, scipy; **635 rlog
-segments** on disk; **23 routes** have both rlogs and a cache.
-
-### ✅ WHAT WAS WRONG WITH EACH, AND WHAT IT COST
-```
-   extract_r*.py    ONE FILE PER DRIVE (~125 lines, four real values).  extract_r24.py's own
-                    docstring still reads "Cache routes 22 and 23".  A stale header is harmless;
-                    a stale WIRE_SCALE or segment count is not.        -> generic extract_route.py
-   score_v133       WINDOW bootstrap -- 2.6x too confident, measured.  -> score_v158_creep.py
-                    Then MY replacement over-claimed until the null gated it.
-   audio_..._manual HARDCODED ROUTES = {'r22', 'r23'} -- every new drive needed the file edited,
-                    and a stale entry would silently analyse the WRONG drive.
-                    -> resolves the prefix from the rlog FILENAMES; verified it reproduces both
-                       hardcoded values exactly, and `--list` shows what is runnable.
-```
-⭐ **Three tools, three different failure modes, all of the same family: a per-drive constant that
-nothing checks.** The fix in each case was to derive the constant from the data on disk, or to refuse
-loudly when it cannot be derived. **A pipeline that cannot be run without editing it will eventually
-be run after editing it wrong.**
-
-## ✅✅✅ **THE SCORER IS VALIDATED ON REAL DATA — AND IT CAUGHT ITSELF OVER-CLAIMING**
-Ran the new pipeline end-to-end on **r24, a real V122 creep drive**, before the V158 flight.
-
-### ⛔ MY OWN SCORER OVER-CLAIMED, AND THE KIT ALREADY HAD THE RULE
-```
-   real run    6-9 Hz  0.20 [0.04, 0.86]   -> verdict printed: "RESOLVED"
-   --null      6-9 Hz  0.41 [0.06, 17.06]  -> the endpoint resolves NOTHING on this route
-```
-The verdict tested only *does the CI exclude 1.0*. It ran the split-half null **only when asked**
-and **never used it** — exactly what `feedback-run-the-control-before-the-measurement` forbids
-(*“four claims died to controls in one session”*). **Fixed: the null is now computed automatically
-and GATES the verdict.**
-
-### ✅ VALIDATED THREE WAYS ON r24
-```
-   6-9 Hz    effect 0.20 [0.04,  0.86]   null 0.20 [0.00, 3.22]   NOT RESOLVED
-   18-22 Hz  effect 3.88 [1.60, 10.87]   null 0.19 [0.02, 0.76]   RESOLVED
-   30-40 Hz  control 0.61 [0.28, 5.91]   -> flat, guard passes
-   speed census: engaged p50 11.3 / manual p50 11.2, median gap 0.14 km/h
-```
-1. **Reproduces the recorded reference**: r24's 18–22 Hz reads **3.88**, against the V133 script's
-   recorded **3.88 [1.63, 10.08]** — same point estimate, slightly wider CI, as an episode bootstrap
-   should give.
-2. **Resolves what is known to be real** — the 18–22 Hz engaged excess, well outside its null.
-3. **Refuses what a naive CI would have claimed** — the 6–9 Hz 0.20 [0.04, 0.86].
-
-### 🛑 A CONCRETE DRIVE REQUIREMENT FALLS OUT OF THIS
-**On r24 — 10 engaged episodes, 5 manual — the 6–9 Hz band CANNOT BE RESOLVED AT ALL**, and 6–9 Hz is
-**V158's primary target**. The manual arm could not even support a split-half null (5 episodes, needs 8).
-=> **a V158 drive shaped like r24 would produce NOTHING on the band that matters.**
-✅ **The drive must ALTERNATE engaged and manual creep many more times** — not two long stretches but
-**8+ separate engaged and 8+ separate manual passes** over the same low-speed loop. More *windows* do
-not help; only more *episodes* do. This is now in the drive card, and the extractor checks it at
-extract time rather than leaving it to be discovered after the drive.
-
-⭐ **THE BROADER POINT**: I audited the tooling the pre-registration named, found a window bootstrap,
-replaced it — and my replacement then over-claimed in a different way that only running it on **real
-data** exposed. **A new instrument is not trustworthy because it fixed the old one's bug.** Run it on
-a route whose answer you already know.
 

@@ -95,3 +95,79 @@ pointer-table family is attributed, and all three complaints have a firmware ans
 is none. Six images cover every outcome of one drive, all verified cell-by-cell.
 **The only remaining input is the drive.** Nothing further can be learned from the bytes.
 
+## ✅✅ **THE DRIVE-SIDE TOOLCHAIN IS COMPLETE AND DE-HARDCODED — THREE COMMANDS**
+Every stage between the rlog and an answer has now been audited, fixed and run.
+```
+   1  python rlog-tools/decode/extract_route.py --route <N> --prefix <rlog prefix> \
+                                                --segments <n> --build V158
+      -> writes the cache AND verifies it is scoreable (fields present, creep windows in
+         BOTH arms) -- it FAILS LOUDLY at extract time instead of after the drive is over
+
+   2  python rlog-tools/score/score_v158_creep.py r<N>
+      -> episode bootstrap, 6-9 Hz primary / 18-22 Hz secondary / 30-40 Hz control,
+         speed census, and a SPLIT-HALF NULL that GATES every verdict
+
+   3  python rlog-tools/decode/audio_engaged_vs_manual.py r<N>
+      -> the acoustic channel: PCM aligned to the CAN timebase by logMonoTime, split on
+         cc_lat, 20-2000 Hz so no band is pre-committed, speed-matched control
+```
+✅ **Dependencies verified present on this machine**: `zstandard`, `cereal`, numpy, scipy; **635 rlog
+segments** on disk; **23 routes** have both rlogs and a cache.
+
+### ✅ WHAT WAS WRONG WITH EACH, AND WHAT IT COST
+```
+   extract_r*.py    ONE FILE PER DRIVE (~125 lines, four real values).  extract_r24.py's own
+                    docstring still reads "Cache routes 22 and 23".  A stale header is harmless;
+                    a stale WIRE_SCALE or segment count is not.        -> generic extract_route.py
+   score_v133       WINDOW bootstrap -- 2.6x too confident, measured.  -> score_v158_creep.py
+                    Then MY replacement over-claimed until the null gated it.
+   audio_..._manual HARDCODED ROUTES = {'r22', 'r23'} -- every new drive needed the file edited,
+                    and a stale entry would silently analyse the WRONG drive.
+                    -> resolves the prefix from the rlog FILENAMES; verified it reproduces both
+                       hardcoded values exactly, and `--list` shows what is runnable.
+```
+⭐ **Three tools, three different failure modes, all of the same family: a per-drive constant that
+nothing checks.** The fix in each case was to derive the constant from the data on disk, or to refuse
+loudly when it cannot be derived. **A pipeline that cannot be run without editing it will eventually
+be run after editing it wrong.**
+
+## ✅✅✅ **THE SCORER IS VALIDATED ON REAL DATA — AND IT CAUGHT ITSELF OVER-CLAIMING**
+Ran the new pipeline end-to-end on **r24, a real V122 creep drive**, before the V158 flight.
+
+### ⛔ MY OWN SCORER OVER-CLAIMED, AND THE KIT ALREADY HAD THE RULE
+```
+   real run    6-9 Hz  0.20 [0.04, 0.86]   -> verdict printed: "RESOLVED"
+   --null      6-9 Hz  0.41 [0.06, 17.06]  -> the endpoint resolves NOTHING on this route
+```
+The verdict tested only *does the CI exclude 1.0*. It ran the split-half null **only when asked**
+and **never used it** — exactly what `feedback-run-the-control-before-the-measurement` forbids
+(*“four claims died to controls in one session”*). **Fixed: the null is now computed automatically
+and GATES the verdict.**
+
+### ✅ VALIDATED THREE WAYS ON r24
+```
+   6-9 Hz    effect 0.20 [0.04,  0.86]   null 0.20 [0.00, 3.22]   NOT RESOLVED
+   18-22 Hz  effect 3.88 [1.60, 10.87]   null 0.19 [0.02, 0.76]   RESOLVED
+   30-40 Hz  control 0.61 [0.28, 5.91]   -> flat, guard passes
+   speed census: engaged p50 11.3 / manual p50 11.2, median gap 0.14 km/h
+```
+1. **Reproduces the recorded reference**: r24's 18–22 Hz reads **3.88**, against the V133 script's
+   recorded **3.88 [1.63, 10.08]** — same point estimate, slightly wider CI, as an episode bootstrap
+   should give.
+2. **Resolves what is known to be real** — the 18–22 Hz engaged excess, well outside its null.
+3. **Refuses what a naive CI would have claimed** — the 6–9 Hz 0.20 [0.04, 0.86].
+
+### 🛑 A CONCRETE DRIVE REQUIREMENT FALLS OUT OF THIS
+**On r24 — 10 engaged episodes, 5 manual — the 6–9 Hz band CANNOT BE RESOLVED AT ALL**, and 6–9 Hz is
+**V158's primary target**. The manual arm could not even support a split-half null (5 episodes, needs 8).
+=> **a V158 drive shaped like r24 would produce NOTHING on the band that matters.**
+✅ **The drive must ALTERNATE engaged and manual creep many more times** — not two long stretches but
+**8+ separate engaged and 8+ separate manual passes** over the same low-speed loop. More *windows* do
+not help; only more *episodes* do. This is now in the drive card, and the extractor checks it at
+extract time rather than leaving it to be discovered after the drive.
+
+⭐ **THE BROADER POINT**: I audited the tooling the pre-registration named, found a window bootstrap,
+replaced it — and my replacement then over-claimed in a different way that only running it on **real
+data** exposed. **A new instrument is not trustworthy because it fixed the old one's bug.** Run it on
+a route whose answer you already know.
+
