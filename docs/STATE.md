@@ -1,5 +1,35 @@
 # STATE — living current state of the kit
 
+## ⚠ **DRIVEN vs SELF-EXCITED: INCONCLUSIVE, LEANING DRIVEN — AND UNDERPOWERED FOR THE SAME REASON AS EVERYTHING ELSE**
+The ratchet is engaged-only but absent from every command channel. Two mechanisms fit that:
+**DRIVEN** (the command carries no 8.6 Hz line but the firmware's RESPONSE to it creates one
+⇒ a forward-path nonlinearity, and the lever is in the forward path) or **SELF-EXCITED** (a
+closed-loop instability running at its own frequency ⇒ the lever is in the feedback path).
+That distinction decides which half of the chain to search, so it was worth a test.
+```
+   band-SPECIFIC coupling = coherence(7-10.5 Hz) - coherence(30-40 Hz control band),
+   `co_tqcan` -> `cs_tq`, vs phase-shuffled surrogates (spectrum preserved, timing destroyed)
+
+     r78  V91    -0.021 (shuf +0.091)  not specific     r1e  V107  +0.522 (+0.097)  SPECIFIC
+     r7e  V96    +0.133 (+0.039)  SPECIFIC             r22  V112  +0.087 (+0.060)  SPECIFIC
+     r7f  V96    +0.176 (+0.042)  SPECIFIC             r24  V122  +0.068 (+0.062)  SPECIFIC
+     r96  V102   +0.019 (+0.047)  not specific         ra4  V104  +0.148 (+0.105)  SPECIFIC
+     ra6  V106   -0.060 (+0.116)  not specific
+
+   across routes: median +0.087   95 % CI [-0.021, +0.176]   <- CROSSES ZERO
+```
+⚠ **[INCONCLUSIVE]** 6/9 routes are individually specific and the pooled median is positive,
+but **the CI includes zero**, so *driven* is not established. ⊕ **RAW coherence was worse than
+useless**: the 30–40 Hz control band scored as high as the ratchet band on most routes, i.e.
+command→torque coupling is **broadband**, so any coherence claim without the control-band
+subtraction is meaningless. Recorded so it is not re-derived.
+⭐ **The one informative detail**: `r1e` — the only route with **14** windows — shows by far the
+largest specific effect (**+0.522** vs a shuffled p95 of +0.097, a 5x margin), while the seven-
+window routes scatter around zero. That is the signature of a real effect seen at insufficient
+power, not of a null.
+⇒ **What would close it**: the same thing every open question here needs — **more continuous
+engaged-creep windows.** At 14 windows the answer was unambiguous on the one route that had them.
+
 ## 🛑🛑 **THE COULOMB RELAY IS A *GRIND* LEVER, NOT A RATCHET LEVER — AND THE TWO SYMPTOMS DISSOCIATE**
 The kit has blamed the command-proportional Coulomb relay (`FUN_0003b8f6`, knee `0xC40BC`)
 for the engaged 6–9 Hz amplification since V80. **The nine scored routes span that knee over
