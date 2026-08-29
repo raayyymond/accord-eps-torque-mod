@@ -1,5 +1,66 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ **THE ASSIST CURVE IS IN THE IMAGE, THE 2.000 SLOPE CAP **BINDS**, AND GATE 2 PASSES**
+The curve was never unreachable — it is **initialised-data copied ROM→RAM at boot**, which is why
+only 3 `st.h` target the 20-knot block and 2 of those are clears. Found by searching the whole image
+for the shape the decompile requires (10 ascending X bounded by the input clamp 8192, 10 ascending Y
+bounded by the output clamp 12288):
+```
+   0xCE47A  X  0   25   60  100  150  250  450  900 1800 4150
+            Y  0  154  338  460  549  635  702  766  824  857
+            slope 6.16 5.26 3.05 1.78 0.86 0.34 0.14 0.06 0.01
+            max 6.16  vs cap 2.000  =>  BINDS on 3 of 9, over X 0-100
+
+   0xCF372  max slope 16.37  binds 4/9 over X 0-450
+   0xCF3CA  max slope 11.97  binds 3/9 over X 0-150
+   (+ 0xCE4A6 / 0xCF39E / 0xCF3F6 duplicates — the mode-selected pointer-table family)
+```
+✅ **[EVIDENCE] the cap is NOT inert — it clamps the steep low-torque segments on every record**,
+pinning the map's **small-signal gain at exactly 2.000**, which is the **CEILING** value of `s` in the
+loop census. The loop's largest single term therefore sits at its maximum, permanently.
+✅ **[EVIDENCE] all six curve records are byte-identical across the 161 images**, and `0xC6384` reads
+**2048 on all 161** (exact u16 read; an earlier 40-byte window check of mine spanned `0xC63A0`/
+`0xC63AC`, which DID change, and wrongly suggested 5 variants — **that was my error, the cap is
+untouched**).
+
+### ✅ GATE 2 — ANCHORED ON THE MEASURED Q RATIO, NOT A CENSUS PHASE
+⚠ My first pass used the census's `L` phase (−148°) with `P` real-positive. That puts `P·L` in the
+third quadrant and gives `|1−P·L| = 1.92 > 1` — a loop that **ADDS** damping, contradicting the
+measured 93 % cancellation. The phase cannot be pinned (the census says `P`'s phase *“is not in the
+image”*) **and the sign of the whole result depends on it**, so anchor on the measurement instead.
+```
+   MEASURED Q_eff/Q_passive = 40/2.8 = 14.3  =>  |1-P.L| = 0.0700  =>  P.L = 0.9300 at stock
+   [ASSUMPTION, stated] P.L real-positive at the peak -- what the measured ratio REQUIRES,
+   and the standard form for a damping-cancelling loop.
+
+   cap    s       |L|     |1-P.L|   Q ratio    vs stock
+   2048   2.000   2.825   0.0700    14.29      stock
+   1792   1.750   2.575   0.1523     6.57      2.2x MORE damped
+   1536   1.500   2.325   0.2346     4.26      3.4x MORE damped
+   1024   1.000   1.825   0.3992     2.50      5.7x MORE damped
+```
+✅ **MAGNITUDE: PASSES**, and the effect is large. ✅ **PHASE: PASSES** — the map term is a **real
+gain**, so lowering the cap **scales `|L|` without rotating it**; under the real-positive `P·L` the
+measurement requires, `|1−P·L|` can only move away from zero ⇒ **monotonically more damped at every
+cap value, with no value at which it reverses.**
+⚠ **What would falsify the assumption**: if `P·L` were not near the positive real axis, the measured
+14.3x cancellation could not come from this loop at all. **The on-car test is the same either way** —
+lower the cap and see whether the 8.64 Hz torque peak drops below its slope-matched null.
+
+### 🛑 THE FEEL TRADE — AND WHY IT IS NARROWER THAN IT LOOKS
+The cap binds over the **LOW-torque** segments (X 0–100 to 0–450 of a ±8192 range), so lowering it
+means **less assist per unit driver torque near centre ⇒ heavier steering there** — the regime the
+operator asked to keep light. **Stated plainly because it cuts against a standing constraint.**
+⊕ But it is narrower than the constraint's wording suggests: the constraint is about *“max steering
+angular velocity and acceleration”* and *“low apparent mass and friction **to LKAS**”*, and
+- the curve is **UNCAPPED and unchanged above X≈450** ⇒ **peak authority and max rates are untouched**;
+- the map is fed by `clamp(gp-0x4f60) + gp-0x6b4a`, i.e. the **driver torque sensor**, not the LKAS
+  command lane (`gp-0x6b4c`) ⇒ **[BELIEF — `gp-0x6b4a`'s provenance is NOT yet established; if it
+  carries an LKAS-derived offset this claim weakens.]**
+⊕ **Recommended first dose 1536 (1.5x)** — predicted **3.4x** more damping, which clears the
+one-episode detection margin comfortably, and is the smallest step that does. **Not the largest dose:
+the feel cost is real and the operator should meet it in the smallest useful increment.**
+
 ## ⚠ **THE ASSIST-CURVE INITIALISER IS STILL UNLOCATED — TWO CANDIDATE PATHS RULED OUT**
 Hunting the RAM-resident 10-knot curve (needed to finish GATE 2 on the slope cap `0xC6384`).
 Both leads the byte scan produced are **not** the initialiser:
@@ -2215,64 +2276,4 @@ sized against the PID's schedule on the same axis, and **that schedule is FLAT a
 point**, so **the coupling the model worried about does not bite at 99 counts.** That is the sizing
 it asked for — done, on the right tables.
 ⇒ **V158 becomes the lead build again**, with its shared-axis gate substantially addressed.
-
-## ✅✅✅ **UN-RETRACTED AND BUILT — V159 REMOVES AN 18 % PARAMETRIC MODULATION OF K_p AT 2f**
-🛑 **I over-corrected last turn.** The "parametric pump" finding was **retracted in error**;
-decompiling `FUN_0003a382` proves the original layout reading was right.
-```c
-   X[0] = tp+0x7b1e   X[last] = tp+0x7b24    =>  X is 4 halfwords at 0xC671E
-   Y[0] = tp+0x7b26   Y[last] = tp+0x7b2c    =>  Y is 4 halfwords at 0xC6726
-   X = [96, 104, 608, 704]        Y = [704, 832, 832, 832]
-```
-⇒ exactly the "X at base, Y at base+8" layout I first assumed. **The retraction is withdrawn.**
-⊕ **What went wrong**: lanes B/C read non-ascending X under the same layout, and I let that anomaly
-override **direct instruction evidence** for lane A. **A neighbouring record being unreadable is not
-evidence against a record whose layout the decompile confirms line by line.**
-
-### ⭐ THE MECHANISM, CONFIRMED
-`FUN_0003a382` is a three-term torque-tracking servo whose **K_p is a LERP on `gp-0x6ac0`, the
-RECTIFIED motor rate.** The golden model's **measured** in-burst operating point is
-**`gp-0x6ac0` = 99 [94, 113]**, which lies **inside the FIRST segment (X 96 -> 104)** where Y rises
-**704 -> 832 = an 18.2 % swing across 8 counts.**
-⇒ and a **rectified** index sweeps at **2f**, so during a 7.8 Hz ratchet it traverses that window at
-**15.6 Hz**.
-⇒ **[EVIDENCE] the PID's proportional gain is PARAMETRICALLY MODULATED ~18 % at 2f at the symptom's
-own operating point — STRUCTURALLY, on STOCK.**
-⊕ This is the qualitative prediction the golden model made and never located, and a **named
-candidate source** for [[accord-v59-parametric-pump-marginal]] (*"the pump is real but MARGINAL"*).
-
-### ✅ V159 — ONE HALFWORD
-```
-   0xC6728  K_p Y[1]  832 -> 704        Y = [704, 704, 832, 832]
-   2 payload bytes, 54/54, CRC 50/50
-   image 47ac7932a16334d1a7719e2d0efdd955eef3cc2ab841b7bbb7d6813872389916
-   rwd   7c51b28bddba3acfa129cd7a4c0e19efaad8f52ce3928332a66c7b6ccd0f5080
-```
-✅ **segment 0 becomes FLAT** ⇒ the 2f sweep sees **no gain change**: swing **18.2 % -> 0.0 %**.
-✅ **DOWNWARD**: it **lowers** K_p between 96 and 104, so no clamp becomes newly reachable.
-✅ **MONOTONE preserved** — the ramp is not deleted, it **moves to X 104..608**, the same 704->832
-rise over a **63x wider span**.
-✅ **RULE 7 SATISFIED BY STRUCTURE**: the decompile reads this table with **bare `tp` displacements
-and NO index register** ⇒ a **flat scalar table shared by all modes**. There is no mode to get wrong.
-✅ **VIRGIN**: `0xC6728` = 832 on **all 158 build images**.
-
-### ⚠ WHAT IS NOT ESTABLISHED
-⚠ **[BELIEF]** that removing an 18 % parametric modulation is audible. **The mechanism and its
-magnitude are EVIDENCE; its share of the symptom is not.**
-⚠ **[OPEN]** lanes B (`tp+0x7b0a`) and C (`tp+0x7ade`) read **non-ascending X** under the confirmed
-layout (`[256,256,0,8]`, `[717,0,0,5]`). Unexplained, and **left open** — it does not bear on lane A.
-⚠ **V159 does NOT close V158's shared-axis GATE 2.** It addresses the **PID side** of that coupling,
-not the FactorE side. **V158 and V159 are INDEPENDENT single-lever builds — do not stack them.**
-
-### ✅ THE QUEUE
-```
-   V158   damper, the golden model's own prescription      shared-axis GATE 2 still OPEN
-   V159   K_p 2f modulation removed                        RULE 7 satisfied, virgin, monotone, down
-   V148 / V150 / V151                                      probe / grind-#2 / marginal
-   V152 / V153                                             GATE-2-OPEN, demoted
-   SUPERSEDED  V139 V149 V154 V155 V156 V157
-```
-⭐ **V159 is the first build of this session derived from a mechanism located in the firmware rather
-than from a lever list**, and the only one whose RULE 7 is satisfied *by the instruction encoding*
-rather than by a mode table.
 
