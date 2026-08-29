@@ -1,5 +1,47 @@
 # STATE — living current state of the kit
 
+## ⚠ **AUDIO ENVELOPE DEMODULATION FOR THE RATCHET — NEW METHOD, NO SIGNAL, IMPERFECT CONTROL**
+The kit uses audio only for **symptom B's band power**. But **a ratchet is an impulse train**, so it
+would not appear *at* 7.8 Hz in audio — it would appear as **7.8 Hz AMPLITUDE MODULATION of the audio
+envelope**. That had never been tried. Tried it.
+
+### ✅ THE INSTRUMENT EXISTS ALREADY
+The audio caches store **per-band envelopes** sampled at **62.5 Hz** (`wide` x 10 bands with
+`wide_lab`; the older `a20_100 ... a4k_7k` format is 100 Hz but only on r81/r82).
+=> Nyquist **31.25 Hz** — 6–9 Hz is comfortably resolved; the control had to move to **20–28 Hz**.
+=> **five routes carry substantial creep-engaged audio**: r9e 12,952 · r96 9,803 · r97 5,495 ·
+r85 5,238 · ra4 4,312 samples.
+
+### ⚠ THE RESULT — NO SIGNAL, AND THE CONTROL IS NOT CLEAN
+```
+   audio band     6-9 Hz AM [95 % CI]        20-28 Hz CONTROL
+   15-21          0.971 [0.951, 1.142]       1.150 [0.822, 1.701]
+   28-40          1.309 [0.978, 1.627]       0.977 [0.743, 1.313]
+   40-60          1.110 [0.874, 1.238]       0.764 [0.392, 1.719]
+   60-100         1.134 [0.912, 1.254]       0.804 [0.626, 0.923]   <-- CONTROL EXCLUDES 1
+   100-300        1.020 [0.897, 1.269]       0.935 [0.686, 1.094]
+   300-1000       0.969 [0.878, 1.121]       0.986 [0.810, 1.233]
+   1000-3000      1.031 [0.872, 1.364]       0.957 [0.715, 1.183]
+   3000-8000      1.030 [0.899, 1.190]       0.961 [0.782, 1.732]
+```
+=> **every 6–9 Hz CI spans 1 — no detectable ratchet AM in any audio band.**
+🛑 **BUT ONE CONTROL BAND FAILS**: 60–100 Hz reads **0.804 [0.626, 0.923]**, excluding 1. The
+windows were matched on **creep speed only, not on steering activity**, so residual confounding
+remains.
+=> **[NOT A CLEAN NULL]** — this is an **underpowered test (5 routes) with an imperfect control**,
+and it must not be cited as evidence that the ratchet is acoustically silent.
+
+### ⭐ WHAT IS WORTH KEEPING
+⊕ **The METHOD**: audio-envelope AM demodulation is a legitimate, previously-unused instrument for
+an impulse-train symptom, and the caches already contain what it needs. **Most suggestive cell:
+the 28–40 Hz audio band at 1.309 [0.978, 1.627]** — not significant, but it is where a
+mechanical ratchet's carrier would plausibly sit.
+⊕ **What would close it**: more routes carrying audio **with matched creep engaged AND manual
+exposure**, and matching on **steering activity** as well as speed — the same stratification the
+CAN-side analysis needed. **Only 5 of ~230 routes have usable creep-engaged audio at all.**
+=> **audio capture on every future drive is what makes this instrument usable** — already the
+standing request for symptom B, and now for symptom A as well.
+
 ## 🛑 **"GRINDING CONTINUES AFTER DISENGAGING" — NO BAND-SPECIFIC PERSISTENCE ON THE BUS**
 The operator's V133 report included *"which continues after disengaging."* That is a **structural**
 claim — the command is gone, so the mechanism would have to have **memory** — and it had never been
