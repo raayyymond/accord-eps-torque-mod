@@ -86,3 +86,21 @@ Four float32 cells that the kit has already changed on-car without fault (V106/V
 these four). The enable was already on. No cave, no code edit; poles real and inside the unit circle
 with margin; CRC chain 50/50 and readback byte-identical. If a DTC appears, revert to V158 and report
 the code.
+
+---
+
+## ATTRIBUTING A GRIND CHANGE — score 15–20 and 20–25 Hz SEPARATELY
+
+Two levers on this build act at 15–25 Hz: V158's damper and V172's filter. The manual arm cannot
+separate them, because **the grind is engaged-only too** — it clears its null in manual on **0 of 7**
+routes, exactly like the ratchet. What separates them is the **shape across the band**:
+
+| | 15–20 Hz | 20–25 Hz | |
+|---|---|---|---|
+| V172's filter | attenuates to 0.174 | attenuates to 0.078 | **sloped — the top falls 2.2x more** |
+| V158's damper | rate-proportional, dose-set | same | **roughly flat** |
+
+- **20–25 falls much more than 15–20** ⇒ V172's filter did it.
+- **both fall about equally** ⇒ V158's damper did it.
+
+Free from the same episode — no extra exposure needed.

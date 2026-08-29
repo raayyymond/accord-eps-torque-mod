@@ -2,6 +2,42 @@
 
 
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
+## ✅✅ **THE GRIND IS ENGAGED-ONLY TOO — AND A SUB-BAND SPLIT ATTRIBUTES IT**
+Both levers on the fly-first build act at 15–25 Hz, so a grind change needs attributing. The obvious
+discriminator — V158's damper is **engaged modes 26/27 only** while V172's filter is **always
+active** — would work if the grind existed in manual. **It does not.**
+```
+   GRIND 15-25 Hz, engaged vs MANUAL creep, slope-matched nulls
+     r78  V91    engaged   6.1 / 3.5    manual  2.3 / 3.8    no
+     r7e  V96             28.9 / 3.2            2.2 / 4.8    no
+     r7f  V96             14.3 / 3.5            2.2 / 3.9    no
+     r96  V102           248.2 / 4.0            1.5 / 4.9    no
+     ra6  V106            25.3 / 4.0            3.0 / 3.9    no
+     r1e  V107            27.7 / 2.7            1.6 / 4.5    no
+     r24  V122            14.0 / 3.9            1.9 / 4.1    no
+   => the grind clears its null in MANUAL on 0 of 7 routes
+```
+✅ **[EVIDENCE] the GRIND is engaged-only, exactly like the ratchet** (also 0/7 in manual).
+⇒ **both symptoms are FIRMWARE-CREATED BY ENGAGEMENT**, not mechanical modes being amplified. They
+differ in frequency and in which levers move them, **not in class**. **This is new** — the ratchet was
+established engaged-only earlier this session; the grind had never been tested the same way.
+❌ And it kills the manual-arm discriminator: neither symptom exists there to compare.
+
+### ✅ WHAT DOES DISCRIMINATE: THE SHAPE ACROSS THE BAND
+V172's filter attenuation is **frequency-SLOPED**; V158's damper adds a rate-proportional term whose
+effect is set by the dose, not the frequency, so it is roughly flat across 15–25 Hz.
+```
+   V172 attenuation:  15 Hz 0.2298 - 17 Hz 0.1828 - 19 Hz 0.1415
+                      21 Hz 0.1042 - 23 Hz 0.0694 - 25 Hz 0.0359
+   mean 15-20 Hz 0.1737   vs   mean 20-25 Hz 0.0784
+   => V172 attenuates the TOP of the band 2.21x more than the bottom
+```
+⭐ **DISCRIMINATOR, free from the same episode**: score the grind excess in **15–20** and **20–25**
+separately.
+- **20–25 falls much more than 15–20** ⇒ **V172's filter did it.**
+- **both fall about equally** ⇒ **V158's damper did it.**
+⊕ Added to the V172 drive card.
+
 ## ✅ **GATE 1 PASSES FOR V172 — `gp-0x6b86` HAS EXACTLY ONE CONSUMER, AND IT IS NOT A MONITOR**
 V172 low-passes the assist map's output hard (**21 Hz down 9.6x, 40 Hz down 3.3x**). The aggregator
 consuming it is fine with that — it is a torque contribution. **The risk was a MONITOR**: a
