@@ -1,15 +1,13 @@
-# 🛑 NOT RECOMMENDED — THE SIGN WAS VERIFIED AND IT WENT THE OTHER WAY
+# ✅ RECOMMENDED — V190
 
-**Do not fly this build to fix the ratchet. Fly V189 instead.**
+*(An earlier header on this card said NOT RECOMMENDED. That was withdrawn: it judged the
+term in isolation, which needs the unproven aggregator→plant sign. The answerable test is
+the RELATIVE one — `gp-0x6bc2` and the inertia term `gp-0x6b26` enter the aggregator with
+the SAME sign, and `gp-0x6b26` is the kit's ★★★★★ anti-damping result. Supporting evidence:
+the flying build carries 3× Honda's dose of it and ratchets 3.58× more when engaged.)*
 
-`FUN_0003a382` was decompiled after this card was written. The chain is now proven:
-`gp-0x6bc2 ~ -a` → `gp-0x6ad6` ↓ → `error = measured - reference` ↑ → `gp-0x6ad4 = -K*error`
-↓ → the aggregator sum **OPPOSES acceleration** = **positive damping, stabilising**.
-Disabling it would most likely make the ratchet **WORSE** — the inverted-sign outcome this
-card itself pre-registered. Honda ships the flag enabled, which agrees.
-
-The artifact is kept: it remains a legitimate **deliberate probe** of this term if V189
-leaves ratchet behind — but it is a probe expected to worsen it, not a fix.
+🛑 The sign rests on **consistency**, not independent proof — so the "ratchet gets WORSE"
+outcome below is real and stays pre-registered.
 
 ---
 

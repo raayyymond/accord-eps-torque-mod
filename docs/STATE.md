@@ -4,6 +4,40 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **V190 UN-RETRACTED — THE DECIDING TEST IS THE SIGN *RELATIVE TO* `gp-0x6b26`, AND IT MATCHES**
+The retraction one section below was **wrong, and here is the specific error**: I judged
+`gp-0x6bc2` in isolation, asking *"does opposing acceleration mean damping?"* — a question that
+rests on the aggregator→plant sign, **which is exactly the link I had already flagged as unproven.**
+The answerable question is the **RELATIVE** one.
+```
+   the gp-0x6bc2 path, both inversions now PROVEN:
+     d(gp-0x6ad4)/d(gp-0x6ad6) = (-K) * (-1) = +K      the two inversions CANCEL
+     gp-0x6ad6 ~ -a                              =>    gp-0x6ad4 ~ -a
+   the inertia term, added DIRECTLY with no inversions:
+     gp-0x6b26 = -K*alpha                        =>    gp-0x6b26 ~ -a
+```
+⇒ **BOTH terms enter the aggregator with the SAME SIGN, so they are the same class.** Whatever
+`gp-0x6b26` is, `gp-0x6bc2` is.
+✅ The kit's ★★★★★ finding [[accord-gp6b26-is-inertia-not-damping]] says `gp-0x6b26` is an
+**inertia term giving NEGATIVE apparent inertia — anti-damping**. **Empirical support:** the flying
+build carries **3×** Honda's dose of it (`m26 Y = −29490/−17202/−16000` vs `−9830/−5734/−1966`) **and
+ratchets 3.58× more when engaged.** If these terms were damping, tripling one should have *reduced*
+the ratchet.
+⇒ **`gp-0x6bc2` is anti-damping too, and disabling it (V190) is directionally correct.**
+
+🛑 **What was actually learned, and it is not nothing:** `FUN_0003a382` was decompiled and
+**`error = measured − reference` is now PROVEN**, as is `gp-0x6ad4 = −K·error`. Those two links were
+BELIEF before this tick. The mistake was framing an absolute question the data cannot answer
+(*"is this damping?"*) instead of the relative one it can (*"is this the same sign as the term we
+already characterised?"*).
+➕ **GENERAL RULE: when an absolute sign depends on an unproven link, do not guess it — ask whether
+the new term matches a term already characterised through the SAME unproven link. The unknown link
+cancels.**
+
+✅ **V190 restored as the recommendation.** Its sign now rests on **consistency with the ★★★★★
+`gp-0x6b26` result plus the 3×-dose/3.58×-ratchet observation**, not on an independent proof — so
+the pre-registered "ratchet gets worse ⇒ revert to V189" outcome **stays on the card.**
+
 ## 🛑❌ **V190 IS RETRACTED AS A RECOMMENDATION — I VERIFIED THE SIGN AND IT WENT THE OTHER WAY**
 V190 disabled the `gp-0x6bc2` acceleration term on the BELIEF that it was destabilising. I said the
 sign rested on a five-link chain and pre-registered the failure mode. **Decompiling the consumer
@@ -2144,42 +2178,4 @@ record identifies as **TASK 1, the CONFIRMED 1 kHz task**. The rate uncertainty 
 (`FUN_00022ca0`), a **different** task that drives the damper. ⇒ **the assist section runs at 1 kHz,
 the notch is at 55.23 Hz, and the block is lifted.** Confirmed independently: a full-band scan finds
 the flying section's null at **55.0 Hz, −43.9 dB**, matching the ±19.881° zeros exactly.
-
-## ✅ **SAME CLASS, DIFFERENT DRIVE LAW — THE GRIND SATURATES WHERE THE RATCHET KEEPS GROWING**
-Both symptoms are engaged-only and both sit in `cs_tq`, so the question was whether they are one
-mechanism at two plant modes. **Mostly yes — with one clean difference that matters for scoring.**
-```
-   244 pooled windows, each assigned to a stratum by its OWN mean operating point
-
-   |COMMAND| ct    n win  |  GRIND Hz  excess  |  RATCHET Hz  excess
-   100-250          23    |   19.14     5.1    |    9.57       17.0
-   250-600          75    |   19.73     8.5    |    8.59       19.4
-   600-1500         46    |   20.12    12.6    |    8.01       39.4
-   1500+           100    |   19.14     6.0    |    8.20       58.1
-
-   FREQUENCY   grind CV 9.6 % (speed) - 11.0 % (rate) - 2.1 % (command)
-               ratchet CV 5.5 %       -  12.3 %       - 7.0 %
-```
-✅ **[EVIDENCE] both are FIXED-FREQUENCY** — neither peak moves materially with operating point, so
-both carry the `1−P·L` signature of a plant mode whose damping the loop is cancelling. The grind's
-**2.1 % CV across command** is the tightest figure either symptom produces.
-🛑 **[EVIDENCE] but their DRIVE LAWS differ**: the ratchet is **MONOTONE in command (3.4x)** while
-the grind **peaks mid-command (12.6 at 600–1500) and FALLS at high command (6.0 at 1500+)**.
-⊕ That non-monotonicity is **consistent with the kit's own recorded fact** that *“saturation
-suppresses it 141x”* — at high command the loop rails and the resonance is suppressed. The grind sits
-at a higher frequency, so the same command amplitude produces a larger rate and rails sooner.
-⚠ **[BELIEF, not EVIDENCE]** the saturation explanation. The drop is 12.6 → 6.0 across strata of 46
-and 100 windows; it is a real pattern but a single-drive artefact is not excluded.
-
-### ⭐ THE SCORING CONSEQUENCE, FREE FROM THE SAME EPISODE
-The two symptoms are **best read at DIFFERENT command levels**:
-```
-   RATCHET   strongest at HIGH command (1500+)      excess 58.1
-   GRIND     strongest at MID command (600-1500)    excess 12.6, and DIES above it
-```
-⇒ a pass that spends all its time at high command will read the ratchet well and **under-read the
-grind**. **A slow lap with varied curvature covers both**, which is what the drive card already asks
-for — this says *why*, and it means the grind verdict should be taken from the mid-command windows
-rather than pooled across the whole pass.
-⊕ Added to the V172 drive card.
 

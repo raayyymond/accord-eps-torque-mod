@@ -1618,3 +1618,41 @@ because nothing is watching it for liveness.
 cells in the same instruction pair, so the pairing that trips `FUN_0006b9fa` is preserved.
 ⊕ The same clearance covers V168, which changes only how the value is COMPUTED, not who reads it.
 
+## ✅ **SAME CLASS, DIFFERENT DRIVE LAW — THE GRIND SATURATES WHERE THE RATCHET KEEPS GROWING**
+Both symptoms are engaged-only and both sit in `cs_tq`, so the question was whether they are one
+mechanism at two plant modes. **Mostly yes — with one clean difference that matters for scoring.**
+```
+   244 pooled windows, each assigned to a stratum by its OWN mean operating point
+
+   |COMMAND| ct    n win  |  GRIND Hz  excess  |  RATCHET Hz  excess
+   100-250          23    |   19.14     5.1    |    9.57       17.0
+   250-600          75    |   19.73     8.5    |    8.59       19.4
+   600-1500         46    |   20.12    12.6    |    8.01       39.4
+   1500+           100    |   19.14     6.0    |    8.20       58.1
+
+   FREQUENCY   grind CV 9.6 % (speed) - 11.0 % (rate) - 2.1 % (command)
+               ratchet CV 5.5 %       -  12.3 %       - 7.0 %
+```
+✅ **[EVIDENCE] both are FIXED-FREQUENCY** — neither peak moves materially with operating point, so
+both carry the `1−P·L` signature of a plant mode whose damping the loop is cancelling. The grind's
+**2.1 % CV across command** is the tightest figure either symptom produces.
+🛑 **[EVIDENCE] but their DRIVE LAWS differ**: the ratchet is **MONOTONE in command (3.4x)** while
+the grind **peaks mid-command (12.6 at 600–1500) and FALLS at high command (6.0 at 1500+)**.
+⊕ That non-monotonicity is **consistent with the kit's own recorded fact** that *“saturation
+suppresses it 141x”* — at high command the loop rails and the resonance is suppressed. The grind sits
+at a higher frequency, so the same command amplitude produces a larger rate and rails sooner.
+⚠ **[BELIEF, not EVIDENCE]** the saturation explanation. The drop is 12.6 → 6.0 across strata of 46
+and 100 windows; it is a real pattern but a single-drive artefact is not excluded.
+
+### ⭐ THE SCORING CONSEQUENCE, FREE FROM THE SAME EPISODE
+The two symptoms are **best read at DIFFERENT command levels**:
+```
+   RATCHET   strongest at HIGH command (1500+)      excess 58.1
+   GRIND     strongest at MID command (600-1500)    excess 12.6, and DIES above it
+```
+⇒ a pass that spends all its time at high command will read the ratchet well and **under-read the
+grind**. **A slow lap with varied curvature covers both**, which is what the drive card already asks
+for — this says *why*, and it means the grind verdict should be taken from the mid-command windows
+rather than pooled across the whole pass.
+⊕ Added to the V172 drive card.
+
