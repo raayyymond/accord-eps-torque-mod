@@ -1,5 +1,72 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **V158 BUILT — THE GOLDEN MODEL'S OWN DAMPER PRESCRIPTION. IT SUPERSEDES V156/V157.**
+🛑 **A PROCESS FAILURE, FOUND AND CORRECTED.** V156 and V157 were designed from
+`BUILD-LINEAGE` and V134's docstring, which model the damper as a **two-factor product**. The
+**GOLDEN MODEL** — the reference `CLAUDE.md` says to read first — already carried the **full
+five-factor structure** (`FactorB 0xC9CCC · FactorC 0xC9E9C · FactorD 0xC9DB4 · FactorE 0xC9F84 ·
+ceiling 0xC77A0`) **and a specific, measured prescription.** My "four-factor discovery" last turn was
+a **re-derivation of something the kit already had.**
+
+### 🛑 WHAT IS WRONG WITH V157 — IT REPEATS V72's ERROR
+The golden model states the rule and names the failure:
+> *"only lifting Y[0] delivers, and **Y[0] := Y[1] is the largest MONOTONE lift** of Y[0] alone"*
+> *"The lever is **FactorC Y[0]:=Y[2] + FactorE X[0]: 60 -> 12 + FactorE Y[1]:=Y[2]** … It **OPENS
+> THE RATE DEAD ZONE** rather than raising a gain, so the damper becomes genuinely rate-proportional
+> in the symptom's range — **the OPPOSITE of V72's flatten-to-relay error**."*
+```
+   stock   FactorE  X=[60,400,2500,4000]  Y=[  0,140,539,927]   MONOTONE
+   V157             X unchanged           Y=[539,140,539,927]   NOT MONOTONE  <- FLATTENS the rate
+                                                                                factor across the
+                                                                                symptom's own range
+   V158             X=[12,400,2500,4000]  Y=[  0,539,539,927]   MONOTONE
+```
+⇒ **V157 destroys rate-proportionality exactly where the symptom lives — V72's error, which the
+golden model explicitly warns against.** **V156/V157 are SUPERSEDED.**
+
+### ✅ V158, PRICED AT THE MEASURED OPERATING POINT
+The model records the in-burst rate as **`gp-0x6ac0` = 99 counts [94, 113]**, which sits on FactorE's
+**first rising segment** — not flat at `Y[0]`. The dose must be evaluated there:
+```
+   FactorE(99) = 539 * (99 - 12) / (400 - 12) = 120
+   FactorC     = Y[0] = 429                      (creep is below X[0] = 2240)
+   product     = (429 * 120) >> 10 = 50          <- the model's own "BOTH dead zones opened ~50"
+   requirement = ~43 [30, 60]                    <- V158 lands INSIDE it
+   ceiling     = 512 at creep  =>  50 is 9.8 %, a 10.2x margin to V80's bang-bang
+```
+⇒ **V157's 123 is 2.4x the requirement; V156's 31 is below it. Only V158 is inside the band the
+model priced.**
+```
+   0xD77DA / 0xD77EE  FactorC Y[0]  0 -> 429 / 426   (each mode's own Y[2])
+   0xD780E / 0xD7822  FactorE X[0]  60 -> 12
+   0xD7818 / 0xD782C  FactorE Y[1]  140 -> 539       (its own Y[2])
+   10 payload bytes, 67/67, CRC 50/50
+   image 42078806f55829039b0891b0f32c465b7caa26f8c5079cfe9c60ab2ea7b0ccaf
+   rwd   511c4a71a0196353b8ef9e570a285704568fc0ee2688d6f5379d3bffef459d3d
+```
+⊕ **FactorE `Y[0]` stays 0** — the dead zone is opened by moving the **AXIS**, not by lifting `Y[0]`
+into a flat shape. **L1 and L3 asserted still flat unity.**
+⊕ **`X[0] = 12` is not a free parameter.** The model's reasoning is preserved in the builder: a
+firmware review flagged `X0 < 30 with Y1 > 300` as unflyable without telemetry, **12 is the TOP of
+its own 6–12 band**, and the rate conversion is **biased LOW** (measured at the COLUMN, indexed at
+the MOTOR, 18–22 Hz torsional). **Do not re-optimise it downward.**
+
+### ⚠ ONE SUBTLETY MY OWN GATE CAUGHT
+`FactorC Y[0] := Y[2]` gives **`[429, 234, 429, 908]` — also NON-MONOTONE**, a damping **dip between
+35 and 60 km/h**, while the model's own text says `Y[0] := Y[1]` is the largest monotone lift.
+⇒ **accepted deliberately, and asserted as such in the builder**: **FactorC is a SPEED SCHEDULE,
+not the damping law** — a dip there is a schedule oddity, not a physics violation, unlike FactorE
+where monotonicity **is** the rate-proportionality.
+⇒ and the monotone alternative (`Y[0]:=Y[1]=234`) yields **product 28, BELOW the [30,60]
+requirement** — which is **why** the model prescribes `Y[2]`. **The trade is now explicit rather
+than implicit.**
+
+### 🛑 THE LESSON
+**`CLAUDE.md` says to read `docs/STATE.md`, the lineage, and the GOLDEN MODEL. I read the first two
+and built two wrong doses of the right lever.** The golden model had the structure, the measured
+operating point, the priced requirement and the shape rule the whole time.
+⇒ **for any damper or lane work, read `eps_chain_lanes.py` FIRST.**
+
 ## ✅ **THE DAMPER CEILING READ FROM ITS OWN RECORDS — V157's 24 % CONFIRMED, 3.7x HEADROOM LEFT**
 V134 cited the ceiling as *"`(&PTR_DAT_000c77a0)[mode]` = Y[512, 1024]"* without reading it per mode.
 Read now, completing the four-factor damper picture:
