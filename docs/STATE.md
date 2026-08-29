@@ -1,5 +1,65 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **`0xC4936` IDENTIFIED — A PWM HARDWARE-TIMING CAL. DO NOT TOUCH IT.**
+`0xC4936` was the **only calibration operand anywhere in the FOC PI/SVPWM region** (0.25 cals/KB)
+and the last open candidate for a symptom-B lever. **Identified, and it is a hard stop.**
+
+### ✅ WHAT IT IS
+Its single reader `0x6C486` sits inside **`FUN_0006c446`, a PERIPHERAL-INITIALISATION routine** that
+writes the motor timer/PWM block. Region **byte-identical stock vs V122**, so this reads true for the
+flying build:
+```c
+   _DAT_ffffcc58 = 0x1388;                                 // 5000   -- period-like
+   _DAT_ffffcc5c = *(ushort *)(tp + 0x5936) * 2 + 0x50;    // cal(0xC4936)=250  ->  580
+   _DAT_ffffcc6c = 0x50;   _DAT_ffffcc70 = 0x50;
+   _DAT_ffffccb0 = _DAT_ffffccb4 = _DAT_ffffccb8 = 0x1428; // THREE IDENTICAL -> 3-phase compares
+   _DAT_ff809220 = 0x801;  _DAT_ff809224 = 0x408;  _DAT_ff809228 = 0x515;
+   _DAT_ff81c084 = 0x700;  _DAT_ff81c088 = 0x100;          // peripheral space
+```
+⇒ **[EVIDENCE] `0xC4936` is NOT a control-law gain. It is a PWM / timer HARDWARE CONFIGURATION
+parameter**, written once at init into the inverter's timer block, as `2 × cal + 0x50`.
+⊕ Three identical compare registers beside a period-like `5000` is the signature of a **3-phase PWM
+generator** — consistent with the golden model's `TSG20` attribution.
+
+### 🛑🛑🛑 WHY IT IS A HARD STOP — A FAILURE MODE WORSE THAN BRICKING
+A `2×cal + offset` field in a 3-phase PWM timer block is most plausibly a **DEAD-TIME or phase
+offset** register.
+⇒ **Shortening inverter DEAD TIME causes SHOOT-THROUGH: both transistors of a leg conduct
+simultaneously and the power stage is DESTROYED.**
+⇒ **That is strictly worse than bricking the ECU.** This kit has bricked three times (V24, V27,
+V48B) and recovered every time, because a bricked ECU is reflashable. **A destroyed inverter is
+not.**
+⇒ **[DECISION] `0xC4936` MUST NOT BE CHANGED, at any dose, for any reason short of a Honda service
+document stating what the field is.** It is **virgin at 250 across all 155 images**, and it stays
+that way.
+⭐ **Recorded prominently because the trap is attractive**: a future session scanning for levers will
+find *"a VIRGIN cal, single reader, inside the FOC region, never touched by 155 builds"* and read
+that as opportunity. **It is the opposite.** Honda left the drive stage uncalibratable **on purpose**;
+this one cell is not an oversight.
+
+### ✅ SYMPTOM B — THE LAST CANDIDATE IS CLOSED, SO THE ANALYSIS IS COMPLETE
+```
+   1. engaged LKAS forward path       NO active switching nonlinearity (gate DORMANT, clamp INERT)
+   2. cal(0xC6194)=3 in TASK 1, 1 kHz ~2 s full-scale => already smooth
+   3. drive stage                     0.25 cals/KB => no calibration surface
+   4. 0xC4936, the sole exception     PWM HARDWARE TIMING => must not be touched
+```
+⇒ **[CONCLUDED] symptom B is not reachable by any calibration edit this kit may safely make.**
+The remaining explanation — the motor and inverter driven harder, ripple and commutation rising
+with command amplitude, superlinear acoustics giving **m^1.74** — stands as **BELIEF**, and the only
+cal that moves it is the **LKAS gain**, frozen in both directions.
+⇒ **The falsifier stated last session is now down to ONE item**: a broadband source that is
+engagement-conditional but **NOT** proportional to command amplitude. The forward path is traced end
+to end and contains none.
+
+### ⭐ A BYPRODUCT: THE PWM CARRIER CONFIGURATION IS NOW LOCATED
+The golden model records **[OPEN] the PWM carrier frequency**. Its configuration is written in
+`FUN_0006c446` — `_DAT_ffffcc58 = 5000` (period-like) with the 3-phase compares at `_DAT_ffffccb0/
+b4/b8 = 0x1428`. **The register block is located; the absolute Hz still needs the clock tree** (the
+kit records PCLK = 40 MHz, which would put a 5000-count period at 8 kHz edge-aligned or 4 kHz
+centre-aligned — **arithmetic, NOT verified against the clock configuration**).
+⇒ **pointer recorded for `eps_chain_delivery.py`; the [OPEN] is narrowed, not closed.**
+
 ## 🛑🛑🛑 **SYMPTOM B IS UNREACHABLE BY CALIBRATION — THE DRIVE STAGE HAS NO CALS**
 The last unexamined place a broadband source could live is the FOC / current-loop / PWM stage.
 Measured its **calibration density** against the control stage, on V122:
@@ -2138,61 +2198,7 @@ committed FIVE times** (V133's clamp · `0xC64FA`≠`0xC64FD` · 18-vs-8 readers
 **V147 remains the build to fly.** This thread is the most promising *next* direction and it is
 blocked on a bounded, mechanical piece of tracing — not on a missing idea.
 
-## ⭐⭐⭐ **WHICH LANE CARRIES THE GRIND — MEASURED. TWO FAMILIES CLOSE, A NEW TARGET APPEARS.**
-Last section's rule *"rank lanes by measured p50"* is **WRONG for finding the grind** and is
-corrected here: **p50 is a DC/typical magnitude; a small lane can carry all the 20 Hz energy.**
-The right ranking is **AC power in 18–22 Hz as a fraction of each lane's OWN variance**, which is
-computable from cache for every lane ever probed.
-```
-   lane                 build/route   18-22 Hz   8-12 Hz(ctl)   ratio
-   11-slot assist sum   V103 / r9e     22.84%      17.04%       1.34
-   11-slot assist sum   V102 / r96     22.50%       7.32%       3.08
-   detector input       V107 / r1e     19.07%       8.85%       2.16
-   AGGREGATOR OUTPUT    V101 / r95     10.05%       8.45%       1.19
-   b26 inertia          V91  / r78      9.53%      18.77%       0.51
-   viscous+pedestal     V92  / r79      9.26%       5.01%       1.85
-   b26 inertia          V90  / r77      7.38%      13.57%       0.54
-   notch lane           V104 / ra4      4.61%       2.11%       2.19
-   notch lane           V106 / ra6      1.07%       2.72%       0.39
-   notch lane           V105 / ra5      1.00%       2.09%       0.48
-```
-⚠ 30–40 Hz ALIASES at 49.9 Hz sampling, so **8–12 Hz is the control band.**
-
-### 🛑 1. `gp-0x6B26` IS **NOT** THE GRIND CARRIER — AND ~15 BUILDS WENT THERE
-**Ratio 0.51 and 0.54 — CONSISTENTLY BELOW ITS OWN CONTROL** on both routes that ever probed it.
-⇒ **b26 carries LESS 18–22 Hz than 8–12 Hz.** The clamp, α2, knee and K1 builds (V126–V138, and
-most of this session) were all aimed at a lane whose 18–22 Hz content is below its own baseline.
-⊕ This is consistent with, and explains, the null and near-null results that family produced.
-
-### 🛑 2. THE NOTCH FAMILY IS CLOSED ON A **THIRD** INDEPENDENT COUNT
-`gp-0x6B86` reads **4.61 / 1.07 / 1.00 %** on all three of its routes — the **lowest** band content
-of any lane measured. Together with (a) the gate that almost certainly never opens and (b) the lane
-carrying only p50 6–19 counts, **V144/V145/V146 are retired as candidates.** The notch itself is
-real, correctly retuned and validated — **it is simply on the wrong lane, behind a shut gate.**
-
-### ✅ 3. THE NEW TARGET: `gp-0x6B4C`, THE 11-SLOT ASSIST SUM
-**22.84 % and 22.50 % on BOTH its routes** — the only lane consistently elevated, and elevated
-against its control on both (1.34, 3.08). ⊕ The kit's own memory already flags it:
-*"`gp-0x6b4c` is NOT the LKAS command — an 11-SLOT ASSIST SUM"*.
-```
-   0xC4124  slot :   0   1   2   3   4   5   6   7   8   9  10
-            stock:   0   0   5   0   5   5   0   0   0   5   0     (V122 identical)
-   => FOUR slots active at weight 5 (indices 2, 4, 5, 9); seven are zero.
-   readers: 0x26CDC 0x27B26 0x27CCE 0x27CF2 0x27F24 -- all in the gp-0x6B4C producer region
-```
-⭐ **A per-slot weight vector on the highest-ranked grind carrier is exactly the shape of lever
-this search has been looking for** — it can remove ONE contributor without touching the rest.
-🛑 **NOT yet a proposal.** What each of the four active slots SOURCES is unknown, and zeroing one
-blindly is the kind of move this session has repeatedly shown to be wrong. **Next step: identify
-slots 2, 4, 5 and 9 by tracing the five readers.**
-
-### ⭐ THE CORRECTED RULE
-**Rank lanes by their BAND POWER in the symptom band, not by p50.** p50 found `gp-0x6BBE`
-(the biggest lane) which turned out to be **torque-dominated 11:1** and therefore neither the grind
-source nor a safe lever. Band power found `gp-0x6B4C`, which p50 ranked near the bottom.
-**Both rankings are one command; only one answers the question that was being asked.**
-
 
 ---
 
-🛑 **10 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
+🛑 **1 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
