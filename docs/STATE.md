@@ -1,5 +1,55 @@
 # STATE — living current state of the kit
 
+## ✅ **THE AUTHORITY CLAMP NOW HAS A CONCRETE THRESHOLD — BUT THE STATIC SHORTCUT FAILED**
+I tried to settle *"does the ±15360 clamp bind?"* **without** spending a cave edit — the bricking
+class — on a probe. **The shortcut failed, and that is worth recording as clearly as a success.**
+
+### ✅ WHAT THE ATTEMPT DID ESTABLISH
+The setpoint LERP is reached through a **pointer table at `0xCB994`**, indexed by mode:
+`iVar41 = *(int *)(0xCB994 + iVar23)`, with `X` at `+2..+10` and `Y` at `+0xC..+0x14`. Following all
+six pointers and decoding the records:
+```
+   0xE4360  X=[0,68,112,136,208]   Y=[205,461,614,696,696]   Ymax=696
+   0xE4378  X=[0,68,112,136,208]   Y=[266,532,696,696,696]   Ymax=696
+   0xE4390  X=[0,48,128,160,208]   Y=[205,410,717,717,717]   Ymax=717
+   0xE43A8  X=[0,68,112,136,208]   Y=[248,512,645,696,696]   Ymax=696
+   0xE43C0  X=[0,68,112,136,208]   Y=[205,461,614,696,696]   Ymax=696
+   0xE43D8  X=[0,48,128,160,208]   Y=[205,410,717,717,717]   Ymax=717
+```
+⇒ **[EVIDENCE] the LERP output is bounded at 717.** With `uVar33 = (iVar31 × LERP) >> 8` clamped
+to `±cal(0xC61BC)` = 15360:
+```
+   the clamp binds  <=>  iVar31 x 717 >> 8  >=  15360  <=>  iVar31 >= 15360 x 256 / 717 = 5482
+```
+⭐ **That is a single, concrete, testable threshold**, and it is a **cheaper probe than measuring the
+clamp itself**: one comparison of `iVar31` against a constant, instead of instrumenting a clamp.
+
+### 🛑 WHY IT DID **NOT** CLOSE STATICALLY
+`iVar31` is **not one semantic variable** — the decompiler reuses it across **16 assignments** in
+`FUN_00028ea6`. The one dominating the clamp is:
+```c
+   iVar31 = (int)(short)((ushort)!bVar4 - (ushort)bVar4) * (int)(short)uVar25;   // +-uVar25
+   iVar31 = iVar31 * 0x20 - uVar35;                                              // x32, minus uVar35
+```
+⇒ bounding it needs `uVar25` **and** `uVar35`, each with their own provenance.
+⇒ **[UNRESOLVED, and I am not going to guess it]** — `iVar31 × 32` could plausibly exceed 5482 by a
+wide margin or not reach it, and **a wrong static bound here would be exactly the class of error the
+kit records as its most expensive**: a mis-read that reads as a *fact* and propagates.
+✅ **The probe remains the correct instrument.** The attempt was worth making — it cost no build and
+it produced the threshold — but it does not replace the measurement.
+
+### ✅ WHAT THIS CHANGES ABOUT THE PROBE
+```
+   BEFORE   instrument the clamp: capture uVar33 and compare against cal(0xC61BC)
+   NOW      one rung:  iVar31 >= 5482     <- a comparison against a CONSTANT
+            duty 0.0000 => the clamp CANNOT bind => 0xC61BC closes exactly as 0xC61B2/B4 did
+            duty > 0    => it binds; the dose is real and the operator can decide knowingly
+```
+⇒ simpler rung, same answer, and it reuses the comparator pattern V98 already flew.
+🛑 **Still NOT a fix and still needs the operator's call before any dose** — raising an authority
+clamp **increases the maximum torque LKAS can apply against the driver**, unlike every other queued
+lever, which only ever reduces.
+
 ## ⭐⭐⭐ **THE LKAS AUTHORITY LIMITER IS LOCATED — AND IT IS VIRGIN ON ALL 157 BUILDS**
 The operator names **LKAS authority** in every single instruction, and this session had not served
 it. It is now located, and the result is uncomfortable: **the kit has been moving the wrong clamps.**
