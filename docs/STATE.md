@@ -2,6 +2,35 @@
 
 
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
+## 🛑✅ **THE SCORER WAS READING THE WRONG CHANNEL — CAUGHT BY RUNNING THE DRIVE CARD'S OWN COMMAND**
+With the design closed, I ran the pipeline end-to-end exactly as it would run on a fresh route. It
+found a defect that would have produced a **wrong verdict on the drive**.
+```
+   score_band_excess.py  read  z['cs_rate']
+   but cs_rate scores at CHANCE for the ratchet: margin 1.03 vs cs_tq's 7.42
+```
+🛑 **[EVIDENCE] the tool the drive card points at was measuring the ratchet in the one channel
+where it is not present.** Fixed to `cs_tq`, and the numbers now match the analysis they came from:
+```
+   r24 / V122, cs_tq        BEFORE (cs_rate)      AFTER (cs_tq)
+     ratchet 5-12 Hz          4.4x                 33.2x     split-half 1.21x
+     grind  15-25 Hz         23.2x                 14.0x     split-half 3.29x
+```
+⊕ Note the split-halves **swap**: the ratchet is now the *tighter* endpoint (1.21x) and the grind the
+looser (3.29x). That is the right way round — the ratchet is what the channel is good for.
+
+### ✅ AND THE DRIVE CARD'S TWO DISCRIMINATORS ARE NOW IN THE TOOL
+One command gives the whole verdict instead of three hand-run analyses:
+- **grind sub-bands 15–20 vs 20–25 Hz** — V173's filter attenuates the top **2.2x** more (sloped),
+  V158's damper is dose-set and flat ⇒ the SHAPE says which lever produced a reduction.
+  Reference measured on the flying build: **15–20 = 5.8x, 20–25 = 14.0x, ratio 2.39.**
+- **grind vs ratchet by COMMAND level** — the grind saturates above 1500 ct while the ratchet grows,
+  so the two verdicts come from different strata.
+⊕ **Both carry an 8-window guard.** On r24 the strata hold 0 and 4 windows and now print *“TOO FEW to
+report”* rather than the 198x / 1270x the unguarded version emitted — those came from a background
+fit on four windows and were **not credible**. Catching that in the tool is the point of running it
+before the drive rather than after.
+
 ## ✅✅✅ **EVERY REMAINING LEVER IS BELOW THE MEASUREMENT FLOOR — V173 IS THE WHOLE AVAILABLE FIX**
 Pricing what is left after V173, with the corrected `L_other` (r26 gated off ⇒ 0.31–0.55, not 0.825).
 Anchor unchanged in kind: the measured `Q_eff/Q_passive = 14.3` fixes `P·L = 0.93`, so `P = 0.93/|L|`.
@@ -2238,41 +2267,4 @@ frames at 2–8 km/h, episodes to 4 s). With the setpoint limit already at openp
 => **the symptom is bounded by (protocol range x gain), the protocol is fixed, and the gain is frozen
 by a measured result.** No firmware lever remains. Closing it needs either an openpilot-side change
 (**barred by standing instruction**) or accepting the trade the 8x test already priced.
-
-## ⛔ **THE AUTHORITY COLLAPSE CURVE ADMITS NO BENEFICIAL CHANGE WITHIN THE SAFETY RULE**
-Open item closed by exhaustive test, not by argument.
-```
-   mode 7, ALL FOUR RECORDS VIRGIN on 90 images
-     0xE547C / 0xE5404  primary  X = [70, 72, 78, 80]   Y = [254, 234, 12, 0]
-     0xE52FC / 0xE5284  blend    X = [32, 42, 80, 112]  Y = [255, 255, 255, 0]
-   authority 254 -> 0 across TEN byte-counts (raw torque 2240 -> 2560)
-   🛑 measured MEDIAN OVERRIDE TORQUE = 2235 = byte 69 -- ONE COUNT below X[0] = 70
-```
-=> **the operator drives on the knee**, so a small road-load increase tips him over a cliff that
-drops authority 254 -> 12 in eight byte-counts. That is the “authority disappears” mechanism.
-
-### ⛔ EVERY RESHAPE THAT HELPS VIOLATES THE RULE
-The rule is **MONOTONE-NON-INCREASING: never more authority than stock at any torque.** Tested:
-```
-   hold longer     X=[74,76,78,80]     VIOLATES (254 vs 234 at byte 72, and above stock to byte 79)
-   gentler slope   X=[70,72,88,90]     VIOLATES (150.8 vs 12.0 at byte 78)
-   raise mid Y     Y=[254,234,120,0]   VIOLATES (120.0 vs 12.0 at byte 78)
-   collapse earlier X=[60,70,78,80]    LEGAL -- but gives LESS authority everywhere
-```
-✅ **[EVIDENCE] this is not an argument, it is an enumeration**: authority is a monotone-decreasing
-function of torque, so *holding it up longer anywhere* IS *more than stock somewhere*. The two are the
-same statement. **No legal change improves it.**
-
-### ⚠ THE TRADE, STATED FOR THE OPERATOR — NOT DECIDED HERE
-Honda collapses authority **because the driver is pushing**; the curve is a driver-in-control override.
-Raising it means **the driver must push harder to take the wheel back.** That is a genuine safety
-trade, and it is the operator's call, not the kit's. If he wants it, the minimal bounded form is
-`X[0]/X[1]` **70,72 -> 72,74** (two byte-counts ≈ 64 torque counts of extra hold, nothing else moved),
-which is the smallest change that moves the knee off his median override torque. **NOT BUILT.**
-
-### ⛔ AND THE `0xC61BC` CAVE PROBE IS NOT WORTH IT RIGHT NOW
-It is a **probe, not a fix** — diagnostic value only — and caves are this kit's **only bricking class**
-(V24, V27, V48B all bricked the ECU). With the calibration search exhausted and V158 ready to fly,
-spending a brick risk on a measurement before the cheap measurement (a drive) has been taken is the
-wrong order. **Revisit only if the V158 drive is ambiguous AND the operator authorizes a cave.**
 

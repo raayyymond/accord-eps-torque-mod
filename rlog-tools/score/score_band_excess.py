@@ -45,6 +45,8 @@ RATCHET = (5.0, 12.0)
 GRIND = (15.0, 25.0)
 BANDS = (RATCHET, GRIND)
 CREEP_KMH = (1.0, 24.0)
+CHANNEL = 'cs_tq'      # see creep_runs(): cs_rate is at chance for the ratchet
+SUB_LO, SUB_HI = (15.0, 20.0), (20.0, 25.0)   # V158-damper vs V173-filter discriminator
 
 
 def _cache(tag):
@@ -63,7 +65,10 @@ def creep_runs(tag, nps=NPS):
     z = np.load(p, allow_pickle=True)
     lat = np.asarray(z['cc_lat']).astype(float)
     v = np.asarray(z['cs_v']).astype(float)
-    r = np.asarray(z['cs_rate']).astype(float)
+    # CHANNEL: cs_tq, the torsion-bar torque.  NOT cs_rate -- that was the original
+    # choice and it scores at CHANCE for the ratchet (margin 1.03 vs cs_tq's 7.42).
+    # Every 6-9 Hz endpoint this kit used before 2026-08-29 read the wrong channel.
+    r = np.asarray(z[CHANNEL]).astype(float)
     n = min(len(lat), len(v), len(r))
     lat, v, r = lat[:n], v[:n], r[:n]
     kmh = v * 3.6
@@ -141,6 +146,66 @@ def split_half(segs, band, seed=0):
     return float(max(ea, eb) / min(ea, eb))
 
 
+
+def attribute_grind(segs):
+    """15-20 vs 20-25 Hz. V173's filter attenuates the TOP of the band 2.2x more than the
+    bottom; V158's damper is rate-proportional and dose-set, hence roughly flat. So the
+    shape of a grind reduction says which lever produced it."""
+    f, M = pooled_psd(segs)
+    lo, _, _ = band_excess(f, M, SUB_LO)
+    hi, _, _ = band_excess(f, M, SUB_HI)
+    if not (np.isfinite(lo) and np.isfinite(hi)):
+        return
+    print('  GRIND SUB-BANDS   15-20 Hz excess %.1fx   20-25 Hz excess %.1fx   ratio %.2f'
+          % (lo, hi, (hi / lo) if lo > 0 else float('nan')))
+    print('       reference V122 (r24, cs_tq): 15-20 = 5.8x, 20-25 = 14.0x, ratio 2.39')
+    print('       20-25 much LOWER than 15-20 => V173/V172 filter did it (sloped attenuation)')
+    print('       both down about equally     => V158 damper did it (flat attenuation)')
+
+
+def grind_by_command(tag):
+    """The grind peaks at MID command (600-1500 ct) and DIES above it, while the ratchet
+    grows monotonically. A pass spent at high command under-reads the grind, so take the
+    grind verdict from the mid-command windows."""
+    p = _cache(tag)
+    if p is None:
+        return
+    z = np.load(p, allow_pickle=True)
+    if 'sc_tq' not in z.files:
+        print('  (no sc_tq in cache -- command stratification unavailable)')
+        return
+    lat = np.asarray(z['cc_lat']).astype(float)
+    v = np.asarray(z['cs_v']).astype(float)
+    a = np.asarray(z[CHANNEL]).astype(float)
+    cmd = np.asarray(z['sc_tq']).astype(float)
+    n = min(len(lat), len(v), len(a), len(cmd))
+    lat, kmh, a, cmd = lat[:n], v[:n] * 3.6, a[:n], cmd[:n]
+    ok = (lat > 0.5) & (kmh >= CREEP_KMH[0]) & (kmh < CREEP_KMH[1]) & np.isfinite(a)
+    d = np.diff(np.concatenate(([0], ok.view(np.int8), [0])))
+    st, en = np.where(d == 1)[0], np.where(d == -1)[0]
+    strata = {'mid 600-1500': [], 'high 1500+': []}
+    for i, j in zip(st, en):
+        for k in range(i, j - NPS + 1, NPS // 2):
+            w, c = a[k:k + NPS], np.abs(cmd[k:k + NPS]).mean()
+            if np.std(w) == 0:
+                continue
+            if 600 <= c < 1500:
+                strata['mid 600-1500'].append(w)
+            elif c >= 1500:
+                strata['high 1500+'].append(w)
+    for nm, ws in strata.items():
+        if len(ws) < 8:
+            print('  command %-14s %2d windows -- TOO FEW to report (need 8; the'
+                  ' background fit is unstable below that and the numbers are not'
+                  ' credible)' % (nm, len(ws)))
+            continue
+        f, M = pooled_psd(ws)
+        g, _, _ = band_excess(f, M, GRIND)
+        r, _, _ = band_excess(f, M, RATCHET)
+        print('  command %-14s %2d windows   grind %6.1fx   ratchet %6.1fx' % (nm, len(ws), g, r))
+    print('       take the GRIND verdict from the MID row (it saturates above 1500 ct);')
+    print('       take the RATCHET verdict from the HIGH row (it grows monotonically).')
+
 def score(tag, label=''):
     segs = creep_runs(tag)
     print('%s %s -- %d continuous engaged-creep windows of %.2f s'
@@ -166,6 +231,15 @@ def score(tag, label=''):
     print('  spectral slope 1/f^%.2f  (routes span 0.80-2.37; the tilt is why raw'
           % -background(f, M)[1])
     print('  band power and fixed-floor prominence were withdrawn)')
+    print()
+    attribute_grind(segs)
+    print()
+    grind_by_command(tag)
+    print()
+    print('  REFERENCE, flying build V122 (route r24), same channel:')
+    print('       ratchet 5-12 Hz  33.2x     grind 15-25 Hz  14.0x')
+    print('       ratchet BELOW its null (~4) => gone;  UNCHANGED => falsifies the P.L')
+    print('       assumption for BOTH lever classes at once.')
 
 
 if __name__ == '__main__':
