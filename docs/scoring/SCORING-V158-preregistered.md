@@ -113,7 +113,7 @@ Reuse `rlog-tools/score/score_v133_creep.py` (creep-band, already episode-cluste
 | ratchet **better**, effort acceptable | **V160** | take the free Lever B increment; then consider a damper dose ladder |
 | ratchet **better**, wheel too heavy | lower FactorC `Y[0]` 429 → 234 (its own `Y[1]`) | dose 50 → 27, monotone, halves the drag |
 | ratchet **unchanged**, effort unchanged | **damper dose ladder** | ×2.74 was too small ⇒ the firmware term does not dominate; the model's *"err low"* argument is then overturned by data |
-| ratchet **worse** | revert to V122 | **NAMED MECHANISM**: gp-0x6bd0 feeds BOTH aggregators, and Path 2 (FUN_00038148 @0x38150) applies an EXTRA pol multiply, so at pol = -1 it arrives PUMPING-signed there. Path 1 damping should dominate — Path 2 reaches the car through f-prime, compressed 6.3x — but Path 2’s loop gain is UNLOCATED and cannot be certified. |
+| ratchet **worse** | **V167** (`0xC63A0` 1024→512), NOT a bare revert | **NAMED MECHANISM**: gp-0x6bd0 feeds BOTH aggregators, and Path 2 (FUN_00038148 @0x38150) applies an EXTRA pol multiply, so at pol = -1 it arrives PUMPING-signed. 0xC63A0 is that term’s Path-2 weight ALONE, so halving it removes half the pumping while keeping Path 1’s damping — it DISCRIMINATES, where a revert to V122 discards both and tells you nothing. Revert to V122 only if V167 is also worse. |
 | **no creep episodes in the drive** | re-drive | the edit is inert above 35 km/h; a null would be for the wrong reason |
 
 ## Confounds stated in advance
