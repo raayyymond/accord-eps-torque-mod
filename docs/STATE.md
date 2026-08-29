@@ -1,5 +1,35 @@
 # STATE — living current state of the kit
 
+## ✅✅ **V157 BUILT — THE 4× DOSE OF V156, AND `MEMORY-PART4` SPLIT**
+V156 puts the damper's creep product at **31 = 6.1 %% of the bang-bang ceiling**, which may simply be
+too small to feel. V157 is the **same lever, same four cells, 4× the dose** — built so the choice
+is available rather than laddered.
+```
+   V156   FactorC Y[0] 0 -> 60        FactorE Y[0] 0 -> 539    product  31   6.1 %% of ceiling
+          rwd bc070cba9e195231337070e57cf228c4ac126f5e09dbc8e2c2e7f68aca37c24d   6 B, 60/60
+   V157   FactorC Y[0] 0 -> OWN Y[1]  FactorE Y[0] 0 -> 539    product 123  24.0 %% of ceiling
+          (234 on m26, 233 on m27)                             4.2x margin to 512
+          rwd 65021b6d996ab1107d9dcf7a15667e1b321e2578a33e49572d27e92893785145   6 B, 62/62
+```
+⊕ **Both doses are the tables' OWN neighbouring knot values, not inventions** — V157 sets each
+mode's FactorC `Y[0]` to **that mode's own `Y[1]`**, so the first segment becomes **FLAT** from 0 to
+`X[1]`=3840 instead of ramping from zero, and FactorE `Y[0]` to its own `Y[2]`.
+🛑 **The V80 distinction that makes this safe**: V80's catastrophe was FactorC **FLAT 566 across
+ALL FOUR knots**. V157 flattens **only the FIRST segment** and leaves **`Y[1..3]` byte-identical**,
+so **the high-speed ramp is untouched** — asserted in the builder, not argued.
+⊕ **FLY ONE OF V156 / V157, not both.** Given the operator's *"I just want the best possible
+results"*, **V157 is the better first flight**: V156's 31 counts has a real chance of being
+inaudible, and V157 still holds a **4.2× margin** to the ceiling.
+
+### ✅ HOUSEKEEPING — `memory/MEMORY-PART4.md` SPLIT AT 199.5 KB
+```
+   before   PART4  199.5 KB, 147 entries
+   after    PART4  100.7 KB,  88 entries      PART5   99.3 KB,  59 entries
+   integrity: 88 + 59 = 147, and the entry SETS are equal  => zero lost
+```
+⇒ **`CLAUDE.md` repointed: "PAGINATED IN FOUR" → "PAGINATED IN FIVE"**, naming `MEMORY-PART5.md`
+so no agent reads a truncated index. PART4 carries a pointer to PART5 at its tail.
+
 ## ✅✅✅ **V156 BUILT — THE DAMPER REACHES THE MICRO REGIME FOR THE FIRST TIME**
 A lightly-damped resonance (**ζ 0.017–0.036**) sits in a regime with **no added damping at all**,
 and the reason is that `ch0 = (FactorC(speed) × FactorE(rate)) >> 10` is a **PRODUCT OF TWO DEAD
