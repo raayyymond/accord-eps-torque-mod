@@ -1,5 +1,60 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **THE CREEP-AUTHORITY CHAIN IS CLOSED — LOCKOUT ALREADY PULLED, NEXT CONJUNCT NOT A CAL**
+All three complaints live at **2–8 km/h**, and the kit's most on-target lever for that band is the
+**low-speed steer lockout**. Followed it to the end. **Both links are closed, and the record needed
+two corrections.**
+
+### 🛑 LINK 1 — THE LOCKOUT IS **ALREADY REMOVED** ON THE FLYING BUILD
+```
+   0xC62EA  low-speed lockout threshold   stock 320 (4.995 km/h)   V122 = 0   => NO LOCKOUT
+   across 157 images: {0: 108, 320: 49}
+```
+⇒ **[EVIDENCE] `0xC62EA` = 0 on V122 — the lockout has been off for most of the arc.**
+⇒ **the 6.4 % command railing at 2–8 km/h is NOT caused by the low-speed lockout.** That lever is
+**spent, not available**, and must not be re-proposed.
+
+### ✅ LINK 2 — THE MEMORY'S OWN PRE-REGISTERED NEXT SUSPECT, AND IT IS **NOT CAL-REACHABLE**
+`accord-low-speed-lockout-window-c62ea` pre-registered the follow-up: *"If a lowered `0xC62EA`
+doesn't work, `gp-0x69aa` is the next suspect."* **It doesn't work — it is already 0 — so the suspect
+is activated.** Read at its site (`0x29000–0x29200` **byte-identical stock vs V122**):
+```asm
+   0x290fc  ld.hu -0x69aa, gp, r14      ; the governor Q15 derate
+   0x2910c  ori   0x8000, r0, r9        ; 0x8000 built as an IMMEDIATE
+   0x29110  cmp   r9, r14
+   0x29112  bh    0x29138               ; UNSIGNED HIGHER -> the FAILURE path (STEER_STATUS = 3)
+```
+🛑 **The 0x8000 threshold is a HARD-CODED IMMEDIATE (`ori 0x8000, r0, r9`), NOT `cal(0xC63F2)`.**
+`0xC63F2` = 32768 is read at `0x28ECE`, a **different site** with a different role.
+⇒ **[EVIDENCE] the governor-derate conjunct is NOT reachable by any calibration.** Changing it would
+need an in-place instruction edit. **The pre-registered next suspect is closed as a cal lever.**
+
+### ⚠ CORRECTION 1 — THE COMPARISON IS `<=`, NOT `==`
+The memory records the conjunct as **`gp-0x69aa == 0x8000`**. The instruction is `cmp r9,r14` then
+**`bh`** (branch if unsigned HIGHER) to the failure path.
+⇒ **the passing condition is `gp-0x69aa <= 0x8000`, not `== 0x8000`.** Any derate BELOW unity still
+passes; only values ABOVE 0x8000 fail. **[CORRECTED in the record.]**
+
+### ⚠ CORRECTION 2 — I HIT THE OFF-BY-0x1000 TRAP, AND CAUGHT IT
+I first wrote `tp+0x73F2` as **`0xC73F2`**. `tp = 0xBF000`, so it is **`0xC63F2`**.
+⇒ **that is the SIXTH recorded recurrence** of the trap `CLAUDE.md` calls out (it lists five).
+⇒ caught by anchoring against the memory's own stated value (32768) — the wrong address read **14**,
+the right one reads **32768**. **The anchor-against-a-known-value discipline is what caught it, and
+it is worth keeping in front of every session.**
+
+### ✅ WHAT REMAINS OF THE CREEP-AUTHORITY QUESTION
+```
+   0xC62EA  lockout threshold        ALREADY 0 -- spent
+   gp-0x69aa governor derate         threshold is a HARD-CODED IMMEDIATE -- not a cal
+   gp-0x67fe substate == 2           a state, not a cal
+   gp-0x69ae within +-0x4000         not yet examined
+   5-channel validity test           not yet examined
+   0xC61BC  setpoint clamp +-15360   VIRGIN, binding UNKNOWN  <-- the only cal candidate left
+```
+⇒ **of the AND-chain that gates control-active at creep, the only remaining CAL-reachable candidate
+is `0xC61BC`** — which is exactly the cell the `iVar31 ≥ 5482` probe would settle.
+⇒ **the probe is now the last cal-reachable question in the entire creep-authority chain.**
+
 ## 🛑🛑🛑 **ALL THREE COMPLAINTS ARE CREEP PHENOMENA — AND SPEED-SCHEDULING THE GAIN IS DEAD**
 Tried to **make** a new lever rather than find one: **schedule the gain by speed** — high where
 authority saturates, low where grinding lives — which would break the authority/grinding tension
@@ -2104,203 +2159,7 @@ payload decompiles (slots 0, 1, 3, 6, 8 — `FUN_0002e52e`, `FUN_0002b422`, `FUN
 cal is equally virgin, its lane feeds the aggregator directly, and its drive also carries the gate
 probe that retires the notch family.
 
-## ✅✅ **19 VIRGIN ASSIST-PATH CALS — AND THE `FUN_00038148` PER-TERM WEIGHT MAP**
-Since **no flown cal moves the creep grind**, the answer must be in a cal **never flown**. A census
-across **131 build images** (diffing `0xC4000–0xC8000` against stock; **948 cells ever touched**)
-gives the frontier:
-```
-   VIRGIN assist-path cals (19):
-     0xC40DA gp-0x6c2e EMA alpha      0xC4124 11-slot type vector    0xC6136/38 gate values
-     0xC615A gp-0x6bbe clamp fallback 0xC6194 DEAD lkas rate limiter 0xC620A detector threshold
-     0xC6316 governor speed gate      0xC6370 gp-0x6c2e weight       0xC6372 torque EMA alpha
-     0xC63A2 0xC63A4 0xC63A6 0xC63A8 0xC63AA   FUN_38148 per-term weights
-     0xC63C2 gp-0x6b5e gain           0xC643C alpha0                 0xC64FA gate CEIL
-     0xC64FD b26 Y-branch threshold
-```
-
-### ✅ THE WEIGHT MAP, VERIFIED FROM THE DECOMPILE
-```c
-   sum = (gp-0x6b4e * gate(+-0x2800) * cal(0xC63A8)) >> 10
-       + (gp-0x6b4c * gate(+-0x2800) * cal(0xC63AA)) >> 10
-       + (gp-0x6b26 * gate(+-0x400)  * cal(0xC63A6)) >> 10
-       + (gp-0x6b46 * gate(+-0x400)  * cal(0xC63A4)) >> 10
-       + (gp-0x6bd0 * gate(+-0x800)  * cal(0xC63A0)) >> 10
-       + (gp-0x6bbe * gate(+-0x800)  * cal(0xC63A2)) >> 10
-   then  * gp-0x6752 (the -1 POLARITY),  *16,  through a cal(0xC63AC)=102 IIR  ->  gp-0x6b70
-```
-```
-   cal       lane        meaning                 gate      stock  V122   status
-   0xC63A0   gp-0x6bd0   base-assist damper      +-0x800    1024  1024   touched by a build
-   0xC63A2   gp-0x6bbe   viscous + DC pedestal   +-0x800    1024  1024   VIRGIN
-   0xC63A4   gp-0x6b46   (unmapped lane)         +-0x400    1024  1024   VIRGIN
-   0xC63A6   gp-0x6b26   b26 inertia             +-0x400    1024  1024   VIRGIN
-   0xC63A8   gp-0x6b4e   (unmapped lane)         +-0x2800   1024  1024   VIRGIN
-   0xC63AA   gp-0x6b4c   11-SLOT ASSIST SUM      +-0x2800   1024  1024   VIRGIN
-```
-⭐ **All six are UNITY 1024 in stock and V122; only `0xC63A0` has ever been moved.**
-
-### ⭐ `0xC63AA` IS THE BEST-FORMED LEVER FOUND ALL SESSION
-It is a **per-term weight on `gp-0x6b4c`** — the lane that ranked as the **most consistent grind
-carrier** — at **unity 1024**, **never flown**, **cal-only**, and **continuously dosable**.
-⇒ **strictly better than disabling an unidentified slot INSIDE `gp-0x6b4c`**: same target, **no
-slot map required**, and it **scales** rather than zeroes, so the dose is a choice rather than a
-cliff.
-
-### 🛑 THE HONEST CHECK AGAINST IT
-This loop's output is **`gp-0x6b70`**, whose measured band share is **0.46–0.52× flat — BELOW
-baseline** ⇒ `gp-0x6b70` is **not itself a grind carrier**, so reducing `gp-0x6b4c`'s contribution
-*here* may not reach the symptom. ⊕ And `gp-0x6b4c` **also enters the aggregator directly**
-(`FUN_0003aa2c`), a path this weight does **not** touch.
-⇒ **[BELIEF] well-formed and virgin; [UNKNOWN] whether it reaches the symptom. NOT a build yet.**
-**V147 still flies first** — its cal is equally virgin and its lane feeds the aggregator directly.
-
-## 🛑🛑🛑 **NO CAL EVER FLOWN MOVES THE CREEP GRIND — THE STRATEGIC RESULT OF THIS SESSION**
-With a working endpoint (noise floor **1.8×**), every cal the kit has tuned can finally be tested
-against it. **None of them separates the builds.**
-```
-   all 8 scoreable routes span   0.0640 - 0.1549 = 2.42x        (noise floor 1.8x)
-
-   gain    3564 (4x): 0.0832 (n=4)   5346 (6x): 0.0877 (n=4)   ratio 1.05x   NO EFFECT
-   alpha2  14: 0.0866 (n=1)          22: 0.0887 (n=7)          ratio 1.02x   NO EFFECT
-   knee    300: 0.0887 (n=3)         600: 0.0866 (n=5)         ratio 1.02x   NO EFFECT
-   K1      constant among scoreable routes
-
-   V96's OWN TWO ROUTES:  0.0640 vs 0.0955 = 1.49x
-   => one build's route-to-route spread is MOST of the entire 2.42x range across all builds.
-```
-⇒ **[EVIDENCE] across gain 4×/6×, α2 8–22, knee 300–3000 and K1 204–1020, NO calibration this
-kit has ever flown has a detectable effect on the creep grind.**
-
-### ⭐ WHAT THIS REFRAMES
-**~30 builds of cal tuning — the gain ladder, the α2 ladder, the knee/K1 relay ladder — all moved
-cals that are now measured INERT for this symptom.** That is consistent with the whole run of nulls
-and near-nulls those families produced, and it explains them at a stroke.
-⇒ **Either the controlling cal has never been flown, or the grind is not cal-controllable.**
-⇒ **This is precisely why V147 is the right next build**: `0xC61F6` (the r24 pump-lane deadband) is
-a cal **NEVER FLOWN**, on a lane (`gp-0x6ADA`) **NEVER PROBED**. Every prior build moved cells now
-shown to be inert. ⊕ The same argument elevates the `0xC4124` slot disable, also never flown.
-
-### ✅ AND IT CLEARS THE 8× GAIN FOR AUTHORITY
-`gain 4× vs 6× = 1.05×` on the clean endpoint, agreeing with the earlier 12-route direct null and
-with the 19-route regression (p = 0.173). ⇒ **the LKAS gain does not drive the creep grind**, so
-**V142 (8× + matched clamps) is not a grinding risk** — it remains gated behind a confirmed grind
-fix only because the operator's instruction made it conditional, not because the evidence implicates
-it. ⚠ no 8× route passes the n≥90 gate, so 8× itself is untested on this endpoint.
-
-### ⭐ THE HONEST SUMMARY OF THE WHOLE SEARCH
-```
-   families CLOSED by measurement   b26 (clamp/a2/knee/K1) | the notch | base-assist damper
-                                    gp-0x6BBE | and now EVERY flown cal
-   levers NEVER FLOWN, still open   0xC61F6 pump deadband (V147)  |  0xC4124 slot disable
-   the only instrument that has     the OPERATOR'S REPORT -- V133's regression came from his ear,
-   ever resolved a build             not from any scorer in this kit
-```
-
-## ✅✅✅ **A WORKING BETWEEN-BUILD ENDPOINT, RECOVERED — NOISE FLOOR 1.8×, DOWN FROM 36×**
-The previous section retired the engaged/manual RATIO endpoint on a 20–36× noise floor. **The
-diagnosis pointed straight at the fix**: it is a **RATIO**, and it explodes when the manual arm is
-small — **r9e scored 1520.81 on 39 manual windows.** Two changes rebuild it:
-```
-   1. a SHARE, not a ratio:  (18-22 Hz power) / (1-45 Hz power), ENGAGED, at creep
-      bounded in [0,1] -- it CANNOT explode however small the denominator gets
-   2. a MINIMUM EXPOSURE gate: n >= 90 engaged creep windows ~ 2 MINUTES of engaged creep
-      the low-n routes (r81 n=45, r96 n=70, r9e n=57) were the outliers driving the residual spread
-```
-```
-   identical-cal noise floor      all n        n >= 90
-      gain3564 a2:22 knee600      7.22x         1.62x   (4 routes)
-      gain5346 a2:22 knee300      5.59x         1.79x   (3 routes)
-   => a build effect must exceed ~1.8x to mean anything.   A 20x RESOLUTION IMPROVEMENT.
-```
-```
-   route build     SHARE      n    gain   a2  knee        route build     SHARE      n
-   r7e   V96      0.0640     98    3564   22   600        r7f   V96      0.0955     95
-   r79   V92      0.0709    106    3564   22   600        r77   V90      0.1038    260
-   r21   V111     0.0866    135    5346   14   600        ra4   V104     0.1549    110
-   ra6   V106     0.0867    108    5346   22   300
-   r1e   V107     0.0887    143    5346   22   300
-```
-
-### ✅ AND IT SETTLES THE KNEE WITH A PROPER INSTRUMENT
-```
-   knee 300   n=3 routes   median SHARE 0.0887
-   knee 600   n=5 routes   median SHARE 0.0866      <-- IDENTICAL
-```
-⇒ **the knee has NO measurable effect.** That **independently CONFIRMS** the retraction of
-*"knee = 300 is catastrophic"* rather than merely withdrawing it — the first time this session a
-retraction has been replaced by a positive measurement instead of a gap.
-
-### 🛑 TWO HONEST CAVEATS
-1. **The n ≥ 90 gate was chosen AFTER seeing which routes were outliers.** A minimum-exposure
-   requirement is defensible a priori and 90 windows ≈ 2 min is a physical threshold rather than a
-   fitted one — **but the specific number is post-hoc and wants validation on new data.**
-2. **Only 8 cached routes qualify.** **V112 (n = 52, 24) and V122 (n = 45) do NOT** ⇒ **the build
-   currently on the car has never had enough engaged creep exposure to be scored at all.**
-
-### ⭐ THE DRIVE REQUIREMENT THIS CREATES — CONCRETE AND ACTIONABLE
-```
-   >= 2 MINUTES of ENGAGED CREEP  (1-24 km/h, hands off, with real steering activity)
-```
-Without it the drive is unscoreable on the only endpoint that works. **The scorer refuses rather
-than guessing**: `r24` (V122, n=45) returns *NOT SCOREABLE*; `r77` (V90, n=260) returns a verdict.
-✅ Shipped as **`rlog-tools/score/score_creep_share.py`**, with `--floor` to re-derive the noise
-floor from the identical-cal groups on demand.
-
-## 🛑🛑🛑 **THE BETWEEN-BUILD ENDPOINT HAS A 20–36× NOISE FLOOR — EVERY BUILD COMPARISON THIS SESSION IS RETRACTED**
-The obvious control was never run: **what do routes with IDENTICAL control cals score?**
-```
-   gain 3564, a2 22, knee  600, K1 204   n=6   SPREAD 19.9x
-        V92/r79 2.60   V96/r7f 9.59   V91/r78 10.21   V96/r7e 11.12   V90/r77 26.36   V98/r81 51.81
-   gain 5346, a2 22, knee  300, K1 204   n=6   SPREAD 36.2x
-        V106/ra6 42.01  V107/r1e 47.30  V105/ra5 52.54  V104/ra4 91.75  V102/r96 714.01  V103/r9e 1520.81
-   gain 5346, a2 14, knee 1800, K1 612   n=2   spread  1.1x     <- the "precision" pair; n=2 is LUCK
-   gain 3564, a2 22, knee  300, K1 204   n=2   spread  3.6x
-```
-⇒ **SIX routes with the same calibration span 20×; another six span 36×.**
-⇒ **NO build comparison below ~36× on this endpoint carries information.**
-
-### 🛑 EVERY COMPARISON MADE THIS SESSION FAILS THAT TEST
-```
-   V111 4.40 vs V112 4.74   "the knee is NULL"                1.08x   BELOW THE FLOOR
-   V112 4.74 vs V122 3.38   "alpha2 IS the lever"             1.40x   BELOW THE FLOOR
-   V112 r22 4.66 vs r23 4.82  "3 % repeatability"             1.03x   BELOW THE FLOOR
-   knee 600 median vs knee 3000                               1.25x   BELOW THE FLOOR
-   knee >= 600 vs knee = 300  "CATASTROPHIC"                 29.35x   BELOW THE FLOOR
-```
-🛑 **Including the `knee = 300` result recorded one section earlier as the strongest
-cross-build effect the kit had ever measured.** The knee-300 group's **own internal spread
-(36.2×)** is LARGER than the between-group difference (29.35×) I attributed to the knee.
-
-### 🛑 WHAT IS RETRACTED
-1. **"α2 is the creep lever, the knee is null"** — the single-variable ladder. It drove the V137 /
-   V138 sizing and the V135 demotion. **The differences were 1.08–1.40× against a 20–36× floor.**
-2. **"The endpoint is precise — V112's two routes agree to 3 %"** — two routes of the SAME build is
-   the floor's **best case**, not evidence of precision. n=2 and it was luck: the six-route group of
-   identical cals spans 19.9×.
-3. **"`knee = 300` is catastrophic."**
-⊕ The **builds themselves are unaffected** — V137/V138/V135 are still correctly built and bounded.
-**Only the RANKING rationale is withdrawn.**
-
-### ✅ WHAT SURVIVES — EVERYTHING THAT IS NOT STATISTICAL
-* the **notch's existence, its retune and its validation against the firmware recursion**;
-* the **11-slot map** (10 callers → 10 distinct slots, self-validated);
-* the **confirmed pump polarity** (`gp-0x6752 = −1`, verified 3 ways incl. on-car);
-* the **r24 deadband's location and continuity**; the **`0xC64FA`/`0xC64FD`** separation;
-* the **instrument findings** — probe clipping, the flat-spectrum baseline, the `ld.bu` disp|1 trap;
-* and **V133's regression, which came from the OPERATOR'S EAR, not from any scorer.**
-
-### ⭐ THE CONCLUSION THIS FORCES
-**This kit has NO working between-build symptom endpoint.** Route-to-route variance is **20–36×**
-and every candidate build effect is smaller than that. ⇒ **the operator's own report is the only
-instrument with the resolution to tell builds apart**, which is exactly what the kit's own doctrine
-already says: ***score bands, let the OPERATOR score symptoms.***
-🛑 **A scorer that compares two builds on this endpoint should REFUSE unless the ratio exceeds
-~36×.** Anything less is reporting route noise as a result. ⊕ `feedback-episodes-not-windows`
-warned about exactly this class of error — *"window bootstraps manufacture significance; get a
-split-half null BEFORE quoting any ratio."* **The identical-cal groups ARE that null, and they were
-available from the first minute.**
-
 
 ---
 
-🛑 **3 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
+🛑 **4 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
