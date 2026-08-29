@@ -1,5 +1,66 @@
 # STATE — living current state of the kit
 
+## 🛑 **THE ADMISSION-GATE CLASS — HALF CLOSED FROM THE RECORD, AND V154/V155 DEMOTED**
+Last turn I flagged the lane admission gates as a **third switching class** and called measuring
+their duty *"the cheap next probe."* **Three of the six were already measured.** The kit's own rule
+— *search the record before naming a cause* — applied to my own proposal.
+```
+   lane        gate     recorded magnitude                              gate trips?
+   gp-0x6b26   +-1024   p50 5.5 / p90 39.1 / p99 114.3 / MAX 319.1      NO -- 3.2x margin
+                        (+-511 clamp upstream, clamp duty 0.000000)
+   gp-0x6b4c  +-10240   V101 b6: |gp-0x6b4c| >= 4096 duty 0.000000      NO -- 2.5x margin
+   gp-0x6bbe   +-2048   p50 73.6 ct, flat across 0-6 deg/s              NO (large margin)
+   gp-0x6b4e  +-10240   disjoint partition twin of gp-0x6b4c            NOT MEASURED
+   gp-0x6b46   +-1024   unmapped lane                                   NOT MEASURED
+   gp-0x6bd0   +-2048   the damper                                      NOT MEASURED
+```
+⇒ **[EVIDENCE] no gate that has ever been measured has EVER tripped.** For `gp-0x6b26` the gate is
+**unreachable by construction** — an upstream `±cal(0xC407E)` = **±511** clamp binds first, and the
+admission gate sits at **±1024**. ⇒ **the admission-gate class is NOT the ratchet's source on any
+lane the kit has instrumented**, and only three lanes remain open.
+
+### 🛑🛑 **AND IT DEMOTES MY OWN BUILD — V154/V155 ARE SMALLER THAN I RANKED THEM**
+The same measurement that closes the gate also **sizes the lane**:
+```
+   gp-0x6b26 MAX 319.1        vs  gp-0x6b4c < 4096 (measured)      =>  <= ~8 % of the sum AT ITS MAX
+   gp-0x6b26 p50 5.5                                               =>  a few tenths of a % typically
+```
+⇒ **halving this weight moves `sum6` by a few percent at most.** The ω² argument still holds — its
+**share at 7.8 Hz is higher** than its share over all frames — but it starts from a **small base**,
+and that share has **never been measured**.
+⇒ **[CORRECTION to my own ranking last turn] V154/V155 drop BELOW V152. The mechanism is still the
+cleanest in the kit — pure gain, no phase cancellation, zero DC cost — but the expected magnitude is
+SMALL.** I ranked them second on mechanism quality without sizing the lane. **Sizing came first and
+I skipped it.**
+✅ **They remain SAFE on the one axis that matters**: `FUN_00036c12` carries an **int32 WRAPAROUND**
+(`mul r13,r6,r0`, ×0x111, high half discarded, **unclamped and UPSTREAM of `0xC407E`**) that binds
+at ≈**1.6005×** the present level and would deliver a **full-scale SIGN INVERSION**. **V154/V155
+REDUCE the lane, moving AWAY from it.** Any build that RAISES `gp-0x6b26` moves toward it.
+
+### ⭐ WHY THE OTHER LANES ARE NOT SELECTIVE LEVERS
+**`gp-0x6b4c` and `gp-0x6b4e` are the DISJOINT PARTITION SUMS of the same 11-slot request array**
+`gp-0x62c8[]`, split by the mode bytes — i.e. **they carry the assist request itself.** They are the
+dominant terms and they carry **DC**, so cutting their weights (`0xC63AA`/`0xC63A8`) would reduce
+authority broadly rather than selectively. **Not selective levers.**
+⇒ **the inertia lane is the ONLY frequency-selective lane in the observer sum**, which is why it was
+worth building even at a small expected magnitude.
+
+### ✅ THE HONEST RE-RANKING
+```
+   1. V153   observer corner /4, BOTH arms matched   1.95x less at 7.8 Hz, no DC cost, CERTAIN   3 B
+   2. V152   the same lever at /2                    1.26x less, conservative                    3 B
+   3. V149   removes the 5.12x r24 switch            bigger IF it fires; may be INERT            2 B
+   4. V139   both pump arms halved                   demonstrated on-car potency                 2 B
+   5. V155   inertia lane /4     cleanest mechanism, SMALL magnitude (lane <= ~8 % of the sum)   1 B
+   6. V154   inertia lane /2                                                                     1 B
+   7. V150   r26 suppression switch removed          can only suppress the pump                  1 B
+   8. V148   deadband + probe                        MEASURES whether gp-0x671d toggles          3 B
+   9. V151   knee 3000 -> 3600                       MARGINAL, costs 17 % of the term            2 B
+```
+⇒ **V153 stays first**: it acts on the WHOLE residual path rather than one small lane, it is
+**certain to act** (the EMA runs every 1 kHz tick), its reduction is **quantified**, and it costs
+**nothing at DC**.
+
 ## ✅✅✅ **V154 / V155 BUILT — THE INERTIA LANE'S WEIGHT, THE CLEAN VERSION OF THE α2 LEVER**
 ```
    V154   0xC63A6  1024 -> 512    w(gp-0x6b26), the INERTIA lane   1 payload byte, 58/58, CRC 50/50
