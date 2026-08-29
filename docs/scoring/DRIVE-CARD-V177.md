@@ -105,3 +105,38 @@ mode-26/27 **only**. The poles act in both. So:
 
 Revert and tell me which symptom worsened. A ratchet that **rises** would falsify the polarity chain,
 which is the most informative single result available.
+
+---
+
+## 🛑 PRE-REGISTERED, BEFORE THE DRIVE — THE EXACT NUMBERS THE SCORER WILL PRINT
+
+Measured on route `r24`, the **flying build**, same channel and same estimator the scorer uses:
+
+| band | ENGAGED (your car now) | MANUAL | null |
+|---|---|---|---|
+| GRIND 15–25 Hz | **11.1×** | **2.3×** | ~3.9× |
+| RATCHET 5–12 Hz | **26.7×** | **2.8×** | ~3.9× |
+
+**Both manual arms are BELOW the null.** The resonance is engaged-only, so falling below 3.9 is a
+reachable outcome, not a hope — manual already sits there.
+
+**So the drive asks one binary question: does the excess fall below ~3.9×?**
+
+| outcome | reading |
+|---|---|
+| excess drops below ~3.9× | **the symptom is gone by the instrument** — engaged now looks like manual |
+| excess falls but stays above | the inertia lane is contributing but is not the whole story |
+| excess unchanged (11.1 / 26.7) | the inertia dose is not the mechanism; that account fails |
+
+🛑 **The POLES cannot move these numbers** — a slope-corrected excess measures *peakiness*, and a
+broadband low-pass steepens the out-of-band fit too (V184 predicts 11.1 → 11.3). **These columns test
+the inertia revert, which V184 and V185 both carry.**
+
+✅ **The poles are tested by the SPECTRAL SLOPE instead**, which the scorer already prints:
+`FLYING 1/f^2.671 · V185 1/f^2.671 · V184 1/f^4.531`. History spans 0.80–2.37, so **4.53 would be
+outside anything ever recorded** — unmistakable on one pass.
+
+⊕ Because the excess endpoints respond only to the inertia revert, **V184 and V185 are
+indistinguishable on them.** V184's only extra is the slope change, bought with **+16.4° of
+engaged-only phase lag** that could not be priced against openpilot's margin. **That is why V185 is
+the recommended first drive.**

@@ -4,6 +4,29 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **THE PRE-REGISTRATION IS COMPLETE — ONE BINARY THRESHOLD, AND MANUAL PROVES IT IS REACHABLE**
+Measured on `r24` (the FLYING build) with the scorer's own estimator:
+```
+   band              ENGAGED    MANUAL    null
+   GRIND  15-25 Hz     11.1x     2.3x     ~3.9      manual is BELOW the null
+   RATCHET 5-12 Hz     26.7x     2.8x     ~3.9      manual is BELOW the null
+   (9 engaged / 26 manual creep windows on this route)
+```
+✅ **Both manual arms sit below the null**, so "excess below 3.9" is a **demonstrated, reachable
+state**, not an aspiration — the car already reaches it whenever LKAS is off.
+⊕ This also gives a **single-route answer to the question my hands-on test was too underpowered to
+settle**: on `r24` the RATCHET is engaged-only too (manual 2.8 < null 3.9, 26 windows). Not
+hands-matched, so it does not replace Stage 1b, but it is real evidence in the same direction as the
+7/7 grind result.
+⇒ **the drive reduces to ONE binary question: does the engaged excess fall below ~3.9x?**
+```
+   below ~3.9      -> the symptom is GONE by the instrument; engaged now looks like manual
+   falls, above    -> the inertia lane contributes but is not the whole story
+   unchanged       -> the inertia-dose account FAILS
+```
+⊕ And the poles are tested separately by the **spectral slope** (2.671 → 4.531 for V184, outside the
+entire 0.80–2.37 history), because they cannot move the excess numbers at all.
+
 ## 🛑🛑 **THE SCORER'S EXCESS ENDPOINT CANNOT SEE THE POLES AT ALL — MY CARD DISCRIMINATOR WAS BACKWARDS**
 Applying each build's `|H|²` to the REAL flying spectrum (route `r24`, V122) and re-running the
 scorer's own estimator:
