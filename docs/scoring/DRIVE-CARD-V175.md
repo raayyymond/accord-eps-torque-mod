@@ -47,12 +47,16 @@ that matters first. **Stage 2 exists solely to attribute a win, so it is only wo
 IS a win** — which is exactly your rule: if the ratcheting is still there, stop instantly.
 
 **STAGE 1 — do this and nothing else.**
-1. **Engaged creep, ONE continuous pass of 15 seconds, 1–24 km/h, WITH HANDS ON THE WHEEL.**
-   🛑 **Hands-on matters.** The corpus holds only **21** engaged hands-on creep windows, so every
-   hands-matched question is currently unanswerable — and `cs_tq` is the DRIVER torque sensor,
-   so a hands-off pass measures mostly the absence of driver input. Hands on is also how you
-   actually feel the symptom., real curvature, not a straight
-   line. Don't break it up — the analysis window is 5.12 s.
+1. **TWO passes of engaged creep, 15 s each, 1–24 km/h, real curvature. About 30 s total.**
+   **1a — drive it HOW YOU NORMALLY DO** (hands off, or resting). This is the pass that can be
+   **scored today**: the whole 27-window historical baseline is hands-off, so this is the only
+   pass comparable to it, and the card's thresholds below apply to it.
+   **1b — the same again with HANDS ON THE WHEEL.** This answers the confound that `cs_tq` is
+   the DRIVER torque sensor, and builds the first hands-on baseline the kit has.
+   🛑 **Honest limit on 1b: its detection thresholds are UNKNOWN.** The corpus contains
+   **ZERO** continuous 15 s hands-on engaged creep windows, so nothing can be promised about
+   what it resolves — it is a baseline-building pass, not a scored one.
+   Don't break either pass up — the analysis window is 5.12 s.
 2. **Stop.** If the ratcheting is obviously still there, say so and we are done for this build.
 
 ✅ **Stage 1 is adequately powered for the primary question.** The ratchet endpoint is

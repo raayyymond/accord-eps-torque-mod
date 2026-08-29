@@ -1137,3 +1137,69 @@ angular velocity and acceleration”* and *“low apparent mass and friction **t
 one-episode detection margin comfortably, and is the smallest step that does. **Not the largest dose:
 the feel cost is real and the operator should meet it in the smallest useful increment.**
 
+## ✅✅✅ **V168 BUILT — THE BASE-ASSIST SLOPE CAP, A LEVER CLASS THE KIT HAS NEVER TRIED**
+```
+   V168 = V158 + 0xC6384  2048 -> 1536   (2.000x -> 1.500x)
+   image  058dd64ac442ef43c790965c9a5fc011f147f7ff0a5e7cd0c0d1bb8889c7b0ff
+   .rwd   0f0ace3b5bc0a8541227e06c831c555797566374b298ba606614f5a09a1356f1
+   ONE payload byte (0xC6385: 08 -> 06) + one CRC trailer.  35/35 assertions.
+   CRC chain 50/50 - readback byte-identical - all six curve records untouched.
+```
+✅ **`0xC6384` is byte-identical on ALL 161 IMAGES** — the first time this kit has moved it.
+⚠ **The payload is ONE byte, not two**: `0x0800 -> 0x0600` differs in the high byte only. The build
+asserts the **VALUE**, not a hardcoded byte count — the hardcoded-2 assertion has bitten this kit
+before and it fired here too, on the first run.
+
+### ⭐ HOW THIS BUILD'S CLASS DIFFERS FROM THE WHOLE ARC SINCE V38
+```
+   V38-V52    authority / filters / poles / caves
+   V53-V61    telemetry probes and lane mutes
+   V62-V73    the rate lane (r24 / r26)
+   V74-V83a   the base-assist DAMPER          V84 damper reverted to Honda
+   V85-V122   friction / knee / alpha2, the Coulomb relay
+   V133-V167  the damper's SHAPE and the Path-2 weight
+   ---------------------------------------------------------------------------------
+   V168       the BASE-ASSIST MAP's own slope cap  <- the DOMINANT torque-fed loop term
+```
+Every earlier lever acts on a term that is **not** the dominant one. `gp-0x6b86` is **5.8–7.8x the
+entire PID** and has the widest window of all eleven aggregator slots. **This is a new lever, not the
+same lever pushed the other way.**
+
+### ✅ WHY IT IS AIMED AT THE RATCHET SPECIFICALLY
+The grind and the ratchet **dissociate**: post-V102 the grind falls ρ = −0.94 (p 0.005) in three
+channels while the ratchet does not move (ρ = −0.14, p 0.787) against a floor that would have shown
+1.9x. Every lever the kit has found is the grind's. V168 is the first aimed at the other one.
+⊕ **V168 is built on V158**, so it carries the grind lever too and **both symptoms score from the
+SAME single episode in different bands** — the two are separated by the **INSTRUMENT**, not the build.
+
+### 🛑 THE NON-STOCK DELTA, READ FROM THE BUILT IMAGE
+```
+   V168 vs STOCK: 341 differing bytes, 321 payload + 5 CRC trailers, in 12 blocks
+     0xC4000  169 B   friction / knee / alpha2 / clamp family (V85-V122)
+     0xC6000   42 B   main cal -- incl. the 6x LKAS gain, Lever B, and THIS BUILD'S 1 byte
+     0xE4000   36 B   } arbitration setpoint limits raised at V38 (0x3c -> 0x40 pattern)
+     0xE5000   36 B   }
+     0xD7000   22 B   the damper records (V158's FactorC/FactorE shape)
+     0x55000    6 B   CAN tap
+     0x35000    4 B   · 0x2A000 2 B · 0x13000/0x14000/0x3A000/0x45000 1 B each
+```
+
+### ✅ WHAT A NULL WILL LICENSE — WRITTEN BEFORE THE CUT
+One continuous **15 s** engaged creep pass, scored by `rlog-tools/score/score_band_excess.py`:
+- **ratchet 5–12 Hz excess falls BELOW its slope-matched null** ⇒ the ratchet is gone in that regime
+  and the loop-gain account is confirmed;
+- **excess unchanged** (V122 reference ≈33, null ≈4) ⇒ a predicted 3.4x damping increase produced
+  nothing ⇒ **falsifies the real-positive `P·L` assumption**, so this loop does not produce the 14.3x
+  cancellation and the assist map is exonerated the way the Coulomb relay now is;
+- **excess RISES** ⇒ lowering `|L|` sharpened the mode, possible only if `P·L` is not real-positive
+  ⇒ revert and re-derive the phase.
+✅ A single 15 s episode detected the ratchet **11/11 at 5–65x margin**, so **all three outcomes are
+readable from one pass. There is no uninterpretable branch.**
+
+### 🛑 THE FEEL COST — THE OPERATOR'S CALL
+Lowering the cap means **less assist per unit driver torque near centre ⇒ heavier steering there**,
+against a standing constraint. Narrower than it sounds: the curve is **uncapped above X≈450 so peak
+authority and max rates are untouched**, and the map is **driver-torque fed, not the LKAS lane**
+(`0xC616C`=0 ⇒ `gp-0x6b4a`≡0, asserted in the build). 1536 is the **smallest** dose clearing the
+one-episode margin; 1280 and 1024 remain if it reads clean but incomplete.
+
