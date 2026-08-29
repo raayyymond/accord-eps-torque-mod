@@ -4,29 +4,40 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
-## ➕ **NEXT LEAD — AMPLITUDE-SELECTIVITY: RESHAPE THE RESIDUAL LERP `f'` AT SMALL SIGNAL**
-**Untouched, and it may be a better fit to the operator's constraint than any frequency lever.**
-`FUN_00038148`'s residual LERP maps `|res|` → `gp-0x6b70` through a **9-knot table**: X at
-`gp-0x64b8..gp-0x64a6`, Y at `gp-0x641c..gp-0x640a`, with `Y[0]` / `Y[last]` as the out-of-range
-fallbacks. `f'` is its **local slope**, and per
-[[accord-fprime-compression-explains-v89-and-v97]] **every perturbation of this path reaches the car
-through `f'`** (measured p50 **2.174 hands-off / 0.346 hands-ON**).
-✅ **The idea**: the ratchet is a **SMALL-signal** phenomenon; LKAS commands and real steering are
-**LARGE-signal**. A table that is **flatter at small `|res|`** cuts small-signal loop gain — hence the
-resonance — while leaving large-signal authority and feel untouched. That is **amplitude**
-selectivity, orthogonal to the ω² selectivity of `gp-0x6b26`, and it does **not** cost lag the way a
-pole does.
-⚠ **What must be settled first, and none of it needs a drive:**
-1. **The table is RAM-resident** (`gp-`relative) → find its **flash initialiser** and confirm it is a
-   cal, not computed. This is a **new edit class for this kit** ⇒ **GATE 1 (RAM ownership) applies in
-   full**, including writers and register-indirect access.
-2. **Read the actual 9 knots** — the shape decides whether small-signal flattening is even available,
-   or whether Honda already flattens there.
-3. 🛑 **`f'` sits INSIDE the loop ⇒ GATE 2 in magnitude AND phase.** A deadband is a
-   **nonlinearity**: it can create a limit cycle rather than remove one. **Describing-function analysis
-   is mandatory before any dose** — this is exactly the V80 relay trap in a different guise.
-🛑 **Do NOT cut a build on this until 1–3 are closed AND V175 has flown** — a fourth unflown build
-is inventory, not progress.
+## ❌ **THE AMPLITUDE-SELECTIVITY LEAD IS CLOSED IN ITS ORIGINAL FORM — THE RESIDUAL LERP IS NOT A CALIBRATION**
+🛑 **I proposed reshaping the residual LERP's 9 knots as a static cal edit. THAT TABLE DOES NOT
+EXIST IN FLASH.** `FUN_000389ec` **rebuilds it every cycle** into a scratch buffer and publishes it:
+```
+   scratch:  X at gp-0x373c ... , Y at gp-0x3714 ...
+   X[i] = ((int)raw << 10) / iVar32        iVar32 = FUN_0003897a(gp-0x6982, clamped by cals)
+   Y[i] = (raw * iVar33) >> 10             iVar33 = FUN_0003897a(gp-0x6984, clamped by cals)
+   then published:  gp-0x64b8.. <- gp-0x373c..     gp-0x641c.. <- gp-0x3714..
+```
+=> the knots are **computed from two RUNTIME ADAPTATION STATES** (`gp-0x6982`, `gp-0x6984`) every
+cycle. **There is no static table to edit**, and my earlier flash search was hunting something that
+does not exist. ➕ It also explains the measured **`f'` compression** (p50 2.174 hands-off vs 0.346
+hands-ON) — that is not a fixed curve being traversed at different points, it is **the curve itself
+being rescaled** by the adaptation.
+
+### ⚠ THE SALVAGEABLE SUB-LEAD, AND WHY I AM NOT SPENDING IT NOW
+The **scale factors are bounded by static cals**, and those are editable:
+```
+   tp+0x7390 / 0x7392  = 0xC6390 / 0xC6392   upper clamps on the two adaptation inputs
+   tp+0x739a / 0x739c  = 0xC639A / 0xC639C   lower clamps
+   tp+0x717a / 0x717c  = 0xC617A / 0xC617C   small-signal FLOORS applied to Y per knot
+   tp+0x713e / 0x7140  = 0xC613E / 0xC6140   the thresholds those floors are gated on
+   tp+0x7178           = 0xC6178             per-knot output clamp
+```
+Since `f' ∝ iVar33 · iVar32 / 1024²`, bounding the adaptation **does** move small-signal gain, and
+`0xC617A`/`0xC617C` look like a direct small-signal floor — the amplitude-selective handle in cal form.
+🛑 **But this is a lever INSIDE AN ADAPTATION LOOP, which is a new and materially riskier class
+than anything the kit has flown.** Before any dose it needs: the exact knot-index gating of the floors
+traced (the logic is threshold-and-index dependent, not a simple clamp); `FUN_0003897a` decompiled to
+learn what the adaptation actually converges to; **GATE 1** on `gp-0x6982`/`gp-0x6984`; and **GATE 2 in
+magnitude AND phase against an ADAPTIVE plant**, which the kit has never had to do. ⚠ **A wrongly
+bounded adaptation can wind up or chatter** — the failure mode would look like new ratcheting.
+=> **That is a full session's work and it must NOT be started before V175 flies**, because if V175's
+result falsifies the polarity chain, this entire path is falsified with it.
 
 ## ✅ **THE SIX-TERM SUM IS NOW FULLY CLASSIFIED — `gp-0x6b26` IS ITS ONLY FREQUENCY-SELECTIVE LANE**
 **A CLOSING result, both positive and negative.** Every lane of `FUN_00038148`'s Path-2 sum has been
@@ -2229,45 +2240,4 @@ can actually resolve.
 between V122 and V158, a move there is attributable to the damper **only because Lever B is
 byte-identical across the pair** — verified. On any future build that touches BOTH, 18–22 Hz stops
 being attributable.
-
-## 🛑🛑 **POWER ANALYSIS ON REAL DATA — THE 6–9 Hz SCORER RESOLVES 1 ROUTE IN 23**
-Ran the validated scorer over **every cached route** to answer, before the drive, whether the band
-instrument can detect V158 at all.
-```
-   route  engEp  manEp   6-9 Hz  eng/man        verdict
-   r1e     22      5     3.19  [ 1.67,   6.84]  not resolved
-   r22      9      4     0.57  [ 0.23,   2.45]  not resolved
-   r24     10      5     0.20  [ 0.04,   0.86]  not resolved
-   r78     15      5     1.17  [ 0.44,   2.07]  not resolved
-   r7e     16      6     2.19  [ 0.69,   5.26]  not resolved
-   r7f     19      6     1.76  [ 0.35,  19.03]  not resolved
-   r81      4      4     6.10  [ 3.27, 122.43]  no null (too few episodes)
-   r96     16      5     1.04  [ 0.54,   4.45]  not resolved
-   ra4     20      4     4.83  [ 0.57,  13.59]  not resolved
-   ra6     15      7    11.58  [ 3.53,  33.37]  *** RESOLVED ***
-   + 13 further routes: NO MATCHED CREEP ARMS AT ALL
-```
-✅ **[EVIDENCE] 10 of 23 routes are scoreable; 1 of those 10 resolves.** ⇒ **the 6–9 Hz band scorer
-resolves roughly ONE DRIVE IN TWENTY-THREE.**
-
-### 🛑 SO SET EXPECTATIONS HONESTLY, BEFORE THE DRIVE
-**The band scorer is unlikely to detect V158's effect.** That is not a defect in V158 and not a defect
-in the scorer — it is the noise floor of the endpoint, measured rather than assumed. **The operator's
-report is the primary endpoint, and on most drives it is the ONLY one.** The pre-registration already
-says this; now it has a number behind it.
-
-### ⭐ AND THE BINDING CONSTRAINT IS IDENTIFIED EXACTLY
-```
-   engaged episodes   9-22   never the limit
-   manual  episodes   3- 7   THE LIMIT, on every single scoreable route
-```
-Thirteen routes have **no matched creep arms at all**, and the ten that do average **5 manual
-episodes**. The one route that resolved, ra6, has **the most manual episodes (7)**.
-⇒ **the missing ingredient has always been MANUAL CREEP, and it is the cheapest thing to fix.**
-**8+ separate manual creep passes** is the single change that would most improve the drive's power —
-more than any extra engaged driving. This is now the headline requirement on the drive card.
-
-⊕ Note r24's 0.20 [0.04, 0.86] would read as a strong engaged *reduction* at 6–9 Hz on a naive CI, and
-the null correctly rejects it. Seven of the ten scoreable routes have CIs spanning 1.0; **the endpoint
-is dominated by between-episode variance, not by firmware.**
 
