@@ -1,5 +1,45 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **THE SCORER IS VALIDATED ON REAL DATA — AND IT CAUGHT ITSELF OVER-CLAIMING**
+Ran the new pipeline end-to-end on **r24, a real V122 creep drive**, before the V158 flight.
+
+### ⛔ MY OWN SCORER OVER-CLAIMED, AND THE KIT ALREADY HAD THE RULE
+```
+   real run    6-9 Hz  0.20 [0.04, 0.86]   -> verdict printed: "RESOLVED"
+   --null      6-9 Hz  0.41 [0.06, 17.06]  -> the endpoint resolves NOTHING on this route
+```
+The verdict tested only *does the CI exclude 1.0*. It ran the split-half null **only when asked**
+and **never used it** — exactly what `feedback-run-the-control-before-the-measurement` forbids
+(*“four claims died to controls in one session”*). **Fixed: the null is now computed automatically
+and GATES the verdict.**
+
+### ✅ VALIDATED THREE WAYS ON r24
+```
+   6-9 Hz    effect 0.20 [0.04,  0.86]   null 0.20 [0.00, 3.22]   NOT RESOLVED
+   18-22 Hz  effect 3.88 [1.60, 10.87]   null 0.19 [0.02, 0.76]   RESOLVED
+   30-40 Hz  control 0.61 [0.28, 5.91]   -> flat, guard passes
+   speed census: engaged p50 11.3 / manual p50 11.2, median gap 0.14 km/h
+```
+1. **Reproduces the recorded reference**: r24's 18–22 Hz reads **3.88**, against the V133 script's
+   recorded **3.88 [1.63, 10.08]** — same point estimate, slightly wider CI, as an episode bootstrap
+   should give.
+2. **Resolves what is known to be real** — the 18–22 Hz engaged excess, well outside its null.
+3. **Refuses what a naive CI would have claimed** — the 6–9 Hz 0.20 [0.04, 0.86].
+
+### 🛑 A CONCRETE DRIVE REQUIREMENT FALLS OUT OF THIS
+**On r24 — 10 engaged episodes, 5 manual — the 6–9 Hz band CANNOT BE RESOLVED AT ALL**, and 6–9 Hz is
+**V158's primary target**. The manual arm could not even support a split-half null (5 episodes, needs 8).
+=> **a V158 drive shaped like r24 would produce NOTHING on the band that matters.**
+✅ **The drive must ALTERNATE engaged and manual creep many more times** — not two long stretches but
+**8+ separate engaged and 8+ separate manual passes** over the same low-speed loop. More *windows* do
+not help; only more *episodes* do. This is now in the drive card, and the extractor checks it at
+extract time rather than leaving it to be discovered after the drive.
+
+⭐ **THE BROADER POINT**: I audited the tooling the pre-registration named, found a window bootstrap,
+replaced it — and my replacement then over-claimed in a different way that only running it on **real
+data** exposed. **A new instrument is not trustworthy because it fixed the old one's bug.** Run it on
+a route whose answer you already know.
+
 ## ⛔✅ **THE PRE-REGISTERED SCORER HAD A WINDOW BOOTSTRAP — FIXED BEFORE THE DRIVE, NOT AFTER**
 The V158 pre-registration told the operator to reuse `score_v133_creep.py`. Its contrast, control
 guard and refusal logic are sound. **Its bootstrap violates this kit's own standing rule.**

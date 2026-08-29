@@ -52,6 +52,11 @@ import sys
 import numpy as np
 from scipy import signal
 
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.dirname(HERE)
 CACHE = os.path.join(ROOT, 'analysis-2020accord', '_scratch', 'cache')
@@ -187,10 +192,31 @@ def run(tag):
         print('     activity difference, not a damping result.  NOTHING may be read from it.')
         return
     print('  ✅ control is flat -- the contrast is band-specific')
-    if lr <= 1.0 <= hr:
-        print('  => 6-9 Hz CI spans 1.0: NOT RESOLVED.  That is "cannot resolve", NOT "unchanged".')
-    else:
-        print('  => 6-9 Hz engaged excess is resolved at this sample size.')
+
+    # 🛑 RUN THE CONTROL BEFORE READING THE MEASUREMENT.  A CI that excludes 1.0 means nothing
+    # until it is compared with what this route's OWN split-half null can resolve.  On r24 the
+    # 6-9 Hz effect read 0.20 [0.04, 0.86] -- apparently resolved -- while the engaged-arm null
+    # read 0.41 [0.06, 17.06], a floor 280x wide.  Without this gate the scorer over-claims.
+    print()
+    print('  SPLIT-HALF NULL on the engaged arm -- the floor this route can actually resolve:')
+    for col, band, pt, cl, ch in ((0, '6-9 Hz  ', pr, lr, hr), (1, '18-22 Hz', pg, lg, hg)):
+        if len(e_eps) < 2 * MIN_EPISODES:
+            print('     %s  null NOT COMPUTABLE (%d engaged episodes, need >=%d)'
+                  % (band, len(e_eps), 2 * MIN_EPISODES))
+            print('     🛑 With no null this endpoint is UNINTERPRETABLE.  Report the operator verdict only.')
+            continue
+        a, b = e_eps[0::2], e_eps[1::2]
+        np_, nl, nh = boot_episodes(a, b, col)
+        width_eff = ch / max(cl, 1e-30)
+        width_null = nh / max(nl, 1e-30)
+        resolves = (pt < nl or pt > nh) and width_eff < width_null
+        print('     %s  effect %5.2f [%5.2f,%7.2f]   null %5.2f [%5.2f,%7.2f]   %s'
+              % (band, pt, cl, ch, np_, nl, nh,
+                 'RESOLVED -- effect lies outside the null' if resolves
+                 else 'NOT RESOLVED -- inside this route\'s own noise floor'))
+    print()
+    print('  🛑 "NOT RESOLVED" means CANNOT RESOLVE, not "unchanged".  The two are different claims')
+    print('     and only the first is supported.')
     print('  🛑 The OPERATOR\'S report is the primary endpoint.  This is a supporting instrument, and')
     print('     the between-build floor on it is 20-36x -- do not rank V158 against V122 with it.')
 

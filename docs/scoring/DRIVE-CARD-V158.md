@@ -21,7 +21,12 @@ has been shown not to track what you hear.
 
 ## Drive order
 
-**1. Engaged creep — the main event. 5+ minutes.**
+🛑 **ALTERNATE, DO NOT DO ONE LONG BLOCK OF EACH.** Validated on r24: a drive with 10 engaged and
+5 manual *stretches* **could not resolve the 6-9 Hz band at all** — and 6-9 Hz is exactly what V158
+targets. The statistic resamples **episodes**, so **8+ separate engaged passes and 8+ separate manual
+passes** are needed. More minutes in one block does **not** help; more separate passes does.
+
+**1. Engaged creep — the main event. 5+ minutes, in SEVERAL separate passes.**
 2–8 km/h, LKAS engaged, hands off, with real steering activity — a car park, a slow residential
 loop, anything that makes the wheel work at walking pace. This is the only segment that can produce
 a result.
