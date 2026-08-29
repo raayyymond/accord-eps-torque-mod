@@ -1,3 +1,18 @@
+# 🛑 NOT RECOMMENDED — THE SIGN WAS VERIFIED AND IT WENT THE OTHER WAY
+
+**Do not fly this build to fix the ratchet. Fly V189 instead.**
+
+`FUN_0003a382` was decompiled after this card was written. The chain is now proven:
+`gp-0x6bc2 ~ -a` → `gp-0x6ad6` ↓ → `error = measured - reference` ↑ → `gp-0x6ad4 = -K*error`
+↓ → the aggregator sum **OPPOSES acceleration** = **positive damping, stabilising**.
+Disabling it would most likely make the ratchet **WORSE** — the inverted-sign outcome this
+card itself pre-registered. Honda ships the flag enabled, which agrees.
+
+The artifact is kept: it remains a legitimate **deliberate probe** of this term if V189
+leaves ratchet behind — but it is a probe expected to worsen it, not a fix.
+
+---
+
 # DRIVE CARD — V190, the untouched acceleration feedback
 
 **File:** `39990-TVA,A160-V190-V189BASE-ACCEL-REFERENCE-TERM-OFF-0x13000-0x100000.rwd`

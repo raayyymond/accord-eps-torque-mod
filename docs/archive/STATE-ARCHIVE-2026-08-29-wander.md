@@ -1559,3 +1559,62 @@ rate**. This is not a power problem that more windows would fix. **Recorded so i
 V168 and seeing whether the peak moves. That is exactly what the pre-registered outcomes cover, and it
 is why no further static analysis is being done on this question.
 
+## ✅✅ **THE GRIND IS ENGAGED-ONLY TOO — AND A SUB-BAND SPLIT ATTRIBUTES IT**
+Both levers on the fly-first build act at 15–25 Hz, so a grind change needs attributing. The obvious
+discriminator — V158's damper is **engaged modes 26/27 only** while V172's filter is **always
+active** — would work if the grind existed in manual. **It does not.**
+```
+   GRIND 15-25 Hz, engaged vs MANUAL creep, slope-matched nulls
+     r78  V91    engaged   6.1 / 3.5    manual  2.3 / 3.8    no
+     r7e  V96             28.9 / 3.2            2.2 / 4.8    no
+     r7f  V96             14.3 / 3.5            2.2 / 3.9    no
+     r96  V102           248.2 / 4.0            1.5 / 4.9    no
+     ra6  V106            25.3 / 4.0            3.0 / 3.9    no
+     r1e  V107            27.7 / 2.7            1.6 / 4.5    no
+     r24  V122            14.0 / 3.9            1.9 / 4.1    no
+   => the grind clears its null in MANUAL on 0 of 7 routes
+```
+✅ **[EVIDENCE] the GRIND is engaged-only, exactly like the ratchet** (also 0/7 in manual).
+⇒ **both symptoms are FIRMWARE-CREATED BY ENGAGEMENT**, not mechanical modes being amplified. They
+differ in frequency and in which levers move them, **not in class**. **This is new** — the ratchet was
+established engaged-only earlier this session; the grind had never been tested the same way.
+❌ And it kills the manual-arm discriminator: neither symptom exists there to compare.
+
+### ✅ WHAT DOES DISCRIMINATE: THE SHAPE ACROSS THE BAND
+V172's filter attenuation is **frequency-SLOPED**; V158's damper adds a rate-proportional term whose
+effect is set by the dose, not the frequency, so it is roughly flat across 15–25 Hz.
+```
+   V172 attenuation:  15 Hz 0.2298 - 17 Hz 0.1828 - 19 Hz 0.1415
+                      21 Hz 0.1042 - 23 Hz 0.0694 - 25 Hz 0.0359
+   mean 15-20 Hz 0.1737   vs   mean 20-25 Hz 0.0784
+   => V172 attenuates the TOP of the band 2.21x more than the bottom
+```
+⭐ **DISCRIMINATOR, free from the same episode**: score the grind excess in **15–20** and **20–25**
+separately.
+- **20–25 falls much more than 15–20** ⇒ **V172's filter did it.**
+- **both fall about equally** ⇒ **V158's damper did it.**
+⊕ Added to the V172 drive card.
+
+## ✅ **GATE 1 PASSES FOR V172 — `gp-0x6b86` HAS EXACTLY ONE CONSUMER, AND IT IS NOT A MONITOR**
+V172 low-passes the assist map's output hard (**21 Hz down 9.6x, 40 Hz down 3.3x**). The aggregator
+consuming it is fine with that — it is a torque contribution. **The risk was a MONITOR**: a
+stuck-signal, rate-of-change or plausibility check that expects the value to keep moving, since
+heavily low-passing a watched signal can look like a frozen sensor. Raw LE byte scan across **both**
+gp encodings (operand-text search undercounts and cannot see register-indirect access at all):
+```
+   gp-0x6b86  4 accesses, ALL accounted for
+     0x35AB6  ld.h        }  inside FUN_000352b4 -- the producer's own lockstep compare
+     0x35AC0  st.h        }  the write
+     0x35ACE  st.h r0        the store-zero (the out-of-range branch)
+     0x3AC7C  ld.h           FUN_0003aa2c, THE AGGREGATOR -- the only consumer outside the producer
+
+   gp-0x4cde  3 accesses -- the lockstep SHADOW, all inside the producer, written in step
+```
+✅ **[EVIDENCE] exactly ONE consumer outside the producer, and it is the torque sum this build
+intends to change.** No monitor, no plausibility checker, no rate-of-change watchdog reads it.
+⇒ **GATE 1 (RAM ownership) PASSES**: heavily filtering this signal cannot trip a fault path,
+because nothing is watching it for liveness.
+⊕ The lockstep shadow is unaffected by a coefficient change — the value is still written to both
+cells in the same instruction pair, so the pairing that trips `FUN_0006b9fa` is preserved.
+⊕ The same clearance covers V168, which changes only how the value is COMPUTED, not who reads it.
+
