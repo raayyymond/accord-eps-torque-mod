@@ -92,7 +92,7 @@ Standing rule: **score bands, let the OPERATOR score symptoms.** Three questions
 
 ## SECONDARY — bands, episode-clustered and speed-matched
 
-Reuse `rlog-tools/score/score_v133_creep.py` (creep-band, already episode-clustered). Requirements:
+Use **`rlog-tools/score/score_v158_creep.py`**. 🛑 **NOT `score_v133_creep.py`** — audited 2026-08-29 and its `boot()` is a **WINDOW** bootstrap (`rng.choice(e[:, i], len(e))`), which this kit’s standing rule forbids; measured **2.6x too confident** on synthetic data. The corrected scorer resamples EPISODES. Requirements it already satisfies:
 
 - **episode bootstrap, never window bootstrap** — window bootstraps manufacture significance;
 - a **30–40 Hz negative control** — a ratio moving in both signal and control bands is a global
