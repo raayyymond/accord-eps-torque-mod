@@ -136,7 +136,7 @@ Measured across every cached route with a computable null: **18-22 Hz resolves 7
 replicated, engagement-caused phenomenon. 6-9 Hz scatters around 1 with no consistent direction.
 
 ⚠ **This corrects an error above.** 18-22 Hz was designated a *“built-in control that should not
-move”*. It is not a control: V158's damper is , a **broadband viscous** term
+move”*. It is not a control: V158's damper is `-sign(rate) * f(|rate|)`, a **broadband viscous** term
 whose LERP is on rate MAGNITUDE not frequency, so it opposes motion at every frequency and should
 reduce 18-22 Hz as well.
 
