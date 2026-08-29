@@ -4,6 +4,27 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **EVERY DRIVE-CARD ENDPOINT IS NOW POWER-CHECKED — AND THE LKAS CLAIM WAS UNSUPPORTABLE**
+Against 27 real 15 s engaged creep windows, comparing ONE new window to the historical distribution:
+```
+   endpoint                 log10 sd   detect@1 pass   V175 predicts    margin   verdict
+   GRIND 15-25 Hz             0.396        5.96x         0.058x          2.91x   ANSWERABLE
+   lane-change 26-31 Hz       0.158        2.04x         0.029x         16.97x   ANSWERABLE
+   RATCHET 6.5-11 Hz          0.332        4.47x         0.260x          0.86x   needs 2 passes
+   LKAS band 0.5-3 Hz         0.654       19.16x         0.846x          0.06x   needs 54 passes
+```
+🛑 **RETRACTION on the card: I claimed the drive would show LKAS authority unchanged. IT CANNOT.**
+One pass bounds an LKAS-band change only to **19.2x**, so a measured null there is worthless and must
+never be reported as evidence of no change. **That authority is intact is an ANALYTIC claim** from the
+section transfer function (−0.05 to −1.42 dB over 0.5–3 Hz); **the operator's own impression is the
+better instrument** and is now what the card asks for.
+✅ **The good news is structural**: the build's LARGEST predicted effect (grind, a 17x cut) is also
+the **best-powered endpoint on the card**, margin 2.9x. ⇒ **if the grinding does not measurably fall
+on one pass, the pole-retune account is in trouble** — a real, pre-registered failure mode.
+⚠ The ratchet's *amplitude-change* endpoint needs **2** passes (margin 0.86x). The ratchet's
+**presence/absence** endpoint does not — it is an ~8x move and one window resolves it. **Keep those
+two questions separate**: "is it gone" is answerable now; "by how much did the band fall" is not.
+
 ## ⚠ **POWER CHECK BEFORE THE DRIVE: THE V175 CARD WAS UNDERPOWERED FOR ATTRIBUTION — NOW STAGED**
 **Caught before the drive rather than after, which is the whole point of the design law.** The card
 asked for one 15 s engaged pass and one 15 s LKAS-off pass and attributed the result via the
@@ -2221,46 +2242,4 @@ driving all advance monotonically with build order too. A monotone run of six ha
 of ~1/360, so the ordering is unlikely to be coincidence — **but “the builds caused it” and “something
 else that also advances with time caused it” are not separated by this data.** The V158 drive is a
 genuine test precisely because V158 is a large, single, *known* change against V122.
-
-## 🛑🛑 **SCORE V158 AT 18–22 Hz, NOT 6–9 Hz — THE INSTRUMENT CAN ONLY SEE ONE OF THEM**
-Ran both bands through the null gate on every route with a computable null.
-```
-   route  manEp   6-9 Hz  eng/man         18-22 Hz eng/man          resolves
-   r1e      5     3.19 [ 1.67,   6.84]    57.93 [ 28.82, 111.51]    18-22
-   r22      4     0.57 [ 0.23,   2.45]     7.10 [  1.29,  17.21]    neither
-   r24      5     0.20 [ 0.04,   0.86]     3.88 [  1.60,  10.87]    18-22
-   r78      5     1.17 [ 0.44,   2.07]    11.81 [  3.52,  25.51]    neither
-   r7e      6     2.19 [ 0.69,   5.26]    10.02 [  4.01,  38.80]    18-22
-   r7f      6     1.76 [ 0.35,  19.03]    18.46 [  4.75,  30.64]    18-22
-   r96      5     1.04 [ 0.54,   4.45]   742.19 [291.03,1422.98]    18-22
-   ra4      4     4.83 [ 0.57,  13.59]   327.51 [ 22.53, 655.22]    18-22
-   ra6      7    11.58 [ 3.53,  33.37]    87.17 [ 35.87, 404.97]    BOTH
-   ------------------------------------------------------------------------
-   6-9 Hz   resolved 1/9        18-22 Hz resolved 7/9
-```
-✅ **[EVIDENCE] the 18–22 Hz band is a ~7x more sensitive instrument than 6–9 Hz.**
-✅ **[EVIDENCE] a large, REPLICATED phenomenon**: the engaged/manual ratio at 18–22 Hz is **> 1 on all
-nine routes**, spanning **3.88 to 742** — engagement multiplies that band at creep on every drive
-measured. 6–9 Hz scatters around 1 (0.20–11.58) with **no consistent direction**.
-
-### ⚠ CORRECTION TO MY OWN PRE-REGISTRATION
-I designated 18–22 Hz a *“built-in control that should not move”* because Lever B is unchanged
-V122→V158. **That was wrong.** V158's damper is `-sign(rate) x f(|rate|)` — a **BROADBAND VISCOUS**
-term whose LERP is on rate MAGNITUDE, not on frequency. It opposes motion at **all** frequencies, so
-it should reduce 18–22 Hz as well as 6–9 Hz.
-⇒ **18–22 Hz is an ENDPOINT for V158, not a control** — and it is the only endpoint the instrument
-can actually resolve.
-
-### ✅ THE REVISED SCORING PLAN
-```
-   PRIMARY (instrumented)   18-22 Hz engaged/manual at creep, null-gated   resolves 7/9
-   SECONDARY                 6-9 Hz  -- the symptom's own band, but         resolves 1/9
-                             expect NOT RESOLVED; that is the floor
-   CONTROL                  30-40 Hz, unchanged
-   PRIMARY OVERALL          the operator's report -- unchanged
-```
-⚠ **A caveat that must travel with this**: because Lever B also lives at 18–22 Hz and is unchanged
-between V122 and V158, a move there is attributable to the damper **only because Lever B is
-byte-identical across the pair** — verified. On any future build that touches BOTH, 18–22 Hz stops
-being attributable.
 

@@ -61,6 +61,32 @@ python rlog-tools/score/score_band_excess.py <route-tag>
 python rlog-tools/score/grind_engaged_vs_manual.py <route-tag>
 ```
 
+---
+
+## 🛑 WHAT ONE STAGE-1 PASS CAN AND CANNOT ANSWER
+
+Power-checked against 27 real 15 s engaged creep windows. **An endpoint marked NOT answerable will
+produce a null that means nothing — I will not report one as evidence.**
+
+| endpoint | detectable @ 1 pass | V175 predicts | verdict |
+|---|---|---|---|
+| **GRIND 15–25 Hz** | 5.96× | **0.058× (a 17× cut)** | ✅ **answerable**, margin 2.9× |
+| **lane-change 26–31 Hz** | 2.04× | 0.029× | ✅ **answerable**, margin 17× |
+| **ratcheting — is it THERE?** | presence/absence, ~8× | gone or not | ✅ **answerable** (and your report settles it) |
+| ratchet 6.5–11 Hz, *how much* it fell | 4.47× | 0.260× | ⚠ margin 0.86× — needs **2** passes |
+| LKAS band 0.5–3 Hz | **19.2×** | 0.846× | ❌ needs **54** passes — **not measurable here** |
+
+🛑 **On LKAS authority — a correction to an earlier draft of this card.** I wrote that the drive
+would show authority unchanged. **It cannot.** One pass bounds an LKAS-band change only to within
+**19×**, so a measured null there is worthless. That authority is intact is an **ANALYTIC** claim
+from the section's transfer function (−0.05 to −1.42 dB across 0.5–3 Hz) — **your seat-of-the-pants
+report is the better instrument**, and it is the one I will use.
+
+✅ **The upshot is good**: Stage 1's biggest predicted win (the grind, a 17× cut) is comfortably the
+best-powered endpoint on the card. If the grinding does not measurably fall on one pass, the
+pole-retune account is in trouble — and that is a real, pre-registered way for this build to fail.
+
+
 ## THE DISCRIMINATOR — ENGAGED vs MANUAL
 
 V173's poles and V175's revert **both** attenuate the ratchet, so amplitude alone cannot say which
@@ -81,8 +107,11 @@ worked. But **V173's poles act in both modes, and the revert cannot act in manua
   *too* light or nervous, say so — that is a real result, not a complaint.
 - Steering will feel slightly **laggier at low frequency** than stock (+29 ms at 1 Hz, from V173's
   poles). You may not notice it; if you do, say so, because the next build's size depends on it.
-- **LKAS authority should be unchanged.** Its magnitude is intact to within 1.4 dB. If the car feels
-  like it is not pulling as hard in a lane, that is unexpected and worth reporting.
+- **LKAS authority should feel unchanged** — the section's magnitude is intact to within
+  1.4 dB across 0.5–3 Hz. 🛑 **This drive CANNOT measure that** (see the table above: one
+  pass bounds it only to 19×), so **your impression is the instrument here.** If the car
+  feels like it is not pulling as hard in a lane, say so — that would be the only signal
+  we get.
 
 🛑 **Score bands are mine; symptoms are yours.** I will not call anything fixed that you have not.
 
