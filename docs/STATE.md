@@ -1,5 +1,61 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **A CALIBRATED BOUND AT LAST — ENGAGEMENT ADDS ≤ ~2 % OF RMS AS A 7.8 Hz LINE**
+The band-power statistic was the wrong instrument: the record's claim is about a **LINE**
+(*"0 of 97 fully-manual windows carry a line"*), and at **Q ≈ 20** the linewidth is
+**7.8/20 ≈ 0.39 Hz**, so a 3 Hz band **dilutes it ~8×**. Redone on **line prominence**
+(peak-in-band / local median background), 20 s windows, **0.098 Hz resolution**:
+```
+   channel  routes    6-9 Hz prominence [95% CI]     26-31 Hz CONTROL
+   tq         13          1.17 [0.86, 1.27]          1.03 [0.88, 1.16]
+   cs_tq      13          1.01 [0.83, 1.53]          1.01 [0.87, 1.30]
+   rate_f     13          1.08 [0.89, 1.50]          0.95 [0.85, 1.21]
+   probe      10          0.89 [0.80, 1.14]          1.03 [0.93, 1.27]
+```
+⇒ **still null, every CI spanning 1** ⇒ **the dilution hypothesis is REFUTED** — it was a reasonable
+idea and it is wrong. Prominence agrees with band power.
+
+### ⭐⭐ THE POSITIVE CONTROL — WHICH IS WHAT MAKES THE NULL MEAN SOMETHING
+A null with no positive control is uninterpretable (the V64 lesson). Injecting a **noise-driven
+Q = 20 resonance at 7.8 Hz** into **real manual `tq` windows** (baseline prominence **9.82**):
+```
+   injected line      prominence      vs baseline
+     2 % of RMS         13.25            1.35
+     5 % of RMS         19.27            1.96
+    10 % of RMS         38.26            3.90
+    20 % of RMS         65.44            6.66
+    80 % of RMS        150.59           15.34
+```
+✅ **THE INSTRUMENT WORKS** — it resolves a Q=20 line at **2 % of signal RMS**.
+⇒ and the measured engagement contrast is **1.17, CI upper bound 1.27 — BELOW the 2 % response of
+1.35.**
+⇒ **[EVIDENCE, with a PASSING positive control] engagement adds AT MOST ~2 % of signal RMS as a
+7.8 Hz line on the column torque channel.** This is the **first calibrated bound** the kit has on
+the symptom's visibility, as opposed to an inference from a ratio.
+
+### 🛑 WHICH SETTLES THE SCORING QUESTION WITH A NUMBER
+If the **entire** engagement-conditional line is ≤ 2 % of RMS, a build that removes **half** of it
+moves the column by **≤ 1 % of RMS** — a prominence change of roughly **1.2×**, inside the
+route-to-route spread of every channel measured.
+⇒ **🛑🛑 NO CAN-DERIVED STATISTIC CAN RANK THESE BUILDS.** Not band share, not line prominence,
+not matched, not pooled over 24 routes. **The question is closed, quantitatively.**
+⇒ **Corollary — stop spending drives on instrumented scoring for THIS symptom.** Probes remain
+valuable for *mechanism* questions (does a gate fire, does a counter toggle, what is a cell's duty),
+which are **binary and large**; they are useless for *amplitude* questions about the ratchet.
+
+### ⚠ ONE RECORDED CLAIM DOES NOT REPLICATE
+`accord-ratchet-is-a-lightly-damped-resonance` states **"0 of 97 fully-manual windows carry a
+line."** On this corpus **manual windows carry a median 6–9 Hz prominence of 9.82**, against a
+white-noise expectation of only **~ln(30) ≈ 3.4**.
+⇒ **manual windows are NOT line-free here.** Either that count used a much stricter test than
+peak/background, or it was drawn from a narrower regime than the 24-route corpus.
+⇒ **⚠ flagged, NOT overturned** — I do not have that memory's exact line test. **But its companion
+inference — *"engagement supplies the resonance, it does not amplify an existing tone"* — should be
+treated as UNCONFIRMED until that test is restated**, because a manual baseline prominence near 10
+is consistent with an existing tone.
+✅ **Untouched** (none is a contrast or a line count): ring-down **Q 14–29 / ζ 0.017–0.036**, the
+Welch-ladder **limit-cycle exclusion**, **not-rim-side**, and the **loop-pole** case for V152/V153.
+
 ## 🛑🛑🛑 **MATCHED, ENGAGEMENT ADDS ~12 % AT 6–9 Hz — NOT 2.8×. THE BUS CANNOT SEE THE SYMPTOM.**
 Pooled the matched analysis over **every cached route with both arms** — 27 qualify, 24 yield matched
 strata. 5.1 s pure-arm windows, stratified on (speed bin × |rate| RMS bin), per-route median over
