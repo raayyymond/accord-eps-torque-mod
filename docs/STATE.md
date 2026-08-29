@@ -1,5 +1,56 @@
 # STATE — living current state of the kit
 
+## ⚠⚠ **THE INSTRUMENT IS RUNNING OUT OF RANGE — AND I MUST WALK BACK LAST TICK'S PREDICTION**
+Replaced the single cross-route replicate with **nine within-drive split-half replicates**: split each
+route's episodes in half, score each half independently, compare.
+```
+   route  build   half A    half B     A/B
+   r78    V91      13.74      7.97    1.72x
+   r7e    V96      10.49     15.15    1.44x
+   r7f    V96      19.10     14.77    1.29x
+   r96    V102    787.68    531.49    1.48x
+   ra4    V104    321.67    150.78    2.13x
+   ra6    V106    108.85     98.31    1.11x
+   r1e    V107     46.16     83.92    1.82x
+   r22    V112      4.95     13.65    2.76x
+   r24    V122      2.10      7.56    3.60x   <- the REFERENCE build, and the WORST
+   -------------------------------------------------------------
+   median 1.72x    p90 2.93x    max 3.60x
+```
+✅ The old 1.84x was **accurate, not optimistic** — it sits at the median. But it was **the wrong
+number to use**, because reproducibility is **worst where the excess is smallest**, and V122 is the
+smallest. As the ratio approaches 1 the noise stops shrinking with it.
+
+### ⚠ WHAT V158 WOULD ACTUALLY HAVE TO DO
+```
+   to clear the 1.72x median floor  ->  V158 must read <= 2.26
+   to clear the 2.93x p90 floor     ->  V158 must read <= 1.32
+   to clear r24's own 3.60x         ->  V158 must read <= 1.08
+   and a ratio of 1.0 means engaged == manual: the excess is GONE
+```
+⇒ **V158 is instrumentally detectable only if it very nearly ELIMINATES the engaged excess.** Last
+tick I wrote *“detectable if the move exceeds ~1.84x”*. **That was too generous** — it used the median
+floor where V122's own route sits at 3.60x. **Corrected.**
+
+### ✅ AND IT REFRAMES THE SIX-BUILD TREND HONESTLY
+```
+   V102 -> V104   2.27x   marginal
+   V104 -> V106   3.76x   RESOLVED
+   V106 -> V107   1.50x   BELOW FLOOR
+   V107 -> V112   8.16x   RESOLVED
+   V112 -> V122   1.83x   marginal
+   cumulative     191x    far above the floor
+```
+✅ **Individual build steps are mostly NOT resolved; the CUMULATIVE trend is.** The monotone run is
+carried by two large steps (V104→V106, V107→V112). ⚠ In particular **V112→V122 (1.83x) is marginal**,
+so the endpoint did not independently confirm the operator's V122 verdict — it is consistent with it,
+which is a weaker claim and the one that is supported.
+
+⭐ **THE LESSON**: an instrument validated over a 191x range is not thereby validated at the bottom of
+that range. **Calibrate the floor AT THE OPERATING POINT you will actually use it at.** I validated on
+the full sweep and then quoted a detection threshold from the median, while the reference build sits
+at the noisy end.
+
 ## ✅✅✅ **THERE IS A WORKING CROSS-BUILD INSTRUMENT AFTER ALL — AND IT HAS TRACKED THE KIT FOR SIX BUILDS**
 The 18–22 Hz within-drive engaged/manual ratio, paired with each route's build tag from its own cache:
 ```

@@ -149,3 +149,19 @@ reduce 18-22 Hz as well.
 
 ⚠ Attribution of an 18-22 Hz move to the damper holds **only because Lever B is byte-identical
 across V122/V158** — verified. A future build touching both makes this band unattributable.
+
+### CORRECTION to the 18-22 Hz threshold, same day
+
+The detection threshold quoted above was derived from ONE cross-route replicate. Nine within-drive
+split-half replicates give **median 1.72x, p90 2.93x, max 3.60x**, and **r24 (the V122 reference) is
+the worst at 3.60x**. Reproducibility is worst where the excess is smallest, and V122 is the smallest.
+
+| to clear | V158 must read |
+|---|---|
+| 1.72x median floor | <= 2.26 |
+| 2.93x p90 floor | <= 1.32 |
+| 3.60x r24 own floor | <= 1.08 |
+
+A ratio of 1.0 means engaged == manual. **So V158 is instrumentally detectable only if it very nearly
+eliminates the engaged excess.** Anything between roughly 1.1 and 3.9 is NOT RESOLVED, and that is the
+most likely outcome. **The operator report remains the primary endpoint.**
