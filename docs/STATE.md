@@ -2,6 +2,36 @@
 
 
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
+## ✅ **DO NOT STACK THE TWO LEVERS — AND V172 ALREADY PASSES THE TARGET**
+```
+   build                        eff s   |L|     Q ratio   vs stock
+   STOCK / flying               2.000   2.825   14.29     1.0x
+   V169  cap 1792               1.750   2.575    6.57     2.2x
+   V168  cap 1536               1.500   2.325    4.26     3.4x
+   V170  cap 1280               1.250   2.075    3.16     4.5x
+   V171  cap 1024               1.000   1.825    2.50     5.7x
+   V172  filter retune          0.907   1.732    2.33     6.1x
+   V172 + cap 1536 (stacked)    0.680   1.505    1.98     7.2x
+   V172 + cap 1024 (stacked)    0.454   1.279    1.73     8.3x
+```
+❌ **[EVIDENCE] stacking is a bad trade**: the cap on top of V172 buys **1.17x** (1536) or **1.35x**
+(1024) while adding the **FULL static weight cost**. ⊕ V172's build asserts the cap is stock, so the
+two cannot be stacked by accident.
+✅ **[EVIDENCE] V172 alone already passes the target**: a Q ratio of 3.0 needs `|L| ≤ 2.025`, and
+V172 leaves **1.732**.
+
+### ⭐ WHAT A THIRD LEVER WOULD HAVE TO BE
+After V172 the loop splits **52 % assist map / 48 % everything else**, and "everything else" is the
+census's **engagement-conditional** terms — PID 0.2565, r24 0.049–0.293, r26 0.098–1.17 (live only
+while `gp-0x6b5e == 0`), `FUN_00036682` 0.0032.
+⇒ **a third lever must come from those, not from the map.**
+🛑 **But it is NOT worth starting before a drive result.** Two independent levers already exceed the
+target on paper; **which of them the car actually responds to is the one thing no further analysis can
+settle**, and both rest on the same `P·L` assumption that a single pass tests. Six builds are cut and
+only one can fly at a time — **more builds now would be speculation, not progress.**
+⊕ Consolidated into `docs/scoring/BUILD-INVENTORY.md`: the decision table, the hashes, and what each
+outcome licenses.
+
 ## 🚩 **FLIGHT ORDER REVISED — V172 FIRST. MY “130 ms LAG” WAS THE WRONG METRIC.**
 I recommended V168 first on the grounds that V172 added *“~130 ms”* of lag. **That figure was the
 STEP SETTLING TIME, which is not what a driver feels** — settling is dominated by the slowest pole's
@@ -2215,52 +2245,4 @@ with Y1 > 300 as the zone it would not fly without telemetry; 12 is the TOP of i
 and FactorE `Y=[0,700,700,927]` would give dose 65. **The model's own requirement is ~43 [30,60] and
 V158's 50 sits inside it** — exceeding a stated requirement without cause is what produced six
 superseded builds this session. **Left at 50.**
-
-## ⛔⛔ **V162/V163 SUPERSEDED — `gp-0x6ad4` IS STIFFNESS, NOT DAMPING. STRUCTURALLY ELIMINATED AT 6–9 Hz.**
-Built, then killed by its own GATE 2 before it ever flew. **The rationale was FALSE.**
-
-### ✅ THE PID'S TRANSFER FUNCTION, COMPUTED FROM THE BYTES
-Structure (model, `FUN_0003a382`): `err = clamp(gp-0x4f60 - clamp(gp-0x6ad6), ±0x2800)`, then
-`P: IIR((err*Kp)>>10 * 0x20, pole tp+0x7450)` · `I: ((Ki*err)>>10)+state` · `D: ((err-state)*Kd)>>10`,
-summed as `gp-0x6ad4 = (((I+D+P)>>5) * LERP_out)>>10 * polarity`.
-Gains at the ratchet's own operating point `gp-0x6ac0 = 99`, all three LERPs flat there:
-```
-   D  0xC6B1E  Y=256   => Kd = 0.2500
-   I  0xC6B0A  Y=98    => Ki = 0.0957
-   P  0xC6ADE  Y=2048  => Kp = 2.0, then x32 = 64.0
-   🛑 IIR pole 0xC6450 = 1024 => a = 1.000000 => THE "IIR" IS A PASS-THROUGH. No smoothing at all.
-```
-```
-   at 7.8 Hz, fs = 1 kHz:        |H|        phase      share of |sum|
-       P                        64.000       0.0 deg      99.88 %
-       I                         1.953     -88.6 deg       3.05 %
-       D                         0.012     +88.6 deg       0.02 %
-       SUM                      64.08       -1.7 deg
-```
-✅ **[EVIDENCE] `gp-0x6ad4` IS A NEARLY PURE PROPORTIONAL TERM AT THE RATCHET FREQUENCY** — phase
-**−1.7°**, derivative contributing **0.02 %**. A 0°-phase term is **STIFFNESS, NOT DAMPING**.
-
-### ⛔ WHY THAT KILLS THE BUILD
-Raising the ceiling raises **loop gain with no phase lead** into a resonance the kit has measured at
-**Q 14–29 (ζ 0.017–0.036)**. Raising proportional gain around a lightly-damped resonant plant
-**reduces stability margin and increases resonant peaking** ⇒ V162/V163 would most likely make the
-ratchet **WORSE**. Both are **SUPERSEDED**, artifacts renamed `SUPERSEDED-DO-NOT-FLASH-PSTIFFNESS-*`.
-
-### ⭐ AND THE LANE IS ELIMINATED ON STRUCTURE, NOT ON A NULL
-For D to matter at 7.8 Hz it needs `Kd · 2sin(ω/2) ≈ |P|`; with `2sin(ω/2) = 0.049` that demands
-`Kd ≈ 1306`, i.e. a Q10 Y of ~1.34 MILLION. **The cell is a u16 — max 65535 gives Kd = 64, |D| = 3.14
-against P's 64.0, a net phase of only +1.06°.** => **the derivative path is ~1300x too weak BY DESIGN
-and the register width cannot close the gap.**
-✅ **`gp-0x6ad4` IS STRUCTURALLY INCAPABLE OF DAMPING AT 6–9 Hz.** This properly closes one of the
-model's five sensor-fed survivors — the model was right that V56's ~21 Hz null did not settle it, but
-**structure settles it now.** Survivors remaining: **{r24/r26, gp-0x6b26, gp-0x6bbe, V89 plant-model}**.
-
-### ⚠ THE MISREADING TO NOT REPEAT
-The model calls it *"the most reachable **AUTHORITY** of any gated lane"* — **authority, not damping.**
-It never claimed the lane damps at 6–9 Hz; it said the lane had never been **scored** there. I read
-"resonance PID" and supplied "therefore it damps." ⭐ **A LANE'S NAME IS NOT ITS TRANSFER FUNCTION.**
-Compute magnitude AND phase at the symptom's own frequency **before** building — which is exactly what
-CLAUDE.md's GATE 2 requires, and it took ~20 lines of Python once the gains were located.
-⊕ **V160/V161/V158 are UNAFFECTED** — independent lanes, and Lever B's rationale is a *measured*
-single-variable result (6–9 Hz 0.859, 15–22 Hz 0.549, LF null), not a structural inference.
 
