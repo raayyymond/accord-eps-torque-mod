@@ -4,6 +4,49 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **THE SAME METHOD DOES *NOT* RETIRE V204 — and the reason is structural, not a shortfall of effort**
+
+V207 died because its producer had an explicit cap: `min(·, LERP2(angle))` with `max(LERP2 Y) = 2560`.
+I applied the identical method to `gp-0x6b4e`, the last unmeasured nonlinearity. **It does not close,
+and the contrast is the point.**
+
+### **`gp-0x3d8c` IS AN UNCAPPED ACCUMULATOR**
+```asm
+   0x271de  movea -0x61b8, gp, ep       ; slot array base, indexed by r14
+   0x271e4  sld.hu 0x0, ep, r16         ; running min/max across the slots
+   0x271ec  cmovc  r21, r16, r16        ; (repeated for bases -0x61d0, -0x61e8, -0x6324)
+   ...
+   0x272f6  add    r12, r2              ; the ACCUMULATE
+   0x27300  cmp    0xa, r15             ; ~10 slots
+   0x27304  jr     0x271de              ; loop
+   0x27318  st.w   r6, -0x3d8c, gp      ; ** stored with NO cap, NO clamp, NO min() **
+```
+⇒ **the saturation to ±10240 is applied DOWNSTREAM, at the reader** (`0x27442`–`0x27454`,
+`movea 0x2800` / `cmovle`), **not at the writer.** There is nothing between the accumulate and the
+store that bounds it. A sum of ~10 signed halfword terms has no structural ceiling below the
+saturation, so **the saturation is genuinely reachable on paper** — exactly unlike the compensation.
+
+### ⭐ **WHICH IS WHY V204 SURVIVES AND V207 DID NOT**
+```
+   V207's producer   capped by min(., LERP2), max 2560  ->  bound PROVEN, gate cannot fire, RETIRED
+   V204's producer   an uncapped 10-slot accumulator    ->  bound NOT PROVABLE, must be MEASURED
+```
+**That is the honest dividing line between what analysis can settle and what needs a drive**, and it is
+worth having explicitly: the analytic route retired one build and confirmed the necessity of the other.
+
+### ⚠ **WEAK CORROBORATION THAT IT MAY STILL BE SMALL — stated as weak**
+`gp-0x6b4c`, the *sibling* 11-slot assist sum, is measured at **`|·| ≥ 4096` duty 0.000000 over 17,614
+engaged frames.** If `gp-0x3d8c` behaves similarly it would sit far under 10240. **But it is a
+different cell with a different slot mask** — `gp-0x6b4c`'s is `0xC4124` = [0,0,5,0,5,5,0,0,0,5,0],
+four slots forced zero — so this transfers only as a prior, not as a bound. **[BELIEF]**
+
+### ✅ **NEW STRUCTURE, NOT NAMED IN THIS KIT BEFORE**
+The mixer's slot loop carries **four parallel slot arrays** at `gp-0x61b8`, `gp-0x61d0`, `gp-0x61e8`
+and `gp-0x6324`, each walked by the same index, with **running min/max** (`cmp` + `cmovc`) alongside
+the sum — and it writes **five** separate accumulators (`gp-0x3d74`, `gp-0x3d88`, `gp-0x3d70`,
+`gp-0x3d98`, `gp-0x3d8c`) in one pass at `0x27308`–`0x27318`. Only the last is traced anywhere in this
+kit; **the other four have never been named.**
+
 ## ✅⭐⭐ **THE SATURATION CENSUS IS CLOSED — the last gate CANNOT FIRE, and V207 is retired BEFORE flying**
 
 I built V207 last tick to measure whether the delivery chain zero-rejects the merged command. **The
@@ -2200,40 +2243,4 @@ touches the steering path was resolved by decompile:
 every address one too low** — inventing a phantom cal `0xC649A` next to the real arm `0xC649B`.
 ✅ Caught by cross-checking one address against Ghidra's own decode. **Validate any cal scan by
 requiring a KNOWN cell to appear** — here, the arm `0xC649B` at `0x359FE`.
-
-## ✅ **THE BIQUAD GATE, VERIFIED END-TO-END — IT *IS* ENGAGEMENT-GATED, AND V103's PATCH HAS THREE SITES, NOT TWO**
-Decompiled stock, then disassembled it, then confirmed the encoding empirically. **Stock:**
-```
-   35A02  ld.bu   0x74fa, tp, r12     ; cal 0xC64FA = 5
-   35A06  ld.bu   -0x671a, gp, r9     ; a runtime byte, NOT engagement
-   35A0C  cmp     0x1, r14            ; the arm cal 0xC649B
-   35A0E  setfe   r8
-   35A12  cmp     r12, r9
-   35A18  setfnc  r6                  ; r6 = (r9 >= r12) unsigned
-   35A22  be 0x35A86                  ; skip the biquad if r8 == 0
-   35A26  be 0x35A86                  ; skip the biquad if r6 == 0
-```
-**Ours (V122 onward) changes THREE sites — `docs/BUILD-LINEAGE.md` names only the first two:**
-```
-   0x35A08  ld.bu displacement  -0x671a -> -0x6806   (disp = sext16(hw2 & 0xFFFE))  the LKAS flag
-   0x35A12  ec 49 cmp r12,r9    ->  e0 49 cmp r0,r9
-   0x35A18  e9 37 setfnc r6     ->  ea 37 setfne r6     <== THE SITE THE LINEAGE OMITS
-```
-⇒ the live gate is **`cal(0xC649B)==1 AND gp-0x6806 != 0`** — **genuinely engagement-gated.**
-
-⚠ **I asserted mid-session that this gate was BROKEN and the biquad always-on.** That was wrong: I
-compared only the two sites the lineage names, and `setfnc` after `cmp r0,r9` *would* be always-true.
-The third site is what makes it correct. 🛑 **The encoding was confirmed EMPIRICALLY, not by hand:**
-scanning the setf family (`hw1 bits4-10 == 1111110`, `hw2 == 0`) found 10 condition nibbles in use,
-and Ghidra decodes nibble **`0xA` at 0x16034 (`ea 57 00 00`) as `setfne`** — the same nibble our build
-carries. **Do not hand-decode a condition nibble; find a real instance and let Ghidra name it.**
-
-### ✅ WHAT THIS BUYS V188/V189 — THE 55 Hz RISK IS HALVED
-Because the section only runs engaged, **Honda's 55.226 Hz null is given up ONLY WHILE LKAS IS
-ENGAGED. Manual driving is bit-for-bit stock**, notch and all. So the one unquantifiable risk on the
-notch builds is confined to engaged driving, where the operator is already attentive and where he
-stops instantly.
-⊕ It also confirms the earlier closure: with every mode-indexed table now equal 24-vs-26, the two
-things that remain engaged-only are **the LKAS command** and **this biquad** — which on V189 is the
-grind notch.
 
