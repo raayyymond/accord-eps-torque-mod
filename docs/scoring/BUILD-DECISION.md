@@ -176,3 +176,44 @@ which act in both modes or are instrumentation, so none confounds the engaged/ma
 | neither moves | no mode asymmetry explains it; the search leaves the mode records entirely |
 
 Independently, the 427 probe answers whether the damper's hard OFF gate is ever open.
+
+---
+
+## THE FORK — V184 vs V185. This is your call, not mine.
+
+The biquad is **engaged-gated**, so V184's poles add **+16.4 deg of engaged-only lag at 1 Hz**, in a
+path that is part of the plant openpilot controls.
+
+**I tried to measure whether openpilot can afford it, and the attempt failed its own controls:**
+
+```
+ENGAGED (loop closed)   Mp = 0.840 at 0.39 Hz
+manual  (loop OPEN)     Mp = 19.59 at 1.17 Hz   <- artifact, Ang/Cmd divides by ~0
+phase-shuffled command  Mp = 0.683 at 0.39 Hz
+```
+
+The engaged peak is below 1 and barely above the shuffled surrogate — command and angle are both
+dominated by road curvature, so the estimate measures the road, not the loop. **openpilot's phase
+margin is not estimable from this corpus. The 16.4 deg is an UNQUANTIFIED risk, not a small one.**
+
+And you list **peak command oscillation** as a current symptom. A loop that already oscillates has
+thin margin by definition.
+
+| | **V184** | **V185** |
+|---|---|---|
+| image | `96509cc9b102e026…` | `54e114d172d89dcb…` |
+| grind 15–25 Hz | **−16.0 dB** | ~none |
+| ratchet | −8.8 dB + inertia revert | inertia revert only |
+| added lag @1 Hz | **+16.4 deg** | **~0 deg** |
+| spends phase margin | **yes, unquantified** | **no** |
+| K1 / accel filter / w[3] / inertia → Honda | yes | yes |
+| 427 probe on gp-0x6ac0 | yes | yes |
+
+**V184** if the ratchet is driven by loop gain in the assist section — it is the only build that
+attacks the grind hard.
+**V185** if you want the ratchet levers with **zero risk to command oscillation** — it is phase-
+identical to what you drive today.
+
+If the ratchet is caused by the inertia lane, V185 fixes it at no phase cost. If it is caused by
+assist-section loop gain, V185 does nothing and V184 is the answer. Either way the 427 probe reports,
+so the drive is informative on both branches.
