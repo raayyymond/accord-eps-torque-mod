@@ -3570,3 +3570,84 @@ stated goal.** That tension is exactly why the answer is a **notch**: keep the g
 consequence. ⊕ Supersedes the stale *"the 4× LKAS gain is frozen on every build"* memory, which
 predates V101.
 
+## ✅✅ **THE ENGAGED/MANUAL ASYMMETRY SPACE IS NOW EXHAUSTED — and that pins what each symptom rests on**
+🛑 **CORRECTION to the previous section: MODE 27 IS UNREACHABLE, so V189's relay revert is INERT.**
+V73's probe settled this over **104,061 frames**: the car is row 11 `TVCA4`, using **e012 = 24
+disengaged** and **e014 = 26 engaged**. Mode 27 would read as **11** in the probe's 4-bit field and
+**only 8 and 10 were ever observed.** The V189 edit is still correct — strictly toward stock — but it
+is a **cleanup, not a fix**, and the previous section left that ambiguous.
+
+**The sweep that matters instead — EVERY mode-indexed table, m24 vs m26:**
+```
+   strict scan (>=3 breakpoints, STRICTLY increasing X, real span): 7 tables
+     0xC7B40  DIFFERS on V189 -- but DIFFERS ON STOCK TOO (4181 vs 4114)  => HONDA'S OWN
+     all other 6                                                          => == m24
+   plus the six damper tables asserted in the V189 builder                 => all == m24
+```
+✅ **NO mode-indexed table on V189 differs 24-vs-26 that is not also different on stock.**
+⚠ A looser first pass reported six "asymmetries"; five were **junk from my own heuristic** — records
+like `X=(3,3,3)` and `X=(5,5,5,5,5)` passed because it only required NON-decreasing X. **A monotonic-X
+test without strict increase and a span floor manufactures tables out of arbitrary data.**
+
+### ⇒ WHAT REMAINS ENGAGED-ONLY ON V189 IS EXACTLY TWO THINGS
+1. **The LKAS command itself** (the excitation), and
+2. **the biquad ARM** (`0xC649B`=1, ours since V103) — which on V189 **is the grind notch.**
+
+⇒ **so each symptom now rests on one identified mechanism, and both are levered:**
+```
+   GRIND    a CLOSED-LOOP INSTABILITY (9,200x less power LKAS-off, 2x2 attribution to 0xC6CD0)
+            -> the notch at 19.40 Hz breaks the loop AT the unstable frequency.  14.3x.
+   RATCHET  engaged-amplified 3.58x.  The flying build's ONLY engaged-only dose was the inertia
+            table (m26 Y = -29490/-17202/-16000 vs Honda's -9830/-5734/-1966, ~3x).
+            V184+ reverts it, so with every other asymmetry now equal, that revert is the
+            candidate mechanism -- and its predicted endpoint is the manual floor.
+```
+✅ **This makes the earlier pre-registration the live prediction for V189**: engaged ratchet excess
+**26.7× → toward the manual 2.8×**, and the null is ~3.9× — i.e. **crossing below the null is
+"gone by the instrument", and manual proves that state is reachable.**
+🛑 If the ratchet survives V189, the engaged-only cause is **not in the calibration at all** — it
+is in the command, which is openpilot's loop (the operator's third symptom, *peak command
+oscillation*), and no firmware cal lever addresses it.
+
+## 🛑✅ **V189 — WE HAD CREATED AN ENGAGED-ONLY DAMPER RELAY BY ACCIDENT. TWO BYTES REMOVE IT.**
+Auditing **every** FactorC mode record against stock, **exactly one deviates**:
+```
+   record 0xD77E4, reached by mode 27
+     stock  Y = (  0, 233, 426, 875)     monotonic -- Honda's viscous surface
+     V188   Y = (426, 233, 426, 875)     steps UP at zero, then DROPS
+                 ^^^ Y[0]=426 at 0xD77EE
+```
+🛑 **THE FLYING BUILD V122 MATCHES STOCK.** So this is a regression introduced in the V177–V183
+chain and inherited by V185/V186/V187/V188 — **every build recommended this session.**
+**V184's "engaged == manual in every data table" fixed m26 and MISSED m27.**
+➕ **WHY IT MATTERS:** FactorC is a factor of the base-assist damper, `ch0 = (FactorC × FactorE) >> 10`.
+The recorded fact is **`FactorC Y[0] == 0` in ALL 13 stock records** — the damper is dead at low index
+*by design*, which is what makes Honda's surface **viscous rather than switched**. A non-zero `Y[0]`
+gives it a floor that engages abruptly at the first breakpoint — **a RELAY** — and a relay in exactly
+this component is what V80 shipped, producing **the worst grinding in the whole arc**.
+⚠ Here it is worse than a plain relay: **`Y[0]=426 > Y[1]=233`**, so the curve steps up then falls.
+**That is not a calibration anyone chose; it is a defect.**
+✅ **V189 = V188 + `0xD77EE` 426 → 0**, Honda's value copied from the stock image. **One int16,
+2 payload bytes, 38/38 assertions.** All six damper tables now read `m26 == m24` and
+`m27 == m24 or IS STOCK`. `71a7032a485ec8253cd46c2532adcf0331382b5b8c374fb204b9fc9d07e9240b`
+⊕ **REACHABILITY, STATED HONESTLY:** the record is ambiguous on whether the car runs mode 27 (one
+memory says TVCA4 uses **24/26**, another describes **26/27** as engaged). **If m27 is reachable this
+removes a live engaged-only relay in the damper — a prime suspect for ratcheting/stuttering. If not,
+it is INERT.** The edit is strictly toward stock, so **there is no configuration in which it is
+worse.** EVIDENCE: the byte deviation and that V122 matches stock. BELIEF: m27 reachability.
+
+## ✅ **V188'S NOTCH DOES NOT THREATEN ITS OWN LOW SHOULDER — and the reason is structural**
+A notch inside a loop adds lag *below* itself, so it could in principle grow a new mode there. On the
+pooled 67-route engaged spectrum:
+```
+   f (Hz)   excess   V188 |H|   added lag
+    9.2      8.71      0.852      -14.0     highest excess, SMALLEST lag
+   12.0      2.81      0.709      -21.0
+   15.0      2.26      0.486      -29.9
+   16.2      2.97      0.372      -34.0     largest lag, gain already down 63 %
+```
+✅ **No frequency has high excess, high retained gain AND large lag at once.** For a notch, **added
+lag and attenuation grow together**, so loop gain is cut in proportion to the phase spent — which is
+precisely why a notch is the standard tool for this job. Still checkable on the drive: a **new** peak
+at 13–16 Hz would falsify it.
+

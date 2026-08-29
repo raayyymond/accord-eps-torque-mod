@@ -208,12 +208,12 @@ live = [os.path.basename(x) for x in glob.glob(RWD + '/39990*-V199-*.rwd')
         + glob.glob(RWD + '/39990*-V204-*.rwd')
         + glob.glob(RWD + '/39990*-V205-*.rwd')
         + glob.glob(RWD + '/39990*-V206-*.rwd')
-        + glob.glob(RWD + '/39990*-V207-*.rwd')]
-chk(len(live) == 6, f'exactly 6 flashable builds from this chain ({len(live)})')
+]
+chk(len(live) == 5, f'exactly 5 flashable builds from this chain ({len(live)})')
 # V194/V195/V196/V198 were PULLED: every one carries a notch whose poles sit at the zeros, scoring
 # max|H| 1.3533-1.7177 against the lineage bar of stock 1.0000.  They must not be flashable.
 for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193',
-          'V194', 'V195', 'V196', 'V197', 'V198', 'V200', 'V201', 'V203'):
+          'V194', 'V195', 'V196', 'V197', 'V198', 'V200', 'V201', 'V203', 'V207'):
     n = len(glob.glob(RWD + f'/39990*-{v}-*.rwd'))
     if n:
         chk(False, f'{v} is still flashable ({n} unmarked file)')

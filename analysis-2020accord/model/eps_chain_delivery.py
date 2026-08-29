@@ -113,7 +113,11 @@ def soft_eme_windup_shaper(sensors: SensorInputs, st: EpsState, cal: Calibration
     applied here as clamp(demand, +/-gov) followed by a separate static +/-0x2000 clamp, output ->
     gp-0x6b98, lockstep-shadowed at gp-0x4ce2. V31's boost floor fixed the observed soft EME on-car;
     the conservative assist-inclusive envelope (4762 governor + 2560 compensation = 7322) exceeds the
-    5120 floor, so this model does not claim every combination is contained.
+    5120 floor. UPGRADED 2026-08-29: that envelope is not conservative, it is a PROVEN BOUND --
+    the compensation is min(., LERP2(angle)) and max(LERP2 Y) = 2560 (0xC67D8..67DC = [512,1024,
+    2560]), while gp-0x6ace <= cal(0xC6202) = 4762, so |gp-0x6acc| <= 7322 against the shaper's
+    +-8192 zero-reject: MARGIN 870, the gate CANNOT FIRE. The alternate rescale branch is disarmed
+    (cal(0xC64BA) = 0, needs -0x17) and is an identity anyway (0xC648E = 0, 0xC6134 = 1000/1000).
     """
     # Boost-latch logic consumes the PREVIOUS authority before this invocation computes the next value.
     previous_authority = st.authority

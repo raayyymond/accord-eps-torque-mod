@@ -4,6 +4,65 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅⭐⭐ **THE SATURATION CENSUS IS CLOSED — the last gate CANNOT FIRE, and V207 is retired BEFORE flying**
+
+I built V207 last tick to measure whether the delivery chain zero-rejects the merged command. **The
+question is answerable from the image, and the answer is no.** Decompiling `FUN_000456a4` — rather
+than reading assembly upward, which is what I had been doing and what `CLAUDE.md` warns against —
+gives the whole structure at once:
+```c
+   uVar6 = gp-0x6a10;                                  // ABSOLUTE STEERING ANGLE
+   if ( gp-0x6ac0 (|filtered motor rate|) > LERP1(angle) ) {         // a rate DEADBAND
+       v = ((gp-0x6ac0 - LERP1(angle)) * cal(0xC6204)) >> 10;
+       v = min(v, LERP2(angle));                       // <-- ** THE CAP **
+       gp-0x6ad0 = (gp-0x6abe > 0) ? -v : v;
+   } else gp-0x6ad0 = 0;
+   gp-0x6acc = gp-0x6ace + gp-0x6ad0;
+```
+⇒ **the compensation is CAPPED by `min(·, LERP2)`**, so its bound is `max(LERP2's Y table)`:
+```
+   LERP1 (rate deadband)  X 0xC6832..6836 [3800, 4000, 4150]   Y 0xC6838..683C [5000, 3037, 1000]
+   LERP2 (** the cap **)  X 0xC67D2..67D6 [3200, 3800, 4150]   Y 0xC67D8..67DC [ 512, 1024, 2560]
+   gain cal 0xC6204 = 3072
+```
+```
+   max compensation          = max(LERP2 Y)   =  2560
+   governor gp-0x6ace        <= cal(0xC6202)  =  4762   (gp-0x4f64 is a min() with this)
+   worst-case |gp-0x6acc|    = 4762 + 2560    =  7322    vs the gate window 8192
+   ** MARGIN 870 COUNTS. THE GATE CANNOT FIRE. **
+```
+⊕ **The alternate rescaling branch is dead twice over.** `gp-0x6acc = cal(0xC648E) + (sum ×
+cal(0xC6134))/1000` is guarded on `cal(0xC64BA) == -0x17`, and that cal reads **0** — disarmed — **and
+even if armed it is an identity**: offset `0xC648E` = 0, gain `0xC6134` = 1000/1000 = 1.000.
+
+### ✅ **THIS UPGRADES THE GOLDEN MODEL'S OWN CAVEAT**
+`eps_chain_delivery.py` states the envelope *"4762 governor + 2560 compensation = 7322"* but adds
+*"this model does not claim every combination is contained."* **It IS contained, provably** — the 2560
+is not an observed typical value, it is `max(LERP2 Y)`, and the `min()` makes it a hard ceiling.
+
+### 🛑🛑 **THE CENSUS IS NOW COMPLETE AND CLOSED**
+```
+   command -> motor path   every clamp: structurally unable to clip, or measured at zero duty
+                           (incl. gp-0x6b70 at 1 frame in 72,916 engaged)
+                           all six aggregator gates: producer <= window, cannot fire
+   delivery chain          the merged-command zero-reject: producer bounded 870 counts under it
+```
+⇒ **NO clamp saturates and NO gate fires anywhere between the LKAS command and the motor.**
+⇒ **The record's "command-gated saturation" model has NO mechanism in the firmware command path.**
+⚠ That does not make the *symptom* description wrong — it means the saturating element, if one exists,
+is **not in the firmware's command path**: it would have to be in the FOC/PWM inner loop, or mechanical.
+
+### ✅ **V207 IS RETIRED BEFORE FLYING — which is the whole point of doing this analytically**
+Its `.rwd` is renamed `SUPERSEDED-DO-NOT-FLASH-ANSWERED-…`. **A drive was saved by reading a
+three-knot table.** ⊕ **V204 returns to the top of the shelf** — `gp-0x6b4e`'s writer saturation is
+now the only unmeasured nonlinearity left in the path.
+
+### ⭐ **AND THE COMPENSATION IS WORTH RECORDING IN ITS OWN RIGHT**
+It is a **motor-rate deadband, scheduled on steering angle**: inert until `|filtered motor rate|`
+exceeds LERP1(angle), whose knots **fall** with angle (5000 → 1000), then capped by LERP2(angle),
+whose knots **rise** with angle (512 → 2560). **So it arms more easily and permits more at large
+steering angles.** Never named anywhere in this kit before.
+
 ## ⭐⭐ **THE DELIVERY CHAIN HAS A ZERO-REJECT ON THE MERGED COMMAND — and it is the ONE gate not structurally dead**
 
 The census had cleared the whole command→motor path: no clamp saturates, no aggregator gate can fire.
@@ -2177,85 +2236,4 @@ stops instantly.
 ⊕ It also confirms the earlier closure: with every mode-indexed table now equal 24-vs-26, the two
 things that remain engaged-only are **the LKAS command** and **this biquad** — which on V189 is the
 grind notch.
-
-## ✅✅ **THE ENGAGED/MANUAL ASYMMETRY SPACE IS NOW EXHAUSTED — and that pins what each symptom rests on**
-🛑 **CORRECTION to the previous section: MODE 27 IS UNREACHABLE, so V189's relay revert is INERT.**
-V73's probe settled this over **104,061 frames**: the car is row 11 `TVCA4`, using **e012 = 24
-disengaged** and **e014 = 26 engaged**. Mode 27 would read as **11** in the probe's 4-bit field and
-**only 8 and 10 were ever observed.** The V189 edit is still correct — strictly toward stock — but it
-is a **cleanup, not a fix**, and the previous section left that ambiguous.
-
-**The sweep that matters instead — EVERY mode-indexed table, m24 vs m26:**
-```
-   strict scan (>=3 breakpoints, STRICTLY increasing X, real span): 7 tables
-     0xC7B40  DIFFERS on V189 -- but DIFFERS ON STOCK TOO (4181 vs 4114)  => HONDA'S OWN
-     all other 6                                                          => == m24
-   plus the six damper tables asserted in the V189 builder                 => all == m24
-```
-✅ **NO mode-indexed table on V189 differs 24-vs-26 that is not also different on stock.**
-⚠ A looser first pass reported six "asymmetries"; five were **junk from my own heuristic** — records
-like `X=(3,3,3)` and `X=(5,5,5,5,5)` passed because it only required NON-decreasing X. **A monotonic-X
-test without strict increase and a span floor manufactures tables out of arbitrary data.**
-
-### ⇒ WHAT REMAINS ENGAGED-ONLY ON V189 IS EXACTLY TWO THINGS
-1. **The LKAS command itself** (the excitation), and
-2. **the biquad ARM** (`0xC649B`=1, ours since V103) — which on V189 **is the grind notch.**
-
-⇒ **so each symptom now rests on one identified mechanism, and both are levered:**
-```
-   GRIND    a CLOSED-LOOP INSTABILITY (9,200x less power LKAS-off, 2x2 attribution to 0xC6CD0)
-            -> the notch at 19.40 Hz breaks the loop AT the unstable frequency.  14.3x.
-   RATCHET  engaged-amplified 3.58x.  The flying build's ONLY engaged-only dose was the inertia
-            table (m26 Y = -29490/-17202/-16000 vs Honda's -9830/-5734/-1966, ~3x).
-            V184+ reverts it, so with every other asymmetry now equal, that revert is the
-            candidate mechanism -- and its predicted endpoint is the manual floor.
-```
-✅ **This makes the earlier pre-registration the live prediction for V189**: engaged ratchet excess
-**26.7× → toward the manual 2.8×**, and the null is ~3.9× — i.e. **crossing below the null is
-"gone by the instrument", and manual proves that state is reachable.**
-🛑 If the ratchet survives V189, the engaged-only cause is **not in the calibration at all** — it
-is in the command, which is openpilot's loop (the operator's third symptom, *peak command
-oscillation*), and no firmware cal lever addresses it.
-
-## 🛑✅ **V189 — WE HAD CREATED AN ENGAGED-ONLY DAMPER RELAY BY ACCIDENT. TWO BYTES REMOVE IT.**
-Auditing **every** FactorC mode record against stock, **exactly one deviates**:
-```
-   record 0xD77E4, reached by mode 27
-     stock  Y = (  0, 233, 426, 875)     monotonic -- Honda's viscous surface
-     V188   Y = (426, 233, 426, 875)     steps UP at zero, then DROPS
-                 ^^^ Y[0]=426 at 0xD77EE
-```
-🛑 **THE FLYING BUILD V122 MATCHES STOCK.** So this is a regression introduced in the V177–V183
-chain and inherited by V185/V186/V187/V188 — **every build recommended this session.**
-**V184's "engaged == manual in every data table" fixed m26 and MISSED m27.**
-➕ **WHY IT MATTERS:** FactorC is a factor of the base-assist damper, `ch0 = (FactorC × FactorE) >> 10`.
-The recorded fact is **`FactorC Y[0] == 0` in ALL 13 stock records** — the damper is dead at low index
-*by design*, which is what makes Honda's surface **viscous rather than switched**. A non-zero `Y[0]`
-gives it a floor that engages abruptly at the first breakpoint — **a RELAY** — and a relay in exactly
-this component is what V80 shipped, producing **the worst grinding in the whole arc**.
-⚠ Here it is worse than a plain relay: **`Y[0]=426 > Y[1]=233`**, so the curve steps up then falls.
-**That is not a calibration anyone chose; it is a defect.**
-✅ **V189 = V188 + `0xD77EE` 426 → 0**, Honda's value copied from the stock image. **One int16,
-2 payload bytes, 38/38 assertions.** All six damper tables now read `m26 == m24` and
-`m27 == m24 or IS STOCK`. `71a7032a485ec8253cd46c2532adcf0331382b5b8c374fb204b9fc9d07e9240b`
-⊕ **REACHABILITY, STATED HONESTLY:** the record is ambiguous on whether the car runs mode 27 (one
-memory says TVCA4 uses **24/26**, another describes **26/27** as engaged). **If m27 is reachable this
-removes a live engaged-only relay in the damper — a prime suspect for ratcheting/stuttering. If not,
-it is INERT.** The edit is strictly toward stock, so **there is no configuration in which it is
-worse.** EVIDENCE: the byte deviation and that V122 matches stock. BELIEF: m27 reachability.
-
-## ✅ **V188'S NOTCH DOES NOT THREATEN ITS OWN LOW SHOULDER — and the reason is structural**
-A notch inside a loop adds lag *below* itself, so it could in principle grow a new mode there. On the
-pooled 67-route engaged spectrum:
-```
-   f (Hz)   excess   V188 |H|   added lag
-    9.2      8.71      0.852      -14.0     highest excess, SMALLEST lag
-   12.0      2.81      0.709      -21.0
-   15.0      2.26      0.486      -29.9
-   16.2      2.97      0.372      -34.0     largest lag, gain already down 63 %
-```
-✅ **No frequency has high excess, high retained gain AND large lag at once.** For a notch, **added
-lag and attenuation grow together**, so loop gain is cut in proportion to the phase spent — which is
-precisely why a notch is the standard tool for this job. Still checkable on the drive: a **new** peak
-at 13–16 Hz would falsify it.
 
