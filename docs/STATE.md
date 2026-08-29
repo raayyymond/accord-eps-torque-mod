@@ -1,5 +1,56 @@
 # STATE — living current state of the kit
 
+## 🛑 **"GRINDING CONTINUES AFTER DISENGAGING" — NO BAND-SPECIFIC PERSISTENCE ON THE BUS**
+The operator's V133 report included *"which continues after disengaging."* That is a **structural**
+claim — the command is gone, so the mechanism would have to have **memory** — and it had never been
+tested. Tested now, on **139 creep-ish disengage events across 76 routes**, by aligning on the
+engaged→manual edge and tracking the 6–9 Hz Hilbert envelope of `tq` normalised to its own engaged
+baseline.
+
+### ⚠ THE UNCONTROLLED VERSION LOOKED LIKE A RESULT
+```
+   engaged -3..0 s   1.000        after 2..3 s   1.225
+   after 0..1 s      1.293        after 3..5 s   1.119
+   after 1..2 s      1.212        (IQR 1.6-1.9 throughout)
+```
+⇒ read alone, *"the ratchet band stays ~25 % elevated for 5 s after disengage"* — which would have
+supported the operator's report and pointed at a filter state with memory.
+
+### ✅ THE CONTROL BANDS KILL IT
+```
+   band                  median    [95 % CI, 4000-draw bootstrap]
+   6-9 Hz  (ratchet)      1.377    [0.918, 1.588]     CI INCLUDES 1
+   26-31 Hz CONTROL       1.051    [0.948, 1.288]
+   32-38 Hz CONTROL       1.117    [1.025, 1.249]
+
+   RATIO 6-9 / 26-31      0.911    [0.795, 1.132]     BELOW 1, CI spans 1
+```
+⇒ **[EVIDENCE, with controls] there is NO band-specific persistence.** The post-disengage elevation
+appears in the **control bands too**, so it is **general activity — the driver taking over — not
+ratchet memory.** The band-specific ratio is **0.911**, i.e. if anything the ratchet band rises
+*less* than the controls.
+
+### ⭐ THE METHODOLOGICAL POINT, WHICH IS THE DURABLE PART
+**The same 139 events read as *"grinding persists 25 % after disengage"* or *"no effect at all"*
+depending ONLY on whether the control band is computed.** This is
+[[feedback-run-the-control-before-the-measurement]] demonstrated on a fresh question, and it is worth
+keeping because the uncontrolled number was **plausible, specific, and would have pointed at a real
+mechanism** (a filter state with memory) that does not exist.
+
+### 🛑 WHAT IT DOES **NOT** SETTLE
+⚠ **This does not refute the operator's report.** Two readings survive:
+```
+   (a) the persistence is not real as a 6-9 Hz phenomenon on the column
+   (b) it IS real but NOT OBSERVABLE ON THIS BUS
+```
+⇒ **(b) is the reading consistent with everything else this session established** — the mode is
+**motor/rack/tyre side, which no channel on this bus observes**, and engagement adds **≤ ~2 % of RMS**
+as a 7.8 Hz line on the column. **A symptom the bus can barely see engaged will not be visible
+decaying after disengage either.**
+⇒ **[NOT CLOSED] the operator's ear remains the only instrument for this**, and the honest record is
+that the bus test came back null **with its control passing**, which is a statement about the
+instrument as much as about the symptom.
+
 ## ✅✅✅ **CONTROL IS FULLY ACTIVE WHERE THE COMMAND RAILS — THE CREEP-AUTHORITY CHAIN IS CLOSED**
 The memory's *"0 % control-active below 2 mph"* was measured when `0xC62EA` = 320. **It is 0 on
 current builds**, so the measurement had to be redone. Redone — **227 routes, 1.88 M engaged
