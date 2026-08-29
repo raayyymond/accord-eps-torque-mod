@@ -1,5 +1,55 @@
 # STATE — living current state of the kit
 
+## ✅ **THE `gp-0x6B4C` LEVER IS IDENTIFIED — AND ONE THING BLOCKS IT: WHICH SLOT**
+`gp-0x6B4C` is the highest-ranked grind carrier (22.84 % / 22.50 % of its own variance in
+18–22 Hz, on both its routes). Its producer `FUN_00027b0a` walks an **11-slot TYPE DISPATCH**:
+```
+   0x27B26  movea 0x5124, tp, r9      // r9 = &cal(0xC4124), the 11 TYPE CODES
+   0x27B32  movea -0x62f8, gp, r10    // the parallel 11-slot DATA array
+   0x27B36  mov   0xa, r7             // 10 iterations
+   cmp 0x7 / 0x6  ->  r24 += slotdata[i] ; r28 += 0x400     (raw contribution, unity weight)
+   cmp 0x5        ->  0x27BDA         cmp 0x4 -> 0x27B98    cmp 0x3 -> 0x27B70
+   r24 accumulates the SUM, r28 accumulates the WEIGHTS
+```
+🛑 **The cal bytes are TYPE CODES, not weights** — I first read them as weights and the kit's own
+memory has it right: `0xC4124 = [0,0,5,0,5,5,0,0,0,5,0]` means ***"7 slots raw, 4 forced zero"***
+⇒ **type 0 = CONTRIBUTES, type 5 = FORCED ZERO.**
+⇒ **the four slots I first called "active" are the DISABLED ones**; the **seven zeros are the
+contributors** (indices 0, 1, 3, 6, 7, 8, 10).
+
+### ✅ THE LEVER
+```
+   0xC4124[i] : 0 -> 5      disables slot i, using Honda's OWN dispatch value
+```
+⭐ **This is the lever shape the whole search has wanted**: it removes **ONE contributor** from the
+highest-ranked grind carrier, using a value the firmware already implements on four other slots, on
+a **byte cal**, with **no cave**. Nothing else found this session can subtract a single source.
+
+### 🛑 WHAT BLOCKS IT — AND WHY I STOPPED RATHER THAN GUESSING
+**Which of the seven slots to disable is unknown.** The slots are written through a **COMPUTED
+POINTER** (`ep = gp-0x62F8 + r12`), so they have no individual gp-relative accesses — a byte scan
+finds only the base (15 hits) and cannot attribute them:
+```
+   slot  0  gp-0x62F8  CONTRIBUTES  15 accesses (the BASE -- all writers alias here)
+   slots 1-9           0 accesses each   <- written via base+offset, invisible to a scan
+   slot 10  gp-0x62E4  CONTRIBUTES   3 accesses
+```
+⊕ And spot-reading a writer does not resolve it either: `0x25EA6` is `add r1, ep` + `sst.h r0` —
+a **zeroing LOOP** with the offset in a loop register, not a per-slot store.
+⇒ **Identifying the seven contributors requires real DATAFLOW TRACING of the 15 writers, not a
+scan and not spot disassembly.** 🛑 **Guessing a slot is exactly the error class this session has
+committed FIVE times** (V133's clamp · `0xC64FA`≠`0xC64FD` · 18-vs-8 readers · `gp-0x6b5e` · the
+`gp-0x6BBE` clamp). **Deliberately not guessing.**
+
+### ⭐ STATUS OF THIS THREAD
+```
+   lane identified as the top grind carrier      DONE, measured, both its routes agree
+   lever identified and it is cal-only, no cave  DONE  (0xC4124[i] 0 -> 5)
+   WHICH slot to disable                         OPEN -- needs dataflow tracing of 15 writers
+```
+**V147 remains the build to fly.** This thread is the most promising *next* direction and it is
+blocked on a bounded, mechanical piece of tracing — not on a missing idea.
+
 ## ⭐⭐⭐ **WHICH LANE CARRIES THE GRIND — MEASURED. TWO FAMILIES CLOSE, A NEW TARGET APPEARS.**
 Last section's rule *"rank lanes by measured p50"* is **WRONG for finding the grind** and is
 corrected here: **p50 is a DC/typical magnitude; a small lane can carry all the 20 Hz energy.**
