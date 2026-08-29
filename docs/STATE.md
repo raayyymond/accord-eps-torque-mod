@@ -4,6 +4,68 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅⭐⭐ **AN UNREAD ON-CAR DOSE-RESPONSE FOR THE RATCHET LEVER — and the shelf gets a FREE endpoint**
+
+Decoding the rung specs for the V102–V106 routes turned the sweep's numbers into measurements. The
+biggest one had been sitting in two caches for weeks.
+
+### ✅ **`b5` IS THE SAME RUNG ON FIVE CONSECUTIVE BUILDS**
+From the lineage: V102's cave defines `b5 = |gp-0x6ae2| ≥ |gp-0x6b26|` — **modelled friction vs the
+INERTIA term** — and V103 changes *"exactly ONE rung"* (`b3`), leaving `b5` byte-identical.
+```
+   route  build   n_eng     b5
+   r96    V102    57,629   0.2481
+   r9e    V103    40,638   0.2384
+   ra4    V104    67,039   0.2305
+   ra5    V105    49,021   0.2798
+   ra6    V106   123,802   0.1907     <- V106 = V105 + ONE cell: the inertia curve
+```
+⇒ **inertia exceeds modelled friction ~75 % of engaged time** on every build. That alone is worth
+knowing: **V196/V199/V202 halve the term that dominates**, not the minor one.
+
+### ✅✅ **V105 → V106 IS A SINGLE-VARIABLE PAIR, AND IT MEASURES THE LEVER**
+Tripling — see the correction below — the inertia term must LOWER `P(friction ≥ inertia)`. Episode
+bootstrap, 4,000 resamples, episodes weighted by length, **per the kit's own “episodes not windows” rule**:
+```
+   rung                                    V105     V106     delta      95% CI
+   b5  |friction| >= |INERTIA|   DOSED    0.2798   0.1907   -0.0891  [-0.1328, -0.0200]  EXCLUDES 0
+   b7  a sign rung             CONTROL    0.3835   0.3324   -0.0511  [-0.1257, +0.0650]  includes 0
+   b4  a sign rung             CONTROL    0.4338   0.4154   -0.0184  [-0.0413, +0.0217]  includes 0
+```
+⇒ **Direction correct, CI excludes zero, effect 1.7× the largest control.**
+✅ **So `0xD7A5C` DEMONSTRABLY REACHES THE CAR, with the expected sign** — which had never been shown
+for the ratchet lever now sitting on the shelf.
+⚠ **Honest limits: 9 and 7 episodes.** The CI is wide and `b7` moved 57 % as much as `b5`. **This is
+corroborating evidence, not proof.**
+
+### 🛑 **CORRECTION TO A BUILD TAG: V106 IS ×2.000, NOT ×3.0**
+Its artifact is named `GP6B26.X3.0`, but read from the images the engaged curve moves
+**−14745/−8601/−2949 → −29490/−17202/−5898 — exactly ×2.000 on all three knots.**
+**The dose in the tag is wrong**, and any dose-response quoted from the tag rather than the image is
+off by 1.5×.
+
+### ⭐⭐ **THE CAVE IS BYTE-IDENTICAL FROM V105 TO V202 — so the shelf already has this endpoint**
+```
+   v105 v106 v107 v108 v122 v202   cave@0xC4B34 sha  d3bb75d8fce08211   ALL IDENTICAL
+   (v103/v104 differ: e997c1138528e334)
+```
+⇒ **V202/V205/V206 carry V105's exact rungs.** `b5` still means friction-vs-inertia and `b6` still
+means the governor clip. **Every shelf build already reports the ratchet lever's effect, for zero
+extra bytes.** The design law wants each build interpretable from one short drive — **it now is, on a
+channel that was already there.**
+
+### ✅ **PRE-REGISTERED, QUANTITATIVE, AND FREE**
+Doses read from the images: V105 = 1.000×, V106 = 2.000×, **V202 = 0.333×**. Extrapolating the
+measured per-doubling effect (−0.0891, CI [−0.1328, −0.0200]) across −1.585 doublings:
+```
+   ** b5 on V202 / V205 / V206 should read 0.42, plausible range 0.31 to 0.49 **
+   against 0.2798 measured on V105 and 0.1907 on V106.
+   b5 <= 0.28 (i.e. no rise at all) => the halving is NOT reaching the car, and the ratchet lever
+   on the shelf is inert -- which would be the single most useful null available.
+```
+⚠ A log-dose extrapolation 1.6 doublings outside the measured range, from ONE pair. Stated as a range,
+not a point.
+
 ## ✅ **SWEPT ALL 23 CACHED ROUTES FOR UNREAD RUNGS — 72 informative readings, and the REGISTRY STOPS AT r77**
 
 V105's `b6` sat unread because nothing pointed at it. So I swept every cached route's cave rungs
@@ -2171,85 +2233,4 @@ hands-matched, so it does not replace Stage 1b, but it is real evidence in the s
 ```
 ⊕ And the poles are tested separately by the **spectral slope** (2.671 → 4.531 for V184, outside the
 entire 0.80–2.37 history), because they cannot move the excess numbers at all.
-
-## 🛑🛑 **THE SCORER'S EXCESS ENDPOINT CANNOT SEE THE POLES AT ALL — MY CARD DISCRIMINATOR WAS BACKWARDS**
-Applying each build's `|H|²` to the REAL flying spectrum (route `r24`, V122) and re-running the
-scorer's own estimator:
-```
-   build                    GRIND 15-25 Hz     RATCHET 5-12 Hz
-   FLYING (V122)                11.1x              26.7x
-   V185 (poles at Honda)        11.1x              26.7x
-   V184 (poles 0.980)           11.3x              30.0x      <- -16 dB of attenuation, and the
-                                                                 endpoint does not move
-```
-🛑 **V184's −16 dB grind attenuation is INVISIBLE to the endpoint the card scores.** The reason
-is structural, not a bug: the **slope-corrected excess** divides band power by a power law fitted
-**outside** the band (3–6 and 12–40 Hz). A low-pass attenuates the fit region too and **steepens the
-fit**, so the RATIO barely moves.
-➕ **THE GENERAL FACT, worth more than this build: the scorer measures PEAKINESS, not LEVEL.** A
-smooth broadband filter changes level without changing peakiness and is therefore invisible to it.
-A **damping** change alters peakiness and IS visible.
-❌ So the card's rule *"grind moved ⇒ the poles did it"* is **WRONG and withdrawn.** The poles will
-not move that number.
-
-### ✅ THE ENDPOINT THAT DOES SEE THEM — AND THE SCORER ALREADY PRINTS IT
-```
-   spectral slope over 3-40 Hz
-     FLYING (V122)        1/f^2.671
-     V185 (poles Honda)   1/f^2.671    delta +0.000
-     V184 (poles 0.980)   1/f^4.531    delta +1.860
-```
-✅ **1/f^4.53 is far outside the entire historical range (0.80–2.37)** — no route has ever produced
-anything like it, so a single pass is unmistakable. **This is a binary, pre-registered check.**
-
-### ✅ THE CORRECTED DISCRIMINATOR
-```
-   spectral slope jumps to ~4.5   => the POLES are live => you flew V184, and they work
-   slope unchanged (~2.7)         => you flew V185, or the poles are not reaching the signal
-   GRIND / RATCHET excess falls   => the INERTIA DOSE REVERT did it (both builds carry it;
-                                     the poles cannot move these numbers)
-   nothing moves anywhere         => both accounts fail together
-```
-⊕ **And note what this means for the fork**: since the excess endpoints respond only to the inertia
-revert, **V184 and V185 are indistinguishable on the ratchet/grind excess.** The ONLY thing V184 buys
-that V185 does not is the slope change — bought with **+16.4° of engaged-only phase lag**. Stated that
-way, **V185 is the better first drive**: same measurable ratchet effect, none of the phase risk.
-⚠ The inertia revert's effect is NOT in these numbers (it acts in a different lane), so the excess
-columns above are a **lower bound** on what both builds do to the ratchet.
-
-## ✅ **THE GRIND IS ENGAGED-ONLY — 7 ROUTES OUT OF 7, INCLUDING THE FLYING BUILD**
-Dry-running the second scorer answered, for the GRIND, the question my underpowered hands-on test
-could not answer for the ratchet. Per-route slope-matched nulls, adequate exposure:
-```
-   route  build   engaged exc / null    manual exc / null    manual real?
-   r78    V91       6.1 / 3.5             2.3 / 3.8            no
-   r7e    V96      28.9 / 3.2             2.2 / 4.8            no
-   r7f    V96      14.3 / 3.5             2.2 / 3.9            no
-   r96    V102    248.2 / 4.0             1.5 / 4.9            no
-   ra6    V106     25.3 / 4.0             3.0 / 3.9            no
-   r1e    V107     27.7 / 2.7             1.6 / 4.5            no
-   r24    V122     14.0 / 3.9             1.9 / 4.1            no   <- the FLYING build
-```
-✅ **The manual arm falls BELOW its own null on every route.** The grind does not exist without
-engagement — replicated 7/7 across six different builds, and true on what the operator drives today.
-⇒ **an ENGAGED-ONLY lever CAN eliminate the grind**, which is exactly the family on the shelf, and
-V184's poles are engaged-gated so they are correctly targeted at it.
-⚠ **This is the GRIND, not the ratchet.** The same question for the ratchet remains unanswered —
-that test needs hands-on exposure the corpus does not have (21/11 windows), which is why Stage 1b
-exists.
-
-## ✅ **BOTH SCORERS DRY-RUN CLEAN — AND ONE CARRIED STALE ATTRIBUTION**
-`score_band_excess.py` and `grind_engaged_vs_manual.py` both run end to end on r77/r24.
-🛑 But the first told the operator to attribute a result between **V172, V173 and V158** — none of
-which are on the shelf. **Had he driven V185 and run it, the guidance would have misled him.** Updated
-to the actual fork:
-```
-   GRIND moved at all       => the POLES did it => you flew V184 and they work
-   GRIND essentially flat   => expected on V185; read the RATCHET row instead
-   RATCHET down, grind flat => the INERTIA dose revert (both builds carry it)
-   neither moved            => both accounts fail together
-   427 now carries gp-0x6ac0 >> 4 (V183+), NOT motor torque; gate at field 812
-```
-⊕ **Testing the instrument before the drive is worth as much as another lever** — a scorer that
-runs but says the wrong thing wastes the drive just as completely as one that crashes.
 

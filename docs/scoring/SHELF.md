@@ -102,6 +102,22 @@ function computed from the image **peaks at a specific amplitude**:
 
 ⭐ **SCORE V205 ON CLIP DUTY AT ±8192.** `gp-0x6b70` saturates there and V205 reads it directly. High duty ⇒ the command-gated-saturation model is confirmed and V206 is aimed correctly. Low-but-nonzero ⇒ partial; a quarter dose quadruples the ceiling. **Identically zero ⇒ the element never clips and V206 comes off the shelf.** A duty needs no scale calibration and cannot be averaged away.
 
+
+### ✅ A FREE ENDPOINT EVERY SHELF BUILD ALREADY CARRIES
+
+The 164-byte cave at 0xC4B34 is **byte-identical from V105 through V202**, so V202/V205/V206 carry
+V105’s exact rungs. Two of them report for free, with no extra bytes:
+
+| rung | meaning | what to expect |
+|---|---|---|
+| **b5** | |modelled friction| ≥ |inertia| | **0.42, range 0.31–0.49.** V105 measured 0.2798 at 1.000× the inertia dose; V202 runs 0.333×. **b5 ≤ 0.28 means the halving is not reaching the car and the ratchet lever is inert** — the most useful null available |
+| b6 | |gp-0x6b94| ≥ |gp-0x4f64| | 0.000000 — already measured dead on two routes; a non-zero reading would be new information |
+
+The b5 prediction comes from a measured single-cell pair: V105→V106 doubled the inertia curve and b5
+fell **−0.0891 [−0.1328, −0.0200]** on an episode bootstrap, with both sign rungs as null controls.
+So this lever is known to reach the car with the right sign — what is unknown is whether the halving
+does, and one drive of any shelf build answers it.
+
 ## V204 — the same fix, probing the parked lever instead
 
 ```

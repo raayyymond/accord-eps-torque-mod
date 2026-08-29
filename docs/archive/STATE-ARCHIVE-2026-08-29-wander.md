@@ -3362,3 +3362,84 @@ pass, not a scored one** — so it cannot produce a result I would then over-rea
 computed on the old exposure.** Re-run the power check against the NEW exposure, or the card is
 promising a result the drive will not deliver.
 
+## 🛑🛑 **THE SCORER'S EXCESS ENDPOINT CANNOT SEE THE POLES AT ALL — MY CARD DISCRIMINATOR WAS BACKWARDS**
+Applying each build's `|H|²` to the REAL flying spectrum (route `r24`, V122) and re-running the
+scorer's own estimator:
+```
+   build                    GRIND 15-25 Hz     RATCHET 5-12 Hz
+   FLYING (V122)                11.1x              26.7x
+   V185 (poles at Honda)        11.1x              26.7x
+   V184 (poles 0.980)           11.3x              30.0x      <- -16 dB of attenuation, and the
+                                                                 endpoint does not move
+```
+🛑 **V184's −16 dB grind attenuation is INVISIBLE to the endpoint the card scores.** The reason
+is structural, not a bug: the **slope-corrected excess** divides band power by a power law fitted
+**outside** the band (3–6 and 12–40 Hz). A low-pass attenuates the fit region too and **steepens the
+fit**, so the RATIO barely moves.
+➕ **THE GENERAL FACT, worth more than this build: the scorer measures PEAKINESS, not LEVEL.** A
+smooth broadband filter changes level without changing peakiness and is therefore invisible to it.
+A **damping** change alters peakiness and IS visible.
+❌ So the card's rule *"grind moved ⇒ the poles did it"* is **WRONG and withdrawn.** The poles will
+not move that number.
+
+### ✅ THE ENDPOINT THAT DOES SEE THEM — AND THE SCORER ALREADY PRINTS IT
+```
+   spectral slope over 3-40 Hz
+     FLYING (V122)        1/f^2.671
+     V185 (poles Honda)   1/f^2.671    delta +0.000
+     V184 (poles 0.980)   1/f^4.531    delta +1.860
+```
+✅ **1/f^4.53 is far outside the entire historical range (0.80–2.37)** — no route has ever produced
+anything like it, so a single pass is unmistakable. **This is a binary, pre-registered check.**
+
+### ✅ THE CORRECTED DISCRIMINATOR
+```
+   spectral slope jumps to ~4.5   => the POLES are live => you flew V184, and they work
+   slope unchanged (~2.7)         => you flew V185, or the poles are not reaching the signal
+   GRIND / RATCHET excess falls   => the INERTIA DOSE REVERT did it (both builds carry it;
+                                     the poles cannot move these numbers)
+   nothing moves anywhere         => both accounts fail together
+```
+⊕ **And note what this means for the fork**: since the excess endpoints respond only to the inertia
+revert, **V184 and V185 are indistinguishable on the ratchet/grind excess.** The ONLY thing V184 buys
+that V185 does not is the slope change — bought with **+16.4° of engaged-only phase lag**. Stated that
+way, **V185 is the better first drive**: same measurable ratchet effect, none of the phase risk.
+⚠ The inertia revert's effect is NOT in these numbers (it acts in a different lane), so the excess
+columns above are a **lower bound** on what both builds do to the ratchet.
+
+## ✅ **THE GRIND IS ENGAGED-ONLY — 7 ROUTES OUT OF 7, INCLUDING THE FLYING BUILD**
+Dry-running the second scorer answered, for the GRIND, the question my underpowered hands-on test
+could not answer for the ratchet. Per-route slope-matched nulls, adequate exposure:
+```
+   route  build   engaged exc / null    manual exc / null    manual real?
+   r78    V91       6.1 / 3.5             2.3 / 3.8            no
+   r7e    V96      28.9 / 3.2             2.2 / 4.8            no
+   r7f    V96      14.3 / 3.5             2.2 / 3.9            no
+   r96    V102    248.2 / 4.0             1.5 / 4.9            no
+   ra6    V106     25.3 / 4.0             3.0 / 3.9            no
+   r1e    V107     27.7 / 2.7             1.6 / 4.5            no
+   r24    V122     14.0 / 3.9             1.9 / 4.1            no   <- the FLYING build
+```
+✅ **The manual arm falls BELOW its own null on every route.** The grind does not exist without
+engagement — replicated 7/7 across six different builds, and true on what the operator drives today.
+⇒ **an ENGAGED-ONLY lever CAN eliminate the grind**, which is exactly the family on the shelf, and
+V184's poles are engaged-gated so they are correctly targeted at it.
+⚠ **This is the GRIND, not the ratchet.** The same question for the ratchet remains unanswered —
+that test needs hands-on exposure the corpus does not have (21/11 windows), which is why Stage 1b
+exists.
+
+## ✅ **BOTH SCORERS DRY-RUN CLEAN — AND ONE CARRIED STALE ATTRIBUTION**
+`score_band_excess.py` and `grind_engaged_vs_manual.py` both run end to end on r77/r24.
+🛑 But the first told the operator to attribute a result between **V172, V173 and V158** — none of
+which are on the shelf. **Had he driven V185 and run it, the guidance would have misled him.** Updated
+to the actual fork:
+```
+   GRIND moved at all       => the POLES did it => you flew V184 and they work
+   GRIND essentially flat   => expected on V185; read the RATCHET row instead
+   RATCHET down, grind flat => the INERTIA dose revert (both builds carry it)
+   neither moved            => both accounts fail together
+   427 now carries gp-0x6ac0 >> 4 (V183+), NOT motor torque; gate at field 812
+```
+⊕ **Testing the instrument before the drive is worth as much as another lever** — a scorer that
+runs but says the wrong thing wastes the drive just as completely as one that crashes.
+
