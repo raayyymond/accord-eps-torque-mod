@@ -31,21 +31,35 @@ file   39990-TVA,A160-V175-V173BASE-GP6B26.ENGAGED.Y.REVERT.HONDA-0x13000-0x1000
 
 ---
 
-## THE DRIVE — ONE PASS
+## THE DRIVE — STAGED, SO YOU NEVER DRIVE MORE THAN THE ANSWER NEEDS
 
-1. **Engaged creep, ONE continuous pass of 15 seconds, 1–24 km/h.** Don't break it up — the analysis
-   window is 5.12 s and a broken pass yields too few of them. Real curvature, not a straight line.
-2. **Then the same again with LKAS OFF**, same speeds, same road if you can. **This second pass is
-   what makes the build interpretable** — see the discriminator below. 15 s is enough.
-3. Stop the moment you have both. If the ratcheting is obviously still there, stop and say so; there
-   is no point continuing a drive whose single question is already answered.
+🛑 **Power-checked against the corpus before writing this.** Stage 1 answers the only question
+that matters first. **Stage 2 exists solely to attribute a win, so it is only worth driving if there
+IS a win** — which is exactly your rule: if the ratcheting is still there, stop instantly.
+
+**STAGE 1 — do this and nothing else.**
+1. **Engaged creep, ONE continuous pass of 15 seconds, 1–24 km/h**, real curvature, not a straight
+   line. Don't break it up — the analysis window is 5.12 s.
+2. **Stop.** If the ratcheting is obviously still there, say so and we are done for this build.
+
+✅ **Stage 1 is adequately powered for the primary question.** The ratchet endpoint is
+presence/absence, an ~8x move, and a single 15 s engaged window resolves it (11/11 on the corpus).
+
+**STAGE 2 — ONLY if Stage 1 shows the ratcheting gone or clearly reduced.**
+3. **Three more short passes, alternating engaged / LKAS-off**, same speeds and same road: roughly
+   15 s each, so about 90 s of driving total. This is what tells us **which lever did it**.
+
+⚠ **Why three and not one.** A single engaged + manual pair can only resolve a change larger than
+**6.6x** in the engaged/manual ratio (single-pair ratio p50 10.5, 95 % band [1.33, 56.5], log10
+sd 0.418). **V175's predicted move is well under that**, so one pair would be uninterpretable for
+attribution. Three matched pairs bring the detectable change to **2.97x**; four to 2.57x.
+🛑 **This is a limit of our instrument, not of your driving** — it is stated here rather than
+discovered afterwards.
 
 ```
 python rlog-tools/score/score_band_excess.py <route-tag>
 python rlog-tools/score/grind_engaged_vs_manual.py <route-tag>
 ```
-
----
 
 ## THE DISCRIMINATOR — ENGAGED vs MANUAL
 

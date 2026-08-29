@@ -4,6 +4,29 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ⚠ **POWER CHECK BEFORE THE DRIVE: THE V175 CARD WAS UNDERPOWERED FOR ATTRIBUTION — NOW STAGED**
+**Caught before the drive rather than after, which is the whole point of the design law.** The card
+asked for one 15 s engaged pass and one 15 s LKAS-off pass and attributed the result via the
+engaged/manual ratio. Resampling real 15 s creep windows out of the corpus and scoring them exactly as
+the card says:
+```
+   engaged 15 s window   n=27   p50 214.3   log10 sd 0.332
+   manual  15 s window   n=22   p50  17.2   log10 sd 0.270
+   single-pair RATIO            p50  10.5   95 % band [1.33, 56.49]   log10 sd 0.418
+   => ONE pair resolves only a change LARGER THAN 6.6x
+      2 pairs 3.80x  ·  3 pairs 2.97x  ·  4 pairs 2.57x  ·  6 pairs 2.16x
+```
+🛑 **V175's predicted ratio move is well under 6.6x** (a 3.0x dose on one of six terms in the
+sum) ⇒ **a single pair could not have attributed the result.**
+✅ **The PRIMARY question is unaffected and stays a single pass**: the ratchet endpoint is
+**presence/absence**, an ~8x move, and one 15 s engaged window resolves it 11/11 on the corpus.
+✅ **The card is now STAGED**: Stage 1 is one engaged pass and stop — which is exactly the operator's
+own rule (*"if I observe micro-ratcheting or grinding, I am generally going to stop instantly"*).
+**Stage 2 (three alternating engaged / LKAS-off passes, ~90 s total) is driven ONLY if Stage 1 shows a
+win**, because attribution only matters when there is something to attribute.
+⊕ **Generalises**: any endpoint that is a RATIO of two separately-driven conditions costs roughly
+**4x the exposure** of a presence/absence endpoint. Stage ratio endpoints behind the presence check.
+
 ## ❌ **THE AMPLITUDE-SELECTIVITY LEAD IS CLOSED IN ITS ORIGINAL FORM — THE RESIDUAL LERP IS NOT A CALIBRATION**
 🛑 **I proposed reshaping the residual LERP's 9 knots as a static cal edit. THAT TABLE DOES NOT
 EXIST IN FLASH.** `FUN_000389ec` **rebuilds it every cycle** into a scratch buffer and publishes it:
