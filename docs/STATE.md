@@ -4,6 +4,36 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅✅ **V195 — THE NOTCH RE-FITTED ON THE CHANNEL WHERE THE GRIND ACTUALLY LIVES**
+V188 centred the notch at 19.40 Hz by minimax over **`cs_tq`, the driver torque sensor**. The
+cross-channel work then showed the grind is a **motion** oscillation, strongest in **`cs_rate`**
+(excess 7.3× vs 5.1× in torque). **The fit had been done on the weaker instrument.** Re-fitting on
+`cs_rate`, same minimax criterion, same GATE 2 constraints, 67 routes:
+```
+   per-route GRIND peak 15-25 Hz    cs_rate  p10 16.33  med 20.12  p90 22.15 Hz
+                                    cs_tq    p10 15.74  med 19.92  p90 21.68 Hz
+
+   design                       median remaining   p90 remaining   phase @3 Hz
+   V188/V189  19.40 Hz r 0.9300   0.0666  15.0x    0.0962  10.4x     -3.8 deg
+   V195       19.75 Hz r 0.9000   0.0466  21.5x    0.0698  14.3x     -4.6 deg
+```
+✅ **1.43× more grind power removed at the median, 1.38× at p90, for 0.8° more phase.**
+⊕ The substantive change is **the pole radius, not the centre**: 0.9300 → 0.9000 makes the notch
+**wider**, because the rate-channel peak distribution is wider than the torque-channel one. The
+0.35 Hz centre shift is minor by comparison.
+✅ **V195 = V189 + four float32 cells. 11 payload bytes, 30/30 assertions.**
+`a3ea8683df48c6b3f40e8ba8ac879047da6aec62fedc8d56cf9f1dc83f7b610b`
+```
+   DC gain 1.000003   max|H| 1.7177   added lag vs V189: -0.27 deg @1 Hz, -0.77 deg @3 Hz
+   notch at 19.76 Hz  |H| 0.00094     15 Hz 0.42 - 21 Hz 0.12 - 22.2 Hz 0.23 - 25 Hz 0.48
+```
+⊕ Still engagement-gated, so manual driving stays bit-for-bit stock — **including Honda's 55.226 Hz
+null, which is given up only while LKAS is engaged.**
+
+⇒ **V195 REPLACES V189 as the recommendation.** Same lever set, same risk profile, a better-aimed
+notch — and the improvement came from measuring the symptom in the right channel rather than from any
+new firmware insight.
+
 ## 🛑 **THREE CLAIMS TESTED, TWO DIED TO THEIR OWN CONTROLS — and one of them was mine from last tick**
 
 ### ❌ 1. THE COULOMB SIGN-FLIP HYPOTHESIS IS REFUTED
@@ -2160,44 +2190,4 @@ term, its cap binds, its section was never retuned, and both gates pass.
 ⊕ **The fix, if this is ever re-run**: restrict candidates to cells **verified as u16 cals** — by the
 knot-count header, by a decompiled read site, or by sensible ordered values — rather than every
 aligned pair. `analysis-2020accord/verify/check_lever.py --record` already does that validation.
-
-## 🛑🛑 **I OVER-CORRECTED. THE RATCHET TREND IS UNRESOLVED, NOT ESTABLISHED — AND TWO LABELS WERE WRONG**
-Searching memory for **operator verdicts** turned up two hard route→build statements that contradict
-labels I had *inferred from filenames*:
-- 🛑 **`r95` = V101, NOT V102** — *“V101 flew it at 8× (7128) as route `0x95`, 2026-08-19”*. My
-  inference came from `r95_v102_prereg.py`, which is a **pre-registration FOR V102 that used route 95
-  as its reference** — not a statement that r95 IS V102.
-- ✅ **`r77` = V90** — *“V90 flew as route 77”*. I had **excluded** r77 as unattributable, and it is the
-  **richest route in the corpus at 97 windows**.
-
-### 🛑 WITH ONLY HARD ATTRIBUTIONS, MY OWN CORRECTION DOES NOT HOLD
-```
-                             n    RATCHET post-V102      GRIND post-V102
-   session start             5    rho -0.14  p 0.787     rho -0.94  p 0.005
-   after enlarging (8 inferred) 11 rho -0.60  p 0.052     rho -0.84  p 0.001
-   ALL HARD attributions     8    rho -0.40  p 0.320     rho -0.86  p 0.007
-```
-✅ **[EVIDENCE] the GRIND trend is ROBUST** — ρ −0.76 to −0.86 across every attribution set tried,
-significant in all of them. **That claim stands unchanged.**
-🛑 **[UNRESOLVED] the RATCHET trend is NOT robust** — ρ swings **−0.14 → −0.60 → −0.40** with the
-label set and is **never significant**. ⇒ **I over-corrected.** *“The ratchet is trending down”* was
-as over-stated as *“the ratchet has never moved”* was. **The honest statement is that the ratchet's
-build trend is UNRESOLVED at every sample size tried**, while the grind's is settled.
-⊕ **What does NOT depend on this**: the ratchet is in torque not wheel rate (19/19 routes),
-engaged-only (15/15 vs 6/15 marginal), command-driven (CI excludes zero), and **no varied cal tracks
-it** under family-wise control. **V173's case is untouched** — it never rested on the trend.
-⚠ **The cal scan used these labels too.** Its ratchet result was a **null** (0 of 94 cells survive),
-which two label changes cannot create a survivor from; its grind hit (`0xC40BC`) is worth re-checking
-if that cell is ever acted on.
-
-### ⭐ AND V101 PRICES THE 8× GAIN, WHICH IS WORTH HAVING
-`r95` is the **8×-gain build** (`0xC6CD0` = 7128), and now correctly labelled it is measurable:
-```
-   V101 (8x gain)   ratchet 193.2   grind 38.7
-   all other builds ratchet  34.5   grind 15.6     (medians)
-   => 8x gain: ratchet 5.6x WORSE, grind 2.5x WORSE
-```
-✅ **This is the first MEASUREMENT behind the standing rule never to raise the LKAS gain**, and it
-matches the operator's own report that 8× made grinding worse. **The rule was right and now it has a
-number.**
 

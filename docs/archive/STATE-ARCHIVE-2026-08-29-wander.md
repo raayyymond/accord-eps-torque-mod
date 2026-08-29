@@ -2103,3 +2103,43 @@ lives here instead.
 ⊕ **If you are reading `068aace3` in the log: ignore its title.** It adds the flash-readiness section
 to the V173 drive card and nothing else. Nothing about V132 or the 511 ceiling changed in it.
 
+## 🛑🛑 **I OVER-CORRECTED. THE RATCHET TREND IS UNRESOLVED, NOT ESTABLISHED — AND TWO LABELS WERE WRONG**
+Searching memory for **operator verdicts** turned up two hard route→build statements that contradict
+labels I had *inferred from filenames*:
+- 🛑 **`r95` = V101, NOT V102** — *“V101 flew it at 8× (7128) as route `0x95`, 2026-08-19”*. My
+  inference came from `r95_v102_prereg.py`, which is a **pre-registration FOR V102 that used route 95
+  as its reference** — not a statement that r95 IS V102.
+- ✅ **`r77` = V90** — *“V90 flew as route 77”*. I had **excluded** r77 as unattributable, and it is the
+  **richest route in the corpus at 97 windows**.
+
+### 🛑 WITH ONLY HARD ATTRIBUTIONS, MY OWN CORRECTION DOES NOT HOLD
+```
+                             n    RATCHET post-V102      GRIND post-V102
+   session start             5    rho -0.14  p 0.787     rho -0.94  p 0.005
+   after enlarging (8 inferred) 11 rho -0.60  p 0.052     rho -0.84  p 0.001
+   ALL HARD attributions     8    rho -0.40  p 0.320     rho -0.86  p 0.007
+```
+✅ **[EVIDENCE] the GRIND trend is ROBUST** — ρ −0.76 to −0.86 across every attribution set tried,
+significant in all of them. **That claim stands unchanged.**
+🛑 **[UNRESOLVED] the RATCHET trend is NOT robust** — ρ swings **−0.14 → −0.60 → −0.40** with the
+label set and is **never significant**. ⇒ **I over-corrected.** *“The ratchet is trending down”* was
+as over-stated as *“the ratchet has never moved”* was. **The honest statement is that the ratchet's
+build trend is UNRESOLVED at every sample size tried**, while the grind's is settled.
+⊕ **What does NOT depend on this**: the ratchet is in torque not wheel rate (19/19 routes),
+engaged-only (15/15 vs 6/15 marginal), command-driven (CI excludes zero), and **no varied cal tracks
+it** under family-wise control. **V173's case is untouched** — it never rested on the trend.
+⚠ **The cal scan used these labels too.** Its ratchet result was a **null** (0 of 94 cells survive),
+which two label changes cannot create a survivor from; its grind hit (`0xC40BC`) is worth re-checking
+if that cell is ever acted on.
+
+### ⭐ AND V101 PRICES THE 8× GAIN, WHICH IS WORTH HAVING
+`r95` is the **8×-gain build** (`0xC6CD0` = 7128), and now correctly labelled it is measurable:
+```
+   V101 (8x gain)   ratchet 193.2   grind 38.7
+   all other builds ratchet  34.5   grind 15.6     (medians)
+   => 8x gain: ratchet 5.6x WORSE, grind 2.5x WORSE
+```
+✅ **This is the first MEASUREMENT behind the standing rule never to raise the LKAS gain**, and it
+matches the operator's own report that 8× made grinding worse. **The rule was right and now it has a
+number.**
+
