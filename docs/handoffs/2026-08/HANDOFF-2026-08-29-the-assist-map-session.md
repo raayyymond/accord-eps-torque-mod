@@ -10,8 +10,8 @@
 
 Three of this kit's own measurement instruments turned out to be artefacts of a spectral tilt. With a
 validated replacement, **the ratchet is firmware-created, engaged-only, lives in TORQUE not wheel
-rate, and has never moved across thirty-plus builds** — while the grind falls monotonically over the
-same builds. That dissociation led to the **base power-assist map**, the largest torque-fed term in
+rate, and falls only WEAKLY across builds where the grind falls strongly** — see the correction in
+§3. That dissociation led to the **base power-assist map**, the largest torque-fed term in
 the aggregator, whose slope cap and second-order section had never been touched. **Seven builds are
 cut.** Fly **V173**. Every remaining lever is priced **below the measurement floor**, and the one
 assumption the levers share is — demonstrably, after three estimator families failed — **testable only
@@ -72,9 +72,12 @@ worked". Excess is monotone.
   **19.9× [4.82, 35.64]**. Engagement *creates* it. (Supersedes the recorded 2.8×.)
 - **The grind is engaged-only too** — **0/7** in manual. Both symptoms are firmware-created by
   engagement; they differ in frequency and levers, **not in class**.
-- **Untouched by 30+ builds.** Post-V102 ρ = −0.14 (p 0.787) against a floor that would have shown
-  1.9×; frequency pinned at **8.64 Hz ± 7.4 %**. Meanwhile the **grind falls ρ = −0.94 (p 0.005)** in
-  three channels ⇒ **the symptoms dissociate.**
+- 🛑 **CORRECTED — both symptoms fall post-V102, the grind more strongly.** An earlier reading here
+  said the ratchet was *untouched by 30+ builds* (ρ = −0.14, p 0.787). **That was an n=5 artefact.**
+  On the full corpus with build attribution recovered (n=11): **RATCHET ρ = −0.60 (p 0.052)** vs
+  **GRIND ρ = −0.84 (p 0.001)**; hard-attributions-only (n=7) gives −0.59 vs −0.76, so the effect
+  size is unchanged and only the p-value moves with n. ⇒ **a difference of DEGREE, not of kind**, and
+  the ratchet is **demonstrably reachable**. Frequency still pinned at **8.64 Hz ± 7.4 %**.
 - **The Coulomb relay is exonerated for it**: knee spans 10× with ρ = −0.06 (p 0.874). Gain-matched,
   knee 300→1800/3000 cuts the **grind 2.8×** and moves the **ratchet 1.18×**.
 - **Fixed frequency, command-proportional amplitude** (17.0 → 58.1, 3.4×) ⇒ the `1−P·L` signature.

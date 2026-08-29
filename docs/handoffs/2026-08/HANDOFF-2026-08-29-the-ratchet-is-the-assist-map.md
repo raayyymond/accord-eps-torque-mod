@@ -3,6 +3,11 @@
 > 🚩 **PARTIAL — covers only the first third of 2026-08-29.** The complete session handoff is
 > `HANDOFF-2026-08-29-the-assist-map-session.md`: seven builds, the notch structure, the
 > scorer defect, the r26 gate, the ring-down negative and the full open-items list.
+>
+> 🛑 **AND ITS CENTRAL CLAIM IS CORRECTED THERE**: this document says the ratchet *“has not
+> moved across thirty-plus builds”* (ρ = −0.14, p 0.787). **That was an n=5 artefact.** On the
+> full corpus (n=11) the ratchet gives **ρ = −0.60, p 0.052** against the grind's −0.84 — both
+> fall, the grind more strongly. Body left unedited as the record of what was believed.
 
 
 > **Read `docs/STATE.md` first.** This is the narrative; STATE is the live state. Everything here is
