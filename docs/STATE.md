@@ -1,5 +1,63 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **THE SIGN-AGREEMENT GATE IS DORMANT WHEN ENGAGED — LEAD CLOSED, TWO SELF-CORRECTIONS**
+Last turn I flagged a sign-agreement gate on the LKAS command path as the best-shaped symptom-B
+mechanism, marked the behavioural reading **BELIEF**, and said *"read all of `FUN_00028ea6` before
+proposing anything."* Done. **The lead collapses, exactly where it was flagged.**
+
+### ✅ WHAT THE FULL DECOMPILE SHOWS — the test is NESTED INSIDE AN ENABLE GATE
+```c
+   if ((cVar15 == '\x01') && (*(char *)(unaff_gp + -0x6806) == '\0')) {    // <-- ENABLE GATE
+       if ( (deadband test on cal(0xC61B8)) || (iVar34 * *(short *)(gp - 0x6b30) < 1) ) {
+           iVar23 = 0;  goto LAB_0002a1ee;                                  // zero the command
+       }
+   }
+   iVar23 = (int)(short)((int)(iVar34 * uVar18) >> 0xf);                     // otherwise pass
+   LAB_0002a1ee:
+   ...
+   *(short *)(unaff_gp + -0x6b30) = (short)iVar23;                           // stores the OUTPUT
+```
+with `cVar15 = *(char *)(unaff_tp + 0x74a3)` = **`cal(0xC64A3)`**.
+
+### 🛑 SELF-CORRECTION 1 — THERE **IS** A CAL ON THE GATE
+I wrote *"no cal on the gate — `mul`+`cmp`+`bgt`, hard-coded."* **Wrong.** `0xC64A3` is a byte
+enable on the whole block. **But it is `1` in stock and in ALL 155 build images**, so it is not a
+free lever and disabling it is untested territory.
+
+### ⭐ SELF-CORRECTION 2 — THE GATE IS **DORMANT WHEN ENGAGED**, PROVED BEHAVIOURALLY
+With `cal(0xC64A3)` permanently 1, the gate's activity rests entirely on **`gp-0x6806 == 0`**
+(37 loads / 20 stores — a state-machine flag in the `0x29xxx` region).
+**The latch reading I flagged is CORRECT, and that is exactly what closes the lead:**
+```
+   the block stores iVar23 back to gp-0x6b30, so once the command is zeroed,
+   prev = 0  =>  iVar34 * 0 = 0 < 1  =>  the test fires AGAIN  =>  a SELF-HOLDING ZERO
+```
+⇒ **if this gate were active while engaged, the FIRST zero-crossing of the command would latch
+LKAS at zero PERMANENTLY.** It demonstrably does not — the operator steers on LKAS every drive.
+⇒ **[EVIDENCE, behavioural] `gp-0x6806 ≠ 0` whenever LKAS is steering ⇒ the deadband and the
+sign-agreement test are BOTH INACTIVE WHEN ENGAGED.**
+⇒ **THE SIGN GATE IS NOT SYMPTOM B'S SOURCE. LEAD CLOSED.**
+⊕ It also independently re-confirms [[reference-accord-pregain-deadband-c61b8]] — the 102-count
+pre-gain deadband sits in this same dormant block, which is *why* it was filed ELIMINATED.
+
+### 🛑 WHAT THIS IMPLIES FOR SYMPTOM B — AND IT IS NOT ENCOURAGING
+The engaged LKAS forward path is now traced end to end with **no switching nonlinearity active**:
+```
+   command -> [deadband + sign gate: DORMANT when engaged] -> x gain -> x polarity -> >>15
+           -> clamp cal(0xC61B4) (record: INERT) -> gp-0x6b30
+```
+⇒ **no discontinuity, no relay, no slew limit on the engaged command path.**
+⇒ the gain-laddered broadband excess (**1× −0.04 · 4× 0.84 · 6× 1.13 · 8× 2.24 dB**) therefore
+does **not** originate in a command-path discontinuity.
+⇒ **[BELIEF, and the honest reading] what remains is the motor/inverter being driven harder** —
+current ripple and commutation noise rising with command amplitude, with a superlinear acoustic
+response giving the observed **m^1.74**. **That is physics, not a defect, and no cal reaches it
+except the LKAS gain, which is frozen in both directions.**
+⇒ **🛑 SYMPTOM B MAY BE IRREDUCIBLE IN FIRMWARE.** Stating it plainly is more useful than
+generating another build that cannot touch it. **If that is wrong, the disproof would be a broadband
+source that is engagement-conditional and NOT proportional to command amplitude — none has been
+found in the forward path.**
+
 ## ⭐⭐ **A SIGN-AGREEMENT GATE SITS DIRECTLY ON THE LKAS COMMAND PATH — UPSTREAM OF THE GAIN**
 Chasing symptom B's broadband source into the forward path found a **hard switching nonlinearity on
 the LKAS command itself.** Disassembled from `0x2A1C0`; the region is **structurally identical to
