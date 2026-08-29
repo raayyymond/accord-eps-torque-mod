@@ -4,6 +4,42 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **THE GRIND IS ENGAGED-ONLY — 7 ROUTES OUT OF 7, INCLUDING THE FLYING BUILD**
+Dry-running the second scorer answered, for the GRIND, the question my underpowered hands-on test
+could not answer for the ratchet. Per-route slope-matched nulls, adequate exposure:
+```
+   route  build   engaged exc / null    manual exc / null    manual real?
+   r78    V91       6.1 / 3.5             2.3 / 3.8            no
+   r7e    V96      28.9 / 3.2             2.2 / 4.8            no
+   r7f    V96      14.3 / 3.5             2.2 / 3.9            no
+   r96    V102    248.2 / 4.0             1.5 / 4.9            no
+   ra6    V106     25.3 / 4.0             3.0 / 3.9            no
+   r1e    V107     27.7 / 2.7             1.6 / 4.5            no
+   r24    V122     14.0 / 3.9             1.9 / 4.1            no   <- the FLYING build
+```
+✅ **The manual arm falls BELOW its own null on every route.** The grind does not exist without
+engagement — replicated 7/7 across six different builds, and true on what the operator drives today.
+⇒ **an ENGAGED-ONLY lever CAN eliminate the grind**, which is exactly the family on the shelf, and
+V184's poles are engaged-gated so they are correctly targeted at it.
+⚠ **This is the GRIND, not the ratchet.** The same question for the ratchet remains unanswered —
+that test needs hands-on exposure the corpus does not have (21/11 windows), which is why Stage 1b
+exists.
+
+## ✅ **BOTH SCORERS DRY-RUN CLEAN — AND ONE CARRIED STALE ATTRIBUTION**
+`score_band_excess.py` and `grind_engaged_vs_manual.py` both run end to end on r77/r24.
+🛑 But the first told the operator to attribute a result between **V172, V173 and V158** — none of
+which are on the shelf. **Had he driven V185 and run it, the guidance would have misled him.** Updated
+to the actual fork:
+```
+   GRIND moved at all       => the POLES did it => you flew V184 and they work
+   GRIND essentially flat   => expected on V185; read the RATCHET row instead
+   RATCHET down, grind flat => the INERTIA dose revert (both builds carry it)
+   neither moved            => both accounts fail together
+   427 now carries gp-0x6ac0 >> 4 (V183+), NOT motor torque; gate at field 812
+```
+⊕ **Testing the instrument before the drive is worth as much as another lever** — a scorer that
+runs but says the wrong thing wastes the drive just as completely as one that crashes.
+
 ## 🛑 **I BROKE THE DRIVE CARD LAST ROUND, AND THIS CAUGHT IT: THERE ARE ZERO HANDS-ON 15 s WINDOWS**
 Last round I changed the card to demand HANDS ON, on the strength of the hands-off confound. **That
 was half-right and it broke the other half.**
