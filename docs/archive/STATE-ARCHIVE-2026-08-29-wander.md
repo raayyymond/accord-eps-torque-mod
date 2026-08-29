@@ -3223,3 +3223,39 @@ cost stability margin even when the magnitude only falls. With Honda's coefficie
 small (a few degrees) — but **V184's retuned poles make it large**, which is a real and previously
 unstated engaged-only cost of the pole lever. [BELIEF, structural — not measured.]
 
+## ❌ **THE FREQUENCY SIGNATURE DOES NOT SETTLE THE V184/V185 FORK — BUT IT SHARPENED THE MEASUREMENT**
+The fork is whether the ratchet is driven by the **inertia lane** (`gp-0x6b26 = K·α`, loop
+contribution ∝ ω²) or by **assist-section loop gain** (a mild broadband filter on the car). Both are
+engaged-only, so the engaged/manual *contrast* cannot separate them — but their **frequency
+signatures** differ, so the engaged/manual ratio vs frequency should.
+✅ **Speed-matched** (300 engaged / 300 manual windows, mean 15.2 vs 14.6 km/h) with a **permutation
+null on the labels**:
+```
+   engaged / manual PSD ratio        3.91 Hz   0.79      <- engagement SUPPRESSES 4 Hz
+                                     8.20 Hz  30.56
+                                     8.40 Hz  33.06      <- the peak
+                                    15.04 Hz   8.72
+                                    25.00 Hz   5.48
+   log-log slope over 3-30 Hz  b = +0.461   permutation null [-0.119, +0.113]
+```
+🛑 **MY FIRST VERDICT WAS WRONG.** The script concluded "slope exceeds its null ⇒ inertia
+fingerprint ⇒ V185 favoured". **It tested the wrong thing.** An ω² force term needs **b ≈ +4 in
+PSD**; observed is **+0.461**. And the shape test settles it:
+```
+   peak 33.06x at 8.40 Hz    band-edge mean 1.48x    peak / edges = 22.3x
+```
+⇒ **the ratio is a narrow PEAK, not a power law.** Fitting a line to a peaked function produces a
+spurious positive slope, and its significance against the null says nothing about ω². The verdict
+logic now tests SHAPE first and reports no discrimination.
+⇒ **THE FORK STAYS OPEN. Only the car can settle it.**
+
+### ✅ WHAT THE MEASUREMENT DID BUY — A MUCH SHARPER ENGAGEMENT NUMBER
+The record carried engagement amplifying the ratchet band **~15x** (and 2.8x on a band contrast).
+**Speed-matched, the peak is 33.1x at 8.40 Hz**, and the excess is **narrow**: 22.3x above the
+band edges, with the ratio **BELOW 1 (0.79) at 3.9 Hz**.
+⇒ **engagement does not raise torque activity broadly — it SUPPRESSES ~4 Hz and excites a specific
+mode at ~8.4 Hz.** That is a resonance being driven, not a gain change, and it is the cleanest
+statement of the engagement effect the kit has.
+⊕ It also re-confirms the mode centre independently: **8.40 Hz**, inside the ±0.71 Hz wander band
+established earlier, and consistent with 8.17–8.20 Hz from the other estimators.
+

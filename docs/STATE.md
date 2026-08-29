@@ -4,6 +4,65 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **A VACUOUS TEST RETIRED, MY OWN AMPLITUDE PREDICTION WEAKENED — AND V206 RE-JUSTIFIED ON BETTER GROUNDS**
+
+### 🛑 **THE FREQUENCY TEST CANNOT DISCRIMINATE — do not spend a drive endpoint on it**
+I planned to predict the limit-cycle frequency and test it against the measured 6–9 Hz ratchet. The
+ratchet is a **measured** lightly-damped resonance: 7.79 Hz, **Q 14–29**, ζ 0.017–0.036, ring-down,
+three drives. A 2nd-order resonance sweeps 180° over roughly `f0/Q`:
+```
+   Q = 14  ->  the -180 deg crossing is pinned within +-0.28 Hz of 7.79
+   Q = 29  ->  ...................................... +-0.13 Hz
+```
+⇒ **ANY limit cycle in a loop containing this resonance locks to 7.6–8.0 Hz BY CONSTRUCTION**, which
+is inside the measured band. **The test is satisfied by every hypothesis that routes through the
+resonance at all, so it has ZERO discriminating power.** Retired before it cost a drive endpoint.
+
+### ⚠ **AND MY OWN AMPLITUDE PREDICTION IS IN TENSION WITH THE RECORD**
+Last tick I pre-registered the describing-function peak as a limit-cycle amplitude. That peak is
+**speed-indexed**, so it predicts the ratchet's amplitude should vary with speed:
+```
+   speed ct   320    640   1280   2560   5120        (~5, 10, 20, 40, 80 km/h at 64 ct/km/h)
+   predicted  460    438    453    619   1224        ** 2.8x rise from 10 to 80 km/h **
+```
+But the record characterises the ratchet as **SPEED-INVARIANT**, with amplitude scaling on **wheel
+rate / command magnitude** ([[accord-ratchet-is-a-lightly-damped-resonance]],
+[[accord-ratchet-axis-is-wheel-rate]]). **Those point in opposite directions.**
+⇒ **The limit-cycle-amplitude framing is WEAKENED.** ⚠ Not a clean refutation — a compensating speed
+dependence in `|G(jω)|` could cancel it — but **the burden now sits on that coincidence**, and I should
+not have pre-registered a speed-varying endpoint against a symptom the record calls speed-invariant.
+
+### ⭐⭐ **BUT V206 IS RE-JUSTIFIED, AND ON THE RECORD'S OWN STATED TARGET**
+`accord-ratchet-and-grind-are-command-gated-saturation.md` says it plainly:
+> *"Sixty builds hunted a **linear** lever — a pole, a damper, a gain — for what is now measured to be
+> a **command-triggered nonlinearity**. 🛑 **A linear lever cannot fix a relay.** The target is the
+> SATURATING ELEMENT: **find what clips, and either raise its ceiling or soften its corner.**"*
+
+**`0xC63AE` scales the LERP's input, so halving it DOUBLES the residual needed to reach the ceiling:**
+```
+   LERP ceiling at X[9] = 14490 at every speed
+   k = 1024 (Honda)  ->  clips when |resid| >= 14490
+   k =  512 (V206)   ->  clips when |resid| >= 28980        ** exactly 2x the ceiling **
+   (resid is gated to +-20000 per term, so the Honda ceiling IS reachable and V206's is much less so)
+```
+⇒ **V206 raises the effective ceiling of a saturating element by exactly 2× — which is verbatim what
+the record instructs.** ⊕ **And this justification SURVIVES the speed-invariance objection**, because
+it is about **clipping duty**, not loop gain: the ceiling is 14490 at every speed.
+⊕ It is also **the "raise its ceiling" branch, not "soften its corner"** — worth naming, because the
+two have different side-effects and only one was available as a single virgin cal.
+
+### ✅ **THE ENDPOINT IS NOW SHARPER — CLIP DUTY, NOT AMPLITUDE**
+`gp-0x6b70` saturates at ±8192, and **V205 reads `gp-0x6b70` directly.** So the pre-registration
+becomes:
+```
+   clip duty at +-8192 is HIGH   -> the saturation model is confirmed and V206 is aimed correctly
+   clip duty is LOW but non-zero -> V206 is a partial fix; a quarter dose (k=256) quadruples the ceiling
+   clip duty is IDENTICALLY ZERO -> the element NEVER clips, the saturation model is wrong HERE,
+                                    and V206 should come off the shelf rather than be flown
+```
+**That is a far better endpoint than the amplitude one** — it is a duty, it needs no scale calibration,
+it cannot be averaged away, and one of its three branches retires the build.
+
 ## ✅ **GATE 2 RUN ON V206 — IT PASSES, AND IT WAS NOT THE TRIVIAL CHECK IT LOOKED LIKE**
 
 I built V206 last tick having run **GATE 1 but not GATE 2**. The kit makes both mandatory for any
@@ -2210,40 +2269,4 @@ Nothing about which cells are right — but it **resizes the target**. The effec
 - and the drive's detection threshold matters more than I implied: the earlier power check found one
   15 s pass resolves a **presence/absence** change, and a ~3.6x band move is comfortably inside the
   **grind** endpoint's power but near the ratchet endpoint's, which needs 2 passes.
-
-## ❌ **THE FREQUENCY SIGNATURE DOES NOT SETTLE THE V184/V185 FORK — BUT IT SHARPENED THE MEASUREMENT**
-The fork is whether the ratchet is driven by the **inertia lane** (`gp-0x6b26 = K·α`, loop
-contribution ∝ ω²) or by **assist-section loop gain** (a mild broadband filter on the car). Both are
-engaged-only, so the engaged/manual *contrast* cannot separate them — but their **frequency
-signatures** differ, so the engaged/manual ratio vs frequency should.
-✅ **Speed-matched** (300 engaged / 300 manual windows, mean 15.2 vs 14.6 km/h) with a **permutation
-null on the labels**:
-```
-   engaged / manual PSD ratio        3.91 Hz   0.79      <- engagement SUPPRESSES 4 Hz
-                                     8.20 Hz  30.56
-                                     8.40 Hz  33.06      <- the peak
-                                    15.04 Hz   8.72
-                                    25.00 Hz   5.48
-   log-log slope over 3-30 Hz  b = +0.461   permutation null [-0.119, +0.113]
-```
-🛑 **MY FIRST VERDICT WAS WRONG.** The script concluded "slope exceeds its null ⇒ inertia
-fingerprint ⇒ V185 favoured". **It tested the wrong thing.** An ω² force term needs **b ≈ +4 in
-PSD**; observed is **+0.461**. And the shape test settles it:
-```
-   peak 33.06x at 8.40 Hz    band-edge mean 1.48x    peak / edges = 22.3x
-```
-⇒ **the ratio is a narrow PEAK, not a power law.** Fitting a line to a peaked function produces a
-spurious positive slope, and its significance against the null says nothing about ω². The verdict
-logic now tests SHAPE first and reports no discrimination.
-⇒ **THE FORK STAYS OPEN. Only the car can settle it.**
-
-### ✅ WHAT THE MEASUREMENT DID BUY — A MUCH SHARPER ENGAGEMENT NUMBER
-The record carried engagement amplifying the ratchet band **~15x** (and 2.8x on a band contrast).
-**Speed-matched, the peak is 33.1x at 8.40 Hz**, and the excess is **narrow**: 22.3x above the
-band edges, with the ratio **BELOW 1 (0.79) at 3.9 Hz**.
-⇒ **engagement does not raise torque activity broadly — it SUPPRESSES ~4 Hz and excites a specific
-mode at ~8.4 Hz.** That is a resonance being driven, not a gain change, and it is the cleanest
-statement of the engagement effect the kit has.
-⊕ It also re-confirms the mode centre independently: **8.40 Hz**, inside the ±0.71 Hz wander band
-established earlier, and consistent with 8.17–8.20 Hz from the other estimators.
 

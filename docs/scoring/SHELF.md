@@ -67,10 +67,12 @@ improves worst-case leakage by only 1.1× and makes the median *worse* — one b
   image 71bd8312c324de9c01cf277307e41bb6dbb5e49cc6cf72e02e597a8013333a80
 ```
 
-✅ **GATE 2 PASS** (describing function, worst case 0.794 — see below). V202 plus **one calibration byte**: `0xC63AE` 1024 → 512. Preflight 8/8, 34/34 assertions, cave
+✅ **GATE 1 + GATE 2 PASS.** V202 plus **one calibration byte**: `0xC63AE` 1024 → 512. Preflight 8/8, 34/34 assertions, cave
 byte-identical, the 427 probe untouched.
 
-`0xC63AE` scales the input of the curve behind `gp-0x6b70`, which computing from the image shows is a
+⭐ **What it actually does: it RAISES A CEILING.** `0xC63AE` scales the LERP’s input, so halving it **doubles the residual needed to clip — 14490 → 28980, at every speed.** The record’s own model of the ratchet is a *command-gated saturation*, with the instruction *“find what clips, and either raise its ceiling or soften its corner”*. This is the raise-its-ceiling branch, and unlike a gain argument it survives the ratchet being speed-invariant, because clip duty is about the ceiling, not loop gain.
+
+`0xC63AE` also scales the curve behind `gp-0x6b70`, which computing from the image shows is a
 **soft relay** — gain 2.67–3.77× near zero against 0.26–0.52× mid-range. Halving it halves that
 small-signal gain (2.67→1.33, 3.77→1.89). It has **exactly one site image-wide and zero writers**,
 and scales this stage only — the base assist map is untouched.
@@ -96,10 +98,9 @@ function computed from the image **peaks at a specific amplitude**:
 | 2560 | 165 | 3.75× | 619 counts |
 | 5120 | 310 | 3.95× | 1224 counts |
 
-⭐ **V206 halves N but DOUBLES A\*, so the predicted swing barely moves** — 438→445 at 640, 619→610 at
-2560. **So V206 must NOT be scored on the amplitude of `gp-0x6b70`: it would read as a null even if
-the lever worked.** Score it on whether the oscillation is **present at all**, and on the operator’s
-own report. This is exactly the endpoint that would have been got wrong without computing it.
+🛑 **SUPERSEDED ENDPOINT.** Two corrections: the limit-cycle FREQUENCY test is vacuous (a Q 14–29 resonance pins the −180° crossing within ±0.3 Hz of 7.79, so every hypothesis passes), and the amplitude table above is SPEED-INDEXED while the record calls the ratchet **speed-invariant** — so do not score on amplitude either.
+
+⭐ **SCORE V205 ON CLIP DUTY AT ±8192.** `gp-0x6b70` saturates there and V205 reads it directly. High duty ⇒ the command-gated-saturation model is confirmed and V206 is aimed correctly. Low-but-nonzero ⇒ partial; a quarter dose quadruples the ceiling. **Identically zero ⇒ the element never clips and V206 comes off the shelf.** A duty needs no scale calibration and cannot be averaged away.
 
 ## V204 — the same fix, probing the parked lever instead
 
