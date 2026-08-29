@@ -1,5 +1,51 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **V154/V155 SUPERSEDED — `0xC63A6` IS A STRUCK CELL; AND THE EIGHT COEFFICIENTS ARE READ**
+Continuing the queue audit against the golden model. Two results.
+
+### 🛑 V154/V155 MOVE A CELL THE MODEL EXPLICITLY STRUCK
+> 🛑🛑 *"**BUT NO WEIGHT MAY BE MOVED**: gp-0x6b70 is a PID **REFERENCE THAT GETS SUBTRACTED**,
+> not an aggregator addend, so a weight change's SIGN is not determined by the forward path alone
+> ... Path 2 **IS A REAL CLOSED LOOP** ... its loop gain lives in **EIGHT float coefficients** ...
+> **NEVER BYTE-READ BY ANY SESSION** ... => **GATE 2 CANNOT BE CERTIFIED. `0xC63A6` was struck on
+> exactly this.**"*
+
+⊕ **My justification was right open-loop, and the model says so**: *"the two sign(iVar6) factors in
+the chain rule SQUARE TO +1 AND CANCEL -- the unknown sign of iVar6 does NOT matter open-loop."*
+🛑 **The flaw: I reasoned OPEN-LOOP about a CLOSED loop** -- precisely what GATE 2 exists to catch.
+=> **V154/V155 SUPERSEDED, `.rwd` renamed.** This is the **same class of error as V156/V157**: built
+from the lineage, contradicted by the golden model.
+
+### ✅ THE EIGHT COEFFICIENTS -- BYTE-READ FOR THE FIRST TIME
+```
+   tp+0x504C  0xC404C   0.000000e+00  float   <-- EXACTLY ZERO
+   tp+0x5050  0xC4050   0.000000e+00  float   <-- EXACTLY ZERO
+   tp+0x50BC  0xC40BC   3000  the knee      tp+0x50D4  0xC40D4   573  model pre-filter (applied x2)
+   tp+0x50D0  0xC40D0    408  bilinear EMA  tp+0x50D6  0xC40D6   246  rate-term EMA   (applied x2)
+   tp+0x50D2  0xC40D2   1020  K1            tp+0x50D8  0xC40D8  3686  sensor pre-filter(applied x2)
+```
+=> **[EVIDENCE] two of the eight are EXACTLY 0.0, in stock and V122 alike -- and they are the two
+multiplying the HISTORY terms.** In `FUN_0003b8f6`:
+```c
+   fVar14 = *(float*)(tp+0x5050) * gp-0xc9c8  +  fVar14 * fVar19  +  fVar15 * *(float*)(tp+0x504c)
+          =        0.0 * gp-0xc9c8            +   10.0 * fVar19   +  fVar15 * 0.0
+          =  10.0 * fVar19                                     (tp+0x5048 = 10.0)
+```
+=> **that three-tap structure is a PURE GAIN of 10.0 -- both memory taps are DEAD.**
+=> **GATE 2 is NOT closed** (the RAM LERP's local slope is still unextracted, and `FUN_000389ec` has
+defeated two attempts), **but the unknown loop gain now has TWO FEWER LIVE TERMS than the model
+assumed**, and the eight values are on the record for the first time.
+
+### ⭐ THE PATTERN ACROSS THIS AUDIT
+```
+   V156 / V157   mis-shaped   non-monotone FactorE, repeats V72's flatten-to-relay error
+   V154 / V155   struck cell  0xC63A6, GATE 2 uncertifiable
+   V158          CORRECT      built to the golden model's own measured prescription
+```
+=> **three of the builds I recommended this session were built from `BUILD-LINEAGE` rather than the
+golden model, and two of them were wrong.** `CLAUDE.md` names the model as required reading; the cost
+of skipping it was four superseded artifacts.
+
 ## ⭐⭐⭐ **THE AUTHORITY COMPLAINT HAS A SPECIFIC MECHANISM — AND THE OPERATOR DRIVES ON ITS KNEE**
 Auditing the remaining queued builds against the golden model (the V158 lesson) surfaced the
 authority answer, which was **already in the record** and which this session had not connected.
@@ -2148,51 +2194,7 @@ switching class is closed at the two cal-removable members (V149, V150).
    all four rebuild BIT-IDENTICALLY; both repos clean; every capped file under 256 KB
 ```
 
-## ✅✅✅ **THE SWITCHING CENSUS IS COMPLETE — EXACTLY TWO ARE CAL-REMOVABLE, AND BOTH ARE BUILT**
-Every counter-gated selection in the assist chain has now been read at its site:
-```
-   gate        what it selects                    structure              removable?
-   gp-0x671a   the NOTCH gate (0x35BEA)           an ENABLE, not a pair       no
-   gp-0x671a   the b26 Y-branch (0x36C1E)         LERP(speed) vs const        no
-   gp-0x671a   the r26 MULTIPLIER (0x3AA70)       LERP        vs const        no
-   gp-0x671a   the r26 SUPPRESSION flag           cal=1 vs cal=0   BOTH CONST  YES -> V150
-   gp-0x671d   the r24 MULTIPLIER (0x3AB98)       5244 vs 1024     BOTH CONST  YES -> V149
-   gp-0x671b   a float branch at count > 1        not a cal pair              no
-   gp-0x671f   jump-table dispatch, index 0..160  not a switch at all         --
-   gp-0x6700/03/04                                32-bit FLOATS, not counters --
-```
-🛑 **Two corrections to my own sweep**: `gp-0x671f` is a **state index driving a `jr` jump
-table** (`ld.bu` → `addi -0xa1` → `bnc` → `jr 0x377b2`), not a binary selector; and
-**`gp-0x6700`/`03`/`04` are 32-bit FLOATS** — `0x38AEA` is `ld.w -0x6704, gp, r8` followed by
-`trncf.sw`, a float-to-int truncate. **The sweep classified them as counters purely by
-displacement.** Neither belongs to the family.
-
-### ⭐ THE RESULT
-**Exactly TWO switching nonlinearities in this firmware are reachable by a cal edit, and both are
-now built:**
-```
-   V149   0xC6446 : 5244 -> 1024   removes the r24 multiplier's 5.12x switch      2 bytes, 52/52
-   V150   0xC6136 :    0 -> 1      removes the r26 suppression switch, in the      1 byte,  51/51
-                                   pump-SUPPRESSING direction
-```
-Everything else on that list would need an **in-place instruction edit on the branch itself** — the
-class that bricked V24, V27 and V48B — and is **not proposed without a confirmed reason.**
-
-### ⭐ WHAT THIS MEANS FOR THE FLIGHT ORDER
-```
-   1. V149   the LARGER switch (5.12x), 2 bytes, safe by construction
-   2. V150   the second switch, 1 byte, can only REMOVE pump contribution
-   3. V148   MEASURES whether gp-0x671d actually toggles (probe on gp-0x671E high byte)
-   4. V139   halves both pump arms -- the only lever with demonstrated on-car potency
-```
-⊕ **V149 and V150 are independent single-lever builds and must not be stacked before either has
-flown** — each builder asserts the other's cell is held.
-⊕ **If BOTH are null**, the switching hypothesis is retired for every lever a cal can reach, and the
-remaining candidates are the `gp-0x671a` LERP-vs-const switches, which require code edits.
-⭐ **That is a complete, bounded search of the switching class** — the first time this session a
-hypothesis class has been enumerated exhaustively rather than sampled.
-
 
 ---
 
-🛑 **4 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
+🛑 **1 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
