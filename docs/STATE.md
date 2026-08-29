@@ -1,5 +1,51 @@
 # STATE — living current state of the kit
 
+## ✅✅ **V139 RE-ELEVATED — ITS EVIDENCE SURVIVED THE RETRACTION, BECAUSE IT NEVER USED THE ENDPOINT**
+The noise-floor retraction was propagated to this session's own comparisons but **not to the older
+claims that rest on the same kind of statistic.** Doing that now changes the flight order.
+
+### 🛑 V62's HEADLINE IS A BETWEEN-BUILD RATIO OF 8× — INSIDE THE MEASURED FLOOR
+`accord-v62-flashed-grinding-is-fixed`: **18–22 Hz creep 0.124 [0.036, 0.387] vs V59** = **8×
+better**, and **0.024 (42×) at |rate| 16–32 °/s**, with a **30–40 Hz negative control at ~1.0**.
+⊕ The between-route floor measured today on the engaged/manual creep ratio is **20–36×**.
+⇒ **V62's 8× headline sits INSIDE the floor of a closely related statistic.** ⚠ It is **NOT
+invalidated** — it is a **different statistic** and it **carried a passing negative control**, which
+is strictly more than a bare ratio. But **the caveat has never been recorded**, and the 42× figure
+is the more robust half of that result.
+
+### 🛑 AND IT EXPOSES A CONTRADICTION THAT WAS NEVER STATED PLAINLY
+```
+   V62   sar 9, gain 3564 (4x)   ->  operator: "Original grinding at 2-5 mph is GONE"
+   V133  sar 9, gain 7128 (8x)   ->  operator: "massive, VIOLENT grinding"
+```
+**The same two bytes, opposite outcomes, different base gain.** ⊕ A gain-normalised reading (lane
+strength × base gain: V62 ≈ 82, V122 ≈ 61, V133 ≈ 164) would put V62's configuration at
+`0xC6446 ≈ 6989` on the 6× base — **and that is NOT proposed**, because it **RAISES a confirmed
+pump** (`gp-0x6752 = −1`), which is the V133 direction.
+⭐ **Between an 8× between-build ratio and a recent, unambiguous operator report on his own car,
+the operator's report wins.** The kit has now measured that its statistics cannot resolve builds;
+his ear demonstrably can.
+
+### ✅ WHICH RE-ELEVATES V139
+V139 halves **both** pump arms (`0x3AB76`/`0x3AC20`, `sar 10 → 11`). **Its entire rationale is:**
+```
+   1. gp-0x6752 = -1, verified THREE ways including on-car  -> these arms are a CONFIRMED PUMP
+   2. V133 DOUBLED them and the operator reported violent grinding  -> the bytes are POTENT on-car
+   3. reducing a feedback magnitude cannot destabilise a stable loop -> SAFE BY CONSTRUCTION
+```
+⇒ **not one of those three depends on the retracted endpoint.** ⊕ I demoted V139 earlier partly on
+the α2-vs-knee ladder, which is now withdrawn — **the demotion went with it and was never undone.**
+⇒ **V139 is now co-primary with V147**, and arguably has the **stronger** basis of the two:
+```
+   V147  0xC61F6 deadband  virgin cal, lane feeds the aggregator directly, BUT the dose is a
+                           guess and gp-0x6ADA has never been flown -> potency UNKNOWN
+   V139  both pump arms    the bytes are PROVEN POTENT on-car (V133), direction is inference
+```
+⚠ **V139's remaining caveat is unchanged and real**: knowing `sar 9` is worse than `sar 10` does
+not prove `sar 11` is better. **Expected failure mode: the steering goes number without the grind
+improving — in which case revert to V122.** ⊕ And the *"2× ≈ optimum"* framing that argued against
+it rested on V62's between-build numbers, which is exactly the class now in question.
+
 ## 🛑🛑🛑 **`gp-0x6B4C` IS A FAULT-ARBITRATION SUM — THE LAST CAL CANDIDATE IS CLOSED, AND THE LEVER WAS UNSAFE**
 `FUN_0002caa2` (slot 8) decompiles to a **LATCHING PLAUSIBILITY MONITOR**:
 ```c

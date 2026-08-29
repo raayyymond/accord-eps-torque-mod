@@ -2,7 +2,14 @@
 r"""
 V139 -- V122 + BOTH r24/r26 aggregator arms sar 10 -> 11.  HALVE A CONFIRMED PUMP.
 
-*** EXPLORATORY.  FLY V137 FIRST.  Read the honest caveat at the bottom before flying this. ***
+*** CO-PRIMARY WITH V147 (re-elevated 2026-08-29).  Read the honest caveat at the bottom. ***
+This build was demoted earlier partly on the alpha2-vs-knee single-variable ladder.  THAT LADDER
+IS RETRACTED: the between-build endpoint it used has a measured 20-36x noise floor and the
+ladder differences were 1.08-1.40x.  V139's OWN rationale never used that endpoint -- it rests
+on (1) gp-0x6752 = -1 verified three ways including on-car, (2) V133 doubling these exact bytes
+and the operator reporting violent grinding, and (3) reducing a feedback magnitude being safe by
+construction.  All three survive.  V137/V138 (the alpha2 ladder) are the builds that lost their
+rationale, not this one.
 
 WHY THIS LEVER, AND WHY NOW
 -----------------------------
