@@ -1,5 +1,58 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **THE SIGN-GATED RELAY IN `FUN_00038148` — FOUND, THEN REFUTED BY FLOWN DATA**
+The switching census covered **counter** gates; the sign-gated class was never swept. Sweeping it
+found a **real signum multiply** in the PID-reference path — and then closed it with measurement.
+
+### ✅ THE STRUCTURE — a genuine relay candidate
+`FUN_00038148`, the ACTUAL arm, ends:
+```c
+   iVar6  = (gp-0x6bfe MODEL - (gp-0x374c>>4) ACTUAL) + gp-0x6bfa REQUEST;
+   uVar7  = |iVar6| * cal(0xC63AE) >> 10;                  // 0xC63AE = 1024, unity
+   sVar8  = LERP(uVar7);                                    // 10-entry RAM table @ gp-0x641c
+   iVar9  = ((iVar6 >= 0) - (iVar6 < 0)) * sVar8;           // <-- SIGNUM MULTIPLY
+   gp-0x6b70 = clamp(iVar9, +-cal(0xC6200)=8192);
+```
+⇒ `gp-0x6b70 = sign(residual) × f(|residual|)` — **odd-symmetric, and continuous ONLY IF f(0)=0.**
+If `values[0] ≠ 0`, `gp-0x6b70` **jumps by `2·values[0]` at every zero crossing** — a hard relay
+feeding the PID reference, which is exactly the stick-slip generator the kit has been hunting.
+⚠ The table is in **RAM (`gp-0x641c` values / `gp-0x64b8` axis, 10 entries each), 0 gp-relative
+stores** ⇒ a `.data` section copied by **register-indirect** stores, which operand scans cannot see.
+So `values[0]` is **not readable from the image** without tracing the startup copy table.
+
+### ⭐ CLOSED BY MEASUREMENT INSTEAD — the flown 427 tap
+**427 = 0x1AB, and V96–V99 repointed its `MOTOR_TORQUE` field to `gp-0x6b70`.** That data is cached.
+**If `values[0] ≠ 0`, `|gp-0x6b70|` can NEVER enter a band around zero.** It does:
+```
+   route   engaged n   min  max  p50   zero-crossings   counts at mt = 0,1,2,3,4,5,6
+   r7e     17,689        0  216    9        1,741       1048 1209 987 877 848 871 816
+   r7f     15,779        0  200    9        1,490        911 1015 907 836 805 770 936
+   r82        467        0  148   14           36         22   19  17  17  14  19  14
+```
+⇒ **`mt = 0` occurs on 5.9 % of engaged frames and every small bin is populated — NO forbidden
+band**, across **1,741 zero crossings** on r7e alone.
+
+### ⭐ THE BOUND IS INDEPENDENT OF THE PACKER'S SHIFT
+The 427 packer applies some `sar k`, so `mt = 0` ⇺ `|gp-0x6b70| < 2^k`, and the worst-case jump is
+`2·values[0] < 2^(k+1)`. The observed maximum is `216·2^k`. Therefore
+```
+   jump / range  <  2^(k+1) / (216 * 2^k)  =  2/216  =  0.93 %      <- k CANCELS
+```
+⇒ **[EVIDENCE] any discontinuity at zero is under 1 % of the signal's own observed range**, against
+a ±8192 clamp. **That is not a relay in any meaningful sense.**
+⇒ **THE SIGN-GATED RELAY HYPOTHESIS IS CLOSED.** `f(0) ≈ 0`; the signum multiply is continuous.
+⭐ **Do not re-propose `gp-0x641c`, `0xC63AE` or the signum branch as a stick-slip source.** And note
+`0xC63AE` is the WRONG direction anyway: shrinking it drives `uVar7 → 0` so `sVar8 → values[0]`
+always, turning a continuous law INTO a pure relay.
+
+### ✅ WHAT THIS LEAVES
+Both sign-gated candidates in the assist chain are now closed — the `|model|×sat(angle)` term (soft
+saturation, continuous, ~1 % duty) and this signum multiply (continuous, <1 % jump).
+⇒ **V152/V153 — the matched observer-corner move — remains the strongest candidate**, and it is
+strengthened by this: with no relay in the path, the ratchet is a **lightly-damped resonance being
+excited through a loop that is 91 % transparent at 7.8 Hz**, which is precisely what those builds
+attack.
+
 ## ✅✅✅ **V152 / V153 BUILT — THE OBSERVER CORNER, MOVED ON BOTH ARMS AT ONCE**
 The GATE-2 objection to `0xC40D0` was that moving it alone **breaks Honda's byte-exact arm-match**.
 **Moving BOTH cells together removes the objection entirely**, and that is these two builds.
