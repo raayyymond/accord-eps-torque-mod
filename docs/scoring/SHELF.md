@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Two flashable builds. Everything else from this arc is renamed
+**Updated 2026-08-29.** Three flashable builds. Everything else from this arc is renamed
 `SUPERSEDED-DO-NOT-FLASH-GATE2-…` and must not be sent.
 
 🛑 **Nothing here has been flashed and no CAN or UDS message has been sent.** Flashing requires you to
@@ -8,7 +8,30 @@ name the file and the bus, and they will be read back to you first.
 
 ---
 
-## ⭐ V199 — THE FIX. Flash this one.
+## ⭐ V201 — FLASH THIS ONE. The fix, plus the one measurement that makes a null readable.
+
+```
+39990-TVA,A160-V201-V199BASE-PROBE-THE-PEDESTAL-0x13000-0x100000.rwd
+  image 354f9dfb93cf6fcd309c791ff962a792db668c6faef1de5a563d9f389f3bdfd6
+  rwd   7594688272b5869b5fb01230bbd94034d0e2ed75d0225765b96ee39b73a7364a
+```
+
+Byte-identical control cells to V199. It adds **3 payload bytes** so CAN 427 carries `gp-0x6b7e` —
+**the unfiltered path that bypasses the notch.**
+
+🛑 **Why this matters.** Decompiling `FUN_000352b4` showed `gp-0x6b7e` is not a constant: it is an
+EMA of the friction-hold limiter's cut, `iVar24 += (iVar33*0x80 − iVar24)*K >> 11` with `K ∈ [2,204]`,
+so its corner reaches **16.7 Hz** and it passes **64.6 % of a 19.75 Hz input straight past the notch**.
+**V199's 10.1× is therefore an upper bound.** Without this probe, a null on V199 cannot be told apart
+from the notch simply being bypassed — and an uninterpretable drive is a design failure on our side.
+
+| what the probe shows | what it means | the lever |
+|---|---|---|
+| pedestal carries 19.75 Hz | **the notch is bypassed** | the EMA rate `K` (LERP at `tp+0x7900`/`0x7906`) or the ±0x80 deadband — existing code, never touched |
+| pedestal quiet at 19.75 Hz | V199's 10.1× is real | none needed |
+| pedestal zero throughout | the limiter never cuts engaged | drop the path from the model |
+
+## V199 — the same car without the instrument
 
 ```
 39990-TVA,A160-V199-V196BASE-NOTCH.POLES.BELOW.ZEROS-0x13000-0x100000.rwd
@@ -90,7 +113,7 @@ three-site patch on `gp-0x6806`, so every notch cell is inert with LKAS off.
 ## BEFORE YOU FLASH
 
 ```
-python flashing-2020accord/preflight.py "<the .rwd filename>"     # V199 passes 8/8
+python flashing-2020accord/preflight.py "<the .rwd filename>"     # V199/V200/V201 all pass 8/8
 tmux kill-server                                                  # openpilot/pandad MUST be dead
 ```
 Name the file and the bus out loud. They will be read back to you before anything is sent.
@@ -106,6 +129,7 @@ Then:
 ```
 python rlog-tools/score/score_band_excess.py <tag>
 python rlog-tools/score/cross_channel_band_excess.py <tag>
+python rlog-tools/probe/decode_v201_pedestal.py <tag> --v201     # V201 only
 python rlog-tools/probe/decode_v198_r24_lane.py <tag> --v198     # V200 only
 ```
 
@@ -126,3 +150,28 @@ python rlog-tools/probe/decode_v198_r24_lane.py <tag> --v198     # V200 only
 | 6–9 Hz excess on `cs_tq` | unchanged | the notch was never aimed there |
 | LKAS command 0.5–3 Hz | unchanged, ±10 % | if it moves, the notch is eating command authority |
 | `gp-0x6ada` 8 Hz content (V200) | if ≫ the inertia term, V199's ratchet lever is aimed at a minor exciter | the rate lanes are where a bigger lever belongs |
+
+---
+
+## 🛑 WHAT THE NOTCH CAN AND CANNOT FIX — corrected 2026-08-29
+
+Decompiling `FUN_000352b4` settled which signal this filter is actually on. The tp anchors check out
+exactly (`tp+0x749b` = `0xC649B` the arm cell, `tp+0x70a8`–`0xb4` = the four coefficient cells), so this
+is the filter we have been editing:
+
+```
+gp-0x4f60 (TORQUE SENSOR) -> clamp +-8192 -> 10-knot assist map -> gp-0x6b7a
+  -> friction-hold limiter -> gp-0x6b82 -> BIQUAD -> clamp +-12.0 -> x1024
+  -> + gp-0x6b7e  (UNFILTERED, added AFTER the filter)
+  -> clamp +-0x3000 -> gp-0x6b86 -> aggregator
+```
+
+**`gp-0x6b86` is the base power-assist output, not the LKAS command.** An earlier note of mine called
+it "the LKAS command" — that was wrong and is retracted. What follows:
+
+| symptom | can this notch fix it? |
+|---|---|
+| **Grinding** | **Yes, and this is the right place.** motion → column torque → sensor → assist map → biquad → aggregator → motor → motion **is** the loop, and the notch cuts its gain at 19.75 Hz. |
+| **LKAS authority** | **Not affected either way — and that is good news.** openpilot's command never passes through this filter, so **no notch dose can reduce how hard it steers.** The authority objection does not apply to this lever. |
+| **Peak command oscillation** | **Not directly.** The command does not pass through the filter. It may still fall if it *tracks* the grind, which the record says it does — but that is an indirect claim, and this build is not evidence for it. |
+| **Ratcheting** | Not by the notch. That is the inertia half-dose at `0xD7A5C`, carried on all three builds. |

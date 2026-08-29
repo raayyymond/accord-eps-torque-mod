@@ -2666,3 +2666,71 @@ globally** — a **broadband** gain change, the same class as V173's poles and s
 thresholds `0xC613E`/`0xC6140`. That is now the sole amplitude-selective candidate in the kit, and it
 still needs its knot-index gating traced before it is a lever rather than a guess.
 
+## ✅ **V176 BUILT — BOTH LEVERS AT THE STRONGER DOSE. THE FOUR-BUILD CHOICE IS NOW COMPLETE.**
+The operator has stated the priority four times: **eliminate the grinding and the ratcheting.** V176 is
+simply **V175 with V174's pole** — the inertia revert *and* the stronger pole in one image, the
+maximum-attenuation build still inside the kit's own lag guardrail.
+```
+   build   poles          engaged inertia   ratchet@8.64   grind@21   lag@1Hz    note
+   flying  0.7966 pair    3.0x Honda           0.9789        0.8659    +2.1 ms
+   V173    0.970/0.475    3.0x Honda           0.4761        0.1894   +29.1 ms
+   V175    0.970/0.475    HONDA'S OWN          0.4761        0.1894   +29.1 ms   <- FLY FIRST
+   V174    0.980/0.475    3.0x Honda           0.3393        0.1275   +42.8 ms
+   V176    0.980/0.475    HONDA'S OWN          0.3393        0.1275   +42.8 ms   <- strongest
+```
+➕ **V176's section response is IDENTICAL to V174's** — the inertia revert is a different mechanism in
+a different lane and does not touch the biquad. What V176 adds over V174 is removal of the 3.0x engaged
+apparent-inertia dose; what it adds over V175 is the stronger pole.
+✅ **28/28 assertions · 12 payload bytes · CRC 50/50 · readback byte-identical · base V175 ·
+`C_B0` untouched · GATE 2 max |H| = 0.9880.** image `bba4cd5a92c5186f…` · rwd `7beac7510411c7ec…` ·
+builder `analysis-2020accord/builds/v108_plus/build_v176_tva.py`.
+⚠ **THE HONEST TRADE: +42.8 ms of group delay at 1 Hz vs V175's +29.1.** The operator feels that as
+**steering weight**, and he has said explicitly that apparent mass and friction must **not** be the
+price of fixing the ratcheting. ⇒ **V175 stays fly-first; V176 is his choice if he wants the
+strongest attack and will judge the lag on the same drive.** The card's staging and endpoint power
+analysis apply unchanged to both, because the ENGAGED-vs-MANUAL discriminator belongs to the inertia
+revert, which both carry.
+🛑 **What V176 deliberately does NOT spend, asserted frozen in the builder:** `0xC63A6` (w[3])
+stays 1024 — it multiplies the same quantity the revert already cut, so stacking it would push the
+product **below Honda's own value** on a nine-link sign chain with no new information; it is the fine
+adjustment **after** a drive, not a stacking opportunity. `p_slow` stops at 0.980, the last point
+below the **do-not-pass-0.985-without-a-lag-verdict** guardrail. And nothing in the FOC.
+
+## ❌ **THE DELIVERY PATH HAS NO DAMPING LEVER EITHER — THE SHAPER IS A PURE PASS-THROUGH**
+Followed the mapped bridge to the motor side, where the record says the resonance actually lives
+([[accord-ratchet-is-a-lightly-damped-resonance]]). **Both stages are closed.**
+
+### ❌ THE "SHAPER" (`gp-0x6acc` → `gp-0x6b08`) IS INERT — `FUN_00042af8` @0x43206, ONE writer
+```
+   gate  = (|gp-0x6acc| <= 8192)          HARDCODED store-zero, not a cal
+   mode  = cal[0xC64C8]
+     mode 1 -> gp-0x6b08 = cal[0xC61D4]                      (a constant)
+     mode 2 -> gp-0x6b08 = clamp(cal[0xC61D4] + gated, +-12288)
+     else   -> gp-0x6b08 = gated                             (pass-through)
+
+   0xC64C8 mode    = 0     VIRGIN on stock/V122/V158/V173/V175
+   0xC61D4 offset  = 0     VIRGIN
+```
+⇒ **LIVE MODE IS 0 with a zero offset ⇒ the stage is a PURE PASS-THROUGH. There is nothing to
+tune.** Its only structure is a hardcoded ±8192 store-zero gate.
+
+### ❌ THE INTEGRATOR (`gp-0x6b08` → `gp-0x6b98`) HAS NO TUNABLE GAIN
+Accumulator at `gp-0x3570`, saturated against `cal[0xC61DC] << 15` and shifted `>>15` on output.
+**Every gain in the stage is a hardcoded shift** — the only cals are an **anti-windup LIMIT**
+(`0xC61DC`) and a post gain feeding a monitor cell (`0xC61DA` = 1092).
+⇒ an integrator limit governs **large-signal windup, not small-signal damping** ⇒ lowering it clips
+authority without touching the resonance. **Not a damping lever.**
+⊕ And this is the region whose **motor-rate cap V41 already FALSIFIED** (V40 bricked, V41 booted
+clean and killed the hypothesis) — so it is also not new ground.
+
+### 🛑 WHAT THIS MEANS FOR THE SEARCH
+Both sides of the chain are now enumerated and closed:
+```
+   ASSIST / OBSERVER side   six-term sum (only w[3] selective, HELD) - notch - residual LERP   ALL CLOSED
+   DELIVERY / MOTOR side    shaper (pass-through) - integrator (no gain, limit only)           ALL CLOSED
+```
+⇒ **the only untouched territory left is the FOC / current loop itself.** That is genuinely
+different ground, but it is also the one place where a mistake is a **motor stability** problem rather
+than a feel problem, and the kit has never edited there. **I will not cut anything in the FOC without
+saying first exactly what it could break.**
+

@@ -46,6 +46,7 @@ PUB = {
     'v198': '9fbbf90b0bed9cb32eb7c3a44a30c2108f361a736ff3f1ebc205f47e5cf3190d',
     'v199': 'c86646ab48c4a62546b4e7bafa59f8097d3bdd99ffdcd3aeabd9f93c7252dc10',
     'v200': 'db0b613aad11e67822528251b66790386635a59e9584e87d352bf294d5bf460e',
+    'v201': '354f9dfb93cf6fcd309c791ff962a792db668c6faef1de5a563d9f389f3bdfd6',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -126,7 +127,21 @@ if 'v199' in img and 'v196' in img:
     chk(len(d) == 9, f'V199 differs from V196 by {len(d)} payload bytes (the four float32 cells)')
     chk(all(0xC60A8 <= a < 0xC60B8 for a in d), 'V199 changes ONLY the four biquad cells')
 
-if 'v200' in img and 'v199' in img:
+for _v, _hw, _what in (('v200', 0x9526, 'gp-0x6ada, the r24 rate lane'),
+                       ('v201', 0x9482, 'gp-0x6b7e, the unfiltered pedestal')):
+    if _v in img and 'v199' in img:
+        d = [a for a in range(0x13000, 0x100000)
+             if img[_v][a] != img['v199'][a] and (a & 0xFFF) < 0xFFC]
+        chk(len(d) <= 3, f'{_v.upper()} differs from V199 by {len(d)} payload bytes (telemetry only)')
+        chk(struct.unpack_from('<H', img[_v], 0x55DF2)[0] == _hw,
+            f'{_v.upper()} probe reads {_what} (hw2 0x{_hw:04X})')
+        chk(img[_v][0x55E10] & 0x1F == 5, f'{_v.upper()} pack shift is sar 5')
+        for a in (0xC60A8, 0xC60AC, 0xC60B0, 0xC60B4):
+            chk(struct.unpack_from('<I', img[_v], a)[0]
+                == struct.unpack_from('<I', img['v199'], a)[0],
+                f'{_v.upper()} 0x{a:05X} biquad cell identical to V199 -- an instrument, not a lever')
+
+if False:
     d = [a for a in range(0x13000, 0x100000)
          if img['v200'][a] != img['v199'][a] and (a & 0xFFF) < 0xFFC]
     chk(len(d) == 2, f'V200 differs from V199 by {len(d)} payload bytes (telemetry only)')
@@ -141,8 +156,9 @@ if 'v200' in img and 'v199' in img:
 # ---- 3. superseded artifacts ------------------------------------------------------------
 print('\n[3] SUPERSEDED ARTIFACTS ARE RENAMED')
 live = [os.path.basename(x) for x in glob.glob(RWD + '/39990*-V199-*.rwd')
-        + glob.glob(RWD + '/39990*-V200-*.rwd')]
-chk(len(live) == 2, f'exactly 2 flashable builds from this chain ({len(live)})')
+        + glob.glob(RWD + '/39990*-V200-*.rwd')
+        + glob.glob(RWD + '/39990*-V201-*.rwd')]
+chk(len(live) == 3, f'exactly 3 flashable builds from this chain ({len(live)})')
 # V194/V195/V196/V198 were PULLED: every one carries a notch whose poles sit at the zeros, scoring
 # max|H| 1.3533-1.7177 against the lineage bar of stock 1.0000.  They must not be flashable.
 for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193',

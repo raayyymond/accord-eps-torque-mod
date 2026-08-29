@@ -15,6 +15,15 @@ model/eps_lkas_chain_model.py
                    -> float clamp +-12.0 -> x1024 -> + gp-0x6b7e (UNFILTERED pedestal, NOT scaled by c4)
                    -> clamp +-0x3000 -> gp-0x6b86 -> FUN_0003aa2c aggregator
        `c4` is a PURE FLAT SCALAR (one reader image-wide, zero added phase at any frequency).
+       🛑 CONFIRMED 2026-08-29 by decompiling `FUN_000352b4`, and TWO consequences:
+         (a) `gp-0x6b86` is the BASE POWER-ASSIST output, NOT the LKAS command. openpilot's
+             command never passes through this biquad, so no notch dose can cost LKAS
+             authority -- and no notch dose can fix command oscillation directly either.
+         (b) `gp-0x6b7e` is NOT a constant pedestal. It is an EMA of the friction-hold
+             limiter's cut, `iVar24 += (iVar33*0x80 - iVar24)*K >> 11` with K in [2,204], so
+             alpha reaches 0.0996 and fc reaches 16.7 Hz. At 19.75 Hz it passes 64.6 % of its
+             input STRAIGHT PAST THE BIQUAD. Any predicted notch attenuation is an UPPER
+             BOUND until this path is measured. V201 probes it.
        Truth lives in `docs/handoffs/2026-08/HANDOFF-2026-08-21-v104-built-c4-boost-and-lever-b.md` sections 2-4.
 
     2. THE ASSIST MAP'S AXES ARE THE OPPOSITE OF THE OBVIOUS READING. `0xC7B40` is a pointer array

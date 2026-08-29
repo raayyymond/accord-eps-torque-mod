@@ -4,6 +4,62 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑⭐ **CORRECTION + A THREAT TO V199: `gp-0x6b86` IS THE BASE POWER-ASSIST, AND THE NOTCH HAS A BYPASS**
+
+**Decompiled `FUN_000352b4` [EVIDENCE].** The tp anchors check out exactly — `tp+0x749b` = `0xC649B`
+(the arm cell), `tp+0x74fa` = `0xC64FA` (the CEIL), `tp+0x70a8/ac/b0/b4` = **the four coefficient cells
+we have been editing** — so this is that filter, confirmed from the code and not from a label.
+
+```
+   gp-0x4f60 (TORQUE SENSOR) -> clamp +-8192 -> 10-knot assist-map LERP -> x sign x pol
+     -> gp-0x6b7a -> friction-hold limiter -> gp-0x6b82 -> BIQUAD -> clamp +-12.0 -> x1024
+     -> + gp-0x6b7e  <-- UNFILTERED, ADDED AFTER THE FILTER
+     -> clamp +-0x3000 -> gp-0x6b86 -> FUN_0003aa2c aggregator
+```
+
+### 🛑 **CORRECTION — I published the wrong label last tick**
+My exciter map said *"`gp-0x6b86` 12288 LIVE biquad output — **LKAS command**, 1–5 Hz."* **That is
+WRONG.** `gp-0x6b86` is the **BASE POWER-ASSIST output**, driven by the torque sensor through the
+10-knot assist map. The golden model's own gap note had it right; my label did not.
+⇒ **openpilot's command does not pass through this filter.** Consequences, both ways:
+- ❌ **The notch CANNOT fix peak command oscillation directly.** My close-out said it gives back phase
+  *"in the currency peak command oscillation is paid in"* — **retracted.** The phase it spends is in the
+  **driver-assist** loop. (Command oscillation may still fall if it *tracks* the grind, which the record
+  says it does — but that is an indirect claim, not this filter acting on the command.)
+- ✅ **The notch costs NOTHING in LKAS authority.** It is not in the command path, so no notch dose can
+  reduce how hard openpilot can steer. That removes the whole authority objection from this lever.
+- ✅ **It is still the right place for the GRIND**: motion → column torque → sensor → assist map →
+  biquad → aggregator → motor → motion **is** the loop, and the notch cuts its gain at 19.75 Hz.
+
+### 🛑🛑 **THE BYPASS — `gp-0x6b7e` IS NOT A CONSTANT, AND IT IS FAST ENOUGH TO CARRY THE GRIND**
+From the decompile:
+```c
+   iVar33 = clamp(gp-0x6b7a - limited, +-0x3000) * bVar3      // bVar3 = the limiter is CUTTING
+   iVar24 = iVar24 + ((iVar33*0x80 - iVar24) * K >> 11)       // an EMA, state at gp-0x381c
+   gp-0x6b7e = (iVar24 -+ 0x80) >> 7                          // deadband +-0x80, then >> 7
+```
+`K` is clamped to **[2, 204]** ⇒ `alpha = K/2048` reaches **0.0996** ⇒ the EMA corner reaches
+```
+   fc = -ln(1 - 0.0996) * 1000 / (2*pi) = 16.7 Hz
+   |H_ema(19.75 Hz)| = 0.0996 / |1 - 0.9004*exp(-j*0.1241)| = 0.0996 / 0.15419 = 0.646
+```
+⇒ **at its fastest the pedestal passes 64.6 % of a 19.75 Hz input straight past the notch.**
+🛑 **So V199's 10.1× is an UPPER BOUND on what reaches `gp-0x6b86`.** If the grind arrives mostly
+through the pedestal, a null on V199 would be **uninterpretable** — we could not separate *"the notch is
+aimed wrong"* from *"the notch was bypassed"*. **That is a design failure on our side, and it is exactly
+what the iteration doctrine says to fix BEFORE flying, not after.**
+⊕ The pedestal is gated by `bVar3` = *the friction-hold limiter is cutting*. If that never fires
+engaged, the whole parallel path is inert — **but nobody has ever measured it.**
+
+### ✅ **V201 = V199 + the 427 probe on `gp-0x6b7e`.** 40/40, 3 payload bytes, control cells identical.
+`354f9dfb93cf6fcd…` · `0x55DF2` → `0x9482`, `0x55E10` → sar 5 (±12288 span, resolution 32).
+**It answers in one drive:** pedestal carries 19.75 Hz ⇒ **the notch is being bypassed**, and the lever
+is the EMA rate `K` (the LERP at `tp+0x7900`/`0x7906`) or the ±0x80 deadband — **existing code, never
+touched**. Quiet ⇒ V199's 10.1× is real. Zero throughout ⇒ the limiter never cuts engaged and this
+path leaves the model.
+⭐ **V201 is now the build to fly if you want ONE drive to be interpretable.** V199 is the fix; V200
+probes the ratchet lever; **V201 probes whether the fix can even work.**
+
 ## 🛑🛑⭐ **EVERY NOTCH BUILD SINCE V188 ADDS LOOP GAIN — the lineage named this trap and I walked into it**
 
 `BUILD-LINEAGE.md`, V105 section, in its own words:
@@ -2187,72 +2243,4 @@ the **assist-section poles** and the **engaged apparent-inertia revert**. Everyt
 is enumerated and closed. **The only unspent cell is `0xC63A6` (w[3]), deliberately held as the fine
 adjustment after a drive result.**
 🛑 **What remains is not analysis. It is one 15-second engaged creep pass.**
-
-## ✅ **V176 BUILT — BOTH LEVERS AT THE STRONGER DOSE. THE FOUR-BUILD CHOICE IS NOW COMPLETE.**
-The operator has stated the priority four times: **eliminate the grinding and the ratcheting.** V176 is
-simply **V175 with V174's pole** — the inertia revert *and* the stronger pole in one image, the
-maximum-attenuation build still inside the kit's own lag guardrail.
-```
-   build   poles          engaged inertia   ratchet@8.64   grind@21   lag@1Hz    note
-   flying  0.7966 pair    3.0x Honda           0.9789        0.8659    +2.1 ms
-   V173    0.970/0.475    3.0x Honda           0.4761        0.1894   +29.1 ms
-   V175    0.970/0.475    HONDA'S OWN          0.4761        0.1894   +29.1 ms   <- FLY FIRST
-   V174    0.980/0.475    3.0x Honda           0.3393        0.1275   +42.8 ms
-   V176    0.980/0.475    HONDA'S OWN          0.3393        0.1275   +42.8 ms   <- strongest
-```
-➕ **V176's section response is IDENTICAL to V174's** — the inertia revert is a different mechanism in
-a different lane and does not touch the biquad. What V176 adds over V174 is removal of the 3.0x engaged
-apparent-inertia dose; what it adds over V175 is the stronger pole.
-✅ **28/28 assertions · 12 payload bytes · CRC 50/50 · readback byte-identical · base V175 ·
-`C_B0` untouched · GATE 2 max |H| = 0.9880.** image `bba4cd5a92c5186f…` · rwd `7beac7510411c7ec…` ·
-builder `analysis-2020accord/builds/v108_plus/build_v176_tva.py`.
-⚠ **THE HONEST TRADE: +42.8 ms of group delay at 1 Hz vs V175's +29.1.** The operator feels that as
-**steering weight**, and he has said explicitly that apparent mass and friction must **not** be the
-price of fixing the ratcheting. ⇒ **V175 stays fly-first; V176 is his choice if he wants the
-strongest attack and will judge the lag on the same drive.** The card's staging and endpoint power
-analysis apply unchanged to both, because the ENGAGED-vs-MANUAL discriminator belongs to the inertia
-revert, which both carry.
-🛑 **What V176 deliberately does NOT spend, asserted frozen in the builder:** `0xC63A6` (w[3])
-stays 1024 — it multiplies the same quantity the revert already cut, so stacking it would push the
-product **below Honda's own value** on a nine-link sign chain with no new information; it is the fine
-adjustment **after** a drive, not a stacking opportunity. `p_slow` stops at 0.980, the last point
-below the **do-not-pass-0.985-without-a-lag-verdict** guardrail. And nothing in the FOC.
-
-## ❌ **THE DELIVERY PATH HAS NO DAMPING LEVER EITHER — THE SHAPER IS A PURE PASS-THROUGH**
-Followed the mapped bridge to the motor side, where the record says the resonance actually lives
-([[accord-ratchet-is-a-lightly-damped-resonance]]). **Both stages are closed.**
-
-### ❌ THE "SHAPER" (`gp-0x6acc` → `gp-0x6b08`) IS INERT — `FUN_00042af8` @0x43206, ONE writer
-```
-   gate  = (|gp-0x6acc| <= 8192)          HARDCODED store-zero, not a cal
-   mode  = cal[0xC64C8]
-     mode 1 -> gp-0x6b08 = cal[0xC61D4]                      (a constant)
-     mode 2 -> gp-0x6b08 = clamp(cal[0xC61D4] + gated, +-12288)
-     else   -> gp-0x6b08 = gated                             (pass-through)
-
-   0xC64C8 mode    = 0     VIRGIN on stock/V122/V158/V173/V175
-   0xC61D4 offset  = 0     VIRGIN
-```
-⇒ **LIVE MODE IS 0 with a zero offset ⇒ the stage is a PURE PASS-THROUGH. There is nothing to
-tune.** Its only structure is a hardcoded ±8192 store-zero gate.
-
-### ❌ THE INTEGRATOR (`gp-0x6b08` → `gp-0x6b98`) HAS NO TUNABLE GAIN
-Accumulator at `gp-0x3570`, saturated against `cal[0xC61DC] << 15` and shifted `>>15` on output.
-**Every gain in the stage is a hardcoded shift** — the only cals are an **anti-windup LIMIT**
-(`0xC61DC`) and a post gain feeding a monitor cell (`0xC61DA` = 1092).
-⇒ an integrator limit governs **large-signal windup, not small-signal damping** ⇒ lowering it clips
-authority without touching the resonance. **Not a damping lever.**
-⊕ And this is the region whose **motor-rate cap V41 already FALSIFIED** (V40 bricked, V41 booted
-clean and killed the hypothesis) — so it is also not new ground.
-
-### 🛑 WHAT THIS MEANS FOR THE SEARCH
-Both sides of the chain are now enumerated and closed:
-```
-   ASSIST / OBSERVER side   six-term sum (only w[3] selective, HELD) - notch - residual LERP   ALL CLOSED
-   DELIVERY / MOTOR side    shaper (pass-through) - integrator (no gain, limit only)           ALL CLOSED
-```
-⇒ **the only untouched territory left is the FOC / current loop itself.** That is genuinely
-different ground, but it is also the one place where a mistake is a **motor stability** problem rather
-than a feel problem, and the kit has never edited there. **I will not cut anything in the FOC without
-saying first exactly what it could break.**
 
