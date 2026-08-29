@@ -4,6 +4,26 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **CLOSE-OUT VERIFICATION — 21/21 FROM DISK, AND BOTH BUILDERS REPRODUCE BIT-FOR-BIT**
+Everything published this session re-checked from the filesystem, not from a build log or from
+memory:
+```
+   [1] published image SHA256 vs disk          V194 / V195 / V196   all match
+   [2] every claimed cell value on V196        notch B0 -1.9846207 (19.75 Hz) - pole^2 0.81
+                                               K1 102 (not the flying 1020) - w[3] 512
+                                               engaged inertia [-4915,-2867,-983] = half Honda
+                                               MANUAL inertia [-9830,-5734,-1966] UNTOUCHED
+                                               0xC407E frozen 511 - V196 vs V195 = exactly 6 bytes
+   [3] superseded artifacts                    exactly 3 flashable; no V185-V193 unmarked
+   [4] mandatory-read caps                     largest 190.9 KB (BUILD-LINEAGE-PART1), cap 256
+   [5] every tool written this session parses
+   + BOTH BUILDERS RE-RUN AND REPRODUCE BIT-FOR-BIT   V195 a3ea8683... V196 f904e43a...
+```
+⊕ **Worth stating explicitly: V196's detector dwell `0xC64DD` is Honda's 50** — V193's widening is
+**not** carried, because V196 descends V195 ← V189, not through V193. **That is what makes V196
+unable to change normal driving**, and it is now asserted rather than assumed.
+⊕ Tool: `analysis-2020accord/verify/closeout_verify_published.py` — re-runnable in one command.
+
 ## ✅⭐ **A SOUND NOTCH PREDICTION IS RESTORED — and it is the pre-registration for the drive**
 The 21.5× open-loop score was wrong because it multiplied the **whole** spectrum by `|H|²`,
 attenuating the broadband floor a notch in the assist path cannot touch. The closed-loop fix went out
