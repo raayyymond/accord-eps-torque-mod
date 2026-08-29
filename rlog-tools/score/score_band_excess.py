@@ -159,8 +159,16 @@ def attribute_grind(segs):
     print('  GRIND SUB-BANDS   15-20 Hz excess %.1fx   20-25 Hz excess %.1fx   ratio %.2f'
           % (lo, hi, (hi / lo) if lo > 0 else float('nan')))
     print('       reference V122 (r24, cs_tq): 15-20 = 5.8x, 20-25 = 14.0x, ratio 2.39')
-    print('       20-25 much LOWER than 15-20 => V173/V172 filter did it (sloped attenuation)')
-    print('       both down about equally     => V158 damper did it (flat attenuation)')
+    print('       -- ATTRIBUTION, updated 2026-08-29 for the V184 / V185 fork --')
+    print('       ONLY V184 changes the assist-section poles; V185 leaves them at Honda.')
+    print('       GRIND moved at all       => the POLES did it => you flew V184 and they work')
+    print('       GRIND essentially flat   => expected on V185; read the RATCHET row instead')
+    print('       RATCHET down, grind flat => the INERTIA dose revert (both builds carry it)')
+    print('       neither moved            => both accounts fail together')
+    print('       NOTE: 427 now carries gp-0x6ac0 >> 4 (V183+), NOT motor torque.')
+    print('       field >= 812 throughout  => the damper hard-OFF gate never opens =>')
+    print('                                   that whole lever family is closed')
+    print('       field <  812 sometimes   => the damper CAN act; its knots become live')
 
 
 def grind_by_command(tag):
