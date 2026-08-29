@@ -56,8 +56,11 @@ below 35 km/h.
 | **total NET of Path 2** | **2.63–3.53 — ×1.67 to ×2.25** (stability-bounded; see STATE) |
 
 ⚠ **[BELIEF] what that buys in ζ.** *Only* if the firmware's viscous term dominates damping would ζ go
-**0.017–0.036 → 0.047–0.099**. If mechanical damping dominates, less. **×2.74 is the firmware-side
-increment, NOT a ζ prediction.** This is the single largest uncertainty and the drive is what settles it.
+**0.017–0.036 → 0.047–0.099**. If mechanical damping dominates, less. The Path-1 nominal is the
+increment, NOT a ζ prediction.** The **x1.7-x2.7 NET** figure above is the one to hold: x2.74 is the
+Path-1 nominal, before Path 2's stability-bounded pumping copy is netted off. This is the single
+largest uncertainty and the drive is what settles it.
+
 
 ---
 
@@ -113,7 +116,7 @@ Reuse `rlog-tools/score/score_v133_creep.py` (creep-band, already episode-cluste
 |---|---|---|
 | ratchet **better**, effort acceptable | **V160** | take the free Lever B increment; then consider a damper dose ladder |
 | ratchet **better**, wheel too heavy | lower FactorC `Y[0]` 429 → 234 (its own `Y[1]`) | dose 50 → 27, monotone, halves the drag |
-| ratchet **unchanged**, effort unchanged | **damper dose ladder** | ×2.74 was too small ⇒ the firmware term does not dominate; the model's *"err low"* argument is then overturned by data |
+| ratchet **unchanged**, effort unchanged | **V165** — damper dose ladder | the x1.7-x2.7 net was too small ⇒ the firmware term does not dominate the plant damping; the model’s *"err low"* argument is then overturned BY DATA |
 | ratchet **worse** | **V167** (`0xC63A0` 1024→512), NOT a bare revert | **NAMED MECHANISM**: gp-0x6bd0 feeds BOTH aggregators, and Path 2 (FUN_00038148 @0x38150) applies an EXTRA pol multiply, so at pol = -1 it arrives PUMPING-signed. 0xC63A0 is that term’s Path-2 weight ALONE, so halving it removes half the pumping while keeping Path 1’s damping — it DISCRIMINATES, where a revert to V122 discards both and tells you nothing. Revert to V122 only if V167 is also worse. |
 | **no creep episodes in the drive** | re-drive | the edit is inert above 35 km/h; a null would be for the wrong reason |
 

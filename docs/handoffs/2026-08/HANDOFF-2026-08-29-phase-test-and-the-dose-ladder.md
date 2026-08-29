@@ -55,7 +55,7 @@ already demanded it; I had been treating it as a review step instead of a design
 ### The dose ladder, in physical units
 
 ```
-build   dose   viscous added   TOTAL creep viscous   vs stock-only
+build   dose   viscous added   TOTAL creep viscous   vs stock-only   [PATH-1 NOMINAL]
 V122      0       0.000            1.571               x1.00
 V164     27       1.476            3.047               x1.94
 V158     50       2.733            4.304               x2.74
@@ -63,8 +63,12 @@ V165     65       3.553            5.124               x3.26
 ```
 Baseline `gp-0x6bbe` = **1.571 ct/(deg/s) measured on-car**; **stock creep damping is exactly 0.000.**
 
-⚠ **[BELIEF] what ×2.74 buys in ζ.** Only if the firmware's viscous term dominates would ζ go
-0.017–0.036 → 0.047–0.099. **It is a firmware-side increment, not a ζ prediction.**
+⚠ **SUPERSEDED BY THE ADDENDUM -- the x2.74 column is the PATH-1 NOMINAL.** `gp-0x6bd0` also enters
+a second aggregator with an inverted sign; a stability argument bounds that pumping copy to at most
+0.61x the damping, so **V158's NET is 1.05-1.96 ct/(deg/s), a total of 2.63-3.53 = x1.7 to x2.7.**
+**[BELIEF]** what that buys in ζ: only if the firmware's viscous term dominates would ζ rise in
+proportion. **It is a firmware-side increment, not a ζ prediction.**
+
 
 ---
 

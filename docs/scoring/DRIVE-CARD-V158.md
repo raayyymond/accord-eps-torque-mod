@@ -62,18 +62,24 @@ Rough is fine. "Better but noticeably heavier below 5 km/h" is a complete answer
 | ratchet better, effort fine | **V160** — adds the r24 increment | ✅ |
 | ratchet better, wheel too heavy | **V164** — dose 50 → 27, halves the drag | ✅ |
 | ratchet unchanged, effort unchanged | **V165** — dose 50 → 65 | ✅ |
-| ratchet worse | **V122** — revert | ✅ |
+| ratchet worse | **V167** — `0xC63A0` 1024→512, NOT a bare revert | ✅ |
 | no real creep in the drive | re-drive — the edit is inert above 35 km/h | — |
 
 ---
 
 ## Predicted effect, committed before the drive
 
-Creep viscous damping goes **0.000 → 2.733 ct/(deg/s)**, on top of a measured 1.571 already present:
-a **×2.74** total increase, and the first non-zero damping this car has ever had at creep.
+Creep viscous damping goes from **0.000** to somewhere in **1.05-1.96 ct/(deg/s)**, on top of a
+measured 1.571 already present -- a total of **2.63-3.53**, i.e. **x1.7 to x2.7**, and the first
+non-zero damping this car has ever had at creep.
 
-⚠ **What that buys is genuinely uncertain.** ×2.74 is the *firmware-side* increment. If the
-firmware's viscous term dominates the plant's damping, ζ would go 0.017–0.036 → 0.047–0.099. If
-mechanical damping dominates, less. **The drive is what settles it** — that is the whole point.
+⚠ **Why a range, not x2.74.** The nominal Path-1 figure is 2.733 (x2.74), but the same cell also
+enters a second aggregator with an inverted sign. A stability argument bounds that pumping copy to at
+most 0.61x the damping, so the net is 39-100 % of nominal. **It does NOT cancel the damping.**
+
+⚠ **What that buys is still uncertain.** This is the *firmware-side* increment. If the firmware's
+viscous term dominates the plant's damping, ζ would rise roughly in proportion. If mechanical damping
+dominates, less. **The drive is what settles it** -- that is the whole point.
+
 
 Full pre-registration: `docs/scoring/SCORING-V158-preregistered.md`.
