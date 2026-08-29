@@ -3733,3 +3733,170 @@ decide**, and it took an identical-cal control to establish. **It also means the
 
 🛑 **4 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
 
+## ⭐⭐ **THE SWITCHING IS EVERYWHERE — BUT `gp-0x671d`'s IS THE ONLY ONE A CAL EDIT CAN REMOVE**
+`gp-0x671a` was checked for the same pattern. **It has it.**
+```
+   gp-0x671a  updated in FUN_000428d4 <- FUN_0002214a = TASK 1, the CONFIRMED 1 kHz task
+              and it is `min(revcount, CEIL)` -- a CLAMPED COPY recomputed EVERY TICK, so it is
+              free to move BOTH WAYS, not a one-way latch
+   it gates THREE cal selections:
+       0x35BEA  the NOTCH gate            -> the filter ARMS/DISARMS at up to 1 kHz
+       0x36C1E  the b26 Y-branch          -> LERP(speed) vs cal(0xC640A) = -8192
+       0x3AA70  the aggregator r26 branch -> LERP vs cal(0xC643E)=1536 / cal(0xC6444)=512
+```
+⇒ **switching nonlinearities are not one anomaly in this firmware — they are a PATTERN.** A notch
+that arms and disarms at kHz rate is itself a nonlinearity, quite apart from what it filters.
+
+### ⭐ BUT THE STRUCTURE MAKES ONLY ONE OF THEM REMOVABLE
+```
+   gp-0x671d switch :  cal(0xC6446)=5244   vs   cal(0xC6442)=1024     BOTH CONSTANTS
+   gp-0x671a switches:  LERP(speed)        vs   a constant cal        ONE SIDE IS SPEED-VARYING
+```
+**V149's trick is to make both branches return the SAME value, so the switch becomes a no-op.**
+⇒ **that only works when both sides are constants.** You cannot equalise a constant against a
+speed-varying LERP — matching it at one speed unmatches it at every other.
+⇒ **[EVIDENCE] `gp-0x671d`'s 5.12× switch is the ONLY one of these that a cal edit can eliminate.**
+⇒ **V149 is not merely the best available build — it is the only removal of a switching
+nonlinearity that this firmware's structure permits without a code edit.**
+
+### ⚠ AND WHAT THAT IMPLIES IF V149 IS NULL
+If removing the one removable switch does not help, then either the switching class is not the
+cause, or the culprit is one of the **`gp-0x671a` switches, which cannot be removed by cal at all**.
+⇒ in that case the options narrow to an **in-place instruction edit** on the branch itself — which
+is the class that has bricked this ECU three times and must be gated accordingly.
+⇒ **so V149 is also the cheapest possible test of the whole hypothesis class.** A null result is
+informative; it retires switching-as-cause for every lever a cal can reach.
+
+
+## 🛑🛑🛑 **ROOT-CAUSE CANDIDATE: A 5.12x GAIN SWITCH TOGGLING AT TASK RATE INSIDE A CONFIRMED PUMP**
+Tracing the counter's increment and clear paths to their task roots settles the time course that
+was left open — and it is far more interesting than a latch.
+```
+   INCREMENT   FUN_00041d56  <-  FUN_0002214a   = TASK 1, the CONFIRMED 1 kHz task
+   CLEAR       FUN_0003bcb2  <-  FUN_0003debc <- FUN_000568d0 <- FUN_00023d24 <- FUN_00022ca0
+                                              = TASK 5, >= 250 Hz, best fit 500 Hz
+   SELECT      0x3AB98   ld.bu -0x671d, gp, r6 ; cmp r0, r6
+                         gp-0x671d == 0  ->  cal(0xC6446)      gp-0x671d != 0  ->  cal(0xC6442)
+```
+⇒ **`gp-0x671d` is INCREMENTED at 1 kHz by one task and CLEARED at ~500 Hz by another.**
+⇒ **it is NOT a drive-long latch — it is a flag that can TOGGLE AT TASK RATE.**
+⇒ and it selects between two r24 multipliers **5.12× apart**, in a lane whose polarity
+(`gp-0x6752 = −1`, verified three ways including on-car) makes it a **CONFIRMED PUMP**.
+
+### ⭐ **A 5.12× GAIN SWITCHING AT HUNDREDS OF HERTZ INSIDE A POSITIVE-FEEDBACK LANE**
+That is a **switching nonlinearity**, and it is a textbook mechanism for a rough, grinding,
+ratcheting feel. ⊕ It also explains why the symptom is **intermittent and route-dependent**: the
+toggle rate depends on how often the `|x| ≥ cal(0xC61FA)=5530` threshold is being crossed, which
+depends on the road.
+
+### ✅ AND THE BUILD HISTORY LINES UP EXACTLY
+```
+   STOCK    512 <-> 1024    a 2.00x switch   -- the mechanism is in HONDA's own calibration
+   V88     5244 <-> 1024    a 5.12x switch   -- V88 made an EXISTING switch 2.6x WORSE
+   V122    5244 <-> 1024    unchanged        -- it is on the car RIGHT NOW
+   V149    1024 <-> 1024    NO SWITCH        -- the two branches become IDENTICAL
+```
+⇒ **V149 does not reduce the switching. It ELIMINATES it**, and it does so regardless of how fast
+the counter toggles, because both branches return the same value.
+⇒ **V149 is now the strongest-motivated build of the session**, and it is **2 bytes, cal-only,
+outside the bricking class, and safe by construction** (it also reduces a pump 5.12× in the
+count==0 regime).
+
+### EVIDENCE vs BELIEF — STATED PRECISELY
+```
+   [EVIDENCE] increment in task 1 (1 kHz) and clear in task 5 (~500 Hz), both by call chain
+   [EVIDENCE] the two branches differ by 5.12x on V122 and by 2.00x on stock
+   [EVIDENCE] the lane's polarity is -1 (verified 3 ways, including on-car)
+   [BELIEF]   that this switching is what the operator HEARS.  Plausible and mechanically apt --
+              but no measurement ties it to his symptom, and this kit has repeatedly shown that a
+              compelling mechanism is not a cause.
+```
+⚠ **It partially reverts V88, which he reported as a fix.** If grinding gets WORSE, V88's high
+value was doing something and the answer is a value **between** 1024 and 5244 — but note that **any**
+value other than 1024 **restores the switch**, so a middle value trades switch depth against
+whatever V88 bought.
+⭐ **V148 measures the toggle directly** (its probe reads `gp-0x671d` via the even `gp-0x671E`) —
+**V149 removes the switch, V148 proves it was switching.**
+
+
+## 🛑🛑 **CORRECTION: "THE COUNTERS NEVER RESET WITHIN A DRIVE" IS NOT ESTABLISHED**
+The section above asserts that the fault counters latch for the whole drive and only clear on an
+init path, and builds the noise-floor explanation on it. **That assertion came from a SINGLE
+zero-store without checking who calls it.** Checked now:
+```
+   0x3EAA6 .. 0x3EAC4   FUN_0003e936 is a CLEAR ROUTINE -- it walks the counters, compares each
+                        against its lockstep shadow (gp-0x4c27 for gp-0x6725), and on a match does
+                        `st.b r0` to BOTH; on a mismatch it calls the lockstep-fault handler.
+   FUN_0003e936         has NINE callers
+   FUN_0003bcb2         holds the gp-0x671d zero-store at 0x3BD2A, AND has SEVEN callers of its own
+   all of them inside a dense 0x3Cxxx-0x3Exxx fault-management web
+```
+⇒ **this is NOT an init-only path.** The counters **can be cleared during operation**, under
+conditions that have not been traced.
+⇒ **[RETRACTED] "they never reset within a drive."** ⊕ **[RETRACTED] that this is established as
+the explanation for the 20–36× noise floor** — it remains a **plausible HYPOTHESIS**, but the time
+course is unknown and a monotone one-way migration is exactly what was assumed and not shown.
+
+### ✅ WHAT SURVIVES — ALL VERIFIED AT SPECIFIC SITES
+```
+   the counters EXIST, are LOCKSTEP-SHADOWED, and GATE CAL SELECTIONS       verified
+   gp-0x671A gates three of them (aggregator / b26 Y-branch / notch gate)   verified
+   gp-0x671D selects the r24 multiplier with a 5.12x step  (0x3AB98)        verified
+   it INCREMENTS on a threshold crossing and SATURATES at 255 (FUN_00041d56) verified
+   WHEN it resets                                                           UNRESOLVED
+```
+⇒ **the mechanism is real; the TIME COURSE is unknown.**
+
+### ⭐ AND IT MAKES V149 STRONGER, NOT WEAKER
+If the counter **latches once**, V149 removes a one-time 5.12× step.
+If the counter can be **cleared and re-armed**, the multiplier **toggles 5.12× repeatedly through a
+drive** — which is **worse** than a single step, and a far better candidate for a symptom that
+"comes and goes".
+⇒ **V149 removes the step under EITHER time course**, because it makes the count==0 and count>0
+values identical. **Its rationale does not depend on the retracted claim.**
+
+### ⭐ THE NEXT MEASUREMENT THIS POINTS AT
+**V148's probe already reads `gp-0x671d`** (via the even `gp-0x671E`, high byte). ⇒ one drive would
+show **not just whether the counter is non-zero, but whether it TOGGLES** — settling the time course
+directly instead of by tracing seven callers.
+⊕ That makes **V148 and V149 complementary**: V149 removes the step, V148 measures it.
+
+
+## ✅ **V139's DESIGN VERIFIED OPTIMAL — AND A FLAG ON V88's "LEVER B"**
+A `sar` edit is locked to exactly ÷2, so a **finer, cal-only** version of V139 would be preferable
+if one existed. **It does not.** Every cal multiplier on these lanes is **BRANCH-GATED**:
+```
+   0xC643E  r26 = 1536   only when gp-0x683c==0 AND gp-0x671a >= CEIL
+   0xC6444  r26 =  512   only when gp-0x683c != 0
+   0xC6440  r24 = 2048   only when gp-0x671d==0 AND gp-0x683c==0 AND gp-0x671a >= CEIL
+   0xC6446  r24 = 5244   only when gp-0x671d==0 AND gp-0x683c != 0     <- V88's "Lever B"
+   0xC6442  r24 = 1024   only when gp-0x671d != 0
+```
+⊕ the **MAIN path is neither of these** — `FUN_0003aa2c` LERPs from a **RAM table**
+(`gp-0x6e30`/`gp-0x6e28` for r26, `gp-0x6e40`/`gp-0x6e38` for r24) whose **flash source is not
+identified**.
+⊕ and **two of those gates require `gp-0x671a ≥ CEIL`** — the very gate measured as **effectively
+never open** (≥ 99.9 % of engaged frames below half the detector threshold).
+⇒ **the `sar` at `0x3AB76`/`0x3AC20` is applied AFTER the multiply on EVERY path**, so it is the
+**only lever that scales these lanes universally.** ✅ **V139 is correct as built; no finer cal-only
+variant exists without the unidentified flash LERP source.**
+
+### 🛑 AND A FLAG ON V88's "LEVER B" — IT MAY BE LARGELY INERT
+`0xC6446` (V88 set it **512 → 5244**, recorded as *"Lever B … best in kit"*) applies **only when
+`gp-0x671d == 0` AND `gp-0x683c != 0`.** ⊕ **That gate's duty has NEVER been measured.**
+⇒ **[UNKNOWN] how often Lever B is in force at all** — the same failure mode that made the notch
+family inert, and the same one that `probe_census.py` exists to catch. ⊕ It is **cheap to settle**:
+`gp-0x671d` and `gp-0x683c` are byte cells, and a 427 tap on either would give a binary duty exactly
+as V147's gate probe does.
+🛑 **This does not retract V88** — its fix was reported by the operator, which survives the
+noise-floor audit. It flags that **the MECHANISM credited for it is unverified.**
+
+⭐ **RULE, now general across this kit: before crediting a cal with an effect, check the DUTY of the
+branch that reads it.** Three separate levers this session (the notch, `0xC643E`/`0xC6440`, and now
+possibly Lever B) turned out to sit behind gates whose duty nobody had measured.
+
+
+---
+
+🛑 **2 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
+
