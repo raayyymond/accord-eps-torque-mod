@@ -4,6 +4,34 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **INTEGRITY CHECK AFTER TWO RETRACTIONS — THE SHELF IS CLEAN**
+After retracting V178 and V182 I re-ran **every surviving builder** and re-checked what each one
+actually touches. **All eight reproduce bit-for-bit with every assertion passing, every artifact on
+disk matches its recorded hash, and each has exactly ONE flashable `.rwd`.**
+```
+   V173 25/25   V174 27/27   V175 26/26   V176 28/28
+   V177 21/21   V179 19/19   V180 30/30   V181 27/27
+```
+✅ **No surviving build touches a retracted cell relative to its own base.** V181 is byte-identical to
+its ancestor V158 at `0xD77DA`, `0xD77EE`, `0xC6598` and `0xC65C4`. Both retracted images are renamed
+`SUPERSEDED-DO-NOT-FLASH-*` and their builders raise on entry.
+⚠ **My first pass of this check FLAGGED ALL EIGHT** — because it compared against the FLYING build
+instead of each build's own base, so it caught **V158-era inheritance** and called it a defect. The
+check was wrong, not the builds. **A comparison is only as good as its reference.**
+
+### 🛑 AND IT SURFACED SOMETHING THE OPERATOR SHOULD KNOW
+```
+   cell       stock   V122 (FLYING)   V158 (my base)   all my builds
+   0xD77DA      0           0              429              429
+   0xD77EE      0           0              426              426
+```
+**V158 changed FactorC's below-range fallback from 0 to 429/426, and the car does not have that
+change.** So **every build I have made already carries a V158-era damper edit relative to what is on
+the car** — inherited, not something I added, and present in V173 through V181 alike.
+⊕ That also partly rehabilitates the damper direction: **V158 already moved this fallback the way
+V182 tried to move it further.** But the axis is still `gp-0x6a5e`, not speed, so *when* it applies
+remains unestablished — V182 stays retracted.
+
 ## 🛑🛑 **V182 RETRACTED — FactorC's AXIS IS `gp-0x6a5e`, NOT VEHICLE SPEED. AND THE DAMPER IS A FIVE-FACTOR PRODUCT.**
 `FUN_00034350` decompiled. **`gp-0x6bd0` is not `FactorC x FactorE`. It is a FIVE-factor product:**
 ```
@@ -2169,34 +2197,4 @@ from excess ≈33 to below null ≈4 — not a 1.7x one.
 only sharpen the *graded* question (how much smaller), which is secondary to *is it fixed*.
 ⚠ The **grind's** margin on the flying build is smaller (V122 excess 14.0 vs null ≈4, i.e. 3.5x), so
 a marginal grind read from one episode is **inconclusive, not negative**. The ratchet's is not.
-
-## ⚠ **DRIVEN vs SELF-EXCITED: INCONCLUSIVE, LEANING DRIVEN — AND UNDERPOWERED FOR THE SAME REASON AS EVERYTHING ELSE**
-The ratchet is engaged-only but absent from every command channel. Two mechanisms fit that:
-**DRIVEN** (the command carries no 8.6 Hz line but the firmware's RESPONSE to it creates one
-⇒ a forward-path nonlinearity, and the lever is in the forward path) or **SELF-EXCITED** (a
-closed-loop instability running at its own frequency ⇒ the lever is in the feedback path).
-That distinction decides which half of the chain to search, so it was worth a test.
-```
-   band-SPECIFIC coupling = coherence(7-10.5 Hz) - coherence(30-40 Hz control band),
-   `co_tqcan` -> `cs_tq`, vs phase-shuffled surrogates (spectrum preserved, timing destroyed)
-
-     r78  V91    -0.021 (shuf +0.091)  not specific     r1e  V107  +0.522 (+0.097)  SPECIFIC
-     r7e  V96    +0.133 (+0.039)  SPECIFIC             r22  V112  +0.087 (+0.060)  SPECIFIC
-     r7f  V96    +0.176 (+0.042)  SPECIFIC             r24  V122  +0.068 (+0.062)  SPECIFIC
-     r96  V102   +0.019 (+0.047)  not specific         ra4  V104  +0.148 (+0.105)  SPECIFIC
-     ra6  V106   -0.060 (+0.116)  not specific
-
-   across routes: median +0.087   95 % CI [-0.021, +0.176]   <- CROSSES ZERO
-```
-⚠ **[INCONCLUSIVE]** 6/9 routes are individually specific and the pooled median is positive,
-but **the CI includes zero**, so *driven* is not established. ⊕ **RAW coherence was worse than
-useless**: the 30–40 Hz control band scored as high as the ratchet band on most routes, i.e.
-command→torque coupling is **broadband**, so any coherence claim without the control-band
-subtraction is meaningless. Recorded so it is not re-derived.
-⭐ **The one informative detail**: `r1e` — the only route with **14** windows — shows by far the
-largest specific effect (**+0.522** vs a shuffled p95 of +0.097, a 5x margin), while the seven-
-window routes scatter around zero. That is the signature of a real effect seen at insufficient
-power, not of a null.
-⇒ **What would close it**: the same thing every open question here needs — **more continuous
-engaged-creep windows.** At 14 windows the answer was unambiguous on the one route that had them.
 
