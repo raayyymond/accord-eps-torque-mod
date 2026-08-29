@@ -1,5 +1,56 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **V159 SUPERSEDED — AN OFF-BY-0x400 ADDRESS ERROR, AND THE LANE GAINS ARE FLAT**
+**V159 edits an unrelated cal on a false premise. It is superseded and must never be flown.**
+```
+   tp = 0xBF000
+   tp + 0x7B1E  =  0xC6B1E     <- the REAL K_p X table
+   V159 edited     0xC6728  =  tp + 0x7728   <- AN UNRELATED CAL
+```
+🛑 **I confused `0x7B1E` with `0x771E`** — an **off-by-0x400** address error, the same family as
+the off-by-0x1000 trap `CLAUDE.md` records **six** times.
+
+### 🛑 THE REAL TABLES KILL THE FINDING OUTRIGHT
+```
+   K_p  tp+0x7b1e = 0xC6B1E   X=[  0, 300, 2000, 4000]   Y=[ 256,  256,  225,  153]
+   K_i  tp+0x7b0a = 0xC6B0A   X=[  0, 400, 1500, 3000]   Y=[  98,   98,   98,   98]
+   K_d  tp+0x7ade = 0xC6ADE   X=[ 50, 400, 1500, 3000]   Y=[2048, 2048, 2048, 2048]
+```
+⇒ the operating point **`gp-0x6ac0` = 99 [94, 113]** lies in **segment 0 of every one of them**:
+K_p is **256 -> 256 (FLAT)** from 0 to 300; **K_i and K_d are FLAT at every knot.**
+⇒ **[EVIDENCE] ALL THREE PID LANE GAINS ARE FLAT AT THE OPERATING POINT. There is NO parametric
+gain modulation there — not 18 %, not any.**
+⇒ **the whole "parametric pump at lane gain A" line is VOID**, and so is V159.
+✅ **The hypothesis is now CLOSED properly**, on the correct tables: the lane gains cannot be the
+source of a 2f parametric pump, because they do not vary at the rate the symptom lives at.
+
+### 🛑🛑 THE PROCESS FAILURE IS WORSE THAN THE ARITHMETIC
+```
+   1. computed tp+0x7b1e wrong (0xC671E)                  -- a digit error
+   2. the garbage there happened to LOOK like a 4-knot table for lane A
+   3. lanes B/C read NON-ASCENDING X                      -- the CORRECT symptom of a wrong base
+   4. I RETRACTED -- right instinct, WRONG reason (blamed the LAYOUT, not the ADDRESS)
+   5. I "verified" against the decompile -- and RE-DERIVED THE SAME WRONG ADDRESS
+   6. UN-retracted, and built V159 on an unrelated cell
+```
+🛑 **The non-ascending X was the signal, and I read it twice and misdiagnosed it twice.**
+⭐ **RULE: when a neighbouring record of the same family decodes as nonsense, suspect the BASE
+ADDRESS before the LAYOUT.** A wrong base makes *every* record in the family garbage; a wrong layout
+usually breaks them all *the same way*. **Lane A "working" while B and C were garbage was itself the
+tell** — a correct base makes all three work.
+⭐ **RULE: re-deriving an address the same way is not verification.** Step 5 felt like a check and
+was not one. **Verify a tp offset by ADDING IT TO tp EXPLICITLY and printing both**, which is what
+finally caught this.
+
+### ✅ WHAT THIS COSTS AND WHAT IT LEAVES
+⊕ **Nothing reached the car.** V159 was built and pushed but never flown.
+⊕ **The lane-gain hypothesis is now closed on correct data** — a real result, not just a retraction.
+🛑 **V158's shared-axis GATE 2 is now CLOSER to closable**: the model demanded FactorE edits be
+sized against the PID's schedule on the same axis, and **that schedule is FLAT at the operating
+point**, so **the coupling the model worried about does not bite at 99 counts.** That is the sizing
+it asked for — done, on the right tables.
+⇒ **V158 becomes the lead build again**, with its shared-axis gate substantially addressed.
+
 ## ✅✅✅ **UN-RETRACTED AND BUILT — V159 REMOVES AN 18 % PARAMETRIC MODULATION OF K_p AT 2f**
 🛑 **I over-corrected last turn.** The "parametric pump" finding was **retracted in error**;
 decompiling `FUN_0003a382` proves the original layout reading was right.
@@ -2146,60 +2197,6 @@ largest lanes are bounded at ±10240, is **audible**. Its worst-case share of th
 **3.8 %**; its share **at 7.8 Hz** is higher because acceleration dominates at HF, but **by how much
 is unmeasured.**
 ⊕ **V154 and V155 are one lever at two doses — fly ONE.**
-
-## 🛑🛑 **THE PLANT MODEL HAS NO DAMPING TERM — `0xC646E` / `0xC40D6` CLOSED AS INERT**
-`FUN_0003b8f6` computes `residual = model − (friction + rate_term)`. The **rate term** looked like
-the ideal lever — a rate term has **exactly zero DC gain** and contributes ∝ω, so scaling it is
-HF-selective **by construction**. It is not a lever, because it is **not there.**
-```
-   rate_term = fVar19[rad/s] * cal(0xC646E)=1428 * 2^-24  =  fVar19 * 8.5115e-05   (clamp +-10)
-     saturates at fVar19 = 117,488 rad/s  =>  PHYSICALLY UNREACHABLE, it is always linear
-
-   regime                              rate rad/s   rate_term   vs the +-10 clamp
-   the RATCHET  7.8 Hz, 0.1 deg           0.0855    7.28e-06        0.0001 %
-   the RATCHET  7.8 Hz, 1.0 deg           0.8554    7.28e-05        0.0007 %
-   brisk lane change ~1 Hz, 30 deg        3.2899    2.80e-04        0.0028 %
-   fast hand slew ~2 Hz, 90 deg          19.7392    1.68e-03        0.0168 %
-   friction, same function, |model|=15:  14.94 -> CLAMPED to 10.00
-```
-⇒ **[EVIDENCE] the damping term is 4–6 ORDERS OF MAGNITUDE below the friction term it is summed
-with.** ⇒ **and NO DOSE REVIVES IT**: at the u16 ceiling `cal = 65535` it still reaches
-**3.34e-04 = 0.0033 %** of the clamp at ratchet amplitudes.
-⇒ **`0xC646E` is STRUCTURALLY INERT and `0xC40D6` (its EMA pole) is inert by consequence. Both
-CLOSED — do not propose either at any dose.** Both **virgin across all 153 images.**
-⭐ **The structural fact worth keeping: Honda's observer models FRICTION but NOT DAMPING.** The
-plant model is friction-only, so real viscous damping is un-modelled and lands in the residual.
-
-### ✅ A METHOD FIX THAT MATTERS FOR EVERY FUTURE READER COUNT
-My first scan reported **20 accesses** to `0xC646E`. **Most were ASCII.** `0x746E` is `"nt"`
-little-endian, so `68 61 6c 74` (*"halt"*) at `0xBB222` and `73 79 6e 74` (*"synt"*) at `0xBB4A8`
-matched as if they were `disp16`. **The missing filter is `reg1`:** a tp-relative load must carry
-**`hw1 & 0x1F == 5`** (tp = r5), plus a Format-VII opcode `>= 0x38`.
-```
-   cell        loose scan   WITH reg1==tp filter    independent check
-   0xC646C         8                5              memory says ~6 readers        OK
-   0xC63AC         -                1  @0x38202    lineage: "sole reader ld.hu 0x73ac,tp,r13
-                                                    @0x38202"                    EXACT MATCH
-   0xC646E        20                1  @0x3BB92    single-reader, FUN_0003b8f6
-   0xC40D0         -                1  @0x3BB22    0xC40BC -> 1 @0x3BAB4
-```
-⇒ **The `0xC63AC` result reproduces a fact recorded independently in the lineage, to the address.**
-🛑 **Ghidra CANNOT answer this** — `get_xrefs_to 0xC646E` returns *"No references found"*, because
-tp is a runtime register and Ghidra never resolves tp-relative loads to absolute cal addresses.
-**For tp-relative cals, the filtered Python scan is the ONLY instrument. Add the `reg1` filter.**
-
-### ⭐ ONE HF-SELECTIVE CANDIDATE REMAINS — AND ITS SIGN IS UNRESOLVED
-`0xC63A6`, the weight on **`gp-0x6b26`, the INERTIA lane** (`−K·α`, an ACCELERATION) in
-`FUN_00038148`. **Acceleration is exactly zero at DC and scales as ω²** ⇒ moving this weight is
-**HF-selective by construction, with zero steady-state cost** — the same attractive property the
-rate term had, but on a lane that is **not** negligible. **Virgin: 1024 in all 153 images.**
-🛑 **NOT PROPOSED — I DERIVED THE DIRECTION TWICE AND GOT OPPOSITE ANSWERS.** The chain is
-`lanes → ×polarity(−1) → ×2639 → IIR → gp-0x374c → MODEL − (gp-0x374c>>4) → iVar6 → gp-0x6b70 →
-gp-0x6ad6 → error → assist`, and whether a bigger lane weight RAISES or LOWERS HF assist depends on
-how the `−1` composes with *"residual ↓ ⇒ more assist"*. **An unresolved sign is not a build** — the
-same rule that held `0xC40D0` back until the paired form closed its gate.
-⇒ **To close it**: the flown `0x14A` comparator rungs already carry `sign(gp-0x6b70)`; one probe
-that also carries `sign(gp-0x6b26)` on the same frame settles it.
 
 
 ---
