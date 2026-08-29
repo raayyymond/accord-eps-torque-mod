@@ -4,6 +4,42 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ❌ **THE FREQUENCY SIGNATURE DOES NOT SETTLE THE V184/V185 FORK — BUT IT SHARPENED THE MEASUREMENT**
+The fork is whether the ratchet is driven by the **inertia lane** (`gp-0x6b26 = K·α`, loop
+contribution ∝ ω²) or by **assist-section loop gain** (a mild broadband filter on the car). Both are
+engaged-only, so the engaged/manual *contrast* cannot separate them — but their **frequency
+signatures** differ, so the engaged/manual ratio vs frequency should.
+✅ **Speed-matched** (300 engaged / 300 manual windows, mean 15.2 vs 14.6 km/h) with a **permutation
+null on the labels**:
+```
+   engaged / manual PSD ratio        3.91 Hz   0.79      <- engagement SUPPRESSES 4 Hz
+                                     8.20 Hz  30.56
+                                     8.40 Hz  33.06      <- the peak
+                                    15.04 Hz   8.72
+                                    25.00 Hz   5.48
+   log-log slope over 3-30 Hz  b = +0.461   permutation null [-0.119, +0.113]
+```
+🛑 **MY FIRST VERDICT WAS WRONG.** The script concluded "slope exceeds its null ⇒ inertia
+fingerprint ⇒ V185 favoured". **It tested the wrong thing.** An ω² force term needs **b ≈ +4 in
+PSD**; observed is **+0.461**. And the shape test settles it:
+```
+   peak 33.06x at 8.40 Hz    band-edge mean 1.48x    peak / edges = 22.3x
+```
+⇒ **the ratio is a narrow PEAK, not a power law.** Fitting a line to a peaked function produces a
+spurious positive slope, and its significance against the null says nothing about ω². The verdict
+logic now tests SHAPE first and reports no discrimination.
+⇒ **THE FORK STAYS OPEN. Only the car can settle it.**
+
+### ✅ WHAT THE MEASUREMENT DID BUY — A MUCH SHARPER ENGAGEMENT NUMBER
+The record carried engagement amplifying the ratchet band **~15x** (and 2.8x on a band contrast).
+**Speed-matched, the peak is 33.1x at 8.40 Hz**, and the excess is **narrow**: 22.3x above the
+band edges, with the ratio **BELOW 1 (0.79) at 3.9 Hz**.
+⇒ **engagement does not raise torque activity broadly — it SUPPRESSES ~4 Hz and excites a specific
+mode at ~8.4 Hz.** That is a resonance being driven, not a gain change, and it is the cleanest
+statement of the engagement effect the kit has.
+⊕ It also re-confirms the mode centre independently: **8.40 Hz**, inside the ±0.71 Hz wander band
+established earlier, and consistent with 8.17–8.20 Hz from the other estimators.
+
 ## ✅ **GATE 2 PHASE, ENGAGED-ONLY — V184 PASSES AT THE RATCHET, AND THE COST IS NOW QUANTIFIED**
 The biquad being engaged-gated forced the phase check V184 had never had. **It passes, and cleanly.**
 ```
@@ -2150,42 +2186,4 @@ angular velocity and acceleration”* and *“low apparent mass and friction **t
 ⊕ **Recommended first dose 1536 (1.5x)** — predicted **3.4x** more damping, which clears the
 one-episode detection margin comfortably, and is the smallest step that does. **Not the largest dose:
 the feel cost is real and the operator should meet it in the smallest useful increment.**
-
-## ⚠ **THE ASSIST-CURVE INITIALISER IS STILL UNLOCATED — TWO CANDIDATE PATHS RULED OUT**
-Hunting the RAM-resident 10-knot curve (needed to finish GATE 2 on the slope cap `0xC6384`).
-Both leads the byte scan produced are **not** the initialiser:
-```
-   0x38FD0 / 0x38FEE / 0x39522   st.h r0, -0x6430/-0x6444/-0x641c, gp
-       -> STORE-ZERO with a lockstep shadow (shadow = knot - 0x184C; mismatch calls
-          FUN_0006b9fa, the lockstep-fault handler).  A CLEAR path, carries no values.
-          Exactly the documented store-zero trap.
-
-   0x39A0C..                     blend each knot toward ep = tp+0x7564 = 0xC6564, in float
-       ANCHOR CHECK: 0xC6384 reads 2048 (the slope cap) => tp = 0xBF000 CONFIRMED, so the
-       0x1000 trap is not in play here.
-       -> but 0xC6564 is ZERO, and zero on ALL 161 IMAGES  =>  this blends the curve toward
-          zero: a FADE-OUT / degradation ramp, not an initialiser.
-```
-✅ **[EVIDENCE] `0xC6564` = 0 on all 161 images**, so nothing the kit has ever built changed it.
-⊕ Region context: `0xC6520-0xC6560` is a **float32 array stored as (lo16,hi16) halfword pairs**
-(`0 16840` = 25.0, `0 16968` = 50.0, `0 16256` = 1.0), which is why a naive u16 read of that
-neighbourhood looks like noise. Recorded so the next pass does not mis-read it as integers.
-❌ **No monotone 10-knot table bounded by the input clamp (8192) exists in `0xC6400-0xC6700`.**
-
-### ⭐ A CHEAPER ROUTE TO THE SAME ANSWER — THE FIRMWARE ALREADY COMPUTES IT
-The question GATE 2 needs is only *does the 2.000 cap BIND at the creep operating point?*, and
-`FUN_000352b4` **already tracks that**: the map-build loop keeps a running maximum of the capped
-per-segment slope in **`gp-0x69a6`** (`uVar40` in the decompile, written `*(short*)(gp-0x69a6)`).
-⇒ **`gp-0x69a6` == 2048 means the cap is binding.** That is a **one-cell telemetry read**, not a
-firmware-reconstruction problem, and it answers the gate directly on-car in a single episode.
-⚠ **[BELIEF]** the cap does bind in the mid-torque range: the domain-average slope is
-`12288/8192 = 1.5` against a cap of **2.000**, so the cap can only bite on segments steeper than 1.33x
-the average — which is the normal shape of a power-assist curve, and is the loaded-wheel creep
-regime. **Unverified until `gp-0x69a6` is read.**
-
-### ✅ THE RECOMMENDATION IS UNCHANGED
-**V158 still flies first.** It targets the GRIND, which is firmware-reachable and demonstrably
-moving (post-V102 ρ = −0.94, p = 0.005, in three channels). The ratchet needs a different lever, and
-that lever's gate is one telemetry cell away — **not** a reason to delay a build that addresses the
-other symptom.
 

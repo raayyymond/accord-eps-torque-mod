@@ -1038,3 +1038,41 @@ only sharpen the *graded* question (how much smaller), which is secondary to *is
 ⚠ The **grind's** margin on the flying build is smaller (V122 excess 14.0 vs null ≈4, i.e. 3.5x), so
 a marginal grind read from one episode is **inconclusive, not negative**. The ratchet's is not.
 
+## ⚠ **THE ASSIST-CURVE INITIALISER IS STILL UNLOCATED — TWO CANDIDATE PATHS RULED OUT**
+Hunting the RAM-resident 10-knot curve (needed to finish GATE 2 on the slope cap `0xC6384`).
+Both leads the byte scan produced are **not** the initialiser:
+```
+   0x38FD0 / 0x38FEE / 0x39522   st.h r0, -0x6430/-0x6444/-0x641c, gp
+       -> STORE-ZERO with a lockstep shadow (shadow = knot - 0x184C; mismatch calls
+          FUN_0006b9fa, the lockstep-fault handler).  A CLEAR path, carries no values.
+          Exactly the documented store-zero trap.
+
+   0x39A0C..                     blend each knot toward ep = tp+0x7564 = 0xC6564, in float
+       ANCHOR CHECK: 0xC6384 reads 2048 (the slope cap) => tp = 0xBF000 CONFIRMED, so the
+       0x1000 trap is not in play here.
+       -> but 0xC6564 is ZERO, and zero on ALL 161 IMAGES  =>  this blends the curve toward
+          zero: a FADE-OUT / degradation ramp, not an initialiser.
+```
+✅ **[EVIDENCE] `0xC6564` = 0 on all 161 images**, so nothing the kit has ever built changed it.
+⊕ Region context: `0xC6520-0xC6560` is a **float32 array stored as (lo16,hi16) halfword pairs**
+(`0 16840` = 25.0, `0 16968` = 50.0, `0 16256` = 1.0), which is why a naive u16 read of that
+neighbourhood looks like noise. Recorded so the next pass does not mis-read it as integers.
+❌ **No monotone 10-knot table bounded by the input clamp (8192) exists in `0xC6400-0xC6700`.**
+
+### ⭐ A CHEAPER ROUTE TO THE SAME ANSWER — THE FIRMWARE ALREADY COMPUTES IT
+The question GATE 2 needs is only *does the 2.000 cap BIND at the creep operating point?*, and
+`FUN_000352b4` **already tracks that**: the map-build loop keeps a running maximum of the capped
+per-segment slope in **`gp-0x69a6`** (`uVar40` in the decompile, written `*(short*)(gp-0x69a6)`).
+⇒ **`gp-0x69a6` == 2048 means the cap is binding.** That is a **one-cell telemetry read**, not a
+firmware-reconstruction problem, and it answers the gate directly on-car in a single episode.
+⚠ **[BELIEF]** the cap does bind in the mid-torque range: the domain-average slope is
+`12288/8192 = 1.5` against a cap of **2.000**, so the cap can only bite on segments steeper than 1.33x
+the average — which is the normal shape of a power-assist curve, and is the loaded-wheel creep
+regime. **Unverified until `gp-0x69a6` is read.**
+
+### ✅ THE RECOMMENDATION IS UNCHANGED
+**V158 still flies first.** It targets the GRIND, which is firmware-reachable and demonstrably
+moving (post-V102 ρ = −0.94, p = 0.005, in three channels). The ratchet needs a different lever, and
+that lever's gate is one telemetry cell away — **not** a reason to delay a build that addresses the
+other symptom.
+
