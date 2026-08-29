@@ -3525,3 +3525,48 @@ right handling of tilt is to **report the slope** (which the scorer already does
 level. **Compare ABSOLUTE across builds; the ratio is valid only WITHIN a build, where the divisor
 is common.**
 
+## ✅✅ **V188 — THE NOTCH ON THE GRIND. ONE BIQUAD, AND THE MECHANISM DECIDES WHERE IT GOES**
+There is **exactly one biquad** (re-checked with a DC-gain-plus-structure criterion; the 60-odd other
+"hits" are mode-table data at regular strides, several reporting pole radius > 1). So one notch, and
+the middle ground is **DOMINATED**:
+```
+   design                  ratchet 5-12   grind 15-25   phase @3 Hz
+   V187  notch  8.80 Hz        6.0x          0.9x         -10.0 deg
+   V188  notch 19.40 Hz        1.3x         14.3x          -3.8 deg   <== RECOMMENDED
+   middle notch 14.10 Hz       2.2x          2.3x          -8.2 deg   (worse than BOTH)
+```
+➕ **THE MECHANISM DECIDES IT — and the kit already established both:**
+- **THE GRIND IS A CLOSED-LOOP INSTABILITY.** 21.09 Hz, **9,200× less power with LKAS off**,
+  de-confounded 2×2 attribution to the LKAS gain `0xC6CD0` (effect 2.7–3.9×). **A notch inside the
+  loop AT the unstable frequency BREAKS THE LOOP — a cure, not a mitigation.**
+- **THE RATCHET IS A PLANT RESONANCE.** Ring-down ζ 0.017–0.036, Q 14–29, motor/rack-side, limit
+  cycle EXCLUDED. A command notch only reduces its **excitation**; road input still rings the mode.
+  And the ratchet **already has an independent lever on this build** — the engaged inertia revert.
+- The biquad is **ENGAGED-GATED** (`0xC649B`=1, arm = the LKAS engagement flag) and the grind is
+  **ENGAGED-ONLY on 7/7 routes**. An engaged-only filter against an engaged-only instability.
+✅ It also costs **a THIRD of the phase**, because 19 Hz is far from openpilot's band — which is
+exactly why the notch can be made **WIDE** (r 0.9300 vs 0.9795) and still pass. Per-route grind peaks
+run p10 15.74 / median 19.92 / p90 21.68 Hz, so **width is what matters here**, not depth.
+✅ **GATES, the best of any filter build in the arc: DC 1.000002 · max|H| 1.3533 · added lag
+−1.25° @1 Hz, −3.84° @3 Hz · cal-only, no cave. 30/30.**
+`81c0845fdf22c3af8a164c56240acfd3be2467705997f2f299b29fe560be3279`
+```
+   8.8 Hz -1.2 dB (helps the ratchet too)   15 Hz -6.2   18 Hz -15.3   19.4 null
+   21 Hz -13.7   23 Hz -6.7   25 Hz -3.0
+```
+
+## ✅ **THE TWO MEASURED GRIND FIXES ARE STILL ON THE CAR — checked, not assumed**
+This kit lost V42's ratchet fix to a rebase once (byte-stock V53–V70), so the same check was run:
+```
+   0xC6446  Lever B, the LKAS-gated r24 arm (V88, grinding FIXED on-car)   5244  CARRIED
+   0x3AA96  the V88 sign fix                                               251  CARRIED
+   0x454FE  V42 ratchet fix                                                181  CARRIED
+```
+⚠ **But `0xC6CD0` — the gain the 2×2 identified as the CARRIER of the ~23 Hz vibration — was
+3564 (4×) when V88's grind fix was CONFIRMED on-car, and is 5346 (6×) now** (V101 raised it to 8×,
+V102 stepped it down to 6×). 🛑 **Lowering it back is NOT recommended: LKAS reach is
+`(clip × cal(0xC6CD0)) >> 15`, so 6×→4× cuts authority by a third — the opposite of the operator's
+stated goal.** That tension is exactly why the answer is a **notch**: keep the gain, remove its 23 Hz
+consequence. ⊕ Supersedes the stale *"the 4× LKAS gain is frozen on every build"* memory, which
+predates V101.
+

@@ -4,6 +4,58 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ⭐⭐ **THE DELIVERY CHAIN HAS A ZERO-REJECT ON THE MERGED COMMAND — and it is the ONE gate not structurally dead**
+
+The census had cleared the whole command→motor path: no clamp saturates, no aggregator gate can fire.
+**The delivery chain was never censused.** It has one, and it is the first with a real margin.
+
+### ✅ **BYTE-CONFIRMED AT `0x431D0`–`0x431D8`**
+```asm
+   0x431c4  ld.h   -0x6acc, gp, r9      ; the MERGED COMMAND
+   0x431d0  addi   0x2000, r9, r6       ; r6 = x + 8192
+   0x431d4  addi   -0x4001, r6, r0      ; flags only: carry iff r6 >= 16385
+   0x431d8  cmovc  0x0, r9, r11         ; ** carry -> r11 = 0, else r11 = x **
+```
+⇒ **outside ±8192 the merged command is REPLACED BY ZERO**, not clipped. **A zero-reject on the
+command itself is the most violent nonlinearity in the whole chain** — all-or-nothing, and exactly the
+"command-gated saturation" shape the record's ratchet model needs.
+
+### ✅ **AND ITS PRODUCER IS NOT STRUCTURALLY BOUNDED BELOW IT**
+The comp-add, at `0x458B8`–`0x458CE`:
+```asm
+   0x458b8  ld.h  -0x6acc, gp, r13      ; previous value (lockstep read)
+   0x458bc  ld.h  -0x6ace, gp, r12      ; the GOVERNOR OUTPUT
+   0x458c0  ld.h  -0x4cc8, gp, r15      ; its lockstep twin
+   0x458c4  st.h  r6,     -0x6ad0, gp   ; the COMPENSATION is stored here
+   0x458c8  add   r6, r12               ; ** gp-0x6acc = gp-0x6ace + gp-0x6ad0 **
+   0x458cc  sxh   r12                   ; sign-extended to int16 -- WRAPS at +-32768, no clamp
+```
+```
+   gp-0x6ace   <= 4762     the governor output; gp-0x4f64 is pinned at its cal max 99.9%+ of the time
+   gp-0x6ad0   ** UNKNOWN **  a LERP output (0x45892-0x458a2), sign-flipped on gp-0x6abe
+   the gate    +-8192
+```
+⇒ **the gate fires iff `|governor + compensation| > 8192`, i.e. iff the compensation exceeds ~3430
+while the governor is railed.** 🛑 **Every one of the aggregator's six gates was structurally dead
+(producer ≤ window, guaranteed). This one is not — its firing is a genuine question.**
+⊕ The golden model's own note concedes the point: the conservative envelope is *"4762 governor + 2560
+compensation = 7322"*, **870 counts under the window**, and it says outright *"this model does not
+claim every combination is contained."*
+
+### 🛑 **AND NEITHER CELL HAS EVER BEEN MEASURED**
+`gp-0x6acc` appears in the record only as a *chain description* — *"the aggregator DOES reach the motor
+— the `gp-0x6acc` bridge"* — never as a measurement. `gp-0x6ad0` appears nowhere at all. **No probe in
+sixty builds has read either.**
+
+### ⭐ **THIS IS THE NEXT PROBE TARGET, AND IT OUTRANKS V204**
+V204 asks whether `gp-0x6b4e` reaches a saturation that merely *clips* a model lane. **This asks
+whether the merged command is being ZEROED** — a far larger effect, on the one gate the census could
+not rule out, on a cell nothing has ever looked at.
+⊕ `gp-0x6ad0` is the better tap of the two: it is the unknown term, `gp-0x6ace` is already bounded,
+and their sum is what the gate tests. A tap on `gp-0x6ad0` gives the margin directly.
+⚠ **[EVIDENCE]** the gate, the comp-add and the governor bound, all byte-confirmed above.
+**[BELIEF]** that it actually fires — unmeasured, and the conservative envelope says it may not.
+
 ## 🛑🛑 **NO GATE REJECTS EITHER — the command-gated-saturation model has NO mechanism in this path**
 
 Last tick killed the clamps. The remaining candidate was the aggregator's **zero-REJECT gates**, which
@@ -2206,49 +2258,4 @@ pooled 67-route engaged spectrum:
 lag and attenuation grow together**, so loop gain is cut in proportion to the phase spent — which is
 precisely why a notch is the standard tool for this job. Still checkable on the drive: a **new** peak
 at 13–16 Hz would falsify it.
-
-## ✅✅ **V188 — THE NOTCH ON THE GRIND. ONE BIQUAD, AND THE MECHANISM DECIDES WHERE IT GOES**
-There is **exactly one biquad** (re-checked with a DC-gain-plus-structure criterion; the 60-odd other
-"hits" are mode-table data at regular strides, several reporting pole radius > 1). So one notch, and
-the middle ground is **DOMINATED**:
-```
-   design                  ratchet 5-12   grind 15-25   phase @3 Hz
-   V187  notch  8.80 Hz        6.0x          0.9x         -10.0 deg
-   V188  notch 19.40 Hz        1.3x         14.3x          -3.8 deg   <== RECOMMENDED
-   middle notch 14.10 Hz       2.2x          2.3x          -8.2 deg   (worse than BOTH)
-```
-➕ **THE MECHANISM DECIDES IT — and the kit already established both:**
-- **THE GRIND IS A CLOSED-LOOP INSTABILITY.** 21.09 Hz, **9,200× less power with LKAS off**,
-  de-confounded 2×2 attribution to the LKAS gain `0xC6CD0` (effect 2.7–3.9×). **A notch inside the
-  loop AT the unstable frequency BREAKS THE LOOP — a cure, not a mitigation.**
-- **THE RATCHET IS A PLANT RESONANCE.** Ring-down ζ 0.017–0.036, Q 14–29, motor/rack-side, limit
-  cycle EXCLUDED. A command notch only reduces its **excitation**; road input still rings the mode.
-  And the ratchet **already has an independent lever on this build** — the engaged inertia revert.
-- The biquad is **ENGAGED-GATED** (`0xC649B`=1, arm = the LKAS engagement flag) and the grind is
-  **ENGAGED-ONLY on 7/7 routes**. An engaged-only filter against an engaged-only instability.
-✅ It also costs **a THIRD of the phase**, because 19 Hz is far from openpilot's band — which is
-exactly why the notch can be made **WIDE** (r 0.9300 vs 0.9795) and still pass. Per-route grind peaks
-run p10 15.74 / median 19.92 / p90 21.68 Hz, so **width is what matters here**, not depth.
-✅ **GATES, the best of any filter build in the arc: DC 1.000002 · max|H| 1.3533 · added lag
-−1.25° @1 Hz, −3.84° @3 Hz · cal-only, no cave. 30/30.**
-`81c0845fdf22c3af8a164c56240acfd3be2467705997f2f299b29fe560be3279`
-```
-   8.8 Hz -1.2 dB (helps the ratchet too)   15 Hz -6.2   18 Hz -15.3   19.4 null
-   21 Hz -13.7   23 Hz -6.7   25 Hz -3.0
-```
-
-## ✅ **THE TWO MEASURED GRIND FIXES ARE STILL ON THE CAR — checked, not assumed**
-This kit lost V42's ratchet fix to a rebase once (byte-stock V53–V70), so the same check was run:
-```
-   0xC6446  Lever B, the LKAS-gated r24 arm (V88, grinding FIXED on-car)   5244  CARRIED
-   0x3AA96  the V88 sign fix                                               251  CARRIED
-   0x454FE  V42 ratchet fix                                                181  CARRIED
-```
-⚠ **But `0xC6CD0` — the gain the 2×2 identified as the CARRIER of the ~23 Hz vibration — was
-3564 (4×) when V88's grind fix was CONFIRMED on-car, and is 5346 (6×) now** (V101 raised it to 8×,
-V102 stepped it down to 6×). 🛑 **Lowering it back is NOT recommended: LKAS reach is
-`(clip × cal(0xC6CD0)) >> 15`, so 6×→4× cuts authority by a third — the opposite of the operator's
-stated goal.** That tension is exactly why the answer is a **notch**: keep the gain, remove its 23 Hz
-consequence. ⊕ Supersedes the stale *"the 4× LKAS gain is frozen on every build"* memory, which
-predates V101.
 
