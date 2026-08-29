@@ -4,6 +4,59 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑 **THE `0xC63AA` SENSITIVITY IS 41× UNDERSTATED IN THE RECORD — and the dilution ratio is nearly closed**
+
+`BUILD-LINEAGE.md` parks `0xC63AA` as *"still the best structural lever, but it needs the **dilution
+ratio** first"*, with the sensitivity recorded as `d(iVar6)/d(0xC63AA) = −(1/16)·(gp-0x6b4c/1024)`.
+Mirroring `FUN_00038148`'s decompiled arithmetic exactly:
+```c
+   0x38148   SUM    = sum over SIX lanes of (x_i * gate_i * w_i) >> 10      // ZERO-REJECT gates
+             scaled = (SUM * sgn(gp-0x6752) * cal(0xC6468)) >> 10           // cal = 2639
+             target = scaled * 0x10                    // <-- the record DROPPED this
+             model += ((target - model) * cal(0xC63AC)) >> 10               // alpha = 102/1024
+             resid  = gp-0x6bfe - (model >> 4) + gp-0x6bfa                  // <-- it KEPT this
+```
+🛑 **The `*0x10` and the `>>4` CANCEL** — the model is stored 16× oversampled so the EMA keeps
+precision; it is **not** a divide in the signal path. Perturbing the mirror rather than trusting the
+algebra: **zeroing the weight moves the residual by 2.577 × `gp-0x6b4c`**, against the recorded 0.0625.
+**2.577 / 0.0625 = 41.2×.**
+⚠ **This cuts BOTH ways.** It is far more potent than the record believed — and therefore far more
+able to destabilise. `gp-0x6b70` is clamped to ±cal(`0xC6200`) = **8192**, and 2.577 × a `gp-0x6b4c`
+of 4000 already **exceeds** it. **This is a lever to size carefully, not a free one.**
+
+### ✅ **TWO OF THE THREE UNKNOWNS ARE NOW CLOSED**
+```
+   the six model lanes, their weights and their ZERO-REJECT windows (V202)
+     gp-0x6bd0  w 0xC63A0 = 1024   +-2048    0 in 100 % of the micro regime
+     gp-0x6bbe  w 0xC63A2 = 1024   +-2048    p50 74
+     gp-0x6b46  w 0xC63A4 = 1024   +-1024    ** <= 512 BY CONSTRUCTION **   <- CLOSED
+     gp-0x6b26  w 0xC63A6 =  512   +-1024    <= 511, clamped by 0xC407E     (V181 halved this weight)
+     gp-0x6b4e  w 0xC63A8 = 1024   +-10240   ** gp-0x3d8c SATURATED to +-10240 **   <- THE UNKNOWN
+     gp-0x6b4c  w 0xC63AA = 1024   +-10240   < 4096 measured (duty 0.000000 for >= 4096 / 17,614 fr)
+```
+- **`gp-0x6b46` — CLOSED.** `FUN_00036682`'s tail clamps its driver to **±0x200** and EMAs toward it
+  (cal `0xC63D2`), so it can never approach its own ±1024 reject window. A lag-compensator error, not
+  a large term.
+- **`gp-0x6b4e` — THE ONE REMAINING UNKNOWN, and it is BIG.** `0x2743E`–`0x2746A`:
+  `ld.w -0x3d8c,gp,r11` · `movea 0x2800,r0,r26` · `bgt` · `movea -0x2800,r0,r9` · `cmovle r9,r11,r26`
+  · `st.h r11,-0x6b4e,gp` (+ lockstep twin at `-0x4cd6`). ⇒ **`gp-0x3d8c` SATURATED to ±10240** — the
+  same ceiling as `gp-0x6b4c`, and its reject window is exactly ±10240 so it **never drops out.**
+```
+   dilution = (gp-0x6b4c * w) / SUM, from the mirror with every other lane at its recorded value
+     gp-0x6b4c      gp-0x6b4e = 0      gp-0x6b4e = 500
+         250            43.2 %              15.8 %
+        1000            75.3 %              42.9 %
+        4000            92.4 %              75.1 %
+```
+⇒ **Whether `0xC63AA` is diluted or dominant is now ENTIRELY a question of how big `gp-0x6b4e` runs —
+one number, never measured in the whole corpus.**
+
+### ✅ **V204 = V202 + the 427 probe on `gp-0x6b4e`.** 40/40, 3 payload bytes, control cells identical.
+`30e7da9f6d20ff13…` · `0x55DF2` → `0x94B2`, sar 5 (±10240 ⇒ raw 0–320 / 704–1023, resolution 32).
+**Small ⇒ `0xC63AA` is the strongest cal-only structural lever in the kit, to be sized against the
+±8192 clamp. Comparable or larger ⇒ genuinely diluted, and it should be STRUCK rather than left
+parked** — which is itself worth knowing after it has sat open since 2026-08-20.
+
 ## 🛑 **THE 8 Hz RATCHET NOTCH STAYS REJECTED — and the friction lane is NOT “reverted to Honda”**
 
 ### ✅ **V184's 8 Hz NOTCH RE-PRICED UNDER THE CORRECTED UNDERSTANDING — still the wrong trade**
@@ -2198,65 +2251,4 @@ hybrid nobody designed) — and **NOT as an understood lever.**
 ladder is INTACT at 5.0**, so V178's error cannot recur silently.
 🛑 **V177 STAYS FLY-FIRST.** V177's case is quantitative (a term 10x oversized); V179's rests on
 design coherence with an unestablished sign. **V179 is the follow-up if V177 helps but does not cure.**
-
-## 🛑🛑 **V178 IS RETRACTED AND QUARANTINED — THOSE CELLS ARE THE AUTHORITY LADDER, NOT V122'S DOING**
-**I built a firmware image on a wrong premise and nearly handed it over as flashable. Caught by the
-audit I had scheduled, one turn later.**
-❌ **The claim**: V122 flattened three LERPs to ±5.0 and deleted a deadband, so V178 reverts them.
-✅ **The full V108-vs-V122 diff is TWELVE BYTES in five payload runs, and that block is NOT among
-them:**
-```
-   0x55DF2  37844 -> 38212   CAN 427 telemetry source
-   0x55E10  12965 -> 12963   427 packer sar
-   0xC40BC    600 -> 3000    Coulomb ramp width      <- V177 keeps this (protective)
-   0xC40D2    204 -> 1020    K1 Coulomb              <- V177 REVERTS this; still valid
-   0xC40DC     22 -> 8       accel EMA alpha         <- still OPEN
-```
-🛑 **The real history of `0xC6598`/`AC`/`C4`/`C8`/`CC`, read across EVERY image in the repo:**
-```
-   stock  1.0  -1.0   0.0  1.5  2.0
-   V29    2.0  -2.0   (stock ramp)
-   V30    4.0  -4.0   (stock ramp)
-   V31    4.0  -4.0   4.0  4.0  4.0
-   V38    5.0  -5.0   5.0  5.0  5.0     <- and unchanged on EVERY build since
-```
-⇒ **that is a deliberate GAIN / AUTHORITY LADDER, raised at V31/V38** — almost certainly how this
-kit obtains its LKAS authority at all. **Reverting it to Honda's 1.0 would cut authority ~5x, the
-exact opposite of the operator's second stated goal.** V178's artifacts are renamed
-**`SUPERSEDED-DO-NOT-FLASH-AUTHORITY-*`** and `build_v178_tva.py` now raises on entry.
-
-### 🛑 THE METHOD ERROR, WHICH IS THE REAL LESSON
-**I asked "did V122 change this cell?" when the question that mattered was "WHEN did this cell
-change?"** Having just found the lineage gap at V122, I attributed everything unfamiliar to V122
-without checking. **One `for build in images: print(value)` loop — four lines — settled it and would
-have prevented the build entirely.**
-➕ **STANDING RULE, earned:** before reverting ANY cell, print its value across **every image in the
-repo, in build order**. A cell that steps through a **ladder** (1 → 2 → 4 → 5) is a **deliberate
-tuning axis**, not an accident, and reverting it undoes deliberate work. A cell that jumps **once** is
-the candidate.
-
-### ✅ WHAT SURVIVES, UNCHANGED
-- **V177 stands.** `0xC40D2` 204 → 1020 **is** genuinely V122's, confirmed by this very diff. Its
-  rationale, its single-cell attribution and its fly-first status are unaffected.
-- **The lineage gap stands** — `grep V122` still returns zero rows — but its consequence is smaller
-  than I said: V122's cal delta is **three** cells, not four, plus two telemetry cells.
-- **`0xC40DC` (22 → 8) remains genuinely V122's and genuinely OPEN.**
-❌ **Retracted with V178**: the "V122 deleted a deadband / flattened a ramp" story, and the V80-relay
-framing attached to it.
-
-## 🛑🛑 **THE BUILD LINEAGE STOPS AT V121 — AND V122, THE FLYING BUILD, MADE FOUR UNDOCUMENTED CHANGES**
-**`docs/BUILD-LINEAGE*.md` contains ZERO occurrences of "V122".** The highest documented build is
-**V121**. Nothing from V122 to V178 has a lineage row. 🛑 **Every lever proposed this session was
-checked against a lineage that does not cover what is on the car** — which is exactly why V122's
-changes only surfaced when I finally read the raw byte delta rather than the record.
-```
-   V122's undocumented delta, read from the images:
-     0xC40D2  K1 Coulomb        204  -> 1020    (5x; 10x Honda)   -> reverted by V177
-     0xC40BC  ramp width        600  -> 3000    (5x)              -> KEEP, it is protective
-     0xC40DC  accel EMA alpha    22  -> 8                          -> OPEN, a phase change
-     0xC6598/9C/AC/B0/C4/C8/CC  three LERPs flattened to +-5.0     -> reverted by V178
-```
-⚠ **This is the failure the lineage rule exists to prevent**, and it defeated the rule's own
-enforcement: *"grep `build_v*_tva.py` and `BUILD-LINEAGE.md` before naming any address"* returns
-nothing for a cell V122 moved, so the check silently passes.
 

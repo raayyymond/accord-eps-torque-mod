@@ -49,6 +49,7 @@ PUB = {
     'v201': '354f9dfb93cf6fcd309c791ff962a792db668c6faef1de5a563d9f389f3bdfd6',
     'v202': '2c5bc569c2c5e4c66f7eaa350ddbfe87d50af9875fa75a10d927eed3a7255160',
     'v203': '0da3b7b9a4bfa9068960ed1c5afd07ff4f816376da9488df4d31946cf55b5965',
+    'v204': '30e7da9f6d20ff1335d01abe86ba03df7245c802217a4e6df54c5b93208873e6',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -130,7 +131,9 @@ if 'v199' in img and 'v196' in img:
     chk(all(0xC60A8 <= a < 0xC60B8 for a in d), 'V199 changes ONLY the four biquad cells')
 
 for _v, _base, _hw, _what in (('v203', 'v202', 0x9482,
-                               'gp-0x6b7e, the unfiltered pedestal'),):
+                               'gp-0x6b7e, the unfiltered pedestal'),
+                              ('v204', 'v202', 0x94B2,
+                               'gp-0x6b4e, the observer model lane'),):
     if _v in img and _base in img:
         d = [a for a in range(0x13000, 0x100000)
              if img[_v][a] != img[_base][a] and (a & 0xFFF) < 0xFFC]
@@ -181,8 +184,9 @@ if 'v202' in img and 'v199' in img:
 print('\n[3] SUPERSEDED ARTIFACTS ARE RENAMED')
 live = [os.path.basename(x) for x in glob.glob(RWD + '/39990*-V199-*.rwd')
         + glob.glob(RWD + '/39990*-V202-*.rwd')
-        + glob.glob(RWD + '/39990*-V203-*.rwd')]
-chk(len(live) == 3, f'exactly 3 flashable builds from this chain ({len(live)})')
+        + glob.glob(RWD + '/39990*-V203-*.rwd')
+        + glob.glob(RWD + '/39990*-V204-*.rwd')]
+chk(len(live) == 4, f'exactly 4 flashable builds from this chain ({len(live)})')
 # V194/V195/V196/V198 were PULLED: every one carries a notch whose poles sit at the zeros, scoring
 # max|H| 1.3533-1.7177 against the lineage bar of stock 1.0000.  They must not be flashable.
 for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193',

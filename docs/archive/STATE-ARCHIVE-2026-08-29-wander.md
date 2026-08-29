@@ -2894,3 +2894,64 @@ go, accepting that its result could not be attributed to a single cell.
 ❌ **`0xC40BC` is deliberately NOT reverted** — 600 would make the Coulomb zero-crossing **5x
 sharper**, undoing the one V122 change that helps.
 
+## 🛑🛑 **V178 IS RETRACTED AND QUARANTINED — THOSE CELLS ARE THE AUTHORITY LADDER, NOT V122'S DOING**
+**I built a firmware image on a wrong premise and nearly handed it over as flashable. Caught by the
+audit I had scheduled, one turn later.**
+❌ **The claim**: V122 flattened three LERPs to ±5.0 and deleted a deadband, so V178 reverts them.
+✅ **The full V108-vs-V122 diff is TWELVE BYTES in five payload runs, and that block is NOT among
+them:**
+```
+   0x55DF2  37844 -> 38212   CAN 427 telemetry source
+   0x55E10  12965 -> 12963   427 packer sar
+   0xC40BC    600 -> 3000    Coulomb ramp width      <- V177 keeps this (protective)
+   0xC40D2    204 -> 1020    K1 Coulomb              <- V177 REVERTS this; still valid
+   0xC40DC     22 -> 8       accel EMA alpha         <- still OPEN
+```
+🛑 **The real history of `0xC6598`/`AC`/`C4`/`C8`/`CC`, read across EVERY image in the repo:**
+```
+   stock  1.0  -1.0   0.0  1.5  2.0
+   V29    2.0  -2.0   (stock ramp)
+   V30    4.0  -4.0   (stock ramp)
+   V31    4.0  -4.0   4.0  4.0  4.0
+   V38    5.0  -5.0   5.0  5.0  5.0     <- and unchanged on EVERY build since
+```
+⇒ **that is a deliberate GAIN / AUTHORITY LADDER, raised at V31/V38** — almost certainly how this
+kit obtains its LKAS authority at all. **Reverting it to Honda's 1.0 would cut authority ~5x, the
+exact opposite of the operator's second stated goal.** V178's artifacts are renamed
+**`SUPERSEDED-DO-NOT-FLASH-AUTHORITY-*`** and `build_v178_tva.py` now raises on entry.
+
+### 🛑 THE METHOD ERROR, WHICH IS THE REAL LESSON
+**I asked "did V122 change this cell?" when the question that mattered was "WHEN did this cell
+change?"** Having just found the lineage gap at V122, I attributed everything unfamiliar to V122
+without checking. **One `for build in images: print(value)` loop — four lines — settled it and would
+have prevented the build entirely.**
+➕ **STANDING RULE, earned:** before reverting ANY cell, print its value across **every image in the
+repo, in build order**. A cell that steps through a **ladder** (1 → 2 → 4 → 5) is a **deliberate
+tuning axis**, not an accident, and reverting it undoes deliberate work. A cell that jumps **once** is
+the candidate.
+
+### ✅ WHAT SURVIVES, UNCHANGED
+- **V177 stands.** `0xC40D2` 204 → 1020 **is** genuinely V122's, confirmed by this very diff. Its
+  rationale, its single-cell attribution and its fly-first status are unaffected.
+- **The lineage gap stands** — `grep V122` still returns zero rows — but its consequence is smaller
+  than I said: V122's cal delta is **three** cells, not four, plus two telemetry cells.
+- **`0xC40DC` (22 → 8) remains genuinely V122's and genuinely OPEN.**
+❌ **Retracted with V178**: the "V122 deleted a deadband / flattened a ramp" story, and the V80-relay
+framing attached to it.
+
+## 🛑🛑 **THE BUILD LINEAGE STOPS AT V121 — AND V122, THE FLYING BUILD, MADE FOUR UNDOCUMENTED CHANGES**
+**`docs/BUILD-LINEAGE*.md` contains ZERO occurrences of "V122".** The highest documented build is
+**V121**. Nothing from V122 to V178 has a lineage row. 🛑 **Every lever proposed this session was
+checked against a lineage that does not cover what is on the car** — which is exactly why V122's
+changes only surfaced when I finally read the raw byte delta rather than the record.
+```
+   V122's undocumented delta, read from the images:
+     0xC40D2  K1 Coulomb        204  -> 1020    (5x; 10x Honda)   -> reverted by V177
+     0xC40BC  ramp width        600  -> 3000    (5x)              -> KEEP, it is protective
+     0xC40DC  accel EMA alpha    22  -> 8                          -> OPEN, a phase change
+     0xC6598/9C/AC/B0/C4/C8/CC  three LERPs flattened to +-5.0     -> reverted by V178
+```
+⚠ **This is the failure the lineage rule exists to prevent**, and it defeated the rule's own
+enforcement: *"grep `build_v*_tva.py` and `BUILD-LINEAGE.md` before naming any address"* returns
+nothing for a cell V122 moved, so the check silently passes.
+

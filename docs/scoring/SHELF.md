@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Three flashable builds: V199, V202, V203. Everything else from this arc is renamed
+**Updated 2026-08-29.** Four flashable builds: V199, V202, V203, V204. Everything else from this arc is renamed
 `SUPERSEDED-DO-NOT-FLASH-GATE2-…` and must not be sent.
 
 🛑 **Nothing here has been flashed and no CAN or UDS message has been sent.** Flashing requires you to
@@ -45,6 +45,25 @@ Human steering-feel thresholds are tens of ms.
 improves worst-case leakage by only 1.1× and makes the median *worse* — one biquad cannot cover
 6.7 Hz. **So score the drive stratified by its own peak frequency, never pooled:** a drive peaking at
 16 Hz gets 2.3×, one peaking at 20 Hz gets 24.7×.
+
+## V204 — V202 + the probe that unblocks the kit’s best parked lever
+
+```
+39990-TVA,A160-V204-V202BASE-PROBE-GP6B4E-0x13000-0x100000.rwd
+  image 30e7da9f6d20ff1335d01abe86ba03df7245c802217a4e6df54c5b93208873e6
+```
+
+V202 control cells byte-identical, +3 payload bytes putting `gp-0x6b4e` on CAN 427. Preflight 8/8.
+
+`0xC63AA` has sat parked since 2026-08-20 as *“the best structural lever, but it needs the dilution
+ratio first.”* Mirroring `FUN_00038148` closed two of its three unknowns and showed the **recorded
+sensitivity is 41× understated** (2.577× `gp-0x6b4c`, not 0.0625× — the record kept a `>>4` but
+dropped the `*0x10` that cancels it). The last unknown is how big `gp-0x6b4e` runs, and this measures
+it. Small ⇒ the lever is dominant and worth sizing; comparable ⇒ it is genuinely diluted and should
+be struck rather than left parked.
+
+⚠ 41× more potent also means 41× more able to destabilise — `gp-0x6b70` is clamped at ±8192 and
+2.577 × a `gp-0x6b4c` of 4000 already exceeds it. This is a lever to size, not a free one.
 
 ## V199 — the low-phase fallback
 
@@ -136,7 +155,8 @@ Then:
 ```
 python rlog-tools/score/score_band_excess.py <tag>
 python rlog-tools/score/cross_channel_band_excess.py <tag>
-python rlog-tools/probe/decode_v201_pedestal.py <tag> --v203     # V203 only
+python rlog-tools/probe/decode_v201_pedestal.py <tag> --v203       # V203 only
+python rlog-tools/probe/decode_v204_observer_lane.py <tag> --v204  # V204 only
 ```
 
 ## STOP CONDITIONS
