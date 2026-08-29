@@ -1,5 +1,77 @@
 # STATE — living current state of the kit
 
+## 🛑🛑⭐ **THE RATCHET IS 100 % FIRMWARE-CAUSED — AND UNTOUCHED BY EVERY LEVER THE KIT HAS PULLED**
+Three results that only make sense together, all from the validated slope-corrected excess
+estimator with slope-matched nulls.
+
+### ✅ 1. IT IS IN THE TORQUE CHANNEL, NOT WHEEL RATE — A 7x BETTER INSTRUMENT
+```
+   ratchet 5-12 Hz margin over each channel's OWN slope-matched null, mean of 4 routes
+     tq        7.62      <- EPS/driver torque
+     cs_tq     7.42
+     ws_fr     4.41      <- front wheel speed, also real
+     ws_fl     3.95
+     cs_rate   1.03      <- THE INCUMBENT CHANNEL, AT CHANCE
+     ang/wang/cs_ang  0.79-0.83
+     sc_tq 0.56 · co_tqcan 0.59 · cc_req 0.67   <- the COMMAND: ratchet absent
+```
+✅ **[EVIDENCE] in `cs_tq` the ratchet is REAL on 9/9 routes** (excess 9.8–67.8 vs null 2.6–4.1).
+✅ **[EVIDENCE] it is NOT in the command** — all three command channels sit below their nulls,
+confirming the older *“not in openpilot's command”* claim with a validated estimator.
+⚠ **This RETRACTS the “and ANGLE-RATE” half of that older claim**: wheel rate scores **1.03**,
+i.e. chance. Every 6–9 Hz endpoint this kit has used was reading the wrong channel.
+
+### 🛑 2. THIRTY-PLUS BUILDS HAVE NOT MOVED IT — AND THE TEST HAD THE POWER TO SEE IT
+```
+   band     channel   full-range rho    post-V102 rho        V102 vs rest
+   GRIND    cs_tq     -0.02 (n.s.)      -0.94   p = 0.005    12.3x
+   GRIND    tq        +0.03 (n.s.)      -0.94   p = 0.005    14.4x
+   GRIND    cs_rate    0.00 (n.s.)      -0.83   p = 0.042    15.0x
+   RATCHET  cs_tq     +0.50  p 0.168    -0.14   p = 0.787     1.6x
+   RATCHET  tq        +0.42  p 0.262    -0.31   p = 0.544     1.9x
+
+   ratchet PEAK FREQUENCY over nine builds: 8.64 +/- 0.64 Hz, CV 7.4 %, vs build rho -0.26 (p 0.51)
+```
+✅ **[EVIDENCE] the GRIND falls monotonically V102→V122 in THREE independent channels**
+(ρ = −0.94, p = 0.005, replicated) ⇒ the kit's builds are measurably working on the grind.
+🛑 **[EVIDENCE] the RATCHET does not move at all.** Observed spread is **6.9–8.3x** against a
+split-half floor of **1.63–1.91x**, so a trend of ≥1.9x would have shown. Its frequency is pinned
+at **8.64 Hz ± 7.4 %** across V91→V122. The weak full-range ρ is **POSITIVE** — if anything newer
+builds ratchet slightly *more* — though not significantly.
+
+### ⭐⭐ 3. AND YET IT EXISTS ONLY WHEN ENGAGED — SO FIRMWARE CREATES IT OUTRIGHT
+```
+   route build   engaged exc / null    manual exc / null    ratio    speed-matched?
+   r78   V91     11.7 / 4.7            3.2 / 4.6            3.63     no (2.8 km/h)
+   r7e   V96     11.5 / 4.7            2.4 / 4.7            4.82     YES
+   r7f   V96     93.6 / 4.2            2.6 / 4.0           35.64     YES
+   r96   V102    55.4 / 4.6            2.0 / 5.0           27.73     YES
+   ra6   V106    48.0 / 4.5            2.7 / 4.1           17.90     no (5.0 km/h)
+   r1e   V107    17.1 / 2.9            2.5 / 4.5            6.92     no (2.9 km/h)
+   r24   V122    32.5 / 4.5            2.7 / 4.6           12.09     YES
+
+   engaged arm beats its null on 7/7 routes ; manual arm on 0/7
+   speed-matched ratio median 19.91x  [4.82, 35.64]
+```
+✅ **[EVIDENCE] there is NO ratchet peak in manual driving at the same speed** — the manual arm
+sits *below* its own null on every route. This is not a mechanical resonance that engagement
+amplifies; **engagement CREATES it.**
+⚠ **SUPERSEDES the recorded “engaging amplifies 6–9 Hz by 2.8x”** — that figure came from the
+tilt-confounded band ratio, which dilutes a peak into its neighbourhood. The validated
+contrast is **~20x**, and the manual arm has no peak at all.
+
+### 🛑 WHAT THIS MEANS FOR THE SEARCH — THE LEVER IS ONE WE HAVE NEVER TOUCHED
+The three results are only consistent one way: **the ratchet is entirely firmware-caused, and
+every calibration lever pulled between V91 and V122 is orthogonal to it.** So it is not
+mechanical, not unreachable, and not a measurement failure — **it is a live firmware path at
+8.6 Hz, engaged-only, that no build in this kit has yet modified.**
+⇒ the question is no longer *“is there a lever?”* but **“which engaged-only path is live at
+8.6 Hz that V91–V122 all left byte-identical?”** — answerable by intersecting the engaged-gated
+code with the set of cells no build has touched.
+⚠ **[BELIEF, not EVIDENCE]** that the responsible path is reachable by calibration at all; it may
+need a structural edit. **What would close it**: the intersection above, then a phase test at
+8.6 Hz on each candidate.
+
 ## 🛑🛑 **THE SPECTRAL TILT CONFOUNDED EVERY 6–9 Hz ENDPOINT — THREE MEASURES WITHDRAWN, ONE SURVIVES**
 Chasing why the ratchet Q showed no build trend produced a chain of retractions and one
 durable positive result. **The wheel-rate signal is RED**, slope **1/f^0.80 to 1/f^2.37**
@@ -2197,62 +2269,4 @@ caution applies to every pre-V101 result, since `0xC6CD0` moved 3564 -> 5346 at 
 cause: **designed from `BUILD-LINEAGE` and fresh decompiles instead of the GOLDEN MODEL**, which held
 the structure, the prescriptions, the strikes, the measured fix and its gain-dependence all along.
 **V158 is the one built from the model, and it is the one that survives.**
-
-## 🛑🛑🛑 **V149 SUPERSEDED — IT REMOVES LEVER B, THE KIT'S ONLY MEASURED GRINDING FIX**
-The queue audit against the golden model reaches V149, and this is the worst of the four errors.
-
-### 🛑 MY PREMISE FOR V149 WAS WRONG
-I built V149 to *"remove the 5.12x r24 switch"*, describing it as **a fault counter (`gp-0x671d`)
-selecting between `cal(0xC6446)=5244` and `cal(0xC6442)=1024` at task rate** — a switching
-nonlinearity inside a confirmed pump. **The selector is not a fault counter.**
-```
-   0x3AA96   stock c5 -> V122 fb     ld.bu -0x683c[gp]  ->  ld.bu -0x6806[gp]
-                                     i.e. the flag is gp-0x6806 = LKAS CONTROL ACTIVE
-   0xC6446   stock 512 -> V122 5244  the LKAS-gated arm's gain
-```
-⇒ **the gate is ENGAGEMENT, not a counter.** It toggles on engage/disengage, **not at 1 kHz**.
-**There is no task-rate switching nonlinearity here, so V149 has nothing to remove.**
-
-### 🛑🛑 WORSE: 5244 IS THE FIX, AND V149 DELETES IT
-The golden model describes this exact pair as **the grind #1 fix**:
-> *"**THE FIX: V67 = V66 + the grind #1 fix GATED ON LKAS.** Two edits, no cave: `0x3AA96 c5 -> fb`
-> + `0xC6446 512 -> 5244` … its flag `lp` already selects cal `0xC6446` for r24 — **the firmware
-> already HAS a conditional-gain arm and it is merely wired to a dead cell.** Repointing it makes the
-> gain conditional **with no code cave, this kit's only bricking class.**
-> gate FALSE (LKAS off) -> the LERP, unchanged => **byte-for-byte STOCK base steering**
-> gate TRUE (LKAS on) -> flat 5244 = **2.00x the LERP at grind #1's operating point**"*
-
-⊕ And the memory record: **V88 = “Lever B restored” is the build that FLEW with “grinding FIXED”**
-([[accord-v88-flew-grinding-fixed-command-intact]]), and
-[[accord-v81-carries-neither-grind1-fix]] calls Lever B **“best in kit”**.
-⇒ **[EVIDENCE] Lever B is ACTIVE on the flying build (`0x3AA96` = `fb`, `0xC6446` = 5244), and
-V149 sets 5244 -> 1024, collapsing the gated arm to the ungated value.**
-⇒ **V149 REMOVES THE ONLY CHANGE THIS KIT HAS EVER MEASURED AS FIXING GRINDING.**
-⇒ **SUPERSEDED. `.rwd` renamed. It must never be flown.**
-
-### ⚠ AND V152/V153 CARRY THE SAME OPEN GATE 2 AS V154/V155
-`tp+0x50d0` = **`0xC40D0`** is **one of the eight Path-2 loop-gain coefficients** the golden model
-names as *"NEVER BYTE-READ"* and on which **GATE 2 cannot be certified**. **V152/V153 move it.**
-⊕ **Their argument is better than V154/V155's**: a *pure added low-pass* lowers HF loop gain, which
-is directionally stabilising, whereas a weight change had an **unresolved sign**.
-⚠ **But it is still not a certification** — a low-pass also adds phase lag, and phase margin cannot
-be checked without the loop gain, which needs the RAM LERP slope that `FUN_000389ec` has defeated
-twice.
-⇒ **V152/V153 are NOT superseded, but they are DEMOTED and flagged GATE-2-OPEN.** They must not be
-flown ahead of V158, whose gate is closed by the model's own priced prescription.
-
-### ✅ THE QUEUE AFTER THE AUDIT
-```
-   1. V158   damper, the golden model's own prescription      GATE 2 closed by the model     FLY THIS
-   2. V139   both pump arms halved                            not yet audited
-   3. V150   r26 suppression switch                           premise deserves re-checking after V149
-   4. V148   deadband + probe                                 instrument, not a fix
-   5. V151   knee 3000 -> 3600                                marginal, relay ~99 % unsaturated
-   -  V152 / V153   observer poles                            GATE-2-OPEN, demoted
-   X  V149 / V154 / V155 / V156 / V157                        SUPERSEDED
-```
-🛑 **FIVE of the builds I recommended this session are now superseded, all for the same root
-cause: designed from `BUILD-LINEAGE` and my own decompiles instead of the GOLDEN MODEL**, which
-`CLAUDE.md` names as required reading and which already contained the structure, the prescription,
-the strikes and the fix.
 
