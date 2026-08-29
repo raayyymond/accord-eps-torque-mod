@@ -25,6 +25,17 @@ cycle, and it matches the record's own "command-proportional Coulomb relay" blam
 0xC63AE scales the LERP's INPUT, so near the origin -- where the curve is near-linear -- it scales
 that gain DIRECTLY.  Halving it halves 2.67x -> 1.34x, 3.77x -> 1.89x.
 
+** BUT THAT IS THE SMALL-SIGNAL LIMIT ONLY, AND THE DOSE IS WEAKER AT LARGER AMPLITUDES. **
+Scaling the INPUT of a CONCAVE curve moves the operating point onto a STEEPER part, so the two
+effects fight.  The correct instrument is the describing function, N_g(A) = k * N_f(k*A), NOT
+k * N_f(A).  Measured on the real curve (verify/gate2_v206_describing_function.py):
+
+    amplitude A      25     200     800    3200    6400   12800
+    N ratio        0.486   0.472   0.619   0.794   0.771   0.658     <- NOT a flat 0.500
+
+So the dose buys between 1.26x and 2.1x of loop-gain reduction depending on amplitude, not a uniform
+2x.  It still reduces gain EVERYWHERE, which is the GATE 2 pass -- but do not quote "half".
+
 ** It scales THIS STAGE ONLY. **  The base power-assist map is fed by Xsrc/Ysrc, a different
 transform of the same source, so the map is untouched.  That matters: the curve's shape is otherwise
 welded to the ROM assist records and could not be moved without moving steering feel, which is very

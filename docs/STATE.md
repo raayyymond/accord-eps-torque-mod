@@ -4,6 +4,54 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **GATE 2 RUN ON V206 — IT PASSES, AND IT WAS NOT THE TRIVIAL CHECK IT LOOKED LIKE**
+
+I built V206 last tick having run **GATE 1 but not GATE 2**. The kit makes both mandatory for any
+dynamics change, and halving a loop gain is one. Running it properly changed a number I had published.
+
+### 🛑 **"HALVING A GAIN HALVES THE LOOP GAIN" IS FALSE HERE**
+`0xC63AE` scales the **input** of a **memoryless, CONCAVE** nonlinearity. Scaling the input down moves
+the operating point onto a **STEEPER** part of the curve — and the curve's slope ratio between small
+and mid signal is **6.7–10.7×**, so the steepening is large. The two effects fight. The correct
+instrument for a memoryless nonlinearity inside a loop is the **describing function**:
+```
+   f(x) = sgn(x) * LERP(|x|)        the stage at unity
+   g(x) = f(k*x)                    the stage with the dose
+   ** N_g(A) = k * N_f(k*A)   NOT   k * N_f(A) **
+```
+### ✅ **MEASURED ON THE REAL CURVE — PASS, worst case 0.794**
+```
+   amplitude A       25     200     800    3200    6400   12800
+   N ratio         0.486   0.472   0.619   0.794   0.771   0.658
+```
+**The ratio is never a flat 0.500 and never reaches 1.0.** Worst case **0.794 at speed 2560, A=3200**.
+⇒ **The dose reduces first-harmonic loop gain at EVERY amplitude and EVERY speed tested**, and being
+memoryless it **adds no phase at any frequency**. So the Nyquist locus contracts **radially toward the
+origin with no rotation**, which cannot create an encirclement of −1 that did not already exist:
+**a stable loop stays stable. GATE 2 PASSES.**
+
+### 🛑 **CORRECTION TO MY OWN BUILDER — do not quote "half"**
+V206's docstring said the dose halves the gain. **That is the small-signal limit only** (the
+describing function confirms 0.486 at A=25). Across the amplitude range the dose buys **1.26× to
+2.1×**, not a uniform 2×. The builder now carries the amplitude table.
+
+### ⭐ **AND A FINDING NOBODY ASKED FOR: THE DESCRIBING FUNCTION PEAKS AT A ≈ 200–400**
+```
+   speed 2560   N(25)=3.64   N(200)=3.75   N(400)=3.55   N(1600)=1.95   N(12800)=0.61
+   speed 5120   N(25)=3.31   N(200)=3.61   N(400)=3.80   N(1600)=2.09   N(12800)=0.63
+```
+**N is NON-MONOTONIC — it rises then falls, peaking near A = 200–400 counts.** A limit cycle sits where
+`N(A)·|G(jω)| = 1`, so **a peak in N is a PREFERRED AMPLITUDE.** ⇒ **If the ratchet is a limit cycle
+through this stage, its amplitude should sit near 200–400 counts** — a concrete, falsifiable
+prediction that V205's probe can test directly, since it reads exactly this signal.
+⊕ V206 lowers that peak from ~3.8 to ~1.9, which would either kill such a cycle or move it.
+⚠ **[BELIEF]** — the describing function is EVIDENCE (computed from the image); that the ratchet is
+this particular limit cycle is the hypothesis.
+
+⊕ **This is the first GATE 2 in the kit run with a describing function rather than a linear Bode
+sum.** For a memoryless nonlinearity in a loop it is the right instrument, and a linear sum would have
+reported a flat 0.5 and missed that the dose is 1.6× weaker than that at mid amplitude.
+
 ## ✅⭐ **THE `0xC63AE` SIGN IS ESTABLISHED WITHOUT A DRIVE — V206 BUILT, AND ITS PRICE IS STATED**
 
 ### ✅ **THE RECORD'S OWN NINE-LINK TRACE ALREADY COVERS THIS STAGE**
@@ -2198,75 +2246,4 @@ mode at ~8.4 Hz.** That is a resonance being driven, not a gain change, and it i
 statement of the engagement effect the kit has.
 ⊕ It also re-confirms the mode centre independently: **8.40 Hz**, inside the ±0.71 Hz wander band
 established earlier, and consistent with 8.17–8.20 Hz from the other estimators.
-
-## ✅ **GATE 2 PHASE, ENGAGED-ONLY — V184 PASSES AT THE RATCHET, AND THE COST IS NOW QUANTIFIED**
-The biquad being engaged-gated forced the phase check V184 had never had. **It passes, and cleanly.**
-```
-   at 8.17 Hz the multiplicative change in the loop path is r = H_V184 / H_flying
-       |r| = 0.3642        arg(r) = -61.51 deg
-       Re(r) = +0.1737     Im(r) = -0.3201
-   the destabilising direction is L -> +1 (real, positive)
-   => |r| < 1 AND Re(r) < 1: the rotation moves L AWAY from +1 on BOTH axes.
-      ** The phase lag does NOT give back the 64 % gain reduction. **
-   max |H_V184 / H_flying| over 0.1-499 Hz = 0.9995  -> it never amplifies at ANY frequency.
-```
-✅ So the pole retune is stabilising at the ratchet in magnitude *and* in phase, which is the check
-[[feedback-run-the-control-before-the-measurement]] would demand and which the earlier
-magnitude-only GATE 2 did not cover.
-
-### ⚠ THE COST, STATED AS A NUMBER FOR THE FIRST TIME
-```
-   engaged-vs-manual phase (manual is a BYPASS, H = 1)
-        1.00 Hz   flying  -1.35 deg  ->  V184  -17.78 deg     (+16.43 deg)
-        8.17 Hz   flying -11.13 deg  ->  V184  -72.65 deg     (+61.51 deg)
-       21.00 Hz   flying -30.01 deg  ->  V184  -91.82 deg     (+61.81 deg)
-```
-⚠ **+16.4 deg of engaged-only lag at 1 Hz is a real phase-margin cost**, and it bears on the
-operator's THIRD goal: added lag inside a loop is exactly what worsens command oscillation.
-🛑 **BUT WHETHER IT REACHES OPENPILOT'S LOOP IS NOT ESTABLISHED.** The biquad sits on the
-**torque-fed** assist path (`gp-0x6b86`); openpilot's command travels a different lane. The coupling
-is **unestablished, not absent** — [BELIEF] that it is small, and it is pre-registered here as a risk
-the drive can contradict: **if peak command oscillation gets WORSE while the grind improves, this is
-the mechanism to suspect first.**
-⊕ Note the lag is nearly flat above ~8 Hz (+61.5 deg at 8.17, +61.8 at 21) — the pole is well below
-the band, so the ratchet and grind see essentially the same rotation.
-
-## 🛑 **CORRECTION: THE BIQUAD IS ENGAGED-GATED, SO V184 IS A TWO-VARIABLE TEST, NOT ONE**
-I wrote in V184's docstring that the assist-section poles *"act in both modes, so they do not confound
-the engaged/manual contrast."* **That is WRONG.** Read from the images:
-```
-   build         0x35A06 arm src   0x35A12   0x35A18   0xC649B   arm
-   stock         gp-0x671a         0xEC      0xE9      0         Honda's gate, DISABLED
-   V103          gp-0x6806         0xE0      0xEA      1         ENGAGED-ONLY (LKAS flag)
-   V122 FLYING   gp-0x6806         0xE0      0xEA      1         ENGAGED-ONLY
-   V184          gp-0x6806         0xE0      0xEA      1         ENGAGED-ONLY
-```
-⇒ **the biquad runs only while LKAS is engaged**, so **every pole edit (V173/V174/V176/V180 and
-therefore V184) is an ENGAGED-ONLY change.**
-➕ It is also a **SECOND kit-created engaged/manual asymmetry on the car** — one my mode-record
-enumeration could not have found, because it is a **code path**, not a data table. The enumeration was
-sound for what it covered and I overstated its scope.
-
-### 🛑 WHAT THIS COSTS, AND WHAT REPLACES IT
-❌ **The engaged-vs-manual ratio NO LONGER isolates the inertia dose.** V184 carries two engaged-only
-changes — the inertia revert and the pole retune — so a ratio move cannot attribute between them.
-✅ **But a BAND discriminator still separates them cleanly, because their frequency signatures differ:**
-```
-   lever                  grind 15-25 Hz     ratchet 6.5-11 Hz
-   assist-section poles      -16.0 dB            -8.8 dB      (hits the GRIND hardest)
-   inertia dose revert       ~none               engaged-only (hits the RATCHET only)
-```
-⇒ **grind falls hard AND ratchet falls modestly → the poles.**
-⇒ **ratchet falls with the grind roughly unchanged → the inertia dose.**
-⇒ **both fall in proportion to the table above → both are contributing.**
-That is a usable, pre-registered discriminator and it does not need the manual pass at all.
-
-### ➕ IS THE ENGAGED-ONLY BIQUAD ITSELF THE ~15x AMPLIFIER?
-**Probably not, and the reason is worth recording.** Unarmed the section is a BYPASS (`H ≡ 1`); armed
-with Honda's coefficients `|H| <= 1` everywhere, so arming it can only REMOVE gain. Engaged therefore
-sees **less** high-frequency gain than manual, which would make engaged **less** ratchet-prone, not
-more. ⚠ The one channel by which it could still matter is **PHASE**: an engaged-only phase lag can
-cost stability margin even when the magnitude only falls. With Honda's coefficients at 8 Hz that lag is
-small (a few degrees) — but **V184's retuned poles make it large**, which is a real and previously
-unstated engaged-only cost of the pole lever. [BELIEF, structural — not measured.]
 

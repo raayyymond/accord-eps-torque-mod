@@ -67,7 +67,7 @@ improves worst-case leakage by only 1.1× and makes the median *worse* — one b
   image 71bd8312c324de9c01cf277307e41bb6dbb5e49cc6cf72e02e597a8013333a80
 ```
 
-V202 plus **one calibration byte**: `0xC63AE` 1024 → 512. Preflight 8/8, 34/34 assertions, cave
+✅ **GATE 2 PASS** (describing function, worst case 0.794 — see below). V202 plus **one calibration byte**: `0xC63AE` 1024 → 512. Preflight 8/8, 34/34 assertions, cave
 byte-identical, the 427 probe untouched.
 
 `0xC63AE` scales the input of the curve behind `gp-0x6b70`, which computing from the image shows is a
@@ -81,6 +81,25 @@ measured it **negative 67 % of engaged time** — so the net is **predominantly 
 heavier wheel.** You have asked for low apparent friction *and* no ratcheting; this buys one with some
 of the other, which is why it is **not** the recommended build. **Fly V205 first** — it measures the
 range so this dose can be sized instead of guessed. A quarter dose is the follow-up.
+
+
+### 🛑 PRE-REGISTERED, AND IT CHANGES HOW V206 MUST BE SCORED
+
+If the ratchet is a limit cycle through this stage, it sits where `N(A)·|G|=1`, and the describing
+function computed from the image **peaks at a specific amplitude**:
+
+| speed | limit-cycle amplitude A* | N(A*) | predicted `|gp-0x6b70|` swing |
+|---|---|---|---|
+| 320 | 185 | 2.49× | 460 counts |
+| 640 | 165 | 2.65× | 438 counts |
+| 1280 | 150 | 3.02× | 453 counts |
+| 2560 | 165 | 3.75× | 619 counts |
+| 5120 | 310 | 3.95× | 1224 counts |
+
+⭐ **V206 halves N but DOUBLES A\*, so the predicted swing barely moves** — 438→445 at 640, 619→610 at
+2560. **So V206 must NOT be scored on the amplitude of `gp-0x6b70`: it would read as a null even if
+the lever worked.** Score it on whether the oscillation is **present at all**, and on the operator’s
+own report. This is exactly the endpoint that would have been got wrong without computing it.
 
 ## V204 — the same fix, probing the parked lever instead
 
