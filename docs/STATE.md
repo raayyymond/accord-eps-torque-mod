@@ -4,6 +4,60 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑 **RETRACTION: THE PER-ROUTE SEVERITY NUMBERS WERE BROADBAND-CONTAMINATED**
+I built two ticks of analysis on the **engaged/manual power ratio per route**. A control killed it:
+```
+   corr(log ratchet, log grind)                     +0.748
+     partial, controlling 0.5-3 Hz activity         +0.793   survives
+     partial, controlling the 30-45 Hz CONTROL band -0.177   ** COLLAPSES **
+
+   corr(log ratchet, log ctrl) = +0.914      corr(log grind, log ctrl) = +0.859
+```
+🛑 **Both symptom bands correlate ~0.9 with a band containing NEITHER symptom** ⇒ the
+engaged/manual ratio is elevated **BROADBAND** on some routes — it measures how the exposure differed
+between LKAS-on and LKAS-off, not band-specific severity.
+
+❌ **WITHDRAWN:**
+- the per-route engaged/manual severity distributions (grind "87.8× worst quartile", ratchet "466×")
+- **"the notch gives ~52× on bad drives"** — built on that ratio
+- the closed-loop loop-gain estimate **L ≈ 0.78–0.81 and the 7.7×**, which inferred `L` from the same
+  contaminated ratio
+
+➕ **THE ROOT CAUSE OF THE ERROR:** the kit's scorers use a **slope-corrected excess** — a band
+against its own local background, on the **same** windows — precisely because it is band-specific by
+construction. **I drifted onto an engaged/manual ratio and inherited an exposure confound.** Use the
+excess; it is what the scorers use for this reason.
+
+## ✅ **REDONE PROPERLY — and it REFUTES the common-cause hypothesis**
+Per-route slope-corrected excess, **engaged windows only**, 67 routes, null ~3.9×:
+```
+   band                          p10   p25   p50    p75    p90    max
+   RATCHET  cs_tq   5-12 Hz     13.7  24.7  60.7  186.9  242.5  381.8
+   GRIND    cs_rate 15-25 Hz    11.8  22.5  31.6   64.8  136.4  413.7
+   99 % of routes are ABOVE the null for BOTH symptoms
+```
+✅ **`corr(log ratchet excess, log grind excess) = +0.304` — weakly related.** The +0.748 **was** the
+broadband confound. ⇒ **the two symptoms are largely independent, and SEPARATE LEVERS remain the
+right design** — which is what V196 already does (notch for the grind, inertia half-dose for the
+ratchet). The common-cause idea is refuted, not adopted.
+
+✅ **WHAT THE SCORER SHOULD PRINT ON A TYPICAL DRIVE** — useful for pre-registration, because a
+single drive is one route, not the pooled corpus:
+```
+   a typical route:  ratchet excess ~61x   grind excess ~32x
+   a bad route:      ratchet ~187x         grind ~65x
+   a mild route:     ratchet ~25x          grind ~23x
+```
+⚠ These are **larger** than the pooled figures quoted earlier (13.5× / 7.3×) because pooling a
+median spectrum across routes attenuates each route's own peak. **Both are correct for what they
+measure; the PER-ROUTE number is what a single drive will show.**
+
+🛑 **WHAT REMAINS UNQUANTIFIED: how much the notch will actually deliver.** The open-loop score
+(21.5×) over-promises, and the closed-loop estimate that would have bounded it is withdrawn with the
+ratio it rested on. **The honest position is that the notch's on-car effect is now UNPREDICTED — the
+drive measures it.** What survives is the ranking (V195's fit beats V188's) and the firmware facts
+(DC gain unity, −0.77° at 3 Hz, notch depth at 19.75 Hz).
+
 ## ⭐⭐ **THE NOTCH DELIVERS MOST EXACTLY WHERE THE GRIND IS WORST — and this supersedes the 7.7×**
 Last section's "honest 7.7×" was computed on the **POOLED** spectrum. Per route, the engaged/manual
 grind ratio varies enormously, so pooling was misleading **in both directions**:
@@ -2170,34 +2224,4 @@ carrying it. Ratio unchanged ⇒ V173's poles did it. Neither moves ⇒ both acc
 Score with `rlog-tools/score/grind_engaged_vs_manual.py` beside `score_band_excess.py`.
 ⚠ **It removes drag — creep effort will be lighter than the operator is used to.** Intended, and he
 should be told.
-
-## ✅ **V174 BUILT — THE PRE-REGISTERED SECOND POINT ON THE FRONTIER. V173 STILL FLIES FIRST.**
-Cut so that the verdict *"better, but the ratcheting is still there"* costs **no build delay**.
-🛑 **V174 IS NOT AN ALTERNATIVE TO V173 AND MUST NOT BE FLOWN FIRST.** It is the *expensive* point
-on the same curve; flying it first throws away the ability to tell which point the car needed.
-```
-   ONE knob:  slow pole 0.970 -> 0.980   (C_B0 byte-identical, Honda's 55.23 Hz notch KEPT)
-     0xC60A8  C_A8  -1.53719997 -> -1.45500004    raw BFBA3D71
-     0xC60AC  C_AC  +0.63462001 -> +0.46549999    raw 3EEE5604
-     0xC60B4  C_B4  +0.81730998 -> +0.08808687    raw 3DB466E4   (solved for unity DC)
-
-                 flying    V174    ratio        V173 for comparison
-     3.00 Hz     0.9975   0.7288   0.731x        0.8476
-     8.64 Hz     0.9789   0.3393   0.347x        0.4761   RATCHET  (2.9x vs V173's 2.1x)
-    21.00 Hz     0.8659   0.1275   0.147x        0.1894   GRIND    (6.8x vs V173's 4.6x)
-    55.23 Hz     0.000128 0.000009               0.000013 Honda's notch, KEPT and deeper
-```
-✅ **27/27 assertions · 12 payload bytes · CRC chain 50/50 · readback byte-identical ·
-`[0xC5000,0xC5FFC)` untouched.** Base **V158** (`42078806f5582903…`), so it carries V158's damper.
-image `c3d6776cc72d4657…` · rwd `5e4ba53db14442cb…` · builder
-`analysis-2020accord/builds/v108_plus/build_v174_tva.py`.
-✅ **GATE 2 magnitude PASS: max |H| = 0.9880 to Nyquist** ⇒ can only REMOVE loop gain.
-✅ **GATE 1 as V173**: `gp-0x6b86` has exactly one consumer outside its producer, no monitor.
-⚠ **THE HONEST COST: +42.8 ms of group delay at 1 Hz** (V173 spends +29.1). The operator feels that
-as **steering weight**, which is the thing he has explicitly said must not be the price of the fix —
-so this build is **his call on a lag verdict**, not a default.
-🛑 **DO NOT CUT PAST `p_slow` = 0.985 WITHOUT AN OPERATOR LAG VERDICT IN HAND.** Beyond there the
-added lag exceeds anything this kit has ever shipped.
-⚠ **The coefficients are RE-DERIVED FROM THE FORMULA inside the builder and asserted against the
-pinned raw words** — a 6-dp decimal does not round-trip a float32; see [[feedback-float-spec-must-be-the-formula]].
 

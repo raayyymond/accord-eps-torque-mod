@@ -48,18 +48,22 @@ question is worth a drive on its own. Card: `DRIVE-CARD-V194.md`.
 | CAN probe | — | — | `gp-0x6c2c` |
 | can change **manual** driving | no | no | **yes** |
 
-⚠ **The grind figures above are OPEN-LOOP scores, used only to RANK designs.**
-⭐ **What to actually expect — it depends on how bad the drive is**, because loop gain is
-highest where the grind is worst:
+⚠ **The grind figures in the table are OPEN-LOOP scores, used only to RANK designs.**
+🛑 **How much the notch actually delivers on-car is UNPREDICTED.** An earlier severity
+estimate was withdrawn: it rested on an engaged/manual ratio that turned out to be
+elevated broadband (both symptom bands correlate ~0.9 with a control band containing
+neither). See `docs/STATE.md`.
 
-| your drive | engaged/manual grind | the notch should give |
+⭐ **What the scorer should print on a typical single drive**, so you can tell a real
+change from noise:
+
+| route | ratchet excess (`cs_tq` 5–12) | grind excess (`cs_rate` 15–25) |
 |---|---|---|
-| **a bad one** (worst quartile) | 87.8× | **~52× less grind power** |
-| a typical one (median) | 24.6× | in between |
-| an already-mild one | 2.7× | ~2.4× |
+| bad | ~187× | ~65× |
+| typical | **~61×** | **~32×** |
+| mild | ~25× | ~23× |
 
-A notch in the assist path cannot remove the road/plant disturbance floor, so the
-engaged/manual ratio is the ceiling on any fix in this band. See `docs/STATE.md`.
+Null is ~3.9×; 99 % of routes sit above it for both symptoms.
 
 ## 🛑 RUN THIS FIRST, ON THE FILE YOU ARE ABOUT TO SEND
 ```

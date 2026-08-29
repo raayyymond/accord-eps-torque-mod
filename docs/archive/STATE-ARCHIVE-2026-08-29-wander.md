@@ -2320,3 +2320,33 @@ strikingly linear rate:
 `C_AC`, `C_B4` re-solved for unity DC): −2.9 dB more ratchet for +14 ms more lag. **Do not go past
 0.985 without an operator lag verdict** — past there the lag is larger than anything the kit has shipped.
 
+## ✅ **V174 BUILT — THE PRE-REGISTERED SECOND POINT ON THE FRONTIER. V173 STILL FLIES FIRST.**
+Cut so that the verdict *"better, but the ratcheting is still there"* costs **no build delay**.
+🛑 **V174 IS NOT AN ALTERNATIVE TO V173 AND MUST NOT BE FLOWN FIRST.** It is the *expensive* point
+on the same curve; flying it first throws away the ability to tell which point the car needed.
+```
+   ONE knob:  slow pole 0.970 -> 0.980   (C_B0 byte-identical, Honda's 55.23 Hz notch KEPT)
+     0xC60A8  C_A8  -1.53719997 -> -1.45500004    raw BFBA3D71
+     0xC60AC  C_AC  +0.63462001 -> +0.46549999    raw 3EEE5604
+     0xC60B4  C_B4  +0.81730998 -> +0.08808687    raw 3DB466E4   (solved for unity DC)
+
+                 flying    V174    ratio        V173 for comparison
+     3.00 Hz     0.9975   0.7288   0.731x        0.8476
+     8.64 Hz     0.9789   0.3393   0.347x        0.4761   RATCHET  (2.9x vs V173's 2.1x)
+    21.00 Hz     0.8659   0.1275   0.147x        0.1894   GRIND    (6.8x vs V173's 4.6x)
+    55.23 Hz     0.000128 0.000009               0.000013 Honda's notch, KEPT and deeper
+```
+✅ **27/27 assertions · 12 payload bytes · CRC chain 50/50 · readback byte-identical ·
+`[0xC5000,0xC5FFC)` untouched.** Base **V158** (`42078806f5582903…`), so it carries V158's damper.
+image `c3d6776cc72d4657…` · rwd `5e4ba53db14442cb…` · builder
+`analysis-2020accord/builds/v108_plus/build_v174_tva.py`.
+✅ **GATE 2 magnitude PASS: max |H| = 0.9880 to Nyquist** ⇒ can only REMOVE loop gain.
+✅ **GATE 1 as V173**: `gp-0x6b86` has exactly one consumer outside its producer, no monitor.
+⚠ **THE HONEST COST: +42.8 ms of group delay at 1 Hz** (V173 spends +29.1). The operator feels that
+as **steering weight**, which is the thing he has explicitly said must not be the price of the fix —
+so this build is **his call on a lag verdict**, not a default.
+🛑 **DO NOT CUT PAST `p_slow` = 0.985 WITHOUT AN OPERATOR LAG VERDICT IN HAND.** Beyond there the
+added lag exceeds anything this kit has ever shipped.
+⚠ **The coefficients are RE-DERIVED FROM THE FORMULA inside the builder and asserted against the
+pinned raw words** — a 6-dp decimal does not round-trip a float32; see [[feedback-float-spec-must-be-the-formula]].
+
