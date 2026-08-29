@@ -1,5 +1,63 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **THE LKAS COMMAND RAILS AT ±4096 — “PEAK COMMAND OSCILLATION” IS AUTHORITY SATURATION**
+The operator names **peak command oscillation** in every instruction and this kit had never measured
+it. **It is measured now, from data already on disk, and it ties all three complaints together.**
+
+### ✅ THE MEASUREMENT — 114 ROUTES, 1.37 M ENGAGED FRAMES
+`co_tqcan`, the LKAS torque command **as sent on the bus**, engaged frames only:
+```
+   overall rail duty                    0.783 %
+   routes that EVER hit the rail        32 of 114   (28 %)
+   worst routes        r85s15 8.633 % | r75s10 6.901 % | r96s11 6.283 % | r73 5.470 % | r85 5.233 %
+   LONGEST CONTINUOUS RAIL              399 frames  =  ~4 SECONDS at 100 Hz   (r9e)
+   |max| on every railing route         EXACTLY 4096
+```
+⇒ **±4096 = 2^12 — a 13-bit signed field. That is the CAN signal's own PROTOCOL MAXIMUM.**
+⇒ **[EVIDENCE] the command is pinned at the largest value the wire can carry, for up to four
+seconds at a time, on 28 % of routes.** A signal that pins at a rail and comes off **is** peak
+command oscillation. **The complaint is real, it is measured, and it is authority saturation.**
+
+### 🛑🛑 WHY THIS IS HARD — THE THREE COMPLAINTS SHARE ONE KNOB
+```
+   1. the command field CANNOT carry more than +-4096          (protocol, not firmware, not openpilot)
+   2. it is ALREADY railed up to 8.6 % of frames / 4 s at a time
+   3. => more steering authority requires more TORQUE PER COMMAND COUNT, i.e. the firmware GAIN
+   4. => but the gain is the grinding knob: MEASURED 6x = 1.13 dB, 8x = 2.24 dB acoustic excess
+        and vibration scales m^1.74 while authority scales only m^0.88
+```
+⇒ **authority and grinding are in DIRECT tension through a single cell (`0xC6CD0`), and the command
+field is already at its rail.** That is why authority has been stuck for the whole arc.
+⇒ **🛑 raising the gain to 8× buys authority SUB-linearly (m^0.88) and buys grinding
+SUPER-linearly (m^1.74) — it is the wrong direction, and it fails the operator's own condition.**
+⊕ **No openpilot-side fix is available** — the standing instruction forbids it, **and it would not
+help anyway: the field itself cannot represent a larger number.**
+
+### ⭐⭐ THE ONE ESCAPE — AND IT IS THE PROBE ALREADY SPECIFIED
+If the firmware's own setpoint clamp **`0xC61BC` / `0xC61BE` = ±15360 BINDS**, then raising it
+delivers **more torque for the same command count** — i.e. **authority WITHOUT touching the gain, and
+therefore WITHOUT the grinding penalty.**
+⇒ **that is the only path off the gain tension that this firmware offers**, and it is exactly what
+the `iVar31 ≥ 5482` rung would settle in one drive.
+⇒ **the probe's value has gone UP**: it no longer serves only the authority complaint, it is the
+**sole test of whether the authority/grinding tension can be broken at all.**
+⚠ **[UNRESOLVED] whether `±15360` binds** — unchanged, and still not guessable statically because
+`iVar31` is a 16-assignment decompiler temporary.
+🛑 **Raising it remains a SAFETY decision for the operator** — it increases the maximum torque LKAS
+can apply against the driver.
+
+### ✅ WHAT IS NOW ANSWERED, AND WHAT IS NOT
+```
+   peak command oscillation   ANSWERED: the command rails at its 13-bit protocol max +-4096,
+                              28 % of routes, up to 8.6 % duty, episodes to ~4 s.  MEASURED.
+   LKAS authority             DIAGNOSED: limited by torque-per-count, and the only cal that
+                              raises it without the grinding penalty is 0xC61BC IF it binds.
+   grinding / ratcheting      A = mechanical resonance (V157 is the best lever, unflown)
+                              B = broadband, unreachable by calibration
+```
+⊕ **This is the first measured answer to the operator's THIRD complaint**, and it came from cached
+data — no drive, no build.
+
 ## ✅ **THE AUTHORITY CLAMP NOW HAS A CONCRETE THRESHOLD — BUT THE STATIC SHORTCUT FAILED**
 I tried to settle *"does the ±15360 clamp bind?"* **without** spending a cave edit — the bricking
 class — on a probe. **The shortcut failed, and that is worth recording as clearly as a success.**
@@ -2140,162 +2198,7 @@ warned about exactly this class of error — *"window bootstraps manufacture sig
 split-half null BEFORE quoting any ratio."* **The identical-cal groups ARE that null, and they were
 available from the first minute.**
 
-## ✅✅ **THE FIRST CROSS-BUILD REGRESSION ON THE SYMPTOM — 19 ROUTES. ONE ROBUST FINDING.**
-Every prior comparison used one or two routes. This uses **all 19 cached routes with a known
-build**, scoring each on the validated within-drive endpoint (ENGAGED/MANUAL 18–22 Hz of `cs_rate`
-at creep) and regressing against the cals that actually differ between builds.
-```
-   route build   eng/man   gain  a2  knee    K1        route build   eng/man  gain  a2 knee   K1
-   r79   V92        2.60   3564  22   600   204        r82   V99      39.66   3564  22  300  204
-   r21   V111       3.90   5346  14   600   204        ra6   V106     42.01   5346  22  300  204
-   r24   V122       8.18   5346   8  3000  1020        r1e   V107     47.30   5346  22  300  204
-   r22   V112       8.51   5346  14  1800   612        r81   V98      51.81   3564  22  600  204
-   r23   V112       9.21   5346  14  1800   612        ra5   V105     52.54   5346  22  300  204
-   r7f   V96        9.59   3564  22   600   204        ra4   V104     91.75   5346  22  300  204
-   r78   V91       10.21   3564  22   600   204        r95   V101    268.23   7128  22  300  204
-   r85   V100      11.11   3564  22   300   204        r96   V102    714.01   5346  22  300  204
-   r7e   V96       11.12   3564  22   600   204        r9e   V103   1520.81   5346  22  300  204
-   r77   V90       26.36   3564  22   600   204
-
-   Spearman vs log(endpoint):  knee -0.770 (p<0.001) | a2 +0.612 (p=0.005) | K1 -0.477 (p=0.039)
-                               gain +0.326 (p=0.173, NOT significant)
-```
-
-### ✅ THE ROBUST FINDING: **`knee = 300` IS CATASTROPHIC**
-**All nine knee-300 routes are elevated (11 → 1521)**; **every knee ≥ 600 route sits between 2.6 and
-51.8.** ⇒ that single cal explains the whole V101–V107 era. ⊕ Nobody is at 300 today (V122 is
-3000), so this is a **historical explanation, not a live lever** — but it is the strongest
-cross-build effect the kit has ever measured on the symptom.
-
-### 🛑 THE OTHER TWO "SIGNIFICANT" CALS ARE COLLINEAR WITH IT — NOT THREE FINDINGS, ONE
-The **gain-holding invariant scales knee and K1 together** (300/204, 600/204, 1800/612, 3000/1020),
-and **α2 tracks knee across the build history** (22 at knee 300–600, 14 at 600–1800, 8 at 3000).
-⇒ **knee, K1 and α2 are ONE variable in this dataset.** Their separate p-values are not independent
-evidence, and no design here can separate them.
-
-### 🛑 AND THE ORDERING ABOVE 600 DOES **NOT** HOLD UP
-```
-   knee  600  ->  2.60, 3.90, 9.59, 10.21, 11.12, 26.36, 51.81      median ~10.2
-   knee 1800  ->  8.51, 9.21                                        median  ~8.9
-   knee 3000  ->  8.18                                              n = 1
-```
-The two best routes are knee 600 — **but so are 26.36 and 51.81.** ⇒ **within-group variance swamps
-the between-group difference**; there is **no evidence that 600 beats 1800/3000**, and the earlier
-"optimum knee ≈ 600" reading of this table would have been a lucky-route artifact.
-
-### ✅ GAIN IS **NOT** SIGNIFICANT (p = 0.173)
-Across 4× / 6× / 8× the gain does not track the symptom. ⇒ **mildly supportive of V142 (8× for
-authority) being safe once grinding is fixed**, and consistent with the earlier direct 12-route
-8×-vs-grind null. ⚠ One 8× route only (r95), so this is weak.
-
-### ⚠ A CAVEAT AGAINST MY OWN NUMBERS
-This run scores **V112 at 8.51/9.21 and V122 at 8.18**; the earlier creep-endpoint run scored the
-same routes **4.74 and 3.38**. **Same data, different window parameters, different values.**
-⇒ **the endpoint is SENSITIVE TO ANALYSIS CHOICES.** Treat the **ordering** as informative and the
-**absolute values as not comparable across analyses.** 🛑 Any future quote of a number from this
-table must name the window parameters with it.
-
-## 🛑🛑 **CORRECTION: THE BAND-SHARE RANKING WAS INFLATED BY THE FLAT BASELINE**
-The section that named `gp-0x6B4C` *"the highest-ranked grind carrier"* at **22.84 % / 22.50 %**
-quoted a raw band share with **no flat-spectrum control**. **For a flat spectrum, ANY 4 Hz window
-inside 1–24 Hz holds 17.4 % by construction.** Re-ranked against that baseline:
-```
-   lane                 route   18-22 Hz   sig/flat   ctl/flat
-   11-slot assist sum   r96      25.08%      1.44x      0.47x
-   default tap          r23      24.78%      1.42x      0.42x
-   11-slot assist sum   r9e      23.95%      1.38x      1.03x   <- its CONTROL is FLAT
-   detector input       r1e      20.14%      1.16x      0.54x
-   AGGREGATOR OUT       r95      10.94%      0.63x      0.53x
-   b26 inertia          r78       9.72%      0.56x      1.10x
-   ... every other lane/route     < 1.00x
-```
-🛑 **NO probed lane shows a strong 18–22 Hz peak.** The best is **1.44× flat** — modestly
-elevated, **not** the sharp resonance the 22.8 % headline implied. ⊕ On **r9e the CONTROL band reads
-1.03× flat**, i.e. that route's spectrum is **essentially featureless**, so its 1.38× carries almost
-nothing.
-
-### ✅ WHAT SURVIVES
-`gp-0x6B4C` is still the **most CONSISTENT** candidate — top on **both** its routes and the only
-lane above 1.3× twice. The *"default tap"* reaches 1.42× on r23 but **0.53× on r22 and 0.08× on
-r24** ⇒ wildly route-dependent and unreliable. ⚠ **But the case is MUCH thinner than stated**, and
-the b26 and notch closures **still stand** — they are at **0.43–0.56×** and **0.06–0.27× flat**, far
-BELOW baseline, which is a stronger statement than before.
-
-### 🛑 AND THE SLOT DISCRIMINATOR FAILED TOO
-The plan was *"pick the slot whose payload is rate/acceleration-derived"*. **None of the five
-candidate callers reads a rate or acceleration cell** — only speed (`gp-0x6A62` in slot 8's caller,
-`gp-0x6A5E` in slot 6's). Combined with `FUN_0003a8a8` (slot 7) passing an **all-zero payload**,
-these read as **thin STATE REGISTRANTS, not assist computers** — which matches `gp-0x6B4C`'s
-measured **p50 of 0–26** (r9e's p50 is literally **0**).
-⇒ **a mostly-zero, occasionally-spiking signal is BROADBAND**, which is exactly why its raw band
-share sat near the flat baseline. **The two findings explain each other.**
-
-### ⭐ THE PROCESS FAILURE, AND IT WAS ALREADY WRITTEN DOWN
-`feedback-run-the-control-before-the-measurement`: ***"Run the control BEFORE the measurement —
-four claims died to controls in one session."*** **I ran the flat-spectrum baseline AFTER publishing
-the ranking, and the ranking did not survive it.** ⊕ That is the **sixth** self-correction today.
-🛑 **A band share is meaningless without its flat-spectrum expectation. Compute the baseline in
-the same function that computes the share, so the two cannot be reported apart.**
-
-### ⭐ STATUS OF THE `gp-0x6B4C` THREAD
-```
-   slot map                 COMPLETE and self-validated (10 callers -> 10 distinct slots)
-   lever                    IDENTIFIED, cal-only, no cave   (0xC4124[i] 0 -> 5)
-   lane is the grind source WEAK -- 1.38-1.44x flat, consistent but modest
-   which slot               UNRESOLVED -- the rate-vs-torque discriminator does not separate them
-```
-⇒ **Not a build candidate at this confidence.** **V147 remains the build to fly**, and its lever
-(the r24 pump deadband) does not depend on any of this.
-
-## ✅✅✅ **THE SLOT MAP IS COMPLETE — THE `gp-0x6B4C` LEVER IS NOW AIMABLE**
-Ten call sites of `FUN_00025c32` were located by xref, and the slot index each passes was read from
-the instruction stream. **`FUN_0003a8a8` was decompiled in full to VALIDATE the method** — it shows
-exactly the predicted shape:
-```c
-   local_1c = 7;                          // <- THE SLOT INDEX, param_1[0]
-   cStack_1b = <mode>;                    // param_1[1]
-   uStack_1a = 0; uStack_18 = 0; uStack_16 = 0; uStack_14 = 0;
-   uStack_12 = 0x400; uStack_10 = 0x400; uStack_e = 0x400;
-   uVar6 = FUN_00025c32(&local_1c);
-```
-⇒ **the LAST `mov imm, rN` before the struct setup is the slot index.** Applied to all ten sites:
-```
-   slot  caller          call site   0xC4124   status
-    0    FUN_0002e52e     0x2E642       0      CONTRIBUTES
-    1    FUN_0002b422     0x2B53E       0      CONTRIBUTES
-    2    FUN_0003405a     0x34212       5      forced zero   (beside the base-assist damper
-                                                              FUN_00034350 / gp-0x6bbe producer)
-    3    FUN_0002c246     0x2C374       0      CONTRIBUTES
-    4    FUN_00023ad2     0x23BD6       5      forced zero
-    5    FUN_00023fe2     0x24176       5      forced zero
-    6    FUN_0003aff4     0x3B25C       0      CONTRIBUTES   (beside the aggregator FUN_0003aa2c)
-    7    FUN_0003a8a8     0x3A972       0      CONTRIBUTES   <- VERIFIED by full decompile
-    8    FUN_0002caa2     0x2CBE6       0      CONTRIBUTES
-    9    FUN_000339cc     0x33B5C       5      forced zero
-   10    (no caller)         --         0      unused
-```
-⭐ **TEN callers → TEN DISTINCT slots 0–9, no collisions.** That self-consistency is strong
-validation: a wrong extraction rule would produce duplicates and gaps, and it produces neither.
-
-### ✅ AND ONE CONTRIBUTOR IS ALREADY EXCLUDED BY ITS OWN PAYLOAD
-`FUN_0003a8a8` passes **all-zero data fields** (`uStack_1a` … `uStack_14` = 0) with unity weights.
-⇒ **slot 7 contributes NOTHING numerically** — it is a state/health registrant, not an assist
-source. ⇒ **the real contributors are slots 0, 1, 3, 6, 8 — FIVE candidates, each a named
-function**, down from "seven unknown indices".
-
-### ⭐ WHAT THIS UNLOCKS
-`gp-0x6B4C` is the **highest-ranked grind carrier** (22.84 % / 22.50 % of its own variance in
-18–22 Hz, both routes agreeing). `0xC4124[i] : 0 → 5` disables slot *i* using **Honda's own dispatch
-value**, on a **byte cal, no cave**. ⇒ **the lever is now aimable at a NAMED subsystem** rather than
-an index — the most precise lever this kit has had.
-⚠ **Still not built.** Two of the five (`FUN_0003aff4` slot 6, `FUN_0002caa2` slot 8) have not been
-read at all, and what each contributes must be known before one is removed — removing an unknown
-assist component is the V133 pattern. **Next: decompile slots 0, 1, 3, 6, 8's callers and pick the
-one whose payload is rate/acceleration-derived rather than torque-derived.**
-
-**V147 remains the build to fly.**
-
 
 ---
 
-🛑 **2 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`.**
+🛑 **3 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
