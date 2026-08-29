@@ -4,6 +4,64 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑⭐ **EVERY NOTCH BUILD SINCE V188 ADDS LOOP GAIN — the lineage named this trap and I walked into it**
+
+`BUILD-LINEAGE.md`, V105 section, in its own words:
+> *"THE HIDDEN ONE: fixing DC with **poles at the notch angle** (the textbook narrow notch) forces
+> `max|H|` to **1.098–1.608** … Fix: **Honda's own poles-BELOW-zeros layout**. **Check `max|H|` over
+> 0–500 Hz against stock's 1.0000 before shipping any biquad edit.**"*
+
+V188 onward put the poles **at the same angle as the zeros**. Measured from the built images:
+```
+   build   max|H| 0-500 Hz   zeros   poles   radius   verdict
+   v122        1.0000        55.23   42.35   0.7966   PASS  (Honda's layout)
+   v188/89/94  1.3533        19.40   19.40   0.9300   ** FAIL -- adds 35 % loop gain **
+   v195/96/98  1.7177        19.75   19.75   0.9000   ** FAIL -- adds 72 % loop gain **
+   v199        1.0000        19.75   17.45   0.9675   PASS
+```
+⇒ **V196 amplifies 1.88× Honda at 35 Hz, 4.57× at 45 Hz, 1.72× at Nyquist.** That is precisely what
+V103's own GATE 2 exists to forbid — the sentence that licensed arming this section at all was
+*"|H| ≤ 1.000032 everywhere 0.1–500 Hz ⇒ the filter can only REMOVE loop gain, never add it."*
+**A filter that ADDS gain in the loop whose instability we are chasing is not a fix, it is a new risk.**
+
+🛑 **HOW IT SHIPPED: V195's own GATE 2 assertion was written `check(mx <= 2.0, ...)`.** The bar is
+stock's **1.0000**. The assertion passed 1.7177 without complaint. **The gate existed and was set wrong.**
+
+### ⭐ **WHY THE BAR IS ABSOLUTE 1.0, NOT "vs Honda"**
+`0xC649B` 0→1 **alone is INERT** — the record: *"the real arm is `gp-0x671a ≥ 5`, **never observed true
+across 255,292 engaged frames** on three builds (V64/V67/V68)."* ⇒ **Honda ships this biquad DORMANT.**
+The car ran `H ≡ 1` at every frequency for its whole life until **V103 armed it engaged-only** on
+`gp-0x6806`. So Honda's 55.226 Hz null is **not a protection Honda relies on at this operating point**,
+and the honest reference for *"is this filter worse than the car has ever been"* is `H ≡ 1`.
+⇒ **Under that reference V199 is never worse than stock at ANY frequency; V196 is worse above 30 Hz.**
+⊕ This also **deflates V108's revert rationale** for V105 (*"+14.0 dB at 61.1 Hz vs Honda's null"*): it
+compared against a filter state **the car never occupies**.
+
+### ✅ **V199 — THE SAME NOTCH, BUILT SO IT CANNOT ADD LOOP GAIN.** Base V196, 4 float32 cells, 31/31.
+```
+                     zeros    poles   radius   max|H|     d phase @5Hz   18-21 Hz atten
+   V196 (defective)  19.75    19.75   0.9000   1.7177       -7.80 deg        16.8x
+   V199              19.75    17.45   0.9675   1.000000     -2.95 deg        10.1x
+```
+**The zeros do not move** — 19.75 Hz, the `cs_rate` refit, kept exactly; the notch is still a TRUE null
+(depth `|H|` = 0.00156 at 19.76 Hz). The poles come **below** the zeros, Honda's layout.
+⊕ **It gives back 4.85° of LKAS-band phase** — the currency peak command oscillation is paid in, and the
+reason V184's 8 Hz notch was abandoned at −40.5°. Added lag vs V196 is **positive at every LKAS
+frequency**: +0.53° @0.5 Hz, +1.05° @1 Hz, +2.08° @2 Hz, +3.08° @3 Hz.
+⊕ **The price, stated plainly: 10.1× attenuation over 18–21 Hz instead of 16.8×.** A sweep of 1,485
+(pole frequency, radius) pairs found **521** that pass the gate; inside that set the tradeoff is hard and
+monotone — the corner that is free at 54–74.5 Hz costs **−46° at 5 Hz**, the corner that is free in phase
+gives only **6.9×**. **V199 is the deepest notch with added phase ≤ 3°.**
+⊕ 55.226 Hz: **V196 1.5183 → V199 0.8150**, so V199 is below unity there too.
+`c86646ab48c4a625…` · preflight **8/8** · 9 payload bytes · cave byte-identical · CRC 50/50.
+
+### ✅ **V200 = V199 + the 427 probe on `gp-0x6ada` (the r24 rate lane).** 40/40, 2 payload bytes.
+`db0b613aad11e678…` — V198's probe rebuilt on the corrected base.
+
+### 🛑 **V194 · V195 · V196 · V198 ARE RENAMED `SUPERSEDED-DO-NOT-FLASH-GATE2-…`**
+All four carry a filter that adds 35–72 % loop gain. **The shelf is now TWO: V199 and V200.**
+⚠ Their `_plain_image.bin` files stay under their own names — V199 chains off V196's image.
+
 ## ✅⭐ **V198 SUPERSEDES V197 — probe the BIGGEST 8 Hz exciter, not the second-biggest**
 The completed exciter map reordered the probe choice, and following it beats defending yesterday's
 build:
@@ -2197,83 +2255,4 @@ Both sides of the chain are now enumerated and closed:
 different ground, but it is also the one place where a mistake is a **motor stability** problem rather
 than a feel problem, and the kit has never edited there. **I will not cut anything in the FOC without
 saying first exactly what it could break.**
-
-## ❌❌ **THE ENTIRE AMPLITUDE-SELECTIVITY LEAD IS CLOSED — ALL THREE BRANCHES, DOUBLY**
-The last surviving branch was the small-signal Y floors. **They are dead twice over**, read from the
-image with the tp off-by-0x1000 guarded (tp = 0xBF000 ⇒ tp+0x713e is **0xC613E**, not 0xC713E):
-```
-   addr      what                            stock/V122/V158/V173/V175
-   0xC613E   X threshold A (arms floor A)    15000  (VIRGIN)
-   0xC6140   X threshold B (arms floor B)    15000  (VIRGIN)
-   0xC617A   Y FLOOR A                           0  (VIRGIN)
-   0xC617C   Y FLOOR B                           0  (VIRGIN)
-   0xC62D8   arm gate on gp-0x6a64            3840  (VIRGIN)
-   0xC6178   per-knot output clamp            5274  (VIRGIN)
-```
-1. **Both floors are ZERO** ⇒ max(Y, 0) is a **no-op** for non-negative Y.
-2. **Both thresholds are 15000 = 183 % of the ±8192 residual clamp** (0xC6200) ⇒ the residual is
-   **hard-clamped below them and X can NEVER reach them** ⇒ the floors **cannot arm**.
-**FULL CLOSURE of the lead, for the record so nobody re-opens it:**
-   branch                what killed it
-   the 9-knot table      NOT a calibration -- FUN_000389ec rebuilds it every cycle
-   the scale factors     zero gp-relative writers -> unity; or, if coded, a BROADBAND rescale
-   the Y floors          value 0 AND thresholds unreachable behind the +-8192 clamp
-⇒ **there is no amplitude-selective lever in the assist-residual path.**
-
-### ➕ WHERE THIS POINTS INSTEAD — THE DELIVERY PATH, WHICH I HAVE NOT TOUCHED
-🛑 The record says the ratchet is a lightly-damped resonance that is **MOTOR/RACK-SIDE**
-([[accord-ratchet-is-a-lightly-damped-resonance]]), yet this entire session has worked in the
-**assist/observer** path. The bridge is already mapped
-([[accord-aggregator-reaches-motor-via-gp6acc-bridge]]):
-   gp-0x6b94 -> governor -> gp-0x6ace -> comp-add -> gp-0x6acc -> SHAPER -> gp-0x6b08
-             -> INTEGRATOR -> gp-0x6b98 -> FOC
-**The SHAPER and the INTEGRATOR sit between the aggregator and the motor, downstream of everything
-examined so far, and on the side the resonance actually lives.** That is the next territory.
-⚠ It is also nearer the current loop, so GATE 2 there is a **stability** question, not a feel one.
-
-## ✅ **GATE 1 RE-VERIFIED AFTER FINDING TWO HOLES IN MY OWN SCANNER — AND THE SCALE BRANCH IS CLOSED**
-🛑 **MY gp-RELATIVE SCANNER HAD TWO HOLES, AND THE KIT'S OWN MEMORY WARNED ABOUT ONE OF THEM.**
-Chasing `gp-0x6982`/`gp-0x6984` — which `FUN_000389ec` demonstrably reads — my scan returned **zero
-sites in BOTH encodings**. Ghidra settled it:
-```
-   00038bc6  ld.hu  -0x6984, gp, r7    bytes e4 3f 7d 96   -> hw2 = 0x967D, not 0x967C
-   00038bec  ld.hu  -0x6982, gp, r16   bytes e4 87 7f 96   -> hw2 = 0x967F, not 0x967E
-```
-1. **`hw2 = (disp | 1)`** for these load forms — exactly the recorded trap in
-   [[accord-v850-scan-traps-formatv-and-storezero]]. I scanned for the even value and found nothing.
-2. **My opcode whitelist omitted `ld.hu` (0x3F)** entirely.
-⚠ **Either hole alone manufactures a FALSE NULL**, and a false null is how this kit gets wrong
-answers. **Re-scanned with NO opcode whitelist and hw2 ∈ {D, D|1}.**
-
-### ✅ THE LOAD-BEARING RESULT SURVIVES
-```
-   gp-0x6b26  (INERTIA -- GATE 1 for V175 rests on it)   1 WRITER  0x36CF0 st.h   4 readers
-   gp-0x6bd0 w[0] 3 writers   gp-0x6bbe w[1] 3   gp-0x6b46 w[2] 1   gp-0x6b4e w[4] 1   gp-0x6b4c w[5] 3
-```
-⇒ **identical to the earlier counts** ⇒ **V175's mechanism claim and the six-lane classification both
-stand under the stricter method.** ⚠ Still blind to **register-indirect** stores by construction —
-that limitation is unchanged and is stated, not solved.
-
-### ❌ THE SCALE-FACTOR BRANCH OF THE LERP LEAD IS CLOSED
-`gp-0x6982`/`gp-0x6984` have **ZERO gp-relative writers** and exactly two readers each, both inside
-the LERP builder. And `FUN_0003897a` — which I had called an *adaptation* — is nothing of the kind:
-```
-   FUN_0003897a(target, state, lo, hi, step_fast, step_slow)
-     state inside [lo,hi] -> state = clamp(target, lo, hi)          (direct snap)
-     state <  target      -> state += step   (step_slow if state >= hi)
-     state >  target      -> state -= step   (step_slow if state <= lo)
-```
-🛑 **RETRACTION: I warned this was "a lever inside an adaptation loop" that could "wind up or
-chatter". IT IS A RANGE-CHECK + CLAMP + TWO-RATE SLEW LIMITER** — deterministic, single state, bounded
-by construction, no integrator and no convergence question. **That warning was overcautious and is
-withdrawn.**
-⇒ **But the branch is dead anyway, both ways**: if nothing writes those cells they are **constant**,
-the validity test `(x − 0xcc) < 0x735` fails and both scales default to **0x400 = unity** ⇒ the
-bounding cals (`0xC6390`/`92`/`9A`/`9C`, `0xC6394`/`96`/`98`/`9E`) are **INERT**. If instead a
-register-indirect coding write does move them, then editing their bounds **rescales the whole LERP
-globally** — a **broadband** gain change, the same class as V173's poles and strictly worse than it.
-**Neither case is amplitude-selective.**
-➕ **What survives of the lead**: only the small-signal **floors** `0xC617A`/`0xC617C` and their
-thresholds `0xC613E`/`0xC6140`. That is now the sole amplitude-selective candidate in the kit, and it
-still needs its knot-index gating traced before it is a lever rather than a guess.
 

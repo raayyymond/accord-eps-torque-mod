@@ -44,6 +44,8 @@ PUB = {
     'v195': 'a3ea8683df48c6b3f40e8ba8ac879047da6aec62fedc8d56cf9f1dc83f7b610b',
     'v196': 'f904e43a1f4ccb94e81204dbecd93982049a024b95e48bd1c2c43852a7edec8e',
     'v198': '9fbbf90b0bed9cb32eb7c3a44a30c2108f361a736ff3f1ebc205f47e5cf3190d',
+    'v199': 'c86646ab48c4a62546b4e7bafa59f8097d3bdd99ffdcd3aeabd9f93c7252dc10',
+    'v200': 'db0b613aad11e67822528251b66790386635a59e9584e87d352bf294d5bf460e',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -110,18 +112,48 @@ if 'v195' in img and 'v196' in img:
          if img['v195'][a] != img['v196'][a] and (a & 0xFFF) < 0xFFC]
     chk(len(d) == 6, f'V196 differs from V195 by {len(d)} payload bytes (expected 6)')
 
+if 'v199' in img and 'v196' in img:
+    a1, a2, b1, g = (struct.unpack_from('<f', img['v199'], a)[0]
+                     for a in (0xC60A8, 0xC60AC, 0xC60B0, 0xC60B4))
+    import math as _m
+    fz = _m.degrees(_m.acos(-b1 / 2)) / 360 * 1000
+    fp = _m.degrees(_m.acos(-a1 / (2 * _m.sqrt(a2)))) / 360 * 1000
+    chk(abs(fz - 19.75) < 0.02, f'V199 zeros at {fz:.2f} Hz -- the cs_rate refit, UNMOVED')
+    chk(fp < fz - 1.0, f'V199 poles at {fp:.2f} Hz -- BELOW the zeros, Honda own layout')
+    chk(abs(_m.sqrt(a2) - 0.9675) < 1e-4, f'V199 pole radius {_m.sqrt(a2):.4f}')
+    d = [a for a in range(0x13000, 0x100000)
+         if img['v199'][a] != img['v196'][a] and (a & 0xFFF) < 0xFFC]
+    chk(len(d) == 9, f'V199 differs from V196 by {len(d)} payload bytes (the four float32 cells)')
+    chk(all(0xC60A8 <= a < 0xC60B8 for a in d), 'V199 changes ONLY the four biquad cells')
+
+if 'v200' in img and 'v199' in img:
+    d = [a for a in range(0x13000, 0x100000)
+         if img['v200'][a] != img['v199'][a] and (a & 0xFFF) < 0xFFC]
+    chk(len(d) == 2, f'V200 differs from V199 by {len(d)} payload bytes (telemetry only)')
+    chk(struct.unpack_from('<H', img['v200'], 0x55DF2)[0] == 0x9526,
+        'V200 probe reads gp-0x6ada (hw2 0x9526), the r24 rate lane')
+    chk(img['v200'][0x55E10] & 0x1F == 5, 'V200 pack shift is sar 5, sized to the +-8192 clamp')
+    for a in (0xC60A8, 0xC60AC, 0xC60B0, 0xC60B4):
+        chk(struct.unpack_from('<I', img['v200'], a)[0]
+            == struct.unpack_from('<I', img['v199'], a)[0],
+            f'0x{a:05X} biquad cell identical to V199 -- V200 adds an instrument, not a lever')
+
 # ---- 3. superseded artifacts ------------------------------------------------------------
 print('\n[3] SUPERSEDED ARTIFACTS ARE RENAMED')
-live = [os.path.basename(p) for p in glob.glob(RWD + '/39990*V19[4-8]*.rwd')]
-chk(len(live) == 4, f'exactly 4 flashable builds from this chain ({len(live)})')
-for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193', 'V197'):
+live = [os.path.basename(x) for x in glob.glob(RWD + '/39990*-V199-*.rwd')
+        + glob.glob(RWD + '/39990*-V200-*.rwd')]
+chk(len(live) == 2, f'exactly 2 flashable builds from this chain ({len(live)})')
+# V194/V195/V196/V198 were PULLED: every one carries a notch whose poles sit at the zeros, scoring
+# max|H| 1.3533-1.7177 against the lineage bar of stock 1.0000.  They must not be flashable.
+for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193',
+          'V194', 'V195', 'V196', 'V197', 'V198'):
     n = len(glob.glob(RWD + f'/39990*-{v}-*.rwd'))
     if n:
         chk(False, f'{v} is still flashable ({n} unmarked file)')
 chk(not any(glob.glob(RWD + f'/39990*-{v}-*.rwd')
             for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193',
                       'V197')),
-    'no superseded artifact (V185-V193, V197) remains unmarked')
+    'no superseded artifact (V185-V198) remains unmarked')
 
 # ---- 4. file caps -----------------------------------------------------------------------
 print('\n[4] MANDATORY-READ FILES UNDER THE 256 KB CAP')
@@ -158,6 +190,69 @@ chk(_seen > 150, f'{_seen} python files swept (a thin sweep means a bad glob)')
 chk(not _bad, 'every python file parses' + ('' if not _bad else f' -- BROKEN: {_bad[:3]}'))
 for _t in ('flashing-2020accord/preflight.py', 'rlog-tools/probe/decode_v198_r24_lane.py'):
     chk(os.path.exists(_t), f'{_t} exists')
+
+print()
+print("[6] GATE 2 -- NO FLASHABLE IMAGE MAY AMPLIFY AT ANY FREQUENCY")
+# BUILD-LINEAGE.md, V105: "Check max|H| over 0-500 Hz against stock 1.0000 before shipping any
+# biquad edit."  V103 GATE 2: the filter "can only REMOVE loop gain, never add it".  V188-V198
+# shipped at 1.3533-1.7177 because V195 wrote its own assertion as mx <= 2.0.  A gate that lives in
+# one builder protects one build; this one sweeps every image that still has a flashable .rwd.
+import cmath
+import math
+import struct as _st
+import re
+
+_IMGD = os.path.join(ROOT, 'analysis-2020accord')
+_RWDD = os.path.join(ROOT, 'flashing-2020accord', 'rwd')
+_GRID = [0.02 + 0.02 * k for k in range(6000)] + [120.0 + 0.5 * k for k in range(761)]
+
+
+def _maxh(path):
+    b = open(path, 'rb').read()
+    a1, a2, b1, g = (_st.unpack_from('<f', b, a)[0]
+                     for a in (0xC60A8, 0xC60AC, 0xC60B0, 0xC60B4))
+    m = 0.0
+    for f in _GRID:
+        z = cmath.exp(2j * math.pi * f / 1000.0)
+        m = max(m, abs(g * (z * z + b1 * z + 1) / (z * z + a1 * z + a2)))
+    return m
+
+
+# only builds whose .rwd is still flashable are in scope; superseded ones are allowed to be bad
+_live = set()
+if os.path.isdir(_RWDD):
+    for f in os.listdir(_RWDD):
+        if f.startswith('39990') and f.endswith('.rwd'):
+            mm = re.match(r'39990-TVA,A160-(V\d+[A-Z]?)-', f)
+            if mm:
+                _live.add(mm.group(1).lower())
+
+# KNOWN, DOCUMENTED EXCEPTIONS -- historical builds that amplify on purpose or marginally.  They
+# are listed here so a NEW violation still fails the check rather than hiding in a raised bar.
+#   v104  1.8501  deliberate: 0xC60B4 c4 x1.850, "a flat scalar on the torque-sensor assist lane".
+#                 IT FLEW as route a4 and the lineage records "FIXED NOTHING -- operator: both
+#                 symptoms still present".  So the one time an amplifying assist filter reached the
+#                 car, it bought nothing -- which is evidence for the bar, not against it.
+#   v172  1.0123  ASSIST.SECTION.RETUNE.REALPOLE, marginal, 1.2 % over.
+_KNOWN = {'v104': 1.8501, 'v172': 1.0123}
+
+_checked, _bad = 0, []
+if os.path.isdir(_IMGD):
+    for f in sorted(os.listdir(_IMGD)):
+        if not f.endswith('_plain_image.bin') or f.startswith('SUPERSEDED'):
+            continue
+        mm = re.match(r'_(v\d+[a-z]?)_', f)
+        if not mm or mm.group(1) not in _live:
+            continue
+        mx = _maxh(os.path.join(_IMGD, f))
+        _checked += 1
+        tag = mm.group(1)
+        if mx > 1.0001 and abs(_KNOWN.get(tag, 0.0) - mx) > 5e-3:
+            _bad.append('%s max|H| = %.4f' % (tag, mx))
+chk(_checked >= 2, '%d flashable images scored against the GATE 2 bar' % _checked)
+chk(not _bad, 'no flashable image amplifies beyond the %d documented exceptions'
+    % len(_KNOWN)
+    + ('' if not _bad else ' -- VIOLATIONS: ' + '; '.join(_bad)))
 
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
