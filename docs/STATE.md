@@ -1,5 +1,253 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **SYMPTOM B IS UNREACHABLE BY CALIBRATION — THE DRIVE STAGE HAS NO CALS**
+The last unexamined place a broadband source could live is the FOC / current-loop / PWM stage.
+Measured its **calibration density** against the control stage, on V122:
+```
+   region                                   size   tp-cals   gp-vars   cals/KB
+   FOC: PI current regulator + SVPWM        4.0 KB      1        19       0.25   <- the drive stage
+   FOC: TSG20 PWM emitter                   4.0 KB      8       116       2.00
+   the gp-0x6b98 writers                    1.0 KB      5        11       5.00
+   CONTROL: the ACTUAL arm    (0x38148)     4.0 KB     42        90      10.50
+   CONTROL: the plant model   (0x3b8f6)     4.0 KB     49        97      12.25
+   CONTROL: LKAS forward path (0x2a1ee)     4.0 KB     40        42      10.00
+```
+⇒ **[EVIDENCE] the motor drive stage is 40–49× LESS CALIBRATABLE than the control stage.** Honda
+left the current loop and PWM generation essentially without calibration operands — its gains are
+immediates or RAM-resident, not cells a `.rwd` can reach.
+⊕ The **whole FOC PI/SVPWM region is byte-identical stock vs V122**, and the golden model already
+records **[OPEN] the PWM carrier frequency** and that these ISRs *"run asynchronously and far faster
+than this steering-task tick."*
+⊕ **The single exception is `0xC4936` = 250** (1 reader, `0x6c486`) — VIRGIN ({250: 155} across 155 images). It is the **only**
+calibration operand anywhere in the PI/SVPWM computation, and its role is unidentified.
+
+### ✅ SYMPTOM B — THE ARGUMENT IS NOW CLOSED END TO END
+```
+   1. the engaged LKAS forward path has NO active switching nonlinearity
+      command -> [deadband + sign gate: DORMANT engaged] -> x gain -> x polarity -> >>15
+              -> clamp cal(0xC61B4) (INERT) -> gp-0x6b30
+   2. the assist-arbitration slew limit cal(0xC6194)=3 runs in TASK 1 at 1 kHz
+      => ~2 s full-scale => already smooth, not a broadband source
+   3. the motor drive stage carries 0.25 cals/KB => no cal reaches it
+```
+⇒ **the gain-laddered broadband excess (1x -0.04 | 4x 0.84 | 6x 1.13 | 8x 2.24 dB) does not
+originate in any cal-reachable element.**
+⇒ **[BELIEF, and the honest reading] it is the motor and inverter being driven harder** — current
+ripple and commutation noise rising with command amplitude, with a superlinear acoustic response
+giving the measured **m^1.74**.
+⇒ **🛑 SYMPTOM B IS IRREDUCIBLE BY CALIBRATION.** The only cal that changes it is the **LKAS
+gain**, and that is frozen in **both** directions — raising it to 8x **doubles** the excess (fails the
+operator's own stated condition) and lowering it is barred by
+[[accord-4x-lkas-gain-is-the-frozen-variable]].
+
+### ⭐ WHAT WOULD OVERTURN THIS — stated so it is falsifiable, not just asserted
+1. **a broadband source that is engagement-conditional but NOT proportional to command amplitude.**
+   None exists anywhere in the forward path; the path is now traced end to end.
+2. **`0xC4936`** turning out to be a current-loop gain or carrier divisor. **1 reader, VIRGIN ({250: 155} across 155 images)** — worth
+   identifying, and it is the *only* candidate left in the drive stage.
+3. **an in-place instruction edit in the FOC** — the class that bricked V24, V27 and V48B, on the
+   one region of this firmware with no calibration surface at all. **Not proposed, and should not
+   be** without a reason far stronger than any now in hand.
+
+### 🛑 THE HONEST TWO-SYMPTOM POSITION
+```
+   SYMPTOM A  the ~7.8 Hz ratchet   a MECHANICAL resonance, motor/rack side, Q 14-29.
+                                    Firmware can change EXCITATION and LOOP PHASE, not the mode.
+                                    => V153 (matched observer poles) is the best remaining lever.
+   SYMPTOM B  the audible GRINDING  BROADBAND, above every CAN Nyquist, scales as gain^1.74.
+                                    NO cal-reachable element produces it.
+                                    => not fixable by calibration; only the frozen gain touches it.
+```
+⊕ **Neither symptom can be "100 % eliminated" by a calibration build**, and saying so is more
+useful than shipping another candidate that cannot reach the mechanism. **Substantial reduction of
+A remains available and untested on-car — that is what the queue is for.**
+
+## 🛑🛑🛑 **SYMPTOM B IS UNREACHABLE BY CALIBRATION — THE DRIVE STAGE HAS NO CALS**
+The last unexamined place a broadband source could live is the FOC / current-loop / PWM stage.
+Measured its **calibration density** against the control stage, on V122:
+```
+   region                                   size   tp-cals   gp-vars   cals/KB
+   FOC: PI current regulator + SVPWM        4.0 KB      1        19       0.25   <- the drive stage
+   FOC: TSG20 PWM emitter                   4.0 KB      8       116       2.00
+   the gp-0x6b98 writers                    1.0 KB      5        11       5.00
+   CONTROL: the ACTUAL arm    (0x38148)     4.0 KB     42        90      10.50
+   CONTROL: the plant model   (0x3b8f6)     4.0 KB     49        97      12.25
+   CONTROL: LKAS forward path (0x2a1ee)     4.0 KB     40        42      10.00
+```
+⇒ **[EVIDENCE] the motor drive stage is 40–49× LESS CALIBRATABLE than the control stage.** Honda
+left the current loop and PWM generation essentially without calibration operands — its gains are
+immediates or RAM-resident, not cells a `.rwd` can reach.
+⊕ The **whole FOC PI/SVPWM region is byte-identical stock vs V122**, and the golden model already
+records **[OPEN] the PWM carrier frequency** and that these ISRs *"run asynchronously and far faster
+than this steering-task tick."*
+⊕ **The single exception is `0xC4936` = 250** (1 reader, `0x6c486`) — VIRGIN ({250: 155} across 155 images). It is the **only**
+calibration operand anywhere in the PI/SVPWM computation, and its role is unidentified.
+
+### ✅ SYMPTOM B — THE ARGUMENT IS NOW CLOSED END TO END
+```
+   1. the engaged LKAS forward path has NO active switching nonlinearity
+      command -> [deadband + sign gate: DORMANT engaged] -> x gain -> x polarity -> >>15
+              -> clamp cal(0xC61B4) (INERT) -> gp-0x6b30
+   2. the assist-arbitration slew limit cal(0xC6194)=3 runs in TASK 1 at 1 kHz
+      => ~2 s full-scale => already smooth, not a broadband source
+   3. the motor drive stage carries 0.25 cals/KB => no cal reaches it
+```
+⇒ **the gain-laddered broadband excess (1x -0.04 | 4x 0.84 | 6x 1.13 | 8x 2.24 dB) does not
+originate in any cal-reachable element.**
+⇒ **[BELIEF, and the honest reading] it is the motor and inverter being driven harder** — current
+ripple and commutation noise rising with command amplitude, with a superlinear acoustic response
+giving the measured **m^1.74**.
+⇒ **🛑 SYMPTOM B IS IRREDUCIBLE BY CALIBRATION.** The only cal that changes it is the **LKAS
+gain**, and that is frozen in **both** directions — raising it to 8x **doubles** the excess (fails the
+operator's own stated condition) and lowering it is barred by
+[[accord-4x-lkas-gain-is-the-frozen-variable]].
+
+### ⭐ WHAT WOULD OVERTURN THIS — stated so it is falsifiable, not just asserted
+1. **a broadband source that is engagement-conditional but NOT proportional to command amplitude.**
+   None exists anywhere in the forward path; the path is now traced end to end.
+2. **`0xC4936`** turning out to be a current-loop gain or carrier divisor. **1 reader, VIRGIN ({250: 155} across 155 images)** — worth
+   identifying, and it is the *only* candidate left in the drive stage.
+3. **an in-place instruction edit in the FOC** — the class that bricked V24, V27 and V48B, on the
+   one region of this firmware with no calibration surface at all. **Not proposed, and should not
+   be** without a reason far stronger than any now in hand.
+
+### 🛑 THE HONEST TWO-SYMPTOM POSITION
+```
+   SYMPTOM A  the ~7.8 Hz ratchet   a MECHANICAL resonance, motor/rack side, Q 14-29.
+                                    Firmware can change EXCITATION and LOOP PHASE, not the mode.
+                                    => V153 (matched observer poles) is the best remaining lever.
+   SYMPTOM B  the audible GRINDING  BROADBAND, above every CAN Nyquist, scales as gain^1.74.
+                                    NO cal-reachable element produces it.
+                                    => not fixable by calibration; only the frozen gain touches it.
+```
+⊕ **Neither symptom can be "100 % eliminated" by a calibration build**, and saying so is more
+useful than shipping another candidate that cannot reach the mechanism. **Substantial reduction of
+A remains available and untested on-car — that is what the queue is for.**
+
+## 🛑🛑🛑 **SYMPTOM B IS UNREACHABLE BY CALIBRATION — THE DRIVE STAGE HAS NO CALS**
+The last unexamined place a broadband source could live is the FOC / current-loop / PWM stage.
+Measured its **calibration density** against the control stage, on V122:
+```
+   region                                   size   tp-cals   gp-vars   cals/KB
+   FOC: PI current regulator + SVPWM        4.0 KB      1        19       0.25   <- the drive stage
+   FOC: TSG20 PWM emitter                   4.0 KB      8       116       2.00
+   the gp-0x6b98 writers                    1.0 KB      5        11       5.00
+   CONTROL: the ACTUAL arm    (0x38148)     4.0 KB     42        90      10.50
+   CONTROL: the plant model   (0x3b8f6)     4.0 KB     49        97      12.25
+   CONTROL: LKAS forward path (0x2a1ee)     4.0 KB     40        42      10.00
+```
+⇒ **[EVIDENCE] the motor drive stage is 40–49× LESS CALIBRATABLE than the control stage.** Honda
+left the current loop and PWM generation essentially without calibration operands — its gains are
+immediates or RAM-resident, not cells a `.rwd` can reach.
+⊕ The **whole FOC PI/SVPWM region is byte-identical stock vs V122**, and the golden model already
+records **[OPEN] the PWM carrier frequency** and that these ISRs *"run asynchronously and far faster
+than this steering-task tick."*
+⊕ **The single exception is `0xC4936` = 250** (1 reader, `0x6c486`) — VIRGIN ({250: 155} across 155 images). It is the **only**
+calibration operand anywhere in the PI/SVPWM computation, and its role is unidentified.
+
+### ✅ SYMPTOM B — THE ARGUMENT IS NOW CLOSED END TO END
+```
+   1. the engaged LKAS forward path has NO active switching nonlinearity
+      command -> [deadband + sign gate: DORMANT engaged] -> x gain -> x polarity -> >>15
+              -> clamp cal(0xC61B4) (INERT) -> gp-0x6b30
+   2. the assist-arbitration slew limit cal(0xC6194)=3 runs in TASK 1 at 1 kHz
+      => ~2 s full-scale => already smooth, not a broadband source
+   3. the motor drive stage carries 0.25 cals/KB => no cal reaches it
+```
+⇒ **the gain-laddered broadband excess (1x -0.04 | 4x 0.84 | 6x 1.13 | 8x 2.24 dB) does not
+originate in any cal-reachable element.**
+⇒ **[BELIEF, and the honest reading] it is the motor and inverter being driven harder** — current
+ripple and commutation noise rising with command amplitude, with a superlinear acoustic response
+giving the measured **m^1.74**.
+⇒ **🛑 SYMPTOM B IS IRREDUCIBLE BY CALIBRATION.** The only cal that changes it is the **LKAS
+gain**, and that is frozen in **both** directions — raising it to 8x **doubles** the excess (fails the
+operator's own stated condition) and lowering it is barred by
+[[accord-4x-lkas-gain-is-the-frozen-variable]].
+
+### ⭐ WHAT WOULD OVERTURN THIS — stated so it is falsifiable, not just asserted
+1. **a broadband source that is engagement-conditional but NOT proportional to command amplitude.**
+   None exists anywhere in the forward path; the path is now traced end to end.
+2. **`0xC4936`** turning out to be a current-loop gain or carrier divisor. **1 reader, VIRGIN ({250: 155} across 155 images)** — worth
+   identifying, and it is the *only* candidate left in the drive stage.
+3. **an in-place instruction edit in the FOC** — the class that bricked V24, V27 and V48B, on the
+   one region of this firmware with no calibration surface at all. **Not proposed, and should not
+   be** without a reason far stronger than any now in hand.
+
+### 🛑 THE HONEST TWO-SYMPTOM POSITION
+```
+   SYMPTOM A  the ~7.8 Hz ratchet   a MECHANICAL resonance, motor/rack side, Q 14-29.
+                                    Firmware can change EXCITATION and LOOP PHASE, not the mode.
+                                    => V153 (matched observer poles) is the best remaining lever.
+   SYMPTOM B  the audible GRINDING  BROADBAND, above every CAN Nyquist, scales as gain^1.74.
+                                    NO cal-reachable element produces it.
+                                    => not fixable by calibration; only the frozen gain touches it.
+```
+⊕ **Neither symptom can be "100 % eliminated" by a calibration build**, and saying so is more
+useful than shipping another candidate that cannot reach the mechanism. **Substantial reduction of
+A remains available and untested on-car — that is what the queue is for.**
+
+## 🛑🛑🛑 **SYMPTOM B IS UNREACHABLE BY CALIBRATION — THE DRIVE STAGE HAS NO CALS**
+The last unexamined place a broadband source could live is the FOC / current-loop / PWM stage.
+Measured its **calibration density** against the control stage, on V122:
+```
+   region                                   size   tp-cals   gp-vars   cals/KB
+   FOC: PI current regulator + SVPWM        4.0 KB      1        19       0.25   <- the drive stage
+   FOC: TSG20 PWM emitter                   4.0 KB      8       116       2.00
+   the gp-0x6b98 writers                    1.0 KB      5        11       5.00
+   CONTROL: the ACTUAL arm    (0x38148)     4.0 KB     42        90      10.50
+   CONTROL: the plant model   (0x3b8f6)     4.0 KB     49        97      12.25
+   CONTROL: LKAS forward path (0x2a1ee)     4.0 KB     40        42      10.00
+```
+⇒ **[EVIDENCE] the motor drive stage is 40–49× LESS CALIBRATABLE than the control stage.** Honda
+left the current loop and PWM generation essentially without calibration operands — its gains are
+immediates or RAM-resident, not cells a `.rwd` can reach.
+⊕ The **whole FOC PI/SVPWM region is byte-identical stock vs V122**, and the golden model already
+records **[OPEN] the PWM carrier frequency** and that these ISRs *"run asynchronously and far faster
+than this steering-task tick."*
+⊕ **The single exception is `0xC4936` = 250** (1 reader, `0x6c486`) — VIRGIN ({250: 155} across 155 images). It is the **only**
+calibration operand anywhere in the PI/SVPWM computation, and its role is unidentified.
+
+### ✅ SYMPTOM B — THE ARGUMENT IS NOW CLOSED END TO END
+```
+   1. the engaged LKAS forward path has NO active switching nonlinearity
+      command -> [deadband + sign gate: DORMANT engaged] -> x gain -> x polarity -> >>15
+              -> clamp cal(0xC61B4) (INERT) -> gp-0x6b30
+   2. the assist-arbitration slew limit cal(0xC6194)=3 runs in TASK 1 at 1 kHz
+      => ~2 s full-scale => already smooth, not a broadband source
+   3. the motor drive stage carries 0.25 cals/KB => no cal reaches it
+```
+⇒ **the gain-laddered broadband excess (1x -0.04 | 4x 0.84 | 6x 1.13 | 8x 2.24 dB) does not
+originate in any cal-reachable element.**
+⇒ **[BELIEF, and the honest reading] it is the motor and inverter being driven harder** — current
+ripple and commutation noise rising with command amplitude, with a superlinear acoustic response
+giving the measured **m^1.74**.
+⇒ **🛑 SYMPTOM B IS IRREDUCIBLE BY CALIBRATION.** The only cal that changes it is the **LKAS
+gain**, and that is frozen in **both** directions — raising it to 8x **doubles** the excess (fails the
+operator's own stated condition) and lowering it is barred by
+[[accord-4x-lkas-gain-is-the-frozen-variable]].
+
+### ⭐ WHAT WOULD OVERTURN THIS — stated so it is falsifiable, not just asserted
+1. **a broadband source that is engagement-conditional but NOT proportional to command amplitude.**
+   None exists anywhere in the forward path; the path is now traced end to end.
+2. **`0xC4936`** turning out to be a current-loop gain or carrier divisor. **1 reader, VIRGIN ({250: 155} across 155 images)** — worth
+   identifying, and it is the *only* candidate left in the drive stage.
+3. **an in-place instruction edit in the FOC** — the class that bricked V24, V27 and V48B, on the
+   one region of this firmware with no calibration surface at all. **Not proposed, and should not
+   be** without a reason far stronger than any now in hand.
+
+### 🛑 THE HONEST TWO-SYMPTOM POSITION
+```
+   SYMPTOM A  the ~7.8 Hz ratchet   a MECHANICAL resonance, motor/rack side, Q 14-29.
+                                    Firmware can change EXCITATION and LOOP PHASE, not the mode.
+                                    => V153 (matched observer poles) is the best remaining lever.
+   SYMPTOM B  the audible GRINDING  BROADBAND, above every CAN Nyquist, scales as gain^1.74.
+                                    NO cal-reachable element produces it.
+                                    => not fixable by calibration; only the frozen gain touches it.
+```
+⊕ **Neither symptom can be "100 % eliminated" by a calibration build**, and saying so is more
+useful than shipping another candidate that cannot reach the mechanism. **Substantial reduction of
+A remains available and untested on-car — that is what the queue is for.**
+
 ## 🛑🛑 **THE SIGN-AGREEMENT GATE IS DORMANT WHEN ENGAGED — LEAD CLOSED, TWO SELF-CORRECTIONS**
 Last turn I flagged a sign-agreement gate on the LKAS command path as the best-shaped symptom-B
 mechanism, marked the behavioural reading **BELIEF**, and said *"read all of `FUN_00028ea6` before
@@ -1944,465 +2192,7 @@ slots 2, 4, 5 and 9 by tracing the five readers.**
 source nor a safe lever. Band power found `gp-0x6B4C`, which p50 ranked near the bottom.
 **Both rankings are one command; only one answers the question that was being asked.**
 
-## ⭐⭐ **THE CENSUS REFRAMES THE WHOLE SEARCH — THIS KIT HAS BEEN TUNING THE SMALLEST LANES**
-The full probe census puts every flown lane on one scale for the first time. **Engaged p50, in the
-same units, from routes already in the cache:**
-```
-   cell        meaning                          p50        max        flown on
-   gp-0x6B94   AGGREGATOR OUTPUT (the total)    115-218   1933-3149   V100/r85, V101/r95
-   gp-0x6BBE   viscous + DC pedestal             74        352        V92 /r79
-   gp-0x6B4C   11-slot assist sum                 0-26     1459-1664  V102/r96, V103/r9e
-   gp-0x6B86   notch lane                         6-19     2720-3274  V104-106 / ra4-ra6
-   gp-0x6B26   b26 INERTIA term                   2-5       222-318   V90 /r77, V91 /r78
-```
-🛑 **`gp-0x6BBE` carries p50 74 against an aggregator OUTPUT of 115-218 — roughly HALF the
-entire assist output at creep.** Meanwhile **`gp-0x6B26`, the target of ~15 builds this session and
-before (V126–V138: clamp, α2, knee, K1), carries p50 2–5**, and the notch lane carries 6–19.
-⇒ **[EVIDENCE] the kit has been spending its builds on the SMALLEST lanes in the aggregator.**
-⭐ **A lever's leverage is bounded by how much signal its lane actually carries. Rank lanes by
-measured p50 BEFORE choosing what to tune** — the census makes that a one-command check.
-
-### 🛑 AND A FIFTH VALUE-ASSUMPTION ERROR, CAUGHT BY READING
-I inferred that `gp-0x6BBE`'s *"p50 73.6 ct FLAT across 0–6 °/s"* meant it was **saturated at its
-clamp**, and that the clamp was therefore the lever. **Read the clamp records instead:**
-```
-   PTR_DAT_000c7970[mode] -> 0xCE080 / 0xCE098 / 0xCF080 / 0xCF098   (all four modes identical)
-        n=5   X = [0, 640, 2560, 5760, 6400]   Y = [512, 512, 512, 512, 512]
-```
-⇒ **the clamp is FLAT at 512, and the lane runs p50 74 / max 352 — it NEVER reaches it.**
-⇒ **the pedestal is GENUINE, not a clamp artifact, and the clamp is NOT the lever.**
-⊕ That is the **fifth** value I have assumed rather than read this session. Checking it cost one
-command. **The rule stands and is now cheap to obey: read the table before building the theory.**
-
-### ✅ WHAT THE DOMINANT LANE ACTUALLY EXPOSES (`FUN_00034a72`, the only writer)
-```c
-   iVar29 += ((gp-0x4f60 * 32 - iVar29) * cal(0xC6372)) >> 10          // torque-sensor EMA
-   iVar27 = ((gp-0x6c2e * cal(0xC6370)) >> 5) * sign(gp-0x6752) + iVar29 >> 5
-   ...
-   gp-0x6bbe = clamp(iVar21, +- LERP(gp-0x6a62))                        // clamp 512, never reached
-```
-```
-   0xC6370 = 2560   weights gp-0x6c2e (the ACCELERATION twin) into the lane's input
-   0xC6372 =  205   the torque-sensor EMA alpha = 205/1024, matching the kit's own record
-```
-⭐ **`0xC6370` is structurally the same KIND of lever as α2 — an acceleration weight — but on a
-lane carrying 15–35× more signal.** ⚠ **NOT yet a proposal**: `gp-0x6bbe` is an ASSIST lane, so
-reducing it makes steering HEAVIER, which cuts against the operator's first goal. That trade has to
-be sized before anything is built. **[BELIEF] it is the highest-leverage unexplored target in the
-aggregator; [UNKNOWN] whether its ratchet content can be reduced without the weight cost.**
-
-⭐ **This does not change the flight: V147 is still the build.** It changes what comes AFTER.
-
-## 🛑🛑 **TWO DIRECT MEASUREMENTS FROM CACHE — ONE CORRECTS THE SECTION ABOVE, ONE KILLS THE NOTCH FAMILY ON ITS OWN**
-A tap census across all build images showed the two cells that matter had **already been flown**:
-`gp-0x6C2C` by V107–V110 (routes **r1b, r1e**) and `gp-0x6B86` by V104–V106 (routes **ra4, ra5,
-ra6**). ⊕ I had just written *"the answer was already in the cache"* as a lesson and **still had to
-run the census to find these** — the lesson needs a TOOL, not a note.
-
-### 🛑 1. THE DETECTOR-INPUT MEASUREMENT IS **CENSORED** — IT DOES NOT CONFIRM THE BACK-SOLVE
-```
-   r1e (V107, sar 3)  engaged  n=49,089   p50  123   p99 1637   MAX 1637
-   r1b (V107, sar 3)  manual   n= 5,999   p50   38   p99 1637   MAX 1637
-   427 wire SATURATED (>=1023) on 3.2 % of engaged / 4.7-5.4 % of manual frames
-```
-🛑 **The probe clips at wire 1023 = |c2c| 1637**, and **3.2 % of engaged frames sit ABOVE it,
-unmeasured.** The detector threshold is **12800 — 7.8× above the clip point.**
-⇒ **this measurement CANNOT settle whether the gate opens, and the section above must not be read
-as confirming it.** The V90 back-solve remains the better evidence **precisely because it was
-UNCLIPPED** (wire max 199 against a 1023 saturation) — but it is an inference, not a direct read.
-⊕ **Corrected status: [BELIEF, well-founded] the gate never opens. NOT [EVIDENCE].**
-⊕ **And this is why V147 carries the gate probe**: `gp-0x6c24` is a **binary** mirror, so it
-**cannot clip**. It settles in one drive what a censored analogue probe could not.
-
-### 🛑 2. THE NOTCH LANE IS LIVE BUT **TINY** — AN INDEPENDENT REASON THE FAMILY IS LOW-VALUE
-```
-   ra4 (V104, sar 4)  engaged  p50 19   p90 141   max 2602   frac ZERO 0.114
-   ra5 (V105, sar 4)  engaged  p50 10   p90  70   max 2557   frac ZERO 0.173
-   ra6 (V106, sar 4)  engaged  p50  6   p90  16   max  125   frac ZERO 0.314
-```
-✅ `gp-0x6B86` **is active** (only 11–31 % of frames read zero) — so the *"lane is dead"* branch of
-the V143/V144 scorers is refuted in advance.
-🛑 **But it carries p50 ≈ 6–19 counts of a ±12288 range — about 0.1 % of its own gate.**
-⇒ **even if the notch DID run, it would be filtering a lane with almost nothing on it.**
-⇒ **the notch family is weak on TWO INDEPENDENT counts**: the gate probably never opens, and the
-lane it filters is small. **V144/V145/V146 stay built and recorded, but they are not the answer.**
-
-### ⭐ WHAT THIS DOES TO THE PLAN — NOTHING CHANGES, WHICH IS THE POINT
-**V147 remains the build to fly.** Its live lever (the r24 pump deadband) does not depend on the
-gate, and its binary probe settles the gate question without clipping. ⊕ The two measurements above
-did not change the recommendation — **they changed the CONFIDENCE behind it, and retired an
-[EVIDENCE] mark that had not been earned.**
-
-## 🛑🛑🛑 **THE NOTCH GATE ALMOST CERTAINLY NEVER OPENS — V144/V145/V146 ARE INERT.  FLY V147.**
-Before spending a drive on the notch, I back-solved the one quantity its gate depends on. **It does
-not reach the threshold.**
-
-### THE BACK-SOLVE, FROM A DIRECT MEASUREMENT ALREADY IN THE CACHE
-**V90 tapped `gp-0x6B26` DIRECTLY** (tap `0x94DA`, sar 3) and route **r77 measured a 427 wire max of
-199** — far from the 1023 saturation, so **318 is a TRUE maximum**, not a clipped one.
-```
-   b26 = ((|c2c| * |Y|) >> 6) * 0x111 >> 0x12      =>      |c2c| = b26 * 61440 / |Y|
-   mode records (all four modes):  X = (0, 1280, 5760)   Y = (-9830, -5734, -1966)
-
-      |Y| = 9830  (creep, index near X[0])   ->   |gp-0x6c2c| max  ~  1,990
-      |Y| = 5734                             ->   |gp-0x6c2c| max  ~  3,412
-      |Y| = 1966  (the smallest Y anywhere)  ->   |gp-0x6c2c| max  ~  9,950
-      detector threshold cal(0xC620A)        =         12,800
-```
-⇒ **under EVERY attribution `|gp-0x6c2c|` stays BELOW 12800** ⇒ the reversal counter never
-increments ⇒ **`gp-0x671a` never reaches 5** ⇒ **THE NOTCH GATE NEVER OPENS.**
-⊕ And **V122 runs α2 = 8 against V90's 22** — *more* smoothing on the same signal ⇒ its
-`gp-0x6c2c` peaks are **LOWER still**. **The conclusion STRENGTHENS on the newer base.**
-⇒ **[BELIEF, well-founded] V144, V145 and V146 are INERT** — not harmful, inert. The notch is
-real, correctly retuned and validated against the firmware's own recursion; it simply never runs.
-
-### ✅ V147 IS THE BUILD TO FLY — A LIVE LEVER *AND* THE DEFINITIVE TEST
-```
-   0xC61F6   r24 pump-lane DEADBAND   3 -> 96     THE LIVE LEVER (V140/V141's, unchanged)
-   0x55DF2   427 tap -> gp-0x6C24                 the gate-state mirror
-   0x55E10   packer sar 3 -> 1                    or BOTH gate values map to wire 0 -- BLIND
-   4 payload bytes: 1 FUNCTIONAL + 3 telemetry.   67/67.
-   image d4a02872aecea638afe4f9741938c7c396d1f1b02468e7570b1ac6a3be7656d6
-   rwd   f7446a67b30c80e7216b7d915f97aabc09089e936066f2ff7ade3338eda3355f
-```
-⭐ **The deadband does NOT depend on the gate** — it acts on the r24 lane every tick. So the drive
-carries a real fix attempt **and** settles a whole build family:
-```
-   gate OPEN duty > 0    ->  the back-solve is WRONG, the notch CAN run  ->  fly V146 next
-   gate OPEN duty = 0    ->  back-solve CONFIRMED  ->  RETIRE V144/V145/V146; the notch family is
-                             closed unless 0xC64FA can be moved, which is its own open question
-```
-
-### ⭐ THE METHOD POINT
-**The answer was already in the cache.** V90 flew the exact probe needed, on the exact cell, with a
-known scale — four builds were designed around a gate whose input had already been measured.
-🛑 **Before designing around a threshold, back-solve whether the quantity ever REACHES it from
-data already flown.** That is the same lesson as *"the answer to the session's central question was
-already in the cache"* (r77/V90, recorded earlier) — **and it has now paid twice.**
-
-## ✅✅ **V146 VALIDATED END-TO-END BY SIMULATING THE FIRMWARE RECURSION ITSELF**
-Three checks against the recursion **transcribed from `FUN_000352b4`**, not against the frequency
-response alone — because "the recursion I read IS the designed filter" had been an ASSUMPTION.
-```
-   filter            f Hz   max|y| all   max|y| tail   predicted |H|*12
-   HONDA 55.2        20.3      10.504        10.504         10.504
-   V146  20.3 r.96   15.0       8.262         8.223          8.224
-   V146  20.3 r.96   18.0       8.156         4.353          4.353
-   V146  20.3 r.96   20.3       8.416         0.000          0.000
-   V146  20.3 r.96   22.0       8.602         3.310          3.310
-   V146  20.3 r.96   25.0       8.912         7.675          7.675
-```
-✅ **1. `tail` == `predicted` to 4 decimals at EVERY frequency, for BOTH coefficient sets** ⇒ **the
-transcription is correct.** The assumption is now checked.
-✅ **2. Honda's filter passes 10.504 of a 12 input at 20.3 Hz** — **as shipped it does nothing for
-an 18–22 Hz grind.** V146 passes **0.000**, and across the band **4.35 @ 18 Hz / 3.31 @ 22 Hz**
-against Honda's 10.84 / 10.22.
-✅ **3. The alarming `max|y|` is PURELY the startup transient.** Settling ≈ `1/((1−r)·fs)`:
-**25 ms at r = 0.96 vs 50 ms at r = 0.98** ⇒ **the wider notch also settles TWICE AS FAST**, which
-matters if the gate chatters open/shut. ⭐ An argument FOR V146 that was not anticipated when it
-was sized.
-
-### ⚠ CLIPPING — CHECKED, AND NOT INTRODUCED BY THE RETUNE
-The filter output is clamped to **±12** before the ×1024 scale.
-```
-   excitation (full scale)     HONDA      V144 r.98    V146 r.96    alt r.94
-   step to 12                  12.507       13.837       13.812      13.939
-   square +-12 at 5 Hz         13.014       15.431       15.592      15.886
-```
-🛑 **Honda's OWN coefficients clip it too.** ⇒ clipping is **inherent to this stage at full-scale
-excitation**, is a **bounded saturation** rather than an instability, and **barely moves with r**
-(15.89 at 0.94 → 15.43 at 0.98) ⇒ **it is not a consequence of the width choice.** V146 overshoots
-Honda by ~20 % on a square; that is the honest cost, and it is transient-only.
-
-## ✅✅✅ **THE NOTCH RE-SIZED FROM MEASURED DATA — V146 SUPERSEDES V144/V145**
-After four claims this session that rested on **assumed** values, I measured the one that sizes the
-best lever: **where the grind actually is.**
-```
-   dominant 14-30 Hz peak of cs_rate, ENGAGED, 1-24 km/h (the creep symptom regime),
-   pooled over 12 cached routes spanning V90 -> V122:
-        n = 1180 windows    p10 14.84   p25 17.19   p50 20.31   p75 21.88   p90 23.44 Hz
-```
-✅ **The CENTRE was right** — p50 = **20.31 Hz**, so V144's 20.0 was within 0.3 Hz.
-🛑 **The WIDTH was NOT.** At r = 0.98 only **68.2 %** of those peaks fall inside the −3 dB band
-⇒ **nearly a third of the grind was escaping the notch.**
-
-### ✅ RE-SIZED AGAINST THE EMPIRICAL DISTRIBUTION (mean |H| evaluated AT the measured peaks)
-```
-    f0    r     mean|H|   frac < -3dB    -3dB span      Nyquist lift
-   20.0  0.98    0.5138      0.682       16.9-23.1         1.026     <- V144 / V145
-   20.0  0.96    0.3513      0.894       14.4-25.5         1.105
-   20.3  0.96    0.3468      0.899       14.7-25.8         1.102     <- V146
-   20.3  0.94    0.2754      0.982       13.0-27.4         1.235     (HF lift too high)
-```
-⇒ **1.48× more attenuation across the ACTUAL grind distribution, coverage 68 % → 90 %**, for a
-10 % lift at 500 Hz.
-```
-   A = -1.90440325  0xC60A8      C = -1.98375338  0xC60B0
-   B = +0.92160000  0xC60AC      D = +1.05848204  0xC60B4
-   |H| DC 1.000000 | 1 Hz 0.9994 | 3 Hz 0.9941 | 18 Hz 0.363 | 20 Hz 0.050 | 22 Hz 0.276
-   | 25 Hz 0.640 | 30 Hz 0.908        image 15e1cd30...   rwd 664d78f5...   80/80
-```
-
-### ⭐ THE NO-BOOST GATE WAS REPHRASED, NOT RELAXED — AND IT IS NOW STRICTLY STRONGER
-V144's gate demanded **peak |H| ≤ 1.05**; at r = 0.96 the peak is **1.102**, so the old bound would
-have **vetoed the better filter**. But in a unity-DC notch the peak is **ALWAYS the NYQUIST end**
-(500 Hz) — a monotone HF shelf, not a resonance. The thing that gate exists to catch is a
-**RESONANT peak NEAR the notch**, which is exactly what my first retune attempt produced
-(**3.82 = +11.6 dB just below the notch**, boosting 15 Hz while notching 20 Hz).
-⇒ the gate now asserts **BOTH** that the peak is ≤ 1.12 **AND that it occurs above 200 Hz**, i.e.
-that it *is* the Nyquist shelf. ⭐ **A magnitude bound alone was the wrong SHAPE of check: it let
-the dangerous case through on magnitude while blocking a safe one.**
-
-### ✅ EVERYTHING ELSE IS V145, UNCHANGED
-Same base (V122), same binary gate probe on `gp-0x6C24` at sar 1, `0xC64FA` untouched, α2 8, gain
-6×, b26 clamp 511, both Lever A arms stock, pump deadband at Honda's 3.
-⚠ **The load-bearing BELIEF is unchanged and still unmeasured**: the section arms only when
-`gp-0x671a ≥ 5`. If the gate stays shut this build is **INERT, not harmful**, and the probe says so
-directly. **Re-sizing the notch does not change that risk — it only makes the notch worth more if
-the gate does open.**
-
-## 🛑🛑 **RETRACTION: THE r26/NOTCH-GATE COUPLING IS *UNRESOLVED* — I MARKED IT [EVIDENCE] AND IT IS NOT**
-The section above closes *"notch always on"* by asserting that opening the gate **enables the r26
-pump**, and marks it **[EVIDENCE]**. **That mark is withdrawn.** The suppression runs through
-`gp-0x6b5e`, and I never established its value.
-```c
-   uVar11 = (gp-0x6b5e != 0);
-   if ((uVar11 == 0) || (iVar17 = uVar11 * (uVar13 == 0), uVar13 == 0)) { ...compute r26... }
-       uVar11 == 0  ->  the r26 block ALWAYS runs, the GATE IS IRRELEVANT
-       uVar11 != 0  ->  r26 is forced to ZERO whenever the gate is shut
-```
-⇒ **the whole coupling hinges on whether `gp-0x6b5e` is non-zero, and that was ASSUMED.**
-
-### THE PRODUCER, READ PROPERLY (`FUN_000361c8`, the only writer)
-```c
-   sVar6 = LERP(gp-0x6bda, X @ tp+0x76CE, Y @ tp+0x76D8)
-   sVar6 = gp-0x6752 * ((sVar6 * cal(0xC63C2)) >> 10)      // x(-1) x 1024
-   gp-0x6b5e = +-sVar6                                      // sign from gp-0x6bf0
-   X = [-384, -128, 128, 294, 384]      Y = [0, 4762, 4762, 717, 0]      cal(0xC63C2) = 1024
-```
-🛑 **TWO errors of my own in one pass, both the same class — assuming a value instead of
-reading it:**
-1. I first wrote the closure without checking `gp-0x6b5e` at all.
-2. Then "refuted" it with a script that put `gp-0x6bda = 0` in the **below-X[0]** branch returning
-   `Y[0] = 0`. **Wrong** — 0 lies **mid-table between Y[1] and Y[2] = 4762**, so if the index really
-   were 0 the output would be **4762**, i.e. **non-zero**, i.e. the coupling WOULD bite.
-3. And the index itself is unknown: the memory `accord-return-centre-and-detent-dead-engaged` says
-   the ***"`gp-0x6bda` gate"*** reads 0.0000 — that is a **derived boolean**, NOT the raw cell.
-
-### ✅ THE HONEST STATE
-```
-   does opening the notch gate enable the r26 pump?      UNRESOLVED
-   what would settle it                                  the DISTRIBUTION of gp-0x6bda (or of
-                                                         gp-0x6b5e directly) on an engaged drive
-   does it change the recommendation?                    NO
-```
-⭐ **V145 is unaffected**: it deliberately does **not** move `0xC64FA` — it MEASURES the gate. If
-the gate already opens with useful duty, the widening question never arises and the coupling is
-moot. Only if the gate reads shut does this become load-bearing, and then `gp-0x6b5e` must be
-**probed, not reasoned about**.
-⭐ **THE LESSON, WHICH THIS SESSION HAS NOW PAID FOR FOUR TIMES:** *the clamp blamed for V133;
-`0xC64FA` vs `0xC64FD`; the 18-vs-8 reader count; and now this.* **Every one was a value or an
-identity ASSUMED rather than read.** 🛑 **Mark a claim [EVIDENCE] only when the number behind it
-was actually read from the image or the logs — a decompile showing WHERE a value comes from is not
-the same as knowing WHAT it is.**
-
-## 🛑🛑 **`0xC64FA` FULLY CHARACTERISED — AND "NOTCH ALWAYS ON" IS CLOSED BY A REAL MECHANISM**
-Two corrections and one closure, from a reader census plus the disassembly.
-
-### 🛑 1. THE "18 READERS" FIGURE WAS THE `ld.bu` disp|1 TRAP
-Every one of the 18 hits encodes **`hw2 = 0x74FB`**, but they split into **two opcode families**:
-```
-   hw1 & 0xFF = 0x85   ->  Ghidra decodes tp+0x74FA     0x35A02 0x35BE6 0x3AA78
-                                                        0x429DA 0x429E2 0x429EA 0x429FC 0x42A08
-   hw1 & 0xFF = 0xA5   ->  Ghidra decodes tp+0x74FB     0x260BC .. 0x261A2   (the 10-reader cluster)
-   0x3AA78  ld.bu 0x74fa, tp, r14    8577fb74
-   0x260BC  ld.bu 0x74fb, tp, r15    a57ffb74      <- SAME hw2, DIFFERENT hw1, DIFFERENT BYTE
-```
-⇒ **`0xC64FA` has EIGHT readers, not 18**, and the *"unexamined 10-reader cluster"* I cited as the
-reason not to touch it **reads `0xC64FB`, a different cal.** ⊕ This is the kit's own documented
-trap (`accord-v850-scan-traps-formatv-and-storezero`: *"hw2 = (disp | 1)"*) — my scan matched on
-the `D|1` alternative and I reported the union as one cal.
-
-### ✅ 2. ALL EIGHT READERS ARE IN KNOWN FUNCTIONS
-```
-   0x35A02, 0x35BE6    the NOTCH gate            FUN_000352b4
-   0x3AA78             the aggregator branch     FUN_0003aa2c
-   0x429DA .. 0x42A08  the reversal counter's own CEIL clamp   (min(revcount, CEIL))
-```
-⇒ `0xC64FA` is the **CEIL that clamps `gp-0x671a`** *and* the threshold both consumers compare
-against. Nothing unexamined remains.
-
-### 🛑 3. AND THAT IS WHAT CLOSES THE LEVER — THE GATE IS COUPLED TO A PUMP
-Setting `0xC64FA = 0` would make the notch's condition `0 <= gp-0x671a` **always true** ⇒ the notch
-would run continuously, which is exactly what V144/V145 want. **But the aggregator reads the same
-cal:**
-```c
-   uVar13 = (sVar7 == 1);                       // 1 when the gate is SHUT
-   uVar11 = (gp-0x6b5e != 0);
-   if ((uVar11 == 0) || (iVar17 = uVar11 * (uVar13 == 0), uVar13 == 0)) { ...compute r26... }
-```
-```
-   gate SHUT + gp-0x6b5e != 0   ->  iVar17 = 1*0 = 0   =>  the r26 lane is FORCED TO ZERO
-   gate OPEN                    ->  the block always runs  =>  r26 is COMPUTED
-```
-⇒ **opening the notch's gate ENABLES the r26 PUMP lane, which is currently suppressed.**
-`gp-0x6752 = −1` makes r26 a **confirmed pump** — the same family whose **doubling** produced
-V133's *"massive, violent grinding"*. ⇒ **[EVIDENCE] the notch's arming is STRUCTURALLY COUPLED
-to un-suppressing a pump. `0xC64FA` must not be lowered, and now for a mechanism that is read off
-the code rather than asserted.**
-⊕ `0xC64FA = 1` is the middle option — it arms the notch on the FIRST reversal instead of the
-fifth — but it enables r26 whenever the counter is ≥ 1 instead of ≥ 5, so it buys the notch by
-paying the pump. **Same trade, smaller dose.** Not recommended without measuring the gate first.
-
-⭐ **V145's design is therefore correct as built**: leave `0xC64FA` alone and MEASURE the gate.
-🛑 **And the fallback if the gate reads shut is NOT to widen it** — it is V141 (the pump
-deadband), which moves the r26/r24 family the *other* way.
-
-## 🛑 **CORRECTION: `0xC64FA` and `0xC64FD` ARE DIFFERENT CALS — THE "WIDENING THE GATE RAILS b26" CLAIM IS WRONG**
-Twice this session I wrote that widening the notch's gate would *"also force the b26 oscillation
-branch to −8192, which V127 found rails the inertia term"*. **That conflated two cells.**
-```
-   0xC64FA  the NOTCH gate + the aggregator branch   18 readers  incl. 0x35A02, 0x35BE6
-                                                                 (both inside FUN_000352b4)
-   0xC64FD  the b26 Y-branch in FUN_00036c12          2 readers  0x36A1E, 0x36C42
-```
-⇒ **disjoint reader sets. Lowering `0xC64FA` would NOT touch the b26 Y branch.**
-✅ **The conclusion survives, for a different reason**: `0xC64FA` has **EIGHTEEN readers**,
-including a **ten-reader cluster at `0x260BC`–`0x261A2` that has never been examined**. It is still
-**not a free lever** — but the specific harm named was wrong, and a future session acting on the
-old note would have avoided the right cell for the wrong reason, or trusted the wrong one.
-⊕ Both bytes read **5**. The u16 views are 517 (`0x0205`) and 1285 (`0x0505`); the **byte** is what
-the code loads (`*(byte *)(tp+0x74fa)`).
-⭐ **RULE: two cals three bytes apart, both equal to 5, in the same subsystem, are still TWO CALS.
-Run the reader census before asserting a shared consumer** — that census is what caught this.
-
-## 🛑🛑🛑 **A TRUE NOTCH FILTER EXISTS — THE KIT BELIEVED IT DID NOT.  V143 RESOLVES THE ONE THING GATING IT.**
-`FUN_000352b4`, the **only** writer of the aggregator lane `gp-0x6B86`, contains a **gated
-second-order FLOAT section**:
-```c
-   if ((cal(0xC649B) == 1) && (gp-0x671a >= cal(0xC64FA))) {        // = 1  and  >= 5
-       w[n] = D*x[n] - A*w[n-1] - B*w[n-2]
-       y[n] = w[n]   + C*w[n-1] +   w[n-2]
-   }
-   A = -1.53720  0xC60A8        C = -1.88080  0xC60B0
-   B =  0.63462  0xC60AC        D =  0.81731  0xC60B4
-   H(z) = D * (1 + C z^-1 + z^-2) / (1 + A z^-1 + B z^-2)
-```
-✅ **The numerator zeros sit EXACTLY on the unit circle** (`z² + Cz + 1`, |z| = 1) at **±19.88°**
-⇒ **a TRUE NOTCH, min |H| = 0.0002 ≈ −74 dB.** Poles |z| = 0.7966 at 15.24° ⇒ **stable.**
-⭐ **|H| = 1.0000 at DC and 1.000 at Nyquist — transparent everywhere except the notch.**
-⇒ **it costs NO authority, NO added mass, NO added friction.** That is precisely the shape the
-operator has demanded all along, and **no other lever in this kit has it.**
-✅ **All four coefficients are CALS ⇒ fully retunable with NO code cave.**
-🛑 **This falsifies the kit memory *"no notch filter exists anywhere"* (V44).** ⊕ The block at
-`0xC60A8` is **already `BQ_ADDR` in every builder, asserted byte-identical** — **the kit had the
-ADDRESS but never the FUNCTION**, and asserted it frozen for ~90 builds.
-
-### 🛑 IT CANNOT BE RETUNED YET — THE TASK RATE IS THE BLOCKER, AND THE TWO CASES DEMAND OPPOSITE EDITS
-The notch ANGLE is fixed at 19.88°; its **FREQUENCY is 19.88/360 × fs**:
-```
-   fs  250 -> 13.8 Hz      fs  333 -> 18.4 Hz      fs  500 -> 27.6 Hz      fs 1000 -> 55.2 Hz
-```
-The kit's own record bounds the assist task (**task 5**) at **≥ 250 Hz and has NEVER pinned it**
-(*"task 1 CONFIRMED 1 kHz, task 5 rate was OPEN"*).
-```
-   at ~333 Hz  Honda's notch ALREADY sits on the 18-22 Hz grind  =>  the lever is the GATE
-   at 1000 Hz  it sits at 55 Hz, useless for the grind           =>  the lever is C:
-               C_new = -2*cos(2*pi*f/fs);  f = 20 Hz, fs = 1000  =>  C = -1.984229
-```
-⇒ **THE TWO CASES CALL FOR OPPOSITE EDITS. Guessing is a coin flip on the best lever found.**
-
-### ✅ V143 RESOLVES IT, AND CARRIES THE FIX WHILE IT DOES
-```
-   V143 = V122 + deadband 0xC61F6 3 -> 96  +  427 tap -> gp-0x6B86
-          3 payload bytes: 1 FUNCTIONAL (the deadband) + 2 TELEMETRY (the tap).  64/64.
-          image f8d62d242b913f48e2f87b77cbf0bf450faa2b6c94529862c1c0a7e2016a1488
-          rwd   2a98f89d5dfca3777615f534bba0b62a75a4287bf319c6556c3c80acec3829c8
-```
-427 samples at **49.9 Hz** (Nyquist 24.95). A **−74 dB null is unmistakable**, and where it lands
-pins fs to a small discrete set:
-```
-   fs  250 -> null at 13.8 Hz  direct        fs  500 -> 27.6 Hz aliases to 22.3 Hz
-   fs  333 -> null at 18.4 Hz  direct        fs 1000 -> 55.2 Hz aliases to  5.3 Hz
-```
-⊕ The probe also answers **two prerequisites the retune depends on**: is the lane active at all,
-and does the gate ever open in normal driving. **If the lane reads dead the notch is irrelevant
-however it is tuned** — worth knowing before spending a build on its coefficients.
-
-### ⚠ THE GATE IS NOT ITSELF A FREE LEVER
-`cal(0xC649B)` is **0 in STOCK and 1 in V122** (history: V22=0 → V103=1 → V117=0 → V120=1), so the
-**ENABLE is already on**. The second half needs `gp-0x671a ≥ cal(0xC64FA) = 5`, the reversal counter
-at its ceiling. Lowering `0xC64FA` would arm the notch more readily — **but that same cal selects
-the Y branch in `FUN_00036c12` and gates two aggregator branches, and `gp-0x671a` has four external
-consumers.** 🛑 **Not a clean lever; do not move it casually.**
-
-### ⚠ AND A TRAP CAUGHT IN FLIGHT
-The first read of these coefficients used `0xC70A8` and returned **denormals (1.35e-39)** — the
-**off-by-0x1000 tp error the index warns about, now SIX occurrences.** `tp = 0xBF000`, so
-`tp+0x70A8` is **`0xC60A8`**. The denormal values were the tell. **Anchor every tp-relative read
-against a plausible value before building on it.**
-
-## ✅✅✅ **AUTHORITY AND "PEAK COMMAND OSCILLATION" MEASURED — TWO OF THE THREE TARGETS COLLAPSE INTO ONE**
-The session had spent itself on grinding. Measuring the operator's other two targets on **r24
-(V122, the best build on the car)** changes the plan.
-
-### ✅ 1. "PEAK COMMAND OSCILLATION" IS **NOT IN THE COMMAND**
-Spectral split of `sc_tq` (openpilot's LKAS request), engaged windows, fs = 100 Hz:
-```
-                             0.5-3 Hz    3-8 Hz   8-15 Hz  15-22 Hz  22-30 Hz
-   PEAK  (|cmd| p50 > 2048)    90.84%     0.93%     0.07%     0.13%     0.01%
-   LOW   (|cmd| p50 <= 2048)   82.59%     5.10%     1.38%     0.71%     0.21%
-```
-🛑 **At peak the command is CLEANER, not dirtier** — HF content **falls** (15–22 Hz: 0.13 % vs
-0.71 %; 3–8 Hz: 0.93 % vs 5.10 %). ⇒ **openpilot's command does not oscillate at peak.**
-⊕ This independently reproduces the kit's own `reference-accord-lkas-lane-is-a-lowpass`: the LKAS
-lane is a ~1–5 Hz low-pass, so **a fast vibration cannot be COMMANDED**.
-⇒ **[EVIDENCE] what the operator feels as "peak command oscillation" is generated DOWNSTREAM,
-inside the EPS. It is the SAME problem as the grinding, not a second one.**
-⇒ **Two of his three targets are one target.** Do not build a separate lever for it.
-⚠ n = 25 high-command windows on one route — indicative, not tight. More peak exposure would
-firm it, but the direction (HF *falls* at peak) is the opposite of the hypothesis, which is the
-robust part.
-
-### 🛑 2. AUTHORITY IS CAPPED ON **openpilot's** SIDE, AND EPS GAIN HAS NOT RELIEVED IT
-```
-   route  build   engaged frames   rail duty at |cmd| >= 4095   |cmd| p50   p90
-   r78    V91          61,987            2.58 %                    230      901
-   ra6    V106        123,802            3.02 %                    133      789
-   r1e    V107         99,910            2.77 %                    247     1168
-   r21    V111         83,782            3.24 %                    187     1390
-   r22    V112         48,957            3.79 %                    232     1459
-   r23    V112         40,103            1.81 %                    198     1048
-   r24    V122         58,652            2.70 %                    149      734
-```
-openpilot sits at its **own ±4096 request limit on ~2–4 % of engaged frames on EVERY build**, and
-**that duty does NOT fall as EPS gain rises** (V91 through V122 span 4×→6× with no trend).
-⇒ The request ceiling is openpilot's, and `feedback-no-openpilot-side-modifications` forbids
-touching it. **The ONLY authority lever available is the EPS gain `0xC6CD0`.**
-⚠ Rail duty is confounded by road/curvature across routes; the *absence* of a trend is weak
-evidence, not proof that gain does nothing for authority.
-
-### ⭐ 3. WHICH PUTS AUTHORITY AND GRINDING IN TENSION THROUGH **ONE CELL** — AND FIXES THE ORDER
-```
-   0xC6CD0   5346 (6x)  ->  7128 (8x)     +33 % authority
-                                          ... and it flew in V133, which the operator described as
-                                          "massive, violent grinding after enabling LKAS"
-```
-His two instructions are *"just go to 8x IF you decide to increase LKAS gain"* and *"If youre going
-to increase gain make sure we dont get even more oscillation and grinding."* ⇒ **the gain rise is
-CONDITIONAL on the grinding being fixed first.**
-⭐ **THE SEQUENCING THIS DICTATES:**
-```
-   1. FIX THE GRINDING on a 6x base      -> V141 (pump deadband + the probe that sizes it)
-   2. ONLY THEN raise 0xC6CD0 to 8x      -> with clamps 0xC61B2/4 3072 -> 4096 to match
-                                            (unmatched clamps throw away 25 % of the rise)
-   3. re-check grinding at 8x            -> if it returns, the grind fix was insufficient, not the gain
-```
-⇒ **8× is not abandoned — it is DEFERRED behind the fix, which is exactly what the operator's
-own conditional says.** A build that raises the gain before the grind is fixed cannot satisfy him
-whatever it measures.
-
 
 ---
 
-🛑 **8 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
+🛑 **10 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
