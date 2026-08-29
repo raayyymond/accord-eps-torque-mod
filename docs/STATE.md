@@ -96,8 +96,10 @@ V195 ← V189 ← V188 ← V185, which never included them. **V196's complete le
 K1 → Honda, accel alpha → Honda, w[3] halved, FactorC m27 → stock, and the engaged inertia half
 dose.** The builder now asserts m26 = half dose and m27 = Honda separately, which is what caught it.
 
-⇒ **THE FORK IS NOW CLEAN:** fly **V196** to fix, or **V197** to fix *and* learn where the ratchet's
-energy actually comes from. They are the same car; V197 costs three telemetry bytes.
+⇒ **THE FORK IS NOW CLEAN:** fly **V196** to fix, or **V198** to fix *and* learn where the ratchet's
+energy actually comes from. They are the same car; the probe costs three telemetry bytes.
+⚠ **V197 (this build) was SUPERSEDED by V198** — the completed exciter map showed `gp-0x6ada`
+carries 4× `gp-0x6bbe`'s clamp, so it is the more informative target. Section above.
 
 ## ⭐ **THE EXCITER LIST: ONLY FOUR AGGREGATOR TERMS ARE LIVE, AND V196 TOUCHES THE SMALLEST**
 The ratchet is a **plant** resonance, so firmware can only reduce what **excites** it. The exciters

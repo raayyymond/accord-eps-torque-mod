@@ -3,7 +3,7 @@
 **Nothing was flashed. No CAN or UDS message was sent.** Everything below is analysis and unflown
 builds. The operator drove nothing this session, so **every on-car claim in here is a prediction**.
 
-**Shelf:** `docs/scoring/SHELF.md`. **Fly V196** (the fix) or **V197** (the same car + one
+**Shelf:** `docs/scoring/SHELF.md`. **Fly V196** (the fix) or **V198** (the same car + one
 telemetry probe). V194 is a separate branch. V185–V193 are renamed
 `SUPERSEDED-DO-NOT-FLASH-…`.
 
@@ -267,7 +267,7 @@ The sections above were written mid-session. What follows supersedes them where 
 | build | what it is | sha256 |
 |---|---|---|
 | **V196** | the recommendation: notch + K1→Honda + alpha→Honda + w[3] halved + FactorC m27→stock + **engaged inertia half dose** | `f904e43a1f4ccb94…` |
-| **V197** | **identical control cells**, + the 427 probe on `gp-0x6bbe` (3 telemetry bytes) | `b70483e02b110b74…` |
+| **V198** | **identical control cells**, + the 427 probe on `gp-0x6ada`, the **r24 rate lane** (3 telemetry bytes) | `9fbbf90b0bed9cb3…` |
 | V195 | V196 without the inertia half dose — no sign bets at all | `a3ea8683df48c6b3…` |
 | V194 | the detector branch (dwell widened) + probe on `gp-0x6c2c`. **Only build that can change manual driving.** | `2adde4ec37be9150…` |
 
@@ -275,7 +275,9 @@ The sections above were written mid-session. What follows supersedes them where 
 Earlier prose implied otherwise; the builder now asserts m26 = half dose and m27 = Honda separately,
 which is what caught it.
 
-**V195/V196 differ from the flying build by 30 payload bytes; V197 by 33.**
+**V195/V196 differ from the flying build by 30 payload bytes; V198 by 33.**
+⚠ **V197 (a probe on `gp-0x6bbe`) was built and then SUPERSEDED by V198** — the completed
+exciter map showed `gp-0x6ada` carries 4× the clamp, so it is the more informative target.
 
 ## 12. THE NOTCH, RE-FITTED — and the number corrected THREE times
 
@@ -304,16 +306,29 @@ design.**
 ## 13. THE RATCHET — what it is, and the honest ceiling
 
 **It is a PLANT resonance.** Firmware cannot remove it; it can only reduce what **excites** it.
-Ranking the `FUN_0003aa2c` exciters by clamp leaves **four live**:
+The `FUN_0003aa2c` exciter map is now **COMPLETE — 6 live, 4 dead, 0 unidentified**:
 ```
-   gp-0x6b86 12288  biquad output -- LKAS command, 1-5 Hz
-   gp-0x6b4c 10240  11-slot assist sum -- low frequency
-   gp-0x6bbe  2048  VISCOUS, rate-derived (omega^1)     ** BYTE-STOCK across the whole arc **
-   gp-0x6b26  1024  INERTIA, acceleration-derived (omega^2), clamped further to 511   <-- V196
+   gp-0x6b86 12288  LIVE  biquad output -- LKAS command, 1-5 Hz
+   gp-0x6b4c 10240  LIVE  11-slot assist sum -- low frequency
+   gp-0x6ad4 10240  eliminated as a cause by V56
+   gp-0x6b62  8192  DEAD ENGAGED (0.0000 / 75,227 frames)
+   gp-0x6adc  8192  LIVE  ** the r26 RATE LANE ** -- omega^1
+   gp-0x6ada  8192  LIVE  ** the r24 RATE LANE ** -- omega^1          <-- V198 probes this
+   gp-0x6bbe  2048  LIVE  VISCOUS, omega^1 -- BYTE-STOCK across the whole arc
+   gp-0x6bd0  2048  DEAD in 100 % of the micro regime
+   gp-0x6ade  1024  DEAD  -- read once at 0x3AA48, NO WRITER anywhere in the image
+   gp-0x6b26  1024  LIVE  INERTIA, omega^2, clamped further to 511    <-- V196 halves this
 ```
+🛑 **An earlier draft of this section said "four live" and was WRONG** — it missed the two rate
+lanes because the decompiler had named them `iVar21`/`iVar16`; the aggregator's own tail stores them
+to `gp-0x6adc` / `gp-0x6ada`.
 🛑 **V196 halves the SMALLEST live exciter.** Not necessarily wrong — it is the only ω² term, so
 it is concentrated exactly at 8 Hz while the big terms carry 1–5 Hz content — but **constants cannot
-settle which dominates the 8 Hz sum. V197 measures it.**
+settle which dominates the 8 Hz sum. V198 measures it.**
+⭐ **And if a bigger lever is needed, the RATE LANES are where it belongs**: 8× the inertia term's
+clamp, ω¹ so live at 8 Hz, and **the only candidates with a measured on-car dose-response history**
+(V62's `sar`×2: *"18–22 Hz down 8–42×"*; V88's Lever B `0xC6446`=5244: *"grinding FIXED on-car"*) —
+both already carried on V196. **No new mechanism required, only a dose choice.**
 
 **Saturation is the real story of the dose ladder:**
 ```
@@ -365,12 +380,12 @@ prior is far worse than V101 alone suggests.
 | open item | what would close it |
 |---|---|
 | **Nothing has been flown.** Every on-car claim is a prediction. | One 15 s engaged creep pass on V196/V197 + `score_band_excess.py`. |
-| Is V196's ratchet lever aimed at the dominant exciter? | Fly **V197**, then `decode_v197_viscous_term.py <tag> --v197`. |
+| Is V196's ratchet lever aimed at the dominant exciter? | Fly **V198**, then `decode_v198_r24_lane.py <tag> --v198`. |
 | Does `\|gp-0x6c2c\|` reach T = 12800? Decides the whole detector branch. | Fly **V194**, then `decode_v194_detector_input.py <tag> --v194`. |
 | Is the inertia sign right? | V196 vs V195 on-car. Ratchet **worse** ⇒ inverted ⇒ revert. |
 | Is the 55 Hz null load-bearing? Unobservable at 100 Hz. | Any notch build. A new high note **while engaged** ⇒ yes. |
 | **Hands-on remains the corpus blind spot** — 1 hands-on vs 31 hands-off 20.5 s episodes. | Pass 1b on any drive. |
-| The viscous path (`0xC6370`/`0xC6372`/`0xC615A`) is byte-stock and unexplored. | V197's measurement first — **no lever until then.** |
+| The rate lanes and the viscous path are unexplored as ratchet levers. | V198's measurement first — **no lever until then.** |
 | `0xC40BC` knee 3000 vs Honda 600, unreverted since ~V122, unattributed. | Operator's call; shallower ramp suits his stated preference. |
 | 72 dead bytes (`0xE4194..0xE521C`) from a half-applied V108 edit. | Revert to stock, or complete it by raising `0xC61BE` — but that adds **base** assist, not LKAS. |
 | openpilot's phase margin. | Not estimable from this corpus; needs deliberate excitation. |
@@ -385,7 +400,7 @@ prior is far worse than V101 alone suggests.
 | `rlog-tools/score/symptom_partial_correlation.py` | common cause vs common exposure |
 | `rlog-tools/score/relay_vs_resonance_test.py` | limit cycle vs driven resonance |
 | `rlog-tools/score/notch_shoulder_check.py` | does a notch threaten its own low shoulder |
-| `rlog-tools/probe/decode_v197_viscous_term.py` | `gp-0x6bbe`'s 8 Hz content |
+| `rlog-tools/probe/decode_v198_r24_lane.py` | `gp-0x6ada`'s 8 Hz content (the r24 lane) |
 | `analysis-2020accord/verify/aggregator_exciter_ranking.py` | which exciters are live |
 | `analysis-2020accord/verify/inertia_saturation_bound.py` | where the inertia term saturates |
 | `analysis-2020accord/verify/closeout_verify_published.py` | re-verify everything published |
