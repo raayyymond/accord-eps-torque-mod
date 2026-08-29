@@ -4,6 +4,44 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **V190's XREF CHAIN BYTE-CONFIRMS — the BELIEF caveat is LIFTED**
+Last section flagged that V190's xref counts came from `search_instructions` and were not
+byte-confirmed. Re-derived from raw bytes, both gp-relative encodings, whole image:
+```
+   cell                          ghidra   raw-real   verdict
+   gp-0x6bc2   V190 chain           2         2      COMPLETE
+   gp-0x6ad6   V190 chain           3         3      COMPLETE  (2 raw hits adjudicated away)
+   gp-0x6c2e   the 2nd accel EMA    5         5      COMPLETE
+   gp-0x6b26   CONTROL              5         5      the scanner is CALIBRATED
+   gp-0x6b2e   the caught case      2         3      ghidra undercounted by 1 (0x2A896)
+```
+⇒ **V190's completeness moves from BELIEF to EVIDENCE.** Only `gp-0x6b2e` was genuinely
+undercounted, and that one is already recorded.
+
+### 🛑 **MY OWN SCANNER OVER-REPORTS — THE MIRROR IMAGE OF GHIDRA'S UNDERCOUNT**
+The two extra `gp-0x6ad6` hits were **false positives I manufactured**:
+```
+   0xBCC52  disassembles as  `st.b r7, -0x6ad5, gp`     <- -0x6ad5, NOT -0x6ad6
+```
+My scan accepted **both** `(hw2 & 0xFFFE)` and `(hw2 & 0xFFFE) | 1` for every opcode, so it matched
+the NEIGHBOURING cell. And the surrounding stream is six consecutive `st.b r7` to scattered
+unrelated displacements (`0x446c`, `0x6cdb`, `-0x42a4`, `-0x1a90`, `0xd65`) — **that is DATA being
+force-disassembled, not code.**
+➕ **THE RULE, and it cuts both ways:** *Ghidra UNDERCOUNTS (it only sees analysed code and still
+reports `truncated:false`); a naive byte scan OVERCOUNTS (it cannot tell code from data, and a
+loose displacement rule matches neighbours).* **Neither is authoritative alone. Adjudicate every
+disagreement by disassembling the disputed address and checking it sits in a sensible instruction
+stream** — which is exactly how `0x2A896` was confirmed real and `0xBCC52` was rejected.
+✅ **Scanner refinement owed:** derive the odd/even displacement bit from the OPCODE FIELD
+(`0x3D` ⇒ odd, `0x3C` ⇒ even, as established for `ld.bu`) instead of accepting both. Accepting
+both is what produced the neighbour match.
+
+⊕ **Ghidra reports `analyzed: true` with 2086 functions, yet `0x2A896` has no function.**
+"Analysed" does not mean complete coverage on this image — so the `CLAUDE.md` instruction to analyse
+the whole `.bin` first is **already satisfied as far as the tool is concerned**, and the residual
+gaps are not fixable by re-running analysis. **The byte scan plus adjudication is the only complete
+method.**
+
 ## 🛑 **LKAS AUTHORITY: `0xC61BE` IS MISLABELLED, AND THE REAL KNOB IS COUPLED TO THE GRIND**
 `0xC61BE` is described in the lineage as *"the LKAS request clip"*. **It is not.** Decompiled:
 ```c
