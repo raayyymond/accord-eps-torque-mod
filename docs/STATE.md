@@ -1,5 +1,53 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **THE SLOT MAP IS COMPLETE — THE `gp-0x6B4C` LEVER IS NOW AIMABLE**
+Ten call sites of `FUN_00025c32` were located by xref, and the slot index each passes was read from
+the instruction stream. **`FUN_0003a8a8` was decompiled in full to VALIDATE the method** — it shows
+exactly the predicted shape:
+```c
+   local_1c = 7;                          // <- THE SLOT INDEX, param_1[0]
+   cStack_1b = <mode>;                    // param_1[1]
+   uStack_1a = 0; uStack_18 = 0; uStack_16 = 0; uStack_14 = 0;
+   uStack_12 = 0x400; uStack_10 = 0x400; uStack_e = 0x400;
+   uVar6 = FUN_00025c32(&local_1c);
+```
+⇒ **the LAST `mov imm, rN` before the struct setup is the slot index.** Applied to all ten sites:
+```
+   slot  caller          call site   0xC4124   status
+    0    FUN_0002e52e     0x2E642       0      CONTRIBUTES
+    1    FUN_0002b422     0x2B53E       0      CONTRIBUTES
+    2    FUN_0003405a     0x34212       5      forced zero   (beside the base-assist damper
+                                                              FUN_00034350 / gp-0x6bbe producer)
+    3    FUN_0002c246     0x2C374       0      CONTRIBUTES
+    4    FUN_00023ad2     0x23BD6       5      forced zero
+    5    FUN_00023fe2     0x24176       5      forced zero
+    6    FUN_0003aff4     0x3B25C       0      CONTRIBUTES   (beside the aggregator FUN_0003aa2c)
+    7    FUN_0003a8a8     0x3A972       0      CONTRIBUTES   <- VERIFIED by full decompile
+    8    FUN_0002caa2     0x2CBE6       0      CONTRIBUTES
+    9    FUN_000339cc     0x33B5C       5      forced zero
+   10    (no caller)         --         0      unused
+```
+⭐ **TEN callers → TEN DISTINCT slots 0–9, no collisions.** That self-consistency is strong
+validation: a wrong extraction rule would produce duplicates and gaps, and it produces neither.
+
+### ✅ AND ONE CONTRIBUTOR IS ALREADY EXCLUDED BY ITS OWN PAYLOAD
+`FUN_0003a8a8` passes **all-zero data fields** (`uStack_1a` … `uStack_14` = 0) with unity weights.
+⇒ **slot 7 contributes NOTHING numerically** — it is a state/health registrant, not an assist
+source. ⇒ **the real contributors are slots 0, 1, 3, 6, 8 — FIVE candidates, each a named
+function**, down from "seven unknown indices".
+
+### ⭐ WHAT THIS UNLOCKS
+`gp-0x6B4C` is the **highest-ranked grind carrier** (22.84 % / 22.50 % of its own variance in
+18–22 Hz, both routes agreeing). `0xC4124[i] : 0 → 5` disables slot *i* using **Honda's own dispatch
+value**, on a **byte cal, no cave**. ⇒ **the lever is now aimable at a NAMED subsystem** rather than
+an index — the most precise lever this kit has had.
+⚠ **Still not built.** Two of the five (`FUN_0003aff4` slot 6, `FUN_0002caa2` slot 8) have not been
+read at all, and what each contributes must be known before one is removed — removing an unknown
+assist component is the V133 pattern. **Next: decompile slots 0, 1, 3, 6, 8's callers and pick the
+one whose payload is rate/acceleration-derived rather than torque-derived.**
+
+**V147 remains the build to fly.**
+
 ## ✅✅ **THE 11 SLOTS ARE IDENTIFIABLE AFTER ALL — `FUN_00025c32` IS A REGISTRATION FUNCTION**
 The previous section recorded the slots as unidentifiable because they are written through a
 computed pointer (`ep = gp-0x62F8 + r12`) and all 14 writer sites use a **loop register**
