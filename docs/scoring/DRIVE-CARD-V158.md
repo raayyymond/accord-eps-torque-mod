@@ -37,8 +37,10 @@ has been shown not to track what you hear.
 targets. The statistic resamples **episodes**, so **8+ separate engaged passes and 8+ separate manual
 passes** are needed. More minutes in one block does **not** help; more separate passes does.
 
-**1. Engaged creep — the main event. 5+ minutes, in 8+ passes of 15 SECONDS EACH.**
-🛑 **EACH PASS MUST BE CONTINUOUS, AND 15 s BEATS 10 s BY 2x.** The endpoint needs 5.12 s analysis windows, and a continuous pass of T seconds yields `floor((T-5.12)/2.56)+1` of them: **a 15 s pass gives 4 windows, a 10 s pass gives 2.** The split-half floor is set by window count — measured **2.23x at 3 per half, 1.57x at 6 per half** — and V158's predicted effect is 1.68-2.74x, so the drive needs **~24-32 windows** to read it. **8 passes of 15 s = 32 windows (adequate); 8 of 10 s = 16 (marginal).** A slow continuous lap of a car park is the natural shape.
+**1. Engaged creep — the main event. ONE CONTINUOUS 15-SECOND PASS IS ENOUGH.**
+✅ **The ratchet endpoint is PRESENCE/ABSENCE, not a ratio, so it needs one episode, not eight.** Measured on the existing corpus: a single continuous 15 s engaged creep episode detects the ratchet in **11 of 11 episodes (100 %)**, at excess **25.5-155.7** against a slope-matched null of **1.9-4.9** — a **5-65x margin**. A build that kills the ratchet drops it below that null, an ~8x move, which one episode reads unambiguously.
+⊕ **Stop as soon as you know.** If the symptom is still there after one slow continuous pass, the drive has already answered its question — nothing is gained by continuing.
+⊕ More passes only sharpen the *graded* question (how much smaller), which is secondary to *is it fixed*. If the pass is easy to repeat, 3-4 of them tighten the grind comparison; if not, one is sufficient for the primary verdict.
 🛑 **EACH PASS MUST BE CONTINUOUS.** The ratchet is a NARROW resonance: resolving it needs at least **7.4 s of unbroken engaged creep** in one stretch, because a 2.56 s window physically cannot resolve a Q of 14-29 at 7.8 Hz. Short bursts, however many, cannot substitute. A slow continuous lap of a car park is the natural shape.
 2–8 km/h, LKAS engaged, hands off, with real steering activity — a car park, a slow residential
 loop, anything that makes the wheel work at walking pace. This is the only segment that can produce

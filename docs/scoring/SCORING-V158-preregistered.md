@@ -255,3 +255,31 @@ The one-sided logic is unchanged and now rests on a monotone statistic: nothing 
 predicts a stronger peak, so a rise is the outcome that carries unambiguous information.
 
 Run it with `rlog-tools/score/score_band_excess.py <route-tag>`.
+
+## ✅ THE DRIVE SPEC IS ONE EPISODE — the endpoint is PRESENCE/ABSENCE
+
+The previous revision asked for 8 passes of 15 s to resolve a 1.68-2.74x *ratio*. That spec is
+unbuildable under the standing design law (*a spec needing matched episodes or minutes of exposure
+is unbuildable; the operator stops the drive the moment the symptom persists*).
+
+It was also the wrong endpoint. The engaged-vs-manual result is **presence/absence** -- the peak
+clears its null on **7/7** engaged arms and **0/7** manual arms -- so a build that kills the ratchet
+moves the excess from ~33 to below ~4, an **8x** move rather than a 1.7x one.
+
+Measured on the existing corpus, splitting each route into single continuous episodes:
+
+| episode length | windows | episodes tested | ratchet detected |
+|---|---|---|---|
+| **15 s** | 5 | 11 | **11/11 = 100 %** |
+| 20 s | 6 | 5 | 5/5 = 100 % |
+| 30 s | 10 | 4 | 4/4 = 100 % |
+
+excess **25.5 - 155.7** against slope-matched nulls of **1.9 - 4.9** => a **5-65x margin**.
+
+| V158's single episode reads | verdict |
+|---|---|
+| ratchet excess **above** its own slope-matched null | **the ratchet is still present** |
+| ratchet excess **below** the null | **the ratchet is gone in that regime** |
+| grind excess below its null (V122 reference 14.0, null ~4) | the grind is gone; margin here is only 3.5x, so treat a marginal grind read as inconclusive rather than negative |
+
+Both bands are scored from the same episode by `rlog-tools/score/score_band_excess.py`.
