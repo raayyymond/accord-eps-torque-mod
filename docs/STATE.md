@@ -4,6 +4,36 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **V176 BUILT — BOTH LEVERS AT THE STRONGER DOSE. THE FOUR-BUILD CHOICE IS NOW COMPLETE.**
+The operator has stated the priority four times: **eliminate the grinding and the ratcheting.** V176 is
+simply **V175 with V174's pole** — the inertia revert *and* the stronger pole in one image, the
+maximum-attenuation build still inside the kit's own lag guardrail.
+```
+   build   poles          engaged inertia   ratchet@8.64   grind@21   lag@1Hz    note
+   flying  0.7966 pair    3.0x Honda           0.9789        0.8659    +2.1 ms
+   V173    0.970/0.475    3.0x Honda           0.4761        0.1894   +29.1 ms
+   V175    0.970/0.475    HONDA'S OWN          0.4761        0.1894   +29.1 ms   <- FLY FIRST
+   V174    0.980/0.475    3.0x Honda           0.3393        0.1275   +42.8 ms
+   V176    0.980/0.475    HONDA'S OWN          0.3393        0.1275   +42.8 ms   <- strongest
+```
+➕ **V176's section response is IDENTICAL to V174's** — the inertia revert is a different mechanism in
+a different lane and does not touch the biquad. What V176 adds over V174 is removal of the 3.0x engaged
+apparent-inertia dose; what it adds over V175 is the stronger pole.
+✅ **28/28 assertions · 12 payload bytes · CRC 50/50 · readback byte-identical · base V175 ·
+`C_B0` untouched · GATE 2 max |H| = 0.9880.** image `bba4cd5a92c5186f…` · rwd `7beac7510411c7ec…` ·
+builder `analysis-2020accord/builds/v108_plus/build_v176_tva.py`.
+⚠ **THE HONEST TRADE: +42.8 ms of group delay at 1 Hz vs V175's +29.1.** The operator feels that as
+**steering weight**, and he has said explicitly that apparent mass and friction must **not** be the
+price of fixing the ratcheting. ⇒ **V175 stays fly-first; V176 is his choice if he wants the
+strongest attack and will judge the lag on the same drive.** The card's staging and endpoint power
+analysis apply unchanged to both, because the ENGAGED-vs-MANUAL discriminator belongs to the inertia
+revert, which both carry.
+🛑 **What V176 deliberately does NOT spend, asserted frozen in the builder:** `0xC63A6` (w[3])
+stays 1024 — it multiplies the same quantity the revert already cut, so stacking it would push the
+product **below Honda's own value** on a nine-link sign chain with no new information; it is the fine
+adjustment **after** a drive, not a stacking opportunity. `p_slow` stops at 0.980, the last point
+below the **do-not-pass-0.985-without-a-lag-verdict** guardrail. And nothing in the FOC.
+
 ## ❌ **THE DELIVERY PATH HAS NO DAMPING LEVER EITHER — THE SHAPER IS A PURE PASS-THROUGH**
 Followed the mapped bridge to the motor side, where the record says the resonance actually lives
 ([[accord-ratchet-is-a-lightly-damped-resonance]]). **Both stages are closed.**
@@ -2148,56 +2178,4 @@ resolve it. **V138 is the follow-up if he wants a number rather than a verdict.*
 ⭐ **THE GENERAL POINT**: *“which build should fly”* and *“which build will produce a readable
 measurement”* are **different questions with different answers**, and this kit has been conflating
 them. Naming both, per build, is more useful than ranking builds on one axis.
-
-## ✅✅ **THE V158-vs-V137 AMBIGUITY IS RESOLVED — V137 IS PREDICTED BELOW THE INSTRUMENT FLOOR**
-Last tick I handed the operator a choice between V158 and V137 and called it *“his call”*. **That was
-premature** — the kit's own closed-loop simulator can price alpha2, and it says the two are not
-comparable.
-
-### ✅ alpha2 HAS A REAL MECHANISM: IT IS AN EMA COEFFICIENT, `>>6`, READ AT `0x41626`
-```
-   alpha2   a=al/64   corner Hz   |H|@20Hz   |H|@7.8Hz   flown as
-     22      0.3438      54.7       0.959      0.993     V91-V107
-     14      0.2188      34.8       0.892      0.981     V112
-      8      0.1250      19.9       0.729      0.939     V122   <- corner INSIDE the 18-22 band
-      5      0.0781      12.4       0.544      0.857     V137 (unflown)
-      2      0.0312       5.0       0.245      0.544     V138 (unflown)
-```
-⚠ But the **open-loop** magnitude does not explain the history: alpha2 22→8 gives **x0.76** while the
-measured excess fell **x0.067 (15x)**. A 1.3x open-loop change cannot produce a 15x drop ⇒ either the
-loop amplifies it, or the collinear knee/K1 did the work.
-
-### ✅ THE KIT'S OWN SIMULATOR PRICES IT — USING ONLY THE PART IT SAYS TO TRUST
-`eps_closed_loop_sim.py`'s header is explicit: the **lane arithmetic is exact and validated against
-Ghidra**, while **the plant is only identified 5–~13 Hz** and every routine that uses it above 13 Hz
-raises. So I used `ratio_filter`, which is lane-only, and avoided the plant entirely.
-```
-   pair            lane ratio @20 Hz    measured 18-22 Hz change
-   V112 -> V122         0.8172          7.10 -> 3.88 = x0.55     <- VALIDATES the method
-   V122 -> V137         0.7462          (unflown)
-   V122 -> V138         0.3364          (unflown)
-```
-✅ **The V112→V122 step validates it**: lane predicts 0.82, measured 0.55 — same direction, right
-order, the measured change slightly larger than the lane alone, which is what a closed loop gives.
-
-### ⛔ AND THAT SETTLES THE CHOICE
-```
-   detection floor (measured, 9 within-drive replicates)   median 1.72x   p90 2.93x
-
-   V137   predicts x0.746  =  a 1.34x reduction   ->  BELOW THE FLOOR, not detectable
-   V138   predicts x0.336  =  a 2.97x reduction   ->  at the p90 floor, MARGINAL
-```
-⇒ **V137 would most likely produce “not resolved” and teach nothing.** It is not a defensible
-alternative to V158; **I overstated it last tick and am withdrawing that framing.**
-✅ **V158 is the flight.** If the operator later wants the alpha2 axis, **V138 (alpha2 2) is the
-version worth a drive**, because it is the one whose predicted effect clears the floor — and it is
-already built.
-⚠ **[NOTE] `ratio_filter` prices the `gp-0x6b26` LANE, not the measured `cs_rate` band.** The two are
-coupled through the loop but are not the same signal, so these are **input-side predictions**, not
-direct forecasts of the endpoint. The V112→V122 agreement is one point of empirical support, not a
-calibration.
-
-⭐ **THE LESSON**: I offered a choice where the kit already had the arithmetic to decide. **Before
-handing the operator an “either/or”, check whether an existing tool can price both options** — here it
-took one call to a simulator that was written for exactly this question.
 

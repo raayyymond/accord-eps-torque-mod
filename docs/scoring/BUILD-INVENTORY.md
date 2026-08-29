@@ -133,3 +133,23 @@ rwd&nbsp;&nbsp; `5e4ba53db14442cbd818ab8ce6155c2a81ef754e7cf2216f11f1d4e1c6b3c9e
 builder `analysis-2020accord/builds/v108_plus/build_v174_tva.py` — 27/27 assertions.
 
 **Score it the same way:** `python rlog-tools/score/score_band_excess.py <route-tag>`.
+
+---
+
+## ✅ **THE FOUR-BUILD CHOICE (complete as of 2026-08-29)**
+
+| build | poles | engaged inertia | ratchet @8.64 | grind @21 | lag @1 Hz | |
+|---|---|---|---|---|---|---|
+| flying | 0.7966 pair | 3.0× Honda | 0.9789 | 0.8659 | +2.1 ms | |
+| V173 | 0.970/0.475 | 3.0× Honda | 0.4761 | 0.1894 | +29.1 ms | poles only |
+| **V175** | 0.970/0.475 | **Honda's own** | 0.4761 | 0.1894 | **+29.1 ms** | ✅ **FLY FIRST** |
+| V174 | 0.980/0.475 | 3.0× Honda | 0.3393 | 0.1275 | +42.8 ms | poles only, stronger |
+| **V176** | 0.980/0.475 | **Honda's own** | **0.3393** | **0.1275** | **+42.8 ms** | strongest available |
+
+🛑 **V175 is fly-first.** V176 is the same two levers at the stronger pole — fly it first **only**
+if you want the hardest available attack on the ratcheting and are willing to judge **+42.8 ms of lag
+at 1 Hz** on the same drive. V173 and V174 are the poles-only controls; there is no reason to fly
+either unless a result needs isolating afterwards.
+
+image `bba4cd5a92c5186f525d17253a846ac5d44bd1dac0d2108573608fb82b133842`
+rwd&nbsp;&nbsp; `7beac7510411c7ecd9dd561bbb4f352150202ad07bc74efa488ea83babee54cf`
