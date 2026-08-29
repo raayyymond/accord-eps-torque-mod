@@ -1,5 +1,49 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **CONTROL IS FULLY ACTIVE WHERE THE COMMAND RAILS — THE CREEP-AUTHORITY CHAIN IS CLOSED**
+The memory's *"0 % control-active below 2 mph"* was measured when `0xC62EA` = 320. **It is 0 on
+current builds**, so the measurement had to be redone. Redone — **227 routes, 1.88 M engaged
+frames** — and it settles the authority question.
+```
+   STEER_STATUS while ENGAGED     distribution: {0: 1,901,564 | 3: 14,538 | 4: 92}
+
+   speed band       engaged frames   STEER_STATUS=3     duty
+   0-2   km/h             179,135           10,511    5.868 %
+   2-8   km/h             175,039                0    0.000 %   <-- where the command rails 6.4 %
+   8-16  km/h             470,173                0    0.000 %
+   16-25 km/h             547,927                0    0.000 %
+   25-40 km/h             506,512                0    0.000 %
+```
+⇒ **[EVIDENCE] `STEER_STATUS = 3` is EXACTLY ZERO at 2–8 km/h**, the band where the command rails
+**6.4 %** of engaged frames.
+⇒ **the lockout removal WORKED** — control-active is continuous through the whole creep band, and the
+old *"0 % below 2 mph / 88 % at 3–4 mph"* figures are **obsolete for every build since**.
+
+### ⭐⭐ WHAT THIS SETTLES — THE RAILING IS NOT A FIRMWARE DROPOUT
+```
+   lockout 0xC62EA          already 0            => not gating
+   STEER_STATUS at 2-8 km/h exactly 0 duty       => control is FULLY ACTIVE
+   the command rails anyway 6.4 % of frames      => the demand genuinely exceeds the field
+```
+⇒ **[EVIDENCE] the authority shortfall at creep is NOT a control dropout, a lockout, or a gating
+failure. The firmware is fully engaged and openpilot is asking for more than a 13-bit signed field
+can carry.**
+⇒ **the ONLY remaining explanation is TORQUE PER COUNT** — which is the **gain `0xC6CD0`** (frozen
+in both directions) or the **±15360 setpoint clamp `0xC61BC`** (virgin, binding unknown).
+⇒ **every other hypothesis for creep authority loss is now eliminated by measurement.**
+
+### ✅ TWO SIDE RESULTS WORTH KEEPING
+⊕ **`STEER_STATUS = 3` survives only at 0–2 km/h (5.868 %)** — i.e. at standstill, where the
+`gp-0x68b3` standstill bypass and the remaining conjuncts govern. **Expected, and not a concern:**
+LKAS steering at 0–2 km/h is not a regime the operator is complaining about.
+⊕ **`STEER_STATUS = 4` occurs 92 times in 1,878,786 engaged frames (0.005 %)** — the state-4
+governor ratchet that V42 fixed. **The fix is holding across the whole corpus**, which is an
+independent confirmation of [[reference-accord-state4-governor-ratchet]] and of
+[[accord-v42-ratchet-fix-lost-since-v53]] being restored.
+
+⇒ **The probe on `0xC61BC` is now the last standing question about creep authority**, and it is the
+only one whose answer could break the authority/grinding tension.
+
 ## 🛑🛑 **THE CREEP-AUTHORITY CHAIN IS CLOSED — LOCKOUT ALREADY PULLED, NEXT CONJUNCT NOT A CAL**
 All three complaints live at **2–8 km/h**, and the kit's most on-target lever for that band is the
 **low-speed steer lockout**. Followed it to the end. **Both links are closed, and the record needed
