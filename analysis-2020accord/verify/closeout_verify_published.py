@@ -52,6 +52,7 @@ PUB = {
     'v204': '30e7da9f6d20ff1335d01abe86ba03df7245c802217a4e6df54c5b93208873e6',
     'v205': '8cf100864be1d6030eed36acac1d514066b157a59de8ca829ae154ce7032882e',
     'v206': '71bd8312c324de9c01cf277307e41bb6dbb5e49cc6cf72e02e597a8013333a80',
+    'v207': '8de7180ec4daeb459be994d180321b235a5c79ade9050eff015e83b0f537067c',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -137,7 +138,9 @@ for _v, _base, _hw, _what in (('v203', 'v202', 0x9482,
                               ('v204', 'v202', 0x94B2,
                                'gp-0x6b4e, the observer model lane'),
                               ('v205', 'v202', 0x9490,
-                               'gp-0x6b70, the observer output'),):
+                               'gp-0x6b70, the observer output'),
+                              ('v207', 'v202', 0x9534,
+                               'gp-0x6acc, the merged command the gate tests'),):
     if _v in img and _base in img:
         d = [a for a in range(0x13000, 0x100000)
              if img[_v][a] != img[_base][a] and (a & 0xFFF) < 0xFFC]
@@ -204,8 +207,9 @@ live = [os.path.basename(x) for x in glob.glob(RWD + '/39990*-V199-*.rwd')
         + glob.glob(RWD + '/39990*-V202-*.rwd')
         + glob.glob(RWD + '/39990*-V204-*.rwd')
         + glob.glob(RWD + '/39990*-V205-*.rwd')
-        + glob.glob(RWD + '/39990*-V206-*.rwd')]
-chk(len(live) == 5, f'exactly 5 flashable builds from this chain ({len(live)})')
+        + glob.glob(RWD + '/39990*-V206-*.rwd')
+        + glob.glob(RWD + '/39990*-V207-*.rwd')]
+chk(len(live) == 6, f'exactly 6 flashable builds from this chain ({len(live)})')
 # V194/V195/V196/V198 were PULLED: every one carries a notch whose poles sit at the zeros, scoring
 # max|H| 1.3533-1.7177 against the lineage bar of stock 1.0000.  They must not be flashable.
 for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193',

@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Five flashable builds: **V204 (fly this)** · V202 (fix) · V206 (ratchet lever, demoted) · V205 (demoted) · V199 (fallback). Everything else from this arc is renamed
+**Updated 2026-08-29.** Six flashable builds: **V207 (fly this)** · V204 · V202 (fix) · V206 · V205 · V199. Everything else from this arc is renamed
 `SUPERSEDED-DO-NOT-FLASH-GATE2-…` and must not be sent.
 
 🛑 **Nothing here has been flashed and no CAN or UDS message has been sent.** Flashing requires you to
@@ -8,7 +8,32 @@ name the file and the bus, and they will be read back to you first.
 
 ---
 
-## ⭐ V204 — FLASH THIS ONE. The last unmeasured saturating element.
+## ⭐ V207 — FLASH THIS ONE. Is the merged command being zeroed?
+
+```
+39990-TVA,A160-V207-V202BASE-PROBE-GP6ACC-0x13000-0x100000.rwd
+  image 8de7180ec4daeb459be994d180321b235a5c79ade9050eff015e83b0f537067c
+```
+
+V202 control cells byte-identical, +2 payload bytes putting `gp-0x6acc` on CAN 427 at sar 5.
+Preflight 8/8, 40/40 assertions.
+
+The shaper **zero-rejects** the merged command outside ±8192 — byte-confirmed at 0x431d0–0x431d8
+(`addi 0x2000` / `addi -0x4001` / `cmovc 0x0,r9,r11`). Outside the window the command is **replaced by
+zero**, not clipped. Every other gate and clamp in the chain is now ruled out — structurally or by
+measurement — so this is the last candidate for the record’s command-gated-saturation model, and
+neither `gp-0x6acc` nor its compensation term has ever been read.
+
+| what it shows | what it means |
+|---|---|
+| |gp-0x6acc| > 8192 at any duty | the command **is** being zeroed — the mechanism is found |
+| duty 0, p99 near 8192 | marginal; a small dose either way decides it |
+| p99 far below 8192 | the gate is dead like the other six, and the saturation model has no mechanism anywhere |
+
+⊕ The 164-byte cave is unchanged, so b5 (friction vs inertia) still reports free — predicted 0.42,
+range 0.31–0.49, with ≤ 0.28 meaning the halved inertia is not reaching the car.
+
+## V204 — the model-lane saturation, still unmeasured
 
 ```
 39990-TVA,A160-V204-V202BASE-PROBE-GP6B4E-0x13000-0x100000.rwd
