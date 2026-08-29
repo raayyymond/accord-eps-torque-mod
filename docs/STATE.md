@@ -4,6 +4,60 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑⭐ **THE RATCHET IS NOT IN THE MOTION — IT IS A TORQUE-PATH EFFECT, AND THAT RE-AIMS EVERYTHING**
+Every prediction this session rested on **`cs_tq`, the driver torque sensor**. Running the same
+slope-corrected excess across **all** channels, 1080 pooled engaged-creep windows, null ~3.9×:
+```
+   channel                       RATCHET 5-12          GRIND 15-25
+   cs_tq   driver torque         13.5x @  8.01 Hz       5.1x @ 20.12 Hz
+   cs_rate steering RATE          1.7x @  8.01 Hz  ***  7.3x @ 20.31 Hz
+   sc_tq   LKAS command           1.2x                  3.3x
+   probe   cave channel           2.2x                  1.9x
+   cs_press hands-on              1.2x                  1.8x
+```
+✅ **THE GRIND IS A GENUINE MOTION OSCILLATION** — **strongest in RATE (7.3×)**, present in torque and
+command. That confirms the closed-loop model and means **the notch is well aimed.**
+🛑 **THE RATCHET IS NOT IN THE MOTION AT ALL** — 13.5× in torque, **1.7× in rate, BELOW the null.**
+The wheel is not oscillating at 8 Hz; the **torque** is. That is a **friction / stiction** signature,
+and it matches the operator's word for it: he feels it, he does not see the wheel move.
+
+### 🛑 CONSEQUENCE 1 — THE DETECTOR ROUTE CANNOT REACH THE RATCHET, FOR A SECOND REASON
+`FUN_000428d4` watches **`gp-0x6c2c`, an ACCELERATION EMA**. No 8 Hz in the rate ⇒ none in its
+derivative ⇒ **the amplitude gate `|gp-0x6c2c| > 12800` will not be crossed either.** So V191, V192
+**and V193** are inert for the ratchet on **both** counts — frequency (established last tick) **and now
+amplitude.** V194's probe will confirm it; the pre-registered "peaks below 12800" branch is now the
+*expected* outcome, not merely a possibility.
+
+### ✅ CONSEQUENCE 2 — THE RATCHET'S PRIME SUSPECT IS THE FLYING BUILD'S 10× COULOMB FRICTION
+```
+   friction = clamp(motor_rate * 12 / cal[0xC40BC], +-1) * (|model| * K1/1024 + K0/1024)
+
+   cal        STOCK  V88  V89  V108  V122(FLYING)  V177..V194
+   0xC40D2 K1   102  102  204   204     ** 1020 **     102      <- TEN TIMES Honda
+   0xC40BC knee 600  600  600   600        3000        3000
+```
+⇒ **the car is running 10× Honda's modelled Coulomb friction**, and Coulomb friction is exactly what
+makes torque ripple without motion. **V177's K1 revert — already carried on V189 through V194 — is
+aimed straight at the lane the measurement points to.**
+⚠ The ramp knee is **3000 vs Honda's 600** and has never been reverted (it was 600 as late as V108).
+A 5× knee makes the ramp shallower, i.e. *less* friction below saturation — aligned with the
+operator's "low apparent friction" requirement, so it is left alone, **but it is non-stock and
+unattributed to any stated intent.**
+
+### ⭐ **THIS RE-ORDERS THE RECOMMENDATION — V189 IS NOW THE BEST BUILD**
+```
+   V189   the grind NOTCH (aimed at a confirmed MOTION oscillation)
+          + the inertia revert and the K1 revert (aimed at the TORQUE path, where the ratchet is)
+          no sign bets - nothing that can change normal driving - both symptoms addressed
+   V190   adds a sign-bet lever on the MOTION path, where the ratchet is NOT
+   V191-3 add detector levers now shown unreachable on BOTH frequency and amplitude,
+          and V193 can change normal driving for no expected benefit
+   V194   = V193 + the probe that confirms the above
+```
+⇒ **RECOMMEND V189.** Everything after it is aimed at the motion path; the measurement says the
+ratchet is not there. **V194 remains worth flying only if the operator wants the `gp-0x6c2c`
+measurement itself** — which is now a confirmation, not a fork.
+
 ## ✅✅ **THE V194 DELTA IS NOW 100 % ATTRIBUTED — and V57 turns out to be the authority build**
 Every payload byte of V194 vs stock is explained. The two stragglers were the **part-number marker**
 (`39990-TVA-A160` → `39990-TVA,A160`, two copies) — a UDS-visible flag that the ECU is modified.
@@ -2144,65 +2198,4 @@ lives here instead.
 ⊕ **Message files are now named distinctly** (`msg-<topic>.txt`) and written immediately before use.
 ⊕ **If you are reading `068aace3` in the log: ignore its title.** It adds the flash-readiness section
 to the V173 drive card and nothing else. Nothing about V132 or the 511 ceiling changed in it.
-
-## ✅✅ **BOTH DRIVE-CARD INSTRUCTIONS CONFIRM AT FULL n — AND THE RATCHET CENTRES AT 8.2 Hz, NOT 8.64**
-The last two subset results are **operational instructions on the card**, so a wrong one mis-specifies
-the drive. Re-tested on **544 windows across 19 routes** (was 244 across 9):
-```
-   |COMMAND| ct   n win   RATCHET exc   GRIND exc    n=9 was (rat / grd)
-   100-250         38      14.0          4.6          17.0 / 5.1
-   250-600        137      15.7          8.1          19.4 / 8.5
-   600-1500        87      32.4         14.5          39.4 / 12.6   <- grind PEAKS
-   1500+          282      47.8          7.0          58.1 / 6.0    <- grind DIES, ratchet grows
-```
-✅ **[EVIDENCE] the ratchet is MONOTONE in command** (14.0 → 47.8, **3.4×**) ⇒ *“include real
-curvature”* stands. ✅ **[EVIDENCE] the grind PEAKS mid-command and DIES above 1500 ct** (4.6 → 14.5 →
-7.0) ⇒ *“take the grind verdict from the mid-command windows”* stands.
-✅ **And the worst rate band strengthens**: 12–25 deg/s gives ratchet excess **155.2** (was 143.1).
-
-### ✅ THE FREQUENCY IS BETTER PINNED THAN BEFORE — AND SLIGHTLY LOWER
-```
-   ratchet peak CV:  3.5 % across speed  ·  4.9 % across rate  ·  8.1 % across command
-                     (n=9 gave 5.5 % / 12.3 % / 7.0 %)
-   peaks across all strata: 7.81 - 9.57 Hz, median ~8.2
-   grind peak: 19.92 - 20.90 Hz, tighter still
-```
-⚠ **The centre is ~8.2 Hz, not the 8.64 Hz quoted throughout this session.** 8.64 came from the
-9-route pooled estimate. ⊕ **No design impact**: V173 targets attenuation across **7–11 Hz**, which
-brackets 8.2 comfortably (its response there is ≈0.50 against 0.476 at 8.64 — a 5 % difference), and
-the notch placement question does not arise because Honda's notch was kept. **The build is unchanged
-and the drive card's bands are unchanged.**
-⊕ **All three operational results held.** The pattern continues: **effect sizes and shapes survive;
-only categorical small-n phrasings have needed correcting.**
-
-## ✅✅✅ **THE CHANNEL RESULT HOLDS — THE ONE THAT MATTERS MOST SURVIVED THE TEST THAT BROKE TWO OTHERS**
-Two n≤9 claims had already fallen on the full corpus, so the **channel survey** — the result that set
-the scorer's channel and underwrites *“every prior 6–9 Hz endpoint read the wrong channel”* — had to be
-re-tested before being trusted further. It was built on **four** routes. On **nineteen**:
-```
-   channel    routes  mean margin  median   min     n=4 result
-   tq         19      28.20        15.52    1.60    7.62
-   cs_tq      19      25.80        14.87    1.64    7.42
-   ws_fl      19       6.13         6.02    3.74    3.95
-   ws_fr      19       5.15         4.91    2.90    4.41
-   cs_rate    19       2.60         1.66    0.68    1.03
-   ang/wang   19       1.86         1.09    0.39    0.83
-   cs_ang     19       1.52         1.16    0.50    0.79
-   sc_tq      19       0.92         0.94    0.47    0.56
-   co_tqcan   19       0.91         0.85    0.48    0.59
-   cc_req     19       0.88         0.82    0.52    0.67
-```
-✅ **[EVIDENCE] the ordering is unchanged and every margin GREW.** Torque leads the next-best channel
-by **5×** (25.8 vs 6.1) and wheel rate by **10×**. ✅ **All three COMMAND channels sit below 1.0 on 19
-routes** — the ratchet is not in the command, now on the full corpus rather than four routes.
-⇒ **the scorer's channel is right, and the “wrong channel” claim stands.**
-
-### ⚠ ONE PHRASING SOFTENS — the same n≤9 pattern, a third time
-I wrote that `cs_rate` scores **“at CHANCE (1.03)”**. On 19 routes it is **2.60 mean / 1.66 median**,
-i.e. **above** its null on most routes. **Wheel rate carries a real but ~10× weaker ratchet signal;
-it is not at chance.** The operational conclusion is unaffected — scoring the ratchet in `cs_rate`
-would still be measuring the weakest usable channel with a floor it barely clears — but the wording
-was a small-n overstatement, exactly like the other two.
-⊕ **Three for three**: every claim of mine that has needed correcting was a **categorical statement at
-n≤9** (*“never moved”*, *“absent in manual”*, *“at chance”*). **Every effect SIZE has held or grown.**
 

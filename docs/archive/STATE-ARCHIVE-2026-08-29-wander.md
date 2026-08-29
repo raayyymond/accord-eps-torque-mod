@@ -1995,3 +1995,64 @@ of my own hypothesis** — *“never moved”* and *“absent in manual”* were
 full corpus made each one weaker. **Small-n presence/absence claims are the failure mode to watch for
 here**, not the effect sizes, which have held.
 
+## ✅✅ **BOTH DRIVE-CARD INSTRUCTIONS CONFIRM AT FULL n — AND THE RATCHET CENTRES AT 8.2 Hz, NOT 8.64**
+The last two subset results are **operational instructions on the card**, so a wrong one mis-specifies
+the drive. Re-tested on **544 windows across 19 routes** (was 244 across 9):
+```
+   |COMMAND| ct   n win   RATCHET exc   GRIND exc    n=9 was (rat / grd)
+   100-250         38      14.0          4.6          17.0 / 5.1
+   250-600        137      15.7          8.1          19.4 / 8.5
+   600-1500        87      32.4         14.5          39.4 / 12.6   <- grind PEAKS
+   1500+          282      47.8          7.0          58.1 / 6.0    <- grind DIES, ratchet grows
+```
+✅ **[EVIDENCE] the ratchet is MONOTONE in command** (14.0 → 47.8, **3.4×**) ⇒ *“include real
+curvature”* stands. ✅ **[EVIDENCE] the grind PEAKS mid-command and DIES above 1500 ct** (4.6 → 14.5 →
+7.0) ⇒ *“take the grind verdict from the mid-command windows”* stands.
+✅ **And the worst rate band strengthens**: 12–25 deg/s gives ratchet excess **155.2** (was 143.1).
+
+### ✅ THE FREQUENCY IS BETTER PINNED THAN BEFORE — AND SLIGHTLY LOWER
+```
+   ratchet peak CV:  3.5 % across speed  ·  4.9 % across rate  ·  8.1 % across command
+                     (n=9 gave 5.5 % / 12.3 % / 7.0 %)
+   peaks across all strata: 7.81 - 9.57 Hz, median ~8.2
+   grind peak: 19.92 - 20.90 Hz, tighter still
+```
+⚠ **The centre is ~8.2 Hz, not the 8.64 Hz quoted throughout this session.** 8.64 came from the
+9-route pooled estimate. ⊕ **No design impact**: V173 targets attenuation across **7–11 Hz**, which
+brackets 8.2 comfortably (its response there is ≈0.50 against 0.476 at 8.64 — a 5 % difference), and
+the notch placement question does not arise because Honda's notch was kept. **The build is unchanged
+and the drive card's bands are unchanged.**
+⊕ **All three operational results held.** The pattern continues: **effect sizes and shapes survive;
+only categorical small-n phrasings have needed correcting.**
+
+## ✅✅✅ **THE CHANNEL RESULT HOLDS — THE ONE THAT MATTERS MOST SURVIVED THE TEST THAT BROKE TWO OTHERS**
+Two n≤9 claims had already fallen on the full corpus, so the **channel survey** — the result that set
+the scorer's channel and underwrites *“every prior 6–9 Hz endpoint read the wrong channel”* — had to be
+re-tested before being trusted further. It was built on **four** routes. On **nineteen**:
+```
+   channel    routes  mean margin  median   min     n=4 result
+   tq         19      28.20        15.52    1.60    7.62
+   cs_tq      19      25.80        14.87    1.64    7.42
+   ws_fl      19       6.13         6.02    3.74    3.95
+   ws_fr      19       5.15         4.91    2.90    4.41
+   cs_rate    19       2.60         1.66    0.68    1.03
+   ang/wang   19       1.86         1.09    0.39    0.83
+   cs_ang     19       1.52         1.16    0.50    0.79
+   sc_tq      19       0.92         0.94    0.47    0.56
+   co_tqcan   19       0.91         0.85    0.48    0.59
+   cc_req     19       0.88         0.82    0.52    0.67
+```
+✅ **[EVIDENCE] the ordering is unchanged and every margin GREW.** Torque leads the next-best channel
+by **5×** (25.8 vs 6.1) and wheel rate by **10×**. ✅ **All three COMMAND channels sit below 1.0 on 19
+routes** — the ratchet is not in the command, now on the full corpus rather than four routes.
+⇒ **the scorer's channel is right, and the “wrong channel” claim stands.**
+
+### ⚠ ONE PHRASING SOFTENS — the same n≤9 pattern, a third time
+I wrote that `cs_rate` scores **“at CHANCE (1.03)”**. On 19 routes it is **2.60 mean / 1.66 median**,
+i.e. **above** its null on most routes. **Wheel rate carries a real but ~10× weaker ratchet signal;
+it is not at chance.** The operational conclusion is unaffected — scoring the ratchet in `cs_rate`
+would still be measuring the weakest usable channel with a floor it barely clears — but the wording
+was a small-n overstatement, exactly like the other two.
+⊕ **Three for three**: every claim of mine that has needed correcting was a **categorical statement at
+n≤9** (*“never moved”*, *“absent in manual”*, *“at chance”*). **Every effect SIZE has held or grown.**
+
