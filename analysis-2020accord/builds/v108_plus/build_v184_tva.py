@@ -240,7 +240,8 @@ def build():
     print(f"  image SHA256 {img_sha}")
     print(f"  .rwd  SHA256 {rwd_sha}")
     print(f"  {_checks[1]}/{_checks[0]} assertions passed")
-    print("  ** The ONLY engaged/manual asymmetry removed is the inertia dose. Single variable. **")
+    print("  ** The only DATA-TABLE asymmetry removed is the inertia dose. The pole retune is a")
+    print("     second engaged-only change (the biquad is engaged-gated) -- discriminate by BAND. **")
     print("=" * 102)
     return img_sha, rwd_sha
 
