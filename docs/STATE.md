@@ -1,5 +1,59 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **THE PLANT MODEL HAS NO DAMPING TERM — `0xC646E` / `0xC40D6` CLOSED AS INERT**
+`FUN_0003b8f6` computes `residual = model − (friction + rate_term)`. The **rate term** looked like
+the ideal lever — a rate term has **exactly zero DC gain** and contributes ∝ω, so scaling it is
+HF-selective **by construction**. It is not a lever, because it is **not there.**
+```
+   rate_term = fVar19[rad/s] * cal(0xC646E)=1428 * 2^-24  =  fVar19 * 8.5115e-05   (clamp +-10)
+     saturates at fVar19 = 117,488 rad/s  =>  PHYSICALLY UNREACHABLE, it is always linear
+
+   regime                              rate rad/s   rate_term   vs the +-10 clamp
+   the RATCHET  7.8 Hz, 0.1 deg           0.0855    7.28e-06        0.0001 %
+   the RATCHET  7.8 Hz, 1.0 deg           0.8554    7.28e-05        0.0007 %
+   brisk lane change ~1 Hz, 30 deg        3.2899    2.80e-04        0.0028 %
+   fast hand slew ~2 Hz, 90 deg          19.7392    1.68e-03        0.0168 %
+   friction, same function, |model|=15:  14.94 -> CLAMPED to 10.00
+```
+⇒ **[EVIDENCE] the damping term is 4–6 ORDERS OF MAGNITUDE below the friction term it is summed
+with.** ⇒ **and NO DOSE REVIVES IT**: at the u16 ceiling `cal = 65535` it still reaches
+**3.34e-04 = 0.0033 %** of the clamp at ratchet amplitudes.
+⇒ **`0xC646E` is STRUCTURALLY INERT and `0xC40D6` (its EMA pole) is inert by consequence. Both
+CLOSED — do not propose either at any dose.** Both **virgin across all 153 images.**
+⭐ **The structural fact worth keeping: Honda's observer models FRICTION but NOT DAMPING.** The
+plant model is friction-only, so real viscous damping is un-modelled and lands in the residual.
+
+### ✅ A METHOD FIX THAT MATTERS FOR EVERY FUTURE READER COUNT
+My first scan reported **20 accesses** to `0xC646E`. **Most were ASCII.** `0x746E` is `"nt"`
+little-endian, so `68 61 6c 74` (*"halt"*) at `0xBB222` and `73 79 6e 74` (*"synt"*) at `0xBB4A8`
+matched as if they were `disp16`. **The missing filter is `reg1`:** a tp-relative load must carry
+**`hw1 & 0x1F == 5`** (tp = r5), plus a Format-VII opcode `>= 0x38`.
+```
+   cell        loose scan   WITH reg1==tp filter    independent check
+   0xC646C         8                5              memory says ~6 readers        OK
+   0xC63AC         -                1  @0x38202    lineage: "sole reader ld.hu 0x73ac,tp,r13
+                                                    @0x38202"                    EXACT MATCH
+   0xC646E        20                1  @0x3BB92    single-reader, FUN_0003b8f6
+   0xC40D0         -                1  @0x3BB22    0xC40BC -> 1 @0x3BAB4
+```
+⇒ **The `0xC63AC` result reproduces a fact recorded independently in the lineage, to the address.**
+🛑 **Ghidra CANNOT answer this** — `get_xrefs_to 0xC646E` returns *"No references found"*, because
+tp is a runtime register and Ghidra never resolves tp-relative loads to absolute cal addresses.
+**For tp-relative cals, the filtered Python scan is the ONLY instrument. Add the `reg1` filter.**
+
+### ⭐ ONE HF-SELECTIVE CANDIDATE REMAINS — AND ITS SIGN IS UNRESOLVED
+`0xC63A6`, the weight on **`gp-0x6b26`, the INERTIA lane** (`−K·α`, an ACCELERATION) in
+`FUN_00038148`. **Acceleration is exactly zero at DC and scales as ω²** ⇒ moving this weight is
+**HF-selective by construction, with zero steady-state cost** — the same attractive property the
+rate term had, but on a lane that is **not** negligible. **Virgin: 1024 in all 153 images.**
+🛑 **NOT PROPOSED — I DERIVED THE DIRECTION TWICE AND GOT OPPOSITE ANSWERS.** The chain is
+`lanes → ×polarity(−1) → ×2639 → IIR → gp-0x374c → MODEL − (gp-0x374c>>4) → iVar6 → gp-0x6b70 →
+gp-0x6ad6 → error → assist`, and whether a bigger lane weight RAISES or LOWERS HF assist depends on
+how the `−1` composes with *"residual ↓ ⇒ more assist"*. **An unresolved sign is not a build** — the
+same rule that held `0xC40D0` back until the paired form closed its gate.
+⇒ **To close it**: the flown `0x14A` comparator rungs already carry `sign(gp-0x6b70)`; one probe
+that also carries `sign(gp-0x6b26)` on the same frame settles it.
+
 ## ✅ **V152/V153's PREMISE CHECKED — THE OBSERVER LOOP DOES CARRY 6–9 Hz, MODESTLY**
 Before betting a drive on the matched-pole move, I asked whether the loop it attacks actually
 carries the symptom band. **Control run FIRST** (the kit's own rule), same signal, same route,
@@ -2194,373 +2248,8 @@ that endpoint have the power to see the predicted effect?"** Three build familie
 (the `Y` fork, the ceiling raise, the f₀ ladder) fail that question **after** the fact. Asking it
 first would have retired them in minutes.
 
-## 🛑🛑🛑 **RETRACTION: I CITED V94's +137° AS "MEASURED" — THE KIT LABELS IT MIXED/UNRESOLVED**
-Last section I wrote *"the sign, for once, is measured"* and concluded α2 = 5 helps the
-oscillation. **That rested on a number the kit explicitly says cannot be used:**
-> returned **MIXED/UNRESOLVED**: gain rise 2.29× (viscous 1.0, inertial 4.7), mean phase **+137°**
-> (viscous 0°, inertial +90°), and the ±2-sample **skew sweep swings 5×** (6–9 Hz: 21 / 31 / 100 /
-> 76 / 68). **`gp-0x6b26` is too small (p50 4.8 ct) and sign-flips too fast for a two-message
-> reconstruction** … **Ghidra settled it; the telemetry could not.**
-🛑 **A ±2-sample skew moves that phase from 21° to 100°.** It is not a usable measurement, and
-**both** of my α2 conclusions rested on it:
-✘ *"+137° is damping-ish ⇒ α2 = 5 helps the oscillation"* — **RETRACTED.**
-✘ and the reversal I was about to write this section (*"+137° is past inertial ⇒ anti-damping ⇒
-revert α2"*) — **also unfounded, and NOT acted on.**
-⊕ Note the failure mode: I read a phase figure out of a memory **without reading the sentence
-after it**, which said the measurement failed. The convention footnote (*viscous 0°, inertial +90°*)
-was in the same line and I initially mis-mapped it too.
-
-### ✅ WHAT GHIDRA *DID* SETTLE — and it changes the ENDPOINT, not the dose
-[[accord-gp6b26-is-inertia-not-damping]], traced in `FUN_00041464` and **pinned in assembly**:
-**`gp-0x6c2c` is a FIRST DIFFERENCE of the filtered motor rate = ACCELERATION**, so
-**`gp-0x6b26` = −K × acceleration is an APPARENT-INERTIA term, NOT a damper.**
-⇒ **an inertia term at a resonance SHIFTS f₀; to first order it adds no damping at all.**
-⇒ **"more" and "less" do not map onto better or worse AMPLITUDE** — which is why four builds of
-α2 dosing produced no clean amplitude result, and why my whole "delivered damping component"
-table was answering the wrong question.
-
-### ⭐ THE RIGHT ENDPOINT IS ALREADY IN THE KIT
-[[accord-f0-crossover-is-the-endpoint]]: **f₀ = 21.90 / 23.61 / 24.90 Hz at 1× / 4× / 6×** — the mode
-**frequency moves with dose**, exactly as an inertia term predicts, and that memory notes it
-**needs no symptomatic drive**. ⇒ **any future `gp-0x6b26` edit should be scored on the MODE
-FREQUENCY, not on band amplitude.** ⊕ This also explains the fixed **~19.9 Hz** peak measured
-earlier this session: it is the *current* f₀ under the current dose, not an immovable object.
-
-### ✅ WHAT SURVIVES THIS RETRACTION
-- **α2's frequency-dependence is untouched** — inert at 20 Hz, 2.26× at 7.79 Hz. That is a
-  **magnitude ratio** and needs no sign. What is retracted is the claim about *which way it helps*.
-- **The knee (V135) and Lever A (V133) are unaffected** — neither rests on `gp-0x6b26`'s phase.
-  V135 is a **measured duty ladder**; V133 is a **measured 42× symptom result**.
-- ⇒ **the flight set does not change: V133 first, then V134 or V135.**
-🛑 **STANDING RULE, recorded**: when quoting a number out of a memory, **read the sentence after
-it.** This kit's memories carry their own retractions inline, and I have now been caught by that
-twice in one session (V107's reconstructed 32.32 %, and V94's +137°).
-
-## ✅✅ **α2 IS AN OSCILLATION LEVER, NOT A GRIND LEVER — AND α2 = 5 IS ALREADY RIGHT**
-The α2 ladder's delivered effect is **strongly frequency-dependent**, which no session had checked:
-```
-   delivered component of the gp-0x6b26 lane, RATIO vs alpha2 = 22 (stock)
-   alpha2     7.79 Hz    6 Hz     9 Hz    20 Hz    26 Hz
-      14        1.31     1.32     1.30     1.16     1.08
-       8        1.83     1.91     1.77     1.19     0.95
-       5        2.26     2.52     2.08     0.98     0.70
-       3        2.38     2.99     2.04     0.67     0.44
-```
-⇒ **INERT at the grind band (0.98× at 20 Hz) but MORE THAN DOUBLED across the entire 6–9 Hz
-ratchet/oscillation band (2.26× at 7.79 Hz).** The ladder was driven 22→14→8→5 **for grinding**,
-and its real effect landed in a band nobody examined. ⊕ Ratios between α2 settings are
-**convention-independent** — this does not depend on my unresolved phase sign.
-
-### ✅ THE SIGN, FOR ONCE, IS MEASURED — AND IT SAYS α2 = 5 IS ALREADY CORRECT
-V94 measured `gp-0x6b26` at **+137/+139°**, between inertia (90°) and damping (180°) ⇒
-**damping-ish at 6–9 Hz**. So **more** of the term there means **more damping**.
-⇒ **α2 = 5 delivers 2.26× the damping at 7.79 Hz that stock did** ⇒ it is **helping the
-peak-turn oscillation**, the operator's third complaint.
-🛑 **I was one step from building an α2 revert** (5 → 22) on the reasoning that the ladder was
-inert and therefore wasted. **V94's measured phase says that revert would HALVE the damping at
-7.79 Hz and make the oscillation worse. NOT BUILT.**
-
-### ⭐ THE REATTRIBUTION, WHICH IS THE POINT
-```
-   lever            grinding (20 Hz)      oscillation (7.79 Hz)
-   alpha2 22 -> 5   INERT (0.98x)         2.26x MORE damping     <- an OSCILLATION lever
-   knee 3000->3600  saturation -> 0.0000  --                     <- the GRIND lever (V135)
-   Lever A (V62)    42x MEASURED at creep --                     <- the GRIND lever (V133)
-```
-⇒ **Each of the three complaints now has a distinct, non-overlapping lever**, and the kit had
-been attributing α2 to the wrong one for four builds. ⊕ It also explains why V124's α2 = 5 *"bought
-so little"* on grinding — **it was never a grind lever.**
-⚠ [BELIEF] the sign rests on **V94's measurement**, not on my transfer function, whose reference
-frame remains unreconciled (5–76° vs V94's +137/+139°). If V94's phase is ever overturned, this
-conclusion inverts — and the α2 revert becomes the right build instead.
-
-## ✅✅ **V135 BUILT — THE LAST *MEASURED* RUNG ON THE RELAY, AND I CLOSED IT TOO EARLY**
-This session recorded *"the knee/K1 ladder is EXHAUSTED at V122/V124"*. **That closure was too
-broad.** It is true only of **GAIN-HOLDING** steps, which need `K1 = 1122` at knee 3300 — above the
-1023 ceiling. **Raising the knee with K1 HELD is a different move**, and the note did not cover it.
-
-### ⭐ WHY THE KNEE AND NOT α2 — the reattribution that motivates it
-GATE 2 at the creep band showed the **α2 ladder is nearly INERT at 20 Hz**: |H| falls 7.24→4.10
-(1.77×) while the phase rotates 56.3°→16.0°, leaving the delivered component **flat**
-(−4.01 → −3.94) — a **ratio**, so it survives any constant sign/phase offset.
-⇒ **V122's *"better, rare moments"* came from the KNEE/K1, not α2** ⇒ **the Coulomb relay is the
-live creep lever**, and this is its last measured rung.
-
-### ✅ THE EDIT IS **ON** THE MEASURED LADDER, IN THE SYMPTOM'S OWN REGIME
-```
-   0xC40BC   3000 -> 3600      K1 (0xC40D2) HELD at 1020
-
-   MEASURED saturation duty, engaged HANDS-OFF, 5-10 mph, cmd >= 2048:
-     knee  600 -> 0.7439    1800 -> 0.2353    3600 -> 0.0000   <- THIS BUILD
-     knee 1200 -> 0.4810    2400 -> 0.0484
-```
-🛑 **3600 is a MEASURED point reading 0.0000 — not an interpolation** — and the ladder was
-measured in **ENGAGED HANDS-OFF CREEP**, precisely the regime of the remaining symptom.
-✅ **And the cost goes the way he asked**: slope **0.003984 → 0.003320 = ×0.83, 17 % LESS
-friction**, saturation **53.1 → 63.7 °/s**. His standing instruction was *"low apparent steering
-mass and friction to LKAS **AND** no ratcheting"* ⇒ **this is the only lever in the kit's record
-that moves BOTH the right way.**
-✅ **K1 untouched at 1020** (ceiling 1023, above which friction exceeds `|model|` and the residual
-inverts). The builder asserts K1 held, the ladder membership, and that friction decreases.
-
-image `777dba0c87ada17b7d66995a9c7a98472bb358816020c8a55f65a91e2821aa89` ·
-rwd `6516aa2a565433b8fbe7fbaeb31ff5cc7f1791ebf546799785e2f7e4f88bbd1e` · **80/80, CRC 50/50**,
-twin verifier **PASS**. 2 payload bytes on a V133 base.
-
-### 🛑 THE FLIGHT SET IS NOW THREE SINGLE-VARIABLE FOLLOW-UPS FROM ONE BASE
-```
-   V133  (FLY FIRST)  V62's Lever A restored     -- MEASURED 42x on this exact symptom
-   V134               + FactorC Y[0] 0 -> 60     -- damping where there is currently NONE
-   V135               + knee 3000 -> 3600        -- relay saturation to a MEASURED 0.0000
-```
-**All three are single-variable against V133**, so whichever is flown second is interpretable.
-🛑 **Fly V133 first regardless** — it restores the one lever with a measured 42× on this symptom,
-off the car since ~V80; flying V134 or V135 first would confound that test.
-⚠ [BELIEF] for V135: the duty ladder is a **MECHANISM** measurement. The link from saturation duty
-to what the operator *hears* rests on his own dose-response across V111/V112/V122, not on an
-instrumented symptom endpoint.
-
-## 🛑🛑 **THE α2 LADDER IS NEARLY INERT AT 20 Hz — MAGNITUDE FALLS, PHASE ROTATES, PRODUCT FLAT**
-GATE 2 for `gp-0x6b26` **at the creep band**, which had never been asked. Lane phase vs motor rate:
-```
-   alpha2      18 Hz          20 Hz          22 Hz          26 Hz
-     22    59.5 deg -0.51  56.3 deg -0.55  53.2 deg -0.60  47.3 deg -0.68
-     14    50.0 deg -0.64  46.0 deg -0.69  42.3 deg -0.74  35.1 deg -0.82
-      8    34.4 deg -0.83  29.8 deg -0.87  25.6 deg -0.90  18.0 deg -0.95
-      5    20.4 deg -0.94  16.0 deg -0.96  12.1 deg -0.98   5.2 deg -1.00
-
-   alpha2 22 at 20 Hz: |H| = 7.24, arg 56.3 deg, delivered component = -4.01
-   alpha2  5 at 20 Hz: |H| = 4.10, arg 16.0 deg, delivered component = -3.94
-```
-✅ **[EVIDENCE, convention-independent] the MAGNITUDE falls 1.77× across the ladder while the PHASE
-rotates by exactly enough to cancel it — the delivered component at 20 Hz is FLAT (−4.01 → −3.94).**
-⇒ **the α2 ladder 22→14→8→5 has been very nearly INERT at 20 Hz in delivered terms.**
-
-### ⭐ WHICH REATTRIBUTES THE ONE IMPROVEMENT THE OPERATOR REPORTED
-V122 changed **three** things vs V112: knee 1800→3000, K1 612→1020, **and α2 14→8**. The operator
-reported grinding *"better, rare moments"*. **If α2 is inert at 20 Hz, that improvement came from
-the KNEE/K1 (the Coulomb relay), not from α2.**
-⇒ **testable reattribution**, and it matters: the α2 ladder is treated across this kit as *the*
-selective grind lever. ⊕ It also explains why pushing α2 further (V124's 5) bought so little.
-⚠ The earlier "α2 selectivity 5.07× toward grind #1" figure was a **|H| magnitude** ratio — it did
-**not** account for the phase rotation, which cancels it at 20 Hz.
-
-### ⚠ WHAT I WILL **NOT** CLAIM — the SIGN
-My phase reference gives **5–76°** across the band, but the kit **measured** `gp-0x6b26` at
-**+137/+139°** (V94) and calls it a real damper. That is a **60–130° disagreement**, so my reference
-frame is **unverified** — I did not track the signs of `Y` (negative), `polarity(gp-0x6752)` (−1)
-or the aggregator's summation convention. ⇒ **I do NOT conclude "anti-damping"**, which is what the
-raw numbers would suggest; that would be the exact overreach this session keeps catching.
-🛑 **What would settle it**: reconcile this transfer function against V94's measured +137/+139°
-on the SAME signal, then re-read the sign. Until then only the **flatness across α2** stands — and
-that result is a RATIO between α2 settings, so it survives any constant sign/phase offset.
-
-## ✅✅✅ **THE CREEP MECHANISM IS CLOSED — AND V134 IS BUILT AS THE FOLLOW-UP**
-Screening predictors of **18–22 Hz AT CREEP** (the actual remaining symptom) first showed every
-channel moving **both** bands 3–9× — a pure **activity** confound. Dividing activity out by taking
-the **within-window ratio (18–22)/(30–40)**, with the adjacent 13–18 band as a second control:
-```
-   predictor        (18-22)/(30-40) hi/lo   (13-18)/(30-40) ADJ CTRL   verdict
-   driver torque    0.611 [0.461,0.879]     1.011 [0.786,1.295]        SHAPE CHANGE
-   |steer angle|    0.813 [0.574,1.046]     0.984 [0.768,1.256]        null
-   LKAS cmd         1.252 [0.949,1.760]     0.974 [0.709,1.269]        null
-   |steer rate|     1.084 [0.789,1.413]     1.324 [1.021,1.600]        null
-```
-983 engaged creep windows, 9 routes. ✅ **DRIVER TORQUE DAMPS 18–22 Hz band-specifically (0.611×)**
-while the adjacent band does not move. ✅ **The LKAS command is NULL at creep** — the opposite of
-mid-speed ⇒ **the creep mode is DAMPING-limited, not excitation-driven.**
-
-### ⭐ THE CHAIN, END TO END
-1. At creep the dominant band is **18–22 Hz** (absolute 3.849, largest of any band at any speed),
-   and its peak is a **FIXED ~19.9 Hz resonance** (`corr(speed,peak) = -0.028`, slope **-0.006** vs
-   **0.13–0.53** for any wheel order) ⇒ **not a road/tyre line.**
-2. **Driver torque damps it** — measured, band-specific, activity-controlled.
-3. **Hands-off, that damping is absent.**
-4. The firmware's own base-assist damper is **structurally ZERO below 35 km/h**
-   (modes 26/27 `FactorC X=[35,60,80,140] km/h, Y=[0,234,429,908]`).
-⇒ **HANDS-OFF AT CREEP THE MODE HAS NO DAMPING FROM EITHER SOURCE** — exactly the condition under
-which the operator reports it.
-
-### ✅ V134 BUILT — 2 payload bytes, and it is NOT V80
-```
-   0xD77DA  FactorC Y[0] mode 26  0 -> 60    Y becomes [60, 234, 429, 908]
-   0xD77EE  FactorC Y[0] mode 27  0 -> 60    Y becomes [60, 233, 426, 875]
-```
-image `5451646d0d4c81b68c934ff522d9cc4a3f953fc36369c5c7e8848e8bcb815ac1` ·
-rwd `5eafbdf54d989391d2a4075d24650d53b0a76612d5f9f72beafdb11c63730bee` · **91/91, CRC 50/50**,
-twin verifier **PASS**. **ENGAGED modes only** — manual 24/25 byte-untouched.
-🛑 **V80 set FactorC to a FLAT 566 and produced the worst grinding on record** — a **plateau**
-that pushed the product past the ceiling into a **relay**. V134 differs on both counts, and the
-builder **asserts** both:
-- **MONOTONE GATE** — `Y` is strictly increasing (a **ramp**, not a plateau); **`X` untouched**;
-- **CEILING GATE** — creep product **≤ 60** (≤ 180 with FactorE headroom) vs the **512** ceiling
-  ⇒ **no saturation**; and 60 is **9.4× smaller** than V80's 566.
-✅ The rate objection is dead: task 5 is bounded **≥ 250 Hz** ⇒ this lane **can** act at 18–22 Hz.
-
-### 🛑 FLIGHT ORDER — V133 FIRST
-**V133 restores V62's Lever A, which MEASURED 42× on this exact symptom** and has been off the car
-since ~V80. **Flying V134 first would confound that test.** ⇒ **V133, then V134 only if the rare
-creep grind survives it.**
-⚠ [BELIEF] the dose. **60** is chosen to sit ~9× under V80's and far under the ceiling; it is
-**not** derived from a measured creep FactorE, which the cache does not contain. If it is too
-weak the ramp has room; if too strong, the failure mode is V80's and shows as saturation on the
-first drive.
-
-## ⭐ **NEXT CANDIDATE, SIZED BUT NOT BUILT: `FactorC Y[0]` — the damper is DEAD at creep**
-With the target corrected to **rare LOW-SPEED grind #1**, one structural fact stands out: the
-base-assist damper is **structurally zero** exactly where the symptom is.
-```
-   mode 26/27 FactorC   X = [2240, 3840, 5120, 8960] = [35.0, 60.0, 80.0, 140.0] km/h
-                        Y = [   0,  234,   429,  908]        (mode 27: [0, 233, 426, 875])
-   below X[0] the LERP returns Y[0] = 0  =>  NO base-assist damping below 35 km/h, at all.
-```
-✅ **The ceiling check PASSES** — the failure mode that destroyed V80. Ceiling LERP is
-**Y = [512, 1024]**; an earlier/raised ramp keeps the product at **≤ 70** through creep
-(**≤ ~168** even allowing FactorE's 2.4×) ⇒ **far under 512, no saturation, no relay.**
-🛑 **But the obvious version is mis-targeted**: moving `X[0]` 2240→640 gives **ZERO below
-10 km/h**, and the operator's remaining grinding is at **2–5 mph (3–8 km/h)**. The edit that
-actually reaches it is **`Y[0]` 0 → ~60**, which:
-- puts a small damping term at **every** speed below 35 km/h, including 3–8 km/h;
-- is **9.4× smaller than V80's 566**, and V80's failure was a **flat 566 everywhere** that pushed
-  the product past the ceiling into a relay — not the non-zero `Y[0]` as such;
-- keeps `Y` **strictly monotone** (60, 234, 429, 908) ⇒ no plateau in the ramp;
-- touches **ENGAGED modes 26/27 only** ⇒ manual feel byte-untouched;
-- acts in a lane whose task rate is now bounded **≥ 250 Hz** ⇒ it **can** damp 18–22 Hz.
-
-### 🛑 WHY IT IS **NOT** BUILT — it would confound the one clean test available
-**V133 already restores the lever that specifically and measurably fixed this exact symptom**:
-V62's Lever A, **18–22 Hz at ENGAGED CREEP, ×0.124 [0.036, 0.387], 42× at |rate| 16–32 °/s,
-30–40 Hz control ~1.0**, operator: *"Original grinding at 2–5 mph is GONE!"* — **off the car since
-~V80.** Adding an untested damper edit on top would make the drive uninterpretable and violates the
-standing law that **every build be interpretable from ONE short symptomatic drive.**
-⇒ **Fly V133 first.** If the rare low-speed grind survives it, `FactorC Y[0]` → 60 on modes 26/27
-is the next build, **already sized and ceiling-checked**, 4 payload bytes.
-⚠ [BELIEF] the dose. `Y[0]` = 60 is chosen to sit ~9× under V80's and far under the ceiling; it is
-**not** derived from a measured creep FactorE, which the cache does not contain.
-
-## 🛑🛑🛑 **OPERATOR CORRECTION 2026-08-28: MID-SPEED GRINDING IS FIXED — ONLY RARE LOW-SPEED REMAINS**
-Verbatim: *"Why are we talking about mid speed grinding in V133? This has been fixed, its just a
-rare low speed grinding #1 since my last drive."*
-🛑 **Two sections of band-hunting (21–26 Hz, then 26–31 Hz) were aimed at 15–40 mph — a symptom
-he no longer has.** Both are superseded as a TARGET; their METHOD findings stand (share is
-confounded; the ~19.9 Hz peak is speed-invariant, not a wheel order).
-
-### ✅ THE CREEP REGIME — where the remaining symptom actually is
-```
-   10-24 km/h, ABSOLUTE band power     6-9    13-18   18-22   21-26   26-31   30-40 CTRL
-   r22 (V112)  grinding present      1.817   1.448   3.226   2.900   0.655   0.315
-   r24 (V122)  better, rare          1.227   1.080   1.913   2.194   0.469   0.308
-   V122/V112                         0.675   0.746   0.593   0.757   0.715   0.977
-```
-✅ **18–22 Hz is the DOMINANT band at low speed (3.226, the largest of any)** and **improved the
-most** V112→V122 (**0.593**) while the **30–40 Hz control stayed FLAT at 0.977** ⇒ a **band-specific**
-improvement that tracks his own *"better"* verdict.
-⚠ **Low n** — creep windows are scarce (26–31 per route). The direction is consistent across all
-bands; only 18–22's margin over the control is clear.
-
-### ⭐ THIS PUTS V133's LEVER A EXACTLY ON TARGET
-**V62 was measured at 18–22 Hz, ENGAGED CREEP**: ×0.124 [0.036, 0.387], **42×** at |rate|
-16–32 °/s, **30–40 Hz control ~1.0**, operator: *"Original grinding at 2–5 mph is GONE!"*
-🛑 **`0x3AB76` / `0x3AC20` have been byte-STOCK since ~V80**, behind a `FROZEN` entry that
-asserted their own absence ⇒ **that is very likely why the rare low-speed grinding returned**, and
-**V133 restores them.**
-⇒ **RETRACTS this session's earlier caveat** *"V62 fixed the creep symptom, not the current one"*
-— **the current one IS the creep symptom.** V133's Lever A restore is the **direct** fix for the
-symptom that actually remains, not an incidental inclusion.
-
-### ✅ WHAT THE DRIVE MUST NOW CONTAIN — priority inverted
-`SCORING-V131-preregistered.md` listed **engaged creep 2–10 mph with real steering** as item (1) of
-four. **It is now the PRIMARY content of the drive**, because that is where both the remaining
-symptom and V62's 42× live. Mid-speed and highway drop to context. ⊕ `score_v131_grind.py` should
-be run on the **creep** stratum, and its 18–22 Hz row is the endpoint — **not** 21–26 Hz.
-
-## 🛑🛑 **CORRECTION: BAND *SHARE* WAS CONFOUNDED — IN ABSOLUTE POWER ONLY 26–31 Hz MATCHES**
-Last section I selected 21–26 Hz using band **SHARE**. **Share is normalised**, so it moves when
-*either* end moves — the exact trap already recorded in this session (*"a ratio moves when either
-end moves; always report numerator and denominator"*). Redone in **ABSOLUTE** power:
-```
-   band          creep<10   10-24    24-64    >=64     24-64/creep   falls>64?
-    6-9  Hz       2.767     2.729    0.549    0.190       0.20x        yes
-   13-18 Hz       1.569     1.814    0.804    0.503       0.51x        yes
-   18-22 Hz       3.849     4.054    0.920    0.303       0.24x        yes
-   21-26 Hz       2.490     4.657    1.260    0.433       0.51x        yes
-   26-31 Hz       0.433     1.003    0.547    0.310       1.26x        yes   <- ONLY band > 1
-   30-40 Hz       0.392     0.597    0.248    0.177       0.63x        yes
-```
-🛑 **Every band falls with speed in absolute terms except 26–31 Hz.** 21–26 Hz's absolute power at
-24–64 km/h is **half** its creep value ⇒ **it does NOT match the operator's profile**; its rising
-*share* was an artefact of the 1–4 Hz denominator collapsing with speed.
-⇒ **[EVIDENCE] 26–31 Hz is the only band genuinely higher at road speed than at creep, and lower
-again at highway** — the operator's stated shape.
-⚠ **Imperfect**: 26–31 Hz peaks at **10–24 km/h (1.003)**, not 24–64 (0.547) ⇒ *"low at creep, high
-at low-mid speed, low at highway"*, a good but **not exact** match to *"15–40 mph"*.
-
-### ✅ AND THE MODE ITSELF IS A FIXED RESONANCE, NOT A ROAD EFFECT
-Peak of the 12–34 Hz region, 1,443 steady-speed engaged windows with prominence ≥ 3:
-```
-   corr(speed, peak Hz) = -0.028      fit  f = -0.0058*v + 19.85
-   median peak 19.5-20.7 Hz from 10 to 100 km/h   (IQR widens 16.4-21.1 -> 12.9-26.2)
-   a wheel order needs slope 0.13-0.53;  measured slope is -0.006, ~50x too small
-```
-⇒ **a FIXED ~19.9 Hz resonance, speed-invariant, broadening with speed — NOT a wheel order**, so
-it is a firmware/mechanical object and **potentially addressable**. ⊕ Consistent with
-[[accord-ratchet-is-a-lightly-damped-resonance]] (Q 14–29), located here at ~20 Hz.
-
-### ⭐ THE KIT ALREADY HAS A MEASURED LEVER ON 26–31 Hz — AND V133 CARRIES IT
-**V84 drove 26–31 Hz burst duty 96.6 % → 25.1 % → 2.54 %** (V80→V81→V84), longest ring
-**18.29 → 11.25 → 1.34 s**, on 3.4–4.9× the exposure, with negative control and IMU falsifier both
-passing. V84 = **Lever B** (`0x3AA96` C5→FB, `0xC6446` 512→5244) **+ the damper returned to Honda's
-values in BOTH engaged columns.**
-✅ **V133 carries all of it**: `0xC6446` = 5244, `0x3AA96` = fb, FactorC/FactorE at Honda's stock.
-⇒ **the best measured lever on the band that matches his profile is ALREADY on the flight build.**
-
-🛑 **Net effect of this section:** it **retracts** last section's *"21–26 Hz is the validated
-band"*, replaces it with **26–31 Hz on absolute power**, and shows the corresponding lever is
-already carried — which is a better-founded reason to fly V133 than the one I gave last time.
-
-## 🛑🛑🛑 **V62 FIXED THE *CREEP* SYMPTOM — THE CURRENT ONE IS A DIFFERENT BAND AT A DIFFERENT SPEED**
-The operator gave a constraint I had never tested: **grinding at 15–40 mph (24–64 km/h), NONE below
-5–6 mph.** That is a **within-drive** speed profile — immune to the route-variance floor that has
-blocked every between-build comparison this session. Pooled over **8 routes / 4,750 engaged
-windows**, which band reproduces it?
-```
-   band          creep<10    24-64     >=64    24-64 / creep
-    1-4  Hz       0.51515   0.17776  0.09867      0.35x
-    6-9  Hz       0.03547   0.07985  0.04803      2.25x   <- matches shape (the RATCHET band)
-   13-18 Hz       0.03130   0.11571  0.11147      3.70x   (flat above 64)
-   18-22 Hz       0.10338   0.10237  0.07187      0.99x   <- FLAT: does NOT match
-   21-26 Hz       0.05963   0.13557  0.11837      2.27x   <- MATCHES: up from creep, down at highway
-   26-31 Hz       0.00622   0.05167  0.09114      8.31x   (keeps RISING above 64)
-   30-40 Hz       0.00585   0.03185  0.04424      5.44x   (keeps RISING)
-```
-✅ **At creep, 18–22 Hz DOMINATES (0.103 vs 21–26's 0.060). At 24–64 km/h, 21–26 Hz DOMINATES
-(0.136 vs 18–22's 0.102).** Only **21–26 Hz** and the **6–9 Hz ratchet** reproduce his full shape —
-up from creep **and down again at highway**. The bigger risers (26–31, 9–13, 30–40, 40–49) all keep
-climbing above 64 km/h, contradicting *"15–40 mph"*.
-⇒ **[EVIDENCE] 21–26 Hz is the right band for the CURRENT complaint**, validated against the
-operator's own speed report rather than assumed.
-
-### 🛑 AND THAT UNDERCUTS WHAT I CALLED V133's "MOST DEFENSIBLE CONTENT"
-**V62's 8–42× result was measured at 18–22 Hz** — the band that is **FLAT with speed (0.99×)** and
-**dominant AT CREEP**. And V62's operator report was *"Original grinding at **2–5 mph** is gone!"*
-⇒ **V62 fixed the CREEP symptom, in the CREEP band.** The current complaint is **15–40 mph in
-21–26 Hz** — a **different symptom, at a different speed, in a different band.**
-⇒ **Restoring Lever A (V133) should NOT be expected to fix the current grinding.** It restores a
-real, measured, control-passing fix — **for the symptom the operator already reported as fixed.**
-⊕ This is precisely what his correction *"grind #1 has moved to a new, higher frequency"* means,
-and it is now **quantified** rather than taken on report.
-
-### ⭐ WHAT THIS CHANGES — the target was mis-specified, not the levers
-Every grind lever this kit has evidence for was scored at **18–22 Hz** (V62) or at **<16 km/h**
-(V106's extinction, measured *"engaged, <16 km/h"*). **Both are the CREEP regime.**
-🛑 **NO lever in this kit's record has ever been scored against 21–26 Hz at 24–64 km/h — the
-operator's actual current symptom.** That is why twelve builds have not closed it: **they were
-optimised against the wrong endpoint.**
-⇒ **The next build should be chosen by, and scored against, 21–26 Hz at 24–64 km/h** — and
-`SCORING-V131-preregistered.md` already requires a drive containing that band. ✅ `score_v131_grind.py`
-already reports 21–26 Hz with a 30–40 Hz control and a validated null; **it is pointed at the right
-band, which is now confirmed rather than assumed.**
 
 ---
 
-🛑 **Older sections split to `docs/archive/STATE-ARCHIVE-2026-08-29.md` on 2026-08-29** when this file reached 229 KB against the 256 KB cap.
+🛑 **9 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** on 2026-08-28 to hold this file under
+the 145 KB working target. Superseded detail lives there; it is a record, not an instruction.
