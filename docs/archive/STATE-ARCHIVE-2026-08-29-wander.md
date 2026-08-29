@@ -2213,3 +2213,39 @@ works whether the mode is command-excited or self-excited.
 ⊕ It also explains the **monotone command scaling** (excess 14.0 → 47.8): more command activity means
 more broadband excitation reaching a fixed-frequency mode, **not** more energy at 8.2 Hz specifically.
 
+## ⚠ **HYPOTHESIS, UNPROVEN: IS THE RATCHET AT EXACTLY 100/12 Hz? — AND THE DRIVE CAN SETTLE IT**
+🛑 **Every ratchet frequency I have quoted this session — 7.81, 8.01, 8.20, 8.40, 8.59, 8.79 — is an
+exact FFT BIN CENTRE** at 0.1953 Hz spacing. I never resolved the frequency, only which bin it fell
+in. That is worth knowing because **100/12 = 8.3333 Hz** sits inside the measured range, and an exact
+submultiple of the 100 Hz frame rate would mean a **firmware cycle** rather than a mechanical mode — a
+completely different lever.
+```
+   parabolic peak interpolation on pooled continuous-run PSDs
+     nperseg=512   19 routes   mean 8.1682 Hz  sd 0.7027   range 6.78-10.19
+     nperseg=1024  12 routes   mean 8.2958 Hz  sd 0.8009   range 7.35-10.42
+
+     100/11 = 9.0909  excluded at 2 SE     100/13 = 7.6923  excluded at 2 SE
+     100/12 = 8.3333  consistent -- 0.5 % from the mean at nperseg=1024
+```
+⚠ **[HYPOTHESIS, NOT EVIDENCE] and two reasons to distrust it:**
+1. **I selected the candidate submultiples AFTER seeing the range.** Finding that a mean lands near
+   one of three post-hoc candidates is weak, and I have no pre-registration for it.
+2. **The per-route scatter (sd 0.80 Hz) is far larger than the interpolation error.** A fixed-frequency
+   mode measured at df = 0.098 Hz should not scatter that much, which argues the frequency **genuinely
+   varies** route to route — i.e. against an exact submultiple. The alternative reading is that the
+   estimator hops between nearby peaks on a noisy median PSD, which would inflate the scatter without
+   the frequency moving. **These are not distinguishable at this window length.**
+
+### ✅ WHAT WOULD SETTLE IT — AND THE V173 DRIVE CAN SUPPLY IT FOR FREE
+No route in the corpus has **20 s of unbroken engaged creep**, which is why the resolution ceiling is
+0.098 Hz. **A single 20-second continuous pass gives df = 0.05 Hz and pins the frequency to ~0.5 %
+on that one route** — enough to separate 8.3333 from a nearby mechanical value.
+⊕ The drive card already asks for **15 s continuous**. **Stretching one pass to 20 s costs nothing and
+adds this test**, which is why it is worth mentioning rather than leaving as a curiosity.
+⊕ **If it IS exactly 100/12**: the mechanism is something running on a 12-frame cycle, the lever is
+that structure, and V173 would be treating a symptom rather than a cause. **If it is not**: the
+mechanical-resonance reading stands and V173's case is unchanged.
+🛑 **This changes nothing about the build or the flight order.** V173 attenuates the response
+whatever the mode's origin. It is recorded because **the test is nearly free and the answer would
+matter a great deal.**
+

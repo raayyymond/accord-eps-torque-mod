@@ -7,7 +7,11 @@
 > 22→8. **THAT IS ALL** — twelve bytes, five payload runs. 🛑 The `0xC6598`… float block is
 > **NOT V122's**: it is a V31/V38 **authority ladder** (1.0→2.0→4.0→5.0) and must NOT be
 > reverted — doing so would cut LKAS authority ~5x. V178 tried and is RETRACTED.
-> **Until these are backfilled, diff against the STOCK IMAGE, not against this file.**
+> ✅ **PARTIALLY BACKFILLED 2026-08-29 — see `docs/BUILD-LINEAGE-PART5-V122-ONWARD-MEASURED.md`**,
+> a GENERATED address index covering **V122–V196 (57 images, 43 cells)**. It carries no
+> reasoning — that is in `STATE.md` and the handoffs — but it restores the one thing that
+> matters: **`grep <address>` now tells you which build moved a cell.**
+> **Still diff against the STOCK IMAGE for anything load-bearing.**
 > Details and the builds that revert them: `docs/STATE.md`.
 
 

@@ -102,6 +102,12 @@ Authority and grind are **one lever pushed opposite ways** — and that coupling
 notch breaks. ⇒ **fly the notch, confirm the grind is gone, THEN 6× → 8×.** Raising it first is the
 V101 mistake.
 
+🛑 **AND THE PRIOR ON 8× IS WORSE THAN V101 ALONE SUGGESTS.** Backfilling the lineage from the
+images (§10) shows `0xC6CD0` went **V124 6×→8×, V137 back to 6×, V142 6×→8× again, V147 back to
+6×** — all undocumented. **8× has been reached and abandoned THREE times, not once.** The
+*sequence* is still right (the notch is what breaks the coupling, and that is new), but the
+operator must be told this before 8× is proposed again.
+
 🛑 **`0xC61BE` is mislabelled in the lineage as "the LKAS request clip".** It clamps `gp-0x6b2e` in
 the **base-assist** path (driver torque → assist map), consumed at `0x2A896`. Raising it adds
 *manual* assist, not LKAS authority.
@@ -226,3 +232,22 @@ anything it cannot attribute**, which is how the 72 bytes surfaced.
 | `rlog-tools/probe/decode_v194_detector_input.py` | `gp-0x6c2c` vs T — refuses on pre-V194 caches |
 | `analysis-2020accord/verify/cumulative_delta_vs_stock.py` | every non-stock cell, attributed |
 | `analysis-2020accord/verify/xref_audit_byte_vs_ghidra.py` | byte-confirm any xref count |
+
+---
+
+## 10. THE LINEAGE GAP — partially closed
+
+`docs/BUILD-LINEAGE.md` said *"THIS LINEAGE STOPS AT V121. V122–V178 HAVE NO ROWS — INCLUDING THE
+FLYING BUILD."* It is a mandatory pre-read before any calibration edit, so the rule *"grep the
+lineage before naming any address"* **silently passed** for every cell those builds moved — which is
+how the 10× K1 dose and the 72 dead bytes stayed invisible.
+
+✅ **`docs/BUILD-LINEAGE-PART5-V122-ONWARD-MEASURED.md`** — **generated, not narrated**: every row is
+a byte diff between two images on disk. **43 cells across 57 builds, 7.4 KB.** `grep <address>` works
+again for V122–V196.
+Generator: `analysis-2020accord/verify/gen_lineage_address_index.py`.
+
+⚠ Limits, stated in the file itself: it carries **no reasoning**; **not every build number has an
+image** (gaps 122→124, 125→127, 127→129, 129→131, 131→137, 142→147, 161→164, 165→167, 177→179,
+181→183), so a change across a gap means *"at or before this build"*; and anything load-bearing
+should still be diffed **against the stock image**.
