@@ -4,6 +4,50 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ⭐⭐ **THE FLYING BUILD'S INERTIA TERM IS A SATURATED RELAY — the best mechanism for the ratchet yet**
+```
+   gp-0x6b26 = clamp( ((accel * L) >> 6) * 273 >> 18, +-cal(0xC407E)=511 )
+   scale = |L| * 273 / 2**24 ;  the clamp binds when |accel| > 511 / scale
+
+                        L        scale    saturates at |accel|
+   FLYING V122     -29490       0.4799            1065     <-- pinned almost always
+   V195 = Honda     -9830       0.1600            3195
+   V196 = half      -4915       0.0800            6389     <-- 6x more headroom
+   detector fires at                             12800
+```
+🛑 **The flying build saturates at |accel| > 1065 — TWELVE TIMES below the detector's own
+threshold.** Above that the term is **pinned at ±511 and flips sign with acceleration: a RELAY, not
+a proportional inertia.** A sign-flipping constant driven by acceleration is exactly a
+ratchet-generating mechanism, and this is a far better account than "anti-damping".
+✅ **SO THE REVERTS' REAL EFFECT IS NOT REDUCING A GAIN — IT IS UN-SATURATING THE TERM.** V196 keeps
+it **proportional across 6× more of the acceleration range** than the build on the car. That also
+explains the dose ladder without appealing to a sign: 3× Honda ⇒ pinned from 1065; Honda ⇒ 3195;
+half ⇒ 6389.
+⊕ **This is a stronger rationale than the one V196 was built on**, and it does **not** depend on the
+anti-damping sign that V190/V196 flagged as BELIEF. Un-saturating a relay is directionally safe
+whichever way the sign runs. **The pre-registered "ratchet gets worse ⇒ revert" outcome stays, but
+it is now less likely.**
+⊕ Compare the recorded [[accord-v80-damper-relay-and-grind1-inert]]: *"the damper became a RELAY,
+worst grinding ever — restore the RAMP, don't merely lower k."* **Same failure shape, different
+lane** — and the same fix: get the term back into its proportional region.
+
+### ⚠ **AND THE TWO REMAINING BRANCHES ARE MUTUALLY EXCLUSIVE**
+```
+   |accel| > 12800   the detector fires (V191/V192/V193 act) -- but the inertia term saturated at
+                     1065-6389 long before, so V196's half-dose does little there
+   |accel| < 3195    the half-dose works proportionally -- but the detector NEVER fires, so
+                     V191/V192/V193 are inert
+```
+⇒ **V196 and V194 are effective in DISJOINT regimes.** One measurement decides which branch is worth
+pursuing at all: **V194's probe on `gp-0x6c2c`.** That is now the strongest reason to fly V194 — not
+to fix anything, but because it tells us which of the two remaining ratchet routes is live.
+
+### ➕ The range bound, for completeness
+The term is clamped at 511 against an aggregator spanning ±10240, so it is **at most 5.0 % of the
+command**, and halving it moves **at most 2.5 %**. ⚠ That is its share of FULL RANGE; because it is
+acceleration-derived its share of the **8 Hz content** is larger, by an amount this bound cannot
+determine.
+
 ## ✅ **CLOSE-OUT VERIFICATION — 21/21 FROM DISK, AND BOTH BUILDERS REPRODUCE BIT-FOR-BIT**
 Everything published this session re-checked from the filesystem, not from a build log or from
 memory:

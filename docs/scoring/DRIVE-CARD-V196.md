@@ -16,6 +16,16 @@ lever left for the ratchet — halving the engaged anti-damping inertia term.
 | effect at DC | **zero** — no LKAS authority cost, no added steering weight |
 | carried | the re-fitted notch · K1 → Honda · accel alpha → Honda · w[3] halved · FactorC m27 stock |
 
+## ⭐ Why this should work — the term is a SATURATED RELAY today
+`gp-0x6b26` is clamped at ±511. The build on your car saturates that clamp at
+**|accel| > 1065**, so above that it is **pinned and flips sign with acceleration — a relay,
+not a proportional inertia.** V196 raises the saturation point to **6389**, keeping the term
+proportional across **6× more** of the range.
+
+That matters: it is the same failure shape as V80's damper relay (*"worst grinding ever —
+restore the RAMP, don't merely lower k"*), and **it does not depend on the anti-damping sign
+that this card flags as BELIEF.** Un-saturating a relay is directionally safe either way.
+
 ## The trade, so you know what to feel for
 Negative apparent inertia makes the wheel feel **lighter to fast inputs**. Halving it moves the
 wheel closer to its true inertia **at high frequency only**. Slow steering, LKAS authority and
