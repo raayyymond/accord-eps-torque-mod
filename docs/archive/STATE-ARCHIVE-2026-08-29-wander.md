@@ -3332,3 +3332,33 @@ Nothing about which cells are right — but it **resizes the target**. The effec
   15 s pass resolves a **presence/absence** change, and a ~3.6x band move is comfortably inside the
   **grind** endpoint's power but near the ratchet endpoint's, which needs 2 passes.
 
+## 🛑 **I BROKE THE DRIVE CARD LAST ROUND, AND THIS CAUGHT IT: THERE ARE ZERO HANDS-ON 15 s WINDOWS**
+Last round I changed the card to demand HANDS ON, on the strength of the hands-off confound. **That
+was half-right and it broke the other half.**
+```
+   continuous 15 s ENGAGED CREEP windows in the corpus
+     ALL (what the card's thresholds were computed on)   27
+     HANDS-ON (what the card then started demanding)      0     <- ZERO
+```
+⇒ **two problems, both mine:**
+1. **The card's promises do not transfer.** Grind "ANSWERABLE, margin 2.89x", ratchet "needs 2
+   passes", LKAS "not measurable" — all computed on **hands-OFF** windows. Nothing supports them
+   for a hands-on pass, and there is **no data to recompute them from.**
+2. **It broke comparability with the entire corpus.** The 27-window historical baseline is
+   hands-off. A hands-on-only drive could not be compared to ANY of it.
+
+### ✅ THE FIX — ASK FOR BOTH, 30 SECONDS TOTAL
+```
+   1a  15 s engaged creep, driven HOW HE NORMALLY DOES   -> SCOREABLE today, thresholds apply,
+                                                            comparable to the 27-window baseline
+   1b  15 s engaged creep, HANDS ON                      -> answers the cs_tq confound and builds
+                                                            the first hands-on baseline;
+                                                            ** thresholds UNKNOWN, stated as such **
+```
+✅ 1a keeps every promise the card already makes. 1b buys the thing the corpus provably cannot
+supply. Neither is asked to do the other's job, and **1b is explicitly labelled a baseline-building
+pass, not a scored one** — so it cannot produce a result I would then over-read.
+⊕ **THE GENERAL LESSON**: changing what a drive asks for **silently invalidates every power figure
+computed on the old exposure.** Re-run the power check against the NEW exposure, or the card is
+promising a result the drive will not deliver.
+

@@ -4,6 +4,47 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **SWEPT ALL 23 CACHED ROUTES FOR UNREAD RUNGS — 72 informative readings, and the REGISTRY STOPS AT r77**
+
+V105's `b6` sat unread because nothing pointed at it. So I swept every cached route's cave rungs
+(`0x14A` byte4 bits 7:3) on engaged frames and put each next to what the route registry says it means.
+**23 routes, 72 informative readings, 43 degenerate.**
+
+### ✅ **THE METHOD IS VALIDATED AGAINST A RECORDED VALUE — not asserted**
+The lineage says V104's `b6` was `|r24| ≥ |r26|` with *"duty **1.0000** engaged ⇒ carried no
+information."* My extraction on route `a4` reads **exactly 1.000000**. ⊕ And route `a5` (V105, same
+cave with `b6` repointed to the governor comparison) reads **0.000000**. **A positive and a negative
+control on the same bit, across two consecutive builds** ⇒ the bit mapping is right.
+
+### ✅ **THREE ANSWERS READ OUT OF CACHES, NO DRIVE**
+- **`r85` IS V100 — confirmed by THREE exact matches.** The lineage's V100 row records *"`d(b5)` AND
+  `d(b6)` BOTH 0.000000 … with `b4` = 0.6057 on the same cell"*; `r85` reads **b5 0.000000, b6
+  0.000000, b4 0.6057.** Attribution by data, not by guess.
+- **`r9e` (V103): `b3` = 0.4675 ⇒ VARIES.** The lineage makes this a run-validity gate: *"🛑 IDENTITY:
+  `b3` must VARY. A constant `b3` means the build is not V103 or the rung is dead — RUN-INVALIDATING,
+  not a finding."* **The gate PASSES.** That had a stated pass/fail criterion and had never been checked.
+- **🛑 `r97` CARRIED NO CAVE AT ALL.** The probe byte is **`7` in all 68,883 engaged frames** — a
+  single value, and `0x07` is what the registry itself calls *"the stock STEER_SENSOR_STATUS with NO
+  probe bits"*. **68,883 engaged frames — one of the largest exposures in the corpus — with zero
+  instrument.** Any analysis expecting rungs from `r97` gets nothing, and nothing said so.
+
+### 🛑 **THE STRUCTURAL GAP: THE REGISTRY STOPS AT r77**
+`lib/route_build_registry.py` has entries through the V5x–V7x era. **All 13 newer routes — `r77`
+through `ra6`, i.e. the entire V90–V106 arc — return "not in registry"**, so their rung meanings live
+only in prose in the lineage. **That gap is exactly why V105's `b6` went unread**: the answer was on
+disk and nothing connected it to the question.
+⚠ **I did NOT extend the registry, because its `tail` field is the rlog hash and those are not in the
+caches** — filling them would mean inventing identifiers. **The blocker is named rather than papered
+over**: extending it needs the route tails from the rlog paths, not from `_scratch/cache`.
+⊕ `analysis-2020accord/verify/unread_rung_sweep.py` is the tool; it re-runs in seconds and prints
+every rung with its duty and its registry evidence, flagging degenerate readings separately.
+
+### ⭐ **AND THE DISTINCTION THAT MATTERS: DEGENERATE ≠ NULL**
+43 of the 115 readings are **0.000000 or 1.000000**. **A degenerate rung is not a null result — it is
+an uninterpretable one**, and this kit's record shows the two being confused repeatedly (V64's *"the
+null is on the GATE, not the hypothesis"*; V68's detector that *"has NEVER been non-zero"*; V104's
+`b6` at duty 1.0000 *"carried no information"*). The sweep now labels them apart by construction.
+
 ## ✅⭐⭐ **THE SATURATION CENSUS CONVERGES ON `gp-0x6b70` — by elimination, from data already on disk**
 
 The record's instruction is *"find what clips"*. I had found **one** saturating element and built a
@@ -2211,34 +2252,4 @@ to the actual fork:
 ```
 ⊕ **Testing the instrument before the drive is worth as much as another lever** — a scorer that
 runs but says the wrong thing wastes the drive just as completely as one that crashes.
-
-## 🛑 **I BROKE THE DRIVE CARD LAST ROUND, AND THIS CAUGHT IT: THERE ARE ZERO HANDS-ON 15 s WINDOWS**
-Last round I changed the card to demand HANDS ON, on the strength of the hands-off confound. **That
-was half-right and it broke the other half.**
-```
-   continuous 15 s ENGAGED CREEP windows in the corpus
-     ALL (what the card's thresholds were computed on)   27
-     HANDS-ON (what the card then started demanding)      0     <- ZERO
-```
-⇒ **two problems, both mine:**
-1. **The card's promises do not transfer.** Grind "ANSWERABLE, margin 2.89x", ratchet "needs 2
-   passes", LKAS "not measurable" — all computed on **hands-OFF** windows. Nothing supports them
-   for a hands-on pass, and there is **no data to recompute them from.**
-2. **It broke comparability with the entire corpus.** The 27-window historical baseline is
-   hands-off. A hands-on-only drive could not be compared to ANY of it.
-
-### ✅ THE FIX — ASK FOR BOTH, 30 SECONDS TOTAL
-```
-   1a  15 s engaged creep, driven HOW HE NORMALLY DOES   -> SCOREABLE today, thresholds apply,
-                                                            comparable to the 27-window baseline
-   1b  15 s engaged creep, HANDS ON                      -> answers the cs_tq confound and builds
-                                                            the first hands-on baseline;
-                                                            ** thresholds UNKNOWN, stated as such **
-```
-✅ 1a keeps every promise the card already makes. 1b buys the thing the corpus provably cannot
-supply. Neither is asked to do the other's job, and **1b is explicitly labelled a baseline-building
-pass, not a scored one** — so it cannot produce a result I would then over-read.
-⊕ **THE GENERAL LESSON**: changing what a drive asks for **silently invalidates every power figure
-computed on the old exposure.** Re-run the power check against the NEW exposure, or the card is
-promising a result the drive will not deliver.
 
