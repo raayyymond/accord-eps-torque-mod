@@ -4,6 +4,55 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **LKAS AUTHORITY: `0xC61BE` IS MISLABELLED, AND THE REAL KNOB IS COUPLED TO THE GRIND**
+`0xC61BE` is described in the lineage as *"the LKAS request clip"*. **It is not.** Decompiled:
+```c
+   FUN_0002a93a  (driver torque gp-0x682f -> a pointer-table assist map)
+       uVar11 = clamp(uVar11, +-cal(0xC61BE));      // 15360
+       gp-0x6b2e = uVar11;                          // the BASE-ASSIST output
+   ... consumed at 0x2A896:  r9 = (gp-0x6b2e * cal(0xC63EE)) >> 10
+```
+⇒ **it clamps the BASE-ASSIST path (driver torque → assist), not the LKAS request.** Raising it adds
+**manual** assist, not LKAS authority. **The label is wrong and the lever is aimed at the wrong lane.**
+
+### 🛑🛑 **AND I NEARLY RECORDED A FALSE NULL — THE TWO-METHOD RULE CAUGHT IT**
+`search_instructions` returned **2 hits for `gp-0x6b2e`, both stores**, which reads as *"a dead cell,
+so `0xC61BE` is provably inert"*. That is a clean, quotable, **wrong** conclusion. The raw byte scan
+found a **third** site:
+```
+   0x2A896   hw1 = 0x4F24  ->  opcode bits5-10 = 0x39 = ld.h, reg r9
+             = `ld.h -0x6b2e, gp, r9`   ** A READER **
+```
+It sits in a region Ghidra has **not analysed**, which is exactly the recorded failure mode:
+*"`search_instructions` silently undercounts — it scans only already-analysed instructions and still
+reports `truncated:false`."*
+⚠ **CONSEQUENCE FOR THIS SESSION'S OTHER SEARCHES.** The xref counts behind **V190** — `gp-0x6bc2`
+(1 writer / 1 reader) and `gp-0x6ad6` (1 writer / 2 readers) — came from the same tool and were
+**not** byte-confirmed. They may undercount. The chains I built on them are still the best available
+reading, but **their completeness is BELIEF, not EVIDENCE.** (By contrast `gp-0x671a`, the setf
+family and the dormant-cal sweep were all byte-scanned and stand.)
+➕ **`CLAUDE.md` already says to analyse the whole image in Ghidra first. The image is NOT fully
+analysed, and that is a live hazard for every operand search in this session.**
+
+### ✅ **THE HONEST ANSWER ON AUTHORITY — IT IS SEQUENCED, NOT BLOCKED**
+```
+   the real LKAS authority knob is 0xC6CD0, the LKAS gain:  reach = (clip * cal(0xC6CD0)) >> 15
+     V57..V88   3564  = 4x     <- the value at which grinding was CONFIRMED FIXED on-car (V88)
+     V101       7128  = 8x     <- and the grind came back
+     V102..now  5346  = 6x     <- where it sits today
+   the SAME cell is what the de-confounded 2x2 named as the CARRIER of the ~23 Hz vibration
+   (effect 2.7-3.9x).  Authority and grind are the SAME LEVER pushed in opposite directions.
+```
+⇒ **that coupling is exactly what the notch breaks.** V188's notch removes the gain's 19.4 Hz
+consequence **without touching the gain**, so:
+```
+   step 1  fly the notch, confirm the grind is gone            <- V194 does this
+   step 2  THEN 0xC6CD0 6x -> 8x becomes available, restoring the authority V102 gave up,
+           with the notch now suppressing the vibration that made 8x untenable
+```
+🛑 **Do NOT raise the gain before the grind result is in** — that is the V101 mistake, and it is
+the one build in the arc that demonstrably brought the grind back.
+
 ## ✅ **V194 — MEASURE THE ONE NUMBER THAT DECIDES WHETHER V191/V192/V193 CAN WORK AT ALL**
 V193 opened the detector's **frequency** window. There is a **second** gate, and it has never been
 measured: the counter increments only when **`|gp-0x6c2c|` exceeds T = `cal(0xC620A)` = 12800.**
@@ -2127,68 +2176,4 @@ command-driven, a null could no longer be explained by "the excitation was absen
 pass carries command by construction. **It sharpens the pre-registered outcomes rather than altering
 them.**
 ⊕ And it retires an open item that was recorded as *“closes with more continuous windows”*. **It did.**
-
-## ❌ **RING-DOWN DOES NOT TEST THE `P·L` ASSUMPTION EITHER — AND MY FIRST CONTROL WAS VACUOUS**
-The last idea for testing `P·L` without driving: a **time-domain** ring-down, immune to the spectral
-tilt that killed the other estimators, and the one measure the kit's record says *“passed its
-control”*. Since `ζ_eff = ζ_passive · |1−P·L|`, a decay rate that differs across builds would test the
-account from data already in hand. Trigger: an abrupt command collapse, then fit the 8.64 Hz envelope
-over 0.5 s of free decay.
-
-### 🛑 MY FIRST CONTROL COULD NOT HAVE WORKED
-I controlled by fitting the **time-REVERSED** envelope, reasoning that a genuine one-sided decay would
-fit worse backwards. It returned **0.64/0.64, 0.61/0.61, 0.80/0.80 … identical on every route** — the
-tell. **Reversing a linear fit's x-ordering flips the slope but leaves the residuals unchanged, so r²
-is invariant BY CONSTRUCTION.** The control could never discriminate anything. Replaced with the same
-fit on engaged segments that have **no** command collapse.
-
-### ❌ AND WITH A REAL CONTROL, THE MEASUREMENT IS TOO WEAK TO USE
-```
-   route build  alpha 1/s  zeta     Q      CONTROL  verdict
-   r78   V91      2.65     0.0489   10.2    2.12    no better than control
-   r7e   V96      3.14     0.0579    8.6    2.16    no better than control
-   r7f   V96      4.92     0.0906    5.5    1.80    DECAY
-   r96   V102     3.40     0.0626    8.0   -0.95    control NEGATIVE -- nonsense
-   ra4   V104     4.13     0.0761    6.6    1.51    DECAY
-   ra6   V106     3.96     0.0729    6.9    1.59    DECAY
-   r1e   V107     1.17     0.0216   23.2    1.62    no better than control
-   r22   V112     4.82     0.0888    5.6    1.95    DECAY
-   r24   V122     4.49     0.0827    6.0    1.35    DECAY
-```
-❌ **It clears its control on only 6 of 9 routes, and by 1.5–3.3x** — the decay alphas (1.17–4.92)
-**overlap the control alphas (1.35–2.16)** heavily. ❌ **One route's control is NEGATIVE (−0.95)**, i.e.
-its no-collapse envelopes *grow* on average, which invalidates the control there outright.
-❌ **ζ = 0.022–0.091 does not match the kit's recorded ring-down ζ = 0.017–0.036** except at the
-extreme. ❌ **And there is no build ordering**: V91 2.65 · V96 3.14/4.92 · V102 3.40 · V104 4.13 ·
-V106 3.96 · V107 1.17 · V112 4.82 · V122 4.49.
-⇒ **the ring-down carries no usable damping information at engaged creep in this corpus.**
-
-### ✅ WHAT THIS SETTLES
-**Three independent estimator families have now been tried on the `P·L` question and all three fail**:
-frequency-domain Q (tilt-confounded), the slope-corrected excess stratified by torque (confounded by
-rate, structurally), and now time-domain ring-down (does not clear its own control). **The assumption
-is testable only by intervention.** That is no longer a judgement — it is a result, and this closes
-the line for good.
-
-## ✅ **TOOL AUDIT: ONE MORE LIVE HAZARD FOUND AND CLOSED**
-Having found the primary scorer reading the wrong channel, I audited **all 43 scoring tools** for the
-same defect — a ratchet or grind endpoint computed on `cs_rate`, where the ratchet scores at chance.
-✅ **No other tool has that defect.** Every remaining ratchet/grind endpoint either reads `cs_tq`,
-sweeps channels deliberately, or is a probe-specific scorer with its own anchor.
-
-🛑 **But the audit found a different live hazard**: `docs/scoring/DRIVE-CARD-V158.md` and
-`SCORING-V158-preregistered.md` still pointed at **`score_v158_creep.py`**, the scorer this session
-**superseded**. Had V158 been flown from its own card, the drive would have been scored with:
-- **half-power Q of the 15–25 Hz peak** — withdrawn, NON-MONOTONE (its null sits *above* the data);
-- **Q at 5–12 Hz** — withdrawn, a WINDOW artefact (white noise alone returns Q 21.7–29.1);
-- **fixed-floor prominence** — withdrawn, large by construction on a red spectrum;
-- **non-continuous windows**, where the validated estimator requires continuous runs;
-- and **`cs_rate`**, before the channel finding.
-✅ **Closed three ways**: the tool now carries a superseded banner **and raises on import** so it
-cannot be used by accident; both documents are redirected to `score_band_excess.py`; and no document
-outside STATE's own retraction text mentions it any more.
-
-⊕ **The pattern worth keeping**: the defect was not in the analysis, it was in the *plumbing between
-the analysis and the drive*. Both instances were found by **running the drive card's own command
-verbatim** rather than by reading the code. That check is cheap and it belongs in every close-out.
 

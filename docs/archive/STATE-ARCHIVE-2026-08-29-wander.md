@@ -1858,3 +1858,67 @@ report”* rather than the 198x / 1270x the unguarded version emitted — those 
 fit on four windows and were **not credible**. Catching that in the tool is the point of running it
 before the drive rather than after.
 
+## ❌ **RING-DOWN DOES NOT TEST THE `P·L` ASSUMPTION EITHER — AND MY FIRST CONTROL WAS VACUOUS**
+The last idea for testing `P·L` without driving: a **time-domain** ring-down, immune to the spectral
+tilt that killed the other estimators, and the one measure the kit's record says *“passed its
+control”*. Since `ζ_eff = ζ_passive · |1−P·L|`, a decay rate that differs across builds would test the
+account from data already in hand. Trigger: an abrupt command collapse, then fit the 8.64 Hz envelope
+over 0.5 s of free decay.
+
+### 🛑 MY FIRST CONTROL COULD NOT HAVE WORKED
+I controlled by fitting the **time-REVERSED** envelope, reasoning that a genuine one-sided decay would
+fit worse backwards. It returned **0.64/0.64, 0.61/0.61, 0.80/0.80 … identical on every route** — the
+tell. **Reversing a linear fit's x-ordering flips the slope but leaves the residuals unchanged, so r²
+is invariant BY CONSTRUCTION.** The control could never discriminate anything. Replaced with the same
+fit on engaged segments that have **no** command collapse.
+
+### ❌ AND WITH A REAL CONTROL, THE MEASUREMENT IS TOO WEAK TO USE
+```
+   route build  alpha 1/s  zeta     Q      CONTROL  verdict
+   r78   V91      2.65     0.0489   10.2    2.12    no better than control
+   r7e   V96      3.14     0.0579    8.6    2.16    no better than control
+   r7f   V96      4.92     0.0906    5.5    1.80    DECAY
+   r96   V102     3.40     0.0626    8.0   -0.95    control NEGATIVE -- nonsense
+   ra4   V104     4.13     0.0761    6.6    1.51    DECAY
+   ra6   V106     3.96     0.0729    6.9    1.59    DECAY
+   r1e   V107     1.17     0.0216   23.2    1.62    no better than control
+   r22   V112     4.82     0.0888    5.6    1.95    DECAY
+   r24   V122     4.49     0.0827    6.0    1.35    DECAY
+```
+❌ **It clears its control on only 6 of 9 routes, and by 1.5–3.3x** — the decay alphas (1.17–4.92)
+**overlap the control alphas (1.35–2.16)** heavily. ❌ **One route's control is NEGATIVE (−0.95)**, i.e.
+its no-collapse envelopes *grow* on average, which invalidates the control there outright.
+❌ **ζ = 0.022–0.091 does not match the kit's recorded ring-down ζ = 0.017–0.036** except at the
+extreme. ❌ **And there is no build ordering**: V91 2.65 · V96 3.14/4.92 · V102 3.40 · V104 4.13 ·
+V106 3.96 · V107 1.17 · V112 4.82 · V122 4.49.
+⇒ **the ring-down carries no usable damping information at engaged creep in this corpus.**
+
+### ✅ WHAT THIS SETTLES
+**Three independent estimator families have now been tried on the `P·L` question and all three fail**:
+frequency-domain Q (tilt-confounded), the slope-corrected excess stratified by torque (confounded by
+rate, structurally), and now time-domain ring-down (does not clear its own control). **The assumption
+is testable only by intervention.** That is no longer a judgement — it is a result, and this closes
+the line for good.
+
+## ✅ **TOOL AUDIT: ONE MORE LIVE HAZARD FOUND AND CLOSED**
+Having found the primary scorer reading the wrong channel, I audited **all 43 scoring tools** for the
+same defect — a ratchet or grind endpoint computed on `cs_rate`, where the ratchet scores at chance.
+✅ **No other tool has that defect.** Every remaining ratchet/grind endpoint either reads `cs_tq`,
+sweeps channels deliberately, or is a probe-specific scorer with its own anchor.
+
+🛑 **But the audit found a different live hazard**: `docs/scoring/DRIVE-CARD-V158.md` and
+`SCORING-V158-preregistered.md` still pointed at **`score_v158_creep.py`**, the scorer this session
+**superseded**. Had V158 been flown from its own card, the drive would have been scored with:
+- **half-power Q of the 15–25 Hz peak** — withdrawn, NON-MONOTONE (its null sits *above* the data);
+- **Q at 5–12 Hz** — withdrawn, a WINDOW artefact (white noise alone returns Q 21.7–29.1);
+- **fixed-floor prominence** — withdrawn, large by construction on a red spectrum;
+- **non-continuous windows**, where the validated estimator requires continuous runs;
+- and **`cs_rate`**, before the channel finding.
+✅ **Closed three ways**: the tool now carries a superseded banner **and raises on import** so it
+cannot be used by accident; both documents are redirected to `score_band_excess.py`; and no document
+outside STATE's own retraction text mentions it any more.
+
+⊕ **The pattern worth keeping**: the defect was not in the analysis, it was in the *plumbing between
+the analysis and the drive*. Both instances were found by **running the drive card's own command
+verbatim** rather than by reading the code. That check is cheap and it belongs in every close-out.
+
