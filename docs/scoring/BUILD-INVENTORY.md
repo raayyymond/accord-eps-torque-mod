@@ -19,6 +19,7 @@ lever) and all are scored from the same single 15-second engaged creep pass.
 >       .rwd  5d213cf8604df90f2df2eaa2a8e40ccedde89f1d66055cb2a22c81edb7245396
 > ```
 > Fly V172 only if the grind is the priority and losing Honda's notch is acceptable.
+> **Card: `docs/scoring/DRIVE-CARD-V173.md`.**
 
 ---
 

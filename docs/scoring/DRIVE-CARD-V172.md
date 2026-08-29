@@ -1,4 +1,4 @@
-# DRIVE CARD — V172  ·  **FLY THIS FIRST**
+# DRIVE CARD — V172  ·  **THE GRIND-PRIORITY ALTERNATIVE**
 
 **Flash target:** `39990-TVA,A160-V172-V158BASE-ASSIST.SECTION.RETUNE.REALPOLE-0x13000-0x100000.rwd`
 **.rwd SHA256** `c0ed77b773a7e7f300ab438450817e17f49269c67d096edefa56dea140e958a5`
@@ -8,10 +8,11 @@
 > (`tmux kill-server`) before any flash operation.
 
 
-> 🚩 **SUPERSEDED AS FLY-FIRST BY V173.** V173 has the same poles, the same +30.1 ms group delay
-> and the same ratchet effect, but keeps **Honda's 55.23 Hz notch** which V172 displaces to 27 Hz.
-> Everything below — the pass, the pre-registered outcomes, the sub-band grind attribution, the
-> command-level guidance — **applies unchanged to V173**. Fly V172 only if the grind is the priority.
+> 🚩 **FLY `V173` INSTEAD UNLESS THE GRIND IS THE PRIORITY** — see
+> `docs/scoring/DRIVE-CARD-V173.md`. V173 has the same poles, the same +30.1 ms group
+> delay and the same ratchet effect, and it **keeps Honda's 55.23 Hz notch**, which this
+> build displaces to 27 Hz. V172 buys **9.6x** on the grind against V173's 4.6x; that is
+> the only reason to choose it. Everything below applies to either build.
 
 ---
 
