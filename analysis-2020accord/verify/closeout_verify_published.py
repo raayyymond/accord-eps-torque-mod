@@ -50,6 +50,7 @@ PUB = {
     'v202': '2c5bc569c2c5e4c66f7eaa350ddbfe87d50af9875fa75a10d927eed3a7255160',
     'v203': '0da3b7b9a4bfa9068960ed1c5afd07ff4f816376da9488df4d31946cf55b5965',
     'v204': '30e7da9f6d20ff1335d01abe86ba03df7245c802217a4e6df54c5b93208873e6',
+    'v205': '8cf100864be1d6030eed36acac1d514066b157a59de8ca829ae154ce7032882e',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -133,14 +134,18 @@ if 'v199' in img and 'v196' in img:
 for _v, _base, _hw, _what in (('v203', 'v202', 0x9482,
                                'gp-0x6b7e, the unfiltered pedestal'),
                               ('v204', 'v202', 0x94B2,
-                               'gp-0x6b4e, the observer model lane'),):
+                               'gp-0x6b4e, the observer model lane'),
+                              ('v205', 'v202', 0x9490,
+                               'gp-0x6b70, the observer output'),):
     if _v in img and _base in img:
         d = [a for a in range(0x13000, 0x100000)
              if img[_v][a] != img[_base][a] and (a & 0xFFF) < 0xFFC]
         chk(len(d) <= 3, f'{_v.upper()} differs from {_base.upper()} by {len(d)} payload bytes')
         chk(struct.unpack_from('<H', img[_v], 0x55DF2)[0] == _hw,
             f'{_v.upper()} probe reads {_what} (hw2 0x{_hw:04X})')
-        chk(img[_v][0x55E10] & 0x1F == 5, f'{_v.upper()} pack shift is sar 5')
+        _want = 6 if _v == 'v205' else 5
+        chk(img[_v][0x55E10] & 0x1F == _want,
+            f'{_v.upper()} pack shift is sar {_want} -- sized to ITS source')
         for a in (0xC60A8, 0xC60AC, 0xC60B0, 0xC60B4):
             chk(struct.unpack_from('<I', img[_v], a)[0]
                 == struct.unpack_from('<I', img[_base], a)[0],
@@ -184,13 +189,13 @@ if 'v202' in img and 'v199' in img:
 print('\n[3] SUPERSEDED ARTIFACTS ARE RENAMED')
 live = [os.path.basename(x) for x in glob.glob(RWD + '/39990*-V199-*.rwd')
         + glob.glob(RWD + '/39990*-V202-*.rwd')
-        + glob.glob(RWD + '/39990*-V203-*.rwd')
-        + glob.glob(RWD + '/39990*-V204-*.rwd')]
+        + glob.glob(RWD + '/39990*-V204-*.rwd')
+        + glob.glob(RWD + '/39990*-V205-*.rwd')]
 chk(len(live) == 4, f'exactly 4 flashable builds from this chain ({len(live)})')
 # V194/V195/V196/V198 were PULLED: every one carries a notch whose poles sit at the zeros, scoring
 # max|H| 1.3533-1.7177 against the lineage bar of stock 1.0000.  They must not be flashable.
 for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193',
-          'V194', 'V195', 'V196', 'V197', 'V198', 'V200', 'V201'):
+          'V194', 'V195', 'V196', 'V197', 'V198', 'V200', 'V201', 'V203'):
     n = len(glob.glob(RWD + f'/39990*-{v}-*.rwd'))
     if n:
         chk(False, f'{v} is still flashable ({n} unmarked file)')

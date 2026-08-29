@@ -1,23 +1,12 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Four flashable builds: V199, V202, V203, V204. Everything else from this arc is renamed
+**Updated 2026-08-29.** Four flashable builds: V202 (the fix), V204 and V205 (probes), V199 (fallback). Everything else from this arc is renamed
 `SUPERSEDED-DO-NOT-FLASH-GATE2-…` and must not be sent.
 
 🛑 **Nothing here has been flashed and no CAN or UDS message has been sent.** Flashing requires you to
 name the file and the bus, and they will be read back to you first.
 
 ---
-
-## ⭐ V203 — FLASH THIS ONE. The best fix, plus the measurement that makes a null readable.
-
-```
-39990-TVA,A160-V203-V202BASE-PROBE-THE-PEDESTAL-0x13000-0x100000.rwd
-  image 0da3b7b9a4bfa9068960ed1c5afd07ff4f816376da9488df4d31946cf55b5965
-  rwd   e9513d179e9336b7aa448dae03980b3a033557743a3f63a5de162553e5c20abf
-```
-
-V202 control cells byte-identical, +3 payload bytes putting `gp-0x6b7e` (the unfiltered pedestal) on
-CAN 427. Preflight 8/8, 40/40 assertions.
 
 ## V202 — the same fix without the instrument
 
@@ -46,7 +35,28 @@ improves worst-case leakage by only 1.1× and makes the median *worse* — one b
 6.7 Hz. **So score the drive stratified by its own peak frequency, never pooled:** a drive peaking at
 16 Hz gets 2.3×, one peaking at 20 Hz gets 24.7×.
 
-## V204 — V202 + the probe that unblocks the kit’s best parked lever
+## ⭐ V205 — FLASH THIS ONE. The fix, plus the ratchet’s named mechanism on the wire.
+
+```
+39990-TVA,A160-V205-V202BASE-PROBE-GP6B70-0x13000-0x100000.rwd
+  image 8cf100864be1d6030eed36acac1d514066b157a59de8ca829ae154ce7032882e
+```
+
+V202 control cells byte-identical, +3 payload bytes putting `gp-0x6b70` on CAN 427 at **sar 6**.
+Preflight 8/8, 40/40 assertions.
+
+`FUN_00038148` ends with `gp-0x6b70 = sgn(resid) × LERP(|resid|)`, clamped ±8192. **If that LERP
+saturates early the stage is a signed constant — a relay** — which is precisely what the record blames
+the ratchet on (*“engagement amplifies 6–9 Hz 2.8× via a command-proportional Coulomb relay”*). No
+magnitude channel for this cell exists anywhere in the corpus, so it has never been looked at.
+
+| what it shows | what it means |
+|---|---|
+| few levels, mass at the rails | the stage **is** a relay — the ratchet’s mechanism localised to one LERP |
+| smooth and spread | the relay lives elsewhere — worth as much |
+| railed at ±8192 | the observer is saturated, and `0xC63AA` cannot be used safely at all |
+
+## V204 — the same fix, probing the parked lever instead
 
 ```
 39990-TVA,A160-V204-V202BASE-PROBE-GP6B4E-0x13000-0x100000.rwd
@@ -155,8 +165,8 @@ Then:
 ```
 python rlog-tools/score/score_band_excess.py <tag>
 python rlog-tools/score/cross_channel_band_excess.py <tag>
-python rlog-tools/probe/decode_v201_pedestal.py <tag> --v203       # V203 only
-python rlog-tools/probe/decode_v204_observer_lane.py <tag> --v204  # V204 only
+python rlog-tools/probe/decode_v205_observer_output.py <tag> --v205  # V205 only
+python rlog-tools/probe/decode_v204_observer_lane.py <tag> --v204    # V204 only
 ```
 
 ## STOP CONDITIONS

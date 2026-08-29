@@ -4,6 +4,58 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **A SHAPE STATISTIC ON A BIT-FIELD LOOKED LIKE A FINDING — the relay question needs an instrument**
+
+### THE QUESTION, AND WHY IT MATTERS
+`FUN_00038148` ends by mapping the residual magnitude through a LERP and re-applying the sign:
+```c
+   uVar7 = (|resid| * cal(0xC63AE)) >> 10          // cal = 1024, so uVar7 = |resid|
+   sVar8 = LERP(uVar7)                             // X at gp-0x64b6.., Y at gp-0x641c..
+   gp-0x6b70 = sgn(resid) * sVar8,  clamped to +-cal(0xC6200) = 8192
+```
+**If that LERP saturates early the stage is a SIGNED CONSTANT — a relay** — and the record blames the
+ratchet on exactly that: *"Engagement amplifies 6–9 Hz 2.8× via a COMMAND-PROPORTIONAL COULOMB RELAY."*
+`gp-0x6b70` is also the traced route to `gp-0x6ad6`, the torque-tracking reference. **So this is the
+ratchet's own named mechanism sitting on a cell we can read for 3 bytes.**
+⚠ The LERP's knots are in RAM **two hops from any cal** (X from `gp-0x373c` staging, Y from an
+`ep`-pointed table), so reading them statically is not the cheap path. Read the OUTPUT instead.
+
+### 🛑 **AND HERE IS THE ERROR I NEARLY PUBLISHED**
+V96–V99 all carried a 427 tap on `gp-0x6b70` (**V100's changelog repoints it AWAY from `gp-0x6b70`,
+which dates the earlier target unambiguously**), and routes `r80`/`r81`/`r82` are cached. I computed a
+rail-mass statistic on the cached `probe` column against `cs_tq`/`cs_rate` controls, and it looked like
+a result — **0.21–0.45 for the probe vs 0.09–0.19 for the controls.**
+Then the distinct-value count:
+```
+   r80  {15, 79, 143, 207}                    4 values, spaced 64
+   r81  {23, 71, 87, 135, 199, 215}           6 values, spaced 48/16/48/64/16
+   r82  {55, 103, 119, 167, 231, 247}         6 values, same pattern shifted 32
+```
+⇒ **spacings of 64 and 16 are BIT positions. That column is the cave's packed BOOLEAN RUNG byte, not
+a magnitude.** A shape statistic on it is meaningless, and **my rail-mass numbers carry no information
+about `gp-0x6b70` whatsoever. Retracted.**
+⊕ `field` is the same rung byte; `row2raw14` is a row index. **There is NO magnitude channel for
+`gp-0x6b70` anywhere in the corpus** — the earlier taps packed it into the rung byte.
+⭐ **The control did not catch this; LOOKING AT THE DATA did.** `cs_tq` behaved perfectly — the
+statistic was fine and the *channel* was wrong, which no control on a different channel can detect.
+✅ **`rlog-tools/score/observer_relay_shape.py` now REFUSES a channel with fewer than 64 distinct
+levels** and prints the levels it saw. **A rule someone must remember became a check that cannot be
+forgotten.**
+
+### ✅ **V205 = V202 + the 427 probe on `gp-0x6b70`, sar 6.** 40/40, 3 payload bytes.
+`8cf100864be1d603…` · `0x55DF2` → `0x9490`, **sar 6** (±8192 ⇒ raw 0–128 / 896–1023, resolution 64).
+**Three live probes now use three different shifts — 5, 5, 6 — because the shift is a property of the
+SOURCE, never of the channel.** It answers in one drive: **few levels with mass at the rails ⇒ the
+stage IS a relay**, localising the ratchet's named mechanism to one LERP worth the two hops to reach;
+**smooth ⇒ the relay lives elsewhere**, worth as much; **railed at ±8192 ⇒ the observer is saturated
+and the 41×-corrected `0xC63AA` sensitivity cannot be applied safely at all.**
+
+### 🛑 **V203 RETIRED — `SUPERSEDED-DO-NOT-FLASH-LOWVALUE-…`**
+Its question (is the notch bypassed by the pedestal?) **shrank to 7.9 %** once the EMA rate table was
+read as flat `K = 20`. **The shelf is V202 (the fix) · V204 · V205 (the two probes worth a slot) · V199
+(low-phase fallback).** ⭐ **Of the probes, V205 is the one to fly** — it aims at the ratchet, the one
+symptom nothing in sixty builds has moved.
+
 ## 🛑🛑 **THE `0xC63AA` SENSITIVITY IS 41× UNDERSTATED IN THE RECORD — and the dilution ratio is nearly closed**
 
 `BUILD-LINEAGE.md` parks `0xC63AA` as *"still the best structural lever, but it needs the **dilution
@@ -2175,80 +2227,4 @@ raised ~2x by moving the fallback. ✅ The knot-step worry is **measured away**:
 family are not detectable on-car.
 ⊕ **Manual (m24) is stock and stays stock** — so this lever is **ENGAGED-ONLY**, which also makes it
 separable on a drive by the same engaged-vs-manual contrast the card already uses.
-
-## ✅✅ **EVERY BYTE OF THE NON-STOCK DELTA IS NOW ACCOUNTED FOR — THE AUDIT IS COMPLETE**
-Not "I could not find more" — **enumerated, classified, and each class resolved.**
-```
-   PART                       METHOD                          RESULT
-   cal cells (u16/byte)       value across 139 images,        every SINGLE JUMP resolved;
-                              in build order                  LADDERs identified as deliberate
-   0xE4195..0xE5FFF           same                            80 bytes; the dominant run is
-                              (9 x u16)                       15360 -> 16384 at V38 = an
-                                                              AUTHORITY raise. DO NOT revert.
-   float block 0xC6598..CC    same                            V31/V38 AUTHORITY LADDER. V178
-                                                              tried to revert it and is RETRACTED.
-   cave 0xC4B34 (164 B)       disassembled every gp/tp        7 READS of control cells; all 5
-                              access inside the extent        WRITES go to gp-0x1511/13/14, the
-                                                              CAN scratch it owns. TELEMETRY-ONLY,
-                                                              no control cell written. CLEAN.
-   code bytes                 lineage + churn history         0x35A08/12/18 V103 arm - 0x3AA96 +
-                                                              0xC6446 Lever B - 0x454FE V42 fix -
-                                                              0x2A1F0, 0x55C0E/DF2/E10 telemetry
-```
-🛑 **THE FIRMWARE SEARCH IS COMPLETE, AND THIS TIME IT IS VERIFIED COMPLETE RATHER THAN
-DECLARED.** Twice today I said the search was finished and was wrong; both times the gap was found by
-reading BYTES rather than the record. The delta has now been read byte by byte.
-
-### ✅ WHAT THE WHOLE SESSION PRODUCED — SIX BUILDS, TWO LEVER FAMILIES, THREE HONDA REVERTS
-```
-   V173  assist-section poles 0.970           grind -12.6 dB, ratchet -5.9 dB, +29 ms lag
-   V174  assist-section poles 0.980           grind -16.0 dB, ratchet -8.8 dB, +43 ms lag
-   V175  V173 + engaged inertia Y -> Honda    removes a 3.0x/8.1x engaged-only dose
-   V176  V175 + pole 0.980                    the strongest attenuation inside the lag guardrail
-   V177  V175 + K1 -> Honda (ONE cell)        removes a 10x-oversized velocity-dependent term
-   V179  V177 + accel alpha -> Honda (1 byte) completes Honda's inertia lane (gain + filter)
-   V178  RETRACTED and quarantined            would have cut LKAS authority ~5x
-```
-✅ **FLY V177 FIRST.** One cell, fully attributable, quantitative case, and it contains V175/V173.
-➕ Then **V179** (completes the lane) or **V176** (more attenuation, more lag), per the card.
-🛑 **Nothing further can be settled without the car.** Every remaining question — which lever the
-ratchet responds to, whether the lag is acceptable, whether `0xC63A6` is needed — is a drive question,
-and the drive card is staged so Stage 1 is a single 15 s pass.
-
-## ✅ **THE NON-STOCK DELTA IS NOW FULLY AUDITED — 139 IMAGES, EVERY CELL CLASSIFIED**
-Applying the rule the V178 error earned: print every non-stock cal across **all 139 images in build
-order**, then classify. **LADDER** (3+ changes / monotone) = a deliberate tuning axis, do not revert.
-**CHURN** = already explored. **SINGLE JUMP** (changed once, never revisited) = the candidate class,
-and the shape of both real findings today.
-```
-   SINGLE JUMP           resolution
-   0x14120, 0xC64DE      V2, ancient, 1-count            -- noise
-   0x35A08/12/18         V103 biquad arm                 -- documented, deliberate
-   0xC61C0, 0xC64B4      V36/V37 -- read together at the SAME four sites; memory records these
-                         as the gentle-EME debounce disable that FIXED the problem on-car.
-                         ** Reverting them would bring the gentle EME back. **
-   0xC40DC               V122, 22 -> 8   ** THE ONLY ONE UNEXPLAINED **
-```
-=> **the delta is fully accounted for.** No further unexplored cells exist.
-
-## ✅ **V179 BUILT — HONDA'S ACCELERATION FILTER, THE LAST UNEXPLORED CELL**
-`FUN_00041464`: `gp-0x6c2c = EMA(accel, alpha = cal[0xC40DC] >> 6) >> 9`, the input to the
-apparent-inertia term.
-```
-   build            cal    a        fc        phase lag at 8.17 Hz
-   Honda / V108      22   0.3438   67.0 Hz        6.95 deg
-   V122+ (flying)     8   0.1250   21.3 Hz       21.03 deg
-```
-=> **V122 slowed the acceleration filter 67 -> 21 Hz and added 14.1 deg of phase lag at the ratchet.**
-Extra lag rotates a positive-acceleration-feedback term toward a velocity term, changing its
-character in the loop.
-⚠ **HONEST LIMIT: the magnitude is exact; the SIGN of its effect on damping is NOT established.**
-So V179 is justified exactly as V175 and V177 are — **a revert to Honda's own value that makes the
-inertia lane self-consistent** (V175 gave it Honda's GAIN; this gives it Honda's FILTER, removing a
-hybrid nobody designed) — and **NOT as an understood lever.**
-✅ **ONE byte · 19/19 assertions · CRC 50/50 · readback byte-identical.** image
-`c1e07f2d6e86bc31…` · rwd `c19f3b36bcdf8daf…`. ➕ The builder **asserts the V31/V38 authority
-ladder is INTACT at 5.0**, so V178's error cannot recur silently.
-🛑 **V177 STAYS FLY-FIRST.** V177's case is quantitative (a term 10x oversized); V179's rests on
-design coherence with an unestablished sign. **V179 is the follow-up if V177 helps but does not cure.**
 
