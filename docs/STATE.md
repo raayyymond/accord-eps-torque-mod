@@ -4,6 +4,37 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ❌❌ **THE ENTIRE AMPLITUDE-SELECTIVITY LEAD IS CLOSED — ALL THREE BRANCHES, DOUBLY**
+The last surviving branch was the small-signal Y floors. **They are dead twice over**, read from the
+image with the tp off-by-0x1000 guarded (tp = 0xBF000 ⇒ tp+0x713e is **0xC613E**, not 0xC713E):
+   addr      what                            stock/V122/V158/V173/V175
+   0xC613E   X threshold A (arms floor A)    15000  (VIRGIN)
+   0xC6140   X threshold B (arms floor B)    15000  (VIRGIN)
+   0xC617A   Y FLOOR A                           0  (VIRGIN)
+   0xC617C   Y FLOOR B                           0  (VIRGIN)
+   0xC62D8   arm gate on gp-0x6a64            3840  (VIRGIN)
+   0xC6178   per-knot output clamp            5274  (VIRGIN)
+1. **Both floors are ZERO** ⇒ max(Y, 0) is a **no-op** for non-negative Y.
+2. **Both thresholds are 15000 = 183 % of the ±8192 residual clamp** (0xC6200) ⇒ the residual is
+   **hard-clamped below them and X can NEVER reach them** ⇒ the floors **cannot arm**.
+**FULL CLOSURE of the lead, for the record so nobody re-opens it:**
+   branch                what killed it
+   the 9-knot table      NOT a calibration -- FUN_000389ec rebuilds it every cycle
+   the scale factors     zero gp-relative writers -> unity; or, if coded, a BROADBAND rescale
+   the Y floors          value 0 AND thresholds unreachable behind the +-8192 clamp
+⇒ **there is no amplitude-selective lever in the assist-residual path.**
+
+### ➕ WHERE THIS POINTS INSTEAD — THE DELIVERY PATH, WHICH I HAVE NOT TOUCHED
+🛑 The record says the ratchet is a lightly-damped resonance that is **MOTOR/RACK-SIDE**
+([[accord-ratchet-is-a-lightly-damped-resonance]]), yet this entire session has worked in the
+**assist/observer** path. The bridge is already mapped
+([[accord-aggregator-reaches-motor-via-gp6acc-bridge]]):
+   gp-0x6b94 -> governor -> gp-0x6ace -> comp-add -> gp-0x6acc -> SHAPER -> gp-0x6b08
+             -> INTEGRATOR -> gp-0x6b98 -> FOC
+**The SHAPER and the INTEGRATOR sit between the aggregator and the motor, downstream of everything
+examined so far, and on the side the resonance actually lives.** That is the next territory.
+⚠ It is also nearer the current loop, so GATE 2 there is a **stability** question, not a feel one.
+
 ## ✅ **GATE 1 RE-VERIFIED AFTER FINDING TWO HOLES IN MY OWN SCANNER — AND THE SCALE BRANCH IS CLOSED**
 🛑 **MY gp-RELATIVE SCANNER HAD TWO HOLES, AND THE KIT'S OWN MEMORY WARNED ABOUT ONE OF THEM.**
 Chasing `gp-0x6982`/`gp-0x6984` — which `FUN_000389ec` demonstrably reads — my scan returned **zero
@@ -2175,38 +2206,4 @@ against a measured operating point, where V137's support is an n=8 correlation o
 ⚠ **But if the operator prefers to continue what has demonstrably been working rather than test a new
 mechanism, V137 is the build for that, it is already built, and it is one halfword.** That is his call,
 not mine, and it is cheap either way — both are cal-only and reversible.
-
-## ⛔ **PAIRED SPEED-MATCHING IS WORSE — AND I AM STOPPING THE ESTIMATOR TUNING THERE**
-The instrument's limit is its noise floor, so the obvious move is to lower it. The current speed match
-is a percentile **filter**, not a **pairing**; matching each engaged window to a nearest-speed manual
-window should cancel more variance. **Tested on the same nine routes, it does the opposite.**
-```
-   route  build   UNPAIRED A/B   PAIRED A/B
-   r78    V91         1.72          1.08
-   r7e    V96         1.44          3.63
-   r7f    V96         1.29          1.01
-   r96    V102        1.48          1.64
-   ra4    V104        2.13          2.97
-   ra6    V106        1.11          2.18
-   r1e    V107        1.82          4.98
-   r22    V112        2.76         11.43
-   r24    V122        3.60          3.52
-   ---------------------------------------------------------
-   UNPAIRED   median 1.72x   p90 2.93x   max  3.60x
-   PAIRED     median 2.97x   p90 6.27x   max 11.43x
-```
-✅ **[EVIDENCE] pairing is ~1.7x WORSE at the median and 2x worse at p90.** Two reasons: it **discards
-every window without a partner within 0.75 km/h**, so *n* collapses; and a **median of individual
-ratios** is a noisier statistic than a **ratio of medians**, because each individual ratio carries the
-noise of two windows rather than of two pooled distributions. **The existing design stands.**
-
-### ⭐ AND I AM STOPPING HERE, DELIBERATELY
-There are more variants to try — a narrower 19–21 Hz band, log-space averaging, a trimmed mean. **I am
-not going to try them.** With **nine routes**, differences below roughly 20 % in split-half scatter are
-not distinguishable, and selecting the best of several estimators **by the same statistic used to judge
-them** is exactly the selection that manufactures an apparent improvement. That is the tuning analogue
-of the window bootstrap this session already had to remove.
-✅ **One principled alternative was pre-specified, tested, and lost. The instrument is what it is:
-median 1.72x, p90 2.93x, and 3.60x at the reference build.** Those are the numbers the V158 drive will
-be judged against, and they were fixed before the drive rather than chosen after it.
 

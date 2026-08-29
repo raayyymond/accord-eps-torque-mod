@@ -427,3 +427,37 @@ that range. **Calibrate the floor AT THE OPERATING POINT you will actually use i
 the full sweep and then quoted a detection threshold from the median, while the reference build sits
 at the noisy end.
 
+## ⛔ **PAIRED SPEED-MATCHING IS WORSE — AND I AM STOPPING THE ESTIMATOR TUNING THERE**
+The instrument's limit is its noise floor, so the obvious move is to lower it. The current speed match
+is a percentile **filter**, not a **pairing**; matching each engaged window to a nearest-speed manual
+window should cancel more variance. **Tested on the same nine routes, it does the opposite.**
+```
+   route  build   UNPAIRED A/B   PAIRED A/B
+   r78    V91         1.72          1.08
+   r7e    V96         1.44          3.63
+   r7f    V96         1.29          1.01
+   r96    V102        1.48          1.64
+   ra4    V104        2.13          2.97
+   ra6    V106        1.11          2.18
+   r1e    V107        1.82          4.98
+   r22    V112        2.76         11.43
+   r24    V122        3.60          3.52
+   ---------------------------------------------------------
+   UNPAIRED   median 1.72x   p90 2.93x   max  3.60x
+   PAIRED     median 2.97x   p90 6.27x   max 11.43x
+```
+✅ **[EVIDENCE] pairing is ~1.7x WORSE at the median and 2x worse at p90.** Two reasons: it **discards
+every window without a partner within 0.75 km/h**, so *n* collapses; and a **median of individual
+ratios** is a noisier statistic than a **ratio of medians**, because each individual ratio carries the
+noise of two windows rather than of two pooled distributions. **The existing design stands.**
+
+### ⭐ AND I AM STOPPING HERE, DELIBERATELY
+There are more variants to try — a narrower 19–21 Hz band, log-space averaging, a trimmed mean. **I am
+not going to try them.** With **nine routes**, differences below roughly 20 % in split-half scatter are
+not distinguishable, and selecting the best of several estimators **by the same statistic used to judge
+them** is exactly the selection that manufactures an apparent improvement. That is the tuning analogue
+of the window bootstrap this session already had to remove.
+✅ **One principled alternative was pre-specified, tested, and lost. The instrument is what it is:
+median 1.72x, p90 2.93x, and 3.60x at the reference build.** Those are the numbers the V158 drive will
+be judged against, and they were fixed before the drive rather than chosen after it.
+
