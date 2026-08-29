@@ -11,7 +11,7 @@
 Three of this kit's own measurement instruments turned out to be artefacts of a spectral tilt. With a
 validated replacement, **the ratchet is firmware-created, engaged-only, lives in TORQUE not wheel
 rate, and falls only WEAKLY across builds where the grind falls strongly** — see the correction in
-§3. That dissociation led to the **base power-assist map**, the largest torque-fed term in
+§3. That led to the **base power-assist map**, the largest torque-fed term in
 the aggregator, whose slope cap and second-order section had never been touched. **Seven builds are
 cut.** Fly **V173**. Every remaining lever is priced **below the measurement floor**, and the one
 assumption the levers share is — demonstrably, after three estimator families failed — **testable only
@@ -129,9 +129,12 @@ the notch, are the lever in the ratchet band.
 - **The `P·L` real-positive assumption.** **Closes only on the drive.** Three estimator families have
   now failed: frequency-domain Q (tilt), excess stratified by torque (rate-confounded, structurally),
   ring-down (fails its own control — 6/9 at 1.5–3.3×, one control negative, no build ordering).
-- **Driven vs self-excited: inconclusive.** Band-specific coupling is specific on 6/9 routes but the
-  pooled CI **[−0.021, +0.176] crosses zero**. `r1e` (14 windows) gives +0.522 vs shuffled +0.097 —
-  an underpowered real effect. **Closes with more continuous windows.**
+- ✅ **Driven vs self-excited: CLOSED — DRIVEN.** It was inconclusive at n=7 (CI [−0.021, +0.176]
+  crossed zero). The cache turned out to hold **19 usable routes, not the 9 I had scored**; at
+  **n=17** the same statistic gives median **+0.1148**, CI **[+0.0274, +0.1682]** — **excludes
+  zero**. Specific on 10/17, and specificity rises with window count (ρ +0.31), as an
+  underpowered real effect predicts. ⚠ Not universal — `r85`/`r95`/`r97` are negative.
+  ⇒ **a null on the drive can no longer be blamed on absent excitation.**
 - **Honda's 55 Hz notch: purpose unknown.** V173 preserves it; V172 does not. Worth knowing before
   flying V172.
 - **The absolute Q-ratio figures** carry more uncertainty than two decimals suggest, since `L_other`
@@ -154,5 +157,8 @@ the notch, are the lever in the ratchet band.
   every close-out.
 - **Never nest a file read inside the call that opens it for writing** — truncated `MEMORY-PART6.md`
   to 1 KB; restored from `540c00a3`, 84 pointers intact.
+- **Enumerate the cache before trusting an n.** I scored 9 routes; there are **19**. The
+  missing half **overturned one headline claim and closed one open question** — both in the
+  same pass. `r77` alone holds 97 windows against `r1e`'s 42.
 - **Search the kit's record first**: `MEMORY-PART5` already carried the notch discovery, with the same
   coefficients. I re-derived it without checking.
