@@ -1,5 +1,47 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **CORRECTION: "THE COUNTERS NEVER RESET WITHIN A DRIVE" IS NOT ESTABLISHED**
+The section above asserts that the fault counters latch for the whole drive and only clear on an
+init path, and builds the noise-floor explanation on it. **That assertion came from a SINGLE
+zero-store without checking who calls it.** Checked now:
+```
+   0x3EAA6 .. 0x3EAC4   FUN_0003e936 is a CLEAR ROUTINE -- it walks the counters, compares each
+                        against its lockstep shadow (gp-0x4c27 for gp-0x6725), and on a match does
+                        `st.b r0` to BOTH; on a mismatch it calls the lockstep-fault handler.
+   FUN_0003e936         has NINE callers
+   FUN_0003bcb2         holds the gp-0x671d zero-store at 0x3BD2A, AND has SEVEN callers of its own
+   all of them inside a dense 0x3Cxxx-0x3Exxx fault-management web
+```
+⇒ **this is NOT an init-only path.** The counters **can be cleared during operation**, under
+conditions that have not been traced.
+⇒ **[RETRACTED] "they never reset within a drive."** ⊕ **[RETRACTED] that this is established as
+the explanation for the 20–36× noise floor** — it remains a **plausible HYPOTHESIS**, but the time
+course is unknown and a monotone one-way migration is exactly what was assumed and not shown.
+
+### ✅ WHAT SURVIVES — ALL VERIFIED AT SPECIFIC SITES
+```
+   the counters EXIST, are LOCKSTEP-SHADOWED, and GATE CAL SELECTIONS       verified
+   gp-0x671A gates three of them (aggregator / b26 Y-branch / notch gate)   verified
+   gp-0x671D selects the r24 multiplier with a 5.12x step  (0x3AB98)        verified
+   it INCREMENTS on a threshold crossing and SATURATES at 255 (FUN_00041d56) verified
+   WHEN it resets                                                           UNRESOLVED
+```
+⇒ **the mechanism is real; the TIME COURSE is unknown.**
+
+### ⭐ AND IT MAKES V149 STRONGER, NOT WEAKER
+If the counter **latches once**, V149 removes a one-time 5.12× step.
+If the counter can be **cleared and re-armed**, the multiplier **toggles 5.12× repeatedly through a
+drive** — which is **worse** than a single step, and a far better candidate for a symptom that
+"comes and goes".
+⇒ **V149 removes the step under EITHER time course**, because it makes the count==0 and count>0
+values identical. **Its rationale does not depend on the retracted claim.**
+
+### ⭐ THE NEXT MEASUREMENT THIS POINTS AT
+**V148's probe already reads `gp-0x671d`** (via the even `gp-0x671E`, high byte). ⇒ one drive would
+show **not just whether the counter is non-zero, but whether it TOGGLES** — settling the time course
+directly instead of by tracing seven callers.
+⊕ That makes **V148 and V149 complementary**: V149 removes the step, V148 measures it.
+
 ## 🛑🛑🛑 **THE ASSIST CALIBRATION IS NOT FIXED — IT MIGRATES AS FAULT COUNTERS ACCUMULATE**
 Sweeping `gp-0x6700`–`gp-0x6728` for cells read inside the assist chain (0x33000–0x43000) turns up
 **a whole FAMILY of lockstep-shadowed latching counters**, every one of them read there:
