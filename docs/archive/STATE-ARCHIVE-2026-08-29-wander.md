@@ -2487,3 +2487,38 @@ is **not** a new direction. Recorded so it is not re-proposed as one.
 pre-registered fine adjustment *after* V175's drive — spending it now would confound the one
 measurement that can attribute the effect.
 
+## ❌ **THE AMPLITUDE-SELECTIVITY LEAD IS CLOSED IN ITS ORIGINAL FORM — THE RESIDUAL LERP IS NOT A CALIBRATION**
+🛑 **I proposed reshaping the residual LERP's 9 knots as a static cal edit. THAT TABLE DOES NOT
+EXIST IN FLASH.** `FUN_000389ec` **rebuilds it every cycle** into a scratch buffer and publishes it:
+```
+   scratch:  X at gp-0x373c ... , Y at gp-0x3714 ...
+   X[i] = ((int)raw << 10) / iVar32        iVar32 = FUN_0003897a(gp-0x6982, clamped by cals)
+   Y[i] = (raw * iVar33) >> 10             iVar33 = FUN_0003897a(gp-0x6984, clamped by cals)
+   then published:  gp-0x64b8.. <- gp-0x373c..     gp-0x641c.. <- gp-0x3714..
+```
+=> the knots are **computed from two RUNTIME ADAPTATION STATES** (`gp-0x6982`, `gp-0x6984`) every
+cycle. **There is no static table to edit**, and my earlier flash search was hunting something that
+does not exist. ➕ It also explains the measured **`f'` compression** (p50 2.174 hands-off vs 0.346
+hands-ON) — that is not a fixed curve being traversed at different points, it is **the curve itself
+being rescaled** by the adaptation.
+
+### ⚠ THE SALVAGEABLE SUB-LEAD, AND WHY I AM NOT SPENDING IT NOW
+The **scale factors are bounded by static cals**, and those are editable:
+```
+   tp+0x7390 / 0x7392  = 0xC6390 / 0xC6392   upper clamps on the two adaptation inputs
+   tp+0x739a / 0x739c  = 0xC639A / 0xC639C   lower clamps
+   tp+0x717a / 0x717c  = 0xC617A / 0xC617C   small-signal FLOORS applied to Y per knot
+   tp+0x713e / 0x7140  = 0xC613E / 0xC6140   the thresholds those floors are gated on
+   tp+0x7178           = 0xC6178             per-knot output clamp
+```
+Since `f' ∝ iVar33 · iVar32 / 1024²`, bounding the adaptation **does** move small-signal gain, and
+`0xC617A`/`0xC617C` look like a direct small-signal floor — the amplitude-selective handle in cal form.
+🛑 **But this is a lever INSIDE AN ADAPTATION LOOP, which is a new and materially riskier class
+than anything the kit has flown.** Before any dose it needs: the exact knot-index gating of the floors
+traced (the logic is threshold-and-index dependent, not a simple clamp); `FUN_0003897a` decompiled to
+learn what the adaptation actually converges to; **GATE 1** on `gp-0x6982`/`gp-0x6984`; and **GATE 2 in
+magnitude AND phase against an ADAPTIVE plant**, which the kit has never had to do. ⚠ **A wrongly
+bounded adaptation can wind up or chatter** — the failure mode would look like new ratcheting.
+=> **That is a full session's work and it must NOT be started before V175 flies**, because if V175's
+result falsifies the polarity chain, this entire path is falsified with it.
+

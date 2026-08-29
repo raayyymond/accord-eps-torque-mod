@@ -4,6 +4,54 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ⭐ **THE EXCITER LIST: ONLY FOUR AGGREGATOR TERMS ARE LIVE, AND V196 TOUCHES THE SMALLEST**
+The ratchet is a **plant** resonance, so firmware can only reduce what **excites** it. The exciters
+are the terms summed in `FUN_0003aa2c` into `gp-0x6b94`. Each carries a hard clamp — an upper bound
+on its contribution, readable from the decompiled constants without any probe:
+```
+   cell        clamp   what it is                     status
+   gp-0x6b86   12288   the BIQUAD output              LIVE - carries the LKAS command (1-5 Hz)
+   gp-0x6b4c   10240   the 11-slot assist sum         LIVE - low frequency
+   gp-0x6ad4   10240   unfiltered residual PID lane   ELIMINATED as a cause by V56
+   gp-0x6b62    8192   return-centre / detent         DEAD ENGAGED (0.0000 / 75,227 frames)
+   iVar21       8192   a clamped branch product       unidentified
+   iVar16       8192   a clamped branch product       unidentified
+   gp-0x6bbe    2048   VISCOUS + DC pedestal          LIVE - rate-derived, omega^1
+   gp-0x6bd0    2048   the base-assist damper         DEAD in 100 % of the micro regime
+   gp-0x6ade    1024   a clamped input                unidentified
+   gp-0x6b26    1024   the INERTIA term  <-- V196     LIVE - acceleration-derived, omega^2
+                                                             and clamped further, to 511
+```
+⇒ **4 LIVE · 3 dead or eliminated · 3 unidentified.**
+🛑 **V196 halves the term with the SMALLEST clamp of any live exciter — 1024 against 12288 for
+the biquad output, 12× less authority**, and `0xC407E` clamps it to 511 on top of that.
+✅ **That is not automatically bad**: the large terms carry the LKAS command, which the record shows
+is a **1–5 Hz low-pass**, so their energy sits well BELOW the ratchet. The inertia term is the only
+**ω²** one — concentrated exactly where the ratchet is. **A small clamp on a high-frequency term can
+still dominate the 8 Hz sum.** Constants cannot settle which.
+
+### ⭐ **`gp-0x6bbe` IS THE NEXT THING TO MEASURE — AND IT IS BYTE-STOCK**
+It is **LIVE**, **rate-derived (ω¹, so also elevated at 8 Hz)**, and carries **twice the inertia
+term's clamp**. Its writer `FUN_00034a72` was decompiled and its cals identified:
+```
+   0xC6370  2560   scales gp-0x6c2e (the 2nd accel EMA) into this path
+   0xC6372   205   EMA coefficient on the torque term
+   0xC615A   512   fallback clamp when gp-0x6a62 >= 0x7d01
+   ** identical on STOCK, V122 and V196 => the VISCOUS PATH IS BYTE-STOCK, untouched by the
+      entire post-V38 arc **
+```
+⊕ Note `0xC6370` scales **`gp-0x6c2e`**, the second acceleration EMA flagged as unexplored earlier —
+so that channel does reach the viscous path after all.
+
+🛑 **AND DELIBERATELY, NO BUILD FOLLOWS FROM THIS.** Three of my hypotheses have been killed by
+their own tests this session (Coulomb sign-flip, common-cause correlation, relay-as-oscillator).
+Proposing a fourth speculative lever on an untouched, byte-stock path — on the strength of a clamp
+width and a frequency-weighting argument, with **no measurement of its actual 8 Hz content** — would
+be repeating exactly that pattern.
+⇒ **The honest next step is a MEASUREMENT, not a lever: repoint the 427 probe onto `gp-0x6bbe` and
+compare its 8 Hz content against the inertia term's.** That decides whether V196 is touching the
+dominant exciter or a minor one, and it is the same one-channel move that V194 already demonstrates.
+
 ## 🛑 **MY RELAY CLAIM OVERREACHED — the ratchet is a DRIVEN RESONANCE, not a relay limit cycle**
 Last section proposed the flying build's saturated inertia term as the ratchet's mechanism. That put
 it in direct tension with the recorded ★★★★★ *"lightly-damped resonance, ring-down ζ 0.017–0.036,
@@ -2196,39 +2244,4 @@ own rule (*"if I observe micro-ratcheting or grinding, I am generally going to s
 win**, because attribution only matters when there is something to attribute.
 ⊕ **Generalises**: any endpoint that is a RATIO of two separately-driven conditions costs roughly
 **4x the exposure** of a presence/absence endpoint. Stage ratio endpoints behind the presence check.
-
-## ❌ **THE AMPLITUDE-SELECTIVITY LEAD IS CLOSED IN ITS ORIGINAL FORM — THE RESIDUAL LERP IS NOT A CALIBRATION**
-🛑 **I proposed reshaping the residual LERP's 9 knots as a static cal edit. THAT TABLE DOES NOT
-EXIST IN FLASH.** `FUN_000389ec` **rebuilds it every cycle** into a scratch buffer and publishes it:
-```
-   scratch:  X at gp-0x373c ... , Y at gp-0x3714 ...
-   X[i] = ((int)raw << 10) / iVar32        iVar32 = FUN_0003897a(gp-0x6982, clamped by cals)
-   Y[i] = (raw * iVar33) >> 10             iVar33 = FUN_0003897a(gp-0x6984, clamped by cals)
-   then published:  gp-0x64b8.. <- gp-0x373c..     gp-0x641c.. <- gp-0x3714..
-```
-=> the knots are **computed from two RUNTIME ADAPTATION STATES** (`gp-0x6982`, `gp-0x6984`) every
-cycle. **There is no static table to edit**, and my earlier flash search was hunting something that
-does not exist. ➕ It also explains the measured **`f'` compression** (p50 2.174 hands-off vs 0.346
-hands-ON) — that is not a fixed curve being traversed at different points, it is **the curve itself
-being rescaled** by the adaptation.
-
-### ⚠ THE SALVAGEABLE SUB-LEAD, AND WHY I AM NOT SPENDING IT NOW
-The **scale factors are bounded by static cals**, and those are editable:
-```
-   tp+0x7390 / 0x7392  = 0xC6390 / 0xC6392   upper clamps on the two adaptation inputs
-   tp+0x739a / 0x739c  = 0xC639A / 0xC639C   lower clamps
-   tp+0x717a / 0x717c  = 0xC617A / 0xC617C   small-signal FLOORS applied to Y per knot
-   tp+0x713e / 0x7140  = 0xC613E / 0xC6140   the thresholds those floors are gated on
-   tp+0x7178           = 0xC6178             per-knot output clamp
-```
-Since `f' ∝ iVar33 · iVar32 / 1024²`, bounding the adaptation **does** move small-signal gain, and
-`0xC617A`/`0xC617C` look like a direct small-signal floor — the amplitude-selective handle in cal form.
-🛑 **But this is a lever INSIDE AN ADAPTATION LOOP, which is a new and materially riskier class
-than anything the kit has flown.** Before any dose it needs: the exact knot-index gating of the floors
-traced (the logic is threshold-and-index dependent, not a simple clamp); `FUN_0003897a` decompiled to
-learn what the adaptation actually converges to; **GATE 1** on `gp-0x6982`/`gp-0x6984`; and **GATE 2 in
-magnitude AND phase against an ADAPTIVE plant**, which the kit has never had to do. ⚠ **A wrongly
-bounded adaptation can wind up or chatter** — the failure mode would look like new ratcheting.
-=> **That is a full session's work and it must NOT be started before V175 flies**, because if V175's
-result falsifies the polarity chain, this entire path is falsified with it.
 
