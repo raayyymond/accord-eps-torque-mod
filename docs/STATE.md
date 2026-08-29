@@ -4,6 +4,38 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **GATE 2 PHASE, ENGAGED-ONLY — V184 PASSES AT THE RATCHET, AND THE COST IS NOW QUANTIFIED**
+The biquad being engaged-gated forced the phase check V184 had never had. **It passes, and cleanly.**
+```
+   at 8.17 Hz the multiplicative change in the loop path is r = H_V184 / H_flying
+       |r| = 0.3642        arg(r) = -61.51 deg
+       Re(r) = +0.1737     Im(r) = -0.3201
+   the destabilising direction is L -> +1 (real, positive)
+   => |r| < 1 AND Re(r) < 1: the rotation moves L AWAY from +1 on BOTH axes.
+      ** The phase lag does NOT give back the 64 % gain reduction. **
+   max |H_V184 / H_flying| over 0.1-499 Hz = 0.9995  -> it never amplifies at ANY frequency.
+```
+✅ So the pole retune is stabilising at the ratchet in magnitude *and* in phase, which is the check
+[[feedback-run-the-control-before-the-measurement]] would demand and which the earlier
+magnitude-only GATE 2 did not cover.
+
+### ⚠ THE COST, STATED AS A NUMBER FOR THE FIRST TIME
+```
+   engaged-vs-manual phase (manual is a BYPASS, H = 1)
+        1.00 Hz   flying  -1.35 deg  ->  V184  -17.78 deg     (+16.43 deg)
+        8.17 Hz   flying -11.13 deg  ->  V184  -72.65 deg     (+61.51 deg)
+       21.00 Hz   flying -30.01 deg  ->  V184  -91.82 deg     (+61.81 deg)
+```
+⚠ **+16.4 deg of engaged-only lag at 1 Hz is a real phase-margin cost**, and it bears on the
+operator's THIRD goal: added lag inside a loop is exactly what worsens command oscillation.
+🛑 **BUT WHETHER IT REACHES OPENPILOT'S LOOP IS NOT ESTABLISHED.** The biquad sits on the
+**torque-fed** assist path (`gp-0x6b86`); openpilot's command travels a different lane. The coupling
+is **unestablished, not absent** — [BELIEF] that it is small, and it is pre-registered here as a risk
+the drive can contradict: **if peak command oscillation gets WORSE while the grind improves, this is
+the mechanism to suspect first.**
+⊕ Note the lag is nearly flat above ~8 Hz (+61.5 deg at 8.17, +61.8 at 21) — the pole is well below
+the band, so the ratchet and grind see essentially the same rotation.
+
 ## 🛑 **CORRECTION: THE BIQUAD IS ENGAGED-GATED, SO V184 IS A TWO-VARIABLE TEST, NOT ONE**
 I wrote in V184's docstring that the assist-section poles *"act in both modes, so they do not confound
 the engaged/manual contrast."* **That is WRONG.** Read from the images:
