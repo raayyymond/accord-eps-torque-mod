@@ -4,6 +4,45 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅✅ **EVERY BYTE OF THE NON-STOCK DELTA IS NOW ACCOUNTED FOR — THE AUDIT IS COMPLETE**
+Not "I could not find more" — **enumerated, classified, and each class resolved.**
+```
+   PART                       METHOD                          RESULT
+   cal cells (u16/byte)       value across 139 images,        every SINGLE JUMP resolved;
+                              in build order                  LADDERs identified as deliberate
+   0xE4195..0xE5FFF           same                            80 bytes; the dominant run is
+                              (9 x u16)                       15360 -> 16384 at V38 = an
+                                                              AUTHORITY raise. DO NOT revert.
+   float block 0xC6598..CC    same                            V31/V38 AUTHORITY LADDER. V178
+                                                              tried to revert it and is RETRACTED.
+   cave 0xC4B34 (164 B)       disassembled every gp/tp        7 READS of control cells; all 5
+                              access inside the extent        WRITES go to gp-0x1511/13/14, the
+                                                              CAN scratch it owns. TELEMETRY-ONLY,
+                                                              no control cell written. CLEAN.
+   code bytes                 lineage + churn history         0x35A08/12/18 V103 arm - 0x3AA96 +
+                                                              0xC6446 Lever B - 0x454FE V42 fix -
+                                                              0x2A1F0, 0x55C0E/DF2/E10 telemetry
+```
+🛑 **THE FIRMWARE SEARCH IS COMPLETE, AND THIS TIME IT IS VERIFIED COMPLETE RATHER THAN
+DECLARED.** Twice today I said the search was finished and was wrong; both times the gap was found by
+reading BYTES rather than the record. The delta has now been read byte by byte.
+
+### ✅ WHAT THE WHOLE SESSION PRODUCED — SIX BUILDS, TWO LEVER FAMILIES, THREE HONDA REVERTS
+```
+   V173  assist-section poles 0.970           grind -12.6 dB, ratchet -5.9 dB, +29 ms lag
+   V174  assist-section poles 0.980           grind -16.0 dB, ratchet -8.8 dB, +43 ms lag
+   V175  V173 + engaged inertia Y -> Honda    removes a 3.0x/8.1x engaged-only dose
+   V176  V175 + pole 0.980                    the strongest attenuation inside the lag guardrail
+   V177  V175 + K1 -> Honda (ONE cell)        removes a 10x-oversized velocity-dependent term
+   V179  V177 + accel alpha -> Honda (1 byte) completes Honda's inertia lane (gain + filter)
+   V178  RETRACTED and quarantined            would have cut LKAS authority ~5x
+```
+✅ **FLY V177 FIRST.** One cell, fully attributable, quantitative case, and it contains V175/V173.
+➕ Then **V179** (completes the lane) or **V176** (more attenuation, more lag), per the card.
+🛑 **Nothing further can be settled without the car.** Every remaining question — which lever the
+ratchet responds to, whether the lag is acceptable, whether `0xC63A6` is needed — is a drive question,
+and the drive card is staged so Stage 1 is a single 15 s pass.
+
 ## ✅ **THE NON-STOCK DELTA IS NOW FULLY AUDITED — 139 IMAGES, EVERY CELL CLASSIFIED**
 Applying the rule the V178 error earned: print every non-stock cal across **all 139 images in build
 order**, then classify. **LADDER** (3+ changes / monotone) = a deliberate tuning axis, do not revert.
@@ -2125,76 +2164,4 @@ the road wheels to be seen.
 of the bar, active only when engaged.** **What would close it**: a phase test at 8.64 Hz on
 each engaged-gated contributor to the motor-torque sum, restricted to cells in the untouched
 set above.
-
-## 🛑🛑⭐ **THE RATCHET IS 100 % FIRMWARE-CAUSED — AND UNTOUCHED BY EVERY LEVER THE KIT HAS PULLED**
-Three results that only make sense together, all from the validated slope-corrected excess
-estimator with slope-matched nulls.
-
-### ✅ 1. IT IS IN THE TORQUE CHANNEL, NOT WHEEL RATE — A 7x BETTER INSTRUMENT
-```
-   ratchet 5-12 Hz margin over each channel's OWN slope-matched null, mean of 4 routes
-     tq        7.62      <- EPS/driver torque
-     cs_tq     7.42
-     ws_fr     4.41      <- front wheel speed, also real
-     ws_fl     3.95
-     cs_rate   1.03      <- THE INCUMBENT CHANNEL, AT CHANCE
-     ang/wang/cs_ang  0.79-0.83
-     sc_tq 0.56 · co_tqcan 0.59 · cc_req 0.67   <- the COMMAND: ratchet absent
-```
-✅ **[EVIDENCE] in `cs_tq` the ratchet is REAL on 9/9 routes** (excess 9.8–67.8 vs null 2.6–4.1).
-✅ **[EVIDENCE] it is NOT in the command** — all three command channels sit below their nulls,
-confirming the older *“not in openpilot's command”* claim with a validated estimator.
-⚠ **This RETRACTS the “and ANGLE-RATE” half of that older claim**: wheel rate scores **1.03**,
-i.e. chance. Every 6–9 Hz endpoint this kit has used was reading the wrong channel.
-
-### 🛑 2. THIRTY-PLUS BUILDS HAVE NOT MOVED IT — AND THE TEST HAD THE POWER TO SEE IT
-```
-   band     channel   full-range rho    post-V102 rho        V102 vs rest
-   GRIND    cs_tq     -0.02 (n.s.)      -0.94   p = 0.005    12.3x
-   GRIND    tq        +0.03 (n.s.)      -0.94   p = 0.005    14.4x
-   GRIND    cs_rate    0.00 (n.s.)      -0.83   p = 0.042    15.0x
-   RATCHET  cs_tq     +0.50  p 0.168    -0.14   p = 0.787     1.6x
-   RATCHET  tq        +0.42  p 0.262    -0.31   p = 0.544     1.9x
-
-   ratchet PEAK FREQUENCY over nine builds: 8.64 +/- 0.64 Hz, CV 7.4 %, vs build rho -0.26 (p 0.51)
-```
-✅ **[EVIDENCE] the GRIND falls monotonically V102→V122 in THREE independent channels**
-(ρ = −0.94, p = 0.005, replicated) ⇒ the kit's builds are measurably working on the grind.
-🛑 **[EVIDENCE] the RATCHET does not move at all.** Observed spread is **6.9–8.3x** against a
-split-half floor of **1.63–1.91x**, so a trend of ≥1.9x would have shown. Its frequency is pinned
-at **8.64 Hz ± 7.4 %** across V91→V122. The weak full-range ρ is **POSITIVE** — if anything newer
-builds ratchet slightly *more* — though not significantly.
-
-### ⭐⭐ 3. AND YET IT EXISTS ONLY WHEN ENGAGED — SO FIRMWARE CREATES IT OUTRIGHT
-```
-   route build   engaged exc / null    manual exc / null    ratio    speed-matched?
-   r78   V91     11.7 / 4.7            3.2 / 4.6            3.63     no (2.8 km/h)
-   r7e   V96     11.5 / 4.7            2.4 / 4.7            4.82     YES
-   r7f   V96     93.6 / 4.2            2.6 / 4.0           35.64     YES
-   r96   V102    55.4 / 4.6            2.0 / 5.0           27.73     YES
-   ra6   V106    48.0 / 4.5            2.7 / 4.1           17.90     no (5.0 km/h)
-   r1e   V107    17.1 / 2.9            2.5 / 4.5            6.92     no (2.9 km/h)
-   r24   V122    32.5 / 4.5            2.7 / 4.6           12.09     YES
-
-   engaged arm beats its null on 7/7 routes ; manual arm on 0/7
-   speed-matched ratio median 19.91x  [4.82, 35.64]
-```
-✅ **[EVIDENCE] there is NO ratchet peak in manual driving at the same speed** — the manual arm
-sits *below* its own null on every route. This is not a mechanical resonance that engagement
-amplifies; **engagement CREATES it.**
-⚠ **SUPERSEDES the recorded “engaging amplifies 6–9 Hz by 2.8x”** — that figure came from the
-tilt-confounded band ratio, which dilutes a peak into its neighbourhood. The validated
-contrast is **~20x**, and the manual arm has no peak at all.
-
-### 🛑 WHAT THIS MEANS FOR THE SEARCH — THE LEVER IS ONE WE HAVE NEVER TOUCHED
-The three results are only consistent one way: **the ratchet is entirely firmware-caused, and
-every calibration lever pulled between V91 and V122 is orthogonal to it.** So it is not
-mechanical, not unreachable, and not a measurement failure — **it is a live firmware path at
-8.6 Hz, engaged-only, that no build in this kit has yet modified.**
-⇒ the question is no longer *“is there a lever?”* but **“which engaged-only path is live at
-8.6 Hz that V91–V122 all left byte-identical?”** — answerable by intersecting the engaged-gated
-code with the set of cells no build has touched.
-⚠ **[BELIEF, not EVIDENCE]** that the responsible path is reachable by calibration at all; it may
-need a structural edit. **What would close it**: the intersection above, then a phase test at
-8.6 Hz on each candidate.
 

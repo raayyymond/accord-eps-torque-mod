@@ -798,3 +798,75 @@ monotone in peak strength and carries the one-sided logic without the defect.
 ⊕ New tool `rlog-tools/score/score_band_excess.py` — the validated estimator, its
 slope-matched null, and the split-half floor, with the window warning built in.
 
+## 🛑🛑⭐ **THE RATCHET IS 100 % FIRMWARE-CAUSED — AND UNTOUCHED BY EVERY LEVER THE KIT HAS PULLED**
+Three results that only make sense together, all from the validated slope-corrected excess
+estimator with slope-matched nulls.
+
+### ✅ 1. IT IS IN THE TORQUE CHANNEL, NOT WHEEL RATE — A 7x BETTER INSTRUMENT
+```
+   ratchet 5-12 Hz margin over each channel's OWN slope-matched null, mean of 4 routes
+     tq        7.62      <- EPS/driver torque
+     cs_tq     7.42
+     ws_fr     4.41      <- front wheel speed, also real
+     ws_fl     3.95
+     cs_rate   1.03      <- THE INCUMBENT CHANNEL, AT CHANCE
+     ang/wang/cs_ang  0.79-0.83
+     sc_tq 0.56 · co_tqcan 0.59 · cc_req 0.67   <- the COMMAND: ratchet absent
+```
+✅ **[EVIDENCE] in `cs_tq` the ratchet is REAL on 9/9 routes** (excess 9.8–67.8 vs null 2.6–4.1).
+✅ **[EVIDENCE] it is NOT in the command** — all three command channels sit below their nulls,
+confirming the older *“not in openpilot's command”* claim with a validated estimator.
+⚠ **This RETRACTS the “and ANGLE-RATE” half of that older claim**: wheel rate scores **1.03**,
+i.e. chance. Every 6–9 Hz endpoint this kit has used was reading the wrong channel.
+
+### 🛑 2. THIRTY-PLUS BUILDS HAVE NOT MOVED IT — AND THE TEST HAD THE POWER TO SEE IT
+```
+   band     channel   full-range rho    post-V102 rho        V102 vs rest
+   GRIND    cs_tq     -0.02 (n.s.)      -0.94   p = 0.005    12.3x
+   GRIND    tq        +0.03 (n.s.)      -0.94   p = 0.005    14.4x
+   GRIND    cs_rate    0.00 (n.s.)      -0.83   p = 0.042    15.0x
+   RATCHET  cs_tq     +0.50  p 0.168    -0.14   p = 0.787     1.6x
+   RATCHET  tq        +0.42  p 0.262    -0.31   p = 0.544     1.9x
+
+   ratchet PEAK FREQUENCY over nine builds: 8.64 +/- 0.64 Hz, CV 7.4 %, vs build rho -0.26 (p 0.51)
+```
+✅ **[EVIDENCE] the GRIND falls monotonically V102→V122 in THREE independent channels**
+(ρ = −0.94, p = 0.005, replicated) ⇒ the kit's builds are measurably working on the grind.
+🛑 **[EVIDENCE] the RATCHET does not move at all.** Observed spread is **6.9–8.3x** against a
+split-half floor of **1.63–1.91x**, so a trend of ≥1.9x would have shown. Its frequency is pinned
+at **8.64 Hz ± 7.4 %** across V91→V122. The weak full-range ρ is **POSITIVE** — if anything newer
+builds ratchet slightly *more* — though not significantly.
+
+### ⭐⭐ 3. AND YET IT EXISTS ONLY WHEN ENGAGED — SO FIRMWARE CREATES IT OUTRIGHT
+```
+   route build   engaged exc / null    manual exc / null    ratio    speed-matched?
+   r78   V91     11.7 / 4.7            3.2 / 4.6            3.63     no (2.8 km/h)
+   r7e   V96     11.5 / 4.7            2.4 / 4.7            4.82     YES
+   r7f   V96     93.6 / 4.2            2.6 / 4.0           35.64     YES
+   r96   V102    55.4 / 4.6            2.0 / 5.0           27.73     YES
+   ra6   V106    48.0 / 4.5            2.7 / 4.1           17.90     no (5.0 km/h)
+   r1e   V107    17.1 / 2.9            2.5 / 4.5            6.92     no (2.9 km/h)
+   r24   V122    32.5 / 4.5            2.7 / 4.6           12.09     YES
+
+   engaged arm beats its null on 7/7 routes ; manual arm on 0/7
+   speed-matched ratio median 19.91x  [4.82, 35.64]
+```
+✅ **[EVIDENCE] there is NO ratchet peak in manual driving at the same speed** — the manual arm
+sits *below* its own null on every route. This is not a mechanical resonance that engagement
+amplifies; **engagement CREATES it.**
+⚠ **SUPERSEDES the recorded “engaging amplifies 6–9 Hz by 2.8x”** — that figure came from the
+tilt-confounded band ratio, which dilutes a peak into its neighbourhood. The validated
+contrast is **~20x**, and the manual arm has no peak at all.
+
+### 🛑 WHAT THIS MEANS FOR THE SEARCH — THE LEVER IS ONE WE HAVE NEVER TOUCHED
+The three results are only consistent one way: **the ratchet is entirely firmware-caused, and
+every calibration lever pulled between V91 and V122 is orthogonal to it.** So it is not
+mechanical, not unreachable, and not a measurement failure — **it is a live firmware path at
+8.6 Hz, engaged-only, that no build in this kit has yet modified.**
+⇒ the question is no longer *“is there a lever?”* but **“which engaged-only path is live at
+8.6 Hz that V91–V122 all left byte-identical?”** — answerable by intersecting the engaged-gated
+code with the set of cells no build has touched.
+⚠ **[BELIEF, not EVIDENCE]** that the responsible path is reachable by calibration at all; it may
+need a structural edit. **What would close it**: the intersection above, then a phase test at
+8.6 Hz on each candidate.
+
