@@ -52,7 +52,21 @@ def decode(raw):
     return np.where(r < 512, r, r - 1024) * LSB
 
 
-def main(tag):
+def main(tag, confirmed=False):
+    if not confirmed:
+        print('=' * 78)
+        print('REFUSING TO DECODE -- this channel is only meaningful on a V194+ route.')
+        print('')
+        print('  The 427 field carries a DIFFERENT signal on every earlier build:')
+        print('    V102..V182  gp-0x6b4c     V183..V193  gp-0x6ac0 at sar 4')
+        print('    V194+       gp-0x6c2c at sar 6   <- the only one this decoder is valid for')
+        print('')
+        print('  Decoding an older cache here produces a PLAUSIBLE, SPECIFIC, WRONG number --')
+        print('  the exact failure this kit keeps hitting.  Re-run with --v194 once you have')
+        print('  flown V194 and the route is genuinely a V194 capture:')
+        print(f'    python {Path(__file__).name} <route-tag> --v194')
+        print('=' * 78)
+        return 2
     p = Path('analysis-2020accord/_scratch/cache') / tag / f'{tag}.npz'
     if not p.exists():
         print(f'no cache for {tag} at {p}')
@@ -96,4 +110,5 @@ def main(tag):
 
 if __name__ == '__main__':
     os.chdir(str(_d.parent) if (_d / 'rlog-tools').exists() else '.')
-    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else 'r24'))
+    _a = [x for x in sys.argv[1:] if not x.startswith('--')]
+    sys.exit(main(_a[0] if _a else 'r24', '--v194' in sys.argv))
