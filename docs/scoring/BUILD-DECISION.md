@@ -139,3 +139,40 @@ desk work can, because neither `gp-0x6ac0` nor `gp-0x6a5e` is in the corpus.
 
 ⚠ Cost: 427 stops carrying `gp-0x6abc` for this drive, and the channel is rescaled 2x, so historical
 427 comparisons must account for the shift.
+
+---
+
+## V184 — the single-variable test (FLY THIS)
+
+`96509cc9b102e026…` · 29/29 · base V183
+
+**The finding behind it.** Stock ships mode 24 (manual) identical to mode 26 (engaged) across all six
+mode-record families. Enumerating them on the build you are actually driving finds **exactly one**
+kit-created engaged/manual asymmetry:
+
+```
+L1 · L3 · FactorE · L5      m26 == m24, m27 == m24
+FactorC                     m27 differs ALREADY IN STOCK -> Honda's, not ours
+0xCBE74 inertia             m26/m27 Y = [-29490,-17202,-16000]  vs  m24 [-9830,-5734,-1966]
+```
+
+The ratchet is engaged-amplified ~15x. **If that amplification comes from a mode asymmetry at all, the
+inertia dose is the only candidate on the car.**
+
+**Why V184 and not V183.** V183 inherits V158's damper edits, which *create* two new engaged-only
+asymmetries your car does not have — so a result would be ambiguous between them and the inertia
+dose. V184 copies those back from each table's own m24 record (read at build time, never typed).
+
+Result: **engaged is identical to manual in every family, exactly as stock ships it, except the
+inertia dose is gone.** One variable.
+
+It still carries the poles, K1→Honda, the accel filter→Honda, w[3] halved, and the 427 probe — all of
+which act in both modes or are instrumentation, so none confounds the engaged/manual contrast.
+
+| what the drive shows | conclusion |
+|---|---|
+| ratchet falls **and** engaged/manual ratio falls | the inertia dose carried the engaged amplification — the strongest single result available |
+| ratchet falls, ratio unchanged | the broadband levers did it; mode asymmetry was not the amplifier |
+| neither moves | no mode asymmetry explains it; the search leaves the mode records entirely |
+
+Independently, the 427 probe answers whether the damper's hard OFF gate is ever open.
