@@ -314,6 +314,21 @@ for _v in sorted(img):
         print(f'         note: {_v.upper()} 0xC64DE = {_c} => {1000.0 / (2 * _c):.2f} Hz '
               f'(Honda 17 => 29.41 Hz). Latent, inside the grind band.')
 
+print()
+print("[8] THE FRICTION LANE'S TRUE MULTIPLIER vs HONDA")
+# friction = clamp(motor_rate * 12 / knee, +-1) * (|model| * K1/1024 + K0/1024)
+# V177 reverted K1 1020 -> 102 and the record calls that "K1 -> Honda".  But the RAMP KNEE was
+# never reverted (600 -> 3000, unattributed to any stated intent), and the knee multiplies the
+# whole expression, so the lane sits at 0.200x Honda BELOW saturation -- not at Honda.  Labelling
+# it "reverted" hides a 5x change in the regime the ratchet lives in.
+for _v in sorted(img):
+    _kn = struct.unpack_from('<H', img[_v], 0xC40BC)[0]
+    _k1 = struct.unpack_from('<H', img[_v], 0xC40D2)[0]
+    _mult = (600.0 / _kn) * (_k1 / 102.0)
+    chk(_kn > 0, f'{_v.upper()} friction lane: knee {_kn}, K1 {_k1} '
+                 f'=> {_mult:.3f}x Honda below saturation, saturating at {_kn / 12.0:.0f} '
+                 f'(Honda 50)')
+
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
 for m in bad:

@@ -2859,3 +2859,38 @@ revert to a Honda value with the strongest mechanism-to-symptom match in the ses
 **22 -> 8**. That changes the inertia term's **phase** rather than its size, its direction is not
 established, and including it would have cost V177's single-cell attribution.
 
+## ✅ **V122 FLATTENED A GRADUATED RAMP TO A CONSTANT, AND DELETED A DEADBAND — V178 RESTORES IT**
+Pinned by disassembly at `0x44374..0x443EE` inside `FUN_00043e44`:
+```
+   0x44374  ld.w   0x75b8, tp, r11    ; X[0] = 700.0
+   0x44378  cmpf.s le, r9, r11        ; input < X[0] ?
+   0x4438e  ld.w   0x75c4, tp, r13    ; -> Y[0]   ** the BELOW-RANGE FALLBACK **
+
+   addr      stock   V122+     the LERP: X = [700, 800, 1100]
+   0xC65C4     0.0     5.0     Y[0] -- below 700, stock gives ZERO, the car gives MAXIMUM
+   0xC65C8     1.5     5.0
+   0xC65CC     2.0     5.0
+   0xC6598     1.0     5.0     (a second LERP, same treatment)
+   0xC659C     1.0     5.0
+   0xC65AC    -1.0    -5.0     (its mirror)
+   0xC65B0    -1.0    -5.0
+```
+⇒ **stock rises 0.0 → 1.5 → 2.0 with input; the flying build is a FLAT 5.0 everywhere**, and the
+deadband below 700 is **gone**. That is the shape change
+[[accord-v80-damper-relay-and-grind1-inert]] was written about — *"the damper became a RELAY …
+**restore the RAMP**, don't merely lower k"* — and it is live on the car.
+🛑 **HONEST LIMIT: the SHAPE change is pinned; the QUANTITY is NOT.** The input arrives in `r9`
+and the only nearby RAM cell (`gp-0x6d94`) has **one writer, zero readers** ⇒ a diagnostic mirror,
+not the source. **V178 is justified as a REVERT TO HONDA'S OWN VALUES — the safest class — and NOT
+as an understood lever. Do not describe it as one.**
+
+### ✅ V178 BUILT — 7 float32 cells, 28 bytes, base V177
+**23/23 assertions · CRC 50/50 · readback byte-identical · all seven cells byte-identical to stock ·
+`0xC407E` 511, `0xC40BC` 3000, `0xC40D2` 102, `0xC63A6` 1024 all asserted FROZEN.**
+image `2a78d9241b9db4bc…` · rwd `b75d7e5438585a1d…`.
+🛑 **NOT fly-first.** V177 is ONE cell and fully attributable; V178 adds seven whose semantics
+are unestablished. **Fly V177 first.** V178 is for undoing the whole undocumented V122 delta in one
+go, accepting that its result could not be attributed to a single cell.
+❌ **`0xC40BC` is deliberately NOT reverted** — 600 would make the Coulomb zero-crossing **5x
+sharper**, undoing the one V122 change that helps.
+

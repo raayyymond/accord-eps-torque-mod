@@ -4,6 +4,57 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **THE 8 Hz RATCHET NOTCH STAYS REJECTED — and the friction lane is NOT “reverted to Honda”**
+
+### ✅ **V184's 8 Hz NOTCH RE-PRICED UNDER THE CORRECTED UNDERSTANDING — still the wrong trade**
+V184 was killed on **−40.5°** of phase, reasoned when the biquad was believed to sit in the **LKAS
+command** path. It sits in the **base power-assist** path, so that phase is steering FEEL, not command
+tracking — a different currency, and the lever deserved re-pricing. **29,348 candidates, same gate:**
+```
+   budget   6-9 Hz (ratchet)   16.3-23 Hz (grind)   phase @1/3/5 Hz        zeros poles radius
+    5 deg        1.34x               0.91x          -0.3  -1.4  -4.6        9.25  9.12 0.9925
+   12 deg        2.56x               0.93x          -1.2  -4.5 -11.8        8.62  8.38 0.9900
+   20 deg        3.50x               0.94x          -2.2  -7.8 -19.2        8.25  7.88 0.9875
+   40 deg        6.96x               1.03x          -6.3 -20.6 -39.8        8.25  6.88 0.9725
+   -------------------------------------------------------------------------------------------
+   V202          1.00x            ** 7.3x **              -7.8 at 5 Hz
+```
+⇒ **2.56× on the ratchet costs MORE phase than 7.3× on the grind**, and 🛑 **the 16.3–23 Hz column
+shows it forfeits the grind fix entirely** (0.91–1.03× — at or slightly worse than Honda).
+⇒ **There is ONE biquad and ONE zero pair: it serves the grind OR the ratchet, never both.**
+**V184's rejection survives on its own terms. The biquad stays on the grind.** ⊕ Why it is so weak:
+6–9 Hz is a 3 Hz-wide band at a low centre, and a notch narrow enough to pass the gate (r ≈ 0.99)
+nulls only a sliver of it while its phase skirt reaches down into the 1–5 Hz band the driver lives in.
+Added group delay at the 12° point is **+3.32 → +15.83 ms** vs V202's +3.80 → +5.52.
+
+### 🛑🛑 **A MISLEADING LABEL IN MY OWN DOCS — the friction lane is at 0.200× HONDA, not Honda**
+```
+   friction = clamp(motor_rate * 12 / knee, +-1) * (|model| * K1/1024 + K0/1024)
+
+   build   0xC40BC knee   0xC40D2 K1   multiplier vs Honda BELOW saturation   saturates at
+   stock        600           102                1.000x                          50
+   V122         3000         1020                2.000x                         250     <- FLEW
+   V202         3000          102             ** 0.200x **                      250
+```
+**V177 reverted K1 (1020→102) and the record — mine included — calls that “K1 → Honda”.** But the
+**ramp knee was never reverted**, and the knee multiplies the whole expression:
+`(600/3000) × (102/102) = 0.200`. ⇒ **The lane is at ONE FIFTH of Honda's friction below saturation,
+and saturation now needs 5× the motor rate (250 vs 50).** Above saturation it equals Honda exactly —
+but the ratchet lives in the LOW-rate regime, which is entirely the 0.200× regime.
+⊕ **A guard now prints this multiplier for every flashable image at close-out**, so “K1 → Honda” can
+never again read as “friction is Honda's”.
+
+### ⚖ **WHY IT IS LEFT ALONE — stated, not silently chosen**
+The knee cuts **both ways** and the two directions are in genuine tension:
+- **For leaving it:** Coulomb friction is *"exactly what makes torque ripple without motion"* — the
+  ratchet's own signature (13.5× on `cs_tq`, 1.7× on `cs_rate`). 0.200× means **less ratchet**. It also
+  matches the standing operator directive: *low apparent steering mass and friction to LKAS.*
+- **Against:** the record's verified polarity is **more modelled friction = MORE assist** (nine links,
+  Ghidra-traced). So 0.200× is also **an authority reduction** in that lane — against a stated goal.
+🛑 **Reverting the knee to 600 would RAISE friction 5×, which contradicts a standing operator
+instruction, so it is NOT built.** It is recorded here as the one remaining unattributed non-stock cell
+in the friction lane, with its effect stated in both directions, for the operator to decide.
+
 ## ✅ **TWO AUTHORITY LEVERS CHECKED AND CLOSED — and a latent 18.52 Hz injector found silent**
 
 ### ✅ **THE SIGN-FLIPPING SQUARE-WAVE INJECTOR IS INERT — checked on the CURRENT build, not inherited**
@@ -2208,39 +2259,4 @@ changes only surfaced when I finally read the raw byte delta rather than the rec
 ⚠ **This is the failure the lineage rule exists to prevent**, and it defeated the rule's own
 enforcement: *"grep `build_v*_tva.py` and `BUILD-LINEAGE.md` before naming any address"* returns
 nothing for a cell V122 moved, so the check silently passes.
-
-## ✅ **V122 FLATTENED A GRADUATED RAMP TO A CONSTANT, AND DELETED A DEADBAND — V178 RESTORES IT**
-Pinned by disassembly at `0x44374..0x443EE` inside `FUN_00043e44`:
-```
-   0x44374  ld.w   0x75b8, tp, r11    ; X[0] = 700.0
-   0x44378  cmpf.s le, r9, r11        ; input < X[0] ?
-   0x4438e  ld.w   0x75c4, tp, r13    ; -> Y[0]   ** the BELOW-RANGE FALLBACK **
-
-   addr      stock   V122+     the LERP: X = [700, 800, 1100]
-   0xC65C4     0.0     5.0     Y[0] -- below 700, stock gives ZERO, the car gives MAXIMUM
-   0xC65C8     1.5     5.0
-   0xC65CC     2.0     5.0
-   0xC6598     1.0     5.0     (a second LERP, same treatment)
-   0xC659C     1.0     5.0
-   0xC65AC    -1.0    -5.0     (its mirror)
-   0xC65B0    -1.0    -5.0
-```
-⇒ **stock rises 0.0 → 1.5 → 2.0 with input; the flying build is a FLAT 5.0 everywhere**, and the
-deadband below 700 is **gone**. That is the shape change
-[[accord-v80-damper-relay-and-grind1-inert]] was written about — *"the damper became a RELAY …
-**restore the RAMP**, don't merely lower k"* — and it is live on the car.
-🛑 **HONEST LIMIT: the SHAPE change is pinned; the QUANTITY is NOT.** The input arrives in `r9`
-and the only nearby RAM cell (`gp-0x6d94`) has **one writer, zero readers** ⇒ a diagnostic mirror,
-not the source. **V178 is justified as a REVERT TO HONDA'S OWN VALUES — the safest class — and NOT
-as an understood lever. Do not describe it as one.**
-
-### ✅ V178 BUILT — 7 float32 cells, 28 bytes, base V177
-**23/23 assertions · CRC 50/50 · readback byte-identical · all seven cells byte-identical to stock ·
-`0xC407E` 511, `0xC40BC` 3000, `0xC40D2` 102, `0xC63A6` 1024 all asserted FROZEN.**
-image `2a78d9241b9db4bc…` · rwd `b75d7e5438585a1d…`.
-🛑 **NOT fly-first.** V177 is ONE cell and fully attributable; V178 adds seven whose semantics
-are unestablished. **Fly V177 first.** V178 is for undoing the whole undocumented V122 delta in one
-go, accepting that its result could not be attributed to a single cell.
-❌ **`0xC40BC` is deliberately NOT reverted** — 600 would make the Coulomb zero-crossing **5x
-sharper**, undoing the one V122 change that helps.
 

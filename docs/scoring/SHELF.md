@@ -94,7 +94,7 @@ number in it was wrong. V199's is `<= 1.0000001`, with a control assertion that 
 | `0xC60AC` | `0.63462` → `0.9216000` | biquad pole radius → **0.9600** | V202 |
 | `0xC60B0` | `−1.8808` → `−1.9846207` | **the notch centre, 55.23 → 19.75 Hz** | V195, kept |
 | `0xC60B4` | `0.81731` → (forced) | overall gain — forced by unity DC | V202 |
-| `0xC40D2` | 1020 → **102** | K1, modelled Coulomb friction → **Honda** | V177 |
+| `0xC40D2` | 1020 → **102** | K1, modelled Coulomb friction — Honda’s VALUE, but see below | V177 |
 | `0xC40DC` | 8 → **22** | acceleration EMA alpha → **Honda** | V179 |
 | `0xC63A6` | 1024 → **512** | w[3], the inertia term's weight, halved | V181 |
 | `0xD7A5C` | (−29490,−17202,−16000) → **(−4915,−2867,−983)** | **engaged** inertia curve, **half Honda** | V196, kept |
@@ -103,7 +103,12 @@ number in it was wrong. V199's is `<= 1.0000001`, with a control assertion that 
 | `0x55E10` | 12963 → 12964 | the probe's pack shift, `sar 4` | V183 |
 
 **Measured on-car:** none of the four biquad cells — this filter geometry has never flown.
-**Reverts to Honda:** `0xC40D2`, `0xC40DC`, `0xD7A6C`.
+**Reverts to Honda:** `0xC40DC`, `0xD7A6C`.
+🛑 **The friction lane is NOT Honda’s.** `0xC40D2` holds Honda’s K1, but the ramp knee `0xC40BC` was
+never reverted (600 → 3000) and it multiplies the whole expression: `(600/3000)×(102/102)` = **0.200×**
+Honda below saturation, with saturation moved from motor-rate 50 to 250. Above saturation it equals
+Honda exactly. **Less friction means less ratchet and matches your low-friction directive, but the
+verified polarity is more friction = more assist, so it is also an authority cut in that lane.**
 **Unverified doses:** `0xC63A6`, `0xD7A5C` (the inertia sign has not been confirmed on-car).
 **The cave is byte-identical** to V196 — no code-cave change, so this is not the bricking class.
 
