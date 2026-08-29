@@ -2056,3 +2056,50 @@ was a small-n overstatement, exactly like the other two.
 ⊕ **Three for three**: every claim of mine that has needed correcting was a **categorical statement at
 n≤9** (*“never moved”*, *“absent in manual”*, *“at chance”*). **Every effect SIZE has held or grown.**
 
+## ⚠ **THE GRIND METRIC WANTS KNEE 1800; THE OPERATOR ALREADY CHOSE 3000. HIS CHOICE WINS.**
+`0xC40BC` is the **only** cell surviving a family-wise-controlled scan of 94 varying cals against the
+grind, and independently the cell structural reasoning named. So the obvious next question is whether
+the flying value has headroom. Plotting the actual shape rather than the correlation:
+```
+   knee   n   GRIND median   RATCHET median   saturates at |gp-0x6abc|
+    300   9      27.4            38.6            25 ct
+    600   6       9.5            29.1            50 ct
+   1800   2       5.1            12.5           150 ct     <- grind MINIMUM
+   3000   1      15.5            38.3           250 ct     <- the FLYING build, worse
+```
+⚠ **[WEAK] the grind minimum looks like knee ≈ 1800, and 3000 appears to be PAST it.** V112 at 1800
+gave the two lowest grind figures in the whole corpus (7.9 and 2.2).
+🛑 **But the 3000 point is ONE route** — `r24`, which has **9 windows, the fewest in the corpus** and
+therefore the noisiest estimate of any. On that evidence alone I would not move a cell.
+
+### 🛑 AND THE DECISIVE POINT IS NOT STATISTICAL
+The flying image is named **`_v122_V122-V112BASE-KNEE3000.K1.1020-ALPHA2.8-BEST`**. **V122 IS V112's
+base with the knee taken from 1800 to 3000, and it is labelled BEST.** The operator has therefore
+already driven both values and **chose 3000 on feel.**
+✅ **The standing instruction settles it**: *the operator's lived experience overrides analyst
+recommendations.* **No build is proposed to revert the knee**, and none should be, on a metric that
+disagrees with a decision he made from the driver's seat.
+⊕ Worth stating plainly because the temptation is real: the scan makes `0xC40BC` look like the most
+defensible lever in the kit, and it is — **for understanding the grind, not for overriding him.**
+⊕ It also explains the shape: the knee trades **grind against feel**. Raising it widens the linear
+(viscous) region and shrinks the Coulomb one, which is what makes the wheel feel less notchy even
+where the 15–25 Hz metric is slightly worse.
+
+## 🛑 **TWO COMMITS CARRY THE WRONG MESSAGE — STALE FILES IN THE JOB TMP DIRECTORY**
+🛑 **`068aace3` is titled *“The 511 ceiling is not a hard limit … V132 lifts both”*. Its actual
+content is the flash-readiness section of `DRIVE-CARD-V173.md` (30 insertions, one file).** An earlier
+commit had the same defect and was caught before pushing.
+
+**Cause, diagnosed:** this job's tmp directory still holds `m7x`/`m8x` message files from a **previous
+session** (`m84`–`m89` all present). My pattern of *write a message file, then `git commit -F` it*
+silently used **stale content** on any tick where I skipped the write step — `git commit -F m80.txt`
+**succeeded** against a V132 message instead of failing as it would have on a missing file.
+
+✅ **Fixed forward, not by force-push.** The bad message is already on `origin`, and its **tree is
+byte-identical to what was intended** — verified by `git diff --stat HEAD origin/main` returning
+empty. Rewriting pushed history to correct a cosmetic message is not worth the risk, so the record
+lives here instead.
+⊕ **Message files are now named distinctly** (`msg-<topic>.txt`) and written immediately before use.
+⊕ **If you are reading `068aace3` in the log: ignore its title.** It adds the flash-readiness section
+to the V173 drive card and nothing else. Nothing about V132 or the 511 ceiling changed in it.
+

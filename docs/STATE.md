@@ -4,6 +4,55 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **THREE CLAIMS TESTED, TWO DIED TO THEIR OWN CONTROLS — and one of them was mine from last tick**
+
+### ❌ 1. THE COULOMB SIGN-FLIP HYPOTHESIS IS REFUTED
+Coulomb friction opposes motion, so it must flip sign at rate zero-crossings. Testing that with a
+**matched** control (samples DWELLING at similarly low |rate| without changing sign):
+```
+   RATCHET  5-12 Hz   cross/dwell  3.73  [2.97, 4.35]
+   GRIND   15-25 Hz   cross/dwell  4.96  [3.84, 5.92]   <- the CONTROL is HIGHER
+```
+⇒ crossings excite **everything** broadly; there is no Coulomb-specific preference.
+**The friction explanation for the ratchet is NOT supported.** (The K1 revert is still defensible —
+it returns a 10× dose to Honda — but not on this rationale.)
+
+### ❌ 2. AND THE RATE-SCALING TEST WAS CONFOUNDED
+The ratchet/control ratio rises 63.7 → 211 peaking at 20–40 °/s — **but the GRIND control does the
+same** (9.6 → 24.9), and the ratchet/grind ratio stays flat at 6.2–8.5 throughout. The common
+rise-and-fall is the **normalisation**, not a rate signature. Inconclusive, not supportive.
+
+### 🛑 3. **I OVER-CLAIMED LAST TICK: "THE RATCHET IS NOT IN THE MOTION" IS TOO STRONG**
+The first coherence attempt returned **1.000 for everything including the shuffled surrogate** —
+degenerate, because one sub-window per segment makes coherence trivially 1. **The shuffled floor
+caught it.** Redone with 2048-sample episodes and 256-sample sub-windows:
+```
+   coherence cs_tq x cs_rate    @ 8 Hz  0.888      @ 20 Hz  0.842
+   SHUFFLED floor                       0.049               0.053
+```
+⇒ **torque and motion are STRONGLY COUPLED at 8 Hz.** The ratchet's motion is **small, not absent** —
+the rack is stiff at 8 Hz, so a large torque ripple produces little movement. That is consistent with
+the recorded *"lightly-damped resonance, Q 14–29, motor/rack-side"*, and it is **not** a
+torque-sensor-only artifact.
+⇒ **CONSEQUENCE: `gp-0x6c2c` DOES contain 8 Hz, so the detector's amplitude gate is NOT provably
+uncrossable.** V193's premise is **not** dead, and **V194's probe is still the honest decider**, not a
+formality. The "peaks below 12800" branch is a real possibility again, not the expected outcome.
+⊕ What survives from last tick unchanged: **the GRIND is a genuine motion oscillation, strongest in
+RATE (7.3×)** — so the notch remains well aimed.
+⊕ An independent rate (`d(cs_ang)/dt` computed here) gives ratchet 1.5× / grind 2.6× — it corroborates
+the small ratchet but **degrades the grind too**, because differentiating a quantised angle amplifies
+HF noise. `cs_rate` is the better motion instrument.
+
+➕ **THE PROCESS POINT: three claims, and the CONTROL killed or corrected two of them before any of it
+reached a build.** A refuted hypothesis with a control that fired is worth more than a confirmed one
+without. 🛑 *Run the control BEFORE the measurement* — the shuffled floor at 1.000 is exactly what a
+broken estimator looks like when nobody checks.
+
+### ✅ WHERE THIS LEAVES THE RECOMMENDATION
+**V189 still stands** — the notch is aimed at a confirmed motion oscillation, and the reverts return
+10× and 3× doses to Honda on their own merits. But **the detector route (V191–V194) is back to
+UNDECIDED rather than ruled out**, and V194 is the build that settles it.
+
 ## 🛑🛑⭐ **THE RATCHET IS NOT IN THE MOTION — IT IS A TORQUE-PATH EFFECT, AND THAT RE-AIMS EVERYTHING**
 Every prediction this session rested on **`cs_tq`, the driver torque sensor**. Running the same
 slope-corrected excess across **all** channels, 1080 pooled engaged-creep windows, null ~3.9×:
@@ -2151,51 +2200,4 @@ if that cell is ever acted on.
 ✅ **This is the first MEASUREMENT behind the standing rule never to raise the LKAS gain**, and it
 matches the operator's own report that 8× made grinding worse. **The rule was right and now it has a
 number.**
-
-## ⚠ **THE GRIND METRIC WANTS KNEE 1800; THE OPERATOR ALREADY CHOSE 3000. HIS CHOICE WINS.**
-`0xC40BC` is the **only** cell surviving a family-wise-controlled scan of 94 varying cals against the
-grind, and independently the cell structural reasoning named. So the obvious next question is whether
-the flying value has headroom. Plotting the actual shape rather than the correlation:
-```
-   knee   n   GRIND median   RATCHET median   saturates at |gp-0x6abc|
-    300   9      27.4            38.6            25 ct
-    600   6       9.5            29.1            50 ct
-   1800   2       5.1            12.5           150 ct     <- grind MINIMUM
-   3000   1      15.5            38.3           250 ct     <- the FLYING build, worse
-```
-⚠ **[WEAK] the grind minimum looks like knee ≈ 1800, and 3000 appears to be PAST it.** V112 at 1800
-gave the two lowest grind figures in the whole corpus (7.9 and 2.2).
-🛑 **But the 3000 point is ONE route** — `r24`, which has **9 windows, the fewest in the corpus** and
-therefore the noisiest estimate of any. On that evidence alone I would not move a cell.
-
-### 🛑 AND THE DECISIVE POINT IS NOT STATISTICAL
-The flying image is named **`_v122_V122-V112BASE-KNEE3000.K1.1020-ALPHA2.8-BEST`**. **V122 IS V112's
-base with the knee taken from 1800 to 3000, and it is labelled BEST.** The operator has therefore
-already driven both values and **chose 3000 on feel.**
-✅ **The standing instruction settles it**: *the operator's lived experience overrides analyst
-recommendations.* **No build is proposed to revert the knee**, and none should be, on a metric that
-disagrees with a decision he made from the driver's seat.
-⊕ Worth stating plainly because the temptation is real: the scan makes `0xC40BC` look like the most
-defensible lever in the kit, and it is — **for understanding the grind, not for overriding him.**
-⊕ It also explains the shape: the knee trades **grind against feel**. Raising it widens the linear
-(viscous) region and shrinks the Coulomb one, which is what makes the wheel feel less notchy even
-where the 15–25 Hz metric is slightly worse.
-
-## 🛑 **TWO COMMITS CARRY THE WRONG MESSAGE — STALE FILES IN THE JOB TMP DIRECTORY**
-🛑 **`068aace3` is titled *“The 511 ceiling is not a hard limit … V132 lifts both”*. Its actual
-content is the flash-readiness section of `DRIVE-CARD-V173.md` (30 insertions, one file).** An earlier
-commit had the same defect and was caught before pushing.
-
-**Cause, diagnosed:** this job's tmp directory still holds `m7x`/`m8x` message files from a **previous
-session** (`m84`–`m89` all present). My pattern of *write a message file, then `git commit -F` it*
-silently used **stale content** on any tick where I skipped the write step — `git commit -F m80.txt`
-**succeeded** against a V132 message instead of failing as it would have on a missing file.
-
-✅ **Fixed forward, not by force-push.** The bad message is already on `origin`, and its **tree is
-byte-identical to what was intended** — verified by `git diff --stat HEAD origin/main` returning
-empty. Rewriting pushed history to correct a cosmetic message is not worth the risk, so the record
-lives here instead.
-⊕ **Message files are now named distinctly** (`msg-<topic>.txt`) and written immediately before use.
-⊕ **If you are reading `068aace3` in the log: ignore its title.** It adds the flash-readiness section
-to the V173 drive card and nothing else. Nothing about V132 or the 511 ceiling changed in it.
 
