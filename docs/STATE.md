@@ -4,6 +4,26 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **V195's LOW SHOULDER IS CLEAR — AND THE WIDER NOTCH IS GENTLER THAN V189's**
+A notch adds lag below itself, so a wider pole (0.9000 vs V188/V189's 0.9300) needed its own check;
+the V188 result does not transfer. Measured on **`cs_rate`**, pooled engaged-creep windows:
+```
+   f (Hz)   excess   V189 |H|  V189 lag   V195 |H|  V195 lag
+   15.04     1.66      0.486    -29.9      0.449    -27.7
+   16.21     2.35      0.372    -34.0      0.349    -30.5
+   16.99     2.95      0.288    -36.9      0.278    -32.4
+   17.97     3.80      0.176    -40.5      0.184    -34.8
+   18.95     7.90      0.057    -44.3      0.085    -37.1
+```
+✅ **Frequencies with excess>2 AND |H|>0.5 AND lag<−30°: ZERO.** The danger pattern needs all three
+at once, and for a notch lag and attenuation grow together — the worst three points (16.2–17.6 Hz)
+have |H| already cut to 0.22–0.35 exactly where the lag peaks.
+➕ **AND V195's LAG IS SMALLER THAN V189's AT EVERY SHOULDER FREQUENCY** (−37.1° vs −44.3° at
+18.95 Hz). The lower-Q notch has a gentler phase transition. ⇒ **V195 dominates V189 on BOTH axes:
+1.43× more grind power removed AND less shoulder lag.** That is unusual and worth stating — the
+re-fit was not a trade.
+⊕ Tool kept: `rlog-tools/score/notch_shoulder_check.py`.
+
 ## ✅✅ **V195 — THE NOTCH RE-FITTED ON THE CHANNEL WHERE THE GRIND ACTUALLY LIVES**
 V188 centred the notch at 19.40 Hz by minimax over **`cs_tq`, the driver torque sensor**. The
 cross-channel work then showed the grind is a **motion** oscillation, strongest in **`cs_rate`**
