@@ -4,6 +4,65 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑 **EVERY ENDPOINT IN THIS KIT IS RELATIVE — AND ONE OF THEM INVERTS V184'S VERDICT**
+Two endpoint families cover essentially every verdict in the arc, and **both divide by something
+that a broadband filter also attenuates**:
+```
+   A) slope-corrected excess (score_band_excess)   band / power law fitted OUTSIDE the band
+   B) control-band ratio     (~every other scorer) band / 30-40 Hz
+```
+Applying V184's real `|H|²` to the real flying spectrum (route `r24`, V122):
+```
+   band            ABSOLUTE          ctrl-band ratio      slope excess
+   GRIND 15-25     x0.025  -15.9 dB      x3.05  UP          x1.02
+   RATCHET 5-12    x0.131   -8.8 dB      x15.6  UP          x1.12
+   the 30-40 Hz CONTROL BAND itself falls -20.8 dB -- that is the whole mechanism
+```
+🛑 **V184 cuts absolute grind 40x, and the kit's standard endpoint would have reported it as a
+3-15x REGRESSION.** I would have told him a large fix was a large regression.
+✅ **FIXED: absolute band power is restored to `score_band_excess.py`**, with the worked example in
+the output so it cannot be re-withdrawn by accident. It was withdrawn once for spectral tilt — the
+right handling of tilt is to **report the slope** (which the scorer already does), not to delete the
+level. **Compare ABSOLUTE across builds; the ratio is valid only WITHIN a build, where the divisor
+is common.**
+
+## ✅ **V187 BUILT — A NEW LEVER CLASS: THE NOTCH, MOVED ONTO THE RATCHET**
+Every filter build in the arc (V43, V173/V174/V184) moved the **denominator** — the poles — which
+makes a low-pass. **V187 moves the NUMERATOR, which has never been done.**
+```
+   H(z) = B4*(z^2 + B0*z + 1) / (z^2 + A8*z + AC)
+   the numerator's roots have product 1 => they are ALWAYS on the unit circle
+   => the numerator is a PERFECT NOTCH and B0 alone sets its frequency
+   Honda placed it at 55.226 Hz.  V187 moves it to 8.80 Hz, onto the ratchet.
+```
+➕ **WHY A NOTCH AND NOT ANOTHER LOW-PASS — and it is a FORCED tradeoff, not a search failure:**
+```
+   lever                            ratchet atten   phase @3 Hz   dB per degree
+   V184 (poles 0.980, low-pass)         -8.8 dB       -40.5 deg       0.22
+   best low-pass at a <=10 deg budget   -0.8 dB       -10.0 deg       0.08
+   V187 (notch)                         -7.8 dB        -9.95 deg      0.78   <- 3.5x better
+```
+Unity DC gain pins `B4 = (1+A8+AC)/(2+B0)`; with the notch near 8 Hz that **forces the poles within
+~0.05 of the unit circle**, so REAL poles (a low-pass) land their corner at 8 Hz too — reproducing
+V184's phase problem exactly. **One biquad cannot serve LKAS phase, ratchet attenuation and 55 Hz
+protection at once.** A notch escapes because its phase returns to ~0 away from itself.
+✅ **FITTED MINIMAX OVER 67 ROUTES, not the pooled average** — per-route peaks run p10 7.34 / median
+7.81 / p90 8.59 Hz, so tuning to the mean leaves a shoulder (V186 did: on r24 its residual peak
+moved to 9.96 Hz). Minimax wins on **both** criteria, so it is not an artifact of the robust one:
+```
+   design                     p90 remaining     median remaining
+   V186  8.30 Hz / r 0.9885   0.3983 -4.0 dB    0.2515  4.0x
+   V187  8.80 Hz / r 0.9795   0.2584 -5.9 dB    0.1661  6.0x   <- BETTER ON BOTH
+```
+✅ **GATES: DC gain 0.999972 · max|H| 1.1403 · added lag −2.97° @1 Hz, −9.95° @3 Hz · cal-only,
+no cave. 30/30 assertions.** `105238993346f0e7e792e418c808d6ddf3f42504fb8bf2705c1eb7e0cad045ab`
+⚠ **THE COST — Honda's 55.226 Hz null is given up** (|H| 0.000016 → 1.136). Our logging is 100 Hz
+so 55 Hz is invisible — tested by **ALIASING** (55.226 folds to 44.774 Hz): across **295 routes**
+median ratio 0.99, max 2.69, **zero above 3**, while control frequencies reach 3.6–6.5. Evidence
+against a road-excited plant mode. 🛑 **HONEST LIMIT: the notch is active in every drive we have,
+so this cannot exclude a COMMAND-excited loop mode it is currently suppressing.** BELIEF, not
+EVIDENCE. Mitigation: cal-only ⇒ reflash V185 recovers.
+
 ## ✅ **THE PRE-REGISTRATION IS COMPLETE — ONE BINARY THRESHOLD, AND MANUAL PROVES IT IS REACHABLE**
 Measured on `r24` (the FLYING build) with the scorer's own estimator:
 ```
@@ -2162,53 +2221,4 @@ the command-scaling result above and with the operator's own 8x experience of mo
 the operator wants 8x if anything. **The constructive reading is the opposite: damping the resonance
 is what BUYS the headroom for more gain.** If V168 works, 8x becomes affordable in a way it is not
 today.
-
-## ✅ **LKAS AUTHORITY IS NOT THE BINDING CONSTRAINT — THE COMMAND IS DELIVERED AND RARELY RAILS**
-The third of the operator's three named symptoms, measured directly for the first time.
-```
-   ENGAGED frames, |sc_tq| against its own observed ceiling of 4096 counts
-   route build   n       rail duty   >=90 %   >=50 %   p50 |cmd|
-   r78   V91     61,987   0.0258     0.0302   0.0523     230
-   r7e   V96     61,506   0.0648     0.0739   0.1161     230
-   r96   V102    57,629   0.0145     0.0170   0.0401     145
-   ra6   V106   123,802   0.0302     0.0338   0.0545     133
-   r1e   V107    99,910   0.0277     0.0334   0.0625     247
-   r22   V112    48,957   0.0379     0.0428   0.0754     232
-   r24   V122    58,652   0.0271     0.0303   0.0495     149
-   pooled: rail 3.3 % - >=90 % 3.7 % - >=50 % 6.4 %
-```
-✅ **[EVIDENCE] the command sits at its ceiling only ~3 % of engaged frames**, and its median is
-**133–247 counts, i.e. 3–6 % of the ceiling.** openpilot is overwhelmingly asking for very little.
-⇒ **raising an authority ceiling cannot add what was never requested.**
-
-### ✅ AND WHAT IS REQUESTED *IS* DELIVERED
-```
-   command -> steering RATE, engaged, best lag over 0-400 ms, vs phase-shuffled surrogates
-   r78 230 ms r -0.167 (shuf p95 0.087)   ra6  70 ms -0.263 (0.054)   r22 390 ms -0.296 (0.100)
-   r7e 150 ms r -0.349 (0.094)            r1e  20 ms -0.293 (0.056)   r24 180 ms -0.441 (0.102)
-   r96  40 ms r -0.402 (0.059)                                        DELIVERED on 7/7 routes
-```
-✅ **[EVIDENCE] the correlation clears its shuffled control on every route**, and its **sign is
-negative**, which is exactly the operator-confirmed convention (*+LKAS demands negative angle*). That
-sign agreement is a free sanity check on the whole measurement, and it passes.
-⇒ **the plant is not swallowing the command.** Authority is not a delivery failure either.
-
-### 🛑 ONE MEASURE OF MINE THAT DOES NOT WORK — RECORDED, NOT DROPPED
-I stratified `mean|rate| / mean|cmd|` by command magnitude to look for a friction/stiction signature
-(less motion per count at small commands). It shows the **opposite** — the 0–200 stratum has the
-**highest** ratio (13.7–57.0 vs 6.2–26.6 at 200–800). **That is an artefact, not a finding**: when the
-command is small the wheel motion is dominated by the driver and the road, so the ratio is
-small-denominator noise rather than a delivery gain. **The stratification carries no information and
-no stiction conclusion may be drawn from it.**
-
-### ✅ THE CONCLUSION, AND WHAT IT LEAVES
-**“LKAS authority” is not a firmware authority-ceiling problem.** The ceiling binds 3 % of the time,
-the command is delivered when issued, and the firmware already multiplies it **6x** (`0xC6CD0`=5346).
-The remaining ways to ask for more are **openpilot-side, which the standing instruction forbids**, and
-the one firmware ceiling that was tried is closed: **`0xC407E` is the hard-fault interlock — Honda
-ships it at 511, one count under its own 512 trip, and V73 raised it ⇒ V74/V75 FAULTED.**
-⇒ **No authority lever is proposed, because the measurement says none is needed.** If the operator's
-lived experience of weak lane-keeping persists, the thing to capture is **which manoeuvre** it happens
-in — the 3 % rail duty means there IS a small population of railed frames, and those are the only
-frames where a ceiling could matter.
 

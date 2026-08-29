@@ -1258,3 +1258,52 @@ every dose** (the curve is uncapped above X≈450) and **no dose touches the LKA
 ⇒ whichever way the V168 drive reads — clean but incomplete, or effective but too heavy — **the next
 build already exists.**
 
+## ✅ **LKAS AUTHORITY IS NOT THE BINDING CONSTRAINT — THE COMMAND IS DELIVERED AND RARELY RAILS**
+The third of the operator's three named symptoms, measured directly for the first time.
+```
+   ENGAGED frames, |sc_tq| against its own observed ceiling of 4096 counts
+   route build   n       rail duty   >=90 %   >=50 %   p50 |cmd|
+   r78   V91     61,987   0.0258     0.0302   0.0523     230
+   r7e   V96     61,506   0.0648     0.0739   0.1161     230
+   r96   V102    57,629   0.0145     0.0170   0.0401     145
+   ra6   V106   123,802   0.0302     0.0338   0.0545     133
+   r1e   V107    99,910   0.0277     0.0334   0.0625     247
+   r22   V112    48,957   0.0379     0.0428   0.0754     232
+   r24   V122    58,652   0.0271     0.0303   0.0495     149
+   pooled: rail 3.3 % - >=90 % 3.7 % - >=50 % 6.4 %
+```
+✅ **[EVIDENCE] the command sits at its ceiling only ~3 % of engaged frames**, and its median is
+**133–247 counts, i.e. 3–6 % of the ceiling.** openpilot is overwhelmingly asking for very little.
+⇒ **raising an authority ceiling cannot add what was never requested.**
+
+### ✅ AND WHAT IS REQUESTED *IS* DELIVERED
+```
+   command -> steering RATE, engaged, best lag over 0-400 ms, vs phase-shuffled surrogates
+   r78 230 ms r -0.167 (shuf p95 0.087)   ra6  70 ms -0.263 (0.054)   r22 390 ms -0.296 (0.100)
+   r7e 150 ms r -0.349 (0.094)            r1e  20 ms -0.293 (0.056)   r24 180 ms -0.441 (0.102)
+   r96  40 ms r -0.402 (0.059)                                        DELIVERED on 7/7 routes
+```
+✅ **[EVIDENCE] the correlation clears its shuffled control on every route**, and its **sign is
+negative**, which is exactly the operator-confirmed convention (*+LKAS demands negative angle*). That
+sign agreement is a free sanity check on the whole measurement, and it passes.
+⇒ **the plant is not swallowing the command.** Authority is not a delivery failure either.
+
+### 🛑 ONE MEASURE OF MINE THAT DOES NOT WORK — RECORDED, NOT DROPPED
+I stratified `mean|rate| / mean|cmd|` by command magnitude to look for a friction/stiction signature
+(less motion per count at small commands). It shows the **opposite** — the 0–200 stratum has the
+**highest** ratio (13.7–57.0 vs 6.2–26.6 at 200–800). **That is an artefact, not a finding**: when the
+command is small the wheel motion is dominated by the driver and the road, so the ratio is
+small-denominator noise rather than a delivery gain. **The stratification carries no information and
+no stiction conclusion may be drawn from it.**
+
+### ✅ THE CONCLUSION, AND WHAT IT LEAVES
+**“LKAS authority” is not a firmware authority-ceiling problem.** The ceiling binds 3 % of the time,
+the command is delivered when issued, and the firmware already multiplies it **6x** (`0xC6CD0`=5346).
+The remaining ways to ask for more are **openpilot-side, which the standing instruction forbids**, and
+the one firmware ceiling that was tried is closed: **`0xC407E` is the hard-fault interlock — Honda
+ships it at 511, one count under its own 512 trip, and V73 raised it ⇒ V74/V75 FAULTED.**
+⇒ **No authority lever is proposed, because the measurement says none is needed.** If the operator's
+lived experience of weak lane-keeping persists, the thing to capture is **which manoeuvre** it happens
+in — the 3 % rail duty means there IS a small population of railed frames, and those are the only
+frames where a ceiling could matter.
+

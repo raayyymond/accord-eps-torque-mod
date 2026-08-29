@@ -235,13 +235,38 @@ def score(tag, label=''):
         if len(segs) < 12:
             print('       WARNING only %d windows; the floor is ~2.2x below 6/half.'
                   % len(segs))
-    print('  spectral slope 1/f^%.2f  (routes span 0.80-2.37; the tilt is why raw'
+    print('  spectral slope 1/f^%.2f  (routes span 0.80-2.37)'
           % -background(f, M)[1])
-    print('  band power and fixed-floor prominence were withdrawn)')
+    print()
+    print('  -- ABSOLUTE BAND POWER, RESTORED 2026-08-29 --')
+    tr = np.trapezoid if hasattr(np, 'trapezoid') else np.trapz
+    for (lo, hi), nm in ((RATCHET, 'RATCHET 5-12'), (GRIND, 'GRIND 15-25')):
+        bm = (f >= lo) & (f <= hi)
+        cm = (f >= 30.0) & (f <= 40.0)
+        print('  %-14s absolute %10.1f    ctrl-band ratio %8.2f'
+              % (nm, float(tr(M[bm], f[bm])),
+                 float(tr(M[bm], f[bm])) / max(float(tr(M[cm], f[cm])), 1e-30)))
+    print('       RAW BAND POWER WAS WITHDRAWN ONCE FOR SPECTRAL TILT. That was a')
+    print('       MISTAKE and it is back, because BOTH other endpoints are RELATIVE')
+    print('       and a broadband filter moves numerator and denominator together:')
+    print('         V184 on real r24 data -- grind ABSOLUTE x0.025 (-15.9 dB, a 40x WIN)')
+    print('         but ctrl-band ratio x3.0 UP and slope excess x1.02 flat, because')
+    print('         the 30-40 Hz control band itself fell -20.8 dB.')
+    print('       => reading only the ratio would have reported a 40x fix as a 15x')
+    print('          REGRESSION. Compare ABSOLUTE across builds; use the ratio only')
+    print('          within a build, where the divisor is common.')
+    print('       Tilt is handled by reporting the slope above, not by deleting the level.')
     print()
     attribute_grind(segs)
     print()
     grind_by_command(tag)
+    print()
+    print('  PRE-REGISTERED for V187 (the notch on the ratchet):')
+    print('       peak stays ~8 Hz and ratchet excess FALLS  => the ratchet is GONE')
+    print('       peak MOVES to ~6.5-7.5 Hz                  => the notch DISPLACED it')
+    print('       peak and excess both unchanged             => assist section is not the path')
+    print('       expect ratchet ABSOLUTE to fall ~4-6x; the excess sees a notch (unlike')
+    print('       a low-pass) because a notch removes a PEAK.')
     print()
     print('  REFERENCE, flying build V122 (route r24), same channel:')
     print('       ratchet 5-12 Hz  33.2x     grind 15-25 Hz  14.0x')
