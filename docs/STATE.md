@@ -1,5 +1,55 @@
 # STATE — living current state of the kit
 
+## ✅ **THE AUDIT IS COMPLETE — V150 IS INERT HANDS-OFF, AND THE QUEUE IS FINAL**
+V150 was the last unaudited build. Its structure checks out against the golden model, **but its
+effect lands outside the symptom's regime.**
+
+### ✅ THE STRUCTURE IS RIGHT
+The model confirms the gate exactly as V150's builder describes it:
+> *"a hard zero-force gate (**`gp-0x6b5e != 0` AND `assist_state_671a < cal 0xC64FA`**) that r24
+> lacks"* · *"**r26 == 0 IFF `gp-0x6b5e != 0`**"*
+
+V150 sets `0xC6136` 0 -> 1, making the state term always true, so the gate reduces to
+`gp-0x6b5e != 0`. **That part is correct.**
+
+### 🛑 BUT THE MODEL ALSO SAYS THE GATE DOES NOT FIRE WHERE THE SYMPTOM IS
+> *"LEG 1, the GATE — **REVERSED**. r26 == 0 iff gp-0x6b5e != 0, and gp-0x6b5e is a trapezoid LERP on
+> gp-0x6bda, a **MARGIN TO A PEAK-HOLD ENVELOPE of driver assist torque**. **Hands-off the margin
+> sits ~24x above the kill threshold => THE GATE LEAVES r26 LIVE in ordinary driving and most
+> strongly live in hands-off creep — exactly where the grinds and the ratchet occur.**"*
+
+⇒ **hands-off, `gp-0x6b5e == 0`**, so the reduced condition `gp-0x6b5e == 0` is **already
+satisfied** — r26 is computed exactly as before.
+⇒ **[EVIDENCE] V150 changes behaviour ONLY when the driver is applying torque.**
+⇒ **V150 is INERT in hands-off creep — the regime of the ratchet and grind #1.** It could only touch
+**grind #2** (measured at `tq_avg` 1600–2700, i.e. driver-torque-present).
+⇒ **NOT superseded** — it is not harmful and it is a legitimate grind-#2 probe — **but it is
+DEMOTED and must not be described as a ratchet lever.**
+
+### ✅ THE FINAL QUEUE, AFTER AUDITING EVERY BUILD AGAINST THE GOLDEN MODEL
+```
+   FLY      V158   damper, the model's own measured prescription, GATE 2 closed by it
+   probe    V148   deadband + gp-0x671E rung -- an INSTRUMENT, explicitly not a fix
+   grind#2  V150   inert hands-off; only acts under driver torque
+   marginal V151   knee 3000->3600; the relay is already ~99 % unsaturated
+   demoted  V152 / V153   GATE-2-OPEN: 0xC40D0 is one of the eight uncertifiable Path-2 coefficients
+   SUPERSEDED  V139 · V149 · V154 · V155 · V156 · V157
+```
+
+### 🛑 THE AUDIT'S VERDICT ON THIS SESSION'S BUILD WORK
+```
+   built this session   V139 V148 V149 V150 V151 V152 V153 V154 V155 V156 V157 V158   (12)
+   superseded            6      -- two of which would have REMOVED measured fixes
+   demoted / inert       4
+   survives as a FIX     1      -- V158, the only one designed FROM the golden model
+```
+⊕ **V149 would have removed Lever B**, the change that flew with *"grinding FIXED"*.
+⊕ **V139 was the direction memory records as CAUSING grind #2.**
+🛑 **Every failure has one cause: designing from `BUILD-LINEAGE` and fresh decompiles instead of
+the GOLDEN MODEL**, which `CLAUDE.md` names as required reading and which already held the
+structure, the prescriptions, the strikes, the measured fixes and their gain-dependence.
+⭐ **The audit was worth more than the builds it deleted.** **Read `eps_chain_*.py` FIRST.**
+
 ## 🛑🛑 **V139 SUPERSEDED — AND THE sar PAIR IS CLOSED AT 6x GAIN, BOTH DIRECTIONS**
 The audit reaches V139 (both pump arms `sar 10 -> 11`). It is wrong, **and its own builder already
 said so.**
@@ -2130,54 +2180,6 @@ if a 4.09 Hz observer corner feels too slow.
    6. V148   deadband + probe                        MEASURES whether gp-0x671d toggles       3 B
    7. V151   knee 3000 -> 3600                       MARGINAL, and costs 17 % of the term     2 B
 ```
-
-## ⭐⭐ **`0xC40D0` — THE BEST REMAINING STRUCTURAL LEVER, WITH ITS GATE OPEN**
-Following the corrected `|model| × sat(angle)` structure to its filter found a **virgin, well-aimed
-lever** — and then found the reason not to fire it yet. Both halves are recorded.
-
-### ✅ WHY IT IS WELL-AIMED
-The bilinear term is EMA-filtered by `cal(0xC40D0)`, `α = cal/4096`, in the **1 kHz** task:
-```
-   0xC40D0  the |model|xsat(angle) EMA   cal= 408  a=0.09961  fc= 16.70 Hz  |H(7.8Hz)| = 0.906
-   0xC40D6  the rate term                cal= 246  a=0.06006  fc=  9.86 Hz  |H(7.8Hz)| = 0.784
-   0xC40D4  model pre-filter             cal= 573  a=0.13989  fc= 23.98 Hz  |H(7.8Hz)| = 0.951
-   0xC40D8  sensor pre-filter            cal=3686  a=0.89990  fc=366.31 Hz  |H(7.8Hz)| = 1.000
-```
-⇒ **the bilinear path passes the ratchet frequency at 91 %** — it is wide open at 7.8 Hz.
-⭐ **And an EMA has DC gain EXACTLY 1**, so lowering the pole attenuates only the FAST component and
-leaves steady-state friction **untouched** ⇒ **no assist cost**, unlike V151 which cuts the term at
-every frequency including DC. That is precisely the operator's *"low friction AND no ratcheting"*.
-✅ **VIRGIN: `0xC40D0` = 408 in ALL 151 build images.** Never touched.
-
-### 🛑 WHY IT IS NOT BUILT — A BYTE-EXACT DESIGNED ARM-MATCH
-`BUILD-LINEAGE.md` warns that `0xC63AC`'s α *"matches `0xC40D0` to the last bit — a genuine
-disturbance-observer constraint, not hygiene."* **Confirmed arithmetically:**
-```
-   alpha(0xC63AC) = 102/1024 = 0.099609375        (>>10 in FUN_00038148)
-   alpha(0xC40D0) = 408/4096 = 0.099609375        (x0.00024414062 in FUN_0003b8f6)
-   408 = 4 x 102  EXACTLY  =>  the match is BY CONSTRUCTION, not coincidence
-```
-And these sit on **opposite arms of one observer residual** — V98's comparator established
-`iVar6 = gp-0x6bfe (MODEL) + gp-0x6bfa (REQUEST) − (gp-0x374c>>4) (ACTUAL)`, where `0xC40D0` shapes
-the **MODEL** arm and `0xC63AC` the **ACTUAL** arm.
-⇒ **Honda gives both arms the same time constant so their phases cancel in the difference.
-Moving one alone injects a phase error into the residual at every frequency, 7.8 Hz included.**
-⇒ **[UNRESOLVED] the SIGN of that phase error in the residual.** Attenuating a term that is
-*subtracted* can either remove or expose 7.8 Hz content depending on phase.
-⚠ **Precedent is discouraging**: the matched twin `0xC63AC` **flew as V97** and came back
-**UNINTERPRETABLE — a null with no positive control**, and the kit's own full-loop Bode sum filed it
-**"Predicted WORSE"**. That was for *raising* it (faster pole, more HF gain); lowering `0xC40D0` is
-the opposite direction, **which is a reason to think, not a reason to assume.**
-
-### ⭐ WHAT WOULD CLOSE THE GATE — stated so it can be executed, not re-derived
-1. **The residual's own phase at 7.8 Hz**, MODEL arm vs ACTUAL arm, from a flown probe — V98's
-   comparator rungs already rank the arms and could be re-cut to carry phase.
-2. **Or the paired move**: change `0xC40D0` and `0xC63AC` **together**, preserving `408 = 4×102`, so
-   the match is never broken and only the shared corner moves. **That is the SAFE form of this
-   lever** and it is the one to build first — but `0xC63AC` at 102 is Honda stock and V99 put it
-   back deliberately, so it needs the operator's call.
-⇒ **[DECISION] not built blind.** GATE 2 (phase, in every loop the signal is in) is **not closed**,
-and this kit's rule is that an unclosed GATE 2 is not a build.
 
 
 ---

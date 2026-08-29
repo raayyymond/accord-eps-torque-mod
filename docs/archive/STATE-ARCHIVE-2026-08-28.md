@@ -4086,3 +4086,56 @@ regime. **V151 stays MARGINAL and stays ranked 5th.**
 
 🛑 **2 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
 
+## ⭐⭐ **`0xC40D0` — THE BEST REMAINING STRUCTURAL LEVER, WITH ITS GATE OPEN**
+Following the corrected `|model| × sat(angle)` structure to its filter found a **virgin, well-aimed
+lever** — and then found the reason not to fire it yet. Both halves are recorded.
+
+### ✅ WHY IT IS WELL-AIMED
+The bilinear term is EMA-filtered by `cal(0xC40D0)`, `α = cal/4096`, in the **1 kHz** task:
+```
+   0xC40D0  the |model|xsat(angle) EMA   cal= 408  a=0.09961  fc= 16.70 Hz  |H(7.8Hz)| = 0.906
+   0xC40D6  the rate term                cal= 246  a=0.06006  fc=  9.86 Hz  |H(7.8Hz)| = 0.784
+   0xC40D4  model pre-filter             cal= 573  a=0.13989  fc= 23.98 Hz  |H(7.8Hz)| = 0.951
+   0xC40D8  sensor pre-filter            cal=3686  a=0.89990  fc=366.31 Hz  |H(7.8Hz)| = 1.000
+```
+⇒ **the bilinear path passes the ratchet frequency at 91 %** — it is wide open at 7.8 Hz.
+⭐ **And an EMA has DC gain EXACTLY 1**, so lowering the pole attenuates only the FAST component and
+leaves steady-state friction **untouched** ⇒ **no assist cost**, unlike V151 which cuts the term at
+every frequency including DC. That is precisely the operator's *"low friction AND no ratcheting"*.
+✅ **VIRGIN: `0xC40D0` = 408 in ALL 151 build images.** Never touched.
+
+### 🛑 WHY IT IS NOT BUILT — A BYTE-EXACT DESIGNED ARM-MATCH
+`BUILD-LINEAGE.md` warns that `0xC63AC`'s α *"matches `0xC40D0` to the last bit — a genuine
+disturbance-observer constraint, not hygiene."* **Confirmed arithmetically:**
+```
+   alpha(0xC63AC) = 102/1024 = 0.099609375        (>>10 in FUN_00038148)
+   alpha(0xC40D0) = 408/4096 = 0.099609375        (x0.00024414062 in FUN_0003b8f6)
+   408 = 4 x 102  EXACTLY  =>  the match is BY CONSTRUCTION, not coincidence
+```
+And these sit on **opposite arms of one observer residual** — V98's comparator established
+`iVar6 = gp-0x6bfe (MODEL) + gp-0x6bfa (REQUEST) − (gp-0x374c>>4) (ACTUAL)`, where `0xC40D0` shapes
+the **MODEL** arm and `0xC63AC` the **ACTUAL** arm.
+⇒ **Honda gives both arms the same time constant so their phases cancel in the difference.
+Moving one alone injects a phase error into the residual at every frequency, 7.8 Hz included.**
+⇒ **[UNRESOLVED] the SIGN of that phase error in the residual.** Attenuating a term that is
+*subtracted* can either remove or expose 7.8 Hz content depending on phase.
+⚠ **Precedent is discouraging**: the matched twin `0xC63AC` **flew as V97** and came back
+**UNINTERPRETABLE — a null with no positive control**, and the kit's own full-loop Bode sum filed it
+**"Predicted WORSE"**. That was for *raising* it (faster pole, more HF gain); lowering `0xC40D0` is
+the opposite direction, **which is a reason to think, not a reason to assume.**
+
+### ⭐ WHAT WOULD CLOSE THE GATE — stated so it can be executed, not re-derived
+1. **The residual's own phase at 7.8 Hz**, MODEL arm vs ACTUAL arm, from a flown probe — V98's
+   comparator rungs already rank the arms and could be re-cut to carry phase.
+2. **Or the paired move**: change `0xC40D0` and `0xC63AC` **together**, preserving `408 = 4×102`, so
+   the match is never broken and only the shared corner moves. **That is the SAFE form of this
+   lever** and it is the one to build first — but `0xC63AC` at 102 is Honda stock and V99 put it
+   back deliberately, so it needs the operator's call.
+⇒ **[DECISION] not built blind.** GATE 2 (phase, in every loop the signal is in) is **not closed**,
+and this kit's rule is that an unclosed GATE 2 is not a build.
+
+
+---
+
+🛑 **1 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
+
