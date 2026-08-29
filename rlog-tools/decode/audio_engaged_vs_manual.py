@@ -23,8 +23,49 @@ sys.path.insert(0, HERE)
 RLOGS = os.path.join(ROOT, 'analysis-2020accord', 'rlogs')
 CACHE = os.path.join(ROOT, 'analysis-2020accord', '_scratch', 'cache')
 SR = 16000
-ROUTES = {'r22': '75604b0a432fdc89_00000022--00f57626e0',
-          'r23': '75604b0a432fdc89_00000023--fc5f268959'}
+
+# Route prefixes are RESOLVED FROM THE RLOG FILENAMES, not hardcoded.  The old
+#   ROUTES = {'r22': ..., 'r23': ...}
+# meant every new drive needed this file edited before its audio could be read, and a stale
+# entry would silently analyse the wrong drive.  Verified: this resolver reproduces the two
+# hardcoded values exactly (r22 -> 75604b0a432fdc89_00000022--00f57626e0).
+_RE = __import__('re')
+
+
+def route_prefix(tag):
+    """'r24' or '24' -> the rlog prefix, or None if that route has no rlogs on disk."""
+    key = tag[1:] if tag.startswith('r') else tag
+    for p in sorted(glob.glob(os.path.join(RLOGS, '*rlog.zst'))):
+        parts = os.path.basename(p).split('--')
+        m = _RE.match(r'.*_0*([0-9a-f]+)$', parts[0])
+        if m and (m.group(1).lstrip('0') or '0') == key.lstrip('0'):
+            return '%s--%s' % (parts[0], parts[1])
+    return None
+
+
+def available():
+    """Routes that have BOTH rlogs and a cache -- the ones this tool can actually run on."""
+    out = []
+    for d in sorted(glob.glob(os.path.join(CACHE, 'r*'))):
+        if not os.path.isdir(d):
+            continue
+        tag = os.path.basename(d)
+        if route_prefix(tag):
+            out.append(tag)
+    return out
+
+
+class _Routes(dict):
+    """Backwards-compatible mapping: ROUTES['r24'] resolves on demand."""
+
+    def __missing__(self, k):
+        p = route_prefix(k)
+        if p is None:
+            raise KeyError('%s: no rlogs found under %s' % (k, RLOGS))
+        return p
+
+
+ROUTES = _Routes()
 
 
 def read_pcm_timed(prefix):
@@ -116,5 +157,15 @@ def run(tag):
           % ', '.join('%.0f Hz %+.1f' % (ff[k2], dd[k2]) for k2 in sorted(top, key=lambda k2: ff[k2])))
 
 
-for t_ in sys.argv[1:] or ['r22']:
-    run(t_)
+_args = [a for a in sys.argv[1:] if not a.startswith('--')]
+if '--list' in sys.argv[1:]:
+    av = available()
+    print('  routes with BOTH rlogs and a cache (%d): %s' % (len(av), ' '.join(av)))
+    print('  usage: python rlog-tools/decode/audio_engaged_vs_manual.py <route> [<route> ...]')
+else:
+    for t_ in _args or ['r22']:
+        try:
+            run(t_)
+        except KeyError as e:
+            print('  %s' % e)
+            print('  run with --list to see which routes are available.')

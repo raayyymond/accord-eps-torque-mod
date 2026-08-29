@@ -88,3 +88,23 @@ dominates, less. **The drive is what settles it** -- that is the whole point.
 
 
 Full pre-registration: `docs/scoring/SCORING-V158-preregistered.md`.
+
+---
+
+## After the drive — the three commands
+
+```
+python rlog-tools/decode/extract_route.py --route <N> --prefix <rlog prefix> \
+       --segments <n> --build V158
+python rlog-tools/score/score_v158_creep.py r<N>
+python rlog-tools/decode/audio_engaged_vs_manual.py r<N>
+```
+
+Step 1 tells you immediately whether the drive is scoreable at all — whether both arms have enough
+creep windows, and enough separate episodes. If it says NOT SCOREABLE, the answer is another drive
+with more alternation, not more analysis.
+
+Step 2 prints a **split-half null** beside every band. A band is only reported RESOLVED if the effect
+lies outside that null. **"NOT RESOLVED" means cannot resolve — it does NOT mean unchanged.**
+
+Step 3 is the channel that has historically tracked your report when the bus did not.

@@ -1,5 +1,41 @@
 # STATE — living current state of the kit
 
+## ✅✅ **THE DRIVE-SIDE TOOLCHAIN IS COMPLETE AND DE-HARDCODED — THREE COMMANDS**
+Every stage between the rlog and an answer has now been audited, fixed and run.
+```
+   1  python rlog-tools/decode/extract_route.py --route <N> --prefix <rlog prefix> \
+                                                --segments <n> --build V158
+      -> writes the cache AND verifies it is scoreable (fields present, creep windows in
+         BOTH arms) -- it FAILS LOUDLY at extract time instead of after the drive is over
+
+   2  python rlog-tools/score/score_v158_creep.py r<N>
+      -> episode bootstrap, 6-9 Hz primary / 18-22 Hz secondary / 30-40 Hz control,
+         speed census, and a SPLIT-HALF NULL that GATES every verdict
+
+   3  python rlog-tools/decode/audio_engaged_vs_manual.py r<N>
+      -> the acoustic channel: PCM aligned to the CAN timebase by logMonoTime, split on
+         cc_lat, 20-2000 Hz so no band is pre-committed, speed-matched control
+```
+✅ **Dependencies verified present on this machine**: `zstandard`, `cereal`, numpy, scipy; **635 rlog
+segments** on disk; **23 routes** have both rlogs and a cache.
+
+### ✅ WHAT WAS WRONG WITH EACH, AND WHAT IT COST
+```
+   extract_r*.py    ONE FILE PER DRIVE (~125 lines, four real values).  extract_r24.py's own
+                    docstring still reads "Cache routes 22 and 23".  A stale header is harmless;
+                    a stale WIRE_SCALE or segment count is not.        -> generic extract_route.py
+   score_v133       WINDOW bootstrap -- 2.6x too confident, measured.  -> score_v158_creep.py
+                    Then MY replacement over-claimed until the null gated it.
+   audio_..._manual HARDCODED ROUTES = {'r22', 'r23'} -- every new drive needed the file edited,
+                    and a stale entry would silently analyse the WRONG drive.
+                    -> resolves the prefix from the rlog FILENAMES; verified it reproduces both
+                       hardcoded values exactly, and `--list` shows what is runnable.
+```
+⭐ **Three tools, three different failure modes, all of the same family: a per-drive constant that
+nothing checks.** The fix in each case was to derive the constant from the data on disk, or to refuse
+loudly when it cannot be derived. **A pipeline that cannot be run without editing it will eventually
+be run after editing it wrong.**
+
 ## ✅✅✅ **THE SCORER IS VALIDATED ON REAL DATA — AND IT CAUGHT ITSELF OVER-CLAIMING**
 Ran the new pipeline end-to-end on **r24, a real V122 creep drive**, before the V158 flight.
 
