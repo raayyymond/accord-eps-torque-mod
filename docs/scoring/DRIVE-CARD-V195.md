@@ -12,7 +12,7 @@ for 0.8° more phase.
 | | |
 |---|---|
 | notch | 19.40 Hz r 0.9300 → **19.75 Hz r 0.9000** (wider) |
-| grind removed | 15.0× → **21.5×** median, 10.4× → **14.3×** worst case |
+| grind removed (open-loop score) | 15.0× → **21.5×** median — ⚠ **the honest CLOSED-loop prediction is ~7.7×, ceiling 11.3×**; the ranking still holds |
 | DC assist | **unchanged** (1.000003) |
 | phase @1 Hz / @3 Hz | **−0.27° / −0.77°** vs V189 |
 | manual driving | **bit-for-bit stock** — the section is engagement-gated |

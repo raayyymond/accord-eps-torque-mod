@@ -2249,3 +2249,74 @@ mechanical-resonance reading stands and V173's case is unchanged.
 whatever the mode's origin. It is recorded because **the test is nearly free and the answer would
 matter a great deal.**
 
+## ✅ **100/12 Hz EXCLUDED · THE MODE GENUINELY WANDERS ±0.71 Hz · AND TWO OF MY OWN CLAIMS RETRACTED**
+🛑 **RETRACTION 1 — I ran the assist section at FS=100 Hz. IT RUNS AT 1 kHz.** Verified against the
+lineage's own three stock response points (notch 55.23 Hz, −1.25 dB @21, −3.01 dB @30, −0.02 dB @3):
+FS=1000 reproduces all four, FS=100 reproduces none. **Two claims I made this session die with it:**
+- ❌ *"Honda's notch is at 5.53 Hz, a 10x error in the record"* — **WRONG, the record was right.**
+  The notch is at **55.226 Hz**. The 10x error was mine.
+- ❌ *"V173 cuts the LKAS band up to 6.5x and doubles group delay"* — **WRONG.** At the true rate
+  **LKAS 0.5–3 Hz is −0.05 to −1.42 dB — essentially intact.**
+
+### ✅ THE 100/12 = 8.3333 Hz FIRMWARE-CYCLE HYPOTHESIS IS DEAD
+Killed by a **synthetic positive control**, not by argument. Inject a *truly fixed* 8.3333 Hz line into
+1/f noise with matched segment counts and run the identical estimator:
+```
+   synthetic FIXED line, SNR 0.5 / 1.0 / 2.0 -> sd 0.0051 / 0.0026 / 0.0011 Hz
+   observed, 15 routes                       -> sd 0.7904 Hz     (150x larger)
+   within-route split-half sd 0.3535  =>  TRUE route-to-route sd 0.7069 Hz
+```
+=> the estimator reproduces a fixed frequency to **0.005 Hz**. The spread is **real**, not noise.
+**A firmware divider cannot produce a frequency that moves +-9 % between drives.** ✅ Also checked the
+image directly: `add 1,rX` paired with `cmp N,rX` gives N=12 only **4** sites vs 22 for N=8 and 13 for
+N=10, and the N=12/13/14 hits sit at regular 0x3E strides — **unrolled loop trip counts, not dividers.**
+
+### ⚠ THE WANDER IS ITSELF A DESIGN CONSTRAINT — IT KILLS EVERY NARROW LEVER
+🛑 **RETRACTION 3 (same FS=100 root cause): I said a re-centred notch dies because it is too
+NARROW for a wandering mode, −0.42 dB worst case. WRONG on both the number and the reason.**
+At the true 1 kHz it is relatively far wider and DOES attenuate the wander core — −15.4 dB at −1 sd,
+−14.6 dB at +1 sd. **It dies on GATE 2 MAGNITUDE instead, catastrophically.** `C_B4` is pinned by
+`C_B4 = (1+C_A8+C_AC)/(2+C_B0)` and `2+C_B0 = 2−2cosθ → 0` as the notch moves toward DC:
+```
+   notch @ 8.17 Hz, stock poles -> C_B4 = 36.98  (stock 0.8173, x45)
+   max |H| absolute = 46.91      GATE 2 needs <= ~1   -> FAILS BY 47x
+   GRIND 21 Hz  +16.33 dB (6.5x AMPLIFIED)    Honda's 55 Hz null  +108 dB (10^5 x)
+```
+⇒ a re-centred notch **amplifies the grind it is meant to help** and destroys Honda's null. This is
+exactly the reason V173's own docstring already gives (`C_B4 ~ 1/f²`), reached independently from the
+image bytes. ⊕ It is a second, independent argument for what V88 concluded from the wire (*"no notch, no phase lever
+exists at 7.79 Hz specifically"*), and it re-confirms the standing lineage rule
+🛑 **"THE NOTCH LEVER IS SPENT — do not re-propose a re-centred `0xC60A8` biquad."** V105 flew a
+25.5 Hz notch and failed; `docs/review/GATE2-2026-08-20-notch-sign.md` refused re-centring at 6–9 Hz.
+=> **the ratchet lever MUST be broadband.** That is exactly what V173's pole move is.
+
+### ✅ V173 RE-PRICED AT THE CORRECT RATE — AND GATE 2 PASSES
+```
+   band                 V173 / stock          what it means
+   LKAS   0.5-3 Hz      -0.05 .. -1.42 dB     authority MAGNITUDE intact
+   ratchet 6.5-11 Hz    -4.50 .. -7.97 dB     partial (1.7-2.5x) but robust across the whole wander
+   GRIND  15-25 Hz     -10.39 .. -14.70 dB    the primary endpoint, well served
+   lane-change 26-31   -15.03 .. -16.51 dB
+   COST: group delay  +30.1 ms @0.5 Hz  +29.1 @1  +21.4 @3   (-5.5 deg / -10.8 / -29.2)
+```
+✅ **GATE 2 (magnitude): PASS, decisively.** `max |H_V173 / H_stock| = 0.999753` over 0.1–499 Hz and
+`max |H_V173| = 0.9998` absolute => the section **can only REMOVE loop gain, never add it**, and no new
+resonance exists. Same argument class V103 passed on.
+⚠ **GATE 2 (phase): a real, bounded cost.** −10.8 deg at 1 Hz and −29.2 deg at 3 Hz is materially more
+in-band phase than V103 spent. It is the **mechanism** by which the mode is damped, not a side effect —
+but it is the honest price, and the operator feels it as lag, not as lost authority.
+
+### ➕ THE FRONTIER — PRE-REGISTERED NEXT STEP IF V173 IMPROVES BUT DOES NOT CURE
+The slow real pole couples attenuation to lag **inseparably** (one real pole, one time constant), at a
+strikingly linear rate:
+```
+   p_slow   corner   ratchet@8.17   grind 15-25   lag@1Hz      ~4.8 ms of 1 Hz lag
+   0.9700   4.85 Hz    -5.89 dB      -12.61 dB    +29.1 ms  <== V173
+   0.9800   3.22 Hz    -8.77 dB      -16.03 dB    +42.8 ms     buys each extra dB
+   0.9850   2.41 Hz   -11.03 dB      -18.49 dB    +54.1 ms     of ratchet attenuation
+   0.9900   1.60 Hz   -14.38 dB      -22.00 dB    +69.2 ms
+```
+=> **If the drive says "better but still there", the next build is `p_slow` 0.970 -> 0.980** (`C_A8`,
+`C_AC`, `C_B4` re-solved for unity DC): −2.9 dB more ratchet for +14 ms more lag. **Do not go past
+0.985 without an operator lag verdict** — past there the lag is larger than anything the kit has shipped.
+

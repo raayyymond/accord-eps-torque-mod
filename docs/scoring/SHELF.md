@@ -41,12 +41,17 @@ question is worth a drive on its own. Card: `DRIVE-CARD-V194.md`.
 ## What each build changes relative to the car you drive today
 | | V195 | V196 | V194 |
 |---|---|---|---|
-| grind notch | **19.75 Hz, 21.5×** | **19.75 Hz, 21.5×** | 19.40 Hz, 15.0× |
+| grind notch (open-loop score) | **19.75 Hz, 21.5×** | **19.75 Hz, 21.5×** | 19.40 Hz, 15.0× |
 | engaged inertia | Honda | **half Honda** | Honda |
 | K1 friction, accel alpha | → Honda | → Honda | → Honda |
 | detector levers | — | — | ✔ (3 cells) |
 | CAN probe | — | — | `gp-0x6c2c` |
 | can change **manual** driving | no | no | **yes** |
+
+⚠ **The grind figures above are OPEN-LOOP scores, used to RANK designs.** The honest
+closed-loop prediction is **~7.7× band-integrated, with 11.3× (the engaged/manual
+ratio) as the hard ceiling** — a notch in the assist path cannot remove the road and
+plant disturbance floor. See `docs/STATE.md`.
 
 ## 🛑 RUN THIS FIRST, ON THE FILE YOU ARE ABOUT TO SEND
 ```
