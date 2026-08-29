@@ -157,15 +157,20 @@ def run(tag):
           % ', '.join('%.0f Hz %+.1f' % (ff[k2], dd[k2]) for k2 in sorted(top, key=lambda k2: ff[k2])))
 
 
-_args = [a for a in sys.argv[1:] if not a.startswith('--')]
-if '--list' in sys.argv[1:]:
-    av = available()
-    print('  routes with BOTH rlogs and a cache (%d): %s' % (len(av), ' '.join(av)))
-    print('  usage: python rlog-tools/decode/audio_engaged_vs_manual.py <route> [<route> ...]')
-else:
-    for t_ in _args or ['r22']:
-        try:
-            run(t_)
-        except KeyError as e:
-            print('  %s' % e)
-            print('  run with --list to see which routes are available.')
+def _main():
+    _args = [a for a in sys.argv[1:] if not a.startswith('--')]
+    if '--list' in sys.argv[1:]:
+        av = available()
+        print('  routes with BOTH rlogs and a cache (%d): %s' % (len(av), ' '.join(av)))
+        print('  usage: python rlog-tools/decode/audio_engaged_vs_manual.py <route> [...]')
+    else:
+        for t_ in _args or ['r22']:
+            try:
+                run(t_)
+            except KeyError as e:
+                print('  %s' % e)
+                print('  run with --list to see which routes are available.')
+
+
+if __name__ == '__main__':
+    _main()

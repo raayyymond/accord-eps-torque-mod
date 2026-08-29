@@ -1,5 +1,41 @@
 # STATE — living current state of the kit
 
+## ✅✅ **THE AUDIO CHANNEL IS VALIDATED — AND IT WAS POINTED AT THE WRONG BAND AND SPEED**
+Audio is the channel that has tracked the operator's report where the bus has not, so it was the last
+drive-side dependency to audit. It runs: **16,364 blocks aligned to the CAN timebase on r24**, with
+`zstandard`/`cereal` present and 635 rlog segments on disk.
+
+### ⛔ BUT `audio_engaged_vs_manual.py` ANSWERS A DIFFERENT QUESTION
+Its own comment explains why it abandoned the engaged/manual split on r24 — *“hopelessly
+speed-confounded (52.8 vs 11.5 km/h median) … produces a uniform +10 dB”* — and substituted a
+within-engaged **21–26 Hz** high-vs-low contrast, speed-matched at **28–82 km/h**. Sound for r24. But
+for V158 that is **the vibration band, not the 6–9 Hz ratchet**, at **a speed where V158 is
+architecturally inert.** Run as-is on the V158 drive it would report on the wrong band at the wrong
+speed.
+
+### ✅ `rlog-tools/decode/audio_creep_v158.py`
+- **PRIMARY: engaged vs manual, restricted to CREEP (1–24 km/h), speed-matched.** The r24 confound came
+  from engaged *highway* against manual *creep*; the drive card's matched manual creep segment is
+  precisely what makes this contrast valid instead of confounded.
+- **It REFUSES if the arm medians differ by more than 2 km/h**, naming the r24 +10 dB artefact as the
+  reason — rather than reporting a speed difference as an acoustic result.
+- **FALLBACK: within engaged creep, high-vs-low 6–9 Hz** — the kit's validated design, retargeted from
+  21–26 Hz to the ratchet band — clearly labelled as unable to separate *“the damper worked”* from
+  *“less ratchet happened to occur”*.
+- Reports 20–2000 Hz so no band is pre-committed; refuses loudly at every insufficient-data point.
+
+### 🛑 IT IMMEDIATELY CAUGHT A REAL CONFOUND ON r24 — AND THAT IS A DRIVE REQUIREMENT
+```
+   596 creep audio windows: 271 engaged, 325 manual
+   speed-matched 3.4-17.8 km/h: engaged p50 10.3 vs manual p50 7.9, gap 2.43 km/h
+   ⛔ REFUSED (gap > 2.0) -> fell back, and said so
+```
+r24 **has** creep audio in both arms, and the primary contrast was **still** invalid because the two
+arms sat 2.43 km/h apart. ✅ **So it is not enough to drive “some creep engaged and some creep
+manual”** — the two arms must be **the same stretch at the same speed**. That is now in the drive card.
+⊕ The guard is what makes a null trustworthy: without it this route would have produced a confident
+acoustic number built on a speed difference.
+
 ## ✅✅ **THE DRIVE-SIDE TOOLCHAIN IS COMPLETE AND DE-HARDCODED — THREE COMMANDS**
 Every stage between the rlog and an answer has now been audited, fixed and run.
 ```

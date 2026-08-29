@@ -31,7 +31,8 @@ passes** are needed. More minutes in one block does **not** help; more separate 
 loop, anything that makes the wheel work at walking pace. This is the only segment that can produce
 a result.
 
-**2. The same creep, LKAS OFF. 2+ minutes.**
+**2. The same creep, LKAS OFF. 2+ minutes, in SEVERAL separate passes.**
+🛑 **SAME STRETCH, SAME SPEED.** Not “some creep engaged and some creep manual” — tested on r24, which has creep audio in BOTH arms and the acoustic contrast was **still refused** because the arms sat **2.43 km/h** apart. Drive the identical loop at the identical pace, engaged, then manual, and alternate.
 Same speeds, same surface, hands off where safe. Without this every ratio is uncontrolled — three
 uncontrolled ratios collapsed under controls this session (2.8→1.12, 1.29→0.911, 1.309→0.958).
 
@@ -97,7 +98,7 @@ Full pre-registration: `docs/scoring/SCORING-V158-preregistered.md`.
 python rlog-tools/decode/extract_route.py --route <N> --prefix <rlog prefix> \
        --segments <n> --build V158
 python rlog-tools/score/score_v158_creep.py r<N>
-python rlog-tools/decode/audio_engaged_vs_manual.py r<N>
+python rlog-tools/decode/audio_creep_v158.py r<N>
 ```
 
 Step 1 tells you immediately whether the drive is scoreable at all — whether both arms have enough
