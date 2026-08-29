@@ -1,5 +1,95 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ **`0xC40D0` — THE BEST REMAINING STRUCTURAL LEVER, WITH ITS GATE OPEN**
+Following the corrected `|model| × sat(angle)` structure to its filter found a **virgin, well-aimed
+lever** — and then found the reason not to fire it yet. Both halves are recorded.
+
+### ✅ WHY IT IS WELL-AIMED
+The bilinear term is EMA-filtered by `cal(0xC40D0)`, `α = cal/4096`, in the **1 kHz** task:
+```
+   0xC40D0  the |model|xsat(angle) EMA   cal= 408  a=0.09961  fc= 16.70 Hz  |H(7.8Hz)| = 0.906
+   0xC40D6  the rate term                cal= 246  a=0.06006  fc=  9.86 Hz  |H(7.8Hz)| = 0.784
+   0xC40D4  model pre-filter             cal= 573  a=0.13989  fc= 23.98 Hz  |H(7.8Hz)| = 0.951
+   0xC40D8  sensor pre-filter            cal=3686  a=0.89990  fc=366.31 Hz  |H(7.8Hz)| = 1.000
+```
+⇒ **the bilinear path passes the ratchet frequency at 91 %** — it is wide open at 7.8 Hz.
+⭐ **And an EMA has DC gain EXACTLY 1**, so lowering the pole attenuates only the FAST component and
+leaves steady-state friction **untouched** ⇒ **no assist cost**, unlike V151 which cuts the term at
+every frequency including DC. That is precisely the operator's *"low friction AND no ratcheting"*.
+✅ **VIRGIN: `0xC40D0` = 408 in ALL 151 build images.** Never touched.
+
+### 🛑 WHY IT IS NOT BUILT — A BYTE-EXACT DESIGNED ARM-MATCH
+`BUILD-LINEAGE.md` warns that `0xC63AC`'s α *"matches `0xC40D0` to the last bit — a genuine
+disturbance-observer constraint, not hygiene."* **Confirmed arithmetically:**
+```
+   alpha(0xC63AC) = 102/1024 = 0.099609375        (>>10 in FUN_00038148)
+   alpha(0xC40D0) = 408/4096 = 0.099609375        (x0.00024414062 in FUN_0003b8f6)
+   408 = 4 x 102  EXACTLY  =>  the match is BY CONSTRUCTION, not coincidence
+```
+And these sit on **opposite arms of one observer residual** — V98's comparator established
+`iVar6 = gp-0x6bfe (MODEL) + gp-0x6bfa (REQUEST) − (gp-0x374c>>4) (ACTUAL)`, where `0xC40D0` shapes
+the **MODEL** arm and `0xC63AC` the **ACTUAL** arm.
+⇒ **Honda gives both arms the same time constant so their phases cancel in the difference.
+Moving one alone injects a phase error into the residual at every frequency, 7.8 Hz included.**
+⇒ **[UNRESOLVED] the SIGN of that phase error in the residual.** Attenuating a term that is
+*subtracted* can either remove or expose 7.8 Hz content depending on phase.
+⚠ **Precedent is discouraging**: the matched twin `0xC63AC` **flew as V97** and came back
+**UNINTERPRETABLE — a null with no positive control**, and the kit's own full-loop Bode sum filed it
+**"Predicted WORSE"**. That was for *raising* it (faster pole, more HF gain); lowering `0xC40D0` is
+the opposite direction, **which is a reason to think, not a reason to assume.**
+
+### ⭐ WHAT WOULD CLOSE THE GATE — stated so it can be executed, not re-derived
+1. **The residual's own phase at 7.8 Hz**, MODEL arm vs ACTUAL arm, from a flown probe — V98's
+   comparator rungs already rank the arms and could be re-cut to carry phase.
+2. **Or the paired move**: change `0xC40D0` and `0xC63AC` **together**, preserving `408 = 4×102`, so
+   the match is never broken and only the shared corner moves. **That is the SAFE form of this
+   lever** and it is the one to build first — but `0xC63AC` at 102 is Honda stock and V99 put it
+   back deliberately, so it needs the operator's call.
+⇒ **[DECISION] not built blind.** GATE 2 (phase, in every loop the signal is in) is **not closed**,
+and this kit's rule is that an unclosed GATE 2 is not a build.
+
+## 🛑🛑 **THE “COULOMB RELAY” IS NOT FRICTION AND NOT A RELAY — IT IS `|model| × sat(ANGLE)`**
+**[EVIDENCE — `decompile_function 0x0003b8f6`, GhidraMCP]** The kit has described `0xC40BC` for
+~40 builds as *"the relay knee"* in `friction = K1·min(|model|,knee)/knee`. **That formula is
+wrong.** What `FUN_0003b8f6` actually computes:
+```c
+   iVar20 = polarity * gp-0x6abc * 12;                  // an ANGLE, NOT the model
+   uVar8  = *(ushort *)(tp + 0x50bc);                   // tp+0x50BC = 0xC40BC = THE KNEE
+   fVar13 = clamp((float)iVar20*0.5 / ((float)uVar8*0.5), -1.0, +1.0);   // sat(ANGLE / knee)
+   fVar14 = |fVar18|;                                   // |model|
+   fVar15 = (fVar14 * K1/1024  +  OFFSET/1024) * fVar13; // BILINEAR: |model| x sat(angle)
+   ...EMA with pole cal(0xC40D0), then clamp to +-10.0
+```
+### ⭐ THE PROOF THAT `gp-0x6abc` IS AN ANGLE
+`iVar20`'s own **first difference** is taken 20 lines later:
+`(iVar20 - *(int*)(gp-0x3618)) * 0.5 * 17.453293` — and **17.453293 = 1000·π/180**, a **deg→rad
+conversion at the confirmed 1 kHz task rate.** A quantity whose first difference is an angular
+rate **is an angle.**
+
+### 🛑 WHAT THIS OVERTURNS
+```
+   BELIEVED (~40 builds)                    ACTUAL
+   knee normalises |model|                  knee normalises the ANGLE gp-0x6abc
+   slope = K1/knee, one axis                K1 and knee are INDEPENDENT axes
+   saturates at |model| >= knee             saturates at |gp-0x6abc| >= knee/12 = 250 counts
+   Coulomb friction (velocity-sign relay)   an ANGLE-proportional, |model|-scaled BILINEAR term
+   a hard relay => stick-slip generator     CONTINUOUS through zero => a SOFT saturation, no jump
+```
+⇒ **Coulomb friction switches on VELOCITY SIGN. This term does not switch at all** — it is a
+linear ramp in angle through zero. **The stick-slip argument for it never applied.**
+⊕ Independent corroboration: a byte census of the V850 sign-extract idiom (`sar 31`, encoding
+`(X<<11)|0x2BF`) over `[0x30000,0x40000)` returns **6 hits, NONE inside the aggregator `0x3AA2C`
+or the plant model `0x3B8F6`.** A true relay needs a sign switch; there is none here.
+
+### ✅ WHAT SURVIVES, AND WHAT IT MEANS FOR V151
+The **×0.8333 number survives, for a different reason**: in the **unsaturated** regime the term is
+**exactly proportional to 1/knee**, so 3000→3600 is a **uniform 17 % reduction**; in the saturated
+regime `sat()` is ±1 either way and the term is **unchanged**. ⇒ monotone reduction, as built.
+⇒ But the term is **∝ steering angle**, and **engaged hands-off creep runs small angles**, so the
+term is **already small there** — V151 reduces something that is already small in the symptom's own
+regime. **V151 stays MARGINAL and stays ranked 5th.**
+⭐ **The V151 builder docstring and one check message have been corrected in place.**
+
 ## ✅ **V151 BUILT — THE KNEE RAISE, REBASED ONTO V122 — AND THE RELAY IS LARGELY RETIRED**
 The switching census covered **counter-gated** switches. It never covered the **sign-gated** class,
 and the mechanism this kit has actually named is a **Coulomb relay** — a sign switch, the textbook

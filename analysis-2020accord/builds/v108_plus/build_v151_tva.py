@@ -12,15 +12,20 @@ V122-based build since (V137..V150) holds the knee at 3000.
 
 THE MECHANISM -- IT REMOVES A RELAY, WHICH IS THE STICK-SLIP GENERATOR
 ----------------------------------------------------------------------
-The modelled Coulomb friction in FUN_0003b8f6 is a SATURATING RAMP:
-        friction = K1 * min(|model|, knee) / knee
-        slope = K1/knee   |   saturation value = K1
-When |model| >= knee the term is CONSTANT at K1 and only its SIGN varies with direction.
-Constant-magnitude, sign-switching friction IS Coulomb friction, and a Coulomb relay inside a
-feedback loop is the textbook generator of stick-slip / ratcheting.
-Below the knee the term is PROPORTIONAL to |model| -- a smooth, viscous-like law that does not
-ratchet.
-=> raising the knee moves the system OUT of the relay regime and INTO the proportional regime.
+CORRECTED 2026-08-28 FROM THE DECOMPILE.  The kit long described this as
+"friction = K1*min(|model|,knee)/knee".  THAT IS WRONG.  FUN_0003b8f6 actually computes:
+        iVar20 = polarity * gp-0x6abc * 12                 <- an ANGLE, not the model
+        fVar13 = clamp(iVar20 / knee, -1.0, +1.0)          <- the KNEE normalises the ANGLE
+        fVar14 = |fVar18|                                  <- |model|
+        term   = (fVar14*K1/1024 + OFFSET/1024) * fVar13   <- BILINEAR: |model| x sat(angle)
+        then an EMA with pole cal(0xC40D0), then clamped to +-10.0
+gp-0x6abc is an ANGLE, proven by its own first difference downstream:
+        (iVar20 - prev) * 0.5 * 17.453293      and 17.453293 = 1000*pi/180 = deg->rad at 1 kHz.
+=> THE KNEE SCALES STEERING ANGLE.  K1 SCALES |model|.  They are INDEPENDENT AXES, not a ratio.
+=> this is NOT Coulomb friction: Coulomb friction switches on VELOCITY SIGN.  This is an
+   angle-proportional, model-magnitude-scaled BILINEAR term, and it is CONTINUOUS through zero
+   (a linear ramp near angle 0), so it has no jump and is a SOFT SATURATION, not a hard relay.
+=> the term saturates at |gp-0x6abc| >= knee/12 = 250 counts, and is +-1 only past that.
 
 MEASURED saturation duty, engaged HANDS-OFF, 5-10 mph, cmd >= 2048 -- the symptom's own regime:
         knee  600 -> 0.7439     knee 2400 -> 0.0484
@@ -228,12 +233,13 @@ def build():
     check(new_slope < old_slope,
           f"  \U0001f6d1 THE DIRECTION GATE: slope {old_slope:.6f} -> {new_slope:.6f}"
           f" = x{new_slope/old_slope:.4f}, {100*(1-new_slope/old_slope):.0f}% LESS friction."
-          f"  With K1 held, friction = K1*min(|m|,knee)/knee is LOWER-OR-EQUAL at EVERY |m| and"
-          f" never higher => a MONOTONE reduction, no regime gets draggier.")
+          f"  the knee normalises ANGLE, so in the UNSATURATED regime -- which is ~99% of"
+          f" engaged creep -- the term scales EXACTLY as 1/knee => a uniform x0.8333.  In the"
+          f" saturated regime sat() is +-1 either way, so the term is UNCHANGED there."
+          f"  => LOWER-OR-EQUAL everywhere, never higher: a MONOTONE reduction.")
     check(KNEE_NEW > KNEE_OLD,
-          f"  \U0001f6d1 THE RELAY GATE: raising the knee moves the term OUT of the saturated"
-          f" CONSTANT-MAGNITUDE regime (sign-switching Coulomb = the stick-slip generator) and INTO"
-          f" the |model|-PROPORTIONAL regime.  MEASURED saturation duty in engaged hands-off creep:"
+          f"  \U0001f6d1 THE SATURATION GATE: raising the knee raises the ANGLE at which the"
+          f" term saturates, from knee/12 = 250 to 300 counts.  MEASURED saturation duty in engaged hands-off creep:"
           f" {KNEE_OLD} -> (current), {KNEE_NEW} -> 0.0000, a measured point, not an interpolation.")
     check(K1_VAL * KNEE_NEW < 2**31 and KNEE_NEW < 2**15,
           f"  no overflow: knee {KNEE_NEW} is inside int16 and K1*knee inside int32")
