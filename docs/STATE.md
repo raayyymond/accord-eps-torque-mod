@@ -1,5 +1,43 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **FIVE INDEPENDENT METRICS CONVERGE ON ~1.1x — THE MEASUREMENT SIDE IS EXHAUSTED**
+The last open objection to the small measured effect was that **band power is the wrong perceptual
+quantity**: grinding is perceived as **roughness**, which tracks **MODULATION DEPTH**, and 7.8 Hz
+sits in the fluctuation-strength range. Depth normalises to the **mean level**; share normalises to
+the **envelope's own spectrum** — they can genuinely diverge. Tested.
+```
+   metric                routes    engaged/manual [95 % CI]   matched on (speed x |rate| RMS)
+   depth 6-9 Hz              25    1.161 [1.049, 1.284]       <- EXCLUDES 1
+   depth 26-31 Hz CONTROL    25    1.086 [0.912, 1.292]       <- control CLEAN
+   share 6-9 Hz              25    1.106 [0.998, 1.273]
+```
+=> depth is **marginally the better metric** and its CI excludes 1, but the **band-specific advantage
+over its own control is only 1.161/1.086 = 1.07x.**
+=> **[EVIDENCE] the perceptual-metric hypothesis does NOT explain the gap** between the measured
+effect and the reported severity.
+
+### ⭐⭐ THE CONVERGENCE — EVERY INSTRUMENT AND EVERY METRIC AGREES
+```
+   CAN band share, median       1.12 [1.01, 1.27]      24 routes, controls clean
+   CAN band share, p95 tail     1.10 [1.04, 1.24]      23 routes, controls clean
+   CAN line prominence          1.17 [0.86, 1.27]      => <= ~2 % of RMS, positive control PASSED
+   CAN modulation depth         1.16 [1.05, 1.28]      25 routes, control clean
+   AUDIO envelope AM            ~1.00 (all 8 bands)     5 routes, all 8 controls clean
+```
+=> **five independent statistics, on two independent instruments, all land between 1.0 and 1.2 with
+clean controls.** Nothing measurable from this vehicle accounts for *"massive, violent grinding."*
+=> **[CONCLUDED] the measurement side is EXHAUSTED.** Not "we haven't found the right statistic" —
+**five have been tried, including the perceptually correct one, and they agree.**
+
+### 🛑 WHAT THAT MEANS, STATED PLAINLY
+The only reading consistent with all of it is the one the kit already reached structurally: **the
+mode is on the motor / rack / tyre side, and no channel this vehicle exposes observes it.** A
+symptom that reads ~1.1x on every available instrument while being unmistakable to the driver is
+**not a measurement failure to be solved with a better statistic — it is an observability limit.**
+=> **the operator's ear is the instrument, and that is now supported by five converging negative
+results rather than by resignation.**
+=> **no further metric should be attempted on cached data.** The next informative bit is a drive.
+
 ## ✅✅ **THE RATCHET IS NOT EPISODIC IN BAND SHARE — THE TAIL LOOKS LIKE THE MEDIAN**
 A flaw in my own method: every matched analysis this session took the **MEDIAN** over engaged
 windows, and the kit's own characterisation says the ratchet appeared in **44 of 46 windows** on one
