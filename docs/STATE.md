@@ -1,5 +1,59 @@
 # STATE — living current state of the kit
 
+## ⭐⭐⭐ **WHICH LANE CARRIES THE GRIND — MEASURED. TWO FAMILIES CLOSE, A NEW TARGET APPEARS.**
+Last section's rule *"rank lanes by measured p50"* is **WRONG for finding the grind** and is
+corrected here: **p50 is a DC/typical magnitude; a small lane can carry all the 20 Hz energy.**
+The right ranking is **AC power in 18–22 Hz as a fraction of each lane's OWN variance**, which is
+computable from cache for every lane ever probed.
+```
+   lane                 build/route   18-22 Hz   8-12 Hz(ctl)   ratio
+   11-slot assist sum   V103 / r9e     22.84%      17.04%       1.34
+   11-slot assist sum   V102 / r96     22.50%       7.32%       3.08
+   detector input       V107 / r1e     19.07%       8.85%       2.16
+   AGGREGATOR OUTPUT    V101 / r95     10.05%       8.45%       1.19
+   b26 inertia          V91  / r78      9.53%      18.77%       0.51
+   viscous+pedestal     V92  / r79      9.26%       5.01%       1.85
+   b26 inertia          V90  / r77      7.38%      13.57%       0.54
+   notch lane           V104 / ra4      4.61%       2.11%       2.19
+   notch lane           V106 / ra6      1.07%       2.72%       0.39
+   notch lane           V105 / ra5      1.00%       2.09%       0.48
+```
+⚠ 30–40 Hz ALIASES at 49.9 Hz sampling, so **8–12 Hz is the control band.**
+
+### 🛑 1. `gp-0x6B26` IS **NOT** THE GRIND CARRIER — AND ~15 BUILDS WENT THERE
+**Ratio 0.51 and 0.54 — CONSISTENTLY BELOW ITS OWN CONTROL** on both routes that ever probed it.
+⇒ **b26 carries LESS 18–22 Hz than 8–12 Hz.** The clamp, α2, knee and K1 builds (V126–V138, and
+most of this session) were all aimed at a lane whose 18–22 Hz content is below its own baseline.
+⊕ This is consistent with, and explains, the null and near-null results that family produced.
+
+### 🛑 2. THE NOTCH FAMILY IS CLOSED ON A **THIRD** INDEPENDENT COUNT
+`gp-0x6B86` reads **4.61 / 1.07 / 1.00 %** on all three of its routes — the **lowest** band content
+of any lane measured. Together with (a) the gate that almost certainly never opens and (b) the lane
+carrying only p50 6–19 counts, **V144/V145/V146 are retired as candidates.** The notch itself is
+real, correctly retuned and validated — **it is simply on the wrong lane, behind a shut gate.**
+
+### ✅ 3. THE NEW TARGET: `gp-0x6B4C`, THE 11-SLOT ASSIST SUM
+**22.84 % and 22.50 % on BOTH its routes** — the only lane consistently elevated, and elevated
+against its control on both (1.34, 3.08). ⊕ The kit's own memory already flags it:
+*"`gp-0x6b4c` is NOT the LKAS command — an 11-SLOT ASSIST SUM"*.
+```
+   0xC4124  slot :   0   1   2   3   4   5   6   7   8   9  10
+            stock:   0   0   5   0   5   5   0   0   0   5   0     (V122 identical)
+   => FOUR slots active at weight 5 (indices 2, 4, 5, 9); seven are zero.
+   readers: 0x26CDC 0x27B26 0x27CCE 0x27CF2 0x27F24 -- all in the gp-0x6B4C producer region
+```
+⭐ **A per-slot weight vector on the highest-ranked grind carrier is exactly the shape of lever
+this search has been looking for** — it can remove ONE contributor without touching the rest.
+🛑 **NOT yet a proposal.** What each of the four active slots SOURCES is unknown, and zeroing one
+blindly is the kind of move this session has repeatedly shown to be wrong. **Next step: identify
+slots 2, 4, 5 and 9 by tracing the five readers.**
+
+### ⭐ THE CORRECTED RULE
+**Rank lanes by their BAND POWER in the symptom band, not by p50.** p50 found `gp-0x6BBE`
+(the biggest lane) which turned out to be **torque-dominated 11:1** and therefore neither the grind
+source nor a safe lever. Band power found `gp-0x6B4C`, which p50 ranked near the bottom.
+**Both rankings are one command; only one answers the question that was being asked.**
+
 ## ⭐⭐ **THE CENSUS REFRAMES THE WHOLE SEARCH — THIS KIT HAS BEEN TUNING THE SMALLEST LANES**
 The full probe census puts every flown lane on one scale for the first time. **Engaged p50, in the
 same units, from routes already in the cache:**
