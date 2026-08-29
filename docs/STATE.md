@@ -4,6 +4,36 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅✅ **BOTH DRIVE-CARD INSTRUCTIONS CONFIRM AT FULL n — AND THE RATCHET CENTRES AT 8.2 Hz, NOT 8.64**
+The last two subset results are **operational instructions on the card**, so a wrong one mis-specifies
+the drive. Re-tested on **544 windows across 19 routes** (was 244 across 9):
+```
+   |COMMAND| ct   n win   RATCHET exc   GRIND exc    n=9 was (rat / grd)
+   100-250         38      14.0          4.6          17.0 / 5.1
+   250-600        137      15.7          8.1          19.4 / 8.5
+   600-1500        87      32.4         14.5          39.4 / 12.6   <- grind PEAKS
+   1500+          282      47.8          7.0          58.1 / 6.0    <- grind DIES, ratchet grows
+```
+✅ **[EVIDENCE] the ratchet is MONOTONE in command** (14.0 → 47.8, **3.4×**) ⇒ *“include real
+curvature”* stands. ✅ **[EVIDENCE] the grind PEAKS mid-command and DIES above 1500 ct** (4.6 → 14.5 →
+7.0) ⇒ *“take the grind verdict from the mid-command windows”* stands.
+✅ **And the worst rate band strengthens**: 12–25 deg/s gives ratchet excess **155.2** (was 143.1).
+
+### ✅ THE FREQUENCY IS BETTER PINNED THAN BEFORE — AND SLIGHTLY LOWER
+```
+   ratchet peak CV:  3.5 % across speed  ·  4.9 % across rate  ·  8.1 % across command
+                     (n=9 gave 5.5 % / 12.3 % / 7.0 %)
+   peaks across all strata: 7.81 - 9.57 Hz, median ~8.2
+   grind peak: 19.92 - 20.90 Hz, tighter still
+```
+⚠ **The centre is ~8.2 Hz, not the 8.64 Hz quoted throughout this session.** 8.64 came from the
+9-route pooled estimate. ⊕ **No design impact**: V173 targets attenuation across **7–11 Hz**, which
+brackets 8.2 comfortably (its response there is ≈0.50 against 0.476 at 8.64 — a 5 % difference), and
+the notch placement question does not arise because Honda's notch was kept. **The build is unchanged
+and the drive card's bands are unchanged.**
+⊕ **All three operational results held.** The pattern continues: **effect sizes and shapes survive;
+only categorical small-n phrasings have needed correcting.**
+
 ## ✅✅✅ **THE CHANNEL RESULT HOLDS — THE ONE THAT MATTERS MOST SURVIVED THE TEST THAT BROKE TWO OTHERS**
 Two n≤9 claims had already fallen on the full corpus, so the **channel survey** — the result that set
 the scorer's channel and underwrites *“every prior 6–9 Hz endpoint read the wrong channel”* — had to be
@@ -2246,44 +2276,4 @@ one edit that tests this bound directly, because it halves exactly the 0.204 ter
 ⚠ **[OPEN] the RAM-LERP slope `s`** is the last unknown. Closing it needs the `gp-0x64b8`/`gp-0x641c`
 rows, which are built by `FUN_000389ec` from `FUN_000382d8`'s tables — the model records two failed
 attempts at exactly this extraction.
-
-## ⛔ **THE PATH-2 WEIGHTS ARE NOT A LEVER FAMILY — AND WHY `0xC63A0` IS THE ONE EXCEPTION**
-Having found that `FUN_00038148` weights every Path-2 term, the obvious next move is to lower the
-others. **It is wrong, and the reason sharpens V167's own justification.**
-
-### THE TEMPTING READING
-Every term gets the **extra `pol` multiply**, so a Path-1 **damper** arrives as a Path-2 **pumper**.
-`gp-0x6bbe` is a **measured** viscous damper (1.571 ct/(deg/s), phase ~0° vs rate) and, unlike the
-base damper, it is **LIVE ON STOCK at creep**. Its Path-2 weight `0xC63A2` is **VIRGIN on all 142
-images**. So it reads as a standalone ratchet lever that needs no V158 base.
-
-### ⛔ WHY IT IS NOT ONE
-**Path 2 is a DISTURBANCE OBSERVER.** It sums the assist lanes to predict what the motor is doing and
-compares that prediction against a measurement. Lowering a term's weight does **not** simply remove
-pumping — **it makes the observer's model WRONG**, biasing the residual by exactly the amount removed.
-The pumping-signed arrival is not a defect to be trimmed; it is **what an observer subtracting a
-predicted contribution is supposed to look like.**
-=> lowering `0xC63A2`, `0xC63A4`, `0xC63A6`, `0xC63A8` or `0xC63AA` corrupts a model of a term the
-firmware has always included. **Not built. Not proposed.**
-⊕ This also retro-justifies the **strike on `0xC63A6`** (the `gp-0x6b26` weight, moved on the
-superseded V154/V155): the objection is not only that GATE 2 was uncertifiable, it is that the edit
-**de-tunes an observer**.
-
-### ⭐ WHY `0xC63A0` IS DIFFERENT — THE ARGUMENT V167 ACTUALLY RESTS ON
-```
-   on V122 the base damper gp-0x6bd0 is EXACTLY ZERO at creep (FactorC Y[0] = 0)
-   => the observer's creep-band sum has NEVER contained a damper term
-   => V158 introduces, at FULL weight, a term the observer was never tuned to see
-```
-✅ **V167's 512 is therefore CLOSER to the observer's pre-V158 behaviour than V158's 1024 is.** It is
-not "de-tuning a working observer" — it is **partially withholding a term the observer has no history
-with**, on the one lane where that argument holds. **On every other weight the argument fails**,
-because those terms have always been in the sum.
-⚠ It still cuts both ways: if the motor really does produce the damper torque, the observer *should*
-see it, and halving it biases the residual. **That is why V167 is a DISCRIMINATOR for the “worse”
-branch and NOT a predicted improvement** — exactly how it is filed.
-
-⭐ **THE GENERAL RULE**: **before lowering a weight, ask what the sum is FOR.** In a torque
-aggregator a weight is a gain and lowering it reduces a contribution. In an **observer** the same
-edit changes a *model*, and "less of the bad-signed thing" is the wrong frame entirely.
 
