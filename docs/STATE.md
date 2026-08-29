@@ -37,6 +37,11 @@ the better-founded statement, and it supports V173 more directly than the origin
 ⊕ **It is consistent with the corrected build trend**: the ratchet *does* fall with build INDEX
 (ρ −0.60) while tracking **no individual cal** — many cells moved together, and no one of them
 explains it.
+⊕ **EXTENDED AND UNCHANGED.** The first pass covered only `0xC4000-0xCD000`, missing `0xD7000` (the
+damper records — V158's own lever) and `0xE4000`/`0xE5000` (V38's arbitration limits). Rerun across
+**all three regions, 94 cells**: **identical verdict** — 0 surviving for the ratchet, `0xC40BC` alone
+for the grind at the same ρ. The only new entry in either top-six is `0xD7FFC` (−0.472), **a CRC
+trailer rather than a cal**. ⇒ **the null is not an artefact of where I looked.**
 
 ## ✅✅ **BOTH DRIVE-CARD INSTRUCTIONS CONFIRM AT FULL n — AND THE RATCHET CENTRES AT 8.2 Hz, NOT 8.64**
 The last two subset results are **operational instructions on the card**, so a wrong one mis-specifies

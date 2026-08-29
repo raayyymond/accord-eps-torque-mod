@@ -37,13 +37,18 @@ DATA=[d for d in DATA if d[1] in arr]
 print('routes with an image: %d over %d builds'%(len(DATA),len({d[1] for d in DATA})))
 
 # every u16 cal in the calibration region that VARIES across these builds
-LO,HI=0xC4000,0xCD000
-stack=np.stack([arr[b][LO:HI] for b in builds if b in arr])
-diff=np.any(stack!=stack[0],axis=0)
+# The first pass covered only 0xC4000-0xCD000.  The 278 bytes this kit has changed also span
+# 0xD7000 (the damper records -- V158's own lever) and 0xE4000/0xE5000 (V38's arbitration
+# setpoint limits), so those were invisible to it.  Scan every region that has ever changed.
+REGIONS=[(0xC4000,0xCD000),(0xD6000,0xD8000),(0xE4000,0xE6000)]
 cand=[]
-for off in range(0,HI-LO-1,2):
-    if diff[off] or diff[off+1]: cand.append(LO+off)
-print('u16 cells varying across these builds: %d'%len(cand))
+for LO,HI in REGIONS:
+    stack=np.stack([arr[b][LO:HI] for b in builds if b in arr])
+    diff=np.any(stack!=stack[0],axis=0)
+    for off in range(0,HI-LO-1,2):
+        if diff[off] or diff[off+1]: cand.append(LO+off)
+print('u16 cells varying across these builds: %d  (regions %s)'%(len(cand),
+      ' '.join('0x%05X-0x%05X'%r for r in REGIONS)))
 
 y_r=np.array([d[2] for d in DATA],float)
 y_g=np.array([d[3] for d in DATA],float)
