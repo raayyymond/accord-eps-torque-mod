@@ -1,5 +1,50 @@
 # STATE — living current state of the kit
 
+## ✅✅ **THE `gp-0x6B4C` CONTRIBUTORS NARROWED TO FOUR — AND THE METHOD IS VALIDATED**
+`FUN_0003a8a8`'s full decompile fixes the struct layout passed to `FUN_00025c32`:
+```c
+   local_1c = 7;      // [0] SLOT INDEX      uStack_12 = 0x400;   // [10] weight
+   cStack_1b = mode;  // [1] mode            uStack_10 = 0x400;   // [12] weight
+   uStack_1a = 0;     // [2] data            uStack_e  = 0x400;   // [14] weight
+   uStack_18 = 0;     // [4] data
+   uStack_16 = 0;     // [6] data
+   uStack_14 = 0;     // [8] data
+```
+⇒ **offsets 10/12/14 are CONSTANT 0x400 weights** — an earlier scan counted those as "computed
+fields" and wrongly called every caller a contributor. **Only offsets 2/4/6/8 are data.** Reading
+just those, from the `sst.h` stores before each call:
+```
+   slot 0  FUN_0002e52e   0@2  r12@4  0@6  0@8      data at offset 4
+   slot 1  FUN_0002b422   0@2  r12@4  0@6  0@8      data at offset 4
+   slot 3  FUN_0002c246   0@2   r8@4  0@6  0@8      data at offset 4
+   slot 8  FUN_0002caa2   0@2   r9@4  0@6  0@8      data at offset 4
+   slot 6  FUN_0003aff4   0@2   0@4   0@6  r7@8     data at offset 8
+   slot 7  FUN_0003a8a8   0@2   0@4   0@6  0@8      NO DATA
+```
+✅ **slot 7 reads ALL-ZERO, exactly as its full decompile showed ⇒ THE METHOD IS VALIDATED**
+against a known answer before being trusted on the unknowns.
+
+### ✅ AND THE OFFSET DECIDES WHICH ARRAY IS FED
+From `FUN_00025c32`:
+```c
+   *(short *)(gp-0x62e0 + slot*2) = clamp(param_1[2], +-0x4000);
+   *(short *)(gp-0x62f8 + slot*2) = clamp(param_1[4], +-0x2800);   // <- THE ARRAY THE SUM READS
+   *(short *)(gp-0x6274 + slot*2) = clamp(param_1[6], +-900);
+   *(short *)(gp-0x633c + slot*2) = clamp(param_1[8], +-20000);
+```
+⇒ **offset 4 feeds `gp-0x62f8`, the array the 11-slot sum walks.** Offset 8 feeds `gp-0x633c`, a
+**different** array.
+⇒ **ONLY slots 0, 1, 3 and 8 contribute to `gp-0x6B4C`. Slots 6 and 7 do NOT.**
+```
+   remaining candidates:  slot 0 FUN_0002e52e | slot 1 FUN_0002b422
+                          slot 3 FUN_0002c246 | slot 8 FUN_0002caa2
+   all four callers sit in ONE cluster, 0x2B4xx-0x2E5xx
+```
+⊕ Narrowed from **seven unknown indices → four named functions in one subsystem cluster**, and the
+`0xC4124[i] : 0 → 5` lever can now be aimed at any one of them.
+⚠ **Still not a build**: what those four compute is unread, and the lane's evidence base is
+**1.4× flat = weak**. **V147 flies first.**
+
 ## 🛑 **`0xC6372` SIZED AND REJECTED BEFORE BUILDING — AND IT NARROWS THE FIELD TO ONE**
 The aggregator adds its ten lanes **BARE — admission gates only, no per-lane weights** (which is why
 the kit recorded *"no weight cell exists"* for `gp-0x6b26`). ⇒ **an aggregator lane can only be
