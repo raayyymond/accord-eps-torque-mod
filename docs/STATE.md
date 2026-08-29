@@ -4,6 +4,44 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **MY RELAY CLAIM OVERREACHED — the ratchet is a DRIVEN RESONANCE, not a relay limit cycle**
+Last section proposed the flying build's saturated inertia term as the ratchet's mechanism. That put
+it in direct tension with the recorded ★★★★★ *"lightly-damped resonance, ring-down ζ 0.017–0.036,
+**limit cycle EXCLUDED**"*, because a relay in a loop is exactly what makes a limit cycle. **Tested,
+and the record wins.**
+```
+   1037 engaged-creep windows, cs_tq.  f0 median 7.81 Hz (IQR 7.62-8.40)
+
+   HARMONIC STRUCTURE  (prominence above local background)
+     f0  19.45   3*f0  4.14   5*f0  2.95   2*f0 (even control) 3.70   off-harmonic control 3.41
+     3f0/2f0 = 1.12      3f0/control = 1.21      => NO odd-harmonic excess.  A relay would show one.
+
+   AMPLITUDE DISTRIBUTION
+     log10 peak power sd 1.025  =>  p10-p90 spans 521x
+     => BROAD.  A limit cycle's amplitude is set by the loop and would span a few x, not 500.
+```
+⇒ **both discriminating signatures say DRIVEN RESONANCE.** The record's limit-cycle exclusion is
+corroborated by two independent statistics, and **my relay-as-oscillator claim is withdrawn.**
+
+### ✅ WHAT SURVIVES, AND IT STILL SUPPORTS V196
+The term can still be **saturated** — that arithmetic is unchanged (flying saturates at
+|accel| > 1065, V196 at 6389). What is withdrawn is that saturation *creates* the oscillation.
+```
+   the plant owns the resonance (Q 14-29, ring-down) -- nothing in the firmware sets its frequency
+   a PINNED, sign-flipping term injects broadband energy that EXCITES that resonance
+   => V196 reduces an EXCITER, not the oscillator
+```
+✅ **The sign-safety argument SURVIVES INTACT.** Reducing a saturated term's injected energy is
+directionally safe **whichever way its sign runs** — less injection is less excitation either way.
+That was the part that mattered for V196, and it does not depend on the limit-cycle claim.
+⚠ But the *strength* of the rationale is lower: **V196 reduces one exciter among several**, rather
+than removing the mechanism. Expect a partial effect, not elimination.
+
+➕ **THIS IS THE THIRD HYPOTHESIS OF MINE KILLED BY ITS OWN TEST THIS SESSION** — after the Coulomb
+sign-flip and the common-cause correlation. In each case the discriminating control was designed
+before the result was known. **That is the process working, not failing**; the alternative is
+carrying three wrong mechanisms into a build.
+
 ## ⭐⭐ **THE FLYING BUILD'S INERTIA TERM IS A SATURATED RELAY — the best mechanism for the ratchet yet**
 ```
    gp-0x6b26 = clamp( ((accel * L) >> 6) * 273 >> 18, +-cal(0xC407E)=511 )
@@ -2193,44 +2231,4 @@ magnitude AND phase against an ADAPTIVE plant**, which the kit has never had to 
 bounded adaptation can wind up or chatter** — the failure mode would look like new ratcheting.
 => **That is a full session's work and it must NOT be started before V175 flies**, because if V175's
 result falsifies the polarity chain, this entire path is falsified with it.
-
-## ✅ **THE SIX-TERM SUM IS NOW FULLY CLASSIFIED — `gp-0x6b26` IS ITS ONLY FREQUENCY-SELECTIVE LANE**
-**A CLOSING result, both positive and negative.** Every lane of `FUN_00038148`'s Path-2 sum has been
-traced to its writer and classified by differentiation order. **No second ω-weighted lever exists in
-this structure** — so the search over it is closed and no future session need re-open it.
-```
-   w    cell      signal      writer            what it is                      order
-   w[0] 0xC63A0   gp-0x6bd0   0x34730 (3 st)    base-assist damper (FactorC x FactorE)   ~w^1 BUT
-                                                zero on 95.91% engaged / 100% of micro
-   w[1] 0xC63A2   gp-0x6bbe   0x3508C (3 st)    viscous + DC PEDESTAL (~90 ct/(rad/s))   w^1 + DC
-   w[2] 0xC63A4   gp-0x6b46   0x3681A (1 st)    EMA'd, deadbanded torque-ERROR tracker   LAG (w^-1)
-   w[3] 0xC63A6   gp-0x6b26   0x36CF0 (1 st)    ** K * ACCELERATION **                   ** w^2 **
-   w[4] 0xC63A8   gp-0x6b4e   0x27466 (1 st)    sum over the 11 aggregator slots         w^0
-   w[5] 0xC63AA   gp-0x6b4c   0x276F0 (3 st)    11-slot sum + frame-converted term       w^0
-```
-✅ **`gp-0x6b46` is NOT a derivative** — `FUN_00036682` forms
-`err = (gp-0x6b48 + conv*(gp-0x4f60*cal>>15)) − gp-0x6b46`, passes it through an **adaptive hysteresis
-band** and a down-counter (`gp-0x6a80`), clamps to ±512 and **EMA-filters** it. It is
-**self-referential ⇒ a first-order LAG**, and the inventory census already measures its contribution
-at **0.0032** — negligible twice over.
-✅ **`gp-0x6b4e` and `gp-0x6b4c` are both written by `FUN_00026c80`**, the **11-slot aggregator**
-(`while (i < 0xb)`), as **sums over the slots** ⇒ ω⁰, no frequency shaping.
-⇒ **`gp-0x6b26` (w[3]) is the UNIQUE ω-weighted lane**, which is what makes it the only handle here
-that can attack 8 Hz without touching 1 Hz.
-
-### ❌ AND THE ONE OTHER CANDIDATE IS RULED OUT BY THE OPERATOR'S OWN CONSTRAINT
-`gp-0x6bbe` (w[1]) is genuinely **viscous** — raising w[1] would add damping ∝ ω, 8x stronger at 8 Hz
-than at 1 Hz. **But it carries a DC PEDESTAL** ([[accord-gp6bbe-is-viscous-plus-dc-pedestal]]: p50
-**73.6 ct flat across 0–6 °/s**), so raising it **amplifies static friction at EVERY frequency,
-including zero.** That is exactly the trade the operator ruled out — *"low apparent steering mass and
-friction to LKAS AND no ratcheting"*. 🛑 **Do not propose raising `0xC63A2` as a damping lever.**
-
-➕ **`0xC63AC`** (the EMA alpha on the whole sum, = 102 ⇒ corner ≈ 16.9 Hz at 1 kHz) is a **shared
-low-pass on all six lanes**. Lowering it would attenuate 8 Hz content in every term — but it is a
-**broadband** lever with the same lag cost as V173's poles, so it is **strictly worse than V173** and
-is **not** a new direction. Recorded so it is not re-proposed as one.
-
-🛑 **CONSEQUENCE FOR THE FLIGHT ORDER: nothing changes.** `0xC63A6` stays **held** as the
-pre-registered fine adjustment *after* V175's drive — spending it now would confound the one
-measurement that can attribute the effect.
 

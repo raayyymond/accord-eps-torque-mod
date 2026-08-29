@@ -22,9 +22,15 @@ lever left for the ratchet — halving the engaged anti-damping inertia term.
 not a proportional inertia.** V196 raises the saturation point to **6389**, keeping the term
 proportional across **6× more** of the range.
 
-That matters: it is the same failure shape as V80's damper relay (*"worst grinding ever —
-restore the RAMP, don't merely lower k"*), and **it does not depend on the anti-damping sign
-that this card flags as BELIEF.** Un-saturating a relay is directionally safe either way.
+🛑 **Tested and partly withdrawn:** the ratchet shows **no odd harmonics** (3f0/control 1.21)
+and a **521× amplitude spread**, so it is a **driven resonance, not a relay limit cycle** — the
+plant owns the oscillation. The saturated term does not *create* it; it **injects broadband
+energy that excites it**. So expect V196 to reduce **one exciter among several**, i.e. a partial
+effect rather than elimination.
+
+✅ **What survives: the sign-safety.** Reducing a saturated term's injected energy is
+directionally safe whichever way its sign runs — less injection is less excitation either way.
+That is the part that mattered, and it does not depend on the withdrawn claim.
 
 ## The trade, so you know what to feel for
 Negative apparent inertia makes the wheel feel **lighter to fast inputs**. Halving it moves the

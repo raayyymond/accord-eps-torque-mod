@@ -2447,3 +2447,43 @@ Score with `rlog-tools/score/grind_engaged_vs_manual.py` beside `score_band_exce
 ⚠ **It removes drag — creep effort will be lighter than the operator is used to.** Intended, and he
 should be told.
 
+## ✅ **THE SIX-TERM SUM IS NOW FULLY CLASSIFIED — `gp-0x6b26` IS ITS ONLY FREQUENCY-SELECTIVE LANE**
+**A CLOSING result, both positive and negative.** Every lane of `FUN_00038148`'s Path-2 sum has been
+traced to its writer and classified by differentiation order. **No second ω-weighted lever exists in
+this structure** — so the search over it is closed and no future session need re-open it.
+```
+   w    cell      signal      writer            what it is                      order
+   w[0] 0xC63A0   gp-0x6bd0   0x34730 (3 st)    base-assist damper (FactorC x FactorE)   ~w^1 BUT
+                                                zero on 95.91% engaged / 100% of micro
+   w[1] 0xC63A2   gp-0x6bbe   0x3508C (3 st)    viscous + DC PEDESTAL (~90 ct/(rad/s))   w^1 + DC
+   w[2] 0xC63A4   gp-0x6b46   0x3681A (1 st)    EMA'd, deadbanded torque-ERROR tracker   LAG (w^-1)
+   w[3] 0xC63A6   gp-0x6b26   0x36CF0 (1 st)    ** K * ACCELERATION **                   ** w^2 **
+   w[4] 0xC63A8   gp-0x6b4e   0x27466 (1 st)    sum over the 11 aggregator slots         w^0
+   w[5] 0xC63AA   gp-0x6b4c   0x276F0 (3 st)    11-slot sum + frame-converted term       w^0
+```
+✅ **`gp-0x6b46` is NOT a derivative** — `FUN_00036682` forms
+`err = (gp-0x6b48 + conv*(gp-0x4f60*cal>>15)) − gp-0x6b46`, passes it through an **adaptive hysteresis
+band** and a down-counter (`gp-0x6a80`), clamps to ±512 and **EMA-filters** it. It is
+**self-referential ⇒ a first-order LAG**, and the inventory census already measures its contribution
+at **0.0032** — negligible twice over.
+✅ **`gp-0x6b4e` and `gp-0x6b4c` are both written by `FUN_00026c80`**, the **11-slot aggregator**
+(`while (i < 0xb)`), as **sums over the slots** ⇒ ω⁰, no frequency shaping.
+⇒ **`gp-0x6b26` (w[3]) is the UNIQUE ω-weighted lane**, which is what makes it the only handle here
+that can attack 8 Hz without touching 1 Hz.
+
+### ❌ AND THE ONE OTHER CANDIDATE IS RULED OUT BY THE OPERATOR'S OWN CONSTRAINT
+`gp-0x6bbe` (w[1]) is genuinely **viscous** — raising w[1] would add damping ∝ ω, 8x stronger at 8 Hz
+than at 1 Hz. **But it carries a DC PEDESTAL** ([[accord-gp6bbe-is-viscous-plus-dc-pedestal]]: p50
+**73.6 ct flat across 0–6 °/s**), so raising it **amplifies static friction at EVERY frequency,
+including zero.** That is exactly the trade the operator ruled out — *"low apparent steering mass and
+friction to LKAS AND no ratcheting"*. 🛑 **Do not propose raising `0xC63A2` as a damping lever.**
+
+➕ **`0xC63AC`** (the EMA alpha on the whole sum, = 102 ⇒ corner ≈ 16.9 Hz at 1 kHz) is a **shared
+low-pass on all six lanes**. Lowering it would attenuate 8 Hz content in every term — but it is a
+**broadband** lever with the same lag cost as V173's poles, so it is **strictly worse than V173** and
+is **not** a new direction. Recorded so it is not re-proposed as one.
+
+🛑 **CONSEQUENCE FOR THE FLIGHT ORDER: nothing changes.** `0xC63A6` stays **held** as the
+pre-registered fine adjustment *after* V175's drive — spending it now would confound the one
+measurement that can attribute the effect.
+
