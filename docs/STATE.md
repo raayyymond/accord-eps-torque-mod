@@ -2,6 +2,77 @@
 
 
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
+## 🚩✅ **V173 BUILT AND SUPERSEDES V172 — THE SAME LEVER WITHOUT GIVING UP HONDA'S NOTCH**
+```
+   V173 = V158 + THREE float32 cells (C_A8, C_AC, C_B4).  C_B0 left BYTE-IDENTICAL to stock.
+   image  a9877aeecfbbbf2436c63fbc81041e1dfbfde787f5a1bf8ea58404b8f86ab1f7
+   .rwd   5d213cf8604df90f2df2eaa2a8e40ccedde89f1d66055cb2a22c81edb7245396
+   11 payload bytes + one CRC trailer - 25/25 assertions - chain 50/50 - readback identical
+```
+
+### ⭐ THE STRUCTURE, COLLAPSED — AND IT SEPARATES
+```
+   H(z) = C_B4 * ( z^2 + C_B0*z + 1 ) / ( z^2 + C_A8*z + C_AC )
+```
+✅ the numerator's roots have **product 1** ⇒ the zeros are **always exactly on the unit circle**, so
+this is **always a true notch**, at `2 cosθ = −C_B0` ⇒ **`C_B0` ALONE sets the notch frequency.**
+✅ the poles are set by `C_A8`/`C_AC` **alone** ⇒ **notch frequency and damping are INDEPENDENT.**
+✅ `DC gain = C_B4 (2 + C_B0) / (1 + C_A8 + C_AC)`.
+
+### 🛑 WHICH EXPOSED A DEFECT IN V172
+Stock `C_B0` puts Honda's notch at **55.23 Hz, −43.9 dB**. **V172 moved it to 27.17 Hz** as a side
+effect of letting an optimiser choose all four coefficients ⇒ **V172 gives up Honda's 55 Hz notch
+entirely** (0.000128 → 0.251316 there). **We do not know what that notch is FOR**, and Honda placed a
+deep null at a specific frequency in the dominant assist lane deliberately.
+✅ **V173 keeps `C_B0` bit-for-bit and moves ONLY the poles:**
+```
+   freq        FLYING      V172        V173
+   0.5 Hz      0.999965    1.006656    0.994633     DC preserved
+   3   Hz      0.997530    0.850073    0.847560     driver band -- same as V172
+   8.64 Hz     0.978950    0.444078    0.476076     THE RATCHET -- same as V172
+   21  Hz      0.865930    0.090235    0.189446     grind 4.6x (V172 got 9.6x)
+   40  Hz      0.452204    0.134765    0.054184     better than V172
+   55.23 Hz    0.000128    0.251316    0.000013     ** HONDA'S NOTCH KEPT, and deeper **
+   group delay added at 0.5 Hz: V172 +30.1 ms, V173 +30.1 ms -- IDENTICAL (same poles)
+   loop effect: V173 5.8x vs V172 6.1x - max |H| to Nyquist 0.9946 => NEVER amplifies
+```
+⇒ **same lag, same ratchet effect, Honda's notch preserved, and THREE cells instead of four.**
+The trade is **half the grind attenuation**, which is the right side to err on: the ratchet is the
+**unsolved** symptom and both builds are equal there, while the grind **already has V158's damper on
+this same base.**
+
+### ❌ WHY THE NOTCH CANNOT BE PUT ON THE RATCHET — STRUCTURAL, NOT AN OPTIMISER FAILURE
+`C_B4 = DC(1+C_A8+C_AC)/(2+C_B0)` and `2+C_B0 = 2−2cosθ → 0` as the notch approaches DC, so **`C_B4`
+scales as ~1/f²**:
+```
+   notch  8.64 Hz => C_B4 13.576 => amplifies out-of-band 1503x
+   notch 27    Hz => C_B4  1.393 => amplifies 120x
+   notch 55.2  Hz => C_B4  0.336 => amplifies 1.0x   <- Honda's placement, the ONLY free one
+```
+⇒ **Honda put the notch at 55 Hz because that is where it costs nothing.** A notch at the ratchet
+needs 13.6x input gain and amplifies everything else. **The POLES, not the notch, are the lever in
+the ratchet band.**
+🛑 **I withdraw my remark that the optimiser “was fighting a structure it did not understand”** — it
+found the right shape for the right reason; the defect was only the notch it displaced.
+
+### 🛑 AND A CORRECTION TO MY OWN NOVELTY CLAIM
+I wrote that this session **“RETRACTS two recorded claims — ‘no frequency-selective lever’ and ‘no
+notch filter exists’”**. **`MEMORY-PART5` already carries that retraction**, in detail, with the same
+four coefficients, the ±19.88° zeros and the “transparent except at the notch” observation.
+**The kit found this first; I re-derived it without checking.** That is exactly the failure the
+`feedback-search-the-kit-before-naming-a-cause` memory exists to prevent.
+⊕ What IS new here: the **collapsed transfer function** and its separability, the **1/f² bound on
+notch placement**, the **task-rate resolution** below, and the **built lever**.
+
+### ✅ AND IT UNBLOCKS WHAT THAT MEMORY WAS PARKED ON
+`MEMORY-PART5` records this lever as **“BLOCKED ON THE TASK RATE — task 5 is bounded ≥250 Hz but
+NEVER pinned”**, with the notch landing anywhere from 13.8 to 55.2 Hz depending on the rate.
+✅ **[EVIDENCE] `get_function_callers(0x352b4)` returns exactly `FUN_0002214a`**, which the kit's own
+record identifies as **TASK 1, the CONFIRMED 1 kHz task**. The rate uncertainty belongs to **task 5**
+(`FUN_00022ca0`), a **different** task that drives the damper. ⇒ **the assist section runs at 1 kHz,
+the notch is at 55.23 Hz, and the block is lifted.** Confirmed independently: a full-band scan finds
+the flying section's null at **55.0 Hz, −43.9 dB**, matching the ±19.881° zeros exactly.
+
 ## ✅ **SAME CLASS, DIFFERENT DRIVE LAW — THE GRIND SATURATES WHERE THE RATCHET KEEPS GROWING**
 Both symptoms are engaged-only and both sit in `cs_tq`, so the question was whether they are one
 mechanism at two plant modes. **Mostly yes — with one clean difference that matters for scoring.**
@@ -2221,30 +2292,4 @@ backlash is **not generating the ratchet**; narrowing it would mainly admit more
 ⊕ The counter-risk is real and symmetric: a deadband exists to reject small-signal chatter, so
 narrowing it can *increase* stutter. With the limit-cycle route excluded there is no argument that the
 benefit outweighs that risk.
-
-## ✅✅ **THE STATIC SEARCH IS NOW COMPLETE — EVERY LANE IN THE AGGREGATOR IS ADJUDICATED**
-```
-   lane / cal              phase or structure at 7.8 Hz            verdict
-   r24  (Lever B 0xC6446)  K x d(torque)/dt, +90 deg               DAMPS -- at 6553 = int16 ceiling (V160)
-   gp-0x6bd0 (V158)        -sign(rate) x f(|rate|), f near-linear   DAMPS -- dose 50, model's own [30,60]
-   r26  (0xC6444)          same class as r24                       FALSIFIED -- flew as V71c, worse
-   gp-0x6ad4               P 99.88 % @ -1.7 deg, D 0.02 %          STIFFNESS -- structurally eliminated
-   gp-0x6b26               -K x acceleration                       ADDED INERTIA -- does not damp
-   gp-0x6bbe               measured viscous, 1.571 ct/(deg/s)      already live; raising = more assist
-   gp-0x6b46 / 0xC63D2     slow trim, |H| 0.119, 81.8 deg lag      NOT a lever either direction
-   backlash band 0xC61A0   floor 123 ct, virgin                    CLOSED by limit-cycle exclusion
-   gp-0x6b62 return-centre DEAD engaged (0.0000 / 75,227 frames)   inert
-   gp-0x6ade               0 writers image-wide                    dead
-   gp-0x6b4c LKAS          command lane                            EXCLUDED (a DC constant carries no 7.8 Hz)
-```
-=> **V160 carries the only two lanes that actually damp, each at or at the model's stated limit.**
-✅ **[EVIDENCE] this is an exhaustive adjudication of the aggregator, not a survey** — every lane the
-model lists now has a phase or a structural verdict.
-
-### ⚠ WHAT THIS MEANS, STATED PLAINLY
-Further progress is **measurement-limited, not analysis-limited.** The instrumented engaged-vs-manual
-contrast collapses to **~1.1x** under controls (≤10 % of the 6–9 Hz band, ≤2 % of RMS as a 7.8 Hz line),
-yet V88 demonstrably changed the felt symptom — **so the bus instrument is the weak link, not the
-firmware model.** The next real information comes from a creep drive **with audio**, which is the one
-input static analysis cannot supply.
 

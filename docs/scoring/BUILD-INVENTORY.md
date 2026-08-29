@@ -7,6 +7,19 @@ lever) and all are scored from the same single 15-second engaged creep pass.
 > 🛑 Nothing here authorises a flash. Name the file and the bus yourself; kill openpilot/pandad
 > (`tmux kill-server`) first.
 
+
+> 🚩 **V173 SUPERSEDES V172 AS FLY-FIRST.** V173 is V172's poles with **Honda's 55.23 Hz notch
+> kept bit-for-bit** (`C_B0` untouched). Same +30.1 ms group delay, same ratchet effect (0.476 vs
+> 0.444 at 8.64 Hz), three cells instead of four, and it never amplifies (max |H| 0.9946). It gives
+> up half the grind attenuation (4.6x vs 9.6x) to preserve a notch whose purpose is unknown — the
+> right side to err on, since the grind already has V158's damper on the same base.
+>
+> ```
+> V173  image a9877aeecfbbbf2436c63fbc81041e1dfbfde787f5a1bf8ea58404b8f86ab1f7
+>       .rwd  5d213cf8604df90f2df2eaa2a8e40ccedde89f1d66055cb2a22c81edb7245396
+> ```
+> Fly V172 only if the grind is the priority and losing Honda's notch is acceptable.
+
 ---
 
 ## THE CHOICE

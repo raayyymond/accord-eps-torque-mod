@@ -7,6 +7,12 @@
 > 🛑 Nothing here authorises a flash. Name the file and the bus yourself; kill openpilot/pandad
 > (`tmux kill-server`) before any flash operation.
 
+
+> 🚩 **SUPERSEDED AS FLY-FIRST BY V173.** V173 has the same poles, the same +30.1 ms group delay
+> and the same ratchet effect, but keeps **Honda's 55.23 Hz notch** which V172 displaces to 27 Hz.
+> Everything below — the pass, the pre-registered outcomes, the sub-band grind attribution, the
+> command-level guidance — **applies unchanged to V173**. Fly V172 only if the grind is the priority.
+
 ---
 
 ## WHY THIS ONE AND NOT V168
