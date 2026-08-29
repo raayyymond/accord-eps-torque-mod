@@ -11,6 +11,14 @@ WHY THE FIRST PEAK PASS NEEDED REDOING
 THE WHEEL-ORDER TEST is done the way the record does it (`HANDOFF-2026-08-20` s2.7): regress the
 PER-WINDOW peak frequency on the window's own speed and compare the slope against the tyre slope
 0.489 Hz/(m/s) per order.  A speed-invariant line has slope ~0.
+
+
+🛑 BETWEEN-BUILD NOISE FLOOR: 20-36x.  Six routes with IDENTICAL control cals
+   (gain 3564, a2 22, knee 600, K1 204) span 2.60 to 51.81 = 19.9x; another six span 36.2x.
+   => NO comparison of two BUILDS on this endpoint carries information below ~36x.
+   This scorer is valid for WITHIN-DRIVE engaged-vs-manual contrast only.  Do NOT use it
+   to rank builds against each other; the operator report is the only instrument with the
+   resolution to do that.
 """
 # --- PATH BOOTSTRAP (repo reorg 2026-08-26; MULTI-ROOT FIX 2026-08-26) ----
 # These files import sibling modules by bare name.  The kit has MORE THAN ONE

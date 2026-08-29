@@ -1,5 +1,59 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **THE BETWEEN-BUILD ENDPOINT HAS A 20–36× NOISE FLOOR — EVERY BUILD COMPARISON THIS SESSION IS RETRACTED**
+The obvious control was never run: **what do routes with IDENTICAL control cals score?**
+```
+   gain 3564, a2 22, knee  600, K1 204   n=6   SPREAD 19.9x
+        V92/r79 2.60   V96/r7f 9.59   V91/r78 10.21   V96/r7e 11.12   V90/r77 26.36   V98/r81 51.81
+   gain 5346, a2 22, knee  300, K1 204   n=6   SPREAD 36.2x
+        V106/ra6 42.01  V107/r1e 47.30  V105/ra5 52.54  V104/ra4 91.75  V102/r96 714.01  V103/r9e 1520.81
+   gain 5346, a2 14, knee 1800, K1 612   n=2   spread  1.1x     <- the "precision" pair; n=2 is LUCK
+   gain 3564, a2 22, knee  300, K1 204   n=2   spread  3.6x
+```
+⇒ **SIX routes with the same calibration span 20×; another six span 36×.**
+⇒ **NO build comparison below ~36× on this endpoint carries information.**
+
+### 🛑 EVERY COMPARISON MADE THIS SESSION FAILS THAT TEST
+```
+   V111 4.40 vs V112 4.74   "the knee is NULL"                1.08x   BELOW THE FLOOR
+   V112 4.74 vs V122 3.38   "alpha2 IS the lever"             1.40x   BELOW THE FLOOR
+   V112 r22 4.66 vs r23 4.82  "3 % repeatability"             1.03x   BELOW THE FLOOR
+   knee 600 median vs knee 3000                               1.25x   BELOW THE FLOOR
+   knee >= 600 vs knee = 300  "CATASTROPHIC"                 29.35x   BELOW THE FLOOR
+```
+🛑 **Including the `knee = 300` result recorded one section earlier as the strongest
+cross-build effect the kit had ever measured.** The knee-300 group's **own internal spread
+(36.2×)** is LARGER than the between-group difference (29.35×) I attributed to the knee.
+
+### 🛑 WHAT IS RETRACTED
+1. **"α2 is the creep lever, the knee is null"** — the single-variable ladder. It drove the V137 /
+   V138 sizing and the V135 demotion. **The differences were 1.08–1.40× against a 20–36× floor.**
+2. **"The endpoint is precise — V112's two routes agree to 3 %"** — two routes of the SAME build is
+   the floor's **best case**, not evidence of precision. n=2 and it was luck: the six-route group of
+   identical cals spans 19.9×.
+3. **"`knee = 300` is catastrophic."**
+⊕ The **builds themselves are unaffected** — V137/V138/V135 are still correctly built and bounded.
+**Only the RANKING rationale is withdrawn.**
+
+### ✅ WHAT SURVIVES — EVERYTHING THAT IS NOT STATISTICAL
+* the **notch's existence, its retune and its validation against the firmware recursion**;
+* the **11-slot map** (10 callers → 10 distinct slots, self-validated);
+* the **confirmed pump polarity** (`gp-0x6752 = −1`, verified 3 ways incl. on-car);
+* the **r24 deadband's location and continuity**; the **`0xC64FA`/`0xC64FD`** separation;
+* the **instrument findings** — probe clipping, the flat-spectrum baseline, the `ld.bu` disp|1 trap;
+* and **V133's regression, which came from the OPERATOR'S EAR, not from any scorer.**
+
+### ⭐ THE CONCLUSION THIS FORCES
+**This kit has NO working between-build symptom endpoint.** Route-to-route variance is **20–36×**
+and every candidate build effect is smaller than that. ⇒ **the operator's own report is the only
+instrument with the resolution to tell builds apart**, which is exactly what the kit's own doctrine
+already says: ***score bands, let the OPERATOR score symptoms.***
+🛑 **A scorer that compares two builds on this endpoint should REFUSE unless the ratio exceeds
+~36×.** Anything less is reporting route noise as a result. ⊕ `feedback-episodes-not-windows`
+warned about exactly this class of error — *"window bootstraps manufacture significance; get a
+split-half null BEFORE quoting any ratio."* **The identical-cal groups ARE that null, and they were
+available from the first minute.**
+
 ## ✅✅ **THE FIRST CROSS-BUILD REGRESSION ON THE SYMPTOM — 19 ROUTES. ONE ROBUST FINDING.**
 Every prior comparison used one or two routes. This uses **all 19 cached routes with a known
 build**, scoring each on the validated within-drive endpoint (ENGAGED/MANUAL 18–22 Hz of `cs_rate`

@@ -34,6 +34,14 @@ Interpretable from ONE drive with no matched control, which is the kit's build-d
 Bootstrap is over EPISODES, never windows (feedback-episodes-not-windows).
 
 USAGE:  python rlog-tools/score/score_v126_rail.py <route> [--control r24]
+
+
+🛑 BETWEEN-BUILD NOISE FLOOR: 20-36x.  Six routes with IDENTICAL control cals
+   (gain 3564, a2 22, knee 600, K1 204) span 2.60 to 51.81 = 19.9x; another six span 36.2x.
+   => NO comparison of two BUILDS on this endpoint carries information below ~36x.
+   This scorer is valid for WITHIN-DRIVE engaged-vs-manual contrast only.  Do NOT use it
+   to rank builds against each other; the operator report is the only instrument with the
+   resolution to do that.
 """
 import os, sys, glob
 import numpy as np
