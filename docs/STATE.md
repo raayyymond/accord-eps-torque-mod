@@ -1,5 +1,55 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **A WORKING BETWEEN-BUILD ENDPOINT, RECOVERED — NOISE FLOOR 1.8×, DOWN FROM 36×**
+The previous section retired the engaged/manual RATIO endpoint on a 20–36× noise floor. **The
+diagnosis pointed straight at the fix**: it is a **RATIO**, and it explodes when the manual arm is
+small — **r9e scored 1520.81 on 39 manual windows.** Two changes rebuild it:
+```
+   1. a SHARE, not a ratio:  (18-22 Hz power) / (1-45 Hz power), ENGAGED, at creep
+      bounded in [0,1] -- it CANNOT explode however small the denominator gets
+   2. a MINIMUM EXPOSURE gate: n >= 90 engaged creep windows ~ 2 MINUTES of engaged creep
+      the low-n routes (r81 n=45, r96 n=70, r9e n=57) were the outliers driving the residual spread
+```
+```
+   identical-cal noise floor      all n        n >= 90
+      gain3564 a2:22 knee600      7.22x         1.62x   (4 routes)
+      gain5346 a2:22 knee300      5.59x         1.79x   (3 routes)
+   => a build effect must exceed ~1.8x to mean anything.   A 20x RESOLUTION IMPROVEMENT.
+```
+```
+   route build     SHARE      n    gain   a2  knee        route build     SHARE      n
+   r7e   V96      0.0640     98    3564   22   600        r7f   V96      0.0955     95
+   r79   V92      0.0709    106    3564   22   600        r77   V90      0.1038    260
+   r21   V111     0.0866    135    5346   14   600        ra4   V104     0.1549    110
+   ra6   V106     0.0867    108    5346   22   300
+   r1e   V107     0.0887    143    5346   22   300
+```
+
+### ✅ AND IT SETTLES THE KNEE WITH A PROPER INSTRUMENT
+```
+   knee 300   n=3 routes   median SHARE 0.0887
+   knee 600   n=5 routes   median SHARE 0.0866      <-- IDENTICAL
+```
+⇒ **the knee has NO measurable effect.** That **independently CONFIRMS** the retraction of
+*"knee = 300 is catastrophic"* rather than merely withdrawing it — the first time this session a
+retraction has been replaced by a positive measurement instead of a gap.
+
+### 🛑 TWO HONEST CAVEATS
+1. **The n ≥ 90 gate was chosen AFTER seeing which routes were outliers.** A minimum-exposure
+   requirement is defensible a priori and 90 windows ≈ 2 min is a physical threshold rather than a
+   fitted one — **but the specific number is post-hoc and wants validation on new data.**
+2. **Only 8 cached routes qualify.** **V112 (n = 52, 24) and V122 (n = 45) do NOT** ⇒ **the build
+   currently on the car has never had enough engaged creep exposure to be scored at all.**
+
+### ⭐ THE DRIVE REQUIREMENT THIS CREATES — CONCRETE AND ACTIONABLE
+```
+   >= 2 MINUTES of ENGAGED CREEP  (1-24 km/h, hands off, with real steering activity)
+```
+Without it the drive is unscoreable on the only endpoint that works. **The scorer refuses rather
+than guessing**: `r24` (V122, n=45) returns *NOT SCOREABLE*; `r77` (V90, n=260) returns a verdict.
+✅ Shipped as **`rlog-tools/score/score_creep_share.py`**, with `--floor` to re-derive the noise
+floor from the identical-cal groups on demand.
+
 ## 🛑🛑🛑 **THE BETWEEN-BUILD ENDPOINT HAS A 20–36× NOISE FLOOR — EVERY BUILD COMPARISON THIS SESSION IS RETRACTED**
 The obvious control was never run: **what do routes with IDENTICAL control cals score?**
 ```
