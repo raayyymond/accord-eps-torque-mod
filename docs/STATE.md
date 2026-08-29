@@ -2,6 +2,56 @@
 
 
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
+## ⭐⭐ **LEVER #2 EXISTS: THE ASSIST MAP'S OWN SECOND-ORDER SECTION IS A RETUNABLE NOTCH**
+This kit's record says *“this firmware has NO frequency-selective lever”* (FactorD refuted) and
+*“no notch filter exists anywhere”*. **Both are wrong.** `FUN_000352b4` carries a genuine biquad in
+the **dominant torque-fed lane**, and it is **already enabled on the flying build**.
+```
+   s1 = gp-0x3814,  s2 = gp-0x3818   (read BEFORE update),  1 kHz
+     w = -C_AC*s1 - C_A8*s2 + C_B4*x
+     y = (1-C_AC)*s1 + (C_B0-C_A8)*s2 + C_B4*x        y clamped to +/-12.0
+     s1 <- s2 ;  s2 <- w
+   coefficients 0xC60A8 / 0xC60AC / 0xC60B0 / 0xC60B4 (float32)  ·  enable 0xC649B
+```
+Simulated directly from the decompiled operand order (a sign slip here inverts the answer, so it is
+**simulated, not hand-derived**):
+```
+   freq       FLYING (stock coeffs)      V106/V107 coeffs
+   8.64 Hz    0.9788  -11.8 deg          0.9823  -16.5 deg     <- the RATCHET, PASSED by both
+   21   Hz    0.8659  -30.0 deg          0.4925  -72.3 deg     <- the grind
+   25.5 Hz                               gain 0.000            <- V106 placed a PERFECT NULL
+```
+✅ **[EVIDENCE] the structure can place a deep notch — the kit has already done it once**, at
+25.5 Hz, in the V105/V106 notch work. ✅ **[EVIDENCE] neither tuning touches the ratchet**: both pass
+8.64 Hz at ≈0.98.
+✅ **[EVIDENCE] the enable is ON for the flying build** (`0xC649B` = 1 from V104; stock ships **0**),
+and the coefficient cells have been changed before **without faults**, so neither the enable path nor
+the coefficient path is new risk.
+
+### ⭐ WHY THIS IS A BETTER LEVER THAN THE SLOPE CAP ON THE FEEL AXIS
+```
+   slope cap 0xC6384   reduces the map's gain at EVERY frequency INCLUDING DC
+                       => heavier steering near centre.  Real, monotone with dose.
+   notch at 8.64 Hz    reduces the loop's contribution ONLY at the resonance
+                       => DC gain 1.0000  =>  NO steady-state feel cost at all.
+```
+⊕ And it **does not rest on the real-positive `P·L` assumption** that V168's lever needs: a notch
+removes gain at the resonant frequency **without adding gain anywhere**, which is the textbook fix
+for a loop resonance whatever the loop's phase there.
+⚠ **[BELIEF] the DC-cost argument.** It follows from the section's own DC gain, which is measured;
+what is *not* measured is whether the operator's felt “weight” tracks DC gain rather than the
+mid-band. A first-order claim, not a guarantee.
+
+### 🛑 WHY A RAZOR NOTCH IS THE WRONG DESIGN, AND WHAT REPLACES IT
+An optimiser hits **−96 dB at exactly 8.64 Hz with DC gain 1.0000** — but that notch is also that
+NARROW, and **the ratchet's own frequency spans 7.81–10.74 Hz across operating-point strata**
+(CV 5.5 % speed, 7.0 % command, 12.3 % rate). A razor notch simply misses the mode when it drifts.
+⊕ It also **amplified 40 Hz by 1.36x**, which must not be traded away silently.
+⇒ the design in progress targets **attenuation across 7–11 Hz** with a pole-radius margin, unity DC,
+and **no gain increase anywhere** — GATE 2 on a notch has to cover phase and out-of-band gain, not
+just depth, because a notch flips phase across itself and that can destabilise frequencies either
+side even while the notch attenuates.
+
 ## ✅✅ **THE RATCHET IS A FIXED RESONANCE WITH COMMAND-PROPORTIONAL DRIVE — THE `1−P·L` SIGNATURE**
 244 pooled engaged-creep windows, each assigned to a stratum by its **own** mean operating point (the
 earlier attempt required contiguous runs *within* a stratum, which fragments the data and left six of
@@ -2184,55 +2234,4 @@ the lane has never been scored at 6–9 Hz, which is exactly why the model calls
 is **bounded to the creep band** and is felt immediately at low speed, not discovered at highway speed.
 ⊕ If worse, the diagnosis is unambiguous and the revert is one halfword; `X[1] = 768` (12 km/h) gives a
 **2x** rather than 3x release.
-
-## ✅✅ **`0xCC914` IS LIVE — IT IS A BREAKPOINT VECTOR, AND THE GOLDEN MODEL'S MAP WAS SHORT ONE ARRAY**
-
-### ⛔ THE "DEAD TABLE" CLAIM IS FULLY RETRACTED
-`0xCC914` is read at **`0x34936`**: `ld.w 0xd914[r16], r15` with **`r16 = tp + mode*4`** — the identical
-idiom to `FUN_0003ad74`'s 4th gain_B array at `0x3ADC2` (`tp+0xD214`). Decoder validated against that
-known-live cell before being trusted.
-```
-   disp23 = (sext(hw3) << 7) | ((hw2 >> 4) & 0x7F)          reg1 = hw1 & 0x1F
-   0x3ADC2  90 07 49 79 a4 01  ->  0x01a4<<7 | 0x14 = 0xD214   base r16   (KNOWN LIVE, validates)
-   0x34936                     ->                    0xD914   base r16   (0xCC914)
-```
-⭐ **WHY BOTH EARLIER SCANS MISSED IT — THE BASE REGISTER IS A *COMPUTED* REGISTER.** A `mov imm32`
-literal scan misses it (the other five arrays ARE literals, this one is not) **and** a tp-relative scan
-misses it (`reg1` is `r16`, not `tp`). This is the recorded *"operand-text search cannot see
-register-indirect writes at all"* trap in a new form: **scanning by base-register identity is
-structurally incomplete.** Three encoding traps have now bitten in one session — `hw2 = (disp|1)`,
-`disp > 0x7FFF` cannot be disp16, and now a computed base register.
-
-### ✅ WHAT IT ACTUALLY IS — THE SPEED BREAKPOINT VECTOR OF A SECOND BLENDED FAMILY
-`FUN_000348e0` is structurally the SAME architecture as gain_B's blender:
-```
-   curves[1..5] = 0xC92F4[m], 0xC93DC[m], 0xC94C4[m], 0xC95AC[m], 0xC9694[m]      (10-knot each)
-   bp           = 0xCC914[m]                    <- FIVE SPEED BREAKPOINTS, record+0..+8
-   speed        = gp-0x6a5e (voted vehicle speed)
-   i = walk(bp, speed);  frac = (speed - bp[i-1]) / (bp[i] - bp[i-1])
-   gp-0x6394[j] = lerp(curves[i][j+1],   curves[i+1][j+1],   frac)      runtime X row
-   gp-0x63a8[j] = lerp(curves[i][j+0xb], curves[i+1][j+0xb], frac)      runtime Y row
-```
-```
-   0xCC914[24/26/27] -> 0xD6B7C / 0xD7B70 / 0xD7B7C
-   bp = [0, 512, 2560, 5120, 8960] counts = [0, 8, 40, 80, 140] km/h   (identical on all three modes)
-```
-✅ record layout obeys the **knot-count header** invariant: `hdr@+0 = 10`, `X@+2..`, `Y@+0x16..`.
-
-### ⚠ THE MODEL'S *"flat zero at creep"* IS ONLY TRUE AT A STANDSTILL
-Curve 1 (0 km/h, `0xD74D0`) has **all-zero Y**, so across 0–8 km/h the whole term is scaled by
-`frac = speed/512`:
-```
-   2 km/h -> 25.0 %      5 km/h -> 62.5 %      8 km/h -> 100 %      of curve 2
-   mode 26 curve 2 (0xD7554)  X=[0,34,101,245,499,846,1888,2966,3656,4150]
-                              Y=[0,677,1052,1391,1732,1911,2204,2321,2361,2355]
-```
-=> **a LINEAR RAMP through the entire creep band, not a dead zone.** The golden model has been
-corrected in place (`eps_chain_lanes.py`), and its **VERIFICATION CONTRACT RE-RUN: 87 symbols,
-stdout 2512 bytes, sha256 `740f4bcd…` EXACT.**
-⚠ **[BELIEF, NOT A LEVER YET]** a steep near-centre slope (Y 0->677 over X 0->34) times a
-speed-proportional creep ramp is *suggestive* for a creep-band feel symptom, but the axis is
-`gp-0x6a10` ABSOLUTE steering angle, which the kit has already REFUTED as a frequency-selective
-lever. **Not proposed as a build.** What would close it: identify the consumers of `gp-0x6394` /
-`gp-0x63a8` and establish whether the term is inside the 6–9 Hz loop at all.
 
