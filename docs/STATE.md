@@ -4,6 +4,66 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **TWO AUTHORITY LEVERS CHECKED AND CLOSED — and a latent 18.52 Hz injector found silent**
+
+### ✅ **THE SIGN-FLIPPING SQUARE-WAVE INJECTOR IS INERT — checked on the CURRENT build, not inherited**
+`BUILD-LINEAGE.md` flags `0xC64DE` as *"a latent, engagement-triggered 18.5 Hz square-wave torque
+injector wired into the 6× gain path, four halfwords from being live"*. Read from the images:
+```
+   0xC64DE (a BYTE, not a halfword)   stock 17 => 29.41 Hz     V202 27 => ** 18.52 Hz **
+   0xC6734  n = 4
+   0xC6736  X = [0, 31872, 31936, 32000]
+   0xC673E  Y = [0, 0, 0, 0]      <-- stock AND V202.  ** SILENT. **
+```
+⇒ **NOT the grind's source.** Two independent reasons it cannot fire: the amplitude LERP is all zeros,
+and the record's *"every other writer of `gp-0x6b2c` is a store-zero"*.
+⚠ **But V18's 17→27 moved a latent injector INTO the grind band** (p10 16.33 / median 20.12 / p90
+22.15 Hz), and its amplitude table sits **24 bytes from `0xC674E`/`0xC6750`, which this kit edits**
+(1024→5120). **A guard is now in `closeout_verify_published.py` — every flashable image is checked.**
+⊕ Reverting `0xC64DE` 27→17 is **a functional no-op while the amplitude is zero**, so it is hygiene,
+not a fix. **Not built** — it would add a shelf build for no measurable change.
+
+### ✅ **THE SETPOINT CLIP IS CLOSED — already built as V108 E3 and PULLED on its own null**
+`0xC61BE` = 15360 was raised to 16384 and killed by its pre-registered endpoint: route `1e`, 93,356
+frames / 924 s, achieved `|rate_c|` low-half-vs-top **still rising at all five speed bins** (3.89× /
+3.12× / 2.91× / 2.62× / 2.14×, every CI excluding 1.0) where a bound clip would pin it flat.
+**The clip is IDLE. Do not re-propose it.**
+
+### ⭐ **SO WHAT DOES LIMIT AUTHORITY? THE ARITHMETIC, READ FROM THE IMAGE**
+```
+   lane_max = (setpoint_clip * gain) >> 15          clip = 15360
+
+   stock       0xC646C =  891   ->   417 counts =  4.1 % of the aggregator clamp 10240
+   V202 (6x)   0xC6CD0 = 5346   ->  2505        = 24.5 %
+   8x          0xC6CD0 = 7128   ->  3341        = 32.6 %   ** exceeds the 3072 fwd clamps **
+   10x         0xC6CD0 = 8910   ->  4176        = 40.8 %
+```
+⊕ Anchor reproduces exactly: `(15360 × 891) >> 15 = 417` = the separately recorded stock-V9 maximum.
+⇒ **The aggregator has 4× unused headroom; nothing downstream binds at 6×.** The forward clamps
+(`0xC61B2`/`0xC61B4` = 3072) are inert at 6× **because 2505 < 3072** — that is the real reason behind
+*"0 % of the effect"*, and it also shows **why V101 had to raise them to 4096 for 8×: 3341 > 3072.**
+⇒ **Every other candidate is measured non-binding**: the setpoint clip (idle), the `0xC520C` cap table
+(`gp-0x4f64` at its max 4762 for 99.9 %+ of engaged time), the low-speed lockout (zeroed since V53).
+⇒ 🛑 **`0xC6CD0` IS THE ONLY FIRMWARE AUTHORITY LEVER.** That is why it has been attempted three
+times, and the enumeration is now closed rather than open.
+
+### ⭐ **A TESTABLE PREDICTION THAT MAKES THE SEQUENCING CONCRETE**
+The record measures **vibration ∝ m^1.74 but authority only ∝ m^0.88** for a gain step m. **A
+sublinear authority exponent means something is eating the command — and the obvious candidate is the
+vibration itself**: a command oscillating at 23 Hz partially cancels its own steering effect, so net
+authority grows slower than the gain that produced it.
+⇒ **If that is right, cutting the 23 Hz loop gain should RAISE the exponent toward 1.0**, and V202
+cuts it **3.4×** there. **Sequence: fix the grind → re-measure the authority exponent → then raise the
+gain.** ⚠ **BELIEF, not evidence** — it needs a gain pair measured on a notched base, which no drive
+has ever provided. But it is the first mechanism offered for the sublinearity, which the record has
+carried as a bare number since V101.
+
+### 🛑 **TOOLING GOTCHA — `stock_fw_dump/code.bin` reads `0xFFFF` at `0xC6CD0`**
+Because **V57 CREATED that cell** (it decoupled the forward reader off the shared `0xC646C`, which is
+byte-identical 891 in stock and V202). **Do not use the stock dump as a stock reference for post-V57
+migrated cals** — it will hand you 65535 and a 0.08× "stock gain". `0xC646C`, `0xC61BE` and `0xC64DE`
+read correctly from it.
+
 ## ✅⭐ **V202 — THE NOTCH IS A POINT FIX; WIDENING THE SHOULDER IS WHERE THE ATTENUATION IS**
 
 ### 🛑 **FIRST, A RETRACTION OF MY OWN NUMBER FROM LAST TICK**
@@ -2183,93 +2243,4 @@ are unestablished. **Fly V177 first.** V178 is for undoing the whole undocumente
 go, accepting that its result could not be attributed to a single cell.
 ❌ **`0xC40BC` is deliberately NOT reverted** — 600 would make the Coulomb zero-crossing **5x
 sharper**, undoing the one V122 change that helps.
-
-## 🛑 **RETRACTION: THE COULOMB TERM IS NOT A RELAY. V122 WIDENED THE RAMP BY THE SAME 5x.**
-I claimed `0xC40D2` at 10x Honda makes a **relay** injecting a **1.99x|model| STEP** at every velocity
-reversal, ~16 times a second. **Decompiling `FUN_0003b8f6` shows that is WRONG.** The term is a
-**SATURATED RAMP**, not a sign function:
-```
-   iVar20   = frame_conv * motor_rate * 12
-   fVar13   = clamp( iVar20 / cal[0xC40BC], +-1 )         <- a RAMP, saturating at cal/12 counts
-   friction = fVar13 * ( |model|*K1/1024 + K0/1024 )       K1 = 0xC40D2, K0 = 0xC4080
-```
-**And V122 raised the ramp width by exactly the same factor it raised K1:**
-```
-   config            K1     ramp width      saturated amp        SLOPE through zero
-   Honda            102    +-50 counts    0.0996 x |model|        0.00199 / count
-   FLYING (V122)   1020   +-250 counts    0.996  x |model|        0.00398 / count
-   V177 (built)     102   +-250 counts    0.0996 x |model|        0.000398 / count
-```
-⇒ **there is no step** — the transition spans ±250 rate counts. ⊕ And **`K0` = 0 (VIRGIN)**, so
-friction → 0 as |model| → 0, which removes the small-signal step entirely. **My "V80 relay in another
-lane" framing was overstated and is withdrawn.**
-
-### ✅ WHAT SURVIVES — AND V177 IS STILL THE RIGHT BUILD, FOR A DIFFERENT REASON
-- the **saturated amplitude is genuinely 10x Honda's**, and
-- the **slope through zero is 2x Honda's**
-⇒ a real, oversized, velocity-dependent term sitting in the assist path, never tested above 204.
-✅ **V177 as built is the GENTLEST of the three configurations**: Honda's amplitude at **one fifth of
-Honda's slope**, because it reverts K1 while leaving V122's wider ramp in place. For a symptom driven
-by rapid assist changes near velocity reversals, gentler is the right direction — so the build stands
-and stays fly-first; only my stated mechanism was wrong.
-🛑 **DO NOT also revert `0xC40BC` to 600.** That would make the zero crossing **5x sharper** and
-undo the one mitigation V122 got right. It is asserted untouched in V177.
-➕ **STILL OPEN: `0xC40DC` (accel EMA alpha), which V122 moved 22 → 8** — a slower filter on the
-acceleration feeding `gp-0x6b26`. That is a **PHASE** change on the inertia term; direction not
-established. Deliberately excluded from V177 to keep it single-cell.
-⊕ **METHOD NOTE, worth keeping**: I found the oversized cell by re-reading the kit's own non-stock
-delta, then **immediately overstated its mechanism from the cell value alone**. The decompile settled
-it in one call. **Read the code before naming the mechanism** — the value tells you a cell moved, not
-what moving it does.
-
-## 🛑🛑 **WE HAVE BEEN DRIVING A RELAY AT 10x HONDA: `0xC40D2` K1 — V177 REVERTS IT, AND IS THE NEW FLY-FIRST**
-**Found by re-reading the kit's own non-stock delta, not by new tracing.** `0xC40D2` is K1, the gain on
-the modelled Coulomb friction in the plant model (`FUN_0003b8f6`):
-```
-   friction = |model| * sign(polarity * gp-0x6abc) * K1 / 1024        gp-0x6abc = MOTOR RATE
-   => it is a SIGN FUNCTION of velocity, so every reversal steps it by  2*|model|*K1/1024
-
-     Honda   K1 =  102  ->  step = 0.199 x |model|
-     V89     K1 =  204  ->  step = 0.398 x |model|     (flew; measured "delivered, but small")
-     V122+   K1 = 1020  ->  step = 1.992 x |model|     <== ON EVERY BUILD SINCE V122
-
-   read from the images:  stock/V81/V87/V88 = 102 | V89..V108 = 204 | V122..V176 = 1020
-```
-🛑 **V89 raised it to 204 and its own docstring PRE-REGISTERED the risk**, which the polarity memory
-records verbatim: *"Coulomb friction flips sign at every reversal, so larger K1 = a larger **STEP at
-each reversal** — **notchiness on turn-in**, not steady drag. Transient, **unmeasured**."*
-**V122 then took it to 1020 — 5x the value that warning was written about — and it has still never
-been tested.** At an 8 Hz oscillation the motor rate reverses **~16 times a second**, so a step of
-**~2x|model|** is injected 16 times a second, **synchronised to the mode**.
-⊕ **This is V80's failure mode in a different lane.** V80 turned the base-assist damper into a relay
-and produced *"the worst grinding ever"*. A relay's describing function **does not shrink with
-amplitude**, which is exactly how it sustains a mode that linear analysis says should be damped — and
-why none of my linear transfer-function work would ever have found it.
-
-### ✅ V177 BUILT — ONE CELL, 2 BYTES, AND IT IS THE MOST ATTRIBUTABLE BUILD OF THE SESSION
-Base **V175**. `0xC40D2` **1020 -> 102**, Honda's own value **read from the stock image, not typed**.
-**21/21 assertions · 2 payload bytes · CRC 50/50 · readback byte-identical · hard-fault interlock
-`0xC407E` frozen at 511 · `0xC63A6` frozen · both prior reverts and all four section coefficients
-asserted CARRIED.** image `fc93255645014a0f…` · rwd `86cd9394c0f426fe…` · builder
-`analysis-2020accord/builds/v108_plus/build_v177_tva.py`.
-
-### ✅ IT MAKES THE DRIVE **MORE** INTERPRETABLE, NOT LESS — TWO INDEPENDENT SIGNATURES
-`0xC40D2` is a **bare `tp` scalar** ⇒ by RULE 7 it is **live in MANUAL and ENGAGED alike**. The
-inertia revert is mode-26/27 only. So one drive separates them:
-```
-   ratchet falls in BOTH engaged and manual, ratio ~unchanged  -> K1's RELAY was carrying it   (V177)
-   ratchet falls in ENGAGED only, ratio falls                  -> the inertia dose             (V175)
-   ratchet falls, ratio unchanged, manual unchanged            -> the assist-section poles     (V173)
-   nothing moves                                               -> all three accounts fail together
-```
-⚠ **THE FEEL COST, stated plainly: steady effort gets slightly HEAVIER.** The verified chain is
-*more modelled friction -> more assist -> lighter*, so undoing 10x removes some of the lightness V89
-was chasing. **That is the trade: a little steady weight, against removing a 1.99x|model| step that
-fires at every velocity reversal.** The operator has named eliminating the ratcheting/stuttering as
-the priority five times, so that is the right side to err on — but he should be told before driving.
-🛑 **FLIGHT ORDER: V177 supersedes V175 as fly-first.** It *contains* V175 and adds a one-cell
-revert to a Honda value with the strongest mechanism-to-symptom match in the session.
-➕ **OPEN, deliberately not folded in**: `0xC40DC` (the acceleration EMA alpha) which V122 also moved
-**22 -> 8**. That changes the inertia term's **phase** rather than its size, its direction is not
-established, and including it would have cost V177's single-cell attribution.
 

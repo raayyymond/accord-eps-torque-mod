@@ -2770,3 +2770,92 @@ is enumerated and closed. **The only unspent cell is `0xC63A6` (w[3]), deliberat
 adjustment after a drive result.**
 🛑 **What remains is not analysis. It is one 15-second engaged creep pass.**
 
+## 🛑 **RETRACTION: THE COULOMB TERM IS NOT A RELAY. V122 WIDENED THE RAMP BY THE SAME 5x.**
+I claimed `0xC40D2` at 10x Honda makes a **relay** injecting a **1.99x|model| STEP** at every velocity
+reversal, ~16 times a second. **Decompiling `FUN_0003b8f6` shows that is WRONG.** The term is a
+**SATURATED RAMP**, not a sign function:
+```
+   iVar20   = frame_conv * motor_rate * 12
+   fVar13   = clamp( iVar20 / cal[0xC40BC], +-1 )         <- a RAMP, saturating at cal/12 counts
+   friction = fVar13 * ( |model|*K1/1024 + K0/1024 )       K1 = 0xC40D2, K0 = 0xC4080
+```
+**And V122 raised the ramp width by exactly the same factor it raised K1:**
+```
+   config            K1     ramp width      saturated amp        SLOPE through zero
+   Honda            102    +-50 counts    0.0996 x |model|        0.00199 / count
+   FLYING (V122)   1020   +-250 counts    0.996  x |model|        0.00398 / count
+   V177 (built)     102   +-250 counts    0.0996 x |model|        0.000398 / count
+```
+⇒ **there is no step** — the transition spans ±250 rate counts. ⊕ And **`K0` = 0 (VIRGIN)**, so
+friction → 0 as |model| → 0, which removes the small-signal step entirely. **My "V80 relay in another
+lane" framing was overstated and is withdrawn.**
+
+### ✅ WHAT SURVIVES — AND V177 IS STILL THE RIGHT BUILD, FOR A DIFFERENT REASON
+- the **saturated amplitude is genuinely 10x Honda's**, and
+- the **slope through zero is 2x Honda's**
+⇒ a real, oversized, velocity-dependent term sitting in the assist path, never tested above 204.
+✅ **V177 as built is the GENTLEST of the three configurations**: Honda's amplitude at **one fifth of
+Honda's slope**, because it reverts K1 while leaving V122's wider ramp in place. For a symptom driven
+by rapid assist changes near velocity reversals, gentler is the right direction — so the build stands
+and stays fly-first; only my stated mechanism was wrong.
+🛑 **DO NOT also revert `0xC40BC` to 600.** That would make the zero crossing **5x sharper** and
+undo the one mitigation V122 got right. It is asserted untouched in V177.
+➕ **STILL OPEN: `0xC40DC` (accel EMA alpha), which V122 moved 22 → 8** — a slower filter on the
+acceleration feeding `gp-0x6b26`. That is a **PHASE** change on the inertia term; direction not
+established. Deliberately excluded from V177 to keep it single-cell.
+⊕ **METHOD NOTE, worth keeping**: I found the oversized cell by re-reading the kit's own non-stock
+delta, then **immediately overstated its mechanism from the cell value alone**. The decompile settled
+it in one call. **Read the code before naming the mechanism** — the value tells you a cell moved, not
+what moving it does.
+
+## 🛑🛑 **WE HAVE BEEN DRIVING A RELAY AT 10x HONDA: `0xC40D2` K1 — V177 REVERTS IT, AND IS THE NEW FLY-FIRST**
+**Found by re-reading the kit's own non-stock delta, not by new tracing.** `0xC40D2` is K1, the gain on
+the modelled Coulomb friction in the plant model (`FUN_0003b8f6`):
+```
+   friction = |model| * sign(polarity * gp-0x6abc) * K1 / 1024        gp-0x6abc = MOTOR RATE
+   => it is a SIGN FUNCTION of velocity, so every reversal steps it by  2*|model|*K1/1024
+
+     Honda   K1 =  102  ->  step = 0.199 x |model|
+     V89     K1 =  204  ->  step = 0.398 x |model|     (flew; measured "delivered, but small")
+     V122+   K1 = 1020  ->  step = 1.992 x |model|     <== ON EVERY BUILD SINCE V122
+
+   read from the images:  stock/V81/V87/V88 = 102 | V89..V108 = 204 | V122..V176 = 1020
+```
+🛑 **V89 raised it to 204 and its own docstring PRE-REGISTERED the risk**, which the polarity memory
+records verbatim: *"Coulomb friction flips sign at every reversal, so larger K1 = a larger **STEP at
+each reversal** — **notchiness on turn-in**, not steady drag. Transient, **unmeasured**."*
+**V122 then took it to 1020 — 5x the value that warning was written about — and it has still never
+been tested.** At an 8 Hz oscillation the motor rate reverses **~16 times a second**, so a step of
+**~2x|model|** is injected 16 times a second, **synchronised to the mode**.
+⊕ **This is V80's failure mode in a different lane.** V80 turned the base-assist damper into a relay
+and produced *"the worst grinding ever"*. A relay's describing function **does not shrink with
+amplitude**, which is exactly how it sustains a mode that linear analysis says should be damped — and
+why none of my linear transfer-function work would ever have found it.
+
+### ✅ V177 BUILT — ONE CELL, 2 BYTES, AND IT IS THE MOST ATTRIBUTABLE BUILD OF THE SESSION
+Base **V175**. `0xC40D2` **1020 -> 102**, Honda's own value **read from the stock image, not typed**.
+**21/21 assertions · 2 payload bytes · CRC 50/50 · readback byte-identical · hard-fault interlock
+`0xC407E` frozen at 511 · `0xC63A6` frozen · both prior reverts and all four section coefficients
+asserted CARRIED.** image `fc93255645014a0f…` · rwd `86cd9394c0f426fe…` · builder
+`analysis-2020accord/builds/v108_plus/build_v177_tva.py`.
+
+### ✅ IT MAKES THE DRIVE **MORE** INTERPRETABLE, NOT LESS — TWO INDEPENDENT SIGNATURES
+`0xC40D2` is a **bare `tp` scalar** ⇒ by RULE 7 it is **live in MANUAL and ENGAGED alike**. The
+inertia revert is mode-26/27 only. So one drive separates them:
+```
+   ratchet falls in BOTH engaged and manual, ratio ~unchanged  -> K1's RELAY was carrying it   (V177)
+   ratchet falls in ENGAGED only, ratio falls                  -> the inertia dose             (V175)
+   ratchet falls, ratio unchanged, manual unchanged            -> the assist-section poles     (V173)
+   nothing moves                                               -> all three accounts fail together
+```
+⚠ **THE FEEL COST, stated plainly: steady effort gets slightly HEAVIER.** The verified chain is
+*more modelled friction -> more assist -> lighter*, so undoing 10x removes some of the lightness V89
+was chasing. **That is the trade: a little steady weight, against removing a 1.99x|model| step that
+fires at every velocity reversal.** The operator has named eliminating the ratcheting/stuttering as
+the priority five times, so that is the right side to err on — but he should be told before driving.
+🛑 **FLIGHT ORDER: V177 supersedes V175 as fly-first.** It *contains* V175 and adds a one-cell
+revert to a Honda value with the strongest mechanism-to-symptom match in the session.
+➕ **OPEN, deliberately not folded in**: `0xC40DC` (the acceleration EMA alpha) which V122 also moved
+**22 -> 8**. That changes the inertia term's **phase** rather than its size, its direction is not
+established, and including it would have cost V177's single-cell attribution.
+

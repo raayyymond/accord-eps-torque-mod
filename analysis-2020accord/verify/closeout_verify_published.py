@@ -294,6 +294,26 @@ chk(not _bad, 'no flashable image amplifies beyond the %d documented exceptions'
     % len(_KNOWN)
     + ('' if not _bad else ' -- VIOLATIONS: ' + '; '.join(_bad)))
 
+print()
+print("[7] THE LATENT SQUARE-WAVE INJECTOR MUST STAY SILENT")
+# BUILD-LINEAGE.md: 0xC64DE is "the hold count of a sign-flipping square wave" in FUN_00028ea6,
+# 8 live read sites, 0 writers, tick 1 ms, so f = 1000/(2*cal).  Honda ships cal = 17 (29.41 Hz).
+# V18 set it to 27 = 18.52 Hz -- INSIDE the grind band (p10 16.33 / median 20.12 / p90 22.15).
+# It is inert ONLY because its amplitude LERP is all zeros, and that table sits 24 bytes from
+# 0xC674E/0xC6750, which this kit edits (1024 -> 5120).  So this is a standing hazard, and the
+# guard is cheap: if the amplitude ever becomes non-zero we get an 18.5 Hz torque injector wired
+# into the gain path, which would look exactly like the symptom we are chasing.
+_INJ_N, _INJ_X, _INJ_Y = 0xC6734, 0xC6736, 0xC673E
+for _v in sorted(img):
+    _n = struct.unpack_from('<h', img[_v], _INJ_N)[0]
+    _y = [struct.unpack_from('<h', img[_v], _INJ_Y + 2 * _i)[0] for _i in range(4)]
+    _c = img[_v][0xC64DE]
+    chk(_n == 4 and _y == [0, 0, 0, 0],
+        f'{_v.upper()} injector amplitude Y = {_y} (n={_n}) -- SILENT')
+    if _c != 17:
+        print(f'         note: {_v.upper()} 0xC64DE = {_c} => {1000.0 / (2 * _c):.2f} Hz '
+              f'(Honda 17 => 29.41 Hz). Latent, inside the grind band.')
+
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
 for m in bad:
