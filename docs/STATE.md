@@ -1,5 +1,52 @@
 # STATE — living current state of the kit
 
+## 🛑 **`0xC6372` SIZED AND REJECTED BEFORE BUILDING — AND IT NARROWS THE FIELD TO ONE**
+The aggregator adds its ten lanes **BARE — admission gates only, no per-lane weights** (which is why
+the kit recorded *"no weight cell exists"* for `gp-0x6b26`). ⇒ **an aggregator lane can only be
+scaled at its SOURCE.** For `gp-0x6BBE`, the largest lane (p50 74 vs the aggregator's 115–218), all
+three source cals are **VIRGIN** — so `0xC6372`, its torque-EMA alpha, looked like the lever.
+
+### ✅ IT SIZES WELL
+`iVar29 += ((gp-0x4f60*32 - iVar29) * cal(0xC6372)) >> 10`, a one-pole EMA, `alpha = cal/1024`,
+in **task 5** (kit bound ≥ 250 Hz, best fit 500 Hz). At fs = 500:
+```
+   alpha    fc Hz   |H| 1Hz   |H| 3Hz   |H| 20Hz   20Hz attenuation
+     205     15.9    0.9984    0.9861     0.6661       1.00x   (stock)
+     102      7.9    0.9929    0.9412     0.3863       1.72x
+      77      6.0    0.9873    0.9008     0.2978       2.24x
+      51      4.0    0.9711    0.8047     0.1997       3.34x
+```
+⊕ and the lane is **DOMINATED by this path** — the earlier sizing gave torque : accel = **6464 : 576
+= 11 : 1** at engaged creep, so this alpha shapes **~92 %** of the lane input. ⊕ the direction is
+robust across the whole fs bound (20 Hz sits above `fc` at every rate in 250–1000).
+
+### 🛑 AND IT IS STILL POINTLESS — THE LANE DOES NOT CARRY THE BAND
+**`gp-0x6BBE`'s measured 18–22 Hz share is 0.54× FLAT — BELOW baseline.** It carries **less**
+18–22 Hz than a featureless spectrum. ⇒ **attenuating 20 Hz in a lane that does not carry 20 Hz
+achieves nothing.** ⇒ **V148 on `0xC6372` would have been a null. One command cost; no drive
+spent.** ⭐ **Size the lever, THEN check the lane carries the band — in that order, because the
+sizing is the seductive part.**
+
+### ⭐ WHICH LEAVES EXACTLY ONE TARGET STANDING
+```
+   lane                       sig/flat            consistent across its routes?
+   gp-0x6B4C (11-slot sum)    1.44x, 1.38x        YES -- the only one
+   "default tap" gp-0x6ABC    1.42 / 0.53 / 0.08  no -- wildly route-dependent
+   gp-0x6BBE                  0.54x               BELOW baseline
+   gp-0x6B26                  0.43-0.56x          BELOW baseline
+   notch lane gp-0x6B86       0.06-0.27x          BELOW baseline
+```
+⇒ **`gp-0x6B4C` is the only lane consistently above a flat spectrum**, and because the aggregator
+adds it **bare**, its **only** lever is **`0xC4124`, the slot vector**. ⊕ `0xC63AA` scales it only
+into `gp-0x6b70`, which is **itself below baseline** — so that weight, however well-formed, is
+aimed at the wrong output.
+⇒ **the slot disable is the SOLE remaining cal-path candidate**, and it still needs the five
+payload decompiles (slots 0, 1, 3, 6, 8 — `FUN_0002e52e`, `FUN_0002b422`, `FUN_0002c246`,
+`FUN_0003aff4`, `FUN_0002caa2`).
+⚠ And its evidence base is **1.4× flat**, which is **weak**. **V147 remains the build to fly**: its
+cal is equally virgin, its lane feeds the aggregator directly, and its drive also carries the gate
+probe that retires the notch family.
+
 ## ✅✅ **19 VIRGIN ASSIST-PATH CALS — AND THE `FUN_00038148` PER-TERM WEIGHT MAP**
 Since **no flown cal moves the creep grind**, the answer must be in a cal **never flown**. A census
 across **131 build images** (diffing `0xC4000–0xC8000` against stock; **948 cells ever touched**)
