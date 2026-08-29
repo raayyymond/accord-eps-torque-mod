@@ -1922,3 +1922,45 @@ outside STATE's own retraction text mentions it any more.
 the analysis and the drive*. Both instances were found by **running the drive card's own command
 verbatim** rather than by reading the code. That check is cheap and it belongs in every close-out.
 
+## ✅✅✅ **THE CORPUS WAS TWICE WHAT I WAS USING — AND IT CLOSES THE DRIVEN/SELF-EXCITED QUESTION**
+🛑 **I had been scoring 9 routes. There are 19** whole-route caches carrying the core channels, and
+several hold far more engaged-creep windows than anything I used — **`r77` has 97 against `r1e`'s
+42.** (The `sNN` entries are per-segment sub-caches of the same drives, so they are not independent
+and are excluded.) **Nothing was wrong with the analysis; I simply never enumerated the cache.**
+```
+   ratchet, all 19 routes, cs_tq, excess / slope-matched null
+     r78 12.2/2.2   r7e 31.0/2.0   r7f 39.2/2.3   r96 38.6/2.7   ra4 23.3/1.9
+     ra6 29.0/1.9   r1e 21.0/1.9   r22 20.6/2.5   r24 38.3/3.2
+     r21 27.2/1.9   r77 20.2/1.6   r79 11.5/2.0   r81 243.7/2.4  r82 237.2/2.3
+     r85 58.7/2.8   r95 193.2/2.5  r97  4.4/2.5   r9e 38.1/2.4   ra5 84.6/2.3
+   => REAL on 19 of 19 routes.  Peak 7.42-10.16 Hz, consistent with the 8.64 Hz estimate.
+```
+
+### ✅ AND THE ONE OPEN QUESTION THAT NEEDED POWER IS NOW ANSWERED
+At n = 7 the driven-vs-self-excited test was **inconclusive** — specific on 6/9 routes but the pooled
+CI **[−0.021, +0.176] crossed zero**. Same statistic, more data:
+```
+   band-specific coupling = coherence(7-10.5 Hz) - coherence(30-40 Hz control),
+   command -> cs_tq, vs phase-shuffled surrogates.   n = 17 routes
+
+     median specificity  +0.1148
+     95 % CI             [+0.0274, +0.1682]      <- EXCLUDES ZERO
+     individually specific on 10 of 17
+     specificity vs window count: rho +0.31 (p 0.226)
+```
+✅ **[EVIDENCE] THE RATCHET IS DRIVEN BY THE COMMAND, not self-excited.** The CI excludes zero, and
+the positive window-count trend is exactly what an underpowered *real* effect predicts — which is what
+`r1e` hinted at when it was the only well-powered route.
+⚠ **Not universal**: three routes (`r85`, `r95`, `r97`) show *negative* specificity. The claim is
+about the population, not every drive.
+
+### ⭐ WHAT IT CHANGES, AND WHAT IT DOES NOT
+⊕ **V173 works either way.** The assist map amplifies whatever reaches the bar, so attenuating it at
+8.64 Hz reduces the ratchet whether the excitation is the command or the loop itself. **No build
+changes.**
+⊕ What it *does* change is **what a null on the drive would mean**: with the ratchet established as
+command-driven, a null could no longer be explained by "the excitation was absent on that pass" — the
+pass carries command by construction. **It sharpens the pre-registered outcomes rather than altering
+them.**
+⊕ And it retires an open item that was recorded as *“closes with more continuous windows”*. **It did.**
+

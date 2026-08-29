@@ -4,6 +4,40 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑✅ **THE CUMULATIVE DELTA — AND IT FOUND 72 DEAD BYTES ON THE BUILD HE IS DRIVING**
+The close-out contract requires enumerating **every** cell that differs from stock, read from the
+**built image**. Doing it for V194 turned up a block nothing in the record explains:
+```
+   0xE4194..0xE41A4 - 0xE41BC..0xE41CC - 0xE420C..0xE421C - 0xE4234..0xE4244
+   0xE5194..0xE51A4 - 0xE51BC..0xE51CC - 0xE51E4..0xE51F4 - 0xE520C..0xE521C
+   8 runs x 9 entries = 72 halfwords, EVERY ONE 15360 -> 16384  (+6.67 %)
+   context:  X = [3413, 3627, 3840, 4736, 5632, 6528, 7424, 8320]   Y = [15360 x8] -> [16384 x8]
+   present on V108, V122, V158, V189, V194  => introduced at V108
+```
+🛑 **AND THEY ARE DEAD.** `0xC61BE` — the clamp on that path — is **byte-stock at 15360 on V194**,
+so every raised entry is cut straight back. The lineage records why: V108 built the
+`0xC61BE` → 16384 raise **and then PULLED it** on a pre-registered null.
+⇒ **V108 raised the TABLES and pulled the CLAMP. 72 bytes of half-applied edit have been carried on
+every build since — including the one on the car right now — doing nothing.**
+⊕ That is exactly the category the contract calls *"carried by accident"*, and it had never been
+found because nobody had run a full cumulative diff against stock.
+
+### ✅ THE 9 CELLS V194 CHANGES RELATIVE TO WHAT HE DRIVES TODAY
+```
+   0xC60A8/AC/B0/B4   the GRIND NOTCH, 55.226 Hz -> 19.40 Hz              V188
+   0xC64AE            2nd omega^2 accel term disabled                      V190
+   0xC691A            oscillating slew curve tightened by Honda's 0.60     V192
+   0xC64DD            detector dwell 50 -> 100 (the ratchet becomes visible) V193
+   0x55DF2 / 0x55E10  the 427 probe -> gp-0x6c2c at sar 6                 V194
+```
+Everything else on V194 is already on the flying build. **V122 vs stock = 310 payload bytes;
+V194 vs stock = 319.** So the whole proposal is **9 bytes of change from what he drives**, of which
+**4 are the notch, 3 are detector-conditional, and 2 are pure instrument.**
+
+✅ Tool kept: **`analysis-2020accord/verify/cumulative_delta_vs_stock.py`** — prints the full
+attributed delta and **refuses to stay silent about anything it cannot attribute**, which is how the
+72 bytes surfaced.
+
 ## ✅ **V190's XREF CHAIN BYTE-CONFIRMS — the BELIEF caveat is LIFTED**
 Last section flagged that V190's xref counts came from `search_instructions` and were not
 byte-confirmed. Re-derived from raw bytes, both gp-relative encodings, whole image:
@@ -2172,46 +2206,4 @@ Both claims that fell were **presence/absence statements made at n≤9, and both
 of my own hypothesis** — *“never moved”* and *“absent in manual”* were the strong readings, and the
 full corpus made each one weaker. **Small-n presence/absence claims are the failure mode to watch for
 here**, not the effect sizes, which have held.
-
-## ✅✅✅ **THE CORPUS WAS TWICE WHAT I WAS USING — AND IT CLOSES THE DRIVEN/SELF-EXCITED QUESTION**
-🛑 **I had been scoring 9 routes. There are 19** whole-route caches carrying the core channels, and
-several hold far more engaged-creep windows than anything I used — **`r77` has 97 against `r1e`'s
-42.** (The `sNN` entries are per-segment sub-caches of the same drives, so they are not independent
-and are excluded.) **Nothing was wrong with the analysis; I simply never enumerated the cache.**
-```
-   ratchet, all 19 routes, cs_tq, excess / slope-matched null
-     r78 12.2/2.2   r7e 31.0/2.0   r7f 39.2/2.3   r96 38.6/2.7   ra4 23.3/1.9
-     ra6 29.0/1.9   r1e 21.0/1.9   r22 20.6/2.5   r24 38.3/3.2
-     r21 27.2/1.9   r77 20.2/1.6   r79 11.5/2.0   r81 243.7/2.4  r82 237.2/2.3
-     r85 58.7/2.8   r95 193.2/2.5  r97  4.4/2.5   r9e 38.1/2.4   ra5 84.6/2.3
-   => REAL on 19 of 19 routes.  Peak 7.42-10.16 Hz, consistent with the 8.64 Hz estimate.
-```
-
-### ✅ AND THE ONE OPEN QUESTION THAT NEEDED POWER IS NOW ANSWERED
-At n = 7 the driven-vs-self-excited test was **inconclusive** — specific on 6/9 routes but the pooled
-CI **[−0.021, +0.176] crossed zero**. Same statistic, more data:
-```
-   band-specific coupling = coherence(7-10.5 Hz) - coherence(30-40 Hz control),
-   command -> cs_tq, vs phase-shuffled surrogates.   n = 17 routes
-
-     median specificity  +0.1148
-     95 % CI             [+0.0274, +0.1682]      <- EXCLUDES ZERO
-     individually specific on 10 of 17
-     specificity vs window count: rho +0.31 (p 0.226)
-```
-✅ **[EVIDENCE] THE RATCHET IS DRIVEN BY THE COMMAND, not self-excited.** The CI excludes zero, and
-the positive window-count trend is exactly what an underpowered *real* effect predicts — which is what
-`r1e` hinted at when it was the only well-powered route.
-⚠ **Not universal**: three routes (`r85`, `r95`, `r97`) show *negative* specificity. The claim is
-about the population, not every drive.
-
-### ⭐ WHAT IT CHANGES, AND WHAT IT DOES NOT
-⊕ **V173 works either way.** The assist map amplifies whatever reaches the bar, so attenuating it at
-8.64 Hz reduces the ratchet whether the excitation is the command or the loop itself. **No build
-changes.**
-⊕ What it *does* change is **what a null on the drive would mean**: with the ratchet established as
-command-driven, a null could no longer be explained by "the excitation was absent on that pass" — the
-pass carries command by construction. **It sharpens the pre-registered outcomes rather than altering
-them.**
-⊕ And it retires an open item that was recorded as *“closes with more continuous windows”*. **It did.**
 
