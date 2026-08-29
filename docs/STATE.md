@@ -4,6 +4,46 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑 **I OVER-CORRECTED. THE RATCHET TREND IS UNRESOLVED, NOT ESTABLISHED — AND TWO LABELS WERE WRONG**
+Searching memory for **operator verdicts** turned up two hard route→build statements that contradict
+labels I had *inferred from filenames*:
+- 🛑 **`r95` = V101, NOT V102** — *“V101 flew it at 8× (7128) as route `0x95`, 2026-08-19”*. My
+  inference came from `r95_v102_prereg.py`, which is a **pre-registration FOR V102 that used route 95
+  as its reference** — not a statement that r95 IS V102.
+- ✅ **`r77` = V90** — *“V90 flew as route 77”*. I had **excluded** r77 as unattributable, and it is the
+  **richest route in the corpus at 97 windows**.
+
+### 🛑 WITH ONLY HARD ATTRIBUTIONS, MY OWN CORRECTION DOES NOT HOLD
+```
+                             n    RATCHET post-V102      GRIND post-V102
+   session start             5    rho -0.14  p 0.787     rho -0.94  p 0.005
+   after enlarging (8 inferred) 11 rho -0.60  p 0.052     rho -0.84  p 0.001
+   ALL HARD attributions     8    rho -0.40  p 0.320     rho -0.86  p 0.007
+```
+✅ **[EVIDENCE] the GRIND trend is ROBUST** — ρ −0.76 to −0.86 across every attribution set tried,
+significant in all of them. **That claim stands unchanged.**
+🛑 **[UNRESOLVED] the RATCHET trend is NOT robust** — ρ swings **−0.14 → −0.60 → −0.40** with the
+label set and is **never significant**. ⇒ **I over-corrected.** *“The ratchet is trending down”* was
+as over-stated as *“the ratchet has never moved”* was. **The honest statement is that the ratchet's
+build trend is UNRESOLVED at every sample size tried**, while the grind's is settled.
+⊕ **What does NOT depend on this**: the ratchet is in torque not wheel rate (19/19 routes),
+engaged-only (15/15 vs 6/15 marginal), command-driven (CI excludes zero), and **no varied cal tracks
+it** under family-wise control. **V173's case is untouched** — it never rested on the trend.
+⚠ **The cal scan used these labels too.** Its ratchet result was a **null** (0 of 94 cells survive),
+which two label changes cannot create a survivor from; its grind hit (`0xC40BC`) is worth re-checking
+if that cell is ever acted on.
+
+### ⭐ AND V101 PRICES THE 8× GAIN, WHICH IS WORTH HAVING
+`r95` is the **8×-gain build** (`0xC6CD0` = 7128), and now correctly labelled it is measurable:
+```
+   V101 (8x gain)   ratchet 193.2   grind 38.7
+   all other builds ratchet  34.5   grind 15.6     (medians)
+   => 8x gain: ratchet 5.6x WORSE, grind 2.5x WORSE
+```
+✅ **This is the first MEASUREMENT behind the standing rule never to raise the LKAS gain**, and it
+matches the operator's own report that 8× made grinding worse. **The rule was right and now it has a
+number.**
+
 ## ⚠ **THE GRIND METRIC WANTS KNEE 1800; THE OPERATOR ALREADY CHOSE 3000. HIS CHOICE WINS.**
 `0xC40BC` is the **only** cell surviving a family-wise-controlled scan of 94 varying cals against the
 grind, and independently the cell structural reasoning named. So the obvious next question is whether
@@ -2248,29 +2288,4 @@ the observer's forward gain would have tightened the bound on `s` by 10x and mad
 smaller than it is. The bound as computed used the correct 1.0.
 ⭐ **THE TRAP**: a decompiler reuses one local for unrelated values within a function. **Read the
 assignment that feeds the expression you care about, not the last assignment to that name.**
-
-## ⛔ **`0xC63AE` IS NOT A CLEAN LOOP-GAIN LEVER EITHER — SAME TRAP, DIFFERENT CELL**
-The stability work suggested one more candidate, and it fails the rule written two ticks ago.
-
-`FUN_00038148` computes `uVar7 = |iVar6| * cal(0xC63AE) >> 10` **before** the LERP, so `0xC63AE`
-(**virgin, 1024 on all 142 images**) scales the **whole Path-2 forward path**. Unlike a per-term
-weight it preserves the observer's relative weighting, so it looked like the clean loop-gain
-reduction — and one that needs no V158 base.
-
-⛔ **But `gp-0x6ad6` is the PID's FEEDBACK term, not a gain node:**
-```
-   uVar19 = *(short*)(gp-0x6ad6)              <- data read
-   uVar24 = clamp(uVar19, +-cal 0xC6200)
-   iVar30 = gp-0x4f60 - uVar24                <- THE ERROR
-```
-=> shrinking it **moves a SUBTRACTION**: `err = measured - feedback`, so a smaller feedback gives a
-**LARGER** error and a **LARGER** PID output. The loop-gain reduction and the error growth push
-**opposite ways**, and which wins depends on the same unknown `s`. **Net ambiguous => not built.**
-
-⭐ **This is the rule from two ticks ago applied to myself**: *before lowering a scalar, ask what the
-sum is FOR.* In an aggregator a scalar is a **gain**; here it feeds a **subtraction**, so it sets an
-**operating point**. The observer-weight trap and this one are the same trap wearing a different cell.
-⊕ **Path 2 now has no clean cal lever at all**: the per-term weights corrupt the model, and the
-output scale moves an operating point. `0xC63A0` remains the sole exception, and only because
-`gp-0x6bd0` was exactly 0 at creep before V158.
 
