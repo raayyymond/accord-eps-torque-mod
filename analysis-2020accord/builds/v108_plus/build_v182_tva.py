@@ -1,4 +1,26 @@
 #!/usr/bin/env python3
+# ############################################################################################
+# RETRACTED 2026-08-29 -- DO NOT BUILD, DO NOT FLASH. THE STATED AXIS IS WRONG.
+#
+# This build raises FactorC Y[0] on the belief that X[0] = 2240 counts = 35.0 km/h, i.e. that
+# Y[0] is the fallback across the 1-24 km/h creep band.  ** THAT IS NUMEROLOGY. **  2240/64
+# happens to equal 35, and I built on the coincidence.
+#
+# FUN_00034350 (decompiled) shows gp-0x6bd0 is a FIVE-factor product, and:
+#     FactorC = LERP(0xC9E9C[mode], index = gp-0x6a5e)     <-- NOT vehicle speed
+#     FactorE = LERP(0xC9F84[mode], index = gp-0x6ac0)     <-- the resolver/FOC electrical rate
+# with gates: FactorC needs gp-0x67f4==1 and gp-0x6a5e<=0x7d00, else it is 1024 (UNITY, not 0);
+# FactorE needs gp-0x6ac0<0x32c9 and |gp-0x6abe|<=0x6590, else THE WHOLE PRODUCT IS ZEROED.
+#
+# So the edit raises a fallback on the gp-0x6a5e axis.  Whether that axis is ever in its
+# below-range region during creep ratcheting is UNKNOWN and was never established.  The
+# 272-crossing knot-step null I computed tested SPEED crossings against a knot that is not on
+# speed, so it does not support this build either.
+#
+# Artifacts renamed SUPERSEDED-DO-NOT-FLASH-WRONGAXIS-*.  Kept as a record of the error.
+# LESSON: read the INDEX EXPRESSION from the code. Never infer a table axis from a unit
+# conversion that happens to come out round.
+# ############################################################################################
 r"""
 V182 -- ADD DAMPING AT CREEP: raise FactorC's below-range fallback on the ENGAGED modes.
         Base = V181.  Two int16 cells, 4 bytes.  0xD77DA 429 -> 700, 0xD77EE 426 -> 700.
@@ -130,6 +152,8 @@ def rec(b, ptr):
 
 
 def build():
+    raise SystemExit("V182 IS RETRACTED -- see the banner at the top of this file.")
+
     print("=" * 102)
     print("  V182 -- ADD DAMPING AT CREEP: FactorC fallback, ENGAGED modes only   (base V181)")
     print("=" * 102)
