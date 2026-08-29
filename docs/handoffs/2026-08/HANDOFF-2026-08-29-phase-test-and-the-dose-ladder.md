@@ -153,3 +153,89 @@ hard hands-off engaged turn · **a matched MANUAL creep segment** (three uncontr
 this session when controls were added: 2.8→1.12, 1.29→0.911, 1.309→0.958).
 
 Pre-registered scoring: `docs/scoring/SCORING-V158-preregistered.md`, committed before any flight.
+
+---
+
+# ADDENDUM — the Path-2 work, and the final queue
+
+Written after the body above. Everything here is later and supersedes it where they differ.
+
+## THE BUILD QUEUE, FINAL
+
+| build | edit | base | when to fly |
+|---|---|---|---|
+| **V158** | damper: FactorC `Y[0]:=Y[2]`, FactorE `X[0]`60→12, `Y[1]:=Y[2]` | V122 | **FLY FIRST** |
+| V164 | FactorC `Y[0]:=Y[1]` — dose 50→27 | V158 | better but wheel too heavy |
+| V160 | Lever B `0xC6446` 5244→6553 | V158 | better, effort fine |
+| V165 | FactorE `Y[1],Y[2]` 539→700 — dose 50→65 | V158 | unchanged, effort unchanged |
+| **V167** | `0xC63A0` 1024→512 — Path-2 damper weight | V158 | **worse** (NOT a bare revert) |
+| V161 | Lever B 6553, no damper | V122 | single-variable twin of V160 |
+
+Dose ladder: V122 **0** · V164 **27** · V158 **50** · V165 **65**, giving total creep viscous damping
+1.571 → 3.047 → 4.304 → 5.124 ct/(deg/s) against a measured `gp-0x6bbe` baseline of 1.571 and a stock
+creep damping of **exactly 0.000**.
+
+## V158's ONE NAMED RISK, AND ITS ANSWER
+
+`gp-0x6bd0` has 5 readers and **two are the aggregators**: `0x3AC78` (`FUN_0003aa2c`, Path 1 — DAMPS)
+and `0x38150` (`FUN_00038148`, Path 2 — **PUMPS**, because Path 2 applies an extra `pol` multiply and
+`gp-0x6752` is −1 on this car). So V158 raises a term that damps in one aggregator and pumps in the
+other.
+
+`FUN_00038148` applies a **per-term weight** before that multiply, and `0xC63A0` is the damper's and
+nothing else — so **V167 halves the pumping copy while Path 1's damping stays byte-identical.** That
+is why "worse → V167" replaces "worse → revert": a revert discards both and discriminates nothing.
+
+⚠ Unresolved: whether the pumping matters. Path 2 is throttled to **16.6 %** at creep by `0xC67C2`,
+but f′ is **2.174 hands-off vs 0.346 hands-on** — the observer is **6.3× more sensitive hands-off**,
+which is where the ratchet lives. Opposite directions; net not settled.
+
+## PATH 2, CHARACTERISED
+
+- The "eight float coefficients never byte-read" are **three floats and five u16s**. `tp+0x5048/504C/
+  5050` = **1.0 / 0.0 / 0.0** ⇒ the 3-tap FIR is an **identity passthrough with both history taps ×0.0
+  ⇒ 2 zeros, 0 poles, no feedback — IT CANNOT RING.** The other five are `ushort` reads scaled in code,
+  which is why a float32 read returned denormals.
+- Poles: `0x50D4`=573 (22.3 Hz) · `0x50D8`=3686 (143 Hz) · `0x50D0`=408 (15.9 Hz) · **`0x50D6`=246
+  (9.6 Hz, applied TWICE ⇒ |H| 0.615, 74° lag at 7.8 Hz)**. `0x50D2`=1020 is K1 (a gain); `0x50BC`=3000
+  is the knee.
+- ⇒ the model's *"GATE 2 CANNOT BE CERTIFIED"* is **superseded for the dynamics**. What remains open is
+  the **relative weight** of Path 1 vs Path 2 into the motor command, which needs `gp-0x6b94`'s four
+  unchecked readers (`FUN_00036bec`, `FUN_0004503c`, `FUN_0004595a`, `FUN_0007ff08`) plus a RAM LERP
+  slope the model records as never extracted.
+
+## FURTHER NEGATIVES — do not re-propose
+
+- **The other five Path-2 weights are NOT levers.** Path 2 is a **disturbance observer**; lowering a
+  weight does not remove pumping, it **makes the observer's model wrong**. `0xC63A0` is the sole
+  exception *only* because `gp-0x6bd0` was exactly 0 at creep pre-V158, so the observer has no history
+  with it. ⭐ **Before lowering a weight, ask what the sum is FOR** — in an aggregator it is a gain, in
+  an observer it is a model.
+- **Peak command oscillation has no firmware lever.** `arb_setpoint_limit` is **already 16384** on the
+  flying build (V38 raised 8 of 28 records, including `0xE41A8`, ours) ⇒ the full ±4096 range is
+  delivered and nothing is clipped. openpilot rails because it wants more than the **13-bit protocol
+  maximum**. The only firmware quantity that could deliver more per count is the gain, measured worse
+  at 8× and frozen by the operator's own instruction.
+- **The authority collapse curve admits no legal improvement.** Enumerated: hold-longer, gentler-slope
+  and raise-mid-Y all violate monotone-non-increasing; collapse-earlier is legal but gives *less*.
+  Authority is monotone-decreasing in torque, so holding it up longer anywhere **is** more than stock
+  somewhere. Raising it is a **safety trade for the operator to decide**, minimal form `X[0]/X[1]`
+  70,72→72,74. **Not built.**
+
+## FURTHER CORRECTIONS
+
+1. **`FUN_000382d8`/`FUN_000389ec` are NOT purely monitor-side.** They write no aggregator lane, but
+   `FUN_000389ec` writes the RAM LERP rows (`gp-0x64b8`/`gp-0x641c`) that `FUN_00038148` reads. ⭐ **A
+   function can be in the loop without writing a lane cell — follow the RAM it writes.**
+2. **V160 demoted by a power calculation.** Its Lever B increment predicts 1.4–5.6 % against a
+   ~20–40 % floor ⇒ **4–30× below resolvable.** ⭐ **A build is only worth a drive if its predicted
+   effect exceeds the instrument floor.**
+3. **I cited f′ compression as reassurance for V158; it runs the other way.** Hands-off is 6.3× *more*
+   sensitive, and the ratchet is hands-off.
+
+## TOOLING ADDED
+
+`analysis-2020accord/verify/check_lever.py` — prints stock value, flying-base value with an explicit
+**MOVED** marker, and the full distribution across all non-superseded images. `--record` validates the
+knot-count header. It flags `0xC6728` (V159's wrong cell) as *not a record start*, and would have
+caught both V159 and V166.
