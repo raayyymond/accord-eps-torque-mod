@@ -4,6 +4,48 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅✅✅ **THE CORPUS WAS TWICE WHAT I WAS USING — AND IT CLOSES THE DRIVEN/SELF-EXCITED QUESTION**
+🛑 **I had been scoring 9 routes. There are 19** whole-route caches carrying the core channels, and
+several hold far more engaged-creep windows than anything I used — **`r77` has 97 against `r1e`'s
+42.** (The `sNN` entries are per-segment sub-caches of the same drives, so they are not independent
+and are excluded.) **Nothing was wrong with the analysis; I simply never enumerated the cache.**
+```
+   ratchet, all 19 routes, cs_tq, excess / slope-matched null
+     r78 12.2/2.2   r7e 31.0/2.0   r7f 39.2/2.3   r96 38.6/2.7   ra4 23.3/1.9
+     ra6 29.0/1.9   r1e 21.0/1.9   r22 20.6/2.5   r24 38.3/3.2
+     r21 27.2/1.9   r77 20.2/1.6   r79 11.5/2.0   r81 243.7/2.4  r82 237.2/2.3
+     r85 58.7/2.8   r95 193.2/2.5  r97  4.4/2.5   r9e 38.1/2.4   ra5 84.6/2.3
+   => REAL on 19 of 19 routes.  Peak 7.42-10.16 Hz, consistent with the 8.64 Hz estimate.
+```
+
+### ✅ AND THE ONE OPEN QUESTION THAT NEEDED POWER IS NOW ANSWERED
+At n = 7 the driven-vs-self-excited test was **inconclusive** — specific on 6/9 routes but the pooled
+CI **[−0.021, +0.176] crossed zero**. Same statistic, more data:
+```
+   band-specific coupling = coherence(7-10.5 Hz) - coherence(30-40 Hz control),
+   command -> cs_tq, vs phase-shuffled surrogates.   n = 17 routes
+
+     median specificity  +0.1148
+     95 % CI             [+0.0274, +0.1682]      <- EXCLUDES ZERO
+     individually specific on 10 of 17
+     specificity vs window count: rho +0.31 (p 0.226)
+```
+✅ **[EVIDENCE] THE RATCHET IS DRIVEN BY THE COMMAND, not self-excited.** The CI excludes zero, and
+the positive window-count trend is exactly what an underpowered *real* effect predicts — which is what
+`r1e` hinted at when it was the only well-powered route.
+⚠ **Not universal**: three routes (`r85`, `r95`, `r97`) show *negative* specificity. The claim is
+about the population, not every drive.
+
+### ⭐ WHAT IT CHANGES, AND WHAT IT DOES NOT
+⊕ **V173 works either way.** The assist map amplifies whatever reaches the bar, so attenuating it at
+8.64 Hz reduces the ratchet whether the excitation is the command or the loop itself. **No build
+changes.**
+⊕ What it *does* change is **what a null on the drive would mean**: with the ratchet established as
+command-driven, a null could no longer be explained by "the excitation was absent on that pass" — the
+pass carries command by construction. **It sharpens the pre-registered outcomes rather than altering
+them.**
+⊕ And it retires an open item that was recorded as *“closes with more continuous windows”*. **It did.**
+
 ## ❌ **RING-DOWN DOES NOT TEST THE `P·L` ASSUMPTION EITHER — AND MY FIRST CONTROL WAS VACUOUS**
 The last idea for testing `P·L` without driving: a **time-domain** ring-down, immune to the spectral
 tilt that killed the other estimators, and the one measure the kit's record says *“passed its
@@ -2232,56 +2274,4 @@ UNRESOLVED HOP”* (`gp-0x6b94`'s 4 unchecked readers: `FUN_00036bec`, `FUN_0004
 pumping is real, attenuated to 0.615 by the double 9.6 Hz EMA but amplified by hands-off f′; and V74
 already flew this dose without an adverse report. **It remains the right build to fly — and the
 “worse” branch of the pre-registered tree now has a quantified mechanism, not a hand-wave.**
-
-## ⚠⚠ **V158's NAMED RISK — `gp-0x6bd0` FEEDS *BOTH* AGGREGATORS, AND PATH 2 INVERTS ITS SIGN**
-Found in the golden model's **facade header** (`eps_lkas_chain_model.py`, "KNOWN MODELLING GAPS"),
-which the four modules do not repeat — so a session that reads only `lanes`/`control` never sees it.
-
-> *“`gp-0x6bd0` is called ‘damping’. **True for PATH 1 only.** `FUN_00038148` (Path 2) applies its
-> **OWN extra `pol` multiply**, so with **pol = −1 the SAME cell arrives PUMPING-signed there.** The
-> sign does not transfer between the two aggregators.”*
-
-✅ **[EVIDENCE] byte-confirmed — `gp-0x6bd0` has 5 readers, and two are the two aggregators:**
-```
-   0x3AC78   FUN_0003aa2c   PATH 1 aggregator   -> DAMPS
-   0x38150   FUN_00038148   PATH 2 consumer     -> extra pol multiply => PUMPS at pol = -1
-   0x34726 / 0x347BC  its own writer function     0x1C114  (unattributed)
-```
-✅ **[EVIDENCE] `gp-0x6752` (pol) is −1 on this car** — verified three ways, ★★★★★ in memory.
-=> **V158 raises a term that damps in Path 1 and pumps in Path 2.**
-
-### ⊕ WHY THIS IS A CAVEAT, NOT A CANCELLATION
-- Path 1 is the **primary** torque aggregator; Path 2 is the **disturbance-observer** loop.
-- Path 2's contribution reaches the car through **f′, which is compressed 6.3x when the driver
-  pushes** — the same mechanism that explained V89's and V97's nulls.
-- **V74 already flew this cell's dose** (delivered 50 at the ratchet's operating point, 67.4 % duty
-  at engaged creep, 0 frames at the ceiling) with no adverse report attributable to it.
-- The golden model **prescribed this exact edit knowing the architecture.**
-⚠ But it **cannot be certified**: the model states Path 2's loop gain is unlocated (below), so the
-relative weight of the damping and pumping contributions is **unknown**.
-⭐ **THIS IS THE NAMED MECHANISM FOR THE “WORSE” BRANCH.** The pre-registered decision tree already
-routes *worse → revert to V122*; it now has a **specific predicted cause** rather than a bare
-possibility, which makes the drive strictly more informative.
-
-## ⛔ **CORRECTION TO THE GOLDEN MODEL — PATH 2's “EIGHT FLOAT COEFFICIENTS” ARE NOT AT THOSE ADDRESSES**
-The model says Path 2's loop gain *“lives in EIGHT float coefficients at `tp+0x50d4/0x50d8/0x504c/
-0x5050/0x50bc/0x50d0/0x50d2/0x50d6` — **NEVER BYTE-READ BY ANY SESSION**”*. Read now:
-```
-   tp+0x504C 0xC404C  0.0             tp+0x50D4 0xC40D4  2.2592335e-38
-   tp+0x5050 0xC4050  0.0             tp+0x50D6 0xC40D6  2.8350151e-30
-   tp+0x50BC 0xC40BC  6.7593616e-37   tp+0x50D8 0xC40D8  2.8067167e-40
-   tp+0x50D0 0xC40D0  9.3677923e-39   tp+0x50D2 0xC40D2  1.3885641e-37
-```
-⛔ **Every one is a DENORMAL**, and three of the addresses are **the kit's own known u16 cals**:
-`0xC40BC` = the relay knee (3000), `0xC40D0` = the friction EMA pole (408), `0xC40D2` = K1 (1020).
-**No firmware uses denormals as filter coefficients.** => **the stated addresses are WRONG** —
-consistent with the model's own admission that they were never verified, and with CLAUDE.md's
-*“off-by-0x1000 on tp-relative cals has recurred FIVE times.”*
-⭐ **THE TRAP THIS DEFUSES**: a future session reading those cells as floats gets ≈ 0 and could
-conclude **“Path 2's loop gain is zero, so Path 2 is dead”** — a wrong and consequential inference,
-because Path 2 demonstrably runs (V89/V97 measured f′ compression through it).
-=> **Path 2's loop gain remains UNLOCATED. GATE 2 for Path 2 stays uncertifiable** — now for the
-sharper reason that the coefficients have never actually been found, not merely never read.
-**[OPEN] what would close it**: locate the real coefficient block from `FUN_0003b8f6`'s decompile
-(float loads, not u16), then re-derive the loop gain.
 
