@@ -631,3 +631,48 @@ resolve it. **V138 is the follow-up if he wants a number rather than a verdict.*
 measurement”* are **different questions with different answers**, and this kit has been conflating
 them. Naming both, per build, is more useful than ranking builds on one axis.
 
+## ✅✅✅ **A BETTER ENDPOINT: Q OF THE 15–25 Hz RESONANCE — AND IT MAKES V158 DETECTABLE**
+Testing the prediction's assumption (2) — *is the band resonance-limited?* — answered it and produced
+a better instrument at the same time.
+
+### ✅ THE BAND IS STRONGLY RESONANCE-LIMITED ON EVERY ROUTE
+```
+   route  build   peak Hz   prominence vs 28-40 Hz floor   Q
+   r96    V102     21.09            610.3                 9.00
+   ra4    V104     ~                 ~                    7.25
+   ra6    V106     17.97             66.5                 7.67
+   r1e    V107     15.62             53.3                 6.67
+   r22    V112     20.31             35.5                 6.50
+   r24    V122     21.09             32.2                 4.50
+```
+✅ **[EVIDENCE] assumption (2) HOLDS** — prominence 32–610x above the floor, so amplitude does scale
+with 1/damping there and the V158 prediction's basis is sound.
+✅ **[EVIDENCE] Q has FALLEN 9.00 → 4.50 across the build sequence** ⇒ ζ = 1/(2Q) rose **0.056 →
+0.111, a 2x damping increase** — a direct measurement of the kit's builds adding damping, independent
+of the engaged/manual ratio entirely.
+
+### ⭐ AND Q IS A MUCH BETTER INSTRUMENT THAN THE BAND RATIO
+```
+   Q split-half reproducibility     median 1.20x   p90 1.50x   max 2.00x   (9 routes)
+   band-ratio reproducibility       median 1.72x   p90 2.93x   max 3.60x
+```
+Q is a **SHAPE** parameter, so it is immune to the level shifts that inflate the ratio's noise — the
+same level shifts the acoustic uniformity guard had to be built to catch.
+```
+   V122 reference Q = 4.50
+   V158 predicts Q -> 1.64 .. 2.68   (the x1.68-2.74 damping increase)
+   that is a x1.68-2.74 change against a 1.20x median / 1.50x p90 floor
+   => DETECTABLE, where the band ratio was NOT
+```
+✅ **This converts V158's drive from “likely unresolvable” to “detectable with margin”.** Added to the
+scorer as the PRIMARY instrumented endpoint, with its own split-half reproducibility printed per drive
+and a prominence guard (Q is not reported when prominence < 3).
+
+### ⚠ ONE HONEST WRINKLE
+On r24 the **pooled** Q is **4.50** while its two halves give **6.00 and 6.75** — pooling more windows
+shifts the half-power points, so the pooled estimate is not the average of its halves. The comparison
+stays valid because **both sides use the same procedure**, but it means the split-half figure may
+**understate** the pooled estimate's true uncertainty. Recorded rather than smoothed over.
+⊕ The one-sided logic is unchanged and now sharper: **Q RISING above 4.50 falsifies the damping
+account** and points at the Path-2 pumping branch, whose build (V167) already exists.
+

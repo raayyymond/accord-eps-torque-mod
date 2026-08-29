@@ -4,6 +4,44 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **RETRACTION: THE COULOMB TERM IS NOT A RELAY. V122 WIDENED THE RAMP BY THE SAME 5x.**
+I claimed `0xC40D2` at 10x Honda makes a **relay** injecting a **1.99x|model| STEP** at every velocity
+reversal, ~16 times a second. **Decompiling `FUN_0003b8f6` shows that is WRONG.** The term is a
+**SATURATED RAMP**, not a sign function:
+```
+   iVar20   = frame_conv * motor_rate * 12
+   fVar13   = clamp( iVar20 / cal[0xC40BC], +-1 )         <- a RAMP, saturating at cal/12 counts
+   friction = fVar13 * ( |model|*K1/1024 + K0/1024 )       K1 = 0xC40D2, K0 = 0xC4080
+```
+**And V122 raised the ramp width by exactly the same factor it raised K1:**
+```
+   config            K1     ramp width      saturated amp        SLOPE through zero
+   Honda            102    +-50 counts    0.0996 x |model|        0.00199 / count
+   FLYING (V122)   1020   +-250 counts    0.996  x |model|        0.00398 / count
+   V177 (built)     102   +-250 counts    0.0996 x |model|        0.000398 / count
+```
+⇒ **there is no step** — the transition spans ±250 rate counts. ⊕ And **`K0` = 0 (VIRGIN)**, so
+friction → 0 as |model| → 0, which removes the small-signal step entirely. **My "V80 relay in another
+lane" framing was overstated and is withdrawn.**
+
+### ✅ WHAT SURVIVES — AND V177 IS STILL THE RIGHT BUILD, FOR A DIFFERENT REASON
+- the **saturated amplitude is genuinely 10x Honda's**, and
+- the **slope through zero is 2x Honda's**
+⇒ a real, oversized, velocity-dependent term sitting in the assist path, never tested above 204.
+✅ **V177 as built is the GENTLEST of the three configurations**: Honda's amplitude at **one fifth of
+Honda's slope**, because it reverts K1 while leaving V122's wider ramp in place. For a symptom driven
+by rapid assist changes near velocity reversals, gentler is the right direction — so the build stands
+and stays fly-first; only my stated mechanism was wrong.
+🛑 **DO NOT also revert `0xC40BC` to 600.** That would make the zero crossing **5x sharper** and
+undo the one mitigation V122 got right. It is asserted untouched in V177.
+➕ **STILL OPEN: `0xC40DC` (accel EMA alpha), which V122 moved 22 → 8** — a slower filter on the
+acceleration feeding `gp-0x6b26`. That is a **PHASE** change on the inertia term; direction not
+established. Deliberately excluded from V177 to keep it single-cell.
+⊕ **METHOD NOTE, worth keeping**: I found the oversized cell by re-reading the kit's own non-stock
+delta, then **immediately overstated its mechanism from the cell value alone**. The decompile settled
+it in one call. **Read the code before naming the mechanism** — the value tells you a cell moved, not
+what moving it does.
+
 ## 🛑🛑 **WE HAVE BEEN DRIVING A RELAY AT 10x HONDA: `0xC40D2` K1 — V177 REVERTS IT, AND IS THE NEW FLY-FIRST**
 **Found by re-reading the kit's own non-stock delta, not by new tracing.** `0xC40D2` is K1, the gain on
 the modelled Coulomb friction in the plant model (`FUN_0003b8f6`):
@@ -2148,49 +2186,4 @@ at 4x gain with otherwise V122-like cals, or a deliberate single-variable gain b
 operator has already ruled out on other grounds.
 ⊕ It does **not** change the recommendation: the gain stays frozen at 6x, and **nothing here suggests
 raising it.** If anything it strengthens the existing rule against 8x by supplying the missing why.
-
-## ✅✅✅ **A BETTER ENDPOINT: Q OF THE 15–25 Hz RESONANCE — AND IT MAKES V158 DETECTABLE**
-Testing the prediction's assumption (2) — *is the band resonance-limited?* — answered it and produced
-a better instrument at the same time.
-
-### ✅ THE BAND IS STRONGLY RESONANCE-LIMITED ON EVERY ROUTE
-```
-   route  build   peak Hz   prominence vs 28-40 Hz floor   Q
-   r96    V102     21.09            610.3                 9.00
-   ra4    V104     ~                 ~                    7.25
-   ra6    V106     17.97             66.5                 7.67
-   r1e    V107     15.62             53.3                 6.67
-   r22    V112     20.31             35.5                 6.50
-   r24    V122     21.09             32.2                 4.50
-```
-✅ **[EVIDENCE] assumption (2) HOLDS** — prominence 32–610x above the floor, so amplitude does scale
-with 1/damping there and the V158 prediction's basis is sound.
-✅ **[EVIDENCE] Q has FALLEN 9.00 → 4.50 across the build sequence** ⇒ ζ = 1/(2Q) rose **0.056 →
-0.111, a 2x damping increase** — a direct measurement of the kit's builds adding damping, independent
-of the engaged/manual ratio entirely.
-
-### ⭐ AND Q IS A MUCH BETTER INSTRUMENT THAN THE BAND RATIO
-```
-   Q split-half reproducibility     median 1.20x   p90 1.50x   max 2.00x   (9 routes)
-   band-ratio reproducibility       median 1.72x   p90 2.93x   max 3.60x
-```
-Q is a **SHAPE** parameter, so it is immune to the level shifts that inflate the ratio's noise — the
-same level shifts the acoustic uniformity guard had to be built to catch.
-```
-   V122 reference Q = 4.50
-   V158 predicts Q -> 1.64 .. 2.68   (the x1.68-2.74 damping increase)
-   that is a x1.68-2.74 change against a 1.20x median / 1.50x p90 floor
-   => DETECTABLE, where the band ratio was NOT
-```
-✅ **This converts V158's drive from “likely unresolvable” to “detectable with margin”.** Added to the
-scorer as the PRIMARY instrumented endpoint, with its own split-half reproducibility printed per drive
-and a prominence guard (Q is not reported when prominence < 3).
-
-### ⚠ ONE HONEST WRINKLE
-On r24 the **pooled** Q is **4.50** while its two halves give **6.00 and 6.75** — pooling more windows
-shifts the half-power points, so the pooled estimate is not the average of its halves. The comparison
-stays valid because **both sides use the same procedure**, but it means the split-half figure may
-**understate** the pooled estimate's true uncertainty. Recorded rather than smoothed over.
-⊕ The one-sided logic is unchanged and now sharper: **Q RISING above 4.50 falsifies the damping
-account** and points at the Path-2 pumping branch, whose build (V167) already exists.
 

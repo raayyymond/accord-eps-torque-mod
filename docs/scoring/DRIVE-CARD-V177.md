@@ -13,33 +13,31 @@ file   39990-TVA,A160-V177-V175BASE-K1.COULOMB.REVERT.HONDA.102-0x13000-0x100000
 
 ---
 
-## WHY THIS ONE — WE HAVE BEEN DRIVING A RELAY
+## WHY THIS ONE — A VELOCITY-DEPENDENT ASSIST TERM AT 10× HONDA
 
-`0xC40D2` (K1) scales the modelled Coulomb friction, and that term is a **sign function of motor
-velocity**:
+`0xC40D2` (K1) scales the modelled Coulomb friction. That term is a **saturated ramp** in motor
+velocity:
 
 ```
-friction = |model| · sign(motor rate) · K1/1024
-⇒ every velocity reversal STEPS it by 2·|model|·K1/1024
+ramp     = clamp( motor_rate × 12 / 0xC40BC , ±1 )
+friction = ramp × ( |model|·K1/1024 + K0/1024 )        K0 = 0 on every build
 
-   Honda   K1 =  102  →  0.199 × |model|
-   V89     K1 =  204  →  0.398 × |model|      (flew, "delivered but small")
-   flying  K1 = 1020  →  1.992 × |model|      ← what you have been driving since V122
+  config            K1     ramp width    saturated amp      slope through zero
+  Honda            102    ±50 counts    0.0996×|model|      0.00199 / count
+  FLYING (V122)   1020   ±250 counts    0.996 ×|model|      0.00398 / count
+  V177 (this)      102   ±250 counts    0.0996×|model|      0.000398 / count
 ```
 
-At an 8 Hz ratchet the motor reverses **~16 times a second**, so a step of about **2× the model
-value** is injected 16 times a second, **in sync with the oscillation**. That is a **relay** — the same
-failure mode as V80, which produced "the worst grinding ever" in a different lane.
+You have been driving a term whose **saturated amplitude is 10× Honda's** and whose **slope through
+zero is 2× Honda's**, sitting directly in the assist path. It has never been tested above 204.
 
-🛑 **V89's own docstring pre-registered this** — *"larger K1 = a larger step at each reversal,
-notchiness on turn-in… transient, unmeasured."* **V122 then took it to five times that value and it
-has still never been tested.** V177 puts it back to Honda's 102.
+✅ **V177 gives Honda's amplitude at one fifth of Honda's slope** — the gentlest of the three
+configurations — because it reverts K1 while keeping V122's wider ramp.
 
-⊕ A relay's gain **does not shrink with amplitude**, which is exactly why none of my linear
-transfer-function work would ever have found it. It also means it can sustain a mode that the linear
-analysis says should already be damped.
-
----
+🛑 **Correction to an earlier draft of this card.** I described this as a *relay* injecting a
+1.99×|model| **step** ~16 times a second. That was **wrong**: V122 widened the ramp by the same 5× it
+raised K1, so the transition spans ±250 rate counts and there is no step. `K0` is also 0, so friction
+→ 0 as |model| → 0. The build is unchanged and still right; only my stated mechanism was overstated.
 
 ## THE DRIVE — STAGED, SAME AS BEFORE
 
