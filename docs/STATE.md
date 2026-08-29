@@ -2,6 +2,29 @@
 
 
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
+## ✅ **GATE 1 PASSES FOR V172 — `gp-0x6b86` HAS EXACTLY ONE CONSUMER, AND IT IS NOT A MONITOR**
+V172 low-passes the assist map's output hard (**21 Hz down 9.6x, 40 Hz down 3.3x**). The aggregator
+consuming it is fine with that — it is a torque contribution. **The risk was a MONITOR**: a
+stuck-signal, rate-of-change or plausibility check that expects the value to keep moving, since
+heavily low-passing a watched signal can look like a frozen sensor. Raw LE byte scan across **both**
+gp encodings (operand-text search undercounts and cannot see register-indirect access at all):
+```
+   gp-0x6b86  4 accesses, ALL accounted for
+     0x35AB6  ld.h        }  inside FUN_000352b4 -- the producer's own lockstep compare
+     0x35AC0  st.h        }  the write
+     0x35ACE  st.h r0        the store-zero (the out-of-range branch)
+     0x3AC7C  ld.h           FUN_0003aa2c, THE AGGREGATOR -- the only consumer outside the producer
+
+   gp-0x4cde  3 accesses -- the lockstep SHADOW, all inside the producer, written in step
+```
+✅ **[EVIDENCE] exactly ONE consumer outside the producer, and it is the torque sum this build
+intends to change.** No monitor, no plausibility checker, no rate-of-change watchdog reads it.
+⇒ **GATE 1 (RAM ownership) PASSES**: heavily filtering this signal cannot trip a fault path,
+because nothing is watching it for liveness.
+⊕ The lockstep shadow is unaffected by a coefficient change — the value is still written to both
+cells in the same instruction pair, so the pairing that trips `FUN_0006b9fa` is preserved.
+⊕ The same clearance covers V168, which changes only how the value is COMPUTED, not who reads it.
+
 ## ⚠ **THE `P·L` ACCOUNT CANNOT BE TESTED FROM THE EXISTING DATA — THE DRIVE IS NECESSARY**
 The account makes one prediction that looked free to check: the assist map's local slope **falls
 steeply along its own curve** (6.16 → 0.86 → 0.01, capped at 2.000 below X≈100), so if that slope is
@@ -2213,60 +2236,4 @@ calibration lever on the band width. What would close it: identify `gp-0x6b44`'s
    0xC63D2                  slow trim, |H| 0.119 at 7.8 Hz               NOT A LEVER
 ```
 => **V160 carries both mechanisms that actually damp, each at or at the model's stated limit.**
-
-## ✅✅✅ **WHICH LANES ACTUALLY DAMP AT 7.8 Hz — AND V158 SIZED IN PHYSICAL UNITS**
-The `gp-0x6ad4` result generalises into a method: **compute each lane's phase at the symptom's own
-frequency before touching it.** Applied to every sensor-fed survivor:
-```
-   lane          structure                              phase @7.8 Hz     verdict
-   gp-0x6ad4     P 99.88 % @0.0 deg (IIR pole = 1024    -1.7 deg          STIFFNESS -- ELIMINATED
-                 => PASS-THROUGH), D 0.02 %                                (structural, u16-bound)
-   gp-0x6b26     -K x ACCELERATION (gp-0x6c2c is a      +180 deg vs pos   ADDED INERTIA -- lowers f0,
-                 first difference of filtered rate)                        does NOT damp
-   gp-0x6bbe     MEASURED on-car: 90 ct/(rad/s),        ~0 deg vs RATE    TRUE VISCOUS DAMPING
-                 phase ~0 vs rate, DC pedestal 73.6 ct
-   gp-0x6bd0     -sign(gp-0x6abe) x f(|rate|, speed)    ~0 deg vs RATE    VISCOUS *if* f is linear
-                 = odd-symmetric in rate                                   in |rate| -- V158's target
-   r24           K x d(torque)/dt                       +90 deg vs torque DERIVATIVE -- damping,
-                 (Lever B 0xC6446)                                         MEASURED by V88
-```
-⭐ **THE TWO LEVERS THIS KIT HAS ARE THE TWO THAT ACTUALLY DAMP** — V158 on `gp-0x6bd0` and Lever B on
-r24. That is not luck; it is why they are the two that measured well.
-
-### ✅ V158 IS GENUINELY VISCOUS, NOT A RELAY — MEASURED FROM ITS OWN BYTES
-```
-   rate_ct   deg/s    dose    dose/rate        a RELAY would fall 6.5x across this span
-      40      8.5      15      0.3750
-      99     21.0      50      0.5051          <- the ratchet's operating point
-     260     55.2     144      0.5538
-```
-=> `dose/rate` is **near-CONSTANT (0.375 -> 0.554) across a 6.5x rate span.** ✅ **[EVIDENCE] GATE 2's
-rate-proportionality requirement is satisfied empirically, not just by the monotone shape.**
-
-### ⭐ V158 SIZED AGAINST AN INDEPENDENTLY MEASURED ON-CAR QUANTITY
-```
-   stock / V122 at creep        0.000 ct/(deg/s)     FactorC Y[0] = 0 kills the product
-   gp-0x6bbe   (measured)       1.571 ct/(deg/s)     = 90 ct/(rad/s), on-car, independent
-   V158 damper (from bytes)     2.733 ct/(deg/s)     local slope at the operating point
-   ------------------------------------------------
-   TOTAL creep viscous          1.571 -> 4.304       = x2.74
-```
-✅ **[EVIDENCE] V158 adds 1.74x the viscous damping the car already had at creep**, expressed in the
-SAME aggregator counts as a quantity measured on the car. This turns "dose 50" from an abstract
-number into a physical damping increment.
-⚠ **[BELIEF] what that buys in ζ.** If the firmware's viscous term were the DOMINANT damping source,
-ζ would scale with it: **0.017–0.036 -> 0.047–0.099**. If mechanical damping dominates, less. The
-split cannot be resolved without a drive, so **treat 2.74x as the firmware-side increment, not a ζ
-prediction.**
-
-### ⚠ ONE OPEN DETAIL — SUB-LINEARITY AT THE VERY BOTTOM
-`dose ∝ (rate − 12)` inside FactorE's first segment, so `dose/rate = k(1 − 12/rate)` → 0 as rate → 12:
-the damping fades in the DEEPEST micro regime. Setting `X[0] = 0` would make it exactly linear through
-the origin — **but the golden model argues X[0] = 12 deliberately** (*"a firmware review flagged X0 < 30
-with Y1 > 300 as the zone it would not fly without telemetry; 12 is the TOP of its own 6–12 band"*).
-**NOT changed.** Recorded as a known, deliberate limitation.
-⊕ Headroom exists but is NOT taken: the build-time rule `(FactorC x FactorE[3])>>10 ≤ 512` reads **388**,
-and FactorE `Y=[0,700,700,927]` would give dose 65. **The model's own requirement is ~43 [30,60] and
-V158's 50 sits inside it** — exceeding a stated requirement without cause is what produced six
-superseded builds this session. **Left at 50.**
 
