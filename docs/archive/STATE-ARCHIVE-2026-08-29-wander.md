@@ -1829,3 +1829,32 @@ and lever · **LKAS authority** → measured, not limiting, no lever needed.
 ⊕ **The next information can only come from the car.** Seven builds, one decision table
 (`docs/scoring/BUILD-INVENTORY.md`), one continuous 15-second engaged creep pass with real curvature.
 
+## 🛑✅ **THE SCORER WAS READING THE WRONG CHANNEL — CAUGHT BY RUNNING THE DRIVE CARD'S OWN COMMAND**
+With the design closed, I ran the pipeline end-to-end exactly as it would run on a fresh route. It
+found a defect that would have produced a **wrong verdict on the drive**.
+```
+   score_band_excess.py  read  z['cs_rate']
+   but cs_rate scores at CHANCE for the ratchet: margin 1.03 vs cs_tq's 7.42
+```
+🛑 **[EVIDENCE] the tool the drive card points at was measuring the ratchet in the one channel
+where it is not present.** Fixed to `cs_tq`, and the numbers now match the analysis they came from:
+```
+   r24 / V122, cs_tq        BEFORE (cs_rate)      AFTER (cs_tq)
+     ratchet 5-12 Hz          4.4x                 33.2x     split-half 1.21x
+     grind  15-25 Hz         23.2x                 14.0x     split-half 3.29x
+```
+⊕ Note the split-halves **swap**: the ratchet is now the *tighter* endpoint (1.21x) and the grind the
+looser (3.29x). That is the right way round — the ratchet is what the channel is good for.
+
+### ✅ AND THE DRIVE CARD'S TWO DISCRIMINATORS ARE NOW IN THE TOOL
+One command gives the whole verdict instead of three hand-run analyses:
+- **grind sub-bands 15–20 vs 20–25 Hz** — V173's filter attenuates the top **2.2x** more (sloped),
+  V158's damper is dose-set and flat ⇒ the SHAPE says which lever produced a reduction.
+  Reference measured on the flying build: **15–20 = 5.8x, 20–25 = 14.0x, ratio 2.39.**
+- **grind vs ratchet by COMMAND level** — the grind saturates above 1500 ct while the ratchet grows,
+  so the two verdicts come from different strata.
+⊕ **Both carry an 8-window guard.** On r24 the strata hold 0 and 4 windows and now print *“TOO FEW to
+report”* rather than the 198x / 1270x the unguarded version emitted — those came from a background
+fit on four windows and were **not credible**. Catching that in the tool is the point of running it
+before the drive rather than after.
+

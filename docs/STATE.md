@@ -4,6 +4,46 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **V194 — MEASURE THE ONE NUMBER THAT DECIDES WHETHER V191/V192/V193 CAN WORK AT ALL**
+V193 opened the detector's **frequency** window. There is a **second** gate, and it has never been
+measured: the counter increments only when **`|gp-0x6c2c|` exceeds T = `cal(0xC620A)` = 12800.**
+⇒ if the ratchet's acceleration never reaches T, then **V191, V192 AND V193 are all inert** and the
+next lever is **T**, for an amplitude reason rather than the frequency one. That fork is worth one
+CAN channel.
+✅ **V194 repoints the 427 probe from `gp-0x6ac0` (V183) onto `gp-0x6c2c`, the detector's own input.**
+```
+   0x55DF2  hw2 of `ld.h disp, gp, r6`   0x9540 (-0x6AC0)  ->  0x93D4 (-0x6C2C)
+   0x55E10  the pack shift               sar 4 (0xA4)      ->  sar 6 (0xA6)
+```
+🛑 **THE SHIFT IS NOT COSMETIC — `gp-0x6ac0` WAS UNSIGNED, `gp-0x6c2c` IS SIGNED.** The packer does
+`andi 0xffff` (zero-extend) then `sar N` then masks to 10 bits, so for a signed source the shift must
+be chosen to make the field carry the sign:
+```
+   sar 6:   positive x -> raw    0 .. 511        negative x -> raw 512 .. 1023
+   decode:  x = (raw < 512 ? raw : raw - 1024) * 64
+   resolution 64 counts   range +-32704   ** T = 12800 lands at raw 200 **
+```
+A smaller shift wraps negatives into the positive range and makes the channel unreadable. **That is
+the trap this build exists to avoid, and it is why the shift moves WITH the source.** Verified by a
+round-trip assertion over ±1000 / ±12800 / ±32704 in the builder.
+✅ **40/40 assertions.** `2adde4ec37be9150b3d501bcd61b7d11a33e49e839c944622474c1d368db0f10`
+⊕ Decoder shipped: **`rlog-tools/probe/decode_v194_detector_input.py <route-tag>`**, which prints the
+percentiles and the verdict directly.
+⊕ Every V193 lever is carried — **this build adds an instrument, it does not remove a fix.**
+
+### ⇒ WHAT ONE SHORT DRIVE NOW SETTLES
+```
+   |x| peaks well past 12800   => amplitude is fine; the detector route is LIVE and V193's window
+                                  fix is the operative change
+   peaks below 12800           => T IS THE BLOCKER. V191/V192/V193 are ALL inert, and the next
+                                  build lowers T (0xC620A) instead
+   peaks near 12800            => marginal; T needs a modest reduction
+```
+➕ This is the design law working as intended: **the probe was sized against its OWN lane's
+reachable output** (±32704 at 64-count resolution, threshold mid-scale at raw 200), not against a
+downstream clamp — and it pairs a magnitude channel with a sign, which is the pattern every probe
+that ever DECIDED something has used.
+
 ## 🛑🛑⭐ **HONDA'S OSCILLATION DETECTOR HAS A FREQUENCY WINDOW, AND THE RATCHET FALLS OUTSIDE IT**
 `FUN_000428d4` is a reversal counter on **`gp-0x6c2c` (the acceleration EMA)**:
 ```c
@@ -2151,33 +2191,4 @@ outside STATE's own retraction text mentions it any more.
 ⊕ **The pattern worth keeping**: the defect was not in the analysis, it was in the *plumbing between
 the analysis and the drive*. Both instances were found by **running the drive card's own command
 verbatim** rather than by reading the code. That check is cheap and it belongs in every close-out.
-
-## 🛑✅ **THE SCORER WAS READING THE WRONG CHANNEL — CAUGHT BY RUNNING THE DRIVE CARD'S OWN COMMAND**
-With the design closed, I ran the pipeline end-to-end exactly as it would run on a fresh route. It
-found a defect that would have produced a **wrong verdict on the drive**.
-```
-   score_band_excess.py  read  z['cs_rate']
-   but cs_rate scores at CHANCE for the ratchet: margin 1.03 vs cs_tq's 7.42
-```
-🛑 **[EVIDENCE] the tool the drive card points at was measuring the ratchet in the one channel
-where it is not present.** Fixed to `cs_tq`, and the numbers now match the analysis they came from:
-```
-   r24 / V122, cs_tq        BEFORE (cs_rate)      AFTER (cs_tq)
-     ratchet 5-12 Hz          4.4x                 33.2x     split-half 1.21x
-     grind  15-25 Hz         23.2x                 14.0x     split-half 3.29x
-```
-⊕ Note the split-halves **swap**: the ratchet is now the *tighter* endpoint (1.21x) and the grind the
-looser (3.29x). That is the right way round — the ratchet is what the channel is good for.
-
-### ✅ AND THE DRIVE CARD'S TWO DISCRIMINATORS ARE NOW IN THE TOOL
-One command gives the whole verdict instead of three hand-run analyses:
-- **grind sub-bands 15–20 vs 20–25 Hz** — V173's filter attenuates the top **2.2x** more (sloped),
-  V158's damper is dose-set and flat ⇒ the SHAPE says which lever produced a reduction.
-  Reference measured on the flying build: **15–20 = 5.8x, 20–25 = 14.0x, ratio 2.39.**
-- **grind vs ratchet by COMMAND level** — the grind saturates above 1500 ct while the ratchet grows,
-  so the two verdicts come from different strata.
-⊕ **Both carry an 8-window guard.** On r24 the strata hold 0 and 4 windows and now print *“TOO FEW to
-report”* rather than the 198x / 1270x the unguarded version emitted — those came from a background
-fit on four windows and were **not credible**. Catching that in the tool is the point of running it
-before the drive rather than after.
 
