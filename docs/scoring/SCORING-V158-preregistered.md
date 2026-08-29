@@ -1,5 +1,24 @@
 # SCORING V158 — pre-registered BEFORE the drive, 2026-08-29
 
+> 🛑 **SUPERSEDED 2026-08-29 — READ `docs/scoring/DRIVE-CARD-V173.md` INSTEAD.**
+>
+> **This document is kept UNEDITED as the record of what was pre-registered at the time.** Several
+> of the endpoints it commits to were withdrawn on evidence later the same day, so **do not score a
+> drive from it**:
+>
+> | figure here | status |
+> |---|---|
+> | 18–22 Hz eng/man ratio **3.88** and its **1.72x / 2.93x / 3.60x** floor | withdrawn — band ratio, confounded by a spectral tilt of 1/f^0.80–2.37 |
+> | **Q = 4.50** of the 15–25 Hz peak, and the **1.64–2.68** prediction | withdrawn — half-power Q is NON-MONOTONE; its null sits *above* the data |
+> | grind reference **23.2x** | measured on `cs_rate`; in `cs_tq` the same route reads **14.0x** |
+> | *"Q RISING above 4.50 falsifies the damping account"* | **retracted** — a rise is also what a *successful* build produces once the peak weakens |
+> | the multi-pass exposure spec | superseded — **ONE continuous 15 s pass**, presence/absence, 11/11 detection |
+>
+> The live endpoint is **slope-corrected excess with a slope-matched null**, in **`cs_tq`**, via
+> `rlog-tools/score/score_band_excess.py`. Current reference (V122, r24): **ratchet 33.2x, grind
+> 14.0x**.
+
+
 🛑 **Written and committed before any V158 flight exists.**
 
 ## 🛑 THE RECOMMENDATION CHANGED, AND A POWER CALCULATION IS WHY

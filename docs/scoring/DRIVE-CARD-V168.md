@@ -61,7 +61,7 @@ episode detected the ratchet in **11 of 11 episodes (100 %)** on the existing co
 | grind 15–25 Hz reads | verdict |
 |---|---|
 | below its null | grind gone. ⚠ margin here is only ~3.5× on the flying build, so a **marginal** grind read is **inconclusive, not negative** |
-| clearly below 23.2 (V122 reference) | V158's damper shape is working |
+| clearly below 14.0 (V122 reference, cs_tq -- the old 23.2 was measured on cs_rate) | V158's damper shape is working |
 
 **There is no uninterpretable branch.**
 
