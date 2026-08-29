@@ -1,5 +1,47 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **SCORE V158 AT 18–22 Hz, NOT 6–9 Hz — THE INSTRUMENT CAN ONLY SEE ONE OF THEM**
+Ran both bands through the null gate on every route with a computable null.
+```
+   route  manEp   6-9 Hz  eng/man         18-22 Hz eng/man          resolves
+   r1e      5     3.19 [ 1.67,   6.84]    57.93 [ 28.82, 111.51]    18-22
+   r22      4     0.57 [ 0.23,   2.45]     7.10 [  1.29,  17.21]    neither
+   r24      5     0.20 [ 0.04,   0.86]     3.88 [  1.60,  10.87]    18-22
+   r78      5     1.17 [ 0.44,   2.07]    11.81 [  3.52,  25.51]    neither
+   r7e      6     2.19 [ 0.69,   5.26]    10.02 [  4.01,  38.80]    18-22
+   r7f      6     1.76 [ 0.35,  19.03]    18.46 [  4.75,  30.64]    18-22
+   r96      5     1.04 [ 0.54,   4.45]   742.19 [291.03,1422.98]    18-22
+   ra4      4     4.83 [ 0.57,  13.59]   327.51 [ 22.53, 655.22]    18-22
+   ra6      7    11.58 [ 3.53,  33.37]    87.17 [ 35.87, 404.97]    BOTH
+   ------------------------------------------------------------------------
+   6-9 Hz   resolved 1/9        18-22 Hz resolved 7/9
+```
+✅ **[EVIDENCE] the 18–22 Hz band is a ~7x more sensitive instrument than 6–9 Hz.**
+✅ **[EVIDENCE] a large, REPLICATED phenomenon**: the engaged/manual ratio at 18–22 Hz is **> 1 on all
+nine routes**, spanning **3.88 to 742** — engagement multiplies that band at creep on every drive
+measured. 6–9 Hz scatters around 1 (0.20–11.58) with **no consistent direction**.
+
+### ⚠ CORRECTION TO MY OWN PRE-REGISTRATION
+I designated 18–22 Hz a *“built-in control that should not move”* because Lever B is unchanged
+V122→V158. **That was wrong.** V158's damper is `-sign(rate) x f(|rate|)` — a **BROADBAND VISCOUS**
+term whose LERP is on rate MAGNITUDE, not on frequency. It opposes motion at **all** frequencies, so
+it should reduce 18–22 Hz as well as 6–9 Hz.
+⇒ **18–22 Hz is an ENDPOINT for V158, not a control** — and it is the only endpoint the instrument
+can actually resolve.
+
+### ✅ THE REVISED SCORING PLAN
+```
+   PRIMARY (instrumented)   18-22 Hz engaged/manual at creep, null-gated   resolves 7/9
+   SECONDARY                 6-9 Hz  -- the symptom's own band, but         resolves 1/9
+                             expect NOT RESOLVED; that is the floor
+   CONTROL                  30-40 Hz, unchanged
+   PRIMARY OVERALL          the operator's report -- unchanged
+```
+⚠ **A caveat that must travel with this**: because Lever B also lives at 18–22 Hz and is unchanged
+between V122 and V158, a move there is attributable to the damper **only because Lever B is
+byte-identical across the pair** — verified. On any future build that touches BOTH, 18–22 Hz stops
+being attributable.
+
 ## 🛑🛑 **POWER ANALYSIS ON REAL DATA — THE 6–9 Hz SCORER RESOLVES 1 ROUTE IN 23**
 Ran the validated scorer over **every cached route** to answer, before the drive, whether the band
 instrument can detect V158 at all.

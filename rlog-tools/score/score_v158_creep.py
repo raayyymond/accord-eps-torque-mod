@@ -183,8 +183,10 @@ def run(tag):
     pr, lr, hr = boot_episodes(e_eps, m_eps, 0)
     pg, lg, hg = boot_episodes(e_eps, m_eps, 1)
     pc, lc, hc = boot_episodes(e_eps, m_eps, 2)
-    print('  6-9 Hz   RATCHET  (primary)  %6.2f [%5.2f, %6.2f]' % (pr, lr, hr))
-    print('  18-22 Hz grind  (secondary)  %6.2f [%5.2f, %6.2f]' % (pg, lg, hg))
+    print('  18-22 Hz grind  (PRIMARY -- resolves 7/9 routes)  %6.2f [%5.2f, %6.2f]'
+          % (pg, lg, hg))
+    print('  6-9 Hz   ratchet (secondary -- resolves 1/9; expect NOT RESOLVED)  %6.2f'
+          ' [%5.2f, %6.2f]' % (pr, lr, hr))
     print('  30-40 Hz CONTROL             %6.2f [%5.2f, %6.2f]' % (pc, lc, hc))
     if not (CTL_GUARD[0] <= pc <= CTL_GUARD[1]):
         print('  🛑 CONTROL GUARD FAILED (%.2f outside [%.1f, %.1f]) -- the contrast is a GLOBAL'
@@ -199,7 +201,7 @@ def run(tag):
     # read 0.41 [0.06, 17.06], a floor 280x wide.  Without this gate the scorer over-claims.
     print()
     print('  SPLIT-HALF NULL on the engaged arm -- the floor this route can actually resolve:')
-    for col, band, pt, cl, ch in ((0, '6-9 Hz  ', pr, lr, hr), (1, '18-22 Hz', pg, lg, hg)):
+    for col, band, pt, cl, ch in ((1, '18-22 Hz', pg, lg, hg), (0, '6-9 Hz  ', pr, lr, hr)):
         if len(e_eps) < 2 * MIN_EPISODES:
             print('     %s  null NOT COMPUTABLE (%d engaged episodes, need >=%d)'
                   % (band, len(e_eps), 2 * MIN_EPISODES))

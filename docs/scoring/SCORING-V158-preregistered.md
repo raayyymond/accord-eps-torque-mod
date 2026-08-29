@@ -128,3 +128,24 @@ Use **`rlog-tools/score/score_v158_creep.py`**. 🛑 **NOT `score_v133_creep.py`
   Reporting both is what makes the next dose choice possible.
 - Damping fades as rate → 12 counts (`dose ∝ rate − 12`), so the very deepest micro regime gets less
   than the table suggests. This is deliberate (the model argues `X[0] = 12`, not lower).
+
+## 🛑 REVISION, 2026-08-29 — THE INSTRUMENTED PRIMARY IS 18-22 Hz, NOT 6-9 Hz
+
+Measured across every cached route with a computable null: **18-22 Hz resolves 7/9, 6-9 Hz resolves
+1/9.** The 18-22 Hz engaged/manual ratio is **>1 on all nine routes (3.88 to 742)** — a large,
+replicated, engagement-caused phenomenon. 6-9 Hz scatters around 1 with no consistent direction.
+
+⚠ **This corrects an error above.** 18-22 Hz was designated a *“built-in control that should not
+move”*. It is not a control: V158's damper is , a **broadband viscous** term
+whose LERP is on rate MAGNITUDE not frequency, so it opposes motion at every frequency and should
+reduce 18-22 Hz as well.
+
+| role | band | expectation |
+|---|---|---|
+| PRIMARY overall | the operator's report | unchanged |
+| PRIMARY instrumented | **18-22 Hz** null-gated | the only band that resolves |
+| secondary | 6-9 Hz | **expect NOT RESOLVED** — that is the measured floor |
+| control | 30-40 Hz | must stay flat |
+
+⚠ Attribution of an 18-22 Hz move to the damper holds **only because Lever B is byte-identical
+across V122/V158** — verified. A future build touching both makes this band unattributable.
