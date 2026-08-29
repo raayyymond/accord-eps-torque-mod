@@ -1,0 +1,79 @@
+# DRIVE CARD — V158
+
+**Flash:** `39990-TVA,A160-V158-V122BASE-DAMPER.GOLDENMODEL.SHAPE-0x13000-0x100000.rwd`
+in `../accord-firmwares/flashing-2020accord/rwd/`.
+**Before flashing:** kill openpilot — `tmux kill-server` on the comma device.
+
+**What changed vs V122:** the base-assist damper now delivers at creep. Stock and every previous
+build deliver **exactly zero** damping below ~35 km/h. Nothing else moved.
+
+---
+
+## The one thing that matters
+
+🛑 **V158 is architecturally inert above ~35 km/h.** A highway drive tests **nothing**.
+The whole result lives in **engaged creep, 2–8 km/h, with the wheel actually moving.**
+
+🛑 **RECORD AUDIO.** Only 5 of ~230 routes have usable creep-engaged audio, and the bus instrument
+has been shown not to track what you hear.
+
+---
+
+## Drive order
+
+**1. Engaged creep — the main event. 5+ minutes.**
+2–8 km/h, LKAS engaged, hands off, with real steering activity — a car park, a slow residential
+loop, anything that makes the wheel work at walking pace. This is the only segment that can produce
+a result.
+
+**2. The same creep, LKAS OFF. 2+ minutes.**
+Same speeds, same surface, hands off where safe. Without this every ratio is uncontrolled — three
+uncontrolled ratios collapsed under controls this session (2.8→1.12, 1.29→0.911, 1.309→0.958).
+
+**3. One slow hard turn, hands off, engaged.**
+The peak-command-oscillation case. Roughly 40–45 km/h through a tight turn.
+
+**4. A few minutes of 15–40 km/h engaged.**
+The band you have previously reported grinding in.
+
+---
+
+## What to tell me afterwards — this is the PRIMARY result
+
+The standing rule is *score bands, let the operator score symptoms*. Three questions, each **vs V122**:
+
+**1. Ratcheting / stuttering at creep** — better, same, or worse? **At what speed?**
+
+**2. Grinding** — better, same, or worse? **At what speed?**
+
+**3. Steering effort at parking speeds** — heavier, same, or lighter?
+⚠ **This one is not optional.** The damper *is* drag. If the ratchet improves but the wheel feels
+heavier when parking, that is the expected trade and I need to hear it — the answer is a lower dose
+(V164 is already built), **not** abandoning the lever.
+
+Rough is fine. "Better but noticeably heavier below 5 km/h" is a complete answer.
+
+---
+
+## What happens next, decided in advance
+
+| what you report | next build | already built? |
+|---|---|---|
+| ratchet better, effort fine | **V160** — adds the r24 increment | ✅ |
+| ratchet better, wheel too heavy | **V164** — dose 50 → 27, halves the drag | ✅ |
+| ratchet unchanged, effort unchanged | **V165** — dose 50 → 65 | ✅ |
+| ratchet worse | **V122** — revert | ✅ |
+| no real creep in the drive | re-drive — the edit is inert above 35 km/h | — |
+
+---
+
+## Predicted effect, committed before the drive
+
+Creep viscous damping goes **0.000 → 2.733 ct/(deg/s)**, on top of a measured 1.571 already present:
+a **×2.74** total increase, and the first non-zero damping this car has ever had at creep.
+
+⚠ **What that buys is genuinely uncertain.** ×2.74 is the *firmware-side* increment. If the
+firmware's viscous term dominates the plant's damping, ζ would go 0.017–0.036 → 0.047–0.099. If
+mechanical damping dominates, less. **The drive is what settles it** — that is the whole point.
+
+Full pre-registration: `docs/scoring/SCORING-V158-preregistered.md`.
