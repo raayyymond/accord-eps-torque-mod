@@ -70,3 +70,38 @@ weighting. Dose is a half, not zero, so there is headroom left if it helps but d
 | grind @21 Hz | 0.189 | 0.127 | 0.127 |
 | added lag @1 Hz | +29 ms | +43 ms | +43 ms |
 | goes below Honda | no | no | **yes** |
+
+---
+
+## V182 — the only build that ADDS damping (strongest)
+
+`0xD77DA` 429→700 and `0xD77EE` 426→700, on a V181 base. Image `1375f42510641e7b…`, 29/29.
+
+Every other build this session **removes** loop gain. This one raises FactorC's below-35 km/h
+fallback so **Honda's own base-assist damper works harder across the whole creep band** — which is
+the textbook fix for a lightly-damped mode, and the one direction nothing else covered.
+
+```
+ch0 = (FactorC x FactorE) >> 10        below 35 km/h, FactorC = Y[0]
+  now   (429 x ~310) >> 10 = 129
+  V182  (700 x ~310) >> 10 = 211        ~1.63x more creep damping, ENGAGED ONLY
+```
+
+**Mode-proofed at build time.** The builder resolves the pointer table at the indices the car actually
+runs (m24 manual / m26,27 engaged), asserts the records match, and asserts **manual stays stock** —
+so parking and manual feel cannot change, and the drive can separate it by the engaged-vs-manual
+contrast already on the card.
+
+**Why it reaches the ratchet:** FactorE is rate-gated, and an 8 Hz oscillation of even 1° makes
+~50 °/s, which already clears its knee. So the damper grows *with* the oscillation and stays small in
+smooth driving — it damps the ratchet without adding steady drag.
+
+⚠ It does add drag while engaged at creep. It is **viscous, not stiction**, so no static friction is
+added, but you will feel more damping in engaged creep. Headroom remains: Y[0] could go to 908.
+
+| | V177 | V181 | **V182** |
+|---|---|---|---|
+| removes loop gain | yes | yes + ω² lane halved | same |
+| **adds damping** | no | no | **yes, 1.63x at creep** |
+| added lag @1 Hz | +29 ms | +43 ms | +43 ms |
+| manual feel changed | no | no | **no (asserted)** |
