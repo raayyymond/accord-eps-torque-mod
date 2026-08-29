@@ -15,7 +15,7 @@ Everything else is V185; every carried lever is asserted.
 | 3 Hz | **−3.84°** — a third of V187's cost |
 | 8.8 Hz | −1.2 dB — helps the ratchet slightly too |
 | 15–23 Hz | **−6.2 to −15.3 dB** — the grind |
-| 55.2 Hz | **+98 dB — Honda's null is given up** |
+| 55.2 Hz | **+98 dB — Honda's null given up, but ONLY WHILE ENGAGED** |
 
 ## Why this and not V187
 One biquad = one notch. The grind is a **closed-loop instability** (9,200× less power with LKAS
@@ -40,6 +40,6 @@ where a notch only reduces excitation — and the ratchet already has its own le
 which this notch also attenuates.
 
 ## ⚠ Stop conditions
-- **A new high note or whine** ⇒ the 55 Hz null we gave up. Stop; reflashing V185 restores it.
+- **A new high note or whine WHILE ENGAGED** ⇒ the 55 Hz null we gave up. (Manual driving is bit-for-bit stock — the section only runs engaged.) Stop; reflashing V185 restores it.
 - Grinding that feels **higher in pitch** ⇒ the notch displaced it rather than removing it.
   That is a real result, not a failure.

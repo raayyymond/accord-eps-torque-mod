@@ -4,6 +4,42 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **THE BIQUAD GATE, VERIFIED END-TO-END — IT *IS* ENGAGEMENT-GATED, AND V103's PATCH HAS THREE SITES, NOT TWO**
+Decompiled stock, then disassembled it, then confirmed the encoding empirically. **Stock:**
+```
+   35A02  ld.bu   0x74fa, tp, r12     ; cal 0xC64FA = 5
+   35A06  ld.bu   -0x671a, gp, r9     ; a runtime byte, NOT engagement
+   35A0C  cmp     0x1, r14            ; the arm cal 0xC649B
+   35A0E  setfe   r8
+   35A12  cmp     r12, r9
+   35A18  setfnc  r6                  ; r6 = (r9 >= r12) unsigned
+   35A22  be 0x35A86                  ; skip the biquad if r8 == 0
+   35A26  be 0x35A86                  ; skip the biquad if r6 == 0
+```
+**Ours (V122 onward) changes THREE sites — `docs/BUILD-LINEAGE.md` names only the first two:**
+```
+   0x35A08  ld.bu displacement  -0x671a -> -0x6806   (disp = sext16(hw2 & 0xFFFE))  the LKAS flag
+   0x35A12  ec 49 cmp r12,r9    ->  e0 49 cmp r0,r9
+   0x35A18  e9 37 setfnc r6     ->  ea 37 setfne r6     <== THE SITE THE LINEAGE OMITS
+```
+⇒ the live gate is **`cal(0xC649B)==1 AND gp-0x6806 != 0`** — **genuinely engagement-gated.**
+
+⚠ **I asserted mid-session that this gate was BROKEN and the biquad always-on.** That was wrong: I
+compared only the two sites the lineage names, and `setfnc` after `cmp r0,r9` *would* be always-true.
+The third site is what makes it correct. 🛑 **The encoding was confirmed EMPIRICALLY, not by hand:**
+scanning the setf family (`hw1 bits4-10 == 1111110`, `hw2 == 0`) found 10 condition nibbles in use,
+and Ghidra decodes nibble **`0xA` at 0x16034 (`ea 57 00 00`) as `setfne`** — the same nibble our build
+carries. **Do not hand-decode a condition nibble; find a real instance and let Ghidra name it.**
+
+### ✅ WHAT THIS BUYS V188/V189 — THE 55 Hz RISK IS HALVED
+Because the section only runs engaged, **Honda's 55.226 Hz null is given up ONLY WHILE LKAS IS
+ENGAGED. Manual driving is bit-for-bit stock**, notch and all. So the one unquantifiable risk on the
+notch builds is confined to engaged driving, where the operator is already attentive and where he
+stops instantly.
+⊕ It also confirms the earlier closure: with every mode-indexed table now equal 24-vs-26, the two
+things that remain engaged-only are **the LKAS command** and **this biquad** — which on V189 is the
+grind notch.
+
 ## ✅✅ **THE ENGAGED/MANUAL ASYMMETRY SPACE IS NOW EXHAUSTED — and that pins what each symptom rests on**
 🛑 **CORRECTION to the previous section: MODE 27 IS UNREACHABLE, so V189's relay revert is INERT.**
 V73's probe settled this over **104,061 frames**: the car is row 11 `TVCA4`, using **e012 = 24
@@ -2149,39 +2185,4 @@ settle**, and both rest on the same `P·L` assumption that a single pass tests. 
 only one can fly at a time — **more builds now would be speculation, not progress.**
 ⊕ Consolidated into `docs/scoring/BUILD-INVENTORY.md`: the decision table, the hashes, and what each
 outcome licenses.
-
-## 🚩 **FLIGHT ORDER REVISED — V172 FIRST. MY “130 ms LAG” WAS THE WRONG METRIC.**
-I recommended V168 first on the grounds that V172 added *“~130 ms”* of lag. **That figure was the
-STEP SETTLING TIME, which is not what a driver feels** — settling is dominated by the slowest pole's
-tail regardless of whether any signal energy is there. The right metric is **group delay in the band
-the driver actually steers in**:
-```
-   freq       FLYING     V172       ADDED LAG
-   0.5 Hz     3.8 ms     33.9 ms    +30.1 ms
-   1   Hz     3.8 ms     32.9 ms    +29.1 ms
-   3   Hz     3.8 ms     25.1 ms    +21.4 ms
-   5   Hz     3.8 ms     17.3 ms    +13.5 ms
-   8.64 Hz    3.9 ms      9.3 ms     +5.4 ms
-```
-✅ **[EVIDENCE] the real added lag is +30 ms, not +130 ms**, and it FALLS with frequency. 30 ms is at
-the low end of what is usually reported as noticeable in steering feel.
-⇒ **V172's risk is materially lower than I stated, and the recommendation changes.**
-
-### ⭐ WHY V172 NOW GOES FIRST
-```
-             predicted ratchet   also grind?   what it costs
-   V168      3.4x                no            heavier NEAR CENTRE, uniformly, always
-   V172      6.2x                9.6x          +30 ms group delay; 3-5 Hz content down 15-32 %
-```
-✅ **The operator's standing constraint is explicitly about apparent MASS AND FRICTION** — *“low
-apparent steering mass and friction to LKAS”*. **V168 raises exactly that, uniformly. V172 leaves it
-untouched** (DC gain 1.0067). ✅ **And V172 is the only lever that also attacks the grind.**
-⇒ on both the operator's own stated axis and on predicted effect, **V172 is the better first flight.**
-⊕ **V168 and its ladder remain cut and ready** as the alternative if V172's lag is the problem.
-
-### ❌ A PROTECTED VARIANT WAS TRIED AND IS DOMINATED
-A real-pole design constrained to hold 3–5 Hz nearer unity gives `poles [0.95916, 0.63265]`, 3 Hz
-gain **0.9322** (vs V172's 0.8501) and 8.64 Hz **0.5716** (vs 0.4441) ⇒ **5.0x damping instead of
-6.2x**. It buys back only **4 ms** of group delay (+26.1 vs +30.1 ms at DC) for a **1.2x loss of
-damping**. **Dominated — not built.**
 

@@ -18,7 +18,7 @@ engaged-only asymmetry this kit created is gone.** The ratchet prediction below 
 | 15–23 Hz (the grind) | **−6.2 to −15.3 dB** |
 | 8.8 Hz (the ratchet) | −1.2 dB |
 | FactorC m27 `Y[0]` | **426 → 0**, back to Honda — ⚠ **INERT: mode 27 is unreachable** |
-| 55.2 Hz | **+98 dB — Honda's null is given up** |
+| 55.2 Hz | **+98 dB — Honda's null given up, but ONLY WHILE ENGAGED** |
 
 ## The drive — two passes, ~30 s
 1. **1a — 15 s engaged creep, 1–24 km/h, driven HOW YOU NORMALLY DO.** Scoreable today.
@@ -39,5 +39,5 @@ engaged-only asymmetry this kit created is gone.** The ratchet prediction below 
 🛑 **Read the ABSOLUTE column, not the control-band ratio.**
 
 ## ⚠ Stop conditions
-- **A new high note or whine** ⇒ the 55 Hz null we gave up. Stop; reflashing V185 restores it.
+- **A new high note or whine WHILE ENGAGED** ⇒ the 55 Hz null we gave up. (Manual driving is bit-for-bit stock — the section only runs engaged.) Stop; reflashing V185 restores it.
 - Grinding **higher in pitch** ⇒ the notch displaced it rather than removing it. A real result.
