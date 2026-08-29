@@ -1986,3 +1986,457 @@ band, which is now confirmed rather than assumed.**
 
 🛑 **Older sections split to `docs/archive/STATE-ARCHIVE-2026-08-29.md` on 2026-08-29** when this file reached 229 KB against the 256 KB cap.
 
+## ✅✅✅ **V140 — A DEADBAND ON A CONFIRMED PUMP: THE ONE LEVER THAT SERVES BOTH OPERATOR GOALS**
+Decompiling the aggregator `FUN_0003aa2c` to find a finer control than V139's power-of-two shift
+turned up something better — **the r24 pump lane already HAS a deadband, and Honda ships it at
+essentially zero.**
+```c
+   uVar13 = (pcVar10 * uVar11) >> 10;              // 0x3AC20  sar 0xa, r8
+   uVar12 = *(ushort *)(tp + 0x71f6);              // cal 0xC61F6  = THE DEADBAND  = 3
+   if      (uVar13 >  uVar12) iVar17 = uVar13 - uVar12;   // SUBTRACT, not clip
+   else if (uVar13 < -uVar12) iVar17 = uVar13 + uVar12;
+   else                       iVar17 = 0;                 // the DEAD ZONE
+   iVar17 = iVar17 * *(char *)(gp - 0x6752);       // x (-1)   <- THE PUMP
+   iVar16 = clamp(iVar17, +-0x2000);               // +-8192 of a +-10240 aggregator total
+```
+🛑 **Honda's value is 3 counts — 0.037 % of the lane clamp.** That is a quantization floor,
+**not a functional dead zone**: any micro-oscillation passes straight into the pump.
+
+### ⭐ WHY THIS SHAPE OF LEVER IS THE ONE THE OPERATOR ASKED FOR
+His standing instruction: *"We want both: low apparent steering mass and friction to LKAS AND no
+ratcheting."* Every other lever in this kit trades one against the other. **A deadband on a pump
+lane does not**: it removes the pump where the signal is **SMALL** — which is what grinding,
+ratcheting and stuttering **ARE** — and leaves **LARGE** steering commands essentially untouched,
+so **LKAS authority does not pay for it.**
+
+### ✅ THREE FACTS THAT MAKE IT SAFE
+1. **IT IS CONTINUOUS.** The deadband **SUBTRACTS rather than clips**, so the transfer curve steps
+   `0 → 0 → 1 → 2` across the boundary with **no discontinuity**. ⇒ **there is no notchiness
+   mechanism**, which is the usual objection to widening a dead zone on a steering path.
+2. **IT REDUCES A CONFIRMED PUMP.** `gp-0x6752 = −1`, verified three ways **including on-car**
+   (V98's b3 rung, duty 0.0000 over 17,983 frames / 5 routes), and the config table that sets it
+   sits at `0x1000–0x15xx`, **below the `0x13000` floor every `.rwd` writes from** ⇒ no build
+   could ever have changed it. Reducing a positive-feedback term cannot destabilise a stable loop.
+3. **THE LARGE-SIGNAL COST IS A 96-COUNT OFFSET on a lane that clamps at 8192 = 1.17 %.**
+
+### ✅ AND THE LANE IS WORTH ATTACKING
+**Each pump lane clamps to ±8192 against a ±10240 aggregator total ⇒ EITHER lane alone can drive
+80 % of the aggregator output.** And **V133 is a fresh, large, on-car demonstration of their
+potency**: it doubled both arms and produced *"massive, violent grinding … continues after
+disengaging."*
+
+### ⚠ THE DOSE IS THE BELIEF, AND THE FAILURE MODE IS NAMED
+```
+   x2 -> 6     x8  -> 24     x32 -> 96   <- V140      x64 -> 192
+   x4 -> 12    x16 -> 48
+```
+The lane input is `gp-0x4f62` clamped to ±5120; with `uVar11 ≈ 1024–2048` the lane runs to
+5120–8192 full scale. **If** the grind is a 1–3 % of full-scale oscillation it lands near
+**50–150 lane counts**, which is what 96 is centred on. ⇒ **[BELIEF] — this kit has NOT measured
+the lane amplitude during a grind episode.**
+⊕ **If V140 is NULL the next rung is 192, not a different lever** — too-small is the expected
+failure mode and it is cheap to step. ⊕ **If the steering feels vague near centre, step back to 48.**
+
+### 🛑 WHAT IT IS NOT
+It does **not** touch the **r26** lane, which has **NO deadband** in this function — it runs
+straight from its multiply to the polarity and the clamp. Adding one there needs an **instruction**
+edit, not a cal, and is a separate decision.
+
+⭐ **RECOMMENDED FIRST** over V137: same one-cal risk profile, but it targets the symptom's
+regime directly instead of shaving 1.34× off one lane's HF content, and it is the only build in the
+queue that cannot cost authority.
+
+
+## 🛑🛑 **CORRECTION TO THE V133 ATTRIBUTION — IT IS **LEVER A**, NOT THE CLAMP**
+The section above blamed the **clamp** (`0xC407E` 511→1023) as the primary cause of V133's
+regression. **The probe data says the clamp was almost certainly INERT.**
+```
+   route  build   427 wire |x|:  p50    p99     max    frac saturated
+   r77    V90                    3.0   67.0   199.0      0.000000
+   r78    V91                    1.0   36.0   139.0      0.000000
+   r24    V122                   4.0  529.7  1023.0      0.000747   (different tap, not b26)
+```
+On **V90 the b26 probe never approached its rail** — peak wire 199 back-solves to **|b26| ≈
+159–318** against a **511** clamp ⇒ **the clamp was never binding**, reproducing the kit's own
+0.0000 % rail-duty measurement. ⇒ **raising it to 1023 changes nothing the term ever reaches.**
+⚠ **Not PROVEN inert on V133**, which ran 8× gain and could drive b26 further than V90 did — but
+it is now the *least* likely of the three suspects, not the most.
+
+### 🛑 THE PRIME SUSPECT IS **LEVER A**, AND IT IS BIGGER THAN THIS SESSION TREATED IT
+`0x3AB76` / `0x3AC20`: **`0xAA` → `0xA9`** is **`sar 10` → `sar 9`** (low 5 bits of the byte) —
+**one shift less = ×2 on the arm** — applied to **BOTH** the r24 and r26 **aggregator** arms.
+⇒ **+6 dB of loop gain in a lane that is NOT LKAS-gated.**
+⭐ **That single edit explains BOTH symptoms**, which neither of the others does:
+```
+   "violent grinding ... CONTINUES AFTER DISENGAGING"   -> aggregator lane, not LKAS-gated  [OK]
+   "grind #2 while DISENGAGED doing a hard turn"        -> its RECORDED signature           [OK]
+   the 8x LKAS gain                                     -> engaged-only, CANNOT do either   [NO]
+   the clamp                                            -> never reached on V90             [NO]
+```
+The **8× gain** then added **33 % more excitation while engaged**, which is why it was worst
+**right after enabling LKAS** — an amplifier of symptom 1, not its cause.
+
+### 🛑 AND THE SUBTLETY THAT MADE THIS LOOK SAFE
+The memory `accord-v62-fixed-the-grinding` says ***"2× ≈ OPTIMUM, not a point on a ramp"*** — and
+V62's fix was real (18–22 Hz down **8–42×**). **But that optimum was measured on V62's OWN base,
+a 4×-gain build.** Transplanting the same ×2 onto a **6×/8×-gain** modern base is **not the same
+edit**: the arm doubles a signal that is itself larger. ⇒ **[EVIDENCE] a lever's measured optimum
+does not travel across a base that changed the magnitude of what the lever multiplies.**
+
+### ✅ WHAT THIS CHANGES, AND WHAT IT DOES NOT
+**Does not change the recommendation.** **V137 = V122 + α2 8→5** holds both Lever A arms at stock,
+the gain at 6× and the clamp at 511 ⇒ **it avoids all three suspects regardless of which is
+guilty.**
+**Does change what to avoid, and what is cheap to try later:**
+```
+   Lever A (BOTH arms)   PRIME SUSPECT.  Do not restore onto a 6x/8x base without re-deriving
+                         the dose.  A future r26-ONLY test is the way back in, NOT both arms.
+   8x LKAS gain          amplifier.  Stays at 6x until grinding is settled.
+   0xC407E clamp         probably INERT -- do NOT spend a build lowering it, and do not record
+                         it as the cause.  Lowering it would likely be a NULL for the same
+                         reason raising it was.
+```
+⭐ **The reusable rule, sharpened:** *before attributing a regression to a cell, check whether the
+quantity that cell bounds ever REACHES it.* One probe-distribution read moved this from the wrong
+suspect to the right one, and would have prevented a wasted clamp-lowering build.
+
+
+## 🛑🛑🛑 **V133 REGRESSED ON-CAR — IT WAS A SIX-VARIABLE BUILD.  V137 IS THE CORRECTION.**
+**Operator report, 2026-08-28:** *"V133 has a massive, violent grinding after enabling LKAS which
+continues after disengaging. I also got some grind #2 while disengaged and doing a hard turn."*
+
+V133 was presented to him as *"every measured-good edit ever flown"* and as a **clean test of V62's
+Lever A**. **IT WAS NOT.** Against **V122** — the last **FLOWN** build, the one he called *"better,
+still ever so slight … in rare moments"* — V133 moved **SIX** cells:
+```
+   cell                                       V122      V133     direction
+   0xC407E  b26 clamp = APPARENT MASS ceiling   511      1023     2.00x MORE headroom
+   0xC4004    its float twin                    0.5       1.0     (matched, correct per se)
+   0x3AB76  Lever A r26 arm                    0xAA      0xA9     restored
+   0x3AC20  Lever A r24 arm                    0xAA      0xA9     restored
+   0xC40DC  alpha2                                8         5     the one GOOD direction
+   0xC640A  oscillation branch Y              -8192     -1966     de-fanged
+   0xC6CD0  LKAS gain                          5346      7128     6x -> 8x, +33 % EXCITATION
+```
+
+### 🛑 EACH SYMPTOM MAPS TO A DIFFERENT EDIT — AND BOTH WERE ALREADY ON RECORD
+**1. "grind #2 while DISENGAGED doing a hard turn" → LEVER A's r24 ARM (`0x3AC20`).**
+The LKAS gain is **engaged-only** and cannot produce a **disengaged** symptom; the r24 arm is in the
+**aggregator** and is **not LKAS-gated**. And the kit's own memory says it outright —
+`accord-v81-carries-neither-grind1-fix`: ***"Lever A = V62's sar×2 (r24 half CAUSED grind #2)"***.
+⇒ **the half with a RECORDED history of causing this exact symptom was restored anyway. The record
+existed and was not checked before the build was recommended.**
+
+**2. "massive violent grinding … CONTINUES AFTER DISENGAGING" → THE CLAMP (`0xC407E`), with the 8×
+gain as a likely amplifier of its onset.**
+`gp-0x6b26 = −K·acceleration` is **APPARENT MASS**. Raising its clamp **511 → 1023 doubles the peak
+apparent mass** the lane can deliver — and **less** apparent mass raises ζ and de-resonates, so this
+moved it the **WRONG WAY**. **`0xC407E` is NOT mode-gated**, which is exactly why disengaging does
+not stop it. The V133 builder sold the edit as *"de-rails without changing linear damping"* — true
+only of the **linear region**, and it ignored that **peaks may now reach twice as far**.
+⊕ The **6× → 8× gain** adds **33 % more excitation** into a ζ 0.017–0.036 / Q 14–29 resonance,
+against the operator's explicit instruction: *"If youre going to increase gain make sure we dont get
+even more oscillation and grinding."*
+
+### ✅ THE α2 MECHANISM IS **REINFORCED**, NOT DAMAGED
+V133 was, accidentally, **a large experiment in the OPPOSITE direction on the same physical
+quantity** — it doubled the ceiling on apparent mass — and it produced a **large worsening**. That
+is exactly what *"apparent mass drives this resonance"* predicts. **α2 lowers the same quantity's
+HF content and is untouched by this result.**
+
+### ✅ V137 — ONE CELL, ON THE BASE HE LIKED
+```
+   BASE = V122 (flown, known-good).   0xC40DC alpha2 8 -> 5.   Nothing else.
+   1 payload byte, 48/48 assertions.
+   image a481ce56e048489617feb5158b4ba3ea78e46dbf26659b604fc51063a9b9bc89
+   rwd   749d7e9c3abec45f7c45efcb642720d286f22b9e926ac1b6fba03fb7170188d8
+```
+Every implicated cell is **asserted BY NAME at its V122 value with the reason attached**: clamp
+**511**, float twin **0.5**, **both** Lever A arms stock **0xAA**, oscillation branch at Honda's
+**−8192**, LKAS gain **5346 (6×)**. Sizing gate: **8→5 = 1.60×**, no larger than the biggest α2 step
+ever flown (**1.75×**, V112→V122).
+
+### 🛑 V133 / V135 / V136 ARE ALL OFF THE FLYABLE LIST
+V135 and V136 are **V133-based** and inherit **the clamp raise, the 8× gain and both Lever A arms**.
+⇒ **neither is flyable as built**; both need **rebasing onto V122** if their levers are still
+wanted. Artifacts renamed `SUPERSEDED-DO-NOT-FLASH-*`.
+
+### ⭐ THE PROCESS FAILURE, RECORDED SO IT IS NOT REPEATED
+**A build presented as a test of one lever must differ from the last FLOWN build by that lever
+alone.** V133 differed by **six cells, two of them large**, and was recommended for flight with a
+scoring plan that **assumed a single-variable comparison**. ⇒ **Diff every candidate against the
+last FLOWN image — not against its own build parent — and enumerate the result before
+recommending a flight.** The build-parent chain hides accumulated drift; the flown image does not.
+
+
+## 🛑🛑🛑 **V134 RETRACTED — IT IS INERT AT CREEP, AND THE WHOLE BASE-ASSIST DAMPER FAMILY IS CLOSED**
+V134 was recommended in this session as *"the only lever that adds damping where there is
+currently NONE at creep"*. **Reading the actual tables refutes it.** The records decode cleanly as
+`n, X[0..3], Y[0..3]`:
+```
+   mode 26   FactorC  X = [2240, 3840, 5120, 8960]   Y = [0, 234, 429, 908]
+                      X[0] = 2240 / 64        =  35.00 km/h
+             FactorE  X = [  60,  400, 2500, 4000]   Y = [0, 140, 539, 927]
+                      X[0] =   60 / 4.7121    =  12.73 deg/s
+   V134's edit: 0xD77DA 0 -> 60 and 0xD77EE 0 -> 60  =  FactorC Y[0], the SPEED dead zone
+```
+⇒ `ch0 = (FactorC(speed) × FactorE(rate)) >> 10`, and **FactorE Y[0] = 0 below 12.73 °/s**, with
+the table clamped to Y[0] beneath X[0]. The operator's symptom is the **micro regime, 1–13 °/s**.
+⇒ **the product is `FactorC × 0 = 0`. V134 does NOTHING where the symptom is.**
+```
+   configuration                        CREEP 8km/h 6d/s   HIGHWAY 105km/h 3d/s
+   STOCK / V133                                        0                      0
+   V134  FactorC Y0=60 only                            0                      0     <- INERT
+   V134 + FactorE Y0=40                                2                     24
+   FactorC Y0=400 + FactorE Y0=100                    39                     61
+   FactorC Y0=300 + FactorE Y0=300                    87                    183
+```
+⊕ **V134's edit bites ONLY at rate > 12.73 °/s AND speed < 35 km/h** — fast low-speed steering,
+i.e. **parking manoeuvres**, not creep micro-steering. It was mis-targeted, not mis-sized.
+
+### 🛑 AND THE FAMILY IS STRUCTURALLY THE WRONG LEVER — IT IS BACKWARDS
+Opening `FactorE Y[0]` is the **only** way into the micro regime. But **FactorE is keyed on RATE
+ALONE**, so every raise also acts at highway low-rate cruise — and because FactorC is far larger up
+there, **every configuration adds MORE damping at HIGHWAY than at CREEP** (24 vs 2 · 61 vs 39 ·
+183 vs 87). ⇒ the lever **preferentially adds apparent friction exactly where it is not wanted**,
+against the operator's standing instruction: *"Increasing mass and friction should not be our
+primary approach … We want both: low apparent steering mass and friction to LKAS AND no
+ratcheting."*
+⇒ **[EVIDENCE] the base-assist damper cannot be aimed at the micro regime without a larger
+highway friction cost. The family is CLOSED for this symptom.** ⊕ This independently re-derives
+the kit's own memory *"the base-assist damper CANNOT reach the micro regime"* — which named the
+two dead zones but was not applied when V134 was designed. **That memory existed and was missed.**
+
+### ✅ WHICH LEAVES α2 (V136) AS THE FOLLOW-UP OF CHOICE
+```
+   V136   alpha2 5 -> 2    REDUCES apparent mass, raises zeta, costs NO friction, works at
+                           18-22 Hz independent of speed.  Both operator goals, same direction.
+   V135   knee 3600        the knee is NULL on the single-variable comparison; fly for the
+                           17 % friction cut only, NOT as a grind fix.
+   V134   RETRACTED        inert at creep; artifacts renamed SUPERSEDED-DO-NOT-FLASH.
+```
+⭐ **V133 STILL FLIES FIRST** — it carries Lever A, the only measured fix on this exact symptom.
+
+### ⭐ THE REUSABLE RULE
+**A lever gated by a PRODUCT of two tables is only as open as its NARROWEST gate.** V134 opened one
+of two and was scored, recommended and nearly flown as though it had opened both. **Before
+proposing a table edit, evaluate the FULL product at the operator's actual operating point** —
+here, 8 km/h and 6 °/s — rather than reasoning about the single table being edited.
+
+
+## ✅✅✅ **V136 BUILT — α2 IS A NEW LEVER WITH REAL HEADROOM, AND IT IS SELECTIVE**
+The single-variable ladder identified **α2** as the creep lever. This build takes the next rung.
+```
+   0xC40DC   alpha2   5 -> 2      ONE payload byte.  Base = V133.   65/65 assertions.
+   image 8cfdeeeb8f16d2ec0956b60b7db51ce55e33f53d4f1623183170d2c472d65b69
+   rwd   818f351cb1ed01aa4b1be389e5a2be8442da0fe3dbc0ebc429896e539085f9c9
+```
+
+### ✅ THE MECHANISM PREDICTS THE MEASUREMENT
+`H(f) = 64·H1(α0=37/128)·(1−z⁻¹)·H2(α2/64)`, fs = 1000 Hz:
+```
+   alpha2  |H| 18-22 Hz   build            alpha2  |H| 18-22 Hz  build
+       22      7.2300     V91 (= HONDA)         5      4.0982    V133
+       14      6.7211     V111 / V112           2      1.8490    V136  <- THIS BUILD
+        8      5.4903     V122                  0      LANE DEAD  never ship
+   predicted alpha2 14->8 : 1.22x        MEASURED endpoint 14->8 : 1.35x
+   predicted V111 vs V112 (same alpha2)  : 1.00x   MEASURED : 1.08x  = the noise floor
+```
+⊕ **The single-path prediction UNDER-shoots** — exactly what a **second path** would do, and there
+is one (below). ⊕ **The physics closes it**: `gp-0x6b26 = −K·acceleration` is **APPARENT MASS**;
+less apparent mass raises ζ = c/(2√(km)) ⇒ **less resonant**. ⭐ **Ladder, transfer function and
+physics all point the same way — and lowering apparent steering mass is what the operator
+explicitly asked for**, so this lever moves **both** his goals the same direction instead of
+trading them.
+
+### 🛑 THE BLAST RADIUS — α2 IS A **SHARED** LEVER, NOT A FILTER COEFFICIENT
+`gp-0x6c2c` **is this EMA's output** (`FUN_00041464`, `gp-0x6c2c = (short)(state >> 9)`), and a
+base-register-filtered scan finds **EIGHT** gp-based accesses:
+```
+   0x36C1A  FUN_00036c12   the gp-0x6b26 inertia lane            <- the intended target
+   0x428FA  0x4292C  0x42968   the hard-reversal DETECTOR cluster (vs cal 0xC620A = 12800),
+                               which drives gp-0x671a -- itself a FOUR-consumer variable
+   0x4184E  0x41AC2   the writers, in FUN_00041464 itself
+   0x71378  FUN_00071272  ld.h -> cvtf.ws -> mulf.s (0x39C90FDB ~ pi/8192)   FLOAT MODEL
+   0x7B1A2  FUN_0007B022  ld.h -> mulf.s, alongside tp+0x623c (0xC523C model-coeff block)
+```
+⇒ the last two are **float plant-model/observer consumers**, not diagnostics.
+✅ **But every one was in force across V91/V111/V112/V122**, which flew α2 at **22/14/14/8** — a
+**2.75× swing** — **fault-free, with monotone symptom improvement.** This rung is **2.50×**, no
+larger, on a path already walked. The builder asserts that bound.
+
+### ✅ TWO GATES THAT HAD TO BE CHECKED, AND BOTH PASS
+**QUANTIZATION** — a truncating EMA has a deadband `|x−y| < 64/α2`, and a stair-stepping inertia
+term is itself a plausible grind mechanism. **The state is 32-BIT and the output is `>>9`**, so at
+α2=2 the deadband is **32 state units = 0.0625 OUTPUT LSB — SUB-LSB.** ⇒ **it cannot stair-step.**
+That was the one way a low α2 could *cause* the symptom; it is closed.
+**SELECTIVITY** — an EMA has **unity DC gain for any α**, so only fast transients are attenuated:
+```
+   pulse ms      a2=5     a2=2    detector loss        vs 18-22 Hz lane attenuation 2.22x
+         10     0.366    0.174       2.10x   SEVERE
+         30     0.686    0.409       1.68x   moderate
+        100     0.935    0.759       1.23x   negligible
+        400     0.995    0.971       1.03x   negligible
+```
+⇒ a **DRIVER** hard reversal is a 100–400 ms event (human bandwidth 2–5 Hz), where the detector
+loses only **1.03–1.23×** while the grind band drops **2.22×**. ⭐ **α2 is SELECTIVE.**
+⊕ The loss that *is* real sits in fast transients, and it is acceptable **only because V133 has
+already de-fanged the branch that detector selects** — `0xC640A` −8192 → −1966 (4.17×).
+
+### 🛑 THIS REVERSES V135's RATIONALE, WHICH IS NOW STALE IN ITS OWN DOCSTRING
+V135 argues *"α2 is nearly INERT at 20 Hz ⇒ V122's improvement came from the KNEE/K1"*. That was
+a delivered-component calculation whose **sign convention was never reconciled**; the
+single-variable on-car comparison says the opposite. **V135's docstring is left as written** (a
+record of what was believed when it was built) — **but its claim is superseded here.**
+
+⭐ **FLIGHT ORDER UNCHANGED: V133 FIRST.** V134/V135/V136 are all V133-based follow-ups; flying
+any of them first confounds the Lever A test that V133 exists to run.
+
+
+## ✅✅ **THE CREEP ENDPOINT IS PRECISE — AND IT PUTS A CHECK ON V135 BEFORE IT FLIES**
+Scored **every cached route** on the within-drive engaged/manual creep endpoint (NW = 128 to
+recover routes the 256-window threshold had dropped), ordered by relay knee:
+```
+   knee   build  route   18-22 eng/man   30-40 control   guard
+    600   V111   r21          4.40           0.54        PASS
+    600   V91    r78         10.59           1.00        PASS
+   1800   V112   r22          4.66           1.43        PASS
+   1800   V112   r23          4.82           0.85        PASS
+   3000   V122   r24          3.38           1.01        PASS
+   (6 of 13 routes FAIL the control guard and are VOID: r77 3.23, r96 6.84, r97 0.50,
+    r1e 8.06, ra6 7.06, ra4 8.32)
+```
+
+### ✅ 1. THE ENDPOINT IS FAR MORE PRECISE THAN ITS BOOTSTRAP CI SUGGESTS
+**V112's two independent routes give 4.66 and 4.82 — agreeing to 3 %**, against bootstrap CIs of
+[2.19, 11.08] and [1.99, 29.44]. ⇒ **the CIs are conservative; the real within-build repeatability
+is ~3 %.** That makes **V133 vs V122's 3.38 genuinely discriminable**, and it is the first
+same-build repeatability check this endpoint has had. ⚠ n = 2, so this is suggestive, not a
+measured null — a third same-build route would settle it.
+
+### 🛑 2. THE KNEE LADDER IS **NOT MONOTONE** ON THIS ENDPOINT — a check on V135
+```
+   knee  600 (V111)  ->  4.40
+   knee 1800 (V112)  ->  4.74   (mean of 4.66, 4.82)   -- WORSE than 600
+   knee 3000 (V122)  ->  3.38
+```
+⇒ **V111 → V112 raised the knee and the endpoint got slightly WORSE.** **V135's premise — that
+more knee is better — is NOT supported here.** ⚠ V122 changed **three** cells (knee, K1, α2), so its
+3.38 is not attributable to the knee alone, and V111/V112 differ in α2 as well (22 vs 14).
+⇒ **V135 is DOWNGRADED from "well-founded" to "a measured-duty-ladder step whose SYMPTOM effect is
+unconfirmed, and mildly contradicted, on the only symptom-adjacent endpoint that survives."**
+It remains harmless and reduces friction 17 %, which the operator wants — but **it should not be
+sold as a grind fix.**
+
+### ✅ 3. THE CONTROL GUARD IS DOING REAL WORK
+It **voids 6 of 13 routes**, including **every V104–V107 route** (controls 7.06–8.32), where engaged
+driving was simply more active than manual. ⇒ without the guard those would have read as enormous
+"engaged excess" results. **This is the same failure that killed the b26 relay hypothesis**, and
+the guard now catches it automatically.
+
+⭐ **Net**: the endpoint is **precise enough to score V133**, and it has already **demoted V135**
+before a drive was spent on it — which is exactly what an endpoint is for.
+
+
+## ✅✅✅ **AN ENDPOINT THAT SURVIVES THE NOISE FLOOR — V133 IS SCOREABLE AFTER ALL**
+Every BETWEEN-ROUTE endpoint died on route variance (band amplitude 8×, f₀ 10 Hz). **But the
+operator's symptom is ENGAGED-ONLY, so both arms can come from ONE drive.** An **ENGAGED-vs-MANUAL
+contrast at matched speed inside a single route** cancels road, tyres, weather, alignment and the
+speed profile — everything that makes routes incomparable.
+```
+   route  build   speed band      18-22 Hz eng/man        30-40 Hz CONTROL
+   r22    V112    5-15 km/h    7.10 [ 2.52, 16.60]      1.12 [0.67, 2.32]   control FLAT
+   r24    V122    6-17 km/h    3.88 [ 1.63, 10.47]      0.61 [0.33, 2.84]   control FLAT
+   r1e    V107    7-19 km/h   57.93 [34.93,102.10]      7.87 [4.99,13.92]   control MOVES -> void
+   ra6    V106    9-12 km/h   87.17 [36.26,346.2 ]     16.81 [7.43,27.03]   control MOVES -> void
+```
+✅ **BAND-SPECIFIC on r22 and r24** (signal moves, control flat) — and it **TRACKS THE OPERATOR**:
+V112 → V122 nearly **halved** the engaged excess (7.10 → 3.88) exactly when he reported grinding
+*"better, still ever so slight … in rare moments"*. **A statistic that moved with his verdict,
+within-drive, is the best endpoint this kit has for the remaining low-speed symptom.**
+⚠ **HONEST LIMIT: those CIs OVERLAP.** The halving is **suggestive, not significant** on its own —
+it is the agreement with his verdict that gives it weight. The endpoint resolves a drop to
+**≤ 1.6** (outside V122's lower bound of 1.63), which is exactly the "gone" band. **More creep
+exposure tightens it.**
+
+### 🛑 A DRIVE-DESIGN REQUIREMENT, NOT A WISH
+Both arms must exist **at the same low speed**:
+- **ENGAGED creep, 2–10 mph, hands off, with real steering activity**;
+- **MANUAL creep over the SAME stretch at the SAME speed.**
+⇒ **drive the same low-speed loop twice, once engaged and once manual.** Without both arms the
+script has nothing to contrast and **says so rather than guessing**.
+
+### ✅ PRE-REGISTERED, BEFORE ANY V133 FLIGHT
+```
+   ENGAGED/MANUAL 18-22 Hz at creep, speed-matched, vs V122's 3.88 [1.63, 10.08]
+      <= 1.6      the engaged excess is GONE      => Lever A reproduced
+      1.6 - 3.0   reduced but present             => partial
+      > 3.0       unchanged vs V122               => Lever A did NOT reproduce
+   MANDATORY GUARD: the 30-40 Hz control must stay in [0.5, 2.0].
+```
+🛑 **The guard is not decoration.** On **r1e and ra6 the control moves WITH the signal** (7.87,
+16.81) ⇒ those contrasts are **global activity differences and carry nothing** — the identical
+failure that killed the b26 relay hypothesis earlier this session. **The script refuses to
+interpret them.**
+✅ Shipped as `rlog-tools/score/score_v133_creep.py`, with **`--validate`** reproducing both
+reference rows so a future edit to the script is caught immediately.
+
+⭐ **Net: the session's measurement wall is breached for the one build that matters.** V133 was
+"unscoreable" only under BETWEEN-route endpoints; **within-drive it is scoreable, band-specific,
+and calibrated against two existing flights.**
+
+
+## 🛑🛑 **BOTH `gp-0x6b26` ENDPOINTS ARE DEAD AT ROUTE-LEVEL POWER — THAT FAMILY IS UNFALSIFIABLE**
+The retraction pointed at **f₀** as the right endpoint for an inertia term, noting the kit's
+record *"f₀ = 21.90 / 23.61 / 24.90 Hz at 1× / 4× / 6× … needs no symptomatic drive"*. **Tested it.**
+```
+   per-route f0 (median peak, 14-34 Hz, prominence >= 4, engaged)
+     4x ->  21.88  20.31  20.31  21.48  24.22  15.23
+     6x ->  16.02  25.78  25.78  21.48  19.92  19.92  19.92  21.29
+
+   6x - 4x  f0 shift = -0.29 Hz  [-2.93, +4.69]      the record predicts +1.29 Hz
+```
+🛑 **Route-to-route f₀ varies by 10 Hz WITHIN one gain group.** The dose effect the record claims
+is **1.29 Hz** — an order of magnitude smaller than the noise. ⊕ **And the memory says so itself**:
+*"it may track COMMAND, not gain"* and ***"pooled, the gain term goes n.s."*** ⇒ **my null
+independently reproduces the kit's own caveat**, and the 21.90/23.61/24.90 ladder is very likely
+confounded.
+
+### 🛑 SO BOTH ENDPOINTS FOR THIS FAMILY ARE GONE
+```
+   endpoint            status at route-level power
+   band AMPLITUDE      DEAD -- same-firmware route variance is 8x (0.047-0.389 within one group)
+   mode FREQUENCY f0   DEAD -- 10 Hz spread within one gain group vs a 1.29 Hz predicted effect
+```
+⇒ **Any `gp-0x6b26` build is effectively UNFALSIFIABLE with current instrumentation.** That covers
+**V129/V130's `Y` changes and V132/V133's ceiling raise** — they are bounded, verified and
+harmless, but **no drive this kit can currently run would score them.**
+⊕ This is the same wall that produced the session's other nulls (the 8× gain-vs-grind test, the
+openpilot-compensation test). **The binding constraint is not lever supply — it is measurement
+power per route.**
+
+### ✅ WHICH SHARPENS THE FLIGHT PLAN RATHER THAN BLOCKING IT
+Two builds have endpoints that **do** survive this bound, because neither is scored on a
+`gp-0x6b26` band statistic:
+```
+   V133  Lever A restored   -> scored by the OPERATOR's symptom + V62's measured 42x at 18-22 Hz
+                               engaged creep, which had adequate power when it was taken
+   V135  knee 3000 -> 3600  -> scored by the MEASURED saturation-duty ladder (3600 reads 0.0000),
+                               a mechanism endpoint with real doses behind it
+```
+⇒ **Fly V133, then V135.** ⚠ **V134 (FactorC Y[0]) sits between**: its mechanism is well-founded
+and its ceiling is checked, but its endpoint is a **band amplitude at creep** — the statistic this
+section just showed is 8×-noisy. **It should be flown only on the operator's report**, not on an
+instrumented endpoint, and that limitation should be stated when it is.
+
+⭐ **THE REUSABLE POINT**: before designing a build, ask **"what endpoint would score it, and does
+that endpoint have the power to see the predicted effect?"** Three build families in this session
+(the `Y` fork, the ceiling raise, the f₀ ladder) fail that question **after** the fact. Asking it
+first would have retired them in minutes.
+
+
+---
+
+🛑 **9 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** on 2026-08-28 to hold this file under
+the 145 KB working target. Superseded detail lives there; it is a record, not an instruction.
+
