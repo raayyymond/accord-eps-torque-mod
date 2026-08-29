@@ -1,5 +1,49 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **THE SWITCHING CENSUS IS COMPLETE — EXACTLY TWO ARE CAL-REMOVABLE, AND BOTH ARE BUILT**
+Every counter-gated selection in the assist chain has now been read at its site:
+```
+   gate        what it selects                    structure              removable?
+   gp-0x671a   the NOTCH gate (0x35BEA)           an ENABLE, not a pair       no
+   gp-0x671a   the b26 Y-branch (0x36C1E)         LERP(speed) vs const        no
+   gp-0x671a   the r26 MULTIPLIER (0x3AA70)       LERP        vs const        no
+   gp-0x671a   the r26 SUPPRESSION flag           cal=1 vs cal=0   BOTH CONST  YES -> V150
+   gp-0x671d   the r24 MULTIPLIER (0x3AB98)       5244 vs 1024     BOTH CONST  YES -> V149
+   gp-0x671b   a float branch at count > 1        not a cal pair              no
+   gp-0x671f   jump-table dispatch, index 0..160  not a switch at all         --
+   gp-0x6700/03/04                                32-bit FLOATS, not counters --
+```
+🛑 **Two corrections to my own sweep**: `gp-0x671f` is a **state index driving a `jr` jump
+table** (`ld.bu` → `addi -0xa1` → `bnc` → `jr 0x377b2`), not a binary selector; and
+**`gp-0x6700`/`03`/`04` are 32-bit FLOATS** — `0x38AEA` is `ld.w -0x6704, gp, r8` followed by
+`trncf.sw`, a float-to-int truncate. **The sweep classified them as counters purely by
+displacement.** Neither belongs to the family.
+
+### ⭐ THE RESULT
+**Exactly TWO switching nonlinearities in this firmware are reachable by a cal edit, and both are
+now built:**
+```
+   V149   0xC6446 : 5244 -> 1024   removes the r24 multiplier's 5.12x switch      2 bytes, 52/52
+   V150   0xC6136 :    0 -> 1      removes the r26 suppression switch, in the      1 byte,  51/51
+                                   pump-SUPPRESSING direction
+```
+Everything else on that list would need an **in-place instruction edit on the branch itself** — the
+class that bricked V24, V27 and V48B — and is **not proposed without a confirmed reason.**
+
+### ⭐ WHAT THIS MEANS FOR THE FLIGHT ORDER
+```
+   1. V149   the LARGER switch (5.12x), 2 bytes, safe by construction
+   2. V150   the second switch, 1 byte, can only REMOVE pump contribution
+   3. V148   MEASURES whether gp-0x671d actually toggles (probe on gp-0x671E high byte)
+   4. V139   halves both pump arms -- the only lever with demonstrated on-car potency
+```
+⊕ **V149 and V150 are independent single-lever builds and must not be stacked before either has
+flown** — each builder asserts the other's cell is held.
+⊕ **If BOTH are null**, the switching hypothesis is retired for every lever a cal can reach, and the
+remaining candidates are the `gp-0x671a` LERP-vs-const switches, which require code edits.
+⭐ **That is a complete, bounded search of the switching class** — the first time this session a
+hypothesis class has been enumerated exhaustively rather than sampled.
+
 ## ⭐⭐ **THE SWITCHING IS EVERYWHERE — BUT `gp-0x671d`'s IS THE ONLY ONE A CAL EDIT CAN REMOVE**
 `gp-0x671a` was checked for the same pattern. **It has it.**
 ```
