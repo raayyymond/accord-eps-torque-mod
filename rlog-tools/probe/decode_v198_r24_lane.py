@@ -101,8 +101,9 @@ def main(tag, confirmed=False):
         print('')
         print('  Compare this 5-12 Hz band power against the same statistic for the inertia term.')
         print('  If the r24 lane dominates, V196 is aimed at a minor exciter and the')
-        print('  rate lanes are where a bigger lever belongs -- and they have a MEASURED on-car
-  dose-response history (V62 sar x2, V88 Lever B), unlike every other candidate.')
+        print('  rate lanes are where a bigger lever belongs -- and unlike every other')
+        print('  candidate they have a MEASURED on-car dose-response history:')
+        print('    V62 sar x2  "18-22 Hz down 8-42x"   V88 Lever B  "grinding FIXED on-car"')
     return 0
 
 

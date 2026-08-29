@@ -43,6 +43,7 @@ PUB = {
     'v194': '2adde4ec37be9150b3d501bcd61b7d11a33e49e839c944622474c1d368db0f10',
     'v195': 'a3ea8683df48c6b3f40e8ba8ac879047da6aec62fedc8d56cf9f1dc83f7b610b',
     'v196': 'f904e43a1f4ccb94e81204dbecd93982049a024b95e48bd1c2c43852a7edec8e',
+    'v198': '9fbbf90b0bed9cb32eb7c3a44a30c2108f361a736ff3f1ebc205f47e5cf3190d',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -91,6 +92,19 @@ if 'v196' in img:
     chk(Y24 == [-9830, -5734, -1966], f'V196 MANUAL inertia Y = {Y24} (untouched)')
     chk(u16(b, 0xC407E) == 511, 'V196 fault interlock frozen at 511')
     chk(b[0xC64DD] == 50, 'V196 detector dwell is Honda 50 (V193s widening NOT carried)')
+if 'v198' in img and 'v196' in img:
+    b = img['v198']
+    d = [a for a in range(0x13000, 0x100000)
+         if b[a] != img['v196'][a] and (a & 0xFFF) < 0xFFC]
+    # 0x9540 -> 0x9526 changes only the LOW byte, so this is 2 bytes, not 3.  An exact-count
+    # expectation must be derived, never assumed -- the same trap as the V181 assertion bug.
+    chk(len(d) == 2, f'V198 differs from V196 by {len(d)} payload bytes (telemetry only)')
+    chk(all(a in (0x55DF2, 0x55DF3, 0x55E10) for a in d),
+        'V198 changes only the probe cells -- no control cell differs from V196')
+    chk(struct.unpack_from('<H', b, 0x55DF2)[0] == 0x9526,
+        'V198 probe reads gp-0x6ada (hw2 0x9526), the r24 rate lane')
+    chk(b[0x55E10] & 0x1F == 5, 'V198 pack shift is sar 5, sized to the +-8192 clamp')
+
 if 'v195' in img and 'v196' in img:
     d = [a for a in range(0x13000, 0x100000)
          if img['v195'][a] != img['v196'][a] and (a & 0xFFF) < 0xFFC]
@@ -98,15 +112,16 @@ if 'v195' in img and 'v196' in img:
 
 # ---- 3. superseded artifacts ------------------------------------------------------------
 print('\n[3] SUPERSEDED ARTIFACTS ARE RENAMED')
-live = [os.path.basename(p) for p in glob.glob(RWD + '/39990*V19[4-6]*.rwd')]
-chk(len(live) == 3, f'exactly 3 flashable builds from this chain ({len(live)})')
-for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193'):
+live = [os.path.basename(p) for p in glob.glob(RWD + '/39990*V19[4-8]*.rwd')]
+chk(len(live) == 4, f'exactly 4 flashable builds from this chain ({len(live)})')
+for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193', 'V197'):
     n = len(glob.glob(RWD + f'/39990*-{v}-*.rwd'))
     if n:
         chk(False, f'{v} is still flashable ({n} unmarked file)')
 chk(not any(glob.glob(RWD + f'/39990*-{v}-*.rwd')
-            for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193')),
-    'no V185-V193 artifact remains unmarked')
+            for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193',
+                      'V197')),
+    'no superseded artifact (V185-V193, V197) remains unmarked')
 
 # ---- 4. file caps -----------------------------------------------------------------------
 print('\n[4] MANDATORY-READ FILES UNDER THE 256 KB CAP')
@@ -127,6 +142,8 @@ for t in ('flashing-2020accord/preflight.py',
           'rlog-tools/score/notch_prediction_excess_only.py',
           'rlog-tools/score/per_route_excess_severity.py',
           'rlog-tools/score/cross_channel_band_excess.py',
+          'rlog-tools/probe/decode_v198_r24_lane.py',
+          'analysis-2020accord/verify/aggregator_exciter_ranking.py',
           'analysis-2020accord/verify/cumulative_delta_vs_stock.py',
           'analysis-2020accord/verify/gen_lineage_address_index.py'):
     if not os.path.exists(t):
