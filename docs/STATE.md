@@ -4,46 +4,54 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
-## 🛑 **RETRACTION: I READ THE WRONG TABLE. THE DAMPER *IS* DEAD AT CREEP — THE MEMORY WAS RIGHT.**
-Last round I claimed [[accord-damper-cannot-reach-micro-regime]] was stale and the damper was live at
-creep (ch0 = 225). **That is WRONG and is withdrawn.** I read cells at `0xD77DA`/`0xD77EE`, which are
-a DIFFERENT table. **The pointer table settles it:**
-```
-   FactorC 0xC9E9C -> 0xCE528 | 0xCE53C | 0xCF528 | 0xCF53C
-   FactorE 0xC9F84 -> 0xCE550 | 0xCE564 | 0xCF550 | 0xCF564
-```
-and those records are **BYTE-IDENTICAL to stock on V181**:
-```
-   FactorC   n=4   X = [1280, 5120, 8960, 12800]   Y = [0, 950, 1356, 1606]
-   FactorE   n=4   X = [  70,  450, 1000,  4000]   Y = [0, 115,  177,  253]
-```
-🛑 **X[0] = 1280 counts = 20.0 km/h and Y[0] = 0** ⇒ FactorC is **ZERO at and below 20 km/h**, and
-only reaches ~63 at 24 km/h. **Creep is 1–24 km/h, so the damper really is dead there.** The memory
-was correct; my correction was the error.
-⊕ **SAME ERROR CLASS AS V178**: a plausible-looking table at the wrong address, believed without
-resolving the pointer. **STANDING RULE: for any per-mode table, resolve the POINTER TABLE first and
-read the record it names. Never pattern-match a nearby array that merely looks right.**
+## ✅🛑 **MODE-PROOFED AND FINAL: THE DAMPER IS LIVE AT CREEP WHEN ENGAGED, DEAD IN MANUAL**
+**This point flipped three times. It is now pinned by disassembly and by the pointer table, and this
+section supersedes every earlier statement about it.**
 
-### ✅ SO THE ADD-DAMPING LEVER IS UNSPENT AND REAL — AND BETTER SHAPED THAN EXPECTED
-Every build this session REMOVES loop gain. This is the only lever that ADDS damping, which is the
-textbook fix for a lightly damped mode.
-⊕ **The binding dead zone is FactorC's SPEED knee, not FactorE's rate knee.** An 8 Hz ratchet of even
-1 deg amplitude generates ~50 deg/s of rate = ~275 counts, well clear of FactorE's X[0] = 70. So
-**FactorE is already live DURING the oscillation**; only FactorC's zero blocks the product.
-⇒ **raising FactorC Y[0] above 0 would let Honda's own damper fight the ratchet, and because FactorE
-is rate-gated it stays small in smooth driving.** Sizing: Y[0] = 200 with FactorE ~253 gives
-ch0 = (200 x 253) >> 10 = 49, i.e. ~5 % of full scale — a modest first dose.
-✅ **And the 35 km/h step is measured harmless**: torque activity in +-0.6 s windows at 272 crossings
-of 35 km/h vs 1069 control crossings at 25/30/40/45 gives a median ratio **1.030** against a
-permutation null of **[0.863, 1.190]** — the knot sits exactly on the smooth speed trend. Discontinuity
-cost at a knot is **not detectable**, so knot edits in this family are low-risk.
+### THE INDEX, PINNED BY DISASSEMBLY
+```
+   0x34502  ld.bu  0x63fd, gp, r13     ; the MODE INDEX byte, at gp+0x63FD
+   0x34506  mov    0xc9e9c, r16        ; FactorC pointer table
+   0x3450c  shl    0x2, r13            ; index * 4
+   0x3450e  add    r16, r13
+   0x34510  ld.w   0x0, r13, ep        ; -> the per-mode record
+```
+`gp+0x63FD` is **the same byte `FUN_00036c12` uses for the `0xCBE74` dereference**, and this car runs
+**mode 24 = MANUAL, modes 26/27 = ENGAGED** ([[accord-car-is-tvca4-mode-24-26]]).
 
-### 🛑 WHY IT IS NOT BUILT YET — THE MODE INDEX IS UNVERIFIED
-The pointer table has **four** records and **I have not established which index is the ENGAGED mode.**
-Writing the wrong index is exactly how **V69/V70 wrote mode-10 values that turned out BYTE-STOCK** and
-produced a dose ladder that never existed ([[accord-car-is-tvca4-mode-24-26]], RULE 7: *mode-proof or
-it is a bet*). **Closing it needs the index selector traced** — the same `(&DAT_000063fd)[gp] * 4`
-style dereference used by `0xCBE74` — and that is the next concrete step, not a guess.
+### THE RECORDS AT THE RIGHT INDICES (V181 vs stock)
+```
+   FactorC 0xC9E9C[m]        X                          Y
+     m24 -> 0xD67E4   [2240,3840,5120,8960]   [  0,234,429,908]   STOCK-IDENTICAL
+     m26 -> 0xD77D0   [2240,3840,5120,8960]   [429,234,429,908]   Y[0] 0 -> 429
+     m27 -> 0xD77E4   [2240,3840,5120,8960]   [426,233,426,875]   Y[0] 0 -> 426
+   FactorE 0xC9F84[m]
+     m24 -> 0xD6820   [  60,400,2500,4000]    [  0,140,539,927]   STOCK-IDENTICAL
+     m26 -> 0xD780C   [  12,400,2500,4000]    [  0,539,539,927]   X[0] 60->12, Y[1] 140->539
+     m27 -> 0xD7820   [  12,400,2500,4000]    [  0,539,539,927]   same
+```
+🛑 **X[0] = 2240 = 35.0 km/h and Y[0] is the BELOW-RANGE FALLBACK** ⇒ below 35 km/h:
+**manual returns 0 (dead), engaged returns 429.** During an 8 Hz ratchet the oscillation itself makes
+~50 deg/s, which clears FactorE's knee, so
+**ch0 = (429 x ~310) >> 10 = ~129 — the damper IS working at creep WHEN ENGAGED.**
+
+### 🛑 THE THREE FLIPS, RECORDED SO THIS STOPS
+1. I read `0xD77DA`/`0xD77EE` directly and said the damper is live — **that was RIGHT.**
+2. I resolved the pointer table at **indices 0..3**, found stock values, and retracted — **that
+   retraction was WRONG.** Indices 0..3 are some other mode set entirely.
+3. Resolving at the **actual mode indices 24/26/27** returns exactly the `0xD77xx` records from (1).
+⊕ **THE LESSON IS NOT "resolve the pointer table" — I did that and still got it wrong. It is:
+RESOLVE IT AT THE MODE INDEX THE CAR ACTUALLY RUNS.** A pointer table read at index 0 is as wrong as
+no pointer table at all. [[accord-car-is-tvca4-mode-24-26]] RULE 7 exists for exactly this.
+
+### ✅ WHAT IS STILL AVAILABLE, NOW MODE-PROOFED
+FactorC m26/m27 `Y[0]` is **429/426 against an in-range maximum of 908**, so creep damping can be
+raised ~2x by moving the fallback. ✅ The knot-step worry is **measured away**: 272 crossings of
+35 km/h vs 1069 controls give a median activity ratio **1.030** against a permutation null of
+**[0.863, 1.190]** — the knot sits exactly on the smooth speed trend, so knot discontinuities in this
+family are not detectable on-car.
+⊕ **Manual (m24) is stock and stays stock** — so this lever is **ENGAGED-ONLY**, which also makes it
+separable on a drive by the same engaged-vs-manual contrast the card already uses.
 
 ## ✅✅ **EVERY BYTE OF THE NON-STOCK DELTA IS NOW ACCOUNTED FOR — THE AUDIT IS COMPLETE**
 Not "I could not find more" — **enumerated, classified, and each class resolved.**
