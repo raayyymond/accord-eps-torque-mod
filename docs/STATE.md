@@ -4,6 +4,36 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **V174 BUILT — THE PRE-REGISTERED SECOND POINT ON THE FRONTIER. V173 STILL FLIES FIRST.**
+Cut so that the verdict *"better, but the ratcheting is still there"* costs **no build delay**.
+🛑 **V174 IS NOT AN ALTERNATIVE TO V173 AND MUST NOT BE FLOWN FIRST.** It is the *expensive* point
+on the same curve; flying it first throws away the ability to tell which point the car needed.
+```
+   ONE knob:  slow pole 0.970 -> 0.980   (C_B0 byte-identical, Honda's 55.23 Hz notch KEPT)
+     0xC60A8  C_A8  -1.53719997 -> -1.45500004    raw BFBA3D71
+     0xC60AC  C_AC  +0.63462001 -> +0.46549999    raw 3EEE5604
+     0xC60B4  C_B4  +0.81730998 -> +0.08808687    raw 3DB466E4   (solved for unity DC)
+
+                 flying    V174    ratio        V173 for comparison
+     3.00 Hz     0.9975   0.7288   0.731x        0.8476
+     8.64 Hz     0.9789   0.3393   0.347x        0.4761   RATCHET  (2.9x vs V173's 2.1x)
+    21.00 Hz     0.8659   0.1275   0.147x        0.1894   GRIND    (6.8x vs V173's 4.6x)
+    55.23 Hz     0.000128 0.000009               0.000013 Honda's notch, KEPT and deeper
+```
+✅ **27/27 assertions · 12 payload bytes · CRC chain 50/50 · readback byte-identical ·
+`[0xC5000,0xC5FFC)` untouched.** Base **V158** (`42078806f5582903…`), so it carries V158's damper.
+image `c3d6776cc72d4657…` · rwd `5e4ba53db14442cb…` · builder
+`analysis-2020accord/builds/v108_plus/build_v174_tva.py`.
+✅ **GATE 2 magnitude PASS: max |H| = 0.9880 to Nyquist** ⇒ can only REMOVE loop gain.
+✅ **GATE 1 as V173**: `gp-0x6b86` has exactly one consumer outside its producer, no monitor.
+⚠ **THE HONEST COST: +42.8 ms of group delay at 1 Hz** (V173 spends +29.1). The operator feels that
+as **steering weight**, which is the thing he has explicitly said must not be the price of the fix —
+so this build is **his call on a lag verdict**, not a default.
+🛑 **DO NOT CUT PAST `p_slow` = 0.985 WITHOUT AN OPERATOR LAG VERDICT IN HAND.** Beyond there the
+added lag exceeds anything this kit has ever shipped.
+⚠ **The coefficients are RE-DERIVED FROM THE FORMULA inside the builder and asserted against the
+pinned raw words** — a 6-dp decimal does not round-trip a float32; see [[feedback-float-spec-must-be-the-formula]].
+
 ## ✅ **100/12 Hz EXCLUDED · THE MODE GENUINELY WANDERS ±0.71 Hz · AND TWO OF MY OWN CLAIMS RETRACTED**
 🛑 **RETRACTION 1 — I ran the assist section at FS=100 Hz. IT RUNS AT 1 kHz.** Verified against the
 lineage's own three stock response points (notch 55.23 Hz, −1.25 dB @21, −3.01 dB @30, −0.02 dB @3):
@@ -27,11 +57,19 @@ image directly: `add 1,rX` paired with `cmp N,rX` gives N=12 only **4** sites vs
 N=10, and the N=12/13/14 hits sit at regular 0x3E strides — **unrolled loop trip counts, not dividers.**
 
 ### ⚠ THE WANDER IS ITSELF A DESIGN CONSTRAINT — IT KILLS EVERY NARROW LEVER
-A mode at 8.17 Hz +- 0.71 Hz cannot be attacked with a **unit-circle zero**: the numerator
-`z^2 + C_B0*z + 1` forces zeros **onto** the circle (product of roots = 1), so the notch is infinitely
-deep and **infinitely narrow**. Re-centred on 8.17 Hz it gives **−308 dB at the centre but −0.42 dB
-WORST CASE across 6.5–11 Hz — i.e. nothing** — and destroys Honda's 55 Hz null. ⊕ This is an
-**independent second argument** for what V88 already concluded from the wire (*"no notch, no phase lever
+🛑 **RETRACTION 3 (same FS=100 root cause): I said a re-centred notch dies because it is too
+NARROW for a wandering mode, −0.42 dB worst case. WRONG on both the number and the reason.**
+At the true 1 kHz it is relatively far wider and DOES attenuate the wander core — −15.4 dB at −1 sd,
+−14.6 dB at +1 sd. **It dies on GATE 2 MAGNITUDE instead, catastrophically.** `C_B4` is pinned by
+`C_B4 = (1+C_A8+C_AC)/(2+C_B0)` and `2+C_B0 = 2−2cosθ → 0` as the notch moves toward DC:
+```
+   notch @ 8.17 Hz, stock poles -> C_B4 = 36.98  (stock 0.8173, x45)
+   max |H| absolute = 46.91      GATE 2 needs <= ~1   -> FAILS BY 47x
+   GRIND 21 Hz  +16.33 dB (6.5x AMPLIFIED)    Honda's 55 Hz null  +108 dB (10^5 x)
+```
+⇒ a re-centred notch **amplifies the grind it is meant to help** and destroys Honda's null. This is
+exactly the reason V173's own docstring already gives (`C_B4 ~ 1/f²`), reached independently from the
+image bytes. ⊕ It is a second, independent argument for what V88 concluded from the wire (*"no notch, no phase lever
 exists at 7.79 Hz specifically"*), and it re-confirms the standing lineage rule
 🛑 **"THE NOTCH LEVER IS SPENT — do not re-propose a re-centred `0xC60A8` biquad."** V105 flew a
 25.5 Hz notch and failed; `docs/review/GATE2-2026-08-20-notch-sign.md` refused re-centring at 6–9 Hz.
@@ -2220,69 +2258,4 @@ extract time rather than leaving it to be discovered after the drive.
 replaced it — and my replacement then over-claimed in a different way that only running it on **real
 data** exposed. **A new instrument is not trustworthy because it fixed the old one's bug.** Run it on
 a route whose answer you already know.
-
-## ⛔✅ **THE PRE-REGISTERED SCORER HAD A WINDOW BOOTSTRAP — FIXED BEFORE THE DRIVE, NOT AFTER**
-The V158 pre-registration told the operator to reuse `score_v133_creep.py`. Its contrast, control
-guard and refusal logic are sound. **Its bootstrap violates this kit's own standing rule.**
-```
-   def boot(e, m, i, k=8000, seed=0):
-       d = [np.median(rng.choice(e[:, i], len(e))) / ... for _ in range(k)]
-```
-`rng.choice(e[:, i], len(e))` resamples **INDIVIDUAL WINDOWS**. Windows overlap by `NW//2` and come
-from a handful of contiguous stretches, so they are strongly correlated and nothing like `len(e)`
-independent draws. The rule is explicit: *“Bootstrap over EPISODES, not windows — window bootstraps
-manufacture significance.”*
-
-### ✅ QUANTIFIED ON SYNTHETIC DATA — 6 EPISODES x 12 WINDOWS, TWO SAME-DISTRIBUTION ARMS
-```
-   EPISODE bootstrap   1.06 [0.23, 2.61]     spans 1.0
-   WINDOW  bootstrap   1.06 [0.58, 1.48]     spans 1.0
-   => the window CI is 0.38x as wide  ==  2.6x TOO CONFIDENT
-```
-Both span 1.0 here, but **an effect near the boundary would be declared significant when it is not**,
-and a real creep drive has more windows per episode than this synthetic, so the error is larger.
-
-### ✅ `rlog-tools/score/score_v158_creep.py` — THE CORRECTED SCORER
-- **EPISODE bootstrap**: windows clustered into maximal runs of consecutive same-arm windows;
-  resampling is over EPISODES, pooling their windows. Unit-tested: 3 episodes from runs
-  0-9 / 30-37 / 60-65, sizes [10, 8, 6].
-- **PRIMARY band 6–9 Hz** — V158 is a damper build and the ratchet is 6–9 Hz. 18–22 Hz kept as a
-  secondary, since Lever B is unchanged V122→V158 and **should not move** (a built-in control).
-- **30–40 Hz control guard** retained, and it now **returns without printing a verdict** if it fails.
-- **Per-window speed census** printed, with a median-gap warning — the guard against a wheel order.
-- **`--null` self-test**: split-halves ONE arm against itself. Same firmware, same arm ⇒ the CI must
-  span 1.0. If it does not, the pipeline manufactures significance and nothing may be believed.
-- **Refuses below 4 episodes per arm**, and says *more windows will not help — you need more separate
-  engaged and manual STRETCHES*. That is a **drive-design instruction**, not a statistic.
-⊕ Uses only `cc_lat` / `cs_v` / `cs_rate`, so it avoids the kit-wide `raw14` off-by-one cache trap.
-
-⭐ **THE POINT**: the pre-registration is what makes a drive decisive, so **the tooling it names must
-be audited BEFORE the drive, not after the numbers are in.** Auditing it afterwards is how a null
-becomes a result.
-
-## ✅ **THE CROSS-CHECK AUDIT IS COMPLETE — EVERY LOAD-BEARING NUMBER TRACED TO ITS SOURCE**
-The audit that caught my P/D swap was run over the rest of this session's load-bearing figures.
-Everything else traces to the authoritative source.
-```
-   figure                        used for                     source, verified verbatim
-   6-9 Hz 0.859                  V160 power calculation       eps_chain_lanes.py, V88-vs-V87
-   9-12 Hz 0.604 [0.465,0.943]   "                            same line
-   15-22 Hz 0.549 [0.407,0.844]  "                            same line
-   0.5-3 Hz 1.192 = NULL         "LKAS command untouched"     same block
-   [0.18, 5.51] split-half       6-9 Hz detection floor       route-71 null, same file
-   gp-0x6ac0 = 99 [94,113]       every dose in the ladder     model's MEASURED operating point
-   ceiling 512                   the bang-bang margin         0xC77A0 + 0xC6158, byte-read
-   dose 50 at 99 counts          V158's design target         model AND V74's flown measurement
-   f' 2.174 / 0.346             Path-2 hands-off weighting   memory, on-car
-```
-✅ **Only ONE fresh derivation disagreed with the record, and the record was right** (the P/D swap).
-Everything else reproduces. ⭐ **The pattern worth keeping: a fresh derivation is a HYPOTHESIS until
-it is checked against the standing record.** One in nine of mine was wrong, and it was the one I had
-already written into a handoff.
-
-### ✅ WHAT REMAINS, STATED WITHOUT HEDGING
-The calibration search is **complete**: every aggregator lane has a phase or structural verdict, every
-pointer-table family is attributed, and all three complaints have a firmware answer or a reason there
-is none. Six images cover every outcome of one drive, all verified cell-by-cell.
-**The only remaining input is the drive.** Nothing further can be learned from the bytes.
 

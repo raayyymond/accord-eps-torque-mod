@@ -96,3 +96,32 @@ account is wrong somewhere and that gap names where.
 
 **One continuous 15-second engaged creep pass, with real curvature, answers all of it.**
 Score with `python rlog-tools/score/score_band_excess.py <route-tag>`.
+
+---
+
+## ➕ **V174 — THE SECOND POINT ON THE FRONTIER (added 2026-08-29). NOT FLY-FIRST.**
+
+🛑 **Fly V173 first. V174 is what you flash if the V173 verdict is "better, but still there".**
+
+The section's slow REAL pole sets attenuation and lag through **one** time constant, so they cannot
+be separated. Measured off the built images:
+
+| `p_slow` | corner | ratchet @8.17 | grind 15–25 | added lag @1 Hz | |
+|---|---|---|---|---|---|
+| 0.7966 | 36.19 Hz | −0.26 dB | −1.39 dB | +2.1 ms | stock |
+| **0.9700** | 4.85 Hz | −5.89 dB | −12.61 dB | **+29.1 ms** | **V173 — FLY FIRST** |
+| **0.9800** | 3.22 Hz | −8.77 dB | −16.03 dB | **+42.8 ms** | **V174 — this build** |
+| 0.9850 | 2.41 Hz | −11.03 dB | −18.49 dB | +54.1 ms | not cut |
+| 0.9900 | 1.60 Hz | −14.38 dB | −22.00 dB | +69.2 ms | not cut |
+
+⇒ **~4.8 ms of 1 Hz lag per dB of ratchet attenuation**, strikingly linear. V174 buys 2.9 dB more
+ratchet and 3.4 dB more grind for 13.7 ms more lag.
+🛑 **Do not cut past 0.985 without an operator lag verdict.** The operator's standing instruction
+is that apparent mass and friction must **not** be the price of fixing the ratcheting, and past that
+point the added lag exceeds anything this kit has shipped.
+
+image `c3d6776cc72d4657598e24337b32a322668dabd25a5fbaeedda87530e106cf62`
+rwd&nbsp;&nbsp; `5e4ba53db14442cbd818ab8ce6155c2a81ef754e7cf2216f11f1d4e1c6b3c9e8`
+builder `analysis-2020accord/builds/v108_plus/build_v174_tva.py` — 27/27 assertions.
+
+**Score it the same way:** `python rlog-tools/score/score_band_excess.py <route-tag>`.
