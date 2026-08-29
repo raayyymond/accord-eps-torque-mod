@@ -1,5 +1,55 @@
 # STATE — living current state of the kit
 
+## ✅✅ **19 VIRGIN ASSIST-PATH CALS — AND THE `FUN_00038148` PER-TERM WEIGHT MAP**
+Since **no flown cal moves the creep grind**, the answer must be in a cal **never flown**. A census
+across **131 build images** (diffing `0xC4000–0xC8000` against stock; **948 cells ever touched**)
+gives the frontier:
+```
+   VIRGIN assist-path cals (19):
+     0xC40DA gp-0x6c2e EMA alpha      0xC4124 11-slot type vector    0xC6136/38 gate values
+     0xC615A gp-0x6bbe clamp fallback 0xC6194 DEAD lkas rate limiter 0xC620A detector threshold
+     0xC6316 governor speed gate      0xC6370 gp-0x6c2e weight       0xC6372 torque EMA alpha
+     0xC63A2 0xC63A4 0xC63A6 0xC63A8 0xC63AA   FUN_38148 per-term weights
+     0xC63C2 gp-0x6b5e gain           0xC643C alpha0                 0xC64FA gate CEIL
+     0xC64FD b26 Y-branch threshold
+```
+
+### ✅ THE WEIGHT MAP, VERIFIED FROM THE DECOMPILE
+```c
+   sum = (gp-0x6b4e * gate(+-0x2800) * cal(0xC63A8)) >> 10
+       + (gp-0x6b4c * gate(+-0x2800) * cal(0xC63AA)) >> 10
+       + (gp-0x6b26 * gate(+-0x400)  * cal(0xC63A6)) >> 10
+       + (gp-0x6b46 * gate(+-0x400)  * cal(0xC63A4)) >> 10
+       + (gp-0x6bd0 * gate(+-0x800)  * cal(0xC63A0)) >> 10
+       + (gp-0x6bbe * gate(+-0x800)  * cal(0xC63A2)) >> 10
+   then  * gp-0x6752 (the -1 POLARITY),  *16,  through a cal(0xC63AC)=102 IIR  ->  gp-0x6b70
+```
+```
+   cal       lane        meaning                 gate      stock  V122   status
+   0xC63A0   gp-0x6bd0   base-assist damper      +-0x800    1024  1024   touched by a build
+   0xC63A2   gp-0x6bbe   viscous + DC pedestal   +-0x800    1024  1024   VIRGIN
+   0xC63A4   gp-0x6b46   (unmapped lane)         +-0x400    1024  1024   VIRGIN
+   0xC63A6   gp-0x6b26   b26 inertia             +-0x400    1024  1024   VIRGIN
+   0xC63A8   gp-0x6b4e   (unmapped lane)         +-0x2800   1024  1024   VIRGIN
+   0xC63AA   gp-0x6b4c   11-SLOT ASSIST SUM      +-0x2800   1024  1024   VIRGIN
+```
+⭐ **All six are UNITY 1024 in stock and V122; only `0xC63A0` has ever been moved.**
+
+### ⭐ `0xC63AA` IS THE BEST-FORMED LEVER FOUND ALL SESSION
+It is a **per-term weight on `gp-0x6b4c`** — the lane that ranked as the **most consistent grind
+carrier** — at **unity 1024**, **never flown**, **cal-only**, and **continuously dosable**.
+⇒ **strictly better than disabling an unidentified slot INSIDE `gp-0x6b4c`**: same target, **no
+slot map required**, and it **scales** rather than zeroes, so the dose is a choice rather than a
+cliff.
+
+### 🛑 THE HONEST CHECK AGAINST IT
+This loop's output is **`gp-0x6b70`**, whose measured band share is **0.46–0.52× flat — BELOW
+baseline** ⇒ `gp-0x6b70` is **not itself a grind carrier**, so reducing `gp-0x6b4c`'s contribution
+*here* may not reach the symptom. ⊕ And `gp-0x6b4c` **also enters the aggregator directly**
+(`FUN_0003aa2c`), a path this weight does **not** touch.
+⇒ **[BELIEF] well-formed and virgin; [UNKNOWN] whether it reaches the symptom. NOT a build yet.**
+**V147 still flies first** — its cal is equally virgin and its lane feeds the aggregator directly.
+
 ## 🛑🛑🛑 **NO CAL EVER FLOWN MOVES THE CREEP GRIND — THE STRATEGIC RESULT OF THIS SESSION**
 With a working endpoint (noise floor **1.8×**), every cal the kit has tuned can finally be tested
 against it. **None of them separates the builds.**
