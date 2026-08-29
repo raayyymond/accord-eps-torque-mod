@@ -42,3 +42,31 @@ python rlog-tools/score/grind_engaged_vs_manual.py <route-tag>
 
 ⚠ Expect creep to feel **lighter** (inertia + K1 reverts) but **slightly laggier** (poles).
 🛑 LKAS authority is **not measurable** on this drive — your impression is the instrument.
+
+---
+
+## V181 — the last lever, spent
+
+`0xC63A6` (w[3]) **1024 → 512**, on a V180 base. One cell, image `49ca42da43e95f31…`.
+
+It weights the **only ω²-scaled lane** in the six-term sum, so halving it removes loop gain **66.7×
+harder at 8.17 Hz than at 1 Hz — with zero added lag**. That is the cleanest match to the standing
+constraint (no ratcheting AND no added mass to LKAS) of anything built this session.
+
+**Why it is safe:** GATE 1 — one writer, and the sum's gate can never close because the writer clamps
+to ±511 inside a ±1024 window, so w[3] multiplies every frame. GATE 2 — the term is *positive*
+acceleration feedback, i.e. destabilising, so reducing it can only increase stability margin; there is
+no magnitude or phase condition to satisfy. Precedent: its sibling `0xC63A0` moved 2× on-car
+fault-free at V72/V77.
+
+⚠ **This is the only edit that goes BELOW Honda's own configuration.** Honda includes
+apparent-inertia compensation deliberately, to make the wheel lighter. Halving it will feel slightly
+**heavier — but at high frequency, not at the ~1 Hz where you and LKAS steer**, because of the ω²
+weighting. Dose is a half, not zero, so there is headroom left if it helps but does not cure.
+
+| | V177 | V180 | **V181** |
+|---|---|---|---|
+| ratchet @8.64 Hz | 0.476 | 0.339 | 0.339 **+ ω² lane halved** |
+| grind @21 Hz | 0.189 | 0.127 | 0.127 |
+| added lag @1 Hz | +29 ms | +43 ms | +43 ms |
+| goes below Honda | no | no | **yes** |
