@@ -2,6 +2,66 @@
 
 
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
+## ✅✅ **THE RATCHET IS A FIXED RESONANCE WITH COMMAND-PROPORTIONAL DRIVE — THE `1−P·L` SIGNATURE**
+244 pooled engaged-creep windows, each assigned to a stratum by its **own** mean operating point (the
+earlier attempt required contiguous runs *within* a stratum, which fragments the data and left six of
+seven strata empty — that cut is superseded).
+```
+                  n win   peak Hz   excess          FREQUENCY SPREAD
+   speed 1-6       17      8.59      18.7
+   speed 6-10      57      7.81      15.1
+   speed 10-14     84      8.40      27.4           7.81-8.98 Hz   sd 0.46   CV 5.5 %
+   speed 14-18     58      7.81      40.0
+   speed 18-24     28      8.98      35.5
+
+   |rate| 0-3      42     10.16       9.7
+   |rate| 3-6      27     10.74      12.5
+   |rate| 6-12     43      8.40      21.7           8.01-10.74 Hz  sd 1.12   CV 12.3 %
+   |rate| 12-25    45      8.01     143.1   <- worst rate band
+   |rate| 25+      87      8.20      27.6
+
+   |cmd| 100-250   23      9.57      17.0
+   |cmd| 250-600   75      8.59      19.4           8.01-9.57 Hz   sd 0.60   CV 7.0 %
+   |cmd| 600-1500  46      8.01      39.4
+   |cmd| 1500+    100      8.20      58.1   <- MONOTONE, 3.4x across the command range
+```
+✅ **[EVIDENCE] the FREQUENCY is near-invariant** — CV **5.5 %** across speed, **7.0 %** across
+command, **12.3 %** across rate, with only a modest downward drift as rate and command rise.
+✅ **[EVIDENCE] the AMPLITUDE is MONOTONE in command magnitude, 17.0 → 58.1 (3.4x).**
+⇒ **fixed resonance + command-proportional drive.** That is precisely the `Z = (Z0 + P·F)/(1−P·L)`
+signature: the command is the **excitation `F`**, the plant sets the frequency, and the loop sets how
+sharply it rings. **A moving loop pole would have shifted the frequency with operating point. It does
+not.**
+
+### ⭐ AND IT SHARPENS THE ENGAGED-ONLY EXPLANATION
+My earlier account attributed engaged-only entirely to the engagement-conditional lanes joining `L`,
+predicting a **4.88x** engaged/manual ratio against a measured **19.9x [4.82, 35.64]** — consistent
+but at the very bottom of the CI. **The command-scaling result supplies the missing factor**: in
+manual the command is **zero**, so the excitation `F` is absent as well as the extra loop gain.
+⊕ The two together land much closer to the measurement than either alone. **⚠ Not a clean product** —
+excitation and the engagement-conditional loop terms are both driven by engagement and are not
+independent factors to multiply — **but the direction and rough size now agree, where the loop-gain
+term alone did not.**
+
+### ✅ WHAT THIS MEANS FOR V168
+It **confirms the lever's logic**: `1−P·L` divides the *whole* response, including the
+command-driven part, so reducing `|L|` attenuates the ratchet **at every command level** rather than
+only at some operating point. It also predicts the **drive should show the effect most clearly at
+HIGH command and in the 12–25 deg/s rate band**, where the excess is largest — useful for the pass.
+
+### ⚠ THE LKAS GAIN COSTS RATCHET — STATED, NOT RECOMMENDED
+```
+   gain 3564 (4x): ratchet excess median 16.5  (n=3)
+   gain 5346 (6x): ratchet excess median 34.5  (n=6)   ratio 2.09x
+   Mann-Whitney p = 0.167  -- NOT significant, and CONFOUNDED (V96->V102 spans other builds)
+```
+⚠ **[BELIEF, weak]** raising the LKAS gain raises the ratchet, as **excitation** — consistent with
+the command-scaling result above and with the operator's own 8x experience of more grinding.
+🛑 **This is NOT a recommendation to lower the gain** — there is a standing instruction never to, and
+the operator wants 8x if anything. **The constructive reading is the opposite: damping the resonance
+is what BUYS the headroom for more gain.** If V168 works, 8x becomes affordable in a way it is not
+today.
+
 ## ✅ **LKAS AUTHORITY IS NOT THE BINDING CONSTRAINT — THE COMMAND IS DELIVERED AND RARELY RAILS**
 The third of the operator's three named symptoms, measured directly for the first time.
 ```
@@ -2175,90 +2235,4 @@ speed-proportional creep ramp is *suggestive* for a creep-band feel symptom, but
 `gp-0x6a10` ABSOLUTE steering angle, which the kit has already REFUTED as a frequency-selective
 lever. **Not proposed as a build.** What would close it: identify the consumers of `gp-0x6394` /
 `gp-0x63a8` and establish whether the term is inside the 6–9 Hz loop at all.
-
-## ✅✅✅ **V160 BUILT — LEVER B TO ITS INT16 CEILING. THE NEW LEAD BUILD.**
-`0xC6446` **5244 -> 6553**, ONE HALFWORD, base = V158. 51/51 assertions, CRC 50/50, **6 differing bytes
-= 2 payload + 4 CRC, ZERO unattributed.**
-```
-   image  5277005735a5b2e42bf38860a7a82d1bed14126207cb376e16d0cf137f921594
-   rwd    d512d8142d9f8bf9ff76919d8beb092cea8279d15b58d6535614374d48ea3096
-```
-### ⭐ WHY THIS LEVER — IT IS THE ONLY ONE MEASURED TO HELP BOTH SYMPTOMS AT ONCE
-Lever B is the **r24 derivative-feedback gain used WHEN LKAS IS ENGAGED**:
-```
-   gain_q10 = <speed x rate LERP surface>
-   elif assist_gate_683c != 0:   gain_q10 = 0xC6446      # stock 512 -> Lever B 5244
-```
-V88 vs V87, **single-variable** (5 changed bytes), speed-matched 2-4 m/s, engaged, unclipped,
-episode-bootstrapped:
-```
-   0.5-3 Hz   1.192 [0.780, 1.812]  NULL   <- peak effective LKAS command, UNTOUCHED
-   6-9 Hz     0.859                        <- the ratchet band
-   9-12 Hz    0.604 [0.465, 0.943]
-   15-22 Hz   0.549 [0.407, 0.844]         <- grind #1's band
-```
-✅ *"MORE r24 DERIVATIVE FEEDBACK = MORE LOOP DAMPING = LESS HF EVERYWHERE, at zero LF cost."*
-=> **the only lever in this kit measured to cut BOTH the ratchet band AND the grind band while
-leaving the LKAS command statistically untouched** — exactly the operator's standing requirement.
-V88 is also the route that flew with **"grinding FIXED"**.
-
-### ⭐ WHY A THIRD DOSE, AND WHY EXACTLY 6553
-Across **all 159 build images** `0xC6446` has taken **exactly THREE values**: 512 (stock, 85 builds),
-5244 (73 builds, flown), 1024 (V149 only, superseded). **The dose-response has TWO points and the
-flown step was 10.24x.** A third has never been tried.
-```
-   (RATE_CLAMP 5120 x 6553) >> 10 = 32765  <= 32767   fits
-   (RATE_CLAMP 5120 x 6554) >> 10 = 32770             OVERFLOWS
-```
-=> **6553 is the EXACT int16 ceiling**, a 1.2496x increment landing on a hard arithmetic boundary
-rather than a guess — small beside the 10.24x step already flown fault-free.
-
-### ✅ WHY IT CANNOT COST LKAS AUTHORITY
-**[EVIDENCE]** r24's own rail is +-8192, four 16-bit immediates at `0x3AC42-0x3AC54`, and V160 leaves
-all 24 bytes **BYTE-IDENTICAL**. The model's warning is specific: raising the **RAIL** lets a
-derivative lane eat the +-10240 aggregator headroom the LKAS command needs — *"the one change in this
-path that could REDUCE peak effective LKAS steering."* **We raise the GAIN and leave the RAIL alone,
-so that failure mode is STRUCTURALLY UNREACHABLE.** (+) measured: `gp-0x6b94` never comes within 20 %
-of its +-10240 clip; and 0.5-3 Hz was NULL across the 10.24x step.
-**[EVIDENCE]** `0xC6446` has **exactly ONE reader** — `ld.hu 0x7446[tp], r10` at `0x3AC08` — and
-**ZERO writers**, confirmed two ways (a tp scan handling the `hw2=(disp|1)` encoding, which also
-reproduced the model's `0xC6440`->`0x3AC12` and `0xC6442`->`0x3ABFE`; and the model's own record).
-
-### ⚠ WHAT IS NOT ESTABLISHED
-**[BELIEF]** that the dose-response stays monotone beyond 5244 — **only two points exist**, and V62's
-lesson is explicit: *"2x is approximately the OPTIMUM, not a point on a ramp."* 5244 may already be at
-or past optimum, so **V160 is a DOSE PROBE as much as a fix.** Mitigation: the step is 1.25x, not 2x.
-**[NOTE]** r24 rails at `|col_torque_rate| > 1280` (was 1599); normal driving is 123-839 counts, so it
-stays unrailed. **[NOTE]** V160 STACKS on V158's damper — two independent mechanisms, both adding
-creep-band damping. If the drive is ambiguous, **V158 alone** and **V151** remain single-lever fallbacks.
-
-### ✅✅ V160's PRECONDITION IS VERIFIED — LEVER B IS ACTUALLY REACHABLE
-`0xC6446` is read **only** when `lp != 0`, and on a stock gate byte `lp` derives from `gp-0x683c`,
-which has **ZERO writers image-wide** — so on stock that load NEVER EXECUTES and Honda's own 512 in
-that cell is dead code. The V67 repoint `0x3AA96 c5 -> fb` rewires it to `gp-0x6806`:
-```
-   build   0x3AA96              0xC6446   Lever B reachable?
-   stock   0xc5 (stock)             512   NO  -- gp-0x683c has 0 writers
-   V122    0xfb (repointed)        5244   YES -- gp-0x6806
-   V158    0xfb (repointed)        5244   YES
-   V160    0xfb (repointed)        6553   YES
-```
-✅ **[EVIDENCE] the repoint is present on the V160 base, so V160 is NOT inert.**
-✅ **[EVIDENCE] the gate is VALIDATED ON-CAR**: `gp-0x6806 != 0` agrees with `latActive` on
-**99.90 % (route 29) / 99.94 % (route 28)**, does not drop out during steady engaged holding, and
-toggles **three orders of magnitude below** the 21/45 Hz modes ⇒ it cannot parametrically pump.
-⭐ **6553 IS CONFIRMED TWICE, INDEPENDENTLY**: it is the int16 overflow bound I derived from
-`(5120 x g) >> 10 <= 32767`, **and** it is the ceiling the golden model already recorded for this
-cell class (*"1 reader / 0 writers, no float mirror, same CRC block #48 as 0xC6446, ceiling <= 6553"*).
-
-## ⛔⛔ **RETRACTION — "`0xCC214`/`0xCC914` ARE DEAD TABLES" IS WRONG**
-`0xCC214` is **LIVE**: it is the **fourth pointer array of gain_B (r24)**, the 100 km/h speed-blend
-record set, reached as **`tp+0xD214`** and hard-coded in the instruction stream — which is exactly why
-it carries no `mov imm32` literal. My null scanned only `mov imm32` literals and 16-bit
-`movhi`+`movea` pairs and **was blind to the long tp-relative form**, the encoding `CLAUDE.md` warns
-about. ⚠ **`0xCC914` is therefore UNRESOLVED, not dead** — the question is OPEN again.
-⭐ **A NULL IS ONLY AS GOOD AS ITS SCAN'S ENCODING COVERAGE.** Two encoding traps bit in one session:
-the `hw2 = (disp | 1)` form (a scan for `hw2 == disp` returns **zero** readers for a cell that has
-one), and `disp > 0x7FFF` cannot be a disp16 at all. **Validate any scanner against a cell whose
-answer is already known BEFORE trusting its null** — doing so is what caught both.
 

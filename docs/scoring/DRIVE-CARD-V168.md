@@ -87,3 +87,16 @@ No fault is expected — this is a single calibration byte in the `0xC6000` bloc
 edit, CRC chain verified 50/50 and readback byte-identical. If a DTC does appear, revert to V158 and
 report the code; the cell is a pure gain cap with no interlock relationship recorded anywhere in the
 lineage.
+
+---
+
+## WHERE THE EFFECT WILL SHOW UP MOST CLEARLY
+
+The ratchet's amplitude is **monotone in command magnitude** (excess 17.0 -> 58.1 across the command
+range, a 3.4x rise) and peaks in the **12-25 deg/s wheel-rate band** (excess 143.1 there vs 9.7 at
+0-3 deg/s). Its *frequency* barely moves (CV 5.5 % across speed).
+
+=> the pass is most informative if the creep involves **actual steering input** rather than a
+straight crawl: a slow continuous lap with real curvature keeps both the command and the wheel rate
+in the bands where the ratchet is largest. A dead-straight 15 s crawl at near-zero command sits in
+the weakest stratum and will under-read the effect in both directions.
