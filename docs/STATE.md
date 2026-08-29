@@ -1,5 +1,71 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **GHIDRA'S `code.bin` IS THE *STOCK* IMAGE — EVERY DECOMPILE THIS SESSION WAS OF STOCK**
+Chasing symptom B I hit a Python-vs-Ghidra disagreement and adjudicated it. **Both tools were
+right; they were reading different images.**
+```
+   at 0x2A1EE:   Ghidra says  ld.h 0x746c, tp, r7   ->  tp+0x746C = 0xC646C
+                 V122 bytes   25 3f d0 7c           ->  tp+0x7CD0 = 0xC6CD0
+```
+⇒ Ghidra's loaded program is `.../ghidra_project/code.bin`, **the STOCK dump** — and stock reads
+`0xC646C` because **V57 is exactly the build that decoupled the forward reader onto `0xC6CD0`.**
+The record predicted this ([[reference-accord-c646c-shared-gain-not-lkas-only]]); the tools agreed
+all along.
+✅ **THE SCAN METHOD IS VINDICATED** — the `reg1 == tp` filter reproduced the lineage's
+independently-recorded *"sole reader `ld.hu 0x73ac,tp,r13` @`0x38202`"* for `0xC63AC`, and here it
+read the V122 byte correctly where the stale program did not.
+
+### ✅ WHICH OF THIS SESSION'S DECOMPILES SURVIVE — CHECKED, NOT ASSUMED
+```
+   FUN_0003b8f6  the PLANT MODEL   0x3B8F6-0x3BC30   IDENTICAL stock vs V122  (0 bytes)  VALID
+   FUN_00038148  the ACTUAL arm    0x38148-0x38400   IDENTICAL stock vs V122  (0 bytes)  VALID
+   FUN_0003aa2c  the AGGREGATOR    0x3AA2C-0x3AC60   DIFFERS   (1 byte  -- Lever B 0x3AA96)
+   FUN_000352b4  the NOTCH         0x352B4-0x35C00   DIFFERS   (4 bytes)
+```
+⇒ **the two functions this session's structural conclusions rest on are byte-identical**, so the
+`|model| × sat(angle)` correction and the signum-relay refutation **both stand.**
+🛑 **STANDING RULE, ADD TO THE DECOMPILE SKILL: Ghidra holds STOCK. Before trusting any decompile
+for a BUILD, diff that function's byte extent stock-vs-target in Python.** A cal that moved between
+stock and the target (V57's `0xC646C`→`0xC6CD0`, V88's `0x3AA96`) will silently read wrong.
+
+## ⚠ **A RECORDED CLAIM LOOKS WRONG: `0xC6194` IS NOT OBVIOUSLY "DEAD"**
+[[reference-accord-lkas-only-rate-limiter-c6194]] says *"`0xC6194` is DEAD calibration — output ×0;
+no live LKAS-specific slew limit exists."* Decompiling its reader's function, **`FUN_00026c80`**
+(the 11-slot request-array processor, region `0x27500-0x27800` **byte-identical stock vs V122**),
+shows `0xC6194` used as a **live ± slew step** on the state `gp-0x3d6c`:
+```c
+   iVar11 = *(int *)(gp - 0x3d6c);                          // the PREVIOUS value -- slew state
+   ... uVar42 = cal(0xC6194)=3 + iVar11 ;                   // step UP   by <= 3
+   ... iVar11 = iVar11 - cal(0xC6194)=3 ;                   // step DOWN by <= 3
+   *(int *)(gp - 0x3d6c) = iVar11;                          // stored back
+   iVar13 = *(int *)(gp - 0x3d80) + iVar11 + uVar42;        // -> gp-0x6b4a / gp-0x6b4c
+```
+⊕ the **×0 the memory refers to is `0xC6196` = 0**, a *different* cell, and it applies only in the
+**`gp-0x6a62 > 0x7d00`** branch — not to `0xC6194` unconditionally.
+⊕ `gp-0x6b4c`/`gp-0x6b4a` are the **DOMINANT** lanes of the observer sum (gated ±10240), so a slew
+limit here is on a **major** path.
+🛑 **[UNRESOLVED — DO NOT BUILD ON IT YET] the CALL RATE of `FUN_00026c80` is unknown to me.**
+At 3 counts/tick and 1 kHz the path is **already** slew-limited to ~3.4 s full-scale, which would
+make it far too smooth to be symptom B's broadband source; at a slow task rate the same cal is a
+meaningful lever. **Resolve the task rate before proposing any dose.**
+⇒ **flagged, NOT overturned** — the memory may be describing a different code path or a downstream
+×0 I have not found. **But its blanket “no live LKAS slew limit exists” does not match this code.**
+
+### ✅ WHAT THE FORWARD PATH ACTUALLY LOOKS LIKE (symptom B context)
+```
+   0x2A1E6  mul r14,r9,r0  /  sar 0xf  /  sxh        the command
+   0x2A1EE  ld.h  0x7cd0,tp,r7                       the 6x gain      (STOCK reads 0x746c)
+   0x2A1F2  ld.b -0x6752,gp,r13  /  mulh r7,r13      x polarity (-1)
+   0x2A1F8  ld.hu 0x71b4,tp,r16                      the clamp 3072   (INERT per the record)
+   0x2A1FE  mul r13,r11,r0  /  sar 0xf               >> 15
+   0x2A206  st.h r9,-0x6b30,gp
+```
+⇒ **`(command × gain × polarity) >> 15`, clamped, stored — and NO SMOOTHING ANYWHERE on this
+path.** Since openpilot's `STEER_DELTA` is not rescaled for gain, **each 1-count command step
+becomes a 6-count firmware step at 6×** ⇒ the staircase amplitude scales with gain, which is the
+right shape for a gain-laddered broadband excess (observed exponent **1.74**, so a linear staircase
+term alone does not fully explain it).
+
 ## 🛑🛑🛑 **CORRECTION — AUDIO IS A WORKING INSTRUMENT, AND THERE ARE TWO SYMPTOMS**
 Last turn I concluded *"no statistic can rank these builds."* **That was overstated, and the kit's
 own record contains the counter-example.** The bound I proved is real but **narrower** than I wrote
