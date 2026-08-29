@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Four flashable builds: V202 (the fix), V204 and V205 (probes), V199 (fallback). Everything else from this arc is renamed
+**Updated 2026-08-29.** Five flashable builds: V205 (fly this) · V202 (fix) · V204 · V206 (ratchet lever, priced) · V199 (fallback). Everything else from this arc is renamed
 `SUPERSEDED-DO-NOT-FLASH-GATE2-…` and must not be sent.
 
 🛑 **Nothing here has been flashed and no CAN or UDS message has been sent.** Flashing requires you to
@@ -59,6 +59,28 @@ Human steering-feel thresholds are tens of ms.
 improves worst-case leakage by only 1.1× and makes the median *worse* — one biquad cannot cover
 6.7 Hz. **So score the drive stratified by its own peak frequency, never pooled:** a drive peaking at
 16 Hz gets 2.3×, one peaking at 20 Hz gets 24.7×.
+
+## V206 — the first real ratchet lever, with its price stated
+
+```
+39990-TVA,A160-V206-V202BASE-C63AE.1024.TO.512-0x13000-0x100000.rwd
+  image 71bd8312c324de9c01cf277307e41bb6dbb5e49cc6cf72e02e597a8013333a80
+```
+
+V202 plus **one calibration byte**: `0xC63AE` 1024 → 512. Preflight 8/8, 34/34 assertions, cave
+byte-identical, the 427 probe untouched.
+
+`0xC63AE` scales the input of the curve behind `gp-0x6b70`, which computing from the image shows is a
+**soft relay** — gain 2.67–3.77× near zero against 0.26–0.52× mid-range. Halving it halves that
+small-signal gain (2.67→1.33, 3.77→1.89). It has **exactly one site image-wide and zero writers**,
+and scales this stage only — the base assist map is untouched.
+
+⚖ **The price.** The record's nine-link polarity trace covers this stage, with a measured
+`d(gp-0x6b94)/d(gp-0x6b70)` of +0.25. Lowering the scale shrinks `gp-0x6b70` toward zero, and V87
+measured it **negative 67 % of engaged time** — so the net is **predominantly less assist, a slightly
+heavier wheel.** You have asked for low apparent friction *and* no ratcheting; this buys one with some
+of the other, which is why it is **not** the recommended build. **Fly V205 first** — it measures the
+range so this dose can be sized instead of guessed. A quarter dose is the follow-up.
 
 ## V204 — the same fix, probing the parked lever instead
 

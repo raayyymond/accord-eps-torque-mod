@@ -3124,3 +3124,31 @@ the axis is unknown and the edit is a bet.
 the corpus** — their distributions during engaged creep ratcheting decide whether any of these knots
 is even reachable.
 
+## ✅ **INTEGRITY CHECK AFTER TWO RETRACTIONS — THE SHELF IS CLEAN**
+After retracting V178 and V182 I re-ran **every surviving builder** and re-checked what each one
+actually touches. **All eight reproduce bit-for-bit with every assertion passing, every artifact on
+disk matches its recorded hash, and each has exactly ONE flashable `.rwd`.**
+```
+   V173 25/25   V174 27/27   V175 26/26   V176 28/28
+   V177 21/21   V179 19/19   V180 30/30   V181 27/27
+```
+✅ **No surviving build touches a retracted cell relative to its own base.** V181 is byte-identical to
+its ancestor V158 at `0xD77DA`, `0xD77EE`, `0xC6598` and `0xC65C4`. Both retracted images are renamed
+`SUPERSEDED-DO-NOT-FLASH-*` and their builders raise on entry.
+⚠ **My first pass of this check FLAGGED ALL EIGHT** — because it compared against the FLYING build
+instead of each build's own base, so it caught **V158-era inheritance** and called it a defect. The
+check was wrong, not the builds. **A comparison is only as good as its reference.**
+
+### 🛑 AND IT SURFACED SOMETHING THE OPERATOR SHOULD KNOW
+```
+   cell       stock   V122 (FLYING)   V158 (my base)   all my builds
+   0xD77DA      0           0              429              429
+   0xD77EE      0           0              426              426
+```
+**V158 changed FactorC's below-range fallback from 0 to 429/426, and the car does not have that
+change.** So **every build I have made already carries a V158-era damper edit relative to what is on
+the car** — inherited, not something I added, and present in V173 through V181 alike.
+⊕ That also partly rehabilitates the damper direction: **V158 already moved this fallback the way
+V182 tried to move it further.** But the axis is still `gp-0x6a5e`, not speed, so *when* it applies
+remains unestablished — V182 stays retracted.
+

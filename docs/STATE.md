@@ -4,6 +4,56 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅⭐ **THE `0xC63AE` SIGN IS ESTABLISHED WITHOUT A DRIVE — V206 BUILT, AND ITS PRICE IS STATED**
+
+### ✅ **THE RECORD'S OWN NINE-LINK TRACE ALREADY COVERS THIS STAGE**
+`accord-friction-polarity-more-friction-is-more-assist.md` traces the polarity end to end, and **its
+step 4 IS this stage**:
+```
+   4  gp-0x6b70 = clamp(sgn(res)*LERP(|res|), +-8192),  f' >= 0  =>  d/d(MODEL) >= 0 EVERYWHERE
+   5  FUN_00037fe6:  gp-0x6ad6 += gp-0x6b70 * w         =>  target felt effort
+   9  delivered = gp-0x6752 x gp-0x6b94                 =>  torque in the DRIVER'S direction
+   measured cross-check:  d(gp-0x6b94)/d(gp-0x6b70) = +0.2529 / +0.2565
+```
+⇒ **Lowering `0xC63AE` shrinks `|gp-0x6b70|` toward zero.** V87 measured `gp-0x6b70` **negative
+67.19 %** of engaged time, and shrinking a negative value *raises* it ⇒ **less assist on ~2/3 of
+frames, more on ~1/3. Net: predominantly LESS assist, a slightly heavier wheel.**
+✅ **So the sign needed no drive at all** — it was already in the record, one link away from where I
+was looking.
+
+### 🛑 **`0xC64B0` IS NOT A WEIGHT — the recorded `tp+0x74B0` trap, in a new form**
+Step 5 of that trace reads *"`gp-0x6ad6 += gp-0x6b70 * w(0xC64B0)=1`"*, so I priced `0xC64B0` as a
+gain. It reads **257 = `0x0101`** — **two enable BYTES, not a halfword weight.** `CLAUDE.md` names
+this exact address as the off-by-0x1000 case that *"invented lane weights for what are 0/1 enable
+flags"*. **The trap recurred in a new guise: not a wrong address, but a byte-pair read as a u16.**
+⇒ **`0xC64B0` is not a lever.** The clean one is `0xC63AE`.
+
+### ✅ **V206 = V202 + `0xC63AE` 1024 → 512.** ONE u16 cal, 34/34. `71bd8312c324de9c…`
+```
+   speed    small-signal gain    with the dose
+     640        2.67x        ->     1.33x
+    1280        3.04x        ->     1.52x
+    2560        3.77x        ->     1.89x
+    5120        3.43x        ->     1.72x
+```
+**GATE 1 is the cleanest possible**: `0xC63AE` has **exactly ONE site image-wide** (`0x38242`, the
+reader) and **ZERO writers**, byte-stock on every build. Cal-only, **1 payload byte**, cave
+byte-identical — **not the bricking class.** ⊕ It scales **this stage only**; the base power-assist
+map is fed by the differently-transformed `Xsrc`/`Ysrc` and is untouched.
+
+### ⚖ **THE PRICE, STATED RATHER THAN BURIED**
+**The trade is: the soft relay's small-signal gain halves (the ratchet mechanism) and the wheel gets
+somewhat heavier (an authority cost).** The operator has been explicit that he wants **low apparent
+friction AND no ratcheting**; this buys one with some of the other. 🛑 **So V206 is deliberately NOT
+the recommended build — V205 is**, because V205 measures `gp-0x6b70`'s actual range so this dose can
+be **sized rather than guessed**. V206 exists so that if V205 says the range is large, the fix is
+already cut. **A quarter dose is the obvious follow-up if half reads in the right direction.**
+
+### 🛑 **THE BYTE-COUNT TRAP RECURRED — and is now DERIVED, not assumed**
+I asserted "exactly 2 payload bytes" for a u16 cal. **1024 = `0x0400` → 512 = `0x0200` moves only the
+HIGH byte — it is ONE byte.** Same shape as the V181 assertion bug and V198's `0x9540`→`0x9526`. The
+builder now **computes** the expectation from the two values instead of stating it.
+
 ## ✅⭐ **THE RELAY QUESTION IS ANSWERED FROM THE IMAGE — it is a SOFT relay, and it has its own private gain cal**
 
 **This reverses last tick's conclusion, and corrects a second claim I made there.** I said the curve
@@ -2219,32 +2269,4 @@ more. ⚠ The one channel by which it could still matter is **PHASE**: an engage
 cost stability margin even when the magnitude only falls. With Honda's coefficients at 8 Hz that lag is
 small (a few degrees) — but **V184's retuned poles make it large**, which is a real and previously
 unstated engaged-only cost of the pole lever. [BELIEF, structural — not measured.]
-
-## ✅ **INTEGRITY CHECK AFTER TWO RETRACTIONS — THE SHELF IS CLEAN**
-After retracting V178 and V182 I re-ran **every surviving builder** and re-checked what each one
-actually touches. **All eight reproduce bit-for-bit with every assertion passing, every artifact on
-disk matches its recorded hash, and each has exactly ONE flashable `.rwd`.**
-```
-   V173 25/25   V174 27/27   V175 26/26   V176 28/28
-   V177 21/21   V179 19/19   V180 30/30   V181 27/27
-```
-✅ **No surviving build touches a retracted cell relative to its own base.** V181 is byte-identical to
-its ancestor V158 at `0xD77DA`, `0xD77EE`, `0xC6598` and `0xC65C4`. Both retracted images are renamed
-`SUPERSEDED-DO-NOT-FLASH-*` and their builders raise on entry.
-⚠ **My first pass of this check FLAGGED ALL EIGHT** — because it compared against the FLYING build
-instead of each build's own base, so it caught **V158-era inheritance** and called it a defect. The
-check was wrong, not the builds. **A comparison is only as good as its reference.**
-
-### 🛑 AND IT SURFACED SOMETHING THE OPERATOR SHOULD KNOW
-```
-   cell       stock   V122 (FLYING)   V158 (my base)   all my builds
-   0xD77DA      0           0              429              429
-   0xD77EE      0           0              426              426
-```
-**V158 changed FactorC's below-range fallback from 0 to 429/426, and the car does not have that
-change.** So **every build I have made already carries a V158-era damper edit relative to what is on
-the car** — inherited, not something I added, and present in V173 through V181 alike.
-⊕ That also partly rehabilitates the damper direction: **V158 already moved this fallback the way
-V182 tried to move it further.** But the axis is still `gp-0x6a5e`, not speed, so *when* it applies
-remains unestablished — V182 stays retracted.
 

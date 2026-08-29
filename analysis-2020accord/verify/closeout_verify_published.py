@@ -51,6 +51,7 @@ PUB = {
     'v203': '0da3b7b9a4bfa9068960ed1c5afd07ff4f816376da9488df4d31946cf55b5965',
     'v204': '30e7da9f6d20ff1335d01abe86ba03df7245c802217a4e6df54c5b93208873e6',
     'v205': '8cf100864be1d6030eed36acac1d514066b157a59de8ca829ae154ce7032882e',
+    'v206': '71bd8312c324de9c01cf277307e41bb6dbb5e49cc6cf72e02e597a8013333a80',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -185,13 +186,26 @@ if 'v202' in img and 'v199' in img:
     chk(not _worse, 'V202 attenuates MORE than V199 at every grind-band frequency'
         + ('' if not _worse else f' -- WORSE at {_worse}'))
 
+if 'v206' in img and 'v202' in img:
+    chk(struct.unpack_from('<H', img['v206'], 0xC63AE)[0] == 512,
+        'V206 0xC63AE = 512 -- half the soft relay input scale')
+    chk(struct.unpack_from('<H', img['v202'], 0xC63AE)[0] == 1024,
+        'V202 0xC63AE = 1024 -- the base is at Honda unity')
+    _d = [a for a in range(0x13000, 0x100000)
+          if img['v206'][a] != img['v202'][a] and (a & 0xFFF) < 0xFFC]
+    chk(_d == [0xC63AF], f'V206 differs from V202 at exactly 0xC63AF (high byte) -- got {_d}')
+    chk(struct.unpack_from('<H', img['v206'], 0x55DF2)[0]
+        == struct.unpack_from('<H', img['v202'], 0x55DF2)[0],
+        'V206 leaves the 427 probe alone -- it is a lever, not an instrument')
+
 # ---- 3. superseded artifacts ------------------------------------------------------------
 print('\n[3] SUPERSEDED ARTIFACTS ARE RENAMED')
 live = [os.path.basename(x) for x in glob.glob(RWD + '/39990*-V199-*.rwd')
         + glob.glob(RWD + '/39990*-V202-*.rwd')
         + glob.glob(RWD + '/39990*-V204-*.rwd')
-        + glob.glob(RWD + '/39990*-V205-*.rwd')]
-chk(len(live) == 4, f'exactly 4 flashable builds from this chain ({len(live)})')
+        + glob.glob(RWD + '/39990*-V205-*.rwd')
+        + glob.glob(RWD + '/39990*-V206-*.rwd')]
+chk(len(live) == 5, f'exactly 5 flashable builds from this chain ({len(live)})')
 # V194/V195/V196/V198 were PULLED: every one carries a notch whose poles sit at the zeros, scoring
 # max|H| 1.3533-1.7177 against the lineage bar of stock 1.0000.  They must not be flashable.
 for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193',
