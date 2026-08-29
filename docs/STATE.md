@@ -4,6 +4,44 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑 **CORRECTION: “THE RATCHET HAS NEVER MOVED” WAS AN n=5 ARTEFACT**
+The headline of this session was that the grind falls monotonically post-V102 while **the ratchet does
+not move at all** — the dissociation that motivated hunting a lever no build had touched. It rested on
+**5 post-V102 routes**. With build attribution recovered for the rest of the corpus it rests on **11**,
+and **it does not hold as stated**.
+```
+                          n      RATCHET              GRIND
+   earlier (this session)  5     rho -0.14  p 0.787   rho -0.94  p 0.005
+   full corpus            11     rho -0.60  p 0.052   rho -0.84  p 0.001
+   HARD attributions only  7     rho -0.59  p 0.159   rho -0.76  p 0.049
+```
+🛑 **[EVIDENCE] the ratchet IS trending down post-V102** — ρ ≈ **−0.60**, p **0.052**, where n=5 showed
+−0.14 (p 0.79). ✅ **And it is robust to attribution confidence**: restricting to routes whose build is
+stated in memory or scored by me directly gives **−0.59** — the effect size is unchanged, only the
+p-value moves with n. **It is not an artefact of the labels I inferred from filenames.**
+
+### ✅ WHAT SURVIVES, AND WHAT DOES NOT
+❌ **NOT SURVIVING**: *“thirty-plus builds have not moved the ratchet”* and *“the symptoms
+dissociate”* in the strong sense of one moving and the other not. **Both fall post-V102.**
+✅ **SURVIVING**: the grind falls **more strongly and more significantly** (−0.84 at p 0.001 vs −0.60
+at p 0.052), so the two are still not responding identically — **a difference of DEGREE, not of kind.**
+✅ **SURVIVING UNTOUCHED**: everything the build actually rests on — the ratchet is in **torque not
+wheel rate**; it is **engaged-only** (7/7 vs 0/7); it is **command-driven** (CI now excludes zero); the
+**assist map is the largest torque-fed term**; its **slope cap binds**; and **`0xC6384` and the curve
+records are byte-identical across 161 images.** None of that came from the trend claim.
+
+### ⭐ WHAT IT CHANGES FOR THE BUILD
+⊕ **V173 stands.** Its case is that the assist map is the dominant term, the cap binds, and the
+section was never retuned — **not** that other levers failed to reach the ratchet.
+⊕ But the *motivation* is now weaker in one respect and **stronger in another**: weaker because the
+assist map is no longer uniquely implicated by elimination; **stronger because the ratchet is
+demonstrably reachable** — something has been moving it, so it is not the untouchable mechanical mode
+the earlier reading implied.
+⚠ **[LIMITATION]** eight of the eighteen attributions are recovered from tool and document filenames
+rather than verified against an image. `r77` (97 windows, the richest route in the corpus) is
+**excluded** because its candidates span V31–V91 and nothing disambiguates them — guessing to gain a
+data point is how a spurious trend gets manufactured.
+
 ## ✅✅✅ **THE CORPUS WAS TWICE WHAT I WAS USING — AND IT CLOSES THE DRIVEN/SELF-EXCITED QUESTION**
 🛑 **I had been scoring 9 routes. There are 19** whole-route caches carrying the core channels, and
 several hold far more engaged-creep windows than anything I used — **`r77` has 97 against `r1e`'s
@@ -2235,43 +2273,4 @@ RAM LERP rows `FUN_00038148` reads** to shape Path 2's output — and `FUN_00038
 ARE in the torque path, via a RAM table rather than a direct lane write.
 ⭐ **A function can be in the loop without writing a lane cell.** "Writes no aggregator lane" proves
 it is not a lane PRODUCER; it does **not** prove it is out of the loop. **Follow the RAM it writes.**
-
-## ✅✅ **PATH 2's COEFFICIENTS ARE LOCATED — THE FIR CANNOT RING, AND THE MODEL'S NOTE IS STALE**
-The model says Path 2's loop gain *“lives in EIGHT float coefficients … **NEVER BYTE-READ BY ANY
-SESSION** … => **GATE 2 CANNOT BE CERTIFIED**”*. `FUN_0003b8f6`'s decompile settles it: **only THREE
-are floats.** The rest are `ushort` reads converted and scaled in code — which is why reading them
-as float32 returned denormals.
-```
-   GENUINE float32:              u16 EMA coefficients (read as ushort, scaled in code):
-     c1 tp+0x5048 = 1.0f           tp+0x50D4 = 573   a=0.1399  fc  22.3 Hz  |H|0.951 lag 16.6 deg
-     c0 tp+0x504C = 0.0f           tp+0x50D8 = 3686  a=0.8999  fc 143.2 Hz  |H|1.000 lag  0.3 deg
-     c2 tp+0x5050 = 0.0f           tp+0x50D0 = 408   a=0.0996  fc  15.9 Hz  |H|0.906 lag 23.7 deg
-                                   tp+0x50D6 = 246   a=0.0601  fc   9.6 Hz  |H|0.784 lag 37.0 deg
-   y = 1.0*x + 0.0*x[n-1] + 0.0*x[n-2]      tp+0x50D2 = 1020  = K1, a GAIN not a pole
-   = IDENTITY PASSTHROUGH                   tp+0x50BC = 3000  = the relay KNEE, a divisor
-```
-✅ **[EVIDENCE] the 3-tap FIR is an IDENTITY PASSTHROUGH with both history taps multiplied by 0.0**
-⇒ **2 zeros, 0 poles, no feedback path — IT CANNOT RING, whatever the input.** This confirms the
-existing `0xC4048` memory (`c1=1.0f, c2=0.0f, c0=0.0f`) from the consuming code rather than from bytes.
-✅ **[EVIDENCE] every Path-2 pole is now located and quantified.** The model's *“never byte-read”*
-and *“GATE 2 CANNOT BE CERTIFIED”* notes are **superseded for the DYNAMICS**: ringing is structurally
-excluded and the cascade is known.
-
-### ⚠ BUT THIS SHARPENS V158's RISK RATHER THAN CLEARING IT
-`tp+0x50D6` = **246 ⇒ corner 9.6 Hz, sitting IN the ratchet band**, and the decompile applies it
-**TWICE** (`fVar15` then `fVar19`) ⇒ a double EMA: **|H| = 0.784² = 0.615, lag = 2 × 37.0 = 74° at
-7.8 Hz.**
-🛑 **AND f′ RUNS THE WRONG WAY FOR US**: memory records `f′` p50 **2.174 hands-off vs 0.346
-hands-ON** — the observer lane is **6.3x MORE sensitive hands-off**, and **the ratchet is a hands-off
-creep phenomenon.** So Path 2's pumping-signed copy of `gp-0x6bd0` is at its **LARGEST exactly where
-the ratchet lives.** I had earlier cited f′ compression as reassurance; **read in the correct
-direction it is the opposite.**
-⊕ What is still uncertifiable is the **relative WEIGHT** of Path 1's damping and Path 2's pumping into
-the final motor command — Path 2's route runs through the hop the model flags as *“AT LEAST ONE
-UNRESOLVED HOP”* (`gp-0x6b94`'s 4 unchecked readers: `FUN_00036bec`, `FUN_0004503c`, `FUN_0004595a`,
-`FUN_0007ff08`). **[OPEN] closing it needs those four decompiles.**
-⭐ **NET POSITION ON V158, STATED HONESTLY**: Path 1 damping is the primary and by design; Path 2
-pumping is real, attenuated to 0.615 by the double 9.6 Hz EMA but amplified by hands-off f′; and V74
-already flew this dose without an adverse report. **It remains the right build to fly — and the
-“worse” branch of the pre-registered tree now has a quantified mechanism, not a hand-wave.**
 
