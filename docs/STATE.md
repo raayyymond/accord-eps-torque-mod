@@ -28,10 +28,10 @@ same statement. **No legal change improves it.**
 Honda collapses authority **because the driver is pushing**; the curve is a driver-in-control override.
 Raising it means **the driver must push harder to take the wheel back.** That is a genuine safety
 trade, and it is the operator's call, not the kit's. If he wants it, the minimal bounded form is
- **70,72 -> 72,74** (two byte-counts ≈ 64 torque counts of extra hold, nothing else moved),
+`X[0]/X[1]` **70,72 -> 72,74** (two byte-counts ≈ 64 torque counts of extra hold, nothing else moved),
 which is the smallest change that moves the knee off his median override torque. **NOT BUILT.**
 
-### ⛔ AND THE  CAVE PROBE IS NOT WORTH IT RIGHT NOW
+### ⛔ AND THE `0xC61BC` CAVE PROBE IS NOT WORTH IT RIGHT NOW
 It is a **probe, not a fix** — diagnostic value only — and caves are this kit's **only bricking class**
 (V24, V27, V48B all bricked the ECU). With the calibration search exhausted and V158 ready to fly,
 spending a brick risk on a measurement before the cheap measurement (a drive) has been taken is the
