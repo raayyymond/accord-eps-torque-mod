@@ -1,5 +1,45 @@
 # STATE — living current state of the kit
 
+## ✅✅ **THE AUDIO AM NULL IS NOW CLEAN — AND THAT IS THE THIRD ARTEFACT KILLED BY A CONTROL**
+Last turn's audio envelope-AM test was underpowered **and its 60–100 Hz control failed** (0.804,
+excluding 1), because windows were matched on **creep speed only**. Re-ran it with the same
+stratification that fixed the CAN-side analysis: **(speed bin x |rate| RMS bin)**.
+```
+   audio band     6-9 Hz AM [95 % CI]        20-28 Hz CONTROL         control status
+   15-21          1.020 [0.767, 1.125]       0.931 [0.834, 1.318]     clean
+   28-40          0.958 [0.854, 1.070]       1.081 [0.836, 1.390]     clean   <- was 1.309
+   40-60          1.048 [0.878, 1.062]       0.882 [0.456, 1.511]     clean
+   60-100         0.869 [0.840, 0.989]       1.044 [0.767, 1.298]     clean   <- control FIXED
+   100-300        1.013 [0.815, 1.091]       1.057 [0.777, 1.268]     clean
+   300-1000       1.004 [0.884, 1.675]       0.875 [0.719, 1.090]     clean
+   1000-3000      1.038 [0.779, 1.426]       0.788 [0.473, 1.029]     clean
+   3000-8000      1.058 [0.894, 1.362]       1.049 [0.897, 1.086]     clean
+```
+✅ **ALL EIGHT CONTROL BANDS NOW SPAN 1** — the stratification fix worked.
+✅ **[EVIDENCE, clean controls] there is NO engagement-conditional 6–9 Hz AM in the audio, in any
+band.** The previously "most suggestive" **28–40 Hz cell fell from 1.309 to 0.958** — it was **pure
+matching artefact.**
+⚠ 60–100 Hz reads **0.869 [0.840, 0.989]**, excluding 1 *below*. With **eight bands tested**, one
+marginal exclusion is expected by chance; **not claimed.**
+⇒ **the ratchet does not AM-modulate the cabin audio in a way engagement changes.** Combined with
+the CAN-side bound (**≤ ~2 % of RMS**), **both available instruments now return clean nulls on
+symptom A**, which is itself consistent with the mode being **motor/rack-side and unobservable**.
+
+## 🛑🛑 **THE PATTERN: THREE TIMES THIS SESSION, THE CONTROL KILLED THE EFFECT**
+```
+   engagement contrast, 6-9 Hz     2.8x   ->  1.12 [1.01, 1.27]   when MATCHED on speed x activity
+   post-disengage persistence      1.29x  ->  ratio 0.911         when a CONTROL BAND was added
+   audio envelope AM, 28-40 Hz     1.309  ->  0.958               when matched on activity too
+```
+⇒ **every one of these was plausible, specific, and pointed at a real mechanism.** Each survived
+until its control was computed, and none survived after.
+⭐ **This is [[feedback-run-the-control-before-the-measurement]] earning its place three separate
+times in one session, on three different instruments (CAN band power, CAN envelope, audio envelope).**
+⇒ **RULE, stated for the record: on this kit, an uncontrolled engaged-vs-manual ratio is worth
+nothing.** Operating point differs systematically between the arms — engaged is creep and steady,
+manual is faster and more active — and that difference is **larger than every effect measured this
+session.** **Compute the control first, or do not compute the number.**
+
 ## ⚠ **AUDIO ENVELOPE DEMODULATION FOR THE RATCHET — NEW METHOD, NO SIGNAL, IMPERFECT CONTROL**
 The kit uses audio only for **symptom B's band power**. But **a ratchet is an impulse train**, so it
 would not appear *at* 7.8 Hz in audio — it would appear as **7.8 Hz AMPLITUDE MODULATION of the audio
@@ -2110,191 +2150,6 @@ decide**, and it took an identical-cal control to establish. **It also means the
 3. **Do not re-derive conclusions from the historical ratios.** They are recorded as history, not as
    evidence. 🛑 **Any future session quoting a between-build grind ratio must state it against the
    20–36× floor** — the scorers now carry that banner.
-
-## ✅✅ **V139 RE-ELEVATED — ITS EVIDENCE SURVIVED THE RETRACTION, BECAUSE IT NEVER USED THE ENDPOINT**
-The noise-floor retraction was propagated to this session's own comparisons but **not to the older
-claims that rest on the same kind of statistic.** Doing that now changes the flight order.
-
-### 🛑 V62's HEADLINE IS A BETWEEN-BUILD RATIO OF 8× — INSIDE THE MEASURED FLOOR
-`accord-v62-flashed-grinding-is-fixed`: **18–22 Hz creep 0.124 [0.036, 0.387] vs V59** = **8×
-better**, and **0.024 (42×) at |rate| 16–32 °/s**, with a **30–40 Hz negative control at ~1.0**.
-⊕ The between-route floor measured today on the engaged/manual creep ratio is **20–36×**.
-⇒ **V62's 8× headline sits INSIDE the floor of a closely related statistic.** ⚠ It is **NOT
-invalidated** — it is a **different statistic** and it **carried a passing negative control**, which
-is strictly more than a bare ratio. But **the caveat has never been recorded**, and the 42× figure
-is the more robust half of that result.
-
-### 🛑 AND IT EXPOSES A CONTRADICTION THAT WAS NEVER STATED PLAINLY
-```
-   V62   sar 9, gain 3564 (4x)   ->  operator: "Original grinding at 2-5 mph is GONE"
-   V133  sar 9, gain 7128 (8x)   ->  operator: "massive, VIOLENT grinding"
-```
-**The same two bytes, opposite outcomes, different base gain.** ⊕ A gain-normalised reading (lane
-strength × base gain: V62 ≈ 82, V122 ≈ 61, V133 ≈ 164) would put V62's configuration at
-`0xC6446 ≈ 6989` on the 6× base — **and that is NOT proposed**, because it **RAISES a confirmed
-pump** (`gp-0x6752 = −1`), which is the V133 direction.
-⭐ **Between an 8× between-build ratio and a recent, unambiguous operator report on his own car,
-the operator's report wins.** The kit has now measured that its statistics cannot resolve builds;
-his ear demonstrably can.
-
-### ✅ WHICH RE-ELEVATES V139
-V139 halves **both** pump arms (`0x3AB76`/`0x3AC20`, `sar 10 → 11`). **Its entire rationale is:**
-```
-   1. gp-0x6752 = -1, verified THREE ways including on-car  -> these arms are a CONFIRMED PUMP
-   2. V133 DOUBLED them and the operator reported violent grinding  -> the bytes are POTENT on-car
-   3. reducing a feedback magnitude cannot destabilise a stable loop -> SAFE BY CONSTRUCTION
-```
-⇒ **not one of those three depends on the retracted endpoint.** ⊕ I demoted V139 earlier partly on
-the α2-vs-knee ladder, which is now withdrawn — **the demotion went with it and was never undone.**
-⇒ **V139 is now co-primary with V147**, and arguably has the **stronger** basis of the two:
-```
-   V147  0xC61F6 deadband  virgin cal, lane feeds the aggregator directly, BUT the dose is a
-                           guess and gp-0x6ADA has never been flown -> potency UNKNOWN
-   V139  both pump arms    the bytes are PROVEN POTENT on-car (V133), direction is inference
-```
-⚠ **V139's remaining caveat is unchanged and real**: knowing `sar 9` is worse than `sar 10` does
-not prove `sar 11` is better. **Expected failure mode: the steering goes number without the grind
-improving — in which case revert to V122.** ⊕ And the *"2× ≈ optimum"* framing that argued against
-it rested on V62's between-build numbers, which is exactly the class now in question.
-
-## 🛑🛑🛑 **`gp-0x6B4C` IS A FAULT-ARBITRATION SUM — THE LAST CAL CANDIDATE IS CLOSED, AND THE LEVER WAS UNSAFE**
-`FUN_0002caa2` (slot 8) decompiles to a **LATCHING PLAUSIBILITY MONITOR**:
-```c
-   if (gp-0x3cba == 1) {
-       sStack_1c = gp-0x6b12;
-       if (|gp-0x6b12| exceeds cal(0xC61D2)) {
-           gp-0x6788 = 1;        // FAULT FLAG
-           gp-0x3cba = 2;
-           sStack_1c = 0;        // this contribution LATCHES OFF, permanently
-       }
-   } else if (gp-0x3cba == 2) { sStack_1c = 0; }      // stays off
-   ...
-   local_20 = 8;  cStack_1f = <state 0..5>;  uStack_1c = sStack_1c;   // <- THE PAYLOAD
-   FUN_00025c32(&local_20);
-```
-⇒ **`gp-0x6B4C` is NOT an assist sum. It is a sum of MONITORED contributions, each behind a
-latching fault gate**, and the `0xC4124` "type" vector is that monitor's per-slot **configuration**.
-
-### ✅ THIS EXPLAINS EVERY MEASUREMENT AT ONCE
-```
-   p50 0-26                     contributions LATCH OFF and stay off
-   max 1459-1664                spikes BEFORE latching
-   broadband, spiky spectrum    latching transitions are IMPULSIVE
-   "1.4x flat" band share       an IMPULSIVENESS ARTIFACT, not 18-22 Hz content
-```
-⇒ **the one lane that looked consistently elevated was elevated because it is SPIKY, not because
-it oscillates at 20 Hz.** ⊕ The flat-baseline control caught the inflation; **this decompile
-explains its CAUSE.**
-⇒ **[EVIDENCE] `gp-0x6B4C` is not the grind carrier. The last cal-path candidate is CLOSED.**
-
-### 🛑 AND THE LEVER WAS NOT MERELY WEAK — IT WAS UNSAFE
-`0xC4124[i] : 0 → 5` would have **disabled a plausibility monitor** — a fault-detection function —
-on an EPS. ⊕ The kit came within one decompile of proposing that, on **1.4×-flat evidence**.
-⭐ **RULE: before disabling ANY per-slot/per-term configuration cell, read what the slot COMPUTES.
-A "weight vector" and a "monitor configuration table" look identical from the cal side.**
-
-### ⭐ THE CAL SPACE IS NOW EXHAUSTED
-```
-   CLOSED by measurement    b26 (clamp/a2/knee/K1) | the notch family | base-assist damper
-                            gp-0x6BBE | EVERY flown cal | and now gp-0x6B4C
-   REJECTED before building 0xC6372 (lane below flat) | 0xC4124 (a fault monitor)
-   NEVER FLOWN, still open  0xC61F6 -- the r24 pump deadband.  V147 tests it.
-```
-⇒ **V147's deadband is the only cal lever left with a live rationale**: virgin cell, on a lane
-that feeds the aggregator **directly**, with a confirmed pump polarity behind it.
-⇒ **The analysis has converged. The remaining information is on the car.**
-
-## ✅✅ **THE `gp-0x6B4C` CONTRIBUTORS NARROWED TO FOUR — AND THE METHOD IS VALIDATED**
-`FUN_0003a8a8`'s full decompile fixes the struct layout passed to `FUN_00025c32`:
-```c
-   local_1c = 7;      // [0] SLOT INDEX      uStack_12 = 0x400;   // [10] weight
-   cStack_1b = mode;  // [1] mode            uStack_10 = 0x400;   // [12] weight
-   uStack_1a = 0;     // [2] data            uStack_e  = 0x400;   // [14] weight
-   uStack_18 = 0;     // [4] data
-   uStack_16 = 0;     // [6] data
-   uStack_14 = 0;     // [8] data
-```
-⇒ **offsets 10/12/14 are CONSTANT 0x400 weights** — an earlier scan counted those as "computed
-fields" and wrongly called every caller a contributor. **Only offsets 2/4/6/8 are data.** Reading
-just those, from the `sst.h` stores before each call:
-```
-   slot 0  FUN_0002e52e   0@2  r12@4  0@6  0@8      data at offset 4
-   slot 1  FUN_0002b422   0@2  r12@4  0@6  0@8      data at offset 4
-   slot 3  FUN_0002c246   0@2   r8@4  0@6  0@8      data at offset 4
-   slot 8  FUN_0002caa2   0@2   r9@4  0@6  0@8      data at offset 4
-   slot 6  FUN_0003aff4   0@2   0@4   0@6  r7@8     data at offset 8
-   slot 7  FUN_0003a8a8   0@2   0@4   0@6  0@8      NO DATA
-```
-✅ **slot 7 reads ALL-ZERO, exactly as its full decompile showed ⇒ THE METHOD IS VALIDATED**
-against a known answer before being trusted on the unknowns.
-
-### ✅ AND THE OFFSET DECIDES WHICH ARRAY IS FED
-From `FUN_00025c32`:
-```c
-   *(short *)(gp-0x62e0 + slot*2) = clamp(param_1[2], +-0x4000);
-   *(short *)(gp-0x62f8 + slot*2) = clamp(param_1[4], +-0x2800);   // <- THE ARRAY THE SUM READS
-   *(short *)(gp-0x6274 + slot*2) = clamp(param_1[6], +-900);
-   *(short *)(gp-0x633c + slot*2) = clamp(param_1[8], +-20000);
-```
-⇒ **offset 4 feeds `gp-0x62f8`, the array the 11-slot sum walks.** Offset 8 feeds `gp-0x633c`, a
-**different** array.
-⇒ **ONLY slots 0, 1, 3 and 8 contribute to `gp-0x6B4C`. Slots 6 and 7 do NOT.**
-```
-   remaining candidates:  slot 0 FUN_0002e52e | slot 1 FUN_0002b422
-                          slot 3 FUN_0002c246 | slot 8 FUN_0002caa2
-   all four callers sit in ONE cluster, 0x2B4xx-0x2E5xx
-```
-⊕ Narrowed from **seven unknown indices → four named functions in one subsystem cluster**, and the
-`0xC4124[i] : 0 → 5` lever can now be aimed at any one of them.
-⚠ **Still not a build**: what those four compute is unread, and the lane's evidence base is
-**1.4× flat = weak**. **V147 flies first.**
-
-## 🛑 **`0xC6372` SIZED AND REJECTED BEFORE BUILDING — AND IT NARROWS THE FIELD TO ONE**
-The aggregator adds its ten lanes **BARE — admission gates only, no per-lane weights** (which is why
-the kit recorded *"no weight cell exists"* for `gp-0x6b26`). ⇒ **an aggregator lane can only be
-scaled at its SOURCE.** For `gp-0x6BBE`, the largest lane (p50 74 vs the aggregator's 115–218), all
-three source cals are **VIRGIN** — so `0xC6372`, its torque-EMA alpha, looked like the lever.
-
-### ✅ IT SIZES WELL
-`iVar29 += ((gp-0x4f60*32 - iVar29) * cal(0xC6372)) >> 10`, a one-pole EMA, `alpha = cal/1024`,
-in **task 5** (kit bound ≥ 250 Hz, best fit 500 Hz). At fs = 500:
-```
-   alpha    fc Hz   |H| 1Hz   |H| 3Hz   |H| 20Hz   20Hz attenuation
-     205     15.9    0.9984    0.9861     0.6661       1.00x   (stock)
-     102      7.9    0.9929    0.9412     0.3863       1.72x
-      77      6.0    0.9873    0.9008     0.2978       2.24x
-      51      4.0    0.9711    0.8047     0.1997       3.34x
-```
-⊕ and the lane is **DOMINATED by this path** — the earlier sizing gave torque : accel = **6464 : 576
-= 11 : 1** at engaged creep, so this alpha shapes **~92 %** of the lane input. ⊕ the direction is
-robust across the whole fs bound (20 Hz sits above `fc` at every rate in 250–1000).
-
-### 🛑 AND IT IS STILL POINTLESS — THE LANE DOES NOT CARRY THE BAND
-**`gp-0x6BBE`'s measured 18–22 Hz share is 0.54× FLAT — BELOW baseline.** It carries **less**
-18–22 Hz than a featureless spectrum. ⇒ **attenuating 20 Hz in a lane that does not carry 20 Hz
-achieves nothing.** ⇒ **V148 on `0xC6372` would have been a null. One command cost; no drive
-spent.** ⭐ **Size the lever, THEN check the lane carries the band — in that order, because the
-sizing is the seductive part.**
-
-### ⭐ WHICH LEAVES EXACTLY ONE TARGET STANDING
-```
-   lane                       sig/flat            consistent across its routes?
-   gp-0x6B4C (11-slot sum)    1.44x, 1.38x        YES -- the only one
-   "default tap" gp-0x6ABC    1.42 / 0.53 / 0.08  no -- wildly route-dependent
-   gp-0x6BBE                  0.54x               BELOW baseline
-   gp-0x6B26                  0.43-0.56x          BELOW baseline
-   notch lane gp-0x6B86       0.06-0.27x          BELOW baseline
-```
-⇒ **`gp-0x6B4C` is the only lane consistently above a flat spectrum**, and because the aggregator
-adds it **bare**, its **only** lever is **`0xC4124`, the slot vector**. ⊕ `0xC63AA` scales it only
-into `gp-0x6b70`, which is **itself below baseline** — so that weight, however well-formed, is
-aimed at the wrong output.
-⇒ **the slot disable is the SOLE remaining cal-path candidate**, and it still needs the five
-payload decompiles (slots 0, 1, 3, 6, 8 — `FUN_0002e52e`, `FUN_0002b422`, `FUN_0002c246`,
-`FUN_0003aff4`, `FUN_0002caa2`).
-⚠ And its evidence base is **1.4× flat**, which is **weak**. **V147 remains the build to fly**: its
-cal is equally virgin, its lane feeds the aggregator directly, and its drive also carries the gate
-probe that retires the notch family.
 
 
 ---
