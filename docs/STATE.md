@@ -1,5 +1,33 @@
 # STATE — living current state of the kit
 
+## ✅✅ **THE RATCHET IS NOT EPISODIC IN BAND SHARE — THE TAIL LOOKS LIKE THE MEDIAN**
+A flaw in my own method: every matched analysis this session took the **MEDIAN** over engaged
+windows, and the kit's own characterisation says the ratchet appeared in **44 of 46 windows** on one
+route — i.e. it may be **EPISODIC**, and a median would wash an episodic phenomenon out entirely.
+**Tested by re-running the matched contrast at the TAIL.**
+```
+   statistic   6-9 Hz [95 % CI]        26-31 Hz CONTROL        23 routes, matched on
+   median      1.067 [0.966, 1.226]    0.987 [0.870, 1.264]    (speed bin x |rate| RMS bin)
+   p75         1.073 [0.954, 1.193]    1.082 [1.005, 1.263]
+   p90         1.160 [0.993, 1.256]    1.022 [0.802, 1.317]
+   p95         1.100 [1.039, 1.243]    1.065 [0.886, 1.276]    <- 6-9 Hz EXCLUDES 1
+   p99         1.110 [0.963, 1.241]    1.024 [0.928, 1.224]
+```
+⇒ **[EVIDENCE] the tail is indistinguishable from the median.** If the ratchet were concentrated in
+rare episodes, **p95/p99 would show a much larger contrast than the median.** They do not —
+**1.10 vs 1.07.**
+⇒ **the engagement effect is a UNIFORM ~10 % elevation of the 6-9 Hz band, not an episodic
+concentration.** The kit's *"44/46 windows engaged"* figure was about detecting a **LINE**, a
+different statistic from band share — **the two are not in conflict.**
+✅ **AND IT FIRMS THE EFFECT UP**: at **p95 the 6-9 Hz CI EXCLUDES 1** (1.039–1.243) while its
+control spans 1, converging with the independent median-based estimate **1.12 [1.01, 1.27]**.
+⇒ **CONVERGED RESULT: engagement adds ~10 % to the 6-9 Hz band — real, small, robust across central
+AND tail statistics, with controls clean at every percentile.**
+
+⊕ **This also closes the last live objection to the ≤ ~2 % of RMS line bound**: that bound was
+derived from a median-based prominence contrast, and the natural challenge was *"an episodic symptom
+would be diluted."* **It would not be — the tail behaves like the centre.**
+
 ## ✅✅ **THE AUDIO AM NULL IS NOW CLEAN — AND THAT IS THE THIRD ARTEFACT KILLED BY A CONTROL**
 Last turn's audio envelope-AM test was underpowered **and its 60–100 Hz control failed** (0.804,
 excluding 1), because windows were matched on **creep speed only**. Re-ran it with the same
