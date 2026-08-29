@@ -1,5 +1,45 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **CAPSTONE AUDIT: ESSENTIALLY EVERY HISTORICAL BETWEEN-BUILD GRIND RATIO IS BELOW THE NOISE FLOOR**
+The measured between-route floor is **20–36×**. Sweeping the memory index for historical
+between-build grind claims and testing each against it:
+```
+   V72   grind #1 ratio 0.953                = 1.05x    BELOW FLOOR
+   V76   predicted 0.57x, measured ~1.0      = 1.8x     BELOW FLOOR
+   V75 / V74  grind 0.349                    = 2.9x     BELOW FLOOR
+   V62   18-22 Hz 0.124 [0.036,0.387] vs V59 = 8x       BELOW FLOOR
+   V107  "rails ~10x V106 across 10-40 km/h" = 10x      BELOW FLOOR
+   V69   ladder 2501 / 879 / 168 / 109 / 746 = 23x      MARGINAL
+   V62   0.024 at |rate| 16-32 deg/s         = 42x      MARGINAL -- the only one clearing 36x
+```
+⇒ **[EVIDENCE] the kit's entire history of BETWEEN-BUILD grind comparisons is uninformative**,
+with V62's 42× the sole marginal survivor. ⊕ Several of these carried **negative controls**, which
+is strictly more than a bare ratio and is why they are *marginal* rather than *dead* — but **none of
+them clears the floor on magnitude alone.**
+
+### ✅ WHAT SURVIVES: THE OPERATOR'S REPORTS, BECAUSE THEY ARE NOT RATIOS
+```
+   V62   "Original grinding at 2-5 mph is GONE"
+   V80   "worst grinding ever, no fault"
+   V88   grinding fixed  (his report; the accompanying 0.549 ratio is 1.8x = below floor)
+   V122  "better, still ever so slight ... in rare moments"
+   V133  "massive, violent grinding ... continues after disengaging"
+```
+⇒ **every durable thing this kit knows about grinding came from the operator's ear**, and every
+number attached to those reports is, on its own, within route noise.
+⭐ That is not a criticism of the measurements — it is the **correct calibration of what they can
+decide**, and it took an identical-cal control to establish. **It also means the kit's doctrine
+(*"score bands, let the OPERATOR score symptoms"*) was right all along and under-obeyed.**
+
+### ⭐ WHAT THIS MEANS FOR THE NEXT DRIVE
+1. **Judge the build by ear.** The scorers are for MECHANISM questions (does the gate open, is the
+   lane live, did the notch run) — **not for ranking builds.**
+2. **The share endpoint (`score_creep_share.py`, floor ~1.8×) is the ONE exception**, and only with
+   **≥ 2 minutes of engaged creep**; below that gate it refuses.
+3. **Do not re-derive conclusions from the historical ratios.** They are recorded as history, not as
+   evidence. 🛑 **Any future session quoting a between-build grind ratio must state it against the
+   20–36× floor** — the scorers now carry that banner.
+
 ## ✅✅ **V139 RE-ELEVATED — ITS EVIDENCE SURVIVED THE RETRACTION, BECAUSE IT NEVER USED THE ENDPOINT**
 The noise-floor retraction was propagated to this session's own comparisons but **not to the older
 claims that rest on the same kind of statistic.** Doing that now changes the flight order.
