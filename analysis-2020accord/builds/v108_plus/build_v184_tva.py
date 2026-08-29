@@ -32,7 +32,9 @@ So V183 removes one asymmetry and adds three.  A result would be ambiguous betwe
 
 V184 backs those out to their m24 values, read FROM THE m24 RECORD AT RUN TIME rather than typed.
 The result: ** engaged is identical to manual in every factor family, exactly as stock ships it,
-except that the inertia dose is gone. **  That is a single-variable test of the one candidate.
+except that the inertia dose is gone. **  That removes the DATA-TABLE ambiguity.  It does NOT make
+this a single-variable test overall -- see the correction below: the biquad is engaged-gated, so the
+pole retune is a second engaged-only change.
 
 WHAT THIS BUILD STILL CARRIES
 ------------------------------
@@ -48,12 +50,12 @@ genuinely mode-independent or instrumentation.
 
 WHAT A NULL LICENSES
 ---------------------
-  * ratchet falls AND the engaged/manual ratio falls  -> the inertia dose was carrying the engaged
-    amplification.  That is the strongest single result available from one drive.
-  * ratchet falls, ratio unchanged                    -> the broadband levers did it; the mode
-    asymmetry was not the amplifier.
-  * neither moves                                     -> no mode asymmetry explains the engaged
-    amplification, and the search moves outside the mode records entirely.
+Use the BAND signature, not the engaged/manual ratio (both changes are engaged-only):
+  * grind falls hard (~-16 dB) AND ratchet falls modestly (~-9 dB)  -> the POLES did it.
+  * ratchet falls with the grind roughly UNCHANGED                  -> the INERTIA DOSE did it.
+  * both fall in the proportions above                              -> both are contributing.
+  * neither moves                                                   -> neither account survives, and
+    the search leaves the assist section and the mode records together.
 Plus, independently, the 427 probe answers whether the damper's hard OFF gate is ever open.
 
 RISK
