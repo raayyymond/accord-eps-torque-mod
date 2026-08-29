@@ -1,5 +1,47 @@
 # STATE — living current state of the kit
 
+## ✅ **THE DAMPER CEILING READ FROM ITS OWN RECORDS — V157's 24 % CONFIRMED, 3.7x HEADROOM LEFT**
+V134 cited the ceiling as *"`(&PTR_DAT_000c77a0)[mode]` = Y[512, 1024]"* without reading it per mode.
+Read now, completing the four-factor damper picture:
+```
+   CEILING records (PTR_DAT_000c77a0), engaged modes    X[] on gp-0x6ac2, Y[] the limit
+     m25  base 0xD709C   X=[300, 800]   Y=[512, 1024]
+     m26  base 0xD70A8   X=[300, 800]   Y=[512, 1024]
+     m27  base 0xD70B4   X=[300, 800]   Y=[512, 1024]
+   fallback when gp-0x6ac2 >= 0x32C9:  cal(tp+0x7158) = cal(0xC6158) = 512
+```
+⇒ **below `gp-0x6ac2` = 300 the ceiling is 512; it rises to 1024 only by 800.** At creep
+`gp-0x6ac2` is low, so **the operative ceiling is 512.**
+⇒ **[EVIDENCE] V157's creep product of 123 is 24.0 % of the operative ceiling** — confirming the
+builder's assertion **from the records themselves**, not from a citation.
+
+### ⭐ THE PRE-COMPUTED NEXT DOSE — SO A GOOD RESULT IS NOT FOLLOWED BY GUESSWORK
+```
+   ceiling 512    max safe product at 90 %  =  460
+   V156           product   31   =   6.1 %      L2_Y0 = 60,  L4_Y0 = 539
+   V157           product  123   =  24.0 %      L2_Y0 = own Y[1] (234/233), L4_Y0 = 539
+   NEXT (unbuilt)  product  225   =  44.0 %     L2_Y0 = own Y[2] (429/426), L4_Y0 = own Y[2] (539)
+                                                 margin to ceiling 2.3x
+```
+⊕ **Both proposed values remain the tables' OWN knots** — no invented numbers, the same discipline
+V156/V157 used.
+🛑 **NOT BUILT, deliberately.** Two doses of this lever are already queued and **neither has
+flown**; a third artifact adds nothing a pre-computed recipe does not. **If V157 reads directionally
+right, this is the next step and it needs no new analysis.**
+
+### ✅ THE DAMPER IS NOW FULLY CHARACTERISED
+```
+   product   = ((((clamp(gp-0x698a,1024) * L1 >>10) * L2 >>10) * L3 >>10) * L4 >>10)
+   L1 torque [1024 x4] unity   L2 SPEED [0,234,429,908]   L3 angle [1024 x4] unity
+   L4 RATE   [0,140,539,927]
+   sign      from gp-0x6abe
+   ceiling   LERP on gp-0x6ac2, X=[300,800] Y=[512,1024], fallback cal(0xC6158)=512
+   gates     L2: gp-0x6a5e <= 0x7D00 and gp-0x67f4 == 1
+             L4: gp-0x6ac0 < 0x32C9 and |gp-0x6abe| <= 13000
+```
+⇒ **every term, every gate, every ceiling in the base damper is now read from the image.** The only
+two zero-valued knots are the two V157 opens.
+
 ## ✅✅✅ **THE DAMPER IS A FOUR-FACTOR CASCADE, NOT TWO — AND V157 IS VALIDATED BY IT**
 The kit models the base damper as **`ch0 = FactorC(speed) x FactorE(rate) >> 10`**. Decompiling its
 actual writer `FUN_00034350` (stores at `0x34730`/`0x34744`/`0x34752`) shows that is **incomplete**:
