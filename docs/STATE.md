@@ -1,5 +1,36 @@
 # STATE — living current state of the kit
 
+## ⚠ **THE RAILED COMMAND IS SUSTAINED ONE-SIDED SATURATION, NOT A RAIL-TO-RAIL LIMIT CYCLE**
+Follow-up to the ±4096 rail finding: **is the railing a limit cycle?** Tested, and the answer is
+**no — and the test that would have said yes is underpowered, which I am recording rather than
+dressing up.**
+```
+   route     n_eng    neg%   pos%   rail-to-rail alternations   median gap   implied freq
+   r78       56230   0.70%  0.32%              6                  1.25 s       0.401 Hz
+   r85       12000   1.23%  4.00%              4                  5.82 s       0.086 Hz
+   r96       35048   0.37%  0.70%              4                  1.84 s       0.272 Hz
+   r96s11     6000   2.18%  4.10%              4                  1.84 s       0.272 Hz
+   pooled: 12 intervals, median 1.84 s, quartiles 1.37 / 1.84 / 2.23
+```
+🛑 **ONLY 4 OF 114 ROUTES EVER SWING RAIL-TO-RAIL, and they yield 12 intervals total with a 4.7×
+spread in implied frequency (0.086–0.401 Hz).**
+⇒ **[NOT CLAIMED] a limit-cycle frequency.** Twelve intervals across four routes that disagree by
+4.7× is not a measurement; quoting "0.27 Hz" from it would be exactly the kind of number this kit
+has had to retract before.
+
+### ✅ WHAT IT DOES ESTABLISH — AND IT SHARPENS THE EARLIER RESULT
+**The command overwhelmingly rails on ONE side and STAYS there** — up to **399 frames ≈ 4 s**
+continuous — rather than alternating between rails.
+⇒ **the operator's "peak command oscillation" is, in the data, SUSTAINED ONE-SIDED AUTHORITY
+SATURATION**, not a controller limit cycle between limits.
+⇒ **that is consistent with, and strengthens, the authority diagnosis**: openpilot asks for the
+maximum the field can carry and holds it, because the plant is not delivering enough per count.
+⇒ **it also means no "oscillation-damping" lever applies** — there is no cycle to damp. **The fix
+is torque-per-count, which is the gain (frozen) or `0xC61BC` (binding unknown).**
+
+⊕ **This turn produced a refinement, not a breakthrough**, and the analysis remains where it was:
+**eleven verified builds unflown, and the binding constraint is a drive.**
+
 ## 🛑🛑🛑 **THE LKAS COMMAND RAILS AT ±4096 — “PEAK COMMAND OSCILLATION” IS AUTHORITY SATURATION**
 The operator names **peak command oscillation** in every instruction and this kit had never measured
 it. **It is measured now, from data already on disk, and it ties all three complaints together.**
