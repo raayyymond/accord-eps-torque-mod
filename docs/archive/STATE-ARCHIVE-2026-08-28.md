@@ -3642,3 +3642,94 @@ probe that retires the notch family.
 
 🛑 **4 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
 
+## 🛑🛑🛑 **THE ASSIST CALIBRATION IS NOT FIXED — IT MIGRATES AS FAULT COUNTERS ACCUMULATE**
+Sweeping `gp-0x6700`–`gp-0x6728` for cells read inside the assist chain (0x33000–0x43000) turns up
+**a whole FAMILY of lockstep-shadowed latching counters**, every one of them read there:
+```
+   cell        total  in-assist   what it is / does
+   gp-0x671A     7        7       gates THREE cal selections: the aggregator branch (0x3AA70),
+                                  the b26 Y-branch (0x36C1E), and the NOTCH gate (0x35BEA)
+   gp-0x671B     6        6       0x39854: ld.bu / cmp 0x1 / cmovh / bh -> gates FLOAT behaviour
+                                  at count > 1
+   gp-0x671C     8        8       0x3A346: st.b r22, -0x671c  + lockstep shadow gp-0x4c23
+   gp-0x671D    26       26       0x3AB98: the r24 MULTIPLIER -- a 5.12x step  (V149 removes it)
+   gp-0x671F/20  3        3       0x3750C / 0x375C0 / 0x37674   -- UNEXAMINED
+   gp-0x6725-28 35-40   35-40     0x3CBxx / 0x3EAxx             -- UNEXAMINED, the largest users
+   gp-0x6700/03/04 2-7   2-7      0x38AExx / 0x39Dxx            -- UNEXAMINED
+```
+⊕ the adjacent-pair pattern (`671A/671B`, `671C/671D`, `6725/6726`, `6727/6728`) is the **`ld.bu`
+disp|1 ambiguity** — each pair is one cell reached by both encodings.
+
+### 🛑 WHAT THIS MEANS — AND IT REFRAMES THE WHOLE PROJECT
+`FUN_00041d56` showed the pattern in full for `gp-0x671d`: **increment on a threshold crossing,
+never decrement, saturate at 255, lockstep-shadowed, raise a DTC at a count limit, and reset only
+on a clear/init path.** The sweep shows that is **not one counter — it is an architecture.**
+⇒ **[EVIDENCE] the effective assist calibration depends on HOW MANY FAULT THRESHOLDS HAVE BEEN
+CROSSED SO FAR IN THE DRIVE.** At least four of these counters select different cal values as they
+advance.
+⇒ **"which build is on the car" is NOT the full state.** Two runs of identical firmware can be
+running **materially different assist configurations** — and the configuration only ever moves in
+one direction within a drive.
+⭐ **That is a concrete, mechanical explanation for the 20–36× between-route noise floor**, and for
+why the operator's grinding "comes and goes". It is not road noise; **it is the firmware
+reconfiguring itself as the drive proceeds.**
+
+### ⭐ WHAT IT CHANGES
+1. **V149 gains weight.** Removing the `gp-0x671d` step (5244→1024 → constant 1024) eliminates
+   **one** of these migrations outright. It is no longer just "reduce a pump" — it is **making one
+   lane's calibration drive-invariant.**
+2. **Every future build should ask: does this cal sit behind a counter?** Three levers this session
+   already did (the notch, `0xC643E`/`0xC6440`, Lever B). 🛑 **`probe_census.py` answers "has this
+   cell been probed"; this needs the companion question "is this cell SELECTED by a counter".**
+3. **A drive's early minutes are not the same firmware as its late minutes.** Any endpoint that
+   pools a whole drive averages across configurations. ⊕ The share endpoint's **n ≥ 90 window** gate
+   makes this worse, not better, by requiring long exposure.
+⚠ **UNEXAMINED and worth a session**: `gp-0x6725`–`gp-0x6728` have **35–40 accesses each**, the
+largest of the family, in `0x3CBxx`/`0x3EAxx`. Nobody has looked at what they gate.
+
+
+## 🛑🛑🛑 **CAPSTONE AUDIT: ESSENTIALLY EVERY HISTORICAL BETWEEN-BUILD GRIND RATIO IS BELOW THE NOISE FLOOR**
+The measured between-route floor is **20–36×**. Sweeping the memory index for historical
+between-build grind claims and testing each against it:
+```
+   V72   grind #1 ratio 0.953                = 1.05x    BELOW FLOOR
+   V76   predicted 0.57x, measured ~1.0      = 1.8x     BELOW FLOOR
+   V75 / V74  grind 0.349                    = 2.9x     BELOW FLOOR
+   V62   18-22 Hz 0.124 [0.036,0.387] vs V59 = 8x       BELOW FLOOR
+   V107  "rails ~10x V106 across 10-40 km/h" = 10x      BELOW FLOOR
+   V69   ladder 2501 / 879 / 168 / 109 / 746 = 23x      MARGINAL
+   V62   0.024 at |rate| 16-32 deg/s         = 42x      MARGINAL -- the only one clearing 36x
+```
+⇒ **[EVIDENCE] the kit's entire history of BETWEEN-BUILD grind comparisons is uninformative**,
+with V62's 42× the sole marginal survivor. ⊕ Several of these carried **negative controls**, which
+is strictly more than a bare ratio and is why they are *marginal* rather than *dead* — but **none of
+them clears the floor on magnitude alone.**
+
+### ✅ WHAT SURVIVES: THE OPERATOR'S REPORTS, BECAUSE THEY ARE NOT RATIOS
+```
+   V62   "Original grinding at 2-5 mph is GONE"
+   V80   "worst grinding ever, no fault"
+   V88   grinding fixed  (his report; the accompanying 0.549 ratio is 1.8x = below floor)
+   V122  "better, still ever so slight ... in rare moments"
+   V133  "massive, violent grinding ... continues after disengaging"
+```
+⇒ **every durable thing this kit knows about grinding came from the operator's ear**, and every
+number attached to those reports is, on its own, within route noise.
+⭐ That is not a criticism of the measurements — it is the **correct calibration of what they can
+decide**, and it took an identical-cal control to establish. **It also means the kit's doctrine
+(*"score bands, let the OPERATOR score symptoms"*) was right all along and under-obeyed.**
+
+### ⭐ WHAT THIS MEANS FOR THE NEXT DRIVE
+1. **Judge the build by ear.** The scorers are for MECHANISM questions (does the gate open, is the
+   lane live, did the notch run) — **not for ranking builds.**
+2. **The share endpoint (`score_creep_share.py`, floor ~1.8×) is the ONE exception**, and only with
+   **≥ 2 minutes of engaged creep**; below that gate it refuses.
+3. **Do not re-derive conclusions from the historical ratios.** They are recorded as history, not as
+   evidence. 🛑 **Any future session quoting a between-build grind ratio must state it against the
+   20–36× floor** — the scorers now carry that banner.
+
+
+---
+
+🛑 **4 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
+
