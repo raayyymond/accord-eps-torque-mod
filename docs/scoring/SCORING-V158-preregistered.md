@@ -52,7 +52,8 @@ below 35 km/h.
 | stock / V122 | **0.000** ct/(deg/s) |
 | `gp-0x6bbe` (measured on-car, independent) | 1.571 ct/(deg/s) |
 | **V158's damper** (from its own bytes) | **2.733** ct/(deg/s) |
-| **total** | **4.304 — ×2.74** |
+| **total (Path 1 nominal)** | **4.304 — ×2.74** |
+| **total NET of Path 2** | **2.63–3.53 — ×1.67 to ×2.25** (stability-bounded; see STATE) |
 
 ⚠ **[BELIEF] what that buys in ζ.** *Only* if the firmware's viscous term dominates damping would ζ go
 **0.017–0.036 → 0.047–0.099**. If mechanical damping dominates, less. **×2.74 is the firmware-side
