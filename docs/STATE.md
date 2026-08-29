@@ -4,6 +4,40 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **V196 — THE ONE FREQUENCY-SELECTIVE RATCHET LEVER LEFT, AND IT COSTS NOTHING AT DC**
+The biquad is spent on the grind. The only other **frequency-selective** lever aimed at the ratchet
+is `gp-0x6b26`: built from the acceleration EMA, so its loop contribution scales as **ω²** —
+**67× stronger at 8.2 Hz than at 1 Hz.**
+```
+   gp-0x6b26 = clamp( ((accel * L) >> 6) * 273 >> 18, +-cal(0xC407E) )
+   L = LERP(0xCBE74[mode], gp-0x6a5e)
+
+   FLYING V122   engaged Y = (-29490, -17202, -16000)   ~3x Honda   ** and it ratchets **
+   V189..V195    engaged Y = ( -9830,  -5734,  -1966)   = Honda
+   V196          engaged Y = ( -4915,  -2867,   -983)   = HALF Honda
+```
+✅ **ENGAGED ONLY.** m24 (manual) and m26 (engaged) are **distinct records** (`0xD6A64` vs
+`0xD7A54`), so only `0xD7A5C..0xD7A61` moves and **manual driving stays byte-identical** — the V74
+pattern the TVCA4 memory endorses.
+⚠ **This deliberately RE-CREATES an engaged/manual asymmetry** that earlier work removed. The
+difference is **direction**: the ones removed made engaged **worse** (more anti-damping when
+engaged); this makes engaged **better**. Recorded explicitly so a later reader does not "fix" it.
+✅ **THE TRADE, PLAINLY:** negative apparent inertia makes the wheel feel lighter to fast inputs, so
+halving it means the wheel feels closer to its true inertia at high frequency — very fast steering
+inputs get marginally less help. **But ZERO at DC** (acceleration is zero in steady state), so **no
+LKAS authority is lost and no steady steering weight is added.** A half-dose rather than zero
+precisely because the trade is real.
+✅ **V196 = V195 + three int16.** `f904e43a1f4ccb94e81204dbecd93982049a024b95e48bd1c2c43852a7edec8e`
+⚠ Sign basis: the ★★★★★ anti-damping reading plus the dose ladder. **If inverted, the term was
+damping and the ratchet gets worse — revert to V195, three int16.**
+
+⇒ **THE SHELF NOW SEPARATES CLEANLY BY SYMPTOM:**
+```
+   V195   the GRIND lever, re-fitted on the channel the grind lives in.  No sign bets.
+   V196   V195 + the RATCHET lever, omega^2-selective, engaged-only, free at DC.  One sign bet.
+   V194   V193 + the gp-0x6c2c probe, if the detector question is worth a drive.
+```
+
 ## ✅ **V195's LOW SHOULDER IS CLEAR — AND THE WIDER NOTCH IS GENTLER THAN V189's**
 A notch adds lag below itself, so a wider pole (0.9000 vs V188/V189's 0.9300) needed its own check;
 the V188 result does not transfer. Measured on **`cs_rate`**, pooled engaged-creep windows:
@@ -2171,43 +2205,4 @@ attenuates the resonance regardless of how broadband the excitation is — which
 works whether the mode is command-excited or self-excited.
 ⊕ It also explains the **monotone command scaling** (excess 14.0 → 47.8): more command activity means
 more broadband excitation reaching a fixed-frequency mode, **not** more energy at 8.2 Hz specifically.
-
-## 🛑🛑🛑 **RETRACTED: THE CAL ASSOCIATION SCAN IS INVALID AS I RAN IT**
-I reported *“a blind cal scan finds the grind's lever”* as a headline. **It does not, and the method
-itself is unsound.** Three findings, in the order they emerged:
-
-### 1. It is unstable — a two-label change flipped BOTH verdicts
-Correcting `r95` (V102→V101) and adding `r77` (V90) reversed everything: **ratchet 0→2 survivors,
-grind 1→0**. `0xC40BC` fell from ρ −0.715 to −0.662, below its threshold.
-
-### 2. Leave-one-out confirms the grind hit was noise
-```
-   RATCHET  0xC4B58  17/17 leave-one-out subsets   0xC4B5E 13/17   others 3,2,1 / 17
-   GRIND    0xC40BC   1/17                          <- the "confirmation" was never stable
-```
-
-### 3. 🛑 AND THE STABLE RATCHET HITS ARE ARTEFACTS — THE REGION IS NOT u16 CALS
-`0xC4B58` looked convincing at ρ +0.783 and 17/17. But its values across builds are **1443, 1542,
-12803, 14022, 14212, 60140, 60141** — jumping with no ordering, which is the signature of a
-**mantissa half, not a scalar.** Reading the region as float32 gives absurdities at every alignment
-(**−1.43e+26**, denormals like **1.76e−38**), and the raw bytes are plainly packed/structured:
-```
-   0xC4B50 on V122:  00 3A C4 3A 84 37 ED EA C6 36 BF 00 07 31 44 37 EC EA 24 37 1E 95 60 32
-```
-⇒ **`0xC4B58` is not a calibration scalar, so correlating it against anything is meaningless.** The
-“stable association” is an artefact of slicing packed bytes on a 2-byte grid.
-
-### ✅ WHAT THE ROOT CAUSE WAS, AND WHAT SURVIVES
-🛑 **The method assumed every 2-byte-aligned pair in the cal region is a u16 scalar. It is not.**
-That region holds floats, packed structures and pointer tables, and the scan silently treated all of
-them as numbers. **Every result it produced — for both bands — is withdrawn.**
-✅ **What SURVIVES, on its own separate evidence**: `0xC40BC` as the grind's lever. That came from the
-**knee sweep**, where the cell was read as the actual relay knee, its values are **sensible and ordered
-(300 / 600 / 1800 / 3000)**, and its role is **in the decompiled relay arithmetic**. ρ = −0.69,
-p 0.039. **The scan neither confirms nor denies it — it simply never had standing to.**
-✅ **V173 is untouched.** Its case is structural throughout: the assist map is the largest torque-fed
-term, its cap binds, its section was never retuned, and both gates pass.
-⊕ **The fix, if this is ever re-run**: restrict candidates to cells **verified as u16 cals** — by the
-knot-count header, by a decompiled read site, or by sensible ordered values — rather than every
-aligned pair. `analysis-2020accord/verify/check_lever.py --record` already does that validation.
 

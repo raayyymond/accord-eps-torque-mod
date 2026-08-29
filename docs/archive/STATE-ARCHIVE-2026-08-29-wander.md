@@ -2143,3 +2143,42 @@ if that cell is ever acted on.
 matches the operator's own report that 8× made grinding worse. **The rule was right and now it has a
 number.**
 
+## 🛑🛑🛑 **RETRACTED: THE CAL ASSOCIATION SCAN IS INVALID AS I RAN IT**
+I reported *“a blind cal scan finds the grind's lever”* as a headline. **It does not, and the method
+itself is unsound.** Three findings, in the order they emerged:
+
+### 1. It is unstable — a two-label change flipped BOTH verdicts
+Correcting `r95` (V102→V101) and adding `r77` (V90) reversed everything: **ratchet 0→2 survivors,
+grind 1→0**. `0xC40BC` fell from ρ −0.715 to −0.662, below its threshold.
+
+### 2. Leave-one-out confirms the grind hit was noise
+```
+   RATCHET  0xC4B58  17/17 leave-one-out subsets   0xC4B5E 13/17   others 3,2,1 / 17
+   GRIND    0xC40BC   1/17                          <- the "confirmation" was never stable
+```
+
+### 3. 🛑 AND THE STABLE RATCHET HITS ARE ARTEFACTS — THE REGION IS NOT u16 CALS
+`0xC4B58` looked convincing at ρ +0.783 and 17/17. But its values across builds are **1443, 1542,
+12803, 14022, 14212, 60140, 60141** — jumping with no ordering, which is the signature of a
+**mantissa half, not a scalar.** Reading the region as float32 gives absurdities at every alignment
+(**−1.43e+26**, denormals like **1.76e−38**), and the raw bytes are plainly packed/structured:
+```
+   0xC4B50 on V122:  00 3A C4 3A 84 37 ED EA C6 36 BF 00 07 31 44 37 EC EA 24 37 1E 95 60 32
+```
+⇒ **`0xC4B58` is not a calibration scalar, so correlating it against anything is meaningless.** The
+“stable association” is an artefact of slicing packed bytes on a 2-byte grid.
+
+### ✅ WHAT THE ROOT CAUSE WAS, AND WHAT SURVIVES
+🛑 **The method assumed every 2-byte-aligned pair in the cal region is a u16 scalar. It is not.**
+That region holds floats, packed structures and pointer tables, and the scan silently treated all of
+them as numbers. **Every result it produced — for both bands — is withdrawn.**
+✅ **What SURVIVES, on its own separate evidence**: `0xC40BC` as the grind's lever. That came from the
+**knee sweep**, where the cell was read as the actual relay knee, its values are **sensible and ordered
+(300 / 600 / 1800 / 3000)**, and its role is **in the decompiled relay arithmetic**. ρ = −0.69,
+p 0.039. **The scan neither confirms nor denies it — it simply never had standing to.**
+✅ **V173 is untouched.** Its case is structural throughout: the assist map is the largest torque-fed
+term, its cap binds, its section was never retuned, and both gates pass.
+⊕ **The fix, if this is ever re-run**: restrict candidates to cells **verified as u16 cals** — by the
+knot-count header, by a decompiled read site, or by sensible ordered values — rather than every
+aligned pair. `analysis-2020accord/verify/check_lever.py --record` already does that validation.
+
