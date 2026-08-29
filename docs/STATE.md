@@ -6,21 +6,30 @@
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
 ## ⚠ **STALE MEMORY CORRECTED: THE DAMPER *IS* LIVE AT CREEP ON THE FLYING BUILD**
 [[accord-damper-cannot-reach-micro-regime]] says the base-assist damper is **zero on 100 % of the
-micro regime** because ch0 = FactorC(speed) x FactorE(rate) is a product of two dead zones.
+micro regime** because `ch0 = FactorC(speed) x FactorE(rate)` is a product of two dead zones.
 ✅ **That describes STOCK and the early builds. It is NOT true of what is flying.** Read from the
 mode-26 records:
+```
+                                stock    V181/flying
+   FactorC below-range fallback     0  ->     429     (0xD77EE)
+   FactorE below-range fallback   140  ->     539     (0xD7818)
+   FactorE X[0], the rate knee     60  ->      12     (0xD780E)
 
-⇒ **the dead zones were already opened, so the “add Honda’s damping back at creep” lever is PARTLY
+   ch0 at creep = (FactorC x FactorE) >> 10
+       stock    = (  0 x 140) >> 10 = 0      <- dead, as the memory says
+       flying   = (429 x 539) >> 10 = 225    <- LIVE
+```
+⇒ **the dead zones were already opened, so the "add Honda's damping back at creep" lever is PARTLY
 SPENT.** Any future session must not re-derive it from that memory.
 
 ### ⚠ THE REMAINING HEADROOM, AND WHY I DID NOT SPEND IT BLIND
-FactorC’s creep fallback could go 429 -> ~908 (the in-range maximum), roughly doubling creep damping.
+FactorC's creep fallback could go 429 -> ~908 (the in-range maximum), roughly doubling creep damping.
 **But the fallback is ALREADY HIGHER than Y[0] = 233**, so there is a step DOWN of 193 counts as speed
 crosses X[0] = 2240 (~35 km/h). Raising the fallback to 700 would deepen that step to 467.
 ⇒ **more creep damping is bought with a bigger discontinuity at 35 km/h** — a jolt crossing that
 speed. Sizing that trade needs a drive, not a guess. **This is exactly the shape of bet that produced
 the retracted V178, so it is recorded as a sized option rather than built.**
-➕ It is also the ONLY “add damping” lever in the kit — every other build this session REMOVES loop
+➕ It is also the ONLY "add damping" lever in the kit — every other build this session REMOVES loop
 gain. If the drive says V181 helped but did not cure, this is the complementary direction.
 
 ## ✅✅ **EVERY BYTE OF THE NON-STOCK DELTA IS NOW ACCOUNTED FOR — THE AUDIT IS COMPLETE**
