@@ -4,6 +4,69 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **100/12 Hz EXCLUDED · THE MODE GENUINELY WANDERS ±0.71 Hz · AND TWO OF MY OWN CLAIMS RETRACTED**
+🛑 **RETRACTION 1 — I ran the assist section at FS=100 Hz. IT RUNS AT 1 kHz.** Verified against the
+lineage's own three stock response points (notch 55.23 Hz, −1.25 dB @21, −3.01 dB @30, −0.02 dB @3):
+FS=1000 reproduces all four, FS=100 reproduces none. **Two claims I made this session die with it:**
+- ❌ *"Honda's notch is at 5.53 Hz, a 10x error in the record"* — **WRONG, the record was right.**
+  The notch is at **55.226 Hz**. The 10x error was mine.
+- ❌ *"V173 cuts the LKAS band up to 6.5x and doubles group delay"* — **WRONG.** At the true rate
+  **LKAS 0.5–3 Hz is −0.05 to −1.42 dB — essentially intact.**
+
+### ✅ THE 100/12 = 8.3333 Hz FIRMWARE-CYCLE HYPOTHESIS IS DEAD
+Killed by a **synthetic positive control**, not by argument. Inject a *truly fixed* 8.3333 Hz line into
+1/f noise with matched segment counts and run the identical estimator:
+```
+   synthetic FIXED line, SNR 0.5 / 1.0 / 2.0 -> sd 0.0051 / 0.0026 / 0.0011 Hz
+   observed, 15 routes                       -> sd 0.7904 Hz     (150x larger)
+   within-route split-half sd 0.3535  =>  TRUE route-to-route sd 0.7069 Hz
+```
+=> the estimator reproduces a fixed frequency to **0.005 Hz**. The spread is **real**, not noise.
+**A firmware divider cannot produce a frequency that moves +-9 % between drives.** ✅ Also checked the
+image directly: `add 1,rX` paired with `cmp N,rX` gives N=12 only **4** sites vs 22 for N=8 and 13 for
+N=10, and the N=12/13/14 hits sit at regular 0x3E strides — **unrolled loop trip counts, not dividers.**
+
+### ⚠ THE WANDER IS ITSELF A DESIGN CONSTRAINT — IT KILLS EVERY NARROW LEVER
+A mode at 8.17 Hz +- 0.71 Hz cannot be attacked with a **unit-circle zero**: the numerator
+`z^2 + C_B0*z + 1` forces zeros **onto** the circle (product of roots = 1), so the notch is infinitely
+deep and **infinitely narrow**. Re-centred on 8.17 Hz it gives **−308 dB at the centre but −0.42 dB
+WORST CASE across 6.5–11 Hz — i.e. nothing** — and destroys Honda's 55 Hz null. ⊕ This is an
+**independent second argument** for what V88 already concluded from the wire (*"no notch, no phase lever
+exists at 7.79 Hz specifically"*), and it re-confirms the standing lineage rule
+🛑 **"THE NOTCH LEVER IS SPENT — do not re-propose a re-centred `0xC60A8` biquad."** V105 flew a
+25.5 Hz notch and failed; `docs/review/GATE2-2026-08-20-notch-sign.md` refused re-centring at 6–9 Hz.
+=> **the ratchet lever MUST be broadband.** That is exactly what V173's pole move is.
+
+### ✅ V173 RE-PRICED AT THE CORRECT RATE — AND GATE 2 PASSES
+```
+   band                 V173 / stock          what it means
+   LKAS   0.5-3 Hz      -0.05 .. -1.42 dB     authority MAGNITUDE intact
+   ratchet 6.5-11 Hz    -4.50 .. -7.97 dB     partial (1.7-2.5x) but robust across the whole wander
+   GRIND  15-25 Hz     -10.39 .. -14.70 dB    the primary endpoint, well served
+   lane-change 26-31   -15.03 .. -16.51 dB
+   COST: group delay  +30.1 ms @0.5 Hz  +29.1 @1  +21.4 @3   (-5.5 deg / -10.8 / -29.2)
+```
+✅ **GATE 2 (magnitude): PASS, decisively.** `max |H_V173 / H_stock| = 0.999753` over 0.1–499 Hz and
+`max |H_V173| = 0.9998` absolute => the section **can only REMOVE loop gain, never add it**, and no new
+resonance exists. Same argument class V103 passed on.
+⚠ **GATE 2 (phase): a real, bounded cost.** −10.8 deg at 1 Hz and −29.2 deg at 3 Hz is materially more
+in-band phase than V103 spent. It is the **mechanism** by which the mode is damped, not a side effect —
+but it is the honest price, and the operator feels it as lag, not as lost authority.
+
+### ➕ THE FRONTIER — PRE-REGISTERED NEXT STEP IF V173 IMPROVES BUT DOES NOT CURE
+The slow real pole couples attenuation to lag **inseparably** (one real pole, one time constant), at a
+strikingly linear rate:
+```
+   p_slow   corner   ratchet@8.17   grind 15-25   lag@1Hz      ~4.8 ms of 1 Hz lag
+   0.9700   4.85 Hz    -5.89 dB      -12.61 dB    +29.1 ms  <== V173
+   0.9800   3.22 Hz    -8.77 dB      -16.03 dB    +42.8 ms     buys each extra dB
+   0.9850   2.41 Hz   -11.03 dB      -18.49 dB    +54.1 ms     of ratchet attenuation
+   0.9900   1.60 Hz   -14.38 dB      -22.00 dB    +69.2 ms
+```
+=> **If the drive says "better but still there", the next build is `p_slow` 0.970 -> 0.980** (`C_A8`,
+`C_AC`, `C_B4` re-solved for unity DC): −2.9 dB more ratchet for +14 ms more lag. **Do not go past
+0.985 without an operator lag verdict** — past there the lag is larger than anything the kit has shipped.
+
 ## ⚠ **HYPOTHESIS, UNPROVEN: IS THE RATCHET AT EXACTLY 100/12 Hz? — AND THE DRIVE CAN SETTLE IT**
 🛑 **Every ratchet frequency I have quoted this session — 7.81, 8.01, 8.20, 8.40, 8.59, 8.79 — is an
 exact FFT BIN CENTRE** at 0.1953 Hz spacing. I never resolved the frequency, only which bin it fell
@@ -2222,32 +2285,4 @@ The calibration search is **complete**: every aggregator lane has a phase or str
 pointer-table family is attributed, and all three complaints have a firmware answer or a reason there
 is none. Six images cover every outcome of one drive, all verified cell-by-cell.
 **The only remaining input is the drive.** Nothing further can be learned from the bytes.
-
-## ✅✅ **FINAL VERIFICATION — ALL SIX FLYABLE BUILDS CHECK OUT, CELL BY CELL**
-```
-   build   sha   LeverB  0xC63A0  gate    FactorC[26]  dose@99   role
-   V158    OK     5244    1024    0xfb       429          50     *** FLY FIRST ***
-   V164    OK     5244    1024    0xfb       234          27     better but too heavy
-   V160    OK     6553    1024    0xfb       429          50     better, effort fine
-   V165    OK     5244    1024    0xfb       429          65     unchanged
-   V167    OK     5244     512    0xfb       429          50     WORSE (not a bare revert)
-   V161    OK     6553    1024    0xfb         0           0     Lever-B-only twin (no damper)
-```
-✅ Every SHA matches its build report; every cell is exactly as designed; the V67 gate repoint
-(`0x3AA96 = 0xfb`) is present on all six, so Lever B is reachable everywhere. **V161's dose 0 is
-correct** — it is the no-damper twin. All six `.rwd` files present and non-superseded. **No mandatory
-file over 200 KB** (cap 256).
-
-## ✅ **RECONCILED — `gp-0x6bbe`'s “76 % OF RAIL” DOES NOT CONTRADICT THE ×1.7–×2.7 FIGURE**
-Two records describe the same lane in different units, and they invite a specific mistake:
-```
-   memory:  "VISCOUS + a DC pedestal -- flat ~90 ct/(rad/s); p50 73.6 ct flat across 0-6 deg/s"
-   facade:  "-K1 x (column rate) DAMPER ... DEAD as a lever: flat +-512 bound, already at 76 % of rail"
-```
-76 % of the ±512 producer ceiling is **~389 counts of TOTAL magnitude** — but the **damping** part is
-the **SLOPE** (90 ct/(rad/s) = 1.571 ct/(deg/s)); the **DC pedestal damps NOTHING.**
-✅ So comparing V158 **by slope** (2.733 vs 1.571) is correct, and comparing **by absolute counts**
-(50 vs ~389) would be **WRONG** — it would credit a constant offset as damping.
-⭐ **When two records give different numbers for one lane, check they are the same QUANTITY before
-calling it a contradiction — or before averaging them.** Here one is a slope and one is a magnitude.
 
