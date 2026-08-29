@@ -1,5 +1,69 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **UNMATCHED ENGAGEMENT CONTRASTS ARE OPERATING-POINT ARTEFACTS — INCLUDING MINE**
+I searched every cached channel for the symptom's carrier: the signature is **high 6–9 Hz engagement
+contrast WITH flat control bands.** The search found nothing — and then showed why the question was
+malformed as asked.
+
+### 🛑 RAW, UNMATCHED CONTRASTS SAY ENGAGEMENT *REMOVES* THE BAND
+```
+   r7e / r7f, engaged/manual 6-9 Hz band power, NO matching:
+      tq      0.13 / 0.10        rate_f  0.12 / 0.10        cs_rate 0.13 / 0.11
+      probe   0.57 / 0.83        wang    1.18 / 0.31
+   no channel on either route exceeds 2.0x, and the best SELECTIVITY is 2.10x (cs_brakev, irrelevant)
+```
+⇒ taken at face value this says engagement **suppresses** 6–9 Hz **8–10×** — which is obviously an
+**operating-point artefact**: the manual arm is ordinary driving and simply moves the wheel far more.
+⇒ **[EVIDENCE] an unmatched engaged/manual band ratio measures the DRIVING, not the firmware.**
+
+### ✅ MATCHED ON SPEED **AND** STEERING ACTIVITY, THE EFFECT COLLAPSES AND FLIPS
+5.1 s windows, pure-arm only, stratified on (speed bin × |rate| RMS bin), median over matched strata:
+```
+   route   channel   6-9 Hz share ratio   CONTROL 26-31 Hz   selectivity   strata
+   r7e     tq              0.86                1.07              0.80         7
+   r7e     rate_f          0.76                1.11              0.69         7
+   r7e     probe           0.66                1.04              0.63         7
+   r7f     tq              1.31                0.87              1.50         6
+   r7f     rate_f          1.08                0.94              1.14         6
+   r7f     probe           1.35                1.31              1.03         6
+```
+⇒ **SAME BUILD, SAME DRIVER, TWO ROUTES, OPPOSITE SIGNS.** Matched, the contrast sits in
+**0.66–1.35** and does not replicate in direction, let alone magnitude.
+⇒ **[EVIDENCE] these two routes do NOT independently confirm an engagement amplification at 6–9 Hz.**
+They are **underpowered** (6–7 strata each) and cannot refute the corpus result either — but they
+**do** demonstrate that the unmatched figures are artefacts.
+
+### 🛑 A NUMBER IN A PROMOTED MEMORY NEEDS A CAVEAT
+`accord-ratchet-is-a-lightly-damped-resonance` cites **"engaged/manual band power 11.7–13.4×"**.
+That figure carries **no n and no CI, and no statement that it was matched.** The kit's other
+engagement result, `accord-engagement-amplifies-6-9hz`, gives **2.8×** from **30 routes / 284 min /
+235 blocks with a CI [+0.146, +0.667]** — blocked, and an order of magnitude smaller.
+⇒ **⚠ Treat the 11.7–13.4× as UNMATCHED and therefore not comparable to any matched number.**
+⇒ **The memory's OTHER results are untouched** — ring-down Q, the Welch-ladder limit-cycle exclusion
+and the not-rim-side transfer function each passed their own control and stand.
+
+### 🛑🛑 WHICH VOIDS THE **REASONING** OF MY OWN RETRACTION LAST TURN
+Last turn I retracted *"`gp-0x6b70` is the carrier"* by comparing its **1.32–1.38×** against the
+symptom's **11.7–13.4×**. **Both numbers are unmatched, so that comparison was not sound either.**
+⇒ **[CORRECTED] `gp-0x6b70` is NOT REFUTED as a carrier — it is UNPROVEN.** The distinction matters:
+refuted closes a lever, unproven leaves V152/V153 exactly where the loop-pole argument put them.
+⇒ **The loop-pole justification for V152/V153 is unaffected** — it never rested on the contrast.
+
+### ⭐ THE BINDING CONSTRAINT IS NOW A DRIVE, AND ITS DESIGN IS SPECIFIC
+The kit cannot identify the carrier from existing data: **no cached route has matched engaged AND
+manual exposure at the same speed and steering activity in the symptom's own regime.** This is the
+same gap `accord-leverb-discriminator-underpowered` named — *"matched ENGAGED and MANUAL exposure."*
+```
+   THE DRIVE THAT UNBLOCKS THE ANALYSIS
+   - one build, unchanged, one session
+   - ALTERNATE arms every ~60 s:  engaged hands-off  <->  manual, at the SAME speed and the SAME
+     gentle steering activity.  A parking-lot or quiet-road creep at a steady 5-15 km/h is ideal.
+   - >= 8 alternations (>= 4 of each arm), >= 2 min engaged TOTAL
+   - do NOT match a highway engaged arm against a city manual arm -- that is the artefact above
+```
+⇒ **This single protocol closes the carrier question for EVERY lever at once**, because every
+channel is recorded on every route. **It is worth more than any additional build.**
+
 ## 🛑🛑 **RECONCILIATION — I HAVE BEEN SEARCHING A SPACE THE KIT ALREADY CLOSED**
 `accord-ratchet-is-a-lightly-damped-resonance` is a **PROMOTED ★★★★★ memory** and it says, in its own
 description: *"the firmware search on it is CLOSED."* Re-reading it in full against my last several
