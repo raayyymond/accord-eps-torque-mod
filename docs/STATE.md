@@ -4,6 +4,53 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑 **NO GATE REJECTS EITHER — the command-gated-saturation model has NO mechanism in this path**
+
+Last tick killed the clamps. The remaining candidate was the aggregator's **zero-REJECT gates**, which
+drop a lane to **0** rather than clipping it — a harder nonlinearity than any clamp, and exactly the
+shape the record's model needs. Mirroring the compare bit-exactly:
+```c
+   (int)*(short *)(gp - 0x6b4e) * (uint)( (int)*(short *)(gp - 0x6b4e) + 0x2800U < 0x5001 )
+```
+an **unsigned** compare of `(x + W)` against `2W+1`, which passes **exactly `|x| ≤ W`** and rejects at
+`|x| = W+1`. Against each lane's own producer bound:
+```
+   lane          window W   producer   can it ever reject?
+   gp-0x6b4e       10240      10240    NO  -- writer SATURATES to +-10240 (0x27442..0x27454)
+   gp-0x6b4c       10240      10240    NO  -- and |.| >= 4096 measured duty 0.000000 / 17,614 fr
+   gp-0x6b26        1024        511    NO  -- producer clamped to 511 by cal 0xC407E
+   gp-0x6b46        1024        512    NO  -- FUN_00036682 tail clamps its driver to +-0x200
+   gp-0x6bd0        2048       1024    NO  -- <=1024 highway, 0 in 100 % of the micro regime
+   gp-0x6bbe        2048        512    NO  -- flat +-512 bound, p50 74
+```
+⇒ **NOT ONE OF THE SIX CAN EVER FIRE.** `gp-0x6b4e` is the tightest case and it is **exact**: the
+writer saturates to ±10240 and the gate passes `|x| ≤ 10240`, so the saturated value passes **by one
+count**. That is not luck — **every window is sized at or above its own producer's bound.**
+
+### ⭐ **WHICH REFRAMES THEM: THESE ARE FAULT GUARDS, NOT SHAPING NONLINEARITIES**
+Honda sized each window so a healthy lane can never trip it. They exist to drop a **corrupted** lane
+(a stuck or wild value), not to shape the control law. **Reading them as shaping elements — which the
+"find what clips" hunt invites — is a category error**, and it is why they look promising on paper and
+are dead in the code.
+
+### 🛑🛑 **COMBINED: THE MODEL HAS NO MECHANISM ANYWHERE IN THE COMMAND→MOTOR PATH**
+```
+   clamps   every one either structurally unable to clip, or measured at zero duty --
+            including the last survivor gp-0x6b70 at 1 frame in 72,916 engaged
+   gates    none can fire, by construction
+```
+⇒ **If the ratchet is a command-gated saturation, the saturating element is NOT in this path.** The
+remaining places it could live are the ones this census never covered: the **delivery chain** — the EME
+shaper, the integrator, the FOC/PWM stage — and the **plant** itself.
+⚠ **[EVIDENCE]** for the census; **[BELIEF]** that the model is therefore wrong — it may simply be
+looking at the wrong stage.
+
+### ✅ **V204 SURVIVES THIS — and it is the one thing here that does**
+`gp-0x6b4e` is still **SATURATED BY ITS WRITER** at ±10240. The gate passing is irrelevant to that:
+**the clipping already happened upstream**, at `0x27442..0x27454`. Whether `gp-0x3d8c` actually drives
+it to the rail is **unmeasured**, and V204 reads exactly that cell. ⇒ **V204 stays the probe to fly**,
+and it is now the *only* saturation question left standing in this path.
+
 ## 🛑🛑 **`gp-0x6b70` DOES NOT SATURATE — V205's question answered from cache, V206's best argument REFUTED**
 
 V205 was built to ask whether `gp-0x6b70` clips, because the saturation census had eliminated every
@@ -2204,26 +2251,4 @@ V102 stepped it down to 6×). 🛑 **Lowering it back is NOT recommended: LKAS r
 stated goal.** That tension is exactly why the answer is a **notch**: keep the gain, remove its 23 Hz
 consequence. ⊕ Supersedes the stale *"the 4× LKAS gain is frozen on every build"* memory, which
 predates V101.
-
-## 🛑🛑 **EVERY ENDPOINT IN THIS KIT IS RELATIVE — AND ONE OF THEM INVERTS V184'S VERDICT**
-Two endpoint families cover essentially every verdict in the arc, and **both divide by something
-that a broadband filter also attenuates**:
-```
-   A) slope-corrected excess (score_band_excess)   band / power law fitted OUTSIDE the band
-   B) control-band ratio     (~every other scorer) band / 30-40 Hz
-```
-Applying V184's real `|H|²` to the real flying spectrum (route `r24`, V122):
-```
-   band            ABSOLUTE          ctrl-band ratio      slope excess
-   GRIND 15-25     x0.025  -15.9 dB      x3.05  UP          x1.02
-   RATCHET 5-12    x0.131   -8.8 dB      x15.6  UP          x1.12
-   the 30-40 Hz CONTROL BAND itself falls -20.8 dB -- that is the whole mechanism
-```
-🛑 **V184 cuts absolute grind 40x, and the kit's standard endpoint would have reported it as a
-3-15x REGRESSION.** I would have told him a large fix was a large regression.
-✅ **FIXED: absolute band power is restored to `score_band_excess.py`**, with the worked example in
-the output so it cannot be re-withdrawn by accident. It was withdrawn once for spectral tilt — the
-right handling of tilt is to **report the slope** (which the scorer already does), not to delete the
-level. **Compare ABSOLUTE across builds; the ratio is valid only WITHIN a build, where the divisor
-is common.**
 

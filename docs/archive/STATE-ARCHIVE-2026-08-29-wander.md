@@ -3503,3 +3503,25 @@ hands-matched, so it does not replace Stage 1b, but it is real evidence in the s
 ⊕ And the poles are tested separately by the **spectral slope** (2.671 → 4.531 for V184, outside the
 entire 0.80–2.37 history), because they cannot move the excess numbers at all.
 
+## 🛑🛑 **EVERY ENDPOINT IN THIS KIT IS RELATIVE — AND ONE OF THEM INVERTS V184'S VERDICT**
+Two endpoint families cover essentially every verdict in the arc, and **both divide by something
+that a broadband filter also attenuates**:
+```
+   A) slope-corrected excess (score_band_excess)   band / power law fitted OUTSIDE the band
+   B) control-band ratio     (~every other scorer) band / 30-40 Hz
+```
+Applying V184's real `|H|²` to the real flying spectrum (route `r24`, V122):
+```
+   band            ABSOLUTE          ctrl-band ratio      slope excess
+   GRIND 15-25     x0.025  -15.9 dB      x3.05  UP          x1.02
+   RATCHET 5-12    x0.131   -8.8 dB      x15.6  UP          x1.12
+   the 30-40 Hz CONTROL BAND itself falls -20.8 dB -- that is the whole mechanism
+```
+🛑 **V184 cuts absolute grind 40x, and the kit's standard endpoint would have reported it as a
+3-15x REGRESSION.** I would have told him a large fix was a large regression.
+✅ **FIXED: absolute band power is restored to `score_band_excess.py`**, with the worked example in
+the output so it cannot be re-withdrawn by accident. It was withdrawn once for spectral tilt — the
+right handling of tilt is to **report the slope** (which the scorer already does), not to delete the
+level. **Compare ABSOLUTE across builds; the ratio is valid only WITHIN a build, where the divisor
+is common.**
+
