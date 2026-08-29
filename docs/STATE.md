@@ -1,5 +1,50 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **THE ASSIST CALIBRATION IS NOT FIXED — IT MIGRATES AS FAULT COUNTERS ACCUMULATE**
+Sweeping `gp-0x6700`–`gp-0x6728` for cells read inside the assist chain (0x33000–0x43000) turns up
+**a whole FAMILY of lockstep-shadowed latching counters**, every one of them read there:
+```
+   cell        total  in-assist   what it is / does
+   gp-0x671A     7        7       gates THREE cal selections: the aggregator branch (0x3AA70),
+                                  the b26 Y-branch (0x36C1E), and the NOTCH gate (0x35BEA)
+   gp-0x671B     6        6       0x39854: ld.bu / cmp 0x1 / cmovh / bh -> gates FLOAT behaviour
+                                  at count > 1
+   gp-0x671C     8        8       0x3A346: st.b r22, -0x671c  + lockstep shadow gp-0x4c23
+   gp-0x671D    26       26       0x3AB98: the r24 MULTIPLIER -- a 5.12x step  (V149 removes it)
+   gp-0x671F/20  3        3       0x3750C / 0x375C0 / 0x37674   -- UNEXAMINED
+   gp-0x6725-28 35-40   35-40     0x3CBxx / 0x3EAxx             -- UNEXAMINED, the largest users
+   gp-0x6700/03/04 2-7   2-7      0x38AExx / 0x39Dxx            -- UNEXAMINED
+```
+⊕ the adjacent-pair pattern (`671A/671B`, `671C/671D`, `6725/6726`, `6727/6728`) is the **`ld.bu`
+disp|1 ambiguity** — each pair is one cell reached by both encodings.
+
+### 🛑 WHAT THIS MEANS — AND IT REFRAMES THE WHOLE PROJECT
+`FUN_00041d56` showed the pattern in full for `gp-0x671d`: **increment on a threshold crossing,
+never decrement, saturate at 255, lockstep-shadowed, raise a DTC at a count limit, and reset only
+on a clear/init path.** The sweep shows that is **not one counter — it is an architecture.**
+⇒ **[EVIDENCE] the effective assist calibration depends on HOW MANY FAULT THRESHOLDS HAVE BEEN
+CROSSED SO FAR IN THE DRIVE.** At least four of these counters select different cal values as they
+advance.
+⇒ **"which build is on the car" is NOT the full state.** Two runs of identical firmware can be
+running **materially different assist configurations** — and the configuration only ever moves in
+one direction within a drive.
+⭐ **That is a concrete, mechanical explanation for the 20–36× between-route noise floor**, and for
+why the operator's grinding "comes and goes". It is not road noise; **it is the firmware
+reconfiguring itself as the drive proceeds.**
+
+### ⭐ WHAT IT CHANGES
+1. **V149 gains weight.** Removing the `gp-0x671d` step (5244→1024 → constant 1024) eliminates
+   **one** of these migrations outright. It is no longer just "reduce a pump" — it is **making one
+   lane's calibration drive-invariant.**
+2. **Every future build should ask: does this cal sit behind a counter?** Three levers this session
+   already did (the notch, `0xC643E`/`0xC6440`, Lever B). 🛑 **`probe_census.py` answers "has this
+   cell been probed"; this needs the companion question "is this cell SELECTED by a counter".**
+3. **A drive's early minutes are not the same firmware as its late minutes.** Any endpoint that
+   pools a whole drive averages across configurations. ⊕ The share endpoint's **n ≥ 90 window** gate
+   makes this worse, not better, by requiring long exposure.
+⚠ **UNEXAMINED and worth a session**: `gp-0x6725`–`gp-0x6728` have **35–40 accesses each**, the
+largest of the family, in `0x3CBxx`/`0x3EAxx`. Nobody has looked at what they gate.
+
 ## ✅ **V139's DESIGN VERIFIED OPTIMAL — AND A FLAG ON V88's "LEVER B"**
 A `sar` edit is locked to exactly ÷2, so a **finer, cal-only** version of V139 would be preferable
 if one existed. **It does not.** Every cal multiplier on these lanes is **BRANCH-GATED**:
