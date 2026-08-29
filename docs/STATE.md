@@ -4,6 +4,37 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅✅✅ **THE CHANNEL RESULT HOLDS — THE ONE THAT MATTERS MOST SURVIVED THE TEST THAT BROKE TWO OTHERS**
+Two n≤9 claims had already fallen on the full corpus, so the **channel survey** — the result that set
+the scorer's channel and underwrites *“every prior 6–9 Hz endpoint read the wrong channel”* — had to be
+re-tested before being trusted further. It was built on **four** routes. On **nineteen**:
+```
+   channel    routes  mean margin  median   min     n=4 result
+   tq         19      28.20        15.52    1.60    7.62
+   cs_tq      19      25.80        14.87    1.64    7.42
+   ws_fl      19       6.13         6.02    3.74    3.95
+   ws_fr      19       5.15         4.91    2.90    4.41
+   cs_rate    19       2.60         1.66    0.68    1.03
+   ang/wang   19       1.86         1.09    0.39    0.83
+   cs_ang     19       1.52         1.16    0.50    0.79
+   sc_tq      19       0.92         0.94    0.47    0.56
+   co_tqcan   19       0.91         0.85    0.48    0.59
+   cc_req     19       0.88         0.82    0.52    0.67
+```
+✅ **[EVIDENCE] the ordering is unchanged and every margin GREW.** Torque leads the next-best channel
+by **5×** (25.8 vs 6.1) and wheel rate by **10×**. ✅ **All three COMMAND channels sit below 1.0 on 19
+routes** — the ratchet is not in the command, now on the full corpus rather than four routes.
+⇒ **the scorer's channel is right, and the “wrong channel” claim stands.**
+
+### ⚠ ONE PHRASING SOFTENS — the same n≤9 pattern, a third time
+I wrote that `cs_rate` scores **“at CHANCE (1.03)”**. On 19 routes it is **2.60 mean / 1.66 median**,
+i.e. **above** its null on most routes. **Wheel rate carries a real but ~10× weaker ratchet signal;
+it is not at chance.** The operational conclusion is unaffected — scoring the ratchet in `cs_rate`
+would still be measuring the weakest usable channel with a floor it barely clears — but the wording
+was a small-n overstatement, exactly like the other two.
+⊕ **Three for three**: every claim of mine that has needed correcting was a **categorical statement at
+n≤9** (*“never moved”*, *“absent in manual”*, *“at chance”*). **Every effect SIZE has held or grown.**
+
 ## 🛑 **CORRECTION 2: “ENGAGEMENT *CREATES* THE RATCHET” IS TOO STRONG — IT AMPLIFIES IT ~15×**
 The same corpus enlargement that corrected the build-trend claim also softens the engaged/manual one.
 ```
@@ -2255,43 +2286,4 @@ branch and NOT a predicted improvement** — exactly how it is filed.
 ⭐ **THE GENERAL RULE**: **before lowering a weight, ask what the sum is FOR.** In a torque
 aggregator a weight is a gain and lowering it reduces a contribution. In an **observer** the same
 edit changes a *model*, and "less of the bad-signed thing" is the wrong frame entirely.
-
-## ✅✅✅ **V167 BUILT — THE KNOB FOR V158's ONE NAMED RISK. `0xC63A0` 1024 → 512.**
-ONE HALFWORD on a V158 base, 56/56 assertions, CRC 50/50, **1 payload byte**.
-```
-   image 93970b6d65e10ff989b429efa1f387f52e48d7cba80938d1dd4f15dfa58ac61d
-   rwd   b80180d89afdafb9579fc095dc254f7af8d7e9086c7abea35e36c81138ae53c4
-```
-### ⭐ `FUN_00038148` APPLIES PER-TERM WEIGHTS — AND ONE OF THEM IS THE DAMPER'S
-```
-   sum = (gp-0x6b4e * 0xC63A8 >>10) + (gp-0x6b4c * 0xC63AA >>10)   <- LKAS
-       + (gp-0x6b26 * 0xC63A6 >>10) + (gp-0x6b46 * 0xC63A4 >>10)
-       + (gp-0x6bd0 * 0xC63A0 >>10) + (gp-0x6bbe * 0xC63A2 >>10)   <- THE DAMPER
-   sum = (sum * pol * cal) >> 10      <-- the EXTRA pol multiply that inverts the sign
-```
-✅ **[EVIDENCE] `0xC63A0` is `gp-0x6bd0`'s PATH-2 weight and nothing else.** Halving it halves the
-**pumping** copy while **Path 1's damping is byte-for-byte untouched** — Path 1 reads the same cell in
-a different function (`FUN_0003aa2c` @`0x3AC78`) with no such weight. The build asserts all five
-sibling weights and both FactorC/FactorE records byte-identical.
-✅ **[EVIDENCE] lowering is the safe direction**, in the model's own words for the sibling cell:
-*“LOWERING is safe BY CONSTRUCTION — reducing a feedback magnitude cannot destabilise a stable loop
-whatever its phase. RAISING is the classic destabiliser.”* History: **1024 on 137 images, 2048 on five
-(V72/73/74/75/81) — raised and flown, NEVER lowered.**
-✅ **[EVIDENCE] it is INERT without V158**: on V122 the damper is exactly 0 at creep, so `0xC63A0`
-multiplies zero. That is why the base is V158.
-
-### ⭐ IT REPLACES "REVERT" AS THE ANSWER TO V158's "WORSE" BRANCH
-A bare revert to V122 discards **Path 1's damping along with Path 2's pumping** and tells you nothing
-about which caused the regression. **V167 keeps the damping and removes half the pumping ⇒ it
-DISCRIMINATES.** The decision tree is updated.
-
-### ⚠ WHAT IS NOT ESTABLISHED
-**[BELIEF]** that Path 2's pumping matters at all. Two effects push **opposite** ways and the net is
-**not resolved**: Path 2 reaches the aggregator via `gp-0x6b70 → FUN_00037fe6 → gp-0x6ad6 → the PID
-→ gp-0x6ad4`, whose ceiling is throttled to **170/1024 = 16.6 %** at creep by `0xC67C2` — but f′ is
-**2.174 hands-off vs 0.346 hands-on**, so the observer is **6.3x MORE sensitive hands-off**, which is
-where the ratchet lives.
-**[NOTE]** the final linear gain also needs a **RAM LERP's local slope** (rows at `gp-0x64b8`/
-`gp-0x641c`), which the model records as never successfully extracted. **512 is a HALVING, one notch
-on a safe axis — NOT a computed optimum.**
 
