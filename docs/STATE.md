@@ -1,5 +1,54 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ **THE CENSUS REFRAMES THE WHOLE SEARCH — THIS KIT HAS BEEN TUNING THE SMALLEST LANES**
+The full probe census puts every flown lane on one scale for the first time. **Engaged p50, in the
+same units, from routes already in the cache:**
+```
+   cell        meaning                          p50        max        flown on
+   gp-0x6B94   AGGREGATOR OUTPUT (the total)    115-218   1933-3149   V100/r85, V101/r95
+   gp-0x6BBE   viscous + DC pedestal             74        352        V92 /r79
+   gp-0x6B4C   11-slot assist sum                 0-26     1459-1664  V102/r96, V103/r9e
+   gp-0x6B86   notch lane                         6-19     2720-3274  V104-106 / ra4-ra6
+   gp-0x6B26   b26 INERTIA term                   2-5       222-318   V90 /r77, V91 /r78
+```
+🛑 **`gp-0x6BBE` carries p50 74 against an aggregator OUTPUT of 115-218 — roughly HALF the
+entire assist output at creep.** Meanwhile **`gp-0x6B26`, the target of ~15 builds this session and
+before (V126–V138: clamp, α2, knee, K1), carries p50 2–5**, and the notch lane carries 6–19.
+⇒ **[EVIDENCE] the kit has been spending its builds on the SMALLEST lanes in the aggregator.**
+⭐ **A lever's leverage is bounded by how much signal its lane actually carries. Rank lanes by
+measured p50 BEFORE choosing what to tune** — the census makes that a one-command check.
+
+### 🛑 AND A FIFTH VALUE-ASSUMPTION ERROR, CAUGHT BY READING
+I inferred that `gp-0x6BBE`'s *"p50 73.6 ct FLAT across 0–6 °/s"* meant it was **saturated at its
+clamp**, and that the clamp was therefore the lever. **Read the clamp records instead:**
+```
+   PTR_DAT_000c7970[mode] -> 0xCE080 / 0xCE098 / 0xCF080 / 0xCF098   (all four modes identical)
+        n=5   X = [0, 640, 2560, 5760, 6400]   Y = [512, 512, 512, 512, 512]
+```
+⇒ **the clamp is FLAT at 512, and the lane runs p50 74 / max 352 — it NEVER reaches it.**
+⇒ **the pedestal is GENUINE, not a clamp artifact, and the clamp is NOT the lever.**
+⊕ That is the **fifth** value I have assumed rather than read this session. Checking it cost one
+command. **The rule stands and is now cheap to obey: read the table before building the theory.**
+
+### ✅ WHAT THE DOMINANT LANE ACTUALLY EXPOSES (`FUN_00034a72`, the only writer)
+```c
+   iVar29 += ((gp-0x4f60 * 32 - iVar29) * cal(0xC6372)) >> 10          // torque-sensor EMA
+   iVar27 = ((gp-0x6c2e * cal(0xC6370)) >> 5) * sign(gp-0x6752) + iVar29 >> 5
+   ...
+   gp-0x6bbe = clamp(iVar21, +- LERP(gp-0x6a62))                        // clamp 512, never reached
+```
+```
+   0xC6370 = 2560   weights gp-0x6c2e (the ACCELERATION twin) into the lane's input
+   0xC6372 =  205   the torque-sensor EMA alpha = 205/1024, matching the kit's own record
+```
+⭐ **`0xC6370` is structurally the same KIND of lever as α2 — an acceleration weight — but on a
+lane carrying 15–35× more signal.** ⚠ **NOT yet a proposal**: `gp-0x6bbe` is an ASSIST lane, so
+reducing it makes steering HEAVIER, which cuts against the operator's first goal. That trade has to
+be sized before anything is built. **[BELIEF] it is the highest-leverage unexplored target in the
+aggregator; [UNKNOWN] whether its ratchet content can be reduced without the weight cost.**
+
+⭐ **This does not change the flight: V147 is still the build.** It changes what comes AFTER.
+
 ## 🛑🛑 **TWO DIRECT MEASUREMENTS FROM CACHE — ONE CORRECTS THE SECTION ABOVE, ONE KILLS THE NOTCH FAMILY ON ITS OWN**
 A tap census across all build images showed the two cells that matter had **already been flown**:
 `gp-0x6C2C` by V107–V110 (routes **r1b, r1e**) and `gp-0x6B86` by V104–V106 (routes **ra4, ra5,
