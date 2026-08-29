@@ -178,7 +178,7 @@ Nothing in V158 predicts an increase: FactorC lifted and FactorE's dead zone ope
 that OPPOSES motion in Path 1. So a rise is the one outcome that carries unambiguous information, and
 its follow-up build already exists.
 
-## PRIMARY INSTRUMENTED ENDPOINT REVISED AGAIN: Q of the 15-25 Hz resonance
+## [WITHDRAWN 2026-08-29 -- see the section below] Q of the 15-25 Hz resonance
 
 The 15-25 Hz peak is strongly resonance-limited on every route (prominence 32-610x above the
 28-40 Hz floor), and **Q is a better endpoint than any band ratio**:
@@ -201,3 +201,57 @@ tracked the kit's own progress.
 Caveat: the pooled Q is not the mean of its halves (r24 pools to 4.50 from halves 6.00/6.75), so
 split-half may understate pooled uncertainty. Both sides use the same procedure, so the comparison
 holds.
+
+## 🛑 PRIMARY ENDPOINT CORRECTED: slope-corrected EXCESS, not Q
+
+Every previous resonance endpoint here was confounded by the wheel-rate signal's spectral
+TILT, which runs 1/f^0.80 to 1/f^2.37 across routes. Coloured noise with **no resonance at
+all** reproduces what the old measures reported:
+
+| control (NO resonance) | prominence | fitted Q | fit r2 |
+|---|---|---|---|
+| 1/f^1.5 | 27.4 | 1.00 | 0.585 |
+| 1/f^2.0 | 64.9 | 1.00 | 0.710 |
+| real routes | 12.2 - 173.3 | 1.0 - 17.6 | 0.28 - 0.87 |
+
+So fixed-floor prominence, fitted Lorentzian Q and half-power Q are all **withdrawn**.
+
+### What replaces them
+
+Fit the route's own power law over 3-40 Hz using only bins **outside** the bands under
+test, measure the peak's excess over that background, and null it at **that route's own
+measured slope**:
+
+| band | excess | slope-matched null p95 | verdict |
+|---|---|---|---|
+| **GRIND 15-25 Hz** | **9.9 - 421.9** | 2.6 - 4.1 | **REAL on 9/9 routes** |
+| RATCHET 5-12 Hz | 2.0 - 8.9 | 2.7 - 4.1 | real on only **6/9** |
+
+The grind is unambiguous; the ratchet is marginal **in this channel**. That is a
+signal-strength fact, not a noise one, and it is why 6-9 Hz endpoints have always
+underperformed here.
+
+### 🛑 The old inference rule was WRONG and is retracted
+
+The withdrawn section said *"Q RISING above 4.50 falsifies the damping account -> fly
+V167"*. **Half-power Q is NON-MONOTONE**: its null sits **above** the data (real 13.7-34.7
+vs null p95 58-78), because on a noisy median periodogram the half-power crossing lands on
+an adjacent bin. Adding damping broadens the peak and lowers Q, but once the peak weakens
+toward the floor **Q rises again toward the noise value**. So a rise cannot distinguish
+"damping failed" from "damping worked" -- exactly the discrimination the drive needed.
+**Excess is monotone in peak strength and does not have this defect.**
+
+### Scoring V158
+
+Reference: **V122 (r24) grind excess 23.2x**, slope 1/f^1.62, split-half 1.67x on 7 windows.
+
+| V158 reads | means |
+|---|---|
+| **excess clearly below 23.2x**, beyond the drive's own split-half | the damping account holds |
+| within the split-half floor | no readable effect |
+| **excess clearly ABOVE 23.2x** | the damping account is falsified -> the Path-2 pumping branch -> **V167** |
+
+The one-sided logic is unchanged and now rests on a monotone statistic: nothing in V158
+predicts a stronger peak, so a rise is the outcome that carries unambiguous information.
+
+Run it with `rlog-tools/score/score_band_excess.py <route-tag>`.
