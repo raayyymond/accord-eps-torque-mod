@@ -4,6 +4,57 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑🛑 **THE BUILD LINEAGE STOPS AT V121 — AND V122, THE FLYING BUILD, MADE FOUR UNDOCUMENTED CHANGES**
+**`docs/BUILD-LINEAGE*.md` contains ZERO occurrences of "V122".** The highest documented build is
+**V121**. Nothing from V122 to V178 has a lineage row. 🛑 **Every lever proposed this session was
+checked against a lineage that does not cover what is on the car** — which is exactly why V122's
+changes only surfaced when I finally read the raw byte delta rather than the record.
+```
+   V122's undocumented delta, read from the images:
+     0xC40D2  K1 Coulomb        204  -> 1020    (5x; 10x Honda)   -> reverted by V177
+     0xC40BC  ramp width        600  -> 3000    (5x)              -> KEEP, it is protective
+     0xC40DC  accel EMA alpha    22  -> 8                          -> OPEN, a phase change
+     0xC6598/9C/AC/B0/C4/C8/CC  three LERPs flattened to +-5.0     -> reverted by V178
+```
+⚠ **This is the failure the lineage rule exists to prevent**, and it defeated the rule's own
+enforcement: *"grep `build_v*_tva.py` and `BUILD-LINEAGE.md` before naming any address"* returns
+nothing for a cell V122 moved, so the check silently passes.
+
+## ✅ **V122 FLATTENED A GRADUATED RAMP TO A CONSTANT, AND DELETED A DEADBAND — V178 RESTORES IT**
+Pinned by disassembly at `0x44374..0x443EE` inside `FUN_00043e44`:
+```
+   0x44374  ld.w   0x75b8, tp, r11    ; X[0] = 700.0
+   0x44378  cmpf.s le, r9, r11        ; input < X[0] ?
+   0x4438e  ld.w   0x75c4, tp, r13    ; -> Y[0]   ** the BELOW-RANGE FALLBACK **
+
+   addr      stock   V122+     the LERP: X = [700, 800, 1100]
+   0xC65C4     0.0     5.0     Y[0] -- below 700, stock gives ZERO, the car gives MAXIMUM
+   0xC65C8     1.5     5.0
+   0xC65CC     2.0     5.0
+   0xC6598     1.0     5.0     (a second LERP, same treatment)
+   0xC659C     1.0     5.0
+   0xC65AC    -1.0    -5.0     (its mirror)
+   0xC65B0    -1.0    -5.0
+```
+⇒ **stock rises 0.0 → 1.5 → 2.0 with input; the flying build is a FLAT 5.0 everywhere**, and the
+deadband below 700 is **gone**. That is the shape change
+[[accord-v80-damper-relay-and-grind1-inert]] was written about — *"the damper became a RELAY …
+**restore the RAMP**, don't merely lower k"* — and it is live on the car.
+🛑 **HONEST LIMIT: the SHAPE change is pinned; the QUANTITY is NOT.** The input arrives in `r9`
+and the only nearby RAM cell (`gp-0x6d94`) has **one writer, zero readers** ⇒ a diagnostic mirror,
+not the source. **V178 is justified as a REVERT TO HONDA'S OWN VALUES — the safest class — and NOT
+as an understood lever. Do not describe it as one.**
+
+### ✅ V178 BUILT — 7 float32 cells, 28 bytes, base V177
+**23/23 assertions · CRC 50/50 · readback byte-identical · all seven cells byte-identical to stock ·
+`0xC407E` 511, `0xC40BC` 3000, `0xC40D2` 102, `0xC63A6` 1024 all asserted FROZEN.**
+image `2a78d9241b9db4bc…` · rwd `b75d7e5438585a1d…`.
+🛑 **NOT fly-first.** V177 is ONE cell and fully attributable; V178 adds seven whose semantics
+are unestablished. **Fly V177 first.** V178 is for undoing the whole undocumented V122 delta in one
+go, accepting that its result could not be attributed to a single cell.
+❌ **`0xC40BC` is deliberately NOT reverted** — 600 would make the Coulomb zero-crossing **5x
+sharper**, undoing the one V122 change that helps.
+
 ## 🛑 **RETRACTION: THE COULOMB TERM IS NOT A RELAY. V122 WIDENED THE RAMP BY THE SAME 5x.**
 I claimed `0xC40D2` at 10x Honda makes a **relay** injecting a **1.99x|model| STEP** at every velocity
 reversal, ~16 times a second. **Decompiling `FUN_0003b8f6` shows that is WRONG.** The term is a
@@ -2152,38 +2203,4 @@ resolution problem, and only a longer window fixes it.**
 **8+ passes of 10-15 s each**, which is also just a natural slow lap of a car park.
 ⊕ A resolution guard is now in `peak_q`: it returns **NaN when the measured Q exceeds 0.6x the
 window's ceiling**, so the scorer can never again report a window artefact as a damping measurement.
-
-## ✅ **Q's BUILD-ORDERING IS NOT GAIN-CONFOUNDED — AND THE GAIN COST ~2x IN DAMPING RATIO**
-```
-   build   Q      gain    knee   alpha2
-   V91     5.20   3564     600     22      4.00x gain
-   V96     4.67   3564     600     22      4.00x
-   V102    9.00   5346     300     22      6.00x   <- Q JUMPS at the gain step
-   V104    7.25   5346     300     22      6.00x
-   V106    7.67   5346     300     22      6.00x
-   V107    6.67   5346     300     22      6.00x
-   V112    6.50   5346    1800     14      6.00x
-   V122    4.50   5346    3000      8      6.00x
-```
-✅ **[EVIDENCE] the V102→V122 fall is NOT gain-confounded** — the gain is **constant at 5346 across the
-whole run**, so the 9.00 → 4.50 decline is attributable to the other cals, not to the gain.
-✅ **[EVIDENCE] V158 does not touch the gain** (`0xC6CD0` = 5346 on V122 and V158 alike), so the
-V122→V158 comparison is clean on this axis too.
-✅ **[EVIDENCE] V122's Q = 4.50 is BELOW the 4x baseline mean of 4.94** ⇒ the kit's builds have not
-merely recovered the damping the gain raise cost, they have slightly exceeded it.
-
-### ⚠ AND THIS CHALLENGES A STANDING CLAIM
-Memory records: *“The 4x LKAS gain … scales **EXCITATION, not loop gain**.”* **Q disagrees.** Q is a
-**shape** parameter: if the gain scaled only excitation, the resonance would grow in amplitude but
-**Q would be unchanged**. Q went **4.67 → 9.00** at the gain step — the peak got **sharper**, not just
-taller. **A gain that changes Q is acting inside the loop.**
-⇒ that gives the operator's 8x experience (*more* grinding) a mechanism it did not previously have:
-raising the gain **reduces the damping ratio** rather than merely amplifying what is there.
-⚠ **[BELIEF, not EVIDENCE] — the step is CONFOUNDED**: V96→V102 spans several builds (V100, V101,
-V102), not the gain alone, and there are only **two routes** at 4x. The Q jump lands exactly on the
-gain change, which is suggestive, but this does **not** isolate it. **What would close it**: any route
-at 4x gain with otherwise V122-like cals, or a deliberate single-variable gain build — which the
-operator has already ruled out on other grounds.
-⊕ It does **not** change the recommendation: the gain stays frozen at 6x, and **nothing here suggests
-raising it.** If anything it strengthens the existing rule against 8x by supplying the missing why.
 

@@ -676,3 +676,37 @@ stays valid because **both sides use the same procedure**, but it means the spli
 ⊕ The one-sided logic is unchanged and now sharper: **Q RISING above 4.50 falsifies the damping
 account** and points at the Path-2 pumping branch, whose build (V167) already exists.
 
+## ✅ **Q's BUILD-ORDERING IS NOT GAIN-CONFOUNDED — AND THE GAIN COST ~2x IN DAMPING RATIO**
+```
+   build   Q      gain    knee   alpha2
+   V91     5.20   3564     600     22      4.00x gain
+   V96     4.67   3564     600     22      4.00x
+   V102    9.00   5346     300     22      6.00x   <- Q JUMPS at the gain step
+   V104    7.25   5346     300     22      6.00x
+   V106    7.67   5346     300     22      6.00x
+   V107    6.67   5346     300     22      6.00x
+   V112    6.50   5346    1800     14      6.00x
+   V122    4.50   5346    3000      8      6.00x
+```
+✅ **[EVIDENCE] the V102→V122 fall is NOT gain-confounded** — the gain is **constant at 5346 across the
+whole run**, so the 9.00 → 4.50 decline is attributable to the other cals, not to the gain.
+✅ **[EVIDENCE] V158 does not touch the gain** (`0xC6CD0` = 5346 on V122 and V158 alike), so the
+V122→V158 comparison is clean on this axis too.
+✅ **[EVIDENCE] V122's Q = 4.50 is BELOW the 4x baseline mean of 4.94** ⇒ the kit's builds have not
+merely recovered the damping the gain raise cost, they have slightly exceeded it.
+
+### ⚠ AND THIS CHALLENGES A STANDING CLAIM
+Memory records: *“The 4x LKAS gain … scales **EXCITATION, not loop gain**.”* **Q disagrees.** Q is a
+**shape** parameter: if the gain scaled only excitation, the resonance would grow in amplitude but
+**Q would be unchanged**. Q went **4.67 → 9.00** at the gain step — the peak got **sharper**, not just
+taller. **A gain that changes Q is acting inside the loop.**
+⇒ that gives the operator's 8x experience (*more* grinding) a mechanism it did not previously have:
+raising the gain **reduces the damping ratio** rather than merely amplifying what is there.
+⚠ **[BELIEF, not EVIDENCE] — the step is CONFOUNDED**: V96→V102 spans several builds (V100, V101,
+V102), not the gain alone, and there are only **two routes** at 4x. The Q jump lands exactly on the
+gain change, which is suggestive, but this does **not** isolate it. **What would close it**: any route
+at 4x gain with otherwise V122-like cals, or a deliberate single-variable gain build — which the
+operator has already ruled out on other grounds.
+⊕ It does **not** change the recommendation: the gain stays frozen at 6x, and **nothing here suggests
+raising it.** If anything it strengthens the existing rule against 8x by supplying the missing why.
+

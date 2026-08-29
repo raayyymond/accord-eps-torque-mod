@@ -1,5 +1,14 @@
 # Build lineage and lever index — CHECK THIS BEFORE PROPOSING ANY CALIBRATION EDIT
 
+> 🛑🛑 **THIS LINEAGE STOPS AT V121. V122–V178 HAVE NO ROWS — INCLUDING THE FLYING BUILD.**
+> Discovered 2026-08-29. **`grep V122` in these files returns nothing**, so the standing rule
+> *"grep the lineage before naming any address"* **silently passes** for every cell V122
+> moved. V122's undocumented delta: `0xC40D2` 204→1020 · `0xC40BC` 600→3000 · `0xC40DC`
+> 22→8 · `0xC6598`/`9C`/`AC`/`B0`/`C4`/`C8`/`CC` three LERPs flattened to ±5.0.
+> **Until these are backfilled, diff against the STOCK IMAGE, not against this file.**
+> Details and the builds that revert them: `docs/STATE.md`.
+
+
 **Why this file exists:** on 2026-07-27 two independent agents, in the same session, proposed
 `0xC6450` 1024→32 as a "new, never-flashed" vibration lever. **It is V46 verbatim — flashed, null.** A
 third nearly repeated it with `0xC644A` (V43, flashed, null). Both had read `CLAUDE.md`; the flashed
