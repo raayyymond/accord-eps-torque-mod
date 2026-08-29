@@ -958,3 +958,83 @@ power, not of a null.
 ⇒ **What would close it**: the same thing every open question here needs — **more continuous
 engaged-creep windows.** At 14 windows the answer was unambiguous on the one route that had them.
 
+## ⭐ **THE RATCHET'S PRIME SUSPECT IS THE BASE-ASSIST MAP — AND ITS LANE IS NOT MEMORYLESS**
+Two independent routes now point at the same lane. **From the DATA** (this session): the ratchet is
+firmware-created, engaged-only, in **torque not angle**, and untouched by all 278 bytes the kit has
+changed. **From the CODE** (a prior tracer's loop-topology census, re-read and confirmed):
+```
+   Z = (Z0 + P.F) / (1 - P.L)      every torque-fed lane is a DENOMINATOR term
+   Q_eff / Q_passive = 40 / 2.8 = 14.3   =>  the loop cancels ~93 % of the mode's damping
+   gp-0x6b86 (base assist map, FUN_000352b4) is the LARGEST torque-fed term: window
+   +/-0x3000, the widest of all 11, and 5.8-7.8x the ENTIRE PID at 7.79 Hz
+```
+✅ **[EVIDENCE] its slope cap `0xC6384` = 2048 (2.000x) is byte-identical on ALL 161 IMAGES**, as
+are `0xC6382` = 41 and the input clamp `0xC6200` = 8192. Independently confirmed by my own
+untouched-cell scan, which found `0xC6384` absent from the 28 changed bytes in `0xC6000`.
+⇒ **the largest available `L` lever has never been moved, which is exactly the profile of a cause
+the kit's 30+ builds could not have touched.**
+
+### 🛑 A CORRECTION TO THE CENSUS — THE LANE HAS STATE
+The census priced this lane as **MEMORYLESS** (*“transfer at 7.79 Hz is real, 0°, magnitude = the
+local slope”*). **The decompile shows otherwise.** `FUN_000352b4` ends with a **parallel lagged
+branch** added to the direct path:
+```
+   iVar33 = clamp(gp-0x6b7a - sVar15, +/-0x3000) * (uVar25 < uVar18)     # a DIFFERENCE, comparator-gated
+   iVar24 += (iVar33*0x80 - iVar24) * k >> 11                            # gp-0x381c, 32-bit state, 1 kHz
+   gp-0x6b86 = clamp(iVar34 + (iVar24 -/+ 0x80) >> 7, +/-0x3000)         # direct + LAGGED, in PARALLEL
+```
+⊕ A difference passed through a lag and added back is a **lead-lag / dynamic-assist compensator**,
+not a static curve ⇒ **the lane's transfer is NOT the memoryless slope the census assumed**, and any
+`|L|` computed from the slope alone is incomplete.
+
+### ⭐ AND ITS POLE IS SELECTED BY ENGAGEMENT — BUT THE EFFECT IS TOO SMALL
+```
+   k = cal(0xC6382) = 41        if (iVar14 != 0 && return-centre != 0)     <- MANUAL
+     = LERP(0xC6906..) = 20     otherwise                                  <- ENGAGED
+   (return-centre is DEAD ENGAGED, 0.0000 duty / 75,227 frames, so the arms genuinely differ)
+
+   at 8.64 Hz, closed form AND the real integer recursion agreeing to 4 dp:
+     ENGAGED k=20  corner 1.56 Hz   |H| 0.1779  arg -78.20 deg
+     MANUAL  k=41  corner 3.22 Hz   |H| 0.3491  arg -68.02 deg
+   => engaged lags 10.18 deg MORE, which moves 1-P.L the RIGHT way (1.798 -> 1.713)
+```
+🛑 **[EVIDENCE] but that is only a ~5 % change in the denominator, against an observed ~20x
+presence-vs-absence contrast. The pole difference is REAL, points the right way, and is FAR TOO
+SMALL to be the mechanism.** Recorded as a negative so it is not re-derived.
+
+### ❌ AND THE FLOAT SECOND-ORDER BLOCK IS NOT IT EITHER
+`FUN_000352b4` carries a genuine 2nd-order float section (states `gp-0x3814`/`gp-0x3818`, coeffs
+`0xC60A8..0xC60B4`), gated on `0xC649B==1 && 0xC64FA <= gp-0x671a`.
+✅ **[EVIDENCE] it is HONDA'S and ships DISABLED** — `0xC649B` stock = **0**, and the kit enabled it
+on 58 of 161 images (V104 on; the V105/V106 notch work).
+❌ **Enabling it did nothing to the ratchet**: `0xC649B` vs ratchet **ρ +0.26, p 0.500**; its
+coefficients moved at V106/V107 with **ρ −0.31 to −0.45, all p ≥ 0.226.**
+
+### 🛑 THE BLOCKER, STATED PRECISELY
+The 10-knot curve itself is **RAM-resident** (`gp-0x641e..gp-0x6430` X, `gp-0x6444..` Y), so the
+**local slope at the creep operating point — which is what sets `|L|` — is not readable from the
+image**, and GATE 2 on `0xC6384` cannot be completed without it.
+⊕ **`search_instructions` returned ZERO for stores to that block; a raw LE byte scan across BOTH gp
+encodings found 27 accesses** (`0x38FD0`/`0x38FEE`/`0x39522` store-shaped; `0x43CBC-0x43CF6` touches
+all ten X knots, but decompiles as a READER into stack locals). **Another instance of the documented
+undercount — the null was false.** The initialiser is still unlocated.
+
+## ✅✅ **THE RATCHET SCORES FROM ONE 15-SECOND EPISODE — THE 8-PASS SPEC WAS THE WRONG ENDPOINT**
+Last tick's drive spec asked for **8 passes of 15 s** to resolve a 1.68–2.74x *ratio*. That is
+**unbuildable** under the standing design law — *a spec needing matched episodes or minutes of
+exposure is unbuildable, and the operator stops the drive the moment the symptom persists.*
+✅ **And it was the wrong endpoint.** The engaged-vs-manual result is **PRESENCE/ABSENCE** (peak
+clears its null on **7/7** engaged arms, **0/7** manual), so killing the ratchet is an **~8x** move
+from excess ≈33 to below null ≈4 — not a 1.7x one.
+```
+   single continuous engaged-creep episodes from the existing corpus
+     15 s ->  5 windows   11 episodes   RATCHET DETECTED 11/11 = 100 %
+     20 s ->  6 windows    5 episodes                     5/5  = 100 %
+     30 s -> 10 windows    4 episodes                     4/4  = 100 %
+   excess 25.5-155.7  vs slope-matched null 1.9-4.9   =>  5-65x MARGIN
+```
+✅ **[EVIDENCE] ONE 15 s continuous engaged creep pass answers the primary question.** More passes
+only sharpen the *graded* question (how much smaller), which is secondary to *is it fixed*.
+⚠ The **grind's** margin on the flying build is smaller (V122 excess 14.0 vs null ≈4, i.e. 3.5x), so
+a marginal grind read from one episode is **inconclusive, not negative**. The ratchet's is not.
+

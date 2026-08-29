@@ -38,7 +38,13 @@ WHAT THIS BUILD STILL CARRIES
 ------------------------------
 Everything that is NOT a mode asymmetry stays: the assist-section poles (V173/V180), K1 -> Honda
 (V177), the accel filter -> Honda (V179), w[3] halved (V181), and the 427 probe on gp-0x6ac0 (V183).
-Those act in both modes or are instrumentation, so they do not confound the engaged/manual contrast.
+** CORRECTED 2026-08-29: the assist-section biquad is ENGAGED-GATED. **  0xC649B = 1 and the arm
+source is gp-0x6806, the LKAS engagement flag (V103 onward, including the FLYING build).  So the pole
+retune is ALSO an engaged-only change, and this build carries TWO of them.  ** The engaged-vs-manual
+ratio therefore does NOT isolate the inertia dose. **  Use the BAND signature instead, which does
+separate them: the poles hit the GRIND hardest (-16.0 dB grind vs -8.8 dB ratchet) while the inertia
+revert moves the RATCHET with the grind roughly unchanged.  K1, the accel filter and the 427 probe are
+genuinely mode-independent or instrumentation.
 
 WHAT A NULL LICENSES
 ---------------------

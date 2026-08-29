@@ -4,6 +4,45 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **CORRECTION: THE BIQUAD IS ENGAGED-GATED, SO V184 IS A TWO-VARIABLE TEST, NOT ONE**
+I wrote in V184's docstring that the assist-section poles *"act in both modes, so they do not confound
+the engaged/manual contrast."* **That is WRONG.** Read from the images:
+```
+   build         0x35A06 arm src   0x35A12   0x35A18   0xC649B   arm
+   stock         gp-0x671a         0xEC      0xE9      0         Honda's gate, DISABLED
+   V103          gp-0x6806         0xE0      0xEA      1         ENGAGED-ONLY (LKAS flag)
+   V122 FLYING   gp-0x6806         0xE0      0xEA      1         ENGAGED-ONLY
+   V184          gp-0x6806         0xE0      0xEA      1         ENGAGED-ONLY
+```
+⇒ **the biquad runs only while LKAS is engaged**, so **every pole edit (V173/V174/V176/V180 and
+therefore V184) is an ENGAGED-ONLY change.**
+➕ It is also a **SECOND kit-created engaged/manual asymmetry on the car** — one my mode-record
+enumeration could not have found, because it is a **code path**, not a data table. The enumeration was
+sound for what it covered and I overstated its scope.
+
+### 🛑 WHAT THIS COSTS, AND WHAT REPLACES IT
+❌ **The engaged-vs-manual ratio NO LONGER isolates the inertia dose.** V184 carries two engaged-only
+changes — the inertia revert and the pole retune — so a ratio move cannot attribute between them.
+✅ **But a BAND discriminator still separates them cleanly, because their frequency signatures differ:**
+```
+   lever                  grind 15-25 Hz     ratchet 6.5-11 Hz
+   assist-section poles      -16.0 dB            -8.8 dB      (hits the GRIND hardest)
+   inertia dose revert       ~none               engaged-only (hits the RATCHET only)
+```
+⇒ **grind falls hard AND ratchet falls modestly → the poles.**
+⇒ **ratchet falls with the grind roughly unchanged → the inertia dose.**
+⇒ **both fall in proportion to the table above → both are contributing.**
+That is a usable, pre-registered discriminator and it does not need the manual pass at all.
+
+### ➕ IS THE ENGAGED-ONLY BIQUAD ITSELF THE ~15x AMPLIFIER?
+**Probably not, and the reason is worth recording.** Unarmed the section is a BYPASS (`H ≡ 1`); armed
+with Honda's coefficients `|H| <= 1` everywhere, so arming it can only REMOVE gain. Engaged therefore
+sees **less** high-frequency gain than manual, which would make engaged **less** ratchet-prone, not
+more. ⚠ The one channel by which it could still matter is **PHASE**: an engaged-only phase lag can
+cost stability margin even when the magnitude only falls. With Honda's coefficients at 8 Hz that lag is
+small (a few degrees) — but **V184's retuned poles make it large**, which is a real and previously
+unstated engaged-only cost of the pole lever. [BELIEF, structural — not measured.]
+
 ## ✅ **INTEGRITY CHECK AFTER TWO RETRACTIONS — THE SHELF IS CLEAN**
 After retracting V178 and V182 I re-ran **every surviving builder** and re-checked what each one
 actually touches. **All eight reproduce bit-for-bit with every assertion passing, every artifact on
@@ -2117,84 +2156,4 @@ regime. **Unverified until `gp-0x69a6` is read.**
 moving (post-V102 ρ = −0.94, p = 0.005, in three channels). The ratchet needs a different lever, and
 that lever's gate is one telemetry cell away — **not** a reason to delay a build that addresses the
 other symptom.
-
-## ⭐ **THE RATCHET'S PRIME SUSPECT IS THE BASE-ASSIST MAP — AND ITS LANE IS NOT MEMORYLESS**
-Two independent routes now point at the same lane. **From the DATA** (this session): the ratchet is
-firmware-created, engaged-only, in **torque not angle**, and untouched by all 278 bytes the kit has
-changed. **From the CODE** (a prior tracer's loop-topology census, re-read and confirmed):
-```
-   Z = (Z0 + P.F) / (1 - P.L)      every torque-fed lane is a DENOMINATOR term
-   Q_eff / Q_passive = 40 / 2.8 = 14.3   =>  the loop cancels ~93 % of the mode's damping
-   gp-0x6b86 (base assist map, FUN_000352b4) is the LARGEST torque-fed term: window
-   +/-0x3000, the widest of all 11, and 5.8-7.8x the ENTIRE PID at 7.79 Hz
-```
-✅ **[EVIDENCE] its slope cap `0xC6384` = 2048 (2.000x) is byte-identical on ALL 161 IMAGES**, as
-are `0xC6382` = 41 and the input clamp `0xC6200` = 8192. Independently confirmed by my own
-untouched-cell scan, which found `0xC6384` absent from the 28 changed bytes in `0xC6000`.
-⇒ **the largest available `L` lever has never been moved, which is exactly the profile of a cause
-the kit's 30+ builds could not have touched.**
-
-### 🛑 A CORRECTION TO THE CENSUS — THE LANE HAS STATE
-The census priced this lane as **MEMORYLESS** (*“transfer at 7.79 Hz is real, 0°, magnitude = the
-local slope”*). **The decompile shows otherwise.** `FUN_000352b4` ends with a **parallel lagged
-branch** added to the direct path:
-```
-   iVar33 = clamp(gp-0x6b7a - sVar15, +/-0x3000) * (uVar25 < uVar18)     # a DIFFERENCE, comparator-gated
-   iVar24 += (iVar33*0x80 - iVar24) * k >> 11                            # gp-0x381c, 32-bit state, 1 kHz
-   gp-0x6b86 = clamp(iVar34 + (iVar24 -/+ 0x80) >> 7, +/-0x3000)         # direct + LAGGED, in PARALLEL
-```
-⊕ A difference passed through a lag and added back is a **lead-lag / dynamic-assist compensator**,
-not a static curve ⇒ **the lane's transfer is NOT the memoryless slope the census assumed**, and any
-`|L|` computed from the slope alone is incomplete.
-
-### ⭐ AND ITS POLE IS SELECTED BY ENGAGEMENT — BUT THE EFFECT IS TOO SMALL
-```
-   k = cal(0xC6382) = 41        if (iVar14 != 0 && return-centre != 0)     <- MANUAL
-     = LERP(0xC6906..) = 20     otherwise                                  <- ENGAGED
-   (return-centre is DEAD ENGAGED, 0.0000 duty / 75,227 frames, so the arms genuinely differ)
-
-   at 8.64 Hz, closed form AND the real integer recursion agreeing to 4 dp:
-     ENGAGED k=20  corner 1.56 Hz   |H| 0.1779  arg -78.20 deg
-     MANUAL  k=41  corner 3.22 Hz   |H| 0.3491  arg -68.02 deg
-   => engaged lags 10.18 deg MORE, which moves 1-P.L the RIGHT way (1.798 -> 1.713)
-```
-🛑 **[EVIDENCE] but that is only a ~5 % change in the denominator, against an observed ~20x
-presence-vs-absence contrast. The pole difference is REAL, points the right way, and is FAR TOO
-SMALL to be the mechanism.** Recorded as a negative so it is not re-derived.
-
-### ❌ AND THE FLOAT SECOND-ORDER BLOCK IS NOT IT EITHER
-`FUN_000352b4` carries a genuine 2nd-order float section (states `gp-0x3814`/`gp-0x3818`, coeffs
-`0xC60A8..0xC60B4`), gated on `0xC649B==1 && 0xC64FA <= gp-0x671a`.
-✅ **[EVIDENCE] it is HONDA'S and ships DISABLED** — `0xC649B` stock = **0**, and the kit enabled it
-on 58 of 161 images (V104 on; the V105/V106 notch work).
-❌ **Enabling it did nothing to the ratchet**: `0xC649B` vs ratchet **ρ +0.26, p 0.500**; its
-coefficients moved at V106/V107 with **ρ −0.31 to −0.45, all p ≥ 0.226.**
-
-### 🛑 THE BLOCKER, STATED PRECISELY
-The 10-knot curve itself is **RAM-resident** (`gp-0x641e..gp-0x6430` X, `gp-0x6444..` Y), so the
-**local slope at the creep operating point — which is what sets `|L|` — is not readable from the
-image**, and GATE 2 on `0xC6384` cannot be completed without it.
-⊕ **`search_instructions` returned ZERO for stores to that block; a raw LE byte scan across BOTH gp
-encodings found 27 accesses** (`0x38FD0`/`0x38FEE`/`0x39522` store-shaped; `0x43CBC-0x43CF6` touches
-all ten X knots, but decompiles as a READER into stack locals). **Another instance of the documented
-undercount — the null was false.** The initialiser is still unlocated.
-
-## ✅✅ **THE RATCHET SCORES FROM ONE 15-SECOND EPISODE — THE 8-PASS SPEC WAS THE WRONG ENDPOINT**
-Last tick's drive spec asked for **8 passes of 15 s** to resolve a 1.68–2.74x *ratio*. That is
-**unbuildable** under the standing design law — *a spec needing matched episodes or minutes of
-exposure is unbuildable, and the operator stops the drive the moment the symptom persists.*
-✅ **And it was the wrong endpoint.** The engaged-vs-manual result is **PRESENCE/ABSENCE** (peak
-clears its null on **7/7** engaged arms, **0/7** manual), so killing the ratchet is an **~8x** move
-from excess ≈33 to below null ≈4 — not a 1.7x one.
-```
-   single continuous engaged-creep episodes from the existing corpus
-     15 s ->  5 windows   11 episodes   RATCHET DETECTED 11/11 = 100 %
-     20 s ->  6 windows    5 episodes                     5/5  = 100 %
-     30 s -> 10 windows    4 episodes                     4/4  = 100 %
-   excess 25.5-155.7  vs slope-matched null 1.9-4.9   =>  5-65x MARGIN
-```
-✅ **[EVIDENCE] ONE 15 s continuous engaged creep pass answers the primary question.** More passes
-only sharpen the *graded* question (how much smaller), which is secondary to *is it fixed*.
-⚠ The **grind's** margin on the flying build is smaller (V122 excess 14.0 vs null ≈4, i.e. 3.5x), so
-a marginal grind read from one episode is **inconclusive, not negative**. The ratchet's is not.
 
