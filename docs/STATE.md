@@ -4,6 +4,40 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ❌ **NEGATIVE RESULT, RECORDED SO IT IS NEVER REPEATED: THERE IS NO SECOND DORMANT FILTER**
+Hunted every dormant Honda feature with the gate signature the biquad uses — a **tp-relative CAL BYTE
+that reads 0 in stock** and is compared against a constant. **48 such cals exist.** Every one that
+touches the steering path was resolved by decompile:
+```
+   0xC649B                the BIQUAD ARM        -- already used (V103)
+   0xC64AB / 0xC64AC      MUTE switches (cal==0 ENABLES the term) in the gp-0x67ac==1 aggregator
+                          branch, gating the RETURN-CENTRE/DETENT term -- which the record already
+                          measured DEAD ENGAGED (0.0000 over 75,227 frames).  Useless to us.
+   0xC40EB..0xC40EE       DIAGNOSTIC SENSOR OVERRIDES, one per channel:
+                            if (magic == 0x49d6b173 && cal == 0xE9)
+                                gp-0x6abc = base + value*cal(0xC6134)/1000;   // synthetic
+                            else gp-0x6abc = real sensor;
+                          Honda's factory injection path for gp-0x6abc/6abe/6ac0/6ac2.
+                          NOT a filter, and not something to arm on a moving car.
+```
+⇒ **ONE biquad, ONE notch. The V188/V189 allocation decision is FINAL, not provisional.**
+
+✅ **BONUS — the delivery path is now decompile-confirmed end to end:**
+`FUN_00041464` (sensors, and `gp-0x6c2c = EMA(accel) >> 9` with the EMA coefficient at **`tp+0x50DC`
+= `0xC40DC`, exactly the cell V179 moved**) → `FUN_000352b4` (boost + the biquad) → **`gp-0x6b86`**
+→ `FUN_0003aa2c` aggregator sum (clamped ±12288) → `gp-0x6b94` → governor → motor.
+⊕ **So the notch's output really does reach the motor** — V188/V189's premise is verified, not assumed.
+⊕ A **second, parallel EMA** on the same acceleration input exists: `>>7` with coefficient
+`tp+0x50DA` = **`0xC40DA`** → `gp-0x6c2e`. Unexplored.
+
+🛑 **METHOD TRAP HIT AND FIXED IN THE SAME TICK — the recorded V850 odd/even displacement bug.**
+`ld.bu disp16[tp]` has **two** opcode fields: bits5-10 == **0x3D ⇒ displacement ODD**
+(`disp = (hw2 & 0xFFFE) | 1`), **0x3C ⇒ EVEN** (`disp = hw2 & 0xFFFE`). My first scan filtered on
+0x3D alone and then computed the displacement as even, so it **caught only the odd half AND reported
+every address one too low** — inventing a phantom cal `0xC649A` next to the real arm `0xC649B`.
+✅ Caught by cross-checking one address against Ghidra's own decode. **Validate any cal scan by
+requiring a KNOWN cell to appear** — here, the arm `0xC649B` at `0x359FE`.
+
 ## ✅ **THE BIQUAD GATE, VERIFIED END-TO-END — IT *IS* ENGAGEMENT-GATED, AND V103's PATCH HAS THREE SITES, NOT TWO**
 Decompiled stock, then disassembled it, then confirmed the encoding empirically. **Stock:**
 ```
@@ -2155,34 +2189,4 @@ rate**. This is not a power problem that more windows would fix. **Recorded so i
 ⇒ **the `P·L` real-positive assumption is testable only by intervention** — i.e. by flying V172 or
 V168 and seeing whether the peak moves. That is exactly what the pre-registered outcomes cover, and it
 is why no further static analysis is being done on this question.
-
-## ✅ **DO NOT STACK THE TWO LEVERS — AND V172 ALREADY PASSES THE TARGET**
-```
-   build                        eff s   |L|     Q ratio   vs stock
-   STOCK / flying               2.000   2.825   14.29     1.0x
-   V169  cap 1792               1.750   2.575    6.57     2.2x
-   V168  cap 1536               1.500   2.325    4.26     3.4x
-   V170  cap 1280               1.250   2.075    3.16     4.5x
-   V171  cap 1024               1.000   1.825    2.50     5.7x
-   V172  filter retune          0.907   1.732    2.33     6.1x
-   V172 + cap 1536 (stacked)    0.680   1.505    1.98     7.2x
-   V172 + cap 1024 (stacked)    0.454   1.279    1.73     8.3x
-```
-❌ **[EVIDENCE] stacking is a bad trade**: the cap on top of V172 buys **1.17x** (1536) or **1.35x**
-(1024) while adding the **FULL static weight cost**. ⊕ V172's build asserts the cap is stock, so the
-two cannot be stacked by accident.
-✅ **[EVIDENCE] V172 alone already passes the target**: a Q ratio of 3.0 needs `|L| ≤ 2.025`, and
-V172 leaves **1.732**.
-
-### ⭐ WHAT A THIRD LEVER WOULD HAVE TO BE
-After V172 the loop splits **52 % assist map / 48 % everything else**, and "everything else" is the
-census's **engagement-conditional** terms — PID 0.2565, r24 0.049–0.293, r26 0.098–1.17 (live only
-while `gp-0x6b5e == 0`), `FUN_00036682` 0.0032.
-⇒ **a third lever must come from those, not from the map.**
-🛑 **But it is NOT worth starting before a drive result.** Two independent levers already exceed the
-target on paper; **which of them the car actually responds to is the one thing no further analysis can
-settle**, and both rest on the same `P·L` assumption that a single pass tests. Six builds are cut and
-only one can fly at a time — **more builds now would be speculation, not progress.**
-⊕ Consolidated into `docs/scoring/BUILD-INVENTORY.md`: the decision table, the hashes, and what each
-outcome licenses.
 

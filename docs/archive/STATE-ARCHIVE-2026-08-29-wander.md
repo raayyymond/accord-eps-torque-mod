@@ -1505,3 +1505,33 @@ gain **0.9322** (vs V172's 0.8501) and 8.64 Hz **0.5716** (vs 0.4441) ⇒ **5.0x
 6.2x**. It buys back only **4 ms** of group delay (+26.1 vs +30.1 ms at DC) for a **1.2x loss of
 damping**. **Dominated — not built.**
 
+## ✅ **DO NOT STACK THE TWO LEVERS — AND V172 ALREADY PASSES THE TARGET**
+```
+   build                        eff s   |L|     Q ratio   vs stock
+   STOCK / flying               2.000   2.825   14.29     1.0x
+   V169  cap 1792               1.750   2.575    6.57     2.2x
+   V168  cap 1536               1.500   2.325    4.26     3.4x
+   V170  cap 1280               1.250   2.075    3.16     4.5x
+   V171  cap 1024               1.000   1.825    2.50     5.7x
+   V172  filter retune          0.907   1.732    2.33     6.1x
+   V172 + cap 1536 (stacked)    0.680   1.505    1.98     7.2x
+   V172 + cap 1024 (stacked)    0.454   1.279    1.73     8.3x
+```
+❌ **[EVIDENCE] stacking is a bad trade**: the cap on top of V172 buys **1.17x** (1536) or **1.35x**
+(1024) while adding the **FULL static weight cost**. ⊕ V172's build asserts the cap is stock, so the
+two cannot be stacked by accident.
+✅ **[EVIDENCE] V172 alone already passes the target**: a Q ratio of 3.0 needs `|L| ≤ 2.025`, and
+V172 leaves **1.732**.
+
+### ⭐ WHAT A THIRD LEVER WOULD HAVE TO BE
+After V172 the loop splits **52 % assist map / 48 % everything else**, and "everything else" is the
+census's **engagement-conditional** terms — PID 0.2565, r24 0.049–0.293, r26 0.098–1.17 (live only
+while `gp-0x6b5e == 0`), `FUN_00036682` 0.0032.
+⇒ **a third lever must come from those, not from the map.**
+🛑 **But it is NOT worth starting before a drive result.** Two independent levers already exceed the
+target on paper; **which of them the car actually responds to is the one thing no further analysis can
+settle**, and both rest on the same `P·L` assumption that a single pass tests. Six builds are cut and
+only one can fly at a time — **more builds now would be speculation, not progress.**
+⊕ Consolidated into `docs/scoring/BUILD-INVENTORY.md`: the decision table, the hashes, and what each
+outcome licenses.
+
