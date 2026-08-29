@@ -1,5 +1,73 @@
 # STATE — living current state of the kit
 
+## ✅✅✅ **V156 BUILT — THE DAMPER REACHES THE MICRO REGIME FOR THE FIRST TIME**
+A lightly-damped resonance (**ζ 0.017–0.036**) sits in a regime with **no added damping at all**,
+and the reason is that `ch0 = (FactorC(speed) × FactorE(rate)) >> 10` is a **PRODUCT OF TWO DEAD
+ZONES**. Below `X[0]` a LERP returns `Y[0]`, and **both `Y[0]` are ZERO**:
+```
+   FactorC  X = [2240,3840,5120,8960] = [35,60,80,140] km/h   Y[0]=0  => ZERO at ALL creep speeds
+   FactorE  X = [  60, 400,2500,4000]                          Y[0]=0
+            X[0]=60 <-> the recorded 12.73 deg/s dead zone => ~0.212 deg/s per count
+            => the MICRO REGIME (1-13 deg/s) sits ENTIRELY BELOW X[0], exactly where Y[0] applies
+```
+⇒ measured **zero on 100 % of the micro regime** and 95.91 % of engaged frames.
+
+### ⭐ NEITHER FACTOR ALONE CAN OPEN IT — AND THE KIT TRIED BOTH, SEPARATELY
+```
+   V134                    FactorC Y[0] 0 -> 60      MEASURED INERT at creep.  Its OWN header:
+                           "FactorE Y[0] = 0 below this build raises FactorC Y[0] into a
+                            product that is still zero there."
+   FactorE X[0] 60 -> 12   WITHDRAWN before flight: "structurally vacuous at creep
+                           (FactorC Y[0] = 0 below 34.97 km/h zeroes the product)"
+```
+⇒ **a product of two dead zones cannot be opened from one side. BOTH `Y[0]` must move together —
+and that build had never existed.** V156 is it.
+
+### ✅ THE BUILD
+```
+   mode 26   0xD77DA FactorC Y[0]  0 -> 60      mode 27   0xD77EE FactorC Y[0]  0 -> 60
+   mode 26   0xD7816 FactorE Y[0]  0 -> 539     mode 27   0xD782A FactorE Y[0]  0 -> 539
+   6 payload bytes, 60/60, CRC 50/50
+   image 21a259ffeb0649bd390383f6280a512c9a9aa869cc4c92f2a601ff67a24e085f
+   rwd   bc070cba9e195231337070e57cf228c4ac126f5e09dbc8e2c2e7f68aca37c24d
+```
+⊕ **Addresses resolved this session, two ways agreeing.** Walking the record block at stride
+`0x14` shows it is **not** a mode-indexed array of one family but **three FactorC records then three
+FactorE records** (`0xD77BE/D2/E6` then `0xD77FA/80E/822`, modes 25/26/27) — which puts **FactorE
+m26 Y[0] at `0xD7816` and m27 at `0xD782A`**, and independently **matches the lineage's own
+"FactorE m27 = `0xD7822`" anchor.**
+⊕ **RULE 7 mode-proof**: `V106B.ENGAGED_MODES = (26, 27)`, `MANUAL_MODES = (24, 25)` — read from
+the builder, not assumed. V134's 26/27 targeting was correct.
+
+### 🛑 THE DOSE IS SIZED BY V80's CATASTROPHE
+**V80 set FactorC FLAT 566, passed the per-mode ceiling, turned the damper into a BANG-BANG RELAY
+and produced THE WORST GRINDING IN THE KIT'S HISTORY.** That bounds the dose:
+```
+   creep product = (60 x 539) >> 10 = 31        ceiling = 512      => 6.1 % of it
+```
+⊕ `FactorC Y[0] = 60` is **V134's own value**, chosen and safety-checked there.
+⊕ `FactorE Y[0] = 539` is **FactorE's own `Y[2]`** — a value already in the table, not an invention.
+⇒ **31 counts of damping where there are currently EXACTLY ZERO.** Small in absolute terms, but
+**0 → non-zero is a change of KIND**, and the ladder above is bounded by 512 if the direction reads
+right.
+
+### ✅ WHY THIS RESPECTS THE OPERATOR'S STANDING CONSTRAINT
+*"Increasing mass and friction should not be our primary approach … IF IT COMES AT THE COST OF max
+steering angular velocity and acceleration."*
+⇒ this build adds damping **only where `FactorE Y[0]` applies, i.e. BELOW 12.73 deg/s.** Above that
+FactorE is **byte-unchanged**, so **maximum angular velocity and acceleration are untouched.** The
+cost lands **entirely inside the regime that has the symptom.**
+
+### 🛑 WHAT IS NOT ESTABLISHED
+⚠ **[BELIEF] that 31 counts is enough to feel.** No dose-response exists because **no build has
+ever had a live damper here** — that is precisely what makes it worth flying, and also why a null
+would be uninformative about the mechanism rather than about the lever.
+⊕ **`0xC63A0`, the damper's WEIGHT, is HELD at stock 1024.** It was 2048 on V72–V76 and is
+**EXONERATED** of V74's fault (that was `0xC407E`), but it **multiplies whatever this build admits**,
+so moving both at once would not be single-variable. **It is the natural second dose.**
+⚠ `diff_vs_flown` reports **MULTI-VARIABLE** (6 bytes) — **expected**: four cells, but **two factors
+× two engaged modes of ONE product**, and the product is the lever. **Do not reduce it.**
+
 ## 🛑🛑🛑 **`0xC4936` IDENTIFIED — A PWM HARDWARE-TIMING CAL. DO NOT TOUCH IT.**
 `0xC4936` was the **only calibration operand anywhere in the FOC PI/SVPWM region** (0.25 cals/KB)
 and the last open candidate for a symptom-B lever. **Identified, and it is a hard stop.**
@@ -2092,113 +2160,7 @@ one whose payload is rate/acceleration-derived rather than torque-derived.**
 
 **V147 remains the build to fly.**
 
-## ✅✅ **THE 11 SLOTS ARE IDENTIFIABLE AFTER ALL — `FUN_00025c32` IS A REGISTRATION FUNCTION**
-The previous section recorded the slots as unidentifiable because they are written through a
-computed pointer (`ep = gp-0x62F8 + r12`) and all 14 writer sites use a **loop register**
-(`add r1/r6/r8/r12/r14, r30`), so no static offset exists to read. **That is true of the WRITES —
-and it was the wrong place to look.**
-
-### ✅ THE STRUCTURE
-```c
-   undefined1 FUN_00025c32(byte *param_1)
-   {
-     iVar9 = min(*param_1, 10);                                   // THE SLOT INDEX -- FROM THE CALLER
-     ...
-     *(short *)(gp-0x62e0 + iVar9*2) = clamp(param_1[2], +-0x4000);
-     *(short *)(gp-0x62f8 + iVar9*2) = clamp(param_1[4], +-0x2800);   // <- THE SLOT ARRAY
-     *(short *)(gp-0x6274 + iVar9*2) = clamp(param_1[6], +-900);
-     *(short *)(gp-0x633c + iVar9*2) = clamp(param_1[8], +-20000);
-     *(short *)(gp-0x6230 + iVar9*2) = clamp(param_1[10], 0x400);
-     *(char  *)(gp-0x61a0 + iVar9)   = <state 0..5>;               // per-slot LIVE STATE
-   }
-```
-⇒ **it is a REGISTRATION / UPDATE call: each caller registers into the slot named by the FIRST
-BYTE of the struct it passes**, and `param_1[1]` is a mode/command (0–5) selecting the update path.
-⊕ **`gp-0x61a0` is the per-slot LIVE STATE array** (0–5), distinct from the `0xC4124` cal of the
-same shape — the cal is the configured type, the RAM array the runtime state.
-
-### ✅ AND THERE ARE EXACTLY TEN CALLERS, FOR ELEVEN SLOTS
-```
-   FUN_00023ad2   FUN_00023fe2   FUN_0002b422   FUN_0002c246   FUN_0002caa2
-   FUN_0002e52e   FUN_000339cc   FUN_0003405a   FUN_0003a8a8   FUN_0003aff4
-```
-⭐ **This converts an intractable dataflow problem into a BOUNDED ENUMERATION**: decompile each
-caller, read the `param_1[0]` it passes, and the slot map is complete. ⊕ Two of them
-(`FUN_0003a8a8`, `FUN_0003aff4`) sit beside the aggregator `FUN_0003aa2c`, and `FUN_0003405a` sits
-beside the base-assist damper `FUN_00034350` and the `gp-0x6bbe` producer `FUN_00034a72` — so the
-map will name real subsystems, not opaque indices.
-
-### ⭐ WHY THIS MATTERS FOR THE FIX
-`gp-0x6B4C` is the **highest-ranked grind carrier** (22.84 % / 22.50 % of its own variance in
-18–22 Hz, both routes), and `0xC4124[i] : 0 → 5` disables **one slot** on a **byte cal with no
-cave**. **Once the map exists, the lever becomes a single named subsystem removed from the grind
-carrier** — the most precise lever this kit has ever had.
-🛑 **Still NOT built, and deliberately so.** Disabling an unidentified slot removes an unknown
-assist component; that is the pattern that produced V133's regression. ⊕ And a "disable ALL seven
-contributors" experiment was considered and **rejected**: `r28` accumulates the weights, four
-divide-class instructions exist in `FUN_00027b0a` (0x28168, 0x2820C, 0x2847C, 0x285A0), and while
-none of their divisors is `r28` in a direct read, **that scan is not exhaustive and a
-divide-by-zero in an EPS control path is not a risk worth taking on an incomplete check.**
-
-### ⭐ STATUS
-```
-   lane = top grind carrier                     MEASURED, both its routes agree
-   lever, cal-only, no cave                     IDENTIFIED   0xC4124[i] 0 -> 5
-   slot map                                     BOUNDED -- 10 callers, read param_1[0] from each
-```
-**V147 remains the build to fly.**
-
-## ✅ **THE `gp-0x6B4C` LEVER IS IDENTIFIED — AND ONE THING BLOCKS IT: WHICH SLOT**
-`gp-0x6B4C` is the highest-ranked grind carrier (22.84 % / 22.50 % of its own variance in
-18–22 Hz, on both its routes). Its producer `FUN_00027b0a` walks an **11-slot TYPE DISPATCH**:
-```
-   0x27B26  movea 0x5124, tp, r9      // r9 = &cal(0xC4124), the 11 TYPE CODES
-   0x27B32  movea -0x62f8, gp, r10    // the parallel 11-slot DATA array
-   0x27B36  mov   0xa, r7             // 10 iterations
-   cmp 0x7 / 0x6  ->  r24 += slotdata[i] ; r28 += 0x400     (raw contribution, unity weight)
-   cmp 0x5        ->  0x27BDA         cmp 0x4 -> 0x27B98    cmp 0x3 -> 0x27B70
-   r24 accumulates the SUM, r28 accumulates the WEIGHTS
-```
-🛑 **The cal bytes are TYPE CODES, not weights** — I first read them as weights and the kit's own
-memory has it right: `0xC4124 = [0,0,5,0,5,5,0,0,0,5,0]` means ***"7 slots raw, 4 forced zero"***
-⇒ **type 0 = CONTRIBUTES, type 5 = FORCED ZERO.**
-⇒ **the four slots I first called "active" are the DISABLED ones**; the **seven zeros are the
-contributors** (indices 0, 1, 3, 6, 7, 8, 10).
-
-### ✅ THE LEVER
-```
-   0xC4124[i] : 0 -> 5      disables slot i, using Honda's OWN dispatch value
-```
-⭐ **This is the lever shape the whole search has wanted**: it removes **ONE contributor** from the
-highest-ranked grind carrier, using a value the firmware already implements on four other slots, on
-a **byte cal**, with **no cave**. Nothing else found this session can subtract a single source.
-
-### 🛑 WHAT BLOCKS IT — AND WHY I STOPPED RATHER THAN GUESSING
-**Which of the seven slots to disable is unknown.** The slots are written through a **COMPUTED
-POINTER** (`ep = gp-0x62F8 + r12`), so they have no individual gp-relative accesses — a byte scan
-finds only the base (15 hits) and cannot attribute them:
-```
-   slot  0  gp-0x62F8  CONTRIBUTES  15 accesses (the BASE -- all writers alias here)
-   slots 1-9           0 accesses each   <- written via base+offset, invisible to a scan
-   slot 10  gp-0x62E4  CONTRIBUTES   3 accesses
-```
-⊕ And spot-reading a writer does not resolve it either: `0x25EA6` is `add r1, ep` + `sst.h r0` —
-a **zeroing LOOP** with the offset in a loop register, not a per-slot store.
-⇒ **Identifying the seven contributors requires real DATAFLOW TRACING of the 15 writers, not a
-scan and not spot disassembly.** 🛑 **Guessing a slot is exactly the error class this session has
-committed FIVE times** (V133's clamp · `0xC64FA`≠`0xC64FD` · 18-vs-8 readers · `gp-0x6b5e` · the
-`gp-0x6BBE` clamp). **Deliberately not guessing.**
-
-### ⭐ STATUS OF THIS THREAD
-```
-   lane identified as the top grind carrier      DONE, measured, both its routes agree
-   lever identified and it is cal-only, no cave  DONE  (0xC4124[i] 0 -> 5)
-   WHICH slot to disable                         OPEN -- needs dataflow tracing of 15 writers
-```
-**V147 remains the build to fly.** This thread is the most promising *next* direction and it is
-blocked on a bounded, mechanical piece of tracing — not on a missing idea.
-
 
 ---
 
-🛑 **1 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
+🛑 **2 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`.**
