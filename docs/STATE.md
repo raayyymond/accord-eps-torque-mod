@@ -4,6 +4,30 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ➕ **NEXT LEAD — AMPLITUDE-SELECTIVITY: RESHAPE THE RESIDUAL LERP `f'` AT SMALL SIGNAL**
+**Untouched, and it may be a better fit to the operator's constraint than any frequency lever.**
+`FUN_00038148`'s residual LERP maps `|res|` → `gp-0x6b70` through a **9-knot table**: X at
+`gp-0x64b8..gp-0x64a6`, Y at `gp-0x641c..gp-0x640a`, with `Y[0]` / `Y[last]` as the out-of-range
+fallbacks. `f'` is its **local slope**, and per
+[[accord-fprime-compression-explains-v89-and-v97]] **every perturbation of this path reaches the car
+through `f'`** (measured p50 **2.174 hands-off / 0.346 hands-ON**).
+✅ **The idea**: the ratchet is a **SMALL-signal** phenomenon; LKAS commands and real steering are
+**LARGE-signal**. A table that is **flatter at small `|res|`** cuts small-signal loop gain — hence the
+resonance — while leaving large-signal authority and feel untouched. That is **amplitude**
+selectivity, orthogonal to the ω² selectivity of `gp-0x6b26`, and it does **not** cost lag the way a
+pole does.
+⚠ **What must be settled first, and none of it needs a drive:**
+1. **The table is RAM-resident** (`gp-`relative) → find its **flash initialiser** and confirm it is a
+   cal, not computed. This is a **new edit class for this kit** ⇒ **GATE 1 (RAM ownership) applies in
+   full**, including writers and register-indirect access.
+2. **Read the actual 9 knots** — the shape decides whether small-signal flattening is even available,
+   or whether Honda already flattens there.
+3. 🛑 **`f'` sits INSIDE the loop ⇒ GATE 2 in magnitude AND phase.** A deadband is a
+   **nonlinearity**: it can create a limit cycle rather than remove one. **Describing-function analysis
+   is mandatory before any dose** — this is exactly the V80 relay trap in a different guise.
+🛑 **Do NOT cut a build on this until 1–3 are closed AND V175 has flown** — a fourth unflown build
+is inventory, not progress.
+
 ## ✅ **THE SIX-TERM SUM IS NOW FULLY CLASSIFIED — `gp-0x6b26` IS ITS ONLY FREQUENCY-SELECTIVE LANE**
 **A CLOSING result, both positive and negative.** Every lane of `FUN_00038148`'s Path-2 sum has been
 traced to its writer and classified by differentiation order. **No second ω-weighted lever exists in
