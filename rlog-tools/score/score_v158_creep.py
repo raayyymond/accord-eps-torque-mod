@@ -84,7 +84,7 @@ def windows(tag):
         return None
     n = min(map(len, (lat, v, rate)))
     lat, v, rate = lat[:n], v[:n], rate[:n]
-    E, M = [], []
+    E, M, EP, MP = [], [], [], []
     for wi, a in enumerate(range(0, n - NW, NW // 2)):
         s = slice(a, a + NW)
         sp = v[s].mean() * 3.6
@@ -101,7 +101,8 @@ def windows(tag):
                P[(f >= GRIND[0]) & (f <= GRIND[1])].sum(),
                P[(f >= CTL[0]) & (f <= CTL[1])].sum(), sp, wi)
         (E if eng else M).append(row)
-    return np.array(E), np.array(M)
+        (EP if eng else MP).append(P)
+    return np.array(E), np.array(M), np.array(EP), np.array(MP), f
 
 
 def episodes(A):
@@ -149,6 +150,60 @@ def boot_episodes(e_eps, m_eps, col, k=8000, seed=0):
     return point, np.percentile(d, 2.5), np.percentile(d, 97.5)
 
 
+
+QBAND = (15.0, 25.0)         # the resonance the kit's builds have been damping
+QFLOOR = (28.0, 40.0)        # for prominence only
+
+
+def peak_q(P, f):
+    """Q of the 15-25 Hz resonance in a pooled PSD. Shape, not level."""
+    if len(P) < 10:
+        return np.nan, np.nan, np.nan
+    M = np.median(np.asarray(P), 0)
+    w = (f >= QBAND[0]) & (f <= QBAND[1])
+    fw, Mw = f[w], M[w]
+    k = int(np.argmax(Mw))
+    pk, pv = fw[k], Mw[k]
+    prom = pv / max(np.median(M[(f >= QFLOOR[0]) & (f <= QFLOOR[1])]), 1e-30)
+    half = pv / 2.0
+    lo = hi = pk
+    for j in range(k, -1, -1):
+        if Mw[j] < half:
+            lo = fw[j]
+            break
+    for j in range(k, len(fw)):
+        if Mw[j] < half:
+            hi = fw[j]
+            break
+    return (pk / (hi - lo)) if hi > lo else np.nan, pk, prom
+
+
+def report_q(EP, f):
+    """PRIMARY instrumented endpoint. Q is ~1.4x more reproducible than the band ratio
+    (median 1.20x vs 1.72x split-half, measured over nine routes) because it is a SHAPE
+    parameter and so immune to the level shifts that inflate the ratio's noise."""
+    Q, pk, prom = peak_q(EP, f)
+    if not np.isfinite(Q):
+        print('  Q: no resolvable 15-25 Hz peak in the engaged creep spectrum')
+        return
+    A, _, _ = peak_q(EP[0::2], f)
+    B, _, _ = peak_q(EP[1::2], f)
+    rep = (max(A, B) / min(A, B)) if (np.isfinite(A) and np.isfinite(B) and min(A, B) > 0) else np.nan
+    print('  15-25 Hz RESONANCE (engaged creep):  peak %.2f Hz  prominence %.1fx  Q = %.2f'
+          % (pk, prom, Q))
+    print('     split-half Q: %.2f / %.2f  => this drive reproducibility %.2fx'
+          % (A, B, rep))
+    print('     reference V122 (r24) Q = 4.50 ; floor median 1.20x, p90 1.50x')
+    if prom < 3:
+        print('     WARNING prominence %.1fx < 3 -- the peak is weak; Q is unreliable here' % prom)
+        return
+    ch = 4.50 / Q if Q > 0 else np.nan
+    v = ('RESOLVED vs the 1.20x floor' if ch > 1.50 else
+         'marginal' if ch > 1.20 else 'NOT RESOLVED')
+    print('     vs V122: Q %.2f -> %.2f = x%.2f change   %s' % (4.50, Q, ch, v))
+    print('     V158 predicted Q 1.64-2.68 (x1.68-2.74 damping). Q RISING above 4.50 would')
+    print('     falsify the damping account -- see the Path-2 pumping branch (V167).')
+
 def census(e, m, lo, hi):
     print('  speed census (km/h), the guard against a wheel-order artefact:')
     for nm, A in (('engaged', e), ('manual ', m)):
@@ -163,7 +218,8 @@ def run(tag):
     w = windows(tag)
     if w is None:
         return
-    r = speed_match(*w)
+    EP, MP, farr = w[2], w[3], w[4]
+    r = speed_match(w[0], w[1])
     if r is None:
         print('  %s: NOT SCOREABLE -- needs >=15 ENGAGED and >=15 MANUAL creep windows at a matched'
               ' speed.  Drive the same low-speed stretch engaged AND manual.' % tag)
@@ -180,6 +236,7 @@ def run(tag):
         print('     manual STRETCHES.  Alternate engaged and manual several times over the loop.')
         return
     census(e, m, lo, hi)
+    report_q(EP, farr)
     pr, lr, hr = boot_episodes(e_eps, m_eps, 0)
     pg, lg, hg = boot_episodes(e_eps, m_eps, 1)
     pc, lc, hc = boot_episodes(e_eps, m_eps, 2)

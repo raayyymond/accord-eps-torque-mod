@@ -177,3 +177,27 @@ most likely outcome. **The operator report remains the primary endpoint.**
 Nothing in V158 predicts an increase: FactorC lifted and FactorE's dead zone opened both add a term
 that OPPOSES motion in Path 1. So a rise is the one outcome that carries unambiguous information, and
 its follow-up build already exists.
+
+## PRIMARY INSTRUMENTED ENDPOINT REVISED AGAIN: Q of the 15-25 Hz resonance
+
+The 15-25 Hz peak is strongly resonance-limited on every route (prominence 32-610x above the
+28-40 Hz floor), and **Q is a better endpoint than any band ratio**:
+
+| endpoint | split-half reproducibility |
+|---|---|
+| **Q of the 15-25 Hz peak** | **median 1.20x, p90 1.50x** |
+| 18-22 Hz engaged/manual ratio | median 1.72x, p90 2.93x |
+| 6-9 Hz engaged/manual ratio | resolves 1 route in 9 |
+
+| V158 reads | means |
+|---|---|
+| **Q 1.64 - 2.68** | the predicted damping increase, **RESOLVED** against the 1.20x floor |
+| Q ~3.6 - 4.5 | marginal to no effect |
+| **Q clearly ABOVE 4.50** | **damping account FALSIFIED** -> Path-2 pumping -> fly **V167** |
+
+Reference: **V122 (r24) Q = 4.50**. Q has fallen 9.00 -> 4.50 across V102..V122, so the endpoint has
+tracked the kit's own progress.
+
+Caveat: the pooled Q is not the mean of its halves (r24 pools to 4.50 from halves 6.00/6.75), so
+split-half may understate pooled uncertainty. Both sides use the same procedure, so the comparison
+holds.
