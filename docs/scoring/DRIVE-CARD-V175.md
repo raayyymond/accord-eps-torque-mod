@@ -47,7 +47,11 @@ that matters first. **Stage 2 exists solely to attribute a win, so it is only wo
 IS a win** — which is exactly your rule: if the ratcheting is still there, stop instantly.
 
 **STAGE 1 — do this and nothing else.**
-1. **Engaged creep, ONE continuous pass of 15 seconds, 1–24 km/h**, real curvature, not a straight
+1. **Engaged creep, ONE continuous pass of 15 seconds, 1–24 km/h, WITH HANDS ON THE WHEEL.**
+   🛑 **Hands-on matters.** The corpus holds only **21** engaged hands-on creep windows, so every
+   hands-matched question is currently unanswerable — and `cs_tq` is the DRIVER torque sensor,
+   so a hands-off pass measures mostly the absence of driver input. Hands on is also how you
+   actually feel the symptom., real curvature, not a straight
    line. Don't break it up — the analysis window is 5.12 s.
 2. **Stop.** If the ratcheting is obviously still there, say so and we are done for this build.
 

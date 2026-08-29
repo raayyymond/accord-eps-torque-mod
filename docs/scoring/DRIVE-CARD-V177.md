@@ -42,7 +42,11 @@ raised K1, so the transition spans ±250 rate counts and there is no step. `K0` 
 ## THE DRIVE — STAGED, SAME AS BEFORE
 
 **STAGE 1 — do this and nothing else.**
-1. **Engaged creep, ONE continuous pass of 15 seconds, 1–24 km/h**, real curvature. Don't break it up.
+1. **Engaged creep, ONE continuous pass of 15 seconds, 1–24 km/h, WITH HANDS ON THE WHEEL.**
+   🛑 **Hands-on matters.** The corpus holds only **21** engaged hands-on creep windows, so every
+   hands-matched question is currently unanswerable — and `cs_tq` is the DRIVER torque sensor,
+   so a hands-off pass measures mostly the absence of driver input. Hands on is also how you
+   actually feel the symptom., real curvature. Don't break it up.
 2. **Stop.** If the ratcheting/stuttering is obviously still there, say so and we are done with this build.
 
 **STAGE 2 — ONLY if Stage 1 shows it gone or clearly reduced.**

@@ -4,6 +4,39 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **THE CORPUS CANNOT ANSWER HANDS-MATCHED QUESTIONS — ONLY 21 ENGAGED HANDS-ON CREEP WINDOWS EXIST**
+Three tests in a row have now failed their controls, and the cause is one structural fact.
+
+**The question**: every lever on the shelf is engaged-only, so *does the ratchet exist in MANUAL?*
+If it does, an engaged-only lever can at best remove the ~3.6x engaged excess and leaves the rest.
+```
+   HANDS-ON windows in the WHOLE corpus:   engaged 21   manual 11
+   slope-corrected excess at a FIXED 8.40 Hz, power law fitted on 3-6 and 12-40 Hz:
+       ENGAGED   0.71x   CI [0.43, 1.31]   no significant peak
+       MANUAL    1.45x   CI [0.80, 2.72]   no significant peak
+```
+🛑 **THE ENGAGED ARM IS THE POSITIVE CONTROL, AND IT FAILS** — the ratchet is known to be there
+and the test cannot see it. So the manual null means nothing, and the script's auto-verdict ("no
+ratchet in manual ⇒ the engaged levers are the right family") is **unsupported and withdrawn.**
+
+➕ **A REAL METHOD FIX CAME OUT OF IT.** The first version scored the band with `argmax`, and the
+point estimate landed **outside its own bootstrap CI** (engaged 1.47x vs CI [1.48, 3.71]). A
+max-over-band statistic is **upward-biased under resampling**; the estimator now reads a **FIXED**
+frequency. With that fix the ordering also stopped being backwards (it had manual > engaged, which
+contradicts everything established).
+🛑 **RULE: never bootstrap a max-over-band statistic. If the point estimate falls outside its own
+CI, the statistic is biased, not the data interesting.**
+
+### ✅ THE ACTIONABLE CONSEQUENCE — THE DRIVE MUST BE HANDS-ON, AND THE CARD NOW SAYS SO
+The corpus is overwhelmingly hands-OFF while engaged (1606 hands-off vs 21 hands-on creep windows),
+because that is how the car is normally driven. **Every hands-matched question is therefore
+unanswerable from existing data**, including:
+- does the ratchet exist in manual at all?
+- is the ~3.6x engaged excess the whole effect, or only the part hands-on exposure can see?
+⇒ **the Stage 1 pass must be driven with HANDS ON THE WHEEL**, which also matches how the operator
+actually experiences the symptom. That is a one-line change to the card and it makes the drive
+answer questions the corpus cannot.
+
 ## 🛑 **RECALIBRATION: ENGAGEMENT AMPLIFIES 8.4 Hz BY ~3.6x, NOT 15-33x. I QUOTED THE CONFOUNDED FIGURE ALL SESSION.**
 `cs_tq` is the DRIVER TORQUE SENSOR, and when engaged the driver largely is not steering. So an
 engaged-vs-manual torque comparison conflates **engagement** with **hands-off**. Stratifying on
