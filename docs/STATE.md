@@ -18,7 +18,7 @@ spread should be operating point, not noise. **It does not work.**
 🛑 **V175 predicts a 3.85x cut — so even the best adjustment puts the effect EXACTLY ON the
 detection threshold (~50 % power). Not good enough. Keep the 2-pass ask.**
 ✅ **Permutation control passes for wheel rate** (real 0.3106 vs shuffled p5 0.3320) ⇒ the gain is
-real, just small. ⚠ **The  figure is UNCONTROLLED** — its permutation null was not run,
+real, just small. ⚠ **The `log|command|` figure is UNCONTROLLED** — its permutation null was not run,
 so it is not usable and the honest best is the wheel-rate number, 4.06x.
 ⊕ **Adding all three covariates made it WORSE** (0.3324 vs 0.3317 raw) — overfitting at n=27, caught
 by leave-one-out. **In-sample R² would have flattered this badly**; do not use it here.
