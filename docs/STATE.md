@@ -1,5 +1,24 @@
 # STATE — living current state of the kit
 
+## ⛔ **CORRECTION — THE PATH-2 THREE-TAP GAIN IS 1.0, NOT 10.0 (a 10x error in a loop gain)**
+An audit of the memory index found an earlier entry claiming the observer's three-tap structure is
+*“a PURE GAIN of 10.0, both memory taps DEAD”*. The taps-dead half is right; the 10.0 is not.
+```
+   FUN_0003b8f6:
+      fVar14 = *(float *)(tp+0x5048);                   <- 1.0f   THE COEFFICIENT
+      fVar14 = 0.0*hist + fVar14*fVar19 + fVar15*0.0;   => 1.0 * fVar19  IDENTITY PASSTHROUGH
+      ...
+      fVar14 = 10.0;                                    <- a CLAMP constant, LATER, same variable
+```
+✅ **[EVIDENCE] `tp+0x5048` = `0xC4048` reads 1.0f** (byte-verified, and it matches the long-standing
+`c1 = 1.0f, c2 = 0.0f, c0 = 0.0f` memory). The earlier read grabbed the **clamp** where the
+**coefficient** was wanted — Ghidra reuses `fVar14` for both.
+⚠ **Why it matters**: the Path-2 stability bound divides by `G_gov × G_obs`. A 10x overstatement of
+the observer's forward gain would have tightened the bound on `s` by 10x and made Path 2 look far
+smaller than it is. The bound as computed used the correct 1.0.
+⭐ **THE TRAP**: a decompiler reuses one local for unrelated values within a function. **Read the
+assignment that feeds the expression you care about, not the last assignment to that name.**
+
 ## ⛔ **`0xC63AE` IS NOT A CLEAN LOOP-GAIN LEVER EITHER — SAME TRAP, DIFFERENT CELL**
 The stability work suggested one more candidate, and it fails the rule written two ticks ago.
 
