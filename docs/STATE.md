@@ -1,5 +1,60 @@
 # STATE — living current state of the kit
 
+## ✅✅ **THE FIRST CROSS-BUILD REGRESSION ON THE SYMPTOM — 19 ROUTES. ONE ROBUST FINDING.**
+Every prior comparison used one or two routes. This uses **all 19 cached routes with a known
+build**, scoring each on the validated within-drive endpoint (ENGAGED/MANUAL 18–22 Hz of `cs_rate`
+at creep) and regressing against the cals that actually differ between builds.
+```
+   route build   eng/man   gain  a2  knee    K1        route build   eng/man  gain  a2 knee   K1
+   r79   V92        2.60   3564  22   600   204        r82   V99      39.66   3564  22  300  204
+   r21   V111       3.90   5346  14   600   204        ra6   V106     42.01   5346  22  300  204
+   r24   V122       8.18   5346   8  3000  1020        r1e   V107     47.30   5346  22  300  204
+   r22   V112       8.51   5346  14  1800   612        r81   V98      51.81   3564  22  600  204
+   r23   V112       9.21   5346  14  1800   612        ra5   V105     52.54   5346  22  300  204
+   r7f   V96        9.59   3564  22   600   204        ra4   V104     91.75   5346  22  300  204
+   r78   V91       10.21   3564  22   600   204        r95   V101    268.23   7128  22  300  204
+   r85   V100      11.11   3564  22   300   204        r96   V102    714.01   5346  22  300  204
+   r7e   V96       11.12   3564  22   600   204        r9e   V103   1520.81   5346  22  300  204
+   r77   V90       26.36   3564  22   600   204
+
+   Spearman vs log(endpoint):  knee -0.770 (p<0.001) | a2 +0.612 (p=0.005) | K1 -0.477 (p=0.039)
+                               gain +0.326 (p=0.173, NOT significant)
+```
+
+### ✅ THE ROBUST FINDING: **`knee = 300` IS CATASTROPHIC**
+**All nine knee-300 routes are elevated (11 → 1521)**; **every knee ≥ 600 route sits between 2.6 and
+51.8.** ⇒ that single cal explains the whole V101–V107 era. ⊕ Nobody is at 300 today (V122 is
+3000), so this is a **historical explanation, not a live lever** — but it is the strongest
+cross-build effect the kit has ever measured on the symptom.
+
+### 🛑 THE OTHER TWO "SIGNIFICANT" CALS ARE COLLINEAR WITH IT — NOT THREE FINDINGS, ONE
+The **gain-holding invariant scales knee and K1 together** (300/204, 600/204, 1800/612, 3000/1020),
+and **α2 tracks knee across the build history** (22 at knee 300–600, 14 at 600–1800, 8 at 3000).
+⇒ **knee, K1 and α2 are ONE variable in this dataset.** Their separate p-values are not independent
+evidence, and no design here can separate them.
+
+### 🛑 AND THE ORDERING ABOVE 600 DOES **NOT** HOLD UP
+```
+   knee  600  ->  2.60, 3.90, 9.59, 10.21, 11.12, 26.36, 51.81      median ~10.2
+   knee 1800  ->  8.51, 9.21                                        median  ~8.9
+   knee 3000  ->  8.18                                              n = 1
+```
+The two best routes are knee 600 — **but so are 26.36 and 51.81.** ⇒ **within-group variance swamps
+the between-group difference**; there is **no evidence that 600 beats 1800/3000**, and the earlier
+"optimum knee ≈ 600" reading of this table would have been a lucky-route artifact.
+
+### ✅ GAIN IS **NOT** SIGNIFICANT (p = 0.173)
+Across 4× / 6× / 8× the gain does not track the symptom. ⇒ **mildly supportive of V142 (8× for
+authority) being safe once grinding is fixed**, and consistent with the earlier direct 12-route
+8×-vs-grind null. ⚠ One 8× route only (r95), so this is weak.
+
+### ⚠ A CAVEAT AGAINST MY OWN NUMBERS
+This run scores **V112 at 8.51/9.21 and V122 at 8.18**; the earlier creep-endpoint run scored the
+same routes **4.74 and 3.38**. **Same data, different window parameters, different values.**
+⇒ **the endpoint is SENSITIVE TO ANALYSIS CHOICES.** Treat the **ordering** as informative and the
+**absolute values as not comparable across analyses.** 🛑 Any future quote of a number from this
+table must name the window parameters with it.
+
 ## 🛑🛑 **CORRECTION: THE BAND-SHARE RANKING WAS INFLATED BY THE FLAT BASELINE**
 The section that named `gp-0x6B4C` *"the highest-ranked grind carrier"* at **22.84 % / 22.50 %**
 quoted a raw band share with **no flat-spectrum control**. **For a flat spectrum, ANY 4 Hz window
