@@ -48,22 +48,23 @@ question is worth a drive on its own. Card: `DRIVE-CARD-V194.md`.
 | CAN probe | — | — | `gp-0x6c2c` |
 | can change **manual** driving | no | no | **yes** |
 
-⚠ **The grind figures in the table are OPEN-LOOP scores, used only to RANK designs.**
-🛑 **How much the notch actually delivers on-car is UNPREDICTED.** An earlier severity
-estimate was withdrawn: it rested on an engaged/manual ratio that turned out to be
-elevated broadband (both symptom bands correlate ~0.9 with a control band containing
-neither). See `docs/STATE.md`.
+⚠ The grind figures in the table above are OPEN-LOOP scores, used only to RANK designs.
 
-⭐ **What the scorer should print on a typical single drive**, so you can tell a real
-change from noise:
+⭐ **WHAT THE SCORER SHOULD PRINT — the pre-registration for your drive.** This attenuates
+only the resonance, never the broadband floor (a notch in the assist path cannot touch
+the road/plant floor), so it is directly comparable to `score_band_excess.py` output:
 
-| route | ratchet excess (`cs_tq` 5–12) | grind excess (`cs_rate` 15–25) |
-|---|---|---|
-| bad | ~187× | ~65× |
-| typical | **~61×** | **~32×** |
-| mild | ~25× | ~23× |
+| grind excess, `cs_rate` 15–25 Hz | p25 | median | p75 |
+|---|---|---|---|
+| measured today | 22.5× | **31.6×** | 64.8× |
+| predicted after V195/V196 | 1.5× | **2.2×** | 4.1× |
 
-Null is ~3.9×; 99 % of routes sit above it for both symptoms.
+**Null is ~3.9×. On ~73 % of drives the grind should fall BELOW it — i.e. read as "not
+real".** Ratchet excess on a typical route is ~61× today; the inertia half-dose has no
+comparable prediction, so that one the drive simply measures.
+
+🛑 If the grind stays above ~15×, the notch is not reaching the signal — check the biquad
+arm `0xC649B` and the engagement gate before touching the design.
 
 ## 🛑 RUN THIS FIRST, ON THE FILE YOU ARE ABOUT TO SEND
 ```

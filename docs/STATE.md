@@ -4,6 +4,48 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅⭐ **A SOUND NOTCH PREDICTION IS RESTORED — and it is the pre-registration for the drive**
+The 21.5× open-loop score was wrong because it multiplied the **whole** spectrum by `|H|²`,
+attenuating the broadband floor a notch in the assist path cannot touch. The closed-loop fix went out
+with the contaminated ratio it rested on. The defensible model splits the spectrum:
+```
+   P(f) = B(f) + X(f)          B = the smooth background (road / plant / sensor floor)
+                               X = the EXCESS, i.e. the resonance the loop amplifies
+   only X passes the assist path  =>  P_new = B + X * |H_new / H_old|^2
+```
+and reports **the same slope-corrected excess the scorer prints**, so it is directly comparable to a
+drive.
+```
+   cs_rate GRIND 15-25 Hz, 67 routes, null ~3.9x
+                            p10    p25    p50    p75    p90
+   measured (flying)       11.8   22.5   31.6   64.8  136.4
+   after V188 notch         1.6    1.9    2.8    5.0    9.5
+   after V195 notch         1.3    1.5    2.2    4.1    7.3
+
+   reduction, V195:  p25 9.7x   median 12.7x   p75 23.4x
+   routes falling BELOW the null:   V195  49/67 (73 %)     V188  43/67 (64 %)
+```
+✅ **THE HEADLINE: on roughly 3 drives in 4, the grind should read as "not real" by the scorer.**
+✅ **It also confirms V195's re-fit on a sound statistic** — 73 % vs 64 % below null, 12.7× vs 10.3×
+median reduction. The re-fit was worth doing, and now that is established without the
+floor-attenuation error.
+⊕ This replaces the withdrawn 21.5× / 7.7× / 52× figures. **It attenuates only the excess, never the
+background, so it cannot repeat that error.**
+⊕ Tool: `rlog-tools/score/notch_prediction_excess_only.py`.
+
+### 🛑 THE PRE-REGISTRATION, IN THE FORM THE SCORER WILL PRINT
+```
+   grind excess falls from ~32x to ~2x, below the ~3.9x null   => THE GRIND IS GONE  (expected on
+                                                                  ~73 % of drives)
+   falls to 4-10x                                              => working but incomplete; this is
+                                                                  the p75-p90 tail
+   stays above ~15x                                            => the notch is NOT reaching the
+                                                                  signal.  Check the biquad arm
+                                                                  (0xC649B) and the engagement gate
+                                                                  before touching the design.
+   grind peak MOVES to ~24-28 Hz                               => displaced, not removed; re-centre
+```
+
 ## 🛑🛑 **RETRACTION: THE PER-ROUTE SEVERITY NUMBERS WERE BROADBAND-CONTAMINATED**
 I built two ticks of analysis on the **engaged/manual power ratio per route**. A control killed it:
 ```
@@ -2127,101 +2169,4 @@ is **not** a new direction. Recorded so it is not re-proposed as one.
 🛑 **CONSEQUENCE FOR THE FLIGHT ORDER: nothing changes.** `0xC63A6` stays **held** as the
 pre-registered fine adjustment *after* V175's drive — spending it now would confound the one
 measurement that can attribute the effect.
-
-## 🛑🛑 **THE ENGAGED RATCHET MAY BE OURS: WE AMPLIFY A DESTABILISING INERTIA TERM 3-8x, ENGAGED-ONLY — V175 REVERTS IT**
-**A new mechanism, traced end to end this session, decompile-first.** It is the first account that
-explains **why the ratchet is ENGAGED-amplified ~15x** in terms of a cell we ourselves moved.
-
-### ✅ THE TRACE [EVIDENCE — both ends confirmed in Ghidra + a raw LE byte scan]
-`FUN_00036c12` is the **sole writer** of `gp-0x6b26` (one `st.h -0x6b26[gp]` at `0x36CF0`; the other
-five disp16 sites decode as `ld.h`, opcode 0x39 vs 0x3B):
-```
-   gp-0x6b26 = clamp( ((gp-0x6c2c * validgate) * LERP_0xCBE74[mode](gp-0x6a5e) >> 6) * 0x111 >> 0x12,
-                      +- cal[0xC407E] )
-```
-- `gp-0x6c2c` is the **ACCELERATION** — `FUN_00041464` @`0x41602` `sub r7,r9` is a FIRST DIFFERENCE of
-  the EMA-filtered resolver rate, then ×32, clamped, EMA'd, `>>9`.
-- **the acceleration enters LINEARLY**; the LERP is indexed by `gp-0x6a5e`, a **scheduling** variable,
-  not by α ⇒ `gp-0x6b26 = K(mode, sched) · α`, a pure apparent-inertia term.
-- ⇒ **its loop contribution scales as ω²: 66.7x more at 8.17 Hz than at 1 Hz.**
-  🛑 **This is the frequency selectivity the kit concluded it did not have** — and it is
-  **STRUCTURAL, from differentiation order, not from a filter.** It costs NO phase lag anywhere.
-  (It does not contradict [[accord-factord-is-the-angle-error-lever]], which refuted a *filter*-based
-  1/ω selectivity. This is a different thing.)
-
-### ✅ THE GATE CANNOT CLOSE
-`FUN_00038148` admits it into the six-term Path-2 sum with `w[3]` = `tp+0x73a6` = **`0xC63A6`**, gated
-on `(gp-0x6b26 + 0x400) < 0x801` i.e. `|x| <= 1024` (a **store-zero**, not a clamp). But the writer
-clamps to **±`0xC407E` = 511** on stock, V173 and V174 alike ⇒ **511 < 1024, the gate is open EVERY
-frame** and `w[3]` is an unconditional multiplier. [EVIDENCE, read from all three images.]
-
-### 🛑 THE SIGN — IT IS POSITIVE ACCELERATION FEEDBACK, I.E. **NEGATIVE APPARENT INERTIA**
-The Y rows are NEGATIVE, so `gp-0x6b26 = −|K|·α`. Through the verified polarity chain
-([[accord-friction-polarity-more-friction-is-more-assist]], whose step 4 gives `f' >= 0` EVERYWHERE):
-```
-   alpha UP -> MODEL DOWN -> res UP -> gp-0x6b70 UP (f'>=0) -> target effort DOWN -> MORE ASSIST
-```
-⇒ **assist RISES with acceleration** ⇒ lowers effective mass **and lowers the damping ratio of the
-resonance**. Amplifying it is the wrong direction — exactly what
-[[accord-gp6b26-is-inertia-not-damping]] already said: *"the whole V74/V75/V91/V92 dose direction was
-aimed at the wrong physics."*
-
-### 🛑🛑 AND THE FLIGHT BUILD AMPLIFIES IT 3.0x / 3.0x / **8.14x**, ON THE ENGAGED MODES ONLY
-```
-   0xD7A5C m26 ENGAGED   Honda (-9830,-5734,-1966)  ->  FLOWN (-29490,-17202,-16000)
-   0xD7A6C m27 ENGAGED   Honda (-9830,-5734,-1966)  ->  FLOWN (-29490,-17202,-16000)
-   0xD6A6C m24 MANUAL    Honda (-9830,-5734,-1966)  ->  UNCHANGED
-```
-⊕ **The one destabilising ω²-weighted term is amplified 3-8x on exactly the modes where the ratchet
-is amplified ~15x, and left alone in manual, where it barely appears.** [BELIEF — a structural match,
-not yet a measured cause.]
-
-### 🛑 **RETRACTION — I OVERSTATED THE RELAY HAZARD. IT IS MEASURED AT 0.49 % DUTY.**
-I wrote that saturating the ±511 clamp makes this lane V80's relay and that the hazard was
-"unexcluded". **Now measured, and that framing was wrong.** Route `77` (`probe_build` = **V90**) carries
-`gp-0x6b26` itself on CAN 427 at **Honda's K**, 52,926 engaged frames. `gp-0x6b26` is hard-clamped to
-±511, which pins the packer shift to s ∈ {0,1} (s ≥ 3 would imply a max of 1592 — impossible).
-At the **tightest** admissible s = 1:
-```
-   K              saturation duty      p99      (clamp 511)
-   Honda 1.0x         0.0000 %         136
-   V91   1.5x         0.0094 %         204
-   FLOWN 3.0x         0.4875 %         408      <== the current build
-```
-⇒ **0.49 % is rare tail clipping, NOT a relay.** V80's relay ran at near-unity duty. **The relay
-argument is withdrawn and is NOT part of the case for V175.**
-⚠ Two further caveats on this measurement: **r78/r79 are NOT comparable to r77** — the 427 packer
-scaling changed across V91/V92, so those columns are **not** a dose-response and must not be read as
-one. And the extrapolation is a **model**, exact only because `gp-0x6b26 = K·α` is linear *before* the
-clamp.
-
-### ✅ WHAT SURVIVES — AND IT IS STILL THE CASE FOR V175
-The **linear** amplification is untouched and is the real argument: at the flown dose the term runs
-**p99 = 408 against a 511 clamp**, a genuine **3x amplification of a DESTABILISING ω²-weighted term,
-engaged-only**. ⊕ And it is **highly intermittent** — p50 ≈ 18 counts, p99 = 408 — i.e. negligible in
-steady driving and large **exactly during the fast transients where the ratchet lives**. That is the
-signature an acceleration term should have, and it is why the lane is worth reverting even though it
-almost never clips.
-
-### ✅ `0xC63A6` IS **UN-STRUCK** — ITS BLOCKING GATE IS CLEARED
-It was struck 2026-08-11/12 because Path 2's sign depended on an **unknown LERP slope**, with the
-release condition *"re-derive the slope from V96/V97's own instruments."* **That slope is now known:
-`f' >= 0` everywhere (structural) and measured p50 2.174 hands-off / 0.346 hands-on**, with the
-cross-check `d(gp-0x6b94)/d(gp-0x6b70)` = +0.2529/+0.2565/+0.2617 and a passing positive control.
-⇒ **the cell is available.** V175 deliberately does **not** spend it (asserted FROZEN at 1024): a
-revert to Honda's own numbers is a lower risk class and carries an on-car saturation measurement.
-
-### ✅ V175 BUILT — 12 BYTES, SUBTRACTIVE, ENGAGED-ONLY
-Base **V173**. `0xD7A5C`/`0xD7A6C` → Honda's row, **read from the stock image, never typed**.
-**26/26 assertions · 12 payload bytes in 3 runs · CRC 50/50 · readback byte-identical · mode 24
-untouched · `0xC407E` and `0xC63A6` asserted frozen · V173's four section coefficients asserted
-carried.** image `a4e0dc4254ad8559…` · rwd `5bf63d0ea539fd18…` · builder
-`analysis-2020accord/builds/v108_plus/build_v175_tva.py`.
-✅ **THE DISCRIMINATOR vs V173's poles is ENGAGED vs MANUAL.** They stack and both attenuate the
-ratchet, so amplitude alone cannot attribute — but V173's poles act in **both** modes and this revert
-**cannot act in manual**. Ratchet falls *and* the engaged/manual ratio falls ⇒ the inertia dose was
-carrying it. Ratio unchanged ⇒ V173's poles did it. Neither moves ⇒ both accounts fail together.
-Score with `rlog-tools/score/grind_engaged_vs_manual.py` beside `score_band_excess.py`.
-⚠ **It removes drag — creep effort will be lighter than the operator is used to.** Intended, and he
-should be told.
 
