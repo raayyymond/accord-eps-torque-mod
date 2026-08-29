@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
-"""Data-driven lever search: does ANY cal that varied track the measured ratchet?
+"""RETRACTED 2026-08-29 -- THIS METHOD IS INVALID AS WRITTEN.  Kept as a record.
 
-Every lever so far came from reasoning about structure.  With 18 build-attributed routes and
-each build's image on disk, the complementary search is available: for every 16-bit cal that
-actually VARIES across those builds, correlate its value against the route's ratchet excess.
+It assumes every 2-byte-aligned pair in the calibration region is a u16 scalar.  It is not:
+the region holds float32 values, packed structures and pointer tables.  Its apparently
+stable ratchet hit 0xC4B58 (rho +0.783, 17/17 leave-one-out) takes values 1443, 1542, 12803,
+14022, 14212, 60140, 60141 across builds -- jumping with no ordering, the signature of a
+MANTISSA HALF -- and float32 reads of that region give -1.43e+26 and denormals at every
+alignment.  Its grind hit 0xC40BC survives only 1 of 17 leave-one-out subsets, and both
+verdicts flipped entirely on a two-route relabelling.
 
-MULTIPLE COMPARISONS ARE THE WHOLE DIFFICULTY.  With dozens of varying cells and n=18,
-spurious hits are guaranteed, so the control is a PERMUTATION null: shuffle the route->build
-mapping many times, recompute the best |rho| over ALL cells each time, and keep only cells
-whose real |rho| beats the 95th percentile of that maximum.  That controls the family-wise
-error rate rather than the per-test rate.
+To make it valid, restrict candidates to cells VERIFIED as u16 cals -- by the knot-count
+header, by a decompiled read site, or by sensible ordered values -- as
+analysis-2020accord/verify/check_lever.py --record already does.
+
+See cal_scan_stability.py for the leave-one-out analysis that condemned it.
 """
+
 import glob, os, re, sys
 import numpy as np
 from scipy import stats
@@ -19,11 +24,16 @@ sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 R='C:/Users/dudei/Desktop/Projects/accord-firmwares/analysis-2020accord'
 
 # route -> (build, ratchet excess, grind excess), from the full-corpus scan
-DATA=[('r78',91,12.2,16.7),('r79',92,11.5,4.8),('r7e',96,31.0,15.7),('r7f',96,39.2,6.4),
-      ('r81',98,243.7,9.9),('r82',99,237.2,17.8),('r85',100,58.7,10.8),('r95',102,193.2,38.7),
-      ('r96',102,38.6,222.9),('r9e',103,38.1,286.9),('ra4',104,23.3,47.1),('ra5',105,84.6,27.4),
-      ('ra6',106,29.0,11.8),('r1e',107,21.0,20.3),('r21',111,27.2,9.1),('r22',112,20.6,7.9),
-      ('r97',112,4.4,2.2),('r24',122,38.3,15.5)]
+# HARD attributions only -- every one stated verbatim in memory or scored directly.
+# r95 CORRECTED V102 -> V101 ("V101 flew it at 8x (7128) as route 0x95"); the earlier label
+#   came from r95_v102_prereg.py, a pre-registration FOR V102 that USED route 95.
+# r77 ADDED as V90 ("V90 flew as route 77") -- 97 windows, previously excluded as unknown.
+# r21 / r23 / r97 DROPPED: filename-only inference, nothing states them.
+DATA=[('r77',90,20.2,11.2),('r78',91,12.2,16.7),('r79',92,11.5,4.8),('r7e',96,31.0,15.7),
+      ('r7f',96,39.2,6.4),('r81',98,243.7,9.9),('r82',99,237.2,17.8),('r85',100,58.7,10.8),
+      ('r95',101,193.2,38.7),('r96',102,38.6,222.9),('r9e',103,38.1,286.9),('ra4',104,23.3,47.1),
+      ('ra5',105,84.6,27.4),('ra6',106,29.0,11.8),('r1e',107,21.0,20.3),('r22',112,20.6,7.9),
+      ('r24',122,38.3,15.5)]
 
 imgs={}
 for p in glob.glob(os.path.join(R,'*plain_image*.bin')):
