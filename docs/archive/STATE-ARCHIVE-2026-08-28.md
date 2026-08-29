@@ -4039,3 +4039,50 @@ switching class is closed at the two cal-removable members (V149, V150).
 
 🛑 **1 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
 
+## 🛑🛑 **THE “COULOMB RELAY” IS NOT FRICTION AND NOT A RELAY — IT IS `|model| × sat(ANGLE)`**
+**[EVIDENCE — `decompile_function 0x0003b8f6`, GhidraMCP]** The kit has described `0xC40BC` for
+~40 builds as *"the relay knee"* in `friction = K1·min(|model|,knee)/knee`. **That formula is
+wrong.** What `FUN_0003b8f6` actually computes:
+```c
+   iVar20 = polarity * gp-0x6abc * 12;                  // an ANGLE, NOT the model
+   uVar8  = *(ushort *)(tp + 0x50bc);                   // tp+0x50BC = 0xC40BC = THE KNEE
+   fVar13 = clamp((float)iVar20*0.5 / ((float)uVar8*0.5), -1.0, +1.0);   // sat(ANGLE / knee)
+   fVar14 = |fVar18|;                                   // |model|
+   fVar15 = (fVar14 * K1/1024  +  OFFSET/1024) * fVar13; // BILINEAR: |model| x sat(angle)
+   ...EMA with pole cal(0xC40D0), then clamp to +-10.0
+```
+### ⭐ THE PROOF THAT `gp-0x6abc` IS AN ANGLE
+`iVar20`'s own **first difference** is taken 20 lines later:
+`(iVar20 - *(int*)(gp-0x3618)) * 0.5 * 17.453293` — and **17.453293 = 1000·π/180**, a **deg→rad
+conversion at the confirmed 1 kHz task rate.** A quantity whose first difference is an angular
+rate **is an angle.**
+
+### 🛑 WHAT THIS OVERTURNS
+```
+   BELIEVED (~40 builds)                    ACTUAL
+   knee normalises |model|                  knee normalises the ANGLE gp-0x6abc
+   slope = K1/knee, one axis                K1 and knee are INDEPENDENT axes
+   saturates at |model| >= knee             saturates at |gp-0x6abc| >= knee/12 = 250 counts
+   Coulomb friction (velocity-sign relay)   an ANGLE-proportional, |model|-scaled BILINEAR term
+   a hard relay => stick-slip generator     CONTINUOUS through zero => a SOFT saturation, no jump
+```
+⇒ **Coulomb friction switches on VELOCITY SIGN. This term does not switch at all** — it is a
+linear ramp in angle through zero. **The stick-slip argument for it never applied.**
+⊕ Independent corroboration: a byte census of the V850 sign-extract idiom (`sar 31`, encoding
+`(X<<11)|0x2BF`) over `[0x30000,0x40000)` returns **6 hits, NONE inside the aggregator `0x3AA2C`
+or the plant model `0x3B8F6`.** A true relay needs a sign switch; there is none here.
+
+### ✅ WHAT SURVIVES, AND WHAT IT MEANS FOR V151
+The **×0.8333 number survives, for a different reason**: in the **unsaturated** regime the term is
+**exactly proportional to 1/knee**, so 3000→3600 is a **uniform 17 % reduction**; in the saturated
+regime `sat()` is ±1 either way and the term is **unchanged**. ⇒ monotone reduction, as built.
+⇒ But the term is **∝ steering angle**, and **engaged hands-off creep runs small angles**, so the
+term is **already small there** — V151 reduces something that is already small in the symptom's own
+regime. **V151 stays MARGINAL and stays ranked 5th.**
+⭐ **The V151 builder docstring and one check message have been corrected in place.**
+
+
+---
+
+🛑 **2 older section(s) moved to `docs/archive/STATE-ARCHIVE-2026-08-28.md`** to hold this file under the 145 KB target.
+
