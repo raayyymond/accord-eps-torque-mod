@@ -1535,3 +1535,27 @@ only one can fly at a time — **more builds now would be speculation, not progr
 ⊕ Consolidated into `docs/scoring/BUILD-INVENTORY.md`: the decision table, the hashes, and what each
 outcome licenses.
 
+## ⚠ **THE `P·L` ACCOUNT CANNOT BE TESTED FROM THE EXISTING DATA — THE DRIVE IS NECESSARY**
+The account makes one prediction that looked free to check: the assist map's local slope **falls
+steeply along its own curve** (6.16 → 0.86 → 0.01, capped at 2.000 below X≈100), so if that slope is
+the dominant term in `L`, the ratchet should **weaken at higher driver torque**. No other account has
+to predict that.
+```
+   raw stratification by |driver torque|
+     |tq| 80-150    n= 49   map slope 1.807   excess  10.7   |cmd|  303   |rate|  2.4
+     |tq| 150-300   n= 34   map slope 0.768   excess  22.9   |cmd|  393   |rate|  6.0
+     |tq| 300+      n=161   map slope 0.140   excess  44.2   |cmd| 1946   |rate| 35.4
+     excess vs map slope rho -1.00   -- the WRONG sign, but |cmd| and |rate| are rho +1.00
+```
+❌ **The confounds are perfectly aligned with the stratum**, so the raw test is uninformative.
+Stratifying torque WITHIN narrow command bands splits 2-supporting / 1-contradicting — but that is
+**also fully explained by the rate confound alone**: excess peaks at **12–25 deg/s and FALLS above
+it**, and the two “supporting” rows have mean rates of **40.6 and 59.7** (past the peak) while the
+“contradicting” row runs **2.4 → 7.0** (climbing toward it).
+🛑 **[INCONCLUSIVE] — and structurally so.** Driver torque, command and wheel rate are all driven by
+how hard the wheel is being worked, so **observational data cannot separate the map's slope from the
+rate**. This is not a power problem that more windows would fix. **Recorded so it is not re-attempted.**
+⇒ **the `P·L` real-positive assumption is testable only by intervention** — i.e. by flying V172 or
+V168 and seeing whether the peak moves. That is exactly what the pre-registered outcomes cover, and it
+is why no further static analysis is being done on this question.
+

@@ -4,6 +4,42 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅✅✅ **V190 — A WHOLE FEEDBACK PATH THE ARC HAS NEVER TOUCHED, AND IT PEAKS AT CREEP**
+Tracing the second acceleration EMA found a complete path nobody here has ever looked at:
+```
+   FUN_00041464   gp-0x6c2e = EMA(rate derivative) >> 9        the 2nd accel channel (cal 0xC40DA)
+   FUN_00036f30   L = LERP(0xC68EA/0xC68F2, speed)
+                  gp-0x6bc2 = clamp(((L*a)>>6) * sign(gp-0x6752) * gp-0x69be >> 6, +-gp-0x6bc0)
+   FUN_00037fe6   gp-0x6ad6 = clamp((SUM + gp-0x6bc2*cal(0xC64AE) + ...) * LERP >> 10, +-25600)
+                              ^ gp-0x6ad6 is the TORQUE-TRACKING REFERENCE
+```
+🛑 **AND THE RECORD'S DESCRIPTION OF THIS SUM WAS WRONG.** It says *"the six-term Path-2 sum in
+`FUN_00038148`, weights `0xC63A0..0xC63AA`, only w[3] is frequency-selective."* Actually:
+**`FUN_00037fe6` · SEVEN terms · flags at `0xC64AD..0xC64B3`** — and they are **ENABLE FLAGS (0/1),
+not gains**, all reading 1 in stock/V122/V189. (Their siblings `0xC64AB`/`0xC64AC` ship at **0**,
+which is what proves 0 is a supported state.) ⇒ **there are TWO ω²-scaled terms, not one.**
+
+### ✅ WHY THIS IS THE RIGHT SHAPE FOR THE RATCHET
+```
+   omega^2 scaling      acceleration-derived => 66x stronger at 8.2 Hz than at 1 Hz
+   speed weighting      X = [0, 4, 32, 96] km/h   Y = [64, 64, 32, 32]
+                          1 km/h -> 64      24 km/h -> 41      40+ km/h -> 32
+                        ** 2x STRONGER AT CREEP **, and the ratchet is a creep symptom
+   DC contribution      ZERO -- acceleration is 0 in steady state
+```
+✅ **So it costs NO LKAS authority and NO added steering weight** — which is exactly the operator's
+standing constraint: *do not buy the ratchet fix with apparent mass or friction.*
+✅ **V190 = V189 + `0xC64AE` 1→0.** One byte, cal-only, 41/41 assertions.
+`ab75a383fad5c65ad03645daffa8d3a93d15916040b438d3a01275e82196744f`
+
+⚠ **THE SIGN IS BELIEF, NOT EVIDENCE — and this is the honest limit.** `gp-0x6752` is −1 (verified
+3 ways) so `gp-0x6bc2 ≈ −k·a`; following the recorded polarity chain (`gp-0x6ad6` ↓ ⇒ error ↑ ⇒
+**more** assist), positive acceleration → more assist → **positive acceleration feedback = negative
+apparent inertia = destabilising**, so removing it should damp the ratchet. **That chain has five
+links.** EVIDENCE: the term exists, is acceleration-derived, is 2× weighted at creep, flag reads 1.
+BELIEF: the sign. 🛑 **If the sign is inverted the term was providing DAMPING and the ratchet gets
+WORSE** — a one-byte revert to V189 undoes it. That failure mode is pre-registered on the card.
+
 ## ❌ **NEGATIVE RESULT, RECORDED SO IT IS NEVER REPEATED: THERE IS NO SECOND DORMANT FILTER**
 Hunted every dormant Honda feature with the gate signature the biquad uses — a **tp-relative CAL BYTE
 that reads 0 in stock** and is compared against a constant. **48 such cals exist.** Every one that
@@ -2165,28 +2201,4 @@ because nothing is watching it for liveness.
 ⊕ The lockstep shadow is unaffected by a coefficient change — the value is still written to both
 cells in the same instruction pair, so the pairing that trips `FUN_0006b9fa` is preserved.
 ⊕ The same clearance covers V168, which changes only how the value is COMPUTED, not who reads it.
-
-## ⚠ **THE `P·L` ACCOUNT CANNOT BE TESTED FROM THE EXISTING DATA — THE DRIVE IS NECESSARY**
-The account makes one prediction that looked free to check: the assist map's local slope **falls
-steeply along its own curve** (6.16 → 0.86 → 0.01, capped at 2.000 below X≈100), so if that slope is
-the dominant term in `L`, the ratchet should **weaken at higher driver torque**. No other account has
-to predict that.
-```
-   raw stratification by |driver torque|
-     |tq| 80-150    n= 49   map slope 1.807   excess  10.7   |cmd|  303   |rate|  2.4
-     |tq| 150-300   n= 34   map slope 0.768   excess  22.9   |cmd|  393   |rate|  6.0
-     |tq| 300+      n=161   map slope 0.140   excess  44.2   |cmd| 1946   |rate| 35.4
-     excess vs map slope rho -1.00   -- the WRONG sign, but |cmd| and |rate| are rho +1.00
-```
-❌ **The confounds are perfectly aligned with the stratum**, so the raw test is uninformative.
-Stratifying torque WITHIN narrow command bands splits 2-supporting / 1-contradicting — but that is
-**also fully explained by the rate confound alone**: excess peaks at **12–25 deg/s and FALLS above
-it**, and the two “supporting” rows have mean rates of **40.6 and 59.7** (past the peak) while the
-“contradicting” row runs **2.4 → 7.0** (climbing toward it).
-🛑 **[INCONCLUSIVE] — and structurally so.** Driver torque, command and wheel rate are all driven by
-how hard the wheel is being worked, so **observational data cannot separate the map's slope from the
-rate**. This is not a power problem that more windows would fix. **Recorded so it is not re-attempted.**
-⇒ **the `P·L` real-positive assumption is testable only by intervention** — i.e. by flying V172 or
-V168 and seeing whether the peak moves. That is exactly what the pre-registered outcomes cover, and it
-is why no further static analysis is being done on this question.
 
