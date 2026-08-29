@@ -103,6 +103,9 @@ def _lerp_u16(x, X, Y):
 # ---------------------------------------------------------------------------
 # FUN_000389ec : speed-cap remap, then the slot fill that writes Xsrc/Ysrc.
 # ---------------------------------------------------------------------------
+_LAST_STAGING = {}
+
+
 def stage_389ec(A, B, speed_cnt, angle_10deg, k1=1024, k2=1024):
     """-> (Xsrc[0..9] @ gp-0x6430.., Ysrc[0..9] @ gp-0x6444..)  both 10 entries, [0]=0."""
     cap = _lerp_u16(speed_cnt, SPD_CAP_X, SPD_CAP_Y)                # 0x000389f4
@@ -136,6 +139,10 @@ def stage_389ec(A, B, speed_cnt, angle_10deg, k1=1024, k2=1024):
             break
     Xi[9] = max(CAL_713C, Xi[8])                                    # 0x00038f10
     Yi[9] = CAL_7200
+    # EXPOSED for FUN_00038148: its LERP copies these two arrays VERBATIM, AFTER the [9] knots --
+    # 0x39548 st.h r9,-0x64b8,gp <- gp-0x373c (Xi) and 0x39522 st.h r11,-0x641c,gp <- gp-0x3714 (Yi).
+    # Side-effect only; the return value is unchanged.
+    _LAST_STAGING['Xi'], _LAST_STAGING['Yi'] = list(Xi), list(Yi)
     SCALE = (((CAL_7468 * CAL_713A) >> 7) << 10) // boost            # 0x00038fd8
     INV = 0x1000000 // CAL_7468                                      # 0x00038fe6
     Xsrc = [0] * 10

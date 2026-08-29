@@ -4,6 +4,72 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅⭐ **THE RELAY QUESTION IS ANSWERED FROM THE IMAGE — it is a SOFT relay, and it has its own private gain cal**
+
+**This reverses last tick's conclusion, and corrects a second claim I made there.** I said the curve
+could not be read statically and that it *"reshapes with steering angle"*. The first is wrong because
+the kit already mirrors `FUN_000389ec` integer-exactly; the second is wrong outright.
+
+### ✅ **THE LERP IS THE POWER-ASSIST CURVE, AND THE MIRROR ALREADY COMPUTES IT**
+`assist_map_mirror.py` (validated **200/200** against V72's flown probe) computes the very staging
+arrays `FUN_00038148`'s LERP copies verbatim:
+```
+   0x39548  st.h r9,  -0x64b8, gp  <- gp-0x373c  == the mirror's Xi   (torque axis)
+   0x39522  st.h r11, -0x641c, gp  <- gp-0x3714  == the mirror's Yi   (assist axis)
+```
+⇒ **`gp-0x6b70 = sgn(resid) × ASSIST_CURVE(|resid|)`** — the observer re-uses the **power-assist
+curve**, applied to the residual instead of to driver torque. One additive side-effect line in the
+mirror exposes it; the return value is unchanged.
+
+### 🛑 **CORRECTION — the curve is SPEED-dependent, NOT angle-dependent**
+```
+   speed  640 / 2560 / 5120 : ** 1 distinct curve across 8 steering angles ** -> INVARIANT
+   fixed angle, 6 speeds    : 6 distinct curves                              -> SPEED-DEPENDENT
+   mode 24 vs 26            : identical at 2560; ONE knot differs 0.4 % at 640
+```
+Steering angle enters through `boost` into `SCALE`, which shapes the **downstream** `Xsrc`/`Ysrc` —
+the base assist map — **not the `Xi`/`Yi` this LERP copies.** **My "stratify by steering angle"
+instruction in `SHELF.md` was wrong and is now "stratify by SPEED".**
+
+### ⭐ **IT IS NOT A HARD RELAY — IT IS A SOFT ONE, AND THAT IS THE INTERESTING PART**
+```
+   mode 26, speed 640:  X  0   166   333   678  1200  1800  3000  5000 10000 14490
+                        Y  0   443   818  1369  1915  2223  2634  3146  4298  8192
+
+   speed    gain near 0    mid-range (X6..X7)    ratio
+     640       2.67x            0.256x           10.4x
+    1280       3.04x            0.284x           10.7x
+    2560       3.77x            0.352x           10.7x
+    5120       3.43x            0.516x            6.7x
+```
+No flat top inside the operating range (the ceiling is only reached at 14490), **so the hard-relay
+hypothesis is REFUTED.** But a curve with **2.7–3.8× gain at small input and 0.26–0.52× at mid-range —
+a 6.7–10.7× compression ratio — IS a soft relay**, and high small-signal gain around a zero crossing
+is exactly the shape that sustains a small-amplitude limit-cycle. **That is a far better-founded
+ratchet mechanism than "it is a relay", and it is consistent with the record's own
+"command-proportional Coulomb relay".**
+
+### ⭐⭐ **AND THE STAGE HAS A PRIVATE GAIN CAL: `0xC63AE`**
+```c
+   0x38242   uVar7 = (|resid| * cal(0xC63AE)) >> 10        // cal = 1024 = unity
+```
+**`0xC63AE` = 1024, EXACTLY ONE site image-wide (`0x38242`), ZERO writers, VIRGIN** (kit's own
+`tp_cal_readers.py`). It scales the LERP's **input**, so in the steep small-signal region the
+effective gain scales with it **directly** — halving it halves the soft relay's small-signal gain.
+⊕ **It scales THIS STAGE ONLY.** The base power-assist map is fed by `Xsrc`/`Ysrc`, a different
+transform of the same source, so **the map itself is untouched.** That matters, because the curve's
+shape is otherwise welded to the ROM assist records and could not be changed without changing
+steering feel — **which is very likely why the ratchet has resisted sixty builds.**
+⚠ **BUT `FUN_00038148` is NOT engagement-gated** (caller `FUN_0002214a` = task 0, 1000 Hz), so this
+cal changes manual driving too. 🛑 **And its SIGN of effect on delivered assist is NOT established**
+— the path runs `gp-0x6b70 → gp-0x6ad6` (a torque-tracking **reference**, not a motor torque), and the
+record is emphatic that sign bets on this path have cost builds. **So it is NOT built this tick.**
+
+### ⭐ **THIS MAKES V205 MORE VALUABLE, NOT LESS**
+Its purpose is no longer *"is it a relay"* — that is answered. **It is now: measure `gp-0x6b70`'s
+operating range and sign so the `0xC63AE` dose can be SIZED and SIGNED.** The probe reads the exact
+signal the cal scales. **Sequence: fly V205 → read the range and sign → dose `0xC63AE`.**
+
 ## 🛑 **THE RELAY CURVE IS BUILT AT RUNTIME — it cannot be read from the image, so V205's drive is REQUIRED**
 
 I set out to answer the relay question statically and make V205 unnecessary. **The answer is a
@@ -2181,48 +2247,4 @@ the car** — inherited, not something I added, and present in V173 through V181
 ⊕ That also partly rehabilitates the damper direction: **V158 already moved this fallback the way
 V182 tried to move it further.** But the axis is still `gp-0x6a5e`, not speed, so *when* it applies
 remains unestablished — V182 stays retracted.
-
-## 🛑🛑 **V182 RETRACTED — FactorC's AXIS IS `gp-0x6a5e`, NOT VEHICLE SPEED. AND THE DAMPER IS A FIVE-FACTOR PRODUCT.**
-`FUN_00034350` decompiled. **`gp-0x6bd0` is not `FactorC x FactorE`. It is a FIVE-factor product:**
-```
-   uVar7 = ((( clamp(gp-0x698a, 0x400) * L1 >> 10) * FactorC >> 10) * L3 >> 10) * FactorE >> 10
-   if (gp-0x6abe > 0)  uVar7 = -uVar7
-   gp-0x6bd0 = clamp(uVar7, +- L5)
-
-   L1      = LERP(0xC9CCC[mode], index = |gp-0x6bcc| )
-   FactorC = LERP(0xC9E9C[mode], index = gp-0x6a5e )     <-- ** NOT vehicle speed **
-   L3      = LERP(0xC9DB4[mode], index = gp-0x6a10 )      (absolute steering angle)
-   FactorE = LERP(0xC9F84[mode], index = gp-0x6ac0 )      (resolver / FOC ELECTRICAL RATE)
-   L5      = LERP(PTR_000C77A0[mode], index = gp-0x6ac2 ) (the symmetric output clamp)
-
-   GATES:  FactorC needs gp-0x67f4 == 1 AND gp-0x6a5e <= 0x7d00, else it is ** 1024 (UNITY, not 0) **
-           FactorE needs gp-0x6ac0 < 0x32c9 AND |gp-0x6abe| <= 0x6590, else ** the WHOLE PRODUCT = 0 **
-```
-🛑 **V182 raised FactorC's below-range fallback believing X[0] = 2240 = 35.0 km/h. That was
-NUMEROLOGY** — 2240/64 happens to equal 35 and I built on the coincidence. **The index is
-`gp-0x6a5e`.** Whether that signal is ever below X[0] during creep ratcheting was never established.
-⇒ artifacts renamed **`SUPERSEDED-DO-NOT-FLASH-WRONGAXIS-*`**, builder raises on entry.
-❌ **The 272-crossing knot-step null is also void for this purpose** — it tested SPEED crossings
-against a knot that is not on speed. It remains valid only as a statement about speed knots generally.
-
-### 🛑 THE PATTERN, STATED PLAINLY — THIS IS THE FOURTH TIME TODAY
-V178 (authority ladder), the damper-memory flip-flop, the FS=100 errors, and now V182: **every one
-was asserting what a table's AXIS or a cell's ROLE is from something plausible — a round unit
-conversion, a nearby array, an adjacent build number — instead of from the code.**
-➕ **STANDING RULE, and it supersedes the softer versions I wrote earlier today:
-BEFORE ANY EDIT TO A LERP, QUOTE THE INDEX EXPRESSION FROM THE DECOMPILE.** Not the X values, not
-the unit conversion, not the neighbouring table — **the index expression.** If it cannot be quoted,
-the axis is unknown and the edit is a bet.
-
-### ✅ WHAT THIS TRACE DID ESTABLISH, CORRECTLY
-- **`w[0]` (`0xC63A0`) IS a genuine second multiplier** on this whole product, confirming the
-  lineage's description. It is at 1024 and V72/V77 moved it 2x on-car fault-free.
-- **The damper has a hard OFF switch**: `gp-0x6ac0 >= 0x32c9` or `|gp-0x6abe| > 0x6590` zeroes the
-  entire product. Any damper lever is inert whenever either holds.
-- **FactorC's gate FAILS OPEN to 1024 (unity), not to 0** — so a "dead zone" reading of FactorC is
-  wrong in the other direction too.
-- The five indices are now named, which is the map any future damper work needs.
-🛑 **No damper build should be attempted until `gp-0x6a5e` and `gp-0x6ac0` are characterised on
-the corpus** — their distributions during engaged creep ratcheting decide whether any of these knots
-is even reachable.
 

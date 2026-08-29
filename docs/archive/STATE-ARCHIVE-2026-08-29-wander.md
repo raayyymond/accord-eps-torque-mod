@@ -3080,3 +3080,47 @@ family are not detectable on-car.
 ⊕ **Manual (m24) is stock and stays stock** — so this lever is **ENGAGED-ONLY**, which also makes it
 separable on a drive by the same engaged-vs-manual contrast the card already uses.
 
+## 🛑🛑 **V182 RETRACTED — FactorC's AXIS IS `gp-0x6a5e`, NOT VEHICLE SPEED. AND THE DAMPER IS A FIVE-FACTOR PRODUCT.**
+`FUN_00034350` decompiled. **`gp-0x6bd0` is not `FactorC x FactorE`. It is a FIVE-factor product:**
+```
+   uVar7 = ((( clamp(gp-0x698a, 0x400) * L1 >> 10) * FactorC >> 10) * L3 >> 10) * FactorE >> 10
+   if (gp-0x6abe > 0)  uVar7 = -uVar7
+   gp-0x6bd0 = clamp(uVar7, +- L5)
+
+   L1      = LERP(0xC9CCC[mode], index = |gp-0x6bcc| )
+   FactorC = LERP(0xC9E9C[mode], index = gp-0x6a5e )     <-- ** NOT vehicle speed **
+   L3      = LERP(0xC9DB4[mode], index = gp-0x6a10 )      (absolute steering angle)
+   FactorE = LERP(0xC9F84[mode], index = gp-0x6ac0 )      (resolver / FOC ELECTRICAL RATE)
+   L5      = LERP(PTR_000C77A0[mode], index = gp-0x6ac2 ) (the symmetric output clamp)
+
+   GATES:  FactorC needs gp-0x67f4 == 1 AND gp-0x6a5e <= 0x7d00, else it is ** 1024 (UNITY, not 0) **
+           FactorE needs gp-0x6ac0 < 0x32c9 AND |gp-0x6abe| <= 0x6590, else ** the WHOLE PRODUCT = 0 **
+```
+🛑 **V182 raised FactorC's below-range fallback believing X[0] = 2240 = 35.0 km/h. That was
+NUMEROLOGY** — 2240/64 happens to equal 35 and I built on the coincidence. **The index is
+`gp-0x6a5e`.** Whether that signal is ever below X[0] during creep ratcheting was never established.
+⇒ artifacts renamed **`SUPERSEDED-DO-NOT-FLASH-WRONGAXIS-*`**, builder raises on entry.
+❌ **The 272-crossing knot-step null is also void for this purpose** — it tested SPEED crossings
+against a knot that is not on speed. It remains valid only as a statement about speed knots generally.
+
+### 🛑 THE PATTERN, STATED PLAINLY — THIS IS THE FOURTH TIME TODAY
+V178 (authority ladder), the damper-memory flip-flop, the FS=100 errors, and now V182: **every one
+was asserting what a table's AXIS or a cell's ROLE is from something plausible — a round unit
+conversion, a nearby array, an adjacent build number — instead of from the code.**
+➕ **STANDING RULE, and it supersedes the softer versions I wrote earlier today:
+BEFORE ANY EDIT TO A LERP, QUOTE THE INDEX EXPRESSION FROM THE DECOMPILE.** Not the X values, not
+the unit conversion, not the neighbouring table — **the index expression.** If it cannot be quoted,
+the axis is unknown and the edit is a bet.
+
+### ✅ WHAT THIS TRACE DID ESTABLISH, CORRECTLY
+- **`w[0]` (`0xC63A0`) IS a genuine second multiplier** on this whole product, confirming the
+  lineage's description. It is at 1024 and V72/V77 moved it 2x on-car fault-free.
+- **The damper has a hard OFF switch**: `gp-0x6ac0 >= 0x32c9` or `|gp-0x6abe| > 0x6590` zeroes the
+  entire product. Any damper lever is inert whenever either holds.
+- **FactorC's gate FAILS OPEN to 1024 (unity), not to 0** — so a "dead zone" reading of FactorC is
+  wrong in the other direction too.
+- The five indices are now named, which is the map any future damper work needs.
+🛑 **No damper build should be attempted until `gp-0x6a5e` and `gp-0x6ac0` are characterised on
+the corpus** — their distributions during engaged creep ratcheting decide whether any of these knots
+is even reachable.
+

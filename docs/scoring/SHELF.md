@@ -29,7 +29,9 @@ magnitude channel for this cell exists anywhere in the corpus, so it has never b
 | smooth and spread | the relay lives elsewhere — worth as much |
 | railed at ±8192 | the observer is saturated, and `0xC63AA` cannot be used safely at all |
 
-🛑 **Score this one STRATIFIED BY STEERING ANGLE, never pooled.** The LERP behind `gp-0x6b70` is not a fixed curve — `FUN_000389ec` rebuilds it every pass by float arithmetic from `gp-0x6a10` (absolute steering angle) and three other live cells. So the stage can be a relay at one angle and smooth at another, and a pooled statistic would average the answer away.
+🛑 **Score this one STRATIFIED BY SPEED, never pooled.** (An earlier note here said steering angle — that was wrong and is corrected.) The LERP behind `gp-0x6b70` is the power-assist curve, and computing it from the image shows **one curve across 8 steering angles at every speed** but **six distinct curves across six speeds**.
+
+⭐ **Its purpose has changed.** Whether the stage is a relay is now answered from the image: it is a **soft** one, gain 2.67–3.77× near zero against 0.256–0.516× mid-range. V205’s job is now to measure `gp-0x6b70`’s operating range and sign, so the dose on `0xC63AE` — its private, virgin, single-reader gain cal — can be sized and signed.
 
 ## V202 — the same fix without the instrument
 
