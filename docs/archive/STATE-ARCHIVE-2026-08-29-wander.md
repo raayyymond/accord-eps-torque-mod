@@ -1307,3 +1307,63 @@ lived experience of weak lane-keeping persists, the thing to capture is **which 
 in — the 3 % rail duty means there IS a small population of railed frames, and those are the only
 frames where a ceiling could matter.
 
+## ✅✅ **THE RATCHET IS A FIXED RESONANCE WITH COMMAND-PROPORTIONAL DRIVE — THE `1−P·L` SIGNATURE**
+244 pooled engaged-creep windows, each assigned to a stratum by its **own** mean operating point (the
+earlier attempt required contiguous runs *within* a stratum, which fragments the data and left six of
+seven strata empty — that cut is superseded).
+```
+                  n win   peak Hz   excess          FREQUENCY SPREAD
+   speed 1-6       17      8.59      18.7
+   speed 6-10      57      7.81      15.1
+   speed 10-14     84      8.40      27.4           7.81-8.98 Hz   sd 0.46   CV 5.5 %
+   speed 14-18     58      7.81      40.0
+   speed 18-24     28      8.98      35.5
+
+   |rate| 0-3      42     10.16       9.7
+   |rate| 3-6      27     10.74      12.5
+   |rate| 6-12     43      8.40      21.7           8.01-10.74 Hz  sd 1.12   CV 12.3 %
+   |rate| 12-25    45      8.01     143.1   <- worst rate band
+   |rate| 25+      87      8.20      27.6
+
+   |cmd| 100-250   23      9.57      17.0
+   |cmd| 250-600   75      8.59      19.4           8.01-9.57 Hz   sd 0.60   CV 7.0 %
+   |cmd| 600-1500  46      8.01      39.4
+   |cmd| 1500+    100      8.20      58.1   <- MONOTONE, 3.4x across the command range
+```
+✅ **[EVIDENCE] the FREQUENCY is near-invariant** — CV **5.5 %** across speed, **7.0 %** across
+command, **12.3 %** across rate, with only a modest downward drift as rate and command rise.
+✅ **[EVIDENCE] the AMPLITUDE is MONOTONE in command magnitude, 17.0 → 58.1 (3.4x).**
+⇒ **fixed resonance + command-proportional drive.** That is precisely the `Z = (Z0 + P·F)/(1−P·L)`
+signature: the command is the **excitation `F`**, the plant sets the frequency, and the loop sets how
+sharply it rings. **A moving loop pole would have shifted the frequency with operating point. It does
+not.**
+
+### ⭐ AND IT SHARPENS THE ENGAGED-ONLY EXPLANATION
+My earlier account attributed engaged-only entirely to the engagement-conditional lanes joining `L`,
+predicting a **4.88x** engaged/manual ratio against a measured **19.9x [4.82, 35.64]** — consistent
+but at the very bottom of the CI. **The command-scaling result supplies the missing factor**: in
+manual the command is **zero**, so the excitation `F` is absent as well as the extra loop gain.
+⊕ The two together land much closer to the measurement than either alone. **⚠ Not a clean product** —
+excitation and the engagement-conditional loop terms are both driven by engagement and are not
+independent factors to multiply — **but the direction and rough size now agree, where the loop-gain
+term alone did not.**
+
+### ✅ WHAT THIS MEANS FOR V168
+It **confirms the lever's logic**: `1−P·L` divides the *whole* response, including the
+command-driven part, so reducing `|L|` attenuates the ratchet **at every command level** rather than
+only at some operating point. It also predicts the **drive should show the effect most clearly at
+HIGH command and in the 12–25 deg/s rate band**, where the excess is largest — useful for the pass.
+
+### ⚠ THE LKAS GAIN COSTS RATCHET — STATED, NOT RECOMMENDED
+```
+   gain 3564 (4x): ratchet excess median 16.5  (n=3)
+   gain 5346 (6x): ratchet excess median 34.5  (n=6)   ratio 2.09x
+   Mann-Whitney p = 0.167  -- NOT significant, and CONFOUNDED (V96->V102 spans other builds)
+```
+⚠ **[BELIEF, weak]** raising the LKAS gain raises the ratchet, as **excitation** — consistent with
+the command-scaling result above and with the operator's own 8x experience of more grinding.
+🛑 **This is NOT a recommendation to lower the gain** — there is a standing instruction never to, and
+the operator wants 8x if anything. **The constructive reading is the opposite: damping the resonance
+is what BUYS the headroom for more gain.** If V168 works, 8x becomes affordable in a way it is not
+today.
+

@@ -4,6 +4,51 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅✅ **V188 — THE NOTCH ON THE GRIND. ONE BIQUAD, AND THE MECHANISM DECIDES WHERE IT GOES**
+There is **exactly one biquad** (re-checked with a DC-gain-plus-structure criterion; the 60-odd other
+"hits" are mode-table data at regular strides, several reporting pole radius > 1). So one notch, and
+the middle ground is **DOMINATED**:
+```
+   design                  ratchet 5-12   grind 15-25   phase @3 Hz
+   V187  notch  8.80 Hz        6.0x          0.9x         -10.0 deg
+   V188  notch 19.40 Hz        1.3x         14.3x          -3.8 deg   <== RECOMMENDED
+   middle notch 14.10 Hz       2.2x          2.3x          -8.2 deg   (worse than BOTH)
+```
+➕ **THE MECHANISM DECIDES IT — and the kit already established both:**
+- **THE GRIND IS A CLOSED-LOOP INSTABILITY.** 21.09 Hz, **9,200× less power with LKAS off**,
+  de-confounded 2×2 attribution to the LKAS gain `0xC6CD0` (effect 2.7–3.9×). **A notch inside the
+  loop AT the unstable frequency BREAKS THE LOOP — a cure, not a mitigation.**
+- **THE RATCHET IS A PLANT RESONANCE.** Ring-down ζ 0.017–0.036, Q 14–29, motor/rack-side, limit
+  cycle EXCLUDED. A command notch only reduces its **excitation**; road input still rings the mode.
+  And the ratchet **already has an independent lever on this build** — the engaged inertia revert.
+- The biquad is **ENGAGED-GATED** (`0xC649B`=1, arm = the LKAS engagement flag) and the grind is
+  **ENGAGED-ONLY on 7/7 routes**. An engaged-only filter against an engaged-only instability.
+✅ It also costs **a THIRD of the phase**, because 19 Hz is far from openpilot's band — which is
+exactly why the notch can be made **WIDE** (r 0.9300 vs 0.9795) and still pass. Per-route grind peaks
+run p10 15.74 / median 19.92 / p90 21.68 Hz, so **width is what matters here**, not depth.
+✅ **GATES, the best of any filter build in the arc: DC 1.000002 · max|H| 1.3533 · added lag
+−1.25° @1 Hz, −3.84° @3 Hz · cal-only, no cave. 30/30.**
+`81c0845fdf22c3af8a164c56240acfd3be2467705997f2f299b29fe560be3279`
+```
+   8.8 Hz -1.2 dB (helps the ratchet too)   15 Hz -6.2   18 Hz -15.3   19.4 null
+   21 Hz -13.7   23 Hz -6.7   25 Hz -3.0
+```
+
+## ✅ **THE TWO MEASURED GRIND FIXES ARE STILL ON THE CAR — checked, not assumed**
+This kit lost V42's ratchet fix to a rebase once (byte-stock V53–V70), so the same check was run:
+```
+   0xC6446  Lever B, the LKAS-gated r24 arm (V88, grinding FIXED on-car)   5244  CARRIED
+   0x3AA96  the V88 sign fix                                               251  CARRIED
+   0x454FE  V42 ratchet fix                                                181  CARRIED
+```
+⚠ **But `0xC6CD0` — the gain the 2×2 identified as the CARRIER of the ~23 Hz vibration — was
+3564 (4×) when V88's grind fix was CONFIRMED on-car, and is 5346 (6×) now** (V101 raised it to 8×,
+V102 stepped it down to 6×). 🛑 **Lowering it back is NOT recommended: LKAS reach is
+`(clip × cal(0xC6CD0)) >> 15`, so 6×→4× cuts authority by a third — the opposite of the operator's
+stated goal.** That tension is exactly why the answer is a **notch**: keep the gain, remove its 23 Hz
+consequence. ⊕ Supersedes the stale *"the 4× LKAS gain is frozen on every build"* memory, which
+predates V101.
+
 ## 🛑🛑 **EVERY ENDPOINT IN THIS KIT IS RELATIVE — AND ONE OF THEM INVERTS V184'S VERDICT**
 Two endpoint families cover essentially every verdict in the arc, and **both divide by something
 that a broadband filter also attenuates**:
@@ -2161,64 +2206,4 @@ NARROW, and **the ratchet's own frequency spans 7.81–10.74 Hz across operating
 and **no gain increase anywhere** — GATE 2 on a notch has to cover phase and out-of-band gain, not
 just depth, because a notch flips phase across itself and that can destabilise frequencies either
 side even while the notch attenuates.
-
-## ✅✅ **THE RATCHET IS A FIXED RESONANCE WITH COMMAND-PROPORTIONAL DRIVE — THE `1−P·L` SIGNATURE**
-244 pooled engaged-creep windows, each assigned to a stratum by its **own** mean operating point (the
-earlier attempt required contiguous runs *within* a stratum, which fragments the data and left six of
-seven strata empty — that cut is superseded).
-```
-                  n win   peak Hz   excess          FREQUENCY SPREAD
-   speed 1-6       17      8.59      18.7
-   speed 6-10      57      7.81      15.1
-   speed 10-14     84      8.40      27.4           7.81-8.98 Hz   sd 0.46   CV 5.5 %
-   speed 14-18     58      7.81      40.0
-   speed 18-24     28      8.98      35.5
-
-   |rate| 0-3      42     10.16       9.7
-   |rate| 3-6      27     10.74      12.5
-   |rate| 6-12     43      8.40      21.7           8.01-10.74 Hz  sd 1.12   CV 12.3 %
-   |rate| 12-25    45      8.01     143.1   <- worst rate band
-   |rate| 25+      87      8.20      27.6
-
-   |cmd| 100-250   23      9.57      17.0
-   |cmd| 250-600   75      8.59      19.4           8.01-9.57 Hz   sd 0.60   CV 7.0 %
-   |cmd| 600-1500  46      8.01      39.4
-   |cmd| 1500+    100      8.20      58.1   <- MONOTONE, 3.4x across the command range
-```
-✅ **[EVIDENCE] the FREQUENCY is near-invariant** — CV **5.5 %** across speed, **7.0 %** across
-command, **12.3 %** across rate, with only a modest downward drift as rate and command rise.
-✅ **[EVIDENCE] the AMPLITUDE is MONOTONE in command magnitude, 17.0 → 58.1 (3.4x).**
-⇒ **fixed resonance + command-proportional drive.** That is precisely the `Z = (Z0 + P·F)/(1−P·L)`
-signature: the command is the **excitation `F`**, the plant sets the frequency, and the loop sets how
-sharply it rings. **A moving loop pole would have shifted the frequency with operating point. It does
-not.**
-
-### ⭐ AND IT SHARPENS THE ENGAGED-ONLY EXPLANATION
-My earlier account attributed engaged-only entirely to the engagement-conditional lanes joining `L`,
-predicting a **4.88x** engaged/manual ratio against a measured **19.9x [4.82, 35.64]** — consistent
-but at the very bottom of the CI. **The command-scaling result supplies the missing factor**: in
-manual the command is **zero**, so the excitation `F` is absent as well as the extra loop gain.
-⊕ The two together land much closer to the measurement than either alone. **⚠ Not a clean product** —
-excitation and the engagement-conditional loop terms are both driven by engagement and are not
-independent factors to multiply — **but the direction and rough size now agree, where the loop-gain
-term alone did not.**
-
-### ✅ WHAT THIS MEANS FOR V168
-It **confirms the lever's logic**: `1−P·L` divides the *whole* response, including the
-command-driven part, so reducing `|L|` attenuates the ratchet **at every command level** rather than
-only at some operating point. It also predicts the **drive should show the effect most clearly at
-HIGH command and in the 12–25 deg/s rate band**, where the excess is largest — useful for the pass.
-
-### ⚠ THE LKAS GAIN COSTS RATCHET — STATED, NOT RECOMMENDED
-```
-   gain 3564 (4x): ratchet excess median 16.5  (n=3)
-   gain 5346 (6x): ratchet excess median 34.5  (n=6)   ratio 2.09x
-   Mann-Whitney p = 0.167  -- NOT significant, and CONFOUNDED (V96->V102 spans other builds)
-```
-⚠ **[BELIEF, weak]** raising the LKAS gain raises the ratchet, as **excitation** — consistent with
-the command-scaling result above and with the operator's own 8x experience of more grinding.
-🛑 **This is NOT a recommendation to lower the gain** — there is a standing instruction never to, and
-the operator wants 8x if anything. **The constructive reading is the opposite: damping the resonance
-is what BUYS the headroom for more gain.** If V168 works, 8x becomes affordable in a way it is not
-today.
 
