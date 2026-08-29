@@ -4,6 +4,51 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅⭐⭐ **THE SATURATION CENSUS CONVERGES ON `gp-0x6b70` — by elimination, from data already on disk**
+
+The record's instruction is *"find what clips"*. I had found **one** saturating element and built a
+ceiling raise for it without checking whether it was the only one, or the binding one. So I enumerated
+**every clamp between the LKAS command and the motor**, read each ceiling from the image, and put each
+next to its own producer's ceiling — because **a clamp only matters if its input can reach it.**
+
+### ✅ **14 OF 18 CLAMPS CANNOT CLIP AT ALL**
+Either the ceiling equals or exceeds its own producer (`gp-0x6b86` 12288 = 12288; the biquad's float
+±12.0 = 12288; `gp-0x6b26`'s ±1024 window against a producer clamped to 511 by `0xC407E`;
+`gp-0x6b46`'s ±1024 window against ±512 by construction), or the record already measured it inert
+(the LKAS setpoint clip — V108 E3, pulled on its own null; the forward clamps `0xC61B2`/`0xC61B4`
+— lane max 2505 < 3072; `gp-0x6bd0` — zero in 100 % of the micro regime; `gp-0x6bbe` — p50 74
+against a ±2048 window; `gp-0x6b4c` — `|·| ≥ 4096` duty 0.000000 over 17,614 engaged frames).
+
+### ✅✅ **AND THE BIGGEST REMAINING CANDIDATE IS MEASURED DEAD — IN A CACHE WE ALREADY HAVE**
+`gp-0x4f64` is the **governor ceiling**, and the record measures it **pinned at its cal max 4762 for
+99.9 %+ of engaged time** — so it is effectively a **constant 4762 limit** on the aggregator output,
+whose own clamp is 10240, i.e. **2.15× higher.** Whether the aggregator ever reaches it had never been
+read out. **But V105's cave `b6` is exactly `|gp-0x6b94| ≥ |gp-0x4f64|`, V105 FLEW as route `a5`, and
+that cache is on disk.**
+```
+   route a5, 65,959 frames, 49,021 engaged (74.3 %)
+   bit   duty        rung
+    7    0.383468    sign                     <- positive control
+    6    ** 0.000000 **  |gp-0x6b94| >= |gp-0x4f64|   THE GOVERNOR CLIP
+    5    0.279778                             <- positive control
+    4    0.433814                             <- positive control
+    3    0.487444    identity                 <- positive control
+```
+⇒ **The aggregator NEVER reaches the governor ceiling. The governor clip is DEAD**, on 49,021 engaged
+frames, **with four rungs on the same byte varying normally** — so this is not a stuck field or a dead
+cave. ⊕ `gp-0x6ad6` was already measured the same way: **V100's `b5` duty 0.000000, CI [0, 0.0186],
+with `b4` = 0.6057 on the same cell.**
+
+### ⭐ **WHAT SURVIVES: `gp-0x6b70`, AND ONLY `gp-0x6b70`**
+**Every other clamp in the command→motor path is either structurally unable to clip or measured at
+zero duty.** `gp-0x6b70` is **the only one that can clip and has never been measured** — and it is
+exactly the cell **V205 reads and V206 doses.**
+⇒ **That is independent corroboration, reached by elimination rather than by following the same
+thread.** It did not need a drive: the census came from the image and the duties from caches already
+on disk.
+⚠ One candidate remains genuinely open besides it — **`gp-0x6b84` (the resid mirror, ±0x3000)** —
+unmeasured, and worth a rung if a future cave has a spare one.
+
 ## 🛑 **A VACUOUS TEST RETIRED, MY OWN AMPLITUDE PREDICTION WEAKENED — AND V206 RE-JUSTIFIED ON BETTER GROUNDS**
 
 ### 🛑 **THE FREQUENCY TEST CANNOT DISCRIMINATE — do not spend a drive endpoint on it**
@@ -2196,77 +2241,4 @@ pass, not a scored one** — so it cannot produce a result I would then over-rea
 ⊕ **THE GENERAL LESSON**: changing what a drive asks for **silently invalidates every power figure
 computed on the old exposure.** Re-run the power check against the NEW exposure, or the card is
 promising a result the drive will not deliver.
-
-## 🛑 **THE CORPUS CANNOT ANSWER HANDS-MATCHED QUESTIONS — ONLY 21 ENGAGED HANDS-ON CREEP WINDOWS EXIST**
-Three tests in a row have now failed their controls, and the cause is one structural fact.
-
-**The question**: every lever on the shelf is engaged-only, so *does the ratchet exist in MANUAL?*
-If it does, an engaged-only lever can at best remove the ~3.6x engaged excess and leaves the rest.
-```
-   HANDS-ON windows in the WHOLE corpus:   engaged 21   manual 11
-   slope-corrected excess at a FIXED 8.40 Hz, power law fitted on 3-6 and 12-40 Hz:
-       ENGAGED   0.71x   CI [0.43, 1.31]   no significant peak
-       MANUAL    1.45x   CI [0.80, 2.72]   no significant peak
-```
-🛑 **THE ENGAGED ARM IS THE POSITIVE CONTROL, AND IT FAILS** — the ratchet is known to be there
-and the test cannot see it. So the manual null means nothing, and the script's auto-verdict ("no
-ratchet in manual ⇒ the engaged levers are the right family") is **unsupported and withdrawn.**
-
-➕ **A REAL METHOD FIX CAME OUT OF IT.** The first version scored the band with `argmax`, and the
-point estimate landed **outside its own bootstrap CI** (engaged 1.47x vs CI [1.48, 3.71]). A
-max-over-band statistic is **upward-biased under resampling**; the estimator now reads a **FIXED**
-frequency. With that fix the ordering also stopped being backwards (it had manual > engaged, which
-contradicts everything established).
-🛑 **RULE: never bootstrap a max-over-band statistic. If the point estimate falls outside its own
-CI, the statistic is biased, not the data interesting.**
-
-### ✅ THE ACTIONABLE CONSEQUENCE — THE DRIVE MUST BE HANDS-ON, AND THE CARD NOW SAYS SO
-The corpus is overwhelmingly hands-OFF while engaged (1606 hands-off vs 21 hands-on creep windows),
-because that is how the car is normally driven. **Every hands-matched question is therefore
-unanswerable from existing data**, including:
-- does the ratchet exist in manual at all?
-- is the ~3.6x engaged excess the whole effect, or only the part hands-on exposure can see?
-⇒ **the Stage 1 pass must be driven with HANDS ON THE WHEEL**, which also matches how the operator
-actually experiences the symptom. That is a one-line change to the card and it makes the drive
-answer questions the corpus cannot.
-
-## 🛑 **RECALIBRATION: ENGAGEMENT AMPLIFIES 8.4 Hz BY ~3.6x, NOT 15-33x. I QUOTED THE CONFOUNDED FIGURE ALL SESSION.**
-`cs_tq` is the DRIVER TORQUE SENSOR, and when engaged the driver largely is not steering. So an
-engaged-vs-manual torque comparison conflates **engagement** with **hands-off**. Stratifying on
-`cs_press` (steeringPressed) separates them:
-```
-   subset        n_eng  n_man   ratio @ 8.40 Hz    95 % CI (bootstrap over WINDOWS)
-   ALL            2255    339        20.94         [16.29, 41.43]
-   ** hands-ON      68     77         3.58         [ 1.36, 14.92]  <- the FAIR comparison **
-   hands-OFF      1606     56        18.34         [ 5.44, 68.85]
-```
-✅ **The amplification is REAL** — the hands-on CI excludes 1. 🛑 **But it is ~3.6x, not the
-15-33x I have been repeating.** The large numbers are engagement *plus* hands-off, not engagement.
-⊕ **THE KIT'S OWN RECORD HAD IT RIGHT**: [[accord-engagement-amplifies-6-9hz]] gives a band contrast
-of **2.8x**, which sits inside [1.36, 14.92]. **My session figures drifted upward; the record did
-not.** Every earlier statement in this session of the form "engaged-amplified ~15x" should be read
-as **~3.6x [1.36, 14.92]**.
-⚠ The hands-on cell is small (68/77 windows), which is why the CI is wide. A tighter number needs
-matched hands-on exposure, which is a drive request, not an analysis.
-
-### ❌ AND THE 4.7 Hz "CROSSOVER" IS DEAD — IT WAS THE SAME CONFOUND
-I measured engagement SUPPRESSING below ~4.7 Hz and AMPLIFYING above, and started reasoning about
-which firmware element has its phase crossover there (none does: the nearest corners are 16.7, 21.3
-and 36.2 Hz). **The hands-on control kills it:**
-```
-   hands-ON    crossover NOT FOUND in 2-20 Hz    CI [5.83, 18.97] Hz  -- spans the band
-   hands-OFF   crossover 5.38 Hz                 CI [4.59,  6.12] Hz
-```
-⇒ with hands on there is **no detectable crossover**. The suppression below 4.7 Hz was **the driver
-not steering**, not loop dynamics. **The line of reasoning is withdrawn before anything was built on
-it.**
-
-### ➕ WHAT THIS CHANGES FOR THE BUILDS
-Nothing about which cells are right — but it **resizes the target**. The effect to eliminate is
-**~3.6x at 8.4 Hz**, not 15-33x, so:
-- a lever that removes a 3.0x engaged-only dose (the inertia revert, V185) is **the right order of
-  magnitude** to account for it, which strengthens rather than weakens that build;
-- and the drive's detection threshold matters more than I implied: the earlier power check found one
-  15 s pass resolves a **presence/absence** change, and a ~3.6x band move is comfortably inside the
-  **grind** endpoint's power but near the ratchet endpoint's, which needs 2 passes.
 
