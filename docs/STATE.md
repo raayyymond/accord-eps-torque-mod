@@ -1,5 +1,54 @@
 # STATE — living current state of the kit
 
+## ✅ **V151 BUILT — THE KNEE RAISE, REBASED ONTO V122 — AND THE RELAY IS LARGELY RETIRED**
+The switching census covered **counter-gated** switches. It never covered the **sign-gated** class,
+and the mechanism this kit has actually named is a **Coulomb relay** — a sign switch, the textbook
+generator of stick-slip. Following that thread produced one build **and one retirement.**
+
+### ✅ THE BUILD — a real gap in the flight set
+**V135 made this exact edit and is SUPERSEDED** — not because the edit was wrong, but because it sat
+on the **V133 base that regressed hard on-car**. Every V122-based build since (**V137–V150**) holds
+the knee at 3000.
+⇒ **the raise to 3600 had NEVER been built on a flyable base.** V151 is that build.
+```
+   0xC40BC  relay knee  3000 -> 3600   K1 HELD at 1020    2 payload bytes, 53/53, CRC 50/50
+   image 0935460e0c6918f8c7cb27fa0c17f366ccc2f17e5a4c908d7400298838d9ebc0
+   rwd   eb98eb6520f656523ca2db8438de0a3c5c072dbc31f8d35f09fcabebfe427287
+   diff_vs_flown: 2 bytes vs V122 => SINGLE-VARIABLE, interpretable
+```
+`friction = K1 * min(|model|, knee) / knee`; with K1 held, friction is **lower-or-equal at every
+`|model|` and never higher** — a monotone reduction, slope **0.340000 → 0.283333 = ×0.8333, 17 %
+less**. **Gain-holding is unavailable**: slope 0.34 at knee 3600 needs **K1 = 1224**, above the
+**1023 ceiling** past which friction exceeds `|model|` and the residual inverts.
+
+### 🛑 THE RETIREMENT — THE RELAY IS ALREADY ~99 % OUT OF SATURATION ON WHAT IS FLYING
+The measured duty ladder is a **survival function of `|model|`**, decaying **×0.206 per 600 counts**:
+```
+   knee  600 -> 0.7439   1800 -> 0.2353   3000 -> ~0.010  <- V122, WHAT IS ON THE CAR
+   knee 1200 -> 0.4810   2400 -> 0.0484   3600 ->  0.0000 <- V151
+```
+⇒ **[EVIDENCE, from the kit's own measured ladder] V122 already runs the relay at ~1 % saturation
+duty**, and **the operator still hears grinding on V122-family builds.**
+⇒ **A nonlinearity active ~1 % of the time cannot be the cause of a continuous grinding symptom.**
+⇒ **the Coulomb relay is LARGELY RETIRED as the cause of the REMAINING grinding.** It was the live
+lever across V108→V122, when duty ran 0.74→0.01 — that arc is real — but **the ladder is spent.**
+⭐ **This also corrects my own framing an hour ago**: V151's remaining effect is **the 17 % friction
+cut, not relay removal.** By the verified polarity (*more modelled friction = MORE assist*) that
+means **slightly LESS assist**, which is in tension with the LKAS-authority complaint.
+⇒ **V151 is a MARGINAL build and is ranked accordingly — it does not displace V149.**
+
+### ✅ THE FLIGHT ORDER, UPDATED
+```
+   1. V149   0xC6446 5244 -> 1024   removes the 5.12x r24 switch      2 B   52/52
+             CAVEAT: inert IF gp-0x671d never increments (it is a FAULT counter, |x| >= 5530)
+   2. V139   both pump arms halved  demonstrated on-car potency       2 B   49/49
+   3. V150   0xC6136 0 -> 1         can only SUPPRESS the pump        1 B   51/51
+   4. V148   deadband + probe       MEASURES whether gp-0x671d toggles 3 B  69/69
+   5. V151   knee 3000 -> 3600      MARGINAL -- ~1 % duty left; 17 % less friction  2 B  53/53
+```
+⊕ **V149, V150 and V151 are independent single-lever builds and must not be stacked** — each
+builder asserts the others' cells are held.
+
 ## 🛑 **FLATTENING THE LERP TO REMOVE THE REMAINING SWITCHES — CONSIDERED AND REJECTED**
 The three `gp-0x671a` switches were called unremovable because one side is a **speed-varying LERP**.
 That is only true while the LERP is a table. **If the table were flattened to the constant the
