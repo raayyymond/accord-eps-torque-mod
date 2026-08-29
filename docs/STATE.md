@@ -4,6 +4,37 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **CORRECTION 2: “ENGAGEMENT *CREATES* THE RATCHET” IS TOO STRONG — IT AMPLIFIES IT ~15×**
+The same corpus enlargement that corrected the build-trend claim also softens the engaged/manual one.
+```
+                          n=7 (earlier)          n=15 (full corpus)
+   engaged clears null     7/7                    15/15
+   manual  clears null     0/7                    6/15        <- NOT zero
+   speed-matched ratio     19.9x [4.82, 35.64]    15.1x [6.0, 38.9]   (n=12 matched)
+```
+🛑 **[EVIDENCE] the manual arm clears its slope-matched null on 6 of 15 routes**, where the
+9-route subset gave 0 of 7. ✅ **But it clears MARGINALLY in 5 of those 6** — 3.3 vs 2.8, 2.7 vs 2.5,
+2.3 vs 2.2, 3.8 vs 2.7, 2.9 vs 2.4 — with only `r21` clearly above (8.2 vs 4.7). Meanwhile the
+**engaged arm clears 15/15, usually by 10–100×** (up to 339.3 vs 2.7 on `r82`).
+⇒ **the right statement is that engagement AMPLIFIES the ratchet by ~15×, not that it CREATES it.**
+The mode is faintly present in manual driving and enormously larger when engaged.
+
+### ✅ WHAT THIS CHANGES
+⊕ **The ratio TIGHTENS**: 15.1× **[6.0, 38.9]** on 12 matched pairs, against 19.9× [4.82, 35.64] on 4.
+Same magnitude, better bounded.
+⊕ **The drive endpoint is unaffected.** Engaged sits at 12–339 against a null near 2–5, so the
+presence/absence reading holds with an enormous margin; the manual arm was only ever a control.
+🛑 **But the MECHANISTIC claim changes.** *“Firmware-created”* implied the mode does not exist without
+the loop. It does — faintly. The loop **amplifies an existing mode**, which is exactly the `1−P·L`
+picture and is if anything **more** consistent with the account than outright creation would be.
+⊕ **No build changes.** V173 reduces `|L|`, which is the amplification.
+
+### ⚠ THE PATTERN IN BOTH CORRECTIONS
+Both claims that fell were **presence/absence statements made at n≤9, and both fell in the direction
+of my own hypothesis** — *“never moved”* and *“absent in manual”* were the strong readings, and the
+full corpus made each one weaker. **Small-n presence/absence claims are the failure mode to watch for
+here**, not the effect sizes, which have held.
+
 ## 🛑🛑 **CORRECTION: “THE RATCHET HAS NEVER MOVED” WAS AN n=5 ARTEFACT**
 The headline of this session was that the grind falls monotonically post-V102 while **the ratchet does
 not move at all** — the dissociation that motivated hunting a lever no build had touched. It rested on
@@ -2263,14 +2294,4 @@ where the ratchet lives.
 **[NOTE]** the final linear gain also needs a **RAM LERP's local slope** (rows at `gp-0x64b8`/
 `gp-0x641c`), which the model records as never successfully extracted. **512 is a HALVING, one notch
 on a safe axis — NOT a computed optimum.**
-
-## ⚠ **CORRECTION — `FUN_000382d8`/`FUN_000389ec` ARE NOT PURELY MONITOR-SIDE**
-Earlier this session I filed both as monitor-side because they write no aggregator lane. **That test
-was too narrow.** `FUN_000389ec` writes `gp-0x64b8`/`gp-0x64b6`/`gp-0x641c`/`gp-0x640a` — **exactly the
-RAM LERP rows `FUN_00038148` reads** to shape Path 2's output — and `FUN_000382d8` feeds
-`FUN_000389ec` through `gp-0x62fc..0x630c`.
-=> **the chain is `FUN_000382d8` → `FUN_000389ec` → the RAM LERP → `FUN_00038148` (Path 2)**, so both
-ARE in the torque path, via a RAM table rather than a direct lane write.
-⭐ **A function can be in the loop without writing a lane cell.** "Writes no aggregator lane" proves
-it is not a lane PRODUCER; it does **not** prove it is out of the loop. **Follow the RAM it writes.**
 

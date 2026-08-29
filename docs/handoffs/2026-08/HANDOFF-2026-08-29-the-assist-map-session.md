@@ -9,7 +9,7 @@
 ## 0. THE ONE-PARAGRAPH VERSION
 
 Three of this kit's own measurement instruments turned out to be artefacts of a spectral tilt. With a
-validated replacement, **the ratchet is firmware-created, engaged-only, lives in TORQUE not wheel
+validated replacement, **the ratchet is a loop-amplified mode, ~15× larger engaged, living in TORQUE not wheel
 rate, and falls only WEAKLY across builds where the grind falls strongly** — see the correction in
 §3. That led to the **base power-assist map**, the largest torque-fed term in
 the aggregator, whose slope cap and second-order section had never been touched. **Seven builds are
@@ -68,8 +68,11 @@ worked". Excess is monotone.
 - **In TORQUE, not wheel rate.** Margins over each channel's own null: `tq` 7.62 · `cs_tq` 7.42 ·
   `ws_fr` 4.41 · **`cs_rate` 1.03 (CHANCE)** · angle 0.79–0.83 · command 0.56–0.67.
   ⇒ **every 6–9 Hz endpoint this kit ever used read the wrong channel.**
-- **Engaged-only.** Engaged arm clears its null **7/7** routes, manual **0/7**, speed-matched ratio
-  **19.9× [4.82, 35.64]**. Engagement *creates* it. (Supersedes the recorded 2.8×.)
+- 🛑 **CORRECTED — engagement AMPLIFIES it ~15×; it does not CREATE it.** On the full corpus the
+  engaged arm clears its null **15/15** and the manual arm **6/15** (not 0/7 as the 9-route subset
+  gave) — though marginally in 5 of those 6. Speed-matched ratio **15.1× [6.0, 38.9]**, n=12.
+  ⇒ the mode exists faintly without the loop and the loop amplifies it, which is **more**
+  consistent with `1−P·L` than creation would be. (Supersedes the recorded 2.8×.)
 - **The grind is engaged-only too** — **0/7** in manual. Both symptoms are firmware-created by
   engagement; they differ in frequency and levers, **not in class**.
 - 🛑 **CORRECTED — both symptoms fall post-V102, the grind more strongly.** An earlier reading here
