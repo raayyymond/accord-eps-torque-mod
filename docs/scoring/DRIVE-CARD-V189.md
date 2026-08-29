@@ -6,8 +6,10 @@
 
 ## What it is
 **V188 plus a two-byte revert.** V188 moved Honda's notch onto the grind at 19.40 Hz; V189 also
-removes an engaged-only damper **relay** that our own build chain created by accident and that the
-build you are driving today does **not** have.
+removes an engaged-only damper **relay** our own chain created by accident. ⚠ **That revert is
+INERT** — mode 27 is unreachable on this car — but it is strictly toward stock, and with it **every
+engaged-only asymmetry this kit created is gone.** The ratchet prediction below rests on the
+**inertia revert**, which is now the only engaged-only dose left.
 
 | | |
 |---|---|
@@ -15,7 +17,7 @@ build you are driving today does **not** have.
 | 1 Hz / 3 Hz phase | **−1.25° / −3.84°** |
 | 15–23 Hz (the grind) | **−6.2 to −15.3 dB** |
 | 8.8 Hz (the ratchet) | −1.2 dB |
-| FactorC m27 `Y[0]` | **426 → 0**, back to Honda — removes the relay |
+| FactorC m27 `Y[0]` | **426 → 0**, back to Honda — ⚠ **INERT: mode 27 is unreachable** |
 | 55.2 Hz | **+98 dB — Honda's null is given up** |
 
 ## The drive — two passes, ~30 s
@@ -30,8 +32,9 @@ build you are driving today does **not** have.
    grind peak MOVES to ~24-28 Hz                            => the notch displaced it
    a NEW peak appears at 13-16 Hz                           => the notch's low-shoulder lag grew a
                                                                mode; back the pole radius off
-   ratchet improves only slightly (~1.3x) unless mode 27 was live, in which case removing the
-   relay may do considerably more -- that is the part we cannot predict
+   RATCHET excess 26.7x -> toward the MANUAL floor 2.8x, null ~3.9x.  Below the null = GONE.
+   That prediction rests on the INERTIA REVERT, now the only engaged-only dose left.
+   (the FactorC m27 revert is INERT -- mode 27 is unreachable, settled over 104,061 frames)
 ```
 🛑 **Read the ABSOLUTE column, not the control-band ratio.**
 

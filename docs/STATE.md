@@ -4,6 +4,45 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅✅ **THE ENGAGED/MANUAL ASYMMETRY SPACE IS NOW EXHAUSTED — and that pins what each symptom rests on**
+🛑 **CORRECTION to the previous section: MODE 27 IS UNREACHABLE, so V189's relay revert is INERT.**
+V73's probe settled this over **104,061 frames**: the car is row 11 `TVCA4`, using **e012 = 24
+disengaged** and **e014 = 26 engaged**. Mode 27 would read as **11** in the probe's 4-bit field and
+**only 8 and 10 were ever observed.** The V189 edit is still correct — strictly toward stock — but it
+is a **cleanup, not a fix**, and the previous section left that ambiguous.
+
+**The sweep that matters instead — EVERY mode-indexed table, m24 vs m26:**
+```
+   strict scan (>=3 breakpoints, STRICTLY increasing X, real span): 7 tables
+     0xC7B40  DIFFERS on V189 -- but DIFFERS ON STOCK TOO (4181 vs 4114)  => HONDA'S OWN
+     all other 6                                                          => == m24
+   plus the six damper tables asserted in the V189 builder                 => all == m24
+```
+✅ **NO mode-indexed table on V189 differs 24-vs-26 that is not also different on stock.**
+⚠ A looser first pass reported six "asymmetries"; five were **junk from my own heuristic** — records
+like `X=(3,3,3)` and `X=(5,5,5,5,5)` passed because it only required NON-decreasing X. **A monotonic-X
+test without strict increase and a span floor manufactures tables out of arbitrary data.**
+
+### ⇒ WHAT REMAINS ENGAGED-ONLY ON V189 IS EXACTLY TWO THINGS
+1. **The LKAS command itself** (the excitation), and
+2. **the biquad ARM** (`0xC649B`=1, ours since V103) — which on V189 **is the grind notch.**
+
+⇒ **so each symptom now rests on one identified mechanism, and both are levered:**
+```
+   GRIND    a CLOSED-LOOP INSTABILITY (9,200x less power LKAS-off, 2x2 attribution to 0xC6CD0)
+            -> the notch at 19.40 Hz breaks the loop AT the unstable frequency.  14.3x.
+   RATCHET  engaged-amplified 3.58x.  The flying build's ONLY engaged-only dose was the inertia
+            table (m26 Y = -29490/-17202/-16000 vs Honda's -9830/-5734/-1966, ~3x).
+            V184+ reverts it, so with every other asymmetry now equal, that revert is the
+            candidate mechanism -- and its predicted endpoint is the manual floor.
+```
+✅ **This makes the earlier pre-registration the live prediction for V189**: engaged ratchet excess
+**26.7× → toward the manual 2.8×**, and the null is ~3.9× — i.e. **crossing below the null is
+"gone by the instrument", and manual proves that state is reachable.**
+🛑 If the ratchet survives V189, the engaged-only cause is **not in the calibration at all** — it
+is in the command, which is openpilot's loop (the operator's third symptom, *peak command
+oscillation*), and no firmware cal lever addresses it.
+
 ## 🛑✅ **V189 — WE HAD CREATED AN ENGAGED-ONLY DAMPER RELAY BY ACCIDENT. TWO BYTES REMOVE IT.**
 Auditing **every** FactorC mode record against stock, **exactly one deviates**:
 ```
@@ -2145,57 +2184,4 @@ A real-pole design constrained to hold 3–5 Hz nearer unity gives `poles [0.959
 gain **0.9322** (vs V172's 0.8501) and 8.64 Hz **0.5716** (vs 0.4441) ⇒ **5.0x damping instead of
 6.2x**. It buys back only **4 ms** of group delay (+26.1 vs +30.1 ms at DC) for a **1.2x loss of
 damping**. **Dominated — not built.**
-
-## ✅✅✅ **V172 BUILT — TWO INDEPENDENT RATCHET LEVERS NOW EXIST, WITH DIFFERENT FEEL COSTS**
-```
-   V172 = V158 + four float32 coefficients at 0xC60A8/AC/B0/B4   (the assist section retune)
-   image  ff8d07e6ba3e80484b8ef67eeb4d9fd13804ee999d35953038355ab2cd0ab830
-   .rwd   c0ed77b773a7e7f300ab438450817e17f49269c67d096edefa56dea140e958a5
-   13 payload bytes + one CRC trailer - 23/23 assertions - chain 50/50 - readback identical
-```
-
-### 🛑 A MISTAKE I NEARLY SHIPPED AS A NEGATIVE
-A frontier sweep appeared to **kill** this lever: every tuning that attenuated 7–11 Hz showed
-*“ring Q 30–53”* and 230–413 ms settling, which would be a Q≈40 resonance in the driver's own band.
-**But that Q figure is meaningless for REAL poles**, and the rows that mattered had real ones. I was
-about to close the lever on a number that did not apply.
-✅ Constraining the search to **real poles at r ≤ 0.97** gives `poles [0.97, 0.47509]`, **0.0 %
-overshoot, ZERO oscillation cycles on a pulse** — an overdamped low-pass, not a resonator.
-⊕ Recorded so it is not repeated: **never read Q off a pole pair without checking it is complex.**
-
-### ✅ WHAT V172 DOES, FROM THE BUILT IMAGE'S OWN BYTES
-```
-   freq       FLYING     V172       ratio
-   0.5 Hz     1.0000     1.0067     1.007   <- DC UNCHANGED: no steady-state weight cost
-   3   Hz     0.9975     0.8501     0.852   <- driver band, 15 % down
-   5   Hz     0.9931     0.6802     0.685   <- driver band, 32 % down
-   8.64 Hz    0.9790     0.4441     0.454   <- THE RATCHET, 2.2x attenuated
-   21  Hz     0.8659     0.0902     0.104   <- THE GRIND, 9.6x attenuated
-   loop: effective map s 1.958 -> 0.888  =>  |1-P.L| 0.0700 -> 0.4360  =>  6.2x MORE DAMPED
-```
-
-### ⭐ THE TWO LEVERS, AND HOW TO CHOOSE
-```
-             cell(s)              predicted    what it COSTS
-   V168      0xC6384 2048->1536   3.4x ratchet  heavier steering NEAR CENTRE, at all times
-   V172      0xC60A8..B4 retune   6.2x ratchet  assist ~130 ms SLOWER on fast inputs;
-                                  + 9.6x grind  3-5 Hz driver content down 15-32 %
-```
-✅ **V172 is stronger on paper** — more damping, and it is the only one that also attacks the grind.
-🛑 **But its risk is less characterised, and it is the risk that matters here.** A 130 ms lag in the
-dominant assist lane means assist arrives late on a quick input — heavier on turn-in, then lightening
-— which **could itself read as notchiness**, the very sensation being chased. V168's cost is
-uniform and predictable; V172's is dynamic.
-⭐ **RECOMMENDATION: fly V168 first.** Not because it is the stronger lever — it is not — but because
-its failure mode is legible. **If V168's damping is insufficient, or its static weight is
-unacceptable, V172 is the next build and needs no further work.**
-⊕ They do **not** stack: V172 asserts the slope cap is still stock, so the two are alternatives and
-each is a clean single-variable test against the same V158 base.
-
-### ✅ AND A NULL ON EITHER IS INFORMATIVE ABOUT THE OTHER
-Both rest on the **same** real-positive `P·L` assumption. ⇒ if V172 reads null on the ratchet, that
-falsifies the assumption for V168 too, and vice versa — so whichever flies first, its null closes
-more than one lever. ⊕ V172 adds a second discriminator the cap does not have: **the grind should
-fall further than the ratchet** (9.6x vs 2.2x filter attenuation). If the ratchet moves and the grind
-does not, the shared-loop account is wrong somewhere and that difference names where.
 
