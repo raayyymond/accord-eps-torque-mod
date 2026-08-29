@@ -4,6 +4,46 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **THE SIX-TERM SUM IS NOW FULLY CLASSIFIED — `gp-0x6b26` IS ITS ONLY FREQUENCY-SELECTIVE LANE**
+**A CLOSING result, both positive and negative.** Every lane of `FUN_00038148`'s Path-2 sum has been
+traced to its writer and classified by differentiation order. **No second ω-weighted lever exists in
+this structure** — so the search over it is closed and no future session need re-open it.
+```
+   w    cell      signal      writer            what it is                      order
+   w[0] 0xC63A0   gp-0x6bd0   0x34730 (3 st)    base-assist damper (FactorC x FactorE)   ~w^1 BUT
+                                                zero on 95.91% engaged / 100% of micro
+   w[1] 0xC63A2   gp-0x6bbe   0x3508C (3 st)    viscous + DC PEDESTAL (~90 ct/(rad/s))   w^1 + DC
+   w[2] 0xC63A4   gp-0x6b46   0x3681A (1 st)    EMA'd, deadbanded torque-ERROR tracker   LAG (w^-1)
+   w[3] 0xC63A6   gp-0x6b26   0x36CF0 (1 st)    ** K * ACCELERATION **                   ** w^2 **
+   w[4] 0xC63A8   gp-0x6b4e   0x27466 (1 st)    sum over the 11 aggregator slots         w^0
+   w[5] 0xC63AA   gp-0x6b4c   0x276F0 (3 st)    11-slot sum + frame-converted term       w^0
+```
+✅ **`gp-0x6b46` is NOT a derivative** — `FUN_00036682` forms
+`err = (gp-0x6b48 + conv*(gp-0x4f60*cal>>15)) − gp-0x6b46`, passes it through an **adaptive hysteresis
+band** and a down-counter (`gp-0x6a80`), clamps to ±512 and **EMA-filters** it. It is
+**self-referential ⇒ a first-order LAG**, and the inventory census already measures its contribution
+at **0.0032** — negligible twice over.
+✅ **`gp-0x6b4e` and `gp-0x6b4c` are both written by `FUN_00026c80`**, the **11-slot aggregator**
+(`while (i < 0xb)`), as **sums over the slots** ⇒ ω⁰, no frequency shaping.
+⇒ **`gp-0x6b26` (w[3]) is the UNIQUE ω-weighted lane**, which is what makes it the only handle here
+that can attack 8 Hz without touching 1 Hz.
+
+### ❌ AND THE ONE OTHER CANDIDATE IS RULED OUT BY THE OPERATOR'S OWN CONSTRAINT
+`gp-0x6bbe` (w[1]) is genuinely **viscous** — raising w[1] would add damping ∝ ω, 8x stronger at 8 Hz
+than at 1 Hz. **But it carries a DC PEDESTAL** ([[accord-gp6bbe-is-viscous-plus-dc-pedestal]]: p50
+**73.6 ct flat across 0–6 °/s**), so raising it **amplifies static friction at EVERY frequency,
+including zero.** That is exactly the trade the operator ruled out — *"low apparent steering mass and
+friction to LKAS AND no ratcheting"*. 🛑 **Do not propose raising `0xC63A2` as a damping lever.**
+
+➕ **`0xC63AC`** (the EMA alpha on the whole sum, = 102 ⇒ corner ≈ 16.9 Hz at 1 kHz) is a **shared
+low-pass on all six lanes**. Lowering it would attenuate 8 Hz content in every term — but it is a
+**broadband** lever with the same lag cost as V173's poles, so it is **strictly worse than V173** and
+is **not** a new direction. Recorded so it is not re-proposed as one.
+
+🛑 **CONSEQUENCE FOR THE FLIGHT ORDER: nothing changes.** `0xC63A6` stays **held** as the
+pre-registered fine adjustment *after* V175's drive — spending it now would confound the one
+measurement that can attribute the effect.
+
 ## 🛑🛑 **THE ENGAGED RATCHET MAY BE OURS: WE AMPLIFY A DESTABILISING INERTIA TERM 3-8x, ENGAGED-ONLY — V175 REVERTS IT**
 **A new mechanism, traced end to end this session, decompile-first.** It is the first account that
 explains **why the ratchet is ENGAGED-amplified ~15x** in terms of a cell we ourselves moved.
@@ -2206,77 +2246,4 @@ more than any extra engaged driving. This is now the headline requirement on the
 ⊕ Note r24's 0.20 [0.04, 0.86] would read as a strong engaged *reduction* at 6–9 Hz on a naive CI, and
 the null correctly rejects it. Seven of the ten scoreable routes have CIs spanning 1.0; **the endpoint
 is dominated by between-episode variance, not by firmware.**
-
-## ⛔✅ **NO STABLE ACOUSTIC MARKER ACROSS ROUTES — AND SPEED-MATCHING ALONE IS NOT ENOUGH**
-Two results from running the creep acoustic contrast across four existing routes.
-
-### ⛔ THE HF CLUSTERS DO NOT REPLICATE — THE ENDPOINT MUST STAY WITHIN-DRIVE
-r24's fallback threw up a coherent **2389–2688 Hz cluster at +4–5.5 dB**, which looked like it might be
-an acoustic signature of the ratchet. It is not:
-```
-   r24  (fallback)  2389-2688 Hz  +4.2 .. +5.5
-   r23  (primary)    408- 416 Hz  +5.2 .. +7.3
-   ra6  (primary)    908- 920 Hz  +9.7 .. +10.5
-   r22  (primary)    193/385/387/443/488/1885/2705 Hz  +3.0 .. +4.8
-```
-**Every route has a different cluster.** ⇒ there is **no stored acoustic signature to compare a V158
-drive against**; the acoustic endpoint must be **within-drive** (V158's engaged arm vs its own manual
-arm), exactly like the band scorer. Recorded so nobody builds a cross-route acoustic reference.
-
-### ⛔ AND ra6 EXPOSED A HOLE IN MY OWN GUARD
-```
-   ra6   speed gap 1.18 km/h   -> PASSED the speed check
-         20-50 Hz +3.00 dB  AND  2000-5000 Hz +3.21 dB  -- the WHOLE spectrum lifted together
-```
-A speed match does **not** exclude a global level difference (mic gain, window position, engine load,
-surface). My tool checked the speed gap and then reported the spectrum as a result. **That is the same
-class of error the 30–40 Hz negative control exists to catch in the band scorer** — I had built the
-acoustic tool without its analogue.
-
-✅ **THE UNIFORMITY GUARD**, now added and validated on real data:
-```
-   ra6   band spread 1.55 dB, median level +3.21 dB  ->  🛑 FAILED (global level shift)
-   r22   band spread 1.23 dB, median level +0.34 dB  ->  ✅ PASSED (band-specific)
-```
-The test is **large level AND small spread**, not spread alone — which is why r22's similar spread
-passes on a near-zero level while ra6's fails on +3.21 dB.
-⭐ **EVERY CONTRAST NEEDS A NEGATIVE CONTROL, INCLUDING THE ONES YOU JUST BUILT.** I added the null
-gate to the band scorer after it over-claimed, then built an acoustic tool with no equivalent and it
-over-claimed the same way on the first route that could expose it.
-
-## ✅✅ **THE AUDIO CHANNEL IS VALIDATED — AND IT WAS POINTED AT THE WRONG BAND AND SPEED**
-Audio is the channel that has tracked the operator's report where the bus has not, so it was the last
-drive-side dependency to audit. It runs: **16,364 blocks aligned to the CAN timebase on r24**, with
-`zstandard`/`cereal` present and 635 rlog segments on disk.
-
-### ⛔ BUT `audio_engaged_vs_manual.py` ANSWERS A DIFFERENT QUESTION
-Its own comment explains why it abandoned the engaged/manual split on r24 — *“hopelessly
-speed-confounded (52.8 vs 11.5 km/h median) … produces a uniform +10 dB”* — and substituted a
-within-engaged **21–26 Hz** high-vs-low contrast, speed-matched at **28–82 km/h**. Sound for r24. But
-for V158 that is **the vibration band, not the 6–9 Hz ratchet**, at **a speed where V158 is
-architecturally inert.** Run as-is on the V158 drive it would report on the wrong band at the wrong
-speed.
-
-### ✅ `rlog-tools/decode/audio_creep_v158.py`
-- **PRIMARY: engaged vs manual, restricted to CREEP (1–24 km/h), speed-matched.** The r24 confound came
-  from engaged *highway* against manual *creep*; the drive card's matched manual creep segment is
-  precisely what makes this contrast valid instead of confounded.
-- **It REFUSES if the arm medians differ by more than 2 km/h**, naming the r24 +10 dB artefact as the
-  reason — rather than reporting a speed difference as an acoustic result.
-- **FALLBACK: within engaged creep, high-vs-low 6–9 Hz** — the kit's validated design, retargeted from
-  21–26 Hz to the ratchet band — clearly labelled as unable to separate *“the damper worked”* from
-  *“less ratchet happened to occur”*.
-- Reports 20–2000 Hz so no band is pre-committed; refuses loudly at every insufficient-data point.
-
-### 🛑 IT IMMEDIATELY CAUGHT A REAL CONFOUND ON r24 — AND THAT IS A DRIVE REQUIREMENT
-```
-   596 creep audio windows: 271 engaged, 325 manual
-   speed-matched 3.4-17.8 km/h: engaged p50 10.3 vs manual p50 7.9, gap 2.43 km/h
-   ⛔ REFUSED (gap > 2.0) -> fell back, and said so
-```
-r24 **has** creep audio in both arms, and the primary contrast was **still** invalid because the two
-arms sat 2.43 km/h apart. ✅ **So it is not enough to drive “some creep engaged and some creep
-manual”** — the two arms must be **the same stretch at the same speed**. That is now in the drive card.
-⊕ The guard is what makes a null trustworthy: without it this route would have produced a confident
-acoustic number built on a speed difference.
 
