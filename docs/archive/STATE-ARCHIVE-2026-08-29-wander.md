@@ -1727,3 +1727,63 @@ record identifies as **TASK 1, the CONFIRMED 1 kHz task**. The rate uncertainty 
 the notch is at 55.23 Hz, and the block is lifted.** Confirmed independently: a full-band scan finds
 the flying section's null at **55.0 Hz, −43.9 dB**, matching the ±19.881° zeros exactly.
 
+## ❌ **r26 IS ALREADY GATED OFF ENGAGED — NO LEVER THERE, AND MY LOOP DECOMPOSITION OVERCOUNTED**
+Looking outside the assist lane: after V173 the assist map is ~54 % of `|L|` and the
+engagement-conditional terms ~46 %. The census lists **r26 at 0.098–1.17**, potentially the largest
+of those, *“LIVE only while `gp-0x6b5e == 0`”* — a **GATE, not a gain**, and one never examined
+(`0xC6444` is falsified on-car but that was a MAGNITUDE cut with the gate still open).
+```
+   FUN_000361c8, the sole producer (writers 0x36256 / 0x36264, both st.h):
+     gp-0x6b5e = +/- POL * ( LERP(gp-0x6bda) * cal(0xC63C2) ) >> 10
+
+   X knots 0xC66CE: [-384, -128, 128, 294, 384, 0]      scale 0xC63C2 = 1024 (unity)
+   Y knots 0xC66D8: [   0, 4762, 4762, 717,   0, 0]
+
+   engaged, gp-0x6bda == 0.0000 over 75,227 frames  =>  0 falls in segment [-128, 128]
+   =>  LERP returns 4762  =>  gp-0x6b5e = +/-4762   NON-ZERO
+```
+❌ **[EVIDENCE] r26 is ALREADY gated OFF during engaged creep.** The gate this line was chasing is
+**already closed by Honda**, so there is no lever here and `0xC66D8`/`0xC63C2` need not be touched
+(both byte-identical across all 167 images).
+🛑 **AND IT CORRECTS MY OWN NUMBERS**: I have been carrying the census's **`L_other` = 0.825**,
+derived as `2.825 − 2.0`, with r26's 0.098–1.17 inside it. **If r26 is gated off engaged, that figure
+overcounts the engaged loop** — the remaining terms are PID 0.2565 + r24 0.049–0.293 + `FUN_00036682`
+0.0032 ≈ **0.31–0.55**, not 0.825.
+⊕ **This does NOT change the lever choice**: every build's predicted effect was computed as a RATIO
+against the same anchoring, and a smaller `L_other` makes the assist map an even LARGER share of the
+loop — it strengthens the case for V173 rather than weakening it. But **the absolute Q-ratio figures
+carry more uncertainty than their two decimal places suggest**, and that is now on the record.
+⚠ **Blast radius, for the record**: `gp-0x6b5e` has **4 readers** — `0x36390`, `0x3AA8E` (the
+aggregator), and **`0x4DA92` / `0x4DFAE` outside it**. Had the gate been open, closing it would NOT
+have been the clean single-consumer edit `gp-0x6b86` was.
+
+### 🛑 THE tp OFF-BY-0x1000 TRAP RECURRED — EIGHTH RECORDED TIME, CAUGHT BY THE SHAPE
+My first read used **`0xC76CE`** instead of `tp+0x76ce` = **`0xC66CE`**, and returned
+`X = [15, 4100, 15, 4102, 15, 4104]` / `Y = [4104, 15, 4106, 15, 8192, 15]`. **The interleaved 15s
+were the tell** — a knot table is monotone, not alternating — exactly as *“the denormals were the
+tell”* on the sixth recurrence. It produced the **opposite conclusion** (apparently “gated off”, by
+luck, from entirely the wrong cells). **Anchor first, then read; and check the SHAPE of what comes
+back.**
+
+## ✅ **V173 IS ON THE EFFICIENT FRONTIER — THE DESIGN WORK IS COMPLETE**
+With Honda's notch fixed and the structure known to separate, the design reduces to choosing **one
+real pole pair**. Sweeping every pair that holds DC within 2 % of unity and never amplifies:
+```
+   added lag   8.64 Hz   3 Hz     poles        21 Hz
+     30.1 ms    0.4761   0.8476   0.970/0.475  0.1894   <- V173 AS BUILT
+     30.1 ms    0.4691   ~0.85    0.970/0.75   ~0.17    <- best possible at that lag
+     46.6 ms    0.3383   0.7285   0.980/0.60   0.1253
+     54.6 ms    0.2832   0.7507   0.975/0.95   0.0584
+```
+✅ **[EVIDENCE] V173 is at the frontier**: the best achievable at its own 30.1 ms lag is **0.4691**
+against V173's **0.4761** — a **1.5 %** difference, far inside any measurement floor. Its pole pair was
+*inherited* from V172 rather than chosen, and it happens to be essentially optimal. **No rebuild.**
+⊕ **The trade is priced if more is wanted**: **0.338 at 46.6 ms** or **0.283 at 54.6 ms**, i.e. buying
+another 1.4–1.7x of ratchet attenuation costs 16–25 ms of additional assist lag. That is a **feel**
+decision, and it is the operator's — the builds are one coefficient triple away if he wants one.
+
+### ✅ WHAT THIS CLOSES
+Design work on the assist lane is **finished**. Both lever classes are cut and verified, both gates
+are closed, every artifact re-hashes from disk, and the remaining assumption is testable only by
+driving. **Seven builds, one decision table, one 15-second pass.**
+
