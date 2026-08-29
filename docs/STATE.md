@@ -2,6 +2,59 @@
 
 
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
+## ✅✅✅ **V172 BUILT — TWO INDEPENDENT RATCHET LEVERS NOW EXIST, WITH DIFFERENT FEEL COSTS**
+```
+   V172 = V158 + four float32 coefficients at 0xC60A8/AC/B0/B4   (the assist section retune)
+   image  ff8d07e6ba3e80484b8ef67eeb4d9fd13804ee999d35953038355ab2cd0ab830
+   .rwd   c0ed77b773a7e7f300ab438450817e17f49269c67d096edefa56dea140e958a5
+   13 payload bytes + one CRC trailer - 23/23 assertions - chain 50/50 - readback identical
+```
+
+### 🛑 A MISTAKE I NEARLY SHIPPED AS A NEGATIVE
+A frontier sweep appeared to **kill** this lever: every tuning that attenuated 7–11 Hz showed
+*“ring Q 30–53”* and 230–413 ms settling, which would be a Q≈40 resonance in the driver's own band.
+**But that Q figure is meaningless for REAL poles**, and the rows that mattered had real ones. I was
+about to close the lever on a number that did not apply.
+✅ Constraining the search to **real poles at r ≤ 0.97** gives `poles [0.97, 0.47509]`, **0.0 %
+overshoot, ZERO oscillation cycles on a pulse** — an overdamped low-pass, not a resonator.
+⊕ Recorded so it is not repeated: **never read Q off a pole pair without checking it is complex.**
+
+### ✅ WHAT V172 DOES, FROM THE BUILT IMAGE'S OWN BYTES
+```
+   freq       FLYING     V172       ratio
+   0.5 Hz     1.0000     1.0067     1.007   <- DC UNCHANGED: no steady-state weight cost
+   3   Hz     0.9975     0.8501     0.852   <- driver band, 15 % down
+   5   Hz     0.9931     0.6802     0.685   <- driver band, 32 % down
+   8.64 Hz    0.9790     0.4441     0.454   <- THE RATCHET, 2.2x attenuated
+   21  Hz     0.8659     0.0902     0.104   <- THE GRIND, 9.6x attenuated
+   loop: effective map s 1.958 -> 0.888  =>  |1-P.L| 0.0700 -> 0.4360  =>  6.2x MORE DAMPED
+```
+
+### ⭐ THE TWO LEVERS, AND HOW TO CHOOSE
+```
+             cell(s)              predicted    what it COSTS
+   V168      0xC6384 2048->1536   3.4x ratchet  heavier steering NEAR CENTRE, at all times
+   V172      0xC60A8..B4 retune   6.2x ratchet  assist ~130 ms SLOWER on fast inputs;
+                                  + 9.6x grind  3-5 Hz driver content down 15-32 %
+```
+✅ **V172 is stronger on paper** — more damping, and it is the only one that also attacks the grind.
+🛑 **But its risk is less characterised, and it is the risk that matters here.** A 130 ms lag in the
+dominant assist lane means assist arrives late on a quick input — heavier on turn-in, then lightening
+— which **could itself read as notchiness**, the very sensation being chased. V168's cost is
+uniform and predictable; V172's is dynamic.
+⭐ **RECOMMENDATION: fly V168 first.** Not because it is the stronger lever — it is not — but because
+its failure mode is legible. **If V168's damping is insufficient, or its static weight is
+unacceptable, V172 is the next build and needs no further work.**
+⊕ They do **not** stack: V172 asserts the slope cap is still stock, so the two are alternatives and
+each is a clean single-variable test against the same V158 base.
+
+### ✅ AND A NULL ON EITHER IS INFORMATIVE ABOUT THE OTHER
+Both rest on the **same** real-positive `P·L` assumption. ⇒ if V172 reads null on the ratchet, that
+falsifies the assumption for V168 too, and vice versa — so whichever flies first, its null closes
+more than one lever. ⊕ V172 adds a second discriminator the cap does not have: **the grind should
+fall further than the ratchet** (9.6x vs 2.2x filter attenuation). If the ratchet moves and the grind
+does not, the shared-loop account is wrong somewhere and that difference names where.
+
 ## ⭐⭐ **LEVER #2 EXISTS: THE ASSIST MAP'S OWN SECOND-ORDER SECTION IS A RETUNABLE NOTCH**
 This kit's record says *“this firmware has NO frequency-selective lever”* (FactorD refuted) and
 *“no notch filter exists anywhere”*. **Both are wrong.** `FUN_000352b4` carries a genuine biquad in
@@ -2175,63 +2228,4 @@ Compute magnitude AND phase at the symptom's own frequency **before** building �
 CLAUDE.md's GATE 2 requires, and it took ~20 lines of Python once the gains were located.
 ⊕ **V160/V161/V158 are UNAFFECTED** — independent lanes, and Lever B's rationale is a *measured*
 single-variable result (6–9 Hz 0.859, 15–22 Hz 0.549, LF null), not a structural inference.
-
-## ✅✅✅ **V162 / V163 BUILT — THE RESONANCE PID GETS ITS AUTHORITY BACK AT CREEP**
-`0xC67C4` **1280 -> 512**, ONE HALFWORD, a **VIRGIN CELL**. 55/55 assertions each, CRC 50/50.
-```
-   V162  base V122  SINGLE VARIABLE   image 423711bf0f10b21f7ddce3e21d35cf390d93054c25ebed1075eb0572cb02d299
-   V163  base V160  STACKED best-shot image 9487dc15f68a3a876ec70509d01167c9db9c8e328e9c003fa85dff94388ce0d6
-```
-### ⭐ THE GOLDEN MODEL NAMED THIS LEVER, AND IT IS AIMED AT THE RATCHET SPECIFICALLY
-The model's elimination is explicit — *"for 52–70 % of the return the LKAS lane is a DC CONSTANT, yet
-the 6–9 Hz |tq| envelope is unchanged … A constant cannot carry 7.8 Hz => **THE RINGING ENTERS THROUGH
-A SENSOR-FED LANE, NOT THE COMMAND LANE.** Excludes every command-side lever and leaves {r24/r26,
-gp-0x6ad4, gp-0x6b26, gp-0x6bbe, the V89 plant-model path}."* — and of those survivors it singles out:
-> *"LIVE `gp-0x6ad4` resonance PID — **the most reachable authority of any gated lane HERE** … 🛑 V56's
-> mute of this lane was scored at ~21 Hz — **the lane has NEVER been scored at 6–9 Hz, so it is OPEN,
-> not eliminated.**"*
-⚠ **THIS OVERTURNS A MEMORY.** `accord-v56-flashed-mute-null-and-costs-damping` records
-`gp-0x6ad4`/`FUN_0003a382` as **eliminated**. An elimination scored at **21 Hz does not eliminate a
-6–9 Hz role**, and the ratchet is 6–9 Hz. The model is the authoritative reference and it addresses
-this directly. **Treat the memory's "eliminated" as scoped to ~21 Hz.**
-
-### ✅ THE ARITHMETIC, READ FROM THE BYTES
-`0xC67BE` = `(0, 3)` knot-count header; X@`0xC67C2`, Y@`0xC67C8`; axis = voted speed `gp-0x6a5e` @64 ct/km/h.
-```
-   stock  X = [128, 1280, 3200] = [2, 20, 50] km/h     Y = [0, 1024, 1024]
-
-     speed     stock -> new     ratio     note
-      2 km/h       0 ->    0    --        parking protection INTACT (X[0] untouched)
-      3 km/h      56 ->  170    x3.00
-      5 km/h     170 ->  512    x3.00     <- the ratchet's own band
-      8 km/h     341 -> 1024    x3.00
-     12 km/h     568 -> 1024    x1.80
-     20 km/h    1024 -> 1024    --        UNCHANGED; edit confined to the creep band
-```
-=> **the lane whose job is to damp resonance is throttled to ~1/6 of its authority exactly where the
-ratchet lives.** ✅ The model's own quoted 164–341 for the 4.9–8.0 km/h ratchet episodes **reproduces
-from these bytes exactly** (170 at 5 km/h, 341 at 8 km/h) — two independent derivations agreeing.
-
-### ✅ WHY THIS DIRECTION IS THE SAFE ONE
-**[EVIDENCE]** It **RELEASES** authority and never removes any — the ceiling is ≥ stock at every speed.
-**[EVIDENCE]** `X[0]=128` UNTOUCHED ⇒ at/below 2 km/h the ceiling stays **exactly 0**; Honda's
-standstill/parking protection is byte-for-byte intact. **[EVIDENCE]** ≥20 km/h **nothing changes**.
-**[EVIDENCE]** **Y is UNTOUCHED** — the ceiling's VALUE stays Honda's own 1024; only the SPEED at which
-it is reached moves. **Honda already runs this lane at FULL authority above 20 km/h and the car does
-not ratchet there**, so this moves creep TOWARD a known-good configuration rather than into new
-territory. **[EVIDENCE]** the axis is **VEHICLE SPEED** — seconds-scale ⇒ **cannot modulate at 6–9 Hz**,
-so the parametric-pump failure mode governing every rate-axis edit does not apply.
-**[EVIDENCE]** `0xC67C4` is **VIRGIN**: `(128, 1280, 0)` on **all 161 build images** ⇒ no interaction
-with any historical edit. **[EVIDENCE]** X stays strictly ascending, no collapsed knot (a zero-width
-LERP segment divides by zero — asserted).
-
-### ⚠ THE ONE REAL RISK
-**[BELIEF]** that `gp-0x6ad4`'s **PHASE** is favourable at 6–9 Hz. It is a resonance controller, but its
-design target may be the ~21 Hz mode, and **a controller phased for 21 Hz can have the wrong phase at
-7.8 Hz — in which case MORE authority makes the ratchet WORSE.** This cannot be settled statically;
-the lane has never been scored at 6–9 Hz, which is exactly why the model calls it OPEN.
-⊕ **Mitigation**: the change is confined to 2–20 km/h and reverts to stock above, so any adverse effect
-is **bounded to the creep band** and is felt immediately at low speed, not discovered at highway speed.
-⊕ If worse, the diagnosis is unambiguous and the revert is one halfword; `X[1] = 768` (12 km/h) gives a
-**2x** rather than 3x release.
 
