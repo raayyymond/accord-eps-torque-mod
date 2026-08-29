@@ -98,3 +98,33 @@ GATE 1 is cleared: `gp-0x6b86` has exactly **one** consumer outside its producer
 readback byte-identical.
 
 If a DTC appears, revert to V158 and report the code.
+
+---
+
+## FLASH READINESS — CHECKED, NOT PERFORMED
+
+🛑 **Nothing here is a licence to flash.** The command below is written out only so it does not have
+to be reconstructed under time pressure. **You name the file and the bus; I do not run it.**
+
+Verified present:
+- `flashing-2020accord/eps-update-tva.py`
+- the target `.rwd` in `accord-firmwares/flashing-2020accord/rwd/` (962.9 KB), sha256
+  `5d213cf8604df90f2df2eaa2a8e40ccedde89f1d66055cb2a22c81edb7245396`
+
+The flasher's own gates, from its argparse: a **part-number check** (overridable only with
+`--force-part-mismatch` — do not), **`--danger` REQUIRED to actually write**, `--yes` to skip the
+interactive prompt, and **`--allow-multiblock` REQUIRED** for x31 `.rwd` files spanning more than one
+block, which this one does (`0x13000-0x100000`).
+
+```
+# 1. kill openpilot FIRST -- on the comma device
+tmux kill-server
+
+# 2. the flash (bus is typically 1 for OBD-II on a red panda; confirm yours)
+python flashing-2020accord/eps-update-tva.py     "<accord-firmwares>/flashing-2020accord/rwd/39990-TVA,A160-V173-V158BASE-ASSIST.SECTION.POLES.NOTCH.KEPT-0x13000-0x100000.rwd"     --bus 1 --allow-multiblock --danger
+```
+
+⊕ Omit `--danger` for a **dry run** — the script stops before writing and still exercises the
+part-number gate, which is the cheapest way to confirm the file and bus are right.
+⊕ **Do not pass `--force-part-mismatch`.** If the part-number gate trips, the file is wrong for this
+car and that is the gate doing its job.
