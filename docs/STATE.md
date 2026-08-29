@@ -1,5 +1,52 @@
 # STATE — living current state of the kit
 
+## ✅✅ **V158 ADDRESS-VERIFIED INDEPENDENTLY — AND WHY IT WAS IMMUNE TO V159's ERROR**
+After the off-by-0x400 that killed V159, the lead build's addresses were re-derived **independently
+and explicitly**, walking the pointer tables rather than trusting the builder.
+```
+   FactorC (L2 speed), pointer table 0xC9E9C -> records 0xD77BC / 0xD77D0 / 0xD77E4   (m25/26/27)
+       m26 base 0xD77D0  X[0]@0xD77D2  Y[0]@0xD77DA  Y[1]@0xD77DC
+       m27 base 0xD77E4  X[0]@0xD77E6  Y[0]@0xD77EE  Y[1]@0xD77F0
+   FactorE (L4 rate),  pointer table 0xC9F84 -> records 0xD77F8 / 0xD780C / 0xD7820
+       m26 base 0xD780C  X[0]@0xD780E  Y[0]@0xD7816  Y[1]@0xD7818
+       m27 base 0xD7820  X[0]@0xD7822  Y[0]@0xD782A  Y[1]@0xD782C
+
+   V158's six edits, each against its RE-DERIVED role:
+       0xD77DA  FactorC m26 Y[0]    0 -> 429      0xD780E  FactorE m26 X[0]   60 -> 12
+       0xD77EE  FactorC m27 Y[0]    0 -> 426      0xD7822  FactorE m27 X[0]   60 -> 12
+                                                  0xD7818  FactorE m26 Y[1]  140 -> 539
+                                                  0xD782C  FactorE m27 Y[1]  140 -> 539
+   image diff V122 -> V158: 14 bytes = 10 payload + 4 CRC (0xD7FFC..0xD7FFF).  ZERO unattributed.
+```
+✅ **[EVIDENCE] all six cells match their independently re-derived roles exactly.**
+
+### ⭐ THE STRUCTURAL REASON V158 COULD NOT SUFFER V159's BUG
+```
+   V159's addresses   computed as  tp + offset      -> one wrong digit = a wrong cell, silently
+   V158's addresses   READ as ABSOLUTE POINTERS out of the image, then walked by a known layout
+```
+=> **no offset was ever added for V158**, so the **off-by-0x400 / off-by-0x1000 class cannot occur**
+there. The pointer table *is* the ground truth, and a wrong pointer would land outside the image and
+be caught by the `0x10000 < p < 0x100000` filter.
+⭐ **RULE, generalised: PREFER POINTER-DERIVED ADDRESSES OVER OFFSET-DERIVED ONES.** When a table is
+reachable through an in-image pointer array, walk the array — it is self-validating. Reserve
+`tp + offset` arithmetic for scalars that have no pointer, and when you must use it, **add the offset
+to `tp` explicitly and print BOTH** (the check that finally caught V159).
+⊕ This also explains, retrospectively, why the **damper** work survived the audit while the
+**lane-gain** work did not: the damper's records are pointer-reachable; the PID's lane gains are not.
+
+### ✅ V158's STANDING
+```
+   addresses      VERIFIED independently, zero unattributed bytes
+   dose           50 at the model's MEASURED operating point, inside its own [30,60] requirement
+   shape          MONOTONE; dead zone opened by the AXIS, not by flattening Y[0]
+   ceiling        9.8 % of the 512 creep ceiling -- a 10.2x margin to V80's bang-bang
+   RULE 7         engaged modes 26/27, read from V106B, not assumed
+   shared-axis    the PID schedule is FLAT at the operating point => the coupling does not bite
+```
+=> **every gate the golden model raised for this lever is now addressed.** V158 is the recommended
+build.
+
 ## 🛑🛑🛑 **V159 SUPERSEDED — AN OFF-BY-0x400 ADDRESS ERROR, AND THE LANE GAINS ARE FLAT**
 **V159 edits an unrelated cal on a false premise. It is superseded and must never be flown.**
 ```
@@ -2140,63 +2187,6 @@ worth building even at a small expected magnitude.
 ⇒ **V153 stays first**: it acts on the WHOLE residual path rather than one small lane, it is
 **certain to act** (the EMA runs every 1 kHz tick), its reduction is **quantified**, and it costs
 **nothing at DC**.
-
-## ✅✅✅ **V154 / V155 BUILT — THE INERTIA LANE'S WEIGHT, THE CLEAN VERSION OF THE α2 LEVER**
-```
-   V154   0xC63A6  1024 -> 512    w(gp-0x6b26), the INERTIA lane   1 payload byte, 58/58, CRC 50/50
-          image 15a9b902828028b17dca92b83098ba29ca267bf531c3c728a575e07849091d1f
-          rwd   6fe3eceb410d13ecd56f02da09b1e37081818af9de8f501c306d7484f3015806
-   V155   0xC63A6  1024 -> 256    the larger dose                  1 payload byte, 58/58, CRC 50/50
-          image 4b9201b618f4fb37cdbe4aabc05e03e9aa348eae7c6b13664931ffee55f69b0e
-          rwd   0d138c838ea505357ab414cce1685d0d758037823f334718daaba6c93dac1cb6
-   diff_vs_flown: 1 payload byte vs V122 => SINGLE-VARIABLE, interpretable
-```
-### ⭐ THE SIGN AMBIGUITY THAT HELD THIS CELL BACK WAS A CATEGORY ERROR
-The previous pass derived the direction twice and got **opposite answers**, and filed it unresolved.
-**The error was asking about the DIRECTION OF ASSIST (sign-dependent) when the question is the
-AMPLITUDE OF AN OSCILLATION (sign-independent).**
-```
-   gp-0x374c ~= -(sum6 * cal(0xC6468)/1024) * 16        because polarity gp-0x6752 = -1
-   iVar5      = gp-0x6bfe - (gp-0x374c >> 4) = MODEL + sum6*2639/1024
-   iVar6      = iVar5 + gp-0x6bfa
-   gp-0x6b70  = sign(iVar6) * LERP(|iVar6|)             an ODD, MONOTONE function
-```
-⇒ **`polarity` sets the PHASE of the oscillating component, not its AMPLITUDE**, and an odd
-monotone `g` maps smaller input amplitude to smaller output amplitude **regardless of sign**.
-⇒ **[EVIDENCE] reducing this weight unambiguously reduces the 7.8 Hz amplitude reaching the PID
-reference.** The ambiguity never applied to an amplitude claim.
-
-### ⭐ WHY IT IS HF-SELECTIVE **BY CONSTRUCTION**
-`gp-0x6b26` is `−K·α`, an **ACCELERATION** (`gp-0x6c2c` is a first difference of the filtered
-EPS-motor rate). **Acceleration is EXACTLY zero at DC and scales as ω²:**
-```
-   influence at 7.8 Hz / influence at 1 Hz steering = (7.8/1)^2 = 61x
-```
-⇒ halving the weight removes **61× more at the ratchet than at normal steering**, and **nothing at
-all in steady state** — the operator's *"low friction AND no ratcheting"* with **no steady-state
-trade**, the same no-cost property as V152/V153 but on a different mechanism.
-
-### ⭐ THIS IS THE LEVER FOUR α2 BUILDS WERE REACHING FOR
-The **α2 ladder (22→14→8→5) scaled this SAME lane** and measured **nearly INERT at 20 Hz**: `|H|`
-fell **7.24→4.10 (1.77×)** while the phase rotated **56.3°→16.0°**, leaving the delivered component
-**FLAT (−4.01 → −3.94)**. **α2 is a POLE — it moves magnitude AND phase, and they cancelled.**
-⇒ **`0xC63A6` is a PURE GAIN: magnitude only, ZERO phase rotation, so NOTHING CANCELS.**
-⇒ **Virgin: 1024 in all 153 images.**
-
-### 🛑 WHAT IS NOT ESTABLISHED — AND A NEW SWITCHING NONLINEARITY FOUND IN PASSING
-⚠ **The lane's admission gate `|gp-0x6b26| ≤ 1024` is a HARD-CODED IMMEDIATE (`0x400`/`0x801`), not
-a cal.** If `gp-0x6b26` crosses that bound during the ratchet the lane is **ZEROED, not clamped** —
-**a genuine switching nonlinearity that no weight change can reach.** **Its duty has NEVER been
-measured.** The same is true of every lane: `gp-0x6b4c`/`gp-0x6b4e` gate at `±10240`, `gp-0x6b46`
-at `±1024`, `gp-0x6bd0`/`gp-0x6bbe` at `±2048`.
-⭐ **THIS IS A NEW ENTRY ON THE SWITCHING CENSUS** — which previously covered only counter-gated and
-sign-gated switches. **Admission gates are a THIRD class, and their bounds are immediates, so they
-are code edits, not cal edits.** Measuring their duty is the cheap next probe.
-⚠ **[BELIEF]** that a 2× (V154) or 4× (V155) cut on a lane bounded at ±1024, inside a sum whose
-largest lanes are bounded at ±10240, is **audible**. Its worst-case share of the full sum is
-**3.8 %**; its share **at 7.8 Hz** is higher because acceleration dominates at HF, but **by how much
-is unmeasured.**
-⊕ **V154 and V155 are one lever at two doses — fly ONE.**
 
 
 ---
