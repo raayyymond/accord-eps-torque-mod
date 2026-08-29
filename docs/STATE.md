@@ -1,5 +1,49 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **RETRACTED — THE "PARAMETRIC PUMP AT LANE GAIN A" WAS A TABLE-LAYOUT ARTEFACT**
+Last turn I reported that lane gain A's knee straddles the measured operating point, giving an 18 %
+parametric gain modulation at 2f. **I flagged RULE 7 as unsatisfied and said “verify before
+building.” Verified. The finding is WRONG and is retracted in full.**
+
+### 🛑 WHAT THE RAW BYTES ACTUALLY SHOW
+```
+   halfwords around 0xC671E:
+     ... 0, 8, | 64, 65, 67, 73, 80, 88, 96, 104 | 608, 704, 704, 832, 832, 832, 832, 832 | 0, 4 ...
+                 \________ one ascending run of 8 ________/
+```
+⇒ **`0xC671E` = 96 sits in the MIDDLE of that ascending run, not at a record base.**
+⇒ my 4-knot reading (`X=[96,104,608,704]`, `Y=[704,832,832,832]`) **straddled the X/Y boundary** —
+it paired the tail of the X axis with the head of the Y array. **The whole “steep knee at 99” follows
+from that mis-split and nothing else.**
+⊕ **The tell was in my own output and I noted it without heeding it**: the same layout gave lanes B
+and C the implausible axes `X=[256,256,0,8]` and `X=[717,0,0,5]`. **A layout that produces nonsense on
+two of three records is not a layout.**
+
+### ⚠ AND THE PLAUSIBLE READING REVERSES THE CONCLUSION
+Read as **count = 8, then X[8] = [64,65,67,73,80,88,96,104], then Y[8] = [608,704,704,832,832,832,
+832,832]**, the operating point `gp-0x6ac0` = 99 falls between **X[6]=96 and X[7]=104**, where
+**Y[6] = Y[7] = 832 — FLAT.**
+⇒ **the gain is FLAT at the operating point, the OPPOSITE of what I claimed**, so there is no 18 %
+modulation there at all.
+⚠ **This reading is ALSO unverified** — stated as the plausible alternative, not as a finding.
+
+### 🛑 AND I CANNOT VERIFY IT BY SCANNING
+The `reg1 == tp` scan returns **NO readers** for `0xC671E`, `0xC670A` or `0xC66DE`. They are reached
+some other way — a pointer table, a different base register, or an index computed at runtime.
+⇒ **[UNRESOLVED] the layout, the readers and the mode-indexing of all three lane-gain tables.**
+⇒ **all three of last turn's lane-gain readings are VOID**, including *“lanes B and C are flat”*.
+
+### ✅ WHAT SURVIVES, AND WHAT THIS COSTS
+✅ **The golden model's warning stands**: *"ALL THREE LANE GAINS ARE LERPs INDEXED ON `gp-0x6ac0` …
+they are NOT independent … [GATE 2 — size any FactorE edit against this, not just dose]"*. That is
+the model's statement, not mine, and it is **unaffected by my error.**
+🛑 **So V158's GATE 2 qualification STANDS**: the shared-axis sizing the model demands **has still
+not been done**, because **I could not read the tables it refers to.** V158's dose is the model's own
+priced figure; **its shared-axis gate remains OPEN.**
+⭐ **What this cost: nothing on the car.** The verification step caught it **before** a build — which
+is the whole point of having flagged RULE 7 rather than proceeding. **Contrast V156/V157/V149/V139,
+where I built first and audited later.**
+
 ## ⭐⭐⭐ **THE PARAMETRIC PUMP IS LOCATED — LANE GAIN A's KNEE STRADDLES THE OPERATING POINT**
 Mining the golden model for levers (the V158 lesson) surfaced a warning I had not acted on, and
 acting on it located a mechanism the kit has hypothesised since V59.
@@ -2125,59 +2169,6 @@ speed-matched. Per [[accord-averaged-spectrum-needs-matched-speed-distributions]
 `0x1AB` sits close to the fold** and can take aliased content from above 24.9 Hz.
 ⇒ **Check the source ID's rate before quoting a high-band number.** `0x14A` is the 100 Hz builder;
 `0x1AB` is not.
-
-## 🛑🛑 **THE SIGN-GATED RELAY IN `FUN_00038148` — FOUND, THEN REFUTED BY FLOWN DATA**
-The switching census covered **counter** gates; the sign-gated class was never swept. Sweeping it
-found a **real signum multiply** in the PID-reference path — and then closed it with measurement.
-
-### ✅ THE STRUCTURE — a genuine relay candidate
-`FUN_00038148`, the ACTUAL arm, ends:
-```c
-   iVar6  = (gp-0x6bfe MODEL - (gp-0x374c>>4) ACTUAL) + gp-0x6bfa REQUEST;
-   uVar7  = |iVar6| * cal(0xC63AE) >> 10;                  // 0xC63AE = 1024, unity
-   sVar8  = LERP(uVar7);                                    // 10-entry RAM table @ gp-0x641c
-   iVar9  = ((iVar6 >= 0) - (iVar6 < 0)) * sVar8;           // <-- SIGNUM MULTIPLY
-   gp-0x6b70 = clamp(iVar9, +-cal(0xC6200)=8192);
-```
-⇒ `gp-0x6b70 = sign(residual) × f(|residual|)` — **odd-symmetric, and continuous ONLY IF f(0)=0.**
-If `values[0] ≠ 0`, `gp-0x6b70` **jumps by `2·values[0]` at every zero crossing** — a hard relay
-feeding the PID reference, which is exactly the stick-slip generator the kit has been hunting.
-⚠ The table is in **RAM (`gp-0x641c` values / `gp-0x64b8` axis, 10 entries each), 0 gp-relative
-stores** ⇒ a `.data` section copied by **register-indirect** stores, which operand scans cannot see.
-So `values[0]` is **not readable from the image** without tracing the startup copy table.
-
-### ⭐ CLOSED BY MEASUREMENT INSTEAD — the flown 427 tap
-**427 = 0x1AB, and V96–V99 repointed its `MOTOR_TORQUE` field to `gp-0x6b70`.** That data is cached.
-**If `values[0] ≠ 0`, `|gp-0x6b70|` can NEVER enter a band around zero.** It does:
-```
-   route   engaged n   min  max  p50   zero-crossings   counts at mt = 0,1,2,3,4,5,6
-   r7e     17,689        0  216    9        1,741       1048 1209 987 877 848 871 816
-   r7f     15,779        0  200    9        1,490        911 1015 907 836 805 770 936
-   r82        467        0  148   14           36         22   19  17  17  14  19  14
-```
-⇒ **`mt = 0` occurs on 5.9 % of engaged frames and every small bin is populated — NO forbidden
-band**, across **1,741 zero crossings** on r7e alone.
-
-### ⭐ THE BOUND IS INDEPENDENT OF THE PACKER'S SHIFT
-The 427 packer applies some `sar k`, so `mt = 0` ⇺ `|gp-0x6b70| < 2^k`, and the worst-case jump is
-`2·values[0] < 2^(k+1)`. The observed maximum is `216·2^k`. Therefore
-```
-   jump / range  <  2^(k+1) / (216 * 2^k)  =  2/216  =  0.93 %      <- k CANCELS
-```
-⇒ **[EVIDENCE] any discontinuity at zero is under 1 % of the signal's own observed range**, against
-a ±8192 clamp. **That is not a relay in any meaningful sense.**
-⇒ **THE SIGN-GATED RELAY HYPOTHESIS IS CLOSED.** `f(0) ≈ 0`; the signum multiply is continuous.
-⭐ **Do not re-propose `gp-0x641c`, `0xC63AE` or the signum branch as a stick-slip source.** And note
-`0xC63AE` is the WRONG direction anyway: shrinking it drives `uVar7 → 0` so `sVar8 → values[0]`
-always, turning a continuous law INTO a pure relay.
-
-### ✅ WHAT THIS LEAVES
-Both sign-gated candidates in the assist chain are now closed — the `|model|×sat(angle)` term (soft
-saturation, continuous, ~1 % duty) and this signum multiply (continuous, <1 % jump).
-⇒ **V152/V153 — the matched observer-corner move — remains the strongest candidate**, and it is
-strengthened by this: with no relay in the path, the ratchet is a **lightly-damped resonance being
-excited through a loop that is 91 % transparent at 7.8 Hz**, which is precisely what those builds
-attack.
 
 
 ---
