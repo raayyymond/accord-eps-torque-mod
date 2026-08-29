@@ -137,21 +137,27 @@ for f in (['docs/STATE.md', 'docs/BUILD-LINEAGE.md', 'CLAUDE.md',
 chk(worst[1] <= CAP, f'largest is {worst[0]} at {worst[1]/1024:.1f} KB (cap 256)')
 
 # ---- 5. the tools run -------------------------------------------------------------------
-print('\n[5] TOOLS WRITTEN THIS SESSION IMPORT AND RUN')
-for t in ('flashing-2020accord/preflight.py',
-          'rlog-tools/score/notch_prediction_excess_only.py',
-          'rlog-tools/score/per_route_excess_severity.py',
-          'rlog-tools/score/cross_channel_band_excess.py',
-          'rlog-tools/probe/decode_v198_r24_lane.py',
-          'analysis-2020accord/verify/aggregator_exciter_ranking.py',
-          'analysis-2020accord/verify/cumulative_delta_vs_stock.py',
-          'analysis-2020accord/verify/gen_lineage_address_index.py'):
-    if not os.path.exists(t):
-        chk(False, f'{t} exists')
-        continue
-    r = subprocess.run([PY, '-c', f'import ast,io;ast.parse(io.open({t!r},encoding="utf-8").read())'],
-                       capture_output=True)
-    chk(r.returncode == 0, f'{os.path.basename(t)} parses')
+print()
+print("[5] EVERY PYTHON FILE IN THE KIT PARSES")
+# A NAMED LIST MISSES GENERATED FILES.  decode_v198_r24_lane.py was produced by stream-editing the
+# V197 decoder and carried a newline inside a quoted string.  It was not on the list, so it would
+# only have failed AFTER a drive, at the moment of decoding a capture.  Sweep everything instead.
+import ast, glob as _glob
+_bad, _seen = [], 0
+for _pat in ('rlog-tools/score/*.py', 'rlog-tools/probe/*.py', 'rlog-tools/decode/*.py',
+             'rlog-tools/lib/*.py', 'analysis-2020accord/verify/*.py',
+             'analysis-2020accord/builds/v108_plus/*.py', 'analysis-2020accord/lib/*.py',
+             'analysis-2020accord/model/*.py', 'flashing-2020accord/*.py'):
+    for _f in sorted(_glob.glob(_pat)):
+        _seen += 1
+        try:
+            ast.parse(io.open(_f, encoding='utf-8').read())
+        except SyntaxError as _e:
+            _bad.append(f'{_f}:{_e.lineno} {_e.msg}')
+chk(_seen > 150, f'{_seen} python files swept (a thin sweep means a bad glob)')
+chk(not _bad, 'every python file parses' + ('' if not _bad else f' -- BROKEN: {_bad[:3]}'))
+for _t in ('flashing-2020accord/preflight.py', 'rlog-tools/probe/decode_v198_r24_lane.py'):
+    chk(os.path.exists(_t), f'{_t} exists')
 
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
