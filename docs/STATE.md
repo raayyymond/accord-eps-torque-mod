@@ -2,6 +2,44 @@
 
 
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
+## ❌ **r26 IS ALREADY GATED OFF ENGAGED — NO LEVER THERE, AND MY LOOP DECOMPOSITION OVERCOUNTED**
+Looking outside the assist lane: after V173 the assist map is ~54 % of `|L|` and the
+engagement-conditional terms ~46 %. The census lists **r26 at 0.098–1.17**, potentially the largest
+of those, *“LIVE only while `gp-0x6b5e == 0`”* — a **GATE, not a gain**, and one never examined
+(`0xC6444` is falsified on-car but that was a MAGNITUDE cut with the gate still open).
+```
+   FUN_000361c8, the sole producer (writers 0x36256 / 0x36264, both st.h):
+     gp-0x6b5e = +/- POL * ( LERP(gp-0x6bda) * cal(0xC63C2) ) >> 10
+
+   X knots 0xC66CE: [-384, -128, 128, 294, 384, 0]      scale 0xC63C2 = 1024 (unity)
+   Y knots 0xC66D8: [   0, 4762, 4762, 717,   0, 0]
+
+   engaged, gp-0x6bda == 0.0000 over 75,227 frames  =>  0 falls in segment [-128, 128]
+   =>  LERP returns 4762  =>  gp-0x6b5e = +/-4762   NON-ZERO
+```
+❌ **[EVIDENCE] r26 is ALREADY gated OFF during engaged creep.** The gate this line was chasing is
+**already closed by Honda**, so there is no lever here and `0xC66D8`/`0xC63C2` need not be touched
+(both byte-identical across all 167 images).
+🛑 **AND IT CORRECTS MY OWN NUMBERS**: I have been carrying the census's **`L_other` = 0.825**,
+derived as `2.825 − 2.0`, with r26's 0.098–1.17 inside it. **If r26 is gated off engaged, that figure
+overcounts the engaged loop** — the remaining terms are PID 0.2565 + r24 0.049–0.293 + `FUN_00036682`
+0.0032 ≈ **0.31–0.55**, not 0.825.
+⊕ **This does NOT change the lever choice**: every build's predicted effect was computed as a RATIO
+against the same anchoring, and a smaller `L_other` makes the assist map an even LARGER share of the
+loop — it strengthens the case for V173 rather than weakening it. But **the absolute Q-ratio figures
+carry more uncertainty than their two decimal places suggest**, and that is now on the record.
+⚠ **Blast radius, for the record**: `gp-0x6b5e` has **4 readers** — `0x36390`, `0x3AA8E` (the
+aggregator), and **`0x4DA92` / `0x4DFAE` outside it**. Had the gate been open, closing it would NOT
+have been the clean single-consumer edit `gp-0x6b86` was.
+
+### 🛑 THE tp OFF-BY-0x1000 TRAP RECURRED — EIGHTH RECORDED TIME, CAUGHT BY THE SHAPE
+My first read used **`0xC76CE`** instead of `tp+0x76ce` = **`0xC66CE`**, and returned
+`X = [15, 4100, 15, 4102, 15, 4104]` / `Y = [4104, 15, 4106, 15, 8192, 15]`. **The interleaved 15s
+were the tell** — a knot table is monotone, not alternating — exactly as *“the denormals were the
+tell”* on the sixth recurrence. It produced the **opposite conclusion** (apparently “gated off”, by
+luck, from entirely the wrong cells). **Anchor first, then read; and check the SHAPE of what comes
+back.**
+
 ## ✅ **V173 IS ON THE EFFICIENT FRONTIER — THE DESIGN WORK IS COMPLETE**
 With Honda's notch fixed and the structure known to separate, the design reduces to choosing **one
 real pole pair**. Sweeping every pair that holds DC within 2 % of unity and never amplifies:
@@ -2227,61 +2265,4 @@ briefly showed `FUN_0003b49a` “writing” `gp-0x4f60` when it only reads it.
 ⊕ The `FUN_000382d8` verdict is **unaffected**: an over-inclusive filter that found **no** lane
 writes still finds none when tightened — the error was in the safe direction. **State which direction
 a filter error runs before deciding whether a conclusion survives it.**
-
-## ✅✅✅ **V164 / V165 BUILT — EVERY BRANCH OF THE DECISION TREE NOW HAS A FLYABLE IMAGE**
-Both on the V158 base, cal-only, outside the cave/bricking class.
-```
-   V164  LOW dose   FactorC Y[0] := Y[1]      0xD77DA 429->234, 0xD77EE 426->233   55/55  4 payload B
-         image ec5ce14fbdce81256e7c6babdad744dc0f841648228b89b0e5bad5c596a8cc73
-   V165  HIGH dose  FactorE Y[1],Y[2] 539->700  0xD7818/1A + 0xD782C/2E            62/62  4 payload B
-         image 41585a5f698cb341f749506f0162c2693f1620b10fa25da71d9c39b26bb9c30a
-```
-### ✅ THE DOSE LADDER, IN PHYSICAL UNITS
-```
-   build   FactorC  FactorE(99)  dose   viscous added   TOTAL creep viscous   vs stock-only
-   V122        0         0          0     0.000            1.571                x1.00
-   V164      234       120         27     1.476            3.047                x1.94
-   V158      429       120         50     2.733            4.304                x2.74
-   V165      429       156         65     3.553            5.124                x3.26
-   (baseline: gp-0x6bbe measures 1.571 ct/(deg/s) ON-CAR; stock creep damping is EXACTLY 0.000)
-```
-✅ **V164 carries a free bonus**: setting Y[0] := Y[1] makes FactorC **MONOTONE** (`[234,234,429,908]`),
-removing the 35-60 km/h dip V158 deliberately accepts — so it is lighter **and** better-shaped.
-✅ **V165 holds Y[3] = 927 deliberately**: a rising segment must survive on X 2500..4000 or FactorE
-flattens across the whole rate axis into a near-**BANG-BANG RELAY** (V72's error, a limit-cycle
-generator at a lightly-damped resonance), and holding Y[3] keeps the build-time rule at V158's 388.
-⚠ **V165's dose 65 sits just ABOVE the model's stated ~43 [30,60].** That is deliberate and
-**conditional**: fly it ONLY if V158 measured as insufficient, in which case the data has contradicted
-the requirement. Not a first choice — the model argues the true delivered dose is HIGHER than computed.
-
-### ✅ THE COMPLETE FLIGHT PLAN
-```
-   FLY FIRST   V158   single-variable, the only change above the instrument floor
-     better + effort OK          -> V160  (Lever B increment, unmeasurable but free)
-     better + wheel too heavy    -> V164  (dose 50 -> 27, halves the drag, monotone shape)
-     unchanged, effort unchanged -> V165  (dose 50 -> 65; overturns “err low” WITH DATA)
-     worse                       -> V122  (revert; damper is destabilising, not damping)
-     no creep episodes           -> re-drive (V158 is inert above ~35 km/h)
-```
-=> **no branch of the drive can now leave the kit without a prepared next step.**
-
-## ✅✅✅ **V158 IS THE FLIGHT, NOT V160 — A POWER CALCULATION DEMOTED THE LEAD BUILD**
-Pre-registered before the drive: `docs/scoring/SCORING-V158-preregistered.md`.
-
-V88 measured Lever B single-variable across a **10.24x** step. V160 adds **1.2496x**. Extrapolating
-log-linearly from V88's own measured ratios, against this kit's own same-firmware detection floor:
-```
-   band       V88 10.24x step    V160 1.25x predicts    floor (same-firmware null)
-   6-9 Hz         0.859              0.986  (-1.4 %)     [0.18, 5.51]  ~3-5x
-   9-12 Hz        0.604              0.953  (-4.7 %)
-   15-22 Hz       0.549              0.944  (-5.6 %)     [0.59, 1.34]  ~40 %
-```
-=> **the Lever B increment is 4-30x BELOW the floor — unmeasurable on one drive.** It adds an untested
-dose (V62: *“2x ≈ the OPTIMUM, not a point on a ramp”*) and **destroys attribution if the drive comes
-back worse.** ✅ **FLY V158**: single-variable vs V122, and its change — creep damping **0 → 2.733
-ct/(deg/s)** — is the only one large enough to resolve. V160 becomes the follow-up if V158 is good.
-
-⭐ **THE GENERAL RULE**: *a build is only worth a drive if its predicted effect exceeds the instrument
-floor.* Stacking a sub-floor increment onto a resolvable one buys nothing and costs attribution. This
-is the first time this kit has run that calculation BEFORE flying rather than after.
 
