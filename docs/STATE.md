@@ -1,5 +1,39 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ **THE SWITCHING IS EVERYWHERE — BUT `gp-0x671d`'s IS THE ONLY ONE A CAL EDIT CAN REMOVE**
+`gp-0x671a` was checked for the same pattern. **It has it.**
+```
+   gp-0x671a  updated in FUN_000428d4 <- FUN_0002214a = TASK 1, the CONFIRMED 1 kHz task
+              and it is `min(revcount, CEIL)` -- a CLAMPED COPY recomputed EVERY TICK, so it is
+              free to move BOTH WAYS, not a one-way latch
+   it gates THREE cal selections:
+       0x35BEA  the NOTCH gate            -> the filter ARMS/DISARMS at up to 1 kHz
+       0x36C1E  the b26 Y-branch          -> LERP(speed) vs cal(0xC640A) = -8192
+       0x3AA70  the aggregator r26 branch -> LERP vs cal(0xC643E)=1536 / cal(0xC6444)=512
+```
+⇒ **switching nonlinearities are not one anomaly in this firmware — they are a PATTERN.** A notch
+that arms and disarms at kHz rate is itself a nonlinearity, quite apart from what it filters.
+
+### ⭐ BUT THE STRUCTURE MAKES ONLY ONE OF THEM REMOVABLE
+```
+   gp-0x671d switch :  cal(0xC6446)=5244   vs   cal(0xC6442)=1024     BOTH CONSTANTS
+   gp-0x671a switches:  LERP(speed)        vs   a constant cal        ONE SIDE IS SPEED-VARYING
+```
+**V149's trick is to make both branches return the SAME value, so the switch becomes a no-op.**
+⇒ **that only works when both sides are constants.** You cannot equalise a constant against a
+speed-varying LERP — matching it at one speed unmatches it at every other.
+⇒ **[EVIDENCE] `gp-0x671d`'s 5.12× switch is the ONLY one of these that a cal edit can eliminate.**
+⇒ **V149 is not merely the best available build — it is the only removal of a switching
+nonlinearity that this firmware's structure permits without a code edit.**
+
+### ⚠ AND WHAT THAT IMPLIES IF V149 IS NULL
+If removing the one removable switch does not help, then either the switching class is not the
+cause, or the culprit is one of the **`gp-0x671a` switches, which cannot be removed by cal at all**.
+⇒ in that case the options narrow to an **in-place instruction edit** on the branch itself — which
+is the class that has bricked this ECU three times and must be gated accordingly.
+⇒ **so V149 is also the cheapest possible test of the whole hypothesis class.** A null result is
+informative; it retires switching-as-cause for every lever a cal can reach.
+
 ## 🛑🛑🛑 **ROOT-CAUSE CANDIDATE: A 5.12x GAIN SWITCH TOGGLING AT TASK RATE INSIDE A CONFIRMED PUMP**
 Tracing the counter's increment and clear paths to their task roots settles the time course that
 was left open — and it is far more interesting than a latch.
