@@ -4,6 +4,48 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑✅ **V189 — WE HAD CREATED AN ENGAGED-ONLY DAMPER RELAY BY ACCIDENT. TWO BYTES REMOVE IT.**
+Auditing **every** FactorC mode record against stock, **exactly one deviates**:
+```
+   record 0xD77E4, reached by mode 27
+     stock  Y = (  0, 233, 426, 875)     monotonic -- Honda's viscous surface
+     V188   Y = (426, 233, 426, 875)     steps UP at zero, then DROPS
+                 ^^^ Y[0]=426 at 0xD77EE
+```
+🛑 **THE FLYING BUILD V122 MATCHES STOCK.** So this is a regression introduced in the V177–V183
+chain and inherited by V185/V186/V187/V188 — **every build recommended this session.**
+**V184's "engaged == manual in every data table" fixed m26 and MISSED m27.**
+➕ **WHY IT MATTERS:** FactorC is a factor of the base-assist damper, `ch0 = (FactorC × FactorE) >> 10`.
+The recorded fact is **`FactorC Y[0] == 0` in ALL 13 stock records** — the damper is dead at low index
+*by design*, which is what makes Honda's surface **viscous rather than switched**. A non-zero `Y[0]`
+gives it a floor that engages abruptly at the first breakpoint — **a RELAY** — and a relay in exactly
+this component is what V80 shipped, producing **the worst grinding in the whole arc**.
+⚠ Here it is worse than a plain relay: **`Y[0]=426 > Y[1]=233`**, so the curve steps up then falls.
+**That is not a calibration anyone chose; it is a defect.**
+✅ **V189 = V188 + `0xD77EE` 426 → 0**, Honda's value copied from the stock image. **One int16,
+2 payload bytes, 38/38 assertions.** All six damper tables now read `m26 == m24` and
+`m27 == m24 or IS STOCK`. `71a7032a485ec8253cd46c2532adcf0331382b5b8c374fb204b9fc9d07e9240b`
+⊕ **REACHABILITY, STATED HONESTLY:** the record is ambiguous on whether the car runs mode 27 (one
+memory says TVCA4 uses **24/26**, another describes **26/27** as engaged). **If m27 is reachable this
+removes a live engaged-only relay in the damper — a prime suspect for ratcheting/stuttering. If not,
+it is INERT.** The edit is strictly toward stock, so **there is no configuration in which it is
+worse.** EVIDENCE: the byte deviation and that V122 matches stock. BELIEF: m27 reachability.
+
+## ✅ **V188'S NOTCH DOES NOT THREATEN ITS OWN LOW SHOULDER — and the reason is structural**
+A notch inside a loop adds lag *below* itself, so it could in principle grow a new mode there. On the
+pooled 67-route engaged spectrum:
+```
+   f (Hz)   excess   V188 |H|   added lag
+    9.2      8.71      0.852      -14.0     highest excess, SMALLEST lag
+   12.0      2.81      0.709      -21.0
+   15.0      2.26      0.486      -29.9
+   16.2      2.97      0.372      -34.0     largest lag, gain already down 63 %
+```
+✅ **No frequency has high excess, high retained gain AND large lag at once.** For a notch, **added
+lag and attenuation grow together**, so loop gain is cut in proportion to the phase spent — which is
+precisely why a notch is the standard tool for this job. Still checkable on the drive: a **new** peak
+at 13–16 Hz would falsify it.
+
 ## ✅✅ **V188 — THE NOTCH ON THE GRIND. ONE BIQUAD, AND THE MECHANISM DECIDES WHERE IT GOES**
 There is **exactly one biquad** (re-checked with a DC-gain-plus-structure criterion; the 60-odd other
 "hits" are mode-table data at regular strides, several reporting pole radius > 1). So one notch, and
@@ -2156,54 +2198,4 @@ falsifies the assumption for V168 too, and vice versa — so whichever flies fir
 more than one lever. ⊕ V172 adds a second discriminator the cap does not have: **the grind should
 fall further than the ratchet** (9.6x vs 2.2x filter attenuation). If the ratchet moves and the grind
 does not, the shared-loop account is wrong somewhere and that difference names where.
-
-## ⭐⭐ **LEVER #2 EXISTS: THE ASSIST MAP'S OWN SECOND-ORDER SECTION IS A RETUNABLE NOTCH**
-This kit's record says *“this firmware has NO frequency-selective lever”* (FactorD refuted) and
-*“no notch filter exists anywhere”*. **Both are wrong.** `FUN_000352b4` carries a genuine biquad in
-the **dominant torque-fed lane**, and it is **already enabled on the flying build**.
-```
-   s1 = gp-0x3814,  s2 = gp-0x3818   (read BEFORE update),  1 kHz
-     w = -C_AC*s1 - C_A8*s2 + C_B4*x
-     y = (1-C_AC)*s1 + (C_B0-C_A8)*s2 + C_B4*x        y clamped to +/-12.0
-     s1 <- s2 ;  s2 <- w
-   coefficients 0xC60A8 / 0xC60AC / 0xC60B0 / 0xC60B4 (float32)  ·  enable 0xC649B
-```
-Simulated directly from the decompiled operand order (a sign slip here inverts the answer, so it is
-**simulated, not hand-derived**):
-```
-   freq       FLYING (stock coeffs)      V106/V107 coeffs
-   8.64 Hz    0.9788  -11.8 deg          0.9823  -16.5 deg     <- the RATCHET, PASSED by both
-   21   Hz    0.8659  -30.0 deg          0.4925  -72.3 deg     <- the grind
-   25.5 Hz                               gain 0.000            <- V106 placed a PERFECT NULL
-```
-✅ **[EVIDENCE] the structure can place a deep notch — the kit has already done it once**, at
-25.5 Hz, in the V105/V106 notch work. ✅ **[EVIDENCE] neither tuning touches the ratchet**: both pass
-8.64 Hz at ≈0.98.
-✅ **[EVIDENCE] the enable is ON for the flying build** (`0xC649B` = 1 from V104; stock ships **0**),
-and the coefficient cells have been changed before **without faults**, so neither the enable path nor
-the coefficient path is new risk.
-
-### ⭐ WHY THIS IS A BETTER LEVER THAN THE SLOPE CAP ON THE FEEL AXIS
-```
-   slope cap 0xC6384   reduces the map's gain at EVERY frequency INCLUDING DC
-                       => heavier steering near centre.  Real, monotone with dose.
-   notch at 8.64 Hz    reduces the loop's contribution ONLY at the resonance
-                       => DC gain 1.0000  =>  NO steady-state feel cost at all.
-```
-⊕ And it **does not rest on the real-positive `P·L` assumption** that V168's lever needs: a notch
-removes gain at the resonant frequency **without adding gain anywhere**, which is the textbook fix
-for a loop resonance whatever the loop's phase there.
-⚠ **[BELIEF] the DC-cost argument.** It follows from the section's own DC gain, which is measured;
-what is *not* measured is whether the operator's felt “weight” tracks DC gain rather than the
-mid-band. A first-order claim, not a guarantee.
-
-### 🛑 WHY A RAZOR NOTCH IS THE WRONG DESIGN, AND WHAT REPLACES IT
-An optimiser hits **−96 dB at exactly 8.64 Hz with DC gain 1.0000** — but that notch is also that
-NARROW, and **the ratchet's own frequency spans 7.81–10.74 Hz across operating-point strata**
-(CV 5.5 % speed, 7.0 % command, 12.3 % rate). A razor notch simply misses the mode when it drifts.
-⊕ It also **amplified 40 Hz by 1.36x**, which must not be traded away silently.
-⇒ the design in progress targets **attenuation across 7–11 Hz** with a pole-radius margin, unity DC,
-and **no gain increase anywhere** — GATE 2 on a notch has to cover phase and out-of-band gain, not
-just depth, because a notch flips phase across itself and that can destabilise frequencies either
-side even while the notch attenuates.
 

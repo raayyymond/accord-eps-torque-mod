@@ -1367,3 +1367,53 @@ the operator wants 8x if anything. **The constructive reading is the opposite: d
 is what BUYS the headroom for more gain.** If V168 works, 8x becomes affordable in a way it is not
 today.
 
+## ⭐⭐ **LEVER #2 EXISTS: THE ASSIST MAP'S OWN SECOND-ORDER SECTION IS A RETUNABLE NOTCH**
+This kit's record says *“this firmware has NO frequency-selective lever”* (FactorD refuted) and
+*“no notch filter exists anywhere”*. **Both are wrong.** `FUN_000352b4` carries a genuine biquad in
+the **dominant torque-fed lane**, and it is **already enabled on the flying build**.
+```
+   s1 = gp-0x3814,  s2 = gp-0x3818   (read BEFORE update),  1 kHz
+     w = -C_AC*s1 - C_A8*s2 + C_B4*x
+     y = (1-C_AC)*s1 + (C_B0-C_A8)*s2 + C_B4*x        y clamped to +/-12.0
+     s1 <- s2 ;  s2 <- w
+   coefficients 0xC60A8 / 0xC60AC / 0xC60B0 / 0xC60B4 (float32)  ·  enable 0xC649B
+```
+Simulated directly from the decompiled operand order (a sign slip here inverts the answer, so it is
+**simulated, not hand-derived**):
+```
+   freq       FLYING (stock coeffs)      V106/V107 coeffs
+   8.64 Hz    0.9788  -11.8 deg          0.9823  -16.5 deg     <- the RATCHET, PASSED by both
+   21   Hz    0.8659  -30.0 deg          0.4925  -72.3 deg     <- the grind
+   25.5 Hz                               gain 0.000            <- V106 placed a PERFECT NULL
+```
+✅ **[EVIDENCE] the structure can place a deep notch — the kit has already done it once**, at
+25.5 Hz, in the V105/V106 notch work. ✅ **[EVIDENCE] neither tuning touches the ratchet**: both pass
+8.64 Hz at ≈0.98.
+✅ **[EVIDENCE] the enable is ON for the flying build** (`0xC649B` = 1 from V104; stock ships **0**),
+and the coefficient cells have been changed before **without faults**, so neither the enable path nor
+the coefficient path is new risk.
+
+### ⭐ WHY THIS IS A BETTER LEVER THAN THE SLOPE CAP ON THE FEEL AXIS
+```
+   slope cap 0xC6384   reduces the map's gain at EVERY frequency INCLUDING DC
+                       => heavier steering near centre.  Real, monotone with dose.
+   notch at 8.64 Hz    reduces the loop's contribution ONLY at the resonance
+                       => DC gain 1.0000  =>  NO steady-state feel cost at all.
+```
+⊕ And it **does not rest on the real-positive `P·L` assumption** that V168's lever needs: a notch
+removes gain at the resonant frequency **without adding gain anywhere**, which is the textbook fix
+for a loop resonance whatever the loop's phase there.
+⚠ **[BELIEF] the DC-cost argument.** It follows from the section's own DC gain, which is measured;
+what is *not* measured is whether the operator's felt “weight” tracks DC gain rather than the
+mid-band. A first-order claim, not a guarantee.
+
+### 🛑 WHY A RAZOR NOTCH IS THE WRONG DESIGN, AND WHAT REPLACES IT
+An optimiser hits **−96 dB at exactly 8.64 Hz with DC gain 1.0000** — but that notch is also that
+NARROW, and **the ratchet's own frequency spans 7.81–10.74 Hz across operating-point strata**
+(CV 5.5 % speed, 7.0 % command, 12.3 % rate). A razor notch simply misses the mode when it drifts.
+⊕ It also **amplified 40 Hz by 1.36x**, which must not be traded away silently.
+⇒ the design in progress targets **attenuation across 7–11 Hz** with a pole-radius margin, unity DC,
+and **no gain increase anywhere** — GATE 2 on a notch has to cover phase and out-of-band gain, not
+just depth, because a notch flips phase across itself and that can destabilise frequencies either
+side even while the notch attenuates.
+
