@@ -4,33 +4,46 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
-## ⚠ **STALE MEMORY CORRECTED: THE DAMPER *IS* LIVE AT CREEP ON THE FLYING BUILD**
-[[accord-damper-cannot-reach-micro-regime]] says the base-assist damper is **zero on 100 % of the
-micro regime** because `ch0 = FactorC(speed) x FactorE(rate)` is a product of two dead zones.
-✅ **That describes STOCK and the early builds. It is NOT true of what is flying.** Read from the
-mode-26 records:
+## 🛑 **RETRACTION: I READ THE WRONG TABLE. THE DAMPER *IS* DEAD AT CREEP — THE MEMORY WAS RIGHT.**
+Last round I claimed [[accord-damper-cannot-reach-micro-regime]] was stale and the damper was live at
+creep (ch0 = 225). **That is WRONG and is withdrawn.** I read cells at `0xD77DA`/`0xD77EE`, which are
+a DIFFERENT table. **The pointer table settles it:**
 ```
-                                stock    V181/flying
-   FactorC below-range fallback     0  ->     429     (0xD77EE)
-   FactorE below-range fallback   140  ->     539     (0xD7818)
-   FactorE X[0], the rate knee     60  ->      12     (0xD780E)
-
-   ch0 at creep = (FactorC x FactorE) >> 10
-       stock    = (  0 x 140) >> 10 = 0      <- dead, as the memory says
-       flying   = (429 x 539) >> 10 = 225    <- LIVE
+   FactorC 0xC9E9C -> 0xCE528 | 0xCE53C | 0xCF528 | 0xCF53C
+   FactorE 0xC9F84 -> 0xCE550 | 0xCE564 | 0xCF550 | 0xCF564
 ```
-⇒ **the dead zones were already opened, so the "add Honda's damping back at creep" lever is PARTLY
-SPENT.** Any future session must not re-derive it from that memory.
+and those records are **BYTE-IDENTICAL to stock on V181**:
+```
+   FactorC   n=4   X = [1280, 5120, 8960, 12800]   Y = [0, 950, 1356, 1606]
+   FactorE   n=4   X = [  70,  450, 1000,  4000]   Y = [0, 115,  177,  253]
+```
+🛑 **X[0] = 1280 counts = 20.0 km/h and Y[0] = 0** ⇒ FactorC is **ZERO at and below 20 km/h**, and
+only reaches ~63 at 24 km/h. **Creep is 1–24 km/h, so the damper really is dead there.** The memory
+was correct; my correction was the error.
+⊕ **SAME ERROR CLASS AS V178**: a plausible-looking table at the wrong address, believed without
+resolving the pointer. **STANDING RULE: for any per-mode table, resolve the POINTER TABLE first and
+read the record it names. Never pattern-match a nearby array that merely looks right.**
 
-### ⚠ THE REMAINING HEADROOM, AND WHY I DID NOT SPEND IT BLIND
-FactorC's creep fallback could go 429 -> ~908 (the in-range maximum), roughly doubling creep damping.
-**But the fallback is ALREADY HIGHER than Y[0] = 233**, so there is a step DOWN of 193 counts as speed
-crosses X[0] = 2240 (~35 km/h). Raising the fallback to 700 would deepen that step to 467.
-⇒ **more creep damping is bought with a bigger discontinuity at 35 km/h** — a jolt crossing that
-speed. Sizing that trade needs a drive, not a guess. **This is exactly the shape of bet that produced
-the retracted V178, so it is recorded as a sized option rather than built.**
-➕ It is also the ONLY "add damping" lever in the kit — every other build this session REMOVES loop
-gain. If the drive says V181 helped but did not cure, this is the complementary direction.
+### ✅ SO THE ADD-DAMPING LEVER IS UNSPENT AND REAL — AND BETTER SHAPED THAN EXPECTED
+Every build this session REMOVES loop gain. This is the only lever that ADDS damping, which is the
+textbook fix for a lightly damped mode.
+⊕ **The binding dead zone is FactorC's SPEED knee, not FactorE's rate knee.** An 8 Hz ratchet of even
+1 deg amplitude generates ~50 deg/s of rate = ~275 counts, well clear of FactorE's X[0] = 70. So
+**FactorE is already live DURING the oscillation**; only FactorC's zero blocks the product.
+⇒ **raising FactorC Y[0] above 0 would let Honda's own damper fight the ratchet, and because FactorE
+is rate-gated it stays small in smooth driving.** Sizing: Y[0] = 200 with FactorE ~253 gives
+ch0 = (200 x 253) >> 10 = 49, i.e. ~5 % of full scale — a modest first dose.
+✅ **And the 35 km/h step is measured harmless**: torque activity in +-0.6 s windows at 272 crossings
+of 35 km/h vs 1069 control crossings at 25/30/40/45 gives a median ratio **1.030** against a
+permutation null of **[0.863, 1.190]** — the knot sits exactly on the smooth speed trend. Discontinuity
+cost at a knot is **not detectable**, so knot edits in this family are low-risk.
+
+### 🛑 WHY IT IS NOT BUILT YET — THE MODE INDEX IS UNVERIFIED
+The pointer table has **four** records and **I have not established which index is the ENGAGED mode.**
+Writing the wrong index is exactly how **V69/V70 wrote mode-10 values that turned out BYTE-STOCK** and
+produced a dose ladder that never existed ([[accord-car-is-tvca4-mode-24-26]], RULE 7: *mode-proof or
+it is a bet*). **Closing it needs the index selector traced** — the same `(&DAT_000063fd)[gp] * 4`
+style dereference used by `0xCBE74` — and that is the next concrete step, not a guess.
 
 ## ✅✅ **EVERY BYTE OF THE NON-STOCK DELTA IS NOW ACCOUNTED FOR — THE AUDIT IS COMPLETE**
 Not "I could not find more" — **enumerated, classified, and each class resolved.**
@@ -2134,62 +2147,4 @@ window routes scatter around zero. That is the signature of a real effect seen a
 power, not of a null.
 ⇒ **What would close it**: the same thing every open question here needs — **more continuous
 engaged-creep windows.** At 14 windows the answer was unambiguous on the one route that had them.
-
-## 🛑🛑 **THE COULOMB RELAY IS A *GRIND* LEVER, NOT A RATCHET LEVER — AND THE TWO SYMPTOMS DISSOCIATE**
-The kit has blamed the command-proportional Coulomb relay (`FUN_0003b8f6`, knee `0xC40BC`)
-for the engaged 6–9 Hz amplification since V80. **The nine scored routes span that knee over
-10x, and the ratchet does not respond.**
-```
-   route build  knee  gain  friction | RATCHET  GRIND      (cs_tq excess, validated estimator)
-   r78   V91     600  3564   204     |   9.8      6.1
-   r7e   V96     600  3564   204     |  16.5     28.9
-   r7f   V96     600  3564   204     |  32.9     14.3
-   r96   V102    300  5346   204     |  49.4    248.2
-   ra4   V104    300  5346   204     |  15.8     54.7
-   ra6   V106    300  5346   204     |  67.8     25.3
-   r1e   V107    300  5346   204     |  28.8     27.7
-   r22   V112   1800  5346   612     |  35.8     15.0
-   r24   V122   3000  5346  1020     |  33.2     14.0
-
-   knee vs RATCHET   rho -0.06  p 0.874      <- NOTHING
-   knee vs GRIND     rho -0.69  p 0.039      <- a real lever
-```
-✅ **[EVIDENCE] the clean GAIN-MATCHED comparison** (all four rows at gain 5346, so the
-4x→6x step cannot explain it): knee 300 → 1800/3000 cuts the **grind 41.2 → 14.5 = 2.8x**
-while the **ratchet moves 39.1 → 33.2 = 1.18x, inside its own 1.63x split-half floor.**
-⚠ **[CONFOUND, stated]** knee and friction `0xC40D2` move together in that comparison
-(204 → 612/1020), so the *grind* effect is knee-or-friction, not knee alone. **The ratchet
-null is unaffected by that confound** — neither predictor moves it (friction ρ +0.30, p 0.44).
-⇒ **the relay attribution for the RATCHET is withdrawn.** It remains a good grind lever.
-
-### ⭐ EVERY LEVER THE KIT HAS PULLED IS A GRIND LEVER
-Across **31 images V91→V122 only 278 bytes ever changed** — 0.027 % of the image:
-```
-   0x35A08-0x35A18 · 0x3AA96 · 0x55DF2-0x55E10 · 0xC40BC-0xC40DC · 0xC4B34-0xC4C03
-   0xC4FFC-0xC4FFF · 0xC60A8-0xC60B6 · 0xC61B3-0xC61B5 · 0xC63AC · 0xC640B-0xC6447
-   0xC649B · 0xC6AE7 · 0xC6CD0 · 0xC6FFC-0xC6FFF · 0xD6A6C-0xD6A71 · 0xD7A5C-0xD7A71
-   untouched ENTIRELY: 0xC5000 model coeff · 0xC7000 · 0xC9000 damper tables · 0xCC000 gain arrays
-```
-Those 278 bytes include the **4x→6x LKAS gain**, **Lever B**, the **relay knee** and the
-**friction** cells. They moved the **grind by 42x** and the **ratchet by nothing**.
-✅ **[EVIDENCE] grind and ratchet are DISSOCIATED mechanisms** — same builds, same routes, same
-estimator, opposite responses. They need separate levers, and every lever found so far is the
-grind's.
-
-### ⭐ THE SHARPEST REMAINING CLUE: TORQUE WITHOUT ANGLE
-```
-   ratchet margin over each channel's own slope-matched null
-     tq 7.62 · cs_tq 7.42   <- the torsion bar
-     ws_fr 4.41 · ws_fl 3.95
-     cs_rate 1.03 · cs_ang 0.79 · ang 0.83 · wang 0.83   <- ANGLE: nothing
-     sc_tq 0.56 · co_tqcan 0.59 · cc_req 0.67            <- COMMAND: nothing
-```
-✅ **[EVIDENCE] the ratchet is a TORQUE oscillation with no matching ANGLE oscillation.** It
-twists the torsion bar without measurably moving the wheel — which is exactly how a driver
-feels *ratcheting* rather than *shaking*, and it rules out anything that would have to move
-the road wheels to be seen.
-⇒ **[BELIEF] it is a motor-torque disturbance injected downstream of the command and upstream
-of the bar, active only when engaged.** **What would close it**: a phase test at 8.64 Hz on
-each engaged-gated contributor to the motor-torque sum, restricted to cells in the untouched
-set above.
 

@@ -870,3 +870,61 @@ code with the set of cells no build has touched.
 need a structural edit. **What would close it**: the intersection above, then a phase test at
 8.6 Hz on each candidate.
 
+## 🛑🛑 **THE COULOMB RELAY IS A *GRIND* LEVER, NOT A RATCHET LEVER — AND THE TWO SYMPTOMS DISSOCIATE**
+The kit has blamed the command-proportional Coulomb relay (`FUN_0003b8f6`, knee `0xC40BC`)
+for the engaged 6–9 Hz amplification since V80. **The nine scored routes span that knee over
+10x, and the ratchet does not respond.**
+```
+   route build  knee  gain  friction | RATCHET  GRIND      (cs_tq excess, validated estimator)
+   r78   V91     600  3564   204     |   9.8      6.1
+   r7e   V96     600  3564   204     |  16.5     28.9
+   r7f   V96     600  3564   204     |  32.9     14.3
+   r96   V102    300  5346   204     |  49.4    248.2
+   ra4   V104    300  5346   204     |  15.8     54.7
+   ra6   V106    300  5346   204     |  67.8     25.3
+   r1e   V107    300  5346   204     |  28.8     27.7
+   r22   V112   1800  5346   612     |  35.8     15.0
+   r24   V122   3000  5346  1020     |  33.2     14.0
+
+   knee vs RATCHET   rho -0.06  p 0.874      <- NOTHING
+   knee vs GRIND     rho -0.69  p 0.039      <- a real lever
+```
+✅ **[EVIDENCE] the clean GAIN-MATCHED comparison** (all four rows at gain 5346, so the
+4x→6x step cannot explain it): knee 300 → 1800/3000 cuts the **grind 41.2 → 14.5 = 2.8x**
+while the **ratchet moves 39.1 → 33.2 = 1.18x, inside its own 1.63x split-half floor.**
+⚠ **[CONFOUND, stated]** knee and friction `0xC40D2` move together in that comparison
+(204 → 612/1020), so the *grind* effect is knee-or-friction, not knee alone. **The ratchet
+null is unaffected by that confound** — neither predictor moves it (friction ρ +0.30, p 0.44).
+⇒ **the relay attribution for the RATCHET is withdrawn.** It remains a good grind lever.
+
+### ⭐ EVERY LEVER THE KIT HAS PULLED IS A GRIND LEVER
+Across **31 images V91→V122 only 278 bytes ever changed** — 0.027 % of the image:
+```
+   0x35A08-0x35A18 · 0x3AA96 · 0x55DF2-0x55E10 · 0xC40BC-0xC40DC · 0xC4B34-0xC4C03
+   0xC4FFC-0xC4FFF · 0xC60A8-0xC60B6 · 0xC61B3-0xC61B5 · 0xC63AC · 0xC640B-0xC6447
+   0xC649B · 0xC6AE7 · 0xC6CD0 · 0xC6FFC-0xC6FFF · 0xD6A6C-0xD6A71 · 0xD7A5C-0xD7A71
+   untouched ENTIRELY: 0xC5000 model coeff · 0xC7000 · 0xC9000 damper tables · 0xCC000 gain arrays
+```
+Those 278 bytes include the **4x→6x LKAS gain**, **Lever B**, the **relay knee** and the
+**friction** cells. They moved the **grind by 42x** and the **ratchet by nothing**.
+✅ **[EVIDENCE] grind and ratchet are DISSOCIATED mechanisms** — same builds, same routes, same
+estimator, opposite responses. They need separate levers, and every lever found so far is the
+grind's.
+
+### ⭐ THE SHARPEST REMAINING CLUE: TORQUE WITHOUT ANGLE
+```
+   ratchet margin over each channel's own slope-matched null
+     tq 7.62 · cs_tq 7.42   <- the torsion bar
+     ws_fr 4.41 · ws_fl 3.95
+     cs_rate 1.03 · cs_ang 0.79 · ang 0.83 · wang 0.83   <- ANGLE: nothing
+     sc_tq 0.56 · co_tqcan 0.59 · cc_req 0.67            <- COMMAND: nothing
+```
+✅ **[EVIDENCE] the ratchet is a TORQUE oscillation with no matching ANGLE oscillation.** It
+twists the torsion bar without measurably moving the wheel — which is exactly how a driver
+feels *ratcheting* rather than *shaking*, and it rules out anything that would have to move
+the road wheels to be seen.
+⇒ **[BELIEF] it is a motor-torque disturbance injected downstream of the command and upstream
+of the bar, active only when engaged.** **What would close it**: a phase test at 8.64 Hz on
+each engaged-gated contributor to the motor-torque sum, restricted to cells in the untouched
+set above.
+
