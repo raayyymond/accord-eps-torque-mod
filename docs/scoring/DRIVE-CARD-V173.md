@@ -14,7 +14,12 @@
 A single continuous 15 s engaged creep episode detected the ratchet in **11 of 11 episodes (100 %)**
 on the existing corpus, at a **5–65× margin**. One pass answers it.
 
-1. **Engaged creep, ONE continuous pass of 15 seconds, 1–24 km/h.** Don't break it up — the analysis
+1. **Engaged creep, ONE continuous pass of 15 seconds, 1–24 km/h — or 20 s if it is easy.**
+   15 s answers the primary question. **20 s continuous additionally pins the ratchet's frequency
+   to ~0.5 %**, which tests whether it sits at exactly **100/12 = 8.3333 Hz** (a firmware cycle, a
+   different lever entirely) or at an arbitrary value (a mechanical mode, as assumed). **No route
+   in the corpus is long enough to tell** — the resolution ceiling today is 0.098 Hz.
+   Don't break it up — the analysis
    window is 5.12 s and a broken pass yields too few of them.
 2. **Include real curvature.** The ratchet's amplitude is monotone in command (excess 17.0 → 58.1
    across the command range) and peaks in the **12–25 deg/s** wheel-rate band. A dead-straight crawl
