@@ -982,7 +982,20 @@ ASSIST_BOOST_CURVE = {                         # pointer array @0xCA154, 6-point
 #   FUN_00036c12 friction (0xCBE74), FUN_0003ad74 r24/r26 speed-blend coefficient sets (LAB_000cbf5c/
 #   c044/c12c + tp+0xd214, keyed 0/10/50/100 km/h breakpoints at tp+0x7010).
 #   NEW: FUN_00034a72 boost (PTR_DAT_000ca324, scalar per-mode cal); FUN_000348e0 angle-tracking blend
-#   (5 arrays, already the gp-0x6a10 "flat zero at creep" chain); FUN_00035154 (PTR_DAT_000c7888, speed
+#   (SIX arrays -- see the correction below);
+# ✅✅ CORRECTED 2026-08-28: FUN_000348e0 has a SIXTH pointer array, and it is the BREAKPOINT VECTOR.
+#   `ld.w 0xd914[r16], r15` @0x34936 with r16 = tp + mode*4  =>  0xCC914[mode].  It is invisible to a
+#   `mov imm32` literal scan (the other five ARE literals) AND to a tp-relative scan, because the base
+#   register is a COMPUTED register, not tp.  Same idiom as FUN_0003ad74's 4th array (tp+0xd214).
+#   0xCC914[24/26/27] -> 0xD6B7C / 0xD7B70 / 0xD7B7C, each FIVE speed breakpoints at record+0..+8:
+#       [0, 512, 2560, 5120, 8960] counts = [0, 8, 40, 80, 140] km/h on gp-0x6a5e (voted speed)
+#   The five curves are 10-knot, hdr@+0 = knot count, X@+2.., Y@+0x16..; blended element-wise on the
+#   speed fraction into a runtime X row at gp-0x6394 and a runtime Y row at gp-0x63a8.
+#   ⚠ "flat zero at creep" IS ONLY TRUE AT A STANDSTILL.  Curve 1 (0 km/h, 0xD74D0) is all-zero Y, so
+#   the term is scaled by frac = speed/512 across 0-8 km/h: 25 % at 2 km/h, 62.5 % at 5 km/h, 100 % at
+#   8 km/h -- a LINEAR RAMP through the whole creep band, not a dead zone.  mode 26 curve 2 (0xD7554)
+#   is X=[0,34,101,245,499,846,1888,2966,3656,4150] Y=[0,677,1052,1391,1732,1911,2204,2321,2361,2355].
+#   FUN_00035154 (PTR_DAT_000c7888, speed
 #   gp-0x6a62-keyed float LERP); FUN_000382d8 (LAB_000cc9fc/PTR_DAT_000c7b40, speed gp-0x6a64-keyed
 #   selector, same shape as FUN_0003ad74); FUN_0003b338 (0xC8198), FUN_0003b416 (0xCA5DC, speed
 #   gp-0x6a5e-keyed), FUN_0003b49a (0xCBCA4, feeds gp-0x6b28) -- roles of these last 3 NOT resolved this
