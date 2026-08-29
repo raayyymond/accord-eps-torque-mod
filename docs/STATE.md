@@ -1,5 +1,46 @@
 # STATE — living current state of the kit
 
+## 🛑🛑 **POWER ANALYSIS ON REAL DATA — THE 6–9 Hz SCORER RESOLVES 1 ROUTE IN 23**
+Ran the validated scorer over **every cached route** to answer, before the drive, whether the band
+instrument can detect V158 at all.
+```
+   route  engEp  manEp   6-9 Hz  eng/man        verdict
+   r1e     22      5     3.19  [ 1.67,   6.84]  not resolved
+   r22      9      4     0.57  [ 0.23,   2.45]  not resolved
+   r24     10      5     0.20  [ 0.04,   0.86]  not resolved
+   r78     15      5     1.17  [ 0.44,   2.07]  not resolved
+   r7e     16      6     2.19  [ 0.69,   5.26]  not resolved
+   r7f     19      6     1.76  [ 0.35,  19.03]  not resolved
+   r81      4      4     6.10  [ 3.27, 122.43]  no null (too few episodes)
+   r96     16      5     1.04  [ 0.54,   4.45]  not resolved
+   ra4     20      4     4.83  [ 0.57,  13.59]  not resolved
+   ra6     15      7    11.58  [ 3.53,  33.37]  *** RESOLVED ***
+   + 13 further routes: NO MATCHED CREEP ARMS AT ALL
+```
+✅ **[EVIDENCE] 10 of 23 routes are scoreable; 1 of those 10 resolves.** ⇒ **the 6–9 Hz band scorer
+resolves roughly ONE DRIVE IN TWENTY-THREE.**
+
+### 🛑 SO SET EXPECTATIONS HONESTLY, BEFORE THE DRIVE
+**The band scorer is unlikely to detect V158's effect.** That is not a defect in V158 and not a defect
+in the scorer — it is the noise floor of the endpoint, measured rather than assumed. **The operator's
+report is the primary endpoint, and on most drives it is the ONLY one.** The pre-registration already
+says this; now it has a number behind it.
+
+### ⭐ AND THE BINDING CONSTRAINT IS IDENTIFIED EXACTLY
+```
+   engaged episodes   9-22   never the limit
+   manual  episodes   3- 7   THE LIMIT, on every single scoreable route
+```
+Thirteen routes have **no matched creep arms at all**, and the ten that do average **5 manual
+episodes**. The one route that resolved, ra6, has **the most manual episodes (7)**.
+⇒ **the missing ingredient has always been MANUAL CREEP, and it is the cheapest thing to fix.**
+**8+ separate manual creep passes** is the single change that would most improve the drive's power —
+more than any extra engaged driving. This is now the headline requirement on the drive card.
+
+⊕ Note r24's 0.20 [0.04, 0.86] would read as a strong engaged *reduction* at 6–9 Hz on a naive CI, and
+the null correctly rejects it. Seven of the ten scoreable routes have CIs spanning 1.0; **the endpoint
+is dominated by between-episode variance, not by firmware.**
+
 ## ⛔✅ **NO STABLE ACOUSTIC MARKER ACROSS ROUTES — AND SPEED-MATCHING ALONE IS NOT ENOUGH**
 Two results from running the creep acoustic contrast across four existing routes.
 

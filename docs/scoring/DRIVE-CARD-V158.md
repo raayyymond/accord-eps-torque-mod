@@ -11,6 +11,17 @@ build deliver **exactly zero** damping below ~35 km/h. Nothing else moved.
 
 ## The one thing that matters
 
+🛑 **THE MANUAL CREEP PASSES ARE WHAT HAVE ALWAYS BEEN MISSING.** Measured across all 23 cached
+routes: engaged creep episodes run 9–22 and are never the limit; **manual creep episodes run 3–7 and
+are the limit on every single scoreable route**, and 13 of 23 routes have no matched creep arms at
+all. Only **one route in 23** ever resolved the 6–9 Hz band — and it is the one with the most manual
+episodes. **8+ separate manual creep passes will do more for this drive than any amount of extra
+engaged driving.**
+
+⚠ **Expect the band scorer to say NOT RESOLVED.** That is the measured noise floor, not a failure.
+**Your report is the primary endpoint and on most drives it is the only one.**
+
+
 🛑 **V158 is architecturally inert above ~35 km/h.** A highway drive tests **nothing**.
 The whole result lives in **engaged creep, 2–8 km/h, with the wheel actually moving.**
 
