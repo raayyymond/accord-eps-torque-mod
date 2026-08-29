@@ -4,6 +4,52 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **GATE 1 RE-VERIFIED AFTER FINDING TWO HOLES IN MY OWN SCANNER — AND THE SCALE BRANCH IS CLOSED**
+🛑 **MY gp-RELATIVE SCANNER HAD TWO HOLES, AND THE KIT'S OWN MEMORY WARNED ABOUT ONE OF THEM.**
+Chasing `gp-0x6982`/`gp-0x6984` — which `FUN_000389ec` demonstrably reads — my scan returned **zero
+sites in BOTH encodings**. Ghidra settled it:
+```
+   00038bc6  ld.hu  -0x6984, gp, r7    bytes e4 3f 7d 96   -> hw2 = 0x967D, not 0x967C
+   00038bec  ld.hu  -0x6982, gp, r16   bytes e4 87 7f 96   -> hw2 = 0x967F, not 0x967E
+```
+1. **`hw2 = (disp | 1)`** for these load forms — exactly the recorded trap in
+   [[accord-v850-scan-traps-formatv-and-storezero]]. I scanned for the even value and found nothing.
+2. **My opcode whitelist omitted `ld.hu` (0x3F)** entirely.
+⚠ **Either hole alone manufactures a FALSE NULL**, and a false null is how this kit gets wrong
+answers. **Re-scanned with NO opcode whitelist and hw2 ∈ {D, D|1}.**
+
+### ✅ THE LOAD-BEARING RESULT SURVIVES
+```
+   gp-0x6b26  (INERTIA -- GATE 1 for V175 rests on it)   1 WRITER  0x36CF0 st.h   4 readers
+   gp-0x6bd0 w[0] 3 writers   gp-0x6bbe w[1] 3   gp-0x6b46 w[2] 1   gp-0x6b4e w[4] 1   gp-0x6b4c w[5] 3
+```
+⇒ **identical to the earlier counts** ⇒ **V175's mechanism claim and the six-lane classification both
+stand under the stricter method.** ⚠ Still blind to **register-indirect** stores by construction —
+that limitation is unchanged and is stated, not solved.
+
+### ❌ THE SCALE-FACTOR BRANCH OF THE LERP LEAD IS CLOSED
+`gp-0x6982`/`gp-0x6984` have **ZERO gp-relative writers** and exactly two readers each, both inside
+the LERP builder. And `FUN_0003897a` — which I had called an *adaptation* — is nothing of the kind:
+```
+   FUN_0003897a(target, state, lo, hi, step_fast, step_slow)
+     state inside [lo,hi] -> state = clamp(target, lo, hi)          (direct snap)
+     state <  target      -> state += step   (step_slow if state >= hi)
+     state >  target      -> state -= step   (step_slow if state <= lo)
+```
+🛑 **RETRACTION: I warned this was "a lever inside an adaptation loop" that could "wind up or
+chatter". IT IS A RANGE-CHECK + CLAMP + TWO-RATE SLEW LIMITER** — deterministic, single state, bounded
+by construction, no integrator and no convergence question. **That warning was overcautious and is
+withdrawn.**
+⇒ **But the branch is dead anyway, both ways**: if nothing writes those cells they are **constant**,
+the validity test `(x − 0xcc) < 0x735` fails and both scales default to **0x400 = unity** ⇒ the
+bounding cals (`0xC6390`/`92`/`9A`/`9C`, `0xC6394`/`96`/`98`/`9E`) are **INERT**. If instead a
+register-indirect coding write does move them, then editing their bounds **rescales the whole LERP
+globally** — a **broadband** gain change, the same class as V173's poles and strictly worse than it.
+**Neither case is amplitude-selective.**
+➕ **What survives of the lead**: only the small-signal **floors** `0xC617A`/`0xC617C` and their
+thresholds `0xC613E`/`0xC6140`. That is now the sole amplitude-selective candidate in the kit, and it
+still needs its knot-index gating traced before it is a lever rather than a guess.
+
 ## ❌ **COVARIATE ADJUSTMENT DOES NOT RESCUE THE ONE-PASS RATCHET ENDPOINT — THE 2-PASS ASK STANDS**
 I tried to buy statistical power **for free** rather than ask for more driving, since the record says
 the ratchet’s axis is WHEEL RATE (1.16x at 2 °/s → 3.94x at 100 °/s) so much of the window-to-window
@@ -2163,55 +2209,4 @@ of the window bootstrap this session already had to remove.
 ✅ **One principled alternative was pre-specified, tested, and lost. The instrument is what it is:
 median 1.72x, p90 2.93x, and 3.60x at the reference build.** Those are the numbers the V158 drive will
 be judged against, and they were fixed before the drive rather than chosen after it.
-
-## ⚠⚠ **THE INSTRUMENT IS RUNNING OUT OF RANGE — AND I MUST WALK BACK LAST TICK'S PREDICTION**
-Replaced the single cross-route replicate with **nine within-drive split-half replicates**: split each
-route's episodes in half, score each half independently, compare.
-```
-   route  build   half A    half B     A/B
-   r78    V91      13.74      7.97    1.72x
-   r7e    V96      10.49     15.15    1.44x
-   r7f    V96      19.10     14.77    1.29x
-   r96    V102    787.68    531.49    1.48x
-   ra4    V104    321.67    150.78    2.13x
-   ra6    V106    108.85     98.31    1.11x
-   r1e    V107     46.16     83.92    1.82x
-   r22    V112      4.95     13.65    2.76x
-   r24    V122      2.10      7.56    3.60x   <- the REFERENCE build, and the WORST
-   -------------------------------------------------------------
-   median 1.72x    p90 2.93x    max 3.60x
-```
-✅ The old 1.84x was **accurate, not optimistic** — it sits at the median. But it was **the wrong
-number to use**, because reproducibility is **worst where the excess is smallest**, and V122 is the
-smallest. As the ratio approaches 1 the noise stops shrinking with it.
-
-### ⚠ WHAT V158 WOULD ACTUALLY HAVE TO DO
-```
-   to clear the 1.72x median floor  ->  V158 must read <= 2.26
-   to clear the 2.93x p90 floor     ->  V158 must read <= 1.32
-   to clear r24's own 3.60x         ->  V158 must read <= 1.08
-   and a ratio of 1.0 means engaged == manual: the excess is GONE
-```
-⇒ **V158 is instrumentally detectable only if it very nearly ELIMINATES the engaged excess.** Last
-tick I wrote *“detectable if the move exceeds ~1.84x”*. **That was too generous** — it used the median
-floor where V122's own route sits at 3.60x. **Corrected.**
-
-### ✅ AND IT REFRAMES THE SIX-BUILD TREND HONESTLY
-```
-   V102 -> V104   2.27x   marginal
-   V104 -> V106   3.76x   RESOLVED
-   V106 -> V107   1.50x   BELOW FLOOR
-   V107 -> V112   8.16x   RESOLVED
-   V112 -> V122   1.83x   marginal
-   cumulative     191x    far above the floor
-```
-✅ **Individual build steps are mostly NOT resolved; the CUMULATIVE trend is.** The monotone run is
-carried by two large steps (V104→V106, V107→V112). ⚠ In particular **V112→V122 (1.83x) is marginal**,
-so the endpoint did not independently confirm the operator's V122 verdict — it is consistent with it,
-which is a weaker claim and the one that is supported.
-
-⭐ **THE LESSON**: an instrument validated over a 191x range is not thereby validated at the bottom of
-that range. **Calibrate the floor AT THE OPERATING POINT you will actually use it at.** I validated on
-the full sweep and then quoted a detection threshold from the median, while the reference build sits
-at the noisy end.
 
