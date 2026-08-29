@@ -4,6 +4,27 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ❌ **COVARIATE ADJUSTMENT DOES NOT RESCUE THE ONE-PASS RATCHET ENDPOINT — THE 2-PASS ASK STANDS**
+I tried to buy statistical power **for free** rather than ask for more driving, since the record says
+the ratchet’s axis is WHEEL RATE (1.16x at 2 °/s → 3.94x at 100 °/s) so much of the window-to-window
+spread should be operating point, not noise. **It does not work.**
+```
+   adjustment (LEAVE-ONE-OUT residual, not in-sample)   log10 sd   detect@1 pass
+   none                                                  0.3317        4.47x
+   log|wheel rate|                                       0.3106        4.06x   <- controlled
+   log|command|                                          0.2990        3.85x   <- NOT controlled
+   log|wheel rate| + log speed + log|command|            0.3324        4.48x   <- WORSE
+```
+🛑 **V175 predicts a 3.85x cut — so even the best adjustment puts the effect EXACTLY ON the
+detection threshold (~50 % power). Not good enough. Keep the 2-pass ask.**
+✅ **Permutation control passes for wheel rate** (real 0.3106 vs shuffled p5 0.3320) ⇒ the gain is
+real, just small. ⚠ **The  figure is UNCONTROLLED** — its permutation null was not run,
+so it is not usable and the honest best is the wheel-rate number, 4.06x.
+⊕ **Adding all three covariates made it WORSE** (0.3324 vs 0.3317 raw) — overfitting at n=27, caught
+by leave-one-out. **In-sample R² would have flattered this badly**; do not use it here.
+⇒ **The instrument is near its limit and more covariates will not help.** Buying power on this
+endpoint means EXPOSURE, not cleverness — which is exactly why the card stages it behind a win.
+
 ## ✅ **EVERY DRIVE-CARD ENDPOINT IS NOW POWER-CHECKED — AND THE LKAS CLAIM WAS UNSUPPORTABLE**
 Against 27 real 15 s engaged creep windows, comparing ONE new window to the historical distribution:
 ```
@@ -2193,53 +2214,4 @@ which is a weaker claim and the one that is supported.
 that range. **Calibrate the floor AT THE OPERATING POINT you will actually use it at.** I validated on
 the full sweep and then quoted a detection threshold from the median, while the reference build sits
 at the noisy end.
-
-## ✅✅✅ **THERE IS A WORKING CROSS-BUILD INSTRUMENT AFTER ALL — AND IT HAS TRACKED THE KIT FOR SIX BUILDS**
-The 18–22 Hz within-drive engaged/manual ratio, paired with each route's build tag from its own cache:
-```
-   route  build   18-22 Hz eng/man
-   r78    V91          11.81
-   r7e    V96          10.02
-   r7f    V96          18.46          <- the ONLY within-build replicate
-   r96    V102        742.19          <- peak
-   ra4    V104        327.51
-   ra6    V106         87.17
-   r1e    V107         57.93
-   r22    V112          7.10
-   r24    V122          3.88          <- the build now on the car
-
-   V102 -> V122: SIX consecutive builds, STRICTLY MONOTONE DECREASING, 191x total
-   corr(build number, log10 excess) = -0.920
-   within-build scatter (V96, two routes) = 1.84x   =>  signal/noise ~104x
-```
-✅ **[EVIDENCE] the endpoint tracks the operator's own verdict**: he called V112 *“the best firmware
-yet … least ratcheting ever”* and V122 better still — and the statistic falls 7.10 → 3.88 across
-exactly that pair, after falling 742 → 7.10 over the four builds before it.
-
-### ⭐ WHY THIS DOES NOT CONTRADICT THE RECORDED 20–36x BETWEEN-BUILD FLOOR
-That floor was measured on **absolute band amplitude between routes** — six routes with identical
-control cals spanning 19.9x, another six spanning 36.2x. This is a **within-drive RATIO**, which
-cancels road, tyre, weather, alignment and the speed profile before any cross-build comparison happens.
-**Same lane, different quantity.** ⊕ This is the third time this session that two records looked
-contradictory and turned out to measure different quantities (see also
-`gp-0x6bbe` slope-vs-magnitude). **Check the quantity before calling it a contradiction.**
-
-### ✅ SO V158 CAN BE SCORED AGAINST V122's 3.88
-The pre-registration's *“expect NOT RESOLVED”* stands for **6–9 Hz**. For **18–22 Hz** there is now a
-concrete reference and a concrete prediction:
-```
-   V122 reference        3.88   [1.60, 10.87]
-   V158 predicts         LOWER -- the damper is broadband viscous and opposes motion at 18-22 Hz too
-   detectable if         the move exceeds the ~1.84x within-build scatter
-   no effect looks like  ~3.9, inside [1.60, 10.87]
-```
-
-### ⚠ WHAT THIS RESTS ON — STATED PLAINLY
-**[BELIEF, not EVIDENCE] the 1.84x scatter figure rests on ONE within-build replicate** (V96's two
-routes). It is the weakest link and everything downstream inherits it.
-🛑 **TIME IS COLLINEAR WITH BUILD NUMBER.** Tyre wear, season, road surface and the operator's own
-driving all advance monotonically with build order too. A monotone run of six has a chance probability
-of ~1/360, so the ordering is unlikely to be coincidence — **but “the builds caused it” and “something
-else that also advances with time caused it” are not separated by this data.** The V158 drive is a
-genuine test precisely because V158 is a large, single, *known* change against V122.
 

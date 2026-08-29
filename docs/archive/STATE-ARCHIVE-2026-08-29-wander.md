@@ -327,3 +327,52 @@ between V122 and V158, a move there is attributable to the damper **only because
 byte-identical across the pair** — verified. On any future build that touches BOTH, 18–22 Hz stops
 being attributable.
 
+## ✅✅✅ **THERE IS A WORKING CROSS-BUILD INSTRUMENT AFTER ALL — AND IT HAS TRACKED THE KIT FOR SIX BUILDS**
+The 18–22 Hz within-drive engaged/manual ratio, paired with each route's build tag from its own cache:
+```
+   route  build   18-22 Hz eng/man
+   r78    V91          11.81
+   r7e    V96          10.02
+   r7f    V96          18.46          <- the ONLY within-build replicate
+   r96    V102        742.19          <- peak
+   ra4    V104        327.51
+   ra6    V106         87.17
+   r1e    V107         57.93
+   r22    V112          7.10
+   r24    V122          3.88          <- the build now on the car
+
+   V102 -> V122: SIX consecutive builds, STRICTLY MONOTONE DECREASING, 191x total
+   corr(build number, log10 excess) = -0.920
+   within-build scatter (V96, two routes) = 1.84x   =>  signal/noise ~104x
+```
+✅ **[EVIDENCE] the endpoint tracks the operator's own verdict**: he called V112 *“the best firmware
+yet … least ratcheting ever”* and V122 better still — and the statistic falls 7.10 → 3.88 across
+exactly that pair, after falling 742 → 7.10 over the four builds before it.
+
+### ⭐ WHY THIS DOES NOT CONTRADICT THE RECORDED 20–36x BETWEEN-BUILD FLOOR
+That floor was measured on **absolute band amplitude between routes** — six routes with identical
+control cals spanning 19.9x, another six spanning 36.2x. This is a **within-drive RATIO**, which
+cancels road, tyre, weather, alignment and the speed profile before any cross-build comparison happens.
+**Same lane, different quantity.** ⊕ This is the third time this session that two records looked
+contradictory and turned out to measure different quantities (see also
+`gp-0x6bbe` slope-vs-magnitude). **Check the quantity before calling it a contradiction.**
+
+### ✅ SO V158 CAN BE SCORED AGAINST V122's 3.88
+The pre-registration's *“expect NOT RESOLVED”* stands for **6–9 Hz**. For **18–22 Hz** there is now a
+concrete reference and a concrete prediction:
+```
+   V122 reference        3.88   [1.60, 10.87]
+   V158 predicts         LOWER -- the damper is broadband viscous and opposes motion at 18-22 Hz too
+   detectable if         the move exceeds the ~1.84x within-build scatter
+   no effect looks like  ~3.9, inside [1.60, 10.87]
+```
+
+### ⚠ WHAT THIS RESTS ON — STATED PLAINLY
+**[BELIEF, not EVIDENCE] the 1.84x scatter figure rests on ONE within-build replicate** (V96's two
+routes). It is the weakest link and everything downstream inherits it.
+🛑 **TIME IS COLLINEAR WITH BUILD NUMBER.** Tyre wear, season, road surface and the operator's own
+driving all advance monotonically with build order too. A monotone run of six has a chance probability
+of ~1/360, so the ordering is unlikely to be coincidence — **but “the builds caused it” and “something
+else that also advances with time caused it” are not separated by this data.** The V158 drive is a
+genuine test precisely because V158 is a large, single, *known* change against V122.
+
