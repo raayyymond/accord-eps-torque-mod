@@ -1076,3 +1076,64 @@ moving (post-V102 ρ = −0.94, p = 0.005, in three channels). The ratchet needs
 that lever's gate is one telemetry cell away — **not** a reason to delay a build that addresses the
 other symptom.
 
+## ⭐⭐ **THE ASSIST CURVE IS IN THE IMAGE, THE 2.000 SLOPE CAP **BINDS**, AND GATE 2 PASSES**
+The curve was never unreachable — it is **initialised-data copied ROM→RAM at boot**, which is why
+only 3 `st.h` target the 20-knot block and 2 of those are clears. Found by searching the whole image
+for the shape the decompile requires (10 ascending X bounded by the input clamp 8192, 10 ascending Y
+bounded by the output clamp 12288):
+```
+   0xCE47A  X  0   25   60  100  150  250  450  900 1800 4150
+            Y  0  154  338  460  549  635  702  766  824  857
+            slope 6.16 5.26 3.05 1.78 0.86 0.34 0.14 0.06 0.01
+            max 6.16  vs cap 2.000  =>  BINDS on 3 of 9, over X 0-100
+
+   0xCF372  max slope 16.37  binds 4/9 over X 0-450
+   0xCF3CA  max slope 11.97  binds 3/9 over X 0-150
+   (+ 0xCE4A6 / 0xCF39E / 0xCF3F6 duplicates — the mode-selected pointer-table family)
+```
+✅ **[EVIDENCE] the cap is NOT inert — it clamps the steep low-torque segments on every record**,
+pinning the map's **small-signal gain at exactly 2.000**, which is the **CEILING** value of `s` in the
+loop census. The loop's largest single term therefore sits at its maximum, permanently.
+✅ **[EVIDENCE] all six curve records are byte-identical across the 161 images**, and `0xC6384` reads
+**2048 on all 161** (exact u16 read; an earlier 40-byte window check of mine spanned `0xC63A0`/
+`0xC63AC`, which DID change, and wrongly suggested 5 variants — **that was my error, the cap is
+untouched**).
+
+### ✅ GATE 2 — ANCHORED ON THE MEASURED Q RATIO, NOT A CENSUS PHASE
+⚠ My first pass used the census's `L` phase (−148°) with `P` real-positive. That puts `P·L` in the
+third quadrant and gives `|1−P·L| = 1.92 > 1` — a loop that **ADDS** damping, contradicting the
+measured 93 % cancellation. The phase cannot be pinned (the census says `P`'s phase *“is not in the
+image”*) **and the sign of the whole result depends on it**, so anchor on the measurement instead.
+```
+   MEASURED Q_eff/Q_passive = 40/2.8 = 14.3  =>  |1-P.L| = 0.0700  =>  P.L = 0.9300 at stock
+   [ASSUMPTION, stated] P.L real-positive at the peak -- what the measured ratio REQUIRES,
+   and the standard form for a damping-cancelling loop.
+
+   cap    s       |L|     |1-P.L|   Q ratio    vs stock
+   2048   2.000   2.825   0.0700    14.29      stock
+   1792   1.750   2.575   0.1523     6.57      2.2x MORE damped
+   1536   1.500   2.325   0.2346     4.26      3.4x MORE damped
+   1024   1.000   1.825   0.3992     2.50      5.7x MORE damped
+```
+✅ **MAGNITUDE: PASSES**, and the effect is large. ✅ **PHASE: PASSES** — the map term is a **real
+gain**, so lowering the cap **scales `|L|` without rotating it**; under the real-positive `P·L` the
+measurement requires, `|1−P·L|` can only move away from zero ⇒ **monotonically more damped at every
+cap value, with no value at which it reverses.**
+⚠ **What would falsify the assumption**: if `P·L` were not near the positive real axis, the measured
+14.3x cancellation could not come from this loop at all. **The on-car test is the same either way** —
+lower the cap and see whether the 8.64 Hz torque peak drops below its slope-matched null.
+
+### 🛑 THE FEEL TRADE — AND WHY IT IS NARROWER THAN IT LOOKS
+The cap binds over the **LOW-torque** segments (X 0–100 to 0–450 of a ±8192 range), so lowering it
+means **less assist per unit driver torque near centre ⇒ heavier steering there** — the regime the
+operator asked to keep light. **Stated plainly because it cuts against a standing constraint.**
+⊕ But it is narrower than the constraint's wording suggests: the constraint is about *“max steering
+angular velocity and acceleration”* and *“low apparent mass and friction **to LKAS**”*, and
+- the curve is **UNCAPPED and unchanged above X≈450** ⇒ **peak authority and max rates are untouched**;
+- the map is fed by `clamp(gp-0x4f60) + gp-0x6b4a`, i.e. the **driver torque sensor**, not the LKAS
+  command lane (`gp-0x6b4c`) ⇒ **[BELIEF — `gp-0x6b4a`'s provenance is NOT yet established; if it
+  carries an LKAS-derived offset this claim weakens.]**
+⊕ **Recommended first dose 1536 (1.5x)** — predicted **3.4x** more damping, which clears the
+one-episode detection margin comfortably, and is the smallest step that does. **Not the largest dose:
+the feel cost is real and the operator should meet it in the smallest useful increment.**
+

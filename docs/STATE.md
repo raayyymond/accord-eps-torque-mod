@@ -4,6 +4,46 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **RECALIBRATION: ENGAGEMENT AMPLIFIES 8.4 Hz BY ~3.6x, NOT 15-33x. I QUOTED THE CONFOUNDED FIGURE ALL SESSION.**
+`cs_tq` is the DRIVER TORQUE SENSOR, and when engaged the driver largely is not steering. So an
+engaged-vs-manual torque comparison conflates **engagement** with **hands-off**. Stratifying on
+`cs_press` (steeringPressed) separates them:
+```
+   subset        n_eng  n_man   ratio @ 8.40 Hz    95 % CI (bootstrap over WINDOWS)
+   ALL            2255    339        20.94         [16.29, 41.43]
+   ** hands-ON      68     77         3.58         [ 1.36, 14.92]  <- the FAIR comparison **
+   hands-OFF      1606     56        18.34         [ 5.44, 68.85]
+```
+✅ **The amplification is REAL** — the hands-on CI excludes 1. 🛑 **But it is ~3.6x, not the
+15-33x I have been repeating.** The large numbers are engagement *plus* hands-off, not engagement.
+⊕ **THE KIT'S OWN RECORD HAD IT RIGHT**: [[accord-engagement-amplifies-6-9hz]] gives a band contrast
+of **2.8x**, which sits inside [1.36, 14.92]. **My session figures drifted upward; the record did
+not.** Every earlier statement in this session of the form "engaged-amplified ~15x" should be read
+as **~3.6x [1.36, 14.92]**.
+⚠ The hands-on cell is small (68/77 windows), which is why the CI is wide. A tighter number needs
+matched hands-on exposure, which is a drive request, not an analysis.
+
+### ❌ AND THE 4.7 Hz "CROSSOVER" IS DEAD — IT WAS THE SAME CONFOUND
+I measured engagement SUPPRESSING below ~4.7 Hz and AMPLIFYING above, and started reasoning about
+which firmware element has its phase crossover there (none does: the nearest corners are 16.7, 21.3
+and 36.2 Hz). **The hands-on control kills it:**
+```
+   hands-ON    crossover NOT FOUND in 2-20 Hz    CI [5.83, 18.97] Hz  -- spans the band
+   hands-OFF   crossover 5.38 Hz                 CI [4.59,  6.12] Hz
+```
+⇒ with hands on there is **no detectable crossover**. The suppression below 4.7 Hz was **the driver
+not steering**, not loop dynamics. **The line of reasoning is withdrawn before anything was built on
+it.**
+
+### ➕ WHAT THIS CHANGES FOR THE BUILDS
+Nothing about which cells are right — but it **resizes the target**. The effect to eliminate is
+**~3.6x at 8.4 Hz**, not 15-33x, so:
+- a lever that removes a 3.0x engaged-only dose (the inertia revert, V185) is **the right order of
+  magnitude** to account for it, which strengthens rather than weakens that build;
+- and the drive's detection threshold matters more than I implied: the earlier power check found one
+  15 s pass resolves a **presence/absence** change, and a ~3.6x band move is comfortably inside the
+  **grind** endpoint's power but near the ratchet endpoint's, which needs 2 passes.
+
 ## ❌ **THE FREQUENCY SIGNATURE DOES NOT SETTLE THE V184/V185 FORK — BUT IT SHARPENED THE MEASUREMENT**
 The fork is whether the ratchet is driven by the **inertia lane** (`gp-0x6b26 = K·α`, loop
 contribution ∝ ω²) or by **assist-section loop gain** (a mild broadband filter on the car). Both are
@@ -2125,65 +2165,4 @@ against a standing constraint. Narrower than it sounds: the curve is **uncapped 
 authority and max rates are untouched**, and the map is **driver-torque fed, not the LKAS lane**
 (`0xC616C`=0 ⇒ `gp-0x6b4a`≡0, asserted in the build). 1536 is the **smallest** dose clearing the
 one-episode margin; 1280 and 1024 remain if it reads clean but incomplete.
-
-## ⭐⭐ **THE ASSIST CURVE IS IN THE IMAGE, THE 2.000 SLOPE CAP **BINDS**, AND GATE 2 PASSES**
-The curve was never unreachable — it is **initialised-data copied ROM→RAM at boot**, which is why
-only 3 `st.h` target the 20-knot block and 2 of those are clears. Found by searching the whole image
-for the shape the decompile requires (10 ascending X bounded by the input clamp 8192, 10 ascending Y
-bounded by the output clamp 12288):
-```
-   0xCE47A  X  0   25   60  100  150  250  450  900 1800 4150
-            Y  0  154  338  460  549  635  702  766  824  857
-            slope 6.16 5.26 3.05 1.78 0.86 0.34 0.14 0.06 0.01
-            max 6.16  vs cap 2.000  =>  BINDS on 3 of 9, over X 0-100
-
-   0xCF372  max slope 16.37  binds 4/9 over X 0-450
-   0xCF3CA  max slope 11.97  binds 3/9 over X 0-150
-   (+ 0xCE4A6 / 0xCF39E / 0xCF3F6 duplicates — the mode-selected pointer-table family)
-```
-✅ **[EVIDENCE] the cap is NOT inert — it clamps the steep low-torque segments on every record**,
-pinning the map's **small-signal gain at exactly 2.000**, which is the **CEILING** value of `s` in the
-loop census. The loop's largest single term therefore sits at its maximum, permanently.
-✅ **[EVIDENCE] all six curve records are byte-identical across the 161 images**, and `0xC6384` reads
-**2048 on all 161** (exact u16 read; an earlier 40-byte window check of mine spanned `0xC63A0`/
-`0xC63AC`, which DID change, and wrongly suggested 5 variants — **that was my error, the cap is
-untouched**).
-
-### ✅ GATE 2 — ANCHORED ON THE MEASURED Q RATIO, NOT A CENSUS PHASE
-⚠ My first pass used the census's `L` phase (−148°) with `P` real-positive. That puts `P·L` in the
-third quadrant and gives `|1−P·L| = 1.92 > 1` — a loop that **ADDS** damping, contradicting the
-measured 93 % cancellation. The phase cannot be pinned (the census says `P`'s phase *“is not in the
-image”*) **and the sign of the whole result depends on it**, so anchor on the measurement instead.
-```
-   MEASURED Q_eff/Q_passive = 40/2.8 = 14.3  =>  |1-P.L| = 0.0700  =>  P.L = 0.9300 at stock
-   [ASSUMPTION, stated] P.L real-positive at the peak -- what the measured ratio REQUIRES,
-   and the standard form for a damping-cancelling loop.
-
-   cap    s       |L|     |1-P.L|   Q ratio    vs stock
-   2048   2.000   2.825   0.0700    14.29      stock
-   1792   1.750   2.575   0.1523     6.57      2.2x MORE damped
-   1536   1.500   2.325   0.2346     4.26      3.4x MORE damped
-   1024   1.000   1.825   0.3992     2.50      5.7x MORE damped
-```
-✅ **MAGNITUDE: PASSES**, and the effect is large. ✅ **PHASE: PASSES** — the map term is a **real
-gain**, so lowering the cap **scales `|L|` without rotating it**; under the real-positive `P·L` the
-measurement requires, `|1−P·L|` can only move away from zero ⇒ **monotonically more damped at every
-cap value, with no value at which it reverses.**
-⚠ **What would falsify the assumption**: if `P·L` were not near the positive real axis, the measured
-14.3x cancellation could not come from this loop at all. **The on-car test is the same either way** —
-lower the cap and see whether the 8.64 Hz torque peak drops below its slope-matched null.
-
-### 🛑 THE FEEL TRADE — AND WHY IT IS NARROWER THAN IT LOOKS
-The cap binds over the **LOW-torque** segments (X 0–100 to 0–450 of a ±8192 range), so lowering it
-means **less assist per unit driver torque near centre ⇒ heavier steering there** — the regime the
-operator asked to keep light. **Stated plainly because it cuts against a standing constraint.**
-⊕ But it is narrower than the constraint's wording suggests: the constraint is about *“max steering
-angular velocity and acceleration”* and *“low apparent mass and friction **to LKAS**”*, and
-- the curve is **UNCAPPED and unchanged above X≈450** ⇒ **peak authority and max rates are untouched**;
-- the map is fed by `clamp(gp-0x4f60) + gp-0x6b4a`, i.e. the **driver torque sensor**, not the LKAS
-  command lane (`gp-0x6b4c`) ⇒ **[BELIEF — `gp-0x6b4a`'s provenance is NOT yet established; if it
-  carries an LKAS-derived offset this claim weakens.]**
-⊕ **Recommended first dose 1536 (1.5x)** — predicted **3.4x** more damping, which clears the
-one-episode detection margin comfortably, and is the smallest step that does. **Not the largest dose:
-the feel cost is real and the operator should meet it in the smallest useful increment.**
 
