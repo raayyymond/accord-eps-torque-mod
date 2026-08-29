@@ -461,3 +461,49 @@ of the window bootstrap this session already had to remove.
 median 1.72x, p90 2.93x, and 3.60x at the reference build.** Those are the numbers the V158 drive will
 be judged against, and they were fixed before the drive rather than chosen after it.
 
+## ⚠ **AN ALTERNATIVE FIRST FLIGHT EXISTS — V137, ALREADY BUILT AND UNFLOWN**
+Correlating the measured 18–22 Hz excess against the kit's pre-specified load-bearing cals across the
+eight builds with flown routes:
+```
+   build  18-22Hz   gain  LeverB  knee   K1   alpha2   path2w  b26clamp
+   V91     11.81    3564   5244    600   204    22      1024      511
+   V96     14.24    3564   5244    600   204    22      1024      511
+   V102   742.19    5346    512    300   204    22      1024      511   <- Lever B OFF, worst
+   V104   327.51    5346   5244    300   204    22      1024      511   <- Lever B restored
+   V106    87.17    5346   5244    300   204    22      1024      511
+   V107    57.93    5346   5244    300   204    22      1024      511
+   V112     7.10    5346   5244   1800   612    14      1024      511
+   V122     3.88    5346   5244   3000  1020     8      1024      511
+
+   knee r = -0.730 | K1 r = -0.648 | alpha2 r = +0.657 | the rest are constant
+```
+🛑 **EXPLORATORY ONLY: n = 8, and knee/K1/alpha2 moved TOGETHER at V112 and V122.** They are
+collinear and **cannot be separated by this data.** No causal claim is made for any one of them.
+
+### ✅ WHAT IS SOLID ENOUGH TO ACT ON
+Two things survive the confounding:
+1. **Lever B off vs on**: V102 (512) reads **742**, the worst in the set; restoring it at V104 drops to
+   **328**. Consistent with V88's measured single-variable result. Lever B stays.
+2. **The knee/K1/alpha2 axis moved the endpoint twice**, 57.9 → 7.1 → 3.88. Whatever the split between
+   the three, **that axis is the only one with a replicated on-car association with this endpoint.**
+
+### ⚠ SO THERE IS A DEFENSIBLE ALTERNATIVE TO FLYING V158 FIRST
+```
+   V137   V122 + alpha2 8 -> 5    ONE halfword (5 bytes with CRC)   BUILT, UNFLOWN
+   V138   V122 + alpha2 8 -> 2    ONE halfword                      BUILT, UNFLOWN
+```
+**The two builds answer different questions, and both are legitimate:**
+
+| | V158 | V137 |
+|---|---|---|
+| rationale | the golden model's own damper prescription, sized at the measured operating point | continue the axis that has twice moved the endpoint on-car |
+| mechanism | **strong** — broadband viscous damping, quantified in ct/(deg/s) | **weak/confounded** — collinear with knee and K1 |
+| on-car history at creep | **none** | **two steps, both in the right direction** |
+| size | 6 halfwords | 1 halfword |
+
+✅ **V158 remains my recommendation**, because its rationale is mechanistic and its dose is sized
+against a measured operating point, where V137's support is an n=8 correlation on collinear cals.
+⚠ **But if the operator prefers to continue what has demonstrably been working rather than test a new
+mechanism, V137 is the build for that, it is already built, and it is one halfword.** That is his call,
+not mine, and it is cheap either way — both are cal-only and reversible.
+

@@ -4,6 +4,44 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ❌ **THE DELIVERY PATH HAS NO DAMPING LEVER EITHER — THE SHAPER IS A PURE PASS-THROUGH**
+Followed the mapped bridge to the motor side, where the record says the resonance actually lives
+([[accord-ratchet-is-a-lightly-damped-resonance]]). **Both stages are closed.**
+
+### ❌ THE "SHAPER" (`gp-0x6acc` → `gp-0x6b08`) IS INERT — `FUN_00042af8` @0x43206, ONE writer
+```
+   gate  = (|gp-0x6acc| <= 8192)          HARDCODED store-zero, not a cal
+   mode  = cal[0xC64C8]
+     mode 1 -> gp-0x6b08 = cal[0xC61D4]                      (a constant)
+     mode 2 -> gp-0x6b08 = clamp(cal[0xC61D4] + gated, +-12288)
+     else   -> gp-0x6b08 = gated                             (pass-through)
+
+   0xC64C8 mode    = 0     VIRGIN on stock/V122/V158/V173/V175
+   0xC61D4 offset  = 0     VIRGIN
+```
+⇒ **LIVE MODE IS 0 with a zero offset ⇒ the stage is a PURE PASS-THROUGH. There is nothing to
+tune.** Its only structure is a hardcoded ±8192 store-zero gate.
+
+### ❌ THE INTEGRATOR (`gp-0x6b08` → `gp-0x6b98`) HAS NO TUNABLE GAIN
+Accumulator at `gp-0x3570`, saturated against `cal[0xC61DC] << 15` and shifted `>>15` on output.
+**Every gain in the stage is a hardcoded shift** — the only cals are an **anti-windup LIMIT**
+(`0xC61DC`) and a post gain feeding a monitor cell (`0xC61DA` = 1092).
+⇒ an integrator limit governs **large-signal windup, not small-signal damping** ⇒ lowering it clips
+authority without touching the resonance. **Not a damping lever.**
+⊕ And this is the region whose **motor-rate cap V41 already FALSIFIED** (V40 bricked, V41 booted
+clean and killed the hypothesis) — so it is also not new ground.
+
+### 🛑 WHAT THIS MEANS FOR THE SEARCH
+Both sides of the chain are now enumerated and closed:
+```
+   ASSIST / OBSERVER side   six-term sum (only w[3] selective, HELD) - notch - residual LERP   ALL CLOSED
+   DELIVERY / MOTOR side    shaper (pass-through) - integrator (no gain, limit only)           ALL CLOSED
+```
+⇒ **the only untouched territory left is the FOC / current loop itself.** That is genuinely
+different ground, but it is also the one place where a mistake is a **motor stability** problem rather
+than a feel problem, and the kit has never edited there. **I will not cut anything in the FOC without
+saying first exactly what it could break.**
+
 ## ❌❌ **THE ENTIRE AMPLITUDE-SELECTIVITY LEAD IS CLOSED — ALL THREE BRANCHES, DOUBLY**
 The last surviving branch was the small-signal Y floors. **They are dead twice over**, read from the
 image with the tp off-by-0x1000 guarded (tp = 0xBF000 ⇒ tp+0x713e is **0xC613E**, not 0xC713E):
@@ -2162,50 +2200,4 @@ calibration.
 ⭐ **THE LESSON**: I offered a choice where the kit already had the arithmetic to decide. **Before
 handing the operator an “either/or”, check whether an existing tool can price both options** — here it
 took one call to a simulator that was written for exactly this question.
-
-## ⚠ **AN ALTERNATIVE FIRST FLIGHT EXISTS — V137, ALREADY BUILT AND UNFLOWN**
-Correlating the measured 18–22 Hz excess against the kit's pre-specified load-bearing cals across the
-eight builds with flown routes:
-```
-   build  18-22Hz   gain  LeverB  knee   K1   alpha2   path2w  b26clamp
-   V91     11.81    3564   5244    600   204    22      1024      511
-   V96     14.24    3564   5244    600   204    22      1024      511
-   V102   742.19    5346    512    300   204    22      1024      511   <- Lever B OFF, worst
-   V104   327.51    5346   5244    300   204    22      1024      511   <- Lever B restored
-   V106    87.17    5346   5244    300   204    22      1024      511
-   V107    57.93    5346   5244    300   204    22      1024      511
-   V112     7.10    5346   5244   1800   612    14      1024      511
-   V122     3.88    5346   5244   3000  1020     8      1024      511
-
-   knee r = -0.730 | K1 r = -0.648 | alpha2 r = +0.657 | the rest are constant
-```
-🛑 **EXPLORATORY ONLY: n = 8, and knee/K1/alpha2 moved TOGETHER at V112 and V122.** They are
-collinear and **cannot be separated by this data.** No causal claim is made for any one of them.
-
-### ✅ WHAT IS SOLID ENOUGH TO ACT ON
-Two things survive the confounding:
-1. **Lever B off vs on**: V102 (512) reads **742**, the worst in the set; restoring it at V104 drops to
-   **328**. Consistent with V88's measured single-variable result. Lever B stays.
-2. **The knee/K1/alpha2 axis moved the endpoint twice**, 57.9 → 7.1 → 3.88. Whatever the split between
-   the three, **that axis is the only one with a replicated on-car association with this endpoint.**
-
-### ⚠ SO THERE IS A DEFENSIBLE ALTERNATIVE TO FLYING V158 FIRST
-```
-   V137   V122 + alpha2 8 -> 5    ONE halfword (5 bytes with CRC)   BUILT, UNFLOWN
-   V138   V122 + alpha2 8 -> 2    ONE halfword                      BUILT, UNFLOWN
-```
-**The two builds answer different questions, and both are legitimate:**
-
-| | V158 | V137 |
-|---|---|---|
-| rationale | the golden model's own damper prescription, sized at the measured operating point | continue the axis that has twice moved the endpoint on-car |
-| mechanism | **strong** — broadband viscous damping, quantified in ct/(deg/s) | **weak/confounded** — collinear with knee and K1 |
-| on-car history at creep | **none** | **two steps, both in the right direction** |
-| size | 6 halfwords | 1 halfword |
-
-✅ **V158 remains my recommendation**, because its rationale is mechanistic and its dose is sized
-against a measured operating point, where V137's support is an n=8 correlation on collinear cals.
-⚠ **But if the operator prefers to continue what has demonstrably been working rather than test a new
-mechanism, V137 is the build for that, it is already built, and it is one halfword.** That is his call,
-not mine, and it is cheap either way — both are cal-only and reversible.
 
