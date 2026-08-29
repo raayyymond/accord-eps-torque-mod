@@ -29,6 +29,8 @@ magnitude channel for this cell exists anywhere in the corpus, so it has never b
 | smooth and spread | the relay lives elsewhere — worth as much |
 | railed at ±8192 | the observer is saturated, and `0xC63AA` cannot be used safely at all |
 
+🛑 **Score this one STRATIFIED BY STEERING ANGLE, never pooled.** The LERP behind `gp-0x6b70` is not a fixed curve — `FUN_000389ec` rebuilds it every pass by float arithmetic from `gp-0x6a10` (absolute steering angle) and three other live cells. So the stage can be a relay at one angle and smooth at another, and a pooled statistic would average the answer away.
+
 ## V202 — the same fix without the instrument
 
 ```

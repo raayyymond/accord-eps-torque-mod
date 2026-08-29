@@ -4,6 +4,53 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **THE RELAY CURVE IS BUILT AT RUNTIME — it cannot be read from the image, so V205's drive is REQUIRED**
+
+I set out to answer the relay question statically and make V205 unnecessary. **The answer is a
+definitive no, and the reason is worth more than the original question.**
+
+### THE TWO HOPS END IN LIVE VEHICLE STATE, NOT IN FLASH
+`FUN_00038148`'s LERP reads X from `gp-0x64b6..` and Y from `gp-0x641c..`. `FUN_000389ec` fills both:
+```
+   0x39508   movea -0x3714, gp, ep        <-- ** ep = gp-0x3714, RAM staging, NOT a flash table **
+   0x3950C   sld.hu 0x0, ep, r11              Y[0] <- gp-0x3714
+   0x39522   st.h   r11, -0x641c, gp          ...
+   0x39548   st.h   r9,  -0x64b8, gp          X[0] <- gp-0x373c
+   0x39572   st.h   r16, -0x64b6, gp          X[1] <- gp-0x373a
+```
+and the staging itself is **COMPUTED, not copied**. Immediately before:
+```
+   ld.hu -0x6982 / -0x6a10 / -0x6a64 / -0x6984, gp     four LIVE cells
+   cvtf.uws  x4                                        u16 -> float
+   movhi 0x3a80, r0, r6        = 0.0009765625 = 1/1024     (Q10 -> float)
+   mov   0x3dcccccd, r12       = 0.1f
+   mulf.s ...                                          FLOAT arithmetic
+   add 0x1, r14 / cmp 0x9, r14 / bgt / jr 0x39258       TEN iterations, one per knot
+```
+⇒ **`gp-0x6a10` is ABSOLUTE STEERING ANGLE** (already in the record). **The curve that decides
+whether `gp-0x6b70` is a relay is re-derived every pass from steering angle and three other live
+cells.** There is no static curve in the image to read. **V205's drive is REQUIRED, not merely
+convenient.**
+
+### ⭐ **AND THIS IS ITSELF THE MORE INTERESTING FINDING**
+**A LERP that reshapes with steering angle means the stage's CHARACTER is condition-dependent** — it
+can be a relay at one steering angle and smooth at another. ⇒ **A single static answer never existed**,
+and the right endpoint for V205 is not *"is it a relay"* but **"over what conditions does it become
+one"**, stratified by steering angle. That also fits a symptom the operator reports as coming and
+going rather than being uniformly present.
+⚠ **[BELIEF, not evidence]** — the reshaping is EVIDENCE (it is in the code); that it explains the
+ratchet's intermittency is a hypothesis V205 can test.
+
+### 🛑 **PROCESS — I HAND-ROLLED A gp SCAN AND HIT THE RECORDED ODD/EVEN TRAP**
+My scan reported **`gp-0x3738`: 0 hits** and **`gp-0x373a`: 1 hit** for cells the disassembly plainly
+reads at `0x39556`/`0x3955A`/`0x39560`/`0x39564`. Cause: `ld.hu -0x373a, gp, r16` encodes
+**`hw2 = 0xC8C7`, not `0xC8C6`** — the `(disp | 1)` odd-displacement form `CLAUDE.md` names as a
+recurring trap. **A raw `find(pack('<H', disp))` is blind to half the sites.**
+✅ **The kit ALREADY HAS the correct scanner** — `analysis-2020accord/verify/scan_gp_relative_no_whitelist.py`
+— whose own opcode census prints *"op 0x3F ld.hu ← MISSED by the old whitelist"*. **Use it. Do not
+hand-roll a displacement scan.** The null it prevents is the expensive kind: *"0 hits"* reads as
+*"dead cell"*.
+
 ## 🛑 **A SHAPE STATISTIC ON A BIT-FIELD LOOKED LIKE A FINDING — the relay question needs an instrument**
 
 ### THE QUESTION, AND WHY IT MATTERS
@@ -2178,53 +2225,4 @@ the axis is unknown and the edit is a bet.
 🛑 **No damper build should be attempted until `gp-0x6a5e` and `gp-0x6ac0` are characterised on
 the corpus** — their distributions during engaged creep ratcheting decide whether any of these knots
 is even reachable.
-
-## ✅🛑 **MODE-PROOFED AND FINAL: THE DAMPER IS LIVE AT CREEP WHEN ENGAGED, DEAD IN MANUAL**
-**This point flipped three times. It is now pinned by disassembly and by the pointer table, and this
-section supersedes every earlier statement about it.**
-
-### THE INDEX, PINNED BY DISASSEMBLY
-```
-   0x34502  ld.bu  0x63fd, gp, r13     ; the MODE INDEX byte, at gp+0x63FD
-   0x34506  mov    0xc9e9c, r16        ; FactorC pointer table
-   0x3450c  shl    0x2, r13            ; index * 4
-   0x3450e  add    r16, r13
-   0x34510  ld.w   0x0, r13, ep        ; -> the per-mode record
-```
-`gp+0x63FD` is **the same byte `FUN_00036c12` uses for the `0xCBE74` dereference**, and this car runs
-**mode 24 = MANUAL, modes 26/27 = ENGAGED** ([[accord-car-is-tvca4-mode-24-26]]).
-
-### THE RECORDS AT THE RIGHT INDICES (V181 vs stock)
-```
-   FactorC 0xC9E9C[m]        X                          Y
-     m24 -> 0xD67E4   [2240,3840,5120,8960]   [  0,234,429,908]   STOCK-IDENTICAL
-     m26 -> 0xD77D0   [2240,3840,5120,8960]   [429,234,429,908]   Y[0] 0 -> 429
-     m27 -> 0xD77E4   [2240,3840,5120,8960]   [426,233,426,875]   Y[0] 0 -> 426
-   FactorE 0xC9F84[m]
-     m24 -> 0xD6820   [  60,400,2500,4000]    [  0,140,539,927]   STOCK-IDENTICAL
-     m26 -> 0xD780C   [  12,400,2500,4000]    [  0,539,539,927]   X[0] 60->12, Y[1] 140->539
-     m27 -> 0xD7820   [  12,400,2500,4000]    [  0,539,539,927]   same
-```
-🛑 **X[0] = 2240 = 35.0 km/h and Y[0] is the BELOW-RANGE FALLBACK** ⇒ below 35 km/h:
-**manual returns 0 (dead), engaged returns 429.** During an 8 Hz ratchet the oscillation itself makes
-~50 deg/s, which clears FactorE's knee, so
-**ch0 = (429 x ~310) >> 10 = ~129 — the damper IS working at creep WHEN ENGAGED.**
-
-### 🛑 THE THREE FLIPS, RECORDED SO THIS STOPS
-1. I read `0xD77DA`/`0xD77EE` directly and said the damper is live — **that was RIGHT.**
-2. I resolved the pointer table at **indices 0..3**, found stock values, and retracted — **that
-   retraction was WRONG.** Indices 0..3 are some other mode set entirely.
-3. Resolving at the **actual mode indices 24/26/27** returns exactly the `0xD77xx` records from (1).
-⊕ **THE LESSON IS NOT "resolve the pointer table" — I did that and still got it wrong. It is:
-RESOLVE IT AT THE MODE INDEX THE CAR ACTUALLY RUNS.** A pointer table read at index 0 is as wrong as
-no pointer table at all. [[accord-car-is-tvca4-mode-24-26]] RULE 7 exists for exactly this.
-
-### ✅ WHAT IS STILL AVAILABLE, NOW MODE-PROOFED
-FactorC m26/m27 `Y[0]` is **429/426 against an in-range maximum of 908**, so creep damping can be
-raised ~2x by moving the fallback. ✅ The knot-step worry is **measured away**: 272 crossings of
-35 km/h vs 1069 controls give a median activity ratio **1.030** against a permutation null of
-**[0.863, 1.190]** — the knot sits exactly on the smooth speed trend, so knot discontinuities in this
-family are not detectable on-car.
-⊕ **Manual (m24) is stock and stays stock** — so this lever is **ENGAGED-ONLY**, which also makes it
-separable on a drive by the same engaged-vs-manual contrast the card already uses.
 
