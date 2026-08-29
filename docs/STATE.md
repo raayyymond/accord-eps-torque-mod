@@ -4,6 +4,24 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## 🛑 **TWO COMMITS CARRY THE WRONG MESSAGE — STALE FILES IN THE JOB TMP DIRECTORY**
+🛑 **`068aace3` is titled *“The 511 ceiling is not a hard limit … V132 lifts both”*. Its actual
+content is the flash-readiness section of `DRIVE-CARD-V173.md` (30 insertions, one file).** An earlier
+commit had the same defect and was caught before pushing.
+
+**Cause, diagnosed:** this job's tmp directory still holds `m7x`/`m8x` message files from a **previous
+session** (`m84`–`m89` all present). My pattern of *write a message file, then `git commit -F` it*
+silently used **stale content** on any tick where I skipped the write step — `git commit -F m80.txt`
+**succeeded** against a V132 message instead of failing as it would have on a missing file.
+
+✅ **Fixed forward, not by force-push.** The bad message is already on `origin`, and its **tree is
+byte-identical to what was intended** — verified by `git diff --stat HEAD origin/main` returning
+empty. Rewriting pushed history to correct a cosmetic message is not worth the risk, so the record
+lives here instead.
+⊕ **Message files are now named distinctly** (`msg-<topic>.txt`) and written immediately before use.
+⊕ **If you are reading `068aace3` in the log: ignore its title.** It adds the flash-readiness section
+to the V173 drive card and nothing else. Nothing about V132 or the 511 ceiling changed in it.
+
 ## ⭐⭐⭐ **A BLIND CAL SCAN FINDS THE GRIND'S LEVER — AND NOTHING AT ALL FOR THE RATCHET**
 Every lever this session came from reasoning about structure. The complementary search was still
 untried: with **18 build-attributed routes** and each build's image on disk, correlate **every 16-bit
