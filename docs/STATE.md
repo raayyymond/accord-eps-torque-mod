@@ -1,5 +1,67 @@
 # STATE — living current state of the kit
 
+## ⭐⭐ **A SIGN-AGREEMENT GATE SITS DIRECTLY ON THE LKAS COMMAND PATH — UPSTREAM OF THE GAIN**
+Chasing symptom B's broadband source into the forward path found a **hard switching nonlinearity on
+the LKAS command itself.** Disassembled from `0x2A1C0`; the region is **structurally identical to
+V122** (only the 2 gain-cal bytes at `0x2A1F0-1` differ, `746c`→`7cd0`), so this reads true for the
+flying build.
+```asm
+   0x2a1ca  ld.hu 0x71b8, tp, r8      ; cal(0xC61B8) = the pre-gain DEADBAND (102)
+   0x2a1ce  subr  r0, r8              ; -deadband
+   0x2a1d0  cmp   r8, r9
+   0x2a1d2  bge   0x2a1e2             ; inside the deadband -> ZERO
+   0x2a1d4  ld.h  -0x6b30, gp, r13    ; the PREVIOUS stored output
+   0x2a1d8  mov   r9, r6
+   0x2a1da  mul   r13, r6, r0         ; r6 = prev x current
+   0x2a1de  cmp   r0, r6
+   0x2a1e0  bgt   0x2a1e6             ; product > 0  -> pass through
+   0x2a1e2  mov   0x0, r9             ; ELSE -> FORCE THE COMMAND TO ZERO
+   0x2a1e6  mul   r14, r9, r0  / sar 0xf / sxh
+   0x2a1ee  ld.h  <gain>, tp, r7      ; 0xC6CD0 on V122, 0xC646C on stock (V57 moved it)
+   0x2a206  st.h  r9, -0x6b30, gp     ; stored back -> becomes next tick's `prev`
+```
+⇒ **[EVIDENCE] the LKAS command is FORCED TO ZERO whenever its sign disagrees with the previous
+output's sign.** A signal zeroed on sign disagreement has **step discontinuities**, which is
+precisely a broadband generator.
+⇒ **⭐ AND THE GATE IS UPSTREAM OF THE GAIN MULTIPLY** (`0x2a1e2` precedes `0x2a1ee`), so the
+**discontinuity amplitude scales with the gain** ⇒ **broadband ∝ gain**, which is the shape symptom B
+shows (measured ladder 1× −0.04 · 4× 0.84 · 6× 1.13 · 8× 2.24 dB).
+⊕ It is **engagement-conditional by construction** — there is no LKAS command when disengaged —
+matching *stock does not fire, we do.*
+
+### 🛑 WHAT I WILL NOT ASSERT — AND WHY NOBODY SHOULD BUILD ON THIS YET
+**[UNRESOLVED] it READS as though it could latch.** If `prev` ever becomes 0 then `prev × current`
+is 0, which fails the strict `> 0` test, forcing 0 again — a self-holding zero. **LKAS demonstrably
+works**, so one of these must be true and I have not established which:
+```
+   (a) the SECOND store to gp-0x6b30 at 0x2A900 resets it on another path   (2 stores exist)
+   (b) r14 / r6 are not what this 48-byte window implies
+   (c) an entry branch (0x2a1c8 bgt -> 0x2a1d4) bypasses the deadband leg and changes the state
+```
+🛑 **Read the WHOLE of `FUN_00028ea6` before proposing anything here.** This is exactly the
+*decompile-first* rule: I formed this claim from a 48-byte assembly window, which is the method the
+kit has recorded as its most expensive mistake generator. **The instruction sequence is EVIDENCE;
+the behavioural reading is BELIEF.**
+
+### ⚠ AND THERE IS NO CAL ON THE GATE ITSELF
+The sign test is `mul` + `cmp r0` + `bgt` — **hard-coded, no calibration operand.** Only the
+**deadband** `0xC61B8` = 102 gates entry, and the record already files it
+([[reference-accord-pregain-deadband-c61b8]], *"ELIMINATED — fixed 102-count deadband"*).
+⇒ **removing or softening the sign gate would be an in-place instruction edit** — the class that
+bricked V24, V27 and V48B — **and it is NOT proposed.**
+⇒ **[NEXT STEP, cheap and safe] read `FUN_00028ea6` in full and settle the latching question.**
+If it does not latch, this is the best-shaped symptom-B mechanism found so far; if it does, my
+reading is wrong and the finding collapses.
+
+### ✅ AND `0xC6194` IS CLOSED AS A SYMPTOM-B LEVER
+`FUN_00026c80`'s **only caller is `FUN_0002214a` = TASK 1, the confirmed 1 kHz task.**
+⇒ `cal(0xC6194)` = 3 counts/tick at **1 kHz** = 3000 counts/s, against a state clamped at
+±cal(`0xC6192`)=2048 / ±cal(`0xC6198`)=3072 ⇒ **full-scale slew ≈ 2 s.**
+⇒ **that path is ALREADY heavily smoothed and cannot be a broadband source. CLOSED.**
+⊕ **This also softens my flag from last turn**: the memory's operative claim is *"no live
+**LKAS-specific** slew limit"*, and this limit is on the **assist-arbitration sum**, not the LKAS
+command ⇒ **the memory's claim stands**; only its *"output ×0"* phrasing mismatches the code.
+
 ## 🛑🛑 **GHIDRA'S `code.bin` IS THE *STOCK* IMAGE — EVERY DECOMPILE THIS SESSION WAS OF STOCK**
 Chasing symptom B I hit a Python-vs-Ghidra disagreement and adjudicated it. **Both tools were
 right; they were reading different images.**
