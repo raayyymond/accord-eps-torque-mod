@@ -1,5 +1,55 @@
 # STATE — living current state of the kit
 
+## 🛑🛑🛑 **ROOT-CAUSE CANDIDATE: A 5.12x GAIN SWITCH TOGGLING AT TASK RATE INSIDE A CONFIRMED PUMP**
+Tracing the counter's increment and clear paths to their task roots settles the time course that
+was left open — and it is far more interesting than a latch.
+```
+   INCREMENT   FUN_00041d56  <-  FUN_0002214a   = TASK 1, the CONFIRMED 1 kHz task
+   CLEAR       FUN_0003bcb2  <-  FUN_0003debc <- FUN_000568d0 <- FUN_00023d24 <- FUN_00022ca0
+                                              = TASK 5, >= 250 Hz, best fit 500 Hz
+   SELECT      0x3AB98   ld.bu -0x671d, gp, r6 ; cmp r0, r6
+                         gp-0x671d == 0  ->  cal(0xC6446)      gp-0x671d != 0  ->  cal(0xC6442)
+```
+⇒ **`gp-0x671d` is INCREMENTED at 1 kHz by one task and CLEARED at ~500 Hz by another.**
+⇒ **it is NOT a drive-long latch — it is a flag that can TOGGLE AT TASK RATE.**
+⇒ and it selects between two r24 multipliers **5.12× apart**, in a lane whose polarity
+(`gp-0x6752 = −1`, verified three ways including on-car) makes it a **CONFIRMED PUMP**.
+
+### ⭐ **A 5.12× GAIN SWITCHING AT HUNDREDS OF HERTZ INSIDE A POSITIVE-FEEDBACK LANE**
+That is a **switching nonlinearity**, and it is a textbook mechanism for a rough, grinding,
+ratcheting feel. ⊕ It also explains why the symptom is **intermittent and route-dependent**: the
+toggle rate depends on how often the `|x| ≥ cal(0xC61FA)=5530` threshold is being crossed, which
+depends on the road.
+
+### ✅ AND THE BUILD HISTORY LINES UP EXACTLY
+```
+   STOCK    512 <-> 1024    a 2.00x switch   -- the mechanism is in HONDA's own calibration
+   V88     5244 <-> 1024    a 5.12x switch   -- V88 made an EXISTING switch 2.6x WORSE
+   V122    5244 <-> 1024    unchanged        -- it is on the car RIGHT NOW
+   V149    1024 <-> 1024    NO SWITCH        -- the two branches become IDENTICAL
+```
+⇒ **V149 does not reduce the switching. It ELIMINATES it**, and it does so regardless of how fast
+the counter toggles, because both branches return the same value.
+⇒ **V149 is now the strongest-motivated build of the session**, and it is **2 bytes, cal-only,
+outside the bricking class, and safe by construction** (it also reduces a pump 5.12× in the
+count==0 regime).
+
+### EVIDENCE vs BELIEF — STATED PRECISELY
+```
+   [EVIDENCE] increment in task 1 (1 kHz) and clear in task 5 (~500 Hz), both by call chain
+   [EVIDENCE] the two branches differ by 5.12x on V122 and by 2.00x on stock
+   [EVIDENCE] the lane's polarity is -1 (verified 3 ways, including on-car)
+   [BELIEF]   that this switching is what the operator HEARS.  Plausible and mechanically apt --
+              but no measurement ties it to his symptom, and this kit has repeatedly shown that a
+              compelling mechanism is not a cause.
+```
+⚠ **It partially reverts V88, which he reported as a fix.** If grinding gets WORSE, V88's high
+value was doing something and the answer is a value **between** 1024 and 5244 — but note that **any**
+value other than 1024 **restores the switch**, so a middle value trades switch depth against
+whatever V88 bought.
+⭐ **V148 measures the toggle directly** (its probe reads `gp-0x671d` via the even `gp-0x671E`) —
+**V149 removes the switch, V148 proves it was switching.**
+
 ## 🛑🛑 **CORRECTION: "THE COUNTERS NEVER RESET WITHIN A DRIVE" IS NOT ESTABLISHED**
 The section above asserts that the fault counters latch for the whole drive and only clear on an
 init path, and builds the noise-floor explanation on it. **That assertion came from a SINGLE
