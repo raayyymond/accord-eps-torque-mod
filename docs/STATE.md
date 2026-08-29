@@ -1,5 +1,41 @@
 # STATE — living current state of the kit
 
+## ✅ **ALL 24 UNFLOWN BUILDS TRIAGED AGAINST THE DETECTION FLOOR — ONLY V138 CLEARS IT**
+Swept every built-but-unflown image through `eps_closed_loop_sim.ratio_filter`.
+```
+   V137   alpha2 8->5    lane ratio @20Hz 0.7462   x1.34 reduction   BELOW the 1.72x floor
+   V138   alpha2 8->2    lane ratio @20Hz 0.3364   x2.97 reduction   CLEARS
+   the other 22 builds -- V139..V167, including V158/V160/V164/V165/V167 --
+       no change on the gp-0x6b26 lane, so this simulator cannot price them
+```
+✅ That is a **limit of the tool, not a defect in those builds**: `ratio_filter` covers the b26 lane
+only. V158's damper is `gp-0x6bd0`, Lever B is r24, the deadband builds are elsewhere. And the golden
+model does not simulate the damper cascade either — it takes `gp-0x6bd0` as an *input* to the
+aggregator. **So V158's prediction rests on the physical-units argument (0.000 → 1.05–1.96 ct/(deg/s)
+net), and no tool in the kit can convert that into a predicted band ratio.**
+
+### ⚠ WHICH EXPOSES A REAL TENSION, WORTH STATING RATHER THAN HIDING
+```
+                  mechanism                     instrumented outcome
+   V158   STRONGEST -- broadband viscous        UNPREDICTABLE, and likely below the floor
+          damping, quantified, targets the      (the 6-9 Hz band resolves 1/9 routes;
+          actual symptom at the actual band)     18-22 Hz needs a ~3.6x move at V122)
+   V138   WEAKER -- an EMA corner moved from    PREDICTED x2.97, tool-backed, CLEARS the floor
+          19.9 Hz to 5.0 Hz
+```
+⇒ **For a drive meant to FIX the car, V158 is the better bet.** Its mechanism is the strongest in the
+kit and it is the first build ever to deliver damping where the symptom lives.
+⇒ **For a drive meant to LEARN something instrumented, V138 is more informative** — it is the only
+unflown build whose predicted effect clears the measured floor.
+✅ **This does not reopen the V137 question**: V137 is below the floor on the same arithmetic and stays
+withdrawn. **V158 remains the recommendation**, because the pre-registration's PRIMARY endpoint is the
+operator's report, not the instrument — and what he feels can move even when the band ratio cannot
+resolve it. **V138 is the follow-up if he wants a number rather than a verdict.**
+
+⭐ **THE GENERAL POINT**: *“which build should fly”* and *“which build will produce a readable
+measurement”* are **different questions with different answers**, and this kit has been conflating
+them. Naming both, per build, is more useful than ranking builds on one axis.
+
 ## ✅✅ **THE V158-vs-V137 AMBIGUITY IS RESOLVED — V137 IS PREDICTED BELOW THE INSTRUMENT FLOOR**
 Last tick I handed the operator a choice between V158 and V137 and called it *“his call”*. **That was
 premature** — the kit's own closed-loop simulator can price alpha2, and it says the two are not
