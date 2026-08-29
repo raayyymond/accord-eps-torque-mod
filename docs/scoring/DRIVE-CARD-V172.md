@@ -104,3 +104,19 @@ routes, exactly like the ratchet. What separates them is the **shape across the 
 - **both fall about equally** ⇒ V158's damper did it.
 
 Free from the same episode — no extra exposure needed.
+
+---
+
+## THE TWO SYMPTOMS READ BEST AT DIFFERENT COMMAND LEVELS
+
+| | strongest at | excess there | note |
+|---|---|---|---|
+| **ratchet** 5–12 Hz | **high** command (1500+ ct) | 58.1 | monotone — keeps growing with command |
+| **grind** 15–25 Hz | **mid** command (600–1500 ct) | 12.6 | **dies above it** (6.0 at 1500+), consistent with saturation |
+
+⇒ a pass spent entirely at high command reads the ratchet well and **under-reads the grind**. The
+slow varied lap the card already asks for covers both — this is *why*. **Take the grind verdict from
+the mid-command windows**, not pooled across the whole pass.
+
+Both peaks are fixed in frequency (grind CV 2.1 % across command, ratchet 7.0 %), so neither verdict
+depends on finding the peak in the right place.
