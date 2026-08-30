@@ -63,17 +63,30 @@ def smooth_med(y, x, width):
 
 
 def can_for(imu_path):
-    """per-segment CAN cache if it exists, else the ROUTE-level one (same t0)"""
+    """per-segment CAN cache if it exists, else the ROUTE-level one (same t0).
+
+    🛑 Caches live under BOTH kit roots. The 6x/8x routes (ra4/ra5/ra6, r95/r96) keep their CAN
+    caches under analysis-2020accord/_scratch/cache/ while their IMU caches are written next to the
+    repo root, so looking only beside the IMU file silently drops exactly the routes that carry the
+    gains the recommended build runs at.
+    """
     d = os.path.dirname(imu_path)
     seg = os.path.basename(imu_path).replace('_imu.npz', '')
-    p = os.path.join(d, seg + '.npz')
-    if os.path.exists(p):
-        return p, seg
     m = re.match(r'^(r[0-9a-fx]+?)s?\d*$', seg)
-    if m:
-        p = os.path.join(d, m.group(1) + '.npz')
+    route = m.group(1) if m else seg
+    dirs = [d]
+    for root in (REPO, os.path.join(REPO, 'analysis-2020accord')):
+        cand = os.path.join(root, '_scratch', 'cache', route)
+        if cand not in dirs:
+            dirs.append(cand)
+    for dd in dirs:
+        p = os.path.join(dd, seg + '.npz')
         if os.path.exists(p):
-            return p, m.group(1)
+            return p, seg
+    for dd in dirs:
+        p = os.path.join(dd, route + '.npz')
+        if os.path.exists(p):
+            return p, route
     return None, seg
 
 

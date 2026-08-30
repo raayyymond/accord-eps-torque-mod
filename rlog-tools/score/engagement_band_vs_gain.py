@@ -66,7 +66,10 @@ WF = np.arange(3.0, 45.0, 0.25)
 
 
 def curves_by_route():
-    imus = sorted(glob.glob(os.path.join(SP.REPO, '_scratch', 'cache', '*', '*_imu.npz')))
+    # caches live under BOTH kit roots -- the 6x/8x routes are under analysis-2020accord/
+    imus = sorted(glob.glob(os.path.join(SP.REPO, '_scratch', 'cache', '*', '*_imu.npz')) +
+                  glob.glob(os.path.join(SP.REPO, 'analysis-2020accord', '_scratch', 'cache',
+                                         '*', '*_imu.npz')))
     byroute = collections.defaultdict(list)
     for p in imus:
         m = re.match(r'^(r[0-9a-fx]+?)s?\d*$', os.path.basename(p).replace('_imu.npz', ''))

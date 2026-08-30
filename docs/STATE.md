@@ -66,6 +66,24 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ⚠⭐⭐⭐⭐ **THE NOTCH IS AIMED ON 4× DATA AND THE CORPUS CANNOT TEST WHETHER IT TRANSFERS TO 8×. The directional hint in the record is reassuring, and it is a hint, not a measurement.**
+>
+> **Every route in the IMU engagement profile V241's notch was optimised against is a 4× build** (r5e/V75 → r73/V88, all pre-V100). The recommended build **V242 runs at 8×**, and the record already measured the band moving with gain — V101 (8×) put the peak at **23.0 Hz** against **20.3 Hz** on three 4× routes, *“a POLE MOVED”*.
+> ⊕ Two path defects fixed to even ask the question: `extract_imu_cache.py` and the pooled scorer's `can_for` both looked in **one** kit root, while the 6×/8× routes keep their CAN caches under `analysis-2020accord/`. Fixed; **73 new IMU segments extracted** for ra4/ra5/ra6/r95/r96.
+> 🛑 **AND THE ANSWER IS THAT THE DATA CANNOT SUPPORT IT:**
+> ```
+>   route  segments contributing   pooled speed-matched eng / man
+>   ra4     2 of 16               44.0 s / 25.2 s     below the 30 s gate
+>   ra5     1 of 11                6.7 s / 51.8 s
+>   ra6     1 of 26               31.1 s / 26.8 s
+>   r96     2 of 15               29.0 s / 71.0 s
+>   r95     1 of  5               15.3 s / 24.3 s     <- the ONLY 8x route
+> ```
+> **The 6×/8× era has almost no speed-matched engaged-AND-manual exposure** — most segments are one arm only, so matching kills them. **The gate was NOT lowered to force an answer.**
+> ⊕ **What can be said, and it is mildly reassuring:** the 4× profile peaks at **27.00 Hz** over 15–40 Hz, and V241's trough spans **22.50 → 29.75 Hz**. If the band moves *up* with gain — the direction V101 hints at — it moves **further into** the trough rather than out of it, until about 30 Hz. ⚠ **V101's 20.3→23.0 is a CAN peak, not this IMU excess metric; the two must not be mixed.**
+> ⇒ **No change to the ladder.** V241/V242 keep the geometry. The honest line for the card is that the notch is aimed on 4× data, the corpus cannot test the transfer, and the geometry's trough is wide enough that the plausible shift stays inside it.
+> ➕ Reader: `rlog-tools/score/engagement_band_vs_gain.py`.
+
 > 🛑⭐⭐⭐⭐ **THE SIGN IS NOT RECOVERABLE FROM THE EXISTING CACHES — the pump/damp rule stays IN DOUBT and can only be settled by a new probe build.**
 >
 > `mag427`'s field is 10-bit and maxes at 1023, so a two's-complement reading was worth testing. It is **not** signed:

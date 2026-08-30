@@ -108,6 +108,22 @@ Unchanged from your car, and asserted so in every build: **`0xC674E` = 5120** (t
 
 ---
 
+## One limitation of the notch, stated up front
+
+**The notch is aimed using data from 4× builds.** Every route in the profile it was optimised against
+is pre-V100, and V242 runs at 8×. The record's one relevant data point says the band *does* move with
+gain — V101 put its peak at 23.0 Hz against 20.3 Hz at 4×.
+
+I tried to measure that directly and **the corpus cannot support it**: the 6×/8× era has almost no
+speed-matched engaged-*and*-manual exposure (the only 8× route yields 15 s against a 30 s gate). I did
+not lower the gate to manufacture an answer.
+
+**What can be said:** the 4× profile peaks at **27.0 Hz**, and V241's trough spans **22.5 → 29.75 Hz**.
+If the band moves up with gain, it moves *further into* the trough, not out of it, until about 30 Hz.
+That is reassuring — it is not a measurement.
+
+---
+
 ## How to drive it
 
 **One episode is enough, and your verdict is final.** If it feels wrong, stop — that is a complete
