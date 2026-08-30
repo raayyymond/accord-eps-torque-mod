@@ -76,7 +76,16 @@ for lo in sorted(hist):
     else:
         sv = ' '.join('%02x' % y for y in st[lo:min(lo + n, lo + 8)])
     ch = ' · '.join('**V%d**: %s → %s' % (v, a, b) for v, a, b, _, _ in ev)
-    out.append('| `0x%05X` | `%s` | %s |' % (lo, sv, ch))
+    # An ODD address here is usually the HIGH BYTE of a u16 cal at the even address below it --
+    # e.g. 1024 -> 512 is 0x0400 -> 0x0200, which moves ONE byte, so the row lands on 0xC63AF while
+    # every human and every doc calls the cell 0xC63AE.  This index is the kit's stated gate
+    # ("grep it by address before proposing any calibration edit"), and a grep on the cell address
+    # would MISS it.  So emit the even neighbour as a searchable alias, hedged because some odd
+    # addresses are genuine BYTE cals (0xC64DD is one).
+    alias = ''
+    if lo & 1:
+        alias = ' <- grep `0x%05X`: this row is that u16 cell, high byte (or a byte cal here)' % (lo - 1,)
+    out.append('| `0x%05X` | `%s` | %s%s |' % (lo, sv, ch, alias))
 out.append('')
 out.append('## Builds covered')
 out.append('')
