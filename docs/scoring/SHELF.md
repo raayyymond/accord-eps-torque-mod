@@ -37,6 +37,10 @@ Built 2026-08-29. **V212 + the authority lever.** 8 payload bytes, cal-and-probe
 1. The engagement-gated **42.19 Hz line is the rectifier image of the 21.09 Hz mode** — `gp-0x6ba6 = |gp-0x6b9a|` at `0x3b87a`, so 2f falls out arithmetically. It only indexes boost LERPs that are **flat at the operating point**, and that arc **already flew NULL** as V58/V59/V60. Not an independent mode.
 2. **Grind #2** (40–49 Hz, +9.7 dB(A)) was **created by V62’s rate-lane ×2**, and this base is **byte-stock at `0x3AB76`/`0x3AC20`** — asserted in the builder. Prior work also found 40–49 Hz is **not engagement-conditional** and the 28 Hz transient is **dose-independent**.
 
+✅ **The residual risk is now MEASURED on the drive itself.** `score_drive.py` gained a **30–49 Hz control band** on `cs_rate`, `imu_vert` and `imu_lat`, with a corpus baseline from 23 cached routes (30–40/grind median **0.0365**, IQR 0.0275–0.0561). On a clean notch drive the ratio should read **~0.54** — the notch removes 14.9× of the denominator, not because the upper band moved.
+
+🛑 **But be clear what one drive settles.** The 1.65× gain effect is **smaller than the corpus IQR** (a factor of 2.0), so **one route cannot resolve whether the gain step costs anything at 30–40 Hz.** What it *can* catch is a grind-#2-scale event (11.71×): read the band as a **large-excursion detector** — under ~2 nothing broke, over ~5 fall back to V212, in between is unresolved and needs a matched V212 drive.
+
 ⚠ **Residual risk, stated plainly.** Break-even is 29.5 Hz; above it the notch gives nothing back, so this build **raises loop gain 1.65× across 30–49 Hz**. There is **no direct measurement of that band on this base** — the two arguments above are inference from prior builds, not a measurement of V213. **If you want the safer half, fly V212**, which is this build without the gain step.
 
 ⚠ **Three levers is a real confound.** The probe separates the ratchet lane from the grind band; it does **not** separate the gain step from either. V212, V210, V209 and V211 are all on the shelf to decompose an ambiguous result.

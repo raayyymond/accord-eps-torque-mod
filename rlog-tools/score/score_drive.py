@@ -241,6 +241,84 @@ def main(tag):
             print('     Corpus-wide V208 removes 14.9x of total band ENERGY. The per-episode')
             print('     figure varies because a single biquad is a point fix, and the corpus')
             print('     band spectrum peaks at 21.09 Hz with a shoulder out to 23.4.')
+    # ---- the 30-49 Hz band: V213's ONE stated residual risk ------------------------------
+    hdr('30-49 Hz CONTROL BAND  --  where the notch gives NOTHING back')
+    # The V208/V212/V213 notch attenuates 3.59x at 22-26 Hz but its skirt runs out: break-even
+    # against a gain raise is 29.5 Hz, and above that a 6x->8x step (V211/V213) raises loop
+    # gain 1.65x unopposed.  The scorer previously looked ONLY at 15-25 Hz, so the one band
+    # that build could plausibly make WORSE was the one band nothing measured.
+    #
+    # This is also where grind #2 lived: 40-49 Hz corner tail 11.71x (p=0.0003), IMU p95 6.27x,
+    # acoustic +9.7 dB(A) -- created by V62's rate-lane x2.  V212/V213 are byte-stock at
+    # 0x3AB76/0x3AC20 so that lever is ABSENT, which is a prediction this band can check.
+    #
+    # !! Everything in the cache is resampled to 100 Hz, so Nyquist is 50 Hz. 30-40 Hz is
+    # comfortable; 40-49 Hz sits at 80-98% of Nyquist and is the noisiest part of this readout.
+    # The kit's own grind-#2 result came off these same 100 Hz caches, so it is established
+    # practice -- but treat a 40-49 Hz move as weaker evidence than a 30-40 Hz one.
+    if ch is None or len(eps) == 0:
+        print('  no channel or no engaged episodes')
+    else:
+        try:
+            from scipy import signal as _sg
+        except Exception:
+            print('  scipy unavailable')
+            _sg = None
+        if _sg is not None:
+            for _cn in ('cs_rate', 'imu_vert', 'imu_lat'):
+                if _cn not in have:
+                    continue
+                _x = np.asarray(z[_cn]).astype(float)[:n]
+                _lo, _mid, _hi, _ref = [], [], [], []
+                for _a, _b in eps:
+                    _seg = _x[_a:_b]
+                    if len(_seg) < 256:
+                        continue
+                    _f, _P = _sg.welch(_seg - _seg.mean(), 100.0, nperseg=min(256, len(_seg)))
+                    _ref.append(_P[(_f >= 15) & (_f <= 25)].sum())
+                    _mid.append(_P[(_f >= 30) & (_f < 40)].sum())
+                    _hi.append(_P[(_f >= 40) & (_f <= 49)].sum())
+                if not _ref:
+                    continue
+                _ref = float(np.sum(_ref)); _m = float(np.sum(_mid)); _h = float(np.sum(_hi))
+                if _ref <= 0:
+                    print(f'  {_cn:9s} 15-25 Hz energy is zero -- ratios undefined')
+                    continue
+                print(f'  {_cn:9s} 30-40 Hz / grind = {_m / _ref:7.4f}    40-49 Hz / grind = {_h / _ref:7.4f}')
+            print()
+            print()
+            # CORPUS BASELINE, cs_rate, 23 cached routes, computed 2026-08-29.
+            #   30-40/grind  median 0.0365  IQR 0.0275-0.0561
+            #   40-49/grind  median 0.0212  IQR 0.0138-0.0344
+            # r7d is a real outlier at 10.16 (278x the median) with mid-range 15-25 energy,
+            # i.e. a genuine large 30-40 Hz event, not a small-denominator artefact. Medians
+            # and IQRs above are robust to it. UNEXPLAINED -- worth a look if it recurs.
+            print('  CORPUS BASELINE (cs_rate, 23 routes, pre-notch):')
+            print('     30-40 Hz / grind   median 0.0365   IQR 0.0275-0.0561')
+            print('     40-49 Hz / grind   median 0.0212   IQR 0.0138-0.0344')
+            print()
+            print('  These are RATIOS to this drive\'s own 15-25 Hz energy, so they are')
+            print('  self-normalising. But the notch REMOVES 15-25 Hz energy -- corpus-wide')
+            print('  14.9x -- so on ANY notch build the ratio RISES ~15x with the upper band')
+            print('  completely unchanged. Expected on a clean notch drive:')
+            print('     30-40 Hz / grind  ~0.54       40-49 Hz / grind  ~0.32')
+            print()
+            print('  !! WHAT THIS CAN AND CANNOT SETTLE, stated up front:')
+            print('  V213 raises loop gain 1.65x above 29.5 Hz vs V212. That would move the')
+            print('  30-40 ratio 0.54 -> 0.90. But the corpus IQR spans a factor of 2.0, which')
+            print('  is WIDER than the 1.65x effect. So ONE drive CANNOT resolve whether the')
+            print('  gain step costs anything here. Do not claim it either way from one route.')
+            print()
+            print('  What ONE drive CAN settle: a grind-#2-scale event. That was 11.71x, and')
+            print('  r7d shows the band does register such things (10.16 vs 0.0365 median).')
+            print('  So read this band as a LARGE-EXCURSION DETECTOR:')
+            print('     30-40 ratio  <~2      nothing broke -- the gain step is safe to keep')
+            print('     30-40 ratio  >~5      something broke at 30-40 Hz -- fall back to V212')
+            print('  and treat anything between as UNRESOLVED, needing a matched V212 drive.')
+            print()
+            print('  40-49 Hz sits at 80-98% of the 100 Hz Nyquist and is the noisiest part')
+            print('  of this readout -- weight a 30-40 Hz move above a 40-49 Hz one.')
+
     print()
     print('  Everything above is measured or explicitly absent. Nothing here is a symptom score --')
     print('  bands are instruments; only the operator scores grinding, ratcheting and stuttering.')
