@@ -219,10 +219,14 @@ One halfword moves the **knee** of its ceiling ramp, not the ceiling height:
 | outcome | what it means |
 |---|---|
 | ratchet **better** | the lane was damping and was being clipped |
-| **no change at all** | the bound never binds at creep — a real possibility, and nothing measures the PID sum, since `gp-0x6ad4` is not mirrored anywhere |
+| **no change at all** | now judged UNLIKELY — see below |
 | ratchet **worse** | the lane was pumping, or the freed integrator changed its phase |
 
 Cal-only, so reflashing V222 undoes it.
+
+⊕ **Priced from the cals, and "inert" is now unlikely.** The bound does two jobs and they bind at very different thresholds. The **output clamp** needs |err| ≈ **849 counts at 6 km/h** to bite — probably not reached, since that is a *tracking* error, not the torque. But the **integrator** gains 0.0957·err **every millisecond** into a window of only ±bound×32, so at 3 km/h a sustained error of 100 counts pins it in **191 ms**. That is the normal operating condition, not a rare excursion. V227 **triples that window at creep** (±1824 → ±5472 at 3 km/h), so it will change something.
+
+🛑 **And that sharpens the risk rather than removing it.** An integrator allowed to run longer contributes more low-frequency phase lag, which is the classic way to make a lightly-damped mode **worse**. So: it will do something, and harm has a plausible route. **Fly it after V222, on its own.**
 
 ⚠ **Read it at CREEP.** Above 20 km/h it is byte-identical in effect to V222, so a highway stretch cannot distinguish them.
 
