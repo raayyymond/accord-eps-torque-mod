@@ -10,8 +10,8 @@ autonomous driving."*
 exist.**
 
 ```
-  V241   6x   image 2ef7eb8eb2417905…  rwd 57d240d77f568aac…   same gain as the car
-  V242   8x   image 424249b0c7d89fad…  rwd a94962b4240613c8…   RECOMMENDED
+  V241   6x   image 2ef7eb8eb2417905…  rwd 57d240d77f568aac…   FLY FIRST -- the car's gain
+  V242   8x   image 424249b0c7d89fad…  rwd a94962b4240613c8…   +4 bytes on V241
   V243  10x   image 5fb9ad74f104de46…  rwd 43a32ac352508557…   the ceiling
 ```
 
@@ -81,6 +81,10 @@ replaced by the car's own value · a claimed IMU null reversed when tested rathe
 
 ## Next
 
-1. **A drive.** Nothing in this lineage has flown. V242 first, V241 if it grinds.
+1. **A drive.** Nothing in this lineage has flown. **V241 first** — it tests the grinding work at the
+   gain the car already runs, so a result is interpretable; V242 is then a four-byte gain step with
+   that question answered. (An earlier pass in this session recommended V242 first; that answered
+   "more torque" rather than the brief's "safest, highest probability", and skipped the operator's
+   own "fix at 6x first" ruling.)
 2. **The sign probe** — put `gp-0x6b86`'s sign bit on 427 and settle the 6–15 Hz rule.
 3. If the rule falls, build the 6–10 Hz notch: it is the only untried lever with a measured case.
