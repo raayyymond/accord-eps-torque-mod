@@ -51,6 +51,17 @@ what actually rises is delivered authority **4096 → 4608**, about 12%.
 
 ---
 
+## Safety vs comfort — they are different questions here
+
+**The 8× gain level is proven safe to drive.** V101 flew it: **fault-free**, identity duty 1.000000
+over 25,551 frames, 176.1 s engaged, **EME audit passed**, `0xC407E` = 511 unchanged. What you rejected
+was how it *felt*, not a failure. V242 sits at that same proven gain.
+
+**The 10× level has never flown at all.** V219 and V225 were built and gated but never driven, so V243
+carries an additional unknown that V242 does not. That is why it is third on the ladder and not second.
+
+---
+
 ## 🛑 The risk on V242, stated plainly
 
 **8× has flown before, and you rejected it.** V101, route 0x95:

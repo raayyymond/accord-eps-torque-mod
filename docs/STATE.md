@@ -66,6 +66,16 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑⭐⭐⭐⭐ **THE SIGN IS NOT RECOVERABLE FROM THE EXISTING CACHES — the pump/damp rule stays IN DOUBT and can only be settled by a new probe build.**
+>
+> `mag427`'s field is 10-bit and maxes at 1023, so a two's-complement reading was worth testing. It is **not** signed:
+> ```
+>   ra4/ra5/ra6 histogram: mass decays SMOOTHLY from zero; only 1.6-2.1 % of frames are >= 512
+> ```
+> A signed field would put mass near **both** 0 and 1023 (small negatives); this is a monotone decay from zero — **the signature of a magnitude.** The firmware transmitted `|gp-0x6b86|`, and the sign was never on the wire for these builds. (`sar 4` preserves sign in the register; the rectification is upstream of the CAN write.)
+> ⇒ **The rule that forbids notching 6-15 Hz cannot be verified or refuted from any existing data.** Settling it needs a build that puts the lane's SIGN BIT on 427, plus a drive. **That is a future probe, not something to fold into a driving build** — it would cost the biquad-state probe the current shelf carries.
+> ⭐ **WHY IT MATTERS ENOUGH TO RECORD:** the torque spectrum says the one band worth filtering is **6-10 Hz**, and this rule is the only thing blocking it. If the rule falls, a notch aimed there becomes the strongest lever the kit has ever had — and it would bear on the ratchet, which nothing has moved in thirty-plus builds.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE GAIN LADDER — V241 (6×) · V242 (8×) · V243 (10×). AND THERE IS NO 16×: IT IS BLOCKED BY A SAFETY INTERLOCK, NOT A JUDGEMENT CALL.**
 >
 > Operator brief, 2026-08-30: *“the safest, highest probability of working firmware with 6x torque (or higher …) up to 16x torque with no grinding, vibration, or oscillation, best firmware for autonomous driving.”*
