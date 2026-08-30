@@ -72,6 +72,7 @@ PUB = {
     'v225': '34d1804120aa52a1131e50663eede9c16ab95e767a16d05dee277911410adac3',
     'v226': 'e45799ed7986139183e50b14d4a15b08085b453d3d1a97a580bda5d7d18e9850',
     'v227': '28b5f4c979660451cda9c457312b824622488201d96ecf1dbf3be90dd8d67434',
+    'v228': '6cf12db9fc49aee29e46c169c05fc18415f2a970b477cdae1372d57805748b3c',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -703,7 +704,8 @@ for _v in sorted(img):
 
 _LEVER_B_LADDER = {'v221': 13107, 'v222': 13107, 'v223': 26214,
                    'v224': 13107, 'v225': 13107, 'v226': 13107,
-                   'v227': 13107}   # the arms, rebased onto V222
+                   'v227': 13107,
+                   'v228': 13107}   # arms rebased onto V222; v228 = V222 at the car 6x
 for _v in sorted(img):
     _want = _LEVER_B_LADDER.get(_v, 5244)
     _got = struct.unpack_from('<H', img[_v], 0xC6446)[0]
