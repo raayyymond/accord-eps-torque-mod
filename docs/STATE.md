@@ -66,6 +66,23 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ⭐⭐⭐⭐⭐ **THE 6–10 Hz NOTCH IS WORTH ~3× V241 — 66 % OF THE TORQUE EXCESS AGAINST 22 %. THE RULE BLOCKING IT IS NOW WORTH SETTLING, WITH A NUMBER ATTACHED.**
+>
+> Priced against the **torque** engagement excess — the lane's own domain, where **6–10 Hz carries 68.6 % of all excess weight over 3–45 Hz**:
+> ```
+>   collateral floor   feasible   zero    pole      r     torque excess removed
+>        0.90            NONE
+>        0.80             yes    7.75    7.50   0.990          66.2 %
+>        0.70             yes    7.75    7.25   0.990          71.0 %
+>        0.60             yes    7.25    6.25   0.985          75.5 %
+>
+>   V241, aimed at 22-30 Hz, on the same weight:                21.8 %
+> ```
+> ✅ **A genuine LOCAL notch at the ratchet — zero 7.75 / pole 7.50 / r 0.990, non-amplifying (`max|H| ≤ 1.0000`), never cutting anything outside 5.5–10.5 Hz by more than 20 % — removes 66.2 % of the torque excess. Three times what the current build achieves, and it sits ON the ratchet.**
+> 🛑 **AND MY FIRST ANSWER WAS THE OPTIMISER CHEATING.** Unconstrained, it returned **pole 4.00 Hz** and claimed **96.8 %** — that is not a notch, it is a **LOW-PASS** that gutted the lane above 4 Hz while keeping unity DC to satisfy the gate. Adding *“a notch must be LOCAL”* — keep |H| above a floor outside the target band — killed it. **Same failure mode as the arbitrary 0.97 threshold earlier: an objective with a missing constraint finds the degenerate answer.**
+> ⊕ **AND 0.90 IS INFEASIBLE ENTIRELY.** At 1 kHz, 8 Hz is ~0.05 rad/sample, so a single 2nd-order section's skirt is wide in absolute Hz. **No geometry cuts 6–10 Hz while leaving everything else within 10 %.** The 66 % figure costs up to **20 % collateral** on its neighbours — including the band the disputed rule says damps.
+> ⇒ **THE DECISION IS NOW PRICED.** The prize is ~3× the current build, on the symptom nothing has ever moved. The blocker is a rule with **two independent defects** (clamped channel; three routes whose in-band filters differ 1.87×) that is nonetheless **not refuted**. Settling it needs the lane's sign, which needs a **cave or a clamp change** — this kit's only bricking class. **Not built. The operator now has the number.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **A SECOND, INDEPENDENT PROBLEM WITH THE 6–15 Hz RULE: ITS THREE “AGREEING” ROUTES DO NOT SHARE A FILTER IN THE BAND IT JUDGES.**
 >
 > Trying to settle the rule **without new firmware**: the biquad sits IN this lane, so if builds differ in how much they cut 6–15 Hz, the aggregate `Re(Z)` there should move with the cut — cutting a damper makes the anti-damping worse. That screen came back **null** (pearson +0.144 p 0.53, spearman −0.063 p 0.79) — **but the reason is what matters: there is no contrast.** 18 of 21 builds have the biquad **UNARMED** (`0xC649B` = 0), so their cut is identically zero.
