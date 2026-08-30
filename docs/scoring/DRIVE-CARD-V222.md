@@ -1,5 +1,27 @@
 # DRIVE CARD — V222 · **the new primary. V221 is the fallback.**
 
+> 🛑 **BEFORE YOU READ FURTHER — there is a safer alternative to this build.**
+>
+> **V228 is this build minus the 8× gain step. Four bytes apart.** Same notch, same Lever B, so the
+> **grinding case is identical** — but V228 does **not** put the ratchet at risk, because the notch does
+> nothing at 6–9 Hz and V222 adds 1.33–1.65× of excitation there against Lever B’s 2.50× damping.
+> **Nobody can say from arithmetic which of those wins.**
+>
+> | | this build (V222) | **V228** |
+> |---|---|---|
+> | grinding | notch cuts 15–22 Hz **3.6×** | **identical** |
+> | **ratchet** | **could go either way** | **protected** |
+> | LKAS authority | **8×** | 6×, unchanged from your car |
+> | 40–49 Hz (audible) | +8.1 dB | +5.9 dB |
+>
+> ⇒ **Fly V222 only if you want the authority and accept the ratchet risk.** Otherwise fly **V228**
+> first — it also makes this build interpretable afterwards, since the two differ in exactly one lever.
+> Card: `docs/scoring/DRIVE-CARD-V228.md` · pre-registration:
+> `docs/scoring/PREREG-V228-V222-THE-8X-EXPERIMENT.md`
+>
+> **Stop and say so if** the ratchet is clearly worse (fall back **V221 → V217 → V122**), a new
+> higher-pitched grind appears, or anything faults. **Your verdict is final and one episode is enough.**
+
 **Flash target:** `39990-TVA,A160-V222-V221BASE-FRICTION.LANE.SATURATION.TO.CAR-0x13000-0x100000.rwd`
 **.rwd SHA256** `0766d45cbad4bde1d48a0f53d63a17f28c436aaed694ef87c4a941f732a46b17`
 **image SHA256** `0e83c7074699d6ab3eee1c035974fa23b5b271c641662001b63fd89558512dae`
@@ -187,7 +209,7 @@ python rlog-tools/score/rate_matched_band_ratio.py
 
 ---
 
-## ✅ THE LEVER B PUMPING CONCERN IS NOW MEASURED — and it points the SAFE way
+## ⚠ THE LEVER B PUMPING CONCERN WAS MEASURED — magnitude corrected, DIRECTION UNRESOLVED
 
 V222 raises Lever B (`0xC6446`) to **13107**, 2.5× above the car. There is a specific reason to watch
 the **ratchet** rather than assume it is untouched, and it is worth stating plainly before you drive.
