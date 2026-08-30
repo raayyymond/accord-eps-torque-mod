@@ -38,6 +38,24 @@ licenses nothing, because `0xC63AE` is unpriced. If the ratchet is worse, the fa
 
 > ✅⭐⭐ **V228 BUILT — V222 WITHOUT THE 8×, i.e. the ratchet race REMOVED.** The risk in the block above comes **entirely from the forward gain**, and that is separable. **V228 = V222 with `0xC6CD0` left at the car’s 5346 (6×) and the clamps `0xC61B2`/`B4` at 3072** — **4 bytes** from V222, **19 bytes** from the car. It keeps **both levers that have evidence behind them**: the 20.50 Hz notch (grinding, net 0.463× at 22–26 Hz) and **Lever B at 13107** (2.50× damping, the kit’s only measured on-car win), and it declines the 1.33–1.65× excitation rise that the notch cannot cover at 6–9 Hz. ⇒ **on V228 the ratchet has no plausible way to get worse** — every delta from the car is either a damper raise or a filter that is flat at the ratchet. 🛑 **COST, stated plainly: LKAS authority stays at the car’s 6×.** That is the whole trade. ⚠ **NOT V212**, which is this base with the car’s Lever B (5244); **V228 is the first build ever to pair a RAISED Lever B with 6×.** image `6cf12db9fc49aee2…`, rwd `b90a200ce53c7f37…`, **72/72** builder assertions, **100 %** orphan-byte coverage, **1138** close-out checks. Builder: `analysis-2020accord/builds/v108_plus/build_v228_tva.py`.
 
+> ⭐⭐ **GRIND #2 IS NOT DETERMINED BY THE RATE-LANE CELLS — a natural experiment already in the record.** Chasing its open origin, the five cells ever blamed were read from the images across every build that reported it:
+>
+> ```
+>   build   r24 arm  r26 arm  sarA  sarB  gate   grind #2?
+>   V62         512      512  0xa9  0xa9  0xc5   YES
+>   V65         512      512  0xa9  0xa9  0xc5   YES
+>   V67        5244      512  0xaa  0xaa  0xfb   YES
+>   V68        5244      512  0xaa  0xaa  0xfb   YES
+>   V85        5244      512  0xaa  0xaa  0xfb   no (absence report)
+>   V122       5244      512  0xaa  0xaa  0xfb   ?   <- the car
+>   V222/228  13107      512  0xaa  0xaa  0xfb   ?
+> ```
+>
+> 🛑 **V67, V68 and V85 are BYTE-IDENTICAL on all five cells**, and grind #2 was reported on two of them and not the third. ⇒ **these cells do not determine it.** Either it varies with conditions on identical firmware, or the V85 absence is a false negative — and the record already flags absence reports as **weak evidence, not a cure**. Either way the conclusion holds.
+> ➕ **A hypothesis of mine died here too:** V71c’s distinguishing edit was `0xC6444` → 3072 (the r26 arm), and V62/V65’s `sar`×2 raised **both** lanes, which suggested **r26** as the common factor. **Dead** — the r26 arm is **512 on every other grind-#2 build.**
+> ⇒ **Consequence for the flight candidates:** V222/V228 carry **exactly V85’s configuration** on these cells, with only Lever B higher. There is **no route from these cells to grind #2**, which is consistent with the separate finding that the 40–49 Hz notch lift is a **different mechanism** and that hearing grind #2 would not attribute to it.
+> ⚠ **This does NOT explain grind #2.** Its origin stays open; what is now closed is that these five cells are not it.
+
 > ⚠⭐ **CORRECTION: "V62’s lever CREATED grind #2" is NOT settled — I have been repeating it.** The V222 builder says the `sar` bytes are stock because V62’s ×2 *"CREATED grind #2 at 40–49 Hz"*, and I carried that forward for several ticks. The lever index says otherwise: **"grind #2 is V62’s `sar`" is REFUTED — V71c produced grind #2 carrying NEITHER `sar` byte**, so its **origin is OPEN**; only *"the r24 half caused grind #2"* survives, and only as *directionally supported*. ⇒ **Consequence for the pre-registered 40–49 Hz test:** the **band measurement** still tests the notch-relocation mechanism, but **hearing grind #2 cannot be attributed to the notch**, because it occurs without any of these levers. The two readouts are now kept apart in the pre-registration. ➕ The operator’s own description, recorded for the drive: *"a higher-speed grind #2 on lane changes/turns, only LKAS-engaged."*
 
 > 🛑⭐⭐ **AND THE 40–49 Hz LIFT IS UNAVOIDABLE — there is no way to buy the grinding fix without it. CLOSED.** The obvious escape is to keep Honda’s 55 Hz notch and buy the 15–22 Hz cut from **Lever B** instead, which damps broadband and never touches the notch. It fails, by two independent arguments and an enormous margin.
