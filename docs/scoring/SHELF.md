@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** **⚠ FLY V216.** Its entire delta from your car is **20 payload bytes, every one a deliberate lever**. V215 is the paired arm (identical but with the friction lane at 0.10× the car); V214 is SUPERSEDED.
+**Updated 2026-08-29.** **⚠ FLY V217.** Its entire delta from your car is **19 payload bytes, and every single one is a deliberate lever from this session** — nothing carried, nothing unpriced. V216/V215/V214 are its predecessors and remain as arms.
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,
@@ -23,7 +23,34 @@ Friction is *subtracted from the plant model*, which lowers `gp-0x6ad6` — a to
 
 ---
 
-## ⭐ V216 — FLASH THIS ONE. 20 bytes from your car, all of them levers.
+## ⭐ V217 — FLASH THIS ONE. The damper fix, complete end to end.
+
+```
+39990-TVA,A160-V217-V216BASE-INERTIA.LANE.WEIGHT.TO.FLOWN.V108-0x13000-0x100000.rwd
+  image f89ea01f405d513985ce51c47f6796e1ea77f600fab3d9f7817cd79907a1967b
+  .rwd  941d82bf2dc556551dc9615bdd01d5e5e2d4fca7d8064578b5afb4bc969dcd54
+```
+
+**What V216 still got wrong.** V214/V215 put the inertia *row* back to your car — but `0xC63A6` is that lane’s **weight** in the six-lane plant-model sum:
+
+```
+SUM = gp-0x6b4e*0xC63A8 + gp-0x6b4c*0xC63AA + gp-0x6b26*0xC63A6   <- w[3], INERTIA
+    + gp-0x6b46*0xC63A4 + gp-0x6bd0*0xC63A0 + gp-0x6bbe*0xC63A2   (each >>10)
+```
+
+So the shelf restored the row and then fed it in at **half weight** — net inertia stayed at **0.5× your car**, undoing half the fix downstream and out of sight. All six weights are **1024 in stock AND on your car**; V216 was the only build halving one, it was **w[3]**, and no rationale for it appears anywhere in the lineage. V217 restores it.
+
+**Complete delta vs YOUR CAR — 19 payload bytes, all levers:**
+
+```
+  0xC60A8/AC/B0/B4   notch 20.50 Hz          GRINDING
+  0xC63AE            1024 -> 512             RATCHET / STUTTER
+  0xC6CD0 + clamps   6x -> 8x                LKAS AUTHORITY
+  0x55DF2            427 probe -> gp-0x6b4e  instrument
+```
+
+Inertia (row **and** weight, both modes) and friction now **match your car exactly**. Every other byte is one of the three levers or the probe. 59/59 builder assertions, CRC 50/50, readback byte-identical.
+
 
 ```
 39990-TVA,A160-V216-V215BASE-FRICTION.LANE.TO.FLOWN.V108-0x13000-0x100000.rwd

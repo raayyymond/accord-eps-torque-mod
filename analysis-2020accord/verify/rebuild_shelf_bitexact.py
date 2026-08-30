@@ -36,6 +36,7 @@ SHELF = {
     'v213': 'b1f998702adbbce9a52e7e430906f0cd77410625c29887e4d0a06e4cddb0e239',
     'v215': 'afc1d88505d2c55d37d6379f4cab058b9d1926c334c13d4c92761d138c62fbff',
     'v216': '791e123fb4d8bd6ea0736c52546995bb15742444b5d5c23b6db128e8bd792a13',
+    'v217': 'f89ea01f405d513985ce51c47f6796e1ea77f600fab3d9f7817cd79907a1967b',
 }
 BD = os.path.join(KIT, 'builds', 'v108_plus')
 IMGD = os.path.join(FW, 'analysis-2020accord')
