@@ -198,6 +198,19 @@ at `ra6`/V106 — there was **no audio cache for the car at all**, which made th
 | **no lift** (within ±2 dB of the car) | the notch arithmetic is **wrong somewhere** — stop and find it before any further build reasons from it |
 | lift **much larger** than predicted | something amplifies beyond the open-loop transfer; treat as a closed-loop effect and re-open |
 
+### 🛑 What this test CANNOT do — attribute a SYMPTOM
+
+The band measurement above is a **mechanism test** and is valid as such. But if the operator reports **grind #2 itself**, that **cannot be attributed to the notch relocation**, because **grind #2’s origin is OPEN**. The record is explicit: *"grind #2 is V62’s `sar`" is REFUTED* — **V71c produced grind #2 carrying NEITHER `sar` byte.** The surviving claim is only that the r24 half is *"directionally supported"* as a contributor.
+
+⇒ So the two readouts must be kept apart:
+
+| readout | what it can show |
+|---|---|
+| **40–49 Hz audio level** vs the r24 baseline | whether the **notch-relocation mechanism** does what the arithmetic says |
+| **the operator hearing grind #2** | that grind #2 occurred — **not** what caused it |
+
+➕ **His own description, for what to listen for:** *"a higher-speed grind #2 on lane changes/turns, only LKAS-engaged."* There is also a recorded **absence** report on another build — *"I did not experience any grind #2 from my hard turning or on the highway"* — which the record correctly flags as **weak negative evidence, not a cure.**
+
 🛑 **This band is NOT alias-confounded.** Audio samples at **16 kHz** (Nyquist 8 kHz), so unlike
 30–49 Hz on the ~101 Hz CAN logs, 40–49 Hz here is directly measurable. It is also **audible** — if a
 new higher-pitched grind appears, this is the first place to look.
