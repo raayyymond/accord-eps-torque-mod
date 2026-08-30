@@ -34,6 +34,41 @@ zeros at 20.50 Hz**. Poles *below* zeros is what drags lag down into 9–12 Hz. 
 **radius** at fixed angle found only a weak trade; the pole **frequency** is the real free parameter and
 has never been swept.
 
+## 🛑 CORRECTION (same day) — SECTION 4'S ALTERNATIVE IS WITHDRAWN AS AN IMPROVEMENT
+
+Section 4 below proposes poles at 18.00 Hz as a "ready alternative". **It was sized on two axes and
+there are three.** On the third it is worse than V228 and over a line the record already drew:
+
+```
+                        V228 (poles 15.52)   ALT (poles 18.00)
+  grind 15-22 vs car     0.17x (-15.4 dB)     0.24x (-12.4 dB)    ALT cuts LESS
+  9-12 Hz phase          -24.8 deg            -12.6 deg           ALT better
+  54-74.5 Hz vs car      4.23x (+12.5 dB)     5.43x (+14.7 dB)    ALT WORSE, and above the
+                                                                  5.15x the lineage called unshippable
+```
+
+**V228's geometry beats it on two of three axes.** Read section 4 as a record of the sweep, not as a
+recommendation.
+
+## ⭐ THE REAL MECHANISM — Honda's biquad IS a 55 Hz notch
+
+```
+  car / Honda   zeros 55.23 Hz, poles 42.35 Hz   deepest cut 55 Hz, |H| = 0.0063  (159x)
+  V228          zeros 20.50 Hz, poles 15.50 Hz   deepest cut 21 Hz, |H| = 0.0433
+
+                |H| 18.5 Hz   |H| 55 Hz   |H| 65 Hz
+  car / Honda      0.8978      0.0063      0.2472
+  V228             0.2045      0.6285      0.6457    <- 100x louder at 55 Hz
+```
+
+There is **one** biquad. The kit has been **relocating** it since V172, not adding one. The 54-74.5 Hz
+lift is not the new notch adding noise -- it is **Honda's 55 Hz cut being vacated**. One 2nd-order
+section cannot notch 18 Hz and 55 Hz; the tradeoff is structural and no choice of (fz, fp, r) escapes
+it. Cutting 15-22 Hz with this cell ALWAYS costs the 55 Hz cut.
+
+**Never flown.** The car carries Honda's 55 Hz notch intact, so V228 would be the first build driven
+that gives it up. And CAN's Nyquist is 50.5 Hz, so only the audio arm can measure the cost.
+
 ## 4. A ready alternative geometry
 
 2-D sweep over (pole freq, radius), zeros fixed at 20.50 Hz, constrained to keep the grinding cut, to

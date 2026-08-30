@@ -15,6 +15,32 @@ anything happens.** Nothing is flashed without that.
 verdict is final.** If it feels wrong, **stop** — that is a complete result, and no measurement
 overrides it.
 
+🛑 **THE ONE THING TO KNOW BEFORE YOU DRIVE THIS: V228 GIVES UP HONDA'S 55 Hz NOTCH.**
+
+There is only **one** filter cell in this ECU, and Honda uses it as a **55 Hz notch** — a 159× cut. To
+put a cut at 20 Hz where the grinding is, every build since V172 has **moved that same cell down**,
+which vacates the 55 Hz cut entirely:
+
+```
+                |H| 18.5 Hz   |H| 55 Hz
+  your car         0.8978       0.0063        <- Honda's 55 Hz notch, intact
+  V228             0.2045       0.6285        <- 4.4x quieter at 18 Hz, 100x LOUDER at 55 Hz
+```
+
+**One 2nd-order section cannot notch 18 Hz and 55 Hz. This is structural — no retuning escapes it.**
+Your car has never run without Honda's 55 Hz cut; V228 would be the first.
+
+**So the honest prediction is a TRADE, not a fix:** less 15–22 Hz, more 54–74 Hz (+12.5 dB). If the
+noise you call grinding lives nearer 55 Hz than 18 Hz, **V228 will sound worse, and that is a real
+result worth having** — it would be the first direct evidence on which side of the trade your symptom
+actually sits, and it points at why sixty builds of notch work have never fixed it.
+
+⚠ **No instrument we have can settle this from the drive except your ears and the audio recording.**
+CAN's Nyquist is 50.5 Hz, so the 55 Hz band is invisible to it — it folds down and masquerades as
+30–49 Hz content.
+
+---
+
 **Stop and say so if:**
 - the **ratchet is clearly worse** than your car → fall back **V221 → V217 → V122**
 - a **new higher-pitched grind** appears on lane changes/turns → expected at 40–49 Hz, **say so anyway**

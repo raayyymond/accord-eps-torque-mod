@@ -46,6 +46,22 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **HONDA'S BIQUAD *IS* A 55 Hz NOTCH, AND EVERY BUILD SINCE V172 HAS BEEN PAYING IT AWAY TO BUY THE 20 Hz CUT.** There is only ONE biquad. The kit has been **relocating** it, not adding one — and no instrument could see the cost, because CAN's Nyquist is 50.5 Hz.
+>
+> ```
+>   car / Honda   zeros 55.23 Hz, poles 42.35 Hz (r 0.797)   deepest cut 55 Hz, |H| = 0.0063  (159x)
+>   V228          zeros 20.50 Hz, poles 15.50 Hz (r 0.958)   deepest cut 21 Hz, |H| = 0.0433
+>
+>                 |H| 18.5 Hz   |H| 55 Hz   |H| 65 Hz
+>   car / Honda      0.8978      0.0063      0.2472
+>   V228             0.2045      0.6285      0.6457     <- 100x louder at 55 Hz (+40 dB)
+> ```
+>
+> ✅ **EVIDENCE (computed from the encoded float32 in each image).** Geometric-mean ratio vs the car over **54–74.5 Hz: 4.23x (+12.5 dB)** for V228's notch lane alone. `docs/BUILD-LINEAGE.md` already carries a standing constraint on exactly this band — *“it must ship WITH the notch revert or not at all — across 54–74.5 Hz V105's coefficients leave the base-assist lane a geometric-mean 5.15x (+14.2 dB) louder than Honda's”* — and **V228 sits at 82 % of that declared-unshippable level.** The second dynamic cell, `0xC40DC` 8→22, adds **2.29x (+7.2 dB)** over the same band in its own lane.
+> 🛑 **THE TRADE IS STRUCTURAL, NOT A TUNING MISS.** One 2nd-order section cannot notch 18 Hz *and* 55 Hz. Every notch build since V172 has bought the 15–22 Hz cut by vacating Honda's 55 Hz cut. **This has never been flown** — the car still carries Honda's 55 Hz notch intact — so V228 would be the FIRST build the operator drives that gives it up.
+> 🛑 **MY “READY ALTERNATIVE” FROM THE PREVIOUS COMMIT IS WITHDRAWN AS AN IMPROVEMENT.** Poles at 18.00 Hz / r 0.9625 halves the 9–12 Hz phase excess (−24.8° → −12.6°) but is **WORSE on the axis that matters more**: **5.43x (+14.7 dB)** over 54–74.5 Hz — *above* the 5.15x the lineage declared unshippable — with a weaker grinding cut (0.24x vs 0.17x). I proposed it without checking the HF axis. It is a phase-for-noise trade, not a free win. **V228's geometry beats it on two of the three axes.**
+> ➕ **BELIEF, and the reason this matters for the complaint:** the operator reports *grinding* — an audible phenomenon. A build that cuts 15–22 Hz while raising 54–74 Hz by 12.5 dB may well be reported as WORSE. That would not be a null; it would be the trade landing on the wrong side. **This is the single most likely explanation on the table for why sixty builds of notch work have never fixed the grinding**, and it is testable with the audio arm alone — CAN cannot see above 50.5 Hz.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V228 MAKES *TWO* PHASE-BEARING CHANGES vs THE CAR, NOT ONE — AND THEY ARE PARALLEL LANES, SO THEIR PHASES MUST NOT BE ADDED.** A full byte diff of the car (V122) against V228 is **27 bytes in 11 runs**: 2 CRC trailers, the 2-byte 427 telemetry tap, and four levers. Two of the four are dynamic:
 >
 > ```
