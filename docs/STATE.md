@@ -38,6 +38,18 @@ licenses nothing, because `0xC63AE` is unpriced. If the ratchet is worse, the fa
 
 > ✅⭐⭐ **V228 BUILT — V222 WITHOUT THE 8×, i.e. the ratchet race REMOVED.** The risk in the block above comes **entirely from the forward gain**, and that is separable. **V228 = V222 with `0xC6CD0` left at the car’s 5346 (6×) and the clamps `0xC61B2`/`B4` at 3072** — **4 bytes** from V222, **19 bytes** from the car. It keeps **both levers that have evidence behind them**: the 20.50 Hz notch (grinding, net 0.463× at 22–26 Hz) and **Lever B at 13107** (2.50× damping, the kit’s only measured on-car win), and it declines the 1.33–1.65× excitation rise that the notch cannot cover at 6–9 Hz. ⇒ **on V228 the ratchet has no plausible way to get worse** — every delta from the car is either a damper raise or a filter that is flat at the ratchet. 🛑 **COST, stated plainly: LKAS authority stays at the car’s 6×.** That is the whole trade. ⚠ **NOT V212**, which is this base with the car’s Lever B (5244); **V228 is the first build ever to pair a RAISED Lever B with 6×.** image `6cf12db9fc49aee2…`, rwd `b90a200ce53c7f37…`, **72/72** builder assertions, **100 %** orphan-byte coverage, **1138** close-out checks. Builder: `analysis-2020accord/builds/v108_plus/build_v228_tva.py`.
 
+> 🛑🛑⭐⭐⭐ **CORRECTION: "V228 CANNOT MAKE ANYTHING WORSE" IS FALSE. Both builds raise the GRIND-#2 BAND (40–49 Hz), and that band is AUDIBLE.** Chasing why V62’s lever — the kit’s most robust measured fix, 29× above the placebo floor — is absent from every build found something about the builds that ARE on the shelf. V62’s `sar×2` (`0x3AB76`/`0x3AC20`) is byte-stock `0xAA` on V88, V122, V222 and V228, removed because it **created grind #2 at 40–49 Hz, +9.7 dB(A)**. But the current builds reach the same band by a **different route**: the notch retune moves Honda’s 55 Hz notch away, which LIFTS 40–49 Hz.
+>
+> ```
+>   40-49 Hz vs the car        power     dB
+>   V228 (notch only)          3.87x   +5.9
+>   V222 (notch + 8x)          6.39x   +8.1
+>   grind #2 as reported               +9.7 dB(A)
+> ```
+>
+> ⇒ **V222’s predicted lift is COMPARABLE to the grind #2 that got a lever removed.** V228’s is smaller but still positive. 🛑 **So my repeated claim that V228 "cannot make anything worse" is WRONG.** The accurate claim is narrower: **V228 cannot make the RATCHET worse** — every delta is a damper raise or flat at 6–9 Hz — **but the notch is not flat at 40–49 Hz.**
+> ✅ **Unlike 30–49 Hz on the CAN logs, this band is AUDIO-measurable (44.1 kHz), so the alias caveat does NOT apply.** It is a real, checkable, audible prediction, and the kit already has audio extractors to score it. ➕ Units, because the kit errs here: the notch `|H|` is an AMPLITUDE transfer (1.968 → power 3.875) while m^1.74 was measured in band-POWER units (1.650); an intermediate line of mine said +10.1 dB by mixing the two, and **+8.1 dB is correct.**
+
 > 🛑⭐⭐ **CORRECTION TO THE BLOCK BELOW — AND TO MY OWN r24 ANCHOR. The kit HAD a route-variance measurement; I missed it.** The ★★★★★ 8× memory records a **MEASURED placebo floor of 1.45× (`r75` vs `r76`, byte-identical V89)** — that is a **third within-build pair**, and it means the dose law was **already** priced the way I claimed was missing. With three pairs `sigma_route` is **0.0985 point / 0.2876 upper** (tighter than the 0.396 below). Re-priced against the kit’s own floor:
 >
 > ```

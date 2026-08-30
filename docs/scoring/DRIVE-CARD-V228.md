@@ -49,9 +49,9 @@ damper raise or a filter that is flat at the ratchet.
 
 ## Which to fly
 
-**Fly V228 if** the ratcheting/stuttering is what bothers you most, or if you want the grinding fix
-without putting the ratchet at risk. It cannot cost you anything you have today — authority stays
-exactly where it is.
+**Fly V228 if** the ratcheting/stuttering is what bothers you most, or if you want the grinding fix without putting the ratchet at risk. Authority stays exactly where it is today.
+
+🛑 **One honest correction to an earlier version of this card, which said V228 "cannot make anything worse".** That is wrong. It cannot make the **ratchet** worse. But **both builds raise the 40–49 Hz band** — the notch retune moves Honda’s own 55 Hz notch away, which lifts what sits above it: **V228 by ~+5.9 dB, V222 by ~+8.1 dB**, against the **+9.7 dB(A)** "grind #2" that caused a lever to be removed back at V62. **That band is audible**, so if you hear a new higher-pitched grind that was not there before, that is where it comes from and it is expected rather than a surprise.
 
 **Fly V222 if** you want the LKAS authority as well and are willing to have the ratchet possibly get
 worse in exchange, knowing you can fall back.
