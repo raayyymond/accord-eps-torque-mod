@@ -4,6 +4,55 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅⭐⭐ **THE 8× LKAS GAIN IS RE-OPENED — V208's notch changes the trade that killed it three times**
+
+**LKAS authority was the one symptom with nothing on the shelf.** The enumeration is closed —
+`0xC6CD0` is the only firmware lever — and it was abandoned at V101, V124/137 and V142/147 because the
+record measures **vibration ∼ m^1.74 against authority ∼ m^0.88**. That trade is set by the
+**baseline**, and V208 moves the baseline.
+
+### ✅ **ENERGY-WEIGHTED OVER THE GAIN-DRIVEN BAND (22–26 Hz), 130 EPISODES**
+```
+   V208 attenuation there      3.70x amplitude   (13.6x energy; sqrt = 3.69x -- consistent)
+   a 6x -> 8x step grows vib   1.65x             (m^1.74; and 2^1.74 = 3.34 sits inside the
+                                                  measured G = 2.7-3.9x for a 2x step)
+   ** net vs the car TODAY     1.65 / 3.70 = 0.45x, i.e. ~2.2x QUIETER **
+   authority gained            1.29x
+```
+⇒ **for the first time the arithmetic puts 8× BELOW where the car sits today, not above it.** V101
+flew 8× with only Honda's 55 Hz notch and the operator reported grinding at all speeds — **that was at
+1.65× the then-current level. This is at 0.45×.**
+
+### 🛑 **A STATISTICAL TRAP I ALMOST PUBLISHED**
+My first pass reported **13.63×** and I nearly called that the attenuation. **13.63× is the ENERGY
+ratio; 3.70× is the AMPLITUDE ratio**, and they differ by the square. The record's `m^1.74` law was
+fitted to `G`, an amplitude ratio — so comparing 1.65× against 13.63× would have overstated the case
+by 3.7×. **Squaring the per-bin amplitude ratios (6.1×…2.4×) gives energy reductions 37×…5.8×, whose
+weighted harmonic mean is 13.6×, and √13.6 = 3.69× = the flat amplitude average.** The two agree once
+labelled. **Compare like with like or a factor of 3.7 appears from nowhere.**
+
+### ✅ **V211 BUILT — AND DELIBERATELY STAGED**
+`70b205589b6f81a9…` · 37/37 · preflight 8/8 · **4 payload bytes across 3 cells** (derived, not assumed:
+`3072 → 4096` is `0x0C00 → 0x1000`, so each clamp moves ONE byte).
+```
+   0xC6CD0  5346 -> 7128   the forward gain, 6x -> 8x
+   0xC61B2  3072 -> 4096   tracking clamp A   ] at 8x the lane max is 3341, which EXCEEDS 3072 --
+   0xC61B4  3072 -> 4096   tracking clamp B   ] this is why V101 had to raise them too
+```
+**The gates that killed earlier gain builds are asserted in the builder**: `0xC674E` = 5120 must stay
+**above** the tracking clamp (the record's own abort condition, and what caps the lever below 10×);
+lane max 3341 < 4096 so the clamps do not bind; `0xC407E` stays Honda 511 (V73 raised it, V74/V75
+faulted).
+
+### 🛑 **WHAT IT RESTS ON — AND WHY IT IS STAGED**
+⚠ **[BELIEF, not measurement]** that the notch attenuates a **command-excited** line. The notch is on
+the base-assist path, not the command path — but it is **inside the loop** (motion → column torque →
+sensor → assist map → biquad → aggregator → motor → motion), so it lowers the loop gain that
+**sustains** the resonance regardless of what excites it. **That is reasoning, not data.**
+🛑 **So V211 must NOT be flown before V208 or V209 confirms the grind fix on-car.** If the notch does
+not do what is predicted, 8× simply lands at 1.65× and the operator hears it immediately. **The
+sequencing is the safeguard, and it is written into the builder's own docstring.**
+
 ## ✅⭐ **THE OUTLIERS DISSOLVE, THE PEAK HISTOGRAM WAS THE WRONG STATISTIC — and V208 stands anyway**
 
 ### 🛑 **ONE "OUTLIER ROUTE" HAS NO GRIND AT ALL**
@@ -2236,38 +2285,4 @@ normal driving sits BELOW the threshold and the LERP path IS live.** The revert 
 ⚠ **Sign basis is shared with V190** — `gp-0x6b26` anti-damping per the ★★★★★ result plus the
 3×-dose / 3.58×-ratchet observation. **If inverted, this term was DAMPING and zeroing it during an
 oscillation makes the ratchet worse.** Same pre-registered revert.
-
-## ✅ **V190 UN-RETRACTED — THE DECIDING TEST IS THE SIGN *RELATIVE TO* `gp-0x6b26`, AND IT MATCHES**
-The retraction one section below was **wrong, and here is the specific error**: I judged
-`gp-0x6bc2` in isolation, asking *"does opposing acceleration mean damping?"* — a question that
-rests on the aggregator→plant sign, **which is exactly the link I had already flagged as unproven.**
-The answerable question is the **RELATIVE** one.
-```
-   the gp-0x6bc2 path, both inversions now PROVEN:
-     d(gp-0x6ad4)/d(gp-0x6ad6) = (-K) * (-1) = +K      the two inversions CANCEL
-     gp-0x6ad6 ~ -a                              =>    gp-0x6ad4 ~ -a
-   the inertia term, added DIRECTLY with no inversions:
-     gp-0x6b26 = -K*alpha                        =>    gp-0x6b26 ~ -a
-```
-⇒ **BOTH terms enter the aggregator with the SAME SIGN, so they are the same class.** Whatever
-`gp-0x6b26` is, `gp-0x6bc2` is.
-✅ The kit's ★★★★★ finding [[accord-gp6b26-is-inertia-not-damping]] says `gp-0x6b26` is an
-**inertia term giving NEGATIVE apparent inertia — anti-damping**. **Empirical support:** the flying
-build carries **3×** Honda's dose of it (`m26 Y = −29490/−17202/−16000` vs `−9830/−5734/−1966`) **and
-ratchets 3.58× more when engaged.** If these terms were damping, tripling one should have *reduced*
-the ratchet.
-⇒ **`gp-0x6bc2` is anti-damping too, and disabling it (V190) is directionally correct.**
-
-🛑 **What was actually learned, and it is not nothing:** `FUN_0003a382` was decompiled and
-**`error = measured − reference` is now PROVEN**, as is `gp-0x6ad4 = −K·error`. Those two links were
-BELIEF before this tick. The mistake was framing an absolute question the data cannot answer
-(*"is this damping?"*) instead of the relative one it can (*"is this the same sign as the term we
-already characterised?"*).
-➕ **GENERAL RULE: when an absolute sign depends on an unproven link, do not guess it — ask whether
-the new term matches a term already characterised through the SAME unproven link. The unknown link
-cancels.**
-
-✅ **V190 restored as the recommendation.** Its sign now rests on **consistency with the ★★★★★
-`gp-0x6b26` result plus the 3×-dose/3.58×-ratchet observation**, not on an independent proof — so
-the pre-registered "ratchet gets worse ⇒ revert to V189" outcome **stays on the card.**
 

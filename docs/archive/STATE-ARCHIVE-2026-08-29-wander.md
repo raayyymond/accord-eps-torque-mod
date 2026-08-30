@@ -3797,3 +3797,37 @@ labelled **BELIEF** with the failure mode pre-registered — and then the verifi
 this is what it looks like when the check comes back negative. **Do not ship a lever whose sign
 rests on an unverified chain when the chain is decompilable in one tick.**
 
+## ✅ **V190 UN-RETRACTED — THE DECIDING TEST IS THE SIGN *RELATIVE TO* `gp-0x6b26`, AND IT MATCHES**
+The retraction one section below was **wrong, and here is the specific error**: I judged
+`gp-0x6bc2` in isolation, asking *"does opposing acceleration mean damping?"* — a question that
+rests on the aggregator→plant sign, **which is exactly the link I had already flagged as unproven.**
+The answerable question is the **RELATIVE** one.
+```
+   the gp-0x6bc2 path, both inversions now PROVEN:
+     d(gp-0x6ad4)/d(gp-0x6ad6) = (-K) * (-1) = +K      the two inversions CANCEL
+     gp-0x6ad6 ~ -a                              =>    gp-0x6ad4 ~ -a
+   the inertia term, added DIRECTLY with no inversions:
+     gp-0x6b26 = -K*alpha                        =>    gp-0x6b26 ~ -a
+```
+⇒ **BOTH terms enter the aggregator with the SAME SIGN, so they are the same class.** Whatever
+`gp-0x6b26` is, `gp-0x6bc2` is.
+✅ The kit's ★★★★★ finding [[accord-gp6b26-is-inertia-not-damping]] says `gp-0x6b26` is an
+**inertia term giving NEGATIVE apparent inertia — anti-damping**. **Empirical support:** the flying
+build carries **3×** Honda's dose of it (`m26 Y = −29490/−17202/−16000` vs `−9830/−5734/−1966`) **and
+ratchets 3.58× more when engaged.** If these terms were damping, tripling one should have *reduced*
+the ratchet.
+⇒ **`gp-0x6bc2` is anti-damping too, and disabling it (V190) is directionally correct.**
+
+🛑 **What was actually learned, and it is not nothing:** `FUN_0003a382` was decompiled and
+**`error = measured − reference` is now PROVEN**, as is `gp-0x6ad4 = −K·error`. Those two links were
+BELIEF before this tick. The mistake was framing an absolute question the data cannot answer
+(*"is this damping?"*) instead of the relative one it can (*"is this the same sign as the term we
+already characterised?"*).
+➕ **GENERAL RULE: when an absolute sign depends on an unproven link, do not guess it — ask whether
+the new term matches a term already characterised through the SAME unproven link. The unknown link
+cancels.**
+
+✅ **V190 restored as the recommendation.** Its sign now rests on **consistency with the ★★★★★
+`gp-0x6b26` result plus the 3×-dose/3.58×-ratchet observation**, not on an independent proof — so
+the pre-registered "ratchet gets worse ⇒ revert to V189" outcome **stays on the card.**
+
