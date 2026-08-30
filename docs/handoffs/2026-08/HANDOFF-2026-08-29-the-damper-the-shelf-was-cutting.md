@@ -109,6 +109,17 @@ from what the operator drives. **Diff every candidate against the flown image.**
   relay) · the rate lane (V39/V42/V61/V62). **`0xC63AE` on V217 is the only untested candidate
   that exists.** Two consecutive search ticks landed on explicitly-closed levers — treat that
   as the signal that the analytical search is exhausted, and get a drive.
+- **THE NOTCH CENTRE IS CONFIRMED OPTIMAL under a SECOND, independent objective.** V208/V217's
+  20.50 Hz was fitted on the **median episode PEAK** (125 episodes, 20 routes). The kit's own
+  scorer argues **band ENERGY** is the better statistic, so I re-optimised on energy-weighted
+  removal across the same 125 episodes, under the same gates (`max|H| <= 1`, `|dphase@5Hz| <= 8`):
+  V217 removes **95.3 %** of median episode band energy; the best design in the sweep removes
+  **95.8 %** — and its **zeros sit at exactly 20.50 Hz**, identical to V217. Only the poles
+  differ (14.50 / r 0.9650 vs 15.50 / r 0.9575) for **0.6 percentage points**, inside noise.
+  ⇒ **No meaningful headroom. Do not re-tune the notch centre.**
+  ⊕ Route `r1e` (999 s engaged, the corpus's longest) has its energy centroid at 17.52 Hz and
+  would prefer 15.50 — that is the **documented p10 tail**, which STATE.md already anticipates
+  ("the tail is where one biquad was never going to help"). **Do not re-centre on one route.**
 - A sweep for "dormant features gated by a zero cal" has a **poor hit rate** — zero offsets and float
   low-halves dominate. The one real find (the PI block) came from tracing, not sweeping.
 
