@@ -246,6 +246,19 @@ the ratchet is clearly worse than V122, stop and say so** — fallback is **V221
 then **V217** (5244, the V88-proven dose).
 Study: `analysis-2020accord/studies/mixer/lever_b_pumping_check_at_matched_gain.py`.
 
+## ✅ THERE IS NOW A SAFER SIBLING — V228, four bytes away
+
+**V228 is this build with the 8× gain step removed** (`0xC6CD0` left at your car’s 5346, clamps at
+3072). It keeps the **identical notch** and the **identical Lever B 13107**, so the grinding case is
+unchanged — but it does **not** put the ratchet at risk, because every one of its 19 bytes is either a
+damper raise or a filter that is flat at 6–9 Hz.
+
+**The trade is only this: V228 leaves LKAS authority at your current 6×; V222 gives you 8×.**
+
+⚠ **If you are undecided, fly V228 first.** It cannot cost you anything you have today, and it makes
+V222 interpretable afterwards — the two differ in exactly one lever. Card:
+`docs/scoring/DRIVE-CARD-V228.md`.
+
 ## 🛑 THE ONE THING THAT COULD GO WRONG — the ratchet, and why
 
 V222 runs the LKAS forward gain at **8×**. **You flew 8× once before, on V101, and reported
