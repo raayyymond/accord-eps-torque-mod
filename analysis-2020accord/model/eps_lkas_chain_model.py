@@ -14,6 +14,41 @@ model/eps_lkas_chain_model.py
                    -> biquad H(z) = c4*(1 + b1 z^-1 + z^-2)/(1 + a1 z^-1 + a2 z^-2), fs = 1000 Hz
                    -> float clamp +-12.0 -> x1024 -> + gp-0x6b7e (UNFILTERED pedestal, NOT scaled by c4)
                    -> clamp +-0x3000 -> gp-0x6b86 -> FUN_0003aa2c aggregator
+       ==> MEASURED 2026-08-30, and it reframes the whole notch arc. The lane's OWN character
+           was finally measured, on `gp-0x6b86` flown on CAN 427 in ra4/ra5/ra6, phase against WHEEL
+           RATE, coherence-gated at 0.30. Sign mapping fixed by the kit's own b26 result (+137 deg,
+           |cos| 0.73, called "a REAL 6-9 Hz DAMPER"), so cos < 0 = damping and cos > 0 = pumping:
+
+               6-9    DAMPING (all 3 routes agree)     22-30  PUMPING (all 3 agree)
+               9-12   DAMPING (all 3 agree)            30-40  PUMPING (all 3 agree)
+               12-15  DAMPING (all 3 agree)            15-22  crossover, routes disagree
+
+           THE LANE DAMPS LOW AND PUMPS HIGH. A notch belongs only where it pumps. Honda centres the
+           cell at 55.23 Hz; every build since V172 RELOCATED it to ~20 Hz, i.e. OUT of the pumping
+           band and INTO the damping band. That is the first mechanical explanation the 56-build null
+           history has had.
+           * the AGGREGATE pumps there too -- r95/V101 carries Honda's biquad and taps `gp-0x6b94`,
+             giving 19-32 Hz mean cos +0.788 with coherence 0.93-0.97, so the other lanes do NOT
+             cancel it and cutting the lane reaches the motor.
+           * per-bin power: 7-10 Hz carries 47.9 % of the lane's power (cos -0.878); the pumping power
+             peaks at 19-26 Hz (19.7 %); 32-45 Hz carries 0.7 %.
+
+       ==> SCORE FILTER CHANGES ON |H|*cos(phi), NEVER ON |H|. A lane's damping contribution is the
+           PRODUCT. Magnitude-only comparisons can invert the verdict: V228 measures at 0.535x on the
+           damping bands and FLIPS 12-15 Hz from damping into pumping, which no |H| table showed.
+           `rlog-tools/score/net_damping_by_build.py`.
+
+       ==> Re(Z) < 0 IS ANTI-DAMPING -- resolved analytically 2026-08-30, no empirical anchor needed.
+           Re(Z) is carState.steeringTorque over carState.steeringRateDeg, BOTH driver-frame, and the
+           operator-confirmed convention puts +torque and +angle both toward LEFT. So T*omega is
+           unambiguous: Re(Z) < 0 means the column does work on the driver's hands. A lane measured
+           with POSITIVE Re(Z) is HELPING -- do not cut it.
+
+       ==> THE 55 Hz RELOCATION COST MEASURES TO -0.05 % of the lane's power. ra4 (Honda notch, 55 Hz
+           cut 121x) against ra5 (a ~25 Hz notch that passes 55 Hz), same b26 dose; CAN folds 52-71 Hz
+           into 30-49 Hz, so real energy up there would show as an excess in ra5. It does not. So the
+           licensed 50-72 Hz LKAS AUDIO excess does NOT originate in this lane.
+
        `c4` is a PURE FLAT SCALAR (one reader image-wide, zero added phase at any frequency).
        🛑 CONFIRMED 2026-08-29 by decompiling `FUN_000352b4`, and TWO consequences:
          (a) `gp-0x6b86` is the BASE POWER-ASSIST output, NOT the LKAS command. openpilot's
