@@ -104,6 +104,9 @@ ROUTES = {
     "r9e": ("75604b0a432fdc89_0000009e--54bb0788af", "V103 6x"),
     "ra4": ("75604b0a432fdc89_000000a4--bdd0c0aa4e", "V104 6x"),
     "r95": ("75604b0a432fdc89_00000095--6d7c6deef5", "V101 8x"),
+    # added 2026-08-30: the CAR's own route. No audio baseline existed for V122, which made
+    # the predicted 40-49 Hz lift on V222/V228 untestable -- there was nothing to compare to.
+    "r24": ("75604b0a432fdc89_00000024--6f4943e0a6", "V122 6x -- THE CAR"),
 }
 SR = 16000
 # ---- PASS A
@@ -136,6 +139,8 @@ def extract(tag):
     prefix, label = ROUTES[tag]
     segs = segments(prefix)
     cache = ROOT / "analysis-2020accord" / ("_cache_%s" % tag)
+    if not (cache / ("%s.npz" % tag)).exists():          # post-2026-08-26 layout
+        cache = ROOT / "analysis-2020accord" / "_scratch" / "cache" / tag
     t0 = float(np.load(cache / ("%s.npz" % tag), allow_pickle=True)["t0_mono"][0])
     print("  %s (%s): %d segments" % (tag, label, len(segs)), flush=True)
 

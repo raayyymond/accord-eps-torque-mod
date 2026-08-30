@@ -163,6 +163,50 @@ tap, rather than discovering it wrong afterwards.
 
 ---
 
+## 🛑 A SECOND PRE-REGISTERED TEST: the 40–49 Hz AUDIO lift
+
+Both builds relocate Honda’s 55 Hz notch to 20.50 Hz, which **lifts 40–49 Hz** — the "grind #2" band.
+That is a side effect of the grinding fix and it is **unavoidable** (Lever B cannot substitute; it would
+need to be 1517× past its cal ceiling, and only one biquad exists). So it should be **tested**, not
+merely warned about.
+
+✅ **The baseline did not exist until 2026-08-30 and was created for this.** The audio corpus stopped
+at `ra6`/V106 — there was **no audio cache for the car at all**, which made the prediction untestable.
+`r24` is now extracted (14 segments, 3148 spectral frames), and it shows something worth knowing:
+
+```
+  r24 (V122 = THE CAR), audio power relative to its own 30-40 Hz neighbour:
+     ratchet    6-9 Hz    -4.9 dB
+     grind #1  15-22 Hz   -1.3 dB
+     8x band   22-26 Hz   -0.5 dB
+     GRIND #2  40-49 Hz   +4.2 dB   <- ALREADY the most elevated band on the car
+     above notch 55-65    -0.5 dB
+```
+
+**40–49 Hz is already the loudest relative feature on the car before any change.**
+
+### The prediction, fixed in advance
+
+| build | predicted lift | predicted level (rel 30–40 Hz) |
+|---|---|---|
+| **V228** (notch only) | **+5.9 dB** | **≈ +10.1 dB** |
+| **V222** (notch + 8×) | **+8.1 dB** | **≈ +12.3 dB** |
+
+| outcome | licenses |
+|---|---|
+| lift within ±3 dB of prediction | the notch-relocation mechanism is **confirmed**; the trade is real and priced |
+| **no lift** (within ±2 dB of the car) | the notch arithmetic is **wrong somewhere** — stop and find it before any further build reasons from it |
+| lift **much larger** than predicted | something amplifies beyond the open-loop transfer; treat as a closed-loop effect and re-open |
+
+🛑 **This band is NOT alias-confounded.** Audio samples at **16 kHz** (Nyquist 8 kHz), so unlike
+30–49 Hz on the ~101 Hz CAN logs, 40–49 Hz here is directly measurable. It is also **audible** — if a
+new higher-pitched grind appears, this is the first place to look.
+
+Extract with `python rlog-tools/decode/extract_audio_grind.py <route>` (the route must be added to its
+`ROUTES` dict, as `r24` now is).
+
+---
+
 ## Provenance
 
 - V228 image `6cf12db9fc49aee2…`, rwd `b90a200ce53c7f37…`, 72/72 builder assertions
