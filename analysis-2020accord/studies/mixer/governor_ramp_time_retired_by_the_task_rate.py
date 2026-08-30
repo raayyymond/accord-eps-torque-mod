@@ -11,6 +11,18 @@ confirmation could never have been quantitative:
 The task rate is no longer contested -- the kit confirmed the control task at ~1000 Hz. So the
 milliseconds ARE computable now, and they retire the hypothesis.
 
+WHICH RATE, AND ON WHAT EVIDENCE (audited 2026-08-30, because this is the whole load-bearing input):
+  * The GOVERNOR is in task 1. The confirming record scopes 1 kHz to FUN_0002214a and names its tree
+    explicitly -- "arbitration (FUN_00028ea6), the aggregator (FUN_0003aa2c), shaper, GOVERNOR". So
+    1000 Hz is the right divisor here, not the assist-shaping rate.
+  * 1 kHz stands on ONE route, not two: the ON-CAR dwell (cal 0xC64DF = 100 cycles, observed on the
+    bus at 100.00 ms). The kit's second route -- OSTM0CMP=79999 / 80 MHz -- is REFUTED: PCLK is
+    40 MHz, and OSTM0 is not the RTOS tick. The conclusion is unaffected (the on-car measurement
+    never used that chain) but do not cite the OSTM0 derivation.
+  * Task 5's rate is OPEN. The "100 Hz" figure was RETRACTED 2026-08-12 (address-coincidence
+    derivation, contradicted by flown gp-0x6bbe telemetry). It does not enter this file's arithmetic,
+    and it must not be used as a ZOH veto elsewhere.
+
     lkas_max = min((setpoint 8192 * gain) >> 15, arb output clamp 4096)
     ramp     = lkas_max / slew_step   cycles, at 1 kHz
 

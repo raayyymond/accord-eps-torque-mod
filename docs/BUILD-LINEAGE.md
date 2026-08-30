@@ -1710,7 +1710,19 @@ effect is on the same amplitude LERPs V60 just falsified. **Do not propose it as
 ⚠ Two more lanes eliminated, byte-verified: `FUN_00036c12` (`gp-0x6b26`) and `FUN_00036388`
 (`gp-0x6b62`, the return-centre lane) read **no torque signal at all** — speed/motor-rate keyed only.
 
-★★ **A structural finding that reframes every damper null: RTOS task 5 runs at 100 Hz.** The rate
+🛑 **RETRACTED 2026-08-12 — TASK 5'S RATE IS OPEN. The paragraph below is kept as a record of what
+the kit believed; do NOT size a build on it, and do NOT cite it as a veto.** The `syscall8`/TCB derivation
+identified the RTOS eligibility handler on an **address coincidence**, and the 100 Hz figure is
+**contradicted by `gp-0x6bbe`'s own flown telemetry**. ⚠ **The closing sentence below is the specific
+error to watch:** it says *"the 1 kHz/100 Hz figures survive on on-car measurement"* — **only the 1 kHz
+half does.** Task 1 is measured on-car (`0xC64DF` = 100 cycles, observed at 100.00 ms); **task 5 has never
+been measured at all.** ⇒ the ZOH veto below is **unsupported**, so V44/V47's nulls rest on the FactorC
+speed-axis argument **alone** (the damper is identically zero below 35 km/h), and the claim elsewhere in
+the record that *"r24/r26 are the ONLY damping with the bandwidth to act on grind #1"* is **unsupported
+too** — it is not refuted, and Lever B's standing rests on its **measured** V88 win, not on this.
+⇒ `memory/accord/firmware/accord-task5-is-100hz-damper-cannot-damp-21hz.md` carries the full banner.
+
+★★ ~~**A structural finding that reframes every damper null: RTOS task 5 runs at 100 Hz.**~~ The rate
 divider `FUN_00014be4` is mod-100 on the base tick; boost `FUN_00034a72` and damping `FUN_00034350`
 fire once per 10 task-1 invocations (integer arithmetic — clock-independent). ⇒ a ZOH costs
 **37.6° average / 75.2° worst-case** transport lag at 20.9 Hz before any plant phase, so the
