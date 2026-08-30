@@ -131,6 +131,38 @@ Run: `python rlog-tools/score/score_8x_experiment.py --selftest` to re-verify, t
 
 ---
 
+## The extract-to-cache path, verified before the drive
+
+The scorer reads a route cache that does not exist until a drive is extracted, so the pipeline was
+checked end to end rather than assumed.
+
+Every drive so far got a hand-written extractor — **49 of them**, 4 KB to 37 KB, each repeating one
+wrapper with two numbers changed. Those two numbers are the CAN-427 tap’s **source** and **shift**, and
+they are the single worst thing to hand-type, because the record’s own rule is: *"CAN 427 carries a
+DIFFERENT VARIABLE PER BUILD — source + shift move on nearly every build (V94 `gp-0x6b26` sar1 vs
+V96–99 `gp-0x6b70` sar6 = **32× apart**). Never pool a 427 percentile across routes; decode from the
+image first."*
+
+`rlog-tools/decode/extract_route_generic.py` therefore **refuses to take them as arguments** and derives
+them from the build’s own image (`0x55DF2` source hw2, `0x55E10` shift, `wire scale = 2**shift / 5`).
+Cross-validated against two independent sources:
+
+```
+  V122 (the car)   gp-0x6ABC  sar 3  scale 1.6   matches extract_r24.py's hardcoded 8.0/5.0
+  V222 / V228      gp-0x6B4E  sar 5  scale 6.4   matches the builder's NEW_PROBE_HW2 = 0x94B2
+```
+
+🛑 **And that surfaces a live trap for this experiment: V222/V228 read a DIFFERENT VARIABLE from the
+car’s route, at 4× a different scale.** Any 427 comparison against route `r24` would be wrong twice
+over.
+✅ **The 8× scorer is unaffected** — it uses `cs_rate`, which is build-independent — and V228 and V222
+**share a tap**, so their 427 channels are directly comparable to each other.
+
+Run `python rlog-tools/decode/extract_route_generic.py --check V228` before the drive to confirm the
+tap, rather than discovering it wrong afterwards.
+
+---
+
 ## Provenance
 
 - V228 image `6cf12db9fc49aee2…`, rwd `b90a200ce53c7f37…`, 72/72 builder assertions
