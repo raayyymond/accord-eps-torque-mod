@@ -47,7 +47,7 @@ print('  DOCUMENTS')
 for f, must in [
     ('docs/STATE.md', 'THE DECISION, IN ONE PLACE'),
     ('docs/scoring/DRIVE-CARD-V228.md', 'DRIVE V228 TWICE'),
-    ('docs/scoring/DRIVE-CARD-V229-vs-V228.md', 'the 55 Hz question'),
+    ('docs/scoring/DRIVE-CARD-V230-V229-V228.md', 'DRIVE **V230** FIRST'),
     ('docs/scoring/DRIVE-CARD-V222.md', 'SAFER SIBLING'),
     ('docs/scoring/PREREG-V228-V222-THE-8X-EXPERIMENT.md', 'CANNOT do'),
     ('docs/specs/design/CAVE-SPECS-THE-TWO-REMAINING-INSTRUMENTS.md', 'GATE RESULTS'),

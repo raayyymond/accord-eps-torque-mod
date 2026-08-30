@@ -74,6 +74,7 @@ PUB = {
     'v227': '28b5f4c979660451cda9c457312b824622488201d96ecf1dbf3be90dd8d67434',
     'v228': '6cf12db9fc49aee29e46c169c05fc18415f2a970b477cdae1372d57805748b3c',
     'v229': '078da4b1f22903a5364b54b0035790f0fac6453a4717e881290eefb15bc14a42',
+    'v230': 'bb11115a54ba97b4216f7bb2a12c1a9da2d0ba4c7495d80f008d7bc35eac3f61',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -707,7 +708,8 @@ _LEVER_B_LADDER = {'v221': 13107, 'v222': 13107, 'v223': 26214,
                    'v224': 13107, 'v225': 13107, 'v226': 13107,
                    'v227': 13107,
                    'v228': 13107,
-                   'v229': 13107}   # v229 = V228 with Honda's 55 Hz notch restored
+                   'v229': 13107,
+                   'v230': 13107}   # v230 = v229 + alpha2 3: BOTH cuts
 for _v in sorted(img):
     _want = _LEVER_B_LADDER.get(_v, 5244)
     _got = struct.unpack_from('<H', img[_v], 0xC6446)[0]
@@ -914,9 +916,17 @@ print("[22] THE TWO DELTAS FROM THE CAR THAT WERE NEVER FLAGGED")
 for _v in sorted(img):
     _al = struct.unpack_from('<H', img[_v], 0xC40DC)[0]
     _kn = struct.unpack_from('<H', img[_v], 0xC40BC)[0]
-    chk(_al in (8, 22),
-        f'{_v.upper()} 0xC40DC accel alpha = {_al} (car 8, Honda 22)'
-        + ('' if _al in (8, 22) else ' -- a THIRD value, unexplained'))
+    # V230 lowers it DELIBERATELY to 3. That cell is the low-pass corner of the gp-0x6b26 EMA
+    # bandpass and its DC gain is 1 at ANY value, so lowering it buys HF cut (0.396 at 18.5 Hz,
+    # 0.178 at 55 Hz) while leaving hand-steering bandwidth alone (0.992 at 1 Hz, 0.932 at 3 Hz).
+    # It is the only HF lever besides the biquad, and the biquad cannot notch 18 Hz AND 55 Hz.
+    # Historical values 22/16/14/8/5/2, so 3 is inside the built range. Any OTHER value is still
+    # unexplained and must fail.
+    _ALPHA2_OK = {8: 'the car', 22: 'Honda / V179', 3: 'V230, deliberate: BOTH cuts'}
+    chk(_al in _ALPHA2_OK,
+        f'{_v.upper()} 0xC40DC accel alpha = {_al}'
+        + (f' ({_ALPHA2_OK[_al]})' if _al in _ALPHA2_OK
+           else ' -- a value outside {8, 22, 3}, unexplained'))
     if _kn != 3000:
         print(f'         note: {_v.upper()} friction ramp saturates at {_kn / 12.0:.0f} deg/s '
               f'vs the car 250 -- differs only ABOVE {_kn / 12.0:.0f}')

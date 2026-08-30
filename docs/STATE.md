@@ -46,6 +46,28 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V230 BUILT — ONE BYTE ON V229, AND THE FIRST BUILD TO CUT *BOTH* 15–22 Hz AND 55 Hz.** One biquad cannot notch 18 Hz and 55 Hz; V228 and V229 sit on opposite sides of that structural trade. **`0xC40DC` (alpha2) is a SECOND HF lever in a DIFFERENT lane** (the cascaded EMA bandpass feeding `gp-0x6b26`), and its low-pass has **DC gain 1 for any value**, so lowering the cal moves the corner **without touching low frequency**:
+>
+> ```
+>   cal    1 Hz    3 Hz  |  18.5 Hz          55 Hz          corner
+>    22   1.000   1.000  |  1.000           1.000           67.0 Hz   Honda / V228 / V229
+>     8   0.999   0.991  |  0.782 (1.28x)   0.466 (2.14x)   21.3 Hz   the CAR
+>     5   0.997   0.975  |  0.595 (1.68x)   0.296 (3.37x)   12.9 Hz
+>  -> 3   0.992   0.932  |  0.396 (2.53x)   0.178 (5.62x)    7.6 Hz   V230
+>     2   0.981   0.861  |  0.273 (3.66x)   0.118 (8.45x)    5.1 Hz
+> ```
+>
+> ```
+>   image bb11115a54ba97b4216f7bb2a12c1a9da2d0ba4c7495d80f008d7bc35eac3f61
+>   rwd   4aac1c8a54c3c9da2df2c7d9823e83e7503b9bae30f6276bb1bfe8f1978d75e0
+>   28/28 assertions · ONE payload byte · CRC 50/50 · cave BYTE-IDENTICAL
+> ```
+>
+> ✅ **Why 3 and not 2:** the operator's standing directive forbids adding felt mass or friction to deliberate steering (~1–3 Hz). Cal 3 leaves the lane at **0.992 / 0.932**; cal 2 buys 1.4× more at 18.5 Hz for **four times** the 3 Hz cost. Cal 3 is where the curve turns.
+> ✅ **GATE 1 is the cleanest in the kit** — *“exactly ONE gp/tp access image-wide, zero writers”*, one reader at `0x41626`. The cal has been 22/16/14/8/5/2 historically, so **3 is inside the built range**, and none of V124–V179 ever flew ⇒ **UNTESTED on-car, not falsified.**
+> ⛔ **NOT CLAIMED:** the 2.53× is **in the `gp-0x6b26` lane**, not in delivered torque. The notch cuts `gp-0x6b82` in another function — **parallel lanes, ratios do NOT multiply.** No total is asserted. And V230 confounds two changes vs V228, so **V229 remains the clean single-variable control**.
+> ➕ **RISK:** V230's 18.5 Hz cut (2.53×, one lane) is SMALLER than V228's (4.9×, another lane). If the grinding sits squarely at 15–22 Hz **in the notch's own lane**, V228 may still beat it there — while remaining 100× louder at 55 Hz.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V229 BUILT — V228 WITH HONDA'S 55 Hz NOTCH PUT BACK. TWELVE PAYLOAD BYTES. THE FIRST BUILD SINCE V172 TO DECLINE THE RELOCATED NOTCH.**
 >
 > ```

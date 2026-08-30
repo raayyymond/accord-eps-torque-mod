@@ -17,6 +17,37 @@ anything happens.** Nothing is flashed without that.
 
 ---
 
+## ⭐ DRIVE **V230** FIRST — it is the only build that cuts BOTH bands
+
+```
+  V230   39990-TVA,A160-V230-V229BASE-ALPHA2.3-BOTH.CUTS-0x13000-0x100000.rwd
+         rwd sha256 4aac1c8a54c3c9da...      image sha256 bb11115a54ba97b4...
+```
+
+V228 and V229 sit on opposite sides of a trade that **one filter cell cannot escape**. V230 escapes it
+by using a *second, different* lever in a *different lane*:
+
+```
+                      18.5 Hz              55 Hz
+  your car        no cut               159x cut (Honda's notch)
+  V228            4.9x cut             100x LOUDER than your car
+  V229            no cut               159x cut
+  V230            2.53x cut *          159x cut  +  5.62x more *
+                                       (* in the gp-0x6b26 lane)
+```
+
+It is **one byte** on V229: `0xC40DC` 22 → 3. That cal is the low-pass corner of a separate filter
+chain, and because its DC gain is 1 at *any* setting, lowering it moves the corner **without touching
+low frequency** — `0.992 at 1 Hz, 0.932 at 3 Hz`. So it buys high-frequency cut **without adding felt
+mass or friction where you actually steer**, which is your standing requirement.
+
+⚠ **Honest limits.** The 2.53× is a cut *in one lane*, not in delivered torque — the notch cuts a
+different signal in a different function, and those ratios **do not multiply**. V230's 18.5 Hz cut is
+smaller than V228's. And V230 changes two things versus V228, so **V229 is the clean control** if you
+want to know *why* something changed rather than just whether it did.
+
+---
+
 ## The one thing to understand
 
 **There is exactly ONE filter cell in this ECU. Honda uses it as a 55 Hz notch.**
