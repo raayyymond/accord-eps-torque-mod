@@ -283,6 +283,12 @@ question and only the car answers it.
 worse, that is an interpretable result and not a surprise — stop, say so, and the fallbacks in order are
 **V221** (identical Lever B), then **V217**, then back to **V122**.
 
+## ✅ THE PAIR IS PRE-REGISTERED
+
+V228 and V222 differ in the forward gain and **nothing else**, so flying both gives the **first clean 8× experiment** this kit has had — the only prior 8× route, V101, **removed Lever B in the same build**, which is why the record’s 8× evidence is confounded.
+
+What each outcome licenses is fixed **in advance** in `docs/scoring/PREREG-V228-V222-THE-8X-EXPERIMENT.md`, including the honest scope: **~21 engaged minutes per build** settles the m^1.74 dose law at 22–26 Hz, but the pair **cannot settle the ratchet** and **cannot tell a linear gain law from no effect** — those need 38–116 min/arm.
+
 ## 🛑 WHAT YOUR DRIVE CAN AND CANNOT SETTLE — read before scoring anything
 
 **Your symptom verdict is the PRIMARY readout. The band numbers are secondary and need far more
