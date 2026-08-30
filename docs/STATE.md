@@ -46,6 +46,21 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐ **THE GAIN HEADROOM IS NOT COMPUTABLE FROM THE CORPUS — so no gain step may be proposed on V235's damping. Recording this as a BLOCK, not an open question.**
+>
+> The idea was sound: V101's 8× vibrated because loop gain rose with nothing added to absorb it, and V235 adds **36 % more net damping** (J −0.28054 → −0.38119 on the clean lane) by flipping both pumping bands negative. So how much gain could that carry?
+> 🛑 **It cannot be answered from what exists:**
+> ```
+>   route  build  gain   biquad      427 tap      clamps
+>   r95    V101   7128   f8c2c4bf    gp-0x6B94    4096/4096   <- VIBRATED, operator rejected
+>   r96    V102   5346   f8c2c4bf    gp-0x6B4C    3072/3072   <- his own revert
+> ```
+> * **not single-variable** — V101 moved the forward clamps too (4096 vs 3072), so gain and clamp are confounded;
+> * **different 427 taps**, so the lane observable is not comparable;
+> * the only common signal is **driver-side Re(Z), which the gain confounds mechanically** — `Re(Z) = torque/rate`, so more loop gain raises rate and makes Re(Z) less negative regardless of symptom. **The rejected build reads LESS anti-damped** (9–12 Hz −38.9 vs −61.7), which is the artifact, not a fact.
+> ⇒ **36 % more damping vs a 33 % gain step is not a comparison, it is a coincidence of two numbers that are not commensurable.** Converting damping into gain headroom needs an OPEN-LOOP transfer — the kit's own GATE 2 — and the kit has never measured one.
+> 🛑 **STANDING BLOCK: do not propose a gain step on the strength of V235's damping.** A gain change is the exact class that produced *“GRINDING/VIBRATION AT ALL SPEEDS”* (V101) and the worst-in-corpus build (V71c). **What would close it:** an open-loop measurement at two gains with everything else byte-identical and the SAME tap — which is a drive-dependent experiment, not an analysis.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V235 AGAINST THE OPERATOR'S THREE STATED GOALS — and it only addresses two of them.** He asked for grinding, LKAS authority and peak command oscillation. Every argument I have made for V235 is about the first. Checking the other two:
 >
 > **1. GRINDING / RATCHETING — addressed.** The notch cuts the band the lane and the aggregate both pump in (19–32 Hz, coherence up to 0.97), while holding the damping band at **1.004×**.
