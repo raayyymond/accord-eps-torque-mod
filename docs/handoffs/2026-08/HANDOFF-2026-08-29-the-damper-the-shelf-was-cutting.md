@@ -73,6 +73,19 @@ from what the operator drives. **Diff every candidate against the flown image.**
 - The mixer's dormant **rate limiter cannot be armed by any single-byte edit** — its input is zero on
   both sides of the arm gate.
 - `0xC648E` (22 readers, reads zero) is **an additive offset** in a telemetry scaler, not a gate.
+- **The ~31 Hz line is NOT explained by apparent inertia.** `gp-0x6b26` is `-K*alpha`, so a
+  mass-spring resonance would give `f ~ 1/sqrt(J)`, slope **-0.5** against the `0xD7A5C` dose.
+  The argmax of the 5-45 Hz creep spectrum appears to confirm it beautifully -- **slope -0.540,
+  corr -0.751, n=9** -- and that number is an **artefact**. The peaks are **bimodal** (5-12 and
+  15-45 Hz) and argmax hops between clusters; at dose 1.500 two routes sit in each cluster,
+  **same dose, opposite answers**. Per band: LOW `corr +0.684 slope +0.061` (wrong sign, flat),
+  HIGH `corr -0.845 slope -0.159` (right sign, wrong magnitude). A pure inertia effect must move
+  **both** at -0.5. And the HIGH association is carried **entirely by one route**: without `r7d`
+  it is `corr -0.510, slope -0.089, perm p=0.177` -- **not significant**. Within-dose spread at
+  1.500 is 3.13 Hz over four routes against a 13.67 Hz total range.
+  ⇒ **REFUTED. The 31 Hz line remains UNEXPLAINED**, and the corpus cannot settle it because
+  only one route has a low inertia dose. `studies/mixer/inertia_dose_vs_peak_frequency.py`
+  asserts both refutation conditions so it cannot be quietly re-derived.
 - A sweep for "dormant features gated by a zero cal" has a **poor hit rate** — zero offsets and float
   low-halves dominate. The one real find (the PI block) came from tracing, not sweeping.
 
