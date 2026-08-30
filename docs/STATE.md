@@ -66,6 +66,29 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE 6–10 Hz NOTCH IS UNREACHABLE — AND THE BLOCKING RULE TURNS OUT TO BE IRRELEVANT. THE BAND IS CLOSED FOR A STRUCTURAL REASON INSTEAD. V244 WITHDRAWN.**
+>
+> The prize was priced at **66.2 %** of the torque excess against V241's 21.8 %, so V244 was built to settle the disputed rule by driving it — a 12-byte cal edit, no cave. **The kit's own passband gate failed it:**
+> ```
+>   V244 passband floor over 0-5 Hz = 0.9179   against a 0.99 bar
+>   "THIS BUILD TURNS THE BASE ASSIST DOWN, it does not notch"
+> ```
+> 🛑 **MY OWN LOCALITY CONSTRAINT WAS TOO LOOSE AND THE GATE CAUGHT IT.** I required `|H| ≥ 0.75` outside 5.5–10.5 Hz, which permits a **25 % cut at 5 Hz** — inside the band the driver actually steers in. The gate's bar is 0.99, and V244 sits at **0.9179**. **The 66 % was bought by cutting the driver's own band — the gain-reduction trade wearing a different hat.**
+> ⭐ **AND THE SEARCH UNDER THE REAL GATE SETTLES THE BAND FOR GOOD:**
+> ```
+>   zero Hz   pole Hz      r    max|H|   pb min   torque excess removed
+>     10.75     10.50   0.990   1.0000   0.9905          14.7 %   <- closest LEGAL to the ratchet
+>     11.00     10.75   0.990   1.0000   0.9919          12.7 %
+>     11.50     11.25   0.990   1.0000   0.9940           9.9 %
+>
+>   V241, aimed at 22-30 Hz:                              21.8 %   and it PASSES the gate
+> ```
+> ⇒ **[EVIDENCE] EVERY NOTCH THAT ACTUALLY REACHES 6–10 Hz VIOLATES THE PASSBAND GATE.** At 1 kHz a 7.75 Hz notch's skirt inevitably drags 0–5 Hz down; the closest legal geometry sits at **10.75 Hz, ABOVE the ratchet, and removes LESS than V241 does.**
+> ⭐⭐ **SO THE PUMP/DAMP RULE NO LONGER BLOCKS ANYTHING.** The band is unreachable for a reason that has nothing to do with the dispute: **the ratchet sits too close to the steering band to notch with a single 2nd-order section at 1 kHz.** Whether the lane damps at 6–15 Hz is now moot for notch design — and the two defects found in that rule no longer need resolving to make progress.
+> ✅ **AND IT VINDICATES V241's PLACEMENT.** 22–30 Hz is not a compromise forced by a disputed rule; it is **the best a single biquad can legally do**, by 21.8 % against 14.7 % for the closest ratchet-ward geometry.
+> ⇒ **V244 WITHDRAWN**, `.rwd` renamed `SUPERSEDED-DO-NOT-FLASH-…`. The flashable shelf is unchanged: **V241 · V242 · V243**.
+> ⊕ The 66 % figure is **RETRACTED**. It was computed under a locality floor of 0.75, which the kit's passband gate rejects.
+
 > ⭐⭐⭐⭐⭐ **THE 6–10 Hz NOTCH IS WORTH ~3× V241 — 66 % OF THE TORQUE EXCESS AGAINST 22 %. THE RULE BLOCKING IT IS NOW WORTH SETTLING, WITH A NUMBER ATTACHED.**
 >
 > Priced against the **torque** engagement excess — the lane's own domain, where **6–10 Hz carries 68.6 % of all excess weight over 3–45 Hz**:
