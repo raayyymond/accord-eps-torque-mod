@@ -206,6 +206,28 @@ this block asserts — is the **SHAPE**: the extremum is at 9–10 Hz and the ba
 **mid > gap > ratchet > grind**.
 ⇒ **Consequence for lever design: size and aim at 9–12 Hz, not only at 6–9.**
 
+> ✅ **AND V222’S AIM WAS CHECKED AGAINST THAT — the gap is real but MITIGATED, and the fix is
+DEFERRED, not taken.** Computed from the image floats (`0xC60A8/AC/B0/B4`, direct-form II, 1 kHz):
+the car is `f0 = 55.23 Hz, r = 0.7966`; V222 is `f0 = 20.50 Hz, r = 0.9575`. V222/car by band:
+**6–9 0.970 · 9–12 0.924 · 12–15 0.827 · 15–22 0.366 · 22–30 0.821**. ⇒ **the notch cuts the band with
+the LEAST anti-damping 2.7× and the band with the MOST by 8 %.** ✅ **But V222 is not blind to the
+peak**: Lever B’s transfer is a 4 ms difference, which **RISES** with frequency — `|H|` **0.1955 at
+7.79 Hz → 0.2630 at 10.5 Hz = 1.35× stronger at the Re(Z) peak than at the ratchet.** The broadband
+lever is best-aimed exactly where the narrowband one is weakest.
+🛑 **RE-CENTRING to 13 Hz is REJECTED**: 9–12 would improve to 0.460, but 15–22 degrades **0.366 →
+0.807** (surrendering a measured grinding win) and 22–30 goes to **1.402 — a BOOST**, in the region that
+folds into the scored 30–49 Hz band.
+⏸ **WIDENING is DEFERRED, not rejected.** Lowering the pole radius improves **both** target bands at
+once (r = 0.92: 9–12 **0.813**, 15–22 **0.254**), with DC held at exactly **1.000000** by
+`c4 = (1+a1+a2)/(2+b1)`. 🛑 **But the skirt extends DOWNWARD into 6–9 Hz — precisely the band where
+V214–V217 found the shelf had been cutting a REAL damper 7.15× below the car, a defect found only
+through an ABORTED DRIVE.** At r = 0.92 the trade is **8.7 % of the 6–9 damper for a 14.1 % deeper 9–12 cut and only 2.7 % on 15–22** — i.e. it buys almost all of its value in the peak band, which is the right place, but pays for it in the wrong one.
+That is far smaller than the 7.15× that caused the abort — **but it is the same DIRECTION, on the one
+band four builds were just spent repairing, and it buys 14 % on a notch already delivering 2.7×.**
+⇒ **Fly V222 as built.** If its drive shows residual 9–12 Hz content, **r = 0.92 is the pre-computed
+follow-up rung** (`a1 −1.82475755, a2 +0.84640000, b1 −1.983432120, c4 +1.30628962`).
+Study: `analysis-2020accord/studies/mixer/notch_aim_vs_where_the_energy_is.py`.
+
 > 🛑 **AND THE FRAME TEST IS INCONCLUSIVE — reported as such, not dressed up.** The plan was to
 calibrate the pipeline against the operator-confirmed *"+ LKAS demands negative steering angle"*.
 Measured: median `corr(sc_tq, cs_ang)` = **−0.166**, which matches the convention — **but 2 of 6 routes
