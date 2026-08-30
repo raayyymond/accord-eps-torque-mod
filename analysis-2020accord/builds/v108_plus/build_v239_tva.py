@@ -1,5 +1,16 @@
 # -*- coding: utf-8 -*-
-r"""V239 -- BOTH RATCHET LEVERS IN THE SAME LANE. V236's slope cap PLUS V238's pole.
+r"""WITHDRAWN 2026-08-30 -- 0xC6384 IS MEASURED INERT. DO NOT FLASH. Fly V238.
+
+The slope cap only reshapes the map ABOVE 2844 torque counts -- it moves the top X breakpoints and
+Y never changes -- and the car is above that on 1.65 % of engaged frames. 6-9 Hz band ratio 1.0000
+(range 0.999-1.000, 22 routes). CONTROL: on a route that never crosses 2844 counts, b82 and b84 are
+BIT-IDENTICAL at every dose down to 256. The cap branch never fires at any shipped value: the map's
+natural max slope is 0.350 against a cap at 2.000. The GATE 2 "Q ratio 14.29 -> 4.26" came from a
+loop model that assumed the cap SCALES the lane gain; it does not.
+
+--- the original docstring follows, retained as the record ---
+
+V239 -- BOTH RATCHET LEVERS IN THE SAME LANE. V236's slope cap PLUS V238's pole.
 
 WHY BOTH. The two cells sit at opposite ends of one structure and their sizes are now MEASURED, so
 combining them confounds nothing:
@@ -76,7 +87,8 @@ if hasattr(sys.stdout, "reconfigure"):
 START, END = 0x13000, 0x100000
 WRITE_MODE = os.environ.get("ACCORD_V239_WRITE", "").strip().lower()
 
-BASE_NAME = "_v236_V236-V235BASE-ASSISTMAP.SLOPECAP.1536.RATCHET_plain_image.bin"
+# base renamed when V236 was withdrawn 2026-08-30; the builder must still reproduce
+BASE_NAME = "SUPERSEDED-_v236_V236-V235BASE-ASSISTMAP.SLOPECAP.1536.RATCHET_plain_image.bin"
 BASE_SHA = "509785673468a346ac366dfb2fb8e491231f49a4e440e22ef9ce4fe39602d862"
 
 BIQ, BIQ_LEN = 0xC60A8, 16

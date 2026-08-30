@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-r"""V236 -- THE RATCHET LEVER, PORTED ONTO THE CURRENT BUILD. TWO BYTES ON V235.
+r"""WITHDRAWN 2026-08-30 -- 0xC6384 IS MEASURED INERT at the ratchet (band ratio 1.0000; the cell
+only reaches above 2844 torque counts, 1.65 % of engaged frames). DO NOT FLASH. Fly V238.
+
+--- the original docstring follows, retained as the record ---
+
+V236 -- THE RATCHET LEVER, PORTED ONTO THE CURRENT BUILD. TWO BYTES ON V235.
 
 WHY THIS EXISTS. `HANDOFF-2026-08-29-the-ratchet-is-the-assist-map.md` worked out a gated ratchet lever
 and built it as V168. **V168 never flew, and every build since reverted the cell.** Read from the

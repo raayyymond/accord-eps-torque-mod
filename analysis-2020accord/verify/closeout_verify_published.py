@@ -79,9 +79,7 @@ PUB = {
     'v233': '399424fd8b03266950ed07d5e47964705c9a87bf2f86c4370c0999179d0ae42a',
     'v234': '7adbc68f2b8163c69c6b387171a2fc18938f8f1dce8127abf6cfff9907be42e6',
     'v235': 'ad6d485eefb2f6bcc195c062035d5a9dab5fb06dae7f46f68f5ca03a504c18ab',
-    'v236': '509785673468a346ac366dfb2fb8e491231f49a4e440e22ef9ce4fe39602d862',
     'v238': '34ceb5aefaa9bdd5fd656513ce3536ae3e0fd5590c5c8bb80b400aa90b8a5be5',
-    'v239': '3c1bf1e9d5f8b79aa3f9011279d1598e3bfc7d6881dbf88adc96388235cd2fcc',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -855,10 +853,6 @@ _KNOT_OK = {
     ('v238', 0xC6908),
     ('v238', 0xC690A),
     ('v238', 0xC690C),
-    ('v239', 0xC6906),
-    ('v239', 0xC6908),
-    ('v239', 0xC690A),
-    ('v239', 0xC690C),
 }
 chk(len(_TABS) >= 90, f'{len(_TABS)} well-formed cal tables enumerated from movea instructions')
 for _v in sorted(img):

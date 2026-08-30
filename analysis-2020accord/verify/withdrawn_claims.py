@@ -65,6 +65,22 @@ WITHDRAWN = [
      '2026-08-30: WITHDRAWN. Under the blend it points the OTHER way (manual restores MORE), and '
      'either reading is confounded -- engagement adds the whole LKAS path, and the archive already '
      'found the pole difference far too small to explain the engaged/manual contrast.'),
+    (r'0xC6384 is the (?:only |one |ONLY |ONE )?(?:gated |GATED )?ratchet lever'
+     r'|the ratchet lever with the size|assist.map slope cap is the ratchet lever',
+     "0xC6384 as a ratchet lever",
+     '2026-08-30: MEASURED INERT. The cap only reshapes the map ABOVE 2844 torque counts (it moves '
+     'the top X breakpoints; Y never changes), and the car is above that on 1.65 % of engaged '
+     'frames. 6-9 Hz band ratio 1.0000, range 0.999-1.000, over 22 routes. On a route that never '
+     'crosses 2844 counts, b82/b84 are BIT-IDENTICAL at every dose down to 256. The GATE 2 '
+     '"Q ratio 14.29 -> 4.26" came from a loop model that assumed the cap scales the lane gain.'),
+    (r'0xC6384 is the (?:only |one |ONLY |ONE )?(?:gated |GATED )?ratchet lever'
+     r'|the ratchet lever with the size|assist.map slope cap is the ratchet lever',
+     "0xC6384 as a ratchet lever",
+     '2026-08-30: MEASURED INERT. The cap only reshapes the map ABOVE 2844 torque counts (it moves '
+     'the top X breakpoints; Y never changes), and the car is above that on 1.65 % of engaged '
+     'frames. 6-9 Hz band ratio 1.0000, range 0.999-1.000, over 22 routes. On a route that never '
+     'crosses 2844 counts, b82/b84 are BIT-IDENTICAL at every dose down to 256. The GATE 2 '
+     '"Q ratio 14.29 -> 4.26" came from a loop model that assumed the cap scales the lane gain.'),
     (r'no LINEAR lane is the ratchet|every lane damps at the ratchet',
      'the all-lanes ratchet scan conclusion',
      '2026-08-30: WITHDRAWN as unsupported. It scored cos(phase vs cs_rate), and cs_rate is at '

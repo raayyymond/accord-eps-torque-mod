@@ -66,6 +66,38 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE ASSIST-MAP LANE IS CLOSED AS A RATCHET LEVER — BOTH ITS CALS ARE NOW MEASURED, AND BOTH ARE TINY. V236 AND V239 ARE WITHDRAWN.**
+>
+> The census calls `gp-0x6b86`'s lane *the largest torque-fed term*, **5.8–7.8× the entire PID at 7.79 Hz**, and the kit has chased its two calibrations for the whole V236→V239 arc. Both are now sized by direct band-power measurement rather than by the loop model:
+> ```
+>   0xC6906  the lag pole   WHOLE range (k 20 -> 2)      3.8 %     (last tick)
+>   0xC6384  the slope cap  2048 -> 1536                 0.0 %     band ratio 1.0000
+>                           pushed to 256 (Honda ships 2048)  4.2 %
+> ```
+> 🛑 **[EVIDENCE] `0xC6384` IS INERT BECAUSE IT IS OUT OF REACH.** Lowering it moves only the **top X breakpoints** — `Y` is byte-identical at every dose — and the lowest breakpoint that moves anywhere on the speed/angle grid sits at **2844 torque counts**. Over **113,521 engaged frames on 25 routes, only 1.65 % are above that.** On a route whose torque never crosses it, `b82` and `b84` are **BIT-IDENTICAL at every dose down to 256** — the control, run before the conclusion.
+> 🛑 **THE CAP'S BRANCH NEVER FIRES AT ANY SHIPPED VALUE.** The natural map slope maxes at **0.350**; the cap sits at **2.000**, i.e. **5.7× above anything the map reaches**. It first binds around 358 and only bites broadly at 256 (970/1440 segments). **V236 chose 1536 — 4.3× above where anything happens.**
+> 🛑 **THIS RETIRES THE RECORD'S GATE-2 NUMBER FOR THIS CELL.** *“Q ratio 14.29 → 4.26”* was computed from a loop model that assumes the cap **scales the lane gain**. It does not — it relocates two breakpoints in a region the car barely visits. **Direction, magnitude and mechanism were all wrong for this cell.**
+> ⇒ **V236 and V239 WITHDRAWN**, `.rwd` renamed `SUPERSEDED-DO-NOT-FLASH-…`. They are strictly worse than V235/V238: identical grinding treatment, plus a cell that **costs a little assist above 2844 counts and buys nothing measurable**.
+> ✅ **THE SHELF REVERTS TO V238** — V235 + the pole's free 2.7 %. It is the best measured build on the shelf, and its ratchet content is honestly 2.7 %.
+> ⭐ **THE STRATEGIC RESULT, and the reason this tick matters more than the builds:** the lane the loop census identified as the **largest** torque-fed term yields **at most ~4 % at the ratchet across the entire range of both its calibrations.** Whatever sustains the ratchet, **it is not reachable through this lane's cals.** The search has to move.
+> ➕ New readers: `rlog-tools/score/slope_cap_band_size.py`, `rlog-tools/score/clip_duty_and_v238_dose.py`.
+
+> 🛑🛑⭐⭐⭐⭐⭐ **THE ASSIST-MAP LANE IS CLOSED AS A RATCHET LEVER — BOTH ITS CALS ARE NOW MEASURED, AND BOTH ARE TINY. V236 AND V239 ARE WITHDRAWN.**
+>
+> The census calls `gp-0x6b86`'s lane *the largest torque-fed term*, **5.8–7.8× the entire PID at 7.79 Hz**, and the kit has chased its two calibrations for the whole V236→V239 arc. Both are now sized by direct band-power measurement rather than by the loop model:
+> ```
+>   0xC6906  the lag pole   WHOLE range (k 20 -> 2)      3.8 %     (last tick)
+>   0xC6384  the slope cap  2048 -> 1536                 0.0 %     band ratio 1.0000
+>                           pushed to 256 (Honda ships 2048)  4.2 %
+> ```
+> 🛑 **[EVIDENCE] `0xC6384` IS INERT BECAUSE IT IS OUT OF REACH.** Lowering it moves only the **top X breakpoints** — `Y` is byte-identical at every dose — and the lowest breakpoint that moves anywhere on the speed/angle grid sits at **2844 torque counts**. Over **113,521 engaged frames on 25 routes, only 1.65 % are above that.** On a route whose torque never crosses it, `b82` and `b84` are **BIT-IDENTICAL at every dose down to 256** — the control, run before the conclusion.
+> 🛑 **THE CAP'S BRANCH NEVER FIRES AT ANY SHIPPED VALUE.** The natural map slope maxes at **0.350**; the cap sits at **2.000**, i.e. **5.7× above anything the map reaches**. It first binds around 358 and only bites broadly at 256 (970/1440 segments). **V236 chose 1536 — 4.3× above where anything happens.**
+> 🛑 **THIS RETIRES THE RECORD'S GATE-2 NUMBER FOR THIS CELL.** *“Q ratio 14.29 → 4.26”* was computed from a loop model that assumes the cap **scales the lane gain**. It does not — it relocates two breakpoints in a region the car barely visits. **Direction, magnitude and mechanism were all wrong for this cell.**
+> ⇒ **V236 and V239 WITHDRAWN**, `.rwd` renamed `SUPERSEDED-DO-NOT-FLASH-…`. They are strictly worse than V235/V238: identical grinding treatment, plus a cell that **costs a little assist above 2844 counts and buys nothing measurable**.
+> ✅ **THE SHELF REVERTS TO V238** — V235 + the pole's free 2.7 %. It is the best measured build on the shelf, and its ratchet content is honestly 2.7 %.
+> ⭐ **THE STRATEGIC RESULT, and the reason this tick matters more than the builds:** the lane the loop census identified as the **largest** torque-fed term yields **at most ~4 % at the ratchet across the entire range of both its calibrations.** Whatever sustains the ratchet, **it is not reachable through this lane's cals.** The search has to move.
+> ➕ New readers: `rlog-tools/score/slope_cap_band_size.py`, `rlog-tools/score/clip_duty_and_v238_dose.py`.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **`0xC6906` IS MEASURED SMALL — THE WHOLE CELL IS WORTH 3.8 % AT THE RATCHET. V238 KEEPS ITS 2.7 % BUT MUST NOT LEAD; V239 = V236 + V238 IS THE BUILD.**
 >
 > Driving the **integer-exact firmware mirror** (`assist_map_mirror`) with 22 routes of real torque/speed/angle, then Welch band power at 6–9 Hz:

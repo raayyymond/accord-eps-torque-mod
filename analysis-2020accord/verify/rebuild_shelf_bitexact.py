@@ -28,6 +28,10 @@ FW = os.environ.get('ACCORD_FIRMWARE_ROOT',
 # WITHDRAWN builds: the builder must still reproduce bit-for-bit -- that invariant is about the build
 # system -- but the artifacts carry SUPERSEDED-DO-NOT-FLASH- and there must be NO flashable .rwd.
 WITHDRAWN = {
+    "v236": ("MEASURED INERT at the ratchet: 0xC6384 only reshapes the map above 2844 torque "
+             "counts, reached on 1.65 % of engaged frames; 6-9 Hz band ratio 1.0000."),
+    "v239": ("carries V236's inert cell; its only measured content is V238's 2.7 % pole, "
+             "which V238 already has for free."),
     "v237": ("BACKWARDS: raising the lag pole RESTORES more of the slew limiter's cut at "
               "7.79 Hz, RAISING lane gain. V238 is the same cell the other way."),
     'v230': 'cuts a DAMPER: gp-0x6b26 measured +518/+565 counts of POSITIVE Re(Z)',
