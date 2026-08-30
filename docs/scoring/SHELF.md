@@ -54,6 +54,12 @@ Residual grind energy **4.7 % → 2.8 %**, i.e. **1.68× less left over**, for 3
   image 13c1d33b3ad9eff526283b7465e3b85b18084056479588ba2741537b25d10d33
 ```
 
+🛑🛑 **CORRECTION TO MY OWN FRAMING (added after checking the archive).** I described 10× as *"structurally permitted with real margin"*. **The gate those margins are measured against is a KIT CONVENTION, not a firmware constraint.** `STATE-ARCHIVE-2026-08-27-v103-to-v107.md`: *"The 9× ceiling was OURS. `0xC674E` has **exactly one reader** image-wide and **no instruction compares it to the clamp** — the assert is a kit convention."* And its justification — *"everything it forbids is authority the governor flattens anyway at 10.69×"* — was **RETRACTED 2026-08-21**: there is no flat governor ceiling, the bound is `(gp-0x4f64 × channel5) >> 15`, **recomputed at runtime**.
+
+⇒ **V219 sits exactly at the convention’s binding point, with the convention’s rationale withdrawn.** That does not make it wrong — the vibration pricing below is independent of it and still holds — but the 432/512-count margins are margins against **our own rule**, not against hardware. The record’s own reframe is that **the gain ceiling is a STABILITY problem, not a clamp problem**, so treat the m^1.74 pricing as the binding argument and the clamp arithmetic as bookkeeping.
+
+⚠ **Consequence for flight order: V219 is the LAST arm to fly, not a peer of V218/V220.**
+
 🛑 **This corrects the record.** V211 says the EME wall *"structurally caps this lever below 10×"*. The two gates it actually asserts permit **10× with real margin**:
 
 ```

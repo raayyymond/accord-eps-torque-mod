@@ -255,6 +255,13 @@ def build():
     #   2. grind #2 (40-49 Hz, +9.7 dB(A)) was CREATED by V62s rate-lane x2, and this base is
     #      BYTE-STOCK at 0x3AB76/0x3AC20 -- asserted below.  Prior work also found 40-49 Hz is
     #      NOT engagement-conditional and the 28 Hz transient is DOSE-INDEPENDENT.
+    # !! THE GATE BELOW IS A KIT CONVENTION, NOT A FIRMWARE CONSTRAINT. 0xC674E has exactly one
+    # reader image-wide and NO instruction compares it to the clamp (STATE-ARCHIVE-2026-08-27).
+    # Its justification -- 'the governor flattens everything above 10.69x anyway' -- was RETRACTED
+    # 2026-08-21: there is no flat governor ceiling, the bound is (gp-0x4f64 * channel5) >> 15,
+    # recomputed at runtime. So these margins are margins against OUR OWN RULE. The binding
+    # argument for this build is the m^1.74 vibration pricing, not the clamp arithmetic.
+    # ⇒ V219 is the LAST arm to fly.
     # RUNG 2. V211 recorded the EME wall as "structurally capping the lever below 10x"; the two
     # gates it actually asserts permit 10x with real margin -- lane max 4176, clamp window
     # [4177, 5119], and 4608 sits 432 above the lane and 512 below the wall. 12x is the true
