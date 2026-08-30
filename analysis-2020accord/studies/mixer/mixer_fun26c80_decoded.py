@@ -78,6 +78,36 @@ print('   0xC63CC = %d   (the gain on iVar13 into gp-0x6b4c)' % u16(TP + 0x73cc)
 print('   gp-0x6752 = -1 (a verified RAM cell, not flash -- see the memory)')
 print()
 
+print('THE SLOT WRITER -- FUN_00025c32, a 10-CLIENT TORQUE-REQUEST BUS')
+print('   Traced 2026-08-29.  It is an ARBITRATION STATE MACHINE, not a signal source.')
+print('   param_1 is a 16-byte REQUEST RECORD:')
+print('      [0]     slot index, clamped 0..10')
+print('      [1]     request type 0..5  -> per-slot state gp-0x61a0[slot]')
+print('      [2:4]   value A  clamp +-16384  -> gp-0x62e0[i]  -> gp-0x6b4a -> DELIVERY')
+print('      [4:6]   value B  clamp +-10240  -> gp-0x62f8[i]  -> gp-0x6b4c')
+print('      [6:8]   value C  clamp +-900    -> gp-0x6274[i]')
+print('      [8:10]  value D  clamp +-20000  -> gp-0x633c[i]  -> gp-0x6bfa  OBSERVER BIAS')
+print('      [10:16] three weights, each clamped 0..1024 -> gp-0x6230/6218/6200[i]')
+print()
+print('   types 2, 3 and 4 ACCEPT the values; types 0, 1 and 5 ZERO them and set the')
+print('   weights to 1024.  Acceptance is checked against per-slot permission tables at')
+print('   0xC41AC, 0xC42A4, 0xC4130 and 0xC410C.')
+print()
+print('   FUN_00025c32 has EXACTLY TEN CALLERS -- one per accumulated slot:')
+for _c in ('FUN_00023ad2', 'FUN_00023fe2', 'FUN_0002b422', 'FUN_0002c246', 'FUN_0002caa2',
+           'FUN_0002e52e', 'FUN_000339cc', 'FUN_0003405a', 'FUN_0003a8a8', 'FUN_0003aff4'):
+    print('      %s' % _c)
+print()
+print('   The MODE table 0xC4124 selects, per slot, whether value B reaches gp-0x6b4c:')
+print('      mode 0 -> gp-0x62b0[i] = value B      mode 5 -> gp-0x62b0[i] = 0')
+print('   Value A reaches gp-0x6b4a -> DELIVERY in BOTH modes.  So 0xC4124 gates a slot out')
+print('   of the assist sum but NOT out of delivery.')
+print()
+print('   OPEN: which caller owns which slot.  Each caller sets param_1[0]; reading that byte')
+print('   in all ten decompiles closes it.  Until then no slot can be named, and no edit to')
+print('   0xC4124 or 0xC4118 is mode-proof.')
+print()
+
 fails = []
 
 
