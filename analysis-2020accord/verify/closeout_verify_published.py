@@ -382,7 +382,10 @@ for _v in sorted(img):
     # notch shelf sat at 0.200x, i.e. 0.100x THE CAR, and this gate waved it through.
     # Lower modelled friction = LESS assist = HEAVIER wheel (verified polarity), so a cut here
     # removes authority. Bound it, against both references.
-    _CAR_MULT = (600.0 / 600) * (204 / 102.0)          # the flown V108
+    # V122 (the car) is knee 3000 / K1 1020 = (600/3000)*(1020/102) = 2.000x, the SAME
+    # effective multiplier as V108's knee 600 / K1 204. Below saturation they are identical.
+    # They differ in SATURATION POINT: the car saturates at 250 deg/s, V216+ at 50 deg/s.
+    _CAR_MULT = 2.000                                  # V122, the build on the car
     _vs_car = _mult / _CAR_MULT
     _FRIC_LOW = {'v194', 'v195', 'v196', 'v198', 'v199', 'v200', 'v201', 'v202', 'v203', 'v204',
                  'v205', 'v206', 'v207', 'v208', 'v209', 'v210', 'v211', 'v212', 'v213', 'v214',
@@ -546,7 +549,10 @@ print("[14] THE 6-9 Hz DAMPER MUST BE PRICED AGAINST THE FLOWN CAR, NOT JUST AGA
 # this row to HONDA, which made a 7.15x change from the CAR look like a tidy "half dose".
 # So: report the dose against BOTH references, and fail any build that cuts it below Honda
 # without being a documented member of the reduced-damper arm.
-_FLOWN_Y = (-29490, -17202, -16000)          # V108, on the car
+_FLOWN_Y = (-29490, -17202, -16000)          # V122 -- THE BUILD ON THE CAR.
+# Corrected 2026-08-29: I used V108 as 'the car' all session. preflight.py says FLYING=v122,
+# and V122 flew as route r24. The two carry an IDENTICAL inertia row, so every damper number
+# is unchanged -- but the label was wrong and a wrong label is how the first miss happened.
 _HONDA_Y = (-9830, -5734, -1966)
 _hs = sum(abs(_x) for _x in _HONDA_Y)
 _fs = sum(abs(_x) for _x in _FLOWN_Y)
@@ -814,6 +820,25 @@ for _v in sorted(img):
         f'{_v.upper()} V57 gain decouple present: 0x2A1F0 hw2 = 0x{_d:04X} -> 0x{_tgt:05X}'
         + ('' if _tgt == 0xC6CD0
            else ' -- NOT REPOINTED, 0xC6CD0 is inert and the authority lever does nothing'))
+
+print()
+print("[22] THE TWO DELTAS FROM THE CAR THAT WERE NEVER FLAGGED")
+# Found 2026-08-29 when the reference build was corrected from V108 to V122. Both are real
+# differences from what the operator actually drives, and neither appeared in any lever table.
+#   0xC40DC  accel alpha        car 8 -> shelf 22   (the shelf reverts it to Honda, V179)
+#   0xC40BC/0xC40D2 saturation  car saturates the friction ramp at 250 deg/s, V216+ at 50 deg/s
+#     -- the EFFECTIVE MULTIPLIER matches (2.000x Honda both), so gate [8] passes correctly and
+#        the ratchet regime (1-13 deg/s) is identical. They differ ONLY in 50-250 deg/s, where
+#        V217 has LESS modelled friction than the car => LESS assist => heavier at high rate.
+for _v in sorted(img):
+    _al = struct.unpack_from('<H', img[_v], 0xC40DC)[0]
+    _kn = struct.unpack_from('<H', img[_v], 0xC40BC)[0]
+    chk(_al in (8, 22),
+        f'{_v.upper()} 0xC40DC accel alpha = {_al} (car 8, Honda 22)'
+        + ('' if _al in (8, 22) else ' -- a THIRD value, unexplained'))
+    if _kn != 3000:
+        print(f'         note: {_v.upper()} friction ramp saturates at {_kn / 12.0:.0f} deg/s '
+              f'vs the car 250 -- differs only ABOVE {_kn / 12.0:.0f}')
 
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')

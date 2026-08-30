@@ -9,13 +9,23 @@
 
 ---
 
-## What is on it — 19 payload bytes from YOUR CAR, every one a lever
+## What is on it — 25 payload bytes from YOUR CAR (V122)
 
 ```
   0xC60A8/AC/B0/B4   notch 20.50 Hz            GRINDING       (18-22 Hz)
   0xC63AE            1024 -> 512               RATCHET        (~7.8 Hz)
   0xC6CD0 + clamps   6x -> 8x                  LKAS AUTHORITY (+28.9 %)
   0x55DF2            427 probe -> gp-0x6b4e    the instrument
+```
+
+🛑 **CORRECTION — the car is V122, not V108.** I used V108 as the reference for most of this session. `preflight.py` says `FLYING = "v122"` and V122 flew as route `r24`. **The damper finding is unaffected** — V108 and V122 carry an identical inertia row — but two deltas were hidden by the wrong reference:
+
+```
+  0xC40DC  accel alpha             car 8 -> V217 22   (reverted to Honda)
+  0xC40BC  friction ramp knee      car saturates at 250 deg/s, V217 at 50 deg/s
+           -- the MULTIPLIER matches (2.000x Honda both), so 1-13 deg/s is identical.
+           -- they differ ONLY above 50 deg/s, where V217 has LESS friction => heavier
+              at high steering rate. That is a feel change you may notice on fast inputs.
 ```
 
 **Everything else is identical to what you already drive.** Inertia (row *and* lane weight, both
