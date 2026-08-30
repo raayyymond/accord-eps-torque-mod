@@ -66,6 +66,26 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE AUDIO CANNOT SEE THE RATCHET AT ALL — AND THE ENTIRE `extract/` TOOLCHAIN HAS BEEN DEAD SINCE THE 2026-08-26 REORG.**
+>
+> **1. THE HARMONICS TEST, DONE PROPERLY, FINDS NOTHING.** Re-extracted from the rlogs at **0.977 Hz bins** (vs the `_spec` caches' 3.91 Hz) with a per-window engagement flag, and replaced the contaminated comb with a **smooth broadband baseline** — so broadband engagement loudness is absorbed and only LOCAL excess survives:
+> ```
+>   route        f0 Hz    f0    2f0   3f0   4f0   5f0     (excess OVER the local baseline)
+>   r97 (stock)   7.81   1.00  1.16  1.00  1.00  2.17
+>   ra4           8.79   1.18  1.04  4.39  1.49  1.29
+>   ra5           6.84   1.16  1.00  1.05  1.76  1.53
+>   ra6           7.81   1.20  1.04  1.00  0.73  1.03
+>   MEDIAN               1.17  1.04  1.03  1.24  1.41
+> ```
+> **NOTHING survives the baseline.** `f0` is **1.17×** — barely above nothing — and the harmonic columns are scattered noise (ra4's 4.39 and r97's 2.17 are isolated, not a comb). The f0 search lands on a **different frequency every route** (7.81 / 8.79 / 6.84 / 7.81), which is what happens when there is no peak to find.
+> ⇒ **The 6.4× “excess” from the previous tick was broadband engagement loudness**, exactly what the contaminated control was hiding. **The audio does not resolve the ratchet as a spectral line.**
+> 🛑 **THAT IS A NEGATIVE ABOUT THE INSTRUMENT, NOT THE MECHANISM.** Resonance-vs-stick-slip is **still open** — the audio simply cannot answer it, either because the ratchet is felt rather than radiated, or because road noise dominates it at 6–9 Hz. **This line of attack is closed.**
+>
+> **2. ⭐ AND THE REAL FIND: THE WHOLE `extract/` FAMILY WAS BROKEN.** Every extractor imports `rlog_parse` from `ROOT/"rlog-tools"`, but the **2026-08-26 reorg moved it to `rlog-tools/lib/`**. `CLAUDE.md` warns that `__file__`-relative anchors were re-based; **these were missed**, and nothing surfaced it because **the caches were already on disk** — the toolchain that MAKES caches was dead while every consumer kept working.
+> ⇒ **51 files fixed**, each now putting the kit root *and every code subfolder* on the path. Two needed indentation-aware handling (the insert sits inside a block); a naive flat replacement broke them and the parse-check caught it before writing. **0 stale inserts remain outside gitignored `_scratch/`.**
+> ⊕ Without this, no new route cache of any kind could be built. It is the reason this tick could run the test at all.
+> ➕ Reader: `rlog-tools/score/ratchet_harmonics_fine.py`. New caches: `_audio_r{97,a4,a5,a6}.npz`.
+
 > ⚠⭐⭐⭐⭐ **THE RATCHET-HARMONICS TEST IS INCONCLUSIVE, AND MY CONTROL WAS CONTAMINATED. NO MECHANISM CLAIM EITHER WAY.**
 >
 > The record calls the ratchet *“a lightly-damped RESONANCE, Q 14–29”*, and the whole arc has tried to add damping to it. A **stick-slip limit cycle** looks nearly identical in a ring-down but calls for the opposite fix — break the friction, not add damping — and **harmonics discriminate them**: a linear resonance radiates at `f0` only; a relaxation oscillation radiates at `2f0`, `3f0`, `4f0` too. The 16 kHz audio is the right instrument, since `3f0`/`4f0` land in the CAN band the record shows is folded.

@@ -385,7 +385,10 @@ def raw_check(segs, refresh):
         per18, per14 = z["per18"], z["per14"]
         t4 = z["t4"]
     else:
-        sys.path.insert(0, str(ROOT / "rlog-tools"))
+        # reorg 2026-08-26 moved rlog_parse into rlog-tools/lib/; add every subfolder
+        for _p in [ROOT / "rlog-tools"] + [d for d in (ROOT / "rlog-tools").iterdir() if d.is_dir()]:
+            if str(_p) not in sys.path:
+                sys.path.insert(0, str(_p))
         from rlog_parse import read_messages
         st = Counter(); b4 = Counter(); n18 = n14 = 0
         per18, per14, t4 = [], [], []

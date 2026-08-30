@@ -17,7 +17,11 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "rlog-tools"))
+# repo reorg 2026-08-26 moved rlog_parse into rlog-tools/lib/ -- the old single-dir insert
+# stopped resolving it. Put the kit root AND every code subfolder on the path.
+for _p in [ROOT / "rlog-tools"] + [d for d in (ROOT / "rlog-tools").iterdir() if d.is_dir()]:
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
 from rlog_parse import read_messages                                    # noqa: E402
 
 RLOG = ROOT / "analysis-2020accord" / "rlogs"

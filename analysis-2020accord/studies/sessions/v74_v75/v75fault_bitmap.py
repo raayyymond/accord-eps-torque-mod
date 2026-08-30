@@ -38,7 +38,12 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).resolve().parents[4]
-sys.path.insert(0, str(ROOT / "rlog-tools"))
+# repo reorg 2026-08-26 moved rlog_parse into rlog-tools/lib/ -- the old single-dir insert
+# stopped resolving it, which killed this whole extractor family silently (the caches were
+# already on disk, so nothing surfaced it). Put the kit root AND every code subfolder on.
+for _p in [ROOT / "rlog-tools"] + [d for d in (ROOT / "rlog-tools").iterdir() if d.is_dir()]:
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
 from rlog_parse import read_messages          # noqa: E402
 
 D = dict(np.load(ROOT / "_scratch/cache/r5e" / "r5e.npz"))

@@ -62,7 +62,12 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(r"C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod")
-sys.path.insert(0, str(ROOT / "rlog-tools"))
+# repo reorg 2026-08-26 moved rlog_parse into rlog-tools/lib/ -- the old single-dir insert
+# stopped resolving it, which killed this whole extractor family silently (the caches were
+# already on disk, so nothing surfaced it). Put the kit root AND every code subfolder on.
+for _p in [ROOT / "rlog-tools"] + [d for d in (ROOT / "rlog-tools").iterdir() if d.is_dir()]:
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
 sys.path.insert(0, str(ROOT / "analysis-2020accord"))
 
 import ratchet_line_ladder_v87 as L  # noqa: E402

@@ -61,7 +61,12 @@ if hasattr(sys.stdout, "reconfigure"):
 ROOT = Path(__file__).resolve().parents[4]
 HERE = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(HERE))
-sys.path.insert(0, str(ROOT / "rlog-tools"))
+# repo reorg 2026-08-26 moved rlog_parse into rlog-tools/lib/ -- the old single-dir insert
+# stopped resolving it, which killed this whole extractor family silently (the caches were
+# already on disk, so nothing surfaced it). Put the kit root AND every code subfolder on.
+for _p in [ROOT / "rlog-tools"] + [d for d in (ROOT / "rlog-tools").iterdir() if d.is_dir()]:
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
 from _r4f_lib import fs_lattice        # noqa: E402  -- never 1/median(dt)
 
 CACHE = ROOT / "_scratch/cache/r59"

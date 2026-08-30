@@ -156,7 +156,10 @@ if hasattr(sys.stdout, "reconfigure"):
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "rlog-tools"))
+# reorg 2026-08-26 moved rlog_parse into rlog-tools/lib/; add every subfolder
+for _p in [ROOT / "rlog-tools"] + [d for d in (ROOT / "rlog-tools").iterdir() if d.is_dir()]:
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
 sys.path.insert(0, str(HERE))
 from rlog_parse import read_messages          # noqa: E402
 from _r4f_lib import fs_lattice, install_fs   # noqa: E402  -- the ONE owner of the fs estimator
@@ -982,7 +985,9 @@ def summarize():
     # ---- THE BUILD-IDENTITY GUARD, route-wide -----------------------------------------------------
     # 🛑 This decoder certified a V73 log as a V74 win five days ago. Run it, record the verdict.
     try:
-        sys.path.insert(0, str(ROOT / "rlog-tools"))
+        for _p in [ROOT / "rlog-tools"] + [d for d in (ROOT / "rlog-tools").iterdir() if d.is_dir()]:
+            if str(_p) not in sys.path:
+                sys.path.insert(0, str(_p))
         import decode_v74_probe as V74D
         print("\n" + "=" * 96)
         print("  BUILD IDENTITY GUARD -- decode_v74_probe.identify(), route-wide")
