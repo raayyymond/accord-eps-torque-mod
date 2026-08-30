@@ -46,6 +46,28 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE NOTCH LANE DAMPS BELOW 15 Hz AND PUMPS ABOVE 22 Hz — SO HONDA'S 55 Hz PLACEMENT IS RIGHT AND EVERY BUILD SINCE V172 MOVED THE NOTCH OUT OF THE PUMPING REGION INTO THE DAMPING REGION.** This is the first mechanical explanation the arc has had.
+>
+> Measured on **`gp-0x6b86`, the notch's own lane**, flown on CAN 427 in ra4/ra5/ra6 (V104–V106), phase against WHEEL RATE, engaged, coherence-gated at 0.30. The sign mapping is fixed by the kit's own b26 result — *“+137/+139° vs wheel rate, |cos| 0.73, i.e. +518/+565 counts of POSITIVE Re(Z)”* for a lane it calls **“a REAL 6–9 Hz DAMPER”** ⇒ **cos < 0 = damping, cos > 0 = pumping.**
+>
+> ```
+>   band       median cos    verdict     route agreement      coherence
+>   6-9          -0.918      DAMPING     all 3 agree          0.51-0.72
+>   9-12         -0.989      DAMPING     all 3 agree          0.50-0.60
+>   12-15        -0.629      DAMPING     all 3 agree          0.53-0.59
+>   15-22        +0.551      PUMPING     DISAGREE -- crossover 0.53-0.77
+>   22-30        +0.936      PUMPING     all 3 agree          0.57-0.80
+>   30-40        +0.821      PUMPING     all 3 agree          0.32-0.37
+>   40-50        +0.285      PUMPING     DISAGREE             0.35-0.38
+> ```
+>
+> 🛑 **THREE INDEPENDENT REASONS V228's RELOCATION IS WRONG:**
+> 1. **Honda's 55 Hz notch sits inside the unanimous PUMPING region (22–40 Hz).** It cuts an energy source. **V228 vacates that cut** — the same 100×-at-55 Hz fact recorded above, now with a mechanism.
+> 2. **V228's 20.5 Hz notch sits AT the crossover**, and its skirt reaches down into **12–15 Hz where the lane unanimously DAMPS (cos −0.629)** ⇒ it cuts damping there.
+> 3. **At 9–12 Hz the lane is at cos −0.989 — near-perfect damping — and V228 adds 25° of lag.** Rotating −0.989 by 25° gives ≈ −0.6 to −0.8: **a 20–40 % loss of the damping factor**, in the band the Re(Z) instrument already ranks most anti-damped.
+> ✅ **⇒ V229/V231 (Honda's geometry) is CORRECT. V228's placement is wrong on three counts.** And the 56-build null history now has a mechanism: **the notch was repeatedly moved from where the lane pumps to where it damps.**
+> ⚠ **LIMITS, stated:** 3 routes, all V104–V106, so era-confounded. 15–22 Hz and 40–50 Hz are NOT licensed (routes disagree). And `gp-0x6b86` is measured **downstream of Honda's biquad**, which was ARMED on those builds — so the 22–50 Hz phase is the residual after Honda's own cut, not the raw lane. The pump/damp SIGN per band is what is claimed; the magnitudes are not.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE Re(Z) SIGN FRAME IS RESOLVED — ANALYTICALLY, NOT EMPIRICALLY — AND IT WITHDRAWS V230 AND CLOSES α2 IN BOTH DIRECTIONS.**
 >
 > **The empirical anchor FAILED first, and diagnosably.** The one directional pair with caches is r95/V101 (*“GRINDING/VIBRATION AT ALL SPEEDS, ONLY WHILE LKAS COMMANDS”*) against r96/V102, the 6× revert he chose himself. Three of four bands read *“less negative = worse”* (9–12 Hz **+22.8**, 12–15 **+17.6**) — **but V101 is the 8× build, and Re(Z) = torque/rate, so higher loop gain raises rate for the same torque and mechanically makes Re(Z) less negative.** The confound moves it in exactly the observed direction; one pair cannot separate them. **Anchor abandoned.**

@@ -17,6 +17,38 @@ anything happens.** Nothing is flashed without that.
 
 ---
 
+## 🛑 THE NOTCH QUESTION IS NOW ANSWERED FROM FLOWN DATA — HONDA'S PLACEMENT IS RIGHT
+
+I measured the notch's own lane (`gp-0x6b86`) against wheel rate on the three routes that carry it —
+ra4, ra5, ra6 — and the answer is unanimous where it matters:
+
+```
+  band     verdict     route agreement
+  6-9      DAMPING     all 3 agree
+  9-12     DAMPING     all 3 agree      <- and V228 adds 25 deg of lag HERE
+  12-15    DAMPING     all 3 agree      <- V228's notch skirt reaches into this
+  15-22    (crossover, routes disagree)
+  22-30    PUMPING     all 3 agree      <- Honda's 55 Hz notch cuts in this region
+  30-40    PUMPING     all 3 agree
+```
+
+**The lane damps below 15 Hz and pumps above 22 Hz.** A notch is only worth placing where the lane
+pumps — cutting where it damps removes damping, which is precisely the mistake that made you abort the
+V94 drive.
+
+So **V228's 20.5 Hz notch is wrong on three counts**: it vacates Honda's cut of the pumping region, its
+skirt cuts damping at 12–15 Hz, and its 25° of lag at 9–12 Hz rotates a near-perfect damping phase
+(cos −0.989) toward zero, costing 20–40 % of the damping there.
+
+⇒ **Honda's placement — which V229 and V231 restore — is correct.** And the 56-build history of notch
+builds that changed nothing now has a mechanism: the notch kept being moved out of the region where the
+lane pumps into the region where it damps.
+
+⚠ Three routes, all from the V104–V106 era, and the 15–22 Hz crossover is not licensed. The pump/damp
+sign per band is what is claimed; the magnitudes are not.
+
+---
+
 ## ⭐ DRIVE **V231** — it is V229 plus the first instrument ever put on the notch
 
 ```
