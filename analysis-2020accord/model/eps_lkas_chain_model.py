@@ -20,10 +20,22 @@ model/eps_lkas_chain_model.py
              command never passes through this biquad, so no notch dose can cost LKAS
              authority -- and no notch dose can fix command oscillation directly either.
          (b) `gp-0x6b7e` is NOT a constant pedestal. It is an EMA of the friction-hold
-             limiter's cut, `iVar24 += (iVar33*0x80 - iVar24)*K >> 11` with K in [2,204], so
-             alpha reaches 0.0996 and fc reaches 16.7 Hz. At 19.75 Hz it passes 64.6 % of its
-             input STRAIGHT PAST THE BIQUAD. Any predicted notch attenuation is an UPPER
-             BOUND until this path is measured. V201 probes it.
+             limiter's cut, `iVar24 += (iVar33*0x80 - iVar24)*K >> 11`, and it is added to the
+             biquad output AFTER the filter, so it does bypass the notch.
+             *** CORRECTED 2026-08-29: THE 64.6 % FIGURE WAS THE CLAMP CEILING, NOT THE CAL. ***
+             K is clamped to [2,204], and the old note took K = 204 (alpha 0.0996, fc 15.9 Hz,
+             |H(20 Hz)| = 0.641). The firmware never selects that. K comes from either the
+             direct cal `0xC6382` = 41, or a 4-point LERP at `0xC6906`..`0xC690C` whose Y is
+             FLAT AT 20 (X = [0, 9830, 26214, 32768]) -- so it is not a shaped lever at all.
+             The reachable set is K in {20, 41}: fc 1.55 / 3.19 Hz and |H(20 Hz)| = 0.078 /
+             0.159. MAX BYPASS IS 0.159, NOT 0.646 -- the hazard was overstated 4.1x, and the
+             notch is correspondingly LESS diluted than this file has been claiming.
+             Both cals are VIRGIN: `0xC6382` = 41 and the LERP Y[0] = 20 in all 215 images on
+             disk. Driving K to its floor of 2 would take the bypass to 0.008, but that caps
+             out at removing a 15.9 % path, so it is a small lever, not the missing one.
+             ⚠ STILL AN UPPER BOUND on notch attenuation: this bounds the pedestal's TRANSFER,
+             not how much 20 Hz energy its input carries relative to the biquad's. Only a
+             measurement settles the split. V201 probes it.
        Truth lives in `docs/handoffs/2026-08/HANDOFF-2026-08-21-v104-built-c4-boost-and-lever-b.md` sections 2-4.
 
     2. THE ASSIST MAP'S AXES ARE THE OPPOSITE OF THE OBVIOUS READING. `0xC7B40` is a pointer array
