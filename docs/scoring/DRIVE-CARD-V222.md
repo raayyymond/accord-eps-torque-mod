@@ -120,6 +120,33 @@ build.
 
 ---
 
+## If grinding improves but is not gone — **V223** is rung 2, already built
+
+`39990-TVA,A160-V223-V222BASE-LEVERB.13107.TO.26214.RUNG2-0x13000-0x100000.rwd`  
+.rwd `38b0773b774dd4922edf599ae911fb5007fae7e3e5a2a988a9a2c26d7be6fb1d`  
+image `a2f034df682cbd4a9ffe9f56787fd40d5465c4c36423362ce7dc03501fa81869`
+
+One more doubling of Lever B, and the dose is **computed rather than guessed**. The lane is a plain saturation, so the describing function gives the effective damping the loop actually sees, and it has a hard asymptote at `4L/(pi*A)` that no gain can exceed:
+
+```
+   gain k    onset   p50 (27)  p90 (146)  p99 (610)  max (1669)
+     5244     1600       5244       5244       5244        5191   <- YOUR CAR
+    13107      640      13107      13107      13107        6239   <- V222
+    26214      320      26214      26214      16669        6360   <- V223
+    65535      128      65535      62194      17380        6393
+ asymptote              395582      73156      17509        6399
+```
+
+Two things fall out. **At the amplitudes where the roughness actually lives, V222 is nowhere near the knee** — 13107 → 26214 buys a full **2×** more damping at both p50 and p90. **And at the largest excursion it buys almost nothing** (1.20× → 1.23× even at the cal maximum), so the rung is *selective for the small-signal regime by construction*.
+
+⊕ **The saturation worry is not new.** The knee at the largest excursion is k = 5184 and **your car is already past it at 5244**. More than that: V88’s measured win — grinding fixed, command untouched — came from 512 → 5244, *the very step that carried the largest excursions across that knee*.
+
+⚠ Cost: the onset falls 640 → 320 counts, so clip duty goes ~5.9 % → ~16 % of engaged frames — the large, fast inputs. The onset/p90 margin drops **4.38× → 2.19×**; the build asserts it stays above 2× and prints it, rather than inheriting rung 1’s threshold silently. **This is an open-loop calculation** — it says what the lane can deliver, not that delivering more improves the car.
+
+🛑 **Fly V222 first.** If V222 reads *worse* on grinding than V217 would have, 5244 was already at the optimum and **both rungs are wrong**.
+
+---
+
 ## Verification behind this build
 
 - **72/72 build assertions**, CRC 50/50, `.rwd` decodes byte-identical to the built image.
