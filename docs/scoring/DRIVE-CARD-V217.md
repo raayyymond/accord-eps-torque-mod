@@ -91,7 +91,9 @@ And the currency `0xC63AE` trades in **has already been tested on-car and came b
 
 ⇒ **A ratchet null on this drive is the expected outcome and is NOT evidence the dose failed to arrive** — `b5` settles arrival independently. **Fly V217 for the notch and the gain step**; the ratchet lever rides along because it costs nothing extra, not because it is likely.
 
-**The scorer's 30–49 Hz band is the one to watch for damage.** Read it as a large-excursion detector:
+**The scorer's 30–49 Hz band is the one to watch for damage.** 🛑 **But it is not purely 30–49 Hz** —
+caches run at fs ≈ 101 Hz, so anything real in **52–71 Hz folds into it** and cannot be separated
+afterwards. Read it as *"30–49 Hz **or its alias**"*. Read it as a large-excursion detector:
 `< ~2` nothing broke · `> ~5` fall back · in between is unresolved. It **cannot** resolve the 1.65×
 gain effect — the corpus spread is wider than that — so don't read a small move either way.
 

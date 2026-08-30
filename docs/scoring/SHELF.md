@@ -192,7 +192,7 @@ V215 = V214 + **mode 27’s inertia row pinned too**. V214 restored only mode 26
 
 > *“Made the stuttering and grinding worse, by a lot. So much so that it vibrated the entire car, and I decided it was not safe to drive.”*
 
-Route **`r7d` is that aborted drive**, and it carries the signature: a sustained, engagement-gated **~31 Hz line at 459× the creep-matched corpus median** (prominence 56×; survives 0.5 s edge-trimming; 56 % of 5–49 Hz power inside 30–35 Hz; speed-invariant across all three episodes; engaged/manual contrast 54×).
+Route **`r7d` is that aborted drive**, and it carries the signature: a sustained, engagement-gated **~31 Hz line at 459× the creep-matched corpus median — 🛑 an UPPER BOUND, see the note below** (prominence 56×; survives 0.5 s edge-trimming; 56 % of 5–49 Hz power inside 30–35 Hz; speed-invariant across all three episodes; engaged/manual contrast 54×).
 
 **The problem:** the car runs **V122 at 3.576× Honda**. The entire notch shelf runs **0.500×** — a **7.15× cut of that damper**, reached in two *never-flown* steps (V175 3.576→1.000, V196 1.000→0.500) and carried silently inside builds whose stated purpose is a grinding fix. **That is a bigger cut than the one you aborted on, in the same direction.**
 
@@ -237,6 +237,11 @@ Built 2026-08-29. **V212 + the authority lever.** 8 payload bytes, cal-and-probe
 2. **Grind #2** (40–49 Hz, +9.7 dB(A)) was **created by V62’s rate-lane ×2**, and this base is **byte-stock at `0x3AB76`/`0x3AC20`** — asserted in the builder. Prior work also found 40–49 Hz is **not engagement-conditional** and the 28 Hz transient is **dose-independent**.
 
 ✅ **The residual risk is now MEASURED on the drive itself.** `score_drive.py` gained a **30–49 Hz control band** on `cs_rate`, `imu_vert` and `imu_lat`, with a corpus baseline from 23 cached routes (30–40/grind median **0.0365**, IQR 0.0275–0.0561). On a clean notch drive the ratio should read **~0.54** — the notch removes 14.9× of the denominator, not because the upper band moved.
+
+🛑 **TWO CAVEATS ON THE NUMBERS ABOVE, ADDED 2026-08-30.**
+
+1. **The 459× is RATE-CONFOUNDED and is an UPPER BOUND.** It is matched on *speed*, and at the same speed `r7d` ran **6.6× the steering rate** of its control. Over 1,368 engaged windows on 7 routes the 30–35 Hz band tracks **rate** (corr **+0.739**, **63×** across the rate range) far more than speed (−0.182). The band-to-control **ratio** has *no* rate dependence, so the rate-robust figures are the ones to quote: **prominence 56×**, **56 %** of 5–49 Hz power in the band, and the **engaged/manual contrast 54×** (same route, same rates both arms). The observation stands; only the cross-route normalisation is bounded.
+2. **The 30–49 Hz band is NOT purely 30–49 Hz.** Every cache runs at fs ≈ 101 Hz, so Nyquist is ~50.5 and anything real in **52–71 Hz folds into it** — a 71 Hz line lands on 30. The fold source sits above Nyquist and can be neither seen nor filtered out afterwards. Read every number in that band as *"30–49 Hz **or its 52–71 Hz alias**"*.
 
 🛑 **But be clear what one drive settles.** The 1.65× gain effect is **smaller than the corpus IQR** (a factor of 2.0), so **one route cannot resolve whether the gain step costs anything at 30–40 Hz.** What it *can* catch is a grind-#2-scale event (11.71×): read the band as a **large-excursion detector** — under ~2 nothing broke, over ~5 fall back to V212, in between is unresolved and needs a matched V212 drive.
 

@@ -187,6 +187,15 @@ python rlog-tools/score/rate_matched_band_ratio.py
 
 ---
 
+## Two limits on the numbers you will read back
+
+1. **The 30–49 Hz damage band is not purely 30–49 Hz.** Caches run at fs ≈ 101 Hz, Nyquist ~50.5, so anything real in **52–71 Hz folds into it** — a 71 Hz line lands on 30. The fold source is above Nyquist: it can be neither seen nor filtered out. Read that band as *"30–49 Hz **or its alias**"*, never as 30–49 alone.
+2. **Band power tracks steering RATE, hard.** Across 1,368 engaged windows the 30–35 Hz band moves **63×** with rate and barely at all with speed. So any comparison between drives must match on **rate**, not speed — or use a band-to-control **ratio**, which is rate-robust. `score_drive.py` reports ratios for this reason; `rlog-tools/score/rate_matched_band_ratio.py` does the rate-matched version if you want it.
+
+⚠ Neither changes what to flash. They change how to read the output.
+
+---
+
 ## Verification behind this build
 
 - **72/72 build assertions**, CRC 50/50, `.rwd` decodes byte-identical to the built image.
