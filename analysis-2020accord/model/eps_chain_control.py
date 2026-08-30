@@ -263,8 +263,15 @@ def limit_distribute_mixer_gate(st: EpsState, cal: Calibration) -> int:
 #         0x3a7e8  mul   lp,r8,r0        ; -> P;  I and D derive from the SAME err
 #     ⇒ |gp-0x6ad6| >= 8192 makes d(gp-0x6ad4)/d(gp-0x6b70) EXACTLY ZERO through P, I AND D at once.
 #     🛑 CONSEQUENCE FOR ANYONE USING THIS MODEL: d(gp-0x6b94)/d(gp-0x6b70) = 0.2565 @ 7.79 Hz is the
-#     UNSATURATED derivative and is valid ONLY while |gp-0x6ad6| < 8192. Neither clamp's duty has ever
-#     been measured; V100's b5/b6 measure them. 0xC6200 is FOUR things (friction lane, gp-0x6b70's output
+#     UNSATURATED derivative and is valid ONLY while |gp-0x6ad6| < 8192.
+#     *** MEASURED 2026-08-30, AND BOTH CLAMPS ARE CLEAN: d(b5) = d(b6) = 0.0000 over 49,850 engaged
+#     frames on route r85 (V100 flew it and its cave carries exactly these two bits), 95 % upper
+#     bound 6.0e-05. POSITIVE CONTROL PASSES: the same cave's b3 identity bit is a constant 1 and
+#     b4/b7 toggle 4,343 and 3,153 times, so the cave was LIVE and the zeros are a real null rather
+#     than a dead probe. => the 0.2565 unsaturated derivative is valid essentially always, and the
+#     shelf's ratchet lever 0xC63AE is NOT gated off. r85 flew V100, not the current candidate, but
+#     gp-0x6b70 IS term 7 of gp-0x6ad6 and halving 0xC63AE SHRINKS it, so the margin moves the safe
+#     way. Working: analysis-2020accord/studies/mixer/pid_reference_clamp_duty_measured.py *** 0xC6200 is FOUR things (friction lane, gp-0x6b70's output
 #     clamp, LERP Y[9], this PID reference clamp) + one unchased reader at 0x39ff6 -- DO NOT EDIT the cell.
 #     ⊕ Term 0 of gp-0x6ad6 (gp-0x6b4a) is IDENTICALLY ZERO (0xC616C = 0 => clamp(x,+-0) == 0), so the
 #     reference is entirely terms 1-7; term 7 IS gp-0x6b70, whose own clamp is the SAME cell => no headroom.
