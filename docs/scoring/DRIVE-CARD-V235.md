@@ -40,8 +40,11 @@ The work behind it: the ratchet is **in torque, not wheel rate**; **engagement c
 speed-matched, engaged 7/7 vs manual 0/7); **nothing in thirty builds has moved it** while the grind
 fell steadily — so the two symptoms are different problems. The base power-assist map is the largest
 torque-fed term, 5.8–7.8× the entire PID, and its slope cap holds the small-signal gain at exactly
-2.000. Lowering it to 1.500 predicts **3.4× more damping**, and because the term is a real gain the
-change is **monotone with no reversal at any value** — the property the notch work never had. It
+2.000. Lowering it to 1.500 was gated at **3.4× more damping** — but that figure comes from a loop
+model the record itself later corrected: this lane has a **lagged parallel branch** the model
+treated as absent, and the cap scales only the direct path. **So the direction is well-founded and
+the size is not.** What holds regardless is that the term is a real gain, so the change is
+**monotone with no reversal at any value** — the property the notch work never had. It
 **cannot touch LKAS**: the clamp feeding it is 0 on all 161 images, so the map sees only your torque
 sensor.
 

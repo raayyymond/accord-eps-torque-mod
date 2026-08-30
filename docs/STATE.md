@@ -46,6 +46,23 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V236's MAGNITUDE IS SOFT — the record corrects the census that produced it. AND THERE IS A NO-EFFORT-COST RATCHET LEVER, UNTOUCHED IN 161 IMAGES, WHOSE DIRECTION IS UNKNOWN.**
+>
+> **The correction, from `STATE-ARCHIVE-2026-08-29-wander.md`:** the loop census priced `gp-0x6b86`'s lane as **memoryless** (*“transfer at 7.79 Hz is real, 0°, magnitude = the local slope”*), and the decompile shows otherwise — a **parallel lagged branch**, a comparator-gated difference through a lag added back to the direct path. That is a **lead-lag compensator, not a static curve** ⇒ *“any `|L|` computed from the slope alone is **incomplete**.”*
+> ⇒ **V236's “3.4× more damped” rests on a slope-only `|L|`.** The cap scales the DIRECT path but not the lagged branch, so the real reduction in loop gain is **smaller than 3.4× implies**. **Direction holds; magnitude is soft.** The drive card should not carry 3.4× as if it were measured.
+>
+> ⭐ **AND THE LAGGED BRANCH HAS ITS OWN CAL, WHICH IS A POLE RATHER THAN A GAIN:**
+> ```
+>   0xC6382 (MANUAL arm)  = 41   on stock, the car, V158, V168, V222, V235, V236 -- NEVER MOVED
+>   0xC6906 (ENGAGED arm) = LERP  20 20 20 20 | 0 4 640 3200 6400 12800  -- FLAT at k = 20
+>
+>   at 8.64 Hz:   k=20 (engaged)  |H| 0.1779  arg -78.20 deg
+>                 k=41 (manual)   |H| 0.3491  arg -68.02 deg
+> ```
+> ✅ **THIS ANSWERS THE QUESTION I SET: the trade is NOT strictly an identity.** Via `0xC6384`, ratchet damping and near-centre assist are the **same parameter** — it is a gain, so buying damping costs effort, unavoidably. But `0xC6906` is a **POLE**: it reshapes this lane's response at the ratchet frequency **with no static-assist cost at all**, and it runs **only when engaged**, which matches an engaged-only symptom.
+> 🛑 **WHY I AM NOT PROPOSING IT: THE DIRECTION IS UNKNOWN.** Raising k raises the branch's magnitude AND reduces its lag; whether that adds or removes damping depends on how the branch enters `1−P·L`, and **the record flags precisely that model as incomplete for this branch.** An unaimed lever on the lane that produced the aborted V94 drive is not something to build on a guess. **Recorded as a characterised CANDIDATE with its gate stated, not a build.**
+> ➕ **What would aim it:** the lagged branch's contribution to `|L|` at 7.79 Hz, computed from the decompiled recursion rather than the slope — the same treatment the direct path already has. That is an analysis, not a drive.
+
 > 🛑⭐⭐⭐⭐ **V236's COST, MEASURED RATHER THAN ADJECTIVAL: it reduces assist over 34.2 % of engaged driving, concentrated near centre.**
 >
 > I had been calling it *“25 % less assist at small inputs”* without measuring how much driving is at small inputs. The cap binds only over X 0–100 of the map's axis, and `cs_tq` is on every route:
