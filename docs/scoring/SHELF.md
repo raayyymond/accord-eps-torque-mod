@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** **⚠ FLY V217 FIRST.** 19 payload bytes from your car, every one a lever. Two rung-2 arms are ready behind it: **V218** (deeper ratchet dose) and **V219** (10× authority). Fly whichever the V217 drive points at.
+**Updated 2026-08-29.** **⚠ FLY V217 FIRST.** 19 payload bytes from your car, every one a lever. **Three rung-2 arms are ready behind it** — **V218** (deeper ratchet dose), **V219** (10× authority), **V220** (wider notch). All three symptoms now have a dose ladder; fly whichever the V217 drive points at.
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,
@@ -20,6 +20,30 @@ An earlier version of this file said the shelf’s low friction setting *“runs
 > **MORE modelled Coulomb friction ⇒ MORE assist ⇒ LIGHTER wheel. It does not fight LKAS.**
 
 Friction is *subtracted from the plant model*, which lowers `gp-0x6ad6` — a torque-tracking **reference**, not a motor torque — so the loop holds your felt torque at a **lower** target. So the shelf’s 0.10× setting made the wheel ~10× **heavier** in that term and **removed** LKAS authority, fighting the 8× gain step in the same build.
+
+---
+
+## 📐 V220 — RUNG 2 of the GRIND ladder (notch widened to the 12° budget).
+
+```
+39990-TVA,A160-V220-V217BASE-NOTCH.POLES.13.50-GRIND.RUNG2-0x13000-0x100000.rwd
+  image ce07b776b8cdfef3ed9584a8352ce8922398c0c631ac132a1bc8f78425070097
+```
+
+Same zeros (**20.50 Hz — confirmed optimal three separate ways**), poles moved 15.50 → 13.50. Ladder over 125 engaged episodes, **with a passband floor**:
+
+```
+   budget   design                          dphase   passband   removed
+    8 deg   zeros 20.50 poles 15.50 r.9575   -7.96    0.9961     95.3 %   V217
+   12 deg   zeros 20.50 poles 13.50 r.9575  -11.87    0.9988     97.2 %   V220
+   16 deg   zeros 19.50 poles 12.50 r.9575  -14.35    0.9933     97.6 %   (saturates)
+```
+
+Residual grind energy **4.7 % → 2.8 %**, i.e. **1.68× less left over**, for 3.9° more phase. The biquad is in the **base power-assist** path, so that phase is steering **feel**, not LKAS command tracking — a different currency from the one that killed V184.
+
+🛑 **This build exposed a real hole in GATE 2.** Optimising removal *without* a passband floor returns `zeros 18.50, poles 11.50, r 0.985` scoring **99.0 %** — which is worthless: it puts a resonant peak at 11.5 Hz, normalises *that* to 1.0, and pushes the whole 0–5 Hz passband to **0.62×**. It does not notch the grind, it **turns the base power assist down 38 %**. `max|H| ≤ 1` cannot catch that. **Close-out [15] now checks the floor** — and it immediately caught four historical builds (V194–V198) attenuating the driver’s band 4.5–5.9 %.
+
+⚠ The builder **solves for the ENCODED float32**: the design’s `max|H|` was 1.0000065 after rounding — GATE 2 failing on rounding alone — so `g` is shrunk until the round-tripped coefficients pass. Seated in 66 steps at 0.9999999.
 
 ---
 

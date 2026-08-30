@@ -64,6 +64,7 @@ PUB = {
     'v217': 'f89ea01f405d513985ce51c47f6796e1ea77f600fab3d9f7817cd79907a1967b',
     'v218': 'f73aee347d67c10e0a50431d01143407bdee180e792022e2002eb8451c10b691',
     'v219': '13c1d33b3ad9eff526283b7465e3b85b18084056479588ba2741537b25d10d33',
+    'v220': 'ce07b776b8cdfef3ed9584a8352ce8922398c0c631ac132a1bc8f78425070097',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -482,7 +483,7 @@ print("[13] A GAIN RAISE MUST BE PRICED AGAINST THE NOTCH, ACROSS THE WHOLE BAND
 # Raising loop gain 1.65x exactly where the notch stops helping, in a band with an unexplained
 # engagement-gated line, is not a blind change.  Hence: STAGED until the notch is confirmed on-car.
 _GAIN_BASE = 5346                      # 6.00x -- the notch shelf's baseline (0xC6CD0 = 891 * N)
-_STAGED = {'v211','v213','v215','v216','v217','v218','v219'}  # priced and documented
+_STAGED = {'v211','v213','v215','v216','v217','v218','v219','v220'}  # priced and documented
 for _v in sorted(img):
     _g = struct.unpack_from('<H', img[_v], 0xC6CD0)[0]
     if _g <= _GAIN_BASE:
@@ -534,6 +535,39 @@ for _v in sorted(img):
             f'{_v.upper()} 0xD7A5C {_vh:.3f}x Honda / {_vf:.3f}x FLOWN'
             f' -- CUTS the 6-9 Hz damper {1 / _vf:.2f}x below the car'
             + ('' if _v in _REDUCED_ARM else ' -- NOT a documented reduced-damper build'))
+
+print()
+print("[15] THE ASSIST PASSBAND MUST SURVIVE -- max|H| <= 1 DOES NOT PROTECT IT")
+# GATE 2 caps max|H| over 0-500 Hz. It says nothing about the FLOOR, so a design can pass it while
+# attenuating everything the driver actually feels. Found 2026-08-29 while pricing the notch's phase
+# budget: optimising 15-25 Hz energy removal WITHOUT a passband constraint returns
+#     zeros 18.50, poles 11.50, r 0.985   ->  scores 99.0 % removed
+# which sounds excellent and is worthless -- it puts a resonant peak at 11.5 Hz, normalises THAT to
+# 1.0, and pushes the whole 0-5 Hz passband to 0.62x. It does not notch the grind, it turns the base
+# power assist DOWN 38 %. Every broadband attenuator scores near 100 % on a removal metric.
+# The biquad sits in the BASE POWER-ASSIST path, so the passband IS steering effort.
+_PB = (0.02, 0.5, 1.0, 2.0, 3.0, 5.0)
+for _v in sorted(img):
+    # NB: _st is rebound to the stock IMAGE BYTES by gate [12]; use struct explicitly.
+    _a1, _a2, _b1, _g = (struct.unpack_from('<f', img[_v], _a)[0]
+                         for _a in (0xC60A8, 0xC60AC, 0xC60B0, 0xC60B4))
+    _lo = 9.9
+    for _f in _PB:
+        _z = cmath.exp(2j * math.pi * _f / 1000.0)
+        _lo = min(_lo, abs(_g * (_z * _z + _b1 * _z + 1) / (_z * _z + _a1 * _z + _a2)))
+    # DOCUMENTED EXCEPTIONS, exactly as gate [2] carries its own. V194/195/196/198 are the
+    # GATE-2-violating notch arc the record already condemns; this gate finds a SECOND defect in
+    # them -- they also attenuate the driver's own band by 4.5-5.9 %. They are listed so a NEW
+    # violation still fails rather than hiding behind a raised bar. None is the fly-first build.
+    _PB_EXC = {'v194': 0.9550, 'v195': 0.9410, 'v196': 0.9410, 'v198': 0.9410}
+    if _v in _PB_EXC:
+        chk(abs(_lo - _PB_EXC[_v]) < 5e-4,
+            f'{_v.upper()} passband floor {_lo:.4f} -- KNOWN BAD (the GATE-2 notch arc), '
+            f'unchanged at its recorded value')
+    else:
+        chk(_lo >= 0.99,
+            f'{_v.upper()} passband floor 0-5 Hz = {_lo:.4f} >= 0.99'
+            + ('' if _lo >= 0.99 else ' -- THIS BUILD TURNS THE BASE ASSIST DOWN, it does not notch'))
 
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
