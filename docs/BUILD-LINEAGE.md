@@ -202,6 +202,23 @@ security access**): a bound clip pins it at **~2481**, and **anything above 2505
   engagement-triggered 18.5 Hz square-wave torque injector wired into the 6× gain path, four halfwords
   from being live, eight bytes from `0xC674E` which this kit edits.** `BUILD-LINEAGE-PART1-LEVER-INDEX.md:76`
   carries the wrong label.
+- **`0xC4118` IS A HAZARD BYTE-ARRAY, NOT A MUTE.** `FUN_00026c80` (the 11-slot lane mixer, decoded
+  2026-08-29) carries a complete Honda rate limiter: `target = clamp(gp-0x3d84, +-2048/3072)`
+  (`0xC6192`/`0xC6198`, 300-tick debounce `0xC6284`) -> `follower` slewed at **`0xC6194` = 3 counts per
+  tick** -> `iVar13 = gp-0x3d80 + follower + clamp(target - follower, +-256)` (cap table `0xC6700`/
+  `0xC6706` is **flat 256**; `0xC6196` = 0 above index `0x7D00`). **`gp-0x3d84` sums ONLY the slots whose
+  `0xC4118[i]` byte is ZERO, and Honda ships all eleven at 1** -- so the limiter's input is identically
+  zero and `iVar13 = gp-0x3d80`. 🛑 **The memory recorded `0xC6194` as dead because of a x0 (`0xC63CC`
+  = 0). That x0 only covers `gp-0x6b4c`** -- `iVar13` **also** reaches **`gp-0x6b4a`** with **no x0**,
+  and that cell has **8 readers including the delivery chain `FUN_00042af8`** (`0x42BF6`). ⇒ **zeroing
+  any ONE arm byte -- which reads like 'mute this lane' -- simultaneously arms a 3-ct/tick slew limiter
+  with a 256-ct residual clip in the LIVE delivery path.** At ~7.8 Hz a half-cycle is 64 ticks = 192
+  counts of follower travel, so the follower cannot track and the path degenerates to a **hard +-256
+  clip -- a relay, in the band we are chasing.** Now asserted at close-out (section [11], 181 checks).
+  ⊕ Same trace names **`gp-0x6bfa`**'s producer: `clamp(SUM over 10 slots of gp-0x6324[i], +-20000)` --
+  the bias term in the observer residual. ⚠ **Structural trace only, nothing flashed or measured;** the
+  per-slot source arrays are indexed off a computed base, so **what each slot physically is remains
+  untraced.** Re-runnable: `analysis-2020accord/studies/mixer/mixer_fun26c80_decoded.py`.
 - **`0xC520C`/`0xC5224` STRUCK as a lever.** Index formula fully reconstructed (`gp-0x6ac0` = |filtered
   motor rate|, scale **4.7121 ct per column °/s** externally anchored via Honda's own 0x14A rate field at
   r ≥ 0.985; X = [1050,1700,2500,3700,4100] = [223,361,530,785,870] col °/s; Y = [5325,3584,2406,1587,512]

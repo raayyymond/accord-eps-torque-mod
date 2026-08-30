@@ -402,6 +402,38 @@ chk(_r.returncode == 0,
     'chdir/path mismatch sweep is clean'
     + ('' if _r.returncode == 0 else ' -- see the sweep output'))
 
+print()
+print("[11] THE DORMANT RATE LIMITER MUST STAY DORMANT -- 0xC4118 ALL ONES")
+# FUN_00026c80 (the 11-slot lane mixer, traced 2026-08-29) carries a complete Honda-written rate
+# limiter that nothing in this kit had looked at:
+#     target   = clamp(gp-0x3d84, +-2048 or +-3072)      0xC6192 / 0xC6198, 300-tick debounce
+#     follower = slew(follower -> target, +-3 per tick)   0xC6194          [gp-0x3d6c]
+#     iVar13   = gp-0x3d80 + follower + clamp(target - follower, +-256)
+#     gp-0x6b4a = clamp(iVar13, +-25600)   -> 8 readers, incl. DELIVERY FUN_00042af8 @ 0x42BF6
+#
+# gp-0x3d84 sums ONLY the slots whose arm byte 0xC4118[i] is ZERO.  Honda ships all eleven at 1,
+# so the limiter's input is identically zero and the whole block is bypassed.
+#
+# The kit's memory records 0xC6194 as "DEAD calibration -- output x0".  That x0 is 0xC63CC, and it
+# is real, but it only covers gp-0x6b4c.  iVar13 also reaches gp-0x6b4a with NO x0.  So the x0 is
+# NOT what makes the limiter safe -- the arm gate is.  Zeroing any ONE byte of 0xC4118 arms a
+# 3-count/tick slew limiter with a 256-count residual clip in the live delivery chain.  At ~7.8 Hz
+# a half-cycle is 64 ticks = 192 counts of follower travel, so the follower cannot track and the
+# path degenerates to a hard +-256 clip: a relay, in exactly the band we are chasing.
+for _v in sorted(img):
+    _arm = [img[_v][0xC4118 + _i] for _i in range(11)]
+    _mode = [img[_v][0xC4124 + _i] for _i in range(11)]
+    _x0 = struct.unpack_from('<H', img[_v], 0xC63CC)[0]
+    _dormant = all(_a == 1 for _a in _arm)
+    chk(_dormant,
+        f'{_v.upper()} 0xC4118 arm gate all ones -- rate limiter dormant'
+        + ('' if _dormant else f' -- {_arm} ARMS A SLEW LIMITER IN DELIVERY'))
+    chk(_mode == [0, 0, 5, 0, 5, 5, 0, 0, 0, 5, 0],
+        f'{_v.upper()} 0xC4124 mode table unchanged')
+    if _x0 != 0:
+        print(f'         note: {_v.upper()} 0xC63CC = {_x0} (Honda 0) -- iVar13 now reaches '
+              f'gp-0x6b4c too; the arm gate is the ONLY thing holding the limiter off.')
+
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
 for m in bad:

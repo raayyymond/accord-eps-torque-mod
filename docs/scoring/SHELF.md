@@ -243,8 +243,12 @@ Two passes are enough. The design law is that one short symptomatic drive must i
 Then, in this order:
 
 ```
-python rlog-tools/score/score_drive.py <tag>                          # start here, one command
+python rlog-tools/score/score_drive.py <tag> V209                     # start here -- NAME THE BUILD
 python rlog-tools/probe/decode_v204_observer_lane.py <tag> --v209     # V209 only
+
+The build argument is not optional: a route tag does not encode which firmware flew, and the ratchet
+prediction is computed from the inertia dose read out of that build’s image. Without it the scorer
+refuses to interpret b5 rather than guessing.
 ```
 
 🛑 **The decoders were all broken until 2026-08-29** — they `chdir` to `rlog-tools/` and then looked
