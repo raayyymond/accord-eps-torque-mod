@@ -46,6 +46,20 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐ **SELF-CORRECTION, AND IT WALKS BACK TWO OF MY OWN CLAIMS: I read a POINT ESTIMATE on 7 EPISODES as evidence, twice.** Both the "V222’s dose curve is contradicted" and "CAN agrees 2 of 3" readings came from medians with **no confidence interval**, on a comparison my own scorer would have **REFUSED** (`r95` has 7 episodes; `MIN_EPISODES` is 8). With episode bootstraps:
+>
+> ```
+>   r95 (V101 8x) vs r96 (V102 6x)        CAN                        AUDIO
+>   22-26 (the 8x band)   [-0.331,+0.160] NOTHING     [-0.395,-0.016] contradicts him
+>   15-22 grind           [-0.371,+0.416] NOTHING     [-0.359,+0.001] NOTHING
+>   6-9  ratchet          [+0.079,+0.637] AGREES      [-0.992,+0.031] NOTHING
+> ```
+>
+> 🛑 **WITHDRAWN: "the record’s 8× dose curve is contradicted at 22–26 Hz."** That CI spans zero and licenses **nothing**. The record’s predicted +0.215 sits just outside the upper bound, which on 7 episodes is not evidence of anything. ⇒ the honest statement is **"I could not reproduce it"** — route 71, the record’s actual second arm, **has no cache** — **not "it is contradicted."**
+> ⚠ **SOFTENED: "CAN agrees 2 of 3."** Only the **6–9 Hz** band is powered, and CAN agrees there. 15–22 licenses nothing either way.
+> ✅ **What SURVIVES:** CAN agrees with the operator in the one band where the comparison is powered; audio contradicts him in the one band where **it** is powered. **CAN stays primary, audio stays the cross-check** — but on **1 band each way**, not 2–0.
+> ➕ **The lesson is mine and it is the kit’s own standing rule:** *"window bootstraps manufacture significance; get a CI before quoting a ratio."* I built the MIN_EPISODES guard **this session** to prevent exactly this, then bypassed it by computing medians directly. **Use the scorer.**
+
 > ❌⭐ **A HYPOTHESIS OF MINE, PROPOSED AND KILLED: 22–26 Hz is NOT demonstrably alias-contaminated.** 22–26 Hz had failed two independent checks, and the fold arithmetic is real — at **fs ≈ 101.1 Hz**, **75.1–79.1 Hz folds exactly into 22–26**, the same mechanism the record already documents for 52–71 → 30–49. Audio samples at 16 kHz and CAN sees 75–79 Hz directly, so for once the fold source was testable rather than inferable.
 >
 > ```
