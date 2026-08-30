@@ -46,6 +46,31 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE NO-COST RATCHET LEVER IS NOW AIMED — RAISE k — WITH A STRONG CONSISTENCY CHECK. BUT THE SAFE DOSE IS TINY AND THE CELL LAYOUT IS NOT CONFIRMED, SO NO BUILD.**
+>
+> **The model validates exactly**, which confirms the recursion was read correctly. From `iVar24 += (iVar33*0x80 − iVar24)·k >> 11` the branch is a first-order EMA with `a = k/2048`, **DC gain exactly 1** — which is why k costs no static assist:
+> ```
+>   at 8.64 Hz   k=20 -> |H| 0.1779, arg -78.20   (archive: 0.1779, -78.20)  MATCH
+>                k=41 -> |H| 0.3491, arg -68.02   (archive: 0.3491, -68.02)  MATCH
+>
+>   at 7.79 Hz (the ratchet):
+>     k=20   |H| 0.1966  arg -77.26   corner  1.56 Hz   <- ENGAGED today
+>     k=41   |H| 0.3819  arg -66.15   corner  3.22 Hz   <- MANUAL arm
+>     k=160  |H| 0.8569  arg -29.65   corner 12.95 Hz
+>     k=640  |H| 0.9917  arg  -6.13   corner 59.63 Hz
+> ```
+>
+> ✅ **DIRECTION: RAISE k.** The archive's own arithmetic — *“engaged lags 10.18° MORE, which moves `1−P·L` the RIGHT way (1.798 → 1.713)”* — means **more lag ⇒ smaller |1−P·L| ⇒ less damping**. Raising k reduces lag, so it damps.
+> ✅ **AND THE CONSISTENCY CHECK IS STRONG: the MANUAL arm already runs k=41, and the ratchet is ABSENT in manual** (engaged clears its null 7/7, manual 0/7). **The arm with the higher k is the arm without the symptom** — exactly what this direction predicts, from data that was never used to derive it.
+> 🛑 **BUT THE SAFE DOSE IS NEGLIGIBLE.** k 20→41 moves |1−P·L| 1.713→1.798, i.e. **4.7 % less Q** on a Q ratio of 14.3. The archive reached the same place and headlined it *“THE EFFECT IS TOO SMALL”*. Larger k is a different matter — k=640 is a **10× magnitude change and 71° less lag** — but that is far outside the linearisation those figures come from, on the branch the record itself calls **incomplete**.
+> 🛑 **AND I STOPPED SHORT OF BUILDING, because the cell layout is NOT established:**
+> ```
+>   0xC6906..0C   20 20 20 20              four values
+>   0xC690E..18   0 4 640 3200 6400 12800  six, ascending -- looks like an X axis
+>   0xC691A..20   358 307 307 307          four more
+> ```
+> That does **not** parse as `[n, X…, Y…]`, and no plausible header nearby yields a valid `n` with a monotone X. **Two 4-value blocks straddling a 6-value axis is not a layout I can edit safely** — the kit's own V850 trap list already contains a *“LERP-vs-(lo,hi)”* misreading, and writing the wrong halfwords corrupts an axis rather than a gain. **Closing it needs a Ghidra trace of the LERP's reader, not a guess about which four cells are Y.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V236's MAGNITUDE IS SOFT — the record corrects the census that produced it. AND THERE IS A NO-EFFORT-COST RATCHET LEVER, UNTOUCHED IN 161 IMAGES, WHOSE DIRECTION IS UNKNOWN.**
 >
 > **The correction, from `STATE-ARCHIVE-2026-08-29-wander.md`:** the loop census priced `gp-0x6b86`'s lane as **memoryless** (*“transfer at 7.79 Hz is real, 0°, magnitude = the local slope”*), and the decompile shows otherwise — a **parallel lagged branch**, a comparator-gated difference through a lag added back to the direct path. That is a **lead-lag compensator, not a static curve** ⇒ *“any `|L|` computed from the slope alone is **incomplete**.”*
