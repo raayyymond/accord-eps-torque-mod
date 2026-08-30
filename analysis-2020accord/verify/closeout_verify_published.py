@@ -376,9 +376,23 @@ for _v in sorted(img):
     _kn = struct.unpack_from('<H', img[_v], 0xC40BC)[0]
     _k1 = struct.unpack_from('<H', img[_v], 0xC40D2)[0]
     _mult = (600.0 / _kn) * (_k1 / 102.0)
-    chk(_kn > 0, f'{_v.upper()} friction lane: knee {_kn}, K1 {_k1} '
-                 f'=> {_mult:.3f}x Honda below saturation, saturating at {_kn / 12.0:.0f} '
-                 f'(Honda 50)')
+    # 2026-08-29: this gate USED TO assert only `knee > 0`, i.e. nothing. It reported a multiplier
+    # and bounded none of it, and it quoted only the HONDA reference -- the same two defects that
+    # hid the damper cut in [14]. The flown car sits at 2.000x Honda (knee 600, K1 204); the whole
+    # notch shelf sat at 0.200x, i.e. 0.100x THE CAR, and this gate waved it through.
+    # Lower modelled friction = LESS assist = HEAVIER wheel (verified polarity), so a cut here
+    # removes authority. Bound it, against both references.
+    _CAR_MULT = (600.0 / 600) * (204 / 102.0)          # the flown V108
+    _vs_car = _mult / _CAR_MULT
+    _FRIC_LOW = {'v194', 'v195', 'v196', 'v198', 'v199', 'v200', 'v201', 'v202', 'v203', 'v204',
+                 'v205', 'v206', 'v207', 'v208', 'v209', 'v210', 'v211', 'v212', 'v213', 'v214',
+                 'v215'}
+    chk(_kn > 0 and (_vs_car >= 0.999 or _v in _FRIC_LOW),
+        f'{_v.upper()} friction lane: knee {_kn}, K1 {_k1} => {_mult:.3f}x Honda / '
+        f'{_vs_car:.3f}x FLOWN, saturating at {_kn / 12.0:.0f} deg/s (Honda 50)'
+        + ('' if (_vs_car >= 0.999 or _v in _FRIC_LOW)
+           else ' -- CUTS modelled friction below the car = LESS assist, and is not a documented'
+                ' low-friction build'))
 
 print()
 print("[9] EVERY PROBE DECODER CAN ACTUALLY FIND A CACHE")
@@ -495,6 +509,20 @@ for _v in sorted(img):
             + ('' if _v in _STAGED else ' -- IT IS NOT. Price it against the notch first.'))
         print(f'         {_v.upper()} is STAGED: growth {(_g / _GAIN_BASE) ** 1.74:.3f}x is a net'
               f' win below ~29.5 Hz and a net LOSS above (2.07x @40 Hz).')
+
+    # AND THE CLAMPS MUST TRACK IT. Added 2026-08-29: this gate priced the gain and never checked
+    # that the forward clamps still clear the lane maximum. V101 had to raise them for 8x; a build
+    # that raises 0xC6CD0 and leaves 0xC61B2/B4 alone would have the clamps BIND, silently turning
+    # the authority lever into a clipper. The builders assert this; the close-out did not.
+    _clip = struct.unpack_from('<H', img[_v], 0xC61BE)[0]
+    _cl = struct.unpack_from('<H', img[_v], 0xC61B2)[0]
+    _clb = struct.unpack_from('<H', img[_v], 0xC61B4)[0]
+    _eme = struct.unpack_from('<H', img[_v], 0xC674E)[0]
+    _lane = (_clip * _g) >> 15
+    chk(_lane < _cl and _cl == _clb and _cl < _eme,
+        f'{_v.upper()} clamps track the gain: lane max {_lane} < clamp {_cl} < EME wall {_eme}'
+        + ('' if (_lane < _cl and _cl == _clb and _cl < _eme)
+           else ' -- THE CLAMPS BIND, the gain lever is clipping'))
 
 # and re-assert the tables the VOID rests on, so the dispute cannot silently reopen
 _st = open(os.path.join(ROOT, 'analysis-2020accord', 'stock_fw_dump', 'code.bin'), 'rb').read()
