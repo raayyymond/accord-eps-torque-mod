@@ -128,6 +128,27 @@ strictly wider blast radius; and Lever B has **12.5× headroom** bounded only by
 dangerous neighbour. ⇒ **do NOT propose `0xC6C42`.** This block exists so it is not re-proposed.
 Study: `analysis-2020accord/studies/mixer/r24_phase_is_structurally_capped.py`.
 
+> ✅⭐ **DELIVERY LAG CANNOT INVERT r24 — the concern is retired, and the sign of the error is
+FAVOURABLE.** r24 sits **36° short** of a pure damper, and transport lag rotates that at **2.80°/ms**
+at 7.79 Hz, so a lag nobody had measured decided whether the kit’s best lever helps, is inert, or
+inverts. **Attempt 1 — measure it from the wire — FAILED, honestly.** A phase slope from openpilot’s
+command to steering rate needs coherence; measured over 6 routes engaged, the median is **0.140 / 0.162
+/ 0.181 / 0.162 / 0.184 / 0.234** across 0.5–12 Hz. **Nothing clears 0.25**, so no delay is fitted — a
+slope through coherence that low is noise. ⊕ The failure is informative: **the command explains only
+~18 % of steering-rate variance at the ratchet**, independently supporting the record’s *"the EPS
+generates it"* and *"a fast vibration cannot be COMMANDED via LKAS"*. **Attempt 2 — bound it
+structurally — SUCCEEDS.** The confirmed task map puts the whole path inside **task 1 at 1 kHz**
+(*"arbitration, the aggregator, shaper, governor"*), so charging **three full ticks plus the FOC
+carrier** gives **3.25 ms = 9.1°**. Inversion to pumping needs **77.2 ms — 24× more**, i.e. ~77 task
+ticks inside a chain that completes within **one**; inertness needs **109.3 ms**. Not a close call.
+✅ **And the direction helps**: because r24 is short of 180° rather than past it, lag inside the bound
+rotates it **toward** a pure damper — work factor **−0.805 → −0.889**. ⚠ A bound, not a measurement;
+it rests on the on-car-confirmed 1 kHz task map and the recorded one-tick re-entry.
+⊕ **Correction to a figure quoted mid-session**: the inert/pump thresholds are **109.3 ms / 77.2 ms**,
+not the 32 / 51 ms first stated — those were computed rotating the wrong way. **The conclusion is
+unchanged and strengthened.**
+Study: `analysis-2020accord/studies/mixer/delivery_lag_cannot_invert_r24.py`.
+
 > 🛑 **RECORD DEFECT FIXED — `r95` is V101, not V102, and the correction had been made in only HALF
 the files.** `r95` flew **V101 = 8× (`0xC6CD0` 7128) with Lever B REMOVED** (`GAIN8X.C6CD0.7128-NOLEVERB`);
 `r95_v102_prereg.py` is the pre-registration **FOR** V102 **MEASURED ON** r95=V101, and its own docstring
