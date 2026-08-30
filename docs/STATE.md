@@ -46,6 +46,25 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑⭐⭐⭐⭐⭐ **V232 BUILT — THE FIRST NOTCH PLACEMENT EVER CHOSEN FROM WHERE THE LANE PUMPS. 16 BYTES ON V231.**
+>
+> ```
+>   image c15fa8633352771f6f9cb5c37eac75ddebe7e648892620cdd7e7f07bc2784329
+>   rwd   81127bd876289fdc444596ee3bd331278ade8cd1980547d93204767217cfca46
+>   39/39 assertions · CRC 50/50 · cave BYTE-IDENTICAL · probe CARRIED
+>   zeros 34.0 Hz, poles 28.0 Hz, r 0.920   (RE-CUT -- see below)
+> ```
+>
+> ✅ **THE GAP IT FILLS.** Honda centres the notch at 55.23 Hz, **above** the measured pumping band:
+> * 22–40 Hz (where the lane PUMPS, all 3 routes agree): Honda cuts only **1.51×**
+> * 44–65 Hz (where Honda is centred): Honda cuts **9.35×**
+>
+> **Honda cuts the band it is centred on 6× harder than the band the lane actually pumps in — and that 9.35× is on the car today and has not stopped the grinding.** V232 cuts the pumping band **4.80×**, i.e. **3.2× better on the measured energy source**.
+> ✅ **The DAMPING region is held, which is the constraint earlier sweeps lacked.** At 9–12 Hz the lane sits at **cos −0.989**, so any rotation there costs damping directly. V232 moves it **−3.9°** (cos −0.989 → ≈ −0.996) and holds 6–15 Hz magnitude within **4.3 %**. DC gain 1.000000, peak |H| 0.9999.
+> 🛑 **COST, PLAINLY: 55 Hz goes 97× LOUDER — it gives up Honda's HF cut, the SAME price V228 pays.** The difference is that **V232 buys something measured for it and V228 does not**: V228's 20.5 Hz notch sits at the crossover and its skirt cuts the damping region.
+> 🛑 **THE FIRST V232 CUT WAS DEFECTIVE AND THE GATE CAUGHT IT.** Geometry 34.0/29.5/0.900 gave a **0–5 Hz passband floor of 0.9892**, under the 0.99 gate — a ~1 % droop means the build **turns base assist down rather than notching**. Re-cut at **34.0/28.0/0.920**: floor **0.9946**, damping-region magnitude **0.990** (was 0.963), for only 1.6 % less cut (4.80× vs 4.88×). **The gate now lives inside the builder**, so a future re-cut cannot regress it.
+> ⚖ **NOT a strict improvement on V231 — it is the other side of a one-biquad trade.** V231 cuts 44–65 Hz (audible; 2.1–2.2× licensed LKAS excess there); V232 cuts the pumping. **The record does not say which matters more to the operator's symptom.** ⇒ **drive V231 first, V232 second.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE NOTCH LANE DAMPS BELOW 15 Hz AND PUMPS ABOVE 22 Hz — SO HONDA'S 55 Hz PLACEMENT IS RIGHT AND EVERY BUILD SINCE V172 MOVED THE NOTCH OUT OF THE PUMPING REGION INTO THE DAMPING REGION.** This is the first mechanical explanation the arc has had.
 >
 > Measured on **`gp-0x6b86`, the notch's own lane**, flown on CAN 427 in ra4/ra5/ra6 (V104–V106), phase against WHEEL RATE, engaged, coherence-gated at 0.30. The sign mapping is fixed by the kit's own b26 result — *“+137/+139° vs wheel rate, |cos| 0.73, i.e. +518/+565 counts of POSITIVE Re(Z)”* for a lane it calls **“a REAL 6–9 Hz DAMPER”** ⇒ **cos < 0 = damping, cos > 0 = pumping.**
