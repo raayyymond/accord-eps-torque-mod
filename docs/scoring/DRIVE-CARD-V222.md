@@ -1,6 +1,6 @@
 # DRIVE CARD — V222 · **the new primary. V221 is the fallback.**
 
-> 🛑 **BEFORE YOU READ FURTHER — there is a safer alternative to this build.**
+> 🛑 **BEFORE YOU READ FURTHER — there is a safer alternative, and this build’s own justification is softer than it looks.** The argument for V222 is that its notch covers the 8× cost at 22–26 Hz. That rests on a dose curve I **could not reproduce**: the one comparison available in the cached data (`r95` vs `r96`) points the **opposite way** by ~2.2×, and the record’s own second arm (route 71) has no cache, so its design cannot be re-run. ⚠ Not a refutation — `r95` has only 7 episodes — but **V228 needs none of this**, because it takes no gain step at all.
 >
 > **V228 is this build minus the 8× gain step. Four bytes apart.** Same notch, same Lever B, so the
 > **grinding case is identical** — but V228 does **not** put the ratchet at risk, because the notch does

@@ -46,6 +46,18 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐ **V222’S JUSTIFICATION RESTS ON A MEASUREMENT I CANNOT REPRODUCE — and V228 does not need it.** V222’s case is that the notch covers the 8× cost **at 22–26 Hz** (net 0.463×). That rests on the record’s dose curve, which says **at 6× the band is 0.61× of V101** — i.e. `r95` (V101, 8×) should sit **+0.215 log10 ABOVE** `r96` (V102, 6×). Measured:
+>
+> ```
+>   control 30-40 Hz (mine)     r95 1.914   r96 2.076   diff -0.162   CONTRADICTS
+>   control 32-38 Hz (RECORD)   r95 1.946   r96 2.077   diff -0.132   CONTRADICTS
+>   the record predicts        +0.215                   ~2.2x discrepancy either way
+> ```
+>
+> 🛑 **But this is NOT a refutation, and must not be cited as one.** Two things block it: `r95` carries only **7 episodes** (below the scorer’s own MIN_EPISODES of 8), and **route 71 — the record’s actual second arm in its de-confounded 2×2 — HAS NO CACHE**, so their design cannot be run at all. What can be said is narrower and still worth saying: **the record’s key 8× measurement is not independently reproducible from the cached corpus, and the one comparison that IS available points the other way.**
+> ➕ It also aligns with the separate validity check, where **CAN failed at 22–26 Hz** — the same band — while agreeing with the operator at 15–22 and 6–9. Two independent probes both stumble on 22–26.
+> ⇒ **CONSEQUENCE, and it is practical: V228 does not depend on any of this.** It takes no gain step, so it needs no dose curve, no 22–26 Hz cover argument, and no 8× pricing. **V222 is the build whose case has a soft foundation; V228’s case is the notch and Lever B, both measured directly.** This is now a second, independent reason to fly V228 first.
+
 > 🛑🛑⭐⭐⭐ **THE AUDIO-FIRST RECOMMENDATION IS WITHDRAWN. Audio is more SENSITIVE; CAN is more VALID.** Having recommended audio-first on exposure efficiency, I ran the validity check I had been careful not to run: **does either instrument agree with what the operator actually reported?** He called **V101 (`r95`) *"grinding/vibration now exists at all speeds"*** and chose **V102 (`r96`)** instead, so a valid instrument must score `r95` **worse**.
 >
 > ```
