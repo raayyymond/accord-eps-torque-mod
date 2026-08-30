@@ -46,6 +46,19 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐ **WITHDRAWN: "audio is 2.3–7× more efficient than CAN." On a LIKE-FOR-LIKE comparison there is NO licensed difference in either direction.** The efficiency claim drove an instrument recommendation, so it needed the CI treatment it never got. Both instruments computed the same way (ungated, 20 s episodes, same control band), efficiency = `(sd_CAN/sd_AUD)²` because minutes scale with sd²:
+>
+> ```
+>   band     sd AUD   sd CAN    ratio          95% CI      licensed?
+>   6-9       0.516    0.379    0.54x   [0.34, 1.35]   NO -- audio WORSE, spans 1.0
+>   9-12      0.400    0.273    0.47x   [0.23, 1.31]   NO -- audio WORSE, spans 1.0
+>   15-22     0.365    0.417    1.31x   [0.39, 5.76]   NO -- spans 1.0
+> ```
+>
+> 🛑 **Where the 2.3–7× came from, and why it was wrong:** it compared **r24-GATED audio** against **gated CAN**, using an engaged-gating factor measured on **one route** and applied to a median drawn from **other** routes. Gated-vs-gated would be fair; gated-by-proxy-vs-gated was not. ⇒ **no efficiency advantage is established for either instrument.**
+> ✅ **What still stands:** audio is **alias-free at 16 kHz**, which CAN is not — that is structural, not statistical, and is why the 40–49 Hz test is worth running at all. And the **validity** result is unaffected: CAN agreed with the operator in the one powered band, audio contradicted him in the one where it was powered. **CAN remains primary on validity; audio is now the cross-check on NEITHER efficiency NOR validity grounds — it is kept because it is a different physical observable and cheap to compute.**
+> ➕ **Third withdrawal in this chain**, all the same shape: a point estimate quoted before a CI. The chain is why `rlog-tools/lib/band_contrast.py` now exists.
+
 > ✅⭐⭐ **I AUDITED MY OWN SESSION CLAIMS AGAINST THE CI RULE. The load-bearing one HOLDS at P = 1.000.** Having withdrawn two findings for being point estimates, the rest needed the same test. Most are **deterministic** — filter responses computed from image floats, the r24 transfer, the notch band ratios — where a CI is meaningless. The **statistical** ones needed it, and the most decision-bearing is the `Re(Z)` band ordering, which I used to argue the anti-damping peaks at 9–12 Hz and to critique V222’s notch aim:
 >
 > ```

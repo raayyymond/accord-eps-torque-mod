@@ -180,11 +180,10 @@ def selftest():
 
 
 # ---------------------------------------------------------------------------------------------
-# AUDIO ARM -- added 2026-08-30. Audio is the BETTER instrument: measured across 8 caches it needs
-# 2.0 min/arm for grinding against CAN's 14.0 (7.0x) and 114.7 against 413.7 at the ratchet (3.6x),
-# and on the noisiest route it is still 2.3-3.8x. It is also alias-free at 16 kHz, where CAN's
-# 30-49 Hz is not interpretable at all. Recommending audio-first while only scoring CAN would leave
-# advice the tooling cannot execute, so both are scored and audio is reported FIRST.
+# AUDIO ARM -- added 2026-08-30. NOT the better instrument: an efficiency advantage was claimed and
+# then WITHDRAWN -- like-for-like, every CI spans 1.0. It is kept because it is a DIFFERENT physical
+# observable and alias-free at 16 kHz, where CAN's
+# 30-49 Hz is not interpretable at all. CAN is PRIMARY on validity; audio is the cross-check.
 # ---------------------------------------------------------------------------------------------
 AUDIO_CTL = (30.0, 40.0)
 AUDIO_CTL_HI = (50.0, 60.0)          # for bands that overlap the 30-40 control
@@ -261,7 +260,8 @@ if __name__ == '__main__':
     print()
     aa, ab = audio_episode_ratios(ta), audio_episode_ratios(tb)
     if aa and ab:
-        print('  AUDIO  (the better instrument: 2.3-7x more efficient than CAN, and alias-free)')
+        print('  AUDIO  (a DIFFERENT observable, alias-free at 16 kHz. NO efficiency advantage is')
+        print('         established -- that claim was withdrawn 2026-08-30, CI spans 1.0.)')
         report(ta, aa, tb, ab)
         print()
     else:
