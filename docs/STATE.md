@@ -46,6 +46,20 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> ✅⭐⭐ **I AUDITED MY OWN SESSION CLAIMS AGAINST THE CI RULE. The load-bearing one HOLDS at P = 1.000.** Having withdrawn two findings for being point estimates, the rest needed the same test. Most are **deterministic** — filter responses computed from image floats, the r24 transfer, the notch band ratios — where a CI is meaningless. The **statistical** ones needed it, and the most decision-bearing is the `Re(Z)` band ordering, which I used to argue the anti-damping peaks at 9–12 Hz and to critique V222’s notch aim:
+>
+> ```
+>   Re(Z), route-level bootstrap, n=6 routes
+>     ratchet 6-9    -38.4  [-48.3, -29.9]
+>     mid 9-12       -65.4  [-69.2, -61.4]   <- CI overlaps NO other band
+>     gap 12-15      -46.9  [-52.4, -43.7]
+>     grind 15-22    -12.2  [-14.9, -10.6]
+>
+>   P(9-12 Hz is the MOST anti-damped, under route resampling) = 1.000
+> ```
+>
+> ⇒ **it survives.** ➕ The point values shift slightly from the first report (mid −67.9 → −65.4, ratchet −23.5 → −38.4) because the aggregation differs — band-mean-then-median here vs grid-interpolate-then-median before — **but the ORDERING is invariant, and the ordering is what the claim rested on.** ⇒ *"size and aim levers at 9–12 Hz"* stands.
+
 > 🛑🛑⭐⭐⭐ **SELF-CORRECTION, AND IT WALKS BACK TWO OF MY OWN CLAIMS: I read a POINT ESTIMATE on 7 EPISODES as evidence, twice.** Both the "V222’s dose curve is contradicted" and "CAN agrees 2 of 3" readings came from medians with **no confidence interval**, on a comparison my own scorer would have **REFUSED** (`r95` has 7 episodes; `MIN_EPISODES` is 8). With episode bootstraps:
 >
 > ```
