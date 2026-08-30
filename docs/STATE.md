@@ -1,5 +1,53 @@
 # STATE — living current state of the kit
 
+> 🛑 **READ THIS BOX FIRST.** Below it are **83 blockquote blocks in reverse-chronological
+> order** — findings, corrections and closures. That is a record, not a briefing. Everything you need
+> to make a decision is in this box and the index under it.
+
+## ✈ THE DECISION, IN ONE PLACE
+
+**Two flight candidates, four bytes apart. Both are built, byte-verified and audited.**
+
+| | **V228** | **V222** |
+|---|---|---|
+| grinding | notch cuts 15–22 Hz **3.6×** | **identical** |
+| **ratchet** | **protected** — every delta is a damper raise or flat at 6–9 Hz | **could go either way** |
+| **LKAS authority** | 6×, unchanged from the car | **8×** |
+| 40–49 Hz (audible) | **+5.9 dB** | **+8.1 dB** |
+| delta from the car | 19 bytes | 23 bytes |
+
+- **Cards:** `docs/scoring/DRIVE-CARD-V228.md` · `docs/scoring/DRIVE-CARD-V222.md`
+- **Pre-registered:** `docs/scoring/PREREG-V228-V222-THE-8X-EXPERIMENT.md` (scorer written and validated
+  **before** any data: `rlog-tools/score/score_8x_experiment.py --selftest`)
+- **If only one thing gets done: drive V228 TWICE**, on separate outings. A repeat route re-prices
+  **every** cross-build claim in the kit at once; no new firmware can do that.
+- 🛑 **The flash decision is the operator’s.** He names the file and the bus; repeat both back.
+
+### The three things that are NOT optional to know
+
+1. **One drive falsifies nothing, in either direction.** V67/V68/V85 are byte-identical and grind #2
+   appeared on two of them. Keep **acceptability** (his verdict, 1 episode, final) apart from
+   **efficacy** (the bands, many drives). See RULE 5b in `BUILD-LINEAGE.md`.
+2. **Do not score 30–49 Hz** across the V222/V122 boundary — 52–71 Hz folds into it from above Nyquist.
+3. **The grinding fix costs an audible 40–49 Hz lift.** It is unavoidable: only one biquad exists, and
+   Lever B cannot substitute (short by 1517×).
+
+## 🗂 INDEX TO THE BLOCKS BELOW
+
+| what you want | look for the block titled |
+|---|---|
+| the flight order | *FLIGHT ORDER — A CHOICE, NOT A SINGLE BUILD* |
+| why V222’s ratchet is a risk | *THE 8× IS COVERED WHERE THE OPERATOR FELT IT — BUT NOT AT THE RATCHET* |
+| what V228 is | *V228 BUILT — V222 WITHOUT THE 8×* |
+| the audible side effect | *"V228 CANNOT MAKE ANYTHING WORSE" IS FALSE* · *THE 40–49 Hz LIFT IS UNAVOIDABLE* |
+| **my own withdrawn claims** | *SELF-CORRECTION: THE ABSOLUTE "r24 DAMPS" LABEL IS DOWNGRADED* · *CORRECTION TO THE BLOCK BELOW — AND TO MY OWN r24 ANCHOR* · *CORRECTION: "V62’s lever CREATED grind #2" is NOT settled* |
+| what measurement can and cannot do | *THE RATCHET BAND CANNOT BE SCORED BY BAND POWER* · *RING-DOWN COMPUTED* · *CROSS-BUILD EVIDENCE HAS NEVER BEEN PRICED AGAINST ROUTE VARIATION* |
+| what is closed and will not be re-proposed | *THE CAL-LEVEL SEARCH IS COMPLETE IN EVERY DIRECTION* · *THE NOTCH IS NOW CLOSED* · *EXACTLY ONE BIQUAD* · *FOC CURRENT LOOP IS TRANSPARENT* · *LEVER A r26-HALF ONLY* · *r24 IS AT 94 % OF A STRUCTURAL PHASE CEILING* |
+| what is still open | *THE TWO REMAINING QUESTIONS BOTH NEED A CAVE* · *OPEN OBSERVATION — an 11.4× residual* · *THE FRAME TEST IS INCONCLUSIVE* |
+| the session narrative | *SESSION HANDOFF* (last block) |
+
+---
+
 
 > 🛑🛑⭐⭐⭐ **THE 8× IS COVERED WHERE THE OPERATOR FELT IT — BUT NOT AT THE RATCHET. V222’s ratchet
 outcome is a RACE, and open-loop arithmetic cannot call it.** The ★★★★★ record says `0xC6CD0` is *"the
