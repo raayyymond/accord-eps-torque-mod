@@ -32,6 +32,18 @@
 3. **The grinding fix costs an audible 40–49 Hz lift.** It is unavoidable: only one biquad exists, and
    Lever B cannot substitute (short by 1517×).
 
+> ❌⭐ **A GATE I BUILT AND THEN DELETED — "documented cell values vs the images" DOES NOT WORK.** The withdrawn-claims registry found 7 defects by pattern-matching, so the obvious next axis was checking every `0xADDR = N` claim in the docs against ground truth: a value **no image has ever held** is wrong regardless of which build was meant. It ran over **1028 claims / 206 images** and produced **only false positives**, because that pattern is ambiguous in this record’s prose:
+>
+> ```
+>   0x55DF2 = 9094           the doc means HEX 0x9094; read as decimal
+>   0xD782C -> 60/400/140    a LIST of values for three addresses
+>   0xC40D2 = 1 reader       a COUNT ("1 reader / 0 writers"), not a value
+>   0xC6564 = 40 zero bytes  a SIZE, not a value
+>   0xC61BE -> 16384         built and then PULLED, so correctly absent from images
+> ```
+>
+> ⇒ **deleted rather than tuned.** Every filter that removes one class removes real hits with it, and a gate that cries wolf gets ignored — which is worse than no gate. **Recorded so nobody rebuilds it.** ➕ The lesson generalises: **the withdrawn-claims registry works because it matches DISTINCTIVE PHRASES; a value-checker fails because `0xADDR = N` is not distinctive.** Pattern gates need a pattern only the defect produces.
+
 ## 🗂 INDEX TO THE BLOCKS BELOW
 
 | what you want | look for the block titled |
