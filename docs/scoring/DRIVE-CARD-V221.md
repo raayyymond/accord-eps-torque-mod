@@ -170,6 +170,16 @@ verbatim.
 
 ---
 
+## Why the dose is sized for small signals, not for peak demand
+
+Measured 2026-08-29 over **3,711** two-second engaged windows on five routes: the roughness ratio P(6–30 Hz)/P(0.5–3 Hz) **falls** as the command grows — by command quartile **2.49 / 2.85 / 2.43 / 0.66**, i.e. the top quartile is **3.7× smoother** (corr −0.358, p<0.0001). Raw HF power does rise with command, but the manoeuvre rises faster, which is the whole point of using a ratio.
+
+⇒ **the grinding and ratcheting live where the command is SMALL** — creep, near centre, low demand. That is why V221 puts Lever B’s saturation onset at **640 counts** against your car’s engaged torque-rate p90 of **146**: it buys damping in the regime the symptom actually occupies, rather than authority at peak where the car is already smoothest.
+
+🛑 Separately, **both testable readings of “peak command oscillation” came back negative** — the command does not overshoot more after a railed peak once events are defined as true local maxima, and integral windup fails its own dose-response. **That is what two instruments read; it is not a verdict on what you feel.** If you can tell me what you are doing when you notice it — speed, whether you are holding the wheel, straight or in a curve — that would point the next instrument at the right place.
+
+---
+
 ## Verification behind this build
 
 - **68/68 build assertions**, CRC 50/50, `.rwd` decodes byte-identical to the built image.
