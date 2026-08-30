@@ -147,7 +147,17 @@ from what the operator drives. **Diff every candidate against the flown image.**
   0x42F8E  add   0x2, r6           ; r6 = 0xC676A  <-- Y[1], POINTER ARITHMETIC
   ```
   A tp-displacement scan cannot see that. **Y[0] and Y[2] *are* displacement-addressed** (`0x42F6E`, `0x42F86`) because they are the ladder’s saturation arms — **only the middle knot is walked, so the scan found the ends and missed the middle.** That is a general trap: a LERP’s interior knots can be invisible while its endpoints are not.
-  ⚠ **Shape, not just gain:** stock RAMPS the corridor `[0, 1536, 2048]`; the shelf FLATTENS it to `[5120, 5120, 5120]`, including **5120 at the low knot where stock is 0**. Carried since V25 and never priced. Gate `[18]` now pins X ascending and unchanged, and reports Y.
+  ⊕ **BOTH ladders share one layout: count at base, X at base+2, Y at base+2+2n.**
+  ```
+  0xC6748  n=2  X [-8192, -1024]   Y stock [1024, 1024]      -> shelf [5120, 5120]
+  0xC6760  n=3  X [  700,   800, 1100]  Y stock [0, 1536, 2048] -> shelf [5120, 5120, 5120]
+  ```
+  🛑 **`0xC674E` IS Y[0] OF THE FIRST TABLE, NOT A SCALAR "EME WALL".** The kit calls it the EME wall and V211/V219 assert it must exceed the tracking clamp. **The firmware never makes that comparison** — the archive said so without knowing why; the reason is that it is a LERP saturation arm. Its *"exactly one reader"* is the same artefact: only the ends of a ladder are displacement-addressed.
+
+  ❌ **RETRACTED, same tick:** I said the corridor put 5120 at a near-zero knot where stock is 0, *"the same family as V80’s step at zero rate"*. **Wrong — I read the COUNT as X[0].** The first X knot is **700**, not 3, so there is no step at near-zero input. Withdrawn. The wrong field also made X read non-ascending, which is the kit’s documented symptom of a wrong *base* — here it was a wrong *field* in the right base.
+
+  ⚠ **What still stands, and is still unpriced:** stock RAMPS the corridor `0 -> 1536 -> 2048`; the shelf FLATTENS it to a constant `5120`. A shape change, carried since V25, on every build including V217. Gate `[18]` now pins the count in range and X ascending for both tables.
+
 - A sweep for "dormant features gated by a zero cal" has a **poor hit rate** — zero offsets and float
   low-halves dominate. The one real find (the PI block) came from tracing, not sweeping.
 

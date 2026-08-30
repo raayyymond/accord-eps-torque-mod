@@ -697,18 +697,20 @@ print("[18] THE DIRECTION-CORRIDOR TABLE -- 0xC6760, and 0xC676A IS NOT INERT")
 #
 # SHAPE, not just gain: stock RAMPS the corridor 0 -> 1536 -> 2048; the shelf FLATTENS it to a
 # constant 5120, including 5120 at the low knot where stock is 0.
-_CX, _CY = 0xC6760, 0xC6768
-for _v in sorted(img):
-    _X = [struct.unpack_from('<h', img[_v], _CX + 2 * _i)[0] for _i in range(4)]
-    _Y = [struct.unpack_from('<h', img[_v], _CY + 2 * _i)[0] for _i in range(4)]
-    chk(_X == sorted(_X),
-        f'{_v.upper()} corridor X ascending {_X}'
-        + ('' if _X == sorted(_X) else ' -- NON-ASCENDING X, the LERP walk will not terminate correctly'))
-    chk(_X == [3, 700, 800, 1100],
-        f'{_v.upper()} corridor X unchanged from stock {_X}')
-    if _Y != [5120, 5120, 5120, 0]:
-        print(f'         note: {_v.upper()} corridor Y = {_Y} (stock [0,1536,2048,0], '
-              f'shelf [5120,5120,5120,0])')
+# LAYOUT, confirmed from BOTH ladders: count at base, X at base+2, Y at base+2+2n.
+# ⚠ I first read the COUNT as X[0], which made X non-ascending -- the kit's own documented symptom
+# of a wrong base. It was a wrong FIELD, not a wrong base. Corrected here.
+for _base, _nm in ((0xC6748, 'the "EME wall" table'), (0xC6760, 'the direction corridor')):
+    for _v in sorted(img):
+        _n = struct.unpack_from('<h', img[_v], _base)[0]
+        chk(1 <= _n <= 8, f'{_v.upper()} 0x{_base:05X} knot count {_n} in range')
+        if not (1 <= _n <= 8):
+            continue
+        _X = [struct.unpack_from('<h', img[_v], _base + 2 + 2 * _i)[0] for _i in range(_n)]
+        _Y = [struct.unpack_from('<h', img[_v], _base + 2 + 2 * _n + 2 * _i)[0] for _i in range(_n)]
+        chk(_X == sorted(_X),
+            f'{_v.upper()} {_nm} X ascending {_X}'
+            + ('' if _X == sorted(_X) else ' -- NON-ASCENDING, the LERP walk is undefined'))
 
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
