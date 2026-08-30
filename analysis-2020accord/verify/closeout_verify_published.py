@@ -403,23 +403,24 @@ chk(_r.returncode == 0,
     + ('' if _r.returncode == 0 else ' -- see the sweep output'))
 
 print()
-print("[11] THE DORMANT RATE LIMITER MUST STAY DORMANT -- 0xC4118 ALL ONES")
-# FUN_00026c80 (the 11-slot lane mixer, traced 2026-08-29) carries a complete Honda-written rate
-# limiter that nothing in this kit had looked at:
-#     target   = clamp(gp-0x3d84, +-2048 or +-3072)      0xC6192 / 0xC6198, 300-tick debounce
-#     follower = slew(follower -> target, +-3 per tick)   0xC6194          [gp-0x3d6c]
-#     iVar13   = gp-0x3d80 + follower + clamp(target - follower, +-256)
-#     gp-0x6b4a = clamp(iVar13, +-25600)   -> 8 readers, incl. DELIVERY FUN_00042af8 @ 0x42BF6
+print("[11] HONDA'S ARBITRATION TABLES MUST STAY AS SHIPPED -- 0xC4118 / 0xC4124")
+# FUN_00026c80 (the 11-slot lane mixer) carries a complete Honda rate limiter -- target clamped to
+# +-2048/3072 (0xC6192/0xC6198), a follower slewed at 3 counts/tick (0xC6194), residual clipped to
+# 256 -- whose output gp-0x6b4a has 8 readers including the delivery chain FUN_00042af8 @ 0x42BF6.
 #
-# gp-0x3d84 sums ONLY the slots whose arm byte 0xC4118[i] is ZERO.  Honda ships all eleven at 1,
-# so the limiter's input is identically zero and the whole block is bypassed.
+# 🛑 CORRECTED 2026-08-29, same session, after mapping all ten slots. I first recorded that zeroing
+# one 0xC4118 arm byte would ARM that limiter in the live delivery path. THAT IS WRONG, and the error
+# was mine: I had traced the plumbing but not the payloads. Mapping every caller of FUN_00025c32
+# shows NINE of the ten slots store value A as literal r0, and the tenth (slot 2, FUN_0003405a)
+# carries gp-0x6b76, which is clamp(torque, +-0xC616C) negated -- and 0xC616C = 0, so it is 0 when
+# the lane is valid and 0x7FFF when it is not, with 0x7FFF exceeding slot 2's own <=0x5000 gate and
+# being rejected to 0 anyway.  =>  gp-0x3d80 AND gp-0x3d84 are both identically zero regardless of
+# the arm gate, so gp-0x6b4a == 0 and the limiter cannot be armed by any single-byte edit.
 #
-# The kit's memory records 0xC6194 as "DEAD calibration -- output x0".  That x0 is 0xC63CC, and it
-# is real, but it only covers gp-0x6b4c.  iVar13 also reaches gp-0x6b4a with NO x0.  So the x0 is
-# NOT what makes the limiter safe -- the arm gate is.  Zeroing any ONE byte of 0xC4118 arms a
-# 3-count/tick slew limiter with a 256-count residual clip in the live delivery chain.  At ~7.8 Hz
-# a half-cycle is 64 ticks = 192 counts of follower travel, so the follower cannot track and the
-# path degenerates to a hard +-256 clip: a relay, in exactly the band we are chasing.
+# The assertion below is KEPT -- Honda's arbitration tables are not ours to move, and a change to
+# either one would silently re-plumb which client reaches which output -- but it is a "leave Honda's
+# wiring alone" guard, NOT the interlock I originally claimed. The real interlock on that whole path
+# is 0xC616C = 0, checked separately below.
 for _v in sorted(img):
     _arm = [img[_v][0xC4118 + _i] for _i in range(11)]
     _mode = [img[_v][0xC4124 + _i] for _i in range(11)]
@@ -430,9 +431,28 @@ for _v in sorted(img):
         + ('' if _dormant else f' -- {_arm} ARMS A SLEW LIMITER IN DELIVERY'))
     chk(_mode == [0, 0, 5, 0, 5, 5, 0, 0, 0, 5, 0],
         f'{_v.upper()} 0xC4124 mode table unchanged')
+    _clamp = struct.unpack_from('<H', img[_v], 0xC616C)[0]
+    chk(_clamp == 0,
+        f'{_v.upper()} 0xC616C = {_clamp} -- the slot-2 torque clamp, THE interlock on the'
+        f' mixer->delivery path'
+        + ('' if _clamp == 0 else ' -- gp-0x6b4a IS NOW LIVE, and so is the rate limiter'))
     if _x0 != 0:
         print(f'         note: {_v.upper()} 0xC63CC = {_x0} (Honda 0) -- iVar13 now reaches '
-              f'gp-0x6b4c too; the arm gate is the ONLY thing holding the limiter off.')
+              f'gp-0x6b4c as well as gp-0x6b4a.')
+
+print()
+print("[12] THE FLOAT PI BLOCK NEXT TO THE BIQUAD MUST STAY BYTE-STOCK -- 0xC60B8-0xC60DC")
+# FUN_00033d10 is a two-lane float PI controller whose gains sit at 0xC60B8-0xC60D8, IMMEDIATELY
+# after the assist biquad at 0xC60A8/AC/B0/B4 that the notch builders write.  One float of offset
+# error in a notch build lands in this block.  It is dormant (lane 1 off via 0xC649D=0, lane 2's
+# output discarded by 0xC4124[2]=5, torque term zeroed by 0xC616C=0), so a corruption here would
+# be SILENT on the bench and would only show up as behaviour once any of those three zeros moved.
+_PI = open(os.path.join(ROOT, 'analysis-2020accord', 'stock_fw_dump', 'code.bin'),
+           'rb').read()[0xC60B8:0xC60DC]
+for _v in sorted(img):
+    chk(img[_v][0xC60B8:0xC60DC] == _PI,
+        f'{_v.upper()} 0xC60B8-0xC60DC PI gains byte-stock'
+        + ('' if img[_v][0xC60B8:0xC60DC] == _PI else ' -- A NOTCH EDIT LANDED ONE FLOAT LOW'))
 
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')

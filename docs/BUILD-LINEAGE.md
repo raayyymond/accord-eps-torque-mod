@@ -202,32 +202,34 @@ security access**): a bound clip pins it at **~2481**, and **anything above 2505
   engagement-triggered 18.5 Hz square-wave torque injector wired into the 6× gain path, four halfwords
   from being live, eight bytes from `0xC674E` which this kit edits.** `BUILD-LINEAGE-PART1-LEVER-INDEX.md:76`
   carries the wrong label.
-- **`0xC4118` IS A HAZARD BYTE-ARRAY, NOT A MUTE.** `FUN_00026c80` (the 11-slot lane mixer, decoded
-  2026-08-29) carries a complete Honda rate limiter: `target = clamp(gp-0x3d84, +-2048/3072)`
-  (`0xC6192`/`0xC6198`, 300-tick debounce `0xC6284`) -> `follower` slewed at **`0xC6194` = 3 counts per
-  tick** -> `iVar13 = gp-0x3d80 + follower + clamp(target - follower, +-256)` (cap table `0xC6700`/
-  `0xC6706` is **flat 256**; `0xC6196` = 0 above index `0x7D00`). **`gp-0x3d84` sums ONLY the slots whose
-  `0xC4118[i]` byte is ZERO, and Honda ships all eleven at 1** -- so the limiter's input is identically
-  zero and `iVar13 = gp-0x3d80`. 🛑 **The memory recorded `0xC6194` as dead because of a x0 (`0xC63CC`
-  = 0). That x0 only covers `gp-0x6b4c`** -- `iVar13` **also** reaches **`gp-0x6b4a`** with **no x0**,
-  and that cell has **8 readers including the delivery chain `FUN_00042af8`** (`0x42BF6`). ⇒ **zeroing
-  any ONE arm byte -- which reads like 'mute this lane' -- simultaneously arms a 3-ct/tick slew limiter
-  with a 256-ct residual clip in the LIVE delivery path.** At ~7.8 Hz a half-cycle is 64 ticks = 192
-  counts of follower travel, so the follower cannot track and the path degenerates to a **hard +-256
-  clip -- a relay, in the band we are chasing.** Now asserted at close-out (section [11], 181 checks).
-  ⊕ Same trace names **`gp-0x6bfa`**'s producer: `clamp(SUM over 10 slots of gp-0x6324[i], +-20000)` --
-  the bias term in the observer residual. ⚠ **Structural trace only, nothing flashed or measured;** the
-  per-slot source arrays are indexed off a computed base, so **what each slot physically is remains
-  untraced.** Re-runnable: `analysis-2020accord/studies/mixer/mixer_fun26c80_decoded.py`.
-  ⊕ **The slot writer is `FUN_00025c32`, a 16-byte request record with EXACTLY TEN CALLERS** (one
-  per accumulated slot): `rec[0]` slot, `rec[1]` type 0-5, then value A (+-16384) -> **delivery via
-  `gp-0x6b4a`**, value B (+-10240) -> `gp-0x6b4c`, value C (+-900), value D (+-20000) -> **`gp-0x6bfa`**,
-  then three weights (0-1024). Types 2/3/4 accept, 0/1/5 zero. **2 of 10 slots mapped:** **slot 7**
-  (`FUN_0003a8a8`) is a **NULL client** -- all four values zero, it reports a state; **slot 2**
-  (`FUN_0003405a`) is a **LIVE injector**, value A = **`gp-0x6b76`** (a cell never named here),
-  gated off unless `gp-0x6a62` <= `0xC62CE` = **640** (a low-regime gate) plus `0xC616A`=4096,
-  `0xC64D6`=10, `0xC6232`=300 and four in-code bounds. Its value B is **discarded** because slot 2
-  is mode 5. 🛑 **8 slots unmapped**; until they are, no `0xC4124`/`0xC4118` edit is mode-proof.
+- **The 11-slot lane mixer `FUN_00026c80` is FULLY TRACED, and its delivery-bound output is DEAD.**
+  Decoded 2026-08-29. `FUN_00025c32` is the slot writer: a 16-byte request record (slot, type 0-5,
+  four values, three weights) with **exactly ten callers**, one per accumulated slot. Value A ->
+  `gp-0x6298` -> `gp-0x3d80` -> **`gp-0x6b4a`**, which has 8 readers **including the delivery chain
+  `FUN_00042af8`** (`0x42BF6`). Value B -> `gp-0x6b4c`; value D -> **`gp-0x6bfa`**, the observer's bias
+  term (provenance previously open; **slot 6 / `FUN_0003aff4` is its only writer**).
+  🛑 **NINE OF THE TEN SLOTS STORE VALUE A AS LITERAL `r0`.** The tenth (slot 2, `FUN_0003405a`)
+  carries `gp-0x6b76` = `-clamp(gp-0x4f60, +-cal(0xC616C))`, and **`0xC616C` = 0** -> 0 when valid,
+  `0x7FFF` when not, and `0x7FFF` fails slot 2's own `<=0x5000` gate and is rejected to 0.
+  ⇒ **`gp-0x3d80` == `gp-0x3d84` == 0, so `gp-0x6b4a` == 0.** The mixer reaches delivery with nothing.
+  ⊕ **This also RETRACTS an earlier claim in this same entry** (written hours before, same session):
+  that zeroing one `0xC4118` arm byte would arm the mixer's rate limiter (`0xC6194`=3/tick, 256-ct
+  residual clip) in the live delivery path. **It cannot** -- the limiter's input is the value-A sum on
+  the other side of the arm gate, and that is zero too. The lesson is the reusable part: **the plumbing
+  was traced correctly and the conclusion was still wrong, because the PAYLOADS were never checked.**
+  The close-out assertion on `0xC4118`/`0xC4124` is kept as a *leave-Honda's-wiring-alone* guard with
+  its reason corrected; **`0xC616C` = 0 is the real interlock** and is now asserted too (198 checks).
+- **A dormant Honda float PI controller sits at `0xC60B8`-`0xC60D8`, ADJACENT TO THE BIQUAD WE EDIT.**
+  `FUN_00033d10` writes both slot-2 payloads via two float PI lanes: lane-1 D/I/P = `0xC60BC`/`0xC60C4`/
+  `0xC60C8` = 0/0/**14**, I clamp `0xC60C0`=1; lane-2 D/I/P = `0xC60CC`/`0xC60D4`/`0xC60D8` =
+  0/**0.002**/**0.03**, I clamp `0xC60D0`=5, pre-filter `0xC60B8`=0.01. **Byte-stock on all 152
+  flashable builds** (checked). The whole controller is gated out **three independent ways**: lane 1 by
+  `0xC649D`=0, lane 2's output `gp-0x6b78` **discarded by `0xC4124[2]`=5**, and the torque term by
+  `0xC616C`=0. ⚠ **The notch builders write four floats at `0xC60A8`-`0xC60B4`; one float of offset
+  error lands in this block.** ⚠ **NOT a lever yet** -- `gp-0x6b4a`'s sign/scaling in `FUN_00042af8` is
+  untraced and the PI inputs (`gp-0x6bf0`, `gp-0x6be0`, `gp-0x6a58`) are unidentified; raising
+  `0xC616C` admits a **driver-torque**-proportional term, which on the wrong sign is added friction.
+  Re-runnable: `analysis-2020accord/studies/mixer/mixer_fun26c80_decoded.py`.
 - **`0xC520C`/`0xC5224` STRUCK as a lever.** Index formula fully reconstructed (`gp-0x6ac0` = |filtered
   motor rate|, scale **4.7121 ct per column °/s** externally anchored via Honda's own 0x14A rate field at
   r ≥ 0.985; X = [1050,1700,2500,3700,4100] = [223,361,530,785,870] col °/s; Y = [5325,3584,2406,1587,512]

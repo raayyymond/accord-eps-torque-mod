@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 """FUN_00026c80 -- the 11-slot lane mixer, decoded and asserted from the image bytes.
 
-Traced 2026-08-29.  This function was previously known only through ONE of its eleven
-outputs (gp-0x6b4c, "an 11-slot assist sum").  The other ten were unnamed, and two of
-them turned out to matter:
+Traced 2026-08-29.  Previously the kit knew ONE of its eleven outputs (gp-0x6b4c).  This decodes
+all of them, maps all ten client slots, and settles what the mixer actually delivers.
 
-  * gp-0x6bfa -- the BIAS TERM the observer adds in FUN_00038148
-                 (resid = gp-0x6bfe - (model>>4) + gp-0x6bfa).  Its provenance was open.
-  * gp-0x6b4a -- reaches the DELIVERY CHAIN (FUN_00042af8, read at 0x42BF6), and carries
-                 a complete Honda-written RATE LIMITER that is dormant.
+HEADLINE: the mixer's delivery-bound output gp-0x6b4a is IDENTICALLY ZERO.  Nine of the ten slots
+store value A as a literal r0; the tenth is gated by 0xC616C = 0.
 
-The headline is the rate limiter, and the reason it is dormant is NOT the reason the kit
-had on file.  See ASSERTIONS below.
+This file also carries a RETRACTION.  An earlier pass in the same session traced every cell, clamp
+and reader correctly and concluded that zeroing one 0xC4118 arm byte would arm the mixer's rate
+limiter in the live delivery path.  That was wrong: the limiter's input is the value-A sum on the
+other side of the arm gate, and the payloads are zero on BOTH sides.  The plumbing was right and the
+conclusion was still wrong, because the payloads were never checked.  Trace the payload, not the path.
 
 Run:  python analysis-2020accord/studies/mixer/mixer_fun26c80_decoded.py
 """
@@ -27,109 +27,53 @@ TP = 0xBF000
 b = open(IMG, 'rb').read()
 u8 = lambda a: b[a]
 u16 = lambda a: struct.unpack_from('<H', b, a)[0]
-s16 = lambda a: struct.unpack_from('<h', b, a)[0]
+f32 = lambda a: struct.unpack_from('<f', b, a)[0]
 
 MODE = [u8(TP + 0x5124 + i) for i in range(11)]   # 0xC4124
 ARM = [u8(TP + 0x5118 + i) for i in range(11)]    # 0xC4118
+
+# slot -> (caller, value-A source, value-B source, value-D source)
+SLOTS = {
+    0: ('FUN_0002e52e', 'r0', 'r12', '0'),
+    1: ('FUN_0002b422', 'r0', 'r12', '0'),
+    2: ('FUN_0003405a', 'gp-0x6b76', 'gp-0x6b78', '0'),
+    3: ('FUN_0002c246', 'r0', 'r8', '0'),
+    4: ('FUN_00023ad2', 'r0', 'r11', '0'),
+    5: ('FUN_00023fe2', 'r0', 'r12', '0'),
+    6: ('FUN_0003aff4', 'r0', '0', 'r7'),
+    7: ('FUN_0003a8a8', 'r0', '0', '0'),
+    8: ('FUN_0002caa2', 'r0', 'r9', '0'),
+    9: ('FUN_000339cc', 'r0', 'r10', '0'),
+}
 
 print('=' * 78)
 print('FUN_00026c80 -- the 11-slot lane mixer')
 print('=' * 78)
 print()
-print('PHASE 1  per-slot dispatch on the MODE table 0xC4124')
-print('   mode :', MODE)
-print('   arm  :', ARM, '  <- 0xC4118')
-print('   modes present: %s' % sorted(set(MODE)))
-print('   Only slots 0..9 are accumulated in phase 2; slot 10 is written but never summed.')
-print('   mode-0 slots (of the 10 summed): %s' % [i for i in range(10) if MODE[i] == 0])
-print('   mode-5 slots (of the 10 summed): %s' % [i for i in range(10) if MODE[i] == 5])
+print('CHAIN')
+print('   FUN_00025c32(rec) is the SLOT WRITER -- a 16-byte request record, 10 callers:')
+print('      rec[0] slot   rec[1] type 0-5   rec[2:4] A   rec[4:6] B   rec[6:8] C')
+print('      rec[8:10] D   rec[10:16] three weights (0..1024)')
+print('      types 2/3/4 ACCEPT the values; 0/1/5 ZERO them and set the weights to 1024')
 print()
-print('PHASE 2  accumulate 10 slots -> 11 scratch cells')
-print('   gp-0x3d70 = MIN over slots of gp-0x61b8[i]')
-print('   gp-0x3d74 = MIN over slots of gp-0x61d0[i]')
-print('   gp-0x3d78 = MIN over slots of gp-0x61e8[i]')
-print('   gp-0x3d8c = SUM of gp-0x62c8[i]                      -> gp-0x6b4e  (clamp +-10240)')
-print('   gp-0x3d7c = SUM of gp-0x625c[i]                      -> gp-0x69f2  (clamp +-3600)')
-print('   gp-0x3d90 = SUM of gp-0x6324[i]                      -> gp-0x6bfa  (clamp +-20000)')
-print('   gp-0x3d88 = SUM of gp-0x62b0[i] WHERE arm[i] != 0')
-print('   gp-0x3d80 = SUM of gp-0x6298[i] WHERE arm[i] != 0')
-print('   gp-0x3d84 = SUM of gp-0x6298[i] WHERE arm[i] == 0    <- the RATE LIMITER input')
+print('   A -> gp-0x62e0[i] -> gp-0x6298 -> gp-0x3d80 -> gp-0x6b4a -> DELIVERY (FUN_00042af8)')
+print('   B -> gp-0x62f8[i] -> gp-0x62b0 -> gp-0x3d88 -> gp-0x6b4c    (mode 5 zeroes gp-0x62b0)')
+print('   D -> gp-0x633c[i] -> gp-0x6324 -> gp-0x3d90 -> gp-0x6bfa    the OBSERVER BIAS term')
 print()
-print('PHASE 3  the rate limiter, then the two live outputs')
-print('   target   = clamp(gp-0x3d84, +-LIM)          LIM = 0xC6192=%d or 0xC6198=%d'
+print('   The rate limiter, between gp-0x3d84 and gp-0x6b4a:')
+print('      target   = clamp(gp-0x3d84, +-%d or +-%d)     0xC6192 / 0xC6198'
       % (u16(TP + 0x7192), u16(TP + 0x7198)))
-print('                                               (0xC6198 once a %d-tick debounce saturates,'
-      % u16(TP + 0x7284))
-print('                                                counter 0xC6284)')
-print('   follower = slew(follower -> target, +-%d per tick)   0xC6194   [gp-0x3d6c]'
+print('      follower = slew(follower -> target, +-%d/tick)   0xC6194   [gp-0x3d6c]'
       % u16(TP + 0x7194))
-print('   residual = clamp(target - follower, +-LERP(gp-0x6a62))')
-print('   iVar13   = gp-0x3d80 + follower + residual')
-print('   gp-0x6b4c = clamp(gp-0x3d88 + (gp-0x6752) * ((iVar13 * 0xC63CC) >> 10), +-10240)')
-print('   gp-0x6b4a = clamp(iVar13, +-25600)')
+print('      gp-0x6b4a = clamp(gp-0x3d80 + follower + clamp(target-follower, +-256), +-25600)')
 print()
-CAPX = [u16(TP + 0x7700 + 2 * i) for i in range(3)]
-CAPY = [u16(TP + 0x7706 + 2 * i) for i in range(3)]
-print('   residual cap table   X = %s   (0xC6700)' % CAPX)
-print('                        Y = %s   (0xC6706)' % CAPY)
-print('                        above gp-0x6a62 > 0x7D00 the cap is 0xC6196 = %d'
-      % u16(TP + 0x7196))
-print('   0xC63CC = %d   (the gain on iVar13 into gp-0x6b4c)' % u16(TP + 0x73cc))
-print('   gp-0x6752 = -1 (a verified RAM cell, not flash -- see the memory)')
-print()
-
-print('THE SLOT WRITER -- FUN_00025c32, a 10-CLIENT TORQUE-REQUEST BUS')
-print('   Traced 2026-08-29.  It is an ARBITRATION STATE MACHINE, not a signal source.')
-print('   param_1 is a 16-byte REQUEST RECORD:')
-print('      [0]     slot index, clamped 0..10')
-print('      [1]     request type 0..5  -> per-slot state gp-0x61a0[slot]')
-print('      [2:4]   value A  clamp +-16384  -> gp-0x62e0[i]  -> gp-0x6b4a -> DELIVERY')
-print('      [4:6]   value B  clamp +-10240  -> gp-0x62f8[i]  -> gp-0x6b4c')
-print('      [6:8]   value C  clamp +-900    -> gp-0x6274[i]')
-print('      [8:10]  value D  clamp +-20000  -> gp-0x633c[i]  -> gp-0x6bfa  OBSERVER BIAS')
-print('      [10:16] three weights, each clamped 0..1024 -> gp-0x6230/6218/6200[i]')
-print()
-print('   types 2, 3 and 4 ACCEPT the values; types 0, 1 and 5 ZERO them and set the')
-print('   weights to 1024.  Acceptance is checked against per-slot permission tables at')
-print('   0xC41AC, 0xC42A4, 0xC4130 and 0xC410C.')
-print()
-print('   FUN_00025c32 has EXACTLY TEN CALLERS -- one per accumulated slot:')
-for _c in ('FUN_00023ad2', 'FUN_00023fe2', 'FUN_0002b422', 'FUN_0002c246', 'FUN_0002caa2',
-           'FUN_0002e52e', 'FUN_000339cc', 'FUN_0003405a', 'FUN_0003a8a8', 'FUN_0003aff4'):
-    print('      %s' % _c)
-print()
-print('   The MODE table 0xC4124 selects, per slot, whether value B reaches gp-0x6b4c:')
-print('      mode 0 -> gp-0x62b0[i] = value B      mode 5 -> gp-0x62b0[i] = 0')
-print('   Value A reaches gp-0x6b4a -> DELIVERY in BOTH modes.  So 0xC4124 gates a slot out')
-print('   of the assist sum but NOT out of delivery.')
-print()
-print('   OPEN: which caller owns which slot.  Each caller sets param_1[0]; reading that byte')
-print('   in all ten decompiles closes it.  Until then no slot can be named, and no edit to')
-print('   0xC4124 or 0xC4118 is mode-proof.')
-print()
-
-print('SLOT MAP -- 2 of 10 identified (each caller sets rec[0] to a literal)')
-print('   slot  7 = FUN_0003a8a8   NULL CLIENT.  A 7-state machine on gp-0x3674; sends the')
-print('                            computed type with ALL FOUR VALUES ZERO and weights 1024.')
-print('                            It reports a STATE, never a torque.')
-print('   slot  2 = FUN_0003405a   LIVE INJECTOR into delivery.')
-print('                            value A = gp-0x6b76  -> gp-0x6b4a -> DELIVERY')
-print('                            value B = gp-0x6b78  -> DISCARDED (slot 2 is mode 5)')
-print('                            weight  = gp-0x699c  -> the gp-0x3d74 MIN reduction')
-print('                            zeroed unless ALL hold (tp anchor checked, tp = 0xBF000):')
-print('                               gp-0x4f68 > 0xC616A = %d' % u16(TP + 0x716a))
-print('                               gp-0x6a62 <= 0xC62CE = %d   <- LOW-REGIME GATE'
-      % u16(TP + 0x72ce))
-print('                               uVar9 * 0xC64D6(=%d) < 0xC6232(=%d)'
-      % (u8(TP + 0x74d6), u16(TP + 0x7232)))
-print('                               |gp-0x6b76|<=20480, gp-0x6b78<=10240,')
-print('                               gp-0x699c<=1024, gp-0x67ea<2   (in-code immediates)')
-print()
-print('   REMAINING 8: FUN_00023ad2 FUN_00023fe2 FUN_0002b422 FUN_0002c246')
-print('                FUN_0002caa2 FUN_0002e52e FUN_000339cc FUN_0003aff4')
-print('   Decompile each and read rec[0] + which values are non-zero. Do NOT scan the')
-print('   assembly for it: a byte scan of the r6 setup got slot 7 right by luck while')
-print('   reporting the SAME index for two different callers.')
+print('SLOT MAP -- all ten, read off each caller (ep = sp, so sst.b/sst.h give the layout)')
+print('   %-4s %-14s %-5s %-12s %-8s %s' % ('slot', 'caller', 'mode', 'value A', 'value B', 'value D'))
+for i in range(10):
+    c, va, vb, vd = SLOTS[i]
+    note = '' if MODE[i] == 0 else '(discarded)'
+    print('   %-4d %-14s %-5d %-12s %-8s %s' % (i, c, MODE[i], va, vb if not note else note, vd))
+print('   slot 10 is written by phase 1 but never summed by phase 2.')
 print()
 
 fails = []
@@ -145,28 +89,38 @@ print('ASSERTIONS')
 check(MODE == [0, 0, 5, 0, 5, 5, 0, 0, 0, 5, 0],
       '0xC4124 mode table is the recorded [0,0,5,0,5,5,0,0,0,5,0]')
 check(all(a == 1 for a in ARM),
-      '0xC4118 arm gate is ALL ONES -- so gp-0x3d84 (the limiter input) is IDENTICALLY ZERO')
+      '0xC4118 arm gate is all ones (Honda wiring, unchanged)')
+check(sum(1 for i in range(10) if SLOTS[i][1] == 'r0') == 9,
+      'NINE of ten slots store value A as literal r0')
+check(u16(TP + 0x716c) == 0,
+      '0xC616C == 0 -- zeroes gp-0x6b76, the ONLY non-constant value-A source')
+check(u8(TP + 0x749d) == 0,
+      '0xC649D == 0 -- lane 1 of the FUN_00033d10 PI controller is disabled')
 check(u16(TP + 0x73cc) == 0,
       '0xC63CC == 0 -- iVar13 cannot reach gp-0x6b4c')
 check(u16(TP + 0x7194) == 3,
-      '0xC6194 == 3 counts/tick -- the slew rate is NOT zero, the cell is not itself dead')
-check(len(set(CAPY)) == 1 and CAPY[0] == 256,
-      'the residual cap table is FLAT at 256 -- no gp-0x6a62 shaping in force')
+      '0xC6194 == 3 counts/tick -- the slew rate itself is NOT zero')
 print()
-print('WHAT THIS CORRECTS')
-print('   memory reference-accord-lkas-only-rate-limiter-c6194 records 0xC6194 as')
-print('   "DEAD calibration -- output x0".  The x0 (0xC63CC) is real, but it only covers')
-print('   gp-0x6b4c.  iVar13 ALSO reaches gp-0x6b4a with NO x0, and gp-0x6b4a has 8 readers')
-print('   including the delivery chain FUN_00042af8 at 0x42BF6.  The load-bearing reason the')
-print('   limiter is dormant is the ARM GATE 0xC4118, not the x0.')
+print('   => gp-0x3d80 == gp-0x3d84 == 0, so gp-0x6b4a == 0.')
+print('      The mixer reaches the delivery chain with NOTHING, and no single-byte edit to')
+print('      0xC4118 can arm the rate limiter: its input is zero on both sides of the gate.')
 print()
-print('   Consequence, and why this is a GATE: zeroing ANY ONE BYTE of 0xC4118 moves that')
-print('   slot out of the direct sum and into the rate-limited path, arming a 3-count/tick')
-print('   slew limiter with a 256-count residual clip in the LIVE delivery chain.  At the')
-print('   ratchet frequency (~7.8 Hz, 64 ms half-cycle = 192 counts of follower travel) the')
-print('   follower cannot track, and the path degenerates to a HARD +-256 CLIP -- a relay.')
-print('   The x0 argument does not protect against that.  0xC4118 is now asserted at')
-print('   close-out for every flashable build.')
+print('THE DORMANT PI CONTROLLER -- FUN_00033d10, gains ADJACENT TO THE BIQUAD WE EDIT')
+print('   biquad (ours to touch):   0xC60A8 a1  0xC60AC a2  0xC60B0 b1  0xC60B4 g')
+for a, nm in ((0xC60B8, 'lane2 pre-filter alpha'), (0xC60BC, 'lane1 D'), (0xC60C0, 'lane1 I clamp'),
+              (0xC60C4, 'lane1 I'), (0xC60C8, 'lane1 P'), (0xC60CC, 'lane2 D'),
+              (0xC60D0, 'lane2 I clamp'), (0xC60D4, 'lane2 I'), (0xC60D8, 'lane2 P')):
+    print('   0x%05X  %-22s = %.8g' % (a, nm, f32(a)))
+print()
+print('   Gated out THREE independent ways: lane 1 by 0xC649D=0, lane 2 output gp-0x6b78')
+print('   discarded by 0xC4124[2]=5, and the torque term by 0xC616C=0.')
+print('   !! The notch builders write four floats at 0xC60A8-0xC60B4. One float of offset')
+print('      error lands in this block. It is byte-stock on all flashable builds (checked')
+print('      by closeout_verify_published.py).')
+print()
+print('   NOT A LEVER YET: gp-0x6b4a sign/scaling inside FUN_00042af8 is untraced, and the PI')
+print('   inputs (gp-0x6bf0, gp-0x6be0, gp-0x6a58) are unidentified. Raising 0xC616C admits a')
+print('   DRIVER-torque-proportional term, which on the wrong sign is added friction.')
 print()
 if fails:
     print('FAILED: %d' % len(fails))
