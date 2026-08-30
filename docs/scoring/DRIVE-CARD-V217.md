@@ -56,10 +56,26 @@ python rlog-tools/probe/decode_v204_observer_lane.py <tag> --v209
 | what you report | what it means | next build |
 |---|---|---|
 | **Grinding gone, ratchet gone** | all three levers landed | nothing — hold V217 and drive it |
-| **Grinding better, ratchet unchanged** | notch works, ratchet dose too shallow | **V218** (`0xC63AE` → 256) |
+| **Grinding better, ratchet unchanged** | **the EXPECTED outcome** — see below | V218 only if you want the dose ladder closed |
 | **Grinding better but still there** | notch centred right, skirt too narrow | **V220** (poles 13.50, residual 4.7 %→2.8 %) |
 | **Both better, steering still too heavy/slow** | levers landed, authority short | **V219** (10×, +56 % authority) |
 | **Anything feels worse** | stop; the arms are single-variable | report it — V212/V215/V216 isolate which |
+
+🛑 **SET YOUR EXPECTATIONS ON THE RATCHET — it is a long shot, not a likely fix.**
+
+The kit's own measurements say the ratchet is a **lightly-damped mechanical resonance** (Q 14–29) on the **motor/rack side, which no channel on this bus observes**:
+
+```
+  limit cycle        EXCLUDED    calibrated Welch ladder
+  stick-slip         KILLED      d log f / d log A = -0.034
+  rate-limit         KILLED      backlash KILLED
+  frequency tracks   LOAD        not amplitude, not the command
+  engagement         SUPPLIES the resonance, does not amplify an existing tone
+```
+
+And the currency `0xC63AE` trades in **has already been tested on-car and came back null**: V104 raised assist-lane gain **×1.85 with its peak at 7.94 Hz** — dead centre of the ratchet band — its dose provably arrived, and it produced **no felt change**. Every alternative lever is closed on its own terms.
+
+⇒ **A ratchet null on this drive is the expected outcome and is NOT evidence the dose failed to arrive** — `b5` settles arrival independently. **Fly V217 for the notch and the gain step**; the ratchet lever rides along because it costs nothing extra, not because it is likely.
 
 **The scorer's 30–49 Hz band is the one to watch for damage.** Read it as a large-excursion detector:
 `< ~2` nothing broke · `> ~5` fall back · in between is unresolved. It **cannot** resolve the 1.65×
