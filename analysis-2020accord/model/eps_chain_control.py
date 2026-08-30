@@ -534,10 +534,19 @@ def slew_ramp_time_analysis(cal: Calibration, assist_counts: int = 1024) -> dict
     stock, so ramp time (target/step) got ~4x longer while the sign-crossing reset (zeroing the held
     value outright) stayed instantaneous -- slow build + instant collapse = a ratchet; the invariant
     V38 broke is RAMP TIME (cycles to full command), not step size. This was the leading ratchet
-    hypothesis and was later CONFIRMED as a real contributor, though the state-4 governor substitution
-    (V42 Change 1) is the root-cause fix that actually resolved it on-car. [OPEN] the wall-clock
-    conversion (task rate contested); cycle counts here are exact, milliseconds are deliberately not
-    computed.
+    hypothesis and was once recorded as CONFIRMED, though the state-4 governor substitution
+    (V42 Change 1) is the root-cause fix that actually resolved it on-car.
+    [RETIRED 2026-08-30] The wall-clock conversion is no longer contested: the control task is
+    ~1 kHz, measured ON-CAR (cal 0xC64DF = 100 cycles, observed at 100.00 ms). NOTE the OSTM0
+    route to that number is REFUTED -- PCLK is 40 MHz, not 80 -- so 1 kHz stands on ONE method,
+    the on-car dwell. Converting: lkas_max/step is 0.4-1.1 ms on Honda stock, 2.6-6.5 ms on the
+    car (V122) and 3.5-8.7 ms on the shelf builds, against a 128.4 ms ratchet cycle at 7.79 Hz.
+    That is 15-37x FASTER than one cycle, so the ramp CANNOT build the oscillation; the '4x
+    longer ramp' invariant is real but is 4x of 0.4 ms. The earlier CONFIRMED verdict was reached
+    with no task rate and is confounded with V42 Change 1.
+    [SAFETY] Do NOT touch 0xC6206/0xC6208. They are 512/205 in 217 of 219 images; at 0xFFFF (V40)
+    they caused EPS lamp + NO POWER STEERING AT IGNITION, by MAGNITUDE not direction -- the guard
+    stopped firing, so snap-to-target raised DTC 0x1d with no debounce. There is nothing to buy.
     """
     lkas_max = min((cal.arb_setpoint_limit * cal.lkas_output_gain) >> 15, cal.arb_output_clamp)
     target = min(lkas_max + int(assist_counts), cal.distribute_lkas_lane_clamp)

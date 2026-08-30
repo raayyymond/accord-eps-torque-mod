@@ -200,7 +200,7 @@ Only these other things need saying:
 
   Dependency order is strict and acyclic: `core` → `lanes` → `control` → `delivery`. **Keep it updated.**
   🛑 **VERIFICATION CONTRACT — re-run it after ANY edit to these files:** `import eps_lkas_chain_model`
-  must expose **exactly 87 symbols**, and `_self_check()` + `_demo()` stdout must hash to
+  must expose **exactly 87 symbols** (NON-DUNDER: `[x for x in dir(M) if not x.startswith("__")]` — this INCLUDES the 11 underscore-prefixed helpers; counting only public names gives 76 and looks like a broken contract), and `_self_check()` + `_demo()` stdout must hash to
   **`740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d`** (2,512 bytes).
 
 - 🛑 **CITE BY HEADING OR GREP STRING, NEVER BY LINE NUMBER.** The golden model split on 2026-08-12 and

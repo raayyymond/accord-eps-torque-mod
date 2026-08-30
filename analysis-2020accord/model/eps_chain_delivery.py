@@ -306,6 +306,15 @@ def motor_pwm_output(st: EpsState) -> tuple:
     writing TSG20 CMPU/CMPV/CMPW (0xFFFFCCB0/B4/B8, /51200.0, period-clamped) -- the physical motor
     output endpoint; commutation table at tp-0x2d40 (0xF52C0). [OPEN] the PWM carrier frequency
     (TSG20 clock not confirmed; init writes period 5000 / compares 5160).
+    [CLOSED 2026-08-30 FOR THE RATCHET] The carrier Hz stays unpinned, but it does not matter.
+    These ISRs run asynchronously and far faster than the 1 kHz task, on a ~4-8 kHz carrier, so
+    the current loop sits at 200-800 Hz bandwidth. As a first-order loop at 7.79 Hz that is
+    |H| 0.999 and -0.6 to -2.2 deg; even an implausible 25 Hz bandwidth gives only -17 deg. To
+    matter at the ratchet the loop would need BW = 7.8 Hz, SLOWER than the task feeding it, which
+    contradicts the verified ISR structure. So FOC gains cannot be a ratchet lever at any
+    plausible tuning, and the record's 'motor/rack-side' points at the PLANT -- mechanical, which
+    no firmware calibration can change -- not at this loop. It is also the worst edit class
+    available: motor control, no instrument on it, and caves here are the only bricking class.
     """
     duty = st.q_current_ref / 51200.0
     return (duty, duty, duty)   # CMPU/CMPV/CMPW (3-phase commutation applied in the real emitter)
