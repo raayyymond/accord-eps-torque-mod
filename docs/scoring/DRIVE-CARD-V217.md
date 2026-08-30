@@ -1,6 +1,10 @@
-# DRIVE CARD — V217
+# DRIVE CARD — V217   ·   ⚠ **superseded as primary by V221 — see `DRIVE-CARD-V221.md`**
+
+V221 is this build plus two bytes (Lever B `0xC6446` 5244 → 13107). **V217 remains the fallback** and everything below still applies to it verbatim; fly it if V221 reads worse on grinding, which would mean 5244 was already at that lever’s optimum.
 
 **Flash target:** `39990-TVA,A160-V217-V216BASE-INERTIA.LANE.WEIGHT.TO.FLOWN.V108-0x13000-0x100000.rwd`
+
+> ⚠ The filename says **V108**; it means **V122**, your car. The tag was fixed before the reference-build error was found, and renaming a published artifact would orphan the hashes above. The bytes are correct — only the name is wrong.
 **.rwd SHA256** `941d82bf2dc556551dc9615bdd01d5e5e2d4fca7d8064578b5afb4bc969dcd54`
 **image SHA256** `f89ea01f405d513985ce51c47f6796e1ea77f600fab3d9f7817cd79907a1967b`
 
@@ -107,7 +111,7 @@ gain effect — the corpus spread is wider than that — so don't read a small m
 
 ## Verification behind this build
 
-- **508 close-out assertions**, 13/13 shelf builders reproduce bit-for-bit.
+- **835 close-out assertions**, 13/13 shelf builders reproduce bit-for-bit.
 - Gate `[17]` pins the **complete** non-stock delta — negative-tested by reverting all 320 payload
   bytes one at a time: **0 missed**.
 - Gates `[8]`, `[13]`, `[14]`, `[15]`, `[16]` were all added or hardened this session after being

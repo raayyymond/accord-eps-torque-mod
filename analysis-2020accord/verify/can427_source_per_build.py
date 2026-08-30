@@ -54,7 +54,7 @@ def decode(b):
 
 BUILDS = ['v87', 'v90', 'v91', 'v92', 'v93', 'v94', 'v96', 'v97', 'v98', 'v99',
           'v100', 'v101', 'v104', 'v107', 'v112', 'v122',
-          'v212', 'v213', 'v215', 'v216', 'v217', 'v218', 'v219', 'v220']
+          'v212', 'v213', 'v215', 'v216', 'v217', 'v218', 'v219', 'v220', 'v221']
 
 print('=' * 86)
 print('  CAN 427 SOURCE AND SCALE, DECODED FROM EACH IMAGE')
@@ -108,6 +108,23 @@ if car:
         print('    %-5s %s the car (gp-0x%04x sar %d)%s'
               % (v, 'MATCHES  ' if same else 'DIFFERS from',
                  -got[v][0], got[v][1], '' if same else '   <- readout is NOT comparable to r24'))
+
+print()
+print('  --- FILENAME GUARD: an image whose _vNNN_ prefix disagrees with its own tag ---')
+# Added 2026-08-29 after a builder emitted V221's image as `_v217_V221-...`. Every lookup here --
+# and in every other tool that globs by prefix -- matches on `_vNNN_`, so such a file IMPERSONATES
+# another build and is silently preferred or rejected depending on glob order. Cheap to check.
+import re
+_bad = []
+for _p in sorted(glob.glob(ROOT + '/*plain_image.bin')):
+    _n = os.path.basename(_p)
+    _m = re.match(r'(?:SUPERSEDED-DO-NOT-FLASH-)?_?v(\d+)_V(\d+)[-_]', _n, re.I)
+    if _m and _m.group(1).lstrip('0') != _m.group(2).lstrip('0'):
+        _bad.append(_n)
+        print('    MISMATCH  prefix _v%s_ but tag V%s   %s' % (_m.group(1), _m.group(2), _n))
+print('    %d image(s) checked, %d prefix/tag mismatch(es)'
+      % (len(glob.glob(ROOT + '/*plain_image.bin')), len(_bad)))
+assert not _bad, 'an image file impersonates another build: %s' % _bad
 
 print()
 print('  RULE: before pooling any 427 statistic across routes, decode this cell for every build')
