@@ -44,6 +44,10 @@ def s16(b, a):
     return struct.unpack_from('<h', b, a)[0]
 
 
+def u16(b, a):
+    return struct.unpack_from('<H', b, a)[0]
+
+
 def movea_bases(b=ST):
     """Every `movea <disp>, tp, rN` landing in the cal region -- the REAL bases."""
     out = {}
@@ -67,10 +71,18 @@ def tables(b=ST):
         n = s16(b, B)
         if not (1 <= n <= 8):
             continue
-        X = [s16(b, B + 2 + 2 * i) for i in range(n)]
-        if X != sorted(X):
+        # !! AXES MAY BE SIGNED **OR** UNSIGNED. Reading them as signed only rejected FIVE
+        # well-formed tables whose axis crosses 0x8000 -- including 0xC6A08 in the delivery chain
+        # and 0xC68FC inside the assist section that carries our own notch. Accept either.
+        Xs = [s16(b, B + 2 + 2 * i) for i in range(n)]
+        Xu = [u16(b, B + 2 + 2 * i) for i in range(n)]
+        if Xs == sorted(Xs):
+            X, sign = Xs, 'signed'
+        elif Xu == sorted(Xu):
+            X, sign = Xu, 'UNSIGNED'
+        else:
             continue
-        out.append({'base': B, 'n': n, 'X': X,
+        out.append({'base': B, 'n': n, 'X': X, 'axis': sign,
                     'lo': B + 2, 'hi': B + 2 + 4 * n})
     return out
 

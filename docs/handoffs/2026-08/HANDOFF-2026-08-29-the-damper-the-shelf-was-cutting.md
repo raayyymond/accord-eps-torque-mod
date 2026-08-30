@@ -170,6 +170,11 @@ from what the operator drives. **Diff every candidate against the flown image.**
   2. Decisively, this function’s output is **`gp-0x6ad4`**, which **V56 muted on-car and it bought nothing** — `FUN_0003a382` is already ELIMINATED as a symptom source.
   ⇒ **Do not chase the deadbands in this lane.** The structure is suggestive and the lane is dead.
   ⊕ **Still genuinely open** among the 12: `0xC68FC` read at `0x35962` inside **`FUN_000352b4`, the assist section that carries our own notch**, and four delivery-chain tables `0xC6A08` / `0xC6A18` / `0xC6A28` / `0xC6A38` (`Y=[197,197,197]`, `[6,6,6]`, `[16,33,66]` — the last is the only one that is not flat). None has ever been named.
+- **THE DELIVERY CHAIN’S NEAR-STEP (`0xC6A08`) IS UNREACHABLE — closed on existing on-car data.**
+  `X=[1606, 1638, 32768]`, `Y=[0, 26208, 32768]` — Y climbs **0 → 26208 over 32 units of X**, effectively a step, read at `0x432F4` inside `FUN_00042af8` next to `gp-0x6b08` (shaper → integrator → FOC). The strongest-looking structure the table map turned up.
+  🛑 Its index is **`gp-0x6966` = AUTHORITY** = `(|gp-0x3570>>15| * 1092) >> 10`, and V54’s probe measured it **pinned at the bottom bucket for 5,989/5,989 frames**, including 17 % of frames at openpilot’s ±4096 rail — *"authority is 0 BY DESIGN, held at 0 by V31’s boost floor on every V31+ build"*. The index never leaves `X < 1606` ⇒ **the table is pinned at `Y[0] = 0` and the step is never traversed.**
+  ⊕ Same cell also indexes `0xC6AF0` with the INVERSE shape (`Y=[32768,32768,0,0,0]`), likewise pinned — at its FULL end.
+- 🛑 **TOOL BUG, mine: `cal_table_bases.py` read axes as SIGNED only**, so it rejected five well-formed tables whose axis crosses `0x8000` — including `0xC6A08` above and `0xC68FC`, which is read from inside **`FUN_000352b4`, the assist section carrying our own notch** (`Y=[20,20,20,20]`, flat, benign). Fixed: axes are accepted signed **or** unsigned, and the table count went **101 → 106**. A detector’s own type assumption is a blind spot exactly like a scan’s addressing-mode assumption.
 - A sweep for "dormant features gated by a zero cal" has a **poor hit rate** — zero offsets and float
   low-halves dominate. The one real find (the PI block) came from tracing, not sweeping.
 
