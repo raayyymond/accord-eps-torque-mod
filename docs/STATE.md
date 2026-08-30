@@ -46,6 +46,26 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE RELAY KNEE CANNOT BE TESTED FROM FLOWN CAN AT ALL — DEMONSTRATED, NOT ASSERTED. AND THE WAY THROUGH IS A 427 TAP, NOT A CAVE.**
+>
+> With every LINEAR lane eliminated as the ratchet's source, the nonlinear candidate the record already names becomes the suspect: engagement multiplies 6–9 Hz by **2.8× (+0.413 [+0.146, +0.667])** with **no rate dependence**, via `FUN_0003b8f6`, *a Coulomb relay PROPORTIONAL TO THE COMMAND* saturating against `0xC40BC` — *“pinned across 99.62 % of its range at stock = pure relay”*.
+> The flown 3-point ladder (V111 600 / V112 1800 / V122 3000, same slope, onsets 50/150/250) returned a null, and its own memory calls that *“a weak instrument that found nothing”*, naming the fix: **windows selected by SUSTAINED rate**. I ran it.
+>
+> ```
+>   sustained-rate windows      creep 0-3    low 3-8    mid 8-15    high 15+
+>     V111 (knee 600)              366          0          0          10
+>     V112 (knee 1800)             173          0          0          12
+>     V122 (knee 3000)             316          0          0           5
+>
+>   creep band, ratchet 6-9:   V111 3.509   V112 3.778   V122 3.463   flat, non-monotone
+> ```
+>
+> 🛑 **TWO STRUCTURAL FACTS, and together they close the route:**
+> 1. **3–15 °/s NEVER SUSTAINS.** Zero windows on all three routes. Steering is either creeping (<3 °/s) or transient (>15 °/s) — there is no steady mid-rate driving to measure. The ratchet's own regime (1–13 °/s) is therefore only partly observable at all.
+> 2. **Where the data IS plentiful — creep, 855 windows — the three knees are IDENTICAL BY CONSTRUCTION**, since with the slope held they differ only above 50 counts. So the flat result is a null on a regime where the builds do not differ.
+> ⇒ **The spectral route to the knee is CLOSED. It is not that the ladder was weak; it is that no amount of estimator work can test a cell in a regime the corpus cannot populate.**
+> ✅ **BUT THE RECORD'S SUGGESTED FIX — a within-frame CAVE RUNG — IS NOT THE ONLY OPTION, AND IT IS THE BRICKING CLASS.** A **CAN 427 tap on the relay's own ratio or saturation state** gives a per-frame reading with no spectrum and no cave: 2–3 bytes in the telemetry tap, exactly the class of edit that worked for V231's biquad-state probe. **That is the way to settle whether the relay saturates in the ratchet regime**, and it is a safe build rather than the one class that has bricked this ECU three times.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **EVERY TAPPED LANE DAMPS AT THE RATCHET — SO THE RATCHET'S ENERGY SOURCE IS NOT IN ANY ASSIST LANE THE KIT CAN OBSERVE.** The net-damping metric was built for the notch and applied only there. Applying it to **every lane ever put on CAN 427**, 13 routes across 7 taps, cos(phase vs wheel rate), coherence-gated:
 >
 > ```
