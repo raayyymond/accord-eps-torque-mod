@@ -102,6 +102,35 @@ standing rule is score bands, let the operator score symptoms.
 
 ---
 
+## The scorer exists, and it was validated before the data
+
+`rlog-tools/score/score_8x_experiment.py` implements this document and nothing else — no extra bands,
+no alternative statistics, no post-hoc filters. It was written and validated **before either build
+flew**, which is what makes this pre-registration binding: a scorer written afterwards, against real
+results, is one whose choices were shaped by the answer they produced.
+
+Validated by injecting known ratios into synthetic data:
+
+```
+  injected 1.000  ->  recovered 1.019  [0.962, 1.073]   OK
+  injected 1.333  ->  recovered 1.324  [1.294, 1.454]   OK
+  injected 1.650  ->  recovered 1.602  [1.520, 1.712]   OK
+  injected 2.500  ->  recovered 2.433  [2.345, 2.545]   OK
+  NULL, two identical builds -> 0.983  [0.924, 1.029]   CI spans 1.0
+```
+
+✅ It recovers injected ratios and **does not manufacture an effect from noise** — on the null it
+prints *"NOTHING — CI spans 1.0, under-exposed. Do NOT report a direction."* rather than a number.
+
+🛑 Two guards are in the code, not just in this document: it **bootstraps over EPISODES, never
+windows** (window bootstraps manufacture significance, a standing instruction here), and it **refuses
+to score any band with fewer than 8 episodes per arm** rather than returning a wide, tempting number.
+
+Run: `python rlog-tools/score/score_8x_experiment.py --selftest` to re-verify, then
+`python rlog-tools/score/score_8x_experiment.py <v228_route> <v222_route>` after the drives.
+
+---
+
 ## Provenance
 
 - V228 image `6cf12db9fc49aee2…`, rwd `b90a200ce53c7f37…`, 72/72 builder assertions
