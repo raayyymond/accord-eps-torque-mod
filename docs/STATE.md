@@ -46,6 +46,25 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE LKAS-CAUSED CABIN NOISE IS BROADBAND, NOT CONFINED TO 15–22 Hz — SO V228 GIVES UP A 159× CUT IN A 2.2× PROBLEM TO BUY A 4.9× CUT IN A 1.45× PROBLEM.** Measured on the **alias-free audio** (0–100 Hz, 0.98 Hz bins), engaged vs not-engaged, **matched on BOTH speed and gear** (gear pins engine order — 60–72 Hz is 1800–2160 rpm of 4-cylinder 2nd-order, a real confound), route-level bootstrap over 6 routes:
+>
+> ```
+>   band (Hz)    LKAS excess          95% CI        licensed
+>   15-22           1.45x         [1.03, 3.70]        YES     <- where the notch program aims
+>   22-30           1.68x         [1.13, 2.99]        YES
+>   30-40           1.13x         [0.79, 1.27]        no
+>   40-50           1.33x         [1.00, 2.91]        YES
+>   50-60           2.13x         [1.13, 3.82]        YES     <- Honda's notch sits here
+>   60-72           2.22x         [1.27, 5.04]        YES
+>   72-85           1.86x         [1.39, 3.79]        YES
+>   85-99           1.27x         [1.02, 1.75]        YES
+> ```
+>
+> ⛔ **WHAT THIS DOES *NOT* SAY.** 50–72 Hz is **NOT** established as worse than 15–22 Hz. The paired within-route test — the right one, since the band CIs overlap heavily — gives **1.73× [0.48, 2.55], NOT licensed**, on per-route ratios 1.76 / 0.27 / 2.34 / 1.70 / 0.85 / 2.77 (4 of 6 routes). **The notch program is not aimed at the wrong band.** It is aimed at *one* licensed band out of several.
+> ✅ **WHAT IT DOES SAY, and it is enough to change the build decision.** There is licensed LKAS-driven acoustic energy at **50–72 Hz (2.1–2.2×)**, and that is exactly where Honda's notch cuts **159×** (|H| 0.0063 at 55 Hz). V228 relocates that single cell to 20.5 Hz, where it cuts **4.9×** (|H| 0.2045 at 18.5 Hz) in a **1.45×** band, and leaves |H| 0.6285 at 55 Hz. ⇒ **the relocation trades a very deep cut in a real problem band for a shallow cut in a smaller one.**
+> 🛑 **THE LIKELIER GRINDING CHANNEL IS UNASSESSED.** `extract_audio_grind.py`'s own docstring argues the audible signature of a rough mechanism is **broadband noise AMPLITUDE-MODULATED at the mode rate**, not a sub-100 Hz tone — *“a steering rack is a hopeless radiator”* down there. Running PASS B under the same matching leaves **1 route**: **under-powered, no verdict.** Everything above is the DIRECT-acoustic channel, which the extractor considers the less likely one. **Fixing that under-powering is worth more than any new build.**
+> ➕ Unmatched, every band read 4–18× and 60–72 Hz looked like a clean winner at 17.81×. Speed matching alone cut that to 2.25× and killed 15–22 Hz entirely; adding gear brought it back. **Most of the raw engaged/not contrast is speed and RPM, exactly as `accord-averaged-spectrum-needs-matched-speed-distributions` warns.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **HONDA'S BIQUAD *IS* A 55 Hz NOTCH, AND EVERY BUILD SINCE V172 HAS BEEN PAYING IT AWAY TO BUY THE 20 Hz CUT.** There is only ONE biquad. The kit has been **relocating** it, not adding one — and no instrument could see the cost, because CAN's Nyquist is 50.5 Hz.
 >
 > ```

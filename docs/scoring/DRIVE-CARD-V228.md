@@ -30,6 +30,23 @@ which vacates the 55 Hz cut entirely:
 **One 2nd-order section cannot notch 18 Hz and 55 Hz. This is structural — no retuning escapes it.**
 Your car has never run without Honda's 55 Hz cut; V228 would be the first.
 
+**And the audio now prices that trade.** Engaged vs not, matched on speed AND gear, 6 routes:
+LKAS raises cabin noise **1.45× at 15–22 Hz** and **2.1–2.2× at 50–72 Hz** — both licensed. So:
+
+```
+                      notch depth there   LKAS excess there
+  your car (Honda)    159x at 55 Hz            2.2x
+  V228                4.9x at 18.5 Hz          1.45x
+```
+
+**V228 gives up a 159× cut in a 2.2× problem to buy a 4.9× cut in a 1.45× problem.** That is the
+clearest statement of the trade available, and it is not favourable on its face.
+
+⚠ **Two honest limits.** 50–72 Hz is *not* proven worse than 15–22 Hz (paired test 1.73×, CI [0.48,
+2.55] — spans 1.0). And the channel most likely to carry the grinding percept — broadband noise
+*amplitude-modulated* at the mode rate, rather than a sub-100 Hz tone — is **under-powered and
+unassessed**.
+
 **So the honest prediction is a TRADE, not a fix:** less 15–22 Hz, more 54–74 Hz (+12.5 dB). If the
 noise you call grinding lives nearer 55 Hz than 18 Hz, **V228 will sound worse, and that is a real
 result worth having** — it would be the first direct evidence on which side of the trade your symptom
