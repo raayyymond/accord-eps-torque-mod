@@ -17,6 +17,23 @@ anything happens.** Nothing is flashed without that.
 
 ---
 
+## 🛑 V233 WAS DESIGNED AND THEN STOPPED BY A GATE — DRIVE V232
+
+I optimised the filter directly against the net-damping measurement and got a geometry that beats both
+Honda and V232 on **both** axes (damping 1.007× vs V232's 0.944×, pumping −0.354× vs +0.285×).
+
+**It is not flashable.** The kit forbids any amplification in a flashable image, and that design peaks
+at `|H| = 1.0020` — 0.2 % above unity. That 0.2 % is precisely the property that made it attractive.
+I did not argue for an exception; the constrained re-optimisation is the next job.
+
+Three earlier versions of the same design also failed their own gates — one boosted the band it was
+meant to cut, one rotated the phase where the lane damps, one carried an arbitrary threshold from a
+different build. **No gate was weakened to make any of them pass.**
+
+**So the flight candidate is unchanged: V232.**
+
+---
+
 ## ⭐ DRIVE **V232** — the ordering changed, and here is the number that changed it
 
 ```

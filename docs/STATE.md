@@ -46,6 +46,29 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V233 IS DESIGNED AND FAILS A CATEGORICAL GATE — NOT FLASHABLE, ARTIFACTS DELETED. The net-damping optimum beats Honda and V232 on both axes but AMPLIFIES by 0.2 %, and the kit forbids amplification in a flashable image.**
+>
+> ```
+>   zeros 24.0 Hz, poles 22.0 Hz, r 0.97 -- 43/43 builder assertions, but
+>   max |H| = 1.0020 > 1.0  =>  FAILS the no-amplification gate. NOT FLASHABLE.
+>   Artifacts deleted; the builder is kept as the design record.
+>
+>   net damping    6-9      9-12    12-15    22-30    30-40   damping  pumping
+>   Honda        1.000x   1.000x   1.000x   1.000x   1.000x   1.000x   1.000x
+>   V232         0.985x   0.990x   0.858x   0.694x  -0.123x   0.944x  +0.285x
+>   V233         1.026x   1.033x   0.963x  -0.068x  -0.641x   1.007x  -0.354x
+> ```
+>
+> ✅ **It RAISES damping at the ratchet** (1.026× at 6–9, 1.033× at 9–12) while flipping both pumping bands negative. J is **20.8 % better than Honda, 19.1 % better than V232**. 0–5 Hz floor **1.0000**, phase shift at 10.5 Hz **+0.0°**.
+> ⭐ **The per-bin curve is what made it findable, and it corrected my own band table:** 7–10 Hz carries **47.9 %** of the lane's power (cos −0.878, damping) and the pumping power peaks at **19–26 Hz** (19.7 %), while 32–45 Hz carries **0.7 %** — so V232's 22–40 Hz aim spent a third of its cut where almost no power lives. V233 is a NARROW notch centred on the pumping power.
+> 🛑 **THREE OF MY DESIGNS FAILED THEIR GATES BEFORE THIS ONE PASSED, and no gate was weakened to fit:**
+> 1. **20.0/20.5/r0.98** — scored best on J but **BOOSTED the pumping band 1.27–1.83×** and relied on a ~70° phase rotation to neutralise the product. A knife-edge, and the same class of sign assumption that produced the aborted V94 drive. ⇒ added a per-frequency **no-boost** constraint.
+> 2. **19.5/16.5/r0.97** — genuine cuts, but rotated 10.5 Hz by **−14.4°**, costing ~7 % of the damping where the lane sits at cos −0.989. ⇒ enforced the **≤8° phase gate** in the optimiser.
+> 3. The **1.5× pumping threshold** was carried over from V232 and was arbitrary for a different mechanism; corrected to *“> Honda”* **with the reason recorded in the builder**, since the substantive gate is the per-frequency no-boost check.
+> ➕ **One gate was re-expressed, not removed:** *“cut where the pumping power is”* had been hardcoded to 18.5 Hz from an abandoned geometry. It now tests the measured power centre (22–26 Hz mean |H| ≤ 0.55 × Honda's) — same intent, no longer tied to one design.
+> 🛑 **A FOURTH GATE, and the one that stopped it.** `closeout_verify_published` forbids ANY amplification in a flashable image beyond two documented exceptions. V233 peaks at **|H| = 1.0020** — 0.2 % — and that 0.2 % IS the “raises damping” property. **I did not argue for a third exception.** The constrained re-optimisation (max |H| ≤ 1.0 with every other gate binding) did not finish inside the compute budget; it is the first task next tick. **V232 remains the flight candidate.**
+> ➕ **Cost, when a compliant version exists:** 55 Hz runs **133× louder** than Honda, in a band with licensed LKAS audio excess. Every geometry that cuts 19–30 Hz with one biquad pays this.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **NET DAMPING — `|H|·cos(φ)` — IS THE METRIC EVERY NOTCH COMPARISON IN THIS KIT HAS BEEN MISSING, AND IT PUTS V232 AHEAD OF V231.** A lane's damping contribution is neither its magnitude nor its phase but their product. Applying the flown lane phases (6–9 cos −0.918, 9–12 −0.989, 12–15 −0.629, 22–30 +0.936, 30–40 +0.821) to each build's filter difference:
 >
 > ```
