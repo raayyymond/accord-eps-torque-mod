@@ -46,6 +46,17 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> ❌⭐ **A HYPOTHESIS OF MINE, PROPOSED AND KILLED: 22–26 Hz is NOT demonstrably alias-contaminated.** 22–26 Hz had failed two independent checks, and the fold arithmetic is real — at **fs ≈ 101.1 Hz**, **75.1–79.1 Hz folds exactly into 22–26**, the same mechanism the record already documents for 52–71 → 30–49. Audio samples at 16 kHz and CAN sees 75–79 Hz directly, so for once the fold source was testable rather than inferable.
+>
+> ```
+>   within-route corr, audio 75-79 Hz vs CAN 22-26 Hz:
+>     r24 +0.439   r85 -0.261   r96 -0.118   r97 +0.167   r9e -0.616   ra4 +0.119
+>     median +0.001 over 6 routes -- essentially random
+> ```
+>
+> ⇒ **not supported.** ⚠ **But the test is weak and must not be cited as a clean kill:** acoustic 77 Hz is **not the same physical quantity** as steering-rate 77 Hz, so an absent correlation could mean no fold OR that the microphone does not hear what the rate signal would alias. ⇒ **the ARITHMETIC concern stands and cannot be checked from the bus** — 22–26 Hz may still be contaminated by content above Nyquist, exactly as 30–49 is, and only a 1 kHz cave counter could settle it (**Cave B — recommended against, it needs a new hook in task 1**).
+> ➕ So the two failures at 22–26 remain **unexplained**, not explained-away. Recorded so the next session neither re-proposes the fold nor treats it as excluded.
+
 > 🛑🛑⭐⭐ **V222’S JUSTIFICATION RESTS ON A MEASUREMENT I CANNOT REPRODUCE — and V228 does not need it.** V222’s case is that the notch covers the 8× cost **at 22–26 Hz** (net 0.463×). That rests on the record’s dose curve, which says **at 6× the band is 0.61× of V101** — i.e. `r95` (V101, 8×) should sit **+0.215 log10 ABOVE** `r96` (V102, 6×). Measured:
 >
 > ```
