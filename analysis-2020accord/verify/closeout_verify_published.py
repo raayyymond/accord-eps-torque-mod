@@ -780,6 +780,27 @@ for _v in sorted(img):
         f'{_v.upper()} boost floor synced: int {_I} == float {["%.4g" % _x for _x in _F]} x1024'
         + ('' if _ok else ' -- MIRROR PAIR DESYNCED, V31s lockstep is broken'))
 
+print()
+print("[21] THE NOTCH MUST ACTUALLY BE ARMED -- V103's THREE-SITE GATE + the arm cal")
+# The notch is the strongest lever on the shelf and it is ENGAGEMENT-GATED. Unpatched,
+# FUN_000352b4 passes gp-0x6b82 through UNFILTERED -- a BYPASS, not a mute -- so the whole grinding
+# lever would be silently absent while every biquad-coefficient check still passed.
+#   HANDOFF-2026-08-29-notch-detector: "V103's patch has THREE sites, not the two the lineage
+#   names ... 0x35A18 setfnc->setfne -- THE OMITTED ONE IS WHAT MAKES IT CORRECT."
+# That site has been left out once already. GATE [17] would catch a change only as a digest
+# mismatch; this names it, so a failure says WHICH site went missing.
+_ARM = {0x35A08: ((0xFB, 0x97), 'displacement -> gp-0x6806'),
+        0x35A12: ((0xE0, 0x49), 'cmp r12,r9 -> cmp r0,r9'),
+        0x35A18: ((0xEA, 0x37), 'setfnc -> setfne  (THE HISTORICALLY OMITTED SITE)'),
+        0xC649B: ((0x01, 0x00), 'the arm cal')}
+for _v in sorted(img):
+    for _a, (_want, _nm) in sorted(_ARM.items()):
+        _got = (img[_v][_a], img[_v][_a + 1])
+        chk(_got == _want,
+            f'{_v.upper()} 0x{_a:05X} armed: {_nm}'
+            + ('' if _got == _want
+               else f' -- got {_got}, want {_want}: THE NOTCH IS A BYPASS'))
+
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
 for m in bad:
