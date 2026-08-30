@@ -40,6 +40,11 @@ builds that probed it, and those builds differ in other ways.  3 vs 2 vs 2 route
 route a6, so the three lanes V107+ put on 427 (gp-0x6c2c, gp-0x6abc, gp-0x6b4e) cannot be ranked at
 all; one of them could rank higher still.
 
+CORRECTED 2026-08-30: the earlier claim "rlogs stop at route a6" was WRONG.  `r1e` (V107) carries
+`mag427` on `gp-0x6c2c` with 99,910 engaged frames -- the best-powered route in the whole corpus -- and
+is now included.  `gp-0x6abc` (r21/V111, r22/V112, r24/V122) genuinely lacks a decoded mag427 column and
+remains unrankable; `gp-0x6b4e` (V212-V220) has no cache at all.
+
 PATH BOOTSTRAP -- see the note in the sibling scripts.
 """
 import os as _os, sys as _sys
@@ -67,7 +72,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 LANE = {'r85': ('V100', 'gp-0x6b94'), 'r95': ('V101', 'gp-0x6b94'),
         'r96': ('V102', 'gp-0x6b4c'), 'r9e': ('V103', 'gp-0x6b4c'),
         'ra4': ('V104', 'gp-0x6b86'), 'ra5': ('V105', 'gp-0x6b86'),
-        'ra6': ('V106', 'gp-0x6b86')}
+        'ra6': ('V106', 'gp-0x6b86'),
+        'r1e': ('V107', 'gp-0x6c2c')}
 F2 = (14.0, 17.5)          # 2*f0 -- where a rectified 7.8 Hz oscillation lands
 HALFWIDTH = 3.0            # baseline is the running median over +/- this many Hz
 FIT = (3.0, 45.0)

@@ -100,11 +100,21 @@ lane per build**, which makes the corpus a natural experiment. Reading the clamp
 ```
   lane         routes   median   per route
   gp-0x6b86         3    3.288   ra4 3.29, ra5 5.36, ra6 2.94
+  gp-0x6c2c         1    1.944   r1e 1.94
   gp-0x6b94         2    1.931   r85 2.11, r95 1.75
   gp-0x6b4c         2    1.849   r96 1.82, r9e 1.88
 ```
 
-**All three `gp-0x6b86` routes sit above all four routes of the other two lanes — complete separation.**
+**All three `gp-0x6b86` routes sit above all five routes of the other three lanes — complete separation
+over 4 lanes and 8 routes.** The split is **bimodal**: the four losing lanes cluster tightly at
+**1.75–2.11** (baseline — essentially no local 2f₀ line at all) while `gp-0x6b86` stands apart at
+**2.94–5.36**.
+
+**And this survived my own blocker being wrong.** The first pass asserted *"rlogs stop at route a6, so
+`gp-0x6c2c` / `gp-0x6abc` / `gp-0x6b4e` cannot be ranked at all."* False: **`r1e` (V107) carries
+`mag427` on `gp-0x6c2c` with 989 s engaged — the best-powered route in the entire corpus.** Adding it
+did not overturn the result. `gp-0x6abc` (r21/r22/r24) genuinely has no decoded `mag427` column, and
+`gp-0x6b4e` (V212–V220) has no cache; those two remain unrankable.
 
 ### The first version of this ranking was wrong, and its own control killed it
 
@@ -150,8 +160,8 @@ Notching 7.79 Hz directly stays closed for the reason the damping-band floor exi
 6–9 Hz damper there**, and cutting it is self-defeating.
 
 **Limits on the ranking, all real:** build and 427-source are perfectly confounded — each lane is seen
-only on the builds that probed it. 3 vs 2 vs 2 routes. And rlogs stop at route a6, so the three lanes
-V107+ put on 427 (`gp-0x6c2c`, `gp-0x6abc`, `gp-0x6b4e`) cannot be ranked at all; one could rank higher.
+only on the builds that probed it, and those builds differ in other ways. 3 vs 1 vs 2 vs 2 routes.
+`gp-0x6abc` and `gp-0x6b4e` remain unrankable for want of a decoded channel.
 
 Readers: `rlog-tools/score/rank_lanes_liveness_free.py` (the sound one) and
 `rank_lanes_by_ratchet_energy.py` (the confounded one, kept with its confound documented).

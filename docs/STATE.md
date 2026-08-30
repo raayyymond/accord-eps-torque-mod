@@ -72,10 +72,12 @@
 > ```
 >   lane         routes   median   per route
 >   gp-0x6b86         3    3.288   ra4 3.29, ra5 5.36, ra6 2.94
+>   gp-0x6c2c         1    1.944   r1e 1.94
 >   gp-0x6b94         2    1.931   r85 2.11, r95 1.75
 >   gp-0x6b4c         2    1.849   r96 1.82, r9e 1.88
 > ```
-> ✅ **[EVIDENCE] ALL THREE `gp-0x6b86` ROUTES SIT ABOVE ALL FOUR ROUTES OF THE OTHER TWO LANES — complete separation, no overlap.**
+> ✅ **[EVIDENCE] ALL THREE `gp-0x6b86` ROUTES SIT ABOVE ALL FIVE ROUTES OF THE OTHER THREE LANES — complete separation over 4 lanes and 8 routes.** And the split is **bimodal**: the four losing lanes cluster tightly at **1.75–2.11** — baseline, essentially no local 2f₀ line at all — while `gp-0x6b86` stands apart at **2.94–5.36**.
+> ⭐ **STRENGTHENED, by correcting my own blocker.** The first pass asserted *“rlogs stop at route a6, so `gp-0x6c2c` / `gp-0x6abc` / `gp-0x6b4e` cannot be ranked.”* **`r1e` (V107) carries `mag427` on `gp-0x6c2c` with 989 s engaged — the BEST-POWERED ROUTE IN THE CORPUS** — and adding it did not overturn the result. `gp-0x6abc` (r21/r22/r24) genuinely has no decoded `mag427`, and `gp-0x6b4e` has no cache; those two stay unrankable.
 > 🛑 **AND THE FIRST VERSION OF THIS RANKING WAS WRONG, KILLED BY ITS OWN CONTROL.** Using the engaged/manual ratio, `gp-0x6b4c` came top at **300–377×** — and the denominator check showed why: **it is nonzero on 0.354 % / 0.273 % of MANUAL frames.** The lane is simply *dead when not engaged*, so the ratio was a division by noise measuring liveness, not ratchet energy. Switching to a **local excess within the engaged arm** removes the confound entirely — and `gp-0x6b4c` then ranks **last**.
 > 🛑 **CORRECTED, AND THE CORRECTION CHANGES THE TARGET. `gp-0x6b86` IS NOT THE ASSIST-MAP LANE — IT IS THE OUTPUT OF THE BIQUAD LANE**, i.e. **the lane the entire V172→V241 notch arc has been shaping.** The facade's own chain:
 > ```
