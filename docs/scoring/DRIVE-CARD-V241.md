@@ -1,10 +1,10 @@
-# DRIVE CARD — V235
+# DRIVE CARD — V241
 
 ## 🚗 DRIVE THIS ONE
 
 ```
-  V235   39990-TVA,A160-V235-V234BASE-C63AE.BACK.TO.HONDA.1024-0x13000-0x100000.rwd
-         rwd    sha256 8b418939011854b5...      image sha256 399424fd8b032669...
+  V241   39990-TVA,A160-V241-V235BASE-NOTCH.IMU.29.75-22.50-0.940-0x13000-0x100000.rwd
+         rwd    sha256 57d240d77f568aac...      image sha256 2ef7eb8eb2417905...
   BEFORE anything: kill openpilot/pandad   ->  tmux kill-server
 ```
 
@@ -17,14 +17,48 @@ verdict is final.** If it feels wrong, **stop.**
 **Stop and say so if:** the ratchet or stutter is clearly worse · a new higher-pitched noise appears ·
 the wheel feels heavier near centre · anything faults.
 
-**Fallback:** **V122** (your car).
+**Fallbacks:** **V235** (V241 minus 12 bytes) → **V122** (your car).
 
 ---
 
-## 🛑 Why the lead moved back to V235
+## What changed, and why it is worth a drive
 
-**I built V238 and V240 as ratchet levers. On the kit's own phase measurement, both make the ratchet
-slightly worse.** Their `.rwd` files are renamed `RATCHET-COST-DO-NOT-FLASH-FIRST-…`.
+**V241 is V235 with the notch re-aimed — twelve bytes, nothing else.** The reason is that V235's
+geometry was fitted to a **CAN objective**: the EPS's own channels, the same subsystem the build
+modifies. The comma's IMU is physically separate and had no part in choosing it.
+
+Asked the open question — *at which frequencies does engagement raise chassis motion above what the
+road explains?* — the IMU names **22–30 Hz** as the largest engagement-created band in the whole
+3–45 Hz range, peaking at **25–26 Hz**. **V235's band is right.** Its shape is not:
+
+```
+  V235   zero 25.00 Hz  pole 23.50 Hz  r 0.960   cost 0.43254   min|H| 6-15 = 0.9108
+  stock  zero 55.23 Hz  pole 42.35 Hz  r 0.797   cost 0.57508   min|H| 6-15 = 0.9344
+  V241   zero 29.75 Hz  pole 22.50 Hz  r 0.940   cost 0.31079   min|H| 6-15 = 0.9374
+```
+
+**V241 removes 28 % more of the measured engagement excess than V235 — and cuts *less* of the band
+that damps.** V235 sat at 0.9108 there, slightly **below Honda's own floor**; V241 is back above it.
+
+**It survives leave-one-route-out on all ten routes** — 29.75 / 22.50 / 0.940 wins every fold, one
+distinct winner in ten. It is not fitted to any single route.
+
+Both gates are recomputed from the written bytes, and both are the record's own bars, not mine:
+**max|H| = 1.0000** (the lineage bar — V194–V198 were pulled for 1.35–1.72) and **min|H| over 6–15 Hz
+= 0.9374 ≥ stock's 0.9344**, because the lane is measured *damping* there.
+
+⚠ **What is NOT claimed:** that 28 % of modelled cost is 28 % less grinding. The weight is chassis
+**motion**; the notch filters a **torque** lane. This is a better-founded aim than the one V235 had, not
+a promise.
+
+---
+
+## Why the grinding side is the one worth attacking
+
+### The ratchet, and why it is not the target
+
+**V238 and V240 were built as ratchet levers. On the kit's own phase measurement, both make the
+ratchet slightly worse.** Their `.rwd` files are renamed `RATCHET-COST-DO-NOT-FLASH-FIRST-…`.
 
 The kit measured `gp-0x6b86` — the lane both builds cut — against wheel rate on three routes:
 

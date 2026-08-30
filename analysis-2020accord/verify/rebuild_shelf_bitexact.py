@@ -80,7 +80,8 @@ SHELF = {
     'v236': '509785673468a346ac366dfb2fb8e491231f49a4e440e22ef9ce4fe39602d862',   # V235 + the assist-map slope cap: the RATCHET lever
     'v237': 'bebd6c6ca9e9ad735016f477dece6dfa275bfaf9bb65a1c5d13d8c8716b812f1',   # V235 + the engaged lag POLE: a ratchet lever with NO effort cost -- WITHDRAWN, backwards
     'v238': '34ceb5aefaa9bdd5fd656513ce3536ae3e0fd5590c5c8bb80b400aa90b8a5be5',   # V235 + the SAME pole LOWERED 20->8: V237 corrected
-    'v240': 'f2745df252e7ce7eb069fa7b7700e7cae474213cda4bebea08916253eb032962',   # V238 + the NORMAL slew curve x Honda's 0.600 -- largest measured ratchet lever
+    'v240': 'f2745df252e7ce7eb069fa7b7700e7cae474213cda4bebea08916253eb032962',
+    'v241': '2ef7eb8eb24179054b0c016d13f2e240b7fe3ea32d419c047405f1a748109df4',   # V235 + the notch re-aimed on the IMU objective (29.75/22.50/0.940)   # V238 + the NORMAL slew curve x Honda's 0.600 -- largest measured ratchet lever
     'v239': '3c1bf1e9d5f8b79aa3f9011279d1598e3bfc7d6881dbf88adc96388235cd2fcc',   # V236 + V238: both ratchet levers in one lane
 
 }

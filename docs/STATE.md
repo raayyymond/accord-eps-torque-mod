@@ -66,6 +66,22 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ⭐⭐⭐⭐⭐ **V241 BUILT — THE NOTCH RE-AIMED ON THE INDEPENDENT INSTRUMENT. 28 % MORE OF THE MEASURED EXCESS, AND IT STOPS CUTTING THE DAMPING BAND HARDER THAN HONDA.**
+>
+> V235's geometry was fitted to a **CAN objective** — the EPS's own channels, the same subsystem the build modifies. The IMU had no part in it, and it names 22–30 Hz as the largest engagement-created band. **V235's band is right; its shape is not:**
+> ```
+>   V235   zero 25.00 Hz  pole 23.50 Hz  r 0.960   cost 0.43254   min|H| 6-15 = 0.9108
+>   stock  zero 55.23 Hz  pole 42.35 Hz  r 0.797   cost 0.57508   min|H| 6-15 = 0.9344
+>   V241   zero 29.75 Hz  pole 22.50 Hz  r 0.940   cost 0.31079   min|H| 6-15 = 0.9374
+> ```
+> ✅ **V241 removes 28.1 % more of the measured engagement excess than V235** (V235 ranks 256 of 1522 feasible geometries), **and cuts LESS of the damping band.** 🛑 **V235 sat at 0.9108 there — BELOW stock's 0.9344 — so it was cutting ~2.5 % more of the band the record says never to notch. V241 is back above Honda's floor at 0.9374.**
+> ✅ **LEAVE-ONE-ROUTE-OUT: 29.75 / 22.50 / 0.940 wins on ALL TEN folds — one distinct winner in ten.** Not fitted to any single route; the same check V235's geometry passed on the CAN objective.
+> ⭐ **BUILT** — image `2ef7eb8eb2417905…` · rwd `57d240d77f568aac…` · **33/33, 12 payload bytes.** Both gates recomputed **from the written bytes**: `max|H| = 1.0000` (the lineage bar) and `min|H| 6-15 = 0.9374 ≥ 0.9344`. Coefficients written **by formula**, never by decimal.
+> 🛑 **AND A THRESHOLD ERROR I CAUGHT MID-RUN.** The first pass imposed an arbitrary **0.97** floor on the damping band — and **STOCK ITSELF came back “VIOLATES”**, because Honda dips to 0.9344. An arbitrary bar that rejects the car is not a bar. The record had to make this exact correction once before, when a **1.5× threshold carried from V232** was replaced by *“the bar is Honda”*. **The floor is now what stock achieves, measured from the image.**
+> ⚠ **NOT CLAIMED:** that 28.1 % of modelled cost is 28 % less grinding. The weight is chassis **motion**; the notch filters a **torque** lane. Better-founded aim, not a promise.
+> ⇒ **V241 IS THE LEAD; V235 IS THE PAIRED ARM, exactly 12 bytes away**, so the geometry can be isolated after the fact.
+> ➕ Readers: `rlog-tools/score/notch_vs_imu_profile.py`, `rlog-tools/score/imu_engagement_spectrum.py`.
+
 > ✅⭐⭐⭐⭐⭐ **V235's NOTCH IS AIMED AT THE LARGEST ENGAGEMENT-CREATED BAND IN THE CORPUS — confirmed on the independent IMU, which had no part in choosing it.**
 >
 > Rather than scoring the kit's three named bands, ask the open question: **at which frequencies does engagement raise chassis motion above what the road explains?** Speed-matched, each route divided by its own road control, 10 routes:
