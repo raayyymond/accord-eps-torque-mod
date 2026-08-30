@@ -455,6 +455,48 @@ for _v in sorted(img):
         f'{_v.upper()} 0xC60B8-0xC60DC PI gains byte-stock'
         + ('' if img[_v][0xC60B8:0xC60DC] == _PI else ' -- A NOTCH EDIT LANDED ONE FLOAT LOW'))
 
+print()
+print("[13] A GAIN RAISE MUST BE PRICED AGAINST THE NOTCH, ACROSS THE WHOLE BAND")
+# GATE 2 checks max|H| of the BIQUAD.  But the loop gain the car sees is biquad x 0xC6CD0, and a
+# build may raise 0xC6CD0 while the notch gives nothing back outside its skirt.  Priced 2026-08-29
+# for the 6x -> 8x step (5346 -> 7128) on the V208/V212 notch, using the kit's own empirical
+# amplitude law (vibration ~ gain^1.74, from the m^1.74 fit):
+#
+#     growth = (7128/5346)^1.74 = 1.650x, FLAT across frequency
+#     notch attenuation vs stock falls with frequency: 4.48x @23 Hz, 1.89x @28, 1.59x @30,
+#                                                      0.80x @40, 0.30x @49
+#     => NET WIN below 29.5 Hz (0.37x at 23 Hz), NET LOSS above:
+#        1.04x @30, 1.47x @35, 2.07x @40, 5.53x @49
+#
+# That matters because V59 measured an ENGAGEMENT-GATED 42.19 Hz line, prominence 11.10x engaged
+# vs 0.00x disengaged.  Its proposed mechanism (parametric modulation of the PID lane gains at 2f)
+# is VOID -- re-verified here: K_p/K_i/K_d at 0xC6B1E/0xC6B0A/0xC6ADE are FLAT at the operating
+# point gp-0x6ac0 = 99, and the contrary reading used 0xC671E, off by 0x400, which is the
+# square-wave injector block.  But the LINE ITSELF still stands and its mechanism is UNKNOWN.
+# Raising loop gain 1.65x exactly where the notch stops helping, in a band with an unexplained
+# engagement-gated line, is not a blind change.  Hence: STAGED until the notch is confirmed on-car.
+_GAIN_BASE = 5346                      # 6.00x -- the notch shelf's baseline (0xC6CD0 = 891 * N)
+_STAGED = {'v211'}                     # builds allowed to exceed it, and known to be staged
+for _v in sorted(img):
+    _g = struct.unpack_from('<H', img[_v], 0xC6CD0)[0]
+    if _g <= _GAIN_BASE:
+        chk(True, f'{_v.upper()} 0xC6CD0 = {_g} ({_g / 891:.2f}x) -- at or below the notch baseline')
+    else:
+        chk(_v in _STAGED,
+            f'{_v.upper()} 0xC6CD0 = {_g} ({_g / 891:.2f}x) RAISES loop gain '
+            f'{_g / _GAIN_BASE:.3f}x -- must be a documented STAGED build'
+            + ('' if _v in _STAGED else ' -- IT IS NOT. Price it against the notch first.'))
+        print(f'         {_v.upper()} is STAGED: growth {(_g / _GAIN_BASE) ** 1.74:.3f}x is a net'
+              f' win below ~29.5 Hz and a net LOSS above (2.07x @40 Hz).')
+
+# and re-assert the tables the VOID rests on, so the dispute cannot silently reopen
+_st = open(os.path.join(ROOT, 'analysis-2020accord', 'stock_fw_dump', 'code.bin'), 'rb').read()
+for _b, _n in ((0xC6B1E, 'K_p'), (0xC6B0A, 'K_i'), (0xC6ADE, 'K_d')):
+    _Y = [struct.unpack_from('<H', _st, _b + 8 + 2 * _k)[0] for _k in range(4)]
+    chk(_Y[0] == _Y[1],
+        f'{_n} at 0x{_b:05X} is FLAT in segment 0 {_Y} -- no 2f parametric pump at the'
+        f' operating point')
+
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
 for m in bad:

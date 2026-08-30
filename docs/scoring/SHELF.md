@@ -159,7 +159,31 @@ fell **−0.0891 [−0.1328, −0.0200]** on an episode bootstrap, with both sig
 So this lever is known to reach the car with the right sign — what is unknown is whether the halving
 does, and one drive of any shelf build answers it.
 
-## 🛑 V211 — STAGED. Do NOT flash this until V209 has confirmed the grind fix.
+## 🛑 V211 — STAGED. Do NOT flash until the notch is confirmed on-car.
+
+**Priced properly 2026-08-29 — the staging now rests on a measurement, not a procedure.**
+
+The 6×→8× step (`0xC6CD0` 5346→7128) raises loop gain a flat **1.333×**, which by the kit's own empirical amplitude law (vibration ∝ gain^1.74) grows vibration **1.650× at every frequency*. The notch gives that back only inside its skirt:
+
+```
+   f (Hz)   notch atten   vs growth 1.65x   net
+     23        4.48x            ->          0.37x  quieter
+     28        1.89x            ->          0.87x  quieter
+   --------- break-even at 29.5 Hz ---------
+     30        1.59x            ->          1.04x  LOUDER
+     35        1.13x            ->          1.47x  LOUDER
+     40        0.80x            ->          2.07x  LOUDER
+     49        0.30x            ->          5.53x  LOUDER
+```
+
+**Below 29.5 Hz it is a clear win** — 1.33× more authority *and* 2.18× quieter at 22–26 Hz. **Above it, the notch contributes nothing and the gain raise is unopposed.**
+
+That band is not empty. **V59 measured an engagement-gated 42.19 Hz line** — prominence **11.10× engaged vs 0.00× disengaged**. Its proposed mechanism (2f parametric modulation of the PID lane gains) is **VOID**, re-verified 2026-08-29: `K_p`/`K_i`/`K_d` at `0xC6B1E`/`0xC6B0A`/`0xC6ADE` are **flat in segment 0** at the operating point `gp-0x6ac0` = 99, and the contrary reading used `0xC671E` — **off by 0x400**, landing on the square-wave injector block. So the *mechanism* is dead but **the line itself stands and is unexplained.**
+
+⇒ Raising loop gain 1.65× exactly where the notch stops helping, in a band carrying an unexplained engagement-gated line, is not a blind change. **Fly V212 first.** If the notch is confirmed, this becomes reasonable and the natural follow-up is V212 + these cells.
+
+⚠ **GATE 2 does not catch this** — it checks the biquad alone, but the loop gain is biquad × `0xC6CD0`. That gap is now closed by **close-out section [13]**, which prices any build raising `0xC6CD0` above the 5346 baseline and fails it unless explicitly staged.
+
 
 ```
 39990-TVA,A160-V211-V208BASE-GAIN8X-CLAMPS4096-0x13000-0x100000.rwd
