@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Four flashable builds: **V209 (fly this)** · V208 (the fix) · V210 (ratchet lever, priced) · V199 (low-phase fallback). All four reproduce bit-for-bit from their builders.
+**Updated 2026-08-29.** Five flashable builds: **V209 (fly this)** · V208 (the fix) · V210 (ratchet lever, priced) · **V211 (authority — STAGED, see below)** · V199 (fallback). All five reproduce bit-for-bit from their builders.
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,
@@ -113,6 +113,47 @@ fell **−0.0891 [−0.1328, −0.0200]** on an episode bootstrap, with both sig
 So this lever is known to reach the car with the right sign — what is unknown is whether the halving
 does, and one drive of any shelf build answers it.
 
+## 🛑 V211 — STAGED. Do NOT flash this until V209 has confirmed the grind fix.
+
+```
+39990-TVA,A160-V211-V208BASE-GAIN8X-CLAMPS4096-0x13000-0x100000.rwd
+  image 70b205589b6f81a9f1e4f039daf8f744a66a1b9865ddbe133b499ef6ce35368e
+```
+
+**This is the LKAS authority build** — the first with a defensible case since V101. It raises
+the forward gain 6× → 8× and the two clamps that must track it. 37/37, preflight 8/8.
+
+| cell | V208 → V211 | why |
+|---|---|---|
+| `0xC6CD0` | 5346 → 7128 | the forward gain, 6× → 8× |
+| `0xC61B2` | 3072 → 4096 | at 8× the lane max is 3341, which exceeds 3072 |
+| `0xC61B4` | 3072 → 4096 | same — this is why V101 had to raise them too |
+
+**Why it is worth re-opening.** The gain was abandoned three times because vibration grows as
+`m^1.74` against authority’s `m^0.88`. **That trade is set by the baseline, and V208 moves it.**
+Energy-weighted over the band the gain excites (22–26 Hz, 130 episodes):
+
+| | |
+|---|---|
+| V208 attenuation there | **3.70×** (amplitude) |
+| 6× → 8× vibration growth | 1.65× |
+| **net vs the car today** | **0.45× — about 2.2× quieter** |
+| authority gained | 1.29× |
+
+V101 flew 8× at **1.65×** the then-current level and you reported grinding at all speeds. This
+sits at **0.45×**.
+
+🛑 **The staging is the safeguard, and it is not optional.** The case rests on a *belief*:
+that the notch attenuates a **command-excited** line. The notch is on the base-assist path, not
+the command path — but it sits inside the loop (motion → column torque → sensor → assist map
+→ biquad → aggregator → motor → motion), so it lowers the loop gain that *sustains* the
+resonance whatever excites it. **That is reasoning, not measurement.** If it is wrong, 8× lands
+at 1.65× and you will hear it on the first engaged mile.
+
+✅ The builder asserts the three gates that killed earlier gain builds: `0xC674E` = 5120 must
+stay **above** the tracking clamp (the abort condition that caps this lever below 10×), lane max
+3341 < 4096 so the clamps do not bind, and `0xC407E` stays at Honda’s 511 — V73
+raised it and V74/V75 faulted.
 ## V199 — the low-phase fallback
 
 ```
