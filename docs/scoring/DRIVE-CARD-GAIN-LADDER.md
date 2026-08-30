@@ -14,21 +14,24 @@ torque", not what you asked** — and it skips your own ruling, *"fix at 6× fir
 where the fix is built but has never been verified on the car.
 
 ```
-  V241   6x   39990-TVA,A160-V241-V235BASE-NOTCH.IMU.29.75-22.50-0.940-...rwd   <-- FLY THIS FIRST
-              rwd 57d240d77f568aac...   image 2ef7eb8eb2417905...
-              Your car's gain. All the grinding work. Nothing else changes.
+  V241   6x   <-- FLY THIS FIRST.  Your car's gain. All the grinding work. Nothing else changes.
+  39990-TVA,A160-V241-V235BASE-NOTCH.IMU.29.75-22.50-0.940-0x13000-0x100000.rwd
+              rwd  57d240d77f568aac...      image 2ef7eb8eb2417905...
 
-  V242   8x   39990-TVA,A160-V242-V241BASE-GAIN8X.CLAMPS4096-...rwd
-              rwd a94962b4240613c8...   image 424249b0c7d89fad...
-              +4 bytes. Fly ONLY if V241 is clean -- then you know the gain is the variable.
+  V242   8x   +4 bytes on V241. Fly ONLY if V241 is clean -- then the gain is the only variable.
+  39990-TVA,A160-V242-V241BASE-GAIN8X.CLAMPS4096-0x13000-0x100000.rwd
+              rwd  a94962b4240613c8...      image 424249b0c7d89fad...
 
-  V243  10x   39990-TVA,A160-V243-V242BASE-GAIN10X.CLAMPS4608.CEILING-...rwd
-              rwd 43a32ac352508557...   image 5fb9ad74f104de46...
-              The ceiling. Only if V242 is also clean. 10x has NEVER flown.
+  V243  10x   The ceiling. Only if V242 is also clean. 10x has NEVER flown at any point.
+  39990-TVA,A160-V243-V242BASE-GAIN10X.CLAMPS4608.CEILING-0x13000-0x100000.rwd
+              rwd  43a32ac352508557...      image 5fb9ad74f104de46...
 
-  BEFORE anything: kill openpilot/pandad   ->  tmux kill-server
-  FALLBACK at any point: V122 (your car)
+  FALLBACK at any point:  V122  (what is on your car now)
+  BEFORE anything:        kill openpilot/pandad  ->  tmux kill-server
 ```
+
+**All three live in `../accord-firmwares/flashing-2020accord/rwd/`.** To flash, give me **the exact
+filename and the bus** — I will repeat both back to you before anything is sent.
 
 🛑 **The flash decision is yours. Name the file and the bus, and I will repeat both back before
 anything happens.**
@@ -146,11 +149,11 @@ result.
 **Stop and say so if:** grinding or vibration appears at any speed while LKAS is commanding (the V101
 signature) · the ratchet is clearly worse · the wheel feels heavier near centre · anything faults.
 
-**The ladder is meant to be walked in order.** If V242 grinds, V241 tells you whether the grinding work
-itself is sound at your current gain — that is the single most valuable drive on the shelf, because
-nothing in this lineage has ever flown.
+**Walk the ladder upward, not downward.** V241 first: it is the single most valuable drive on the
+shelf, because nothing in this lineage has ever flown and V241 tests the grinding work at the gain you
+already run. Only once that is clean does V242's four-byte gain step mean anything.
 
-**Fallbacks:** V242 → **V241** → **V122** (your car).
+**If a rung is bad, drop to the one below it:** V243 → V242 → **V241** → **V122** (your car).
 
 ---
 
