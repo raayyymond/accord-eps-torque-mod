@@ -32,6 +32,20 @@ sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 STOCK_PROBE_BYTE = 0x07          # stock STEER_SENSOR_STATUS, i.e. no cave
 DEGEN = 0.001                    # within this of 0 or 1 -> carries no information
 
+# ---- route -> build, for caches whose own probe_build label is missing or unresolved ----------
+# The record names the gap this fills: lib/route_build_registry.py stops at r77, so the whole
+# V90-V106 arc (and later) has its build attribution only in prose. That gap is *why* rungs go
+# unread. This map is CACHE-FIRST on purpose -- it carries no rlog hashes, because those are not in
+# the caches and inventing them was the blocker that stopped the registry being extended.
+# 🛑 EVERY ENTRY CITES ITS SOURCE. Do not add one without a citation.
+ROUTE_BUILD = {
+    # r21's cache says "UNKNOWN-V108-or-V111". V108 and V111 differ in only 3 payload cells and the
+    # cave is BYTE-IDENTICAL, so the rungs cannot discriminate them. Resolved from the record:
+    'r21': ('V111', 'docs/handoffs/2026-08/HANDOFF-2026-08-28-v112-flew-two-symptoms-separated.md '
+                    'line 11 tabulates "r21  V111"; written by the session that flew r22 as V112, '
+                    'whose own base is V111, so the flight order is consistent'),
+}
+
 
 def _lbl(k, rs):
     """Bit name, prefixed by its build only when the cache carries more than one decoded set."""
@@ -84,9 +98,12 @@ def main(argv):
         lat = d['cc_lat'] > 0.5
         if lat.sum() < 500:
             continue
+        tag = base[:-4]
         build = str(d['probe_build'][0]) if 'probe_build' in d.files else '?'
+        if tag in ROUTE_BUILD and ('UNKNOWN' in build.upper() or build in ('?', '')):
+            build = ROUTE_BUILD[tag][0] + '*'      # * = resolved from the record, not the cache
         rs, how = rungs(d)
-        rows.append((base[:-4], build, int(lat.sum()), rs, how, lat))
+        rows.append((tag, build, int(lat.sum()), rs, how, lat))
 
     print('=' * 100)
     print('  CAVE RUNG SWEEP -- %d cached routes with >=500 engaged frames' % len(rows))
@@ -113,6 +130,11 @@ def main(argv):
     print()
     print('  %d informative rungs, %d degenerate, %d routes with NO cave at all'
           % (n_inf, n_deg, n_nocave))
+    if ROUTE_BUILD:
+        print()
+        print('  * = build resolved from the record because the cache label is missing or unresolved:')
+        for t, (b, why) in sorted(ROUTE_BUILD.items()):
+            print('      %-5s -> %-5s  %s' % (t, b, why))
     print()
     print('  🛑 A DEGENERATE RUNG IS NOT A FINDING -- "always" and "never" are only meaningful once')
     print('  the build\'s own identity bit says the cave was running. Check the lineage row before')
