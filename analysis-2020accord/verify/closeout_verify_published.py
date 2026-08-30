@@ -65,6 +65,9 @@ PUB = {
     'v218': 'f73aee347d67c10e0a50431d01143407bdee180e792022e2002eb8451c10b691',
     'v219': '13c1d33b3ad9eff526283b7465e3b85b18084056479588ba2741537b25d10d33',
     'v220': 'ce07b776b8cdfef3ed9584a8352ce8922398c0c631ac132a1bc8f78425070097',
+    'v221': '7bb0ba58956ca21064a815d0298c6994cf124b941c72aa76c03f8628a598c51b',
+    'v222': '0e83c7074699d6ab3eee1c035974fa23b5b271c641662001b63fd89558512dae',
+    'v223': 'a2f034df682cbd4a9ffe9f56787fd40d5465c4c36423362ce7dc03501fa81869',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -500,7 +503,10 @@ print("[13] A GAIN RAISE MUST BE PRICED AGAINST THE NOTCH, ACROSS THE WHOLE BAND
 # Raising loop gain 1.65x exactly where the notch stops helping, in a band with an unexplained
 # engagement-gated line, is not a blind change.  Hence: STAGED until the notch is confirmed on-car.
 _GAIN_BASE = 5346                      # 6.00x -- the notch shelf's baseline (0xC6CD0 = 891 * N)
-_STAGED = {'v211','v213','v215','v216','v217','v218','v219','v220'}  # priced and documented
+_STAGED = {'v211','v213','v215','v216','v217','v218','v219','v220',
+           'v221','v222','v223'}   # priced and documented
+# V221/V222/V223 carry V217's 8x step BYTE-IDENTICALLY -- they add Lever B and restore the
+# friction lane, neither of which touches 0xC6CD0. The pricing that admitted V217 admits them.
 for _v in sorted(img):
     _g = struct.unpack_from('<H', img[_v], 0xC6CD0)[0]
     if _g <= _GAIN_BASE:
@@ -647,7 +653,7 @@ for _v in sorted(img):
 
 _LEVERS = {
     0x454FE: ('V42 ratchet fix (LOST at a rebase once, byte-stock V53-V70)', 26037, 'H'),
-    0xC6446: ('Lever B -- V88, best measured grind lever in the kit', 5244, 'H'),
+
     0x3AA96: ('Lever B arm, V88 sign fix', 0x97FB, 'H'),
     0xC62EA: ('low-speed steer lockout DISABLED (stock 320 ct ~ 5 km/h)', 0, 'H'),
 }
@@ -657,6 +663,26 @@ for _v in sorted(img):
         chk(_got == _want,
             f'{_v.upper()} 0x{_a:05X} = {_got} -- {_nm}'
             + ('' if _got == _want else f' -- EXPECTED {_want}, THIS LEVER HAS MOVED'))
+
+# ---- Lever B is a DELIBERATE LADDER now, so it gets a per-build expectation ------------
+# 🛑 IT IS NOT MOVED OUT OF THE ANTI-DRIFT SET AND WIDENED. Every build still has ONE expected
+# value; the ladder is ENUMERATED, so an unintended drift on any build -- including a new one --
+# still fails, because an unlisted build falls through to the 5244 default.
+#   5244   V88..V220 and THE CAR -- the value V88 measured (15-22 Hz 0.549x, 0.5-3 Hz NULL)
+#  13107   V221/V222 rung 1, after V160's "int16 ceiling" was shown not to exist
+#  26214   V223     rung 2, sized by the lane's describing function
+_LEVER_B_LADDER = {'v221': 13107, 'v222': 13107, 'v223': 26214}
+for _v in sorted(img):
+    _want = _LEVER_B_LADDER.get(_v, 5244)
+    _got = struct.unpack_from('<H', img[_v], 0xC6446)[0]
+    chk(_got == _want,
+        f'{_v.upper()} 0xC6446 = {_got} -- Lever B, expected {_want}'
+        + ('' if _got == _want else ' -- THIS LEVER HAS MOVED')
+        + ('' if _v in _LEVER_B_LADDER else ' (default: the value V88 measured)'))
+    # and the rail it must never claim more of
+    _rail = bytes(img[_v][0x3AC42:0x3AC58])
+    chk(_rail == bytes(img['v208'][0x3AC42:0x3AC58]),
+        f'{_v.upper()} r24 +-8192 rail byte-identical to V208 -- Lever B cannot cost LKAS authority')
 
 print()
 print("[17] THE COMPLETE NON-STOCK DELTA OF EVERY SHELF BUILD IS PINNED")
