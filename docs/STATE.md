@@ -315,6 +315,33 @@ against a 77 ms inversion threshold. ⇒ **The binding constraint is now a DRIVE
 built, verified and audited against all three asks; **nothing further can be learned about it from data
 already on disk.**
 
+> ✅⭐ **NEW GATE: NO ORPHAN BYTES. Every non-stock byte on the whole ladder has a written home.**
+An **orphan** is a byte that differs from stock and that **no document in the kit mentions**. Orphans
+are how this kit loses things: **V42’s ratchet fix sat silently REVERTED across eighteen builds
+(V53–V70)** because nothing checked that the bytes on the candidate still matched the bytes the record
+described. A byte nobody can explain is the same failure pointed the other way — and the operator is
+entitled to know what every non-stock byte in his ECU does.
+
+```
+  build   payload bytes   runs   cited     record: 4998 distinct 0x addresses across 789 files
+  V217         320         115   100.0 %
+  V221         320         115   100.0 %
+  V222         323         116   100.0 %   <- the flight candidate
+  V223-V226    323         116   100.0 %
+  V227         324         117   100.0 %
+```
+
+⇒ **ZERO orphan runs anywhere on the shelf.** ➕ Two cells that looked unannotated when I first grepped
+are in fact fully documented — my search was too narrow, not the record: **`0x2A1F0` is V57’s decouple
+displacement** (`746C`→`7CD0`, which is *why* the stock dump reads `0xFFFF` at `0xC6CD0`), and
+**`0xC61C0`/`C2`/`C4` are the angle-rate tiers of the `STEER_STATUS` debounce SM** raised to unsigned
+max at V36, with `0xC64B4`/`B6`/`B8` the matching V37 gentle-EME defeat.
+⚠ **Scope:** this proves each byte has a written **home**, **not** that the annotation is correct,
+current, or that the byte does what it claims — those need the lineage and a drive.
+➕ Correcting a figure I gave the operator: the cumulative delta is **323** payload bytes, not 331; the
+first count failed to exclude the `0xE4FFC`/`0xE5FFC` CRC trailers.
+Gate: `analysis-2020accord/verify/no_orphan_bytes.py` (takes a build tag, defaults to v222).
+
 > ✅⭐ **AUTHORITY AUDIT: V222’S 8× STEP SCALES ITS CLAMP EXACTLY — margin identical to the car to four
 digits.** A gain raise whose forward clamp does not follow silently turns the authority lever into a
 **clipper**, so this was checked from the images rather than assumed. `lane_max = (0xC61BE × gain) >> 15`
