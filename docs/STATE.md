@@ -46,6 +46,22 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V235 AGAINST THE OPERATOR'S THREE STATED GOALS — and it only addresses two of them.** He asked for grinding, LKAS authority and peak command oscillation. Every argument I have made for V235 is about the first. Checking the other two:
+>
+> **1. GRINDING / RATCHETING — addressed.** The notch cuts the band the lane and the aggregate both pump in (19–32 Hz, coherence up to 0.97), while holding the damping band at **1.004×**.
+>
+> **2. LKAS AUTHORITY — V235 DOES NOTHING. Verified, not assumed:**
+> ```
+>   0xC6CD0 gain 5346 · 0xC61B2/B4 clamps 3072 · 0xC61B3/B5 12 · 0x3AA96 251
+>   0x3AC42/0x3AC58 rails · 0xC6446 5244 · 0xC6444 512 · 0xC6C42 4
+>   0xC62EA 0 · 0xC407E 511 · 0xC6194 3 · 0xC6316 640
+>   => 0 of 15 command/authority cells differ from the car.
+> ```
+> 🛑 **And authority may not be improvable at all by the obvious lever.** The command rails at ±4096 on 2.7 % of engaged frames, and raising `0xC6CD0` buys authority back — but **the operator flew 8× as V101 and reported *“GRINDING/VIBRATION AT ALL SPEEDS”*, then reverted to 6× at his own choosing.** So the gain route to authority is **measured harmful**, by him. Any future authority work has to come from somewhere else.
+>
+> **3. PEAK COMMAND OSCILLATION — the premise is REFUTED on this bus, and V235 acts in the regime that survived.** Both testable readings failed their controls: *“the command reverses after a peak”* gives corr **+0.099 (p=0.188)** over 179 rail events with two of five routes NEGATIVE; *“the car oscillates while the command is large”* **reverses** — the roughness ratio FALLS with command size. ⇒ **the roughness is a SMALL-command phenomenon.** A biquad is linear, so V235's notch acts identically at every amplitude, including the small-command regime where the roughness actually lives. **It addresses the phenomenon, not the phrasing.**
+> ⚖ **Net: V235 is aimed at 2 of the 3 stated goals and is inert on the third.** That belongs on the card rather than being left for him to infer from silence.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE 55 Hz COST IS MECHANICALLY NEGLIGIBLE — V235's LAST OPEN QUESTION CLOSES FAVOURABLY.** The content at 55 Hz cannot be recovered from any route running Honda's notch (|H| = 0.0063 there, so de-embedding means ×25,000 — the numerically invalid operation caught earlier). But **ra4 and ra5 share the same b26 dose (1.5×) and differ in the notch**, and CAN's ~101 Hz sampling folds **52–71 Hz into 30–49 Hz**:
 >
 > ```

@@ -145,6 +145,33 @@ this, not either half alone.)*
 
 ---
 
+## Against the three things you asked for
+
+You asked for grinding, LKAS authority, and peak command oscillation. **V235 is aimed at two of them
+and does nothing for the third.** Rather than leave that to be inferred:
+
+**Grinding / ratcheting — addressed.** The notch cuts the band that both the lane and the aggregate
+pump in, while leaving the damping at your ratchet frequency at 1.004×.
+
+**LKAS authority — untouched, verified cell by cell.** All 15 command-path and authority cells read
+identical to your car: the gain, both forward clamps, the gate byte, both ±8192 rails, Lever B, the
+r26 arm, the input span, the lockout, the fault interlock, the rate limiter and the governor cal.
+**Zero differ.** So this build will not change how much steering LKAS can ask for, in either direction.
+
+And the obvious lever for authority is one you have already rejected: raising the gain does buy it
+back, but **you flew 8× as V101 and reported grinding and vibration at all speeds**, then chose 6×
+yourself. Authority has to come from somewhere other than the gain.
+
+**Peak command oscillation — the premise did not survive testing, but V235 acts where the effect
+actually is.** Both readings of it that this bus can observe were tested against controls and neither
+held: the "command reverses after a peak" reading gives a correlation of +0.099 (p=0.188) with two of
+five routes going the wrong way, and the "oscillates while the command is large" reading **reverses** —
+roughness *falls* as the command grows. The roughness is a **small-command** phenomenon. A filter is
+linear, so V235's notch works identically at every command size, including the small ones where the
+roughness lives.
+
+---
+
 ## What each outcome means
 
 | you report | what it settles |
