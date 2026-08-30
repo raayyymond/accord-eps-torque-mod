@@ -66,6 +66,20 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE 427 SIGN IS KILLED BY THE FIRMWARE, NOT THE DECODER — AND A SIGN PROBE IS NOT A CHEAP IN-PLACE EDIT. The 6–15 Hz rule cannot be settled without a cave or a clamp change.**
+>
+> The open thread was: the rule forbidding a 6–10 Hz notch — the one band the torque spectrum says matters — may rest on a rectified channel, and settling it needs `gp-0x6b86`'s SIGN on CAN. `FUN_00055d80` is the 0x1AB (427) frame builder, and it decides the question:
+> ```c
+>   uVar3 = FUN_00049a5a((int)*(short *)(gp - 0x6c18));      // SIGNED short load -- the probe cell
+>   uVar4 = FUN_00049a78(uVar3);
+>   FUN_00049a90((int)((uVar4 & 0xffff) * 5) >> 3, 0, 0x3ff);  // CLAMPED [0, 1023]
+> ```
+> 🛑 **[EVIDENCE] THE FIELD IS CLAMPED TO `[0, 0x3ff]`.** Any negative value pins to zero. **The rectification is Honda's, in the frame builder** — not a choice the cache extractor made. Confirmed independently by the data: `mag427` maxes at **exactly 1023** on ra6.
+> ⊕ **The probe encoding, decoded properly:** `24 37` is `ld.w disp[gp],r6`, and the displacement is the stored halfword with **bit 0 as an opcode flag**. `stock e8 93 → 0x93E8 → gp-0x6C18`; `V241 ea c7 → 0xC7EA → gp-0x3816`, the biquad state. A repoint is genuinely 2 bytes — but it can only change WHICH cell is read, never that the result is clamped non-negative.
+> ⚠ **THE THREE SINGLE-BIT CHANNELS DO NOT RESCUE IT.** The same function writes three bits (`(byte & 1) << 6`, `<< 4`, `<< 3`) sourced from byte cells — but each takes **bit 0**, and the sign of `gp-0x6b86` is **bit 15**. Pointing a bit channel at `gp-0x6b85` yields bit 8 of the value, not its sign. **Getting the sign needs a shift or mask change, or a cave.**
+> 🛑 **AND CAVES ARE THIS KIT'S ONLY BRICKING CLASS** — V24, V27 and V48B all bricked the ECU. **I am not cutting one to settle an analysis question on a shelf the operator is about to fly**, and a clamp change touches Honda's own frame builder. **Not built. The cost is now known and the decision is his.**
+> ⇒ **The 6–15 Hz rule stays IN DOUBT and unsettleable from the current probe design.** What it would take is now specific: either a cave that writes `sign(gp-0x6b86)` into one of the three bit channels, or a change to the `[0, 0x3ff]` clamp so the magnitude field carries a signed value.
+
 > ✅⭐⭐⭐⭐ **THE THIRD SYMPTOM IN THE BRIEF — “peak command oscillation” — IS ALREADY REFUTED IN THE RECORD, AND THE ROUGHNESS RUNS THE OTHER WAY.**
 >
 > The brief named three symptoms; grinding and authority are covered by the ladder, and this one was not spoken to. It has been tested — **both readings this bus can observe were refuted with controls** — and the roughness ratio **falls** as the command grows:
