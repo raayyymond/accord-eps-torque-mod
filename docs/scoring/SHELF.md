@@ -38,6 +38,8 @@ the cached corpus **per engaged episode** — 20 routes, 125 episodes — gives 
 | V202 (19.75 / 15.25 / 0.9600) | −7.83° | 5.7× | 2.3× |
 | **V208 (20.50 / 15.50 / 0.9575)** | −7.98° | **9.5×** | 2.0× |
 
+✅ **Re-scored on the 18-route cluster** (the 2 outlier routes at ~15.7 Hz excluded, a 3.71 Hz gap separates them): **V208 gives median 10.4×, p10 3.4×.** The pooled p10 of 2.0× was those two routes, not a distribution tail. The best possible re-centre buys 1.11× — inside noise, so **V208 stands.**
+
 **1.66× at the median for the same gate and budget** — and only −0.11° more lag at 3 Hz than V202, so
 very nearly free. ⚠ 20 routes here vs 67 in the original fit, so the 0.58 Hz gap could be sampling;
 what is not sample-dependent is that 19.75 sits below **both** medians.

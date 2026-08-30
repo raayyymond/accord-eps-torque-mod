@@ -4,6 +4,48 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅ **NOTHING PREDICTS THE GRIND PEAK — but the spread is BIMODAL, and V208 is already near-optimal**
+
+### 🛑 **A CORRELATION I FOUND AND THEN RETRACTED IN THE SAME TICK**
+Per engaged episode (130 episodes, 23 routes), the 15–25 Hz peak against each episode's own median
+covariates: speed **ρ +0.109 (p 0.22)**, |steering rate| **−0.062 (p 0.48)**, |driver torque|
+**−0.109 (p 0.22)** — and **|LKAS command| ρ = −0.351, p < 0.0001.** Only one survived, and it looked
+like a real command-dependent frequency shift.
+**It does not survive the honest n.** The variance decomposition says **within-route / total = 0.24**,
+so episodes inside a route are not independent. At **route level (n = 20): ρ = −0.340, p = 0.14.**
+⇒ **The episode-level p was pseudo-replication. RETRACTED.** ⊕ This is the same error the record
+already names one level down (*"bootstrap over EPISODES, not windows — window bootstraps manufacture
+significance"*); the identical trap exists one level up, **episodes inside a route**, and it is not
+written down anywhere. **Now it is.**
+⇒ **No covariate predicts the grind peak: not speed, not rate, not driver torque, not command.**
+
+### ✅⭐ **BUT THE SPREAD IS NOT A DISTRIBUTION TAIL — IT IS TWO CLUSTERS**
+```
+   sorted route medians (Hz):
+   15.62 15.82 | 19.53 19.92 19.92 19.92 20.12 20.31 20.31 20.70 20.90 21.09 21.48 21.48 21.48
+               | 21.88 22.27 22.66 22.66 23.05
+   ** 2 routes below 18 (r1e, r97);  18 routes in 19.53-23.05, median 20.99 **
+   ** GAP 3.71 Hz with NOTHING in between **
+```
+⇒ the "p10 = 16.37, so one biquad cannot cover the spread" worry was driven by **two routes**, not by
+a continuum. The other 18 sit inside a **3.5 Hz** window.
+
+### ✅ **RE-SCORED ON THE CLUSTER, V208 IS BETTER THAN ADVERTISED AND NEAR-OPTIMAL**
+```
+   cluster only (112 episodes, 18 routes, peak median 21.09, p10 19.53)
+     V208 as built (20.50)          median 10.4x   p10 3.4x
+     best possible on the cluster   median 11.6x   p10 3.5x   (20.75, poles 15.50, r 0.9575)
+     gain from moving again:        1.11x
+```
+⇒ **V208's p10 is 3.4×, not the 2.0× the pooled figure implied** — the pooled p10 was two outlier
+routes. ⇒ **and re-centring again buys 11 %, inside sampling noise. DO NOT RE-CUT. V208 stands.**
+
+### ⚠ **WHAT r1e AND r97 ARE IS NOT ESTABLISHED**
+They are a distinct regime by frequency, but nothing measured here says why. `r97` is the route that
+**carried no cave at all** (probe byte constant `7` across 68,883 engaged frames), so it is anomalous
+on an independent axis too. **[BELIEF]** they are a different mode or a different era; **not
+investigated**, and the notch is deliberately not tuned toward them.
+
 ## ✅⭐⭐ **THE NOTCH WAS 1 Hz LOW — re-centred on the peaks the car ACTUALLY makes, 1.66× for free**
 
 Building a single post-drive scorer (`rlog-tools/score/score_drive.py`, which the kit did not have —
@@ -2221,40 +2263,4 @@ labelled **BELIEF** with the failure mode pre-registered — and then the verifi
 **before it cost a drive.** *"I'm not sure, here's what I'd need to verify"* is the preferred output;
 this is what it looks like when the check comes back negative. **Do not ship a lever whose sign
 rests on an unverified chain when the chain is decompilable in one tick.**
-
-## ✅✅✅ **V190 — A WHOLE FEEDBACK PATH THE ARC HAS NEVER TOUCHED, AND IT PEAKS AT CREEP**
-Tracing the second acceleration EMA found a complete path nobody here has ever looked at:
-```
-   FUN_00041464   gp-0x6c2e = EMA(rate derivative) >> 9        the 2nd accel channel (cal 0xC40DA)
-   FUN_00036f30   L = LERP(0xC68EA/0xC68F2, speed)
-                  gp-0x6bc2 = clamp(((L*a)>>6) * sign(gp-0x6752) * gp-0x69be >> 6, +-gp-0x6bc0)
-   FUN_00037fe6   gp-0x6ad6 = clamp((SUM + gp-0x6bc2*cal(0xC64AE) + ...) * LERP >> 10, +-25600)
-                              ^ gp-0x6ad6 is the TORQUE-TRACKING REFERENCE
-```
-🛑 **AND THE RECORD'S DESCRIPTION OF THIS SUM WAS WRONG.** It says *"the six-term Path-2 sum in
-`FUN_00038148`, weights `0xC63A0..0xC63AA`, only w[3] is frequency-selective."* Actually:
-**`FUN_00037fe6` · SEVEN terms · flags at `0xC64AD..0xC64B3`** — and they are **ENABLE FLAGS (0/1),
-not gains**, all reading 1 in stock/V122/V189. (Their siblings `0xC64AB`/`0xC64AC` ship at **0**,
-which is what proves 0 is a supported state.) ⇒ **there are TWO ω²-scaled terms, not one.**
-
-### ✅ WHY THIS IS THE RIGHT SHAPE FOR THE RATCHET
-```
-   omega^2 scaling      acceleration-derived => 66x stronger at 8.2 Hz than at 1 Hz
-   speed weighting      X = [0, 4, 32, 96] km/h   Y = [64, 64, 32, 32]
-                          1 km/h -> 64      24 km/h -> 41      40+ km/h -> 32
-                        ** 2x STRONGER AT CREEP **, and the ratchet is a creep symptom
-   DC contribution      ZERO -- acceleration is 0 in steady state
-```
-✅ **So it costs NO LKAS authority and NO added steering weight** — which is exactly the operator's
-standing constraint: *do not buy the ratchet fix with apparent mass or friction.*
-✅ **V190 = V189 + `0xC64AE` 1→0.** One byte, cal-only, 41/41 assertions.
-`ab75a383fad5c65ad03645daffa8d3a93d15916040b438d3a01275e82196744f`
-
-⚠ **THE SIGN IS BELIEF, NOT EVIDENCE — and this is the honest limit.** `gp-0x6752` is −1 (verified
-3 ways) so `gp-0x6bc2 ≈ −k·a`; following the recorded polarity chain (`gp-0x6ad6` ↓ ⇒ error ↑ ⇒
-**more** assist), positive acceleration → more assist → **positive acceleration feedback = negative
-apparent inertia = destabilising**, so removing it should damp the ratchet. **That chain has five
-links.** EVIDENCE: the term exists, is acceleration-derived, is 2× weighted at creep, flag reads 1.
-BELIEF: the sign. 🛑 **If the sign is inverted the term was providing DAMPING and the ratchet gets
-WORSE** — a one-byte revert to V189 undoes it. That failure mode is pre-registered on the card.
 

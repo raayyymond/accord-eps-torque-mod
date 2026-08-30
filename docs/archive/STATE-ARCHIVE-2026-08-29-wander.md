@@ -3721,3 +3721,39 @@ every address one too low** — inventing a phantom cal `0xC649A` next to the re
 ✅ Caught by cross-checking one address against Ghidra's own decode. **Validate any cal scan by
 requiring a KNOWN cell to appear** — here, the arm `0xC649B` at `0x359FE`.
 
+## ✅✅✅ **V190 — A WHOLE FEEDBACK PATH THE ARC HAS NEVER TOUCHED, AND IT PEAKS AT CREEP**
+Tracing the second acceleration EMA found a complete path nobody here has ever looked at:
+```
+   FUN_00041464   gp-0x6c2e = EMA(rate derivative) >> 9        the 2nd accel channel (cal 0xC40DA)
+   FUN_00036f30   L = LERP(0xC68EA/0xC68F2, speed)
+                  gp-0x6bc2 = clamp(((L*a)>>6) * sign(gp-0x6752) * gp-0x69be >> 6, +-gp-0x6bc0)
+   FUN_00037fe6   gp-0x6ad6 = clamp((SUM + gp-0x6bc2*cal(0xC64AE) + ...) * LERP >> 10, +-25600)
+                              ^ gp-0x6ad6 is the TORQUE-TRACKING REFERENCE
+```
+🛑 **AND THE RECORD'S DESCRIPTION OF THIS SUM WAS WRONG.** It says *"the six-term Path-2 sum in
+`FUN_00038148`, weights `0xC63A0..0xC63AA`, only w[3] is frequency-selective."* Actually:
+**`FUN_00037fe6` · SEVEN terms · flags at `0xC64AD..0xC64B3`** — and they are **ENABLE FLAGS (0/1),
+not gains**, all reading 1 in stock/V122/V189. (Their siblings `0xC64AB`/`0xC64AC` ship at **0**,
+which is what proves 0 is a supported state.) ⇒ **there are TWO ω²-scaled terms, not one.**
+
+### ✅ WHY THIS IS THE RIGHT SHAPE FOR THE RATCHET
+```
+   omega^2 scaling      acceleration-derived => 66x stronger at 8.2 Hz than at 1 Hz
+   speed weighting      X = [0, 4, 32, 96] km/h   Y = [64, 64, 32, 32]
+                          1 km/h -> 64      24 km/h -> 41      40+ km/h -> 32
+                        ** 2x STRONGER AT CREEP **, and the ratchet is a creep symptom
+   DC contribution      ZERO -- acceleration is 0 in steady state
+```
+✅ **So it costs NO LKAS authority and NO added steering weight** — which is exactly the operator's
+standing constraint: *do not buy the ratchet fix with apparent mass or friction.*
+✅ **V190 = V189 + `0xC64AE` 1→0.** One byte, cal-only, 41/41 assertions.
+`ab75a383fad5c65ad03645daffa8d3a93d15916040b438d3a01275e82196744f`
+
+⚠ **THE SIGN IS BELIEF, NOT EVIDENCE — and this is the honest limit.** `gp-0x6752` is −1 (verified
+3 ways) so `gp-0x6bc2 ≈ −k·a`; following the recorded polarity chain (`gp-0x6ad6` ↓ ⇒ error ↑ ⇒
+**more** assist), positive acceleration → more assist → **positive acceleration feedback = negative
+apparent inertia = destabilising**, so removing it should damp the ratchet. **That chain has five
+links.** EVIDENCE: the term exists, is acceleration-derived, is 2× weighted at creep, flag reads 1.
+BELIEF: the sign. 🛑 **If the sign is inverted the term was providing DAMPING and the ratchet gets
+WORSE** — a one-byte revert to V189 undoes it. That failure mode is pre-registered on the card.
+
