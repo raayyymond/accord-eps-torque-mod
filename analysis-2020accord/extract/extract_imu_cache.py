@@ -56,12 +56,16 @@ def route_segments(tag):
 
 def can_cache(tag, s):
     """per-segment cache if present, else the ROUTE-level one -- both carry t0_mono"""
-    base = ROOT / "_scratch" / "cache" / tag
-    for cand in (base / f"{tag}s{s}.npz", base / f"{tag}.npz",
-                 ROOT / f"_cache_{tag}" / f"{tag}s{s}.npz"):
-        if cand.exists():
-            return cand
-    return None
+    # caches live under BOTH kit roots depending on when they were made -- check both, or the
+    # older routes (ra4/ra5/ra6, r95/r96) silently skip with "no CAN cache to take t0 from"
+    roots = [ROOT / "_scratch" / "cache" / tag,
+             ROOT / "analysis-2020accord" / "_scratch" / "cache" / tag]
+    for base in roots:
+        for cand in (base / f"{tag}s{s}.npz", base / f"{tag}.npz"):
+            if cand.exists():
+                return cand
+    cand = ROOT / f"_cache_{tag}" / f"{tag}s{s}.npz"
+    return cand if cand.exists() else None
 
 
 def recover_t0(path):
