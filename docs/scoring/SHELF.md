@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** **⚠ READ THE V214 SECTION FIRST — every other build on this shelf cuts a real 6–9 Hz damper 7.15× below what is on your car, bundled invisibly inside the notch.** Eight flashable builds: **V214 (fly this)** · V213 (same, but with the damper cut) · V212 · V209 · V208 · V210 · V211 · V199.
+**Updated 2026-08-29.** **⚠ FLY V215.** Every other build on this shelf cuts a real 6–9 Hz damper 7.15× below what is on your car, bundled invisibly inside the notch. V215 is the only build whose ENTIRE delta from your car is named and intentional — 23 payload bytes, all levers. V214 is SUPERSEDED (it left mode 27 unpinned).
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,
@@ -13,7 +13,29 @@ name the file and the bus, and they will be read back to you first.
 
 ---
 
-## ⭐ V214 — FLASH THIS ONE. V213 with the 6–9 Hz damper left alone.
+## ⭐ V215 — FLASH THIS ONE. Every delta from your car is a named lever.
+
+```
+39990-TVA,A160-V215-V214BASE-INERTIA.M26.AND.M27.TO.FLOWN.V108-0x13000-0x100000.rwd
+  image afc1d88505d2c55d37d6379f4cab058b9d1926c334c13d4c92761d138c62fbff
+```
+
+V215 = V214 + **mode 27’s inertia row pinned too**. V214 restored only mode 26, resting on the memory that this car (TVCA4) uses modes 24/26. That memory is probably right — the V105→V106 on-car dose-response proves mode **26** is live — but there is **no equivalent evidence that 27 is dead**, and your car carries 27 high as well. RULE 7 says mode-proof or it is a bet, and this kit already lost a whole dose ladder to a mode assumption (V69/V70 wrote mode-10 `gain_B` and were byte-stock). **Six bytes removes the bet.** V214 is superseded.
+
+**Full delta vs YOUR CAR — 23 payload bytes, every one named:**
+
+```
+  0xC60A8/AC/B0/B4   notch 20.50 Hz          <- grinding
+  0xC63AE            1024 -> 512             <- ratchet/stutter
+  0xC6CD0 + clamps   6x -> 8x                <- LKAS authority
+  0x55DF2 / 0x55E10  427 probe -> gp-0x6b4e  <- makes the drive readable
+  0xC63A6            w[3] 1024 -> 512        <- carried from V181
+  0xC40BC / 0xC40D2  knee 600->3000, K1 204->102   <- carried; see note
+  0xD7A5C / 0xD7A6C  inertia = YOUR CAR      <- restored, both modes
+```
+
+⚠ **One large carried delta remains, flagged not changed.** The friction lane sits at **0.10× your car’s** modelled friction (knee 5× higher, K1 halved back to Honda). That is a big reduction — but it is in the direction you have asked for (*“low apparent steering mass and friction to LKAS”*), so it is reported rather than reverted. Say the word and I will pin it too.
+
 
 ```
 39990-TVA,A160-V214-V213BASE-INERTIA.RESTORED.TO.FLOWN.V108-0x13000-0x100000.rwd
