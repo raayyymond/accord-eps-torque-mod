@@ -31,8 +31,8 @@ anything happens.**
 
 ## 🛑 Why there is no 16×
 
-The forward-path clamp must stay **below** the soft-EME floor `0xC674E` = 5120, and the clamp tracks
-the gain exactly as `gain × 512 // 891`:
+The forward-path clamp must stay **below** the soft-EME floor `0xC674E`, and the clamp tracks the gain
+exactly as `gain × 512 // 891`:
 
 ```
    6x -> clamp 3072   OK
@@ -42,12 +42,18 @@ the gain exactly as `gain × 512 // 891`:
   16x -> clamp 8192   EME AUDIT FAILS
 ```
 
-Above ~10× **the command cannot be delivered** — it would be clipped long before the nominal gain was
-reached, and getting there means raising a safety interlock. **I have not touched `0xC674E`, and I
-would not without you telling me to explicitly.** Every build here asserts it frozen at 5120.
+⚠ **One correction to be exact about this.** `0xC674E` is **not** at Honda's value on your car —
+**Honda ships 1024, and your car carries 5120**, raised 5× by an earlier build. So the floor is already
+a modification, not an untouchable factory value.
 
-Even V243's 10× is nominal, not delivered: its clamp is held at 4608 rather than the exact 5120, so
-what actually rises is delivered authority **4096 → 4608**, about 12%.
+**What that changes:** reaching 16× would mean raising it *again*, to above 8192 — eight times Honda's
+number — on an interlock whose job is to bound how much torque the EPS will hold against you. **I have
+left it exactly where your car has it, in all three builds, and I am not going to raise it further on
+my own initiative.** If you want that explored, say so and I will price it properly rather than just
+doing it.
+
+Even V243's 10× is nominal rather than delivered: its clamp is held at 4608 instead of the exact 5120,
+so what actually rises is delivered authority **4096 → 4608, about 12%**.
 
 ---
 
@@ -81,24 +87,24 @@ with no grinding treatment at all. V242 raises it with the best treatment the ki
 
 ---
 
-## What all three carry
+## What V242 changes, relative to YOUR CAR — read from the built image
 
-**V241 against your car: 23 payload bytes.** V242 and V243 add exactly **4 more** (gain + two clamps).
+**27 bytes. Nineteen of payload, eight of recomputed CRC.**
 
 ```
-  0xC60A8/AC/B0/B4   the notch, aimed on the IMU (29.75 / 22.50 / 0.940)   12 B   grinding
-  0xC40DC            alpha2 8 -> 22, Honda's own value                      1 B   restores a damper
-  0x55DF2 / 0x55E10  the biquad-state probe on CAN 427                      3 B   telemetry only
-  0xC63AE            back to Honda's 1024                                   2 B   (in V235)
-  0xC6446            Lever B at V88's measured optimum, 5244                2 B   (in V234)
-  ---- V242/V243 only ----
-  0xC6CD0            the forward LKAS gain                                  2 B
-  0xC61B2 / 0xC61B4  the two tracking clamps                                2 B
+  0xC60A8..B6   the NOTCH, 4 float32, re-aimed on the IMU        12 B   grinding
+  0xC6CD0       THE FORWARD LKAS GAIN   5346 -> 7128 (6x -> 8x)   2 B   torque
+  0xC61B3..B5   the two forward clamps  3072 -> 4096              2 B   tracks the gain
+  0xC40DC       alpha2  8 -> 22, back to Honda's own value        1 B   restores a damper
+  0x55DF2       CAN 427 probe repoint                             2 B   telemetry only
+  0xC4FFC / 0xC6FFC   CRC trailers, recomputed                    8 B
 ```
 
-The notch geometry beats V235's by **28%** on the measured objective, survives **leave-one-route-out on
-all ten routes**, and wins under **five of six** objective weightings. It also cuts *less* of the band
-the lane damps in than V235 did — V235 was slightly below Honda's own floor there.
+**V241 is the same list minus the gain and clamps** (23 bytes). **V243 is V242 with only those four
+bytes different again** (gain 8910, clamps 4608).
+
+Unchanged from your car, and asserted so in every build: **`0xC674E` = 5120** (the soft-EME floor) and
+**`0xC407E` = 511** (the hard-fault interlock).
 
 ---
 
