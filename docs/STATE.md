@@ -46,6 +46,30 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V236 BUILT — THE RATCHET LEVER WAS FOUND, GATED AND BUILT AS V168 LAST YEAR, THEN SILENTLY LOST IN THE REBASE CHAIN. SAME FAILURE AS LEVER B.**
+>
+> ```
+>   0xC6384 (base power-assist map SLOPE CAP):
+>     stock 2048 · car 2048 · V158 2048 · V222 2048 · V231 2048 · V235 2048
+>     V168  1536   <- the ONLY build ever to carry it, and it never flew
+>
+>   image 509785673468a346ac366dfb2fb8e491231f49a4e440e22ef9ce4fe39602d862
+>   rwd   25646ed45da588e05f2386e79239e47bad9da0ea26dfacaea8727af74e66d8f7
+>   30/30 assertions · TWO payload bytes on V235
+> ```
+>
+> **The case, from `HANDOFF-2026-08-29-the-ratchet-is-the-assist-map.md`, which did the work:** the ratchet is **in TORQUE, not wheel rate** (`tq 7.62 · cs_tq 7.42 · cs_rate 1.03 = CHANCE`); **engagement CREATES it** (engaged 7/7, manual 0/7, speed-matched **19.9× [4.82, 35.64]**); **nothing has moved it** (ρ −0.14, p 0.787 post-V102; pinned at 8.64 Hz ± 7.4 %) while the **grind falls ρ −0.94 (p 0.005)** ⇒ the symptoms dissociate. `gp-0x6b86` is the largest torque-fed term, **5.8–7.8× the entire PID**, and its slope cap pins small-signal gain at exactly 2.000.
+> ```
+>   cap    s       |L|     |1-P.L|   Q ratio   vs stock
+>   2048   2.000   2.825   0.0700    14.29     stock -- the car
+>   1536   1.500   2.325   0.2346     4.26     3.4x MORE DAMPED   <- V236
+> ```
+> ✅ **MAGNITUDE and PHASE both pass** — the term is a REAL GAIN, so lowering the cap scales |L| without rotating it: **monotone, no reversal at any value.** That is the property every notch geometry lacked.
+> ✅ **IT CANNOT TOUCH LKAS, re-verified on V235:** `0xC616C` = 0 ⇒ a clamp with limit 0 annihilates its input ⇒ `gp-0x6b4a ≡ 0` ⇒ the map is fed by the **driver torque sensor alone**.
+> 🛑 **THE COST COLLIDES WITH A STANDING OPERATOR DIRECTIVE, and that is his call not mine.** The cap pins SMALL-SIGNAL gain, so 2048→1536 cuts the capped slope 25 % over X 0–100 — **felt as more effort at small inputs.** His instruction: *“Increasing mass and friction should not be our primary approach… We want both.”* This is the only gated ratchet lever the kit has ever produced, and it does the thing he asked to avoid. ⊕ **It does NOT cost angular velocity or acceleration** — the cap is on the map's slope, not a rate or authority limit, and 0 of 15 command/authority cells move.
+> ➕ **THE ASSUMPTION ONLY A DRIVE CAN CLOSE:** `P·L` real-positive. The handoff says so — *“closes on the V168 drive itself; an unchanged excess falsifies it.”*
+> 🛑 **AND IT CORRECTS MY OWN WORK TODAY:** my all-lanes scan scored `cos(phase vs cs_rate)`, and **`cs_rate` is at CHANCE for the ratchet (1.03)**. So *“every lane damps at 6–9 Hz”* is about generic 6–9 Hz motion, **not about the ratchet**. The conclusion that no lane is the ratchet's linear source does not follow from it, and the ratchet-band scan should be redone in **torque**.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE COULOMB RELAY IS ALREADY LARGELY DE-RELAYED ON THE CAR, AND THE RATCHET PERSISTED THROUGH A 4.6× REDUCTION IN ITS DUTY. NO BUILD WAS NEEDED TO FIND THIS.**
 >
 > Decompiling `FUN_0003b8f6` gives the relay explicitly:

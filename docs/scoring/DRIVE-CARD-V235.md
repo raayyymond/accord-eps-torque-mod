@@ -24,6 +24,39 @@ overrides it.
 
 ---
 
+## 🛑 V236 EXISTS NOW, AND IT IS THE FIRST BUILD AIMED AT BOTH SYMPTOMS
+
+```
+  V236   39990-TVA,A160-V236-V235BASE-ASSISTMAP.SLOPECAP.1536.RATCHET-0x13000-0x100000.rwd
+         rwd 25646ed45da588e0...     image 509785673468a346...
+       = V235 + ONE cell: 0xC6384  2048 -> 1536
+```
+
+I found a ratchet lever that was worked out, gated and built as **V168 last year — and never flown.**
+Every build since reverted the cell, including all of mine. That is the same silent loss that put
+Lever B 2.5× off its optimum.
+
+The work behind it: the ratchet is **in torque, not wheel rate**; **engagement creates it** (19.9×
+speed-matched, engaged 7/7 vs manual 0/7); **nothing in thirty builds has moved it** while the grind
+fell steadily — so the two symptoms are different problems. The base power-assist map is the largest
+torque-fed term, 5.8–7.8× the entire PID, and its slope cap holds the small-signal gain at exactly
+2.000. Lowering it to 1.500 predicts **3.4× more damping**, and because the term is a real gain the
+change is **monotone with no reversal at any value** — the property the notch work never had. It
+**cannot touch LKAS**: the clamp feeding it is 0 on all 161 images, so the map sees only your torque
+sensor.
+
+⚠ **It does the thing you told me not to do.** The cap sets small-signal gain, so this is **25 % less
+assist at small steering inputs — more effort.** Your standing instruction is *"Increasing mass and
+friction should not be our primary approach to resolving the ratcheting… We want both."* This is the
+only gated ratchet lever this kit has ever produced, and it costs exactly that. **It does not cost
+angular velocity or acceleration** — no rate or authority cell moves — but it will feel heavier at
+small inputs, and whether that trade is acceptable is yours to decide, not mine to bury.
+
+**V235 remains the no-added-effort option.** V236 is V235 plus that one cell, so the pair also isolates
+it exactly.
+
+---
+
 ## What V235 is: your car, plus three things
 
 **15 payload bytes.** Every other cell is byte-identical to what you drive today — verified by diffing

@@ -61,6 +61,7 @@ SHELF = {
     'v233': '399424fd8b03266950ed07d5e47964705c9a87bf2f86c4370c0999179d0ae42a',   # V231 + net-damping optimum, 25 Hz, every gate binding
     'v234': '7adbc68f2b8163c69c6b387171a2fc18938f8f1dce8127abf6cfff9907be42e6',   # V233 + Lever B back to V88's measured optimum 5244
     'v235': 'ad6d485eefb2f6bcc195c062035d5a9dab5fb06dae7f46f68f5ca03a504c18ab',   # V234 + 0xC63AE back to Honda 1024 -- the car + 3 cells
+    'v236': '509785673468a346ac366dfb2fb8e491231f49a4e440e22ef9ce4fe39602d862',   # V235 + the assist-map slope cap: the RATCHET lever
 
 }
 # ARCHIVE: builds whose BUILDER must still reproduce its image, but which are NOT meant to be
