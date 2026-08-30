@@ -50,6 +50,31 @@ speed as Honda's own oscillation response already is. Like V192, this is **not a
 
 ---
 
+## 🛑 What it actually is: a BROADBAND cut, not a targeted ratchet lever
+
+I called this "the largest measured ratchet lever" last tick. Measuring it band by band, that
+oversold it — and the correction matters, because it is **least** effective exactly where your
+symptoms live:
+
+```
+  band              ratio     change     what lives here
+  ratchet  6-9      0.9399     -6.0 %    the ratchet
+  grind    9-15     0.8832    -11.7 %
+  grind   15-22     0.9699     -3.0 %    V62's grinding band
+  pump    22-40     0.8294    -17.1 %    (aliased from 52-71 Hz)
+  ALL      1-50     0.8933    -10.7 %
+```
+
+**It is a rate limiter, so it cuts high frequency generally.** The lane loses 10.7% across the whole
+band, and the ratchet gets 6.0% — *less* than average. The V62 grinding band gets 3.0%, less still.
+
+Two things that stay true: **it never raises any band on any route** (max ratio is 1.000 everywhere),
+and it is still the only cal in the path that does this without taking assist away. But it is a
+broadband reduction in assist-lane high-frequency content, and the honest way to describe how that
+might feel is **slightly duller, not obviously fixed**.
+
+---
+
 ## What it measures
 
 14 routes, the integer-exact firmware mirror driving real torque/speed/angle, Welch band power at 6–9 Hz:

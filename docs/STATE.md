@@ -66,6 +66,23 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐ **V240 IS BROADBAND, NOT RATCHET-SELECTIVE — AND IT IS WEAKEST IN BOTH SYMPTOM BANDS. MY OWN “LARGEST MEASURED RATCHET LEVER” HEADLINE OVERSOLD IT.**
+>
+> Same 14 routes, same machinery, band by band:
+> ```
+>   band              ratio     change    what lives here
+>   ratchet  6-9      0.9399     -6.0 %   the ratchet
+>   grind    9-15     0.8832    -11.7 %
+>   grind   15-22     0.9699     -3.0 %   V62's grinding band
+>   pump    22-40     0.8294    -17.1 %   (ALIASED from 52-71 Hz)
+>   ALL      1-50     0.8933    -10.7 %
+> ```
+> 🛑 **THE LANE LOSES 10.7 % ACROSS THE WHOLE BAND, AND THE RATCHET GETS 6.0 % — LESS THAN AVERAGE.** V62's grinding band gets **3.0 %**, less still. `gp-0x69a0` is a **rate limiter**, so it cuts high frequency generally; there is nothing ratchet-selective about it. **Both of the operator's symptom bands are among its WEAKEST.**
+> ✅ **What stays true:** it never RAISES any band on any route (max ratio 1.000 everywhere), and it is still the only cal in the path that moves the band with `assist p50` at exactly 1.0000.
+> ⚠ **AND A COST THE ASSIST PERCENTILES DO NOT SHOW.** `assist p50 = 1.0000` is an amplitude statistic; a **−10.7 % broadband HF cut in the assist lane** is the kind of change that reads as *duller steering*, not as *nothing*. The card now says so in those words rather than leading with the band number.
+> ⇒ **V240 REMAINS THE LEAD** — it is the only free lever and it does reduce both symptom bands — **but it is not a fix, and the card no longer implies it might be.**
+> ➕ Reader: `rlog-tools/score/v240_band_profile.py`.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **CAL CENSUS BY MEASUREMENT — `gp-0x69a0` IS THE *ONLY* LEVER IN THE WHOLE ASSIST-MAP PATH THAT BUYS DAMPING WITHOUT TAKING ASSIST AWAY.**
 >
 > Every cal the map path reads, perturbed one at a time through the integer-exact mirror on 10 routes, scored on 6–9 Hz band power **and** on delivered assist:

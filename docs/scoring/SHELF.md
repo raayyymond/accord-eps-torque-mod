@@ -12,18 +12,29 @@
   BACK  V122  (your car)
 ```
 
-⭐ **V240 IS THE LARGEST MEASURED RATCHET LEVER THE KIT HAS.** `gp-0x69a0`'s **NORMAL** curve
+⭐ **V240 IS THE ONLY FREE LEVER IN THE ASSIST-MAP PATH** -- but it is **BROADBAND, not
+ratchet-selective**, and it is **weakest in both symptom bands** (see the band profile below). `gp-0x69a0`'s **NORMAL** curve
 `0xC693E = [358,358,461,512]` is **byte-stock on all 161 images** -- V192 tightened the **OSCILLATING**
 curve `0xC691A`, which V192's own card calls *"provably inert in normal driving"*. V240 applies **Honda's
 own 0.600 ratio** to the always-live curve, and **Y[3] lands on 307 = Honda's own oscillating value**.
 
 ```
-  6-9 Hz band   0.9399   -6.0 %   range 0.813..1.000     <- 14 routes, integer-exact mirror + Welch
+  band              ratio     change    what lives here
+  ratchet  6-9      0.9399     -6.0 %   the ratchet
+  grind    9-15     0.8832    -11.7 %
+  grind   15-22     0.9699     -3.0 %   V62's grinding band
+  pump    22-40     0.8294    -17.1 %   (ALIASED from 52-71 Hz)
+  ALL      1-50     0.8933    -10.7 %   <- the lane loses MORE overall than at either symptom
+
   assist p50    1.0000   +0.0 %   ordinary driving UNAFFECTED
   assist p95    0.9469   -5.3 %   only the top of assist demand pays
 
   vs  0xC6906 pole  -3.8 % across its WHOLE range   ·   0xC6384 slope cap  0.0 % (withdrawn)
 ```
+🛑 **It is a RATE LIMITER, so it cuts HF generally -- nothing about it is ratchet-selective, and a
+-10.7 % broadband HF cut in the assist lane is the kind of change that reads as DULLER STEERING.** It
+never RAISES any band on any route (max 1.000 everywhere), and it is still the only free lever, but it
+is **not a fix**.
 
 ✅ **The opposite direction was tested and is wrong:** removing the limiter entirely (gate duty 0.00 %)
 **RAISES** band power 2.8 %.
