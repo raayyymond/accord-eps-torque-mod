@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Five flashable builds: **V209 (fly this)** · V208 (the fix) · V210 (ratchet lever, priced) · **V211 (authority — STAGED, see below)** · V199 (fallback). All five reproduce bit-for-bit from their builders.
+**Updated 2026-08-29.** Six flashable builds: **V212 (fly this)** · V209 (notch + probe, no ratchet lever) · V208 (the notch alone) · V210 (ratchet lever, uninstrumented) · **V211 (authority — STAGED)** · V199 (fallback). All reproduce bit-for-bit from their builders.
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,
@@ -13,7 +13,53 @@ name the file and the bus, and they will be read back to you first.
 
 ---
 
-## ⭐ V209 — FLASH THIS ONE. The re-centred notch, plus the probe.
+## ⭐ V212 — FLASH THIS ONE. Both named symptoms, in one instrumented build.
+
+```
+39990-TVA,A160-V212-V208BASE-C63AE.512-PROBE.GP6B4E-0x13000-0x100000.rwd
+  image dcc1b921e85e56bce56b3c1e69c795194c141dd4486b4f4e8b3755a2a6c2b04a
+  .rwd  1bd255313bee04338c23ac795453bc4eae344e1da102fd6cd77ec83c53055a22
+```
+
+Built 2026-08-29. **V208 base + `0xC63AE` 1024→512 + the V209 probe.** 4 payload bytes, cal-and-probe only, **no cave change** — not the bricking class. 36/36 builder assertions, CRC 50/50, `.rwd` readback byte-identical.
+
+**Why this one and not V209 or V210.** The three symptoms had three separate builds, and only one of them could be read:
+
+| build | notch (grinding) | `0xC63AE` (ratchet) | probe |
+|---|---|---|---|
+| V208 | yes | — | — |
+| V209 | yes | — | yes |
+| V210 | yes | yes | **no** |
+| **V212** | **yes** | **yes** | **yes** |
+
+V210 already carried both levers but **no instrument**, so a partial result would have been uninterpretable — the design failure the iteration doctrine explicitly forbids. V212 is that build with V209’s probe added.
+
+**The two levers do not overlap in frequency**, measured from the built image:
+
+```
+            |H| at 7.8 Hz    |H| at 20.5 Hz
+  stock        0.98290          0.87271
+  V212         0.97953          0.00000
+```
+
+The notch is a null at the grind band and leaves the ratchet band essentially untouched (0.980 vs 0.983), so the `0xC63AE` dose owns 7.8 Hz on its own and the probe separates them. **GATE 2: max|H| = 1.0000 over 0–500 Hz, exactly stock’s bar** — the filter removes loop gain and adds none.
+
+⚠ **Two levers in one build is a deliberate confound**, accepted because they act in different bands and the probe reads them apart. If the drive is ambiguous, V209 (notch only, instrumented) and V210 (notch + cal, blind) are both on the shelf to split it.
+
+⚠ **The `0xC63AE` dose is not a flat 0.5×.** Its describing function ranges 0.47–0.79 over amplitude — see the V210 section below for the table. It lowers gain everywhere, which is the GATE 2 pass, but do not quote “half”.
+
+**Probe decode** — 427 frame, source `gp-0x6b4e`, `sar 5`:
+`x = (raw < 512 ? raw : raw - 1024) * 32`, rails at raw 320/704 (the ±10240 clamp in `FUN_00026c80`).
+`gp-0x6b4e` is the **mode-5 arm of the `0xC4124` router** — value B from slots 2/4/5/9, slot 2 being the live PI lane-2 output — and `FUN_00038148` reads it at `0x3817C` as model lane w[4]. **Confirmed live 2026-08-29**, not a dead cell.
+
+```
+python rlog-tools/score/score_drive.py <tag> V212   # start here -- NAME THE BUILD
+python rlog-tools/probe/decode_v204_observer_lane.py <tag> --v209
+```
+
+---
+
+## V209 — the notch and probe WITHOUT the ratchet lever. The re-centred notch, plus the probe.
 
 ```
 39990-TVA,A160-V209-V208BASE-PROBE-GP6B4E-0x13000-0x100000.rwd

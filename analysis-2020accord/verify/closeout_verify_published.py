@@ -57,6 +57,7 @@ PUB = {
     'v209': '984dfe5590bb8bfedaedca1256008cdd81cf33837acaa54a909463768b47327c',
     'v210': 'ab49ca762b7017de436a7b80d15a7a72fda7e3f862f32c3a9106318018da814b',
     'v211': '70b205589b6f81a9f1e4f039daf8f744a66a1b9865ddbe133b499ef6ce35368e',
+    'v212': 'dcc1b921e85e56bce56b3c1e69c795194c141dd4486b4f4e8b3755a2a6c2b04a',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
