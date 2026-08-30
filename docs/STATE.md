@@ -1,7 +1,7 @@
 # STATE — living current state of the kit
 
 
-> 🚩 **FLIGHT ORDER: V217.** Its entire delta from the CAR (V108) is **19 payload bytes, every one a deliberate lever** — notch 20.50 Hz (grinding) · `0xC63AE` 512 (ratchet) · `0xC6CD0` 6×→8× + clamps (authority) · the 427 probe. Inertia (row **and** lane weight, both modes) and the friction lane now match the car exactly. Predecessors V212–V216 remain as arms; V214 is SUPERSEDED. Shelf: `docs/scoring/SHELF.md`. Drive card: `docs/scoring/DRIVE-CARD-V217.md`.
+> 🚩 **FLIGHT ORDER: V217.** Its entire delta from the CAR (V108) is **19 payload bytes, every one a deliberate lever** — notch 20.50 Hz (grinding) · `0xC63AE` 512 (ratchet) · `0xC6CD0` 6×→8× + clamps (authority) · the 427 probe. Inertia (row **and** lane weight, both modes) and the friction lane now match the car exactly. Predecessors V212–V216 remain as arms; V214 is SUPERSEDED. Shelf: `docs/scoring/SHELF.md`. Drive card: `docs/scoring/DRIVE-CARD-V217.md`. Pre-registered scoring: `docs/scoring/SCORING-V217-preregistered.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-damper-the-shelf-was-cutting.md` — the damper finding, the mixer decode, five self-retractions, and the open-items list with what would close each. Prior: `HANDOFF-2026-08-29-the-assist-map-session.md`.
 ## 🛑🛑⭐⭐⭐ **THE NOTCH SHELF WAS CUTTING A REAL 6–9 Hz DAMPER 7.15× BELOW THE CAR — FOUND 2026-08-29, FIXED IN V214–V217**

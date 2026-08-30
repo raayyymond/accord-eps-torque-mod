@@ -47,6 +47,10 @@ python rlog-tools/probe/decode_v204_observer_lane.py <tag> --v209
 
 ---
 
+📌 **The analysis is PRE-REGISTERED**: `docs/scoring/SCORING-V217-preregistered.md`. Every threshold is fixed before the drive, including the b5 prediction of **0.168 [0.113, 0.255]** — note this is LOWER than earlier shelf builds would have predicted, because restoring the damper raises the inertia dose to 2.384×.
+
+---
+
 ## What each outcome means — and which arm flies next
 
 | what you report | what it means | next build |
