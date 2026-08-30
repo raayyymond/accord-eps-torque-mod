@@ -597,6 +597,44 @@ for _v in sorted(img):
             f'{_v.upper()} passband floor 0-5 Hz = {_lo:.4f} >= 0.99'
             + ('' if _lo >= 0.99 else ' -- THIS BUILD TURNS THE BASE ASSIST DOWN, it does not notch'))
 
+print()
+print("[16] THE CAVE, AND THE LOAD-BEARING LEVERS NO GATE COVERED")
+# Found 2026-08-29 by asking the complementary question to the gate audit: not "does each gate check
+# the right thing" but "which non-stock cells has NO gate at all". V217 differs from stock in 115
+# payload runs; only 16 were referenced anywhere in this file.
+#
+# (a) THE 164-BYTE CODE CAVE. Code caves are this kit's ONLY bricking class -- V24, V27 and V48B all
+#     bricked the ECU. Each builder asserts the cave is byte-identical to ITS OWN base, which is a
+#     chain of local checks: if one link were wrong every later build would inherit it and still
+#     pass. Nothing compared the cave ACROSS the shelf. It is identical on all of them today; this
+#     pins that so a divergence cannot appear silently.
+# (b) FOUR LEVERS WITH ON-CAR RESULTS AND NO ASSERTION. 0x454FE is the case that proves the need:
+#     V42's ratchet fix was SILENTLY LOST at a rebase and sat byte-stock from V53 to V70 before
+#     anyone noticed. A gate would have caught it the same day.
+_CAVE = (0xC4B34, 0xC4BD8)
+_ref = None
+for _v in sorted(img):
+    _c = img[_v][_CAVE[0]:_CAVE[1]]
+    if _ref is None:
+        _ref = _c
+        _rv = _v
+    chk(_c == _ref,
+        f'{_v.upper()} 164-byte cave identical to {_rv.upper()}'
+        + ('' if _c == _ref else ' -- THE CAVE DIVERGED, this is the bricking class'))
+
+_LEVERS = {
+    0x454FE: ('V42 ratchet fix (LOST at a rebase once, byte-stock V53-V70)', 26037, 'H'),
+    0xC6446: ('Lever B -- V88, best measured grind lever in the kit', 5244, 'H'),
+    0x3AA96: ('Lever B arm, V88 sign fix', 0x97FB, 'H'),
+    0xC62EA: ('low-speed steer lockout DISABLED (stock 320 ct ~ 5 km/h)', 0, 'H'),
+}
+for _v in sorted(img):
+    for _a, (_nm, _want, _f) in sorted(_LEVERS.items()):
+        _got = struct.unpack_from('<' + _f, img[_v], _a)[0]
+        chk(_got == _want,
+            f'{_v.upper()} 0x{_a:05X} = {_got} -- {_nm}'
+            + ('' if _got == _want else f' -- EXPECTED {_want}, THIS LEVER HAS MOVED'))
+
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
 for m in bad:

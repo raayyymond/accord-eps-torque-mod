@@ -162,6 +162,25 @@ Four gates were found checking the wrong thing this session, all by the same two
 
 ⇒ **When a gate passes, ask what it would still pass.** Two of these four surfaced only because a build tripped over the consequence; the other two were found by deliberately applying the lenses to gates that were passing quietly. **Apply them to any new gate before trusting it.**
 
+## 4c. 🛑 THE COMPLEMENTARY AUDIT — which non-stock cells had NO gate at all
+
+Having audited the gates that exist, the other question is which cells nothing checks. V217 differs from stock in **115 payload runs; only 16 were referenced anywhere in the close-out.**
+
+**(a) The 164-byte code cave had NO coverage** — and caves are this kit’s **only bricking class** (V24, V27, V48B all bricked the ECU). Each builder asserts the cave equals **its own base**, which is a chain of *local* checks: one bad link and every later build inherits it and still passes. Nothing compared the cave **across** the shelf. It is identical on all nine today; gate `[16]` now pins that.
+
+**(b) Four levers with on-car results had no assertion:**
+
+```
+  0x454FE   V42 ratchet fix       -- SILENTLY LOST at a rebase, byte-stock V53-V70
+  0xC6446   Lever B (V88)         -- best measured grind lever in the kit
+  0x3AA96   Lever B arm (V88)
+  0xC62EA   low-speed steer lockout DISABLED (stock 320 ct ~ 5 km/h)
+```
+
+`0x454FE` is the case that proves the need: it was lost at a rebase and sat byte-stock for eighteen builds before anyone noticed. A gate would have caught it the same day.
+
+⊕ Also checked and found fine: the `0xE4xxx`/`0xE5xxx` taper block (72 identical 15360→16384 edits) is the deliberate authority-curve raise; `0xE51A8` holds a record header (9), not a Y value, so the memory’s wording is consistent — I had read the address as a data cell.
+
 ## 5. Tools and gates added
 
 - `score_drive.py`: a **30–49 Hz control band** on `cs_rate` + both IMU axes, with a 23-route corpus
