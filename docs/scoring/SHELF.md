@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Five flashable builds: **V204 (fly this)** · V202 (fix) · V206 · V205 · V199.
+**Updated 2026-08-29.** Four flashable builds: **V209 (fly this)** · V208 (the fix) · V206 (ratchet lever, priced) · V199 (low-phase fallback).
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,
@@ -13,24 +13,45 @@ name the file and the bus, and they will be read back to you first.
 
 ---
 
-## ⭐ V204 — FLASH THIS ONE. The last unmeasured nonlinearity in the path.
+## ⭐ V209 — FLASH THIS ONE. The re-centred notch, plus the probe.
 
 ```
-39990-TVA,A160-V204-V202BASE-PROBE-GP6B4E-0x13000-0x100000.rwd
-  image 30e7da9f6d20ff1335d01abe86ba03df7245c802217a4e6df54c5b93208873e6
+39990-TVA,A160-V209-V208BASE-PROBE-GP6B4E-0x13000-0x100000.rwd
+  image 984dfe5590bb8bfedaedca1256008cdd81cf33837acaa54a909463768b47327c
 ```
 
-V202 control cells byte-identical, +3 payload bytes putting `gp-0x6b4e` on CAN 427. Preflight 8/8.
+Preflight 8/8, 40/40. V208 control cells byte-identical, +3 payload bytes putting `gp-0x6b4e` on CAN 427.
 
-`0xC63AA` has sat parked since 2026-08-20 as *“the best structural lever, but it needs the dilution
-ratio first.”* Mirroring `FUN_00038148` closed two of its three unknowns and showed the **recorded
-sensitivity is 41× understated** (2.577× `gp-0x6b4c`, not 0.0625× — the record kept a `>>4` but
-dropped the `*0x10` that cancels it). The last unknown is how big `gp-0x6b4e` runs, and this measures
-it. Small ⇒ the lever is dominant and worth sizing; comparable ⇒ it is genuinely diluted and should
-be struck rather than left parked.
+## V208 — the same fix without the instrument
 
-⚠ 41× more potent also means 41× more able to destabilise — `gp-0x6b70` is clamped at ±8192 and
-2.577 × a `gp-0x6b4c` of 4000 already exceeds it. This is a lever to size, not a free one.
+```
+39990-TVA,A160-V208-V202BASE-NOTCH.20.50.REFIT.ON.EPISODES-0x13000-0x100000.rwd
+  image e27b4fcc2dafd872feb25e5625544dbe4f9067a742cec1670d8d3dde176b1f7a
+```
+
+🛑 **The notch was a hertz low.** It was fitted at 19.75 Hz from a per-route median of 20.12. Surveying
+the cached corpus **per engaged episode** — 20 routes, 125 episodes — gives **median 20.70 Hz**
+(p10 16.37, p90 23.05). Scoring the actual peaks through each candidate, under the same two gates:
+
+| design | Δphase | median atten | p10 |
+|---|---|---|---|
+| V202 (19.75 / 15.25 / 0.9600) | −7.83° | 5.7× | 2.3× |
+| **V208 (20.50 / 15.50 / 0.9575)** | −7.98° | **9.5×** | 2.0× |
+
+**1.66× at the median for the same gate and budget** — and only −0.11° more lag at 3 Hz than V202, so
+very nearly free. ⚠ 20 routes here vs 67 in the original fit, so the 0.58 Hz gap could be sampling;
+what is not sample-dependent is that 19.75 sits below **both** medians.
+
+## After the drive, one command
+
+```
+python rlog-tools/score/score_drive.py <route-tag>
+```
+
+Exposure and episode count first, then the free cave rungs (degenerate readings flagged as
+**uninterpretable, not null**), the b3 validity gate, b6 against measured-dead, **b5 against its
+pre-registered 0.31–0.49**, the 427 channel, and the grind peak **stratified by this drive’s own
+episodes**. It refuses to apply the b5 prediction to a non-shelf route.
 
 ## V205 — DEMOTED. Its question was answered from cache on 2026-08-29.
 

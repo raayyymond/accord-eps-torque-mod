@@ -53,6 +53,8 @@ PUB = {
     'v205': '8cf100864be1d6030eed36acac1d514066b157a59de8ca829ae154ce7032882e',
     'v206': '71bd8312c324de9c01cf277307e41bb6dbb5e49cc6cf72e02e597a8013333a80',
     'v207': '8de7180ec4daeb459be994d180321b235a5c79ade9050eff015e83b0f537067c',
+    'v208': 'e27b4fcc2dafd872feb25e5625544dbe4f9067a742cec1670d8d3dde176b1f7a',
+    'v209': '984dfe5590bb8bfedaedca1256008cdd81cf33837acaa54a909463768b47327c',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -201,19 +203,31 @@ if 'v206' in img and 'v202' in img:
         == struct.unpack_from('<H', img['v202'], 0x55DF2)[0],
         'V206 leaves the 427 probe alone -- it is a lever, not an instrument')
 
+if 'v208' in img and 'v202' in img:
+    import math as _m3
+    a1, a2, b1, _g = (struct.unpack_from('<f', img['v208'], a)[0]
+                      for a in (0xC60A8, 0xC60AC, 0xC60B0, 0xC60B4))
+    fz = _m3.degrees(_m3.acos(-b1 / 2)) / 360 * 1000
+    fp = _m3.degrees(_m3.acos(-a1 / (2 * _m3.sqrt(a2)))) / 360 * 1000
+    chk(abs(fz - 20.50) < 0.02, f'V208 zeros re-centred to {fz:.2f} Hz (was 19.75)')
+    chk(fp < fz - 1.0, f'V208 poles at {fp:.2f} Hz -- still BELOW the zeros')
+    chk(struct.unpack_from('<I', img['v208'], 0xD7A5C)[0]
+        == struct.unpack_from('<I', img['v202'], 0xD7A5C)[0],
+        'V208 carries V202s engaged inertia half-dose unchanged')
+
 # ---- 3. superseded artifacts ------------------------------------------------------------
 print('\n[3] SUPERSEDED ARTIFACTS ARE RENAMED')
 live = [os.path.basename(x) for x in glob.glob(RWD + '/39990*-V199-*.rwd')
-        + glob.glob(RWD + '/39990*-V202-*.rwd')
-        + glob.glob(RWD + '/39990*-V204-*.rwd')
-        + glob.glob(RWD + '/39990*-V205-*.rwd')
+        + glob.glob(RWD + '/39990*-V208-*.rwd')
+        + glob.glob(RWD + '/39990*-V209-*.rwd')
         + glob.glob(RWD + '/39990*-V206-*.rwd')
 ]
-chk(len(live) == 5, f'exactly 5 flashable builds from this chain ({len(live)})')
+chk(len(live) == 4, f'exactly 4 flashable builds from this chain ({len(live)})')
 # V194/V195/V196/V198 were PULLED: every one carries a notch whose poles sit at the zeros, scoring
 # max|H| 1.3533-1.7177 against the lineage bar of stock 1.0000.  They must not be flashable.
 for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193',
-          'V194', 'V195', 'V196', 'V197', 'V198', 'V200', 'V201', 'V203', 'V207'):
+          'V194', 'V195', 'V196', 'V197', 'V198', 'V200', 'V201', 'V203', 'V207',
+          'V202', 'V204', 'V205'):
     n = len(glob.glob(RWD + f'/39990*-{v}-*.rwd'))
     if n:
         chk(False, f'{v} is still flashable ({n} unmarked file)')

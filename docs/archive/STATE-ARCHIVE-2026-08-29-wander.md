@@ -3687,3 +3687,37 @@ stops instantly.
 things that remain engaged-only are **the LKAS command** and **this biquad** — which on V189 is the
 grind notch.
 
+## ❌ **NEGATIVE RESULT, RECORDED SO IT IS NEVER REPEATED: THERE IS NO SECOND DORMANT FILTER**
+Hunted every dormant Honda feature with the gate signature the biquad uses — a **tp-relative CAL BYTE
+that reads 0 in stock** and is compared against a constant. **48 such cals exist.** Every one that
+touches the steering path was resolved by decompile:
+```
+   0xC649B                the BIQUAD ARM        -- already used (V103)
+   0xC64AB / 0xC64AC      MUTE switches (cal==0 ENABLES the term) in the gp-0x67ac==1 aggregator
+                          branch, gating the RETURN-CENTRE/DETENT term -- which the record already
+                          measured DEAD ENGAGED (0.0000 over 75,227 frames).  Useless to us.
+   0xC40EB..0xC40EE       DIAGNOSTIC SENSOR OVERRIDES, one per channel:
+                            if (magic == 0x49d6b173 && cal == 0xE9)
+                                gp-0x6abc = base + value*cal(0xC6134)/1000;   // synthetic
+                            else gp-0x6abc = real sensor;
+                          Honda's factory injection path for gp-0x6abc/6abe/6ac0/6ac2.
+                          NOT a filter, and not something to arm on a moving car.
+```
+⇒ **ONE biquad, ONE notch. The V188/V189 allocation decision is FINAL, not provisional.**
+
+✅ **BONUS — the delivery path is now decompile-confirmed end to end:**
+`FUN_00041464` (sensors, and `gp-0x6c2c = EMA(accel) >> 9` with the EMA coefficient at **`tp+0x50DC`
+= `0xC40DC`, exactly the cell V179 moved**) → `FUN_000352b4` (boost + the biquad) → **`gp-0x6b86`**
+→ `FUN_0003aa2c` aggregator sum (clamped ±12288) → `gp-0x6b94` → governor → motor.
+⊕ **So the notch's output really does reach the motor** — V188/V189's premise is verified, not assumed.
+⊕ A **second, parallel EMA** on the same acceleration input exists: `>>7` with coefficient
+`tp+0x50DA` = **`0xC40DA`** → `gp-0x6c2e`. Unexplored.
+
+🛑 **METHOD TRAP HIT AND FIXED IN THE SAME TICK — the recorded V850 odd/even displacement bug.**
+`ld.bu disp16[tp]` has **two** opcode fields: bits5-10 == **0x3D ⇒ displacement ODD**
+(`disp = (hw2 & 0xFFFE) | 1`), **0x3C ⇒ EVEN** (`disp = hw2 & 0xFFFE`). My first scan filtered on
+0x3D alone and then computed the displacement as even, so it **caught only the odd half AND reported
+every address one too low** — inventing a phantom cal `0xC649A` next to the real arm `0xC649B`.
+✅ Caught by cross-checking one address against Ghidra's own decode. **Validate any cal scan by
+requiring a KNOWN cell to appear** — here, the arm `0xC649B` at `0x359FE`.
+

@@ -4,6 +4,54 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅⭐⭐ **THE NOTCH WAS 1 Hz LOW — re-centred on the peaks the car ACTUALLY makes, 1.66× for free**
+
+Building a single post-drive scorer (`rlog-tools/score/score_drive.py`, which the kit did not have —
+~40 tools and nothing saying which to run) meant surveying the grind peak per engaged episode. That
+survey moved the notch.
+
+### 🛑 **THE FITTED CENTRE AND THE MEASURED PEAKS DISAGREE**
+V195 fitted 19.75 Hz from a **per-route** distribution it recorded as median 20.12 Hz. Surveying the
+cached corpus **per engaged EPISODE** — 20 routes, **125 episodes**, Welch on `cs_rate` over 15–25 Hz:
+```
+   p10 16.37     median ** 20.70 **     p90 23.05
+```
+The notch is narrow enough that 1 Hz is expensive. Scoring the **actual episode peaks** through each
+candidate, under V202's own two constraints (`max|H| ≤ 1.0`, `|Δphase@5Hz| ≤ 8°`):
+```
+   design                                      dphase   median atten   p10 atten
+   V202  zeros 19.75  poles 15.25  r 0.9600    -7.83        5.7x         2.3x
+   V208  zeros 20.50  poles 15.50  r 0.9575    -7.98     ** 9.5x **      2.0x
+```
+⇒ **1.66× more attenuation at the median for the same gate and the same phase budget.** Measured
+against V202 directly, the added lag is **−0.11° at 3 Hz** — it is very nearly free.
+⚠ The p10 tail gives up 13 % (2.3× → 2.0×). A point fix earns its keep at the median, and the tail is
+where one biquad was never going to help — the minimax settled that.
+
+### ⚠ **HONEST LIMIT: 20 routes here, 67 in V195's fit**
+The gap between the two medians (20.12 vs 20.70) could be sampling. **What is not sample-dependent:
+at whatever the true median is, the notch should sit on it, and 19.75 is below BOTH estimates.** The
+re-centre moves toward both.
+
+### ✅ **V208 = V202 with the notch at 20.50 Hz.** 31/31, `max|H|` 1.000000, depth 0.00000 at 20.50.
+`e27b4fcc2dafd872…` · poles stay **below** the zeros (Honda's layout), cave byte-identical, 12 payload
+bytes. **V209 = V208 + the `gp-0x6b4e` probe**, 40/40, preflight 8/8, `984dfe5590bb8bfe…`.
+
+### ✅ **AND THE KIT NOW HAS A ONE-COMMAND DRIVE SCORER**
+`python rlog-tools/score/score_drive.py <tag>` reports exposure and episode count first, then the free
+cave rungs with **degenerate readings flagged as uninterpretable rather than null**, the b3
+run-validity gate, b6 against its measured-dead expectation, **b5 against its pre-registered range**,
+the 427 channel (pointing at the matching decoder rather than guessing the scale), and the grind peak
+**stratified by the drive's own episodes**. 🛑 It **refuses to apply the b5 prediction to a route that
+is not a shelf build** — caught on its first run against route `a5`, where it would otherwise have
+announced a false "the lever is not reaching the car".
+
+### 🛑 **SHELF CONSOLIDATED TO FOUR**
+**V209 (fly this) · V208 (the fix) · V206 (ratchet lever, priced) · V199 (low-phase fallback).**
+V202, V204 and V205 renamed `SUPERSEDED-DO-NOT-FLASH-DOMINATED-…`.
+⚠ **V206 still carries V202's 19.75 Hz notch.** It is a lever on a different question, so it is left
+as built — but if it is ever flown after V208 confirms, **rebuild it on the V208 base first.**
+
 ## ✅ **THE SAME METHOD DOES *NOT* RETIRE V204 — and the reason is structural, not a shortfall of effort**
 
 V207 died because its producer had an explicit cap: `min(·, LERP2(angle))` with `max(LERP2 Y) = 2560`.
@@ -2209,38 +2257,4 @@ apparent inertia = destabilising**, so removing it should damp the ratchet. **Th
 links.** EVIDENCE: the term exists, is acceleration-derived, is 2× weighted at creep, flag reads 1.
 BELIEF: the sign. 🛑 **If the sign is inverted the term was providing DAMPING and the ratchet gets
 WORSE** — a one-byte revert to V189 undoes it. That failure mode is pre-registered on the card.
-
-## ❌ **NEGATIVE RESULT, RECORDED SO IT IS NEVER REPEATED: THERE IS NO SECOND DORMANT FILTER**
-Hunted every dormant Honda feature with the gate signature the biquad uses — a **tp-relative CAL BYTE
-that reads 0 in stock** and is compared against a constant. **48 such cals exist.** Every one that
-touches the steering path was resolved by decompile:
-```
-   0xC649B                the BIQUAD ARM        -- already used (V103)
-   0xC64AB / 0xC64AC      MUTE switches (cal==0 ENABLES the term) in the gp-0x67ac==1 aggregator
-                          branch, gating the RETURN-CENTRE/DETENT term -- which the record already
-                          measured DEAD ENGAGED (0.0000 over 75,227 frames).  Useless to us.
-   0xC40EB..0xC40EE       DIAGNOSTIC SENSOR OVERRIDES, one per channel:
-                            if (magic == 0x49d6b173 && cal == 0xE9)
-                                gp-0x6abc = base + value*cal(0xC6134)/1000;   // synthetic
-                            else gp-0x6abc = real sensor;
-                          Honda's factory injection path for gp-0x6abc/6abe/6ac0/6ac2.
-                          NOT a filter, and not something to arm on a moving car.
-```
-⇒ **ONE biquad, ONE notch. The V188/V189 allocation decision is FINAL, not provisional.**
-
-✅ **BONUS — the delivery path is now decompile-confirmed end to end:**
-`FUN_00041464` (sensors, and `gp-0x6c2c = EMA(accel) >> 9` with the EMA coefficient at **`tp+0x50DC`
-= `0xC40DC`, exactly the cell V179 moved**) → `FUN_000352b4` (boost + the biquad) → **`gp-0x6b86`**
-→ `FUN_0003aa2c` aggregator sum (clamped ±12288) → `gp-0x6b94` → governor → motor.
-⊕ **So the notch's output really does reach the motor** — V188/V189's premise is verified, not assumed.
-⊕ A **second, parallel EMA** on the same acceleration input exists: `>>7` with coefficient
-`tp+0x50DA` = **`0xC40DA`** → `gp-0x6c2e`. Unexplored.
-
-🛑 **METHOD TRAP HIT AND FIXED IN THE SAME TICK — the recorded V850 odd/even displacement bug.**
-`ld.bu disp16[tp]` has **two** opcode fields: bits5-10 == **0x3D ⇒ displacement ODD**
-(`disp = (hw2 & 0xFFFE) | 1`), **0x3C ⇒ EVEN** (`disp = hw2 & 0xFFFE`). My first scan filtered on
-0x3D alone and then computed the displacement as even, so it **caught only the odd half AND reported
-every address one too low** — inventing a phantom cal `0xC649A` next to the real arm `0xC649B`.
-✅ Caught by cross-checking one address against Ghidra's own decode. **Validate any cal scan by
-requiring a KNOWN cell to appear** — here, the arm `0xC649B` at `0x359FE`.
 
