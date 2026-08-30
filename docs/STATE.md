@@ -105,6 +105,29 @@ removing it entirely would buy back **~23 %**. **Real, quantified, and modest �
 terms, the signature of a convention flip rather than a physics disagreement.
 Study: `analysis-2020accord/studies/mixer/lane_work_factors_who_pumps_the_ratchet.py`.
 
+> ⭐⭐ **r24 IS AT 94 % OF A STRUCTURAL PHASE CEILING IT CANNOT PASS — and the span cal is NOT a new
+lever.** Two closures, both structural rather than empirical. ⊕ **First, a consistency check that
+lands**: the measured torque phase reproduces the kit’s central symptom independently —
+`Re(Z) ∝ cos(−120.7°) = −0.51 < 0`, the anti-damping replicated on three drives, now from a
+convention pinned by a constructed +90° lead rather than assumed.
+**CLOSURE 1 — the phase is capped by the SHAPE of a finite difference.**
+`arg(1 − e^{−jωN·dt}) = 90° − ωN·dt/2 ≤ +90°` for **any** N > 0. So
+`r24 phase ≤ −120.7 + 90 + 180 = +149.3°`, and **180° — a pure damper — is unreachable**. The work
+factor is capped at **0.860**; the shipped N = 4 already delivers **0.806 = 94 % of that ceiling**.
+⇒ **≥ 14 % of r24’s output is REACTIVE at the ratchet under ANY calibration**, and rotating it further
+would need **more than 90° of lead** — a second derivative or a lead-lag. **No such cal exists on this
+lane.** ✅ This is a fixed efficiency, not a diminishing return, so **damping still scales LINEARLY with
+Lever B** — it supports V222/V223 rather than limiting them.
+**CLOSURE 2 — `0xC6C42` (the span N, never moved in 219 images) is a redundant GAIN knob with a cliff.**
+Across the whole usable range N = 1..7 the **phase moves only 8.4° while the magnitude moves 7.0×** —
+**91 % magnitude, 9 % phase**. N = 7 buys **1.65×** the damping of N = 4, but that is pure magnitude,
+which is Lever B’s job. And it is the **worse** way to buy it: 🛑 **N = 8 SILENTLY ZEROES the lane,
+killing r24 AND r26 together** — so the in-range optimum sits **ONE STEP** from a double kill-switch
+with no fault, no DTC and no symptom beyond losing the kit’s best lever; N is **shared with r26**, a
+strictly wider blast radius; and Lever B has **12.5× headroom** bounded only by the ±8192 rail with no
+dangerous neighbour. ⇒ **do NOT propose `0xC6C42`.** This block exists so it is not re-proposed.
+Study: `analysis-2020accord/studies/mixer/r24_phase_is_structurally_capped.py`.
+
 > 🛑 **RECORD DEFECT FIXED — `r95` is V101, not V102, and the correction had been made in only HALF
 the files.** `r95` flew **V101 = 8× (`0xC6CD0` 7128) with Lever B REMOVED** (`GAIN8X.C6CD0.7128-NOLEVERB`);
 `r95_v102_prereg.py` is the pre-registration **FOR** V102 **MEASURED ON** r95=V101, and its own docstring
