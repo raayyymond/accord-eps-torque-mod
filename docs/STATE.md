@@ -66,6 +66,24 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **A SECOND, INDEPENDENT PROBLEM WITH THE 6–15 Hz RULE: ITS THREE “AGREEING” ROUTES DO NOT SHARE A FILTER IN THE BAND IT JUDGES.**
+>
+> Trying to settle the rule **without new firmware**: the biquad sits IN this lane, so if builds differ in how much they cut 6–15 Hz, the aggregate `Re(Z)` there should move with the cut — cutting a damper makes the anti-damping worse. That screen came back **null** (pearson +0.144 p 0.53, spearman −0.063 p 0.79) — **but the reason is what matters: there is no contrast.** 18 of 21 builds have the biquad **UNARMED** (`0xC649B` = 0), so their cut is identically zero.
+> ⭐ **AND THE ONE OUTLIER IS THE FINDING.** Read from the images:
+> ```
+>   build   armed     max|H|    mean 6-15   mean 22-30
+>   V104      yes     1.8499       1.7878       1.4503   *** ABOVE THE 1.0000 BAR ***
+>   V105      yes     1.0000       0.9577       0.1968
+>   V106      yes     1.0000       0.9577       0.1968
+>   V235      yes     1.0000       0.9662       0.2771
+>   V241      yes     1.0000       0.9811       0.2846
+> ```
+> 🛑 **[EVIDENCE] THE PUMP/DAMP TABLE WAS MEASURED ON ra4/ra5/ra6 — AND ra4's BUILD AMPLIFIES 1.79× AT 6–15 Hz WHILE ra5/ra6 CUT 4 %.** That is a **1.87× difference in the lane's own transfer**, in the exact band whose sign the table claims, between three routes that were pooled as if they agreed. **They are not poolable there.**
+> ⊕ **And V104 flew carrying `max|H|` = 1.8499 — worse than V194/V195/V196/V198, which were later PULLED for 1.3533–1.7177.** The amplification bar was introduced after V104, so it never applied to it. Worth knowing: a filter the lineage would now reject has already been on the car.
+> ⇒ **THE RULE NOW RESTS ON MUCH LESS THAN THE RECORD TREATS IT AS RESTING ON — two independent defects:** (1) measured on `mag427`, which the frame builder **clamps to [0, 0x3ff]** so its phase carries no reliable sign; (2) pooled across three routes whose in-band filters differ by 1.87×.
+> ⚠ **NEITHER REFUTES IT.** The lane may still damp at 6–15 Hz. What has changed is the weight the rule can bear: it is currently the only thing blocking the band the torque spectrum says matters, and it is **weakly founded on both axes**. **Still not built on** — settling it needs the sign, and that needs a cave or a clamp change, which is the operator's call.
+> ➕ Reader: `rlog-tools/score/notch_cut_vs_rez_across_builds.py`.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE 427 SIGN IS KILLED BY THE FIRMWARE, NOT THE DECODER — AND A SIGN PROBE IS NOT A CHEAP IN-PLACE EDIT. The 6–15 Hz rule cannot be settled without a cave or a clamp change.**
 >
 > The open thread was: the rule forbidding a 6–10 Hz notch — the one band the torque spectrum says matters — may rest on a rectified channel, and settling it needs `gp-0x6b86`'s SIGN on CAN. `FUN_00055d80` is the 0x1AB (427) frame builder, and it decides the question:
