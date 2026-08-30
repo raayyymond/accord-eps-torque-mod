@@ -28,7 +28,7 @@ contributing +180:
 CLOSURE 2 -- THE SPAN CAL IS A REDUNDANT GAIN KNOB WITH A CLIFF, NOT A PHASE LEVER.
 
 Across the entire usable range N = 1..7 the phase moves only 147.9 -> 139.5 deg, 8.4 deg total, while
-the magnitude moves 0.049 -> 0.341, a factor of 7. So the span cal is 98 % magnitude and 2 % phase: it
+the magnitude moves 0.049 -> 0.341, a factor of 7. So the span cal is 91 % magnitude and 9 % phase: it
 does the same job as Lever B (0xC6446) and nothing Lever B cannot do.
 
     N   |H|      phase      work    damping counts (at V222's cal, median |T|)
