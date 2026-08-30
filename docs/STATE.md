@@ -66,6 +66,29 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ✅⭐⭐⭐⭐⭐ **THE RATCHET IS REAL MOTION — CONFIRMED ON A SENSOR PHYSICALLY INDEPENDENT OF THE EPS, FOR THE FIRST TIME IN THIS KIT.**
+>
+> Every prior ratchet finding came off the EPS's own CAN channels, so all of them shared one failure mode: an artefact of EPS signal processing, a decode error, or torsion-bar scaling. The comma's LSM6DS3TR-C shares none of that. Pooled per route across segments, **speed-matched**, with a **road control** on vertical acceleration:
+> ```
+>   route  segs  eng s  man s   f0 Hz  gyro exc  road ctl  ratio
+>   r66      15  101.8  158.2    6.71     3.350     2.955  1.133
+>   r70       4   82.9   86.7    9.08     1.737     1.524  1.140
+>   r73      11   57.2   83.7    7.30     4.723     1.904  2.481
+>   r5d      17   64.4   55.1    8.09     4.315     1.470  2.935
+>   r6e       7   50.2   60.3    9.08     5.102     3.371  1.514
+>   r31       4   38.5   70.5    9.47     1.737     1.585  1.096
+>   r37      15   59.1   40.5    7.50     3.220     2.755  1.169
+>   r3b      14   48.1   45.6    6.71     8.017     2.793  2.870
+>   r5e       7   38.7   43.0    7.10     4.118     2.630  1.566
+>   r3a       7   40.3   31.9    9.08     4.606     5.158  0.893
+> ```
+> ✅ **[EVIDENCE] 9 of 10 routes positive · sign test p 0.0215 · Wilcoxon p 0.0195 · median ratio 1.341, bootstrap 95 % CI [1.118, 2.481] — the CI excludes 1.**
+> 🛑 **AND I NEARLY RECORDED THE OPPOSITE.** Read by eye, the two highest-exposure routes (r66, r70) give the two lowest ratios — which looks exactly like the noise signature, a well-powered arm regressing to nothing. **Tested rather than eyeballed, that pattern is not there:** ratio vs exposure is **null** (pearson −0.078 p 0.83, spearman +0.297 p 0.40), and the **top-half-exposure routes give the HIGHER median ratio (1.513 vs 1.169)**. The apparent trend was two points out of ten, and it was one edit away from going into the record as *“the ratchet does not reach the chassis”* — the opposite of what the data says.
+> ⭐ **WHAT IT ESTABLISHES:** the ratchet produces **real chassis motion**, engagement-gated, at 6.7–9.5 Hz, above what road input explains. **Every CAN-side ratchet finding now has an independent corroboration it has never had.**
+> ⚠ **WHAT IT DOES NOT:** the effect is **modest (1.34×)**, `f0` scatters across 6.71–9.47 Hz so this is a **band, not a sharp line**, and n = 10 routes. It does **not** settle resonance vs stick-slip, and the IMU on the windscreen bounds **motion**, not torque.
+> ⊕ **Two more stale-path defects fixed to get here**, from the same 2026-08-26 reorg as last tick's: the IMU extractor carried a **hardcoded 6-route dict** that rejected every other route with a bare `KeyError` — including **every route holding the speed-matched exposure** — and read caches from the pre-reorg `_cache_{tag}/` path. It now globs the rlogs like its sibling and reads `_scratch/cache/{tag}/`. **225 IMU caches now exist, up from 109.**
+> ➕ Reader: `rlog-tools/score/ratchet_in_the_imu_pooled.py`.
+
 > ⚠⭐⭐⭐⭐ **THE IMU TEST IS UNDERPOWERED, NOT DECISIVE — BUT SPEED MATCHING IS VALIDATED, AND THE CORPUS'S ENGAGED/MANUAL CONFOUND IS NOW QUANTIFIED.**
 >
 > The comma's LSM6DS3TR-C is **physically independent of the EPS**, so it is the one instrument whose answer cannot be an artefact of EPS signal processing, a decode error, or torsion-bar scaling. Unmatched, it looked like a result:

@@ -20,6 +20,7 @@ matching .npz), so IMU time and CAN time are directly comparable window-for-wind
 
 Usage:  python extract/extract_imu_cache.py r3a 0 1 2   |   python extract/extract_imu_cache.py r3b
 """
+import re
 import sys
 from pathlib import Path
 
@@ -35,15 +36,32 @@ for _p in [ROOT / "rlog-tools"] + [d for d in (ROOT / "rlog-tools").iterdir() if
 from rlog_parse import read_messages  # noqa: E402
 
 RLOGDIR = ROOT / "analysis-2020accord" / "rlogs"
-ROUTES = {"r3a": "75604b0a432fdc89_0000003a--4e55c1e0f4",
-          "r3b": "75604b0a432fdc89_0000003b--a4a7f4dbf1",
-          "r47": "75604b0a432fdc89_00000047--3e0b6134c0",
-          "r2b": "75604b0a432fdc89_0000002b--7926e8f7e5",
-          "r2c": "75604b0a432fdc89_0000002c--eb219f392c",
-          "r37": "75604b0a432fdc89_00000037--6231e33f3d"}
-# r2c/r37 segment lists are SPARSE (some segments were never pulled), so NSEG is the highest index
-# plus one and a missing rlog is skipped rather than fatal.
-NSEG = {"r3a": 7, "r3b": 14, "r47": 26, "r2b": 14, "r2c": 13, "r37": 15}
+# 🛑 The hardcoded ROUTES/NSEG dicts covered SIX routes and rejected every other with a bare
+# KeyError. The rlogs are named "*_000000{rid}--*--{seg}--rlog.zst", so discover them the way the
+# sibling audio extractor already does. Found 2026-08-30 when the speed-matched routes that actually
+# carry the exposure (r66: 300 s engaged / 492 s manual) all turned out to be unsupported.
+import glob as _glob
+
+
+def route_segments(tag):
+    """-> [(seg_index, path)] for a route tag like 'r66', discovered from disk"""
+    rid = tag[1:] if tag.startswith('r') else tag
+    out = []
+    for p in _glob.glob(str(RLOGDIR / f"*_000000{rid}--*--rlog.zst")):
+        m = re.search(r"--(\d+)--rlog", p)
+        if m:
+            out.append((int(m.group(1)), p))
+    return sorted(out)
+
+
+def can_cache(tag, s):
+    """per-segment cache if present, else the ROUTE-level one -- both carry t0_mono"""
+    base = ROOT / "_scratch" / "cache" / tag
+    for cand in (base / f"{tag}s{s}.npz", base / f"{tag}.npz",
+                 ROOT / f"_cache_{tag}" / f"{tag}s{s}.npz"):
+        if cand.exists():
+            return cand
+    return None
 
 
 def recover_t0(path):
@@ -67,9 +85,19 @@ def recover_t0(path):
 
 
 def extract(tag, s):
-    path = RLOGDIR / f"{ROUTES[tag]}--{s}--rlog.zst"
-    out = ROOT / f"_cache_{tag}"
-    z = np.load(out / f"{tag}s{s}.npz")
+    segs = dict(route_segments(tag))
+    s = int(s)                      # the CLI passes strings; segment keys are ints
+    if s not in segs:
+        print(f"{tag}s{s}: no rlog on disk -- SKIPPED")
+        return None
+    path = Path(segs[s])
+    out = ROOT / "_scratch" / "cache" / tag
+    out.mkdir(parents=True, exist_ok=True)
+    cc = can_cache(tag, s)
+    if cc is None:
+        print(f"{tag}s{s}: no CAN cache to take t0 from -- SKIPPED")
+        return None
+    z = np.load(cc, allow_pickle=True)
     if "t0_mono" in z.files:
         t0 = float(z["t0_mono"][0])                            # the CAN cache's t=0
     else:
@@ -132,7 +160,7 @@ def extract(tag, s):
 
 if __name__ == "__main__":
     tag = sys.argv[1]
-    segl = sys.argv[2:] or [str(i) for i in range(NSEG[tag])]
+    segl = sys.argv[2:] or [str(i) for i, _ in route_segments(tag)]
     fa, fg, DA, DG = [], [], [], []
     for s in segl:
         r = extract(tag, s)
