@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** **⚠ FLY V217.** Its entire delta from your car is **19 payload bytes, and every single one is a deliberate lever from this session** — nothing carried, nothing unpriced. V216/V215/V214 are its predecessors and remain as arms.
+**Updated 2026-08-29.** **⚠ FLY V217 FIRST.** Its delta from your car is **19 payload bytes, every one a deliberate lever**. **V218 is rung 2** of the ratchet dose ladder — fly it only if V217 moves the ratchet but not enough.
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,
@@ -20,6 +20,30 @@ An earlier version of this file said the shelf’s low friction setting *“runs
 > **MORE modelled Coulomb friction ⇒ MORE assist ⇒ LIGHTER wheel. It does not fight LKAS.**
 
 Friction is *subtracted from the plant model*, which lowers `gp-0x6ad6` — a torque-tracking **reference**, not a motor torque — so the loop holds your felt torque at a **lower** target. So the shelf’s 0.10× setting made the wheel ~10× **heavier** in that term and **removed** LKAS authority, fighting the 8× gain step in the same build.
+
+---
+
+## 📐 V218 — RUNG 2 of the ratchet dose ladder. Fly V217 first.
+
+```
+39990-TVA,A160-V218-V217BASE-C63AE.512.TO.256-RATCHET.RUNG2-0x13000-0x100000.rwd
+  image f73aee347d67c10e0a50431d01143407bdee180e792022e2002eb8451c10b691
+```
+
+V218 = V217 with `0xC63AE` **512 → 256**. Priced from the real curve (`assist_map_mirror`, input-scaled describing function — reproduces the recorded values):
+
+```
+  0xC63AE   small-amp loop gain   |gp-0x6b70| cost   small-signal gain
+    1024          1.000x               1.000x          2.67 - 3.77x     Honda
+     512          0.500x               0.500x          1.33 - 1.89x     V217, rung 1
+     256          0.250x               0.250x          0.67 - 0.94x     V218, rung 2
+```
+
+**The trade is exactly 1:1 at small amplitude, with no knee** — halving the cal halves the ratchet loop gain and the assist term in lockstep. So **no dose is analytically preferred**; it is a pure preference, and the drive decides it.
+
+⚠ **256 crosses a qualitative boundary:** small-signal gain falls **below unity** at every speed, so the observer lane *attenuates* near the origin instead of amplifying. 512 stays above unity. That is why rung 1 flies first.
+
+**How to read the ladder:** V217 moves the ratchet but not enough → fly V218. V217 costs too much assist → the other direction (768) is the follow-up. Either way the two builds together are a **dose-response**, which is this kit’s strongest evidence form.
 
 ---
 
