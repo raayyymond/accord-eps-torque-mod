@@ -66,6 +66,7 @@ SHELF = {
     'v236': '509785673468a346ac366dfb2fb8e491231f49a4e440e22ef9ce4fe39602d862',   # V235 + the assist-map slope cap: the RATCHET lever
     'v237': 'bebd6c6ca9e9ad735016f477dece6dfa275bfaf9bb65a1c5d13d8c8716b812f1',   # V235 + the engaged lag POLE: a ratchet lever with NO effort cost -- WITHDRAWN, backwards
     'v238': '34ceb5aefaa9bdd5fd656513ce3536ae3e0fd5590c5c8bb80b400aa90b8a5be5',   # V235 + the SAME pole LOWERED 20->8: V237 corrected
+    'v239': '3c1bf1e9d5f8b79aa3f9011279d1598e3bfc7d6881dbf88adc96388235cd2fcc',   # V236 + V238: both ratchet levers in one lane
 
 }
 # ARCHIVE: builds whose BUILDER must still reproduce its image, but which are NOT meant to be

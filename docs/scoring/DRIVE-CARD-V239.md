@@ -1,10 +1,10 @@
-# DRIVE CARD — V238, and the two builds behind it
+# DRIVE CARD — V239, and the shelf behind it
 
 ## 🚗 DRIVE THIS ONE
 
 ```
-  V238   39990-TVA,A160-V238-V235BASE-ENGAGED.LAGPOLE.8.TIGHTEN-0x13000-0x100000.rwd
-         rwd    sha256 e9faa7b461c6118b...      image sha256 34ceb5aefaa9bdd5...
+  V239   39990-TVA,A160-V239-V236BASE-SLOPECAP.PLUS.LAGPOLE.8-0x13000-0x100000.rwd
+         rwd    sha256 f8582ad978dcd6fc...      image sha256 3c1bf1e9d5f8b79a...
   BEFORE anything: kill openpilot/pandad   ->  tmux kill-server
 ```
 
@@ -17,18 +17,93 @@ overrides it.
 
 **Stop and say so if:**
 - the **ratchet or stutter is clearly worse** than your car
-- steering feels **soggy or hesitant** on a quick input — a brief delay before the assist catches up.
-  This is V238's one predicted failure mode; if you feel it, the dose is too big and the next rung is
-  smaller, not larger
-- the wheel feels **heavier near centre** — V238 is built specifically *not* to do this, so if it
-  happens the model is wrong somewhere and that is important
+- the wheel feels **heavier near centre** — V239 carries the slope cap, which **is** a real gain, so
+  **some added effort is expected**. The question is whether the ratchet improvement is worth it
+- steering feels **soggy or hesitant** on a quick input — the pole's failure mode
 - anything faults, or the EPS lamp lights
 
-**Fallbacks in order:** **V235** → **V122** (your car).
+**Fallbacks in order:** **V236** (V239 minus 8 bytes) → **V235** → **V122** (your car).
 
 ---
 
-## ⚠ V237 has been withdrawn — it was pointing the wrong way
+## 🛑 What I measured this tick, and what it cost V238
+
+V238 was yesterday's lead on the argument that its lever was free. It **is** free — and it is also
+**too small to be the fix**, which I could not say before because nobody had measured it.
+
+Driving the integer-exact firmware mirror with 22 routes of real torque/speed/angle, then taking Welch
+band power at the ratchet:
+
+```
+  the CUT the slew limiter makes carries a median 0.4 % of its power in 6-9 Hz
+  -- it is almost entirely LOW frequency, so it is restored at ANY pole value
+
+  6-9 Hz band power vs your car:   k=8  (V238)   0.9731   -2.7 %   range 0.709..1.005
+                                   k=2  (floor)  0.9622   -3.8 %   range 0.589..1.007
+```
+
+**The entire reachable range of that cell at the ratchet is 3.8 %.** V238 already takes 2.7 % of it.
+
+That is where the archive landed years of builds ago by a completely different route — *"THE EFFECT IS
+TOO SMALL"* — so this is a **convergence, not a re-derivation**. It also means my last card oversold
+V238: the per-frame cut looked like 6–14 %, but most of that cut is low-frequency and never reaches the
+ratchet band.
+
+⚠ **A correction to my own measurement, before it reached you:** the first pass used a fallback key
+chain and silently read `sc_t` — which is **not** the torque sensor — on caches lacking `tq`. That
+manufactured a 0.0 % gate duty on 40 routes and would have retired a live lever. The fallback is gone;
+the script now requires the exact keys or skips the cache.
+
+---
+
+## Why V239
+
+`0xC6384` is the lever with the **size**. It caps the map's own interpolation slope, so it scales the
+whole lane — not the small residue the pole gates:
+
+```
+  out(f) = table2 + H_k(f) * (table1 - table2)
+           ^^^^^^             ^^^^^^^^^^^^^^^
+           0xC6384 caps the slope of BOTH tables    <- V236's cell, the big lever
+                              H_k is the valve      <- V238's cell, measured 2.7 %
+```
+
+| build | what it carries | cost |
+|---|---|---|
+| **V239** | slope cap **+** lag pole | real effort where the cap binds, plus the free 2.7 % |
+| **V236** | slope cap only | real effort — the paired arm, **8 bytes** from V239 |
+| **V235** | neither | none — the control both sit on |
+
+**V236 stays on the shelf**, exactly 8 bytes from V239, so the pole's contribution can still be isolated
+after the fact if you want it.
+
+---
+
+## What V239 changes, in full
+
+**Against your car: 25 payload bytes.**
+
+```
+  0xC60A8/AC/B0/B4   the notch, re-aimed to the net-damping optimum      12 B   grinding
+  0xC6906 Y[0..3]    the engaged lag pole, 20 -> 8                        8 B   ratchet, free, 2.7 %
+  0xC6384            the assist-map slope cap, 2048 -> 1536               2 B   ratchet, COSTS EFFORT
+  0xC40DC            alpha2 8 -> 22, which is Honda's own value           1 B   restores a damper
+  0x55DF2            the biquad-state probe on CAN 427                    2 B   telemetry only
+```
+
+**Zero of 15 command-path and authority cells differ from your car.** This build cannot change how much
+steering LKAS can ask for, in either direction.
+
+⚠ **The slope cap's size is NOT measured.** Its *"3.4× more damped"* comes from a loop model the record
+itself later corrected — the model treated this lane as memoryless when it has a lagged branch.
+**Direction well-founded, magnitude soft.** The 2.7 %/3.8 % figures for the pole, by contrast, **are**
+measured.
+
+---
+
+---
+
+## ⚠ V237 remains withdrawn — it was pointing the wrong way
 
 V237 moved this same cell **upward** on the reasoning that the lane was a direct path plus a parallel
 lagged branch, so a faster pole would damp. Reading the tail of `FUN_000352b4` properly shows that is

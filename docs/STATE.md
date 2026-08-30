@@ -66,6 +66,27 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **`0xC6906` IS MEASURED SMALL — THE WHOLE CELL IS WORTH 3.8 % AT THE RATCHET. V238 KEEPS ITS 2.7 % BUT MUST NOT LEAD; V239 = V236 + V238 IS THE BUILD.**
+>
+> Driving the **integer-exact firmware mirror** (`assist_map_mirror`) with 22 routes of real torque/speed/angle, then Welch band power at 6–9 Hz:
+> ```
+>   gate duty (engaged frames where the slew limiter bites): median 7.4 %, top routes 20–85 %
+>   => the gate is LIVE. The cell is not inert.
+>
+>   BUT the CUT (table1 − table2) carries a median 0.4 % of its power in 6–9 Hz.
+>   It is almost entirely LOW frequency, so it is restored at ANY pole value.
+>
+>   6–9 Hz band power vs the car:  k=8  (V238)   0.9731   −2.7 %   range 0.709..1.005
+>                                  k=2  (floor)  0.9622   −3.8 %   range 0.589..1.007
+> ```
+> 🛑 **[EVIDENCE] THE ENTIRE REACHABLE RANGE OF `0xC6906` AT THE RATCHET IS 3.8 %.** V238 already takes 2.7 % of it; the floor buys 1.1 % more. **A nibble, not a fix.**
+> ✅ **This CONVERGES with the archive**, which reached *“THE EFFECT IS TOO SMALL”* from a linearisation of `|1−P·L|`. Two independent routes, same verdict — that is a convergence, not a re-derivation, and it retires the cell as a primary lever.
+> 🛑 **AND IT CORRECTS MY OWN LAST CARD.** The per-frame cut looked like **6–14 %** (`p50|b84|` conditional on the gate), but most of that cut is low-frequency and never reaches the band. **The per-frame amplitude overstated the lever 2–5×.** Score the BAND, not the per-frame amplitude.
+> ⚠ **A measurement error caught before it reached the operator:** the first pass used a fallback key chain `('tq','sc_t','cs_t')`, and the `loopop_*` caches — which carry no `tq` — **silently fell through to `sc_t`, which is NOT the torque sensor** (p50 129.9, max 159.9, near-constant, against `tq`'s p50 111 / max 4076). That manufactured a **0.0 % gate duty on 40 routes** and would have **retired a live lever**. The fallback is deleted; the script now requires the exact keys or skips the cache. **A fallback that substitutes a different physical signal is not a convenience, it is a silent wrong answer.**
+> ⭐ **V239 BUILT — V236 + V238**, image `3c1bf1e9d5f8b79a…` · rwd `f8582ad978dcd6fc…` · 37/37. `0xC6384` is the lever with the **size**: it caps the map's own interpolation slope, so it scales **both** tables — the whole lane, not the residue the pole gates. Combining costs no interpretability now that the pole's contribution is bounded at 3.8 %. **V236 stays on the shelf as the paired arm, exactly 8 bytes from V239.**
+> ⚠ **`0xC6384`'s own size is still NOT measured** — *“3.4× more damped”* rests on the loop model the record corrected. Direction well-founded, magnitude soft. The 2.7 %/3.8 % for the pole **are** measured.
+> ➕ New reader: `rlog-tools/score/clip_duty_and_v238_dose.py`.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V237 WAS BACKWARDS — THE LANE IS A *BLEND*, NOT A DIRECT PATH PLUS A LAGGED BRANCH. V238 IS THE SAME CELL THE OTHER WAY, AND IT IS HONDA'S OWN DIRECTION.**
 >
 > Reading the tail of `FUN_000352b4` properly — decompile first, which is what settled it:
