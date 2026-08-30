@@ -147,6 +147,26 @@ Two things fall out. **At the amplitudes where the roughness actually lives, V22
 
 ---
 
+## The follow-up arms are now REBASED ONTO V222
+
+🛑 **V218, V219 and V220 were cut off V217, so each of them LACKS Lever B at 13107 AND the friction-lane restoration.** Flying one of them after V222 would have **silently handed back two levers** — the exact failure shape that lost V42’s ratchet fix at a rebase and that hid the 6–9 Hz damper cut inside every notch build from V196 to V213.
+
+Each arm has been rebuilt on V222’s base, carrying its own lever and nothing else:
+
+```
+  build  arm                what it changes vs V222     .rwd SHA256 (first 16)
+  V223   Lever B rung 2     0xC6446 13107 -> 26214      38b0773b774dd492
+  V224   ratchet rung 2     0xC63AE   512 -> 256        04ae388ad7257a83
+  V225   authority rung 2   0xC6CD0  8x -> 10x + clamps d4d21c547a1ab9c6
+  V226   grind rung 2       notch poles 15.50 -> 13.50  038837ca3372a896
+```
+
+All five builds now share **the same 23 payload bytes from your car**, differing only by the one lever each arm exists to test. **Use these, not V218/V219/V220** — those three remain on disk for the record but are superseded as follow-ups.
+
+Mapping from the outcome table above: *grinding better but still there* → **V226** · *ratchet unchanged and you want the dose ladder closed* → **V224** · *levers landed but steering still short* → **V225** · *grinding improved but not gone* → **V223**.
+
+---
+
 ## Verification behind this build
 
 - **72/72 build assertions**, CRC 50/50, `.rwd` decodes byte-identical to the built image.

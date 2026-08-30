@@ -43,7 +43,30 @@ SHELF = {
     'v221': '7bb0ba58956ca21064a815d0298c6994cf124b941c72aa76c03f8628a598c51b',
     'v222': '0e83c7074699d6ab3eee1c035974fa23b5b271c641662001b63fd89558512dae',
     'v223': 'a2f034df682cbd4a9ffe9f56787fd40d5465c4c36423362ce7dc03501fa81869',
+    'v224': '21198a4d1f21ce8d07b25530fc2969466f5e644370220658008a499b2585f2c3',
+    'v225': '34d1804120aa52a1131e50663eede9c16ab95e767a16d05dee277911410adac3',
+    'v226': 'e45799ed7986139183e50b14d4a15b08085b453d3d1a97a580bda5d7d18e9850',
 }
+# ARCHIVE: builds whose BUILDER must still reproduce its image, but which are NOT meant to be
+# flashable -- their .rwd files are correctly SUPERSEDED-DO-NOT-FLASH-renamed. They were in the
+# close-out's PUB list (published hash vs disk) but their builders were never re-run, which is
+# the one drift class this file exists to catch. The 'exactly one flashable .rwd' rule below is
+# a SHELF rule and deliberately does NOT apply to them.
+ARCHIVE = {
+    'v194': '2adde4ec37be9150b3d501bcd61b7d11a33e49e839c944622474c1d368db0f10',
+    'v195': 'a3ea8683df48c6b3f40e8ba8ac879047da6aec62fedc8d56cf9f1dc83f7b610b',
+    'v196': 'f904e43a1f4ccb94e81204dbecd93982049a024b95e48bd1c2c43852a7edec8e',
+    'v198': '9fbbf90b0bed9cb32eb7c3a44a30c2108f361a736ff3f1ebc205f47e5cf3190d',
+    'v200': 'db0b613aad11e67822528251b66790386635a59e9584e87d352bf294d5bf460e',
+    'v201': '354f9dfb93cf6fcd309c791ff962a792db668c6faef1de5a563d9f389f3bdfd6',
+    'v202': '2c5bc569c2c5e4c66f7eaa350ddbfe87d50af9875fa75a10d927eed3a7255160',
+    'v203': '0da3b7b9a4bfa9068960ed1c5afd07ff4f816376da9488df4d31946cf55b5965',
+    'v204': '30e7da9f6d20ff1335d01abe86ba03df7245c802217a4e6df54c5b93208873e6',
+    'v205': '8cf100864be1d6030eed36acac1d514066b157a59de8ca829ae154ce7032882e',
+    'v206': '71bd8312c324de9c01cf277307e41bb6dbb5e49cc6cf72e02e597a8013333a80',
+    'v207': '8de7180ec4daeb459be994d180321b235a5c79ade9050eff015e83b0f537067c',
+}
+
 BD = os.path.join(KIT, 'builds', 'v108_plus')
 IMGD = os.path.join(FW, 'analysis-2020accord')
 
@@ -52,7 +75,7 @@ print('=' * 96)
 print('  SHELF REBUILD -- does each builder still produce the artifact it published?')
 print('=' * 96)
 env = dict(os.environ, ACCORD_FIRMWARE_ROOT=FW)
-for v, want in sorted(SHELF.items()):
+for v, want in sorted({**SHELF, **ARCHIVE}.items()):
     b = os.path.join(BD, f'build_{v}_tva.py')
     if not os.path.exists(b):
         bad.append(f'{v.upper()}: builder missing at {b}')
@@ -103,7 +126,8 @@ for v in sorted(SHELF):
 
 print()
 print('=' * 96)
-print(f'  {ok}/{len(SHELF)} shelf builders reproduce bit-for-bit')
+print(f'  {ok}/{len(SHELF) + len(ARCHIVE)} builders reproduce bit-for-bit '
+      f'({len(SHELF)} shelf + {len(ARCHIVE)} archive)')
 for m in bad:
     print('    FAILED: ' + m)
 print('=' * 96)

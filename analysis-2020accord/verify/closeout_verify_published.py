@@ -68,6 +68,9 @@ PUB = {
     'v221': '7bb0ba58956ca21064a815d0298c6994cf124b941c72aa76c03f8628a598c51b',
     'v222': '0e83c7074699d6ab3eee1c035974fa23b5b271c641662001b63fd89558512dae',
     'v223': 'a2f034df682cbd4a9ffe9f56787fd40d5465c4c36423362ce7dc03501fa81869',
+    'v224': '21198a4d1f21ce8d07b25530fc2969466f5e644370220658008a499b2585f2c3',
+    'v225': '34d1804120aa52a1131e50663eede9c16ab95e767a16d05dee277911410adac3',
+    'v226': 'e45799ed7986139183e50b14d4a15b08085b453d3d1a97a580bda5d7d18e9850',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -504,10 +507,22 @@ print("[13] A GAIN RAISE MUST BE PRICED AGAINST THE NOTCH, ACROSS THE WHOLE BAND
 # engagement-gated line, is not a blind change.  Hence: STAGED until the notch is confirmed on-car.
 _GAIN_BASE = 5346                      # 6.00x -- the notch shelf's baseline (0xC6CD0 = 891 * N)
 _STAGED = {'v211','v213','v215','v216','v217','v218','v219','v220',
-           'v221','v222','v223'}   # priced and documented
+           'v221','v222','v223',
+           'v224','v225','v226'}   # priced and documented
+# V224/V226 carry V217's 8x step byte-identically (they are V218/V220's lever rebased onto V222).
+# V225 IS the authority rung: 10x, and it carries the matching clamp raise 0xC61B3/B5 16 -> 18,
+# which is what makes the step a STAGED one rather than a bare gain raise. Asserted below.
 # V221/V222/V223 carry V217's 8x step BYTE-IDENTICALLY -- they add Lever B and restore the
 # friction lane, neither of which touches 0xC6CD0. The pricing that admitted V217 admits them.
+# the 10x arm must carry its clamps -- a gain raise without them is NOT the priced build
 for _v in sorted(img):
+    _g = struct.unpack_from('<H', img[_v], 0xC6CD0)[0]
+    if _g == 8910:
+        for _c in (0xC61B3, 0xC61B5):
+            _cv = struct.unpack_from('<H', img[_v], _c)[0]
+            chk(_cv == 18,
+                f'{_v.upper()} 0x{_c:05X} = {_cv} -- the 10x arm must raise its clamp to 18'
+                + ('' if _cv == 18 else ' -- 10x WITHOUT THE CLAMP IS NOT THE PRICED BUILD'))
     _g = struct.unpack_from('<H', img[_v], 0xC6CD0)[0]
     if _g <= _GAIN_BASE:
         chk(True, f'{_v.upper()} 0xC6CD0 = {_g} ({_g / 891:.2f}x) -- at or below the notch baseline')
@@ -671,7 +686,8 @@ for _v in sorted(img):
 #   5244   V88..V220 and THE CAR -- the value V88 measured (15-22 Hz 0.549x, 0.5-3 Hz NULL)
 #  13107   V221/V222 rung 1, after V160's "int16 ceiling" was shown not to exist
 #  26214   V223     rung 2, sized by the lane's describing function
-_LEVER_B_LADDER = {'v221': 13107, 'v222': 13107, 'v223': 26214}
+_LEVER_B_LADDER = {'v221': 13107, 'v222': 13107, 'v223': 26214,
+                   'v224': 13107, 'v225': 13107, 'v226': 13107}   # the arms, rebased onto V222
 for _v in sorted(img):
     _want = _LEVER_B_LADDER.get(_v, 5244)
     _got = struct.unpack_from('<H', img[_v], 0xC6446)[0]
