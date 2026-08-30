@@ -63,6 +63,7 @@ PUB = {
     'v216': '791e123fb4d8bd6ea0736c52546995bb15742444b5d5c23b6db128e8bd792a13',
     'v217': 'f89ea01f405d513985ce51c47f6796e1ea77f600fab3d9f7817cd79907a1967b',
     'v218': 'f73aee347d67c10e0a50431d01143407bdee180e792022e2002eb8451c10b691',
+    'v219': '13c1d33b3ad9eff526283b7465e3b85b18084056479588ba2741537b25d10d33',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -481,7 +482,7 @@ print("[13] A GAIN RAISE MUST BE PRICED AGAINST THE NOTCH, ACROSS THE WHOLE BAND
 # Raising loop gain 1.65x exactly where the notch stops helping, in a band with an unexplained
 # engagement-gated line, is not a blind change.  Hence: STAGED until the notch is confirmed on-car.
 _GAIN_BASE = 5346                      # 6.00x -- the notch shelf's baseline (0xC6CD0 = 891 * N)
-_STAGED = {'v211','v213','v215','v216','v217','v218'}  # priced and documented
+_STAGED = {'v211','v213','v215','v216','v217','v218','v219'}  # priced and documented
 for _v in sorted(img):
     _g = struct.unpack_from('<H', img[_v], 0xC6CD0)[0]
     if _g <= _GAIN_BASE:

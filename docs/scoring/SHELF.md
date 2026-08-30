@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** **⚠ FLY V217 FIRST.** Its delta from your car is **19 payload bytes, every one a deliberate lever**. **V218 is rung 2** of the ratchet dose ladder — fly it only if V217 moves the ratchet but not enough.
+**Updated 2026-08-29.** **⚠ FLY V217 FIRST.** 19 payload bytes from your car, every one a lever. Two rung-2 arms are ready behind it: **V218** (deeper ratchet dose) and **V219** (10× authority). Fly whichever the V217 drive points at.
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,
@@ -20,6 +20,35 @@ An earlier version of this file said the shelf’s low friction setting *“runs
 > **MORE modelled Coulomb friction ⇒ MORE assist ⇒ LIGHTER wheel. It does not fight LKAS.**
 
 Friction is *subtracted from the plant model*, which lowers `gp-0x6ad6` — a torque-tracking **reference**, not a motor torque — so the loop holds your felt torque at a **lower** target. So the shelf’s 0.10× setting made the wheel ~10× **heavier** in that term and **removed** LKAS authority, fighting the 8× gain step in the same build.
+
+---
+
+## 📐 V219 — RUNG 2 of the AUTHORITY ladder (8× → 10×). Fly V217 first.
+
+```
+39990-TVA,A160-V219-V217BASE-GAIN10X-CLAMPS4608-AUTHORITY.RUNG2-0x13000-0x100000.rwd
+  image 13c1d33b3ad9eff526283b7465e3b85b18084056479588ba2741537b25d10d33
+```
+
+🛑 **This corrects the record.** V211 says the EME wall *"structurally caps this lever below 10×"*. The two gates it actually asserts permit **10× with real margin**:
+
+```
+  mult  0xC6CD0  lane max  clamp window   V219 picks 4608
+    8     7128     3341    [3342, 5119]   (V217 uses 4096)
+   10     8910     4176    [4177, 5119]   432 above the lane, 512 below the wall
+   12    10692     5011    [5012, 5119]   a 108-count squeeze -- NOT taken
+```
+
+**Priced on the record’s own exponents** (vibration ~ m^1.74, authority ~ m^0.88) against the notch’s measured 3.59× at 22–26 Hz, relative to your car at 6×:
+
+```
+    8x   authority +28.9 %   vibration 1.650x   NET 0.459x  quieter   V217
+   10x   authority +56.0 %   vibration 2.432x   NET 0.677x  quieter   V219
+```
+
+⚠ I had been quoting authority as **linear** (+33 % at 8×). It is **m^0.88**, so 8× buys **+28.9 %**, not +33 %. Corrected here.
+
+⚠ **Above 29.5 Hz the notch gives nothing back**, so 10× raises loop gain there **2.43× vs your car** against 8×’s 1.65× — a bigger *unopposed* raise. That is why rung 1 flies first, and why the 30–49 Hz band in `score_drive.py` matters on the V217 drive.
 
 ---
 
