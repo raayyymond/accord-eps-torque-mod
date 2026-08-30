@@ -80,6 +80,7 @@ PUB = {
     'v234': '7adbc68f2b8163c69c6b387171a2fc18938f8f1dce8127abf6cfff9907be42e6',
     'v235': 'ad6d485eefb2f6bcc195c062035d5a9dab5fb06dae7f46f68f5ca03a504c18ab',
     'v238': '34ceb5aefaa9bdd5fd656513ce3536ae3e0fd5590c5c8bb80b400aa90b8a5be5',
+    'v240': 'f2745df252e7ce7eb069fa7b7700e7cae474213cda4bebea08916253eb032962',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -853,6 +854,17 @@ _KNOT_OK = {
     ('v238', 0xC6908),
     ('v238', 0xC690A),
     ('v238', 0xC690C),
+    # V240: the NORMAL gp-0x69a0 slew curve x Honda's own 0.600 ratio. Byte-stock on all
+    # 161 images before this; V192 moved the OSCILLATING curve (0xC691A), not this one.
+    # V240 sits on a V238 base, so it inherits V238's pole knots too.
+    ('v240', 0xC6906),
+    ('v240', 0xC6908),
+    ('v240', 0xC690A),
+    ('v240', 0xC690C),
+    ('v240', 0xC693E),
+    ('v240', 0xC6940),
+    ('v240', 0xC6942),
+    ('v240', 0xC6944),
 }
 chk(len(_TABS) >= 90, f'{len(_TABS)} well-formed cal tables enumerated from movea instructions')
 for _v in sorted(img):

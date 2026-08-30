@@ -66,6 +66,32 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V240 — THE *NORMAL* SLEW CURVE HAS NEVER BEEN TOUCHED, AND IT IS THE LARGEST MEASURED RATCHET LEVER THE KIT HAS.**
+>
+> `FUN_00035b20` selects `gp-0x69a0` from **two** curves on the hard-reversal counter:
+> ```
+>   NORMAL       0xC6936 X=[320,1600,3200,4480]   0xC693E Y=[358,358,461,512]   <- ALWAYS LIVE
+>   OSCILLATING  0xC6912 X=[640,3200,6400,12800]  0xC691A Y=[358,307,307,307]   <- V192 moved THIS
+> ```
+> 🛑 **V192 TIGHTENED THE WRONG ONE — and said so itself.** Its card: the oscillating curve *“is read ONLY on the counter≥5 branch so it is provably inert in normal driving.”* **The NORMAL curve is byte-stock on all 161 images.** Nobody has ever moved the curve that is actually live.
+> ✅ **V240 applies HONDA'S OWN RATIO to it.** Honda's oscillation response steps 512 → 307 = **0.5996**, so `[358,358,461,512] × 0.600 → [215,215,277,307]` — and **Y[3] lands on 307, Honda's own oscillating value exactly.** V240 makes the normal curve as tight at speed as Honda's own oscillation response already is. **Like V192, not a polarity gamble.**
+> ⭐ **[EVIDENCE] MEASURED — 14 routes, integer-exact mirror + Welch band power at 6–9 Hz:**
+> ```
+>   6-9 Hz band   0.9399   -6.0 %   range 0.813 .. 1.000
+>   assist p50    1.0000   +0.0 %   <- ordinary driving UNAFFECTED
+>   assist p95    0.9469   -5.3 %   <- only the top of assist demand pays
+>   gate duty     5.78 %   (was 2.35 %)
+>
+>   vs  0xC6906 the lag pole   -3.8 % across its WHOLE range
+>       0xC6384 the slope cap   0.0 %  -- MEASURED INERT, V236/V239 withdrawn
+> ```
+> ⇒ **1.6× the pole's ENTIRE range, at no median cost.**
+> ✅ **THE OPPOSITE DIRECTION WAS TESTED AND IS WRONG.** Loosening `gp-0x69a0` to remove the relay entirely (gate duty **0.00 %**) **RAISES** 6–9 Hz band power by **2.8 %**. The limiter is helping; V240 makes it help more. That control is what makes the direction evidence rather than a guess.
+> ⭐ **V240 BUILT** — image `f2745df252e7ce7e…` · rwd `617f63f3cbd3de34…` · 35/35. V238 base, 8 payload bytes, **31 from the car**. V192's oscillating curve left byte-identical.
+> ⚠ **A 6 % LANE-GAIN CUT IS NOT A PROMISE OF A 6 % SYMPTOM CUT.** What is measured is this lane's contribution at the band. The step to *felt* ratcheting is the loop model, and that model has been **wrong twice this session** — it oversold `0xC6384` as *“3.4× more damped”* when the cell is inert, and it framed `0xC6906` as an additive branch when it is a blend.
+> ⚠ **HESITATION is the named failure mode** (V192's card), and it applies with **more** force here because this curve is always live. **0.8× = `[286,286,369,410]` is the back-off rung, but it measures only −0.5 %** — a retreat, not a compromise.
+> ⊕ **A branch-selection error I caught in my own last two ticks:** `g69a0_of()` defaults to curve **B**, the *oscillating* branch, and my clip-duty and slope-cap measurements used it. Re-run on curve **C** the numbers are unchanged — the two curves are identical below 20 km/h (both 358) and these routes run under 39 km/h — but **the conclusions were resting on the wrong branch until checked.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE ASSIST-MAP LANE IS CLOSED AS A RATCHET LEVER — BOTH ITS CALS ARE NOW MEASURED, AND BOTH ARE TINY. V236 AND V239 ARE WITHDRAWN.**
 >
 > The census calls `gp-0x6b86`'s lane *the largest torque-fed term*, **5.8–7.8× the entire PID at 7.79 Hz**, and the kit has chased its two calibrations for the whole V236→V239 arc. Both are now sized by direct band-power measurement rather than by the loop model:

@@ -2,36 +2,35 @@
 
 **Updated 2026-08-30.**
 
-## 🛑 THE LIVE CARD IS `DRIVE-CARD-V238-LIVE.md`. EVERYTHING BELOW THIS BLOCK IS OLDER.
+## 🛑 THE LIVE CARD IS `DRIVE-CARD-V240.md`. EVERYTHING BELOW THIS BLOCK IS OLDER.
 
 ```
-  FLY   V238   39990-TVA,A160-V238-V235BASE-ENGAGED.LAGPOLE.8.TIGHTEN-0x13000-0x100000.rwd
-        rwd  e9faa7b461c6118b...   image  34ceb5aefaa9bdd5...
-  CTRL  V235  (grinding only -- V238 minus the pole)
+  FLY   V240   39990-TVA,A160-V240-V238BASE-NORMAL.SLEW.HONDA0.600-0x13000-0x100000.rwd
+        rwd  617f63f3cbd3de34...   image  f2745df252e7ce7e...
+  ARM   V238  (V240 minus the slew curve -- isolates it after the fact)
+  CTRL  V235  (grinding only)
   BACK  V122  (your car)
 ```
 
-**🛑 V236, V237 AND V239 ARE ALL WITHDRAWN.** V237 pointed the wrong way; V236 and V239 carry
-`0xC6384`, which is **MEASURED INERT at the ratchet**.
+⭐ **V240 IS THE LARGEST MEASURED RATCHET LEVER THE KIT HAS.** `gp-0x69a0`'s **NORMAL** curve
+`0xC693E = [358,358,461,512]` is **byte-stock on all 161 images** -- V192 tightened the **OSCILLATING**
+curve `0xC691A`, which V192's own card calls *"provably inert in normal driving"*. V240 applies **Honda's
+own 0.600 ratio** to the always-live curve, and **Y[3] lands on 307 = Honda's own oscillating value**.
 
-**BOTH CALS OF THE ASSIST-MAP LANE ARE NOW SIZED BY DIRECT BAND-POWER MEASUREMENT:**
 ```
-  0xC6906  the lag pole    WHOLE range (k 20 -> 2)             3.8 %
-  0xC6384  the slope cap   2048 -> 1536 (V236/V239)            0.0 %   band ratio 1.0000
-                           pushed to 256 (Honda ships 2048)    4.2 %
+  6-9 Hz band   0.9399   -6.0 %   range 0.813..1.000     <- 14 routes, integer-exact mirror + Welch
+  assist p50    1.0000   +0.0 %   ordinary driving UNAFFECTED
+  assist p95    0.9469   -5.3 %   only the top of assist demand pays
+
+  vs  0xC6906 pole  -3.8 % across its WHOLE range   ·   0xC6384 slope cap  0.0 % (withdrawn)
 ```
-`0xC6384` is inert because it is **out of reach**: it moves only the top X breakpoints (Y never
-changes), the lowest of which sits at **2844 torque counts**, and the car is above that on **1.65 %** of
-engaged frames. CONTROL: on a route that never crosses 2844, the lane output is **bit-identical at every
-dose down to 256**. The cap's branch **never fires at any shipped value** -- natural max map slope
-**0.350** against a cap at **2.000**.
 
-🛑 **This retires the record's "Q ratio 14.29 -> 4.26" for that cell** -- it came from a loop model
-that assumed the cap scales the lane gain.
+✅ **The opposite direction was tested and is wrong:** removing the limiter entirely (gate duty 0.00 %)
+**RAISES** band power 2.8 %.
 
-⭐ **STRATEGIC:** the lane the census called the **largest** torque-fed term yields **at most ~4 %** at
-the ratchet across the entire range of both cals. **The ratchet is not reachable through this lane's
-calibrations.** The search has to move.
+🛑 **V236, V237 AND V239 REMAIN WITHDRAWN.** ⚠ **Watch for HESITATION** -- V192's named failure
+mode, applying with more force here because this curve is always live. 0.8x is the back-off rung but
+measures only -0.5 %.
 
 **(older, 2026-08-29)** **⚠ FLY V222 FIRST** — it is **V221 with four bytes REMOVED from the delta**, restoring the friction lane’s SATURATION to the car (V216 restored only its slope, leaving a **216×** difference above 250 counts of steering rate; the ratchet regime is 1.0× identical). 23 payload bytes, every deliberate lever byte-identical to V221. Card: `docs/scoring/DRIVE-CARD-V222.md`. **V221 is the fallback.** ⊕ **V227 is the one genuinely untried ratchet lane** — `0xC67C4` 1280→512 moves the resonance-PID ceiling knee so it reaches full authority at 8 km/h instead of 20, **3× more ceiling at creep and identical above 20 km/h**. The model calls `gp-0x6ad4` *"the most reachable authority of any gated lane"* and says it has **never been scored at 6–9 Hz**. 🛑 OPEN lever, not a predicted fix — it can make the ratchet worse. ⊕ **All four follow-up arms are now REBASED ONTO V222** — V223 (Lever B rung 2), **V224** (ratchet rung 2), **V225** (authority rung 2, 10× with its clamps) and **V226** (grind rung 2, notch poles 13.50). V218/V219/V220 were cut off V217 and each LACKED Lever B and the friction restoration, so flying one after V222 would have silently handed back two levers. All five builds now share the same 23 payload bytes from the car. ⊕ V223 is Lever B rung 2 (13107→26214), built and ready if V222’s grinding result is positive but incomplete — the dose is set by the lane’s describing function, which says V222 sits nowhere near the knee at the amplitudes that matter and that one more doubling buys a full 2× there while buying essentially nothing at the largest excursions. **⚠ V221 was the previous primary.** 27 payload bytes from your car, every one a lever. **V221 is V217 plus two bytes** — Lever B `0xC6446` 5244 → 13107, the kit’s only lever that has ever moved both symptom families at once with the LKAS command measurably untouched (V88: 15–22 Hz **0.549×**, 9–12 Hz **0.604×**, 0.5–3 Hz **1.192 = NULL**). It sat frozen for 130+ builds because V160 called 6553 a hard int16 ceiling; that is **false** — `0x3AC18` is a 32-bit `mul` and the only bound is the ±8192 rail, left byte-identical, so the real headroom is **12.5×, not 1.25×**. 🛑 Only two dose points exist, so V221 is a **dose probe as much as a fix**: if grinding reads worse than V217 would have, 5244 was already at the optimum and **V217 is the fallback, built and published**. See `docs/scoring/DRIVE-CARD-V221.md`. **Three rung-2 arms are ready behind V217** — **V218** (deeper ratchet dose), **V219** (10× authority), **V220** (wider notch). All three symptoms now have a dose ladder; fly whichever the V217 drive points at.
 
