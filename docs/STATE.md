@@ -46,6 +46,33 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE LANE MEASUREMENT WAS CONTAMINATED — AND FIXING IT INDEPENDENTLY RE-SELECTS V235'S EXACT GEOMETRY. ra6's DISSENT IS EXPLAINED.**
+>
+> **The contamination.** `gp-0x6b86` is measured DOWNSTREAM of the biquad, and I pooled ra4/ra5/ra6 then corrected as if HONDA's filter had been in force on all three. It was not:
+>
+> ```
+>   ra4  V104  b26 dose 1.500x  biquad f8c2c4bf 7576223f 0ebef0bf fc89c13f  (HONDA angles, b4 differs)
+>   ra5  V105  b26 dose 1.500x  biquad 56e1f0bf 3d0a673f 9eb8fcbf b51a4e3f  (V105's ~25.5 Hz notch)
+>   ra6  V106  b26 dose 3.000x  biquad 56e1f0bf 3d0a673f 9eb8fcbf b51a4e3f  (same)
+> ```
+>
+> 🛑 **MY FIRST FIX WAS NUMERICALLY INVALID AND ITS OWN OUTPUT SHOWED IT.** De-embedding by dividing power by `|H|²` put **99.5 % of the de-embedded power in one band** — division by near-zero at ra5/ra6's own notch. **You cannot recover a lane's response where the in-force filter removed the signal; the information is not there.** Caught by looking at the power distribution, not by the optimiser, which happily returned a different "optimum" from the artifact.
+> ✅ **THE CLEAN ROUTE IS ra4**, whose biquad has **Honda's angles** — only `b4`, a flat gain, differs — so it needs **no phase de-embedding at all**, and **100 % of 4–45 Hz is usable** (|H| min 0.5653). ra5/ra6 are only **84.1 %** usable (|H| min 0.0030 / 0.0018).
+> ```
+>   ra4 INTRINSIC lane      cos(phi)   power %   contribution
+>     7-10                    -0.793     44.6%     -0.3535   damps   <- the dominant term
+>     19-22                   +0.160      9.7%     +0.0155   PUMPS
+>     22-26                   +0.351     16.4%     +0.0575   PUMPS   <- V235's notch sits here
+>     26-32                   +0.818      4.6%     +0.0380   PUMPS
+>
+>   RE-OPTIMISED ON ra4 ALONE, usable bins only:
+>     J(Honda) -0.28054   J(V232) -0.29860   J(V235) -0.38119
+>     OPTIMUM  zeros 25.0, poles 23.5, r 0.96   bytes fa15f3bf...  == V235 EXACTLY
+> ```
+>
+> ✅ **The one clean route independently re-selects V235's geometry, byte for byte, and V235 beats Honda by 36 % on it.** The contaminated pooling happened to land on the right answer.
+> ✅ **AND ra6's LEAVE-ONE-OUT FAILURE IS EXPLAINED: ra6's own notch erases 22–26 Hz**, which is precisely the band the optimisation is about. It was being asked to judge an effect it cannot see. **That is not a generalisation failure of V235; it is a blind spot of the held-out route.**
+
 > 🛑⭐⭐⭐⭐ **V235 CROSS-VALIDATED: THE GEOMETRY IS NOT FITTED, BUT ITS ADVANTAGE IS NOT UNIFORM EITHER.** Leave-one-route-out over the three routes the design was optimised against:
 >
 > ```

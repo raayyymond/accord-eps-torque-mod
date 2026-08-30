@@ -80,7 +80,12 @@ one out in turn:
 ```
 
 **The filter itself is not fitted** — every fold picks the same geometry, so no single route is driving
-the choice. But on **ra6 the held-out score prefers Honda's placement**, narrowly. V235 wins on two of
+the choice. One route, ra6, scored it below Honda — **and that turned out to be a fault in the test,
+not in the build.** ra6 ran a different filter of its own whose notch erases the 22–26 Hz band, which
+is exactly the band this design is about; it was being asked to judge an effect it cannot see.
+
+**Re-derived on the one route that carries Honda's filter angles (ra4, 100 % of the band usable), the
+optimum comes out as V235's geometry byte for byte, and beats Honda by 36 %.** V235 wins on two of
 three routes by about ten times the margin it loses by on the third, so the average clearly favours it —
 **but the advantage is not uniform, and three routes is too few to put an interval on it.**
 
