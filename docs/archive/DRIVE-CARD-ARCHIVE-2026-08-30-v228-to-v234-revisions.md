@@ -1,3 +1,16 @@
+# ARCHIVED DRIVE CARD — the V228 → V234 revision history
+
+🛑 **SUPERSEDED by `docs/scoring/DRIVE-CARD-V235.md`. Do not drive from this file.**
+
+This card accumulated **six stacked “DRIVE X” sections** as the recommendation moved V228 → V229 →
+V231 → V232 → V233 → V234 → V235 over one session. Each was correct when written and each was
+superseded by a later measurement. It is kept as **a record of how the recommendation moved and
+why**, not as an instruction — reading it top-down means reading my changes of mind in reverse.
+
+The live card is one page and names one build.
+
+---
+
 # DRIVE CARD — V229 vs V228: the 55 Hz question, open since V172
 
 ## 🚗 AT THE CAR

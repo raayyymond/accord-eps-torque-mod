@@ -1,3 +1,9 @@
+🛑 **ARCHIVED. SUPERSEDED by `docs/scoring/DRIVE-CARD-V235.md`. DO NOT DRIVE FROM THIS FILE.**
+
+V222 carries the 8× gain step and Lever B at 13107, both since superseded: Lever B was found to sit **2.5× above V88's bracketed optimum**, on the flank the record calls *worst in the corpus*. Kept as a record.
+
+---
+
 # DRIVE CARD — V222 · **the new primary. V221 is the fallback.**
 
 > 🛑 **BEFORE YOU READ FURTHER — there is a safer alternative, and this build’s own justification is softer than it looks.** The argument for V222 is that its notch covers the 8× cost at 22–26 Hz. That rests on a dose curve I **could not reproduce** — the record’s own second arm (route 71) **has no cache**, so its design cannot be re-run at all. ⚠ **The one comparison available (`r95` vs `r96`) licenses NOTHING**: its 95 % CI spans zero, on 7 episodes. So the curve is **UNVERIFIED, not contradicted** — an earlier version of this card said "points the opposite way", which was a point estimate with no CI and is withdrawn. ⇒ **V228 needs none of it**, because it takes no gain step at all.

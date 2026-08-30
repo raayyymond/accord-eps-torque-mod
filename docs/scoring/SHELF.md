@@ -1,6 +1,34 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** **⚠ FLY V222 FIRST** — it is **V221 with four bytes REMOVED from the delta**, restoring the friction lane’s SATURATION to the car (V216 restored only its slope, leaving a **216×** difference above 250 counts of steering rate; the ratchet regime is 1.0× identical). 23 payload bytes, every deliberate lever byte-identical to V221. Card: `docs/scoring/DRIVE-CARD-V222.md`. **V221 is the fallback.** ⊕ **V227 is the one genuinely untried ratchet lane** — `0xC67C4` 1280→512 moves the resonance-PID ceiling knee so it reaches full authority at 8 km/h instead of 20, **3× more ceiling at creep and identical above 20 km/h**. The model calls `gp-0x6ad4` *"the most reachable authority of any gated lane"* and says it has **never been scored at 6–9 Hz**. 🛑 OPEN lever, not a predicted fix — it can make the ratchet worse. ⊕ **All four follow-up arms are now REBASED ONTO V222** — V223 (Lever B rung 2), **V224** (ratchet rung 2), **V225** (authority rung 2, 10× with its clamps) and **V226** (grind rung 2, notch poles 13.50). V218/V219/V220 were cut off V217 and each LACKED Lever B and the friction restoration, so flying one after V222 would have silently handed back two levers. All five builds now share the same 23 payload bytes from the car. ⊕ V223 is Lever B rung 2 (13107→26214), built and ready if V222’s grinding result is positive but incomplete — the dose is set by the lane’s describing function, which says V222 sits nowhere near the knee at the amplitudes that matter and that one more doubling buys a full 2× there while buying essentially nothing at the largest excursions. **⚠ V221 was the previous primary.** 27 payload bytes from your car, every one a lever. **V221 is V217 plus two bytes** — Lever B `0xC6446` 5244 → 13107, the kit’s only lever that has ever moved both symptom families at once with the LKAS command measurably untouched (V88: 15–22 Hz **0.549×**, 9–12 Hz **0.604×**, 0.5–3 Hz **1.192 = NULL**). It sat frozen for 130+ builds because V160 called 6553 a hard int16 ceiling; that is **false** — `0x3AC18` is a 32-bit `mul` and the only bound is the ±8192 rail, left byte-identical, so the real headroom is **12.5×, not 1.25×**. 🛑 Only two dose points exist, so V221 is a **dose probe as much as a fix**: if grinding reads worse than V217 would have, 5244 was already at the optimum and **V217 is the fallback, built and published**. See `docs/scoring/DRIVE-CARD-V221.md`. **Three rung-2 arms are ready behind V217** — **V218** (deeper ratchet dose), **V219** (10× authority), **V220** (wider notch). All three symptoms now have a dose ladder; fly whichever the V217 drive points at.
+**Updated 2026-08-30.**
+
+## 🛑 THE LIVE CARD IS `DRIVE-CARD-V235.md`. EVERYTHING BELOW THIS BLOCK IS OLDER.
+
+```
+  FLY   V235   39990-TVA,A160-V235-V234BASE-C63AE.BACK.TO.HONDA.1024-0x13000-0x100000.rwd
+               rwd a6a58fa9ce11a0fa...   image ad6d485eefb2f6bc...
+               = THE CAR + 3 cells, 15 payload bytes:
+                 0xC60A8/AC/B0/B4  notch at the net-damping optimum   12 B
+                 0xC40DC           alpha2 8 -> 22 (Honda's own)        1 B
+                 0x55DF2           biquad-state probe                  2 B  telemetry only
+
+  paired arms, TWO BYTES each, for attribution if something changes:
+    V234  isolates 0xC63AE (1024 vs 512)      V233  isolates Lever B (5244 vs 13107)
+
+  DO NOT FLY   V228  measured to destroy 46.5 % of the net damping and flip 12-15 Hz to pumping
+               V230  WITHDRAWN -- cuts a MEASURED DAMPER; artifacts carry a do-not-flash prefix
+               V222  superseded: 8x gain + Lever B 13107, which is 2.5x above V88's bracketed optimum
+```
+
+**Two standing corrections that invalidate older rows below:**
+- **Lever B is off every shortlist in BOTH directions** (V61 below V88 *"made it WORSE"*; V71c above =
+  worst in the corpus). Every build V221–V233 carried it 2.5× high; V234/V235 do not.
+- **Filter changes are scored on `|H|·cos φ`, not `|H|`.** Rows below that compare magnitudes alone
+  can invert once the phase term is included — that is how V228 was found harmful.
+
+---
+
+**(older, 2026-08-29)** **⚠ FLY V222 FIRST** — it is **V221 with four bytes REMOVED from the delta**, restoring the friction lane’s SATURATION to the car (V216 restored only its slope, leaving a **216×** difference above 250 counts of steering rate; the ratchet regime is 1.0× identical). 23 payload bytes, every deliberate lever byte-identical to V221. Card: `docs/scoring/DRIVE-CARD-V222.md`. **V221 is the fallback.** ⊕ **V227 is the one genuinely untried ratchet lane** — `0xC67C4` 1280→512 moves the resonance-PID ceiling knee so it reaches full authority at 8 km/h instead of 20, **3× more ceiling at creep and identical above 20 km/h**. The model calls `gp-0x6ad4` *"the most reachable authority of any gated lane"* and says it has **never been scored at 6–9 Hz**. 🛑 OPEN lever, not a predicted fix — it can make the ratchet worse. ⊕ **All four follow-up arms are now REBASED ONTO V222** — V223 (Lever B rung 2), **V224** (ratchet rung 2), **V225** (authority rung 2, 10× with its clamps) and **V226** (grind rung 2, notch poles 13.50). V218/V219/V220 were cut off V217 and each LACKED Lever B and the friction restoration, so flying one after V222 would have silently handed back two levers. All five builds now share the same 23 payload bytes from the car. ⊕ V223 is Lever B rung 2 (13107→26214), built and ready if V222’s grinding result is positive but incomplete — the dose is set by the lane’s describing function, which says V222 sits nowhere near the knee at the amplitudes that matter and that one more doubling buys a full 2× there while buying essentially nothing at the largest excursions. **⚠ V221 was the previous primary.** 27 payload bytes from your car, every one a lever. **V221 is V217 plus two bytes** — Lever B `0xC6446` 5244 → 13107, the kit’s only lever that has ever moved both symptom families at once with the LKAS command measurably untouched (V88: 15–22 Hz **0.549×**, 9–12 Hz **0.604×**, 0.5–3 Hz **1.192 = NULL**). It sat frozen for 130+ builds because V160 called 6553 a hard int16 ceiling; that is **false** — `0x3AC18` is a 32-bit `mul` and the only bound is the ±8192 rail, left byte-identical, so the real headroom is **12.5×, not 1.25×**. 🛑 Only two dose points exist, so V221 is a **dose probe as much as a fix**: if grinding reads worse than V217 would have, 5244 was already at the optimum and **V217 is the fallback, built and published**. See `docs/scoring/DRIVE-CARD-V221.md`. **Three rung-2 arms are ready behind V217** — **V218** (deeper ratchet dose), **V219** (10× authority), **V220** (wider notch). All three symptoms now have a dose ladder; fly whichever the V217 drive points at.
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,

@@ -1,3 +1,9 @@
+🛑 **ARCHIVED. SUPERSEDED by `docs/scoring/DRIVE-CARD-V235.md`. DO NOT DRIVE FROM THIS FILE.**
+
+V228 was later **measured harmful**: on the net-damping metric `|H|·cos φ` it destroys **46.5 % of the damping** and **flips 12–15 Hz from damping into pumping**. Its magnitude tables never showed this because they omitted the phase term. Kept as a record of what was believed when it was written.
+
+---
+
 # DRIVE CARD — V228, and the choice between it and V222
 
 ## 🚗 AT THE CAR — everything operational, in one block
