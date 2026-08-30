@@ -17,6 +17,36 @@ anything happens.** Nothing is flashed without that.
 
 ---
 
+## ⭐ DRIVE **V235** — your car, plus three things, and nothing else
+
+```
+  V235   39990-TVA,A160-V235-V234BASE-C63AE.BACK.TO.HONDA.1024-0x13000-0x100000.rwd
+         rwd sha256 a6a58fa9ce11a0fa...     image sha256 ad6d485eefb2f6bc...
+```
+
+I ran the cell-by-cell audit the close-out contract asks for, against stock. V234 differed in 115
+non-CRC runs — but **only 6 of those also differ from your car**, and the other 109 are simply what you
+already drive. Of the 6, one had no justification at all: `0xC63AE` = 512, carried by every build since
+V206, which STATE.md itself calls **unpriced**, and whose opposite direction is already **NO-GO** for a
+gain that *reverses* across your amplitude range. It halves the soft relay's small-signal gain — exactly
+where LKAS authority at small commands is decided. **Returned to Honda's 1024, which is also yours.**
+
+**V235 is your car plus three things, 15 bytes:**
+
+```
+  0xC60A8/AC/B0/B4   the notch at the net-damping optimum   12 B
+  0xC40DC            alpha2 8 -> 22, Honda's own value       1 B
+  0x55DF2            the biquad-state probe                  2 B   telemetry only
+```
+
+`0xC40DC` earns its place: 22 is Honda's, and your car's 8 attenuates a **measured damper** to 0.782× at
+18.5 Hz — it removes damping. Restoring it gives that back.
+
+**V234 stays on the shelf as the paired arm — two bytes apart — so driving both isolates `0xC63AE`
+exactly.**
+
+---
+
 ## ⭐ DRIVE **V234** — V233 with a mistake of mine taken back out
 
 ```

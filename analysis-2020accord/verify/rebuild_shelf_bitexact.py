@@ -60,6 +60,7 @@ SHELF = {
     'v232': 'c15fa8633352771f6f9cb5c37eac75ddebe7e648892620cdd7e7f07bc2784329',   # V231 + notch re-aimed to 34 Hz (the pumping band)
     'v233': '399424fd8b03266950ed07d5e47964705c9a87bf2f86c4370c0999179d0ae42a',   # V231 + net-damping optimum, 25 Hz, every gate binding
     'v234': '7adbc68f2b8163c69c6b387171a2fc18938f8f1dce8127abf6cfff9907be42e6',   # V233 + Lever B back to V88's measured optimum 5244
+    'v235': 'ad6d485eefb2f6bcc195c062035d5a9dab5fb06dae7f46f68f5ca03a504c18ab',   # V234 + 0xC63AE back to Honda 1024 -- the car + 3 cells
 
 }
 # ARCHIVE: builds whose BUILDER must still reproduce its image, but which are NOT meant to be

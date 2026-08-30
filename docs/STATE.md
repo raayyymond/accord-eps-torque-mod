@@ -46,6 +46,23 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V235 BUILT — THE CELL-BY-CELL AUDIT FOUND ONE MORE UNJUSTIFIED CELL, AND V235 IS NOW THE CAR PLUS THREE THINGS.**
+>
+> The audit the close-out contract asks for, run against **STOCK**: V234 differs in **115 non-CRC runs**, of which **only 6 also differ from the car**. The other 109 are what he already drives and need no new justification. Of the 6, five were justified (the notch ×4, the probe) and **one was not**.
+> 🛑 **`0xC63AE` = 512 was carried by every build since V206/V210 and is UNPRICED — STATE.md's own words: *“a ratchet null licenses nothing, because `0xC63AE` is unpriced.”*** And the opposite direction is already **NO-GO**: *“1024→2048 | NO-GO | AC gain **non-monotone, REVERSES** across his amplitude range (0.70× @500 ct → 2.00× @6000)”*. It halves the soft relay's **small-signal gain**, which is exactly where LKAS authority at small commands is decided. ⇒ **returned to Honda's and the car's 1024.**
+> ```
+>   image ad6d485eefb2f6bcc195c062035d5a9dab5fb06dae7f46f68f5ca03a504c18ab
+>   rwd   a6a58fa9ce11a0fa411d0b34e1539f68c514e63125692dbec20518c20a5ad0c5
+>   28/28 assertions · 15 payload bytes vs the CAR, in 6 runs
+>     0xC60A8/AC/B0/B4  the net-damping optimum biquad   12 B
+>     0xC40DC           alpha2 8 -> 22 (HONDA's value)     1 B
+>     0x55DF2           the biquad-state probe             2 B   telemetry only
+> ```
+>
+> ✅ **That is the smallest, most defensible build of the whole arc**: one control change chosen by optimising against a measured quantity, one restoration of a Honda value the car had moved away from, an instrument on the first, and nothing else moving.
+> 🛑 **I GOT THE HEADLINE WRONG AND MY OWN CHECK CAUGHT IT.** The first draft said *“the car plus exactly two things”* and omitted `0xC40DC`. Diffing the built image against the car — rather than trusting the claim — is what found it. `0xC40DC` **is** justified (22 is Honda's; the car's 8 attenuates a MEASURED DAMPER to 0.782× at 18.5 Hz, i.e. it removes damping), but the count was wrong and is corrected in the builder.
+> ➕ **V234 stays as the paired arm — two bytes apart — so driving both isolates `0xC63AE` exactly, the same way V233/V234 isolates Lever B.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V234 BUILT — A CORRECTION TO MY OWN SHELF. EVERY BUILD V221→V233 CARRIED LEVER B 2.5× ABOVE A MEASURED OPTIMUM WHOSE UPPER FLANK IS THE WORST BUILD IN THE CORPUS.**
 >
 > The record states it outright: *“**THE LANE IS AN OPTIMUM AND V88 IS SITTING ON IT. BOTH FLANKS ARE NOW MEASURED:** V61 (net below V88) *‘made it WORSE… the rate lane is the mode's damper’*; V71c (net above) **worst in the corpus** … ⇒ **LEVER B IS OFF EVERY FUTURE SHORTLIST, IN BOTH DIRECTIONS**.”* V71c is *“the worst build ever recorded on all three symptoms (ratchet at the corpus record 8,521 ct p-p)”*.
