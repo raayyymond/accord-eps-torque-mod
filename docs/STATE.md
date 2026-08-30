@@ -46,6 +46,27 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE COULOMB RELAY IS ALREADY LARGELY DE-RELAYED ON THE CAR, AND THE RATCHET PERSISTED THROUGH A 4.6× REDUCTION IN ITS DUTY. NO BUILD WAS NEEDED TO FIND THIS.**
+>
+> Decompiling `FUN_0003b8f6` gives the relay explicitly:
+> ```
+>   iVar20 = gp-0x6752 (polarity) * gp-0x6abc * 12
+>   uVar8  = cal(0xC40BC)                       the gate
+>   ratio  = iVar20 / uVar8 ;  relay = clamp(ratio, -1, +1)   SATURATED when |ratio| >= 1
+> ```
+> ⇒ it saturates when **|gp-0x6abc| ≥ cal/12** — and `gp-0x6abc` is **already tapped** on r21/r22/r24, which is the flown knee ladder itself. The onsets 50/150/250 fall straight out of the decompile, independently confirming the ladder's own column. **The saturation duty was measurable from existing caches all along.**
+>
+> ```
+>   build   cal    onset   |gp-0x6abc| p50 / p90    SATURATION DUTY   n_eng
+>   V111     600      50       138 /  576             76.64 %         83,778
+>   V112    1800     150       147 / 1293             49.99 %         48,956
+>   V122    3000     250       128 /  347             16.75 %         58,650   <- THE CAR
+> ```
+>
+> 🛑 **THE DE-RELAYING WAS ALREADY DONE.** Stock's *“pinned across 99.62 % of its range = pure relay”* is not the car's condition: **the car saturates on 16.75 % of engaged frames.** The ladder spans **77 % → 17 %, a 4.6× reduction in relay duty, all three flown — and the ratchet persisted throughout.** That is a real dose-response on the relay hypothesis, and it fails.
+> ⚖ **THE CONDITIONAL LOOKS SUPPORTIVE AND IS CONFOUNDED.** Duty is higher in high-ratchet windows on all three builds (car: **0.278 vs 0.110**, 2.5×). But **the ratchet's own motion IS the relay's input** — more 6–9 Hz rate means larger `|gp-0x6abc|` means more saturation, causation or not. The association is exactly what a pure bystander would produce. **Not evidence for the relay.**
+> ⇒ **The Coulomb relay is substantially weakened as the ratchet's source**, on the strongest instrument the kit recognises: the operator drove all three rungs and reported no change, across a 4.6× swing in the mechanism's own duty. **It is not fully excluded** — his verdicts on the ladder were not per-rung symptom scores — but it is no longer the prime suspect, and **a 427 relay probe is no longer worth a channel.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE RELAY KNEE CANNOT BE TESTED FROM FLOWN CAN AT ALL — DEMONSTRATED, NOT ASSERTED. AND THE WAY THROUGH IS A 427 TAP, NOT A CAVE.**
 >
 > With every LINEAR lane eliminated as the ratchet's source, the nonlinear candidate the record already names becomes the suspect: engagement multiplies 6–9 Hz by **2.8× (+0.413 [+0.146, +0.667])** with **no rate dependence**, via `FUN_0003b8f6`, *a Coulomb relay PROPORTIONAL TO THE COMMAND* saturating against `0xC40BC` — *“pinned across 99.62 % of its range at stock = pure relay”*.
