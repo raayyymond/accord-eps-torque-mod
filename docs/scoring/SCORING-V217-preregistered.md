@@ -19,6 +19,11 @@ is our defect, not a result.
 | `b5` non-degenerate | **not exactly 0.0 or 1.0** | degenerate ⇒ uninterpretable, **not a null** |
 | per-episode grind peak | **NOT at 20.50 ± 1 Hz** | the notch is not in force — the biquad edit did not take |
 
+✅ **The probe target is verified to HAVE LIVE FEEDS — checked, not assumed.** `gp-0x6b4e` is the mode-5 arm of the `0xC4124` router, summing value B from slots 2/4/5/9. Two of those are confirmed live computed signals, not constants:
+  · **slot 2** → `gp-0x6b78`, the `FUN_00033d10` PI lane-2 output (written `0x33FFA`)
+  · **slot 4** → `gp-0x6b68` (written `0x23ACC`), gated by `gp-0x6a64` vs `0xC50A6` and by `|gp-0x6b68| ≤ 10240`
+  ⇒ a reading of exactly 0 would be a **result** (both feeds gated off), not a dead channel. Worth stating because the kit has three recorded uninterpretable nulls (V64, V68, V92) that were all probes on cells nothing drove.
+
 The third is the strongest identity check available and it costs nothing: the notch attenuates
 **335,719×** at 20.50 Hz. A peak surviving there is arithmetically impossible with the filter live.
 
