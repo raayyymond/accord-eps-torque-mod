@@ -82,6 +82,8 @@ PUB = {
     'v238': '34ceb5aefaa9bdd5fd656513ce3536ae3e0fd5590c5c8bb80b400aa90b8a5be5',
     'v240': 'f2745df252e7ce7eb069fa7b7700e7cae474213cda4bebea08916253eb032962',
     'v241': '2ef7eb8eb24179054b0c016d13f2e240b7fe3ea32d419c047405f1a748109df4',
+    'v242': '424249b0c7d89fad4e1192fbb89b829fb6295e4260b7959d2a406c95657a5576',
+    'v243': '5fb9ad74f104de4616b4704081517d418e4307687eab3490b1ffb62e629d9a07',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -519,7 +521,17 @@ print("[13] A GAIN RAISE MUST BE PRICED AGAINST THE NOTCH, ACROSS THE WHOLE BAND
 _GAIN_BASE = 5346                      # 6.00x -- the notch shelf's baseline (0xC6CD0 = 891 * N)
 _STAGED = {'v211','v213','v215','v216','v217','v218','v219','v220',
            'v221','v222','v223',
-           'v224','v225','v226','v227'}   # priced and documented
+           'v224','v225','v226','v227',
+           'v242','v243'}   # priced and documented
+# V242 (8x) / V243 (10x) -- the operator's OWN sequence, "fix at 6x first, then raise to 8x".
+# PRICED AGAINST THE NOTCH, which is the condition this gate exists to enforce: 8x flew as V101
+# and was rejected -- "grinding/vibration at all speeds, only while LKAS commands" -- with the
+# de-confounded gain measured at 2.7-3.9x over 22-26 Hz. That band is exactly what this
+# lineage's notch attacks, and the notch is now aimed by the comma IMU, an instrument
+# independent of the EPS. V101 raised the gain with NO grinding treatment; V242 raises it with
+# the best the kit has. The step is 4 bytes on V241 -- gain plus its two tracking clamps --
+# and both carry the EME interlock assertion (clamp < 0xC674E = 5120), which is why there is
+# no 12x or 16x arm. UNFLOWN: the pricing is a rationale, not a result.
 # V224/V226 carry V217's 8x step byte-identically (they are V218/V220's lever rebased onto V222).
 # V225 IS the authority rung: 10x, and it carries the matching clamp raise 0xC61B3/B5 16 -> 18,
 # which is what makes the step a STAGED one rather than a bare gain raise. Asserted below.

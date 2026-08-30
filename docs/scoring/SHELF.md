@@ -2,32 +2,31 @@
 
 **Updated 2026-08-30.**
 
-## 🛑 THE LIVE CARD IS `DRIVE-CARD-V241.md`. EVERYTHING BELOW THIS BLOCK IS OLDER.
+## 🛑 THE LIVE CARD IS `DRIVE-CARD-GAIN-LADDER.md`. EVERYTHING BELOW THIS BLOCK IS OLDER.
 
 ```
-  FLY   V241   39990-TVA,A160-V241-V235BASE-NOTCH.IMU.29.75-22.50-0.940-0x13000-0x100000.rwd
-        rwd  57d240d77f568aac...   image  2ef7eb8eb2417905...
-  ARM   V235  (V241 minus 12 bytes -- isolates the notch geometry)
-  BACK  V122  (your car)
+  V241   6x   ...-V241-V235BASE-NOTCH.IMU.29.75-22.50-0.940-...rwd   57d240d77f568aac...
+  V242   8x   ...-V242-V241BASE-GAIN8X.CLAMPS4096-...rwd             a94962b4240613c8...  <-- RECOMMENDED
+  V243  10x   ...-V243-V242BASE-GAIN10X.CLAMPS4608.CEILING-...rwd    43a32ac352508557...
+  BACK  V122  (your car, 6x)
 ```
 
-⭐ **V241 = V235 with the notch RE-AIMED on an instrument independent of the EPS.** V235's geometry was
-fitted to a CAN objective -- the EPS's own channels, the same subsystem the build modifies. The comma
-IMU had no part in it and names **22-30 Hz as the largest engagement-created band** (2.481, peak
-25-26 Hz) in the whole 3-45 Hz range.
-
+🛑 **THERE IS NO 16x, AND NO 12x.** The forward clamp must stay BELOW the soft-EME floor
+`0xC674E` = 5120 and tracks the gain as `gain*512//891`:
 ```
-  V235   zero 25.00 Hz  pole 23.50 Hz  r 0.960   cost 0.43254   min|H| 6-15 = 0.9108
-  stock  zero 55.23 Hz  pole 42.35 Hz  r 0.797   cost 0.57508   min|H| 6-15 = 0.9344
-  V241   zero 29.75 Hz  pole 22.50 Hz  r 0.940   cost 0.31079   min|H| 6-15 = 0.9374
+   6x -> 3072 OK     8x -> 4096 OK     10x -> 5120 EQUALS the floor (V219/V225 used 4608)
+  12x -> 6144 EME AUDIT FAILS          16x -> 8192 EME AUDIT FAILS
 ```
+Above ~10x the command cannot be DELIVERED, and reaching it means raising a safety interlock.
+`0xC674E` is asserted FROZEN in every build. Even V243's 10x is nominal -- delivered authority rises
+4096 -> 4608, about 12 %.
 
-✅ **28.1 % more of the measured excess removed, and it cuts LESS of the damping band** -- V235 sat at
-0.9108, BELOW Honda's own floor. ✅ **Leave-one-route-out: the same geometry wins on ALL TEN folds.**
-✅ Both gates recomputed from the WRITTEN bytes.
+🛑 **8x FLEW AS V101 AND WAS REJECTED** -- "grinding/vibration at all speeds, only while LKAS
+commands". Peak moved 20.3 -> 23.0 Hz; de-confounded gain 2.7-3.9x at 22-26 Hz. ✅ **That band is what
+this lineage's notch attacks**, aimed by the IMU (independent of the EPS). V101 had NO grinding
+treatment. **It may still grind -- the lineage is unflown.**
 
-🛑 **V236, V237, V239 remain WITHDRAWN; V238 and V240 carry a RATCHET COST.** ⚠ The weight is
-chassis MOTION and the notch filters a TORQUE lane -- a better-founded aim, not a promise.
+The ladder is FOUR BYTES per rung: V241 already carries V222's whole lineage minus the 8x step.
 
 **(older, 2026-08-29)** **⚠ FLY V222 FIRST** — it is **V221 with four bytes REMOVED from the delta**, restoring the friction lane’s SATURATION to the car (V216 restored only its slope, leaving a **216×** difference above 250 counts of steering rate; the ratchet regime is 1.0× identical). 23 payload bytes, every deliberate lever byte-identical to V221. Card: `docs/scoring/DRIVE-CARD-V222.md`. **V221 is the fallback.** ⊕ **V227 is the one genuinely untried ratchet lane** — `0xC67C4` 1280→512 moves the resonance-PID ceiling knee so it reaches full authority at 8 km/h instead of 20, **3× more ceiling at creep and identical above 20 km/h**. The model calls `gp-0x6ad4` *"the most reachable authority of any gated lane"* and says it has **never been scored at 6–9 Hz**. 🛑 OPEN lever, not a predicted fix — it can make the ratchet worse. ⊕ **All four follow-up arms are now REBASED ONTO V222** — V223 (Lever B rung 2), **V224** (ratchet rung 2), **V225** (authority rung 2, 10× with its clamps) and **V226** (grind rung 2, notch poles 13.50). V218/V219/V220 were cut off V217 and each LACKED Lever B and the friction restoration, so flying one after V222 would have silently handed back two levers. All five builds now share the same 23 payload bytes from the car. ⊕ V223 is Lever B rung 2 (13107→26214), built and ready if V222’s grinding result is positive but incomplete — the dose is set by the lane’s describing function, which says V222 sits nowhere near the knee at the amplitudes that matter and that one more doubling buys a full 2× there while buying essentially nothing at the largest excursions. **⚠ V221 was the previous primary.** 27 payload bytes from your car, every one a lever. **V221 is V217 plus two bytes** — Lever B `0xC6446` 5244 → 13107, the kit’s only lever that has ever moved both symptom families at once with the LKAS command measurably untouched (V88: 15–22 Hz **0.549×**, 9–12 Hz **0.604×**, 0.5–3 Hz **1.192 = NULL**). It sat frozen for 130+ builds because V160 called 6553 a hard int16 ceiling; that is **false** — `0x3AC18` is a 32-bit `mul` and the only bound is the ±8192 rail, left byte-identical, so the real headroom is **12.5×, not 1.25×**. 🛑 Only two dose points exist, so V221 is a **dose probe as much as a fix**: if grinding reads worse than V217 would have, 5244 was already at the optimum and **V217 is the fallback, built and published**. See `docs/scoring/DRIVE-CARD-V221.md`. **Three rung-2 arms are ready behind V217** — **V218** (deeper ratchet dose), **V219** (10× authority), **V220** (wider notch). All three symptoms now have a dose ladder; fly whichever the V217 drive points at.
 

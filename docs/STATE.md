@@ -66,6 +66,45 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE GAIN LADDER — V241 (6×) · V242 (8×) · V243 (10×). AND THERE IS NO 16×: IT IS BLOCKED BY A SAFETY INTERLOCK, NOT A JUDGEMENT CALL.**
+>
+> Operator brief, 2026-08-30: *“the safest, highest probability of working firmware with 6x torque (or higher …) up to 16x torque with no grinding, vibration, or oscillation, best firmware for autonomous driving.”*
+> ```
+>   V241   6x   image 2ef7eb8eb2417905…  rwd 57d240d77f568aac…   SAME gain as the car
+>   V242   8x   image 424249b0c7d89fad…  rwd a94962b4240613c8…   <-- RECOMMENDED
+>   V243  10x   image 5fb9ad74f104de46…  rwd 43a32ac352508557…   the ceiling
+> ```
+> 🛑 **[EVIDENCE] WHY 16× DOES NOT EXIST.** The forward clamp must stay **below** the soft-EME floor `0xC674E` = 5120, and it tracks the gain as `gain × 512 // 891`:
+> ```
+>    6x -> 3072 OK     8x -> 4096 OK     10x -> 5120 EQUALS the floor (V219/V225 used 4608)
+>   12x -> 6144 EME AUDIT FAILS          16x -> 8192 EME AUDIT FAILS
+> ```
+> **Above ~10× the command cannot be DELIVERED** — it clips long before the nominal gain — and reaching it means raising a **safety interlock**. `0xC674E` is asserted **FROZEN at 5120** in every build; I did not touch it and would not without an explicit instruction. Even V243's 10× is nominal: its clamp is held at 4608, so delivered authority rises **4096 → 4608, about 12 %**.
+> ⭐ **THE LADDER IS FOUR BYTES PER RUNG.** V241 already carries V222's whole lineage — the diff showed V241 = V222 **minus** the 8× step, **plus** the IMU notch, Honda's `0xC63AE` and Lever B at V88's optimum. So V242 = V241 + `0xC6CD0` + two clamps. Nothing else moves.
+> 🛑 **THE RISK, NOT BURIED: 8× FLEW AS V101 AND WAS REJECTED** — *“GRINDING/VIBRATION AT ALL SPEEDS, ONLY WHILE LKAS COMMANDS”*; the operator reverted to 6× himself. Peak **moved 20.3 → 23.0 Hz**, de-confounded gain **2.7–3.9× at 22–26 Hz**.
+> ✅ **WHY V242 IS NOT A REPEAT:** that 22–26 Hz band is exactly what this lineage's notch attacks, and the notch is aimed by the **IMU — independent of the EPS** — which independently names 22–30 Hz as the largest engagement-created band. **V101 raised the gain with NO grinding treatment.** It may still grind; the lineage is unflown.
+> ✅ Registered as **STAGED** in `closeout_verify_published`, with the pricing written into the registry rather than the gate bypassed — that gate exists because of V101.
+> ⇒ **1493 checks passed, 48/48 builders bit-exact.**
+> ⚠ **WHAT THE BRIEF COULD NOT BE GIVEN:** no authority lever beyond the gain exists — every other cal in the assist path was measured this session and is inert or broadband gain reduction. And **the ratchet is not fixed**; V242 attacks grinding, which two independent instruments now agree is a different problem.
+
+> 🛑🛑⭐⭐⭐⭐⭐ **THE RULE THAT BLOCKS THE ONLY USEFUL BAND MAY REST ON A RECTIFIED CHANNEL. MY OWN RE-CHECK WAS INVALID FOR THE SAME REASON — REPORTING BOTH.**
+>
+> The torque spectrum says the one band worth filtering is **6–10 Hz**, and a single claim forbids it: *“never notch 6–15 Hz on this lane”*, from `gp-0x6b86`'s measured phase (cos −0.918 / −0.989 / −0.629, 3/3 routes). That rule condemned V238 and V240 and now blocks the strongest lever the data points to, so it was worth re-deriving.
+> ⚠ **MY RE-CHECK FLIPPED ALL SIX BANDS — WHICH IS A RED FLAG, NOT A RESULT.**
+> ```
+>   band     mine    record        band     mine    record
+>   6-9    +0.565   -0.918        15-22   +0.635   +0.551
+>   9-12   +0.894   -0.989        22-30   -0.338   +0.936
+>   12-15  +0.933   -0.629        30-40   +0.106   +0.821
+> ```
+> ✅ **I VALIDATED MY PIPELINE FIRST, on signals whose phase I know** — `lane = −rate` returns cos −1.000 (damping), `lane = +rate` returns +1.000 (pumping), quadrature returns 0.000. The convention is right. **So a wholesale six-band inversion had to come from the DATA, and it does:**
+> 🛑 **`mag427` IS RECTIFIED — all non-negative on all three routes** (min 0.00 across 93k/66k/155k samples). A rectified signal's phase against wheel rate carries no reliable sign: rectification folds the negative half-cycles and doubles the fundamental. **My re-check is therefore INVALID, and it is not evidence that the record is wrong.**
+> 🛑 **BUT THE SAME DEFECT REACHES THE RECORD'S OWN TABLE.** It was measured on `gp-0x6b86` via CAN 427 on **ra4/ra5/ra6** — and those three caches carry **`mag427` WITHOUT `sgn427`**. The extractor family does produce a sign channel (`extract_r85.py` writes both), and **59 other caches carry it — but not these three.** So unless the original analysis had a signed source these caches do not hold, **the table's SIGNS rest on a rectified channel too.**
+> ⇒ **STATUS: the rule is IN DOUBT, not overturned.** I am **not** acting on it — no 6–10 Hz notch is being built, and **V238/V240 stay costed**. A load-bearing claim that may rest on a rectified channel is a flag to resolve, not a licence.
+> ➕ **THE FIX IS CONCRETE AND NOW POSSIBLE:** re-extract ra4/ra5/ra6 **with `sgn427`**, which the extractor family already supports and which the revived `extract/` toolchain can finally run. Then the pump/damp table can be derived on a signed channel for the first time — and with it, whether the 6–10 Hz band is genuinely forbidden.
+> ⭐ **The kit's own memory already warned about this class:** *“`band_envelope` is RECTIFIED, not analytic”*. The warning existed; the table was built anyway.
+> ➕ Reader: `rlog-tools/score/pump_damp_recheck.py` (the convention self-test is in the script).
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE TORQUE CHANNEL AND THE CHASSIS DISAGREE COMPLETELY — AND THE NOTCH ACTS ON TORQUE. V241's OBJECTIVE IS IN THE WRONG DOMAIN.**
 >
 > The last untested link in V241's chain: its geometry was optimised against **chassis motion**, but the notch filters a **torque lane**. Same local-excess design, same speed matching, run on `tq`:
