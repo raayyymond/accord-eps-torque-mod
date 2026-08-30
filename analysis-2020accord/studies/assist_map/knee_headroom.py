@@ -20,7 +20,7 @@ os.chdir('C:/Users/dudei/Desktop/Projects/accord-eps-torque-mod')
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 R='C:/Users/dudei/Desktop/Projects/accord-firmwares/analysis-2020accord'
 DATA=[('r78',91,12.2,16.7),('r79',92,11.5,4.8),('r7e',96,31.0,15.7),('r7f',96,39.2,6.4),
-      ('r81',98,243.7,9.9),('r82',99,237.2,17.8),('r85',100,58.7,10.8),('r95',102,193.2,38.7),
+      ('r81',98,243.7,9.9),('r82',99,237.2,17.8),('r85',100,58.7,10.8),('r95',101,193.2,38.7)  # r95 CORRECTED V102 -> V101 (8x/7128, Lever B removed); matches cal_association_scan.py + cal_scan_stability.py, which were fixed earlier,
       ('r96',102,38.6,222.9),('r9e',103,38.1,286.9),('ra4',104,23.3,47.1),('ra5',105,84.6,27.4),
       ('ra6',106,29.0,11.8),('r1e',107,21.0,20.3),('r21',111,27.2,9.1),('r22',112,20.6,7.9),
       ('r97',112,4.4,2.2),('r24',122,38.3,15.5)]

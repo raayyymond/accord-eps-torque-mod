@@ -187,6 +187,41 @@ python rlog-tools/score/rate_matched_band_ratio.py
 
 ---
 
+## 🛑 ONE RESIDUAL RISK ON LEVER B — watch the ratchet, do not assume it
+
+V222 raises Lever B (`0xC6446`) to **13107**, 2.5× above the car. There is a specific reason to watch
+the **ratchet** rather than assume it is untouched, and it is worth stating plainly before you drive.
+
+Lever B **is** the r24 engaged derivative gain. A three-way-verified sign finding in this kit
+(`gp-0x6752` = **−1**, not +1) concludes that **r24’s 6–9 Hz contribution is sign-negative — "PUMPING",
+−431 to −1294 counts.** The ratchet sits at **7.79 Hz**, squarely inside that band. So the arithmetic
+says more Lever B could mean more ratchet.
+
+**What the measurements say, against that:**
+
+| evidence | 6–9 Hz result | weight |
+|---|---|---|
+| **V88, a direct on-car A/B** (Lever B 512 → 5244) | **0.859× — mildly BETTER** | the only real test; a designed toggle |
+| the flown corpus, Lever B ON vs OFF at byte-matched forward gain | **1.08×, p = 0.58** | ❌ **too weak to count** — see below |
+| the static sign arithmetic | predicts pumping | open-loop; says nothing about the closed loop |
+
+🛑 **The corpus test does NOT clear it, and I am not going to present it as if it did.** With 2 OFF
+routes against 9 ON, the detection floor is **3.55×** — it can only exclude a *huge* pump. Worse, the
+built-in control failed to stay quiet: computed on **disengaged** driving, where Lever B is **inert**,
+the same contrast shows the table’s **largest** separation (+0.212 log10, p = 0.073). The arms differ by
+road and route, not only by lever, so the engaged null is not attributable.
+
+➕ The arms are also not single-variable (V102/V103 differ from V104+ in the biquad, the notch and
+`gp-0x6b26` as well), which is a second, independent reason not to lean on it.
+
+⇒ **What this means for your drive.** The grinding read is unchanged and well-founded. But treat the
+**ratchet as pre-registered to WATCH, not as expected-neutral**: V88 measured the safe direction at half
+this dose, and nothing in the record has tested 13107. **If the ratchet is clearly worse than V122, that
+is an interpretable result and Lever B is the first suspect** — stop the drive, say so, and the fallback
+is **V221** (identical Lever B) then **V217** (Lever B at 5244, the V88-proven dose).
+⚠ This is a *residual risk*, not a prediction: the one direct measurement went the other way.
+Study: `analysis-2020accord/studies/mixer/lever_b_pumping_check_at_matched_gain.py`.
+
 ## Two limits on the numbers you will read back
 
 1. **The 30–49 Hz damage band is not purely 30–49 Hz.** Caches run at fs ≈ 101 Hz, Nyquist ~50.5, so anything real in **52–71 Hz folds into it** — a 71 Hz line lands on 30. The fold source is above Nyquist: it can be neither seen nor filtered out. Read that band as *"30–49 Hz **or its alias**"*, never as 30–49 alone.

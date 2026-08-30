@@ -26,7 +26,7 @@ ROUTES = [
     ('r81',  98, 'memory: V98 FLEW (route 0x81)'),
     ('r82',  99, 'v99_r82_score.py'),
     ('r85', 100, 'score_r85_v100.py'),
-    ('r95', 102, 'r95_v102_prereg.py'), ('r96', 102, 'session'),
+    ('r95', 101, 'V101 flew 8x/7128 as route 0x95; r95_v102_prereg.py is the PREREG FOR V102, MEASURED ON r95=V101 -- its docstring says so. Was 102 here.'), ('r96', 102, 'session'),
     ('r9e', 103, 'SCORING-2026-08-20-v103-route9e.md'),
     ('ra4', 104, 'session'), ('ra5', 105, 'ra5 tooling'),
     ('ra6', 106, 'session'), ('r1e', 107, 'session'),
