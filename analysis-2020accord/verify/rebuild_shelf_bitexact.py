@@ -58,6 +58,7 @@ SHELF = {
     'v230': 'bb11115a54ba97b4216f7bb2a12c1a9da2d0ba4c7495d80f008d7bc35eac3f61',   # WITHDRAWN 2026-08-30: cuts a DAMPER (positive Re(Z)); kept for bit-exactness only
     'v231': '34a4400d3d848069890a7d2be298d4ba3118e86251421d535f2f534676cace37',   # V229 + the biquad-state probe
     'v232': 'c15fa8633352771f6f9cb5c37eac75ddebe7e648892620cdd7e7f07bc2784329',   # V231 + notch re-aimed to 34 Hz (the pumping band)
+    'v233': '399424fd8b03266950ed07d5e47964705c9a87bf2f86c4370c0999179d0ae42a',   # V231 + net-damping optimum, 25 Hz, every gate binding
 
 }
 # ARCHIVE: builds whose BUILDER must still reproduce its image, but which are NOT meant to be

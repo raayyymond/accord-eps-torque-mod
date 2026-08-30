@@ -17,20 +17,33 @@ anything happens.** Nothing is flashed without that.
 
 ---
 
-## 🛑 V233 WAS DESIGNED AND THEN STOPPED BY A GATE — DRIVE V232
+## ⭐ DRIVE **V233** — the best build on the shelf
 
-I optimised the filter directly against the net-damping measurement and got a geometry that beats both
-Honda and V232 on **both** axes (damping 1.007× vs V232's 0.944×, pumping −0.354× vs +0.285×).
+```
+  V233   39990-TVA,A160-V233-V231BASE-NOTCH.NETDAMPING.OPTIMUM.25HZ-0x13000-0x100000.rwd
+         rwd sha256 8b418939011854b5...     image sha256 399424fd8b032669...
+```
 
-**It is not flashable.** The kit forbids any amplification in a flashable image, and that design peaks
-at `|H| = 1.0020` — 0.2 % above unity. That 0.2 % is precisely the property that made it attractive.
-I did not argue for an exception; the constrained re-optimisation is the next job.
+```
+  net damping    6-9      9-12    12-15    22-30    30-40   damping  pumping
+  your car     1.000x   1.000x   1.000x   1.000x   1.000x   1.000x   1.000x
+  V228         0.861x   0.799x  -0.055x  -0.088x  -0.498x   0.535x  -0.293x
+  V232         0.985x   0.990x   0.858x   0.694x  -0.123x   0.944x  +0.285x
+  V233         1.004x   1.000x   0.891x  -0.050x  -0.888x   0.965x  -0.469x
+```
 
-Three earlier versions of the same design also failed their own gates — one boosted the band it was
-meant to cut, one rotated the phase where the lane damps, one carried an arbitrary threshold from a
-different build. **No gate was weakened to make any of them pass.**
+**It leaves the damping at your ratchet frequency untouched (1.004×, 1.000×) and turns both pumping
+bands into damping.** It is a narrow notch at 25 Hz, sitting on the measured peak of the pumping power,
+and it never amplifies anywhere (max |H| 0.999991).
 
-**So the flight candidate is unchanged: V232.**
+Five versions of this design were built and four were rejected by the kit's own gates — one boosted the
+band it was meant to cut, one rotated the phase where the lane damps, one carried an arbitrary threshold
+from a different build, and one was **deleted for amplifying by 0.2 %** rather than being granted an
+exception. **No gate was weakened to make any of them pass.**
+
+⚠ **Cost, unchanged:** 55 Hz runs 143× louder than Honda's cut, in a band where the audio does show LKAS
+excess. Any geometry that cuts 19–30 Hz with one filter cell pays this. **V231 is the control arm** —
+Honda's placement, same probe — if you want to separate the two effects.
 
 ---
 

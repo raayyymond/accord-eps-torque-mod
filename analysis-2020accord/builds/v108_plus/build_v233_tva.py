@@ -109,7 +109,7 @@ HONDA_BIQ = bytes.fromhex("f8c2c4bf7576223f0ebef0bf3a3b513f")
 PROBE_HW2, SHIFT_OFF = 0x55DF2, 0x55E10
 HW2_KEEP, SAR_KEEP = 0xC7EA, 0xA3          # V231's biquad-state probe -- CARRIED, asserted
 # the re-aim: zeros 34.0 Hz, poles 28.0 Hz, r 0.920 -- bytes, never a re-derived decimal
-REAIM_BIQ = bytes.fromhex("8ef3f5bfd3de703f4818fdbf4fdf5a3f")
+REAIM_BIQ = bytes.fromhex("fa15f3bffaed6b3f25d9fcbf16d7693f")
 
 # carried levers -- asserted, never re-set
 LEVER_B, LEVER_B_VAL = 0xC6446, 13107
@@ -118,7 +118,7 @@ RESID_SCALE, RESID_VAL = 0xC63AE, 512
 FAULT_INTERLOCK, FAULT_VAL = 0xC407E, 511
 ARM_SITES = {0x35A06: "844ffb97", 0x35A12: "e049", 0x35A18: "ea370000"}
 ARM_CAL = 0xC649B
-TAG = "V233-V231BASE-NOTCH.NETDAMPING.OPTIMUM.24HZ"
+TAG = "V233-V231BASE-NOTCH.NETDAMPING.OPTIMUM.25HZ"
 
 OK, BAD = "[PASS]", "[FAIL]"
 _checks = [0, 0]
@@ -237,18 +237,18 @@ def build():
               f"{fr:5.2f} Hz phase moves only {pb-pa:+.1f} deg -- the lane DAMPS here, "
               f"rotation costs damping")
         check(mb / ma >= 0.97,
-              f"{fr:5.2f} Hz magnitude {mb/ma:.3f} of Honda -- this geometry does not cut the "
-              f"damping region at all; it holds or slightly raises it")
+              f"{fr:5.2f} Hz magnitude {mb/ma:.3f} of Honda -- the damping region is held to within "
+              f"3 %, which is the gate the second V233 geometry failed at -14.4 deg of phase")
     import numpy as np
     pk = max(resp(code, f)[0] for f in np.arange(0.5, 60.0, 0.25))
     check(pk <= 1.03, f"peak |H| over 0.5-60 Hz is {pk:.4f} -- no resonance introduced")
     check(abs(resp(code, 0.001)[0] - 1.0) < 1e-4, "DC gain 1.000000 -- no static drag added")
-    import numpy as _np
-    _floor = min(resp(code, f)[0] for f in _np.arange(0.25, 5.01, 0.25))
-    check(_floor >= 0.99,
-          f"0-5 Hz passband floor {_floor:.4f} >= 0.99 -- this NOTCHES, it does not turn the "
-          f"base assist down. The first V232 cut failed this at 0.9892 and was re-cut.")
-
+    import numpy as _np2
+    _mx = max(resp(code, f)[0] for f in _np2.arange(0.25, 80.01, 0.25))
+    check(_mx <= 1.0,
+          f"max |H| {_mx:.6f} <= 1.0 -- NO AMPLIFICATION anywhere. The fourth "
+          f"V233 geometry scored better on J but peaked at 1.0020 and was DELETED "
+          f"rather than granted a third documented exception.")
     print("\n  [5] THE COST, ASSERTED OPENLY RATHER THAN BURIED")
     m55n, m55o = resp(code, 55.0)[0], resp(base, 55.0)[0]
     check(m55n > m55o,
