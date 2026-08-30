@@ -75,6 +75,36 @@ whole firmware, so 20.50 Hz and 55 Hz are mutually exclusive.
 ⇒ **The real choice is: the grinding fix with an audible 40–49 Hz lift (~+5.9 dB on V228, ~+8.1 dB on
 V222), or neither.** Staying on your car keeps 40–49 Hz where it is and keeps the grinding too.
 
+## 🛑 WHAT ONE DRIVE CAN AND CANNOT FALSIFY — read this if the drive disappoints
+
+**These symptoms are intermittent, and that cuts BOTH ways.** The kit already has a standing rule that
+*"absence of a complaint is not a report of absence"*. What is newly established is that **presence
+varies too**:
+
+- **V67, V68 and V85 are byte-identical** on all five cells ever blamed for grind #2. It was reported
+  on the first two and **not** on the third.
+- Your own words on V112: ***"I no longer have an understanding of the kinds of scenarios that illicit
+  grind #1."***
+
+⇒ **So a single drive is weak evidence in BOTH directions.** "No better" does **not** falsify a build,
+and "better" does **not** confirm one. That is written here **before** the drive so it cannot sound like
+an excuse afterwards.
+
+### Two different questions, and only one of them is yours to answer in a single drive
+
+| question | who answers it | how many drives |
+|---|---|---|
+| **Is the car acceptable to drive?** | **You, and only you.** One episode is enough, and your verdict is final | **1** |
+| **Did the lever work?** | the band measurements | **many** — 14 min/arm for grinding, ~7 h for the ratchet |
+
+**Your job is the first question.** If it feels wrong, stop — that is a complete and sufficient result,
+and no measurement overrides it. But if it feels *unchanged*, that is **not** a verdict on the lever;
+it is one sample of an intermittent process, and the honest response is another drive rather than
+abandoning the build.
+
+⚠ This is also why the **repeat route** matters more than the next new build: it is the only thing that
+separates "this build does nothing" from "this symptom did not happen to fire today."
+
 ## ⭐ IF YOU CAN ONLY DO ONE THING: DRIVE V228 TWICE
 
 Not V228 then V222 — **V228 twice, on separate outings.**
