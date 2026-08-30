@@ -379,6 +379,36 @@ are different instruments and a 20 s band ratio must not be reported as evidence
 estimator that passes its control"*, and it is a per-burst measurement rather than a band average, so
 its variance structure is different. **Its power has NOT been computed; that is the open question.**
 
+> ⭐ **RING-DOWN COMPUTED: it is the better ratchet instrument, but only for LARGE effects — and a
+quality filter BIASES AGAINST the mode of interest.** 304 ring-down events extracted over **75.1
+engaged minutes** across 6 routes (**4.05 events/min**), from command drops ≥35 % within 100 ms.
+
+```
+  min R2   kept  ev/min  p50 zeta  sd(log10)  min/arm to see a 2x change
+     0.0    304    4.05    0.0400     0.474            9.6
+     0.3    171    2.28    0.0709     0.294            6.6   <- best exposure
+     0.8     52    0.69    0.1384     0.272           18.8
+     0.9     29    0.39    0.1427     0.209           20.7
+```
+
+✅ **For a 2× change in ζ, ring-down needs ~7–10 engaged min/arm against band power’s ~104.** That is a
+**10–15×** improvement and makes a large ratchet effect **measurable on a drive somebody would
+actually do.**
+🛑 **But it does NOT rescue a V88-sized effect**: 1.16× still needs **209–404 min/arm**. ⇒ **neither
+instrument can resolve a small ratchet change at any realistic exposure** — and that conclusion is
+robust across every filter setting, so it does not depend on implementation details.
+🛑🛑 **THE TRAP, and it is the interesting part: filtering on fit quality selects AGAINST the
+ratchet.** As R² rises the median ζ climbs **0.040 → 0.143** — but the record’s ratchet is
+**ζ = 0.017–0.036 (Q 14–29)**, and ζ = 0.14 is **Q ≈ 3.6**, heavily damped. A **lightly** damped mode
+barely decays across a 0.5 s window, so its fit is POOR by construction; a clean exponential over that
+span is something **faster-decaying and probably not the ratchet at all.** ⇒ **do not filter ring-downs
+on R²** without checking what it selects.
+⚠ **Scope:** this is a quick re-implementation, not the kit’s validated scorer, and it does **not**
+reproduce the record’s ζ (0.040 unfiltered vs 0.017–0.036). The **exposure ratios** are indicative; the
+absolute ζ values are **not** trustworthy here. ⇒ **OPEN: re-run this variance estimate through
+`rlog-tools/score/ratchet_ringdown.py` with its own controls** (time-reversal, random-frame) before any
+build is sized against it.
+
 > ✅⭐ **AUTHORITY AUDIT: V222’S 8× STEP SCALES ITS CLAMP EXACTLY — margin identical to the car to four
 digits.** A gain raise whose forward clamp does not follow silently turns the authority lever into a
 **clipper**, so this was checked from the images rather than assumed. `lane_max = (0xC61BE × gain) >> 15`
