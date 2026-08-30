@@ -50,6 +50,7 @@ SHELF = {
     'v228': '6cf12db9fc49aee29e46c169c05fc18415f2a970b477cdae1372d57805748b3c',   # flight candidate: V222 at the car 6x
     'v229': '078da4b1f22903a5364b54b0035790f0fac6453a4717e881290eefb15bc14a42',   # V228 + Honda's 55 Hz notch restored
     'v230': 'bb11115a54ba97b4216f7bb2a12c1a9da2d0ba4c7495d80f008d7bc35eac3f61',   # V229 + alpha2 3 -- BOTH cuts
+    'v231': '34a4400d3d848069890a7d2be298d4ba3118e86251421d535f2f534676cace37',   # V229 + the biquad-state probe
 
 }
 # ARCHIVE: builds whose BUILDER must still reproduce its image, but which are NOT meant to be

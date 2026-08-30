@@ -17,6 +17,35 @@ anything happens.** Nothing is flashed without that.
 
 ---
 
+## ⭐ DRIVE **V231** — it is V229 plus the first instrument ever put on the notch
+
+```
+  V231   39990-TVA,A160-V231-V229BASE-PROBE.BIQUAD.STATE-0x13000-0x100000.rwd
+         rwd sha256 a089ba1432a5aa39...     image sha256 34a4400d3d848069...
+```
+
+**V231 drives identically to V229.** All three changed bytes are in the telemetry tap; not one control
+byte moves. So you get V229's lever *and* the measurement, at zero cost to how the car behaves.
+
+**Why it matters.** After 56 builds that moved the notch around, **none has ever measured whether the
+notch runs at all.** If you drive V229 and report "no change", I cannot tell you whether the notch is
+inert or simply not where your symptom lives. V231 answers that from the same drive.
+
+The filter's internal state boots to exactly `0.0f`. If its enable never fires on the car, that state
+stays zero forever. V231 puts that state on CAN 427, so the reading licenses one clean sentence either
+way:
+
+- **identically zero across the drive** → the filter never executes, and **the entire notch axis is
+  dead** — which would explain 56 builds of nothing, and retire the axis for good
+- **nonzero** → it runs, and how hard it works is measurable for the first time
+
+I tried to settle this from the existing corpus first and could not: the biquad was dormant before V103
+and armed after, and five routes have audio across that boundary, but the **control bands moved more
+than the test band** and one arm spanned 6× within itself. Cabin audio at 55 Hz is road and engine — one
+assist lane cut 159× barely shows up in it.
+
+---
+
 ## 🛑 CORRECTION — DRIVE **V229**, NOT V230
 
 I recommended V230 first. **That was wrong, and here is why.** V230's lever (`0xC40DC`) acts on the

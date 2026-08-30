@@ -46,6 +46,29 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V231 BUILT — V229 PLUS THE FIRST INSTRUMENT EVER PUT ON THE NOTCH. THREE BYTES, ALL IN THE TELEMETRY TAP; NO CONTROL BYTE MOVES.** After 56 builds that RELOCATED this filter, **none has ever measured whether it RUNS.**
+>
+> ```
+>   image 34a4400d3d848069890a7d2be298d4ba3118e86251421d535f2f534676cace37
+>   rwd   a089ba1432a5aa39d14ad281a4934f2d8fd347e5c5d2ed7e62412fd2a8449c18
+>   31/31 assertions · 3 payload bytes · CRC 50/50 · cave BYTE-IDENTICAL
+> ```
+>
+> ✅ **THE NULL IS INTERPRETABLE, which is the whole point.** The filter's state floats boot to **exactly 0.0f** (V103's GATE 1, `.data` initialiser at flash `0x89898`), so if the arming gate never fires the state stays zero forever. 427 now taps **`gp-0x3816`** — the HIGH half of the z1 float at `gp-0x3818`. ⇒ *“identically zero across N engaged frames ⇒ the filter never executed.”*
+> ✅ **ENCODING VERIFIED IN THE INSTRUCTION STREAM, not assumed** — `0x55DF0` is `ld.h -0x6c18,gp,r6` (`2437e893`), so `hw2 = 65536 − offset` and the load is SIGNED; `0x55E10` is `sar 0x3,r6` (`a332`), so the shift byte is `0xA0|N`. `sar 3` is kept: any real nonzero float has |high half| ≥ 8, so it cannot alias a live state to a wire zero.
+> 🛑 **I TRIED THE CORPUS FIRST AND IT COULD NOT ANSWER.** The biquad was DORMANT before V103 and ARMED after, and five routes carry audio across that boundary (r95/V101, r96/V102 vs r9e/V103, ra4/V104, r24/V122). Difference-in-differences on engaged/not audio, speed AND gear matched:
+>
+> ```
+>   band      ARMED e/n   DORMANT e/n   armed/dorm
+>   6-9          1.36x        4.21x        0.32x
+>   15-22        1.15x        2.63x        0.44x   <- CONTROL, should be ~1.0
+>   50-60        1.64x        1.93x        0.85x   <- the notch band
+>   85-99        1.20x        1.02x        1.18x   <- CONTROL
+> ```
+>
+> **The CONTROL bands move MORE than the test band**, and the armed arm spans 6× within itself (1.64 / 0.73 / 4.38). **That is not a null on the biquad — it is a design that cannot see it.** Cabin audio at 55 Hz is road and engine; cutting ONE assist lane 159× barely moves it. ⇒ audio is the wrong instrument for liveness, and the lane itself is the right one.
+> ➕ **COST:** 427 is a shared channel, so V231 gives up V229's `gp-0x6b4e` reading. Pure instrument trade.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V230's α2 LEVER IS PROBABLY INERT, AND ITS DIRECTION IS THE ONE THAT ONCE ENDED A DRIVE. V229 GOES BACK TO BEING THE RECOMMENDATION.** I built V230 to escape the one-biquad trade, then checked the lineage on the lane it acts on — and the lane is already characterised.
 >
 > ✅ **The lane has exactly ONE output and it has been dosed and flown.** `gp-0x4f50 → FUN_00041464 → gp-0x6c2c → FUN_00036c12 [the 0xCBE74 LERP] → gp-0x6b26 (±511)`, no second consumer. **A ×1.5 dose measured INERT at `gp-0x6b26` itself** — p50 **0.988**, every CI containing 1.00, against a pre-registered 1.50 (r78/V91, r79/V92). Class **T10, “the instrument is invariant to the lever”**: `y = K·α` where α is what K damps, so **in a stable closed loop the product is invariant to K.**
