@@ -46,6 +46,21 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑⭐⭐⭐ **AUDIO BEATS CAN IN EVERY BAND, BY 2.2× TO 10.5× — THE KIT HAS BEEN SCORING WITH THE LESS SENSITIVE INSTRUMENT.** Episode-level sd on the car, engaged 20 s episodes, log10 power, converted to the exposure each readout needs at MATCHED effect sizes:
+>
+> ```
+>   band                effect        AUDIO min/arm   CAN min/arm   advantage
+>   grinding 15-22   V88 0.549x                 1.3          14.0      10.5x
+>   22-26            2.0x                       2.0          10.7       5.3x
+>   ratchet 6-9      V88 0.859x                98.3         413.7       4.2x
+>   mid 9-12         V88 0.604x                 7.3          17.0       2.3x
+> ```
+>
+> ⇒ **the grinding question — the operator’s primary symptom — collapses from 14 min/arm to 1.3.** And the ratchet, the symptom that has resisted sixty builds, drops from **~7 hours to under 2**. ➕ It is also **alias-free**: audio samples at **16 kHz**, so nothing in it suffers the fold that makes CAN’s 30–49 Hz uninterpretable.
+> 🛑 **Why this was invisible:** the audio corpus stopped at `ra6` (V106) and **the car had no audio cache at all** until it was extracted on 2026-08-30. Every scoring decision since has been CAN-based by default, not by comparison.
+> ⚠ **THREE CAVEATS, before this is over-trusted.** ① The sd figures come from **ONE route**, so route-to-route variation in the **variance itself** is unmeasured — the same gap that made the cross-build claims unpriced. ② Audio measures a **different physical quantity** (acoustic) from CAN (steering rate); they need not respond identically to a firmware change, and audio may carry road noise CAN does not. ③ The 15–22 Hz audio sd of **0.131** is low enough to deserve a sanity check on a second route before the 10.5× is relied on.
+> ⇒ **RECOMMENDATION: score audio FIRST on the next drive, and keep CAN as the cross-check** — not the reverse, which is what the kit has been doing.
+
 ## 🗂 INDEX TO THE BLOCKS BELOW
 
 | what you want | look for the block titled |

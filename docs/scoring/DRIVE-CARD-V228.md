@@ -101,6 +101,23 @@ whole firmware, so 20.50 Hz and 55 Hz are mutually exclusive.
 ⇒ **The real choice is: the grinding fix with an audible 40–49 Hz lift (~+5.9 dB on V228, ~+8.1 dB on
 V222), or neither.** Staying on your car keeps 40–49 Hz where it is and keeps the grinding too.
 
+## ⭐ GOOD NEWS ON EXPOSURE — the numbers below are for the CAN readout, and AUDIO is far better
+
+The exposure figures in the next section (14 min/arm for grinding, ~7 h for the ratchet) are for the
+**CAN** band readout, which is what this kit has always used. Measured on your car, **audio is 2.2× to
+10.5× more efficient in every band**:
+
+```
+  grinding 15-22 Hz    AUDIO  1.3 min/arm     CAN  14.0 min/arm
+  ratchet  6-9 Hz      AUDIO 98.3 min/arm     CAN 413.7 min/arm
+```
+
+⇒ **the grinding question needs about a minute and a half of engaged driving per build, not fourteen.**
+Audio also samples at 16 kHz, so unlike the CAN logs nothing in it is alias-confounded.
+
+⚠ Measured on one route only, and audio is a different physical quantity from steering rate — so treat
+it as the primary readout and keep CAN as the cross-check, rather than trusting it alone.
+
 ## 🛑 WHAT ONE DRIVE CAN AND CANNOT FALSIFY — read this if the drive disappoints
 
 **These symptoms are intermittent, and that cuts BOTH ways.** The kit already has a standing rule that
