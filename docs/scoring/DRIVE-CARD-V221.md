@@ -97,8 +97,49 @@ rail alone, so r24 cannot claim one more count of the aggregator than it already
 
 ```
 python rlog-tools/score/score_drive.py <tag> V221        # NAME THE BUILD -- it is not optional
+python rlog-tools/score/score_authority.py <tag> V221    # NEW -- the authority readout below
 python rlog-tools/probe/decode_v204_observer_lane.py <tag> --v209
 ```
+
+⚠ **The authority readout needs some curvature at speed.** Creep in a straight line cannot exercise
+the command; the bins will be empty and it will say so rather than guess.
+
+---
+
+## LKAS authority now has a direct measurement — and it changes what the 8× step means
+
+**Your command rails.** `sc_tq` pins at ±4096 on **2.7 % of engaged frames on your own drive**, in
+**sustained runs of 475–732 ms** (up to 6 s), same-signed between runs, with steering rate 6–21×
+higher than off-rail. So these are honest saturations during real manoeuvres — **not** hunting, and
+not a decode artifact. On r24 the command's p90 is 733 but its **p99 is the rail**: small nearly all
+the time, then pinned.
+
+**When the command is pinned, openpilot has no authority left.** That makes rail duty — at matched
+lateral demand, `|curvature| × speed²` — a direct authority metric that needs no model of the plant.
+
+```
+   demand |curv|*v^2      0.00-0.15  0.15-0.40  0.40-0.80  0.80-1.60    1.60+
+   4x  (Lever B present)      8.81%     20.27%     19.82%     31.48%   34.96%
+   6x  (Lever B present)      1.06%      3.89%      4.81%     13.65%   23.04%
+     -> improvement            8.3x       5.2x       4.1x       2.3x     1.5x
+   r24 = YOUR CAR (6x)        1.16%      2.46%      3.99%     19.47%   22.63%
+```
+
+⇒ **more EPS forward gain buys authority back, and by a lot** — 4–8× fewer railed frames in the low
+and mid bins, shrinking as demand rises, which is the shape you would expect.
+
+🛑 **AND THE APPARENT COUNTER-EVIDENCE AT 8× IS A CONFOUND.** There is exactly **one** 8× route in the
+whole corpus — r95, build V101 — and it appears to rail far worse (33 %, 48 %, 56 % in the upper
+bins). **V101 removed Lever B in the same build.** Byte-checked: `0xC6446` = **512** (stock) and its
+arm `0x3AA96` = **c5** (stock), against 5244/`fb` on every other build in the comparison. It raised
+forward gain and deleted the loop-damping lever at once, and more gain with less damping needs more
+command to hold a line — exactly what it shows.
+
+⇒ **the corpus has no clean 8× data point**, and **V221 is the first build ever to pair 8× gain with
+Lever B raised rather than removed** — the opposite of V101's combination.
+
+⚠ Honest limit: a V221 drive moves gain *and* Lever B together against your car, so a good authority
+result cannot be attributed to either alone. **V216 is the same build at 6×** if you want that split.
 
 ---
 
