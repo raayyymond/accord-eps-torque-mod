@@ -743,6 +743,26 @@ for _v in sorted(img):
         f'{_v.upper()} moves no table knot outside the 3 known corridor tables'
         + ('' if not _bad else f' -- {["0x%05X %s of 0x%05X" % (a, f[2], f[0]) for a, f in _bad[:4]]}'))
 
+print()
+print("[20] THE BOOST-FLOOR MIRROR PAIR MUST STAY IN SYNC -- int 0xC6768/6A/6C vs float 0xC65C4/C8/CC")
+# BUILD-LINEAGE names these together as V31's soft-EME boost floor and says, in as many words,
+# "Do not desync the mirror pair." Nothing enforced it. The pair is easy to desync by accident: the
+# ints are a LERP Y-array at 0xC6768 and the floats are three separate scalars 0x1200 bytes away, so
+# an edit reached through the table (as the corridor is) touches only one side.
+#   V31 set the floor to 4096; V38 raised it to 5120 (float 5.0). Relationship: float == int / 1024.
+#
+# ⊕ This also SOLVES the "unpriced corridor shape change" flagged earlier today. 0xC6768/6A/6C IS
+# the boost floor. Stock ramps 0/1536/2048; every build since V31 flattens it to a constant BECAUSE
+# A FLAT FLOOR IS THE POINT. It is not an accident and it is not unpriced -- it resolved soft EME.
+# I had decoded the table without connecting its address to the lever's name.
+for _v in sorted(img):
+    _I = [struct.unpack_from('<H', img[_v], _a)[0] for _a in (0xC6768, 0xC676A, 0xC676C)]
+    _F = [struct.unpack_from('<f', img[_v], _a)[0] for _a in (0xC65C4, 0xC65C8, 0xC65CC)]
+    _ok = all(abs(_F[_i] - _I[_i] / 1024.0) < 1e-4 for _i in range(3))
+    chk(_ok,
+        f'{_v.upper()} boost floor synced: int {_I} == float {["%.4g" % _x for _x in _F]} x1024'
+        + ('' if _ok else ' -- MIRROR PAIR DESYNCED, V31s lockstep is broken'))
+
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
 for m in bad:
