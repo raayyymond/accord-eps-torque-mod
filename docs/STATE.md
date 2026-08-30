@@ -254,6 +254,30 @@ build no longer notches, folded down by the sample rate. **It cannot be separate
 applies to **every notch build**, not just V222.
 Study: `analysis-2020accord/studies/mixer/notch_is_the_constrained_optimum_and_the_alias_cost.py`.
 
+> 🛑⭐ **AND THE ALIAS COST CANNOT BE ENGINEERED AWAY — THERE IS EXACTLY ONE BIQUAD.** The obvious fix
+for the 30–49 Hz confound is to keep Honda’s 55 Hz notch **and** add the 20.50 Hz one, which needs a
+second second-order section. **There is not one.** Scanned the entire cal region **`0xC4000`–`0xD8000`**
+at 4-byte stride for float quads with biquad structure (stability triangle `|a1| < 1+a2`, `0 < a2 < 1`,
+`|b1| ≤ 2`, non-trivial `c4`), rejecting constant blocks and monotone runs (lookup tables) and
+requiring the notch to fall in a plausible 1–200 Hz control band:
+
+```
+     addr           a1         a2         b1         c4   zero Hz  pole Hz     DC
+   0xC60A8    -1.53720    0.63462   -1.88080    0.81731     55.23    42.35   1.0000   <- the only one
+   biquad-shaped quads in the ENTIRE cal region: 1
+```
+
+⇒ **one section places ONE notch pair, so the 55 Hz vs 20.50 Hz choice is STRUCTURAL.** The alias cost
+can be **ACCEPTED or REVERTED — it cannot be removed**, and reverting would surrender the 3.6× grind cut
+that is the build’s main grinding lever. ⇒ **accept it, and score around it** (drive card already says
+so).
+⚠ **Scope, stated precisely**: this establishes there is exactly one **float32 biquad coefficient block
+in the cal region**. A second-order filter implemented in a different numeric format (int16 Q-format)
+or with a non-contiguous coefficient layout would not be caught by this scan — the claim is about the
+float32 layout, not about every conceivable filter. The record independently calls `FUN_0003b8f6`
+*"the dormant biquad"*, singular, which agrees.
+➕ Related: Honda shipped this section **DISARMED** (`0xC649B` = 0); the kit armed it at V103.
+
 > ✅⭐ **AUTHORITY AUDIT: V222’S 8× STEP SCALES ITS CLAMP EXACTLY — margin identical to the car to four
 digits.** A gain raise whose forward clamp does not follow silently turns the authority lever into a
 **clipper**, so this was checked from the images rather than assumed. `lane_max = (0xC61BE × gain) >> 15`
