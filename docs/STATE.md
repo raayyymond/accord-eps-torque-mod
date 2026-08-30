@@ -24,7 +24,7 @@ V94 flew it after cutting `gp-0x6b26` 6×. That cell was **measured afterwards t
 ### 🛑 The defect: every notch build carried a LARGER cut of the same cell
 
 ```
-  V108 (ON THE CAR)   0xD7A5C = (-29490, -17202, -16000)   3.576x Honda
+  V122 (ON THE CAR)   0xD7A5C = (-29490, -17202, -16000)   3.576x Honda
   V196..V213          0xD7A5C = ( -4915,   -2867,   -983)   0.500x Honda   <- 7.15x CUT
 ```
 

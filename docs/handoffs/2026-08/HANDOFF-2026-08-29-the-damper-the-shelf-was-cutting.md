@@ -27,7 +27,7 @@ and every control passes:
 V94 flew it after cutting `gp-0x6b26` 6×; that cell was later measured to be a **real 6–9 Hz damper**
 (+137°/+139° vs wheel rate, |cos| 0.73 ⇒ **+518/+565 counts of positive Re(Z)**).
 
-**The defect:** the car (V108) carries `0xD7A5C` at **3.576× Honda**; every notch build carried
+**The defect:** the car (V122) carries `0xD7A5C` at **3.576× Honda**; every notch build carried
 **0.500×** — a **7.15× cut**, reached in two *never-flown* steps (V175, V196). **Every prior check
 compared this row to Honda**, which made a 7.15× change *from the car* read as a tidy "half dose".
 

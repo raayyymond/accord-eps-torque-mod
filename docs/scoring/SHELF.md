@@ -194,7 +194,7 @@ V215 = V214 + **mode 27’s inertia row pinned too**. V214 restored only mode 26
 
 Route **`r7d` is that aborted drive**, and it carries the signature: a sustained, engagement-gated **~31 Hz line at 459× the creep-matched corpus median** (prominence 56×; survives 0.5 s edge-trimming; 56 % of 5–49 Hz power inside 30–35 Hz; speed-invariant across all three episodes; engaged/manual contrast 54×).
 
-**The problem:** the car runs **V108 at 3.576× Honda**. The entire notch shelf runs **0.500×** — a **7.15× cut of that damper**, reached in two *never-flown* steps (V175 3.576→1.000, V196 1.000→0.500) and carried silently inside builds whose stated purpose is a grinding fix. **That is a bigger cut than the one you aborted on, in the same direction.**
+**The problem:** the car runs **V122 at 3.576× Honda**. The entire notch shelf runs **0.500×** — a **7.15× cut of that damper**, reached in two *never-flown* steps (V175 3.576→1.000, V196 1.000→0.500) and carried silently inside builds whose stated purpose is a grinding fix. **That is a bigger cut than the one you aborted on, in the same direction.**
 
 Every earlier check compared this row to **Honda**, which made a 7.15× change *from your car* read as a tidy “half dose”. Close-out **[14]** now prices it against **both** references.
 

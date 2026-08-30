@@ -275,7 +275,7 @@ def build():
     check(code[0x3AB76] == 0xAA and code[0x3AC20] == 0xAA,
           "0x3AB76/0x3AC20 BYTE-STOCK -- V62s x2, which CREATED grind #2 at 40-49 Hz, is ABSENT")
 
-    # V214 RESTORES THE ENGAGED INERTIA to the value that is ON THE CAR TODAY (V108).
+    # V214 RESTORES THE ENGAGED INERTIA to the value that is ON THE CAR TODAY (V122).
     #
     # Found 2026-08-29 by chasing r7d, and it is the reason this build exists.  gp-0x6b26
     # (0xD7A5C, the engaged m26 row) is a REAL 6-9 Hz DAMPER -- measured after V94 flew it,
@@ -286,7 +286,7 @@ def build():
     # line at 459x the creep-matched corpus median (prominence 56x; survives 0.5 s edge
     # trimming; 56% of 5-49 Hz power in 30-35 Hz; speed-invariant across three episodes).
     #
-    # THE PROBLEM: the flown car (V108) carries this row at 3.576x Honda.  The whole notch
+    # THE PROBLEM: the flown car (V122) carries this row at 3.576x Honda.  The whole notch
     # shelf carries it at 0.500x -- a 7.15x CUT of that damper, arrived at in two unflown
     # steps (V175 3.576->1.000, V196 1.000->0.500) and bundled invisibly with the notch.
     # That is a LARGER cut than the one V94 aborted on, in the same direction, and it has
@@ -297,7 +297,7 @@ def build():
     # "adding mass" -- it is declining to remove 86% of what is on the car inside another
     # experiment.  V213 remains on the shelf as the 0.500x arm of the pair.
     INERTIA_ROW = 0xD7A5C
-    FLOWN_Y = (-29490, -17202, -16000)     # V108, on the car
+    FLOWN_Y = (-29490, -17202, -16000)     # V122, on the car -- see the note in the close-out gate [14]
     SHELF_Y = (-4915, -2867, -983)         # V196..V213, 0.500x Honda
     HONDA_Y3 = (-9830, -5734, -1966)
     _cur = tuple(s16(code, INERTIA_ROW + 2 * _i) for _i in range(3))
@@ -306,7 +306,7 @@ def build():
         struct.pack_into("<h", code, INERTIA_ROW + 2 * _i, _val)
         attributed |= {INERTIA_ROW + 2 * _i, INERTIA_ROW + 2 * _i + 1}
     _new = tuple(s16(code, INERTIA_ROW + 2 * _i) for _i in range(3))
-    check(_new == FLOWN_Y, f"0xD7A5C now {FLOWN_Y} -- the value ON THE CAR (V108)")
+    check(_new == FLOWN_Y, f"0xD7A5C now {FLOWN_Y} -- the value ON THE CAR (V122)")
     _d_sh = sum(abs(_x) for _x in SHELF_Y) / sum(abs(_x) for _x in HONDA_Y3)
     _d_fl = sum(abs(_x) for _x in FLOWN_Y) / sum(abs(_x) for _x in HONDA_Y3)
     print(f"      0xD7A5C  {SHELF_Y} -> {FLOWN_Y}")
@@ -346,7 +346,7 @@ def build():
     # V214 DELIBERATELY REVERSES this inherited assertion: the shelf half-dose is exactly
     # what this build exists to undo.  Both directions are checked so neither can drift.
     check(Y26 == list(FLOWN_Y),
-          f"engaged inertia Y = {Y26} -- RESTORED to the flown V108 value, NOT the half dose")
+          f"engaged inertia Y = {Y26} -- RESTORED to the flown V122 value, NOT the half dose")
     check(list(SHELF_Y) == [-4915, -2867, -983],
           "and the shelf value it replaced was V196s 0.500x half dose")
     for off in BIQUAD:
@@ -367,7 +367,7 @@ def build():
         check(u16(code, off) == want, f"0x{off:05X} {nm} CARRIED ({want})")
     for off, (nm, want) in sorted(CARRIED_B.items()):
         check(code[off] == want, f"0x{off:05X} {nm} CARRIED (0x{want:02X})")
-    for m, want, lbl in ((26, FLOWN_Y, "the FLOWN V108 value (V214 restores it)"),
+    for m, want, lbl in ((26, FLOWN_Y, "the FLOWN V122 value (V214 restores it)"),
                          (27, HONDA_Y, "Honda")):
         p = u32(code, PTR_I + 4 * m)
         n = s16(code, p)
