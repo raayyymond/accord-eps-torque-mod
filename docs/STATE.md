@@ -409,6 +409,39 @@ absolute ζ values are **not** trustworthy here. ⇒ **OPEN: re-run this varianc
 `rlog-tools/score/ratchet_ringdown.py` with its own controls** (time-reversal, random-frame) before any
 build is sized against it.
 
+> 🛑⭐⭐ **AND THE RATCHET ARM OF V222/V224 IS UNPRICED AGAINST THAT FLOOR — its lane’s SHARE and its
+SIGN have both never been measured.** `0xC63AE` is **1024 in stock and on the car**, **512 on
+V217–V223**, **256 on V224**. The record annotates it only as a *"Stage-2 input"* scale on the second
+aggregator chain. A weight cut moves ζ only as much as that lane weighs in the net:
+
+```
+  D_net(w) = D_other + w*D_lane ;  f = |D_lane| / D_car
+     lane ANTI-damps:  zeta_new/zeta_old = 1 + f*(1-k)      cutting it HELPS
+     lane      damps:  zeta_new/zeta_old = 1 - f*(1-k)      cutting it HURTS
+
+     lane f    V222 k=.5 anti   V224 k=.25 anti   V222 damp   V224 damp
+       0.20         1.100            1.150          0.900       0.850
+       0.50         1.250            1.375          0.750       0.625
+       1.00         1.500            1.750          0.500       0.250
+       2.00         2.000            2.500          0.000       0.000
+```
+
+⇒ to clear the **2.00×** ring-down floor, **V222 needs f = 2.00** and **V224 needs f = 1.33** — i.e. this
+ONE Stage-2 input would have to supply anti-damping worth **1.3–2× the entire net damping.** (f *can*
+exceed 1, since `D_other > D_car` when the lane is anti-damping, but that is a lane dominating the whole
+balance.) **⇒ if the lane is anything less than dominant, the ratchet arm is BELOW the measurement
+floor — unmeasurable by design, which is the kit’s own definition of a build failure rather than a lever
+failure.**
+🛑 **And the SIGN is the load-bearing unknown.** If the lane **damps**, cutting it makes ζ **worse**:
+at a modest f = 0.5, **V224 would cut ζ to 0.62× the car.** Nobody has measured which way it goes.
+✅ **Scope — this does NOT argue against flying V222.** `0xC63AE` = 512 is the V217 baseline, not a new
+V222 edit, and the build’s audited levers are Lever B and the notch. What it says is narrower and
+worth saying before the drive rather than after a null: **the ratchet arm specifically is unpriced, so
+a ratchet null on this drive licenses NOTHING about `0xC63AE`.** The grinding and authority arms are
+priced and audited; this one is not.
+➕ Corrected mid-derivation: my first pass had a sign error that made a **bigger** cut need a **larger**
+lane share, which is backwards. The table above is the corrected algebra and passes that sanity check.
+
 > ✅⭐ **AUTHORITY AUDIT: V222’S 8× STEP SCALES ITS CLAMP EXACTLY — margin identical to the car to four
 digits.** A gain raise whose forward clamp does not follow silently turns the authority lever into a
 **clipper**, so this was checked from the images rather than assumed. `lane_max = (0xC61BE × gain) >> 15`
