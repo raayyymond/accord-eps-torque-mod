@@ -15,6 +15,7 @@ distinction this kit has repeatedly got wrong.
 import glob
 import math
 import os
+import re
 import sys
 
 import numpy as np
@@ -107,27 +108,60 @@ def main(tag):
         # b5: the pre-registered ratchet endpoint
         b5 = duty[5]
         print()
-        print('  ** PRE-REGISTERED: b5 should read 0.42, plausible range 0.31-0.49 **')
-        print('     (V105 measured 0.2798 at 1.000x the inertia dose; the shelf runs 0.333x.')
-        print('      Derived from the V105->V106 pair: doubling the dose moved b5 -0.0891,')
-        print('      CI [-0.1328, -0.0200], with both sign rungs as null controls.)')
-        SHELF = {'v199','v202','v204','v205','v206'}
-        known = tag.lower().lstrip('r') in SHELF or any(k in tag.lower() for k in SHELF)
-        if not known:
-            print(f'     b5 = {b5:.4f}  -- but this route is NOT a shelf build, so the')
-            print('     prediction above DOES NOT APPLY to it. The 0.42 figure is for the 0.333x')
-            print('     inertia dose the shelf carries; older routes ran other doses.')
-        elif b5 in (0.0, 1.0):
-            print(f'     b5 = {b5:.6f} DEGENERATE -> uninterpretable, NOT a null.')
-        elif b5 <= 0.28:
-            print(f'     b5 = {b5:.4f}  <= 0.28  ** THE HALVED INERTIA IS NOT REACHING THE CAR. **')
-            print('     That retires the ratchet lever on the shelf -- the most useful null available.')
-        elif 0.31 <= b5 <= 0.49:
-            print(f'     b5 = {b5:.4f}  INSIDE the pre-registered range -- the lever reaches the car.')
+        print('  ** PRE-REGISTERED: b5 scales with the INERTIA DOSE the build carried **')
+        print('     V105 measured 0.2798 at 1.000x the dose. From the V105->V106 single-cell')
+        print('     pair, DOUBLING the dose moved b5 by -0.0891, CI [-0.1328, -0.0200], with')
+        print('     both sign rungs as null controls.')
+        # A route tag does NOT encode the build -- 'ra5' and 'r80' contain no version at all --
+        # so matching tag against a build list was wrong in concept, not merely stale. The b5
+        # prediction depends on ONE thing: the inertia dose the flown build carried. So take the
+        # build explicitly and READ that dose out of its image. Nothing here can rot.
+        build = None
+        for _x in sys.argv[1:]:
+            if re.match(r'^--build=?', _x):
+                build = _x.split('=', 1)[1] if '=' in _x else None
+            elif build is None and re.match(r'^[Vv]\d+[A-Za-z]?$', _x):
+                build = _x
+        dose = None
+        if build:
+            import glob as _g
+            import struct as _st
+            _root = os.environ.get('ACCORD_FIRMWARE_ROOT',
+                                   'C:/Users/dudei/Desktop/Projects/accord-firmwares')
+            _hits = [f for f in _g.glob(os.path.join(_root, 'analysis-2020accord',
+                                                     '_%s_*plain_image.bin' % build.lower()))
+                     if 'SUPERSEDED' not in os.path.basename(f)]
+            if _hits:
+                _b = open(_hits[0], 'rb').read()
+                _y = [_st.unpack_from('<h', _b, 0xD7A5C + 2 * _i)[0] for _i in range(3)]
+                # V105 flew mean|Y| = 8765 at 1.000x and measured b5 = 0.2798
+                dose = (sum(abs(v) for v in _y) / 3.0) / 8765.0
+        if dose is None:
+            print(f'     b5 = {b5:.4f}  -- pass the build to interpret this, e.g.')
+            print('       python rlog-tools/score/score_drive.py <tag> V209')
+            print('     The prediction depends on the INERTIA DOSE the flown build carried, and a')
+            print('     route tag does not encode the build. Without it this number is just a number.')
         else:
-            print(f'     b5 = {b5:.4f}  outside [0.31, 0.49] but above 0.28 -- direction right,')
-            print('     magnitude off; report it, do not re-fit the prediction after the fact.')
-
+            # b5 moved -0.0891 per DOUBLING of the dose (V105->V106, CI [-0.1328, -0.0200])
+            import math as _m
+            _exp = 0.2798 + (-0.0891) * _m.log2(dose) if dose > 0 else float('nan')
+            _lo = 0.2798 + (-0.1328) * _m.log2(dose)
+            _hi = 0.2798 + (-0.0200) * _m.log2(dose)
+            _lo, _hi = min(_lo, _hi), max(_lo, _hi)
+            print(f'     {build.upper()} carries inertia dose {dose:.3f}x (read from its image);')
+            print('     the BUILD is taken on trust from your argument -- a route tag does not')
+            print('     encode it, so name the build you actually flashed.')
+            print(f'     => predicted b5 {_exp:.2f}, CI-propagated range {_lo:.2f}-{_hi:.2f}')
+            if b5 in (0.0, 1.0):
+                print(f'     b5 = {b5:.6f} DEGENERATE -> uninterpretable, NOT a null.')
+            elif dose < 1.0 and b5 <= 0.2798:
+                print(f'     b5 = {b5:.4f} <= 0.2798 (the 1.000x reference) ** THE REDUCED INERTIA')
+                print('     IS NOT REACHING THE CAR ** -- that retires the ratchet lever.')
+            elif _lo <= b5 <= _hi:
+                print(f'     b5 = {b5:.4f}  INSIDE the predicted range -- the lever reaches the car.')
+            else:
+                print(f'     b5 = {b5:.4f}  outside [{_lo:.2f}, {_hi:.2f}] -- report it as measured;')
+                print('     do not re-fit the prediction after the fact.')
     # ---- the 427 dose channel --------------------------------------------------------------
     hdr('CAN 427 DOSE CHANNEL')
     if 'ab_mt' not in have:
