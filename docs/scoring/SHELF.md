@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** **⚠ FLY V215.** Every other build on this shelf cuts a real 6–9 Hz damper 7.15× below what is on your car, bundled invisibly inside the notch. V215 is the only build whose ENTIRE delta from your car is named and intentional — 23 payload bytes, all levers. V214 is SUPERSEDED (it left mode 27 unpinned).
+**Updated 2026-08-29.** **⚠ FLY V216.** Its entire delta from your car is **20 payload bytes, every one a deliberate lever**. V215 is the paired arm (identical but with the friction lane at 0.10× the car); V214 is SUPERSEDED.
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,
@@ -13,7 +13,40 @@ name the file and the bus, and they will be read back to you first.
 
 ---
 
-## ⭐ V215 — FLASH THIS ONE. Every delta from your car is a named lever.
+## 🛑 CORRECTION — I had the friction direction BACKWARDS
+
+An earlier version of this file said the shelf’s low friction setting *“runs in the direction you have asked for”*. **That was wrong.** The polarity is verified nine links deep (`accord-friction-polarity-*`):
+
+> **MORE modelled Coulomb friction ⇒ MORE assist ⇒ LIGHTER wheel. It does not fight LKAS.**
+
+Friction is *subtracted from the plant model*, which lowers `gp-0x6ad6` — a torque-tracking **reference**, not a motor torque — so the loop holds your felt torque at a **lower** target. So the shelf’s 0.10× setting made the wheel ~10× **heavier** in that term and **removed** LKAS authority, fighting the 8× gain step in the same build.
+
+---
+
+## ⭐ V216 — FLASH THIS ONE. 20 bytes from your car, all of them levers.
+
+```
+39990-TVA,A160-V216-V215BASE-FRICTION.LANE.TO.FLOWN.V108-0x13000-0x100000.rwd
+  image 791e123fb4d8bd6ea0736c52546995bb15742444b5d5c23b6db128e8bd792a13
+  .rwd  33b5a59c338b1702750565e36f3eca9f8e4a770c7e061ff1ece7db5313214ce1
+```
+
+V216 = V215 + the friction lane pinned to your car (`0xC40BC` 3000→600, `0xC40D2` 102→204). That is **0.200× → 2.000× Honda = 10× more assist = a lighter wheel**, and it saturates at 50 °/s (Honda’s own point) instead of 250. The ratchet regime (1–13 °/s) sits far below **both** saturation points, so the full 10× applies exactly where the symptom lives.
+
+**Complete delta vs YOUR CAR — 20 payload bytes:**
+
+```
+  0xC60A8/AC/B0/B4   notch 20.50 Hz            <- grinding
+  0xC63AE            1024 -> 512               <- ratchet/stutter
+  0xC6CD0 + clamps   6x -> 8x                  <- LKAS authority
+  0x55DF2 / 0x55E10  427 probe -> gp-0x6b4e    <- makes the drive readable
+  0xC63A6            w[3] 1024 -> 512          <- carried from V181, still unpriced
+```
+
+Inertia (both modes) and friction now **match your car exactly**. 53/53 builder assertions, CRC 50/50, readback byte-identical.
+
+⚠ **One cell still unpriced against the car:** `0xC63A6` (model lane `w[3]`) sits at 0.5× yours, carried from V181. Given the friction lesson — model-side weights move the tracking reference, not the motor — this deserves the same check. Next on the list.
+
 
 ```
 39990-TVA,A160-V215-V214BASE-INERTIA.M26.AND.M27.TO.FLOWN.V108-0x13000-0x100000.rwd
