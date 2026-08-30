@@ -210,8 +210,8 @@ collapses to **one measurable quantity: the phase of column torque vs rate**, wh
      magnitude at your car (5244)    187 counts      vs the record's claimed 431-1294
 ```
 
-⇒ **r24 DAMPS at 6–9 Hz on your car’s own data — it opposes the motion — and the magnitude that made
-the claim alarming was overstated 2.3–6.9×.** Two controls with non-trivial expectations pass exactly,
+⇒ **The MAGNITUDE that made the claim alarming was overstated 2.3–6.9× — 187 ct measured against 431–1294 claimed. That correction is frame-independent and stands.**
+🛑 **The DIRECTION is UNRESOLVED and I am not going to tell you otherwise.** I first read this as *"r24 damps"*, then tested it: across the three bands V88 measured on-car, the predicted ordering comes out **backwards** (`corr = −0.803`, prediction required positive — V88 helped **most** at 15–22 Hz, where the instrument says r24 pumps hardest). My controls pinned the pipeline, not the physical frame. ⚠ Weak evidence (n = 3, and V88 moved 5 bytes) — enough to **withdraw** the direction, not to assert its opposite. **Both directions are open.** Two controls with non-trivial expectations pass exactly,
 and the cross-spectrum sign convention is pinned with a constructed +90° lead rather than assumed
 (the precise trap that has inverted this kit before).
 ⚠ Frame-dependent (a global sign flip would make it pumping) and **open-loop** — it says what r24
@@ -224,7 +224,7 @@ gain 512→5244 measured 6–9 Hz at **0.859× on-car**, the damping direction.
 |---|---|---|
 | **V88, a direct on-car A/B** (Lever B 512 → 5244) | **0.859× — mildly BETTER** | the only real test; a designed toggle |
 | the flown corpus, Lever B ON vs OFF at byte-matched forward gain | **1.08×, p = 0.58** | ❌ **too weak to count** — see below |
-| **r24 reconstructed on flown data** (6 routes) | **DAMPING — −0.805 work factor, 187 ct** | ✅ controls pass; frame-dependent, open-loop |
+| **r24 reconstructed on flown data** (6 routes) | **187 ct** (magnitude, solid); direction **WITHDRAWN** | 🛑 fails its retrodiction test vs V88 |
 | the static sign arithmetic | predicted pumping at 431–1294 ct | 🛑 **superseded** — wrong in direction AND ~4× in size |
 
 🛑 **The corpus test does NOT clear it, and I am not going to present it as if it did.** With 2 OFF

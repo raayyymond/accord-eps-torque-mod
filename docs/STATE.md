@@ -149,6 +149,37 @@ not the 32 / 51 ms first stated — those were computed rotating the wrong way. 
 unchanged and strengthened.**
 Study: `analysis-2020accord/studies/mixer/delivery_lag_cannot_invert_r24.py`.
 
+> 🛑🛑⭐⭐ **SELF-CORRECTION: THE ABSOLUTE "r24 DAMPS" LABEL IS DOWNGRADED TO UNRESOLVED. The
+separation-based conclusions are UNAFFECTED.** I published *"r24 DAMPS at 6–9 Hz"* as EVIDENCE earlier
+this session. The first external check of that **absolute** label fails. The instrument makes a
+retrodiction that can be tested against V88, which raised r24 and measured three bands on-car:
+
+| band | φ(T,rate) | r24 phase | work factor | **V88 on-car** |
+|---|---|---|---|---|
+| ratchet 6–9 | −120.7° | +143.9° | **−0.808** | 0.859× |
+| mid 9–12 | −150.8° | +111.6° | **−0.368** | 0.604× |
+| grind 15–22 | **+119.8°** | +16.5° | **+0.959** | **0.549×** |
+
+**V88 helped MOST at 15–22 Hz — exactly where the instrument says r24 pumps hardest.**
+`corr(work, V88 ratio) = −0.803`; the prediction required **positive**. ➕ **Flipping the sign gives
++0.803 and retrodicts V88 across all three bands**, which is what a globally inverted frame looks like.
+🛑 **My controls pinned the PIPELINE, not the PHYSICS.** A constructed +90° lead reading +90°, and a
+viscous torque landing in quadrature, establish internal consistency — they say nothing about whether
+r24’s output reaches the motor with the same sign as `cs_rate`. That frame question was flagged OPEN
+from the start, and this is the first evidence bearing on it. ⚠ The evidence is **weak**: n = 3 bands,
+not independent, and **V88 changed 5 bytes, not only Lever B**. It is not proof of an inversion — it is
+enough to withdraw the absolute claim.
+✅ **WHAT IS UNAFFECTED, BY DESIGN.** Every actionable conclusion was deliberately re-anchored on the
+**separation between lanes plus V88’s on-car result**, with no absolute label in the chain: r24 and
+`gp-0x6ad4` are **76° apart on opposite sides**, V88 fixes r24’s side as beneficial, the PID lane is
+**0.25× r24**, **V227’s ceiling does not bind**, the **span cal is a redundant gain knob**, the phase is
+**structurally capped**, and **delivery lag is bounded at 3.25 ms**. **None of those use the sign.**
+⇒ **V222 remains the flight candidate and the guidance is unchanged**, because it rests on V88’s direct
+measurement. ⇒ **What IS withdrawn**: any statement that r24 damps or pumps *in absolute terms*, and
+with it the claim that the record’s *"net PID DAMPS"* is a convention flip — **it may be the record that
+is right and me that is inverted.**
+Study: `analysis-2020accord/studies/mixer/r24_retrodiction_test_fails.py`.
+
 > 🛑 **RECORD DEFECT FIXED — `r95` is V101, not V102, and the correction had been made in only HALF
 the files.** `r95` flew **V101 = 8× (`0xC6CD0` 7128) with Lever B REMOVED** (`GAIN8X.C6CD0.7128-NOLEVERB`);
 `r95_v102_prereg.py` is the pre-registration **FOR** V102 **MEASURED ON** r95=V101, and its own docstring

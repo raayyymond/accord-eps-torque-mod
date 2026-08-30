@@ -74,6 +74,16 @@ confirms −1.
 > ⚠ **Open-loop.** It says what r24 computes, not what the closed loop does with it.
 > ⇒ **Raising Lever B is not indicated to pump the ratchet**, and the magnitude that made it look
 > alarming was ~4× too large.
+>
+> ### 🛑 2026-08-30, LATER THE SAME DAY — THE **DIRECTION** ABOVE IS WITHDRAWN; THE **MAGNITUDE** STANDS
+> The instrument’s absolute sign **fails its first external check.** Across the three bands V88 measured
+> on-car, `corr(work factor, V88 ratio) = −0.803` where the prediction required **positive** — V88 helped
+> **most** at 15–22 Hz, exactly where the instrument says r24 pumps hardest. **Flipping the sign gives
+> +0.803.** My controls pinned the pipeline’s internal consistency, **not the physical frame**, which was
+> flagged OPEN throughout. ⚠ Weak evidence (n = 3 non-independent bands; V88 moved 5 bytes) — enough to
+> withdraw the claim, not to assert the opposite. ⇒ **"r24 DAMPS" is UNRESOLVED. So is "r24 PUMPS".**
+> ✅ **The MAGNITUDE correction is frame-independent and STANDS: 187 ct measured vs 431–1294 claimed.**
+> ✅ And nothing actionable changes — the guidance rests on V88’s direct on-car A/B, not on a sign.
 
 - **Parity is ODD for r24 and r26** — each multiplies `gp-0x6752` exactly once, so the `P² = +1`
   cancellation in the Path-1/Path-2 chain **does not apply**. ⇒ ~~**r24 = −431 to −1294 ct at 6–9 Hz,
