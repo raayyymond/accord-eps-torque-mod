@@ -120,6 +120,7 @@ See `../CLAUDE.md` for the index and the standing behaviours.
 | Doc | What it is |
 |---|---|
 | [AGENTS.md](./AGENTS.md) | Light agent-collaboration conventions: bd (beads) for issue tracking, the "landing the plane" session-completion workflow. |
+- [handoffs/2026-08/HANDOFF-2026-08-30-the-notch-was-in-the-wrong-place.md](handoffs/2026-08/HANDOFF-2026-08-30-the-notch-was-in-the-wrong-place.md) — the notch was relocated OUT of the pumping band; V235; six withdrawn claims
 - [handoffs/2026-07/HANDOFF-2026-07-28-v54-drive-authority-resolved-and-v55-partition-probe.md](handoffs/2026-07/HANDOFF-2026-07-28-v54-drive-authority-resolved-and-v55-partition-probe.md) — the V54 drive: the probe fired, authority is ~0 by design (0xC6AF0 unblocked), the vibration at creep moves with speed and dies at the rail, the damper reappraisal withdrawn, and V55 the partition probe.
 
 ## 🛑 THIS INDEX IS PARTIAL — the authoritative reading order lives elsewhere

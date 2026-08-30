@@ -47,6 +47,7 @@ print('  DOCUMENTS')
 for f, must in [
     ('docs/STATE.md', 'THE DECISION, IN ONE PLACE'),
     ('docs/scoring/DRIVE-CARD-V235.md', 'your car, plus three things'),
+    ('docs/handoffs/2026-08/HANDOFF-2026-08-30-the-notch-was-in-the-wrong-place.md', 'six of my own claims were wrong'),
     ('docs/scoring/PREREG-V228-V222-THE-8X-EXPERIMENT.md', 'CANNOT do'),
     ('docs/specs/design/CAVE-SPECS-THE-TWO-REMAINING-INSTRUMENTS.md', 'GATE RESULTS'),
     ('docs/handoffs/2026-08/HANDOFF-2026-08-30-the-cal-search-closes.md', 'WITHDRAWN'),
