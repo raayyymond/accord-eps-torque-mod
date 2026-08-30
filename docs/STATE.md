@@ -66,6 +66,16 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑⭐⭐⭐⭐⭐ **RECOMMENDATION CORRECTED: V241 (6×) LEADS, NOT V242 (8×). I had been answering “give me more torque” rather than the brief as written.**
+>
+> The brief: *“the **safest, highest probability of working** firmware with 6x torque (or higher …) up to 16x torque with no grinding, vibration, or oscillation.”* **“Up to 16×” bounds what to EXPLORE; it does not demand the maximum.** Read that way:
+>   * **V241 is 6×** — the car's own gain, all the grinding work, and **no torque lever the operator has already rejected**. It satisfies *“6× or higher”* at the floor and is the build most likely to simply work.
+>   * **V242 is 8×** — the same build plus a step he **personally rejected** on V101 for grinding. Higher upside, materially lower probability of *“no grinding”*.
+> 🛑 **AND LEADING WITH V242 SKIPPED HIS OWN RULING** — *“fix at 6x first, then raise to 8x”*. The fix is **built but never verified on the car**. Flying 8× first jumps the verification his ruling exists to force.
+> ⭐ **THE ORDER IS ALSO THE HIGHER-INFORMATION ONE.** If V242 grinds you cannot separate the gain from the grinding work, and you are back where V101 left you. If **V241** grinds, the grinding work has failed and 8× is pointless. If V241 is clean, **V242 is a four-byte step with the grinding question already answered.** Two short drives, each interpretable — which is the kit's own build law.
+> ✅ **The one-drive option is still on the card**: if he will accept the risk for a single flash, V242 is the same build plus the gain, and the 8× level itself flew **fault-free** as V101 — what was rejected was feel, not safety.
+> ⇒ Card and `SHELF.md` both repointed. **No build changed; only which rung is recommended.**
+
 > ⚠⭐⭐⭐⭐ **THE NOTCH IS AIMED ON 4× DATA AND THE CORPUS CANNOT TEST WHETHER IT TRANSFERS TO 8×. The directional hint in the record is reassuring, and it is a hint, not a measurement.**
 >
 > **Every route in the IMU engagement profile V241's notch was optimised against is a 4× build** (r5e/V75 → r73/V88, all pre-V100). The recommended build **V242 runs at 8×**, and the record already measured the band moving with gain — V101 (8×) put the peak at **23.0 Hz** against **20.3 Hz** on three 4× routes, *“a POLE MOVED”*.

@@ -1,31 +1,45 @@
 # DRIVE CARD — the gain ladder: V241 (6×) · V242 (8×) · V243 (10×)
 
-## 🚗 THE ANSWER TO YOUR BRIEF, IN ONE PLACE
+## 🚗 THE ANSWER TO YOUR BRIEF
 
-You asked for the safest, highest-probability firmware at **6× or higher, up to 16×**, with no
-grinding, vibration or oscillation.
+You asked for the **safest, highest-probability** firmware at **6× or higher**, with no grinding,
+vibration or oscillation — "up to 16×" bounding what to explore, not demanding the maximum.
 
-**16× is not available, and neither is 12×.** Not a judgement call — a structural interlock. See below.
-**~10× is the ceiling.** Here is the whole ladder, all three on the identical grinding work:
+**Read that way, the answer is V241, not V242.** It is 6× — your car's current gain — carrying all the
+grinding work and **no torque lever you have already rejected**. It satisfies "6× or higher" at the
+floor and is the build most likely to simply work.
+
+⚠ **I had been leading with V242 (8×) earlier in this session. That was answering "give me more
+torque", not what you asked** — and it skips your own ruling, *"fix at 6× first, then raise to 8×"*,
+where the fix is built but has never been verified on the car.
 
 ```
-  V241   6x   39990-TVA,A160-V241-V235BASE-NOTCH.IMU.29.75-22.50-0.940-...rwd
+  V241   6x   39990-TVA,A160-V241-V235BASE-NOTCH.IMU.29.75-22.50-0.940-...rwd   <-- FLY THIS FIRST
               rwd 57d240d77f568aac...   image 2ef7eb8eb2417905...
-              SAME gain as your car. Safest. Isolates the grinding work.
+              Your car's gain. All the grinding work. Nothing else changes.
 
-  V242   8x   39990-TVA,A160-V242-V241BASE-GAIN8X.CLAMPS4096-...rwd          <-- RECOMMENDED
+  V242   8x   39990-TVA,A160-V242-V241BASE-GAIN8X.CLAMPS4096-...rwd
               rwd a94962b4240613c8...   image 424249b0c7d89fad...
-              Your own sequence: "fix at 6x first, then raise to 8x."
+              +4 bytes. Fly ONLY if V241 is clean -- then you know the gain is the variable.
 
   V243  10x   39990-TVA,A160-V243-V242BASE-GAIN10X.CLAMPS4608.CEILING-...rwd
               rwd 43a32ac352508557...   image 5fb9ad74f104de46...
-              The structural ceiling. Only if V242 is clean.
+              The ceiling. Only if V242 is also clean. 10x has NEVER flown.
 
   BEFORE anything: kill openpilot/pandad   ->  tmux kill-server
+  FALLBACK at any point: V122 (your car)
 ```
 
 🛑 **The flash decision is yours. Name the file and the bus, and I will repeat both back before
 anything happens.**
+
+**Why this order beats flying V242 first.** If V242 grinds you learn nothing — it could be the gain or
+the grinding work, and you are back where V101 left you. If **V241** grinds, the grinding work has
+failed and 8× is pointless. If V241 is clean, V242 is a **4-byte** step with the grinding question
+already answered. Two short drives, and each one is interpretable.
+
+**If you only want one drive and will accept the risk**, fly V242 — it is the same build plus the gain.
+The 8× level itself flew fault-free as V101; what you rejected was how it felt.
 
 ---
 
