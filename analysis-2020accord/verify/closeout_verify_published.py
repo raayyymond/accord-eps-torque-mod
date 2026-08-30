@@ -801,6 +801,20 @@ for _v in sorted(img):
             + ('' if _got == _want
                else f' -- got {_got}, want {_want}: THE NOTCH IS A BYPASS'))
 
+# AND THE AUTHORITY LEVER HAS AN ARM TOO. 0xC6CD0 only exists because V57 REPOINTED the forward
+# gain reader onto it; stock reads 0xC646C, a scale SHARED by 6 readers across 3 subsystems. The
+# repoint is the hw2 displacement at 0x2A1F0: stock 0x746C (-> 0xC646C), decoupled 0x7CD0
+# (-> 0xC6CD0, since tp = 0xBF000). WITHOUT IT, EDITING 0xC6CD0 DOES NOTHING and the whole authority
+# lever is inert while GATE [13]'s value check still passes. Same failure shape as the notch arm:
+# the cal is right, the path to it is not.
+for _v in sorted(img):
+    _d = struct.unpack_from('<H', img[_v], 0x2A1F0)[0]
+    _tgt = 0xBF000 + (_d & ~1)
+    chk(_tgt == 0xC6CD0,
+        f'{_v.upper()} V57 gain decouple present: 0x2A1F0 hw2 = 0x{_d:04X} -> 0x{_tgt:05X}'
+        + ('' if _tgt == 0xC6CD0
+           else ' -- NOT REPOINTED, 0xC6CD0 is inert and the authority lever does nothing'))
+
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
 for m in bad:
