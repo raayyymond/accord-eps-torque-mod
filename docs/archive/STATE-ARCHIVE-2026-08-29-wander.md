@@ -3757,3 +3757,43 @@ links.** EVIDENCE: the term exists, is acceleration-derived, is 2× weighted at 
 BELIEF: the sign. 🛑 **If the sign is inverted the term was providing DAMPING and the ratchet gets
 WORSE** — a one-byte revert to V189 undoes it. That failure mode is pre-registered on the card.
 
+## 🛑❌ **V190 IS RETRACTED AS A RECOMMENDATION — I VERIFIED THE SIGN AND IT WENT THE OTHER WAY**
+V190 disabled the `gp-0x6bc2` acceleration term on the BELIEF that it was destabilising. I said the
+sign rested on a five-link chain and pre-registered the failure mode. **Decompiling the consumer
+settled it, and the belief was wrong.**
+
+**`FUN_0003a382`, the only reader of `gp-0x6ad6`:**
+```c
+   uVar24 = clamp(gp-0x6ad6, +-cal(0xC6200))
+   iVar30 = gp-0x4f60 - uVar24              // error = MEASURED - REFERENCE   <- record CONFIRMED
+   ... PID(error) ...
+   iVar30 = (PID * gain >> 10) * gp-0x6752  // gp-0x6752 = -1
+   gp-0x6ad4 = clamp(iVar30, ...)           // => gp-0x6ad4 is proportional to -error
+```
+and `gp-0x6ad4` is an additive term in the `FUN_0003aa2c` aggregator (already decompiled).
+
+**The chain, now with five links PROVEN instead of assumed:**
+```
+   gp-0x6bc2  ~ -a                (gp-0x6752 = -1)                          PROVEN
+   gp-0x6ad6 += gp-0x6bc2  ~ -a                                             PROVEN
+   error = measured - gp-0x6ad6   ~ +k*a                                    PROVEN
+   gp-0x6ad4 = -K*error           ~ -k*a                                    PROVEN
+   aggregator += gp-0x6ad4        => the sum OPPOSES acceleration           PROVEN
+   (unproven: whether a more-negative gp-0x6b94 is less assist in the driver's direction)
+```
+⇒ **opposing acceleration is POSITIVE damping — stabilising.** So disabling the term would most
+likely make the ratchet **WORSE**, which is exactly the inverted-sign outcome the card pre-registered.
+⊕ **Independent support:** Honda ships this flag **enabled**. A manufacturer adds acceleration
+feedback for damping; it would not enable a destabilising one. The decompile and the shipped
+configuration agree.
+
+✅ **ACTION: V189 is restored as the recommendation. `docs/scoring/DRIVE-CARD-V190.md` is marked
+NOT RECOMMENDED** (the artifact is kept — it stays a legitimate probe if V189 leaves ratchet behind
+and we want to test this term deliberately, knowing it may worsen it).
+
+🛑 **THE PROCESS POINT, worth more than the build:** the lever was built, recorded, and its sign
+labelled **BELIEF** with the failure mode pre-registered — and then the verification killed it
+**before it cost a drive.** *"I'm not sure, here's what I'd need to verify"* is the preferred output;
+this is what it looks like when the check comes back negative. **Do not ship a lever whose sign
+rests on an unverified chain when the chain is decompilable in one tick.**
+

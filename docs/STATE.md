@@ -4,6 +4,53 @@
 > 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
 
 > 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+## ✅⭐ **THE OUTLIERS DISSOLVE, THE PEAK HISTOGRAM WAS THE WRONG STATISTIC — and V208 stands anyway**
+
+### 🛑 **ONE "OUTLIER ROUTE" HAS NO GRIND AT ALL**
+Comparing band powers rather than peak locations:
+```
+   route   P(15-17)   P(19.5-23)   vs cluster median P(19.5-23)
+   r97         0.1        0.0            ** 0.01x **      <- essentially NO signal
+   r1e         3.2        1.8               0.56x         <- a REAL 15-17 line
+```
+⇒ **`r97`'s "peak at 15.82 Hz" is `argmax` on a flat spectrum.** There is no grind on that route to
+locate. It is not a second mode; it is an absence being read as a frequency.
+⇒ **`r1e` is different and real** — a genuine 15–17 Hz line (3.2, second-highest in the corpus) that
+outranks its own 21 Hz content. **One route, not a cluster.**
+⊕ A prominence floor does NOT catch `r97` — its line is locally prominent and absolutely tiny. **The
+right criterion is absolute energy, not prominence.**
+
+### 🛑🛑 **WHICH MAKES THE PEAK HISTOGRAM THE WRONG STATISTIC — including mine, last tick**
+An unweighted median over episode peaks gives an episode with 1 % of the grind **the same vote** as one
+with 20 %. Weighting each episode by its band energy:
+```
+   unweighted       median 20.70   p10 16.37   p90 23.05
+   POWER-WEIGHTED   median 21.48   p10 19.53   p90 23.05
+   the top 10 episodes carry 53 % of all grind energy in the corpus; their peaks:
+     21.5  21.9  24.6  21.5  22.7  23.0  23.0  23.0  21.5  21.5
+```
+**The energy sits at 21.5–23, not at 20.7.** And the corpus band spectrum confirms it directly — it
+peaks at **21.09 Hz** with a broad shoulder to 23.4.
+
+### ✅ **BUT ON THE RIGHT OBJECTIVE, V208 IS ALREADY THERE**
+The physically meaningful objective is **total residual band energy**, not a distance to a histogram
+median:
+```
+   V208 as built (20.50, poles 15.50, r 0.9575)   residual 0.0671  ->  ** 14.9x energy reduction **
+   best possible  (21.75, poles 18.25, r 0.9300)  residual 0.0562  ->     17.8x
+   gain from re-cutting again:                                            ** 1.19x **
+```
+⇒ **V208's skirt is wide enough that its centre is not critical.** The 19.75→20.50 move was worth
+1.66× because it was a whole notch-width off; 20.50→21.75 buys 1.19×, which is inside the sampling
+uncertainty of a 20-route corpus. **V208 STANDS — now confirmed on the energy objective, not just on a
+peak histogram.**
+
+### ✅ **THE SCORER IS FIXED**
+`score_drive.py` now reports the **power-weighted** peak as the figure to trust, prints how many
+episodes carry half the drive's band energy, and warns outright when a drive has essentially no band
+energy — the `r97` failure mode, which would otherwise hand the operator a confident frequency for a
+symptom that was not present.
+
 ## ✅ **NOTHING PREDICTS THE GRIND PEAK — but the spread is BIMODAL, and V208 is already near-optimal**
 
 ### 🛑 **A CORRELATION I FOUND AND THEN RETRACTED IN THE SAME TICK**
@@ -2223,44 +2270,4 @@ cancels.**
 ✅ **V190 restored as the recommendation.** Its sign now rests on **consistency with the ★★★★★
 `gp-0x6b26` result plus the 3×-dose/3.58×-ratchet observation**, not on an independent proof — so
 the pre-registered "ratchet gets worse ⇒ revert to V189" outcome **stays on the card.**
-
-## 🛑❌ **V190 IS RETRACTED AS A RECOMMENDATION — I VERIFIED THE SIGN AND IT WENT THE OTHER WAY**
-V190 disabled the `gp-0x6bc2` acceleration term on the BELIEF that it was destabilising. I said the
-sign rested on a five-link chain and pre-registered the failure mode. **Decompiling the consumer
-settled it, and the belief was wrong.**
-
-**`FUN_0003a382`, the only reader of `gp-0x6ad6`:**
-```c
-   uVar24 = clamp(gp-0x6ad6, +-cal(0xC6200))
-   iVar30 = gp-0x4f60 - uVar24              // error = MEASURED - REFERENCE   <- record CONFIRMED
-   ... PID(error) ...
-   iVar30 = (PID * gain >> 10) * gp-0x6752  // gp-0x6752 = -1
-   gp-0x6ad4 = clamp(iVar30, ...)           // => gp-0x6ad4 is proportional to -error
-```
-and `gp-0x6ad4` is an additive term in the `FUN_0003aa2c` aggregator (already decompiled).
-
-**The chain, now with five links PROVEN instead of assumed:**
-```
-   gp-0x6bc2  ~ -a                (gp-0x6752 = -1)                          PROVEN
-   gp-0x6ad6 += gp-0x6bc2  ~ -a                                             PROVEN
-   error = measured - gp-0x6ad6   ~ +k*a                                    PROVEN
-   gp-0x6ad4 = -K*error           ~ -k*a                                    PROVEN
-   aggregator += gp-0x6ad4        => the sum OPPOSES acceleration           PROVEN
-   (unproven: whether a more-negative gp-0x6b94 is less assist in the driver's direction)
-```
-⇒ **opposing acceleration is POSITIVE damping — stabilising.** So disabling the term would most
-likely make the ratchet **WORSE**, which is exactly the inverted-sign outcome the card pre-registered.
-⊕ **Independent support:** Honda ships this flag **enabled**. A manufacturer adds acceleration
-feedback for damping; it would not enable a destabilising one. The decompile and the shipped
-configuration agree.
-
-✅ **ACTION: V189 is restored as the recommendation. `docs/scoring/DRIVE-CARD-V190.md` is marked
-NOT RECOMMENDED** (the artifact is kept — it stays a legitimate probe if V189 leaves ratchet behind
-and we want to test this term deliberately, knowing it may worsen it).
-
-🛑 **THE PROCESS POINT, worth more than the build:** the lever was built, recorded, and its sign
-labelled **BELIEF** with the failure mode pre-registered — and then the verification killed it
-**before it cost a drive.** *"I'm not sure, here's what I'd need to verify"* is the preferred output;
-this is what it looks like when the check comes back negative. **Do not ship a lever whose sign
-rests on an unverified chain when the chain is decompilable in one tick.**
 

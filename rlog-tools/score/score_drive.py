@@ -179,19 +179,34 @@ def main(tag):
             if not band.any():
                 continue
             pk.append(f[band][int(np.argmax(P[band]))])
-            pw.append(P[band].max())
+            pw.append(P[band].sum())          # BAND ENERGY, not the peak height
         if not pk:
             print('  no episode long enough for a 15-25 Hz spectrum')
         else:
-            pk = np.array(pk)
+            pk, pw = np.array(pk), np.array(pw)
+            # POWER-WEIGHT the peak. An unweighted median gives an episode with 1 % of the grind
+            # the same vote as one with 20 %, and route r97 -- which has 0.01x the corpus median
+            # band energy -- produced a confident 15.8 Hz "peak" that was argmax on a flat
+            # spectrum. Weighting by band energy removes that class of artefact without a cutoff.
+            o = np.argsort(pk)
+            cw = np.cumsum(pw[o]) / pw.sum()
+            wmed = float(np.interp(0.5, cw, pk[o]))
             print(f'  per-episode 15-25 Hz peak: median {np.median(pk):.2f} Hz'
                   f'  min {pk.min():.2f}  max {pk.max():.2f}   ({len(pk)} episodes)')
+            print(f'  ** POWER-WEIGHTED median {wmed:.2f} Hz ** -- this is the one to trust;'
+                  ' an episode votes by how much grind it actually has')
+            share = np.sort(pw)[::-1]
+            k = int(np.searchsorted(np.cumsum(share) / share.sum(), 0.5)) + 1
+            print(f'  {k} of {len(pk)} episodes carry half this drive\'s band energy')
+            if pw.max() < 1e-9:
+                print('  !! this drive has essentially NO band energy -- the peak above is noise')
             print()
-            print('  ** V202\'s notch is a POINT fix, so the expected attenuation depends on where')
-            print('     THIS drive\'s peak landed: **')
-            print('       peak near 20 Hz  -> 24.7x      peak near 18 Hz -> 4.6x')
-            print('       peak near 22 Hz  ->  4.3x      peak near 16.3 Hz -> 2.3x')
-            print('     Pooling across episodes with different peaks averages the answer away.')
+            print('  ** V208 notch at 20.50 Hz. Expected attenuation vs where this drive sat:')
+            print('       16.5 Hz -> 2.1x     19.5 Hz ->  9.2x     21.5 Hz -> 10.3x')
+            print('       18.0 Hz -> 3.4x     20.5 Hz -> the null   22.5 Hz ->  5.4x')
+            print('     Corpus-wide V208 removes 14.9x of total band ENERGY. The per-episode')
+            print('     figure varies because a single biquad is a point fix, and the corpus')
+            print('     band spectrum peaks at 21.09 Hz with a shoulder out to 23.4.')
     print()
     print('  Everything above is measured or explicitly absent. Nothing here is a symptom score --')
     print('  bands are instruments; only the operator scores grinding, ratcheting and stuttering.')
