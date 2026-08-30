@@ -66,6 +66,39 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V238 AND V240 CUT A MEASURED DAMPER. BOTH CARRY A RATCHET COST, AND THE LEAD REVERTS TO V235. THE RATCHET IS NOT REACHABLE BY CALIBRATION.**
+>
+> I asked whether **anything** in the firmware is ratchet-SELECTIVE — the property every build in this arc has assumed and none has demonstrated. Two findings, and the second reverses my own last two builds.
+>
+> **1. THE BIQUAD IS THE ONLY FREQUENCY-SELECTIVE DEVICE, AND IT *CAN* NULL THE RATCHET.** Its zeros sit **on the unit circle**, so a notch aimed at 7.79 Hz gives `|H| = 0.00000` exactly:
+> ```
+>   pole Hz      r    |H|@7.79    |H|@6    |H|@9   max|H|
+>     7.79    0.990    0.00000   0.7719   0.6259   1.0410
+>     7.79    0.995    0.00000   0.9214   0.8427   1.0102
+> ```
+> 🛑 **BUT AIMING IT THERE IS FORBIDDEN BY THE KIT'S OWN MEASUREMENT.** `gp-0x6b86` vs wheel rate, 3 routes, coherence-gated:
+> ```
+>   6-9    cos -0.918   DAMPING   all 3 agree
+>   9-12   cos -0.989   DAMPING   all 3 agree     <- near-perfect damping
+>   12-15  cos -0.629   DAMPING   all 3 agree
+>   22-30  cos +0.936   PUMPING   all 3 agree
+> ```
+> The record's instruction is verbatim: *“place a notch only where the lane PUMPS. **Never notch 6–15 Hz on this lane.**”*
+>
+> **2. 🛑 AND THAT SAME TABLE CONDEMNS V238 AND V240.** They do not use a notch — they use a rate limiter — but they cut the same lane in the same bands:
+> ```
+>   V240's cut:   6-9  -6.0 %     9-15  -11.7 %     15-22  -3.0 %
+> ```
+> **They remove the most damping exactly where the lane damps hardest (9-12 Hz, cos −0.989).** And the two records are **consistent, not conflicting**: the aggregate `Re(Z)` at 6–9 Hz is measured anti-damping on **stock at every speed**, so this lane is one of the things *offsetting* Honda's anti-damping — and cutting it makes the net **worse**.
+> ⇒ **V238 and V240 renamed `RATCHET-COST-DO-NOT-FLASH-FIRST-…`.** My *“largest measured ratchet lever”* headline for V240 was wrong **twice over**: it is broadband, and at the ratchet it points the wrong way. Corrected once already this session for the first error; this is the second.
+> ✅ **V235 IS THE LEAD.** Its notch sits at **25.0 Hz**, inside the unanimous PUMPING band — exactly where the rule says a notch belongs — and its gain at the ratchet is **0.9879**, so it barely touches the damping bands. 15 payload bytes, the smallest build in the arc.
+>
+> ⭐⭐ **THE ARC'S RESULT, STATED PLAINLY: THE RATCHET IS NOT REACHABLE BY CALIBRATION.**
+>   * every cal in the assist-map path is now **measured**; only `gp-0x69a0` moves the band without taking assist away, and it is **broadband** — it cuts damping and pumping alike;
+>   * the **one** frequency-selective device cannot be aimed at the ratchet without nulling a damper;
+>   * every remaining cal lever is **broadband gain reduction** — the V101 trade arriving through different cells.
+> ⇒ **The next real step is not another cal build.** It is finding what *creates* the anti-damping, which the stock baseline says is **Honda's, present at every speed before we touch anything**, and which we multiply 2.4–3.0× at 29–86 km/h.
+
 > 🛑🛑⭐⭐⭐⭐ **V240 IS BROADBAND, NOT RATCHET-SELECTIVE — AND IT IS WEAKEST IN BOTH SYMPTOM BANDS. MY OWN “LARGEST MEASURED RATCHET LEVER” HEADLINE OVERSOLD IT.**
 >
 > Same 14 routes, same machinery, band by band:

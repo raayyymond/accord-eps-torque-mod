@@ -27,6 +27,16 @@ FW = os.environ.get('ACCORD_FIRMWARE_ROOT',
 
 # WITHDRAWN builds: the builder must still reproduce bit-for-bit -- that invariant is about the build
 # system -- but the artifacts carry SUPERSEDED-DO-NOT-FLASH- and there must be NO flashable .rwd.
+# COSTED builds: NOT withdrawn -- the lever is real and the build is sound -- but a MEASURED cost was
+# found after publication, so the artifact carries RATCHET-COST-DO-NOT-FLASH-FIRST- and must not be the
+# first flight. They still reproduce bit-for-bit, and they still have exactly one artifact each.
+COSTED = {
+    "v238": ("cuts gp-0x6b86 at 6-9 Hz by 2.7 %, where the lane is measured DAMPING "
+             "(cos -0.918, 3/3 routes)."),
+    "v240": ("cuts gp-0x6b86 by 6.0 %/11.7 %/3.0 % at 6-9/9-15/15-22 Hz, where the lane is measured "
+             "DAMPING (cos -0.918/-0.989/-0.629, 3/3 routes). Real lever, wrong way at the ratchet."),
+}
+
 WITHDRAWN = {
     "v236": ("MEASURED INERT at the ratchet: 0xC6384 only reshapes the map above 2844 torque "
              "counts, reached on 1.65 % of engaged frames; 6-9 Hz band ratio 1.0000."),
@@ -147,11 +157,17 @@ print('  THE .rwd ON DISK IS WHAT GETS FLASHED -- checking each is present and u
 for v in sorted(SHELF):
     hits = [f for f in os.listdir(RWDD)
             if f.startswith('39990') and f'-{v.upper()}-' in f and f.endswith('.rwd')]
-    want = 0 if v in WITHDRAWN else 1
-    if len(hits) == want:
+    # a COSTED build keeps exactly one artifact, but renamed so it cannot be flown first
+    costed = [f for f in os.listdir(RWDD)
+              if f.startswith('RATCHET-COST') and f'-{v.upper()}-' in f and f.endswith('.rwd')]
+    want = 0 if (v in WITHDRAWN or v in COSTED) else 1
+    if len(hits) == want and (v not in COSTED or len(costed) == 1):
         if want:
             sz = os.path.getsize(os.path.join(RWDD, hits[0]))
             print(f'  [PASS] {v.upper()} exactly one flashable .rwd, {sz} bytes')
+        elif v in COSTED:
+            print(f'  [PASS] {v.upper()} COSTED -- one RATCHET-COST- artifact, not flashable first '
+                  f'({COSTED[v]})')
         else:
             print(f'  [PASS] {v.upper()} WITHDRAWN -- zero flashable .rwd, as intended '
                   f'({WITHDRAWN[v]})')
