@@ -163,6 +163,13 @@ from what the operator drives. **Diff every candidate against the flown image.**
   🛑 **A pattern detector is NOT good enough, and nearly cost a correct finding.** Matching on *"small count followed by ascending values"* proposes `0xC63C6` as a base, which would make `0xC63CC` a table knot and **overturn the correct result that `0xC63CC` = 0 is a genuine scalar ×0**. There is **no movea to `0xC63C6`** — false positive. The detector proposes; the code disposes.
   ⊕ **Result: only 7 of V217’s 119 changed cal cells are table fields**, all in the three corridor tables already decoded. The other 112 are genuine scalars — so the misclassification was contained, not systemic.
   ⊕ Gate `[19]` fails any build moving a knot outside the known set. It immediately caught a **fourth** table (`0xC6910`) — not a misclassification: the kit already knows it as `OSC_X`/`OSC_Y`, only **V194** moves it, and V194 is in the condemned GATE-2 arc.
+- **31 CAL TABLES ARE READ FROM INSIDE THE KNOWN CHAIN; 12 ARE MENTIONED NOWHERE IN `docs/`.**
+  Enumerated from the table map. The two that looked most promising for the ratchet are **deadbands** — `0xC67A0` `Y=[0,5120,5120]` and `0xC67C0` `Y=[0,1024,1024]`, both `Y[0]=0` ramping up, in `FUN_0003a382`, the lane the record calls *"raw derivative on the torque sensor reaching the aggregator directly"*. A deadband is the classic stick-slip structure.
+  🛑 **CLOSED, on evidence already in the record:**
+  1. `0xC67A0` is indexed by **`gp-0x6bda`**, measured **0.0000 over 75,227 engaged frames** ([[accord-return-centre-and-detent-dead-engaged]]) ⇒ pinned at `Y[0]=0` engaged.
+  2. Decisively, this function’s output is **`gp-0x6ad4`**, which **V56 muted on-car and it bought nothing** — `FUN_0003a382` is already ELIMINATED as a symptom source.
+  ⇒ **Do not chase the deadbands in this lane.** The structure is suggestive and the lane is dead.
+  ⊕ **Still genuinely open** among the 12: `0xC68FC` read at `0x35962` inside **`FUN_000352b4`, the assist section that carries our own notch**, and four delivery-chain tables `0xC6A08` / `0xC6A18` / `0xC6A28` / `0xC6A38` (`Y=[197,197,197]`, `[6,6,6]`, `[16,33,66]` — the last is the only one that is not flat). None has ever been named.
 - A sweep for "dormant features gated by a zero cal" has a **poor hit rate** — zero offsets and float
   low-halves dominate. The one real find (the PI block) came from tracing, not sweeping.
 
