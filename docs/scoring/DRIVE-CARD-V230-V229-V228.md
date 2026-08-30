@@ -17,7 +17,32 @@ anything happens.** Nothing is flashed without that.
 
 ---
 
-## ⭐ DRIVE **V230** FIRST — it is the only build that cuts BOTH bands
+## 🛑 CORRECTION — DRIVE **V229**, NOT V230
+
+I recommended V230 first. **That was wrong, and here is why.** V230's lever (`0xC40DC`) acts on the
+`gp-0x6b26` lane, and after building it I checked what the record already says about that lane:
+
+- It has **exactly one output**, so a null there is a null on the lever, full stop.
+- **A ×1.5 dose on it measured INERT** — p50 0.988, every CI containing 1.00, against a pre-registered
+  1.50. The lane is in the closed-loop **invariance partition**: `y = K·α`, so scaling K leaves the
+  product alone.
+- **V94 cut that same cell 6× and you aborted the drive.** So the cell does reach the car — it is inert
+  at small dose and bad at large dose, **in the cut direction**.
+
+Measured against **your car**, V230 is −25 % at 7.79 Hz and −49 % at 18.5 Hz in that lane: comparable
+to the dose that measured inert, and the **same sign** as the one that ended a drive.
+
+⇒ **V230 is most likely a no-op, and if it is not, it acts the way the aborted drive did.** It stays on
+the shelf. **Drive V229.**
+
+⚠ **One thing this turned up that applies to all three builds:** V228 and V229 both carry `0xC40DC` = 22
+against your car's 8 — that lane runs **+6 % at 7.79 Hz, +28 % at 18.5 Hz, +114 % at 55 Hz** compared to
+what you drive now. By the same invariance it is probably inert too, but it is a real non-stock delta
+and you should know it is there.
+
+---
+
+## (superseded) DRIVE V230 FIRST — it is the only build that cuts BOTH bands
 
 ```
   V230   39990-TVA,A160-V230-V229BASE-ALPHA2.3-BOTH.CUTS-0x13000-0x100000.rwd

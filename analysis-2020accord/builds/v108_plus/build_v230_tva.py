@@ -1,5 +1,35 @@
 # -*- coding: utf-8 -*-
-r"""V230 -- V229 PLUS alpha2 = 3. THE FIRST BUILD TO CUT *BOTH* 15-22 Hz AND 55 Hz.
+r"""🛑 QUALIFIED AFTER BUILDING -- DRIVE V229 FIRST, NOT THIS.
+
+After cutting this build I checked the record on the lane 0xC40DC shapes, and it is already
+characterised. The chain has exactly ONE output --
+  gp-0x4f50 -> FUN_00041464 -> gp-0x6c2c -> FUN_00036c12 [the 0xCBE74 LERP] -> gp-0x6b26 (+-511)
+-- so a null there is a null on the lever. And:
+
+  * a x1.5 DOSE ON THAT CELL MEASURED INERT at gp-0x6b26 itself: p50 0.988, every CI containing
+    1.00, against a pre-registered 1.50 (r78/V91, r79/V92). Class T10, "the instrument is
+    invariant to the lever": y = K*alpha where alpha is what K damps, so in a stable closed loop
+    the product is invariant to K.
+  * V94 CUT THE SAME CELL 6x AND THE OPERATOR ABORTED THE DRIVE -- which is what proves the cell
+    reaches the car. Inert at small dose, bad at large dose, in the CUT direction.
+
+Measured against THE CAR (not against V229), V230 is 0.993 at 1 Hz, 0.746 at 7.79 Hz (-25 %) and
+0.506 at 18.5 Hz (-49 %) in that lane: comparable in magnitude to the dose that measured inert, and
+the SAME SIGN as the one that ended a drive. => most likely a no-op; if not, it acts like V94.
+
+The lane is also primarily a RATCHET lane -- measured on the three routes whose CAN 427 taps it,
+it is 52.8 % 6-9 Hz (coherence 0.728 with wheel rate), 17.4 % 9-12, 10.9 % 15-22. Perturbing it in
+the aborted-drive direction is not a small matter.
+
+THIS BUILD IS KEPT ON THE SHELF, NOT RECOMMENDED. V229 is the lead: its lever is the notch, which
+acts on gp-0x6b82 in FUN_000352b4 -- a different lane, never shown invariant, and a phase-shaping
+device rather than a gain, so y = K*alpha does not directly apply.
+
+The original rationale follows unchanged, as the record of why it was cut.
+
+--------------------------------------------------------------------------------------------------
+
+V230 -- V229 PLUS alpha2 = 3. THE FIRST BUILD TO CUT *BOTH* 15-22 Hz AND 55 Hz.
 
 THE PROBLEM V229 COULD NOT SOLVE. There is exactly ONE biquad in this ECU. Honda uses it as a 55 Hz
 notch (159x). Every build since V172 RELOCATED it to ~20 Hz to cut the grinding band, which VACATES the

@@ -50,6 +50,10 @@ WITHDRAWN = [
     (r'grind #2 is V62',
      '"grind #2 is V62\'s sar"',
      '2026-08-30: REFUTED -- V71c produced grind #2 carrying NEITHER sar byte. Origin is OPEN.'),
+    (r'V230 is the (?:recommendation|lead)|DRIVE V230 FIRST',
+     'V230 as the recommended build',
+     '2026-08-30: its lever acts on the gp-0x6b26 lane, which is INVARIANCE-PARTITIONED -- a x1.5 '
+     'dose measured INERT (p50 0.988) and a 6x cut ABORTED a drive. V229 is the lead.'),
     (r'OSTM0.{0,40}1000 ?Hz|1 ?kHz.{0,30}OSTM0',
      '1 kHz derived from OSTM0',
      '2026-08-30: the OSTM0 route is REFUTED (PCLK is 40 MHz, not 80). 1 kHz stands on the ON-CAR '
