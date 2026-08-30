@@ -246,6 +246,30 @@ the ratchet is clearly worse than V122, stop and say so** — fallback is **V221
 then **V217** (5244, the V88-proven dose).
 Study: `analysis-2020accord/studies/mixer/lever_b_pumping_check_at_matched_gain.py`.
 
+## 🛑 THE ONE THING THAT COULD GO WRONG — the ratchet, and why
+
+V222 runs the LKAS forward gain at **8×**. **You flew 8× once before, on V101, and reported
+*"grinding/vibration now exists at all speeds"*** — which is why V102 went back to 6×. So the question
+is whether the notch added since then actually covers it.
+
+✅ **In the band you felt it (22–26 Hz), it does, with room to spare.** 8× brings **1.65×** more
+vibration there; the notch cuts that band to **0.281×** ⇒ **net 0.463×, better than your car**, and it
+stays a win across the full uncertainty range.
+
+🛑 **But the notch only spans 15.5–29.8 Hz. At the RATCHET it does nothing** (0.997), so there:
+
+```
+  forward gain raise at 6-9 Hz    1.33x to 1.65x   (excitation, UP)
+  Lever B raise                   2.50x            (damping, UP)
+```
+
+**Same order, Lever B larger — but I cannot tell you from arithmetic which wins.** That is a closed-loop
+question and only the car answers it.
+
+⇒ **So: the grinding case is strong. The ratchet could go either way, including worse.** If it is
+worse, that is an interpretable result and not a surprise — stop, say so, and the fallbacks in order are
+**V221** (identical Lever B), then **V217**, then back to **V122**.
+
 ## 🛑 WHAT YOUR DRIVE CAN AND CANNOT SETTLE — read before scoring anything
 
 **Your symptom verdict is the PRIMARY readout. The band numbers are secondary and need far more

@@ -1,6 +1,41 @@
 # STATE — living current state of the kit
 
 
+> 🛑🛑⭐⭐⭐ **THE 8× IS COVERED WHERE THE OPERATOR FELT IT — BUT NOT AT THE RATCHET. V222’s ratchet
+outcome is a RACE, and open-loop arithmetic cannot call it.** The ★★★★★ record says `0xC6CD0` is *"the
+MEASURED CAUSE of the ~23 Hz vibration"*: **V101 flew 8× and the operator reported *"grinding/vibration
+now exists at all speeds"*, and V102 went back to 6× at his own choosing.** V222 returns to **8×**, so
+that claim had to be checked rather than carried on its star rating.
+✅ **In the band he felt, the notch covers it with room to spare.** Vibration grows as m^1.74, so
+6×→8× is **1.650×** more 22–26 Hz; the notch cuts that band to **0.281×** ⇒ **net 0.463× — better than
+the car** — and it stays a win across the whole exponent CI (**0.423 / 0.463 / 0.493** at m^1.43 /
+1.74 / 1.96). Break-even needed 0.606×; it delivers 0.281×.
+🛑 **But the notch window is only 15.5–29.8 Hz, and I nearly missed the LOWER crossing by checking
+only 22–26.** Forward path (gain growth × notch), **Lever B not included**:
+
+```
+  band                 notch    net vs car
+  ratchet 6-9          0.997      1.645   WORSE   <- the notch does NOTHING here
+  at 7.79 Hz           0.997      1.645   WORSE
+  mid 9-12             0.953      1.572   WORSE   <- and this is the Re(Z) PEAK
+  gap 12-15            0.799      1.319   WORSE
+  grind 15-22          0.280      0.462   better
+  22-26 (the 8x band)  0.286      0.472   better
+  40 Hz                  --       2.072   WORSE   (in the alias-source region)
+```
+
+⇒ **at the ratchet, V222 pairs a 1.65× forward-gain rise with a 2.50× Lever B rise.** They are the
+**same order** and **Lever B is the larger**, but whether they net out is a **closed-loop** question this
+arithmetic cannot answer.
+⚠ **And the 1.65× is an EXTRAPOLATION**: m^1.74 was measured at **22–26 Hz** on V101 vs V100, not at
+6–9 Hz. A purely linear response would give **1.33×**. So the honest range at the ratchet is
+**1.33–1.65× excitation against 2.50× damping.**
+⇒ **CONSEQUENCE, and it is the operator’s to weigh:** the grinding case is strong and well covered.
+**The ratchet could go either way, and it could go the wrong way.** This is now a **pre-registered
+possibility**, not a surprise — and it compounds with the separate finding that a ratchet **null**
+licenses nothing, because `0xC63AE` is unpriced. If the ratchet is worse, the fallbacks in order are
+**V221** (identical), then **V217**, then **V122** (the car).
+
 > 🚩 **FLIGHT ORDER: V222.** = **V221 with four bytes REMOVED from the delta.** Delta from the CAR (**V122**) is **23 payload bytes** — notch 20.50 Hz (grinding) · `0xC63AE` 512 (ratchet) · `0xC6CD0` 6×→8× + clamps (authority) · `0xC6446` 5244→13107 (Lever B) · the 427 probe. Every deliberate lever is byte-identical to V221; what changed is that the friction lane now matches the car at EVERY rate rather than only below its knee. Drive card: `docs/scoring/DRIVE-CARD-V222.md`. **V221 is the fallback** (`DRIVE-CARD-V221.md`), V217 behind it. Shelf: `docs/scoring/SHELF.md`. Pre-registered scoring: `docs/scoring/SCORING-V217-preregistered.md` (applies to all three).
 
 > 🛑⭐ **THE GOVERNOR RAMP-TIME HYPOTHESIS IS RETIRED — by the task rate, now that it is known.** The model records it as the leading ratchet hypothesis, *"later CONFIRMED as a real contributor"*, while its own docstring says why that could never have been quantitative: *"[OPEN] the wall-clock conversion (task rate contested); cycle counts here are exact, milliseconds are deliberately NOT computed."* **The task rate is no longer contested** — the control task is confirmed ~1 kHz — so the milliseconds are computable, and they retire it: `lkas_max = min((8192*gain)>>15, 4096)`, ramp = lkas_max/step. **Honda 0.4/1.1 ms · the car 2.6/6.5 ms · the shelf 3.5/8.7 ms** — against a ratchet period of **128.4 ms**, i.e. **15–37× faster than one cycle**. The *"V38 made the ramp 4× longer"* observation is arithmetically right and operationally irrelevant: **4× of 0.4 ms is 1.7 ms**. The earlier "confirmed contributor" verdict was reached with no task rate and is confounded with V42’s state-4 substitution, which the record itself calls the root-cause fix. 🛑 **AND DO NOT TOUCH THE CELLS ANYWAY**: `0xC6206`/`0xC6208` are 512/205 in **217 of 219 images**; the exceptions are V45 (205/205, falsified) and **V40 (0xFFFF — ☠ EPS lamp + NO POWER STEERING AT IGNITION)**. The record attributes that fault to these two cells and says the mechanism was **magnitude, not direction**: the guard never fired → snap-to-target → DTC 0x1d with **no debounce** → motor off. Since the LKAS command is a ~1–5 Hz low-pass, its natural per-cycle change is a few counts, so **any large step makes the guard functionally inert** — the exact condition that faulted V40. **No demonstrated safe raise, and nothing to buy.** Study: `analysis-2020accord/studies/mixer/governor_ramp_time_retired_by_the_task_rate.py`.
