@@ -179,6 +179,51 @@ def selftest():
     print('  [OK] the scorer recovers injected ratios and does not manufacture an effect from noise.')
 
 
+# ---------------------------------------------------------------------------------------------
+# AUDIO ARM -- added 2026-08-30. Audio is the BETTER instrument: measured across 8 caches it needs
+# 2.0 min/arm for grinding against CAN's 14.0 (7.0x) and 114.7 against 413.7 at the ratchet (3.6x),
+# and on the noisiest route it is still 2.3-3.8x. It is also alias-free at 16 kHz, where CAN's
+# 30-49 Hz is not interpretable at all. Recommending audio-first while only scoring CAN would leave
+# advice the tooling cannot execute, so both are scored and audio is reported FIRST.
+# ---------------------------------------------------------------------------------------------
+AUDIO_CTL = (30.0, 40.0)
+AUDIO_CTL_HI = (50.0, 60.0)          # for bands that overlap the 30-40 control
+
+
+def audio_episode_ratios(tag):
+    """One band/control ratio per 20 s ENGAGED episode, from the *_grind.npz spectra.
+
+    Engaged-gating is not optional: it is worth 1.5-2.4x on its own (r24: sd 0.478 -> 0.286 at
+    6-9 Hz, 0.308 -> 0.131 at 15-22). The audio frames carry no engagement flag, so each is mapped
+    to the nearest CAN sample.
+    """
+    ap = 'analysis-2020accord/_scratch/cache/%s/%s_grind.npz' % (tag, tag)
+    cp = 'analysis-2020accord/_scratch/cache/%s/%s.npz' % (tag, tag)
+    if not (os.path.exists(ap) and os.path.exists(cp)):
+        return None
+    g = np.load(ap, allow_pickle=True)
+    z = np.load(cp, allow_pickle=True)
+    if 'sp' not in g.files or 't_sp' not in g.files:
+        return None
+    sp = np.asarray(g['sp']).astype(float)
+    f = np.asarray(g['sp_f']).astype(float)
+    ta = np.asarray(g['t_sp']).astype(float)
+    tc = np.asarray(z['t']).astype(float)
+    lat = np.asarray(z['cc_lat']).astype(float)
+    sl = lat[np.clip(np.searchsorted(tc, ta), 0, len(tc) - 1)]
+    fr = 1.0 / np.median(np.diff(ta))
+    n = max(2, int(round(EPISODE_S * fr)))
+    out = {}
+    for name, lo, hi in BANDS:
+        b = (f >= lo) & (f < hi)
+        c = ((f >= AUDIO_CTL[0]) & (f < AUDIO_CTL[1])) if hi <= AUDIO_CTL[0] else             ((f >= AUDIO_CTL_HI[0]) & (f < AUDIO_CTL_HI[1]))
+        r = np.log10(sp[:, b].mean(axis=1) / np.maximum(sp[:, c].mean(axis=1), 1e-30))
+        m = np.isfinite(r) & (sl > 0.5)
+        r = r[m]
+        out[name] = [float(r[i:i + n].mean()) for i in range(0, len(r) - n + 1, n)]
+    return out
+
+
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('routes', nargs='*', help='<v228_route> <v222_route>')
@@ -214,6 +259,16 @@ if __name__ == '__main__':
         print('     Two builds differing in something OTHER than the gain will still produce')
         print('     large ratios -- they just say nothing about the dose law.')
     print()
+    aa, ab = audio_episode_ratios(ta), audio_episode_ratios(tb)
+    if aa and ab:
+        print('  AUDIO  (the better instrument: 2.3-7x more efficient than CAN, and alias-free)')
+        report(ta, aa, tb, ab)
+        print()
+    else:
+        print('  AUDIO  no *_grind.npz cache for one or both routes -- extract it, audio is the')
+        print('         BETTER readout (2.3-7x). rlog-tools/decode/extract_audio_grind.py')
+        print()
+    print('  CAN    (cross-check)')
     ra = episode_ratios(*da)
     rb = episode_ratios(*db)
     report(ta, ra, tb, rb)

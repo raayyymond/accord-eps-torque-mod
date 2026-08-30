@@ -246,6 +246,21 @@ figure here ever looks absurd, check this conversion first.
 ➕ The instrument did not exist before 2026-08-30: the audio corpus stopped at `ra6` (V106) and the car
 had no audio cache at all, so this prediction was untestable until the baseline was extracted.
 
+### ⚠ AUDIO AND CAN CAN DISAGREE — SENSITIVITY IS NOT VALIDITY
+
+The scorer now reports **both** arms, audio first. That is because audio is **2.3–7× more efficient** and alias-free — but efficiency is not correctness, and the two can disagree hard.
+
+Exercised on `r24` vs `r96` (V122 vs V102 — **not** the registered pair, so nothing is licensed either way, this is purely an instrument check):
+
+```
+  22-26 Hz     AUDIO  0.758x  [0.590, 1.172]
+               CAN   22.940x  [11.930, 33.904]
+```
+
+⇒ **a ~30× disagreement on the same two drives.** They measure genuinely different physical quantities — acoustic radiation versus openpilot’s steering-rate signal — and there is no reason they must move together. Audio can carry road and cabin noise the rate signal never sees; the rate signal can carry motion the microphone never hears.
+
+🛑 **REGISTERED IN ADVANCE:** if the two arms disagree on the drive, that is **not** a licence to pick the one that suits. **Report both, name the disagreement, and treat the question as OPEN.** The audio-first ordering reflects **exposure efficiency only** — it is not a claim that audio is the truer instrument, and nothing here establishes which one better tracks what the operator feels.
+
 ### 🛑 What this test CANNOT do — attribute a SYMPTOM
 
 The band measurement above is a **mechanism test** and is valid as such. But if the operator reports **grind #2 itself**, that **cannot be attributed to the notch relocation**, because **grind #2’s origin is OPEN**. The record is explicit: *"grind #2 is V62’s `sar`" is REFUTED* — **V71c produced grind #2 carrying NEITHER `sar` byte.** The surviving claim is only that the r24 half is *"directionally supported"* as a contributor.
