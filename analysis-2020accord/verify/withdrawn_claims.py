@@ -54,6 +54,11 @@ WITHDRAWN = [
      'V230\'s lever called "probably inert"',
      '2026-08-30: MISREADING. The x1.5 null means UNMEASURABLE, not dead -- y = K*alpha is invariant '
      'to K while the motion is not. V94\'s 6x cut aborted a drive, proving the cell reaches the car.'),
+    (r'no LINEAR lane is the ratchet|every lane damps at the ratchet',
+     'the all-lanes ratchet scan conclusion',
+     '2026-08-30: WITHDRAWN as unsupported. It scored cos(phase vs cs_rate), and cs_rate is at '
+     'CHANCE for the ratchet (margin 1.03). Redone against cs_tq it has no discriminating power: '
+     'all 7 lanes are filtered copies of the same sensor, coherence 0.95-0.98, phase 15.9-19.8 deg.'),
     (r'V230 is the (?:recommendation|lead)|DRIVE V230 FIRST',
      'V230 as the recommended build',
      '2026-08-30: its lever acts on the gp-0x6b26 lane, which is INVARIANCE-PARTITIONED -- a x1.5 '

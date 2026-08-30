@@ -46,6 +46,24 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐ **NEITHER OF MY LANE SCANS CAN IDENTIFY THE RATCHET'S SOURCE — one was in the wrong channel, the other has no discriminating power. AND I INVERTED A PHASE CONVENTION AGAIN.**
+>
+> Redoing the all-lanes scan against `cs_tq`, the channel the ratchet actually lives in:
+> ```
+>   lane        routes   coh 6-9   coh ctl    phase     verdict
+>   gp-0x6C2C     1        0.982     0.295     19.1°    follows torque
+>   gp-0x6B70     1        0.980     0.452     19.6°    follows torque
+>   gp-0x6B26     2        0.979     0.507     19.3°    follows torque
+>   gp-0x6ABC     3        0.978     0.481     19.0°    follows torque
+>   gp-0x6B86     3        0.973     0.337     19.2°    follows torque
+>   gp-0x6B4C     2        0.963     0.315     18.4°    follows torque
+>   gp-0x6B94     1        0.961     0.241     19.8°    follows torque
+> ```
+> 🛑 **THE UNIFORMITY IS THE FINDING.** Seven different lanes, coherence 0.95–0.98, phase all within **15.9–19.8°**. That is not seven results — **every one of these lanes is a filtered function of the SAME torque sensor**, so coherence with `cs_tq` is trivial and shared, and the common ~19° (≈7 ms at 7.5 Hz) is a shared path delay. **The measurement cannot discriminate between them.**
+> 🛑 **AND I INVERTED THE PHASE CONVENTION — the SECOND csd inversion in this kit's history.** `scipy.csd(x,y)` returns `arg(Y)−arg(X)`; with `x=lane, y=cs_tq` a POSITIVE phase means **`cs_tq` leads the lane**, i.e. the lane FOLLOWS. My first pass printed *“LEADS cs_tq”* for exactly that condition and would have named **all seven lanes ratchet drivers**. The record already carries one such inversion, which *“recommended LOWERING `0xC63AC` when the correct move was raising it”*. Corrected in the script itself, not just in prose.
+> ⇒ **NET: neither scan identifies a source lane.** The rate-referenced one looked in a channel the ratchet is absent from (`cs_rate` margin **1.03 = chance**); the torque-referenced one looks in the right channel but has **no discriminating power**. My earlier conclusion *“no linear lane is the ratchet's source”* is **withdrawn as unsupported** — not reversed, unsupported.
+> ✅ **This does not weaken V236.** The assist map is the suspect on the handoff's own reasoning — largest torque-fed term at 5.8–7.8× the PID, the cap binds 3/9 knots, GATE 2 passes on magnitude and phase — none of which rests on either of my scans.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V236 BUILT — THE RATCHET LEVER WAS FOUND, GATED AND BUILT AS V168 LAST YEAR, THEN SILENTLY LOST IN THE REBASE CHAIN. SAME FAILURE AS LEVER B.**
 >
 > ```
