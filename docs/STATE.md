@@ -48,6 +48,29 @@ direction — at HALF this dose.** V222 stays the flight candidate; the ratchet 
 WATCH**, with V221 then V217 (the V88-proven 5244) as fallbacks. Drive card updated.
 Study: `analysis-2020accord/studies/mixer/lever_b_pumping_check_at_matched_gain.py`.
 
+> ✅⭐⭐ **AND THEN IT WAS MEASURED: r24 DAMPS AT 6–9 Hz. The "PUMPING" claim is WRONG in direction
+AND ~4× in size.** No flown route carries the `gp-0x6ada` mirror (the corpus tops out at `r24` = V122,
+the build on the car), so r24 has never been observed — **but it is COMPUTABLE**, because its only input
+is column torque and that is on the wire. Mirrored exactly: `gp-0x4f62 = T[n]−T[n−4]` at 1 kHz →
+`× cal(0xC6446) >> 10` → `clamp ±8192` → `× gp-0x6752 (=−1)`, i.e. as a transfer
+**`r24(f) = −(cal/1024)·(1−e^{−j2πf·0.004})·T(f)`**. At 7.79 Hz the difference term is **fixed** at
+`|H| = 0.19547, arg +84.39°`, so the entire question reduces to **one measurable quantity — the phase of
+column torque vs rate.** Measured on **6 routes / 5 builds**: torque **lags rate by −122°**, spread only
+**18.9°** ⇒ **r24 sits at +143.6° vs rate, 36° from the ANTI-rate axis, net-work factor −0.805 —
+DAMPING.** Magnitude at the car’s Lever B: **187 counts against the record’s claimed 431–1294**, i.e.
+**overstated 2.3–6.9×**. ✅ **Two controls with non-trivial expectations pass exactly** (a viscous torque
+must land at −95.6° = quadrature, a stiffness torque at +174.4° = damping), and the `csd` convention is
+**pinned with a constructed +90° lead rather than assumed** — the exact trap that has inverted this kit
+decision-bearingly before. ✅ **V88 agrees independently**: raising this same gain 512→5244 measured
+**6–9 Hz at 0.859× on-car**. ⚠ **Frame-dependent** (a global flip makes it pumping) — it rests on the
+operator-confirmed table under which driver torque and steering angle share a frame and assist acts in
+the driver’s direction; and ⚠ **open-loop**, so it says what r24 computes, not what the closed loop does
+with it. ⊕ **Two bugs the controls caught before publication**: at the ~100 Hz cache rate
+`round(4 ms × 100) = 0`, so a naive span silently becomes a **10 ms** difference (2.5× the gain, 8.4× of
+phase error) — computed analytically instead; and the `csd` sign was inverted. ⇒ **the pumping concern
+on V222 is resolved in the safe direction by three independent lines**, and the drive card is updated.
+Study: `analysis-2020accord/studies/mixer/r24_reconstructed_magnitude_and_phase.py`.
+
 > 🛑 **RECORD DEFECT FIXED — `r95` is V101, not V102, and the correction had been made in only HALF
 the files.** `r95` flew **V101 = 8× (`0xC6CD0` 7128) with Lever B REMOVED** (`GAIN8X.C6CD0.7128-NOLEVERB`);
 `r95_v102_prereg.py` is the pre-registration **FOR** V102 **MEASURED ON** r95=V101, and its own docstring

@@ -245,3 +245,5 @@ candidate levers were killed by exactly those entries on 2026-08-12 alone.
 
 🛑 **PAGINATED IN FOUR** — `MEMORY-PART2.md`, `MEMORY-PART3.md` and
 `MEMORY-PART4.md` (split 2026-08-28 at the 256 KB cap) must all be read.
+
+- 🛑★★★★★ [r24 DAMPS at 6–9 Hz — the "PUMPING" inference is WRONG](accord/signals/accord-gp6752-is-negative-one.md) — reconstructed on 6 routes: phase **+143.6°** vs rate, work factor **−0.805**, **187 ct** not 431–1294. `gp-0x6752` = −1 itself stands.

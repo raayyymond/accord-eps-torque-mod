@@ -45,9 +45,39 @@ confirms −1.
   footing. ⚠ **This survived THREE sign reversals in one session; cite
   `.claude/agent-memory/firmware-codepath-tracer/reference_accord_gp6752_resolved_negative_one_and_pid_polarity_reversal.md`
   for the current picture, not any intermediate claim.**
+> ## 🛑 CORRECTION 2026-08-30 — THE "r24 PUMPS" INFERENCE BELOW IS WRONG, IN BOTH DIRECTION AND SIZE
+>
+> **The `gp-0x6752` = −1 finding itself is NOT disputed** — it is verified three ways including
+> on-car, and nothing here touches it. What is corrected is the **downstream inference** in the
+> next bullet.
+>
+> r24 was reconstructed from the firmware arithmetic on **flown data, 6 routes / 5 builds**
+> (`analysis-2020accord/studies/mixer/r24_reconstructed_magnitude_and_phase.py`). As a transfer,
+> `r24(f) = −(cal/1024)·(1 − e^{−j2πf·0.004})·T(f)`, so at 7.79 Hz the difference contributes a
+> **fixed** `|H| = 0.19547, arg = +84.39°` and the whole question reduces to the phase of column
+> torque vs rate — which is on the wire.
+>
+> | | claimed here | **measured** |
+> |---|---|---|
+> | magnitude at the car’s Lever B (5244) | **431–1294 ct** | **187 ct** — overstated **2.3–6.9×** |
+> | behaviour at 6–9 Hz | **PUMPING** | **DAMPING** — phase **+143.6°** vs rate, net-work factor **−0.805** |
+>
+> Column torque **lags rate by ~122°** at 6–9 Hz (tight: only **18.9°** spread across 6 routes), so the
+> derivative plus the −1 lands r24 **36° from the anti-rate axis** — opposing the motion.
+> ✅ **Two controls with non-trivial expectations pass exactly**, and the `csd` convention is pinned by
+> a constructed +90° lead rather than assumed — the specific trap this file itself warns about.
+> ✅ **V88 agrees independently**: raising this same gain 512→5244 measured **6–9 Hz at 0.859× on-car**,
+> the damping direction.
+> ⚠ The verdict is **frame-dependent** (a global flip would make it pumping); it rests on the
+> operator-confirmed table in [[accord-steering-sign-convention-confirmed]], under which driver torque
+> and steering angle share a frame and assist acts in the driver’s direction.
+> ⚠ **Open-loop.** It says what r24 computes, not what the closed loop does with it.
+> ⇒ **Raising Lever B is not indicated to pump the ratchet**, and the magnitude that made it look
+> alarming was ~4× too large.
+
 - **Parity is ODD for r24 and r26** — each multiplies `gp-0x6752` exactly once, so the `P² = +1`
-  cancellation in the Path-1/Path-2 chain **does not apply**. ⇒ **r24 = −431 to −1294 ct at 6–9 Hz,
-  PUMPING**, and the corrected band shape retrodicts the measurement better than +1 did.
+  cancellation in the Path-1/Path-2 chain **does not apply**. ⇒ ~~**r24 = −431 to −1294 ct at 6–9 Hz,
+  PUMPING**~~ — 🛑 **SUPERSEDED, see the correction block above: measured 187 ct and DAMPING**, and the corrected band shape retrodicts the measurement better than +1 did.
 - ⚠ **V49 was built, verified and held unflashed with the note "brick if −1."** It was never flashed.
   **That caution was correct and nobody knew why until now.**
 

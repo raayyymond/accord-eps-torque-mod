@@ -187,7 +187,7 @@ python rlog-tools/score/rate_matched_band_ratio.py
 
 ---
 
-## 🛑 ONE RESIDUAL RISK ON LEVER B — watch the ratchet, do not assume it
+## ✅ THE LEVER B PUMPING CONCERN IS NOW MEASURED — and it points the SAFE way
 
 V222 raises Lever B (`0xC6446`) to **13107**, 2.5× above the car. There is a specific reason to watch
 the **ratchet** rather than assume it is untouched, and it is worth stating plainly before you drive.
@@ -197,13 +197,35 @@ Lever B **is** the r24 engaged derivative gain. A three-way-verified sign findin
 −431 to −1294 counts.** The ratchet sits at **7.79 Hz**, squarely inside that band. So the arithmetic
 says more Lever B could mean more ratchet.
 
+✅ **That concern has now been MEASURED, and it goes the other way.** r24 is reconstructed exactly
+from the firmware arithmetic — as a transfer, `r24(f) = −(cal/1024)·(1−e^{−j2πf·0.004})·T(f)` — so at
+7.79 Hz the difference contributes a **fixed** `|H| = 0.19547, arg +84.39°`, and the whole question
+collapses to **one measurable quantity: the phase of column torque vs rate**, which is on the wire.
+
+```
+  measured on 6 routes / 5 builds, engaged, 6-9 Hz
+     column torque LAGS rate by      -122 deg        (spread only 18.9 deg across routes)
+     => r24 phase vs rate            +143.6 deg      36 deg from the ANTI-rate axis
+     net-work factor cos(phase)      -0.805          (+1 = pump, -1 = damp)
+     magnitude at your car (5244)    187 counts      vs the record's claimed 431-1294
+```
+
+⇒ **r24 DAMPS at 6–9 Hz on your car’s own data — it opposes the motion — and the magnitude that made
+the claim alarming was overstated 2.3–6.9×.** Two controls with non-trivial expectations pass exactly,
+and the cross-spectrum sign convention is pinned with a constructed +90° lead rather than assumed
+(the precise trap that has inverted this kit before).
+⚠ Frame-dependent (a global sign flip would make it pumping) and **open-loop** — it says what r24
+computes, not what the closed loop does with it. But **V88 agrees independently**: raising this exact
+gain 512→5244 measured 6–9 Hz at **0.859× on-car**, the damping direction.
+
 **What the measurements say, against that:**
 
 | evidence | 6–9 Hz result | weight |
 |---|---|---|
 | **V88, a direct on-car A/B** (Lever B 512 → 5244) | **0.859× — mildly BETTER** | the only real test; a designed toggle |
 | the flown corpus, Lever B ON vs OFF at byte-matched forward gain | **1.08×, p = 0.58** | ❌ **too weak to count** — see below |
-| the static sign arithmetic | predicts pumping | open-loop; says nothing about the closed loop |
+| **r24 reconstructed on flown data** (6 routes) | **DAMPING — −0.805 work factor, 187 ct** | ✅ controls pass; frame-dependent, open-loop |
+| the static sign arithmetic | predicted pumping at 431–1294 ct | 🛑 **superseded** — wrong in direction AND ~4× in size |
 
 🛑 **The corpus test does NOT clear it, and I am not going to present it as if it did.** With 2 OFF
 routes against 9 ON, the detection floor is **3.55×** — it can only exclude a *huge* pump. Worse, the
@@ -214,12 +236,14 @@ road and route, not only by lever, so the engaged null is not attributable.
 ➕ The arms are also not single-variable (V102/V103 differ from V104+ in the biquad, the notch and
 `gp-0x6b26` as well), which is a second, independent reason not to lean on it.
 
-⇒ **What this means for your drive.** The grinding read is unchanged and well-founded. But treat the
-**ratchet as pre-registered to WATCH, not as expected-neutral**: V88 measured the safe direction at half
-this dose, and nothing in the record has tested 13107. **If the ratchet is clearly worse than V122, that
-is an interpretable result and Lever B is the first suspect** — stop the drive, say so, and the fallback
-is **V221** (identical Lever B) then **V217** (Lever B at 5244, the V88-proven dose).
-⚠ This is a *residual risk*, not a prediction: the one direct measurement went the other way.
+⇒ **What this means for your drive.** The grinding read is unchanged and well-founded, and the
+ratchet concern is now **three independent lines pointing the same, safe way**: the reconstruction
+(damping, −0.805), V88’s on-car A/B (0.859×), and the corpus contrast (no separation). **Nothing
+predicts the ratchet gets worse.**
+⚠ Still worth watching, for one honest reason: **nothing has ever flown 13107**, the reconstruction is
+open-loop, and a lightly-damped resonance can behave in ways an open-loop phase does not capture. **If
+the ratchet is clearly worse than V122, stop and say so** — fallback is **V221** (identical Lever B),
+then **V217** (5244, the V88-proven dose).
 Study: `analysis-2020accord/studies/mixer/lever_b_pumping_check_at_matched_gain.py`.
 
 ## Two limits on the numbers you will read back
