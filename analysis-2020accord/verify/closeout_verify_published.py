@@ -680,6 +680,36 @@ for _v in sorted(_MANIFEST):
         chk(False, f'{_v.upper()} DELTA CHANGED: {_n} payload bytes (manifest says {_wn}). '
                    f'Re-record the manifest in the same commit as the edit, or find the stray byte.')
 
+print()
+print("[18] THE DIRECTION-CORRIDOR TABLE -- 0xC6760, and 0xC676A IS NOT INERT")
+# Closed 2026-08-29 after ~190 builds. 0xC676A was recorded as "non-stock since V25, ZERO READERS
+# FOUND, may be inert". It has readers; the null was a METHOD ARTEFACT.
+#
+#   0x42F56  movea 0x7760, tp, r8    ; r8 = 0xC6760
+#   0x42F5A  addi  0x2, r8, ep       ; ep = 0xC6762  -> the X array, walked by ep
+#   0x42F5E  addi  0x8, r8, r6       ; r6 = 0xC6768  -> the Y array, walked by r6
+#   0x42F8E  add   0x2, r6           ; r6 = 0xC676A  <-- Y[1], reached by POINTER ARITHMETIC
+#
+# A tp-displacement scan cannot see that, which is why it read as zero readers. Same blindness
+# CLAUDE.md warns about for register-indirect access. Y[0] and Y[2] ARE displacement-addressed
+# (0x42F6E, 0x42F86) because they are the saturation arms of the ladder -- only the middle knot is
+# walked. So the scan found the ends and missed the middle.
+#
+# SHAPE, not just gain: stock RAMPS the corridor 0 -> 1536 -> 2048; the shelf FLATTENS it to a
+# constant 5120, including 5120 at the low knot where stock is 0.
+_CX, _CY = 0xC6760, 0xC6768
+for _v in sorted(img):
+    _X = [struct.unpack_from('<h', img[_v], _CX + 2 * _i)[0] for _i in range(4)]
+    _Y = [struct.unpack_from('<h', img[_v], _CY + 2 * _i)[0] for _i in range(4)]
+    chk(_X == sorted(_X),
+        f'{_v.upper()} corridor X ascending {_X}'
+        + ('' if _X == sorted(_X) else ' -- NON-ASCENDING X, the LERP walk will not terminate correctly'))
+    chk(_X == [3, 700, 800, 1100],
+        f'{_v.upper()} corridor X unchanged from stock {_X}')
+    if _Y != [5120, 5120, 5120, 0]:
+        print(f'         note: {_v.upper()} corridor Y = {_Y} (stock [0,1536,2048,0], '
+              f'shelf [5120,5120,5120,0])')
+
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
 for m in bad:

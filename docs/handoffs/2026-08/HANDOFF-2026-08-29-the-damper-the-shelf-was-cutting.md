@@ -139,6 +139,15 @@ from what the operator drives. **Diff every candidate against the flown image.**
   ⇒ **`0xC63AE` scales exactly that slope and is the only lever that touches this stage alone**;
   the curve is welded to the ROM assist records, so reshaping it moves steering feel everywhere.
   This closes the last conceivable alternative for the ratchet.
+- ✅ **`0xC676A` IS NOT INERT — a ~190-build open item closed, and the null was a METHOD ARTEFACT.** It was recorded as *"non-stock since V25, ZERO READERS FOUND, may be inert"*. It is **Y[1] of the direction-corridor LERP** at `0xC6760`:
+  ```
+  0x42F56  movea 0x7760, tp, r8    ; r8 = 0xC6760
+  0x42F5A  addi  0x2, r8, ep       ; ep = 0xC6762  -> X array, walked by ep
+  0x42F5E  addi  0x8, r8, r6       ; r6 = 0xC6768  -> Y array, walked by r6
+  0x42F8E  add   0x2, r6           ; r6 = 0xC676A  <-- Y[1], POINTER ARITHMETIC
+  ```
+  A tp-displacement scan cannot see that. **Y[0] and Y[2] *are* displacement-addressed** (`0x42F6E`, `0x42F86`) because they are the ladder’s saturation arms — **only the middle knot is walked, so the scan found the ends and missed the middle.** That is a general trap: a LERP’s interior knots can be invisible while its endpoints are not.
+  ⚠ **Shape, not just gain:** stock RAMPS the corridor `[0, 1536, 2048]`; the shelf FLATTENS it to `[5120, 5120, 5120]`, including **5120 at the low knot where stock is 0**. Carried since V25 and never priced. Gate `[18]` now pins X ascending and unchanged, and reports Y.
 - A sweep for "dormant features gated by a zero cal" has a **poor hit rate** — zero offsets and float
   low-halves dominate. The one real find (the PI block) came from tracing, not sweeping.
 
