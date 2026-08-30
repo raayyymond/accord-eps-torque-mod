@@ -13,6 +13,10 @@ It checks four things and nothing else:
   3. every artifact hash is re-read from disk and compared to what was reported
   4. both repos are clean, so nothing reported is uncommitted
 
+It runs the OTHER gates rather than duplicating them, because a gate nobody invokes is a gate
+that does not exist -- which is exactly how four broken memory pointers survived until
+2026-08-30. One command, everything verified.
+
 Re-run it after any change to the shelf. If a hash moves, either a build was re-cut (in which case the
 record must be updated) or something is wrong.
 """
@@ -61,6 +65,8 @@ for cmd, label in [
     (['rlog-tools/score/score_8x_experiment.py', '--selftest'], 'pre-registered scorer selftest'),
     (['rlog-tools/decode/extract_route_generic.py', '--check', 'V228'], 'generic extractor tap check'),
     (['rlog-tools/score/rez_spectrum.py'], 'Re(Z) spectrum instrument'),
+    (['analysis-2020accord/verify/memory_index_consistency.py'], 'memory-index consistency'),
+    (['analysis-2020accord/verify/rebuild_shelf_bitexact.py'], 'shelf rebuilds bit-exact'),
 ]:
     try:
         r = subprocess.run([PY] + cmd, capture_output=True, timeout=420, text=True,
