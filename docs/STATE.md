@@ -447,14 +447,33 @@ changelog repoints 427 away from `gp-0x6b70`, which bounds the window at **V96�
 onto the 427 timebase* rather than assumed.)
 ```
    route  build          n_eng    p50     p95     max    AT CLAMP
-   r7d    V96 (aborted)    542   1370    4990    8320    0.001845
+   r7d    V94  -- STRUCK, see below  542   1370   4990   8320   0.001845
    r7e    V97            30753    154    1856    3238    0.000000
    r7f    V97            34476    141    1677    3405    0.000000
    r80    V97              860    602    2483    2675    0.000000
    r81    V98             3296    883    2726    3162    0.000000
    r82    V99             2989    538    2624    3008    0.000000
-   POOLED  72,916 engaged 427 frames, ONE at the clamp  ->  duty 0.000014
+   POOLED  72,374 engaged 427 frames, ZERO at the clamp  ->  duty 0, 95% UB 0.0000414
 ```
+
+🛑 **CORRECTION 2026-08-29 — the `r7d` row is STRUCK, and it was the only row carrying a clamp hit.**
+It was labelled **V96**. **V96 never flew** ("BUILT, VERIFIED, UNFLASHED"), and `r7d` flew **V94** —
+agreed by the cache's own `probe_build` field, the lineage (*"V94 … FLEW route `7d` … AND WAS
+ABORTED"*), the handoff filename and the study filenames. That matters because **V94's CAN 427 is a
+different variable at a 32× different scale**, byte-verified from the images:
+
+```
+   V94        0x55DF2 = DA   0x55E10 = A1   ->  gp-0x6b26,  sar 1
+   V96..V99   0x55DF2 = 90   0x55E10 = A6   ->  gp-0x6b70,  sar 6
+```
+
+So the clamp arithmetic this table rests on (`8192×5>>6 = 640`) **does not apply to `r7d` at all** —
+it is `gp-0x6b26` read against `gp-0x6b70`'s ceiling, 32× out. The prose above bounds the window at
+"V96–V99: routes 7d/7e/7f/80/81/82"; **`r7d` was never inside it.**
+
+⊕ **CONSEQUENCE 1 SURVIVES AND STRENGTHENS.** `r7d` contributed the pool's single clamp event
+(0.001845 × 542 = 1.0). Without it the pool is **72,374 frames with zero events**, so the "nothing
+clips" reading is firmer, not weaker, and V206's justification stays dead. Nothing downstream moves.
 
 ### 🛑 **CONSEQUENCE 1 — V206's STRONGER JUSTIFICATION IS DEAD**
 Two ticks ago I re-justified V206 as *"raises the effective ceiling by exactly 2×"*, matching the

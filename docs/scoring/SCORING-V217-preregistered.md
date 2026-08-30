@@ -19,7 +19,15 @@ is our defect, not a result.
 | `b5` non-degenerate | **not exactly 0.0 or 1.0** | degenerate ⇒ uninterpretable, **not a null** |
 | per-episode grind peak | **NOT at 20.50 ± 1 Hz** | the notch is not in force — the biquad edit did not take |
 
-✅ **The probe target is verified to HAVE LIVE FEEDS — checked, not assumed.** `gp-0x6b4e` is the mode-5 arm of the `0xC4124` router, summing value B from slots 2/4/5/9. Two of those are confirmed live computed signals, not constants:
+✅ **The probe target is verified to HAVE LIVE FEEDS — checked, not assumed.**
+
+🛑 **427 IS NOT COMPARABLE TO ANY EARLIER ROUTE.** The shelf reads `gp-0x6b4e` at `sar 5`; the car
+(V122, route `r24`) reads **`gp-0x6abc` at `sar 3`** — a different variable at a 4× different LSB.
+Nearly every build in the corpus moves this cell, so **no 427 percentile, clamp duty or threshold may
+be pooled or compared across builds without decoding it first**: run
+`analysis-2020accord/verify/can427_source_per_build.py`, which decodes source and shift straight from
+each image. Ignoring this is what put a struck row in `STATE.md`'s 427 clamp table — see the
+correction there dated 2026-08-29. Use 427 here as an **identity/liveness check only**. `gp-0x6b4e` is the mode-5 arm of the `0xC4124` router, summing value B from slots 2/4/5/9. Two of those are confirmed live computed signals, not constants:
   · **slot 2** → `gp-0x6b78`, the `FUN_00033d10` PI lane-2 output (written `0x33FFA`)
   · **slot 4** → `gp-0x6b68` (written `0x23ACC`), gated by `gp-0x6a64` vs `0xC50A6` and by `|gp-0x6b68| ≤ 10240`
   ⇒ a reading of exactly 0 would be a **result** (both feeds gated off), not a dead channel. Worth stating because the kit has three recorded uninterpretable nulls (V64, V68, V92) that were all probes on cells nothing drove.
@@ -116,12 +124,50 @@ The notch gives nothing back above 29.5 Hz, so the 8× step raises loop gain the
 🛑 **This band cannot resolve the 1.65× effect** — the corpus IQR spans a factor of 2.0, which is
 wider. It is a **large-excursion detector** only. Do not read a small move in either direction.
 
+🛑 **AND IT IS NOT PURELY 30–49 Hz.** Caches run at fs = 101.01–101.26 Hz ⇒ Nyquist ~50.5 Hz, so
+anything real in **52–71 Hz folds into this band** — a 71 Hz line lands on 30 Hz. The fold source sits
+entirely above Nyquist and can be neither seen nor filtered out afterwards, and no channel escapes it.
+Read every number here as *"30–49 Hz **or its 52–71 Hz alias**"*. Settling it needs a cave zero-crossing
+counter (`docs/specs/design/PROBE-zero-crossing-rate-counter.md`), not more analysis.
+
+---
+
+## 5. IS IT COMMANDED, OR IS THE EPS GENERATING IT? — free, within-drive, no matched pair
+
+Added 2026-08-29 from the r7d decomposition. Costs nothing — both channels are already cached — and it
+**attributes any high-band line to a side of the CAN bus from a single engaged episode.**
+
+On r7d the two spectra separate completely:
+
+```
+   cs_rate  (measured column rate)   30.1 Hz at 63x background, engaged; ABSENT manual
+   probe    (the firmware's own byte) 30.1 Hz at 11x background, engaged
+   sc_req   (the LKAS request)        3.0 / 5.0 / 7.0 / 9.0 Hz -- a clean roll-off, NO 30 Hz at all
+```
+
+⇒ the EPS was **generating** that line, not tracking it. Apply the same test to whatever V217 shows:
+
+| `sc_req` at the line | reading |
+|---|---|
+| line **present** in `sc_req` | openpilot is commanding it — upstream of the firmware, and no cal lever on the shelf addresses it |
+| line **absent** from `sc_req`, present in `cs_rate` | **generated inside the EPS loop** — a firmware lever can reach it |
+| line absent from both | not a steering-loop phenomenon; check the IMU channels for a road or tyre order |
+
+🛑 This attributes, it does not size. It says **which side** a line comes from, never how big the
+effect is or whether a lever moved it.
+
 ---
 
 ## What is NOT being tested, and will not be claimed
 
-- **The ~31 Hz line on route `r7d`** (the aborted V94 drive). Its mechanism is unexplained; the
-  apparent-inertia hypothesis is refuted by its own arithmetic. This drive cannot settle it.
+- **The ~31 Hz line on route `r7d`** (the aborted V94 drive). Narrowed on 2026-08-29 but still not
+  named: it is **in the loop and not commanded** (63× in `cs_rate`, 11× in `probe`, absent from
+  `sc_req`), it is **not a harmonic** of the 7.8 Hz ratchet (the 2f rung sits *below* background), and
+  it is **not the inertia mode moving** — refuted again under the saturating functional form that
+  favours that mechanism most. What is left is a **broadband engaged loop-gain rise carried by one
+  drive**, confounded with build order (dose vs build number r = +0.750) and **not separable from a
+  52–71 Hz alias**. This drive cannot settle any of it.
+  See `analysis-2020accord/studies/mixer/r7d_31hz_what_it_is_and_isnt.py`.
 - **Whether the 8× gain costs anything at 30–40 Hz.** Needs a matched pair, not one drive.
 - **Any interaction between the three levers.** They are separated by band and by the probe, not by
   the build. A build carrying all three cannot decompose them.
