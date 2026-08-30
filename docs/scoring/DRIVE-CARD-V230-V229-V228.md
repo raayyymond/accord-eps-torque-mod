@@ -17,6 +17,34 @@ anything happens.** Nothing is flashed without that.
 
 ---
 
+## The two builds worth driving, and why the choice is genuinely open
+
+**V231** — Honda's notch placement, plus the first instrument ever put on that filter.
+**V232** — the notch re-aimed to 34 Hz, at the band the lane measurably pumps in.
+
+They are opposite sides of a trade one filter cell cannot avoid:
+
+```
+                  cuts 44-65 Hz      cuts 22-40 Hz      the case for it
+  V231 (Honda)       9.35x              1.51x          44-65 overlaps the 50-72 Hz audio band
+                                                       where LKAS excess IS licensed (2.1-2.2x)
+  V232 (re-aimed)    1.0x               4.80x          22-40 is where the lane measurably PUMPS,
+                                                       unanimous across 3 routes
+```
+
+I tested whether the audible band is simply the **second harmonic** of the pumping — 22–40 doubled is
+44–80 — which would have meant V232 fixes both and this choice disappears. **It does not:** the
+ratio's clustering at 2.0 is fully reproduced by shuffled pairings (real 0.343 vs shuffled 0.351,
+lift 0.98×). Refuted.
+
+⚠ **The honest asymmetry, and why V231 still leads.** V232 cuts **22–40 Hz — a band you have never
+named**. Your symptoms are the felt ratchet near 7.79 Hz (where the lane *damps*, so nothing should be
+cut) and audible grinding, which the audio puts at 50–72 Hz. V232's case is a mechanism with no
+reported symptom in its band; V231's is a symptom correlate with no measured mechanism. **Each has one
+leg.** Your experience outranks the analysis, so the band you actually report wins the first drive.
+
+---
+
 ## 🛑 THE NOTCH QUESTION IS NOW ANSWERED FROM FLOWN DATA — HONDA'S PLACEMENT IS RIGHT
 
 I measured the notch's own lane (`gp-0x6b86`) against wheel rate on the three routes that carry it —

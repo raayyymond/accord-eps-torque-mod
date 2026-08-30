@@ -46,6 +46,20 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑⭐⭐⭐⭐ **THE HARMONIC HYPOTHESIS IS REFUTED — AND THE CONTROL IS THE ONLY REASON I KNOW IT.** 22–40 Hz doubled is 44–80 Hz, almost exactly the audio band with licensed LKAS excess, so if that were a harmonic relationship V232 would fix both bands and the one-biquad trade would dissolve. Per engaged window, dominant mechanical frequency in 22–40 Hz against dominant audio frequency in 44–80 Hz, 7 routes, n=396:
+>
+> ```
+>   pooled ratio median          2.038
+>   SHUFFLED-pairing median      2.049      <- identical
+>   P(|ratio-2.00| < 0.10) real  0.343
+>   ... shuffled                 0.351      lift 0.98x
+>   shuffled null 95% band  [0.268, 0.356]  <- contains the real value
+> ```
+>
+> **The ratio clusters at 2.0 only because two bounded ranges have a quotient mechanically confined near 2.** Without the shuffled control I would have reported *“ratio 2.038, harmonic confirmed”* and promoted V232 to the lead on nothing. ⇒ **no harmonic lock; the V231-vs-V232 trade STANDS.**
+> ⭐ **AND A SHARPER POINT ABOUT V232, which this made me notice: it cuts a band the operator has never named.** His symptoms are the **felt ratchet at 7.79 Hz** — where the lane *damps* — and **audible grinding**, which the audio localises to 50–72 Hz. **V232 cuts 22–40 Hz, which is neither.** Its case rests entirely on a mechanism (unanimous pumping) with no reported symptom in that band; V231's cut at 44–65 Hz overlaps a band with a licensed symptom correlate but no measured mechanism. **Each has exactly one leg.**
+> ⇒ Under the kit's own rule that *the operator's lived experience overrides analyst recommendations*, **V231 keeps the lead**: its band is one he actually reports. V232 stays second — a real lever aimed at a real mechanism, awaiting evidence that the mechanism is his symptom.
+
 > 🛑⭐⭐⭐⭐⭐ **V232 BUILT — THE FIRST NOTCH PLACEMENT EVER CHOSEN FROM WHERE THE LANE PUMPS. 16 BYTES ON V231.**
 >
 > ```
