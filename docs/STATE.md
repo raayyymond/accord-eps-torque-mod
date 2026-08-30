@@ -228,6 +228,32 @@ band four builds were just spent repairing, and it buys 14 % on a notch already 
 follow-up rung** (`a1 −1.82475755, a2 +0.84640000, b1 −1.983432120, c4 +1.30628962`).
 Study: `analysis-2020accord/studies/mixer/notch_aim_vs_where_the_energy_is.py`.
 
+> ✅⭐ **AUTHORITY AUDIT: V222’S 8× STEP SCALES ITS CLAMP EXACTLY — margin identical to the car to four
+digits.** A gain raise whose forward clamp does not follow silently turns the authority lever into a
+**clipper**, so this was checked from the images rather than assumed. `lane_max = (0xC61BE × gain) >> 15`
+must stay under the clamp `0xC61B2/B4`, which must stay under the EME wall `0xC674E`:
+
+| build | gain | lane max | clamp | EME wall | margin |
+|---|---|---|---|---|---|
+| **V122 (the car)** | 6.0× | 2505 | 3072 | 5120 | **1.2263×** |
+| **V217 / V221 / V222 / V223** | 8.0× | 3341 | 4096 | 5120 | **1.2260×** |
+| V225 (the 10× rung) | 10.0× | 4176 | 4608 | 5120 | 1.1034× |
+
+⇒ **V222 preserves the car’s clamp margin exactly** — the 8× step is proportional, not a bare gain
+raise. ➕ **And V225’s smaller margin is NOT an oversight**: proportional scaling to 10× would need clamp
+byte **20 = 5120, which is EXACTLY the EME wall**, and the ordering constraint requires strict
+inequality. **18 is forced by the wall, not chosen carelessly.** ⚠ Byte **19** (margin 1.165×) was
+available and would give **5.6 % more headroom** while still clearing — free if V225 is ever re-cut.
+🛑 **STRUCTURAL CEILING ON THIS PATH — and it is CLOSE.** `lane_max` reaches the EME wall at 12.26×, but the practical limit is tighter because the clamp is a BYTE << 8 and must sit strictly between them:
+```
+    6x  lane 2505  clamp bytes 10..19  best margin 1.942x
+    8x  lane 3341  clamp bytes 14..19  best margin 1.456x   <- V222
+   10x  lane 4176  clamp bytes 17..19  best margin 1.165x   <- V225 (built with 18 = 1.103x)
+   11x  lane 4594  clamp bytes 18..19  best margin 1.059x   <- the LAST workable step
+   12x  lane 5011  NO VALID CLAMP EXISTS -- the path is exhausted
+```
+⇒ **the forward-gain authority lever has ONE ~10 % step left beyond V225, not an open runway.** Past 11× the clamp cannot be placed at all, and a gain raise there would clip by construction.
+
 > 🛑 **AND THE FRAME TEST IS INCONCLUSIVE — reported as such, not dressed up.** The plan was to
 calibrate the pipeline against the operator-confirmed *"+ LKAS demands negative steering angle"*.
 Measured: median `corr(sc_tq, cs_ang)` = **−0.166**, which matches the convention — **but 2 of 6 routes
