@@ -95,6 +95,33 @@ sound and any *magnitude* from that band carries a 30% contamination.
 
 ---
 
+## Its notch band is the largest engagement effect on the car
+
+The alias check said the band is real. A second, independent instrument now says it is also the
+**biggest** thing engagement does. The comma's IMU is physically separate from the EPS and had no part
+in choosing this notch:
+
+```
+  band          Hz     median   p25..p75   routes>1
+  ratchet     6-10      1.496   0.96..2.12    45 %
+  mid        10-15      1.696   1.05..3.59    47 %
+  grind      15-22      1.621   1.14..2.18    64 %
+  V235 notch 22-30      2.481   2.16..5.01    67 %   <-- largest
+  upper      30-45      1.575   1.34..2.04    63 %
+```
+
+Per-bin, the peak is at **25-26 Hz** — where the notch sits — and it is about **1.7x the ratchet
+band**, which is the weakest of the five.
+
+The same instrument also ranked **V88**, the kit's one measured grinding fix, **near-best for grinding
+and near-worst for ratchet** — a prediction written down before the answer was read. So the grinding
+metric this build was tuned against measures something real.
+
+⚠ The IMU measures motion; the notch filters a torque lane. This makes the placement well-founded, not
+proven.
+
+---
+
 ## What the probe settles either way
 
 The notch filter's internal state boots to exactly `0.0f`. If its enable never fires on the car, that

@@ -66,6 +66,23 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ✅⭐⭐⭐⭐⭐ **V235's NOTCH IS AIMED AT THE LARGEST ENGAGEMENT-CREATED BAND IN THE CORPUS — confirmed on the independent IMU, which had no part in choosing it.**
+>
+> Rather than scoring the kit's three named bands, ask the open question: **at which frequencies does engagement raise chassis motion above what the road explains?** Speed-matched, each route divided by its own road control, 10 routes:
+> ```
+>   band          Hz     median   p25..p75    routes>1
+>   ratchet     6-10      1.496   0.96..2.12     45 %
+>   mid        10-15      1.696   1.05..3.59     47 %
+>   grind      15-22      1.621   1.14..2.18     64 %
+>   V235 notch 22-30      2.481   2.16..5.01     67 %   <-- LARGEST
+>   upper      30-45      1.575   1.34..2.04     63 %
+> ```
+> ✅ **[EVIDENCE] 22–30 Hz is the biggest engagement effect in the whole 3–45 Hz range**, and the per-bin profile peaks at **25–26 Hz (2.400 / 2.452)** — precisely where V235's notch sits. **The notch geometry was chosen by CAN-based net-damping optimisation; the IMU had no part in it and independently names the same band.**
+> ⭐ **It is ~1.7× the ratchet band**, which turns out to be the *weakest* of the named bands here (1.496, and only 45 % of routes above 1). Together with the V88 ranking, that is a consistent picture across two instruments: **the band V235 attacks is where engagement actually does the most, and it is not the ratchet band.**
+> ⚠ **THE BOUND:** the IMU measures **motion**, and the notch filters a **torque** lane. A band loud in the chassis need not be the band that matters in torque — but a notch aimed at the loudest engagement-created motion band is a far better-founded placement than one aimed at a band the chassis never shows.
+> ⊕ **A fix that mattered:** routes differ slightly in IMU sample rate, so their Welch grids differ by a bin. The first run crashed on `vstack` rather than silently averaging misaligned frequencies — every curve is now interpolated onto one grid. A shape error is a lucky failure; the same mismatch one bin smaller would have quietly smeared the peak.
+> ➕ Reader: `rlog-tools/score/imu_engagement_spectrum.py`.
+
 > ✅⭐⭐⭐⭐⭐ **THE GRINDING METRIC IS REAL — V88 RANKS CORRECTLY ON AN INSTRUMENT NO CALIBRATION CAN TOUCH, AND THE PREDICTION WAS WRITTEN BEFORE THE ANSWER WAS READ.**
 >
 > The same speed-matched IMU pipeline, scored in three bands, each against its own road control:
