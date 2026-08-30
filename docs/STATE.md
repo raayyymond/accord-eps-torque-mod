@@ -66,6 +66,34 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THREE AVENUES CLOSED IN ONE TICK, AND NO FIX. THE LOOP-DELAY HYPOTHESIS IS REFUTED BY ITS OWN CONTROL.**
+>
+> With calibration exhausted, the question was what **creates** the 6–9 Hz anti-damping. The delay hypothesis is the classic candidate: a delay τ turns assist into anti-damping above `1/(4τ)`.
+> ✅ **[EVIDENCE] THE SETUP LOOKED EXCELLENT:**
+> ```
+>   Re(Z) at 6-9 Hz NEGATIVE on 24 of 24 routes     <- replicates the stock finding corpus-wide
+>   arg(Z) fits a LINE over 3-20 Hz, R^2 median 0.820 (up to 0.972)
+>   tau median 28.33 ms  [p10 19.0, p90 41.1]
+>   1/(4*tau) = 8.83 Hz   <-> the ratchet sits at 7.79 Hz
+> ```
+> 🛑 **AND THE CONTROL KILLS IT.** If τ sets the anti-damping frequency, `1/(4τ)` and the crossover must **rise together** across routes. They do not:
+> ```
+>   1/(4tau) vs crossover Re(Z)<0    pearson -0.393  p 0.148    NULL, and the sign is WRONG
+>   1/(4tau) vs most-negative f      pearson -0.764  p 0.0009   significant, but BACKWARDS
+>
+>   median 1/(4tau)  8.19 Hz    median crossover  3.26 Hz    median most-negative  12.38 Hz
+> ```
+> **`Re(Z)` is already negative from ~3.3 Hz — far below the 8.8 Hz the delay predicts — and the one significant correlation runs the wrong way.** The phase IS delay-like; **τ does not set the crossover.** ⇒ **REFUTED, on the control built into the test rather than on a later re-reading.**
+> ⚠ **A near-miss worth recording:** the EMA lag at `k=20` is **−77.26° at 7.79 Hz ≡ 27.5 ms**, against a measured τ of **28.33 ms**. That coincidence is *not* evidence — a first-order pole's phase **saturates** with frequency while the measured phase is **linear**, so the pole cannot be what the fit is describing. Recorded so the coincidence is not re-discovered and believed.
+>
+> ⭐ **THE STATE AFTER THIS TICK — three closed avenues, stated plainly:**
+>   1. **every cal in the assist path is measured** — only `gp-0x69a0` is free, and it is broadband;
+>   2. **the one frequency-selective device cannot be aimed at the ratchet** without nulling a lane measured as damping;
+>   3. **the anti-damping is not a loop-delay artifact** — refuted above.
+> ⇒ **THE RATCHET'S MECHANISM REMAINS UNIDENTIFIED, AND THE CALIBRATION SEARCH SPACE IS EXHAUSTED.** That is the honest state. **V235 stays the lead** — it is the *grinding* build, and grinding is the symptom that has a mechanism and has actually moved before (V62, V88).
+> ➕ Readers: `rlog-tools/score/impedance_phase_delay_test.py`, `rlog-tools/score/tau_sets_crossover_control.py`.
+> ⊕ A path bug caught before it became a result: `REPO` used two `dirname`s where the layout needs three, so the first run **globbed an empty tree and printed a clean-looking table of zero routes**. A null that comes from an empty input looks exactly like a null that comes from the data.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V238 AND V240 CUT A MEASURED DAMPER. BOTH CARRY A RATCHET COST, AND THE LEAD REVERTS TO V235. THE RATCHET IS NOT REACHABLE BY CALIBRATION.**
 >
 > I asked whether **anything** in the firmware is ratchet-SELECTIVE — the property every build in this arc has assumed and none has demonstrated. Two findings, and the second reverses my own last two builds.
