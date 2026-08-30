@@ -712,6 +712,37 @@ for _base, _nm in ((0xC6748, 'the "EME wall" table'), (0xC6760, 'the direction c
             f'{_v.upper()} {_nm} X ascending {_X}'
             + ('' if _X == sorted(_X) else ' -- NON-ASCENDING, the LERP walk is undefined'))
 
+print()
+print("[19] NO BUILD MAY MOVE A CAL TABLE KNOT OUTSIDE THE THREE KNOWN TABLES")
+# Twice in one session a cell the record called a SCALAR was a knot of a count/X/Y LERP table
+# (0xC676A, 0xC674E). Only a ladder's SATURATION arms are displacement-addressed, so a
+# tp-displacement scan finds a table's ENDS and misses its MIDDLE -- which reads like a scalar.
+# analysis-2020accord/verify/cal_table_bases.py enumerates the REAL bases from the code
+# (`movea <disp>, tp, rN`), not by pattern-matching: a pattern detector proposes 0xC63C6, which is
+# NOT a base, and acting on it would have overturned the correct finding that 0xC63CC = 0.
+# This gate fails a build that moves a table knot outside the three corridor tables we understand.
+import importlib.util as _ilu
+_spec = _ilu.spec_from_file_location('_ctb', 'analysis-2020accord/verify/cal_table_bases.py')
+_ctb = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(_ctb)
+_TABS = _ctb.tables()
+_KNOWN = {0xC6748, 0xC6754, 0xC6760,   # the three direction-corridor tables
+          0xC6910}                     # the oscillation table -- the kit already knows this one
+                                       # as OSC_X/OSC_Y (build_v192_tva.py:85). ONLY V194 moves
+                                       # it (Y 358/307 -> 215/184); V195 onward is stock, and
+                                       # V194 is part of the condemned GATE-2 notch arc.
+chk(len(_TABS) >= 90, f'{len(_TABS)} well-formed cal tables enumerated from movea instructions')
+for _v in sorted(img):
+    _bad = []
+    for _i in range(0xC4000, 0xC7000):
+        if _st[_i] != img[_v][_i] and (_i & 0xFFF) < 0xFFC:
+            _f = _ctb.field_of(_i & ~1, _TABS)
+            if _f and _f[0] not in _KNOWN:
+                _bad.append((_i & ~1, _f))
+    chk(not _bad,
+        f'{_v.upper()} moves no table knot outside the 3 known corridor tables'
+        + ('' if not _bad else f' -- {["0x%05X %s of 0x%05X" % (a, f[2], f[0]) for a, f in _bad[:4]]}'))
+
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
 for m in bad:

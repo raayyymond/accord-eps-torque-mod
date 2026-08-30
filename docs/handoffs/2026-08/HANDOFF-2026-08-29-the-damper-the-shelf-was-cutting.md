@@ -158,6 +158,11 @@ from what the operator drives. **Diff every candidate against the flown image.**
 
   ⚠ **What still stands, and is still unpriced:** stock RAMPS the corridor `0 -> 1536 -> 2048`; the shelf FLATTENS it to a constant `5120`. A shape change, carried since V25, on every build including V217. Gate `[18]` now pins the count in range and X ascending for both tables.
 
+- ✅ **THE AUTHORITATIVE CAL-TABLE MAP — 165 bases, 101 well-formed, derived from the CODE.**
+  Two cells the record called scalars turned out to be LERP knots in one session, so the question *"which cells are secretly table fields?"* got answered properly rather than case-by-case. `analysis-2020accord/verify/cal_table_bases.py` enumerates every `movea <disp>, tp, rN` landing in `0xC4000-0xC7000` — **a base is real only if an instruction materialises it.**
+  🛑 **A pattern detector is NOT good enough, and nearly cost a correct finding.** Matching on *"small count followed by ascending values"* proposes `0xC63C6` as a base, which would make `0xC63CC` a table knot and **overturn the correct result that `0xC63CC` = 0 is a genuine scalar ×0**. There is **no movea to `0xC63C6`** — false positive. The detector proposes; the code disposes.
+  ⊕ **Result: only 7 of V217’s 119 changed cal cells are table fields**, all in the three corridor tables already decoded. The other 112 are genuine scalars — so the misclassification was contained, not systemic.
+  ⊕ Gate `[19]` fails any build moving a knot outside the known set. It immediately caught a **fourth** table (`0xC6910`) — not a misclassification: the kit already knows it as `OSC_X`/`OSC_Y`, only **V194** moves it, and V194 is in the condemned GATE-2 arc.
 - A sweep for "dormant features gated by a zero cal" has a **poor hit rate** — zero offsets and float
   low-halves dominate. The one real find (the PI block) came from tracing, not sweeping.
 
