@@ -91,9 +91,12 @@ replaced by the car's own value · a claimed IMU null reversed when tested rathe
 
 ---
 
-## THE RATCHET'S LANE IS IDENTIFIED — `gp-0x6b86`, and it is the lane the notch already sits in
+## 🛑 `gp-0x6b86` carries the most ratchet-band energy of any lane 427 ever flew — and that is NOT "the ratchet's lane"
 
-The arc's central unanswered question, answered from data already on disk. CAN 427 carried a **different
+**Read the correction at the end of this section before using any of it.** I headlined this as *"the
+ratchet's lane is identified"* and that was an overclaim: the discriminator was already in `STATE.md`
+and it goes against me. The **measurement** below is clean and useful; the **causal reading** is
+withdrawn. CAN 427 carried a **different
 lane per build**, which makes the corpus a natural experiment. Reading the clamped channel at **2f₀**
 (where a rectified 7.8 Hz oscillation lands):
 
@@ -165,5 +168,23 @@ only on the builds that probed it, and those builds differ in other ways. 3 vs 1
 
 Readers: `rlog-tools/score/rank_lanes_liveness_free.py` (the sound one) and
 `rank_lanes_by_ratchet_energy.py` (the confounded one, kept with its confound documented).
+
+### 🛑 The correction: this is a good INSTRUMENT and a bad TARGET
+
+`gp-0x6b86`'s **measured phase at 6–9 Hz is cos −0.918 / −0.989 / −0.629, 3/3 routes** — the lane is
+**damping** in the ratchet band, not pumping. A *source* shows cos > 0. So the lane carrying the most
+2f₀ energy is the one **responding hardest** to the ratchet, not the one causing it — which is exactly
+why cutting it condemned **V238 and V240**. The ranking is therefore *consistent with*, not a correction
+to, the standing result that **every tapped lane damps at the ratchet, so no linear lane is the source.**
+
+A third correction, made mid-tick and worth recording because I got it wrong first: the pedestal is
+**not** a parallel path carrying its own copy of the signal. It is the term that **undoes the slew
+limiter's cut** — `out(f) = table2 + H_k(f)·(table1 − table2)` — so the 0.197 at 7.79 Hz is *the
+fraction of the cut undone*, not a path ratio. Its cell is `0xC6906`, i.e. **V238**, already built and
+already costed at ~3.8 % of the lane. Right conclusion, wrong reasoning.
+
+**The bind is unchanged, and it is the arc's real wall:** every device in this lane acts at 6–9 Hz by
+*cutting* it, and at 6–9 Hz this lane is a damper we need. **The one band worth filtering is the one
+band that must not be filtered.** Nothing found this tick moves that.
 
 **The flight recommendation is unchanged: V241 first.**

@@ -22,8 +22,9 @@ For each route: engaged-vs-manual power ratio of `mag427` at 2f0 (14-17.5 Hz), w
 excess is carrying the most ratchet-band energy.
 
 READING IT
-  * one lane clearly above the others  => the first identification of where the ratchet enters, and
-    the target for every future lever.
+  * one lane clearly above the others  => where the ratchet is most VISIBLE.  🛑 NOT where it enters:
+    that needs the lane's PHASE, and every lane so far measures DAMPING at 6-9 Hz.  See the sibling
+    `rank_lanes_liveness_free.py`, which also fixes this script's engaged/manual liveness confound.
   * all comparable                     => the ratchet is not concentrated in any one of these three,
     and the remaining candidates (gp-0x6c2c, gp-0x6abc, gp-0x6b4e) need routes this corpus lacks.
 

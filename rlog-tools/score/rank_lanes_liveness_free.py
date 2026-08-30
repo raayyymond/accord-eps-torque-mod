@@ -30,10 +30,14 @@ RESULT -- complete separation, and it is the assist-map lane:
     gp-0x6b94         2    1.931   r85 2.11, r95 1.75
     gp-0x6b4c         2    1.849   r96 1.82, r9e 1.88
 
-All three gp-0x6b86 routes sit ABOVE all four routes of the other two lanes.  And gp-0x6b86 is the
-BASE ASSIST-MAP lane -- the one whose calibration surface this arc proved closed (slope cap measured
-inert, lag pole's whole range 3.8 %, only gp-0x69a0 free and broadband).  **The ratchet enters through
-the lane whose cals cannot reach it**, which explains thirty-plus builds of nulls in one sentence.
+All three gp-0x6b86 routes sit ABOVE all four routes of the other two lanes.
+
+🛑 WHAT THIS DOES *NOT* SHOW.  It is tempting to call this "the ratchet's lane" -- I did, and it was
+wrong.  gp-0x6b86's measured PHASE at 6-9 Hz is cos -0.918 / -0.989 / -0.629 (3/3 routes): the lane is
+DAMPING in that band, not pumping, and a SOURCE shows cos > 0.  So the lane with the most 2f0 energy is
+the one RESPONDING hardest to the ratchet, not the one causing it -- which is exactly why cutting it
+condemned V238 and V240.  A good INSTRUMENT, a bad TARGET.  This result is consistent with, not a
+correction to, the standing finding that every tapped lane damps at the ratchet.
 
 LIMITS, all real.  Build and 427-source are perfectly confounded -- each lane is seen only on the
 builds that probed it, and those builds differ in other ways.  3 vs 2 vs 2 routes.  And rlogs stop at
