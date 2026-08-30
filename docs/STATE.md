@@ -46,6 +46,20 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> ⚠⭐⭐ **CORRECTION TO THE BLOCK BELOW — I MEASURED THE QUIETEST ROUTE. The audio advantage is REAL but SMALLER: 7.0× at the median, not 10.5×.** The block below rested on `r24` alone, which is the same single-route gap that left every cross-build claim unpriced — so it was checked against the other **7 audio caches**. `r24` turns out to be the **lowest or near-lowest sd in 3 of 4 bands**, and the sd itself varies **~2× across routes** (6–9 Hz: 0.327–0.687 ungated).
+>
+> ```
+>   minutes/arm at V88-sized effects   r24(opt)   MEDIAN   p90(pess)     CAN
+>   grinding 15-22 Hz                       1.3      2.0        3.7    14.0
+>   ratchet  6-9 Hz                        98.3    114.7      181.0   413.7
+>   mid      9-12 Hz                        7.3      7.3       15.3    17.0
+>
+>   advantage at the MEDIAN route: grinding 7.0x, ratchet 3.6x, mid 2.3x
+>   and on the NOISIEST route it is still 2.3x-3.8x
+> ```
+>
+> ✅ **The recommendation is unchanged** — score audio first, keep CAN as the cross-check — because the advantage holds **across the whole route range**, not just on the best one. ➕ **Engaged-gating is worth 1.5–2.4× on its own** (measured on `r24`: 0.478→0.286 at 6–9, 0.308→0.131 at 15–22), so **gate before comparing.** ⇒ read every figure in the block below as the **optimistic end**.
+
 > 🛑⭐⭐⭐ **AUDIO BEATS CAN IN EVERY BAND, BY 2.2× TO 10.5× — THE KIT HAS BEEN SCORING WITH THE LESS SENSITIVE INSTRUMENT.** Episode-level sd on the car, engaged 20 s episodes, log10 power, converted to the exposure each readout needs at MATCHED effect sizes:
 >
 > ```

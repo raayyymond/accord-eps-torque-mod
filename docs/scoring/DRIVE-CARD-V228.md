@@ -108,9 +108,11 @@ The exposure figures in the next section (14 min/arm for grinding, ~7 h for the 
 10.5× more efficient in every band**:
 
 ```
-  grinding 15-22 Hz    AUDIO  1.3 min/arm     CAN  14.0 min/arm
-  ratchet  6-9 Hz      AUDIO 98.3 min/arm     CAN 413.7 min/arm
+                       AUDIO (median route)      CAN
+  grinding 15-22 Hz      2.0 min/arm          14.0 min/arm     7.0x better
+  ratchet  6-9 Hz      114.7 min/arm         413.7 min/arm     3.6x better
 ```
+(measured across 8 audio caches; on the noisiest route the advantage is still 2.3–3.8×)
 
 ⇒ **the grinding question needs about a minute and a half of engaged driving per build, not fourteen.**
 Audio also samples at 16 kHz, so unlike the CAN logs nothing in it is alias-confounded.
