@@ -209,7 +209,7 @@ this block asserts — is the **SHAPE**: the extremum is at 9–10 Hz and the ba
 > ✅ **AND V222’S AIM WAS CHECKED AGAINST THAT — the gap is real but MITIGATED, and the fix is
 DEFERRED, not taken.** Computed from the image floats (`0xC60A8/AC/B0/B4`, direct-form II, 1 kHz):
 the car is `f0 = 55.23 Hz, r = 0.7966`; V222 is `f0 = 20.50 Hz, r = 0.9575`. V222/car by band:
-**6–9 0.970 · 9–12 0.924 · 12–15 0.827 · 15–22 0.366 · 22–30 0.821**. ⇒ **the notch cuts the band with
+**6–9 0.998 · 9–12 0.955 · 12–15 0.805 · 15–22 0.281 · 22–30 0.402** ➕ 🛑 **CORRECTED 2026-08-30 — the figures first published here (0.970 / 0.924 / 0.366 / 0.821) came from a PARAMETRIC RECONSTRUCTION, not the image floats, and were WRONG in the pessimistic direction.** V222’s biquad is **NOT symmetric**: its zeros sit at 20.50 Hz but its **poles at 15.50 Hz** (Honda’s own are 12.88 Hz apart, so the shape is structural). A `coef(f0, r)` reconstruction places poles AT the zeros and does not reproduce the build.. ⇒ **the notch cuts the band with
 the LEAST anti-damping 2.7× and the band with the MOST by 8 %.** ✅ **But V222 is not blind to the
 peak**: Lever B’s transfer is a 4 ms difference, which **RISES** with frequency — `|H|` **0.1955 at
 7.79 Hz → 0.2630 at 10.5 Hz = 1.35× stronger at the Re(Z) peak than at the ratchet.** The broadband
@@ -227,6 +227,32 @@ band four builds were just spent repairing, and it buys 14 % on a notch already 
 ⇒ **Fly V222 as built.** If its drive shows residual 9–12 Hz content, **r = 0.92 is the pre-computed
 follow-up rung** (`a1 −1.82475755, a2 +0.84640000, b1 −1.983432120, c4 +1.30628962`).
 Study: `analysis-2020accord/studies/mixer/notch_aim_vs_where_the_energy_is.py`.
+
+> ✅⭐⭐ **AND THE NOTCH IS NOW CLOSED, NOT DEFERRED: V222 IS THE CONSTRAINED OPTIMUM OF ITS OWN
+FAMILY.** Searched **109,446** configs (zeros 12–30 Hz × poles 5–30 Hz × r 0.70–0.985). The constraint
+set had to be built in **three passes, because the optimiser exploited every omission**:
+> ① **band-mean constraints** → an apparent **+360 %**, but the 6–9 *mean* of 1.019 concealed a
+**1.265× POINTWISE peak at 6.0 Hz** and a **Q≈33 pole at 7.0 Hz sitting on the ratchet.** Rejected on
+**GATE 2** — a lightly-damped pole inside an already anti-damped loop.
+> ② **pointwise CEILING only** → an apparent **+394 %**, achieved by **cutting 6–9 Hz to 0.528** — a
+1.9× cut of the damper, the V214–V217 defect’s own direction. I had added a ceiling and removed the
+floor.
+> ③ **pointwise ceiling AND floor, no global lift, no worsening of 52–71 Hz** → best feasible scores
+**12.65 against V222’s 23.30, i.e. −45.7 %.**
+> ⇒ **nothing in the biquad family beats V222.** Every “improvement” along the way was a missing
+constraint. **The notch lever is CLOSED.**
+
+> 🛑🛑⭐⭐ **AND A SCORING TRAP THE SEARCH SURFACED: DO NOT SCORE 30–49 Hz ACROSS THE V222/V122
+BOUNDARY.** V222 **removes Honda’s 55 Hz notch** in order to place one at 20.50 Hz. Every cache runs at
+**fs ≈ 101 Hz ⇒ Nyquist 50.5**, and the record establishes that **52–71 Hz folds into the scored
+30–49 Hz band** from **above Nyquist**, where it can be neither seen nor filtered.
+**mean |H| over 52–71 Hz: car 0.1700 vs V222 0.6392 ⇒ V222 passes 3.76× more.**
+⚠ A **911×** ratio appears at 55.2 Hz but is an **ARTEFACT** of dividing by the car’s notch null
+(|H| = 0.0007) — **the honest figure is the band mean, 3.76×.**
+⇒ **any 30–49 Hz difference between V222 and the car is CONFOUNDED** by genuine 52–71 Hz content the
+build no longer notches, folded down by the sample rate. **It cannot be separated post hoc.** This
+applies to **every notch build**, not just V222.
+Study: `analysis-2020accord/studies/mixer/notch_is_the_constrained_optimum_and_the_alias_cost.py`.
 
 > ✅⭐ **AUTHORITY AUDIT: V222’S 8× STEP SCALES ITS CLAMP EXACTLY — margin identical to the car to four
 digits.** A gain raise whose forward clamp does not follow silently turns the authority lever into a

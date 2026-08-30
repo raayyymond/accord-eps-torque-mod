@@ -246,6 +246,20 @@ the ratchet is clearly worse than V122, stop and say so** — fallback is **V221
 then **V217** (5244, the V88-proven dose).
 Study: `analysis-2020accord/studies/mixer/lever_b_pumping_check_at_matched_gain.py`.
 
+## 🛑 A THIRD LIMIT — the 30–49 Hz band is NOT interpretable on this build
+
+V222 removes Honda’s **55 Hz** notch to place one at **20.50 Hz**. The rlogs sample at **~101 Hz**, so
+Nyquist is **50.5 Hz** and **52–71 Hz folds down into the scored 30–49 Hz band** — from above Nyquist,
+where it can be neither seen nor filtered out afterwards.
+
+```
+  mean |H| over 52-71 Hz    car 0.1700    V222 0.6392    ->  V222 passes 3.76x more
+```
+
+⇒ **If 30–49 Hz looks different after this drive, do not read it as a real change.** Part of it is
+genuine 52–71 Hz content the build no longer notches, aliased down. It cannot be separated post hoc.
+**Score 6–9, 9–12 and 15–22 as planned; treat 30–49 as uninterpretable across this boundary.**
+
 ## Two limits on the numbers you will read back
 
 1. **The 30–49 Hz damage band is not purely 30–49 Hz.** Caches run at fs ≈ 101 Hz, Nyquist ~50.5, so anything real in **52–71 Hz folds into it** — a 71 Hz line lands on 30. The fold source is above Nyquist: it can be neither seen nor filtered out. Read that band as *"30–49 Hz **or its alias**"*, never as 30–49 alone.
