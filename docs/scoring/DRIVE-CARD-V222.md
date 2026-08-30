@@ -226,6 +226,10 @@ Cal-only, so reflashing V222 undoes it.
 
 ⊕ **Priced from the cals, and "inert" is now unlikely.** The bound does two jobs and they bind at very different thresholds. The **output clamp** needs |err| ≈ **849 counts at 6 km/h** to bite — probably not reached, since that is a *tracking* error, not the torque. But the **integrator** gains 0.0957·err **every millisecond** into a window of only ±bound×32, so at 3 km/h a sustained error of 100 counts pins it in **191 ms**. That is the normal operating condition, not a rare excursion. V227 **triples that window at creep** (±1824 → ±5472 at 3 km/h), so it will change something.
 
+⊕ **And what the lane DOES at 7.79 Hz is computable too — it is mostly STIFFNESS, not damping.** Collecting the same cals as phasors: P **0.2500** at 0°, D **0.0979** at +90°, I **0.0611** at −90°. D and I are antiphase and largely cancel, leaving **0.0368 of net lead against 0.2500 in phase with the error** — so the lane is **85 % stiffness-like** at the ratchet, and the integrator is only **24 %** of its output there (it dominates only below **1.90 Hz**). ⇒ raising this lane’s authority mostly buys **stiffer tracking of a torque error**, which is not damping of a mechanical mode — and stiffening a loop around a lightly-damped resonance is a recognised way to make it MORE prominent.
+
+⇒ **V227 is reclassified: an EXPERIMENT on the one lane nobody has scored, not a candidate fix.** The arithmetic is open-loop and says nothing about what the closed loop does with a 15 % lead term through an unknown plant, which is exactly why it still deserves a drive — but do not expect it to help.
+
 🛑 **And that sharpens the risk rather than removing it.** An integrator allowed to run longer contributes more low-frequency phase lag, which is the classic way to make a lightly-damped mode **worse**. So: it will do something, and harm has a plausible route. **Fly it after V222, on its own.**
 
 ⚠ **Read it at CREEP.** Above 20 km/h it is byte-identical in effect to V222, so a highway stretch cannot distinguish them.
