@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Seven flashable builds: **V213 (fly this — all three symptoms)** · **V212 (the conservative half — no gain step)** · V209 (notch + probe) · V208 (notch alone) · V210 (notch + ratchet, blind) · V211 (gain step alone) · V199 (fallback). All reproduce bit-for-bit from their builders.
+**Updated 2026-08-29.** **⚠ READ THE V214 SECTION FIRST — every other build on this shelf cuts a real 6–9 Hz damper 7.15× below what is on your car, bundled invisibly inside the notch.** Eight flashable builds: **V214 (fly this)** · V213 (same, but with the damper cut) · V212 · V209 · V208 · V210 · V211 · V199.
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,
@@ -13,7 +13,41 @@ name the file and the bus, and they will be read back to you first.
 
 ---
 
-## ⭐ V213 — FLASH THIS ONE. All three symptoms, instrumented.
+## ⭐ V214 — FLASH THIS ONE. V213 with the 6–9 Hz damper left alone.
+
+```
+39990-TVA,A160-V214-V213BASE-INERTIA.RESTORED.TO.FLOWN.V108-0x13000-0x100000.rwd
+  image 4be4d47c1f0ad0deacbac46bd020cf5e02f06896144455766be48e330dbcedb5
+  .rwd  d6c2ed81f50bbcd0e23d94af672771d2ceca9c801725b29c286cc29a3a689e90
+```
+
+### 🛑 What this fixes, and why it matters more than the notch
+
+`gp-0x6b26` (`0xD7A5C`, the engaged m26 row) is **a real 6–9 Hz damper** — measured after V94 flew it: **+137°/+139° vs wheel rate, |cos| 0.73 ⇒ +518/+565 counts of positive Re(Z)**. V94 cut it hard and **the drive was aborted**:
+
+> *“Made the stuttering and grinding worse, by a lot. So much so that it vibrated the entire car, and I decided it was not safe to drive.”*
+
+Route **`r7d` is that aborted drive**, and it carries the signature: a sustained, engagement-gated **~31 Hz line at 459× the creep-matched corpus median** (prominence 56×; survives 0.5 s edge-trimming; 56 % of 5–49 Hz power inside 30–35 Hz; speed-invariant across all three episodes; engaged/manual contrast 54×).
+
+**The problem:** the car runs **V108 at 3.576× Honda**. The entire notch shelf runs **0.500×** — a **7.15× cut of that damper**, reached in two *never-flown* steps (V175 3.576→1.000, V196 1.000→0.500) and carried silently inside builds whose stated purpose is a grinding fix. **That is a bigger cut than the one you aborted on, in the same direction.**
+
+Every earlier check compared this row to **Honda**, which made a 7.15× change *from your car* read as a tidy “half dose”. Close-out **[14]** now prices it against **both** references.
+
+### What V214 is
+
+V213 — notch 20.50 Hz + `0xC63AE` 512 + 8× gain + the `gp-0x6b4e` probe — with `0xD7A5C` pinned to **the value already on your car**. 14 payload bytes, cal-and-probe only, **no cave change**. 47/47 builder assertions, CRC 50/50, readback byte-identical.
+
+**This is not “adding mass.”** It is declining to remove 86 % of a damper that is on the car today, inside an experiment about something else. Your standing instruction against fixing the ratchet by adding friction is respected: nothing here goes **above** what you already drive.
+
+⚠ **V213 is the paired arm** — identical but with the damper cut. If V214 is good and V213 is worse, the damper cut is the culprit and this whole line of builds needs it reverted. That pair is now the cleanest single-variable test on the shelf.
+
+```
+python rlog-tools/score/score_drive.py <tag> V214   # start here -- NAME THE BUILD
+```
+
+---
+
+## V213 — the paired arm: identical to V214 but with the 6–9 Hz damper CUT 7.15×.
 
 ```
 39990-TVA,A160-V213-V208BASE-C63AE.512-GAIN8X-PROBE.GP6B4E-0x13000-0x100000.rwd

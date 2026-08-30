@@ -59,6 +59,7 @@ PUB = {
     'v211': '70b205589b6f81a9f1e4f039daf8f744a66a1b9865ddbe133b499ef6ce35368e',
     'v212': 'dcc1b921e85e56bce56b3c1e69c795194c141dd4486b4f4e8b3755a2a6c2b04a',
     'v213': 'b1f998702adbbce9a52e7e430906f0cd77410625c29887e4d0a06e4cddb0e239',
+    'v214': '4be4d47c1f0ad0deacbac46bd020cf5e02f06896144455766be48e330dbcedb5',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -477,7 +478,7 @@ print("[13] A GAIN RAISE MUST BE PRICED AGAINST THE NOTCH, ACROSS THE WHOLE BAND
 # Raising loop gain 1.65x exactly where the notch stops helping, in a band with an unexplained
 # engagement-gated line, is not a blind change.  Hence: STAGED until the notch is confirmed on-car.
 _GAIN_BASE = 5346                      # 6.00x -- the notch shelf's baseline (0xC6CD0 = 891 * N)
-_STAGED = {'v211', 'v213'}             # allowed to exceed it, priced and documented
+_STAGED = {'v211', 'v213', 'v214'}     # allowed to exceed it, priced and documented
 for _v in sorted(img):
     _g = struct.unpack_from('<H', img[_v], 0xC6CD0)[0]
     if _g <= _GAIN_BASE:
@@ -497,6 +498,38 @@ for _b, _n in ((0xC6B1E, 'K_p'), (0xC6B0A, 'K_i'), (0xC6ADE, 'K_d')):
     chk(_Y[0] == _Y[1],
         f'{_n} at 0x{_b:05X} is FLAT in segment 0 {_Y} -- no 2f parametric pump at the'
         f' operating point')
+
+print()
+print("[14] THE 6-9 Hz DAMPER MUST BE PRICED AGAINST THE FLOWN CAR, NOT JUST AGAINST HONDA")
+# gp-0x6b26 (0xD7A5C, engaged m26) is a REAL 6-9 Hz DAMPER: measured after V94 flew it at
+# +137/+139 deg vs WHEEL rate, |cos| 0.73 => +518/+565 counts of POSITIVE Re(Z).  V94 cut it and
+# the operator ABORTED: "made the stuttering and grinding worse, by a lot ... it vibrated the
+# entire car, and I decided it was not safe to drive."  Route r7d is that drive, and it carries a
+# sustained engagement-gated ~31 Hz line at 459x the creep-matched corpus median.
+#
+# The flown car (V108) carries this row at 3.576x Honda.  The notch shelf carries 0.500x -- a
+# 7.15x CUT, reached in two UNFLOWN steps (V175 3.576->1.000, V196 1.000->0.500) and bundled
+# invisibly inside builds whose stated purpose is a grinding fix.  Every previous check compared
+# this row to HONDA, which made a 7.15x change from the CAR look like a tidy "half dose".
+# So: report the dose against BOTH references, and fail any build that cuts it below Honda
+# without being a documented member of the reduced-damper arm.
+_FLOWN_Y = (-29490, -17202, -16000)          # V108, on the car
+_HONDA_Y = (-9830, -5734, -1966)
+_hs = sum(abs(_x) for _x in _HONDA_Y)
+_fs = sum(abs(_x) for _x in _FLOWN_Y)
+_REDUCED_ARM = {'v194', 'v195', 'v196', 'v198', 'v199', 'v200', 'v201', 'v202', 'v203', 'v204',
+                'v205', 'v206', 'v207', 'v208', 'v209', 'v210', 'v211', 'v212', 'v213'}
+for _v in sorted(img):
+    _Y = tuple(struct.unpack_from('<h', img[_v], 0xD7A5C + 2 * _i)[0] for _i in range(3))
+    _ss = sum(abs(_x) for _x in _Y)
+    _vh, _vf = _ss / _hs, _ss / _fs
+    if _ss >= _hs:
+        chk(True, f'{_v.upper()} 0xD7A5C {_vh:.3f}x Honda / {_vf:.3f}x FLOWN -- damper at or above Honda')
+    else:
+        chk(_v in _REDUCED_ARM,
+            f'{_v.upper()} 0xD7A5C {_vh:.3f}x Honda / {_vf:.3f}x FLOWN'
+            f' -- CUTS the 6-9 Hz damper {1 / _vf:.2f}x below the car'
+            + ('' if _v in _REDUCED_ARM else ' -- NOT a documented reduced-damper build'))
 
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
