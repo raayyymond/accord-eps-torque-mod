@@ -247,3 +247,5 @@ candidate levers were killed by exactly those entries on 2026-08-12 alone.
 `MEMORY-PART4.md` (split 2026-08-28 at the 256 KB cap) must all be read.
 
 - 🛑★★★★ [r24’s 6–9 Hz MAGNITUDE is 187 ct, not 431–1294 — the DIRECTION is UNRESOLVED](accord/signals/accord-gp6752-is-negative-one.md) — ✅ the magnitude correction is frame-independent and STANDS (reconstructed on 6 routes). 🛑 **The direction is WITHDRAWN: "r24 DAMPS" AND "r24 PUMPS" are both unresolved** — it failed its retrodiction against V88 (corr −0.803 where positive was required), because the controls pinned the pipeline, not the physical frame. `gp-0x6752` = −1 itself stands.
+
+- 🛑★★★★ [Never quote a ratio without a CI and a POWER check](feedback/measurement/feedback-never-quote-a-ratio-without-a-ci.md) — use `rlog-tools/lib/band_contrast.py`. An inline median **bypassed a guard written the same hour** and produced two findings that had to be withdrawn. A CI can exclude 1.0 and still license nothing: 7 vs 24 episodes gave `1.240 [1.023, 1.690]`, **refused**.
