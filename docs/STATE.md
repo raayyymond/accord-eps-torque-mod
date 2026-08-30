@@ -66,6 +66,21 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ⚠⭐⭐⭐⭐ **THE RATCHET-HARMONICS TEST IS INCONCLUSIVE, AND MY CONTROL WAS CONTAMINATED. NO MECHANISM CLAIM EITHER WAY.**
+>
+> The record calls the ratchet *“a lightly-damped RESONANCE, Q 14–29”*, and the whole arc has tried to add damping to it. A **stick-slip limit cycle** looks nearly identical in a ring-down but calls for the opposite fix — break the friction, not add damping — and **harmonics discriminate them**: a linear resonance radiates at `f0` only; a relaxation oscillation radiates at `2f0`, `3f0`, `4f0` too. The 16 kHz audio is the right instrument, since `3f0`/`4f0` land in the CAN band the record shows is folded.
+> ```
+>   engaged/manual power ratio, 13 routes, median
+>     f0  (7.8 Hz)   6.439        3f0 (23.4 Hz)  1.958
+>     2f0 (15.6 Hz)  5.272        4f0 (31.2 Hz)  2.599
+>     control comb   3.790
+> ```
+> **The pattern is `f0 ≈ 2f0 >> 3f0 ≈ 4f0`.** A strong second harmonic with weak third and fourth is the signature of an **asymmetric / one-sided** nonlinearity rather than a symmetric stick-slip (which gives ODD harmonics, 3f and 5f). That would point at something like the Coulomb relay.
+> 🛑 **BUT I CANNOT CLAIM IT, BECAUSE MY CONTROL IS NOT A CONTROL.** The comb sits at `1.5/2.5/3.5 × f0` = **11.7 / 19.5 / 27.3 Hz** — *inside* the bands the record already shows are engagement-elevated (grinding 15–22, pumping 22–30). It is not a neutral baseline, so it **inflates** and the harmonic ratios **understate**. Worse, **`2f0` = 15.6 Hz sits in the grinding band itself**, so the one piece of structure the test found — the second harmonic — **cannot be separated from the grinding.**
+> ⇒ **VERDICT: the test does not discriminate.** It is consistent with a mild asymmetric nonlinearity and equally consistent with broadband engagement loudness plus grinding. **The record's “linear resonance” reading is neither confirmed nor overturned**, and nothing should be built on this tick's numbers.
+> ➕ **What WOULD discriminate:** a control comb at frequencies the corpus shows are NOT engagement-elevated, and a fundamental resolved better than **3.91 Hz bins** — the `_spec` caches are too coarse to separate 7.79 from 7.8×2/2. Both are re-extractable from the rlogs; the extractor's own docstring promises 0.977 Hz bins, which these caches do not carry.
+> ➕ Reader: `rlog-tools/score/ratchet_harmonics_audio.py` (the caveat is printed by the script, not just recorded here).
+
 > ✅⭐⭐⭐⭐⭐ **V235's NOTCH PLACEMENT IS CLEARED — THE 22–30 Hz BAND IS REAL, NOT AN ALIAS. First time the kit has bounded the fold risk on the evidence that aims the notch.**
 >
 > The pump/damp table that puts V235's notch at 25 Hz was measured on **CAN at ~101 Hz**, so its *“22–30 Hz PUMPING”* row could have been **folded from 71.1–79.1 Hz** and the notch aimed at a ghost. The `_spec` caches are **16 kHz PCM, alias-free**, and cover **ra4/ra5/ra6 — the very routes the table was measured on**:
