@@ -40,23 +40,53 @@ MARKERS = BANNERS + ('⚠', '\U0001f6d1', 'UNRESOLVED', 'OPEN', 'CORRECTION', 'N
 LINK = re.compile(r'\[([^\]]{3,140})\]\(([^)]+\.md)\)')
 
 
+# The AUTO-MEMORY index lives outside the repo and is loaded into context at session start, exactly
+# like the project index -- so it needs the same check. It was NOT scanned until 2026-08-30, when 89
+# of its entries had their descriptive tails trimmed to get the file under its load limit; any
+# caution marker living in a trimmed tail would have vanished silently.
+AUTO = os.path.expanduser(
+    '~/.claude/projects/C--Users-dudei-Desktop-Projects-accord-eps-torque-mod/memory/MEMORY.md')
+
+
 def index_pages():
     out = []
     for p in ['memory/MEMORY.md'] + sorted(glob.glob('memory/MEMORY-PART*.md')):
         if os.path.exists(p):
             out.append(p)
+    if os.path.exists(AUTO):
+        out.append(AUTO)
     return out
 
 
 def banner_of(path):
-    """The first caution banner in the target's frontmatter or opening block, if any."""
+    """The first caution banner in the target's opening BODY block, if any.
+
+    TWO THINGS THIS DELIBERATELY DOES NOT MATCH, both found on 2026-08-30 when the auto-memory index
+    was first scanned:
+
+      1. YAML FRONTMATTER. A `description:` that REPORTS a refutation ("the belief is refuted") is
+         describing a finding, not flagging the file. Frontmatter is stripped before scanning.
+      2. LOWERCASE PROSE. The kit's banners are written UPPERCASE ("SUPERSEDED", "REFUTED"), usually
+         after a glyph. Matching case-insensitively turns every ordinary sentence containing the word
+         "corrected" or "disputed" into a banner. The match is now case-SENSITIVE.
+
+    Both produced the same false positive: a correct, confident index line reported as over-confident.
+    """
     try:
         t = io.open(path, encoding='utf-8', errors='replace').read()
     except OSError:
         return None
-    head = t[:1800]                      # frontmatter + opening banner region
+    if t.startswith('---'):              # strip YAML frontmatter
+        end = t.find('\n---', 3)
+        if end != -1:
+            t = t[end + 4:]
+    # A banner sits ABOVE the first section heading. Scanning a fixed 1800-char window instead
+    # caught '## A HYPOTHESIS OF MINE THAT WAS REFUTED, AND WHY' -- a section documenting a refuted
+    # hypothesis inside a file whose own result stands (V88). Cut at the first section heading.
+    cut = t.find('\n## ')
+    head = (t if cut == -1 else t[:cut])[:1200]
     for b in BANNERS:
-        if b in head.upper():
+        if b in head:                    # case-SENSITIVE: banners are uppercase by convention
             return b
     return None
 

@@ -46,6 +46,21 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐ **THE NOTCH IS A PHASE DEVICE, AND ITS PHASE AT 9–12 Hz HAS NEVER BEEN EXAMINED — THE WHOLE ARC V172→V228 IS UNFLOWN.** `0xC60A8/AC/B0/B4` has been discussed as a notch (how deep, how wide, centred where) for 40+ builds; a 2nd-order section moves phase over a far wider span than magnitude. Read from the encoded float32 in each image:
+>
+> ```
+>                    7.79 Hz          10.5 Hz          18.5 Hz
+>   car (V122)    0.9829 / -10.6   0.9686 / -14.4   0.8978 /  -26.1
+>   V105-V107     0.9863 / -14.6   0.9676 / -21.3   0.7107 /  -55.5
+>   V208-V228     0.9796 / -25.4   0.9257 / -39.3   0.2045 / -102.0
+> ```
+>
+> ✅ **EVIDENCE — grouping all 199 images by biquad and intersecting with the route→build map: EVERY cached route flew −14.4° or −21.3° at 10.5 Hz. V172→V228 — 40+ builds, every one of V202–V228 — has never produced a flown route.** So the current geometry's 9–12 Hz behaviour is unobserved, in the band the kit's own instrument calls most energetic (Re(Z) −65.4, P(most anti-damped) = 1.000).
+> ✅ **The lag comes from the POLE FREQUENCY, not the width** — V208 puts poles at 15.52 Hz below its 20.50 Hz zeros. A ready alternative (poles 18.00 Hz, r 0.9625) **halves the 9–12 Hz phase excess (−24.8° → −12.6°) for 30 % of the grinding cut (4.84× → 3.37×)**, 6–9 Hz magnitude unchanged, no resonant peak. `docs/specs/design/NOTCH-PHASE-AND-THE-POLE-FREQUENCY-LEVER.md`.
+> 🛑 **THE SIGN IS UNRESOLVED AND THE CORPUS CANNOT RESOLVE IT.** The natural experiment (V105–V107 vs the rest, 6.9°) gives **episode-level −8.53 [−14.62, −0.58] excluding zero** but **route-level +1.77 [−21.87, +10.53] SPANNING ZERO** — the point estimate flips sign. Episodes nest inside routes; the route is the unit. It is also confounded with build order. ⇒ needs a deliberate drive.
+> ➕ **Consequence for V228's drive card:** “cannot make the ratchet worse” is a MAGNITUDE claim and is now qualified there — V228 carries 15° more ratchet-band phase lag than the car and 25° more at 10.5 Hz, beyond anything ever driven.
+> ➕ **`band_contrast.py` now takes `cluster_a=`/`cluster_b=`** and resamples whole routes; its self-test shows the same data reading LICENSED [0.708, 0.925] episode-level and NOT LICENSED [0.551, 1.489] route-clustered.
+
 > 🛑🛑⭐⭐⭐ **WITHDRAWN: "audio is 2.3–7× more efficient than CAN." On a LIKE-FOR-LIKE comparison there is NO licensed difference in either direction.** The efficiency claim drove an instrument recommendation, so it needed the CI treatment it never got. Both instruments computed the same way (ungated, 20 s episodes, same control band), efficiency = `(sd_CAN/sd_AUD)²` because minutes scale with sd²:
 >
 > ```

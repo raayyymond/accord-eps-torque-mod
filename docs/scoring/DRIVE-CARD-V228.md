@@ -82,6 +82,19 @@ damper raise or a filter that is flat at the ratchet.
 worse in exchange, knowing you can fall back.
 
 ⚠ **If you are undecided, V228 is the one that cannot make the RATCHET worse** (it does still raise
+
+🛑 **That is a MAGNITUDE claim, and it is now qualified.** The notch biquad
+(`0xC60A8/AC/B0/B4`) is a **phase** device as well as a magnitude one, and its phase had never been
+examined. At the ratchet frequency V228 leaves magnitude alone (|H| 0.9796 vs the car's 0.9829) but
+carries **−25.4° against the car's −10.6° — 15° of extra lag — and at 10.5 Hz −39.3° against
+−14.4°, 25° extra**. **No route in the corpus has ever flown more than −21.3°**: the whole notch arc
+V172→V228 (40+ builds, every one of V202–V228) is UNFLOWN. Whether lag there helps or hurts is
+**UNRESOLVED** — `rez_spectrum.py` flags the Re(Z) sign frame as unresolved, and I tried to settle it
+from the corpus and could not (route-level CI **+1.77 [−21.87, +10.53]**, spanning zero).
+⇒ **so this is a real unknown, not a hidden risk being downplayed: V228 does not touch ratchet-band
+MAGNITUDE, and its ratchet-band PHASE is 15° beyond anything driven.** If the ratchet is worse, that
+is the first thing to suspect, and `docs/specs/design/NOTCH-PHASE-AND-THE-POLE-FREQUENCY-LEVER.md`
+has a ready alternative geometry that halves the excess.
 40–49 Hz — see the correction above; no build avoids that). V222 remains available
 afterwards, and flying V228 first also makes V222 interpretable: the two differ in exactly one lever,
 so a V228 drive followed by a V222 drive is the cleanest 8×-gain experiment this kit has ever had.

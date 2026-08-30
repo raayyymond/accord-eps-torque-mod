@@ -21,6 +21,19 @@ WHAT IT REFUSES:
   * a CI spanning 1.0               -> licensed=False, "licenses NOTHING"
 It still returns the numbers, so an caller can inspect them -- it just will not let a bare ratio be
 printed as if it meant something.
+
+CLUSTERING -- added 2026-08-30, after the same failure recurred ONE NESTING LEVEL UP. Testing whether
+notch phase moves Re(Z), an episode-level bootstrap gave -8.53 [-14.62, -0.58], excluding zero. But the
+113 episodes in one arm came from 3 routes and the 334 in the other from 14, and episodes inside a
+route are no more independent than windows inside an episode. Re-run with the ROUTE as the unit, the
+result was +1.77 [-21.87, +10.53] -- CI spanning zero, and the point estimate FLIPPED SIGN.
+
+  RULE: when the arms differ by BUILD or by ROUTE, the route is the unit of randomisation, not the
+  episode. Pass `cluster=` and the bootstrap resamples clusters. Omitting it when arms span multiple
+  routes manufactures significance exactly the way window bootstraps do.
+
+`band_contrast(a, b)` still bootstraps episodes -- correct when both arms come from ONE route (e.g. two
+bands of the same drive). `band_contrast(a, b, cluster_a=..., cluster_b=...)` bootstraps routes.
 """
 import numpy as np
 
@@ -52,21 +65,47 @@ class Contrast(object):
     __repr__ = __str__
 
 
-def band_contrast(a, b, n_boot=N_BOOT):
-    """b/a as a ratio with an EPISODE-level bootstrap CI. a, b are per-episode log10 values."""
+def _resample(vals, clusters, rng):
+    """One bootstrap draw. Without clusters, resample values; with them, resample WHOLE clusters."""
+    if clusters is None:
+        return rng.choice(vals, len(vals), True)
+    keys = np.unique(clusters)
+    drawn = rng.choice(keys, len(keys), True)
+    return np.concatenate([vals[clusters == k] for k in drawn])
+
+
+def band_contrast(a, b, n_boot=N_BOOT, cluster_a=None, cluster_b=None):
+    """b/a as a ratio with a bootstrap CI. a, b are per-episode log10 values.
+
+    cluster_a / cluster_b: per-episode labels (route tags) naming which cluster each episode came
+    from. Pass them WHENEVER the two arms span different routes or builds -- the route is then the
+    unit of randomisation and whole routes are resampled. Omitting them in that case gives a CI that
+    is too narrow, and can flip the sign of the point estimate. See the module docstring.
+    """
     a = np.asarray(a, float)
     b = np.asarray(b, float)
-    a = a[np.isfinite(a)]
-    b = b[np.isfinite(b)]
+    ca = None if cluster_a is None else np.asarray(cluster_a)
+    cb = None if cluster_b is None else np.asarray(cluster_b)
+    for v, c, nm in ((a, ca, 'a'), (b, cb, 'b')):
+        if c is not None and len(c) != len(v):
+            raise ValueError('cluster_%s has %d labels for %d values' % (nm, len(c), len(v)))
+    ka = np.isfinite(a); kb = np.isfinite(b)
+    if ca is not None:
+        ca = ca[ka]
+    if cb is not None:
+        cb = cb[kb]
+    a = a[ka]; b = b[kb]
     if len(a) == 0 or len(b) == 0:
         return Contrast(float('nan'), float('nan'), float('nan'), len(a), len(b))
     point = 10 ** (np.median(b) - np.median(a))
     boot = np.empty(n_boot)
     for i in range(n_boot):
-        boot[i] = (np.median(_RNG.choice(b, len(b), True))
-                   - np.median(_RNG.choice(a, len(a), True)))
+        boot[i] = (np.median(_resample(b, cb, _RNG))
+                   - np.median(_resample(a, ca, _RNG)))
     lo, hi = np.percentile(boot, [2.5, 97.5])
-    return Contrast(point, 10 ** lo, 10 ** hi, len(a), len(b))
+    n_a = len(a) if ca is None else len(np.unique(ca))
+    n_b = len(b) if cb is None else len(np.unique(cb))
+    return Contrast(point, 10 ** lo, 10 ** hi, n_a, n_b)
 
 
 def episodes(values, fs, mask=None, episode_s=EPISODE_S):
@@ -115,6 +154,18 @@ if __name__ == '__main__':
     c = band_contrast(np.log10(rng.lognormal(0, 0.3, 7)), np.log10(rng.lognormal(0, 0.3, 24) * 1.5))
     ok = (not c.licensed) and 'under-powered' in c.why
     print('  7 vs 24 episodes      : %s   %s' % (c, 'OK' if ok else 'FAIL'))
+    fails += not ok
+    # CLUSTERING: 3 routes vs 13, a real per-route offset. Episode-level says LICENSED (too narrow);
+    # route-level must NOT, because 3 clusters cannot support the claim.
+    ra = np.repeat(np.arange(13), 26)
+    rb = np.repeat(np.arange(100, 103), 38)
+    va = np.log10(rng.lognormal(0, 0.25, len(ra)) * np.repeat(rng.lognormal(0, 0.35, 13), 26))
+    vb = np.log10(rng.lognormal(0, 0.25, len(rb)) * np.repeat(rng.lognormal(0, 0.35, 3), 38))
+    flat = band_contrast(va, vb)
+    clus = band_contrast(va, vb, cluster_a=ra, cluster_b=rb)
+    ok = clus.hi / clus.lo > flat.hi / flat.lo and not clus.licensed
+    print('  episode-level          : %s' % flat)
+    print('  route-clustered        : %s   %s' % (clus, 'OK' if ok else 'FAIL'))
     fails += not ok
     assert fails == 0, '%d self-test failures' % fails
     print()
