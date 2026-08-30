@@ -126,6 +126,37 @@ See `../CLAUDE.md` for the index and the standing behaviours.
 
 **48 handoffs on disk are not listed here**, a drift that predates 2026-08-02. Do not treat absence
 from this file as evidence a handoff does not exist — `ls docs/HANDOFF-*.md` is the ground truth.
+
+
+## 📁 The `STATE.md` archive chain
+
+`docs/STATE.md` is split whenever it approaches the ~150 KB soft target, because past the
+**256 KB** hard cap a file loads with its tail **silently truncated** and no warning. These are
+**records, not instructions** — all superseded by `STATE.md` itself. **Read `STATE.md` first;
+reach for these only to recover the numbers behind a closure.**
+
+| archive (in `docs/archive/`) | KB | era |
+|---|---|---|
+| `STATE-ARCHIVE-pre-V89.md` | 433 | everything before V89 |
+| `STATE-ARCHIVE-2026-08-28.md` | 299 | V107 → V150 era |
+| `STATE-ARCHIVE-2026-08-29-wander.md` | 258 | the wander investigation |
+| `STATE-ARCHIVE-2026-08-29.md` | 115 | V173 → V184 era |
+| `STATE-ARCHIVE-2026-08-28b.md` | 108 | V150 → V168 era |
+| `STATE-ARCHIVE-2026-08-21-pre-v104.md` | 99 | pre-V104 |
+| `STATE-ARCHIVE-2026-08-30-v184-v202.md` | 81 | V184 → V202 era |
+| `STATE-ARCHIVE-2026-08-30-v204-v208.md` | 76 | V204 → V208 — **closures summarised back in `STATE.md`** |
+| `STATE-ARCHIVE-2026-08-27-v103-to-v107.md` | 75 | V103 → V107 |
+| `STATE-ARCHIVE-2026-08-13-v96-to-v99.md` | 53 | V96 → V99 |
+| `STATE-ARCHIVE-2026-08-11-v90-flight-session.md` | 31 | V90 flight session |
+| *40 smaller `2026-08-29-*` fragments* | 226 | one-topic splits from a single heavy session |
+
+⚠ **That fragment count is itself a finding.** 40 one-topic files were split out on a single
+day, totalling only 226 KB — splitting per topic rather than per era makes the chain hard to
+walk. **Prefer one archive per era.**
+
+🛑 **A split is not a deletion.** When a section moves out its **standing closures** stay in
+`STATE.md` as a compact table — a closure is what stops a lever being re-proposed, and that is
+exactly the failure this kit has paid for before.
 🛑 **AUTHORITY CHANGED 2026-08-03.** This section used to defer to *"`CLAUDE.md` item 3"*, but that
 chain has been removed: `CLAUDE.md` is an index and was carrying 57 lines of dated results and handoff
 narrative, against its own stated rule. **The authoritative chain is now THIS section plus
