@@ -108,6 +108,30 @@ print('   in all ten decompiles closes it.  Until then no slot can be named, and
 print('   0xC4124 or 0xC4118 is mode-proof.')
 print()
 
+print('SLOT MAP -- 2 of 10 identified (each caller sets rec[0] to a literal)')
+print('   slot  7 = FUN_0003a8a8   NULL CLIENT.  A 7-state machine on gp-0x3674; sends the')
+print('                            computed type with ALL FOUR VALUES ZERO and weights 1024.')
+print('                            It reports a STATE, never a torque.')
+print('   slot  2 = FUN_0003405a   LIVE INJECTOR into delivery.')
+print('                            value A = gp-0x6b76  -> gp-0x6b4a -> DELIVERY')
+print('                            value B = gp-0x6b78  -> DISCARDED (slot 2 is mode 5)')
+print('                            weight  = gp-0x699c  -> the gp-0x3d74 MIN reduction')
+print('                            zeroed unless ALL hold (tp anchor checked, tp = 0xBF000):')
+print('                               gp-0x4f68 > 0xC616A = %d' % u16(TP + 0x716a))
+print('                               gp-0x6a62 <= 0xC62CE = %d   <- LOW-REGIME GATE'
+      % u16(TP + 0x72ce))
+print('                               uVar9 * 0xC64D6(=%d) < 0xC6232(=%d)'
+      % (u8(TP + 0x74d6), u16(TP + 0x7232)))
+print('                               |gp-0x6b76|<=20480, gp-0x6b78<=10240,')
+print('                               gp-0x699c<=1024, gp-0x67ea<2   (in-code immediates)')
+print()
+print('   REMAINING 8: FUN_00023ad2 FUN_00023fe2 FUN_0002b422 FUN_0002c246')
+print('                FUN_0002caa2 FUN_0002e52e FUN_000339cc FUN_0003aff4')
+print('   Decompile each and read rec[0] + which values are non-zero. Do NOT scan the')
+print('   assembly for it: a byte scan of the r6 setup got slot 7 right by luck while')
+print('   reporting the SAME index for two different callers.')
+print()
+
 fails = []
 
 

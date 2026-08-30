@@ -219,6 +219,15 @@ security access**): a bound clip pins it at **~2481**, and **anything above 2505
   the bias term in the observer residual. ⚠ **Structural trace only, nothing flashed or measured;** the
   per-slot source arrays are indexed off a computed base, so **what each slot physically is remains
   untraced.** Re-runnable: `analysis-2020accord/studies/mixer/mixer_fun26c80_decoded.py`.
+  ⊕ **The slot writer is `FUN_00025c32`, a 16-byte request record with EXACTLY TEN CALLERS** (one
+  per accumulated slot): `rec[0]` slot, `rec[1]` type 0-5, then value A (+-16384) -> **delivery via
+  `gp-0x6b4a`**, value B (+-10240) -> `gp-0x6b4c`, value C (+-900), value D (+-20000) -> **`gp-0x6bfa`**,
+  then three weights (0-1024). Types 2/3/4 accept, 0/1/5 zero. **2 of 10 slots mapped:** **slot 7**
+  (`FUN_0003a8a8`) is a **NULL client** -- all four values zero, it reports a state; **slot 2**
+  (`FUN_0003405a`) is a **LIVE injector**, value A = **`gp-0x6b76`** (a cell never named here),
+  gated off unless `gp-0x6a62` <= `0xC62CE` = **640** (a low-regime gate) plus `0xC616A`=4096,
+  `0xC64D6`=10, `0xC6232`=300 and four in-code bounds. Its value B is **discarded** because slot 2
+  is mode 5. 🛑 **8 slots unmapped**; until they are, no `0xC4124`/`0xC4118` edit is mode-proof.
 - **`0xC520C`/`0xC5224` STRUCK as a lever.** Index formula fully reconstructed (`gp-0x6ac0` = |filtered
   motor rate|, scale **4.7121 ct per column °/s** externally anchored via Honda's own 0x14A rate field at
   r ≥ 0.985; X = [1050,1700,2500,3700,4100] = [223,361,530,785,870] col °/s; Y = [5325,3584,2406,1587,512]
