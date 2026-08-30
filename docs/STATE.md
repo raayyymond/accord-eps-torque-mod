@@ -66,6 +66,26 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE RATCHET IS A PROTECTIVE DAMPING TERM *RUNNING OUT*, NOT A SOURCE SWITCHING ON — AND THAT INVERTS THE DIRECTION OF EVERY LEVER THIS ARC HAS TRIED.**
+>
+> Binning engaged 2 s windows by **A = the 6–9.5 Hz oscillation amplitude of `cs_rate`** (°/s) and reporting the **signed** median `Re(Z)` per decile — every window kept, no sign selection:
+> ```
+>   6-9.5 Hz   A 0.25 -> -23.3   A 0.98 -> -58.6   A 3.73 -> -64.9   A 8.39 -> -62.0   rho -0.406
+>   22-30 Hz   A 0.30 ->  -6.2   A 1.13 -> + 1.4   A 5.35 -> +12.9   A 14.4 -> +16.1   rho +0.668
+> ```
+> ✅ **[EVIDENCE] THE TWO BANDS MOVE IN OPPOSITE DIRECTIONS** (p 8e-300 and p ~0, 7,603 windows each). **No method artefact — filter leakage, the ratio form, driver grip, speed — moves two bands opposite ways.** The amplitude dependence is real and band-specific.
+> ✅ **[EVIDENCE] THE COULOMB RELAY IS RULED OUT AS THE SOURCE.** A relay's describing function `N(A) = 4F/(πA)` makes its contribution **fall as 1/A**, so a relay source must WEAKEN with amplitude. **The anti-damping STRENGTHENS** (−23 → −65) and then plateaus. That is the opposite signature, and it retires the arc's standing nonlinear candidate.
+> ⚖ **[BELIEF — consistent with the deciles, not the only reading] `Re(Z)(A) = −65 + D(A)/A`:**
+> ```
+>   A      0.245  0.353  0.454  0.573  0.743  0.983  1.359  2.061  3.732
+>   D(A)    10.2   10.9   10.7    8.2    8.5    6.3    6.1    3.5    0.4
+> ```
+> `D` is roughly **CONSTANT (~10.5) below A ≈ 0.5** — a **COULOMB-like** term, a *force* not a viscosity, since a viscous damper would give `D ∝ A` — and it **decays to nothing by A ≈ 2–4 °/s**, which sits inside the record's own **1–13 °/s** ratchet regime. ⇒ a **fixed −65 anti-damper that is MASKED at small amplitude by a protective term, and exposed once that term runs out.**
+> ⭐⭐ **WHY THIS MATTERS: THE FIX IS TO *ADD* DAMPING AT 6–9 Hz, NOT CUT IT.** Every lever this arc has tried **cuts** that band — which is what the standing rule forbids and what condemned V238 and V240. **Extending the protective term never touches that wall.** It is the first direction found that is not blocked by it.
+> 🛑 **NOT DONE — WHICH CAL SETS THAT TERM.** The friction-lane saturation is **NOT** it: that one saturates at **250 counts** of `gp-0x6abc` and is **1.0× identical in the ratchet regime** by its own table. **Nothing should be built until the cell is identified** — this is a mechanism, not yet a lever.
+> ➕ Readers: `rlog-tools/score/ratchet_damping_runs_out.py` (the decile shape) and `relay_describing_function.py` (the log-log fit — ⚠ it regresses only `Re(Z)<0` windows, a selection; the decile reader supersedes it).
+> ⭐ **Nothing on the shelf moves. V241 stays the flight candidate.**
+
 > ⭐⭐⭐⭐⭐ **THE 6–9 Hz ANTI-DAMPING REPLICATES ON NON-RECTIFIED INSTRUMENTS — UNANIMOUSLY. THE RECTIFICATION DOUBT IS SETTLED FOR THE *SYSTEM* SIGN, AND STILL OPEN FOR THE *LANE* SIGN.**
 >
 > `tq` and `cs_rate` never pass through `FUN_00055d80`, so `Z = CSD(rate,tq)/PSD(rate)` is immune to the doubt that hangs over every 427-derived phase:
