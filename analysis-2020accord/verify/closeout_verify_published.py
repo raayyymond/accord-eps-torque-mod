@@ -55,6 +55,7 @@ PUB = {
     'v207': '8de7180ec4daeb459be994d180321b235a5c79ade9050eff015e83b0f537067c',
     'v208': 'e27b4fcc2dafd872feb25e5625544dbe4f9067a742cec1670d8d3dde176b1f7a',
     'v209': '984dfe5590bb8bfedaedca1256008cdd81cf33837acaa54a909463768b47327c',
+    'v210': 'ab49ca762b7017de436a7b80d15a7a72fda7e3f862f32c3a9106318018da814b',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -220,14 +221,14 @@ print('\n[3] SUPERSEDED ARTIFACTS ARE RENAMED')
 live = [os.path.basename(x) for x in glob.glob(RWD + '/39990*-V199-*.rwd')
         + glob.glob(RWD + '/39990*-V208-*.rwd')
         + glob.glob(RWD + '/39990*-V209-*.rwd')
-        + glob.glob(RWD + '/39990*-V206-*.rwd')
+        + glob.glob(RWD + '/39990*-V210-*.rwd')
 ]
 chk(len(live) == 4, f'exactly 4 flashable builds from this chain ({len(live)})')
 # V194/V195/V196/V198 were PULLED: every one carries a notch whose poles sit at the zeros, scoring
 # max|H| 1.3533-1.7177 against the lineage bar of stock 1.0000.  They must not be flashable.
 for v in ('V185', 'V186', 'V187', 'V188', 'V189', 'V190', 'V191', 'V192', 'V193',
           'V194', 'V195', 'V196', 'V197', 'V198', 'V200', 'V201', 'V203', 'V207',
-          'V202', 'V204', 'V205'):
+          'V202', 'V204', 'V205', 'V206'):
     n = len(glob.glob(RWD + f'/39990*-{v}-*.rwd'))
     if n:
         chk(False, f'{v} is still flashable ({n} unmarked file)')

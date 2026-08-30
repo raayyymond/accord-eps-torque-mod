@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Four flashable builds: **V209 (fly this)** · V208 (the fix) · V206 (ratchet lever, priced) · V199 (low-phase fallback).
+**Updated 2026-08-29.** Four flashable builds: **V209 (fly this)** · V208 (the fix) · V210 (ratchet lever, priced) · V199 (low-phase fallback). All four reproduce bit-for-bit from their builders.
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,
@@ -55,14 +55,14 @@ Exposure and episode count first, then the free cave rungs (degenerate readings 
 pre-registered 0.31–0.49**, the 427 channel, and the grind peak **stratified by this drive’s own
 episodes**. It refuses to apply the b5 prediction to a non-shelf route.
 
-## V206 — the first real ratchet lever, with its price stated
+## V210 — the ratchet lever, on the current notch
 
 ```
-39990-TVA,A160-V206-V202BASE-C63AE.1024.TO.512-0x13000-0x100000.rwd
-  image 71bd8312c324de9c01cf277307e41bb6dbb5e49cc6cf72e02e597a8013333a80
+39990-TVA,A160-V210-V208BASE-C63AE.1024.TO.512-0x13000-0x100000.rwd
+  image ab49ca762b7017de436a7b80d15a7a72fda7e3f862f32c3a9106318018da814b
 ```
 
-✅ **GATE 1 + GATE 2 PASS.** V202 plus **one calibration byte**: `0xC63AE` 1024 → 512. Preflight 8/8, 34/34 assertions, cave
+✅ **GATE 1 + GATE 2 PASS.** V208 plus **one calibration byte**: `0xC63AE` 1024 → 512. Preflight 8/8, 34/34 assertions, cave
 byte-identical, the 427 probe untouched.
 
 ⭐ **What it actually does: it RAISES A CEILING.** `0xC63AE` scales the LERP’s input, so halving it **doubles the residual needed to clip — 14490 → 28980, at every speed.** The record’s own model of the ratchet is a *command-gated saturation*, with the instruction *“find what clips, and either raise its ceiling or soften its corner”*. This is the raise-its-ceiling branch, and unlike a gain argument it survives the ratchet being speed-invariant, because clip duty is about the ceiling, not loop gain.

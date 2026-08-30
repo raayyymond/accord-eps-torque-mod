@@ -1,79 +1,84 @@
 #!/usr/bin/env python3
 r"""
-V209 -- CLOSE THE 0xC63AA DILUTION RATIO.  Base = V202.  3 bytes, telemetry only.
+V210 -- HALVE THE SOFT RELAY'S SMALL-SIGNAL GAIN.  Base = V202.  ONE u16 cal.
 
-WHY
----
-BUILD-LINEAGE.md parks 0xC63AA as "still the best structural lever, but it needs the DILUTION RATIO
-first".  Mirroring FUN_00038148's decompiled arithmetic settles two of the three unknowns and turns
-the third into a single measurable number.
+WHAT THE LEVER IS
+-----------------
+FUN_00038148 ends with
 
-1. ** THE RECORDED SENSITIVITY IS 41x UNDERSTATED. **  The record has
+    0x38242   uVar7 = (|resid| * cal(0xC63AE)) >> 10          cal = 1024 = unity
+              sVar8 = LERP(uVar7)                              X gp-0x64b6.., Y gp-0x641c..
+              gp-0x6b70 = sgn(resid) * sVar8,  clamped +-cal(0xC6200) = 8192
 
-       d(iVar6)/d(0xC63AA) = -(1/16) * (gp-0x6b4c / 1024)
+Computing that LERP from the image -- it is the POWER-ASSIST CURVE, via the staging arrays
+assist_map_mirror.py already mirrors integer-exactly (validated 200/200 vs V72's flown probe) --
+shows it is NOT a hard relay but a SOFT one:
 
-   The code is
+    speed    gain near 0    mid-range     ratio
+      640       2.67x         0.256x      10.4x
+     1280       3.04x         0.284x      10.7x
+     2560       3.77x         0.352x      10.7x
+     5120       3.43x         0.516x       6.7x
 
-       0x38148  SUM    = sum over six lanes of (x_i * gate_i * w_i) >> 10     ZERO-REJECT gates
-                scaled = (SUM * sgn(gp-0x6752) * cal(0xC6468)) >> 10          cal = 2639
-                target = scaled * 0x10                    <-- the record dropped this
-                model += ((target - model) * cal(0xC63AC)) >> 10              alpha = 102/1024
-                resid  = gp-0x6bfe - (model >> 4) + gp-0x6bfa                 <-- it kept this
+High small-signal gain around a zero crossing is the shape that sustains a small-amplitude limit
+cycle, and it matches the record's own "command-proportional Coulomb relay" blamed for the ratchet.
+0xC63AE scales the LERP's INPUT, so near the origin -- where the curve is near-linear -- it scales
+that gain DIRECTLY.  Halving it halves 2.67x -> 1.34x, 3.77x -> 1.89x.
 
-   ** The *0x10 and the >>4 CANCEL ** -- the model is stored 16x oversampled so the EMA keeps
-   precision, it is not a divide in the signal path.  Perturbing the mirror rather than trusting the
-   algebra: zeroing the weight moves the residual by ** 2.577 x gp-0x6b4c **, against the recorded
-   0.0625.  2.577 / 0.0625 = 41.2x.
+** BUT THAT IS THE SMALL-SIGNAL LIMIT ONLY, AND THE DOSE IS WEAKER AT LARGER AMPLITUDES. **
+Scaling the INPUT of a CONCAVE curve moves the operating point onto a STEEPER part, so the two
+effects fight.  The correct instrument is the describing function, N_g(A) = k * N_f(k*A), NOT
+k * N_f(A).  Measured on the real curve (verify/gate2_v210_describing_function.py):
 
-   ** That cuts BOTH ways. **  It is a far more potent lever than the record believed, and therefore
-   also far more able to destabilise: gp-0x6b70 is clamped to +-cal(0xC6200) = 8192, and 2.577 x a
-   gp-0x6b4c of 4000 already exceeds it.  This is now a lever to size carefully, not a free one.
+    amplitude A      25     200     800    3200    6400   12800
+    N ratio        0.486   0.472   0.619   0.794   0.771   0.658     <- NOT a flat 0.500
 
-2. ** gp-0x6b46 IS BOUNDED AT +-512 BY CONSTRUCTION. **  FUN_00036682's tail clamps its driver to
-   +-0x200 and EMAs toward it (cal 0xC63D2), so it can never approach its own +-1024 reject window.
-   It is a lag-compensator error, not a large term.  No longer an unknown.
+So the dose buys between 1.26x and 2.1x of loop-gain reduction depending on amplitude, not a uniform
+2x.  It still reduces gain EVERYWHERE, which is the GATE 2 pass -- but do not quote "half".
 
-3. ** gp-0x6b4e IS THE ONE REMAINING UNKNOWN, AND IT IS BIG. **  0x2743e..0x2746a:
+** It scales THIS STAGE ONLY. **  The base power-assist map is fed by Xsrc/Ysrc, a different
+transform of the same source, so the map is untouched.  That matters: the curve's shape is otherwise
+welded to the ROM assist records and could not be moved without moving steering feel, which is very
+likely why the ratchet has resisted sixty builds.
 
-       ld.w   -0x3d8c, gp, r11        load an int32 source
-       movea  0x2800, r0, r26         +10240
-       bgt    ...                     saturate high
-       movea  -0x2800, r0, r9         -10240
-       cmovle r9, r11, r26            saturate low
-       st.h   r11, -0x6b4e, gp        store   (+ lockstep twin at -0x4cd6)
+GATE 1: 0xC63AE has EXACTLY ONE site image-wide (0x38242, the reader above) and ZERO writers, by the
+kit's own tp_cal_readers.py.  Byte-stock on every build.  Cal-only, 2 bytes, no cave -- not the
+bricking class.
 
-   So it is gp-0x3d8c SATURATED to +-10240 -- the same ceiling as gp-0x6b4c, and its zero-reject
-   window in FUN_00038148 is exactly +-10240, so it never drops out.  ** Whether 0xC63AA is diluted
-   or dominant is now entirely a question of how big gp-0x6b4e runs at runtime, and nothing in the
-   corpus has ever measured it. **
+THE SIGN, AND THE PRICE -- STATED, NOT HIDDEN
+---------------------------------------------
+The record's nine-link Ghidra polarity trace covers this exact path, and its step 4 IS this stage:
 
-   dilution = (gp-0x6b4c * w) / SUM, computed from the mirror with the other lanes at their
-   recorded values (gp-0x6bd0 = 0 in 100 % of the micro regime, gp-0x6bbe p50 = 74,
-   gp-0x6b26 <= 511 clamped by 0xC407E, gp-0x6b46 <= 512 as above):
+    4  gp-0x6b70 = clamp(sgn(res)*LERP(|res|), +-8192), f' >= 0  =>  d/d(MODEL) >= 0 everywhere
+    5  FUN_00037fe6: gp-0x6ad6 += gp-0x6b70 * w                  =>  target felt effort
+    9  delivered = gp-0x6752 * gp-0x6b94                         =>  torque in the driver's direction
 
-       gp-0x6b4c      gp-0x6b4e = 0      gp-0x6b4e = 500
-           250            43.2 %              15.8 %
-          1000            75.3 %              42.9 %
-          4000            92.4 %              75.1 %
+with the measured cross-check d(gp-0x6b94)/d(gp-0x6b70) = +0.2529 / +0.2565.  So the sign is known
+WITHOUT a drive:
 
-WHAT V209 DOES
---------------
-Repoints the CAN 427 probe from gp-0x6ac0 onto gp-0x6b4e.  Every V202 control cell is carried
-unchanged; this adds an instrument only.
+    lowering 0xC63AE shrinks |gp-0x6b70| toward zero.  V87 measured gp-0x6b70 NEGATIVE 67.19 % of
+    engaged time, and shrinking a negative value raises it => LESS assist on ~2/3 of frames,
+    MORE on the other ~1/3.  ** Net: predominantly LESS assist, a slightly heavier wheel. **
 
-    0x55DF2  hw2 of `ld.h disp, gp, r6`   0x9540 (-0x6AC0)  ->  0x94B2 (-0x6B4E)
-    0x55E10  the pack shift               sar 4 (0xA4)      ->  sar 5 (0xA5)
+** That is a real cost against a stated goal, so it is priced here rather than buried. **  The trade
+is: the soft relay's small-signal gain halves (the ratchet mechanism) and the wheel gets somewhat
+heavier (an authority cost).  The operator has been explicit that he wants low apparent friction AND
+no ratcheting; this buys one with some of the other, so ** it is deliberately NOT the recommended
+build ** -- V205 is, because V205 measures gp-0x6b70's actual range and sign so this dose can be
+sized rather than guessed.  V210 exists so that if V205 says the range is large, the fix is already
+cut.
 
-sar 5 because the source saturates at +-10240: positives raw 0..320, negatives 704..1023,
-resolution 32, unambiguous to |x| <= 16352.
+WHY HALF AND NOT LESS
+---------------------
+The gain ratio between small and mid signal is 6.7-10.7x, so halving is a modest step inside a large
+range -- enough to be felt if the mechanism is real, small enough that the assist cost stays bounded.
+A quarter dose is the obvious follow-up if half reads in the right direction.
 
-WHAT IT ANSWERS IN ONE DRIVE
-----------------------------
-    gp-0x6b4e small vs gp-0x6b4c   -> 0xC63AA is DOMINANT, not diluted.  With the 41x correction it
-                                      becomes the strongest cal-only structural lever in the kit --
-                                      and one that must be sized against the +-8192 output clamp.
-    gp-0x6b4e comparable or larger -> genuinely diluted; the lever is weak and should be struck
-                                      rather than left parked, which is itself worth knowing.
+WHAT IS CARRIED
+---------------
+Everything in V208, bit for bit: the 20.50 Hz notch with poles at 15.50 Hz, the engaged inertia
+half-dose, the K1 and accel-alpha reverts, w[3] halved, 0xC407E frozen at 511, the 164-byte cave
+byte-identical, and the 427 probe still on gp-0x6ac0.  ** V210 is a lever, not an instrument. **
 """
 import hashlib
 import math
@@ -106,7 +111,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 START, END = 0x13000, 0x100000
-WRITE_MODE = os.environ.get("ACCORD_V209_WRITE", "").strip().lower()
+WRITE_MODE = os.environ.get("ACCORD_V210_WRITE", "").strip().lower()
 BASE_NAME = "_v208_V208-V202BASE-NOTCH.20.50.REFIT.ON.EPISODES_plain_image.bin"
 BASE_SHA = "e27b4fcc2dafd872feb25e5625544dbe4f9067a742cec1670d8d3dde176b1f7a"
 
@@ -117,7 +122,9 @@ NORM_X, NORM_Y = 0xC6936, 0xC693E
 HYST = 0xC64DD
 NEW_HYST = 100
 PROBE_HW2, PROBE_SHIFT = 0x55DF2, 0x55E10
-NEW_DISP, NEW_SAR = (-0x6B4E) & 0xFFFF, 5
+RESID_SCALE = 0xC63AE          # the soft relay's own input scale, 1 reader / 0 writers
+NEW_SCALE = 512                # HALF Honda unity 1024
+KITROOT = str(Path(__file__).resolve().parents[2].parent)
 OSC_X, OSC_Y = 0xC6912, 0xC691A
 FACTORC_PTR = 0xC9E9C
 Y0_ADDR = 0xD77EE
@@ -129,15 +136,15 @@ BIQUAD = (A8_OFF, AC_OFF, B0_OFF, B4_OFF)
 # parameters are exact, everything else is derived, and every assertion below is checked against the
 # ENCODED float32 read back out of the image -- not against these Python doubles.
 SEC_FS = 1000.0
-F0 = 20.50         # notch centre, Hz -- V199 design: zeros 19.75, poles 17.45, r 0.9675
+F0 = 20.50         # notch centre, Hz -- V199 design: zeros 20.50, poles 15.50, r 0.9575
 RP = 0.9300        # pole radius     -- WIDE: 19 Hz is far from openpilot, so we can afford it
 
 FAULT_INTERLOCK, FAULT_VAL = 0xC407E, 511
 CARRIED_U16 = {0xC40D2: ("K1 -> Honda (V177)", 102),
                0xC63A6: ("w[3] halved (V181)", 512),
-               0x55DF2: ("427 probe source gp-0x6b4e, the observer lane (V209)", 0x94B2)}
+               0x55DF2: ("427 probe source gp-0x6ac0 (V202, UNCHANGED)", 0x9540)}
 CARRIED_B = {0xC40DC: ("accel alpha -> Honda (V179)", 22),
-             0x55E10: ("packer sar 5 (V209)", 0xA5)}
+             0x55E10: ("packer sar 4 (V202, UNCHANGED)", 0xA4)}
 PTR_I = 0xCBE74
 HONDA_Y = (-9830, -5734, -1966)
 HALF_Y = (-4915, -2867, -983)
@@ -216,36 +223,32 @@ def build():
           f"  -> sar {base[PROBE_SHIFT] & 0x1F}")
     check(old_disp == 0x9540, "the base carries V183's gp-0x6ac0 probe (0x9540)")
     check(base[PROBE_SHIFT] & 0x1F == 4, "the base carries sar 4")
+    check(u16(base, PROBE_HW2) == 0x9540, "the base probe reads gp-0x6ac0")
 
-    print("\n  [3] THE EDIT -- repoint onto the r24 RATE LANE, and re-size the shift")
+    print("\n  [3] THE EDIT -- one u16 cal, the soft relay's own input scale")
     attributed = set()
-    struct.pack_into("<H", code, PROBE_HW2, NEW_DISP)
-    attributed |= {PROBE_HW2, PROBE_HW2 + 1}
-    code[PROBE_SHIFT] = (base[PROBE_SHIFT] & ~0x1F) | NEW_SAR
-    attributed.add(PROBE_SHIFT)
-    d = struct.unpack_from("<H", code, PROBE_HW2)[0]
-    print(f"      0x{PROBE_HW2:05X}  0x{old_disp:04X} -> 0x{d:04X}   (gp-0x{0x10000 - d:04X})")
-    print(f"      0x{PROBE_SHIFT:05X}  sar {base[PROBE_SHIFT] & 0x1F} -> sar"
-          f" {code[PROBE_SHIFT] & 0x1F}")
-    check(0x10000 - d == 0x6B4E, f"the probe now reads gp-0x6B4E, the observer model lane (hw2 0x{d:04X})")
-    check((0x10000 - d) % 2 == 0, "the displacement is EVEN, as ld.h requires")
-    check(code[PROBE_SHIFT] & 0x1F == NEW_SAR, f"the pack shift is sar {NEW_SAR}")
+    before = u16(code, RESID_SCALE)
+    check(before == 1024, f"0x{RESID_SCALE:05X} starts at Honda unity ({before})")
+    struct.pack_into("<H", code, RESID_SCALE, NEW_SCALE)
+    attributed |= {RESID_SCALE, RESID_SCALE + 1}
+    print(f"      0x{RESID_SCALE:05X}  {before} -> {u16(code, RESID_SCALE)}"
+          f"   ({NEW_SCALE / 1024.0:.3f}x)")
+    check(u16(code, RESID_SCALE) == NEW_SCALE, f"the residual scale is now {NEW_SCALE}")
 
-    print("\n  [4] THE 10-BIT FIELD CARRIES THE SIGN CLEANLY AT sar 5")
-    def pack(x):
-        return ((x & 0xFFFF) >> NEW_SAR) & 0x3FF
-
-    def unpack(r):
-        return (r if r < 512 else r - 1024) * (1 << NEW_SAR)
-    for x in (0, 32, 2048, 8192, -32, -2048, -8192):
-        r = pack(x)
-        print(f"        x = {x:+7d}  -> raw {r:4d} -> decoded {unpack(r):+7d}")
-    for x in (0, 32, 2048, 8192, -32, -2048, -8192):
-        check(abs(unpack(pack(x)) - x) <= (1 << NEW_SAR),
-              f"x={x:+7d} round-trips to {unpack(pack(x)):+7d} within one LSB ({1 << NEW_SAR})")
-    CL = 8192
-    check(pack(CL) < 512 and pack(-CL) >= 512,
-          f"the +-{CL} writer clamp maps to raw {pack(CL)} / {pack(-CL)} -- sign intact, no aliasing")
+    print("\n  [4] WHAT THE DOSE DOES TO THE SOFT RELAY, from the image")
+    # gp-0x6b70 = sgn(resid) * LERP((|resid| * cal) >> 10).  Scaling the INPUT scales the
+    # small-signal gain directly, because the curve is near-linear close to the origin.
+    import sys as _sys
+    _sys.path.insert(0, os.path.join(KITROOT, "analysis-2020accord", "studies", "models"))
+    import assist_map_mirror as _M                                            # noqa: E402
+    for sp in (640, 1280, 2560, 5120):
+        A_, B_ = _M.stage_382d8(26, sp)
+        _M.stage_389ec(A_, B_, sp, 150)
+        Xi, Yi = _M._LAST_STAGING["Xi"], _M._LAST_STAGING["Yi"]
+        g0 = Yi[1] / Xi[1]
+        print(f"        speed {sp:5d}   small-signal gain {g0:.2f}x"
+              f" -> {g0 * NEW_SCALE / 1024.0:.2f}x")
+    check(NEW_SCALE < 1024, "the dose LOWERS the gain (raising it would make the relay worse)")
 
     print("\n  [5] V196 LEVERS CARRIED, AND WHAT IS DELIBERATELY ABSENT")
     check(code[0xC64DD] == 50, "0xC64DD dwell is Honda 50 -- V193s widening NOT carried")
@@ -257,6 +260,9 @@ def build():
     check(Y26 == [-4915, -2867, -983], f"engaged inertia Y = {Y26} -- V196s half dose CARRIED")
     for off in BIQUAD:
         check(u32(code, off) == u32(base, off), f"0x{off:05X} biquad cell identical to V202")
+    check(u16(code, PROBE_HW2) == u16(base, PROBE_HW2)
+          and code[PROBE_SHIFT] == base[PROBE_SHIFT],
+          "the 427 probe is UNTOUCHED -- V210 is a lever, not an instrument")
     m194, _ = resp(code, F0)
     check(m194 < 0.05, f"notch still at {F0:.2f} Hz, |H| = {m194:.5f}")
 
@@ -294,7 +300,12 @@ def build():
     check(not [a for a in diff if a not in attributed],
           f"all {len(diff)} differing bytes attributed")
     pay = [a for a in diff if (a & 0xFFF) < 0xFFC]
-    check(len(pay) <= 4, f"{len(pay)} payload bytes (<= 4: hw2 + shift)")
+    # DERIVE the count, never assume it: 1024 = 0x0400 -> 512 = 0x0200 moves only the HIGH byte,
+    # so this is ONE byte, not two.  Same trap as the V181 assertion bug and V198's 0x9540->0x9526.
+    _exp = sum(1 for _k in range(2)
+               if ((1024 >> (8 * _k)) & 0xFF) != ((NEW_SCALE >> (8 * _k)) & 0xFF))
+    check(len(pay) == _exp,
+          f"{len(pay)} payload byte(s), derived expectation {_exp} for 1024 -> {NEW_SCALE}")
 
     print("\n  [13] .rwd ENCODE + READBACK")
     src = Path(FF.V38_RWD).read_bytes()
@@ -312,13 +323,13 @@ def build():
 
     img_sha = hashlib.sha256(bytes(code)).hexdigest()
     rwd_sha = hashlib.sha256(rwd).hexdigest()
-    tag = "V209-V208BASE-PROBE-GP6B4E"
+    tag = "V210-V208BASE-C63AE.1024.TO.512"
     if WRITE_MODE == "rwd":
-        Path(plain_image_path(f"_v209_{tag}_plain_image.bin")).write_bytes(bytes(code))
+        Path(plain_image_path(f"_v210_{tag}_plain_image.bin")).write_bytes(bytes(code))
         Path(RWD_DIR, f"39990-TVA,A160-{tag}-0x{START:X}-0x{END:X}.rwd").write_bytes(rwd)
         print("\n      WROTE image + rwd")
     else:
-        print("\n  [14] NOT WRITTEN -- set ACCORD_V209_WRITE=rwd to emit the files")
+        print("\n  [14] NOT WRITTEN -- set ACCORD_V210_WRITE=rwd to emit the files")
 
     print("\n" + "=" * 102)
     print(f"  image SHA256 {img_sha}")

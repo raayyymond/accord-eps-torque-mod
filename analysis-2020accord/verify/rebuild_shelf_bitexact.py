@@ -28,7 +28,7 @@ FW = os.environ.get('ACCORD_FIRMWARE_ROOT',
 # the shelf, and the hash each builder is expected to produce
 SHELF = {
     'v199': 'c86646ab48c4a62546b4e7bafa59f8097d3bdd99ffdcd3aeabd9f93c7252dc10',
-    'v206': '71bd8312c324de9c01cf277307e41bb6dbb5e49cc6cf72e02e597a8013333a80',
+    'v210': 'ab49ca762b7017de436a7b80d15a7a72fda7e3f862f32c3a9106318018da814b',
     'v208': 'e27b4fcc2dafd872feb25e5625544dbe4f9067a742cec1670d8d3dde176b1f7a',
     'v209': '984dfe5590bb8bfedaedca1256008cdd81cf33837acaa54a909463768b47327c',
 }
