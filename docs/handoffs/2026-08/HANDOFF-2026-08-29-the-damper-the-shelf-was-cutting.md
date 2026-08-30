@@ -98,6 +98,17 @@ from what the operator drives. **Diff every candidate against the flown image.**
   sliver of that band while its phase skirt reaches 1-5 Hz. **Price a band lever on the BAND.**
   ⚠ **Process:** grep the lineage BEFORE computing. CLAUDE.md warns about exactly this and I
   spent a tick reproducing a closed result.
+- **THE BASE-ASSIST DAMPER INTO THE MICRO REGIME IS CLOSED** (checked again this session, and the
+  memory already said *"DO NOT re-propose"*). `ch0 = (FactorC(speed) x FactorE(rate)) >> 10` is
+  zero on **100 % of the micro-ratcheting regime**, but opening both dead zones gives only
+  `0 / 3 / 10 / 25` counts at 2/5/10/20 deg/s out of 1024. 25 % authority at 10 deg/s needs
+  `FactorE >= 288`, **unreachable by moving X**; it needs `Y[0]` off zero = a step at zero rate
+  = a relay in rate = the V78/V79/V80 move = **"WORST GRINDING EVER"**.
+- 🛑 **THE RATCHET HAS NO UNTRIED FIRMWARE LEVER.** Closed, each on its own terms:
+  the biquad re-centring (29,348-candidate sweep) · the base-assist damper (sizing needs a
+  relay) · the rate lane (V39/V42/V61/V62). **`0xC63AE` on V217 is the only untested candidate
+  that exists.** Two consecutive search ticks landed on explicitly-closed levers — treat that
+  as the signal that the analytical search is exhausted, and get a drive.
 - A sweep for "dormant features gated by a zero cal" has a **poor hit rate** — zero offsets and float
   low-halves dominate. The one real find (the PI block) came from tracing, not sweeping.
 
