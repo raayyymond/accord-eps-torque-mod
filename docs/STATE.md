@@ -180,6 +180,40 @@ with it the claim that the record’s *"net PID DAMPS"* is a convention flip —
 is right and me that is inverted.**
 Study: `analysis-2020accord/studies/mixer/r24_retrodiction_test_fails.py`.
 
+> ⭐⭐⭐ **THE ANTI-DAMPING IS BROADBAND AND ITS PEAK IS AT 9–10 Hz — BETWEEN the two bands the kit
+treats as its symptoms.** `Re(Z) = Re(S_TR/S_RR)` measured over 6 routes engaged, magnitude-weighted
+rather than phase-only:
+
+| band | mean Re(Z) | mean cos | coherence | |
+|---|---|---|---|---|
+| ratchet 6–9 | −23.5 | −0.401 | 0.532 | |
+| **mid 9–12** | **−67.9** | −0.784 | **0.618** | ← **strongest, and best-measured** |
+| the gap 12–15 | −51.3 | **−0.986** | 0.511 | near-perfect antiphase, less magnitude |
+| grind 15–22 | −14.2 | −0.591 | 0.631 | |
+
+🛑 **`Re(Z)` is negative across the ENTIRE 4–24 Hz range** — this is **broadband** anti-damping, not a
+narrow mode. Its magnitude peaks at **10 Hz (−71.5)** and the anti-damping **power** peaks at **9 Hz**.
+⇒ the dominant energy exchange is **~3× the ratchet band and ~5× the grind band**, and it sits in
+**9–12 Hz** — a band the kit **scores but has never treated as a target**, since its named symptoms map
+to 6–9 (ratchet) and 15–22 (grinding).
+➕ **A phase-only read would have put the peak at 13 Hz** (cos −0.998, essentially 179° opposed) — that
+is the *phase* extremum, but torque amplitude is lower there, so the *impedance* extremum is at 9–10.
+**Magnitude-weighting moved the answer; phase alone would have mis-aimed a lever by 3 Hz.**
+✅ Unlike the command–rate coherence null (0.14–0.23), **torque–rate coherence is 0.44–0.76 across
+7–23 Hz**, so this is a real measurement over its whole range.
+⚠ The **absolute sign** of `Re(Z)` still depends on the unresolved frame; what is frame-free — and what
+this block asserts — is the **SHAPE**: the extremum is at 9–10 Hz and the band ordering is
+**mid > gap > ratchet > grind**.
+⇒ **Consequence for lever design: size and aim at 9–12 Hz, not only at 6–9.**
+
+> 🛑 **AND THE FRAME TEST IS INCONCLUSIVE — reported as such, not dressed up.** The plan was to
+calibrate the pipeline against the operator-confirmed *"+ LKAS demands negative steering angle"*.
+Measured: median `corr(sc_tq, cs_ang)` = **−0.166**, which matches the convention — **but 2 of 6 routes
+come out POSITIVE** and the magnitudes are **0.015–0.413**, i.e. noise-level. The 0.1–0.5 Hz phase reads
+**−89.3°**, dominated by plant dynamics rather than a clean 0/180 readout. ⇒ **the frame is NOT
+resolvable from bus data**; it needs a probe putting the delivered assist on the wire with a known
+sign, which is a cave build. **It blocks nothing** — every actionable conclusion is anchored on V88.
+
 > 🛑 **RECORD DEFECT FIXED — `r95` is V101, not V102, and the correction had been made in only HALF
 the files.** `r95` flew **V101 = 8× (`0xC6CD0` 7128) with Lever B REMOVED** (`GAIN8X.C6CD0.7128-NOLEVERB`);
 `r95_v102_prereg.py` is the pre-registration **FOR** V102 **MEASURED ON** r95=V101, and its own docstring
