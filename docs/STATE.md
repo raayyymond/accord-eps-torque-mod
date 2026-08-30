@@ -46,6 +46,18 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V228 MAKES *TWO* PHASE-BEARING CHANGES vs THE CAR, NOT ONE — AND THEY ARE PARALLEL LANES, SO THEIR PHASES MUST NOT BE ADDED.** A full byte diff of the car (V122) against V228 is **27 bytes in 11 runs**: 2 CRC trailers, the 2-byte 427 telemetry tap, and four levers. Two of the four are dynamic:
+>
+> ```
+>                          7.79 Hz     10.5 Hz     18.5 Hz
+>   notch 0xC60A8..B7      -14.8 deg   -24.9 deg   -75.9 deg    (more LAG)
+>   EMA2  0xC40DC 8->22    +13.4 deg   +17.3 deg   +25.5 deg    (more LEAD, and +1.06/1.10/1.28x gain)
+> ```
+>
+> 🛑 **THEY DO NOT CANCEL.** The biquad filters `gp-0x6b82` *inside* `FUN_000352b4`; the EMA2 chain feeds `gp-0x6b26` from a different function. Different signals, different functions ⇒ **parallel, not series.** Adding −24.9° to +17.3° to get “−7.6°, nearly neutral” would be wrong, and was the first thing the numbers suggested. What actually changes is the **relative** phase between two contributions to the assist sum.
+> ✅ **`0xC40DC` is the EMA2 coefficient of a cascaded bandpass** — `step = a1(x−y1)` (high-pass, a1 = 37/128 at `0xC643C`) → `×32` → EMA2 low-pass (a2 = cal/64) → `>>9`. **V228 restores Honda's 22; the car carries a non-stock 8.** That moves the low-pass corner **21.3 Hz → 67.0 Hz**, so V228 passes *more* HF through this lane: **+28 % at 18.5 Hz, +61 % at 31 Hz, +125 % at 61 Hz.**
+> ✅ **THE BIQUAD IS LIVE ON V228, ENGAGED-ONLY — verified, and I nearly called it inert.** The decompile shows it gated on `cal(0xC649B)==1 && cal(0xC64FA) <= gp-0x671a`, and the kit's own record says `gp-0x671a ≥ 5` was **0 of 255,292 engaged frames** ⇒ *“Honda ships this biquad DORMANT.”* But **V103 armed it** with three code patches (`0x35A06` `844fe798`→`844ffb97` repointing the arm source from `gp-0x671a` to the LKAS engagement flag `gp-0x6806`, `0x35A12` `ec49`→`e049`, `0x35A18` `e9370000`→`ea370000`) plus `0xC649B` 0→1. **All four are byte-intact on V103, V107, V122, V208, V222 and V228** — this is NOT another V42-style lost-at-rebase. The gate is now LKAS-engaged, which is why the notch is an engaged-only device.
+
 > 🛑🛑⭐⭐⭐⭐ **THE NOTCH IS A PHASE DEVICE, AND ITS PHASE AT 9–12 Hz HAS NEVER BEEN EXAMINED — THE WHOLE ARC V172→V228 IS UNFLOWN.** `0xC60A8/AC/B0/B4` has been discussed as a notch (how deep, how wide, centred where) for 40+ builds; a 2nd-order section moves phase over a far wider span than magnitude. Read from the encoded float32 in each image:
 >
 > ```

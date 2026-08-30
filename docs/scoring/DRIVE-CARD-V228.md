@@ -95,6 +95,8 @@ from the corpus and could not (route-level CI **+1.77 [−21.87, +10.53]**, span
 MAGNITUDE, and its ratchet-band PHASE is 15° beyond anything driven.** If the ratchet is worse, that
 is the first thing to suspect, and `docs/specs/design/NOTCH-PHASE-AND-THE-POLE-FREQUENCY-LEVER.md`
 has a ready alternative geometry that halves the excess.
+
+🛑 **And the notch is not the only one.** A full byte diff of the car against V228 is 27 bytes; **two** of the four levers are dynamic. `0xC40DC` (EMA2 of a cascaded bandpass) goes **8 → 22, restoring Honda’s value** — the car’s 8 is the non-stock one. That moves that lane’s low-pass corner **21.3 → 67.0 Hz** and leans the opposite way to the notch: **+13.4° at 7.79 Hz, +17.3° at 10.5 Hz**, with **+28 % gain at 18.5 Hz and +61 % at 31 Hz**. 🛑 **These do NOT cancel** — the biquad filters `gp-0x6b82` inside `FUN_000352b4` while the EMA2 chain feeds `gp-0x6b26` from another function, so they are parallel lanes. The net effect on the car is not predictable from either number alone.
 40–49 Hz — see the correction above; no build avoids that). V222 remains available
 afterwards, and flying V228 first also makes V222 interpretable: the two differ in exactly one lever,
 so a V228 drive followed by a V222 drive is the cleanest 8×-gain experiment this kit has ever had.
