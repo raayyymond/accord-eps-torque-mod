@@ -66,6 +66,22 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ✅⭐⭐⭐⭐⭐ **V235's NOTCH PLACEMENT IS CLEARED — THE 22–30 Hz BAND IS REAL, NOT AN ALIAS. First time the kit has bounded the fold risk on the evidence that aims the notch.**
+>
+> The pump/damp table that puts V235's notch at 25 Hz was measured on **CAN at ~101 Hz**, so its *“22–30 Hz PUMPING”* row could have been **folded from 71.1–79.1 Hz** and the notch aimed at a ghost. The `_spec` caches are **16 kHz PCM, alias-free**, and cover **ra4/ra5/ra6 — the very routes the table was measured on**:
+> ```
+>   route      P(20-32)     P(69-81)    ratio
+>   ra4       3.582e+05    1.443e+05     2.48   <- the pump/damp routes
+>   ra5       3.345e+05    1.152e+05     2.90
+>   ra6       3.839e+05    2.166e+05     1.77
+>   median over 13 routes                2.34   (min 1.57, ALL > 1)
+> ```
+> ✅ **[EVIDENCE] Real 20–32 Hz energy dominates its alias source by ~2.3× on every route.** The band is genuinely there, so **the notch is aimed at something real and its placement stands.**
+> ⚠ **THE HONEST QUALIFICATION: at a ratio of 2.34 the fold still supplies ~30 % of the CAN band power.** So the *sign* of the pump/damp row is sound; its *magnitude* carries a ~30 % contamination, and any number derived from that band's CAN magnitude should say so.
+> ⊕ **A METHOD WORTH REUSING:** the kit's alias memory says the 30–49 Hz fold *“cannot be fixed after the fact”* — true for the CAN caches alone, but the **audio spectra bound it**, because they see both the band and its fold source separately. That is a general check for any CAN-derived band above ~20 Hz, and it had never been run.
+> ⊕ A second empty-input null caught the same way as the last one: the `_spec` caches are **0–2000 Hz at 3.9 Hz bins**, not the 0–500 Hz at 0.977 Hz their extractor's docstring describes, so a `>=3 bins` filter emptied the table. **Check the row count before reading a null.**
+> ➕ Reader: `rlog-tools/score/alias_bound_on_notch_band.py`.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THREE AVENUES CLOSED IN ONE TICK, AND NO FIX. THE LOOP-DELAY HYPOTHESIS IS REFUTED BY ITS OWN CONTROL.**
 >
 > With calibration exhausted, the question was what **creates** the 6–9 Hz anti-damping. The delay hypothesis is the classic candidate: a delay τ turns assist into anti-damping above `1/(4τ)`.

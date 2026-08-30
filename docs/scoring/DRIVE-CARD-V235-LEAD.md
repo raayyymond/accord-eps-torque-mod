@@ -73,6 +73,28 @@ barely touches the damping bands at all.
 
 ---
 
+## Its notch band is verified real, not an alias
+
+The evidence placing this notch at 25 Hz came from CAN at ~101 Hz, where **22-30 Hz could have been
+folded from 71-79 Hz** - the notch aimed at a ghost. The 16 kHz audio spectra settle it, on the same
+three routes the placement was measured on:
+
+```
+  route      P(20-32)     P(69-81)    ratio
+  ra4       3.582e+05    1.443e+05     2.48
+  ra5       3.345e+05    1.152e+05     2.90
+  ra6       3.839e+05    2.166e+05     1.77
+  median over 13 routes                2.34   (all > 1)
+```
+
+**Real energy in the band beats its alias source ~2.3x on every route.** The notch is aimed at something
+that is actually there.
+
+⚠ At that ratio the fold still supplies about **30%** of the CAN band power - so the *direction* is
+sound and any *magnitude* from that band carries a 30% contamination.
+
+---
+
 ## What the probe settles either way
 
 The notch filter's internal state boots to exactly `0.0f`. If its enable never fires on the car, that
