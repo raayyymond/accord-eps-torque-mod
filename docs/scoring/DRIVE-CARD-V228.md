@@ -64,6 +64,20 @@ so a V228 drive followed by a V222 drive is the cleanest 8×-gain experiment thi
 
 ---
 
+## ⭐ IF YOU CAN ONLY DO ONE THING: DRIVE V228 TWICE
+
+Not V228 then V222 — **V228 twice, on separate outings.**
+
+Every cross-build number this kit has ever reported is **one route against one route**, and the
+route-to-route variation underneath them has never been measured. From the only two repeat pairs in the
+whole corpus, it could be small (σ = 0.09) or large (σ = 0.40); two pairs cannot tell. At the small
+value most of the record stands. At the large value **only one result in the kit’s history survives** —
+and V88’s 0.549×, the basis for Lever B and therefore for this very build, is not among them.
+
+**A second V228 route fixes that for everything at once.** It is the one measurement that re-prices
+V62, V88, the 8× dose law and the pre-registered experiment simultaneously. No new firmware can do it,
+and it costs nothing but a second drive.
+
 ## ✅ THE PAIR IS PRE-REGISTERED
 
 V228 and V222 differ in the forward gain and **nothing else**, so flying both gives the **first clean 8× experiment** this kit has had — the only prior 8× route, V101, **removed Lever B in the same build**, which is why the record’s 8× evidence is confounded.
