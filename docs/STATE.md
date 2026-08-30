@@ -66,6 +66,31 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ⚠⭐⭐⭐⭐ **THE IMU TEST IS UNDERPOWERED, NOT DECISIVE — BUT SPEED MATCHING IS VALIDATED, AND THE CORPUS'S ENGAGED/MANUAL CONFOUND IS NOW QUANTIFIED.**
+>
+> The comma's LSM6DS3TR-C is **physically independent of the EPS**, so it is the one instrument whose answer cannot be an artefact of EPS signal processing, a decode error, or torsion-bar scaling. Unmatched, it looked like a result:
+> ```
+>   UNMATCHED   13 segments   gyro excess 3.18   road control (az) 2.50   broadband ratio 20.2
+> ```
+> 🛑 **The broadband ratio of 20.2 is the tell: the arms differ in ROAD AND SPEED, not just engagement.** And the road control on vertical acceleration came back at **2.50** against the gyro's 3.18 — most of the “excess” was driving conditions.
+> ✅ **SPEED MATCHING WORKS, AND THE VALIDATION IS THE BROADBAND COLLAPSE:**
+> ```
+>   MATCHED      3 segments   gyro excess 3.18   road control (az) 2.37   broadband ratio  2.73
+> ```
+> The confound drops **20.2 → 2.73**. But the sample collapses to **n = 3**, and gyro 3.18 against a road control of 2.37 is only **1.34×**. The `f0` estimates also scatter to the search-window edges (9.47 / 8.49 / 6.71) — the signature of taking the max of noise, not finding a peak.
+> ⇒ **VERDICT: inconclusive and underpowered.** The IMU neither confirms nor refutes that the ratchet is real gross motion. **Resonance vs stick-slip stays open.**
+>
+> ⭐ **THE CORPUS FACT THIS PRODUCED, which bears on far more than this test:**
+> ```
+>   351 route caches inspected
+>    64 have >= 20 s in BOTH arms
+>    29 survive speed matching                 (45 %)
+>   median segment retains 60 % of its smaller arm   (p10 0.05, p90 1.00)
+> ```
+> **The operator engages LKAS at speeds where he does not drive manually**, so every engaged-vs-manual claim in the record carries a speed confound. It is **not fatal** — 45 % of usable segments survive and the median keeps 60 % of its exposure — but it means the effective corpus for any engaged/manual contrast is **roughly half** what a raw segment count suggests. My own 13 → 3 collapse was worse than the corpus average only because the IMU caches cover different routes than the speed-matched set.
+> ➕ **The actionable next step is now possible for the first time:** the `extract/` toolchain was revived last tick, so IMU caches can be built for the **29 speed-matched segments** that lack them — which is exactly what this test was short of.
+> ➕ Readers: `rlog-tools/score/ratchet_in_the_imu.py` (speed matching built in).
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE AUDIO CANNOT SEE THE RATCHET AT ALL — AND THE ENTIRE `extract/` TOOLCHAIN HAS BEEN DEAD SINCE THE 2026-08-26 REORG.**
 >
 > **1. THE HARMONICS TEST, DONE PROPERLY, FINDS NOTHING.** Re-extracted from the rlogs at **0.977 Hz bins** (vs the `_spec` caches' 3.91 Hz) with a per-window engagement flag, and replaced the contaminated comb with a **smooth broadband baseline** — so broadband engagement loudness is absorbed and only LOCAL excess survives:
