@@ -17,6 +17,35 @@ anything happens.** Nothing is flashed without that.
 
 ---
 
+## ⭐ DRIVE **V234** — V233 with a mistake of mine taken back out
+
+```
+  V234   39990-TVA,A160-V234-V233BASE-LEVERB.BACK.TO.V88.OPTIMUM.5244-0x13000-0x100000.rwd
+         rwd sha256 a34204862389afa3...     image sha256 7adbc68f2b8163c6...
+```
+
+Checking Lever B against the record, I found that **every build I have put in front of you — V228, V231,
+V232, V233 — carries it at 13107, which is 2.5× above the value V88 flew.** The record's verdict on that
+lever is explicit:
+
+> *"THE LANE IS AN OPTIMUM AND V88 IS SITTING ON IT. BOTH FLANKS ARE NOW MEASURED: V61 (below) 'made it
+> WORSE'; V71c (above) worst in the corpus … LEVER B IS OFF EVERY FUTURE SHORTLIST, IN BOTH
+> DIRECTIONS."*
+
+V71c is described there as **the worst build ever recorded on all three of your symptoms.** Read straight
+from the images: V88, your car, and V217 all carry **5244**; V221 stepped it to 13107 and everything
+since inherited that, unflown.
+
+**V234 is V233 with Lever B returned to 5244** — two bytes. It pairs the notch chosen by optimising
+against the measurement with the only rate-lane dose this kit has ever bracketed on both sides.
+
+⚠ **I am not claiming 13107 is harmful** — it has never flown, and V71c's evidence is about the net dose
+reached through a different cell. But carrying an unflown 2.5× step, in the direction of the flank that
+was measured catastrophic, while recommending the build, is not something I can defend. **V233 stays on
+the shelf as the paired arm — two bytes apart, so driving both isolates Lever B exactly.**
+
+---
+
 ## ⭐ DRIVE **V233** — the best build on the shelf
 
 ```

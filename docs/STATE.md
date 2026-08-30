@@ -46,6 +46,29 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V234 BUILT — A CORRECTION TO MY OWN SHELF. EVERY BUILD V221→V233 CARRIED LEVER B 2.5× ABOVE A MEASURED OPTIMUM WHOSE UPPER FLANK IS THE WORST BUILD IN THE CORPUS.**
+>
+> The record states it outright: *“**THE LANE IS AN OPTIMUM AND V88 IS SITTING ON IT. BOTH FLANKS ARE NOW MEASURED:** V61 (net below V88) *‘made it WORSE… the rate lane is the mode's damper’*; V71c (net above) **worst in the corpus** … ⇒ **LEVER B IS OFF EVERY FUTURE SHORTLIST, IN BOTH DIRECTIONS**.”* V71c is *“the worst build ever recorded on all three symptoms (ratchet at the corpus record 8,521 ct p-p)”*.
+>
+> ```
+>   READ FROM THE IMAGES        0xC6446      0xC6444
+>   V88-era (V100)                 5244          512
+>   car V122                       5244          512
+>   V217                           5244          512
+>   V221                          13107          512   <- the step
+>   V228 / V231 / V232 / V233     13107          512   <- my whole shelf inherits it
+> ```
+>
+> ```
+>   image 7adbc68f2b8163c69c6b387171a2fc18938f8f1dce8127abf6cfff9907be42e6
+>   rwd   a34204862389afa3cf0086c92284f8369ce35de3257de508f48d76b38e9426f4
+>   29/29 assertions · TWO payload bytes · CRC 50/50 · cave BYTE-IDENTICAL · probe CARRIED
+> ```
+>
+> ✅ **V234 = the net-damping-optimal notch (V233's 25.0/23.5/0.96) + the ONLY rate-lane dose this kit has bracketed on both sides.** The r26 arm `0xC6444` is untouched at 512 throughout, so V233 and V234 are **two bytes apart** and driving both isolates Lever B exactly.
+> ⛔ **NOT CLAIMED: that 13107 is harmful.** It has never flown, and V71c's evidence concerns the NET rate-lane dose reached via the **r26 arm**, not via `0xC6446` itself. What is true is that carrying an **unflown 2.5× step**, on a lever the record puts off the shortlist **in both directions**, in the **same direction** as the flank measured catastrophic, **while recommending the build**, is not defensible. V234 removes the step; V233 stays as the paired arm.
+> 🛑 **HOW IT WAS MISSED:** I read the Lever B ladder as a settled carried value and never checked it against the V88 optimum memory — the same file I had already cited three times this session for its measurement protocol. **Reading a memory for one fact does not mean its other instructions have been applied.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V233 BUILT AND FULLY COMPLIANT — THE BEST BUILD ON THE SHELF, AND THE FIRST DESIGNED BY OPTIMISING AGAINST A MEASUREMENT RATHER THAN A HYPOTHESIS.**
 >
 > ```
