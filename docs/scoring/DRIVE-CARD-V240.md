@@ -75,6 +75,30 @@ band power by **2.8%** — the limiter is helping, and V240 makes it help more.
 
 ---
 
+## V240 survives its own census
+
+I then perturbed **every** cal the assist-map path reads, one at a time, and scored each on band power
+*and* on delivered assist:
+
+```
+  cal                     scale   band 6-9  assist p50  assist p95
+  gp-0x69a0 NORMAL         0.60     0.9126     1.0000     0.9469   <- V240
+  CAL_7384  slope cap      0.60     0.9998     1.0000     1.0000
+  CAL_7178 / 713C / 7200 / SPD_CAP_Y      1.0000 exactly, every dose
+  CAL_7468                 1.40     0.3888     0.5192     0.6255
+  BOOST_Y   angle boost    0.60     0.5698     0.6077     0.8092
+  CAL_713A                 1.40     0.7185     0.7386     0.8742
+```
+
+**`gp-0x69a0` is the only one that reduces ratchet-band gain without taking assist away.** The other
+three that move the band move assist with it — and worse than plain gain scaling would: band power goes
+as gain², so `CAL_7468`'s 0.519 assist should give 0.269 band, and it gives 0.389. **They are the same
+trade you rejected on V101, at a discount.**
+
+Four cals are **completely inert** at ±40% — band ratio 1.0000 exactly. They are off every future list.
+
+---
+
 ## What V240 changes, in full
 
 **Against your car: 31 payload bytes.**

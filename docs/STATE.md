@@ -66,6 +66,28 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **CAL CENSUS BY MEASUREMENT — `gp-0x69a0` IS THE *ONLY* LEVER IN THE WHOLE ASSIST-MAP PATH THAT BUYS DAMPING WITHOUT TAKING ASSIST AWAY.**
+>
+> Every cal the map path reads, perturbed one at a time through the integer-exact mirror on 10 routes, scored on 6–9 Hz band power **and** on delivered assist:
+> ```
+>   cal                     scale   band 6-9  assist p50  assist p95
+>   gp-0x69a0 NORMAL         0.60     0.9126     1.0000     0.9469   <- V240, THE ONLY FREE ONE
+>   CAL_7384  slope cap      0.60     0.9998     1.0000     1.0000   <- inert, confirmed again
+>   CAL_7178  slot ceiling   0.6/1.4  1.0000     1.0000     1.0000   <- COMPLETELY INERT
+>   CAL_713C  X-ish[9]       0.6/1.4  1.0000     1.0000     1.0000   <- COMPLETELY INERT
+>   CAL_7200  torque clamp   0.6/1.4  1.0000     1.0000     1.0000   <- COMPLETELY INERT
+>   SPD_CAP_Y torque cap     0.6/1.4  1.0000     1.0000     1.0000   <- COMPLETELY INERT
+>   CAL_7468                 1.40     0.3888     0.5192     0.6255   <- just turns ASSIST DOWN
+>   BOOST_Y   angle boost    0.60     0.5698     0.6077     0.8092   <- just turns ASSIST DOWN
+>   CAL_713A                 1.40     0.7185     0.7386     0.8742   <- just turns ASSIST DOWN
+> ```
+> ✅ **THE DISCRIMINATION IS THE RESULT.** Three cals move the band — and all three move **assist with it**. `gp-0x69a0` moves the band with **assist p50 at exactly 1.0000**. It is the only cal in the path that changes the lane's *shape* rather than its *gain*, which is precisely the operator's standing constraint: *“low apparent steering mass and friction to LKAS **AND** no ratcheting.”*
+> 🛑 **AND THE GAIN LEVERS ARE WORSE THAN PLAIN GAIN SCALING.** Band power goes as gain², so `CAL_7468`'s 0.5192 assist should give **0.269** band; it gives **0.3888**. `BOOST_Y`'s 0.6077 should give 0.369; it gives 0.5698. **Every one of them is strictly worse than simply lowering the overall assist gain** — which the operator already rejected on V101. They are not levers, they are the same trade at a discount.
+> ⭐ **FOUR CALS ARE MEASURED COMPLETELY INERT** at ±40 %: `CAL_7178`, `CAL_713C`, `CAL_7200`, `SPD_CAP_Y`. Band ratio **1.0000 exactly** at every dose. They can come off every future shortlist.
+> ⇒ **V240 SURVIVES ITS OWN CENSUS.** The lever it moves is the only free one in the path, and the path now has no unexamined cal left.
+> ➕ Reader: `rlog-tools/score/cal_census_by_measurement.py`. Runs the whole census in one command.
+> ⚠ **WHAT THE CENSUS DOES NOT SAY:** that −8.7 % band is a −8.7 % symptom. It measures the lane's contribution at the band; the step to felt ratcheting is the loop model, which is the part the record calls incomplete.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V240 — THE *NORMAL* SLEW CURVE HAS NEVER BEEN TOUCHED, AND IT IS THE LARGEST MEASURED RATCHET LEVER THE KIT HAS.**
 >
 > `FUN_00035b20` selects `gp-0x69a0` from **two** curves on the hard-reversal counter:
