@@ -214,7 +214,15 @@ One halfword moves the **knee** of its ceiling ramp, not the ceiling height:
    20 km/h        1024           1024        1.00x   <- IDENTICAL from here up
 ```
 
-🛑 **This is an OPEN lever, not a predicted fix.** Whether more authority on that lane **damps or PUMPS** 6–9 Hz depends on the loop phase there, which is exactly what "never scored" means. **It can make the ratchet worse.** It is cal-only, so reflashing V222 undoes it.
+🛑 **This is an OPEN lever, not a predicted fix — and there are THREE outcomes, not two.** The cell feeds the lane’s **output clamp** *and* the **anti-windup window on its integrator** (both confirmed in the disassembly). The clamp half is reassuring — a symmetric clamp is memoryless and odd, so it cannot invert a sign, only let more of an existing contribution through. The **anti-windup half is not**: an integrator with more headroom stops saturating and contributes its full phase, so this **can** change the lane’s dynamics.
+
+| outcome | what it means |
+|---|---|
+| ratchet **better** | the lane was damping and was being clipped |
+| **no change at all** | the bound never binds at creep — a real possibility, and nothing measures the PID sum, since `gp-0x6ad4` is not mirrored anywhere |
+| ratchet **worse** | the lane was pumping, or the freed integrator changed its phase |
+
+Cal-only, so reflashing V222 undoes it.
 
 ⚠ **Read it at CREEP.** Above 20 km/h it is byte-identical in effect to V222, so a highway stretch cannot distinguish them.
 

@@ -49,6 +49,30 @@ orphaned at the rebase to V164, the SAME rebase that orphaned Lever B's 6553. Th
 lever on V222's base, so it carries Lever B at 13107, the restored friction lane, the notch and the
 8x gain rather than silently handing them back.
 
+WHAT THE CELL ACTUALLY FEEDS -- TWO ROLES, CONFIRMED IN THE DISASSEMBLY
+----------------------------------------------------------------------
+The 0xC67C2 LERP does NOT feed a gain. It produces `iVar10`, and `iVar10` is used TWICE:
+
+  (1) the SYMMETRIC OUTPUT CLAMP on gp-0x6ad4 -- confirmed instruction by instruction:
+        0003a880  sar 0x5, r14        ; (D + I + P) >> 5
+        0003a882  mul r8, r14, r0     ; x the gp-0x671a LERP gain
+        0003a886  sar 0xa, r14
+        0003a888  mul r2, r14, r0     ; x polarity
+        0003a88c  cmp r10, r14        ; r10 IS the bound
+        0003a88e  bgt 0003a8a0        ;   upper clamp
+        0003a890  subr r0, r10        ;   -bound
+        0003a894  cmovle r14, r10, r10;   lower clamp
+        0003a8a0  st.h r10, -0x6ad4, gp
+  (2) the ANTI-WINDUP WINDOW ON THE INTEGRATOR: `iVar30 = iVar10*32 - P`, `iVar29 = P + iVar10*32`,
+      and the I accumulator is clamped between them before being stored to gp-0x3688.
+
+🛑 THAT SECOND ROLE IS WHY THIS IS NOT A COSMETIC CHANGE, and it is worth stating because the first
+role alone would have been reassuring. A symmetric output clamp is memoryless and odd, so raising it
+cannot invert a sign -- it can only let more of an existing contribution through. But raising the
+ANTI-WINDUP window gives the integrator more headroom, and an integrator that no longer saturates
+behaves differently: it contributes its full phase where it previously sat pinned. So this build CAN
+change the lane's dynamics, not merely its amplitude.
+
 WHAT IS NOT ESTABLISHED
 -----------------------
 [BELIEF] that more authority on this lane DAMPS 6-9 Hz rather than pumping it. The lane is a PID on
@@ -58,6 +82,10 @@ means. 🛑 THIS IS AN OPEN LEVER, NOT A PREDICTED FIX, and it is possible for i
 WORSE. It is cal-only and therefore recoverable by reflashing V222.
 [NOTE] V56 muted this lane and scored the mute at ~21 Hz, finding nothing. That does not transfer to
 6-9 Hz and the model says so explicitly.
+[NOTE] IT MAY ALSO BE INERT. Both roles only act where the bound BINDS. If |PID sum| stays under the
+existing bound at creep (57 at 3 km/h, 228 at 6 km/h) and the integrator never reaches its window,
+this build does NOTHING. That is an honest third outcome alongside better and worse, and nothing in
+the record measures |PID sum| -- gp-0x6ad4 is not mirrored to any telemetered cell.
 [NOTE] above 20 km/h this build is byte-identical in effect to V222, so a highway stretch cannot
 distinguish them. The read is at CREEP.
 
