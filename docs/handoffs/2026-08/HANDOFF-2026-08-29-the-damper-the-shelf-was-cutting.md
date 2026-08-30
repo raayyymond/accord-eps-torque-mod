@@ -245,6 +245,22 @@ Gates `[1]`–`[16]` each assert a hand-picked cell, which leaves everything nob
 
 ⚠ My first negative test reported a MISS on the taper block. **The bug was in the test, not the gate:** `0xE41C4` holds 15360→16384, i.e. `00 3C`→`00 40`, so the changed byte is at `0xE41C5` and I had reverted the unchanged low byte. Same *derive the byte, never assume it* lesson that has bitten three builds — this time in my own verification.
 
+## 4e. ❓ OPEN, NOT CLAIMED — has V31’s boost floor been outgrown?
+
+**The hypothesis.** V31 sized the soft-EME boost floor by an explicit inequality:
+
+> boost is authority-gated so it is ON at authority≈0 → **floors the bound to 4096 > 3584** → integrator can’t wind up → self-stable fixpoint
+
+where `3584 = governed_LKAS ≤1024 + COMP ≤2560`. The floor is now **5120** (V38 raised it). But the V207 retirement note computes today’s ceiling as **`4762 + 2560 = 7322`**. If those are the same quantity, then **5120 < 7322** and the inequality V31 relied on has been inverted — the floor would now BIND, which would make it an authority limiter rather than a stability floor. That would be directly on the LKAS-authority symptom.
+
+🛑 **I could not establish that they ARE the same quantity, and I am not claiming it.** Two specific reasons to doubt the arithmetic:
+1. **`0xC6202` = 4762 is not a governor cap.** The record is explicit: one reader image-wide, inside the `gp-0x4f64` **writer**, and it is a **Q10 scale factor**, not a command ceiling. I used it as one to get 7322.
+2. **The `≤1024` in V31’s inequality is a governed-LKAS figure from the 4× gain era.** Whether the post-governor value grew with the gain, or the governor still bounds it, is exactly the unverified step.
+
+**What would close it:** trace where the corridor/floor output (`r23`, set at `0x42FB8` from the LERP at `0x42F56`) is finally *used*. It passes through a state machine on `gp-0x3562` and into a parameter block staged on the stack around `0x4334C`; I did not follow it to the comparison. Until that comparison is read, **"the floor binds" is a guess, and so is "it does not."**
+
+⚠ This is written up as an open question deliberately. Three claims of exactly this shape — numbers from different contexts assumed commensurable — were retracted earlier in this same session (the friction polarity, the near-zero step, the 1/√J mechanism).
+
 ## 5. Tools and gates added
 
 - `score_drive.py`: a **30–49 Hz control band** on `cs_rate` + both IMU axes, with a 23-route corpus
