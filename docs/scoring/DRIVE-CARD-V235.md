@@ -45,7 +45,22 @@ change is **monotone with no reversal at any value** — the property the notch 
 **cannot touch LKAS**: the clamp feeding it is 0 on all 161 images, so the map sees only your torque
 sensor.
 
-⚠ **It does the thing you told me not to do.** The cap sets small-signal gain, so this is **25 % less
+⚠ **It does the thing you told me not to do, and here is the size of it — measured, not estimated.**
+The cap binds only over the first 100 counts of driver torque, and across 13 routes and 878,000 engaged
+samples that is **34.2 % of your engaged driving**:
+
+```
+  0-25   9.8 %  |  25-60  12.4 %  |  60-100  12.0 %   <- assist reduced here, 34.2 % total
+  100-150 13.5 % |  150-250 21.4 %  |  250-450 11.5 %   <- untouched
+```
+
+Your median steering torque is 128–226 counts, so **normal cornering is above the capped region and
+unaffected** — the cost falls on **near-centre, small-correction steering**, which is where added
+effort is most noticeable. The absolute size is modest, since the cap already clips those segments'
+raw slopes (6.16 / 5.26 / 3.05) down to 2.000 and V236 takes that to 1.500.
+
+**It is your feel, not LKAS** — the map is fed by the torque sensor alone, proven by `0xC616C` = 0 on
+all 161 images. The cap sets small-signal gain, so this is **25 % less
 assist at small steering inputs — more effort.** Your standing instruction is *"Increasing mass and
 friction should not be our primary approach to resolving the ratcheting… We want both."* This is the
 only gated ratchet lever this kit has ever produced, and it costs exactly that. **It does not cost

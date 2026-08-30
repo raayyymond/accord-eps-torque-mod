@@ -46,6 +46,27 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑⭐⭐⭐⭐ **V236's COST, MEASURED RATHER THAN ADJECTIVAL: it reduces assist over 34.2 % of engaged driving, concentrated near centre.**
+>
+> I had been calling it *“25 % less assist at small inputs”* without measuring how much driving is at small inputs. The cap binds only over X 0–100 of the map's axis, and `cs_tq` is on every route:
+> ```
+>   scale check: pooled max 8139 vs the map's last knot 4150 and clamp 8192 -- CONSISTENT
+>
+>   segment        fraction   cumul    cap binds?
+>      0 -   25       9.8 %    9.8 %   YES
+>     25 -   60      12.4 %   22.1 %   YES
+>     60 -  100      12.0 %   34.2 %   YES
+>    100 -  150      13.5 %   47.6 %
+>    150 -  250      21.4 %   69.0 %
+>    250 -  450      11.5 %   80.5 %
+>
+>   ENGAGED TIME WHERE V236 REDUCES ASSIST: 34.2 %   (pooled n = 877,942 over 13 routes)
+> ```
+>
+> ⚖ **A third of engaged driving, not a sliver — but not constant either.** Median driver torque is **128–226 counts** across routes, so **normal cornering sits just above the capped region and is untouched**. The 34 % is concentrated in **near-centre, small-correction steering**, which is exactly where added effort is noticeable.
+> ✅ **It is the DRIVER's feel, not LKAS.** `0xC616C` = 0 on all 161 images ⇒ the map is fed by the torque sensor alone, so nothing here changes what LKAS can ask for. That was already proven; this measurement says where the *driver* would feel it.
+> ➕ **And the absolute magnitude is modest**: the cap already clips the raw small-signal slopes (6.16 / 5.26 / 3.05 over the first three segments) down to 2.000, so V236 takes an already-reduced number down another 25 %. **The operator now has the number instead of my adjective**, which is what he needs to decide whether the only gated ratchet lever is worth its price.
+
 > 🛑🛑⭐⭐⭐⭐ **NEITHER OF MY LANE SCANS CAN IDENTIFY THE RATCHET'S SOURCE — one was in the wrong channel, the other has no discriminating power. AND I INVERTED A PHASE CONVENTION AGAIN.**
 >
 > Redoing the all-lanes scan against `cs_tq`, the channel the ratchet actually lives in:
