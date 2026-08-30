@@ -254,6 +254,41 @@ available and would give **5.6 % more headroom** while still clearing — free i
 ```
 ⇒ **the forward-gain authority lever has ONE ~10 % step left beyond V225, not an open runway.** Past 11× the clamp cannot be placed at all, and a gain raise there would clip by construction.
 
+> ✅⭐ **THIRD ASK CLOSED — LEVER B CAN NEVER CLIP THE MICRO REGIME, AT ANY VALUE IN ITS RANGE.** The
+record’s standing instruction on peak command oscillation is *"roughness is a SMALL-COMMAND phenomenon
+… size levers for the micro regime"*, so the question is whether V222/V223 stay **linear where the
+roughness actually lives**, not at the peaks. Measured `|dT|` over the span-4 ms window, pooled across
+6 routes engaged, **n = 455,183**: **p50 16.5 · p90 104.1 · p99 298.9 · max 977.4** counts.
+Lever B saturates when `|dT| × cal/1024 ≥ 8192`:
+
+```
+        cal   x car  |dT|_sat  sat duty  micro gain  delivered
+       5244    1.0x    1599.7    0.000%       84.5     100.0%   <- the car
+      13107    2.5x     640.0    0.014%      211.1     100.0%   <- V222
+      26214    5.0x     320.0    0.740%      422.2      98.6%   <- V223
+      39321    7.5x     213.3    3.093%      633.2      94.0%
+      52428   10.0x     160.0    5.674%      844.3      88.1%
+      65535   12.5x     128.0    7.859%     1055.4      82.6%   <- cal MAX (uint16)
+```
+
+⇒ **V222 delivers 100.0 % of its dose and V223 delivers 98.6 %** — both fully linear in the micro
+regime, with micro gain scaling **exactly proportionally** (84.5 → 211 → 422). ➕ **And the whole ladder
+is usable**: even at the cal maximum, saturation onset (128 ct) sits **7.8× above the p50 of 16.5 ct**,
+so **no uint16 value can clip the regime the symptom lives in**; delivery degrades only gracefully, to
+**82.6 %** at the extreme. ⚠ What DOES clip is the top of the distribution — 7.9 % of frames at cal max
+— i.e. large excursions, not roughness. ⇒ **the dose reaches the symptom, and the ladder has room
+beyond V223 if the drive asks for it.**
+➕ Correcting my own working line: an intermediate print called the high end *"mostly clipped"*. It is
+not — **82.6 % still arrives at the maximum.**
+
+> ✅ **PRE-FLIGHT AUDIT OF ALL THREE ASKS IS NOW COMPLETE.** ① **Grinding** — the notch cuts 15–22 Hz
+2.7×; it reaches the 9–12 Hz `Re(Z)` peak by only 8 %, but Lever B covers that band **1.35× more
+strongly than the ratchet**, and both re-centring and widening are priced and deferred. ② **LKAS
+authority** — the 8× step scales its clamp **exactly**, preserving the car’s margin to four digits;
+the path’s structural ceiling is **11×**. ③ **Peak command oscillation** — the dose is **fully linear in
+the micro regime** and cannot be clipped there at any cal. **Nothing in the audit argues against flying
+V222 as built.**
+
 > 🛑 **AND THE FRAME TEST IS INCONCLUSIVE — reported as such, not dressed up.** The plan was to
 calibrate the pipeline against the operator-confirmed *"+ LKAS demands negative steering angle"*.
 Measured: median `corr(sc_tq, cs_ang)` = **−0.166**, which matches the convention — **but 2 of 6 routes
