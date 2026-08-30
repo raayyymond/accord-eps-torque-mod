@@ -686,6 +686,20 @@ for _v in sorted(img):
 #   5244   V88..V220 and THE CAR -- the value V88 measured (15-22 Hz 0.549x, 0.5-3 Hz NULL)
 #  13107   V221/V222 rung 1, after V160's "int16 ceiling" was shown not to exist
 #  26214   V223     rung 2, sized by the lane's describing function
+# ---- Lever B's INPUT has a silent kill-switch, and nothing checked it ------------------
+# gp-0x4f62 is produced by FUN_0007e74a as a span-N finite difference over an 8-slot ring, with
+# N = cal(0xC6C42). The code's own guard is `if N < 8 ... else gp-0x4f62 = 0`, so writing 8 or more
+# ZEROES the torque rate -- killing r24 AND r26 together, since both read the same dtorque. Lever B
+# would report its full gain and deliver NOTHING, and every other check here would still pass,
+# because they all check the GAIN and never its input. 0xC6C42 = 4 in all 218 images; this keeps it
+# that way. Span also sets the lane's PHASE: at ~1 kHz, N=4 is 5.6 deg of lag at 7.79 Hz.
+for _v in sorted(img):
+    _n = struct.unpack_from('<H', img[_v], 0xC6C42)[0]
+    chk(_n == 4,
+        f'{_v.upper()} 0xC6C42 = {_n} -- Lever B input derivative span'
+        + ('' if _n == 4 else (' -- N >= 8 SILENTLY ZEROES gp-0x4f62 AND KILLS r24 AND r26'
+                               if _n >= 8 else ' -- span moved, Lever B phase changed')))
+
 _LEVER_B_LADDER = {'v221': 13107, 'v222': 13107, 'v223': 26214,
                    'v224': 13107, 'v225': 13107, 'v226': 13107}   # the arms, rebased onto V222
 for _v in sorted(img):
