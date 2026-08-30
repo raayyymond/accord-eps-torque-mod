@@ -66,6 +66,33 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ⭐⭐⭐⭐⭐ **THE 6–9 Hz ANTI-DAMPING REPLICATES ON NON-RECTIFIED INSTRUMENTS — UNANIMOUSLY. THE RECTIFICATION DOUBT IS SETTLED FOR THE *SYSTEM* SIGN, AND STILL OPEN FOR THE *LANE* SIGN.**
+>
+> `tq` and `cs_rate` never pass through `FUN_00055d80`, so `Z = CSD(rate,tq)/PSD(rate)` is immune to the doubt that hangs over every 427-derived phase:
+> ```
+>   ENGAGED  Re(Z) 6-9 Hz : median -58.20    negative on 31 of 31 routes
+>   MANUAL   Re(Z) 6-9 Hz : median  -0.81    negative on 13 of 25  (a coin flip)
+>   ENGAGED - MANUAL      : median -56.38    more negative on 25 of 25, p = 0.0000
+>   control 22-30 Hz eng  : POSITIVE +8..+17 on nearly every route
+> ```
+> ✅ **Engagement injects anti-damping at 6–9 Hz while the 22–30 Hz control stays POSITIVE** — band-specific, so not a sign error and not a broadband artefact. This **replicates** the record's own *“the 6–9 Hz anti-damping is HONDA'S; at 22–26 Hz we REVERSE the sign”*, now on instruments the rectification cannot touch.
+> 🛑 **AND IT DOES NOT LICENSE A 6–10 Hz NOTCH — I checked, because it looked like it did.** System-level `Re(Z)` and per-lane phase are **different objects**. The record already holds *both* *“the system is anti-damped at 6–9 Hz”* and *“every tapped lane damps at 6–9 Hz”*, and **their coexistence is exactly what forces the source to be NONLINEAR**: no combination of damping linear lanes can produce an anti-damped system. That points back at the **command-proportional Coulomb relay**, which is already de-relayed to 16.75 % duty on the car.
+> ⚠ Manual-arm coherence is low (0.06–0.23 vs the engaged arm's 0.4–0.9), so the paired contrast is carried by the engaged side. Not speed-matched.
+> ➕ Reader: `rlog-tools/score/rez_nonrectified_replication.py`. **Nothing on the shelf moves: V241 stays the flight candidate, V238/V240 stay costed.**
+
+> 🛑🛑⭐⭐⭐⭐⭐ **THE SETTLED POSITION ON `gp-0x6b86`, AFTER TWO WRONG HEADLINES IN ONE TICK: ITS ENERGY IS KNOWN, ITS SIGN IS NOT — AND THE SIGN IS THE WHOLE QUESTION.**
+>
+> Rectification (`FUN_00055d80` clamps 427 to `[0, 0x3ff]`) is **asymmetric in what it destroys**, and that asymmetry decides which claims survive:
+> ```
+>   ENERGY at f0   -> RECOVERABLE, it reappears at 2f0     => the ranking is SOUND
+>   PHASE  at f0   -> DESTROYED outright                   => the sign is NOT MEASURED
+> ```
+> ✅ **WHAT IS ESTABLISHED:** `gp-0x6b86` carries the most ratchet-band energy of every lane 427 ever flew — complete separation over **4 lanes and 8 routes**, the four losers clustered at baseline (1.75–2.11) and `gp-0x6b86` apart at 2.94–5.36.
+> 🛑 **WHAT IS NOT:** whether that lane **damps or pumps** at 6–9 Hz. I first called it the ratchet's source, then corrected to *“a damper we must not cut”* on the strength of `cos −0.918 / −0.989 / −0.629`. **Both overreached: that phase was measured ON THE RECTIFIED CHANNEL**, which is the exact doubt the drive card already flags. **Neither reading is established.**
+> ⚠ **AND THE DOUBT IS NOT LOCAL TO ONE LANE.** *“Every tapped lane damps at the ratchet — 13 routes, 7 taps, all negative at 6–9 Hz”* is the claim that closes the linear-lane census **and** condemns V238/V240. If those signs came from 427, they are **suspect together**, and the arc's central wall — *“the one band worth filtering is the one band that must not be filtered”* — rests on them.
+> ⇒ **THE ONE MEASUREMENT THAT SETTLES IT, and the data is already on disk:** take the phase between **two NON-rectified instruments** — the torque sensor `tq` and the **IMU** (independent of the EPS entirely, and already shown to see the ratchet, 9/10 routes, p 0.0215). **No probe, no build, no drive.** That is the next tick.
+> ⭐ **NOTHING ON THE SHELF MOVES ON THIS.** V241 stays the flight candidate; V238/V240 stay costed until the sign is measured rather than inherited.
+
 > 🛑🛑⭐⭐⭐⭐ **`gp-0x6b86` CARRIES THE MOST RATCHET-BAND ENERGY OF EVERY LANE 427 EVER FLEW — BUT THAT IS *NOT* “THE RATCHET'S LANE”, AND I HEADLINED IT WRONGLY BEFORE CHECKING THE PHASE THE RECORD ALREADY HELD.**
 >
 > The **measurement** stands and is clean. The **causal reading I hung on it does not**, and the discriminator was already in this file: **`gp-0x6b86`'s measured phase at 6–9 Hz is cos −0.918 / −0.989 / −0.629, 3/3 routes — the lane is DAMPING there, not pumping.** A *source* shows cos > 0. ⇒ **the lane with the most 2f₀ energy is the lane RESPONDING hardest to the ratchet, not the one causing it** — which is precisely why cutting it condemned V238 and V240.
