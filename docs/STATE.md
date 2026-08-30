@@ -46,6 +46,24 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **EVERY TAPPED LANE DAMPS AT THE RATCHET — SO THE RATCHET'S ENERGY SOURCE IS NOT IN ANY ASSIST LANE THE KIT CAN OBSERVE.** The net-damping metric was built for the notch and applied only there. Applying it to **every lane ever put on CAN 427**, 13 routes across 7 taps, cos(phase vs wheel rate), coherence-gated:
+>
+> ```
+>   lane        routes     6-9 Hz    9-12 Hz    15-22 Hz   22-30 Hz
+>   gp-0x6ABC      3       -0.844    -0.978     -0.314     -0.184
+>   gp-0x6B26      2       -0.875    -0.987     +0.167     +0.886
+>   gp-0x6B4C      2       -0.902    -0.953     +0.574     +0.921
+>   gp-0x6B70      1       -0.889    -0.986     +0.038     +0.914
+>   gp-0x6B86      3       -0.918    -0.989     +0.551     +0.936
+>   gp-0x6B94      1       -0.918    -0.820     +0.545     +0.797   <- the AGGREGATE
+>   gp-0x6C2C      1       -0.646    -0.996     +0.070     -0.234
+> ```
+>
+> ✅ **EVERY value at 6–9 Hz is NEGATIVE, and every value at 9–12 Hz is negative.** Not one lane injects energy at 7.79 Hz, and the aggregate opposes the motion at **−0.918**. Yet driver-side `Re(Z)` is NEGATIVE at 6–9 Hz on three replicated drives — the column IS doing work on the driver's hands.
+> 🛑 **⇒ THE RATCHET'S SOURCE IS OUTSIDE THE OBSERVABLE ASSIST LANES.** A direct explanation for sixty builds failing on it: **reducing a damping lane makes it worse, and raising one is bounded by that lane's own ceiling.** No aggregator cal change can be the fix, because there is nothing there to remove. The record already suspected the plant; this confirms it **from the lane side**, which had never been checked.
+> 🛑 **THE LIMIT, AND IT MATTERS AS MUCH AS THE FINDING.** This is a LINEAR cross-spectral measurement. A **nonlinear** mechanism — stick-slip, a Coulomb relay, a deadband — can inject energy without showing positive cos in a linear cross-spectrum, and the kit has a Coulomb relay finding and describes the ratchet as stick-slip-like. ⇒ **what is refuted is a LINEAR lane source; a nonlinear one remains open and is invisible to this method.** This is NOT “the ratchet is unfixable”.
+> ➕ **Consequence for V235:** its value is on the **grinding**, where the lanes demonstrably pump (22–30 Hz, +0.79 to +0.94 on six of seven taps). It was never going to fix the ratchet — and now there is a reason rather than a hope.
+
 > 🛑 **SESSION NARRATIVE: `docs/handoffs/2026-08/HANDOFF-2026-08-30-the-notch-was-in-the-wrong-place.md`** — the arc V228→V235, the six claims of mine that were wrong and what caught each, the two defects found in builds I was recommending, and the standing blocks. **Read it before the blocks below**, which are in reverse chronological order.
 
 > 🛑🛑⭐⭐⭐⭐ **THE GAIN HEADROOM IS NOT COMPUTABLE FROM THE CORPUS — so no gain step may be proposed on V235's damping. Recording this as a BLOCK, not an open question.**
