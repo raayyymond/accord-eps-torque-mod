@@ -1088,6 +1088,30 @@ restored and the operator reported no change. That was wrong.** V71's own probe 
 > If the answer is "the build carried the byte", that is not sufficient — a byte that never executes is
 > not a test. Prefer a probe rung on the lever's own enabling condition.**
 
+> **RULE 5b, added 2026-08-30 — AND STATE HOW YOU KNOW THE SYMPTOM HAD A CHANCE TO OCCUR.**
+> RULE 5 closes *"was the byte executing?"*. It does **not** close *"did the symptom fire at
+> all?"*, and that second gap is now demonstrated rather than suspected:
+>
+> - **V67, V68 and V85 are BYTE-IDENTICAL** on all five cells ever blamed for grind #2
+>   (`0xC6446`=5244, `0xC6444`=512, `0x3AB76`/`0x3AC20`=`aa`, `0x3AA96`=`fb`). Grind #2 was
+>   reported on the first two and **NOT** on the third.
+> - The operator on V112: ***"I no longer have an understanding of the kinds of scenarios that
+>   illicit grind #1."***
+>
+> ⇒ **a lever can be provably IN FORCE, flown on a drive where the symptom never fired, and
+> recorded FALSIFIED wrongly.** The existing rule that *"absence of a complaint is not a report
+> of absence"* covers the operator's side; **RULE 5b covers the LEVER's side.**
+>
+> **Acceptable answers:** a probe rung showing the symptom's own signature fired; a band
+> measurement with stated exposure against the floor (grinding needs ~14 engaged min/arm, the
+> ratchet ~7 h — see `STATE.md`); or a REPEAT ROUTE on the same build. **"He drove it and did
+> not mention it" is not one of them.**
+>
+> 🛑 **And keep ACCEPTABILITY apart from EFFICACY.** *Is the car acceptable?* — the operator
+> answers it, one episode suffices, his verdict is FINAL. *Did the lever work?* — the bands
+> answer it and need many drives. **Confusing the two is how a lever gets struck on one quiet
+> drive.**
+
 ★ What survives is stronger than the retracted claim: since state 4 never occurs, the substitution
 **never runs on stock either** ⇒ **structurally eliminated** as the 7.79 Hz ratchet's cause.
 ⚠ **[OPEN]:** V42 was CONFIRMED on-car against the *hard-turn recovery* ratchet. If state 4 never occurs,
