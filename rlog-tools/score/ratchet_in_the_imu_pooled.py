@@ -99,20 +99,14 @@ def arms(sig, t, engf, spd, fs):
     return out[0], out[1], out[0][0], em.sum() / fs, mm.sum() / fs
 
 
-def main():
+def collect():
+    """-> [(route, nseg, eng_s, man_s, f0, gyro_excess, road_control, ratio)]"""
     imus = sorted(glob.glob(os.path.join(REPO, '_scratch', 'cache', '*', '*_imu.npz')))
     byroute = collections.defaultdict(list)
     for p in imus:
         m = re.match(r'^(r[0-9a-fx]+?)s?\d*$', os.path.basename(p).replace('_imu.npz', ''))
         if m:
             byroute[m.group(1)].append(p)
-
-    print('=' * 96)
-    print('  RATCHET IN THE IMU -- POOLED per route, SPEED-MATCHED, with a road control')
-    print('=' * 96)
-    print('  %-8s %5s %8s %8s %8s %9s %9s %9s' %
-          ('route', 'segs', 'eng s', 'man s', 'f0 Hz', 'gyro exc', 'road ctl', 'ratio'))
-    print('  ' + '-' * 76)
 
     rows = []
     for route, paths in sorted(byroute.items()):
@@ -182,6 +176,17 @@ def main():
         rows.append((route, len(paths), te, tm, f0, gexc, rctl,
                      gexc / rctl if rctl and np.isfinite(rctl) else np.nan))
 
+    return rows
+
+
+def main():
+    rows = collect()
+    print('=' * 96)
+    print('  RATCHET IN THE IMU -- POOLED per route, SPEED-MATCHED, with a road control')
+    print('=' * 96)
+    print('  %-8s %5s %8s %8s %8s %9s %9s %9s' %
+          ('route', 'segs', 'eng s', 'man s', 'f0 Hz', 'gyro exc', 'road ctl', 'ratio'))
+    print('  ' + '-' * 76)
     if not rows:
         print('  no route pooled enough speed-matched exposure.')
         print('  \U0001f6d1 EMPTY INPUT, not a null result.')

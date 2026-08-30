@@ -66,6 +66,23 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑⭐⭐⭐⭐⭐ **NO BUILD HAS EVER MOVED THE RATCHET — AND THAT IS NOW CONFIRMED ON AN INSTRUMENT NO BUILD COULD HAVE GAMED.**
+>
+> Every ratchet score in the record was computed from the **EPS's own CAN channels** — the same subsystem the builds modify. So a hypothesis has stood open this whole arc: *maybe a build did fix it, and CAN-based scoring could not see it.* The comma's gyro cannot be altered by any calibration, so it settles that. Each build scored against **its own road control**, speed-matched:
+> ```
+>   build  route   segs   eng s   man s  gyro exc  road ctl   ratio
+>   V75    r5e        7    38.7    43.0     4.118     2.630   1.566
+>   V80    r66       15   101.8   158.2     3.350     2.955   1.133
+>   V85    r6e        7    50.2    60.3     5.102     3.371   1.514
+>   V86B   r70        4    82.9    86.7     1.737     1.524   1.140
+>   V88    r73       11    57.2    83.7     4.723     1.904   2.481
+>   median 1.514   spread 1.133 .. 2.481
+> ```
+> 🛑 **[EVIDENCE] NO BUILD SITS BELOW THE SPREAD.** The arc's ratchet null is **real**, not an artefact of scoring the ratchet through the very subsystem being modified.
+> ✅ **AND V88 — the kit's ONE measured grinding fix — carries the HIGHEST ratchet ratio (2.481).** That is exactly the dissociation the record already reports from CAN (*grind falls ρ −0.94 p 0.005 while the ratchet stays pinned at 8.64 Hz ± 7.4 %*), now reproduced **off-EPS**. Two independent instruments agreeing that **grinding and ratcheting are different problems** is the strongest form that claim has ever had.
+> ⚠ **THIS IS A SCREEN, NOT AN ATTRIBUTION.** One route per build, so build and road are **perfectly confounded** — a route driven on rougher tarmac cannot be separated from a worse build. n = 5. A standout would have been a lead to chase; the absence of one is the useful part.
+> ➕ Reader: `rlog-tools/score/imu_ratchet_by_build.py` (route→build map from `rlog-tools/lib/v95_rez_lib.py`).
+
 > ✅⭐⭐⭐⭐⭐ **THE RATCHET IS REAL MOTION — CONFIRMED ON A SENSOR PHYSICALLY INDEPENDENT OF THE EPS, FOR THE FIRST TIME IN THIS KIT.**
 >
 > Every prior ratchet finding came off the EPS's own CAN channels, so all of them shared one failure mode: an artefact of EPS signal processing, a decode error, or torsion-bar scaling. The comma's LSM6DS3TR-C shares none of that. Pooled per route across segments, **speed-matched**, with a **road control** on vertical acceleration:
