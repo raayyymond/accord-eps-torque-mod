@@ -23,8 +23,8 @@ Measured against THE CAR (not against V229), V230 is 0.993 at 1 Hz, 0.746 at 7.7
 
 => THE LEVER DOES REACH THE CAR -- V94's 6x cut aborting a drive is the proof. It is merely
 unmeasurable at its own output. Its direction matches that 6x cut and its magnitude is smaller. The
-caution is therefore BETTER founded than when I wrote it, not weaker: this is not "probably a no-op",
-it is "reaches the car, in the direction that once went badly".
+caution is therefore BETTER founded than when I wrote it, not weaker. RETRACTED wording: "probably
+a no-op". The correct reading is "reaches the car, in the direction that once went badly".
 
 The lane is also primarily a RATCHET lane -- measured on the three routes whose CAN 427 taps it,
 it is 52.8 % 6-9 Hz (coherence 0.728 with wheel rate), 17.4 % 9-12, 10.9 % 15-22. Perturbing it in
