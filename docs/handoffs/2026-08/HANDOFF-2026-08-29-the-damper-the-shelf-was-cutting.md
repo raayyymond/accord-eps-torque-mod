@@ -31,6 +31,16 @@ V94 flew it after cutting `gp-0x6b26` 6×; that cell was later measured to be a 
 **0.500×** — a **7.15× cut**, reached in two *never-flown* steps (V175, V196). **Every prior check
 compared this row to Honda**, which made a 7.15× change *from the car* read as a tidy "half dose".
 
+### 🛑🛑 AND IT MAY EXPLAIN THE SIXTY-BUILD NULL
+
+The cut was not an accident of bundling. `STATE.md`’s top-level summary **credited it as the ratchet ANSWER** — *"RATCHETING → inertia half-dose (V196) + the K1 revert"*. V196 is a half-dose of the exact cut V94 flew and the operator aborted, and the V94 row already said why that was wrong:
+
+> 🛑 **THE PREMISE WAS BACKWARDS.** Cut 6× on *"it is apparent inertia, nothing is dissipated, lowering is strictly safe"*. Measured on **two independent drives**, ω-partialled with a shuffled control: **+518/+565 counts of POSITIVE Re(Z). It is a REAL 6–9 Hz DAMPER.** ⇒ **the first measured `d(symptom)/dK` this lever has ever had, and the sign says UP.**
+
+⇒ **V196 repeated a premise the kit’s own flight data had already refuted, and the summary then recorded the result as the answer.** So for the ratchet — the symptom that *"nothing has moved in sixty builds"* — the lever has been pushed in the direction the only on-car measurement says makes it **worse**.
+
+⚠ **Candidate, not conclusion.** It fits the V94 abort and the sixty-build null, but nothing has flown with the damper restored **and** a ratchet lever applied. **V217 is the first build that tests it.** Retracted in `STATE.md` 2026-08-29.
+
 ### The fix took four builds because each exposed the next layer
 
 | build | corrected |
