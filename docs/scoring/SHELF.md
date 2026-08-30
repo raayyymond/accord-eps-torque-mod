@@ -1,6 +1,6 @@
 # THE SHELF — what is built, what to flash, what it changes
 
-**Updated 2026-08-29.** Six flashable builds: **V212 (fly this)** · V209 (notch + probe, no ratchet lever) · V208 (the notch alone) · V210 (ratchet lever, uninstrumented) · **V211 (authority — STAGED)** · V199 (fallback). All reproduce bit-for-bit from their builders.
+**Updated 2026-08-29.** Seven flashable builds: **V213 (fly this — all three symptoms)** · **V212 (the conservative half — no gain step)** · V209 (notch + probe) · V208 (notch alone) · V210 (notch + ratchet, blind) · V211 (gain step alone) · V199 (fallback). All reproduce bit-for-bit from their builders.
 
 🛑 **V207 was built and RETIRED without flying.** It asked whether the delivery chain zero-rejects
 the merged command; the answer is provably no — the compensation is capped at 2560 by a 3-knot table,
@@ -13,7 +13,42 @@ name the file and the bus, and they will be read back to you first.
 
 ---
 
-## ⭐ V212 — FLASH THIS ONE. Both named symptoms, in one instrumented build.
+## ⭐ V213 — FLASH THIS ONE. All three symptoms, instrumented.
+
+```
+39990-TVA,A160-V213-V208BASE-C63AE.512-GAIN8X-PROBE.GP6B4E-0x13000-0x100000.rwd
+  image b1f998702adbbce9a52e7e430906f0cd77410625c29887e4d0a06e4cddb0e239
+  .rwd  c43546ba8b59ec716c539d1457511524e591dc527810bdcd3c596339a6a3e3ca
+```
+
+Built 2026-08-29. **V212 + the authority lever.** 8 payload bytes, cal-and-probe only, **no cave change**. 42/42 builder assertions, CRC 50/50, `.rwd` readback byte-identical.
+
+| lever | cell | targets |
+|---|---|---|
+| notch 20.50 Hz | `0xC60A8/AC/B0/B4` | **grinding**, 18–22 Hz |
+| soft-relay dose | `0xC63AE` 1024→512 | **ratchet/stutter**, ~7.8 Hz |
+| forward gain 6×→8× | `0xC6CD0` 5346→7128 + clamps `0xC61B2/B4` 3072→4096 | **LKAS authority** |
+| 427 probe | `0x55DF2`, `0x55E10` | reads `gp-0x6b4e` so the drive is interpretable |
+
+**The gain step is priced, not guessed.** It raises loop gain a flat 1.333× ⇒ vibration 1.650× (the kit’s m^1.74 amplitude law). The notch gives back 3.59× at 22–26 Hz ⇒ **net 0.459×: 2.18× quieter AND 1.33× more authority.**
+
+**Both reasons this was previously staged are now resolved:**
+
+1. The engagement-gated **42.19 Hz line is the rectifier image of the 21.09 Hz mode** — `gp-0x6ba6 = |gp-0x6b9a|` at `0x3b87a`, so 2f falls out arithmetically. It only indexes boost LERPs that are **flat at the operating point**, and that arc **already flew NULL** as V58/V59/V60. Not an independent mode.
+2. **Grind #2** (40–49 Hz, +9.7 dB(A)) was **created by V62’s rate-lane ×2**, and this base is **byte-stock at `0x3AB76`/`0x3AC20`** — asserted in the builder. Prior work also found 40–49 Hz is **not engagement-conditional** and the 28 Hz transient is **dose-independent**.
+
+⚠ **Residual risk, stated plainly.** Break-even is 29.5 Hz; above it the notch gives nothing back, so this build **raises loop gain 1.65× across 30–49 Hz**. There is **no direct measurement of that band on this base** — the two arguments above are inference from prior builds, not a measurement of V213. **If you want the safer half, fly V212**, which is this build without the gain step.
+
+⚠ **Three levers is a real confound.** The probe separates the ratchet lane from the grind band; it does **not** separate the gain step from either. V212, V210, V209 and V211 are all on the shelf to decompose an ambiguous result.
+
+```
+python rlog-tools/score/score_drive.py <tag> V213   # start here -- NAME THE BUILD
+python rlog-tools/probe/decode_v204_observer_lane.py <tag> --v209
+```
+
+---
+
+## V212 — THE CONSERVATIVE HALF. Same build without the gain step.
 
 ```
 39990-TVA,A160-V212-V208BASE-C63AE.512-PROBE.GP6B4E-0x13000-0x100000.rwd
