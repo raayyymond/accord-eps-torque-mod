@@ -28,6 +28,8 @@ FW = os.environ.get('ACCORD_FIRMWARE_ROOT',
 # WITHDRAWN builds: the builder must still reproduce bit-for-bit -- that invariant is about the build
 # system -- but the artifacts carry SUPERSEDED-DO-NOT-FLASH- and there must be NO flashable .rwd.
 WITHDRAWN = {
+    "v237": ("BACKWARDS: raising the lag pole RESTORES more of the slew limiter's cut at "
+              "7.79 Hz, RAISING lane gain. V238 is the same cell the other way."),
     'v230': 'cuts a DAMPER: gp-0x6b26 measured +518/+565 counts of POSITIVE Re(Z)',
 }
 
@@ -62,7 +64,8 @@ SHELF = {
     'v234': '7adbc68f2b8163c69c6b387171a2fc18938f8f1dce8127abf6cfff9907be42e6',   # V233 + Lever B back to V88's measured optimum 5244
     'v235': 'ad6d485eefb2f6bcc195c062035d5a9dab5fb06dae7f46f68f5ca03a504c18ab',   # V234 + 0xC63AE back to Honda 1024 -- the car + 3 cells
     'v236': '509785673468a346ac366dfb2fb8e491231f49a4e440e22ef9ce4fe39602d862',   # V235 + the assist-map slope cap: the RATCHET lever
-    'v237': 'bebd6c6ca9e9ad735016f477dece6dfa275bfaf9bb65a1c5d13d8c8716b812f1',   # V235 + the engaged lag POLE: a ratchet lever with NO effort cost
+    'v237': 'bebd6c6ca9e9ad735016f477dece6dfa275bfaf9bb65a1c5d13d8c8716b812f1',   # V235 + the engaged lag POLE: a ratchet lever with NO effort cost -- WITHDRAWN, backwards
+    'v238': '34ceb5aefaa9bdd5fd656513ce3536ae3e0fd5590c5c8bb80b400aa90b8a5be5',   # V235 + the SAME pole LOWERED 20->8: V237 corrected
 
 }
 # ARCHIVE: builds whose BUILDER must still reproduce its image, but which are NOT meant to be

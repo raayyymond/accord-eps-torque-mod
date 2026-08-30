@@ -1,3 +1,7 @@
+# WITHDRAWN 2026-08-30: the direction this script argues for is BACKWARDS, and the manual-arm
+# consistency check it prints is retracted. The lane is a BLEND, out = table2 + H_k*(table1-table2),
+# so RAISING k restores more of the slew limiter's cut and RAISES lane gain. See
+# analysis-2020accord/builds/v108_plus/build_v238_tva.py. Kept as the record of how it was aimed.
 # -*- coding: utf-8 -*-
 """AIM 0xC6906 -- which way does k move the ratchet's damping?
 

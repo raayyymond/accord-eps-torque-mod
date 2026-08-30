@@ -80,7 +80,7 @@ PUB = {
     'v234': '7adbc68f2b8163c69c6b387171a2fc18938f8f1dce8127abf6cfff9907be42e6',
     'v235': 'ad6d485eefb2f6bcc195c062035d5a9dab5fb06dae7f46f68f5ca03a504c18ab',
     'v236': '509785673468a346ac366dfb2fb8e491231f49a4e440e22ef9ce4fe39602d862',
-    'v237': 'bebd6c6ca9e9ad735016f477dece6dfa275bfaf9bb65a1c5d13d8c8716b812f1',
+    'v238': '34ceb5aefaa9bdd5fd656513ce3536ae3e0fd5590c5c8bb80b400aa90b8a5be5',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -850,10 +850,10 @@ _KNOT_OK = {
     #     move static assist at any input;
     #   * the MANUAL arm already runs this pole at 41 on every image, and manual is the arm WITHOUT
     #     the ratchet, so raising the engaged value moves toward a configuration the car already runs.
-    ('v237', 0xC6906),
-    ('v237', 0xC6908),
-    ('v237', 0xC690A),
-    ('v237', 0xC690C),
+    ('v238', 0xC6906),
+    ('v238', 0xC6908),
+    ('v238', 0xC690A),
+    ('v238', 0xC690C),
 }
 chk(len(_TABS) >= 90, f'{len(_TABS)} well-formed cal tables enumerated from movea instructions')
 for _v in sorted(img):

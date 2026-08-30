@@ -54,6 +54,17 @@ WITHDRAWN = [
      'V230\'s lever called "probably inert"',
      '2026-08-30: MISREADING. The x1.5 null means UNMEASURABLE, not dead -- y = K*alpha is invariant '
      'to K while the motion is not. V94\'s 6x cut aborted a drive, proving the cell reaches the car.'),
+    (r'rais\w* (?:the )?(?:engaged )?lag pole|0xC6906.{0,40}(?:80|raise)|V237 is the (?:lead|recommendation)',
+     "V237's direction (raising the engaged lag pole)",
+     '2026-08-30: WITHDRAWN. The lane is not a direct path plus a parallel lagged branch; it is a '
+     'BLEND, out = table2 + H_k*(table1 - table2), where table2 is the gp-0x69a0 slew-limited map. '
+     'RAISING k restores more of the cut at 7.79 Hz and RAISES lane gain => less damping. V238 '
+     'lowers it instead.'),
+    (r'manual arm .{0,40}k=41.{0,60}(?:no|without) (?:the )?ratchet|the arm with the higher k',
+     "V237's manual-arm consistency check",
+     '2026-08-30: WITHDRAWN. Under the blend it points the OTHER way (manual restores MORE), and '
+     'either reading is confounded -- engagement adds the whole LKAS path, and the archive already '
+     'found the pole difference far too small to explain the engaged/manual contrast.'),
     (r'no LINEAR lane is the ratchet|every lane damps at the ratchet',
      'the all-lanes ratchet scan conclusion',
      '2026-08-30: WITHDRAWN as unsupported. It scored cos(phase vs cs_rate), and cs_rate is at '

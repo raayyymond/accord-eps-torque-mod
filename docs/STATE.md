@@ -51,7 +51,7 @@
 > ```
 >   image bebd6c6ca9e9ad735016f477dece6dfa275bfaf9bb65a1c5d13d8c8716b812f1
 >   rwd   9cab1723e1b969883869677ef7f42e49beba04f09256ac14942a9d5c7b48c764
->   EIGHT payload bytes on V235: 0xC6906 Y[0..3]  20 -> 80
+>   🛑 WITHDRAWN -- BACKWARDS. EIGHT payload bytes on V235: 0xC6906 Y[0..3]  20 -> 80
 > ```
 >
 > ✅ **LAYOUT SETTLED FROM THE READER, not inferred.** `pcVar26 = tp+0x7906` is the Y base; the bounds tests read `tp+0x78FE` and `tp+0x7904`; the out-of-range arms return `tp+0x790C` and `tp+0x7906`. ⇒ **X = [0, 9830, 26214, 32768] at `0xC68FE`, Y = [20,20,20,20] at `0xC6906`.** The reader then clamps: `if (uVar40 < 0xcd) max(2, uVar40) else 0xcc` ⇒ **k is bounded to [2, 204] by the firmware itself.**
@@ -65,6 +65,37 @@
 > ```
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
+
+> 🛑🛑⭐⭐⭐⭐⭐ **V237 WAS BACKWARDS — THE LANE IS A *BLEND*, NOT A DIRECT PATH PLUS A LAGGED BRANCH. V238 IS THE SAME CELL THE OTHER WAY, AND IT IS HONDA'S OWN DIRECTION.**
+>
+> Reading the tail of `FUN_000352b4` properly — decompile first, which is what settled it:
+> ```
+>   gp-0x37e8   Y array, capped by 0xC6384          -> table1 -> gp-0x6b7a   (V236's cell)
+>   gp-0x3810   Y array, ALSO slewed by gp-0x69a0   -> table2 -> uVar25      (V192's cell)
+>
+>   bVar3  = (table2 < |table1|)            the gate: where the SLEW limiter bit
+>   iVar33 = (table1 - table2) * bVar3      exactly what the slew limiter cut
+>   iVar34 = table2*bVar3 + table1*!bVar3   the DIRECT path is the LIMITED value
+>   out    = iVar34 + EMA_k(iVar33)
+>
+>   =>  out(f) = table2 + H_k(f)*(table1 - table2)
+>            = table1 at DC        (the slew limit fully UNDONE)
+>            = table2 at high f    (the slew limit fully IN FORCE)
+> ```
+> 🛑 **`k` IS NOT A BRANCH GAIN. It is the valve on how much of the slew limiter's tightening survives to the output at a given frequency.** Raising it restores MORE of the cut at 7.79 Hz, which **raises** the lane's gain there; every torque-fed lane is a denominator term in `Z = (Z0+P·F)/(1−P·L)`, so that is **more positive feedback and less damping**. **V237 pushed the ratchet the wrong way and is WITHDRAWN** — `.rwd` renamed `SUPERSEDED-DO-NOT-FLASH-…`.
+> ✅ **LOWERING k IS HONDA'S OWN DIRECTION.** `FUN_00035b20` TIGHTENS `gp-0x69a0` when its hard-reversal counter trips — tightening that limiter *is* Honda's built-in oscillation response, and **V192 applied Honda's own 0.600 ratio to it once more**. V238 opens the same mechanism further through a different cell. Like V192, this is **not a polarity gamble**.
+> ⭐ **V238 BUILT — `0xC6906` Y[0..3] 20 → 8**, 8 payload bytes on V235. image `34ceb5aefaa9bdd5…` · rwd `e9faa7b461c6118b…` · 36/36.
+> ```
+>   k     corner     |H| at 7.79 Hz    tau       fraction of the cut UNDONE at the ratchet
+>   20    1.554 Hz      0.1966       0.102 s      20 %   <- the car
+>    8    0.622 Hz      0.0797       0.256 s       8 %   <- V238
+>    2    0.155 Hz      0.0200       1.024 s       2 %   <- the firmware's own floor
+> ```
+> **8, not the floor:** at `k=2` tau is ~1 s, and V192's card already names the failure mode — *“watch for a brief HESITATION replacing the ratchet ⇒ too tight”*. V238 cuts the restore **2.5×** at tau 0.256 s and leaves 2 as a second rung.
+> ✅ **DC gain of the EMA is exactly 1 at every k** (verified against the integer recursion: steady state `iVar24 → iVar33·128`, then the ±0x80 deadband and `>>7` give back `iVar33 − 1`). ⇒ **no static assist change at any steering input.** Unlike `0xC6384`, which IS a real gain and does cost effort.
+> 🛑 **ALSO WITHDRAWN with V237: its “the MANUAL arm runs k=41 and has no ratchet” consistency check.** Under the blend it points the OTHER way (manual restores MORE of the cut, not less), and **either reading is confounded** — engagement adds the whole LKAS path, and the archive already found the pole difference *“FAR TOO SMALL”* to explain the engaged/manual contrast. **The manual arm is not evidence for direction in either sense.**
+> ⚠ **DIRECTION structural, SIZE unmeasured.** The worth of V238 depends on how hard the slew limiter bites in normal driving — the **clip duty** — which has not been measured on a route. `analysis-2020accord/studies/telemetry/run_clip_duty.py` is the reader that would answer it.
+> ⊕ **A cell-identity correction that nearly went the other way:** `gp-0x69a0` is **NOT** `0xC6384`. It is the slew limit `FUN_00035b20` selects from two speed/counter curves (`0xC6912`/`0xC691A` — the `358 307 307 307` block **V192 already moved**, which sits immediately after the pole table and which an earlier pass mistook for part of it). `0xC6384` is separately `tp+0x7384`, read as `float × 1/1024 = 2.000` and capping the **interpolation slope** in the same build loop. **Two different limiters in one loop; V236 and V192 hold one each, V238 holds the valve between them.**
 
 > 🛑🛑⭐⭐⭐⭐⭐ **THE NO-COST RATCHET LEVER IS NOW AIMED — RAISE k — WITH A STRONG CONSISTENCY CHECK. BUT THE SAFE DOSE IS TINY AND THE CELL LAYOUT IS NOT CONFIRMED, SO NO BUILD.**
 >
@@ -80,8 +111,8 @@
 >     k=640  |H| 0.9917  arg  -6.13   corner 59.63 Hz
 > ```
 >
-> ✅ **DIRECTION: RAISE k.** The archive's own arithmetic — *“engaged lags 10.18° MORE, which moves `1−P·L` the RIGHT way (1.798 → 1.713)”* — means **more lag ⇒ smaller |1−P·L| ⇒ less damping**. Raising k reduces lag, so it damps.
-> ✅ **AND THE CONSISTENCY CHECK IS STRONG: the MANUAL arm already runs k=41, and the ratchet is ABSENT in manual** (engaged clears its null 7/7, manual 0/7). **The arm with the higher k is the arm without the symptom** — exactly what this direction predicts, from data that was never used to derive it.
+> 🛑 **RETRACTED — “DIRECTION: RAISE k” was WRONG; the answer is LOWER k. See the blend block above.** The archive's own arithmetic — *“engaged lags 10.18° MORE, which moves `1−P·L` the RIGHT way (1.798 → 1.713)”* — means **more lag ⇒ smaller |1−P·L| ⇒ less damping**. Raising k reduces lag, so it damps.
+> 🛑 **RETRACTED — the consistency check is WITHDRAWN: under the blend it points the other way, and either reading is confounded by engagement adding the whole LKAS path.** Original text: the MANUAL arm already runs k=41, and the ratchet is ABSENT in manual** (engaged clears its null 7/7, manual 0/7). **The arm with the higher k is the arm without the symptom** — exactly what this direction predicts, from data that was never used to derive it.
 > 🛑 **BUT THE SAFE DOSE IS NEGLIGIBLE.** k 20→41 moves |1−P·L| 1.713→1.798, i.e. **4.7 % less Q** on a Q ratio of 14.3. The archive reached the same place and headlined it *“THE EFFECT IS TOO SMALL”*. Larger k is a different matter — k=640 is a **10× magnitude change and 71° less lag** — but that is far outside the linearisation those figures come from, on the branch the record itself calls **incomplete**.
 > 🛑 **AND I STOPPED SHORT OF BUILDING, because the cell layout is NOT established:**
 > ```

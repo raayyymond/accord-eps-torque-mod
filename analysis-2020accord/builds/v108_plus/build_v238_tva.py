@@ -1,82 +1,59 @@
 # -*- coding: utf-8 -*-
-r"""WITHDRAWN 2026-08-30 -- THIS BUILD IS BACKWARDS. DO NOT FLASH. See build_v238_tva.py.
+r"""V238 -- THE SAME POLE AS V237, THE OTHER WAY. V237 WAS BACKWARDS.
 
-The lane is a BLEND, not a direct path plus a parallel lagged branch:
-    out(f) = table2 + H_k(f)*(table1 - table2)
-where table2 is the same assist map ALSO slew-limited by gp-0x69a0 (V192's cell). So k is the valve
-on how much of the slew limiter's tightening survives to the output. RAISING it (as below) restores
-MORE of the cut at 7.79 Hz and RAISES lane gain => more positive feedback, LESS damping. V238 lowers
-the same cell to 8 instead. The manual-arm consistency check below is withdrawn too.
+WHAT V237 GOT WRONG. V237 raised `0xC6906` 20 -> 80 on the argument that the lane is a direct path plus
+a parallel lagged branch, so raising the pole "damps". Reading the tail of `FUN_000352b4` properly shows
+the lane is not an additive branch at all -- it is a BLEND between two versions of the same assist map:
 
---- the original docstring follows, retained as the record ---
+    gp-0x37e8   Y array, capped by 0xC6384          -> table1 -> gp-0x6b7a     (V236's cell)
+    gp-0x3810   Y array, ALSO slewed by gp-0x69a0   -> table2 -> uVar25        (V192's cell)
 
-V237 -- THE RATCHET LEVER THAT COSTS NO EFFORT. EIGHT BYTES ON V235.
+    bVar3  = (table2 < |table1|)                    the gate: where the SLEW limiter bit
+    iVar33 = (table1 - table2) * bVar3              exactly what the slew limiter cut
+    iVar34 = table2*bVar3 + table1*!bVar3           the direct path is the LIMITED value
+    out    = iVar34 + EMA_k(iVar33)                 the cut, added back through the lag
 
-WHAT THIS IS. `gp-0x6b86`'s lane is not the memoryless curve the loop census priced: `FUN_000352b4`
-ends with a PARALLEL LAGGED BRANCH added to the direct path,
+    =>  out(w) = table2 + H_k(w) * (table1 - table2)
+              = table1 at DC (H=1)  ...  table2 at high frequency (H=0)
 
-    iVar24 += (iVar33*0x80 - iVar24) * k >> 11        32-bit state, 1 kHz
-    contribution = (iVar24 -/+ 0x80) >> 7
+**k does not set a branch gain. It sets HOW MUCH OF THE SLEW LIMITER'S TIGHTENING SURVIVES TO THE
+OUTPUT at a given frequency.** Raising k restores MORE of the cut at the ratchet frequency, which RAISES
+the lane's gain there. Every torque-fed lane is a denominator term in `Z = (Z0 + P.F)/(1 - P.L)`, so a
+higher gain is MORE positive feedback and LESS damping. **V237 pushed the ratchet the wrong way.**
 
-which is a first-order EMA with `a = k/2048` and **DC gain exactly 1**. That is the whole point: k moves
-the POLE and cannot move the static gain, so unlike V236's slope cap it costs NO assist at any steering
-input. The archive that found the branch says of the census's slope-only model: "any |L| computed from
-the slope alone is incomplete."
+WHY THIS DIRECTION IS HONDA'S OWN. `gp-0x69a0` is the slew limit `FUN_00035b20` switches on the
+hard-reversal counter -- Honda's own oscillation response is to TIGHTEN it (V192 applied Honda's own
+0.600 ratio once more). k is the valve on how much of that tightening reaches the output. **Lowering k
+opens Honda's own anti-oscillation mechanism further.** Same logic as V192, a different cell.
 
-THE LAYOUT, READ OUT OF THE DECOMPILE RATHER THAN INFERRED. An earlier pass refused to edit these cells
-because a raw dump showed two 4-value blocks straddling a 6-value ascending run and would not parse.
-The LERP reader settles it:
+THE DOSE. The reader clamps k to [2, 204], so 2 is the firmware's own floor.
 
-    pcVar26 = FUN_00007906 + unaff_tp;                     Y base   = tp+0x7906
-    if (*(ushort *)(unaff_tp + 0x78fe) < uVar17) {         X[0]     = tp+0x78FE
-        if (uVar17 < *(ushort *)(unaff_tp + 0x7904)) {     X[3]     = tp+0x7904
-            puVar13 = (ushort *)(unaff_tp + 0x7900);       X[1]
-        } else uVar40 = *(ushort *)(unaff_tp + 0x790c);    Y[3]     = tp+0x790C
-    } else uVar40 = *(ushort *)(FUN_00007906 + unaff_tp);  Y[0]     = tp+0x7906
+    k    a=k/2048   corner    |H| at 7.79 Hz   arg      tau
+    20   0.009766   1.554 Hz     0.1966      -77.26   0.102 s   <- ENGAGED today
+     8   0.003906   0.622 Hz     0.0797      -84.03   0.256 s   <- THIS BUILD
+     2   0.000977   0.155 Hz     0.0200      -87.45   1.024 s   <- the floor
 
-    => X = [0, 9830, 26214, 32768] at 0xC68FE   Y = [20, 20, 20, 20] at 0xC6906   (tp = 0xBF000)
+**8, not the floor.** At the floor tau is ~1.0 s: the difference the slew limiter cut takes a full
+second to be restored, and V192's card already names the failure mode -- "watch for a brief HESITATION
+replacing the ratchet => too tight". A one-second soggy restore is a real drivability risk. k=8 cuts the
+restore at the ratchet 2.47x (0.1966 -> 0.0797) while keeping tau at a quarter second, and leaves 2 as a
+second rung.
 
-and the reader then CLAMPS the result:
+WHAT IT DOES NOT DO. DC gain of the EMA is exactly 1 at every k, so static assist is unchanged at any
+steering input -- this build does NOT carry V236's effort cost. It also cannot touch LKAS: the map is
+fed by the driver torque sensor alone (`0xC616C` = 0 on all 161 images).
 
-    if (uVar40 < 0xcd) { iVar27 = max(2, uVar40); } else { iVar27 = 0xcc; }
+WHAT IS ASSUMED. The DIRECTION is now structural -- it follows from the blend, not from a linearisation.
+What is NOT established is the SIZE, because that depends on how large `table1 - table2` is in normal
+driving, i.e. how hard the slew limiter bites. That is the clip duty, and it has not been measured on a
+route. So: direction well-founded, magnitude unknown.
 
-**k is bounded to [2, 204] by the firmware itself**, which makes the top of the range a natural,
-safe-by-construction bound rather than an arbitrary one.
+RETRACTED WITH V237: its "manual arm runs k=41 and has no ratchet" consistency check. Under the blend
+that check points the OTHER way (manual restores MORE, not less), and either reading is confounded --
+engagement adds the whole LKAS path, and the archive already found the pole difference far too small to
+explain the engaged/manual contrast. **The manual arm is not evidence for direction in either sense.**
 
-THE DIRECTION, AIMED AND CHECKED. The archive computes the engaged-vs-manual difference at the mode:
-"engaged lags 10.18 deg MORE, which moves 1-P.L the RIGHT way (1.798 -> 1.713)" -- i.e. MORE lag gives
-SMALLER |1-P.L| gives LESS damping. **So raising k damps.** And the consistency check uses data that
-played no part in deriving it: the MANUAL arm already runs k=41, and the ratchet is ABSENT in manual
-(engaged clears its null 7/7, manual 0/7). The arm with the higher k is the arm without the symptom.
-
-THE REACHABLE RANGE at 7.79 Hz, from the EMA (validated against the archive's own k=20 and k=41 figures
-to 4 dp, which is what confirms the recursion was read correctly):
-
-    k       |H|      arg      corner    lag vs k=20
-    20    0.1966  -77.26 deg   1.56 Hz    0.00      <- ENGAGED today
-    41    0.3819  -66.15 deg   3.22 Hz  +11.11      <- MANUAL arm; the archive calls this "TOO SMALL"
-    80    0.6314  -49.46 deg   6.34 Hz  +27.80      <- THIS BUILD
-   204    0.9063  -23.63 deg  16.70 Hz  +53.63      <- the firmware's own ceiling
-
-WHY 80 AND NOT THE CEILING. k=41 is Honda's manual value and buys about 4.7 % less Q -- the archive
-reached that and headlined it "THE EFFECT IS TOO SMALL". The ceiling extrapolates to roughly 21 %, but
-that is a LINEAR extrapolation over five times the measured range on a branch the record calls
-incomplete, and a 10x jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at
-6.34 Hz, just BELOW the 7.79 Hz mode**, so the branch becomes responsive AT the mode while still
-rolling off above it; it is 4x the current value, takes 52 % of the available phase change, and leaves
-204 as a second rung if it helps. HF passage stays small either way (at 100 Hz, 0.064 at k=80 against
-0.167 at the ceiling).
-
-WHAT IT DOES NOT DO. No static assist changes at any input -- DC gain is 1 by construction, so this
-build does NOT carry V236's 34.2 %-of-driving effort cost. It also cannot touch LKAS: the map is fed by
-the driver torque sensor alone (`0xC616C` = 0 on all 161 images).
-
-🛑 WHAT IS ASSUMED. The magnitude rests on the archive's 1.713/1.798 linearisation extrapolated 2.7x.
-The DIRECTION is well-founded -- the archive's arithmetic plus the manual-arm consistency check -- but
-the SIZE is an order-of-magnitude estimate, not a gated number. Said plainly on the card.
-
-BASE: V235, the no-added-effort build. V237 = V235 + these four halfwords, so the pair isolates the
-pole exactly, and neither build asks the operator for the effort trade V236 does.
+BASE: V235, the no-added-effort build. V238 = V235 + these four halfwords.
 """
 import hashlib
 import os
@@ -108,7 +85,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 START, END = 0x13000, 0x100000
-WRITE_MODE = os.environ.get("ACCORD_V237_WRITE", "").strip().lower()
+WRITE_MODE = os.environ.get("ACCORD_V238_WRITE", "").strip().lower()
 
 BASE_NAME = "_v235_V235-V234BASE-C63AE.BACK.TO.HONDA.1024_plain_image.bin"
 BASE_SHA = "ad6d485eefb2f6bcc195c062035d5a9dab5fb06dae7f46f68f5ca03a504c18ab"
@@ -126,8 +103,8 @@ RESID_SCALE_VAL = 1024                      # CARRIED, asserted
 SLOPE_CAP, CAP_STOCK = 0xC6384, 2048        # V236's lever -- NOT touched here, asserted
 POLE_Y = 0xC6906                            # engaged lag pole, LERP Y[0..3]
 POLE_X = 0xC68FE                            # its X axis -- asserted, never written
-K_OLD, K_NEW = 20, 80                       # corner 1.56 Hz -> 6.34 Hz, just below the mode
-K_CLAMP_MAX = 204                           # the firmware's own clamp, from the reader
+K_OLD, K_NEW = 20, 8                        # corner 1.554 Hz -> 0.622 Hz; |H| at 7.79 Hz 0.1966 -> 0.0797
+K_CLAMP_MIN = 2                             # the firmware's own floor, from the reader
 LKAS_CLAMP = 0xC616C                        # must be 0: the proof LKAS cannot reach the map
 ALPHA2, ALPHA2_VAL = 0xC40DC, 22
 RESID_SCALE, RESID_VAL = 0xC63AE, 512
@@ -135,7 +112,7 @@ FAULT_INTERLOCK, FAULT_VAL = 0xC407E, 511
 ARM_SITES = {0x35A06: "844ffb97", 0x35A12: "e049", 0x35A18: "ea370000"}
 ARM_CAL = 0xC649B
 R26_ARM = 0xC6444          # the r26 arm -- frozen at 512, asserted
-TAG = "V237-V235BASE-ENGAGED.LAGPOLE.80.NOCOST"
+TAG = "V238-V235BASE-ENGAGED.LAGPOLE.8.TIGHTEN"
 
 OK, BAD = "[PASS]", "[FAIL]"
 _checks = [0, 0]
@@ -189,15 +166,16 @@ def build():
         struct.pack_into("<H", code, POLE_Y + 2 * _i, K_NEW)
         attributed |= {POLE_Y + 2 * _i, POLE_Y + 2 * _i + 1}
     check(all(u16(code, POLE_Y + 2 * _i) == K_NEW for _i in range(4)),
-          f"engaged pole Y[0..3] {K_OLD} -> {K_NEW} (corner 1.56 Hz -> 6.34 Hz)")
+          f"engaged pole Y[0..3] {K_OLD} -> {K_NEW} (corner 1.554 Hz -> 0.622 Hz)")
 
     print("\n  [3] WHY -- the record's own bracket, asserted rather than narrated")
-    check(K_NEW <= K_CLAMP_MAX,
-          f"{K_NEW} is inside the firmware's OWN clamp of {K_CLAMP_MAX} -- the reader does "
-          f"max(2, min(k, 204)), so this cannot exceed what Honda's code already permits")
-    check(K_NEW > K_OLD,
-          "the direction is RAISE k: the archive shows more lag gives smaller |1-P.L| gives LESS "
-          "damping, and the MANUAL arm at k=41 is the arm WITHOUT the ratchet")
+    check(K_NEW >= K_CLAMP_MIN,
+          f"{K_NEW} is inside the firmware's OWN floor of {K_CLAMP_MIN} -- the reader does "
+          f"max(2, min(k, 204)), so this cannot go below what Honda's code already permits")
+    check(K_NEW < K_OLD,
+          "the direction is LOWER k: out = table2 + H_k*(table1 - table2), so a SMALLER H at "
+          "7.79 Hz leaves MORE of the slew limiter's tightening in force -- less lane gain, "
+          "less positive feedback, more damping. V237 raised it and was backwards.")
     check(u16(code, SLOPE_CAP) == CAP_STOCK,
           f"0x{SLOPE_CAP:05X} left at {CAP_STOCK} -- this build does NOT carry V236's effort cost")
     check([u16(code, POLE_X + 2 * _i) for _i in range(4)] == [0, 9830, 26214, 32768],
@@ -259,7 +237,7 @@ def build():
     dec_tbl = build_decode_table(FF.V9B["keys"], FF.V9B["ops"])
     rwd = encode_x31(info["headers"], info["blocks"],
                      [bytes(code[START:END]).translate(invert_table(dec_tbl))])
-    FF.assert_x31_checksum(rwd, "V237 output")
+    FF.assert_x31_checksum(rwd, "V238 output")
     dec = bytearray(base)
     dec[START:END] = bytes(parse_x31(rwd)["encs"][0]).translate(dec_tbl)
     check(bytes(dec) == bytes(code), "decoded .rwd is byte-identical to the built image")
@@ -268,29 +246,33 @@ def build():
     img_sha = hashlib.sha256(bytes(code)).hexdigest()
     rwd_sha = hashlib.sha256(rwd).hexdigest()
     if WRITE_MODE == "rwd":
-        Path(plain_image_path(f"_v237_{TAG}_plain_image.bin")).write_bytes(bytes(code))
+        Path(plain_image_path(f"_v238_{TAG}_plain_image.bin")).write_bytes(bytes(code))
         Path(RWD_DIR, f"39990-TVA,A160-{TAG}-0x{START:X}-0x{END:X}.rwd").write_bytes(rwd)
         print("\n      WROTE image + rwd")
     else:
-        print("\n  [9] NOT WRITTEN -- set ACCORD_V234_WRITE=rwd to emit the files")
+        print("\n  [9] NOT WRITTEN -- set ACCORD_V238_WRITE=rwd to emit the files")
 
     print("\n" + "=" * 102)
     print(f"  image SHA256 {img_sha}")
     print(f"  .rwd  SHA256 {rwd_sha}")
     print(f"  {_checks[1]}/{_checks[0]} assertions passed")
-    print("  ** A CORRECTION TO MY OWN SHELF. The record states: 'THE LANE IS AN OPTIMUM AND V88 IS  **")
-    print("  ** SITTING ON IT. BOTH FLANKS ARE NOW MEASURED... LEVER B IS OFF EVERY FUTURE          **")
-    print("  ** SHORTLIST, IN BOTH DIRECTIONS.' V61 below V88 'made it WORSE'; V71c above was the   **")
-    print("  ** worst build ever recorded on all three symptoms, ratchet at 8,521 ct p-p.           **")
-    print("  ** Read from the images: V88, the car and V217 all carry 5244. V221 stepped it to      **")
-    print("  ** 13107 and V228/231/232/233 all inherit that -- an UNFLOWN 2.5x step in the same     **")
-    print("  ** direction as the flank measured catastrophic. V234 removes it.                      **")
-    print("  ** NOT CLAIMED: that 13107 is harmful. It has never flown, and V71c's evidence is      **")
-    print("  ** about the NET rate-lane dose reached via the r26 arm, not via 0xC6446 itself.       **")
-    print("  ** What IS true: carrying an unflown 2.5x step on a lever the record puts off the      **")
-    print("  ** shortlist in both directions, while recommending the build, is not defensible.      **")
-    print("  ** V233 stays on the shelf as the paired arm -- TWO BYTES apart, so driving both       **")
-    print("  ** isolates Lever B exactly. The r26 arm 0xC6444 is untouched at 512 throughout.       **")
+    print("  ** V238 CORRECTS V237, WHICH WAS BACKWARDS. Same cell, opposite direction.                            **")
+    print("  ** Reading the tail of FUN_000352b4 properly: the lane is not a direct path plus a                    **")
+    print("  ** parallel lagged branch. It is a BLEND of two versions of the same assist map --                    **")
+    print("  **     out(w) = table2 + H_k(w) * (table1 - table2)                                                   **")
+    print("  ** table1 = the map capped by 0xC6384 (V236's cell); table2 = the same map ALSO slewed                **")
+    print("  ** by gp-0x69a0 (V192's cell). k is the valve on how much of the SLEW LIMITER'S                       **")
+    print("  ** TIGHTENING survives to the output at a given frequency.                                            **")
+    print("  ** => RAISING k restores more of the cut at 7.79 Hz, RAISING the lane's gain there.                   **")
+    print("  **    Every torque-fed lane is a denominator term, so that is MORE positive feedback                  **")
+    print("  **    and LESS damping. V237 pushed the ratchet the wrong way.                                        **")
+    print("  ** LOWERING k is Honda's own direction: FUN_00035b20 TIGHTENS gp-0x69a0 on the                        **")
+    print("  ** hard-reversal counter, and V192 applied Honda's own 0.600 ratio once more.                         **")
+    print("  ** DOSE: 8, not the floor of 2. At the floor tau is ~1.0 s and V192's card already                    **")
+    print("  ** names the failure mode -- 'watch for a brief HESITATION replacing the ratchet'.                    **")
+    print("  ** k=8 cuts the restore 2.47x (|H| 0.1966 -> 0.0797) at tau 0.256 s.                                  **")
+    print("  ** NOT CLAIMED: the SIZE. That depends on how hard the slew limiter bites (the clip                   **")
+    print("  ** duty), which has not been measured on a route. Direction structural, magnitude open.               **")
     print("=" * 102)
     return img_sha, rwd_sha
 
