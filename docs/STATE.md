@@ -66,6 +66,26 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **RETRACTED WITHIN THE HOUR BY ITS OWN CONTROL — “A PROTECTIVE DAMPING TERM RUNNING OUT” WAS MOSTLY REGRESSION DILUTION. WHAT SURVIVES IS BETTER AIMED: THE 6–9 Hz ANTI-DAMPING IS *LINEAR*, AND THE REAL NONLINEARITY IS AT 22–30 Hz.**
+>
+> The decile shape (`Re(Z)` −23 → −65 with amplitude) has an alternative explanation I should have tested before writing a mechanism onto it: **at small A the SNR is low, and `Re(Z) = CSD/PSD` is biased toward zero when the estimate is noisy.** Coherence per decile settles it:
+> ```
+>   6-9.5 Hz   coherence 0.292 -> 0.908 as A rises      rho(A,coh) +0.569
+>              rho(A, Re(Z))  ALL windows        -0.406
+>              rho(A, Re(Z))  HIGH-COHERENCE half -0.192      <- halved
+>              within high-coherence: low-A -54.6 vs high-A -57.8   <- essentially FLAT
+>
+>   22-30 Hz   within high-coherence: low-A -16.9 vs high-A +17.3   <- SURVIVES, and it is huge
+> ```
+> 🛑 **WITHDRAWN:** *“a Coulomb-like protective term of ~10.5 that runs out by ~2 °/s.”* Once measurement quality is controlled the 6–9 Hz anti-damping barely moves with amplitude — **−54.6 to −57.8 across the whole range, a 6 % change against the 180 % the uncontrolled deciles showed.** The `D(A)` table was reading noise.
+> ✅ **[EVIDENCE] WHAT SURVIVES, AND IT IS SHARPER THAN WHAT I RETRACTED:**
+> **1. The 6–9 Hz anti-damping is AMPLITUDE-INDEPENDENT ⇒ it is LINEAR.** Engagement adds a roughly constant **≈ −56** at the ratchet (against **−0.81** manual, 31/31 routes). A constant `Re(Z) < 0` is a *linear* negative damper, not a nonlinearity.
+> **2. THE GENUINE NONLINEARITY IS AT 22–30 Hz — the GRINDING band, not the ratchet.** There `Re(Z)` flips sign with amplitude, **−16.9 → +17.3**, and that survives the coherence control (rho +0.593 within the high-coherence half). **Small oscillations there are PUMPED; large ones are DAMPED.**
+> ⇒ **AND THIS RE-OPENS THE ARC'S CENTRAL PROHIBITION.** *“No LINEAR lane is the source, so the ratchet is nonlinear”* was the reason the linear-lane census was closed. **The ratchet now measures as linear**, and the lane phases that closed that census came from the **rectified** 427 channel, which cannot carry phase. ⇒ **a linear lane may well be the source, and the ban on notching 6–10 Hz rests on the same suspect measurement.** ⚠ Not licence to build — licence to *re-measure the lane signs on a non-rectified channel*, which is the next step.
+> ⚠ **Three readings of this data in one session — “source”, “damper”, “running out” — and the controls killed the first two and now the third.** The lesson is in `feedback-`: **compute the control BEFORE writing the mechanism**, not after.
+> ➕ Reader: `rlog-tools/score/ratchet_damping_runs_out.py`, now carrying the coherence control and the retraction.
+> ⭐ **Nothing on the shelf moves. V241 stays the flight candidate.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE RATCHET IS A PROTECTIVE DAMPING TERM *RUNNING OUT*, NOT A SOURCE SWITCHING ON — AND THAT INVERTS THE DIRECTION OF EVERY LEVER THIS ARC HAS TRIED.**
 >
 > Binning engaged 2 s windows by **A = the 6–9.5 Hz oscillation amplitude of `cs_rate`** (°/s) and reporting the **signed** median `Re(Z)` per decile — every window kept, no sign selection:

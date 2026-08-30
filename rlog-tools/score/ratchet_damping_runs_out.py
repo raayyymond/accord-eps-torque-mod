@@ -1,5 +1,20 @@
 #!/usr/bin/env python3
-r"""WHY THE RATCHET BAND IS ANTI-DAMPED: a protective damping term RUNS OUT above ~2 deg/s.
+r"""🛑 RETRACTED HEADLINE -- the amplitude trend here is mostly REGRESSION DILUTION.
+
+The conclusion this file was written for ("a protective damping term runs out above ~2 deg/s") DID NOT
+SURVIVE its own control.  At small A the SNR is low and Re(Z)=CSD/PSD is biased toward zero, which
+reproduces the -23 -> -65 shape with no mechanism.  Coherence per decile (see the sibling
+`rez_dilution_control.py`) shows coherence climbing 0.292 -> 0.908 with A, and WITHIN the
+high-coherence half Re(Z) is essentially FLAT: -54.6 at low A vs -57.8 at high A.
+
+WHAT SURVIVES, and it is sharper:
+  1. the 6-9 Hz anti-damping is AMPLITUDE-INDEPENDENT (~ -56) => LINEAR, not a nonlinearity;
+  2. the genuine nonlinearity is at 22-30 Hz -- the GRINDING band -- where Re(Z) flips -16.9 -> +17.3
+     and that DOES survive the coherence control.
+The relay exclusion also stands: a relay would weaken as 1/A and nothing here strengthens that way.
+See [[accord-ratchet-antidamping-is-linear]].  The original write-up follows.
+
+ORIGINAL: a protective damping term runs out above ~2 deg/s.
 
 THE SETUP.  Re(Z) = Re(CSD(rate,tq)/PSD(rate)) is negative at 6-9 Hz on 31/31 routes engaged
 (`rez_nonrectified_replication.py`).  Both instruments are NON-RECTIFIED, so unlike every 427-derived
