@@ -1,5 +1,30 @@
 # DRIVE CARD — V228, and the choice between it and V222
 
+## 🚗 AT THE CAR — everything operational, in one block
+
+```
+  FILE   39990-TVA,A160-V228-V222BASE-GAIN.STAYS.6X.AS.CAR-0x13000-0x100000.rwd
+  rwd    sha256 b90a200ce53c7f37...        image sha256 6cf12db9fc49aee2...
+  BEFORE anything: kill openpilot/pandad   ->  tmux kill-server
+```
+
+🛑 **The flash decision is yours. Name the file and the bus, and I will repeat both back before
+anything happens.** Nothing is flashed without that.
+
+**While driving — the whole job:** *does the car feel acceptable?* One episode is enough and **your
+verdict is final.** If it feels wrong, **stop** — that is a complete result, and no measurement
+overrides it.
+
+**Stop and say so if:**
+- the **ratchet is clearly worse** than your car → fall back **V221 → V217 → V122**
+- a **new higher-pitched grind** appears on lane changes/turns → expected at 40–49 Hz, **say so anyway**
+- anything faults, or the EPS lamp lights
+
+➕ **If it feels good, keep driving.** The band numbers need **minutes**, not one episode — and a
+**second V228 drive is worth more than any new build** (see below).
+
+---
+
 **V228 is V222 minus the 8× gain step. Four bytes apart. They ask you for different things.**
 
 ---
@@ -56,7 +81,8 @@ damper raise or a filter that is flat at the ratchet.
 **Fly V222 if** you want the LKAS authority as well and are willing to have the ratchet possibly get
 worse in exchange, knowing you can fall back.
 
-⚠ **If you are undecided, V228 is the one that cannot make anything worse.** V222 remains available
+⚠ **If you are undecided, V228 is the one that cannot make the RATCHET worse** (it does still raise
+40–49 Hz — see the correction above; no build avoids that). V222 remains available
 afterwards, and flying V228 first also makes V222 interpretable: the two differ in exactly one lever,
 so a V228 drive followed by a V222 drive is the cleanest 8×-gain experiment this kit has ever had.
 
