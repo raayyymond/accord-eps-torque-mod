@@ -62,6 +62,7 @@ SHELF = {
     'v234': '7adbc68f2b8163c69c6b387171a2fc18938f8f1dce8127abf6cfff9907be42e6',   # V233 + Lever B back to V88's measured optimum 5244
     'v235': 'ad6d485eefb2f6bcc195c062035d5a9dab5fb06dae7f46f68f5ca03a504c18ab',   # V234 + 0xC63AE back to Honda 1024 -- the car + 3 cells
     'v236': '509785673468a346ac366dfb2fb8e491231f49a4e440e22ef9ce4fe39602d862',   # V235 + the assist-map slope cap: the RATCHET lever
+    'v237': 'bebd6c6ca9e9ad735016f477dece6dfa275bfaf9bb65a1c5d13d8c8716b812f1',   # V235 + the engaged lag POLE: a ratchet lever with NO effort cost
 
 }
 # ARCHIVE: builds whose BUILDER must still reproduce its image, but which are NOT meant to be

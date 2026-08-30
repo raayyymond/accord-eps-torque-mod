@@ -24,6 +24,37 @@ overrides it.
 
 ---
 
+## ⭐ V237 — a ratchet lever that costs you nothing
+
+```
+  V237   39990-TVA,A160-V237-V235BASE-ENGAGED.LAGPOLE.80.NOCOST-0x13000-0x100000.rwd
+         rwd 9cab1723e1b96988...     image bebd6c6ca9e9ad73...
+       = V235 + eight bytes: 0xC6906 Y[0..3]  20 -> 80
+```
+
+The assist-map lane has a **lagged branch** alongside its main path, and that branch's pole is a
+calibration nobody has ever moved. Raising it damps the ratchet — and because the branch has a DC gain
+of exactly 1, **moving the pole cannot change static assist at all.** No added effort, at any steering
+input. That is the difference between this and V236.
+
+The direction has a check that used no part of its own derivation: **your manual arm already runs this
+pole at 41, and the ratchet is absent in manual** (engaged clears its null 7/7, manual 0/7). The arm
+with the higher value is the arm without the symptom.
+
+```
+  at 7.79 Hz      corner     lag vs today
+    k= 20 today   1.56 Hz       —
+    k= 41 manual  3.22 Hz    +11 deg    <- too small to feel, per the record
+    k= 80 V237    6.34 Hz    +28 deg
+    k=204 ceiling 16.70 Hz   +54 deg    <- the firmware's own limit
+```
+
+⚠ **The direction is well-founded; the size is an estimate.** It extrapolates a measured 10° difference
+out to 28°, on a branch the record itself calls incompletely modelled. If V237 does nothing, 204 is the
+next rung and still costs no effort.
+
+---
+
 ## 🛑 V236 EXISTS NOW, AND IT IS THE FIRST BUILD AIMED AT BOTH SYMPTOMS
 
 ```

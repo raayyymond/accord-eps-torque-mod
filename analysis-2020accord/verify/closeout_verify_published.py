@@ -80,6 +80,7 @@ PUB = {
     'v234': '7adbc68f2b8163c69c6b387171a2fc18938f8f1dce8127abf6cfff9907be42e6',
     'v235': 'ad6d485eefb2f6bcc195c062035d5a9dab5fb06dae7f46f68f5ca03a504c18ab',
     'v236': '509785673468a346ac366dfb2fb8e491231f49a4e440e22ef9ce4fe39602d862',
+    'v237': 'bebd6c6ca9e9ad735016f477dece6dfa275bfaf9bb65a1c5d13d8c8716b812f1',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -837,6 +838,22 @@ _KNOT_OK = {
     # any gated lane" and explicitly flags as NEVER SCORED AT 6-9 Hz. Y is asserted unchanged in the
     # builder, so this moves the KNEE and not the ceiling height.
     ('v227', 0xC67C4),
+    # V237 moves all four Y knots of the ENGAGED LAG POLE table 0xC68FC from 20 to 80. The layout was
+    # established TWO independent ways before any byte was written: from the LERP reader inside
+    # FUN_000352b4 (Y base tp+0x7906, bounds tp+0x78FE and tp+0x7904, out-of-range arms tp+0x790C and
+    # tp+0x7906) and from this file's own cal_table_bases enumeration, which names the same header.
+    # X = [0, 9830, 26214, 32768] is asserted UNCHANGED in the builder -- only Y moves.
+    # It is safe by three separate constructions:
+    #   * the reader clamps k to [2, 204] -- `if (uVar40 < 0xcd) max(2,uVar40) else 0xcc` -- so 80 is
+    #     inside a bound Honda's own code enforces;
+    #   * the branch is an EMA with a = k/2048 and DC GAIN EXACTLY 1, so k moves the POLE and cannot
+    #     move static assist at any input;
+    #   * the MANUAL arm already runs this pole at 41 on every image, and manual is the arm WITHOUT
+    #     the ratchet, so raising the engaged value moves toward a configuration the car already runs.
+    ('v237', 0xC6906),
+    ('v237', 0xC6908),
+    ('v237', 0xC690A),
+    ('v237', 0xC690C),
 }
 chk(len(_TABS) >= 90, f'{len(_TABS)} well-formed cal tables enumerated from movea instructions')
 for _v in sorted(img):
