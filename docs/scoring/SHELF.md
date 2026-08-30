@@ -55,63 +55,6 @@ Exposure and episode count first, then the free cave rungs (degenerate readings 
 pre-registered 0.31–0.49**, the 427 channel, and the grind peak **stratified by this drive’s own
 episodes**. It refuses to apply the b5 prediction to a non-shelf route.
 
-## V205 — DEMOTED. Its question was answered from cache on 2026-08-29.
-
-```
-39990-TVA,A160-V205-V202BASE-PROBE-GP6B70-0x13000-0x100000.rwd
-  image 8cf100864be1d6030eed36acac1d514066b157a59de8ca829ae154ce7032882e
-```
-
-V202 control cells byte-identical, +3 payload bytes putting `gp-0x6b70` on CAN 427 at **sar 6**.
-Preflight 8/8, 40/40 assertions.
-
-`FUN_00038148` ends with `gp-0x6b70 = sgn(resid) × LERP(|resid|)`, clamped ±8192. **If that LERP
-saturates early the stage is a signed constant — a relay** — which is precisely what the record blames
-the ratchet on (*“engagement amplifies 6–9 Hz 2.8× via a command-proportional Coulomb relay”*). No
-magnitude channel for this cell exists anywhere in the corpus, so it has never been looked at.
-
-| what it shows | what it means |
-|---|---|
-| few levels, mass at the rails | the stage **is** a relay — the ratchet’s mechanism localised to one LERP |
-| smooth and spread | the relay lives elsewhere — worth as much |
-| railed at ±8192 | the observer is saturated, and `0xC63AA` cannot be used safely at all |
-
-🛑 **Score this one STRATIFIED BY SPEED, never pooled.** (An earlier note here said steering angle — that was wrong and is corrected.) The LERP behind `gp-0x6b70` is the power-assist curve, and computing it from the image shows **one curve across 8 steering angles at every speed** but **six distinct curves across six speeds**.
-
-⭐ **Its purpose has changed.** Whether the stage is a relay is now answered from the image: it is a **soft** one, gain 2.67–3.77× near zero against 0.256–0.516× mid-range. V205’s job is now to measure `gp-0x6b70`’s operating range and sign, so the dose on `0xC63AE` — its private, virgin, single-reader gain cal — can be sized and signed.
-
-🛑 **Superseded.** V96–V99 already carried `gp-0x6b70` on CAN 427 at LSB 12.8 ct, and six cached
-routes give **1 frame at the clamp out of 72,916 engaged — duty 0.000014.** It does not saturate,
-and its range is now known (p50 141–1370, p95 1677–4990 against the 8192 clamp). Flying this would
-re-measure a settled quantity.
-
-## V202 — the same fix without the instrument
-
-```
-39990-TVA,A160-V202-V199BASE-POLES.15.25.WIDER.SHOULDER-0x13000-0x100000.rwd
-  image 2c5bc569c2c5e4c66f7eaa350ddbfe87d50af9875fa75a10d927eed3a7255160
-```
-
-Same null as V199 (19.75 Hz, depth 0.00099), poles dropped 17.45 → 15.25 Hz and radius eased to
-0.9600. `max|H|` = 0.999998, so it still can only remove loop gain.
-
-| f Hz | V199 | **V202** |
-|---|---|---|
-| 16.33 | 1.6× | **2.3×** |
-| 18.00 | 3.0× | **4.6×** |
-| **20.12 (median grind peak)** | 15.6× | **24.7×** |
-| 22.15 | 2.8× | **4.3×** |
-| 23.00 (the gain line) | 2.2× | **3.4×** |
-| 30.00 | 1.1× | **1.5×** |
-
-Cost: **~3 ms** more group delay in the driver-assist path (+3.80→+5.52 ms vs V199’s +1.30→+2.37).
-Human steering-feel thresholds are tens of ms.
-
-🛑 **The notch is a POINT fix, not a band fix.** A joint minimax over the whole 16.3–23 Hz band
-improves worst-case leakage by only 1.1× and makes the median *worse* — one biquad cannot cover
-6.7 Hz. **So score the drive stratified by its own peak frequency, never pooled:** a drive peaking at
-16 Hz gets 2.3×, one peaking at 20 Hz gets 24.7×.
-
 ## V206 — the first real ratchet lever, with its price stated
 
 ```
@@ -212,12 +155,12 @@ number in it was wrong. V199's is `<= 1.0000001`, with a control assertion that 
 
 ## WHAT EVERY BUILD ON THIS SHELF CHANGES vs V122 — 11 cells, 30 payload bytes
 
-| addr | V122 → V199 | what it physically is | introduced |
+| addr | V122 → V208/V209 | what it physically is | introduced |
 |---|---|---|---|
-| `0xC60A8` | `−1.5372` → `−1.9289435` | biquad pole angle → **15.25 Hz** | V202 |
-| `0xC60AC` | `0.63462` → `0.9216000` | biquad pole radius → **0.9600** | V202 |
-| `0xC60B0` | `−1.8808` → `−1.9846207` | **the notch centre, 55.23 → 19.75 Hz** | V195, kept |
-| `0xC60B4` | `0.81731` → (forced) | overall gain — forced by unity DC | V202 |
+| `0xC60A8` | −1.5372 → -1.905926 | biquad pole angle → **15.50 Hz** | V208 |
+| `0xC60AC` | 0.63462 → 0.9168062 | biquad pole radius → **0.9575** | V208 |
+| `0xC60B0` | −1.8808 → -1.983432 | **the notch centre, 55.23 → 20.50 Hz** | V208 |
+| `0xC60B4` | 0.81731 → 0.6567325 | overall gain — forced by unity DC | V208 |
 | `0xC40D2` | 1020 → **102** | K1, modelled Coulomb friction — Honda’s VALUE, but see below | V177 |
 | `0xC40DC` | 8 → **22** | acceleration EMA alpha → **Honda** | V179 |
 | `0xC63A6` | 1024 → **512** | w[3], the inertia term's weight, halved | V181 |
@@ -258,7 +201,7 @@ Two passes are enough. The design law is that one short symptomatic drive must i
 
 Then:
 ```
-python rlog-tools/score/score_band_excess.py <tag>
+python rlog-tools/score/score_drive.py <tag>       # start here — one command
 python rlog-tools/score/cross_channel_band_excess.py <tag>
 python rlog-tools/probe/decode_v205_observer_output.py <tag> --v205  # V205 only
 python rlog-tools/probe/decode_v204_observer_lane.py <tag> --v204    # V204 only
