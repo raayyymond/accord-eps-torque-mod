@@ -47,6 +47,11 @@ Both gates are recomputed from the written bytes, and both are the record's own 
 **max|H| = 1.0000** (the lineage bar — V194–V198 were pulled for 1.35–1.72) and **min|H| over 6–15 Hz
 = 0.9374 ≥ stock's 0.9344**, because the lane is measured *damping* there.
 
+**And it is not fitted to the median car.** Re-searched under five other ways of combining the routes
+— mean, geometric mean, worst-route, p75 — the winner is the same geometry every time. The only
+weighting that prefers V235's 25 Hz is a **flat** one, i.e. the objective that ignores the measurement
+and just aims at the middle of the band. That is precisely the difference between the two builds.
+
 ⚠ **What is NOT claimed:** that 28 % of modelled cost is 28 % less grinding. The weight is chassis
 **motion**; the notch filters a **torque** lane. This is a better-founded aim than the one V235 had, not
 a promise.

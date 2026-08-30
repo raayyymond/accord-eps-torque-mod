@@ -66,6 +66,23 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ✅⭐⭐⭐⭐ **V241's GEOMETRY IS NOT FITTED TO THE MEDIAN CAR — it wins under 5 of 6 objective weightings, and the one exception explains exactly what separates it from V235.**
+>
+> The obvious weakness of V241's objective is that it weights the **median** route. If the geometry only suits the median, it is fitted. Re-searched under every reasonable alternative:
+> ```
+>   weighting                  zero Hz  pole Hz     r      cost
+>   MEDIAN (V241 used this)      29.75    22.50  0.940  0.31079  <- V241
+>   MEAN                         29.75    22.50  0.940  0.38980  <- V241
+>   GEOMETRIC MEAN               29.75    22.50  0.940  0.31743  <- V241
+>   WORST ROUTE (minimax)        29.75    22.50  0.940  0.40573  <- V241
+>   p75 across routes            29.75    22.50  0.940  0.38251  <- V241
+>   UNWEIGHTED (flat 22-30)      25.00    22.00  0.960  0.06746
+> ```
+> ✅ **[EVIDENCE] Identical geometry under median, mean, geometric mean, minimax and p75.** With the leave-one-route-out result (same winner on all 10 folds), the shape is robust to **both** which routes are used and how they are combined.
+> ⭐ **AND THE ONE EXCEPTION IS THE MOST USEFUL LINE IN THE TABLE.** Weighting the band **flatly** reproduces **25.00 / 22.00 / 0.960 — essentially V235's geometry.** So the entire difference between the two builds is that **V235 aimed at the NOMINAL CENTRE of 22–30 Hz, while V241 aims at where the excess MEASURABLY IS.** The only objective that prefers V235 is the one that ignores the measurement.
+> ⊕ That also explains the geometry's shape: with the pole at 22.50 and the zero at 29.75, the trough spans the whole excess band rather than nulling one frequency — which is why it beats a sharper notch centred at the peak.
+> ➕ Reader: `rlog-tools/score/notch_weighting_robustness.py`.
+
 > ⭐⭐⭐⭐⭐ **V241 BUILT — THE NOTCH RE-AIMED ON THE INDEPENDENT INSTRUMENT. 28 % MORE OF THE MEASURED EXCESS, AND IT STOPS CUTTING THE DAMPING BAND HARDER THAN HONDA.**
 >
 > V235's geometry was fitted to a **CAN objective** — the EPS's own channels, the same subsystem the build modifies. The IMU had no part in it, and it names 22–30 Hz as the largest engagement-created band. **V235's band is right; its shape is not:**
