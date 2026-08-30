@@ -66,6 +66,19 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **NO BUILD FROM V90 TO V122 HAS MOVED THE 6–9 Hz ANTI-DAMPING — AT ALL. THAT IS THE MECHANISM-LEVEL REASON SIXTY BUILDS PRODUCED NOTHING ON THE RATCHET.**
+>
+> Now that the ratchet's anti-damping measures **linear and amplitude-independent**, a per-build comparison of it is finally *interpretable* — and that same amplitude-independence is what makes it interpretable, since a quantity that swings with amplitude cannot be compared across routes that differ in amplitude. Engaged windows, `tq` vs `cs_rate` (**both non-rectified**), **coherence ≥ 0.60 only**:
+> ```
+>   V90 -60.0 · V91 -53.4 · V96 -54.2/-54.0 · V98 -46.6 · V99 -56.6 · V100 -66.8 · V101 -84.1
+>   V102 -74.9 · V103 -72.3 · V104 -64.8 · V105 -67.8 · V106 -63.5 · V107 -62.3 · V111 -70.6
+>   V112 -68.5 · V122 -70.1
+>   median -64.77   sd 9.07   range -84.1 .. -46.6 over 17 builds
+> ```
+> ✅ **[EVIDENCE] NOTHING IS OFF THE PACK.** The only two flagged at |z| ≥ 2 are the **smallest-n routes** (V98 on 26 windows, V101 on 75); the spread is 14 % of the median with no structure by build era. **Thirty-plus builds of levers — rate lanes, dampers, filters, caves, the notch arc — and not one of them came near this number.** The record's *“nothing has moved the ratchet”* now has a mechanism behind it rather than a symptom tally.
+> ⊕ **AN OBSERVATION, NOT A FINDING, IN THE CONTROL BAND.** At 22–30 Hz the builds *do* separate — `V90 +14.1 · V96 +12.8 · V106 +11.7` against `V107 −1.5 · V111 −8.3 · V112 −12.0`, and then **V122 +10.7**. Since `Re(Z)` there swings −17 → +17 *with amplitude*, most of that ordering is the amplitude confound — but **V112 and V122 are amplitude-matched (A 1.85 vs 1.69) and 22 points apart**, so not all of it is. ⚠ **n = 51 windows each, one route per build: a screen.** If it holds, **V122 — the build on the car — damps the grinding band where its three predecessors pumped it.**
+> ➕ Reader: `rlog-tools/score/antidamping_by_build.py`.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **RETRACTED WITHIN THE HOUR BY ITS OWN CONTROL — “A PROTECTIVE DAMPING TERM RUNNING OUT” WAS MOSTLY REGRESSION DILUTION. WHAT SURVIVES IS BETTER AIMED: THE 6–9 Hz ANTI-DAMPING IS *LINEAR*, AND THE REAL NONLINEARITY IS AT 22–30 Hz.**
 >
 > The decile shape (`Re(Z)` −23 → −65 with amplitude) has an alternative explanation I should have tested before writing a mechanism onto it: **at small A the SNR is low, and `Re(Z) = CSD/PSD` is biased toward zero when the estimate is noisy.** Coherence per decile settles it:
