@@ -246,6 +246,18 @@ figure here ever looks absurd, check this conversion first.
 ➕ The instrument did not exist before 2026-08-30: the audio corpus stopped at `ra6` (V106) and the car
 had no audio cache at all, so this prediction was untestable until the baseline was extracted.
 
+### 🛑 CAN IS PRIMARY, AUDIO IS THE CROSS-CHECK — decided on VALIDITY, not efficiency
+
+Registered 2026-08-30 after testing both against the operator’s own verdicts. He called **V101 (`r95`)**
+*"grinding/vibration now exists at all speeds"* and chose **V102 (`r96`)**, so a valid instrument must
+score `r95` worse. **Audio scores it BETTER in all three bands; CAN agrees with him in two of three.**
+
+⇒ **CAN is primary here, audio is the cross-check** — the reverse of an earlier recommendation in this
+document’s own history, which ranked them on exposure efficiency alone.
+
+⚠ One route pair, and `r95` carries only 7 episodes. Weak, and it does not prove audio invalid — but it
+is enough that audio must not be primary on sensitivity alone.
+
 ### ⚠ AUDIO AND CAN CAN DISAGREE — SENSITIVITY IS NOT VALIDITY
 
 The scorer now reports **both** arms, audio first. That is because audio is **2.3–7× more efficient** and alias-free — but efficiency is not correctness, and the two can disagree hard.

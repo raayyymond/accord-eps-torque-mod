@@ -46,6 +46,21 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐ **THE AUDIO-FIRST RECOMMENDATION IS WITHDRAWN. Audio is more SENSITIVE; CAN is more VALID.** Having recommended audio-first on exposure efficiency, I ran the validity check I had been careful not to run: **does either instrument agree with what the operator actually reported?** He called **V101 (`r95`) *"grinding/vibration now exists at all speeds"*** and chose **V102 (`r96`)** instead, so a valid instrument must score `r95` **worse**.
+>
+> ```
+>   band            AUDIO                    CAN
+>   22-26 (8x)   NO (says V101 better)    NO (says V101 better)
+>   15-22 grind  NO (says V101 better)    YES
+>   6-9 ratchet  NO (says V101 better)    YES
+>                 -----------              -------
+>                   0 of 3                  2 of 3
+> ```
+>
+> ⇒ **audio contradicts his verdict in EVERY band; CAN agrees in two of three.** Sensitivity without validity is measuring the wrong thing more precisely, so **the audio-first ordering is withdrawn.** ➕ Note CAN also fails at **22–26 Hz — the band the record says the 8× effect lives in** — which is its own open question.
+> ⚠ **Weak, and labelled weak:** this is **one route pair**, and `r95` carries only **7 episodes / 2.9 engaged minutes**, far under any threshold used elsewhere. The routes also differ in more than the build. It is not proof audio is invalid — it is enough to **stop recommending audio as the primary readout on sensitivity alone.**
+> ✅ **What stands:** audio’s exposure advantage is real (2.3–7×) and it is alias-free. **Keep scoring both** — the scorer already does — but treat **CAN as primary and audio as the cross-check**, which is the reverse of what I said two ticks ago. ⇒ **the operator’s own verdict outranks both**, which is the standing rule and is now the only instrument with a validity record.
+
 > ⚠⭐⭐ **CORRECTION TO THE BLOCK BELOW — I MEASURED THE QUIETEST ROUTE. The audio advantage is REAL but SMALLER: 7.0× at the median, not 10.5×.** The block below rested on `r24` alone, which is the same single-route gap that left every cross-build claim unpriced — so it was checked against the other **7 audio caches**. `r24` turns out to be the **lowest or near-lowest sd in 3 of 4 bands**, and the sd itself varies **~2× across routes** (6–9 Hz: 0.327–0.687 ungated).
 >
 > ```
