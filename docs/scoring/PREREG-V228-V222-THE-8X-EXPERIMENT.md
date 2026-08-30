@@ -222,6 +222,30 @@ at `ra6`/V106 — there was **no audio cache for the car at all**, which made th
 | **no lift** (within ±2 dB of the car) | the notch arithmetic is **wrong somewhere** — stop and find it before any further build reasons from it |
 | lift **much larger** than predicted | something amplifies beyond the open-loop transfer; treat as a closed-loop effect and re-open |
 
+### ✅ POWER: this is the MOST SENSITIVE test in the apparatus — ~2 min/arm
+
+Checked before the drive rather than after, using the `r24` baseline created for it.
+
+```
+  engaged 20 s episodes on the car: sd = 0.3415 log10 = 3.4 dB
+     (gating to ENGAGED frames cut it from 6.7 dB -- do the gating)
+
+  V228 +5.9 dB     6 episodes/arm  =  2.0 min/arm
+  V222 +8.1 dB     3 episodes/arm  =  1.0 min/arm
+```
+
+⇒ **compare the CAN band tests: grinding needs 14 min/arm, 9–12 Hz needs 17, the ratchet needs 414.**
+The 40–49 Hz audio readout is roughly **7× more sensitive than the CAN grinding test** and is
+**falsifiable inside a single short drive** — the only registered test here that is.
+
+🛑 **UNITS, because this bit me.** The ratio is log10 of a POWER ratio, so **dB = 10 × log10** and
+**+5.9 dB IS 0.59 log10, not 0.059**. A first pass divided an already-log10 figure by ten and reported
+671 and 356 min/arm, i.e. the test looked dead when it is the strongest one available. If a power
+figure here ever looks absurd, check this conversion first.
+
+➕ The instrument did not exist before 2026-08-30: the audio corpus stopped at `ra6` (V106) and the car
+had no audio cache at all, so this prediction was untestable until the baseline was extracted.
+
 ### 🛑 What this test CANNOT do — attribute a SYMPTOM
 
 The band measurement above is a **mechanism test** and is valid as such. But if the operator reports **grind #2 itself**, that **cannot be attributed to the notch relocation**, because **grind #2’s origin is OPEN**. The record is explicit: *"grind #2 is V62’s `sar`" is REFUTED* — **V71c produced grind #2 carrying NEITHER `sar` byte.** The surviving claim is only that the r24 half is *"directionally supported"* as a contributor.
