@@ -46,6 +46,25 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE 55 Hz COST IS MECHANICALLY NEGLIGIBLE — V235's LAST OPEN QUESTION CLOSES FAVOURABLY.** The content at 55 Hz cannot be recovered from any route running Honda's notch (|H| = 0.0063 there, so de-embedding means ×25,000 — the numerically invalid operation caught earlier). But **ra4 and ra5 share the same b26 dose (1.5×) and differ in the notch**, and CAN's ~101 Hz sampling folds **52–71 Hz into 30–49 Hz**:
+>
+> ```
+>   true Hz   aliases to    Honda      V105      V235
+>   52           49.0      0.0930    0.7514    0.8927
+>   55           46.0      0.0063    0.7640    0.9010   <- Honda cuts 121x, V105/V235 pass
+>   65           36.0      0.2472    0.7915    0.9186
+>
+>   lane power, normalised to 4-15 Hz (which BOTH notches leave alone):
+>     ra4 (Honda notch)   4-15 1.000   15-30 0.409   30-40 0.00856   40-49 0.01042
+>     ra5 (V105 notch)    4-15 1.000   15-30 0.423   30-40 0.00975   40-49 0.00858
+>
+>   excess in the folded band, ra5 - ra4 = -0.05 % of total power
+> ```
+>
+> ✅ **ra5 passes 52–71 Hz where ra4 notches it out, so real energy there would show as an excess. There is none: −0.05 %, indistinguishable from zero.** ⇒ **Honda's 55 Hz notch removes essentially nothing from this lane, and V235's 143× increase at 55 Hz applies to a band with no energy in it.**
+> ✅ **COROLLARY, and it matters for the drive:** the licensed **50–60 Hz (2.13×) and 60–72 Hz (2.22×) LKAS audio excess does NOT originate in the lane V235 modifies.** Releasing the notch there cannot amplify it. The audible excess comes from somewhere else — motor, mechanical, or another path — and this build does not touch it.
+> ⚖ **Limits:** two routes, and the two folded sub-bands move in opposite directions (30–40 up 1.138×, 40–49 down 0.823×), which is scatter. The **total** is −0.05 %, far inside any plausible noise, which is what licenses the conclusion — not either sub-band alone.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE AGGREGATE PUMPS WHERE THE LANE PUMPS — V235's PREMISE CONFIRMED FROM A SECOND ROUTE AND A SECOND OBSERVABLE.**
 >
 > `gp-0x6b86` is only ONE of about six lanes summed into the aggregator (model add order at `0x3acc8-0x3ace6`: `r26+r24 → +6b86 → +6bd0 → +6bbe → +6b26 → +[6b62/6ade]`). So the lane pumping is **necessary but not sufficient** — if the other lanes cancelled it at the sum, notching the lane would buy nothing that reaches the motor. **r95 (V101) carries Honda's biquad byte-for-byte and taps `gp-0x6b94`, the aggregator**, so it answers this directly.

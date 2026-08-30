@@ -17,7 +17,7 @@ overrides it.
 
 **Stop and say so if:**
 - the **ratchet or stutter is clearly worse** than your car
-- a **new higher-pitched noise** appears — expected, see the cost below, but say so anyway
+- a **new higher-pitched noise** appears — this is now measured as UNLIKELY, so if it happens it is important: say so
 - anything faults, or the EPS lamp lights
 
 **Fallbacks in order:** **V234** → **V233** → **V122** (your car).
@@ -119,16 +119,29 @@ leaves at 1.004×.
 
 ---
 
-## The cost, plainly
+## The cost — measured, and it is smaller than I thought
 
-**55 Hz runs ~143× louder than Honda's cut.** One second-order section cannot notch both 25 Hz and
-55 Hz — that is structural, not a tuning choice, and any geometry that cuts the pumping pays it. The
-audio does show LKAS-caused excess at 50–72 Hz, so **if a new higher-pitched noise appears, that is
-where it comes from.**
+V235 raises 55 Hz by ~143× versus Honda's cut, and one filter cell cannot notch both 25 Hz and 55 Hz.
+I flagged that as the build's one real cost. **It has now been measured, and it is negligible.**
 
-The counter-argument, which is why it is still worth driving: **Honda's 55 Hz cut is on your car today
-and has not stopped the grinding**, while the band the lane demonstrably pumps into was left cut only
-1.51×.
+The trick is that CAN's sampling folds 52–71 Hz down into 30–49 Hz, and two of the measured routes
+differ in exactly the right way: **ra4 ran Honda's notch (55 Hz cut 121×), ra5 ran a 25 Hz notch that
+passes 55 Hz** — same lane dose otherwise. If the lane carried real energy up there, ra5's folded band
+would exceed ra4's.
+
+```
+  excess in the folded band, ra5 - ra4  =  -0.05 % of total power
+```
+
+**There is essentially no energy at 52–71 Hz in this lane**, so Honda's notch there is removing almost
+nothing, and V235 gives back almost nothing.
+
+⇒ **The 50–72 Hz noise the audio does show is not coming from the lane this build touches.** It comes
+from somewhere else, and V235 will not make it louder. If you hear a new high-pitched noise anyway,
+that is genuinely informative — it would mean the lane model is wrong somewhere.
+
+*(Two routes, and the two folded sub-bands scatter in opposite directions; the total is what licenses
+this, not either half alone.)*
 
 ---
 
