@@ -167,6 +167,26 @@ Mapping from the outcome table above: *grinding better but still there* → **V2
 
 ---
 
+## A free extra read on this drive — pre-registered
+
+V222 sits at relay saturation onset **250** counts; the whole V196–V217 shelf sat at **50**. A three-point flown ladder (V111 onset 50 · V112 onset 150 · V122 onset 250, all with the same unsaturated slope) shows the **grinding band falling monotonically with onset** in two rate bins, with the extreme builds’ CIs disjoint in both.
+
+🛑 **I am not claiming it**, and the reasons are written down: the largest bin sorts nothing, the ratchet band scrambles in the same bin where grinding sorts, the middle build is highest in the intermediate band, onset is confounded with build number, and the arithmetic predicts no effect at these rates at all. But **this drive reads it at zero extra cost**:
+
+```
+python rlog-tools/score/rate_matched_band_ratio.py
+```
+
+| grind 15–22 vs the control band | reading |
+|---|---|
+| clearly BELOW the V196–V217 shelf era | the knee trend was real, and V222 gained from it |
+| indistinguishable | the trend was route difference, as the checks suggest |
+| clearly ABOVE | something else moved; do not attribute it to the knee |
+
+⚠ Nothing on this card depends on the answer. It is a spare observation on a drive being made anyway.
+
+---
+
 ## Verification behind this build
 
 - **72/72 build assertions**, CRC 50/50, `.rwd` decodes byte-identical to the built image.
