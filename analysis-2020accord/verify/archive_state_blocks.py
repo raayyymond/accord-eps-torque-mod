@@ -13,8 +13,13 @@ lines = io.open(P, encoding='utf-8').read().split('\n')
 orig_bytes = len('\n'.join(lines).encode('utf-8'))
 
 # BLOCKS section runs from the INDEX header to the first "EARLIER STATE ... ARCHIVED" header
-start = next(i for i, l in enumerate(lines) if l.startswith('## 🗂 INDEX TO THE BLOCKS BELOW'))
-end = next(i for i, l in enumerate(lines) if 'EARLIER STATE' in l and 'ARCHIVED' in l)
+# 🛑 LAYOUT DRIFT, 2026-08-30. This used to scan BETWEEN the INDEX header and the first
+# "EARLIER STATE ... ARCHIVED" header, because that is where blocks lived. Blocks are now
+# PREPENDED AT THE TOP of the file instead, so that range emptied and the archiver silently
+# reported "only 0 blocks found -- not archiving" while STATE kept growing. The live blocks run
+# from the top matter down to the INDEX header, newest first, so the OLDEST sit just above it.
+start = next(i for i, l in enumerate(lines) if l.startswith('## ✈'))
+end = next(i for i, l in enumerate(lines) if l.startswith('## 🗂 INDEX TO THE BLOCKS BELOW'))
 
 # group boundaries: a line starting '> ' whose predecessor is blank
 starts = [i for i in range(start + 1, end)
