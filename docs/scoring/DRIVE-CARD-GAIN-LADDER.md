@@ -157,6 +157,38 @@ already run. Only once that is clean does V242's four-byte gain step mean anythi
 
 ---
 
+## The third symptom you named: "peak command oscillation"
+
+**It has been tested, and as literally stated it does not exist in the data.** Both readings this bus
+can observe were checked with controls, and both were refuted. The roughness runs the *other* way:
+
+```
+  command p90 quartile     n     roughness ratio  P(6-30Hz)/P(0.5-3Hz)
+        76 -   276        928        2.4877
+       276 -   473        928        2.8547
+       473 -  1161        928        2.4342
+      1161 -  4096        928        0.6637   <- 3.7x SMOOTHER
+  log roughness vs log command   corr -0.358, p<0.0001, all five routes agree
+```
+
+**The car gets smoother as the command grows.** High-frequency power does rise with command
+(corr +0.491) — but low-frequency power rises *faster* (+0.793), so the ratio falls.
+
+⇒ **The roughness you feel is a SMALL-command phenomenon**: gentle steering, holding a straight line —
+not peak demand. That matches the ratchet living at creep, 1–13 °/s.
+
+⚠ **Do not read that as "so more gain will be smoother."** It is a within-build correlation across
+operating points, not a between-build prediction — and V101 at 8× ground badly, which is direct
+evidence against that inference. Raising the gain moves the loop, not just where you sit on the command
+axis.
+
+**None of these three builds targets peak-command oscillation, and none of them claims to.** The
+useful consequence is the opposite of intuition: levers have to be sized for the **micro** regime, and
+that is what this lineage does — Lever B sits at 5244, its saturation onset at 640 counts against an
+engaged torque-rate p90 of 146, deliberately keeping the small-signal region linear.
+
+---
+
 ## What I could not deliver, and why
 
 **No lever for LKAS authority beyond the gain.** The only EPS-side route to more authority is

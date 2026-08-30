@@ -66,6 +66,21 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ✅⭐⭐⭐⭐ **THE THIRD SYMPTOM IN THE BRIEF — “peak command oscillation” — IS ALREADY REFUTED IN THE RECORD, AND THE ROUGHNESS RUNS THE OTHER WAY.**
+>
+> The brief named three symptoms; grinding and authority are covered by the ladder, and this one was not spoken to. It has been tested — **both readings this bus can observe were refuted with controls** — and the roughness ratio **falls** as the command grows:
+> ```
+>   command p90 quartile     n     roughness  P(6-30)/P(0.5-3)
+>        76 -   276        928        2.4877
+>       276 -   473        928        2.8547
+>       473 -  1161        928        2.4342
+>      1161 -  4096        928        0.6637   <- 3.7x SMOOTHER
+>   log roughness vs log command  corr -0.358  p<0.0001, all five routes
+> ```
+> HF power rises with command (+0.491) but **LF power rises faster (+0.793)**, so the ratio falls. ⇒ **the roughness is a SMALL-command phenomenon**, consistent with the ratchet living at creep.
+> 🛑 **AND THE TEMPTING INFERENCE IS WRONG.** *“Roughness falls with command, so more gain will be smoother”* is a **within-build correlation across operating points**, not a between-build prediction — and **V101 at 8× ground badly**, which is direct evidence against it. Raising the gain moves the loop, not just where you sit on the command axis. **Recorded on the card so the ladder is not oversold with it.**
+> ⇒ **None of the three builds targets peak-command oscillation, and the card now says so.**
+
 > ✅⭐⭐⭐⭐ **THE FLASHABLE ARTIFACTS VERIFY FROM THE OTHER END — and a false “DO NOT FLASH” was caught by its own control.**
 >
 > The builders assert their round-trip at build time and `rebuild_shelf_bitexact` re-runs them. This asks the same question **backwards, from the artifact** — so a file corrupted or replaced after its build would be caught:
