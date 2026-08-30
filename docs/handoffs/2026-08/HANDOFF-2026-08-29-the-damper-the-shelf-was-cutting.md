@@ -146,6 +146,22 @@ from what the operator drives. **Diff every candidate against the flown image.**
 5. **The 30–49 Hz band needing a matched pair of drives** — the design failure the doctrine forbids.
    Replaced with a corpus baseline so one drive is interpretable.
 
+## 4b. 🛑 THE GATES THEMSELVES WERE THE RECURRING DEFECT — audit them with two lenses
+
+Four gates were found checking the wrong thing this session, all by the same two questions:
+
+**Lens 1 — is it the right REFERENCE?** A cell compared to *stock* says nothing about what it does to the *car*.
+**Lens 2 — does it bound BOTH ends?** A gate that caps a maximum says nothing about the floor.
+
+| gate | what it checked | what it MISSED | lens |
+|---|---|---|---|
+| `[14]` damper | vs Honda | vs the **flown car** — hid a **7.15x** cut | 1 |
+| `[6]` GATE 2 | `max\|H\| <= 1` | the **passband floor** — a design scored 99.0 % by attenuating 0-5 Hz to **0.62x** | 2 |
+| `[8]` friction | reported the multiplier | **asserted only `knee > 0`** — no bound at all, and Honda-only | 1 + 2 |
+| `[13]` gain | the gain value | that the **clamps still clear the lane max** — a raise could silently clip | 2 |
+
+⇒ **When a gate passes, ask what it would still pass.** Two of these four surfaced only because a build tripped over the consequence; the other two were found by deliberately applying the lenses to gates that were passing quietly. **Apply them to any new gate before trusting it.**
+
 ## 5. Tools and gates added
 
 - `score_drive.py`: a **30–49 Hz control band** on `cs_rate` + both IMU axes, with a 23-route corpus
