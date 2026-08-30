@@ -64,6 +64,17 @@ so a V228 drive followed by a V222 drive is the cleanest 8×-gain experiment thi
 
 ---
 
+## The trade you are actually making
+
+**You cannot get the grinding fix without lifting 40–49 Hz.** That was checked properly rather than
+assumed: keeping Honda’s 55 Hz notch and buying the 15–22 Hz cut from Lever B instead would need Lever B
+**1517× past its calibration ceiling**, and the describing function says the extra gain would not
+deliver anyway because this build already sits at the p99 knee. There is also only **one biquad** in the
+whole firmware, so 20.50 Hz and 55 Hz are mutually exclusive.
+
+⇒ **The real choice is: the grinding fix with an audible 40–49 Hz lift (~+5.9 dB on V228, ~+8.1 dB on
+V222), or neither.** Staying on your car keeps 40–49 Hz where it is and keeps the grinding too.
+
 ## ⭐ IF YOU CAN ONLY DO ONE THING: DRIVE V228 TWICE
 
 Not V228 then V222 — **V228 twice, on separate outings.**

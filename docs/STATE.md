@@ -38,6 +38,23 @@ licenses nothing, because `0xC63AE` is unpriced. If the ratchet is worse, the fa
 
 > ✅⭐⭐ **V228 BUILT — V222 WITHOUT THE 8×, i.e. the ratchet race REMOVED.** The risk in the block above comes **entirely from the forward gain**, and that is separable. **V228 = V222 with `0xC6CD0` left at the car’s 5346 (6×) and the clamps `0xC61B2`/`B4` at 3072** — **4 bytes** from V222, **19 bytes** from the car. It keeps **both levers that have evidence behind them**: the 20.50 Hz notch (grinding, net 0.463× at 22–26 Hz) and **Lever B at 13107** (2.50× damping, the kit’s only measured on-car win), and it declines the 1.33–1.65× excitation rise that the notch cannot cover at 6–9 Hz. ⇒ **on V228 the ratchet has no plausible way to get worse** — every delta from the car is either a damper raise or a filter that is flat at the ratchet. 🛑 **COST, stated plainly: LKAS authority stays at the car’s 6×.** That is the whole trade. ⚠ **NOT V212**, which is this base with the car’s Lever B (5244); **V228 is the first build ever to pair a RAISED Lever B with 6×.** image `6cf12db9fc49aee2…`, rwd `b90a200ce53c7f37…`, **72/72** builder assertions, **100 %** orphan-byte coverage, **1138** close-out checks. Builder: `analysis-2020accord/builds/v108_plus/build_v228_tva.py`.
 
+> 🛑⭐⭐ **AND THE 40–49 Hz LIFT IS UNAVOIDABLE — there is no way to buy the grinding fix without it. CLOSED.** The obvious escape is to keep Honda’s 55 Hz notch and buy the 15–22 Hz cut from **Lever B** instead, which damps broadband and never touches the notch. It fails, by two independent arguments and an enormous margin.
+>
+> ```
+>   target: the notch cuts 15-22 Hz to 0.0790 POWER
+>
+>   TEST 1  empirical dose law, exponent -0.258 from V88 two points:
+>      Lever B 13107 -> 0.790   26214 -> 0.660   65535 (cal MAX) -> 0.522
+>      to MATCH the notch needs 9.9e+07  =  1517x past the uint16 ceiling
+>
+>   TEST 2  the describing function:
+>      V222 already sits at 0.93x the p99 knee -- past a knee, more k buys NOTHING
+> ```
+>
+> ➕ The exponent rests on **two** dose points, which the record explicitly warns against (*"V62’s lesson: 2× was the OPTIMUM, not a point on a ramp"*). It is used here only to show the idea fails by **orders of magnitude** — a margin no exponent uncertainty can close.
+> ⇒ Combined with **one biquad exists**, so 20.50 Hz and 55 Hz are **mutually exclusive**, this closes it: **the 40–49 Hz lift is the PRICE of the grinding fix, not an oversight in the build.** The alternative build (Honda’s notch kept, Lever B raised instead) would deliver **0.79× power at 15–22 Hz ≈ −1 dB — imperceptible.**
+> ⇒ **So the real choice is: grinding fix WITH an audible 40–49 Hz lift, or neither.** That is the operator’s call and it is now stated plainly rather than buried in a trade nobody named.
+
 > 🛑🛑⭐⭐⭐ **CORRECTION: "V228 CANNOT MAKE ANYTHING WORSE" IS FALSE. Both builds raise the GRIND-#2 BAND (40–49 Hz), and that band is AUDIBLE.** Chasing why V62’s lever — the kit’s most robust measured fix, 29× above the placebo floor — is absent from every build found something about the builds that ARE on the shelf. V62’s `sar×2` (`0x3AB76`/`0x3AC20`) is byte-stock `0xAA` on V88, V122, V222 and V228, removed because it **created grind #2 at 40–49 Hz, +9.7 dB(A)**. But the current builds reach the same band by a **different route**: the notch retune moves Honda’s 55 Hz notch away, which LIFTS 40–49 Hz.
 >
 > ```
