@@ -66,6 +66,29 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ⭐⭐⭐⭐⭐ **THE RATCHET'S LANE IS IDENTIFIED: `gp-0x6b86`. First answer the arc has had, from data already on disk — and it explains thirty-plus builds of nulls.**
+>
+> CAN 427 carried a **different lane per build**, so the corpus is a natural experiment. Reading the clamped channel at **2f₀** (where a rectified 7.8 Hz oscillation lands), as a **local excess within the engaged arm**:
+> ```
+>   lane         routes   median   per route
+>   gp-0x6b86         3    3.288   ra4 3.29, ra5 5.36, ra6 2.94
+>   gp-0x6b94         2    1.931   r85 2.11, r95 1.75
+>   gp-0x6b4c         2    1.849   r96 1.82, r9e 1.88
+> ```
+> ✅ **[EVIDENCE] ALL THREE `gp-0x6b86` ROUTES SIT ABOVE ALL FOUR ROUTES OF THE OTHER TWO LANES — complete separation, no overlap.**
+> 🛑 **AND THE FIRST VERSION OF THIS RANKING WAS WRONG, KILLED BY ITS OWN CONTROL.** Using the engaged/manual ratio, `gp-0x6b4c` came top at **300–377×** — and the denominator check showed why: **it is nonzero on 0.354 % / 0.273 % of MANUAL frames.** The lane is simply *dead when not engaged*, so the ratio was a division by noise measuring liveness, not ratchet energy. Switching to a **local excess within the engaged arm** removes the confound entirely — and `gp-0x6b4c` then ranks **last**.
+> 🛑 **CORRECTED, AND THE CORRECTION CHANGES THE TARGET. `gp-0x6b86` IS NOT THE ASSIST-MAP LANE — IT IS THE OUTPUT OF THE BIQUAD LANE**, i.e. **the lane the entire V172→V241 notch arc has been shaping.** The facade's own chain:
+> ```
+>   ... -> biquad H(z) -> float clamp +-12.0 -> x1024
+>       -> + gp-0x6b7e   (UNFILTERED pedestal, NOT scaled by c4)
+>       -> clamp +-0x3000 -> gp-0x6b86 -> FUN_0003aa2c aggregator
+> ```
+> ✅ **THE GOOD NEWS: THE NOTCH IS IN THE RIGHT LANE.** The ratchet is not somewhere the kit's main instrument cannot reach — it rides the exact lane the notch sits in. That is the opposite of a dead end.
+> 🛑 **THE BAD NEWS, AND IT EXPLAINS THE ARC'S CENTRAL FAILURE: `gp-0x6b7e` IS ADDED AFTER THE BIQUAD — AN UNFILTERED BYPASS AROUND THE NOTCH.** Whatever rides the pedestal reaches the aggregator with **no filtering at all**, at any notch aiming. That is why every notch build moved grinding and **none moved the ratchet**, and it is a mechanism, not a coincidence.
+> ⇒ **THE PEDESTAL IS THE TARGET, AND IT IS NOT A CONSTANT.** It is an EMA of the friction-hold limiter's cut — `iVar24 += (iVar33*0x80 - iVar24)*K >> 11` — so **it has a rate `K`, and a rate is a lever.** Pinning `K`'s cell is the next concrete step, and it is a lever in the RIGHT LANE, which nothing since V172 has been.
+> ⚠ **LIMITS, all real:** build and 427-source are **perfectly confounded** — each lane is seen only on the builds that probed it. 3 vs 2 vs 2 routes. And **rlogs stop at route a6**, so the three lanes V107+ put on 427 (`gp-0x6c2c`, `gp-0x6abc`, `gp-0x6b4e`) cannot be ranked at all — one of them could rank higher still.
+> ➕ Readers: `rlog-tools/score/rank_lanes_by_ratchet_energy.py` (the engaged/manual version, kept with its confound documented) and the liveness-free local-excess version.
+
 > ⭐⭐⭐⭐⭐ **THE CLAMPED 427 CHANNEL IS NOT USELESS AFTER ALL — READ IT AT 2f₀. THE LANE-RANKING BLOCKER IS REMOVED, AND IT WAS REMOVED BY A FIX MADE THIS SESSION.**
 >
 > Re-auditing the four lanes I called *“spoken for”* after V245 showed one of them was not. **Two closures are sound:** the base-assist damper is a **product of five Q10 gains with two exactly zero at creep**, so scaling any of them is structurally vacuous (even the untried `FactorC X[0]` edit reaches **0.096 %** of full gain); and `0xC40D2`'s Coulomb slope would need `k1 = 25600`, **25× past the boundary where its sign inverts**. Those stay closed.

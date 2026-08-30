@@ -88,3 +88,72 @@ replaced by the car's own value · a claimed IMU null reversed when tested rathe
    own "fix at 6x first" ruling.)
 2. **The sign probe** — put `gp-0x6b86`'s sign bit on 427 and settle the 6–15 Hz rule.
 3. If the rule falls, build the 6–10 Hz notch: it is the only untried lever with a measured case.
+
+---
+
+## THE RATCHET'S LANE IS IDENTIFIED — `gp-0x6b86`, and it is the lane the notch already sits in
+
+The arc's central unanswered question, answered from data already on disk. CAN 427 carried a **different
+lane per build**, which makes the corpus a natural experiment. Reading the clamped channel at **2f₀**
+(where a rectified 7.8 Hz oscillation lands):
+
+```
+  lane         routes   median   per route
+  gp-0x6b86         3    3.288   ra4 3.29, ra5 5.36, ra6 2.94
+  gp-0x6b94         2    1.931   r85 2.11, r95 1.75
+  gp-0x6b4c         2    1.849   r96 1.82, r9e 1.88
+```
+
+**All three `gp-0x6b86` routes sit above all four routes of the other two lanes — complete separation.**
+
+### The first version of this ranking was wrong, and its own control killed it
+
+Scored by the **engaged/manual ratio**, `gp-0x6b4c` came top at **300–377×** — which read as a decisive
+answer. The denominator check:
+
+```
+  route  lane          eng p50   man p50   man nonzero
+  r96    gp-0x6b4c        7.0      0.0      0.354 %
+  r9e    gp-0x6b4c        8.0      0.0      0.273 %
+  r85    gp-0x6b94        8.0     21.0     98.443 %
+```
+
+`gp-0x6b4c` is nonzero on **three tenths of one percent** of manual frames — the lane is simply *dead
+when not engaged*, so the ratio was a division by noise measuring **liveness**, not ratchet energy.
+(Consistent with the record: an 11-slot *assist sum* has nothing to sum when LKAS is not driving.)
+Rescoring as a **local excess within the engaged arm** removes the confound, and `gp-0x6b4c` ranks last.
+**Always inspect the denominator behind an implausibly large ratio.**
+
+### 🛑 And the lane's identity had to be corrected — the correction changes the target
+
+First written up as *"the base assist-map lane"*. **Wrong.** The facade's own chain:
+
+```
+  ... -> biquad H(z) -> float clamp ±12.0 -> ×1024
+      -> + gp-0x6b7e   (UNFILTERED pedestal, NOT scaled by c4)
+      -> clamp ±0x3000 -> gp-0x6b86 -> FUN_0003aa2c aggregator
+```
+
+`gp-0x6b86` is the **output of the biquad lane** — the lane the entire V172→V241 notch arc has been
+shaping. **The notch is in the right lane**; the ratchet is not somewhere the kit's main instrument
+cannot reach.
+
+### Three levers in that lane, all checked this tick, all negative
+
+| candidate | test | result |
+|---|---|---|
+| boost-curve **kink** (seg 0 is 21× steeper than seg 1) | what is the X axis? | **wrong axis** — `0xCA154` is keyed on *speed*, not torque; already refuted on record, and V61 touched it |
+| **pedestal** `gp-0x6b7e` bypassing the notch | EMA gain at 7.8 Hz | **weak** — at K=20 it passes **0.196** vs ~0.93 through the biquad path; filtered path dominates ~5×. V238's costing stands |
+| the lane's **±0x3000 clamp** (the record's *"nonlinear remains open"*) | does it bind? | **never** — 0.0000 % at ceiling on all three routes (max 850/835/723 of 1023) |
+
+Notching 7.79 Hz directly stays closed for the reason the damping-band floor exists: **there is a real
+6–9 Hz damper there**, and cutting it is self-defeating.
+
+**Limits on the ranking, all real:** build and 427-source are perfectly confounded — each lane is seen
+only on the builds that probed it. 3 vs 2 vs 2 routes. And rlogs stop at route a6, so the three lanes
+V107+ put on 427 (`gp-0x6c2c`, `gp-0x6abc`, `gp-0x6b4e`) cannot be ranked at all; one could rank higher.
+
+Readers: `rlog-tools/score/rank_lanes_liveness_free.py` (the sound one) and
+`rank_lanes_by_ratchet_energy.py` (the confounded one, kept with its confound documented).
+
+**The flight recommendation is unchanged: V241 first.**
