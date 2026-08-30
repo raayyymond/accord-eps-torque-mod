@@ -120,6 +120,15 @@ from what the operator drives. **Diff every candidate against the flown image.**
   ⊕ Route `r1e` (999 s engaged, the corpus's longest) has its energy centroid at 17.52 Hz and
   would prefer 15.50 — that is the **documented p10 tail**, which STATE.md already anticipates
   ("the tail is where one biquad was never going to help"). **Do not re-centre on one route.**
+- **THERE IS NO RELAY STEP TO REMOVE at the observer's zero crossing.** `gp-0x6b70 = sgn(resid) *
+  LERP(|resid|)`, so if `LERP(0) != 0` there would be a hard step of `2*LERP(0)` at every zero
+  crossing — a true relay, and **removing** a discontinuity would beat scaling it. Checked via
+  `assist_map_mirror`: **`X[0] = 0, Y[0] = 0` at 640/1280/2560/5120** — the curve passes
+  through the origin and is **continuous** there. The relay-like behaviour is the STEEP BUT
+  CONTINUOUS origin slope (2.67x / 3.04x / 3.77x / 3.43x), not a step.
+  ⇒ **`0xC63AE` scales exactly that slope and is the only lever that touches this stage alone**;
+  the curve is welded to the ROM assist records, so reshaping it moves steering feel everywhere.
+  This closes the last conceivable alternative for the ratchet.
 - A sweep for "dormant features gated by a zero cal" has a **poor hit rate** — zero offsets and float
   low-halves dominate. The one real find (the PI block) came from tracing, not sweeping.
 
