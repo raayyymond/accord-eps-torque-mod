@@ -1,0 +1,120 @@
+# HANDOFF 2026-08-29 — the damper the shelf was cutting
+
+**Headline: the notch shelf was cutting a real 6–9 Hz damper 7.15× below the car, invisibly, inside
+builds whose stated purpose was fixing grinding.** Found by chasing one outlier route. Fixed across
+V214–V217. Nothing was flashed and no CAN or UDS message was sent.
+
+**Fly `V217`** — `image f89ea01f405d513985ce51c47f6796e1ea77f600fab3d9f7817cd79907a1967b`.
+Its entire delta from the car is **19 payload bytes, every one a deliberate lever.**
+
+---
+
+## 1. The headline finding
+
+`r7d` is **the drive the operator aborted** — *"made the stuttering and grinding worse, by a lot … it
+vibrated the entire car, and I decided it was not safe to drive."* It carries a measurable signature,
+and every control passes:
+
+```
+  sustained engagement-gated line at ~31 Hz
+  459x the CREEP-MATCHED corpus median   prominence 56x   (next highest 13.3x)
+  engaged/manual contrast          54x
+  survives 0.5 s edge trimming     -> not an engagement transient
+  56 % of 5-49 Hz power in 30-35   -> a narrow line, not broadband
+  speed-invariant across 3 episodes -> not a wheel order (would be order 75.8)
+```
+
+V94 flew it after cutting `gp-0x6b26` 6×; that cell was later measured to be a **real 6–9 Hz damper**
+(+137°/+139° vs wheel rate, |cos| 0.73 ⇒ **+518/+565 counts of positive Re(Z)**).
+
+**The defect:** the car (V108) carries `0xD7A5C` at **3.576× Honda**; every notch build carried
+**0.500×** — a **7.15× cut**, reached in two *never-flown* steps (V175, V196). **Every prior check
+compared this row to Honda**, which made a 7.15× change *from the car* read as a tidy "half dose".
+
+### The fix took four builds because each exposed the next layer
+
+| build | corrected |
+|---|---|
+| V214 | mode 26 inertia row → the car |
+| V215 | mode 27 too — RULE 7: "27 is unused" is a *memory*, not evidence |
+| V216 | the friction lane — **polarity was backwards**; more modelled friction = MORE assist = LIGHTER wheel, so the shelf's 0.10× was *removing* authority and fighting the 8× gain step in the same build |
+| V217 | `0xC63A6`, the inertia lane's **weight** in the model sum — the shelf restored the row then fed it in at half weight, keeping net inertia at 0.5× the car |
+
+⚠ **The generalisable lesson:** *comparing a cell to STOCK hides what it does to the CAR.* Three cells
+(inertia row, friction lane, lane weight) all passed Honda-relative checks while sitting 7×, 10× and 2×
+from what the operator drives. **Diff every candidate against the flown image.** Gate **[14]** now does.
+
+---
+
+## 2. Structural findings (all EVIDENCE, two methods each)
+
+- **`FUN_00026c80` is the 11-slot lane mixer**, fully decoded. **`gp-0x6b4a` ≡ 0** — nine of ten slots
+  store value A as literal `r0`, the tenth (`gp-0x6b76`) is zeroed by `0xC616C` = 0. So the mixer
+  reaches the delivery chain with nothing, and **`0xC616C` is the real interlock**, not the ×0.
+- **`FUN_00025c32` is a 10-client request bus** — a 16-byte record (slot, type, four values, three
+  weights), exactly ten callers. **All ten slots mapped.**
+- **`0xC4124` is a ROUTER, not a mute.** mode 0 → `gp-0x6b4c`; mode 5 → **`gp-0x6b4e`**. Complementary
+  branches, verified verbatim.
+- **`gp-0x6bfa`** (the observer's bias term, provenance previously open) is written by **slot 6**.
+- **A float PI controller sits at `0xC60B8`–`0xC60D8`, adjacent to the biquad we edit.** One float of
+  offset error lands in it. **Lane 2 is LIVE** — its output reaches `gp-0x6b4e`, read by
+  `FUN_00038148` at `0x3817C` as model lane w[4]. Byte-stock on all flashable builds; now asserted.
+- **The 42.19 Hz engagement-gated line is a RECTIFIER IMAGE** of the 21.09 Hz mode
+  (`gp-0x6ba6 = |gp-0x6b9a|` at `0x3b87a` ⇒ 2f falls out arithmetically). It indexes boost LERPs that
+  are flat at the operating point, and that arc **already flew NULL** (V58/V59/V60). **Not an
+  independent mode.**
+- **The parametric-pump mechanism is VOID**, re-verified rather than taking either side of the
+  contested record: `K_p`/`K_i`/`K_d` at `0xC6B1E`/`0xC6B0A`/`0xC6ADE` are **flat in segment 0** at the
+  operating point; the contrary reading used `0xC671E`, **off by 0x400**, landing on the square-wave
+  injector block.
+
+## 3. Negative findings — record these so they are never re-chased
+
+- The mixer's dormant **rate limiter cannot be armed by any single-byte edit** — its input is zero on
+  both sides of the arm gate.
+- `0xC648E` (22 readers, reads zero) is **an additive offset** in a telemetry scaler, not a gate.
+- A sweep for "dormant features gated by a zero cal" has a **poor hit rate** — zero offsets and float
+  low-halves dominate. The one real find (the PI block) came from tracing, not sweeping.
+
+## 4. Retractions — all mine, all caught in-session
+
+1. **The `0xC4118` arm-gate hazard.** I claimed zeroing one arm byte would arm a slew limiter in live
+   delivery. **Wrong** — payloads are zero on both sides. I traced the plumbing correctly with two
+   methods and still got the conclusion wrong **because I never checked what the slots put on the wire.**
+2. **"Mode 5 discards value B".** Wrong twice — it *routes* it to `gp-0x6b4e`. Root cause: reading a
+   zero-store in one arm of a mode dispatch as proof a value is dead, without checking the complement.
+3. **`gp-0x6b76` as a half-wave rectifier.** Misread `r15` as the torque sensor when it was the cal.
+   A far more dramatic claim than the truth; caught by going back to the instructions.
+4. **The friction direction in `SHELF.md`.** I wrote that the low setting "runs in the direction you
+   asked for". It is the opposite.
+5. **The 30–49 Hz band needing a matched pair of drives** — the design failure the doctrine forbids.
+   Replaced with a corpus baseline so one drive is interpretable.
+
+## 5. Tools and gates added
+
+- `score_drive.py`: a **30–49 Hz control band** on `cs_rate` + both IMU axes, with a 23-route corpus
+  baseline, the ~15× notch-denominator correction, and an explicit statement that **one drive cannot
+  resolve the 1.65× gain effect** (the corpus IQR is wider) — it is a *large-excursion detector*.
+- Close-out gates **[11]–[14]**: Honda's arbitration tables · the PI block byte-stock · a gain raise
+  priced across the whole band · **the damper priced against the flown car**.
+- `analysis-2020accord/studies/mixer/mixer_fun26c80_decoded.py` — re-runnable, asserts its own premises.
+- **297 checks, 10/10 shelf builders reproduce bit-for-bit.**
+
+## 6. Open items, with what would close each
+
+| item | what closes it |
+|---|---|
+| **A drive.** Nothing else can confirm any lever. | Fly V217; `score_drive.py <tag> V217` |
+| The ~31 Hz line's *mechanism* — why 31 Hz from a 6–9 Hz damper removal | trace the loop's phase at 31 Hz on the V94 cell set |
+| Whether the 8× gain costs anything at 30–40 Hz | needs a matched V216/V217 pair — one drive cannot resolve 1.65× |
+| Which physical signal each of the 10 mixer slots carries | decompile each caller's *inputs* (slot indices are already mapped) |
+| `r7d`'s line on **other** builds | only V94 flew it; no other route shows it creep-matched |
+| Route registry stops at `r77` | rlog tails not present in `_scratch/cache` |
+
+## 7. Standing cautions carried forward
+
+- **Diff against the flown image, not stock.** This session's headline is one instance; there were three.
+- **Trace the payload, not just the path.** Retraction 1 is the case study.
+- **Read every arm of a mode dispatch** before calling a value dead. Retraction 2.
+- The `tp` anchor is `0xBF000`; the off-by-0x400/0x1000 error recurred again in the record this session
+  (the void parametric-pump reading).

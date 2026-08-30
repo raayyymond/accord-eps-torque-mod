@@ -1,9 +1,50 @@
 # STATE — living current state of the kit
 
 
-> 🚩 **FLIGHT ORDER: V168 SUPERSEDES V158 AS FLY-FIRST.** V168 *is* V158 plus one byte, so it carries both levers, and the two symptoms score from the SAME 15 s episode in different bands (grind 15-25 Hz, ratchet 5-12 Hz, both in `cs_tq`) — **separated by the INSTRUMENT, not by the build**. Fly V158 alone only to isolate the grind lever on FEEL. Card: `docs/scoring/DRIVE-CARD-V168.md`.
+> 🚩 **FLIGHT ORDER: V217.** Its entire delta from the CAR (V108) is **19 payload bytes, every one a deliberate lever** — notch 20.50 Hz (grinding) · `0xC63AE` 512 (ratchet) · `0xC6CD0` 6×→8× + clamps (authority) · the 427 probe. Inertia (row **and** lane weight, both modes) and the friction lane now match the car exactly. Predecessors V212–V216 remain as arms; V214 is SUPERSEDED. Shelf: `docs/scoring/SHELF.md`.
 
-> 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-assist-map-session.md` carries every finding, every retraction and the open-items list with what would close each.
+> 📘 **SESSION HANDOFF:** `docs/handoffs/2026-08/HANDOFF-2026-08-29-the-damper-the-shelf-was-cutting.md` — the damper finding, the mixer decode, five self-retractions, and the open-items list with what would close each. Prior: `HANDOFF-2026-08-29-the-assist-map-session.md`.
+## 🛑🛑⭐⭐⭐ **THE NOTCH SHELF WAS CUTTING A REAL 6–9 Hz DAMPER 7.15× BELOW THE CAR — FOUND 2026-08-29, FIXED IN V214–V217**
+
+Chasing the one route that stood out in a newly-added 30–49 Hz band produced the most important finding of the session, and it was a defect in our own shelf.
+
+**`r7d` is the drive the operator ABORTED** (*"made the stuttering and grinding worse, by a lot … it vibrated the entire car, and I decided it was not safe to drive"*). It carries a measurable signature, and every control passes:
+
+```
+  sustained engagement-gated line at ~31 Hz
+  459x the CREEP-MATCHED corpus median      prominence 56x  (next highest 13.3x)
+  engaged/manual contrast          54x
+  survives 0.5 s edge trimming     -> not an engagement transient
+  56 % of 5-49 Hz power in 30-35   -> a narrow line, not broadband
+  speed-invariant across 3 episodes -> not a wheel order (would be order 75.8)
+```
+
+V94 flew it after cutting `gp-0x6b26` 6×. That cell was **measured afterwards to be a REAL 6–9 Hz DAMPER** — +137°/+139° vs wheel rate, |cos| 0.73 ⇒ **+518/+565 counts of positive Re(Z)**.
+
+### 🛑 The defect: every notch build carried a LARGER cut of the same cell
+
+```
+  V108 (ON THE CAR)   0xD7A5C = (-29490, -17202, -16000)   3.576x Honda
+  V196..V213          0xD7A5C = ( -4915,   -2867,   -983)   0.500x Honda   <- 7.15x CUT
+```
+
+Reached in two **never-flown** steps (V175 3.576→1.000, V196 1.000→0.500) and carried silently inside builds whose stated purpose is a grinding fix. **Every previous check compared this row to HONDA**, which made a 7.15× change *from the car* read as a tidy "half dose". That is the whole mechanism of the miss.
+
+### The fix took four builds, because each one exposed the next layer
+
+| build | what it corrected |
+|---|---|
+| **V214** | mode 26 inertia row → the car |
+| **V215** | mode 27 too — RULE 7: "mode 27 is unused" is a *memory*, not evidence |
+| **V216** | the friction lane — **I had its polarity backwards**; more modelled friction = MORE assist = LIGHTER wheel, so the shelf’s 0.10× was *removing* authority |
+| **V217** | `0xC63A6`, the inertia lane’s **weight** in the model sum — the shelf restored the row then fed it in at half weight, keeping net inertia at 0.5× the car |
+
+⇒ **V217’s delta from the car is 19 payload bytes, all levers.** Close-out gate **[14]** now prices `0xD7A5C` against **both** Honda and the flown car, and all six model-lane weights are asserted together so the set cannot drift again.
+
+⚠ **The generalisable lesson, and it is the valuable part:** *comparing a cell to STOCK hides what it does to the CAR.* Three separate cells (inertia row, friction lane, lane weight) all passed Honda-relative checks while sitting 7×, 10× and 2× from what the operator actually drives. **Diff every candidate against the flown image, not against stock.**
+
+---
+
 ## ✅⭐⭐ **THE 8× LKAS GAIN IS RE-OPENED — V208's notch changes the trade that killed it three times**
 
 **LKAS authority was the one symptom with nothing on the shelf.** The enumeration is closed —
