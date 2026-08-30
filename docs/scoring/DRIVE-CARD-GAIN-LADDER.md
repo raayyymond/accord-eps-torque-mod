@@ -30,6 +30,28 @@ where the fix is built but has never been verified on the car.
   BEFORE anything:        kill openpilot/pandad  ->  tmux kill-server
 ```
 
+**🛑 A FOURTH BUILD, AIMED AT THE RATCHET — and it is additive, not a trade:**
+
+```
+  V245        V241 + the resonance-PID ceiling knee.  TWO bytes on V241, ONE payload byte.
+  39990-TVA,A160-V245-V241BASE-RESPID.KNEE.1280.TO.512-0x13000-0x100000.rwd
+              rwd  00bc8ddbb0135cd3...      image 10494d5fe6a948ef...
+```
+
+The record calls `gp-0x6ad4` **"the most reachable authority of any gated lane"**, and V56's mute of it
+was scored at ~21 Hz **only** — **it has never been scored at 6–9 Hz**. The return-to-centre analysis
+narrows the ratchet's entry to five sensor-fed lanes; four are spoken for. **This is the fifth**, and
+it is virgin in 216 of 218 images.
+
+The lever moves the ceiling knee from **20 km/h to 8 km/h**, so the lane reaches full authority through
+the **creep band** where the ratchet lives — and is **identical above 20 km/h**. It does not touch the
+biquad, so **V241's whole grinding treatment is carried**.
+
+⚠ **This is an OPEN lever, not a predicted fix.** More ceiling means more authority, and if the lane's
+phase at 6–9 Hz is wrong, that means more **pumping** — a *worse* ratchet. Nobody has scored this lane
+in that band, which is exactly why it is worth a drive and exactly why I cannot tell you which way it
+will go. Two bytes, cal-only, no cave, nothing changes above 20 km/h, instantly revertible.
+
 **All three live in `../accord-firmwares/flashing-2020accord/rwd/`.** To flash, give me **the exact
 filename and the bus** — I will repeat both back to you before anything is sent.
 

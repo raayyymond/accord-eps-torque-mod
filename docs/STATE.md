@@ -66,6 +66,23 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **“THE CALIBRATION SURFACE IS EXHAUSTED” WAS AN OVERCLAIM. THERE IS ONE SENSOR-FED LANE NOBODY HAS EVER SCORED AT THE RATCHET, AND IT IS NOW BUILT AS V245.**
+>
+> Four ticks closed the assist-map path, the notch axis and the loop-delay hypothesis, and I concluded the calibration surface was exhausted **for both symptoms**. That was true of the **assist-map path**. The **resonance PID is a different lane**, and the record had been pointing at it the whole time.
+> ⭐ **The golden model's own census, verbatim:** *“LIVE `gp-0x6ad4` resonance PID — **the most reachable authority of any gated lane HERE** … V56's mute of this lane was scored at ~21 Hz — the lane has **NEVER been scored at 6–9 Hz**, so it is OPEN, not eliminated.”*
+> ⊕ And the return-to-centre analysis narrows the ratchet's entry to **five sensor-fed lanes** — *“for 52–70 % of the return the LKAS lane is a DC CONSTANT, yet the 6–9 Hz |tq| envelope is unchanged … a constant cannot carry 7.8 Hz.”* **Four are spoken for** (r24 = Lever B, `gp-0x6b26` = the restored damper, `gp-0x6bbe` at 76 % of its rail, the plant-model path = `0xC63AE`). **`gp-0x6ad4` is the fifth**, virgin in **216 of 218 images**.
+> ```
+>   0xC67C4   1280 -> 512    the ceiling LERP's middle X breakpoint
+>   X = [128, 1280, 3200] counts = [2, 20, 50] km/h     Y = [0, 1024, 1024]
+>   => full ceiling from 8 km/h instead of 20; up to 3x more through CREEP,
+>      and IDENTICAL above 20 km/h.
+> ```
+> **That is where the ratchet lives** — the record puts it at creep, 1–13 °/s, and *“the damper cannot reach the micro regime”* is the recurring complaint. **This lane can.**
+> ✅ **ADDITIVE, NOT A TRADE.** The biquad is untouched, so **V241's entire grinding treatment is carried**. V244 had to give up the 22–30 Hz cut to attack the ratchet; V245 does not.
+> 🛑 **THE RISK IS REAL AND THE RECORD NAMES IT: “OPEN lever — may PUMP.”** More ceiling is more authority, and if the lane's phase at 6–9 Hz is wrong that means more **pumping** — a WORSE ratchet. **Nobody has scored this lane in that band**, which is exactly why it is worth a drive and exactly why the outcome cannot be predicted.
+> ⭐ **BUILT — image `10494d5fe6a948ef…` · rwd `00bc8ddbb0135cd3…` · 35/35, ONE payload byte.** Cal-only, **no cave**, nothing changes above 20 km/h, instantly revertible to V241. The knot is registered **build-scoped** with the LERP endpoints asserted unmoved, rather than whitelisting the table.
+> ⇒ **1525 checks passed, 50/50 builders bit-exact.** Shelf: **V241 · V242 · V243 · V245**.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THERE IS NO SECOND BIQUAD. THE NOTCH AXIS IS CLOSED AT V241's 21.8 %, AND THE CEILING IS STRUCTURAL.**
 >
 > The ceiling found last tick — *no notch reaching 6–10 Hz can pass the passband gate* — is a property of **one** 2nd-order section. So: is that the only filter the firmware has? Scanned the whole calibration region `0xC4000–0xC8000` for any 4 consecutive float32 forming a **stable** biquad (`|a2| < 1`, `|a1| < 1 + a2`, plausible `c4`, pole radius ≥ 0.3):

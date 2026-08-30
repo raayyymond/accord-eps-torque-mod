@@ -82,6 +82,7 @@ PUB = {
     'v238': '34ceb5aefaa9bdd5fd656513ce3536ae3e0fd5590c5c8bb80b400aa90b8a5be5',
     'v240': 'f2745df252e7ce7eb069fa7b7700e7cae474213cda4bebea08916253eb032962',
     'v241': '2ef7eb8eb24179054b0c016d13f2e240b7fe3ea32d419c047405f1a748109df4',
+    'v245': '10494d5fe6a948efd38364fdb9de979e4d00105da4ea5c8ed7580c78f79f0753',
     'v242': '424249b0c7d89fad4e1192fbb89b829fb6295e4260b7959d2a406c95657a5576',
     'v243': '5fb9ad74f104de4616b4704081517d418e4307687eab3490b1ffb62e629d9a07',
 }
@@ -874,6 +875,11 @@ _KNOT_OK = {
     ('v240', 0xC6908),
     ('v240', 0xC690A),
     ('v240', 0xC690C),
+    # V245: the resonance-PID ceiling knee, X[1] of the LERP at 0xC67C0. Registered build-scoped
+    # rather than whitelisting the whole table -- the endpoints (128 / 3200) are asserted UNMOVED
+    # in the builder, and moving X[1] alone keeps the axis monotone. This is the one sensor-fed
+    # lane the record says has NEVER been scored at 6-9 Hz.
+    ('v245', 0xC67C4),
     ('v240', 0xC693E),
     ('v240', 0xC6940),
     ('v240', 0xC6942),
