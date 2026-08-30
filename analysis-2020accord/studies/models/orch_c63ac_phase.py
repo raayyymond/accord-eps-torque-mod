@@ -19,7 +19,7 @@ THE ARITHMETIC, as the firmware does it (integer, Q10, `/1024` NOT `/4096`)
 
         H(z) = alpha / (1 - (1-alpha) z^-1)
 
-    Control tick is 1 kHz (`control-task-tick-confirmed-1khz`: OSTM0 + STEER_STATUS=4 dwell).
+    Control tick is 1 kHz (`control-task-tick-confirmed-1khz`: the ON-CAR STEER_STATUS=4 dwell ALONE -- the OSTM0 route is REFUTED, PCLK is 40 MHz).
 
 🛑 The integer mirror below is run against the float transfer function as its own control -- if the
    quantised recursion and the analytic H(z) disagree, the table is wrong and says so.

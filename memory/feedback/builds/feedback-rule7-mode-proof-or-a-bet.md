@@ -26,8 +26,8 @@ B/C, both of V73's levers, and the entire r24 dose of V69/V70/V72/V73 — and it
 
 ## 🛑 Two corollaries, both earned the hard way
 
-**(a) Several "symptoms" this kit chased were created by its own earlier fixes.** Grind #2 is V62's
-`sar` — a grind-#1 fix. Stock has no grind #2; near-stock builds have no grind #2. The operator reached
+**(a) Several "symptoms" this kit chased were created by its own earlier fixes.** ⚠ **REFUTED 2026-08-30 — kept as an example of the reasoning, not as a fact:** it was once believed that grind #2 is V62's
+`sar` — a grind-#1 fix. **V71c produced grind #2 carrying NEITHER `sar` byte, so its origin is OPEN.** The point about symptoms created by earlier fixes still stands — this just is not one of them. Stock has no grind #2; near-stock builds have no grind #2. The operator reached
 this independently: *"Grind #2 was never an independent issue. It only ever came to be through some
 proposed fixes for grind #1."*
 ⇒ **Before adding a lever for symptom X, check whether X first appeared in the build that introduced the

@@ -104,7 +104,7 @@ inside = all(FUN_2214A[0] <= x < FUN_2214A[1] for x in allsites)
 print(f"\n  ⇒ EXACTLY ONE call site each, image-wide: {[hex(x) for x in allsites]}")
 print(f"  ⇒ all three inside FUN_0002214a [0x{FUN_2214A[0]:05X}, ...): {inside}  -- straight-line")
 print("    calls in ONE task body, so all three lanes share ONE rate.")
-print("  ⇒ FUN_0003aa2c's rate is CONFIRMED 1 kHz in the record (OSTM0 + the STEER_STATUS==4")
+print("  ⇒ FUN_0003aa2c's rate is CONFIRMED 1 kHz in the record (the on-car dwell alone, NOT OSTM0 which is refuted -- STEER_STATUS==4")
 print("    dwell), and it is called from the same body ⇒ gp-0x6b62 and gp-0x6ad4 ARE 1 kHz.")
 print("    [EVIDENCE, two independent methods: Ghidra call graph + this raw byte scan]")
 

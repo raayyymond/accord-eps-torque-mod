@@ -294,7 +294,7 @@ EXECUTION MODEL
                      idx 5  FUN_0002351E  task 6  c == 0x10      ->   10 Hz
                  Task 1 hosts arbitration, FUN_0003b66a, the aggregator, the governor and the shaper.
                  ★★ LOAD-BEARING: boost (FUN_00034a72) and the TABLE DAMPER (FUN_00034350, sole caller
-                 FUN_00022ca0) run in TASK 5 = 100 Hz, while the aggregator FUN_0003aa2c and the
+                 FUN_00022ca0) run in TASK 5 (rate RETRACTED 2026-08-12 -- was asserted 100 Hz, now OPEN), while the aggregator FUN_0003aa2c and the
                  residual lane FUN_0003a382 run in TASK 1 = 1 kHz. A zero-order hold costs 37.6 deg
                  average / 75.2 deg worst-case transport lag at 20.9 Hz BEFORE any plant phase, and the
                  ZOH CROSSOVER IS 25 Hz -- above it the 100 Hz damper can be sampled into an

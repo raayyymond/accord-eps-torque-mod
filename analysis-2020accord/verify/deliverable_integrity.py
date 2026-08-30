@@ -66,6 +66,7 @@ for cmd, label in [
     (['rlog-tools/decode/extract_route_generic.py', '--check', 'V228'], 'generic extractor tap check'),
     (['rlog-tools/score/rez_spectrum.py'], 'Re(Z) spectrum instrument'),
     (['analysis-2020accord/verify/memory_index_consistency.py'], 'memory-index consistency'),
+    (['analysis-2020accord/verify/withdrawn_claims.py'], 'withdrawn-claims registry'),
     (['analysis-2020accord/verify/rebuild_shelf_bitexact.py'], 'shelf rebuilds bit-exact'),
 ]:
     try:

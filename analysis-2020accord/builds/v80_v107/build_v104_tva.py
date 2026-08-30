@@ -62,7 +62,7 @@ already infinitely deep at stock; there is nothing left to deepen.  Measured ove
 🛑🛑 **THE SAMPLE RATE IS 1 kHz, AND AN EARLIER DRAFT OF THIS DOCSTRING GOT IT WRONG.**
 An earlier revision of this file quoted the notch window as "5.8 .. 10.8 Hz" and the 6-9 Hz band
 average as "-14.05 -> -8.71 dB".  **BOTH WERE COMPUTED AT fs = 143 Hz AND ARE RETRACTED.**  The
-control task is **1000 Hz**, established twice over -- `control-task-tick-confirmed-1khz` (OSTM0 +
+control task is **1000 Hz**, established on ONE method (the on-car dwell; ⚠ the OSTM0 route is refuted) -- `control-task-tick-confirmed-1khz` (OSTM0 +
 STEER_STATUS=4 dwell), and independently from the `gp-0x381c` EMA whose alpha = 20/2048 reproduces
 the observed 1.554 Hz corner only at fs = 1000.  **At fs = 1000 the notch is at 55.23 Hz and
 `|H_new| < 1` only on 36.84 .. 82.23 Hz -- nowhere near any symptom band.**  Corrected table:

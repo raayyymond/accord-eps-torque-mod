@@ -57,7 +57,7 @@ break the ~50 Hz Nyquist ceiling both instruments share ([[accord-both-instrumen
 Both halves fail:
 1. **The hook is not on the 1 kHz path.** `0x55C0E` sits in `FUN_00055a98`, the CAN-`0x14A` frame
    builder, reached only via handler-table slot 10 (`0xB72D4`, the sole pointer image-wide) ←
-   `FUN_00055540` ← **`FUN_00022ca0` = TCB idx-4 = task 5 = 100 Hz**. The suppression counter
+   `FUN_00055540` ← **`FUN_00022ca0` = TCB idx-4 = task 5 (⚠ its 100 Hz rate was RETRACTED 2026-08-12; the rate is OPEN)**. The suppression counter
    `gp-0x2f68` is a **one-shot** power-on decrement with no reload (2 accesses image-wide).
    ⇒ **the cave physically cannot observe 1 kHz content.** ⚠ This corrects a kit docstring calling this
    a "1 kHz TX path"; the *"CAN-TX base tick is 100 Hz"* memory is the correct one.

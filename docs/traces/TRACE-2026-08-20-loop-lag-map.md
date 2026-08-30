@@ -24,7 +24,7 @@ biquad c1..c4 (0xC60A8/AC/B0/B4) = -1.5372, 0.63462, -1.8808, 0.81731
 
 ## 1. Execution model — confirmed, one correction made this session
 
-- **Control task `FUN_0002214a` = 1 kHz** (OSTM0-confirmed, established prior sessions).
+- **Control task `FUN_0002214a` = 1 kHz** (confirmed by the ON-CAR STEER_STATUS=4 dwell; ⚠ the OSTM0 route cited here is REFUTED -- PCLK is 40 MHz, not 80).
 - **The `andi 0x830/0xc30/0xd30` blocks are STATE bitmasks (one-hot on `gp-0x67fa`), not phase
   dividers.** Reachable set is `{11}` alone in practice, and bit 11 (`0x800`) is set in all three
   masks ⇒ every gated block fires every tick. [EVIDENCE, prior session]
