@@ -60,6 +60,13 @@ was restored to the flown car in V214–V217), and the measured on-car slope is 
 
 ⇒ The ratchet is a **lightly-damped mechanical resonance (Q 14–29, motor/rack side)** that *"engagement SUPPLIES … it does not amplify an existing tone"*. **The relay-sustains-a-limit-cycle story is wrong.**
 
+🛑 **AND THERE IS ALREADY A MEASURED ON-CAR TEST OF THIS CURRENCY — IT CAME BACK NULL.** V104 raised the assist-lane gain ×1.85, and that biquad response **peaks at 7.94 Hz, dead centre of the ratchet band** (swept from the image this session; the close-out already carries `max|H|` 1.8501 as a documented GATE 2 exception, but nobody had noted WHERE the peak sits). It flew as route `a4`. The record: *"V104 flew and FAILED — fixed nothing … its dose provably arrived (1.824×, predicted 1.66–1.85) and it still produced no felt change."*
+
+⇒ **An 85 % gain lift centred in the ratchet band produced no felt worsening.** That is a direct on-car test of whether 6–9 Hz loop gain drives the ratchet, and it says no — corroborating the mechanical-resonance finding independently.
+
+⚠ **This LOWERS THE PRIOR on `0xC63AE`**, which trades in the same currency in the opposite direction. A ratchet null on V217 should therefore be read as **expected, not surprising**, and it should NOT be taken as evidence the dose failed to arrive — `b5` settles arrival separately.
+⚠ Not strictly implied: V104’s lift was **band-limited** (a biquad peak) while `0xC63AE` is **broadband** (it scales a memoryless nonlinearity). The two are not the same experiment, which is why this lowers the prior rather than closing the lever.
+
 ✅ **The lever can still work — by a DIFFERENT mechanism.** `0xC63AE` scales the observer output that feeds the tracking reference and hence the command, so lowering it lowers the 6–9 Hz **excitation** of a resonance the firmware cannot damp. That is excitation reduction, not limit-cycle breaking.
 
 ⚠ **What this changes for scoring.** The describing-function amplitude dependence (0.47–0.79) was derived for the *limit-cycle* framing. Under excitation reduction the expected effect is closer to the **linear dose** (0.500× at rung 1). **Do not treat the describing-function numbers as the prediction**; they bound it, they do not set it. The b5 interval below is unaffected — it is measured from the inertia dose, not from this framing.
