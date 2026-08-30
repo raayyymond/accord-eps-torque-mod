@@ -47,6 +47,7 @@ EPISODE_S = 20.0
 MIN_EPISODES = 8
 N_BOOT = 5000
 RNG = np.random.default_rng(20260830)
+REG_OK = True
 
 # pre-registered predictions, fixed before any data
 M = 7128.0 / 5346.0
@@ -89,7 +90,9 @@ def contrast(a, b):
     return point, 10 ** lo, 10 ** hi
 
 
-def verdict(point, lo, hi):
+def verdict(point, lo, hi, registered=True):
+    if not registered:
+        return 'ratio only -- NOT the registered pair, no verdict is licensed'
     if lo <= 1.0 <= hi:
         return 'NOTHING -- CI spans 1.0, under-exposed. Do NOT report a direction.'
     near = lambda x, y: abs(np.log10(x / y)) < 0.06
@@ -102,6 +105,9 @@ def verdict(point, lo, hi):
     return 'a real effect, but at neither predicted value -- report the number, not a model'
 
 
+REGISTERED = ('V228', 'V222')          # the pre-registration is about THIS pair and no other
+
+
 def load(tag):
     p = 'analysis-2020accord/_scratch/cache/%s/%s.npz' % (tag, tag)
     if not os.path.exists(p):
@@ -109,11 +115,13 @@ def load(tag):
     z = np.load(p, allow_pickle=True)
     t = np.asarray(z['t']).astype(float)
     fs = 1.0 / np.median(np.diff(t))
+    build = str(z['probe_build'][0]) if 'probe_build' in z.files else '?'
     return (t, np.asarray(z['cs_rate']).astype(float), np.asarray(z['cc_lat']).astype(float),
-            np.asarray(z['cs_v']).astype(float), fs)
+            np.asarray(z['cs_v']).astype(float), fs), build
 
 
 def report(name_a, ra, name_b, rb):
+    global REG_OK
     print('  %-16s %8s %8s %10s %18s   %s'
           % ('band', 'n(228)', 'n(222)', 'ratio', '95% CI', 'licenses'))
     ok = True
@@ -126,7 +134,7 @@ def report(name_a, ra, name_b, rb):
             continue
         pt, lo, hi = contrast(a, b)
         print('  %-16s %8d %8d %10.3f  [%6.3f, %6.3f]   %s'
-              % (name, len(a), len(b), pt, lo, hi, verdict(pt, lo, hi)))
+              % (name, len(a), len(b), pt, lo, hi, verdict(pt, lo, hi, REG_OK)))
     return ok
 
 
@@ -193,8 +201,21 @@ if __name__ == '__main__':
     print('=' * 96)
     print('  predictions fixed in advance: linear %.3f | m^1.74 %.3f' % (PRED_LINEAR, PRED_POWER))
     print()
-    ra = episode_ratios(*load(ta))
-    rb = episode_ratios(*load(tb))
+    da, ba = load(ta)
+    db, bb = load(tb)
+    REG_OK = (ba.upper().startswith(REGISTERED[0]) and bb.upper().startswith(REGISTERED[1]))
+    globals()['REG_OK'] = REG_OK
+    print('  route %s carries build %s   (registered: %s)' % (ta, ba, REGISTERED[0]))
+    print('  route %s carries build %s   (registered: %s)' % (tb, bb, REGISTERED[1]))
+    if not REG_OK:
+        print()
+        print('  🛑 THESE ARE NOT THE REGISTERED PAIR. Ratios are printed; NO verdict is')
+        print('     licensed, because the pre-registration is about V228 vs V222 and nothing else.')
+        print('     Two builds differing in something OTHER than the gain will still produce')
+        print('     large ratios -- they just say nothing about the dose law.')
+    print()
+    ra = episode_ratios(*da)
+    rb = episode_ratios(*db)
     report(ta, ra, tb, rb)
     print()
     print('  [LIMIT] 30-49 Hz is NOT scored here and must not be: 52-71 Hz folds into it.')
