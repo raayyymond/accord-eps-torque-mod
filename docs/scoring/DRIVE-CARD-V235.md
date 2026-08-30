@@ -94,6 +94,31 @@ settles that the data cannot.
 
 ---
 
+## Confirmed on a second route, through a second signal
+
+The filter's lane is only one of about six that sum together before reaching the motor. So the lane
+pumping at 19–32 Hz was necessary but not sufficient — if the other lanes cancelled it at the sum,
+notching it would buy nothing you could feel.
+
+**r95 answers that.** It ran Honda's filter byte-for-byte and taps the *aggregator* rather than the
+lane:
+
+```
+  band     the SUM (r95)      the LANE (ra4)
+  6-9      -0.918  78% pwr    -0.879     <- damping dominates the ratchet band
+  19-22    +0.609   coh 0.93  +0.625
+  22-26    +0.791   coh 0.97  +0.826     <- where V235 cuts
+  26-32    +0.964             +0.994
+
+  sign agreement: 7 of 8 bands
+```
+
+**The sum pumps at 19–32 Hz with coherence up to 0.97** — the other lanes do not cancel it, so cutting
+there reaches the motor. And 78 % of the sum's power sits at 6–9 Hz in strong damping, which V235
+leaves at 1.004×.
+
+---
+
 ## The cost, plainly
 
 **55 Hz runs ~143× louder than Honda's cut.** One second-order section cannot notch both 25 Hz and

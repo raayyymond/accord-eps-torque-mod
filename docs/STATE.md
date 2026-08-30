@@ -46,6 +46,27 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE AGGREGATE PUMPS WHERE THE LANE PUMPS — V235's PREMISE CONFIRMED FROM A SECOND ROUTE AND A SECOND OBSERVABLE.**
+>
+> `gp-0x6b86` is only ONE of about six lanes summed into the aggregator (model add order at `0x3acc8-0x3ace6`: `r26+r24 → +6b86 → +6bd0 → +6bbe → +6b26 → +[6b62/6ade]`). So the lane pumping is **necessary but not sufficient** — if the other lanes cancelled it at the sum, notching the lane would buy nothing that reaches the motor. **r95 (V101) carries Honda's biquad byte-for-byte and taps `gp-0x6b94`, the aggregator**, so it answers this directly.
+>
+> ```
+>   band     | r95  gp-0x6b94  THE SUM   | ra4  gp-0x6b86  THE LANE
+>            |    cos   pow%   coh       |    cos   pow%   coh
+>   6-9      | -0.918  78.2%  0.80       | -0.879  51.3%  0.72
+>   9-12     | -0.820   6.5%  0.61       | -0.964  12.1%  0.50
+>   12-15    | +0.121   1.4%  0.69       | -0.629   6.0%  0.53   <- the one disagreement
+>   19-22    | +0.609   2.3%  0.93       | +0.625  10.0%  0.88
+>   22-26    | +0.791   9.5%  0.97       | +0.826  16.5%  0.89
+>   26-32    | +0.964   0.5%  0.73       | +0.994   1.3%  0.66
+>
+>   sign agreement 7 of 8 bands · aggregate 19-32 Hz mean cos = +0.788
+> ```
+>
+> ✅ **The other lanes do NOT cancel it: the SUM pumps at 19–32 Hz with coherence 0.93–0.97.** Cutting the lane there reaches the motor. That was the open question V235's whole case rested on, and it is now answered on a route the design was never fitted to, through a different signal.
+> ✅ **And the ratchet band is dominated by damping at the aggregate: 6–9 Hz carries 78.2 % of the sum's power at cos −0.918.** V235 leaves it at **1.004×**.
+> ➕ **The single disagreement is at 12–15 Hz** — the lane damps (−0.629) while the sum is barely pumping (+0.121, 1.4 % of power). If the SUM is what matters, V235's small net loss there (0.891×) is **not a cost at all.** Noted rather than claimed: 1.4 % of power and one route.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE LANE MEASUREMENT WAS CONTAMINATED — AND FIXING IT INDEPENDENTLY RE-SELECTS V235'S EXACT GEOMETRY. ra6's DISSENT IS EXPLAINED.**
 >
 > **The contamination.** `gp-0x6b86` is measured DOWNSTREAM of the biquad, and I pooled ra4/ra5/ra6 then corrected as if HONDA's filter had been in force on all three. It was not:
