@@ -52,6 +52,33 @@ Both gates are recomputed from the written bytes, and both are the record's own 
 weighting that prefers V235's 25 Hz is a **flat** one, i.e. the objective that ignores the measurement
 and just aims at the middle of the band. That is precisely the difference between the two builds.
 
+## 🛑 The honest ceiling on this build
+
+The notch is optimised against **chassis motion**, but it filters a **torque lane**. Running the same
+measurement on the torque channel shows the two domains do not agree at all:
+
+```
+  band            TORQUE     IMU
+  ratchet 6-10     2.849   1.516    <- torque peaks here
+  mid    10-15     0.946   1.547
+  grind  15-22     1.245   1.621
+  V241   22-30     1.337   2.481    <- motion peaks here
+  upper  30-45     1.052   1.575
+
+  agreement across 3-45 Hz:  spearman rho = +0.040, p = 0.61  -- none
+```
+
+**In torque, engagement's biggest effect is the ratchet band, and V241's band is nearly the weakest.**
+So both V241 and V235 are aimed by a spectrum that is not the lane's own. V241 is still the better of
+the two -- it beats V235 on the motion objective and respects Honda's damping floor, which V235 did
+not -- but **expect less from either than the previous two cards implied.**
+
+The bind is now explicit: in the domain the notch can reach, the band worth filtering is **6-10 Hz**,
+and that is exactly the band the record forbids touching because the lane damps there. That is not a
+gap in the analysis; it is the shape of the problem.
+
+---
+
 ⚠ **What is NOT claimed:** that 28 % of modelled cost is 28 % less grinding. The weight is chassis
 **motion**; the notch filters a **torque** lane. This is a better-founded aim than the one V235 had, not
 a promise.

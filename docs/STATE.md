@@ -66,6 +66,27 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE TORQUE CHANNEL AND THE CHASSIS DISAGREE COMPLETELY — AND THE NOTCH ACTS ON TORQUE. V241's OBJECTIVE IS IN THE WRONG DOMAIN.**
+>
+> The last untested link in V241's chain: its geometry was optimised against **chassis motion**, but the notch filters a **torque lane**. Same local-excess design, same speed matching, run on `tq`:
+> ```
+>   band            TORQUE     IMU
+>   ratchet 6-10     2.849   1.516    <- TORQUE peaks here
+>   mid    10-15     0.946   1.547
+>   grind  15-22     1.245   1.621
+>   V241   22-30     1.337   2.481    <- IMU peaks here
+>   upper  30-45     1.052   1.575
+>
+>   profile agreement across 3-45 Hz:  spearman rho = +0.040  p = 0.61   -- NONE
+> ```
+> 🛑 **[EVIDENCE] IN TORQUE, ENGAGEMENT'S DOMINANT EFFECT IS THE RATCHET BAND (2.849), AND V241's BAND IS NEARLY THE WEAKEST (1.337).** The two profiles are **uncorrelated**. The IMU's 22–30 Hz peak is a **motion** phenomenon the torque lane does not share.
+> ⇒ **V241 (and V235 equally) is aimed at a band that is near the bottom of the spectrum it can actually reach.** The 28 % improvement over V235 is real *on the motion objective*; both are aimed by a spectrum that is not the lane's.
+> 🛑 **AND THE BIND IS NOW EXPLICIT.** In the domain the notch acts on, the biggest engagement effect sits at **6–10 Hz** — and the record forbids notching there, because the lane is measured **damping** (cos −0.918 / −0.989 / −0.629, 3/3 routes) and cutting it is what condemned V238/V240. **The one band worth filtering is the one band that must not be filtered.**
+> ✅ **This also unifies the session's findings rather than contradicting them:** the ratchet is a **torque** phenomenon (`tq` 2.849; the record's own margins `tq 7.62 · cs_tq 7.42 · cs_rate 1.03`), while the 22–30 Hz band is a **motion** phenomenon (IMU 2.481, and the audio confirms it is real, not folded). **They are different things in different domains — which is exactly the grinding/ratchet dissociation, now located in the physics rather than just in the statistics.**
+> ⚠ **CAVEATS, both real:** `tq` rides the ~101 Hz CAN frame, so its 22–30 Hz carries ~30 % folded from 71–79 Hz — that inflates it if anything, so the 1.337 is an **upper** bound. And `tq` is the driver **sensor**, not the lane output; the notch changes assist, which reaches `tq` only through the loop.
+> ⇒ **V241 STAYS THE LEAD** — it beats V235 on the motion objective and respects Honda's damping floor, which V235 did not. **But the honest expectation for either build is lower than the last two ticks implied, and the card now says so.**
+> ➕ Reader: `rlog-tools/score/torque_vs_imu_band_agreement.py`.
+
 > ✅⭐⭐⭐⭐ **V241's GEOMETRY IS NOT FITTED TO THE MEDIAN CAR — it wins under 5 of 6 objective weightings, and the one exception explains exactly what separates it from V235.**
 >
 > The obvious weakness of V241's objective is that it weights the **median** route. If the geometry only suits the median, it is fitted. Re-searched under every reasonable alternative:
