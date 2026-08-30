@@ -73,6 +73,7 @@ PUB = {
     'v226': 'e45799ed7986139183e50b14d4a15b08085b453d3d1a97a580bda5d7d18e9850',
     'v227': '28b5f4c979660451cda9c457312b824622488201d96ecf1dbf3be90dd8d67434',
     'v228': '6cf12db9fc49aee29e46c169c05fc18415f2a970b477cdae1372d57805748b3c',
+    'v229': '078da4b1f22903a5364b54b0035790f0fac6453a4717e881290eefb15bc14a42',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -705,7 +706,8 @@ for _v in sorted(img):
 _LEVER_B_LADDER = {'v221': 13107, 'v222': 13107, 'v223': 26214,
                    'v224': 13107, 'v225': 13107, 'v226': 13107,
                    'v227': 13107,
-                   'v228': 13107}   # arms rebased onto V222; v228 = V222 at the car 6x
+                   'v228': 13107,
+                   'v229': 13107}   # v229 = V228 with Honda's 55 Hz notch restored
 for _v in sorted(img):
     _want = _LEVER_B_LADDER.get(_v, 5244)
     _got = struct.unpack_from('<H', img[_v], 0xC6446)[0]

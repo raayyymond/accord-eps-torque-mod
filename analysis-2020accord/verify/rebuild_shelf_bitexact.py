@@ -48,6 +48,8 @@ SHELF = {
     'v226': 'e45799ed7986139183e50b14d4a15b08085b453d3d1a97a580bda5d7d18e9850',
     'v227': '28b5f4c979660451cda9c457312b824622488201d96ecf1dbf3be90dd8d67434',
     'v228': '6cf12db9fc49aee29e46c169c05fc18415f2a970b477cdae1372d57805748b3c',   # flight candidate: V222 at the car 6x
+    'v229': '078da4b1f22903a5364b54b0035790f0fac6453a4717e881290eefb15bc14a42',   # V228 + Honda's 55 Hz notch restored
+
 }
 # ARCHIVE: builds whose BUILDER must still reproduce its image, but which are NOT meant to be
 # flashable -- their .rwd files are correctly SUPERSEDED-DO-NOT-FLASH-renamed. They were in the

@@ -46,6 +46,24 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V229 BUILT — V228 WITH HONDA'S 55 Hz NOTCH PUT BACK. TWELVE PAYLOAD BYTES. THE FIRST BUILD SINCE V172 TO DECLINE THE RELOCATED NOTCH.**
+>
+> ```
+>   image 078da4b1f22903a5364b54b0035790f0fac6453a4717e881290eefb15bc14a42
+>   rwd   443fa080307cf221bb27f0b7dcda1c277648cab17b305f3e199e3f050a5d3c6d
+>   28/28 assertions · CRC 50/50 · readback byte-identical · cave BYTE-IDENTICAL
+>
+>                 |H| 18.5 Hz   |H| 55 Hz    phase @10.5 Hz
+>   car / Honda      0.8978      0.0063         -14.4 deg
+>   V228             0.2045      0.6285         -39.3 deg   (unflown; nothing past -21.3)
+>   V229             0.8978      0.0063         -14.4 deg   (back on the driven geometry)
+> ```
+>
+> **THE ARGUMENT.** Both 15–22 Hz and 50–72 Hz carry licensed LKAS-caused noise (audio, speed AND gear matched, route-clustered). The cut depths differ by **32×**: V228 buys **4.9× at 18.5 Hz** while giving up **159× at 55 Hz**. When two bands are comparably affected, the deeper cut is worth more — and that holds whichever band is marginally worse.
+> ⛔ **NOT CLAIMED: that 50–72 Hz is worse than 15–22 Hz.** Paired within-route is NOT licensed on either channel — **1.73× [0.48, 2.55]** direct, **1.23× [0.87, 1.86]** AM. The notch program is not aimed at the wrong band; it is aimed at one licensed band out of several, and pays for that aim with a far deeper cut elsewhere.
+> ✅ **V229 also satisfies a standing lineage constraint V228 VIOLATES.** On `0xC40DC`: *“it must ship WITH the notch revert or not at all.”* V228 ships `0xC40DC` = 22 — which passes MORE HF (corner 21.3 → 67.0 Hz) — alongside a notch that no longer cuts 54–74 Hz. Both cells push HF the same way. **V229 is that revert.**
+> ➕ **COST, PLAINLY:** V229 gives up V228's 4.9× cut at 18.5 Hz. If the grinding really is at 15–22 Hz, **V229 will be worse there.** The pair is a clean 12-byte single-variable contrast, so driving both settles a question open since V172 — and *all three* outcomes are informative, including “no difference”, which would retire the whole notch axis after 56 builds. `docs/scoring/DRIVE-CARD-V229-vs-V228.md`.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE LKAS-CAUSED CABIN NOISE IS BROADBAND, NOT CONFINED TO 15–22 Hz — SO V228 GIVES UP A 159× CUT IN A 2.2× PROBLEM TO BUY A 4.9× CUT IN A 1.45× PROBLEM.** Measured on the **alias-free audio** (0–100 Hz, 0.98 Hz bins), engaged vs not-engaged, **matched on BOTH speed and gear** (gear pins engine order — 60–72 Hz is 1800–2160 rpm of 4-cylinder 2nd-order, a real confound), route-level bootstrap over 6 routes:
 >
 > ```
