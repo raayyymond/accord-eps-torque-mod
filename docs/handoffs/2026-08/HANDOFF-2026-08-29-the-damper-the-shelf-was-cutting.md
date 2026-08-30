@@ -181,6 +181,23 @@ Having audited the gates that exist, the other question is which cells nothing c
 
 ⊕ Also checked and found fine: the `0xE4xxx`/`0xE5xxx` taper block (72 identical 15360→16384 edits) is the deliberate authority-curve raise; `0xE51A8` holds a record header (9), not a Y value, so the memory’s wording is consistent — I had read the address as a data cell.
 
+## 4d. ✅ GATE `[17]` — the whole delta is pinned, and the gate is PROVEN to fail
+
+Gates `[1]`–`[16]` each assert a hand-picked cell, which leaves everything nobody thought to name: even after `[16]`, only **21 of V217’s 115 non-stock runs** were referenced anywhere. `[17]` pins the **complete delta** instead — every payload byte differing from stock, CRC trailers excluded, as a count plus a digest, for all nine shelf builds.
+
+**It is deliberately strict.** Adding a legitimate lever *will* fail it, and the fix is to re-record that build’s manifest **in the same commit as the edit**. That is the point: it turns *"did anyone check?"* into *"the manifest says so."*
+
+**Proven to fail, not assumed to.** A gate that cannot fail is worthless, so it was negative-tested:
+
+```
+  one cave byte flipped        CAUGHT
+  V42 ratchet fix reverted     CAUGHT
+  ratchet cal 512 -> 128       CAUGHT
+  ALL 320 payload bytes, reverted one at a time:  0 MISSED
+```
+
+⚠ My first negative test reported a MISS on the taper block. **The bug was in the test, not the gate:** `0xE41C4` holds 15360→16384, i.e. `00 3C`→`00 40`, so the changed byte is at `0xE41C5` and I had reverted the unchanged low byte. Same *derive the byte, never assume it* lesson that has bitten three builds — this time in my own verification.
+
 ## 5. Tools and gates added
 
 - `score_drive.py`: a **30–49 Hz control band** on `cs_rate` + both IMU axes, with a 23-route corpus

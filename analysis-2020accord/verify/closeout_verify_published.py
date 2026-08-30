@@ -635,6 +635,51 @@ for _v in sorted(img):
             f'{_v.upper()} 0x{_a:05X} = {_got} -- {_nm}'
             + ('' if _got == _want else f' -- EXPECTED {_want}, THIS LEVER HAS MOVED'))
 
+print()
+print("[17] THE COMPLETE NON-STOCK DELTA OF EVERY SHELF BUILD IS PINNED")
+# Gates [1]-[16] each assert a hand-picked cell. That leaves everything nobody thought to name:
+# of V217's 115 non-stock payload runs, only 21 were referenced anywhere in this file even after
+# [16]. This pins the WHOLE delta instead -- every payload byte that differs from stock, with the
+# CRC trailers excluded -- so a cell nobody has ever discussed cannot move without failing.
+#
+# It is deliberately strict: adding a legitimate lever to a shelf build WILL fail this gate, and the
+# fix is to re-record that build's manifest in the same commit as the edit. That is the point --
+# it converts "did anyone check?" into "the manifest says so".
+_MANIFEST = {
+    'v208': (315, '77d2772a26cfc16bb09c6aad650c2967a8412255f52d87c6217cd6cc75ac0e36'),
+    'v212': (316, '8467b125d57de796080fb5d93171a8d8f9e8c354a16a7418217272c347676f38'),
+    'v213': (316, 'bca8154fb107930a034b8c455ed513a7637ffabf32b880c09b07052c220d0586'),
+    'v215': (322, '56a9ff7ded316c9cbadcdf55329783fcda37fc1bacce5bafe76813216939d7fa'),
+    'v216': (321, '41df39f03be7caa38e565d223bbdff24062311ebf8630d1f1f7b5f2d84411bf6'),
+    'v217': (320, 'cf52133064245f0fba62471e9a4ae656a49872459d6345490d9fe24c2144f2b4'),
+    'v218': (320, 'e179317d7b92f8601750666e85b4e62673964a5af118412b42e24e7b980aed39'),
+    'v219': (320, '08d1ce376beb1ec48162efcc497da20990ee59deb0409c598a304b5e893da52d'),
+    'v220': (320, '4b652db86a6b240613dcea5fef9473307a0d5fa348230d035f1005f0db7923e3'),
+}
+
+
+def _delta_digest(_b):
+    _parts = []
+    for _i in range(0x13000, 0x100000):
+        if _st[_i] != _b[_i] and (_i & 0xFFF) < 0xFFC:
+            _parts.append('%06X:%02X' % (_i, _b[_i]))
+    return len(_parts), hashlib.sha256(','.join(_parts).encode()).hexdigest()
+
+
+for _v in sorted(_MANIFEST):
+    if _v not in img:
+        chk(False, f'{_v.upper()} in the manifest but no image on disk')
+        continue
+    _n, _dg = _delta_digest(img[_v])
+    _wn, _wd = _MANIFEST[_v]
+    if _dg == _wd:
+        chk(True, f'{_v.upper()} full delta pinned: {_n} payload bytes, digest {_dg[:16]}')
+    else:
+        _now = {_i for _i in range(0x13000, 0x100000)
+                if _st[_i] != img[_v][_i] and (_i & 0xFFF) < 0xFFC}
+        chk(False, f'{_v.upper()} DELTA CHANGED: {_n} payload bytes (manifest says {_wn}). '
+                   f'Re-record the manifest in the same commit as the edit, or find the stray byte.')
+
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
 for m in bad:
