@@ -66,6 +66,25 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ✅⭐⭐⭐⭐ **THE FLASHABLE ARTIFACTS VERIFY FROM THE OTHER END — and a false “DO NOT FLASH” was caught by its own control.**
+>
+> The builders assert their round-trip at build time and `rebuild_shelf_bitexact` re-runs them. This asks the same question **backwards, from the artifact** — so a file corrupted or replaced after its build would be caught:
+> ```
+>   build  status     start       bytes   payload vs image
+>   V122   flown    0x13000      970752   IDENTICAL      <- the build on the car, the CONTROL
+>   V88    flown    0x13000      970752   IDENTICAL
+>   V108   flown    0x13000      970752   IDENTICAL
+>   V241   shelf    0x13000      970752   IDENTICAL
+>   V242   shelf    0x13000      970752   IDENTICAL
+>   V243   shelf    0x13000      970752   IDENTICAL
+> ```
+> 🛑 **A FALSE ALARM, AND HOW IT DIED.** My first attempt used `crack_cipher()` and printed **“*** DO NOT FLASH ***”** on all three shelf builds. Running the same test on **flown** builds — including **V122, which is on the car right now** — failed identically. **A check that condemns the firmware currently running the vehicle is a broken check, not a discovery.**
+> ⊕ **Two traps, both worth keeping:**
+>   1. `crack_cipher()` is for **ORIGINAL HONDA** `.rwd` files, where the table must be recovered from a known plaintext. **The kit's builds use a KNOWN table** — `build_decode_table(FF.V9B[...])`, which is what every builder uses.
+>   2. `roundtrip()` derives the expected part number from the filename with `39990[-]?…`, but the kit's filenames use a **COMMA** (`39990-TVA,A160`), so `expected` silently becomes `None`.
+>   ⊕ and `parse_x31` returns `blocks` as **dicts** (`{'start','length'}`), not tuples.
+> ➕ Saved as `analysis-2020accord/verify/rwd_decodes_to_image.py`, **with the flown builds wired in as controls and a distinct message when a control fails** — so the next run cannot repeat the false alarm silently.
+
 > 🛑⭐⭐⭐⭐⭐ **RECOMMENDATION CORRECTED: V241 (6×) LEADS, NOT V242 (8×). I had been answering “give me more torque” rather than the brief as written.**
 >
 > The brief: *“the **safest, highest probability of working** firmware with 6x torque (or higher …) up to 16x torque with no grinding, vibration, or oscillation.”* **“Up to 16×” bounds what to EXPLORE; it does not demand the maximum.** Read that way:
