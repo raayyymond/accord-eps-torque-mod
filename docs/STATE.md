@@ -278,6 +278,43 @@ float32 layout, not about every conceivable filter. The record independently cal
 *"the dormant biquad"*, singular, which agrees.
 ➕ Related: Honda shipped this section **DISARMED** (`0xC649B` = 0); the kit armed it at V103.
 
+> ✅⭐⭐ **THE LAST UNCHARACTERISED REGION IS CLOSED: THE FOC CURRENT LOOP IS TRANSPARENT AT THE
+RATCHET.** `gp-0x6b98` is *"the final merged command and the only path to FOC"*, and everything below it
+was the one stage the golden model only **abstracts** (`motor_pwm_output` is a placeholder
+`duty = q_current_ref / 51200`, with *"[OPEN] the PWM carrier Hz"*). It is also where the record says
+the ratchet physically lives — *"motor/rack-side, which no channel on this bus observes."* So it looked
+like the obvious remaining place to search. **It is not, and the bound is not close.**
+The model verifies the structure even where the carrier Hz is open: the FOC/PWM ISRs
+(**EIIC 0x600** = ADC-complete inner loop, **0x970**) run **asynchronously and FAR FASTER** than the
+1 kHz task, on a **~4–8 kHz** carrier. A current loop is tuned to 1/10–1/20 of switching ⇒ **200–800 Hz**
+bandwidth. As a first-order loop at 7.79 Hz:
+
+```
+    BW (Hz)   |H| @7.79    phase        verdict
+        800     0.99995    -0.56 deg    transparent   <- plausible for an 8 kHz carrier
+        200     0.99924    -2.23 deg    transparent   <- plausible for a 4 kHz carrier
+         50     0.98808    -8.86 deg    mild
+         25     0.95472   -17.31 deg    mild
+```
+
+⇒ **even at an implausible 25 Hz bandwidth the loop contributes −17.3° and 0.955 gain.** For it to
+matter at the ratchet (≈45°) the current loop would need **BW = 7.8 Hz — slower than the 1 kHz task
+that feeds it**, contradicting the verified ISR structure.
+⇒ **[EVIDENCE] the FOC gains cannot be a ratchet lever at any plausible tuning.** And *"motor/rack-side"*
+points at the **PLANT** — mechanical, which **no firmware calibration can change** — not at this loop.
+⚠ It is also the **worst edit class available**: motor control, **no instrument on it**, and code caves
+in exactly this kind of region are this kit’s **only bricking class** (V24, V27, V48B).
+
+> 🛑⭐⭐ **WITH THAT, THE CAL-LEVEL SEARCH IS COMPLETE IN EVERY DIRECTION FROM THE AGGREGATOR.**
+Upstream: the **aggregator lane census** is closed at 7.79 Hz and only r24 has ever been shown to help.
+Downstream: the **governor** is retired by the task rate, and the **FOC loop** is transparent. Sideways:
+the **notch** is the constrained optimum of its only second-order section, the **span cal** is a
+redundant gain knob next to a double kill-switch, **creep damping** is exhausted, **authority** caps at
+11×, **Lever B** is linear across its whole uint16 range, and **delivery lag** is bounded at 3.25 ms
+against a 77 ms inversion threshold. ⇒ **The binding constraint is now a DRIVE, not analysis.** V222 is
+built, verified and audited against all three asks; **nothing further can be learned about it from data
+already on disk.**
+
 > ✅⭐ **AUTHORITY AUDIT: V222’S 8× STEP SCALES ITS CLAMP EXACTLY — margin identical to the car to four
 digits.** A gain raise whose forward clamp does not follow silently turns the authority lever into a
 **clipper**, so this was checked from the images rather than assumed. `lane_max = (0xC61BE × gain) >> 15`
