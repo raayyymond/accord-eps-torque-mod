@@ -246,6 +246,29 @@ the ratchet is clearly worse than V122, stop and say so** — fallback is **V221
 then **V217** (5244, the V88-proven dose).
 Study: `analysis-2020accord/studies/mixer/lever_b_pumping_check_at_matched_gain.py`.
 
+## 🛑 WHAT YOUR DRIVE CAN AND CANNOT SETTLE — read before scoring anything
+
+**Your symptom verdict is the PRIMARY readout. The band numbers are secondary and need far more
+exposure than one episode.** Measured from real cached drives, the episode-to-episode spread of each
+band is:
+
+```
+  band          smallest change ONE episode could prove   what V88 actually measured
+  grind 15-22                 13-15x                              0.549x
+  mid 9-12                    11-13x                              0.604x
+  ratchet 6-9                 42-45x                              0.859x
+```
+
+⇒ **a single 15–30 s episode cannot prove ANY of the expected effects** — the floor is 12–45× and the
+effects are 1.2–1.8×. To resolve them at 80 % power needs roughly **14 min** of engaged symptomatic
+driving per arm for grinding, **17 min** for 9–12 Hz, and — for the ratchet — **about 7 hours**, which is
+not a drive anyone is going to do.
+
+⇒ **So: if the ratchet feels different, THAT is the finding.** Say so in your own words. Do not wait
+for a band number to confirm it, and do not treat a band number from a short drive as contradicting
+you — it cannot. If the car feels better and you keep driving, the extra exposure makes the grinding
+and 9–12 Hz numbers meaningful; if it feels bad, stop, and your report stands on its own.
+
 ## 🛑 A THIRD LIMIT — the 30–49 Hz band is NOT interpretable on this build
 
 V222 removes Honda’s **55 Hz** notch to place one at **20.50 Hz**. The rlogs sample at **~101 Hz**, so

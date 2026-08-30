@@ -342,6 +342,43 @@ current, or that the byte does what it claims — those need the lineage and a d
 first count failed to exclude the `0xE4FFC`/`0xE5FFC` CRC trailers.
 Gate: `analysis-2020accord/verify/no_orphan_bytes.py` (takes a build tag, defaults to v222).
 
+> 🛑🛑⭐⭐⭐ **THE RATCHET BAND CANNOT BE SCORED BY BAND POWER — IT NEEDS ~7 HOURS PER ARM. This may
+be why "nothing has moved micro-ratcheting in sixty builds."** The kit’s design law says every build
+must be interpretable from ONE short symptomatic drive, and *"UNINTERPRETABLE is a DESIGN FAILURE on
+our side."* That was never checked quantitatively. Measured, from real cached data — the
+episode-to-episode spread of the band/control ratio, which **is** the noise floor for a single-episode
+drive:
+
+```
+  band         sd(log10)   MDE, 1 episode/arm   MDE, 2 each   V88 measured on-car
+  ratchet 6-9     0.587          42-45x            14.2x           0.859x
+  mid 9-12        0.392          11-13x             5.9x           0.604x
+  grind 15-22     0.426          13-15x             6.5x           0.549x
+```
+
+⇒ **one episode cannot resolve ANY of them**: the floor is 12–45× and the effects are 1.2–1.8×. V88 got
+its 0.549× from a **full route**, not one episode. Exposure needed per arm at 80 % power:
+
+```
+  band          n episodes   minutes/arm      if V222 DOUBLES V88's effect
+  grind 15-22        42          14.0          11 episodes,   3.7 min   achievable
+  mid 9-12           51          17.0          13 episodes,   4.3 min   achievable
+  ratchet 6-9      1241         413.7         311 episodes, 103.7 min   NOT achievable
+```
+
+🛑 **The ratchet band is 30× more expensive than the other two**, because its episode-to-episode
+spread is a factor of **3.9** — the ratchet is INTERMITTENT, so 20 s windows vary enormously while the
+effect is small. ⇒ **band power could never have detected a V88-sized ratchet improvement at any
+exposure this operator has ever given.** ⚠ **That does NOT mean improvements happened** — it means the
+instrument cannot answer the question, so sixty builds of "no ratchet change" is **weaker evidence than
+it reads as.**
+✅ **This is exactly why the standing instruction is "SCORE BANDS; LET THE OPERATOR SCORE SYMPTOMS"** —
+now quantified. The operator’s verdict needs **one** episode; the band readout needs **minutes**. They
+are different instruments and a 20 s band ratio must not be reported as evidence either way.
+➕ **The known alternative for the ratchet is RING-DOWN** — the record calls ζ = 0.017–0.036 *"the only
+estimator that passes its control"*, and it is a per-burst measurement rather than a band average, so
+its variance structure is different. **Its power has NOT been computed; that is the open question.**
+
 > ✅⭐ **AUTHORITY AUDIT: V222’S 8× STEP SCALES ITS CLAMP EXACTLY — margin identical to the car to four
 digits.** A gain raise whose forward clamp does not follow silently turns the authority lever into a
 **clipper**, so this was checked from the images rather than assumed. `lane_max = (0xC61BE × gain) >> 15`
