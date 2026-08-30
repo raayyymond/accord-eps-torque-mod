@@ -1766,13 +1766,30 @@ corpus's blind spot.**
 ### ⇒ ALL THREE STATED SYMPTOMS NOW HAVE AN ANSWER
 ```
    GRINDING            a real MOTION oscillation, strongest in cs_rate  -> the notch (V195: 21.5x)
-   RATCHETING          torque-dominant, omega^2 lane                    -> inertia half-dose (V196)
-                                                                           + the K1 revert
+   RATCHETING          torque-dominant, omega^2 lane                    -> ** RETRACTED 2026-08-29 **
+                                                                           see the correction below
    COMMAND OSCILLATION cannot be commanded (1-5 Hz low-pass); it tracks -> fixed BY fixing the grind
                        the grind                                           no separate lever
    LKAS AUTHORITY      the knob is 0xC6CD0 and it is the grind's carrier -> sequenced: confirm the
                                                                            grind fix, THEN 6x -> 8x
 ```
+
+### 🛑🛑 **THE RATCHET ANSWER IN THAT TABLE CONTRADICTS THE ONLY MEASURED `d(symptom)/dK` FOR THAT LEVER — RETRACTED 2026-08-29**
+
+The table credited **"inertia half-dose (V196)"** as the ratchet answer. **V196 is a half-dose of the exact cut V94 flew and the operator ABORTED.**
+
+`BUILD-LINEAGE-CATCHUP-V76-V100.md`, V94 row, verbatim:
+
+> 🛑 **THE PREMISE WAS BACKWARDS.** `gp-0x6b26` was cut 6× on *"it is apparent inertia, nothing is dissipated, lowering is strictly safe on both binding bounds"*. Measured afterwards on **two independent drives**, ω-partialled with a shuffled control: **+518/+565 counts of POSITIVE `Re(Z)`. It is a REAL 6–9 Hz DAMPER and V94 removed 6/6ths of it.** ⇒ **the first measured `d(symptom)/dK` this lever has ever had, and the sign says UP.**
+
+⇒ **V196 repeated the falsified premise at half strength, and this table then recorded the result as the answer.** The whole notch shelf inherited it, at **0.140× the flown car**.
+
+✅ **This is a candidate explanation for why the ratchet "has never moved in sixty builds":** the lever has been pushed in the direction the only on-car measurement says makes it worse. Reverted across **V214–V217**; V217 carries the damper at the flown value.
+
+⚠ **Stated as a candidate, not a conclusion.** It is consistent with the V94 abort and with the sixty-build null, but nothing has flown with the damper restored *and* a ratchet lever applied. **V217 is the first build that tests it.**
+
+⇒ **The ratchet’s actual answer is now `0xC63AE` (V217 rung 1, V218 rung 2) — untested.** Every alternative is closed on its own terms.
+
 
 ## ✅ **V196 — THE ONE FREQUENCY-SELECTIVE RATCHET LEVER LEFT, AND IT COSTS NOTHING AT DC**
 The biquad is spent on the grind. The only other **frequency-selective** lever aimed at the ratchet
