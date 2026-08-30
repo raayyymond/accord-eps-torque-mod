@@ -38,6 +38,20 @@ licenses nothing, because `0xC63AE` is unpriced. If the ratchet is worse, the fa
 
 > ✅⭐⭐ **V228 BUILT — V222 WITHOUT THE 8×, i.e. the ratchet race REMOVED.** The risk in the block above comes **entirely from the forward gain**, and that is separable. **V228 = V222 with `0xC6CD0` left at the car’s 5346 (6×) and the clamps `0xC61B2`/`B4` at 3072** — **4 bytes** from V222, **19 bytes** from the car. It keeps **both levers that have evidence behind them**: the 20.50 Hz notch (grinding, net 0.463× at 22–26 Hz) and **Lever B at 13107** (2.50× damping, the kit’s only measured on-car win), and it declines the 1.33–1.65× excitation rise that the notch cannot cover at 6–9 Hz. ⇒ **on V228 the ratchet has no plausible way to get worse** — every delta from the car is either a damper raise or a filter that is flat at the ratchet. 🛑 **COST, stated plainly: LKAS authority stays at the car’s 6×.** That is the whole trade. ⚠ **NOT V212**, which is this base with the car’s Lever B (5244); **V228 is the first build ever to pair a RAISED Lever B with 6×.** image `6cf12db9fc49aee2…`, rwd `b90a200ce53c7f37…`, **72/72** builder assertions, **100 %** orphan-byte coverage, **1138** close-out checks. Builder: `analysis-2020accord/builds/v108_plus/build_v228_tva.py`.
 
+> 🛑⭐⭐ **CORRECTION TO THE BLOCK BELOW — AND TO MY OWN r24 ANCHOR. The kit HAD a route-variance measurement; I missed it.** The ★★★★★ 8× memory records a **MEASURED placebo floor of 1.45× (`r75` vs `r76`, byte-identical V89)** — that is a **third within-build pair**, and it means the dose law was **already** priced the way I claimed was missing. With three pairs `sigma_route` is **0.0985 point / 0.2876 upper** (tighter than the 0.396 below). Re-priced against the kit’s own floor:
+>
+> ```
+>   claim                    vs the 1.45x placebo floor
+>   V62 grinding, high end        28.97x   robust
+>   8x dose law G             1.86-2.69x   CLEARS -- the law STANDS
+>   V88 grinding 0.549x            1.26x   clears, but MARGINALLY
+>   V88 ratchet 0.859x             0.80x   INSIDE the floor -- not evidence of anything
+> ```
+>
+> ✅ **The 8× dose law stands and my single-route framing of it was unfair** — the kit priced it against a measured floor and it clears by 1.9–2.7×.
+> 🛑 **But this corrects MY OWN reasoning too.** The r24 work anchored on *"V88 raised r24 and cut 6–9 Hz to 0.859×, so r24’s side is beneficial"*. **That 6–9 Hz value is INSIDE the placebo floor.** The anchor survives on the **grinding** band (0.549×, clears by 1.26×) and **not** on the ratchet band — where **V88 never had a result distinguishable from route noise.** ⇒ every conclusion I drew that used V88’s *ratchet* number is weaker than stated; those using its *grinding* number stand, marginally.
+> ➕ **This does not change either flight candidate** — Lever B’s case was always the grinding band — but it does mean **nobody has ever shown Lever B helps the ratchet**, which is worth knowing before reading a ratchet result from the next drive.
+
 > 🛑🛑⭐⭐⭐ **THE KIT’S CROSS-BUILD EVIDENCE HAS NEVER BEEN PRICED AGAINST ROUTE VARIATION — and a repeat route is now the highest-value data available.** Every cross-build result in this record is **one route vs one route**, so its error bar is `sigma_route * sqrt(2)`. That quantity has never been estimated. From the only two within-build pairs (`r7e`/`r7f` = V96, `r22`/`r23` = V112): point estimate **0.0897**, χ² 95 % upper bound **0.3960** (2 df is very wide).
 >
 > ```
