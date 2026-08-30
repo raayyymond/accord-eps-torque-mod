@@ -442,6 +442,30 @@ priced and audited; this one is not.
 ➕ Corrected mid-derivation: my first pass had a sign error that made a **bigger** cut need a **larger**
 lane share, which is backwards. The table above is the corrected algebra and passes that sanity check.
 
+> 🛑 **AND THE SIGN CANNOT BE RECOVERED FROM CACHE — every 427-derived channel is RECTIFIED, verified.**
+The obvious move was the r24 method: reconstruct the lane and measure its phase against rate. It does
+not work here, and the reason is worth recording. Checked across **r7e / r80 / r81 / r82** (V96–V99, the
+builds that put `gp-0x6b70` on CAN 427 at `sar 6`):
+
+```
+  ab_mt              0..251, 250 distinct, ZERO negatives   <- the 427 torque byte, RECTIFIED
+  probe / field / raw14_b4   only 4-8 distinct values       <- cave threshold rungs, not waveforms
+  slow3 / g6ac2      constant                               <- carry nothing on these routes
+```
+
+⇒ **rectification destroys the sign by construction**, and the cave channels are **comparator duties**,
+not sampled waveforms — neither can yield a phase. The record’s *"CAN 427 is RECTIFIED"* is confirmed
+empirically here rather than quoted.
+➕ **Why r24 worked and this does not:** r24’s **input** (column torque) is on the wire **unrectified**,
+so its lane could be reconstructed from a known transfer applied to a known signal. `gp-0x6b70` has no
+equivalent unrectified input available — the chain `FUN_00038148 → gp-0x6b70` sums several weighted
+lanes, and reconstructing it would require every one of them.
+⇒ **The sign needs ONE CAVE SIGN BIT.** ✅ That is a **proven, low-risk pattern in this kit**, not a new
+cave class: **V70 flew a 4-bit sign probe** and **V88’s `b7` carried a sign at 100 Hz**. It is the
+cheapest instrument that would settle whether cutting `0xC63AE` helps or hurts.
+⚠ But it is still a **cave**, and caves are this kit’s **only bricking class** (V24, V27, V48B) — so it
+is a proposal for after V222 flies, not a reason to delay the drive.
+
 > ✅⭐ **AUTHORITY AUDIT: V222’S 8× STEP SCALES ITS CLAMP EXACTLY — margin identical to the car to four
 digits.** A gain raise whose forward clamp does not follow silently turns the authority lever into a
 **clipper**, so this was checked from the images rather than assumed. `lane_max = (0xC61BE × gain) >> 15`
