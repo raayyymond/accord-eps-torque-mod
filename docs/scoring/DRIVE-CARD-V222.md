@@ -196,6 +196,30 @@ python rlog-tools/score/rate_matched_band_ratio.py
 
 ---
 
+## If the ratchet is unchanged — **V227** is the one genuinely untried lane
+
+`39990-TVA,A160-V227-V222BASE-RESPID.CEILING.X1.1280.TO.512-0x13000-0x100000.rwd`  
+.rwd `a270b05e382712549cf00098e4a8510440db03b4a3c2a55eb1fead2c946b31da`  
+image `28b5f4c979660451cda9c457312b824622488201d96ecf1dbf3be90dd8d67434`
+
+Every other ratchet lever on the shelf has either flown or been closed by arithmetic. **This lane has not.** The golden model’s own lane census calls `gp-0x6ad4` *"the most reachable authority of any gated lane"* and says outright that **it has never been scored at 6–9 Hz** — V56 muted it and scored the mute at ~21 Hz, which does not transfer.
+
+One halfword moves the **knee** of its ceiling ramp, not the ceiling height:
+
+```
+   speed     stock ceiling   V227 ceiling   ratio
+    3 km/h          57            171        3.00x
+    6 km/h         228            683        3.00x
+   10 km/h         455           1024        2.25x
+   20 km/h        1024           1024        1.00x   <- IDENTICAL from here up
+```
+
+🛑 **This is an OPEN lever, not a predicted fix.** Whether more authority on that lane **damps or PUMPS** 6–9 Hz depends on the loop phase there, which is exactly what "never scored" means. **It can make the ratchet worse.** It is cal-only, so reflashing V222 undoes it.
+
+⚠ **Read it at CREEP.** Above 20 km/h it is byte-identical in effect to V222, so a highway stretch cannot distinguish them.
+
+---
+
 ## Verification behind this build
 
 - **72/72 build assertions**, CRC 50/50, `.rwd` decodes byte-identical to the built image.

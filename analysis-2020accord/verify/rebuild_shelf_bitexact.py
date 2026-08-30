@@ -46,6 +46,7 @@ SHELF = {
     'v224': '21198a4d1f21ce8d07b25530fc2969466f5e644370220658008a499b2585f2c3',
     'v225': '34d1804120aa52a1131e50663eede9c16ab95e767a16d05dee277911410adac3',
     'v226': 'e45799ed7986139183e50b14d4a15b08085b453d3d1a97a580bda5d7d18e9850',
+    'v227': '28b5f4c979660451cda9c457312b824622488201d96ecf1dbf3be90dd8d67434',
 }
 # ARCHIVE: builds whose BUILDER must still reproduce its image, but which are NOT meant to be
 # flashable -- their .rwd files are correctly SUPERSEDED-DO-NOT-FLASH-renamed. They were in the

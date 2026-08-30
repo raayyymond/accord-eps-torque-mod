@@ -71,6 +71,7 @@ PUB = {
     'v224': '21198a4d1f21ce8d07b25530fc2969466f5e644370220658008a499b2585f2c3',
     'v225': '34d1804120aa52a1131e50663eede9c16ab95e767a16d05dee277911410adac3',
     'v226': 'e45799ed7986139183e50b14d4a15b08085b453d3d1a97a580bda5d7d18e9850',
+    'v227': '28b5f4c979660451cda9c457312b824622488201d96ecf1dbf3be90dd8d67434',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
 img = {}
@@ -508,7 +509,7 @@ print("[13] A GAIN RAISE MUST BE PRICED AGAINST THE NOTCH, ACROSS THE WHOLE BAND
 _GAIN_BASE = 5346                      # 6.00x -- the notch shelf's baseline (0xC6CD0 = 891 * N)
 _STAGED = {'v211','v213','v215','v216','v217','v218','v219','v220',
            'v221','v222','v223',
-           'v224','v225','v226'}   # priced and documented
+           'v224','v225','v226','v227'}   # priced and documented
 # V224/V226 carry V217's 8x step byte-identically (they are V218/V220's lever rebased onto V222).
 # V225 IS the authority rung: 10x, and it carries the matching clamp raise 0xC61B3/B5 16 -> 18,
 # which is what makes the step a STAGED one rather than a bare gain raise. Asserted below.
@@ -701,7 +702,8 @@ for _v in sorted(img):
                                if _n >= 8 else ' -- span moved, Lever B phase changed')))
 
 _LEVER_B_LADDER = {'v221': 13107, 'v222': 13107, 'v223': 26214,
-                   'v224': 13107, 'v225': 13107, 'v226': 13107}   # the arms, rebased onto V222
+                   'v224': 13107, 'v225': 13107, 'v226': 13107,
+                   'v227': 13107}   # the arms, rebased onto V222
 for _v in sorted(img):
     _want = _LEVER_B_LADDER.get(_v, 5244)
     _got = struct.unpack_from('<H', img[_v], 0xC6446)[0]
@@ -810,17 +812,36 @@ _KNOWN = {0xC6748, 0xC6754, 0xC6760,   # the three direction-corridor tables
                                        # as OSC_X/OSC_Y (build_v192_tva.py:85). ONLY V194 moves
                                        # it (Y 358/307 -> 215/184); V195 onward is stock, and
                                        # V194 is part of the condemned GATE-2 notch arc.
+# ---- deliberate, BUILD-SCOPED knot moves ------------------------------------------------------
+# 🛑 NOT added to _KNOWN. _KNOWN whitelists a whole TABLE for every build; these name one CELL on one
+# BUILD, so any other build touching the same knot -- or this build touching a different one -- still
+# fails. A table-knot move is exactly the class this gate exists to surface, so each one is listed
+# with its reason rather than waved through.
+_KNOT_OK = {
+    # V227 moves X[1] of the resonance-PID ceiling LERP 0xC67C0 from 1280 to 512, so the ceiling
+    # reaches full authority at 8 km/h instead of 20 -- 3x more ceiling at creep, IDENTICAL above
+    # 20 km/h. The lane is gp-0x6ad4, which the golden model calls "the most reachable authority of
+    # any gated lane" and explicitly flags as NEVER SCORED AT 6-9 Hz. Y is asserted unchanged in the
+    # builder, so this moves the KNEE and not the ceiling height.
+    ('v227', 0xC67C4),
+}
 chk(len(_TABS) >= 90, f'{len(_TABS)} well-formed cal tables enumerated from movea instructions')
 for _v in sorted(img):
     _bad = []
     for _i in range(0xC4000, 0xC7000):
         if _st[_i] != img[_v][_i] and (_i & 0xFFF) < 0xFFC:
             _f = _ctb.field_of(_i & ~1, _TABS)
-            if _f and _f[0] not in _KNOWN:
+            if _f and _f[0] not in _KNOWN and (_v, _i & ~1) not in _KNOT_OK:
                 _bad.append((_i & ~1, _f))
     chk(not _bad,
         f'{_v.upper()} moves no table knot outside the 3 known corridor tables'
         + ('' if not _bad else f' -- {["0x%05X %s of 0x%05X" % (a, f[2], f[0]) for a, f in _bad[:4]]}'))
+
+# every listed exception must still be a real, live move -- a stale allowance is a hole
+for _bv, _ba in sorted(_KNOT_OK):
+    if _bv in img:
+        chk(_st[_ba] != img[_bv][_ba] or _st[_ba + 1] != img[_bv][_ba + 1],
+            f'{_bv.upper()} still moves 0x{_ba:05X} -- a _KNOT_OK entry that no longer applies is a hole')
 
 print()
 print("[20] THE BOOST-FLOOR MIRROR PAIR MUST STAY IN SYNC -- int 0xC6768/6A/6C vs float 0xC65C4/C8/CC")
