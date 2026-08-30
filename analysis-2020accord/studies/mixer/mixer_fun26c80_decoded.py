@@ -13,6 +13,12 @@ limiter in the live delivery path.  That was wrong: the limiter's input is the v
 other side of the arm gate, and the payloads are zero on BOTH sides.  The plumbing was right and the
 conclusion was still wrong, because the payloads were never checked.  Trace the payload, not the path.
 
+And a SECOND retraction: I twice read a zero-store in one arm of the mode dispatch as "this value
+is discarded".  Mode 0 and mode 5 are COMPLEMENTARY -- 0xC4124 is a ROUTER, not a mute.  Value B goes
+to gp-0x6b4c in mode 0 and to gp-0x6b4e in mode 5.  So the FUN_00033d10 PI controller's lane 2 is
+LIVE (it feeds the plant model via gp-0x6b4e), and V209's probe target is confirmed real.
+In a mode dispatch, a zero in one arm usually means the value went somewhere else -- read every arm.
+
 Run:  python analysis-2020accord/studies/mixer/mixer_fun26c80_decoded.py
 """
 import os
@@ -57,7 +63,9 @@ print('      rec[8:10] D   rec[10:16] three weights (0..1024)')
 print('      types 2/3/4 ACCEPT the values; 0/1/5 ZERO them and set the weights to 1024')
 print()
 print('   A -> gp-0x62e0[i] -> gp-0x6298 -> gp-0x3d80 -> gp-0x6b4a -> DELIVERY (FUN_00042af8)')
-print('   B -> gp-0x62f8[i] -> gp-0x62b0 -> gp-0x3d88 -> gp-0x6b4c    (mode 5 zeroes gp-0x62b0)')
+print('   B -> gp-0x62f8[i] -> ROUTED BY MODE, not discarded:')
+print('          mode 0: gp-0x62b0 -> gp-0x3d88 -> gp-0x6b4c   (arm-gated)')
+print('          mode 5: gp-0x62c8 -> gp-0x3d8c -> gp-0x6b4e   (NOT arm-gated) <- V209 probes this')
 print('   D -> gp-0x633c[i] -> gp-0x6324 -> gp-0x3d90 -> gp-0x6bfa    the OBSERVER BIAS term')
 print()
 print('   The rate limiter, between gp-0x3d84 and gp-0x6b4a:')
@@ -68,11 +76,11 @@ print('      follower = slew(follower -> target, +-%d/tick)   0xC6194   [gp-0x3d
 print('      gp-0x6b4a = clamp(gp-0x3d80 + follower + clamp(target-follower, +-256), +-25600)')
 print()
 print('SLOT MAP -- all ten, read off each caller (ep = sp, so sst.b/sst.h give the layout)')
-print('   %-4s %-14s %-5s %-12s %-8s %s' % ('slot', 'caller', 'mode', 'value A', 'value B', 'value D'))
+print('   %-4s %-14s %-5s %-12s %-9s %-9s %s' % ('slot','caller','mode','value A','value B','B goes to','value D'))
 for i in range(10):
     c, va, vb, vd = SLOTS[i]
-    note = '' if MODE[i] == 0 else '(discarded)'
-    print('   %-4d %-14s %-5d %-12s %-8s %s' % (i, c, MODE[i], va, vb if not note else note, vd))
+    note = '' if MODE[i] == 0 else '-> 6b4e'
+    print('   %-4d %-14s %-5d %-12s %-9s %-9s %s' % (i, c, MODE[i], va, vb, note or '-> 6b4c', vd))
 print('   slot 10 is written by phase 1 but never summed by phase 2.')
 print()
 
@@ -112,8 +120,10 @@ for a, nm in ((0xC60B8, 'lane2 pre-filter alpha'), (0xC60BC, 'lane1 D'), (0xC60C
               (0xC60D0, 'lane2 I clamp'), (0xC60D4, 'lane2 I'), (0xC60D8, 'lane2 P')):
     print('   0x%05X  %-22s = %.8g' % (a, nm, f32(a)))
 print()
-print('   Gated out THREE independent ways: lane 1 by 0xC649D=0, lane 2 output gp-0x6b78')
-print('   discarded by 0xC4124[2]=5, and the torque term by 0xC616C=0.')
+print('   Lane 1 is OFF (0xC649D=0) and the torque term is zeroed (0xC616C=0), so nothing')
+print('   reaches gp-0x6b4a.  But LANE 2 IS LIVE: its output gp-0x6b78 is slot 2 value B,')
+print('   which mode 5 ROUTES to gp-0x6b4e -- read by FUN_00038148 at 0x3817C as model lane')
+print('   w[4], and probed by V209.  Only the DELIVERY-bound half of this block is dormant.')
 print('   !! The notch builders write four floats at 0xC60A8-0xC60B4. One float of offset')
 print('      error lands in this block. It is byte-stock on all flashable builds (checked')
 print('      by closeout_verify_published.py).')

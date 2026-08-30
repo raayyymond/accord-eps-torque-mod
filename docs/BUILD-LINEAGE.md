@@ -206,7 +206,9 @@ security access**): a bound clip pins it at **~2481**, and **anything above 2505
   Decoded 2026-08-29. `FUN_00025c32` is the slot writer: a 16-byte request record (slot, type 0-5,
   four values, three weights) with **exactly ten callers**, one per accumulated slot. Value A ->
   `gp-0x6298` -> `gp-0x3d80` -> **`gp-0x6b4a`**, which has 8 readers **including the delivery chain
-  `FUN_00042af8`** (`0x42BF6`). Value B -> `gp-0x6b4c`; value D -> **`gp-0x6bfa`**, the observer's bias
+  `FUN_00042af8`** (`0x42BF6`). Value B is **ROUTED BY MODE, not discarded**: mode 0 -> `gp-0x62b0` -> `gp-0x6b4c` (arm-gated),
+  mode 5 -> `gp-0x62c8` -> **`gp-0x6b4e`** (NOT arm-gated, and what **V209 probes**). Value D ->
+  **`gp-0x6bfa`**, the observer's bias
   term (provenance previously open; **slot 6 / `FUN_0003aff4` is its only writer**).
   🛑 **NINE OF THE TEN SLOTS STORE VALUE A AS LITERAL `r0`.** The tenth (slot 2, `FUN_0003405a`)
   carries `gp-0x6b76` = `-clamp(gp-0x4f60, +-cal(0xC616C))`, and **`0xC616C` = 0** -> 0 when valid,
@@ -224,8 +226,9 @@ security access**): a bound clip pins it at **~2481**, and **anything above 2505
   `0xC60C8` = 0/0/**14**, I clamp `0xC60C0`=1; lane-2 D/I/P = `0xC60CC`/`0xC60D4`/`0xC60D8` =
   0/**0.002**/**0.03**, I clamp `0xC60D0`=5, pre-filter `0xC60B8`=0.01. **Byte-stock on all 152
   flashable builds** (checked). The whole controller is gated out **three independent ways**: lane 1 by
-  `0xC649D`=0, lane 2's output `gp-0x6b78` **discarded by `0xC4124[2]`=5**, and the torque term by
-  `0xC616C`=0. ⚠ **The notch builders write four floats at `0xC60A8`-`0xC60B4`; one float of offset
+  `0xC649D`=0 and the torque term by `0xC616C`=0 -- but **LANE 2 IS LIVE**: its output `gp-0x6b78`
+  is slot 2's value B, which mode 5 routes to **`gp-0x6b4e`**, read by `FUN_00038148` at `0x3817C`
+  as model lane w[4] and **probed by V209**. Only the DELIVERY-bound half is dormant. ⚠ **The notch builders write four floats at `0xC60A8`-`0xC60B4`; one float of offset
   error lands in this block.** ⚠ **NOT a lever yet** -- `gp-0x6b4a`'s sign/scaling in `FUN_00042af8` is
   untraced and the PI inputs (`gp-0x6bf0`, `gp-0x6be0`, `gp-0x6a58`) are unidentified; raising
   `0xC616C` admits a **driver-torque**-proportional term, which on the wrong sign is added friction.
