@@ -46,6 +46,25 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑⭐⭐⭐⭐ **V235 CROSS-VALIDATED: THE GEOMETRY IS NOT FITTED, BUT ITS ADVANTAGE IS NOT UNIFORM EITHER.** Leave-one-route-out over the three routes the design was optimised against:
+>
+> ```
+>   1) FIT STABILITY -- re-optimise on each PAIR
+>      ra5+ra6   -> 25.0 / 23.5 / 0.96      (held out ra4)
+>      ra4+ra6   -> 25.0 / 23.5 / 0.96      (held out ra5)
+>      ra4+ra5   -> 25.0 / 23.5 / 0.96      (held out ra6)
+>      all three -> 25.0 / 23.5 / 0.96      <- V235
+>
+>   2) HELD-OUT SCORE       J Honda      J V232      J V235    margin vs Honda
+>      ra4                 -0.36667    -0.37874    -0.46391      +0.097  V235
+>      ra5                 -0.38603    -0.39354    -0.46089      +0.075  V235
+>      ra6                 -0.44792    -0.41635    -0.43770      -0.010  HONDA
+> ```
+>
+> ✅ **The filter choice is not fitted at all** — every fold selects the identical geometry, so dropping any route changes nothing. And because the geometry chosen *without* ra6 is that same geometry, scoring it on ra6 is a genuine held-out test.
+> 🛑 **It loses that test on ra6.** V235 wins on 2 of 3 routes by roughly **10× the margin it loses by** on the third, so the average strongly favours it — but **one route prefers Honda, and n=3 is far too few for a confidence interval.** ⇒ **a qualification on the card, not a disqualification, and not a clean win either.**
+> ➕ **My own script's verdict line said *“the advantage is fitted to the sample”*, which the numbers do not support** — the geometry is provably not fitted, and 2-of-3 with a 10× margin asymmetry is not the same as a fitted advantage. Corrected where it lives, in `rlog-tools/score/notch_leave_one_route_out.py`, so the next reader gets the accurate reading.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V235 BUILT — THE CELL-BY-CELL AUDIT FOUND ONE MORE UNJUSTIFIED CELL, AND V235 IS NOW THE CAR PLUS THREE THINGS.**
 >
 > The audit the close-out contract asks for, run against **STOCK**: V234 differs in **115 non-CRC runs**, of which **only 6 also differ from the car**. The other 109 are what he already drives and need no new justification. Of the 6, five were justified (the notch ×4, the probe) and **one was not**.

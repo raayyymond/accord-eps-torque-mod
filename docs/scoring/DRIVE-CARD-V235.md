@@ -67,6 +67,28 @@ for the whole drive.
 
 ---
 
+## How well this generalises — cross-validated, and one route disagrees
+
+The notch geometry was chosen by optimising against measurements from three flown routes. Holding each
+one out in turn:
+
+```
+  trained without   picks geometry        held-out score vs Honda
+  ra4               25.0 / 23.5 / 0.96    ra4:  +0.097  V235 better
+  ra5               25.0 / 23.5 / 0.96    ra5:  +0.075  V235 better
+  ra6               25.0 / 23.5 / 0.96    ra6:  -0.010  Honda better
+```
+
+**The filter itself is not fitted** — every fold picks the same geometry, so no single route is driving
+the choice. But on **ra6 the held-out score prefers Honda's placement**, narrowly. V235 wins on two of
+three routes by about ten times the margin it loses by on the third, so the average clearly favours it —
+**but the advantage is not uniform, and three routes is too few to put an interval on it.**
+
+That is a reason to drive it and watch, not a reason to skip it — and it is one more thing your verdict
+settles that the data cannot.
+
+---
+
 ## The cost, plainly
 
 **55 Hz runs ~143× louder than Honda's cut.** One second-order section cannot notch both 25 Hz and
