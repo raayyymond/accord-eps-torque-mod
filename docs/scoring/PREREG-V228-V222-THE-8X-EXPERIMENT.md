@@ -80,12 +80,36 @@ standing rule is score bands, let the operator score symptoms.
 
 **Fly V228 first.**
 
-1. It **cannot make anything worse** than the car — every one of its 19 delta bytes is a damper raise
-   or a filter flat at the ratchet.
+1. It **cannot make the RATCHET worse** — every one of its 19 delta bytes is a damper raise or is flat
+   at 6–9 Hz. ⚠ **Corrected 2026-08-30:** an earlier version of this line said "cannot make ANYTHING
+   worse", which is false — the notch is **not** flat at 40–49 Hz and V228 raises that band by
+   ~+5.9 dB (V222 by ~+8.1 dB). The ordering argument survives, because the ratchet is what the
+   first drive risks; the absolute claim does not.
 2. It establishes the **grinding baseline with the ratchet protected**, so if grinding improves, that
    result is clean.
 3. Only then does V222 add one variable. Flying V222 first and V228 second also works, but risks the
    ratchet on the *first* drive, which is the one most likely to be cut short.
+
+---
+
+## 🛑 Registered BEFORE the drive: acceptability is not efficacy
+
+These are two different questions and only one of them a single drive can answer. Confusing them is
+how sixty builds in this record got "falsified" by one quiet drive.
+
+| question | who answers it | drives needed |
+|---|---|---|
+| **Is the car acceptable to drive?** | **the operator, and only him.** One episode suffices and his verdict is **FINAL** | **1** |
+| **Did the lever work?** | the band measurements above | **many** — ~21 min/build here |
+
+⇒ **"It felt no different" does NOT falsify either build.** Symptom presence varies on *byte-identical*
+firmware: V67/V68/V85 are identical on all five cells ever blamed for grind #2, and it was reported on
+two of them and not the third. The operator on V112: *"I no longer have an understanding of the kinds
+of scenarios that illicit grind #1."* A single drive is weak evidence in **both** directions.
+
+⇒ If he reports the car is **worse**, that stands on its own and no band number overrides it. If he
+reports it **unchanged**, that is one sample of an intermittent process — the registered response is
+**another drive**, not abandoning the build. See RULE 5b in `docs/BUILD-LINEAGE.md`.
 
 ---
 
