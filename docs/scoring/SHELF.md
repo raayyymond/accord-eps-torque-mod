@@ -228,8 +228,8 @@ three-site patch on `gp-0x6806`, so every notch cell is inert with LKAS off.
 ## BEFORE YOU FLASH
 
 ```
-python flashing-2020accord/preflight.py "<the .rwd filename>"     # V199/V200/V201 all pass 8/8
-tmux kill-server                                                  # openpilot/pandad MUST be dead
+python flashing-2020accord/preflight.py "<the .rwd filename>"   # all five pass 8/8
+tmux kill-server                                                # openpilot/pandad MUST be dead
 ```
 Name the file and the bus out loud. They will be read back to you before anything is sent.
 
@@ -237,35 +237,47 @@ Name the file and the bus out loud. They will be read back to you before anythin
 
 Two passes are enough. The design law is that one short symptomatic drive must interpret the build.
 
-1. **~15 s engaged creep, hands off** — the grind's home ground.
+1. **~15 s engaged creep, hands off** — the grind’s home ground.
 2. **~15 s engaged, hands lightly on** — the corpus blind spot; `f'` compresses 6.3× when you push.
 
-Then:
+Then, in this order:
+
 ```
-python rlog-tools/score/score_drive.py <tag>       # start here — one command
-python rlog-tools/score/cross_channel_band_excess.py <tag>
-python rlog-tools/probe/decode_v205_observer_output.py <tag> --v205  # V205 only
-python rlog-tools/probe/decode_v204_observer_lane.py <tag> --v204    # V204 only
+python rlog-tools/score/score_drive.py <tag>                          # start here, one command
+python rlog-tools/probe/decode_v204_observer_lane.py <tag> --v209     # V209 only
 ```
+
+🛑 **The decoders were all broken until 2026-08-29** — they `chdir` to `rlog-tools/` and then looked
+for a kit-root-relative cache path, so every one of them would have failed after a drive with
+"no cache". Fixed in all five. If a decoder ever says "no cache" for a route you know exists,
+that is the bug returning, not a missing capture.
 
 ## STOP CONDITIONS
 
 | what you feel | what it means | what to do |
 |---|---|---|
-| ratcheting noticeably **worse** | the inertia sign is inverted | stop; reflash the prior build |
-| wheel heavy or dead to fast inputs | the half-dose is too much | stop; quarter it |
-| a **new high note while engaged** | Honda's 55 Hz null, which the notch gives up | stop; it can only appear with LKAS on |
-| grinding unchanged | the notch is aimed at the wrong frequency | stop — no point continuing |
+| ratcheting noticeably **worse** | the inertia sign is inverted | stop; reflash **V199** |
+| wheel heavy or dead to fast inputs | the inertia half-dose is too much | stop; quarter it |
+| a **new high note while engaged** | Honda’s 55 Hz null, which the notch gives up | stop — it can only appear with LKAS on, since the section is engagement-gated |
+| grinding unchanged | **check the peak before concluding anything** — see below | do not assume the notch is wrong |
+
+🛑 **"Grinding unchanged" is not by itself a null.** The notch is a **point fix**: V208 gives
+~10× at 20–21.5 Hz but only ~2× at 16.5 Hz. Run the scorer first — it prints the drive’s own
+**power-weighted** peak. A drive whose peak landed at 16 Hz never sampled the notch’s band, and
+that is a statement about the drive, not about the fix.
 
 ## PRE-REGISTERED — write the sentence a null will license
 
 | endpoint | prediction | what a null means |
 |---|---|---|
-| **15–25 Hz excess on `cs_rate`, STRATIFIED BY THE DRIVE’S OWN PEAK** | peak near 20 Hz → **24.7×**; peak near 18 Hz → 4.6×; peak near 16.3 Hz → **2.3×** | pooling these hides the result — a low-peak drive can look like a null when the filter did exactly what it was designed to |
-| 6–9 Hz excess on `cs_tq` | unchanged | the notch was never aimed there; that band is the ratchet |
-| LKAS command 0.5–3 Hz | unchanged | the biquad is not in the command path at all, so any movement here is something else |
-| `gp-0x6b7e` content at the drive’s peak (V203) | small vs the notch output | if it dominates, the pedestal is the bypass and the lever is `0xC6906–090C` (K = 20 at all four knots) |
-| `gp-0x6b7e` duty | if identically zero, the friction-hold limiter never cuts engaged | the whole parallel path leaves the model |
+| **15–25 Hz on `cs_rate`, at the drive’s own power-weighted peak** | peak ≈20.5 Hz → **the null** · 19.5 → 9.2× · 21.5 → 10.3× · 22.5 → 5.4× · 18.0 → 3.4× · 16.5 → 2.1× | if the peak sat in the notch’s band and nothing moved, the grind is not in the assist section’s path |
+| corpus-wide band **energy** | V208 removes **14.9×** | a point fix cannot be judged on one episode |
+| **`b5` (free — every shelf build carries it)** | **0.31–0.49**, against 0.2798 measured at 1.000× the inertia dose | **≤ 0.28 ⇒ the halved inertia is NOT reaching the car**, and the ratchet lever comes off the shelf. The most useful null available |
+| `b6` (free) | 0.000000 | measured dead on two routes, 49k and 124k frames. Non-zero would be new information |
+| `b3` (free) | must **vary** | a constant b3 is **run-invalidating**, not a finding |
+| `gp-0x6b4e` saturation (V209) | unknown — this is why V209 is the one to fly | its producer is an uncapped 10-slot accumulator, so unlike every other clamp this bound is **not provable** and must be measured |
+| 6–9 Hz on `cs_tq` | unchanged | the notch was never aimed there; that band is the ratchet |
+| LKAS command 0.5–3 Hz | unchanged | the biquad is not in the command path, so movement here is something else |
 
 ## 🛑 WHAT THE NOTCH CAN AND CANNOT FIX — corrected 2026-08-29
 

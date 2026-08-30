@@ -51,7 +51,7 @@ def main(tag, confirmed=False):
         print(f'    python {Path(__file__).name} <route-tag> --v203')
         print('=' * 78)
         return 2
-    p = Path('analysis-2020accord/_scratch/cache') / tag / f'{tag}.npz'
+    p = (_d.parent / 'analysis-2020accord' / '_scratch' / 'cache') / tag / f'{tag}.npz'
     if not p.exists():
         print(f'no cache for {tag} at {p}')
         return 1

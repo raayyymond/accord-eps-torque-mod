@@ -63,14 +63,14 @@ def main(tag, confirmed=False):
         print('')
         print('  The 427 field carries a DIFFERENT signal on every other build:')
         print('    V102..V182  gp-0x6b4c            V183..V196  gp-0x6ac0 at sar 4')
-        print('    V194        gp-0x6c2c at sar 6   V204        gp-0x6b4e at sar 3  <- this one')
+        print('    V194        gp-0x6c2c at sar 6   V204/V209    gp-0x6b4e at sar 3  <- this one')
         print('')
         print('  Decoding another build here yields a PLAUSIBLE, SPECIFIC, WRONG number.')
         print(f'  Re-run with --v204 once the route is genuinely a V204 capture:')
         print(f'    python {Path(__file__).name} <route-tag> --v203')
         print('=' * 78)
         return 2
-    p = Path('analysis-2020accord/_scratch/cache') / tag / f'{tag}.npz'
+    p = (_d.parent / 'analysis-2020accord' / '_scratch' / 'cache') / tag / f'{tag}.npz'
     if not p.exists():
         print(f'no cache for {tag} at {p}')
         return 1
@@ -110,4 +110,4 @@ def main(tag, confirmed=False):
 if __name__ == '__main__':
     os.chdir(str(_d))
     _a = [x for x in sys.argv[1:] if not x.startswith('--')]
-    sys.exit(main(_a[0] if _a else 'r24', any(f in sys.argv for f in ('--v204','--v202','--v203'))))
+sys.exit(main(_a[0] if _a else 'r24', any(f in sys.argv for f in ('--v204','--v209'))))
