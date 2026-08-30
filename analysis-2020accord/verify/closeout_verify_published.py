@@ -372,6 +372,36 @@ for _v in sorted(img):
                  f'=> {_mult:.3f}x Honda below saturation, saturating at {_kn / 12.0:.0f} '
                  f'(Honda 50)')
 
+print()
+print("[9] EVERY PROBE DECODER CAN ACTUALLY FIND A CACHE")
+# Six decoders shipped with a defect that no other check would catch: the PATH BOOTSTRAP ends in
+# os.chdir(str(_d)) -> the package root, and then the tool opens a KIT-ROOT-relative path.  They
+# reported a plausible "no cache" and exited 1.  That reads as a missing capture, not a bug, so a
+# drive would have been flown and the probe unreadable.  Assert the path they build actually exists.
+import subprocess as _sp
+_dec = sorted(glob.glob('rlog-tools/probe/decode_*.py'))
+_cache = glob.glob('analysis-2020accord/_scratch/cache/r*/r*.npz')
+_tag = os.path.basename(os.path.dirname(_cache[0])) if _cache else None
+chk(_tag is not None, 'a cached route exists to smoke-test the decoders against')
+for _f in _dec:
+    try:
+        _r = _sp.run([PY, _f, _tag or 'r24', '--v194', '--v198', '--v201', '--v204',
+                      '--v205', '--v207', '--v209'], capture_output=True, text=True, timeout=180)
+        _out = (_r.stdout or '') + (_r.stderr or '')
+    except _sp.TimeoutExpired:
+        _out = '(timed out -- slow tool, not the chdir bug)'
+    chk('no cache for' not in _out,
+        f'{os.path.basename(_f)} resolves its cache path'
+        + ('' if 'no cache for' not in _out else ' -- THE CHDIR BUG IS BACK'))
+
+print()
+print("[10] NO TOOL chdirs AWAY AND THEN USES A KIT-ROOT-RELATIVE PATH")
+_r = _sp.run([PY, 'analysis-2020accord/verify/chdir_path_mismatch_sweep.py'],
+             capture_output=True, text=True, timeout=300)
+chk(_r.returncode == 0,
+    'chdir/path mismatch sweep is clean'
+    + ('' if _r.returncode == 0 else ' -- see the sweep output'))
+
 print('\n' + '=' * 84)
 print(f'  {ok} checks passed, {len(bad)} failed')
 for m in bad:

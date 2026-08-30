@@ -67,7 +67,7 @@ def main(tag, confirmed=False):
         print(f'    python {Path(__file__).name} <route-tag> --v194')
         print('=' * 78)
         return 2
-    p = Path('analysis-2020accord/_scratch/cache') / tag / f'{tag}.npz'
+    p = (_d.parent / 'analysis-2020accord' / '_scratch' / 'cache') / tag / f'{tag}.npz'
     if not p.exists():
         print(f'no cache for {tag} at {p}')
         print('the probe field is the 10-bit value the 427 decoder already extracts;')
