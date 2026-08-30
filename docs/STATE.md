@@ -71,6 +71,40 @@ phase error) — computed analytically instead; and the `csd` sign was inverted.
 on V222 is resolved in the safe direction by three independent lines**, and the drive card is updated.
 Study: `analysis-2020accord/studies/mixer/r24_reconstructed_magnitude_and_phase.py`.
 
+> 🛑⭐⭐ **V227 IS MEASURED INERT AT THE RATCHET — its lever is a ceiling that does not bind.** The
+lane work-factor method (below) also sizes each lane, and `gp-0x6ad4`’s 6–9 Hz output is **47.2 counts**
+against a recorded ceiling of **164–341** at ratchet speeds. **The ceiling is 3.5–7× above the signal**,
+so `0xC67C4` — V227’s only edit — **cannot act there.** That is exactly the *"third outcome is INERT"*
+the record flagged for V227, now **measured rather than speculated**. ⊕ The same number killed the
+build I was about to cut: a mirror-image lever raising the same knee would be inert for the identical
+reason. ⚠ V227 may still act at **DC/low frequency** through the integrator’s anti-windup window
+(a sustained error can pin it), but **not in the ratchet band** — so it must not be described as a
+ratchet rung. ⇒ **the lever that acts regardless of the ceiling is the lane GAIN `0xC6AF0` (= 5).**
+
+> ⭐⭐ **THE LANE WORK-FACTOR RANKING — `gp-0x6ad4` is on the OPPOSITE side from r24, and the argument
+uses NO sign convention.** The r24 reconstruction generalises: every lane is a known transfer on a
+signal that is on the wire, so each lane’s phase against rate is computable without observing it.
+Measured inputs (2 controls pass: rate-vs-itself **+0.0°**, angle-vs-rate **−79.2°** against an ideal
+−90°), torque at **−120.7°**:
+
+| lane | out phase vs rate | note |
+|---|---|---|
+| `r24` / `r26` | **+143.7°** | span-4 diff gives **+84.4°** of lead |
+| **`gp-0x6ad4`** | **+67.7°** | P/I/D gives only **+8.4°** — D and I antiphase and nearly cancel |
+
+**Both carry the same `gp-0x6752` polarity, so the 76° split is the TRANSFER, not a polarity artefact.**
+🛑 **The absolute labels are deliberately NOT relied on**: the kit records that its canonical `Re(Z)`
+tool uses the OPPOSITE convention to a work factor, and that reading one against the other *"produced
+the wrong answer twice"*. What survives any global flip is the **separation** — and the good side is
+fixed by an **on-car measurement**: V88 raised r24 and cut 6–9 Hz to **0.859×**. ⇒ `gp-0x6ad4` is on the
+harmful side. ⊕ **But size it before believing in it**: the PID lane is **exactly 0.25× r24 on all six
+routes** (both scale with |T|), so as phasors **r24 187 ct ∠+143.7° + PID 47 ct ∠+67.7° = 203 ct
+∠+130.8°** — the PID lane **erodes r24’s work factor from −0.806 to −0.653**, i.e. **19 %**, and
+removing it entirely would buy back **~23 %**. **Real, quantified, and modest — not a fix.**
+⚠ Open-loop; and the record’s opposite classification (*"net PID DAMPS"*) inverts **all three** P/I/D
+terms, the signature of a convention flip rather than a physics disagreement.
+Study: `analysis-2020accord/studies/mixer/lane_work_factors_who_pumps_the_ratchet.py`.
+
 > 🛑 **RECORD DEFECT FIXED — `r95` is V101, not V102, and the correction had been made in only HALF
 the files.** `r95` flew **V101 = 8× (`0xC6CD0` 7128) with Lever B REMOVED** (`GAIN8X.C6CD0.7128-NOLEVERB`);
 `r95_v102_prereg.py` is the pre-registration **FOR** V102 **MEASURED ON** r95=V101, and its own docstring

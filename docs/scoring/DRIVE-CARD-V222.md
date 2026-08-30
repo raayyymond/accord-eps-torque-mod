@@ -255,7 +255,17 @@ Study: `analysis-2020accord/studies/mixer/lever_b_pumping_check_at_matched_gain.
 
 ---
 
-## If the ratchet is unchanged — **V227** is the one genuinely untried lane
+## 🛑 If the ratchet is unchanged — **V227 is now MEASURED INERT in this band; read this first**
+
+
+> 🛑⭐ **UPDATE 2026-08-30 — DO NOT FLY V227 AS A RATCHET RUNG.** Its only edit is the ceiling knee
+> `0xC67C4`, and the ceiling **does not bind at the ratchet**: the lane’s 6–9 Hz output measures
+> **47.2 counts** against a ceiling of **164–341** at ratchet speeds — **3.5–7× of headroom**. The record
+> itself listed *"a third outcome is INERT"* for V227; that outcome is now **measured**. V227 may still
+> act at **DC/low frequency** via the integrator’s anti-windup window, which is a different experiment
+> and a different readout. ⊕ The lane is also only **0.25× r24** in this band, so even a lever that DID
+> act there would be worth about **23 %** of r24’s damping. ⇒ the lever that acts regardless of the
+> ceiling is the lane **gain `0xC6AF0` (= 5)**, not the knee.
 
 `39990-TVA,A160-V227-V222BASE-RESPID.CEILING.X1.1280.TO.512-0x13000-0x100000.rwd`  
 .rwd `a270b05e382712549cf00098e4a8510440db03b4a3c2a55eb1fead2c946b31da`  
