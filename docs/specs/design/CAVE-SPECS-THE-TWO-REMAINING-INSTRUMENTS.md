@@ -79,6 +79,27 @@ record, at a fraction of the risk.** If only one is ever cut, it should be A.
 
 ---
 
+## ✅ GATE RESULTS — Cave A passes both, on proven precedent only
+
+Run 2026-08-30, before any build.
+
+| gate | result | basis |
+|---|---|---|
+| **GATE 2 — closed-loop stability** | **PASSES BY CONSTRUCTION** | the cave is **read-only on the control path**; it writes only CAN payload bits. No gain, filter or feedback is altered, so there is no loop to destabilise. |
+| **GATE 2 — timing** | **PASSES, huge margin** | the real constraint is the **RTOS deadline** (DTC 0x18 is boot-only, so **zero diagnostic visibility if violated**). A **filter**-sized cave is ~30–80 cycles against **~80,000 per tick**; Cave A is four comparator rungs, smaller than a filter. |
+| **GATE 1 — RAM ownership** | **PASSES on flown precedent** | `gp-0x6ada` was **FLOWN at V100** as the 427 source, and a `\|gp-0x6adc\| ≥ \|gp-0x6ada\|` rung has flown. The `0x14A` payload bits have been written since **V31p**. |
+| **register discipline** | **no new liveness claim** | all four rungs are **single-operand or immediate** comparisons — exactly V96’s proven `r6`/`r7` pattern. The two-operand case that would need a third scratch register is **avoided by design**. |
+
+⇒ **Cave A is buildable on proven patterns alone.** It introduces no new edit class, no new hook, and no new liveness claim.
+
+### 🛑 Why it has NOT been built
+
+Not risk — judgement. **The shelf already holds two flight candidates and a five-build ladder, and neither cave is needed to fly any of them.** A third artifact would compete for the same scarce thing: **engaged symptomatic drive time**, which the exposure analysis shows is already the binding constraint (~21 min/build for the pre-registered test, and a repeat route worth more than any new build).
+
+**Build it when there is a reason to spend a drive on WHY rather than on WHETHER** — for example after V228 flies, if the frame sign becomes decision-bearing. The spec and the gates are done, so it is a short job at that point.
+
+---
+
 ## What neither cave changes
 
 Neither is needed to fly V228 or V222. The flight decision rests on the operator's symptom verdict and
