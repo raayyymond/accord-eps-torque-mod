@@ -50,6 +50,10 @@ WITHDRAWN = [
     (r'grind #2 is V62',
      '"grind #2 is V62\'s sar"',
      '2026-08-30: REFUTED -- V71c produced grind #2 carrying NEITHER sar byte. Origin is OPEN.'),
+    (r"V230'?s? (?:alpha2 )?lever is probably inert|probably a no-op",
+     'V230\'s lever called "probably inert"',
+     '2026-08-30: MISREADING. The x1.5 null means UNMEASURABLE, not dead -- y = K*alpha is invariant '
+     'to K while the motion is not. V94\'s 6x cut aborted a drive, proving the cell reaches the car.'),
     (r'V230 is the (?:recommendation|lead)|DRIVE V230 FIRST',
      'V230 as the recommended build',
      '2026-08-30: its lever acts on the gp-0x6b26 lane, which is INVARIANCE-PARTITIONED -- a x1.5 '

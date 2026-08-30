@@ -61,8 +61,14 @@ I recommended V230 first. **That was wrong, and here is why.** V230's lever (`0x
 Measured against **your car**, V230 is −25 % at 7.79 Hz and −49 % at 18.5 Hz in that lane: comparable
 to the dose that measured inert, and the **same sign** as the one that ended a drive.
 
-⇒ **V230 is most likely a no-op, and if it is not, it acts the way the aborted drive did.** It stays on
-the shelf. **Drive V229.**
+🛑 **CORRECTED.** I first wrote that this makes V230 "probably a no-op". That was a misreading:
+the record says the ×1.5 dose was **unmeasurable, not dead** — *"do not file it FALSIFIED"* — because
+`y = K·α` is invariant to K while **α, the actual motion, is not**. The dose was measured at the one
+quantity guaranteed not to move.
+
+⇒ **V230's lever DOES reach the car** — V94's 6× cut aborting a drive is what proves it. It is simply
+unmeasurable at its own output. Its direction matches that 6× cut and its size is smaller. **So the
+caution stands and is now better founded, not weaker:** V230 stays on the shelf. **Drive V231.**
 
 ⚠ **One thing this turned up that applies to all three builds:** V228 and V229 both carry `0xC40DC` = 22
 against your car's 8 — that lane runs **+6 % at 7.79 Hz, +28 % at 18.5 Hz, +114 % at 55 Hz** compared to

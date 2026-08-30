@@ -13,9 +13,18 @@ characterised. The chain has exactly ONE output --
   * V94 CUT THE SAME CELL 6x AND THE OPERATOR ABORTED THE DRIVE -- which is what proves the cell
     reaches the car. Inert at small dose, bad at large dose, in the CUT direction.
 
+CORRECTED 2026-08-30, later the same day. I first read the x1.5 null as "the lever is probably
+inert". That is a MISREADING, and the record says so outright: "this was never a dead lever; it was an
+UNMEASURABLE one. Do not file it FALSIFIED." y = K*alpha is invariant to K, but ALPHA -- the motion --
+is not, and the dose was measured at y, the one quantity guaranteed not to move.
+
 Measured against THE CAR (not against V229), V230 is 0.993 at 1 Hz, 0.746 at 7.79 Hz (-25 %) and
-0.506 at 18.5 Hz (-49 %) in that lane: comparable in magnitude to the dose that measured inert, and
-the SAME SIGN as the one that ended a drive. => most likely a no-op; if not, it acts like V94.
+0.506 at 18.5 Hz (-49 %) in that lane.
+
+=> THE LEVER DOES REACH THE CAR -- V94's 6x cut aborting a drive is the proof. It is merely
+unmeasurable at its own output. Its direction matches that 6x cut and its magnitude is smaller. The
+caution is therefore BETTER founded than when I wrote it, not weaker: this is not "probably a no-op",
+it is "reaches the car, in the direction that once went badly".
 
 The lane is also primarily a RATCHET lane -- measured on the three routes whose CAN 427 taps it,
 it is 52.8 % 6-9 Hz (coherence 0.728 with wheel rate), 17.4 % 9-12, 10.9 % 15-22. Perturbing it in

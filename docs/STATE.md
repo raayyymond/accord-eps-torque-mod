@@ -46,6 +46,21 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **I MISREAD THE INVARIANCE FINDING LAST TICK, AND THE CORRECTION MAKES V230 *MORE* SUSPECT, NOT LESS — PLUS THE RULE IT GENERALISES TO.**
+>
+> ❌ **What I said:** *“V230's α2 lever is probably inert”*, citing the ×1.5 dose that measured INERT at `gp-0x6b26`.
+> ✅ **What that finding actually says** — the memory is explicit and I read past it: *“this was never a dead lever; it was an **unmeasurable** one. **Do not file it FALSIFIED.**”* `y = K·α` is invariant to K, but **α — the motion — is not.** The ×1.5 dose was measured at `y`, the one quantity guaranteed not to move. **And V94 cut the same cell 6× and the operator ABORTED the drive, which PROVES the cell reaches the car.**
+> ⇒ **V230's lever DOES reach the car.** It is unmeasurable at its own output, its direction matches the 6× cut that ended a drive, and its magnitude is smaller. **The caution stands; my reason for it was wrong.** V230 is not “probably a no-op” — it is “reaches the car, in the direction that once went badly”.
+>
+> ⭐ **THE RULE THIS GENERALISES TO — and it may explain much of the null history.**
+> **Never score a damping-like lever at its OWN OUTPUT. Score it on the MOTION it damps.** In a stable loop the lever's output is the invariant quantity by construction, so a probe there is **structurally blind** — it will read null however well the lever works.
+> The kit's own record already contains both halves of the proof:
+> * **The b26 ×1.5 dose** was scored at `gp-0x6b26`, the lane's own output ⇒ **null** (p50 0.988, every CI containing 1.00).
+> * **V88's win** was scored as band ratios on the **delivered command** — speed-matched, episode-bootstrapped: **15–22 Hz 0.549 [0.407, 0.844], 9–12 Hz 0.604 [0.465, 0.943]**, both CIs excluding 1.00. Same class of lever (a rate-feedback gain), *measured in the right place*.
+> * And the V88 note states the mechanism outright: *“r24 is rate FEEDBACK inside the loop, and `gp-0x6b98` is the loop's OUTPUT, not its input.”*
+>
+> ✅ **V231's PROBE SURVIVES THIS TEST — checked deliberately, because repeating the mistake here would have been easy.** V231 asks a **binary liveness** question, not a dose question: the biquad's state floats boot to exactly `0.0f`, so *“is it ever nonzero?”* is immune to loop compensation — invariance rescales magnitudes, it cannot turn a running filter's state into an exact zero. 🛑 **But the MAGNITUDE readout from V231 is NOT immune**: how hard the filter appears to work is subject to the same invariance, so V231 licenses **liveness cleanly and working-level only weakly.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V231 BUILT — V229 PLUS THE FIRST INSTRUMENT EVER PUT ON THE NOTCH. THREE BYTES, ALL IN THE TELEMETRY TAP; NO CONTROL BYTE MOVES.** After 56 builds that RELOCATED this filter, **none has ever measured whether it RUNS.**
 >
 > ```
