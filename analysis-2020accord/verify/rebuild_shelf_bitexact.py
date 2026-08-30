@@ -25,6 +25,12 @@ PY = 'C:/Users/dudei/anaconda3/envs/bin_decompile/python'
 FW = os.environ.get('ACCORD_FIRMWARE_ROOT',
                     'C:/Users/dudei/Desktop/Projects/accord-firmwares')
 
+# WITHDRAWN builds: the builder must still reproduce bit-for-bit -- that invariant is about the build
+# system -- but the artifacts carry SUPERSEDED-DO-NOT-FLASH- and there must be NO flashable .rwd.
+WITHDRAWN = {
+    'v230': 'cuts a DAMPER: gp-0x6b26 measured +518/+565 counts of POSITIVE Re(Z)',
+}
+
 # the shelf, and the hash each builder is expected to produce
 SHELF = {
     'v199': 'c86646ab48c4a62546b4e7bafa59f8097d3bdd99ffdcd3aeabd9f93c7252dc10',
@@ -49,7 +55,7 @@ SHELF = {
     'v227': '28b5f4c979660451cda9c457312b824622488201d96ecf1dbf3be90dd8d67434',
     'v228': '6cf12db9fc49aee29e46c169c05fc18415f2a970b477cdae1372d57805748b3c',   # flight candidate: V222 at the car 6x
     'v229': '078da4b1f22903a5364b54b0035790f0fac6453a4717e881290eefb15bc14a42',   # V228 + Honda's 55 Hz notch restored
-    'v230': 'bb11115a54ba97b4216f7bb2a12c1a9da2d0ba4c7495d80f008d7bc35eac3f61',   # V229 + alpha2 3 -- BOTH cuts
+    'v230': 'bb11115a54ba97b4216f7bb2a12c1a9da2d0ba4c7495d80f008d7bc35eac3f61',   # WITHDRAWN 2026-08-30: cuts a DAMPER (positive Re(Z)); kept for bit-exactness only
     'v231': '34a4400d3d848069890a7d2be298d4ba3118e86251421d535f2f534676cace37',   # V229 + the biquad-state probe
 
 }
@@ -105,8 +111,11 @@ for v, want in sorted({**SHELF, **ARCHIVE}.items()):
         print(f'  [FAIL] {v.upper()} DRIFTED: builder {got[:16]}... vs published {want[:16]}...')
 
     # and the artifact on disk must match too
+    # A WITHDRAWN build keeps its builder verified but its artifacts carry the
+    # SUPERSEDED-DO-NOT-FLASH- prefix, so accept that form too.
     hits = [f for f in os.listdir(IMGD)
-            if f.startswith(f'_{v}_') and f.endswith('plain_image.bin')]
+            if (f.startswith(f'_{v}_') or (f.startswith('SUPERSEDED') and f'_{v}_' in f))
+            and f.endswith('plain_image.bin')]
     if not hits:
         bad.append(f'{v.upper()}: no image on disk')
         print(f'         !! no _{v}_*plain_image.bin on disk')
@@ -123,12 +132,17 @@ print('  THE .rwd ON DISK IS WHAT GETS FLASHED -- checking each is present and u
 for v in sorted(SHELF):
     hits = [f for f in os.listdir(RWDD)
             if f.startswith('39990') and f'-{v.upper()}-' in f and f.endswith('.rwd')]
-    if len(hits) == 1:
-        sz = os.path.getsize(os.path.join(RWDD, hits[0]))
-        print(f'  [PASS] {v.upper()} exactly one flashable .rwd, {sz} bytes')
+    want = 0 if v in WITHDRAWN else 1
+    if len(hits) == want:
+        if want:
+            sz = os.path.getsize(os.path.join(RWDD, hits[0]))
+            print(f'  [PASS] {v.upper()} exactly one flashable .rwd, {sz} bytes')
+        else:
+            print(f'  [PASS] {v.upper()} WITHDRAWN -- zero flashable .rwd, as intended '
+                  f'({WITHDRAWN[v]})')
     else:
-        bad.append(f'{v.upper()}: {len(hits)} flashable .rwd files (want exactly 1)')
-        print(f'  [FAIL] {v.upper()} has {len(hits)} .rwd files')
+        bad.append(f'{v.upper()}: {len(hits)} flashable .rwd files (want exactly {want})')
+        print(f'  [FAIL] {v.upper()} has {len(hits)} .rwd files, want {want}')
 
 print()
 print('=' * 96)

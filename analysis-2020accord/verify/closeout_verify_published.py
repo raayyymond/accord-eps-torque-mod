@@ -74,7 +74,6 @@ PUB = {
     'v227': '28b5f4c979660451cda9c457312b824622488201d96ecf1dbf3be90dd8d67434',
     'v228': '6cf12db9fc49aee29e46c169c05fc18415f2a970b477cdae1372d57805748b3c',
     'v229': '078da4b1f22903a5364b54b0035790f0fac6453a4717e881290eefb15bc14a42',
-    'v230': 'bb11115a54ba97b4216f7bb2a12c1a9da2d0ba4c7495d80f008d7bc35eac3f61',
     'v231': '34a4400d3d848069890a7d2be298d4ba3118e86251421d535f2f534676cace37',
 }
 print('\n[1] PUBLISHED IMAGE HASHES vs DISK')
@@ -710,7 +709,6 @@ _LEVER_B_LADDER = {'v221': 13107, 'v222': 13107, 'v223': 26214,
                    'v227': 13107,
                    'v228': 13107,
                    'v229': 13107,
-                   'v230': 13107,
                    'v231': 13107}   # v231 = v229 + the biquad-state probe
 for _v in sorted(img):
     _want = _LEVER_B_LADDER.get(_v, 5244)

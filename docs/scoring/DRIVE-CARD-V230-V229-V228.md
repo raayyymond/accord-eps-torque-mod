@@ -61,6 +61,10 @@ I recommended V230 first. **That was wrong, and here is why.** V230's lever (`0x
 Measured against **your car**, V230 is −25 % at 7.79 Hz and −49 % at 18.5 Hz in that lane: comparable
 to the dose that measured inert, and the **same sign** as the one that ended a drive.
 
+🛑🛑 **V230 IS NOW WITHDRAWN — DO NOT FLASH IT.** The Re(Z) sign frame resolved from your own confirmed steering convention: `Re(Z) < 0` means the column is doing work on your hands, i.e. anti-damping. The lane census measured `gp-0x6b26` at **+518/+565 counts of POSITIVE Re(Z)** — so it is a **damper**, and V230 cuts 30 % of it at 7.79 Hz and 60 % at 18.5 Hz. **V230 removes damping.** That is also why V94’s 6× cut of the same lane ended a drive. Its files are renamed `SUPERSEDED-DO-NOT-FLASH-`.
+
+⛔ **And `0xC40DC` is closed in the other direction too** — raising it is the helpful way, but Honda’s 22 already sits at **99.3 % of the theoretical ceiling at 7.79 Hz**, so the most it could ever buy is **1.007×**. There is nothing there.
+
 🛑 **CORRECTED.** I first wrote that this makes V230 "probably a no-op". That was a misreading:
 the record says the ×1.5 dose was **unmeasurable, not dead** — *"do not file it FALSIFIED"* — because
 `y = K·α` is invariant to K while **α, the actual motion, is not**. The dose was measured at the one
