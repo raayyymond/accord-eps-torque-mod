@@ -86,6 +86,18 @@ from what the operator drives. **Diff every candidate against the flown image.**
   ⇒ **REFUTED. The 31 Hz line remains UNEXPLAINED**, and the corpus cannot settle it because
   only one route has a low inertia dose. `studies/mixer/inertia_dose_vs_peak_frequency.py`
   asserts both refutation conditions so it cannot be quietly re-derived.
+- **RE-CENTRING THE NOTCH ON 7.8 Hz IS CLOSED — I re-proposed it and should not have.**
+  `STATE.md` already carries a **29,348-candidate** sweep: at a 12° phase budget an 8 Hz notch
+  buys `2.56x` on the ratchet but **forfeits the grind entirely** (`0.93x`, at Honda); at 40° it
+  is `6.96x` / `1.03x` — grind WORSE than Honda. V217’s 20.5 Hz notch is `1.00x` ratchet /
+  **`7.3x` grind** for only `-7.8°`. **One biquad, one zero pair: grind OR ratchet, never both,**
+  and the grind is much the better trade. V184 was killed on this and the rejection was already
+  re-priced after the biquad was correctly relocated to the base power-assist path.
+  ⚠ **My own methodological error:** I quoted `|H|(7.8 Hz) = 0.0000`, a POINT null, where the
+  symptom is a **3 Hz-wide band**. A notch narrow enough to pass GATE 2 (r ≈ 0.99) nulls a
+  sliver of that band while its phase skirt reaches 1-5 Hz. **Price a band lever on the BAND.**
+  ⚠ **Process:** grep the lineage BEFORE computing. CLAUDE.md warns about exactly this and I
+  spent a tick reproducing a closed result.
 - A sweep for "dormant features gated by a zero cal" has a **poor hit rate** — zero offsets and float
   low-halves dominate. The one real find (the PI block) came from tracing, not sweeping.
 
