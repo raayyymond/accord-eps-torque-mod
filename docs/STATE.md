@@ -66,6 +66,21 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ⭐⭐⭐⭐⭐ **THE CLAMPED 427 CHANNEL IS NOT USELESS AFTER ALL — READ IT AT 2f₀. THE LANE-RANKING BLOCKER IS REMOVED, AND IT WAS REMOVED BY A FIX MADE THIS SESSION.**
+>
+> Re-auditing the four lanes I called *“spoken for”* after V245 showed one of them was not. **Two closures are sound:** the base-assist damper is a **product of five Q10 gains with two exactly zero at creep**, so scaling any of them is structurally vacuous (even the untried `FactorC X[0]` edit reaches **0.096 %** of full gain); and `0xC40D2`'s Coulomb slope would need `k1 = 25600`, **25× past the boundary where its sign inverts**. Those stay closed.
+> 🛑 **BUT ONE CLOSURE NAMED ITS OWN BLOCKER, AND I REMOVED IT THIS SESSION:** *“427 lane ranking — not possible from the existing caches … **would need re-extraction from the rlogs**.”* The `extract/` toolchain was **dead since the 2026-08-26 reorg** and is now fixed — and **every rlog for the 427-era routes is on disk** (r95, r96, r9e, ra4–ra6, r77–r79, r7d).
+> ⭐ **AND THE RECTIFICATION IS NOT FATAL EITHER.** `FUN_00055d80` clamps the field to `[0, 0x3ff]`, which destroys **phase** — but a rectified narrowband signal at `f₀` puts its energy at **2f₀**. Tested on the three routes carrying `mag427`, engaged/manual power ratio:
+> ```
+>   route   eng s    7.8 Hz   15.6 Hz   2f0/f0
+>   ra4       663     7.178    37.217    5.185
+>   ra5       485     5.361    30.256    5.644
+>   ra6      1225     0.744     2.414    3.244
+> ```
+> **The 2f₀ excess is 3.2–5.6× the f₀ one on every route — the rectification signature, unambiguous.** ⇒ **the lane's ratchet-band ENERGY is recoverable from the clamped channel.** Phase is gone (the sign finding stands); energy is not.
+> ⇒ **THE CONCRETE NEXT STEP, now unblocked:** 427 carried a **different lane per build** — `V104 gp-0x6b86 · V107 gp-0x6c2c · V112/V122 gp-0x6abc · V212–V220 gp-0x6b4e`. Re-extract `mag427` for those routes and rank the lanes by 2f₀ energy. **That answers “which lane carries the ratchet” — the question this whole arc has failed to answer — from data already on disk.**
+> ⊕ **Still open:** `gp-0x6bbe`'s weight `0xC63A2` is a **virgin single-reader cal**, and its closure (*“the lane is already at 76 % of its ±512 rail”*) is a **caution, not a proof of vacuity** — 76 % is not 100 %, and whether that is a p50 or a peak was never stated.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **“THE CALIBRATION SURFACE IS EXHAUSTED” WAS AN OVERCLAIM. THERE IS ONE SENSOR-FED LANE NOBODY HAS EVER SCORED AT THE RATCHET, AND IT IS NOW BUILT AS V245.**
 >
 > Four ticks closed the assist-map path, the notch axis and the loop-delay hypothesis, and I concluded the calibration surface was exhausted **for both symptoms**. That was true of the **assist-map path**. The **resonance PID is a different lane**, and the record had been pointing at it the whole time.
