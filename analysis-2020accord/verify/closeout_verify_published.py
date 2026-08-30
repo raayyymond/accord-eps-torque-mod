@@ -612,6 +612,18 @@ print("[16] THE CAVE, AND THE LOAD-BEARING LEVERS NO GATE COVERED")
 #     V42's ratchet fix was SILENTLY LOST at a rebase and sat byte-stock from V53 to V70 before
 #     anyone noticed. A gate would have caught it the same day.
 _CAVE = (0xC4B34, 0xC4BD8)
+# THE ANCHOR IS V105, NOT MERELY "THE SHELF". The b5 ratchet endpoint is pre-registered against a
+# dose-response measured on the V105 -> V106 pair. That response only TRANSFERS to a later build if
+# b5 is still the same rung reading the same signal -- i.e. if the cave is byte-identical to the one
+# those two flew. Pinning the cave across the shelf alone would not establish that: the whole shelf
+# could share a cave that differs from V105's, and b5 would silently mean something else while every
+# check still passed. Verified 2026-08-29: identical V105 -> V217, sha256[:16] d3bb75d8fce08211.
+_V105 = None
+for _g in glob.glob(A + '/*_v105_*plain_image.bin'):
+    if 'SUPERSEDED' not in _g:
+        _V105 = io.open(_g, 'rb').read()[_CAVE[0]:_CAVE[1]]
+        break
+chk(_V105 is not None, 'V105 image present to anchor the cave')
 _ref = None
 for _v in sorted(img):
     _c = img[_v][_CAVE[0]:_CAVE[1]]
@@ -621,6 +633,11 @@ for _v in sorted(img):
     chk(_c == _ref,
         f'{_v.upper()} 164-byte cave identical to {_rv.upper()}'
         + ('' if _c == _ref else ' -- THE CAVE DIVERGED, this is the bricking class'))
+    if _V105 is not None:
+        chk(_c == _V105,
+            f'{_v.upper()} cave identical to V105 -- b5 is the same rung the dose-response was'
+            f' measured on'
+            + ('' if _c == _V105 else ' -- b5 NO LONGER MEANS WHAT THE PRE-REGISTRATION SAYS'))
 
 _LEVERS = {
     0x454FE: ('V42 ratchet fix (LOST at a rebase once, byte-stock V53-V70)', 26037, 'H'),

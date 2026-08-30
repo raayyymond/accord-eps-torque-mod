@@ -41,6 +41,8 @@ was restored to the flown car in V214–V217), and the measured on-car slope is 
 > 0.333 ⇒ b5 ≈ 0.42. V217 is a *higher* dose because the damper is back, so b5 should be **lower**.
 > Registering it now so the change is not mistaken for an effect of the ratchet lever.
 
+✅ **THE PREDICTION IS VALID — verified, not assumed.** The dose-response was measured on the **V105→V106** pair, so it only transfers if `b5` is still the same rung reading the same signal. The 164-byte cave is **byte-identical V105 → V217** (`sha256[:16] d3bb75d8fce08211`). Gate `[16]` now anchors the cave to **V105 specifically**, not merely across the shelf — the whole shelf could have shared a cave that differs from V105’s, and `b5` would have silently meant something else while every check still passed.
+
 **What a null licenses:** b5 inside [0.113, 0.255] with the ratchet unchanged in feel ⇒ the dose
 reached the car and was **insufficient**, not inert ⇒ fly **V218** (256). b5 *outside* the interval
 ⇒ report as measured; do not re-fit.
