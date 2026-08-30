@@ -17,6 +17,33 @@ anything happens.** Nothing is flashed without that.
 
 ---
 
+## ⭐ DRIVE **V232** — the ordering changed, and here is the number that changed it
+
+```
+  V232   39990-TVA,A160-V232-V231BASE-NOTCH.REAIMED.34HZ.PUMPING.BAND-0x13000-0x100000.rwd
+         rwd sha256 81127bd876289fdc...     image sha256 c15fa8633352771f...
+```
+
+Every notch comparison in this kit — mine included — has been made on **magnitude alone**. But a lane's
+damping contribution is `|H| × cos(phase)`. Computing the product against the flown lane phases:
+
+```
+  build         6-9      9-12    12-15    22-30    30-40    damping   pumping
+  your car    1.000x   1.000x   1.000x   1.000x   1.000x     1.000x    1.000x
+  V228        0.861x   0.799x  -0.055x  -0.088x  -0.498x     0.535x   -0.293x
+  V232        0.985x   0.990x   0.858x   0.694x  -0.123x     0.944x    0.285x
+```
+
+**V232 keeps 94 % of the damping while removing 71 % of the pumping**, and barely touches the ratchet
+band itself. **V228 destroys 46 % of the damping and flips 12–15 Hz from damping into pumping** — which
+its magnitude tables never showed, because they left the phase term out.
+
+**V231 remains the control arm.** It carries the same probe, so driving V232 first costs you nothing in
+diagnosis. Its cost is unchanged and real: 55 Hz runs 97× louder than Honda, in a band where the audio
+does show LKAS excess — but Honda's cut there is on your car today and has not stopped the grinding.
+
+---
+
 ## The two builds worth driving, and why the choice is genuinely open
 
 **V231** — Honda's notch placement, plus the first instrument ever put on that filter.

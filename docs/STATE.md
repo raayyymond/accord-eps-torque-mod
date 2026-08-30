@@ -46,6 +46,21 @@
 
 > ✅⭐⭐ **THE 40–49 Hz AUDIO TEST IS THE MOST SENSITIVE READOUT THIS KIT HAS — ~2 min/arm.** Its power was checked before the drive, on the `r24` baseline created this session. Engaged 20 s episodes give **sd = 0.3415 log10 = 3.4 dB** (gating to engaged cut it from 6.7 — **do the gating**), so V228’s +5.9 dB needs **6 episodes = 2.0 min/arm** and V222’s +8.1 dB needs **3 = 1.0 min**. ⇒ **compare the CAN bands: grinding 14 min/arm, 9–12 Hz 17, the ratchet 414.** The audio readout is **~7× more sensitive than the CAN grinding test** and is the **only registered test falsifiable inside one short drive.** 🛑 **A units error nearly killed it:** the ratio is log10 of a POWER ratio, so **dB = 10×log10 and +5.9 dB IS 0.59 log10, not 0.059**. My first pass divided an already-log10 figure by ten and reported **671 / 356 min/arm** — the test looked dead when it is the strongest available. ➕ **And the instrument did not exist before today**: the audio corpus stopped at `ra6` (V106) and the car had **no audio cache at all**. ⇒ **audio is under-used by this kit** — it is sampled at 16 kHz so nothing in it is alias-confounded, unlike the ~101 Hz CAN logs.
 
+> 🛑🛑⭐⭐⭐⭐⭐ **NET DAMPING — `|H|·cos(φ)` — IS THE METRIC EVERY NOTCH COMPARISON IN THIS KIT HAS BEEN MISSING, AND IT PUTS V232 AHEAD OF V231.** A lane's damping contribution is neither its magnitude nor its phase but their product. Applying the flown lane phases (6–9 cos −0.918, 9–12 −0.989, 12–15 −0.629, 22–30 +0.936, 30–40 +0.821) to each build's filter difference:
+>
+> ```
+>   build         6-9      9-12    12-15    22-30    30-40    damping bands  pumping bands
+>   car / V231  1.000x   1.000x   1.000x   1.000x   1.000x       1.000x         1.000x
+>   V228        0.861x   0.799x  -0.055x  -0.088x  -0.498x       0.535x        -0.293x
+>   V232        0.985x   0.990x   0.858x   0.694x  -0.123x       0.944x         0.285x
+> ```
+>
+> 🛑 **V228 is worse than it has ever looked.** It **destroys 46.5 % of the net damping** and **flips 12–15 Hz from damping to pumping** (net −0.055×). Its |H| tables never showed this because they omitted the phase term.
+> ✅ **V232 preserves 94.4 % of the damping while cutting the pumping to 28.5 %** — a **3.5× pumping reduction for 5.6 % of the damping**, and it barely touches the ratchet band itself (0.985× at 6–9, 0.990× at 9–12). That is a far better trade than the |H|-only view suggested, and it is the reason the ordering changes.
+> ⇒ **V232 BECOMES THE LEAD; V231 IS THE CONTROL ARM.** This is not vacillation on the same evidence — the net-damping product is analysis that had not been done. **Both builds carry the biquad-state probe**, so the earlier “drive V231 first to establish liveness” argument no longer separates them.
+> ➕ **V232's cost is unchanged and still real:** 55 Hz runs **97× louder** than Honda, in a band with licensed LKAS audio excess. **But Honda's 9.35× cut there is on the car today and has not stopped the grinding**, while the pumping it leaves at 22–40 Hz is the mechanism the lane measurement actually identifies.
+> ⛔ **AND THE BOOST IDEA IS DEAD, structurally.** Using the cell to ADD gain where the lane damps fails because **a pole pair cannot add gain at a frequency without adding phase at it**: every geometry boosting 6–9 Hz by even 5 % rotates the phase there by >15°, and the rotation costs more damping than the gain adds (rotate −45° and cos −0.918 → −0.375; rotate −90° and it PUMPS). **Not a tuning failure — a structural one. Do not re-propose it.**
+
 > 🛑⭐⭐⭐⭐ **THE HARMONIC HYPOTHESIS IS REFUTED — AND THE CONTROL IS THE ONLY REASON I KNOW IT.** 22–40 Hz doubled is 44–80 Hz, almost exactly the audio band with licensed LKAS excess, so if that were a harmonic relationship V232 would fix both bands and the one-biquad trade would dissolve. Per engaged window, dominant mechanical frequency in 22–40 Hz against dominant audio frequency in 44–80 Hz, 7 routes, n=396:
 >
 > ```
