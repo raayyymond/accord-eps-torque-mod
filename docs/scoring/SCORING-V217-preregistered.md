@@ -48,6 +48,22 @@ was restored to the flown car in V214–V217), and the measured on-car slope is 
 
 ✅ **THE PREDICTION IS VALID — verified, not assumed.** The dose-response was measured on the **V105→V106** pair, so it only transfers if `b5` is still the same rung reading the same signal. The 164-byte cave is **byte-identical V105 → V217** (`sha256[:16] d3bb75d8fce08211`). Gate `[16]` now anchors the cave to **V105 specifically**, not merely across the shelf — the whole shelf could have shared a cave that differs from V105’s, and `b5` would have silently meant something else while every check still passed.
 
+🛑 **THE LEVER’S STATED MECHANISM IS CONTRADICTED BY THE KIT’S OWN MEASUREMENTS.** The V210 builder justifies `0xC63AE` as *"high small-signal gain around a zero crossing is the shape that sustains a small-amplitude limit cycle"*. Against that:
+
+```
+  limit cycle          EXCLUDED   calibrated Welch ladder: car 20.9 vs pure tone 53.8
+  classic stick-slip   KILLED     d log f / d log A = -0.034 (needs amplitude dependence)
+  rate-limit           KILLED     would need -1.0
+  backlash             KILLED     would need positive
+  frequency tracks     LOAD       +0.467 Hz over a 17.8x torque range, NOT amplitude/command
+```
+
+⇒ The ratchet is a **lightly-damped mechanical resonance (Q 14–29, motor/rack side)** that *"engagement SUPPLIES … it does not amplify an existing tone"*. **The relay-sustains-a-limit-cycle story is wrong.**
+
+✅ **The lever can still work — by a DIFFERENT mechanism.** `0xC63AE` scales the observer output that feeds the tracking reference and hence the command, so lowering it lowers the 6–9 Hz **excitation** of a resonance the firmware cannot damp. That is excitation reduction, not limit-cycle breaking.
+
+⚠ **What this changes for scoring.** The describing-function amplitude dependence (0.47–0.79) was derived for the *limit-cycle* framing. Under excitation reduction the expected effect is closer to the **linear dose** (0.500× at rung 1). **Do not treat the describing-function numbers as the prediction**; they bound it, they do not set it. The b5 interval below is unaffected — it is measured from the inertia dose, not from this framing.
+
 **What a null licenses:** b5 inside [0.113, 0.255] with the ratchet unchanged in feel ⇒ the dose
 reached the car and was **insufficient**, not inert ⇒ fly **V218** (256). b5 *outside* the interval
 ⇒ report as measured; do not re-fit.
