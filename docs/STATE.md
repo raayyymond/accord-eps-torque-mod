@@ -66,6 +66,22 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THERE IS NO SECOND BIQUAD. THE NOTCH AXIS IS CLOSED AT V241's 21.8 %, AND THE CEILING IS STRUCTURAL.**
+>
+> The ceiling found last tick — *no notch reaching 6–10 Hz can pass the passband gate* — is a property of **one** 2nd-order section. So: is that the only filter the firmware has? Scanned the whole calibration region `0xC4000–0xC8000` for any 4 consecutive float32 forming a **stable** biquad (`|a2| < 1`, `|a1| < 1 + a2`, plausible `c4`, pole radius ≥ 0.3):
+> ```
+>   20 candidate blocks -- and 19 are ARTIFACTS.
+>   the tell: almost all report zero/pole near 250 Hz, which is just acos(0) when a coefficient
+>   happens to be ~0. And they hit at CONSECUTIVE addresses (0xC65F8/FC/600, 0xC6634/38/3C,
+>   0xC6BD4/D8) -- a sliding window over runs of similar floats, not distinct filters.
+>
+>   0xC60A8   a1 -1.5372  a2 0.6346  b1 -1.8808  c4 0.8173   zero 55.23 Hz  pole 42.35 Hz
+>   ^ the ONLY block with real filter geometry -- Honda's notch, already known.
+> ```
+> ⇒ **[EVIDENCE] THE SINGLE 2nd-ORDER SECTION IS ALL THERE IS.** No second biquad to cascade, so the passband ceiling cannot be beaten by splitting the job across two narrower sections. Creating a filter means **code**, which means a **cave** — this kit's only bricking class.
+> ⭐ **THE NOTCH AXIS IS THEREFORE CLOSED, and V241 sits at its ceiling.** 22–30 Hz at **21.8 %** of the torque excess is not a compromise and not a guess — it is **the most a single biquad can legally remove**, given `max|H| ≤ 1.0000` and a 0–5 Hz passband floor of 0.99. Nothing further is available on this axis by calibration.
+> ⊕ **What that settles, taken with the last three ticks:** the ratchet band is unreachable by notch; the pump/damp rule that seemed to block it is moot; there is no second filter; and every cal in the assist path is measured. **The calibration surface is exhausted for both symptoms, and V241/V242/V243 are what it yields.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE 6–10 Hz NOTCH IS UNREACHABLE — AND THE BLOCKING RULE TURNS OUT TO BE IRRELEVANT. THE BAND IS CLOSED FOR A STRUCTURAL REASON INSTEAD. V244 WITHDRAWN.**
 >
 > The prize was priced at **66.2 %** of the torque excess against V241's 21.8 %, so V244 was built to settle the disputed rule by driving it — a 12-byte cal edit, no cave. **The kit's own passband gate failed it:**
