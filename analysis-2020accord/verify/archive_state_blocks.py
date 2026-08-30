@@ -24,7 +24,7 @@ if len(starts) < 6:
 groups = [(starts[k], (starts[k + 1] if k + 1 < len(starts) else end)) for k in range(len(starts))]
 print('  %d blocks between lines %d and %d' % (len(groups), start + 1, end + 1))
 
-TARGET = 30 * 1024
+TARGET = 55 * 1024   # raised 2026-08-30: STATE hit 176 KB after a long analysis run
 moved, acc = [], 0
 for a, b in reversed(groups):                       # oldest first
     if acc >= TARGET:
