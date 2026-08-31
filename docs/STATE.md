@@ -66,6 +66,22 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> ⭐⭐⭐⭐ **THE GAIN FINDING SURVIVES TWO CONTROLS — AND A “CLAMP-ONLY” ESCAPE FROM THE TRADE DOES NOT EXIST. THE MECHANISM STAYS OPEN, AND I AM NOT GOING TO INVENT ONE.**
+>
+> **1. 🛑 THE CLAMP IS NOT AN INDEPENDENT LEVER — the escape route I went looking for is closed.** V242's own docstring: **the clamp TRACKS the gain as `gain*512//891`.** So `clamp/gain` is identically **512** on every build, and the openpilot command at which the clamp binds is **512 counts regardless of gain**:
+> ```
+>   V90  4x  clamp 2048   sat thresh 512   saturated 44.3 %
+>   V100 4x  clamp 2048   sat thresh 512   saturated 45.2 %
+>   V102 6x  clamp 3072   sat thresh 512   saturated 13.5 %
+>   V122 6x  clamp 3072   sat thresh 512   saturated 13.0 %
+>   V101 8x  clamp 4096   sat thresh 512   saturated 40.3 %
+> ```
+> ⇒ gain and clamp are collinear **by construction, not by accident**, delivered torque scales with gain uniformly, and **a clamp-only build would be INERT.** There is no authority-without-ratchet hiding in the clamp.
+> **2. ✅ AND THE SATURATION DUTY IS A CONTROL THAT STRENGTHENS THE FINDING.** If the anti-damping were driven by *how hard openpilot pushes*, the 4× builds would be worst — they saturate **44–45 %** of frames against 6×'s **13 %**. **They are the least anti-damped (−55 vs −68).** And within the 6× builds, duty (13.0–24.8 %) does not predict `Re(Z)` either, and what weak trend there is points the *other* way. ⇒ **the effect tracks the GAIN CELL, not command effort.**
+> 🛑 **THE MECHANISM IS NOT ESTABLISHED, AND THE OBVIOUS STORY DOES NOT WORK.** The LKAS command lane is a **~1–5 Hz low-pass**, so the command cannot itself carry 7.8 Hz; and a uniform scaling of both torque and motion would leave `Re(Z) = Re(tq/rate)` *unchanged*, since it is a ratio. **So “more gain ⇒ more anti-damping” is a robust EMPIRICAL relation with an OPEN mechanism.** I am recording it that way rather than fitting a story to it — three stories died to their own controls in this session already.
+> ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
+> ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE LKAS GAIN *IS* THE RATCHET'S ANTI-DAMPING. IT PRICES THE GAIN LADDER, AND IT EXPLAINS WHY NO OTHER LEVER HAS EVER MOVED THE RATCHET IN SIXTY BUILDS.**
 >
 > Regressing the coherence-gated 6–9 Hz `Re(Z)` on `0xC6CD0` across every flown build:
