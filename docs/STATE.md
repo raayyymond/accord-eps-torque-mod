@@ -82,6 +82,25 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⭐⭐⭐⭐ **V246'S DOSE IS VALIDATED, AND NO FURTHER RUNG IS WARRANTED. THE DESCRIBING-FUNCTION ASYMPTOTE HAS ALREADY BITTEN ABOVE THE MEDIAN AMPLITUDE — SO LEVER B'S ENTIRE BENEFIT LIVES EXACTLY WHERE THE RATCHET DOES.**
+>
+> Pricing the dose against the **measured** 6–9.5 Hz torque-rate envelope rather than an assumed one, through the lane's own arithmetic (`out = clamp(deadzone((clamp(rate,±5120)·k)>>10, ±3), ±8192)`):
+> ```
+>   A              k=5244    k=7866   k=13107    saturating?
+>   p50   859        5244      7866     11157    13107 only
+>   p90  4253        2451      2485      2502    ALL
+>   p99  6541        1617      1626      1630    ALL
+>   max  7574        1400      1405      1408    ALL
+>
+>   still LINEAR:   5244: 70.4 %   7866: 57.6 %   13107: 39.5 %
+> ```
+> ✅ **[EVIDENCE] ABOVE p50 EVERY DOSE SATURATES AND THE DELIVERED DAMPING IS WITHIN ~1–2 % REGARDLESS OF `k`** — 2451 vs 2502 at p90, 1617 vs 1630 at p99. `N(A) → 4L·1024/(πA)`, independent of `k`, exactly as the lane's describing function predicts. **Dose spent above the knee is wasted.**
+> ⭐ **AND THAT IS THE RIGHT SHAPE FOR THIS TARGET.** All of Lever B's reachable benefit is concentrated in the **low-amplitude half of frames** — and the ratchet is a **micro-regime** symptom (creep, 1–13 °/s). At `p50` the 1.5× step delivers a **full +50 %** of effective damping; at `p90` it delivers **+1.4 %**. The lever bites where the symptom is and nowhere else.
+> ⇒ **THIS VALIDATES V246's 1.5× RATHER THAN ARGUING FOR MORE.** Going on to 2.5× would add ~42 % at `p50` and **under 1 % everywhere above it**, while moving twice as far from **V88's bracketed grinding optimum** — the one real risk this build carries. **No V247 is warranted until V246 has flown**, and building one now would spend a drive to learn almost nothing.
+> ⚠ **PRICES THE RATCHET SIDE ONLY.** Nothing here says a larger dose is safe at 22–30 Hz; `5244` was bracketed for **grinding**.
+> 🛑 **A TOOLING TRAP CAUGHT IN PASSING, and it silently produced a clean-looking empty table:** `np.gradient(q, t)` divides by zero on the caches' **duplicate timestamps**, NaN-ing the whole envelope with only a `RuntimeWarning`. Use the uniform sample rate. Same family as the fallback-key-chain null.
+> ➕ Reader: `rlog-tools/score/lever_b_dose_headroom.py`.
+
 > ⭐⭐⭐⭐⭐ **V246 BUILT — LEVER B 1.5×. THE FIRST LEVER MEASURED TO MOVE THE RATCHET *WITHOUT SPENDING AUTHORITY*, WHICH IS THE TRADE THE OPERATOR HAS BEEN ASKING FOR ALL ALONG.**
 >
 > The ratchet's anti-damping tracks the **forward gain**, and forward gain is also what buys authority — so they are locked, and **three escapes were opened and closed this tick, all by arithmetic, none needing a drive:**
