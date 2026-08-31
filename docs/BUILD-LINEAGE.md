@@ -42,6 +42,36 @@ deliberately not numbered `PART2` so the two can never be confused.
 
 ---
 
+
+## V246–V250 — the damper lane, opened for the first time (2026-08-30, ALL UNFLOWN)
+
+| build | base | cells | what | measured/computed |
+|---|---|---|---|---|
+| V246 | V241 | `0xC6446` 5244→7866 | Lever B ×1.5 | protective at the ratchet within fixed gain, p 0.056 |
+| V247 | V241 | `0xD780E` 60→12, `0xD7818` 140→539 | FactorE **rate** dead zone | damper 6→50 counts, but ONLY above 35 km/h |
+| V248 | V247 | `0xD774C` Y ×4 1024→2048 | FactorB ×2 | 50→100, still high-speed only |
+| **V249** | V247 | `0xD77DA` 0→429 | FactorC **speed** dead zone | **50 counts at EVERY speed; 0→50 below 35 km/h** |
+| V250 | V249 | `0xD774C` Y ×4 1024→2048 | FactorB ×2 | 100 at every speed, 179 % of requirement |
+
+🛑 **All five damper records (FactorB/C/D/E + ceiling) were BYTE-STOCK in all 18 flown builds.** The
+correlation census could not see them — it can only test cells that varied. That blind spot is where
+this lane was hiding.
+
+🛑 **V72/V73 attempted the FactorE edit and were INERT BY TABLE SELECTION** — modes 10/11 on a car that
+runs 24/26. Unfalsified, not tried-and-failed. RULE 7 in action.
+
+🛑 **V74–V83a scaled this lane's GAINS and read null — structurally, not empirically.** Scaling a
+product whose `Y[0]` is zero is vacuous (`k × 0 = 0`). Only opening the dead zone delivers.
+
+✅ **ENGAGED ONLY on all five** — every mode owns its own record (26 @`0xD780C`/`0xD77D0`, 24
+@`0xD6820`/`0xD67E4`), and manual reads **0 counts on every build**, verified from the shipped images.
+
+⚠ The grinding side is untestable from the corpus: the stock damper never exceeds ~11 counts anywhere,
+which is sub-percent against the torque signal.
+
+Reader: `analysis-2020accord/model/damper_fun34350_mirror.py`.
+
+
 ## ✅ V199–V210 — BUILT 2026-08-29, NONE FLASHED. The notch rebuilt twice and the census closed.
 
 🛑 **Grep these before proposing any of their cells.** Full narrative:
