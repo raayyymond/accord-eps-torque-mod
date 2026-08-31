@@ -82,6 +82,21 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⭐⭐⭐⭐⭐ **THE SEARCH IS CLOSED SYSTEMATICALLY: OF EVERY CALIBRATION CELL THAT VARIES ACROSS THE FLOWN CORPUS, ONLY *TWO THINGS* TRACK THE RATCHET'S ANTI-DAMPING — THE GAIN AND LEVER B. THERE IS NO HIDDEN LEVER.**
+>
+> Lever B was found **opportunistically**, by noticing it happened to correlate. This is the exhaustive version: every u16 in `[0xC4000,0xCC000)` that differs between any two flown images, regressed against the coherence-gated 6–9 Hz `Re(Z)`, with Benjamini-Hochberg FDR and collinear cells grouped into indistinguishable classes.
+> ```
+>   16 flown builds · 17 varying cells (cave and CRC trailers excluded)
+>
+>   GAIN + its two tracking clamps    rho -0.803   q 0.0010
+>   Lever B                           rho +0.677   q 0.0168
+>   ---- nothing else survives FDR ----
+> ```
+> 🛑 **AND THE FIRST PASS FOUND FIVE MORE “HITS” THAT WERE ALL ARTEFACTS — worth recording because they look exactly like levers.** `0xC4B48`–`0xC4B98` all fall inside the **164-byte cave at `0xC4B34`**, which holds each build's **probe payload**: it differs by *instrument design*, not by any damping mechanism. `0xC6FFC`/`0xC6FFE` are the **CRC trailer** of block `0xC6000` — a *derived* checksum that moves whenever anything in its block moves. Both classes score highly and mean nothing; excluding them cut 103 varying cells to 17. **A cross-build byte census must exclude derived and instrument bytes or it manufactures levers.**
+> ⇒ **WHAT THIS SETTLES.** The gain is locked to authority; three escapes from that lock were closed this session (clamp tracks the gain · `0xC646C` is 0.7 % · the command has nothing at 6–9 Hz to filter). **Lever B is the only cell in the entire calibration region that moves the ratchet without spending authority — established by exhaustion, not by noticing.** That is precisely what V246 carries.
+> ⚠ **LIMITS, unchanged and real:** one route per build, builds differ in many cells at once, and a cell that never varied in the flown corpus **cannot be tested here at all** — this censuses what has flown, not what exists. Absence from this table is not proof of inertness.
+> ➕ Reader: `rlog-tools/score/antidamping_cell_census.py`.
+
 > ⭐⭐⭐⭐ **V246'S DOSE IS VALIDATED, AND NO FURTHER RUNG IS WARRANTED. THE DESCRIBING-FUNCTION ASYMPTOTE HAS ALREADY BITTEN ABOVE THE MEDIAN AMPLITUDE — SO LEVER B'S ENTIRE BENEFIT LIVES EXACTLY WHERE THE RATCHET DOES.**
 >
 > Pricing the dose against the **measured** 6–9.5 Hz torque-rate envelope rather than an assumed one, through the lane's own arithmetic (`out = clamp(deadzone((clamp(rate,±5120)·k)>>10, ±3), ±8192)`):
