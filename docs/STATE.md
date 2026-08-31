@@ -82,6 +82,54 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⭐⭐⭐⭐⭐ **2026-08-30 — THE RATE LANE'S REAL GAIN SURFACE, FOUND. BYTE-STOCK IN EVERY BUILD, AND
+> ENGAGED-ONLY.** `FUN_0003ad74` builds the LERP that `FUN_0003aa2c` reads as the r24 lane's gain:
+> ```
+>   idx     = *(byte *)(gp + 0x63fd) * 4                      ; the MODE index
+>   A/B/C/D = *(int *)({0xCBF5C, 0xCC044, 0xCC12C, 0xCC214} + idx)
+>   blended on cal(0xC6010) = [0, 640, 3200, 6400]
+>   -> X into gp-0x6e40.., Y into gp-0x6e38.., then interpolated on motor rate gp-0x6ac0
+> ```
+> **MODE 26 (ENGAGED)** — `0xD7A88` Y=[3072,3072,2322,1536] · `0xD7AC4` [2560,2560,2246,1946] ·
+> `0xD7B00` [2303,2303,2151,1947] · `0xD7B3C` [2150,2150,2049,1947], all X=[0,400,1400/1500,3000].
+> **MODE 24 (MANUAL)** is a disjoint set at `0xD6A9C`/`0xD6AD8`/`0xD6B14`/`0xD6B50`.
+>
+> 🛑 **THIS IS THE DOMINANT ARM.** The cal fallbacks (`0xC6440`=2048, `0xC6442`=1024) fire only when the
+> `[0,5]` ramp saturates or `gp-0x671d != 0`, and `0xC6446` (Lever B) is unreachable. ⇒ **no calibration
+> cell this kit has ever touched reaches this surface.**
+>
+> ⭐ **AND IT IS ENGAGED-ONLY, WHICH THE `sar` EDIT IS NOT.** V255/V262 edit the shift at
+> `0x3AB76`/`0x3AC20` — in the **code path** — so they dose the rate lane in **manual steering too**.
+> The operator's standing instruction is *"low apparent steering mass and friction to LKAS AND no
+> ratcheting"*; a `sar` edit spends part of that budget on manual feel he never asked to change.
+> ✅ Aliasing checked across all 64 indices of all four pointer arrays: each mode-26 table is referenced
+> by index 26 **and no other**.
+>
+> ⊕ **WHERE GRINDING SITS ON THIS CURVE:** the record puts grind #1 at motor rate ~603 and grind #2 at
+> ~1206, i.e. **on the `[400,1400]` rolloff**, where Y has already fallen 3072 → 2322. Flattening that
+> rolloff is a further, more surgical lever — **but it is NOT built**, because the record warns Honda's
+> rolloff there may be what prevents the parametric-pump mode V58/V59/V60 chased. Uniform scaling
+> (V263) preserves the shape and does not touch that question.
+
+> ⭐⭐⭐⭐⭐ **THE V112 SHELF — seven builds, all verified, all unflashed, nothing on the car.**
+> ```
+>   build  pay  gain  clamp  Kd  arms/surface        targets                    image sha[:12]
+>   CAR      0  6.0x   3072  1x  stock               --                         f032878c4e0b
+>   V255     2  6.0x   3072  2x  stock               grinding, 1 variable       32852708058b
+>   V256     4  6.0x   4096  2x  stock               +authority DISAMBIGUATOR   f9cbb677ecd9
+>   V258     6  4.0x   4096  2x  stock               all four, frontier         f4515c684b25
+>   V259    15  4.0x   4096  2x  stock + damper      max ratchet (~31 %)        fc7e72aa2e66
+>   V261     5  6.0x   3072  2x  cal arms x2         fallback branches only     d71b59cc56ae
+>   V262     2  6.0x   3072  4x  stock               rate lane 4x, 1 variable   1be8018a88ba
+>   V263    27  6.0x   3072  1x  SURFACE x2 ENGAGED  manual feel UNTOUCHED      1355326e10ad
+> ```
+> **RECOMMENDED ORDER: V263 or V255 → V256 → V258.** V263 if *"do not make the wheel heavier when I
+> drive it myself"* is the binding constraint; V255 if the largest grinding effect is, since it is the
+> only dose with flight history (V62/V65, fault-free, ST==4 zero over 86,278 frames). **V256 is the
+> highest-information build** — it is the first ever to break the clamp/gain tracking.
+> ⚠ V257 dropped from the ladder: it was the **worst** of the twelve winning (gain, clamp) configurations.
+> ⚠ V260 **SUPERSEDED-DO-NOT-FLASH** — it dosed only one of the two rate lanes.
+
 > 🛑🛑🛑⭐⭐⭐⭐⭐ **2026-08-30 — LEVER B IS UNREACHABLE. IT HAS NEVER DONE ANYTHING.**
 > `FUN_0003aa2c` picks the r24 rate-lane arm before the multiply at `0x3AC18`:
 > ```c
