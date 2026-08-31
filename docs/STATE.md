@@ -82,6 +82,21 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ✅⭐⭐⭐⭐⭐ **THE 6–10 Hz NOTCH QUESTION IS CLOSED — AND NOT THE WAY EITHER SIDE EXPECTED. THE LANE THE DAMPING FLOOR GATES HAS TOO LITTLE AUTHORITY AT 6–9 Hz FOR ANY AIMING TO MATTER.**
+>
+> The notch is forbidden from 6–10 Hz by the **damping-band floor**, justified by a lane phase of `cos −0.918/−0.989/−0.629` — **taken from the rectified 427 channel**, which cannot carry phase. Meanwhile the system measures **anti-damped** there on non-rectified instruments. So the floor might be protecting nothing, and it blocks the kit's strongest device.
+> 🛑 **THE DIRECT TEST CANNOT RUN — AND THAT IS ITSELF THE FINDING.** `|H|@7.79 Hz` is **0.9829 on fourteen flown builds and 0.9863 on three**: **no flown build has ever cut 6–9 Hz.** The regression returns rho +0.026, p 0.92 — an absence of *contrast*, not evidence. **The floor has never been tested against a trusted instrument.**
+> ⭐ **BUT ONE ROW CARRIES THE ANSWER ANYWAY.** V104 ran **`c4 × 1.85`** — and `c4` is a **pure flat scalar**, so that is an **85 % dose on the ENTIRE notch lane**:
+> ```
+>   corpus Re(Z) at 6-9 Hz :  median -64.77   sd 9.07   range -84.06 .. -46.61   n=17
+>   V104  (lane x1.85)     :         -64.77   z = +0.00   -- the 47th percentile
+>   V105  (lane back to 1x):         -67.78   z = -0.33
+> ```
+> ✅ **[EVIDENCE] AN 85 % DOSE ON THE WHOLE LANE MOVED THE SYSTEM ANTI-DAMPING BY 0.00 sd.** The lane is **not a meaningful contributor at 6–9 Hz, in either direction** — so cutting there would be as invisible as amplifying there was.
+> ⇒ **THIS EXPLAINS WHAT THE ARC NEVER RESOLVED.** The notch could never reach the ratchet — not because it was mis-aimed, and not because a gate blocked it, but because **the lane does not act there at all.** And it independently corroborates the damper as the right target: **the damper delivers ~50 counts at that frequency where the notch lane delivers nothing measurable.**
+> ⚠ **The damping-band floor is still UNTESTED**, and its original evidence is still rectified-channel. It simply no longer matters, because the lever it blocks is empty. **Leave the floor in place** — it costs nothing now.
+> ➕ Reader: `rlog-tools/score/notch_depth_vs_antidamping.py`.
+
 > ✅⭐⭐⭐⭐⭐ **THE RATCHET RESONANCE IS NOT DRIFTING — SO IT IS STRUCTURAL, NOT A WEARING PART, AND FIRMWARE DAMPING IS A LEGITIMATE TREATMENT RATHER THAN A PALLIATIVE.**
 >
 > The most important thing to rule out before recommending more flashing: the ratchet is **real chassis motion** (IMU-confirmed, independent of the EPS) and a **lightly-damped resonance (Q 14–29)**. A resonance has a mass and a stiffness — so if its frequency were **walking**, something would be *changing*, and the right advice would be *“have the front end inspected and stop flashing.”* `f = (1/2π)√(k/m)`, so a 10 % frequency drop is a ~20 % stiffness loss — well within what a worn bushing or loosening joint produces, and easily visible.
