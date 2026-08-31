@@ -82,6 +82,26 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **CORRECTION TO MY OWN HEADLINE: THE GAIN↔ANTI-DAMPING LINK IS A STRONG ASSOCIATION WITH *ONE* ERA-FREE CONTRAST — NOT THE CLEAN CAUSAL BREAK I WROTE. LEVER B MOVED IN THE SAME STEP.**
+>
+> I claimed the V100→V101→V102 reversal *“breaks the era confound”*. **Half of it does not.** `V101` changed the gain **and removed Lever B** (`0xC6446` 5244 → 512) in the same build:
+> ```
+>   V100   gain 3564   LeverB 5244   Re(Z) -66.83
+>   V101   gain 7128   LeverB  512   Re(Z) -84.06   <- BOTH changed: leg is CONFOUNDED
+>   V102   gain 5346   LeverB  512   Re(Z) -74.91   <- LeverB held: this leg is CLEAN
+> ```
+> ⇒ **only the second leg is era-free** — gain 8× → 6× with Lever B held, `Re(Z)` **+9.15**. **That is ONE pair**, not a two-legged reversal.
+> ✅ **WHAT SURVIVES, AND IT IS STILL SUBSTANTIAL:**
+> ```
+>   rho(GAIN,   Re(Z)) = -0.819  p 0.0001   n=17
+>   rho(LeverB, Re(Z)) = +0.661  p 0.0038   <- Lever B correlates too, and PROTECTIVELY
+>   within LeverB = 5244 (n=14): rho(GAIN, Re(Z)) = -0.762  p 0.0015
+> ```
+> **The gain association survives controlling for Lever B.** But inside those 14 builds the gains are 4× (all early) and 6× (all late), **so build era remains confounded and this corpus cannot fully separate them.**
+> ⚠ **HONEST STATUS: gain is the best-supported single explanation for the ratchet's anti-damping, with one era-free contrast behind it — not an established cause.** *“Era”* is not a mechanism, it is a placeholder for the other things those builds changed, and **Lever B was one of them and it did correlate.** No further competing lever has been identified.
+> ⊕ **AND A GENUINELY USEFUL SIDE-RESULT: Lever B is PROTECTIVE.** `rho +0.661` means the builds carrying **5244** are LESS anti-damped than the three carrying 512. **V241 carries Lever B at 5244** — V88's measured optimum — so the flight candidate already holds the protective value.
+> ⇒ **THE PRACTICAL ADVICE IS UNCHANGED IN DIRECTION AND WEAKER IN CERTAINTY:** V241 at 6× is the safe rung; 8× and 10× are **likely** worse for the ratchet rather than **measured** worse. The drive card has been corrected to say exactly that.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE LKAS GAIN *IS* THE RATCHET'S ANTI-DAMPING. IT PRICES THE GAIN LADDER, AND IT EXPLAINS WHY NO OTHER LEVER HAS EVER MOVED THE RATCHET IN SIXTY BUILDS.**
 >
 > Regressing the coherence-gated 6–9 Hz `Re(Z)` on `0xC6CD0` across every flown build:

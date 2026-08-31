@@ -25,22 +25,25 @@ have ever flown.**
   8x  (1 build)    Re(Z)  -84.1
 ```
 
-Gain went up over time, so a trend alone would prove nothing. **What settles it is a reversal in
-three consecutive builds — the gain goes up, then back down, and the ratchet follows both ways:**
+Gain went up over time, so a trend alone would prove nothing. **A reversal is the era-free test —
+and one of its two legs is clean while the other is not**, because V101 also removed Lever B in
+the same step:
 
 ```
-  V100   4x  ->  -66.83
-  V101   8x  ->  -84.06     gain UP,    ratchet WORSE
-  V102   6x  ->  -74.91     gain DOWN,  ratchet BETTER
+  V100   4x  LeverB 5244  ->  -66.83
+  V101   8x  LeverB  512  ->  -84.06    both changed -- CONFOUNDED
+  V102   6x  LeverB  512  ->  -74.91    LeverB held  -- CLEAN, ratchet better by 9.15
 ```
 
-**≈ −4.4 of anti-damping per 1× of gain.** So, in your own terms:
+So the era-free evidence is **one clean pair**, not two. The overall association is strong (rho −0.819, and −0.762 within builds sharing one Lever B value), but **build era cannot be fully separated from gain in this corpus.**
+
+**Status: gain is the best-supported explanation for the ratchet, not a proven one.** In your terms:
 
 | build | gain | expected ratchet vs your car today |
 |---|---|---|
 | **V241** | 6× | **the same** — this is your car's present gain |
-| V242 | 8× | **worse**, by about the V100→V101 step you can already feel |
-| V243 | 10× | **worse still**, roughly double that |
+| V242 | 8× | **likely worse** — supported, not proven |
+| V243 | 10× | **likely worse still** |
 
 **This does not withdraw V242 or V243.** You asked for the ladder, it is built and verified, and the
 authority is real. What changed is that the trade is no longer unknown: **more torque buys more
