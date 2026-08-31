@@ -82,6 +82,21 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ✅⭐⭐⭐⭐ **V251'S SAFETY CASE IS FLIGHT HISTORY, NOT A MODEL: ITS PEAK IS A VALUE THAT HAS ALREADY FLOWN, REACHED LESS OFTEN.**
+>
+> Two things had to be checked before recommending a build that **breaks the clamp/gain tracking**:
+> **1. Is the tracking a FIRMWARE INVARIANT or a build convention?** A convention. `0xC61B4` is the clamp in the arbitration (`FUN_00028ea6`) and `0xC61B2` in `limit_and_pack` (`FUN_0002b422`) — **both are plain clamps, and neither is compared against the gain anywhere.** Breaking the tracking changes *where the clip happens*, nothing else. They are also the same two cells V242 moves.
+> **2. Is a 4096 clamp at 6× new territory?** No:
+> ```
+>   build   gain   clamp   peak deliv   rail @cmd   status
+>   V122   6.00x    3072         3072         512   FLOWN, on the car
+>   V101   8.00x    4096         4096         512   FLOWN -- rejected for GRINDING
+>   V251   6.00x    4096         4096         683   this build
+> ```
+> ✅ **PEAK DELIVERED COMMAND *IS* THE CLAMP** — an absolute limit, independent of gain. **V251 shares V101's peak of 4096, and V101 flew.** V251 merely **reaches** that peak less often (683 counts of openpilot command against V101's 512).
+> ⭐ **And what the operator rejected V101 for — *“grinding/vibration at all speeds”* — came from its 8× GAIN, which V251 does not carry.** V251 is 6× with V101's clamp: the half of V101 that was never the complaint.
+> ⊕ The soft-EME interlock `0xC674E` = 5120 is asserted **frozen**, and 4096 stays below it. Also relevant: the record's *“gentle EME fires on saturated LKAS command”* means **less saturation should mean fewer EME interventions, not more.**
+
 > ⭐⭐⭐⭐⭐ **V251 — THE FIRST LEVER EVER AIMED AT *PEAK COMMAND OSCILLATION*, THE ONE SYMPTOM THIS ARC HAD NEVER GIVEN ONE. AND IT COSTS NO TORQUE AND NO RATCHET.**
 >
 > The operator names **three** symptoms; the third has had no lever in sixty builds. It has a specific mechanism: **while the command is at its rail the loop is briefly OPEN** — openpilot asks for more and receives a fixed value — the textbook setup for a limit cycle. Measured over **2,353 railed vs 5,850 free** engaged windows, each symptom band normalised by a **12–18 Hz control band** so the *hard-driving* factor cancels:
