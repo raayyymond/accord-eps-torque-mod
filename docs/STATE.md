@@ -82,6 +82,26 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⚠⭐⭐⭐⭐ **OPERATOR QUESTION ANSWERED: V241 vs THE CAR IS ONLY 23 BYTES — AND ONE OF THEM REVERTS A CELL THE CAR'S OWN BUILD NAME CALLS “BEST”.**
+>
+> Confirmed **V122 is the last flown** (route r24); **V112 came earlier in the same lineage** and V122 superseded it. Diffing V241 against V122 over `[0x13000,0x100000)`:
+> ```
+>   biquad, 4 runs, 12 B    THE NOTCH re-aimed to 29.75/22.50/0.940   <- the intended change
+>   0xC40DC   8 -> 22       alpha2, reverted to Honda's value
+>   0x55DF2                 CAN 427 TX packer source -- TELEMETRY, not a control path
+>   2 CRC trailers          derived
+> ```
+> ⇒ **V241 is essentially “the car + a re-aimed notch + alpha2 reverted”.**
+> 🛑 **THE ALPHA2 REVERT IS WORTH FLAGGING: V122's own name is `ALPHA2.8-BEST`.** V115 took it 14 → 8 and V122 carried it. V241's lineage restored Honda's 22. Across the flown corpus:
+> ```
+>   alpha2  8   n=1    Re(Z) -70.13   <- the car
+>   alpha2 14   n=2    Re(Z) -69.53
+>   alpha2 22   n=14   Re(Z) -62.87   <- V241
+>                      rho +0.376, p 0.136
+> ```
+> The direction **weakly favours 22** (less anti-damping), so V241's value looks slightly better rather than worse — **but n=1 at the car's value, p 0.136, and CONFOUNDED WITH ERA**: alpha2 went 22 → 14 → 8 as the gain went 4× → 6×, so the trend may be the gain effect in disguise. **The corpus cannot separate them.**
+> ⇒ **If the operator chose 8 because the car FELT better, that outranks this** — his lived experience beats a confounded n=1 contrast, per the standing rule. **A one-byte V241 variant holding alpha2 at 8 is available on request**, and would make the notch the ONLY change from the car, which is a cleaner experiment regardless.
+
 > ✅⭐⭐⭐⭐⭐ **THE PID DERIVATIVE'S SIGN IS DETERMINATE AFTER ALL — AND IT SAYS DO NOT BUILD THE CUT. THE LAST OPEN LEVER IS CLOSED.**
 >
 > I recorded the D term as *“sized but sign unknown”*. **The sign is computable, not unknowable.** The PID's error is torque-derived, so the D term injects a torque proportional to `d(tq)/dt`, which **leads `tq` by exactly 90°**. Damping is torque antiphase with rate (180°); pumping is in phase (0°). So the D contribution sits at **`arg(Z) + 90°`** — and `arg(Z)` is measurable on the same non-rectified instruments:
