@@ -443,7 +443,11 @@ def read_column_torque_voter(sensors: SensorInputs, st: EpsState, cal: Calibrati
 #         entirely. Both were stock-virgin until V93/V94. gp-0x67f4 is the vehicle-speed VALID/SETTLED
 #         flag (FUN_00041eec: set once any wheel source is valid and the vote settles, cleared only
 #         when ALL sources go invalid) => it is 1 in normal driving, so neither fallback should fire.
-#     FUN_0003a382 -> gp-0x6ad4   UNFILTERED residual lane (2 passthroughs + a raw derivative)
+#     FUN_0003a382 -> gp-0x6ad4   gain-scheduled PID. 🛑 CORRECTED 2026-08-30: the D term is
+#         NOT structurally unfiltered -- it passes an IIR at tp+0x744a (0xC644A) -- but that cal
+#         reads 1024 on ALL 18 flown builds, and 1024 makes the IIR a PASSTHROUGH
+#         (state += (x-state)*1024>>10 == x). So the derivative is raw IN PRACTICE, by cal value
+#         rather than by structure. The distinction matters: it means there IS a pole to move.
 #     FUN_00036388 -> gp-0x6b62   slow +/-1/tick accumulator w/ hysteresis       [return-to-centre]
 #     FUN_000352b4 -> gp-0x6b86 + gp-0x69a4                                      [friction magnitude]
 #     inline r24   <- gp-0x4f62 x generated Q10 gain                              [VERIFIED torque-rate]

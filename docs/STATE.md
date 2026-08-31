@@ -82,6 +82,25 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE RESONANCE PID RUNS A RAW DERIVATIVE WITH D GAIN 8× ITS P GAIN, BYTE-STOCK IN ALL 18 FLOWN BUILDS. THE LAST STRUCTURALLY SUSPICIOUS THING IN THE CHAIN — SIZED, BUT ITS SIGN IS NOT KNOWN.**
+>
+> Decompiling `FUN_0003a382` (the lane the record calls *“never scored at 6–9 Hz”*):
+> ```
+>   P gain  0xC6B26  [256, 256, 225, 153]   at rate 99:  256   (Q10 0.25)
+>   I gain  0xC6B12  [ 98,  98,  98,  98]   at rate 99:   98   (Q10 0.096)
+>   D gain  0xC6AE6  [2048, 2048, 2048, 2048] at rate 99: 2048 (Q10 2.0)   <- 8x the P gain
+>
+>   derivative pole 0xC644A = 1024 on ALL 18 flown builds
+> ```
+> ⭐ **AND IT CORRECTS THE GOLDEN MODEL.** The model calls this an *“UNFILTERED residual lane (2 passthroughs + a raw derivative)”*. **There IS a pole** — an IIR at `tp+0x744a` — but it reads **1024**, and `state += (x−state)*1024>>10 == x` is a **passthrough**. So the derivative is raw **by cal value, not by structure.** That distinction matters: **there is a pole to move.**
+> ```
+>   a raw one-sample difference has gain proportional to frequency:
+>     D/P share   at 8.5 Hz: 0.43      at 25 Hz: 1.26   <- D DOMINATES in the grinding band
+> ```
+> 🛑 **ALL THREE PID GAINS ARE BYTE-STOCK ACROSS ALL 18 FLOWN BUILDS** — the same census blind spot that hid the damper. And the record's own note stands: *“V56's mute of this lane was scored at ~21 Hz — the lane has NEVER been scored at 6–9 Hz.”*
+> ⚠ **I AM NOT BUILDING THIS, AND THE REASON IS THE SIGN.** I can size the term but **not its direction**: a derivative adds +90° of phase, so reducing D could damp the loop or destabilise it depending on the rest of the loop's phase — this is the *“OPEN lever, may PUMP”* situation the record warns about. **V43 already tried the pole** (`0xC644A` 1024 → 64) and got a **null**, but that was scored at ~21 Hz, so it does not settle 6–9 Hz either.
+> ⇒ **TOP CANDIDATE FOR THE NEXT SESSION, and the honest reason to stop here: the shelf already holds six unflown builds.** A seventh whose direction is a guess would spend a drive to learn less than V249 will.
+
 > ✅⭐⭐⭐⭐⭐ **THE 6–10 Hz NOTCH QUESTION IS CLOSED — AND NOT THE WAY EITHER SIDE EXPECTED. THE LANE THE DAMPING FLOOR GATES HAS TOO LITTLE AUTHORITY AT 6–9 Hz FOR ANY AIMING TO MATTER.**
 >
 > The notch is forbidden from 6–10 Hz by the **damping-band floor**, justified by a lane phase of `cos −0.918/−0.989/−0.629` — **taken from the rectified 427 channel**, which cannot carry phase. Meanwhile the system measures **anti-damped** there on non-rectified instruments. So the floor might be protecting nothing, and it blocks the kit's strongest device.
