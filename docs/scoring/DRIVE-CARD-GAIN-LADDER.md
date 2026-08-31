@@ -115,7 +115,13 @@ the thing that sets it.** Reader: `rlog-tools/score/gain_vs_antidamping.py`.
   39990-TVA,A160-V247-V241BASE-FACTORE.DEADZONE.OPEN.ENGAGED-0x13000-0x100000.rwd
               rwd  eb92273e2e416403...      image 7a59497a592ea6e3...
 
-  V246   6x   <-- FLY THIS THIRD, if V247 is not enough or you want the smaller step.
+  V248   6x   <-- FLY THIS THIRD, only if V247 helped but did not finish the job.
+              V247 + the damper's flat gain doubled: 90% -> 181% of the requirement.
+              4 bytes on V247. Engaged only. Revert FactorB to 1024 to get V247 back.
+  39990-TVA,A160-V248-V247BASE-FACTORB.X2.ENGAGED-0x13000-0x100000.rwd
+              rwd  fa50afd325c88adb...      image d2b554038a59f9c2...
+
+  V246   6x   <-- FLY THIS FOURTH, a different lane (Lever B), smaller step.
               The ONLY build that targets the RATCHET without costing you torque.
               2 bytes on V241: Lever B 5244 -> 7866. Identical notch, identical gain.
   39990-TVA,A160-V246-V241BASE-LEVERB.5244.TO.7866-0x13000-0x100000.rwd

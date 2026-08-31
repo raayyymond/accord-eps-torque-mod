@@ -82,6 +82,26 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⭐⭐⭐⭐ **V248 BUILT — THE MARGIN RUNG. V247 REACHES 90 % OF THE REQUIREMENT; THIS TAKES IT TO 181 %, FROM THE SAME LANE, WITH THE ARITHMETIC EXACT.**
+>
+> V247's ~50.6 counts against a ~56-count requirement is close — **and the requirement is itself an estimate**, so if it is really 70 or 80 then V247 lands short. This buys margin from the cell best suited to it:
+> ```
+>   0xD774C   FactorB (engaged, mode 26)   Y = [1024]x4 -> [2048]x4
+>
+>   V247    50.6 counts    90 % of requirement
+>   V248   101.3 counts   181 % of requirement      still 5x under the 512 ceiling
+> ```
+> ⭐ **WHY `FactorB` IS THE RIGHT CELL FOR MARGIN, AND WHY ITS SHAPE IS SAFE BY CONSTRUCTION.** It is a **FLAT Q10 gain at unity** across its whole axis — a pure multiplier with **no dead zone, no knee and no slope to get wrong**. And at high rate the product **already clamps**:
+> ```
+>   stock, high rate:  1024 x (908/1024) x (927/1024) = 822  -> clamped to 512
+>   V248,  high rate:  that x2 = 1644                        -> clamped to 512, IDENTICAL
+> ```
+> ⇒ **doubling it changes NOTHING at the top end and lifts only the low/mid-rate region** — exactly where the ratchet lives and exactly where the damper was too small. **The lever's shape matches the target by construction rather than by tuning.**
+> 🛑 **FLY V247 FIRST — THIS IS THE MARGIN RUNG, NOT THE FIRST ATTEMPT.** V247 vs V241 is one variable; V248 vs V247 is one variable. Flying V248 first **wastes the discrimination**: if the ratchet improves you will not know whether the dead zone or the gain did it, and if the wheel feels heavy you will not know which half to walk back.
+> ⚠ **COST, twice V247's:** ~101 counts is **~3.3 % of the 3072 forward clamp**, engaged only. If LKAS feels reluctant, `FactorB` back to 1024 returns to V247 exactly.
+> ⭐ **BUILT — image `d2b554038a59f9c2…` · rwd `fa50afd325c88adb…` · 4 payload bytes.** **1627 checks passed, 53/53 builders bit-exact.**
+> ⇒ **FLIGHT ORDER: V241 → V247 → V248 → V246.**
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE ENTIRE BASE-ASSIST DAMPER HAS BEEN BYTE-STOCK IN EVERY FLOWN BUILD. ALL FIVE RECORDS. THE CENSUS WAS BLIND TO THE WHOLE LANE — AND SIXTY BUILDS NEVER TOUCHED IT.**
 >
 > The FDR census tests only cells that **varied**; a byte-identical cell has nothing to correlate. Sweeping the complement — every damper record, across all 18 flown builds:
