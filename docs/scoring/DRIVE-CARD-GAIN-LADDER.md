@@ -11,7 +11,13 @@
               and takes it from ZERO to full below 35 km/h. Engaged only --
               your manual steering is byte-identical. This is the main event.
 
-  3.  V250   Only if V249 helped but did not finish it. Same lane, doubled.
+  3.  V251   THE RAIL FIX -- the first lever ever aimed at PEAK COMMAND
+              OSCILLATION. Raises the clamp ALONE (gain untouched), so the
+              command rails 23% less often. Costs no torque and no ratchet.
+              With V241's notch and V249's damper under it, this one build
+              addresses ALL THREE of your symptoms.
+
+  4.  V250   Only if V249 helped but did not finish it. Same lane, doubled.
               Revert FactorB to 1024 to get back to V249.
 
   4.  V246   A DIFFERENT lane (Lever B). Independent second opinion if the

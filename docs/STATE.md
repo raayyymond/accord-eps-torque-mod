@@ -82,6 +82,27 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⭐⭐⭐⭐⭐ **V251 — THE FIRST LEVER EVER AIMED AT *PEAK COMMAND OSCILLATION*, THE ONE SYMPTOM THIS ARC HAD NEVER GIVEN ONE. AND IT COSTS NO TORQUE AND NO RATCHET.**
+>
+> The operator names **three** symptoms; the third has had no lever in sixty builds. It has a specific mechanism: **while the command is at its rail the loop is briefly OPEN** — openpilot asks for more and receives a fixed value — the textbook setup for a limit cycle. Measured over **2,353 railed vs 5,850 free** engaged windows, each symptom band normalised by a **12–18 Hz control band** so the *hard-driving* factor cancels:
+> ```
+>   ratchet  / control :  railed 2.378   free 0.788   ratio 3.02   p ~ 0
+>   grinding / control :  railed 0.631   free 0.335   ratio 1.88   p 2e-265
+> ```
+> 🛑 **THE FIRST VERSION OF THAT TEST FAILED AND ITS OWN CONTROL SAID SO.** Normalising by TOTAL energy put the **control** band at ratio 0.250 — moving *more* than either symptom band — because railing correlates with cornering, whose large low-frequency content inflates the denominator and pushes every fraction down. Normalising by the control band is what made the split readable.
+> 🛑 **AND IT CORRECTS TWO OF MY OWN CLAIMS.** *(a)* The gain ladder cannot fix this: the clamp **tracks** the gain as `gain*512//891`, so the rail sits at **512 counts of command AT EVERY GAIN** — V242/V243 buy **no headroom at all**. *(b)* I earlier called a clamp-only build *“inert”*. That was true of the **damper's magnitude** and **false of saturation**, which is what this build is about.
+> ```
+>   0xC61B2 / 0xC61B4   3072 -> 4096     forward clamps, both signs
+>   0xC6CD0             5346             the GAIN, asserted UNCHANGED at 6x
+>
+>   rail moves        512 -> 683 counts of openpilot command
+>   mean rail duty   17.6 % -> 13.5 %   =  23 % less time with the loop open
+> ```
+> ✅ **NOT A TORQUE STEP.** The gain is untouched, so assist per unit of command is identical and **the ratchet's measured gain dependence is not engaged.** What changes is that openpilot's larger requests are *delivered* instead of clipped.
+> ⭐ **BUILT ON V249, so ONE BUILD NOW ADDRESSES ALL THREE SYMPTOMS:** V241's notch (grinding) · V249's two damper dead zones (ratchet + grinding) · V251's clamp (peak command oscillation). **image `b1976f8f442e7533…` · rwd `2d14f2426dfa3c7f…` · 2 payload bytes.**
+> ⚠ **THE RISK:** the top ~4 % of requests now arrive instead of being clipped, so the car may feel more decisive in hard corners. **4096 has flown before** (V101, at 8× gain) and stays below the soft-EME interlock **5120**, which is asserted frozen. Revert to 3072 to undo. And the 3.0× is **observational** — railing is chosen by openpilot, not assigned.
+> ⇒ **1735 checks passed, 56/56 builders bit-exact.** Flight order: **V241 → V249 → V251**.
+
 > ✅⭐⭐⭐⭐⭐ **GATE 2 PASSES ON V247/V249/V250: THE DAMPING IS REAL DAMPING AT THE RATCHET, NOT A DISGUISED SPRING.**
 >
 > The build assumes the damper opposes motion — but `gp-0x6abe`/`gp-0x6ac0` are **filtered** from `gp-0x4f50` in `FUN_00041464`, and a filter with a low corner would rotate that opposition into a **spring term that neither damps nor pumps**. The kit's own GATE 2 demands *magnitude AND phase, in every loop the signal is in*, and I had not run it on this build.
