@@ -6,12 +6,22 @@
   1.  V241   baseline. All the grinding work, your car's own 6x gain.
               Establishes what the rest are compared against.
 
-  PREDICTION FOR V249, written before you drive so a null still means something:
-    your car's damper delivers ~2.9 counts against a measured 50-count 6-9 Hz
-    torque. V249 takes it to ~48. If the mechanism is right the ratchet should
-    drop a lot, not a little. If it does nothing, that RULES OUT the damper lane
-    -- still worth the drive. If it feels WORSE, revert immediately: that means
-    the sign is inverted somewhere.
+  🛑 CORRECTED PREDICTION FOR V249 -- I had this badly wrong and fixed it before
+     you drove. I priced the damper by its output SIZE. What actually damps a small
+     oscillation riding on a larger steering motion is the SLOPE of the damper
+     curve, and I was off by about 20x.
+
+       your car          1.3 % of what would be needed to cancel the ratchet
+       V249              4.2 %       <- 3.4x your car, but still small
+       V250              8.4 %
+       the lane's MAX   29.0 %       <- even flat out, it cannot cancel it
+
+     So: expect a SMALL improvement, not a fix. If the ratchet is unchanged that is
+     the PREDICTED result, not a surprise. If it feels WORSE, revert -- that would
+     mean the sign is inverted somewhere and I want to know immediately.
+
+     V249 is still worth flying: it is the largest this lane offers at a sane dose,
+     it is engaged-only, and it is 3 bytes. But it is not the fix I called it.
 
   2.  V249   THE DAMPER FIX. Opens BOTH of the damper's dead zones.
               Raises damping 8.3x at the ratchet AND 4.1x at the grinding band,

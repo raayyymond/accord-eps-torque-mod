@@ -82,6 +82,32 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑🛑🛑⭐⭐⭐⭐⭐ **RETRACTION, AND IT IS THE BIG ONE: THE DAMPER SUPPLIES ~4 % OF THE REQUIREMENT, NOT 90 %. I COMPARED THE WRONG QUANTITY, AND EVEN AT ITS CEILING THIS LANE CANNOT CANCEL THE RATCHET.**
+>
+> **The error.** I priced the damper by its output MAGNITUDE — 50 counts against a ~56-count requirement — and called it 89 %. **For a small oscillation riding on a larger steady rate the damping coefficient is the curve's SLOPE, not its value.** `T = −sign(rate)·M(|rate|)`, so with `rate = R₀ + δ·sin` and `R₀ ≫ δ` the oscillating part is `−M′(R₀)·δ`. **I used `M` where `M′` belongs, and was wrong by ~20×.**
+> **Which regime applies is measurable, and I measured it** rather than assuming:
+> ```
+>   slow |rate| (<3 Hz)   p50 1.65 deg/s
+>   6-9 Hz amplitude      p50 0.72 deg/s      ratio p50 0.35, p90 0.96
+>   the rate sign reverses in only 9.4 % of engaged windows  =>  SLOPE REGIME
+> ```
+> ⭐ Units, from the record: `gp-0x6ac0 = 4.71210813 counts per deg/s`, so the damper's operating point of 99 counts is **21 °/s** — while the ratchet's own 6–9 Hz amplitude is **0.72 °/s**. The oscillation is a small ripple on a much larger motion, and the sign almost never flips.
+> ```
+>   c = seed·(B/1024)(C/1024)(D/1024)·(dE/drate)/1024 · 4.7121      [counts per deg/s]
+>
+>                                     c        vs requirement 65
+>   V122 (the car)                 0.813             1.3 %
+>   V247 / V249                    2.742             4.2 %
+>   V250                           5.485             8.4 %
+>   + FactorD x2 as well          10.970            16.9 %
+>   MAX: steepest legal E, B+D x2 18.866            29.0 %
+> ```
+> 🛑🛑 **EVEN AT ITS CEILING THE DAMPER LANE REACHES 29 %. IT CANNOT CANCEL THE RATCHET.** Every *“50 counts against a ~56-count requirement”*, *“89 % / 179 %”* and *“V249 nearly cancels it”* elsewhere in this file, the handoff, the memories and the build docstrings **is wrong and is superseded by this block.**
+> ⇒ **WHAT SURVIVES.** V249 is still **directionally right and the largest the lane offers at a sane dose — 3.4× the car's damping** — and it is engaged-only, cal-only and cheap. **But the operator must not expect the ratchet to disappear.** It is a few-percent improvement, not a fix.
+> 🛑 **AND THE SEARCH REOPENS.** If the damper cannot do it and the cal census found nothing else, then **the ratchet may not be calibration-reachable at all** — which is where the arc stood before the damper was found. The damper was a real discovery (a lane structurally switched off); it is simply **not big enough**.
+> ✅ **The pre-registered prediction is REPLACED:** `Re(Z)` should move from **−64.8 to about −62**, not to −6.8. If the operator reports the ratchet unchanged on V249, **that is the predicted outcome**, not a falsification of the damper direction.
+> ➕ Readers: `v249_predicted_effect.py` (🛑 carries the SUPERSEDED magnitude form) and the regime measurement that corrected it.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE PRE-REGISTERED PREDICTION FOR V249 — WRITTEN BEFORE THE DRIVE, SO A NULL IS READABLE INSTEAD OF “UNINTERPRETABLE”.**
 >
 > The design law: *“before cutting, write the sentence a null will license.”* V249 goes after a symptom sixty builds have failed to move, so the drive is only worth what was said in advance.

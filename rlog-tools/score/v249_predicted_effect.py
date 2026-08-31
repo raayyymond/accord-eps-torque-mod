@@ -1,5 +1,18 @@
 #!/usr/bin/env python3
-r"""WHAT SHOULD V249 DO TO Re(Z)?  A pre-registered prediction, so the drive can falsify it.
+r"""🛑 SUPERSEDED -- THIS FILE PRICES THE DAMPER BY MAGNITUDE, WHICH IS THE WRONG QUANTITY.
+
+The 89.5 % / "Re(Z) -> -6.8" figures below are WRONG BY ~20x.  For a small oscillation riding on a
+larger steady rate, the damping coefficient is the curve's SLOPE, not its value:
+    T = -sign(rate)*M(|rate|),  rate = R0 + d*sin,  R0 >> d   =>   oscillating part = -M'(R0)*d
+and the regime IS the slope regime -- measured, the rate sign reverses in only 9.4 % of engaged
+windows (6-9 Hz amplitude p50 0.72 deg/s against a slow rate of 1.65).
+
+CORRECT figures, counts per deg/s against a requirement of 65:
+    V122 0.813 = 1.3 %   V249 2.742 = 4.2 %   V250 5.485 = 8.4 %   lane ceiling 18.866 = 29.0 %
+THE DAMPER CANNOT CANCEL THE RATCHET.  Corrected prediction: Re(Z) -64.8 -> about -62.
+See [[accord-damper-sizing-was-magnitude-not-slope]].  Original text follows, kept for the method.
+
+ORIGINAL: what should V249 do to Re(Z)? A pre-registered prediction.
 
 WHY THIS EXISTS.  The kit's design law: "before cutting, write the sentence a null will license."
 V249 is about to be flown against a symptom that sixty builds have failed to move, so the value of the
