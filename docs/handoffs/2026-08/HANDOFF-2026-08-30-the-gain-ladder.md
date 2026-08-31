@@ -188,3 +188,86 @@ already costed at ~3.8 % of the lane. Right conclusion, wrong reasoning.
 band that must not be filtered.** Nothing found this tick moves that.
 
 **The flight recommendation is unchanged: V241 first.**
+
+
+---
+
+## 🛑 THE LKAS GAIN *IS* THE RATCHET'S ANTI-DAMPING — and it prices this very ladder
+
+**The most useful thing found in the whole arc, and it arrived after the ladder above was written.**
+
+Regressing the coherence-gated 6–9 Hz `Re(Z)` on `0xC6CD0` across every flown build — `tq` against
+`cs_rate`, **both non-rectified**, so unlike every 427-derived phase this is actually measured:
+
+```
+  4x  (7 builds)   Re(Z)  -46.6 .. -66.8         less negative = less ratchet
+  6x  (9 builds)   Re(Z)  -62.3 .. -74.9
+  8x  (1 build)    Re(Z)  -84.1
+  slope -0.0074/count · R2 0.726 · Spearman rho -0.819 · p 0.0001 · n = 17
+```
+
+Gain rises monotonically with build era, so the trend **alone** proves nothing. **What carries it is a
+reversal** — three consecutive builds where the gain goes up, then back down:
+
+```
+  V100  4x  ->  -66.83
+  V101  8x  ->  -84.06     gain UP,   anti-damping DEEPENS  (-17.23)
+  V102  6x  ->  -74.91     gain DOWN, anti-damping RECOVERS (+9.15)
+```
+
+**Build era is monotone and cannot produce a reversal.** ≈ **−4.4 of `Re(Z)` per 1× of gain.**
+
+### Why this closes the arc's central puzzle
+
+The ratchet was never a lever the kit failed to find. **It tracks the gain the kit itself kept
+raising.** That is why every cal, filter, damper, cave and notch measured null on it — and why **no
+build from V90 to V122 moved the anti-damping** (median −64.8, sd 9.1, nothing off the pack). None of
+them changed the thing that sets it.
+
+### How it was reached — three eliminations from bytes first
+
+Engagement re-indexes the mode table 24 → 26. Of everything that re-index touches:
+
+| lane | mode 24 vs 26 |
+|---|---|
+| five base-assist damper records (FactorB/C/D/E + ceiling) | **byte-identical** |
+| all three boost tables | **byte-identical** |
+| **friction** | **3× different** — `Y −9830/−5734/−1966` → `−29490/−17202/−16000` |
+
+Friction was the only candidate left, and its dose spans **1.0×–3.0× across 17 flown builds with no
+relation to `Re(Z)`** (rho −0.263, p 0.31). ⇒ no re-indexed calibration explains the anti-damping,
+which leaves the applied LKAS torque — and the gain is what sets that.
+
+### Two controls it survives, and one escape that is closed
+
+1. **The clamp is not an independent lever.** It tracks the gain as `gain*512//891`, so `clamp/gain` is
+   identically 512 and the command at which it binds is 512 counts on every build. Collinear **by
+   construction** — a clamp-only build would be **inert**. No authority-without-ratchet hides there.
+2. **Saturation duty controls against "command effort".** If effort drove it, the 4× builds would be
+   worst — they saturate **44–45 %** of frames against 6×'s **13 %**. They are the **least**
+   anti-damped. Within the 6× builds duty does not predict `Re(Z)` either.
+
+### 🛑 The mechanism is NOT established, and that is recorded deliberately
+
+The LKAS lane is a **~1–5 Hz low-pass**, so the command cannot itself carry 7.8 Hz; and uniform scaling
+of both torque and motion would leave the **ratio** `Re(tq/rate)` unchanged. So this is a robust
+**empirical** relation with an **open** mechanism. Three mechanisms were written into `STATE.md` and
+retracted in this session — see `feedback-compute-the-control-before-writing-the-mechanism`.
+
+### What it means for the ladder
+
+```
+  V241   6x   the car's present gain    ->  ratchet as today   <-- FLY THIS
+  V242   8x   +2x                       ->  measurably WORSE
+  V243  10x   +4x                       ->  worse still
+```
+
+**V242 and V243 are not withdrawn** — the operator asked for the ladder, it is built and verified, and
+the authority is real. What changed is that **the trade is no longer unknown**. V241 stays the
+recommendation, now for a *measured* reason rather than a cautious one.
+
+⚠ One route per build, 75–170 windows each, adjacent builds differ in more than the gain cell. **A
+priced trade-off, not a controlled experiment.**
+
+Readers: `gain_vs_antidamping.py` · `friction_dose_vs_antidamping.py` · `gain_vs_clamp_collinearity.py`
+· `antidamping_by_build.py` · `rez_dilution_control.py` · `rez_nonrectified_replication.py`.
