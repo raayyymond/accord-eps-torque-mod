@@ -13,6 +13,43 @@ floor and is the build most likely to simply work.
 torque", not what you asked** — and it skips your own ruling, *"fix at 6× first, then raise to 8×"*,
 where the fix is built but has never been verified on the car.
 
+## ⭐ V246 — THE ONE BUILD THAT ATTACKS THE RATCHET WITHOUT TAKING TORQUE AWAY
+
+Everything above says the ratchet is priced in gain: more torque, more ratchet. **V246 is the one
+exception found**, and it is why the ladder now has a fifth rung.
+
+The ratchet's anti-damping tracks the **forward gain** — but I checked three ways round that and closed
+all three by arithmetic, needing no drive from you:
+
+```
+  the tracking CLAMP      follows the gain automatically  ->  a clamp-only build does NOTHING
+  the 0xC646C feedback    contributes 0.7% at 7.8 Hz      ->  zeroing it moves ~0.1 of 65
+  a low-pass on command   command has ~0.3% of its        ->  there is nothing there to filter
+                          energy in the ratchet band
+```
+
+**Lever B is the one cell that is not tied to your torque and still moves the ratchet.** Holding the
+gain fixed at 6×, the builds carrying the higher dose are measurably less anti-damped:
+
+```
+  at 6x gain    Lever B  512  ->  Re(Z) -73.59
+                Lever B 5244  ->  Re(Z) -67.78      +5.81 better, p = 0.056
+```
+
+Your car already runs 5244. **V246 goes to 7866 (1.5×)** — and the headroom is computed, not guessed:
+the lane saturates, and its knee sits at 58624 at typical steering effort, so 5244 is nowhere near it.
+Raising it still buys real damping.
+
+⚠ **The honest risk:** 5244 is the value **V88 measured as best for grinding**. V246 deliberately moves
+off it. Whether that costs grinding is **not established** — the only comparison I have is uncontrolled
+and its groups overlap, so I am not claiming it either way. That is exactly what your drive settles.
+
+**Fly V241 first, then V246 on the same roads.** They differ by two bytes and nothing else, so if the
+ratchet improves, Lever B did it — and if grinding comes back, the answer is 5244 and we have priced
+the lever in one drive.
+
+---
+
 ## 🛑 NEW, AND IT PRICES THE LADDER: THE GAIN *IS* THE RATCHET
 
 Measured after the card was first written, on instruments independent of the EPS. **The 6–9 Hz
@@ -71,6 +108,12 @@ the thing that sets it.** Reader: `rlog-tools/score/gain_vs_antidamping.py`.
   V243  10x   The ceiling. Only if V242 is also clean. 10x has NEVER flown at any point.
   39990-TVA,A160-V243-V242BASE-GAIN10X.CLAMPS4608.CEILING-0x13000-0x100000.rwd
               rwd  43a32ac352508557...      image 5fb9ad74f104de46...
+
+  V246   6x   <-- FLY THIS SECOND, right after V241, on the same roads.
+              The ONLY build that targets the RATCHET without costing you torque.
+              2 bytes on V241: Lever B 5244 -> 7866. Identical notch, identical gain.
+  39990-TVA,A160-V246-V241BASE-LEVERB.5244.TO.7866-0x13000-0x100000.rwd
+              rwd  f336b0d53d335fde...      image c97e535f3177c564...
 
   FALLBACK at any point:  V122  (what is on your car now)
   BEFORE anything:        kill openpilot/pandad  ->  tmux kill-server
