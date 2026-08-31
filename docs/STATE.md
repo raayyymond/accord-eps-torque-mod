@@ -82,6 +82,23 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⭐⭐⭐⭐⭐ **V249 IS ONE LEVER AIMED AT BOTH SYMPTOMS. THE DAMPER IS RATE-PROPORTIONAL, SO OPENING IT RAISES THE GRINDING BAND TOO — AND BELOW 35 km/h IT CURRENTLY SUPPLIES LITERALLY ZERO AT EITHER.**
+>
+> `gp-0x6ac0` is `|motor rate| >> 10`. The ratchet sits at the measured **99 counts**; a 22–30 Hz oscillation of similar amplitude turns the motor ~3× faster, so the grinding band maps to ~**300 counts**. Damper magnitude through the decompiled mirror, ENGAGED:
+> ```
+>                     V122   V247   V249   V250
+>   80 km/h
+>     ratchet   (99)     6     50     50    100      8.3x
+>     grinding (300)    41    167    167    335      4.1x
+>
+>   25 km/h  -- below the FactorC knee
+>     ratchet   (99)     0      0     50    100      0 -> full
+>     grinding (300)     0      0    167    335      0 -> full
+> ```
+> ✅ **[EVIDENCE] the same edit lifts BOTH bands** — 8.3× at the ratchet and 4.1× at the grinding band, at 80 km/h. And **below 35 km/h the car currently has NO damping at all at either frequency**, which V249 takes to full. The operator's two symptoms may share one cell.
+> ⚠ **AND THE CAUTION THAT GOES WITH IT.** V62's lesson on a *different* lane was *“2× is the OPTIMUM, not a point on a ramp”* — more damping is not monotonically better, and this raises the grinding band **4.1×**. If grinding gets WORSE rather than better on V249, that is the signature, and V247 (which leaves low speed alone) or V241 is the way back. **The ratchet direction is well-founded; the grinding direction is a hypothesis this build happens to test for free.**
+> ⊕ At high rate (fast steering) V249 delivers **225** against V122's 122–225, so quick manoeuvres meet up to 1.8× the stock damper — **engaged only**, never in the driver's hands.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V247 WAS AIMED AT ONLY 64 % OF THE PROBLEM — I BUILT HALF THE RECOMMENDED LEVER. V249 AND V250 CLOSE IT, AND THE DAMPER LADDER IS NOW COMPLETE ACROSS THE WHOLE SPEED RANGE.**
 >
 > The record's recommendation was to open **both** dead zones. **V247 opened only the RATE half.** `FactorC`'s SPEED dead zone is `X[0] = 2240` counts = **35 km/h with `Y[0] = 0`**, and zero × anything = 0 — so **below 35 km/h the whole damper is structurally zero no matter what `FactorE` does.** Stratifying the measured anti-damping by speed, coherence-gated, **4,772 engaged windows**:

@@ -1,4 +1,36 @@
-# DRIVE CARD — the gain ladder: V241 (6×) · V242 (8×) · V243 (10×)
+# DRIVE CARD — what to flash, in order
+
+## ⭐ THE SHORT LIST (everything else is detail)
+
+```
+  1.  V241   baseline. All the grinding work, your car's own 6x gain.
+              Establishes what the rest are compared against.
+
+  2.  V249   THE DAMPER FIX. Opens BOTH of the damper's dead zones.
+              Raises damping 8.3x at the ratchet AND 4.1x at the grinding band,
+              and takes it from ZERO to full below 35 km/h. Engaged only --
+              your manual steering is byte-identical. This is the main event.
+
+  3.  V250   Only if V249 helped but did not finish it. Same lane, doubled.
+              Revert FactorB to 1024 to get back to V249.
+
+  4.  V246   A DIFFERENT lane (Lever B). Independent second opinion if the
+              damper lane turns out not to be the answer.
+```
+
+**Superseded, do not fly:** V247 and V248 — the same damper levers but with the SPEED
+dead zone still shut, so they do nothing below 35 km/h (36 % of your engaged driving).
+
+**Authority builds (V242 8× / V243 10×):** these RAISE the gain, and the gain is what the
+ratchet tracks. Fly them only once the ratchet is settled, and expect it to come back.
+
+**V245** (resonance-PID knee) is a separate open lever, weaker than V249; keep for later.
+
+**Before anything:** kill openpilot/pandad → `tmux kill-server`. Fallback at any point is
+**V122**, what is on your car now.
+
+---
+
 
 ## 🚗 THE ANSWER TO YOUR BRIEF
 
