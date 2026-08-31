@@ -82,6 +82,20 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ✅⭐⭐⭐⭐⭐ **GATE 2 PASSES ON V247/V249/V250: THE DAMPING IS REAL DAMPING AT THE RATCHET, NOT A DISGUISED SPRING.**
+>
+> The build assumes the damper opposes motion — but `gp-0x6abe`/`gp-0x6ac0` are **filtered** from `gp-0x4f50` in `FUN_00041464`, and a filter with a low corner would rotate that opposition into a **spring term that neither damps nor pumps**. The kit's own GATE 2 demands *magnitude AND phase, in every loop the signal is in*, and I had not run it on this build.
+> The filter is **EMA1** — `y0 += ((u*1024 − y0) * alpha0) >> 7` @`0x415DA..0x415E8`, so `alpha_eff = alpha0/128`, with `alpha0` at `0xC643C`:
+> ```
+>   alpha0 = 37  ->  alpha_eff 0.2891  ->  corner fc = 46.0 Hz   (unchanged V122 -> V249)
+>
+>   at  7.79 Hz (ratchet) : lag 6.8°   cos(phi) = 0.993   -> 99.3 % still OPPOSES rate
+>   at 25 Hz   (grinding) : lag 20.5°   cos(phi) = 0.937   -> 94 % still OPPOSES rate
+> ```
+> ✅ **[EVIDENCE] The corner is 46 Hz, far above both symptom bands, so the phase error is negligible where it matters.** V249's ~50 counts is **~50 counts of genuine damping**, not a rotated vector.
+> 🛑 **THIS WAS A REAL RISK, NOT A FORMALITY.** A 2 Hz corner would have given a 76° lag and `cos = 0.24` — three quarters of the build's output would have been a spring term, and the drive would have read as a null with no way to tell why. The gate had to be run before recommending the build, and it had not been.
+> ⊕ `alpha0` is **shared** and **unchanged** by V247/V249/V250 — none of them touch the filter, so this margin is inherited, not spent.
+
 > ✅⭐⭐⭐⭐⭐ **THE SEARCH IS EXHAUSTIVE NOW: THE PATTERN THAT HID THE DAMPER OCCURS EXACTLY ONCE IN THE WHOLE CALIBRATION SURFACE, AND V249 ADDRESSES IT.**
 >
 > Two blind spots produced V247/V249, and the second is a **mechanical signature** rather than a judgement call: a lane whose LERP value at the operating point is a trivial **fraction of its own range** is structurally starved there — scaling it is near-vacuous, and only reshaping delivers. Sweeping every pointer-array LERP in the cal region at the ratchet's operating point:
