@@ -82,6 +82,22 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⭐⭐⭐⭐⭐ **V253 BUILT — V241 WITH THE OPERATOR'S OWN ALPHA2 KEPT. AGAINST THE CAR, THE NOTCH IS NOW THE ONLY CONTROL CHANGE.**
+>
+> He asked what V241 changes against the car, and the answer surfaced that V241 **reverts a cell his own build name calls BEST** (`V122 = KNEE3000.K1.1020-ALPHA2.8-BEST`). Rather than leave that as a question, the one-byte variant is built:
+> ```
+>   V253 vs V122 (the car): 22 bytes in 7 runs
+>     0xC60A8-B6   12 B   the NOTCH             <- the ONLY control change
+>     0x55DF2       2 B   CAN 427 telemetry source -- no control path
+>     2 CRC trailers      derived
+>
+>   alpha2 0xC40DC:   car 8    V253 8    V241 22
+> ```
+> ✅ **THE STANDING RULE DECIDED THIS, NOT THE STATISTICS.** *“The operator's lived experience overrides analyst recommendations.”* The corpus leans toward 22 (−62.87 across 14 builds vs −70.13 at 8) but it is **n=1 at his value, p 0.136, and confounded with era** — alpha2 went 22→14→8 exactly as the gain went 4×→6×. **A confounded n=1 contrast is not grounds to silently undo a choice he named BEST.**
+> ⭐ **AND IT BUYS A BETTER EXPERIMENT REGARDLESS.** With alpha2 held, the notch is the sole control delta from the car — so if the drive changes anything, **the notch did it**, and there is no second cell to argue about afterwards.
+> ⇒ **WHICH TO FLY:** no feel-preference on alpha2 → **V241** is fine and its value is marginally better supported. Chose 8 deliberately → **V253**. One byte apart; either reverts to the other in a single flash. image `c9b127b1e851c9ee…` · rwd `b5a41b7b1da0625d…`
+> ⇒ **1803 checks passed, 58/58 bit-exact.**
+
 > ⚠⭐⭐⭐⭐ **OPERATOR QUESTION ANSWERED: V241 vs THE CAR IS ONLY 23 BYTES — AND ONE OF THEM REVERTS A CELL THE CAR'S OWN BUILD NAME CALLS “BEST”.**
 >
 > Confirmed **V122 is the last flown** (route r24); **V112 came earlier in the same lineage** and V122 superseded it. Diffing V241 against V122 over `[0x13000,0x100000)`:
