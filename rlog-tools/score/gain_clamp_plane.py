@@ -9,9 +9,10 @@ has never been searched.
 The two dimensions do different things:
 
     gain   sets torque per unit of command BELOW the rail, and sets the loop gain around the
-           21.4 Hz mechanical mode.  It is also the ratchet's anti-damping (~ -4.4 of Re(Z) per 1x).
-    clamp  sets PEAK delivered torque and the command at which the loop rails.  It has no effect
-           on Re(Z) at all.
+           21.4 Hz mechanical mode.  It is also the ratchet's anti-damping (~ -6.6 of Re(Z) per 1x,
+           from the 3-dose median over 16 flown builds -- see gain_clamp_collinearity.py).
+    clamp  sets PEAK delivered torque and the command at which the loop rails.  Believed to have no
+           effect on Re(Z) -- but see the collinearity caveat below, which is why "believed".
 
 So the gain is the only thing that costs ratchet, and the clamp is the only thing that sets peak.
 Searching them jointly is the whole point.
@@ -25,10 +26,20 @@ MODEL, and its weak point stated up front:
 \U0001f6d1 [BELIEF] the compensation model is optimistic -- it assumes openpilot recovers the full gain
 ratio below the rail, which holds only while its own authority and rate limits are not binding.  The
 rail-duty column is the honest bound on how often that fails.
-\U0001f6d1 [BELIEF] the gain->ratchet slope is confounded with build era; one era-free contrast supports
-it (V101->V102 with Lever B held), not a controlled experiment.
-\U0001f6d1 HARD CONSTRAINT: the clamp must stay strictly under the soft-EME wall 0xC674E = 5120, and that
-cell is one of a mirrored INT/FLOAT quad -- the pair V27 hard-faulted on.  Do not raise the wall.
+\U0001f6d1\U0001f6d1 THE SLOPE IS CONFOUNDED WITH THE CLAMP, NOT MERELY WITH ERA -- the serious caveat.
+The tracking rule `clamp = gain * 512 // 891` was held EXACTLY on all 16 flown builds (4x->2048,
+6x->3072, 8x->4096), so gain and clamp are PERFECTLY COLLINEAR in the corpus.  Nothing in the data
+distinguishes "lower gain helps" from "lower clamp helps"; both fit all 16 exactly.  And they make
+OPPOSITE predictions for every configuration ranked below, since all of them RAISE the clamp.
+**V256 (clamp 4096 with the gain held at the car's 6x) is the first build ever to break the tracking,
+so it is the disambiguating experiment.**  Run gain_clamp_collinearity.py before trusting this table.
+\U0001f6d1 THE 5119 CAP HERE IS CONSERVATISM, NOT A STRUCTURAL LIMIT.  The old "the clamp must stay under
+0xC674E = 5120" rule was settled UNFOUNDED 2026-08-27 three ways: disjoint reader sets, disjoint
+dataflow (0xC674E's corridor is indexed by driver column torque), and the relation has already
+diverged on-car -- 0xC674E frozen at 5120 while the clamps went 2048 -> 4096 -> 3072, with V101
+flying a ratio of 1.25 without faulting.  The cap is kept only because no build has ever run a
+clamp above 4096.  Do NOT abort a build on that rule -- but DO leave the mirrored INT/FLOAT quad
+alone; that pair is what V27 hard-faulted on.
 
 PATH BOOTSTRAP -- see the note in the sibling scripts.
 """
@@ -55,7 +66,9 @@ if hasattr(sys.stdout, 'reconfigure'):
 STOCK = 891.0
 CAR_GAIN, CAR_CLAMP = 5346.0, 3072      # V112 / the car
 CAR_REZ = -64.77
-SLOPE_PER_X = -4.4
+SLOPE_PER_X = -6.6      # CORRECTED 2026-08-30: 3-dose median over 16 flown builds
+                        # (4x -55.37, 6x -68.49, 8x -84.06). The old -4.4 came from a single
+                        # era-free contrast (V101->V102). See gain_clamp_collinearity.py.
 EME_WALL = 5120                          # 0xC674E -- the clamp must stay strictly under this
 
 
@@ -99,7 +112,8 @@ def main():
         print('  no command data.')
         return
     print('\n  %d engaged frames of real openpilot command.' % len(cmd))
-    print('  peak delivered torque IS the clamp.  Re(Z) depends ONLY on the gain.\n')
+    print('  peak delivered torque IS the clamp.  The Re(Z) column MODELS the effect as')
+    print('  gain-only -- which the flown corpus cannot verify. See the caveat below.\n')
 
     base = row(cmd, 6.0, CAR_CLAMP)
     print('  %-16s %7s %8s %9s %9s %8s %9s'
@@ -142,11 +156,14 @@ def main():
         print('  (none)')
     print('  ' + '-' * 78)
     print('  columns after rail%% are DELTAS vs the car.  peak tq delta is the clamp ratio exactly.')
-    print('\n  \U0001f6d1 clamp is capped at %d: it must stay strictly under the soft-EME wall %d'
-          % (5119, EME_WALL))
-    print('     (0xC674E, one of the mirrored INT/FLOAT quad the V27 build hard-faulted on).')
-    print('  \U0001f6d1 [BELIEF] the compensation model and the gain->ratchet slope are both stated')
-    print('     assumptions, not controlled experiments. See the docstring.')
+    print('\n  \U0001f6d1 clamp capped at %d here as CONSERVATISM, not a structural limit -- the'
+          % 5119)
+    print('     "must stay under 0xC674E = %d" rule was settled unfounded 2026-08-27.' % EME_WALL)
+    print('     (Do still leave the mirrored INT/FLOAT quad alone: that is the V27 class.)')
+    print('  \U0001f6d1\U0001f6d1 GAIN AND CLAMP ARE PERFECTLY COLLINEAR IN ALL 16 FLOWN BUILDS, so the')
+    print('     Re(Z) column assumes the effect is the GAIN\'s. If it is the CLAMP\'s instead,')
+    print('     every row above is WRONG IN SIGN -- they all RAISE the clamp. V256 settles it.')
+    print('  \U0001f6d1 [BELIEF] the compensation model assumes openpilot winds up below the rail.')
 
 
 if __name__ == '__main__':
