@@ -82,6 +82,72 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑🛑🛑⭐⭐⭐⭐⭐ **2026-08-30 — THE KIT'S ONLY MEASURED GRINDING FIX HAS NOT BEEN ON THE CAR SINCE V65.**
+> V62 (`sar 0xa`→`sar 0x9` at **`0x3AB76`** and **`0x3AC20`**) measured **18–22 Hz down 8×** (42× at
+> |rate| 16–32 °/s) against a flat 30–40 Hz control, and the operator said *"Original grinding at 2–5 mph
+> is gone!"* Read from the **images**, not the record:
+> ```
+>   stock                      aa32  aa42   1x Kd
+>   V62 / V65                  a932  a942   2x Kd   <- the fix
+>   V70                        aa32  aa42   REVERTED
+>   V88 V100 V108 V111 V112    aa32  aa42   1x Kd   <- V112 is the car
+>   V131 V139                  a932  a942   2x Kd   <- restored again
+>   V122 V241 V251 V254        aa32  aa42   1x Kd   <- lost again; the whole old shelf
+> ```
+> `BUILD-LINEAGE-PART1` says *"Restored in V71"*. **The images say it was added and dropped TWICE.**
+> A mechanical audit of every flown image vs V112 confirms this is the **only genuine instance** — the car
+> also lacks the notch relocation, FactorC/E and the `0xC646C` decoupling, but those were never *lost*:
+> **V112 simply predates ~140 builds of work.**
+>
+> **MECHANISM.** The grinding mode is a lightly-damped **MECHANICAL** resonance — 21.4 Hz, **Q = 13.6**,
+> ~0.23 s coherence — not a digital limit cycle. Its `phi'` coefficient is **positive and LINEAR in Kd**,
+> and at Kd = 0 the mode has **no damping term at all**. The rate lane IS that Kd. Engaged vs disengaged
+> at matched speed, hands-off: **9,200× more 21 Hz power engaged**, while the disengaged pool carries 6×
+> MORE low-frequency energy — so the loop closes **through the physics**, not through firmware.
+>
+> ⭐ **AND A DERIVATIVE IS NOT THE FRICTION THE OPERATOR RULED OUT** — it scales with frequency, so at
+> 1 Hz it delivers **4.7 %** of its 21.4 Hz output (3 Hz → 14 %, the ratchet 7.8 Hz → 36 %). It acts where
+> motion is fast and is nearly absent where he steers. The dangerous form is the **Coulomb relay**
+> (`4M/πa` → ∞ as amplitude → 0), which is what made V80 the worst grinding ever produced.
+
+> 🛑🛑⭐⭐⭐⭐⭐ **THE GAIN→RATCHET SLOPE IS ~−6.6 PER 1×, NOT −4.4 — AND IT IS CONFOUNDED WITH THE CLAMP.**
+> Coherence-gated 6–9 Hz `Re(Z)` over **16 flown builds**, gain read from the images:
+> ```
+>   gain    n    median Re(Z)    range              4x -> 6x  =  -6.6 per 1x
+>   4.0x    6       -55.37       -46.6 .. -66.8     6x -> 8x  =  -7.8 per 1x
+>   6.0x    9       -68.49       -62.3 .. -74.9   <- V112, the car
+>   8.0x    1       -84.06
+> ```
+> ⇒ 6× → 4× is worth **~13 units, 20 % of the 65-unit requirement, from one cell.**
+> 🛑🛑 **BUT `clamp = gain × 512 // 891` HELD EXACTLY ON ALL SIXTEEN** (4x→2048, 6x→3072, 8x→4096).
+> **Gain and clamp are PERFECTLY COLLINEAR in the whole flown corpus** — nothing distinguishes *"lower
+> gain helps"* from *"lower clamp helps"*, and they predict **opposite** outcomes for every shelf build,
+> since all of them raise the clamp.
+> ⇒ ⭐ **V256 IS THE DISAMBIGUATING EXPERIMENT** — clamp alone, gain held at the car's 6×, which no build
+> has done in 16 flights. Readers: `rlog-tools/score/gain_clamp_collinearity.py`, `gain_clamp_plane.py`.
+> ⊕ **The `0xC674E` abort rule stays UNFOUNDED** (settled 2026-08-27); the 5119 cap in the plane tool is
+> conservatism, now labelled as such. **Leave the mirrored INT/FLOAT quad alone — that is the V27 class.**
+
+> ⭐⭐⭐⭐⭐ **THE V112-BASED LADDER — BUILT, VERIFIED, UNFLASHED 2026-08-30.** All on the **V112** base
+> (what the operator says is on the car), every payload byte attributed, MANUAL damper records asserted
+> byte-identical in all five, V27 quad asserted in sync and untouched, all reproduce bit-for-bit.
+> ```
+>   build  pay  gain  clamp  rate  damper   targets                image sha256[:16]
+>   CAR      0  6.0x   3072    1x   stock   --                     f032878c4e0b8e90
+>   V255     2  6.0x   3072    2x   stock   grinding, 1 variable   32852708058ba3e7
+>   V256     4  6.0x   4096    2x   stock   + authority  ** THE DISAMBIGUATOR **  f9cbb677ecd98757
+>   V257     6  5.0x   4096    2x   stock   all four, mild         d43ab1a1a73a8da5
+>   V258     6  4.0x   4096    2x   stock   all four, frontier     f4515c684b25d3e3
+>   V259    15  4.0x   4096    2x    OPEN   maximum ratchet        fc7e72aa2e66584a
+> ```
+> **V258's cells all sit at previously-FLOWN values** (gain 3564 flew V38–V100, clamp 4096 flew as V101,
+> the two `sar` bytes flew as V62/V65) — **only the combination is new.**
+> **RECOMMENDED ORDER: V255 → V256 → V258.** V257 is dominated (it was the worst of the twelve winning
+> configurations); V259 moves five levers and is for after the direction is known.
+> 🛑 A broken check was found and fixed: both V257/V258 inherited a peak-torque assertion with a hardcoded
+> stale command value — it **FAILED in V258 and PASSED IN V257 FOR THE WRONG REASON** (reporting 3415
+> instead of 4096). The *"a check that looks right and is not"* class.
+
 > 🛑🛑🛑 **UNRESOLVED: WHICH BUILD IS ON THE CAR. THE OPERATOR SAYS V112; THIS FILE SAYS V122.**
 > Raised by the operator 2026-08-30: *"last on car is V112"*. This file (below) says *"Confirmed V122 is
 > the last flown (route r24)"*. **Both cannot be right, and every "vs the car" number computed in the
