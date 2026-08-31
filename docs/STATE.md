@@ -66,6 +66,34 @@
 > ⚖ **WHY 80 AND NOT THE CEILING.** 41 is Honda's manual value and the archive already called its effect too small. The ceiling extrapolates to ~21 % less Q, but that is a **linear extrapolation over 5× the measured range** on a branch the record calls incomplete, and a 10× jump on an unmodelled lever is how the V94 drive ended. **80 puts the corner at 6.34 Hz, just BELOW the 7.79 Hz mode** — responsive AT the mode, still rolling off above it — takes 52 % of the available phase change, and leaves 204 as a second rung.
 > 🛑 **WHAT IS ASSUMED:** the SIZE rests on the archive's 1.713/1.798 linearisation extrapolated 2.7×. **Direction is well-founded** (the archive's own arithmetic, plus the manual arm at k=41 being the arm WITHOUT the ratchet); **magnitude is an order-of-magnitude estimate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE LKAS GAIN *IS* THE RATCHET'S ANTI-DAMPING. IT PRICES THE GAIN LADDER, AND IT EXPLAINS WHY NO OTHER LEVER HAS EVER MOVED THE RATCHET IN SIXTY BUILDS.**
+>
+> Regressing the coherence-gated 6–9 Hz `Re(Z)` on `0xC6CD0` across every flown build:
+> ```
+>   4x  (7 builds)   Re(Z)  -46.6 .. -66.8
+>   6x  (9 builds)   Re(Z)  -62.3 .. -74.9
+>   8x  (1 build)    Re(Z)  -84.1
+>   slope -0.0074 per count · R2 0.726 · Spearman rho -0.819 · p 0.0001 · n = 17
+> ```
+> ⚠ **Gain rises monotonically with build era, so the trend ALONE proves nothing.** What breaks that confound is a **reversal**, and there is one — three consecutive builds where the gain goes **up then down**:
+> ```
+>   V100  4x  ->  Re(Z) -66.83
+>   V101  8x  ->  Re(Z) -84.06     gain UP,   anti-damping DEEPENS  (-17.23)
+>   V102  6x  ->  Re(Z) -74.91     gain DOWN, anti-damping RECOVERS (+9.15)
+> ```
+> ✅ **[EVIDENCE] `Re(Z)` FOLLOWS THE REVERSAL. Build era is monotone and cannot produce one.** ≈ **−4.4 of `Re(Z)` per 1× of gain.**
+> ⭐⭐ **WHY THIS CLOSES THE ARC'S CENTRAL PUZZLE.** The ratchet was never a lever we had failed to find — **it tracks the gain the kit itself kept raising.** That is why every cal, filter, damper, cave and notch measured null on it, and why **no build V90→V122 moved the anti-damping** (median −64.8, sd 9.1): none of them changed the thing that sets it.
+> ⇒ **HOW IT WAS REACHED — three eliminations first, all from bytes:** engagement re-indexes the mode table 24→26, and of everything that re-index touches, **the five base-assist damper records and all three boost tables are BYTE-IDENTICAL** between manual and engaged. Only **friction** differs (3× — `Y −9830/−5734/−1966` → `−29490/−17202/−16000`), and its dose spans **1.0×–3.0× across 17 flown builds with NO relation to `Re(Z)`** (rho −0.263, p 0.31). ⇒ no re-indexed calibration explains it, which left the applied LKAS torque — and that is what the gain sets.
+> 🛑🛑 **THE PRICE OF THE LADDER, AND THE OPERATOR MUST SEE IT BEFORE FLYING:**
+> ```
+>   V241   6x   the car's present gain    Re(Z) ~ -70   (V122 measured -70.13)
+>   V242   8x   +2x                       Re(Z) ~ -79   ratchet WORSE
+>   V243  10x   +4x                       Re(Z) ~ -88   ratchet WORSE STILL
+> ```
+> **This does not withdraw V242/V243** — the operator asked for the ladder and it is built and verified — but it converts them from *“more authority, ratchet unknown”* into *“more authority, measurably more ratchet”*. **V241 remains the recommendation, and now for a measured reason rather than a cautious one.**
+> ⚠ **LIMITS:** n = 75–170 windows, **one route per build**, and adjacent builds differ in more than the gain cell. The reversal is what carries this, not the regression. **A SCREEN that prices a trade-off — not a controlled experiment.**
+> ➕ Readers: `rlog-tools/score/gain_vs_antidamping.py`, `friction_dose_vs_antidamping.py`.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **NO BUILD FROM V90 TO V122 HAS MOVED THE 6–9 Hz ANTI-DAMPING — AT ALL. THAT IS THE MECHANISM-LEVEL REASON SIXTY BUILDS PRODUCED NOTHING ON THE RATCHET.**
 >
 > Now that the ratchet's anti-damping measures **linear and amplitude-independent**, a per-build comparison of it is finally *interpretable* — and that same amplitude-independence is what makes it interpretable, since a quantity that swings with amplitude cannot be compared across routes that differ in amplitude. Engaged windows, `tq` vs `cs_rate` (**both non-rectified**), **coherence ≥ 0.60 only**:

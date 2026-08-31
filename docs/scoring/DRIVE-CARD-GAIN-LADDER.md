@@ -13,6 +13,49 @@ floor and is the build most likely to simply work.
 torque", not what you asked** — and it skips your own ruling, *"fix at 6× first, then raise to 8×"*,
 where the fix is built but has never been verified on the car.
 
+## 🛑 NEW, AND IT PRICES THE LADDER: THE GAIN *IS* THE RATCHET
+
+Measured after the card was first written, on instruments independent of the EPS. **The 6–9 Hz
+anti-damping — the thing that makes the wheel ratchet — tracks the LKAS gain across every build you
+have ever flown.**
+
+```
+  4x  (7 builds)   Re(Z)  -46.6 .. -66.8      less negative = less ratchet
+  6x  (9 builds)   Re(Z)  -62.3 .. -74.9
+  8x  (1 build)    Re(Z)  -84.1
+```
+
+Gain went up over time, so a trend alone would prove nothing. **What settles it is a reversal in
+three consecutive builds — the gain goes up, then back down, and the ratchet follows both ways:**
+
+```
+  V100   4x  ->  -66.83
+  V101   8x  ->  -84.06     gain UP,    ratchet WORSE
+  V102   6x  ->  -74.91     gain DOWN,  ratchet BETTER
+```
+
+**≈ −4.4 of anti-damping per 1× of gain.** So, in your own terms:
+
+| build | gain | expected ratchet vs your car today |
+|---|---|---|
+| **V241** | 6× | **the same** — this is your car's present gain |
+| V242 | 8× | **worse**, by about the V100→V101 step you can already feel |
+| V243 | 10× | **worse still**, roughly double that |
+
+**This does not withdraw V242 or V243.** You asked for the ladder, it is built and verified, and the
+authority is real. What changed is that the trade is no longer unknown: **more torque buys more
+ratchet, and now there is a number on it.** If the ratchet is the symptom you care most about,
+**V241 is not just the safe first step — it is the best rung on the ladder.**
+
+⚠ One route per build and 75–170 windows each, so treat this as a **priced trade-off, not a
+controlled experiment**. The reversal is what carries it, not the regression line.
+
+⭐ **Why this is the most useful thing found in the whole arc:** it explains why sixty builds of
+cals, filters, dampers, caves and notches all measured null on the ratchet — **none of them changed
+the thing that sets it.** Reader: `rlog-tools/score/gain_vs_antidamping.py`.
+
+---
+
 ```
   V241   6x   <-- FLY THIS FIRST.  Your car's gain. All the grinding work. Nothing else changes.
   39990-TVA,A160-V241-V235BASE-NOTCH.IMU.29.75-22.50-0.940-0x13000-0x100000.rwd
