@@ -89,6 +89,7 @@ PUB = {
     'v249': '9c1ac13746538b45e7dc56057ab02728b403b90aeae473c9c18cc874b03ecb50',
     'v250': '66f15ba3d1c6b5ce15b0538827482e89e77ebc3544b42e767655841cf106187b',
     'v251': 'b1976f8f442e7533f48a6b2c4a79c774276976c92a844a760d2a7de97de75b4d',
+    'v252': '0f3f6cf2b1eb2141c2e89d9c037c393740674fe4602714ac6ce8042907945ce6',
     'v242': '424249b0c7d89fad4e1192fbb89b829fb6295e4260b7959d2a406c95657a5576',
     'v243': '5fb9ad74f104de4616b4704081517d418e4307687eab3490b1ffb62e629d9a07',
 }
@@ -529,7 +530,7 @@ _GAIN_BASE = 5346                      # 6.00x -- the notch shelf's baseline (0x
 _STAGED = {'v211','v213','v215','v216','v217','v218','v219','v220',
            'v221','v222','v223',
            'v224','v225','v226','v227',
-           'v242','v243'}   # priced and documented
+           'v242','v243', 'v252'}   # priced and documented
 # V242 (8x) / V243 (10x) -- the operator's OWN sequence, "fix at 6x first, then raise to 8x".
 # PRICED AGAINST THE NOTCH, which is the condition this gate exists to enforce: 8x flew as V101
 # and was rejected -- "grinding/vibration at all speeds, only while LKAS commands" -- with the
@@ -904,6 +905,12 @@ _KNOT_OK = {
     ('v251', 0xD77DA),
     ('v251', 0xC61B2),
     ('v251', 0xC61B4),
+    ('v252', 0xD780E),
+    ('v252', 0xD7818),
+    ('v252', 0xD77DA),
+    ('v252', 0xC61B2),
+    ('v252', 0xC61B4),
+    ('v252', 0xC6CD0),
     ('v250', 0xD7756),
     ('v250', 0xD7758),
     ('v250', 0xD775A),

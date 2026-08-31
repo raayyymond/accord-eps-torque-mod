@@ -82,6 +82,25 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⭐⭐⭐⭐ **V252 — 8× ON TOP OF EVERY FIX. THE AUTHORITY STEP THE BRIEF ASKED FOR, AND THE ONLY BUILD ON THE SHELF THAT MAKES A SYMPTOM WORSE ON PURPOSE.**
+>
+> The brief was *“6× or higher, up to 16×, with no grinding, vibration or oscillation.”* Until this session the gain step was **unaffordable**: the ratchet tracks the forward gain (rho −0.819 over 17 flown builds), so 8× meant more of the exact symptom being chased with **nothing on the other side of the ledger.** That has changed.
+> ```
+>   0xC6CD0   5346 -> 7128    forward LKAS gain, 6x -> 8x    -- ONE cell
+> ```
+> ⭐ **THE CLAMP IS ALREADY RIGHT.** V251 set it to **4096**, which *is* `gain*512//891` at 8× — so V252 **restores** the tracking rather than breaking it further, and never touches the clamp. Asserted at build time.
+> **WHAT IS BOUGHT AND PAID, measured rather than asserted:**
+> ```
+>   BOUGHT   +33 % assist per unit of command, EVERYWHERE -- not just at the peaks
+>   PAID     the rail returns 683 -> 512 counts: V251's 23 % rail-time cut is GIVEN BACK
+>   PAID     ~13 units of Re(Z) anti-damping, from the gain/ratchet relation
+>   OFFSET   V249 supplies ~50 counts of damping against a ~56-count requirement -- the first
+>            time in this arc anything has been on the other side of that ledger
+> ```
+> 🛑 **THIS IS THE ONE BUILD THAT WORSENS A SYMPTOM DELIBERATELY.** Every other build in the V246–V251 group is symptom-reducing or symptom-neutral. **It is NOT the build to fly if the ratchet is the priority**, and it is **only meaningful after V251 has flown clean** — otherwise it inherits an unfixed ratchet and adds 13 units to it.
+> ⚠ **THE HISTORY IT WALKS BACK INTO:** 8× flew once as **V101** and was rejected — *“grinding and vibration at all speeds, only while LKAS commands.”* **V101 carried no notch, no damper and no grinding treatment.** V252 carries all three. That is the whole bet, and it is unflown.
+> ⇒ **1772 checks passed, 57/57 bit-exact.** The `_STAGED` gate **caught this build** and refused it until registered as a documented gain-raiser — the safety mechanism working exactly as intended.
+
 > ⭐⭐⭐⭐⭐ **V251 IS ALSO THE ANSWER TO *LKAS AUTHORITY* — AND IT IS THE ONLY AUTHORITY LEVER THAT COSTS NO RATCHET.**
 >
 > I undersold this build as *“not a torque step”*. True of the **gain**; false of **delivered torque**. Computing `delivered = min(|cmd| × gain/891, clamp)` over the flown command stream:
