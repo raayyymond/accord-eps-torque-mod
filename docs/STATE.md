@@ -82,6 +82,25 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE SEARCH IS COMPLETE. ALL FIVE SENSOR-FED LANES ARE NOW ACCOUNTED FOR — BUILT, OR CLOSED BY ARITHMETIC, OR CLOSED BY THE OPERATOR'S OWN CONSTRAINT. THE ONLY THING THAT REACHES THE REQUIREMENT IS THE DAMPER.**
+>
+> The on-car evidence confines the ringing to five lanes: *“for 52–70 % of the return the LKAS lane is a DC CONSTANT, yet the 6–9 Hz |tq| envelope is unchanged … a constant cannot carry 7.8 Hz ⇒ **the ringing enters through a SENSOR-FED lane, not the command lane.**”*
+> ```
+>   r24/r26      Lever B  0xC6446    -> V246 BUILT (1.5x)
+>   gp-0x6ad4    PID knee 0xC67C4    -> V245 BUILT (1280 -> 512)
+>   gp-0x6b26    inertia  0xC63AE    -> CLOSED: an INERTIA term; raising it adds apparent MASS
+>   gp-0x6bbe    viscous  0xC63A2    -> CLOSED: 2.4 % of requirement, 3.2 % at its rail
+>   plant model  k1       0xC40D2    -> V222 restored to 1020, carried
+>
+>   base-assist damper gp-0x6bd0 (NOT sensor-fed -- it OPPOSES the motion):
+>                V247   50.6 counts    90 % of requirement
+>                V248  101.3 counts   181 %
+> ```
+> ✅ **`gp-0x6bbe` WAS THE LAST GENUINELY OPEN ONE** — the only lane measured as *truly* viscous (flat **90 ct/(rad/s)**, phase ~0° vs rate) and a **virgin single-reader cal** the record explicitly refused to call vacuous without a number. The number: `90 ct/(rad/s) = 1.571 ct/(deg/s)` against a **65 ct/(deg/s)** requirement = **2.4 %**, and it already sits at **76 % of its ±512 rail** so it can rise at most **1.32×** ⇒ **3.2 % maximum.** Closed on arithmetic, which is what the record asked for.
+> ⭐ **`gp-0x6b26` closes on the operator's own words rather than a number:** it is an **inertia** term, so raising it adds **apparent mass** — *“increasing mass and friction should not be our primary approach … we want LOW apparent steering mass and friction.”* Wrong direction by construction.
+> ⇒ **THE WHOLE SEARCH NOW RESOLVES TO ONE SENTENCE:** the ringing enters through sensor-fed lanes that are individually too small to cancel it, and the lane that *could* cancel it — **the damper, whose entire purpose is to oppose this motion** — has been sitting behind a dead zone the operating point never clears, **byte-stock in every build ever flown.** V247 and V248 are the first builds to open it.
+> ➕ Reader: `rlog-tools/score/sensor_fed_lane_census.py`.
+
 > ⭐⭐⭐⭐ **V248 BUILT — THE MARGIN RUNG. V247 REACHES 90 % OF THE REQUIREMENT; THIS TAKES IT TO 181 %, FROM THE SAME LANE, WITH THE ARITHMETIC EXACT.**
 >
 > V247's ~50.6 counts against a ~56-count requirement is close — **and the requirement is itself an estimate**, so if it is really 70 or 80 then V247 lands short. This buys margin from the cell best suited to it:
