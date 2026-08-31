@@ -3,6 +3,16 @@
 ## ⭐ THE SHORT LIST (everything else is detail)
 
 ```
+  0.  V254   THE BEST TRADE FOUND. The only build that beats your car on ALL
+              THREE at once: +7% mean torque, +33% PEAK torque, 26% less rail
+              time, and ~15% of the ratchet. It gets there by LOWERING the gain
+              to 5x and RAISING the clamp -- peak torque is the clamp, not the
+              gain, so you end up with more torque, not less.
+              CAVEAT: '5x' may FEEL softer at a given input even though delivered
+              torque is higher. Only you can judge that.
+  39990-TVA,A160-V254-V250BASE-GAIN5X.CLAMP4096.BEST.TRADE-0x13000-0x100000.rwd
+              rwd  1e336dfbdda6b23f...      image 80d11a28e5e73a35...
+
   1.  V241   baseline. All the grinding work, your car's own 6x gain.
               Establishes what the rest are compared against.
 

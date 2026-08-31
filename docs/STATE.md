@@ -82,6 +82,34 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⭐⭐⭐⭐⭐ **V254 — THE ONLY CONFIGURATION STRICTLY BETTER THAN THE CAR ON ALL THREE SYMPTOMS AT ONCE. AND IT GETS THERE BY *LOWERING* THE GAIN.**
+>
+> The operator asks for more torque and less ratchet, and the gain relation says those conflict. **But peak delivered torque is set by the CLAMP, not the gain** — `delivered = min(cmd·gain/891, clamp)`. So lowering the gain while raising the clamp:
+> ```
+>   loses torque per unit of command          (bad)
+>   raises the ceiling it is clipped at        (good -- and it repays more than the loss)
+>   reduces the anti-damping                   (good)
+>   raises the command at which the loop rails (good -- less peak command oscillation)
+> ```
+> **Three of four point the same way, and the fourth is outweighed.** Measured over **1,691,012 engaged frames** of real openpilot command, every row on one corpus:
+> ```
+>   configuration      gain  clamp  rail duty  mean deliv   Re(Z)        vs the car
+>   V122 (the car)     6.0x   3072     30.2 %      1688     -64.8            --
+>   V251 (clamp only)  6.0x   4096     24.9 %      1968     -64.8    +17 % tq /  0.0
+>   V252 (8x)          8.0x   4096     30.2 %      2251     -73.6    +33 % tq / -8.8
+>   V254 (this)        5.0x   4096     22.3 %      1801     -54.9     +7 % tq / +9.9
+> ```
+> ✅ **[EVIDENCE] V254 IS THE ONLY ROW THAT BEATS THE CAR ON TORQUE *AND* RATCHET *AND* RAIL DUTY SIMULTANEOUSLY.** `0xC61B2/B4` 3072→4096 and `0xC6CD0` 5346→4455, on top of V241's notch and the full damper — **4 payload bytes.**
+> ```
+>   +7 %  mean delivered torque     the clamp ceiling rises 3072 -> 4096
+>   +33 % PEAK delivered torque     the clamp IS the peak
+>   -26 % rail duty  30.2 -> 22.3   the loop is open less often
+>   +9.9  Re(Z)  -64.8 -> -54.9     15 % of the 65 needed: +4.4 gain, +5.5 damper
+> ```
+> 🛑 **THE HONEST WEAKNESS: “5×” READS LIKE LESS TORQUE.** *Delivered* torque goes UP, but if the operator judges the car by feel at a given steering input rather than by lane-holding, a lower gain may feel **softer below the rail** even with the mean and peak both higher. **That is a feel question only a drive settles.** **V251** (clamp only, gain untouched) is the conservative alternative: +17 % torque, no gain change, no ratchet benefit.
+> ⚠ And the gain→ratchet slope is **confounded with era** — one era-free contrast supports it, not a controlled experiment. If it is wrong, V254 keeps its torque and rail gains and loses only the +4.4.
+> ⇒ **1844 checks passed, 59/59 bit-exact.** image `80d11a28e5e73a35…` · rwd `1e336dfbdda6b23f…`
+
 > ⚖⭐⭐⭐⭐⭐ **THE DAMPER TRADE, FULLY PRICED — AND IT ARGUES AGAINST A MAXIMAL BUILD. V250 IS THE SENSIBLE CEILING.**
 >
 > Correcting my own correction: *“cannot cancel the ratchet”* is too pessimistic as a verdict. The ratchet is a **limit cycle bounded by nonlinearity**, so reducing net anti-damping does not have to reach zero to move the amplitude balance. The right question is the **trade**, and both sides are computable — damping uses the curve's **slope**, authority cost uses its **magnitude**:

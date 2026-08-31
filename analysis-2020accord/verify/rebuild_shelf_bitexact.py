@@ -94,6 +94,7 @@ SHELF = {
     'v251': 'b1976f8f442e7533f48a6b2c4a79c774276976c92a844a760d2a7de97de75b4d',   # V249 + clamp raised ALONE -- 23% less rail time, gain unchanged
     'v252': '0f3f6cf2b1eb2141c2e89d9c037c393740674fe4602714ac6ce8042907945ce6',   # V251 + 8x gain -- the authority step on top of every fix
     'v253': 'c9b127b1e851c9eee841fad7a730207cd6b1f0ca5697e2a8c39ceb0889ae2662',   # V241 with the car's own alpha2 kept -- notch is the only control delta
+    'v254': '80d11a28e5e73a352cee99b93bd99943305045125794ed9d50a08b89faa7ec15',   # 5x + clamp 4096 + full damper -- the only strict improvement on the car
     'v244': '83f2d0260f1df4fb5cd646c65142cfcc4865a921cc8ecf9a816c4a7ae85260af',   # V241 with the notch moved ONTO the ratchet -- the experiment that settles the 6-15 Hz rule
     'v242': '424249b0c7d89fad4e1192fbb89b829fb6295e4260b7959d2a406c95657a5576',   # gain ladder on the V241 grinding work
     'v243': '5fb9ad74f104de4616b4704081517d418e4307687eab3490b1ffb62e629d9a07',   # gain ladder on the V241 grinding work   # V235 + the notch re-aimed on the IMU objective (29.75/22.50/0.940)   # V238 + the NORMAL slew curve x Honda's 0.600 -- largest measured ratchet lever
