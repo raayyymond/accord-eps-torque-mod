@@ -82,6 +82,19 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ✅⭐⭐⭐⭐⭐ **THE PID DERIVATIVE'S SIGN IS DETERMINATE AFTER ALL — AND IT SAYS DO NOT BUILD THE CUT. THE LAST OPEN LEVER IS CLOSED.**
+>
+> I recorded the D term as *“sized but sign unknown”*. **The sign is computable, not unknowable.** The PID's error is torque-derived, so the D term injects a torque proportional to `d(tq)/dt`, which **leads `tq` by exactly 90°**. Damping is torque antiphase with rate (180°); pumping is in phase (0°). So the D contribution sits at **`arg(Z) + 90°`** — and `arg(Z)` is measurable on the same non-rectified instruments:
+> ```
+>   ratchet  6-9.5 Hz   arg(Z) -151.1 deg   D at  -61.1 deg   damping fraction -0.483  -> PUMPS
+>   grinding 22-30 Hz   arg(Z)  +21.6 deg   D at +111.6 deg   damping fraction +0.367  -> DAMPS
+> ```
+> 🛑 **THE D TERM PUMPS AT THE RATCHET AND DAMPS AT THE GRINDING BAND.** Cutting it trades one symptom for the other — **and the trade is bad**, because the D term is **0.43× the P term at 8.5 Hz but 1.26× at 25 Hz**: cutting removes considerably more damping from grinding than it removes pumping from the ratchet.
+> ⇒ **CANDIDATE CLOSED. Do not cut `0xC6AE6` or move `0xC644A`.** That is worth more than another speculative build, and it explains V43's null (`0xC644A` 1024 → 64) as a real result rather than a mis-scored one: the two effects partly cancel.
+> ✅ **AND THE PHASES CHECK OUT INTERNALLY** — an independent consistency test of the whole measurement stack: `cos(−151.1°) = −0.87` gives a **negative** Re(Z) at the ratchet, and `cos(+21.6°) = +0.93` gives a **positive** Re(Z) at 22–30 Hz. Both match the Re(Z) values measured separately, by a different estimator, earlier in the session.
+> ⚖ **[BELIEF]** the sign rests on the standard small-signal argument — that the plant seen by the injected torque is the plant `Z` describes. It is the same argument that settled the damper's sign, but it is a model step, not a direct measurement of the D term.
+> ➕ Reader: `rlog-tools/score/pid_derivative_sign.py`.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE RESONANCE PID RUNS A RAW DERIVATIVE WITH D GAIN 8× ITS P GAIN, BYTE-STOCK IN ALL 18 FLOWN BUILDS. THE LAST STRUCTURALLY SUSPICIOUS THING IN THE CHAIN — SIZED, BUT ITS SIGN IS NOT KNOWN.**
 >
 > Decompiling `FUN_0003a382` (the lane the record calls *“never scored at 6–9 Hz”*):
