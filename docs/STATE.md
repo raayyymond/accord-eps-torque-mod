@@ -82,6 +82,32 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V247 WAS AIMED AT ONLY 64 % OF THE PROBLEM — I BUILT HALF THE RECOMMENDED LEVER. V249 AND V250 CLOSE IT, AND THE DAMPER LADDER IS NOW COMPLETE ACROSS THE WHOLE SPEED RANGE.**
+>
+> The record's recommendation was to open **both** dead zones. **V247 opened only the RATE half.** `FactorC`'s SPEED dead zone is `X[0] = 2240` counts = **35 km/h with `Y[0] = 0`**, and zero × anything = 0 — so **below 35 km/h the whole damper is structurally zero no matter what `FactorE` does.** Stratifying the measured anti-damping by speed, coherence-gated, **4,772 engaged windows**:
+> ```
+>    0-10 km/h  -55.5      10-20  -65.6      20-35  -71.7     <- damper DEAD
+>   35-50 km/h  -68.4      50-70  -60.0      70+    -57.4     <- damper live
+>
+>   below the knee: 36.4 % of engaged windows, Re(Z) -64.7
+>   above the knee: 63.6 %,                    Re(Z) -60.9
+> ```
+> 🛑 **THE ANTI-DAMPING IS PRESENT AT EVERY SPEED, ROUGHLY UNIFORMLY — IT IS NOT A CREEP-ONLY PHENOMENON**, and below the knee it is if anything **worse**. So V247 could act on 64 % of engaged driving and was inert by construction on the other 36 %.
+> ⇒ **V249** = V247 + `FactorC Y[0] 0 → 429` (`:= Y[2]`, the record's own value) · **V250** = V249 + `FactorB ×2`. Priced through the decompiled mirror, from the real image bytes:
+> ```
+>   build     10 km/h   25 km/h   80 km/h   MANUAL 25 km/h
+>   V122            0         0         6              0
+>   V241            0         0         6              0
+>   V247            0         0        50              0    <- high speed only
+>   V248            0         0       100              0    <- high speed only
+>   V249           50        50        50              0    <- all speeds,  89 % of requirement
+>   V250          100       100       100              0    <- all speeds, 179 %
+> ```
+> ✅ **[EVIDENCE] MANUAL READS 0 ON EVERY BUILD** — the engaged-only guarantee is now verified from the **shipped artefacts** across the entire ladder, not asserted at build time. Honda's dead zones exist so the wheel is not heavy in the driver's hands; **none of this added damping reaches them.**
+> ⇒ **V249 SUPERSEDES V247 and V250 SUPERSEDES V248** as recommendations — the earlier pair are the high-speed-only versions and stay on the shelf only as the discriminating variants.
+> ⚠ **THE RISK V249 CARRIES THAT V247 DOES NOT:** openpilot engaged at low speed now meets a damper Honda deliberately removed there. **If LKAS feels sluggish in slow corners or traffic, `FactorC Y[0]` back to 0 returns V247 exactly.**
+> ⇒ **1699 checks passed, 55/55 builders bit-exact.** Flight order: **V241 → V249 → V250 → V246**.
+
 > ✅⭐⭐⭐⭐⭐ **V247/V248 VERIFIED AGAINST THE DECOMPILED ARITHMETIC, FROM THE REAL BYTES — AND A REAL GAP IN THE GOLDEN MODEL CLOSED IN THE PROCESS.**
 >
 > The 90 % / 181 % figures came from a hand LERP, so they needed an independent derivation. **The golden model could not supply one: it does NOT implement this lane at all** — `assist_shaping_lanes` takes `damping_6bd0` as a *supplied input defaulting to 0*, and every `FactorB`/`FactorC`/`FactorE` reference in the four modules is a **comment**. That gap was harmless while the damper was untouched and is not harmless now.

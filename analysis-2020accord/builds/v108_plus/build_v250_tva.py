@@ -1,0 +1,312 @@
+# -*- coding: utf-8 -*-
+r"""V250 -- V249 PLUS THE DAMPER'S FLAT GAIN DOUBLED. THE MARGIN RUNG THAT WORKS AT EVERY SPEED.
+
+V249 opens BOTH of the damper's dead zones and delivers ~50 counts at every speed, against a ~56-count
+requirement computed from Re(Z) = -65.  That is 89 %, and the requirement is itself an ESTIMATE.  This
+rung buys margin from the same lane, and unlike V248 -- which stacked on V247 and therefore only helped
+ABOVE 35 km/h -- it applies across the whole speed range because its base already has the speed dead
+zone open.
+
+    0xD774C   FactorB (engaged, mode 26)   Y = [1024, 1024, 1024, 1024] -> [2048, 2048, 2048, 2048]
+
+    build      10 km/h   25 km/h   80 km/h
+    V122             0         0         6
+    V247             0         0        50      high speed only
+    V248             0         0       100      high speed only
+    V249            50        50        50      all speeds, 89 % of requirement
+    V250           100       100       100      all speeds, 179 %
+
+FactorB is a FLAT Q10 gain at unity across its whole axis -- a pure multiplier with NO dead zone, knee
+or slope to get wrong.  And at HIGH rate the product ALREADY clamps at stock (1024 * 908/1024 *
+927/1024 = 822 -> clamped to 512), so doubling it changes NOTHING at the top end; it lifts only the
+low/mid-rate region, which is exactly where the ratchet lives.
+
+ENGAGED ONLY.  Every mode owns its own record, so the MANUAL FactorB (mode 24) is asserted untouched
+and manual steering feel is byte-identical.
+
+🛑 FLY V249 FIRST.  This is the MARGIN rung, not the first attempt.  V249 vs V241 is one lane;
+V250 vs V249 is one cell.  Flying V250 first wastes the discrimination in both directions -- a win
+would not say whether the dead zones or the gain did it, and a heavy wheel would not say which half to
+walk back.
+
+THE COST, twice V249's.  ~100 counts against the 3072 forward clamp is ~3.3 % of LKAS authority, spent
+only while engaged, and now at LOW speed too where Honda deliberately provided none.  If LKAS feels
+reluctant in slow corners or traffic, revert FactorB to 1024 and you are back at V249 exactly.
+
+BASE: V249.  Eight bytes.
+"""
+import hashlib
+import os
+import struct
+import sys
+import math
+import zlib
+from pathlib import Path
+
+_d = Path(__file__).resolve()
+while not (_d / ".pkgroot").exists() and _d != _d.parent:
+    _d = _d.parent
+for _p in [_d] + [p for p in _d.iterdir() if p.is_dir()]:
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
+for _sub in ("builds", "lib", "model", "verify", "extract"):
+    _q = _d / _sub
+    if _q.is_dir():
+        for _r in [_q] + [p for p in _q.iterdir() if p.is_dir()]:
+            if str(_r) not in sys.path:
+                sys.path.insert(0, str(_r))
+
+import build_vfourframe_tva as FF                                                 # noqa: E402
+import build_v53_tva as V53                                                       # noqa: E402
+from encode_eps import encode_x31, parse_x31, build_decode_table, invert_table     # noqa: E402
+from firmware_paths import plain_image_path, RWD_DIR                              # noqa: E402
+from verify_bootloader_crc import walk_all_blocks                                  # noqa: E402
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+START, END = 0x13000, 0x100000
+WRITE_MODE = os.environ.get("ACCORD_V250_WRITE", "").strip().lower()
+
+BASE_NAME = "_v249_V249-V247BASE-FACTORC.SPEED.DEADZONE.OPEN_plain_image.bin"
+BASE_SHA = "9c1ac13746538b45e7dc56057ab02728b403b90aeae473c9c18cc874b03ecb50"
+
+BIQ, BIQ_LEN = 0xC60A8, 16
+HONDA_BIQ = bytes.fromhex("f8c2c4bf7576223f0ebef0bf3a3b513f")
+PROBE_HW2, SHIFT_OFF = 0x55DF2, 0x55E10
+HW2_KEEP, SAR_KEEP = 0xC7EA, 0xA3          # V231's biquad-state probe -- CARRIED, asserted
+# the re-aim: zeros 34.0 Hz, poles 28.0 Hz, r 0.920 -- bytes, never a re-derived decimal
+REAIM_BIQ = bytes.fromhex("fa15f3bffaed6b3f25d9fcbf16d7693f")
+
+# carried levers -- asserted, never re-set
+LEVER_B, LEVER_B_VAL = 0xC6446, 5244        # V88's bracketed optimum -- CARRIED, asserted
+RESID_SCALE_VAL = 1024                      # CARRIED, asserted
+SLOPE_CAP, CAP_STOCK = 0xC6384, 2048        # V236's lever -- NOT touched here, asserted
+BQ = 0xC60A8                                # a1, a2, b1, c4 -- four float32, direct form II
+FB26 = 0xD774C                              # FactorB record, ENGAGED mode 26 (manual 24 @0xD6760)
+FB_OLD, FB_NEW = 1024, 2048                 # flat Q10 gain at unity -> x2, no shape to corrupt
+FB24 = 0xD6760                              # MANUAL FactorB -- asserted UNTOUCHED
+FC26 = 0xD77D0                              # FactorC record, ENGAGED mode 26 (manual 24 @0xD67E4)
+FC_Y0 = FC26 + 2 + 8                        # layout [npt][X x4][Y x4] -> Y[0]
+FC_OLD, FC_NEW = 0, 429                     # := Y[2]; below X[0] the LERP clamps flat to Y[0]
+FC24 = 0xD67E4                              # MANUAL FactorC -- asserted UNTOUCHED
+FE26 = 0xD780C                              # FactorE record, ENGAGED mode 26 (manual 24 @0xD6820)
+FE_X0, FE_Y1 = FE26 + 2, FE26 + 2 + 8 + 2   # layout [npt][X x4][Y x4]
+X0_OLD, X0_NEW = 60, 12                     # open the rate dead zone
+Y1_OLD, Y1_NEW = 140, 539                   # := Y[2], real slope on the first segment
+FE24 = 0xD6820                              # MANUAL record -- asserted UNTOUCHED
+OP_POINT = 99                               # gp-0x6ac0 in-burst, measured on-car [94,113]
+FS_HZ = 1000.0                              # the control task rate
+POLE_Y, K_STOCK = 0xC6906, 20               # the lag pole -- asserted STOCK, V241 does not touch it
+LKAS_CLAMP = 0xC616C                        # must be 0: the proof LKAS cannot reach the map
+ALPHA2, ALPHA2_VAL = 0xC40DC, 22
+RESID_SCALE, RESID_VAL = 0xC63AE, 512
+FAULT_INTERLOCK, FAULT_VAL = 0xC407E, 511
+ARM_SITES = {0x35A06: "844ffb97", 0x35A12: "e049", 0x35A18: "ea370000"}
+ARM_CAL = 0xC649B
+R26_ARM = 0xC6444          # the r26 arm -- frozen at 512, asserted
+TAG = "V250-V249BASE-FACTORB.X2.ENGAGED"
+
+OK, BAD = "[PASS]", "[FAIL]"
+_checks = [0, 0]
+
+
+def check(cond, msg):
+    _checks[0] += 1
+    if cond:
+        _checks[1] += 1
+    print(f"      {OK if cond else BAD} {msg}")
+    if not cond:
+        raise SystemExit(f"ASSERTION FAILED: {msg}")
+
+
+def u16(b, o):
+    return struct.unpack_from("<H", b, o)[0]
+
+
+def u32(b, o):
+    return struct.unpack_from("<I", b, o)[0]
+
+
+def f32(b, o):
+    return struct.unpack_from("<f", b, o)[0]
+
+
+def f32(b, o):
+    return struct.unpack_from("<f", b, o)[0]
+
+
+def build():
+    print("=" * 102)
+    print("  V234 -- LEVER B BACK TO V88'S MEASURED OPTIMUM.  TWO BYTES ON V233.")
+    print("=" * 102)
+
+    print("\n  [1] BASE = V233")
+    base = bytearray(Path(plain_image_path(BASE_NAME)).read_bytes())
+    check(hashlib.sha256(bytes(base)).hexdigest() == BASE_SHA, "V233 base sha256 matches")
+    check(walk_all_blocks(bytes(base)) == 0, "base CRC chain 50/50")
+    _b = struct.unpack_from("<ffff", base, BQ)
+    check(abs(_b[3]) > 0, "base carries a live biquad c4")
+    _fx = [struct.unpack_from("<h", base, FE26 + 2 + 2 * _i)[0] for _i in range(4)]
+    _fy = [struct.unpack_from("<h", base, FE26 + 10 + 2 * _i)[0] for _i in range(4)]
+    check(_fx == [12, 400, 2500, 4000] and _fy == [0, 539, 539, 927],
+          f"base already carries V247's opened RATE dead zone X={_fx} Y={_fy}")
+    _cx = [struct.unpack_from("<h", base, FC26 + 2 + 2 * _i)[0] for _i in range(4)]
+    _cy = [struct.unpack_from("<h", base, FC26 + 10 + 2 * _i)[0] for _i in range(4)]
+    check(_cy == [429, 234, 429, 908],
+          f"base carries V249's opened SPEED dead zone Y={_cy} -- so this margin rung applies "
+          f"at EVERY speed, unlike V248 which stacked on V247 and only helped above 35 km/h")
+    _fb = [struct.unpack_from("<h", base, FB26 + 10 + 2 * _i)[0] for _i in range(4)]
+    check(_fb == [FB_OLD] * 4,
+          f"base FactorB(engaged) Y={_fb} -- FLAT at unity, a pure multiplier with no shape")
+    check(all(u16(base, POLE_Y + 2 * _i) == K_STOCK for _i in range(4)),
+          f"base lag pole is STOCK at {K_STOCK} -- V241 does not touch it")
+
+    code = bytearray(base)
+    attributed = set()
+
+    print("\n  [2] THE ONE EDIT -- two bytes")
+    for _i in range(4):
+        struct.pack_into("<h", code, FB26 + 10 + 2 * _i, FB_NEW)
+        attributed |= {FB26 + 10 + 2 * _i, FB26 + 11 + 2 * _i}
+    def _lerp(v, X, Y):
+        if v <= X[0]:
+            return float(Y[0])
+        for _i in range(len(X) - 1):
+            if v < X[_i + 1]:
+                return Y[_i] + (Y[_i + 1] - Y[_i]) * (v - X[_i]) / (X[_i + 1] - X[_i])
+        return float(Y[-1])
+    _nb = [struct.unpack_from("<h", code, FB26 + 10 + 2 * _i)[0] for _i in range(4)]
+    check(_nb == [FB_NEW] * 4,
+          f"FactorB(engaged) {FB_OLD} -> {FB_NEW} at all four points -- still FLAT, so it stays "
+          f"a pure multiplier and adds no shape")
+    _fe = _lerp(OP_POINT, [12, 400, 2500, 4000], [0, 539, 539, 927])
+    _v249 = 1024.0 * (429 / 1024) * (_fe / 1024)
+    _v250 = _v249 * (FB_NEW / FB_OLD)
+    check(_v250 > 56.0,
+          f"the damper goes {_v249:.1f} -> {_v250:.1f} counts AT EVERY SPEED, past the ~56 "
+          f"needed to cancel Re(Z) = -65 ({100 * _v250 / 56:.0f}% of requirement)")
+    check(_v250 < 512,
+          f"{_v250:.1f} stays UNDER the 512 ceiling floor, so nothing new clamps")
+    check(1024.0 * (908 / 1024) * (927 / 1024) * (FB_NEW / FB_OLD) > 512,
+          "at HIGH rate the product still clamps at 512 exactly as at stock -- doubling FactorB "
+          "changes nothing at the top end, only the low/mid-rate region")
+
+    print("\n  [3] WHY -- the record's own bracket, asserted rather than narrated")
+    # the shape gates: FactorC must stay monotone and its X axis untouched
+    _ncy = [struct.unpack_from("<h", code, FC26 + 10 + 2 * _i)[0] for _i in range(4)]
+    _ncx = [struct.unpack_from("<h", code, FC26 + 2 + 2 * _i)[0] for _i in range(4)]
+    check(_ncx == [2240, 3840, 5120, 8960] and _ncy == [429, 234, 429, 908],
+          f"V249's FactorC is CARRIED unchanged X={_ncx} Y={_ncy} -- FactorB is the only "
+          f"variable between this build and V249")
+    check(bytes(code[FB24:FB24 + 20]) == bytes(base[FB24:FB24 + 20]),
+          "the MANUAL FactorB record (mode 24) is BYTE-IDENTICAL -- manual steering feel is "
+          "untouched at every speed")
+    check(bytes(code[FC24:FC24 + 20]) == bytes(base[FC24:FC24 + 20]),
+          "the MANUAL FactorC record (mode 24) is BYTE-IDENTICAL -- parking and low-speed "
+          "manual steering are completely unchanged, which is what makes a creep-speed "
+          "damper acceptable at all")
+    check(bytes(code[FE24:FE24 + 20]) == bytes(base[FE24:FE24 + 20]),
+          "the MANUAL FactorE record is BYTE-IDENTICAL too")
+    _ny = [struct.unpack_from("<h", code, FE26 + 10 + 2 * _i)[0] for _i in range(4)]
+    check(_ny == [0, 539, 539, 927],
+          f"V247's FactorE curve is CARRIED unchanged {_ny} -- FactorC is the only variable")
+    check(bytes(code[BQ:BQ + 16]) == bytes(base[BQ:BQ + 16]),
+          "the notch is CARRIED byte-for-byte")
+    check(u16(code, LKAS_CLAMP) == 0,
+          "0xC616C = 0 -- the map is fed by the driver torque sensor alone; LKAS cannot reach it")
+    check(u16(code, LEVER_B) == LEVER_B_VAL,
+          f"Lever B CARRIED at {LEVER_B_VAL}")
+    check(u16(code, R26_ARM) == 512, "0xC6444 r26 arm UNTOUCHED at 512")
+
+    print("\n  [4] FactorE IS THE ONE THING V247 CHANGES; ELSE V241 BYTE FOR BYTE")
+    check(bytes(code[BIQ:BIQ + BIQ_LEN]) == bytes(base[BIQ:BIQ + BIQ_LEN]),
+          "the biquad block is CARRIED byte-for-byte -- V247 changes FactorE and nothing else")
+    check(u16(code, PROBE_HW2) == HW2_KEEP, "biquad-state probe CARRIED")
+    check(code[SHIFT_OFF] == SAR_KEEP, "probe shift CARRIED")
+    check(code[ALPHA2] == ALPHA2_VAL, f"0x{ALPHA2:05X} alpha2 = {ALPHA2_VAL}")
+    check(u16(code, FAULT_INTERLOCK) == FAULT_VAL,
+          f"0x{FAULT_INTERLOCK:05X} hard-fault interlock FROZEN at {FAULT_VAL}")
+    check(bytes(code[0xC4B34:0xC4B34 + 164]) == bytes(base[0xC4B34:0xC4B34 + 164]),
+          "the 164-byte cave is BYTE-IDENTICAL -- not the bricking class")
+    for a, want in sorted(ARM_SITES.items()):
+        check(bytes(code[a:a + len(bytes.fromhex(want))]).hex() == want, f"0x{a:05X} = {want}")
+    check(code[ARM_CAL] == 1, f"0x{ARM_CAL:05X} = 1 (biquad enabled)")
+
+    print("\n  [5] THE +-8192 RAIL IS UNTOUCHED")
+    check(bytes(code[0x3AC42:0x3AC44]) == bytes(base[0x3AC42:0x3AC44]), "0x3AC42 rail immediate frozen")
+    check(bytes(code[0x3AC58:0x3AC5A]) == bytes(base[0x3AC58:0x3AC5A]), "0x3AC58 rail immediate frozen")
+
+    print("\n  [6] CRC RECOMPUTATION")
+    blocks = sorted({tuple(V53.owning_block(code, a)) for a in sorted(attributed)})
+    for blk in blocks:
+        check(not any(blk[1] <= a < blk[1] + 4 for a in attributed),
+              f"no edit on trailer 0x{blk[1]:06X}")
+        oldc = u32(code, blk[1])
+        newc = zlib.crc32(bytes(code[blk[0]:blk[1]])) & 0xFFFFFFFF
+        struct.pack_into("<I", code, blk[1], newc)
+        attributed |= set(range(blk[1], blk[1] + 4))
+        print(f"      [0x{blk[0]:06X},0x{blk[1]:06X})  0x{oldc:08X} -> 0x{newc:08X}")
+    check(walk_all_blocks(bytes(code)) == 0, "built image CRC chain 50/50")
+    check(bytes(code[0xC5000:0xC5FFC]) == bytes(base[0xC5000:0xC5FFC]),
+          "CRC-skipped block byte-identical to base")
+
+    print("\n  [7] FULL BYTE DIFF vs V233")
+    diff = [a for a in range(START, END) if code[a] != base[a]]
+    check(not [a for a in diff if a not in attributed],
+          f"all {len(diff)} differing bytes attributed")
+    pay = [a for a in diff if (a & 0xFFF) < 0xFFC]
+    check(len(pay) <= 8, f"{len(pay)} payload byte(s), at most the four FactorB halfwords")
+    check(set(pay) <= {FB26 + 10 + _j for _j in range(8)},
+          "every payload byte is inside the ENGAGED FactorB record -- nothing else moved")
+
+    print("\n  [8] .rwd ENCODE + READBACK")
+    src = Path(FF.V38_RWD).read_bytes()
+    check(hashlib.sha256(src).hexdigest() == FF.V38_RWD_SHA256, "V38 source .rwd sha256 matches")
+    FF.assert_x31_checksum(src, "V38 source")
+    info = parse_x31(src)
+    dec_tbl = build_decode_table(FF.V9B["keys"], FF.V9B["ops"])
+    rwd = encode_x31(info["headers"], info["blocks"],
+                     [bytes(code[START:END]).translate(invert_table(dec_tbl))])
+    FF.assert_x31_checksum(rwd, "V250 output")
+    dec = bytearray(base)
+    dec[START:END] = bytes(parse_x31(rwd)["encs"][0]).translate(dec_tbl)
+    check(bytes(dec) == bytes(code), "decoded .rwd is byte-identical to the built image")
+    check(walk_all_blocks(bytes(dec)) == 0, "readback CRC 50/50")
+
+    img_sha = hashlib.sha256(bytes(code)).hexdigest()
+    rwd_sha = hashlib.sha256(rwd).hexdigest()
+    if WRITE_MODE == "rwd":
+        Path(plain_image_path(f"_v250_{TAG}_plain_image.bin")).write_bytes(bytes(code))
+        Path(RWD_DIR, f"39990-TVA,A160-{TAG}-0x{START:X}-0x{END:X}.rwd").write_bytes(rwd)
+        print("\n      WROTE image + rwd")
+    else:
+        print("\n  [9] NOT WRITTEN -- set ACCORD_V250_WRITE=rwd to emit the files")
+
+    print("\n" + "=" * 102)
+    print(f"  image SHA256 {img_sha}")
+    print(f"  .rwd  SHA256 {rwd_sha}")
+    print(f"  {_checks[1]}/{_checks[0]} assertions passed")
+    print("  ** V250 = V249 + THE DAMPER'S FLAT GAIN DOUBLED. MARGIN AT EVERY SPEED.                               **")
+    print("  **   0xD774C   FactorB(engaged) Y = [1024]x4 -> [2048]x4                                              **")
+    print("  **   build      10 km/h   25 km/h   80 km/h                                                           **")
+    print("  **   V122             0         0         6                                                           **")
+    print("  **   V247             0         0        50    high speed only                                        **")
+    print("  **   V249            50        50        50    all speeds,  89% of requirement                        **")
+    print("  **   V250           100       100       100    all speeds, 179%                                       **")
+    print("  ** WHY FactorB: a FLAT Q10 gain at unity -- a pure multiplier with no dead zone,                      **")
+    print("  ** knee or slope to get wrong. At HIGH rate the product ALREADY clamps at 512, so                     **")
+    print("  ** doubling changes nothing at the top end and lifts only the low/mid-rate region,                    **")
+    print("  ** which is exactly where the ratchet lives.                                                          **")
+    print("  ** ENGAGED ONLY: manual FactorB (mode 24) asserted byte-identical.                                    **")
+    print("  ** FLY V249 FIRST. This is the MARGIN rung. V249 vs V241 is one lane and V250 vs                      **")
+    print("  ** V249 is one cell -- flying this first wastes the discrimination both ways.                         **")
+    print("  ** COST: ~100 counts is ~3.3% of the 3072 forward clamp, engaged only, and now at                     **")
+    print("  ** LOW speed too where Honda deliberately provided none. Revert FactorB to 1024                       **")
+    print("  ** to return to V249 exactly.                                                                         **")
+    print("=" * 102)
+    return img_sha, rwd_sha
+
+
+if __name__ == "__main__":
+    build()

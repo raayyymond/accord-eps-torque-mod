@@ -109,17 +109,21 @@ the thing that sets it.** Reader: `rlog-tools/score/gain_vs_antidamping.py`.
   39990-TVA,A160-V243-V242BASE-GAIN10X.CLAMPS4608.CEILING-0x13000-0x100000.rwd
               rwd  43a32ac352508557...      image 5fb9ad74f104de46...
 
-  V247   6x   <-- FLY THIS SECOND. The biggest un-flown lever the kit has, and the
-              first one COMPUTED to nearly cancel the ratchet. ENGAGED ONLY -- your
-              manual steering feel is byte-identical. 3 bytes on V241.
-  39990-TVA,A160-V247-V241BASE-FACTORE.DEADZONE.OPEN.ENGAGED-0x13000-0x100000.rwd
-              rwd  eb92273e2e416403...      image 7a59497a592ea6e3...
+  V249   6x   <-- FLY THIS SECOND. The damper fix, working at EVERY speed.
+              Opens BOTH of the damper's dead zones. ENGAGED ONLY -- your manual
+              steering is byte-identical. 2 bytes on V247, 5 bytes from V241.
+  39990-TVA,A160-V249-V247BASE-FACTORC.SPEED.DEADZONE.OPEN-0x13000-0x100000.rwd
+              rwd  ffe37f2a0e329be0...      image 9c1ac13746538b45...
 
-  V248   6x   <-- FLY THIS THIRD, only if V247 helped but did not finish the job.
-              V247 + the damper's flat gain doubled: 90% -> 181% of the requirement.
-              4 bytes on V247. Engaged only. Revert FactorB to 1024 to get V247 back.
-  39990-TVA,A160-V248-V247BASE-FACTORB.X2.ENGAGED-0x13000-0x100000.rwd
-              rwd  fa50afd325c88adb...      image d2b554038a59f9c2...
+  V250   6x   <-- FLY THIS THIRD, only if V249 helped but did not finish the job.
+              V249 + the damper's flat gain doubled: 89% -> 179% of requirement,
+              at every speed. Revert FactorB to 1024 to get V249 back.
+  39990-TVA,A160-V250-V249BASE-FACTORB.X2.ENGAGED-0x13000-0x100000.rwd
+              rwd  7528195b26b84719...      image 66f15ba3d1c6b5ce...
+
+  V247 / V248  SUPERSEDED by V249 / V250 -- they are the same levers but with the
+              SPEED dead zone still shut, so they do nothing below 35 km/h, which
+              is 36% of your engaged driving. Kept only as discriminating variants.
 
   V246   6x   <-- FLY THIS FOURTH, a different lane (Lever B), smaller step.
               The ONLY build that targets the RATCHET without costing you torque.
