@@ -82,6 +82,30 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑🛑🛑 **UNRESOLVED: WHICH BUILD IS ON THE CAR. THE OPERATOR SAYS V112; THIS FILE SAYS V122.**
+> Raised by the operator 2026-08-30: *"last on car is V112"*. This file (below) says *"Confirmed V122 is
+> the last flown (route r24)"*. **Both cannot be right, and every "vs the car" number computed in the
+> 2026-08-27 → 2026-08-30 sessions used V122 as the baseline.**
+>
+> **THE ENTIRE DIFFERENCE IS THREE CELLS + the CAL CRC**, read from the two images over `[0x13000,0x100000)`:
+> ```
+>   cell        what it is                        V112     V122
+>   0xC40BC     Coulomb-relay knee                1800     3000
+>   0xC40D2     K1                                 612     1020
+>   0xC40DC     alpha2 (HF filter coefficient)      14        8
+> ```
+> ⚠ **CONSEQUENCE FOR THE V253 RATIONALE:** V253 was cut on 2026-08-29 specifically to hold `alpha2` at
+> **8**, on the argument that *the car has 8* and V122's own name is `ALPHA2.8-BEST`. **If the car is V112
+> the car runs alpha2 = 14, and that argument collapses** — V253 would be aimed at a value the operator
+> may never have driven. **Do not fly V253 on the "match the car" rationale until this is settled.**
+>
+> ✅ **WHAT IS UNAFFECTED:** none of these three cells is in the gain, clamp, damper or notch lanes, so the
+> gain/clamp arithmetic behind V251/V252/V254 and the damper sizing are unchanged in kind. What shifts is
+> only the baseline image the deltas were measured against.
+>
+> ⇒ **HOW TO SETTLE IT:** re-flashing a known file makes the question disappear. Absent that, a UDS read of
+> any one of the three cells settles it — **gated: needs the operator's explicit payload confirmation.**
+
 > 🛑🛑🛑⭐⭐⭐⭐⭐ **THE DEFINITIVE ANSWER TO “ELIMINATE ALL RATCHETING”: CALIBRATION CANNOT. Every lane is now measured, and the arithmetic does not reach.**
 >
 > Requirement to CANCEL: **65 counts per deg/s** of damping. Every lever at its measured maximum:

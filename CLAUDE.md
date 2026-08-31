@@ -59,7 +59,7 @@ repoint this index at all of them** — do not leave a pointer to a file that ca
 3. **The latest `docs/handoffs/<YYYY-MM>/HANDOFF-*.md`** — narrative of the most recent session, and the chain behind it.
    `docs/INDEX.md` lists the full reading order. 🛑 **Results, CIs and retractions live in `STATE.md`
    and the handoffs — NOT here.** This file is an index; keep it that way.
-4. **`memory/MEMORY.md`** — 🛑 **PAGINATED IN EIGHT: read `MEMORY-PART2.md`, `MEMORY-PART3.md`, `MEMORY-PART4.md`, `MEMORY-PART5.md`, `MEMORY-PART6.md`, `MEMORY-PART7.md` AND `MEMORY-PART8.md` too**
+4. **`memory/MEMORY.md`** — 🛑 **PAGINATED IN NINE: read `MEMORY-PART2.md`, `MEMORY-PART3.md`, `MEMORY-PART4.md`, `MEMORY-PART5.md`, `MEMORY-PART6.md`, `MEMORY-PART7.md`, `MEMORY-PART8.md` AND `MEMORY-PART9.md` too**
    — the notes themselves are nested one level below (`memory/accord/`, `memory/reference/`, `memory/feedback/` …);
    the indexes carry the full relative path, so follow the link rather than guessing the folder
    — and **`memory/MEMORY_CONSTELLATION.md`**: the flat fact index and the
