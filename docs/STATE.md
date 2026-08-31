@@ -82,6 +82,28 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE PRE-REGISTERED PREDICTION FOR V249 — WRITTEN BEFORE THE DRIVE, SO A NULL IS READABLE INSTEAD OF “UNINTERPRETABLE”.**
+>
+> The design law: *“before cutting, write the sentence a null will license.”* V249 goes after a symptom sixty builds have failed to move, so the drive is only worth what was said in advance.
+> ```
+>   measured 6-9.5 Hz torque amplitude   50 counts (p50, 7,603 engaged windows)
+>   damper on the car (V122)              2.9 counts   <- weighted by the REAL speed mix
+>   damper on V249                       47.8 counts
+>   V249 adds 44.9 counts against 50     =  89.5 %
+>
+>   PREDICTION:  Re(Z) at 6-9 Hz moves from -64.8 TOWARD ZERO, to roughly -6.8
+> ```
+> ✅ **AND AN INDEPENDENT CONSISTENCY CHECK FALLS OUT.** The band torque amplitude measures **50 counts**; the requirement derived earlier by a completely different route — `Re(Z) × the 0.86 °/s rate amplitude` — was **~56 counts**. **Two methods, same number.** That is the first time the requirement has been corroborated rather than just computed.
+> ⊕ **The car's damper delivers 2.9 counts mean** once weighted by where the operator actually drives, because **34 % of engaged windows sit below the FactorC knee where it is exactly zero.**
+> **THE DECISION RULE, ON THE RECORD:**
+> | outcome | what it licenses |
+> |---|---|
+> | `Re(Z)` moves toward zero by roughly this | mechanism right, dose calibrated. **V250** is the margin step if more is wanted |
+> | unchanged | the damper does **not** reach the loop the ratchet lives in ⇒ **RULES OUT the damper lane by experiment**, which sixty builds of inference never could |
+> | more negative | the sign argument is inverted somewhere ⇒ **REVERT V249 immediately** |
+> 🛑 **FIRST-ORDER, NOT A SIMULATION.** It assumes the damper torque enters the same summing junction the impedance is measured across, and that the plant is linear over the increment — the standard small-signal assumptions used throughout this arc. **Read the SIGN and the ORDER, not the decimal.**
+> ➕ Reader: `rlog-tools/score/v249_predicted_effect.py`.
+
 > ⭐⭐⭐⭐⭐ **V253 BUILT — V241 WITH THE OPERATOR'S OWN ALPHA2 KEPT. AGAINST THE CAR, THE NOTCH IS NOW THE ONLY CONTROL CHANGE.**
 >
 > He asked what V241 changes against the car, and the answer surfaced that V241 **reverts a cell his own build name calls BEST** (`V122 = KNEE3000.K1.1020-ALPHA2.8-BEST`). Rather than leave that as a question, the one-byte variant is built:

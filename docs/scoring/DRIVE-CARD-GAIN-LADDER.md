@@ -6,6 +6,13 @@
   1.  V241   baseline. All the grinding work, your car's own 6x gain.
               Establishes what the rest are compared against.
 
+  PREDICTION FOR V249, written before you drive so a null still means something:
+    your car's damper delivers ~2.9 counts against a measured 50-count 6-9 Hz
+    torque. V249 takes it to ~48. If the mechanism is right the ratchet should
+    drop a lot, not a little. If it does nothing, that RULES OUT the damper lane
+    -- still worth the drive. If it feels WORSE, revert immediately: that means
+    the sign is inverted somewhere.
+
   2.  V249   THE DAMPER FIX. Opens BOTH of the damper's dead zones.
               Raises damping 8.3x at the ratchet AND 4.1x at the grinding band,
               and takes it from ZERO to full below 35 km/h. Engaged only --
