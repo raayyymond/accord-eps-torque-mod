@@ -82,6 +82,49 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑🛑🛑⭐⭐⭐⭐⭐ **2026-08-30 — LEVER B IS UNREACHABLE. IT HAS NEVER DONE ANYTHING.**
+> `FUN_0003aa2c` picks the r24 rate-lane arm before the multiply at `0x3AC18`:
+> ```c
+>   if (*(char *)(gp - 0x671d) == 0) {
+>       if (*(char *)(gp - 0x683c) == 0) {          // ALWAYS TRUE -- zero writers
+>           if (!(gp-0x671a < cal_byte(0xC64FA)))   // the [0,5] ramp vs 5
+>               r10 = cal(0xC6440);                 // 2048   <- LIVE
+>           // else: the runtime LERP on motor rate  <- LIVE, and the DOMINANT path
+>       } else {
+>           r10 = cal(0xC6446);                     // 5244   <- LEVER B, DEAD CODE
+>       }
+>   } else {
+>       r10 = cal(0xC6442);                         // 1024   <- LIVE
+>   }
+> ```
+> **`gp-0x683c` has ZERO writers**, so `bVar4` is permanently true and the Lever B arm is never selected.
+> The record carried this as *"single-method, wants a raw byte scan"* — **the scan was never run.** It has
+> now been confirmed **two independent ways**: (1) the decompile of `FUN_00052e32`, which writes the whole
+> neighbourhood (`-0x683b`, `-0x683d`, `-0x683e`, `-0x6832`…`-0x6835`) and **never `-0x683c`**; (2) a
+> **corrected** byte-form scan — 🛑 for byte forms the displacement's bit 0 lives in **`hw1` bit 5**, so the
+> opcode is bits **6–10**, and decoding it as 5–10 conflates odd/even displacements. A naive scan reports
+> 14 "sites"; the control (`gp-0x683b`, demonstrably written) has opcode set `{0x1E}`, and every `0x1E`
+> site at "`-0x683c`" matches only the halfword form ⇒ its real displacement is `-0x683b`.
+>
+> ⇒ 🛑 **EVERY LEVER B RESULT IN THIS KIT IS OF A DEAD CELL.** Voided: the anti-damping census collapses
+> to **the GAIN ALONE**; *"Lever B moves the ratchet without spending authority"*; **V88's "bracketed
+> optimum" of 5244**; the `_LEVER_B_LADDER` registry; and the two Lever B rows of the calibration-ceiling
+> table (5.81 + 2.90 units). **The calibration ceiling is LOWER than stated, and only one cell was ever
+> really tracking the ratchet.**
+>
+> ⚠ **AND THE SELECTOR THRESHOLD IS A BYTE**: `cal_byte(0xC64FA)` = **5**, not the 517 a halfword read
+> gives. Wrong-width read, same family as the off-by-0x1000 trap.
+>
+> **THE LIVE ARMS, none ever moved from stock in any build:** `0xC6442` = 1024 · `0xC6440` = 2048 ·
+> `0xC643E` = 1536 (sibling lane) · and a **runtime LERP on motor rate that NO calibration cell can reach.**
+>
+> ✅ **THIS MAKES V255 BETTER.** The `sar` edit sits **after** the multiply, so it doubles whichever arm is
+> live — including that LERP branch. And V255's saturation caveat is **VOID**: it was computed against the
+> dead 5244. At the live arms (1024–2048) the doubled lane clips at input **2048–4096** against a measured
+> p50 of **859** — no saturation where the symptoms live.
+> ⇒ **The rate lane has not actually been dosed since V65**: Lever B was dead, and the `sar` was reverted.
+> **V255 is the first real dose of this lane in ~200 builds.**
+
 > 🛑🛑🛑⭐⭐⭐⭐⭐ **2026-08-30 — THE KIT'S ONLY MEASURED GRINDING FIX HAS NOT BEEN ON THE CAR SINCE V65.**
 > V62 (`sar 0xa`→`sar 0x9` at **`0x3AB76`** and **`0x3AC20`**) measured **18–22 Hz down 8×** (42× at
 > |rate| 16–32 °/s) against a flat 30–40 Hz control, and the operator said *"Original grinding at 2–5 mph

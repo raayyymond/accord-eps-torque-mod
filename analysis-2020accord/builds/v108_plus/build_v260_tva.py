@@ -1,92 +1,54 @@
 # -*- coding: utf-8 -*-
-r"""V255 -- RESTORE V62's RATE-LANE DOUBLING.  TWO BYTES ON WHAT IS ACTUALLY ON THE CAR.
+r"""V260 -- V255 PLUS THE ARMS THAT ARE ACTUALLY LIVE.  THE FIRST REAL DOSE OF THIS LANE SINCE V65.
 
-THE FINDING THAT JUSTIFIES THIS BUILD.  V62 (`sar 0xa` -> `sar 0x9` at 0x3AB76 and 0x3AC20) is the
-ONLY measured grinding fix this kit has ever produced -- 18-22 Hz down 8x (42x at |rate| 16-32 deg/s)
-against a flat 30-40 Hz negative control, and the operator's own words: "Original grinding at 2-5 mph
-is gone!"
+    0x3AB76 / 0x3AC20   aa -> a9        rate lane 2x Kd   (V62's encoding, doses EVERY branch)
+    0xC6440             2048 -> 4096    live arm A: selected when the [0,5] ramp is SATURATED
+    0xC6442             1024 -> 2048    live arm B: selected when gp-0x671d != 0
 
-**IT IS NOT ON THE CAR, AND IT IS NOT ON ANY BUILD SINCE V65.**  Read from the IMAGES, not the record:
-
-    build                    0x3AB76  0x3AC20   state
-    stock                      aa32     aa42    1x Kd
-    V62                        a932     a942    2x Kd   <- the fix
-    V65                        a932     a942    2x Kd
-    V70                        aa32     aa42    REVERTED
-    V88 V100 V108 V111         aa32     aa42    1x Kd
-    V112                       aa32     aa42    1x Kd   <- THE CAR
-    V122 V241 V251 V254        aa32     aa42    1x Kd   <- the whole current shelf
-
-`docs/BUILD-LINEAGE-PART1-LEVER-INDEX.md` says "Restored in V71".  **The images say otherwise.**
-Whatever V71 did, nothing from V88 onward carries it.  This is a RECORD DEFECT, not a new lever:
-the kit has spent sixty builds hunting grinding while its one measured cure sat reverted.
-
-WHY IT SHOULD WORK, mechanically.  The grinding mode is a lightly-damped MECHANICAL resonance --
-21.4 Hz, Q = 13.6, ~0.23 s coherence -- not a digital limit cycle.  For the wheel-inertia-on-bar mode
-
-    phi'' + (Kd*k/J_c)*phi' + k*(1/J_w + (1+K)/J_c)*phi = T_road/J_c
-
-the phi' coefficient is POSITIVE and LINEAR IN Kd, and **at Kd = 0 the mode has no damping term at
-all.**  The rate lane IS that Kd.  Doubling it doubles the only damping the mode has.
-
-🛑 THE SATURATION CAVEAT THAT USED TO BE HERE IS VOID -- IT WAS COMPUTED AGAINST A DEAD CELL.
-This docstring previously warned that the doubled lane clips above input 799 because the car runs
-Lever B (0xC6446) at 5244 where V62 flew it at stock 512.  **Lever B is UNREACHABLE.**  Resolved
-2026-08-30 from the decompile of FUN_0003aa2c plus a corrected byte-form scan:
+WHY THESE TWO CELLS AND NOT LEVER B.  **Lever B (`0xC6446` = 5244) is UNREACHABLE.**  The arm is
+chosen before the multiply at 0x3AC18:
 
     if (*(char *)(gp - 0x671d) == 0) {
         if (*(char *)(gp - 0x683c) == 0) {          // ALWAYS TRUE -- zero writers
-            if (!(gp-0x671a < cal_byte(0xC64FA)))   // the [0,5] ramp vs 5
-                r10 = cal(0xC6440);                 // 2048
-            // else: the runtime LERP on motor rate
+            if (!(gp-0x671a < cal_byte(0xC64FA)))   // the [0,5] persistence ramp vs 5
+                r10 = cal(0xC6440);                 // 2048   <- LIVE
+            // else: the runtime LERP on motor rate (gp-0x6e38 array)   <- LIVE, dominant
         } else {
-            r10 = cal(0xC6446);                     // 5244  <-- LEVER B, DEAD CODE
+            r10 = cal(0xC6446);                     // 5244   <- LEVER B, DEAD CODE
         }
     } else {
-        r10 = cal(0xC6442);                         // 1024
+        r10 = cal(0xC6442);                         // 1024   <- LIVE
     }
 
-`gp-0x683c` has ZERO writers, so the Lever B arm is never selected.  Confirmed two ways: FUN_00052e32
-writes every neighbour (-0x683b, -0x683d, -0x683e, -0x6832..-0x6835) and never -0x683c; and a correct
-byte-form scan (displacement bit 0 lives in hw1 bit 5, opcode in bits 6-10) shows all 14 apparent
-"sites" are aliases of -0x683b.
+`gp-0x683c` has **zero writers**, confirmed two ways (FUN_00052e32 writes every neighbour and never
+this cell; and a corrected byte-form scan shows all 14 apparent sites are aliases of -0x683b -- the
+displacement's bit 0 lives in hw1 bit 5, so decoding the opcode as bits 5-10 conflates odd and even
+displacements).  ⇒ **the branch that loads 5244 is never taken, and every Lever B measurement in this
+kit is of a dead cell.**  V88's "bracketed optimum" included.
 
-⇒ THE LIVE ARM IS 1024 OR 2048, NOT 5244, so the doubled lane saturates at input **2048-4096**
-against a measured p50 of **859** -- **no saturation where the symptoms live.**  V62's own
-"expect a PARTIAL improvement" caveat does not bind here either.
+⚠ **AND THE THRESHOLD IS A BYTE.**  `cal_byte(0xC64FA)` is read as `*(byte*)(tp+0x74fa)` = **5**, not
+the 517 a halfword read gives.  It is compared against a bounded [0,5] persistence ramp.
 
-⭐ AND THIS EDIT IS THE ONLY THING THAT CAN DOSE THE LANE AT ALL.  The `sar` sits AFTER the multiply
-at 0x3AC18, so it doubles whichever arm is selected -- including the runtime LERP branch, which is
-the dominant path and which NO calibration cell can reach.  Lever B was dead and the `sar` was
-reverted after V65, so **this lane has not actually been dosed since V65.**
+WHAT THIS BUILD ADDS OVER V255.  V255's `sar` doubles whatever arm is live, including the LERP branch
+that no cal can reach -- that is why it is the primary lever and why it flies first.  This build adds
+a second doubling in the two branches a cal CAN reach, so those branches get 4x while the LERP branch
+keeps V255's 2x.  It is the escalation for "V255 helped but not enough", not a replacement.
 
+🛑 THE DOSE IS UNVALIDATED, AND SAYING SO IS THE POINT.  V88's 5244 bracket is void, so there is
+**no measured optimum for this lane at all** -- Lever B was dead and the `sar` was reverted after V65.
+Doubling stock is the smallest step that is clearly a step.  The lane output is hard-clamped at +-8192
+(`0x3AC42 addi -0x2000` / `movea 0x2000`) and the aggregate at +-10240, so no dose can exceed what the
+hardware already permits; and at these arms the doubled lane saturates at input 1024-2048 against a
+measured p50 of 859, so the top of the distribution begins to clip while the median does not.
 
-GATES.
-  GATE 1 (RAM ownership)  VACUOUS -- no cave, no new RAM, two immediate bytes edited in place.
-  GATE 2 (closed-loop)    The edit is POST-MULTIPLY, verified in Ghidra this session:
-                              0x3AC18  mul   r10, r8, r0      ; r8 = rate * LeverB
-                              0x3AC20  sar   0xa, r8          ; <- THE EDIT
-                          so the V850 `mul` high-word headroom argument is preserved (47% of
-                          INT32_MAX, not 94%).  Editing 0x3AB70/0x3AC1A instead would put it
-                          PRE-multiply, which is exactly why V62 chose these two sites.
-                          The +-8192 lane rails (0x3AC42 `addi -0x2000` / `movea 0x2000`) and the
-                          +-10240 aggregate are UNTOUCHED, so the lane cannot produce an unbounded
-                          command.  Kd is a DAMPING term: it adds phase lead; it moves no pole into
-                          the right half plane.
-  FLIGHT HISTORY          These exact two bytes flew as V62 and V65, fault-free, ST==4 zero over
-                          86,278 frames.  This is not a novel edit class.
+GATES.  GATE 1 vacuous (no cave; two immediate bytes and two cal halfwords).  GATE 2: Kd is a DAMPING
+term -- it adds phase lead and moves no pole into the right half plane; the rails are untouched and
+asserted.  The `sar` bytes themselves flew as V62/V65, fault-free, ST==4 zero over 86,278 frames.
 
-WHAT A NULL LICENSES (pre-registered, per the design law).
-  * 18-22 Hz band drops and the operator reports less grinding  => V62 replicates; the fix was
-    simply missing, and it belongs in every subsequent build.
-  * band drops, operator reports nothing                        => band moved, symptom did not.
-    Report it that way and do NOT call grinding fixed.
-  * nothing moves                                               => V62's result did NOT transfer
-    across the Lever B change, and the saturation arithmetic above is the first suspect.
-  * grinding WORSE                                              => the clip is not benign at
-    LeverB 5244; revert, and the follow-up is Lever B DOWN with the doubling kept.
+🛑 FLY V255 FIRST.  If the lane is potent, V255 alone will show it and this build is the second
+rung.  If V255 does nothing, this one probably will not either, and the lane is not the answer.
 
-BASE: **V112 -- what the operator says is on the car**, not V122.  Two bytes.  Single variable.
+BASE: V112.  Six bytes.
 """
 import hashlib
 import os
@@ -119,7 +81,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 START, END = 0x13000, 0x100000
-WRITE_MODE = os.environ.get("ACCORD_V255_WRITE", "").strip().lower()
+WRITE_MODE = os.environ.get("ACCORD_V260_WRITE", "").strip().lower()
 
 BASE_NAME = "_v112_V112-V111BASE-RELAY.KNEE1800.K1.612_plain_image.bin"
 BASE_SHA = "f032878c4e0b8e90d782ddac6ba2d644e09956cc1b267a60ef4fb1c44ee1f96f"
@@ -163,12 +125,16 @@ FAULT_INTERLOCK, FAULT_VAL = 0xC407E, 511
 ARM_SITES = {0x35A06: "844ffb97", 0x35A12: "e049", 0x35A18: "ea370000"}
 ARM_CAL = 0xC649B
 R26_ARM = 0xC6444          # the r26 arm -- frozen at 512, asserted
-TAG = "V255-V112BASE-RATELANE.2X.V62.RESTORED"
+TAG = "V260-V112BASE-RATELANE.2X.LIVEARMS.2X"
 
 SAR_R26, SAR_R24 = 0x3AB76, 0x3AC20     # the two `sar` immediates -- V62's exact sites
 SAR_1X, SAR_2X = 0xAA, 0xA9             # sar 0xa (stock) -> sar 0x9 (double the lane)
 MUL_R24, MUL_R26 = 0x3AC18, 0x3AB6E     # the multiply each edit must stay AFTER
 RAIL_SITES = {0x3AC42: "060600e0", 0x3AC46: "20c60020"}   # the +-8192 lane rails
+ARM_A, ARM_A_OLD, ARM_A_NEW = 0xC6440, 2048, 4096   # LIVE: ramp saturated
+ARM_B, ARM_B_OLD, ARM_B_NEW = 0xC6442, 1024, 2048   # LIVE: gp-0x671d != 0
+ARM_DEAD, ARM_DEAD_VAL = 0xC6446, 5244              # Lever B -- UNREACHABLE, asserted untouched
+SEL_THRESH = 0xC64FA                                # read as a BYTE (= 5), not a halfword
 
 OK, BAD = "[PASS]", "[FAIL]"
 _checks = [0, 0]
@@ -201,7 +167,7 @@ def f32(b, o):
 
 def build():
     print("=" * 102)
-    print("  V255 -- V62's RATE-LANE DOUBLING, RESTORED ONTO V112.  TWO BYTES.")
+    print("  V260 -- V255 + THE ARMS THAT ARE ACTUALLY LIVE.  SIX BYTES ON V112.")
     print("=" * 102)
 
     print("\n  [1] BASE = V112 -- what the operator says is on the car")
@@ -233,14 +199,34 @@ def build():
           f"0x{SAR_R26:05X} > 0x{MUL_R26:05X}) -- preserves the V850 mul high-word headroom at "
           f"47% of INT32_MAX rather than pushing it to 94%")
 
+    print("\n  [2b] THE LIVE ARMS -- four bytes")
+    check(u16(base, ARM_A) == ARM_A_OLD and u16(base, ARM_B) == ARM_B_OLD,
+          f"base live arms are stock: 0x{ARM_A:05X}={ARM_A_OLD}, 0x{ARM_B:05X}={ARM_B_OLD} -- "
+          f"neither has EVER been moved in any build")
+    struct.pack_into("<H", code, ARM_A, ARM_A_NEW)
+    struct.pack_into("<H", code, ARM_B, ARM_B_NEW)
+    attributed |= {ARM_A, ARM_A + 1, ARM_B, ARM_B + 1}
+    check(u16(code, ARM_A) == ARM_A_NEW and u16(code, ARM_B) == ARM_B_NEW,
+          f"live arms doubled: {ARM_A_OLD}->{ARM_A_NEW} and {ARM_B_OLD}->{ARM_B_NEW}")
+    check(u16(code, ARM_DEAD) == ARM_DEAD_VAL,
+          f"Lever B 0x{ARM_DEAD:05X} left at {ARM_DEAD_VAL} -- it is UNREACHABLE (gp-0x683c has "
+          f"zero writers), so changing it would be theatre")
+    check(base[SEL_THRESH] == 5,
+          f"the arm selector threshold is a BYTE = {base[SEL_THRESH]} (a halfword read gives "
+          f"{u16(base, SEL_THRESH)}, which is the wrong width)")
+
     print("\n  [3] SATURATION, COMPUTED NOT ASSERTED")
-    for _lb, _who in ((512, "V62 era"), (LEVER_B_VAL, "this car")):
-        _s1, _s2 = 8192 * 1024 // _lb, 8192 * 512 // _lb
-        print(f"      {_who:<9} LeverB {_lb:>5}:  1x clips above {_s1:>6}   2x clips above {_s2:>6}")
-    check(8192 * 512 // LEVER_B_VAL < 5120,
-          "on this car the doubled lane DOES clip below the input ceiling -- stated, not hidden")
-    check(8192 * 1024 // 512 >= 5120,
-          "in V62's era it could not clip at all, which is why V62's result may not transfer whole")
+    for _k, _who in ((ARM_B_OLD, "arm B stock"), (ARM_A_OLD, "arm A stock"),
+                     (ARM_B_NEW, "arm B doubled"), (ARM_A_NEW, "arm A doubled")):
+        print(f"      {_who:<14} k={_k:>5}:  1x clips above {8192 * 1024 // _k:>6}   "
+              f"2x clips above {8192 * 512 // _k:>6}")
+    check(8192 * 512 // ARM_B_OLD > 859,
+          "at the STOCK live arms the doubled lane does NOT clip at the measured p50 input of 859")
+    _clip_a = 8192 * 512 // ARM_A_NEW
+    check(859 < _clip_a < 5120,
+          f"with arm A doubled the clip point is {_clip_a}: ABOVE the measured p50 input of 859 so "
+          f"the median frame is still linear, but BELOW the 5120 ceiling so the upper tail clips -- "
+          f"stated, not hidden")
 
     print("\n  [4] THE RAILS AND EVERYTHING ELSE ARE FROZEN")
     for a, want in sorted(RAIL_SITES.items()):
@@ -277,9 +263,10 @@ def build():
     check(not [a for a in diff if a not in attributed],
           f"all {len(diff)} differing bytes attributed")
     pay = [a for a in diff if (a & 0xFFF) < 0xFFC]
-    check(len(pay) == 2, f"{len(pay)} payload byte(s) -- exactly the two sar immediates")
-    check(set(pay) == {SAR_R26, SAR_R24},
-          "every payload byte is one of V62 two sar immediates -- nothing else moved")
+    check(set(pay) <= {SAR_R26, SAR_R24, ARM_A, ARM_A + 1, ARM_B, ARM_B + 1},
+          "every payload byte is a sar immediate or a LIVE arm -- nothing else moved")
+    check({SAR_R26, SAR_R24} <= set(pay), "both sar immediates actually moved")
+    check(len(pay) >= 4, f"{len(pay)} payload bytes -- 2 sar + the live-arm high bytes")
 
     print("\n  [8] .rwd ENCODE + READBACK")
     src = Path(FF.V38_RWD).read_bytes()
@@ -289,7 +276,7 @@ def build():
     dec_tbl = build_decode_table(FF.V9B["keys"], FF.V9B["ops"])
     rwd = encode_x31(info["headers"], info["blocks"],
                      [bytes(code[START:END]).translate(invert_table(dec_tbl))])
-    FF.assert_x31_checksum(rwd, "V255 output")
+    FF.assert_x31_checksum(rwd, "V260 output")
     dec = bytearray(base)
     dec[START:END] = bytes(parse_x31(rwd)["encs"][0]).translate(dec_tbl)
     check(bytes(dec) == bytes(code), "decoded .rwd is byte-identical to the built image")
@@ -298,34 +285,34 @@ def build():
     img_sha = hashlib.sha256(bytes(code)).hexdigest()
     rwd_sha = hashlib.sha256(rwd).hexdigest()
     if WRITE_MODE == "rwd":
-        Path(plain_image_path(f"_v255_{TAG}_plain_image.bin")).write_bytes(bytes(code))
+        Path(plain_image_path(f"_v260_{TAG}_plain_image.bin")).write_bytes(bytes(code))
         Path(RWD_DIR, f"39990-TVA,A160-{TAG}-0x{START:X}-0x{END:X}.rwd").write_bytes(rwd)
         print("\n      WROTE image + rwd")
     else:
-        print("\n  [9] NOT WRITTEN -- set ACCORD_V255_WRITE=rwd to emit the files")
+        print("\n  [9] NOT WRITTEN -- set ACCORD_V260_WRITE=rwd to emit the files")
 
     print("\n" + "=" * 102)
     print(f"  image SHA256 {img_sha}")
     print(f"  .rwd  SHA256 {rwd_sha}")
     print(f"  {_checks[1]}/{_checks[0]} assertions passed")
-    print("  ** V255 -- V62's RATE-LANE DOUBLING, RESTORED. TWO BYTES ON V112.                                     **")
-    print("  **   0x3AB76  aa -> a9    sar 0xa -> sar 0x9   (r26 lane)                                             **")
-    print("  **   0x3AC20  aa -> a9    sar 0xa -> sar 0x9   (r24 lane)                                             **")
-    print("  ** THE FINDING: V62 is the kit's ONLY measured grinding fix -- 18-22 Hz down 8x,                      **")
-    print("  ** operator said 'Original grinding at 2-5 mph is gone!'. Read from the IMAGES,                       **")
-    print("  ** it is absent from V70 onward, including the car and the whole current shelf.                       **")
-    print("  ** The lineage file says 'Restored in V71'. The images say otherwise.                                 **")
-    print("  ** MECHANISM: the grinding mode is MECHANICAL (21.4 Hz, Q=13.6), and its damping                      **")
-    print("  ** coefficient is LINEAR in Kd -- at Kd=0 the mode has no damping term at all.                        **")
-    print("  ** The rate lane IS that Kd.                                                                          **")
-    print("  ** THE HONEST CAVEAT: V62 flew with Lever B at stock 512; this car runs 5244, so                      **")
-    print("  ** the doubled lane clips above input 799 where V62's never clipped at all.                           **")
-    print("  ** That is BENIGN for these symptoms: a saturating LINEAR damper has maximum gain                     **")
-    print("  ** at small amplitude (unlike V80's Coulomb relay, whose gain goes to infinity as                     **")
-    print("  ** amplitude goes to zero -- which is why V80 was the worst grinding ever).                           **")
-    print("  ** The ratchet is 0.72 deg/s and the ring is 4-7 counts: both small-signal.                           **")
-    print("  ** FLIGHT HISTORY: these exact two bytes flew as V62 and V65, fault-free,                             **")
-    print("  ** ST==4 zero over 86,278 frames. Not a novel edit class. GATE 1 vacuous.                             **")
+    print("  ** V260 -- V255 + THE ARMS THAT ARE ACTUALLY LIVE. SIX BYTES ON V112.                                 **")
+    print("  **   0x3AB76 / 0x3AC20   aa -> a9       rate lane 2x (doses EVERY branch)                             **")
+    print("  **   0xC6440             2048 -> 4096   live arm A (ramp saturated)                                   **")
+    print("  **   0xC6442             1024 -> 2048   live arm B (gp-0x671d != 0)                                   **")
+    print("  ** LEVER B (0xC6446 = 5244) IS UNREACHABLE AND IS LEFT ALONE. Its branch tests                        **")
+    print("  ** gp-0x683c, which has ZERO WRITERS -- confirmed two ways: FUN_00052e32 writes                       **")
+    print("  ** every neighbour and never this cell, and a corrected byte-form scan shows all                      **")
+    print("  ** 14 apparent sites are aliases of -0x683b (disp bit 0 lives in hw1 bit 5).                          **")
+    print("  ** => EVERY LEVER B MEASUREMENT IN THIS KIT IS OF A DEAD CELL, V88's 'bracketed                       **")
+    print("  **    optimum' of 5244 included. The live arms are 1024 and 2048, plus a runtime                      **")
+    print("  **    LERP on motor rate that NO calibration cell can reach.                                          **")
+    print("  ** THE SAR IS STILL THE PRIMARY LEVER: it sits AFTER the multiply, so it doubles                      **")
+    print("  ** whichever arm is live -- including that LERP branch. This build adds a second                      **")
+    print("  ** doubling only in the two branches a cal can reach.                                                 **")
+    print("  ** THE DOSE IS UNVALIDATED AND THAT IS THE POINT: with Lever B dead and the sar                       **")
+    print("  ** reverted after V65, this lane has NOT been dosed since V65. There is no                            **")
+    print("  ** measured optimum for it at all. Doubling stock is the smallest real step.                          **")
+    print("  ** FLY V255 FIRST. This is the escalation for 'helped but not enough'.                                **")
     print("=" * 102)
     return img_sha, rwd_sha
 
