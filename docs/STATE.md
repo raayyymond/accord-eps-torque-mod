@@ -82,6 +82,29 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⭐⭐⭐⭐⭐ **V251 IS ALSO THE ANSWER TO *LKAS AUTHORITY* — AND IT IS THE ONLY AUTHORITY LEVER THAT COSTS NO RATCHET.**
+>
+> I undersold this build as *“not a torque step”*. True of the **gain**; false of **delivered torque**. Computing `delivered = min(|cmd| × gain/891, clamp)` over the flown command stream:
+> ```
+>   route  build   mean 3072  mean 4096   gain    p99 3072   p99 4096
+>   r96    V102         1189       1308  +10.0 %      3072       4096
+>   ra6    V106         1118       1240  +10.9 %      3072       4096
+>   r1e    V107         1638       1841  +12.4 %      3072       4096
+>   r22    V112         1601       1824  +13.9 %      3072       4096
+>   r24    V122         1181       1300  +10.1 %      3072       4096
+>
+>   MEAN DELIVERED TORQUE  1345 -> 1502  =  +11.7 % MORE AUTHORITY
+>   PEAK AVAILABLE         3072 -> 4096  =  +33.3 %
+> ```
+> ✅ **[EVIDENCE] THE p99 SITS AT EXACTLY 3072 ON EVERY ROUTE** — the clamp value itself. **The top 1 % of openpilot's requests were ALL being clipped**, on every drive in the corpus. They now arrive.
+> ⭐ **AND IT IS AUTHORITY OPENPILOT WAS ALREADY ASKING FOR.** The gain is untouched, so assist per unit of command is identical and **the ratchet's measured gain dependence is not engaged.**
+> ⇒ **THE TRADE, STATED FOR THE OPERATOR:**
+> ```
+>   V242 (8x gain)   +33 % authority   costs ~13 units of Re(Z)  -- measurably more ratchet
+>   V251 (clamp)     +11.7 % authority  costs ZERO ratchet       -- the gain never moves
+> ```
+> **V251 is strictly better per unit of ratchet cost.** If the operator wants authority without paying in ratchet, this is the whole of what is available — and it was invisible until the rail was measured.
+
 > ✅⭐⭐⭐⭐ **V251'S SAFETY CASE IS FLIGHT HISTORY, NOT A MODEL: ITS PEAK IS A VALUE THAT HAS ALREADY FLOWN, REACHED LESS OFTEN.**
 >
 > Two things had to be checked before recommending a build that **breaks the clamp/gain tracking**:
