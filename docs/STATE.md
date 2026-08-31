@@ -82,6 +82,25 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **V247 — THE DAMPER'S RATE DEAD ZONE, OPENED, ENGAGED ONLY. THE BIGGEST UNFLOWN LEVER IN THE KIT, AND THE FIRST ONE COMPUTED TO ACTUALLY REACH THE RATCHET.**
+>
+> The FDR census said the cal surface was exhausted — **but a census can only test cells that have VARIED, and the damper's dead zones are BYTE-STOCK IN ALL 18 FLOWN BUILDS.** They were never tested because they were never moved.
+> ```
+>   FactorE (engaged, mode 26 @0xD780C)   X=[60, 400, 2500, 4000]   Y=[0, 140, 539, 927]
+> ```
+> Below `X[0]=60` counts of motor rate the LERP clamps flat to `Y[0]=0`, and **zero × anything = 0, so the damper is simply OFF.** The ratchet's measured operating point is `gp-0x6ac0 = 99` — *just* past the edge, on the first rising segment where the curve is still almost nothing:
+> ```
+>   LERP(99) stock              =  16.1   ->  damper delivers ~6.7 counts
+>   LERP(99) X[0]=12, Y[1]=539  = 120.8   ->  damper delivers ~50.6 counts     7.5x
+> ```
+> ✅ **AND THE REQUIREMENT IS MET, BY TWO INDEPENDENT ROUTES.** `Re(Z) = −65` at the measured p50 band amplitude of 0.86 °/s is **≈56 counts of torque — only 0.5 % of the aggregator's ±10240**, so the magnitude needed to cancel the ratchet was never the problem. And the record's *own* pricing of this same lever, done for a different purpose, reads **“BOTH dead zones opened ~50”** against **“a requirement of ~43”**. **Two routes land at ~50 against 43–56.**
+> ⭐ **WHY IT NEVER FLEW — IT WAS NEVER FALSIFIED, ONLY MIS-ADDRESSED.** V72 and V73 tried this and were **INERT BY TABLE SELECTION**: they edited **modes 10/11**, assuming this part number is row 2 *TVAA1*. It is not — the car is **row 11 *TVCA4*, modes 24 manual / 26 engaged.** So the lane is **unflown and unfalsified**, not tried-and-failed.
+> ⭐⭐ **ENGAGED ONLY, AND THAT IS WHAT MAKES ADDED DAMPING AFFORDABLE.** Every mode owns its own record — mode 26 @`0xD780C`, mode 24 @`0xD6820`, **no sharing** — so **manual feel is byte-identical**. The operator's standing instruction is *“increasing mass and friction should not be our primary approach … we want LOW apparent steering mass and friction”*; **a damper that exists only while the car drives itself does not spend that.**
+> 🛑 **GATE 2 — V72'S EXACT MISTAKE, AVOIDED AND ASSERTED.** V72 set `Y[0..2] → 927`, flat across the whole rate axis, turning a rate-proportional damper into a **near-bang-bang RELAY** — and a relay in a loop at a lightly-damped resonance is a **limit-cycle generator**. This does the opposite, with all three asserted at build time: **`Y[0]` stays 0** (zero damping at zero rate, so no relay) · the curve stays **monotone** `[0,539,539,927]` · it **OPENS the dead zone rather than raising a gain**, so the lane becomes *more* rate-proportional in the symptom's range, not flatter.
+> ⚠ **THE COST, AND THE UNCERTAINTY.** ~50 counts against the 3072 forward clamp is **~1.6 % of LKAS authority**, spent only while engaged — if LKAS feels lazier, this is the cell and `60/140` is the way back. And both the ~56 requirement and the ~50 delivery are **estimates**: the damper's phase is right *by construction* (`−sign(rate)`), but its effect on `Re(Z)` is **computed, not measured**, and this lane has never been observed working on this car.
+> ⭐ **BUILT — image `7a59497a592ea6e3…` · rwd `eb92273e2e416403…` · 3 payload bytes.** Cal-only, no cave, engaged-only, instantly revertible. **1590 checks passed, 52/52 builders bit-exact.**
+> ⇒ **FLIGHT ORDER NOW: V241 → V247 → V246.** V247 displaces V246 as the second flight because it is computed to nearly cancel the ratchet where V246's effect is smaller and statistically marginal.
+
 > ⭐⭐⭐⭐⭐ **THE SEARCH IS CLOSED SYSTEMATICALLY: OF EVERY CALIBRATION CELL THAT VARIES ACROSS THE FLOWN CORPUS, ONLY *TWO THINGS* TRACK THE RATCHET'S ANTI-DAMPING — THE GAIN AND LEVER B. THERE IS NO HIDDEN LEVER.**
 >
 > Lever B was found **opportunistically**, by noticing it happened to correlate. This is the exhaustive version: every u16 in `[0xC4000,0xCC000)` that differs between any two flown images, regressed against the coherence-gated 6–9 Hz `Re(Z)`, with Benjamini-Hochberg FDR and collinear cells grouped into indistinguishable classes.

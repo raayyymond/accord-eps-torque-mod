@@ -109,7 +109,13 @@ the thing that sets it.** Reader: `rlog-tools/score/gain_vs_antidamping.py`.
   39990-TVA,A160-V243-V242BASE-GAIN10X.CLAMPS4608.CEILING-0x13000-0x100000.rwd
               rwd  43a32ac352508557...      image 5fb9ad74f104de46...
 
-  V246   6x   <-- FLY THIS SECOND, right after V241, on the same roads.
+  V247   6x   <-- FLY THIS SECOND. The biggest un-flown lever the kit has, and the
+              first one COMPUTED to nearly cancel the ratchet. ENGAGED ONLY -- your
+              manual steering feel is byte-identical. 3 bytes on V241.
+  39990-TVA,A160-V247-V241BASE-FACTORE.DEADZONE.OPEN.ENGAGED-0x13000-0x100000.rwd
+              rwd  eb92273e2e416403...      image 7a59497a592ea6e3...
+
+  V246   6x   <-- FLY THIS THIRD, if V247 is not enough or you want the smaller step.
               The ONLY build that targets the RATCHET without costing you torque.
               2 bytes on V241: Lever B 5244 -> 7866. Identical notch, identical gain.
   39990-TVA,A160-V246-V241BASE-LEVERB.5244.TO.7866-0x13000-0x100000.rwd

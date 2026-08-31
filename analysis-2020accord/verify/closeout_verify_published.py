@@ -84,6 +84,7 @@ PUB = {
     'v241': '2ef7eb8eb24179054b0c016d13f2e240b7fe3ea32d419c047405f1a748109df4',
     'v245': '10494d5fe6a948efd38364fdb9de979e4d00105da4ea5c8ed7580c78f79f0753',
     'v246': 'c97e535f3177c564a6737864abcf83d330562910be489f7bfa09d004cdf49cca',
+    'v247': '7a59497a592ea6e342a985583c77f18ae753941c90c28ef22bf2145f5028c288',
     'v242': '424249b0c7d89fad4e1192fbb89b829fb6295e4260b7959d2a406c95657a5576',
     'v243': '5fb9ad74f104de4616b4704081517d418e4307687eab3490b1ffb62e629d9a07',
 }
@@ -884,6 +885,8 @@ _KNOT_OK = {
     # lane the record says has NEVER been scored at 6-9 Hz.
     ('v245', 0xC67C4),
     ('v246', 0xC6446),
+    ('v247', 0xD780E),
+    ('v247', 0xD7818),
     ('v240', 0xC693E),
     ('v240', 0xC6940),
     ('v240', 0xC6942),

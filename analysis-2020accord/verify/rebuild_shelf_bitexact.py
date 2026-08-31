@@ -87,6 +87,7 @@ SHELF = {
     'v241': '2ef7eb8eb24179054b0c016d13f2e240b7fe3ea32d419c047405f1a748109df4',
     'v245': '10494d5fe6a948efd38364fdb9de979e4d00105da4ea5c8ed7580c78f79f0753',   # V241 + the resonance-PID ceiling knee -- the one lane never scored at 6-9 Hz
     'v246': 'c97e535f3177c564a6737864abcf83d330562910be489f7bfa09d004cdf49cca',   # V241 + Lever B 5244->7866 -- the one cell that moves the ratchet WITHOUT spending authority
+    'v247': '7a59497a592ea6e342a985583c77f18ae753941c90c28ef22bf2145f5028c288',   # V241 + FactorE dead zone opened, ENGAGED only -- byte-stock in all 18 flown builds
     'v244': '83f2d0260f1df4fb5cd646c65142cfcc4865a921cc8ecf9a816c4a7ae85260af',   # V241 with the notch moved ONTO the ratchet -- the experiment that settles the 6-15 Hz rule
     'v242': '424249b0c7d89fad4e1192fbb89b829fb6295e4260b7959d2a406c95657a5576',   # gain ladder on the V241 grinding work
     'v243': '5fb9ad74f104de4616b4704081517d418e4307687eab3490b1ffb62e629d9a07',   # gain ladder on the V241 grinding work   # V235 + the notch re-aimed on the IMU objective (29.75/22.50/0.940)   # V238 + the NORMAL slew curve x Honda's 0.600 -- largest measured ratchet lever
