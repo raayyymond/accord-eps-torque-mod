@@ -82,6 +82,20 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ✅⭐⭐⭐⭐⭐ **THE SEARCH IS EXHAUSTIVE NOW: THE PATTERN THAT HID THE DAMPER OCCURS EXACTLY ONCE IN THE WHOLE CALIBRATION SURFACE, AND V249 ADDRESSES IT.**
+>
+> Two blind spots produced V247/V249, and the second is a **mechanical signature** rather than a judgement call: a lane whose LERP value at the operating point is a trivial **fraction of its own range** is structurally starved there — scaling it is near-vacuous, and only reshaping delivers. Sweeping every pointer-array LERP in the cal region at the ratchet's operating point:
+> ```
+>   boost amp y1     91.8 %      damper FactorB  100.0 %
+>   boost amp y4     84.6 %      damper FactorC   47.2 %
+>   boost curve      84.1 %      damper FactorD  100.0 %
+>   friction lane    87.0 %      damper FactorE    1.7 %   <== STRUCTURALLY STARVED
+> ```
+> ✅ **[EVIDENCE] `FactorE` IS THE ONLY ONE.** Every other lane runs at **47–100 %** of its range at the operating point; `FactorE` runs at **1.7 %**. **V249 takes it to 13.0 %.** ⇒ **there is no second lever of this class hiding anywhere in the calibration surface.**
+> 🛑 **MY FIRST VERSION OF THIS TEST RETURNED ZERO HITS AND WAS WRONG.** It looked for the operating point *below* `X[0]` — but `FactorE`'s problem is the opposite: **99 counts sits just PAST the dead-zone edge of 60**, on the first rising segment, where the curve has climbed to only 16 of 927. *“Below the dead zone”* misses that entirely; *“fraction of the lane's own range”* catches it. The corrected test is what makes the sweep exhaustive.
+> ⚠ **STARVED ≠ WORTH OPENING.** A hit means the lane contributes almost nothing and cannot be scaled into life. Whether to *open* it needs the lane's **sign** — the damper was safe to open because it **opposes the motion by construction.** Opening a lane that PUMPS at 6–9 Hz would make the ratchet worse.
+> ➕ Reader: `rlog-tools/score/dead_zone_sweep.py`, kept with its own first-version error documented.
+
 > 🛑⭐⭐⭐⭐⭐ **THE GRINDING RISK IN V249 CANNOT BE TESTED FROM THE CORPUS — AND THE REASON IS THE FINDING: THE STOCK DAMPER IS DOING ESSENTIALLY NOTHING, ANYWHERE.**
 >
 > V249 raises the grinding band 4.1×, and V62's *“2× is the OPTIMUM, not a point on a ramp”* says more damping is not monotonically better. I tried to falsify that from flown data with a **regression discontinuity at the damper's switch-on speed.** **The design was wrong**, and both halves of why are worth keeping:
