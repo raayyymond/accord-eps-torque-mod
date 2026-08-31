@@ -82,6 +82,25 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ✅⭐⭐⭐⭐⭐ **V247/V248 VERIFIED AGAINST THE DECOMPILED ARITHMETIC, FROM THE REAL BYTES — AND A REAL GAP IN THE GOLDEN MODEL CLOSED IN THE PROCESS.**
+>
+> The 90 % / 181 % figures came from a hand LERP, so they needed an independent derivation. **The golden model could not supply one: it does NOT implement this lane at all** — `assist_shaping_lanes` takes `damping_6bd0` as a *supplied input defaulting to 0*, and every `FactorB`/`FactorC`/`FactorE` reference in the four modules is a **comment**. That gap was harmless while the damper was untouched and is not harmless now.
+> ⇒ **`analysis-2020accord/model/damper_fun34350_mirror.py`** mirrors `FUN_00034350` in integer Python, address by address, reading the real tables out of the real images — including both gates (`FactorC` forced to unity above `0x7d00` or on an implausible voter; the `FactorE` validity window that zeroes the **whole term**) and the strict-`<=` bottom clamp.
+> ```
+>   build      B     C     D     E   ceiling  magnitude  vs req
+>   V122    1024   429  1024    16      512          6     11 %
+>   V241    1024   429  1024    16      512          6     11 %
+>   V246    1024   429  1024    16      512          6     11 %
+>   V247    1024   429  1024   120      512         50     89 %
+>   V248    2048   429  1024   120      512        100    179 %
+>
+>   manual (mode 24):  V122 = 6   V247 = 6   V248 = 6     <- unchanged
+> ```
+> ✅ **[EVIDENCE] The hand figures were 6.7 / 50.6 / 101.3; the integer mirror gives 6 / 50 / 100 — agreement within truncation.** The dose claims stand on the decompiled chain now, not on my arithmetic.
+> ✅ **AND THE ENGAGED-ONLY CLAIM IS NOW VERIFIED FROM THE BUILT ARTEFACTS, not merely asserted at build time:** the manual damper reads **6 counts on V122, V247 and V248 alike.** Manual steering feel is untouched, confirmed by reading the shipped images.
+> ⊕ **The mirror is a SIBLING module, not imported by the facade**, so the golden model's contract is intact and re-verified: **87 symbols, hash `740f4bcd…` — both OK.**
+> ⚠ **Still a real gap:** the golden model itself remains without this lane. The mirror documents and prices it, but folding it into the facade would change the 87-symbol/hash contract and should be done deliberately, not as a side effect.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **THE SEARCH IS COMPLETE. ALL FIVE SENSOR-FED LANES ARE NOW ACCOUNTED FOR — BUILT, OR CLOSED BY ARITHMETIC, OR CLOSED BY THE OPERATOR'S OWN CONSTRAINT. THE ONLY THING THAT REACHES THE REQUIREMENT IS THE DAMPER.**
 >
 > The on-car evidence confines the ringing to five lanes: *“for 52–70 % of the return the LKAS lane is a DC CONSTANT, yet the 6–9 Hz |tq| envelope is unchanged … a constant cannot carry 7.8 Hz ⇒ **the ringing enters through a SENSOR-FED lane, not the command lane.**”*
