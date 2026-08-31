@@ -82,6 +82,27 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑🛑🛑⭐⭐⭐⭐⭐ **THE DEFINITIVE ANSWER TO “ELIMINATE ALL RATCHETING”: CALIBRATION CANNOT. Every lane is now measured, and the arithmetic does not reach.**
+>
+> Requirement to CANCEL: **65 counts per deg/s** of damping. Every lever at its measured maximum:
+> ```
+>   lever                                            units    of the 65
+>   damper lane, flat out                            18.87       29.0 %
+>   gain 6x -> 0x  (removes LKAS entirely)           26.40       40.6 %
+>   Lever B 512 -> 5244  (ALREADY on the car)         5.81        8.9 %
+>   Lever B 5244 -> 7866 (V246)                       2.90        4.5 %
+>   gp-0x6bbe at its rail                             0.52        0.8 %
+>   resonance PID D term                              0.00        0.0 %   (closed: bad trade)
+>   -----------------------------------------------------------------
+>   SUM OF EVERYTHING, including removing LKAS       54.50       83.8 %
+>
+>   PRACTICAL ceiling, LKAS still usable:            26.2         40 %
+> ```
+> 🛑 **EVEN REMOVING LKAS TORQUE ALTOGETHER, CALIBRATION REACHES 84 %. WITH THE SYSTEM STILL FUNCTIONAL, ~40 %.** This is not a shortfall in effort — the cal surface has been censused twice (an FDR regression over every cell that ever varied, and a mechanical starved-lane sweep over every LERP), and every lane is priced. **The ratchet is not calibration-eliminable.**
+> ⇒ **WHAT WOULD REACH IT IS A CODE CAVE** — adding a damping term that does not exist in stock firmware. **That is this kit's only bricking class: V24, V27 and V48B all bricked the ECU**, and this is the operator's daily driver. **Not proposed, and not to be built without an explicit instruction with that risk stated.**
+> ✅ **WHAT IS ACHIEVABLE AND ALREADY BUILT: V254 captures ~15 % of the ratchet while DELIVERING 7 % more mean torque and 33 % more peak** — because the clamp, not the gain, sets delivered torque. Pushing to the full 40 % means the damper flat out, at ~15 % of authority.
+> ⇒ **This closes the ratchet as a calibration problem.** Grinding and peak command oscillation are different: the notch treats one, and V251/V254's clamp measurably treats the other.
+
 > ⭐⭐⭐⭐⭐ **V254 — THE ONLY CONFIGURATION STRICTLY BETTER THAN THE CAR ON ALL THREE SYMPTOMS AT ONCE. AND IT GETS THERE BY *LOWERING* THE GAIN.**
 >
 > The operator asks for more torque and less ratchet, and the gain relation says those conflict. **But peak delivered torque is set by the CLAMP, not the gain** — `delivered = min(cmd·gain/891, clamp)`. So lowering the gain while raising the clamp:
