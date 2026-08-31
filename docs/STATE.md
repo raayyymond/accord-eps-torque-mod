@@ -82,6 +82,22 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑⭐⭐⭐⭐⭐ **THE GRINDING RISK IN V249 CANNOT BE TESTED FROM THE CORPUS — AND THE REASON IS THE FINDING: THE STOCK DAMPER IS DOING ESSENTIALLY NOTHING, ANYWHERE.**
+>
+> V249 raises the grinding band 4.1×, and V62's *“2× is the OPTIMUM, not a point on a ramp”* says more damping is not monotonically better. I tried to falsify that from flown data with a **regression discontinuity at the damper's switch-on speed.** **The design was wrong**, and both halves of why are worth keeping:
+> **1. There is no step to find.** The LERP is **continuous at its knee** — below `X[0]` it clamps to `Y[0] = 0`, and above it ramps *from* 0. So the damper is zero on *both* sides of 35 km/h; there is a **kink in slope, not a step in value.** All three bands returned the same jump (+0.0072, control included, z 0.37–1.02) — the estimator was reading noise, and **the control band is what caught it.**
+> **2. 🛑 THE DEEPER REASON, AND IT MATTERS MORE:**
+> ```
+>   V122 ENGAGED, at the ratchet rate of 99 counts
+>     25 km/h  FactorC   0   damper  0        80 km/h  FactorC 429   damper  6
+>     35 km/h  FactorC   0   damper  0       100 km/h  FactorC 588   damper  9
+>     50 km/h  FactorC 140   damper  2       120 km/h  FactorC 748   damper 11
+> ```
+> **The stock damper NEVER EXCEEDS ~11 COUNTS ANYWHERE IN THE NORMAL SPEED RANGE.** Against a torque signal with p50 136 and band envelopes in the hundreds, that is a **sub-percent** effect — **no design can detect it, so no drive in the corpus can say whether damping this lane helps or hurts grinding.**
+> ⇒ **AND IT REFRAMES V249.** It is not *“more damping”* — it is going from **effectively NO DAMPER to a real one** (6 → 50 above 35 km/h, **0 → 50 below**). ⭐ **V62's caution may therefore not transfer at all:** that lesson came from a lane that was already doing something, and this one is not.
+> ⚠ **STATUS: the grinding side of V249 is GENUINELY OPEN and only a drive settles it.** The ratchet direction is well-founded — the damper opposes the motion **by construction**; the grinding direction is a free hypothesis the same build tests. **If grinding worsens on V249, that is the signature, and V241 is the way back.**
+> ➕ Reader: `rlog-tools/score/damper_switch_on_discontinuity.py`, kept **with its own design error documented.**
+
 > ⭐⭐⭐⭐⭐ **V249 IS ONE LEVER AIMED AT BOTH SYMPTOMS. THE DAMPER IS RATE-PROPORTIONAL, SO OPENING IT RAISES THE GRINDING BAND TOO — AND BELOW 35 km/h IT CURRENTLY SUPPLIES LITERALLY ZERO AT EITHER.**
 >
 > `gp-0x6ac0` is `|motor rate| >> 10`. The ratchet sits at the measured **99 counts**; a 22–30 Hz oscillation of similar amplitude turns the motor ~3× faster, so the grinding band maps to ~**300 counts**. Damper magnitude through the decompiled mirror, ENGAGED:
