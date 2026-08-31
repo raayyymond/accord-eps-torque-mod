@@ -42,7 +42,8 @@ FW = os.environ.get('ACCORD_FIRMWARE_ROOT',
 RWD = os.path.join(FW, 'flashing-2020accord', 'rwd')
 IMG = os.path.join(FW, 'analysis-2020accord')
 # flown builds FIRST -- they are the control. If they fail, the check is broken.
-BUILDS = ('V122', 'V88', 'V108', 'V241', 'V242', 'V243')
+BUILDS = ('V122', 'V88', 'V108', 'V241', 'V242', 'V243',
+          'V245', 'V246', 'V247', 'V248', 'V249', 'V250')
 FLOWN = {'V122', 'V88', 'V108'}
 
 
