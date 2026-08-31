@@ -82,6 +82,31 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> 🛑🛑⭐⭐⭐⭐⭐ **THE ENTIRE BASE-ASSIST DAMPER HAS BEEN BYTE-STOCK IN EVERY FLOWN BUILD. ALL FIVE RECORDS. THE CENSUS WAS BLIND TO THE WHOLE LANE — AND SIXTY BUILDS NEVER TOUCHED IT.**
+>
+> The FDR census tests only cells that **varied**; a byte-identical cell has nothing to correlate. Sweeping the complement — every damper record, across all 18 flown builds:
+> ```
+>   FactorB   NEVER VARIED      FactorC   NEVER VARIED      FactorD   NEVER VARIED
+>   FactorE   NEVER VARIED      ceiling   NEVER VARIED
+> ```
+> ⇒ **the census's null said nothing whatsoever about the damper.** V247's lever was hiding in exactly this blind spot, and so are three more.
+> ⭐ **PRICED BY ARITHMETIC at the measured operating point** (speed 5120 counts, `gp-0x6ac0` = 99), against the **~56 counts** needed to cancel `Re(Z) = −65`:
+> ```
+>                                            magnitude   vs requirement
+>   stock                                          6.7        12 %
+>   V247: FactorE X[0]=12, Y[1]:=Y[2]             50.6        90 %
+>   FactorB flat 1024 -> 2048  (alone)            13.5        24 %
+>   FactorD flat 1024 -> 2048  (alone)            13.5        24 %
+>   FactorC Y[2] 429 -> 908    (alone)            14.2        25 %
+>   V247 + FactorB 2048                          101.3       181 %
+>   V247 + FactorB + FactorD                     202.5       362 %
+>                          headroom to the 512 ceiling: 76x from stock, 10x from V247
+> ```
+> ✅ **V247 ALONE REACHES 90 % OF THE COMPUTED REQUIREMENT**, and `FactorB`/`FactorD` are **flat Q10 gains sitting at unity** — pure multipliers with linear leverage and *no shape to corrupt*, so if V247 proves the direction but falls short, the next step is arithmetic rather than invention.
+> 🛑 **HEADROOM IS NOT PERMISSION, AND NOTHING MORE IS BEING BUILT.** More damping costs LKAS authority — it opposes openpilot's own steering, and V247's 51 counts is already **1.6 % of the 3072 forward clamp** — and a damper large enough to matter can change loop behaviour away from the band it was aimed at (**GATE 2**). **V247 must fly first.** A ladder built before the first rung is scored is three wasted drives.
+> ⊕ **AND IT REFRAMES THE WHOLE ARC.** Sixty builds went into rate lanes, filters, notches, caves and probes. **The damper — the one lane whose entire purpose is to oppose this motion — was never touched once.** That is the single most useful sentence to hand the next session.
+> ➕ Reader: `rlog-tools/score/damper_never_varied_sweep.py`.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **V247 — THE DAMPER'S RATE DEAD ZONE, OPENED, ENGAGED ONLY. THE BIGGEST UNFLOWN LEVER IN THE KIT, AND THE FIRST ONE COMPUTED TO ACTUALLY REACH THE RATCHET.**
 >
 > The FDR census said the cal surface was exhausted — **but a census can only test cells that have VARIED, and the damper's dead zones are BYTE-STOCK IN ALL 18 FLOWN BUILDS.** They were never tested because they were never moved.
