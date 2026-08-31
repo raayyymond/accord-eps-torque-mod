@@ -82,6 +82,21 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ✅⭐⭐⭐⭐⭐ **THE RATCHET RESONANCE IS NOT DRIFTING — SO IT IS STRUCTURAL, NOT A WEARING PART, AND FIRMWARE DAMPING IS A LEGITIMATE TREATMENT RATHER THAN A PALLIATIVE.**
+>
+> The most important thing to rule out before recommending more flashing: the ratchet is **real chassis motion** (IMU-confirmed, independent of the EPS) and a **lightly-damped resonance (Q 14–29)**. A resonance has a mass and a stiffness — so if its frequency were **walking**, something would be *changing*, and the right advice would be *“have the front end inspected and stop flashing.”* `f = (1/2π)√(k/m)`, so a 10 % frequency drop is a ~20 % stiffness loss — well within what a worn bushing or loosening joint produces, and easily visible.
+> ```
+>   15 routes, builds V90..V122, peak of the engaged 5.5-10.5 Hz band per 20 s segment
+>
+>   median peak        8.50 Hz     route-to-route sd 0.48
+>   within-route IQR   1.33 Hz     <- the estimator's own noise floor
+>   trend             +0.0103 Hz per build  =  +0.33 Hz over the whole span
+>   Spearman rho      +0.277   p 0.318
+> ```
+> ✅ **[EVIDENCE] THE TREND IS FOUR TIMES SMALLER THAN THE NOISE FLOOR AND NOT SIGNIFICANT.** The resonance is a **fixed structural property of the car**. ⇒ V249 is aimed at a **real and stationary** target, and nothing here indicates a mechanical inspection.
+> ⚠ **ONE DISCREPANCY, FLAGGED RATHER THAN SMOOTHED:** this puts the median at **8.50 Hz** where the record's characterisation says **7.79 Hz**. That sits inside the route-to-route spread (sd 0.48, IQR 1.33), and the damper's operating point (`gp-0x6ac0` = 99 counts) was **measured on-car** rather than derived from the frequency, so nothing downstream moves. But the two numbers come from different methods and should not be quoted as one.
+> ➕ Reader: `rlog-tools/score/ratchet_frequency_drift.py`.
+
 > ⭐⭐⭐⭐ **V252 — 8× ON TOP OF EVERY FIX. THE AUTHORITY STEP THE BRIEF ASKED FOR, AND THE ONLY BUILD ON THE SHELF THAT MAKES A SYMPTOM WORSE ON PURPOSE.**
 >
 > The brief was *“6× or higher, up to 16×, with no grinding, vibration or oscillation.”* Until this session the gain step was **unaffordable**: the ratchet tracks the forward gain (rho −0.819 over 17 flown builds), so 8× meant more of the exact symptom being chased with **nothing on the other side of the ledger.** That has changed.
