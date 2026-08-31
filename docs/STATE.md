@@ -82,6 +82,21 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⚖⭐⭐⭐⭐⭐ **THE DAMPER TRADE, FULLY PRICED — AND IT ARGUES AGAINST A MAXIMAL BUILD. V250 IS THE SENSIBLE CEILING.**
+>
+> Correcting my own correction: *“cannot cancel the ratchet”* is too pessimistic as a verdict. The ratchet is a **limit cycle bounded by nonlinearity**, so reducing net anti-damping does not have to reach zero to move the amplitude balance. The right question is the **trade**, and both sides are computable — damping uses the curve's **slope**, authority cost uses its **magnitude**:
+> ```
+>   config          c vs req     damper torque taken from openpilot
+>                                p50      p90      p99
+>   V122 (car)          1.3 %      0       20      146
+>   V249                4.2 %      0       67      388
+>   V250                8.4 %      0      133      512
+>   MAX E+B+D          29.0 %      0      459      512
+> ```
+> 🛑 **AT THE MAXIMUM THE DAMPER TAKES 459 COUNTS AT p90 STEERING RATE — 15 % OF THE 3072 CLAMP — and rails at p99.** The benefit:cost ratio is roughly **2:1 and LINEAR**, so there is no sweet spot to find: 29 % of the ratchet costs 15 % of the authority the operator asked to *increase*. **The maximal build is not worth proposing.**
+> ✅ **AND ONE GOOD STRUCTURAL DETAIL FALLS OUT.** At the **median** engaged steering rate (1.77 °/s = 8.3 counts) the damper is **OFF in every configuration**, because `FactorE X[0]` sits at **12 counts**. So it costs nothing in quiet driving and engages only during active steering — including ratchet bursts, whose operating point is 99 counts. **That is the right shape**, and it vindicates the record's deliberate choice of `X[0] = 12` over 6.
+> ⇒ **V250 (8.4 % for 4.3 % authority) is the ceiling worth flying**, and it is already built. **V249 (4.2 % for 2.2 %) remains the first step.**
+
 > 🛑🛑🛑⭐⭐⭐⭐⭐ **RETRACTION, AND IT IS THE BIG ONE: THE DAMPER SUPPLIES ~4 % OF THE REQUIREMENT, NOT 90 %. I COMPARED THE WRONG QUANTITY, AND EVEN AT ITS CEILING THIS LANE CANNOT CANCEL THE RATCHET.**
 >
 > **The error.** I priced the damper by its output MAGNITUDE — 50 counts against a ~56-count requirement — and called it 89 %. **For a small oscillation riding on a larger steady rate the damping coefficient is the curve's SLOPE, not its value.** `T = −sign(rate)·M(|rate|)`, so with `rate = R₀ + δ·sin` and `R₀ ≫ δ` the oscillating part is `−M′(R₀)·δ`. **I used `M` where `M′` belongs, and was wrong by ~20×.**

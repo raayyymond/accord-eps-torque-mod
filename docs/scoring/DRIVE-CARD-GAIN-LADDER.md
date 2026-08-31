@@ -20,8 +20,17 @@
      the PREDICTED result, not a surprise. If it feels WORSE, revert -- that would
      mean the sign is inverted somewhere and I want to know immediately.
 
-     V249 is still worth flying: it is the largest this lane offers at a sane dose,
-     it is engaged-only, and it is 3 bytes. But it is not the fix I called it.
+     V249 is still worth flying: engaged-only, 3 bytes, and it is the first step
+     of a trade that is now fully priced. But it is not the fix I called it.
+
+     THE TRADE, both sides measured -- damper benefit vs authority given up:
+       V249    4.2 % of the ratchet   costs  2.2 % of your torque
+       V250    8.4 %                  costs  4.3 %
+       flat out 29 %                  costs 15 %   <- NOT offered: too much torque
+     Roughly 2:1 and linear, so there is no sweet spot. V250 is the ceiling I
+     would fly. Good news: at ordinary steering rates the damper is OFF in all
+     of them, so it costs nothing cruising -- it only acts when the wheel is
+     actually moving, which is where the ratchet lives.
 
   2.  V249   THE DAMPER FIX. Opens BOTH of the damper's dead zones.
               Raises damping 8.3x at the ratchet AND 4.1x at the grinding band,
