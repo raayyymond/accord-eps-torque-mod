@@ -83,6 +83,7 @@ PUB = {
     'v240': 'f2745df252e7ce7eb069fa7b7700e7cae474213cda4bebea08916253eb032962',
     'v241': '2ef7eb8eb24179054b0c016d13f2e240b7fe3ea32d419c047405f1a748109df4',
     'v245': '10494d5fe6a948efd38364fdb9de979e4d00105da4ea5c8ed7580c78f79f0753',
+    'v246': 'c97e535f3177c564a6737864abcf83d330562910be489f7bfa09d004cdf49cca',
     'v242': '424249b0c7d89fad4e1192fbb89b829fb6295e4260b7959d2a406c95657a5576',
     'v243': '5fb9ad74f104de4616b4704081517d418e4307687eab3490b1ffb62e629d9a07',
 }
@@ -731,7 +732,9 @@ _LEVER_B_LADDER = {'v221': 13107, 'v222': 13107, 'v223': 26214,
                    'v229': 13107,
                    'v231': 13107,
                    'v232': 13107,
-                   'v233': 13107}   # v233 = v231 + the net-damping optimum, all gates
+                   'v233': 13107,   # v233 = v231 + the net-damping optimum, all gates
+                   'v246': 7866}    # V241 + 1.5x Lever B -- the one cell measured to move the
+                                    # ratchet WITHOUT spending forward authority (p 0.0556 at 6x)
 for _v in sorted(img):
     _want = _LEVER_B_LADDER.get(_v, 5244)
     _got = struct.unpack_from('<H', img[_v], 0xC6446)[0]
@@ -880,6 +883,7 @@ _KNOT_OK = {
     # in the builder, and moving X[1] alone keeps the axis monotone. This is the one sensor-fed
     # lane the record says has NEVER been scored at 6-9 Hz.
     ('v245', 0xC67C4),
+    ('v246', 0xC6446),
     ('v240', 0xC693E),
     ('v240', 0xC6940),
     ('v240', 0xC6942),

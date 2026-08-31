@@ -82,6 +82,30 @@
 > ⊕ **THE ONE UNTESTED WAY OUT, and its size is bounded.** V57 decoupled the forward reader onto `0xC6CD0`, leaving **four FEEDBACK readers on the shared `0xC646C` = 891 — stock, and never varied in the flown corpus.** The two live ones (`FUN_00036682`, `FUN_00036828`) compute `(raw sensor × gain) >> 15`, and at 7.8 Hz their IIR (`tp+0x73d2 = 14/1024`, fc ≈ 2.18 Hz) still passes ≈ **28 %** — into a **±512 clamp, 5 % of the aggregator's ±10240**. ⇒ lowering `0xC646C` is the only known way to cut feedback response **without touching forward authority**, but **it is capped at ~5 % of the aggregator, and the record already judges this path “probably NOT the 21 Hz driver”.** A candidate, not a plan — and it must be sized before it is built.
 > ➕ **Nothing on the shelf moves. V241 remains the flight candidate.**
 
+> ⭐⭐⭐⭐⭐ **V246 BUILT — LEVER B 1.5×. THE FIRST LEVER MEASURED TO MOVE THE RATCHET *WITHOUT SPENDING AUTHORITY*, WHICH IS THE TRADE THE OPERATOR HAS BEEN ASKING FOR ALL ALONG.**
+>
+> The ratchet's anti-damping tracks the **forward gain**, and forward gain is also what buys authority — so they are locked, and **three escapes were opened and closed this tick, all by arithmetic, none needing a drive:**
+> ```
+>   the tracking CLAMP     follows the gain as gain*512//891  =>  a clamp-only build is INERT
+>   the 0xC646C FEEDBACK   |k| = 0.0073 at 7.79 Hz            =>  zeroing it moves Re(Z) by 0.13 of 65
+>   a forward LOW-PASS     LKAS carries 0.09-1.7 % of its     =>  there is nothing there to filter
+>                          0-5 Hz energy at 6-9.5 Hz
+> ```
+> ✅ **LEVER B IS THE ONE CELL THAT IS NOT LOCKED TO AUTHORITY AND DOES MOVE THE RATCHET.** Controlling for gain — the mirror of the control run on gain itself:
+> ```
+>   WITHIN GAIN 6x    LeverB  512 (n=2)   Re(Z) -73.59
+>                     LeverB 5244 (n=7)   Re(Z) -67.78
+>                     Mann-Whitney p = 0.0556,  +5.81 in favour of the HIGHER dose
+> ```
+> ⭐ **AND THE HEADROOM IS COMPUTED, NOT GUESSED.** Lever B's real ceiling is its **describing function** — the lane is a plain saturation, `N(A) → 4L·1024/(πA)` independent of `k`. The knee sits at **k = 58624 at p90** torque-rate amplitude, **14080 at p99**, **5184 at max**. ⇒ at *typical* amplitudes the car's **5244 is far BELOW the knee, still in the LINEAR region where raising k genuinely buys damping**; only the largest excursions are already saturated.
+> ```
+>   0xC6446   5244 -> 7866   (1.50x)   well under the p99 knee of 14080
+> ```
+> ⚠ **WHAT IS ASSUMED, AND IT IS THE WHOLE RISK: 5244 is V88's BRACKETED optimum for GRINDING**, and this moves off it. V62's lesson is *“2× is the OPTIMUM, not a point on a ramp.”* **Whether the step costs grinding is NOT established** — the only cross-build grinding comparison available is an uncontrolled band fraction (no speed matching, no road control) whose groups overlap heavily. It happens to point the *same* way (less grinding at the higher dose) but **that is not evidence and is not claimed as any.** V222's 2.5× (13107) was flagged as over-dosing, which is exactly why this stops at 1.5×.
+> ⭐ **BUILT — image `c97e535f3177c564…` · rwd `f336b0d53d335fde…` · 2 payload bytes.** Cal-only, no cave, and **ONE VARIABLE against V241**: identical notch, identical gain, identical everything else. Instantly revertible.
+> ⇒ **1557 checks passed, 51/51 builders bit-exact.** Shelf: **V241 · V242 · V243 · V245 · V246**.
+> ⊕ Readers: `size_c646c_feedback_lever.py` (the feedback closure) and `gain_vs_clamp_collinearity.py`.
+
 > 🛑🛑⭐⭐⭐⭐⭐ **CORRECTION TO MY OWN HEADLINE: THE GAIN↔ANTI-DAMPING LINK IS A STRONG ASSOCIATION WITH *ONE* ERA-FREE CONTRAST — NOT THE CLEAN CAUSAL BREAK I WROTE. LEVER B MOVED IN THE SAME STEP.**
 >
 > I claimed the V100→V101→V102 reversal *“breaks the era confound”*. **Half of it does not.** `V101` changed the gain **and removed Lever B** (`0xC6446` 5244 → 512) in the same build:
