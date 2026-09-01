@@ -19,6 +19,12 @@ stock AND V112, so the integrator is inert. `gp-0x674e` is a STATIC variant/tabl
 pointer-array bank); `gp-0x682f` = `|gp-0x4f60|>>5`, the driver-torque override index. `FUN_0002a93a`
 is a dead twin of the same block (positive-controlled jarl scan).**:
 [[reference_accord_fun28ea6_lkas_rate_pid_full_decode]]
+🛑🛑★★★★★ **UPDATED 2026-09-01 — the driver override is TWO mechanisms: the Y taper AND a `0xC64B4`-`B7`
++ `0xC61C0/C2/C4` debounce writing `gp-0x6807 = 4`. On STOCK the debounce binds FIRST (raw 1728, below
+the taper knees); on a V112/V268 base ALL EIGHT cals are 255/0xFFFF so BOTH are unsatisfiable. Taper X is
+a zero-extended byte, ceiling 255, 1 count = 32 raw counts. `0xC6974` is 4-knot FLAT and inert
+(correction). Also carries the decoded 6-byte extended-displacement gp-relative encoding.**:
+[[reference_accord_fun28ea6_lkas_rate_pid_full_decode]]
 
 ## 2026-08-27 — `blanked` task, for `team-lead` (V36-blanked cells 0xC61C0/C2/C4)
 🛑🛑★★★★★ **V36 debounce SM fully re-verified fresh (GhidraMCP, not r2): 12 exact reader addresses across
@@ -35,3 +41,34 @@ function-unbound-code blind spot: [[reference_accord_gp6807_gates_gp69b0_engagem
 🛑🛑★★★★★ **`gp-0x69ae` (the openpilot STEER_TORQUE) has EXACTLY 3 readers; both in-control uses are
 GATES, not summands. The torque that reaches the motor is generated internally and scaled by the
 `gp-0x69b0` engagement ramp at 0x2a1e6 — NOT at 0x2a194.**: [[reference-accord-op-0e4-steer-command-full-path]]
+
+## 2026-09-01 — CAN 427 telemetry-tap packer, for `main` (V277 design)
+🛑🛑★★★★★ **The 427 tap field is 10 BITS (ceiling 1023), not 8 — byte1 + byte0[1:0] of `0x1AB`. And
+`ld.h` CANNOT address an ODD gp displacement (disp bit0 selects ld.h/ld.w), so `gp-0x674B` is
+unreachable by the current load; it needs `ld.bu` (opcode 0x3C even / 0x3D odd, `hw2 = disp|1`).
+`gp-0x674B` has 2 writers and ZERO readers — a free publish cell.**:
+[[reference_accord_can427_packer_tap_field_full_decode]]
+🛑🛑★★★★★ **ALL 7 EPS outbound frames censused. `FUN_000561b0`/0x660 writes SEVEN payload bytes to
+literal zero — and is a TRAP: gateway-filtered, the kit already built AND flashed this exact repurpose
+(TIER1, 2026-07-08) and saw nothing. Only 0x14A/0x18F/0x1AB cross, and NONE has a free contiguous byte
+(~21 scattered bits). Way out: the 427 tap chain has ~20 bytes of dead slack for bit-packing two
+signals.** Also: `or` opcode is 0x08 not 0x04, and `jarl` disp22 splits 6/16:
+[[reference_accord_eps_outbound_frame_census_and_free_bits]]
+
+## 2026-09-01 — V277 adversarial pass (interlocks & consumers)
+🛑🛑★★★★★ **`gp-0x674E` is <= 9 in every coded variant (`FUN_00057f8e` loops `while (uVar2 < 0x10)`;
+byte +8 of records 0..15 maxes at 9), so bank slots 10-27 are DEAD CALIBRATION and the
+`(32,48,64,112)` taper shape is never used. Resolves the "record 2 vs record 11" open question:
+neither.**: [[reference-accord-variant-selector-max-is-nine]]
+🛑★★★★★ **`ld.hu` is opcode 0x3E/0x3F, NOT 0x3C/0x3D — a ld.bu-only disp16 scanner returns FALSE
+ZEROS on halfword cal cells (cost me a bogus "0 readers" on `0xC62E6`, true answer 3). Full
+load/store + jarl + `mov imm32` decoder table here.**:
+[[reference-accord-v850-load-opcode-map-ldhu-0x3e]]
+🛑★★★★★ **Ghidra's `in_r10` in `FUN_00049a90`/`49a78`/`49a5a` is a `cmov` ARTEFACT — cmov always
+writes its dest, so the clamp helper needs no incoming r10. And `FUN_00055d80` saves r6/r7/r8 but
+NEVER restores them: dead scratch, free to clobber in an in-place packer rewrite.**:
+[[reference-accord-clamp-helpers-and-packer-scratch]]
+★★★★ **Importing a built image: auto-analysis returns ZERO functions (raw binary, no entry points) —
+`create_function` is required, and its `body_size` doubles as a desync check. And NEVER use
+`save_all_programs` to work around a locked save: it commits every open shared program.**:
+[[reference-accord-importing-a-built-image-into-ghidra]]

@@ -4,44 +4,74 @@
 > order** — findings, corrections and closures. That is a record, not a briefing. Everything you need
 > to make a decision is in this box and the index under it.
 
-## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-01
+## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-01 (V277)
 
-**ON THE CAR: V112.  THE FLIGHT CANDIDATE: V276.**
+**ON THE CAR: V112.  THE FLIGHT CANDIDATE: V277.  V276 IS SUPERSEDED BY IT (V277 CONTAINS V276).**
 
-| | **V276** — THE REFERENCE, SCALED 6x |
+| | **V277** — THE OVERRIDE CLIFF, SOFTENED |
 |---|---|
-| base | **V268** (= V112 + both pump families flattened, slots 0–33) |
-| payload | **457 bytes, 4 of them code**, 7 CRC trailers |
-| image | `f4ea35df1051db25736cd52710dfb8af194d4f74ecfd798d77ba026a7ff5e846` |
-| rwd | `6c4542b0ff6edce1c2eda37befae6933497a2c672703547e8d1489472fa86f08` |
-| assertions | **660/660**, CRC 50/50, bootloader replay 49/49, cipher validated NON-circularly |
-| artifact | https://claude.ai/code/artifact/52f1483a-0720-49df-bc96-238537170973 |
+| base | **V268** → V276 → V277 (V277 carries both of V276's cells unchanged) |
+| payload | **565 bytes, 32 of them code**, 7 CRC trailers |
+| image | `ee76f4cdd3f3a14860459dc3eea84c86cb88c72d414ae8eb992e2e4234877a7f` |
+| rwd | `a1716eaaefbeea31ecbfbb8e492a764c317f89dfaad1f191a57a7d980d7b44a7` |
+| assertions | **967/967**, CRC 50/50, bootloader replay 49/49, cipher validated NON-circularly |
+| artifact | https://claude.ai/code/artifact/0859e9d0-423c-41da-86fb-6e627db04aca |
 
-**TWO CALIBRATION CELLS + 4 TELEMETRY CODE BYTES. `FUN_00028ea6` IS BYTE-IDENTICAL.**
-1. **assist map `0xC9A88`, all 28 records — every Y knot EXACTLY 6x**, Honda's shape preserved.
-   Setpoint ceiling 172/180/188 → 1032/1080/1128. **This is the rate REFERENCE.**
-2. **feedback clamp `0xC62E6` 7680 → 46080** — so the loop can still MEASURE what it commands.
-   Honda's setpoint:feedback ratio 1.395 preserved EXACTLY.
-3. **CAN-427 tap** `0x55DF2-3`→`0x98B2` (gp-0x674e), `0x55E10` sar 3→sar 0, `0x55E0E` mov 0→mov 1.
-   **wire 5 ⇒ record 2 (`TVAA1`, = the part number).  wire 35 ⇒ record 11.** Static at boot.
+**TWO LEVERS: 16 TAPER RECORDS, AND A 34-BYTE PACKER REWRITE.**
+1. **driver-override taper**, banks `0xCBA04`/`0xCBA74`, the 8 REACHABLE slots only — 16 records:
+   **X (70,72,78,80) → (70,84,98,112)** and **Y (254,234,12,0) → (254,170,85,0)**.
+   Kick-in raw 2240 **UNCHANGED**; zero moves 2560 → 3584. Widths 14/14/14, drops 84/85/85 — a
+   near-straight fade replacing a 320-count DROPOUT. Banks `0xCB8B4`/`0xCB924` are already linear
+   fades and are **left byte-stock**, as is every unreachable slot.
+2. **CAN-427 packer `0x55DF0`–`0x55E11` rewritten IN PLACE**, same length, `jarl` untouched:
+   `wire = 0x10 | (gp-0x674E & 0x0F) | ((gp-0x674B >> 3) << 5)`.
+   Selector (4 bits, max 9 so lossless) + **liveness beacon** (bit 4) + **live post-taper demand
+   index** (5 bits, /8). Verified at the DECOMPILER level on the built image.
+   Carried from V276: assist map `0xC9A88` x6, feedback clamp `0xC62E6` 7680 → 46080.
 
-⭐⭐ **THE DIAGNOSIS THIS BUILD RESTS ON — and it explains the whole post-V38 arc.** LKAS commands a
-**RATE**, not a torque. The assist map is its REFERENCE and it ceilings at ~23 deg/s. Every build since
-V38 moved how hard the loop PUSHES (gain ladder 4x/6x/8x, lane gains, damper, notch); **none ever moved
-what the loop ASKS FOR.** So more torque bought faster acceleration to the same ceiling and never a
-higher one — which is exactly the operator's standing report that *"the angle rate doesn't scale with
-the torque."* `0xC9A88` and `0xC62E6` have **never been flown in any build**.
+⭐⭐ **THE FALSIFICATION THAT RESHAPED THIS BUILD, AND IT RETIRES AN OPEN QUESTION.**
+V277 began as “move the override knee out x2.5”. That design targeted **records that never execute**.
+`FUN_00057f8e` loops `while (i < 0x10)`, so only variant records 0–15 are searched; byte +0x1A of those
+records — written to `gp-0x674E` at `0x4272A`, the **direct unscaled word index** into every
+per-variant bank — reads `{0,0,1,1,0,0,1,1,3,4,6,7,6,8,8,9}`. **MAX 9.**
+⇒ **Taper and assist-map slots 10–27 are DEAD CALIBRATION, and so are slots 2 and 5.**
+⇒ This **RESOLVES** the long-open “record 2 (slots 10/11) vs record 11 (24–27)” question in
+`accord-variant-selector-chain-0xcd000`: **NEITHER.** Any earlier build that dosed only slots 10–27
+dosed dead cells. **A lineage re-check is owed.**
+⇒ The live override shape is a **CLIFF**: 254 → 0 across raw torque 2240–2560, which is where the
+operator drives. That is the firmware behind his standing report that the assist does not fade under
+load — it lets go.
 
-🛑 **TORQUE IS NOT RAISED.** Peak 2441→2505 (+2.6 %, and V268's peak is 2441 on 6 records, 2444 on
-18, 2505 on 4). The gain `0xC6CD0`=5346 and output clamp `0xC61B4`=3072 are **frozen and asserted**, so
-max LKAS torque stays **6x STOCK**. The frozen P clamp `0xC61BC`=15360 is what enforces that cap
-structurally: torque can never exceed `(15360*5346)>>15 = 2505` whatever the map does.
+🛑 **TORQUE IS NOT RAISED, AND THE CEILING NUMBER ON RECORD WAS WRONG.** V277 changes no cal and
+no instruction on the gain path (`0x28E00`–`0x2A310` byte-identical to V276). The binding clamp there is
+**`0xC61B4` = 3072**, *not* the 2505 this kit has been quoting — `0xC61BC` = 15360 sits on a different
+leg, after `sar 0x8`. ⚠ **AND THE 6x WAS DESCRIBED WRONGLY TOO.** “gain 891→5346” reads as one cell changing value.
+**Stock `0xC6CD0` is `0xFFFF` — ERASED FLASH**; the 891 lives at `0xC646C`. V112 **REDIRECTED THE GAIN
+LOAD** (`0x2A1F0` = `d0 7c`, stock `6c 74`, moving `ld.h` from tp+0x746c to tp+0x7cd0) and programmed
+the blank cell with 5346. The honest comparison is what the load *reads*: 891 → 5346, exactly
+6.000000, against a clamp 512→3072 that really is one cell. Both scale identically, so the knee is
+unmoved at 18830 — a uniform dilation. The conclusion stands; the sentence describing it did not.
+⚠ That is the ceiling of the forward-gain path terminating at `gp-0x6b38`; **that `gp-0x6b38` is the
+final motor torque is NOT proven.** Do not write “max LKAS torque = 3072” until it is.
 
-⚠ **RISK BEFORE THE DRIVE.** In fast-steering, high-command moments the lane will PULL where it used
-to RESIST: V268's error crosses zero at ~23 deg/s and goes negative; V276 keeps commanding forward to
-~140 deg/s. Also, above demand index ~40 at standstill P sits at its clamp, so fine command resolution
-is lost there — the unavoidable price of a 6x reference under a fixed torque cap.
-**ASSESS STATIONARY OR AT LOW SPEED FIRST.**
+⚠ **RISK BEFORE THE DRIVE.** **This build only RELAXES driver override.** Between raw 2560 and 3584
+the lane now holds up to 76 % of full authority where it previously held NONE. The threshold at which
+resistance BEGINS is unchanged, and full override is still reachable at 3584 — but the middle is
+different. And Honda's OTHER override layer is **already dead, from V112, not from this build**: the
+driver-fighting-the-assist ladder (`0xC64B4`–`B8` = 255, `0xC61C0/C2/C4` = 65535) cannot fire, so the
+taper is the ONLY driver-override mechanism left in this ECU. Also **the plausibility-fail path at
+`0x290B8` writes index 0 = FULL AUTHORITY**, so an implausible torque reading disables override.
+
+⭐ **THE WIRE↔RAW UNITS FACTOR, NEWLY CLOSED AND PREVIOUSLY NEVER APPLIED.**
+`wire = -(raw * 125 >> 7)` (`FUN_00055C42` → `FUN_000218BE`), so **raw = wire x 1.024**. The figure on
+record — “median override torque 2235, one count below the 2240 knot” — was in WIRE counts and was
+route r75's p50, not a corpus median. Corrected: r75 = **2289 raw, ABOVE the knot**; pooled median
+within override = **2819 raw**. The memory
+`accord-authority-curve-is-virgin-and-the-override-sits-on-its-knee` is **wrong on that line**.
+
+**THE DRIVE THAT READS IT:** plot CAN 427 byte1 against `0x18F` bytes 0–1. Stock steps to zero at raw
+2560; V277 must show a straight ramp 2240 → 3584. Override is 8.26 % of engaged time in ordinary
+driving (34 routes, 13,391 s), so a few deliberate pushes against the lane supply it.
 
 🛑 **V273/V274/V275 ARE WITHDRAWN — DO NOT FLASH.** All three passed their own assertions and were
 falsified by adversarial review. V274: froze torque CELLS and thought that froze TORQUE (the map scales

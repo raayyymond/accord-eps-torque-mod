@@ -43,6 +43,36 @@ deliberately not numbered `PART2` so the two can never be confused.
 ---
 
 
+
+### V277 — the driver-override CLIFF softened, and a bit-packed tap  (2026-09-01, NOT FLOWN)
+
+**base** V268 → V276 → V277 · **image** `ee76f4cd…77a7f` · **rwd** `a1716eaa…b44a7` · **967/967**
+**artifact** https://claude.ai/code/artifact/0859e9d0-423c-41da-86fb-6e627db04aca
+
+| cell | stock | V277 | what it is |
+|---|---|---|---|
+| `0xCBA04`/`0xCBA74`, slots {0,1,3,4,6,7,8,9} — **16 records** | X 70,72,78,80 · Y 254,234,12,0 | X 70,84,98,112 · Y 254,170,85,0 | driver-override taper, mode==2 banks |
+| `0x55DF0`–`0x55E11` | 34 B packer | rewritten in place | CAN-427: selector + beacon + live demand |
+
+**FIRST BUILD EVER TO TOUCH THE DRIVER-OVERRIDE CURVE.** These four banks are virgin across the whole
+record; V273/V274/V275 proposed *flattening* them and all three were withdrawn unflashed. It is also
+the first build to bit-pack two signals onto one CAN field.
+
+**Kick-in raw 2240 UNCHANGED**; zero moves 2560 → 3584 (= where banks `0xCB8B4`/`0xCB924` already
+reach zero). Those two banks and every unreachable slot are **left byte-stock**. Authority ≥ V276 at
+every index and monotone non-increasing — both asserted.
+
+🛑 **THE X2.5 DESIGN THIS BUILD STARTED AS WAS FALSIFIED, NOT FLOWN.** It targeted slots 10–27, which
+**never execute**: the selector maxes at 9. See `accord-variant-selector-max-is-nine`. **A lineage
+re-check is owed for any earlier build that dosed only slots 10–27.**
+
+🛑 **CEILING CORRECTION, applies to EVERY earlier entry in this file.** The binding clamp on the
+`0xC6CD0` forward-gain path is **`0xC61B4` = 3072**, not the 2505 this kit has been quoting;
+`0xC61BC` = 15360 sits on a different leg after `sar 0x8`. Gain 891→5346 and clamp 512→3072 are both
+exactly **6.000000**, so the knee is unmoved at 18830 — a uniform dilation. ⚠ That `gp-0x6b38` is the
+final motor torque is **not proven**.
+
+
 ## V246–V250 — the damper lane, opened for the first time (2026-08-30, ALL UNFLOWN)
 
 | build | base | cells | what | measured/computed |
