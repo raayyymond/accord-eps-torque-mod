@@ -11,9 +11,22 @@ mode at f -- the textbook parametric-resonance condition, and the mode at f is t
 The kit priced exactly TWO curves (0xD28DC / 0xD2888) and only for mode slot 10, which this car does
 not use.  **Nobody ever asked how many others there are.**  This does.
 
+🛑 METHOD CORRECTION 2026-09-01 -- THE ORIGINAL RUN-DETECTION WAS UNSOUND.
+The pointer families are packed BACK TO BACK with no terminator: slot 58 of one family is slot 0 of
+the next, and it dereferences to a perfectly valid record. So "walk until an entry stops looking like
+a record" NEVER terminates at the real boundary -- it runs to whatever cap you set. Worse, a
+"run of aligned words pointing into the record region" merges ALL adjacent families into ONE run and
+reports a wrong base, which is what produced 27 tables and 0 rows on the first attempt here.
+
+**A FAMILY'S SIZE IS THE STRIDE BETWEEN KNOWN BASES, NEVER A PROPERTY OF ITS ENTRIES.**
+    gap 0xE8 = 58 slots  -- damper, boost, rate-lane surface. Selected by gp+0x63fd.
+    gap 0x70 = 28 slots  -- Kp/Kd/quadrant block at 0xCB7D4..0xCBA04. Selected by gp-0x674e.
+The record's "the pointer array is 34 slots, a GIVEN bound" is WRONG; slots 34-57 exist and parse.
+
 METHOD.
   1. Find the mode-indexed POINTER TABLES mechanically: runs of >= 16 four-byte-aligned words in the
      0xC8000-0xD0000 region whose values all land in the mode-record region 0xD0000-0xD8000.
+     (Retained for discovery only -- see the correction above before trusting any LENGTH it implies.)
   2. For each table, follow slot MODE_ENGAGED (26) and slot MODE_MANUAL (24) and parse the record as
      [npt][X x npt][Y x npt].
   3. Score each curve by its parametric depth over the operating range:
