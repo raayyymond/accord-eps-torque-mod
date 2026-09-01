@@ -14,7 +14,7 @@
 | payload | **565 bytes, 32 of them code**, 7 CRC trailers |
 | image | `ee76f4cdd3f3a14860459dc3eea84c86cb88c72d414ae8eb992e2e4234877a7f` |
 | rwd | `a1716eaaefbeea31ecbfbb8e492a764c317f89dfaad1f191a57a7d980d7b44a7` |
-| assertions | **967/967**, CRC 50/50, bootloader replay 49/49, cipher validated NON-circularly |
+| assertions | **973/973**, CRC 50/50, bootloader replay 49/49, cipher validated NON-circularly |
 | artifact | https://claude.ai/code/artifact/0859e9d0-423c-41da-86fb-6e627db04aca |
 
 **TWO LEVERS: 16 TAPER RECORDS, AND A 34-BYTE PACKER REWRITE.**

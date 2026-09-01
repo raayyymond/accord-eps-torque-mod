@@ -408,12 +408,41 @@ def build():
     # Both are PURE LEAF routines: register-only, no memory access, no onward call, `jmp lp`.
     # They are safe to delete because two zero-extended BYTE loads plus explicit masking already
     # bound the value -- abs() and min(.,0xFFFF) are no-ops on a u8.  Asserted below.
-    for tgt, lbl in ((0x49A5A, "abs"), (0x49A78, "unsigned min")):
-        check(bytes(base[tgt:tgt + 2]) != bytes(2),
-              f"deleted callee 0x{tgt:05X} ({lbl}) exists in the base image -- it is a real routine "
-              f"that this rewrite removes from the call path, not a phantom")
-    check(0x49A5A not in range(PACK_LO, PACK_HI) and 0x49A78 not in range(PACK_LO, PACK_HI),
-          "and neither callee lives inside the rewritten window -- only the CALLS go, not the code")
+    # These WERE documentation wearing a [PASS] until an audit proved it by injection: the old pair
+    # asserted only "these two bytes are not both zero" (true of nearly every address) and a
+    # comparison between two literals (cannot fail for any image).  Replaced with a real decode of
+    # the Format-V `jarl disp22` TARGETS in the base, which binds the claim to the bytes.
+    def jarl_target(addr, img=None):
+        img = base if img is None else img
+        hw1, hw2 = u16(img, addr), u16(img, addr + 2)
+        if (hw1 >> 6) & 0x1F != 0b11110:
+            return None
+        disp = (((hw1 & 0x3F) << 16) | hw2) & ~1
+        if disp & (1 << 21):
+            disp -= 1 << 22
+        return addr + disp
+
+    check(jarl_target(JARL_CLAMP) == 0x49A90,
+          f"POSITIVE CONTROL for the jarl decoder: 0x{JARL_CLAMP:05X} resolves to 0x49A90, the clamp "
+          f"helper this build KEEPS.  The decoder is validated before any null is drawn from it.")
+    for site, tgt, lbl in ((0x55DF4, 0x49A5A, "abs"), (0x55DFE, 0x49A78, "unsigned min")):
+        check(jarl_target(site) == tgt,
+              f"0x{site:05X} in the BASE is `jarl 0x{tgt:05X}` ({lbl}) -- DECODED from the bytes. "
+              f"V277 deletes this call.")
+        check(not (PACK_LO <= tgt < PACK_HI),
+              f"and 0x{tgt:05X} lies OUTSIDE the rewritten window -- the CALL goes, the callee stays")
+    # NO jarl SURVIVES IN THE WINDOW -- and this is ENTAILED, not separately scanned.  A byte scan
+    # is the wrong instrument here: the jarl opcode field collides with ld.bu, so a naive mask
+    # reports the two loads as calls.  What actually settles it is that the ten field-by-field
+    # decodes above pin EVERY instruction in the window by opcode, registers and immediate, and
+    # none of the ten is a jarl.  The 12 boundaries tile the 34 bytes exactly (asserted above), so
+    # there is no room for an eleventh instruction to hide.
+    BOUNDS = (0, 4, 8, 12, 16, 18, 20, 22, 26, 28, 30, 32)
+    check(BOUNDS[-1] + 2 == len(PACK_NEW) and len(BOUNDS) == 12,
+          "the 12 decoded instruction boundaries tile the 34-byte window exactly -- no room for an "
+          "undecoded instruction, so 'no jarl in the window' follows from the decodes above")
+    check(sum(2 if o in (16, 18, 20, 26, 28, 30, 32) else 4 for o in BOUNDS) == len(PACK_NEW),
+          "and the per-instruction lengths sum to exactly 34 bytes")
 
     # ---- decode every written instruction back, from the BUILT bytes -------------------------
     _hw = lambda o: struct.unpack_from("<H", code, PACK_LO + o)[0]
