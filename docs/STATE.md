@@ -4,33 +4,57 @@
 > order** — findings, corrections and closures. That is a record, not a briefing. Everything you need
 > to make a decision is in this box and the index under it.
 
-## ✈ THE DECISION, IN ONE PLACE
+## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-01
 
-**Two flight candidates, four bytes apart. Both are built, byte-verified and audited.**
+**ON THE CAR: V112.  THE FLIGHT CANDIDATE: V276.**
 
-| | **V228** | **V222** |
-|---|---|---|
-| grinding | notch cuts 15–22 Hz **3.6×** | **identical** |
-| **ratchet** | **protected** — every delta is a damper raise or flat at 6–9 Hz | **could go either way** |
-| **LKAS authority** | 6×, unchanged from the car | **8×** |
-| 40–49 Hz (audible) | **+5.9 dB** | **+8.1 dB** |
-| delta from the car | 19 bytes | 23 bytes |
+| | **V276** — THE REFERENCE, SCALED 6x |
+|---|---|
+| base | **V268** (= V112 + both pump families flattened, slots 0–33) |
+| payload | **457 bytes, 4 of them code**, 7 CRC trailers |
+| image | `f4ea35df1051db25736cd52710dfb8af194d4f74ecfd798d77ba026a7ff5e846` |
+| rwd | `6c4542b0ff6edce1c2eda37befae6933497a2c672703547e8d1489472fa86f08` |
+| assertions | **660/660**, CRC 50/50, bootloader replay 49/49, cipher validated NON-circularly |
+| artifact | https://claude.ai/code/artifact/52f1483a-0720-49df-bc96-238537170973 |
 
-- **Cards:** `docs/scoring/DRIVE-CARD-V228.md` · `docs/scoring/DRIVE-CARD-V222.md`
-- **Pre-registered:** `docs/scoring/PREREG-V228-V222-THE-8X-EXPERIMENT.md` (scorer written and validated
-  **before** any data: `rlog-tools/score/score_8x_experiment.py --selftest`)
-- **If only one thing gets done: drive V228 TWICE**, on separate outings. A repeat route re-prices
-  **every** cross-build claim in the kit at once; no new firmware can do that.
-- 🛑 **The flash decision is the operator’s.** He names the file and the bus; repeat both back.
+**TWO CALIBRATION CELLS + 4 TELEMETRY CODE BYTES. `FUN_00028ea6` IS BYTE-IDENTICAL.**
+1. **assist map `0xC9A88`, all 28 records — every Y knot EXACTLY 6x**, Honda's shape preserved.
+   Setpoint ceiling 172/180/188 → 1032/1080/1128. **This is the rate REFERENCE.**
+2. **feedback clamp `0xC62E6` 7680 → 46080** — so the loop can still MEASURE what it commands.
+   Honda's setpoint:feedback ratio 1.395 preserved EXACTLY.
+3. **CAN-427 tap** `0x55DF2-3`→`0x98B2` (gp-0x674e), `0x55E10` sar 3→sar 0, `0x55E0E` mov 0→mov 1.
+   **wire 5 ⇒ record 2 (`TVAA1`, = the part number).  wire 35 ⇒ record 11.** Static at boot.
 
-### The three things that are NOT optional to know
+⭐⭐ **THE DIAGNOSIS THIS BUILD RESTS ON — and it explains the whole post-V38 arc.** LKAS commands a
+**RATE**, not a torque. The assist map is its REFERENCE and it ceilings at ~23 deg/s. Every build since
+V38 moved how hard the loop PUSHES (gain ladder 4x/6x/8x, lane gains, damper, notch); **none ever moved
+what the loop ASKS FOR.** So more torque bought faster acceleration to the same ceiling and never a
+higher one — which is exactly the operator's standing report that *"the angle rate doesn't scale with
+the torque."* `0xC9A88` and `0xC62E6` have **never been flown in any build**.
 
-1. **One drive falsifies nothing, in either direction.** V67/V68/V85 are byte-identical and grind #2
-   appeared on two of them. Keep **acceptability** (his verdict, 1 episode, final) apart from
-   **efficacy** (the bands, many drives). See RULE 5b in `BUILD-LINEAGE.md`.
-2. **Do not score 30–49 Hz** across the V222/V122 boundary — 52–71 Hz folds into it from above Nyquist.
-3. **The grinding fix costs an audible 40–49 Hz lift.** It is unavoidable: only one biquad exists, and
-   Lever B cannot substitute (short by 1517×).
+🛑 **TORQUE IS NOT RAISED.** Peak 2441→2505 (+2.6 %, and V268's peak is 2441 on 6 records, 2444 on
+18, 2505 on 4). The gain `0xC6CD0`=5346 and output clamp `0xC61B4`=3072 are **frozen and asserted**, so
+max LKAS torque stays **6x STOCK**. The frozen P clamp `0xC61BC`=15360 is what enforces that cap
+structurally: torque can never exceed `(15360*5346)>>15 = 2505` whatever the map does.
+
+⚠ **RISK BEFORE THE DRIVE.** In fast-steering, high-command moments the lane will PULL where it used
+to RESIST: V268's error crosses zero at ~23 deg/s and goes negative; V276 keeps commanding forward to
+~140 deg/s. Also, above demand index ~40 at standstill P sits at its clamp, so fine command resolution
+is lost there — the unavoidable price of a 6x reference under a fixed torque cap.
+**ASSESS STATIONARY OR AT LOW SPEED FIRST.**
+
+🛑 **V273/V274/V275 ARE WITHDRAWN — DO NOT FLASH.** All three passed their own assertions and were
+falsified by adversarial review. V274: froze torque CELLS and thought that froze TORQUE (the map scales
+the ERROR feeding Kp → P saturated over ~80 % of range); its defending assertion was a tautology.
+V275: divided Kp/Kd by 6, which cancels only the FEEDFORWARD half of `E = 32*sp - fb` and leaves the
+FEEDBACK half 6x weaker — the loop keeps its ambition and goes deaf to the wheel. Both also flattened
+the override taper, which is **UPSTREAM** (it produces the demand index) and whose companion hard cutoff
+`0xC64B8`=255 is unsatisfiable — so the taper reaching Y=0 is the ONLY live mechanism that zeroes the
+command, and the operator's median override torque sits ONE COUNT below its first knot.
+
+🛑 **DO-NOT-FLASH:** V255–V262, V269 (rate-lane `sar` doubling; V255/V256/V269 drove **undriveable**),
+and V273/V274/V275 above.
+
 
 > ❌⭐ **A GATE I BUILT AND THEN DELETED — "documented cell values vs the images" DOES NOT WORK.** The withdrawn-claims registry found 7 defects by pattern-matching, so the obvious next axis was checking every `0xADDR = N` claim in the docs against ground truth: a value **no image has ever held** is wrong regardless of which build was meant. It ran over **1028 claims / 206 images** and produced **only false positives**, because that pattern is ambiguous in this record’s prose:
 >

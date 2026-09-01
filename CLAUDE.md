@@ -61,6 +61,70 @@ design law · *score bands, let the OPERATOR score symptoms*.
 
 ---
 
+## 🛑🛑 EVERY CLOSE-OUT RUNS AN ADVERSARIAL PASS ON THE BUILT IMAGE
+
+Standing operator instruction, **2026-09-01**, after V273 and V274 were both cut fast, both passed
+their own assertions, and **both were falsified only because adversarial subagents were pointed at
+them afterwards.** V274 passed 720/720 of its own checks while its central torque claim was FALSE and
+~451 of those assertions were entailed by the base hash. **A build's own assertions cannot falsify it.**
+
+**Before any build is written to disk or offered for flashing, run an ADVERSARIAL PASS whose explicit
+job is to make it FAIL.** Not a review — an attempt to break it.
+
+**Fan out at least three INDEPENDENT agents, on disjoint attack surfaces.** Independent means each
+re-derives from the IMAGE, never from the build script's constants or from the orchestrator's brief:
+1. **ARITHMETIC** — re-derive the delivered surface from scratch; hunt overflow, sign-extension,
+   truncation, saturation, and every intermediate store's width.
+2. **UNIT / SCALE CHAIN** — re-derive the physical units end to end. Assume an inherited factor is
+   wrong until re-proven from bytes.
+3. **BUILD-SCRIPT AUDIT** — independently rebuild to the same hash, full-file diff, recompute every
+   CRC, and **census the assertions**: how many are vacuous (entailed by the base hash), tautological
+   (readback of what was just written), or stale hard-coded expectations?
+4. **INTERLOCKS AND DOWNSTREAM** — EME, governor ceilings, lockstep monitors, DTC plausibility
+   thresholds, and every consumer of a raised cell. **A cell is not private because you did not find
+   another reader — prove the census.**
+
+**Binding rules, each learned the hard way:**
+- 🛑 **VERIFY THE CRUX OF EVERY DECISION-BEARING FINDING YOURSELF** before relaying it. Three
+  agents in one session asserted "value X never reaches the motor"; all three were WRONG.
+- 🛑 **A NULL FROM THE WRONG IMAGE IS NOT A NULL.** Verify claims about a modded build against
+  THAT BUILD'S image. A clean stock scan says nothing about an image carrying code edits.
+- ⭐ **The pass must be able to return "do not flash".** If it structurally cannot, it is theatre.
+  Write down, before it runs, what a FAIL would look like.
+- Findings arriving after acceptance are **reports, not licence to act** — brief every agent so.
+- **Roll-call and `TaskStop` every agent before close-out**, per the `firmware-iteration` skill.
+
+---
+
+## 🛑🛑 EVERY CLOSE-OUT SHIPS AN ARTIFACT: DIAGRAM THE EDITS AND THEIR LERPs
+
+Standing operator instruction, **2026-09-01**. **Every close-out that cuts or revises a build MUST
+produce an Artifact** — a published page, not a file left in the repo — alongside the other
+collaterals. It is part of the five-part close-out contract in the `firmware-iteration` skill, not an
+optional extra.
+
+**It must carry, at minimum:**
+1. **A MAIN SIGNAL-FLOW DIAGRAM of the new edits** — where each changed cell physically sits in the
+   EPS chain, what feeds it, and what it feeds. Not a cell table: a *diagram*.
+2. **How the edits fit the LKAS DEMAND path end to end** — openpilot command → assist map → setpoint
+   → error → PID → gain → clamps → motor. Show where the edit lands ON that path.
+3. ⭐ **EVERY RELEVANT LERP, PLOTTED, AND DRAWN INSIDE THE DIAGRAM WHERE IT ACTS** — assist map, Kp,
+   Kd, override taper, and any other table the build touches or depends on. **Before and after, on
+   the same axes.** The LERPs are the operator's primary way of reading what a build actually does;
+   a curve he cannot see is a build he cannot assess.
+4. **The delivered-surface consequence** — a before/after table or curve of torque vs demand, read
+   **from the built image**, never from the build script's constants.
+
+**Rules that have each already cost this kit an error:**
+- **Read every number from the BUILT IMAGE.** V274's docstring asserted a peak torque that was a
+  clamp ceiling the build never reached, defended by a tautological assertion.
+- **Mark EVIDENCE vs BELIEF on the page itself**, same as everywhere else. Do not print an expected
+  telemetry code as fact when the premise behind it is unresolved.
+- **State the risk before the drive, on the page.** If authority rises, say by how much and where.
+- Load the `artifact-design` skill before writing it, per the Artifact tool's own contract.
+
+---
+
 ## 🛑🛑 EVERY MANDATORY FILE BELOW MUST STAY ≤ 256 KB — SPLIT IT AND REPOINT HERE IF IT GROWS
 Standing operator instruction, 2026-08-12. **A file past the `Read` limit loads with its tail SILENTLY
 TRUNCATED and no warning** — `STATE.md` hit 506 KB and its tail was invisible; the golden model hit

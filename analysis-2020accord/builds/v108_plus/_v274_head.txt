@@ -1,0 +1,95 @@
+# -*- coding: utf-8 -*-
+r"""V274 -- THE RATE AXIS, SCALED 6x.  TORQUE SCALING UNCHANGED AT 6x.  BASE: V268.
+
+THE OPERATOR'S SYMPTOM, QUANTIFIED:  "LKAS demand has not been scaling with steering velocity."
+The loop's MAXIMUM COMMANDABLE RATE is 22.3 column deg/s.  Above that, more command buys nothing --
+the reference itself has run out.  That is the complaint, and it was never a gain problem.
+
+    max commandable rate = 32 * map_ceiling / 247.1 = 32*172/247.1 = 22.3 deg/s
+
+THE INSIGHT THAT MAKES THIS A TWO-CELL BUILD (operator, 2026-09-01).  The loop's cells sit on TWO
+INDEPENDENT AXES, because the error is in PHYSICAL rate-error units:
+
+    error = 32*setpoint - feedback = 247.1 * (r_cmd - r_act)
+
+The error for a given rate error does NOT depend on the map scale.  Therefore:
+
+  RATE axis    0xC9A88 map ceiling M   -> the COMMANDED rate,  r_max = 32M/247.1
+               0xC62E6 feedback clamp F -> the MEASURABLE rate, r_meas = F/247.1
+  TORQUE axis  0xC61BC (P) . 0xC61BE (sum) . 0xC61B2/0xC61B4 (out) . gain 0xC6CD0
+               -> torque per unit of rate ERROR.  DOES NOT SCALE WITH THE RATE TARGET.
+
+=> V274 scales ONLY the rate axis.  Every torque-path cell is frozen and asserted below, so
+   **delivered peak torque is bit-for-bit what V268/V112 already produce: (15360*5346)>>15 = 2505.**
+
+FOUR EDITS -- V273's three, re-aimed at the rate axis and scaled 6x, plus the feedback clamp.
+  [A] TELEMETRY -- CAN 427 repointed to the variant selector gp-0x674e (3 code bytes, from V273).
+      wire == 5 => record 2 (slots 10/11).  wire == 35 => record 11 (slots 24-27).  A STATIC boot
+      constant, so ANY drive answers it -- parked, disengaged, ten seconds.  It matters here
+      specifically: V274 edits all 28 records because we still do not know which one is live.
+  [B] ASSIST MAP  0xC9A88 -- COMPLETELY LINEARISED **and** scaled 6x, all 28 records:
+          Y[i] = round( X[i] * 6*Y_stock[-1] / 240 )
+      so each record keeps its own character (ceiling 172/180/188 -> 1032/1080/1128) while its
+      response becomes a straight line.  This is V273's edit [C] carried forward -- the resolution
+      collapse is what made demand unreadable at high command: stock spends its top 80 index steps
+      climbing 6 counts (slope 0.075, one output level per 13.3 steps) against 2.0 at the bottom.
+      Linearised at 6x the slope is 4.3 everywhere -- uniform resolution AND 6x the rate ceiling.
+  [C] OVERRIDE TAPER FLATTENED -- 0xCBA04 / 0xCBA74, Y -> each record's own Y[0], 56 records.
+      This is V273's edit [B].  Stock X = (70,72,78,80) Y = (254,234,12,0), indexed by
+      |gp-0x4f60|>>5, i.e. the DRIVER'S OWN COLUMN TORQUE multiplied into the demand.  Index 0 is
+      below X[0], so hands-off already returns 254 -- the curve only acts ABOVE raw driver torque
+      ~2240, where it currently cuts LKAS demand to ZERO by ~2560.  Flattening changes NOTHING below
+      that threshold and removes the cut above it.  Flattening to each record's own Y[0] only ever
+      RAISES Y, never lowers it.
+  [D] FEEDBACK CLAMP  0xC62E6  7680 -> 46080 (6x), so the loop can still MEASURE what it commands.
+
+WHY BOTH [B] AND [C], AND WHY EXACTLY 6x ON EACH.  Honda matched them: feedback_clamp / max_error =
+7680/5504 = 1.395.  Scaling both by 6 preserves that ratio EXACTLY (46080/33024 = 1.395).  Raise the
+map alone and the feedback pins at 31.1 deg/s while the setpoint keeps climbing -- the loop would go
+effectively OPEN above 31 deg/s.  That is a real defect, and it is the one V273 has.
+
+WHAT V274 DELIBERATELY DOES **NOT** DO, each with its reason:
+  * It does NOT raise the P clamp 0xC61BC.  P saturating on a large transient is correct behaviour --
+    a big rate error should command full effort.  Raising it would raise TORQUE, which the operator
+    explicitly does not want.  Frozen and asserted.
+  * It does NOT raise the sum clamp 0xC61BE.  Besides being a torque cell, it carries a
+    SIGN-EXTENSION DEFECT: of its four clamp reads, 0x2A146 is `ld.h` (2567be71) while 0x2A13E /
+    0x2A14C / 0x2A156 are `ld.hu` (e5..bf71).  Set it >= 32768 and PEAK DEMAND CLAMPS NEGATIVE.
+    V274 never approaches it.  0xC61BC (4/4 ld.hu) and 0xC62E6 (3/3 ld.hu) are clean.
+  * It does NOT touch 0xC61B2/0xC61B4 (3072).  These never bind today -- the lane clips at 2505,
+    82 % of its own output clamp -- so leaving them frozen is what keeps torque at exactly 6x.
+  * It does NOT enable Ki (0xC63E6 = 0).  Three independent agents converged: P already sits at
+    97.4 % of its clamp at max demand BY DESIGN, so the steady-state error is large intentionally,
+    not a residual for an integrator; and Ki costs ~-145 deg at 7 Hz, into the band where Re(Z) < 0
+    is replicated on three drives.  V270/V271/V272 (Ki = 5/5/1) are mis-motivated.
+  * It does NOT change Kp or Kd.  Scaling the reference and the feedback TOGETHER leaves the
+    small-signal loop gain invariant -- for the same physical rate error the loop responds
+    identically.  No retune is required, and manufacturing one would only add risk.
+  * The override taper flatten [C] IS included at the operator's direction.  Note what it is: the
+    taper multiplies DRIVER COLUMN TORQUE into the LKAS demand, so flattening it stops LKAS backing
+    off when the driver pushes.  It does NOT disable the separate override DEBOUNCE path
+    (gp-0x682f vs cal 0xC64B8) -- which V112 already set to 255 against a channel saturating at 255.
+  * It does NOT restore V62's rate-lane doubling.  V255/V256/V269 carried it at this gain and drove
+    UNDRIVEABLE.
+
+EME -- CLEARED BY CONSTRUCTION, NOT BY A CLEARANCE.  The soft-EME integrator watches
+gp-0x6acc = governed_LKAS + COMP against a bound the flown car holds at +-5120 with COMP <= 2560.
+V274 changes NO torque-path cell, so the LKAS lane's delivered magnitude is UNCHANGED and the EME
+margin cannot be newly encroached.  (The untraced dynamic limit gp-0x4f64 inside FUN_0004503c would
+have gated a TORQUE build.  It does not gate this one.)  The hard bricking interlock is the INT/FLOAT
+lockstep quad -- V27 hard-faulted on a desync -- and none of V274's cells is in it.
+
+GATE 2.  No pole, no gain, no filter coefficient moves.  The feedback pole (923/1024, corner 16.53 Hz)
+and the 5 Hz output LPF are untouched, and a clamp that is not binding is linearly transparent.  The
+closed-loop transfer at 6-9 Hz and 22-30 Hz is therefore IDENTICAL to V268 by construction.  This is
+deliberately NOT the shape of argument that made V255/V256/V269 undriveable ("Kd adds phase lead, no
+pole moves into the RHP") -- that was a claim about a changed system; this is a claim that the linear
+system did not change.
+
+THE SENTENCE A NULL WOULD LICENSE.  If the operator drives V274 and LKAS still will not track a brisk
+correction, then the rate ceiling was NOT the binding constraint and the limit lies on the torque axis
+(0xC61B2/0xC61B4 at 2505 counts) or in the plant.  That is a clean, interpretable null -- and edit [A]
+returns its answer regardless of how the drive goes.
+
+BASE: V268 (= V112 + both pump families flattened across slots 0-33).
+"""
