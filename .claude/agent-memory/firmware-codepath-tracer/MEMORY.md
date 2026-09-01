@@ -1,5 +1,21 @@
 # Firmware Codepath Tracer — Memory Index
 
+## 2026-09-01 — V276 reference back-off costing + telemetry design, for `team-lead`
+🛑🛑★★★★★ **Crossover threshold (E<0 requires feedback_lag_out > 32*setpoint) tabulated in RAW COUNTS
+across K=1..6, resolving a team discrepancy about absolute deg/s (both were right, different points in
+the same unclosed unit chain). K=2 recommended (threshold 11008, required `0xC62E6`=15360) — clears the
+BELIEF median-achieved-rate crossover with zero peak-torque cost. Also: the CAN-427 packer RECTIFIES
+(calls abs()) so it CANNOT carry sign(E) without a real restructure, not just an edit-site change.**:
+[[reference_accord_v276_crossover_threshold_and_packer_rectifies_sign]]
+
+## 2026-09-01 — V276 2-4Hz oscillation census, for `team-lead`
+🛑🛑★★★★★ **`0xC61BE` (post-gain PID-sum clamp, 15360) — not D's own clamp `0xC61B6` — is what starves
+the D term: P alone already fills it at low driver-override index, so D is discarded whenever it
+matters. Also `0xC61BE` (not `0xC61B4`) is the SECRET binding constraint on peak torque today (2505
+actual vs 3072 nominal), and it has a sign-extension defect on its POSITIVE branch (`ld.h` @0x2a146,
+must stay <32768). Single-cell V278 fix identified that restores D's authority AND closes the 18%
+torque shortfall with zero authority given back.**: [[reference_accord_c61be_sum_clamp_starves_d_term_v276_oscillation]]
+
 ## 2026-09-01 — V274 telemetry design, for `main`
 🛑🛑★★★★★ **The rate PID ALREADY publishes 9 of its internals to gp cells nothing reads — so every
 clamp flag is FREE (exact equality to the cal) and any term reaches CAN 427 in a 3-BYTE edit.

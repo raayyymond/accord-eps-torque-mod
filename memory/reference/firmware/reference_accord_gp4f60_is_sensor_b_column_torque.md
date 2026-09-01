@@ -21,7 +21,14 @@ STEER_ANGLE_RATE    (bytes[2:3]) = -(gp-0x6a56)
 
 A value packed onto the bus *as* `STEER_TORQUE_SENSOR` is the torque sensor. This was already recorded in [[reference-accord-dual-torque-sensor-architecture]] (sensor B = the CAN/TAS sensor, the only one carrying absolute angle) — the error was that two *other* memories independently attached different labels to the same address without reconciling.
 
-Producer: `FUN_0007f3f8` (decompile fails on the ENCA0 struct — use disasm): 2-pt interp + per-sensor gain `gp-0x25d4` + phase correction `FUN_0007f300` + learned gain `gp-0x698c` / offset `gp-0x6b50` + clamp `gp-0x4f54` -> store `@0x7f9c8`.
+Producer: `FUN_0007f3f8` (decompile fails on the ENCA0 struct — use disasm): 2-pt interp + per-sensor gain `gp-0x25d4` + a static zero-offset bias `FUN_0007f300` + learned gain `gp-0x698c` / offset `gp-0x6b50` + clamp `gp-0x4f54` -> store `@0x7f9c8`.
+
+> 🛑 **CORRECTED 2026-09-01**: `FUN_0007f300` was mislabelled "phase correction" above. Freshly
+> decompiled, it is a stateless mechanical zero-offset bias (`param_1 + clamp(gp-0x6b66, ±0x134)`),
+> not a filter — no history, no time constant, no phase effect at all. The entire producer chain is
+> memoryless; there is no dynamic filtering anywhere between the ADC sample and `gp-0x4f60`. See
+> [[reference-accord-gp4f60-no-producer-filter-raw-sensor]] for the full re-trace and its
+> consequence for the V276/V277 driver-torque-feedback-loop analysis.
 
 ## What was wrong, and where
 

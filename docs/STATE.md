@@ -6,7 +6,22 @@
 
 ## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-01 (V277)
 
-**ON THE CAR: V112.  THE FLIGHT CANDIDATE: V277.  V276 IS SUPERSEDED BY IT (V277 CONTAINS V276).**
+**ON THE CAR: V276, FLASHED AND DRIVEN 2026-09-01.**  
+🛑 **V276 PRODUCED A NEW SYMPTOM: a large, self-exciting 2-4 Hz oscillation, LKAS-ENGAGED ONLY,
+at ALL tested speeds, arising unprompted on STRAIGHT roads, stoppable only by gripping the wheel
+firmly and returning as soon as he lets go.**  Operator report, 2026-09-01, rlog to follow.
+He also reports the authority itself is what he wanted: *“Amazing authority now on turns as I would
+like on 6x torque.”*  ⇒ **The fix must keep the 6x and remove the oscillation; backing the dose out
+is not an acceptable answer.**
+
+⭐ **2-4 Hz IS THE LKAS LANE'S OWN CLOSED-LOOP BAND** — this kit has used `(2,4)` for a year as a
+*normalising CONTROL band*, and the house scorer band set is `[(6,9),(9,12),(15,22),(22,30)]`.
+**Every “no effect” null in the flown corpus was computed over bands starting ABOVE the band the car
+is now oscillating in.** The transform is not blind (100 Hz, Welch nperseg 512, 0.195 Hz bins, no
+high-pass, no detrend) — only the band set was. The whole corpus is re-scorable at 2-4 Hz today.
+
+**V277 IS BUILT AND NOT FLASHED. IT DOES NOT ADDRESS THIS SYMPTOM** — it softens the driver-override
+cliff, and it carries V276's reference x6 unchanged, so it would inherit the oscillation.
 
 | | **V277** — THE OVERRIDE CLIFF, SOFTENED |
 |---|---|
