@@ -4,7 +4,7 @@ r"""V270 -- ENABLE THE LKAS-PATH INTEGRAL TERM.  ONE CALIBRATION HALFWORD.
     0xC63E6   Ki   0 -> 5      the integral gain of the PID in the LKAS COMMAND path
 
 \U0001f6d1 **I TOLD THE OPERATOR "THERE IS NO PID ON THE LKAS OUTPUT; THE PATH IS FEEDFORWARD."
-THAT WAS WRONG.**  An independent contributor, who worked this firmware ~4 years ago, pointed at it, and the
+THAT WAS WRONG.**  An independent contributor who worked this firmware ~4 years ago pointed at it; the
 decompile of `FUN_00028ea6`'s tail confirms him exactly:
 
     if ((uVar18 != 0 || cVar15 == 1) && bVar3) {

@@ -110,6 +110,34 @@ Consequences, binding on every build:
 
 ---
 
+## 🛑🛑🛑 DO NOT CUT BUILDS HASTILY — VOLUME IS NOT ITERATION
+
+Standing operator instruction, **2026-08-31**: *"do not make new firmware versions hastily; when adding
+changes, you should also update the live telemetry to measure the new edits' effects."*
+
+What provoked it: a single session cut **V255 → V272** at pace, and **V268, V270, V271 and V272 all
+carry V112's cave BYTE-IDENTICAL** — cave `0xC4B34` hash `d3bb75d8`, hook `0x55C0E`, 427 source
+`0x55DF2`, every one unchanged. **Not one of those builds could observe its own edit.** V255/V256/V269
+then drove undriveable, and the cause was identifiable *only because the operator could feel it*.
+Nothing on the wire would have said which of the eleven shelf builds was the dangerous class.
+
+- **A NEW BUILD IS NOT A UNIT OF PROGRESS.** Ten images in a session is evidence of a *missing
+  measurement*, not momentum. Each competes for the same scarce resource — one short symptomatic
+  drive — and a shelf of untested images is a shelf of untested *hypotheses*, which is worth less than
+  one measured answer.
+- **A CAL-ONLY EDIT STILL NEEDS TELEMETRY.** *"No code byte changed"* bounds the RISK and says nothing
+  about OBSERVABILITY. Enabling a previously-disabled term is exactly the case where the state to
+  watch — the accumulator, the newly-live lane output — is invisible without a probe.
+- ⭐ **PREFER THE INERT TAP TO THE BLIND DOSE.** If the quantity is already computed and then
+  discarded (multiplied by a zero gain, stored to a cell nothing reads), a **read-only** tap changes
+  nothing on the car and lets *every* candidate dose be sized offline from one drive. That is strictly
+  a better experiment than picking a dose and flying it — and it is usually cheaper than the second
+  build you would otherwise cut.
+- **Before cutting, write the sentence a null will license** — and check that the instrument named in
+  that sentence is actually on the wire *in this build*. If it is not, the build is not ready.
+
+---
+
 ## 🛑 Live telemetry is part of EVERY build — design it deliberately
 Before cutting any firmware, **think first about what every prior build has already observed** — read and
 **cite** the real record (`BUILD-LINEAGE.md`, the `HANDOFF-*` chain, `memory/`); **do not hallucinate it,

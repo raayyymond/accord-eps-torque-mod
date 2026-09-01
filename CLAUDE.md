@@ -16,6 +16,33 @@ go in the SKILL, not here.**
 
 ---
 
+## 🛑🛑🛑 DO NOT CUT BUILDS HASTILY — AND NO BUILD SHIPS WITHOUT THE TELEMETRY TO MEASURE IT
+
+Standing operator instruction, **2026-08-31**, after a session cut V255→V272 at pace and shipped
+**V268, V270, V271 and V272 carrying V112's cave BYTE-IDENTICAL** — cave `0xC4B34` hash `d3bb75d8`,
+hook `0x55C0E`, 427 source `0x55DF2` all unchanged. **Not one of those builds could observe its own
+edit.** V255/V256/V269 then drove undriveable, and the only reason the cause was identifiable at all
+is that the operator could *feel* it; nothing on the wire would have told us.
+
+1. **A NEW BUILD IS NOT A UNIT OF PROGRESS.** Volume is not iteration. Cutting ten images in a session
+   is evidence of a *missing measurement*, not of momentum — each one competes for the same scarce
+   resource, one short symptomatic drive.
+2. **EVERY BUILD MUST CARRY THE INSTRUMENT FOR ITS OWN EDIT.** Before cutting, name the signal that
+   will move if the edit works, and confirm it is already on the wire or add it. If neither, **the
+   build is not ready** — fix the instrument first. A lever with no instrument produces an
+   uninterpretable null (V64, V68, V92), and *"uninterpretable"* is a DESIGN FAILURE on our side, not
+   a verdict.
+3. **A CAL-ONLY EDIT STILL NEEDS TELEMETRY.** "No code byte changed" bounds the *risk*; it says
+   nothing about *observability*. Enabling a disabled term (e.g. an integral gain) is exactly the case
+   where the state to watch — the accumulator — is invisible without a probe.
+4. ⭐ **PREFER THE INERT TAP TO THE BLIND DOSE.** If the quantity is already computed and discarded, a
+   read-only tap changes nothing on the car and lets every candidate dose be sized offline. That is
+   strictly a better experiment than guessing the dose and flying it.
+
+**Detail, and the probe-design law it belongs to, live in the `firmware-iteration` skill.**
+
+---
+
 ## 🛑🛑 LOAD THE `firmware-iteration` SKILL BEFORE DOING ANY OF THIS
 
 **Mandatory, not optional. Load it FIRST if the session will:**

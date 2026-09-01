@@ -20,6 +20,27 @@ this kit at least once; several have recurred.
   on opposite parities: an encoder or scan assuming one parity **silently addresses the neighbouring
   cell with every other field perfect.**
 
+- **`jarl` disp22 is opcode field `0x1E`** (hw1 bits 6-10), not `0x1B`. Getting it wrong is not a quiet
+  failure: `0x1B` matches **4,448 sites** across the code region and resolves **zero** real calls, so
+  the scan looks like it ran and returns a confident, empty answer. Cost a wrong "dead code" verdict
+  on 2026-08-31 before the control below caught it.
+
+## 🛑🛑 POSITIVE-CONTROL EVERY SCAN BEFORE YOU TRUST A NULL
+
+**This is the rule that catches all of the above, including the ones not yet discovered.** Every trap in
+this file has the same shape: a hand-rolled decoder returns **zero hits**, and zero hits reads as a
+finding rather than as a broken tool.
+
+> **Before reporting "N callers", "no writers", or "zero readers", run the SAME scanner against a case
+> you already know exists.** If it cannot find the known one, its null is worth nothing.
+
+Cheap controls that are always available: `FUN_00028ea6` is called from `0x22522`; `FUN_00034350` from
+`0x23276`; `FUN_0003aa2c` from `0x2291e`. For a gp/tp cell, pick one the decompiler visibly reads and
+confirm the scan finds that site. **A scan that finds the control and then finds nothing at the target
+is EVIDENCE; a scan that was never controlled is a guess with a number attached.**
+
+⊕ And when two methods disagree, **do not average them** — find which one the control breaks.
+
 ## Tools that lie
 
 - **`search_instructions` counts only already-analysed instructions** and reports `truncated:false`
