@@ -1,6 +1,7 @@
 🛑 **THIS INDEX IS PAGINATED IN EIGHT.** This page alone is not the whole memory —
 the continuation pages carry the rest, newest last:
 
+- 🛑🛑⭐⭐⭐⭐⭐ [V278 rev 3 FLEW: 3.9 Hz gone; max rate = the REFERENCE (42/56 deg/s, 1.9× stock-map); the high-angle STUTTER is a 7 Hz line = P desaturating on a STALLED wheel; V280 = knee at 96, ×6 top, clamp 46080](accord/mechanism/accord-v278r3-high-angle-stutter-is-p-desaturating-on-a-stalled-wheel.md) — x6 top pins P (ripple/level 0.45→0.18 open-loop); tap field is ((b0&3)<<8)|b1; damping scalar is regime-dependent
 - 🛑🛑⭐⭐⭐⭐⭐ [MEASURED: kp = 0.600 on ALL 60 routes — the Honda Kp/Ki scale NEVER acted; ki went 0.35→0.15 by a commit on 2026-08-18](accord/calibration/accord-honda-kp-ki-scale-never-acted-kp-is-0600-on-all-60-routes.md) — SteerKP (0.3–0.9, never moved) is the only live kp knob; it overrides the Accord's 0.8 every frame
 - 🛑⭐⭐⭐⭐⭐ [`gp-0x6b38` IS the delivered lane torque (the added term is provably zero) and it FORWARDS to `gp-0x6b3c` @0x2B41C](accord/firmware/accord-gp6b38-is-the-delivered-lane-torque-and-forwards-to-gp6b3c.md) — first byte-level link toward the motor; search_instructions found 3 of 5 accesses; V279 taps it on 427
 - 🛑🛑⭐⭐⭐⭐⭐ [StarPilot runs the TORQUE controller; the 0.33 multiplier was INERT — torqued's live LAF compensated the 6x](accord/calibration/accord-starpilot-torque-controller-the-033-multiplier-was-inert.md) — kp flat 0.6, friction is 60-80% of V279's loop gain at 3.9 Hz; first move SteerFriction 0.212→0.08, SteerLatAccel→2.53

@@ -4,11 +4,37 @@
 > order** — findings, corrections and closures. That is a record, not a briefing. Everything you need
 > to make a decision is in this box and the index under it.
 
-## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-02 (V278 rev 3)
+## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-02 (V278 rev 3 FLEW; V280 built)
 
-**ON THE CAR: V276 (reference x6, oscillates at 3.9 Hz).  THE FLIGHT CANDIDATE, BY OPERATOR CHOICE (2026-09-02, "maybe I
-will try V278 actually"): V278 rev 3 — K=2 with the DELIVERED-TORQUE tap.  V279 (pure feedforward) stays BUILT as the
-alternative; it needs the StarPilot retune below, V278 needs NO comma-side change.  V277 is WITHDRAWN.**
+**ON THE CAR: V278 rev 3 (map ×2, feedback clamp 15360, delivered-torque tap) — FLOWN 2026-09-02, route `…_00000031`.
+Operator: amazing authority; no more constant oscillation; no audible grinding; STUTTER at high angles is now the largest
+issue; max rate not yet 6× stock. THE FLIGHT CANDIDATE: V280 — the same map ×2 up to idx 96 (byte-identical to rev 3),
+rising to ×6 at 240 (V276's top knot), `0xC62E6` = 46080 (V276's value), tap unchanged. V279 stays on the shelf (the operator
+has set aside the pure-feedforward path: it needs a StarPilot retune; V278/V280 need none). V277 is WITHDRAWN.**
+
+| | **V280** — the knee at 96 |
+|---|---|
+| base | **V268**, cal-only + rev 3's 34-byte tap window (code region byte-identical to rev 3) |
+| edits | 28 map records: Y×2 for X ≤ 96 (== rev 3), Y×26/9 at X=128, ×34/9 at X=160, ×6 at X=240 (== V276); slot 7 Y = 0,48,84,100,124,200,252,445,627,1032 · `0xC62E6` 15360→46080 |
+| why | rev 3's drive: the REFERENCE (44.5 deg/s) limits the rate, not torque; the 7 Hz high-angle stutter is P desaturating on a stalled wheel (E +7k vs a 5650 linear window, ±6000 ripple) — a ×6 top pins P (E +29k; open-loop ripple/level 0.45→0.18); the region where V276 rang (idx ≤ 58) stays ×2, damping fraction 0.863 by construction |
+| image | `47bdfb0ddd0e69e2302b814ee6e1c40d683b2d9625189d5e9ef4e98d5bfd7411` |
+| rwd | `0357a025fa0d1ebc794d21a05419bfe286f474c7eabc474b31416b4438cc84db` — `39990-TVA,A160-V280-V268BASE-MAP2X.TO6X.KNEE96.FEEDBACK46080.TORQUE.TAP-0x13000-0x100000.rwd` |
+| assertions | **687/687** incl. cross-image (code == rev 3, low knots == rev 3, top knots == V276, clamp == V276) and end-state re-reads; adversarial ×3 CLEAN (rebuild reproduces; 31/33 mutations caught, 2 benign; all 0xC62E6 readers decoded `ld.hu`; consumers censused) |
+| read it by | `rlog-tools/studies/osc-highangle/PREREG-V280-READ.md`: T ripple/level at 6–8.5 Hz in high-angle turns **≤ 0.25** (rev 3 0.55–0.70); full-demand rate p50 **> 56** (rev 3 42.3); low-cmd damping 0.35–0.45 (unchanged); 2–4 Hz excess < 1.39 |
+| risk | the lane will PUSH WITH a driver spinning the wheel above 44.5 deg/s where rev 3 braked; steady push ~1.3× in a stalled turn; peak torque unchanged; taper byte-stock; knots X=128/160 are values no build has flown (between rev 3's and V276's) |
+| artifact | https://claude.ai/code/artifact/9177a537-83c4-463d-83e9-8c0523f5f34d |
+
+**REV 3 MEASURED (2026-09-02, `V278R3-READ-2026-09-02.md`, `HIGHANGLE-V278R3-…`, `SERVO-AT-REFERENCE-…`, `studies/v280/`):**
+3.9 Hz mode GONE (band excess 0.76 vs V276 4.58, corpus p50 0.82). Saturation duty 0.000 → the clamps are not a lever (pre-registered
+null confirmed). Sustained full-demand rate 42.3/56.4 deg/s = 1.9× the ×1 builds, 32 % of ×6. Damping statistic 0.40 on normal
+frames — the prereg's 0.60 was V276-specific and its refutation clause fired; the scalar is regime-dependent, not diagnostic.
+Stutter: 7.0–7.6 Hz line, 10 episodes, all |angle| ≥ 30°, absent on stock/V112; the driver-torque channel RINGS at 7 Hz there
+(1470–1960 raw, mean ~0). Grinding not scorable (23 s manual). **Tap field = `((b0&3)<<8)|b1`; damping = sign(T) ≠ sign(RAW
+0x18F rate); sign(T) = +sign(cmd) on the wire.** Ghidra was down all session; censuses are raw-scan only.
+
+---
+
+**V278 rev 3 (as flown):**
 
 | | **V278 rev 3** — the reference ×2, plus the delivered-torque tap |
 |---|---|

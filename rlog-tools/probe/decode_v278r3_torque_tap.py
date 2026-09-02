@@ -3,7 +3,7 @@
 off CAN 427 (0x1AB).
 
 WIRE (10-bit MOTOR_TORQUE field, DBC honda_accord_2017_can_ext: start bit 1, len 10, Motorola):
-    value = ((d[0] & 0x7F) << 3) | (d[1] >> 5)
+    value = ((d[0] & 3) << 8) | d[1]          # kit convention; see decode_1ab
     sign  = (value >> 9) & 1            T = -(|T|) if sign else +|T|
     |T|   = (value & 0x1FF) << 3        (resolution 8 counts; structural ceiling 3072, the
                                           sum-clamp-driven ceiling actually reached is 2505 -> 313)
@@ -71,7 +71,12 @@ COUNTS_PER_DEGS = 8.0     # 0x18F rate wire, measured (see accord-feedback-opera
 
 
 def decode_1ab(d0, d1):
-    val = ((d0 & 0x7F) << 3) | (d1 >> 5)
+    # 10-bit field = ((b0 & 3) << 8) | b1 -- the kit's established convention (direct_read_v276.py read the
+    # selector 35 = 7x5 with it on V276).  The DBC-derived window ((b0&0x7F)<<3)|(b1>>5) used here on
+    # 2026-09-02 was WRONG: on the wire b0 is only 0x80/0x82, so it maxed at 21 with the sign never set.
+    # Verified on r31 seg 6 raw bytes by the orchestrator: this window gives max 673, sign duty 0.54,
+    # corr(|T|,|cmd|) = +0.67.  b0 bit 7 is some other flag.
+    val = ((d0 & 3) << 8) | d1
     sign = -1 if (val >> 9) & 1 else 1
     mag = (val & 0x1FF) << 3
     return sign * mag, val
@@ -100,7 +105,7 @@ def collect(paths):
                     t1ab.append(ts); Tv.append(T)
                 elif src == 1 and addr == 0x18F and len(d) >= 5:
                     r = (d[2] << 8) | d[3]
-                    r = (r - 0x10000 if r & 0x8000 else r) * -1.0   # 0x18F rate_f = -gp-0x6a56
+                    r = float(r - 0x10000 if r & 0x8000 else r)      # RAW wire (= -gp-0x6a56).  Damping compares T to the RAW wire: the chain is damping <=> sign(E) != sign(fb) <=> sign(-T) != sign(gp-0x6a56) <=> sign(T) != sign(raw wire).  An earlier draft negated here and so had the two rows swapped (r3read, 2026-09-02).
                     t18.append(ts); rate.append(r); sca.append((d[4] >> 3) & 1)
                 elif src == 129 and addr == 0x0E4 and len(d) >= 3:
                     c = (d[0] << 8) | d[1]
@@ -160,8 +165,8 @@ def main(argv):
     damping_eq = float((np.sign(Te[valid_sign]) == np.sign(re[valid_sign])).mean())
 
     print(f"\nSATURATION duty  P(|T| >= 2496)                         : {sat_duty:.4f}")
-    print(f"DAMPING duty     P(sign(T) != sign(0x18F rate))  [derived]: {damping_ne:.4f}")
-    print(f"DAMPING duty     P(sign(T) == sign(0x18F rate))  [docstr] : {damping_eq:.4f}")
+    print(f"DAMPING duty     P(sign(T) != sign(RAW 0x18F rate))  [the definition]: {damping_ne:.4f}")
+    print(f"PUMPING duty     P(sign(T) == sign(RAW 0x18F rate))  [complement]   : {damping_eq:.4f}")
     if interpret:
         print("  -> per adv278r3b's sign-chain derivation (T = -1*gain*lag(PID output ~ E), "
               "gain>0; fb DC gain positive on gp-0x6a56; wire = -gp-0x6a56), damping is the "

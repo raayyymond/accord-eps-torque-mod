@@ -92,7 +92,36 @@ a return of 3.9 Hz with the tap at 1.00 (Kp→0.15), sluggish centering (Ki→0.
 no do-not-flash; three script holes (no end-state check on the primary edit, Kd only read back in-loop, last-record
 blindness) closed with re-reads from the FINAL image and the decoded .rwd against the constants.
 
-### V278 rev 3 — the REFERENCE brought back into reach (K=2), plus the DELIVERED-TORQUE tap  (2026-09-02, NOT FLOWN — THE FLIGHT CANDIDATE, operator's choice)
+### V280 — the KNEE at 96: map ×2 to idx 96, ×6 at 240; feedback clamp 46080  (2026-09-02, NOT FLOWN — THE FLIGHT CANDIDATE)
+
+**base** V268 · **image** `47bdfb0d…7411` · **rwd** `0357a025…84db` · **687/687** · rebuild reproduces · 31/33 mutations caught (2 benign)
+**artifact** https://claude.ai/code/artifact/9177a537-83c4-463d-83e9-8c0523f5f34d · **prereg** `rlog-tools/studies/osc-highangle/PREREG-V280-READ.md`
+
+| cell | rev 3 | V280 | what it is |
+|---|---|---|---|
+| 28 map records, knots X ≤ 96 | ×2 | ×2 (byte-identical) | the rate reference where V276 rang (idx ≤ 58) — damping fraction 0.863 by construction |
+| knots X = 128 / 160 / 240 | ×2 (308/332/344) | ×26/9, ×34/9, ×6 (445/627/1032) | the reference at high demand; top knot = V276's in every record; 128/160 are UNFLOWN values |
+| `0xC62E6` | 15360 | 46080 | feedback clamp, V276's value; 1.395 ratio at the ceiling; all three readers `ld.hu` (decoded) |
+| `0x55DF0`–`0x55E11` | torque tap | unchanged | CAN-427 `(sign(T)<<9) \| (\|T\|>>3)`, field `((b0&3)<<8)\|b1` |
+
+**WHY.** Rev 3's drive: the REFERENCE limits the rate (42.3/56.4 deg/s at full demand against 44.5; \|T\| 22 % of the rail;
+lane braking at its setpoint), and the high-angle stutter (7.0–7.6 Hz, 10 episodes, absent on stock/V112) is P desaturating on
+a STALLED wheel: E +7k..+9k against a 5650 linear window with a ±6000 ripple. A ×6 top puts E at +25k..+34k; P stays railed;
+open-loop T ripple/level 0.45 → 0.18. Reference ceiling 44.5 → 133.6 deg/s. **CLASS:** the reference lever a third time, now
+SHAPED (V276 ×6 flat → V278 ×2 flat → V280 knee). New: the knee and the interpolated knots. **RISK:** the lane pushes WITH a
+driver spinning above 44.5 deg/s where rev 3 braked; ~1.3× steadier push in stalled turns; peak torque unchanged; taper byte-stock.
+**READ IT BY:** T 6–8.5 Hz ripple ÷ level in high-angle turns ≤ 0.25 (rev 3 0.55–0.70); full-demand rate p50 > 56; low-cmd
+damping 0.35–0.45; 2–4 Hz excess < 1.39. FAIL sentences in the prereg. Adversarial: `adv280a/b/c`, all clean; docstring
+corrections only (a P-only rail reads 307, the sum rail 310; D one-tick rails 0.71 → 1.06 % of ticks).
+
+### V278 rev 3 — the REFERENCE brought back into reach (K=2), plus the DELIVERED-TORQUE tap  (2026-09-02, **FLOWN 2026-09-02**, route `…_00000031`)
+
+**ON-CAR (operator):** amazing authority in max angular velocity and acceleration · no audible grinding (maybe a very attenuated
+trace) · **stuttering/oscillation at high angles far from centre — the largest issue** · no more constant oscillation · not yet 6× max
+rate. **MEASURED:** 3.9 Hz mode gone (0.76 vs 4.58); saturation 0.000; full-demand rate 42.3/56.4 deg/s (1.9× the ×1 builds); damping
+stat 0.40 normal (prereg's 0.60 was V276-specific — refuted by its own clause; regime-dependent, not diagnostic); stutter = 7.0–7.6 Hz
+line at \|angle\| ≥ 30°, P desaturating on a stalled wheel (see V280). Tap decoder corrected: field `((b0&3)<<8)\|b1`, damping vs RAW
+rate, sign(T) = +sign(cmd) on the wire.
 
 **base** V268 · **image** `aadeced6…3765e6` · **rwd** `7effd74c…0de37` (`…V278R3-…TORQUE.TAP…rwd`) · **598/598** · independent rebuild
 reproduces · 25/25 mutations caught · window byte-identical to V279 rev 2's image, cal region byte-identical to rev 2's image

@@ -29,7 +29,14 @@ sign-agreement statistic is diluted. Simulated on the V276 log through the exact
 | 2 (rev 3) | 0.863 | **0.678 / 0.600** | 0.000 / 0.004 |
 | 6 (V276) | 0.576 | **0.368 / 0.401** | 0.000 / 0.012 |
 
-Decision rule and thresholds: `rlog-tools/studies/osc-2to4/PREREG-V278R3-CLAMP-READ.md`. Decoder:
+**FLOWN 2026-09-02 — corrections from the wire:** (1) the 10-bit field is `((b0&3)<<8)|b1` (kit convention; the DBC window
+`(b0&0x7F)<<3|b1>>5` maxes at 21 and never sets the sign — b0 is only 0x80/0x82); (2) damping compares T to the RAW 0x18F rate
+(the decoder had negated it once more); (3) **sign(T) = +sign(cmd)** on the wire (v = −4·cmd, then T = −lane) — V279's docstring
+has it backwards; (4) the damping scalar read **0.40** on rev 3's normal frames and the chain sim on the same frames gives 0.399:
+tap and model agree, the prereg's 0.60 was V276's log. It is REGIME-DEPENDENT (0.33 near centre hands-off, 0.83 above 50 deg/s,
+0.68 hands-on) — the lane moving the wheel reads as "pumping" — so it does not discriminate a healthy loop from a ringing one on
+its own. (5) A P-only rail delivers 2461 and reads **307**; 2481/310 is the sum-clamp rail (needs D). Decision rule and
+thresholds: `rlog-tools/studies/osc-2to4/PREREG-V278R3-CLAMP-READ.md`. Decoder:
 `rlog-tools/probe/decode_v278r3_torque_tap.py` (prints both duties; meaningless on any route before rev 3 / V279 rev 2,
 which carry V112's gp-0x6abc tap). Related: [[accord-gp6b38-is-the-delivered-lane-torque-and-forwards-to-gp6b3c]],
 [[accord-the-rate-loop-is-a-bang-bang-servo-p-rails-at-e-440]] (retracted), [[accord-v276-mechanism-is-a-matter-of-degree]].
