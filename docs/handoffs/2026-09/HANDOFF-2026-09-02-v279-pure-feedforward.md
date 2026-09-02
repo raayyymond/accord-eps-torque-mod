@@ -43,7 +43,11 @@ railed *negative*. To openpilot's angle PID the plant has looked like an **integ
 V279 gives it torque into a spring-inertia column — a different loop *shape*, so "stock gain ÷ V279 gain" has no
 finite value and the multipliers could not be scaled; they had to be derived from the cmd→angle loop.
 
-## The StarPilot side — EVIDENCE from the fork's source and the V276 log
+## The StarPilot side — 🛑 RETRACTED SAME DAY: the operator runs the TORQUE controller
+
+🛑 **CORRECTION IN PROGRESS (2026-09-02): the operator runs `force_torque_controller` (LatControlTorque), NOT LatControlPID. The StarPilot paragraph below is VOID -- the multipliers are being re-derived for the torque controller; do not act on Kp 0.33 / 16.7 dB from this text.**
+
+### (original text, VOID)
 
 - StarPilot (`openpilots/raayyymond-StarPilot`, e631b24) runs **`LatControlPID`**, the angle PID, for the Accord —
   not the torque controller. `honda/interface.py:98–104`: `b"," in fw.fwVersion` → `EPS_MODIFIED`; `:139–142`

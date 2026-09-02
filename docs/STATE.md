@@ -28,7 +28,9 @@ bricking class. Mechanism proven from bytes: the zero clamp forces r26=0 on all 
 `0xC62E6` has exactly 3 readers in the image (all in that block), D is a pure multiply, the LERPs hold flat beyond
 their domains, the setpoint publish cell `gp-0x6a32` has ZERO readers.
 
-🛑 **THE STARPILOT RETUNE IS PART OF THIS BUILD.** StarPilot runs `LatControlPID` (angle PID) for the Accord;
+
+🛑 **CORRECTION IN PROGRESS (2026-09-02): the operator runs `force_torque_controller` (LatControlTorque), NOT LatControlPID. The StarPilot paragraph below is VOID -- the multipliers are being re-derived for the torque controller; do not act on Kp 0.33 / 16.7 dB from this text.**
+🛑 **THE STARPILOT RETUNE IS PART OF THIS BUILD.** ~~StarPilot runs `LatControlPID`~~ (angle PID) for the Accord;
 the `,` in the part number sets `EPS_MODIFIED` and halves kpV/kiV (0.6→0.3, 0.18→0.09); the user multipliers scale
 those only; **kf = 0.00006 is never scaled; there is NO friction term.** Effective today: kp 0.099, ki 0.0297.
 Derived from HIS V276 log: column response 0.00056 deg/torque-count at −104° at 3.9 Hz, openpilot delay ~56 ms

@@ -1,6 +1,6 @@
 ---
 name: accord-starpilot-runs-the-angle-pid-kf-unscaled-no-friction
-description: StarPilot (the operator's fork, openpilots/raayyymond-StarPilot) runs LatControlPID (the ANGLE PID) for the Accord, not the torque controller. The "," in the EPS part number sets EPS_MODIFIED and halves kpV/kiV (0.6->0.3, 0.18->0.09); the user multipliers HondaLateralPidKpScale/KiScale scale kpV/kiV ONLY. kf = 0.00006 is NEVER scaled by either. There is NO friction term in this controller -- any "openpilot friction relay" attribution is wrong. Effective today at 0.33: kp 0.099 (405 CAN counts/deg), ki 0.0297. For V279: Kp 0.33 = 16.7 dB gain margin at the 3.9 Hz phase crossover measured on the V276 log; Ki 0.33 (0.5 ok); never above Kp 1.0 (7 dB).
+description: RETRACTED SAME DAY -- the operator runs force_torque_controller (LatControlTorque), NOT the PID; this file's derivation is VOID. Original text: StarPilot (the operator's fork, openpilots/raayyymond-StarPilot) runs LatControlPID (the ANGLE PID) for the Accord, not the torque controller. The "," in the EPS part number sets EPS_MODIFIED and halves kpV/kiV (0.6->0.3, 0.18->0.09); the user multipliers HondaLateralPidKpScale/KiScale scale kpV/kiV ONLY. kf = 0.00006 is NEVER scaled by either. There is NO friction term in this controller -- any "openpilot friction relay" attribution is wrong. Effective today at 0.33: kp 0.099 (405 CAN counts/deg), ki 0.0297. For V279: Kp 0.33 = 16.7 dB gain margin at the 3.9 Hz phase crossover measured on the V276 log; Ki 0.33 (0.5 ok); never above Kp 1.0 (7 dB).
 metadata:
   type: reference
 ---
@@ -25,3 +25,5 @@ railed limit cycle). Watch for a NEW 1-2.5 Hz wallow -> Kp 0.2.
 
 **How to apply:** the multipliers are a loop-SHAPE decision, not a torque ratio. Re-derive from the cmd->angle
 response whenever the EPS plant changes class. See [[accord-the-rate-loop-is-a-bang-bang-servo-p-rails-at-e-440]].
+
+> 🛑 **RETRACTED 2026-09-02, same day, by the operator: "Pretty sure StarPilot is doing torque controller this entire time actually. I explicitly have force torque controller enabled."** The agent that wrote this read the default controller selection and missed the `force_torque_controller` toggle. The car runs `LatControlTorque`. Everything below about LatControlPID, kf, and "no friction term" does NOT describe the operator's car; the 16.7 dB / Kp 0.33 derivation is VOID and is being re-derived for the torque controller.

@@ -62,6 +62,8 @@ than how hard it pushes (V38–V124), how it is damped (V74–V84, V278) or what
 `= 64·idx × 5346 >> 15` → **2505 at full demand = 6× stock, UNCHANGED**; linear to cmd 3886 (idx cap 240).
 Stock's own small-signal slope is ~74/idx at low index, so this is stock's feedforward straightened, not a new gain.
 
+
+🛑 **CORRECTION IN PROGRESS (2026-09-02): the operator runs `force_torque_controller` (LatControlTorque), NOT LatControlPID. The StarPilot paragraph below is VOID -- the multipliers are being re-derived for the torque controller; do not act on Kp 0.33 / 16.7 dB from this text.**
 **THE FACT THAT RESHAPED THE TUNE.** Stock's P term rails at |E| = 440 (±1.8 deg/s): with the wheel still, stock
 delivers its full 417 at cmd ≈ 113 (<3% of scale). The rate loop was a bang-bang rate SERVO; openpilot's angle PID
 was tuned against an integrator-like plant. "Stock gain / V279 gain" has no finite value. The StarPilot multipliers
