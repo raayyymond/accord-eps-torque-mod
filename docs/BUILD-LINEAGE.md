@@ -55,7 +55,7 @@ deliberately not numbered `PART2` so the two can never be confused.
 | Kd bank `0xCB7D4` → 28 records | 128 / 64 flat | **0** | D = (dE×0)>>3 = 0 |
 | map bank `0xC9A88` → 28 records | Honda Y (slot 7 ceiling 172) | **Y = 2X**, ceiling 480 | the reference, linearized |
 | Kp bank `0xCB994` → 28 records | 248…717 rising | **256 flat** | so `P = 32·2idx·256>>8 = 64·idx` exactly |
-| `0x55DF0`–`0x55E11` | stock packer | signed delivered torque | CAN-427: `(sign(T)<<9) \| (\|T\|>>3)`, T = `gp-0x6b38`, 2505 reads 313 |
+| `0x55DF0`–`0x55E11` | stock packer | signed delivered torque | CAN-427: `(sign(T)<<9) \| (\|T\|>>3)`, T = `gp-0x6b38`; a railed sum delivers 2481 and reads **310** (corrected 2026-09-02; "313" ignored the 0.990 output-lag readout) |
 
 **CLASS — GENUINELY NEW.** The first build to change WHAT THE LOOP IS (a rate regulator → a torque map) rather
 than how hard it pushes (V38–V124), how it is damped (V74–V84, V278) or what it asks for (V276). Delivered
@@ -92,16 +92,18 @@ a return of 3.9 Hz with the tap at 1.00 (Kp→0.15), sluggish centering (Ki→0.
 no do-not-flash; three script holes (no end-state check on the primary edit, Kd only read back in-loop, last-record
 blindness) closed with re-reads from the FINAL image and the decoded .rwd against the constants.
 
-### V278 — the REFERENCE brought back into reach (K=2), plus a DAMPING tap  (2026-09-02, NOT FLOWN — THE FLIGHT CANDIDATE)
+### V278 rev 3 — the REFERENCE brought back into reach (K=2), plus the DELIVERED-TORQUE tap  (2026-09-02, NOT FLOWN — THE FLIGHT CANDIDATE, operator's choice)
 
-**base** V268 · **image** `4bc51073…5a22c` · **rwd** `ac9d27a9…10562` · **487/487** · independent rebuild reproduces
+**base** V268 · **image** `aadeced6…3765e6` · **rwd** `7effd74c…0de37` (`…V278R3-…TORQUE.TAP…rwd`) · **598/598** · independent rebuild
+reproduces · 25/25 mutations caught · window byte-identical to V279 rev 2's image, cal region byte-identical to rev 2's image
+**rev 2** `4bc51073…` / `ac9d27a9…` (487/487, damping-comparator tap) → **SUPERSEDED-DO-NOT-FLASH** 2026-09-02
 **artifact** https://claude.ai/code/artifact/b2a2995e-e219-4e18-a2c3-e99a979d0575
 
 | cell | V268 | V278 | what it is |
 |---|---|---|---|
 | 28 LERP records at `0xE4000`–`0xE8105` (family `0xC9A88`) | Honda Y knots | ×2 (slot 7: 172 → 344) | the LKAS rate-loop REFERENCE (V276 on the car: ×6) |
 | `0xC62E6` | 7680 | 15360 | feedback saturation clamp, stored ×256; ratio 1.395 preserved structurally |
-| `0x55DF0`–`0x55E11` | stock packer | 34 B in place | CAN-427: `(sel & 0x0F) \| ((E ^ fb_state) >> 31) << 9` — bit 9 = the lane OPPOSES the wheel |
+| `0x55DF0`–`0x55E11` | stock packer | 34 B in place | CAN-427: `(sign(T)<<9) \| (\|T\|>>3)`, T = `gp-0x6b38` (delivered lane torque); a railed sum reads **310**; rev 2 carried `sel \| (E^fb)>>31<<9` |
 
 **WHY.** V276 (×6) FLEW 2026-09-01 and produced a self-exciting **3.9 Hz** oscillation, engaged-only, all speeds,
 straight roads, killed by a firm grip. Frame by frame on his rlog (`r2e`), the fraction of oscillation time in
@@ -118,9 +120,17 @@ offline** (reads 0.50 at every K); the comparator replaced it before anything wa
 **RISK.** Felt authority on turns WILL be below V276's, should be clearly above stock's. A residual oscillation
 is possible. The override taper is byte-stock: the grip escape (~2,500 raw, where the cliff begins) is unchanged.
 
-**READ IT BY:** CAN-427 bit-9 duty over engaged frames — predicted ~0.57 on V276, ~0.86 on V278; selector nibble
-must read 7. Null sentence in the docstring. Adversarial pass: five agents, two revisions, no do-not-flash;
-every script finding fixed after the last audit closed, image unchanged.
+**READ IT BY (rev 3):** `decode_v278r3_torque_tap.py`. **DAMPING = P(sign(T) ≠ sign(0x18F rate))** — the tap's read is
+LOWER than the E-comparator's 0.86 because T lags E ~38° at 3.9 Hz: **predicted 0.68 in an oscillation / 0.60 normal at
+K=2; V276 would read 0.37 / 0.40.** **SATURATION = P(|field| ≥ 309)**: predicted **0.000 / 0.004** — the pre-registered
+answer to "widen the P/sum clamps?" is NO (`PREREG-V278R3-CLAMP-READ.md`, with the four-way rule and the widening table:
+W=20480 needs `0xC6CD0`→4008 to hold 2505; all three cells sign-extended, keep < 32768). Adversarial pass rev 3: three
+agents (build-script rebuild+census+mutations; sign chain from the bytes; pre-registration), no do-not-flash; two TEXT
+corrections — the docstring's damping sign was backwards (`==` reads pumping), and "2505 reads 313" → 310.
+
+🛑 **RETRACTION (2026-09-02): "P rails at |E| = 440, bang-bang servo, stock delivers 417 at cmd 113."** The decompile
+is `E = 32·sp − fb`, `P = E·Kp >> 8` — ONE ×32. P rails at |E| = 15855 (64 deg/s) at Kp 248, 5650 (22.9 deg/s) at Kp 696;
+stock's wheel-still surface peaks at P = 14964 < 15360. The linear band covers 92–97 % of ticks on the V276 log at K=2.
 
 🛑 **RETRACTION of the "CEILING CORRECTION" in the V277 entry below.** The LKAS ceiling **IS 2505**, as the kit
 had it: `0xC61BE` = 15360 clamps the PID sum, the output lag's readout `(state_old+state_new)>>5` cancels its

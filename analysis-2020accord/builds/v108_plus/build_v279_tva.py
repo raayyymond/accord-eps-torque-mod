@@ -38,7 +38,8 @@ is wrapped around that inner loop without knowing it.  V279 removes the inner lo
       reaches it).  It has NEVER been on a broadcast frame.
       \u26a0 V279 REPLACES V112's gp-0x6ABC tap on CAN 427: every offline 427 decoder for the V268 family must
       switch to the T decode for V279.  |T| <= 3072 -> /8 <= 384,
-      9 bits; the 2505 ceiling reads 313.  Resolution 8 torque counts.
+      9 bits; a railed sum delivers 2481 through the output lag's 0.990 readout and reads 310 (NOT 313 -- corrected
+      2026-09-02, adv278r3c).  Resolution 8 torque counts.
       The operator rejected carrying the selector (measured: 7) and the demand index (computable offline from
       0xE4 and 0x18F).  This is the quantity that is NOT otherwise observable: steeringTorqueEps is ~0 on the wire.
       What it reads: (a) sign(T) == -sign(0xE4 cmd) on every engaged, in-taper, ramped frame proves the feedback
@@ -53,7 +54,7 @@ is wrapped around that inner loop without knowing it.  V279 removes the inner lo
 
 === THE SENTENCE A NULL LICENSES ===============================================================
 T == 0 while engaged with cmd != 0, outside taper-closed and ramp-low frames: gp-0x6b38 is not the lane's
-output or is gated -- do not trust any other conclusion.  T saturating at 313 (2505) at commands well below
+output or is gated -- do not trust any other conclusion.  T saturating at 310 (2481) at commands well below
 3886: the map is not the live setpoint source.  sign(T) disagreeing with -sign(cmd) on ~50% of qualifying
 frames: the feedback is NOT dead.  sign agreement ~1.00 AND T linear in cmd AND the car stable: the operator
 has the torque interface he asked for, and openpilot's plant model is on the wire for free.  If the car
@@ -438,11 +439,11 @@ def build():
     for site in (SEL_WRITER, DEMAND_WRITER, E_STORE_SITE, T_STORE_SITE):
         check(bytes(code[site:site + 4]) == bytes(base[site:site + 4]), f"writer at 0x{site:05X} untouched")
     print("      wire = (sign(T) << 9) | (|T| >> 3)      T = gp-0x6b38, |T| <= 3072 -> max 0x380 = 896 < 1023")
-    print("      -> T = (-1 if bit9 else 1) * ((wire & 0x1ff) << 3);  2505 reads 313;  sign(T) == -sign(cmd) proves fb dead")
+    print("      -> T = (-1 if bit9 else 1) * ((wire & 0x1ff) << 3);  a railed sum reads 310 (2481 via the 0.990 readout);  sign(T) == -sign(cmd) proves fb dead")
 
     def decode(w):
         return (-1 if (w >> 9) & 1 else 1) * ((w & 0x1FF) << 3)
-    check(decode(313) == 2504 and decode(512 | 313) == -2504 and decode(0) == 0, "decode: 313 -> +2504 (the 2505 ceiling at 8-count resolution), bit 9 -> negative")
+    check(decode(310) == 2480 and decode(512 | 310) == -2480 and decode(0) == 0, "decode: 310 -> +2480 (the railed-sum delivery at 8-count resolution), bit 9 -> negative")
     check((3072 >> 3) | 0x200 == 896 < 1023, "max wire value 896 -- the clamp helper stays a pass-through")
 
     # ------------------------------------------------------------------------------------------

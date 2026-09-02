@@ -4,10 +4,31 @@
 > order** — findings, corrections and closures. That is a record, not a briefing. Everything you need
 > to make a decision is in this box and the index under it.
 
-## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-02 (V279)
+## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-02 (V278 rev 3)
 
-**ON THE CAR: V276 (reference x6, oscillates at 3.9 Hz).  THE FLIGHT CANDIDATE, BY OPERATOR CHOICE: V279.
-V278 (K=2 + damping tap) remains BUILT as the fallback.  V277 is WITHDRAWN.**
+**ON THE CAR: V276 (reference x6, oscillates at 3.9 Hz).  THE FLIGHT CANDIDATE, BY OPERATOR CHOICE (2026-09-02, "maybe I
+will try V278 actually"): V278 rev 3 — K=2 with the DELIVERED-TORQUE tap.  V279 (pure feedforward) stays BUILT as the
+alternative; it needs the StarPilot retune below, V278 needs NO comma-side change.  V277 is WITHDRAWN.**
+
+| | **V278 rev 3** — the reference ×2, plus the delivered-torque tap |
+|---|---|
+| base | **V268**, cal-only + one 34-byte packer window (the PID function `FUN_00028ea6` byte-identical) |
+| edits | 28 map records Y×2 (slot 7 ceiling 172→344) · `0xC62E6` 7680→15360 · packer `0x55DF0`–`0x55E11` = V279 rev 2's window, byte-identical: `(sign(T)<<9) \| (\|T\|>>3)`, T = `gp-0x6b38` |
+| image | `aadeced67ac4f9391db42e2d6779390add9d4c7cdaeeed017111ca629c3765e6` |
+| rwd | `7effd74c4b3e1b1e901dd6ffe6b06335365224423c58667a27102172eeb0de37` — `39990-TVA,A160-V278R3-V268BASE-REFERENCE2X.MAP.FEEDBACK.TORQUE.TAP-0x13000-0x100000.rwd` |
+| assertions | **598/598**, incl. cross-image (window == V279 rev 2's image, cal region == rev 2's image) and end-state re-reads; adversarial: rebuild reproduces, 25/25 mutations caught, 17 substantive assertions; rev 2 (`4bc51073…`) renamed SUPERSEDED-DO-NOT-FLASH |
+| read it by | `rlog-tools/probe/decode_v278r3_torque_tap.py` — **DAMPING = P(sign(T) ≠ sign(0x18F rate))**, predicted **0.68 osc / 0.60 normal** (V276 on the same instrument: 0.37 / 0.40); **SATURATION = P(\|field\| ≥ 309)**, predicted **0.000 / 0.004** → pre-registered answer to "widen the clamps?" is NO. Rule + thresholds: `rlog-tools/studies/osc-2to4/PREREG-V278R3-CLAMP-READ.md` |
+| artifact | https://claude.ai/code/artifact/b2a2995e-e219-4e18-a2c3-e99a979d0575 |
+
+🛑 **CORRECTION OF RECORD (2026-09-02, from the decompile, two independent confirmations):** `P = E·Kp >> 8` with
+`E = 32·sp − fb` — ONE factor of 32. The morning's "P rails at |E| = 440 (±1.8 deg/s), bang-bang servo, stock delivers
+417 at cmd 113" carried a second ×32 and is RETRACTED (memory stamped). P rails at |E| = 15855 (64 deg/s) at Kp 248,
+5650 (22.9 deg/s) at Kp 696; stock's wheel-still surface never reaches the clamp. Also: **the tap reads 310 at the
+rail, never 313** — the output lag's readout is 0.990, so a railed sum delivers 2481.
+
+---
+
+**V279, the alternative:**
 
 | | **V279** — PURE FEEDFORWARD: the rate PID opened into a linear torque map |
 |---|---|
@@ -21,8 +42,9 @@ V278 (K=2 + damping tap) remains BUILT as the fallback.  V277 is WITHDRAWN.**
 
 **WHY THIS BUILD.** Honda's EPS maps openpilot's TORQUE request onto an ANGULAR-RATE SETPOINT and closes a PID on
 measured column rate; openpilot's angle PID has been tuned against that hidden inner loop. Stock's P term rails at
-|E| = 440 (±1.8 deg/s of rate error) — with the wheel still, stock delivers its full 417 at a command of ~113
-counts (<3% of scale). **The rate loop is a bang-bang rate servo; to openpilot it has looked like an INTEGRATOR.**
+|E| = 15855 operand at Kp 248 (RETRACTED 2026-09-02: an earlier draft said 440 — see the correction box above).
+**The rate loop is a rate servo whose linear band covers stock's whole wheel-still surface; V279 removes the
+feedback, not a saturation.**
 V279 gives openpilot a linear torque-into-column plant — what its controller assumes. Cal-only: outside the
 bricking class. Mechanism proven from bytes: the zero clamp forces r26=0 on all three branches (`0x28fa6`–`0x28fbc`),
 `0xC62E6` has exactly 3 readers in the image (all in that block), D is a pure multiply, the LERPs hold flat beyond
@@ -55,11 +77,11 @@ wallow at 1–2.5 Hz (Kp → 0.2); a return of 3.9 Hz with the tap reading 1.00 
 **THE INSTRUMENT — the delivered torque itself.** The operator rejected carrying the selector (measured: 7) and the demand
 index (computable offline). CAN 427 now carries `(sign(T)<<9) | (|T|>>3)`, T = `gp-0x6b38` = the lane's ramped, gain-multiplied,
 `±0xC61B4`-clamped output (`st.h r1,-0x6b38,gp` @`0x2A23C`, every tick; only other readers: two UDS loads). 8-count
-resolution; 2505 reads 313. `sign(T) == -sign(cmd)` on every engaged/in-taper/ramped frame proves the feedback is dead
+resolution; a railed sum reads **310** (2481 through the 0.990 output-lag readout — never 313). `sign(T) == -sign(cmd)` on every engaged/in-taper/ramped frame proves the feedback is dead
 (~0.5 if not); T vs cmd is the delivered surface read from the car. ✅ The second term added before the gain (`gp-0x6b2c`) is PROVABLY ZERO on every path: its LERP table at `tp+0x7736..0x7744` is all-zero (byte-identical to stock) AND its gate `gp-0x6809 == 1` can never be true (`gp-0x6809` has no writer in the image, kit memory 2026-07-14). So `T = -lane x 5346 >> 15`, clamped +-3072, always. The sign is one negation (`gp-0x6752` = -1). Live readers: UDS x2 and a forwarding copy to `gp-0x6b3c` @`0x2B41C` (the first link toward the motor path). ⚠ V279 REPLACES V112's `gp-0x6abc` 427 tap — switch every V268-family 427 decoder.
 
-**V278, the fallback (built, `4bc51073…`):** reference x2, damping fraction 0.86 (stock 0.94, V276 0.57), damping
-comparator tap. Fly it if V279's premise fails on the wire or the retune cannot hold the pure-FF plant.
+**V278 rev 2 (`4bc51073…`, damping-comparator tap) is SUPERSEDED by rev 3 above** — same two cal edits, the tap
+replaced by the delivered torque, which carries the damping fraction (as `sign(T) ≠ sign(rate)`) AND the saturation duty.
 
 🛑 **V273/V274/V275 ARE WITHDRAWN — DO NOT FLASH.** All three passed their own assertions and were
 falsified by adversarial review. V274: froze torque CELLS and thought that froze TORQUE (the map scales
