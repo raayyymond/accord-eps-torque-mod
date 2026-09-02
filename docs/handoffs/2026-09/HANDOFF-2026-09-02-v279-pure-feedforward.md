@@ -2,7 +2,7 @@
 
 **Predecessor:** `HANDOFF-2026-09-02-v278-the-damping-fraction.md`.
 **Artifact:** https://claude.ai/code/artifact/4696407c-e0ef-4c44-b1ee-698be51df141
-**Status: V279 BUILT, written to `../accord-firmwares`, NOT flashed. V278 remains built as the fallback. V277 withdrawn.**
+**Status: V279 rev 2 BUILT (`a165b1a5…`), written to `../accord-firmwares`, NOT flashed; rev 1 renamed SUPERSEDED-DO-NOT-FLASH. V278 remains built as the fallback. V277 withdrawn.**
 
 ---
 
@@ -77,7 +77,9 @@ but on the torque path (ki 0.35 there; 0.15 on HEAD); the orchestrator re-verifi
 |---|---|---|
 | `ff279` | mechanism, from bytes | zero clamp → 0 on all three branches; `0xC62E6` has exactly 3 readers image-wide (2 raw-scan false positives adjudicated); D is a pure multiply; LERPs flat beyond domain; `gp-0x6a32` has ZERO readers; a 4th clamp `0xC61BA` (I anti-windup, moot) |
 | `adv279a` | arithmetic / interlocks / packer | no blocker; P clamp is `ble` (exact at 15360); dead twin re-verified unreachable; caught its own `hw2=disp\|1` scan trap by positive control; docstring's "V278 rev 1" needed disambiguating from the final V278 image |
-| `adv279b` | build script | rebuild reproduces; 85/99 mutations caught; **no end-state assertion on the primary edit**, Kd only read back in-loop, last-record blindness, last-knot overdose masked by the clamp; docstring's 406 vs 417 explained (P-only vs the sum clamp stock reaches via D) |
+| `adv279c` | rev-2 window + the tapped cell | decompile matches; r9 survives abs; no branch into the window; **`gp-0x6b2c` provably zero** (zero table + dead gate); found the `gp-0x6b3c` forwarding copy |
+| `adv279d` | rev-2 build script | rebuild reproduces `a165b1a5…`; 148/157 caught; **`jarl_target` ignored the link register** (a `jr` to abs would never return) — closed; base window is V112's `gp-0x6abc`, not stock's |
+| `adv279b` | build script, rev 1 | rebuild reproduces; 85/99 mutations caught; **no end-state assertion on the primary edit**, Kd only read back in-loop, last-record blindness, last-knot overdose masked by the clamp; docstring's 406 vs 417 explained (P-only vs the sum clamp stock reaches via D) |
 
 All script holes closed after the audits: end-state re-reads of all 84 records and the clamp from the **final
 image and the decoded `.rwd`**, against the constants; `Kd(idx) == 0` on every slot. Image unchanged, 703/703.
@@ -100,8 +102,14 @@ helper touches only r6, r10, lp).
 
 **Reads:** `sign(T) == -sign(cmd)` on every engaged, in-taper, ramped frame proves the feedback is dead (~0.5 if not);
 T vs cmd is the delivered surface (slope 2505/3886 × taper); 0x18F rate vs T is openpilot's plant model for free.
-⚠ **Open:** at `0x2A1FC` `add r9,r11` sums the lane's output with a value already in r11 before the gain. If that is a
-second contribution, T = lane + other. Adversarial check (`adv279c`) pending at the time of writing.
+✅ **Closed (`adv279c`):** The second term added before the gain (`gp-0x6b2c`) is PROVABLY ZERO on every path: its LERP table at `tp+0x7736..0x7744` is all-zero (byte-identical to stock) AND its gate `gp-0x6809 == 1` can never be true (`gp-0x6809` has no writer in the image, kit memory 2026-07-14). So `T = -lane x 5346 >> 15`, clamped +-3072, always. The sign is one negation (`gp-0x6752` = -1).
+
+**Census of `gp-0x6b38`, by subop-validated raw scan (Ghidra's `search_instructions` found 3 of 5):** writers `st.h r1` @`0x2A23C`
+(live) and `st.h r12` @`0x2A934` (in the unreachable tail-duplicate before `FUN_0002a93a`, gain 891 = stock's cell); readers
+`0x4E8D2`/`0x4E8E2` (UDS record) and **`0x2B418` → `st.h -0x6b3c` @`0x2B41C`**, a gated forwarding copy (`gp-0x6b3c = r16 ? gp-0x6b38 : 0`)
+followed by clamp logic against `tp+0x71b2` — **the first byte-level link from the lane's output toward the motor path.** What
+sets `r16` and where `gp-0x6b3c` goes next are the next hops. `FUN_00028ea6` is `void`: the value leaves only through this cell.
+⚠ **V279 REPLACES V112's `gp-0x6abc` tap on 427** — every offline 427 decoder for the V268 family must switch to the T decode.
 
 **Watch, in order:** a 3–4 Hz shimmy ABOVE ~25 m/s that grows with speed and vanishes under a little steady torque (friction
 slope at the margin: SteerFriction down, then SteerLatAccel up) · turning in too hard on the first curves (feedforward is now

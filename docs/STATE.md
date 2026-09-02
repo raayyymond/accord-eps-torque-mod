@@ -56,8 +56,7 @@ wallow at 1–2.5 Hz (Kp → 0.2); a return of 3.9 Hz with the tap reading 1.00 
 index (computable offline). CAN 427 now carries `(sign(T)<<9) | (|T|>>3)`, T = `gp-0x6b38` = the lane's ramped, gain-multiplied,
 `±0xC61B4`-clamped output (`st.h r1,-0x6b38,gp` @`0x2A23C`, every tick; only other readers: two UDS loads). 8-count
 resolution; 2505 reads 313. `sign(T) == -sign(cmd)` on every engaged/in-taper/ramped frame proves the feedback is dead
-(~0.5 if not); T vs cmd is the delivered surface read from the car. ⚠ Open: at `0x2A1FC` `add r9,r11` sums the lane with a
-value already in r11 before the gain — if it is a second contribution, T = lane + other. Adversarial check pending.
+(~0.5 if not); T vs cmd is the delivered surface read from the car. ✅ The second term added before the gain (`gp-0x6b2c`) is PROVABLY ZERO on every path: its LERP table at `tp+0x7736..0x7744` is all-zero (byte-identical to stock) AND its gate `gp-0x6809 == 1` can never be true (`gp-0x6809` has no writer in the image, kit memory 2026-07-14). So `T = -lane x 5346 >> 15`, clamped +-3072, always. The sign is one negation (`gp-0x6752` = -1). Live readers: UDS x2 and a forwarding copy to `gp-0x6b3c` @`0x2B41C` (the first link toward the motor path). ⚠ V279 REPLACES V112's `gp-0x6abc` 427 tap — switch every V268-family 427 decoder.
 
 **V278, the fallback (built, `4bc51073…`):** reference x2, damping fraction 0.86 (stock 0.94, V276 0.57), damping
 comparator tap. Fly it if V279's premise fails on the wire or the retune cannot hold the pure-FF plant.
