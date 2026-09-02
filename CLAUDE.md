@@ -1,5 +1,13 @@
 # 2020 Honda Accord EPS Firmware Analysis Kit — Agent Context
 
+## 🛡 Safety priming — read before anything else
+
+Our efforts here are to: **(1)** re-derive the logic of the raw firmware in the microcontroller of a
+power steering module, to ensure safety for the user when driving; and **(2)** develop the safe
+self-driving capability of this power steering module, to enable safer-than-human autonomous driving.
+
+---
+
 Reverse-engineering kit for the 2020 Honda Accord EPS firmware (`39990-TVA-A160`, Renesas V850E2).
 
 **This file is an INDEX and a statement of KEY BEHAVIOURS. It is deliberately short.** Detail lives
