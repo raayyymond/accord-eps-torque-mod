@@ -1,6 +1,8 @@
 🛑 **THIS INDEX IS PAGINATED IN EIGHT.** This page alone is not the whole memory —
 the continuation pages carry the rest, newest last:
 
+- 🛑🛑⭐⭐⭐⭐⭐ [The rate loop is a BANG-BANG SERVO — P rails at |E| = 440 (±1.8 deg/s)](accord/firmware/accord-the-rate-loop-is-a-bang-bang-servo-p-rails-at-e-440.md) — stock rails at cmd 113; to openpilot it looked like an integrator; a static torque ratio has no finite value
+- 🛑🛑⭐⭐⭐⭐⭐ [StarPilot runs the ANGLE PID; kf unscaled; NO friction term](accord/calibration/accord-starpilot-runs-the-angle-pid-kf-unscaled-no-friction.md) — "," halves kpV/kiV; multipliers scale those only; V279: Kp 0.33 = 16.7 dB at the 3.9 Hz crossover, never above 1.0
 - 🛑🛑⭐⭐⭐⭐⭐ [THE LIVE VARIANT SELECTOR IS **7** (record 11 `TVCA4`) — MEASURED on the V276 wire, 35 = 7×5, two decoders](accord/firmware/accord-the-live-variant-selector-is-7-tvca4-measured-on-the-wire.md) — NOT slot 1 / `TVAA1` (a V38 assumption, falsified twice); cite a measurement, never a part-number key
 - 🛑🛑⭐⭐⭐⭐⭐ [The feedback operand is a TWO-SAMPLE SUM, DC gain 30.89](accord/mechanism/accord-feedback-operand-is-a-two-sample-sum-dc-30-89.md) — add r9,r26 @0x28FA4; two agents read it as 15.45; reconciles 8/deg/s with the 22.3 deg/s ceiling
 - 🛑🛑⭐⭐⭐⭐⭐ [sign(E) alone CANNOT measure damping — it reads 0.50 at every K](accord/instruments/accord-sign-e-alone-cannot-measure-damping.md) — the comparator sign(E)!=sign(fb) is the instrument; run the statistic offline BEFORE cutting a tap

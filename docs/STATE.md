@@ -4,48 +4,50 @@
 > order** — findings, corrections and closures. That is a record, not a briefing. Everything you need
 > to make a decision is in this box and the index under it.
 
-## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-02 (V278)
+## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-02 (V279)
 
-**ON THE CAR: V276, FLASHED AND DRIVEN 2026-09-01.  THE FLIGHT CANDIDATE: V278.**
+**ON THE CAR: V276 (reference x6, oscillates at 3.9 Hz).  THE FLIGHT CANDIDATE, BY OPERATOR CHOICE: V279.
+V278 (K=2 + damping tap) remains BUILT as the fallback.  V277 is WITHDRAWN.**
 
-🛑 **V276 PRODUCED A NEW SYMPTOM: a large, self-exciting 3.9 Hz oscillation, LKAS-ENGAGED ONLY, at ALL
-speeds, on STRAIGHT roads, stoppable only by gripping the wheel.** Operator report + rlog `r2e`, 2026-09-01.
-He also reports the authority is what he wanted: *“Amazing authority now on turns as I would like on 6x
-torque.”* ⇒ **V278 keeps the 6x TORQUE (V112) and backs off only the REFERENCE (V276).**
-
-| | **V278** — THE REFERENCE BROUGHT BACK INTO REACH, K = 2, PLUS A DAMPING TAP |
+| | **V279** — PURE FEEDFORWARD: the rate PID opened into a linear torque map |
 |---|---|
-| base | **V268** (V276's edits re-applied at x2 instead of x6; V276's 4-byte selector tap replaced by a 34-byte window) |
-| payload | map Y knots x2 (28 records, data at `0xE4000`–`0xE8105`) · `0xC62E6` 7680→15360 · packer `0x55DF0`–`0x55E11` |
-| image | `4bc510734c7b53fcdb242a28ce97149ecb4eb86fd2da1f4a39dbedff2865a22c` |
-| rwd | `ac9d27a974545bd9144095182d6dd95ef5dbd03056ab5a0d6529808b5ee10562` |
-| assertions | **456/456**, CRC 50/50, bootloader replay 49/49, cipher validated fail-closed; independent rebuild reproduces |
-| artifact | https://claude.ai/code/artifact/b2a2995e-e219-4e18-a2c3-e99a979d0575 |
+| base | **V268**, CAL-ONLY (the PID function `FUN_00028ea6` is byte-identical) |
+| edits | `0xC62E6` 7680→0 (feedback operand forced to 0) · Kd→0 (28 rec) · map Y=2X (28 rec) · Kp flat 256 (28 rec) · packer `0x55DF0`–`0x55E11` = V278-rev-1 window (sel \| demand>>5 \| sign(E)) |
+| surface | `P = 64·idx` exactly, 15360 at idx 240 = the P/sum clamps; delivered `= P×5346>>15` → **2505 at full demand, 6x stock's 417, UNCHANGED** |
+| image | `dca2acbc9f805272eafea9a8cda2a57e1ca0de0dbf37ae0d19173ddb5f7871b5` |
+| rwd | `6c104b5519a5a5f463842616535bedc3afc72385dcd1abb1daba1a3817c38b25` |
+| assertions | **703/703** incl. end-state re-reads from the final image AND the decoded .rwd; independent rebuild reproduces; 85/99 mutations caught, the 3 misses closed |
+| artifact | https://claude.ai/code/artifact/4696407c-e0ef-4c44-b1ee-698be51df141 |
 
-**THE MECHANISM, MEASURED ON HIS LOG — A MATTER OF DEGREE.** `E = 32*setpoint - feedback` at `0x29d78`; the lane
-damps when its push OPPOSES the wheel (`sign(E) != sign(fb)`). Frame by frame at each reference scale K:
-`osc 0.94 / 0.90 / 0.86 / 0.82 / 0.78 / 0.57` for K = 1 / 1.5 / 2 / 2.5 / 3 / 6 (normal driving 0.80 → 0.48).
-V276 cut the damping fraction from 0.94 to 0.57 and the COMBINED loop (EPS rate lane + openpilot's angle follower,
-which swings with coh 1.00 but whose desired path is flat) went unstable in between. **K = 2 restores 0.86** while
-keeping the ceiling crossover at 44.5 deg/s (stock 22.3, V276 134). The 3.9 Hz is MECHANICAL (firmware poles
-supply 28–52° of 180). The crossover does NOT cap amplitude (V276's peaks overshot theirs 1.5–2x).
+**WHY THIS BUILD.** Honda's EPS maps openpilot's TORQUE request onto an ANGULAR-RATE SETPOINT and closes a PID on
+measured column rate; openpilot's angle PID has been tuned against that hidden inner loop. Stock's P term rails at
+|E| = 440 (±1.8 deg/s of rate error) — with the wheel still, stock delivers its full 417 at a command of ~113
+counts (<3% of scale). **The rate loop is a bang-bang rate servo; to openpilot it has looked like an INTEGRATOR.**
+V279 gives openpilot a linear torque-into-column plant — what its controller assumes. Cal-only: outside the
+bricking class. Mechanism proven from bytes: the zero clamp forces r26=0 on all three branches (`0x28fa6`–`0x28fbc`),
+`0xC62E6` has exactly 3 readers in the image (all in that block), D is a pure multiply, the LERPs hold flat beyond
+their domains, the setpoint publish cell `gp-0x6a32` has ZERO readers.
 
-⭐ **THE TAP.** `wire = (sel & 0x0F) | ((E ^ fb_state) >> 31 << 9)` — bit 9 = the lane opposing the wheel. Its DUTY
-is the instrument: predicted ~0.57 on V276, ~0.86 on V278. **A plain sign(E) bit was built first and FALSIFIED
-offline** (reads 0.50 at every K — it follows the direction of motion). Run the statistic on a flown log BEFORE
-cutting a tap. Selector in bits 3:0 must read **7** (record 11 `TVCA4` — on the V276 wire, 35 = 7x5, two decoders).
+🛑 **THE STARPILOT RETUNE IS PART OF THIS BUILD.** StarPilot runs `LatControlPID` (angle PID) for the Accord;
+the `,` in the part number sets `EPS_MODIFIED` and halves kpV/kiV (0.6→0.3, 0.18→0.09); the user multipliers scale
+those only; **kf = 0.00006 is never scaled; there is NO friction term.** Effective today: kp 0.099, ki 0.0297.
+Derived from HIS V276 log: column response 0.00056 deg/torque-count at −104° at 3.9 Hz, openpilot delay ~56 ms
+(−79°) → **3.9 Hz is V279's phase crossover**; |L| there = 0.444 × Kp-multiplier.
+**⇒ ENTER Kp 0.33, Ki 0.33 (Ki 0.5 acceptable). Never above Kp 1.0 (7 dB). Leave kf. Do NOT switch to the torque
+controller.** 0.33 gives 16.7 dB gain margin at the mode — the same number as today, DERIVED, not inherited.
+BELIEF: the low-frequency side (column stiffness known to ~2x from a hands-on log).
 
-**UNITS, CLOSED:** the feedback operand is a TWO-SAMPLE SUM (`add r9,r26` @`0x28FA4`), DC gain 2×1560/101 =
-**30.89** per raw count; the 0x18F wire is 1:1 with `gp-0x6a56` at 8 counts/deg/s. Stock's ceiling crossover =
-5504/30.89 = 178 wire = 22.3 deg/s — the inherited figure. Two agents read the sum as 15.45; verified by disassembly.
+⚠ **RISK BEFORE THE DRIVE.** V276 rang when the EPS damping fraction fell to 0.57; V279 takes it to ZERO by
+construction. Stability now rests on openpilot's tune and the column's mechanics. Watch, in order: a NEW slow
+wallow at 1–2.5 Hz (Kp → 0.2); a return of 3.9 Hz with the tap reading 1.00 (Kp → 0.15); sluggish centering
+(Ki → 0.5 first). First minute hands-LIGHT. Peak torque unchanged; taper byte-stock (grip escape unchanged).
 
-⚠ **RISK BEFORE THE DRIVE.** A REDUCTION of a live gain — the third in ~240 builds (V93/V94 made the car worse).
-Felt authority on turns WILL be below V276's; should be clearly above stock's. A residual oscillation is possible.
-The override taper is byte-stock: the grip escape at ~2500 raw (where the cliff begins) is unchanged — which is also
-why **V277 (cliff softened, authority held to 3584) is WITHDRAWN as a flight candidate**: it would blunt the grip.
+**THE INSTRUMENT.** CAN 427: selector bits 3:0 (must read **7**), demand>>5 bits 7:5, `sign(E)` bit 9. With
+feedback zeroed, `sign(E) == -sign(cmd)` on EVERY frame: **agreement 1.00 proves the feedback is dead**; ~0.5 means
+it is not and nothing else from the drive can be trusted. Null sentence in `build_v279_tva.py`.
 
-**THE DRIVE THAT READS IT:** engaged, straight road, hands light, 20–30 s. CAN 427 bit 9 duty; 0x18F rate; the
-selector nibble. The null sentence and the three-way decode are in `build_v278_tva.py`'s docstring.
+**V278, the fallback (built, `4bc51073…`):** reference x2, damping fraction 0.86 (stock 0.94, V276 0.57), damping
+comparator tap. Fly it if V279's premise fails on the wire or the retune cannot hold the pure-FF plant.
 
 🛑 **V273/V274/V275 ARE WITHDRAWN — DO NOT FLASH.** All three passed their own assertions and were
 falsified by adversarial review. V274: froze torque CELLS and thought that froze TORQUE (the map scales

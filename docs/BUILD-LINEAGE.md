@@ -44,6 +44,39 @@ deliberately not numbered `PART2` so the two can never be confused.
 
 
 
+### V279 — PURE FEEDFORWARD: the rate PID opened into a linear torque map  (2026-09-02, NOT FLOWN — THE FLIGHT CANDIDATE)
+
+**base** V268, CAL-ONLY · **image** `dca2acbc…7871b5` · **rwd** `6c104b55…c38b25` · **703/703** · independent rebuild reproduces
+**artifact** https://claude.ai/code/artifact/4696407c-e0ef-4c44-b1ee-698be51df141
+
+| cell | V268 | V279 | what it is |
+|---|---|---|---|
+| `0xC62E6` | 7680 (30×256) | **0** | feedback clamp → the PID's feedback OPERAND is forced to 0 every tick; `E = 32·setpoint` |
+| Kd bank `0xCB7D4` → 28 records | 128 / 64 flat | **0** | D = (dE×0)>>3 = 0 |
+| map bank `0xC9A88` → 28 records | Honda Y (slot 7 ceiling 172) | **Y = 2X**, ceiling 480 | the reference, linearized |
+| Kp bank `0xCB994` → 28 records | 248…717 rising | **256 flat** | so `P = 32·2idx·256>>8 = 64·idx` exactly |
+| `0x55DF0`–`0x55E11` | stock packer | V278-rev-1 window | CAN-427: sel \| demand>>5 \| sign(E) |
+
+**CLASS — GENUINELY NEW.** The first build to change WHAT THE LOOP IS (a rate regulator → a torque map) rather
+than how hard it pushes (V38–V124), how it is damped (V74–V84, V278) or what it asks for (V276). Delivered
+`= 64·idx × 5346 >> 15` → **2505 at full demand = 6× stock, UNCHANGED**; linear to cmd 3886 (idx cap 240).
+Stock's own small-signal slope is ~74/idx at low index, so this is stock's feedforward straightened, not a new gain.
+
+**THE FACT THAT RESHAPED THE TUNE.** Stock's P term rails at |E| = 440 (±1.8 deg/s): with the wheel still, stock
+delivers its full 417 at cmd ≈ 113 (<3% of scale). The rate loop was a bang-bang rate SERVO; openpilot's angle PID
+was tuned against an integrator-like plant. "Stock gain / V279 gain" has no finite value. The StarPilot multipliers
+were therefore re-derived from the operator's V276 log: |G(3.9 Hz)| = 0.00056 deg/count at −104°, openpilot delay
+~56 ms → 3.9 Hz is V279's phase crossover; |L| = 0.444 × Kp-mult → **Kp 0.33 = 16.7 dB margin; Ki 0.33; kf untouched
+(it was never scaled); no friction term exists in `LatControlPID`.**
+
+**RISK.** V276 rang at damping fraction 0.57; V279 is 0 by construction. Watch for a NEW 1–2.5 Hz wallow (Kp→0.2),
+a return of 3.9 Hz with the tap at 1.00 (Kp→0.15), sluggish centering (Ki→0.5). Hands-light first minute.
+
+**READ IT BY:** agreement(sign(E) on 427 bit 9, −sign(0xE4 cmd)) must be 1.00 (feedback dead); ~0.5 = not dead.
+Selector nibble must read 7. Adversarial: a byte-level mechanism proof (`ff279`) + two attackers (`adv279a/b`);
+no do-not-flash; three script holes (no end-state check on the primary edit, Kd only read back in-loop, last-record
+blindness) closed with re-reads from the FINAL image and the decoded .rwd against the constants.
+
 ### V278 — the REFERENCE brought back into reach (K=2), plus a DAMPING tap  (2026-09-02, NOT FLOWN — THE FLIGHT CANDIDATE)
 
 **base** V268 · **image** `4bc51073…5a22c` · **rwd** `ac9d27a9…10562` · **487/487** · independent rebuild reproduces
