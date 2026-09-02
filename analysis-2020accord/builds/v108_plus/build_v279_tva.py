@@ -32,8 +32,12 @@ is wrapped around that inner loop without knowing it.  V279 removes the inner lo
   [D] TELEMETRY -- the CAN-427 packer 0x55DF0-0x55E11 rewritten IN PLACE (34 bytes, jarl untouched):
           wire = (sign(T) << 9) | (|T| >> 3)        T = gp-0x6b38, the DELIVERED lane torque
       gp-0x6b38 is the lane's ramped, gain-multiplied, +-0xC61B4-clamped output, `st.h r1,-0x6b38,gp` at
-      0x2A23C, stored unconditionally every tick at the end of FUN_00028ea6; its only other readers are two
-      UDS diagnostic loads in FUN_0004e82e -- it has NEVER been on a broadcast frame.  |T| <= 3072 -> /8 <= 384,
+      0x2A23C, stored unconditionally every tick at the end of FUN_00028ea6.  Census (raw LE scan, adv279d):
+      readers ld.h @0x2B418 (FUN_0001b33e's callee, copies it to gp-0x6b3c), @0x4E8D2/@0x4E8E2 (UDS record);
+      a second writer st.h r12 @0x2A934 lives in the dead tail-duplicate before FUN_0002a93a (no jump or pointer
+      reaches it).  It has NEVER been on a broadcast frame.
+      \u26a0 V279 REPLACES V112's gp-0x6ABC tap on CAN 427: every offline 427 decoder for the V268 family must
+      switch to the T decode for V279.  |T| <= 3072 -> /8 <= 384,
       9 bits; the 2505 ceiling reads 313.  Resolution 8 torque counts.
       The operator rejected carrying the selector (measured: 7) and the demand index (computable offline from
       0xE4 and 0x18F).  This is the quantity that is NOT otherwise observable: steeringTorqueEps is ~0 on the wire.
@@ -42,8 +46,9 @@ is wrapped around that inner loop without knowing it.  V279 removes the inner lo
       2505/3886 x taper(driver torque) -- read from the CAR, not the build script.
       ⚠ KNOWN CAVEAT: at 0x2A1FC `add r9,r11` sums the lane's lag readout with a value already in r11 before
       the gain; if that is a second contribution, T = lane + other.  Pinned in the adversarial pass.
-      The window reuses the STOCK packer's own skeleton (ld.h / jarl abs / mov r10,r6 / sar 3 / clamp bounds),
-      retargets the load to gp-0x6b38, deletes the dead ori/min/andi and the mul 5, and packs the sign from a
+      The window reuses the packer's own skeleton (ld.h / jarl abs / mov r10,r6 / sar 3 / clamp bounds) as it stands
+      in V268 -- which is V112's window: V112 had already repointed the load from stock's gp-0x6c18 to gp-0x6ABC
+      (the only 2 bytes differing in 0x55D80-0x55F00 between V38 and V268).  V279 retargets it to gp-0x6b38, deletes the dead ori/min/andi and the mul 5, and packs the sign from a
       copy in r9 taken BEFORE the abs call (FUN_00049a5a touches only r6, r10, lp -- r9 survives).
 
 === THE SENTENCE A NULL LICENSES ===============================================================
@@ -137,7 +142,7 @@ PACK_NEW = bytes.fromhex(
     "0000000000000000")   # 4 x nop
 T_CELL_DISP, T_STORE_SITE, T_STORE_BYTES = -0x6b38, 0x2A23C, bytes.fromhex("640fc894")   # st.h r1,-0x6b38,gp
 ABS_FN = 0x49A5A
-E_CELL_DISP, E_STORE_SITE, E_STORE_BYTES = -0x6cf8, 0x2A18C, bytes.fromhex("64870993")
+E_STORE_SITE, E_STORE_BYTES = 0x2A18C, bytes.fromhex("64870993")   # E cell no longer tapped in rev 2; store still asserted untouched
 SEL_WRITER, DEMAND_WRITER = 0x4272A, 0x29D14
 
 # ---- frozen torque path, all asserted --------------------------------------------------------
@@ -229,15 +234,28 @@ def dec_ld(img, a):
     return "?", r2, r1, None
 
 
+def dec_ld_h(img, a):              # ld.h gp-relative: op 0x39 with EVEN hw2 -> (reg2, reg1, disp)
+    hw1, hw2 = u16(img, a), u16(img, a + 2)
+    r2, op, r1 = f_I(hw1)
+    if op != 0x39 or (hw2 & 1):
+        return None
+    return r2, r1, hw2 - 0x10000 if hw2 & 0x8000 else hw2
+
+
 def dec_imm16(img, a):
     hw1, imm = u16(img, a), u16(img, a + 2)
     r2, op, r1 = f_I(hw1)
     return op, r2, r1, imm
 
 
-def jarl_target(addr, img):
+def jarl_target(addr, img, require_lp=True):
+    """Format V jarl: reg2 (hw1[15:11]) is the link register. reg2 == r0 is `jr` and reg2 != lp never
+    returns to the caller -- a `jr 0x49A5A` here would make the abs helper's `jmp [lp]` return to the
+    PACKER'S caller, silently skipping the rest of the window. Audit finding adv279d(a)."""
     hw1, hw2 = u16(img, addr), u16(img, addr + 2)
     if (hw1 >> 6) & 0x1F != 0b11110:
+        return None
+    if require_lp and (hw1 >> 11) != 31:
         return None
     disp = (((hw1 & 0x3F) << 16) | hw2) & ~1
     if disp & (1 << 21):
@@ -386,17 +404,17 @@ def build():
     # ------------------------------------------------------------------------------------------
     print("\n  [7] [D] THE PACKER -- signed delivered lane torque: sign(T)<<9 | |T|>>3, T = gp-0x6b38")
     check(bytes(base[PACK_LO:PACK_HI]) == PACK_V268, "base packer window == the V268/stock 34 bytes")
-    check(jarl_target(JARL_CLAMP, base) == 0x49A90, "0x55E12 is `jarl 0x49A90` (the clamp) -- DECODED")
+    check(jarl_target(JARL_CLAMP, base) == 0x49A90 and (u16(base, JARL_CLAMP) >> 11) == 31, "0x55E12 is `jarl 0x49A90,lp` (the clamp) -- target and lp DECODED")
     check(len(PACK_NEW) == 34, "new window is exactly 34 bytes")
     code[PACK_LO:PACK_HI] = PACK_NEW
     attributed |= set(range(PACK_LO, PACK_HI))
-    check(jarl_target(JARL_CLAMP, code) == 0x49A90, "jarl 0x49A90 intact after the rewrite")
+    check(jarl_target(JARL_CLAMP, code) == 0x49A90 and (u16(code, JARL_CLAMP) >> 11) == 31, "jarl 0x49A90,lp intact after the rewrite")
     a = PACK_LO
     hw1_t, hw2_t = u16(code, a), u16(code, a + 2)
     check(f_I(hw1_t) == (6, 0x39, 4) and not (hw2_t & 1) and (hw2_t - 0x10000) == T_CELL_DISP,
           "ld.h -0x6b38[gp],r6  (op 0x39 with EVEN hw2 = ld.h; disp decoded from the bytes)"); a += 4
     check(f_I(u16(code, a)) == (9, 0x00, 6), "mov r6,r9  (signed copy before the abs)"); a += 2
-    check(jarl_target(a, code) == ABS_FN, "jarl 0x49A5A  (abs) -- target DECODED from the moved site"); a += 4
+    check(jarl_target(a, code) == ABS_FN and (u16(code, a) >> 11) == 31, "jarl 0x49A5A,lp  (abs) -- target AND link register lp DECODED from the moved site"); a += 4
     check(f_I(u16(code, a)) == (6, 0x00, 10), "mov r10,r6  (|T|)"); a += 2
     check(f_II(u16(code, a)) == (6, 0x15, 3), "sar 0x3,r6  (|T| >> 3)"); a += 2
     check(f_II(u16(code, a)) == (9, 0x14, 0x1F), "shr 0x1f,r9  (sign(T) -> 0/1)"); a += 2
@@ -406,8 +424,9 @@ def build():
     check(f_II(u16(code, a)) == (7, 0x10, 0), "mov 0x0,r7  (clamp lo)"); a += 2
     check(all(u16(code, a + k) == 0 for k in (0, 2, 4, 6)), "4 x nop"); a += 8
     check(a == PACK_HI, "the 10 decoded instructions + 4 nop tile the window exactly")
-    check(u16(base, PACK_LO) == hw1_t, "POSITIVE CONTROL: the stock window's own `ld.h -0x6c18,gp,r6` has the SAME hw1 (24 37) -- only the disp changed")
-    check(jarl_target(0x55DF4, base) == ABS_FN, "POSITIVE CONTROL: the stock window's jarl at 0x55DF4 decodes to the same abs 0x49A5A")
+    check(dec_ld_h(base, PACK_LO) == (6, 4, -0x6abc), "the V268 window loads gp-0x6ABC (V112's tap), NOT stock's gp-0x6c18 -- decoded")
+    check(u16(base, PACK_LO) == hw1_t, "POSITIVE CONTROL: the V268 window's own `ld.h -0x6abc,gp,r6` (V112's repoint of stock's -0x6c18) has the SAME hw1 (24 37) -- only the disp changed")
+    check(jarl_target(0x55DF4, base) == ABS_FN, "POSITIVE CONTROL: the V268 window's jarl at 0x55DF4 decodes to the same abs 0x49A5A, with lp")
     check(bytes(base[T_STORE_SITE:T_STORE_SITE + 4]) == T_STORE_BYTES and f_I(u16(base, T_STORE_SITE)) == (1, 0x3B, 4)
           and (u16(base, T_STORE_SITE + 2) - 0x10000) == T_CELL_DISP,
           "0x2A23C is `st.h r1,-0x6b38,gp` -- the delivered lane torque is stored every tick (disp decoded)")
