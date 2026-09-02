@@ -46,7 +46,7 @@ deliberately not numbered `PART2` so the two can never be confused.
 
 ### V279 — PURE FEEDFORWARD: the rate PID opened into a linear torque map  (2026-09-02, NOT FLOWN — THE FLIGHT CANDIDATE)
 
-**base** V268, CAL-ONLY · **image** `dca2acbc…7871b5` · **rwd** `6c104b55…c38b25` · **703/703** · independent rebuild reproduces
+**base** V268, CAL-ONLY + one packer window · **image** `a165b1a5…423485` (rev 2) · **rwd** `ea0d7dfd…532985b` · **710/710** · rev 1 `dca2acbc…`: independent rebuild reproduced
 **artifact** https://claude.ai/code/artifact/4696407c-e0ef-4c44-b1ee-698be51df141
 
 | cell | V268 | V279 | what it is |
@@ -55,7 +55,7 @@ deliberately not numbered `PART2` so the two can never be confused.
 | Kd bank `0xCB7D4` → 28 records | 128 / 64 flat | **0** | D = (dE×0)>>3 = 0 |
 | map bank `0xC9A88` → 28 records | Honda Y (slot 7 ceiling 172) | **Y = 2X**, ceiling 480 | the reference, linearized |
 | Kp bank `0xCB994` → 28 records | 248…717 rising | **256 flat** | so `P = 32·2idx·256>>8 = 64·idx` exactly |
-| `0x55DF0`–`0x55E11` | stock packer | V278-rev-1 window | CAN-427: sel \| demand>>5 \| sign(E) |
+| `0x55DF0`–`0x55E11` | stock packer | signed delivered torque | CAN-427: `(sign(T)<<9) \| (\|T\|>>3)`, T = `gp-0x6b38`, 2505 reads 313 |
 
 **CLASS — GENUINELY NEW.** The first build to change WHAT THE LOOP IS (a rate regulator → a torque map) rather
 than how hard it pushes (V38–V124), how it is damped (V74–V84, V278) or what it asks for (V276). Delivered
@@ -63,19 +63,32 @@ than how hard it pushes (V38–V124), how it is damped (V74–V84, V278) or what
 Stock's own small-signal slope is ~74/idx at low index, so this is stock's feedforward straightened, not a new gain.
 
 
-🛑 **CORRECTION IN PROGRESS (2026-09-02): the operator runs `force_torque_controller` (LatControlTorque), NOT LatControlPID. The StarPilot paragraph below is VOID -- the multipliers are being re-derived for the torque controller; do not act on Kp 0.33 / 16.7 dB from this text.**
-**THE FACT THAT RESHAPED THE TUNE.** Stock's P term rails at |E| = 440 (±1.8 deg/s): with the wheel still, stock
-delivers its full 417 at cmd ≈ 113 (<3% of scale). The rate loop was a bang-bang rate SERVO; openpilot's angle PID
-was tuned against an integrator-like plant. "Stock gain / V279 gain" has no finite value. The StarPilot multipliers
-were therefore re-derived from the operator's V276 log: |G(3.9 Hz)| = 0.00056 deg/count at −104°, openpilot delay
-~56 ms → 3.9 Hz is V279's phase crossover; |L| = 0.444 × Kp-mult → **Kp 0.33 = 16.7 dB margin; Ki 0.33; kf untouched
-(it was never scaled); no friction term exists in `LatControlPID`.**
+**THE FACT THAT RESHAPED THE TUNE.** Stock's P term rails at |E| = 440 (±1.8 deg/s): with the wheel still, stock delivers its
+full 417 at cmd ≈ 113 (<3% of scale). The rate loop was a bang-bang rate SERVO. "Stock gain / V279 gain" has no finite value.
+
+🛑 **THE STARPILOT RETUNE IS PART OF THIS BUILD — TORQUE CONTROLLER, verified on `openpilots/StarPilot` @ 3d4c625de by
+the orchestrator (an agent had traced an older fork and reported the angle PID; retracted the same day).**
+The car runs `LatControlTorque` on 60/60 logged routes. On HEAD: `latcontrol_torque.py:152-153` sets the Accord's torque
+PID to kp 0.8 (last knot) / ki 0.15 flat, but `controlsd.py:443-444` overwrites `_k_p` with the `SteerKP` toggle every
+frame (default KP 0.6, range 0.3–0.9) → **effective kp = SteerKP, ki = 0.15**; measured `p/error = 0.600` on the V276 log.
+**`HondaLateralPidKpScale/KiScale = 0.33` is read by exactly one file, `latcontrol_pid.py` — INERT on the torque path.**
+The `,` → `EPS_MODIFIED` halving is on the Accord's PID branch, discarded by `configure_torque_tune`; the torque path has no
+Accord `EPS_MODIFIED` effect (only the Civic Bosch scales LAF). **What compensated the 6x was `torqued`'s live LAF**
+(raw 4.5–5.2 on V276, capped at 1.3 × 1.689 = 2.196; friction cap 1.5 × 0.212 = 0.318).
+V279 loop at the 3.9 Hz crossover: |L| = [kp_eff + fricSlope] × (4096/LAF) × 0.645 × |G(3.9)| × latAccel/deg(v); **friction
+(a saturating linear, slope friction/0.3, LAF-independent) is 60–80% of the gain.** GM with port values: 5.4x @13 m/s,
+3.6x @20, 2.8x @25, **2.1x @30** (rows ≥ 30 extrapolated from 13–15 m/s column data — a floor, not a budget).
+**⇒ FIRST DRIVE: SteerFriction 0.212 → 0.08 (GM @30 → 3.6x); SteerLatAccel → 2.53 (toggle max); SteerKP stay 0.6 (ceiling
+0.9, only with friction ≤ 0.08); ForceAutoTuneOff ON. No Ki lever exists. Then read `liveTorqueParameters.latAccelFactorRaw`;
+if > 2.5, edit `params.toml:14`.** The feedforward is now real torque: 1 m/s² at port LAF = 1563 EPS counts = 62% of peak.
+Watch for a 3–4 Hz shimmy ABOVE ~25 m/s that grows with speed and vanishes under a little steady torque: friction down
+first, then LAF up. Gentle curves, hands on, below 25 m/s first.
 
 **RISK.** V276 rang at damping fraction 0.57; V279 is 0 by construction. Watch for a NEW 1–2.5 Hz wallow (Kp→0.2),
 a return of 3.9 Hz with the tap at 1.00 (Kp→0.15), sluggish centering (Ki→0.5). Hands-light first minute.
 
-**READ IT BY:** agreement(sign(E) on 427 bit 9, −sign(0xE4 cmd)) must be 1.00 (feedback dead); ~0.5 = not dead.
-Selector nibble must read 7. Adversarial: a byte-level mechanism proof (`ff279`) + two attackers (`adv279a/b`);
+**READ IT BY:** T on 427 (bit 9 sign, bits 8:0 = |T|/8): `sign(T) == -sign(0xE4 cmd)` on every engaged/in-taper/ramped frame
+(feedback dead; ~0.5 = not dead); T vs cmd = the delivered surface, slope 2505/3886 × taper(driver torque). Adversarial: a byte-level mechanism proof (`ff279`) + two attackers (`adv279a/b`);
 no do-not-flash; three script holes (no end-state check on the primary edit, Kd only read back in-loop, last-record
 blindness) closed with re-reads from the FINAL image and the decoded .rwd against the constants.
 

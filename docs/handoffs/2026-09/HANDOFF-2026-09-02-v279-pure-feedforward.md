@@ -15,9 +15,9 @@
 ## What shipped — three cal edits and one code window, base V268
 
 ```
-image  dca2acbc9f805272eafea9a8cda2a57e1ca0de0dbf37ae0d19173ddb5f7871b5
-rwd    6c104b5519a5a5f463842616535bedc3afc72385dcd1abb1daba1a3817c38b25
-703/703 · CRC 50/50 · bootloader replay 49/49 · cipher fail-closed · independent rebuild reproduces
+image  a165b1a59307ab67867fd5488c287a2271d51e322ff601d527853712ea423485   (rev 2; rev 1 dca2acbc… = sel/demand/sign(E) tap)
+rwd    ea0d7dfdbbc3277141aaff0666aea9f2ebc82cafe8bdd5b64fefd19d3532985b
+710/710 · CRC 50/50 · bootloader replay 49/49 · cipher fail-closed · independent rebuild reproduces
 ```
 
 | cell | V268 | V279 | consequence |
@@ -26,7 +26,7 @@ rwd    6c104b5519a5a5f463842616535bedc3afc72385dcd1abb1daba1a3817c38b25
 | Kd `0xCB7D4` → 28 records | 128/64 | **0** | D = (dE×0)>>3 = 0 |
 | map `0xC9A88` → 28 records | Honda Y | **Y = 2X** | ceiling 172 → 480 |
 | Kp `0xCB994` → 28 records | 248…717 | **256 flat** | `P = 32·2idx·256>>8 = 64·idx` exactly |
-| `0x55DF0`–`0x55E11` | stock | V278-rev-1 window | `sel \| demand>>5 \| sign(E)` |
+| `0x55DF0`–`0x55E11` | stock | signed delivered torque | `(sign(T)<<9) \| (\|T\|>>3)`, T = `gp-0x6b38` |
 
 `P(240) = 15360` lands **exactly** on the P clamp and the sum clamp (`ble`, no off-by-one); delivered
 `= 15360 × 5346 >> 15 = 2505` — 6× stock, unchanged. Linear to cmd ≈ 3886 (`idx = |cmd|/16.2`, cap 240).
@@ -43,33 +43,31 @@ railed *negative*. To openpilot's angle PID the plant has looked like an **integ
 V279 gives it torque into a spring-inertia column — a different loop *shape*, so "stock gain ÷ V279 gain" has no
 finite value and the multipliers could not be scaled; they had to be derived from the cmd→angle loop.
 
-## The StarPilot side — 🛑 RETRACTED SAME DAY: the operator runs the TORQUE controller
+## The StarPilot side — torque controller, verified on the operator's tree at HEAD
 
-🛑 **CORRECTION IN PROGRESS (2026-09-02): the operator runs `force_torque_controller` (LatControlTorque), NOT LatControlPID. The StarPilot paragraph below is VOID -- the multipliers are being re-derived for the torque controller; do not act on Kp 0.33 / 16.7 dB from this text.**
+🛑 **THE STARPILOT RETUNE IS PART OF THIS BUILD — TORQUE CONTROLLER, verified on `openpilots/StarPilot` @ 3d4c625de by
+the orchestrator (an agent had traced an older fork and reported the angle PID; retracted the same day).**
+The car runs `LatControlTorque` on 60/60 logged routes. On HEAD: `latcontrol_torque.py:152-153` sets the Accord's torque
+PID to kp 0.8 (last knot) / ki 0.15 flat, but `controlsd.py:443-444` overwrites `_k_p` with the `SteerKP` toggle every
+frame (default KP 0.6, range 0.3–0.9) → **effective kp = SteerKP, ki = 0.15**; measured `p/error = 0.600` on the V276 log.
+**`HondaLateralPidKpScale/KiScale = 0.33` is read by exactly one file, `latcontrol_pid.py` — INERT on the torque path.**
+The `,` → `EPS_MODIFIED` halving is on the Accord's PID branch, discarded by `configure_torque_tune`; the torque path has no
+Accord `EPS_MODIFIED` effect (only the Civic Bosch scales LAF). **What compensated the 6x was `torqued`'s live LAF**
+(raw 4.5–5.2 on V276, capped at 1.3 × 1.689 = 2.196; friction cap 1.5 × 0.212 = 0.318).
+V279 loop at the 3.9 Hz crossover: |L| = [kp_eff + fricSlope] × (4096/LAF) × 0.645 × |G(3.9)| × latAccel/deg(v); **friction
+(a saturating linear, slope friction/0.3, LAF-independent) is 60–80% of the gain.** GM with port values: 5.4x @13 m/s,
+3.6x @20, 2.8x @25, **2.1x @30** (rows ≥ 30 extrapolated from 13–15 m/s column data — a floor, not a budget).
+**⇒ FIRST DRIVE: SteerFriction 0.212 → 0.08 (GM @30 → 3.6x); SteerLatAccel → 2.53 (toggle max); SteerKP stay 0.6 (ceiling
+0.9, only with friction ≤ 0.08); ForceAutoTuneOff ON. No Ki lever exists. Then read `liveTorqueParameters.latAccelFactorRaw`;
+if > 2.5, edit `params.toml:14`.** The feedforward is now real torque: 1 m/s² at port LAF = 1563 EPS counts = 62% of peak.
+Watch for a 3–4 Hz shimmy ABOVE ~25 m/s that grows with speed and vanishes under a little steady torque: friction down
+first, then LAF up. Gentle curves, hands on, below 25 m/s first.
 
-### (original text, VOID)
-
-- StarPilot (`openpilots/raayyymond-StarPilot`, e631b24) runs **`LatControlPID`**, the angle PID, for the Accord —
-  not the torque controller. `honda/interface.py:98–104`: `b"," in fw.fwVersion` → `EPS_MODIFIED`; `:139–142`
-  halves the tune, kpV 0.6→0.3, kiV 0.18→0.09 (the "0.5 auto factor"). `starpilot_variables.py:690–691` the user
-  multipliers, PID path only; `latcontrol_pid.py:116–117` scale kpV/kiV only. **kf = 0.00006 is never scaled.
-  There is no friction term** — the earlier "openpilot friction relay" attribution is withdrawn.
-- From route r2e (3–5 Hz band, coherence 0.97): column response **0.00056 deg per torque count at −104°** at
-  3.9 Hz (hands-on windows — the conservative case); openpilot's flown cmd/angle 332–354 counts/deg (confirms 0.33);
-  cmd-vs-angle phase −79° → **openpilot delay ≈ 56 ms**. Plant −104° + delay −79° = **−183°: 3.9 Hz is V279's
-  phase crossover.** |L| = 1229·mult × 0.645 × 0.00056 = **0.444 × Kp-multiplier**.
-
-| Kp multiplier | \|L\| at 3.9 Hz | gain margin |
-|---|---|---|
-| **0.33** | 0.147 | **16.7 dB** — recommended |
-| 0.50 | 0.222 | 13.1 dB |
-| 1.00 | 0.444 | 7.0 dB — ceiling |
-| 2.25 | 1.0 | 0 dB — oscillates |
-
-**⇒ Enter Kp 0.33, Ki 0.33 (0.5 acceptable). Leave kf. Do not switch to the torque controller.** The same number as
-today, now derived. BELIEF on the low-frequency side: column stiffness k ≈ 85–170 counts/deg, not identifiable from
-31 s of a railed limit cycle. Authority is not lost: on V112 the 0.33 throttled the *rate* asked for; on V279 it
-scales torque — 5° of error gives ~1300 counts from P alone.
+**Process record:** the first derivation (`tune279`) traced `openpilots/raayyymond-StarPilot/StarPilot` @ e631b24 (July), reported
+`LatControlPID`, and was retracted the same day on the operator's correction; the second (`tune279b`) traced the same old fork
+but on the torque path (ki 0.35 there; 0.15 on HEAD); the orchestrator re-verified every gating line on `openpilots/StarPilot`
+@ 3d4c625de. Memories: `accord-starpilot-torque-controller-the-033-multiplier-was-inert`,
+`feedback-the-operator-runs-force-torque-controller-check-toggles-not-defaults`.
 
 ---
 
@@ -92,13 +90,23 @@ indices (max idx 237 vs 240). The V278 damping-fraction table is unaffected in i
 
 ## The instrument and the drive
 
-CAN 427: selector bits 3:0 (**must read 7**), demand/32 bits 7:5, `sign(E)` bit 9. With feedback zeroed
-`sign(E) == −sign(0xE4 cmd)` on every frame: **agreement 1.00 proves the feedback is dead**; ~0.5 means it is not
-and nothing else can be trusted. 0x18F rate vs 0xE4 command then gives openpilot's plant model for free.
+The operator rejected carrying the selector (measured: 7) and the demand index (computable offline from 0xE4 and 0x18F).
+CAN 427 now carries **the delivered lane torque itself**: `(sign(T)<<9) | (|T|>>3)`, T = `gp-0x6b38` — the lane's ramped,
+gain-multiplied, `±0xC61B4`-clamped output, `st.h r1,-0x6b38,gp` at `0x2A23C`, stored unconditionally every tick; its only
+other readers are two UDS diagnostic loads in `FUN_0004e82e`; it has never been on a broadcast frame. 8-count resolution;
+2505 reads 313. The window reuses the STOCK packer's skeleton (`ld.h` / `jarl abs` / `sar 3` / clamp bounds), retargets the
+load, deletes the dead `ori`/`min`/`andi`/`mul 5`, and packs the sign from a copy in r9 taken before the abs call (the abs
+helper touches only r6, r10, lp).
 
-**Watch, in order:** a NEW slow wallow at 1–2.5 Hz (Kp → 0.2) · a return of 3.9 Hz with the tap at 1.00
-(column response off by >5×: Kp → 0.15) · sluggish centering / steady offset (Ki → 0.5 first). Hands-light first
-minute. V276 rang at damping fraction 0.57; V279 is 0 by construction — stability now rests on the tune.
+**Reads:** `sign(T) == -sign(cmd)` on every engaged, in-taper, ramped frame proves the feedback is dead (~0.5 if not);
+T vs cmd is the delivered surface (slope 2505/3886 × taper); 0x18F rate vs T is openpilot's plant model for free.
+⚠ **Open:** at `0x2A1FC` `add r9,r11` sums the lane's output with a value already in r11 before the gain. If that is a
+second contribution, T = lane + other. Adversarial check (`adv279c`) pending at the time of writing.
+
+**Watch, in order:** a 3–4 Hz shimmy ABOVE ~25 m/s that grows with speed and vanishes under a little steady torque (friction
+slope at the margin: SteerFriction down, then SteerLatAccel up) · turning in too hard on the first curves (feedforward is now
+real torque; the I term unwinds it) · T == 0 with cmd ≠ 0 outside taper/ramp-closed frames (the cell is not the lane
+output). Gentle curves, hands on, below 25 m/s first.
 
 ## Open
 - The comma-side lever is now primary if V279 rings; the firmware fallback is V278 (K=2, 0.86).

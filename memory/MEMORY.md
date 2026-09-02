@@ -1,6 +1,8 @@
 🛑 **THIS INDEX IS PAGINATED IN EIGHT.** This page alone is not the whole memory —
 the continuation pages carry the rest, newest last:
 
+- 🛑🛑⭐⭐⭐⭐⭐ [StarPilot runs the TORQUE controller; the 0.33 multiplier was INERT — torqued's live LAF compensated the 6x](accord/calibration/accord-starpilot-torque-controller-the-033-multiplier-was-inert.md) — kp flat 0.6, friction is 60-80% of V279's loop gain at 3.9 Hz; first move SteerFriction 0.212→0.08, SteerLatAccel→2.53
+- 🛑⭐⭐⭐⭐⭐ [The operator runs FORCE TORQUE CONTROLLER — check HIS toggles, not the code's defaults](feedback/process/feedback-the-operator-runs-force-torque-controller-check-toggles-not-defaults.md) — a whole tune derivation shipped on the default path and was retracted the same day
 - 🛑🛑⭐⭐⭐⭐⭐ [The rate loop is a BANG-BANG SERVO — P rails at |E| = 440 (±1.8 deg/s)](accord/firmware/accord-the-rate-loop-is-a-bang-bang-servo-p-rails-at-e-440.md) — stock rails at cmd 113; to openpilot it looked like an integrator; a static torque ratio has no finite value
 - 🛑🛑⭐⭐⭐⭐⭐ [RETRACTED: "StarPilot runs the ANGLE PID" — operator runs force_torque_controller; Kp 0.33 derivation VOID](accord/calibration/accord-starpilot-runs-the-angle-pid-kf-unscaled-no-friction.md) — "," halves kpV/kiV; multipliers scale those only; V279: Kp 0.33 = 16.7 dB at the 3.9 Hz crossover, never above 1.0
 - 🛑🛑⭐⭐⭐⭐⭐ [THE LIVE VARIANT SELECTOR IS **7** (record 11 `TVCA4`) — MEASURED on the V276 wire, 35 = 7×5, two decoders](accord/firmware/accord-the-live-variant-selector-is-7-tvca4-measured-on-the-wire.md) — NOT slot 1 / `TVAA1` (a V38 assumption, falsified twice); cite a measurement, never a part-number key

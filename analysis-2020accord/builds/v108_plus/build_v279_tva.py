@@ -30,22 +30,29 @@ is wrapped around that inner loop without knowing it.  V279 removes the inner lo
         before the map's 172 ceiling rolls it off; stock reaches P = 14964 at idx 240.  V279's flat 64/idx
         is within 15% of stock's initial slope and reaches 15360 at 240: stock's feedforward, straightened.
   [D] TELEMETRY -- the CAN-427 packer 0x55DF0-0x55E11 rewritten IN PLACE (34 bytes, jarl untouched):
-          wire = (sel & 0x0F) | (demand & 0xE0) | (sign(E) << 9)
-      With feedback zeroed, sign(E) == sign(setpoint) == -sign(cmd) on EVERY frame.  Offline:
-      agreement(sign(E), -sign(0xE4 cmd)) must be 1.00.  On any build with live feedback it is ~0.5.
-      THAT is the instrument for this build's edit: it proves the feedback is dead, from the wire.
-      Bits 7:5 carry the demand index /32 (coarse), so saturation duty (idx >= 224) is also readable.
-      This window is byte-identical to V278 REVISION 1 (image 513ea8c1..., audited by adv278a/b/c: decodes
-      verified, r6/r7/r8/r9 dead) -- NOT the final V278 image (4bc51073...), whose window carries the
-      E^fb comparator instead.  Re-audited on THIS image by adv279a (decompile matches) and adv279b.
+          wire = (sign(T) << 9) | (|T| >> 3)        T = gp-0x6b38, the DELIVERED lane torque
+      gp-0x6b38 is the lane's ramped, gain-multiplied, +-0xC61B4-clamped output, `st.h r1,-0x6b38,gp` at
+      0x2A23C, stored unconditionally every tick at the end of FUN_00028ea6; its only other readers are two
+      UDS diagnostic loads in FUN_0004e82e -- it has NEVER been on a broadcast frame.  |T| <= 3072 -> /8 <= 384,
+      9 bits; the 2505 ceiling reads 313.  Resolution 8 torque counts.
+      The operator rejected carrying the selector (measured: 7) and the demand index (computable offline from
+      0xE4 and 0x18F).  This is the quantity that is NOT otherwise observable: steeringTorqueEps is ~0 on the wire.
+      What it reads: (a) sign(T) == -sign(0xE4 cmd) on every engaged, in-taper, ramped frame proves the feedback
+      is dead (~0.5 agreement if it is not); (b) T vs cmd is the delivered surface -- predicted slope
+      2505/3886 x taper(driver torque) -- read from the CAR, not the build script.
+      ⚠ KNOWN CAVEAT: at 0x2A1FC `add r9,r11` sums the lane's lag readout with a value already in r11 before
+      the gain; if that is a second contribution, T = lane + other.  Pinned in the adversarial pass.
+      The window reuses the STOCK packer's own skeleton (ld.h / jarl abs / mov r10,r6 / sar 3 / clamp bounds),
+      retargets the load to gp-0x6b38, deletes the dead ori/min/andi and the mul 5, and packs the sign from a
+      copy in r9 taken BEFORE the abs call (FUN_00049a5a touches only r6, r10, lp -- r9 survives).
 
 === THE SENTENCE A NULL LICENSES ===============================================================
-If agreement(sign(E), -sign(cmd)) reads ~0.5, the feedback is NOT dead -- 0xC62E6 is not the operand's
-clamp on this car, or another reader re-introduces it; do not trust any other conclusion from the drive.
-If it reads 1.00 and the car oscillates, the pure-feedforward plant is unstable under openpilot's
-current tune -- the fix is the StarPilot Kp/Ki multipliers, not the firmware.  If it reads 1.00 and the
-car is stable, the operator has the torque interface he asked for; the 0x18F rate vs 0xE4 command
-transfer (free on the wire) then gives openpilot's plant model directly.
+T == 0 while engaged with cmd != 0, outside taper-closed and ramp-low frames: gp-0x6b38 is not the lane's
+output or is gated -- do not trust any other conclusion.  T saturating at 313 (2505) at commands well below
+3886: the map is not the live setpoint source.  sign(T) disagreeing with -sign(cmd) on ~50% of qualifying
+frames: the feedback is NOT dead.  sign agreement ~1.00 AND T linear in cmd AND the car stable: the operator
+has the torque interface he asked for, and openpilot's plant model is on the wire for free.  If the car
+oscillates with the tap reading clean, the fix is StarPilot's torque tune (friction first), not the firmware.
 
 === RISK, PLAINLY ==============================================================================
 V276 cut the fraction of oscillation time in which the lane opposes the wheel from 0.94 to 0.57 and the
@@ -91,7 +98,7 @@ WRITE_MODE = os.environ.get("ACCORD_V279_WRITE", "").strip().lower()
 
 BASE_NAME = "_v268_V268-V112BASE-BOTH.PUMPS.ALL.MODES_plain_image.bin"
 BASE_SHA = "39c4e517ad63929eb6de64116a405260d4941ed8e62d5bb01d0210fe49da727f"
-TAG = "V279-V268BASE-PURE.FEEDFORWARD.FB0.KD0.LINEAR.SIGNE.TAP"
+TAG = "V279-V268BASE-PURE.FEEDFORWARD.FB0.KD0.LINEAR.TORQUE.TAP"
 
 # ---- [C] the linear feedforward -------------------------------------------------------------
 MAP_PTR, MAP_N, N_SLOTS = 0xC9A88, 10, 28
@@ -117,17 +124,19 @@ PACK_LO, PACK_HI, JARL_CLAMP = 0x55DF0, 0x55E12, 0x55E12
 PACK_V268 = bytes.fromhex("24374495bfff663c0a30803effffbfff7a3cca36ffff"
                           "e53740022046ff03003aa332")
 PACK_NEW = bytes.fromhex(
-    "8437b398"      # ld.bu -0x674e[gp],r6    selector
-    "a43fb598"      # ld.bu -0x674b[gp],r7    demand index (magnitude)
-    "c6360f00"      # andi  0x0f,r6,r6
-    "244f0993"      # ld.w  -0x6cf8[gp],r9    E = 32*setpoint - feedback  (= 32*setpoint here)
-    "c73ee000"      # andi  0xe0,r7,r7        demand bits 7:5 in place
-    "0731"          # or    r7,r6
-    "9f4a"          # shr   0x1f,r9           sign(E) -> 0/1
+    "2437c894"      # ld.h  -0x6b38[gp],r6    T = delivered lane torque (signed 16)
+    "0648"          # mov   r6,r9             signed copy, taken BEFORE the abs call
+    "bfff643c"      # jarl  0x49a5a           abs  (site moved +2; target unchanged)
+    "0a30"          # mov   r10,r6            |T|
+    "a332"          # sar   0x3,r6            |T| >> 3   (<= 384)
+    "9f4a"          # shr   0x1f,r9           sign(T) -> 0/1
     "c94a"          # shl   0x9,r9            -> bit 9
     "0931"          # or    r9,r6
     "2046ff03"      # movea 0x3ff,r0,r8       clamp hi (unchanged)
-    "003a")         # mov   0x0,r7            clamp lo (unchanged)
+    "003a"          # mov   0x0,r7            clamp lo (unchanged)
+    "0000000000000000")   # 4 x nop
+T_CELL_DISP, T_STORE_SITE, T_STORE_BYTES = -0x6b38, 0x2A23C, bytes.fromhex("640fc894")   # st.h r1,-0x6b38,gp
+ABS_FN = 0x49A5A
 E_CELL_DISP, E_STORE_SITE, E_STORE_BYTES = -0x6cf8, 0x2A18C, bytes.fromhex("64870993")
 SEL_WRITER, DEMAND_WRITER = 0x4272A, 0x29D14
 
@@ -375,7 +384,7 @@ def build():
     print(f"      stock slot 7 small-signal slope: P(12)/12 = {slope0:.1f}/idx   vs V279 64/idx")
 
     # ------------------------------------------------------------------------------------------
-    print("\n  [7] [D] THE PACKER -- V278 rev-1 window: sel | demand&0xE0 | sign(E)<<9")
+    print("\n  [7] [D] THE PACKER -- signed delivered lane torque: sign(T)<<9 | |T|>>3, T = gp-0x6b38")
     check(bytes(base[PACK_LO:PACK_HI]) == PACK_V268, "base packer window == the V268/stock 34 bytes")
     check(jarl_target(JARL_CLAMP, base) == 0x49A90, "0x55E12 is `jarl 0x49A90` (the clamp) -- DECODED")
     check(len(PACK_NEW) == 34, "new window is exactly 34 bytes")
@@ -383,28 +392,39 @@ def build():
     attributed |= set(range(PACK_LO, PACK_HI))
     check(jarl_target(JARL_CLAMP, code) == 0x49A90, "jarl 0x49A90 intact after the rewrite")
     a = PACK_LO
-    check(dec_ld(code, a) == ("ld.bu", 6, 4, -0x674e), "ld.bu -0x674e[gp],r6  (selector)"); a += 4
-    check(dec_ld(code, a) == ("ld.bu", 7, 4, -0x674b), "ld.bu -0x674b[gp],r7  (demand)"); a += 4
-    check(dec_imm16(code, a) == (0x36, 6, 6, 0x0F), "andi 0x0f,r6,r6"); a += 4
-    check(dec_ld(code, a) == ("ld.w", 9, 4, E_CELL_DISP), "ld.w -0x6cf8[gp],r9  (E)"); a += 4
-    check(dec_imm16(code, a) == (0x36, 7, 7, 0xE0), "andi 0xe0,r7,r7  (demand bits 7:5)"); a += 4
-    check(f_I(u16(code, a)) == (6, 0x08, 7), "or r7,r6"); a += 2
-    check(f_II(u16(code, a)) == (9, 0x14, 0x1F), "shr 0x1f,r9  (sign(E) -> 0/1)"); a += 2
+    hw1_t, hw2_t = u16(code, a), u16(code, a + 2)
+    check(f_I(hw1_t) == (6, 0x39, 4) and not (hw2_t & 1) and (hw2_t - 0x10000) == T_CELL_DISP,
+          "ld.h -0x6b38[gp],r6  (op 0x39 with EVEN hw2 = ld.h; disp decoded from the bytes)"); a += 4
+    check(f_I(u16(code, a)) == (9, 0x00, 6), "mov r6,r9  (signed copy before the abs)"); a += 2
+    check(jarl_target(a, code) == ABS_FN, "jarl 0x49A5A  (abs) -- target DECODED from the moved site"); a += 4
+    check(f_I(u16(code, a)) == (6, 0x00, 10), "mov r10,r6  (|T|)"); a += 2
+    check(f_II(u16(code, a)) == (6, 0x15, 3), "sar 0x3,r6  (|T| >> 3)"); a += 2
+    check(f_II(u16(code, a)) == (9, 0x14, 0x1F), "shr 0x1f,r9  (sign(T) -> 0/1)"); a += 2
     check(f_II(u16(code, a)) == (9, 0x16, 9), "shl 0x9,r9  (-> bit 9)"); a += 2
     check(f_I(u16(code, a)) == (6, 0x08, 9), "or r9,r6"); a += 2
     check(dec_imm16(code, a) == (0x31, 8, 0, 0x3FF), "movea 0x3ff,r0,r8  (clamp hi)"); a += 4
     check(f_II(u16(code, a)) == (7, 0x10, 0), "mov 0x0,r7  (clamp lo)"); a += 2
-    check(a == PACK_HI, "the 11 decoded instructions tile the window exactly")
+    check(all(u16(code, a + k) == 0 for k in (0, 2, 4, 6)), "4 x nop"); a += 8
+    check(a == PACK_HI, "the 10 decoded instructions + 4 nop tile the window exactly")
+    check(u16(base, PACK_LO) == hw1_t, "POSITIVE CONTROL: the stock window's own `ld.h -0x6c18,gp,r6` has the SAME hw1 (24 37) -- only the disp changed")
+    check(jarl_target(0x55DF4, base) == ABS_FN, "POSITIVE CONTROL: the stock window's jarl at 0x55DF4 decodes to the same abs 0x49A5A")
+    check(bytes(base[T_STORE_SITE:T_STORE_SITE + 4]) == T_STORE_BYTES and f_I(u16(base, T_STORE_SITE)) == (1, 0x3B, 4)
+          and (u16(base, T_STORE_SITE + 2) - 0x10000) == T_CELL_DISP,
+          "0x2A23C is `st.h r1,-0x6b38,gp` -- the delivered lane torque is stored every tick (disp decoded)")
+    check(bytes(code[T_STORE_SITE:T_STORE_SITE + 4]) == T_STORE_BYTES, "T store untouched")
+    _abs = bytes(base[ABS_FN:ABS_FN + 0x18])
+    check(all(bytes(code[ABS_FN + k:ABS_FN + k + 2]) == bytes(base[ABS_FN + k:ABS_FN + k + 2]) for k in range(0, 0x18, 2)), "abs helper 0x49A5A byte-identical")
     check(dec_ld(base, 0x2A178) == ("ld.w", 9, 4, -0x3d3c), "POSITIVE CONTROL: 0x2A178 decodes as `ld.w -0x3d3c[gp],r9`")
     check(f_II(u16(base, 0x2A1AC)) == (9, 0x15, 5), "POSITIVE CONTROL: 0x2A1AC decodes as `sar 0x5,r9`")
-    for site in (SEL_WRITER, DEMAND_WRITER, E_STORE_SITE):
+    for site in (SEL_WRITER, DEMAND_WRITER, E_STORE_SITE, T_STORE_SITE):
         check(bytes(code[site:site + 4]) == bytes(base[site:site + 4]), f"writer at 0x{site:05X} untouched")
-    print("      wire = (sel & 0x0F) | (demand & 0xE0) | (sign(E) << 9)     max 0x2EF = 751 < 1023")
-    print("      -> with fb = 0, sign(E) == -sign(cmd) on EVERY frame: agreement 1.00 proves the feedback is dead.")
+    print("      wire = (sign(T) << 9) | (|T| >> 3)      T = gp-0x6b38, |T| <= 3072 -> max 0x380 = 896 < 1023")
+    print("      -> T = (-1 if bit9 else 1) * ((wire & 0x1ff) << 3);  2505 reads 313;  sign(T) == -sign(cmd) proves fb dead")
 
     def decode(w):
-        return {"sel": w & 0xF, "demand_hi3": (w >> 5) & 7, "sign_E": (w >> 9) & 1}
-    check(decode(0x2E7) == {"sel": 7, "demand_hi3": 7, "sign_E": 1}, "decode(0x2E7): this car, full demand, E<0")
+        return (-1 if (w >> 9) & 1 else 1) * ((w & 0x1FF) << 3)
+    check(decode(313) == 2504 and decode(512 | 313) == -2504 and decode(0) == 0, "decode: 313 -> +2504 (the 2505 ceiling at 8-count resolution), bit 9 -> negative")
+    check((3072 >> 3) | 0x200 == 896 < 1023, "max wire value 896 -- the clamp helper stays a pass-through")
 
     # ------------------------------------------------------------------------------------------
     print("\n  [8] EVERYTHING ELSE BYTE-IDENTICAL TO V268")
