@@ -1,0 +1,6773 @@
+[
+ {
+  "route": "75604b0a432fdc89_0000001a--a4ef772958",
+  "nseg": 1,
+  "which": {
+   "torqueState": 5804
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 16.329999923706055
+    },
+    247
+   ]
+  ],
+  "ltp": {
+   "n": 226,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.228,
+   "LAF_raw_p50": 3.357,
+   "friction_filt_p50": 0.1459,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 1432,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 1241,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 822,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 419,
+   "p50": 0.6
+  },
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 1008,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.2643,
+  "f_over_output_p50": 0.981,
+  "|p|_p50": 0.1556,
+  "|i|_p50": 0.1279,
+  "|f|_p50": 0.3,
+  "|err|_p50": 0.2594,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000001b--d2abf1af1c",
+  "nseg": 1,
+  "which": {
+   "torqueState": 5729
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 16.329999923706055
+    },
+    867
+   ]
+  ],
+  "ltp": {
+   "n": 223,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.38,
+   "LAF_raw_p50": 3.26,
+   "friction_filt_p50": 0.1432,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 2827,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 2490,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 2490,
+   "p50": 0.6
+  },
+  "kp_5-10": null,
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 1110,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0965,
+  "f_over_output_p50": 0.699,
+  "|p|_p50": 0.762,
+  "|i|_p50": 0.0576,
+  "|f|_p50": 0.3049,
+  "|err|_p50": 1.27,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000001c--ade8fd5b4a",
+  "nseg": 2,
+  "which": {
+   "torqueState": 10856
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 16.329999923706055
+    },
+    767
+   ]
+  ],
+  "ltp": {
+   "n": 428,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.392,
+   "LAF_raw_p50": 3.258,
+   "friction_filt_p50": 0.1431,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 2358,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 2259,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 2259,
+   "p50": 0.6
+  },
+  "kp_5-10": null,
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 1296,
+   "p5_p50_p95": [
+    -0.3525,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0318,
+  "f_over_output_p50": 0.756,
+  "|p|_p50": 0.9285,
+  "|i|_p50": 0.1191,
+  "|f|_p50": 0.4451,
+  "|err|_p50": 1.5475,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000013--f484e75b00",
+  "nseg": 4,
+  "which": {
+   "torqueState": 22422
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 16.329999923706055
+    },
+    224
+   ]
+  ],
+  "ltp": {
+   "n": 896,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.725,
+   "friction_filt_p50": 0.212,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 10192,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 9864,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 9864,
+   "p50": 0.6
+  },
+  "kp_5-10": null,
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 0,
+   "p5_p50_p95": null
+  },
+  "f_over_output_p50": 0.566,
+  "|p|_p50": 1.5377,
+  "|i|_p50": 0.0,
+  "|f|_p50": 0.3596,
+  "|err|_p50": 2.5628,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000002c--eb219f392c",
+  "nseg": 9,
+  "which": {
+   "torqueState": 50725
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 16.329999923706055
+    },
+    638
+   ]
+  ],
+  "ltp": {
+   "n": 2021,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.264,
+   "friction_filt_p50": 0.215,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 37512,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 28662,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 8341,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 4291,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 15211,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 819,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 9733,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.1073,
+  "f_over_output_p50": 1.377,
+  "|p|_p50": 0.0952,
+  "|i|_p50": 0.1537,
+  "|f|_p50": 0.294,
+  "|err|_p50": 0.1587,
+  "sat_frac": 0.006,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000031--0441e00d2b",
+  "nseg": 4,
+  "which": {
+   "torqueState": 21771
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 16.329999923706055
+    },
+    634
+   ]
+  ],
+  "ltp": {
+   "n": 865,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.542,
+   "friction_filt_p50": 0.215,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 3920,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 3683,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 3683,
+   "p50": 0.6
+  },
+  "kp_5-10": null,
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 1729,
+   "p5_p50_p95": [
+    -1.1356,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0469,
+  "f_over_output_p50": 0.763,
+  "|p|_p50": 0.4479,
+  "|i|_p50": 0.0115,
+  "|f|_p50": 0.3166,
+  "|err|_p50": 0.7465,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000002b--7926e8f7e5",
+  "nseg": 14,
+  "which": {
+   "torqueState": 83776
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 16.329999923706055
+    },
+    1486
+   ]
+  ],
+  "ltp": {
+   "n": 3344,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.529,
+   "friction_filt_p50": 0.215,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 60400,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 34523,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 6308,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 7809,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 11731,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 8675,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 15832,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.2147,
+  "f_over_output_p50": 1.762,
+  "|p|_p50": 0.0372,
+  "|i|_p50": 0.304,
+  "|f|_p50": 0.2889,
+  "|err|_p50": 0.062,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000003a--4e55c1e0f4",
+  "nseg": 7,
+  "which": {
+   "torqueState": 36757
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    431
+   ]
+  ],
+  "ltp": {
+   "n": 1464,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.76,
+   "LAF_raw_p50": 3.003,
+   "friction_filt_p50": 0.203,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 32636,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 28510,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 22628,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 4370,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 1512,
+   "p50": 0.6
+  },
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 5659,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0194,
+  "f_over_output_p50": 0.447,
+  "|p|_p50": 1.7936,
+  "|i|_p50": 0.0563,
+  "|f|_p50": 0.286,
+  "|err|_p50": 2.9894,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000004c--d0ea3c14b4",
+  "nseg": 5,
+  "which": {
+   "torqueState": 30006
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    300
+   ]
+  ],
+  "ltp": {
+   "n": 1200,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.304,
+   "friction_filt_p50": 0.18,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 4966,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 3896,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 430,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 506,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 1931,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 1029,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 0,
+   "p5_p50_p95": null
+  },
+  "f_over_output_p50": 1.128,
+  "|p|_p50": 0.0903,
+  "|i|_p50": 0.0,
+  "|f|_p50": 0.0947,
+  "|err|_p50": 0.1505,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000050--50f2e00e8f",
+  "nseg": 3,
+  "which": {
+   "torqueState": 17757
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    659
+   ]
+  ],
+  "ltp": {
+   "n": 703,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.018,
+   "friction_filt_p50": 0.18,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 7241,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 5337,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 2342,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 1481,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 1514,
+   "p50": 0.6
+  },
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 3080,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0498,
+  "f_over_output_p50": 1.205,
+  "|p|_p50": 0.0772,
+  "|i|_p50": 0.2518,
+  "|f|_p50": 0.3458,
+  "|err|_p50": 0.1286,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000037--6231e33f3d",
+  "nseg": 15,
+  "which": {
+   "torqueState": 86134
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 16.329999923706055
+    },
+    1478
+   ]
+  ],
+  "ltp": {
+   "n": 3437,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.274,
+   "friction_filt_p50": 0.212,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 70336,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 51024,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 16431,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 6461,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 17749,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 10383,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 19534,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0899,
+  "f_over_output_p50": 1.269,
+  "|p|_p50": 0.0689,
+  "|i|_p50": 0.2162,
+  "|f|_p50": 0.27,
+  "|err|_p50": 0.1148,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000004f--61171e660d",
+  "nseg": 8,
+  "which": {
+   "torqueState": 47751
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    1142
+   ]
+  ],
+  "ltp": {
+   "n": 1902,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.066,
+   "friction_filt_p50": 0.18,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 34476,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 28556,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 13824,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 4927,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 4081,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 5724,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 6233,
+   "p5_p50_p95": [
+    0.0172,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0725,
+  "f_over_output_p50": 0.962,
+  "|p|_p50": 0.1013,
+  "|i|_p50": 0.0571,
+  "|f|_p50": 0.2095,
+  "|err|_p50": 0.1688,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000005e--857d0bd164",
+  "nseg": 7,
+  "which": {
+   "torqueState": 39718
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    1048
+   ]
+  ],
+  "ltp": {
+   "n": 1582,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.815,
+   "LAF_raw_p50": 3.155,
+   "friction_filt_p50": 0.178,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 18233,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 10960,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 5720,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 2610,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 2630,
+   "p50": 0.6
+  },
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 5432,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.2968,
+  "f_over_output_p50": 0.846,
+  "|p|_p50": 0.0453,
+  "|i|_p50": 0.2105,
+  "|f|_p50": 0.2042,
+  "|err|_p50": 0.0756,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000058--1d1005262f",
+  "nseg": 16,
+  "which": {
+   "torqueState": 92707
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    1054
+   ]
+  ],
+  "ltp": {
+   "n": 3700,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.042,
+   "friction_filt_p50": 0.18,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 50593,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 31670,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 6190,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 8008,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 13128,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 4344,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 23706,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.068,
+  "f_over_output_p50": 2.164,
+  "|p|_p50": 0.0478,
+  "|i|_p50": 0.3147,
+  "|f|_p50": 0.3775,
+  "|err|_p50": 0.0797,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000059--9070b9dcee",
+  "nseg": 15,
+  "which": {
+   "torqueState": 87736
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    2044
+   ]
+  ],
+  "ltp": {
+   "n": 3502,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.013,
+   "friction_filt_p50": 0.18,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 55346,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 49165,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 9798,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 12457,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 18834,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 8076,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 6121,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.18,
+  "f_over_output_p50": 1.284,
+  "|p|_p50": 0.1274,
+  "|i|_p50": 0.0,
+  "|f|_p50": 0.2494,
+  "|err|_p50": 0.2123,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000047--3e0b6134c0",
+  "nseg": 26,
+  "which": {
+   "torqueState": 150135
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    1866
+   ]
+  ],
+  "ltp": {
+   "n": 5997,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.337,
+   "friction_filt_p50": 0.18,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 116595,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 58568,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 3787,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 7240,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 10328,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 37213,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 33869,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.1303,
+  "f_over_output_p50": 3.261,
+  "|p|_p50": 0.0302,
+  "|i|_p50": 0.3383,
+  "|f|_p50": 0.338,
+  "|err|_p50": 0.0504,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000054--4e67ae1164",
+  "nseg": 21,
+  "which": {
+   "torqueState": 123168
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    1469
+   ]
+  ],
+  "ltp": {
+   "n": 4915,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.037,
+   "friction_filt_p50": 0.18,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 66441,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 49511,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 19224,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 11872,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 13063,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 5352,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 28591,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0398,
+  "f_over_output_p50": 1.264,
+  "|p|_p50": 0.0735,
+  "|i|_p50": 0.2437,
+  "|f|_p50": 0.3051,
+  "|err|_p50": 0.1224,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000061--3b8f2f9278",
+  "nseg": 13,
+  "which": {
+   "torqueState": 75689
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    2223
+   ]
+  ],
+  "ltp": {
+   "n": 3020,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.209,
+   "LAF_raw_p50": 2.98,
+   "friction_filt_p50": 0.1686,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 60563,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 37265,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 7560,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 13468,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 15386,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 851,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 14470,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.3604,
+  "f_over_output_p50": 1.829,
+  "|p|_p50": 0.043,
+  "|i|_p50": 0.1646,
+  "|f|_p50": 0.2062,
+  "|err|_p50": 0.0717,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000005a--2d32bec040",
+  "nseg": 18,
+  "which": {
+   "torqueState": 103838
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    1683
+   ]
+  ],
+  "ltp": {
+   "n": 4146,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.008,
+   "friction_filt_p50": 0.18,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 76872,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 41444,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 12149,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 10878,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 10864,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 7553,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 29296,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.1662,
+  "f_over_output_p50": 1.936,
+  "|p|_p50": 0.0334,
+  "|i|_p50": 0.338,
+  "|f|_p50": 0.3114,
+  "|err|_p50": 0.0557,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000006f--80ca318af4",
+  "nseg": 4,
+  "which": {
+   "torqueState": 22698
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    642
+   ]
+  ],
+  "ltp": {
+   "n": 906,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.236,
+   "LAF_raw_p50": 2.854,
+   "friction_filt_p50": 0.1641,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 14115,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 13618,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 13421,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 197,
+   "p50": 0.6
+  },
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 5209,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.1215,
+  "f_over_output_p50": 0.56,
+  "|p|_p50": 1.4141,
+  "|i|_p50": 0.1433,
+  "|f|_p50": 0.3342,
+  "|err|_p50": 2.3569,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000070--66544f819d",
+  "nseg": 4,
+  "which": {
+   "torqueState": 21068
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    1237
+   ]
+  ],
+  "ltp": {
+   "n": 840,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.23,
+   "LAF_raw_p50": 2.853,
+   "friction_filt_p50": 0.1644,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 9175,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 8659,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 8360,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 299,
+   "p50": 0.6
+  },
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 3477,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.1614,
+  "f_over_output_p50": 0.502,
+  "|p|_p50": 1.0773,
+  "|i|_p50": 0.1359,
+  "|f|_p50": 0.3063,
+  "|err|_p50": 1.7956,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000068--0b7efae911",
+  "nseg": 8,
+  "which": {
+   "torqueState": 43434
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    596
+   ]
+  ],
+  "ltp": {
+   "n": 1728,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.462,
+   "LAF_raw_p50": 2.87,
+   "friction_filt_p50": 0.1685,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 30530,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 25959,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 7102,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 12706,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 4640,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 1511,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 17028,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.2018,
+  "f_over_output_p50": 1.382,
+  "|p|_p50": 0.1889,
+  "|i|_p50": 0.116,
+  "|f|_p50": 0.32,
+  "|err|_p50": 0.3148,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000071--ac50da2a6a",
+  "nseg": 4,
+  "which": {
+   "torqueState": 23467
+  },
+  "undecodable": 0,
+  "errors": [
+   "75604b0a432fdc89_00000071--ac50da2a6a--3--rlog.zst: KjException()"
+  ],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    289
+   ]
+  ],
+  "ltp": {
+   "n": 934,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.224,
+   "LAF_raw_p50": 2.856,
+   "friction_filt_p50": 0.1646,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 12388,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 11324,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 11147,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 177,
+   "p50": 0.6
+  },
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 4689,
+   "p5_p50_p95": [
+    0.0001,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0284,
+  "f_over_output_p50": 0.547,
+  "|p|_p50": 0.9056,
+  "|i|_p50": 0.087,
+  "|f|_p50": 0.2833,
+  "|err|_p50": 1.5093,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000066--276b942769",
+  "nseg": 15,
+  "which": {
+   "torqueState": 89782
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    1135
+   ]
+  ],
+  "ltp": {
+   "n": 3583,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.477,
+   "LAF_raw_p50": 3.052,
+   "friction_filt_p50": 0.169,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 30269,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 19512,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 5549,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 3971,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 7139,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 2853,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 11018,
+   "p5_p50_p95": [
+    0.0483,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0383,
+  "f_over_output_p50": 1.511,
+  "|p|_p50": 0.0505,
+  "|i|_p50": 0.1196,
+  "|f|_p50": 0.1924,
+  "|err|_p50": 0.0841,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000006e--649c462a6e",
+  "nseg": 8,
+  "which": {
+   "torqueState": 43289
+  },
+  "undecodable": 0,
+  "errors": [
+   "75604b0a432fdc89_0000006e--649c462a6e--7--rlog.zst: KjException()"
+  ],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    606
+   ]
+  ],
+  "ltp": {
+   "n": 1728,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.248,
+   "LAF_raw_p50": 2.844,
+   "friction_filt_p50": 0.1636,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 35667,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 29678,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 14777,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 9859,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 3636,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 1406,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 19453,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.2205,
+  "f_over_output_p50": 1.23,
+  "|p|_p50": 0.1508,
+  "|i|_p50": 0.1259,
+  "|f|_p50": 0.2965,
+  "|err|_p50": 0.2514,
+  "sat_frac": 0.001,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000006d--5d03a5adb4",
+  "nseg": 12,
+  "which": {
+   "torqueState": 67920
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    728
+   ]
+  ],
+  "ltp": {
+   "n": 2711,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.278,
+   "LAF_raw_p50": 2.849,
+   "friction_filt_p50": 0.1632,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 54392,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 31027,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 4748,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 5189,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 12826,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 8264,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 18934,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.1668,
+  "f_over_output_p50": 1.812,
+  "|p|_p50": 0.0373,
+  "|i|_p50": 0.1043,
+  "|f|_p50": 0.1628,
+  "|err|_p50": 0.0622,
+  "sat_frac": 0.017,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000067--9b3ebbe218",
+  "nseg": 14,
+  "which": {
+   "torqueState": 78553
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    885
+   ]
+  ],
+  "ltp": {
+   "n": 3133,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.506,
+   "LAF_raw_p50": 2.945,
+   "friction_filt_p50": 0.1699,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 67173,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 34385,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 8534,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 6477,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 15910,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 3464,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 22132,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.2814,
+  "f_over_output_p50": 1.927,
+  "|p|_p50": 0.0312,
+  "|i|_p50": 0.0921,
+  "|f|_p50": 0.1472,
+  "|err|_p50": 0.0521,
+  "sat_frac": 0.007,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000007d--83a5c80392",
+  "nseg": 3,
+  "which": {
+   "torqueState": 13624
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    161
+   ]
+  ],
+  "ltp": {
+   "n": 542,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.65,
+   "LAF_raw_p50": 2.942,
+   "friction_filt_p50": 0.198,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 1078,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 798,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 798,
+   "p50": 0.6
+  },
+  "kp_5-10": null,
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 539,
+   "p5_p50_p95": [
+    -1.3233,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0712,
+  "f_over_output_p50": 0.815,
+  "|p|_p50": 0.0722,
+  "|i|_p50": 0.0149,
+  "|f|_p50": 0.1013,
+  "|err|_p50": 0.1204,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000073--9380c74d52",
+  "nseg": 11,
+  "which": {
+   "torqueState": 60746
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    970
+   ]
+  ],
+  "ltp": {
+   "n": 2432,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.28,
+   "LAF_raw_p50": 2.849,
+   "friction_filt_p50": 0.1649,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 44265,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 34460,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 12881,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 11250,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 6310,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 4019,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 16078,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.1596,
+  "f_over_output_p50": 1.506,
+  "|p|_p50": 0.1248,
+  "|i|_p50": 0.0785,
+  "|f|_p50": 0.2684,
+  "|err|_p50": 0.2079,
+  "sat_frac": 0.001,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000080--6c8b103892",
+  "nseg": 2,
+  "which": {
+   "torqueState": 10456
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "1bf271762",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    135
+   ]
+  ],
+  "ltp": {
+   "n": 407,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.65,
+   "LAF_raw_p50": 2.796,
+   "friction_filt_p50": 0.198,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 1711,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 1575,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 1575,
+   "p50": 0.6
+  },
+  "kp_5-10": null,
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 887,
+   "p5_p50_p95": [
+    0.3017,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.3264,
+  "f_over_output_p50": 0.498,
+  "|p|_p50": 0.6624,
+  "|i|_p50": 0.0979,
+  "|f|_p50": 0.1442,
+  "|err|_p50": 1.104,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000076--c81e964e05",
+  "nseg": 13,
+  "which": {
+   "torqueState": 75310
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    785
+   ]
+  ],
+  "ltp": {
+   "n": 3019,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.35,
+   "LAF_raw_p50": 2.829,
+   "friction_filt_p50": 0.1676,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 65446,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 36903,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 5899,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 7265,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 19595,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 4144,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 15262,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0568,
+  "f_over_output_p50": 1.741,
+  "|p|_p50": 0.0361,
+  "|i|_p50": 0.081,
+  "|f|_p50": 0.1349,
+  "|err|_p50": 0.0602,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000081--c7103d2cb4",
+  "nseg": 3,
+  "which": {
+   "torqueState": 17730
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "682b4b5c9",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    173
+   ]
+  ],
+  "ltp": {
+   "n": 698,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.65,
+   "LAF_raw_p50": 2.796,
+   "friction_filt_p50": 0.198,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 6574,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 6340,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 6340,
+   "p50": 0.6
+  },
+  "kp_5-10": null,
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 2211,
+   "p5_p50_p95": [
+    0.2669,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.2808,
+  "f_over_output_p50": 0.435,
+  "|p|_p50": 1.5964,
+  "|i|_p50": 0.1512,
+  "|f|_p50": 0.3405,
+  "|err|_p50": 2.6606,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000082--e30d55731b",
+  "nseg": 2,
+  "which": {
+   "torqueState": 11692
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "682b4b5c9",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    416
+   ]
+  ],
+  "ltp": {
+   "n": 462,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.65,
+   "LAF_raw_p50": 2.792,
+   "friction_filt_p50": 0.198,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 5948,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 5602,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 5004,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 598,
+   "p50": 0.6
+  },
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 2641,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.3002,
+  "f_over_output_p50": 0.535,
+  "|p|_p50": 0.6495,
+  "|i|_p50": 0.1447,
+  "|f|_p50": 0.2774,
+  "|err|_p50": 1.0825,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000079--cb7538ffae",
+  "nseg": 15,
+  "which": {
+   "torqueState": 86697
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    983
+   ]
+  ],
+  "ltp": {
+   "n": 3475,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.65,
+   "LAF_raw_p50": 2.933,
+   "friction_filt_p50": 0.198,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 74943,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 44356,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 7228,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 11507,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 20920,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 4701,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 21025,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.1534,
+  "f_over_output_p50": 2.598,
+  "|p|_p50": 0.0403,
+  "|i|_p50": 0.3126,
+  "|f|_p50": 0.3274,
+  "|err|_p50": 0.0672,
+  "sat_frac": 0.003,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000078--93548c06b3",
+  "nseg": 16,
+  "which": {
+   "torqueState": 91900
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    1493
+   ]
+  ],
+  "ltp": {
+   "n": 3684,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.65,
+   "LAF_raw_p50": 2.988,
+   "friction_filt_p50": 0.198,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 61740,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 35194,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 6376,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 5960,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 15143,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 7715,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 18388,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.1783,
+  "f_over_output_p50": 1.643,
+  "|p|_p50": 0.0375,
+  "|i|_p50": 0.2921,
+  "|f|_p50": 0.2786,
+  "|err|_p50": 0.0626,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000007e--e5f2d1465f",
+  "nseg": 14,
+  "which": {
+   "torqueState": 79890
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    2247
+   ]
+  ],
+  "ltp": {
+   "n": 3201,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.65,
+   "LAF_raw_p50": 2.859,
+   "friction_filt_p50": 0.198,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 61270,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 36781,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 10054,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 5983,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 12197,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 8547,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 20680,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.2912,
+  "f_over_output_p50": 1.36,
+  "|p|_p50": 0.0429,
+  "|i|_p50": 0.3018,
+  "|f|_p50": 0.3045,
+  "|err|_p50": 0.0715,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000007f--2bb30756e7",
+  "nseg": 14,
+  "which": {
+   "torqueState": 83097
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    892
+   ]
+  ],
+  "ltp": {
+   "n": 3329,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.65,
+   "LAF_raw_p50": 2.814,
+   "friction_filt_p50": 0.198,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 68677,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 39648,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 6949,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 8394,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 19195,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 5110,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 22606,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.22,
+  "f_over_output_p50": 2.981,
+  "|p|_p50": 0.0384,
+  "|i|_p50": 0.3403,
+  "|f|_p50": 0.3381,
+  "|err|_p50": 0.064,
+  "sat_frac": 0.006,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000077--7411859c54",
+  "nseg": 21,
+  "which": {
+   "torqueState": 123632
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2025-07-02 07:05",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    2079
+   ]
+  ],
+  "ltp": {
+   "n": 4958,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.65,
+   "LAF_raw_p50": 2.875,
+   "friction_filt_p50": 0.198,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 107040,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 82252,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 23089,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 25410,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 23931,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 9822,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 23671,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0715,
+  "f_over_output_p50": 1.29,
+  "|p|_p50": 0.09,
+  "|i|_p50": 0.1372,
+  "|f|_p50": 0.2867,
+  "|err|_p50": 0.1499,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000001b--d7c81cf9b5",
+  "nseg": 2,
+  "which": {
+   "torqueState": 11647
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-28 08:05",
+   "gitCommit": "36d0c074f",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.329999923706055
+    },
+    365
+   ]
+  ],
+  "ltp": {
+   "n": 461,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 0.3,
+   "friction_filt_p50": 0.212,
+   "liveValid_frac": 0.0
+  },
+  "active_frames": 3606,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 3408,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 610,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 2423,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 375,
+   "p50": 0.6
+  },
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 1317,
+   "p5_p50_p95": [
+    -0.0659,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": -0.0239,
+  "f_over_output_p50": 1.346,
+  "|p|_p50": 0.1284,
+  "|i|_p50": 0.0265,
+  "|f|_p50": 0.2037,
+  "|err|_p50": 0.2141,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000022--00f57626e0",
+  "nseg": 12,
+  "which": {
+   "torqueState": 71275
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-28 08:05",
+   "gitCommit": "2c002755c",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.329999923706055
+    },
+    1651
+   ]
+  ],
+  "ltp": {
+   "n": 2855,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.268,
+   "LAF_raw_p50": 5.323,
+   "friction_filt_p50": 0.1542,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 48747,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 34183,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 4956,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 6116,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 18663,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 4448,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 21683,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0908,
+  "f_over_output_p50": 2.011,
+  "|p|_p50": 0.0588,
+  "|i|_p50": 0.1502,
+  "|f|_p50": 0.2693,
+  "|err|_p50": 0.0981,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000024--6f4943e0a6",
+  "nseg": 14,
+  "which": {
+   "torqueState": 82398
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-28 08:05",
+   "gitCommit": "ec0ab9d30",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.329999923706055
+    },
+    2164
+   ]
+  ],
+  "ltp": {
+   "n": 3302,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.409,
+   "LAF_raw_p50": 5.525,
+   "friction_filt_p50": 0.1412,
+   "liveValid_frac": 0.0
+  },
+  "active_frames": 58390,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 32652,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 3870,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 6450,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 14472,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 7860,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 23567,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0233,
+  "f_over_output_p50": 2.055,
+  "|p|_p50": 0.0354,
+  "|i|_p50": 0.12,
+  "|f|_p50": 0.2079,
+  "|err|_p50": 0.0589,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000002b--604bd0e8f8",
+  "nseg": 13,
+  "which": {
+   "torqueState": 75626
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-28 08:05",
+   "gitCommit": "764417845",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.329999923706055
+    },
+    961
+   ]
+  ],
+  "ltp": {
+   "n": 3029,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.519,
+   "LAF_raw_p50": 4.785,
+   "friction_filt_p50": 0.1286,
+   "liveValid_frac": 0.0
+  },
+  "active_frames": 58658,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 31261,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 5619,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 6167,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 10716,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 8759,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 22691,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0807,
+  "f_over_output_p50": 1.932,
+  "|p|_p50": 0.0328,
+  "|i|_p50": 0.1263,
+  "|f|_p50": 0.1812,
+  "|err|_p50": 0.0547,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000021--489af1e5b7",
+  "nseg": 18,
+  "which": {
+   "torqueState": 105891
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-28 08:05",
+   "gitCommit": "2c002755c",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.329999923706055
+    },
+    1601
+   ]
+  ],
+  "ltp": {
+   "n": 4245,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.986,
+   "LAF_raw_p50": 5.333,
+   "friction_filt_p50": 0.1814,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 83423,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 53563,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 10722,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 15194,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 26255,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 1392,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 29726,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0542,
+  "f_over_output_p50": 2.106,
+  "|p|_p50": 0.0469,
+  "|i|_p50": 0.1281,
+  "|f|_p50": 0.2251,
+  "|err|_p50": 0.0782,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000002d--10714693cd",
+  "nseg": 14,
+  "which": {
+   "torqueState": 81760
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-28 08:05",
+   "gitCommit": "764417845",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.329999923706055
+    },
+    1274
+   ]
+  ],
+  "ltp": {
+   "n": 3275,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 4.775,
+   "friction_filt_p50": 0.212,
+   "liveValid_frac": 0.0
+  },
+  "active_frames": 63679,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 40947,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 5165,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 7528,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 21630,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 6624,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 20188,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0952,
+  "f_over_output_p50": 3.127,
+  "|p|_p50": 0.0454,
+  "|i|_p50": 0.2251,
+  "|f|_p50": 0.299,
+  "|err|_p50": 0.0757,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000002e--855ecfcf30",
+  "nseg": 16,
+  "which": {
+   "torqueState": 92456
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-28 08:05",
+   "gitCommit": "401319431",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.329999923706055
+    },
+    2002
+   ]
+  ],
+  "ltp": {
+   "n": 3705,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.955,
+   "LAF_raw_p50": 4.761,
+   "friction_filt_p50": 0.1893,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 7298,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 5982,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 1204,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 2233,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 2322,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 223,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 3127,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0742,
+  "f_over_output_p50": 1.533,
+  "|p|_p50": 0.0826,
+  "|i|_p50": 0.0195,
+  "|f|_p50": 0.1507,
+  "|err|_p50": 0.1377,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000095--6d7c6deef5",
+  "nseg": 5,
+  "which": {
+   "torqueState": 25127
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-28 08:05",
+   "gitCommit": "d47be8092",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.33
+    },
+    1642
+   ]
+  ],
+  "ltp": {
+   "n": 998,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.423,
+   "LAF_raw_p50": 3.148,
+   "friction_filt_p50": 0.1757,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 17534,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 14116,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 4702,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 4096,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 5318,
+   "p50": 0.6
+  },
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 7383,
+   "p5_p50_p95": [
+    -0.4912,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0037,
+  "f_over_output_p50": 1.367,
+  "|p|_p50": 0.086,
+  "|i|_p50": 0.0052,
+  "|f|_p50": 0.1297,
+  "|err|_p50": 0.1433,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_000000a5--1419044ddf",
+  "nseg": 11,
+  "which": {
+   "torqueState": 65471
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-28 08:05",
+   "gitCommit": "4b3372d00",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.33
+    },
+    946
+   ]
+  ],
+  "ltp": {
+   "n": 2618,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.0,
+   "LAF_raw_p50": 2.049,
+   "friction_filt_p50": 0.1942,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 48804,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 33150,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 7897,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 7227,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 12130,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 5896,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 17720,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0221,
+  "f_over_output_p50": 1.569,
+  "|p|_p50": 0.0655,
+  "|i|_p50": 0.023,
+  "|f|_p50": 0.1545,
+  "|err|_p50": 0.1091,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_000000a4--bdd0c0aa4e",
+  "nseg": 16,
+  "which": {
+   "torqueState": 92905
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-28 08:05",
+   "gitCommit": "269562e73",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.33
+    },
+    1120
+   ]
+  ],
+  "ltp": {
+   "n": 3724,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.983,
+   "LAF_raw_p50": 1.996,
+   "friction_filt_p50": 0.1936,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 66743,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 41590,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 10607,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 7291,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 12968,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 10724,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 26818,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0948,
+  "f_over_output_p50": 1.562,
+  "|p|_p50": 0.0444,
+  "|i|_p50": 0.0186,
+  "|f|_p50": 0.1268,
+  "|err|_p50": 0.0741,
+  "sat_frac": 0.001,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_000000a6--78293a259e",
+  "nseg": 26,
+  "which": {
+   "torqueState": 154384
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-28 08:05",
+   "gitCommit": "7c6741a93",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.33
+    },
+    1953
+   ]
+  ],
+  "ltp": {
+   "n": 6191,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.056,
+   "LAF_raw_p50": 2.14,
+   "friction_filt_p50": 0.1973,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 123249,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 58759,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 10537,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 6056,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 8427,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 33739,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 22622,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0383,
+  "f_over_output_p50": 2.028,
+  "|p|_p50": 0.0276,
+  "|i|_p50": 0.0424,
+  "|f|_p50": 0.1056,
+  "|err|_p50": 0.046,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000024--bc45926e80",
+  "nseg": 16,
+  "which": {
+   "torqueState": 94241
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-28 22:13",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 16.329999923706055
+    },
+    940
+   ]
+  ],
+  "ltp": {
+   "n": 3760,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.43,
+   "LAF_raw_p50": 3.385,
+   "friction_filt_p50": 0.1488,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 73104,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 34681,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 4046,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 6406,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 20217,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 4012,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 21444,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0999,
+  "f_over_output_p50": 1.55,
+  "|p|_p50": 0.0281,
+  "|i|_p50": 0.1147,
+  "|f|_p50": 0.1527,
+  "|err|_p50": 0.0468,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000028--66ab5a2233",
+  "nseg": 5,
+  "which": {
+   "torqueState": 29999
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-29 10:23",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 16.329999923706055
+    },
+    300
+   ]
+  ],
+  "ltp": {
+   "n": 1200,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.374,
+   "LAF_raw_p50": 3.167,
+   "friction_filt_p50": 0.1432,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 14964,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 8627,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 4722,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 2716,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 1180,
+   "p50": 0.6
+  },
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 5314,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.3499,
+  "f_over_output_p50": 1.381,
+  "|p|_p50": 0.0372,
+  "|i|_p50": 0.0561,
+  "|f|_p50": 0.0863,
+  "|err|_p50": 0.062,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000029--47bc9c9d99",
+  "nseg": 2,
+  "which": {
+   "torqueState": 7790
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-29 11:15",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 16.329999923706055
+    },
+    77
+   ]
+  ],
+  "ltp": {
+   "n": 302,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.221,
+   "LAF_raw_p50": 3.563,
+   "friction_filt_p50": 0.1431,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 1723,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 1580,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 1580,
+   "p50": 0.6
+  },
+  "kp_5-10": null,
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 64,
+   "p5_p50_p95": [
+    -0.0,
+    0.0051,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0136,
+  "f_over_output_p50": 0.597,
+  "|p|_p50": 0.5194,
+  "|i|_p50": 0.0,
+  "|f|_p50": 0.2836,
+  "|err|_p50": 0.8657,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000035--77808fe7ce",
+  "nseg": 3,
+  "which": {
+   "torqueState": 14826
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-31 07:32",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 16.329999923706055
+    },
+    147
+   ]
+  ],
+  "ltp": {
+   "n": 587,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.394,
+   "friction_filt_p50": 0.215,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 7941,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 7158,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 7158,
+   "p50": 0.6
+  },
+  "kp_5-10": null,
+  "kp_10-20": null,
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 4804,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.0695,
+  "f_over_output_p50": 0.883,
+  "|p|_p50": 0.221,
+  "|i|_p50": 0.2929,
+  "|f|_p50": 0.2658,
+  "|err|_p50": 0.3683,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000003b--a4a7f4dbf1",
+  "nseg": 14,
+  "which": {
+   "torqueState": 82910
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-07-31 23:48",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    826
+   ]
+  ],
+  "ltp": {
+   "n": 3307,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.041,
+   "friction_filt_p50": 0.18,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 62645,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 46911,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 5923,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 10807,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 18247,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 11934,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 15447,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.2488,
+  "f_over_output_p50": 2.111,
+  "|p|_p50": 0.0802,
+  "|i|_p50": 0.2128,
+  "|f|_p50": 0.3182,
+  "|err|_p50": 0.1336,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000004a--346bf31d97",
+  "nseg": 6,
+  "which": {
+   "torqueState": 36003
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-08-02 19:03",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    360
+   ]
+  ],
+  "ltp": {
+   "n": 1440,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.16,
+   "friction_filt_p50": 0.18,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 18915,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 18534,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 15247,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 2232,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 1055,
+   "p50": 0.6
+  },
+  "kp_v>20": null,
+  "ki_eff": {
+   "n": 0,
+   "p5_p50_p95": null
+  },
+  "f_over_output_p50": 0.335,
+  "|p|_p50": 4.9606,
+  "|i|_p50": 0.0,
+  "|f|_p50": 0.2717,
+  "|err|_p50": 8.2677,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000004e--11f5b814b6",
+  "nseg": 4,
+  "which": {
+   "torqueState": 24000
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-08-03 16:44",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": false,
+     "steerRatio": 11.82
+    },
+    240
+   ]
+  ],
+  "ltp": {
+   "n": 960,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 3.083,
+   "friction_filt_p50": 0.18,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 24000,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 17810,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 782,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 871,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 5209,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 10948,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 1875,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.35,
+  "f_over_output_p50": 2.06,
+  "|p|_p50": 0.0708,
+  "|i|_p50": 0.2022,
+  "|f|_p50": 0.1907,
+  "|err|_p50": 0.1181,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000065--ae43aa0f27",
+  "nseg": 11,
+  "which": {
+   "torqueState": 63280
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-08-06 23:43",
+   "gitCommit": "8640f0605",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.10.3",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    629
+   ]
+  ],
+  "ltp": {
+   "n": 2521,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.428,
+   "LAF_raw_p50": 3.043,
+   "friction_filt_p50": 0.1673,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 44985,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 30889,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 6453,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 7190,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 14078,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 3168,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 11673,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.3609,
+  "f_over_output_p50": 1.926,
+  "|p|_p50": 0.0562,
+  "|i|_p50": 0.0327,
+  "|f|_p50": 0.2504,
+  "|err|_p50": 0.0937,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000074--ef6c21294f",
+  "nseg": 1,
+  "which": {
+   "torqueState": 5266
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-08-10 08:54",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    1
+   ]
+  ],
+  "ltp": {
+   "n": 102,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.261,
+   "LAF_raw_p50": 2.871,
+   "friction_filt_p50": 0.1658,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 0,
+  "torque_version": [],
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000075--9bbcb3f7da",
+  "nseg": 16,
+  "which": {
+   "torqueState": 92647
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-08-10 08:55",
+   "gitCommit": "9e3ab90bd",
+   "gitBranch": "StarPilot",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 11.82
+    },
+    927
+   ]
+  ],
+  "ltp": {
+   "n": 3715,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.347,
+   "LAF_raw_p50": 2.876,
+   "friction_filt_p50": 0.1672,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 58084,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 31062,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 6053,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 8031,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 8547,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 8431,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 15100,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.3095,
+  "f_over_output_p50": 1.679,
+  "|p|_p50": 0.0336,
+  "|i|_p50": 0.0768,
+  "|f|_p50": 0.1282,
+  "|err|_p50": 0.056,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000085--cad692c3d3",
+  "nseg": 5,
+  "which": {
+   "torqueState": 29866
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-08-13 16:11",
+   "gitCommit": "682b4b5c9",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 14.4
+    },
+    299
+   ]
+  ],
+  "ltp": {
+   "n": 1200,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.65,
+   "LAF_raw_p50": 2.998,
+   "friction_filt_p50": 0.198,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 24816,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 19026,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 3386,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 6713,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 6423,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 2504,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 10736,
+   "p5_p50_p95": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "ki_lsq": 0.2347,
+  "f_over_output_p50": 1.479,
+  "|p|_p50": 0.0811,
+  "|i|_p50": 0.1819,
+  "|f|_p50": 0.2848,
+  "|err|_p50": 0.1351,
+  "sat_frac": 0.003,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000096--57f5183b32",
+  "nseg": 15,
+  "which": {
+   "torqueState": 87006
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-08-20 08:56",
+   "gitCommit": "a0cf28539",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.33
+    },
+    868
+   ]
+  ],
+  "ltp": {
+   "n": 3480,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.362,
+   "LAF_raw_p50": 3.111,
+   "friction_filt_p50": 0.1771,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 57371,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 32118,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 5980,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 7246,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 8651,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 10241,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 12412,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0248,
+  "f_over_output_p50": 1.765,
+  "|p|_p50": 0.0357,
+  "|i|_p50": 0.0063,
+  "|f|_p50": 0.0972,
+  "|err|_p50": 0.0596,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000097--489d7896b3",
+  "nseg": 18,
+  "which": {
+   "torqueState": 106785
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-08-20 13:34",
+   "gitCommit": "a0cf28539",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA-A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.33
+    },
+    1068
+   ]
+  ],
+  "ltp": {
+   "n": 4279,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.272,
+   "LAF_raw_p50": 2.549,
+   "friction_filt_p50": 0.1769,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 68575,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 43095,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 6347,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 3752,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 21467,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 11529,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 20067,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.1045,
+  "f_over_output_p50": 1.848,
+  "|p|_p50": 0.0443,
+  "|i|_p50": 0.0603,
+  "|f|_p50": 0.2494,
+  "|err|_p50": 0.0738,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000009e--54bb0788af",
+  "nseg": 11,
+  "which": {
+   "torqueState": 64320
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-08-20 21:14",
+   "gitCommit": "73f64ac75",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.33
+    },
+    640
+   ]
+  ],
+  "ltp": {
+   "n": 2569,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.077,
+   "LAF_raw_p50": 1.969,
+   "friction_filt_p50": 0.1891,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 40460,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 22012,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 6104,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 4266,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 9835,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 1807,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 12598,
+   "p5_p50_p95": [
+    -0.0262,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0358,
+  "f_over_output_p50": 1.616,
+  "|p|_p50": 0.0355,
+  "|i|_p50": 0.0152,
+  "|f|_p50": 0.1034,
+  "|err|_p50": 0.0591,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_0000001e--28ef595061",
+  "nseg": 23,
+  "which": {
+   "torqueState": 133052
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-08-26 20:56",
+   "gitCommit": "36d0c074f",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.30000000149011613,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.329999923706055
+    },
+    1332
+   ]
+  ],
+  "ltp": {
+   "n": 5336,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 1.689,
+   "LAF_raw_p50": 7.731,
+   "friction_filt_p50": 0.212,
+   "liveValid_frac": 0.0
+  },
+  "active_frames": 99465,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 82662,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 9847,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 17906,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 34997,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 19912,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 27479,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.0354,
+  "f_over_output_p50": 1.954,
+  "|p|_p50": 0.0878,
+  "|i|_p50": 0.0067,
+  "|f|_p50": 0.1795,
+  "|err|_p50": 0.1463,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ },
+ {
+  "route": "75604b0a432fdc89_00000023--fc5f268959",
+  "nseg": 9,
+  "which": {
+   "torqueState": 53742
+  },
+  "undecodable": 0,
+  "errors": [],
+  "init": {
+   "wall": "2026-08-27 21:39",
+   "gitCommit": "2c002755c",
+   "gitBranch": "Dom",
+   "gitRemote": "https://github.com/firestar5683/openpilot.git",
+   "version": "0.11.2",
+   "dirty": false
+  },
+  "carParams": {
+   "fingerprint": "HONDA_ACCORD",
+   "which": "torque",
+   "steerActuatorDelay": 0.10000000149011612,
+   "latAccelFactor": 1.689333438873291,
+   "friction": 0.2120497077703476,
+   "kpDEPRECATED": 0.0,
+   "kiDEPRECATED": 0.0,
+   "kfDEPRECATED": 0.0,
+   "latAccelOffset": 0.0,
+   "epsFw": [
+    "39990-TVA,A160\u0000\u0000",
+    "\u0011L-130520-03461268             "
+   ]
+  },
+  "toggles": [
+   [
+    {
+     "steerKp": [
+      [
+       0
+      ],
+      [
+       0.6
+      ]
+     ],
+     "honda_lateral_pid_kp_scale": 1.0,
+     "honda_lateral_pid_ki_scale": 1.0,
+     "force_torque_controller": true,
+     "nnff": false,
+     "nnff_lite": false,
+     "steerActuatorDelay": 0.2,
+     "use_custom_steerActuatorDelay": true,
+     "steerRatio": 16.329999923706055
+    },
+    536
+   ]
+  ],
+  "ltp": {
+   "n": 2149,
+   "useParams_frac": 1.0,
+   "LAF_filt_p50": 2.374,
+   "LAF_raw_p50": 5.501,
+   "friction_filt_p50": 0.1443,
+   "liveValid_frac": 1.0
+  },
+  "active_frames": 39916,
+  "torque_version": [
+   2
+  ],
+  "kp_eff": {
+   "n": 24585,
+   "p5_p50_p95": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "kp_v<5": {
+   "n": 2011,
+   "p50": 0.6
+  },
+  "kp_5-10": {
+   "n": 4842,
+   "p50": 0.6
+  },
+  "kp_10-20": {
+   "n": 10416,
+   "p50": 0.6
+  },
+  "kp_v>20": {
+   "n": 7316,
+   "p50": 0.6
+  },
+  "ki_eff": {
+   "n": 13385,
+   "p5_p50_p95": [
+    0.15,
+    0.15,
+    0.15
+   ]
+  },
+  "ki_lsq": 0.1055,
+  "f_over_output_p50": 2.444,
+  "|p|_p50": 0.047,
+  "|i|_p50": 0.1471,
+  "|f|_p50": 0.2763,
+  "|err|_p50": 0.0784,
+  "sat_frac": 0.0,
+  "pid_active_frames": 0
+ }
+]

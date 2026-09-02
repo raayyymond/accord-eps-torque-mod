@@ -1,6 +1,7 @@
 🛑 **THIS INDEX IS PAGINATED IN EIGHT.** This page alone is not the whole memory —
 the continuation pages carry the rest, newest last:
 
+- 🛑🛑⭐⭐⭐⭐⭐ [MEASURED: kp = 0.600 on ALL 60 routes — the Honda Kp/Ki scale NEVER acted; ki went 0.35→0.15 by a commit on 2026-08-18](accord/calibration/accord-honda-kp-ki-scale-never-acted-kp-is-0600-on-all-60-routes.md) — SteerKP (0.3–0.9, never moved) is the only live kp knob; it overrides the Accord's 0.8 every frame
 - 🛑⭐⭐⭐⭐⭐ [`gp-0x6b38` IS the delivered lane torque (the added term is provably zero) and it FORWARDS to `gp-0x6b3c` @0x2B41C](accord/firmware/accord-gp6b38-is-the-delivered-lane-torque-and-forwards-to-gp6b3c.md) — first byte-level link toward the motor; search_instructions found 3 of 5 accesses; V279 taps it on 427
 - 🛑🛑⭐⭐⭐⭐⭐ [StarPilot runs the TORQUE controller; the 0.33 multiplier was INERT — torqued's live LAF compensated the 6x](accord/calibration/accord-starpilot-torque-controller-the-033-multiplier-was-inert.md) — kp flat 0.6, friction is 60-80% of V279's loop gain at 3.9 Hz; first move SteerFriction 0.212→0.08, SteerLatAccel→2.53
 - 🛑⭐⭐⭐⭐⭐ [The operator runs FORCE TORQUE CONTROLLER — check HIS toggles, not the code's defaults](feedback/process/feedback-the-operator-runs-force-torque-controller-check-toggles-not-defaults.md) — a whole tune derivation shipped on the default path and was retracted the same day
