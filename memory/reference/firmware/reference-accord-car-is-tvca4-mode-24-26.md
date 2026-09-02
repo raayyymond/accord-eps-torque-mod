@@ -67,3 +67,5 @@ at creep** — and since V69 was byte-stock, that is a **measurement of the STOC
 
 Related: [[accord-damper-is-mode-table-selected]] (the first half of this finding, which stopped one step
 short), [[accord-two-lane-rule-grind2]], [[reference-accord-two-dead-zones-speed-and-rate]].
+
+> 🛑 **UPDATE 2026-09-01 (later the same day): the live selector was MEASURED on the V276 wire = 7 (record 11 `TVCA4`). The "record 2 (slots 10/11) vs record 11" question and any "slot 1 / TVAA1" statement here are superseded -- see [[accord-the-live-variant-selector-is-7-tvca4-measured-on-the-wire]].**
