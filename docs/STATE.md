@@ -27,8 +27,10 @@ has set aside the pure-feedforward path: it needs a StarPilot retune; V278/V280 
 | artifact | https://claude.ai/code/artifact/9177a537-83c4-463d-83e9-8c0523f5f34d |
 
 **REV 3 MEASURED (2026-09-02, `V278R3-READ-2026-09-02.md`, `HIGHANGLE-V278R3-…`, `SERVO-AT-REFERENCE-…`, `studies/v280/`):**
-3.9 Hz mode GONE (band excess 0.76 vs V276 4.58, corpus p50 0.82). Saturation duty 0.000 → the clamps are not a lever (pre-registered
-null confirmed). Sustained full-demand rate 42.3/56.4 deg/s = 1.9× the ×1 builds, 32 % of ×6. Damping statistic 0.40 on normal
+3.9 Hz mode GONE (band excess 0.76 vs V276 4.58, corpus p50 0.82). Tap saturation duty 0.000 at the FULL-SPEED rail (2472) — but that
+rail is unreachable below 10 m/s (post-sum multiplier ~0.5 there, measured T/sim T 0.42–0.51; delivered rail ~1240–1680, and T reached
+1704 max): at speed nothing saturated; in the slow stalled turns P railed ~50 % of ticks (chain sim) and T sat near its low-speed rail with
+100 % ripple. Widening the clamps is still not the lever (it widens P's window toward the wobble). Sustained full-demand rate 42.3/56.4 deg/s = 1.9× the ×1 builds, 32 % of ×6. Damping statistic 0.40 on normal
 frames — the prereg's 0.60 was V276-specific and its refutation clause fired; the scalar is regime-dependent, not diagnostic.
 Stutter: 7.0–7.6 Hz line, 10 episodes, all |angle| ≥ 30°, absent on stock/V112; the driver-torque channel RINGS at 7 Hz there
 (1470–1960 raw, mean ~0). Grinding not scorable (23 s manual). **Tap field = `((b0&3)<<8)|b1`; damping = sign(T) ≠ sign(RAW

@@ -117,7 +117,8 @@ corrections only (a P-only rail reads 307, the sum rail 310; D one-tick rails 0.
 
 **ON-CAR (operator):** amazing authority in max angular velocity and acceleration · no audible grinding (maybe a very attenuated
 trace) · **stuttering/oscillation at high angles far from centre — the largest issue** · no more constant oscillation · not yet 6× max
-rate. **MEASURED:** 3.9 Hz mode gone (0.76 vs 4.58); saturation 0.000; full-demand rate 42.3/56.4 deg/s (1.9× the ×1 builds); damping
+rate. **MEASURED:** 3.9 Hz mode gone (0.76 vs 4.58); tap saturation 0.000 at the full-speed rail (unreachable below 10 m/s: post-sum multiplier ~0.5, delivered rail
+~1240–1680, T max 1704 — P railed ~50 % of stall ticks per the chain sim); full-demand rate 42.3/56.4 deg/s (1.9× the ×1 builds); damping
 stat 0.40 normal (prereg's 0.60 was V276-specific — refuted by its own clause; regime-dependent, not diagnostic); stutter = 7.0–7.6 Hz
 line at \|angle\| ≥ 30°, P desaturating on a stalled wheel (see V280). Tap decoder corrected: field `((b0&3)<<8)\|b1`, damping vs RAW
 rate, sign(T) = +sign(cmd) on the wire.

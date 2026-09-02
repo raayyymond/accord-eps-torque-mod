@@ -14,7 +14,7 @@ servo_at_reference.py}`, `analysis-2020accord/studies/v280/V280-MAP-DESIGN-2026-
 |---|---|---|
 | 7 Hz episodes | 10 of 13, all \|angle\| >= 30 deg, 3-9 m/s, cmd railed (idx 237-238), planner flat | inside the EPS loop |
 | driver torque during them | a 7 Hz RING, amplitude 1470-1960 raw, mean ~0 (column twist), peaks graze the 2240 cliff 3-12 % of frames | not a hand on the wheel -- a magnitude-of-a-ringing-sensor misread was caught |
-| 7 of 10 episodes | rate 10-20 deg/s vs reference 36-45 (rate/ref 0.30-0.49), \|E\| +6.9k..+9.4k, P railed 56-67 % | stalled wheel; ripple crosses P's linear window (\|E\| < 15360*256/696 = 5650) |
+| 7 of 10 episodes | rate 10-20 deg/s vs reference 36-45 (rate/ref 0.30-0.49), \|E\| +6.9k..+9.4k, P railed 56-67 % (chain sim on measured rate) | stalled wheel; ripple crosses P's linear window (\|E\| < 15360*256/696 = 5650). The tap's "saturation 0.000" is at the FULL-SPEED rail 2472, unreachable below 10 m/s (post-sum multiplier ~0.5: T_meas/T_sim 0.42-0.51; delivered rail ~1240-1680; T max 1704). At speed nothing saturated; in stalls P railed and T sat near its low-speed rail. |
 | 3 of 10 | rate 52-73 deg/s ABOVE the reference (driver spinning in), fb clamp binds 33-65 %, lane BRAKES | V280 will push WITH the driver here instead (brake 0.6-0.8 -> 0.01) |
 | stock r97 / V112 r22 at high angle | same stalled structure at 1/6 torque (stock); V112 at its reference with fb ripple 2.5 deg/s | no 7 Hz line on either |
 
