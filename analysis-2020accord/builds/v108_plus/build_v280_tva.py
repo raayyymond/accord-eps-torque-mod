@@ -1,6 +1,22 @@
 # -*- coding: utf-8 -*-
-r"""V280 -- THE MAP TOP RAISED TO x6 ABOVE THE KNEE, THE LOW-COMMAND REGION KEPT AT x2.  BASE: V268.
-Delivered-torque tap (V278 rev 3 / V279 rev 2 window) unchanged.
+r"""V280 rev 2 -- THE MAP MADE A STRAIGHT LINE TO THE x6 TOP.  BASE: V268.  Tap (V278 rev 3 window) unchanged.
+
+=== REV 2 (2026-09-02) ===========================================================================
+Operator, after reading rev 1 (the knee at 96): "change the setpoint curve to be linear instead of having a knee at 96,
+we should linearize this response as much as possible for openpilot to control torque."  Rev 2: every record's Y is a
+STRAIGHT LINE through the origin to its own x6 top -- Y'(X) = round(6 * Ytop * X / 240).  Slot 7: 0, 52, 86, 103, 138,
+275, 413, 550, 688, 1032 (slope 4.3 per idx).  Relative to Honda's CONCAVE stock shape that is x2.15 at idx 12, x2.2 at 32,
+x2.7 at 58, x3.3 at 96, x6 at 240 -- the low-command region is NO LONGER rev 3's x2.  The consequence for the damping
+fraction in V276's ringing frames (idx <= 58), chain sim (V280-LINEAR-MAP-2026-09-02.md): 0.840 for the straight line
+vs 0.863 for rev 3 / the knee (flown clean at 0.863; V276 rang at 0.576).  The loss is at idx 32-58 (0.851 -> 0.780),
+where the concave stock map flattens and the line does not; idx <= 12 is unchanged.  Fully-linear alternatives that hold
+0.863: slope 3.8 (top 912, x5.3, ceiling 118 deg/s); a two-segment 3.8 -> 4.48 keeps 1032 with an 18 % kink at idx 64.
+The operator chose linearity; 0.840 is between K=2 (0.863) and K=2.5 (0.82), both above any value that rang.  The stall
+margin at the top is unchanged from rev 1 (96 deg/s of ripple to desaturate P at a 15 deg/s stall).
+Also corrected in rev 2's text: V276 is NOT cited as on-car evidence for anything -- it oscillated constantly and was
+barely driven laterally engaged (operator).  "Engaged" everywhere means 0xE4 STEER_REQUEST & 0x18F STEER_CONTROL_ACTIVE.
+Rev 1 (knee at 96, image 47bdfb0d...) is SUPERSEDED-DO-NOT-FLASH.
+
 
 === WHY THIS BUILD EXISTS ======================================================================
 V278 rev 3 FLEW 2026-09-02 (route ..._00000031).  Operator: "amazing authority in terms of maximum angular
@@ -26,6 +42,7 @@ osc-highangle/HIGHANGLE-V278R3-2026-09-02.md, SERVO-AT-REFERENCE-2026-09-02.md, 
     override cliff on 3-12 % of frames.
 
 THE LEVER, AND WHY IT ADDRESSES BOTH COMPLAINTS AT ONCE:
+  (rev 1 reasoning, kept for the record; rev 2 replaces the knee with a straight line -- see the REV 2 block above)
   Raise the map's TOP (idx > 96) from x2 toward x6, keep idx <= 96 at exactly x2.
   - Low-command region (where V276 rang; its ringing frames were idx p50 20 / max 58): byte-identical to
     rev 3, so the damping fraction in those frames is rev 3's 0.863 by construction (V276: 0.576).
@@ -44,16 +61,16 @@ THE LEVER, AND WHY IT ADDRESSES BOTH COMPLAINTS AT ONCE:
     known path and is NOT changed here (V277's softened cliff stays on the shelf).
 
 === THE CELLS ==================================================================================
-  [A] ASSIST MAP -- 28 records via 0xC9A88.  Per knot, Y' = round(Y x f(X)) with
-        f = 2 for X in (0,12,20,24,32,64,96);  f(128) = 26/9 = 2.889;  f(160) = 34/9 = 3.778;  f(240) = 6
-      (linear in X from x2 at 96 to x6 at 240).  Slot 7 (live, record 11 TVCA4, stock Y ... 154,166,172):
-        Y = 0,48,84,100,124,200,252, 445, 627, 1032.   idx <= 96 byte-identical to rev 3; the top knot of every
-      record == V276's (x6) top knot -- both asserted against THOSE images.
+  [A] ASSIST MAP -- 28 records via 0xC9A88.  REV 2: per knot, Y' = round(K_TOP x Ytop x X / 240) -- a straight line
+      through the origin to the record's own x6 top (X untouched).  Slot 7 (live, record 11 TVCA4, stock top 172):
+        Y = 0, 52, 86, 103, 138, 275, 413, 550, 688, 1032.   The top knot of every record == V276's image (asserted);
+      the low knots are NEW values (rev 3 had x2 of stock's concave shape there).
   [B] FEEDBACK CLAMP 0xC62E6: 15360 -> 46080 = 7680 x 6 = V276's flown value.  Honda's 1.395 setpoint:feedback
-      ratio holds at the ceiling (46080 / (32 x 1032) = 1.395).  Below the knee the clamp is looser than stock's
+      ratio holds at the ceiling (46080 / (32 x 1032) = 1.395).  Below the top the clamp is looser than stock's
       ratio would give; on rev 3's log |fb| >= 15360 on 4.7 % of ticks and the low-idx damping fraction is
       IDENTICAL at either clamp (the comparator is a sign; P rails at |E| >= 15855 at idx 0, 5650 at idx >= 136).  All 3 readers
-      are ld.hu (asserted): 46080 > 32767 is SAFE here.  V276 flew this exact value.
+      are ld.hu (asserted; full decode adv280b: op 0x3F, hw2 odd, reg1 = r5 = tp on this ABI -- the cell IS tp-relative,
+      0xBF000 + 0x72E6): 46080 > 32767 is SAFE here.
   [C] TAP unchanged: CAN-427 = (sign(T)<<9) | (|T|>>3), T = gp-0x6b38.  Field = ((b0&3)<<8)|b1 on the wire.
 
 === PRE-REGISTERED READ (rlog-tools/studies/osc-highangle/PREREG-V280-READ.md) =================
@@ -62,25 +79,29 @@ On frames |angle| >= 30 deg AND idx >= 200, per >= 1 s run, with the existing ta
   (ii) 0x18F signed driver-torque 6-8.5 Hz amplitude: rev 3 1470-1960 raw (no tap needed).
   (iii) 7 Hz episodes per 100 s of high-angle engaged time: rev 3 10 / 102 s.
   Max rate: sustained full-demand hands-light rate p50 -- rev 3 42.3 (p90 56.4); V280 must exceed 56.
-  Low-command: damping fraction on |cmd| < 1300 frames == rev 3's (0.40 on rev 3's own normal driving);
+  Low-command: damping fraction on |cmd| < 1300 frames 0.30-0.40 (chain on rev 3's frames: 0.34; rev 3 read 0.40);
   2-4 Hz band excess < 1.39 (corpus p95).
+  Low-command: the straight line raises the small-signal loop gain x1.6-1.8 at idx 32-58 vs rev 3 (Kp rises with idx, so
+  a linear map makes the loop gain GROW with command where rev 3's fell).  A 3.9 Hz return on straight roads => slope 3.8.
   FAIL sentences: ripple/level >= 0.45 or torque ring >= 1200 raw while |T| sits at its low-speed rail  =>
   the 7 Hz is D- or plant-fed and the map top is not the lever (next: Kd, or the cliff).  Rate p50 <= 56 with
   |T| unchanged => load / the low-speed multiplier limits, not the map.  A 3.9 Hz return on straight roads
-  => the knee must move down (idx 64), not the top.
+  => the slope comes down to 3.8 (top 912), which holds rev 3's 0.863.
 
 === RISK, PLAINLY ==============================================================================
-The top of the map is V276's.  What differs from V276 is ONLY idx <= 96 (x2 instead of x6), and the whole
-V276 oscillation lived there (idx <= 58).  Authority at full demand will rise toward V276's -- the operator
+REV 2: the top knot is x6 (as V276 carried) and every other knot (X = 12..160) is a NEW value -- the ratio to stock's
+concave map runs x2.17 at idx 12 -> x4.14 at 160.  V276 is NOT a reference (it oscillated constantly and was barely
+driven engaged).  In the region where V276 rang (idx <= 58) the line is x2.2-2.7 of stock vs rev 3's x2, damping
+fraction 0.840 vs 0.863 (chain sim).  Authority at full demand will rise toward V276's -- the operator
 liked that -- and the lane will push with, not against, a driver who spins the wheel fast.  Peak torque
 unchanged (a P-only rail delivers 2461 and reads 307 through the post-sum 254/256 multiplier [BELIEF, from two
 tapers at 255]; the sum-clamp rail 2481 / 310 needs D's help; the clamps and gain are frozen -- adv280b).  Override taper byte-stock.
 
 === CLASS OF BUILD =============================================================================
-The reference lever a THIRD time, now SHAPED: V276 (x6 flat) -> V278 (x2 flat) -> V280 (x2 to 96, x6 at
-240).  Flown before: the x2 region (rev 3, clean) and the x6 top knot + clamp 46080 (V276, no turn stutter).
-NOT flown before: the knee itself, and the INTERPOLATED knots at X=128 (26/9) and X=160 (34/9) -- 4 of the 10 knots
-per record carry values no build has carried (rev 3 had 308/332 there, V276 924/996); V280 sits between them.  Cal-only; tap unchanged; interpretable from one high-angle turn and one straight road.
+The reference lever a THIRD time, now LINEARISED: V276 (x6 of the concave stock shape) -> V278 (x2 of it) -> V280 rev 2
+(a straight line, 4.3 per idx, to the same x6 top).  Flown before: the x2 region (rev 3, clean) and the x6 top knot + clamp 46080 (V276, no turn stutter).
+NOT flown before (rev 2): every knot X = 12..160 -- 8 of the 10 knots per record carry values no build has carried.
+There is no knee in rev 2; the rev-1 knee text above is kept as the record of the superseded design.  Cal-only; tap unchanged; interpretable from one high-angle turn and one straight road.
 """
 import hashlib
 import os
@@ -109,22 +130,20 @@ from firmware_paths import plain_image_path, RWD_DIR                            
 from verify_bootloader_crc import walk, walk_all_blocks                            # noqa: E402
 
 START, END = 0x13000, 0x100000
-WRITE_MODE = os.environ.get("ACCORD_V280_WRITE", "").strip().lower()
+WRITE_MODE = os.environ.get("ACCORD_V280R2_WRITE", "").strip().lower()
 
 BASE_NAME = "_v268_V268-V112BASE-BOTH.PUMPS.ALL.MODES_plain_image.bin"
 BASE_SHA = "39c4e517ad63929eb6de64116a405260d4941ed8e62d5bb01d0210fe49da727f"
-K = 2                                                   # the LOW-COMMAND scale (idx <= 96): rev 3's, unchanged
-K_TOP = 6                                               # the scale at idx 240: V276's
-KNEE_X = 96                                             # last knot held at K; f rises linearly to K_TOP at X = 240
+K = 2                                                   # rev 3's uniform scale -- kept only for the rev-3 cross-reads and messages
+K_TOP = 6                                               # the scale at idx 240
+KNEE_X = 0                                              # rev 2: NO knee -- the whole map is one straight line from the origin
 from fractions import Fraction as _Fr
-def f_of_x(x):
-    if x <= KNEE_X:
-        return _Fr(K)
-    return _Fr(K) + _Fr(K_TOP - K) * _Fr(x - KNEE_X, 240 - KNEE_X)
-def scale_y(y, x):
-    v = _Fr(y) * f_of_x(x)
-    return int(v + _Fr(1, 2)) if v >= 0 else -int(-v + _Fr(1, 2))     # round half up, exact rationals
-TAG = f"V280-V268BASE-MAP{K}X.TO{K_TOP}X.KNEE{KNEE_X}.FEEDBACK46080.TORQUE.TAP"
+def line_y(ytop, x):                                     # rev 2: Y'(X) = round(K_TOP * ytop * X / 240), exact rationals, round half up
+    v = _Fr(K_TOP * ytop * x, 240)
+    return int(v + _Fr(1, 2))
+TAG = f"V280R2-V268BASE-MAP.LINEAR.TO{K_TOP}X.FEEDBACK46080.TORQUE.TAP"
+REV1_IMAGE = "SUPERSEDED_v280_rev1_KNEE96_plain_image.bin"
+REV1_SHA = "47bdfb0ddd0e69e2302b814ee6e1c40d683b2d9625189d5e9ef4e98d5bfd7411"
 REV3_IMAGE = "_v278_V278R3-V268BASE-REFERENCE2X.MAP.FEEDBACK.TORQUE.TAP_plain_image.bin"
 REV3_SHA = "aadeced67ac4f9391db42e2d6779390add9d4c7cdaeeed017111ca629c3765e6"
 V276_IMAGE = "_v276_V276-V268BASE-REFERENCE6X.MAP.FEEDBACK_plain_image.bin"
@@ -285,7 +304,7 @@ def jump_targets(img):
 
 def build():
     print("=" * 102)
-    print(f"  V280 -- MAP x{K} to X={KNEE_X}, x{K_TOP} at 240; clamp 46080.  Kp/Kd/taper/gain/clamps FROZEN.  TORQUE TAP.  BASE V268.")
+    print(f"  V280 rev 2 -- MAP a STRAIGHT LINE to x{K_TOP} at 240; clamp 46080.  Kp/Kd/taper/gain/clamps FROZEN.  TORQUE TAP.  BASE V268.")
     print("=" * 102)
 
     print("\n  [1] BASE = V268")
@@ -346,8 +365,8 @@ def build():
     attributed = set()
 
     # ------------------------------------------------------------------------------------------
-    print(f"\n  [2] [A] ASSIST MAP -- x{K} to X={KNEE_X}, rising to x{K_TOP} at X=240, all {N_SLOTS} records")
-    check([float(f_of_x(x)) for x in MAP_X] == [2, 2, 2, 2, 2, 2, 2, 26 / 9, 34 / 9, 6], "profile f(X) = 2,2,2,2,2,2,2, 26/9, 34/9, 6")
+    print(f"\n  [2] [A] ASSIST MAP -- a STRAIGHT LINE from the origin to x{K_TOP} of each record's top, all {N_SLOTS} records")
+    check(line_y(172, 240) == 1032 and line_y(172, 12) == 52 and line_y(172, 96) == 413, "line_y(172, .) = 52 @12, 413 @96, 1032 @240")
     ptrs = sorted({u32(base, MAP_PTR + 4 * s) for s in range(N_SLOTS)})
     check(all(START <= p < END for p in ptrs), f"all {len(ptrs)} map pointers in range")
     check(bytes(code[MAP_PTR:MAP_PTR + 4 * N_SLOTS]) == bytes(base[MAP_PTR:MAP_PTR + 4 * N_SLOTS]),
@@ -358,7 +377,7 @@ def build():
         check(n == MAP_N, f"map 0x{p:05X} npt == {MAP_N}")
         X, Y = rec(base, p, n)
         check(tuple(X) == MAP_X, f"map 0x{p:05X} X == stock (X is NOT touched)")
-        newY = tuple(scale_y(y, x) for x, y in zip(X, Y))
+        newY = tuple(line_y(Y[-1], x) for x in X)
         check(max(newY) <= 32767, f"map 0x{p:05X} scaled ceiling {max(newY)} fits int16")
         for i, y in enumerate(newY):
             o = p + 2 + 2 * n + 2 * i
@@ -366,9 +385,9 @@ def build():
             attributed |= {o, o + 1}
         gY = rec(code, p, n)[1]
         bY = rec(base, p, n)[1]                                    # re-read from BASE, not the loop's tuple
-        check(all(gY[i] == scale_y(bY[i], X[i]) for i in range(n)) and gY[-1] == K_TOP * bY[-1],
-              f"map 0x{p:05X} every WRITTEN knot == round(f(X) x BASE knot) (independent re-read), ceiling {bY[-1]} -> {gY[-1]}")
-        check(all(gY[i] == K * bY[i] for i in range(7)), f"map 0x{p:05X} knots X<=96 are EXACTLY {K} x BASE (rev 3's low-command region)")
+        check(all(gY[i] == line_y(bY[-1], X[i]) for i in range(n)) and gY[-1] == K_TOP * bY[-1],
+              f"map 0x{p:05X} every WRITTEN knot == round({K_TOP} x BASEtop x X/240) (independent re-read), top {bY[-1]} -> {gY[-1]}")
+        check(all(abs(gY[i] * 240 - K_TOP * bY[-1] * X[i]) <= 120 for i in range(n)), f"map 0x{p:05X} every knot within half a count of the straight line")
         check(all(gY[i + 1] >= gY[i] for i in range(n - 1)), f"map 0x{p:05X} still monotone")
         shapes.setdefault((tuple(Y), newY), []).append(p)
     for (oldY, newY), ps in shapes.items():
@@ -376,21 +395,20 @@ def build():
     for p in ptrs:
         bY, gY = rec(base, p, MAP_N)[1], rec(code, p, MAP_N)[1]
         rs = [gY[i] / bY[i] for i in range(MAP_N) if bY[i]]
-        check(all(abs(rs[i] - float(f_of_x(MAP_X[i + 1]))) < 0.5 / max(bY[i + 1], 1) + 1e-9 for i in range(len(rs))), f"map 0x{p:05X}: every knot ratio to BASE == f(X) within rounding (no over-dose)")
-        check(all(rs[i + 1] >= rs[i] - 1e-9 for i in range(len(rs) - 1)), f"map 0x{p:05X}: the ratio is non-decreasing in X (the knee rises, never dips)")
+        check(max(rs) <= K_TOP + 1e-9 and rs[-1] == K_TOP, f"map 0x{p:05X}: no knot exceeds x{K_TOP} of BASE and the top is exactly x{K_TOP} (no over-dose)")
     n_scaled = sum(len(ps) for ps in shapes.values())
     check(n_scaled == len(ptrs) == 28, f"ALL 28 records scaled ({n_scaled}) -- an under-dosed record cannot pass silently")
     map_changed = sum(1 for p in ptrs for i in range(MAP_N) for k in (0, 1)
                       if code[p + 2 + 2 * MAP_N + 2 * i + k] != base[p + 2 + 2 * MAP_N + 2 * i + k])
     exp_changed = sum(1 for p in ptrs for i in range(MAP_N) for k in (0, 1)
-                      if struct.pack("<h", scale_y(rec(base, p, MAP_N)[1][i], MAP_X[i]))[k] != struct.pack("<h", rec(base, p, MAP_N)[1][i])[k])
-    check(map_changed == exp_changed, f"exactly {exp_changed} map bytes changed ({map_changed}) -- computed from the profile; 378 = 210 bytes in knots X<=96 + 168 in X=128/160/240 (adv280a), the same total as rev 3 by coincidence")
+                      if struct.pack("<h", line_y(rec(base, p, MAP_N)[1][-1], MAP_X[i]))[k] != struct.pack("<h", rec(base, p, MAP_N)[1][i])[k])
+    check(map_changed == exp_changed, f"exactly {exp_changed} map bytes changed ({map_changed}) -- computed from the line")
     live_p = u32(base, MAP_PTR + 4 * LIVE_SLOT)
     lX, lY = rec(code, live_p, MAP_N)
-    check(tuple(lY) == (0, 48, 84, 100, 124, 200, 252, 445, 627, 1032), f"LIVE slot {LIVE_SLOT} (record 11 TVCA4) Y == 0,48,84,100,124,200,252,445,627,1032")
+    check(tuple(lY) == (0, 52, 86, 103, 138, 275, 413, 550, 688, 1032), f"LIVE slot {LIVE_SLOT} (record 11 TVCA4) Y == 0,52,86,103,138,275,413,550,688,1032")
     print(f"      live slot {LIVE_SLOT} @0x{live_p:05X}: Y = {lY}")
     print(f"      ceiling crossover: 32 x 1032 = 33024 operand = 133.6 deg/s (rev 3: 44.5, stock 22.3)")
-    # the firmware's integer LERP on the live slot: identical to rev 3 for idx <= 96, monotone, 1032 at 240
+    # the firmware's integer LERP on the live slot: a straight line (rev 2), monotone, 1032 at 240
     def lerp(X, Y, i):
         if i <= X[0]:
             return Y[0]
@@ -400,11 +418,11 @@ def build():
             if X[k] <= i < X[k + 1]:
                 return Y[k] + (Y[k + 1] - Y[k]) * (i - X[k]) // (X[k + 1] - X[k])
     bX, bY = rec(base, live_p, MAP_N)
-    check(all(lerp(lX, lY, i) == lerp(bX, [K * y for y in bY], i) for i in range(0, KNEE_X + 1)), f"live LERP(idx) == the x{K}-knot (rev 3) LERP(idx) for EVERY idx 0..{KNEE_X} (integer LERP: knots identical => output identical)")
+    check(all(abs(lerp(lX, lY, i) - 4.3 * i) <= 2.0 for i in range(241)), "live LERP(idx) within 2 counts of 4.3 x idx for EVERY idx 0..240 (a straight line; knot rounding + integer LERP floor)")
     check(all(lerp(lX, lY, i + 1) >= lerp(lX, lY, i) for i in range(240)), "live LERP monotone over 0..240")
-    check(lerp(lX, lY, 240) == 1032 and lerp(lX, lY, 128) == 445 and lerp(lX, lY, 160) == 627, "live LERP 445 @128, 627 @160, 1032 @240")
+    check(lerp(lX, lY, 240) == 1032 and lerp(lX, lY, 128) == 550 and lerp(lX, lY, 96) == 413, "live LERP 413 @96, 550 @128, 1032 @240")
     dmax = max(lerp(lX, lY, i + 1) - lerp(lX, lY, i) for i in range(240))
-    print(f"      steepest LERP step {dmax} counts/idx (top segment (1032-627)/80 = 5.06); 32 x step = dE per idx")
+    print(f"      steepest LERP step {dmax} counts/idx (the line is 4.3/idx); 32 x step = dE per idx")
 
     # ------------------------------------------------------------------------------------------
     print(f"\n  [3] [B] FEEDBACK CLAMP 0xC62E6  {FB_STOCK} -> {FB_NEW}")
@@ -506,7 +524,7 @@ def build():
     check(all(PACK_LO <= x < PACK_HI for x in cb), f"all {len(cb)} changed code bytes lie inside the packer window")
     print(f"      {len(pay)} payload bytes, {len(cb)} code, {len(blocks)} CRC trailers")
 
-    print("\n  [7b] CROSS-IMAGE: rev 3 (same window, x2 low region) and V276 (x6 top, same clamp) -- read from THOSE images")
+    print("\n  [7b] CROSS-IMAGE: rev 3 (same window/code), V276 (same top knots, same clamp), V280 rev 1 (knee) -- read from THOSE images")
     rev3 = Path(plain_image_path(REV3_IMAGE)).read_bytes()
     v276 = Path(plain_image_path(V276_IMAGE)).read_bytes()
     check(hashlib.sha256(rev3).hexdigest() == REV3_SHA, "V278 rev 3 image sha256 matches the reported hash")
@@ -515,11 +533,17 @@ def build():
     d3 = [x for x in range(0xC0000, END) if code[x] != rev3[x] and (x & 0xFFF) < 0xFFC]
     allow3 = {FB_CELL, FB_CELL + 1}
     for p in ptrs:
-        allow3 |= {p + 2 + 2 * MAP_N + 2 * i + k for i in (7, 8, 9) for k in (0, 1)}
-    check(d3 and set(d3) <= allow3, f"vs rev 3: every payload difference is a TOP knot (X=128/160/240) or 0xC62E6 ({len(d3)} bytes)")
+        allow3 |= {p + 2 + 2 * MAP_N + 2 * i + k for i in range(1, MAP_N) for k in (0, 1)}
+    check(d3 and set(d3) <= allow3, f"vs rev 3: every payload difference is a map knot X>=12 or 0xC62E6 ({len(d3)} bytes)")
+    rev1 = Path(plain_image_path(REV1_IMAGE)).read_bytes()
+    check(hashlib.sha256(rev1).hexdigest() == REV1_SHA, "V280 rev 1 (knee) image sha256 matches the reported hash")
+    d1 = [x for x in range(START, END) if code[x] != rev1[x] and (x & 0xFFF) < 0xFFC]
+    allow1 = set()
     for p in ptrs:
-        check(rec(code, p, MAP_N)[1][:7] == rec(rev3, p, MAP_N)[1][:7], f"map 0x{p:05X} knots X<=96 == rev 3's (read from the rev 3 image)")
-        check(rec(code, p, MAP_N)[1][-1] == rec(v276, p, MAP_N)[1][-1], f"map 0x{p:05X} top knot == V276's (read from the V276 image)")
+        allow1 |= {p + 2 + 2 * MAP_N + 2 * i + k for i in range(1, 9) for k in (0, 1)}
+    check(d1 and set(d1) <= allow1, f"vs rev 1: the ONLY differences are map knots X=12..160 ({len(d1)} bytes); clamp, top knots, code identical")
+    for p in ptrs:
+        check(rec(code, p, MAP_N)[1][-1] == rec(v276, p, MAP_N)[1][-1], f"map 0x{p:05X} top knot == V276's image")
     check(u16(v276, FB_CELL) == FB_NEW, "0xC62E6 == V276's flown value (read from the V276 image)")
     d6 = [x for x in range(0xC0000, END) if code[x] != v276[x] and (x & 0xFFF) < 0xFFC]
     allow6 = set()
@@ -554,8 +578,8 @@ def build():
     print("\n  [8b] END STATE -- re-read from the FINAL image and the DECODED .rwd")
     for nm, im in (("code", code), ("dec", dec)):
         check(u16(im, FB_CELL) == FB_NEW, f"{nm}: 0xC62E6 == {FB_NEW}")
-        check(tuple(rec(im, u32(im, MAP_PTR + 4 * LIVE_SLOT), MAP_N)[1]) == (0, 48, 84, 100, 124, 200, 252, 445, 627, 1032), f"{nm}: live slot Y == the V280 profile")
-        check(all(rec(im, p, MAP_N)[1] == [scale_y(y, x) for x, y in zip(MAP_X, rec(base, p, MAP_N)[1])] for p in ptrs), f"{nm}: all 28 map records == profile(base)")
+        check(tuple(rec(im, u32(im, MAP_PTR + 4 * LIVE_SLOT), MAP_N)[1]) == (0, 52, 86, 103, 138, 275, 413, 550, 688, 1032), f"{nm}: live slot Y == the straight line")
+        check(all(rec(im, p, MAP_N)[1] == [line_y(rec(base, p, MAP_N)[1][-1], x) for x in MAP_X] for p in ptrs), f"{nm}: all 28 map records == line(base top)")
         check(bytes(im[PACK_LO:PACK_HI]) == PACK_NEW, f"{nm}: packer window == the torque tap")
         check((u16(im, 0xC61BE) * u16(im, 0xC6CD0)) >> 15 == 2505, f"{nm}: sum-clamp ceiling 15360 x 5346 >> 15 == 2505 (delivered 2481 through the 0.990 readout; reads 310)")
         _s = u16(im, 0xC61BE) * u16(im, 0xC63EE) >> 5; _ro = (_s + _s) >> 5
@@ -565,7 +589,7 @@ def build():
 
     img_sha = hashlib.sha256(bytes(code)).hexdigest()
     rwd_sha = hashlib.sha256(rwd).hexdigest()
-    _scr = os.environ.get("ACCORD_V280_SCRATCH", "").strip()
+    _scr = os.environ.get("ACCORD_V280R2_SCRATCH", "").strip()
     if _scr:
         Path(_scr, f"_v280_{TAG}_plain_image.bin").write_bytes(bytes(code))
         Path(_scr, f"v280_{TAG}.rwd").write_bytes(rwd)
@@ -575,7 +599,7 @@ def build():
         Path(RWD_DIR, f"39990-TVA,A160-{TAG}-0x{START:X}-0x{END:X}.rwd").write_bytes(rwd)
         print("\n      WROTE image + rwd")
     else:
-        print("\n  [9] NOT WRITTEN -- set ACCORD_V280_WRITE=rwd to emit the files")
+        print("\n  [9] NOT WRITTEN -- set ACCORD_V280R2_WRITE=rwd to emit the files")
 
     print("\n" + "=" * 102)
     print(f"  image SHA256 {img_sha}")

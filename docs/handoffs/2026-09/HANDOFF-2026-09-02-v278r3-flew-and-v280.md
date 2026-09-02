@@ -1,8 +1,9 @@
-# HANDOFF 2026-09-02 — V278 rev 3 FLEW; V280 (the knee at 96) BUILT
+# HANDOFF 2026-09-02 — V278 rev 3 FLEW; V280 rev 2 (the straight line to 1032) BUILT
 
 **Status: V278 rev 3 is ON THE CAR (flown 2026-09-02, route `75604b0a432fdc89_00000031--a680e9b2ac`, 11 segments, 581 s
-engaged). V280 BUILT (`47bdfb0d…7411` / rwd `0357a025…84db`), written to `../accord-firmwares`, NOT flashed, three-agent
-adversarial pass clean. Chain: ← `HANDOFF-2026-09-02-v278-rev3-the-torque-tap.md`.**
+engaged). V280 rev 2 BUILT (`b1f19d3e…90fa` / rwd `55cee20f…2e4c`), written to `../accord-firmwares`, NOT flashed. Rev 1 (knee at 96,
+`47bdfb0d…`, three-agent pass clean) SUPERSEDED on the operator's instruction: "change the setpoint curve to be linear instead of
+having a knee at 96, we should linearize this response as much as possible for openpilot to control torque." Chain: ← `HANDOFF-2026-09-02-v278-rev3-the-torque-tap.md`.**
 
 ## The operator's report on rev 3, verbatim
 "amazing authority in terms of maximum angular velocity and acceleration · no audible grinding, maybe felt a very very
@@ -32,18 +33,22 @@ side changes."
    negated the wire once more. Fixed. Also: on the wire **sign(T) = +sign(cmd)** (80 % of frames, 100 % in steady corners) —
    the V279 docstring's "sign(T) == −sign(cmd)" is not what the wire shows (v = −4·cmd, then T = −lane: two negations).
 
-## V280 — what it is and why
-Map ×2 to idx 96 (byte-identical to rev 3, the region where V276 rang: its ringing frames were idx ≤ 58), rising linearly
-to ×6 at 240 (f(128) = 26/9, f(160) = 34/9; slot 7 Y = 0,48,84,100,124,200,252,445,627,1032; top knot = V276's in all 28
-records); `0xC62E6` = 46080 (V276's value; ratio 1.395 at the ceiling; all three readers `ld.hu`, decoded); tap unchanged.
-Reference ceiling 44.5 → 133.6 deg/s. Damping fraction in V276's ringing frames stays 0.863 by construction. Predicted: less
+## V280 rev 2 — what it is and why
+Every map record a STRAIGHT LINE from the origin to its own ×6 top: Y'(X) = round(6·Ytop·X/240); slot 7 Y =
+0,52,86,103,138,275,413,550,688,1032 (4.3/idx; vs stock's concave shape ×2.2 at idx 12, ×2.7 at 58, ×3.3 at 96, ×6 at 240);
+`0xC62E6` = 46080 (ratio 1.395 at the ceiling; all three readers `ld.hu`, decoded); tap unchanged. Reference ceiling 44.5 →
+133.6 deg/s. **Cost of linearity (chain sim, `V280-LINEAR-MAP-2026-09-02.md`):** damping fraction in V276's ringing frames
+0.840 vs rev 3's 0.863 (flew clean) and V276's 0.576 (rang); the loss is entirely at idx 32–58 where stock flattens and the
+line does not. Fully linear slope 3.8 (top 912, ceiling 118) holds 0.863; a two-segment 3.8→4.48 keeps 1032 with an 18 % kink.
+The operator chose linearity. Honda's rising Kp (248→696) means a linear map makes the small-signal loop gain GROW with
+command (×1.6–1.8 rev 3's at idx 32–58) where rev 3's fell. Predicted: less
 7 Hz chatter at high-angle full demand (P pinned at its rail), rate p50 > 56, steadier ~1.3× harder push; the lane pushes
 WITH a driver who spins the wheel above the old reference instead of braking (feel/risk, on the page).
 **Pre-registration:** `rlog-tools/studies/osc-highangle/PREREG-V280-READ.md`. Build: `build_v280_tva.py`, 687/687.
 Design: `analysis-2020accord/studies/v280/` (profile ranking: every knee ≥ 64 ties rev 3 at 0.863; the gate is blind above
-idx 58, so ×6 at the top rests on V276's 73 s, not on the comparator).
+idx 58, so ×6 at the top has NO on-car evidence — V276 carried it but oscillated constantly and was barely driven engaged (operator, 2026-09-02); it rests on the open-loop stall arithmetic only).
 
-## Adversarial pass (three agents, disjoint), all CLEAN
+## Adversarial pass — rev 1 (three agents, disjoint), all CLEAN; rev 2 build-script audit `adv280r2a` (arithmetic and consumer censuses carry over: same cells, clamp, top knots, addresses)
 - `adv280a` build script: rebuild reproduces; 438 bytes vs V268 all attributed; own CRC walk 50/50 + 49/49; rwd == image;
   280 knots reproduced by independent round-half-up (denominators only 9 → no half products; floor would differ at 26 X=128
   knots and is caught); 33 mutations, 31 caught, 2 silent-benign (banker's rounding; LIVE_SLOT=6 is the same shape).
@@ -54,6 +59,14 @@ idx 58, so ×6 at the top rests on V276's 73 s, not on the comparator).
 - `adv280c` consumers: 0xC62E6 readers exactly three, all ld.hu; the 0xC9A88 family has two readers (the live LERP at
   0x29CFC and the dead twin at 0x2ABF2); `gp-0x6a32` has ZERO loads; no interlock consumes sp/E/fb; V280 vs V276 differs in
   code only by the tap window and in cal only by Y[1..8]. Untested: the X=128/160 knots and the ×2-low + 46080 pairing.
+
+## Operator corrections applied this session
+- V276 is NOT a reference build (it oscillated constantly and was barely driven laterally engaged); all "V276 flew ×6 with no
+  turn stutter" language removed. "Engaged" = 0xE4 STEER_REQUEST & 0x18F STEER_CONTROL_ACTIVE — every script this session
+  gates on those (checked); memory `feedback-engaged-means-lateral-engaged-and-v276-is-not-a-reference`.
+- The stutter explanation simplified (page §02): the push pulses because the wobble drags the error in and out of P's ±22.9 deg/s
+  window; raising the rail WIDENS the window toward the operating point and makes it worse — the map is the lever.
+- Page chart labels de-overlapped.
 
 ## Open items (not requested)
 - Ghidra MCP was down all session; every census above is raw-scan only (the kit's required second method), not Ghidra+scan.

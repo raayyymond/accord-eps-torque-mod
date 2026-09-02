@@ -1,6 +1,7 @@
 # PRE-REGISTRATION — reading V280 from ONE drive
 
-Written **2026-09-02, BEFORE the drive.** Build: V280 (map ×2 to idx 96, rising to ×6 at 240; `0xC62E6` = 46080; the
+Written **2026-09-02, BEFORE the drive.** Build: **V280 rev 2** (map a STRAIGHT LINE from the origin to ×6 of each record's top —
+slot 7 Y = 0,52,86,103,138,275,413,550,688,1032, 4.3 per idx; `0xC62E6` = 46080; the
 V278 rev 3 delivered-torque tap unchanged). Instruments already on the wire: CAN 427 = `(sign(T)<<9) | (|T|>>3)`,
 field = `((b0&3)<<8)|b1`, T = `gp-0x6b38`; 0x18F rate (raw, 8 counts/deg/s) and signed driver torque; 0x14A angle;
 0xE4 command. Scripts: `highangle_stutter.py`, `servo_at_reference.py` (this folder), `read_v278r3_route.py` and
@@ -22,7 +23,7 @@ demand: 42.3 deg/s p50 / 56.4 p90 against a 44.5 reference (1.9× the ×1 builds
 | (iii) 7 Hz episodes per 100 s of high-angle engaged time | \|angle\| ≥ 30° | 10 / 102 s | fewer; a count ≥ 8/100 s is a FAIL |
 | (iv) sustained full-demand hands-light rate p50 / p90 (deg/s) | idx = 240 ≥ 0.3 s, driver tq < 400 raw | 42.3 / 56.4 | p50 **> 56**; ceiling reference now 133.6 |
 | (v) tap \|T\| p50 at idx = 240 | same | 539 | ≥ 700 (lane no longer braking at its reference) |
-| (vi) low-command damping fraction P(sign(T) ≠ sign(raw rate)) | \|cmd\| < 1300, engaged | 0.40 | **unchanged, 0.35–0.45** (map identical there) |
+| (vi) low-command damping fraction P(sign(T) ≠ sign(raw rate)) | \|cmd\| < 1300, engaged | 0.40 | **0.30–0.40** (chain on rev 3's frames: 0.34; the line is ×2.2–2.7 of stock at idx ≤ 58 vs rev 3's ×2) |
 | (vii) 2–4 Hz band excess, MID stratum | whole route | 0.76 | < 1.39 (corpus p95); V276 read 4.58 |
 | (viii) saturation P(\|field\| ≥ 309) | engaged | 0.000 | ≤ 0.01 |
 
@@ -33,9 +34,9 @@ demand: 42.3 deg/s p50 / 56.4 p90 against a 44.5 reference (1.9× the ×1 builds
 - (i) ≥ 0.45 or (ii) ≥ 1200 raw while \|T\| sits at its low-speed rail (~1000–1300) → the 7 Hz is D- or plant-fed; the map
   top is NOT the lever. Next: Kd (D is the remaining 7 Hz path, 16·ΔE), or the override cliff the ring's peaks graze.
 - (iv) ≤ 56 with (v) unchanged → road load / the low-speed post-sum multiplier limits, not the map.
-- (vii) ≥ 1.39 or a 3.9 Hz return on straight roads → the knee must move DOWN (idx 64), not the top: the low-command
-  region is byte-identical to rev 3, so a return there means the clamp (46080 vs 15360) matters at low idx after all.
-- (vi) outside 0.30–0.50 → the low-region invariance failed; read the map bytes and the clamp before anything else.
+- (vii) ≥ 1.39 or a 3.9 Hz return on straight roads → the slope comes DOWN to 3.8 (top 912, ×5.3), which holds rev 3's
+  damping fraction 0.863 in V276's ringing frames (the line reads 0.840; V276 rang at 0.576; the threshold is unknown).
+- (vi) outside 0.25–0.45 → the chain model of the low region is wrong; read the map bytes and the clamp before anything else.
 
 ## Risk stated before the drive
 On frames where the driver spins the wheel faster than the OLD reference (52–73 deg/s on rev 3's log, 3 episodes) the
@@ -44,5 +45,4 @@ high-angle full demand ~1.3× rev 3's. Peak torque unchanged (2481 at the rail).
 torque-sensor ring grazes the 2240 cliff on 3–12 % of stutter frames on rev 3 and is not addressed by this build.
 
 ## What refutes this pre-registration
-Any field reading of 313; (vi) moving while the map bytes at idx ≤ 96 are byte-identical to rev 3 (the comparator model
-is wrong); (i) rising while (v) rises (the ripple scales with the push — plant-fed, not P-fed).
+Any field reading of 313; (i) rising while (v) rises (the ripple scales with the push — plant-fed, not P-fed).

@@ -8,20 +8,22 @@
 
 **ON THE CAR: V278 rev 3 (map ×2, feedback clamp 15360, delivered-torque tap) — FLOWN 2026-09-02, route `…_00000031`.
 Operator: amazing authority; no more constant oscillation; no audible grinding; STUTTER at high angles is now the largest
-issue; max rate not yet 6× stock. THE FLIGHT CANDIDATE: V280 — the same map ×2 up to idx 96 (byte-identical to rev 3),
-rising to ×6 at 240 (V276's top knot), `0xC62E6` = 46080 (V276's value), tap unchanged. V279 stays on the shelf (the operator
+issue; max rate not yet 6× stock. THE FLIGHT CANDIDATE: V280 rev 2 — the map a STRAIGHT LINE from the origin to a ×6
+top (operator: "linearize this response as much as possible for openpilot to control torque"), `0xC62E6` = 46080, tap unchanged.
+Rev 1 (a knee at idx 96) is SUPERSEDED. ⚠ V276 is NOT a reference for anything but its own oscillation (it was barely driven
+engaged); "engaged" in every analysis means LATERAL engaged (0xE4 STEER_REQUEST & 0x18F SCA). V279 stays on the shelf (the operator
 has set aside the pure-feedforward path: it needs a StarPilot retune; V278/V280 need none). V277 is WITHDRAWN.**
 
-| | **V280** — the knee at 96 |
+| | **V280 rev 2** — the straight line to 1032 |
 |---|---|
 | base | **V268**, cal-only + rev 3's 34-byte tap window (code region byte-identical to rev 3) |
-| edits | 28 map records: Y×2 for X ≤ 96 (== rev 3), Y×26/9 at X=128, ×34/9 at X=160, ×6 at X=240 (== V276); slot 7 Y = 0,48,84,100,124,200,252,445,627,1032 · `0xC62E6` 15360→46080 |
-| why | rev 3's drive: the REFERENCE (44.5 deg/s) limits the rate, not torque; the 7 Hz high-angle stutter is P desaturating on a stalled wheel (E +7k vs a 5650 linear window, ±6000 ripple) — a ×6 top pins P (E +29k; open-loop ripple/level 0.45→0.18); the region where V276 rang (idx ≤ 58) stays ×2, damping fraction 0.863 by construction |
-| image | `47bdfb0ddd0e69e2302b814ee6e1c40d683b2d9625189d5e9ef4e98d5bfd7411` |
-| rwd | `0357a025fa0d1ebc794d21a05419bfe286f474c7eabc474b31416b4438cc84db` — `39990-TVA,A160-V280-V268BASE-MAP2X.TO6X.KNEE96.FEEDBACK46080.TORQUE.TAP-0x13000-0x100000.rwd` |
-| assertions | **687/687** incl. cross-image (code == rev 3, low knots == rev 3, top knots == V276, clamp == V276) and end-state re-reads; adversarial ×3 CLEAN (rebuild reproduces; 31/33 mutations caught, 2 benign; all 0xC62E6 readers decoded `ld.hu`; consumers censused) |
-| read it by | `rlog-tools/studies/osc-highangle/PREREG-V280-READ.md`: T ripple/level at 6–8.5 Hz in high-angle turns **≤ 0.25** (rev 3 0.55–0.70); full-demand rate p50 **> 56** (rev 3 42.3); low-cmd damping 0.35–0.45 (unchanged); 2–4 Hz excess < 1.39 |
-| risk | the lane will PUSH WITH a driver spinning the wheel above 44.5 deg/s where rev 3 braked; steady push ~1.3× in a stalled turn; peak torque unchanged; taper byte-stock; knots X=128/160 are values no build has flown (between rev 3's and V276's) |
+| edits | 28 map records: Y'(X) = round(6·Ytop·X/240), a straight line to each record's ×6 top; slot 7 Y = 0,52,86,103,138,275,413,550,688,1032 (4.3/idx; ×2.2 at idx 12, ×2.7 at 58, ×3.3 at 96, ×6 at 240 vs stock) · `0xC62E6` 15360→46080 |
+| why | rev 3's drive: the REFERENCE (44.5 deg/s) limits the rate, not torque; the 7 Hz high-angle stutter is P desaturating on a stalled wheel (E +7k vs a 5650 linear window, ±6000 ripple) — a ×6 top pins P (E +29k; open-loop ripple/level 0.45→0.18). COST of linearity: damping fraction in V276's ringing frames (idx ≤ 58) 0.840 vs rev 3's 0.863 (flew clean; V276 rang at 0.576), all of it at idx 32–58 where stock's concave map flattens; slope 3.8 (top 912) would hold 0.863 |
+| image | `b1f19d3e330cd8874a857e57700ffa73b837754d6e5085be0caa33ba398c90fa` (rev 1 knee `47bdfb0d…` SUPERSEDED) |
+| rwd | `55cee20f8f88d43d1632192f7ec48a66a292271632246fc607a018d567022e4c` — `39990-TVA,A160-V280R2-V268BASE-MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP-0x13000-0x100000.rwd` |
+| assertions | **633/633** incl. cross-image (code == rev 3, top knots == V276, clamp == V276, vs rev 1 only knots X=12..160 differ) and end-state re-reads; adversarial: rev 1 ×3 CLEAN (arithmetic + consumer censuses carry over — same cells, clamp, top), rev 2 build-script audit `adv280r2a` |
+| read it by | `rlog-tools/studies/osc-highangle/PREREG-V280-READ.md`: T ripple/level at 6–8.5 Hz in high-angle turns **≤ 0.25** (rev 3 0.55–0.70); full-demand rate p50 **> 56** (rev 3 42.3); low-cmd damping 0.30–0.40 (chain 0.34); 2–4 Hz excess < 1.39 — a 3.9 Hz return → slope 3.8 |
+| risk | the lane will PUSH WITH a driver spinning the wheel above 44.5 deg/s where rev 3 braked; steady push ~1.3× in a stalled turn; peak torque unchanged; taper byte-stock; every knot but the top is a value no build has flown; small-signal loop gain ×1.6–1.8 rev 3's at idx 32–58 (Kp rises with idx, so a linear map makes loop gain GROW with command) |
 | artifact | https://claude.ai/code/artifact/9177a537-83c4-463d-83e9-8c0523f5f34d |
 
 **REV 3 MEASURED (2026-09-02, `V278R3-READ-2026-09-02.md`, `HIGHANGLE-V278R3-…`, `SERVO-AT-REFERENCE-…`, `studies/v280/`):**
