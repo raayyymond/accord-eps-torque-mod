@@ -1,6 +1,9 @@
 🛑 **THIS INDEX IS PAGINATED IN EIGHT.** This page alone is not the whole memory —
 the continuation pages carry the rest, newest last:
 
+- 🛑🛑⭐⭐⭐⭐⭐ [The feedback operand is a TWO-SAMPLE SUM, DC gain 30.89](accord/mechanism/accord-feedback-operand-is-a-two-sample-sum-dc-30-89.md) — add r9,r26 @0x28FA4; two agents read it as 15.45; reconciles 8/deg/s with the 22.3 deg/s ceiling
+- 🛑🛑⭐⭐⭐⭐⭐ [sign(E) alone CANNOT measure damping — it reads 0.50 at every K](accord/instruments/accord-sign-e-alone-cannot-measure-damping.md) — the comparator sign(E)!=sign(fb) is the instrument; run the statistic offline BEFORE cutting a tap
+- 🛑🛑⭐⭐⭐⭐⭐ [V276's mechanism is a matter of DEGREE — damping fraction 0.94 → 0.57, not zero](accord/mechanism/accord-v276-mechanism-is-a-matter-of-degree.md) — combined loop; crossover does not cap amplitude; grip acts at the cliff
 - [MEMORY-PART2](MEMORY-PART2.md)
 - [MEMORY-PART3](MEMORY-PART3.md)
 - [MEMORY-PART4](MEMORY-PART4.md)

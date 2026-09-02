@@ -1,0 +1,76 @@
+==============================================================================================================
+V276 PRE-REGISTRATION READ  route r2e  build(npz)=V276  cache=analysis-2020accord/_scratch/cache\r2e\r2e.npz
+  93153 rows = 15.5 min;  engaged 1.2 min;  manual 14.3 min
+  stratum LOW   engaged   38.5 s   manual  159.7 s
+  stratum MID   engaged   30.9 s   manual  171.1 s
+  stratum HIGH  engaged    2.6 s   manual  233.4 s
+==============================================================================================================
+
+TEST 1 -- is there a real 2-4 Hz oscillation?   CONFIRMS: excess24(rate_f) >= 2.5 engaged in >=2 strata with >=120 s each.   REFUTES: excess24 <= 1.4 (corpus p95).
+TEST 8 -- ALL speeds?   CONFIRMS: excess24 >= 2.5 in all three strata.
+   LOW   engaged    37.0 s  runs   3   excess24(rate_f)=1.023   excess24(ang)=0.999   -> REFUTES(<=1.4)
+   MID   engaged    30.9 s  runs   2   excess24(rate_f)=4.583   excess24(ang)=4.811   -> between
+   HIGH  engaged     0.0 s  runs   0   excess24(rate_f)=  n/a   excess24(ang)=  n/a   -> UNAVAILABLE (<10.24 s)
+   TEST 1 verdict: NOT confirmed  (0 strata >= 2.5 with >= 120 s)
+   TEST 8 verdict: NOT confirmed  (1 of 2 available strata >= 2.5)
+
+TEST 2 -- PEAK not broadband?   CONFIRMS: strict interior max in 1.6-5.0 Hz, peak excess >= 3, Q >= 3, same fc (+-0.4 Hz) in every stratum.   REFUTES: no interior max, or fc moving > 1 Hz.
+   LOW   rate_f: fc=4.49 Hz  peak_excess=8.11  Q=5.75   |  e4tq: fc=4.49  peak_excess=8.06  Q=5.75
+   MID   rate_f: fc=3.91 Hz  peak_excess=13.46  Q=4.00   |  e4tq: fc=3.91  peak_excess=11.67  Q=4.00
+   fc spread across strata = 0.59 Hz   TEST 2 verdict: CONFIRMS
+   LOW  excess curve 1-6 Hz (rate_f): 1.2:0.81 1.6:0.37 2.0:1.50 2.3:0.30 2.7:1.06 3.1:0.17 3.5:0.75 3.9:2.06 4.3:5.99 4.7:7.25 5.1:2.69 5.5:1.00 5.9:0.60
+   MID  excess curve 1-6 Hz (rate_f): 1.2:2.15 1.6:0.77 2.0:0.44 2.3:0.92 2.7:1.18 3.1:1.81 3.5:9.14 3.9:13.46 4.3:5.69 4.7:5.84 5.1:1.42 5.5:1.00 5.9:0.67
+
+TEST 3 -- ENGAGED-ONLY?   CONFIRMS: engaged/manual excess24 >= 3 in a matched stratum with >= 60 s both arms.  REFUTES: ratio <= 1.5.   No manual frames at speed => UNAVAILABLE.
+   LOW   eng excess24=1.023 (37 s)  man excess24=1.883 (108 s)  ratio=  n/a  -> UNAVAILABLE (eng 37 s, man 108 s in contiguous >=5.12 s runs)
+   MID   eng excess24=4.583 (31 s)  man excess24=1.331 (169 s)  ratio=  n/a  -> UNAVAILABLE (eng 31 s, man 169 s in contiguous >=5.12 s runs)
+   HIGH  eng excess24=  n/a (0 s)  man excess24=1.580 (233 s)  ratio=  n/a  -> UNAVAILABLE (eng 0 s, man 233 s in contiguous >=5.12 s runs)
+
+TEST 4 -- THE DISCRIMINATOR (command vs response), per stratum, engaged:
+   OUTER (comma):   cmd_excess24 >= 2.5 AND coh24 >= 0.8, rate follows
+   INNER (firmware): cmd_excess24 <= 1.3 while rate_excess24 >= 2.5
+   AMBIGUOUS:       both >= 2.5 with coh24 <= 0.5
+TEST 7 -- plant more responsive?  CONFIRMS: gain24 >= 0.10.  REFUTES: gain24 in [0.009, 0.048].
+   spd  |     secs  rateExc    e4Exc coreqExc |  coh24    ph24   gain24 | row
+   LOW  |       37    1.023    0.854    0.881 |  0.565   148.3   0.0704 | NO ROW MATCHES (outside all three pre-registered cells) ; gain24 -> TEST 7 between
+   MID  |       31    4.583    4.300    4.312 |  0.913   150.7   0.0501 | OUTER-loop row (openpilot ringing; comma-side fix) ; gain24 -> TEST 7 between
+   HIGH   UNAVAILABLE
+
+TEST 5 -- SELF-EXCITING?   CONFIRMS: 2-4 Hz analytic envelope of rate_f shows episodes rising >= 3x over >= 3 s with no matching rise in ct_dcurv.   REFUTES: envelope tracks ct_dcurv.
+   rise-episodes found (>=3x over >=3 s, engaged): 5 ; of which reaching the top-decile engaged envelope (20.11 deg/s): 3
+   corr(env24 rate_f, |ct_dcurv| 1 s) engaged = 0.241 ;  corr(env24 rate_f, env24 ct_dcurv) = 0.287
+   big episodes with NO matching ct_dcurv rise (<1.5x): 2 of 3
+     t=   84.4-   95.7 s (11.3 s)  v=10.7 m/s  rate env  6.08 -> x 5.4  cmd env  820.1  dcurv rise x1.0 (24Hz-band x1.3)
+     t=   78.0-   82.4 s ( 4.4 s)  v= 3.0 m/s  rate env  2.34 -> x12.9  cmd env  444.2  dcurv rise x36.8 (24Hz-band x44.0)
+     t=  346.6-  349.9 s ( 3.2 s)  v=16.1 m/s  rate env  2.62 -> x 9.9  cmd env  571.0  dcurv rise x1.0 (24Hz-band x1.0)
+
+TEST 6 -- gripping kills it?   CONFIRMS: excess24 on hands-ON frames (5 s median |tq| >= 1200) <= 1/3 of hands-OFF.
+   LOW   hands-ON    12.4 s excess24=9.301   hands-OFF   15.9 s excess24=2.118   ratio on/off=4.39  -> REFUTES/not confirmed
+   MID   hands-ON     0.0 s excess24=  n/a   hands-OFF   21.6 s excess24=3.825   ratio on/off=  n/a  -> UNAVAILABLE (on 0 s / off 22 s)
+   HIGH  hands-ON     0.0 s excess24=  n/a   hands-OFF    0.0 s excess24=  n/a   ratio on/off=  n/a  -> UNAVAILABLE (on 0 s / off 0 s)
+   (tq distribution engaged: p50 |tq| = 950, p90 = 2352, frac hands-on = 0.344)
+
+WAVEFORM SHAPE inside oscillation episodes (top-decile 2-4 Hz rate envelope, engaged):
+   crest = peak/rms of the 2-4 Hz band-passed signal (sine 1.41, square 1.00, growing sinusoid > 1.41);
+   kurtosis of band-passed signal (sine -1.5 excess, square -2.0, gaussian 0);  clip = fraction of RAW e4tq at >= 95%% of its route max |e4tq|.
+   NOTE: the excess PEAK sits at 3.9-4.5 Hz, at the 2-4 Hz band EDGE; a 2-4 Hz band-pass attenuates it. Rows tagged [2-6] use a 2-6 Hz band-pass (supplementary, NOT pre-registered).
+   episode threshold: 1-s 2-4 Hz rate envelope >= 2x engaged median = 6.79 deg/s; episodes >= 1 s: 9, total 20.3 s
+     episode t=   35.1-   38.6 s ( 3.5 s) v= 1.7  rate env  21.5  cmd env    351  p50|tq|   904
+     episode t=   40.8-   42.3 s ( 1.6 s) v= 1.8  rate env  28.7  cmd env    482  p50|tq|   767
+     episode t=   54.0-   55.7 s ( 1.7 s) v= 5.2  rate env   8.5  cmd env    172  p50|tq|  1139
+     episode t=   79.8-   84.2 s ( 4.4 s) v= 4.7  rate env  17.4  cmd env    139  p50|tq|  1751
+     episode t=   85.8-   87.2 s ( 1.4 s) v= 7.2  rate env  14.9  cmd env    212  p50|tq|   993
+     episode t=   93.5-   96.7 s ( 3.2 s) v=15.1  rate env  17.9  cmd env    378  p50|tq|  1454
+     episode t=  348.9-  351.2 s ( 2.3 s) v=17.2  rate env  18.1  cmd env    369  p50|tq|  1223
+     episode t=  356.9-  357.9 s ( 1.0 s) v=17.2  rate env   9.4  cmd env    233  p50|tq|  1450
+     episode t=  506.8-  508.0 s ( 1.2 s) v=31.0  rate env  18.1  cmd env    530  p50|tq|  1449
+   rate      crest median 2.05 (p10 1.95, p90 2.66)   excess kurtosis median -0.60 (p10 -0.99, p90 0.32)
+   cmd       crest median 2.05 (p10 1.88, p90 2.87)   excess kurtosis median -0.58 (p10 -1.12, p90 0.79)
+   rate[2-6] crest median 2.05 (p10 1.79, p90 2.84)   excess kurtosis median -0.94 (p10 -1.21, p90 0.60)
+   cmd[2-6]  crest median 1.85 (p10 1.78, p90 3.21)   excess kurtosis median -0.97 (p10 -1.15, p90 2.09)
+   raw e4tq during episodes: route max |e4tq| = 4096 ; fraction of episode samples >= 95% of max = 0.156 ; p50 |e4tq| in episodes = 445 vs engaged overall p50 = 181
+   longest episode t=79.8-84.2 s (4.4 s): rate env by fifths = 14.44 19.50 23.11 21.62 8.60 6.82 ; cmd env by fifths = 199 246 112 15 116 305
+   (no episode >= 5.12 s: per-episode periodograms zero-padded to 512 bins)
+   dominant PSD frequency in episodes (1-8 Hz) = 3.71 Hz ; interior excess peak fc=3.71 excess=8.53 Q=2.71
+
+wrote rlog-tools/studies/osc-2to4/prereg_v276_r2e.json

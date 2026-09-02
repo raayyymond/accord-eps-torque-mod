@@ -44,6 +44,47 @@ deliberately not numbered `PART2` so the two can never be confused.
 
 
 
+### V278 — the REFERENCE brought back into reach (K=2), plus a DAMPING tap  (2026-09-02, NOT FLOWN — THE FLIGHT CANDIDATE)
+
+**base** V268 · **image** `4bc51073…5a22c` · **rwd** `ac9d27a9…10562` · **487/487** · independent rebuild reproduces
+**artifact** https://claude.ai/code/artifact/b2a2995e-e219-4e18-a2c3-e99a979d0575
+
+| cell | V268 | V278 | what it is |
+|---|---|---|---|
+| 28 LERP records at `0xE4000`–`0xE8105` (family `0xC9A88`) | Honda Y knots | ×2 (slot 7: 172 → 344) | the LKAS rate-loop REFERENCE (V276 on the car: ×6) |
+| `0xC62E6` | 7680 | 15360 | feedback saturation clamp, stored ×256; ratio 1.395 preserved structurally |
+| `0x55DF0`–`0x55E11` | stock packer | 34 B in place | CAN-427: `(sel & 0x0F) \| ((E ^ fb_state) >> 31) << 9` — bit 9 = the lane OPPOSES the wheel |
+
+**WHY.** V276 (×6) FLEW 2026-09-01 and produced a self-exciting **3.9 Hz** oscillation, engaged-only, all speeds,
+straight roads, killed by a firm grip. Frame by frame on his rlog (`r2e`), the fraction of oscillation time in
+which the lane opposes the wheel is **0.94 at stock, 0.57 at V276** — the COMBINED loop (EPS rate lane +
+openpilot's angle follower) went unstable in between. **K=2 restores 0.86** while keeping the ceiling crossover
+at 44.5 deg/s (stock 22.3). **Peak torque is untouched** (`0xC61B4`, `0xC6CD0`, map Y-ceiling frozen).
+The 3.9 Hz is mechanical (firmware poles supply 28–52° of 180). **The crossover does NOT cap the amplitude.**
+
+**CLASS.** The same lever as V276 pushed the OTHER way — a REDUCTION of a live gain, the third in ~240 builds
+(V93/V94 made the car worse) and the first in response to a symptom a build of ours created. Plus the first tap
+in this kit that reads the loop's damping state directly. **A plain `sign(E)` tap was built first and FALSIFIED
+offline** (reads 0.50 at every K); the comparator replaced it before anything was written.
+
+**RISK.** Felt authority on turns WILL be below V276's, should be clearly above stock's. A residual oscillation
+is possible. The override taper is byte-stock: the grip escape (~2,500 raw, where the cliff begins) is unchanged.
+
+**READ IT BY:** CAN-427 bit-9 duty over engaged frames — predicted ~0.57 on V276, ~0.86 on V278; selector nibble
+must read 7. Null sentence in the docstring. Adversarial pass: five agents, two revisions, no do-not-flash;
+every script finding fixed after the last audit closed, image unchanged.
+
+🛑 **RETRACTION of the "CEILING CORRECTION" in the V277 entry below.** The LKAS ceiling **IS 2505**, as the kit
+had it: `0xC61BE` = 15360 clamps the PID sum, the output lag's readout `(state_old+state_new)>>5` cancels its
+15.84 state gain to 0.990, and `15360 × 5346 >> 15 = 2505`. `0xC61B4` = 3072 clamps the COMBINED base+LKAS sum.
+Triple-confirmed (fresh disassembly; `adv278` this session; `reference_accord_c61be_c61b4_c61b2_diagnostic_
+cluster_not_lkas_ceiling`, 2026-08-26, cross-validated against the recorded stock max of 417). `0xC61BE` also
+carries a sign-extension defect on its positive branch (`ld.h` at `0x2a146`) and must stay < 32768.
+
+**UNITS, CLOSED.** The feedback operand at `0x29d78` is `s_old + s_new` (`add r9,r26` @`0x28FA4`), DC gain
+2×1560/101 = **30.89** per raw count; the 0x18F wire is 1:1 with `gp-0x6a56` at 8 counts/deg/s. Stock ceiling
+crossover 178 wire = 22.3 deg/s. **The live variant slot is 7** (record 11 `TVCA4`; on the V276 wire 35 = 7×5).
+
 ### V277 — the driver-override CLIFF softened, and a bit-packed tap  (2026-09-01, NOT FLOWN)
 
 **base** V268 → V276 → V277 · **image** `ee76f4cd…77a7f` · **rwd** `a1716eaa…b44a7` · **967/967**
@@ -66,7 +107,7 @@ every index and monotone non-increasing — both asserted.
 **never execute**: the selector maxes at 9. See `accord-variant-selector-max-is-nine`. **A lineage
 re-check is owed for any earlier build that dosed only slots 10–27.**
 
-🛑 **CEILING CORRECTION, applies to EVERY earlier entry in this file.** The binding clamp on the
+🛑 ~~**CEILING CORRECTION, applies to EVERY earlier entry in this file.**~~ **RETRACTED 2026-09-02 — see the V278 entry above: the ceiling IS 2505.** The (wrong) original text follows for the record. The binding clamp on the
 `0xC6CD0` forward-gain path is **`0xC61B4` = 3072**, not the 2505 this kit has been quoting;
 `0xC61BC` = 15360 sits on a different leg after `sar 0x8`. Gain 891→5346 and clamp 512→3072 are both
 exactly **6.000000**, so the knee is unmoved at 18830 — a uniform dilation. ⚠ That `gp-0x6b38` is the

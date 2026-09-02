@@ -49,7 +49,7 @@ torque -- LKAS and driver pushing the same direction), which is not the "driver 
 
 ## The grab-rate curves are flat-to-near-flat -- for BOTH slot 0 and the car's live slot 1
 
-Dumped fresh, both slots (slot 1 independently confirmed live for this car, part number
+Dumped fresh, both slots (⚠ CORRECTED 2026-09-01: the live slot is 7, record 11 `TVCA4` — V73 probe 2026-08-05 + V276 wire 35=7x5; slot 1 was a stale V38 belief. Slot-7 curves NOT yet dumped. Slot 1 was believed live for this car, part number
 39990-TVA-A160 → `0xCD000` record 2 → selector 1, per a sibling agent's variant-matcher trace):
 
 ```

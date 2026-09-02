@@ -27,7 +27,7 @@ Kp, Kd, the forward gain (`0xC6CD0`=5346) and the cap (`0xC61B4`=3072) are ALL b
 V268 → V276. V276 scaled the setpoint AND the feedback clamp by 6, preserving Honda's 1.395 ratio —
 so the rate at which E can go negative moved OUT OF PHYSICAL REACH.
 
-**In raw counts** (`E<0` needs `feedback > 32*setpoint_ceiling`; slot 1, ceiling 172 — no unit factor):
+**In raw counts** (`E<0` needs `feedback > 32*setpoint_ceiling`; **slot 7 — the LIVE slot, see correction 11** — ceiling 172, the same shape as slot 1, so the numbers stand; no unit factor):
 
 | K | threshold | matching `0xC62E6` |
 |---|---|---|
@@ -111,7 +111,7 @@ and if V276 shows high coherence AND high excess, that combination is genuinely 
    (`0x55DF2-3` / `0x55E0E` / `0x55E10`), the selector tap inherited from V273.
 5. **Gate (B) (`0xCBAE4`/`0xCBBC4`) is INERT in the override case.** `r25 = (gp-0x6803 == 2)` at
    `0x29a80`; when true, both `cmovne`s select the grab-rate curves, which for slot 1 are
-   `Y=[255,255,255,255,255,205]` — flat. **V277 omitting these tables was CORRECT.** Gate (A), the
+   `Y=[255,255,255,255,255,205]` — flat. ⚠ **Dumped for slot 1; the live slot is 7 (correction 11). Re-dump for slot 7 in the adversarial pass.** **V277 omitting these tables was CORRECT.** Gate (A), the
    cliff, is the only live nonlinearity in this loop.
 6. **`FUN_0002a30e` is UNREACHABLE** — four independent nulls (callers, xrefs, a raw `jarl disp22` scan,
    a dispatch-table word scan). It is the DTC-0x49 state machine and carries neither gate.
@@ -126,6 +126,15 @@ and if V276 shows high coherence AND high excess, that combination is genuinely 
 9. **The variant selector fact was ALREADY KNOWN on 2026-07-18** in `build_v38_tva.py`
    (`SETPOINT_REACHABLE_SELECTORS = (0,1,3,4,6,7,8,9)`) and was lost, then re-derived as new. The
    dead-slot lineage re-check is **DONE: nothing retracts** — no build before V273 touched those banks.
+11. 🛑🛑 **THE LIVE VARIANT SLOT IS 7 (record 11, key `TVCA4`), NOT 1 — and the kit ALREADY KNEW.**
+    This session's "slot 1 / record 2 / `TVAA1`" claim came from a sibling agent reading V38's 2026-07-18
+    docstring. But `memory/reference/firmware/reference-accord-car-is-tvca4-mode-24-26.md` settled it on
+    **2026-08-05** from V73's probe (manual mode 24 appears ONLY in row 11), and says outright that the
+    `TVAA1` reading *"was never a measurement."* Record 11's selector byte is **7**. The V276 rlog now
+    confirms it a third way: the 427 tap reads a **constant wire 35 = 7 × 5** over all 46,576 frames —
+    exactly what `HANDOFF-2026-09-01-reference-6x.md` predicted. Slot 7's map record shares slot 1's
+    shape (ceiling 172), so every crossover number above stands; slot 7's taper is shape A (the cliff)
+    and Kd = 128. **`feedback-search-the-kit-before-naming-a-cause`, for the second time this session.**
 10. 🛑 **DEFECT, reported not fixed: `rlog-tools/studies/impedance/rez_by_band_all_routes.py` globs only
     ONE of the TWO cache roots**, silently omitting ~12 routes (V74–V89) from its Re(Z)/f0 corpus
     statistics. Several standing findings rest on that scorer. **Worth a sweep.**
