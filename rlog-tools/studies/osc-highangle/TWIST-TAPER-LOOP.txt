@@ -1,0 +1,130 @@
+======================================================================================================================================================
+TABLES READ FROM THE V280 REV 2 IMAGE, slot 7  (rec addr : X / Y)
+======================================================================================================================================================
+  taperA_m2_same  0xE547C : X [70, 72, 78, 80] / Y [254, 234, 12, 0]
+  taperA_m2_opp   0xE5404 : X [70, 72, 78, 80] / Y [254, 234, 12, 0]
+  taperA_m0_same  0xE52FC : X [32, 42, 80, 112] / Y [255, 255, 255, 0]
+  taperA_m0_opp   0xE5284 : X [32, 38, 80, 112] / Y [255, 255, 255, 0]
+  postA_m2        0xE55A4 : X [0, 3, 6, 8, 10, 20] / Y [255, 255, 255, 255, 255, 205]
+  postA_m0        0xE56F4 : X [0, 3, 6, 8, 10, 20] / Y [255, 255, 255, 255, 255, 205]
+  postB_m2        0xE54FC : X [24, 45, 64, 80, 96, 112] / Y [255, 205, 164, 125, 90, 51]
+  postB_m0        0xE564C : X [16, 26, 38, 48, 64, 96] / Y [255, 243, 218, 179, 77, 77]
+  kp              0xE5378 : X [0, 68, 112, 136, 208] / Y [248, 512, 645, 696, 696]
+  map             0xE502C : X [0, 12, 20, 24, 32, 64, 96, 128, 160, 240] / Y [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032]
+  V281r2 kp        0xE5378 : X [0, 24, 68, 136, 208] / Y [248, 341, 341, 341, 341]
+  cals: {'c63e2': 31, 'c63e4': 634, 'c64b8': 255, 'c64f0': 240, 'c61be': 15360, 'c61b4': 3072, 'gain': 5346, 'c62e6': 46080, 'c61bc': 15360, 'c61b6': 10240} ; speedF Y [255, 255, 255, 0]
+  m0 = mode gp-0x6803 == 0 (openpilot's 0xE4 byte 2 bits 3:2 = 0, measured on r32/r33/r34) ; m2 = the kit's assumed mode-2 arms
+  raw driver torque at the LIVE arm knots (x32): postB_m0 [512, 832, 1216, 1536, 2048, 3072] ; taperA_m0_same [1024, 1344, 2560, 3584] ; postB_m2 [768, 1440, 2048, 2560, 3072, 3584] ; taperA_m2 [2240, 2304, 2496, 2560]
+
+======================================================================================================================================================
+WHOLE-ROUTE CENSUS, engaged frames: where the live multipliers sit
+======================================================================================================================================================
+  r32 engaged   602 s | |tq| p50/p90  133/ 549 raw | frac |tq|>=512 (postB_m0 below 255) 0.11 ; >=1216 (<=218) 0.06 ; >=2048 (77) 0.04 ; >=2560 (m0 taper falls) 0.026 ; >=2240 (m2 cliff) 0.035
+       live m p10/p50/p90 = 251/254/254 (of 254) ; A(grab) p50/p10 255/255 ; B(tq) p50/p10 255/255 ; grab byte p50/p90/max 0/4/48
+       idx: live arm vs kit arm differ on 0.069 of engaged frames (live > kit on 0.069)
+       kit (m2 arm, m=254, Kd)      vs tap, engaged idx>0: corr 0.895  LS slope 0.579  |T_sim| p50   88  |T_meas| p50   78
+       live (m0 arm, live m, Kd)    vs tap, engaged idx>0: corr 0.960  LS slope 0.861  |T_sim| p50   88  |T_meas| p50   78
+  r33 engaged   649 s | |tq| p50/p90  168/1825 raw | frac |tq|>=512 (postB_m0 below 255) 0.20 ; >=1216 (<=218) 0.14 ; >=2048 (77) 0.07 ; >=2560 (m0 taper falls) 0.045 ; >=2240 (m2 cliff) 0.058
+       live m p10/p50/p90 = 123/254/254 (of 254) ; A(grab) p50/p10 255/255 ; B(tq) p50/p10 255/128 ; grab byte p50/p90/max 0/6/49
+       idx: live arm vs kit arm differ on 0.106 of engaged frames (live > kit on 0.106)
+       kit (m2 arm, m=254, Kd)      vs tap, engaged idx>0: corr 0.925  LS slope 0.500  |T_sim| p50  103  |T_meas| p50   94
+       live (m0 arm, live m, Kd)    vs tap, engaged idx>0: corr 0.961  LS slope 0.858  |T_sim| p50  103  |T_meas| p50   94
+  r34 engaged   903 s | |tq| p50/p90  208/2190 raw | frac |tq|>=512 (postB_m0 below 255) 0.30 ; >=1216 (<=218) 0.23 ; >=2048 (77) 0.12 ; >=2560 (m0 taper falls) 0.061 ; >=2240 (m2 cliff) 0.094
+       live m p10/p50/p90 = 76/254/254 (of 254) ; A(grab) p50/p10 255/255 ; B(tq) p50/p10 255/77 ; grab byte p50/p90/max 1/6/57
+       idx: live arm vs kit arm differ on 0.176 of engaged frames (live > kit on 0.176)
+       kit (m2 arm, m=254, Kd)      vs tap, engaged idx>0: corr 0.919  LS slope 0.473  |T_sim| p50  183  |T_meas| p50  176
+       live (m0 arm, live m, Kd)    vs tap, engaged idx>0: corr 0.982  LS slope 0.902  |T_sim| p50  183  |T_meas| p50  176
+
+======================================================================================================================================================
+PER-EPISODE: the multipliers' modulation depth (6-8.5 Hz amp / mean, and 12-17 Hz = 2*f0 for the rectified index), bar<->T cross-spectrum,
+             chain mirror corr/residual before (kit arm, m=254) and after (live arm, live m), and the P / taper / D decomposition of T's 6-8.5 Hz
+======================================================================================================================================================
+route t0     dur fdom | tq mean  ring | taper m0: mean d7 d14 | postB: mean d7 d14 | postA: mean d7 d14 | m: mean d7 d14 | coh phase(T re tq) f | corr kit/live | resid rip/L kit/live | rip/L meas (|T|) | sim rip/L kit/live | P-drv taper-drv D-drv (of |T|meas) | m-lever: |T| x, rip/L | V281: rip/L, taper-drv
+  r32  620.7 3.8 7.03 |  -215  1590 |  255 0.00 0.00 |  203 0.07 0.27 |  230 0.04 0.10 |  184 0.09 0.33 | 0.97 -152  6.2 | 0.85/0.92 | 0.13/0.13 | 0.45 ( 954) | 0.65/0.51 | 0.42 0.05 0.20 | 1.21 0.57 | 0.43 0.05 | tdrv: c(P) +0.32 re-rate  +75 damp 0.36 | rate-rev 0.07
+  r32  692.8 2.8 6.64 |  -149  1743 |  255 0.00 0.00 |  197 0.10 0.31 |  229 0.05 0.11 |  178 0.13 0.37 | 0.97 -153  6.2 | 0.89/0.95 | 0.12/0.14 | 0.56 ( 857) | 0.93/0.68 | 0.58 0.09 0.25 | 1.34 0.83 | 0.56 0.09 | tdrv: c(P) -0.15 re-rate -162 damp 0.26 | rate-rev 0.06
+  r32  726.5 1.7 6.55 |  +208  1447 |  255 0.00 0.00 |  209 0.20 0.23 |  230 0.03 0.12 |  189 0.19 0.29 | 0.96 -159  6.2 | 0.87/0.95 | 0.15/0.13 | 0.47 (1046) | 0.63/0.54 | 0.44 0.10 0.20 | 1.11 0.57 | 0.44 0.07 | tdrv: c(P) +0.56 re-rate  +42 damp 0.62 | rate-rev 0.42
+  r33  100.8 1.6 6.96 |   -54  1287 |  255 0.00 0.00 |  206 0.14 0.17 |  234 0.02 0.11 |  188 0.15 0.24 | 0.99 -155  6.2 | 0.78/0.97 | 0.08/0.10 | 0.42 (1066) | 0.59/0.52 | 0.43 0.11 0.27 | 1.34 0.54 | 0.52 0.08 | tdrv: c(P) +0.45 re-rate  +56 damp 0.60 | rate-rev 0.41
+  r33  212.5 1.4 7.35 |  +113  1880 |  255 0.00 0.00 |  180 0.14 0.45 |  224 0.02 0.12 |  160 0.16 0.52 | 1.00 -159  7.8 | 0.90/0.96 | 0.16/0.16 | 0.99 ( 588) | 1.50/1.22 | 1.01 0.18 0.33 | 1.31 1.40 | 0.86 0.16 | tdrv: c(P) +0.55 re-rate +148 damp 0.14 | rate-rev 0.00
+  r33  224.1 1.1 6.96 |   -99  1715 |  255 0.00 0.00 |  198 0.10 0.31 |  227 0.04 0.12 |  178 0.11 0.39 | 1.00 -149  6.2 | 0.93/0.95 | 0.12/0.13 | 0.74 ( 799) | 1.13/0.92 | 0.74 0.10 0.30 | 1.48 1.03 | 0.73 0.11 | tdrv: c(P) +0.49 re-rate +139 damp 0.10 | rate-rev 0.05
+  r33  833.5 3.6 7.42 |  +367  1598 |  246 0.01 0.01 |  199 0.13 0.27 |  230 0.02 0.11 |  180 0.14 0.33 | 0.99 -152  7.8 | 0.90/0.96 | 0.25/0.17 | 0.91 ( 600) | 1.24/1.03 | 0.83 0.19 0.32 | 1.22 1.12 | 0.77 0.14 | tdrv: c(P) +0.51 re-rate +128 damp 0.36 | rate-rev 0.37
+  r34   35.5 1.5 7.43 |  +266  1698 |  255 0.01 0.01 |  193 0.21 0.33 |  225 0.03 0.12 |  171 0.20 0.39 | 0.99 -152  7.8 | 0.94/0.97 | 0.10/0.18 | 0.95 ( 617) | 1.35/1.10 | 0.91 0.23 0.39 | 1.23 1.26 | 0.86 0.16 | tdrv: c(P) +0.28 re-rate +105 damp 0.27 | rate-rev 0.33
+  r34   77.7 1.2 6.84 |   -75  1437 |  255 0.00 0.00 |  211 0.14 0.22 |  228 0.04 0.11 |  189 0.15 0.29 | 1.00 -149  6.2 | 0.93/0.97 | 0.10/0.09 | 0.49 (1102) | 0.65/0.55 | 0.43 0.10 0.25 | 1.28 0.59 | 0.51 0.06 | tdrv: c(P) +0.49 re-rate  +67 damp 0.72 | rate-rev 0.32
+  r34  133.1 2.1 7.28 |  -434  1786 |  255 0.00 0.00 |  173 0.14 0.40 |  231 0.05 0.11 |  157 0.18 0.47 | 1.00 -145  7.8 | 0.87/0.96 | 0.15/0.09 | 0.53 ( 960) | 0.76/0.58 | 0.48 0.08 0.23 | 1.61 0.68 | 0.54 0.10 | tdrv: c(P) +0.31 re-rate +146 damp 0.36 | rate-rev 0.39
+  r34  182.4 4.1 7.81 |  -463  1379 |  251 0.00 0.01 |  197 0.05 0.25 |  236 0.03 0.09 |  182 0.07 0.29 | 0.99 -149  7.8 | 0.79/0.93 | 0.18/0.12 | 0.57 ( 727) | 0.81/0.65 | 0.54 0.08 0.23 | 1.35 0.71 | 0.52 0.08 | tdrv: c(P) +0.40 re-rate +149 damp 0.30 | rate-rev 0.18
+  r34  188.2 1.1 7.48 |  +123  2223 |  254 0.01 0.01 |  166 0.04 0.53 |  223 0.02 0.12 |  147 0.05 0.60 | 1.00 -152  7.8 | 0.84/0.97 | 0.59/0.14 | 1.37 ( 503) | 1.69/1.59 | 1.24 0.45 0.34 | 1.15 1.88 | 1.05 0.32 | tdrv: c(P) +0.28 re-rate +172 damp 0.09 | rate-rev 0.00
+  r34  343.7 1.6 7.41 |   -75  1592 |  255 0.00 0.00 |  206 0.11 0.27 |  226 0.03 0.12 |  184 0.12 0.34 | 1.00 -153  7.8 | 0.94/0.95 | 0.06/0.07 | 0.68 ( 763) | 0.97/0.82 | 0.68 0.09 0.33 | 1.20 0.88 | 0.70 0.08 | tdrv: c(P) +0.56 re-rate +115 damp 0.30 | rate-rev 0.36
+  r34  372.9 1.6 6.92 |  -438  1746 |  255 0.00 0.01 |  176 0.10 0.37 |  230 0.05 0.10 |  160 0.14 0.43 | 0.99 -149  6.2 | 0.88/0.96 | 0.10/0.07 | 0.55 ( 914) | 0.88/0.64 | 0.53 0.06 0.25 | 1.43 0.77 | 0.54 0.07 | tdrv: c(P) +0.34 re-rate +158 damp 0.25 | rate-rev 0.10
+  r34  475.7 3.5 7.03 |   -90  1784 |  255 0.00 0.00 |  197 0.12 0.33 |  228 0.05 0.11 |  178 0.16 0.40 | 0.98 -149  6.2 | 0.88/0.94 | 0.11/0.12 | 0.67 ( 814) | 0.98/0.77 | 0.60 0.09 0.34 | 1.46 0.87 | 0.70 0.08 | tdrv: c(P) +0.57 re-rate  +44 damp 0.44 | rate-rev 0.18
+  r34  480.9 3.8 6.64 |  +225  1043 |  209 0.06 0.03 |  152 0.21 0.22 |  243 0.03 0.07 |  142 0.21 0.26 | 0.97 -160  6.2 | 0.89/0.98 | 0.26/0.17 | 0.53 ( 743) | 0.72/0.62 | 0.50 0.17 0.33 | 1.45 0.69 | 0.62 0.13 | tdrv: c(P) +0.40 re-rate  +37 damp 0.68 | rate-rev 0.50
+  r34  667.7 1.7 7.06 |  +623  1242 |  253 0.02 0.03 |  190 0.10 0.20 |  236 0.05 0.08 |  174 0.15 0.26 | 0.94 -158  7.8 | 0.46/0.94 | 0.09/0.07 | 0.35 (1134) | 0.47/0.39 | 0.34 0.09 0.22 | 1.53 0.43 | 0.37 0.07 | tdrv: c(P) -0.03 re-rate   +9 damp 0.85 | rate-rev 0.40
+  r34 1003.6 1.0 7.77 |  -364  1520 |  255 0.00 0.00 |  204 0.11 0.23 |  229 0.06 0.10 |  184 0.13 0.29 | 1.00 -149  7.8 | 0.92/0.92 | 0.06/0.08 | 0.46 ( 904) | 0.71/0.55 | 0.46 0.06 0.23 | 1.33 0.65 | 0.44 0.08 | tdrv: c(P) -0.45 re-rate -127 damp 0.33 | rate-rev 0.02
+  r34  250.0 14.0 0.00 |  -410   547 |  254 0.00 0.00 |  217 0.03 0.07 |  252 0.01 0.04 |  214 0.04 0.09 | 0.97 -137  6.2 | 0.92/0.99 | 0.29/0.13 | 0.67 ( 205) | 0.94/0.76 | 0.66 0.11 0.28 | 1.01 0.87 | 0.62 0.11 | tdrv: c(P) -0.00 re-rate -138 damp 0.48 | rate-rev 0.98
+  F7 MEDIANS (n 18): tq ring 1595 | taper d7 0.00 | postB mean 197 d7 0.11 d14 0.27 | postA mean 229 d7 0.04 d14 0.11 | m mean 178 d7 0.14 d14 0.33 | coh 0.99 phase -152
+             corr kit 0.888 -> live 0.955 | resid rip/L kit 0.12 -> live 0.13 | meas rip/L 0.55 | sim rip/L kit 0.85 live 0.65 | P-drv 0.53 taper-drv 0.10 D-drv 0.26 | lever |T| x1.33 rip/L 0.74 | V281 rip/L 0.55 taper-drv 0.08
+  taper-driven component: corr with P-driven median +0.40 (min -0.45 max +0.57) ; phase re rate median +90 ; damping fraction median 0.34 ; rate-reversal fraction median 0.25 (max 0.50)
+  paired: live corr - kit corr: mean +0.094, positive on 17 of 18 episodes
+
+======================================================================================================================================================
+DRIVER-SIDE (bar-fed) lanes at f0, per F7 episode, aggregator counts -- vs the LKAS lane's own measured 6-8.5 Hz T ripple
+  r24 = -(0.5*(tq[n]-tq[n-4]) * gainA/1024), gainA = 0xC6446 = 512 (Lever B cell dead, gp-0x683c = 0) [BELIEF for the arm];
+  FUN_00036682 = (tq*891>>15) through alpha=6/1024 IIR, clamp 512;  gp-0x6bbe ~ 90 ct per rad/s of wheel rate (V92 measured)
+======================================================================================================================================================
+  r32  620.7: tq ring 1590 raw -> r24  70.2 ct, FUN_00036682  5.70 ct | LKAS lane T ripple meas  433 ct (= 0.45 x |T|  954)
+  r32  692.8: tq ring 1743 raw -> r24  72.6 ct, FUN_00036682  6.61 ct | LKAS lane T ripple meas  479 ct (= 0.56 x |T|  857)
+  r32  726.5: tq ring 1447 raw -> r24  59.5 ct, FUN_00036682  5.56 ct | LKAS lane T ripple meas  492 ct (= 0.47 x |T| 1046)
+  r33  100.8: tq ring 1287 raw -> r24  56.2 ct, FUN_00036682  4.66 ct | LKAS lane T ripple meas  450 ct (= 0.42 x |T| 1066)
+  r33  212.5: tq ring 1880 raw -> r24  86.7 ct, FUN_00036682  6.45 ct | LKAS lane T ripple meas  580 ct (= 0.99 x |T|  588)
+  r33  224.1: tq ring 1715 raw -> r24  74.9 ct, FUN_00036682  6.21 ct | LKAS lane T ripple meas  591 ct (= 0.74 x |T|  799)
+  r33  833.5: tq ring 1598 raw -> r24  74.4 ct, FUN_00036682  5.43 ct | LKAS lane T ripple meas  548 ct (= 0.91 x |T|  600)
+  r34   35.5: tq ring 1698 raw -> r24  79.2 ct, FUN_00036682  5.77 ct | LKAS lane T ripple meas  587 ct (= 0.95 x |T|  617)
+  r34   77.7: tq ring 1437 raw -> r24  61.7 ct, FUN_00036682  5.29 ct | LKAS lane T ripple meas  545 ct (= 0.49 x |T| 1102)
+  r34  133.1: tq ring 1786 raw -> r24  81.6 ct, FUN_00036682  6.19 ct | LKAS lane T ripple meas  509 ct (= 0.53 x |T|  960)
+  r34  182.4: tq ring 1379 raw -> r24  67.6 ct, FUN_00036682  4.46 ct | LKAS lane T ripple meas  416 ct (= 0.57 x |T|  727)
+  r34  188.2: tq ring 2223 raw -> r24 104.3 ct, FUN_00036682  7.50 ct | LKAS lane T ripple meas  690 ct (= 1.37 x |T|  503)
+  r34  343.7: tq ring 1592 raw -> r24  74.0 ct, FUN_00036682  5.42 ct | LKAS lane T ripple meas  519 ct (= 0.68 x |T|  763)
+  r34  372.9: tq ring 1746 raw -> r24  75.8 ct, FUN_00036682  6.36 ct | LKAS lane T ripple meas  499 ct (= 0.55 x |T|  914)
+  r34  475.7: tq ring 1784 raw -> r24  78.7 ct, FUN_00036682  6.40 ct | LKAS lane T ripple meas  549 ct (= 0.67 x |T|  814)
+  r34  480.9: tq ring 1043 raw -> r24  43.5 ct, FUN_00036682  3.96 ct | LKAS lane T ripple meas  391 ct (= 0.53 x |T|  743)
+  r34  667.7: tq ring 1242 raw -> r24  55.0 ct, FUN_00036682  4.44 ct | LKAS lane T ripple meas  393 ct (= 0.35 x |T| 1134)
+  r34 1003.6: tq ring 1520 raw -> r24  74.1 ct, FUN_00036682  4.94 ct | LKAS lane T ripple meas  412 ct (= 0.46 x |T|  904)
+
+======================================================================================================================================================
+LEVER 'postB flat to 2560 raw' on the HAND-ON rows (cliff / stall class): |T| p50 live vs lever, and frames with |tq| in [512,2560) / >= 2560
+======================================================================================================================================================
+  r33  805.8 (1.1 s, fdom 1.90): |tq| p50 2487 | frames 512-2560: 0.52, >=2560: 0.41 | |T| p50 live  798 -> lever 2180 (x2.73) | tap |T| p50  749 | m live p50  76
+  r34  227.9 (1.1 s, fdom 2.78): |tq| p50 3336 | frames 512-2560: 0.00, >=2560: 1.00 | |T| p50 live  732 -> lever  734 (x1.00) | tap |T| p50  728 | m live p50  76
+  r34  172.2 (1.3 s, fdom 2.36): |tq| p50 1714 | frames 512-2560: 0.78, >=2560: 0.17 | |T| p50 live 1222 -> lever 1763 (x1.44) | tap |T| p50 1141 | m live p50 147
+  r34  747.8 (1.1 s, fdom 2.75): |tq| p50 1919 | frames 512-2560: 0.70, >=2560: 0.27 | |T| p50 live 1035 -> lever 1676 (x1.62) | tap |T| p50  978 | m live p50 107
+  r32 whole route engaged: |T| p50 live   88 -> lever   89 ; hands-on (|tq|>=1216, 0.04 of frames): |T| p50 live  663 -> lever 1170 ; frames T rail (3072) live 0.0000 lever 0.0000
+  r33 whole route engaged: |T| p50 live  103 -> lever  103 ; hands-on (|tq|>=1216, 0.10 of frames): |T| p50 live  925 -> lever 2223 ; frames T rail (3072) live 0.0000 lever 0.0000
+  r34 whole route engaged: |T| p50 live  183 -> lever  185 ; hands-on (|tq|>=1216, 0.19 of frames): |T| p50 live  777 -> lever 2264 ; frames T rail (3072) live 0.0000 lever 0.0000
+
+======================================================================================================================================================
+r24 (FUN_0003aa2c) ON THE CAR: 0x3AA96 = 0xfb (stock 0xc5) => gate reads gp-0x6806 (engaged) => gainA = 0xC6446 = 5244 (stock 512), Q10.
+  r24 = clamp(-1 * deadband(clamp(0.5*(tq[n]-tq[n-4]), +-5120) * 5244 >> 10, 3), +-8192)  at 1 kHz on the 0x18F torque (raw = wire*1.024,
+  gp-0x4f60 = -(wire) * 1.024 by the frame builder FUN_00055C42, applied here).  Per F7 episode: 6-8.5 Hz amp of r24 (aggregator ct) vs the tap's T ripple; phase re T and re rate;
+  damping fraction = mean(sign(r24_bp) != sign(wire_bp)), the kit's T convention (positive counts push toward +wire rate).  Stock gain column = the same at 512.
+======================================================================================================================================================
+  r32  620.7 f0 7.03: r24 6-8.5 Hz amp   722 ct (stock gain   68) | |r24| p90  1075 | T ripple  433 ct (|T|  954) -> r24/T-ripple 1.67, r24/|T| 0.76 | r24 re T -132 deg, re rate  -22 | damp frac r24 0.11 (T 0.61)
+  r32  692.8 f0 6.64: r24 6-8.5 Hz amp   797 ct (stock gain   75) | |r24| p90  1174 | T ripple  479 ct (|T|  857) -> r24/T-ripple 1.66, r24/|T| 0.93 | r24 re T -128 deg, re rate  -13 | damp frac r24 0.09 (T 0.67)
+  r32  726.5 f0 6.55: r24 6-8.5 Hz amp   653 ct (stock gain   61) | |r24| p90   954 | T ripple  492 ct (|T| 1046) -> r24/T-ripple 1.33, r24/|T| 0.62 | r24 re T -123 deg, re rate  -20 | damp frac r24 0.14 (T 0.59)
+  r33  100.8 f0 6.96: r24 6-8.5 Hz amp   556 ct (stock gain   51) | |r24| p90   705 | T ripple  450 ct (|T| 1066) -> r24/T-ripple 1.24, r24/|T| 0.52 | r24 re T -127 deg, re rate  -26 | damp frac r24 0.13 (T 0.54)
+  r33  212.5 f0 7.35: r24 6-8.5 Hz amp   923 ct (stock gain   87) | |r24| p90  1143 | T ripple  580 ct (|T|  588) -> r24/T-ripple 1.59, r24/|T| 1.57 | r24 re T -125 deg, re rate  -13 | damp frac r24 0.08 (T 0.64)
+  r33  224.1 f0 6.96: r24 6-8.5 Hz amp   814 ct (stock gain   77) | |r24| p90  1076 | T ripple  591 ct (|T|  799) -> r24/T-ripple 1.38, r24/|T| 1.02 | r24 re T -134 deg, re rate  -18 | damp frac r24 0.11 (T 0.65)
+  r33  833.5 f0 7.42: r24 6-8.5 Hz amp   777 ct (stock gain   73) | |r24| p90   955 | T ripple  548 ct (|T|  600) -> r24/T-ripple 1.42, r24/|T| 1.29 | r24 re T -132 deg, re rate  -18 | damp frac r24 0.13 (T 0.61)
+  r34   35.5 f0 7.43: r24 6-8.5 Hz amp   826 ct (stock gain   77) | |r24| p90   994 | T ripple  587 ct (|T|  617) -> r24/T-ripple 1.41, r24/|T| 1.34 | r24 re T -131 deg, re rate  -17 | damp frac r24 0.05 (T 0.65)
+  r34   77.7 f0 6.84: r24 6-8.5 Hz amp   727 ct (stock gain   68) | |r24| p90   952 | T ripple  545 ct (|T| 1102) -> r24/T-ripple 1.33, r24/|T| 0.66 | r24 re T -135 deg, re rate  -18 | damp frac r24 0.06 (T 0.71)
+  r34  133.1 f0 7.28: r24 6-8.5 Hz amp   845 ct (stock gain   80) | |r24| p90  1171 | T ripple  509 ct (|T|  960) -> r24/T-ripple 1.66, r24/|T| 0.88 | r24 re T -138 deg, re rate  -23 | damp frac r24 0.19 (T 0.65)
+  r34  182.4 f0 7.81: r24 6-8.5 Hz amp   663 ct (stock gain   62) | |r24| p90   995 | T ripple  416 ct (|T|  727) -> r24/T-ripple 1.59, r24/|T| 0.91 | r24 re T -135 deg, re rate  -18 | damp frac r24 0.13 (T 0.70)
+  r34  188.2 f0 7.48: r24 6-8.5 Hz amp  1028 ct (stock gain   97) | |r24| p90  1393 | T ripple  690 ct (|T|  503) -> r24/T-ripple 1.49, r24/|T| 2.04 | r24 re T -132 deg, re rate  -10 | damp frac r24 0.06 (T 0.69)
+  r34  343.7 f0 7.41: r24 6-8.5 Hz amp   757 ct (stock gain   71) | |r24| p90   976 | T ripple  519 ct (|T|  763) -> r24/T-ripple 1.46, r24/|T| 0.99 | r24 re T -131 deg, re rate  -18 | damp frac r24 0.08 (T 0.61)
+  r34  372.9 f0 6.92: r24 6-8.5 Hz amp   789 ct (stock gain   74) | |r24| p90  1185 | T ripple  499 ct (|T|  914) -> r24/T-ripple 1.58, r24/|T| 0.86 | r24 re T -133 deg, re rate  -11 | damp frac r24 0.09 (T 0.72)
+  r34  475.7 f0 7.03: r24 6-8.5 Hz amp   847 ct (stock gain   80) | |r24| p90  1165 | T ripple  549 ct (|T|  814) -> r24/T-ripple 1.54, r24/|T| 1.04 | r24 re T -134 deg, re rate  -15 | damp frac r24 0.10 (T 0.66)
+  r34  480.9 f0 6.64: r24 6-8.5 Hz amp   447 ct (stock gain   42) | |r24| p90   729 | T ripple  391 ct (|T|  743) -> r24/T-ripple 1.14, r24/|T| 0.60 | r24 re T -122 deg, re rate  -18 | damp frac r24 0.39 (T 0.41)
+  r34  667.7 f0 7.06: r24 6-8.5 Hz amp   548 ct (stock gain   51) | |r24| p90   962 | T ripple  393 ct (|T| 1134) -> r24/T-ripple 1.40, r24/|T| 0.48 | r24 re T -124 deg, re rate   +6 | damp frac r24 0.20 (T 0.64)
+  r34 1003.6 f0 7.77: r24 6-8.5 Hz amp   754 ct (stock gain   71) | |r24| p90  1154 | T ripple  412 ct (|T|  904) -> r24/T-ripple 1.83, r24/|T| 0.83 | r24 re T -135 deg, re rate   -6 | damp frac r24 0.06 (T 0.73)
+  r34  250.0 f0 0.00: r24 6-8.5 Hz amp   270 ct (stock gain   25) | |r24| p90   353 | T ripple  139 ct (|T|  205) -> r24/T-ripple 1.95, r24/|T| 1.31 | r24 re T -146 deg, re rate  -25 | damp frac r24 0.32 (T 0.55)
+  F7 MEDIANS: r24 amp 767 ct (stock-gain 72) | r24 / T ripple 1.47 (min 1.14 max 1.83) | r24 / |T| 0.90 | r24 re T -132 | re rate -18 | damp frac r24 0.10 vs T 0.65
+  r32 whole route engaged: |r24| p50/p90/p99   37/ 176/ 784 ct ; frames |r24| >= 8192 rail 0.0000 ; |T_meas| p50/p90   76/ 324
+  r33 whole route engaged: |r24| p50/p90/p99   35/ 237/ 871 ct ; frames |r24| >= 8192 rail 0.0000 ; |T_meas| p50/p90   95/ 720
+  r34 whole route engaged: |r24| p50/p90/p99   38/ 247/ 976 ct ; frames |r24| >= 8192 rail 0.0000 ; |T_meas| p50/p90  187/ 768

@@ -33,7 +33,7 @@ FACTOR_SANITY, FRICTION_SANITY = 0.3, 0.5
 # controller constants
 KP, KI, FRIC_THR = 0.6, 0.15, 0.30
 LOW_SPEED_X, LOW_SPEED_Y = [0, 10, 20, 30], [12, 10.5, 8, 5]
-TAGS = ["r22", "r97", "r31", "r32", "r33"]
+TAGS = ["r22", "r97", "r31", "r32", "r33", "r34"]
 
 
 def rot_from_euler(e):

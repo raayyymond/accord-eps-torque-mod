@@ -92,6 +92,16 @@ a return of 3.9 Hz with the tap at 1.00 (Kp→0.15), sluggish centering (Ki→0.
 no do-not-flash; three script holes (no end-state check on the primary edit, Kd only read back in-loop, last-record
 blindness) closed with re-reads from the FINAL image and the decoded .rwd against the constants.
 
+### V281 rev 3 — Kp COMPLETELY FLAT at the idx-0 value on the LKAS rate PID  (2026-09-03, NOT FLOWN — THE FLIGHT CANDIDATE; rev 1 knot-cap and rev 2 flat-341-from-24 SUPERSEDED)
+
+**base** V280 rev 2 · **image** `98a7a514…2fc9c` · **rwd** `a3e330ff…8901` (`…V281R3-V280R2BASE-KP.FLAT.Y0.MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP…rwd`) · **793/793** (566 S) · independent rebuild reproduces · adversarial A (arithmetic) PASS, C (build audit, 36/36 mutations caught) PASS, B pending at close-out · rev 2 `4c437e3b…` passed A/B/C before being superseded on the operator's instruction · **prereg** `rlog-tools/studies/osc-highangle/PREREG-V281-READ.md` · **page** https://claude.ai/code/artifact/51c14843-7f5c-4792-ba8e-4eaf2e641054
+
+| cell | V280 rev 2 | V281 rev 3 | what it is |
+|---|---|---|---|
+| Kp LERP records, family `0xCB994`, all 28 (live slot 7 @`0xE5378`) | Y 248,512,645,696,696 (X 0,68,112,136,208) | Y = Y[0] ×5 (248; other families 205/266/307), X untouched | the LKAS rate-PID proportional gain vs demand index; 218 bytes incl. 5 CRC trailers; **the Kp bank had never flown edited** (V275 withdrawn, V279 unflown) |
+
+**WHY.** Operator: "I want Kp on the LKAS PID completely flat, flattened to demand index 0's value." Sizing (`studies/v280/KPFLAT-SIZING-2026-09-03.md`): the 6–8 Hz strong-turn ripple (18 episodes on r32/r33/r34, wheel moving near the reference, P linear 60–80 %, no clamp) is the inner loop's crossover limit cycle at Kp 512–696 (GM 0.5–0.86× on the tap-identified loaded plant; K_crit ≈ 425 by linear fit and by the P-clamp describing function); flat 248 → GM 2.0×, PM 27°, clears all 18. Kd/lag/fb variants do not stabilise the base Kp. **CLASS:** the first edit of the rate loop's GAIN table (the arc so far moved its reference and its clamps). **COST:** full-demand rate ≈ −8 %; stalled push −29…−48 % at idx 26–80, full stalled push from idx ≈ 120 (was 58); r31-class stall stutter may return at idx 60–120; highway inner Kp −3…−16 % (outer loop untouched). **READ IT BY:** F7 episodes ≤ 2/100 s, tap 6–8.5 Hz ripple/level ≤ 0.25, full-demand rate ≥ 105; FAIL: ≥ 4/100 s with ripple/level ≥ 0.4 → not the P-gain cycle, no further Kp cut. ⚠ Open: the engaged-only r24 twist-derivative lane (~770 counts at 7 Hz, sign disputed) is inside the identified plant; V281 cannot touch it.
+
 ### V280 rev 2 — the STRAIGHT LINE to 1032: map linear from the origin to ×6; feedback clamp 46080  (2026-09-02, **TAP-ATTRIBUTED FLOWN 2026-09-02**, routes `…_00000032`/`…_00000033`; operator confirmation pending)
 
 **ON-CAR (operator, filed as "V278"):** by far the best authority, close to complete right turns · slight oscillation riding on strong turns · the highway

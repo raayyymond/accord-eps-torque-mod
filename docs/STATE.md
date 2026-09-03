@@ -4,7 +4,7 @@
 > order** — findings, corrections and closures. That is a record, not a briefing. Everything you need
 > to make a decision is in this box and the index under it.
 
-## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-02 late (r32/r33 read: TWO LOOPS; V280 rev 2 tap-attributed ON THE CAR)
+## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-03 (r34 read; V281 rev 3 built; GRINDING = the rate loop's 20 Hz crossover; two deep-analysis agents out)
 
 **ON THE CAR (TAP-ATTRIBUTED, operator confirmation PENDING): V280 rev 2** — routes `…_00000032` / `…_00000033` (2026-09-02) show the lane
 PUSHING at 143–155 deg/s hands-light where rev 3 brakes above 44.5 (chain-mirror corr: line 0.89–0.92, ×2 0.28–0.46); the operator filed them
@@ -26,12 +26,20 @@ tuning issue, openpilot not in the loop".**
    no clamp/cliff; the stalled/P-desaturating class is GONE (0 of 7; r31 7 of 10; a 14 s stall with P railed rippled 0.02). Episodes per
    100 s 9.8 → 8.1 / 4.3; amplitude held. Next levers: Kp table at idx 68–136, D as lead — both need a drive.
 
+**2026-09-03 — r34 (V280 rev 2 + the new tune: ForceAutoTune OFF, LAF 2.11, friction 0.03, SR 16.1; operator later set SR 12.5 for the oversteer):** the highway lane-change ring is GONE (0 of 2 lane changes rang vs 6 of 6; 4–8 Hz rate power ÷ 8–11 at matched speed/cmd; openpilot's block gain 0.36×, as predicted) at the cost of 2× lane-keeping error RMS; the strong-turn 7 Hz ripple did NOT move (EPS-internal); oversteer splits into a road-speed regime (+24 %, FF over-delivery at LAF 2.11 no longer masked by the friction relay) and a hairpin regime (ratio-shaped, output railed); the grind at 3–6 mph is a 20 Hz torsion-bar/rate/tap line, hands OFF, unchanged by build or tune.
+
+**V281 rev 3 — THE FLIGHT CANDIDATE (built 2026-09-03, cal-only, 218 bytes; attackers A/C PASS, B pending; NOT flown):** the LKAS rate-PID Kp table COMPLETELY FLAT at each record's idx-0 value (live 248; base 248→696), the operator's instruction. Image `98a7a514…2fc9c`, rwd `a3e330ff…8901` (`…V281R3-V280R2BASE-KP.FLAT.Y0…rwd`); rev 1 (knot cap) and rev 2 (flat 341 from idx 24, three-attacker PASS) SUPERSEDED. Why: the 6–8 Hz strong-turn ripple is the inner loop's crossover limit cycle on the loaded high-angle plant (GM 0.5–0.86× at Kp 512–696; K_crit ≈ 425 two ways); flat 248 → GM 2.0×, PM 27°. Cost: full-demand rate ≈ −8 %; stalled push −29…−48 % at idx 26–80; the r31 stall stutter may return at idx 60–120; highway inner Kp −3…−16 % (outer loop untouched). Prereg `PREREG-V281-READ.md`; page https://claude.ai/code/artifact/51c14843-7f5c-4792-ba8e-4eaf2e641054. ⚠ DISPUTE: the engaged-only r24 twist-derivative lane (0x3AA96=fb → 0xC6446=5244 when engaged, ×10 stock, since V104) injects ~770 counts at 7 Hz — twistloop reads it IN PHASE with the rate (pump); the on-car 18–22 Hz history says the gate ON reduced the band. Not acted on; handed to the deep-analysis agents.
+
+**GRINDING — ROOT CAUSE (2026-09-03, `rlog-tools/studies/grind/CREEP-20HZ-LOOP-ID-…`, `docs/research/GRINDING-ROOT-CAUSE-LEDGER-…` 98 rows):** the 20 Hz line is the LKAS rate loop's own crossover resonance (17–21 Hz, PM 35–60°, Ms 2–2.9; D ~55 %), f pinned, presence follows Kp(idx), engaged-only, hands off; the record agrees (scales with the ×6 gain; only motor-side rate/accel feedback ever reduced it). The fix is a loop-shaping design with a 7–9 Hz trade-off (less D → ~8 Hz peak). Two Opus-5 deep-analysis handoffs are out: `docs/handoffs/2026-09/HANDOFF-2026-09-03-GRINDING-for-deep-analysis.md`, `…-7HZ-STRONG-TURN-…`.
+
+**Corrections of record this session:** the override-taper ARM is a 0xE4 byte-2 field openpilot sends as 0 → the 2240 cliff is never selected; the live post-PID fade is 0xCBBC4 (the ~0.5 mirror slope); 'Lever B unreachable' is true only of c5 images; HondaLateralPidKp/KiScale are inert on the torque path (verified on the car's commit); torqued has never been valid on the modded EPS.
+
 **THE TUNE, BACK-CALCULATED (2026-09-03, `studies/optune/`):** the controller ran the DEFAULTS 1.689/0.212 on every modded route (ForceAutoTune ON but torqued never valid — the modded EPS needs too little torque to fill its buckets; its raw 5.0 is a stale-cache artefact). The car: deadband ~0.025 tq, lat-accel/torque 5–10 (integrator-like). Friction is 64 % of the outer gain and LAF-independent. **Apply: ForceAutoTune OFF → SteerFriction ≈ 0.025–0.03, SteerLatAccel 2.53 (toggle max) → outer gain 0.32×** (the asserted 0.08 was 3–4× the car). "openpilot" = StarPilot Dom branch from now on.
 
 **V280 PREREG SCORED on r32/r33:** (i) ripple/level 0.03 PASS · (iv) full-demand rate 125/123 deg/s PASS (93 % of 133.6) · (vi) damping
 0.37 PASS · (viii) sat 0.000 PASS · (iii) 4.3 / 8.1 per 100 s (r32 marginal on n=3) · (v) 691/672 borderline · (vii) not computed.
 
-| | **V280 rev 2** — the straight line to 1032 — **TAP-ATTRIBUTED FLOWN 2026-09-02 (r32/r33), confirmation pending** |
+| | **V280 rev 2** — the straight line to 1032 — **ON THE CAR (r32/r33/r34; the operator confirmed no V280 'rev 3' exists — only rev 2 was ever flashable)** |
 |---|---|
 | base | **V268**, cal-only + rev 3's 34-byte tap window (code region byte-identical to rev 3) |
 | edits | 28 map records: Y'(X) = round(6·Ytop·X/240), a straight line to each record's ×6 top; slot 7 Y = 0,52,86,103,138,275,413,550,688,1032 (4.3/idx; ×2.2 at idx 12, ×2.7 at 58, ×3.3 at 96, ×6 at 240 vs stock) · `0xC62E6` 15360→46080 |

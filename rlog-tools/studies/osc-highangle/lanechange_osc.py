@@ -61,8 +61,9 @@ ROUTES = {
     "r31": ("75604b0a432fdc89_00000031--a680e9b2ac", "V278r3", SCRATCH),
     "r32": ("75604b0a432fdc89_00000032--33a5dbbcb3", "V280r2", os.path.join(HERE, "_scratch")),
     "r33": ("75604b0a432fdc89_00000033--1948a2c354", "V280r2", os.path.join(HERE, "_scratch")),
+    "r34": ("75604b0a432fdc89_00000034--e2d2d5381f", "V280r2-newtune", os.path.join(HERE, "_scratch")),   # 2026-09-03: same firmware, NEW StarPilot tune
 }
-HAS_TAP = {"r31", "r32", "r33"}
+HAS_TAP = {"r31", "r32", "r33", "r34"}
 
 # --- chain constants (dose_e_sign_by_k.py / v280_map_profiles.py; FUN_00028ea6 decompile) ---------------------
 MAP_X = np.array([0, 12, 20, 24, 32, 64, 96, 128, 160, 240], float)
@@ -79,6 +80,7 @@ MAP_Y_V280R2 = np.array([0, 52, 86, 103, 138, 275, 413, 550, 688, 1032], float)
 CHAIN_CFG = {"r31": dict(mapY=MAP_Y_STOCK * 2, fb_clamp=15360, name="V278 rev 3 (map x2, clamp 15360)"),
              "r32": dict(mapY=MAP_Y_V280R2, fb_clamp=46080, name="V280 rev 2 (line to x6 top, clamp 46080)"),
              "r33": dict(mapY=MAP_Y_V280R2, fb_clamp=46080, name="V280 rev 2 (line to x6 top, clamp 46080)"),
+             "r34": dict(mapY=MAP_Y_V280R2, fb_clamp=46080, name="V280 rev 2 (line to x6 top, clamp 46080) + new tune"),
              "r22": dict(mapY=MAP_Y_STOCK, fb_clamp=7680, name="V112 (map x1, clamp 7680)"),
              "r97": dict(mapY=MAP_Y_STOCK, fb_clamp=7680, name="stock (map x1, clamp 7680)")}
 
