@@ -1,0 +1,390 @@
+===============================================================================================================================================================================
+SECTION A/B -- per-episode complex demodulation at f0, and the r24 de-embedding.  Phases in degrees RE THE WIRE RATE (+ = leads).
+===============================================================================================================================================================================
+route  t0     dur  f0    idx  Kp  | rate  bar    T   T_p50  rip/L | ph(bar) ph(T) ph(cmd)| r24_amp ph(r24) |  |G|deg/s/ct  ang |  |R|  ang | r24 return ratio | L_servo(f0) | L_servo0(f0)
+r32    620.7  3.8  7.20   121  664 |  21.7   1436   409   954  0.43 |    -94   116    -13 |    681     -9 |   0.0530  -116 |  3.92    -9 |  1.22 @    -37 |  2.10 @    178 |  1.54 @    -94
+r32    692.8  2.8  7.13   110  639 |  17.0   1249   296   857  0.34 |    -82   122     41 |    586      3 |   0.0574  -122 |  4.32     3 |  1.15 @    -30 |  2.21 @    173 |  1.28 @    -98
+r32    726.5  1.7  6.81   184  696 |  21.4   1473   509  1046  0.49 |   -102   102     93 |    660    -16 |   0.0420  -102 |  3.86   -16 |  1.08 @    -47 |  1.81 @   -166 |  1.50 @    -95
+r33    100.8  1.6  7.08    26  351 |  29.4   1365   502  1066  0.47 |    -98   106     40 |    636    -13 |   0.0585  -106 |  2.71   -13 |  1.08 @    -48 |  1.35 @   -159 |  1.15 @    -88
+r33    212.5  1.4  7.57   140  696 |  24.8   1988   614   588  1.04 |    -88   113     -7 |    990     -4 |   0.0404  -113 |  4.99    -4 |  1.10 @    -38 |  1.61 @    179 |  1.09 @   -102
+r33    224.1  1.1  7.30   106  627 |  29.4   1814   614   799  0.77 |    -94   117     19 |    872     -9 |   0.0478  -117 |  3.71    -9 |  1.22 @    -44 |  1.78 @    178 |  1.53 @   -100
+r33    833.5  3.6  7.59   118  658 |  15.5   1504   513   600  0.86 |    -96   112     70 |    752    -11 |   0.0302  -112 |  6.06   -11 |  1.18 @    -42 |  1.14 @   -180 |  0.92 @    -99
+r34     35.5  1.5  7.23   133  690 |  25.5   1747   656   617  1.06 |    -93   114    163 |    831     -8 |   0.0389  -114 |  4.07    -8 |  1.13 @    -49 |  1.59 @    180 |  1.42 @   -107
+r34     77.7  1.2  7.30   238  696 |  28.6   1542   592  1102  0.54 |    -88   120   -168 |    741     -3 |   0.0482  -120 |  3.24    -3 |  1.15 @    -50 |  1.97 @    173 |  1.82 @   -113
+r34    133.1  2.1  7.40    80  548 |  25.5   1885   531   960  0.55 |   -101   113     42 |    917    -16 |   0.0481  -113 |  4.49   -16 |  1.29 @    -35 |  1.57 @   -177 |  1.17 @    -83
+r34    182.4  4.1  7.71   128  678 |  16.8   1418   446   727  0.61 |    -96   115    -27 |    720    -11 |   0.0377  -115 |  5.36   -11 |  1.25 @    -38 |  1.44 @    176 |  1.11 @    -95
+r34    188.2  1.1  7.52   238  696 |  21.9   2322   713   503  1.42 |    -86   123     49 |   1149     -2 |   0.0307  -123 |  6.56    -2 |  1.21 @    -38 |  1.23 @    169 |  0.92 @   -104
+r34    343.7  1.6  7.47    86  566 |  29.7   1686   594   763  0.78 |    -94   112     27 |    829     -9 |   0.0500  -112 |  3.49    -9 |  1.14 @    -44 |  1.67 @   -176 |  1.36 @    -99
+r34    372.9  1.6  6.81   127  677 |  29.3   1876   550   914  0.60 |    -91   121     36 |    841     -6 |   0.0533  -121 |  3.59    -6 |  1.25 @    -41 |  2.24 @    175 |  1.83 @    -99
+r34    475.7  3.5  7.37   104  621 |  26.8   1582   510   814  0.63 |    -93   119     33 |    768     -8 |   0.0525  -119 |  3.58    -8 |  1.25 @    -41 |  1.92 @    176 |  1.59 @    -99
+r34    480.9  3.8  6.59   114  648 |  24.9   1105   435   743  0.59 |   -100   101     85 |    479    -14 |   0.0573  -101 |  2.41   -14 |  0.98 @    -53 |  2.36 @   -163 |  2.10 @   -101
+r34    667.7  1.7  7.06   148  696 |  28.1   1289   441  1146  0.38 |    -87   116     46 |    599     -2 |   0.0637  -116 |  2.66    -2 |  1.08 @    -45 |  2.67 @    179 |  2.14 @   -108
+r34   1003.6  1.0  7.37   239  696 |  20.9   1729   472   904  0.52 |    -85   127     67 |    839     -0 |   0.0444  -127 |  5.01    -0 |  1.25 @    -34 |  1.80 @    166 |  1.27 @   -101
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+MEDIAN (n=18): f0 7.30 Hz | rate 25.2 deg/s  bar 1562  T 512  rip/L 0.59 | ph(bar) -93  ph(T) +116  ph(cmd) +40 | r24 760 ct at -9
+    G  (rate/T, r24 CLOSED)    |.|   0.3855   angle  -115.6 deg
+    R  (r24 per rate ct)       |.|   3.8903   angle    -8.7 deg
+    G0 (bare plant)            |.|   0.2997   angle   -34.4 deg
+    r24 RETURN RATIO G0*R      |.|   1.1679   angle   -42.0 deg
+    L_servo (measured G)       |.|   1.7893   angle  +173.1 deg
+    L_servo on G0              |.|   1.3940   angle   -99.1 deg
+    r24 / T amplitude ratio  median 1.48     r24 projection on the rate  median 0.99 x |r24|
+    T   projection on the rate  median -0.43 x |T|   (negative = damping under the aggregator convention)
+    NET in-phase-with-rate counts: r24 +750   T -217   sum +536
+
+  CONTROL (r34 250.0 s, 14 s hands-ON stalled window, no 7 Hz line):
+    f0 7.76  rate 0.8 deg/s  bar 91  T 24 (level 205, rip/L 0.12)  ph(bar) -111  ph(T) +114  r24 47 ct @ -27
+
+===============================================================================================================================================================================
+SECTION C -- THE DISCRIMINATOR.  A servo crossover limit cycle must move f0 DOWN as Kp goes UP
+(the kit's own model puts f_180 at 10.3 Hz for Kp 349 and 8.2 Hz for Kp 696).  A column mode
+pumped by a rate-proportional lane sits at the structure's frequency and does NOT track Kp.
+===============================================================================================================================================================================
+  n = 18 episodes;  f0 6.59 - 7.71 Hz (median 7.30, sd 0.299)
+  x             r     p(t)       slope          se   predicted swing over the observed x range
+  Kp        0.054    0.830     0.00019     0.00088   +0.07 Hz over 351..696
+  idx       0.103    0.684     0.00054     0.00130   +0.11 Hz over 26..239
+  v        -0.081    0.750    -0.01284     0.03960   -0.08 Hz over 2..8
+  ang      -0.286    0.250    -0.00108     0.00090   -0.23 Hz over 49..265
+  Tlev     -0.468    0.050    -0.00074     0.00035   -0.48 Hz over 503..1146
+  rate     -0.305    0.219    -0.01955     0.01528   -0.28 Hz over 16..30
+  bar       0.454    0.058     0.00045     0.00022   +0.55 Hz over 1105..2322
+  MULTIPLE f0 ~ 1 + Kp + v :  b_Kp = +0.00028 (se 0.00093, t 0.31)   b_v = -0.0162 (se 0.0423)
+  SERVO-CYCLE PREDICTION for b_Kp, from the kit's own f_180 table (349 -> 696 gives 10.3 -> 8.2 Hz): -0.00605 Hz per Kp count
+  95% CI on the measured b_Kp: -0.00173 .. +0.00230
+
+===============================================================================================================================================================================
+SECTION D -- broadband B(f) = bar / wire-rate in the loaded high-angle stratum (Welch, engaged, v<=10, |ang|>=30)
+===============================================================================================================================================================================
+  stratum: 228 s of engaged high-angle frames
+  f Hz     |B| ct/ct    ph(B)      coh |       |R|    ph(R) | r24 counts per deg/s of rate
+  1.95          0.21       -9     0.02 |     0.026       80 | 0.21
+  3.12          0.95      -83     0.26 |     0.196        4 | 1.57
+  3.91          1.72     -102     0.42 |     0.442      -15 | 3.54
+  5.08          2.86      -98     0.62 |     0.955      -12 | 7.64
+  5.86          4.15      -99     0.71 |     1.602      -14 | 12.81
+  7.03          7.62      -96     0.91 |     3.527      -11 | 28.21
+  7.81         10.29      -95     0.92 |     5.289      -11 | 42.32
+  8.98         10.72     -108     0.44 |     6.335      -24 | 50.68
+  10.16         3.08      149     0.07 |     2.055     -129 | 16.44
+  12.11         4.44      122     0.39 |     3.532     -157 | 28.26
+  14.84         4.14      116     0.90 |     4.025     -165 | 32.20
+  19.92         2.75      114     0.94 |     3.579     -170 | 28.63
+  25.00         1.54      111     0.53 |     2.500     -177 | 20.00
+  30.08         1.00       86     0.15 |     1.928      154 | 15.42
+
+===============================================================================================================================================================================
+SECTION F -- WHICH LOOP GAIN PREDICTS THE CYCLE?  The servo hypothesis says the cycle strength
+tracks Kp (or K_eff).  The twist hypothesis says it tracks |R| = the r24 counts fed back per
+count of wheel rate, which is set by the bar-per-rate ratio |B| and NOT by Kp at all.
+===============================================================================================================================================================================
+  tap ripple/level       vs |R|  r +0.595 (p 0.0092)   vs |B|  r +0.580 (p 0.0117)   vs Kp   r +0.232 (p 0.3542)
+  rate ripple deg/s      vs |R|  r -0.683 (p 0.0018)   vs |B|  r -0.701 (p 0.0012)   vs Kp   r -0.348 (p 0.1576)
+  r24 return |G0*R|      vs |R|  r +0.498 (p 0.0355)   vs |B|  r +0.481 (p 0.0431)   vs Kp   r +0.083 (p 0.7439)
+  f0 Hz                  vs |R|  r +0.702 (p 0.0012)   vs |B|  r +0.624 (p 0.0056)   vs Kp   r +0.054 (p 0.8304)
+
+  Partial: ripple/level ~ 1 + |R| + Kp
+      b_const    +0.02288  se   0.44019  t  +0.05
+      b_|R|      +0.14191  se   0.05362  t  +2.65
+      b_Kp       +0.00010  se   0.00072  t  +0.14
+      R^2 = 0.355
+
+===============================================================================================================================================================================
+SECTION G -- the 7 Hz rate line by REGIME (1 s windows, |angle| >= 30, v <= 10).  hands-on =
+median |driver torque| >= 1216 raw wire counts in the window; the r24 5244 arm is ENGAGED-ONLY.
+===============================================================================================================================================================================
+  route  regime                    n win  rate7 p50  rate7 p90   bar7 p50    |B| p50
+  r32    ENGAGED hands-light          29       9.07      20.59        909      10.39
+  r32    ENGAGED hands-ON             25       2.53      19.20         63       6.24
+  r32    MANUAL (disengaged)         109       0.92       1.80         21       2.83
+  r33    ENGAGED hands-light          55      10.09      17.91        836      10.87
+  r33    ENGAGED hands-ON             65       2.07      17.46         69       5.44
+  r33    MANUAL (disengaged)          76       1.22       3.44         22       2.15
+  r34    ENGAGED hands-light          84       7.86      21.41        759      10.90
+  r34    ENGAGED hands-ON            142       2.02      19.59         50       5.02
+  r34    MANUAL (disengaged)          42       1.31       3.29         26       2.73
+
+===============================================================================================================================================================================
+SECTION H -- parametric B(f), the de-embedded bare plant G0(f), and NYQUIST on both loops.
+  rate = G0*(T + r24),  r24 = R*rate,  T = -C*rate  =>  char eq  1 + G0*C - G0*R = 0
+  L_tot = G0*C - G0*R is open-loop stable, so closed-loop stability <=> 0 net encirclements of -1.
+  extra plant delay applied to the kit's fit 1: 0.0 ms
+===============================================================================================================================================================================
+  B(f) fit over 4.5-9.0 Hz (coherence-weighted): K -0.1058, fn 11.84 Hz, zeta 0.069   rms resid 1.05 ct/ct
+
+  f Hz            |G| id       ph |   |R| 5244       ph |      |G0| bare       ph | |G0*R| 5244
+  2.00            0.1419      -74 |      0.180       -3 |         0.1333      -63 | 0.192
+  3.00            0.0984      -84 |      0.421       -4 |         0.0927      -66 | 0.312
+  4.00            0.0749      -91 |      0.790       -6 |         0.0710      -64 | 0.449
+  5.00            0.0604      -96 |      1.329       -8 |         0.0573      -60 | 0.610
+  6.00            0.0505     -101 |      2.112      -10 |         0.0474      -52 | 0.800
+  7.00            0.0434     -105 |      3.272      -12 |         0.0386      -40 | 1.010
+  7.30            0.0416     -106 |      3.728      -13 |         0.0360      -36 | 1.072
+  8.00            0.0380     -108 |      5.079      -16 |         0.0295      -25 | 1.200
+  9.00            0.0338     -112 |      8.145      -21 |         0.0200       -5 | 1.301
+  10.00           0.0305     -116 |     14.130      -29 |         0.0113       17 | 1.283
+  12.00           0.0254     -122 |     43.873     -110 |         0.0030      115 | 1.069
+  15.00           0.0203     -132 |     15.540     -175 |         0.0063     -171 | 0.783
+  20.00           0.0153     -148 |      9.278      173 |         0.0073     -161 | 0.544
+  CONSISTENCY: encirclements of -1 by (-G*R) with the IDENTIFIED G = -0.05  (must be 0 for the de-embedded G0 to be a stable plant)
+
+  0xC6446  Kp     | N* (DF)   | linear: enc / Ms / f_peak / PM / GM    | verdict
+  --- 0xC6446 = 5244  : r24 return ratio at 7.3 Hz = 1.072 @ -49 deg ---
+      Kp 696 : enc -0.13  Ms   1.87 @ 12.06 Hz  PM  +87.5 @ 10.69  GM  2.51x @ 11.64 | no cycle; ring Ms 1.9 @ 12.1 Hz
+      Kp 645 : enc -0.13  Ms   2.02 @ 12.06 Hz  PM  +86.3 @ 10.61  GM  2.29x @ 11.62 | no cycle; ring Ms 2.0 @ 12.1 Hz
+      Kp 512 : enc -0.14  Ms   2.55 @ 12.06 Hz  PM  +84.5 @ 10.38  GM  1.89x @ 11.54 | no cycle; ring Ms 2.6 @ 12.1 Hz
+      Kp 425 : enc -0.14  Ms   3.05 @ 12.06 Hz  PM  +85.1 @ 10.16  GM  1.73x @ 11.46 | no cycle; ring Ms 3.0 @ 12.1 Hz
+      Kp 341 : enc -0.14  Ms   3.71 @ 12.06 Hz  PM  +88.1 @  9.89  GM  1.63x @ 11.33 | no cycle; ring Ms 3.7 @ 12.1 Hz
+      Kp 295 : enc -0.14  Ms   4.15 @ 12.07 Hz  PM  +91.3 @  9.70  GM  1.61x @ 11.23 | no cycle; ring Ms 4.2 @ 12.1 Hz
+      Kp 248 : enc -0.14  Ms   4.68 @ 12.07 Hz  PM  +96.2 @  9.47  GM  1.63x @ 11.08 | no cycle; ring Ms 4.7 @ 12.1 Hz
+      Kp   0 : enc -2.06  Ms   8.39 @ 11.91 Hz  PM +368.5 @ 12.60  GM   nanx @   nan | LIMIT CYCLE (N*=1.00)
+  --- 0xC6446 = 3072  : r24 return ratio at 7.3 Hz = 0.628 @ -49 deg ---
+      Kp 696 : enc -0.11  Ms   1.08 @ 12.56 Hz  PM +115.1 @ 10.78  GM   nanx @   nan | no cycle; ring Ms 1.1 @ 12.6 Hz
+      Kp 645 : enc -0.11  Ms   1.14 @ 12.64 Hz  PM +114.0 @ 10.71  GM   nanx @   nan | no cycle; ring Ms 1.1 @ 12.6 Hz
+      Kp 512 : enc -0.11  Ms   1.34 @ 13.01 Hz  PM +112.1 @ 10.48  GM 19.78x @ 11.51 | no cycle; ring Ms 1.3 @ 13.0 Hz
+      Kp 425 : enc -0.12  Ms   1.53 @ 13.54 Hz  PM +112.3 @ 10.30  GM 10.10x @ 11.43 | no cycle; ring Ms 1.5 @ 13.5 Hz
+      Kp 341 : enc -0.12  Ms   1.82 @ 14.47 Hz  PM +114.2 @ 10.07  GM  7.56x @ 11.31 | no cycle; ring Ms 1.8 @ 14.5 Hz
+      Kp 295 : enc -0.12  Ms   2.03 @ 14.77 Hz  PM +116.4 @  9.93  GM  7.13x @ 11.23 | no cycle; ring Ms 2.0 @ 14.8 Hz
+      Kp 248 : enc -0.12  Ms   2.31 @ 14.91 Hz  PM +119.9 @  9.76  GM  7.39x @ 11.11 | no cycle; ring Ms 2.3 @ 14.9 Hz
+      Kp   0 : enc -0.04  Ms   3.44 @ 10.50 Hz  PM   +nan @   nan  GM   nanx @   nan | no cycle; ring Ms 3.4 @ 10.5 Hz
+  --- 0xC6446 = 2048  : r24 return ratio at 7.3 Hz = 0.419 @ -49 deg ---
+      Kp 696 : enc -0.10  Ms   0.97 @ 22.41 Hz  PM +128.3 @ 10.87  GM   nanx @   nan | no cycle; ring Ms 1.0 @ 22.4 Hz
+      Kp 645 : enc -0.10  Ms   1.01 @ 21.27 Hz  PM +127.0 @ 10.80  GM   nanx @   nan | no cycle; ring Ms 1.0 @ 21.3 Hz
+      Kp 512 : enc -0.10  Ms   1.17 @ 18.43 Hz  PM +124.9 @ 10.59  GM   nanx @   nan | no cycle; ring Ms 1.2 @ 18.4 Hz
+      Kp 425 : enc -0.10  Ms   1.32 @ 16.84 Hz  PM +124.8 @ 10.42  GM   nanx @   nan | no cycle; ring Ms 1.3 @ 16.8 Hz
+      Kp 341 : enc -0.11  Ms   1.52 @ 16.08 Hz  PM +126.3 @ 10.21  GM   nanx @   nan | no cycle; ring Ms 1.5 @ 16.1 Hz
+      Kp 295 : enc -0.11  Ms   1.66 @ 15.89 Hz  PM +128.2 @ 10.09  GM   nanx @   nan | no cycle; ring Ms 1.7 @ 15.9 Hz
+      Kp 248 : enc -0.11  Ms   1.84 @ 15.77 Hz  PM +131.1 @  9.94  GM   nanx @   nan | no cycle; ring Ms 1.8 @ 15.8 Hz
+      Kp   0 : enc -0.03  Ms   1.93 @ 10.24 Hz  PM   +nan @   nan  GM   nanx @   nan | no cycle; ring Ms 1.9 @ 10.2 Hz
+  --- 0xC6446 = 1024  : r24 return ratio at 7.3 Hz = 0.209 @ -49 deg ---
+      Kp 696 : enc -0.09  Ms   0.91 @ 23.43 Hz  PM +142.2 @ 11.01  GM   nanx @   nan | no cycle; ring Ms 0.9 @ 23.4 Hz
+      Kp 645 : enc -0.09  Ms   0.94 @ 22.20 Hz  PM +140.7 @ 10.94  GM   nanx @   nan | no cycle; ring Ms 0.9 @ 22.2 Hz
+      Kp 512 : enc -0.09  Ms   1.06 @ 19.36 Hz  PM +138.1 @ 10.74  GM   nanx @   nan | no cycle; ring Ms 1.1 @ 19.4 Hz
+      Kp 425 : enc -0.09  Ms   1.17 @ 17.92 Hz  PM +137.7 @ 10.58  GM   nanx @   nan | no cycle; ring Ms 1.2 @ 17.9 Hz
+      Kp 341 : enc -0.09  Ms   1.31 @ 17.04 Hz  PM +138.7 @ 10.40  GM   nanx @   nan | no cycle; ring Ms 1.3 @ 17.0 Hz
+      Kp 295 : enc -0.09  Ms   1.40 @ 16.74 Hz  PM +140.2 @ 10.28  GM   nanx @   nan | no cycle; ring Ms 1.4 @ 16.7 Hz
+      Kp 248 : enc -0.09  Ms   1.51 @ 16.52 Hz  PM +142.7 @ 10.16  GM   nanx @   nan | no cycle; ring Ms 1.5 @ 16.5 Hz
+      Kp   0 : enc -0.01  Ms   1.32 @ 10.07 Hz  PM   +nan @   nan  GM   nanx @   nan | no cycle; ring Ms 1.3 @ 10.1 Hz
+  --- 0xC6446 = 512   : r24 return ratio at 7.3 Hz = 0.105 @ -49 deg ---
+      Kp 696 : enc -0.08  Ms   0.88 @ 24.08 Hz  PM +149.7 @ 11.10  GM   nanx @   nan | no cycle; ring Ms 0.9 @ 24.1 Hz
+      Kp 645 : enc -0.08  Ms   0.91 @ 22.77 Hz  PM +148.1 @ 11.03  GM   nanx @   nan | no cycle; ring Ms 0.9 @ 22.8 Hz
+      Kp 512 : enc -0.08  Ms   1.01 @ 19.87 Hz  PM +145.0 @ 10.83  GM   nanx @   nan | no cycle; ring Ms 1.0 @ 19.9 Hz
+      Kp 425 : enc -0.09  Ms   1.10 @ 18.42 Hz  PM +144.4 @ 10.67  GM   nanx @   nan | no cycle; ring Ms 1.1 @ 18.4 Hz
+      Kp 341 : enc -0.09  Ms   1.22 @ 17.49 Hz  PM +145.1 @ 10.50  GM   nanx @   nan | no cycle; ring Ms 1.2 @ 17.5 Hz
+      Kp 295 : enc -0.09  Ms   1.30 @ 17.16 Hz  PM +146.4 @ 10.40  GM   nanx @   nan | no cycle; ring Ms 1.3 @ 17.2 Hz
+      Kp 248 : enc -0.09  Ms   1.39 @ 16.90 Hz  PM +148.6 @ 10.28  GM   nanx @   nan | no cycle; ring Ms 1.4 @ 16.9 Hz
+      Kp   0 : enc -0.01  Ms   1.14 @ 10.00 Hz  PM   +nan @   nan  GM   nanx @   nan | no cycle; ring Ms 1.1 @ 10.0 Hz
+  --- 0xC6446 = 0     : r24 return ratio at 7.3 Hz = 0.000 @ +0 deg ---
+      Kp 696 : enc -0.07  Ms   0.85 @ 24.84 Hz  PM +157.8 @ 11.20  GM   nanx @   nan | no cycle; ring Ms 0.8 @ 24.8 Hz
+      Kp 645 : enc -0.07  Ms   0.87 @ 23.44 Hz  PM +155.9 @ 11.13  GM   nanx @   nan | no cycle; ring Ms 0.9 @ 23.4 Hz
+      Kp 512 : enc -0.08  Ms   0.96 @ 20.42 Hz  PM +152.3 @ 10.93  GM   nanx @   nan | no cycle; ring Ms 1.0 @ 20.4 Hz
+      Kp 425 : enc -0.08  Ms   1.05 @ 18.94 Hz  PM +151.3 @ 10.79  GM   nanx @   nan | no cycle; ring Ms 1.0 @ 18.9 Hz
+      Kp 341 : enc -0.08  Ms   1.15 @ 17.96 Hz  PM +151.7 @ 10.62  GM   nanx @   nan | no cycle; ring Ms 1.1 @ 18.0 Hz
+      Kp 295 : enc -0.08  Ms   1.21 @ 17.58 Hz  PM +152.7 @ 10.53  GM   nanx @   nan | no cycle; ring Ms 1.2 @ 17.6 Hz
+      Kp 248 : enc -0.08  Ms   1.29 @ 17.30 Hz  PM +154.6 @ 10.42  GM   nanx @   nan | no cycle; ring Ms 1.3 @ 17.3 Hz
+      Kp   0 : enc -0.00  Ms   1.00 @  0.20 Hz  PM   +nan @   nan  GM   nanx @   nan | no cycle; ring Ms 1.0 @ 0.2 Hz
+
+===============================================================================================================================================================================
+SECTION I -- LOOP DECOMPOSITION AT f0, convention-free.  L_r24 + L_servo = 1 by construction;
+the split says which lane carries the mode.  |L| > 1 alone = that lane could sustain it on its own
+if its phase reached 0; |L| < 1 alone = it cannot, at this frequency, whatever its phase.
+===============================================================================================================================================================================
+  route     t0    f0 | G0 = rate/(T+r24)      | L_r24                | L_servo              | T/rate vs firmware C(f)
+  r32    620.7  7.20 |   0.0390 @  -27.9 deg |  1.223 @  -36.9 |  0.735 @  +88.3 | meas  2.36 @   +116  fw  4.95 @   +114
+  r32    692.8  7.13 |   0.0332 @  -33.2 deg |  1.147 @  -30.3 |  0.579 @  +89.1 | meas  2.18 @   +122  fw  4.81 @   +115
+  r32    726.5  6.81 |   0.0349 @  -30.4 deg |  1.076 @  -46.9 |  0.829 @  +71.4 | meas  2.97 @   +102  fw  5.38 @   +116
+  r33    100.8  7.08 |   0.0499 @  -34.9 deg |  1.082 @  -48.2 |  0.853 @  +70.9 | meas  2.14 @   +106  fw  2.89 @   +127
+  r33    212.5  7.57 |   0.0275 @  -33.8 deg |  1.096 @  -37.5 |  0.680 @  +78.9 | meas  3.09 @   +113  fw  4.97 @   +112
+  r33    224.1  7.30 |   0.0412 @  -35.1 deg |  1.222 @  -44.2 |  0.861 @  +81.7 | meas  2.61 @   +117  fw  4.65 @   +115
+  r33    833.5  7.59 |   0.0244 @  -31.1 deg |  1.184 @  -42.4 |  0.809 @  +81.0 | meas  4.14 @   +112  fw  4.71 @   +113
+  r34     35.5  7.23 |   0.0348 @  -40.8 deg |  1.132 @  -49.1 |  0.894 @  +73.2 | meas  3.21 @   +114  fw  5.11 @   +114
+  r34     77.7  7.30 |   0.0444 @  -46.6 deg |  1.152 @  -50.1 |  0.921 @  +73.5 | meas  2.59 @   +120  fw  5.11 @   +113
+  r34    133.1  7.40 |   0.0359 @  -19.3 deg |  1.291 @  -35.2 |  0.747 @  +94.2 | meas  2.60 @   +113  fw  4.08 @   +117
+  r34    182.4  7.71 |   0.0291 @  -26.9 deg |  1.248 @  -38.3 |  0.773 @  +88.5 | meas  3.32 @   +115  fw  4.78 @   +112
+  r34    188.2  7.52 |   0.0231 @  -36.5 deg |  1.213 @  -38.3 |  0.753 @  +86.4 | meas  4.07 @   +123  fw  5.00 @   +112
+  r34    343.7  7.47 |   0.0409 @  -35.0 deg |  1.142 @  -44.3 |  0.819 @  +77.1 | meas  2.50 @   +112  fw  4.17 @   +116
+  r34    372.9  6.81 |   0.0436 @  -34.9 deg |  1.252 @  -40.7 |  0.818 @  +86.4 | meas  2.35 @   +121  fw  5.25 @   +116
+  r34    475.7  7.37 |   0.0435 @  -33.3 deg |  1.247 @  -41.5 |  0.828 @  +85.5 | meas  2.38 @   +119  fw  4.57 @   +115
+  r34    480.9  6.59 |   0.0509 @  -39.0 deg |  0.980 @  -53.4 |  0.889 @  +62.2 | meas  2.18 @   +101  fw  5.16 @   +118
+  r34    667.7  7.06 |   0.0509 @  -42.7 deg |  1.084 @  -44.9 |  0.799 @  +73.1 | meas  1.96 @   +116  fw  5.25 @   +114
+  r34   1003.6  7.37 |   0.0312 @  -33.9 deg |  1.248 @  -34.2 |  0.702 @  +92.7 | meas  2.82 @   +127  fw  5.08 @   +113
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    MEDIAN G0 = rate/(T+r24)  [wire ct per aggregator ct]   0.2997  @   -34.4 deg
+    MEDIAN L_r24                                            1.1679  @   -42.0 deg
+    MEDIAN L_servo                                          0.8138  @   +81.4 deg
+    MEDIAN T/rate measured                                  2.5944  @  +115.6 deg
+    MEDIAN -C(f) firmware chain, live m=178                 4.9611  @   -65.5 deg
+
+    => at f0 the servo lane alone has |L| = 0.81 (median) and is 81 deg from the critical point;
+       r24 alone has |L| = 1.17 and is 42 deg from it.  Neither closes alone; their SUM is 1 by construction.
+
+===============================================================================================================================================================================
+SECTION J -- the BARE plant G0 across the episode band, and the predicted loop for each build
+===============================================================================================================================================================================
+    ln|G0|           =  -0.5286 * f  +0.5280    (r -0.65, p 0.003) -> at 7.0 Hz  -3.1722
+    phase(G0) deg    =  +5.8383 * f -76.5188    (r +0.28, p 0.254) -> at 7.0 Hz -35.6508
+    R(f) = r24/rate:  |R| = exp(+0.6623 f -3.4243), phase = +3.54 f -33.49 deg
+
+    Interpolating BOTH transfers only inside the measured band 6.6-7.8 Hz (extrapolation to 5.5/9.5 Hz is BELIEF).
+
+    0xC6446   Kp     | L_tot peak |L| @ f             | closest approach to 1+j0       | verdict at 5.5-9.5 Hz
+    5244      696    |  3.961 @  5.50 Hz              |  0.264  (at  8.20 Hz, L =  1.25 @   +4.2) | marginal
+    5244      645    |  3.633 @  5.50 Hz              |  0.221  (at  8.11 Hz, L =  1.21 @   +3.8) | marginal
+    5244      512    |  2.777 @  5.50 Hz              |  0.089  (at  7.84 Hz, L =  1.08 @   +1.9) | OSCILLATES
+    5244      341    |  1.678 @  5.50 Hz              |  0.132  (at  7.51 Hz, L =  0.89 @   -4.6) | marginal
+    5244      295    |  1.475 @  9.49 Hz              |  0.205  (at  7.45 Hz, L =  0.85 @   -8.5) | marginal
+    5244      248    |  1.471 @  9.49 Hz              |  0.284  (at  7.43 Hz, L =  0.82 @  -13.9) | marginal
+
+    3072      696    |  4.210 @  5.50 Hz              |  0.100  (at  9.49 Hz, L =  0.91 @   +2.2) | OSCILLATES
+    3072      645    |  3.884 @  5.50 Hz              |  0.105  (at  9.49 Hz, L =  0.90 @   +0.8) | marginal
+    3072      512    |  3.035 @  5.50 Hz              |  0.142  (at  9.49 Hz, L =  0.87 @   -3.0) | marginal
+    3072      341    |  1.954 @  5.50 Hz              |  0.210  (at  9.49 Hz, L =  0.84 @   -8.4) | marginal
+    3072      295    |  1.668 @  5.50 Hz              |  0.231  (at  9.49 Hz, L =  0.83 @   -9.9) | marginal
+    3072      248    |  1.380 @  5.50 Hz              |  0.252  (at  9.49 Hz, L =  0.82 @  -11.4) | marginal
+
+    2048      696    |  4.334 @  5.50 Hz              |  0.407  (at  9.49 Hz, L =  0.64 @  +13.2) | no sustained mode
+    2048      645    |  4.009 @  5.50 Hz              |  0.410  (at  9.49 Hz, L =  0.62 @  +11.4) | no sustained mode
+    2048      512    |  3.165 @  5.50 Hz              |  0.425  (at  9.49 Hz, L =  0.58 @   +6.3) | no sustained mode
+    2048      341    |  2.095 @  5.50 Hz              |  0.458  (at  9.49 Hz, L =  0.54 @   -1.2) | no sustained mode
+    2048      295    |  1.814 @  5.50 Hz              |  0.469  (at  9.49 Hz, L =  0.53 @   -3.5) | no sustained mode
+    2048      248    |  1.533 @  5.50 Hz              |  0.482  (at  9.49 Hz, L =  0.52 @   -5.8) | no sustained mode
+
+    1024      696    |  4.462 @  5.50 Hz              |  0.714  (at  9.49 Hz, L =  0.42 @  +37.5) | no sustained mode
+    1024      645    |  4.138 @  5.50 Hz              |  0.717  (at  9.49 Hz, L =  0.40 @  +35.9) | no sustained mode
+    1024      512    |  3.300 @  5.50 Hz              |  0.728  (at  9.49 Hz, L =  0.34 @  +30.7) | no sustained mode
+    1024      341    |  2.243 @  5.50 Hz              |  0.751  (at  9.49 Hz, L =  0.27 @  +21.0) | no sustained mode
+    1024      295    |  1.967 @  5.50 Hz              |  0.759  (at  9.49 Hz, L =  0.26 @  +17.6) | no sustained mode
+    1024      248    |  1.692 @  5.50 Hz              |  0.767  (at  9.49 Hz, L =  0.24 @  +13.6) | no sustained mode
+
+    512       696    |  4.527 @  5.50 Hz              |  0.868  (at  9.49 Hz, L =  0.36 @  +58.6) | no sustained mode
+    512       645    |  4.205 @  5.50 Hz              |  0.870  (at  9.49 Hz, L =  0.34 @  +58.2) | no sustained mode
+    512       512    |  3.369 @  5.50 Hz              |  0.881  (at  9.49 Hz, L =  0.27 @  +56.9) | no sustained mode
+    512       341    |  2.318 @  5.50 Hz              |  0.901  (at  9.49 Hz, L =  0.19 @  +53.9) | no sustained mode
+    512       295    |  2.044 @  5.50 Hz              |  0.908  (at  9.49 Hz, L =  0.17 @  +52.6) | no sustained mode
+    512       248    |  1.773 @  5.50 Hz              |  0.916  (at  9.49 Hz, L =  0.14 @  +50.8) | no sustained mode
+
+    Ripple scaling, at the flown operating point (linearised about the measured cycle):
+      the closed-loop gain from a broadband road input to the 7.3 Hz rate is 1/|1 - L_tot|.
+      0xC6446   Kp      |1 - L_tot| ring gain 1/|1-L|
+      5244      696           0.677           1.48
+      5244      341           0.163           6.15
+      5244      248           0.288           3.47
+      3072      696           1.005           0.99
+      3072      341           0.624           1.60
+      3072      248           0.629           1.59
+      2048      696           1.198           0.83
+      2048      341           0.851           1.18
+      2048      248           0.841           1.19
+      1024      696           1.402           0.71
+      1024      341           1.079           0.93
+      1024      248           1.060           0.94
+      512       696           1.506           0.66
+      512       341           1.193           0.84
+      512       248           1.171           0.85
+
+===============================================================================================================================================================================
+SECTION K -- plant-free split, the r24 amplitude that flips the verdict, and the build grid
+===============================================================================================================================================================================
+  route     t0    f0 |    |T|  |r24| |  L_servo    L_r24 |    |T+r24| | r24 flip thr | verdict
+  r32    620.7  7.20 |    409    681 |  0.74@ +88  1.22@ -37 |        556 |          472 | r24 is the lane above unity
+  r32    692.8  7.13 |    296    586 |  0.58@ +89  1.15@ -30 |        511 |          290 | r24 is the lane above unity
+  r32    726.5  6.81 |    509    660 |  0.83@ +71  1.08@ -47 |        614 |          482 | r24 is the lane above unity
+  r33    100.8  7.08 |    502    636 |  0.85@ +71  1.08@ -48 |        588 |          488 | r24 is the lane above unity
+  r33    212.5  7.57 |    614    990 |  0.68@ +79  1.10@ -38 |        904 |          547 | r24 is the lane above unity
+  r33    224.1  7.30 |    614    872 |  0.86@ +82  1.22@ -44 |        713 |          721 | r24 is the lane above unity
+  r33    833.5  7.59 |    513    752 |  0.81@ +81  1.18@ -42 |        635 |          566 | r24 is the lane above unity
+  r34     35.5  7.23 |    656    831 |  0.89@ +73  1.13@ -49 |        733 |          701 | r24 is the lane above unity
+  r34     77.7  7.30 |    592    741 |  0.92@ +74  1.15@ -50 |        643 |          656 | r24 is the lane above unity
+  r34    133.1  7.40 |    531    917 |  0.75@ +94  1.29@ -35 |        710 |          674 | r24 is the lane above unity
+  r34    182.4  7.71 |    446    720 |  0.77@ +89  1.25@ -38 |        577 |          534 | r24 is the lane above unity
+  r34    188.2  7.52 |    713   1149 |  0.75@ +86  1.21@ -38 |        947 |          811 | r24 is the lane above unity
+  r34    343.7  7.47 |    594    829 |  0.82@ +77  1.14@ -44 |        726 |          620 | r24 is the lane above unity
+  r34    372.9  6.81 |    550    841 |  0.82@ +86  1.25@ -41 |        672 |          664 | r24 is the lane above unity
+  r34    475.7  7.37 |    510    768 |  0.83@ +85  1.25@ -41 |        616 |          613 | r24 is the lane above unity
+  r34    480.9  6.59 |    435    479 |  0.89@ +62  0.98@ -53 |        489 |          375 | neither
+  r34    667.7  7.06 |    441    599 |  0.80@ +73  1.08@ -45 |        552 |          414 | r24 is the lane above unity
+  r34   1003.6  7.37 |    472    839 |  0.70@ +93  1.25@ -34 |        672 |          566 | r24 is the lane above unity
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  |L_servo| : median 0.81, range 0.58-0.92 ; ABOVE 1 on 0 of 18 episodes
+  |L_r24|   : median 1.17, range 0.98-1.29 ; ABOVE 1 on 17 of 18 episodes
+  r24 amplitude at which the verdict FLIPS (|L_servo| = 1): median 566 counts (range 290-811);
+     measured r24 median 760 counts -> margin x1.34 ; equivalent 0xC6446 threshold = 3909 (flown 5244)
+
+  BUILD GRID -- L_tot(new) = kappa * L_servo + alpha * L_r24, evaluated at the measured f0 of each
+  episode and then pooled.  kappa = pid(Kp_new,N=1) / pid_eff(Kp_now, N), alpha = gain_new/5244.
+  pid(Kp,N) = N*Kp/256 + (Kd/8)*(1 - z^-1) at f0.  N = the P clamp's describing-function gain now.
+
+  --- assuming the P clamp's present describing-function gain N = 1.00 ---
+    0xC6446   Kp     | L_tot at f0 (pooled median) | |1 - L_tot|    | reading
+    5244      696    |  1.009 @   +1.5 deg        |          0.028 | SUSTAINS the cycle
+    5244      645    |  0.992 @   -1.5 deg        |          0.028 | SUSTAINS the cycle
+    5244      512    |  0.956 @   -9.5 deg        |          0.167 | cycle stops; ring gain 6.0
+    5244      341    |  0.920 @  -21.5 deg        |          0.367 | cycle stops; ring gain 2.7
+    5244      295    |  0.912 @  -24.4 deg        |          0.414 | cycle stops; ring gain 2.4
+    5244      248    |  0.908 @  -27.7 deg        |          0.466 | cycle stops; ring gain 2.1
+
+    3072      696    |  0.761 @  +28.4 deg        |          0.491 | cycle stops; ring gain 2.0
+    3072      645    |  0.713 @  +25.5 deg        |          0.471 | cycle stops; ring gain 2.1
+    3072      512    |  0.594 @  +16.0 deg        |          0.459 | cycle stops; ring gain 2.2
+    3072      341    |  0.486 @   -2.0 deg        |          0.515 | cycle stops; ring gain 1.9
+    3072      295    |  0.471 @   -7.4 deg        |          0.536 | cycle stops; ring gain 1.9
+    3072      248    |  0.457 @  -13.7 deg        |          0.566 | cycle stops; ring gain 1.8
+
+    2048      696    |  0.724 @  +47.1 deg        |          0.734 | cycle stops; ring gain 1.4
+    2048      645    |  0.668 @  +45.6 deg        |          0.715 | cycle stops; ring gain 1.4
+    2048      512    |  0.524 @  +39.0 deg        |          0.678 | cycle stops; ring gain 1.5
+    2048      341    |  0.348 @  +24.2 deg        |          0.697 | cycle stops; ring gain 1.4
+    2048      295    |  0.308 @  +18.3 deg        |          0.714 | cycle stops; ring gain 1.4
+    2048      248    |  0.273 @  +10.5 deg        |          0.733 | cycle stops; ring gain 1.4
+
+    1024      696    |  0.753 @  +65.9 deg        |          0.975 | cycle stops; ring gain 1.0
+    1024      645    |  0.694 @  +65.9 deg        |          0.956 | cycle stops; ring gain 1.0
+    1024      512    |  0.539 @  +65.0 deg        |          0.914 | cycle stops; ring gain 1.1
+    1024      341    |  0.341 @  +65.2 deg        |          0.911 | cycle stops; ring gain 1.1
+    1024      295    |  0.288 @  +65.3 deg        |          0.918 | cycle stops; ring gain 1.1
+    1024      248    |  0.232 @  +63.9 deg        |          0.922 | cycle stops; ring gain 1.1
+
+    512       696    |  0.790 @  +73.5 deg        |          1.084 | cycle stops; ring gain 0.9
+    512       645    |  0.732 @  +74.1 deg        |          1.066 | cycle stops; ring gain 0.9
+    512       512    |  0.580 @  +76.6 deg        |          1.033 | cycle stops; ring gain 1.0
+    512       341    |  0.386 @  +82.6 deg        |          1.025 | cycle stops; ring gain 1.0
+    512       295    |  0.336 @  +85.2 deg        |          1.028 | cycle stops; ring gain 1.0
+    512       248    |  0.285 @  +88.3 deg        |          1.032 | cycle stops; ring gain 1.0
+
+  --- assuming the P clamp's present describing-function gain N = 0.70 ---
+    0xC6446   Kp     | L_tot at f0 (pooled median) | |1 - L_tot|    | reading
+    5244      696    |  1.237 @  +14.3 deg        |          0.365 | SUSTAINS the cycle
+    5244      645    |  1.177 @  +11.5 deg        |          0.281 | SUSTAINS the cycle
+    5244      512    |  1.030 @   +3.3 deg        |          0.066 | SUSTAINS the cycle
+    5244      341    |  0.933 @  -10.2 deg        |          0.184 | cycle stops; ring gain 5.4
+    5244      295    |  0.904 @  -14.5 deg        |          0.258 | cycle stops; ring gain 3.9
+    5244      248    |  0.884 @  -19.3 deg        |          0.336 | cycle stops; ring gain 3.0
+
+    3072      696    |  1.068 @  +37.6 deg        |          0.669 | cycle stops; ring gain 1.5
+    3072      645    |  0.992 @  +36.2 deg        |          0.618 | cycle stops; ring gain 1.6
+    3072      512    |  0.797 @  +29.5 deg        |          0.498 | cycle stops; ring gain 2.0
+    3072      341    |  0.564 @  +16.0 deg        |          0.484 | cycle stops; ring gain 2.1
+    3072      295    |  0.511 @  +10.5 deg        |          0.506 | cycle stops; ring gain 2.0
+    3072      248    |  0.465 @   +3.8 deg        |          0.537 | cycle stops; ring gain 1.9
+
+    2048      696    |  1.053 @  +50.6 deg        |          0.879 | cycle stops; ring gain 1.1
+    2048      645    |  0.972 @  +49.6 deg        |          0.828 | cycle stops; ring gain 1.2
+    2048      512    |  0.763 @  +46.7 deg        |          0.731 | cycle stops; ring gain 1.4
+    2048      341    |  0.497 @  +39.9 deg        |          0.696 | cycle stops; ring gain 1.4
+    2048      295    |  0.427 @  +37.4 deg        |          0.710 | cycle stops; ring gain 1.4
+    2048      248    |  0.356 @  +31.8 deg        |          0.723 | cycle stops; ring gain 1.4
+
+    1024      696    |  1.084 @  +63.2 deg        |          1.095 | cycle stops; ring gain 0.9
+    1024      645    |  1.003 @  +63.6 deg        |          1.056 | cycle stops; ring gain 0.9
+    1024      512    |  0.791 @  +65.0 deg        |          0.978 | cycle stops; ring gain 1.0
+    1024      341    |  0.520 @  +67.1 deg        |          0.930 | cycle stops; ring gain 1.1
+    1024      295    |  0.448 @  +67.8 deg        |          0.928 | cycle stops; ring gain 1.1
+    1024      248    |  0.374 @  +69.9 deg        |          0.940 | cycle stops; ring gain 1.1
+
+    512       696    |  1.115 @  +68.7 deg        |          1.197 | cycle stops; ring gain 0.8
+    512       645    |  1.035 @  +69.5 deg        |          1.160 | cycle stops; ring gain 0.9
+    512       512    |  0.827 @  +72.3 deg        |          1.087 | cycle stops; ring gain 0.9
+    512       341    |  0.565 @  +79.0 deg        |          1.050 | cycle stops; ring gain 1.0
+    512       295    |  0.496 @  +81.9 deg        |          1.052 | cycle stops; ring gain 1.0
+    512       248    |  0.428 @  +85.9 deg        |          1.059 | cycle stops; ring gain 0.9
+

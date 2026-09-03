@@ -25,6 +25,14 @@ Flat 248 = 0.58×K_crit: PM 27°, GM 2.0× on the loaded high-angle plant; it al
 | (g) highway lane-change ring count and 4–8 Hz rate power at matched speed/cmd | ≥ 20 m/s | 0 of 2, 29 wire² (new tune) | unchanged or better (inner Kp −3…−16 % there; the outer loop is untouched) |
 | (h) saturation P(|field| ≥ 309) | engaged | 0.000 | ≤ 0.01 |
 
+### Amendments 2026-09-03 (before any drive; from `docs/research/7HZ-STRONG-TURN-DEEP-ANALYSIS-2026-09-03.md`)
+- (i) f0 per episode and the ratio |bar ripple| / |rate ripple| at f0. The r24-pump reading predicts f0 unchanged or higher and the ratio unchanged at ~10;
+  the pure-servo reading predicts f0 moves up substantially (its own f_180 8.2 → 12 Hz) and the ratio falls with it.
+- (j) The remaining-suspect list in the FAIL sentence below is: the engaged-only r24 twist-derivative lane (0xC6446 = 5244 when engaged; predicted share of the
+  loop 1.17 vs the servo's 0.81 on the 18 measured episodes), then a plant-side resonance. The outer loop is already excluded by the measured data.
+- Prediction from the plant-free share method: the total return ratio falls 1.00 → 0.88–0.91 at flat 248 — the cycle stops by a 9–12 % margin, a Q ~2–3 mode remains
+  at ~7.3 Hz: 6–8.5 Hz rate 2.3–3.3 deg/s in the same turns (now 17–29), tap ripple/level 0.10–0.25, F7 ≤ 1 per 100 s — a PASS near the edge of (b).
+
 ## Decision rule
 - (a) ≤ 2 AND (b) ≤ 0.25 AND (d) ≥ 105 → **the strong-turn ripple was the P-gain limit cycle and a flat Kp is the lever.** The operator scores the feel.
 - **FAIL sentence:** if with Kp flat 248 F7 episodes still occur at ≥ 4 per 100 s with tap ripple/level ≥ 0.4 in idx ≥ 68 frames, the ripple is NOT the
