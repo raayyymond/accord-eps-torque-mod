@@ -92,6 +92,18 @@ a return of 3.9 Hz with the tap at 1.00 (Kp→0.15), sluggish centering (Ki→0.
 no do-not-flash; three script holes (no end-state check on the primary edit, Kd only read back in-loop, last-record
 blindness) closed with re-reads from the FINAL image and the decoded .rwd against the constants.
 
+### V282 — V281 rev 3 + the r24 COMPARATOR TAP in the existing cave (2026-09-03, NOT FLOWN — THE FLIGHT CANDIDATE, supersedes V281 rev 3 as the thing to fly; both stay flashable)
+
+**base** V281 rev 3 · **image** `0ea98d06…ed0fe` · **rwd** `61836515…7e22` · **357/357** (282 S) · independent rebuild reproduces · 10 bytes vs rev 3: `0xC4B36` 6c94→2695, `0xC4B42` 9cb0→c894, `0xC4B64` 1e95→2695, `0xC4B70` da94→6c94 (hw1 `2437` = `ld.h disp16[gp],r6` unchanged at all four) + CRC `0xC4FFC` · adversarial ×3 in progress · **prereg** `rlog-tools/studies/grind/PREREG-V282-READ.md`
+
+| 0x14A byte 4 | V105 → V281 rev 3 | V282 |
+|---|---|---|
+| bit 6 | \|gp-0x6b94\| ≥ \|gp-0x4f64\| (duty ~0) | **\|gp-0x6ada (r24)\| ≥ \|gp-0x6b38 (T)\|** |
+| bit 5 | \|gp-0x6ae2\| ≥ \|gp-0x6b26\| | **\|r24\| ≥ \|gp-0x6b94 (aggregator)\|** |
+| bits 7 / 4 / 3 | sign(gp-0x6b4c) / sign(r24) / sign(gp-0x3680) | unchanged |
+
+**WHY.** The two deep analyses (`docs/research/7HZ-STRONG-TURN-DEEP-ANALYSIS-2026-09-03.md`, `GRINDING-DEEP-ANALYSIS-2026-09-03.md`): the engaged-only r24 lane (0xC6446 = 5244 when engaged) PUMPS the 7 Hz strong-turn ripple (share 1.17 vs the servo's 0.81) and DAMPS the 20 Hz grind (~83 % of the aggregator's damping); every ranking scales with |r24|, which is not on the wire, and a hidden gain arm (gp-0x671d ≠ 0 → 0xC6442 = 1024) would invert it. **CLASS:** an inert instrument (the kit's preferred experiment), the first since V279's tap; displacement-only inside a cave flown V105→V281 (the safe cave sub-class). **RISK:** none intended; V281 rev 3's risks apply. **READ IT BY:** bit-6 duty over engaged hands-off creep: ≥ 0.22 → r24 dominant (do not cut it); ≤ 0.10 → the 1024 arm is live; FAIL: duty 0.000/1.000 over 20 s, or bit 4's 18–22 Hz phase ≠ −6 ± 25°; cost FAIL: the 427 tap stops decoding, a DTC, any change in feel.
+
 ### V281 rev 3 — Kp COMPLETELY FLAT at the idx-0 value on the LKAS rate PID  (2026-09-03, NOT FLOWN — THE FLIGHT CANDIDATE; rev 1 knot-cap and rev 2 flat-341-from-24 SUPERSEDED)
 
 **base** V280 rev 2 · **image** `98a7a514…2fc9c` · **rwd** `a3e330ff…8901` (`…V281R3-V280R2BASE-KP.FLAT.Y0.MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP…rwd`) · **793/793** (566 S) · independent rebuild reproduces · adversarial A (arithmetic) PASS, B (interlocks/stability; rwd cipher decoded and matched; two drive notes: grip-compounded fade at idx 58 ≈ 370 counts, idx-26 class thin) PASS, C (build audit, 36/36 mutations caught) PASS · rev 2 `4c437e3b…` passed A/B/C before being superseded on the operator's instruction · **prereg** `rlog-tools/studies/osc-highangle/PREREG-V281-READ.md` · **page** https://claude.ai/code/artifact/51c14843-7f5c-4792-ba8e-4eaf2e641054
