@@ -3,8 +3,7 @@
 Written **2026-09-03, BEFORE the build is finished and before any drive.** V283 = V282 (Kp flat 248 + the inert r24 comparator tap) + `0xC63E6` Ki 0 → 50, one u16,
 cal-only. Instruments: the 427 T tap (the integrator is in series with it), 0x14A byte 4 bits 6/5/4 (V282's r24 comparators and sign), 0x18F, 0x14A, 0xE4.
 Scripts: `strongturn_r35.py`, `v281r3_read_r35.py` (+ `_supp`), `r24_deembed.py`, `ki_sizing.py`, `rlog-tools/studies/grind/v282_prereg_duty.py`. **Do not move a threshold
-after the log lands.** Record the toggle backup; recommended tune for this drive: **SteerRatio back to 16.1** (the r35 read attributes most of the road-level understeer
-to the 12.5 measurement bias: the loop settles at ~0.62 of the request), LAF 2.11, friction 0.03, KP 0.6.
+after the log lands.** Record the toggle backup. **Operator's decision: SteerRatio STAYS 12.5 for this drive** (one change at a time: Ki is the variable), LAF 2.11, friction 0.03, KP 0.6 — the same tune as r35, so every r35 statistic is a like-for-like baseline. The road-level understeer from the 12.5 bias (the loop settling at ~0.62 of the request) is therefore EXPECTED to persist and is not a V283 statistic; the EPS-side stalls/deadband (a), (b), (c) are.
 
 ## Why (from `V281R3-READ-r35-2026-09-03.md`, `7HZ-STRONG-TURN-DEEP-ANALYSIS-2026-09-03.md` §10)
 V281 rev 3 stopped the self-sustained 7 Hz cycle (F7 0.0 per 100 s; a damped ring at ~40 % remains, r24-driven). Its predicted cost arrived: seven 1–3 s stalled-wheel
