@@ -43,6 +43,12 @@ Flat 248 = 0.58×K_crit: PM 27°, GM 2.0× on the loaded high-angle plant; it al
 - (g) worse → the inner-loop Kp drop at idx 2–12 mattered on the highway (it should not: PM ~50° there); check the build diff before believing anything else.
 
 ## Risk stated before the drive
+**Added 2026-09-03 from the Ki sizing (7HZ deep analysis §10, BELIEF: Coulomb break-away plant calibrated to the measured full-demand point):** flat 248 creates
+a hard LOW-DEMAND deadband under road load that V280 rev 2 does not have — at idx 26 against an ordinary 690-count load Kp 696 moves the wheel at 7.2 deg/s, Kp 248
+delivers 555 counts and the wheel does not move. Statistic (k): fraction of engaged frames with idx 20–40, |rate| < 1 deg/s and |angle| > 10° (a held, unmoving
+command); V280 baseline to be read from r32–r34 first. The companion is Ki (0xC63E6, ships 0): Ki 100 (corner 0.5 Hz) restores 13.9 of 14.5 deg/s with no overshoot
+in that case, costs −2.8° at 7 Hz and nothing at 20 Hz, and needs no new tap (the integrator is in series with the T tap); a stall-release lurch of ~+10 deg/s lasts
+0.8 s at Ki 100 (Ki sets the duration, not the size). Ki 5 (V270/V271) does not break a stall.
 Less push on a loaded wheel at mid demand (−48 % at idx 58 in a stall, full stalled push only from idx ≈ 120); the r31-class stall stutter may reappear between idx 60 and 120 where P is now weaker; hands-light full-demand rate ≈ −8 %; a lightly damped ~7.6 Hz mode (Ms ≈ 2.9) remains on the model. Peak torque unchanged; nothing else on the car changes.
 
 ## What refutes this pre-registration

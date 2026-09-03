@@ -466,6 +466,207 @@ situation a dose cannot resolve and a tap can.
 
 ---
 
+## 10. ADDENDUM — a small Ki on the rate PID (operator question, 2026-09-03)
+
+Script: `rlog-tools/studies/osc-highangle/ki_sizing.py`, stdout `KI-SIZING.txt`. Every constant below is
+re-derived from the disassembly this session; nothing is taken from the V270/V271 build scripts.
+
+### 10.1 The Ki arithmetic and its units [EVIDENCE — my own disassembly of `FUN_00028ea6`]
+
+```
+E        = 32*sp - fb                                          # 0x29d76 shl 0x5 ; 0x29d78 sub r26
+excess   = deadband(E >> 5, 0xC62E4 = 4)                       # 0x29d7c..0x29d9a
+acc      = clamp(acc + ((excess * Ki) >> 3), +-0xC61BA*128)    # 0x29d9c..0x29dc2   (acc = gp-0x6dd0 >> 3)
+I_term   = acc >> 7                                            # 0x29f18 sar 0x7
+sum      = clamp(I_term + P + D, +-0xC61BE = 15360)            # 0x29f1e add r9 ; 0x29f24 add r8
+gp-0x6dd0 = acc << 3                                           # 0x29de4 shl 0x3,r24 ; 0x2a190 st.w r24
+```
+
+- **Per-tick accumulation:** `I_term` gains `excess * Ki / 1024` every 1 ms tick.
+- **Clamp:** the accumulator's limit is `0xC61BA << 10 >> 3`, and `I_term = acc >> 7`, so **`|I_term| ≤ 0xC61BA
+  = 10240`** — the integral term is limited in exactly the same units as P and D, at two thirds of the sum
+  clamp. This is integrator limiting, and it is the only anti-windup present.
+- **The `0xC62E4` term is a DEADBAND ON THE ERROR, not an output anti-windup.** It is ±4 in `E>>5`, i.e.
+  ±128 counts of E, i.e. **±0.52 deg/s of rate error** (fb DC 30.89 per raw count × 8 raw counts per deg/s
+  = 247.1 counts of E per deg/s). At the error magnitudes that matter it costs ~2 %, so the integrator is
+  effectively linear.
+- **Reset:** `gp-0x6dd0` has exactly **four** accesses in the code region — `ld.w` 0x29DA4 and `st.w` 0x2A190
+  in the live function, and the same pair at 0x2AC96/0x2B05C in the dead twin `FUN_0002A93A`. One writer.
+  Every reset must therefore flow through r24 before that store, and there are exactly two `mov 0x0, r24`
+  sites reaching it: **0x2A164** (the clear-everything path — r24, r29, r27, r22, r16, r12 all zeroed, i.e.
+  the loop's not-valid / not-engaged arm) and **0x2A0C6** (the `gp-0x680a` alternate-taper arm, which
+  twistloop found has no writer). **There is no driver-override reset and no conditional integration.**
+  [EVIDENCE — a complete census, because the single writer bounds it]
+- **The accumulator has no external reader**, so its entire effect on the car flows through the PID sum into
+  `gp-0x6b38`, which is already tapped. [EVIDENCE — the same four-access census]
+
+**Reader census of the three cells** (raw LE scan of the V280 image, 0x13000–0xC0000):
+
+| cell | value | readers | verdict |
+|---|---|---|---|
+| **`0xC63E6` Ki** | **0** | 0x29D9C (live PID), 0x2AC8E (dead twin), 0x59B90 | effectively private. The third hit is a bare-halfword match whose decode (`ld.bu …, r0`) discards to r0, so it is far more likely a data coincidence than an instruction — **confirm before building.** |
+| `0xC62E4` deadband | 4 | 0x29D6E, 0x29D84, 0x29D8C, 0x29D96 (live) + 3 in the dead twin | **fully private to the rate-PID pair** |
+| `0xC61BA` I clamp | 10240 | 0x29DA0 (live), 0x2ACA0 (twin), **0x36ABA, 0x3BCC2, 0x5AAFC** | **NOT private — three outside readers. Do not touch it.** |
+
+### 10.2 The Ki/Kp corner and the phase cost
+
+`|I| = |P|` at **`f_i = 1.2434 · Ki / Kp` Hz**. Cost on the controller transfer, relative to Ki = 0:
+
+| Kp | Ki | f_i (Hz) | 7 Hz | 9 Hz | 20 Hz |
+|---|---|---|---|---|---|
+| 248 | 5 | 0.025 | ×0.998, −0.14° | ×0.999, −0.09° | −0.02° |
+| 248 | 20 | 0.100 | ×0.994, −0.55° | ×0.995, −0.35° | −0.07° |
+| **248** | **50** | **0.251** | **×0.984, −1.38°** | **×0.987, −0.88°** | **−0.16°** |
+| **248** | **100** | **0.501** | **×0.969, −2.80°** | **×0.974, −1.79°** | **−0.33°** |
+| 248 | 200 | 1.003 | ×0.940, −5.79° | ×0.950, −3.68° | −0.66° |
+| 248 | 400 | 2.006 | ×0.891, −12.28° | ×0.904, −7.75° | −1.35° |
+| 696 | 100 | 0.179 | ×0.995, −1.38° | ×0.995, −1.03° | −0.34° |
+
+**Folded into the measured 7.3 Hz loop share** (the plant-free identity of §2; r24 untouched at 5244):
+
+| Kp | Ki | L_tot at f0 (N = 1) | ring gain | L_tot (N = 0.70) | ring gain |
+|---|---|---|---|---|---|
+| 248 | 0 | 0.908 ∠ −27.7° | 2.15 | 0.884 ∠ −19.3° | 2.98 |
+| 248 | 50 | 0.918 ∠ −27.6° | **2.15** | 0.899 ∠ −19.7° | **2.95** |
+| 248 | 100 | 0.928 ∠ −27.5° | **2.15** | 0.914 ∠ −19.8° | **2.95** |
+| 248 | 200 | 0.949 ∠ −27.4° | 2.16 | 0.943 ∠ −19.9° | 2.93 |
+| 248 | 400 | 0.990 ∠ −27.0° | 2.15 | 0.998 ∠ −20.1° | 2.87 |
+
+**The 7.3 Hz mode does not care.** Up to Ki = 400 the residual ring gain moves by under 1 %: the integral
+term shrinks the servo's contribution slightly and rotates it slightly, and the two effects cancel in the
+sum with r24. The 20 Hz creep mode is untouched by construction — at 20 Hz the I term is 1.2 % of the D term
+at Ki = 100. **Answer to the operator's constraint: a Ki up to ~200 costs nothing at 7–9 Hz and nothing at
+20 Hz.** [EVIDENCE on the model — the measured loop share plus the exact firmware transfer]
+
+### 10.3 What it buys and what it costs — closed-loop transients
+
+Plant calibrated to the measured hands-light full-demand point (T 2462 counts → 124 deg/s against a
+~690-count load): viscous `b` = 14.3 counts per deg/s, `τ` = 0.199 s (the kit's identified 0.80 Hz pole),
+8.4 ms delay, Coulomb break-away `L`. **A MODEL, marked BELIEF** — but every parameter in it is anchored on
+a measured point.
+
+**(a) The command deadband — idx 26 (ref 14.5 deg/s), ordinary 690-count road load:**
+
+| Kp | Ki | steady T | steady rate | overshoot |
+|---|---|---|---|---|
+| 696 (V280 rev 2) | 0 | 792 | 7.2 deg/s | none |
+| **248 (V281 rev 3)** | **0** | **555** | **0.0 deg/s — the wheel does not move at all** | none |
+| 248 | 20 | 793 | 6.4 | none |
+| **248** | **50** | **869** | **12.0** | **none** |
+| 248 | 100 | 890 | 13.9 | none |
+
+**V281 rev 3 creates a hard command deadband at low demand that V280 rev 2 does not have**: at idx 26 the
+P-only torque (555 counts) sits below the road load (690), so the wheel is dead. Ki = 50 removes it
+completely, with no overshoot anywhere in this case. **Pure benefit.**
+
+**(b) The stalled-wheel class — idx 58 (ref 32.3 deg/s), 2000-count break-away released at t = 2 s:**
+
+| Kp | Ki | T in the stall | rate in the stall | time to the I clamp | peak rate after release | overshoot | time above ref |
+|---|---|---|---|---|---|---|---|
+| 696 | 0 | 2175 | 12.2 | never | 29.9 | −2.4 | 0.00 s |
+| **248** | **0** | **1238** | **0.0 (dead)** | never | 11.0 | −21.3 | 0.00 s |
+| 248 | 5 | 1568 | 0.0 (still dead) | never | 22.9 | −9.3 | 0.00 s |
+| 248 | 20 | 2160 | 8.9 | never | 38.5 | +6.2 | 3.16 s |
+| **248** | **50** | **2240** | **16.8** | 0.99 s | 42.7 | **+10.5** | **1.77 s** |
+| **248** | **100** | **2240** | **16.8** | 0.47 s | 42.6 | +10.4 | **0.83 s** |
+| 248 | 200 | 2240 | 16.8 | 0.22 s | 42.5 | +10.2 | 0.34 s |
+
+**Ki = 5 — V270/V271's dose — is far too small: it does not break the stall at all.** Ki ≥ 20 does. Note the
+shape of the cost: **the overshoot MAGNITUDE (~+10 deg/s, a third of the reference) is set by the integrator
+clamp and the plant, not by Ki; Ki sets only how long it lasts, and a LARGER Ki gives a SHORTER lurch**
+because it unwinds as fast as it wound. That inverts the usual "smaller is safer" instinct.
+
+**(c) A driver holding the wheel — the case I expected to be the problem, and it mostly is not:**
+
+| case | Kp 248, Ki 0 | Kp 248, Ki 100 | Kp 696, Ki 0 (V280 rev 2) |
+|---|---|---|---|
+| idx 60, held at 2600 ct | T 1281, rate 0 | **T 2462 (railed) within 0.41 s**; on release +10.2 deg/s for 0.80 s | T 2462, rate 0; on release −1.5 |
+| idx 120, held at 2600 ct | T 2462 already | T 2462; on release +0.9 deg/s for 0.00 s | T 2462; on release −8.6 |
+
+At idx ≳ 84 the P term alone already rails the output at Kp 248, so **the integrator adds nothing new
+against a driver's hand there.** The exposed window is **idx ≈ 40–84**, where Ki takes the delivered torque
+from ~1281 counts to the 2462 cap within half a second while the driver holds. That is new relative to
+V281 rev 3 — but it is **not new relative to V280 rev 2, which already delivers 2462 there.** Ki restores
+the override push that flat 248 removed; it does not exceed what is on the car today.
+
+**(d) r31's real stall episodes, open-loop wind-up replay** (E from the measured rate, so this bounds the
+wind-up and cannot show the overshoot): median E is 5509–49509 counts across the ten episodes, and the
+integrator reaches its 10240 clamp within the episode at **every Ki ≥ 20**, and in 5 of 10 at Ki = 5.
+
+### 10.4 The deadband cal is not the stall/normal discriminator
+
+The obvious idea is to raise `0xC62E4` so the integrator only wakes on a stall: 4 → 64 moves the deadband
+from 0.52 to 8.3 deg/s of rate error. **Do not.** Two reasons:
+
+1. At Kp 248 the loop's *ordinary* steady tracking error in a loaded turn is already 13–25 deg/s
+   (`kpflat` §3), which is as large as a stall error. No threshold separates them.
+2. **A larger deadband makes the break-free lurch worse, not better.** The wound integrator only unwinds on
+   error of the opposite sign, so with a deadband D the wheel must overshoot the reference by more than D
+   before unwinding even begins — the wind-up latches. Keep `0xC62E4 = 4`.
+
+The lever is Ki alone: **one u16 at `0xC63E6`.**
+
+### 10.5 Is an accumulator tap needed first?
+
+**No — and this is the one place where the kit's "enabling a disabled term needs a probe" rule does not
+bite, for a reason the census makes explicit.** `gp-0x6dd0` has one writer and no external reader, so the
+accumulator's entire effect on the car flows through the PID sum into `gp-0x6b38` — **which the CAN-427 tap
+already carries.** The integrator is not a quantity that is computed and then discarded; it is in series
+with the instrument. Its signature there is large and pre-computable: at idx 58 in a stall, T goes
+**1238 → 2240 counts (×1.81)** with a rise time set by Ki (0.99 s at Ki 50, 0.47 s at Ki 100), and the
+accumulator is reconstructible offline frame by frame from the logged rate and command using the arithmetic
+in §10.1, then validated against the tap.
+
+🛑 **The caveat is scheduling, not observability: V282 (§7) takes that same field for r24.** The two builds
+compete for the one tap and must not fly together.
+
+### 10.6 How this folds into the §7 recommendation
+
+The recommendation in §7 does not change — **V282, the inert r24 tap, is still the ONE next build after
+V281 rev 3's read.** Ki becomes the *second* build, and which of the two comes second is decided by
+V281 rev 3's own drive:
+
+```
+V281 rev 3 (built, Kp flat 248)  --- fly it, read PREREG-V281 ---
+   |
+   +-- 7 Hz FIXED ((a) <= 2, (b) <= 0.25)  AND the stall/deadband cost bites ((e) >= 3, or the
+   |   operator reports a dead low-demand command)
+   |        => V283 = V281 rev 3 + Ki = 100 at 0xC63E6.  Cal-only, ONE u16, read on the existing
+   |           T tap.  This is the companion the Kp cut needs: it gives back the low-frequency
+   |           authority (idx 26 rate 0.0 -> 13.9 deg/s; idx 58 stall rate 0.0 -> 16.8 deg/s) and
+   |           moves the 7.3 Hz ring gain 2.15 -> 2.15, i.e. not at all.
+   |
+   +-- 7 Hz NOT fixed ((a) >= 4 with (b) >= 0.4)
+            => V282 = the r24 tap (Section 7).  The r24 question is then the live one and Ki is a
+               distraction: it cannot touch a mode whose ring gain it does not move.
+```
+
+**Dose:** Ki = **100** (f_i 0.50 Hz at Kp 248), with **50** (f_i 0.25 Hz) as the conservative alternative.
+Not 200: f_i = 1.0 Hz puts the inner integral corner inside the outer loop's own band (openpilot's command
+is a 1–5 Hz low-pass), and the standing constraint is that the highway outer loop must not be pushed back
+toward its ring. Not 5: it does not break the stall (table (b)). Between 50 and 100 the trade is lurch
+duration (1.77 s vs 0.83 s) against the outer-loop corner (0.25 vs 0.50 Hz); I prefer 100, because the lurch
+is what the operator feels and 0.5 Hz is still an octave below the outer loop's crossover.
+
+**Pre-registration for V283, if it is cut.** Primary: at |angle| ≥ 30° stalled frames (rate/ref < 0.3) at
+idx 40–80, the tap's |T| p50 — V281 rev 3 will read ~1240–1700, **PASS ≥ 2100**; and the low-demand command
+deadband — engaged frames at idx 20–32 with the wheel stopped, **PASS: that class disappears.** Mechanism:
+the tap's rise time into a stall, fitted against the predicted `excess·Ki/1024` per ms; if the fitted Ki is
+not within ±30 % of 100, the arithmetic in §10.1 is wrong. Cost: peak rate after a stall breaks — **FAIL if
+it exceeds the reference by more than 20 deg/s, or if the operator reports a lurch on exit from a stall**;
+and statistic (g) of PREREG-V281 — **FAIL if a slow 0.3–1 Hz weave appears**, which is the outer-loop
+interaction. **FAIL sentence:** *"If Ki = 100 leaves the stalled-frame |T| p50 below 2100 counts at idx
+40–80, the integral path is not live on the car — `gp-0x671d`-class gating, the 0x59B90 reader, or a reset I
+did not find — and no larger Ki is licensed until the accumulator is tapped directly."*
+
+**Build gates before cutting V283:** (i) confirm 0x59B90 is data, not a second reader of `0xC63E6`;
+(ii) do not touch `0xC61BA` (three outside readers) or `0xC62E4` (§10.4); (iii) for the adversarial pass —
+Ki raises no ceiling: the sum clamp, the ±3072 output cap and every downstream clamp are unchanged, so
+ADV281R2-B's interlock census carries over — **but the time spent AT the output cap rises**, which is a new
+exposure for the soft-EME bound-arm integrator even though its trip condition (peak, not dwell) is unchanged.
+
+---
+
 ## 9. Files
 
 - `rlog-tools/studies/osc-highangle/r24_deembed.py` — the script (standalone; sections A/B demodulation and
@@ -473,6 +674,9 @@ situation a dose cannot resolve and a tap can.
   **kept for the record and NOT used for any claim**, F ripple predictors, G the regime table, I the loop
   decomposition, J the local fits, K the plant-free identity and the build grid).
 - `rlog-tools/studies/osc-highangle/R24-DEEMBED.txt` — full stdout.
+- `rlog-tools/studies/osc-highangle/ki_sizing.py` + `KI-SIZING.txt` — the Ki addendum (§10): the PI corner
+  and its phase cost, that cost folded into the measured 7.3 Hz share, the calibrated closed-loop stall and
+  driver-hold transients, and the open-loop wind-up replay on r31's stall episodes.
 - Ghidra work this session: `FUN_0003aa2c`, `FUN_00026c80`, `FUN_00025c32` decompiled; `0x7e820–0x7e864` and
   `0x41e70–0x41ecf` disassembled; raw LE scans of the V280 rev 2 image for `gp-0x4f62`, `gp-0x4f60`,
   `gp-0x6ada`, `gp-0x6adc`, `gp-0x6b38` and for the cals `0xC63CC`, `0xC646A`, `0xC4118`, `0xC4124`,
