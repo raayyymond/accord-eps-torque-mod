@@ -92,6 +92,16 @@ a return of 3.9 Hz with the tap at 1.00 (Kp→0.15), sluggish centering (Ki→0.
 no do-not-flash; three script holes (no end-state check on the primary edit, Kd only read back in-loop, last-record
 blindness) closed with re-reads from the FINAL image and the decoded .rwd against the constants.
 
+### V283 — V282 + Ki 50 on the LKAS rate PID (2026-09-03, NOT FLOWN — THE FLIGHT CANDIDATE; V282 and V281 rev 3 stay flashable)
+
+**base** V282 · **image** `fd0c321a…1ef3d` · **rwd** `6bd088f5…c85d` · **328/328** (273 S) · 5 bytes vs V282 (`0xC63E6` 0→50 low byte + CRC `0xC6FFC`) · independent rebuild reproduces · adversarial ×3 in progress · **prereg** `rlog-tools/studies/osc-highangle/PREREG-V283-READ.md`
+
+| cell | V282 | V283 | what it is |
+|---|---|---|---|
+| `0xC63E6` (tp+0x73E6) | 0 | **50** | the rate PID's integral gain: acc += deadband(E»5, 4)·Ki » 3, clamp ±10240·128; I = acc » 7 (≤ ⅔ of the sum clamp); reset on disengage @0x2A164; readers: the live PID @0x29D9C + the unreachable twin (the 0x59B90 hit is a gp-relative packer load) |
+
+**WHY.** r35 (V281 rev 3): the 7 Hz cycle is gone but seven 1–3 s stalled-wheel runs appeared at idx 54–79 delivering 0.62 of V280's torque — a P-only loop's deadband. Ki 50: corner f = 1.24·Ki/Kp = 0.25 Hz; accumulates the held error until the wheel breaks free (~1.5 s in a 2000-count stall on the ki_sizing plant); costs ×0.984/−1.4° at 7 Hz (the ring is r24's), ~0 at 20 Hz; the integrator is in series with the T tap. Ki 5 (V270/V271, unflown) cannot break a stall (6 s time constant). **CLASS:** the first integrator ever run on this car; a cal that has never been non-zero on any flown build. **RISK:** stall-release lurch ~10 deg/s for ~1.8 s (clamp-set); push against a held hand at idx 40–84 back to V280's level within ~1 s; residual after long curves (~4 s). **READ IT BY:** stalled runs ≥ 1 s ≤ 2 (r35 7), idx 40–80 rate ≥ 70 % of reference (r35 45 %), dead fraction ≤ 0.10 (r35 0.34); 7 Hz and 20 Hz unchanged; FAIL: stalls persist with the accumulator railed; cost FAIL: lurch > 20 deg/s or > 3 s, or a new sub-1 Hz hunt.
+
 ### V282 — V281 rev 3 + the r24 COMPARATOR TAP in the existing cave (2026-09-03, NOT FLOWN — THE FLIGHT CANDIDATE, supersedes V281 rev 3 as the thing to fly; both stay flashable)
 
 **base** V281 rev 3 · **image** `0ea98d06…ed0fe` · **rwd** `61836515…7e22` · **357/357** (282 S) · independent rebuild reproduces · 10 bytes vs rev 3: `0xC4B36` 6c94→2695, `0xC4B42` 9cb0→c894, `0xC4B64` 1e95→2695, `0xC4B70` da94→6c94 (hw1 `2437` = `ld.h disp16[gp],r6` unchanged at all four) + CRC `0xC4FFC` · adversarial ×3 in progress · **prereg** `rlog-tools/studies/grind/PREREG-V282-READ.md`
