@@ -106,15 +106,17 @@ CAN-427 T tap (gp-0x6b38, unchanged) directly reads the integral's effect: a sta
 should show |T| rising over ~1-2 s instead of sitting flat at the P-only value, and the tap's rise time can be
 fit against the predicted excess*Ki/1024-per-ms accumulation to check the arithmetic in situ.  CAN 0x14A bit 4
 (sign of r24, carried from V282/before) is unaffected -- this build touches no cell r24 depends on.
+SCORE THE DRIVE FROM rlog-tools/studies/osc-highangle/PREREG-V283-READ.md (numeric thresholds: stalled runs <= 2, idx 40-80 rate
+>= 70 % of reference, dead fraction <= 0.10; lurch > 20 deg/s or > 3 s = cost FAIL), not from this docstring.
 
 === PRE-REGISTRATION (drive-time; recorded for the close-out, not a build-time assertion) =========
-Primary: at |angle| >= 30 deg stalled frames (rate/ref < 0.3) at idx 40-80, tap |T| p50 -- V281 rev 3 read
-~1240-1700 there; PASS if it rises measurably (half the Ki=100 sizing's effect, since Ki=50 halves the
+Primary: at |angle| >= 30 deg stalled frames (rate/ref < 0.5) at idx 40-80, tap |T| p50 -- V281 rev 3 read
+778-868 on the WIRE there (the r35 stall runs; 1240-1700 are ki_sizing's MODEL values at Ki 0/5, not a read); PASS if it rises measurably (half the Ki=100 sizing's effect, since Ki=50 halves the
 accumulation rate) and the stalled-run COUNT/duration falls vs V281 rev 3's 7 runs / 14.8 s.  Cost: peak rate
 after a stall breaks free -- FAIL if it exceeds the reference by more than 20 deg/s or the operator reports a
 lurch; and PREREG-V281's statistic (g) (highway 4-8 Hz rate power / OSC episodes) -- FAIL if a new slow
-0.3-1 Hz weave appears (the outer-loop-interaction risk named in the deep-analysis doc, sec.10.6 gate iii).
-FAIL sentence: "If Ki=50 leaves the idx 40-80 stalled-frame |T| p50 unmoved from V281 rev 3's ~1240-1700 and
+0.2-1 Hz weave appears (the outer-loop-interaction risk named in the deep-analysis doc, sec.10.6 gate iii).
+FAIL sentence: "If Ki=50 leaves the idx 40-80 stalled-frame |T| p50 unmoved from V281 rev 3's 778-868 (wire) and
 the stall-run count/duration unchanged, the integral path is not live on the car as decoded here -- the
 reset condition fires more often than the decompile shows, or gp-0x680a-class gating exists that was not
 found -- and no larger Ki is licensed until the accumulator (gp-0x6dd0) is tapped directly instead of inferred
@@ -437,6 +439,13 @@ def build():
         check(bytes(im[PACK_LO:PACK_HI]) == bytes(base[PACK_LO:PACK_HI]), f"{nm}: 427 tap window untouched", kind)
         n7, X7, Y7 = rec(im, u32(im, KP_PTR + 4 * LIVE_SLOT))
         check(tuple(X7) == LIVE_KP_X and tuple(Y7) == LIVE_KP_Y_R3, f"{nm}: live Kp record == flat-248, carried", kind)
+        # KI VALUE PINS (adversary ADV283-C finding 1): tie the dose to something outside KI_NEW.
+        import re as _re
+        _prereg = Path(__file__).resolve().parents[2].parent / "rlog-tools" / "studies" / "osc-highangle" / "PREREG-V283-READ.md"
+        _m = _re.search(r"Ki 0 → (\d+)", _prereg.read_text(encoding="utf-8"))
+        check(_m is not None and u16(im, KI_CELL) == int(_m.group(1)), f"{nm}: Ki on the image == the dose in PREREG-V283-READ.md ({_m.group(1) if _m else '?'})", "S")
+        _fi = 1.2434 * u16(im, KI_CELL) / Y7[0]
+        check(0.24 <= _fi <= 0.26, f"{nm}: integral corner 1.2434*Ki/Kp(image) = {_fi:.3f} Hz in [0.24, 0.26]", "S")
 
     # ------------------------------------------------------------------------------------------
     print("\n  [9] INDEPENDENT REBUILD -- a second implementation reproduces the hash")
