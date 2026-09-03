@@ -94,7 +94,7 @@ blindness) closed with re-reads from the FINAL image and the decoded .rwd agains
 
 ### V283 — V282 + Ki 50 on the LKAS rate PID (2026-09-03, NOT FLOWN — THE FLIGHT CANDIDATE; V282 and V281 rev 3 stay flashable)
 
-**base** V282 · **image** `fd0c321a…1ef3d` · **rwd** `6bd088f5…c85d` · **328/328** (273 S) · 5 bytes vs V282 (`0xC63E6` 0→50 low byte + CRC `0xC6FFC`) · independent rebuild reproduces · adversarial ×3 in progress · **prereg** `rlog-tools/studies/osc-highangle/PREREG-V283-READ.md`
+**base** V282 · **image** `fd0c321a…1ef3d` · **rwd** `6bd088f5…c85d` · **329/329** (274 S) · 5 bytes vs V282 (`0xC63E6` 0→50 low byte + CRC `0xC6FFC`) · independent rebuild reproduces · adversarial A/B/C PASS (B residuals: integrator blind to a hand, release lurch +14–18 deg/s ~2 s, reset lags disengage 0.1–1 s; governor/COMP re-trace before Ki > 50) · **prereg** `rlog-tools/studies/osc-highangle/PREREG-V283-READ.md`
 
 | cell | V282 | V283 | what it is |
 |---|---|---|---|

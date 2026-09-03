@@ -33,6 +33,7 @@ breaks free; costs < 3° at 7 Hz, ~0 at 20 Hz; no new instrument needed. Ki 5 (V
 - (e) worse → Ki's 3° at 7 Hz mattered; revert to V282.
 
 ## Risk stated before the drive
+**Added from adversary B (model, BELIEF):** the integrator is blind to a hand (only the output fade overrides): holding against the lane at idx 40–84 drives T to 1540–2191 counts within 1–3 s (Ki 0: 256–537), any grip; release after a 3 s hold → +14–18 deg/s overshoot, settling in ~2 s (91 % of the cost-FAIL line). The accumulator clears 0.1–1.0 s AFTER a disengage (gated on the engagement ramp). Standstill windup: the accumulator rails in 0.4–1.9 s of a held command; the lane's structural ceiling is ~2500 counts (below the 3072 cap). Before any Ki above 50: re-trace the governor/COMP composition (a 5066 vs 5120 boost-floor margin rests on an old memory).
 A stall-release lurch of ~10 deg/s for ~1.8 s (BELIEF); more push against a held hand at idx 40–84 (restores V280's, not more); the integrator holds its value while
 engaged (resets only on disengage) — a long one-sided curve could leave a residual offset for ~4 s (corner 0.25 Hz) after it ends. Peak torque unchanged; the r24
 lane and the 20 Hz creep line untouched.
