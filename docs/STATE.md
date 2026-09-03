@@ -4,17 +4,32 @@
 > order** — findings, corrections and closures. That is a record, not a briefing. Everything you need
 > to make a decision is in this box and the index under it.
 
-## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-02 (V278 rev 3 FLEW; V280 built)
+## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-02 late (r32/r33 read: TWO LOOPS; V280 rev 2 tap-attributed ON THE CAR)
 
-**ON THE CAR: V278 rev 3 (map ×2, feedback clamp 15360, delivered-torque tap) — FLOWN 2026-09-02, route `…_00000031`.
-Operator: amazing authority; no more constant oscillation; no audible grinding; STUTTER at high angles is now the largest
-issue; max rate not yet 6× stock. THE FLIGHT CANDIDATE: V280 rev 2 — the map a STRAIGHT LINE from the origin to a ×6
-top (operator: "linearize this response as much as possible for openpilot to control torque"), `0xC62E6` = 46080, tap unchanged.
-Rev 1 (a knee at idx 96) is SUPERSEDED. ⚠ V276 is NOT a reference for anything but its own oscillation (it was barely driven
-engaged); "engaged" in every analysis means LATERAL engaged (0xE4 STEER_REQUEST & 0x18F SCA). V279 stays on the shelf (the operator
-has set aside the pure-feedforward path: it needs a StarPilot retune; V278/V280 need none). V277 is WITHDRAWN.**
+**ON THE CAR (TAP-ATTRIBUTED, operator confirmation PENDING): V280 rev 2** — routes `…_00000032` / `…_00000033` (2026-09-02) show the lane
+PUSHING at 143–155 deg/s hands-light where rev 3 brakes above 44.5 (chain-mirror corr: line 0.89–0.92, ×2 0.28–0.46); the operator filed them
+as "V278". Rev 3 flew on `…_00000031` only (never above 20 m/s). **Operator on r32/r33: "by far the best in authority… so close to complete
+right turns"; slight oscillation riding on strong turns; the highway LANE CHANGE now oscillates (smooth on V112); "seems like an LKAS PID
+tuning issue, openpilot not in the loop".**
 
-| | **V280 rev 2** — the straight line to 1032 |
+**THE READ — TWO DIFFERENT LOOPS (`LANECHANGE-V278R3-…`, `HIGHANGLE-r32-r33-…`, `studies/v280/LOWCMD-LOOPGAIN-…` A1–A6, `V268-DAMPER-DELTA-…`):**
+1. **Lane change = the OUTER loop (openpilot ↔ EPS).** 7.0–7.8 Hz, 5–15 deg/s, 6 of 6 hands-light lane changes ≥ 17.7 m/s (both operator
+   timestamps confirmed inside `laneChangeState` windows), absent on V112/stock; the 0xE4 command carries the line at coherence 1.00; P-rail,
+   fb-clamp, saturation all 0.000; openpilot's block/tune/commit identical on every route. **From the decompile: Kp/Kd are indexed by the
+   cmd-derived idx (the map's own register), so the map multiplies cmd→rate ONLY — the EPS rate-feedback gain is 1.00× V112 in every build.**
+   Inner loop from the tap: crossover 13–15 Hz, PM ~50°, no −180° below 15 Hz on the highway. Outer |L| at 2 Hz, 24 m/s: V112 0.51 / rev 3
+   1.02 / V280 1.10 (BELIEF: kinematic vehicle; scales with v²). In the lane-change regime (idx 2–12) rev 3 and V280 are within 8 %.
+   V268's base-assist flatten is a NO-OP below 85 deg/s (Honda's curve already flat; bytes re-read). **Discriminator, no build: lower
+   SteerFriction (72 % of the outer gain) / SteerKP and repeat lane changes at 25–30 m/s.** If it softens: keep the linear map, size the
+   openpilot tune against the OUTER margin. If not: the map's X 0–12 segment comes down.
+2. **Strong-turn ripple = the EPS inner loop hunting AT its reference.** 7 F7 episodes, wheel at 0.6–1.2× the reference, P linear 62–79 %,
+   no clamp/cliff; the stalled/P-desaturating class is GONE (0 of 7; r31 7 of 10; a 14 s stall with P railed rippled 0.02). Episodes per
+   100 s 9.8 → 8.1 / 4.3; amplitude held. Next levers: Kp table at idx 68–136, D as lead — both need a drive.
+
+**V280 PREREG SCORED on r32/r33:** (i) ripple/level 0.03 PASS · (iv) full-demand rate 125/123 deg/s PASS (93 % of 133.6) · (vi) damping
+0.37 PASS · (viii) sat 0.000 PASS · (iii) 4.3 / 8.1 per 100 s (r32 marginal on n=3) · (v) 691/672 borderline · (vii) not computed.
+
+| | **V280 rev 2** — the straight line to 1032 — **TAP-ATTRIBUTED FLOWN 2026-09-02 (r32/r33), confirmation pending** |
 |---|---|
 | base | **V268**, cal-only + rev 3's 34-byte tap window (code region byte-identical to rev 3) |
 | edits | 28 map records: Y'(X) = round(6·Ytop·X/240), a straight line to each record's ×6 top; slot 7 Y = 0,52,86,103,138,275,413,550,688,1032 (4.3/idx; ×2.2 at idx 12, ×2.7 at 58, ×3.3 at 96, ×6 at 240 vs stock) · `0xC62E6` 15360→46080 |
@@ -26,15 +41,7 @@ has set aside the pure-feedforward path: it needs a StarPilot retune; V278/V280 
 | risk | the lane will PUSH WITH a driver spinning the wheel above 44.5 deg/s where rev 3 braked; steady push ~1.3× in a stalled turn; peak torque unchanged; taper byte-stock; every knot but the top is a value no build has flown; small-signal loop gain ×1.6–1.8 rev 3's at idx 32–58 (Kp rises with idx, so a linear map makes loop gain GROW with command) |
 | artifact | https://claude.ai/code/artifact/9177a537-83c4-463d-83e9-8c0523f5f34d |
 
-**REV 3 MEASURED (2026-09-02, `V278R3-READ-2026-09-02.md`, `HIGHANGLE-V278R3-…`, `SERVO-AT-REFERENCE-…`, `studies/v280/`):**
-3.9 Hz mode GONE (band excess 0.76 vs V276 4.58, corpus p50 0.82). Tap saturation duty 0.000 at the FULL-SPEED rail (2472) — but that
-rail is unreachable below 10 m/s (post-sum multiplier ~0.5 there, measured T/sim T 0.42–0.51; delivered rail ~1240–1680, and T reached
-1704 max): at speed nothing saturated; in the slow stalled turns P railed ~50 % of ticks (chain sim) and T sat near its low-speed rail with
-100 % ripple. Widening the clamps is still not the lever (it widens P's window toward the wobble). Sustained full-demand rate 42.3/56.4 deg/s = 1.9× the ×1 builds, 32 % of ×6. Damping statistic 0.40 on normal
-frames — the prereg's 0.60 was V276-specific and its refutation clause fired; the scalar is regime-dependent, not diagnostic.
-Stutter: 7.0–7.6 Hz line, 10 episodes, all |angle| ≥ 30°, absent on stock/V112; the driver-torque channel RINGS at 7 Hz there
-(1470–1960 raw, mean ~0). Grinding not scorable (23 s manual). **Tap field = `((b0&3)<<8)|b1`; damping = sign(T) ≠ sign(RAW
-0x18F rate); sign(T) = +sign(cmd) on the wire.** Ghidra was down all session; censuses are raw-scan only.
+**REV 3 MEASURED (r31 only, 2026-09-02):** 3.9 Hz gone (0.76 vs 4.58); saturation 0.000 at the full-speed rail (unreachable below 10 m/s; P railed ~50 % of stall ticks); full-demand rate 42.3/56.4 (1.9× the ×1 builds); damping stat 0.40 (regime-dependent); stutter 7.0–7.6 Hz, 10 episodes at |angle| ≥ 30°, P desaturating on a stalled wheel. Tap field `((b0&3)<<8)|b1`; damping = sign(T) ≠ sign(RAW rate). 🛑 No rev 3 data above 20 m/s exists.
 
 ---
 

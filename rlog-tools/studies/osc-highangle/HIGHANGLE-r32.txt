@@ -1,0 +1,41 @@
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--0--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--1--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--2--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--3--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--4--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--5--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--6--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--7--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--8--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--9--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--10--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--11--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--12--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--13--rlog.zst
+  read 75604b0a432fdc89_00000032--33a5dbbcb3--14--rlog.zst
+=== ROUTE 75604b0a432fdc89_00000032--33a5dbbcb3  (build v278r3) ===
+0x18F 85380  0x14A 85380  0x1AB 42688  0xE4 src 129 (84128 frames; census 193:7, 128:84485, 129:84128)  torqueState 84773
+engaged 602.4 s of 855.6 s
+engaged |angle| deg: p50 1.0 p75 3.2 p90 8.6 p95 58.0 p99 198.3 max 287.7
+
+PER |ANGLE| BIN (engaged; band energy = Welch power in band, ratio vs the lowest populated bin)
+bin deg     secs     v | RATE 2-4/4-8/8-15 (x base) | CMD 2-4/4-8/8-15 (x base) | T 2-4/4-8/8-15 (x base)  Tsat flip/s oppos | idx50 >=160  =240 |   tq50   tq90 >=2240 >2560 |  cmd50  r_p95   fpk  prom | |T|50 |T|90 T~cmd
+0-10       549.6  17.4 |  1.00/ 1.00/ 1.00      |  1.00/ 1.00/ 1.00      |  1.00/ 1.00/ 1.00      0.000   6.02  0.34 |     5  0.00  0.00 |    121    320  0.01  0.01 |     84     78   1.2     8 |    72   224  0.83
+10-30       15.7   7.1 | 21.81/31.37/ 1.32      | 18.21/26.86/ 1.90      |  8.25/13.10/ 4.12      0.000   6.73  0.49 |    27  0.08  0.00 |    725   2781  0.20  0.14 |    645    830   1.6    55 |   296   768  0.69
+30-60        7.3   7.9 |   nan/  nan/  nan      |   nan/  nan/  nan      |   nan/  nan/  nan      0.000   5.06  0.54 |    74  0.20  0.00 |   2039   3263  0.42  0.36 |   2041   1285   nan   nan |   680   976  0.76
+60-120      11.6   6.8 |   nan/  nan/  nan      |   nan/  nan/  nan      |   nan/  nan/  nan      0.000   3.10  0.54 |   115  0.39  0.00 |   1478   3313  0.29  0.21 |   2611   1411   nan   nan |   752  1128  0.82
+120-inf     18.2   4.6 | 66.46/27.20/ 3.65      | 12.90/ 3.44/ 0.77      |  9.10/50.33/14.43      0.000   2.37  0.55 |    92  0.26  0.00 |   1246   2973  0.25  0.18 |   1902   1123   1.2   582 |   728  1336  0.64
+absolute base-bin band power: rate {'2-4': 72, '4-8': 129, '8-15': 157}  cmd {'2-4': 1499, '4-8': 1582, '8-15': 1036}  T {'2-4': 366, '4-8': 636, '8-15': 623}
+
+HANDS SPLIT at |angle| >= 30 deg (rate band power x low-angle base; 1.28 s Welch runs): 
+  |tq_raw| < 1000      13.8 s  rate    4.6/   0.2/   1.1  fpk 1.6 Hz prom 109
+  1000-2240            12.2 s  rate    nan/   nan/   nan  fpk nan Hz prom nan
+  >= 2240 (cliff)      11.0 s  rate   27.8/   1.4/   0.8  fpk 1.6 Hz prom 452
+
+EPISODES: 2-8 Hz rate envelope > 117 wire (ref lowang; disengaged-ref 259, low-angle-ref 117), engaged, >= 1 s; 4 found, 9.7 s total
+  at |angle| >= 30 deg: 3 episodes, 8.2 s;  engaged time at |angle| >= 30: 37.1 s (6.2% of engaged) vs 84.9% of oscillating time
+  #      t0   dur    ang     v  fdom |   rAmp    rPk swing |   cAmp   c50   coh phase |  tq50 cliff  idx  =240 | fdomT   Tamp  Tsat oppos cohTr  phTr | desAmp errAmp
+  0   333.5   1.5   26.6   6.5  2.74 |    446   2133  6.32 |    243   3910  1.00  -101 |  1685  0.45   64  0.00 |  7.53    214 0.000  0.46  1.00   -33 |  0.033  0.361
+  1   620.7   3.8  -97.2   8.3  7.03 |    248    968  2.57 |    336   1945  1.00   101 |  1199  0.02  120  0.00 |  7.42    418 0.000  0.09  1.00    94 |  0.028  0.201   <HIGH
+  2   692.8   2.8  -80.0   7.6  6.64 |    224   1231  1.81 |    267   1777  1.00    74 |  1275  0.04  110  0.00 |  6.64    453 0.000  0.12  1.00    82 |  0.011  0.126   <HIGH
+  3   726.5   1.7 -229.6   4.3  6.55 |    215   1456  2.06 |    286   2922  1.00     7 |  1041  0.05  172  0.00 |  6.55    517 0.000  0.35  1.00    73 |  0.036  0.511   <HIGH

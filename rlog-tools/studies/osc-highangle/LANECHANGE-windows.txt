@@ -1,0 +1,120 @@
+==================================================================================================================================
+ROUTE r32  75604b0a432fdc89_00000032--33a5dbbcb3  [V280 rev 2 (line to x6 top, clamp 46080)]
+  wall-clock anchor: unix = logMonoTime + 1788366773.363 s (GPS, n=8323)  |  post-sync clocks offset 1788366773.463 s  (diff 0.100 s)
+  first 0x18F frame (route t=0): 16:33:26.534 UTC = 09:33:26 local (UTC-7)
+  OPERATOR 09:39:25 local -> route t = 358.5 s, computed segment 5 (operator said 5)  OK
+  OPERATOR 09:42:41 local -> route t = 554.5 s, computed segment 9 (operator said 9)  OK
+  LANE-CHANGE WINDOWS (laneChangeState != off, +2 s settle): 7;  state census: {np.str_('laneChangeFinishing'): np.int64(180), np.str_('laneChangeStarting'): np.int64(837), np.str_('off'): np.int64(15855), np.str_('preLaneChange'): np.int64(81)};  direction census: {np.str_('left'): np.int64(560), np.str_('none'): np.int64(15859), np.str_('right'): np.int64(534)}
+   #    t0   dur dir blk |    v ang50 swing | cmdpk idxpk tqpk | amp412 envpk f_rate prom f_inst  f_T |  ampT |T|90 Tsat damp |  coh  ph | P-rail fb-cl |E|50 |E|90 ref50 | eng  hw | OSC-hit operator
+   0  247.1  19.8  L   L  | 13.7   4.7 138.7 |  4096   237  4107 |    5.5   185   1.56   73   4.54  1.56 |    97   744 0.00 0.49 | 0.85   31 | 0.0445 0.0000  1128  8683   5.0 | 1.00 0.00 | - 
+   1  357.5   7.5  L   L  | 28.1  -0.8   7.6 |   849    52  1736 |    5.5   144   7.81   32   7.65  7.81 |    77   176 0.00 0.33 | 0.90   37 | 0.0000 0.0000   453  1401   2.8 | 1.00 1.00 | OSC@357.9 OP 09:39:25
+   2  383.9   6.8  L   L  | 21.1  -3.6  22.5 |  2732   165  3282 |    1.9    48   2.34   29   3.09  1.56 |    32   704 0.00 0.58 | 0.40   68 | 0.0412 0.0000  1220  4760   2.2 | 1.00 0.43 | - 
+   3  536.4   8.2  R   R  | 27.3   0.8   8.3 |   697    44  1717 |    5.0   119   7.81    9   8.01  7.81 |    72   232 0.00 0.40 | 0.87   29 | 0.0000 0.0000   569  1509   2.8 | 1.00 1.00 | OSC@536.8,539.5 
+   4  553.1   9.0  R   R  | 20.3   1.2  12.2 |   701    43  1401 |    4.4    74   9.38   17   8.63  7.81 |    69   233 0.00 0.38 | 0.91   25 | 0.0000 0.0000   555  1572   2.8 | 1.00 0.73 | OSC@553.6 OP 09:42:41
+   5  687.4   8.6  R   R  | 12.3  -4.2 182.2 |  4096   238  3322 |   16.7   278   7.03   13   6.44  7.03 |   314  1208 0.00 0.25 | 0.74   32 | 0.1419 0.0000  1834  8345  19.0 | 1.00 0.00 | - 
+   6  719.0   8.9  R   R  |  8.1  -6.1 264.5 |  4096   238  3688 |   13.0   279   1.56  359   5.08  7.03 |   272  1136 0.00 0.45 | 0.75   37 | 0.1844 0.0503  1804 29538  10.0 | 1.00 0.00 | - 
+  OSC episodes outside any lane-change window: none
+  ---- OPERATOR EXAMPLE 09:39:25 (route t 358.5, seg 5): +-10 s, 0.5 s bins ----
+     t     v   ang   cmd  idx  env |T|  lcState eng
+   348.5  25.6   1.3     7    4   17   51  off       E
+   349.0  25.8   0.8   -35    6   16   47  off       E
+   349.5  25.9   0.8    44    5   11   43  off       E
+   350.0  26.0   0.5   -65    5   19   60  off       E
+   350.5  26.1   0.7    43    6   39   51  off       E
+   351.0  26.2   0.4   -34    3   33   44  off       E
+   351.5  26.3   0.9   -11    6   23   34  off       E
+   352.0  26.3   0.4    47    4   12   54  off       E
+   352.5  26.2   0.0    42    5   15   60  off       E
+   353.0  26.2   0.2   -71    5   15   60  off       E
+   353.5  26.3  -0.0    56    5   12   57  off       E
+   354.0  26.3   0.0  -108    6   10   82  off       E
+   354.5  26.4   0.7   -52    5   14   95  off       E
+   355.0  26.4  -0.1    82    6   14   66  off       E
+   355.5  26.6  -1.1   113    8   16  126  off       E
+   356.0  26.6  -1.5    16    2   13   58  off       E
+   356.5  26.7  -1.2   -24    2    7   24  off       E
+   357.0  26.8  -1.0   -36    3    8   30  off       E
+   357.5  26.9  -0.8     5    3    6   45  pre       E
+   358.0  27.1  -0.5  -171   13   98   99  starting  E
+   358.5  27.3   3.4  -336   20  144  230  starting  E
+   359.0  27.4   4.1   -18    7  100  153  starting  E
+   359.5  27.6   0.8   143   10   29   57  starting  E
+   360.0  27.7  -1.1   157   10   30  128  starting  E
+   360.5  27.9  -2.1    18    6   28   97  starting  E
+   361.0  28.1  -1.5    -4    3   15   33  starting  E
+   361.5  28.3  -1.3   -21    3    8   33  starting  E
+   362.0  28.5  -1.2    36    4    8   53  finishing E
+   362.5  28.8  -1.2   -19    2   11   31  finishing E
+   363.0  29.1  -0.7   -93    5   17   48  off       E
+   363.5  29.3  -0.2   -20    2   12   34  off       E
+   364.0  29.5  -0.4   -28    3    8   36  off       E
+   364.5  29.5   0.0  -113    7   17   88  off       E
+   365.0  29.6   0.6   -77    6   23   92  off       E
+   365.5  29.6   0.7   -95    6   16   94  off       E
+   366.0  29.7   0.9   -46    4   14   58  off       E
+   366.5  29.7   0.8   -73    6   22   68  off       E
+   367.0  29.8   1.0  -100    7   21  132  off       E
+   367.5  29.9   0.5    35    5   15   41  off       E
+   368.0  29.9  -0.2     6    4   24   55  off       E
+   RING 358.2-359.2 s: v 27.3  ang 3.8 (swing 5.8)  cmd pk 849  idx pk 52  tq pk 1736 | rate 4-12 amp 14.6 deg/s, env pk 144, f 7.45 Hz (Welch, prom 52) / 7.50 (Hilbert); T f 7.45, amp 188, |T|90 416, sat 0.000, damping 0.31 | cmd coh 1.00 ph +35 | P-rail 0.0000 fb-clamp 0.0000 |E| p50/p90 1580/4237 ref 7.8 deg/s
+   spectrum rate +-10 s: peak 7.42 Hz (prom 17), band power 2-4/4-8/8-12: 21/428/154
+   spectrum T    +-10 s: peak 7.81 Hz (prom 9), band power 2-4/4-8/8-12: 220/1273/725
+   spectrum cmd  +-10 s: peak 7.42 Hz (prom 9), band power 2-4/4-8/8-12: 508/3159/1383
+  ---- OPERATOR EXAMPLE 09:42:41 (route t 554.5, seg 9): +-10 s, 0.5 s bins ----
+     t     v   ang   cmd  idx  env |T|  lcState eng
+   544.5  23.1  -0.3    31    3   23   58  off       E
+   545.0  22.2  -0.3    27    3   10   40  off       E
+   545.5  21.4   0.1   -80    4   15   40  off       E
+   546.0  20.7   0.4   -20    2   13   36  off       E
+   546.5  20.3   0.5   -64    5   18   50  off       E
+   547.0  20.0   0.4     3    1   16   17  off       E
+   547.5  19.8   0.3   -39    2    8   29  off       E
+   548.0  19.7   0.3    22    3   17   27  off       E
+   548.5  19.6  -0.0   -24    3   16   22  off       E
+   549.0  19.6   0.3  -105    6   11   81  off       E
+   549.5  19.6   0.8   -43    3   11   59  off       E
+   550.0  19.7   0.4   -17    2    8   27  off       E
+   550.5  19.9   0.2    20    3   14   30  off       E
+   551.0  20.1  -0.3     9    4   14   47  off       E
+   551.5  20.3  -0.2     9    3   13   28  off       E
+   552.0  20.4  -0.5    53    4   10   66  off       E
+   552.5  20.3  -0.6    -3    2   10   30  off       E
+   553.0  20.2  -0.1   -71    4   14   45  pre       E
+   553.5  20.2   0.1    57   11   48   86  starting  E
+   554.0  20.1  -4.6   402   25   61  248  starting  E
+   554.5  20.0  -6.3    65    7   43  210  starting  E
+   555.0  19.8  -3.9  -121    7   35   67  starting  E
+   555.5  19.7  -1.5  -187   11   38   68  starting  E
+   556.0  19.7   1.5  -305   18   63  185  starting  E
+   556.5  19.9   4.7  -214   13   74  218  starting  E
+   557.0  20.1   3.6    -3    2   37  108  starting  E
+   557.5  20.3   2.5   -28    3   26   73  starting  E
+   558.0  20.6   1.8   -68    5   22   86  starting  E
+   558.5  20.8   2.3  -159    9   23  171  starting  E
+   559.0  21.1   2.6   -69    5   22  121  finishing E
+   559.5  21.4   2.1   -45    4   23   80  finishing E
+   560.0  21.6   1.6   -17    2   16   41  off       E
+   560.5  21.9   1.1    51    5   21   36  off       E
+   561.0  22.1   0.2    36    3   21   43  off       E
+   561.5  22.3   0.3   -73    4   20   41  off       E
+   562.0  22.5   0.7    -6    4   23   45  off       E
+   562.5  22.7  -0.1    65    5   23   57  off       E
+   563.0  22.9  -0.3    32    3   21   51  off       E
+   563.5  23.1   0.3  -117    8   30   72  off       E
+   564.0  23.3   1.2   -61    5   28   81  off       E
+   RING 553.9-554.5 s: v 20.1  ang -4.7 (swing 6.3)  cmd pk 661  idx pk 41  tq pk 1398 | rate 4-12 amp 7.3 deg/s, env pk 61, f 9.38 Hz (Welch, prom 14) / 7.96 (Hilbert); T f 7.81, amp 144, |T|90 376, sat 0.000, damping 0.11 | cmd coh 1.00 ph +47 | P-rail 0.0000 fb-clamp 0.0000 |E| p50/p90 1074/2740 ref 13.3 deg/s
+   RING 556.2-556.9 s: v 19.8  ang 4.4 (swing 3.8)  cmd pk 701  idx pk 43  tq pk 1401 | rate 4-12 amp 9.1 deg/s, env pk 74, f 8.33 Hz (Welch, prom 33) / 7.76 (Hilbert); T f 8.33, amp 140, |T|90 407, sat 0.000, damping 0.31 | cmd coh 1.00 ph +40 | P-rail 0.0000 fb-clamp 0.0000 |E| p50/p90 1186/3288 ref 9.5 deg/s
+   spectrum rate +-10 s: peak 9.77 Hz (prom 16), band power 2-4/4-8/8-12: 12/91/254
+   spectrum T    +-10 s: peak 9.38 Hz (prom 6), band power 2-4/4-8/8-12: 169/535/747
+   spectrum cmd  +-10 s: peak 9.77 Hz (prom 3), band power 2-4/4-8/8-12: 376/1075/1261
+==================================================================================================================================
+ROUTE r33  75604b0a432fdc89_00000033--1948a2c354  [V280 rev 2 (line to x6 top, clamp 46080)]
+  wall-clock anchor: unix = logMonoTime + 1788393558.293 s (GPS, n=8450)  |  post-sync clocks offset 1788393558.309 s  (diff 0.016 s)
+  first 0x18F frame (route t=0): 23:59:48.894 UTC = 16:59:48 local (UTC-7)
+  LANE-CHANGE WINDOWS (laneChangeState != off, +2 s settle): 4;  state census: {np.str_('laneChangeFinishing'): np.int64(80), np.str_('laneChangeStarting'): np.int64(367), np.str_('off'): np.int64(16751), np.str_('preLaneChange'): np.int64(41)};  direction census: {np.str_('left'): np.int64(235), np.str_('none'): np.int64(16752), np.str_('right'): np.int64(252)}
+   #    t0   dur dir blk |    v ang50 swing | cmdpk idxpk tqpk | amp412 envpk f_rate prom f_inst  f_T |  ampT |T|90 Tsat damp |  coh  ph | P-rail fb-cl |E|50 |E|90 ref50 | eng  hw | OSC-hit operator
+   0  229.1   7.5  L   L  | 18.4  -1.6  23.5 |  1379    85  2719 |    9.5   224   7.03   35   7.35  7.81 |   196   400 0.00 0.45 | 0.92   40 | 0.0093 0.0000   582  2807   3.4 | 1.00 0.26 | - 
+   1  268.7   8.2  L   L  | 17.7  -1.3  16.7 |   821    50  1882 |    5.1   123   7.81   28   7.48  7.81 |   103   296 0.00 0.43 | 0.96   49 | 0.0000 0.0000   661  1861   4.5 | 1.00 0.00 | - 
+   2  474.5   8.1  R   R  | 28.2   0.5  10.3 |   811    51  1627 |    5.6   125   7.03   18   7.52  7.03 |    71   240 0.00 0.42 | 0.94   17 | 0.0000 0.0000   593  1776   3.4 | 1.00 1.00 | OSC@475.0,477.5 
+   3  599.9   8.6  R   R  | 10.1  -6.0  58.0 |  1778   109  2134 |    8.8   158   7.03   12   6.51  7.03 |   183   672 0.00 0.30 | 0.86   20 | 0.0012 0.0000   824  3262   8.4 | 1.00 0.00 | - 
+  OSC episodes outside any lane-change window: ['460.5', '464.4', '491.6']

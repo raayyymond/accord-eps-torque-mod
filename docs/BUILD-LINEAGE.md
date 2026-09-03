@@ -92,7 +92,17 @@ a return of 3.9 Hz with the tap at 1.00 (Kp→0.15), sluggish centering (Ki→0.
 no do-not-flash; three script holes (no end-state check on the primary edit, Kd only read back in-loop, last-record
 blindness) closed with re-reads from the FINAL image and the decoded .rwd against the constants.
 
-### V280 rev 2 — the STRAIGHT LINE to 1032: map linear from the origin to ×6; feedback clamp 46080  (2026-09-02, NOT FLOWN — THE FLIGHT CANDIDATE)
+### V280 rev 2 — the STRAIGHT LINE to 1032: map linear from the origin to ×6; feedback clamp 46080  (2026-09-02, **TAP-ATTRIBUTED FLOWN 2026-09-02**, routes `…_00000032`/`…_00000033`; operator confirmation pending)
+
+**ON-CAR (operator, filed as "V278"):** by far the best authority, close to complete right turns · slight oscillation riding on strong turns · the highway
+lane change oscillates (smooth on V112). **MEASURED:** the tap shows the line map (lane pushing at 143–155 deg/s hands-light where ×2 brakes above 44.5;
+chain-mirror corr 0.89–0.92 vs 0.28–0.46 for ×2). Full-demand rate 125/150 & 123/142 deg/s (93 % of the 133.6 ceiling); the stalled/P-desaturating
+stutter class is GONE (0 of 7 episodes; r31 7 of 10); the residual strong-turn ripple is the inner loop hunting AT its reference with P linear
+(7 F7, 6.5–7.4 Hz, no clamp/cliff). **The lane-change ring is the OUTER loop** (openpilot ↔ EPS, cmd coherence 1.00, nothing railed): the map
+multiplies cmd→rate only — Kp/Kd are indexed by the cmd-derived idx, so the EPS rate-feedback gain is 1.00× V112 in every build; in the
+lane-change regime (idx 2–12) rev 3 and V280 are within 8 %, both ≈2× V112 on the outer path. V268's damper flatten is inert below 85 deg/s.
+Prereg: (i) 0.03 PASS, (iv) 125 PASS, (vi) 0.37 PASS, (viii) 0.000 PASS, (iii) marginal, (v) borderline, (vii) open. Next: no-build discriminator
+(SteerFriction/SteerKP down, lane changes at 25–30 m/s); then size the X 0–12 map segment against the OUTER margin, or the Kp table idx 68–136 / D lead for the inner ripple.
 
 **base** V268 · **image** `b1f19d3e…90fa` · **rwd** `55cee20f…2e4c` · **633/633** · rev 1 (knee at 96, `47bdfb0d…`, 687/687, adversarial ×3 clean) → SUPERSEDED-DO-NOT-FLASH on the operator's instruction to linearize
 **artifact** https://claude.ai/code/artifact/9177a537-83c4-463d-83e9-8c0523f5f34d · **prereg** `rlog-tools/studies/osc-highangle/PREREG-V280-READ.md`
