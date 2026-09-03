@@ -88,3 +88,25 @@ NEVER restores them: dead scratch, free to clobber in an in-place packer rewrite
 `create_function` is required, and its `body_size` doubles as a desync check. And NEVER use
 `save_all_programs` to work around a locked save: it commits every open shared program.**:
 [[reference-accord-importing-a-built-image-into-ghidra]]
+
+## 2026-09-03 — V280 engaged-only 20Hz loop census, for `team-lead`
+🛑🛑★★★★★ **First check of Honda's 55Hz biquad (`FUN_000352b4`) against the current flown image: it IS
+LIVE and ENGAGED-ONLY on V280 (arm `0xC649B`=1, V103's `gp-0x6806` repoint present) — was permanently
+dormant on stock/pre-V103 builds. Also confirms on the flown image: rate lane `0xC6446` engaged flat
+gain 10.24x raised (512->5244), carrier `0xC6CD0`=6x (5346), crossover `0xC62E6`=46080 (K=6), all LKAS-
+PID debounce/cutout cals disarmed. RANKS rate lane r24 as the highest-confidence structural candidate
+for the 18-22Hz creep grind: engaged-only + a genuinely UNFILTERED, zero-state-cell differencer whose
+own gain rises ~linearly with f, directly into the 1kHz aggregator sum. STALE-MEMORY FLAG: `0xC40DC`
+is NOT virgin (contra a 2026-08-22 memory) — it's V109's documented lever, V280 carries 14 not 22.**:
+[[reference_accord_v280_engaged_gates_census_biquad_confirmed_live]]
+
+## 2026-09-03 — r24 "Lever B" reconciliation, for `team-lead`
+🛑🛑★★★★★ **Reconciles "Lever B (gp-0x683c) is unreachable" with "V280's r24 engaged gain is live":
+BOTH TRUE. gp-0x683c genuinely has zero writers on stock AND V280 (re-confirmed independently). What
+V104-V280 actually did is a single 1-byte hw2 edit at `0x3AA96` (0xC5->0xFB) that repoints the SAME
+`ld.bu` at 0x3aa94 from reading gp-0x683c to reading gp-0x6806 (STEER_CONTROL_ACTIVE, 16 writers,
+identical set stock=V280) — nothing was "armed", the gate's SOURCE was swapped. Traces to the
+2026-08-01 repoint-hypothesis session that named gp-0x6806 as exactly this target. BUILD-LINEAGE's
+"Lever B RE-ARMED" label is imprecise, flagged not edited. Also: converting r24's gain to counts/deg-s
+of WHEEL rate needs a torsion-bar-stiffness constant NOT on record anywhere in this kit — flagged open,
+not fabricated.**: [[reference_accord_r24_gate_repoint_reconciles_lever_b_dead_vs_v280_live]]
