@@ -63,11 +63,10 @@ about the opcode/register encoding needs to change):
     0xC4B64-65   -0x6AE2 (0x951E) -> -0x6ADA (0x9526)   bit 5 operand A: unrelated cal   -> r24
     0xC4B70-71   -0x6B26 (0x94DA) -> -0x6B94 (0x946C)   bit 5 operand B: unrelated cal   -> aggregator
 
-(a) V850 bit-5/odd-displacement encoding trap (firmware-decompile skill): does NOT apply here.  That trap is
-    specific to ld.bu/st.b, which steal a parity bit into hw1 because the byte-granularity field is one bit
-    short.  ld.h's disp16 4-byte form uses hw2 directly as the full signed displacement (verified: hw2=0x946C
-    decodes to exactly -0x6B94, no shift). All four NEW displacements (-0x6ADA, -0x6B38, -0x6ADA, -0x6B94)
-    are even, matching the alignment ld.h already required, so hw1 is untouched and stays valid.  Asserted at
+(a) Encoding (CORRECTED per ADV282-C nuance A): in this Format-VII form hw2 bit 0 is NOT part of the displacement --
+    it selects ld.h (0) vs ld.w (1); the same cave shows it at 0xC4BA8 (ld.w -0x3680, hw2 0xC981, odd).  An ODD new
+    displacement would therefore silently WIDEN the load to 32 bits, so the EVEN assertion below is load-bearing,
+    not cosmetic.  All four NEW displacements (-0x6ADA, -0x6B38, -0x6ADA, -0x6B94) are even; hw1 (0x2437) is untouched.  Asserted at
     [3] by re-checking hw1 == 0x2437 at every site, before and after.
 (b) All four loads, old and new, are the SAME `ld.h -disp[gp],r6` 16-bit signed form feeding the SAME
     abs-compare-then-branch machinery; only the two cal addresses being compared change.  gp-0x6ada, gp-0x6b38
@@ -421,6 +420,13 @@ def build():
             check(u16(im, a_) == v, f"{nm}: 0x{a_:05X} == {v}", "T" if nm == "code" else "S")
         n7, X7, Y7 = rec(im, u32(im, KP_PTR + 4 * LIVE_SLOT))
         check(tuple(X7) == LIVE_KP_X and tuple(Y7) == LIVE_KP_Y_R3, f"{nm}: live Kp record == V281 rev 3's flat-248 X {LIVE_KP_X} Y {LIVE_KP_Y_R3}", "T" if nm == "code" else "S")
+        # OPERAND PINS (adversary ADV282-C finding 1): tie every NEW displacement to a byte already on the flown image,
+        # not to the EDITS table -- catches a swapped/dropped/mistyped operand that the table-based checks cannot.
+        _p16 = lambda a_: struct.unpack_from("<h", im, a_)[0]
+        check(_p16(0xC4B42) == _p16(0x55DF2), f"{nm}: bit-6 B operand (0xC4B42) == the 427 tap's own ld.h operand (0x55DF2) = gp-0x6b38 (T)", "S")
+        check(_p16(0xC4B36) == _p16(0xC4B64) == _p16(0xC4B9E), f"{nm}: bit-6 A and bit-5 A operands == bit 4's sign-load operand (0xC4B9E) = gp-0x6ada (r24)", "S")
+        check(_p16(0xC4B70) == struct.unpack_from("<h", base, 0xC4B36)[0], f"{nm}: bit-5 B operand (0xC4B70) == the OLD bit-6 A operand = gp-0x6b94 (aggregator)", "S")
+        check(_p16(0xC4B36) != _p16(0xC4B42) and _p16(0xC4B64) != _p16(0xC4B70), f"{nm}: each rung compares two DIFFERENT cells (no degenerate |x|>=|x|)", "S")
 
     # ------------------------------------------------------------------------------------------
     print("\n  [9] INDEPENDENT REBUILD -- a second implementation reproduces the hash")
