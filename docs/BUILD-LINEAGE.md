@@ -94,7 +94,7 @@ blindness) closed with re-reads from the FINAL image and the decoded .rwd agains
 
 ### V281 rev 3 — Kp COMPLETELY FLAT at the idx-0 value on the LKAS rate PID  (2026-09-03, NOT FLOWN — THE FLIGHT CANDIDATE; rev 1 knot-cap and rev 2 flat-341-from-24 SUPERSEDED)
 
-**base** V280 rev 2 · **image** `98a7a514…2fc9c` · **rwd** `a3e330ff…8901` (`…V281R3-V280R2BASE-KP.FLAT.Y0.MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP…rwd`) · **793/793** (566 S) · independent rebuild reproduces · adversarial A (arithmetic) PASS, C (build audit, 36/36 mutations caught) PASS, B pending at close-out · rev 2 `4c437e3b…` passed A/B/C before being superseded on the operator's instruction · **prereg** `rlog-tools/studies/osc-highangle/PREREG-V281-READ.md` · **page** https://claude.ai/code/artifact/51c14843-7f5c-4792-ba8e-4eaf2e641054
+**base** V280 rev 2 · **image** `98a7a514…2fc9c` · **rwd** `a3e330ff…8901` (`…V281R3-V280R2BASE-KP.FLAT.Y0.MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP…rwd`) · **793/793** (566 S) · independent rebuild reproduces · adversarial A (arithmetic) PASS, B (interlocks/stability; rwd cipher decoded and matched; two drive notes: grip-compounded fade at idx 58 ≈ 370 counts, idx-26 class thin) PASS, C (build audit, 36/36 mutations caught) PASS · rev 2 `4c437e3b…` passed A/B/C before being superseded on the operator's instruction · **prereg** `rlog-tools/studies/osc-highangle/PREREG-V281-READ.md` · **page** https://claude.ai/code/artifact/51c14843-7f5c-4792-ba8e-4eaf2e641054
 
 | cell | V280 rev 2 | V281 rev 3 | what it is |
 |---|---|---|---|

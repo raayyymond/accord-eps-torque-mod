@@ -17,7 +17,7 @@ at ±1.0 via the low-speed factor); highway curves fine. No FF-scale toggle exis
 ## 2. V281 — the rate-PID Kp table
 - Sizing `studies/v280/KPFLAT-SIZING-2026-09-03.md`: the 7 Hz ripple = inner-loop crossover limit cycle at Kp 512–696 (GM 0.5–0.86×), K_crit ≈ 425 two ways.
 - Rev 1 (knot cap, lowered the highway band) → rev 2 (flat 341 from idx 24; A/B/C PASS; adversary B: the stall window moves to idx 80–111) → **rev 3 (operator:
-  "completely flat at index 0's value" = 248 everywhere; 218 bytes; A and C PASS, B pending)**. Image 98a7a514…, rwd a3e330ff…, firmware repo 886355b.
+  "completely flat at index 0's value" = 248 everywhere; 218 bytes; A, B and C PASS)**. Image 98a7a514…, rwd a3e330ff…, firmware repo 886355b.
   Prereg `PREREG-V281-READ.md`, page https://claude.ai/code/artifact/51c14843-7f5c-4792-ba8e-4eaf2e641054. Adversary A settled the record layout (n, X[5] with
   X[0]=0 implicit, Y[5], pad) and proved one live reader. StarPilot tune: leave for the first drive.
 
