@@ -26,6 +26,8 @@ tuning issue, openpilot not in the loop".**
    no clamp/cliff; the stalled/P-desaturating class is GONE (0 of 7; r31 7 of 10; a 14 s stall with P railed rippled 0.02). Episodes per
    100 s 9.8 → 8.1 / 4.3; amplitude held. Next levers: Kp table at idx 68–136, D as lead — both need a drive.
 
+**THE TUNE, BACK-CALCULATED (2026-09-03, `studies/optune/`):** the controller ran the DEFAULTS 1.689/0.212 on every modded route (ForceAutoTune ON but torqued never valid — the modded EPS needs too little torque to fill its buckets; its raw 5.0 is a stale-cache artefact). The car: deadband ~0.025 tq, lat-accel/torque 5–10 (integrator-like). Friction is 64 % of the outer gain and LAF-independent. **Apply: ForceAutoTune OFF → SteerFriction ≈ 0.025–0.03, SteerLatAccel 2.53 (toggle max) → outer gain 0.32×** (the asserted 0.08 was 3–4× the car). "openpilot" = StarPilot Dom branch from now on.
+
 **V280 PREREG SCORED on r32/r33:** (i) ripple/level 0.03 PASS · (iv) full-demand rate 125/123 deg/s PASS (93 % of 133.6) · (vi) damping
 0.37 PASS · (viii) sat 0.000 PASS · (iii) 4.3 / 8.1 per 100 s (r32 marginal on n=3) · (v) 691/672 borderline · (vii) not computed.
 

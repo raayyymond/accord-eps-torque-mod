@@ -67,3 +67,21 @@ Full-demand rate 125/150 & 123/142 deg/s (93 % of 133.6). Prereg: (i) 0.03 PASS 
 `strongturn_r32_r33.py`, `HIGHANGLE-r32.txt`, `HIGHANGLE-r33.txt`. `analysis-2020accord/studies/v280/`: `LOWCMD-LOOPGAIN-V112-V278-V280-2026-09-02.md`,
 `lowcmd_loopgain_v112_v278_v280.py`, `plant_id_v278r3_tap.py`, `V268-DAMPER-DELTA-AT-HIGHWAY-2026-09-02.md`, `v268_damper_delta_highway.py`.
 Caches: `analysis-2020accord/_scratch/cache/v280/r32.npz`, `r33.npz`. Memories: `accord-lanechange-ring-is-the-outer-loop-…`, `feedback-attribute-the-build-from-the-tap-…`.
+
+## 8. ADDENDUM 2026-09-03 — the StarPilot tune, back-calculated (operator: "I am suspicious of the recommended steer friction")
+Convention from now on: **"openpilot" = StarPilot, the normal one on branch `Dom`** (`openpilots/StarPilot`, HEAD 3d4c625de), not the operator's fork.
+Toggles decoded from `analysis-2020accord/reference/toggle-backup(2).json` (XOR key + base64, `the_galaxy/utilities.py`): ForceTorqueController ON,
+**ForceAutoTune ON**, Steer* all stock (KP 0.6, friction 0.2120, LAF 1.6893), SteerDelay 0.2, NudgelessLaneChange ON. Studies: `analysis-2020accord/studies/optune/`
+(`STARPILOT-DOM-TORQUE-MATH-2026-09-02.md`, `BACKCALC-LAF-FRICTION-2026-09-02.md` + scripts).
+- **What the controller used (EVIDENCE, orchestrator-verified on r32 seg 5):** `liveValid` 0 on every tick of r31/r32/r33, filtered = 1.689/0.212,
+  −(p+i+d+f)/output = 1.689 at p5/p50. torqued cannot validate on the modded EPS: engaged |torque| p90 0.06–0.12 vs buckets needing |x| up to 0.5;
+  `totalBucketPoints` frozen at 6653; its raw LAF ~5.0 is this build's centre + a stale cache — not a measurement. The earlier memory's "raw 4.5–5.2
+  clipped to 2.196" is corrected: nothing was applied.
+- **The law (EVIDENCE, source):** T = [kp·e' + I + FF]/LAF + friction·sat((e' + 0.22·j_f)/0.30); kp = SteerKP 0.6 flat, ki 0.15, kd 0; m from the steering
+  angle via the vehicle model; friction term LAF-independent; FRICTION_THRESHOLD 0.30 m/s². Small-signal Gc = (kp+lsf)/LAF + friction/0.30 (friction 64 % at 25 m/s).
+- **The car (EVIDENCE, IV fits lag 0.2 s, closed-loop caveat):** V280 rev 2 lat-accel/torque 8.3–9.4 (|P| 11/5/2.5 at 0.1/0.3/1 Hz — integrator-like, the EPS
+  is a rate servo), hysteresis half-width 0.013–0.030 tq (coulomb ~0). Stock 1.13 / 0.116; V112 6.0 / 0.054. The live 0.212 friction kick = 868 counts = 1.8× the p90 command.
+- **Back-calculated:** friction ≈ 0.025 (the measured deadband; the asserted 0.08 was 3–4× the car) → Gc 0.43×; with SteerLatAccel at the toggle max 2.53 → 0.32×;
+  the true LAF 5–10 needs `torque_data/params.toml` (re-bases torqued's caps and the toggle range). torqued's caps are outside the car in both parameters, so
+  auto-tune can never reach it: **ForceAutoTune OFF, then SteerFriction ≈ 0.025–0.03 and SteerLatAccel 2.53.** BELIEF: the Gc ratio carries to |L(7.5 Hz)|.
+  Predicted outer |L| at 2 Hz, 24 m/s: 1.10 × 0.32 ≈ 0.35 (V112 sat at 0.51). Instrument for the drive: `lanechange_windows.py` ring count (now 6/6) and 4–8 Hz rate power.
