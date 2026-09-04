@@ -1,0 +1,39 @@
+  read 75604b0a432fdc89_00000036--f4be1a18e9--0--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--1--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--2--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--3--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--4--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--5--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--6--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--7--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--8--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--9--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--10--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--11--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--12--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--13--rlog.zst
+  read 75604b0a432fdc89_00000036--f4be1a18e9--14--rlog.zst
+=== ROUTE 75604b0a432fdc89_00000036--f4be1a18e9  (build v278r3) ===
+0x18F 89556  0x14A 89555  0x1AB 44778  0xE4 src 129 (88229 frames; census 193:11, 128:88630, 129:88229)  torqueState 88886
+engaged 633.6 s of 897.3 s
+engaged |angle| deg: p50 1.4 p75 4.6 p90 15.1 p95 98.4 p99 251.5 max 307.3
+
+PER |ANGLE| BIN (engaged; band energy = Welch power in band, ratio vs the lowest populated bin)
+bin deg     secs     v | RATE 2-4/4-8/8-15 (x base) | CMD 2-4/4-8/8-15 (x base) | T 2-4/4-8/8-15 (x base)  Tsat flip/s oppos | idx50 >=160  =240 |   tq50   tq90 >=2240 >2560 |  cmd50  r_p95   fpk  prom | |T|50 |T|90 T~cmd
+0-10       552.0  17.1 |  1.00/ 1.00/ 1.00      |  1.00/ 1.00/ 1.00      |  1.00/ 1.00/ 1.00      0.000   3.07  0.33 |     5  0.00  0.00 |    129    333  0.03  0.03 |     93     78   1.2    13 |    80   264  0.74
+10-30       33.7   6.8 |  1.42/ 7.15/ 0.75      |  2.61/ 7.40/ 2.20      |  2.18/ 7.10/ 1.20      0.000   2.55  0.43 |    18  0.01  0.00 |    295   2801  0.20  0.15 |    436    420   1.2    19 |   360  1016  0.68
+30-60        6.9   4.7 |   nan/  nan/  nan      |   nan/  nan/  nan      |   nan/  nan/  nan      0.000   4.23  0.47 |   106  0.32  0.00 |    630   2540  0.16  0.10 |   1851   1043   nan   nan |   552  1320  0.69
+60-120      15.9   5.7 | 23.10/15.23/ 3.58      |  8.97/ 8.57/ 6.33      |  5.59/14.08/ 5.67      0.000   0.76  0.49 |    93  0.27  0.00 |    629   2170  0.08  0.06 |   1744   1081   1.2   224 |   920  1386  0.62
+120-inf     25.2   2.6 | 62.19/51.90/ 3.30      | 17.42/29.63/ 7.04      | 18.13/12.85/ 2.37      0.000   0.32  0.50 |    34  0.16  0.00 |    475   3092  0.28  0.22 |   1097   1091   1.2   494 |  1008  1536  0.71
+absolute base-bin band power: rate {'2-4': 37, '4-8': 30, '8-15': 80}  cmd {'2-4': 326, '4-8': 140, '8-15': 95}  T {'2-4': 162, '4-8': 188, '8-15': 301}
+
+HANDS SPLIT at |angle| >= 30 deg (rate band power x low-angle base; 1.28 s Welch runs): 
+  |tq_raw| < 1000      29.5 s  rate    3.3/  14.2/   1.9  fpk 1.6 Hz prom 66
+  1000-2240             8.9 s  rate  215.1/   7.2/   0.7  fpk 1.6 Hz prom 817
+  >= 2240 (cliff)       9.5 s  rate  110.1/   9.0/   1.5  fpk 1.6 Hz prom 626
+
+EPISODES: 2-8 Hz rate envelope > 100 wire (ref lowang; disengaged-ref 317, low-angle-ref 100), engaged, >= 1 s; 1 found, 1.1 s total
+  at |angle| >= 30 deg: 1 episodes, 1.1 s;  engaged time at |angle| >= 30: 48.0 s (7.6% of engaged) vs 100.0% of oscillating time
+  #      t0   dur    ang     v  fdom |   rAmp    rPk swing |   cAmp   c50   coh phase |  tq50 cliff  idx  =240 | fdomT   Tamp  Tsat oppos cohTr  phTr | desAmp errAmp
+  0   705.9   1.1 -146.0   5.5  2.61 |    197    658  2.10 |    333   1357  1.00   -57 |   785  0.30   59  0.00 |  6.96    194 0.000  0.68  1.00   179 |  0.047  0.374   <HIGH
+wrote _scratch/ha_r36.json

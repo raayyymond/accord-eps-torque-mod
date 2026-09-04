@@ -92,7 +92,154 @@ a return of 3.9 Hz with the tap at 1.00 (Kp→0.15), sluggish centering (Ki→0.
 no do-not-flash; three script holes (no end-state check on the primary edit, Kd only read back in-loop, last-record
 blindness) closed with re-reads from the FINAL image and the decoded .rwd against the constants.
 
-### V283 — V282 + Ki 50 on the LKAS rate PID (2026-09-03, NOT FLOWN — THE FLIGHT CANDIDATE; V282 and V281 rev 3 stay flashable)
+### V286 — V282 + Kd 128→160 + a 2-level absolute `|r24|` ladder on `0x14A` bits 3/7 (2026-09-04, **SPEC WRITTEN, NOT BUILT** — carries a LEVER now, thresholds pending an empirical pre-flash placement, FULL ADVERSARIAL PASS REQUIRED before any image is written)
+
+**base** V282 · **spec** `docs/specs/design/V286-R24-LADDER-2026-09-04.md` · **no build script written, no image, no `.rwd`.**
+
+**WHAT.** 🛑 **REVISED same session — this build now carries a Kd cal edit, not just an instrument.**
+`0xE511C` slot 7 Y-knots `128→160` (`0xE5126/28/2A/2C`, 8 bytes + page CRC `0xE5FFC`, 10 bytes total).
+Plus two new fixed thresholds on `|r24|` (`gp-0x6ada`), `≈16` and `≈64` raw as a **documented BELIEF
+placeholder** — read into `0x14A` byte 4 bits **3 and 7** (bit 7 SACRIFICES the legacy
+`sign(gp-0x6b4c)` probe; bit 3 was already margin). Bits 4/5/6 (`sign(r24)`, `|r24|≥|T|`,
+`|r24|≥|aggregator|`) untouched. Ladder extends the existing, flown `0xC4B34` cave — no new hook,
+~76 B, lands in the confirmed 1048-byte free region at `0xC4BD8`–`0xC4FF0`. No lock needed: `0x14A`'s
+checksum (`0x00057b24`) is computed **downstream** of the cave's writes, inside the **same critical
+section** (`0x55C0A jarl 0x1fa42` → cave → `0x55C18 jarl 0x57b24`) — structurally identical in kind
+and timing to the already-flown bits 5/6. **Independently re-verified this session**: `FUN_0003aa2c`
+(r24's sole producer, confirmed by an exhaustive image-wide `gp-0x6ada` search — exactly 4 hits, 1
+writer + the 3 cave readers) has **zero references to the Kd LERP table `0xCB7D4`** — the ladder
+reads a Kd-invariant quantity, so the two edits don't confound each other (the relative comparators,
+bits 5/6, DO shift with Kd and are secondary instruments only).
+
+**🛑 WHY THE Kd RAISE IS NOW UNBLOCKED — `task5rate` resolved the blind-band question by ENDPOINT
+TYPE, not by needing a new instrument.** An ENERGY endpoint ("did HF energy grow?") is safe on
+existing channels (no anti-alias filter anywhere; folded power is unattenuated, PSD measured
+*rising* 1.8–4.8× toward Nyquist on all five routes, contra what a sinc rolloff would predict — each
+alternative artefact excluded by its own control). A FREQUENCY endpoint ("PM at 27–32 Hz") is NOT
+safe. **The 1 kHz `dE` cave (see the superseded V286 bullet elsewhere in this file / `STATE.md`) was
+never necessary.** Separately, the measured `|L|=0.976<1` at Kd 128 is `s`-INDEPENDENT (it proves the
+operating point sits between the two roots regardless of where `s` places them exactly), and since
+the loop's damping minimum sits near Kd≈500, **128→160 moves AWAY from the lower root**. `s`'s
+uncertainty threatens a Kd CUT, not a Kd raise.
+
+**🛑 PRE-REGISTER AN ENERGY ENDPOINT, NOT A FREQUENCY ONE — this is the load-bearing acceptance test.**
+Score on total engaged HF energy over 0–50 Hz, with the 33–49.9 Hz near-Nyquist shelf reported as its
+own sub-band. Do NOT compute or cite a phase margin at 27–32 Hz to justify the margin spend. FAIL:
+0–50 Hz energy (or the 33–49.9 Hz shelf specifically) grows materially more than candidate F's own
+predicted blind-band gain (×1.24). 🛑 **Carry forward: engaging LKAS itself raises true >50 Hz
+content 1.4–3.4× (loop-driven) — a loop-driven resonance at 68–73 Hz is exactly what a raised Kd
+could create, the specific hazard this endpoint exists to catch. `task5rate` WITHDREW its earlier
+≤22–33% folded-fraction bound — do not cite it, the folded fraction is currently unbounded.**
+
+🛑 **This build now needs the full four-way adversarial pass (arithmetic, unit/scale chain,
+build-script audit, interlocks/downstream) before any image is written — it carries a lever, not
+just an instrument. Nothing in this entry substitutes for that pass.**
+
+**WHY.** `Kd ∈ [118, 227]` at Kp 248 is bracketed from both sides, but the lower root (118) is
+**only `s`-sensitive** (r24's real-amplitude/closed-form scale, currently a closed-form estimate
+`s ∈ [0.30, 0.52]`, never directly measured — the sign-bit-only comparators give phase, not
+magnitude). Candidates on the table: **Kd 122** (ZN-PI, operator's current preference, 3 % above the
+nominal floor) and **Kd 160** (candidate F/ZN-PID, 36 % above it). **Acceptance criterion, re-framed
+2026-09-04**: not "does this pin `s` to a point" — it does not — but "does it bound the floor's
+upper bound below the candidate Kd with margin." A narrowing can answer that even without a point
+estimate.
+
+**🛑 RETRACTED FIRST DESIGN — a 4-bit placement in the 427/`0x1AB` payload** (`gp-0x13CC` b2/5/6,
+`gp-0x13CA` b7 — genuinely DBC-undefined AND firmware-unwritten, dual-certified) was built out and
+withdrawn same session. `0x00057b24` is a **pure function** (checksum only, no side effect); the
+427 packer (`FUN_00055d80`, 50 Hz) calls it, stores the result, releases — the r24 cave runs at
+`0x14A`'s rate, **100 Hz, asynchronously**. A cave write landing between one 427 checksum
+computation and the next desyncs the transmitted checksum from the payload **systematically**, on
+every threshold crossing. Full mechanism in the spec §5 — kept as a durable warning against
+re-deriving "4 free bits!" for this specific frame.
+
+**🛑 OPEN PRE-FLASH ITEM — do NOT flash the documented `16/64` placeholder.** Better method,
+route-data work not yet run: bit 6's measured duty (`|r24|≥|T|`) on r36/r37/r38, combined with
+`T`'s own measured distribution (427 tap, already flown), gives a genuine empirical point on
+`|r24|`'s CDF; bit 5 against the aggregator gives a second. Assigned once `task5rate` reports.
+
+**READ IT BY / NULL-LICENSING:** success = bits 3/7 (with 5/6) bound the floor's upper bound below
+122 (ZN-PI clear) or below 160 but not 122 (160 is the fallback) or neither (no Kd change flies —
+fully acceptable outcome, say so). If all four bits saturate across an engaged episode, the
+thresholds were mis-placed for the true distribution, not a null about r24 — re-place and re-fly.
+**Rides along with the `SteerKP`/variable-SR StarPilot changes at no extra drive cost** (inert), but
+duty **must be read stratified by `idx`** (proxy: `0xE4`, already logged) if flown on the same drive
+as an SR change, or an SR-driven shift in which `idx` values get visited will look indistinguishable
+from a genuine change in r24's own behaviour.
+
+### V285 — V282 + Kp = 0 on the LKAS rate PID (2026-09-04, **BUILT — 🛑 BENCH / SYSTEM-IDENTIFICATION CONFIG, NOT A DRIVE CANDIDATE. DO NOT FLY.**)
+
+**base** V282 · **image** `7c2cfef78b1d2bcbd4379fb7dc999f8128e3e72775695ff236a684c3ea9605d2` · **rwd** `83079d4373a5b822b88848550db950f3b343f4fc76ede4f9d3c9c7fb532a652e` · **444/444** (278 substantive / 29 vacuous / 2 tautological / 135 redundant — censused, not just counted) · independent rebuild reproduces bit-for-bit · build `analysis-2020accord/builds/v108_plus/build_v285_tva.py` · cal-only, **no cave change**
+
+**9 bytes, 6 runs** vs V282 — *not* the 14 first predicted: 248 = `0x00F8`, so only the five LOW bytes change value.
+
+| offset | cell | V282 | V285 |
+|---|---|---|---|
+| `0xE5384` / `86` / `88` / `8A` / `8C` | Kp slot-7 Y[0..4] low bytes | `f8` ×5 | **`00` ×5** |
+| `0xE5FFC` | page CRC | `7ea6f28e` | `9ee32106` |
+
+X untouched (0, 68, 112, 136, 208). Kd `0xE511C` untouched (n=4, X 0,11,22,32, Y 128 ×4). Ki `0xC63E6` = 0, `0xC6446` = 5244, `0xC62E6` = 46080. Slot 7 only.
+
+**WHY.** The operator, 2026-09-04: *"We should keep Kp fixed, if not 0. I'm thinking about doing a Ziegler–Nichols tuned PID loop for angular acceleration. This means we need to set Kp=0, then increase Kd to get Ku."* In the acceleration frame openpilot actually commands, **our D is the PROPORTIONAL gain and our P is the INTEGRAL gain**, so Kp = 0 is the ZN P-only condition. **CLASS: the first build ever to run the LKAS rate PID with only ONE live term** — a structural reduction of the controller, not a gain re-shape. (Arc: V280 linearised the map · V281 flattened Kp · V282 added the r24 comparator tap · V283 the integrator, flown and rejected · V284 shaped Kp, shelved.)
+
+**🛑 THE COST — ZERO steady-state lane keeping. Not "weak", not "reduced". ZERO.** The plant is **type 0 in rate** (pinned from four measured (|T|, wheel-rate) pairs held 1–3 s on r34/r35: 663→18.5, 657→34.1, 828→5.8, 795→17.8 deg/s — sustained torque against a bounded non-zero rate excludes both an integrator and a differentiator). With Kp = 0 **and** Ki = 0 the chain is `dE = 0 ⇒ D = 0 ⇒ S = 0 ⇒ L(0) = 0` **exactly**. Verified three independent ways (orchestrator integer mirror: 0.000 deg/s at every plant gain; `zn285`: 0.0 % of a 25 deg/s request at 4 s; the decompile). V282 delivers 53.5 %, V283 96.6 %. Only `d(32·sp)/dt` reaches the motor — a kick on command *change*, nothing held.
+
+**THE HONEST OTHER HALF — every stability gate improves:** ring 0.861 (vs ~0.98), **GM 2.11× vs today's 1.77×**, +52° of lead at 7.3 Hz, +25° at 20 Hz. Authority loss vs frequency: −89.7 % @ 1 Hz (exact) · −54.2 % @ 5 · −40.3 % @ 7.3 · −30.3 % @ 9.64 · −20.2 % @ 13.5 · **−12.1 % @ 20** · −5.5 % @ 40. 🛑 *"Removing P removes ~90° of lag"* was **BACKWARDS** — P is phase-**flat**, so removing it **adds** lead.
+
+**SAFETY CHECK THE BUILD ACTUALLY NEEDED, answered NO exhaustively:** all **17** divisions in `FUN_00028ea6` divide by an **X-axis segment width**; **no Y value is ever a divisor anywhere in the function**, and X is untouched, so every `divq` divisor is bit-identical to V282's. Y = 0 is degenerate in the safe direction on all three LERP branches.
+
+**CROSS-FAMILY CENSUS (new, after a label error was found):** three record families **interleave** in `0xE4000`–`0xE82FF` — MAP (`0xC9A88`, 28 × `0x2C`), Kp (`0xCB994`, 28 × 24), Kd (`0xCB7D4`, 28 × 20). **84 records walked, ZERO overlaps**; V285's ten bytes fall inside **exactly one** record, Kp slot 7. Verified independently by the orchestrator and the builder. **Never assume contiguity in this address range** — a contiguous-record dump earlier produced a false "21 distinct X axes" alarm by walking into a neighbouring table.
+
+**TELEMETRY: no new bytes, deliberately.** A dedicated design pass (`docs/specs/design/V285-TELEMETRY-2026-09-04.md`) returned **BUILD NOTHING** — three candidates were redundant with channels already flying and the fourth (`|D| ≥ |P|`) is **structurally vacuous**: with Kp = 0 and Ki = 0, `S = D·254/256`, so the controller has one live term and there is no ratio to compare. Read by `gp-0x6a56` on 0x18F[2:3] (100 Hz, the motion), `T` on 0x1AB/427 (50 Hz, cross-check + rail exclusion), and V282's r24 comparator bits on 0x14A byte 4.
+
+**🛑 DRIVE SPEC / NULL-LICENSING, written before the drive:** the ring appears as a **damped TRANSIENT after a disturbance, not a standing hum** ⇒ **seek bumps, quick corrections and stall releases while LATERALLY engaged; smooth cruising returns an uninterpretable null.** 🛑 **DO NOT claim V285 fixes grinding** — `0xC6446` is byte-untouched and a quiet 20 Hz line is confounded with the loop going weak. The **P-only deadband/stutter is expected to RETURN and worsen** (Ki 50 was its cure at 7 → 1 stalls; Ki is 0 here).
+
+**WHAT THE Ku PROGRAMME LOOKS LIKE AFTER THIS BUILD (two retractions, both recorded):** `Ku ≈ 143–151` (orchestrator) was void — it read a **7.3 Hz** figure as 20 Hz. `Ku = 859` (`zn285` pass 1) is a **real quantity** — the Kd at which the 7.3 Hz ring's *magnitude* reaches unity — but not Ku, because a **Nyquist −180° crossing at 27–32 Hz arrives first at `Ku ≈ 227` [217–270]**, `Tu ≈ 36 ms`, anchored on a **measured** gain margin (`CREEP-20HZ-LOOP-ID` bar-IV rows, `1.75× @ 23.4 Hz`; ⚠ only that estimator family finds a crossing at all).
+
+```
+Ku (Nyquist, 27-32 Hz) = 227   <   D clamp bites 845-1489   <   ring-magnitude root 859
+```
+🛑 **THE ±10240 D CLAMP DOES *NOT* BITE FIRST — Ku IS PHYSICALLY REACHABLE AT Kd ≈ 227 WITH NO SATURATION BACKSTOP.** An earlier draft said the opposite; it was wrong **in the reassuring direction**. A sweep past ~227 goes genuinely unstable.
+⭐ **`Kd ∈ [118, 227]` at Kp 248** — the 7.3 Hz ring improves with more Kd (lower root 118; a **cut re-arms** it, so Kd cuts stay DO-NOT-FLASH), the 27–32 Hz mode worsens. **Today's 128 sits near the FLOOR.** At Kp 0 the lower root drops to ≈ 65, so V285's 128 is ~2× clear.
+⭐ **ZN-PID of the accel frame gives Kd 162 — the loop-shape study's candidate F (160) to within 1 %**, from independent reasoning. `zn285`'s pass-1 ZN constants are **RETRACTED AS UNSTABLE** (ZN-PI 108/387 GM 0.69×; ZN-PID 241/515 GM 0.51×). **Td has no realisable home** — three addends, ONE difference operator (`0x29EE2 sub r27,r8`, history cell `gp-0x6cf8` stored by `st.w` at `0x2A18C`).
+🛑 **27–32 Hz is ABOVE the 427 tap's 25 Hz Nyquist** — *a Kd sweep cannot be scored on the instrument that would have to catch it going unstable.* That constrains the next build more than Ku's value does.
+
+**⭐ FINDING, not built here — the PID publishes its own internals every tick** (`st.h`, live code, below the dead-duplicate region at `0x2A30E`):
+`0x2A17C` → `gp-0x6b2e` (clamped output) · `0x2A188` → `gp-0x6b32` (P) · `0x2A18C` → `gp-0x6cf8` (E_prev, `st.w`) · `0x2A19C` → `gp-0x6b36` (D) · `0x2A1A2` → `gp-0x6b34` (sum). Also `0x29DDA st.h r7,-0x697a,gp` publishes the demand index. ⚠ `D = 16·dE` **only while D is inside ±10240** (`0xC61B6`) — on railed frames the sign holds but the magnitude does not, and rails stop being rare in exactly the Kd sweep such an instrument would serve.
+
+### V284 — V282 + Ki 0 + a SHAPED Kp table (2026-09-04, **BUILT, FOUR-WAY ADVERSARIAL PASS — 🛑 SHELVED, DO NOT FLASH**)
+
+**base** V282 · **image** `1b46f24f3ea0988a7786d4dd4cfc4db84bba2f41d44f3a2176386727828b74ff` · **rwd** `f42cfc9b2a197c27a5e14fd059f1f704a2e6f3f27dec3604f822b6771a47e724` · 12 bytes / 6 runs vs V282 · independent rebuild reproduces bit-for-bit · adversarial A/B/C/D all FLASH-with-caveats · **page** https://claude.ai/code/artifact/e80e5566-f343-4b55-83c8-ae5145772b83 · build `analysis-2020accord/builds/v108_plus/build_v284_tva.py`
+
+| offset | cell | V282 | V284 |
+|---|---|---|---|
+| `0xE537C` | Kp slot-7 X[1] | 68 | **32** |
+| `0xE537E` | Kp slot-7 X[2] | 112 | **36** |
+| `0xE5380` | Kp slot-7 X[3] | 136 | **44** |
+| `0xE5382` | Kp slot-7 X[4] | 208 | **88** |
+| `0xE5388` | Kp slot-7 Y[2],Y[3] | 248, 248 | **512, 512** |
+| `0xE5FFC` | page CRC | `7ea6f28e` | `2a7055f2` |
+
+Slot 7 only (X 0,32,36,44,88 · Y 248,248,512,512,248) — the other 27 records untouched, unlike V281 which rewrote all 28.
+
+**WHY (the intent).** V283's Ki cured V281 rev 3's P-only deadband but bought oversteer with a DC face. V284 was the Ki-free alternative: leave Kp at 248 where the loop is marginal and where the ring lives, raise it to 512 only across the narrow stall band (idx 32–44), and come back to 248 before the ring index. **CLASS:** the first *shaped* (non-flat, non-linear-from-origin) Kp table, and the first single-slot Kp edit.
+
+**🛑 WHY IT IS SHELVED — the build is sound, the LEVER is not.** Two independent grounds, plus the operator's own read (*"I am reading V284 as a continued regression from V282"*, *"we should keep Kp fixed, if not 0"*):
+1. **Measured ring loop gain at flat Kp 248 = 0.976 [0.944–0.990] at the 7.3 Hz STRONG-TURN RING** (per-episode complex-ACF fit `|ρ(τ)| = exp(−α|τ|)`, `Q = πf₀/α`, 5 episodes / ~8 s; stock arm 1.027 [1.017–1.044], 13 episodes / 29.7 s; `STUTTER-7HZ-V283-r36-r38-2026-09-03.md` §A14.3). Headroom **2.5 %**. At 7.3 Hz **P dominates D** (`|D|/|P| = 0.757`), so V284 adds **+13 % of loop gain at idx 68 and +31 % at its idx 36–44 peak**, driving the ring **above unity** (1.106 / 1.277) across its whole raised band — idx 68 included, which is inside the ring's own index range. Model-free dose–response concurs: 0.997 [0.964–1.011].
+   🛑 **CORRECTED 2026-09-04, same day:** this figure was first entered as the **~20.3 Hz grind** ring. It is not — it is the 7.3 Hz strong-turn ring (the operator's *“stuttering when the wheel is turning”*, not his *“rare, attenuated grinding”*). **The 20 Hz ring has NO usable measured loop gain**: `CREEP-20HZ-LOOP-ID-2026-09-03.md` item 7(a) shows `L_in(line) = −1 by construction` at a spectral line, so any 20 Hz margin number is tautological. The earlier framing (“headroom 1.0–5.6 %, spends 2.1–5.4 %”) understated the effect ~10×. **The shelving verdict survives and strengthens; only its frequency, its size and the symptom it bears on change.**
+2. **The shape-selection gate was defective** — it scaled the servo arm as if D followed Kp; D does not. True scaling **1.771∠−16.6°**, not 2.065. Corrected, M8\* reads 1.216 against flat 341's 1.033 — **the ranking reverses**, and V284's shape is no longer the winner of its own selection.
+
+⇒ **GAIN IS SPENT AS A LEVER ON THIS LOOP.** Do not raise Kp anywhere without a fresh margin measurement.
+
+**What the four attacks DID settle (all EVIDENCE, useful to the next build):** the selector's ×4 scaling at `0x29CCE` resolved · the twin Kp reader is unreachable · overflow impossible (33.5× margin) · truncation impossible (264 = 66·4 = 6·44) · the LERP index is bounded [0, 240] · the record layout is 24 B with X[0] **explicit** (no implicit X0) and `[0x00]` count unread by the LERP · records are pointer-table-addressed (`0xCB994`) and **page-scattered** across five separately-CRC'd 4 KB pages, so a contiguous dump walks into a neighbouring table (it produced "21 distinct X axes" and a false alarm).
+
+**Also retired here:** *"~1500 counts breaks a stall"* is **UNSUPPORTED** — reference builds deliver 586–817 counts and still stall 12–19 %. The *direction* survives (V283 took stalls 7 → 0/1/0 at the same tune); only the target number was invented.
+
+🛑 **Kd record note, for the ZN work that follows: `0xE511C` is NOT virgin.** V279 / V279 rev 1 set it to 0 — confounded and unflown, so it carries no on-car evidence, but it is not an untouched cell. Kd has been **128 on every FLOWN build in the arc**.
+
+### V283 — V282 + Ki 50 on the LKAS rate PID (2026-09-03, **FLOWN 2026-09-03**, routes …_00000036 / _00000037 / _00000038 — 🛑 REJECTED BY THE OPERATOR; V282 and V281 rev 3 stay flashable)
+
+**ON-CAR (operator, 2026-09-04):** *“This firmware consistently oversteers. I don’t like the idea of the integrator anyways, it goes against what openpilot is modelling its output as, a torque.”* → the integrator is rejected on principle as well as on the drive; his frontier build reverts to **V282**. **MEASURED:** all three routes tap-attributed to V283 (Ki fitted 51.9 / 52.0 / 52.1 against a 1.2–1.9 control floor); tune unmoved (SR 12.50 / LAF 2.110 / kp 0.600). **The prereg PASS sentence FIRED** — stalls 7 → **1** pooled, (b) 87 %, (c) 0.048, (e) F7 0.00 unchanged: **Ki 50 cured the P-only deadband.** The cost is the DC face — tight-curve achieved÷asked 0.996 → **1.278**, matched-frame Δ **+0.334 m/s²** on an SR-free instrument (livePose yaw·v, roll removed); inner DC gain 0.36 → 0.76. **NEW RESIDUAL (verified independently): the integrator does not clear at disengage** — 139–383 counts still delivered 0.5–1.0 s after `STEER_REQUEST` drops; both Ki-0 builds are at zero within 0.5 s. Adversarial B had flagged exactly this (“reset lags disengage 0.1–1 s”) and the drive confirms it. Grinding held V281 rev 3’s gain (~3× rarer, ~2.2× smaller than V280 rev 2), no r35-class incident, and **Ki does not touch the 20 Hz line** (1.10, p = 0.38).
 
 **base** V282 · **image** `fd0c321a…1ef3d` · **rwd** `6bd088f5…c85d` · **329/329** (274 S) · 5 bytes vs V282 (`0xC63E6` 0→50 low byte + CRC `0xC6FFC`) · independent rebuild reproduces · adversarial A/B/C PASS (B residuals: integrator blind to a hand, release lurch +14–18 deg/s ~2 s, reset lags disengage 0.1–1 s; governor/COMP re-trace before Ki > 50) · **prereg** `rlog-tools/studies/osc-highangle/PREREG-V283-READ.md`
 
@@ -118,7 +265,7 @@ blindness) closed with re-reads from the FINAL image and the decoded .rwd agains
 
 **ON-CAR (operator):** oversteering largely gone · prolific understeer · stuttering and rare attenuated grinding still present · a pronounced grind at 23:48:21. **MEASURED:** Kp 248 confirmed from the tap (P rail 0.3 % of strong frames vs 31 %); the self-sustained 7 Hz cycle GONE (F7 0.0 per 100 s; 6–8.5 Hz rate ×0.19, tap ×0.14; ripple/level 0.18; driver ring −41 %); a damped ring at ~40 % remains, f0 7.3 and bar/rate ~10 unchanged, servo share 0.82 → 0.64, r24 share 1.27 → the r24-pump reading PASSED, pure-servo FAILED; no 8–12 Hz mode; full-demand rate 136/140 (returning-dominated; winding −4 %); COST: seven 1–3 s stalled runs at idx 54–79 at 0.62 of V280's torque, dead fraction ×3–8 (the P-only deadband); understeer mostly the SR 12.5 bias; prereg (a)(b)(d)(f)(g)(h) PASS, (e) cost present, FAIL sentence did not fire.
 
-**base** V280 rev 2 · **image** `98a7a514…2fc9c` · **rwd** `a3e330ff…8901` (`…V281R3-V280R2BASE-KP.FLAT.Y0.MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP…rwd`) · **793/793** (566 S) · independent rebuild reproduces · adversarial A (arithmetic) PASS, B (interlocks/stability; rwd cipher decoded and matched; two drive notes: grip-compounded fade at idx 58 ≈ 370 counts, idx-26 class thin) PASS, C (build audit, 36/36 mutations caught) PASS · rev 2 `4c437e3b…` passed A/B/C before being superseded on the operator's instruction · **prereg** `rlog-tools/studies/osc-highangle/PREREG-V281-READ.md` · **page** https://claude.ai/code/artifact/51c14843-7f5c-4792-ba8e-4eaf2e641054
+**base** V280 rev 2 · **image** `98a7a514…2fc9c` · **rwd** `a3e330ff…8901` (`…V281R3-V280R2BASE-KP.FLAT.Y0.MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP…rwd`) · **793/793** (566 S) · independent rebuild reproduces · adversarial A (arithmetic) PASS, B (interlocks/stability; rwd cipher decoded and matched; two drive notes: grip-compounded fade at idx 58 ≈ 370 counts, idx-26 class thin) PASS, C (build audit, 36/36 mutations caught) PASS · rev 2 `4c437e3b…` passed A/B/C before being superseded on the operator's instruction — ⚠ **CORRECTION 2026-09-04: rev 2 was NOT “flat 341 from idx 24”.** It *lowered* the knots (X = 0, 24, 68, 136, 208) **and** moved Y; the live record differs from rev 3 at **10 bytes, not 2**. The short description above is incomplete on both counts. · **prereg** `rlog-tools/studies/osc-highangle/PREREG-V281-READ.md` · **page** https://claude.ai/code/artifact/51c14843-7f5c-4792-ba8e-4eaf2e641054
 
 | cell | V280 rev 2 | V281 rev 3 | what it is |
 |---|---|---|---|

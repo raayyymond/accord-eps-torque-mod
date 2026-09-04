@@ -1,0 +1,250 @@
+image  : _v282_V282-V281R3BASE-KP.FLAT.Y0-CAVE.R24CMP.BITS5.6-MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP_plain_image.bin
+bytes  : 1048576
+sha256 : 0ea98d06b292ca1a5e78a752f339c8fad103a35a603e0237e598e68c1d5ed0fe
+
+-- cals byte-read from the V282 image --
+  0xC63E6 Ki        = 0
+  0xC63E8/EA fb EMA = 923/1560
+  0xC63EC/EE outlag = 992/507
+  0xC61B6 D clamp   = 10240   0xC61BC P clamp = 15360
+  0xC61BE sum clamp = 15360 0xC61B4 out clamp = 3072
+  0xC61BA anti-windup base = 10240   0xC6CD0 fwd gain = 5346
+  0xE5378 Kp record = n=5 X=[0, 68, 112, 136, 208] Y=[248, 248, 248, 248, 248]
+  0xE511C Kd record = n=4 X=[0, 11, 22, 32] Y=[128, 128, 128, 128]
+
+  exact out-lag pole  = 5.053 Hz   DC = 0.9902
+  exact feedback pole = 16.527 Hz   DC = 30.891
+  Kd/Kp corner (D=P)  = 1.534 Hz [exact: ]
+  exact |D|=|P| at    = 9.638 Hz
+
+==============================================================================================
+Q2  AUTHORITY LOSS FROM Kp -> 0   (V282: Ki=0, so C = P + D exactly)
+==============================================================================================
+  ratio = |C(Kp=0)| / |C(Kp=248)| ; the output lag, taper, fwd gain, feedback and the
+  PLANT are common to P and D and CANCEL exactly in this ratio.
+
+     f Hz  |C| Kp248       ph   |C| Kp0       ph   ratio   loss %  d(phase)
+    0.200     0.9690     1.2d    0.0201    90.0d  0.0208   -97.9%    +88.8d
+    0.500     0.9701     3.0d    0.0503    89.9d  0.0518   -94.8%    +86.9d
+    1.000     0.9743     5.9d    0.1005    89.8d  0.1032   -89.7%    +83.9d
+    2.000     0.9906    11.7d    0.2011    89.6d  0.2030   -79.7%    +77.9d
+    3.000     1.0173    17.2d    0.3016    89.5d  0.2965   -70.4%    +72.2d
+    5.000     1.0984    27.2d    0.5026    89.1d  0.4576   -54.2%    +61.9d
+    7.300     1.2286    36.7d    0.7338    88.7d  0.5973   -40.3%    +52.0d
+    9.636     1.3905    44.1d    0.9686    88.3d  0.6966   -30.3%    +44.1d
+   13.500     1.7002    52.9d    1.3568    87.6d  0.7980   -20.2%    +34.7d
+   20.000     2.2848    61.4d    2.0093    86.4d  0.8794   -12.1%    +25.0d
+   25.000     2.7611    65.0d    2.5107    85.5d  0.9093    -9.1%    +20.5d
+   30.000     3.2491    67.3d    3.0115    84.6d  0.9269    -7.3%    +17.3d
+   40.000     4.2424    69.7d    4.0107    82.8d  0.9454    -5.5%    +13.1d
+   60.000     6.2506    70.4d    5.9962    79.2d  0.9593    -4.1%     +8.8d
+  100.000    10.2295    66.8d    9.8885    72.0d  0.9667    -3.3%     +5.2d
+
+==============================================================================================
+Q3  Ku / Tu  --  the marginal-stability search, on the MEASURED arm split at f0 = 7.3 Hz
+==============================================================================================
+
+  |L(7.3 Hz)| as Kd is swept.  Kp = 0 (the ZN Ku-hunt configuration), Ki = 0.
+  |L| >= 1.000 = the cycle self-sustains.   as-built V282 (Kp 248, Kd 128) = 0.979 by construction
+
+     Kd |  pooled     r36     r38 | pooled@0.990 pooled@0.944
+      0 |   1.161   1.132   1.093 |        1.178        1.123
+     32 |   1.082   1.032   1.033 |        1.097        1.046
+     64 |   1.002   0.933   0.973 |        1.016        0.969
+     96 |   0.922   0.834   0.914 |        0.935        0.892
+    128 |   0.843   0.735   0.854 |        0.855        0.815
+    160 |   0.763   0.636   0.795 |        0.774        0.738
+    192 |   0.684   0.538   0.736 |        0.693        0.661
+    256 |   0.526   0.348   0.619 |        0.533        0.508
+    320 |   0.370   0.181   0.506 |        0.375        0.357
+    400 |   0.185   0.191   0.372 |        0.188        0.179
+    500 |   0.139   0.468   0.239 |        0.141        0.134
+    600 |   0.360   0.774   0.221 |        0.365        0.348
+    700 |   0.605   1.085   0.338 |        0.613        0.585
+    800 |   0.853   1.397   0.502 |        0.865        0.825
+    849 |   0.975   1.550   0.589 |        0.989        0.943
+    900 |   1.102   1.710   0.681 |        1.118        1.066
+   1000 |   1.351   2.023   0.865 |        1.371        1.307
+   1200 |   1.851   2.651   1.240 |        1.878        1.791
+
+  Kd values where |L(7.3)| = 1.000  (lower root = ring RE-ARMS below it; upper root = Ku):
+    Kp=0   pooled L_tot=0.976 -> Kd=65, Kd=859
+    Kp=0   pooled L_tot=0.944 -> Kd=51, Kd=873
+    Kp=0   pooled L_tot=0.990 -> Kd=70, Kd=853
+    Kp=0      r36 L_tot=0.976 -> Kd=42, Kd=673
+    Kp=0      r36 L_tot=0.944 -> Kd=32, Kd=684
+    Kp=0      r36 L_tot=0.990 -> Kd=47, Kd=668
+    Kp=0      r38 L_tot=0.976 -> Kd=50, Kd=1072
+    Kp=0      r38 L_tot=0.944 -> Kd=32, Kd=1091
+    Kp=0      r38 L_tot=0.990 -> Kd=57, Kd=1065
+
+    Kp=248  pooled L_tot=0.976 -> Kd=118, Kd=798
+    Kp=248  pooled L_tot=0.944 -> Kd=102, Kd=814
+    Kp=248  pooled L_tot=0.990 -> Kd=125, Kd=791
+
+  D-CLAMP REACHABILITY.  |D| measured on V283 strong-turn frames = 880-1552 counts at Kd 128.
+  |D| scales linearly in Kd.  D clamp (0xC61B6) = 10240.
+      Kd   |D| lo   |D| hi  % of clamp (hi)
+     128      880     1552              15%
+     160     1100     1940              19%
+     256     1760     3104              30%
+     400     2750     4850              47%
+     600     4125     7275              71%
+     798     5486     9676              94%
+     859     5906    10415             102%   <-- RAILED
+    1000     6875    12125             118%   <-- RAILED
+  => the D path saturates at Kd = 845 (worst frames) .. 1489 (best frames),
+     i.e. INSIDE the Ku band.  A clean linear Ku is NOT reachable.
+
+==============================================================================================
+Q3b  20 Hz creep-grind damping budget, Kp -> 0 and Kd swept   (plant-free aggregator budget)
+==============================================================================================
+  today (Kp 248, Kd 128): Re_total = +2.06  (servo +0.68, r24 +1.38)
+  positive Re = damping.  Below +2.06 is a regression.
+
+      Kd |   Kp=248     Kp=0 |  Kp=0 s=0.30  Kp=0 s=0.52
+       0 |    +0.86    +1.38 |        +0.97        +1.67
+      64 |    +1.46    +1.98 |        +1.57        +2.27
+      96 |    +1.76    +2.29 |        +1.87        +2.58
+     128 |    +2.06    +2.59 |        +2.17        +2.88
+     160 |    +2.37    +2.89 |        +2.47        +3.18
+     192 |    +2.67    +3.19 |        +2.77        +3.48
+     256 |    +3.27    +3.79 |        +3.37        +4.08
+     400 |    +4.62    +5.14 |        +4.72        +5.43
+     600 |    +6.50    +7.02 |        +6.60        +7.31
+     859 |    +8.93    +9.45 |        +9.04        +9.74
+
+  servo-lane Re=0 crossover (above it the LKAS lane PUMPS), Hz:
+      Kd    Kp=248      Kp=0
+      64       n/a       n/a
+      96       n/a       n/a
+     128       n/a       n/a
+     160       n/a       n/a
+     192       n/a       n/a
+     256       n/a       n/a
+     400       n/a       n/a
+     859       n/a       n/a
+
+  HF gain of the servo arm vs as-built V282 (|C*Hlag*Fb| ratio):
+                cand      20Hz      25Hz      40Hz      80Hz     250Hz     500Hz
+           Kp0 Kd128      0.88     0.91     0.95     0.96     0.97     0.97
+           Kp0 Kd160      1.10     1.14     1.18     1.21     1.21     1.21
+           Kp0 Kd256      1.76     1.82     1.89     1.93     1.94     1.94
+      Kp0 Kd859 (Ku)      5.90     6.10     6.34     6.47     6.51     6.51
+   Kp0 Kd387 (ZN-PI)      2.66     2.75     2.86     2.92     2.93     2.93
+     Kp248 Kd160 (F)      1.20     1.22     1.23     1.24     1.24     1.24
+
+  [anchor] modelled Z_servo(20 Hz, Kp 248) phase = -65.0d vs measured -69d  (residual +4.0d = the plant)
+  [anchor] modelled Z_servo(7.3 Hz, Kp 600) phase = -61.9d vs measured -62d
+
+  servo-lane Re=0 crossover (above it the LKAS lane PUMPS), Hz:
+      Kd    Kp=248      Kp=0
+      64      34.2      81.5
+      96      53.0      81.5
+     128      61.2      81.5
+     160      65.6      81.5
+     192      68.5      81.5
+     256      71.9      81.5
+     400      75.5      81.5
+     859      78.8      81.5
+
+==============================================================================================
+Q3c  ZIEGLER-NICHOLS TRANSLATION BACK INTO CELL VALUES
+==============================================================================================
+
+  UNIT CHAIN (accel frame).  Let e_a = dE/dt be the acceleration error in E-counts/s.
+  Then E = integral(e_a dt), and the firmware sum S = Kp_r*E + Kd_r*dE/dt + Ki_r*integral(E) becomes
+
+      S = Kd_r * e_a           <- accel-frame PROPORTIONAL, Kp' = Kd_r = (Kd/8)*T
+        + Kp_r * integral(e_a) <- accel-frame INTEGRAL,     Ki' = Kp_r = Kp/256
+        + Ki_r * double int.   <- NOT part of any ZN form; must be 0
+  so
+      Kd = Kp' * 8 / T = Kp' * 8000          (T = 1 ms)
+      Kp = Ki' * 256   = (Kp'/Ti) * 256
+      Ti (as built)    = Kd_r/Kp_r = (Kd/8)*T/(Kp/256)
+  Every downstream factor (254/256 taper, the output lag, the 5346 forward gain, the >>8 and >>3
+  shifts, the 32x on sp and the feedback EMA) multiplies P, D and I IDENTICALLY, so none of them
+  enters the ZN ratios.  They set the loop's absolute scale, which is exactly what Ku absorbs.
+
+  as built (V282): Kp' = 0.016000 s   Ki' = 0.968750   Ti = 16.52 ms   (1/2*pi*Ti = 9.64 Hz)
+
+  --- pooled:  Kd_u = 859  ->  Ku' = 0.10737 s ,  f_osc = 7.3 Hz , Tu = 137.0 ms ---
+    ZN classic PID  Kp'=0.06442 Ti=68.5ms -> **Kd (0xE511C) = 515** , **Kp (0xE5378) = 241** , Td=17.1ms -> NO CELL EXISTS (needs d2E/dt2)
+    ZN classic PI   Kp'=0.04832 Ti=114.2ms -> **Kd (0xE511C) = 387** , **Kp (0xE5378) = 108**
+    0xC63E6 (Ki) must be 0 in BOTH forms - it is a DOUBLE integral in the accel frame.
+
+  --- r36 (most servo):  Kd_u = 673  ->  Ku' = 0.08413 s ,  f_osc = 7.3 Hz , Tu = 137.0 ms ---
+    ZN classic PID  Kp'=0.05047 Ti=68.5ms -> **Kd (0xE511C) = 404** , **Kp (0xE5378) = 189** , Td=17.1ms -> NO CELL EXISTS (needs d2E/dt2)
+    ZN classic PI   Kp'=0.03786 Ti=114.2ms -> **Kd (0xE511C) = 303** , **Kp (0xE5378) = 85**
+    0xC63E6 (Ki) must be 0 in BOTH forms - it is a DOUBLE integral in the accel frame.
+
+  --- r38 (least servo):  Kd_u = 1072  ->  Ku' = 0.13400 s ,  f_osc = 7.3 Hz , Tu = 137.0 ms ---
+    ZN classic PID  Kp'=0.08040 Ti=68.5ms -> **Kd (0xE511C) = 643** , **Kp (0xE5378) = 301** , Td=17.1ms -> NO CELL EXISTS (needs d2E/dt2)
+    ZN classic PI   Kp'=0.06030 Ti=114.2ms -> **Kd (0xE511C) = 482** , **Kp (0xE5378) = 135**
+    0xC63E6 (Ki) must be 0 in BOTH forms - it is a DOUBLE integral in the accel frame.
+
+==============================================================================================
+Q1  IS THE PLANT AN INTEGRATOR OR A DIFFERENTIATOR IN RATE?  -- pinned from the wire
+==============================================================================================
+  DC chain (all factors byte-read):  S = (Kp/256)*E = 0.96875*E
+    -> taper 0.9922 -> out-lag DC 0.9902 -> fwd gain 0.16315
+    => |T| = 0.15528 * E     (engagement ramp assumed unity)
+    fb = 30.891 * raw ; raw = 8 counts per deg/s  => fb = 247.1 per deg/s
+
+  CONSISTENCY TEST -- reconstruct the commanded rate from the MEASURED (|T|, wheel rate) pairs.
+  If the plant were an integrator in rate, a sustained |T| could not coexist with a
+  sustained BOUNDED rate.  If it were a differentiator, a sustained |T| would give rate = 0.
+
+           route/stratum    |T|    rate   E=|T|/k       fb     32sp  => ref deg/s   plant g   L_dc
+     r34 V280r2 idx40-60    663    18.5      4270     4572     8842          35.8    0.0279   1.07
+     r34 V280r2 idx60-80    657    34.1      4231     8427    12658          51.2    0.0519   1.99
+     r35 V281r3 idx40-60    828     5.8      5332     1433     6766          27.4    0.0070   0.27
+     r35 V281r3 idx60-80    795    17.8      5120     4399     9519          38.5    0.0224   0.86
+
+  The reconstructed references land at 27-39 deg/s.  The two drive reports independently
+  record the stall-run references as r35 27 deg/s (mean) and r34 30-44 deg/s.
+  => the DC chain closes to within a few percent WITHOUT a free parameter. [EVIDENCE]
+
+  VERDICT: plant DC gain from PID output to measured rate is FINITE and NON-ZERO
+           (g = 0.007-0.052 deg/s per T count, load-dependent).  L_dc = 0.27-1.99.
+           The plant is TYPE 0 in rate: constant torque -> constant, bounded, non-zero RATE.
+           NOT an integrator (L_dc would be infinite, droop zero).
+           NOT a differentiator (rate would be 0 while |T| = 795-828 counts for 1-3 s).
+
+  CONSEQUENCE.  With Kp = 0 AND Ki = 0 the controller is C(s) = Kd_r*s, so L(0) = 0 EXACTLY.
+  Steady-state rate error = 100 %.  The loop has ZERO low-frequency authority; the only
+  command that reaches the motor is d(32*sp)/dt -- a kick on command CHANGE, nothing held.
+
+  Step response, integer mirror, plant = 1st-order lag (g = 0.030 deg/s/count, tau = 60 ms):
+    V282 as built Kp248 Kd128 Ki0    rate at 4 s =  13.38 deg/s of 25.0 requested ( 53.5 %), |T| =    446
+    V283          Kp248 Kd128 Ki50   rate at 4 s =  24.16 deg/s of 25.0 requested ( 96.6 %), |T| =    806
+    Kp0 Kd128 Ki0  (Ku-hunt cfg)     rate at 4 s =   0.00 deg/s of 25.0 requested (  0.0 %), |T| =      0
+    Kp0 Kd859 Ki0  (at Ku)           rate at 4 s =   0.00 deg/s of 25.0 requested (  0.0 %), |T| =      0
+    ZN-PI  Kp108 Kd387 Ki0           rate at 4 s =   8.35 deg/s of 25.0 requested ( 33.4 %), |T| =    278
+    ZN-PID Kp241 Kd515 Ki0           rate at 4 s =  13.20 deg/s of 25.0 requested ( 52.8 %), |T| =    440
+
+==============================================================================================
+Q4  GATE TABLE -- candidate F vs the ZN tunes vs the Ku-hunt configuration
+==============================================================================================
+                   candidate    Kp    Kd   ring  |L|7.3  |L|@.99  Re@20  ph13.5   HFx  xover  rate%
+               V282 as built   248   128  1.003   0.979    0.993  +2.06   +0.0d  1.00     61  53.5%
+                V283 (Ki 50)   248   128  1.003   0.979    0.993  +2.06   +0.0d  1.00     61  96.6%
+             F: Kd 160 alone   248   160  0.934   0.912    0.925  +2.37   +5.6d  1.24     66  53.5%
+                Kd 192 alone   248   192  0.869   0.848    0.860  +2.67   +9.7d  1.48     69  53.5%
+  Kd 112 alone (DO-NOT-FLASH)   248   112  1.038   1.013    1.027  +1.91   -3.5d  0.88     58  53.5%
+  Kd 64 alone (DO-NOT-FLASH)   248    64  1.145   1.117    1.133  +1.46  -18.7d  0.52     34  53.5%
+   Kp 0 only (Ku-hunt start)     0   128  0.863   0.843    0.855  +2.59  +34.7d  0.96     82   0.0%
+                 Kp 0, Kd 64     0    64  1.026   1.002    1.016  +1.98  +34.7d  0.48     82   0.0%
+           Kp 0, Kd 859 = Ku     0   859  1.024   1.000    1.014  +9.45  +34.7d  6.47     82   0.0%
+    ZN-PI   (0.45Ku, Tu/1.2)   108   387  0.347   0.339    0.344  +4.79  +28.9d  2.93     79  33.4%
+      ZN-PID  (0.6Ku,  Tu/2)   241   515  0.544   0.531    0.539  +5.72  +25.0d  3.91     77  52.8%
+               ZN-PI + Ki 50   108   387  0.347   0.339    0.344  +4.79  +28.9d  2.93     79  97.7%
+              ZN-PID + Ki 50   241   515  0.544   0.531    0.539  +5.72  +25.0d  3.91     77  96.8%
+
+  ring   = |Ls*R + Lr| at 7.3 Hz, pooled arms (1.000 = today).  |L| >= 1 = the cycle sustains.
+  Re@20  = aggregator damping budget at the creep line, s = 0.43 (today +2.06; lower is a regression).
+  ph13.5 = change in loop phase at 13.5 Hz (+ returns margin, - spends it; the budget is ~50 deg).
+  HFx    = servo-arm gain at 80 Hz vs as-built, through an UNFILTERED differentiator.
+  xover  = frequency above which the LKAS lane stops damping and starts pumping.
+  rate%  = steady-state rate delivered vs requested, integer mirror, mid-load plant.
+

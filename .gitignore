@@ -149,3 +149,6 @@ analysis-2020accord/rlogs/
 # They are OUTPUTS, not evidence of record -- the findings they support live in
 # docs/STATE.md, docs/BUILD-LINEAGE.md and the docs/handoffs/ chain.
 _scratch/
+
+# Operator StarPilot toggle backups (decoded ones may contain keys) — never commit
+analysis-2020accord/reference/toggle-backup*

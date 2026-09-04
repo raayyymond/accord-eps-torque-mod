@@ -1,0 +1,114 @@
+diff --git a/selfdrive/controls/controlsd.py b/selfdrive/controls/controlsd.py
+index 0df6581c2..586c738ad 100644
+--- a/selfdrive/controls/controlsd.py
++++ b/selfdrive/controls/controlsd.py
+@@ -32,7 +32,7 @@ from openpilot.selfdrive.controls.lib.latcontrol_torque import (
+   BOLT_2018_2021_STEER_RATIO_TEST_SCALE,
+   LatControlTorque,
+   get_bolt_2017_steer_ratio_scale,
+-  get_honda_accord_steer_ratio_scale,
++  get_honda_accord_steer_ratio,
+ )
+ from openpilot.selfdrive.controls.lib.longcontrol import LongControl
+ from openpilot.selfdrive.car.cruise_state import should_cancel_stock_cruise
+@@ -467,18 +467,18 @@ class Controls:
+     lp = self.sm['liveParameters']
+     x = max(lp.stiffnessFactor, 0.1)
+     sr = max(lp.steerRatio, 0.1)
+-    custom_accord_ratio = getattr(self.starpilot_toggles, "steerRatio", self.CP.steerRatio)
+-    accord_ratio_is_explicit = getattr(self.starpilot_toggles, "use_custom_steerRatio", False) and \
+-      abs(custom_accord_ratio - self.CP.steerRatio) > 0.01
++    steer_angle_deg = CS.steeringAngleDeg - lp.angleOffsetDeg
+     if self.CP.carFingerprint == GM_CAR.CHEVROLET_BOLT_CC_2017:
+       sr *= get_bolt_2017_steer_ratio_scale(CS.vEgo)
+     elif self.CP.carFingerprint == GM_CAR.CHEVROLET_BOLT_CC_2018_2021:
+       sr *= BOLT_2018_2021_STEER_RATIO_TEST_SCALE
+-    elif self.CP.carFingerprint == HONDA_CAR.HONDA_ACCORD and not accord_ratio_is_explicit:
+-      sr *= get_honda_accord_steer_ratio_scale(CS.vEgo)
++    elif self.CP.carFingerprint == HONDA_CAR.HONDA_ACCORD:
++      # Variable-ratio rack: the map IS the ratio, so neither the learner nor the
++      # SteerRatio toggle can bias it. Both are ignored for this platform by design.
++      sr = get_honda_accord_steer_ratio(steer_angle_deg)
+     self.VM.update_params(x, sr)
+ 
+-    steer_angle_without_offset = math.radians(CS.steeringAngleDeg - lp.angleOffsetDeg)
++    steer_angle_without_offset = math.radians(steer_angle_deg)
+     self.curvature = -self.VM.calc_curvature(steer_angle_without_offset, CS.vEgo, lp.roll)
+ 
+     # Update Torque Params
+diff --git a/selfdrive/controls/lib/latcontrol_vehicle_tunes.py b/selfdrive/controls/lib/latcontrol_vehicle_tunes.py
+index d30fdee12..6cf0bc414 100644
+--- a/selfdrive/controls/lib/latcontrol_vehicle_tunes.py
++++ b/selfdrive/controls/lib/latcontrol_vehicle_tunes.py
+@@ -73,7 +73,17 @@ BOLT_2017_CARS = (
+   GM_CAR.CHEVROLET_BOLT_CC_2017,
+ )
+ BOLT_CARS = BOLT_2022_2023_CARS + BOLT_2018_2021_CARS + BOLT_2017_CARS
+-HONDA_ACCORD_STEER_RATIO_SCALE = 14.0 / 16.33
++# Measured on this car: 427 min over 47 routes, ratio derived four independent ways
++# (yaw+rear-axle speed, yaw+front, rear differential without IMU, wheel speeds alone),
++# left and right measured separately -- symmetric to within 1.5%. Flat at ~16:1 out to
++# ~48 deg, then quickening monotonically to ~11.1:1 at lock. Speed control passed, so
++# this is rack geometry, not a speed-dependent artefact: index on |angle| only.
++# The old single 14.0/16.33 scale was this curve sampled at ~95 deg and applied at every
++# angle: too quick on centre, too slow at lock.
++# Breakpoints are |steering wheel angle| in degrees off the learned centre; values are the
++# measured ratio there. np.interp holds the ends, so the ratio is bounded on [11.06, 16.00].
++HONDA_ACCORD_STEER_RATIO_ANGLE_BP = [0.0, 48.0, 60.0, 76.0, 95.0, 121.0, 191.0, 236.0, 303.0, 380.0]  # deg
++HONDA_ACCORD_STEER_RATIO_V = [16.00, 16.00, 15.02, 14.52, 13.97, 13.75, 13.50, 12.81, 11.67, 11.06]  # :1
+ HONDA_ACCORD_TORQUE_KP = 0.8
+ HONDA_ACCORD_TORQUE_KI = 0.15
+ HONDA_ACCORD_TURN_FF_REDUCTION_MAX = 0.10
+@@ -2102,8 +2112,9 @@ def get_bolt_2017_steer_ratio_scale(v_ego: float) -> float:
+   return 1.0 + ((BOLT_2017_STEER_RATIO_TEST_SCALE - 1.0) * _bolt_2017_high_speed_factor(v_ego))
+ 
+ 
+-def get_honda_accord_steer_ratio_scale(_v_ego: float) -> float:
+-  return HONDA_ACCORD_STEER_RATIO_SCALE
++def get_honda_accord_steer_ratio(steer_angle_deg: float) -> float:
++  """Local ratio of the Accord's variable-ratio rack at the current wheel angle."""
++  return float(np.interp(abs(steer_angle_deg), HONDA_ACCORD_STEER_RATIO_ANGLE_BP, HONDA_ACCORD_STEER_RATIO_V))
+ 
+ 
+ def get_honda_accord_ff_scale(desired_lateral_accel: float) -> float:
+diff --git a/selfdrive/controls/tests/test_latcontrol.py b/selfdrive/controls/tests/test_latcontrol.py
+index a7b08c473..ea5927336 100644
+--- a/selfdrive/controls/tests/test_latcontrol.py
++++ b/selfdrive/controls/tests/test_latcontrol.py
+@@ -44,6 +44,7 @@ from openpilot.selfdrive.controls.lib.latcontrol_vehicle_tunes import (
+   get_prius_center_taper_scale,
+   PRIUS_STANDARD_FRICTION_JERK_DEADZONE_MAX,
+   KIA_FORTE_BASE_LAT_ACCEL_FACTOR_MULT,
++  HONDA_ACCORD_STEER_RATIO_V,
+   HONDA_ACCORD_TORQUE_KI,
+   HONDA_ACCORD_TORQUE_KP,
+   RAM_1500_BASE_LAT_ACCEL_FACTOR_MULT,
+@@ -101,7 +102,7 @@ from openpilot.selfdrive.controls.lib.latcontrol_torque import (
+   get_genesis_gv70_unwind_ff_scale,
+   get_honda_accord_ff_scale,
+   get_elantra_non_scc_ff_scale,
+-  get_honda_accord_steer_ratio_scale,
++  get_honda_accord_steer_ratio,
+   get_palisade_ff_scale,
+   get_palisade_center_output_scale,
+   get_palisade_center_taper_scale,
+@@ -1913,10 +1914,15 @@ class TestLatControl:
+     assert controller.pid._k_p[1][-1] == pytest.approx(HONDA_ACCORD_TORQUE_KP)
+     assert controller.pid._k_i[1] == pytest.approx([HONDA_ACCORD_TORQUE_KI] * len(controller.pid._k_i[1]))
+ 
+-  def test_honda_accord_steer_ratio_calibration(self):
+-    expected_scale = 14.0 / 16.33
+-    assert get_honda_accord_steer_ratio_scale(0.0) == pytest.approx(expected_scale)
+-    assert get_honda_accord_steer_ratio_scale(20.0) == pytest.approx(expected_scale)
++  def test_honda_accord_steer_ratio_is_variable_and_symmetric(self):
++    centre = get_honda_accord_steer_ratio(0.0)
++    assert centre == pytest.approx(HONDA_ACCORD_STEER_RATIO_V[0])
++    # flat across the on-centre band, then quickening toward lock, identically both sides
++    assert get_honda_accord_steer_ratio(48.0) == pytest.approx(centre)
++    assert get_honda_accord_steer_ratio(180.0) < centre
++    assert get_honda_accord_steer_ratio(-180.0) == pytest.approx(get_honda_accord_steer_ratio(180.0))
++    # np.interp holds the endpoints, so the ratio stays bounded past the last knot
++    assert get_honda_accord_steer_ratio(1e4) == pytest.approx(HONDA_ACCORD_STEER_RATIO_V[-1])
+ 
+   def test_honda_accord_turn_feedforward_taper(self):
+     assert get_honda_accord_ff_scale(0.0) > get_honda_accord_ff_scale(0.8)

@@ -1,112 +1,51 @@
 # Firmware Codepath Tracer — Memory Index
 
+## 2026-09-04 — V285/V286 telemetry costing (dE sign-change + r24 magnitude rungs), for `team-lead`
+- 🛑🛑★★★★★ [FUN_00028ea6 publishes S/P/D/output to gp-0x6b2e/32/34/36, orphan-safe like the lag pole — but raw dE is register-only, never published; D's clamp hides magnitude exactly where a Kd sweep needs it](reference_accord_fun28ea6_publishes_p_d_sum_output_orphan_safe.md)
+- 🛑🛑★★★★★ [lp is reused as scratch in FUN_00028ea6, CONFIRMED live 0x29A2C→0x2A29A (spans the dE tap point) — jarl there corrupts a live gate check; 0x29EE4 is a same-length jr swap site, r10 dead there, 168+ free flash bytes at 0xC4BD8, gp-0x683c has zero references at all](reference_accord_fun28ea6_lp_reused_as_scratch_and_29ee4_insertion_site.md)
+- 🛑★★★★★ [CAN 427's opendbc def matches the firmware's own byte writer census bit-for-bit; gp-0x13CC b2/5/6 + gp-0x13CA b7 are DBC-undefined AND firmware-unwritten (top-tier spare) — but b3/b4 are DBC-undefined YET written, proof undefined≠unwritten](reference_accord_can427_dbc_confirms_4_spare_bits_and_undefined_neq_unwritten.md)
+- 🛑★★★★ [search_instructions operand-text hit on a displacement can land on a different physical byte when a function uses its own non-gp base register (movhi) — check the base register, not just the displacement](reference_accord_operand_text_search_false_positive_wrong_base_register.md)
+
+## 2026-09-03 — GATE-1 census of the LKAS rate-PID pole cells (V282), for `loopshape`
+- 🛑🛑★★★★★ [Feedback-EMA poles are PRIVATE; output-lag poles 0xC63EC/EE are shared-in-code but PRIVATE-IN-EFFECT — 2nd reader at 0x2A892/2A8A2 is inside a duplicate compiled orphan with NO entry path (halfword 0xA892 occurs nowhere); Kd slot 7 is FLAT so its knot index can't move Kd at all](reference_accord_lkas_pid_pole_cell_gate1_census_2a508_second_reader.md)
+- 🛑★★★★★ [Grep memory for the address BEFORE calling a function dead — a passing scanner control proves the scanner, not the claim (0x2A5xx retraction: FUN_0002a30e next door is LIVE)](feedback_check_kit_memory_before_calling_a_function_dead.md)
+
+## 2026-09-03 — r24 dt/Q-format/gain-arm census, V283, for `team-lead`
+- 🛑🛑★★★★★ [gp-0x4f62's Δt is a DMA torque-sensor rolling-counter tick (SVD-confirmed), not CPU-ms; Q-format chain re-verified bug-free on V283; gp-0x683c CONFIRMED dead by direct V283 byte read](reference_accord_gp4f62_dt_is_dma_sensor_tick_not_cpu_ms.md)
+
 ## 2026-09-01 — V276 reference back-off costing + telemetry design, for `team-lead`
-🛑🛑★★★★★ **Crossover threshold (E<0 requires feedback_lag_out > 32*setpoint) tabulated in RAW COUNTS
-across K=1..6, resolving a team discrepancy about absolute deg/s (both were right, different points in
-the same unclosed unit chain). K=2 recommended (threshold 11008, required `0xC62E6`=15360) — clears the
-BELIEF median-achieved-rate crossover with zero peak-torque cost. Also: the CAN-427 packer RECTIFIES
-(calls abs()) so it CANNOT carry sign(E) without a real restructure, not just an edit-site change.**:
-[[reference_accord_v276_crossover_threshold_and_packer_rectifies_sign]]
+- 🛑🛑★★★★★ [Crossover threshold tabulated in raw counts K=1..6; K=2 clears the crossover at zero peak-torque cost; the CAN-427 packer RECTIFIES so it cannot carry sign(E) without a restructure](reference_accord_v276_crossover_threshold_and_packer_rectifies_sign.md)
 
 ## 2026-09-01 — V276 2-4Hz oscillation census, for `team-lead`
-🛑🛑★★★★★ **`0xC61BE` (post-gain PID-sum clamp, 15360) — not D's own clamp `0xC61B6` — is what starves
-the D term: P alone already fills it at low driver-override index, so D is discarded whenever it
-matters. Also `0xC61BE` (not `0xC61B4`) is the SECRET binding constraint on peak torque today (2505
-actual vs 3072 nominal), and it has a sign-extension defect on its POSITIVE branch (`ld.h` @0x2a146,
-must stay <32768). Single-cell V278 fix identified that restores D's authority AND closes the 18%
-torque shortfall with zero authority given back.**: [[reference_accord_c61be_sum_clamp_starves_d_term_v276_oscillation]]
+- 🛑🛑★★★★★ [0xC61BE (post-gain sum clamp), not D's own 0xC61B6, starves D — and is the secret binding constraint on peak torque (2505 vs 3072 nominal), with a sign-extension defect on its positive branch](reference_accord_c61be_sum_clamp_starves_d_term_v276_oscillation.md)
 
 ## 2026-09-01 — V274 telemetry design, for `main`
-🛑🛑★★★★★ **The rate PID ALREADY publishes 9 of its internals to gp cells nothing reads — so every
-clamp flag is FREE (exact equality to the cal) and any term reaches CAN 427 in a 3-BYTE edit.
-CORRECTS STATE.md twice: `0xC61B2` is NOT a clamp in this loop (it lives in `FUN_0002b422`), and the
-`ld.h` sign-extension defect exists on `0xC61B4`/`0xC61B2` too, not only `0xC61BE`.**:
-[[reference_accord_fun28ea6_publishes_its_pid_internals_to_gp_cells]]
-🛑🛑★★★★★ **Variant record table at 0xCD012 dumped whole (16 rows, only 9 distinct numeric classes).
-`gp-0x674d`=0 everywhere so V273's `ld.h` premise HOLDS — but V273's docstring pairs record NAMES
-(1-based) with record VALUES (0-based), so its "wire 5 vs 35" may really be "0 vs 30", and 0 reads
-exactly like a dead channel. One-byte fix at 0x55E0E.**:
-[[reference_accord_variant_record_table_0xcd012_full_dump]]
+- ⚠🛑🛑★★★★★ STALE LINK — the file `reference_accord_fun28ea6_publishes_its_pid_internals_to_gp_cells` this entry pointed to does not exist on disk (confirmed 2026-09-04). The underlying claim (PID publishes internals to unread gp cells) is INDEPENDENTLY RE-CONFIRMED for 4 cells this session — see 2026-09-04 entry above, `reference_accord_fun28ea6_publishes_p_d_sum_output_orphan_safe.md`. Treat that file as the source now, not this line.
+- 🛑🛑★★★★★ [Variant record table at 0xCD012 dumped whole (16 rows, 9 numeric classes); gp-0x674d=0 everywhere; V273's docstring pairs 1-based names with 0-based values, so "5 vs 35" may really be "0 vs 30"](reference_accord_variant_record_table_0xcd012_full_dump.md)
 
 ## 2026-08-31 — `FUN_00028ea6` control block 0x29D6C–0x2A190, for the orchestrator
-🛑🛑★★★★★ **It is a PID on STEERING-RATE ERROR: setpoint = CAN-0xE4 LKAS torque command mapped through a
-variant table; feedback = first-order lag of `gp-0x6a56` (column angular rate). Ki (`0xC63E6`) is ZERO on
-stock AND V112, so the integrator is inert. `gp-0x674e` is a STATIC variant/table-set index (28-entry
-pointer-array bank); `gp-0x682f` = `|gp-0x4f60|>>5`, the driver-torque override index. `FUN_0002a93a`
-is a dead twin of the same block (positive-controlled jarl scan).**:
-[[reference_accord_fun28ea6_lkas_rate_pid_full_decode]]
-🛑🛑★★★★★ **UPDATED 2026-09-01 — the driver override is TWO mechanisms: the Y taper AND a `0xC64B4`-`B7`
-+ `0xC61C0/C2/C4` debounce writing `gp-0x6807 = 4`. On STOCK the debounce binds FIRST (raw 1728, below
-the taper knees); on a V112/V268 base ALL EIGHT cals are 255/0xFFFF so BOTH are unsatisfiable. Taper X is
-a zero-extended byte, ceiling 255, 1 count = 32 raw counts. `0xC6974` is 4-knot FLAT and inert
-(correction). Also carries the decoded 6-byte extended-displacement gp-relative encoding.**:
-[[reference_accord_fun28ea6_lkas_rate_pid_full_decode]]
+- 🛑🛑★★★★★ [It's a PID on steering-rate error: setpoint = CAN-0xE4 mapped through a variant table, feedback = lag of gp-0x6a56; Ki is zero on stock/V112 so the integrator is inert; FUN_0002a93a is a dead twin](reference_accord_fun28ea6_lkas_rate_pid_full_decode.md)
+- 🛑🛑★★★★★ [UPDATED 2026-09-01: driver override is TWO mechanisms (Y taper + a debounce writing gp-0x6807=4); on V112/V268 base all 8 cals are 255/0xFFFF so both are unsatisfiable; 6-byte extended gp-relative encoding decoded](reference_accord_fun28ea6_lkas_rate_pid_full_decode.md)
 
 ## 2026-08-27 — `blanked` task, for `team-lead` (V36-blanked cells 0xC61C0/C2/C4)
-🛑🛑★★★★★ **V36 debounce SM fully re-verified fresh (GhidraMCP, not r2): 12 exact reader addresses across
-`FUN_00028ea6`+`FUN_0002a30e`, byte-confirmed 0xFFFF through V110, NOT the ratchet/grind cause** (level-
-debounce, not periodic; different signal path than `gp-0x6b26`): [[reference_accord_v36_gentle_eme_debounce_full_mechanism]]
-🛑🛑★★★★★ **CORRECTS "STEER_STATUS=4 is report-only" (2026-07-14 record): a state dispatcher tail-appended
-to `FUN_0002a30e` (Ghidra mis-bounds the function at a mid-function `dispose`, invisible to
-`get_function_by_address`/`search_instructions`) gates whether `gp-0x69b0` (BELIEF: the LKAS engagement-ramp
-Q15 multiplier, per other kit memory) can advance. STEER_STATUS ∉{0,1,2} blocks the increment — a real
-gating effect, not just a report.** Also a concrete reproduction of the search_instructions
-function-unbound-code blind spot: [[reference_accord_gp6807_gates_gp69b0_engagement_ramp]]
+- 🛑🛑★★★★★ [V36 debounce SM re-verified fresh: 12 exact reader addresses, byte-confirmed 0xFFFF through V110, NOT the ratchet/grind cause (level-debounce, different path than gp-0x6b26)](reference_accord_v36_gentle_eme_debounce_full_mechanism.md)
+- 🛑🛑★★★★★ [CORRECTS "STEER_STATUS=4 is report-only": a tail-appended state dispatcher (Ghidra mis-bounds the function at a mid-function dispose) gates whether gp-0x69b0 can advance — a real gating effect](reference_accord_gp6807_gates_gp69b0_engagement_ramp.md)
 
 ## 2026-08-31 — openpilot 0x0E4 command path
-🛑🛑★★★★★ **`gp-0x69ae` (the openpilot STEER_TORQUE) has EXACTLY 3 readers; both in-control uses are
-GATES, not summands. The torque that reaches the motor is generated internally and scaled by the
-`gp-0x69b0` engagement ramp at 0x2a1e6 — NOT at 0x2a194.**: [[reference-accord-op-0e4-steer-command-full-path]]
+- 🛑🛑★★★★★ [gp-0x69ae (openpilot STEER_TORQUE) has exactly 3 readers, both GATES not summands; motor torque is generated internally, scaled by the gp-0x69b0 ramp at 0x2a1e6](reference-accord-op-0e4-steer-command-full-path.md)
 
 ## 2026-09-01 — CAN 427 telemetry-tap packer, for `main` (V277 design)
-🛑🛑★★★★★ **The 427 tap field is 10 BITS (ceiling 1023), not 8 — byte1 + byte0[1:0] of `0x1AB`. And
-`ld.h` CANNOT address an ODD gp displacement (disp bit0 selects ld.h/ld.w), so `gp-0x674B` is
-unreachable by the current load; it needs `ld.bu` (opcode 0x3C even / 0x3D odd, `hw2 = disp|1`).
-`gp-0x674B` has 2 writers and ZERO readers — a free publish cell.**:
-[[reference_accord_can427_packer_tap_field_full_decode]]
-🛑🛑★★★★★ **ALL 7 EPS outbound frames censused. `FUN_000561b0`/0x660 writes SEVEN payload bytes to
-literal zero — and is a TRAP: gateway-filtered, the kit already built AND flashed this exact repurpose
-(TIER1, 2026-07-08) and saw nothing. Only 0x14A/0x18F/0x1AB cross, and NONE has a free contiguous byte
-(~21 scattered bits). Way out: the 427 tap chain has ~20 bytes of dead slack for bit-packing two
-signals.** Also: `or` opcode is 0x08 not 0x04, and `jarl` disp22 splits 6/16:
-[[reference_accord_eps_outbound_frame_census_and_free_bits]]
+- 🛑🛑★★★★★ [427 tap field is 10 bits (byte1 + byte0[1:0]); ld.h cannot address an odd gp displacement so gp-0x674B needs ld.bu; gp-0x674B has 2 writers, 0 readers, a free publish cell](reference_accord_can427_packer_tap_field_full_decode.md)
+- 🛑🛑★★★★★ [All 7 EPS outbound frames censused; FUN_000561b0/0x660 writing 7 bytes to zero is a TRAP (gateway-filtered, already tried); only 0x14A/0x18F/0x1AB cross, ~20 bytes dead slack in the 427 chain — SUPERSEDED for 0x1AB specifically by the 2026-09-04 DBC cross-check above, which found 4 clean bits there](reference_accord_eps_outbound_frame_census_and_free_bits.md)
 
 ## 2026-09-01 — V277 adversarial pass (interlocks & consumers)
-🛑🛑★★★★★ **`gp-0x674E` is <= 9 in every coded variant (`FUN_00057f8e` loops `while (uVar2 < 0x10)`;
-byte +8 of records 0..15 maxes at 9), so bank slots 10-27 are DEAD CALIBRATION and the
-`(32,48,64,112)` taper shape is never used. Resolves the "record 2 vs record 11" open question:
-neither.**: [[reference-accord-variant-selector-max-is-nine]]
-🛑★★★★★ **`ld.hu` is opcode 0x3E/0x3F, NOT 0x3C/0x3D — a ld.bu-only disp16 scanner returns FALSE
-ZEROS on halfword cal cells (cost me a bogus "0 readers" on `0xC62E6`, true answer 3). Full
-load/store + jarl + `mov imm32` decoder table here.**:
-[[reference-accord-v850-load-opcode-map-ldhu-0x3e]]
-🛑★★★★★ **Ghidra's `in_r10` in `FUN_00049a90`/`49a78`/`49a5a` is a `cmov` ARTEFACT — cmov always
-writes its dest, so the clamp helper needs no incoming r10. And `FUN_00055d80` saves r6/r7/r8 but
-NEVER restores them: dead scratch, free to clobber in an in-place packer rewrite.**:
-[[reference-accord-clamp-helpers-and-packer-scratch]]
-★★★★ **Importing a built image: auto-analysis returns ZERO functions (raw binary, no entry points) —
-`create_function` is required, and its `body_size` doubles as a desync check. And NEVER use
-`save_all_programs` to work around a locked save: it commits every open shared program.**:
-[[reference-accord-importing-a-built-image-into-ghidra]]
+- 🛑🛑★★★★★ [gp-0x674E <= 9 in every coded variant — bank slots 10-27 are dead calibration, resolves "record 2 vs 11" as neither](reference-accord-variant-selector-max-is-nine.md)
+- 🛑★★★★★ [ld.hu is opcode 0x3E/0x3F not 0x3C/0x3D — a ld.bu-only scanner gives false zeros on halfword cals; full load/store+jarl+mov-imm32 decoder table](reference-accord-v850-load-opcode-map-ldhu-0x3e.md)
+- 🛑★★★★★ [Ghidra's in_r10 in FUN_00049a90/78/5a is a cmov artefact, not a real param; FUN_00055d80 saves r6/r7/r8 but never restores — dead scratch, free to clobber](reference-accord-clamp-helpers-and-packer-scratch.md)
+- ★★★★ [Importing a built image: auto-analysis finds ZERO functions, create_function required, body_size doubles as desync check; never save_all_programs on shared state](reference-accord-importing-a-built-image-into-ghidra.md)
 
 ## 2026-09-03 — V280 engaged-only 20Hz loop census, for `team-lead`
-🛑🛑★★★★★ **First check of Honda's 55Hz biquad (`FUN_000352b4`) against the current flown image: it IS
-LIVE and ENGAGED-ONLY on V280 (arm `0xC649B`=1, V103's `gp-0x6806` repoint present) — was permanently
-dormant on stock/pre-V103 builds. Also confirms on the flown image: rate lane `0xC6446` engaged flat
-gain 10.24x raised (512->5244), carrier `0xC6CD0`=6x (5346), crossover `0xC62E6`=46080 (K=6), all LKAS-
-PID debounce/cutout cals disarmed. RANKS rate lane r24 as the highest-confidence structural candidate
-for the 18-22Hz creep grind: engaged-only + a genuinely UNFILTERED, zero-state-cell differencer whose
-own gain rises ~linearly with f, directly into the 1kHz aggregator sum. STALE-MEMORY FLAG: `0xC40DC`
-is NOT virgin (contra a 2026-08-22 memory) — it's V109's documented lever, V280 carries 14 not 22.**:
-[[reference_accord_v280_engaged_gates_census_biquad_confirmed_live]]
+- 🛑🛑★★★★★ [Honda's 55Hz biquad IS live and engaged-only on V280; r24 confirmed the top structural candidate for the 18-22Hz creep grind — unfiltered differencer, gain rises ~linearly with f into the 1kHz sum; 0xC40DC is NOT virgin (V109's lever)](reference_accord_v280_engaged_gates_census_biquad_confirmed_live.md)
 
 ## 2026-09-03 — r24 "Lever B" reconciliation, for `team-lead`
-🛑🛑★★★★★ **Reconciles "Lever B (gp-0x683c) is unreachable" with "V280's r24 engaged gain is live":
-BOTH TRUE. gp-0x683c genuinely has zero writers on stock AND V280 (re-confirmed independently). What
-V104-V280 actually did is a single 1-byte hw2 edit at `0x3AA96` (0xC5->0xFB) that repoints the SAME
-`ld.bu` at 0x3aa94 from reading gp-0x683c to reading gp-0x6806 (STEER_CONTROL_ACTIVE, 16 writers,
-identical set stock=V280) — nothing was "armed", the gate's SOURCE was swapped. Traces to the
-2026-08-01 repoint-hypothesis session that named gp-0x6806 as exactly this target. BUILD-LINEAGE's
-"Lever B RE-ARMED" label is imprecise, flagged not edited. Also: converting r24's gain to counts/deg-s
-of WHEEL rate needs a torsion-bar-stiffness constant NOT on record anywhere in this kit — flagged open,
-not fabricated.**: [[reference_accord_r24_gate_repoint_reconciles_lever_b_dead_vs_v280_live]]
+- 🛑🛑★★★★★ [Reconciles "Lever B unreachable" with "V280's r24 gain is live": both true — V104-V280 repointed the SAME ld.bu from gp-0x683c to gp-0x6806, nothing was armed, the gate's SOURCE was swapped. Converting r24's gain to deg/s needs an unrecorded torsion-bar constant](reference_accord_r24_gate_repoint_reconciles_lever_b_dead_vs_v280_live.md)
