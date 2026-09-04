@@ -1,0 +1,127 @@
+V282 sha256 0ea98d06b292ca1a  (Ki=0; lag 992/507, fb 923/1560, fwd 5346 -- identical to the V283 cals pid_frame_sizing reads)
+  |T|/E at Kp 248 = 0.15528 (doc: 0.15528) ; fb DC = 30.891 (doc 30.891) ; lag DC = 0.9902 (doc 0.9902)
+  DC: L_dc(Kp 248, g=0.030) = 1.1512 -> tracking 53.5 % (zn285 integer mirror: 53.5 %)
+
+======================================================================================================================
+GATE 1 -- reproduce the ADDENDUM sec-A5 rows before trusting anything new
+======================================================================================================================
+  candidate                   Kp    Kd  ring ratio   |L(7.3)|         GM   f(-180)
+  V282/V283 as built         248   128       1.000      0.976     1.77x     28.1Hz
+  F: Kd 160                  248   160       0.932      0.909     1.48x     28.8Hz
+  Kd 192                     248   192       0.866      0.845     1.27x     29.3Hz
+  Kd 112                     248   112       1.035      1.010     1.96x     27.6Hz
+  ZN-PID (new) 329/162       329   162       1.013      0.989     1.39x     27.9Hz
+  ZN-PI (new) 148/122        148   122       0.936      0.914     2.01x     29.5Hz
+  Kp 0 only                    0   128       0.861      0.840     2.11x     31.7Hz
+  Kp 0, Kd 160                 0   160       0.780      0.761     1.69x     31.7Hz
+  ZN-PI OLD (retracted)      108   387       0.346      0.338     0.69x     31.2Hz
+  ZN-PID OLD (retracted)     241   515       0.543      0.530     0.51x     30.9Hz
+  lower root at Kp 248 : Kd = 116.7   (addendum: 118)
+  Ku at Kp 248 = 128 x GM = 227  (addendum: 227) ; at Kp 0 = 270 (addendum: 270)
+
+======================================================================================================================
+Q1 -- THE Kp SWEEP AT FIXED Kd 128 (Ki = 0).  Kd is NOT MOVED, so the 7.3 Hz lower root is
+      not approached at all; the only thing that moves the ring is Kp's rotation of Ls.
+======================================================================================================================
+     Kp    Kd  ring ratio   |L(7.3)|        GM     GM dB   f(-180)    DC track   vs today
+    248   128       1.000      0.976     1.77x      5.0     28.1Hz       53.5 %      1.00x
+    200   128       0.960      0.936     1.85x      5.4     28.8Hz       48.1 %      1.04x
+    176   128       0.941      0.919     1.89x      5.5     29.2Hz       45.0 %      1.06x
+    148   128       0.922      0.900     1.93x      5.7     29.6Hz       40.7 %      1.09x
+    128   128       0.910      0.888     1.96x      5.8     29.9Hz       37.3 %      1.10x
+    100   128       0.895      0.873     2.00x      6.0     30.3Hz       31.7 %      1.12x
+     64   128       0.879      0.858     2.04x      6.2     30.8Hz       22.9 %      1.15x
+      0   128       0.861      0.840     2.11x      6.5     31.7Hz        0.0 %      1.19x
+
+  HEAD TO HEAD -- the Kp-only cut vs ZN-PI, on the same footing:
+  candidate                     Kp    Kd  ring ratio   |L(7.3)|        GM    DC track Kd vs root 118
+  today (V282)                 248   128       1.000      0.976     1.77x       53.5 %         1.08x
+  Q1: Kp 148, Kd 128           148   128       0.922      0.900     1.93x       40.7 %         1.08x
+  ZN-PI (new): 148/122         148   122       0.936      0.914     2.01x       40.7 %         1.03x
+  F: Kd 160 (Kp 248)           248   160       0.932      0.909     1.48x       53.5 %         1.36x
+  Kp 148 + Kd 160              148   160       0.847      0.827     1.58x       40.7 %         1.36x
+
+  DECOMPOSITION -- is the Kp cut or the Kd cut doing the work in ZN-PI 148/122?
+    today               248/128 : |L(7.3)| = 0.9760
+    Kp 248->148 alone   148/128 : |L(7.3)| = 0.9001   (delta -0.0759)
+    Kd 128->122 alone   248/122 : |L(7.3)| = 0.9887   (delta +0.0127)
+    both                148/122 : |L(7.3)| = 0.9139   (delta -0.0621)
+    GM: today 1.774x | Kp-only 1.930x | Kd-only 1.840x | both 2.013x
+    lower root moves with Kp: Kp 248 -> Kd 116.7 ; Kp 200 -> 99.4 ; Kp 148 -> 84.9 ; Kp 100 -> 75.0 ; Kp 0 -> 63.6
+
+======================================================================================================================
+Q2a -- THE LOW-OVERSHOOT ZN FAMILY, against the 7.3 Hz LOWER ROOT
+======================================================================================================================
+
+  --- Kp 0  (ZN-proper: the hunt runs with integral action OFF) :  Ku(Kd cell) = 270, f_osc = 31.7 Hz, Tu = 31.5 ms, lower root Kd = 64 ---
+      ZN form                      kf       Ti   Kd cell   Kp cell      Td (ms)        vs root
+      classic PID               0.600   15.8ms       162       329          3.9       2.55x
+      classic PI                0.450   26.3ms       122       148          nan       1.91x
+      SOME overshoot            0.333   15.8ms        90       183         10.5       1.42x
+      NO overshoot              0.200   15.8ms        54       110         10.5       0.85x  ** BELOW ROOT **
+
+  --- Kp 248 (the brief's arithmetic: Ku measured at today's Kp) :  Ku(Kd cell) = 227, f_osc = 28.1 Hz, Tu = 35.6 ms, lower root Kd = 117 ---
+      ZN form                      kf       Ti   Kd cell   Kp cell      Td (ms)        vs root
+      classic PID               0.600   17.8ms       136       245          4.4       1.17x
+      classic PI                0.450   29.6ms       102       110          nan       0.88x  ** BELOW ROOT **
+      SOME overshoot            0.333   17.8ms        76       136         11.9       0.65x  ** BELOW ROOT **
+      NO overshoot              0.200   17.8ms        45        82         11.9       0.39x  ** BELOW ROOT **
+
+  What the low-overshoot Kd values actually do to the 7.3 Hz ring (at their own ZN Kp):
+  candidate                         Kp    Kd  ring ratio   |L(7.3)|        GM    DC track
+  SOME overshoot (Ku@Kp 0)         183    90       1.034      1.010     2.49x       45.9 %
+  NO overshoot (Ku@Kp 0)           110    54       1.081      1.055     4.15x       33.8 %
+  SOME overshoot (Ku@Kp 248)       136    76       1.039      1.014     3.04x       38.7 %
+  NO overshoot (Ku@Kp 248)          82    45       1.092      1.066     5.11x       27.6 %
+
+  IS ANY LOW-GAIN REGIME AVAILABLE AT ALL?  The 7.3 Hz lower root as a function of Kp,
+  with the GM and the DC authority at that root:
+     Kp   lower root    GM at root    DC track
+    248        116.7         1.90x       53.5 %
+    200         99.4         2.26x       48.1 %
+    148         84.9         2.74x       40.7 %
+    100         75.0         3.24x       31.7 %
+     64         69.4         3.63x       22.9 %
+      0         63.6         4.25x        0.0 %
+
+======================================================================================================================
+Q2b -- WHAT THE OUTER LOOP SEES OF THE INNER LOOP.  openpilot closes on PATH at ~0.3-1.5 Hz;
+       the EPS appears to it as T_inner(f) = L(f)/(1+L(f)) in RATE.  Its PHASE LAG at those
+       frequencies is the delay the outer loop must stabilise around (more lag -> more path
+       overshoot); its GAIN is the authority (less gain -> less overshoot but more lag error).
+======================================================================================================================
+  candidate                     0.30 Hz       0.50 Hz       1.00 Hz       1.50 Hz       2.50 Hz
+  today 248/128             0.667  -1.8   0.667  -2.7   0.668  -4.8   0.668  -6.8   0.670 -11.0   (|T| and phase, deg)
+  Kp 148, Kd 128            0.544  -1.9   0.544  -2.7   0.545  -4.7   0.545  -6.6   0.547 -10.5   (|T| and phase, deg)
+  ZN-PI 148/122             0.544  -2.0   0.544  -2.8   0.545  -4.9   0.545  -6.9   0.546 -10.9   (|T| and phase, deg)
+  F 248/160                 0.667  -1.7   0.667  -2.4   0.667  -4.3   0.668  -6.1   0.669  -9.7   (|T| and phase, deg)
+  Kp 248, Kd 192            0.667  -1.5   0.667  -2.2   0.667  -3.8   0.668  -5.4   0.670  -8.5   (|T| and phase, deg)
+  Kp 148, Kd 160            0.544  -1.6   0.545  -2.2   0.546  -3.6   0.548  -5.0   0.553  -8.0   (|T| and phase, deg)
+
+  equivalent inner-loop transport lag at 1 Hz, and the OPEN-loop lag of the raw forward path:
+    today 248/128          |T(1Hz)| = 0.6676, phase  -4.76 deg =  +13.2 ms lag ; controller phase at 1 Hz +5.9 deg
+    Kp 148, Kd 128         |T(1Hz)| = 0.5447, phase  -4.67 deg =  +13.0 ms lag ; controller phase at 1 Hz +9.9 deg
+    ZN-PI 148/122          |T(1Hz)| = 0.5446, phase  -4.88 deg =  +13.6 ms lag ; controller phase at 1 Hz +9.4 deg
+    F 248/160              |T(1Hz)| = 0.6674, phase  -4.26 deg =  +11.8 ms lag ; controller phase at 1 Hz +7.4 deg
+    Kp 248, Kd 192         |T(1Hz)| = 0.6675, phase  -3.76 deg =  +10.5 ms lag ; controller phase at 1 Hz +8.8 deg
+    Kp 148, Kd 160         |T(1Hz)| = 0.5459, phase  -3.56 deg =   +9.9 ms lag ; controller phase at 1 Hz +12.3 deg
+
+======================================================================================================================
+Q3 -- THE DEADBAND / STALL COST OF THE Kp CUT (Ki = 0 throughout).
+======================================================================================================================
+  The stall test in stutter_v283.py D1 / v281r3_read_r35.py (e) is: rate < 0.5 * ref.
+  With Ki = 0 the steady-state chain is a pure static gain, so a frame whose MEASURED
+  rate/ref = x had L_dc = x/(1-x) at Kp 248; at Kp' the same frame has L' = L * Kp'/248
+  and x' = L'/(1+L').  The stall test x' < 0.5 therefore becomes a test on the MEASURED x.
+      Kp        k    x' at x=0.535    x' at x=0.663  equiv measured-x stall gate
+     248    1.000            0.535            0.663                      0.500
+     200    0.806            0.481            0.613                      0.554
+     176    0.710            0.449            0.583                      0.585
+     148    0.597            0.407            0.540                      0.626
+     128    0.516            0.373            0.504                      0.660
+     100    0.403            0.317            0.442                      0.713
+
+  i.e. at Kp 148 EVERY frame whose measured rate/ref was below 0.626 becomes a 'stall'.
+  (The counterfactual stall COUNT on the flown routes is computed by
+   rlog-tools/studies/osc-highangle/stall_kp_counterfactual.py, which re-runs the exact
+   D1 census with this map.)

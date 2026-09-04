@@ -1,0 +1,61 @@
+======================================================================================================================================================
+Q3 -- THE Kp CUT vs THE P-ONLY DEADBAND.  Counterfactual stall census on the FLOWN routes.
+      Metric = v281r3_read_r35.moving_runs(idx_lo=40), CALLED DIRECTLY, thresholds untouched.
+======================================================================================================================================================
+  r35 = V281 rev 3 (Kp flat 248, Ki 0) -- the P-ONLY build that CREATED the deadband.
+  r36/r37/r38 = V283 (Kp flat 248, Ki 50) -- the cure.  Ki-50 rows are for scale; a Kp-cut
+  candidate is a Ki-0 image, so r35 is the LIKE-FOR-LIKE baseline.
+
+  map: measured median x = rate/ref  ->  x' = k*x/(1 - x + k*x), k = Kp'/248
+  equivalent measured-x stall gate:  Kp 248: x < 0.500 | Kp 200: x < 0.554 | Kp 176: x < 0.585 | Kp 148: x < 0.626 | Kp 128: x < 0.660 | Kp 100: x < 0.713
+
+  --- r35 (Ki on car  0): 20 runs >= 1 s in the context mask, 20 of them hands-light (36.6 s); median rate/ref over those: p10 0.33 p25 0.42 p50 0.65 p75 0.83 ---
+          Kp    gate x<   stall runs  stall secs     longest      idx p50   DC track %
+         248      0.500            7       14.8 s        3.4 s           70        53.5
+         200      0.554            8       17.3 s        3.4 s           72        48.1
+         176      0.585            8       17.3 s        3.4 s           72        45.0
+         148      0.626            9       18.9 s        3.4 s           74        40.7
+         128      0.660           11       22.1 s        3.4 s           75        37.3
+         100      0.713           13       24.9 s        3.4 s           79        31.7
+
+  --- r36 (Ki on car 50): 13 runs >= 1 s in the context mask, 10 of them hands-light (16.6 s); median rate/ref over those: p10 0.78 p25 0.81 p50 0.92 p75 0.95 ---
+          Kp    gate x<   stall runs  stall secs     longest      idx p50   DC track %
+         248      0.500            0        0.0 s        0.0 s          nan        53.5
+         200      0.554            0        0.0 s        0.0 s          nan        48.1
+         176      0.585            0        0.0 s        0.0 s          nan        45.0
+         148      0.626            0        0.0 s        0.0 s          nan        40.7
+         128      0.660            0        0.0 s        0.0 s          nan        37.3
+         100      0.713            1        1.2 s        1.2 s           49        31.7
+
+  --- r37 (Ki on car 50): 9 runs >= 1 s in the context mask, 9 of them hands-light (13.4 s); median rate/ref over those: p10 0.81 p25 0.91 p50 0.92 p75 0.95 ---
+          Kp    gate x<   stall runs  stall secs     longest      idx p50   DC track %
+         248      0.500            1        1.4 s        1.4 s           71        53.5
+         200      0.554            1        1.4 s        1.4 s           71        48.1
+         176      0.585            1        1.4 s        1.4 s           71        45.0
+         148      0.626            1        1.4 s        1.4 s           71        40.7
+         128      0.660            1        1.4 s        1.4 s           71        37.3
+         100      0.713            1        1.4 s        1.4 s           71        31.7
+
+  --- r38 (Ki on car 50): 2 runs >= 1 s in the context mask, 2 of them hands-light (4.5 s); median rate/ref over those: p10 0.93 p25 0.95 p50 0.97 p75 1.00 ---
+          Kp    gate x<   stall runs  stall secs     longest      idx p50   DC track %
+         248      0.500            0        0.0 s        0.0 s          nan        53.5
+         200      0.554            0        0.0 s        0.0 s          nan        48.1
+         176      0.585            0        0.0 s        0.0 s          nan        45.0
+         148      0.626            0        0.0 s        0.0 s          nan        40.7
+         128      0.660            0        0.0 s        0.0 s          nan        37.3
+         100      0.713            0        0.0 s        0.0 s          nan        31.7
+
+======================================================================================================================================================
+  r35 ALONE -- the LIKE-FOR-LIKE Ki-0 baseline (the build that produced the symptom):
+      Kp 248 :  7 stall runs,  14.8 s   (published r35/V281r3 baseline at Kp 248: 7 runs / 14.8 s)
+      Kp 200 :  8 stall runs,  17.3 s   (published r35/V281r3 baseline at Kp 248: 7 runs / 14.8 s)
+      Kp 176 :  8 stall runs,  17.3 s   (published r35/V281r3 baseline at Kp 248: 7 runs / 14.8 s)
+      Kp 148 :  9 stall runs,  18.9 s   (published r35/V281r3 baseline at Kp 248: 7 runs / 14.8 s)
+      Kp 128 : 11 stall runs,  22.1 s   (published r35/V281r3 baseline at Kp 248: 7 runs / 14.8 s)
+      Kp 100 : 13 stall runs,  24.9 s   (published r35/V281r3 baseline at Kp 248: 7 runs / 14.8 s)
+
+  POOLED r35+r36+r37+r38 (mixed Ki, for scale):  Kp 248: 8 runs / 16.2 s | Kp 200: 9 runs / 18.7 s | Kp 176: 9 runs / 18.7 s | Kp 148: 10 runs / 20.2 s | Kp 128: 12 runs / 23.5 s | Kp 100: 15 runs / 27.5 s
+======================================================================================================================================================
+
+  THE V283 COMPARISON POINT: Ki 50 took r35's 7 runs -> 1 run pooled over r36/r37/r38 at Kp 248.
+  The Kp column above is the size of the move in the OPPOSITE direction, on the same metric.

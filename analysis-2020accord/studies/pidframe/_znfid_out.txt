@@ -1,0 +1,191 @@
+V282 sha256 0ea98d06b292ca1a  (Ki=0; lag 992/507, fb 923/1560, fwd 5346 -- identical to the V283 cals pid_frame_sizing reads)
+==========================================================================================================================
+SECTION 0 -- !! CONVENTION AUDIT.  Two models, two conventions, and they DISAGREE at 7.3 Hz.
+==========================================================================================================================
+  (a) The NYQUIST/GM model (addendum sec-A3, anchored on the measured plant phase and the
+      item-4 |L| row).  Negative feedback: instability at angle L = -180 deg.
+        f (Hz)        |L|      angle L  |T|=|L/(1+L)|
+           0.3      1.996        -5.4          0.667
+           1.0      1.968       -14.2          0.668
+           3.0      1.776       -36.7          0.671
+           7.3      1.319       -71.5          0.698
+          13.0      0.973      -105.5          0.814
+          20.0      0.734      -141.6          1.178
+          28.1      0.564      -179.9          1.294
+
+  (b) The MEASURED RING (per-episode complex-ACF, 5 episodes).  Positive feedback around the
+      ripple: sustained oscillation at L = +1, margin |1-L| ~ 1/Q.
+      |L_ring(7.3)| = 0.976 [0.944-0.990],  Q ~ 41.7  =>  peak |L/(1-L)| ~ 40.7
+
+  !! THEY DO NOT DESCRIBE THE SAME LOOP.  Model (a) puts 7.3 Hz at |L| = 1.319 angle -71.5 deg,
+     i.e. |1+L| = 1.891 and NO PEAK AT ALL (|T| = 0.70).  Model (b) measures a Q ~ 42 resonance
+     there.  Model (a) is a SMOOTH DELAY model fitted at 20 Hz -- it contains no plant
+     resonance and no r24 lane at all.  The ring lives in a PARALLEL arm (r24, FUN_0003aa2c)
+     that (a)'s single forward path does not contain.
+  ==> A SINGLE CLOSED-LOOP |T(f)| CURVE FOR THIS SYSTEM IS NOT COMPUTABLE FROM WHAT IS
+      MEASURED.  What IS computable is listed in SECTION 2, and what is not in SECTION 6.
+
+==========================================================================================================================
+SECTION 1 -- THE COMMAND BAND, MEASURED (not assumed).  From the engaged 0x18F/0xE4 LKAS
+  command on r34/r35/r36/r37/r38 (100 Hz, Welch nperseg 2048), cumulative energy fraction:
+==========================================================================================================================
+      route      0.5      1.0      1.5      2.0      3.0    band-95%
+      r34      0.929    0.983    0.994    0.997    0.998     0.59 Hz
+      r35      0.920    0.975    0.991    0.994    0.996     0.71 Hz
+      r36      0.893    0.975    0.992    0.996    0.997     0.74 Hz
+      r37      0.921    0.983    0.994    0.997    0.998     0.60 Hz
+      r38      0.897    0.978    0.991    0.996    0.997     0.71 Hz
+   (demand index gp-0x697a, which adds the taper and sign: 95 % below 1.40-2.78 Hz)
+
+  !! THE COMMAND BAND IS 0-0.75 Hz, NOT 0-3 Hz.  97.5-98.3 % of engaged command energy sits
+     below 1 Hz.  ==> criterion 1 ('|T| flat and near 1.0 across the command band') is, on
+     this car, almost exactly the statement '|T(0)| = 1.0'.  Every dynamic feature of the
+     loop -- the 5.05 Hz output-lag pole, the 7.3 Hz ring, the 9.64 Hz D=P corner, the
+     16.5 Hz feedback EMA, the 20 Hz creep line -- is 7x to 27x ABOVE the command band.
+
+==========================================================================================================================
+SECTION 2 -- THE FIDELITY TABLE, restricted to what is actually anchored.
+==========================================================================================================================
+  |T(0)|      : the DC chain, from the four measured (|T|, rate) stall pairs.  [EVIDENCE]
+  scale error : 1/|T(0)| -- the factor the outer loop must make up.  Criterion 1 + 4(scale).
+  ph @0.75 Hz : inner-loop lag at the top of the MEASURED command band.  Criterion 3.
+  ring peak   : 1/|1 - L_ring(7.3)| -- criterion 2, and the ONLY peak with a measured handle.
+                !! a TRANSFER-FUNCTION number; the record explicitly warns it does NOT map to
+                felt amplitude (zn285 sec5.3 item 5).  Read the RATIO column, not the value.
+  GM          : blind-band gain margin (27-32 Hz), the constraint on pushing the ring down.
+
+  candidate               Kp    Kd   |T(0)|  scale err  ph @0.75Hz  ring peak  vs today       GM
+  today (V282)           248   128    0.535      1.87x      -3.71       41.7     1.00x    1.77x
+  Kp 200, Kd 128         200   128    0.481      2.08x      -3.85       15.7     0.38x    1.85x
+  Kp 176, Kd 128         176   128    0.450      2.22x      -3.84       12.3     0.30x    1.89x
+  Q1: Kp 148, Kd 128     148   128    0.407      2.46x      -3.70       10.0     0.24x    1.93x
+  Kp 128, Kd 128         128   128    0.373      2.68x      -3.42        8.9     0.21x    1.96x
+  Kp 100, Kd 128         100   128    0.317      3.15x      -2.54        7.9     0.19x    2.00x
+  ZN-PI 148/122          148   122    0.407      2.46x      -3.86       11.6     0.28x    2.01x
+  F: 248/160             248   160    0.535      1.87x      -3.34       11.0     0.27x    1.48x
+  Kp 248, Kd 192         248   192    0.535      1.87x      -2.96        6.5     0.16x    1.27x
+  Kp 176, Kd 160         176   160    0.450      2.22x      -3.20        6.6     0.16x    1.55x
+  Kp 248, Kd 216         248   216    0.535      1.87x      -2.69        5.0     0.12x    1.14x
+
+  => CRITERION 3 IS MOOT: phase lag at 0.75 Hz spans only 1.32 deg across EVERY candidate
+     (-3.86 to -2.54), i.e. 4.87 ms of difference against openpilot's own 200 ms SteerDelay.
+  => CRITERION 1 (|T(0)|) and CRITERION 2 (ring peak) are ANTI-CORRELATED IN Kp -- but
+     criterion 2 is improvable in Kd at ZERO |T(0)| cost.  Compare, from the rows above:
+       Kp 148, Kd 128 : ring peak 10.0 (0.24x)  at |T(0)| 0.407   <-- pays 24 % of |T(0)|
+       Kp 248, Kd 160 : ring peak 11.0 (0.27x)  at |T(0)| 0.535   <-- pays NOTHING
+       Kp 248, Kd 192 : ring peak  6.5 (0.16x)  at |T(0)| 0.535   <-- BETTER ON BOTH
+     !! ON THE FIDELITY SPEC A Kd RAISE DOMINATES A Kp CUT.  Its cost is blind-band GM only.
+
+==========================================================================================================================
+SECTION 3 -- IS max|T| <= 1.05 REACHABLE?  (criterion 2, taken literally)
+==========================================================================================================================
+  |T| = |L/(1-L)| at the ring, so |T| <= 1.05 needs |L_ring(7.3)| <= 0.512.
+  Sweep the feasible box.  THREE constraints, enforced together:
+    (i)   GM >= the floor in column 1 (the blind-band Nyquist point)
+    (ii)  Kd >= 1.10 x the ring lower root AT THAT Kp (do not approach the re-arm point)
+    (iii) |T(0)| >= 0.311 -- below this the OUTER integrator saturates (SECTION 4).
+          !! Without (iii) the optimiser returns Kp = 0 every time, and Kp = 0 is DEAD.
+  GM floor      best Kp  best Kd   |L_ring|   ring peak    |T(0)|  root margin  vs today
+  >= 1.77     x      100      144      0.835         6.1     0.317        1.92x     0.15x
+  >= 1.60     x      100      160      0.798         4.9     0.317        2.13x     0.12x
+  >= 1.48     x      100      174      0.765         4.3     0.317        2.32x     0.10x
+  >= 1.35     x      100      192      0.723         3.6     0.317        2.56x     0.09x
+  >= 1.25     x      100      208      0.686         3.2     0.317        2.78x     0.08x
+  >= 1.15     x      100      228      0.640         2.8     0.317        3.04x     0.07x
+
+  !! THE BEST RING ACHIEVABLE ANYWHERE IN THE FEASIBLE BOX IS |L| = 0.640 (Kp 100, Kd 228),
+     i.e. a peak of ~2.8x -- and that is at a GM floor of only 1.15x (1.2 dB, THIN).
+     max|T| <= 1.05 needs |L_ring| <= 0.512 and is NOT REACHABLE: it needs Kd past Ku = 227,
+     and the Kp = 0 end of the axis is dead independently.  ==> CRITERION 2 CANNOT BE MET.
+     The design question is not 'flat or not' but 'how much peaking, at what GM and |T(0)|'.
+
+  !! READ THAT TABLE CAREFULLY -- it optimises the RING ALONE, so it drives Kp down to
+     constraint (iii) and reports |T(0)| = 0.317 every time.  That is criterion 2 winning
+     outright over criterion 1.  A single optimum is the WRONG object here; the honest
+     object is the PARETO FRONTIER over (|T(0)|, ring peak).  Below, at a GM floor of 1.48x
+     (candidate F's own margin), the best ring available AT EACH |T(0)|:
+
+        Kp     |T(0)|    best Kd    |L_ring|    ring peak          GM
+       248      0.535        160       0.909         11.0       1.48x
+       224      0.510        162       0.883          8.6       1.49x
+       200      0.481        166       0.854          6.8       1.48x
+       176      0.450        168       0.830          5.9       1.49x
+       148      0.407        170       0.805          5.1       1.49x
+       128      0.373        172       0.786          4.7       1.49x
+       100      0.317        174       0.765          4.3       1.49x
+
+  ** THE DECISION-BEARING PAIRWISE COMPARISON, straight off SECTION 2 and needing no optimiser:
+       Kp 148, Kd 128 : ring peak 10.0 , |T(0)| 0.407 , GM 1.93x , deadband +29 %
+       Kp 248, Kd 192 : ring peak  6.5 , |T(0)| 0.535 , GM 1.27x , deadband UNCHANGED
+     Kd 192 is BETTER ON BOTH FIDELITY CRITERIA and costs no deadband.  It pays in GM alone.
+     ==> on the actuator spec the Kp cut is DOMINATED, and the currency is blind-band margin,
+     not DC authority.  The ranking inverts relative to the loop-gain framing.
+
+==========================================================================================================================
+SECTION 4 -- OUTER-INTEGRATOR HEADROOM.  The gate that replaces 'DC authority is cheap'.
+==========================================================================================================================
+  Prior-route basis [team-lead, to be replaced by r39 when `dec39` reports]:
+    max|i| = 1.225 against a bound of +-2.110  =>  58.1 % of bound, saturated 0.00 % of frames.
+
+  CONSERVATIVE (multiplicative) model: the outer integrator must supply 1/k_T more, where
+  k_T = |T(0)|_cand / |T(0)|_today.  |i'| = max|i| / k_T.
+  candidate               Kp    |T(0)|      k_T   req. mult.    % of bound
+  today (V282)           248     0.535    1.000       1.000x         58.1
+  Kp 200, Kd 128         200     0.481    0.900       1.112x         64.5
+  Kp 176, Kd 128         176     0.450    0.840       1.190x         69.1
+  Q1: Kp 148, Kd 128     148     0.407    0.761       1.314x         76.3
+  Kp 128, Kd 128         128     0.373    0.696       1.436x         83.4
+  Kp 100, Kd 128         100     0.317    0.592       1.688x         98.0   thin
+  ZN-PI 148/122          148     0.407    0.761       1.314x         76.3
+  F: 248/160             248     0.535    1.000       1.000x         58.1
+  Kp 248, Kd 192         248     0.535    1.000       1.000x         58.1
+  Kp 176, Kd 160         176     0.450    0.840       1.190x         69.1
+  Kp 248, Kd 216         248     0.535    1.000       1.000x         58.1
+
+  THE FLOOR, as a FUNCTION of max|i| (so it can be re-evaluated when r39 lands):
+    saturation when  max|i| / k_T = 2.110  =>  k_T_min = max|i| / 2.110
+  max|i|       % of bound      k_T min   |T(0)| min    => Kp FLOOR
+  1.000             47.4        0.474        0.254            73
+  1.225             58.1        0.581        0.311            97
+  1.400             66.4        0.664        0.355           119
+  1.600             75.8        0.758        0.406           147
+  1.800             85.3        0.853        0.457           181
+  2.000             94.8        0.948        0.507           222
+
+  (!) WHY THE MULTIPLICATIVE MODEL IS PROBABLY PESSIMISTIC, and I flag it rather than use it
+    silently: at steady state p -> 0 and the FEEDFORWARD is inner-loop-blind, so structurally
+    i' = u/k_T - f, i.e. ADDITIVE in (u/k_T - u), not multiplicative in |i|.  STATE.md's own
+    measured decomposition in steady curves is f = +0.800 with i = -0.392 OPPOSING it and a
+    net output of only +0.108.  With f dominant and i of the opposite sign, needing MORE
+    output makes i LESS negative -- |i| would FALL, not rise.  I report the multiplicative
+    bound because it is the one that could disqualify a candidate; the additive structure
+    says the true cost is smaller.  [BELIEF -- I do not have max|i| paired with u on a route.]
+
+==========================================================================================================================
+SECTION 5 -- Kp = 0.  I AGREE IT STAYS DEAD, and the actuator spec adds a third reason.
+==========================================================================================================================
+  1. |T(0)| = 0 EXACTLY (type-0 plant, C(s) = Kd_r*s, L(0) = 0).  zn285 sec1.4, and the
+     orchestrator's own integer mirror.  [EVIDENCE]
+  2. The outer integrator cannot close a plant with zero DC gain: it winds up without bound
+     and never converges.  Its bound is +-2.110, so it rails and the lane is lost.
+  3. NEW, on the actuator spec: |T(0)| = 0 is MAXIMAL infidelity -- the actuator delivers
+     none of the demanded rate at DC.  It is not a low-authority actuator, it is not an
+     actuator.
+  ==> CONFIRMED DEAD.  Note this makes Kp = 0 unusable even as a Ku-hunt drive.
+
+==========================================================================================================================
+SECTION 6 -- WHAT I COULD NOT COMPUTE, and what would make it computable
+==========================================================================================================================
+  NOT COMPUTABLE from measured data, and I decline to manufacture it:
+   * a full closed-loop |T(f)| curve  -- section 0: the two models disagree and the ring
+     lives in a lane the Nyquist model's forward path does not contain.
+   * f_-3dB (closed-loop bandwidth)   -- needs the plant MAGNITUDE above ~5 Hz.  The record
+     measures the plant PHASE (-28 deg @10 Hz, -73 deg @22 Hz) and its DC gain, never its
+     magnitude in between.  Any f_-3dB I printed would be an artefact of assuming flat.
+   * max|T| over 0-50 Hz             -- the 20 Hz creep line has NO measured |L| at all
+     (CREEP-20HZ item 7(a): L_in(line) = -1 by construction at a spectral line), so its
+     peak height is unquantified in both directions.
+  WHAT WOULD MAKE THEM COMPUTABLE: a plant MAGNITUDE identification -- a swept or
+  broadband excitation with the 427 T tap and the 0x18F rate read simultaneously.  That is a
+  drive design, not a build, and it is the single measurement that would turn this whole
+  framework from composed to identified.

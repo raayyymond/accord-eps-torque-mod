@@ -1,0 +1,101 @@
+V282 sha256 0ea98d06b292ca1a  (Ki=0; lag 992/507, fb 923/1560, fwd 5346 -- identical to the V283 cals pid_frame_sizing reads)
+==============================================================================================================================
+1. THE GEOMETRY AT 7.3 Hz -- Lr fixed, Ls = Ls_base * R(Kp,Kd).  Kd HELD AT 128.
+==============================================================================================================================
+     Kp       Lr (fixed)        Ls (with plant) angle Ls-Lr     |Ls+Lr|     ALONG Lr   QUADRATURE
+    248   1.190 /_ -27.0     0.550 /_  +96.0      123.0      1.0028      -0.2996       0.4613
+    200   1.190 /_ -27.0     0.485 /_ +101.9      128.9      0.9622      -0.3049       0.3775
+    176   1.190 /_ -27.0     0.455 /_ +105.5      132.5      0.9441      -0.3076       0.3356
+    148   1.190 /_ -27.0     0.423 /_ +110.3      137.3      0.9249      -0.3107       0.2868
+    100   1.190 /_ -27.0     0.376 /_ +120.3      147.3      0.8972      -0.3161       0.2030
+
+  sanity: |Lr| = 1.190 alone, |Ls+Lr| = 1.0028 at Kp 248  ==> the servo arm IS cancelling today.
+  and  |Ls+Lr|^2 = (|Lr| + ALONG)^2 + QUADRATURE^2  -- check at Kp 248: 1.0028 vs 1.0028
+
+==============================================================================================================================
+2. !! MY STATED MECHANISM WAS WRONG.  What the numbers actually say:
+==============================================================================================================================
+  Kp 248 -> 148 at fixed Kd 128:
+    angle between the arms : 123.0 deg -> 137.3 deg   ==> CLOSER to anti-phase, not further
+    ALONG-Lr component     : -0.2996 -> -0.3107   ==> cancellation GROWS slightly (3.7 %)
+    QUADRATURE component   : +0.4613 -> +0.2868   ==> falls 37.8 %  <-- THE DOMINANT TERM
+    |Ls+Lr|                : 1.0028 -> 0.9249
+
+  CORRECTED MECHANISM, in one sentence:
+    Lowering Kp rotates the servo arm TOWARD the D term's +88.7 deg, which moves it CLOSER to
+    anti-phase with the fixed r24 arm; the small shrink in |Ls| costs almost nothing in the
+    cancelling (along-Lr) direction because the rotation compensates it, while it removes
+    most of the QUADRATURE component -- and the quadrature is what was inflating the RMS sum.
+    ==> the sum shrinks because the servo arm becomes a PURER canceller, not a weaker one.
+  (My earlier 'sits further from anti-phase and cancels less' was wrong on BOTH clauses.)
+
+==============================================================================================================================
+3. WHY THE ROOT MOVES DOWN WITH Kp -- the same decomposition, now sweeping Kd at each Kp
+==============================================================================================================================
+  --- Kp 248 (root at Kd 116.7) ---
+          Kd      |Ls|    angle Ls       ALONG   QUADRATURE     |Ls+Lr|
+         192    0.6638     +107.2     -0.4632       0.4755      0.8686
+         160    0.6040     +102.2     -0.3814       0.4684      0.9345
+         128    0.5500      +96.0     -0.2996       0.4613      1.0028
+         110    0.5228      +92.0     -0.2535       0.4573      1.0421
+         117    0.5331      +93.6     -0.2714       0.4588      1.0268   <-- ROOT
+          80    0.4840      +84.4     -0.1768       0.4506      1.1088
+          60    0.4635      +78.7     -0.1257       0.4461      1.1540
+
+  --- Kp 148 (root at Kd 84.9) ---
+          Kd      |Ls|    angle Ls       ALONG   QUADRATURE     |Ls+Lr|
+         192    0.5618     +120.6     -0.4743       0.3010      0.7764
+         160    0.4904     +116.2     -0.3925       0.2939      0.8499
+         128    0.4228     +110.3     -0.3107       0.2868      0.9249
+         110    0.3873     +106.1     -0.2647       0.2828      0.9675
+          85    0.3423      +98.9     -0.2008       0.2772      1.0273   <-- ROOT
+          80    0.3340      +97.3     -0.1880       0.2761      1.0393
+          60    0.3042      +89.7     -0.1369       0.2716      1.0876
+
+  ==> cutting Kd rotates Ls BACK toward P (angle falls), which BOTH reduces the along-Lr
+      cancellation AND (below the corner) is no longer compensated -- the sum climbs to 1.
+      At a LOWER Kp the SAME Kd leaves C more D-dominated (|D|/|P| = 33.03*sin(pi f T)/(Kp/256)),
+      so the arm stays rotated further out; you must cut Kd FURTHER before the along-Lr
+      cancellation collapses.  THAT is why the root falls with Kp.  [EVIDENCE, byte-exact C]
+
+==============================================================================================================================
+4. !! THE `s` SENSITIVITY, WITHOUT MY RENORMALISATION.  team-lead is right that preserving
+   |Ls|+|Lr| FORCED the servo arm up when r24 went down and hid the threat.
+==============================================================================================================================
+  (a) NAIVE -- scale Lr down, leave Ls at 0.55.  This BREAKS the measurement:
+      Lr scale      |Ls|      |Lr|      |Ls+Lr| implied |L_today|
+         1.000     0.550     1.190       1.0028            0.976
+         0.333     0.550     0.397       0.4714            0.459
+         0.200     0.550     0.238       0.4654            0.453
+      ==> a 3x smaller r24 predicts |L_today| = 0.46 against a MEASURED 0.976.  The naive
+          scaling is REFUTED BY THE MEASUREMENT -- it is not an admissible sensitivity.
+
+  (b) MEASUREMENT-CONSISTENT -- the real constraint is |Ls + Lr| = 1.0028 (that IS the
+      measured 0.976 up to the shared normalisation).  Hold the two PHASES, scale |Lr|,
+      and SOLVE for |Ls|:   a^2 + r^2 + 2*a*r*cos(123 deg) = |Ls+Lr|^2
+      Lr scale      |Lr|      |Ls|   root @Kp248   root @Kp148   |L| 148/128  Kd128 margin
+         1.000     1.190     0.746         118.3          73.5         0.838         1.74x
+         0.800     0.952     1.125           nan          21.1         0.649         6.06x
+         0.600     0.714     1.193           nan           nan         0.607          nanx
+         0.333     0.397     1.162         141.0         226.8         0.642         0.56x
+         0.250     0.297     1.133         139.0         216.8         0.665         0.59x
+         0.200     0.238     1.112         138.2         211.3         0.680         0.61x
+
+  ==> AT EVERY r24 SCALE THE MEASUREMENT FORCES |Ls| UP, AND THE ROOT STILL FALLS WITH Kp.
+      That is not an artefact of my renormalisation -- it survives the constraint-solved
+      version too, because it is driven by the CONTROLLER's rotation, which is byte-exact
+      and `s`-independent.  What DOES move is the root's absolute location.
+
+  (c) THE REGIME CHANGE, stated plainly.  At Lr scale 1/3 the solved |Ls| = 1.16 > |Lr| = 0.40:
+      the SERVO becomes the dominant arm.  That is exactly the branch grind39 is adjudicating
+      ('the servo is the 7 Hz pump after all').  In that regime a Kp CUT attacks the arm that
+      DOMINATES, so it gets MORE effective, not less -- see the |L| 148/128 column falling
+      from 0.838 to 0.680.  My Kp conclusions STRENGTHEN if grind39's branch is right.
+      !! BUT THE Kd-RAISE CONCLUSION WEAKENS IN THAT REGIME -- check it:
+      Lr scale      |Lr|      |Ls|   |L| 248/160   |L| 248/192      vs today
+         1.000     1.190     0.746         0.901         0.832         0.85x
+         0.800     0.952     1.125         0.948         0.947         0.97x
+         0.600     0.714     1.193         0.995         1.043         1.07x
+         0.333     0.397     1.162         1.042         1.130         1.16x
+         0.250     0.297     1.133         1.053         1.148         1.18x
+         0.200     0.238     1.112         1.058         1.157         1.19x

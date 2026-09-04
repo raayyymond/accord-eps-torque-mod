@@ -1,0 +1,27 @@
+============================================================================================================================================
+r39 DEADBAND COUNTERFACTUAL -- the Kp cut at r39's OWN operating point (V282, Ki 0, +1.70x outer authority)
+============================================================================================================================================
+  cache r39.npz : fs 101.16 Hz, 95099 frames, 952.8 s total, 869.7 s engaged
+  detector = dec39's: engaged & |bar|<400 & |rate|<THR & |cmd|>100 & v>0.5 & constant cmd sign, run >= 0.6 s
+  counterfactual: THR widened from 2.0 to 2.0/k, k = Kp'/248  (small-x limit of the DC map)
+
+  eligible context (before the rate gate): 475.9 s
+
+      Kp        k  THR deg/s      windows    total secs       LONGEST      mean len      vs Kp 248
+     248    1.000       2.00           17        13.5 s        1.85 s        0.80 s      baseline
+     200    0.806       2.48           21        18.5 s        2.69 s        0.88 s    1.24x runs
+     176    0.710       2.82           27        24.4 s        2.69 s        0.90 s    1.59x runs
+     148    0.597       3.35           32        31.2 s        2.70 s        0.97 s    1.88x runs
+     128    0.516       3.88           35        35.9 s        2.95 s        1.03 s    2.06x runs
+     100    0.403       4.96           58        56.5 s        3.02 s        0.97 s    3.41x runs
+
+  BASELINE CHECK: dec39 published r39 = 17 windows, longest 2.69 s.  This script reproduces
+  17 windows, longest 1.85 s at Kp 248.
+
+  THE QUESTION team-lead ASKED: on r35 the Kp cut added marginal runs WITHOUT deepening the
+  worst one (3.4 s at every Kp).  At r39's operating point:
+     longest run: Kp 248: 1.85 s | Kp 200: 2.69 s | Kp 176: 2.69 s | Kp 148: 2.70 s | Kp 128: 2.95 s | Kp 100: 3.02 s
+     Kp 248 -> 148 moves the worst run by +0.85 s (+46 %)  ==> the worst case DOES deepen
+
+  r35 comparison (rate/ref metric, from stall_kp_counterfactual.py):
+     Kp 248: 7 runs / 14.8 s, longest 3.4 s   ->   Kp 148: 9 runs / 18.9 s, longest 3.4 s
