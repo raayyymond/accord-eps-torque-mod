@@ -1,0 +1,462 @@
+<title>The Rack Map Correction</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#f6f4f0; --panel:#fffdfa; --ink:#191c1f; --ink-2:#41484f;
+  --slate:#6d7780; --rule:#d9d4cc; --rule-2:#ebe7e0;
+  --steel:#3c6383;      /* the map / the model */
+  --amber:#b3701a;      /* what was measured */
+  --rust:#9c3826;       /* the error zone */
+  --good:#3f6b4a;
+  --shadow:0 1px 2px rgba(25,28,31,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#101315; --panel:#171b1e; --ink:#e8e6e1; --ink-2:#b3b8bd;
+    --slate:#8b949c; --rule:#2c3236; --rule-2:#21262a;
+    --steel:#79aacf; --amber:#e0a049; --rust:#e07a63; --good:#71b183;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101315; --panel:#171b1e; --ink:#e8e6e1; --ink-2:#b3b8bd;
+  --slate:#8b949c; --rule:#2c3236; --rule-2:#21262a;
+  --steel:#79aacf; --amber:#e0a049; --rust:#e07a63; --good:#71b183;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,sans-serif; font-size:16px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px 96px}
+.col{max-width:68ch}
+h1,h2,h3{font-family:Archivo,system-ui,sans-serif;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,5vw,3.1rem);font-weight:700;letter-spacing:-.022em;line-height:1.06}
+h2{font-size:1.5rem;font-weight:600;letter-spacing:-.012em;margin:0 0 .5rem}
+h3{font-size:1.02rem;font-weight:600;letter-spacing:-.005em;margin:0 0 .35rem}
+p{margin:0 0 1rem}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.86em}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;font-size:.7rem;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--slate);
+}
+header{border-bottom:1px solid var(--rule);padding:56px 0 30px;margin-bottom:44px}
+.hgroup{display:flex;flex-direction:column;gap:14px}
+.sub{font-size:1.1rem;color:var(--ink-2);max-width:62ch;margin:0}
+.meta{
+  display:flex;flex-wrap:wrap;gap:0 26px;margin-top:20px;padding-top:16px;
+  border-top:1px solid var(--rule-2);
+  font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--slate);
+}
+.meta b{color:var(--ink-2);font-weight:500}
+section{margin:0 0 56px}
+.lede{font-size:1.06rem;color:var(--ink-2)}
+figure{margin:26px 0;padding:0}
+figcaption{
+  font-size:.82rem;color:var(--slate);margin-top:10px;max-width:74ch;
+  border-left:2px solid var(--rule);padding-left:12px;
+}
+.scroll{overflow-x:auto;background:var(--panel);border:1px solid var(--rule);border-radius:3px;padding:14px}
+svg{display:block;max-width:100%;height:auto}
+table{border-collapse:collapse;width:100%;font-size:.86rem;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:7px 12px;border-bottom:1px solid var(--rule-2);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{
+  font-family:"IBM Plex Mono",monospace;font-size:.7rem;font-weight:500;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--slate);
+  border-bottom:1px solid var(--rule);
+}
+tbody tr.hot td{background:color-mix(in srgb,var(--rust) 8%,transparent)}
+tbody tr.hot td:first-child{box-shadow:inset 2px 0 0 var(--rust)}
+td.num{font-family:"IBM Plex Mono",monospace}
+.bad{color:var(--rust);font-weight:600}
+.ok{color:var(--good);font-weight:600}
+pre{
+  font-family:"IBM Plex Mono",monospace;font-size:.78rem;line-height:1.7;
+  background:var(--panel);border:1px solid var(--rule);border-radius:3px;
+  padding:16px;overflow-x:auto;margin:0;
+}
+pre .was{color:var(--slate)}
+pre .now{color:var(--amber);font-weight:600}
+.callout{
+  background:var(--panel);border:1px solid var(--rule);border-left:3px solid var(--steel);
+  border-radius:3px;padding:18px 20px;margin:24px 0;box-shadow:var(--shadow);
+}
+.callout.warn{border-left-color:var(--amber)}
+.callout.stop{border-left-color:var(--rust)}
+.callout p:last-child{margin-bottom:0}
+.callout .eyebrow{display:block;margin-bottom:8px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:18px;margin:24px 0}
+.tile{background:var(--panel);border:1px solid var(--rule);border-radius:3px;padding:16px 18px}
+.tile .k{font-family:"IBM Plex Mono",monospace;font-size:1.5rem;font-weight:600;letter-spacing:-.02em;line-height:1.15}
+.tile .l{font-size:.8rem;color:var(--slate);margin-top:5px}
+.legend{display:flex;flex-wrap:wrap;gap:18px;margin:12px 0 0;font-size:.78rem;color:var(--ink-2)}
+.legend span{display:flex;align-items:center;gap:7px}
+.sw{width:15px;height:3px;border-radius:2px;flex:none}
+.evid{
+  font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.09em;
+  text-transform:uppercase;padding:2px 6px;border-radius:2px;
+  border:1px solid currentColor;
+}
+.evid.e{color:var(--good)} .evid.b{color:var(--amber)}
+ul{padding-left:20px;margin:0 0 1rem} li{margin-bottom:.45rem}
+:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){
+  .fig-in{animation:rise .5s ease-out both}
+  @keyframes rise{from{opacity:.55;transform:translateY(4px)}to{opacity:1;transform:none}}
+}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="hgroup">
+    <span class="eyebrow">2020 Honda Accord · EPS 39990-TVA-A160 · firmware V282 unchanged</span>
+    <h1>The Rack Map Correction</h1>
+    <p class="sub">The variable-ratio steering map is ~9&thinsp;% too aggressive beyond 48° of wheel
+    angle. Correcting it is a fidelity fix, not a feel tune — and it cannot touch highway behaviour.</p>
+  </div>
+  <div class="meta">
+    <span><b>Routes</b> r39 · r3a · r3c</span>
+    <span><b>Firmware</b> V282, byte-identical on all three</span>
+    <span><b>Change</b> openpilot only — no flash</span>
+    <span><b>2026-09-05</b></span>
+  </div>
+</header>
+
+<section class="col">
+  <p class="lede">Three drives on the same firmware, with <code>SteerLatAccel</code> at 2.11, 4.0 and
+  3.6. The operator reports understeer on hard corners below 20&nbsp;mph and oversteer above it. Those
+  are not two symptoms on a speed axis — they are one symptom on an <strong>angle</strong> axis, and
+  the map is where it lives.</p>
+</section>
+
+<!-- ─────────────  THE CHAIN  ───────────── -->
+<section>
+  <div class="col"><span class="eyebrow">Where the edit sits</span>
+  <h2>One cell, on the measurement side only</h2>
+  <p>The map supplies <code>VM.sR</code>, and <code>VM.sR</code> is read in exactly one place that
+  matters: converting steering angle into the curvature the controller <em>believes</em> it is
+  achieving. The demand path never touches it. That asymmetry is the whole mechanism — a map ratio
+  below the true rack ratio makes the controller over-read its own curvature, so the loop backs off
+  and settles below what was asked.</p></div>
+
+  <figure class="fig-in">
+  <div class="scroll">
+  <svg viewBox="0 0 1000 330" role="img" aria-label="Signal flow: the steer-ratio map feeds only the measurement path of the lateral torque loop.">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9 z" fill="var(--slate)"/>
+      </marker>
+      <marker id="ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9 z" fill="var(--amber)"/>
+      </marker>
+    </defs>
+    <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink)">
+
+      <!-- demand path -->
+      <text x="16" y="26" font-size="10" letter-spacing="1.4" fill="var(--slate)">DEMAND PATH — NO STEER RATIO ANYWHERE</text>
+      <rect x="16" y="38" width="150" height="42" rx="2" fill="var(--panel)" stroke="var(--rule)"/>
+      <text x="91" y="56" text-anchor="middle">model</text>
+      <text x="91" y="70" text-anchor="middle" font-size="10" fill="var(--slate)">desiredCurvature</text>
+
+      <line x1="166" y1="59" x2="204" y2="59" stroke="var(--slate)" stroke-width="1.4" marker-end="url(#ar)"/>
+      <rect x="206" y="38" width="140" height="42" rx="2" fill="var(--panel)" stroke="var(--rule)"/>
+      <text x="276" y="56" text-anchor="middle">clip_curvature</text>
+      <text x="276" y="70" text-anchor="middle" font-size="10" fill="var(--slate)">speed · roll · jerk</text>
+
+      <line x1="346" y1="59" x2="384" y2="59" stroke="var(--slate)" stroke-width="1.4" marker-end="url(#ar)"/>
+      <rect x="386" y="38" width="150" height="42" rx="2" fill="var(--panel)" stroke="var(--rule)"/>
+      <text x="461" y="56" text-anchor="middle">setpoint</text>
+      <text x="461" y="70" text-anchor="middle" font-size="10" fill="var(--slate)">m/s² lateral</text>
+
+      <!-- summing junction -->
+      <line x1="536" y1="59" x2="592" y2="59" stroke="var(--slate)" stroke-width="1.4" marker-end="url(#ar)"/>
+      <circle cx="606" cy="59" r="15" fill="var(--panel)" stroke="var(--ink-2)" stroke-width="1.3"/>
+      <text x="606" y="63" text-anchor="middle" font-size="13">−</text>
+      <text x="606" y="30" text-anchor="middle" font-size="10" fill="var(--slate)">error</text>
+
+      <line x1="621" y1="59" x2="664" y2="59" stroke="var(--slate)" stroke-width="1.4" marker-end="url(#ar)"/>
+      <rect x="666" y="38" width="118" height="42" rx="2" fill="var(--panel)" stroke="var(--rule)"/>
+      <text x="725" y="56" text-anchor="middle">PID</text>
+      <text x="725" y="70" text-anchor="middle" font-size="10" fill="var(--slate)">kp .8 · ki .15</text>
+
+      <line x1="784" y1="59" x2="822" y2="59" stroke="var(--slate)" stroke-width="1.4" marker-end="url(#ar)"/>
+      <rect x="824" y="38" width="118" height="42" rx="2" fill="var(--panel)" stroke="var(--rule)"/>
+      <text x="883" y="56" text-anchor="middle">÷ LAF</text>
+      <text x="883" y="70" text-anchor="middle" font-size="10" fill="var(--slate)">→ torque</text>
+
+      <!-- down to plant -->
+      <line x1="883" y1="80" x2="883" y2="150" stroke="var(--slate)" stroke-width="1.4" marker-end="url(#ar)"/>
+      <rect x="770" y="152" width="172" height="46" rx="2" fill="var(--panel)" stroke="var(--rule)"/>
+      <text x="856" y="171" text-anchor="middle">EPS · V282</text>
+      <text x="856" y="186" text-anchor="middle" font-size="10" fill="var(--slate)">427 sat 0.0000 %</text>
+
+      <line x1="770" y1="175" x2="716" y2="175" stroke="var(--slate)" stroke-width="1.4" marker-end="url(#ar)"/>
+      <rect x="556" y="152" width="158" height="46" rx="2" fill="var(--panel)" stroke="var(--rule)"/>
+      <text x="635" y="171" text-anchor="middle">variable-ratio rack</text>
+      <text x="635" y="186" text-anchor="middle" font-size="10" fill="var(--slate)">the physical thing</text>
+
+      <line x1="556" y1="175" x2="502" y2="175" stroke="var(--slate)" stroke-width="1.4" marker-end="url(#ar)"/>
+      <rect x="348" y="152" width="152" height="46" rx="2" fill="var(--panel)" stroke="var(--rule)"/>
+      <text x="424" y="171" text-anchor="middle">steeringAngleDeg</text>
+      <text x="424" y="186" text-anchor="middle" font-size="10" fill="var(--slate)">the only sensor used</text>
+
+      <!-- the map -->
+      <line x1="424" y1="198" x2="424" y2="238" stroke="var(--amber)" stroke-width="1.8" marker-end="url(#ara)"/>
+      <rect x="300" y="240" width="248" height="56" rx="2" fill="color-mix(in srgb,var(--amber) 12%,var(--panel))" stroke="var(--amber)" stroke-width="1.6"/>
+      <text x="424" y="262" text-anchor="middle" font-weight="600" fill="var(--ink)">STEER-RATIO MAP</text>
+      <text x="424" y="278" text-anchor="middle" font-size="10" fill="var(--ink-2)">interp(|angle|) → VM.sR — THE EDIT</text>
+
+      <line x1="300" y1="268" x2="248" y2="268" stroke="var(--amber)" stroke-width="1.8" marker-end="url(#ara)"/>
+      <rect x="90" y="245" width="156" height="46" rx="2" fill="var(--panel)" stroke="var(--rule)"/>
+      <text x="168" y="264" text-anchor="middle">calc_curvature</text>
+      <text x="168" y="279" text-anchor="middle" font-size="10" fill="var(--slate)">× cf(v) + roll</text>
+
+      <!-- feedback up to junction -->
+      <path d="M90,268 L44,268 L44,59 L591,59" fill="none" stroke="var(--steel)" stroke-width="1.6" marker-end="url(#ar)"/>
+      <text x="52" y="168" font-size="10" fill="var(--steel)" font-weight="600">measurement</text>
+      <text x="52" y="182" font-size="10" fill="var(--slate)">what it BELIEVES</text>
+
+      <text x="16" y="316" font-size="10" letter-spacing="1.4" fill="var(--slate)">MEASUREMENT PATH — THE MAP IS THE ONLY RATIO IN THE ENTIRE LOOP</text>
+    </g>
+  </svg>
+  </div>
+  <figcaption>The map enters at exactly one call site and feeds only the measurement. Verified at the
+  flown commit <code>ffe28378f</code>: <code>controlsd.py:478</code> → <code>update_params</code> →
+  <code>latcontrol_torque.py:232</code>. The demand path — model curvature through
+  <code>clip_curvature</code> to the setpoint — is steer-ratio-free end to end.</figcaption>
+  </figure>
+</section>
+
+<!-- ─────────────  THE LERP  ───────────── -->
+<section>
+  <div class="col"><span class="eyebrow">The table that changes</span>
+  <h2>The LERP, before and after, against what was measured</h2>
+  <p>Fitted at low speed, where tyre slip is negligible and the roll term is 0.3–1&thinsp;% of the
+  signal — so this is rack geometry, immune to both the tyre model and road bank. Below 48° the flat
+  16.00 is right and stays. Above it, four independent bins all land 8–9&thinsp;% high of the map.</p></div>
+
+  <figure class="fig-in">
+  <div class="scroll">
+  <svg viewBox="0 0 800 400" role="img" aria-label="Steer ratio versus steering angle: the shipped map, the corrected map, and seven measured bins with confidence intervals.">
+    <g font-family="IBM Plex Mono, monospace" font-size="11">
+      <!-- error zone -->
+      <rect x="152.8" y="30" width="607.2" height="320" fill="color-mix(in srgb,var(--rust) 6%,transparent)"/>
+      <text x="163" y="46" font-size="10" fill="var(--rust)" letter-spacing="1.2">MAP RUNS ~9 % LOW BEYOND 48°</text>
+
+      <!-- grid + y axis -->
+      <g stroke="var(--rule-2)" stroke-width="1">
+        <line x1="70" y1="327.1" x2="760" y2="327.1"/><line x1="70" y1="281.4" x2="760" y2="281.4"/>
+        <line x1="70" y1="235.7" x2="760" y2="235.7"/><line x1="70" y1="190.0" x2="760" y2="190.0"/>
+        <line x1="70" y1="144.3" x2="760" y2="144.3"/><line x1="70" y1="98.6" x2="760" y2="98.6"/>
+        <line x1="70" y1="52.9" x2="760" y2="52.9"/>
+      </g>
+      <g fill="var(--slate)" text-anchor="end">
+        <text x="60" y="331">11</text><text x="60" y="285">12</text><text x="60" y="239">13</text>
+        <text x="60" y="194">14</text><text x="60" y="148">15</text><text x="60" y="102">16</text>
+        <text x="60" y="57">17</text>
+      </g>
+      <text x="70" y="20" fill="var(--ink-2)" font-size="10.5" letter-spacing=".8">STEER RATIO  ( :1 )</text>
+
+      <!-- x axis -->
+      <line x1="70" y1="350" x2="760" y2="350" stroke="var(--rule)" stroke-width="1.2"/>
+      <g fill="var(--slate)" text-anchor="middle">
+        <text x="70" y="368">0</text><text x="152.8" y="368">48</text><text x="242.5" y="368">100</text>
+        <text x="415" y="368">200</text><text x="587.5" y="368">300</text><text x="760" y="368">400</text>
+      </g>
+      <text x="415" y="390" fill="var(--ink-2)" text-anchor="middle" font-size="10.5" letter-spacing=".8">STEERING WHEEL ANGLE  ( DEG )</text>
+      <line x1="152.8" y1="30" x2="152.8" y2="350" stroke="var(--rust)" stroke-width="1" stroke-dasharray="3 3"/>
+
+      <!-- shipped map -->
+      <polyline fill="none" stroke="var(--slate)" stroke-width="2" stroke-dasharray="5 4"
+        points="70,98.6 152.8,98.6 173.5,143.4 201.1,166.3 233.9,191.4 278.7,201.4 399.5,212.9 477.1,244.4 592.7,296.5 725.5,324.4"/>
+      <!-- corrected map -->
+      <polyline fill="none" stroke="var(--amber)" stroke-width="2.6"
+        points="70,98.6 152.8,98.6 173.5,98.6 201.1,106.4 233.9,133.8 278.7,144.8 399.5,157.1 477.1,191.8 592.7,248.5 725.5,278.7"/>
+
+      <!-- measured bins: CI bars then dots -->
+      <g stroke="var(--steel)" stroke-width="1.5">
+        <line x1="78.6" y1="56.0" x2="78.6" y2="105.1"/>
+        <line x1="99.3" y1="66.6" x2="99.3" y2="121.1"/>
+        <line x1="132.1" y1="59.7" x2="132.1" y2="93.5"/>
+        <line x1="177.0" y1="48.8" x2="177.0" y2="102.4"/>
+        <line x1="239.1" y1="130.2" x2="239.1" y2="133.4"/>
+        <line x1="346.0" y1="146.1" x2="346.0" y2="165.7"/>
+        <line x1="587.5" y1="184.1" x2="587.5" y2="188.2"/>
+      </g>
+      <g fill="var(--steel)">
+        <circle cx="78.6" cy="82.0" r="4.5"/><circle cx="99.3" cy="95.2" r="4.5"/>
+        <circle cx="132.1" cy="73.2" r="4.5"/><circle cx="177.0" cy="72.6" r="4.5"/>
+        <circle cx="239.1" cy="131.6" r="4.5"/><circle cx="346.0" cy="155.7" r="4.5"/>
+        <circle cx="587.5" cy="186.3" r="4.5"/>
+      </g>
+
+      <!-- annotations -->
+      <text x="196" y="66" fill="var(--steel)" font-size="10">16.57 measured</text>
+      <text x="196" y="163" fill="var(--slate)" font-size="10">15.02 shipped</text>
+      <text x="606" y="181" fill="var(--steel)" font-size="10">14.08</text>
+      <text x="606" y="302" fill="var(--slate)" font-size="10">11.67</text>
+    </g>
+  </svg>
+  </div>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--slate)"></i>shipped map</span>
+    <span><i class="sw" style="background:var(--amber);height:4px"></i>corrected map</span>
+    <span><i class="sw" style="background:var(--steel);height:9px;width:9px;border-radius:50%"></i>measured rack ratio, 95&thinsp;% CI</span>
+  </div>
+  <figcaption>The 0° and 48° knots do not move. Everything from 60° up is scaled ×1.09 and clamped at
+  16.00 so the table stays monotone non-increasing. The corrected curve tracks the measured points
+  across all four high-angle bins; the shipped curve falls away from them.</figcaption>
+  </figure>
+
+  <div class="col">
+  <pre><span class="was">was  HONDA_ACCORD_STEER_RATIO_V = [16.00, 16.00, 15.02, 14.52, 13.97, 13.75, 13.50, 12.81, 11.67, 11.06]</span>
+<span class="now">now  HONDA_ACCORD_STEER_RATIO_V = [16.00, 16.00, 16.00, 15.83, 15.23, 14.99, 14.72, 13.96, 12.72, 12.06]</span>
+     breakpoints unchanged: [0, 48, 60, 76, 95, 121, 191, 236, 303, 380] deg
+     selfdrive/controls/lib/latcontrol_vehicle_tunes.py:86</pre>
+  </div>
+</section>
+
+<!-- ─────────────  DELIVERED SURFACE  ───────────── -->
+<section>
+  <div class="col"><span class="eyebrow">The consequence</span>
+  <h2>What the loop actually delivers</h2>
+  <p>Because the map sits on the measurement, the equilibrium follows it directly:
+  <code>ρ_true / ρ_cmd = sR_assumed / sR_true</code>. A map reading low means the controller thinks it
+  has already turned more than it has, so it stops early. The last column is that shortfall, before
+  and after.</p></div>
+
+  <figure>
+  <div class="scroll">
+  <table>
+    <thead><tr>
+      <th>|angle|</th><th>measured SR</th><th>95 % CI</th><th>map now</th>
+      <th>delivery now</th><th>map after</th><th>delivery after</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>0–10°</td><td class="num">16.362</td><td class="num">15.86 – 16.93</td><td class="num">16.00</td><td class="num">0.978</td><td class="num">16.00</td><td class="num">0.978</td></tr>
+      <tr><td>10–25°</td><td class="num">16.072</td><td class="num">15.51 – 16.70</td><td class="num">16.00</td><td class="num">0.996</td><td class="num">16.00</td><td class="num">0.996</td></tr>
+      <tr><td>25–48°</td><td class="num">16.554</td><td class="num">16.11 – 16.85</td><td class="num">16.00</td><td class="num">0.967</td><td class="num">16.00</td><td class="num">0.967</td></tr>
+      <tr class="hot"><td>48–76°</td><td class="num">16.567</td><td class="num">15.92 – 17.09</td><td class="num">15.05</td><td class="num bad">0.909</td><td class="num">15.98</td><td class="num ok">0.965</td></tr>
+      <tr class="hot"><td>76–121°</td><td class="num">15.278</td><td class="num">15.24 – 15.31</td><td class="num">13.93</td><td class="num bad">0.912</td><td class="num">15.21</td><td class="num ok">0.996</td></tr>
+      <tr class="hot"><td>121–200°</td><td class="num">14.749</td><td class="num">14.53 – 14.96</td><td class="num">13.62</td><td class="num bad">0.924</td><td class="num">14.85</td><td class="num ok">1.007</td></tr>
+      <tr class="hot"><td>200–400°</td><td class="num">14.081</td><td class="num">14.04 – 14.13</td><td class="num">12.86</td><td class="num bad">0.913</td><td class="num">14.01</td><td class="num ok">0.995</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <figcaption>Delivery = map ÷ measured, evaluated at each bin's effective angle and read from the
+  interpolated table, not from the knot values. Below 48° nothing moves. Above it the shortfall goes
+  from a consistent 8–9&thinsp;% to within half a percent of unity on three of four bins.</figcaption>
+  </figure>
+
+  <div class="grid2">
+    <div class="tile"><div class="k" style="color:var(--rust)">0.909 – 0.924</div>
+      <div class="l">Delivery above 48° today — four bins, all agreeing, all short.</div></div>
+    <div class="tile"><div class="k" style="color:var(--good)">0.965 – 1.007</div>
+      <div class="l">Delivery above 48° after the correction.</div></div>
+    <div class="tile"><div class="k">5 – 8°</div>
+      <div class="l">Median steering angle above 11 m/s. The edit is structurally unreachable there.</div></div>
+  </div>
+</section>
+
+<!-- ─────────────  THE CONFOUND  ───────────── -->
+<section>
+  <div class="col"><span class="eyebrow">Why this looked like a speed problem</span>
+  <h2>The two axes are the same event seen twice</h2>
+  <p>Map error by angle <em>and</em> speed. Values above 1.00 mean the map reads high and the car
+  oversteers; below 1.00 it reads low and understeers. Read the top row across — the speed axis is
+  flat within ±4&thinsp;%. Read the 6–9 m/s column down — the angle axis breaks hard at 48°.</p></div>
+
+  <figure>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>|angle| \ speed</th><th>2–6 m/s</th><th>6–9</th><th>9–14</th><th>14–20</th><th>20–40</th></tr></thead>
+    <tbody>
+      <tr><td>1.5–10°</td><td class="num">0.995</td><td class="num">1.021</td><td class="num">1.031</td><td class="num">1.016</td><td class="num">1.037</td></tr>
+      <tr><td>10–25°</td><td class="num">0.980</td><td class="num">1.056</td><td class="num">0.988</td><td class="num">1.021</td><td class="num" style="color:var(--slate)">n=160</td></tr>
+      <tr><td>25–48°</td><td class="num">0.994</td><td class="num">1.007</td><td class="num">1.017</td><td class="num" style="color:var(--slate)">n=2</td><td class="num" style="color:var(--slate)">no data</td></tr>
+      <tr class="hot"><td>48–90°</td><td class="num" style="color:var(--slate)">n=242</td><td class="num bad">0.926</td><td class="num">0.998</td><td class="num" style="color:var(--slate)">no data</td><td class="num" style="color:var(--slate)">no data</td></tr>
+      <tr class="hot"><td>90–400°</td><td class="num bad">0.932</td><td class="num bad">0.936</td><td class="num" style="color:var(--slate)">n=30</td><td class="num" style="color:var(--slate)">no data</td><td class="num" style="color:var(--slate)">no data</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <figcaption>Note the empty bottom-right quadrant. Above 10° of steering at 20–40 m/s the corpus has
+  essentially no data — so in this driving, "hard corner below 20 mph" and "large angle" are the same
+  event, and "above 20 mph" and "near centre" are the same event. Angle is the axis that resolves.</figcaption>
+  </figure>
+
+  <div class="col">
+  <div class="callout">
+    <span class="eyebrow">Three-way decomposition · r39</span>
+    <p><strong>Flat ratio level 0.006–0.012</strong> — already spent by the map, nothing left to buy.
+    <strong>Angle, the ≥48° knots, ~0.09</strong> — the largest reachable term measured.
+    <strong>Near-centre speed / slip 0.042</strong> — not resolvable.</p>
+  </div>
+  <p>Arbitrated on a third instrument: wheel-speed differential yaw from raw CAN <code>0x1D0</code>,
+  which contains no gyro, no roll model, no Kalman filter and no calibration matrix. Restricting to the
+  near-centre stratum halves the spread on <em>every</em> instrument — 0.155 → 0.074 (rear wheels),
+  0.089 → 0.037 (front), 0.096 → 0.054 (gyro) — and leaves no resolvable crossing of 1.000. The excess
+  is carried by the ≥48° blocks.</p>
+  </div>
+</section>
+
+<!-- ─────────────  RISK  ───────────── -->
+<section class="col">
+  <span class="eyebrow">Before the drive</span>
+  <h2>Risk, and what would falsify it</h2>
+
+  <div class="callout warn">
+    <span class="eyebrow">Authority rises at large angle</span>
+    <p>The controller will now believe it is turning ~9&thinsp;% less than before at angles past 48°,
+    so it pushes harder there. Expect tight, low-speed corners to stop falling short. Watch for it
+    feeling <em>too</em> eager at parking-lot scale. If it overshoots, halve the correction (×1.045) —
+    do not revert.</p>
+  </div>
+
+  <div class="callout stop">
+    <span class="eyebrow">Magnitude is a first estimate <span class="evid b">belief</span></span>
+    <p>The direction is solid — four independent bins, all 0.909–0.924, measured where slip and roll
+    cannot explain them <span class="evid e">evidence</span>. The <em>size</em> rests on 3–8 seconds
+    of data per bin, because normal driving barely samples that regime. A deliberate large-angle pass
+    should precede trusting the number.</p>
+  </div>
+
+  <div class="callout">
+    <span class="eyebrow">Git — do not push to Dom</span>
+    <p>The local <code>Dom</code> branch shares no merge base with the flown commit, and
+    <code>origin/Dom</code> is 2158 commits off it. Branch from <code>ffe28378f</code> — exactly what
+    was flown — so the drive differs from the last one by one line.</p>
+  </div>
+
+  <h3>What this change is not</h3>
+  <ul>
+    <li><strong>Not a steer-ratio de-tune.</strong> The flat level is 0.14&thinsp;σ from the map's
+    16.000. Aiming a flat ratio at the highway oversteer instead deepens the low-speed shortfall from
+    −7.3&thinsp;% to −12.4&thinsp;%.</li>
+    <li><strong>Not a fix for the highway oversteer.</strong> That is a separate, command-amplitude
+    scale error. The measured plant wants <code>SteerLatAccel</code> ≈ 3.3; fly 3.6, on its own drive.</li>
+    <li><strong>Not firmware.</strong> V282 is unchanged and stays on the car.</li>
+  </ul>
+</section>
+
+<section class="col">
+  <span class="eyebrow">Killed this session</span>
+  <h2>Three mechanisms that did not survive</h2>
+  <ul>
+    <li><strong>Integral-gain collapse with speed.</strong> The arithmetic holds — effective
+    <code>ki</code> really does fall 0.55 → 0.16 — but τ(error) is 0.85 s against a 5.9 s median curve,
+    the residual is <em>smallest</em> at 22–40 m/s, and the error <em>grows</em> with time in curve
+    where an unconverged integrator would decay.</li>
+    <li><strong>Roll-compensation artefact.</strong> Sign inverted: <code>calc_curvature</code> carries
+    a leading minus, so the term <em>masks</em> the spread rather than creating it. Deleting it takes
+    the spread 0.131 → 0.318.</li>
+    <li><strong>Setpoint lead term.</strong> Stripping the lead makes the excess worse, and the ratio
+    is flat within 1.5&thinsp;% across a ±0.30 s shift — it is a scale, not a phase.</li>
+  </ul>
+  <p>What survived: the integrator cannot pre-charge against a bias that reverses with turn direction.
+  Folded curve error −0.120, unfolded +0.014, on balanced left/right counts.</p>
+</section>
+
+</div>

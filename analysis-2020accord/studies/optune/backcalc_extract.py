@@ -25,6 +25,18 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
 sys.path.insert(0, os.path.join(ROOT, "rlog-tools"))
 RLOGS = os.path.join(ROOT, "analysis-2020accord", "rlogs")
 OUT = os.path.join(HERE, "_scratch"); os.makedirs(OUT, exist_ok=True)
+# ---------------------------------------------------------------------------------------------
+# 0xE4 SOURCE RULE -- CHANGED 2026-09-04, team-lead ruling, STATE.md DEFECT #3.
+# This file USED to take `m.src >= 128`, which mixes the STOCK CAMERA (src 128) with OPENPILOT
+# (src 129) on the same address.  With both talking, `e4_req` reads ~0.5 and `e4_cmd` interleaves
+# two senders, so `g["cmd"]`/`g["req"]`/`g["eng_wire"]` in backcalc_laf_friction.grid are unsafe.
+# 🛑 EVERY `_backcalc.npz` ALREADY ON DISK (r22 r97 r31 r32 r33 r34 r35 r39) WAS BUILT UNDER THE
+#    OLD `>= 128` RULE.  Their `e4_cmd`/`e4_req` are NOT comparable with anything built after this
+#    change.  Rebuild them before any cross-route use of those two channels.  Every npz written
+#    from now on carries `e4_src_rule` so a consumer can tell which rule made it.
+#    NOTHING ELSE IN THE FILE IS AFFECTED -- `e4_*` are the only channels this touches.
+E4_SRC = 129
+
 ROUTES = {
     "r22": ("75604b0a432fdc89_00000022--00f57626e0", "V112"),
     "r97": ("75604b0a432fdc89_00000097--489d7896b3", "stock"),
@@ -32,6 +44,12 @@ ROUTES = {
     "r32": ("75604b0a432fdc89_00000032--33a5dbbcb3", "V280r2"),
     "r33": ("75604b0a432fdc89_00000033--1948a2c354", "V280r2"),
     "r34": ("75604b0a432fdc89_00000034--e2d2d5381f", "V280r2-newtune"),
+    # --- current-epoch (2026-09) V282 rows.  🛑 The dongle's route counter RESET: there are OLD
+    # 2026-07/08 routes numbered 35, 39, 3a and 3b too.  Match the FULL id, never the counter.
+    "r35": ("75604b0a432fdc89_00000035--580292087d", "V281r3"),
+    "r39": ("75604b0a432fdc89_00000039--f56039af87", "V282"),
+    "r3a": ("75604b0a432fdc89_0000003a--283a39a1d6", "V282-laf4.0"),
+    "r3c": ("75604b0a432fdc89_0000003c--927965c2b4", "V282-laf3.6"),
 }
 
 
@@ -65,9 +83,18 @@ def read_segment(path, out, cp_holder):
         if w == "can":
             for m in evt.can:
                 d = bytes(m.dat)
-                if m.src == 1 and m.address == 0x18F and len(d) >= 5:
+                if m.src == 1 and m.address == 0x1D0 and len(d) >= 8:
+                    # WHEEL_SPEEDS: four independent fields, 0.01 kph/LSB.  Layout verbatim from
+                    # `compare_v75_v76_v80_grind.wheel_speeds_kph`, the decode every ws_* column in
+                    # the corpus already uses.  Stored in m/s.
+                    A("w1d0_t", []).append(tm)
+                    A("w1d0_fl", []).append((((d[0] << 7) | (d[1] >> 1)) * 0.01) / 3.6)
+                    A("w1d0_fr", []).append(((((d[1] & 0x01) << 14) | (d[2] << 6) | (d[3] >> 2)) * 0.01) / 3.6)
+                    A("w1d0_rl", []).append(((((d[3] & 0x03) << 13) | (d[4] << 5) | (d[5] >> 3)) * 0.01) / 3.6)
+                    A("w1d0_rr", []).append(((((d[5] & 0x07) << 12) | (d[6] << 4) | (d[7] >> 4)) * 0.01) / 3.6)
+                elif m.src == 1 and m.address == 0x18F and len(d) >= 5:
                     A("f18_t", []).append(tm); A("f18_tq", []).append(i16be(d, 0)); A("f18_rate", []).append(i16be(d, 2)); A("f18_sca", []).append((d[4] >> 3) & 1)
-                elif m.src >= 128 and m.address == 0x0E4 and len(d) >= 3:
+                elif m.src == E4_SRC and m.address == 0x0E4 and len(d) >= 3:
                     A("e4_t", []).append(tm); A("e4_cmd", []).append(i16be(d, 0)); A("e4_req", []).append((d[2] >> 7) & 1)
         elif w == "carOutput":
             a = evt.carOutput.actuatorsOutput
@@ -76,6 +103,18 @@ def read_segment(path, out, cp_holder):
             c = evt.carState
             A("cs_t", []).append(tm); A("cs_v", []).append(c.vEgo); A("cs_drv", []).append(c.steeringTorque)
             A("cs_ang", []).append(c.steeringAngleDeg); A("cs_rate", []).append(c.steeringRateDeg); A("cs_pressed", []).append(int(c.steeringPressed))
+            # --- WHEEL SPEEDS, added 2026-09-04.  A yaw rate from (v_rr - v_rl)/track contains NO
+            # gravity term, NO liveParameters.roll model, NO Kalman filter and NO rpyCalib matrix,
+            # so it arbitrates disputes that every angle- or gyro-derived instrument shares. m/s.
+            # 🛑 `carState.wheelSpeeds` is IDENTICALLY ZERO on this platform -- measured on r39,
+            # r3a and r3c: all four members, every frame, 0.0 (same dead-channel failure as
+            # `carState.yawRate`).  The REAL wheel speeds are on raw CAN 0x1D0 and are decoded in
+            # the `can` branch above into `w1d0_*`.  These four are kept ONLY so the deadness is
+            # visible in the cache rather than rediscovered; DO NOT USE THEM.
+            ws = c.wheelSpeeds
+            A("cs_ws_fl_DEAD", []).append(float(ws.fl)); A("cs_ws_fr_DEAD", []).append(float(ws.fr))
+            A("cs_ws_rl_DEAD", []).append(float(ws.rl)); A("cs_ws_rr_DEAD", []).append(float(ws.rr))
+            A("cs_aego", []).append(float(c.aEgo))
         elif w == "carControl":
             A("cc_t", []).append(tm); A("cc_lat", []).append(int(bool(evt.carControl.latActive)))
         elif w == "controlsState":
@@ -134,14 +173,40 @@ def read_segment(path, out, cp_holder):
 def main(tag):
     prefix, build = ROUTES[tag]
     segs = sorted(glob.glob(os.path.join(RLOGS, "%s--*--rlog.zst" % prefix)), key=lambda p: int(os.path.basename(p).split("--")[2]))
+    have = [int(os.path.basename(p).split("--")[2]) for p in segs]
+    missing = [i for i in range(max(have) + 1) if i not in have] if have else []
+    if missing:
+        # r3a is missing segment 10 on disk.  backcalc_laf_friction.grid() builds a UNIFORM 100 Hz
+        # axis from co_t[0] to co_t[-1] and then hold()/np.interp across it, so a hole is BRIDGED
+        # INVISIBLY.  Record it so a consumer can mask; do not paper over it here.
+        print("  *** SEGMENTS MISSING FROM DISK: %s -- the uniform grid in grid() WILL bridge the "
+              "hole; mask on gap_starts/gap_ends ***" % missing, flush=True)
     out, cp = {}, {}
     for p in segs:
         print("  %s" % os.path.basename(p), flush=True)
         read_segment(p, out, cp)
     D = {k: np.asarray(v, float) for k, v in out.items()}
+    # gaps on the channel grid() anchors on (carOutput), route-relative to that same t0
+    ct = D["co_t"]; ct0 = ct[0]; dt = np.diff(ct)
+    big = np.flatnonzero(dt > 5.0)
+    D["gap_starts"] = np.asarray([ct[i] - ct0 for i in big], float)
+    D["gap_ends"] = np.asarray([ct[i + 1] - ct0 for i in big], float)
+    D["segments_present"] = np.asarray(have, float)
+    D["segments_missing"] = np.asarray(missing, float)
     D["carParams_json"] = np.array(json.dumps(cp.get("cp"), default=float))
     D["build"] = np.array(build)
     D["prefix"] = np.array(prefix)
+    D["e4_src_rule"] = np.array("m.src == %d (post-2026-09-04; older files used m.src >= 128)" % E4_SRC)
+    # Bumped whenever the CHANNEL SET changes, so a consumer can tell what a cache contains.
+    #   (absent)  pre-2026-09-04: no e4_src_rule, no wheel speeds, no gap keys
+    #   2         2026-09-04: e4_src_rule + gap_starts/gap_ends/segments_*
+    #   3         2026-09-04: + ws_fl/ws_fr/ws_rl/ws_rr (carState.wheelSpeeds, m/s) + cs_aego
+    #   4         2026-09-04: carState.wheelSpeeds proven DEAD (all zero) -> renamed
+    #             cs_ws_*_DEAD; REAL wheel speeds decoded from raw CAN 0x1D0 as w1d0_* (m/s)
+    D["schema_version"] = np.array(4)
+    D["channels_added"] = np.array(
+        "v3: cs_aego. v4: w1d0_t/fl/fr/rl/rr (raw CAN 0x1D0 WHEEL_SPEEDS, m/s, ~50 Hz) "
+        "+ cs_ws_*_DEAD (carState.wheelSpeeds, identically zero on this platform -- do not use)")
     np.savez(os.path.join(OUT, "%s_backcalc.npz" % tag), **D)
     print("wrote %s: %s" % (tag, {k: len(v) for k, v in D.items() if v.ndim}))
 

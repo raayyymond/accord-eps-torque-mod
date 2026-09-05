@@ -114,7 +114,27 @@ def extract(route):
     from rlog_parse import read_messages
 
     pref, nseg, cdir, _pfx, stem, label = ROUTES[route]
-    paths = [RLOGDIR / f"{pref}--{s}--rlog.zst" for s in range(nseg)]
+    # ---- SEGMENT ENUMERATION, changed 2026-09-04 -------------------------------------------
+    # Was `[RLOGDIR / f"{pref}--{s}--rlog.zst" for s in range(nseg)]`, which assumes the segment
+    # indices are CONTIGUOUS 0..nseg-1.  Route 3a (0000003a--283a39a1d6) is missing segment 10 on
+    # disk (0..9, 11, 12, 13), so range() would try to open a file that is not there.  Enumerate
+    # what EXISTS instead, and carry the REAL segment number (not the enumerate position) into
+    # `seg` -- otherwise `split()` writes `r3as10.npz` from what is really segment 11 and every
+    # per-segment label downstream is shifted.
+    # 🛑 For a contiguous route this is IDENTICAL to the old expression, so every existing cache
+    #    (r6d r67x r68x r77 r78 r79 r7d r39 ...) is bit-for-bit unaffected.
+    _found = {}
+    for _p in RLOGDIR.glob(f"{pref}--*--rlog.zst"):
+        try:
+            _found[int(_p.name.split("--")[2])] = _p
+        except (IndexError, ValueError):
+            continue
+    seg_nums = sorted(_found)
+    paths = [_found[s] for s in seg_nums]
+    _missing = [i for i in range(nseg) if i not in _found]
+    if _missing:
+        print(f"  *** SEGMENTS ABSENT FROM DISK: {_missing} -- the concatenated `t` axis WILL "
+              f"carry a hole; see seg_bounds ***", flush=True)
     CACHE = ROOT / cdir
 
     rows, seg_of_row = [], []
@@ -133,7 +153,7 @@ def extract(route):
     a_hw, a_mono, a_v, a_st = [], [], [], []
     events = []
 
-    for si, p in enumerate(paths):
+    for si, p in zip(seg_nums, paths):        # si is the REAL segment index, not the position
         for evt in read_messages(p):
             try:
                 w = evt.which()
