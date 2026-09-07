@@ -1,6 +1,6 @@
 ---
 name: reference_accord_lkas_pid_pole_cell_gate1_census_2a508_second_reader
-description: GATE-1 reader/writer census for the four LKAS-rate-PID filter poles (0xC63E8/EA/EC/EE), the Kd LERP record 0xE511C and its table base 0xCB7D4, on the V282 image. The EMA poles are private to FUN_00028ea6; the OUTPUT-LAG poles 0xC63EC/0xC63EE have a second reader at 0x2A892/0x2A8A2 sharing RAM state gp-0x3d3c -- but that region (0x2A30E-0x2B421) is a DUPLICATE COMPILED COPY with no entry path, so the pole is applied ONCE per tick, not twice. Also: the cal-block CRC, and why 'it writes a cell live code reads' does NOT prove liveness.
+description: GATE-1 reader/writer census for the four LKAS-rate-PID filter poles (0xC63E8/EA/EC/EE), the Kd LERP record 0xE511C and its table base 0xCB7D4, on the V282 image. The EMA poles are private to FUN_00028ea6; the OUTPUT-LAG poles 0xC63EC/0xC63EE have a second reader at 0x2A892/0x2A8A2 sharing RAM state gp-0x3d3c -- but that region (0x2A30E-0x2B421) is a DUPLICATE COMPILED COPY with no entry path, so the pole is applied ONCE per tick, not twice. RESOLVED 2026-09-06: GATE 1 now PASSES outright - 0x2A504 is `dispose ..., lp`, a RETURN, so FUN_0002a30e never falls into the block; see reference_accord_gate1_pole_cells_unreachable_dispose_is_a_return. Also: the cal-block CRC, and why 'it writes a cell live code reads' does NOT prove liveness.
 metadata:
   type: reference
 ---
@@ -110,12 +110,34 @@ engaged path at 0x2A174** with `r12 = S`. So `iVar23 = (0xC63EC * gp-0x3d3c >> 1
 executes every tick, S = 0 when disengaged. Output is `state_old + increment`, and `gp-0x3d3c` is then
 overwritten with the **increment**, not the output — flagged for the arithmetic owner, not verified here.
 
-## Residual caveat that keeps this from being closed
-`FUN_0002a30e` (0x2A30E-0x2A507) is still a live-with-no-discoverable-caller case in this kit's record
-(it writes STEER_STATUS=4, seen on CAN 399). Its entry path remains unexplained. If anyone finds it, it
-may enter the duplicate block too and this conclusion needs revisiting.
-**Cheapest definitive settle: a wire tap on `gp-0x3d3c` (0xFEDF42C4).** Exactly 4 accesses — 2 live, 2 in
-the orphan. If the orphan never runs the state is written once per tick; if it runs, twice.
+## ✅ RESOLVED 2026-09-06 — the residual caveat is CLOSED, GATE 1 PASSES
+
+~~Residual caveat: `FUN_0002a30e` is a live-with-no-discoverable-caller case, so if its entry path is
+ever found it may enter the duplicate block too and this conclusion needs revisiting.~~
+**STRUCK.** The concern was misplaced and is now disproved, not merely unresolved.
+
+**`0x2A504` — the target of every `jr`/`br` in `FUN_0002a30e` that looked like it "lands next to the
+duplicate" — is `dispose 0x0, { r20,r22,r24,r26,r28,lp }, lp`: a function RETURN.** `dispose` with `lp`
+as its destination pops the frame and jumps to the link register, so control **never falls through**
+from 0x2A507 into the dispatch head at 0x2A508. Ghidra's function bound is correct here.
+⇒ **`FUN_0002a30e`'s liveness is irrelevant to the duplicate block.** The two are unconnected.
+
+A 7/7-positive-controlled branch scan (45,821 branches) then found **zero** real entries into
+`[0x2A508, 0x2B422)` from outside — the three raw hits were all `prepare` prologues, one of them the
+entry of the 100 Hz task — and no immediate, pointer or `movhi`/`movea` pair anywhere in the image can
+construct `0x2A508` or `0x2A890`.
+
+⇒ **GATE 1 PASSES for `0xC63EC` and `0xC63EE`: an edit changes exactly ONE lag filter, the live one at
+`0x2A174`/`0x2A184`. No `H^2`.** Full proof, and the one route left bounded rather than closed
+(Format-XI `jarl [reg]` dispatch), in
+**[[reference_accord_gate1_pole_cells_unreachable_dispose_is_a_return]]** — read that file, not this
+paragraph, for the current verdict.
+⚠ The scan trap that nearly inverted this verdict is
+[[reference_accord_v850_prepare_collides_with_jr_jarl_in_format_v_scans]].
+
+The `gp-0x3d3c` (0xFEDF42C4) wire tap — 4 accesses, 2 live and 2 in the orphan, written once per tick
+if the orphan is dead and twice if it runs — is **no longer needed to decide GATE 1**. It survives only
+as the cheapest way to close the Format-XI residual empirically, should anyone want that.
 
 ## Historical note — the original (now superseded) liveness paragraph
 

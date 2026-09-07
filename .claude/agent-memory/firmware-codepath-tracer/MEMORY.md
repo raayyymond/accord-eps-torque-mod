@@ -1,5 +1,13 @@
 # Firmware Codepath Tracer — Memory Index
 
+## 2026-09-06 - the addend at 0x2A1FC in FUN_00028ea6, for `shape`/`main`
+- 🛑🛑★★★★★ [r11 at 0x2A1FC is (short)[gp-0x6b2c] on all 11 paths, and that cell is IDENTICALLY ZERO (Y table 0xC673E-44 all zeros + the r29>=32001 gate forces the above-range branch) - so gp-0x6b38 = clamp(-K6*r9>>15), NO bar-torque feedthrough, x6 multiplies only the PID](reference_accord_gp6b2c_addend_is_identically_zero.md)
+- 🛑★★★★★ [0x2B422/0x2B57A are LIVE (jarl from 0x22530/0x22572) but undefined in Ghidra; 11 more gp-0x6b2c touches hide there - plus the CORRECTED Format-V jr/jarl mask (0x07FF, not 0x07C0, which also matches prepare)](reference_accord_undefined_live_code_2b422_and_gp6b2c_orphan_writers.md)
+
+
+## 2026-09-05 — amplitude-nonlinearity / small-command shortfall brief, for `team-lead`
+- 🛑🛑★★★★★ [Ki=0 (0xC63E6, byte-verified V282) makes the LKAS rate PID a friction-limited PD loop; the 0xC9A88 map is CONFIRMED LINEAR (Y/X=4.30, selector 7) so the loop itself is the amplitude-nonlinearity source, independently confirmed by the flown V283 Ki-A/B test](reference_accord_ki0_pd_loop_explains_amplitude_gain_curve.md)
+
 ## 2026-09-04 — V285/V286 telemetry costing (dE sign-change + r24 magnitude rungs), for `team-lead`
 - 🛑🛑★★★★★ [FUN_00028ea6 publishes S/P/D/output to gp-0x6b2e/32/34/36, orphan-safe like the lag pole — but raw dE is register-only, never published; D's clamp hides magnitude exactly where a Kd sweep needs it](reference_accord_fun28ea6_publishes_p_d_sum_output_orphan_safe.md)
 - 🛑🛑★★★★★ [lp is reused as scratch in FUN_00028ea6, CONFIRMED live 0x29A2C→0x2A29A (spans the dE tap point) — jarl there corrupts a live gate check; 0x29EE4 is a same-length jr swap site, r10 dead there, 168+ free flash bytes at 0xC4BD8, gp-0x683c has zero references at all](reference_accord_fun28ea6_lp_reused_as_scratch_and_29ee4_insertion_site.md)
@@ -7,7 +15,7 @@
 - 🛑★★★★ [search_instructions operand-text hit on a displacement can land on a different physical byte when a function uses its own non-gp base register (movhi) — check the base register, not just the displacement](reference_accord_operand_text_search_false_positive_wrong_base_register.md)
 
 ## 2026-09-03 — GATE-1 census of the LKAS rate-PID pole cells (V282), for `loopshape`
-- 🛑🛑★★★★★ [Feedback-EMA poles are PRIVATE; output-lag poles 0xC63EC/EE are shared-in-code but PRIVATE-IN-EFFECT — 2nd reader at 0x2A892/2A8A2 is inside a duplicate compiled orphan with NO entry path (halfword 0xA892 occurs nowhere); Kd slot 7 is FLAT so its knot index can't move Kd at all](reference_accord_lkas_pid_pole_cell_gate1_census_2a508_second_reader.md)
+- 🛑🛑★★★★★ [Feedback-EMA poles are PRIVATE; output-lag poles 0xC63EC/EE are shared-in-code but PRIVATE-IN-EFFECT (GATE 1 now PASSES outright, see the 2026-09-06 entry) — 2nd reader at 0x2A892/2A8A2 is inside a duplicate compiled orphan with NO entry path (halfword 0xA892 occurs nowhere); Kd slot 7 is FLAT so its knot index can't move Kd at all](reference_accord_lkas_pid_pole_cell_gate1_census_2a508_second_reader.md)
 - 🛑★★★★★ [Grep memory for the address BEFORE calling a function dead — a passing scanner control proves the scanner, not the claim (0x2A5xx retraction: FUN_0002a30e next door is LIVE)](feedback_check_kit_memory_before_calling_a_function_dead.md)
 
 ## 2026-09-03 — r24 dt/Q-format/gain-arm census, V283, for `team-lead`
@@ -49,3 +57,10 @@
 
 ## 2026-09-03 — r24 "Lever B" reconciliation, for `team-lead`
 - 🛑🛑★★★★★ [Reconciles "Lever B unreachable" with "V280's r24 gain is live": both true — V104-V280 repointed the SAME ld.bu from gp-0x683c to gp-0x6806, nothing was armed, the gate's SOURCE was swapped. Converting r24's gain to deg/s needs an unrecorded torsion-bar constant](reference_accord_r24_gate_repoint_reconciles_lever_b_dead_vs_v280_live.md)
+
+## 2026-09-06 — lag/fb pole hostile census for the next build (V282), for `team-lead`
+- 🛑🛑★★★★★ [BOTH PID filters are a one-pole IIR on an INCREMENT whose output is the TWO-SAMPLE SUM with `a` ADDED; the lag has >>5 (DC 0.990) but the feedback EMA has NO >>5 (DC 30.89, so the `/32` is wrong for it); no overflow on any candidate (>=8.9x); and FUN_000428d4 is a LIVE >10 Hz HIGH-PASS reversal detector with a 40% assist cut](reference_accord_lkas_pid_filter_form_two_sample_sum_and_oscillation_detector.md)
+
+## 2026-09-06 - GATE 1 reachability proof for the lag poles (V282), for `team-lead`
+- 🛑🛑★★★★★ [GATE 1 PASSES for 0xC63EC/EE: 0x2A504 is `dispose ..., lp`, a RETURN, so FUN_0002a30e never falls into the duplicate block; zero real branches enter it, no immediate can build 0x2A508/0x2A890 - the earlier census's residual caveat is CLOSED](reference_accord_gate1_pole_cells_unreachable_dispose_is_a_return.md)
+- 🛑★★★★★ [V850 `prepare` COLLIDES with jr/jarl on the Format-V opcode test, inventing false branch targets out of every function prologue - filter on TARGET PARITY; controls passing does NOT protect against an over-match](reference_accord_v850_prepare_collides_with_jr_jarl_in_format_v_scans.md)

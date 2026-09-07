@@ -4,96 +4,52 @@
 > order** — findings, corrections and closures. That is a record, not a briefing. Everything you need
 > to make a decision is in this box and the index under it.
 
-## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-05 (**r3a + r3c FLEW: V282 unchanged, `SteerLatAccel` 4.0 then 3.6**; the LAF axis is NOT dead — the earlier "inert" verdict was a conditioning artefact; 🛑 **THE RESIDUAL IS A FUNCTION OF STEERING ANGLE, NOT SPEED** — the operator's speed split is confounded, he has no data above 10° of angle at 20+ m/s; the **SR map's ≥48° knots are ~9 % too low** and are the largest reachable term measured; the car's **true lat-accel-per-torque is ≈3.3**; **NO FIRMWARE CUT THIS SESSION**)
+## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-06 (**grind #1 on V282: the CAL-ONLY SURFACE IS EXHAUSTED**; 🛑 the record's headline lever, the output-lag pole to 15 Hz, is **DO-NOT-FLASH** (GM 0.72×); the one new class, the **D-term clamp 0xC61B6**, FAILED the adversarial pass at 2560 and is built at **7680 as V287 rev 2 — a partial mitigant (~5 %), NOT a cure**; the real fix is a **setpoint-interpolation CODE edit**, identified, not built)
 
-**ON THE CAR: V282**, unchanged across r39/r3a/r3c and confirmed **on the wire, not from the label** [EVIDENCE]: engaged-gated cave bit-6 duty **0.1140 / 0.1541 / 0.1561** and bit-5 **0.1341 / 0.1525 / 0.1678**, all strictly in (0,1) and far from r34/r35's exact 0.0000; byte-4 low 3 bits = 7 on 100 % of frames on all three. ⚠ The cave is **byte-identical V282↔V283**, so byte 4 can never separate those two; only a Ki fit on the 427 tap does. 427 saturation **0.0000 %** on all three (magnitude max 207/209/213 against a 1023 ceiling).
+**ON THE CAR: V282**, unchanged (r39/r3a/r3c, confirmed on the wire — see the archived 2026-09-05 box in `docs/archive/STATE-ARCHIVE-2026-09-05-r3a-r3c-decision-box.md` for the openpilot-side SR-map / LAF results, which stand).
 
-**THE TWO NEW DRIVES.** r3a = `75604b0a432fdc89_0000003a--283a39a1d6` (13 of 14 segments — **index 10 MISSING**, a real monotonic 60.02 s hole at route t 601.62→661.64 on the CAN clock = **597.02–657.04 on the `co_t` clock**); r3c = `…_0000003c--927965c2b4` (13 seg, no gaps). 🛑 **TRAP: `0000003a--4e55c1e0f4` and `0000003b--a4a7f4dbf1` are OLD-EPOCH (2026-08-01) routes from the dongle counter reset — match the full id with its hash suffix, always.** ⚠ **`analysis-2020accord/extract/extract_r3a_cache.py` already existed and belongs to the OLD epoch**; the current-epoch extractors are `extract_r3a_v282_cache.py` / `extract_r3c_v282_cache.py`, and **repo-root `_scratch/cache/r3a/` is the WRONG-EPOCH cache — do not read it.**
+**BUILT, UNFLASHED: V287 rev 2 = V282 + ONE halfword, `0xC61B6` 10240 → 7680** (the LKAS rate PID's D-term clamp; D = 16·ΔE rails at |ΔE| = 480 instead of 640). Image `_v287r2_…DCLAMP.7680…_plain_image.bin` sha256 **e75ae7eb5c5bcba564f445a7223260b25c4b476b9df1d8c9ad8e171f79498f15**; rwd `…V287R2…rwd` sha256 **71648c0ebdc8ca63d7f974d32a735c0f3ef607d7b67c71efc883ceb79ba852a5**. Diff vs V282: 5 bytes (0xC61B7 + the cal-page CRC). Adversarial pass on rev 1 (2560): A arithmetic PASS · C build audit PASS · D interlocks PASS · **B units/strata FAIL** → re-sized to 7680, where B's own admissibility test holds in every stratum. Prereg: `rlog-tools/studies/grind/PREREG-V287-LOOP-SHAPE.md` §C5. 🛑 **V287 rev 1 (2560) is SUPERSEDED-DO-NOT-FLASH** (renamed on disk).
 
-**SECONDS CONVENTION, BINDING:** true wire rate **100 Hz** (`count/span`), verified through two independent code paths. r39 **879.7 s** engaged (92.51 %), r3a **483.1 s** (65.94 %), r3c **593.7 s** (79.91 %). STATE's former "869.7 s" used `1/median(diff)` = 101.16 Hz and overstates fs by 1.3 %; frame *fractions* were unaffected. 🛑 **`grid()` lays a uniform axis across r3a's hole and inflates its `latActive` by exactly 60.0 s** (543.3 s phantom vs 483.3 s real) — mask the gap; `gap_starts`/`gap_ends` are in the caches.
+### 🛑🛑 THE RESULT — every cal-only grind #1 lever on V282, priced on one model anchored to the measured loop
+Grind #1 = the 18–22 Hz rate-loop crossover resonance, lightly damped, rung by input. **On V282 it opens 130 times over r39+r3a+r3c** (48 burst / 51 sustained / 31 ride-along), at demand index, wheel rate and |angle| **3–6× the all-engaged median**; only 7 % of onsets are in strict steady creep [EVIDENCE, `GRIND1-CENSUS-V282-2026-09-06.md`]. The operator's "opens on large turn transients" is right in direction; the sharpest bursts open at somewhat lower demand than the sustained stretches. **Onsets within 0.5 s of a top-1 % command step (|Δcmd| ≥ 122 raw/frame or Δidx ≥ 9/frame) are enriched 2.80× [2.10, 3.57] over engaged baseline** (burst 2.1×, sustained 3.8×, ride-along 2.4×) — but **69 % of onsets have no such step nearby**, so the command kick is an enrichment, not a necessity: a second, structural reason the D clamp can only be partial.
 
-**THE TUNE, ATTRIBUTED FROM THE WIRE** [EVIDENCE — LAF recovered exactly per frame as `-(p+i+d+f)/output`, since the PID runs in lat-accel space and LAF divides once at `interfaces.py:329`]: **LAF = 2.110000 / 4.000000 / 3.600000**, sd ~3e-7, n 63k/26k/35k. `kp = 0.800000` flat at every speed on all three (`controlsd.py:444` overwrites the whole `_k_p` schedule with the `SteerKP` toggle every frame). Full `initData.params` diff across the three routes gives **exactly three** substantive changes: `SteerLatAccel`; the git commit `8a28dcef8 → ffe28378f` (**one UI-only commit**, raises a slider ceiling, **zero lines under `controls/`, `locationd/`, `opendbc_repo/` or `common/`** — not a confound); and 🛑 **`Model`/`DrivingModel` `rdf43` → `tsfdo`**, a driving-model swap that **confounds r39 vs r3a/r3c**. ⇒ **r3a vs r3c is a CLEAN PAIR** (only LAF differs).
-
-### 🛑🛑 THE RESIDUAL IS ON THE **ANGLE** AXIS, NOT THE SPEED AXIS — the session's main result
-The operator reports understeer on hard corners < 20 mph and oversteer above. **In his driving those are the same event seen twice: "hard corner below 20 mph" ≡ large steering angle, and "above 20 mph" ≡ near centre. Above 10° of angle at 20–40 m/s the corpus has essentially NO DATA.** The two axes are confounded and **angle is the resolvable one.**
-
-Map error (map/fit; **>1.00 = map ratio too high → oversteer; <1.00 = too low → understeer**), pooled:
-
-| \|ang\| \ v | 2–6 m/s | 6–9 | 9–14 | 14–20 | 20–40 |
+| lever (cell) | Re@7 Hz | S@20 | GM | ring L_tot | verdict |
 |---|---|---|---|---|---|
-| **1.5–10°** | 0.995 | 1.021 | 1.031 | 1.016 | 1.037 |
-| **10–25°** | 0.980 | 1.056 | 0.988 | 1.021 | *(n=160)* |
-| **25–48°** | 0.994 | 1.007 | 1.017 | *(n=2)* | *(n=0)* |
-| **48–90°** | *(n=242)* | **0.926** | 0.998 | *(n=0)* | *(n=0)* |
-| **90–400°** | **0.932** | **0.936** | *(n=30)* | *(n=0)* | *(n=0)* |
+| as-built V282 | −0.23 | 1.61 | 1.77× | 0.980 [0.971–0.983] | — |
+| **out-lag pole 15 Hz** 0xC63EC/EE 932/1458 | +1.84 | 0.63 | **0.72×** | — | 🛑 **DO-NOT-FLASH** (also ≥10 Hz: fires Honda's oscillation detector in 15/19 windows) |
+| out-lag pole 8 Hz 974/792 | +0.69 | 1.21 | 1.19× | 0.822 | WATERBED: 18–22 ↓ ×0.76, 26–33 Hz ↑ ×2.3 into the blind band; a plant discriminator, not a cure |
+| fb pole 0xC63E8/EA | — | — | — | — | gain lever only (rectified, multiplicative; no phase effect measured) — struck |
+| Kd 64–96 | — | 1.67–1.71 | ↑ | — | drags the sensitivity peak from 26 Hz INTO 20.7 Hz — closed |
+| Kp 160 | — | 1.38 | 1.91× | 0.912 | costs 35 % inner DC tracking; SteerKP headroom only 1.125× — unrecoverable |
+| **0xC6446 → 2048** | **+0.62** | 1.61 | 1.77× | **0.479** | the largest FREE lever for the **7.3 Hz stutter**; halves 20 Hz damping (1.52 → 0.68) — a stutter build, not a grind build |
+| **D clamp 0xC61B6 → 2560** | — | as-built hands-off | — | **1.038 (loaded)** | 🛑 FAILED adversary B: in hands-on bar>700 / loaded ang>60 / fast wheel >25 deg/s (20–28 % of engaged time) it clips the FEEDBACK derivative, Kd_eff 95 < the ~118 floor, ring re-armed |
+| **D clamp 0xC61B6 → 7680** | −0.29 | as-built | 1.77× | **0.983 (= gate)** | admissible in every stratum; onset envelope ×0.947 (r39) / ×0.930 (r3c); steady control ×1.000; **needs ≥ 1,150 command-step onsets ≈ 38 min engaged to resolve at 2 SE** |
 
-Across the top row (speed, near centre) it is **flat within ±4 %**; down the 6–9 m/s column (angle) it breaks hard at 48°.
+**The joint (pole, Kd) grid with today's margins held is EMPTY; the (Kd, 0xC6446, Kp) grid moves S@20 only through Kp.** V282's sensitivity peak already sits at **26.3 Hz** — every linear lever that helps 18–22 Hz feeds 26–33 Hz, where the 0x18F streams carry energy but not frequency (`TASK5`). [BELIEF for absolute margins — model (a), pessimistic ≥1.7× vs the measured GM 1.32× at Kp 470; EVIDENCE for every phase and for the rankings' direction]
 
-⭐ **THREE-WAY DECOMPOSITION of the angle→curvature mismatch** (r39): **FLAT** (ratio level) **0.006–0.012** — already spent by the map, do not touch · **ANGLE** (map knots ≥ 48°) **~0.09** — the big one, binds only at low speed · **SPEED** (near-centre slip) **0.042**, not resolvable.
+### ⭐ THE MECHANISM BEHIND THE D CLAMP, and why the staircase cannot be softened by calibration
+The openpilot command is a **100 Hz staircase**; the PID runs at 1 kHz on E = 32·sp − fb, so **32·Δsp is an impulse train** into D. At today's 10240, **93–100 % of the ticks on which D binds are setpoint-dominated and land on a command step** [EVIDENCE, 1 kHz mirror]. The clamp is already an excitation limiter. **But the setpoint path has NO memory anywhere from the 0xE4 byte to the error** — CAN decode store (0x526F2) → symmetric clamp → Q16 LERP scale → ›22 → clamp 240 (0xC64F0) → assist map → `shl 5` (an immediate) → `sub`. Structural test: a slew needs a RAM cell both written and read; the positive control finds the lag filter's state (gp-0x3d3c); the setpoint region has none [EVIDENCE, tracer addenda 5–6]. ⇒ **Softening the kick without touching feedback D is a CODE edit** (interpolate sp across the 10 ticks: ~10× less kick, zero DC cost) — the identified target, needs a new RAM state cell (GATE 1) and the cave discipline.
 
-**ARBITRATED ON A THIRD INSTRUMENT** [EVIDENCE]. Wheel-speed differential yaw from raw CAN **0x1D0** — no gyro, no roll model, no Kalman, no calibration matrix. 🛑 **`carState.wheelSpeeds` and `carState.yawRate` are BOTH identically zero on this platform** — dead channels; the real source is 0x1D0, now decoded as `w1d0_*` (backcalc schema v4). Rolling-radius mismatch calibrated out first (δ_rear +0.000628/+0.000703/+0.000747, which would fake +0.008–0.009 rad/s of yaw at 20 m/s). FWD **measured**, not assumed (front axle runs +0.016 m/s per m/s² of `aEgo`). Near-centre stratum (|sa| < 48°), scale-normalised, r39, 7–30 m/s: **spread 0.074 (wheel rear) / 0.037 (wheel front) / 0.054 (gyro)** against **0.155 / 0.089 / 0.096** unstratified. ⇒ **Restricting to near-centre roughly halves the spread on every instrument and leaves no resolvable crossing of 1.000. The excess is carried by ≥48° blocks, not by speed.** ⚠ The ≥48° stratum is itself **UNRESOLVED** on this instrument (10 gated blocks on r39) — large-angle events are transient and the steady-state gate removes them — so the map-knot finding rests on the two angle-fit pipelines, not on the wheel instrument.
+### 🛑 NEW: HONDA'S OSCILLATION DETECTOR IS LIVE (FUN_000428d4)
+Ungated, every tick: watches **gp-0x6c2c = a 39 Hz-filtered derivative of motor ROTOR angle** (cal 0xC40DC = **14 on V282, stock 22**), counts alternate crossings past ±12800 (40 % of its 32000 full scale), resets after 50 ticks (so only >10 Hz counts), and after 15/20 reversals ramps **×0.600 into the governor's Q15 motor-demand scale** (slot 2, MIN-fold, by register — the RAM mirror gp-0x6994 has no readers). **Not observed firing on any V282 episode** (no ×0.6 step in motion per unit T; the duration histogram is confounded by the detector floor). No cave comparator can read it (no RAM reference). The golden model's `motor_torque_governor` treats the scale as exogenous — **a gap to close**.
 
-### ✈ THE ONE CHANGE: raise the SR map's ≥48° knots ~×1.09. Everything else stays.
-`selfdrive/controls/lib/latcontrol_vehicle_tunes.py:86`, breakpoints unchanged:
-```
-was  HONDA_ACCORD_STEER_RATIO_V = [16.00, 16.00, 15.02, 14.52, 13.97, 13.75, 13.50, 12.81, 11.67, 11.06]
-now  HONDA_ACCORD_STEER_RATIO_V = [16.00, 16.00, 16.00, 15.83, 15.23, 14.99, 14.72, 13.96, 12.72, 12.06]
-```
-Measured at low speed where tyre slip is negligible **and the roll term is 0.3–1 % of the signal**, so it is a rack-geometry measurement, immune to both the tyre model and the bank:
-
-| \|angle\| | fitted SR | 95 % CI | map | map/fit |
-|---|---|---|---|---|
-| 0–10° | 16.362 | [15.86, 16.93] | 16.00 | 0.978 |
-| 10–25° | 16.072 | [15.51, 16.70] | 16.00 | 0.996 |
-| 25–48° | 16.554 | [16.11, 16.85] | 16.00 | 0.967 |
-| **48–76°** | **16.567** | [15.92, 17.09] | 15.05 | **0.909** |
-| **76–121°** | **15.278** | [15.24, 15.31] | 13.93 | **0.912** |
-| **121–200°** | **14.749** | [14.53, 14.96] | 13.62 | **0.924** |
-| **200–400°** | **14.081** | [14.04, 14.13] | 12.86 | **0.913** |
-
-Independently confirmed on a second instrument: at v < 9, `R_m` is **flat** across angle strata (1.07–1.21) while `1/rho` swings **1.086 (<48°) → 0.935 (≥121°)** — a 14 % move entirely on the measurement, replicated on all three arms. 🛑 **The earlier attribution of the low-speed shortfall to the P-only firmware deadband was WITHDRAWN by its own author; it is the map's high-angle knots.** ⭐ Because it is a LERP, the ≥48° knots move without touching the 0–48° flat segment, and **median |sa| above 11 m/s is 5–8°, so this cannot touch the highway behaviour.** ⚠ Direction solid across four bins; **magnitude rests on 3–8 s per bin** — if it overshoots, halve it (×1.045), do not revert. Knots scaled ×1.09 and clamped at 16.00 to keep the table monotone non-increasing.
-
-### ⭐ THE CAR'S TRUE LAT-ACCEL-PER-TORQUE IS ≈3.3 — and the LAF axis is NOT dead
-🛑 **RETRACTION: "the LAF dose is measurably inert" was an artefact of conditioning on `|setpoint| > 0.5`**, which selects only the top amplitude decile. Unconditioned whole-route road gain is **monotone**: 1.1215 [1.1031,1.1401] @ 2.11 → 1.1055 [1.0480,1.1580] @ 3.6 → **1.0387** [0.9588,1.1140] @ 4.0 (CIs still overlap — direction, not a resolved effect).
-
-| route | assumed LAF | n | median \|meas\|/\|ctrl\| | **LAF_true implied** |
-|---|---|---|---|---|
-| r39 | 2.11 | 19,514 | 1.515 | **3.20** |
-| r3c | 3.60 | 14,427 | 0.909 | **3.27** |
-| r3a | 4.00 | 13,155 | 0.841 | **3.37** |
-
-Three assumed values spanning 1.9×, implied truth agreeing to **5 %** — that invariance is the check that it measures the plant, not the assumption. It sits between the flown 2.11 and torqued's unused `latAccelFactorRaw` (4.89–5.84), and is a **third** number against the two prior sizings (4.0 and 9.5). **EVIDENCE-grade for "≈3.2–3.4", not for a third decimal. Recommendation: `SteerLatAccel` 3.6.** Priced trade by amplitude (road gain, gyro, SR-free): large-command **1.126 → 1.117 → 1.048**; small-command **0.794 → 0.547 → 0.540** (CIs do not overlap — but ⚠ **perfectly confounded with the `tsfdo` model swap**).
-
-**THE GAIN ERROR IS A FUNCTION OF COMMAND AMPLITUDE, NOT SPEED** [EVIDENCE, pooled, no curve selection]: gain vs speed **1.130 / 1.131 / 1.110 / 1.107** across 5–9 / 9–14 / 14–20 / 20–40 m/s — flat and marginally falling; gain vs |setpoint| **0.687 → 0.757 → 0.836 → 1.061 → 1.124 → 1.200 → 1.128**, a ~1.4× rise **present in every speed column separately**. Two regimes: below ~0.10 m/s² the feedforward **points the wrong way** (`f/setp` = −0.42/−0.46) because `ff = future_desired − roll·g·roll_offset_fade` and `roll·g` ≈ 0.22–0.33 m/s² exceeds the whole bin, with the fade already at 1.0 above 2.5 m/s; above 0.35 m/s² P and I both turn negative and the car still delivers 1.12–1.20×.
-
-### 🛑 THE STANDING CURVE ERROR IS REAL — and no mechanism proposed this session survives
-`pid_log.desiredLateralAccel = setpoint` and `pid_log.actualLateralAccel = measurement` (`latcontrol_torque.py:672-673`, verified at the flown commit), so **`R_m` is exactly the ratio the loop nulls** and the comparison-artefact hypothesis dies by construction. Physical folded raw error (`ctl_error / (1 + lsf/kp)`, kp 0.8) on r39: **−0.125 / −0.096 / −0.059 / −0.076 m/s²** by speed band, every CI excluding zero, against **−0.025 on straights**. Replicated on r3a/r3c.
-- ⭐ **CONFIRMED — the integrator cannot pre-charge against a direction-reversing bias.** Folded error −0.120 with **unfolded +0.014** on balanced L/R counts; unfolded `i` holds **+0.19** (road crown / alignment) while the direction-reversing part is never cancelled. This is the mechanism.
-- 🛑 **KILLED — the `k_i_eff`-vs-speed convergence story.** The arithmetic is right (`error_with_lsf = error × (1 + lsf/kp)`, `lsf ∝ 1/v²`, effective `k_i` falls 0.55→0.16, a measured 3.9–6.8× collapse, wire/pred 0.97–1.03). The mechanism is not what drives the signal: the dimensionless group `k_i_eff × T_curve` is **non-monotone** (rho −0.133, n 81); the residual is **smallest** at 22–40 m/s; τ(error) = **0.85 s against a 5.9 s median curve**, settling at `e_inf` = −0.167; `i` moves **2×** the error it fails to remove; and the error **GROWS** with time-in-curve (−0.023 → −0.266 over 3 s) where an unconverged integrator gives decay.
-- 🛑 **KILLED — the setpoint-construction / lead-term story.** Stripping the lead makes the excess **worse** (1.113 → 1.123 → 1.133 on r39, all three routes, both instruments). `R_m` is flat within 1.5 % across a **±0.30 s** setpoint shift and never approaches 1.000 ⇒ **it is a SCALE, not a phase.**
-- 🛑 **KILLED — the roll-compensation artefact.** Note the leading minus at `:232`: for `roll > 0` the term **adds** to the measurement and **lowers** `1/rho`, so it **masks** the spread rather than creating it. Deleting it takes r39's spread **0.131 → 0.318** and r3a's 0.106 → 0.374. Arithmetic closes to the digit (folded `Rm` +0.173 vs roll-free measurement 0.978 ⇒ bias factor 0.8495; 1.243 × 0.8495 = 1.056 vs 1.058 measured). The bank correlation is nonetheless real — `mean(roll·sign(turn))` +0.029…+0.064 rad at speed, while the *unfolded* mean goes negative, i.e. genuine road bank, **not** a constant mounting offset.
-- **STRUCK:** `get_honda_accord_ff_scale` sits at its 0.90 floor through most of every curve — a 9 % FF **cut**, wrong sign; removing it would make the over-delivery **bigger**. And `unwind_detected` is **exactly 0.0000 inside curves, structurally** (it needs |setpoint| < 0.3; a curve is > 0.5) ⇒ **STATE's "curve-exit unwind freeze" cannot act inside a curve at all.** Both closed.
-
-### 🛑 PINNED PARAMETERS — three now, all from the operator's own toggles
-1. `liveParameters.steerRatio` = **12.500000, sd 0.000e+00** — pinned by `ForceAutoTuneOff` (`paramsd.py:29-31`) *and* overwritten by the map (`controlsd.py:478`). Inert twice over.
-2. 🛑 `liveParameters.stiffnessFactor` = **1.000000, sd 0.000e+00** — same pin, but **NOT inert**: it flows `controlsd.py:468` → `update_params` → `cF`/`cR` → `calc_slip_factor` → `curvature_factor(v)`. **The only live handle on the speed-dependent term, and it has never been allowed to learn.** Sign: `sf ∝ 1/x`, so raising it REDUCES modelled understeer. **Do not move it** — the decomposition puts the near-centre speed term at 0.042 and not resolvable.
-3. `liveDelay.lateralDelay` = **0.200000, sd 0.0000** — pinned by `SteerDelay` with `UseAutoSteerDelay` = 0; `lat_delay` = 0.300 s exactly on all three routes. Not a cross-route confound.
-paramsd IS running and converging — `angleOffsetDeg` and `roll` vary continuously with thousands of unique values. Only the SR and stiffness **outputs** are discarded at publish.
+### CORRECTIONS OF RECORD (2026-09-06)
+1. **The D clamp is `0xC61B6`; `0xC61BA` is the integrator anti-windup** (both 10240; the build scripts always had it right; assert on the ADDRESS).
+2. **The 102 deadband `0xC61B8` is gated OFF when engaged** (block at 0x2A1BC skipped when gp-0x6806 ≠ 0) → the "P-only deadband = 0xC61B8" attribution of r39's stall runs is **WITHDRAWN**.
+3. The fb filter has **no ›5** (DC 30.89); the lag filter's DC formula does not apply to it. 963/986 is +2 % DC; 842/2814 is 31.1 Hz.
+4. 0xC63EC/EE and 0xC61B6 each have extra readers inside a **duplicate, unreachable PID copy at 0x2A508** (entered only via a `dispose …, lp` return). GATE 1 passes for both. New scan trap: `prepare` collides with jr/jarl on the Format-V opcode test → odd "targets" are false positives.
+5. The deep analysis's LKAS-lane phase at 20 Hz (−69°) was **modelled**; measured −86° (τ 3.9 ms) → the servo lane is near-pure quadrature at 20 Hz, **essentially all 20 Hz damping is r24's** (sum +2.06 → +1.52).
+6. D and the PID sum (gp-0x6b36/34) are **write-only** — the clamp's binding is observable only through T; with Ki 0, on rising steps where P rails and sign(D)=sign(P) the sum clamp masks the edit exactly (Q1 is conditioned on it).
+7. 0x14A bit-6 duty rises mechanically under any D-clamp dose (T's kick shrinks) — **score it differentially; V282's 0.22/0.10 thresholds do not transfer**.
 
 ### ✈ NEXT — in order
-1. **Fly the ≥48° map knots ALONE** (branch `accord-sr-map-ge48deg` off the flown `ffe28378f`; ⚠ local `Dom` shares **no history** with the flown commit and `origin/Dom` is 2158 commits off it — **do not push to `Dom`**). Score on the operator's hard-turn feel and on `1/rho` in the ≥48° strata.
-2. **`SteerLatAccel` → 3.6**, not with the map change on the same drive.
-3. 🛑 **INSTRUMENT `steer_limited_by_safety`.** It fires on **29–37 % of curve frames** and is **not logged**. It is symmetric in the error sign (0.311 vs 0.303 on r39) and `R_m` is identical with and without it, so it does **not** carry the anomaly — but on a modded EPS pushing authority into the safety rate limiter it is the largest unmeasured term in the loop. `starpilot_lateral_state` already logs `unwindDetected` and `lowSpeedFactor`; `backcalc_extract.py` does not capture them.
-4. **A deliberate large-angle data pass** before trusting the ≥48° magnitude — 3–8 s per bin is the whole basis, and normal driving barely samples that regime.
-5. Still open from r39, unchanged: the **plant-magnitude identification drive** (427 `T` tap and 0x18F rate simultaneously under broadband excitation).
+1. **Decide on V287 rev 2.** Adversary B on rev 2: PASS WITH CONDITIONS — admissible in every stratum on its own machinery, authority clean, BUT the ring gate |L_tot| = 0.983 has zero margin and the multiplier it turns on is measured at 0.990 (shape) vs 0.970–0.983 (B), i.e. not to gate precision. ⇒ the ring is judged by **Q10** (6–9 / 18–22 Hz at |ang|>60, FAIL > ×1.9/×2.3, margins ×1.75/×1.78) and the operator's stutter report, Q5 is REPORTED; **Q2 is read PAIRED against the 10240-mirror on the same drive** (a two-drive comparison never resolves: 2·SE floor 7.8 % vs a 5.3 % effect); Q6 > ×1.9 route-wide. Read Q1 liveness first. Paired Q2 (1.0 s onset windows, predicted ×0.957) has a measured paired SE of 3.2–5.0 %, so it resolves at 2 SE with ~650–810 onset events ≈ 22–27 min engaged ≈ 1.5 normal routes; the mirror under-predicts the tap's 18–22 Hz content by 18–28 % (cancels in the ratio if stable — recorded).
+2. **Spec the setpoint-interpolation cave** (the real grind #1 fix): GATE 1 for a new state cell, hook site near 0x29D76, instrument = 427 tap vs mirror on step ticks, dose = interpolation depth.
+3. **0xC6446 → 2048 as a labelled STUTTER build** if the 7.3 Hz ring is the next symptom to treat.
+4. **Creep/onset exposure drive on V282** (hands-off 1–3 m/s, several minutes) — sizes every endpoint's n and SE.
+5. Golden model: add the governor's 7-slot MIN-fold and the oscillation detector.
+6. Open: r3c t 232 s burst (P rail active 73 %, a different mechanism); the 80/120 Hz alias (audio); Task 5's rate on a second method.
 
-### 🛑 DEFECTS FOUND OR CLOSED THIS SESSION
-1. ✅ **CLOSED — dec39's 91-field cache had no driver in the repo.** Reconstructed as `rlog-tools/decode/extract_r39_r3a_r3c.py`; it reproduces `r39.npz` **byte-for-byte** (sha256 `9563baa9…`, 16,014,213 B, all 91 fields equal) and `_events`/`_census_seg`/`_segments` JSON byte-identical.
-2. ✅ **FIXED — `backcalc_extract.py` mixed the two 0x0E4 sources.** `m.src >= 128` caught the stock camera (src 128) alongside openpilot (129); now `E4_SRC = 129`. Measured: the old rule held **exactly 2×** the frames (144,451 → 72,057) and `e4_req` mean 0.3424 → 0.6678. **69 of 73 fields were bit-identical.** New provenance keys `e4_src_rule` / `gap_starts` / `gap_ends` / `segments_present` / `segments_missing`; schema v4 adds `w1d0_*`. ⚠ **The 9 legacy `_backcalc.npz` still carry the old rule and lack `e4_src_rule` — that absence is the tell.** Unsafe only in `e4_cmd`/`e4_req`/`eng_wire`; not rebuilt.
-3. ✅ **FIXED — `r39_1ab.json`'s 427 descriptor was wrong.** `0.2 → 8.0` counts/LSB; the kit's sar-3 (×8) decode is correct, bit 9 is the sign (`b0 ∈ {128,130}`, magnitude max 207–213 vs a 1023 ceiling). No measured value changed.
-4. **REPORTED, NOT FIXED — `extract_r39_v280cache.py` records each segment's `lo` from `initData`**, which is the process-start stamp, so `r39_marks.json`'s `lo_route`/`t_in_seg` are meaningless and any gap computed from `lo` comes out negative. `r39.npz` data unaffected; STATE's `MARKS` are `t_route` and unaffected. New extractors add `lo_can`.
-5. **`carState.wheelSpeeds` and `carState.yawRate` are identically zero** on this platform — dead channels that return a silent zero rather than an error.
-6. **The dongle's route counter RESET** — two routes numbered `0000003a`. Check the epoch of every cache before a cross-route comparison. (Standing.)
 
 ---
 
