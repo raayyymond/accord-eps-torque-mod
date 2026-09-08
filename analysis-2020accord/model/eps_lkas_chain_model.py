@@ -120,6 +120,35 @@ model/eps_lkas_chain_model.py
       "FUN_0003b8f6"             the 1 kHz plant model (K0 0xC4080, K1 0xC40D2, relay 0xC40BC)
       "OSTM0"                    ⚠ the 80 MHz red herring — PCLK is 40 MHz, OSTM0 is 500 Hz.
                                  The 1 kHz control-task rate is anchored on 0xC64DF, NOT on OSTM0.
+    V288 -- THE LKAS RATE-PID SETPOINT PRE-FILTER (added 2026-09-07). Grep `lkas_setpoint_prefilter`
+    [control]. V288 is a 48-byte CODE CAVE at 0xC4C00..0xC4C2F, hooked at 0x29D72 by replacing the
+    stock DEAD store `st.h r16,-0x6a32,gp` with a `jr`, and returning to the untouched `shl 0x5,r16` at 0x29D76.
+    It low-passes the RATE SETPOINT (the assist-map output sp, int16, +-1032 on the live selector 7 and
+    +-1128 worst case) before the error former builds E = 32*sp - fb:
+        y[n] = y[n-1] + ((sp - y[n-1]) >> K),  K = 4,  plus a forced +1 when the shift floors a
+        strictly positive difference to zero. `sar` floors toward -infinity, so a negative difference
+        never floors to zero and needs no matching -1 arm.
+    THE DELTA IN THIS MODEL, in full:
+      * Calibration.spfilt_k  [core] -- None = stock/V282 and every build before it (the pre-filter is
+        an identity and touches no state, so all pre-V288 output is bit-for-bit unchanged); 4 = V288.
+        It is a FLAG, not a firmware cal cell: there is no stock byte to change, only a cave to add.
+      * EpsState.sp_filter_y  [core] -- gp-0x6a32, int16. Stock writes it and nobody reads it; V288
+        repurposes the same cell, at the same address and width, as the filter state y[n-1].
+      * EpsState.pid_prev_err_cell [core] -- gp-0x6cf8, int32. Honda's own previous-E cell, written
+        every tick at 0x2A18C, carrying 0x7FFFFFFF on the three hook-skipping routes. V288's prologue
+        loads it into r6, materialises the sentinel in full into r9 with a 6-byte `mov 0x7fffffff,r9`,
+        and does an EXACT 32-bit `cmp r9,r6`; on a match it sets y := sp, so the first engaged tick
+        after a gap is byte-identical to V282 instead of ramping from a stale y. (An earlier cut of
+        the cave used a `sar 0x1c` + `cmp 0x7` top-nibble test, which accepted a whole BAND rather
+        than one value. Safe, but superseded and NOT what shipped.)
+      * lkas_setpoint_prefilter() [control] and _self_check_v288() (not exported; called from
+        _self_check(), asserts only, so the hashed stdout is unchanged).
+    🛑 THE STAGE IT FEEDS IS NOT IN THIS MODEL. Nothing here forms E = 32*sp - fb, and no Kp/Kd bank
+    (0xCB994 / 0xCB7D4) or 0xC61B6 D clamp appears in any of the five modules, so control_task() does
+    NOT call the pre-filter -- there is no consumer to call it from. It is an exact standalone mirror
+    of the cave, ready for the one correct call site (immediately before the x32) when the rate PID is
+    added. Adding that PID is a SEPARATE open item. See SECTION 5B in eps_chain_control.py.
+
     ⚠ Line-number citations of the form `model/eps_lkas_chain_model.py:NNNN` written before 2026-08-12
       (in build scripts, handoffs and memories) point into the PRE-SPLIT file and are now STALE.
       Grep for the symbol name instead.
@@ -528,6 +557,7 @@ from eps_chain_control import (
     governor_step_selector_bandwidth,
     limit_distribute_mixer_gate,
     lkas_iir_quantization_analysis,
+    lkas_setpoint_prefilter,
     motor_torque_demand_aggregator,
     motor_torque_governor,
     openpilot_command_slew_invariance,

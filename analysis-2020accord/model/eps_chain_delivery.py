@@ -72,6 +72,7 @@ from eps_chain_lanes import (
 )
 from eps_chain_control import (
     GOVERNOR_RATE_SLOPE_Q13,
+    _self_check_v288,
     a160_governor_rate_cap,
     computed_runtime_governor,
     engage_decider,
@@ -503,6 +504,10 @@ def _self_check():
     assert soft_eme_windup_shaper(SensorInputs(), q15, Calibration.for_build("V9")) == 1000
     assert q15.soft_eme_integrator_q15 == 1000 << 15
     assert q15.authority == (1000 * 1092) >> 10
+
+    # V288 setpoint pre-filter. Asserts only -- prints nothing, so this function's stdout (and the
+    # hashed _self_check()+_demo() output) is unchanged by V288's arrival.
+    _self_check_v288()
 
 
 def _demo():

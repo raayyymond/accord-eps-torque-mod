@@ -291,7 +291,7 @@ Only these other things need saying:
 
   | file | KB | contents |
   |---|---|---|
-  | `analysis-2020accord/model/eps_lkas_chain_model.py` | 31 | **FACADE** — re-exports all 87 symbols; `import eps_lkas_chain_model` still works unchanged |
+  | `analysis-2020accord/model/eps_lkas_chain_model.py` | 31 | **FACADE** — re-exports all 88 symbols; `import eps_lkas_chain_model` still works unchanged |
   | `analysis-2020accord/model/eps_chain_core.py` | 37 | SECTIONS 0–1 — `Calibration`, containers, helpers |
   | `analysis-2020accord/model/eps_chain_lanes.py` | 119 | SECTIONS 2–3 — CAN intake, torque voter, base assist, boost index, the rate lanes |
   | `analysis-2020accord/model/eps_chain_control.py` | 90 | SECTIONS 4–6 — engage SM, arbitration, mixer/gate, aggregator, governor, analyses |
@@ -299,7 +299,7 @@ Only these other things need saying:
 
   Dependency order is strict and acyclic: `core` → `lanes` → `control` → `delivery`. **Keep it updated.**
   🛑 **VERIFICATION CONTRACT — re-run it after ANY edit to these files:** `import eps_lkas_chain_model`
-  must expose **exactly 87 symbols** (NON-DUNDER: `[x for x in dir(M) if not x.startswith("__")]` — this INCLUDES the 11 underscore-prefixed helpers; counting only public names gives 76 and looks like a broken contract), and `_self_check()` + `_demo()` stdout must hash to
+  must expose **exactly 88 symbols** (NON-DUNDER: `[x for x in dir(M) if not x.startswith("__")]` — this INCLUDES the 11 underscore-prefixed helpers; counting only public names gives 77 and looks like a broken contract; 87→88 on 2026-09-07 when `lkas_setpoint_prefilter` was added for V288), and `_self_check()` + `_demo()` stdout must hash to
   **`740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d`** (2,512 bytes).
 
 - 🛑 **CITE BY HEADING OR GREP STRING, NEVER BY LINE NUMBER.** The golden model split on 2026-08-12 and

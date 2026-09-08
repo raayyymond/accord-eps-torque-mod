@@ -113,6 +113,17 @@ class Calibration:
                                          # 15360; raising is safe (no float twin). V38 patches all 8
                                          # reachable per-part-number records (72 halfwords total,
                                          # builds/v18_v49/build_v38_tva.py, verifies 49/49).
+    # ---- V288 LKAS RATE-PID SETPOINT PRE-FILTER (a CODE CAVE, not a stock cal) ---------------------
+    # None  = stock / V282 behaviour: the raw assist-map output goes straight into the `shl 5`. Every
+    #         build up to and including V287 is this, and `lkas_setpoint_prefilter` is then bypassed,
+    #         so the model's output is byte-identical to before this field existed.
+    # 4     = V288 (K_SHIFT=4, the built dose): y[n] = y[n-1] + ((sp - y[n-1]) >> 4), with the +1
+    #         creep rung, i.e. a one-pole low-pass on the RATE SETPOINT ahead of the error former.
+    # This is NOT a calibration cell -- there is no stock byte to change. It selects whether the
+    # 48-byte cave at 0xC4C00..0xC4C2F (hooked at 0x29D72) is present in the image. Modelled as a cal flag so a
+    # V288 run and a V282 run differ by one Calibration field. See lkas_setpoint_prefilter().
+    spfilt_k: Optional[int] = None
+
     assist_ramp_ticks: int = 10          # tp+0x74d1 * 10; assist engage-ramp dwell per state (gp-0x68c8)
     distribute_lkas_lane_clamp: int = 0x2800   # LKAS rides the +/-0x2800 distributor lane
     mixer_gate_clamp: int = 0x2800       # gate: |x|<=0x2800 ? x : 0x7FFF-sentinel
@@ -322,6 +333,21 @@ class EpsState:
     """Persistent RAM the state machines carry between ticks. gp-relative address in each comment."""
     # ---- LKAS command pipeline stages ----
     lkas_setpoint: int = 0        # gp-0x69ae (0xFEDF1652) clamp(STEER_TORQUE*-4)
+    # ---- V288 setpoint pre-filter state (only touched when cal.spfilt_k is not None) ----
+    sp_filter_y: int = 0          # gp-0x6a32 (0xFEDF15CE), int16. STOCK: a DEAD publish of the raw
+                                  # assist-map output, written at 0x29D72 and read by nobody. V288's
+                                  # cave repurposes it as the filter state y[n-1]; the store at
+                                  # 0xC4C20 replaces the displaced stock store, so the cell keeps its
+                                  # address and its width and only its MEANING changes.
+    pid_prev_err_cell: int = 0x7FFFFFFF   # gp-0x6cf8 (0xFEDF1308), int32. Honda's own "previous E"
+                                  # for the rate PID's D term, written EVERY tick by the single store
+                                  # `st.w r16,-0x6cf8,gp` @0x2A18C in the PID's SHARED EPILOGUE. The
+                                  # three hook-skipping routes (0x29A5C / 0x29A64 -> 0x2A164, and
+                                  # 0x29A70 -> 0x2A0C6) load 0x7FFFFFFF instead (the only two sites
+                                  # are 0x2A16C and 0x2A0EA) and store THAT, so the sentinel means
+                                  # "the previous tick did not execute 0x29D72". Honda already uses
+                                  # this same cell as its own first-tick-after-gap guard at 0x29E5E.
+                                  # Defaults to the sentinel: a fresh EpsState IS "first tick".
     arb_command: int = 0          # gp-0x6b3c (0xFEDF14C4) arbitration gated command
     mixed_command: int = 0        # gp-0x6b4c, LKAS-internal lane into the demand aggregator
     secondary_mixer_command: int = 0  # gp-0x6afe, separate lane consumed at final shaper output

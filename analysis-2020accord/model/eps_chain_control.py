@@ -152,6 +152,194 @@ def dtc49_fault_counter(arb_torque_byte: int, st: EpsState, cal: Calibration) ->
         pass
 
 
+# -----------------------------------------------------------------------------------------------------
+# SECTION 5B -- V288: THE LKAS RATE-PID SETPOINT PRE-FILTER  (cave 0xC4C00..0xC4C2F, hook 0x29D72)
+# -----------------------------------------------------------------------------------------------------
+# 🛑 MODELLING GAP, RESTATED HERE BECAUSE IT BOUNDS WHAT THIS FUNCTION CAN DO IN THE MODEL.
+# The LKAS RATE PID -- the stage that forms E = 32*sp - fb at 0x29D76 (`shl 0x5,r16`) and runs Kp/Kd
+# from the per-variant banks (Kp 0xCB994, Kd 0xCB7D4, 28 slots, live selector 7) -- IS NOT REPRESENTED
+# ANYWHERE IN THIS MODEL. steer_torque_arbitration() below is FUN_00028ea6, the SAME function the hook
+# sits inside (its docstring already cites 0x29a78), but it models only the setpoint LERP limit, the
+# Q15 gain and the two inlined SMs. It stops short of the error former. Grep confirms: no `<< 5`, no
+# `* 32`, no Kp/Kd bank, no 0xC61B6 D clamp anywhere in eps_chain_{core,lanes,control,delivery}.py.
+# (The 10240 clamp cited in SECTION 6B is a DIFFERENT PID -- gp-0x6ad4 at 0x3a7d0 -- not this one.)
+# ⇒ CONSEQUENCE: this function is an EXACT, executable, standalone mirror of the cave, but nothing in
+#   control_task() calls it yet, because the stage it feeds does not exist to be fed. When the rate PID
+#   is added to the model, the ONE correct call site is immediately before the x32:
+#       sp  = <assist-map output>                       # the value stock stores at 0x29D72
+#       sp  = lkas_setpoint_prefilter(sp, st, cal)      # V288 -- returns sp unchanged when spfilt_k is None
+#       E   = (sp << 5) - fb                            # 0x29D76 `shl 0x5,r16`, then the sub at 0x29D78
+#   Do NOT insert it anywhere else: the cave physically REPLACES the store at 0x29D72 and returns to
+#   0x29D76, so it is strictly between the map output and the shift.
+#
+# WHAT THE CAVE IS. sp is the assist-map output, an int16 bounded by +-1032 on the live selector 7 and
+# +-1128 across every reachable record, so the int16 round-trip through gp-0x6a32 is LOSSLESS. The
+# filter is a one-pole low-pass with an integer creep rung: y[n] = y[n-1] + ((sp - y[n-1]) >> K), plus
+# a forced +1 whenever the shift floors a strictly positive difference to zero, so a rising step always
+# converges instead of stalling one LSB short. `sar` floors toward -infinity, so a NEGATIVE difference
+# can never produce step 0 (it lands on -1 at worst) -- that is why only the +1 arm exists in the cave.
+#
+# THE ENGAGE-INIT PROLOGUE. Without it, the first engaged tick after a gap would ramp y from a stale
+# value at 1/16th per tick and deliver a soft, wrong setpoint for ~60 ms. The prologue reads Honda's
+# own shared-epilogue cell gp-0x6cf8 into r6, materialises the sentinel IN FULL into r9 with a 6-byte
+# `mov 0x7fffffff,r9`, and does an EXACT 32-bit `cmp r9,r6`. On the sentinel the cave branches straight
+# to the store at 0xC4C24 with r16 still holding the RAW sp, so y := sp and that tick is byte-identical
+# to V282.
+# ⚠ HISTORY, because the model briefly mirrored the other form: an earlier cut of this cave tested the
+#   sentinel as `sar 0x1c` then `cmp 0x7` (0x7FFFFFFF >> 28 == 7, while any real E shifts to 0 or -1).
+#   That was SAFE -- |E| is bounded by 32*1128 + 46080 = 82176 against a 7 << 28 = 1879048192 tag, a
+#   margin of 22863x -- but it accepted a whole BAND, every value in [0x70000000, 0x7FFFFFFF], where
+#   the exact compare accepts one value. The shipped cave is the exact compare. The two agree on every
+#   reachable input; only the exact compare is what is in the image, and it is what is modelled here.
+# 🛑 The model's PID reset must NOT clear sp_filter_y. The firmware does not: the cave is SKIPPED on
+#   those ticks (they never reach 0x29D72), so gp-0x6a32 simply retains whatever it last held, and the
+#   sentinel in gp-0x6cf8 is what makes the next engaged tick overwrite it. Zeroing y here would model
+#   a store that does not exist.
+# 🛑 0x2A164 is a SHARED EPILOGUE, not a private reset path -- three unconditional `br` (from 0x2A14A,
+#   0x2A15E, 0x2A162) enter the same store block at 0x2A174. Anything written there fires EVERY tick.
+
+def lkas_setpoint_prefilter(sp: int, st: EpsState, cal: Calibration) -> int:
+    """
+    V288's setpoint pre-filter: the value the rate PID's error former should see in place of the raw
+    assist-map output. Returns `sp` UNCHANGED and touches no state when `cal.spfilt_k is None`
+    (stock/V282 and every build before it), so every pre-V288 result is bit-for-bit preserved.
+
+    [EVIDENCE] Mirrors the FINAL cave at 0xC4C00..0xC4C2F instruction for instruction, against
+    analysis-2020accord/builds/v108_plus/build_v288_tva.py at sha256
+    31b7524ae2a4cf268c619ced83b94fc8a58145ebd49d3e665bbd5b0006cb16a5 (hash verified here, not taken on
+    report). The addresses are re-derived from that file's own encoder widths -- f1/f2/bcond emit 2
+    bytes, f67/ld_h/st_h/ld_w/jr emit 4, and `mov_imm32` emits 6 -- giving a 14-byte prologue, a
+    22-byte body, an 8-byte tail and a 4-byte `jr`, i.e. 48 bytes total with the store landing at
+    0xC4C24. That reproduces the emitted listing exactly.
+    ⚠ TWO STALE COMMENTS IN THAT BUILD SCRIPT, both cosmetic, neither affecting the built image:
+    its `FILT` line still reads "(44 B) -> 0xC4C00..0xC4C2B" and its `filter_cave` docstring still
+    says "PROLOGUE (rev 2) ... 10 bytes"; both describe the superseded top-nibble prologue. The script
+    computes the real extent dynamically (`f_lo, f_hi = FILT, FILT + len(filt_bytes)`), so every
+    overlap and free-space check uses the true 48 bytes. Its OWN Python mirror `sp_filter_tick` is
+    also stale, carrying the earlier 0xC4BDC.. addresses and no prologue at all. Trust this function.
+
+    Live-register contract at the hook, for anyone extending this: r10 (cal 0xC62E4, loaded 0x29D6E,
+    consumed 0x29D7E) and r26 (the rate feedback fb, consumed 0x29D78) MUST survive the cave and are
+    never touched; r6 and r9 are dead scratch; PSW is free because `cmp r10,r6` @0x29D7E re-sets the
+    flags before the first consumer, `ble` @0x29D82.
+    """
+    k = cal.spfilt_k
+    if k is None:
+        return sp                     # no cave in the image: 0x29D72 is the stock dead store
+
+    # -- PROLOGUE: the engage-init test. r6 and r9 only; r16 (= sp) is untouched on both arms. -------
+    r6 = st.pid_prev_err_cell         # 0xC4C00  ld.w  -0x6cf8[gp],r6   Honda's shared-epilogue cell,
+                                      #                                 as the PREVIOUS tick left it
+    r9 = 0x7FFFFFFF                   # 0xC4C04  mov   0x7fffffff,r9   (6-byte mov_imm32: the sentinel
+                                      #                                 materialised IN FULL)
+    if r6 != r9:                      # 0xC4C0A  cmp   r9,r6   -- an EXACT 32-bit compare, so no band
+                                      # 0xC4C0C  be    0xC4C24  of ordinary values can be mistaken for
+                                      #                         the sentinel. Taken means y := raw sp.
+        # -- BODY: the filter proper. Reached only when the previous tick ran this hook. ------------
+        r9 = _signed16(st.sp_filter_y)  # 0xC4C0E  ld.h  -0x6a32[gp],r9   y[n-1], sign-extended
+        r16 = sp - r9                 # 0xC4C12  sub   r9,r16            -> d, 32-bit signed
+        r6 = r16                      # 0xC4C14  mov   r16,r6            keep d for the zero test
+        r16 = r16 >> k                # 0xC4C16  sar   K,r16             -> step (ARITHMETIC: floors)
+        if r16 == 0:                  # 0xC4C18  cmp   0x0,r16
+                                      # 0xC4C1A  bne   0xC4C22 (the add)
+            if r6 != 0:               # 0xC4C1C  cmp   0x0,r6
+                                      # 0xC4C1E  be    0xC4C22 (the add)
+                r16 = 1               # 0xC4C20  mov   0x1,r16   only for 0 < d < 2^K; sar never
+                                      #                          floors a NEGATIVE d to 0
+        r16 = r16 + r9                # 0xC4C22  add   r9,r16            -> y[n]
+    else:
+        r16 = sp                      # sentinel arm: r16 still holds the raw sp, so y := sp
+
+    # -- TAIL, shared by both arms. -----------------------------------------------------------------
+    st.sp_filter_y = r16 & 0xFFFF     # 0xC4C24  st.h  r16,-0x6a32[gp]   low 16 bits only
+    r16 = _signed16(st.sp_filter_y)   # 0xC4C28  ld.h  -0x6a32[gp],r16   read BACK: register and cell
+                                      #                                  can never diverge
+    return r16                        # 0xC4C2C  jr    0x29d76 -> the untouched `shl 0x5,r16`
+
+
+def _self_check_v288():
+    """V288 pre-filter assertions. Called from _self_check(); prints NOTHING, so the hashed
+    _self_check()+_demo() stdout is unchanged."""
+    stock = Calibration()                       # spfilt_k is None
+    v288 = replace(Calibration(), spfilt_k=4)
+
+    # 1. DEFAULT OFF is a true identity: sp passes through and NO state is touched.
+    st = EpsState(sp_filter_y=1234, pid_prev_err_cell=0)
+    assert lkas_setpoint_prefilter(777, st, stock) == 777
+    assert (st.sp_filter_y, st.pid_prev_err_cell) == (1234, 0)
+
+    # 2. The engage-init sentinel passes sp straight through and seeds y (a fresh EpsState IS "first
+    #    tick"), so the first engaged tick after a gap is byte-identical to V282.
+    st = EpsState(sp_filter_y=-900)             # stale y from before the gap
+    assert st.pid_prev_err_cell == 0x7FFFFFFF
+    assert lkas_setpoint_prefilter(600, st, v288) == 600
+    assert _signed16(st.sp_filter_y) == 600
+
+    # 3. A PID reset does NOT clear y -- the cave is skipped on those ticks, so gp-0x6a32 persists.
+    #    Only the sentinel in gp-0x6cf8 makes the next engaged tick overwrite it.
+    st.pid_prev_err_cell = 0x7FFFFFFF           # what 0x2A16C/0x2A0EA store, via 0x2A18C
+    assert _signed16(st.sp_filter_y) == 600     # y survived the reset
+
+    # 3b. The compare is EXACT, not a top-nibble band. 0x7FFFFFFE and 0x70000000 both shift to 7
+    #     under the superseded `sar 0x1c` test, so they are precisely the values that would separate
+    #     the two forms -- both must take the FILTER arm, not the seed arm.
+    for near_miss in (0x7FFFFFFE, 0x70000000, 0x7F000000):
+        st = EpsState(sp_filter_y=0, pid_prev_err_cell=near_miss)
+        assert lkas_setpoint_prefilter(1032, st, v288) == 64      # filtered, NOT seeded to 1032
+    st = EpsState(sp_filter_y=0, pid_prev_err_cell=0x7FFFFFFF)
+    assert lkas_setpoint_prefilter(1032, st, v288) == 1032        # only the exact value seeds
+
+    # 4. The rising step converges EXACTLY, never stalling short: the +1 rung guarantees progress.
+    st = EpsState(sp_filter_y=0, pid_prev_err_cell=0)
+    for _ in range(4000):
+        y = lkas_setpoint_prefilter(1032, st, v288)   # the live-selector-7 map maximum
+        if y == 1032:
+            break
+    assert y == 1032
+
+    # 5. The falling step also converges EXACTLY, with NO +1 arm needed: `sar` floors toward
+    #    -infinity, so a negative difference lands on -1 at worst and never on 0.
+    for _ in range(4000):
+        y = lkas_setpoint_prefilter(0, st, v288)
+        if y == 0:
+            break
+    assert y == 0
+
+    # 6. Decay from a negative y reaches EXACTLY 0 too (the -inf floor does not overshoot).
+    st = EpsState(sp_filter_y=_signed16(-1032) & 0xFFFF, pid_prev_err_cell=0)
+    for _ in range(4000):
+        y = lkas_setpoint_prefilter(0, st, v288)
+        if y == 0:
+            break
+    assert y == 0
+
+    # 7. The int16 round-trip is LOSSLESS over the whole reachable setpoint range (+-1128 worst case
+    #    across every record, +-1032 on the live selector), on both signs and at every K we could ship.
+    for kk in (1, 2, 3, 4, 5, 6):
+        cal_k = replace(Calibration(), spfilt_k=kk)
+        for target in (-1128, -1032, -1, 0, 1, 1032, 1128):
+            st = EpsState(sp_filter_y=0, pid_prev_err_cell=0)
+            for _ in range(200000):
+                y = lkas_setpoint_prefilter(target, st, cal_k)
+                if y == target:
+                    break
+            assert y == target, (kk, target, y)
+            assert -32768 <= _signed16(st.sp_filter_y) <= 32767
+
+    # 8. One-tick arithmetic, hand-checked against the cave at K=4:
+    #    d = 1032-0 = 1032; 1032 >> 4 = 64; y = 0 + 64 = 64.
+    st = EpsState(sp_filter_y=0, pid_prev_err_cell=0)
+    assert lkas_setpoint_prefilter(1032, st, v288) == 64
+    #    d = -1032-0 = -1032; -1032 >> 4 = -65 (FLOORS, it is not -64); y = -65.
+    st = EpsState(sp_filter_y=0, pid_prev_err_cell=0)
+    assert lkas_setpoint_prefilter(-1032, st, v288) == -65
+    #    d = 1 (0 < d < 16, so the shift floors to 0 and the +1 rung fires); y = 1.
+    st = EpsState(sp_filter_y=0, pid_prev_err_cell=0)
+    assert lkas_setpoint_prefilter(1, st, v288) == 1
+    #    d = 0 -> step stays 0, y unchanged (converged; the +1 rung is NOT reached).
+    assert lkas_setpoint_prefilter(1, st, v288) == 1
+
+
 def steer_torque_arbitration(sensors: SensorInputs, st: EpsState, cal: Calibration) -> int:
     """
     Limit the LKAS setpoint, apply the Q15 gain/clamp, and run the two inlined SMs (driver assist is

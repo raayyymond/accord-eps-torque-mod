@@ -70,6 +70,7 @@
  "limit_distribute_mixer_gate",
  "lkas_iir_quantization_analysis",
  "lkas_process_steer_cmd",
+ "lkas_setpoint_prefilter",
  "motor_pwm_output",
  "motor_torque_demand_aggregator",
  "motor_torque_governor",
