@@ -340,6 +340,395 @@ def _self_check_v288():
     assert lkas_setpoint_prefilter(1, st, v288) == 1
 
 
+# -----------------------------------------------------------------------------------------------------
+# SECTION 5C -- V289: THE SUM NOTCH (cave 0xC4C00..0xC4C8B, hook 0x2A174) AND THE FEEDBACK-LAG POLE
+#               (stock 0x28F7C..0x28FBE, cals 0xC63E8/0xC63EA)                       added 2026-09-08
+# -----------------------------------------------------------------------------------------------------
+# 🛑 SAME MODELLING GAP AS SECTION 5B: the LKAS rate PID is NOT in this model, so NEITHER function below
+# has a caller yet. Both are EXACT standalone mirrors, decoded from the BUILT V289 IMAGE (sha256
+# f0c10c29752d2b9bc4ec510800cd4de58166ebbb87f05613b5ee8e7af339a3ed) with an independent field-layout
+# decoder that was positive-controlled against Ghidra's listing of the stock 0x2A13A-0x2A1B4 window on
+# the V282 image. When the rate PID is added, the two call sites are fixed by the bytes:
+#     fb  = lkas_fb_lag(x, st, cal)                # 0x28F7C..0x28FBE: r26 -> r16, the fb the error
+#     ...                                           #   former subtracts at 0x29D78
+#     S   = clamp(P + D, +-cal.sum_clamp)           # 0x2A13E..0x2A162, the four routes converging at
+#     S   = lkas_sum_notch(S, st, cal)              # 0x2A174 -- V289 -- identity when sum_notch is None
+#     st.pid_sum_publish = S                        # 0x2A17C `st.h r12,-0x6b2e,gp`, then the lag at
+#                                                   #   0x2A180.. (`mul r7,r12` with r7 = cal 0xC63EE)
+# The cave sits strictly between the sum clamp and the 0x2A17C publish; it filters r12 IN PLACE and
+# replicates the displaced `ld.hu 0x73ee,tp,r7` as its last act, so nothing downstream of 0x2A178
+# can tell it was there except through the value of r12.
+#
+# WHAT THE CAVE IS (all from the bytes; the builder's docstring was read AFTER and agrees):
+#   A second-order notch in TRANSPOSED DIRECT FORM II with FIRST-ORDER ERROR FEEDBACK, Q14:
+#       acc = b0*x + s1 + e            e = last tick's remainder, 0..16383   (0xC4C00-0xC4C18)
+#       y   = acc >> 14  (sar floors)  e' = acc & 0x3fff                     (0xC4C1C-0xC4C22)
+#       s2' = b0*x - a2*y              (b2 == b0: r7 = b0*x is REUSED)        (0xC4C26-0xC4C34)
+#       n   = x - y                    the removed component                  (0xC4C38-0xC4C3A)
+#       s1' = b1*n + s2                (a1 == b1: b1*x - a1*y in ONE multiply) (0xC4C3C-0xC4C46)
+#       FLAG = (n<0 ? 0x20 : 0) | (|n| >= |y| ? 0x80 : 0)                     (0xC4C4A-0xC4C6E)
+#       r12 = clamp(y, +-cal 0xC61BE)  the OUTPUT only; the recursion uses linear y (0xC4C72-0xC4C82)
+#   Immediates DECODED FROM THE IMAGE: movea 0x3eb0 = 16048 (b0, and b2 by structure), movea 0x3d60 =
+#   15712 (a2), movea -0x7c62 = -31842 (b1, and a1 by structure), `sar 0xe` = Q14 so a0 = 16384,
+#   `andi 0x3fff` = the remainder mask. Numerator zeros on the unit circle (b0 == b2) at
+#   acos(31842/32096) -> 20.036 Hz at 1 kHz; DC = (16048-31842+16048)/(16384-31842+15712) = 254/254 = 1
+#   EXACTLY; Nyquist = 63938/63938 = 1 EXACTLY; pole radius sqrt(15712/16384) = 0.9793, tau ~ 48 ticks.
+#   WHY the error feedback matters (measured in _self_check_v289, not taken on report): A(1) = 254
+#   against a0 = 16384 makes the DC noise gain of a plainly floored TDF-II 64.5, i.e. a 64-count DC
+#   deadband; with e fed back the quantisation error is (1 - z^-1)-shaped and a constant input X yields
+#   y within +-1 of X with time-average X.
+#   REGISTER WIDTHS: every add/sub/mul is a 32-bit register op (mul keeps the LOW word: `mul rA,rB,r0`),
+#   so this mirror wraps each of them through _s32(). The l1-norm worst cases at |x| = 15360 stay inside
+#   int32 (|acc| <= 0.262 * 2^31 + 16383) -- ASSERTED below by driving the worst-case sign sequences.
+#   The state cells boot to 0 (.data source 0x8646C-0x86477 is twelve 0x00 bytes in the image).
+#
+# WHAT THE FB LAG IS (stock code, unchanged in every image; V289 moves only its two cal cells):
+#       s_new = ((a * s) >> 10) + ((b * x) >> 10)      a = cal 0xC63E8 (ld.h, SIGNED), b = 0xC63EA (ld.hu)
+#       r26   = clamp(s + s_new, +-cal 0xC62E6)          the fb that reaches the error former
+#       s    := s_new                                    ONE int32 state word, gp-0x3d30
+#   i.e. a one-pole lag with pole a/1024 and DC gain 2b/(1024-a): 923/1560 -> 16.53 Hz, 30.891;
+#   875/2301 -> 25.03 Hz, 30.886. Its input x is `ld.h -0x6a56,gp,r7` @0x28F4C and the whole function
+#   exits at 0x28F5A (`jr 0x290b0`) when |x| > 12000 (the addi/addi/bnl guard at 0x28F50-0x28F58), so
+#   the window below is only ever reached with |x| <= 12000. A byte gp-0x3d2c != 1 (0x28F66-0x28F76)
+#   takes the 0x28F82 arm, which runs the SAME arithmetic with s read as 0 (and still stores s_new).
+
+
+def _s32(v: int) -> int:
+    """A V850 general register: keep the low 32 bits, read back as a signed value. `add`, `sub`,
+    `subr`, `shl` and `mul rA,rB,r0` (low word) all wrap this way, silently."""
+    v &= 0xFFFFFFFF
+    return v - (1 << 32) if v & 0x80000000 else v
+
+
+def lkas_sum_notch(S: int, st: EpsState, cal: Calibration) -> int:
+    """
+    V289's in-loop notch on the clamped rate-PID loop output S (r12 at 0x2A174). Returns S UNCHANGED
+    and touches no state when `cal.sum_notch is None` (stock / V282 / V288 and every build before
+    V289), so every pre-V289 result is bit-for-bit preserved.
+
+    [EVIDENCE] Mirrors the cave at 0xC4C00..0xC4C8B of the BUILT V289 image instruction for
+    instruction; every address in the comments is the decoded address in that image, and every
+    immediate is the decoded immediate. `cal.sum_notch` = (b0, b1, b2, a1, a2), Q14, a0 = 16384
+    implied. The cave's shape hard-wires b2 == b0 and a1 == b1; a tuple that breaks either is not a
+    cave this function describes, so it is refused rather than silently approximated.
+
+    Live-register contract at the hook, for anyone extending this: r11, r14, r15, r16, r22, r24,
+    r27, r29 and lp are LIVE across 0x2A174 and never touched; r6, r7, r9, r13 are scratch; PSW is
+    free because the first flag consumer after the hook is `bne` @0x2A1B4, preceded by its own
+    `cmp 0x1,r16` @0x2A1AE.
+    """
+    coeffs = cal.sum_notch
+    if coeffs is None:
+        return S                          # no cave: 0x2A174 is the stock `ld.hu 0x73ee,tp,r7`
+    b0, b1, b2, a1, a2 = coeffs
+    if b2 != b0 or a1 != b1:
+        raise ValueError("lkas_sum_notch mirrors a cave whose shape forces b2 == b0 and a1 == b1; "
+                         f"got b=({b0},{b1},{b2}) a1={a1}")
+    r12 = _s32(S)                         # r12 = S on entry, |S| <= cal.sum_clamp on every route
+
+    # -- acc = b0*x + s1 + e -------------------------------------------------------------------------
+    r9 = _s32(st.notch_s1)                # 0xC4C00  ld.w  -0x6c44[gp],r9     s1
+    r13 = ((st.notch_flag & 0xFFFF) << 16) | (st.notch_e & 0xFFFF)
+                                          # 0xC4C04  ld.w  -0x6c3c[gp],r13    the WORD: (FLAG << 16) | e
+    r13 = r13 & 0x3FFF                    # 0xC4C08  andi  0x3fff,r13,r13     e only; FLAG half stripped
+    r9 = _s32(r9 + r13)                   # 0xC4C0C  add   r13,r9             s1 + e
+    r13 = b0                              # 0xC4C0E  movea 0x3eb0,r0,r13      16048
+    r13 = _s32(r13 * r12)                 # 0xC4C12  mul   r12,r13,r0         b0*x, LOW 32 bits
+    r7 = r13                              # 0xC4C16  mov   r13,r7             b0*x kept for s2'
+    r9 = _s32(r9 + r13)                   # 0xC4C18  add   r13,r9             acc
+    # -- y, e' ------------------------------------------------------------------------------------
+    r6 = r9                               # 0xC4C1A  mov   r9,r6
+    r6 = r6 >> 14                         # 0xC4C1C  sar   0xe,r6             y = acc >> 14 (FLOORS)
+    r9 = r9 & 0x3FFF                      # 0xC4C1E  andi  0x3fff,r9,r9       e' = acc & 0x3fff
+    st.notch_e = r9                       # 0xC4C22  st.w  r9,-0x6c3c[gp]     a WORD store: e' low,
+    st.notch_flag = 0                     #                                   and the FLAG half := 0
+    # -- s2' = b0*x - a2*y -------------------------------------------------------------------------
+    r13 = a2                              # 0xC4C26  movea 0x3d60,r0,r13      15712
+    r13 = _s32(r13 * r6)                  # 0xC4C2A  mul   r6,r13,r0          a2*y
+    r7 = _s32(r7 - r13)                   # 0xC4C2E  sub   r13,r7             s2' = b0*x - a2*y
+    r13 = _s32(st.notch_s2)               # 0xC4C30  ld.w  -0x6c40[gp],r13    s2 (old)
+    st.notch_s2 = r7                      # 0xC4C34  st.w  r7,-0x6c40[gp]     s2 := s2'
+    # -- n = x - y ; s1' = b1*n + s2_old -----------------------------------------------------------
+    r9 = r12                              # 0xC4C38  mov   r12,r9
+    r9 = _s32(r9 - r6)                    # 0xC4C3A  sub   r6,r9              n = x - y
+    r7 = b1                               # 0xC4C3C  movea -0x7c62,r0,r7      -31842
+    r7 = _s32(r7 * r9)                    # 0xC4C40  mul   r9,r7,r0           b1*n
+    r13 = _s32(r13 + r7)                  # 0xC4C44  add   r7,r13             s1' = b1*n + s2_old
+    st.notch_s1 = r13                     # 0xC4C46  st.w  r13,-0x6c44[gp]    s1 := s1'
+    # -- FLAG: bit 5 = n < 0 ; bit 7 = |n| >= |y| --------------------------------------------------
+    r13 = 0                               # 0xC4C4A  mov   0x0,r13
+    if r9 < 0:                            # 0xC4C4C  cmp   0x0,r9 ; 0xC4C4E  bge 0xC4C52
+        r13 = 2                           # 0xC4C50  mov   0x2,r13            -> 0x20 after the shl
+    r12 = r6                              # 0xC4C52  mov   r6,r12             r12 = y (linear); x is dead
+    r7 = r9                               # 0xC4C54  mov   r9,r7
+    if r7 < 0:                            # 0xC4C56  cmp   0x0,r7 ; 0xC4C58  bge 0xC4C5C
+        r7 = _s32(0 - r7)                 # 0xC4C5A  subr  r0,r7              |n|
+    if r6 < 0:                            # 0xC4C5C  cmp   0x0,r6 ; 0xC4C5E  bge 0xC4C62
+        r6 = _s32(0 - r6)                 # 0xC4C60  subr  r0,r6              |y|
+    psw_ge = r7 >= r6                     # 0xC4C62  cmp   r6,r7              PSW <- flags of |n| - |y|
+    r7 = 8                                # 0xC4C64  mov   0x8,r7             (mov does not touch PSW)
+    if not psw_ge:                        # 0xC4C66  bge   0xC4C6A            |n| >= |y| keeps the 8
+        r7 = 0                            # 0xC4C68  mov   0x0,r7
+    r13 = r13 | r7                        # 0xC4C6A  or    r7,r13             nibble in {0,2,8,10}
+    r13 = _s32(r13 << 4)                  # 0xC4C6C  shl   0x4,r13            FLAG in {0,0x20,0x80,0xA0}
+    st.notch_flag = r13 & 0xFFFF          # 0xC4C6E  st.h  r13,-0x6c3a[gp]    the telemetry handoff
+    # -- output clamp to +-cal(0xC61BE), the sum clamp's own cell -----------------------------------
+    r9 = cal.sum_clamp & 0xFFFF           # 0xC4C72  ld.hu 0x71be[tp],r9      +L = 15360, UNSIGNED load
+    if not (r12 <= r9):                   # 0xC4C76  cmp   r9,r12 ; 0xC4C78  ble 0xC4C7C
+        r12 = r9                          # 0xC4C7A  mov   r9,r12             y := +L
+    r9 = _s32(0 - r9)                     # 0xC4C7C  subr  r0,r9              -L
+    if not (r12 >= r9):                   # 0xC4C7E  cmp   r9,r12 ; 0xC4C80  bge 0xC4C84
+        r12 = r9                          # 0xC4C82  mov   r9,r12             y := -L
+                                          # 0xC4C84  ld.hu 0x73ee[tp],r7      the DISPLACED load, r7 = 507
+    return r12                            # 0xC4C88  jr    0x2a178            -> the untouched ld.w
+
+
+def lkas_fb_lag(x: int, st: EpsState, cal: Calibration, lane_live: bool = True) -> int:
+    """
+    The rate PID's feedback-lag filter, stock code at 0x28F7C..0x28FBE: returns r26, the rate feedback
+    fb that the error former subtracts (E = 32*sp - fb at 0x29D78), and advances the one-word state
+    gp-0x3d30. V289 changes ONLY the two cal cells it reads (cal.fb_lag_a / cal.fb_lag_b); the bytes
+    are identical in the V282 and V289 images (0x28F40..0x28FC0 compared whole).
+
+    [EVIDENCE] Decoded from the V289 image (same decoder and positive control as lkas_sum_notch);
+    the memory's statement "s_new = (a*s >> 10) + (b*x >> 10); r26 = clamp(s + s_new, +-0xC62E6);
+    s = s_new" is CONFIRMED by the bytes. x is the signed halfword gp-0x6a56 read at 0x28F4C; the
+    function has already exited at 0x28F5A when |x| > 12000, so that is a precondition here, not a
+    branch. `lane_live=False` is the 0x28F82 arm (byte gp-0x3d2c != 1): same arithmetic with s read
+    as 0, and s_new is still stored.
+    """
+    if not -12000 <= x <= 12000:
+        raise ValueError("lkas_fb_lag: |x| > 12000 never reaches this window (guard 0x28F50-0x28F5A)")
+    r7 = _signed16(x)                     # 0x28F4C  ld.h  -0x6a56[gp],r7     x
+    if lane_live:                         # 0x28F66  ld.bu -0x3d2c[gp],r9 ; 0x28F72 cmp 0x1,r9 ; 0x28F76 bne 0x28F82
+        r26 = _s32(st.fb_lag_s)           # 0x28F7C  ld.w  -0x3d30[gp],r26    s          ; 0x28F80 br 0x28F86
+    else:
+        r26 = 0                           # 0x28F82  mov 0x0,r6 ; 0x28F84  mov 0x0,r26   s read as 0
+    r16 = cal.fb_lag_b & 0xFFFF           # 0x28F86  ld.hu 0x73ea[tp],r16     b, UNSIGNED (1560 / 2301)
+    r9 = _signed16(cal.fb_lag_a)          # 0x28F8A  ld.h  0x73e8[tp],r9      a, SIGNED   (923 / 875)
+    r7 = _s32(r7 * r16)                   # 0x28F8E  mul   r16,r7,r0          b*x, low word
+    r9 = _s32(r9 * r26)                   # 0x28F92  mul   r26,r9,r0          a*s, low word
+    r13 = cal.fb_clamp & 0xFFFF           # 0x28F96  ld.hu 0x72e6[tp],r13     +L = 46080
+    r7 = r7 >> 10                         # 0x28F9A  sar   0xa,r7             (b*x) >> 10, floors
+    r14 = cal.fb_clamp & 0xFFFF           # 0x28F9C  ld.hu 0x72e6[tp],r14     +L again
+    r9 = r9 >> 10                         # 0x28FA0  sar   0xa,r9             (a*s) >> 10, floors
+    r9 = _s32(r9 + r7)                    # 0x28FA2  add   r7,r9              s_new
+    r26 = _s32(r26 + r9)                  # 0x28FA4  add   r9,r26             s + s_new
+                                          # 0x28FA6  cmp   r13,r26            flags of (s + s_new) - L
+    st.fb_lag_s = r9                      # 0x28FA8  st.w  r9,-0x3d30[gp]     s := s_new (BEFORE the clamp resolves)
+    if r26 > r13:                         # 0x28FAC  ble   0x28FB2            not-taken arm: above +L
+        r26 = r14                         # 0x28FAE  mov   r14,r26 ; 0x28FB0  br 0x28FBE
+    else:
+        r14 = _s32(0 - r14)               # 0x28FB2  subr  r0,r14             -L
+        if r26 < r14:                     # 0x28FB4  cmp   r14,r26 ; 0x28FB6  bge 0x28FBE
+            r26 = cal.fb_clamp & 0xFFFF   # 0x28FB8  ld.hu 0x72e6[tp],r26
+            r26 = _s32(0 - r26)           # 0x28FBC  subr  r0,r26             -L
+    return r26                            # 0x28FBE  mov   r26,r16            -> fb, into the error former
+
+
+def _self_check_v289():
+    """V289 sum-notch and fb-lag assertions. Called from _self_check(); prints NOTHING, so the hashed
+    _self_check()+_demo() stdout is unchanged. Every number below is re-derived here, not quoted."""
+    import math
+    import random
+    import hashlib
+    import os
+
+    V289_NOTCH = (16048, -31842, 16048, -31842, 15712)
+    stock = Calibration()
+    v289 = replace(Calibration(), fb_lag_a=875, fb_lag_b=2301, sum_notch=V289_NOTCH)
+    L = v289.sum_clamp
+    assert L == 15360 and stock.sum_notch is None and (stock.fb_lag_a, stock.fb_lag_b) == (923, 1560)
+
+    def notch_state(st):
+        return (st.notch_s1, st.notch_s2, st.notch_e, st.notch_flag)
+
+    # 0. DEFAULT OFF is a true identity: S passes through and NO state is touched. And the mirror
+    #    refuses a tuple the cave's shape cannot encode.
+    st = EpsState(notch_s1=5, notch_s2=6, notch_e=7, notch_flag=0x20)
+    assert lkas_sum_notch(1234, st, stock) == 1234 and notch_state(st) == (5, 6, 7, 0x20)
+    for bad in ((16048, -31842, 16047, -31842, 15712), (16048, -31842, 16048, -31841, 15712)):
+        try:
+            lkas_sum_notch(1, EpsState(), replace(Calibration(), sum_notch=bad))
+            raise AssertionError("structural check did not fire")
+        except ValueError:
+            pass
+
+    # 1. DC gain is EXACTLY 1 on constants after settling: |y - X| <= 1 on every tick, and the
+    #    time-average of y is X (the error feedback makes the quantisation error (1 - z^-1)-shaped).
+    #    Without it a floored TDF-II parks up to 64 counts low -- the CONTROL below shows that.
+    for X in (1, 7, 100, -3000, 15360, -15360, 0, -1):
+        st = EpsState()
+        for _ in range(2000):
+            lkas_sum_notch(X, st, v289)
+        ys = [lkas_sum_notch(X, st, v289) for _ in range(4096)]
+        assert all(abs(y - X) <= 1 for y in ys), (X, min(ys), max(ys))
+        assert abs(sum(ys) / len(ys) - X) <= 1e-2, (X, sum(ys) / len(ys))
+    #    CONTROL: the same recursion with e forced to 0 each tick (plain floored TDF-II) sits LOW.
+    st = EpsState()
+    for _ in range(3000):
+        st.notch_e = 0
+        y_ctrl = lkas_sum_notch(1000, st, v289)
+    assert y_ctrl < 1000 - 30, y_ctrl
+
+    # 2. Zero-input decay: after a rail step the state decays to EXACTLY zero and stays there.
+    st = EpsState()
+    for _ in range(300):
+        lkas_sum_notch(L, st, v289)
+    ys = [lkas_sum_notch(0, st, v289) for _ in range(3000)]
+    assert ys[-1000:] == [0] * 1000 and (st.notch_s1, st.notch_s2) == (0, 0), (ys[-5:], notch_state(st))
+
+    # 3. Realised notch by LOCK-IN on the INTEGER mirror: centre in 20.0..20.1 Hz, depth > 40 dB,
+    #    and it is a notch (>= -1 dB at 10 Hz and 30 Hz), not a low-pass.
+    def lockin(f_hz, amp=8000, settle=600, n=4000):
+        w = 2 * math.pi * f_hz / 1000.0
+        st = EpsState()
+        for k in range(settle):
+            lkas_sum_notch(int(round(amp * math.sin(w * k))), st, v289)
+        i = q = 0.0
+        for k in range(settle, settle + n):
+            y = lkas_sum_notch(int(round(amp * math.sin(w * k))), st, v289)
+            i += y * math.sin(w * k)
+            q += y * math.cos(w * k)
+        return math.hypot(2 * i / n, 2 * q / n) / amp
+    grid = (19.80, 19.90, 19.95, 20.00, 20.02, 20.04, 20.06, 20.08, 20.10, 20.15, 20.20)
+    mags = {f: lockin(f) for f in grid}
+    f_min = min(mags, key=mags.get)
+    assert 20.0 <= f_min <= 20.1, (f_min, mags)
+    assert mags[f_min] < 10 ** (-40 / 20), (f_min, mags[f_min])           # deeper than -40 dB
+    assert lockin(10.0) > 10 ** (-1 / 20) and lockin(30.0) > 10 ** (-1 / 20)
+    #    the analytic zero of the DECODED numerator sits where the lock-in minimum landed
+    f_zero = math.acos(-V289_NOTCH[1] / (2 * V289_NOTCH[0])) / (2 * math.pi) * 1000.0
+    assert abs(f_zero - f_min) <= 0.03, (f_zero, f_min)
+
+    # 4. The builder's OWN mirror (build_v289_tva.py `notch_tick`, copied verbatim -- the script runs
+    #    its build at import and cannot be imported for a function) must agree with this byte-level
+    #    mirror tick for tick. The copy is pinned to the source by hash when the script is present.
+    _BUILDER_SRC_SHA = "fef8ae92b5dcd133a49a37aca5ecb91b20a3de6216d58479b882c2280ce51637"
+    _here = os.path.dirname(os.path.abspath(__file__))
+    _bp = os.path.join(_here, "..", "builds", "v108_plus", "build_v289_tva.py")
+    if os.path.isfile(_bp):
+        with open(_bp, encoding="utf-8") as fh:
+            _t = fh.read()
+        _src = _t[_t.index("def notch_tick"):_t.index("class V850Emu")].strip()
+        assert hashlib.sha256(_src.encode("utf-8")).hexdigest() == _BUILDER_SRC_SHA, \
+            "build_v289_tva.py's notch_tick changed; re-copy it below and re-pin the hash"
+
+    B0, B1, B2 = 16048, -31842, 16048
+    A0, A1, A2 = 16384, -31842, 15712
+    QSH, E_MASK, S_MAX, BIT_SIGN, BIT_CMP = 14, 0x3FFF, 15360, 0x20, 0x80
+
+    def notch_tick(x, st, wrapcheck=None):            # == build_v289_tva.py notch_tick, verbatim body
+        s1, s2, e = st
+        e &= E_MASK                                  # 0xC4C08 andi 0x3fff
+        b0x = B0 * x                                 # 0xC4C12 mul r12,r13
+        acc = s1 + e + b0x                           # 0xC4C0C add ; 0xC4C18 add
+        y = acc >> QSH                               # 0xC4C1C sar 0xe
+        e2 = acc & E_MASK                            # 0xC4C1E andi 0x3fff
+        a2y = A2 * y                                 # 0xC4C2A mul r6,r13
+        s2n = b0x - a2y                              # 0xC4C2E sub r13,r7
+        n = x - y                                    # 0xC4C3A sub r6,r9
+        b1n = B1 * n                                 # 0xC4C40 mul r9,r7
+        s1n = b1n + s2                               # 0xC4C44 add r7,r13
+        flag = (BIT_SIGN if n < 0 else 0) | (BIT_CMP if abs(n) >= abs(y) else 0)
+        Lc = S_MAX
+        yo = Lc if y > Lc else (-Lc if y < -Lc else y)
+        if wrapcheck is not None:
+            for k, v in (("s1", s1n), ("s2", s2n), ("acc", acc), ("b0x", b0x), ("a2y", a2y), ("b1n", b1n),
+                         ("s1e", s1 + e), ("y", y), ("n", n)):
+                wrapcheck[k] = max(wrapcheck.get(k, 0), abs(v))
+                if not -(1 << 31) <= v < (1 << 31):
+                    wrapcheck["wraps"] = wrapcheck.get("wraps", 0) + 1
+            wrapcheck["all"] = max(wrapcheck.get("all", 0), max(abs(v) for v in (b0x, acc, a2y, s2n, b1n, s1n, s1 + e)))
+        st[:] = [s1n, s2n, e2]
+        return yo, y, n, flag
+
+    rng = random.Random(0x289)
+    flags_seen = set()
+    n_cases = 0
+
+    def run_equiv(xs):
+        nonlocal n_cases
+        st = EpsState()
+        bs = [0, 0, 0]
+        wc = {}
+        for x in xs:
+            yo = lkas_sum_notch(x, st, v289)
+            yb, _, _, fb = notch_tick(x, bs, wc)
+            assert yo == yb and st.notch_flag == fb, (x, yo, yb, st.notch_flag, fb)
+            assert (st.notch_s1, st.notch_s2, st.notch_e) == tuple(bs), (x, notch_state(st), bs)
+            assert st.notch_flag in (0, 0x20, 0x80, 0xA0)
+            flags_seen.add(st.notch_flag)
+            n_cases += 1
+        return wc
+
+    # regimes: white at the rail, a random walk, rail square waves near the notch, a chirp, and long
+    # constant dwells -- all with |S| <= 15360 as the sum clamp guarantees on every route
+    run_equiv([rng.randint(-L, L) for _ in range(40000)])
+    xs, x = [], 0
+    for _ in range(40000):
+        x = max(-L, min(L, x + rng.randint(-600, 600)))
+        xs.append(x)
+    run_equiv(xs)
+    for period in (48, 50, 52, 25, 100):
+        run_equiv([L if (k // (period // 2)) % 2 == 0 else -L for k in range(6000)])
+    run_equiv([int(round(L * math.sin(2 * math.pi * (5 + 30 * k / 20000) * k / 1000.0))) for k in range(20000)])
+    run_equiv([L] * 3000 + [-L] * 3000 + [0] * 3000 + [1] * 3000 + [-1] * 3000)
+    assert n_cases >= 100000, n_cases
+    assert flags_seen == {0, 0x20, 0x80, 0xA0}, flags_seen
+
+    # 5. No int32 wrap on the l1 worst case at |S| = 15360: drive the SIGN sequence of each linear
+    #    impulse response (x -> s1, s2, acc) reversed, so the target peaks at the last tick; the
+    #    unbounded reference reports its maxima and the wrapped mirror must still agree with it.
+    def impulse_paths(n):
+        s1 = s2 = 0.0
+        hs1, hs2, hacc = [], [], []
+        for k in range(n):
+            x = 1.0 if k == 0 else 0.0
+            acc = B0 * x + s1
+            y = acc / A0
+            s2n = B0 * x - A2 * y
+            s1n = B1 * (x - y) + s2
+            s1, s2 = s1n, s2n
+            hs1.append(s1); hs2.append(s2); hacc.append(acc)
+        return hs1, hs2, hacc
+    for h in impulse_paths(2500):
+        xs = [L if h[len(h) - 1 - k] >= 0 else -L for k in range(len(h))]
+        wc = run_equiv(xs)
+        assert wc.get("wraps", 0) == 0 and wc["all"] < (1 << 31), wc
+        assert wc["acc"] <= 0.27 * (1 << 31) and wc["s1"] <= 0.16 * (1 << 31) and wc["s2"] <= 0.16 * (1 << 31), wc
+
+    # 6. The fb lag: DC gain 2b/(1024-a) on both cell sets (30.89 to 4 s.f.), the +-46080 clamp on
+    #    both signs, the guard, and the 0x28F82 arm.
+    for cal_, dc_expect in ((stock, 2 * 1560 / (1024 - 923)), (v289, 2 * 2301 / (1024 - 875))):
+        st = EpsState()
+        for _ in range(3000):
+            fb = lkas_fb_lag(1000, st, cal_)
+        # the two `sar 0xa` floors cost ~0.1 % at X = 1000 (measured 30.862 / 30.86x, not 30.89):
+        # a real, tiny DC bias of the integer lag, the same in kind on both cell sets
+        assert abs(fb / 1000.0 - dc_expect) < 0.04, (fb, dc_expect)
+        assert abs(dc_expect - 30.89) < 0.005
+        st = EpsState()
+        for _ in range(3000):
+            fb = lkas_fb_lag(12000, st, cal_)
+        assert fb == 46080
+        for _ in range(3000):
+            fb = lkas_fb_lag(-12000, st, cal_)
+        assert fb == -46080
+    try:
+        lkas_fb_lag(12001, EpsState(), stock)
+        raise AssertionError("guard did not fire")
+    except ValueError:
+        pass
+    st = EpsState(fb_lag_s=5000)
+    assert lkas_fb_lag(1024, st, stock) == (923 * 5000 >> 10) + (1560 * 1024 >> 10) + 5000     # live arm: s + s_new
+    st = EpsState(fb_lag_s=5000)
+    assert lkas_fb_lag(1024, st, stock, lane_live=False) == 1560 and st.fb_lag_s == 1560       # 0x28F82 arm: s read as 0
+    #    one tick by hand with the V289 cells, negative x: (875*0 >> 10) + (2301*-7 >> 10) = -16 (floors, not -15)
+    st = EpsState()
+    assert lkas_fb_lag(-7, st, v289) == -16 and st.fb_lag_s == -16
+
+
 def steer_torque_arbitration(sensors: SensorInputs, st: EpsState, cal: Calibration) -> int:
     """
     Limit the LKAS setpoint, apply the Q15 gain/clamp, and run the two inlined SMs (driver assist is

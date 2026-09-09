@@ -124,6 +124,30 @@ class Calibration:
     # V288 run and a V282 run differ by one Calibration field. See lkas_setpoint_prefilter().
     spfilt_k: Optional[int] = None
 
+    # ---- THE LKAS RATE-PID's OUTPUT-SIDE CELLS (stock cals, first modelled for V289, 2026-09-08) ----
+    # These three are READ FROM THE IMAGE by the V289 decode (scratch decoder over the built V289 and
+    # V282 images, both halfwords LE): 0xC61BE = 15360, 0xC62E6 = 46080 in every image; 0xC63E8/0xC63EA
+    # = 923/1560 stock and in all ~285 images through V288, 875/2301 in V289 (its ONLY cal delta).
+    sum_clamp: int = 15360               # 0xC61BE (tp+0x71be), `ld.hu`. The +-clamp on the rate PID's
+                                         # clamped loop output S at 0x2A13E-0x2A162; V289's notch cave
+                                         # re-reads the SAME cell at 0xC4C72 for its output clamp.
+    fb_lag_a: int = 923                  # 0xC63E8 (tp+0x73e8), `ld.h` SIGNED @0x28F8A. The feedback-lag
+                                         # pole, Q10: a/1024 = 0.9014 -> 16.5 Hz (V282); 875 -> 25.0 Hz (V289).
+    fb_lag_b: int = 1560                 # 0xC63EA (tp+0x73ea), `ld.hu` UNSIGNED @0x28F86. The lag's input
+                                         # gain, Q10. DC gain of the lag = 2b/(1024-a): 30.891 (V282), 30.886 (V289).
+    fb_clamp: int = 46080                # 0xC62E6 (tp+0x72e6), `ld.hu`. The +-clamp on the lag output r26
+                                         # (the rate feedback fb the error former subtracts at 0x29D78).
+    # ---- V289 SUM NOTCH (a CODE CAVE at 0xC4C00..0xC4C8B, hooked at 0x2A174; NOT a stock cal) --------
+    # None  = stock / V282 / V288 and every build before V289: no cave, S passes 0x2A174 untouched, and
+    #         `lkas_sum_notch` is an identity that touches no state.
+    # (b0, b1, b2, a1, a2), Q14 with a0 = 16384 implied = the cave's immediates. V289 as DECODED FROM
+    # THE BUILT IMAGE (movea 0x3eb0 @0xC4C0E, movea 0x3d60 @0xC4C26, movea -0x7c62 @0xC4C3C; sar 0xe
+    # @0xC4C1C fixes Q14): (16048, -31842, 16048, -31842, 15712). The cave's SHAPE forces b2 == b0 (it
+    # reuses r7 = b0*x for s2') and a1 == b1 (one multiply on n = x - y), so lkas_sum_notch refuses any
+    # tuple that violates either. Build a V289 calibration with
+    #   replace(Calibration(), fb_lag_a=875, fb_lag_b=2301, sum_notch=(16048, -31842, 16048, -31842, 15712))
+    sum_notch: Optional[tuple] = None
+
     assist_ramp_ticks: int = 10          # tp+0x74d1 * 10; assist engage-ramp dwell per state (gp-0x68c8)
     distribute_lkas_lane_clamp: int = 0x2800   # LKAS rides the +/-0x2800 distributor lane
     mixer_gate_clamp: int = 0x2800       # gate: |x|<=0x2800 ? x : 0x7FFF-sentinel
@@ -348,6 +372,20 @@ class EpsState:
                                   # "the previous tick did not execute 0x29D72". Honda already uses
                                   # this same cell as its own first-tick-after-gap guard at 0x29E5E.
                                   # Defaults to the sentinel: a fresh EpsState IS "first tick".
+    # ---- The rate PID's feedback-lag state (stock RAM; modelled for V289, 2026-09-08) ----
+    fb_lag_s: int = 0             # gp-0x3d30 (0xFEDF42D0), int32. The lag filter's ONE state word:
+                                  # loaded @0x28F7C, stored (as s_new) @0x28FA8. See lkas_fb_lag().
+    # ---- V289 sum-notch state (only touched when cal.sum_notch is not None) ----
+    # The censused 12-byte run gp-0x6c44..gp-0x6c39, all four booting to 0 (.data source flash
+    # 0x8646C-0x86477 is 12 zero bytes in the V289 image, read here). Stock never touches the run.
+    notch_s1: int = 0             # gp-0x6c44 (0xFEDF13BC), int32. TDF-II state 1 (feeds acc).
+    notch_s2: int = 0             # gp-0x6c40 (0xFEDF13C0), int32. TDF-II state 2 (feeds s1').
+    notch_e: int = 0              # gp-0x6c3c (0xFEDF13C4), the LOW halfword of the third word: the
+                                  # error-feedback remainder, 0..16383. Loaded as a WORD @0xC4C04 and
+                                  # masked `andi 0x3fff`, stored as a WORD @0xC4C22 (which also zeroes..)
+    notch_flag: int = 0           # gp-0x6c3a (0xFEDF13C6), the HIGH halfword of that word: the
+                                  # telemetry FLAG in {0, 0x20, 0x80, 0xA0}, written `st.h` @0xC4C6E
+                                  # AFTER the word store, read by the 0x14A tail @0xC4BDC.
     arb_command: int = 0          # gp-0x6b3c (0xFEDF14C4) arbitration gated command
     mixed_command: int = 0        # gp-0x6b4c, LKAS-internal lane into the demand aggregator
     secondary_mixer_command: int = 0  # gp-0x6afe, separate lane consumed at final shaper output

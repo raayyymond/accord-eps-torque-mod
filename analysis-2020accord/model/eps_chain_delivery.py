@@ -73,6 +73,7 @@ from eps_chain_lanes import (
 from eps_chain_control import (
     GOVERNOR_RATE_SLOPE_Q13,
     _self_check_v288,
+    _self_check_v289,
     a160_governor_rate_cap,
     computed_runtime_governor,
     engage_decider,
@@ -508,6 +509,8 @@ def _self_check():
     # V288 setpoint pre-filter. Asserts only -- prints nothing, so this function's stdout (and the
     # hashed _self_check()+_demo() output) is unchanged by V288's arrival.
     _self_check_v288()
+    # V289 sum notch + fb-lag pole. Asserts only, prints nothing (same contract as V288's).
+    _self_check_v289()
 
 
 def _demo():

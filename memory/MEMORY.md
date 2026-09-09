@@ -1,6 +1,7 @@
 🛑 **THIS INDEX IS PAGINATED IN EIGHT.** This page alone is not the whole memory —
 the continuation pages carry the rest, newest last:
 
+- 🛑🛑⭐⭐⭐⭐⭐ [V289 rev 1 BUILT + ACCEPTED: notch on the loop OUTPUT (20.04 Hz Q3, cave @0x2A174) + fb pole 16.5→25 Hz; the 20 Hz line is a PLANT MODE the loop de-damps; B3 transient-authority FAIL accepted by the operator](accord/builds/accord-v289r1-sum-notch-plus-fb-pole-built-b3-accepted-the-20hz-line-is-a-plant-mode.md)
 - 🛑🛑⭐⭐⭐⭐⭐ [V288 rev 2 FLEW (r5e_v288): cave LIVE, D-bind x0.03, grinding UNCHANGED at 20 Hz — reference-side class EXHAUSTED; the lever is in-loop damping](accord/builds/accord-v288r2-flew-grind-unchanged-excitation-side-class-exhausted.md)
 - 🛑🛑⭐⭐⭐⭐⭐ [V288 rev 2 BUILT (2026-09-07): V282 + a SETPOINT PRE-FILTER cave, 0 cal bytes, y+=(sp-y)>>4 at 1 kHz (10.3 Hz, 15 ms, kick /16), engage init from Honda's sentinel; adversarial pass PASSED on rev 2 (rev 1 FAILED twice); UNFLOWN; V287 rejected by the operator](accord/builds/accord-v288r2-setpoint-prefilter-cave-built-adversarial-pass-passed.md)
 - 🛑🛑⭐⭐⭐⭐⭐ [The 0xE4 command is NOT a staircase (changes on 92 % of frames); it is slew-capped at 123/frame by openpilot and ~54 % of D-clamp binds land on capped frames; its 20 Hz line is an ECHO (9 % share, open-loop); grind #1 is a RUNG BELL (97.6 % decay, ζ≈0.026)](accord/mechanism/accord-0xe4-command-is-not-a-staircase-slew-cap-is-the-excitation-grind1-is-a-rung-bell.md)

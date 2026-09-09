@@ -148,6 +148,28 @@ model/eps_lkas_chain_model.py
     NOT call the pre-filter -- there is no consumer to call it from. It is an exact standalone mirror
     of the cave, ready for the one correct call site (immediately before the x32) when the rate PID is
     added. Adding that PID is a SEPARATE open item. See SECTION 5B in eps_chain_control.py.
+    V289 -- THE SUM NOTCH + THE FEEDBACK-LAG POLE (added 2026-09-08). Grep `lkas_sum_notch` and
+    `lkas_fb_lag` [control], SECTION 5C. V289 is V282 + a 140-byte CODE CAVE at 0xC4C00..0xC4C8B hooked
+    at 0x2A174 (the one address all four routes that produce the clamped rate-PID loop output S pass
+    every tick) + two cal halfwords 0xC63E8/0xC63EA 923/1560 -> 875/2301. The cave is a Q14 notch in
+    transposed direct form II with first-order error feedback, immediates DECODED FROM THE BUILT IMAGE:
+    b = (16048, -31842, 16048), a = (16384, -31842, 15712); zero at 20.036 Hz, DC and Nyquist gain
+    EXACTLY 1, output clamped to +-cal 0xC61BE (15360). The fb-lag is stock code (0x28F7C..0x28FBE):
+    s_new = (a*s >> 10) + (b*x >> 10); fb = clamp(s + s_new, +-46080); s := s_new -- pole 16.5 -> 25.0 Hz
+    at a DC gain that stays 30.89 to 4 s.f.
+    THE DELTA IN THIS MODEL, in full:
+      * Calibration.sum_clamp (0xC61BE), .fb_lag_a / .fb_lag_b (0xC63E8/EA), .fb_clamp (0xC62E6) [core]
+        -- stock cals read from the image, defaults = stock = V282; and Calibration.sum_notch [core] --
+        None = every build before V289 (the notch is an identity and touches no state), or the Q14
+        (b0, b1, b2, a1, a2) tuple. A FLAG-like field, as spfilt_k is: no stock byte, only a cave.
+      * EpsState.notch_s1 / .notch_s2 / .notch_e / .notch_flag [core] -- the censused run gp-0x6c44..
+        gp-0x6c39 (boots to 0); EpsState.fb_lag_s [core] -- the lag's stock state word gp-0x3d30.
+      * lkas_sum_notch(), lkas_fb_lag() [control] and _self_check_v289() (not exported; called from
+        _self_check(), asserts only: DC exactly 1, zero-input decay, lock-in centre/depth on the
+        integer mirror, no int32 wrap on the l1 worst case at |S| = 15360, FLAG domain, 152,500-tick
+        equivalence against the build script's own mirror, the fb-lag DC/clamp/guard/arms).
+    🛑 STILL NO CALLER: the rate PID that produces S and consumes fb is not in this model (see V288
+    above), so control_task() calls neither. Contract: 90 symbols, stdout hash unchanged.
 
     ⚠ Line-number citations of the form `model/eps_lkas_chain_model.py:NNNN` written before 2026-08-12
       (in build scripts, handoffs and memories) point into the PRE-SPLIT file and are now STALE.
@@ -556,8 +578,10 @@ from eps_chain_control import (
     governor_slew_0xffff_postmortem,
     governor_step_selector_bandwidth,
     limit_distribute_mixer_gate,
+    lkas_fb_lag,
     lkas_iir_quantization_analysis,
     lkas_setpoint_prefilter,
+    lkas_sum_notch,
     motor_torque_demand_aggregator,
     motor_torque_governor,
     openpilot_command_slew_invariance,

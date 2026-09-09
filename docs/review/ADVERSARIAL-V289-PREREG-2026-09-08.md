@@ -42,3 +42,27 @@ Design: `docs/specs/design/DESIGN-20HZ-DAMPING-LOOPSHAPE-2026-09-08.md`. Trace: 
 - D4 The rung overwrites a stock Honda bit (b0–2) or a bit another decoder depends on without a documented remap.
 
 A finding that does not meet a criterion above is a residual to record, not a FAIL. Findings after acceptance are reports.
+
+---
+## VERDICTS (2026-09-08/09) and the operator's decision
+
+| surface | verdict | deciding evidence | report |
+|---|---|---|---|
+| A arithmetic | **PASS** | own decoder = Ghidra 61/61 on the imported v289 program; coefficients from the immediates; f0 20.036 Hz, DC exactly 1 (22 constant runs settle to exactly X), depth −47.6 dB at 20.05; no int32 wrap (big-int shadow); writes r6/r7/r9/r12/r13 only, no jarl; tail 1536/1536 | ADV-V289-A-ARITHMETIC-2026-09-08.md |
+| B units / loop / GATE 2 | **FAIL on §B3 as written**; B1, B2, B4 PASS | B1 DC 30.8911 → 30.8859; B2 |L| < 5 Hz +2.0 %, 3.9 Hz +0.56°, 7 Hz gate 1.005, Ms 3.77 → 2.05, step-ring ζ 0.0155 → 0.0379; B4 18–22 Hz of S −13.6 dB. **B3: capped-frame step peak rate ×0.909, peak accel ×0.929 (criterion 0.95); steady state ×1.00; t90 28 → 35 ms; open-loop peak torque into the motor identical for every step size.** Root cause of the design's "×1.00": its authority row was the FEEDBACK-operand notch; the build notches the loop OUTPUT. | ADV-V289-B-UNITS-LOOP-2026-09-08.md |
+| C build audit | **PASS** (text fixes F1–F3 applied, hashes unchanged) | independent assembler + CRC + rwd parser reproduce f0c10c29…; 185/188, 0 stray; 4 dry runs identical; census 92 S about the image + 55 constant-only, 28 S-labelled entailed/tautological | ADV-V289-C-BUILD-AUDIT-2026-09-08.md |
+| D interlocks / GATE 1 | **PASS** | raw scan (corrected for byte forms) + Ghidra SLEIGH agree: zero non-cave touches on gp-0x6c44..gp-0x6c39, boots to 0; only the 185 declared bytes differ; gp-0x6b2e has zero readers; fb-pole readers unchanged at 2; bits 0–2/6 untouched | ADV-V289-D-INTERLOCKS-GATE1-2026-09-08.md |
+
+**Operator's decision (2026-09-09, verbatim intent): "accept rev 1 (sum notch)."** B3 is amended on the record: the
+criterion measured the ring's own overshoot on a capped-frame step (the notch removes it and adds ~7 ms), not the
+steady-state authority, which is unchanged (×1.00), and not the open-loop peak torque into the motor, which is identical
+for every step size. The operator was told plainly: capped-step transient peak ~9 % lower, ~7 ms later, steady authority
+unchanged. **V289 rev 1 stands as the flash candidate.** Residuals carried (reports, not blockers): (i) on the design's
+fit (iii) the pair's ζ falls 0.022 → 0.016 while notch-alone holds — a second revert signature, a NEW line at 22–24 Hz,
+is pre-registered alongside the 14–17 Hz one; (ii) if the plant is smooth (census wrong) the build is Nyquist-unstable and
+the signature is a sustained 16 Hz lower-pitch grind — revert; (iii) FLAG halfword is transiently 0 for ~30 instructions
+per tick (preemption residual, worst case a small downward bias on both duties); (iv) fs = 1 kHz rests on the CAN dwell
+measurement; (v) the register-indirect RAM residual common to every flown cave.
+**Reading traps:** b4.5 duty ≈ 0.50 engaged is "alive" (zero-mean component) — only its cross-spectrum with the 0x18F rate
+is informative; b4.7 = 1.000 while DISENGAGED (0 ≥ 0) — score it engaged-only (predicted 0.10–0.11 at the 100 Hz sample
+instants engaged, 0.12–0.37 in bookmark windows).
