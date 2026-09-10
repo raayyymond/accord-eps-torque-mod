@@ -24,3 +24,18 @@ Handoff for the fix: `docs/handoffs/2026-09/HANDOFF-2026-09-03-GRINDING-for-deep
 Open dispute: whether the engaged-only r24 twist-derivative lane (0xC6446 = 5244) pumps or damps at 20 Hz -- see
 [[accord-grind-happens-hands-off-the-bar-signal-is-twist-and-the-engaged-rate-lane-gate-is-live]]. Related:
 [[accord-the-8x-gain-is-the-carrier]], [[accord-v62-rate-lane-was-silently-lost]], [[accord-lanechange-ring-is-the-outer-loop-the-map-never-touches-the-eps-rate-feedback-gain]].
+
+---
+
+## 🛑 CORRECTION 2026-09-09 — the "crosses unity 17–21 Hz" (crossover) framing is NOT supported by the later joint refit
+
+This memory's "inner loop crossover 17-21 Hz, PM 35-60, Ms 2-2.9" line was always marked BELIEF (28 s
+creep data, off-line coherence 0.3-0.6). `MODE-NATURE-V289-RECENSUS-2026-09-09.md`'s joint refit against
+V289's move AND the Kp-pinning (four plant families, ~106,000 plants) finds **every family's V282 fit
+puts |L(20 Hz)| at 0.43–0.61 — well below 1 — so none of them puts a gain crossover at 20 Hz.** The
+D-dominance reading (D ~55% / P ~45% of the tap's 20 Hz content) is not contradicted and still stands as a
+description of the PID's own frequency response, but the mechanism is better read as a lightly-damped
+**PLANT MODE the loop de-damps** (f pinned across a ×2.81 Kp change while ζ falls 0.033→0.018 — root-locus
+departing the plant pole nearly horizontally) rather than the loop's own crossover resonance. See
+[[accord-20hz-line-is-plant-mode-clamp-explanation-falsified-two-line-census]] for the full recensus and
+the falsification of the clamp-based alternative explanation for the Kp-pinning.

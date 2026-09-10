@@ -249,7 +249,81 @@ Slot 7 only (X 0,32,36,44,88 · Y 248,248,512,512,248) — the other 27 records 
 
 **WHY.** r35 (V281 rev 3): the 7 Hz cycle is gone but seven 1–3 s stalled-wheel runs appeared at idx 54–79 delivering 0.62 of V280's torque — a P-only loop's deadband. Ki 50: corner f = 1.24·Ki/Kp = 0.25 Hz; accumulates the held error until the wheel breaks free (~1.5 s in a 2000-count stall on the ki_sizing plant); costs ×0.984/−1.4° at 7 Hz (the ring is r24's), ~0 at 20 Hz; the integrator is in series with the T tap. Ki 5 (V270/V271, unflown) cannot break a stall (6 s time constant). **CLASS:** the first integrator ever run on this car; a cal that has never been non-zero on any flown build. **RISK:** stall-release lurch ~10 deg/s for ~1.8 s (clamp-set); push against a held hand at idx 40–84 back to V280's level within ~1 s; residual after long curves (~4 s). **READ IT BY:** stalled runs ≥ 1 s ≤ 2 (r35 7), idx 40–80 rate ≥ 70 % of reference (r35 45 %), dead fraction ≤ 0.10 (r35 0.34); 7 Hz and 20 Hz unchanged; FAIL: stalls persist with the accumulator railed; cost FAIL: lurch > 20 deg/s or > 3 s, or a new sub-1 Hz hunt.
 
-### V289 rev 1 — V282 + a NOTCH on the rate loop's OUTPUT + the feedback lag pole 16.5 → 25 Hz (2026-09-08) · BUILT, UNFLOWN, adversarial pass complete (A/C/D PASS, B FAIL on the transient-authority criterion B3, ACCEPTED by the operator 2026-09-09)
+### V290 — 🛑 **DESIGNED, FULLY SPECIFIED, AND NOT CUT. NO IMAGE, NO RWD, NO BUILD SCRIPT EXISTS.** (2026-09-09)
+
+**THE OPERATOR'S DECISION, verbatim in substance: *"Neither — revert to V282 and stop here."*** Shown the
+re-scored candidate table, he declined both surviving options and chose to flash **V282**, taking the 20 Hz
+plant mode back rather than spend a drive on a ×1.22 effect that cannot be read, or on a candidate whose
+worst-case transient authority is **0.928** against his own **0.95** floor. **Recorded as HIS decision.**
+
+**The trade he was shown** (`docs/review/V290-BASE-DECISION-2026-09-09.md` § ADDENDUM A3 — the ADDENDUM
+supersedes that file's body ranking; full scoring `docs/review/V290-DECISION-TABLE-2026-09-09.md`):
+
+| option | 7 Hz gate ≤ 1.01 | pkR med / **worst** ≥ 0.95 | delivered ring | ζ_worst | verdict |
+|---|---|---|---|---|---|
+| **revert to V282** | 1.0028 | 1.000 / 1.000 | 545 ms (10.9 cyc) | +0.0129 | **CHOSEN** |
+| **C** — V282 + notch 21.5 Hz Q1.5 on the **feedback operand** + fb pole 40 Hz | 1.0092 ✅ | 0.971 ✅ / **0.928 ❌** | **387 ms (×1.41)** | **+0.0349 (×2.7)** | needs the floor relaxed |
+| **S′** — V282 + Kd record (112,112,112,128) + a readability cave | 1.0100 ✅ (at the limit) | 0.995 / 0.99 ✅ | **448 ms (×1.22)** | +0.0178 | legal, **unreadable from one drive** |
+| **D** = C + any schedule | 1.016–1.024 ❌ | 0.92 ❌ | 321–353 ms | +0.040–0.045 | also needs 5 telemetry rungs, has 3 |
+| **B/B′** — any schedule on the **V289** base | 1.012–1.020 | **0.806 ❌ at every Kd 64–128** | — | — | dead — V289's notch sits in the reference transfer, no cal recovers it |
+| S / M1 / M2 / S80 / S64 / every X-knot variant | 1.012–1.060 ❌ | — | 257–395 ms | — | fail the 7 Hz gate |
+
+**Option C, as specified and ready to cut if the floor is ever relaxed** (class: **in-loop loop shaping on
+the FEEDBACK side** — the placement V289's own design scored and then did not ship):
+
+| region | V282 | **V290-C (unbuilt)** | what it is |
+|---|---|---|---|
+| `0x28F4C` | `ld.h -0x6a56,gp,r7`, bytes `24 3f aa 95` | `jr 0xC4C90`, bytes `89 07 44 bd` | hook on the **rate operand `x`** (bounded ±12000). ⭐ Sits **below** the engagement guard `0x29A48–0x29A70`, so the three skip jumps that bypass `0x29D72` do **not** bypass it ⇒ the cave runs on **every** tick, engaged and disengaged, and needs **no `gp-0x6cf8` sentinel seeding** — the thing V288 rev 1 failed for |
+| `0xC4C90–` | 0xFF filler | notch cave, 868 B free, CRC block `0xC4FFC` | Q14 notch 21.5 Hz Q 1.5: `b0 = b2 = 15680`, `b1 = a1 = −31074`, `a2 = 14976`; replicate the `ld.h`, filter `r7`, clamp ±12000, `jr 0x28F50` |
+| `0xC63E8` / `0xC63EA` | 923 / 1560 (16.5 Hz) | 796 / 3522 (**40 Hz**) | feedback lag pole |
+| `0x14A` byte 4 | V282's b4/b6 r24 comparators | `b3 = \|d2\| > \|d\|` · `b5 = sign(n)` · `b7 = \|n\| ≥ 16`; **b4/b6/b0–2 untouched** | telemetry, sized on r39/r62/r63; three rungs that "looked obvious" were measured and discarded first |
+
+⚠ **Two hook addresses appear in the record for C and they are NOT interchangeable:** `0x29D72` (the fb
+**sum** `r26`, clamped 46080 — the first pass, still quoted in `V290-DECISION-TABLE` §1.2) and **`0x28F4C`**
+(the rate operand `x`, ±12000 — the final choice, per the trace's ADDENDUM). Use `0x28F4C`.
+
+**Pre-registered revert signature for C, written before any drive:** C **re-creates** the 16 Hz object — a
+pole at **16.5 Hz, ζ_med +0.057, in 100 % of surviving fits**, better damped than V289's 16.66 Hz ζ 0.033 but
+**inside the burst range the operator has already rejected**. Watch for a 15–18 Hz line in trains; grinding
+lower-pitched than V282's; a new 10–14 Hz line (C's sensitivity there is ×2.0 V282's); audible HF hiss
+(rms |R| 30–500 Hz ×1.91). 🛑 **If C's 16.5 Hz pole is audible, the ENTIRE loop-shaping class is closed —
+both placements, both bases, and the Kd schedule — and V291 must come from outside it.**
+
+**WHY S′ WAS NOT CUT EITHER, even though it is legal.** Two findings compound: (1) the within-drive
+stratified contrast is **unbiased but 2.6× too imprecise** — the confound-correction CI is ×0.34–2.01
+against a ×2.29 effect — and the two operator-facing channels are confounded **in the flattering direction**
+(on the base builds low-demand rings are already **41 % quieter** and **half as long**); (2) the effect S′
+can *legally* deliver is **×1.22 on ring time**, not the ×2.1 the nominal Kd 96 implied.
+⇒ **a build that cannot observe its own edit's effect.** `docs/review/V290-ROWS-READABILITY-2026-09-09.md`.
+
+**LEVERS CLOSED BY THIS DESIGN ROUND — record them so they are not re-proposed:**
+1. **The Kp/Kd SCHEDULE class is CAPPED at ×2.1 ring improvement at INFINITE dose.** Both schedules are
+   indexed by the demand index at **16.125736 wire counts per LSB** (Kd record `0xE511C`, X = 0/11/22/32,
+   Y = 128×4 — **never edited on any flown build**; Kp record `0xE5378`). Roughly **half of grinding seconds
+   sit above the knot (idx 32)**, where every Y-only edit is byte-identical to base. `Y[0..2] = 0` — deleting
+   D below the knot — reaches only 257 ms and blows the 7 Hz gate to **1.0604**.
+   **Moving the knot X is DOMINATED everywhere** by deepening Y (S80 beats X64 on both axes with 2 fewer
+   bytes, in the safer byte class): **the X lever is closed.** `docs/traces/TRACE-2026-09-09-kp-kd-schedule-axis.md`.
+2. **The V289 base is dead for any schedule** (option B): pkR 0.799–0.807 at **every** Kd, because V289's
+   notch sits in the reference transfer and no calibration edit recovers it.
+3. **The added post-lag term class is CLOSED on the surviving plant, either sign** — minus drives the 16.4 Hz
+   pole to ζ −0.082; plus removes it but the crossover reappears at 26.9 Hz ζ +0.006, because (1−N)/8
+   bypasses the 5 Hz output lag and re-injects the 20 Hz content the notch removed.
+   `docs/review/ADV-V290-PHYSICS-2026-09-09.md`, `docs/specs/design/DESIGN-V290-2026-09-09.md` (the FIRST,
+   REFUTED design memo — do not build from it).
+4. **The parametric hazard is measured SAFE for the schedule class** (modulation 15–50× too slow and
+   50–500× too shallow; the measured `Kd(t)` through the byte-exact clamped mirror never pumped, 9 of 9).
+   🛑 **But a Floquet analysis of the UNCLAMPED electronics is NOT a sufficient parametric-safety argument
+   for this loop** — linear reads ~2 % where the clamped mirror reads 0.42×. `docs/review/V290-PARAMETRIC-HAZARD-2026-09-09.md`.
+
+**Design record:** `docs/specs/design/DESIGN-V290B-2026-09-09.md` (the plant family, 304 fits / 121
+linear-stable / 87 burst-consistent), `DESIGN-V290-TELEMETRY-2026-09-09.md`, `docs/review/ADV-V290-NULL-2026-09-09.md`
+(the null that was overturned), `docs/traces/TRACE-2026-09-09-v290-feedback-operand-hook.md` and
+`TRACE-2026-09-09-v290-postlag-hook-rate-operand-ram.md` (RAM census: 72-byte free run
+`gp-0x6D74..gp-0x6D2D`; 868 B free flash after V289's cave; **`r26` is REWRITTEN with LERP scratch at
+`0x29F76` on the main path** — a cave wanting filtered feedback must read `gp-0x3d30`, not `r26`).
+
+### V289 rev 1 — V282 + a NOTCH on the rate loop's OUTPUT + the feedback lag pole 16.5 → 25 Hz (2026-09-08) · **FLEW 2026-09-09, routes `…00000062--1c7daa54e8` / `…00000063--1d4b188022`: HIT ITS OWN PRE-REGISTERED REVERT SIGNATURE — the ring MOVED to 15–17 Hz, is not quieter, comes in trains**
 **Class: IN-LOOP loop shaping — the first filter ever placed on the LKAS rate loop's own output, and the first move of the fb lag pole in 285 images. No gain cut, no authority cut, no reference-side filter.** Diff vs V282: 185 bytes / 10 runs / 3 cal bytes / TWO CRC trailers.
 | region | V282 | V289 r1 | what it is |
 |---|---|---|---|
@@ -260,6 +334,8 @@ Slot 7 only (X 0,32,36,44,88 · Y 248,248,512,512,248) — the other 27 records 
 | `0xC4FFC` / `0xC6FFC` | 446bb04e / 75eadf72 | 821f61a7 / fe780477 | CRC, code page and cal page |
 Why: the V288 drive showed the excitation-side story false (D-bind ×0.03, grind unchanged) and the mode-nature census showed the 20 Hz line is a plant mode the loop de-damps (f pinned across Kp 248–696, +0.4 Hz with gain, ζ falling with gain). GATE 2 (adversary B, from the bytes on the census plant): |L| < 5 Hz +2 %, 3.9 Hz +0.56°, 7 Hz gate 1.005, Ms 3.77 → 2.05, step-ring ζ 0.0155 → 0.0379. B3 as written FAILED: capped-step peak rate ×0.909 / accel ×0.929 (criterion 0.95) — the ring's overshoot removed, t90 +7 ms, steady state ×1.00, open-loop peak torque identical; the operator accepted. GATE 1 (adversary D): the 12-byte state run has zero accessors by raw scan (byte forms and bit ops included) and Ghidra; boots to 0. Image `f0c10c29752d2b9bc4ec510800cd4de58166ebbb87f05613b5ee8e7af339a3ed`, rwd `20fa175721eb9712cd9aada27c6ecc84e43108fcdd0c21d387b80db4a105625c`. Design `docs/specs/design/DESIGN-20HZ-DAMPING-LOOPSHAPE-2026-09-08.md`; prereg + verdicts `docs/review/ADVERSARIAL-V289-PREREG-2026-09-08.md`; page https://claude.ai/code/artifact/6ee52635-8425-4d63-86a7-6a2b60e7a444.
 Expected if right: rings decay ≈ 1.7× faster and stop being sustained — not a cure. Revert signatures: a new line at 14–17 Hz or 22–24 Hz, or a sustained ~16 Hz lower-pitch grind (smooth-plant branch).
+
+**ON-CAR, 2026-09-09 (routes r62/r63, 619 s / 588 s engaged, tap-attributed from the wire — b5 duty 0.500 engaged, b7 0.95–1.00 on SCA=0 > 3 s post-disengage on both, the V289 signature): the pre-registered "14–17 Hz / sustained ~16 Hz" REVERT SIGNATURE FIRED.** Operator: *"Grinding is still an issue."* The 20 Hz line is GONE from the pooled wheel-rate PSD on both routes (nothing above the noise floor 18–22.5 Hz); a 16.5–17.0 Hz line stands ×9.6–23.2 above the floor (V282/V288: a 20 Hz line ×5–11 above floor, nothing 13–17.5 Hz) — the 13–17.5:18–22.5 band-power ratio flips from 0.32–0.62 to 4.9–9.9. Bookmark line frequencies 15.92 Hz (r62) / 15.09 Hz (r63). **Not quieter**: loudest episodes 725–826 raw (r63), 581–599 (r62) — above every V288/V282 bookmark and V288's loudest route-wide episode (640). **Shorter individual events, in trains**: decaying bursts, half-peak 0.30–0.90 s, ζ_eff 0.02–0.13 (V288's worst mark was SUSTAINED, ζ 0.004); one r63 episode re-fires every 1.5–2 s for 10 s, hands off. 🛑 **The V282-yardstick census (18–22 Hz ≥ 40 raw gate) is BLIND to this line** — its 2.1–2.2 % presence reading (vs V288's 15.6 %) is the gate missing a relocated line, not the grinding shrinking; **do not quote it as an improvement**. Trigger class unchanged (full-lock intersection turns at 2–5 m/s, command rail-to-rail at the slew cap); loudest new episodes widen it to 7–12 m/s turn entries and one hands-off held turn. b7 (the cave's own |4·notched| ≥ |output| comparator) reads only 0.03–0.15 in the loud cores against a 0.12–0.37 prediction — the notch passes most of the 15–17 Hz content it is not aimed at [EVIDENCE for the duty; BELIEF for the mechanism]. 🛑 **CORRECTED READING, same day, after the demand-gated re-census (`rlog-tools/studies/grind/MODE-NATURE-V289-RECENSUS-2026-09-09.md`) — the first version of this entry said "the notch failed / the line moved". It did not.** **THE NOTCH WORKED COMPLETELY: the 18–22 Hz band is EMPTY on V289 — 0 of 1414 present windows** (V282 carries 501 windows in 19–21 Hz alone; demand-gated 20 Hz prevalence ×34 down; gate-free pooled peak V282 19.92 → V289 16.80 Hz). It did not shift the 20 Hz mode, it **removed the loop gain feeding it** (|N| = 0.011, −39.3 dB). **What became dominant is a DIFFERENT, PRE-EXISTING pole at 15–17 Hz — a crossing V282 already carried at |L| 1.13 with 30° of phase margin, which the notch skirt (−41.6°) and the new fb pole (+11.5°) spent. That one IS the loop's own crossover. Measured ζ 0.029 on BOTH builds: the frequency moved, the damping did not.** ⇒ **"The 20 Hz line is a plant mode the loop de-damps" SURVIVES and is stronger** — the Kp-pinning is now confirmed model-free at matched load and the clamp explanation for it is FALSIFIED; what broke is the one-plant-one-pole model (no single LTI plant carries both facts, best joint χ² 25.8). **Class lesson: a notch on this loop removes its target band and hands dominance to the next crossing — a loop-shaping build must price the pole it CREATES, not only the one it kills.** ⚠ **And the placement lesson (`docs/review/ADV-V290-NULL-2026-09-09.md`, `docs/traces/TRACE-2026-09-09-v290-feedback-operand-hook.md` Q6): forward and feedback placement of the SAME filter are algebraically identical in poles/ζ/Ms/PM/GM/7 Hz gate to machine precision and differ ONLY in transient authority (pkR 0.78 → 0.98). V289's own design scored the feedback row; the build shipped the loop-output one; no blocker was ever recorded. The ×0.91 authority price was a price for the TOPOLOGY, not for the damping.** Full read: `V289-QLIVE-R62-R63-2026-09-09.md`, `V289-MARKS-R62-R63-2026-09-09.md`, `GRIND1-CENSUS-V289-R62-R63-2026-09-09.md`, `MODE-NATURE-V289-RECENSUS-2026-09-09.md`. **Outcome: the operator chose to REVERT TO V282 and stop — see the V290 entry above.**
 
 ### V288 rev 2 — V282 + a SETPOINT PRE-FILTER code cave (2026-09-07) · FLEW 2026-09-08 (route 5e): cave LIVE, D-bind ×0.03, GRINDING UNCHANGED — the reference-side class is closed
 **Class: reference pre-filter, OUTSIDE the rate loop — the first build V38→V288 to touch the reference the LKAS rate PID compares against.** Zero calibration bytes. Diff vs V282: 91 bytes / 5 regions.

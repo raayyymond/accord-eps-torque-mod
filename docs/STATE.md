@@ -1,50 +1,209 @@
 # STATE — living current state of the kit
 
-> 🛑 **READ THIS BOX FIRST.** Below it are **83 blockquote blocks in reverse-chronological
+> 🛑 **READ THIS BOX FIRST.** Below it are **84 blockquote blocks in reverse-chronological
 > order** — findings, corrections and closures. That is a record, not a briefing. Everything you need
 > to make a decision is in this box and the index under it.
 
-## ✈ THE DECISION, IN ONE PLACE  — updated 2026-09-09 (**V288 rev 2 FLEW and the grinding is UNCHANGED; the 20 Hz line is a PLANT MODE the rate loop de-damps; V289 rev 1 = V282 + a NOTCH on the loop output + the feedback pole 16.5 → 25 Hz, BUILT, adversarial pass complete, ACCEPTED by the operator**)
+## ✈ THE DECISION, IN ONE PLACE — updated 2026-09-09 close-out (**THE OPERATOR CHOSE: "Neither — revert to V282 and stop here." NO V290 IMAGE WAS BUILT.**)
 
-**ON THE CAR: V288 rev 2 or V282** (the operator drove V288 rev 2 on 2026-09-08 — route `75604b0a…0000005e--03a9714d78`, 642 s engaged, three grinding bookmarks — and reported the grinding; V288's edit is measured INERT on the grind, see below). Either is a valid base to return to; V289 is cut on V282.
+**ON THE CAR: V289 rev 1.** **RECOMMENDED, AND THE OPERATOR'S OWN DECISION: revert to V282.**
 
-**BUILT, UNFLASHED, FLASH CANDIDATE: V289 rev 1 = V282 + a notch code cave on the clamped loop output + two calibration bytes (feedback lag pole).**
-`39990-TVA,A160-V289-V282BASE-SUMNOTCH.20.05HZ.Q3-FBPOLE.25HZ-KP.FLAT.Y0-CAVE.R24CMP.B6-NOTCHSIGN.B5-NOTCHCMP.B7-MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP-0x13000-0x100000.rwd`
-rwd sha256 **20fa175721eb9712cd9aada27c6ecc84e43108fcdd0c21d387b80db4a105625c** · image `_v289_…_plain_image.bin` sha256 **f0c10c29752d2b9bc4ec510800cd4de58166ebbb87f05613b5ee8e7af339a3ed** · script `analysis-2020accord/builds/v108_plus/build_v289_tva.py` (FAST 2 s / `--full` 4 s; writes only with `ACCORD_V289_WRITE=rwd`). Diff vs V282: **185 bytes, 10 runs** — hook 0x2A174 (`ld.hu 0x73ee,tp,r7` → `jr 0xC4C00`), 0x14A cave exit 0xC4BD6 → 0xC4BDC, telemetry tail 0xC4BDC–F7 (28 B), notch cave 0xC4C00–8B (140 B, 52 instr), cal 0xC63E8 923 → 875 and 0xC63EA 1560 → 2301, CRC 0xC4FFC AND 0xC6FFC (two blocks — the fb-pole cells live in the cal page). Exactly one V289 rwd on disk.
+> 🛑 **THE OPERATOR'S DECISION, 2026-09-09.** Presented with the re-scored V290 candidate table, he chose
+> **"Neither — revert to V282 and stop here."** He will flash V282, **taking the 20 Hz plant mode back**
+> rather than spend a drive on a ×1.22 effect that cannot be read, or on a candidate whose worst-case
+> transient authority is 0.928 against his own 0.95 floor. **This is his call, recorded as his call.**
 
-### WHAT V289 DOES (all read from the built image)
-1. **Notch on the clamped loop output S** (r12 at 0x2A174, the value after P+D and the per-variant gain LERPs, clamped ±15360 by 0xC61BE), BEFORE the 5.05 Hz output lag: Q14 TDF-II, b = [16048, −31842, 16048], a = [16384, −31842, 15712], first-order error feedback (remainder word) so DC is EXACTLY 1 (254/254) and constants settle to exactly X; realised centre **20.036 Hz**, −3 dB 16.98–23.64 Hz, Q 3.007, −47.6 dB at 20.05 Hz; output clamped to ±cal(0xC61BE); state gp-0x6c44/−0x6c40/−0x6c3c, FLAG halfword gp-0x6c3a (12-byte run, censused free by raw scan incl. byte forms + Ghidra, boots to 0). Every route passes the hook every tick (disengaged S = 0 → state decays), so no sentinel init (switch in the script, off).
-2. **Feedback lag pole 0xC63E8/EA 923/1560 → 875/2301**: 16.53 → 25.03 Hz, DC 30.891 → 30.886 (held), +11.8° of phase at 20 Hz, +7.6° at 7.3 Hz, +4.4° at 3.9 Hz. Never moved in 285 images.
-3. **Telemetry 0x14A byte 4: b5 = sign(S − y) (the notched-out component), b7 = |S − y| ≥ |y| (comparator)**; b4/b6 = V282's r24 comparators kept as positive controls; b3 as V282; b0–2 stock. Computed at 1 kHz into one FLAG halfword, ORed in atomically by the 100 Hz tail (mask 0x5F).
-Kp 248 flat, Kd 128, the map, tapers, D clamp, sum clamp, r26 clamp, the 427 tap: byte-identical to V282.
+**The trade he was shown** (`docs/review/V290-BASE-DECISION-2026-09-09.md` § ADDENDUM A3 — read the
+ADDENDUM, it supersedes that file's body ranking; scoring in `docs/review/V290-DECISION-TABLE-2026-09-09.md`):
 
-### WHY THIS CLASS — what the V288 drive proved (rlog-tools/studies/grind/{V288-QLIVE,V288-MARKS,GRIND1-CENSUS-V288}-R5E-2026-09-08.md)
-- V288's cave ran (b4.5 = sign(y_model) on 99.5 % of engaged frames) and did what it was sized to do: D-clamp bind duty ×0.03 on the same route. **The grinding did not move**: same 20.0–20.4 Hz line at all three bookmarks (mark 3 louder than any V282 episode), 258 vs 239 episodes/h, envelope p50 126 vs 127, f 20.06 vs 20.03 Hz, rung-bell ratio 2.41 vs 2.25, no new line > 22 Hz [EVIDENCE, V282 census pipeline reproduced exactly]. ⇒ **the reference-side class is exhausted**. (V288's +1 rounding fix also makes it a unit-slew follower below 16 counts — irrelevant to the outcome.)
-- **Mode nature (9 routes, 5 builds, 529 episodes): a PLANT MODE the loop de-damps.** f 20.03–20.08 Hz on every build while Kp ran 248 → 696; +0.4 Hz with gain; ζ 0.036 → 0.019 with gain while staying stable; ζp ≈ 0.05 with the loop spending ~30 %. A −180°-limited crossover predicts −2..−4 Hz and instability above Kp ~350: falsified. Plant rate/T: ×1.7 bump 18–21 Hz, flat phase −85..−100° over 15–23 Hz [EVIDENCE]. The record's "PM 35–60°" was the un-removed 3.9 ms stream offset (+28° spurious lead).
-- **Loop phase at 20.3 Hz, byte-exact electronics (V282):** output lag −72.4°, fb pole −47.3°, two two-sample sums −7.4°, one tick −7.3°, D lead +61.6° ⇒ −72.6°; the plant supplies ≈ −100°. Both lag filters sit INSIDE the rate loop and had never been touched (`docs/traces/TRACE-2026-09-08-rate-loop-lags-and-inloop-filter-hooks.md`). The V287 design doc's reason for striking the fb pole ("|fb| multiplier at 0x2A1E6") was a misread: 0x2A1E6 is y × the engagement ramp gp-0x69b0.
-- **Ranking (`docs/specs/design/DESIGN-20HZ-DAMPING-LOOPSHAPE-2026-09-08.md`):** the PAIR (notch + fb pole 25 Hz) is the only row neutral on every gate (7 Hz gate 1.005 vs 1.003; 3.9 Hz +0.6°; |L| < 5 Hz within 2 %); a bare notch re-arms the 7 Hz strong-turn ring (gate 1.079); fb pole alone is a blind dose (verdict flips between fits); output-lag pole, every lead and the D filter are STRUCK. Predicted: ζ of the mode 0.019 → 0.024 on the census fit (Ms 3.8 → 2.0, min|1+L| 0.27 → 0.49), byte-exact step-ring ζ 0.016 → 0.038 (adversary B). **Not a cure: rings decay ≈ 1.7× faster and stop being sustained.**
+| option | 7 Hz gate (≤ 1.01) | capped-step pkR med / **worst** (≥ 0.95) | delivered ring | ζ_worst | verdict |
+|---|---|---|---|---|---|
+| **revert to V282** | 1.0028 | 1.000 / 1.000 | 545 ms (10.9 cyc) | +0.0129 | **CHOSEN** |
+| **C** — V282 + notch 21.5 Hz Q1.5 on the **feedback operand** + fb pole 40 Hz | 1.0092 ✅ | 0.971 ✅ / **0.928 ❌** | 545 → **387 ms (×1.41)** | **+0.0349 (×2.7)** | needs the authority floor relaxed |
+| **S′** — V282 + Kd schedule (112,112,112,128) + a readability cave | 1.0100 ✅ (at the limit) | 0.995 ✅ / 0.99 ✅ | 545 → **448 ms (×1.22)** | +0.0178 | legal but **unreadable from one drive** |
+| **D** = C + any schedule | 1.016–1.024 ❌ | 0.92 ❌ | — | — | also needs 5 telemetry rungs, has 3 |
+| **B/B′** — any schedule on the **V289** base | 1.012–1.020 | **0.806 ❌ at every Kd** | — | — | dead: V289's notch sits in the reference transfer |
 
-### ADVERSARIAL PASS (FAIL criteria pre-registered in `docs/review/ADVERSARIAL-V289-PREREG-2026-09-08.md`, verdicts appended there)
-**A PASS · B FAIL on §B3, ACCEPTED BY THE OPERATOR · C PASS (docstring fixes, hashes unchanged) · D PASS.** B3: on a capped-frame command step the byte-exact closed-loop mirror gives peak wheel rate ×0.909 and peak accel ×0.929 (criterion 0.95) — the ring's own overshoot removed, t90 28 → 35 ms; steady-state ×1.00; open-loop peak torque into the motor identical for every step size. The design's "×1.00" row was the feedback-operand notch, not the built topology. Operator, 2026-09-09: *"accept rev 1 (sum notch)."*
-Residuals carried: on one plant fit the pair's ζ falls (0.022 → 0.016) while the notch alone holds → a NEW line at **22–24 Hz** is a second revert signature next to **14–17 Hz**; if the plant is smooth the build is Nyquist-unstable → a sustained ~16 Hz lower-pitch grind = revert; FLAG halfword transiently 0 for ~30 instructions per tick (preemption residual); fs = 1 kHz rests on the CAN dwell measurement; the register-indirect RAM residual common to every flown cave.
+**FLASH TARGET — verified from the file, not from a build script:**
+`39990-TVA,A160-V282-V281R3BASE-KP.FLAT.Y0-CAVE.R24CMP.BITS5.6-MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP-0x13000-0x100000.rwd`
+· **rwd sha256 `618365154e3ffdbb073c00a60173508291f0a18340d6a4f7d39cdd4b2a5b7e22`** · image sha256
+`0ea98d06b292ca1a5e78a752f339c8fad103a35a603e0237e598e68c1d5ed0fe` · **exactly one V282 `.rwd` on disk**
+(the seven other filenames containing "V282" are V283…V289, whose names carry `V282BASE`).
+⚠ *Not a flash instruction — the flash is gated on the operator naming the file and the bus.*
+**Full cumulative non-stock delta of what goes on the car: `docs/review/V282-CUMULATIVE-NONSTOCK-DELTA-2026-09-09.md`**
+(1,984 bytes / 311 runs vs the true stock dump, every byte attributed, re-read from the images).
 
-### ✈ RISK BEFORE THE DRIVE, and how it will be read
-Steady-state authority unchanged; capped-step transient peak ~9 % lower and ~7 ms later (accepted). New HF cost: ×1.48 rms noise into D from the raised pole (guarded by the 26–33 Hz statistic). **Revert to V282 if:** a new line at 14–17 Hz or 22–24 Hz, a sustained lower-pitch (~16 Hz) grind, or any new vibration on straight engaged driving. Reading: (1) liveness — b4.5 duty ≈ 0.50 engaged is ALIVE (zero-mean component; only its cross-spectrum with the 0x18F rate at the line is informative), b4.7 must rise at episode onsets (predicted 0.10–0.11 engaged at the 100 Hz instants, 0.12–0.37 in bookmark windows) — 🛑 **b4.7 reads 1.000 while DISENGAGED (0 ≥ 0): score engaged-only**; (2) the 18–22 Hz line's decay rate and duration at the operator's bookmarks vs r5e_v288/r39 (the census pipeline `grind1_census_v288_r5e.py` takes a new route in minutes); (3) the 13–17 and 22–24 Hz bands; (4) the operator scores the grinding.
+<!-- V290 --> **NO V290 IMAGE, RWD OR BUILD SCRIPT EXISTS.** Option C is fully specified and traced —
+hook `0x28F4C` (`ld.h -0x6a56,gp,r7`, bytes `24 3f aa 95` → `89 07 44 bd`), cave `0xC4C90` (868 B free,
+CRC block `0xC4FFC`), notch Q14 integers `b0 = b2 = 15680`, `b1 = a1 = −31074`, `a2 = 14976`, output clamp
+±12000 inside the cave, fb pole `0xC63E8/EA` → 796/3522 (40 Hz), telemetry `b3 = |d2| > |d|`, `b5 = sign(n)`,
+`b7 = |n| ≥ 16` with b4/b6 preserved as V282's cross-build control. **It is ready to cut if the operator
+later relaxes the worst-case transient-authority floor** (`docs/specs/design/DESIGN-V290B-2026-09-09.md`,
+`DESIGN-V290-TELEMETRY-2026-09-09.md`, `docs/traces/TRACE-2026-09-09-v290-feedback-operand-hook.md` ADDENDUM).
+
+### V289 rev 1 — the verdict, the operator's words first
+**Operator, 2026-09-09, after two routes (`…00000062--1c7daa54e8`, 975 s / 619 s engaged; `…00000063--1d4b188022`,
+707 s / 588 s engaged): "Grinding is still an issue."** V289 rev 1 = V282 + a Q14 TDF-II notch cave on the
+clamped LKAS rate-loop output (20.036 Hz, Q 3.0; hook `0x2A174` → cave `0xC4C00`) + the feedback lag pole
+`0xC63E8/EA` 923/1560 → 875/2301 (16.5 → 25 Hz). Image `f0c10c29…`, rwd `20fa1757…`.
+
+🛑 **V289 hit its own pre-registered REVERT SIGNATURE.** It is a **MIXED** result, and the two halves must
+be stated separately because the first pass at this box got the reading wrong:
+
+1. **THE NOTCH WORKED — completely.** The 18–22 Hz band is **EMPTY on V289: 0 of 1414 present windows**
+   (V282: 501 windows in 19–21 Hz alone; demand-gated 20 Hz prevalence ×34 down). Independent, no census
+   gate at all: the pooled wheel-rate spectral peak in 12–26 Hz reads V282 19.92 Hz, V288 19.92 Hz,
+   **V289 16.80 Hz (×10.3 above the band median)**. The notch did not *move* the 20 Hz line; it **removed
+   the loop gain feeding it** (|N| = 0.011, −39.3 dB). [EVIDENCE — `rlog-tools/studies/grind/MODE-NATURE-V289-RECENSUS-2026-09-09.md` §1]
+2. **IT RELOCATED THE RING TO A DIFFERENT, PRE-EXISTING POLE at 15–17 Hz** — one V282 *already carried*
+   at |L| 1.13 with 30° of phase margin, which the notch skirt (−41.6°) plus the new fb pole (+11.5°)
+   spent. **That one is the loop's own crossover.** Measured ζ **0.029 on both builds — the frequency
+   moved, the damping did not.** Dominant line at the two operator bookmarks: 15.92 Hz (r62), 15.09 Hz (r63);
+   demand-gated median 16.47 Hz [15.81–16.91] vs V282's 19.98 Hz.
+3. **Not quieter; some episodes louder** (725–826 raw envelope on r63 vs V288's loudest 640), **shorter
+   events but in trains** — one r63 episode re-fires every 1.5–2 s for 10 s, hands off, wheel nearly still.
+4. **The cave was confirmed LIVE from the wire, not the label**: b5 duty 0.500 engaged on both routes,
+   phase-locked to the 20 Hz wheel rate (coherence 0.55–0.99 in loud windows); b7 reads 0.95–1.00 on SCA = 0
+   frames > 3 s after disengage — V289's own signature (V282/V288 read 0.00 there).
+5. 🛑 **The V282-yardstick census (gate 18–22 Hz ≥ 40 raw) is BLIND to the relocated line.** Its "2.1–2.2 %
+   presence" is a **gate miss, not an improvement**, and must never be quoted as a rate improvement across
+   V282/V288/V289.
+
+### THE TWO-OBJECT PICTURE — what the band actually holds
+The widened 12–26 Hz band contains **two different lines, separable on LKAS DEMAND, not on speed**
+(`MODE-NATURE-V289-RECENSUS-2026-09-09.md`; every pooled median that ignored this landed at a spurious
+~14.8 Hz):
+- **Low-demand line (idx < 5): 12.4–13.8 Hz**, falls with speed, ~4 raw of command amplitude, **at the same
+  frequency on V282, V288, V289 and the Kp-LERP builds.** A road/plant line. Not the grinding mode.
+- **High-demand line (idx ≥ 20): 20.0 Hz on V278r3/V280r2/V281r3/V282/V288, 16.2–16.7 Hz on V289**, at every
+  speed bin 0–20 m/s, carrying 15–40 raw of command amplitude. **This is the grinding mode.**
+
+### WHAT THIS SESSION CLOSED
+1. **"The 20 Hz line is a PLANT MODE the loop de-damps" SURVIVES and is stronger.** The Kp-pinning is now
+   confirmed **model-free at matched load**, and **the clamp explanation for it is FALSIFIED**. What broke
+   is the *one-plant-one-pole* model, not the classification: no single LTI plant carries both V289's move
+   and the Kp-pinning (best joint χ² 25.8, ζ wrong by 2–14×).
+2. 🛑 **A FILTER'S PLACEMENT DECIDES ITS AUTHORITY COST, and the two placements are otherwise identical.**
+   Forward (loop-output) and feedback placement of the *same* filter give **algebraically identical** return
+   ratios — poles, ζ, Ms, PM, GM and the 7 Hz gate agree to **machine precision (max |pole difference| 0.000e+00)**.
+   They differ **only** in the reference transfer, i.e. in capped-step transient authority: **pkR 0.78 → 0.98**.
+   **V289's own design scored the feedback row and the build shipped the loop-output one; no blocker was ever
+   recorded** — the design preferred the sum node on one physics argument ("the setpoint's 20 Hz kick still
+   reaches the motor") and left the feedback hook explicitly open. **The ×0.91 authority price V289 paid was a
+   price for the TOPOLOGY, not for the damping.** [`docs/review/ADV-V290-NULL-2026-09-09.md`,
+   `docs/traces/TRACE-2026-09-09-v290-feedback-operand-hook.md` Q6]
+3. **Both colleague hypotheses are FALSE.** **H1** ("the operator is switching between two torque-table
+   points; scaling the map spreads them so resolution is lost") — the index quantiser sits **before** the
+   assist map and is **map-independent** (1 index LSB = **16.126** raw `0xE4` counts on every build, using the
+   live taper arm 255); its whole residual carried through the loop is 2.3–2.5 output counts at 18–22 Hz and
+   is **identical in grinding and quiet windows**, while the measured torque there is 29–41 counts — **12–32×
+   larger**. openpilot's only command-indexed table is the identity `[0,4096] → [0,4096]`. **H2** ("a 20 Hz
+   stair-step command held 4 frames") fails again on the wire: 96–99 % of 100 Hz frames change; ±1-alternation
+   and two-value 100 ms windows sit at ~0.000 in every stratum. ⭐ **The kernel of truth in H1: scaling the map
+   raises loop gain per command count — a GAIN effect, not a resolution effect** (and V288 made every setpoint
+   step ~11× finer with the grinding unmoved).
+4. **The Kp/Kd schedule class is CAPPED.** Both schedules are indexed by the demand index at exactly
+   **16.125736 wire counts per LSB** (Kd record `0xE511C`, X = 0/11/22/32; Kp record `0xE5378`). Because
+   **roughly half of grinding seconds sit above the knot (idx 32)**, where every Y-only edit is byte-identical
+   to base, the class ceils at **×2.1 ring improvement at infinite dose** — and setting `Y[0..2] = 0` (deleting
+   D below the knot) blows the 7 Hz gate to 1.0604. **Moving the knot X is DOMINATED everywhere** by deepening
+   Y — the X lever is closed. Under the operator's own gate exactly **one** record qualifies, S′ (Y0 = 112), at
+   ×1.22. [`docs/traces/TRACE-2026-09-09-kp-kd-schedule-axis.md` + its scalecheck VERIFICATION section]
+5. **Row S is not readable from one drive** — and the estimator, not the control, is why. The within-drive
+   stratified contrast is **unbiased but 2.6× too imprecise** (confound-correction CI ×0.34–2.01 against a
+   ×2.29 effect), and the two operator-facing channels are confounded **in the flattering direction**:
+   on the base builds low-demand rings are already **41 % quieter (×0.585)** and **half as long (×0.500)**.
+   A naive "the low-demand grinding got better" report would be reporting the confound.
+   [`docs/review/V290-ROWS-READABILITY-2026-09-09.md`]
+6. **The parametric hazard is measured SAFE for the schedule class** — the modulation row S could produce is
+   15–50× too slow and 50–500× too shallow, and the measured `Kd(t)` trace through the byte-exact clamped
+   mirror never pumped (decay ≥ V282's in 9 of 9). 🛑 **But a Floquet analysis of the UNCLAMPED electronics is
+   NOT a sufficient parametric-safety argument for this loop** — linear reads ~2 % where the clamped mirror
+   reads 0.42×. [`docs/review/V290-PARAMETRIC-HAZARD-2026-09-09.md`]
+
+### CORRECTIONS OF RECORD, 2026-09-09
+1. 🛑 **The first version of this box read V289 as "the line moved, the notch failed." That is WRONG and is
+   corrected above: the notch removed the 20 Hz object completely; a *different*, pre-existing 15–17 Hz pole
+   became dominant.** "Under adjudication" is withdrawn — the plant-mode verdict survives.
+2. **The V282-census gate (18–22 Hz) is BLIND to V289's relocated line.** Re-census at 13–18 Hz, demand-gated,
+   before any cross-build rate comparison.
+3. **The notch cave keeps executing 1–3 s after SCA falls** (Honda's disengage fade leaves a decaying nonzero
+   loop state). Score b5/b7 **engaged-only**, never on raw SCA = 0.
+4. **The idx quantiser LSB is 16.126 raw `0xE4` counts, not 16.19** — the earlier figure used the superseded
+   taper cliff-arm (254); the live arm is 255. Strengthens H1's falsification; changes no conclusion.
+5. **`docs/BUILD-LINEAGE-PART1-LEVER-INDEX.md` has no rows for `0xC63E8`/`0xC63EA`, `0x2A174`, `0x28F4C` or the
+   Kd record `0xE511C`** — that index's stated coverage stops at **V108** and none of those cells was touched
+   before V289. Their on-car and design record lives in `docs/BUILD-LINEAGE.md`'s V289/V290 entries. **Absence
+   from the index is not evidence of untested.**
+6. ⚠ **Two hook addresses appear for option C in the record and they are not interchangeable:** `0x29D72`
+   (the fb **sum** `r26`, the first pass) and **`0x28F4C`** (the rate operand `x`, ±12000-bounded — the final
+   choice; it sits below the engagement guard so the cave runs on every tick and needs no sentinel seeding).
+   `docs/review/V290-DECISION-TABLE-2026-09-09.md` §1.2 still quotes the earlier one.
 
 ### ✈ NEXT — in order
-1. **Operator decides on V289 rev 1.** Flash only the file named above; kill openpilot first. Decoders: b4.5/b4.7 semantics above (V288's b4.5 = sign(y) no longer applies).
-2. Read the first V289 route with the three 2026-09-08 instruments (qlive → adapt to b5/b7; marks; census) — all take a new route by cache key.
-3. openpilot-side echo lever unchanged (`docs/research/STARPILOT-FORK-COMMAND-PIPELINE-2026-09-07.md`).
-4. Golden model: `lkas_sum_notch` and `lkas_fb_lag` added (contract 90 symbols, hash unchanged); the rate PID stage itself (E former, P/D, the per-variant gain LERPs 0xCBB54/0xCBC34/0xCBBC4/0xCBAE4) is STILL absent — next model task.
-5. Open: 1 kHz task slack (no period field, no overrun counter found); outer-loop PM; `0xC61C0/C2/C4` intent; the 12 bytes at 0xC4FF0.
+1. **Operator flashes V282** when he chooses to. Nothing else is pending on the car.
+2. **If and when he relaxes the worst-case transient-authority floor (0.928 vs 0.95): cut option C.** It is
+   fully specified and traced; its pre-registered revert signature is written down — a 15–18 Hz line in trains,
+   grinding lower-pitched than V282's, a new 10–14 Hz line (C's sensitivity there is ×2.0 V282's), or audible
+   HF hiss (rms |R| 30–500 Hz ×1.91). 🛑 **If C's 16.5 Hz pole is audible, the whole loop-shaping class is
+   closed — both placements, both bases, and the Kd schedule — and V291 must come from outside it.**
+3. **The fork-side echo lever stands regardless** (`docs/research/STARPILOT-FORK-COMMAND-PIPELINE-2026-09-07.md`):
+   openpilot's unfiltered 100 Hz angle measurement is what makes the command's own 20 Hz line an echo of the ring.
+4. **Standing open item — the golden model still lacks the LKAS rate-PID stage.** Verified unchanged and passing
+   at this close-out: **90 symbols**, `_self_check()` + `_demo()` stdout 2,512 B sha256
+   `740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d`. To close the gap it would need: the
+   **E-former** (`E = 32·setpoint − feedback`, feedback = two-sample sum, DC 30.89, through the `0xC63E8/EA` lag
+   pole), the **P and D terms** (`P = E·Kp>>8` with the Kp schedule `0xE5378` indexed at 16.126 wire counts/LSB;
+   D on the *error* with clamp `0xC61B6`), the **sum clamp** `0xC61BE`, the **per-variant gain LERPs**, and the
+   5.05 Hz output lag `0xC63EC/EE` — plus a hook point where a cave filter (V288's pre-filter, V289's notch,
+   V290-C's operand notch) can be inserted at either placement. **Do not add it piecemeal**; the 90-symbol +
+   sha256 contract must be re-run on any edit.
+5. **`0xC61C0/C2/C4` (row 19 of the V282 delta) still has NO lineage entry** despite 12 live readers across 249
+   images. A tracer task is owed before the next authority change.
+---
 
-### CORRECTIONS OF RECORD (2026-09-08/09)
-1. "Grind #1 is the LKAS rate loop's crossover resonance" → it is a **plant mode the loop de-damps**; the loop owns ~30 % of its damping at Kp 248.
-2. "PM 35–60°, Ms 2–3" (creep20) → an artefact of the 3.9 ms inter-stream offset; the loop sits at |L| 0.8–0.95, −170..−185° at 20.3 Hz.
-3. V287 design doc: 0x2A1E6 multiplies y (the output-lag result) by the engagement ramp gp-0x69b0 — not |q32(H_fb·rate)|; the fb pole is a phase element.
-4. V288 spec: "15 ms at zero crossings" → ~3 ms by construction (the +1 fix); "ΔE 3936 → 224" was in raw 0xE4 counts (sp counts: 1088 → 96, ×11); the D clamp 0xC61B6 = 10240 binds at |ΔE| ≥ 640 and is never reached by the filtered steps.
-5. A tracer's "free RAM" verdicts by halfword sweep were wrong on 2 of 3 runs (gp-0x68b0 has 19 byte accesses; gp-0x6ab0 boots to initialised data) — a free-cell census must include ld.b/st.b/bit-op forms (the builder's and adversary D's scanners do).
-6. The dongle's route counter collides: `r5e_v288` (cache key `5e2`) is the 2026-09-08 V288 route; `r5e` is a 2026-08-06 route.
+> 🛑 **SUPERSEDED 2026-09-09 — the decision box as it stood before V289's first two drives.** Kept for
+> the pre-flight spec/design detail (adversarial verdicts, risk statement, cell-level diff) the box
+> above trims; the "ON THE CAR" / "NEXT" lines below are stale — see the live box above.
+>
+> **BUILT, UNFLASHED, FLASH CANDIDATE: V289 rev 1 = V282 + a notch code cave on the clamped loop output + two calibration bytes (feedback lag pole).**
+> `39990-TVA,A160-V289-V282BASE-SUMNOTCH.20.05HZ.Q3-FBPOLE.25HZ-KP.FLAT.Y0-CAVE.R24CMP.B6-NOTCHSIGN.B5-NOTCHCMP.B7-MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP-0x13000-0x100000.rwd`
+> rwd sha256 **20fa175721eb9712cd9aada27c6ecc84e43108fcdd0c21d387b80db4a105625c** · image `_v289_…_plain_image.bin` sha256 **f0c10c29752d2b9bc4ec510800cd4de58166ebbb87f05613b5ee8e7af339a3ed** · script `analysis-2020accord/builds/v108_plus/build_v289_tva.py` (FAST 2 s / `--full` 4 s; writes only with `ACCORD_V289_WRITE=rwd`). Diff vs V282: **185 bytes, 10 runs** — hook 0x2A174 (`ld.hu 0x73ee,tp,r7` → `jr 0xC4C00`), 0x14A cave exit 0xC4BD6 → 0xC4BDC, telemetry tail 0xC4BDC–F7 (28 B), notch cave 0xC4C00–8B (140 B, 52 instr), cal 0xC63E8 923 → 875 and 0xC63EA 1560 → 2301, CRC 0xC4FFC AND 0xC6FFC (two blocks — the fb-pole cells live in the cal page). Exactly one V289 rwd on disk.
+>
+> ### WHAT V289 DOES (all read from the built image)
+> 1. **Notch on the clamped loop output S** (r12 at 0x2A174, the value after P+D and the per-variant gain LERPs, clamped ±15360 by 0xC61BE), BEFORE the 5.05 Hz output lag: Q14 TDF-II, b = [16048, −31842, 16048], a = [16384, −31842, 15712], first-order error feedback (remainder word) so DC is EXACTLY 1 (254/254) and constants settle to exactly X; realised centre **20.036 Hz**, −3 dB 16.98–23.64 Hz, Q 3.007, −47.6 dB at 20.05 Hz; output clamped to ±cal(0xC61BE); state gp-0x6c44/−0x6c40/−0x6c3c, FLAG halfword gp-0x6c3a (12-byte run, censused free by raw scan incl. byte forms + Ghidra, boots to 0). Every route passes the hook every tick (disengaged S = 0 → state decays), so no sentinel init (switch in the script, off).
+> 2. **Feedback lag pole 0xC63E8/EA 923/1560 → 875/2301**: 16.53 → 25.03 Hz, DC 30.891 → 30.886 (held), +11.8° of phase at 20 Hz, +7.6° at 7.3 Hz, +4.4° at 3.9 Hz. Never moved in 285 images.
+> 3. **Telemetry 0x14A byte 4: b5 = sign(S − y) (the notched-out component), b7 = |S − y| ≥ |y| (comparator)**; b4/b6 = V282's r24 comparators kept as positive controls; b3 as V282; b0–2 stock. Computed at 1 kHz into one FLAG halfword, ORed in atomically by the 100 Hz tail (mask 0x5F).
+> Kp 248 flat, Kd 128, the map, tapers, D clamp, sum clamp, r26 clamp, the 427 tap: byte-identical to V282.
+>
+> ### WHY THIS CLASS — what the V288 drive proved (rlog-tools/studies/grind/{V288-QLIVE,V288-MARKS,GRIND1-CENSUS-V288}-R5E-2026-09-08.md)
+> - V288's cave ran (b4.5 = sign(y_model) on 99.5 % of engaged frames) and did what it was sized to do: D-clamp bind duty ×0.03 on the same route. **The grinding did not move**: same 20.0–20.4 Hz line at all three bookmarks (mark 3 louder than any V282 episode), 258 vs 239 episodes/h, envelope p50 126 vs 127, f 20.06 vs 20.03 Hz, rung-bell ratio 2.41 vs 2.25, no new line > 22 Hz [EVIDENCE, V282 census pipeline reproduced exactly]. ⇒ **the reference-side class is exhausted**. (V288's +1 rounding fix also makes it a unit-slew follower below 16 counts — irrelevant to the outcome.)
+> - **Mode nature (9 routes, 5 builds, 529 episodes): a PLANT MODE the loop de-damps.** f 20.03–20.08 Hz on every build while Kp ran 248 → 696; +0.4 Hz with gain; ζ 0.036 → 0.019 with gain while staying stable; ζp ≈ 0.05 with the loop spending ~30 %. A −180°-limited crossover predicts −2..−4 Hz and instability above Kp ~350: falsified. Plant rate/T: ×1.7 bump 18–21 Hz, flat phase −85..−100° over 15–23 Hz [EVIDENCE]. The record's "PM 35–60°" was the un-removed 3.9 ms stream offset (+28° spurious lead).
+> - **Loop phase at 20.3 Hz, byte-exact electronics (V282):** output lag −72.4°, fb pole −47.3°, two two-sample sums −7.4°, one tick −7.3°, D lead +61.6° ⇒ −72.6°; the plant supplies ≈ −100°. Both lag filters sit INSIDE the rate loop and had never been touched (`docs/traces/TRACE-2026-09-08-rate-loop-lags-and-inloop-filter-hooks.md`). The V287 design doc's reason for striking the fb pole ("|fb| multiplier at 0x2A1E6") was a misread: 0x2A1E6 is y × the engagement ramp gp-0x69b0.
+> - **Ranking (`docs/specs/design/DESIGN-20HZ-DAMPING-LOOPSHAPE-2026-09-08.md`):** the PAIR (notch + fb pole 25 Hz) is the only row neutral on every gate (7 Hz gate 1.005 vs 1.003; 3.9 Hz +0.6°; |L| < 5 Hz within 2 %); a bare notch re-arms the 7 Hz strong-turn ring (gate 1.079); fb pole alone is a blind dose (verdict flips between fits); output-lag pole, every lead and the D filter are STRUCK. Predicted: ζ of the mode 0.019 → 0.024 on the census fit (Ms 3.8 → 2.0, min|1+L| 0.27 → 0.49), byte-exact step-ring ζ 0.016 → 0.038 (adversary B). **Not a cure: rings decay ≈ 1.7× faster and stop being sustained.**
+>
+> ### ADVERSARIAL PASS (FAIL criteria pre-registered in `docs/review/ADVERSARIAL-V289-PREREG-2026-09-08.md`, verdicts appended there)
+> **A PASS · B FAIL on §B3, ACCEPTED BY THE OPERATOR · C PASS (docstring fixes, hashes unchanged) · D PASS.** B3: on a capped-frame command step the byte-exact closed-loop mirror gives peak wheel rate ×0.909 and peak accel ×0.929 (criterion 0.95) — the ring's own overshoot removed, t90 28 → 35 ms; steady-state ×1.00; open-loop peak torque into the motor identical for every step size. The design's "×1.00" row was the feedback-operand notch, not the built topology. Operator, 2026-09-09: *"accept rev 1 (sum notch)."*
+> Residuals carried: on one plant fit the pair's ζ falls (0.022 → 0.016) while the notch alone holds → a NEW line at **22–24 Hz** is a second revert signature next to **14–17 Hz**; if the plant is smooth the build is Nyquist-unstable → a sustained ~16 Hz lower-pitch grind = revert; FLAG halfword transiently 0 for ~30 instructions per tick (preemption residual); fs = 1 kHz rests on the CAN dwell measurement; the register-indirect RAM residual common to every flown cave.
+>
+> ### ✈ RISK BEFORE THE DRIVE, and how it will be read
+> Steady-state authority unchanged; capped-step transient peak ~9 % lower and ~7 ms later (accepted). New HF cost: ×1.48 rms noise into D from the raised pole (guarded by the 26–33 Hz statistic). **Revert to V282 if:** a new line at 14–17 Hz or 22–24 Hz, a sustained lower-pitch (~16 Hz) grind, or any new vibration on straight engaged driving. Reading: (1) liveness — b4.5 duty ≈ 0.50 engaged is ALIVE (zero-mean component; only its cross-spectrum with the 0x18F rate at the line is informative), b4.7 must rise at episode onsets (predicted 0.10–0.11 engaged at the 100 Hz instants, 0.12–0.37 in bookmark windows) — 🛑 **b4.7 reads 1.000 while DISENGAGED (0 ≥ 0): score engaged-only**; (2) the 18–22 Hz line's decay rate and duration at the operator's bookmarks vs r5e_v288/r39 (the census pipeline `grind1_census_v288_r5e.py` takes a new route in minutes); (3) the 13–17 and 22–24 Hz bands; (4) the operator scores the grinding.
+>
+> ### ✈ NEXT — in order (STALE — see the live box above)
+> 1. ~~Operator decides on V289 rev 1.~~ Decided: flown 2026-09-09.
+> 2. ~~Read the first V289 route~~ — done: `V289-QLIVE/MARKS-R62-R63-2026-09-09.md`.
+> 3. openpilot-side echo lever unchanged (`docs/research/STARPILOT-FORK-COMMAND-PIPELINE-2026-09-07.md`).
+> 4. Golden model: `lkas_sum_notch` and `lkas_fb_lag` added (contract 90 symbols, hash unchanged); the rate PID stage itself (E former, P/D, the per-variant gain LERPs 0xCBB54/0xCBC34/0xCBBC4/0xCBAE4) is STILL absent — next model task.
+> 5. Open: 1 kHz task slack (no period field, no overrun counter found); outer-loop PM; `0xC61C0/C2/C4` intent; the 12 bytes at 0xC4FF0.
+>
+> ### CORRECTIONS OF RECORD (2026-09-08/09, pre-drive)
+> 1. "Grind #1 is the LKAS rate loop's crossover resonance" → it is a **plant mode the loop de-damps**; the loop owns ~30 % of its damping at Kp 248. (⚠ now itself under adjudication — see the live box.)
+> 2. "PM 35–60°, Ms 2–3" (creep20) → an artefact of the 3.9 ms inter-stream offset; the loop sits at |L| 0.8–0.95, −170..−185° at 20.3 Hz.
+> 3. V287 design doc: 0x2A1E6 multiplies y (the output-lag result) by the engagement ramp gp-0x69b0 — not |q32(H_fb·rate)|; the fb pole is a phase element.
+> 4. V288 spec: "15 ms at zero crossings" → ~3 ms by construction (the +1 fix); "ΔE 3936 → 224" was in raw 0xE4 counts (sp counts: 1088 → 96, ×11); the D clamp 0xC61B6 = 10240 binds at |ΔE| ≥ 640 and is never reached by the filtered steps.
+> 5. A tracer's "free RAM" verdicts by halfword sweep were wrong on 2 of 3 runs (gp-0x68b0 has 19 byte accesses; gp-0x6ab0 boots to initialised data) — a free-cell census must include ld.b/st.b/bit-op forms (the builder's and adversary D's scanners do).
+> 6. The dongle's route counter collides: `r5e_v288` (cache key `5e2`) is the 2026-09-08 V288 route; `r5e` is a 2026-08-06 route.
+
 ---
 
 *The section below is V279-era standing reference — the instrument description, the withdrawn builds and the DO-NOT-FLASH list. Its "first drive" and "risk before the drive" paragraphs are historical, not current instructions.*

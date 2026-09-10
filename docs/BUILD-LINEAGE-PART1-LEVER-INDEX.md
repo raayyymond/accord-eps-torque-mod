@@ -22,6 +22,22 @@ each build's stated base, not copied from a build script or from prose.
 silently invisible — the same failure `docs/STATE.md` hit at 506 KB and `memory/MEMORY.md` hit at
 287 KB. Nothing was deleted; this is Part 1 verbatim.
 
+🛑🛑 **STALE AGAIN as of 2026-09-09 — the build on the car is V289 rev 1 and the index stops at V108.**
+Five cells that a post-V108 session has touched or specified have **NO ROW HERE, and a grep by address
+returns nothing.** They are listed by address only, so the grep lands; **no rows have been fabricated for
+them** — their detail lives in `docs/BUILD-LINEAGE.md`'s V289 and V290 entries.
+
+| address | what it is | where its record actually is |
+|---|---|---|
+| `0xC63E8` / `0xC63EA` | LKAS rate-PID **feedback lag pole** (923/1560 = 16.5 Hz stock; V289 → 875/2301 = 25 Hz; V290-C would use 796/3522 = 40 Hz). **Never moved in 285 images before V289.** | `BUILD-LINEAGE.md` V289 (FLOWN 2026-09-09), V290 (designed, not cut) |
+| `0x2A174` | V289's notch **hook** into the clamped rate-loop output (`ld.hu 0x73ee,tp,r7` → `jr 0xC4C00`). Stock filler on V282. | `BUILD-LINEAGE.md` V289 |
+| `0x28F4C` | V290 option C's **hook** on the rate operand `x` (`ld.h -0x6a56,gp,r7` → `jr 0xC4C90`). **Specified, never built.** | `BUILD-LINEAGE.md` V290 |
+| `0xE511C` (bank `0xCB7D4`) | the **Kd schedule** record, slot 7: X = 0/11/22/32, Y = 128×4. **Never edited on any flown build.** Indexed by demand at 16.125736 wire counts/LSB. | `BUILD-LINEAGE.md` V290; `docs/traces/TRACE-2026-09-09-kp-kd-schedule-axis.md` |
+| `0xC4C90` | V290 option C's cave site (868 B free, CRC block `0xC4FFC`). **Specified, never built.** | `BUILD-LINEAGE.md` V290 |
+
+**Absence from this index is NOT evidence that a cell is untested.** Extend the index past V108 before
+trusting a null from it.
+
 🛑 **THIS IS A LOOKUP TABLE. GREP IT BY ADDRESS — do not read it whole.**
 🛑 **It is still MANDATORY before proposing any calibration edit:** grep the address here, and grep
 `analysis-2020accord/build_v*_tva.py` for it too, and state its on-car result. **FALSIFIED ≠

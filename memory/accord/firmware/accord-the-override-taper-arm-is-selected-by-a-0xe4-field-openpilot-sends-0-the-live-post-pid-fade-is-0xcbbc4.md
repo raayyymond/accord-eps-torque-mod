@@ -11,3 +11,19 @@ Corrections of record (reports, to be applied): `accord-override-taper-is-a-clif
 `reference-accord-second-driver-torque-gate-cbae4-cbbc4` ("inert") read the wrong arm -- 0xCBBC4 is live; every mirror assuming post m = 254 over-predicts |T| by ~1/0.7
 wherever a hand is on the wheel; the "cliff duty 2-11 %" columns in the high-angle tables were computed on the 2240 knee -- live taper duty in those episodes ~0.
 Related: [[accord-lanechange-ring-is-the-outer-loop-the-map-never-touches-the-eps-rate-feedback-gain]], [[accord-grind-happens-hands-off-the-bar-signal-is-twist-and-the-engaged-rate-lane-gate-is-live]].
+
+---
+
+## 🛑 UPGRADE 2026-09-09 — `gp-0x6803` selector is now EVIDENCE on BOTH halves, not half-believed
+
+Independently re-confirmed and closed: `gp-0x6803 = (byte2 << 0x1c) >> 0x1e` = **0xE4 byte 2, bits 3:2**,
+which the STARPILOT-FORK DBC (`honda_accord_2017_can_ext_generated.dbc`) names `SET_ME_X00` (`22|7@0+`,
+byte 2 bits 6:0). `create_steering_control` in `opendbc/car/honda/hondacan.py` on the operator's fork packs
+**only** `STEER_TORQUE` and `STEER_TORQUE_REQUEST` into that frame — `SET_ME_X00` is never set, so it is
+packed as **0** on every frame openpilot sends. `gp-0x6803` (bits 3:2 of that field) is therefore **0 on
+every frame**, and the cliff taper arms `0xCBA04`/`0xCBA74` (selected only on `gp-0x6803 == 2`) are
+**UNREACHABLE under openpilot** — now EVIDENCE on both the firmware side (the bit-field derivation) and
+the fork side (the packer), not memory carried forward as belief. Source:
+`docs/traces/TRACE-2026-09-09-kp-kd-schedule-axis.md` §"This also CLOSES `reqaxis`'s open question §7.5".
+See [[accord-kp-kd-schedule-x-axis-is-demand-index-16-125736-per-lsb]] (same trace, the demand-index axis
+these taper arms feed into).
