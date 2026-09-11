@@ -4,42 +4,320 @@
 > order** — findings, corrections and closures. That is a record, not a briefing. Everything you need
 > to make a decision is in this box and the index under it.
 
-## ✈ THE DECISION, IN ONE PLACE — updated 2026-09-09 close-out (**THE OPERATOR CHOSE: "Neither — revert to V282 and stop here." NO V290 IMAGE WAS BUILT.**)
+## ✈ THE DECISION, IN ONE PLACE — updated 2026-09-10 (**ROOT-CAUSE SESSION. NO BUILD CUT. The grinding is an EXCITED RESONANCE and there is NO excitation to remove.**)
 
-**ON THE CAR: V289 rev 1.** **RECOMMENDED, AND THE OPERATOR'S OWN DECISION: revert to V282.**
+**ON THE CAR: V289 rev 1.** **RECOMMENDED, AND THE OPERATOR'S OWN STANDING DECISION (2026-09-09): revert to V282.**
+Flash target unchanged — see the *FLASH TARGET* block further down. **Nothing was built, flashed or sent on any bus on 2026-09-10.**
 
-> 🛑 **THE OPERATOR'S DECISION, 2026-09-09.** Presented with the re-scored V290 candidate table, he chose
-> **"Neither — revert to V282 and stop here."** He will flash V282, **taking the 20 Hz plant mode back**
-> rather than spend a drive on a ×1.22 effect that cannot be read, or on a candidate whose worst-case
-> transient authority is 0.928 against his own 0.95 floor. **This is his call, recorded as his call.**
+---
 
-**The trade he was shown** (`docs/review/V290-BASE-DECISION-2026-09-09.md` § ADDENDUM A3 — read the
-ADDENDUM, it supersedes that file's body ranking; scoring in `docs/review/V290-DECISION-TABLE-2026-09-09.md`):
+### 🛑🛑🛑 THE VERDICT — (C) EXCITED RESONANCE. STOP HUNTING THE EXCITATION.
 
-| option | 7 Hz gate (≤ 1.01) | capped-step pkR med / **worst** (≥ 0.95) | delivered ring | ζ_worst | verdict |
-|---|---|---|---|---|---|
-| **revert to V282** | 1.0028 | 1.000 / 1.000 | 545 ms (10.9 cyc) | +0.0129 | **CHOSEN** |
-| **C** — V282 + notch 21.5 Hz Q1.5 on the **feedback operand** + fb pole 40 Hz | 1.0092 ✅ | 0.971 ✅ / **0.928 ❌** | 545 → **387 ms (×1.41)** | **+0.0349 (×2.7)** | needs the authority floor relaxed |
-| **S′** — V282 + Kd schedule (112,112,112,128) + a readability cave | 1.0100 ✅ (at the limit) | 0.995 ✅ / 0.99 ✅ | 545 → **448 ms (×1.22)** | +0.0178 | legal but **unreadable from one drive** |
-| **D** = C + any schedule | 1.016–1.024 ❌ | 0.92 ❌ | — | — | also needs 5 telemetry rungs, has 3 |
-| **B/B′** — any schedule on the **V289** base | 1.012–1.020 | **0.806 ❌ at every Kd** | — | — | dead: V289's notch sits in the reference transfer |
+Six agents on disjoint surfaces, 17 routes, 6 builds **plus stock**. Full note:
+`memory/accord/mechanism/accord-grinding-is-an-excited-resonance-no-excitation-to-remove.md`.
 
-**FLASH TARGET — verified from the file, not from a build script:**
-`39990-TVA,A160-V282-V281R3BASE-KP.FLAT.Y0-CAVE.R24CMP.BITS5.6-MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP-0x13000-0x100000.rwd`
-· **rwd sha256 `618365154e3ffdbb073c00a60173508291f0a18340d6a4f7d39cdd4b2a5b7e22`** · image sha256
-`0ea98d06b292ca1a5e78a752f339c8fad103a35a603e0237e598e68c1d5ed0fe` · **exactly one V282 `.rwd` on disk**
-(the seven other filenames containing "V282" are V283…V289, whose names carry `V282BASE`).
-⚠ *Not a flash instruction — the flash is gated on the operator naming the file and the bus.*
-**Full cumulative non-stock delta of what goes on the car: `docs/review/V282-CUMULATIVE-NONSTOCK-DELTA-2026-09-09.md`**
-(1,984 bytes / 311 runs vs the true stock dump, every byte attributed, re-read from the images).
+**THE DECISIVE MEASUREMENT — coherence time EQUALS ring-down time.** A noise-rung damped pole gives
+|ρ(τ)| = exp(−ζω₀τ) exactly; a drive or a limit cycle keeps phase for seconds. Measured τ_c **0.35–0.87 s
+= 6.5–17.4 cycles**, implied ζ **0.009–0.025, matching the independently measured free-decay ζ on every
+build** (sham band 0.18–0.38 s). ⇒ **There is no persistent phase, therefore no persistent source.**
 
-<!-- V290 --> **NO V290 IMAGE, RWD OR BUILD SCRIPT EXISTS.** Option C is fully specified and traced —
-hook `0x28F4C` (`ld.h -0x6a56,gp,r7`, bytes `24 3f aa 95` → `89 07 44 bd`), cave `0xC4C90` (868 B free,
-CRC block `0xC4FFC`), notch Q14 integers `b0 = b2 = 15680`, `b1 = a1 = −31074`, `a2 = 14976`, output clamp
-±12000 inside the cave, fb pole `0xC63E8/EA` → 796/3522 (40 Hz), telemetry `b3 = |d2| > |d|`, `b5 = sign(n)`,
-`b7 = |n| ≥ 16` with b4/b6 preserved as V282's cross-build control. **It is ready to cut if the operator
-later relaxes the worst-case transient-authority floor** (`docs/specs/design/DESIGN-V290B-2026-09-09.md`,
-`DESIGN-V290-TELEMETRY-2026-09-09.md`, `docs/traces/TRACE-2026-09-09-v290-feedback-operand-hook.md` ADDENDUM).
+**THE EXCITATION CENSUS — every candidate bounded or dead [EVIDENCE]:**
+
+| candidate | bound | source |
+|---|---|---|
+| discrete command kicks (cap binds, idx steps, Δ² spikes, sign reversals) | **≤ 13 %** of 514 burst onsets; cap binds **RR 0.83 [0.69, 0.96]** — *below* chance | `BURST-ONSET-TRIGGERS-2026-09-10.md` |
+| road / chassis input | **null**, 30 route×IMU tests; the chassis does not carry the mode | same |
+| self-oscillation / limit cycle | **falsified on 5 independent signatures** | `FORCED-VS-LIMIT-CYCLE-2026-09-10.md` |
+| outer loop through openpilot | **\|L\| = 0.026–0.165**, bound 0.096–0.189, ≤ 0.38 adverse; needs 1.0 | `OUTER-LOOP-ID-2026-09-10.md` |
+| steering-angle quantiser echo | **falsified as a coherent link** — residual cmd↔angle coherence **0.022** after removing the camera clock | `COMB-VS-ECHO-SIZING-2026-09-10.md` |
+| camera comb (modeld's 20 Hz staircase) | **REAL and LARGER THAN FIRST REPORTED — lock fraction ≈ 0.50**; perfect deletion buys **≈29 % amplitude (~3 dB)**. ⚠ But V289 already flew the un-forced case and it got WORSE (confounded) | `COMB-VS-ECHO-SIZING-2026-09-10.md` §12 |
+
+**Command side in total:** whole-band ablation through the byte-exact mirror — the command's *entire*
+in-band content delivers **11.56 of 57.21 counts (20.2 %) on r39/V282** and **5.21 of 125.86 (4.1 %) on
+r63/V289**. **The feedback leg carries 88–100 % on every route.** Comb and echo are **competing
+partitions of ONE command-side budget**, not additive sources.
+
+**⭐ THE GRINDING IS ENGAGEMENT-GATED** — 20,761 engaged vs 5,905 lateral-disengaged windows, 17 routes.
+Load-matched at creep on **both** driver-torque and wheel-rate IQR: **0.3617 engaged vs 0.0108 disengaged
+(×33) with MORE driver torque (376 vs 267) and MORE wheel motion (205 vs 100)**; **×72** at high demand.
+Disengaged rate **0.000–0.0505 on all 17 routes including stock**. ⇒ The 20 Hz object needs LKAS torque.
+🛑 It **cannot separate inner from outer** (`STEER_REQUEST = 0` opens the EPS's own rate loop too) — the
+|L| bound does that. ⚠ Decisive at 0–8 m/s only; **120 disengaged windows total at 8–25 m/s, ZERO above 25.**
+🛑 The **shape-only** gate does NOT go to zero disengaged (0.25–0.50 at **12–14 Hz**) — the low-demand
+road/plant line. **The two-object picture holds on this cut.**
+
+🛑 **WITHDRAWN 2026-09-11 — both halves of what stood here were artefacts of a BIASED ESTIMATOR.**
+The retracted text claimed *"bar is 34 % camera-locked, the ANGLE only 2 %, so a torque comb barely moves
+the column's inertia and openpilot measures the angle"*, and separately that *"the comb does not grow when
+the car grinds"*. **Debiased, r39 reads command 0.624 · bar 0.534 · ANGLE 0.401** — the angle is ~40 %
+camera-locked, not 2 %, **and the column-inertia explanation goes with it.** And the comb **does** grow:
+×0.94–1.81 against the ring's ×1.62–2.68 (r39's CI now excludes 1 **in the opposite direction**, 1.29
+[1.08, 1.59]). **What survives at true strength: the response outpaces the drive by ×1.3–2.3, not ×2.5–4.0
+— consistent with partial amplification, and NOT a "constant driver, varying damping" signature.**
+⇒ **The crux-3 synthesis below loses one of its six premises.** [`COMB-VS-ECHO-SIZING-2026-09-10.md` §12]
+
+**⭐ THE 20 Hz COINCIDENCE, RESOLVED:** the loop's own mode sits at **20.07 / 20.10 / 20.11 Hz** on
+V281r3 / V282 / V288 against modeld's **20.02 Hz** — within 0.1 Hz, inside the mode's ~1.2 Hz bandwidth.
+**A coincidence, not a mechanism**, and it is what made the comb look causal. **V289 separated them**
+(mode → 16.46/16.55 Hz, forcing stayed at 20.0) **and the grinding got LOUDER.**
+
+---
+
+### 🛑🛑 THE DESIGN LAW THIS REPLACES THE OLD ONE WITH
+
+> **Under (C) the lever is the SENSITIVITY PEAK |1/(1+L)| across the WHOLE 12–26 Hz band, not a notch at
+> one frequency. Design against max Ms over 12–26 Hz and PRE-REGISTER THE WHOLE BAND.**
+
+**V289 is the proof and the trap in one drive:** it killed the 20 Hz object completely (18–22 Hz band
+empty, 0/1414) and spent the 30° of margin the already-present 15–17 Hz pole had. The 18–22 Hz census
+gate was blind to exactly what went wrong.
+**RULED OUT: drive-hunting, and nonlinearity-hunting** — the D clamp, the sum clamp, the 123/frame slew
+cap and rack stiction are **not** what sets the amplitude.
+
+---
+
+### 🛑🛑 CORRECTIONS OF RECORD, 2026-09-10 — premises the kit reasoned from that are FALSE
+
+1. 🛑🛑 **"V288 cut 20 Hz by ×0.457, so THE REFERENCE-SIDE CLASS IS EXHAUSTED" — WRONG, and it is the
+   most consequential error in the recent record.** The cave is **non-LTI**: `delta = sp − y_prev;
+   step = delta>>4; if step==0 and delta!=0: step=1`. The anti-stick branch makes it a 1-count/tick
+   follower below |d| = 16. Measured fundamental gain at 20.3 Hz: **≈1.00 at A = 4–8**, 0.62 at 16,
+   0.44 at 40. **The ring is 4.0–10.7 sp counts** (15–40 raw ÷ 16.125736 idx LSB × 4.30 sp/idx); a
+   slew-capped frame is 32.8. ⇒ **V288 changed the ring band by −1 % to +9 %, and its phase by 0.0°.**
+   **Its null is UNINFORMATIVE IN BOTH DIRECTIONS. The reference-side class is UNTESTED, not exhausted.**
+   Four independent derivations (`fwpath`, orchestrator, `cyclekind`, `combsize`).
+   🛑 The caveat was in **our own adversarial pass three days before the build flew**
+   (`ADV-V288-A-ARITHMETIC-2026-09-07.md` ll. 285–287: *"below ~8 counts the filter is essentially
+   transparent"*) and was not applied when the drive was read.
+2. 🛑 **`clip_curvature` NEVER rate-limits — binding fraction 0.000 in every route × stratum.**
+   `STARPILOT-FORK-COMMAND-PIPELINE-2026-09-07.md` §2.1 is **false in practice**; 60–71 % of engaged
+   ticks at v < 12 carry `modelV2.action.desiredCurvature` bit-for-bit. **`jerk_filter` is likewise
+   transparent at 20 Hz** (|setpoint/F| = 1.000) and must not be counted as command smoothing.
+3. 🛑 **The live openpilot gains are NOT the config defaults** — measured exactly (p5 == p95):
+   **kp 0.8000 (r39), 0.9000 (r5e/r62/r63), 0.6000 only (r35)**; **latAccelFactor 2.1100 (r39/r35),
+   6.0000 (r5e/r62/r63)**, not carParams' 1.68933 nor torqued's 2.46–2.50. Any gain chain built on
+   1.6893 is **×3.6 too large** on the recent routes.
+   ⇒ **`accord-honda-kp-ki-scale-never-acted-kp-is-0600-on-all-60-routes` no longer holds for these routes.**
+4. 🛑 **`pid_log.output` is the NEGATED torque** ⇒ characteristic equation `1 − P·K = 0`: **critical
+   point L = +1, metric |1 − L|, critical phase ~0°, NOT ±180°.** The old convention makes the *safest*
+   route read as the most dangerous. |1 − L|: 1.069 / 1.088 / 1.022 / 0.974 / 1.154.
+5. 🛑 **`wire_0xe4_20hz.episodes_of` HARD-CODES the 18–22 Hz gate** — 12 and 15 episodes on r62/r63
+   against a band-aware detector's **57 and 83** (225 corpus-wide). **Every V289 rate number computed
+   with it is wrong.** Use `rlog-tools/studies/grind/fvlc_lib.py`. **V289's cleanest band is 15–18.5 Hz**
+   (median episode demand index 13.2, f0 16.16 Hz); 13–18 catches the road line (7.0), 14–18 is 10.0.
+6. ⚠ **"f0 pinned to +0.4 Hz across Kp 248→696" is NOT supported** — acting Kp is confounded with demand
+   index. Identified matched-cell contrast **+1.80 Hz [−0.02, +4.46]**. Correct statement: *any gain
+   effect on f0 is small and poorly determined; the phase effect is large and unambiguous* (−3.78 Hz).
+   **f0 falls with vehicle speed** (−0.11 to −0.21 Hz per m/s), a plant-stiffness signature.
+7. ⚠ **"A Q ≈ 17 mode rings 12–32× its impulse" is FALSE** (orchestrator's error). A unit-area impulse
+   peaks at ωn ⇒ a 10 ms kick of height h rings to ≈**1.26 h**; ζ buys the **5.5-cycle length**, not
+   amplitude. Phase-locked ceiling **1/(1−e^(−2πζ)) = 6.00**, degraded by |cos ψ|.
+8. ⚠ **The device's `0xE4` tx counter fits 99.53–99.56 Hz, not 100** — 0.45 % bias on that axis.
+8b. 🛑 **"Slew-capped on 13–21 % of grinding frames" is WRONG — measured bind duty at the 122.88 cap is
+   **1.45–4.29 %** (engaged baseline 0.50–1.86 %, enrichment only ×1.24–2.92).** The 13–21 % figure is most
+   likely the ≥ 40-count column (9.9–15.0 %), and ≥ 40 is a third of the cap and is **not binding**.
+   ⇒ At ~2 % duty the two-tone describing function gives **|N| = 1.000 at 0° — the rate limiter is
+   TRANSPARENT at 20 Hz**, and the ring line is demonstrably present in the **post-limiter** `0xE4` stream
+   at 5.6–40.7 counts. **Raising `STEER_DELTA_UP` changes 20 Hz content by essentially nothing** — it is an
+   authority decision needing its own drive, **not an excitation lever in either direction**. (An earlier
+   claim that raising it would admit ×15–67 more 20 Hz energy rested on a synthetic 99.8 %-duty sweep and is
+   **retracted**.) ⚠ Safety unchanged and still binding: **panda enforces NO Honda steer limit at all**
+   (`opendbc/safety/modes/honda.h:274-282`).
+8c. ⚠ **The ring at the wheel is SMALLER than first reported: 0.17–0.28 LSB**, measured through `0x18F`
+   STEER_ANGLE_RATE (0.125 °/s LSB, ~100× finer in this band) rather than through the quantised angle
+   itself, which reads 1.4× high as expected at ~2× the quantiser floor. ⇒ **~40 % of the ring-band content
+   the controller sees in that channel is quantisation NOISE, not motion** — and the residual is **not
+   white dither**: it is coherent with the independent rate channel at **0.78–0.90** in grinding vs
+   0.48–0.68 baseline, at the same f0 as bar. **The quantiser is DRIVEN by a real ring, not manufacturing
+   one.** It is nonetheless **not** what puts the 20 Hz line in the command: P-on-the-measured-angle
+   accounts for only **0.27–0.37** of the command's ring line.
+8d. ⚠ **The record's "open-loop 9 % / feedback 63 %" split is the MOTOR TORQUE's, not openpilot's** — 63 %
+   is the **EPS's own internal rate feedback**, and openpilot's angle echo lives entirely inside the 9 %.
+   Any fork-side measurement lever attacks that ~9 %, of which the echo is at most a third.
+9. 🛑 **The EPS itself builds CAN `0x14A`** (`FUN_00055a98`; the Accord uses the **Civic-hatchback**
+   powertrain DBC, `BO_ 330 STEERING_SENSORS: 8 EPS`) and **floor-truncates the broadcast STEER_ANGLE by
+   5 bits (32:1), undithered** — internal ~0.003°, transmitted 0.1° (`FUN_00040a50`, `0x40B70` / `0x40B7A` /
+   `0x40B80`). A real defect. **NOT established as causal** — the ring at the wheel is **sub-LSB
+   (0.29–0.47 of one step)** and the echo is falsified. Lockstep is a **bit-exact dual-copy check with
+   nothing recomputed ⇒ a dithered value would pass**; the fault path is **debounced**, and what the
+   confirmed state does (DTC / MIL / assist cut) is **NOT traced — a required gate before any build there.**
+   ⚠ **No clean hook exists** at `0x40B70`–`0x40B92` (unrelated work interleaved) and **no free flash was
+   located in that region.** Design pass only, not build-ready.
+
+---
+
+### 🛑🛑 THE ESTIMATOR CORRECTION — `R2 − floor` IS BIASED LOW. USE `R2_deb`.
+
+🛑 **Three agents published camera-lock fractions differing 4×; the data were all correct and two of the
+three estimators were biased.** Settled 2026-09-11 by reproducing **all three** published numbers on one
+loader, varying one factor at a time, then testing both estimators **against a synthetic signal with a
+KNOWN locked fraction**.
+
+| windowing | estimator | quantity | r39 bar 18–22 Hz | whose published cell |
+|---|---|---|---|---|
+| 20 s blocks | `R2 − maxfloor` | excess | **0.1309** | `cyclekind` (0.131) ✓ |
+| 20 s blocks | `R2_deb` | excess | 0.5356 | |
+| whole | `R2 − maxfloor` | excess | **0.3956** | `combsize` (0.357, own strata) |
+| whole | `R2_deb` | grind total | **0.4948** | `modelrate` (0.501) ✓ |
+
+**Factor decomposition: estimator ×4.09 · windowing ×3.02 · total-vs-excess ×0.98.**
+
+- 🛑 **`R2 − maxfloor` is biased LOW by ~0.12 whole-stratum and ~0.22 in 20 s blocks**, at every p ≥ 0.1.
+  **`R2_deb = √(max(R2² − mean(R2²_detuned), 0))` recovers the truth to ±0.04.** The reason is dimensional:
+  **noise adds in POWER, so subtracting a floor in AMPLITUDE over-subtracts, and it worsens as power falls.**
+  ⇒ **Use `R2_deb`. Never quote `R2 − floor` as an estimate — it is a conservative lower bound that
+  degrades with sample size.**
+- ⚠ **TOTAL vs EXCESS is NOT the explanation** (×0.98) — they agree to 2–5 % here, because the quiet stratum
+  holds only ~10 % of the grinding stratum's in-band energy at a similar locked fraction. An orchestrator
+  hypothesis that they differed was **wrong**.
+- **Proximity control:** a *free* mode 0.08 Hz from the clock — where r39's ring actually sits (19.92 vs
+  19.9997) — reads `R2_deb` = **0.018** over 182 s. **The lock is real, not mere nearness.**
+- ⭐ **The number is ≈0.50**, and all three agents reconcile once each estimator's bias is restored
+  (0.131 + 0.22 ≈ 0.35 · 0.396 + 0.13 ≈ 0.53 · 0.495). **Nobody's data was wrong.**
+- ⭐ **Reconciling a 50 % locked OUTPUT with a 20 % command-side DRIVE share** — not a contradiction: a
+  **phase-locked** drive accumulates **coherently** (amplitudes add) while random-phase drive accumulates
+  **incoherently** (powers add). **The comb is a minority of the drive, over-represented in the response
+  because it is the only coherent part of it.** Both measurements stand.
+- ⇒ **At lock 0.50, perfectly removing the comb cuts ring amplitude by 1 − √(1−0.50) = ≈29 %, ~3 dB.**
+  🛑 **TWO COUNTERWEIGHTS OF EQUAL WEIGHT:** (1) **V289 is ALREADY the flown version of "remove the
+  coherent 20 Hz forcing" and the symptom got WORSE** — its relocated ring carries **0.000** camera lock
+  and is **1.71×** r39's on **0.30–0.45×** the command drive. ⚠ **Confounded** (the notch also spent 30° of
+  margin at 15–17 Hz), so not decisive — but it is the only configuration ever flown with no coherent
+  forcing and it went the wrong way. (2) The 29 % assumes the locked energy **vanishes**; if the mode is
+  rung by whatever broadband excitation remains at unchanged loop gain, the ring returns lower but
+  non-zero. **Nothing measures that — only the transient test would.**
+
+---
+
+### 🛑🛑 THE ζ CORRECTION — EVERY SUFFICIENCY VERDICT IN THIS KIT WAS HOSTAGE TO AN ASSUMED NUMBER
+
+🛑 **ζ = 0.029 was INHERITED, never measured. `cyclekind` MEASURED it from the ring's coherence decay:
+ζ = 0.0091–0.0224 per build.** Lower ζ **raises** the phase-locked accumulation ceiling 1/(1−e^(−2πζ)),
+so every "is this excitation big enough" verdict computed at 0.029 was **too harsh**. Re-swept ceilings
+(command leg ÷ measured ring, at ψ = 0):
+
+| route | build | ζ=0.0091 | ζ=0.0150 | ζ=0.0224 | ζ=0.029 (as previously quoted) | crossing ζ |
+|---|---|---|---|---|---|---|
+| r35 | V281r3 | 4.88 | 3.02 | 2.07 | *1.63* | 0.0503 |
+| r39 | V282 | **3.64** | **2.25** | **1.54** | *1.21* | 0.0359 |
+| r5e | V288 | 2.39 | 1.48 | 1.01 | *0.80* | 0.0227 |
+| r62 | V289 | 1.64 | 1.02 | 0.70 | *0.55* | 0.0152 |
+| **r63** | **V289** | **0.75** | **0.46** | **0.32** | *0.25* | **0.0067** |
+
+⇒ **"NEITHER MECHANISM IS SUFFICIENT" is WITHDRAWN for V282, V288 and V281r3** — at measured ζ the command
+side reaches 1.54–3.64 on r39, tolerant of ψ up to 49–74°. **Only r63 stays below unity at every measured
+ζ.** ⭐ **`cyclekind`'s coherence-time measurement is now the SOURCE OF RECORD for ζ. Do not quote 0.029.**
+
+⚠ **Two further reductions, both self-reported:** the cross-build contrast is **1.71×, not 2.20×** once
+matched on speed × demand (r63's loud windows sit at v p50 12.6 vs 8.9 and |bar| p50 581 vs 243; demand
+*was* matched at 51.5 vs 49.8) — 12 of 13 matched cells still above 1, and the equal-bandwidth check
+passes (2.15–2.18 at 2/3/4 Hz). And the **initiator-vs-amplifier question is NOT settled on V282**: the
+accumulation ceiling was what converted proximate delivery into origination, and it now bites only on
+r63. The verdict rests on the **ζ-free** evidence instead — the comb not growing with the symptom, the
+0.022 coherence collapse, the cross-build inverse relation, and the flat forcing against a ×98 response.
+
+---
+
+### ⭐⭐ THE ANSWER, IN THE FORM THAT SURVIVES ALL OF THIS
+
+> **At ζ ≈ 0.01–0.03 with the loop de-damping, no identifiable excitation is NEEDED. The ever-present
+> camera comb — constant across six builds — SUFFICES, and what varies is the DAMPING, not the drive.
+> "What excites it" is the wrong question. The lever is ζ_eff, and that is EPS-side.**
+
+⚠ **Two earlier phrasings are RETRACTED:** *"no excitation is big enough to be worth preventing"* **and**
+*"removing it perfectly buys ~3 %, at most 8 %"*. Correctly: **the excitation is always there and cannot
+be prevented, because it IS the camera clock — but it is a LARGER contributor than first reported.**
+**FIVE** premises survive, each measured, each from a different agent or method: drive flat across builds ·
+response varies ×98 on it · **the ever-present drive IS enough at measured ζ** · the ring is a rung mode
+(not forced, not a limit cycle) · no discrete trigger and no road. **A sixth — "the drive does not track
+the symptom within a route" — is WITHDRAWN** (biased estimator; debiased, the comb does grow, just ×1.3–2.3
+slower than the ring).
+
+🛑 **THE ONE RESIDUAL, AND THE ONLY TEST THAT CAN CLOSE IT: a TRANSIENT test, not a spectral one.**
+**Interrupt or phase-step `modelV2.action.desiredCurvature` for ONE model frame and time the ring
+envelope's decay.** A rung mode decays with its ring-down time (0.27–0.87 s, 5–17 cycles) and stays down
+until re-excited; a regeneratively sustained one decays on the much slower closed-loop envelope or not at
+all. **Fork-side, zero authority cost, zero lag, no flash, in scope under the 2026-09-10 amendment.**
+Spec: `docs/specs/design/SPEC-COMB-TRANSIENT-TEST-2026-09-10.md`. **Nothing further in the steady-state
+spectral class will settle it.**
+
+---
+
+### ⭐ THE ONE EXPERIMENT THAT CAN STILL CLOSE IT — and it needs the operator's SPECIFIC consent
+
+`docs/specs/design/SPEC-COMB-TRANSIENT-TEST-2026-09-10.md`. **It is NOT the one-frame interruption** that
+was first proposed — that was killed on two grounds, both computed: it decays the envelope only
+**5.5–13.1 %** before drive resumes (d = 0.11–0.25 ⇒ hundreds of perturbations), **and it costs up to
+50 ms of added group delay, which is exactly the class the operator forbade by name.**
+
+⭐ **The replacement inverts it: ADD comb rather than remove it.** Removal can move the ring by at most the
+locked fraction (−30 %); **adding 2× moves it +125 %, because in-band powers add — ~16× the power for the
+same seconds of driving.**
+
+- **Manipulation:** at each `modelV2` publish, add `G·s[k]` — **the plan's OWN per-frame step, re-used and
+  held**, not a synthesised sinusoid (the step distribution is violently heavy-tailed, median 0.09–6.45
+  counts vs rms 12.6–63, so **a median-sized synthetic step under-doses ~10×**). `G` cycles 0→1→2 on a 2 s
+  cadence. **Zero lag, proved**: `s[k]` exists at the instant frame *k* publishes — no state, no buffer,
+  no filter ⇒ no group delay at any frequency, and authority is **increased**, not limited.
+- **Discriminator:** fit `log A(G)/A(0) = α·log(1+G)`. **α ≈ 1 ⇒ INITIATOR · α ≈ 0 ⇒ AMPLIFIER · α ≈ 0.5 ⇒
+  the band matters, not the clock.** Predicted A(G)/A(0) at lock 0.51: **1.00 / 1.59 / 2.25.**
+- ⭐ **A fourth arm injects the SAME amplitude at a DETUNED clock (f_model + 0.5 Hz, still in-band).**
+  That is what makes it an experiment rather than a dose ramp.
+- ⭐ **It measures ζ_eff as a by-product** from the onset/offset transients — the number every sufficiency
+  verdict in this kit is hostage to. **That may be worth more than the test's own answer.**
+- **Power: ≈10–15 s of symptomatic engaged time. It FITS one short drive** (G = 1 entry point: +59 %,
+  d = 1.13, ≈6 s/arm). ⚠ **G = 0.5 predicts only +28 % and needs 27 s/arm — no longer one drive.**
+- 🛑 **SAFETY — THIS IS A PROVOCATION TEST. At G = 2 it deliberately makes the grinding ~2.25× LOUDER for
+  2 s at a time. The operator WILL feel it, and he must consent to THAT SPECIFICALLY, not to "a test."**
+  Bounds: ≈60 raw counts total against a 122-count slew cap so it cannot reach the rate limiter; same kind
+  of signal already on the wire, tripled; no lag and no attenuation so path margins are unchanged;
+  fork-side only, no flash, reverted by `G ≡ 0`. **If G = 1 is unacceptable to him, the test cannot be done
+  in one drive and must not be attempted.**
+- ⭐ **STEP ONE IS OFFLINE AND COSTS NOTHING** — synthesise the injection, verify the dose lands and that
+  the detuned arm shows no rise at f_model, then push each arm through the byte-exact mirror.
+  🛑 **But offline gives the x-axis ONLY:** *"`GI.simulate` is open-loop — it reads the measured wheel rate
+  as feedback and cannot produce a plant response to a command never sent. Offline gives the x-axis
+  exactly and NONE of the y-axis. Anyone quoting a predicted ring response from the mirror has mistaken
+  the drive for the answer."*
+- ⚠ **A positive α licenses BUILDING the comb fix; it does NOT predict the symptom goes away.** V289 is
+  already the flown experiment for removing the 20 Hz forcing, and the grinding relocated and got worse.
+
+---
+
+### ✈ NEXT — in order
+1. **Operator flashes V282** when he chooses to. Nothing is pending on the car.
+2. 🛑 **Any future build is scored on max Ms over 12–26 Hz, pre-registered across the whole band.**
+   A single-frequency notch is the V289 trap. **Option C (`docs/specs/design/DESIGN-V290B-2026-09-09.md`)
+   must be re-scored on that criterion before it is cut** — its 21.5 Hz Q1.5 notch was designed against
+   the old single-frequency framing.
+3. ⭐ **THE TOP OPEN ITEM IS AN INSTRUMENT, NOT A LEVER: the IMU.** Every proxy used to date is a CAN
+   channel from *inside* the steering system, so none can say whether the residual excitation is **road,
+   rack or motor**. Cached for one route only. **Extract it corpus-wide before designing anything.**
+4. **The reference-side class is UNTESTED and re-opened** — but a correctly-sized reference filter
+   **still could not separate (B) from (C)**, since a reference-path filter never enters
+   `1 + N(A)L(jω) = 0`. If it is revisited it needs a **fractional accumulator / error-feedback
+   remainder word**; a `>>k` integer IIR is transparent at small amplitudes by construction.
+5. **The fork-side comb reconstruction is legal and cheap but worth only 3–8 %** — and **unreadable from
+   one drive** (the kit already judged ×1.22 unreadable). **Ride it free on a drive spent on something
+   else; do NOT pre-register it as the thing under test.** Lag-free forms: slope extrapolation (0 ms) or
+   trajectory-shaped reconstruction from `modelV2.orientationRate` (**lag-NEGATIVE up to 50 ms**).
+   🛑 **A command LPF is forbidden by the operator by name** (2026-09-10) — the colleagues' filter costs
+   100–280 ms of group delay and −32° to −59° at 1 Hz. **A measurement-side filter buys almost nothing**
+   (80–97 % of the command's ring is setpoint-derived; residual cmd↔angle coherence 0.022).
+6. **Standing: the golden model still lacks the LKAS rate-PID stage.** Contract re-verified unchanged at
+   this close-out — **90 symbols**, `_self_check()` + `_demo()` stdout 2,512 B sha256
+   `740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d`.
+7. **`0xC61C0/C2/C4` still has NO lineage entry** despite 12 live readers across 249 images.
+
+**Session reports:** `rlog-tools/studies/grind/{FORCED-VS-LIMIT-CYCLE,COMB-VS-ECHO-SIZING,OUTER-LOOP-ID,BURST-ONSET-TRIGGERS,MODELD-CADENCE-VS-RING}-2026-09-10.md`
+· `docs/traces/TRACE-2026-09-10-command-intersample-zoh.md` · `docs/research/OPENPILOT-EXCITATION-SOURCES-2026-09-10.md`
+· handoff `docs/handoffs/2026-09/HANDOFF-2026-09-10-THE-EXCITATION-CENSUS.md`
+
+---
+
+> 🛑 **SUPERSEDED 2026-09-10 — the decision box as it stood after the V289 drives.** Kept for the
+> V289/V290 detail, the FLASH TARGET block and the cumulative-delta pointers. **Its "reference-side class
+> is exhausted" framing is WRONG — see CORRECTIONS 1 above.**
 
 ### V289 rev 1 — the verdict, the operator's words first
 **Operator, 2026-09-09, after two routes (`…00000062--1c7daa54e8`, 975 s / 619 s engaged; `…00000063--1d4b188022`,

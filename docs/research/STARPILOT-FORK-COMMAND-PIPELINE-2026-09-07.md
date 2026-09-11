@@ -26,10 +26,25 @@ see §2.
 
 ## 2. What already smooths the command on this fork (contradicts "nothing smooths it")
 
+> 🛑🛑 **STAGE 1 BELOW IS FALSIFIED IN PRACTICE — flag added 2026-09-10 by subagent `modelrate`.**
+> `clip_curvature`'s **binding fraction is 0.000** in every route × stratum of six routes spanning
+> V112 → V289 (r22, r35, r39, r5e_v288, r62_v289, r63_v289), engaged, v<12 and v≥12 alike — measured
+> by direct equality of `|Δ desiredCurvature|` against its own bound
+> `MAX_LATERAL_JERK · jerk_factor / v_ego² · DT_CTRL`, on `controlsState.desiredCurvature` logged at
+> 100 Hz. **It only removes the staircase discontinuity when it BINDS, and on this record it never
+> does.** `controlsState.desiredCurvature` is bit-identical to the latest
+> `modelV2.action.desiredCurvature` on **60–71 % of engaged ticks at v < 12 m/s**, and the plan is a
+> **pure ZOH** (rms in-hold deviation exactly 0.000e+00 on all six routes). **The raw 20 Hz staircase
+> reaches the PID undigested, and it puts a phase-locked 20 Hz comb on the 0xE4 wire on every build.**
+> Evidence and consequences: `rlog-tools/studies/grind/MODELD-CADENCE-VS-RING-2026-09-10.md` §2, §3, §5′.
+> ⚠ At least two orchestrator briefs inherited the claim below; the *code read* is correct, the
+> *operational consequence* is not. Stages 2 and 3 are untouched by this flag.
+
 Three independent smoothing/shaping stages sit between the 20 Hz model staircase and the CAN frame,
 all present today on `main`/Dom:
 
-1. **`clip_curvature` — an ISO lateral-jerk slew limiter, run every 100 Hz tick.**
+1. **`clip_curvature` — an ISO lateral-jerk slew limiter, run every 100 Hz tick.** 🛑 *See the flag
+   above: measured binding fraction 0.000; the smoothing claimed here does not occur in practice.*
    `selfdrive/controls/lib/drive_helpers.py:25-51`. `max_curvature_rate = MAX_LATERAL_JERK
    (5.0 m/s^3) * jerk_factor / v_ego**2`; `new_curvature` is clamped to
    `prev_curvature ± max_curvature_rate * DT_CTRL` every frame (`controlsd.py:803`,
@@ -37,6 +52,8 @@ all present today on `main`/Dom:
    or not modelV2 published that tick, so the value the PID sees ramps continuously at 100 Hz
    between the 20 Hz plan updates — it is not a literal LPF (constant-slope ramp, not exponential),
    but it removes the raw staircase discontinuity before the PID ever sees it.
+   🛑 **FALSIFIED IN PRACTICE 2026-09-10 — binding fraction 0.000, the clamp never engages, the plan
+   is a pure ZOH and the staircase survives to the PID intact. See the flag at the head of §2.**
 2. **`jerk_filter` — a true first-order LPF on the desired lateral jerk, inside `LatControlTorque`.**
    `selfdrive/controls/lib/latcontrol_torque.py:90` `FirstOrderFilter(0.0, 1/(2*pi*1.2), dt)`
    (1.2 Hz cutoff), applied at `latcontrol_torque.py:282` to `raw_lateral_jerk` before it is used to
