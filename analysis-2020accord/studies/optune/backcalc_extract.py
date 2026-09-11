@@ -50,6 +50,10 @@ ROUTES = {
     "r39": ("75604b0a432fdc89_00000039--f56039af87", "V282"),
     "r3a": ("75604b0a432fdc89_0000003a--283a39a1d6", "V282-laf4.0"),
     "r3c": ("75604b0a432fdc89_0000003c--927965c2b4", "V282-laf3.6"),
+    # --- 2026-09-10: fork HEAD 0f98d8c75 (rate-plant FF, variable-SR map at level 16.33,
+    #     LAF 6.0 / friction 0.01 / Kp 0.9 / Ki 0.30, ForceAutoTune OFF).  V289 rev 1 firmware.
+    "r62": ("75604b0a432fdc89_00000062--1c7daa54e8", "V289r1-forkHEAD"),
+    "r63": ("75604b0a432fdc89_00000063--1d4b188022", "V289r1-forkHEAD"),
 }
 
 
