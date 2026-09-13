@@ -1,5 +1,9 @@
 # Firmware Codepath Tracer — Memory Index
 
+## 2026-09-13 — V292 error-feedback fb-lag cave design, for `main` (agent `cavedesign`)
+- 🛑🛑★★★★★ [The fb filter's TWO `sar 0xa` floors give the feedback a CONSTANT -32-count DC offset at EVERY amplitude on V291 (-20 on V282), measured against the exact linear filter — that is +32 counts of PHANTOM ERROR on E = 32*sp - fb, one whole extra setpoint count forever, and it is the real mechanism behind ADV-V291-B's B4, NOT the 1.07-count quantum; it scales as 1/(1024-a) so EVERY lower pole pays more (a 2 Hz pole would cost -157). Fix = carry the residue; `t & 0x3FF` IS the floor remainder exactly, for either sign](reference_accord_fb_filter_floor_bias_is_32_counts_of_phantom_error.md)
+- 🛑🛑★★★★★ [0x28F8E is a ZERO-NEW-LIVENESS-CLAIM hook: its straight-line span unconditionally WRITES {r7,r9,r13,r14} before reading them, and it sits AFTER the ±12000 bail so a cave needs no clamp (the decisive edge over 0x28F4C); plus 6 reusable gp-base encoding controls, and the correction that 0xC4C00-0xC4FF0 is 1008 B of 0xFF on V291 — the record's "868 B at 0xC4C90" was read from the V289 image](reference_accord_0x28f8e_zero_liveness_hook_in_the_fb_filter.md)
+
 ## 2026-09-13 — V291 adversarial pass, surface D (interlocks/downstream), for `main` (agent `advD`)
 - 🛑🛑★★★★★ [TWO V850E2 opcode-field COLLISIONS: `0x3C/0x3D` is shared by Format-V `jr`/`jarl` AND the 6-byte extended-disp23 load; `0x3F` is shared by `ld.hu`, `mul` (hw2=0x0220) and `setfcc`. BOTH disambiguate on **hw2 bit 0** (loads=1). A decoder without these reads `jr` as a load and `mul` as `ld.hu` — a phantom cal reader at a phantom address. Caught by scoring a hand decoder against Ghidra's own 60-instruction listing on LENGTH](reference_accord_v850_opcode_collisions_3c3d_jr_and_3f_mul_disambiguated_by_hw2_bit0.md)
 

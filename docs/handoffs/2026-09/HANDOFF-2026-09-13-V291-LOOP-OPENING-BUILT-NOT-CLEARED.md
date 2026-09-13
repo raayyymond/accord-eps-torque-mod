@@ -1,4 +1,4 @@
-# HANDOFF 2026-09-13 — V291, the first LOOP-OPENING build, cut and NOT CLEARED by its own adversarial pass
+# HANDOFF 2026-09-13 — V291 and V292, the first LOOP-OPENING builds: V291 cut and NOT CLEARED by its own pass, V292 (byte-exact) cut and CLEARED over one dissent
 
 **Read `docs/STATE.md`'s decision box first.** This is the narrative of the session that set the goal
 *"V282's authority with no grinding"*, measured that the grinding object does not exist with the loop
@@ -28,6 +28,23 @@ intrinsic to any cal-only pole change; B3 re-scored PASS at ×3.3–4.2) plus on
 cleared**; flying it is the operator's decision against that verdict. The fork-side comb fix was built
 too (uncommitted, OFF by default) and is worth −2.4/−4.2 dB, not a cure.
 
+## 0b. The second half of the session — V292
+
+The stop condition held the session open, and the only pre-registered failure on V291 was an integer
+artefact, so the session continued into **V292: the same dose with the feedback filter's two floored terms
+carrying error-feedback remainders in a 52-byte cave** (hook at the filter's own first multiply, 0x28F8E;
+halfword remainders at gp-0x6D74/6D72; +10 instructions per tick). The cave designer proved from the built
+bytes that the filter's mean is exact at every amplitude and that V291's own floors had been leaking a
+constant −32 count feedback bias (one permanent phantom setpoint count). Four fresh adversaries: **A, C, D
+PASS; B FAIL on one clause only** — the steady state at 3 setpoint counts against the LINEAR V282 chain,
+which B2 showed is a surface no integer build can sit on (five floors in the loop, the cave repairs one;
+V282 itself reads ×0.96/×0.72 there). Against byte-exact V282, V292 reads ×1.000 at +3 with the smallest
+sign asymmetry of the three builds. **The orchestrator cleared V292 by the kit's own broken-check rule,
+recorded B2's dissent verbatim, and put the sp = 3 numbers, the gp-0x6806 premise and the 9–18 Hz shoulder
+on the page. V291 is SUPERSEDED-DO-NOT-FLASH on disk.** Two corrections from the pass propagate: the b3
+read is the DUTY (0.47–0.50), not the transition rate; the record's r24 fold omitted the motor gain and
+over-weighted r24 ×6.13 (pessimistic — corrected folded f0 18.4 Hz).
+
 ## 1. How the session ran
 
 Orchestrated; twenty-one agents (Opus for every substantive task, Sonnet for two trivial ones, none on
@@ -47,6 +64,10 @@ GO WRITE.
 | `advA` / `advB` / `advC` / `advD` | the adversarial pass | **PASS / DO-NOT-FLASH / PASS / PASS**; C: the census is inflated 377 → 67; D: the b3 instrument's window; B: the three numbers above |
 | `artifact` | the close-out page | https://claude.ai/code/artifact/19038e6d-729b-4a79-ba3b-a07aeefcc067 |
 | `gmcheck` | the golden-model contract | 90 symbols, sha256 unchanged |
+| `cavedesign` | the V292 error-feedback cave | hook 0x28F8E, 52 B at 0xC4C00, halfword remainders, five proofs from the bytes; the −32 count floor-bias mechanism; a free b3-at-rest control |
+| `builder292` | the V292 script | 69 bytes vs V282; hashes reproduced across five runs; two write blockers found (Windows 260-char paths, unpinned mirror import) and fixed; 14/14 mutations; wrote on GO WRITE and superseded V291 |
+| `advA2` / `advB2` / `advC2` / `advD2` | the V292 adversarial pass | **PASS / DO-NOT-FLASH (sp = 3 clause only) / PASS / PASS**; A2: the b3 read must be the duty; B2: the five-floor mechanism, the ×6.13 fold defect, the gp-0x6806 premise; D2: the hook liveness wording and the boot copy loop |
+| `artifact2` | the page, V292 | same URL, version 4 |
 | `biv` | the two flips B named | **the deadband does NOT explain the r24 arm gap (≤ 15 %); the residual is a constant pre-deadband scale; the effective arm (κ 0.449) is admissible; the 5244 rung IS selected; B(f) not biased at 20.3 Hz; 9.94–14 Hz identified at nperseg 512** → B3 re-scored PASS |
 
 ## 2. What changed our mind, and in what order
@@ -91,7 +112,13 @@ GO WRITE.
 ## 4. On disk
 
 - **On the car:** V282 (rwd sha256 `618365154e3ffdbb073c00a60173508291f0a18340d6a4f7d39cdd4b2a5b7e22`).
-- **Built, not flown, NOT CLEARED:** V291 (C10) rwd
+- **Built, not flown, CLEARED over one dissent — THE FLIGHT CANDIDATE:** V292 rwd
+  `$ACCORD_FIRMWARE_ROOT/flashing-2020accord/rwd/39990-TVA,A160-V292-V282BASE-EFCAVE.C4C00.6D74-FBPOLE.10HZ.962.958-R24.4725-B3.FBSTATE-KP.FLAT.Y0-CAVE.R24CMP.B5.B6-MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP-0x13000-0x100000.rwd`
+  sha256 **`6d2784b5e27e2f21a909f552ac786f74fe28991dcbc275bf7ae03fb61f9fc20c`**; image `_v292_…_plain_image.bin`
+  sha256 **`d1128232993d3a1dcfa4afecb279976f014e6c940f36d88b87db9f2aee3aef33`**; script `build_v292_tva.py`
+  (sha256 9bf135ab…, frozen). Design `DESIGN-V292-FBLP-CAVE-2026-09-13.md` (+ errata), mirror `v292_cave_mirror.py`,
+  prereg + verdicts `ADVERSARIAL-V292-PREREG-2026-09-13.md`, reports `ADV-V292-{A,B,C,D}-2026-09-13.md`.
+- **Built, not flown, SUPERSEDED-DO-NOT-FLASH by V292:** V291 (C10) rwd
   `$ACCORD_FIRMWARE_ROOT/flashing-2020accord/rwd/39990-TVA,A160-V291-V282BASE-FBPOLE.10HZ.962.958-R24.4725-B3.FBSTATE-KP.FLAT.Y0-CAVE.R24CMP.B5.B6-MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP-0x13000-0x100000.rwd`
   sha256 **`8ce8d5b7c7cda973a04fbe9a061090c76121b6a136d1bba18d1b67fd24530533`**; plain image
   `_v291c10_…_plain_image.bin` sha256 **`a66f9c54b21031d3948cf1f60fbcadc6ac44d422c01d5a357b19aa0d23144657`**.
@@ -125,12 +152,14 @@ GO WRITE.
   today's hold — flagged on the page; the toggle is OFF.
 
 ## 6. Open items
-1. **The operator's decision on V291** with the narrowed basis (B4 + the 9–18 Hz shoulder). `B-IV-AND-KAPPA-2026-09-13.md`
+1. **The operator's decision on V292** (V291 is superseded). `B-IV-AND-KAPPA-2026-09-13.md`
    closed B3; the residual ×1.95 scale on the r24 lane's product is characterised but not physically named
    (a frequency-resolved κ would).
-2. **V292 direction:** the fb filter as a cave with error feedback (closes B4), a pointwise 3–30 Hz
-   sensitivity gate, the r24 fold at the settled arm. Whether the 9–18 Hz shoulder is an acceptable price
-   is the operator's call.
+2. **Two premises to close before spending on the sp = 3 point again:** gp-0x6806's state while engaged (the
+   ±102 deadband on y, B2 §7.2) and the r24 fold's motor-gain factor (B2 §7.1 — re-run the V291 §4.2/§11 folds
+   with K included; expected: every folded number improves, f0 18.4 Hz). Whether the 9–18 Hz shoulder is an
+   acceptable price is the operator's call; a V293 with error feedback through the output lag would close the
+   sp = 3 clause as written for ~0.1 deg/s.
 3. **The IMU** — still the top missing instrument.
 4. **The transient test** — now the ζ_eff measurement, not the mechanism test.
 5. **`0xC61C0/C2/C4`** still has no lineage entry; the two tracer memories in STATE §CORRECTIONS 6.

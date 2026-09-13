@@ -249,7 +249,66 @@ Slot 7 only (X 0,32,36,44,88 · Y 248,248,512,512,248) — the other 27 records 
 
 **WHY.** r35 (V281 rev 3): the 7 Hz cycle is gone but seven 1–3 s stalled-wheel runs appeared at idx 54–79 delivering 0.62 of V280's torque — a P-only loop's deadband. Ki 50: corner f = 1.24·Ki/Kp = 0.25 Hz; accumulates the held error until the wheel breaks free (~1.5 s in a 2000-count stall on the ki_sizing plant); costs ×0.984/−1.4° at 7 Hz (the ring is r24's), ~0 at 20 Hz; the integrator is in series with the T tap. Ki 5 (V270/V271, unflown) cannot break a stall (6 s time constant). **CLASS:** the first integrator ever run on this car; a cal that has never been non-zero on any flown build. **RISK:** stall-release lurch ~10 deg/s for ~1.8 s (clamp-set); push against a held hand at idx 40–84 back to V280's level within ~1 s; residual after long curves (~4 s). **READ IT BY:** stalled runs ≥ 1 s ≤ 2 (r35 7), idx 40–80 rate ≥ 70 % of reference (r35 45 %), dead fraction ≤ 0.10 (r35 0.34); 7 Hz and 20 Hz unchanged; FAIL: stalls persist with the accumulator railed; cost FAIL: lurch > 20 deg/s or > 3 s, or a new sub-1 Hz hunt.
 
-### V291 (C10) — V282 + the LKAS feedback lag pole 16.5 → 9.94 Hz (DC held) + the r24 engaged arm 5244 → 4725 + 0x14A b3 = sign(fb state)  (2026-09-13, **BUILT, NOT FLOWN — NOT CLEARED FOR FLASHING by its pre-registered adversarial pass (B FAIL on B4 + an ungated 9–18 Hz cost; B3 re-scored PASS); A/C/D PASS**)
+### V292 — V291's loop-opening dose made BYTE-EXACT: the feedback lag filter's two floors carry error-feedback remainders in a 52-byte cave  (2026-09-13, **BUILT, NOT FLOWN — THE FLIGHT CANDIDATE: CLEARED by the orchestrator over one dissent (adversarial A/C/D PASS; B FAIL on the sp = 3 steady-state clause only)**)
+
+**Class: the same OPEN-THE-RATE-LOOP-ABOVE-~8 Hz dose as V291 (fb lag pole 16.5 → 9.94 Hz DC-held, r24 arm
+5244 → 4725, 0x14A b3 = sign(fb state)), plus a code cave that makes the integer filter's mean behaviour equal
+the linear filter's at EVERY amplitude.** It exists because V291's pre-registered pass failed exactly one clause,
+byte-exactly: each `sar 0xa` floor in the filter leaks half an LSB per tick, the state integrates it, and the
+two-sample sum doubles it — a constant **−32 count feedback bias** on the 9.94 Hz pole (V282's own is −20), i.e.
+one permanent phantom setpoint count of demand, plus the input quantum 0.66 → 1.07 raw counts; at sp = 3 counts
+V291 delivered **×1.34–1.80** of V282's rate (the rate loop effectively open below ~0.5 deg/s). V292 removes both
+exactly. Diff vs V282: **69 bytes / 7 runs** — the V291 15 (rung, three cal halfwords, cal-page CRC, which comes
+out byte-identical to V291's `ed9b12bb`) + the 4-byte hook + 52 cave bytes + the code-block CRC.
+
+**base** V282 · **image** `d1128232993d3a1dcfa4afecb279976f014e6c940f36d88b87db9f2aee3aef33` · **rwd**
+`6d2784b5e27e2f21a909f552ac786f74fe28991dcbc275bf7ae03fb61f9fc20c`
+(`39990-TVA,A160-V292-V282BASE-EFCAVE.C4C00.6D74-FBPOLE.10HZ.962.958-R24.4725-B3.FBSTATE-…-0x13000-0x100000.rwd`)
+· **280/280** (146 substantive / 125 vacuous / 9 tautological, classified by entailment) · mutation test 14/14
+caught · script `analysis-2020accord/builds/v108_plus/build_v292_tva.py` (sha256 9bf135ab…; writes only with
+`ACCORD_V292_WRITE=rwd`; refuses a second write; the tag is derived from the integers and re-derived from the
+built image) · **V291's rwd and image renamed `SUPERSEDED-DO-NOT-FLASH-…` at this write** (same dose, worse
+arithmetic) · design `docs/specs/design/DESIGN-V292-FBLP-CAVE-2026-09-13.md` + mirror
+`rlog-tools/studies/grind/v292_cave_mirror.py` · prereg `docs/review/ADVERSARIAL-V292-PREREG-2026-09-13.md`
+(written before the image; the 9–18 Hz shoulder is a pre-registered REVERT SIGNATURE, not a gate — reasoning
+recorded there).
+
+| region | V282 | **V292** | what it is |
+|---|---|---|---|
+| `0x28F8E` | `mul r16,r7,r0` (`f0 3f 20 02`) | **`jr 0xC4C00`** (`89 07 72 bc`) | the hook, ON the filter's own first multiply; the displaced span `[0x28F8E, 0x28FA2)` is straight-line and writes r7/r9/r13/r14 before reading them, so the cave's whole register footprint is dead at the hook by Honda's own code — zero new liveness claims; the ±12000 bail and the sentinel are upstream and untouched; r25 (the skip-2 coupling) untouched |
+| `0xC4C00–0xC4C33` | `0xFF` | 52 B / 15 instr: `mul r16,r7,r0 · mul r26,r9,r0 · ld.hu −0x6d74[gp],r13 · add r13,r7 · andi 0x3ff,r7,r13 · st.h r13,−0x6d74[gp] · sar 0xa,r7 · ld.hu −0x6d72[gp],r13 · add r13,r9 · andi 0x3ff,r9,r13 · st.h r13,−0x6d72[gp] · sar 0xa,r9 · ld.hu 0x72e6[tp],r13 · ld.hu 0x72e6[tp],r14 · jr 0x28FA2` | `t = mul + rem; rem' = t & 0x3FF; step = t sar 10` per term (`t & 0x3FF` IS the two's-complement residue for either sign, so one `andi` replaces mov/shl/sub); returns into Honda's `add r7,r9`; +10 instructions per 1 ms tick (V289's cave was 53 and flew) |
+| `gp−0x6D74`, `gp−0x6D72` | free | rem_b, rem_a (HALFWORDS, ld.hu/st.h) | inside the certified 72-byte free run; zero accessors outside the cave on the built image (4-byte, 6-byte, absolute, movhi/movea, bit-op forms, each scanner positively controlled); boot 0; halfword so any boot garbage is ≤ 65535 and one `andi` bounds it to [0, 1023] |
+| `0xC63E8/EA`, `0xC6446`, `0xC4BAA-AB` | 923/1560, 5244, `ld.w −0x3680` | 962/958, 4725, `ld.w −0x3d30` | V291's three edits, byte-identical (the cal-page CRC `ed9b12bb` pins all three) |
+| `0xC4FFC` | 446bb04e | 584e432c | the code-block CRC ([0x13000, 0xC4FFC) owns the rung, hook and cave) |
+
+**THE FIVE PROOFS, from the BUILT bytes (a 15-instruction V850 micro-emulator over an independent decoder):**
+(i) mean input gain EXACTLY b/1024 and decay EXACTLY a/1024 — DC exactly 958/31 = 30.903 — at all 2,982
+amplitudes x = ±1…±1491 (above that the pre-existing ±46080 clamp binds identically on V291/V292); the s = −1
+absorbing state is released (s0 = −500 reaches exactly 0 in 110 ticks; V291 sticks at −16). (iii) the
+describing-function gain at 20.3 Hz is 0.9994–1.0009 at A ∈ {1, 2, 3, 5, 8, 16, 24} raw counts (V291: 0.07 /
+0.73 / 0.86 / 0.95 / 0.98 / 1.01 with +60° of phase error at A = 1). (iv) byte-exact closed loop on the family's
+median fit: steady state at **sp = 3 → ×1.00000 of V282 (V291 ×1.4155)**; sp = 330 ×0.996; sp = 33 ×0.9856 vs
+byte-exact V282 — and V282's OWN integer filter with the same cave reads ×0.9848, i.e. V292 is within 0.1 % of
+the linear surface and the 1.4 % is V282's own floor bias; peak rate on a capped step ×1.002 (V291 ×1.233).
+(v) the dither is zero-mean (worst |mean| 0.0000, peak ≤ 2 counts) so the LINEAR loop is V291's unchanged —
+gate73 1.0099, Ms, pkR, the r24 fold (×3.3–4.2 on the effective arm), and every C10 gate carry over as the SAME
+numbers. (ii) the first tick to a 1-count step is 1 on 958/1024 remainder phases (mean b/1024) — never worse
+than V291 (always 0), 0.94 of V282's.
+
+**⭐ A free positive control that the cave is live (memo §6):** 0x14A b3 already publishes sign(fb state); on
+V291 s rests in [−16, 0] with the wheel still (idle b3 duty 0.52–1.00 across stop phases), on V292 s rests at
+exactly 0 (idle duty 0.000). No telemetry bits spent.
+
+**RISK, READ IT BY, REVERT IF:** exactly V291's (see that entry) — torque authority unchanged, overshoot ~×1.1,
+|T(3.9)| ×1.07, the 9–18 Hz sensitivity shoulder (worst-fit ×1.3–2.0 of V282's over 3–18 Hz, peak ×1.99 at
+12.85 Hz, well damped, in absolute terms inside what V282 carries symptom-free at 16–18 Hz) pre-registered as a
+revert signature with numbers, the r24 cut −10 % (effective arm settled by `biv`), `AccordCurvatureLead` OFF.
+The half-peak decay read (545 → ≈183 ms) and the −14° phase at 10 Hz are unchanged; the tail below 0.5 deg/s is
+now closed-loop on V292 where it was open on V291, so a full-envelope metric is usable again.
+
+**Adversarial pass (criteria pre-registered before the image existed):** **A PASS · C PASS · D PASS · B DO-NOT-FLASH on the sp = 3 steady-state clause ALONE (as amended to the LINEAR V282 reference — a surface no integer build can sit on at 1-count demand: V282 itself reads ×0.96/×0.72 there); every other B clause PASS, no instability. V292 vs byte-exact V282 at +3 counts ×1.0000 (median), sign asymmetry ×0.89 (V282 ×1.33, V291 ×1.41), 0/21 fits outside ±1 % at ±330. **ORCHESTRATOR'S VERDICT: CLEARED as the flight candidate by the kit's broken-check rule, with B2's dissent, the sp = 3 numbers, the gp-0x6806 premise and the 9–18 Hz shoulder on the page; the flight is the operator's decision.** Corrections from the pass: the b3 read is the DUTY (0.47–0.50), not the transition rate; the inherited r24 fold over-weighted r24 ×6.13 (pessimistic; corrected f0 18.4 Hz); the hook's liveness wording corrected (r7/r9 live-in, replicated). `docs/review/ADVERSARIAL-V292-PREREG-2026-09-13.md`.
+
+### V291 (C10) — V282 + the LKAS feedback lag pole 16.5 → 9.94 Hz (DC held) + the r24 engaged arm 5244 → 4725 + 0x14A b3 = sign(fb state)  (2026-09-13, **BUILT, NOT FLOWN — NOT CLEARED by its pre-registered adversarial pass (B FAIL on B4 + an ungated 9–18 Hz cost; B3 re-scored PASS); A/C/D PASS — 🛑 SUPERSEDED-DO-NOT-FLASH by V292 the same day (same dose, byte-exact arithmetic); its rwd and image carry that prefix on disk**)
 
 **Class: OPEN THE LKAS RATE LOOP ABOVE ~8 Hz + a partial revert of Lever B — the first build V38 → V291 to
 lower the servo's feedback bandwidth instead of shaping the loop AT the mode, and the first to touch the r24

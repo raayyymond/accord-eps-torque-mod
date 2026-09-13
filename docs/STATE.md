@@ -4,76 +4,83 @@
 > boxes and the 84 finding/correction blocks that used to follow it are ARCHIVED under `docs/archive/` (pointers
 > at the end of this file). They are a record, not a briefing; nothing was retracted by the moves.
 
-## ✈ THE DECISION, IN ONE PLACE — updated 2026-09-13 (**V291 (C10) BUILT — the first LOOP-OPENING build — and NOT CLEARED FOR FLASHING by the letter of its pre-registered adversarial pass: B4 + an ungated 9–18 Hz cost; B3 re-scored PASS. Nothing flashed, nothing sent.**)
+## ✈ THE DECISION, IN ONE PLACE — updated 2026-09-13 (**V292 BUILT — the loop-opening dose, byte-exact — and CLEARED as the flight candidate by the orchestrator over one dissent; V291 SUPERSEDED-DO-NOT-FLASH. Nothing flashed, nothing sent.**)
 
 **ON THE CAR: V282** — route `…0000006c` (2026-09-12, 62 segments, mostly motorway, 326 s engaged in the 8
 segments read) attributed from the tap (b7 → 0.000 after disengage, b5 engaged 0.156), not the label.
-**Flash target: none recommended.** V291 exists on disk and is the only V291; flying it is the operator's
-decision against the verdict below.
+**Flash target, if the operator chooses to fly the loop-opening class: V292** (rwd sha256
+`6d2784b5e27e2f21a909f552ac786f74fe28991dcbc275bf7ae03fb61f9fc20c`). V291's rwd and image carry
+`SUPERSEDED-DO-NOT-FLASH-` on disk. The flight is the operator's decision; the read and the revert signatures are below.
 
 ---
 
-### 🛑🛑 V291 (C10) — WHAT IT IS, AND WHY IT IS NOT CLEARED
+### 🛑🛑 V292 — WHAT IT IS, WHAT THE PASS SAID, AND THE VERDICT
 
-**V291 = V282 + 15 bytes:** `0xC63E8/EA` 923/1560 → **962/958** (the LKAS rate-PID feedback lag pole 16.53 →
-**9.94 Hz, DC 30.89 held**), `0xC6446` 5244 → **4725** (the r24 engaged arm, −9.9 %, a partial revert of
-V84's Lever B), the 0x14A cave's **b3 = sign(fb state gp-0x3d30)** (displacement-only), two CRC trailers.
-Forward path byte-identical (map ×6, Kp 248, Kd 128, Ki 0, clamps, ×6 gain, output lag; peak 2505).
-rwd **`8ce8d5b7c7cda973a04fbe9a061090c76121b6a136d1bba18d1b67fd24530533`** · image
-**`a66f9c54b21031d3948cf1f60fbcadc6ac44d422c01d5a357b19aa0d23144657`** · script
-`analysis-2020accord/builds/v108_plus/build_v291_tva.py` · design `docs/specs/design/DESIGN-V291-FBLP-2026-09-13.md`
-(+ Addenda A–D) · prereg + verdicts `docs/review/ADVERSARIAL-V291-PREREG-2026-09-13.md` · lineage entry ·
-page https://claude.ai/code/artifact/19038e6d-729b-4a79-ba3b-a07aeefcc067.
+**V292 = V282 + 69 bytes:** V291's three cells — `0xC63E8/EA` 923/1560 → **962/958** (the LKAS rate-PID
+feedback lag pole 16.53 → **9.94 Hz, DC 30.89 held**), `0xC6446` 5244 → **4725** (the r24 engaged arm,
+−9.9 %, a partial revert of V84's Lever B), the 0x14A cave's **b3 = sign(fb state gp-0x3d30)** — plus a
+**52-byte cave at 0xC4C00** hooked at the filter's own first multiply (`0x28F8E` `mul r16,r7,r0` → `jr`)
+that computes the filter's two floored terms with **error-feedback remainders** (halfwords at
+gp-0x6D74/6D72; `t = mul + rem; rem' = t & 0x3FF; step = t sar 10`), so the integer filter's mean equals
+the linear filter's at every amplitude (V291's own floors leaked a constant −32 count feedback bias, one
+permanent phantom setpoint count). Forward path byte-identical (map ×6, Kp 248, Kd 128, Ki 0, clamps, ×6
+gain, output lag; peak 2505). rwd **`6d2784b5…fc20c`** · image **`d1128232…aef33`** · script
+`analysis-2020accord/builds/v108_plus/build_v292_tva.py` · design
+`docs/specs/design/DESIGN-V292-FBLP-CAVE-2026-09-13.md` (+ errata) · prereg and verdicts
+`docs/review/ADVERSARIAL-V292-PREREG-2026-09-13.md` · lineage entry · page
+https://claude.ai/code/artifact/19038e6d-729b-4a79-ba3b-a07aeefcc067.
 
-**CLASS — genuinely new in the V38 → V291 arc: OPEN THE RATE LOOP ABOVE ~8 Hz.** Every prior in-loop
-lever (V289's notch, option C, Kd, fb pole UP, output lag, leads) shaped the loop AT the mode and returned a
-null under the authority gates; V291 lowers the servo's feedback bandwidth so the loop stops acting where
-the grinding object lives, and pays the 7.3 Hz gate with the r24 cut.
+**CLASS — genuinely new in the V38 → V292 arc: OPEN THE RATE LOOP ABOVE ~8 Hz.** Every prior in-loop
+lever shaped the loop AT the mode and returned a null under the authority gates; V291/V292 lower the
+servo's feedback bandwidth so the loop stops acting where the grinding object lives, pay the 7.3 Hz gate
+with the r24 cut, and (V292) keep the integer arithmetic faithful to the linear design.
 
-**Predicted (servo-side, byte-exact z-domain over the 121-fit family):** max |1/(1+L)| over 12–26 Hz
-**19.4 → 3.6**, sensitivity at 20.3 Hz **×0.34**, ring **×3.24 shorter** (f −0.8 Hz, NOT relocated), PM
-+39 → +57°, GM 1.15 → 1.55, 0/121 unstable, **transient authority UP** (pkR 1.026 worst), steady state
-×1.000 (linear), |T(3.9)| ×1.07, 5–9 Hz bump 0.70 → 0.91. r24-folded: Ms 12–26 **4.7 (effective arm) /
-12.3 (flown arm)**; folded f0 17.0–17.9 Hz.
+**Predicted (byte-exact z-domain, 121-fit family, r24 folded at the wire-settled effective arm κ 0.449):**
+max |1/(1+L)| over 12–26 Hz **19.4 → 3.6 unfolded / ×3.7–5.2 folded** (the record's fold omitted the motor
+gain K and over-weighted r24 ×6.13 — pessimistic; corrected folded f0 **18.4 Hz**, clear of 15–17),
+sensitivity at 20.3 Hz **×0.34**, ring **×3.3 shorter** (half-life 170 → 52 ms), PM +39 → +57°, GM
+1.15 → 1.55, 0/121 unstable, 0/121 fits gain a ζ < 0.05 pole, transient authority UP (pkR 1.026 worst,
+overshoot ×1.21), steady state ×1.000 at ±330 and ≤ 2 % at ±33, |T(3.9)| ×1.07, 5–9 Hz bump 0.91.
 
 **ADVERSARIAL PASS (four independent agents, FAIL criteria written before the image existed):**
-- **A arithmetic PASS · C build audit PASS · D interlocks PASS** (one reader per cell on the built image,
-  both methods; every EME/governor/lockstep/DTC cal byte-identical; the gp-0x671d latch moves the safe way).
-- 🛑 **B units/stability: DO-NOT-FLASH — no instability on any fit at any scaling; after the re-score the
-  basis is B4 + one ungated cost:** (1) **B3 PASS (re-scored)** — with the r24 arm settled as EFFECTIVE (κ 0.449,
-  the deadband explains ≤ 15 % of the 2353-vs-5244 gap, the 5244 rung is selected, k_eff 0.895) and the 9.94–14 Hz
-  band identified at nperseg 512, the r24-folded 12–26 Hz improvement is **×3.3–4.2** across the whole B(f)
-  perturbation box, f0 17.45–17.95 Hz (clear of 15–17), no new ζ < 0.05 pole; (2) **B4 FAIL** — byte-exact
-  steady state at tiny demand (sp = 3 counts) **×1.34–1.80** of V282's (within 3 % at sp = 33; 0.23–0.41 deg/s
-  absolute): the feedback quantum b/1024 0.66 → 1.07 raw counts leaves the rate loop effectively open below
-  ~0.5 deg/s — **intrinsic to any cal-only fb-pole change**, fixable only by a cave with an error-feedback
-  remainder word; (3) **UNGATED** — worst-fit disturbance sensitivity worse than V282 on **121/121 fits over
-  3.0–18.2 Hz, peak ×1.99 at 12.85 Hz** — a broad well-damped shoulder (no pole below ζ 0.36), not a line, in
-  the band that killed V289 (whose object was a ζ 0.03 line); the byte-exact integer limit cycle's median
-  frequency moves 19.8 → 15.2 Hz. B5 FAILS if the fork's `AccordCurvatureLead` is ON.
-- ⇒ **ORCHESTRATOR'S VERDICT: NOT CLEARED FOR FLASHING**, by the letter of the rule written before the pass ran.
-  The remaining grounds are a sub-deg/s effect the class cannot avoid and a design cost no gate priced; **whether
-  a well-damped ×2 shoulder at 9–18 Hz is an acceptable price for ×3–4 at 20 Hz is the operator's decision.**
+- **A arithmetic PASS** (cave decoded independently; mean gain exact; DF gain 0.9995–1.0009 and phase
+  ≤ 0.16° at A = 1…24 — more faithful to the linear model than V282's own filter) · **C build audit PASS**
+  (independent rebuild reproduces both hashes; 17/17 mutations caught; write guard; V291 renamed) ·
+  **D interlocks PASS** (the remainders have exactly the cave's accessors plus the boot copy loop that
+  zeroes them; every interlock cal byte-identical; the hook's r7/r9 are live-in and replicated).
+- 🛑 **B: FAIL on ONE clause only — the byte-exact steady state at sp = ±3 setpoint counts against the
+  LINEAR V282 chain (×0.78–1.16, 20–21 of 21 fits outside ±1 %)** — every other clause PASS, no instability.
+  B2 showed why: the loop has five floors and the cave repairs one; **the linear chain is a surface no
+  integer build can sit on at 1-count demand — V282 itself reads ×0.96 / ×0.72 against it.** Against
+  byte-exact V282, V292 reads **×1.0000 at +3** (median) and has the smallest sign asymmetry of the three
+  builds (×0.89 vs V282 ×1.33, V291 ×1.41); the absolute spread is 0.22–0.33 deg/s. B2: *"I would not defend
+  a do-not-flash on physics here"* and *"that is a change of criterion after the fact, and I am not making
+  it"* — both recorded.
+- ⇒ **ORCHESTRATOR'S VERDICT: CLEARED as the flight candidate**, by the kit's standing rule that a check
+  which condemns the flown build is a broken check (the amended clause condemns V282). The dissent, the
+  sp = 3 numbers, and two premises are on the page: (a) gp-0x6806's state while engaged (B2 §7.2: if 0,
+  a ±102 deadband on y zeroes sp = 3 on every build — the record's V103/V104 evidence says it is 1 while
+  engaged, the 55 Hz notch and the r24 rung both key on it and were measured live; BELIEF); (b) the 9–18 Hz
+  sensitivity shoulder (byte-exact ×1.33–1.70 of V282's at 12.85 Hz, well damped, in absolute terms inside
+  what V282 carries symptom-free at 16–18 Hz) — pre-registered as a REVERT SIGNATURE with numbers, not a
+  gate (reasoning in the prereg). Also from B2: B5 is fragile in phase (V292's 5–9 Hz worst reaches 1.0 at
+  −5.9° of loop-phase error vs V282's −31.6°), and the loop closes ~6× sooner after engage at near-zero
+  wheel rate — correct behaviour, but the most likely thing the operator could feel that no gate scores.
 
-**What closed B3 (`rlog-tools/studies/grind/B-IV-AND-KAPPA-2026-09-13.md`):** the ±3 post-gain deadband was
-already in the b6-inversion ladder and the measured post-gain amplitude (26–138 counts) is 5–25× too large for
-it to matter; the residual ×1.95 is a constant pre-deadband scale (stratum-invariant ×1.21); the 427 tap is exact
-by its packer/decoder identity; B(f) is not detectably biased at 20.3 Hz (command-IV ×1.01/×1.02); the command
-has no energy at 12–13 Hz so no instrument reaches the band, but nperseg 512 identifies 9.94–14 Hz (coh ≥ 0.40)
-and moves |B| ≤ 8 % / ∠B ≤ 18°. **What would close B4:** the fb filter as a cave with error feedback (V292
-direction). **The 9–18 Hz shoulder needs a gate** (B proposes: sensitivity ratio vs V282 ≤ 1.25 pointwise over
-3–30 Hz, worst fit; C10 reads 1.99).
+**THE READ (one ~20 s hands-off creep episode):** 18–22 Hz envelope **half-peak** decay ≈545 → ≈183 ms;
+T-vs-0x18F-rate cross-spectrum phase **−14° ± 4° at 10 Hz** over 16 s of creep (the LANDED check);
+**0x14A b3 DUTY 0.47–0.50 at every amplitude** (V282-pole 0.54–0.70; V291 pinned at 1.0 below 3 counts;
+**idle duty 0.000 with the wheel still = the cave is live**), conditioned on |rate| ≥ 2 counts and mean
+rate ≤ ~1.5 deg/s; b5/b6 duties the r24 cut's control (~−10 %). **The null:** decay not below 1.23× V282's
+while the phase HAS moved ⇒ the object's damping is not set by the rate loop's return ratio ⇒ the whole
+in-loop class is closed. **REVERT IF:** the 6–9 Hz strong-turn ripple returns (F7 ≥ 2/100 s or tap
+ripple/level ≥ 0.25); new roughness or a line at 10–18 Hz (worst-fit sensitivity ×1.3–1.7 of V282's, peak
+near 13 Hz; the integer cycle near 15 Hz); a 22–30 Hz line; the grinding unchanged; a darty/loose
+lane-centring feel; a one-sided pull at rest. **`AccordCurvatureLead` must be OFF** (with it ON, B5 fails).
 
-**If the operator flies it anyway — pre-registered read (one ~20 s hands-off creep episode):** 18–22 Hz
-envelope **half-peak** decay ≈545 → ≈183 ms (the half-peak metric is safe; a full-envelope or 10 % metric
-is NOT — the tail below 0.5 deg/s is open-loop on V291); T-vs-0x18F-rate cross-spectrum phase **−14° ± 4°
-at 10 Hz** (−12.5° at 7.3 Hz) over 16 s of creep — the LANDED check; 0x14A **b3 transition rate ×0.785
-[0.762, 0.805]** of the mirror's V282-pole prediction on the same 0x18F trace, within-drive, conditioned on
-|rate| ≥ 2 counts and mean rate ≤ ~1.5 deg/s (outside that window the bit pins). **Revert signatures, with
-numbers:** the 6–9 Hz strong-turn ripple returns (F7 ≥ 2/100 s or tap ripple/level ≥ 0.25); a new 10–18 Hz
-line or roughness (worst-fit sensitivity ×1.3–2.0, peak near 13 Hz; integer cycle at ~15 Hz); a 22–30 Hz
-line; the grinding unchanged; a darty/loose lane-centring feel; a one-sided standing pull at rest.
-**`AccordCurvatureLead` must be OFF.**
+**V291 (C10), the same dose without the cave:** built, NOT CLEARED by its pass (B4 ×1.34–1.80 at sp = 3 from
+the coarser feedback quantum; B3 re-scored PASS once `biv` settled the r24 arm), **SUPERSEDED-DO-NOT-FLASH
+by V292** the same day. Its record stays in `docs/BUILD-LINEAGE.md` and `ADVERSARIAL-V291-PREREG-2026-09-13.md`.
 
 ---
 
@@ -155,12 +162,12 @@ to a 10 Hz inner loop (~2 % perturbation); `AccordTorqueKi` 0.30 → 0.15 is the
    has hw2 bit 0 = 1). Reject any Format-V hit whose target is ODD.
 
 ### ✈ NEXT — in order
-1. **The operator decides on V291** with the narrowed basis above (B4 + the 9–18 Hz shoulder); if he flies it, the
-   pre-registered read and revert signatures apply and `AccordCurvatureLead` stays OFF.
-2. **V292 direction (not cut):** the fb filter in a CAVE with an error-feedback remainder word (Q15,
-   DC 1.00000 at every amplitude — closes B4), at the 0x28F4C hook (runs every tick, no sentinel; 868 B
-   free at 0xC4C90), scored on a pointwise 3–30 Hz sensitivity gate (≤ 1.25 vs V282 worst-fit) with the
-   r24 fold at the settled arm. The operator decides whether the 9–18 Hz shoulder is an acceptable price.
+1. **The operator decides on V292.** If he flies it, the read and the revert signatures above apply and
+   `AccordCurvatureLead` stays OFF. Score the band; he scores the symptom.
+2. **If V292 flies and the 20 Hz object survives at ζ ≥ 0.05 with the loop's phase moved, the in-loop class is
+   closed; if it goes and a 10–18 Hz roughness appears, the next lever is the shoulder's own (a lead at
+   10–14 Hz costs 20 Hz; a V293 with error feedback through the output lag closes the sp = 3 clause but buys
+   ~0.1 deg/s). Resolve gp-0x6806's engaged state and the deadband premise before spending on sp = 3 again.
 3. **The IMU stays the top missing instrument** (road vs rack vs motor).
 4. **The transient test** (`SPEC-COMB-TRANSIENT-TEST-2026-09-10.md`) is now second to the loop-opening
    result; keep it as the ζ_eff measurement.
@@ -169,8 +176,9 @@ to a 10 Hz inner loop (~2 % perturbation); `AccordTorqueKi` 0.30 → 0.15 is the
    `docs/BUILD-LINEAGE.md` (229 KB) and `BUILD-LINEAGE-PART1-LEVER-INDEX.md` (193 KB) are over the 150 KB
    soft target — split at the next close-out; `0xC61C0/C2/C4` still has no lineage entry.
 
-**Session reports:** `docs/specs/design/DESIGN-V291-FBLP-2026-09-13.md` · `docs/review/ADVERSARIAL-V291-PREREG-2026-09-13.md`
-+ `ADV-V291-{A,B,C,D}-2026-09-13.md` · `docs/traces/TRACE-2026-09-13-{fb-lag-filter-bytes,r24-lane-transfer,lkas-lane-to-aggregator-and-ghidra-gap}.md`
+**Session reports:** `docs/specs/design/DESIGN-V291-FBLP-2026-09-13.md`, `DESIGN-V292-FBLP-CAVE-2026-09-13.md` ·
+`docs/review/ADVERSARIAL-V291-PREREG-2026-09-13.md` + `ADV-V291-{A,B,C,D}`, `ADVERSARIAL-V292-PREREG-2026-09-13.md` + `ADV-V292-{A,B,C,D}` ·
+`rlog-tools/studies/grind/B-IV-AND-KAPPA-2026-09-13.md` · `docs/traces/TRACE-2026-09-13-{fb-lag-filter-bytes,r24-lane-transfer,lkas-lane-to-aggregator-and-ghidra-gap}.md`
 · `rlog-tools/studies/grind/{OPENLOOP-RING-DAMPING,B-OF-F-V282,ROUTE-6C-ATTRIBUTION}-2026-09-13.md` ·
 `docs/research/FORK-COMB-RECONSTRUCTION-2026-09-13.md` · handoff `docs/handoffs/2026-09/HANDOFF-2026-09-13-V291-LOOP-OPENING-BUILT-NOT-CLEARED.md`.
 **The 2026-09-10 and 2026-09-09 decision boxes are archived in `docs/archive/STATE-ARCHIVE-2026-09-13-decision-boxes-0909-0910.md`** —

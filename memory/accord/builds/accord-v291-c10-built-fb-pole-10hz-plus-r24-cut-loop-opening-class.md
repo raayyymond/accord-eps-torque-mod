@@ -1,6 +1,6 @@
 ---
 name: accord-v291-c10-built-fb-pole-10hz-plus-r24-cut-loop-opening-class
-description: "🛑🛑⭐⭐⭐⭐⭐ V291 (C10) BUILT 2026-09-13, NOT FLOWN, NOT CLEARED by its adversarial pass (B4 + an ungated 9–18 Hz cost): V282 + 0xC63E8/EA 923/1560 → 962/958 (LKAS feedback lag pole 16.5 → 9.94 Hz, DC 30.89 held) + 0xC6446 5244 → 4725 (r24 engaged arm −9.9 %, a partial revert of V84's Lever B) + 0x14A b3 = sign(fb state gp-0x3d30); 15 bytes vs V282, forward path byte-identical (peak 2505, map ×6). Class: OPEN THE RATE LOOP ABOVE ~8 Hz. Passes all 8 gates with margin; predicted ring ×3.24 shorter, S@20.3 ×0.34, Ms 12–26 19.4 → 3.6 (unfolded) / 4.7–12.3 (r24-folded); 5–9 Hz bump 0.91; |T(3.9)| ×1.07; pkR_w 1.026. Image a66f9c54…, rwd 8ce8d5b7…."
+description: "🛑🛑⭐⭐⭐⭐⭐ V291 (C10) BUILT 2026-09-13, NOT FLOWN, NOT CLEARED by its adversarial pass (B4 + an ungated 9–18 Hz cost), SUPERSEDED-DO-NOT-FLASH by V292 the same day: V282 + 0xC63E8/EA 923/1560 → 962/958 (LKAS feedback lag pole 16.5 → 9.94 Hz, DC 30.89 held) + 0xC6446 5244 → 4725 (r24 engaged arm −9.9 %, a partial revert of V84's Lever B) + 0x14A b3 = sign(fb state gp-0x3d30); 15 bytes vs V282, forward path byte-identical (peak 2505, map ×6). Class: OPEN THE RATE LOOP ABOVE ~8 Hz. Passes all 8 gates with margin; predicted ring ×3.24 shorter, S@20.3 ×0.34, Ms 12–26 19.4 → 3.6 (unfolded) / 4.7–12.3 (r24-folded); 5–9 Hz bump 0.91; |T(3.9)| ×1.07; pkR_w 1.026. Image a66f9c54…, rwd 8ce8d5b7…."
 metadata:
   node_type: memory
   type: project
